@@ -22,7 +22,7 @@ const isAdditionDisabledEntrySpecific = (
   instance: Data.ActivatableDependent,
 ): boolean => {
   return R.defaultTo(true, getWikiEntry<Wiki.Activatable>(wiki, instance.id)
-    .fmap(entry => {
+    .map(entry => {
       if (entry.category === Categories.SPECIAL_ABILITIES) {
         if (CheckStyleUtils.isCombatStyleSpecialAbility(entry)) {
           const combinationSA =

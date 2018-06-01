@@ -14,7 +14,7 @@ import { flattenPrerequisites } from './flattenPrerequisites';
 import { getAllEntriesByGroup, getHeroStateListItem } from './heroStateUtils';
 import { isActive } from './isActive';
 import { match } from './match';
-import { Maybe, MaybeFunctor } from './maybe';
+import { Maybe } from './maybe';
 import { getActiveSelections } from './selectionUtils';
 import { getBlessedTraditionFromWiki, getMagicalTraditions } from './traditionUtils';
 import { validateObject, validateTier } from './validatePrerequisitesUtils';
@@ -70,41 +70,33 @@ const isRemovalDisabledEntrySpecific = (
       match<string, boolean>(entry.id)
         .on(R.both(
           R.equals('ADV_16'),
-          () => {
-            return R.defaultTo(false, Maybe(state.skills.get(active.sid as string))
-              .fmap(skill => {
-                return Maybe(wiki.experienceLevels.get(state.experienceLevel))
-                  .fmap(R.pipe(
-                    el => el.maxSkillRating,
-                    R.add(R.reduce(
-                      (e, obj) => obj.sid === active.sid ? e + 1 : e,
-                      0,
-                      instance.active,
-                    )),
-                    R.equals(skill.value),
-                  ))
-                  .value;
-              })
-              .value
-            );
-          }
+          () => Maybe.from(state.skills.get(active.sid as string))
+            .bind(skill =>
+              Maybe.from(wiki.experienceLevels.get(state.experienceLevel))
+                .map(R.pipe(
+                  el => el.maxSkillRating,
+                  R.add(R.reduce(
+                    (e, obj) => obj.sid === active.sid ? e + 1 : e,
+                    0,
+                    instance.active,
+                  )),
+                  R.equals(skill.value),
+                ))
+            )
+            .valueOr(false)
         ), R.T)
         .on(R.both(
           R.equals('ADV_17'),
-          () => {
-            return R.defaultTo(false, Maybe(state.combatTechniques.get(active.sid as string))
-              .fmap(skill => {
-                return Maybe(wiki.experienceLevels.get(state.experienceLevel))
-                  .fmap(R.pipe(
-                    el => el.maxCombatTechniqueRating,
-                    R.inc,
-                    R.equals(skill.value),
-                  ))
-                  .value;
-              })
-              .value
-            );
-          }
+          () => Maybe.from(state.combatTechniques.get(active.sid as string))
+            .bind(skill =>
+              Maybe.from(wiki.experienceLevels.get(state.experienceLevel))
+                .map(R.pipe(
+                  el => el.maxCombatTechniqueRating,
+                  R.inc,
+                  R.equals(skill.value),
+                ))
+            )
+            .valueOr(false)
         ), R.T)
         .on(R.both(
           [
@@ -174,11 +166,11 @@ const isRemovalDisabledEntrySpecific = (
         ), R.T)
         .on(R.both(
           ['SA_623', 'SA_625', 'SA_632'].includes,
-          () => R.defaultTo(false, getBlessedTraditionFromWiki(
+          () => getBlessedTraditionFromWiki(
             wiki.specialAbilities,
             state.specialAbilities,
           )
-            .fmap(blessedTradition => {
+            .map(blessedTradition => {
               return R.pipe(
                 (list: Data.ActivatableSkillDependent[]) =>
                   list.filter(e => e.active),
@@ -191,7 +183,7 @@ const isRemovalDisabledEntrySpecific = (
                 convertMapToValues(state.liturgicalChants)
               );
             })
-            .value),
+            .valueOr(false),
         ), R.T)
         .on(R.both(
           () => R.equals(entry.category, Categories.SPECIAL_ABILITIES),
@@ -202,37 +194,33 @@ const isRemovalDisabledEntrySpecific = (
         ), R.T)
         .otherwise(() => R.all(e => {
           if (typeof e === 'object' && e.origin) {
-            return R.defaultTo(
-              true,
-              getWikiEntry<Wiki.WikiActivatable>(wiki, e.origin)
-                .fmap(origin => {
-                  return Maybe(
-                    flattenPrerequisites(
-                      origin.prerequisites,
-                      R.defaultTo(1, origin.tiers),
-                    )
-                      .find((r): r is Wiki.AllRequirementObjects =>
-                        typeof r !== 'string' &&
-                        Array.isArray(r.id) &&
-                        !!e.origin &&
-                        r.id.includes(e.origin)
-                      )
+            return getWikiEntry<Wiki.WikiActivatable>(wiki, e.origin)
+              .bind(origin => {
+                return Maybe.from(
+                  flattenPrerequisites(
+                    origin.prerequisites,
+                    R.defaultTo(1, origin.tiers),
                   )
-                    .fmap(req => {
-                      return R.gt((req.id as string[]).reduce(
-                        (acc, e) => validateObject(
-                          wiki,
-                          state,
-                          { ...req, id: e } as Wiki.AllRequirementObjects,
-                          entry.id,
-                        ) ? acc + 1 : acc,
-                        0,
-                      ), 1);
-                    })
-                    .value
-                })
-                .value
-            );
+                    .find((r): r is Wiki.AllRequirementObjects =>
+                      typeof r !== 'string' &&
+                      Array.isArray(r.id) &&
+                      !!e.origin &&
+                      r.id.includes(e.origin)
+                    )
+                )
+                  .map(req => {
+                    return R.gt((req.id as string[]).reduce(
+                      (acc, e) => validateObject(
+                        wiki,
+                        state,
+                        { ...req, id: e } as Wiki.AllRequirementObjects,
+                        entry.id,
+                      ) ? acc + 1 : acc,
+                      0,
+                    ), 1);
+                  })
+              })
+              .valueOr(true);
           }
           else if (typeof e === 'object' && Array.isArray(e.sid)) {
             const list = e.sid;
@@ -277,7 +265,7 @@ export function getMinTier(
   wiki: WikiState,
   state: Data.HeroDependent,
   obj: Data.ActiveObjectWithId,
-  dependencies: Data.ActivatableInstanceDependency[],
+  dependencies: ReadonlyArray<Data.ActivatableInstanceDependency>,
   sid?: string | number,
 ): number | undefined {
   return R.pipe(
@@ -336,7 +324,7 @@ export const getMaxTier = (
   wiki: WikiState,
   state: Data.HeroDependent,
   prerequisites: Wiki.LevelAwarePrerequisites,
-  dependencies: Data.ActivatableInstanceDependency[],
+  dependencies: ReadonlyArray<Data.ActivatableInstanceDependency>,
   id: string,
 ) => {
   return match<string, number | undefined>(id)
@@ -369,50 +357,41 @@ export const isRemovalOrChangeDisabled = (
   obj: Data.ActiveObjectWithId,
   wiki: WikiState,
   state: Data.HeroDependent,
-): MaybeFunctor<ValidationObject | undefined> => {
-  const { id, sid } = obj;
+): Maybe<ValidationObject | undefined> => {
+  return getWikiEntry<Wiki.WikiActivatable>(wiki, obj.id)
+    .bind(wikiEntry =>
+      getHeroStateListItem<Data.ActivatableDependent>(obj.id)(state)
+        .map(instance => {
+          const tiers = wikiEntry.id === 'SA_29' ? 3 : wikiEntry.tiers;
+          const minTier = getMinTier(
+            wiki,
+            state,
+            obj,
+            instance.dependencies,
+            obj.sid,
+          );
 
-  return getWikiEntry<Wiki.WikiActivatable>(wiki, id)
-    .fmap(wikiEntry => {
-      return getHeroStateListItem<Data.ActivatableDependent>(id)(state)
-        .fmap(instance => {
-          return R.pipe(
-            (tiers: number | undefined) => {
-              return {
-                tiers,
-                minTier: getMinTier(
-                  wiki,
-                  state,
-                  obj,
-                  instance.dependencies,
-                  sid,
-                ),
-                maxTier: getMaxTier(
-                  wiki,
-                  state,
-                  wikiEntry.prerequisites,
-                  instance.dependencies,
-                  id,
-                ),
-              };
-            },
-            res => {
-              return {
-                ...res,
-                disabled: isRemovalDisabledEntrySpecific(
-                  wiki,
-                  state,
-                  wikiEntry,
-                  instance,
-                  obj,
-                  res.tiers,
-                  res.minTier,
-                )
-              }
-            },
-            res => ({ ...obj, ...res }),
-          )(id === 'SA_29' ? 3 : wikiEntry.tiers);
+          return ({
+            ...obj,
+            tiers,
+            minTier,
+            maxTier: getMaxTier(
+              wiki,
+              state,
+              wikiEntry.prerequisites,
+              instance.dependencies,
+              obj.id,
+            ),
+            disabled: isRemovalDisabledEntrySpecific(
+              wiki,
+              state,
+              wikiEntry,
+              instance,
+              obj,
+              tiers,
+              minTier,
+            ),
+          });
         })
-        .value
-    });
+    );
 };

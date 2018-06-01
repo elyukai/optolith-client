@@ -1,10 +1,9 @@
 import R from 'ramda';
 import { Maybe } from './maybe';
-import { pipe } from './pipe';
 
-export type ArrayElement<T> = T extends Array<infer I> ? I : never;
+export type ArrayElement<T> = T extends ReadonlyArray<infer I> ? I : never;
 export type ArrayFilter<T> = (list: T[]) => T[];
-export type MapValueElement<T> = T extends Map<any, infer I> ? I : never;
+export type MapValueElement<T> = T extends ReadonlyMap<any, infer I> ? I : never;
 
 type ReadonlyMapUpdater<K, V> = (list: ReadonlyMap<K, V>) => ReadonlyMap<K, V>;
 
@@ -38,8 +37,8 @@ export const removeFromArray = <T>(
  * remaining elements. Reversed funtion order.
  * @param index
  */
-export const remove = <T>(index: number) => {
-  return R.remove<T>(index, 1);
+export const remove = (index: number) => {
+  return R.remove(index, 1);
 };
 
 type FilterJust = <T>(list: ReadonlyArray<T | undefined>) => T[];
@@ -56,8 +55,8 @@ export const filterExisting: FilterJust = R.filter(R.complement(R.isNil));
  * @param add
  */
 export const spreadOptionalInArray = <T>(
-  add: ReadonlyArray<T> = [],
-) => (list: ReadonlyArray<T>) => [ ...list, ...add ];
+  add: Maybe<ReadonlyArray<T> | undefined>,
+) => (list: ReadonlyArray<T>) => [ ...list, ...add.valueOr([]) ];
 
 /**
  * Converts a Map to an array of key-value pairs.
@@ -76,7 +75,11 @@ export const convertMapToValues = <V>(map: ReadonlyMap<any, V>) => [
 ];
 
 export interface StringKeyObject<V> {
-  [id: string]: V;
+  readonly [id: string]: V;
+}
+
+export interface NumberKeyObject<V> {
+  readonly [id: number]: V;
 }
 
 /**
@@ -147,7 +150,7 @@ export const setM = <K, V>(key: K, value: V): ReadonlyMapUpdater<K, V> => {
  * @param key The key of the entry.
  */
 export const deleteMapItem = <K, V>(list: Map<K, V>, key: K) => {
-  return pipe<Map<K, V>, [K, V][], [K, V][], Map<K, V>>(
+  return R.pipe<Map<K, V>, [K, V][], [K, V][], Map<K, V>>(
     convertMapToArray,
     R.filter<[K, V]>(([k]) => k !== key) as (list: [K, V][]) => [K, V][],
     arr => new Map(arr),
@@ -169,7 +172,7 @@ export const deleteM = <K, V>(key: K): ReadonlyMapUpdater<K, V> => R.pipe(
  * @param key The key of the entry.
  */
 export const getM = <K, V>(key: K) => (list: ReadonlyMap<K, V>) => {
-  return Maybe(list.get(key));
+  return Maybe.from(list.get(key));
 };
 
 /**

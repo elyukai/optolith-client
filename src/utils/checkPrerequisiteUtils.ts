@@ -1,10 +1,10 @@
+import R from 'ramda';
 import * as Categories from '../constants/Categories';
 import * as Data from '../types/data';
 import * as Reusable from '../types/reusable';
 import * as Wiki from '../types/wiki';
 import { getCategoryById } from './IDUtils';
 import { match } from './match';
-import { pipe } from './pipe';
 
 export const isSexRequirement = (
   req: Wiki.AllRequirementObjects,
@@ -27,13 +27,13 @@ export const isRequiringIncreasable = (
 ): req is Reusable.RequiresIncreasableObject => {
   return match<string | string[], boolean>(req.id)
     .on((id): id is string[] => typeof id === 'object', id => {
-      return req.hasOwnProperty('value') && id.every(pipe(
+      return req.hasOwnProperty('value') && id.every(R.pipe(
         getCategoryById,
         category => typeof category === 'string' &&
           Categories.IncreasableCategories.includes(category)
       ));
     })
-    .otherwise(pipe(
+    .otherwise(R.pipe(
       getCategoryById,
       category => req.hasOwnProperty('value') &&
         typeof category === 'string' &&
@@ -46,13 +46,13 @@ export const isRequiringActivatable = (
 ): req is Reusable.RequiresActivatableObject => {
   return match<string | string[], boolean>(req.id)
     .on((id): id is string[] => typeof id === 'object', id => {
-      return req.hasOwnProperty('active') && id.every(pipe(
+      return req.hasOwnProperty('active') && id.every(R.pipe(
         getCategoryById,
         category => typeof category === 'string' &&
           Categories.ActivatableLikeCategories.includes(category)
       ));
     })
-    .otherwise(pipe(
+    .otherwise(R.pipe(
       getCategoryById,
       category => req.hasOwnProperty('active') &&
         typeof category === 'string' &&

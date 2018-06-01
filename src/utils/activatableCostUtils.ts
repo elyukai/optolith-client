@@ -7,11 +7,11 @@ import { translate } from './I18n';
 import { getCategoryById } from './IDUtils';
 import { getRoman } from './NumberUtils';
 import { getWikiEntry } from './WikiUtils';
-import { exists, matchExists } from './exists';
+import { exists } from './exists';
 import { getHeroStateListItem } from './heroStateUtils';
 import { isActive } from './isActive';
 import { match } from './match';
-import { Maybe, MaybeFunctor } from './maybe';
+import { Maybe } from './maybe';
 import { getSelectOptionCost } from './selectionUtils';
 
 const getEntrySpecificCost = (
@@ -39,18 +39,17 @@ const getEntrySpecificCost = (
       'SA_531',
       'SA_569',
     ].includes, () => {
-      return match<string | number | undefined, number>(sid)
-        .on(isString, sid => {
-          return R.defaultTo(0, getWikiEntry<Wiki.Skillish>(wiki, sid)
-            .fmap(entry => (cost as number[])[entry.ic - 1])
-            .value
-          );
-        })
-        .otherwise(() => 0);
+      const getCostForId = R.pipe(
+        getWikiEntry<Wiki.Skillish>(wiki),
+        m => m.map(entry => (cost as number[])[entry.ic - 1]),
+        Maybe.fromMaybe(0)
+      );
+
+      return getCostForId(sid as string);
     })
     .on(['DISADV_34', 'DISADV_50'].includes, () => {
-      return match<Data.ActiveObject[] | undefined, number | undefined>(active)
-        .on(matchExists(), active => {
+      return Maybe.from(active)
+        .map(active => {
           const compareMaxTier = (
             previousMax: number,
             active: Data.ActiveObject,
@@ -97,12 +96,12 @@ const getEntrySpecificCost = (
             return (cost as number) * (tier! - subMaxCurrentTier);
           }
         })
-        .otherwise(() => (cost as number) * tier!);
+        .valueOr((cost as number) * tier!);
     })
     .on('DISADV_33', () => {
       if (
         sid === 7
-        && Maybe(active).fmap(R.pipe(
+        && Maybe.from(active).map(R.pipe(
           arr => R.filter(e => e.sid === 7 && !exists(e.cost), arr),
           filtered => filtered.length,
           R.lt(costToAdd ? 0 : 1),
@@ -126,10 +125,10 @@ const getEntrySpecificCost = (
       )(active);
     })
     .on('SA_9', () => {
-      return R.defaultTo(0, Maybe(wiki.skills.get(sid as string))
-        .fmap(skill => {
-          return R.defaultTo(skill.ic, Maybe(state).fmap(state => {
-            return Maybe(state.specialAbilities.get(id)).fmap(R.pipe(
+      return R.defaultTo(0, Maybe.from(wiki.skills.get(sid as string))
+        .map(skill => {
+          return R.defaultTo(skill.ic, Maybe.from(state).map(state => {
+            return Maybe.from(state.specialAbilities.get(id)).map(R.pipe(
               instance => instance.active,
               R.reduce<Data.ActiveObject, number>((c, obj) => {
                 return obj.sid === sid && !exists(obj.cost) ? R.inc(c) : c;
@@ -143,8 +142,8 @@ const getEntrySpecificCost = (
     })
     .on('SA_29', () => tier === 4 ? 0 : cost as number)
     .on('SA_72', () => {
-      return Maybe(active)
-        .fmap(R.pipe(
+      return Maybe.from(active)
+        .map(R.pipe(
           arr => R.filter(e => !exists(e.cost), arr),
           arr => arr.length,
           R.add(costToAdd ? 0 : -1),
@@ -153,8 +152,8 @@ const getEntrySpecificCost = (
         .value;
     })
     .on('SA_87', () => {
-      return Maybe(active)
-        .fmap(R.pipe(
+      return Maybe.from(active)
+        .map(R.pipe(
           arr => R.filter(e => !exists(e.cost), arr),
           arr => arr.length,
           R.add(costToAdd ? 0 : -1),
@@ -182,35 +181,35 @@ const getEntrySpecificCost = (
     .on('SA_533', () => {
       return match<string | number | undefined, number>(sid)
         .on(isString, sid => {
-          type F = MaybeFunctor<Data.HeroDependent | undefined>;
+          type F = Maybe<Data.HeroDependent | undefined>;
           type Selection = string | number | undefined;
           type Skill = Wiki.Skill | undefined;
 
-          return R.defaultTo(0, Maybe(wiki.skills.get(sid)).fmap(entry => {
+          return R.defaultTo(0, Maybe.from(wiki.skills.get(sid)).map(entry => {
             return R.pipe(
-              (state: F) => state.fmap(v => v.specialAbilities)
-                .fmap(v => v.get('SA_531'))
-                .fmap(v => v.active)
-                .fmap(v => v && v[0] && v[0].sid),
-              sid => match<Selection, MaybeFunctor<Skill>>(sid.value)
-                .on(isString, sid => Maybe(wiki.skills.get(sid)))
-                .otherwise(() => Maybe(undefined))
-                .fmap(firstEntry => {
+              (state: F) => state.map(v => v.specialAbilities)
+                .map(v => v.get('SA_531'))
+                .map(v => v.active)
+                .map(v => v && v[0] && v[0].sid),
+              sid => match<Selection, Maybe<Skill>>(sid.value)
+                .on(isString, sid => Maybe.from(wiki.skills.get(sid)))
+                .otherwise(() => Maybe.from(undefined))
+                .map(firstEntry => {
                   return (cost as number[])[entry.ic - 1] + firstEntry.ic;
                 }).value
-            )(Maybe(state));
+            )(Maybe.from(state));
           }).value);
         })
         .otherwise(() => 0);
     })
     .on('SA_699', () => {
-      return R.defaultTo(cost as number, Maybe(state)
-        .fmap(v => v.specialAbilities)
-        .fmap(v => v.get('SA_29'))
-        .fmap(v => v.active)
-        .fmap(R.find<Data.ActiveObject>(R.propEq('sid', sid)))
-        .fmap(base => base.tier)
-        .fmap<number | undefined>(
+      return R.defaultTo(cost as number, Maybe.from(state)
+        .map(v => v.specialAbilities)
+        .map(v => v.get('SA_29'))
+        .map(v => v.active)
+        .map(R.find<Data.ActiveObject>(R.propEq('sid', sid)))
+        .map(base => base.tier)
+        .map<number | undefined>(
           R.ifElse(R.equals(4), R.always(0), R.always(undefined))
         )
         .value
@@ -237,19 +236,19 @@ export const getCost = (
   wiki: WikiState,
   state?: Data.HeroDependent,
   costToAdd?: boolean,
-): MaybeFunctor<number | number[] | undefined> => {
+): Maybe<number | number[] | undefined> => {
   const { id, cost: customCost } = obj;
 
   return getWikiEntry<Wiki.Activatable>(wiki, id)
-    .fmap(wikiEntry => {
-      type F = MaybeFunctor<Data.HeroDependent | undefined>;
+    .map(wikiEntry => {
+      type F = Maybe<Data.HeroDependent | undefined>;
 
       const { category, cost } = wikiEntry;
 
       return R.pipe(
-        (state: F) => state.fmap(R.pipe(
+        (state: F) => state.map(R.pipe(
           getHeroStateListItem<Data.ActivatableDependent>(id),
-          state => state.fmap(instance => instance.active),
+          state => state.map(instance => instance.active),
           active => active.value,
         )),
         active => active.value,
@@ -279,7 +278,7 @@ export const getCost = (
           }
           return currentCost;
         }
-      )(Maybe(state));
+      )(Maybe.from(state));
     });
 };
 

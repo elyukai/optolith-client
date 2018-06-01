@@ -1,34 +1,30 @@
-import { isEqual } from 'lodash';
 import R from 'ramda';
 import * as Data from "../types/data.d";
 import { isActivatableSkillDependent } from './checkEntryUtils';
-import { ArrayElement, removeFromArray } from './collectionUtils';
+import { ArrayElement } from './collectionUtils';
 import { getHeroStateListItem, removeHeroListStateItem, setHeroListStateItem } from './heroStateUtils';
 import * as UnusedEntryUtils from './unusedEntryUtils';
 
-const removeDependency = <T extends Data.Dependent>(
-  remove: ArrayElement<T["dependencies"]>,
-) => (obj: T): T => {
-  let index;
+type Dep<T extends Data.Dependent> = ArrayElement<T["dependencies"]>;
+type Deps<T extends Data.Dependent> = T["dependencies"];
 
-  type Deps = ArrayElement<T["dependencies"]>[];
+const getDependencies = <T extends Data.Dependent>(obj: T) =>
+  obj.dependencies as Deps<T>;
 
-  if (typeof remove === 'object') {
-    index = (obj.dependencies as Deps).findIndex(e => isEqual(remove, e));
-  }
-  else {
-    index = (obj.dependencies as Deps).findIndex(e => e === remove);
-  }
+const getDependencyIndex = <T extends Data.Dependent>(e: Dep<T>) =>
+  R.findIndex(R.equals(e)) as (list: Deps<T>) => number;
 
-  if (index > -1) {
+const removeDependency = <T extends Data.Dependent>(e: Dep<T>) =>
+  (obj: T): T => {
+    const list = getDependencies(obj);
+
+    const index = getDependencyIndex(e)(list);
+
     return {
       ...(obj as any),
-      dependencies: removeFromArray<any>(obj.dependencies)(index),
-    } as T;
-  }
-
-  return obj;
-};
+      dependencies: R.remove(index, 1, list),
+    };
+  };
 
 const adjustOrRemove = <T extends Data.Dependent>(
   isUnused: (entry: T) => boolean,
@@ -66,11 +62,11 @@ const removeDependencyCreator = <T extends Data.Dependent>(
   return R.defaultTo(
     state,
     getHeroStateListItem<T>(id)(state)
-      .fmap(R.pipe(
+      .map(R.pipe(
         removeDependency(value),
         adjustOrRemove(id),
       ))
-      .fmap(fn => (fn as any)(state))
+      .map(fn => (fn as any)(state))
       .value
   );
 };;

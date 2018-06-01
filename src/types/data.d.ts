@@ -2,46 +2,11 @@ import { Action } from 'redux';
 import { Categories } from '../constants/Categories';
 import { Purse } from '../reducers/equipment';
 import { TabId } from '../utils/LocationUtils';
+import { StringKeyObject } from '../utils/collectionUtils';
 import { RawRules } from './rawdata';
 import * as Reusable from './reusable.d';
 import { AllRequirementTypes } from './reusable.d';
 import * as Wiki from './wiki';
-
-export interface InstanceByCategory {
-  'ADVANTAGES': AdvantageInstance;
-  'ATTRIBUTES': AttributeInstance;
-  'BLESSINGS': BlessingInstance;
-  'CANTRIPS': CantripInstance;
-  'COMBAT_TECHNIQUES': CombatTechniqueInstance;
-  'CULTURES': CultureInstance;
-  'DISADVANTAGES': DisadvantageInstance;
-  'LITURGIES': LiturgyInstance;
-  'PROFESSIONS': ProfessionInstance;
-  'PROFESSION_VARIANTS': ProfessionVariantInstance;
-  'RACES': RaceInstance;
-  'RACE_VARIANTS': RaceVariantInstance;
-  'SPECIAL_ABILITIES': SpecialAbilityInstance;
-  'SPELLS': SpellInstance;
-  'TALENTS': TalentInstance;
-}
-
-export type InstanceWithGroups = CombatTechniqueInstance | LiturgyInstance | SpecialAbilityInstance | SpellInstance | TalentInstance;
-
-export interface Book {
-  id: string;
-  short: string;
-  name: string;
-}
-
-export interface ToListById<T> {
-  [id: string]: T;
-}
-
-export type ToOptionalKeys<T> = {
-  [K in keyof T]?: T[K];
-};
-
-export type SMap<T> = Map<string, T>;
 
 export interface HeroBaseForHerolist {
   readonly name: string;
@@ -78,7 +43,7 @@ export interface HeroBaseBase extends HeroBaseForHerolist {
     otherinfo?: string;
     cultureAreaKnowledge?: string;
   };
-  readonly activatable: ToListById<ActiveObject[]>;
+  readonly activatable: StringKeyObject<ActiveObject[]>;
   readonly attr: {
     values: [string, number, number][];
     lp: number;
@@ -96,15 +61,15 @@ export interface HeroBaseBase extends HeroBaseForHerolist {
       redeemed: number;
     };
   };
-  readonly talents: ToListById<number>;
-  readonly ct: ToListById<number>;
-  readonly spells: ToListById<number>;
+  readonly talents: StringKeyObject<number>;
+  readonly ct: StringKeyObject<number>;
+  readonly spells: StringKeyObject<number>;
   readonly cantrips: string[];
-  readonly liturgies: ToListById<number>;
+  readonly liturgies: StringKeyObject<number>;
   readonly blessings: string[];
   readonly belongings: {
-    items: ToListById<ItemInstance>;
-    armorZones: ToListById<ArmorZonesInstance>;
+    items: StringKeyObject<ItemInstance>;
+    armorZones: StringKeyObject<ArmorZonesInstance>;
     purse: {
       d: string;
       s: string;
@@ -112,7 +77,7 @@ export interface HeroBaseBase extends HeroBaseForHerolist {
       k: string;
     };
   };
-  readonly pets?: ToListById<PetInstance>;
+  readonly pets?: StringKeyObject<PetInstance>;
 }
 
 export interface HeroBase extends HeroBaseBase {
@@ -127,29 +92,29 @@ export interface Hero extends HeroBase {
 }
 
 export interface ActivatableDependent {
-  id: string;
-  active: ActiveObject[];
-  dependencies: ActivatableInstanceDependency[];
+  readonly id: string;
+  readonly active: ActiveObject[];
+  readonly dependencies: ReadonlyArray<ActivatableInstanceDependency>;
 }
 
 export interface AttributeDependent {
-  id: string;
-  value: number;
-  mod: number;
-  dependencies: AttributeInstanceDependency[];
+  readonly id: string;
+  readonly value: number;
+  readonly mod: number;
+  readonly dependencies: ReadonlyArray<AttributeInstanceDependency>;
 }
 
 export interface SkillDependent {
-  id: string;
-  value: number;
-  dependencies: TalentInstanceDependency[];
+  readonly id: string;
+  readonly value: number;
+  readonly dependencies: ReadonlyArray<TalentInstanceDependency>;
 }
 
 export interface ActivatableSkillDependent {
-  id: string;
-  value: number;
-  active: boolean;
-  dependencies: SpellInstanceDependency[];
+  readonly id: string;
+  readonly value: number;
+  readonly active: boolean;
+  readonly dependencies: ReadonlyArray<SpellInstanceDependency>;
 }
 
 export type ExtendedSkillDependent =
@@ -190,20 +155,20 @@ export interface HeroDependent {
   readonly sex: 'm' | 'f';
   readonly experienceLevel: string;
   readonly personalData: PersonalData;
-  readonly advantages: Map<string, ActivatableDependent>;
-  readonly disadvantages: Map<string, ActivatableDependent>;
-  readonly specialAbilities: Map<string, ActivatableDependent>;
-  readonly attributes: Map<string, AttributeDependent>;
+  readonly advantages: ReadonlyMap<string, ActivatableDependent>;
+  readonly disadvantages: ReadonlyMap<string, ActivatableDependent>;
+  readonly specialAbilities: ReadonlyMap<string, ActivatableDependent>;
+  readonly attributes: ReadonlyMap<string, AttributeDependent>;
   readonly energies: Energies;
-  readonly skills: Map<string, SkillDependent>;
-  readonly combatTechniques: Map<string, SkillDependent>;
-  readonly spells: Map<string, ActivatableSkillDependent>;
-  readonly cantrips: Set<string>;
-  readonly liturgicalChants: Map<string, ActivatableSkillDependent>;
-  readonly blessings: Set<string>;
+  readonly skills: ReadonlyMap<string, SkillDependent>;
+  readonly combatTechniques: ReadonlyMap<string, SkillDependent>;
+  readonly spells: ReadonlyMap<string, ActivatableSkillDependent>;
+  readonly cantrips: ReadonlySet<string>;
+  readonly liturgicalChants: ReadonlyMap<string, ActivatableSkillDependent>;
+  readonly blessings: ReadonlySet<string>;
   readonly belongings: Belongings;
   readonly rules: Rules;
-  readonly pets: Map<string, PetInstance>;
+  readonly pets: ReadonlyMap<string, PetInstance>;
   readonly pact?: Pact;
   readonly combatStyleDependencies: StyleDependency[];
   readonly magicalStyleDependencies: StyleDependency[];
@@ -211,55 +176,55 @@ export interface HeroDependent {
 }
 
 export interface AdventurePoints {
-  total: number;
-  spent: number;
+  readonly total: number;
+  readonly spent: number;
 }
 
 export interface PersonalData {
-  family?: string;
-  placeOfBirth?: string;
-  dateOfBirth?: string;
-  age?: string;
-  hairColor?: number;
-  eyeColor?: number;
-  size?: string;
-  weight?: string;
-  title?: string;
-  socialStatus?: number;
-  characteristics?: string;
-  otherInfo?: string;
-  cultureAreaKnowledge?: string;
+  readonly family?: string;
+  readonly placeOfBirth?: string;
+  readonly dateOfBirth?: string;
+  readonly age?: string;
+  readonly hairColor?: number;
+  readonly eyeColor?: number;
+  readonly size?: string;
+  readonly weight?: string;
+  readonly title?: string;
+  readonly socialStatus?: number;
+  readonly characteristics?: string;
+  readonly otherInfo?: string;
+  readonly cultureAreaKnowledge?: string;
 }
 
 export interface Energies {
-  addedLifePoints: number;
-  addedArcaneEnergyPoints: number;
-  addedKarmaPoints: number;
-  permanentLifePoints: PermanentEnergyLoss;
-  permanentArcaneEnergyPoints: PermanentEnergyLossAndBoughtBack;
-  permanentKarmaPoints: PermanentEnergyLossAndBoughtBack;
+  readonly addedLifePoints: number;
+  readonly addedArcaneEnergyPoints: number;
+  readonly addedKarmaPoints: number;
+  readonly permanentLifePoints: PermanentEnergyLoss;
+  readonly permanentArcaneEnergyPoints: PermanentEnergyLossAndBoughtBack;
+  readonly permanentKarmaPoints: PermanentEnergyLossAndBoughtBack;
 }
 
 export interface PermanentEnergyLoss {
-  lost: number;
-}
-
-export interface Belongings {
-  items: Map<string, ItemInstance>;
-  armorZones: Map<string, ArmorZonesInstance>;
-  purse: Purse;
-}
-
-export interface Pact {
-	category: number;
-	level: number;
-	type: number;
-	domain: number | string;
-	name: string;
+  readonly lost: number;
 }
 
 export interface PermanentEnergyLossAndBoughtBack extends PermanentEnergyLoss {
-  redeemed: number;
+  readonly redeemed: number;
+}
+
+export interface Belongings {
+  readonly items: ReadonlyMap<string, ItemInstance>;
+  readonly armorZones: ReadonlyMap<string, ArmorZonesInstance>;
+  readonly purse: Purse;
+}
+
+export interface Pact {
+	readonly category: number;
+	readonly level: number;
+	readonly type: number;
+	readonly domain: number | string;
+	readonly name: string;
 }
 
 export interface HeroForSave extends HeroBase {

@@ -30,21 +30,21 @@ export function translate<T extends keyof UIMessages>(
   key: T,
   ...params: (string | number)[],
 ): UIMessages[T] | undefined {
-	if (messages === undefined) {
-		return '...';
-	}
-	const message = messages[key];
-	if (params.length > 0 && typeof message === 'string') {
-		return message.replace(/\{(\d+)\}/g, (_, p1) => {
-			const param = params[Number.parseInt(p1)];
-			return typeof param === 'number' ? param.toString() : param;
-		});
-	}
-	return message;
+  if (messages === undefined) {
+    return '...';
+  }
+  const message = messages[key];
+  if (params.length > 0 && typeof message === 'string') {
+    return message.replace(/\{(\d+)\}/g, (_, p1) => {
+      const param = params[Number.parseInt(p1)];
+      return typeof param === 'number' ? param.toString() : param;
+    });
+  }
+  return message;
 }
 
 export const localizeNumber = (n: number, locale: string) => {
-	return n.toLocaleString(locale);
+  return n.toLocaleString(locale);
 };
 
 /**
@@ -57,14 +57,14 @@ export const localizeSize = (
   number: number | undefined,
   locale: string,
 ): number => {
-	if (typeof number !== 'number') {
-		return 0;
+  if (typeof number !== 'number') {
+    return 0;
   }
-	else if (locale === 'en-US') {
-		return number * 0.4;
+  else if (locale === 'en-US') {
+    return number * 0.4;
   }
 
-	return number;
+  return number;
 };
 
 /**
@@ -76,12 +76,12 @@ export const localizeWeight = (
   number: number | undefined,
   locale: string,
 ): number => {
-	if (typeof number !== 'number') {
-		return 0;
-	}
-	else if (locale === 'en-US') {
-		return number * 2;
+  if (typeof number !== 'number') {
+    return 0;
+  }
+  else if (locale === 'en-US') {
+    return number * 2;
   }
 
-	return number;
+  return number;
 };

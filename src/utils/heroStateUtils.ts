@@ -5,7 +5,7 @@ import { EntryWithGroup } from '../types/wiki';
 import { getIdPrefix } from './IDUtils';
 import { adjustOrM, convertMapToValues, deleteMapItem, setMapItem } from './collectionUtils';
 import { match } from './match';
-import { Maybe, MaybeFunctor } from './maybe';
+import { Maybe, Maybe } from './maybe';
 
 export type HeroStateListKey =
   'advantages' |
@@ -31,8 +31,8 @@ export type HeroStateMapKey =
 
 export const getHeroStateListKeyById = (
   id: string,
-): MaybeFunctor<HeroStateListKey | undefined> => {
-  return Maybe(
+): Maybe<HeroStateListKey | undefined> => {
+  return Maybe.from(
     match<IdPrefixes, HeroStateListKey | undefined>(getIdPrefix(id))
       .on(IdPrefixes.ADVANTAGES, () => 'advantages')
       .on(IdPrefixes.ATTRIBUTES, () => 'attributes')
@@ -50,10 +50,10 @@ export const getHeroStateListKeyById = (
 
 export const getHeroStateListItem =
   <D extends Dependent = Dependent>(id: string) =>
-    (state: HeroDependent): MaybeFunctor<D | undefined> =>
+    (state: HeroDependent): Maybe<D | undefined> =>
       getHeroStateListKeyById(id)
-        .fmap(key => state[key])
-        .fmap(slice => slice instanceof Map
+        .map(key => state[key])
+        .map(slice => slice instanceof Map
           ? slice.get(id) as D | undefined
           : undefined
         );
@@ -67,7 +67,7 @@ export const setHeroListStateItem =
   <D extends Dependent = Dependent>(id: string) => (item: D) =>
     (state: HeroDependent): HeroDependent =>
       R.defaultTo(state, getHeroStateListKeyById(id)
-        .fmap(key => ({
+        .map(key => ({
           ...state,
           [key]: setMapItem(state[key] as Map<string, D>, id, item),
         }))
@@ -78,7 +78,7 @@ export const removeHeroListStateItem =
   <D extends Dependent = Dependent>(id: string) =>
     (state: HeroDependent): HeroDependent =>
       R.defaultTo(state, getHeroStateListKeyById(id)
-        .fmap(key => ({
+        .map(key => ({
           ...state,
           [key]: deleteMapItem<string, D>(state[key] as Map<string, D>, id),
         }))
@@ -102,7 +102,7 @@ export const adjustHeroListStateItemOr = <D extends Dependent>(
 ) => (
   state: HeroDependent,
 ) => R.defaultTo(state, getHeroStateListKeyById(id)
-  .fmap(key => ({
+  .map(key => ({
     ...state,
     [key]: adjustOrM<string, D>(
       R.pipe(

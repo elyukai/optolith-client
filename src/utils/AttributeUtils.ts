@@ -1,4 +1,3 @@
-import R from 'ramda';
 import { WikiState } from '../reducers/wikiReducer';
 import * as Data from '../types/data.d';
 import { getExperienceLevelIdByAp } from '../utils/ELUtils';
@@ -17,21 +16,18 @@ export const isIncreasable = (
 ): boolean => {
   if (state.phase < 3) {
     const attributes = convertMapToValues(state.attributes);
-    return R.defaultTo(
-      false,
-      Maybe(wiki.experienceLevels.get(state.experienceLevel))
-        .fmap(startEl => {
-          const total = getSum(attributes);
-          const reachedMaxTotal = total >= startEl.maxTotalAttributeValues;
+    return Maybe.from(wiki.experienceLevels.get(state.experienceLevel))
+      .map(startEl => {
+        const total = getSum(attributes);
+        const reachedMaxTotal = total >= startEl.maxTotalAttributeValues;
 
-          if (reachedMaxTotal) {
-            return false;
-          }
+        if (reachedMaxTotal) {
+          return false;
+        }
 
-          return instance.value < startEl.maxAttributeValue + instance.mod;
-        })
-        .value
-    );
+        return instance.value < startEl.maxAttributeValue + instance.mod;
+      })
+      .valueOr(false);
   }
   else if (state.rules.attributeValueLimit === true) {
     const currentExperienceLevellId = getExperienceLevelIdByAp(
@@ -39,14 +35,11 @@ export const isIncreasable = (
       state.adventurePoints.total,
     );
 
-    return R.defaultTo(
-      false,
-      Maybe(wiki.experienceLevels.get(currentExperienceLevellId))
-        .fmap(currentEl => {
-          return instance.value < currentEl.maxAttributeValue + 2;
-        })
-        .value
-    );
+    return Maybe.from(wiki.experienceLevels.get(currentExperienceLevellId))
+      .map(currentEl => {
+        return instance.value < currentEl.maxAttributeValue + 2;
+      })
+      .valueOr(false);
   }
 
   return true;

@@ -9,13 +9,13 @@ import { getTraditionOfAspect } from './LiturgyUtils';
 import { getWikiEntry } from './WikiUtils';
 import { isAdditionDisabled } from './activatableInactiveValidationUtils';
 import { countActiveSkillEntries } from './activatableSkillUtils';
-import { convertMapToValues, filterExisting, setM } from './collectionUtils';
+import { convertMapToValues, setM } from './collectionUtils';
 import { countActiveGroupEntries } from './entryGroupUtils';
 import { exists } from './exists';
 import { getAllEntriesByGroup } from './heroStateUtils';
 import { isActive } from './isActive';
 import { ifOrUndefined, match } from './match';
-import { Maybe, MaybeFunctor, NIL } from './maybe';
+import { Maybe } from './maybe';
 import { findSelectOption, getActiveSecondarySelections, getActiveSelections, getRequiredSelections } from './selectionUtils';
 import { getBlessedTradition, getMagicalTraditions } from './traditionUtils';
 import { validatePrerequisites, validateTier } from './validatePrerequisitesUtils';
@@ -26,14 +26,14 @@ const getEntrySpecificSelections = (
   state: Data.HeroDependent,
   entry: Wiki.Activatable,
 ) => {
-  return match<string, Wiki.SelectionObject[] | undefined>(entry.id)
+  return match<string, Maybe<Wiki.SelectionObject[] | undefined>>(entry.id)
     .on([
       'ADV_4',
       'ADV_17',
       'ADV_47',
-    ].includes, () => {
-      return Maybe(entry.select)
-        .fmap(select => {
+    ].includes, () =>
+      Maybe.from(entry.select)
+        .map(select => {
           const activeSelections = getActiveSelections(instance);
           const requiredSelections = getRequiredSelections(instance);
 
@@ -42,11 +42,10 @@ const getEntrySpecificSelections = (
             e => R.not(R.contains(e.id, requiredSelections)),
           ), select);
         })
-        .value;
-    })
-    .on('ADV_16', () => {
-      return Maybe(entry.select)
-        .fmap(select => {
+    )
+    .on('ADV_16', () =>
+      Maybe.from(entry.select)
+        .map(select => {
           const activeSelections = getActiveSelections(instance);
           const requiredSelections = getRequiredSelections(instance);
 
@@ -58,14 +57,13 @@ const getEntrySpecificSelections = (
             e => R.not(R.contains(e.id, requiredSelections)),
           ), select);
         })
-        .value;
-    })
+    )
     .on([
       'ADV_28',
       'ADV_29',
-    ].includes, () => {
-      return Maybe(entry.select)
-        .fmap(select => {
+    ].includes, () =>
+      Maybe.from(entry.select)
+        .map(select => {
           const requiredSelections = getRequiredSelections(instance);
 
           return R.filter(
@@ -73,14 +71,13 @@ const getEntrySpecificSelections = (
             select,
           );
         })
-        .value;
-    })
+    )
     .on([
       'ADV_32',
       'DISADV_24',
-    ].includes, id => {
-      return Maybe(entry.select)
-        .fmap(select => {
+    ].includes, id =>
+      Maybe.from(entry.select)
+        .map(select => {
           const activeSelections = getActiveSelections(
             state.disadvantages.get(id === 'DISADV_24' ? 'ADV_32' : id)
           );
@@ -94,15 +91,14 @@ const getEntrySpecificSelections = (
             e => R.not(R.contains(e.id, requiredSelections)),
           ), select);
         })
-        .value;
-    })
+    )
     .on([
       'DISADV_1',
       'DISADV_34',
       'DISADV_50',
-    ].includes, () => {
-      return Maybe(entry.select)
-        .fmap(select => {
+    ].includes, () =>
+      Maybe.from(entry.select)
+        .map(select => {
           const requiredSelections = getRequiredSelections(instance);
 
           return R.filter(
@@ -110,15 +106,14 @@ const getEntrySpecificSelections = (
             select,
           );
         })
-        .value;
-    })
+    )
     .on([
       'DISADV_33',
       'DISADV_37',
       'DISADV_51',
-    ].includes, id => {
-      return Maybe(entry.select)
-        .fmap(select => {
+    ].includes, id =>
+      Maybe.from(entry.select)
+        .map(select => {
           const activeSelections = getActiveSelections(instance);
           const requiredSelections = getRequiredSelections(instance);
 
@@ -137,11 +132,10 @@ const getEntrySpecificSelections = (
             ), select)),
           )(id);
         })
-        .value;
-    })
-    .on('DISADV_36', () => {
-      return Maybe(entry.select)
-        .fmap(select => {
+    )
+    .on('DISADV_36', () =>
+      Maybe.from(entry.select)
+        .map(select => {
           const activeSelections = getActiveSelections(instance);
           const requiredSelections = getRequiredSelections(instance);
 
@@ -150,11 +144,10 @@ const getEntrySpecificSelections = (
             e => R.not(R.contains(e.id, requiredSelections)),
           ), select);
         })
-        .value;
-    })
-    .on('DISADV_48', () => {
-      return Maybe(entry.select)
-        .fmap(select => {
+    )
+    .on('DISADV_48', () =>
+      Maybe.from(entry.select)
+        .map(select => {
           const activeSelections = getActiveSelections(instance);
           const requiredSelections = getRequiredSelections(instance);
 
@@ -163,21 +156,18 @@ const getEntrySpecificSelections = (
               R.either(
                 R.always(R.defaultTo(
                   false,
-                  Maybe(state.advantages.get('ADV_40'))
-                    .fmap(e => R.gt(e.active.length, 0)).value,
+                  Maybe.from(state.advantages.get('ADV_40'))
+                    .map(e => R.gt(e.active.length, 0)).value,
                 )),
                 R.always(R.defaultTo(
                   false,
-                  Maybe(state.advantages.get('ADV_46'))
-                    .fmap(e => R.gt(e.active.length, 0)).value,
+                  Maybe.from(state.advantages.get('ADV_46'))
+                    .map(e => R.gt(e.active.length, 0)).value,
                 )),
               ),
-              e => R.defaultTo(
-                false,
-                Maybe(wiki.skills.get(e.id as string))
-                  .fmap(skill => R.equals(skill.ic, 2))
-                  .value
-              ),
+              e => Maybe.from(wiki.skills.get(e.id as string))
+                .map(skill => R.equals(skill.ic, 2))
+                .valueOr(false),
             ),
             R.F,
             R.both(
@@ -186,18 +176,10 @@ const getEntrySpecificSelections = (
             ),
           ), select);
         })
-        .value;
-    })
-    .on('DISADV_59', () => {
-      return R.ifElse(
-        R.gt(3),
-        activeSpells => ({ maxTier: 3 - activeSpells }),
-        NIL,
-      )(countActiveSkillEntries(state, "spells"));
-    })
-    .on('SA_3', () => {
-      return Maybe(entry.select)
-        .fmap(select => {
+    )
+    .on('SA_3', () =>
+      Maybe.from(entry.select)
+        .map(select => {
           const activeSelections = getActiveSelections(instance);
           const requiredSelections = getRequiredSelections(instance);
 
@@ -216,12 +198,11 @@ const getEntrySpecificSelections = (
             )(e.req),
           ]), select);
         })
-        .value;
-    })
+    )
     .on('SA_9', () => {
       const counter = getActiveSecondarySelections(instance);
-      return Maybe(entry.select)
-        .fmap(select => {
+      return Maybe.from(entry.select)
+        .map(select => {
           const requiredSelections = getRequiredSelections(instance);
 
           return R.filter(e => {
@@ -232,10 +213,10 @@ const getEntrySpecificSelections = (
 
                 return R.defaultTo(
                   false,
-                  Maybe(ifOrUndefined(
+                  Maybe.from(ifOrUndefined(
                     isString,
                     state.skills.get,
-                  )(id)).fmap(R.both(
+                  )(id)).map(R.both(
                     R.always(R.lt(arr.length, 3)),
                     skill => R.gte(skill.value, 6 * (arr.length + 1)),
                   )).value
@@ -251,14 +232,14 @@ const getEntrySpecificSelections = (
                   isString,
                   state.skills.get,
                 ),
-                skill => Maybe(skill)
-                  .fmap(skill => R.gte(skill.value, 6))
+                skill => Maybe.from(skill)
+                  .map(skill => R.gte(skill.value, 6))
                   .value,
                 R.defaultTo(false)
               ));
           }, select);
         })
-        .fmap(R.map(e => {
+        .map(R.map(e => {
           const id = e.id as string;
           const arr = counter.get(id);
           return {
@@ -273,12 +254,11 @@ const getEntrySpecificSelections = (
               return isInactive && arePrerequisitesMet;
             })
           };
-        }))
-        .value;
+        }));
     })
-    .on('SA_28', () => {
-      return Maybe(entry.select)
-        .fmap(select => {
+    .on('SA_28', () =>
+      Maybe.from(entry.select)
+        .map(select => {
           const activeSelections = getActiveSelections(instance);
           const requiredSelections = getRequiredSelections(instance);
 
@@ -286,10 +266,10 @@ const getEntrySpecificSelections = (
             return match<string | number, boolean>(e.id)
               .on(id => R.not(R.contains(id, requiredSelections)), R.F)
               .otherwise(id => {
-                return R.defaultTo(false, Maybe(e.talent)
-                  .fmap(talent => {
-                    return Maybe(state.skills.get(talent[0]))
-                      .fmap(skill => {
+                return R.defaultTo(false, Maybe.from(e.talent)
+                  .map(talent => {
+                    return Maybe.from(state.skills.get(talent[0]))
+                      .map(skill => {
                         return R.both(
                           () => R.not(R.contains(id, activeSelections)),
                           () => R.gte(skill.value, talent[1])
@@ -301,11 +281,10 @@ const getEntrySpecificSelections = (
               });
           }, select);
         })
-        .value;
-    })
-    .on('SA_29', () => {
-      return Maybe(entry.select)
-        .fmap(select => {
+    )
+    .on('SA_29', () =>
+      Maybe.from(entry.select)
+        .map(select => {
           const requiredSelections = getRequiredSelections(instance);
 
           return R.filter(R.both(
@@ -313,8 +292,7 @@ const getEntrySpecificSelections = (
             e => R.all(n => n.sid !== e.id, instance.active),
           ), select);
         })
-        .value;
-    })
+    )
     .on('SA_72', () => {
       const getPropertiesWithValidSpells = R.pipe(
         (list: Data.ActivatableSkillDependent[]) => R.filter(
@@ -323,8 +301,8 @@ const getEntrySpecificSelections = (
         list => R.reduce((coll, obj) => {
           return R.defaultTo(
             coll,
-            Maybe(wiki.spells.get(obj.id))
-              .fmap(spell => {
+            Maybe.from(wiki.spells.get(obj.id))
+              .map(spell => {
                 return setM(
                   spell.property,
                   R.defaultTo(0, coll.get(spell.property)) + 1,
@@ -339,8 +317,8 @@ const getEntrySpecificSelections = (
         ),
       );
 
-      return Maybe(entry.select)
-        .fmap(select => {
+      return Maybe.from(entry.select)
+        .map(select => {
           const propertiesWithValidSpells =
             getPropertiesWithValidSpells(
               convertMapToValues(state.spells)
@@ -366,14 +344,13 @@ const getEntrySpecificSelections = (
             ]),
             select
           );
-        })
-        .value;
+        });
     })
-    .on('SA_81', () => {
-      return Maybe(entry.select)
-        .fmap(select => {
-          return Maybe(state.specialAbilities.get('SA_72'))
-            .fmap(propertyKnowledge => {
+    .on('SA_81', () =>
+      Maybe.from(entry.select)
+        .map(select => {
+          return Maybe.from(state.specialAbilities.get('SA_72'))
+            .map(propertyKnowledge => {
               const activePropertyKnowledges =
                 getActiveSelections(propertyKnowledge);
               const activeSelections =
@@ -401,8 +378,7 @@ const getEntrySpecificSelections = (
             })
             .value;
         })
-        .value;
-    })
+    )
     .on('SA_87', () => {
       const getAspectsWithValidLiturgicalChants = R.pipe(
         (list: Data.ActivatableSkillDependent[]) => R.filter(
@@ -411,8 +387,8 @@ const getEntrySpecificSelections = (
         list => R.reduce((coll, obj) => {
           return R.defaultTo(
             coll,
-            Maybe(wiki.liturgicalChants.get(obj.id))
-              .fmap(chant => {
+            Maybe.from(wiki.liturgicalChants.get(obj.id))
+              .map(chant => {
                 return chant.aspects.reduce((coll, aspect) => {
                   return setM(
                     aspect,
@@ -429,8 +405,8 @@ const getEntrySpecificSelections = (
         ),
       );
 
-      return Maybe(entry.select)
-        .fmap(select => {
+      return Maybe.from(entry.select)
+        .bind(select => {
           const aspectsWithValidLiturgicalChants =
             getAspectsWithValidLiturgicalChants(
               convertMapToValues(state.spells)
@@ -439,8 +415,8 @@ const getEntrySpecificSelections = (
           const activeSelections = getActiveSelections(instance);
           const requiredSelections = getRequiredSelections(instance);
 
-          return Maybe(getBlessedTradition(state.specialAbilities))
-            .fmap(tradition => {
+          return Maybe.from(getBlessedTradition(state.specialAbilities))
+            .map(tradition => {
               return R.filter(
                 R.allPass([
                   (e: Wiki.SelectionObject) => R.equals(
@@ -464,14 +440,12 @@ const getEntrySpecificSelections = (
                 ]),
                 select
               );
-            })
-            .value;
-        })
-        .value;
+            });
+        });
     })
-    .on('SA_231', () => {
-      return Maybe(entry.select)
-        .fmap(select => {
+    .on('SA_231', () =>
+      Maybe.from(entry.select)
+        .map(select => {
           const activeSelections = getActiveSelections(instance);
           const requiredSelections = getRequiredSelections(instance);
 
@@ -485,39 +459,32 @@ const getEntrySpecificSelections = (
                 e.id,
                 requiredSelections,
               )),
-              (e: Wiki.SelectionObject) => {
-                return R.defaultTo(
-                  false,
-                  Maybe(state.spells.get(e.id as string))
-                    .fmap(R.pipe(
-                      spell => spell.value,
-                      R.lte(10),
-                    ))
-                    .value
-                );
-              },
+              (e: Wiki.SelectionObject) =>
+                Maybe.from(state.spells.get(e.id as string))
+                  .map(R.pipe(
+                    spell => spell.value,
+                    R.lte(10),
+                  ))
+                  .valueOr(false),
             ]),
             select
           );
         })
-        .value;
-    })
-    .on('SA_338', () => {
-      return Maybe(entry.select)
-        .fmap(select => {
+    )
+    .on('SA_338', () =>
+      Maybe.from(entry.select)
+        .map(select => {
           const activeSelections = getActiveSelections(instance);
 
           if (isActive(instance)) {
             const selectedPath =
               findSelectOption(entry, instance.active[0].sid)
-                .fmap(obj => obj.gr)
+                .map(obj => obj.gr)
                 .value;
 
-            const highestLevel = Math.max(...filterExisting(
+            const highestLevel = Math.max(...Maybe.catMaybes(
               activeSelections.map(e => {
-                return findSelectOption(entry, e)
-                  .fmap(e => e.tier)
-                  .value;
+                return findSelectOption(entry, e).map(e => e.tier);
               })
             ));
 
@@ -530,14 +497,13 @@ const getEntrySpecificSelections = (
             return R.filter(e => e.tier === 1, select);
           }
         })
-        .value;
-    })
+    )
     .on([
       'SA_414',
       'SA_663',
-    ].includes, () => {
-      return Maybe(entry.select)
-        .fmap(select => {
+    ].includes, () =>
+      Maybe.from(entry.select)
+        .map(select => {
           const activeSelections = getActiveSelections(instance);
           const requiredSelections = getRequiredSelections(instance);
 
@@ -575,11 +541,10 @@ const getEntrySpecificSelections = (
             return arr;
           }, []);
         })
-        .value;
-    })
-    .on('SA_639', () => {
-      return Maybe(entry.select)
-        .fmap(select => {
+    )
+    .on('SA_639', () =>
+      Maybe.from(entry.select)
+        .map(select => {
           const activeSelections = getActiveSelections(instance);
           const requiredSelections = getRequiredSelections(instance);
 
@@ -594,41 +559,37 @@ const getEntrySpecificSelections = (
                 );
           }, select);
         })
-        .value;
-    })
-    .on('SA_699', () => {
-      return Maybe(wiki.specialAbilities.get('SA_29'))
-        .fmap(languagesWikiEntry => {
-          return Maybe(languagesWikiEntry.select)
-            .fmap(select => {
+    )
+    .on('SA_699', () =>
+      Maybe.from(wiki.specialAbilities.get('SA_29'))
+        .bind(languagesWikiEntry => {
+          return Maybe.from(languagesWikiEntry.select)
+            .map(select => {
               interface AvailableLanguage {
                 id: number;
                 tier: number;
               }
 
               const availableLanguages: AvailableLanguage[] =
-                R.defaultTo(
-                  [],
-                  Maybe(state.specialAbilities.get('SA_29'))
-                    .fmap(lang => {
-                      return lang.active.reduce<AvailableLanguage[]>(
-                        (arr, obj) => {
-                          if (obj.tier === 3 || obj.tier === 4) {
-                            return [
-                              ...arr,
-                              {
-                                id: obj.sid as number,
-                                tier: obj.tier
-                              }
-                            ];
-                          }
-                          return arr;
-                        },
-                        []
-                      );
-                    })
-                    .value
-                );
+                Maybe.from(state.specialAbilities.get('SA_29'))
+                  .map(lang => {
+                    return lang.active.reduce<AvailableLanguage[]>(
+                      (arr, obj) => {
+                        if (obj.tier === 3 || obj.tier === 4) {
+                          return [
+                            ...arr,
+                            {
+                              id: obj.sid as number,
+                              tier: obj.tier
+                            }
+                          ];
+                        }
+                        return arr;
+                      },
+                      []
+                    );
+                  })
+                  .valueOr([]);
 
               return select.reduce<Wiki.SelectionObject[]>((acc, e) => {
                 const languageAvailable = R.find(l => {
@@ -651,14 +612,12 @@ const getEntrySpecificSelections = (
 
                 return acc;
               }, []);
-            })
-            .value;
+            });
         })
-        .value;
-    })
-    .otherwise(() => {
-      return Maybe(entry.select)
-        .fmap(select => {
+    )
+    .otherwise(() =>
+      Maybe.from(entry.select)
+        .map(select => {
           const activeSelections = getActiveSelections(instance);
           const requiredSelections = getRequiredSelections(instance);
 
@@ -667,8 +626,7 @@ const getEntrySpecificSelections = (
             e => R.not(R.contains(e.id, requiredSelections)),
           ), select);
         })
-        .value;
-    });
+    );
 };
 
 interface InactiveOptions {
@@ -691,21 +649,21 @@ const getOtherOptions = (
       return R.ifElse(
         R.gt(3),
         activeSpells => ({ maxTier: 3 - activeSpells }),
-        NIL,
+        () => undefined,
       )(countActiveSkillEntries(state, "spells"));
     })
     .on('SA_17', () => {
       return R.ifElse(
         R.lte(12),
         activeSpells => ({ maxTier: 3 - activeSpells }),
-        NIL,
+        () => undefined,
       )(R.add(
-        R.defaultTo(0, Maybe(state.skills.get('TAL_51'))
-          .fmap(skill => skill.value)
+        R.defaultTo(0, Maybe.from(state.skills.get('TAL_51'))
+          .map(skill => skill.value)
           .value
         ),
-        R.defaultTo(0, Maybe(state.skills.get('TAL_55'))
-          .fmap(skill => skill.value)
+        R.defaultTo(0, Maybe.from(state.skills.get('TAL_55'))
+          .map(skill => skill.value)
           .value
         )
       ));
@@ -714,7 +672,7 @@ const getOtherOptions = (
       return R.ifElse(
         R.lt(0),
         R.always({}),
-        NIL,
+        () => undefined,
       )(R.length(R.filter(
         e => e.value >= 10,
         getAllEntriesByGroup(
@@ -770,11 +728,11 @@ const getOtherOptions = (
     .on('SA_72', () => ({ cost: [10, 20, 40][instance.active.length] }))
     .on('SA_87', () => ({ cost: [15, 25, 45][instance.active.length] }))
     .on('SA_533', () => {
-      return Maybe(state.specialAbilities.get('SA_531'))
-        .fmap(specialAbility => specialAbility.active[0])
-        .fmap(active => active.sid)
-        .fmap(sid => wiki.skills.get(sid as string))
-        .fmap(skill => {
+      return Maybe.from(state.specialAbilities.get('SA_531'))
+        .map(specialAbility => specialAbility.active[0])
+        .map(active => active.sid)
+        .map(sid => wiki.skills.get(sid as string))
+        .map(skill => {
           return { cost: (entry.cost as number[]).map(e => e + skill.ic) };
         })
         .value;
@@ -795,18 +753,18 @@ const getOtherOptions = (
                 if (isActive(state.advantages.get('ADV_79'))) {
                   return max + R.defaultTo(
                     1,
-                    Maybe(state.advantages.get('ADV_79'))
-                      .fmap(obj => obj.active[0])
-                      .fmap(active => active.tier)
+                    Maybe.from(state.advantages.get('ADV_79'))
+                      .map(obj => obj.active[0])
+                      .map(active => active.tier)
                       .value
                   );
                 }
                 else if (isActive(state.advantages.get('DISADV_72'))) {
                   return max - R.defaultTo(
                     1,
-                    Maybe(state.advantages.get('DISADV_72'))
-                      .fmap(obj => obj.active[0])
-                      .fmap(active => active.tier)
+                    Maybe.from(state.advantages.get('DISADV_72'))
+                      .map(obj => obj.active[0])
+                      .map(active => active.tier)
                       .value
                   );
                 }
@@ -837,18 +795,18 @@ const getOtherOptions = (
                 if (isActive(state.advantages.get('ADV_80'))) {
                   return max + R.defaultTo(
                     1,
-                    Maybe(state.advantages.get('ADV_80'))
-                      .fmap(obj => obj.active[0])
-                      .fmap(active => active.tier)
+                    Maybe.from(state.advantages.get('ADV_80'))
+                      .map(obj => obj.active[0])
+                      .map(active => active.tier)
                       .value
                   );
                 }
                 else if (isActive(state.advantages.get('DISADV_73'))) {
                   return max - R.defaultTo(
                     1,
-                    Maybe(state.advantages.get('DISADV_73'))
-                      .fmap(obj => obj.active[0])
-                      .fmap(active => active.tier)
+                    Maybe.from(state.advantages.get('DISADV_73'))
+                      .map(obj => obj.active[0])
+                      .map(active => active.tier)
                       .value
                   );
                 }
@@ -876,7 +834,7 @@ const getOtherOptions = (
           getMagicalTraditions(state.specialAbilities).length === 0;
       },
       () => ({}),
-      NIL
+      () => undefined
     ) as () => ({} | undefined))
     .otherwise(() => ({}));
 };
@@ -899,11 +857,11 @@ export const getInactiveView = (
   validExtendedSpecialAbilities: string[],
   locale: Data.UIMessages,
   adventurePoints: AdventurePointsObject,
-): MaybeFunctor<Data.DeactiveViewObject | undefined> => {
+): Maybe<Data.DeactiveViewObject | undefined> => {
   const { id, dependencies } = instance;
 
   return getWikiEntry<Wiki.Activatable>(wiki, id)
-    .fmap(entry => {
+    .bind(entry => {
       const { cost, name, input, tiers, prerequisites} = entry;
 
       const maxTier = prerequisites instanceof Map ? validateTier(
@@ -941,10 +899,9 @@ export const getInactiveView = (
 
         type OptionalSelect = Wiki.SelectionObject[] | undefined;
 
-        const getIfSelectionNotEmpty =
-          ifOrUndefined<OptionalSelect, Data.DeactiveViewObject>(
-            sel => !exists(sel) || R.gt(R.length(sel), 0),
-            sel => {
+        return Maybe.from(specificSelections.valueOr(entry.select))
+          .map(sel => {
+            if (!exists(sel) || R.gt(R.length(sel), 0)) {
               return {
                 id,
                 name,
@@ -961,11 +918,11 @@ export const getInactiveView = (
                 )(sel)
               };
             }
-          );
 
-        return getIfSelectionNotEmpty(specificSelections || entry.select);
+            return;
+          });
       }
 
-      return;
+      return Maybe.from(undefined);
     });
 }

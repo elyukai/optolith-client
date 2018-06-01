@@ -1,3 +1,4 @@
+import { StringKeyObject } from '../utils/collectionUtils';
 import * as Data from './data.d';
 import * as Reusable from './reusable.d';
 import * as UI from './ui.d';
@@ -19,7 +20,7 @@ export interface RawRules {
 	enableLanguageSpecializations: boolean;
 }
 
-export type RawHerolist = Data.ToListById<RawHero>;
+export type RawHerolist = StringKeyObject<RawHero>;
 
 export interface RawRace {
 	id: string;
@@ -467,48 +468,48 @@ export interface RawExperienceLevel {
 }
 
 export interface RawTables {
-	advantages: Data.ToListById<RawAdvantage>;
-	attributes: Data.ToListById<RawAttribute>;
-	blessings: Data.ToListById<RawBlessing>;
-	cantrips: Data.ToListById<RawCantrip>;
-	combattech: Data.ToListById<RawCombatTechnique>;
-	cultures: Data.ToListById<RawCulture>;
-	disadvantages: Data.ToListById<RawDisadvantage>;
-	el: Data.ToListById<RawExperienceLevel>;
-	items: Data.ToListById<RawItem>;
-	liturgies: Data.ToListById<RawLiturgy>;
-	professions: Data.ToListById<RawProfession>;
-	professionvariants: Data.ToListById<RawProfessionVariant>;
-	races: Data.ToListById<RawRace>;
-	racevariants: Data.ToListById<RawRaceVariant>;
-	specialabilities: Data.ToListById<RawSpecialAbility>;
-	spells: Data.ToListById<RawSpell>;
-	talents: Data.ToListById<RawTalent>;
+	advantages: StringKeyObject<RawAdvantage>;
+	attributes: StringKeyObject<RawAttribute>;
+	blessings: StringKeyObject<RawBlessing>;
+	cantrips: StringKeyObject<RawCantrip>;
+	combattech: StringKeyObject<RawCombatTechnique>;
+	cultures: StringKeyObject<RawCulture>;
+	disadvantages: StringKeyObject<RawDisadvantage>;
+	el: StringKeyObject<RawExperienceLevel>;
+	items: StringKeyObject<RawItem>;
+	liturgies: StringKeyObject<RawLiturgy>;
+	professions: StringKeyObject<RawProfession>;
+	professionvariants: StringKeyObject<RawProfessionVariant>;
+	races: StringKeyObject<RawRace>;
+	racevariants: StringKeyObject<RawRaceVariant>;
+	specialabilities: StringKeyObject<RawSpecialAbility>;
+	spells: StringKeyObject<RawSpell>;
+	talents: StringKeyObject<RawTalent>;
 }
 
 export interface RawLocale {
 	ui: UI.UIMessages;
-	books: Data.ToListById<Data.Book>;
-	el: Data.ToListById<RawExperienceLevelLocale>;
-	attributes: Data.ToListById<RawAttributeLocale>;
-	races: Data.ToListById<RawRaceLocale>;
-	racevariants: Data.ToListById<RawRaceVariantLocale>;
-	cultures: Data.ToListById<RawCultureLocale>;
-	professions: Data.ToListById<RawProfessionLocale>;
-	professionvariants: Data.ToListById<RawProfessionVariantLocale>;
-	advantages: Data.ToListById<RawAdvantageLocale>;
-	disadvantages: Data.ToListById<RawDisadvantageLocale>;
-	talents: Data.ToListById<RawTalentLocale>;
-	combattech: Data.ToListById<RawCombatTechniqueLocale>;
-	spells: Data.ToListById<RawSpellLocale>;
-	cantrips: Data.ToListById<RawCantripLocale>;
-	liturgies: Data.ToListById<RawLiturgyLocale>;
-	blessings: Data.ToListById<RawBlessingLocale>;
-	specialabilities: Data.ToListById<RawSpecialAbilityLocale>;
-	items: Data.ToListById<RawItemLocale>;
+	books: StringKeyObject<Wiki.Book>;
+	el: StringKeyObject<RawExperienceLevelLocale>;
+	attributes: StringKeyObject<RawAttributeLocale>;
+	races: StringKeyObject<RawRaceLocale>;
+	racevariants: StringKeyObject<RawRaceVariantLocale>;
+	cultures: StringKeyObject<RawCultureLocale>;
+	professions: StringKeyObject<RawProfessionLocale>;
+	professionvariants: StringKeyObject<RawProfessionVariantLocale>;
+	advantages: StringKeyObject<RawAdvantageLocale>;
+	disadvantages: StringKeyObject<RawDisadvantageLocale>;
+	talents: StringKeyObject<RawTalentLocale>;
+	combattech: StringKeyObject<RawCombatTechniqueLocale>;
+	spells: StringKeyObject<RawSpellLocale>;
+	cantrips: StringKeyObject<RawCantripLocale>;
+	liturgies: StringKeyObject<RawLiturgyLocale>;
+	blessings: StringKeyObject<RawBlessingLocale>;
+	specialabilities: StringKeyObject<RawSpecialAbilityLocale>;
+	items: StringKeyObject<RawItemLocale>;
 }
 
-export type RawLocaleList = Data.ToListById<RawLocale>;
+export type RawLocaleList = StringKeyObject<RawLocale>;
 
 export interface Config {
 	herolistSortOrder: string;
@@ -546,5 +547,5 @@ export interface Raw {
 	config?: Config;
 	heroes?: RawHerolist;
 	tables: RawTables;
-	locales: Data.ToListById<RawLocale>;
+	locales: StringKeyObject<RawLocale>;
 }

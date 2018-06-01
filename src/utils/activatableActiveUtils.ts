@@ -2,7 +2,7 @@ import { WikiState } from '../reducers/wikiReducer';
 import * as Data from '../types/data.d';
 import { getCost } from './activatableCostUtils';
 import { getName } from './activatableNameUtils';
-import { MaybeFunctor } from './maybe';
+import { Maybe } from './maybe';
 
 /**
  * Returns name, splitted and combined, as well as the AP you get when removing
@@ -19,20 +19,14 @@ export const getNameCost = (
   state: Data.HeroDependent,
   costToAdd: boolean,
   locale?: Data.UIMessages,
-): MaybeFunctor<Data.ActivatableNameCost | undefined> => {
-  return getCost(obj, wiki, state, costToAdd)
-    .fmap(currentCost => {
-      return getName(obj, wiki, locale)
-        .fmap(names => {
-          return {
-            ...obj,
-            ...names,
-            currentCost
-          };
-        })
-        .value;
-    })
-};
+): Maybe<Data.ActivatableNameCost | undefined> =>
+  getCost(obj, wiki, state, costToAdd).bind(currentCost =>
+    getName(obj, wiki, locale).map(names => ({
+      ...obj,
+      ...names,
+      currentCost
+    }))
+  );
 
 /**
  * Returns name, splitted and combined, as well as the AP you get when removing
@@ -45,17 +39,11 @@ export const getNameCostForWiki = (
   obj: Data.ActiveObjectWithId,
   wiki: WikiState,
   locale?: Data.UIMessages,
-): MaybeFunctor<Data.ActivatableNameCost | undefined> => {
-  return getCost(obj, wiki)
-    .fmap(currentCost => {
-      return getName(obj, wiki, locale)
-        .fmap(names => {
-          return {
-            ...obj,
-            ...names,
-            currentCost
-          };
-        })
-        .value;
-    });
-};
+): Maybe<Data.ActivatableNameCost | undefined> =>
+  getCost(obj, wiki).bind(currentCost =>
+    getName(obj, wiki, locale).map(names => ({
+      ...obj,
+      ...names,
+      currentCost
+    }))
+  );

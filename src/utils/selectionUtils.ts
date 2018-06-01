@@ -1,8 +1,8 @@
+import R from 'ramda';
 import * as Data from '../types/data.d';
 import * as Wiki from '../types/wiki.d';
 import { filterExisting, setMapItem } from './collectionUtils';
-import { Maybe, MaybeFunctor } from './maybe';
-import { pipe } from './pipe';
+import { Maybe } from './maybe';
 
 /**
  * Get a selection option with the given id from given wiki entry. Returns
@@ -12,8 +12,8 @@ import { pipe } from './pipe';
 export const findSelectOption = <S extends Wiki.SelectionObject>(
   obj: Wiki.Activatable,
   id?: string | number,
-): MaybeFunctor<S | undefined> => Maybe(obj.select)
-  .fmap(select => select.find<S>((e): e is S => {
+): Maybe<S | undefined> => Maybe.from(obj.select)
+  .map(select => select.find<S>((e): e is S => {
     return e.id === id;
   }));
 
@@ -25,9 +25,9 @@ export const findSelectOption = <S extends Wiki.SelectionObject>(
 export const getSelectOptionName = (
   obj: Wiki.Activatable,
   id?: string | number,
-): MaybeFunctor<string | undefined> => {
+): Maybe<string | undefined> => {
   return findSelectOption(obj, id)
-    .fmap(e => e.name);
+    .map(e => e.name);
 };
 
 /**
@@ -38,9 +38,9 @@ export const getSelectOptionName = (
 export const getSelectOptionCost = (
   obj: Wiki.Activatable,
   id?: string | number,
-): MaybeFunctor<number | undefined> => {
+): Maybe<number | undefined> => {
   return findSelectOption(obj, id)
-    .fmap(e => e.cost);
+    .map(e => e.cost);
 };
 
 interface SelectionNameAndCost {
@@ -56,9 +56,9 @@ interface SelectionNameAndCost {
 export const getSelectionNameAndCost = (
   obj: Wiki.Activatable,
   id?: string | number,
-): MaybeFunctor<SelectionNameAndCost | undefined> => {
+): Maybe<SelectionNameAndCost | undefined> => {
   return findSelectOption(obj, id)
-    .fmap(e => {
+    .map(e => {
       return typeof e.cost === 'number' ? {
         name: e.name,
         cost: e.cost,
@@ -70,9 +70,16 @@ export const getSelectionNameAndCost = (
  * Get all `ActiveObject.sid` values from the given instance.
  * @param obj The entry.
  */
-export const getActiveSelections = (obj: Data.ActivatableDependent | undefined) => {
-  return obj ? filterExisting(obj.active.map(e => e.sid)) : [];
-}
+export const getActiveSelections = R.pipe(
+  (obj: Data.ActivatableDependent | undefined) => Maybe.from(obj),
+  obj => obj
+    .map(R.pipe(
+      obj => obj.active,
+      R.map<Data.ActiveObject, Data.ActiveObject["sid"]>(e => e.sid),
+      filterExisting,
+    ))
+    .valueOr<(string | number)[]>([]),
+);
 
 type SecondarySelections = ReadonlyMap<number | string, (string | number)[]>;
 
@@ -81,28 +88,32 @@ type SecondarySelections = ReadonlyMap<number | string, (string | number)[]>;
  * `ActiveObject.sid` in Map.
  * @param entry
  */
-export function getActiveSecondarySelections(
-  entry: Data.ActivatableDependent | undefined,
-): SecondarySelections {
-  return (entry ? entry.active : []).reduce<SecondarySelections>((map, obj) => {
-    const { sid, sid2 } = obj;
-    if (sid !== undefined && sid2 !== undefined) {
-      return setMapItem(map, sid, [...(map.get(sid) || []), sid2]);
-    }
-    return map;
-  }, new Map());
-}
+export const getActiveSecondarySelections = R.pipe(
+  (entry: Data.ActivatableDependent | undefined) => Maybe.from(entry),
+  obj => obj
+    .map(R.pipe(
+      obj => obj.active,
+      (obj: Data.ActiveObject[]) => obj.reduce<SecondarySelections>(
+        (map, obj) => {
+          const { sid, sid2 } = obj;
+          if (sid !== undefined && sid2 !== undefined) {
+            return setMapItem(map, sid, [...(map.get(sid) || []), sid2]);
+          }
+          return map;
+        },
+        new Map()
+      ),
+    ))
+    .valueOr<SecondarySelections>(new Map()),
+);
 
 /**
  * Get all `DependencyObject.sid` values from the given instance.
  * @param obj The entry.
  */
-export const getRequiredSelections = (obj: Data.ActivatableDependent | undefined) => pipe(
-  (list: Data.ActivatableInstanceDependency[]) => {
-    return list.filter((e): e is Data.DependencyObject => {
-      return typeof e === 'object';
-    });
-  },
-  list => list.map(e => e.sid),
+export const getRequiredSelections = R.pipe(
+  (obj: Data.ActivatableDependent | undefined) => obj ? obj.dependencies : [],
+  list => list.filter((e): e is Data.DependencyObject => isObject(e)),
+  (list: Data.DependencyObject[]) => R.map(e => e.sid, list),
   filterExisting
-)(obj ? obj.dependencies : []);
+);

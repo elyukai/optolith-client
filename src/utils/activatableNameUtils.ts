@@ -7,7 +7,7 @@ import { translate } from './I18n';
 import { getRoman } from './NumberUtils';
 import { getWikiEntry } from './WikiUtils';
 import { match } from './match';
-import { Maybe, MaybeFunctor, OrNot } from './maybe';
+import { Maybe } from './maybe';
 import { findSelectOption, getSelectOptionName } from './selectionUtils';
 
 /**
@@ -69,19 +69,19 @@ const getEntrySpecificNameAddition = (
     ].includes, () => {
       if (typeof sid === 'string') {
         return getWikiEntry<Wiki.Skillish>(wiki, sid)
-          .fmap(entry => entry.name)
+          .map(entry => entry.name)
           .value;
       }
       return;
     })
     .on('ADV_68', () => {
       return findSelectOption(wikiEntry, sid)
-        .fmap(item => item && `${sid2} (${item.name})`)
+        .map(item => item && `${sid2} (${item.name})`)
         .value;
     })
     .on('DISADV_33', () => {
       return getSelectOptionName(wikiEntry, sid)
-        .fmap(name => {
+        .map(name => {
           if (isNumber(sid) && [7, 8].includes(sid)) {
             return `${name}: ${sid2}`;
           }
@@ -93,16 +93,16 @@ const getEntrySpecificNameAddition = (
     })
     .on('SA_9', () => {
       if (typeof sid === 'string') {
-        return Maybe(wiki.skills.get(sid))
-          .fmap(skill => {
+        return Maybe.from(wiki.skills.get(sid))
+          .map(skill => {
             return R.pipe(
               (sid2: string | number | undefined) => {
-                return R.unless<string | number | undefined, OrNot<string>>(
+                return R.unless<string | number | undefined, string | undefined>(
                   isString,
                   R.always(
-                    Maybe(skill.applications)
-                      .fmap(R.find(e => e.id === sid2))
-                      .fmap(app => app.name)
+                    Maybe.from(skill.applications)
+                      .map(R.find(e => e.id === sid2))
+                      .map(app => app.name)
                       .value
                   )
                 );
@@ -119,9 +119,9 @@ const getEntrySpecificNameAddition = (
       'SA_663',
     ].includes, () => {
       return findSelectOption(wikiEntry, sid)
-        .fmap(item => {
-          return Maybe(item.target)
-            .fmap(target => {
+        .map(item => {
+          return Maybe.from(item.target)
+            .map(target => {
               if (id === 'SA_414') {
                 return wiki.spells.get(target);
               }
@@ -129,31 +129,31 @@ const getEntrySpecificNameAddition = (
                 return wiki.liturgicalChants.get(target);
               }
             })
-            .fmap(target => `${target.name}: ${item.name}`)
+            .map(target => `${target.name}: ${item.name}`)
             .value;
         })
         .value;
     })
     .on('SA_680', () => {
       if (typeof sid === 'string') {
-        return Maybe(wiki.skills.get(sid as string))
-          .fmap(entry => `: ${entry.name}`)
+        return Maybe.from(wiki.skills.get(sid as string))
+          .map(entry => `: ${entry.name}`)
           .value;
       }
       return;
     })
     .on('SA_699', () => {
-      return Maybe(wiki.specialAbilities.get('SA_29'))
-        .fmap(languages => {
+      return Maybe.from(wiki.specialAbilities.get('SA_29'))
+        .map(languages => {
           return findSelectOption(languages, sid)
-            .fmap(item => {
+            .map(item => {
               return `${item.name}: ${
                 R.unless<string | number | undefined, string | undefined>(
                   isString,
-                  sid2 => Maybe(item.spec)
-                    .fmap(spec => {
-                      return Maybe(sid2 as number | undefined)
-                        .fmap(sid2 => spec[sid2 - 1])
+                  sid2 => Maybe.from(item.spec)
+                    .map(spec => {
+                      return Maybe.from(sid2 as number | undefined)
+                        .map(sid2 => spec[sid2 - 1])
                         .value
                     })
                     .value,
@@ -207,8 +207,8 @@ const getEntrySpecificNameReplacements = (
       return `${name} ${nameAddition}`;
     })
     .on(['SA_677', 'SA_678'].includes, () => {
-      return Maybe(locale)
-        .fmap(locale => {
+      return Maybe.from(locale)
+        .map(locale => {
           const part = getTraditionNameFromFullName(name);
           const musicTraditionLabels = translate(locale, 'musictraditions');
 
@@ -246,9 +246,9 @@ export const getName = (
   instance: Data.ActiveObjectWithId,
   wiki: WikiState,
   locale?: Data.UIMessages,
-): MaybeFunctor<CombinedName | undefined> => {
+): Maybe<CombinedName | undefined> => {
   return getWikiEntry<Wiki.Activatable>(wiki, instance.id)
-    .fmap(wikiEntry => {
+    .map(wikiEntry => {
       const addName = getEntrySpecificNameAddition(
         wikiEntry,
         instance,

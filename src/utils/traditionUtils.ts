@@ -1,10 +1,10 @@
+import R from 'ramda';
 import { ActivatableDependent } from '../types/data.d';
 import { SpecialAbility } from '../types/wiki';
 import { isBlessedTraditionId, isMagicalTraditionId } from './IDUtils';
-import { convertMapToValues, filterExisting } from './collectionUtils';
+import { convertMapToValues } from './collectionUtils';
 import { isActive } from './isActive';
 import { Maybe } from './maybe';
-import { pipe } from './pipe';
 
 const isActiveMagicalTradition = (e: ActivatableDependent) => {
   return isMagicalTraditionId(e.id) && isActive(e);
@@ -19,7 +19,7 @@ const isActiveBlessedTradition = (e: ActivatableDependent) => {
  * @param list
  */
 export const getMagicalTraditions = (
-  list: Map<string, ActivatableDependent>,
+  list: ReadonlyMap<string, ActivatableDependent>,
 ) => {
   return convertMapToValues(list).filter(isActiveMagicalTradition);
 };
@@ -30,12 +30,11 @@ export const getMagicalTraditions = (
  * @param list
  */
 export const getMagicalTraditionsFromWiki = (
-  wiki: Map<string, SpecialAbility>,
-  list: Map<string, ActivatableDependent>,
-) => pipe(
+  wiki: ReadonlyMap<string, SpecialAbility>,
+  list: ReadonlyMap<string, ActivatableDependent>,
+): ReadonlyArray<SpecialAbility> => R.pipe(
   getMagicalTraditions,
-  traditions => traditions.map(e => wiki.get(e.id)),
-  filterExisting
+  Maybe.mapMaybe(e => Maybe.from(wiki.get(e.id))),
 )(list);
 
 /**
@@ -43,7 +42,7 @@ export const getMagicalTraditionsFromWiki = (
  * @param list
  */
 export const getBlessedTradition = (
-  list: Map<string, ActivatableDependent>,
+  list: ReadonlyMap<string, ActivatableDependent>,
 ) => {
 	return convertMapToValues(list).find(isActiveBlessedTradition);
 };
@@ -54,7 +53,7 @@ export const getBlessedTradition = (
  * @param list
  */
 export const getBlessedTraditionFromWiki = (
-  wiki: Map<string, SpecialAbility>,
-  list: Map<string, ActivatableDependent>,
-) => Maybe(getBlessedTradition(list))
-  .fmap(e => wiki.get(e.id));
+  wiki: ReadonlyMap<string, SpecialAbility>,
+  list: ReadonlyMap<string, ActivatableDependent>,
+) => Maybe.from(getBlessedTradition(list))
+  .map(e => wiki.get(e.id));

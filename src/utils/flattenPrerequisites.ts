@@ -1,7 +1,6 @@
 import { flatten } from 'lodash';
 import R from 'ramda';
 import { ActivatablePrerequisites, LevelAwarePrerequisites } from '../types/wiki.d';
-import { pipe } from './pipe';
 
 type LevelPair = [number, ActivatablePrerequisites];
 type PrerequisiteFilter = (pair: LevelPair) => boolean;
@@ -39,7 +38,7 @@ const flattenMap = (
   prerequisites: Map<number, ActivatablePrerequisites>,
   oldTier?: number,
   newTier?: number,
-) => pipe(
+) => R.pipe(
   createFilter(newTier),
   createFlattenFiltered(prerequisites),
 )(oldTier);

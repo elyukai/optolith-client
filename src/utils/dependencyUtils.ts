@@ -1,3 +1,4 @@
+import R from 'ramda';
 import { Categories } from '../constants/Categories';
 import * as Data from '../types/data.d';
 import * as Reusable from '../types/reusable.d';
@@ -6,7 +7,6 @@ import * as AddDependencyUtils from './addDependencyUtils';
 import * as CheckPrerequisiteUtils from './checkPrerequisiteUtils';
 import { maybe } from './exists';
 import { match } from './match';
-import { pipe } from './pipe';
 import { getPrimaryAttributeId } from './primaryAttributeUtils';
 import { ActivatableReducer } from './reducerUtils';
 import * as RemoveDependencyUtils from './removeDependencyUtils';
@@ -24,8 +24,8 @@ type ModifyActivatableDependency =
 const createPrimaryAttributeDependencyModifier = (
   state: Data.HeroDependent,
   modify: ModifyIncreasableDependency,
-) => (req: Reusable.RequiresPrimaryAttribute) => pipe(
-  maybe((id: string) => modify(id, req.value)(state), state)
+) => (req: Reusable.RequiresPrimaryAttribute) => R.pipe(
+  Maybe.from((id: string) => modify(id, req.value)(state), state)
 )(getPrimaryAttributeId(state.specialAbilities, req.type));
 
 const createIncreasableDependencyModifier = (
@@ -36,7 +36,7 @@ const createIncreasableDependencyModifier = (
 ) => (req: Reusable.RequiresIncreasableObject) => {
   return match<string | string[], Data.HeroDependent>(req.id)
     .on((id): id is string[] => typeof id === 'object', id => {
-      return pipe<Reusable.ValueOptionalDependency, Data.HeroDependent>(
+      return R.pipe<Reusable.ValueOptionalDependency, Data.HeroDependent>(
         add => id.reduce((state, e) => {
           if (getCategoryById(e) === Categories.ATTRIBUTES) {
             return modifyAttribute(e, add)(state);
@@ -64,7 +64,7 @@ const createActivatableDependencyModifier = (
 
   return match<string | string[], Data.HeroDependent>(req.id)
     .on((id): id is string[] => typeof id === 'object', (id: string[]) => {
-      return pipe(
+      return R.pipe(
         add => {
           if (Object.keys(req).length === 2 && typeof active === 'boolean') {
             return {
@@ -83,7 +83,7 @@ const createActivatableDependencyModifier = (
       )({ origin: sourceId });
     })
     .otherwise(id => {
-      return pipe<boolean | Reusable.ActiveDependency, Data.HeroDependent>(
+      return R.pipe<boolean | Reusable.ActiveDependency, Data.HeroDependent>(
         add => modify(id, add)(state),
       )(
         match<Reusable.RequiresActivatableObject, boolean | Reusable.ActiveDependency>(req)

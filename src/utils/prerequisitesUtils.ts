@@ -25,8 +25,8 @@ export function getGeneratedPrerequisites(
   switch (wikiEntry.id) {
     case 'SA_3': {
       findSelectOption(wikiEntry, sid)
-        .fmap(item => item.req)
-        .fmap(req => {
+        .map(item => item.req)
+        .map(req => {
           adds.push(...req);
         });
       break;
@@ -45,10 +45,10 @@ export function getGeneratedPrerequisites(
       });
 
       findSelectOption<SkillSelectionObject>(wikiEntry, sid)
-        .fmap(skill => skill.applications)
-        .fmap(R.find(e => e.id === sid2))
-        .fmap(app => app.prerequisites)
-        .fmap(prerequisites => {
+        .map(skill => skill.applications)
+        .map(R.find(e => e.id === sid2))
+        .map(app => app.prerequisites)
+        .map(prerequisites => {
           adds.push(...prerequisites);
         });
 
@@ -70,7 +70,7 @@ export function getGeneratedPrerequisites(
       }
 
       findSelectOption<ExtensionSelectionObject>(wikiEntry, sid)
-        .fmap(item => {
+        .map(item => {
           adds.push({
             id: item.target,
             value: item.tier * 4 + 4,
@@ -81,8 +81,8 @@ export function getGeneratedPrerequisites(
     }
     case 'SA_639': {
       findSelectOption(wikiEntry, sid)
-        .fmap(item => item.prerequisites)
-        .fmap(prerequisites => {
+        .map(item => item.prerequisites)
+        .map(prerequisites => {
           adds.push(...prerequisites);
         });
       break;

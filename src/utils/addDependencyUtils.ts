@@ -11,9 +11,10 @@ type IncreasableCreator = (id: string) => Data.ExtendedSkillDependent;
 
 const addDependency = <T extends Data.Dependent>(
   add: ArrayElement<T["dependencies"]>,
+// @ts-ignore
 ) => (obj: T): T => ({
   ...(obj as Data.Dependent),
-  dependencies: R.append(add as any, obj.dependencies as T["dependencies"]),
+  dependencies: R.append(add, obj.dependencies as ArrayElement<T["dependencies"]>[]),
 } as T);
 
 /**

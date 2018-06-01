@@ -2,16 +2,16 @@ import R from 'ramda';
 import { WikiState } from '../reducers/wikiReducer';
 import * as Data from '../types/data.d';
 import * as Reusable from '../types/reusable.d';
-import { Culture, Profession, Race, Skill } from '../types/wiki';
+import { Skill } from '../types/wiki';
 import { getAllWikiEntriesByGroup } from './WikiUtils';
 import { isActivatableDependent, isActivatableSkillDependent, isDependentSkillExtended } from './checkEntryUtils';
 import * as CheckPrerequisiteUtils from './checkPrerequisiteUtils';
 import { convertMapToArray, filterExisting, spreadOptionalInArray } from './collectionUtils';
-import { matchExists, maybe } from './exists';
+import { matchExists } from './exists';
 import { getHeroStateListItem } from './heroStateUtils';
 import { isActive } from './isActive';
 import { match } from './match';
-import { pipe } from './pipe';
+import { Maybe } from './maybe';
 import { getPrimaryAttributeId } from './primaryAttributeUtils';
 import { getActiveSelections } from './selectionUtils';
 
@@ -29,35 +29,32 @@ const isRCPValid = (
   state: Data.HeroDependent,
   sourceId: string,
 ): boolean => {
-  return pipe(
+  return R.pipe(
     spreadOptionalInArray(
-      pipe<string | undefined, Race | undefined, string[] | undefined>(
-        maybe(race => wiki.races.get(race)),
-        maybe(race => [
+      Maybe.from(state.race)
+        .map(wiki.races.get)
+        .map(race => [
           ...race.stronglyRecommendedAdvantages,
           ...race.stronglyRecommendedDisadvantages,
           ...race.commonAdvantages,
           ...race.commonDisadvantages,
         ]),
-      )(state.race)
     ),
     spreadOptionalInArray(
-      pipe<string | undefined, Culture | undefined, string[] | undefined>(
-        maybe(race => wiki.cultures.get(race)),
-        maybe(race => [
+      Maybe.from(state.culture)
+        .map(wiki.cultures.get)
+        .map(race => [
           ...race.commonAdvantages,
           ...race.commonDisadvantages,
         ]),
-      )(state.culture)
     ),
     spreadOptionalInArray(
-      pipe<string | undefined, Profession | undefined, string[] | undefined>(
-        maybe(race => wiki.professions.get(race)),
-        maybe(race => [
+      Maybe.from(state.profession)
+        .map(wiki.professions.get)
+        .map(race => [
           ...race.suggestedAdvantages,
           ...race.unsuitableAdvantages,
         ]),
-      )(state.profession)
     ),
     arr => arr.includes(sourceId)
   )([]);
@@ -153,7 +150,7 @@ const isIncreasableValid = (
         return validateObject(wiki, state, { ...req, id: e }, sourceId);
       });
     })
-    .otherwise(pipe(
+    .otherwise(R.pipe(
       id => getHeroStateListItem(id)(state),
       instance => {
         return match<Data.Dependent | undefined, boolean>(instance.value)
@@ -180,21 +177,20 @@ const isActivatableValid = (
       return match<string | number | number[] | undefined, boolean>(req.sid)
         .on('sel', () => true)
         .on('GR', () => {
-          return R.defaultTo(
-            true,
-            getHeroStateListItem<Data.ActivatableDependent>(id)(state)
-              .fmap(target => {
-                return pipe<Skill[], string[], boolean>(
-                  arr => arr.map(e => e.id),
-                  arr => getActiveSelections(target).every(e => {
-                    return !arr.includes(e as string);
-                  })
-                )(
-                  getAllWikiEntriesByGroup(wiki.skills, req.sid2 as number)
-                );
-              })
-              .value
-          );
+          return R.pipe(
+            getHeroStateListItem<Data.ActivatableDependent>(id),
+            obj => obj.map(target => {
+              return R.pipe<Skill[], string[], boolean>(
+                arr => arr.map(e => e.id),
+                arr => getActiveSelections(target).every(e => {
+                  return !arr.includes(e as string);
+                })
+              )(
+                getAllWikiEntriesByGroup(wiki.skills, req.sid2 as number)
+              );
+            })
+            .valueOr(true),
+          )(state);
         })
         .otherwise(() => {
           return match<Data.ExtendedActivatableDependent | undefined, boolean>(
@@ -304,8 +300,8 @@ export const validatePrerequisites = (
   });
 }
 
-type ReqMap = Map<number, Data.AllRequirements[]>;
-type ReqEntries = [number, Data.AllRequirements[]][];
+type ReqMap = ReadonlyMap<number, Data.AllRequirements[]>;
+type ReqEntries = ReadonlyArray<[number, Data.AllRequirements[]]>;
 
 const isSkipping = (arr: ReqEntries, index: number, max?: number) => {
   return typeof max === 'number' && index > 1 && arr[index - 2][0] < max
@@ -337,11 +333,11 @@ const isProhibitingHigherLevel = (
 export const validateTier = (
   wiki: WikiState,
   state: Data.HeroDependent,
-  requirements: Map<number, Data.AllRequirements[]>,
-  dependencies: Data.ActivatableInstanceDependency[],
+  requirements: ReadonlyMap<number, Data.AllRequirements[]>,
+  dependencies: ReadonlyArray<Data.ActivatableInstanceDependency>,
   sourceId: string,
 ): number | undefined => {
-  return pipe<ReqMap, ReqEntries, ReqEntries, number | undefined>(
+  return R.pipe<ReqMap, ReqEntries, ReqEntries, number | undefined, number | undefined>(
     convertMapToArray,
     arr => [...arr].sort((a, b) => a[0] - b[0]),
     arr => arr.reduce<number | undefined>((max, entry, index) => {

@@ -10,13 +10,13 @@ export const getExperienceLevelIdByAp = (
   experienceLevels: Map<string, ExperienceLevel>,
   ap: number,
 ): string => {
-	return [...experienceLevels].reduce((result, [id, { ap: threshold }]) => {
-		const prev = experienceLevels.get(result);
-		if (ap >= threshold && (!prev || prev.ap < threshold)) {
-			return id;
-		}
-		return result;
-	}, 'EL_1');
+  return [...experienceLevels].reduce((result, [id, { ap: threshold }]) => {
+    const prev = experienceLevels.get(result);
+    if (ap >= threshold && (!prev || prev.ap < threshold)) {
+      return id;
+    }
+    return result;
+  }, 'EL_1');
 };
 
 /**
@@ -28,7 +28,7 @@ export const getExperienceLevelNumericIdByAp = (
   experienceLevels: Map<string, ExperienceLevel>,
   ap: number,
 ): number => {
-	return getNumericId(getExperienceLevelIdByAp(experienceLevels, ap));
+  return getNumericId(getExperienceLevelIdByAp(experienceLevels, ap));
 };
 
 /**
@@ -36,5 +36,5 @@ export const getExperienceLevelNumericIdByAp = (
  * @param lowerId The lower EL's id.
  */
 export function getHigherExperienceLevelId(lowerId: string): string {
-	return getStringId(getNumericId(lowerId) + 1, 'EL');
+  return getStringId(getNumericId(lowerId) + 1, 'EL');
 }

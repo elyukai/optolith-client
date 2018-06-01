@@ -5,6 +5,6 @@ import { ActivatableDependent } from '../types/data.d';
  * `ActiveObject` in the `obj.active` array.
  * @param obj The entry.
  */
-export function isActive(obj: ActivatableDependent | undefined): boolean {
+export const isActive = (obj: ActivatableDependent | undefined): boolean => {
   return typeof obj === 'object' && obj.active.length > 0;
-}
+};

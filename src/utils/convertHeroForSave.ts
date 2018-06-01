@@ -45,7 +45,7 @@ const getValuesForSave = <T extends HeroStateMapKey>(
 ) => {
   return (hero: Data.HeroDependent) => {
     return convertMapToArray(
-      hero[sliceKey] as Map<string, Data.ExtendedSkillDependent>
+      hero[sliceKey] as ReadonlyMap<string, Data.ExtendedSkillDependent>
     )
       .reduce<StringKeyObject<number>>((acc, [id, obj]) => {
         if (testFn(obj as MapValueElement<Data.HeroDependent[T]>)) {

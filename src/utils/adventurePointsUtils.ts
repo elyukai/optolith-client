@@ -17,11 +17,11 @@ export const areSufficientAPAvailable = (
   availableAP: number,
   negativeApValid: boolean,
 ): boolean => {
-	if (cost > 0 && negativeApValid === false) {
-		return cost <= availableAP;
+  if (cost > 0 && negativeApValid === false) {
+    return cost <= availableAP;
   }
 
-	return true;
+  return true;
 };
 
 /**
@@ -35,16 +35,16 @@ export const getDisAdvantagesSubtypeMax = (
   state: Data.HeroDependent,
   isMagical: boolean,
 ): number => {
-	if (isMagical) {
+  if (isMagical) {
     const traditionActive = getMagicalTraditions(state.specialAbilities)[0];
     const semiTraditionIds = ['SA_677', 'SA_678', 'SA_679', 'SA_680'];
 
-		if (traditionActive && semiTraditionIds.includes(traditionActive.id)) {
-			return 25;
-		}
+    if (traditionActive && semiTraditionIds.includes(traditionActive.id)) {
+      return 25;
+    }
   }
 
-	return 50;
+  return 50;
 };
 
 export interface SufficientAPAvailableForDisAdvantage {
@@ -116,7 +116,7 @@ export const areSufficientAPAvailableForDisAdvantage = (
     adventurePoints,
   );
 
-	const smallMax = getDisAdvantagesSubtypeMax(state, isMagical);
+  const smallMax = getDisAdvantagesSubtypeMax(state, isMagical);
   const equalizedCost = isDisadvantage ? cost * -1 : cost;
 
   const subValid = !isInCharacterCreation
@@ -127,9 +127,9 @@ export const areSufficientAPAvailableForDisAdvantage = (
   const mainValid = !isInCharacterCreation
     || currentAPSpent + equalizedCost <= 80;
 
-	const totalValid = cost <= adventurePoints.available || isInCharacterCreation;
+  const totalValid = cost <= adventurePoints.available || isInCharacterCreation;
 
-	return { totalValid, mainValid, subValid };
+  return { totalValid, mainValid, subValid };
 };
 
 const getPrinciplesObligationsDiff = (

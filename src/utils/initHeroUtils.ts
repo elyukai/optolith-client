@@ -4,32 +4,11 @@ import * as Raw from '../types/rawdata.d';
 import { getCategoryById } from './IDUtils';
 import { convertObjectToMap } from './ListUtils';
 import { currentVersion } from './VersionUtils';
+import { StringKeyObject, convertMapToArray, setM } from './collectionUtils';
 import * as CreateDependencyObjectUtils from './createEntryUtils';
+import { exists } from './exists';
 
-export function getHeroInstance(id: string, hero: Raw.RawHero): Data.HeroDependent {
-  return {
-    ...getUnchangedProperties(id, hero),
-    ...getPlayer(hero),
-    ...getDates(hero),
-    ...getActivatables(hero),
-    attributes: getAttributes(hero),
-    energies: getEnergies(hero),
-    skills: getSkills(hero),
-    combatTechniques: getCombatTechniques(hero),
-    spells: getSpells(hero),
-    cantrips: getCantrips(hero),
-    liturgicalChants: getLiturgicalChants(hero),
-    blessings: getBlessings(hero),
-    belongings: getBelongings(hero),
-    rules: getRules(hero),
-    pets: getPets(hero),
-    combatStyleDependencies: [],
-    magicalStyleDependencies: [],
-    blessedStyleDependencies: [],
-  };
-}
-
-function getUnchangedProperties(id: string, hero: Raw.RawHero) {
+const getUnchangedProperties = (id: string, hero: Raw.RawHero) => {
   const {
     clientVersion,
     name,
@@ -64,56 +43,66 @@ function getUnchangedProperties(id: string, hero: Raw.RawHero) {
     experienceLevel: el,
     personalData: pers,
   };
-}
+};
 
-function getPlayer(hero: Raw.RawHero) {
+const getPlayer = (hero: Raw.RawHero) => {
   const { player } = hero;
   return {
     player: player && player.id,
   };
-}
+};
 
-function getDates(hero: Raw.RawHero) {
+const getDates = (hero: Raw.RawHero) => {
   const { dateCreated, dateModified } = hero;
   return {
     dateCreated: new Date(dateCreated),
     dateModified: new Date(dateModified),
   };
-}
+};
 
 interface ActivatableMaps {
-  advantages: Map<string, Data.ActivatableDependent>;
-  disadvantages: Map<string, Data.ActivatableDependent>;
-  specialAbilities: Map<string, Data.ActivatableDependent>;
+  advantages: ReadonlyMap<string, Data.ActivatableDependent>;
+  disadvantages: ReadonlyMap<string, Data.ActivatableDependent>;
+  specialAbilities: ReadonlyMap<string, Data.ActivatableDependent>;
 }
 
-function getActivatables(hero: Raw.RawHero): ActivatableMaps {
+const getActivatables = (hero: Raw.RawHero): ActivatableMaps => {
   const objectsInMap = getActivatableDependent(hero.activatable);
 
-  const stateObject: ActivatableMaps = {
-    advantages: new Map(),
-    disadvantages: new Map(),
-    specialAbilities: new Map(),
-  };
-
-  for (const [id, obj] of objectsInMap) {
+  return convertMapToArray(objectsInMap).reduce<ActivatableMaps>((acc, e) => {
+    const [id, obj] = e;
     const category = getCategoryById(id);
 
     if (category === Categories.ADVANTAGES) {
-      stateObject.advantages.set(id, obj);
+      return {
+        ...acc,
+        advantages: setM(id, obj)(acc.advantages),
+      };
     }
     else if (category === Categories.DISADVANTAGES) {
-      stateObject.disadvantages.set(id, obj);
+      return {
+        ...acc,
+        disadvantages: setM(id, obj)(acc.disadvantages),
+      };
     }
     else if (category === Categories.SPECIAL_ABILITIES) {
-      stateObject.specialAbilities.set(id, obj);
+      return {
+        ...acc,
+        specialAbilities: setM(id, obj)(acc.specialAbilities),
+      };
     }
-  }
 
-  return stateObject;
-}
+    return acc;
+  }, {
+    advantages: new Map(),
+    disadvantages: new Map(),
+    specialAbilities: new Map(),
+  });
+};
 
-function getAttributes(hero: Raw.RawHero): Map<string, Data.AttributeDependent> {
+const getAttributes = (
+  hero: Raw.RawHero
+): ReadonlyMap<string, Data.AttributeDependent> => {
   return new Map(
     hero.attr.values.map<[string, Data.AttributeDependent]>(
       ([id, value, mod]) => {
@@ -129,9 +118,9 @@ function getAttributes(hero: Raw.RawHero): Map<string, Data.AttributeDependent> 
       }
     )
   );
-}
+};
 
-function getEnergies(hero: Raw.RawHero): Data.Energies {
+const getEnergies = (hero: Raw.RawHero): Data.Energies => {
   const {
     attr: {
       ae: addedArcaneEnergyPoints,
@@ -151,33 +140,45 @@ function getEnergies(hero: Raw.RawHero): Data.Energies {
     permanentKarmaPoints: permanentKP,
     permanentLifePoints: permanentLP || { lost: 0 }
   };
-}
+};
 
-function getSkills(hero: Raw.RawHero): Map<string, Data.SkillDependent> {
+const getSkills = (
+  hero: Raw.RawHero
+): ReadonlyMap<string, Data.SkillDependent> => {
   return getDependentSkills(hero.talents);
-}
+};
 
-function getCombatTechniques(hero: Raw.RawHero): Map<string, Data.SkillDependent> {
+const getCombatTechniques = (
+  hero: Raw.RawHero
+): ReadonlyMap<string, Data.SkillDependent> => {
   return getDependentSkills(hero.ct);
-}
+};
 
-function getSpells(hero: Raw.RawHero): Map<string, Data.ActivatableSkillDependent> {
+const getSpells = (
+  hero: Raw.RawHero
+): ReadonlyMap<string, Data.ActivatableSkillDependent> => {
   return getActivatableDependentSkills(hero.spells);
-}
+};
 
-function getCantrips(hero: Raw.RawHero): Set<string> {
+const getCantrips = (
+  hero: Raw.RawHero
+): ReadonlySet<string> => {
   return new Set(hero.cantrips);
-}
+};
 
-function getLiturgicalChants(hero: Raw.RawHero): Map<string, Data.ActivatableSkillDependent> {
+const getLiturgicalChants = (
+  hero: Raw.RawHero
+): ReadonlyMap<string, Data.ActivatableSkillDependent> => {
   return getActivatableDependentSkills(hero.liturgies);
-}
+};
 
-function getBlessings(hero: Raw.RawHero): Set<string> {
+const getBlessings = (
+  hero: Raw.RawHero
+): ReadonlySet<string> => {
   return new Set(hero.blessings);
-}
+};
 
-function getBelongings(hero: Raw.RawHero): Data.Belongings {
+const getBelongings = (hero: Raw.RawHero): Data.Belongings => {
   const {
     items,
     armorZones,
@@ -189,33 +190,39 @@ function getBelongings(hero: Raw.RawHero): Data.Belongings {
     armorZones: convertObjectToMap(armorZones),
     purse,
   };
-}
+};
 
-function getRules(hero: Raw.RawHero): Data.Rules {
+const getRules = (hero: Raw.RawHero): Data.Rules => {
   return {
     ...hero.rules,
     enabledRuleBooks: new Set(hero.rules.enabledRuleBooks),
   };
+};
+
+const getPets = (hero: Raw.RawHero): ReadonlyMap<string, Data.PetInstance> => {
+  return exists(hero.pets) ? convertObjectToMap(hero.pets) : new Map();
 }
 
-function getPets(hero: Raw.RawHero): Map<string, Data.PetInstance> {
-  return typeof hero.pets === 'object' ? convertObjectToMap(hero.pets) : new Map();
-}
-
-function getActivatableDependent(source: Data.ToListById<Data.ActiveObject[]>): Map<string, Data.ActivatableDependent> {
+const getActivatableDependent = (
+  source: StringKeyObject<Data.ActiveObject[]>
+): ReadonlyMap<string, Data.ActivatableDependent> => {
   return new Map(
     Object.entries(source).map<[string, Data.ActivatableDependent]>(
       ([id, active]) => {
         return [
           id,
-          CreateDependencyObjectUtils.createActivatableDependent(id, { active }),
+          CreateDependencyObjectUtils.createActivatableDependent(id, {
+            active
+          }),
         ];
       }
     )
   );
-}
+};
 
-function getDependentSkills(source: Data.ToListById<number>): Map<string, Data.SkillDependent> {
+const getDependentSkills = (
+  source: StringKeyObject<number>
+): ReadonlyMap<string, Data.SkillDependent> => {
   return new Map(
     Object.entries(source).map<[string, Data.SkillDependent]>(
       ([id, value]) => {
@@ -226,24 +233,53 @@ function getDependentSkills(source: Data.ToListById<number>): Map<string, Data.S
       }
     )
   );
-}
+};
 
-function getActivatableDependentSkills(source: Data.ToListById<number>): Map<string, Data.ActivatableSkillDependent> {
+const getActivatableDependentSkills = (
+  source: StringKeyObject<number>
+): ReadonlyMap<string, Data.ActivatableSkillDependent> => {
   return new Map(
     Object.entries(source).map<[string, Data.ActivatableSkillDependent]>(
       ([id, value]) => {
         return [
           id,
-          CreateDependencyObjectUtils.createActivatableDependentSkill(id, { active: true, value }),
+          CreateDependencyObjectUtils.createActivatableDependentSkill(id, {
+            active: true,
+            value
+          }),
         ];
       }
     )
   );
-}
+};
 
+export const getHeroInstance = (
+  id: string,
+  hero: Raw.RawHero,
+): Data.HeroDependent => {
+  return {
+    ...getUnchangedProperties(id, hero),
+    ...getPlayer(hero),
+    ...getDates(hero),
+    ...getActivatables(hero),
+    attributes: getAttributes(hero),
+    energies: getEnergies(hero),
+    skills: getSkills(hero),
+    combatTechniques: getCombatTechniques(hero),
+    spells: getSpells(hero),
+    cantrips: getCantrips(hero),
+    liturgicalChants: getLiturgicalChants(hero),
+    blessings: getBlessings(hero),
+    belongings: getBelongings(hero),
+    rules: getRules(hero),
+    pets: getPets(hero),
+    combatStyleDependencies: [],
+    magicalStyleDependencies: [],
+    blessedStyleDependencies: [],
+  };
+};
 
-
-export function getInitialHeroObject(
+export const getInitialHeroObject = (
   id: string,
   name: string,
   sex: 'm' | 'f',
@@ -251,7 +287,7 @@ export function getInitialHeroObject(
   totalAp: number,
   enableAllRuleBooks: boolean,
   enabledRuleBooks: Set<string>,
-): Data.HeroDependent {
+): Data.HeroDependent => {
   return {
     id,
     clientVersion: currentVersion,
@@ -314,4 +350,4 @@ export function getInitialHeroObject(
     magicalStyleDependencies: [],
     blessedStyleDependencies: [],
   };
-}
+};

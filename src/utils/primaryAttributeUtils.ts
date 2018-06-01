@@ -1,7 +1,7 @@
+import R from 'ramda';
 import { ActivatableDependent } from '../types/data.d';
 import * as IDUtils from './IDUtils';
 import { match } from './match';
-import { pipe } from './pipe';
 import { getBlessedTradition, getMagicalTraditions } from './traditionUtils';
 
 const getAttributeIdByMagicalNumericId = (id: number): string | undefined => {
@@ -26,15 +26,15 @@ const getAttributeIdByBlessedNumericId = (id: number): string | undefined => {
  * @param state Special abilities
  * @param type 1 = magical, 2 = blessed
  */
-export function getPrimaryAttributeId(
-  state: Map<string, ActivatableDependent>,
+export const getPrimaryAttributeId = (
+  state: ReadonlyMap<string, ActivatableDependent>,
   type: 1 | 2,
-): string | undefined {
+): string | undefined => {
   return match<(1 | 2), string | undefined>(type)
     .on(1, () => {
       const traditions = getMagicalTraditions(state);
       if (traditions.length > 0) {
-        return pipe(
+        return R.pipe(
           IDUtils.getNumericMagicalTraditionIdByInstanceId,
           getAttributeIdByMagicalNumericId,
         )(traditions[0].id);
@@ -44,7 +44,7 @@ export function getPrimaryAttributeId(
     .on(2, () => {
       const tradition = getBlessedTradition(state);
       if (tradition) {
-        return pipe(
+        return R.pipe(
           IDUtils.getNumericBlessedTraditionIdByInstanceId,
           getAttributeIdByBlessedNumericId,
         )(tradition.id);
@@ -52,4 +52,4 @@ export function getPrimaryAttributeId(
       return;
     })
     .otherwise(() => undefined);
-}
+};
