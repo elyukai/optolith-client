@@ -2,9 +2,8 @@ import { Categories } from '../constants/Categories';
 import * as Data from '../types/data.d';
 import * as Raw from '../types/rawdata.d';
 import { getCategoryById } from './IDUtils';
-import { convertObjectToMap } from './ListUtils';
 import { currentVersion } from './VersionUtils';
-import { StringKeyObject, convertMapToArray, setM } from './collectionUtils';
+import { StringKeyObject, convertMapToArray, convertObjectToMap, setM } from './collectionUtils';
 import * as CreateDependencyObjectUtils from './createEntryUtils';
 import { exists } from './exists';
 

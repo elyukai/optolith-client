@@ -20,16 +20,11 @@ export function getGeneratedPrerequisites(
 ): Reusable.AllRequirementTypes[] {
   const { sid, sid2 } = active;
 
-  const adds: Reusable.AllRequirementTypes[] = [];
-
   switch (wikiEntry.id) {
     case 'SA_3': {
-      findSelectOption(wikiEntry, sid)
+      return findSelectOption(wikiEntry, sid)
         .map(item => item.req)
-        .map(req => {
-          adds.push(...req);
-        });
-      break;
+        .valueOr([]);
     }
     case 'SA_9': {
       interface SkillSelectionObject extends Wiki.SelectionObject {
@@ -39,28 +34,24 @@ export function getGeneratedPrerequisites(
 
       const sameSkill = instance.active.filter(e => e.sid === sid).length;
 
-      adds.push({
+      const sameSkillDependency = {
         id: sid as string,
         value: (sameSkill + (add ? 1 : 0)) * 6,
-      });
+      };
 
-      findSelectOption<SkillSelectionObject>(wikiEntry, sid)
+      return findSelectOption<SkillSelectionObject>(wikiEntry, sid)
         .map(skill => skill.applications)
         .map(R.find(e => e.id === sid2))
         .map(app => app.prerequisites)
-        .map(prerequisites => {
-          adds.push(...prerequisites);
-        });
-
-      break;
+        .map(prerequisites => [sameSkillDependency, ...prerequisites])
+        .valueOr([sameSkillDependency]);
     }
     case 'SA_81':
-      adds.push({
+      return [{
         id: 'SA_72',
         active: true,
         sid,
-      });
-      break;
+      }];
     case 'SA_414':
     case 'SA_663': {
       interface ExtensionSelectionObject extends Wiki.SelectionObject {
@@ -69,35 +60,29 @@ export function getGeneratedPrerequisites(
         tier: number;
       }
 
-      findSelectOption<ExtensionSelectionObject>(wikiEntry, sid)
-        .map(item => {
-          adds.push({
-            id: item.target,
-            value: item.tier * 4 + 4,
-          });
-        });
-
-      break;
+      return findSelectOption<ExtensionSelectionObject>(wikiEntry, sid)
+        .map(item => [{
+          id: item.target,
+          value: item.tier * 4 + 4,
+        }])
+        .valueOr([]);
     }
     case 'SA_639': {
-      findSelectOption(wikiEntry, sid)
+      return findSelectOption(wikiEntry, sid)
         .map(item => item.prerequisites)
-        .map(prerequisites => {
-          adds.push(...prerequisites);
-        });
-      break;
+        .valueOr([]);
     }
     case 'SA_699': {
-      adds.push({
+      return [{
         id: 'SA_29',
         active: true,
         sid,
         tier: 3,
-      });
-      break;
+      }];
     }
   }
-  return adds;
+
+  return [];
 }
 
 export const addDynamicPrerequisites = (

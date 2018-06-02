@@ -55,7 +55,7 @@ export const filterExisting: FilterJust = R.filter(R.complement(R.isNil));
  * @param add
  */
 export const spreadOptionalInArray = <T>(
-  add: Maybe<ReadonlyArray<T> | undefined>,
+  add: Maybe<ReadonlyArray<T>>,
 ) => (list: ReadonlyArray<T>) => [ ...list, ...add.valueOr([]) ];
 
 /**

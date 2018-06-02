@@ -181,9 +181,8 @@ const getEntrySpecificCost = (
     .on('SA_533', () => {
       return match<string | number | undefined, number>(sid)
         .on(isString, sid => {
-          type F = Maybe<Data.HeroDependent | undefined>;
+          type F = Maybe<Data.HeroDependent>;
           type Selection = string | number | undefined;
-          type Skill = Wiki.Skill | undefined;
 
           return R.defaultTo(0, Maybe.from(wiki.skills.get(sid)).map(entry => {
             return R.pipe(
@@ -191,9 +190,9 @@ const getEntrySpecificCost = (
                 .map(v => v.get('SA_531'))
                 .map(v => v.active)
                 .map(v => v && v[0] && v[0].sid),
-              sid => match<Selection, Maybe<Skill>>(sid.value)
+              sid => match<Selection, Maybe<Wiki.Skill>>(sid.value)
                 .on(isString, sid => Maybe.from(wiki.skills.get(sid)))
-                .otherwise(() => Maybe.from(undefined))
+                .otherwise(() => Maybe.from<never>(undefined))
                 .map(firstEntry => {
                   return (cost as number[])[entry.ic - 1] + firstEntry.ic;
                 }).value
@@ -209,7 +208,7 @@ const getEntrySpecificCost = (
         .map(v => v.active)
         .map(R.find<Data.ActiveObject>(R.propEq('sid', sid)))
         .map(base => base.tier)
-        .map<number | undefined>(
+        .map<number>(
           R.ifElse(R.equals(4), R.always(0), R.always(undefined))
         )
         .value
@@ -236,12 +235,12 @@ export const getCost = (
   wiki: WikiState,
   state?: Data.HeroDependent,
   costToAdd?: boolean,
-): Maybe<number | number[] | undefined> => {
+): Maybe<number | number[]> => {
   const { id, cost: customCost } = obj;
 
   return getWikiEntry<Wiki.Activatable>(wiki, id)
     .map(wikiEntry => {
-      type F = Maybe<Data.HeroDependent | undefined>;
+      type F = Maybe<Data.HeroDependent>;
 
       const { category, cost } = wikiEntry;
 

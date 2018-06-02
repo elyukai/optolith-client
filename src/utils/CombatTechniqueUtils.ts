@@ -4,7 +4,7 @@ import { CombatTechnique, WikiAll } from '../types/wiki';
 import { flattenDependencies } from './flattenDependencies';
 import { getAllEntriesByGroup } from './heroStateUtils';
 import { isActive } from './isActive';
-import { Maybe, isJust } from './maybe';
+import { Maybe } from './maybe';
 import { getActiveSelections } from './selectionUtils';
 
 const getMaxPrimaryAttributeValueById = (
@@ -14,7 +14,7 @@ const getMaxPrimaryAttributeValueById = (
   return primaryAttributeIds.reduce((max, id) => {
     const attribute = Maybe.from(state.attributes.get(id));
 
-    if (isJust(attribute)) {
+    if (Maybe.isJust(attribute)) {
       return Math.max(max, attribute.value.value);
     }
 
@@ -71,7 +71,7 @@ export const isIncreaseDisabled = (
 
 	if (state.phase < 3) {
     const startEl = Maybe.from(wiki.experienceLevels.get(state.experienceLevel));
-    if (isJust(startEl)) {
+    if (Maybe.isJust(startEl)) {
       max = startEl.value.maxCombatTechniqueRating;
     }
 	}

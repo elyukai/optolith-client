@@ -19,7 +19,7 @@ export const getNameCost = (
   state: Data.HeroDependent,
   costToAdd: boolean,
   locale?: Data.UIMessages,
-): Maybe<Data.ActivatableNameCost | undefined> =>
+): Maybe<Data.ActivatableNameCost> =>
   getCost(obj, wiki, state, costToAdd).bind(currentCost =>
     getName(obj, wiki, locale).map(names => ({
       ...obj,
@@ -39,7 +39,7 @@ export const getNameCostForWiki = (
   obj: Data.ActiveObjectWithId,
   wiki: WikiState,
   locale?: Data.UIMessages,
-): Maybe<Data.ActivatableNameCost | undefined> =>
+): Maybe<Data.ActivatableNameCost> =>
   getCost(obj, wiki).bind(currentCost =>
     getName(obj, wiki, locale).map(names => ({
       ...obj,

@@ -25,7 +25,7 @@ const createPrimaryAttributeDependencyModifier = (
   state: Data.HeroDependent,
   modify: ModifyIncreasableDependency,
 ) => (req: Reusable.RequiresPrimaryAttribute) => R.pipe(
-  Maybe.from((id: string) => modify(id, req.value)(state), state)
+  maybe((id: string) => modify(id, req.value)(state), state)
 )(getPrimaryAttributeId(state.specialAbilities, req.type));
 
 const createIncreasableDependencyModifier = (

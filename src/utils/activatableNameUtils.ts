@@ -48,11 +48,11 @@ const getEntrySpecificNameAddition = (
   wikiEntry: Wiki.Activatable,
   instance: Data.ActiveObjectWithId,
   wiki: WikiState,
-): string | undefined => {
+): Maybe<string> => {
   const { id, sid, sid2 } = instance;
   const { select, input } = wikiEntry;
 
-  return match<string, string | undefined>(id)
+  return match<string, Maybe<string>>(id)
     .on([
       'ADV_4',
       'ADV_47',
@@ -66,21 +66,16 @@ const getEntrySpecificNameAddition = (
       'SA_531',
       'SA_533',
       'SA_569',
-    ].includes, () => {
-      if (typeof sid === 'string') {
-        return getWikiEntry<Wiki.Skillish>(wiki, sid)
-          .map(entry => entry.name)
-          .value;
-      }
-      return;
-    })
-    .on('ADV_68', () => {
-      return findSelectOption(wikiEntry, sid)
+    ].includes, () =>
+      getWikiEntry<Wiki.Skillish>(wiki, sid as string)
+        .map(entry => entry.name)
+    )
+    .on('ADV_68', () =>
+      findSelectOption(wikiEntry, sid)
         .map(item => item && `${sid2} (${item.name})`)
-        .value;
-    })
-    .on('DISADV_33', () => {
-      return getSelectOptionName(wikiEntry, sid)
+    )
+    .on('DISADV_33', () =>
+      getSelectOptionName(wikiEntry, sid)
         .map(name => {
           if (isNumber(sid) && [7, 8].includes(sid)) {
             return `${name}: ${sid2}`;
@@ -89,38 +84,33 @@ const getEntrySpecificNameAddition = (
             return name;
           }
         })
-        .value;
-    })
-    .on('SA_9', () => {
-      if (typeof sid === 'string') {
-        return Maybe.from(wiki.skills.get(sid))
-          .map(skill => {
-            return R.pipe(
-              (sid2: string | number | undefined) => {
-                return R.unless<string | number | undefined, string | undefined>(
-                  isString,
-                  R.always(
-                    Maybe.from(skill.applications)
-                      .map(R.find(e => e.id === sid2))
-                      .map(app => app.name)
-                      .value
-                  )
-                );
-              },
-              name => `${skill.name}: ${name}`
-            )(sid2);
-          })
-          .value;
-      }
-      return;
-    })
+    )
+    .on('SA_9', () =>
+      Maybe.from(wiki.skills.get(sid as string))
+        .map(skill => {
+          return R.pipe(
+            (sid2: string | number | undefined) => {
+              return R.unless<string | number | undefined, string>(
+                isString,
+                R.always(
+                  Maybe.from(skill.applications)
+                    .map(R.find(e => e.id === sid2))
+                    .map(app => app.name)
+                    .valueOr('')
+                )
+              );
+            },
+            name => `${skill.name}: ${name}`
+          )(sid2);
+        })
+    )
     .on([
       'SA_414',
       'SA_663',
-    ].includes, () => {
-      return findSelectOption(wikiEntry, sid)
-        .map(item => {
-          return Maybe.from(item.target)
+    ].includes, () =>
+      findSelectOption(wikiEntry, sid)
+        .bind(item =>
+          Maybe.from(item.target)
             .map(target => {
               if (id === 'SA_414') {
                 return wiki.spells.get(target);
@@ -130,55 +120,46 @@ const getEntrySpecificNameAddition = (
               }
             })
             .map(target => `${target.name}: ${item.name}`)
-            .value;
-        })
-        .value;
-    })
-    .on('SA_680', () => {
-      if (typeof sid === 'string') {
-        return Maybe.from(wiki.skills.get(sid as string))
-          .map(entry => `: ${entry.name}`)
-          .value;
-      }
-      return;
-    })
-    .on('SA_699', () => {
-      return Maybe.from(wiki.specialAbilities.get('SA_29'))
-        .map(languages => {
-          return findSelectOption(languages, sid)
+        )
+    )
+    .on('SA_680', () =>
+      Maybe.from(wiki.skills.get(sid as string))
+        .map(entry => `: ${entry.name}`)
+    )
+    .on('SA_699', () =>
+      Maybe.from(wiki.specialAbilities.get('SA_29'))
+        .bind(languages =>
+          findSelectOption(languages, sid)
             .map(item => {
               return `${item.name}: ${
-                R.unless<string | number | undefined, string | undefined>(
+                R.unless<string | number | undefined, string>(
                   isString,
                   sid2 => Maybe.from(item.spec)
-                    .map(spec => {
-                      return Maybe.from(sid2 as number | undefined)
+                    .bind(spec =>
+                      Maybe.from(sid2 as number | undefined)
                         .map(sid2 => spec[sid2 - 1])
-                        .value
-                    })
-                    .value,
+                    )
+                    .valueOr(''),
                 )(sid2)
               }`;
             })
-            .value;
-        })
-        .value;
-    })
+        )
+    )
     .otherwise(() => {
       if (typeof input === 'string' && typeof sid === 'string') {
-        return sid;
+        return Maybe.from(sid);
       }
       else if (Array.isArray(select)) {
-        return getSelectOptionName(wikiEntry, sid).value;
+        return getSelectOptionName(wikiEntry, sid);
       }
-      return;
+      return Maybe.Nothing();
     });
 };
 
 const getEntrySpecificNameReplacements = (
   wikiEntry: Wiki.Activatable,
   instance: Data.ActiveObjectWithId,
-  nameAddition: string | undefined,
+  nameAddition: Maybe<string>,
   locale?: Data.UIMessages,
 ): string => {
   const { id, sid2, tier } = instance;
@@ -206,8 +187,8 @@ const getEntrySpecificNameReplacements = (
     .on('SA_639', () => {
       return `${name} ${nameAddition}`;
     })
-    .on(['SA_677', 'SA_678'].includes, () => {
-      return Maybe.from(locale)
+    .on(['SA_677', 'SA_678'].includes, () =>
+      Maybe.from(locale)
         .map(locale => {
           const part = getTraditionNameFromFullName(name);
           const musicTraditionLabels = translate(locale, 'musictraditions');
@@ -219,8 +200,8 @@ const getEntrySpecificNameReplacements = (
 
           return;
         })
-        .value;
-    })
+        .valueOr('')
+    )
     .otherwise(() => R.when(
       R.complement(R.isNil),
       () => `${name} (${nameAddition})`,
@@ -232,7 +213,7 @@ const getEntrySpecificNameReplacements = (
 export interface CombinedName {
   combinedName: string;
   baseName: string;
-  addName: string | undefined;
+  addName: Maybe<string>;
 }
 
 /**
@@ -246,7 +227,7 @@ export const getName = (
   instance: Data.ActiveObjectWithId,
   wiki: WikiState,
   locale?: Data.UIMessages,
-): Maybe<CombinedName | undefined> => {
+): Maybe<CombinedName> => {
   return getWikiEntry<Wiki.Activatable>(wiki, instance.id)
     .map(wikiEntry => {
       const addName = getEntrySpecificNameAddition(

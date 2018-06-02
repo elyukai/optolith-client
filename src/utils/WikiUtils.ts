@@ -50,22 +50,22 @@ export const getWikiStateKeyByCategory = <T extends Categories>(
 
 export const getWikiStateKeyById = (
   id: string,
-): Maybe<keyof WikiState | undefined> => R.pipe(
+): Maybe<keyof WikiState> => R.pipe(
   getCategoryById,
   category => Maybe.from(category).map(getWikiStateKeyByCategory),
 )(id);
 
 export function getWikiEntry<T extends Wiki.Entry = Wiki.Entry>(
   state: WikiState,
-): (id: string) => Maybe<T | undefined>;
+): (id: string) => Maybe<T>;
 export function getWikiEntry<T extends Wiki.Entry = Wiki.Entry>(
   state: WikiState,
   id: string,
-): Maybe<T | undefined>;
+): Maybe<T>;
 export function getWikiEntry<T extends Wiki.Entry = Wiki.Entry>(
   state: WikiState,
   id?: string,
-): Maybe<T | undefined> | ((id: string) => Maybe<T | undefined>) {
+): Maybe<T> | ((id: string) => Maybe<T>) {
   if (id === undefined) {
     return id =>
       getWikiStateKeyById(id)

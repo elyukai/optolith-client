@@ -3,6 +3,7 @@ import { Categories } from '../constants/Categories';
 import { Purse } from '../reducers/equipment';
 import { TabId } from '../utils/LocationUtils';
 import { StringKeyObject } from '../utils/collectionUtils';
+import { Maybe } from '../utils/maybe';
 import { RawRules } from './rawdata';
 import * as Reusable from './reusable.d';
 import { AllRequirementTypes } from './reusable.d';
@@ -506,7 +507,7 @@ export interface ActiveObjectWithId extends ActiveObject {
 export interface ActivatableNameCost extends ActiveObjectWithId {
   combinedName: string;
   baseName: string;
-  addName: string | undefined;
+  addName: Maybe<string>;
   currentCost: number | number[];
 }
 

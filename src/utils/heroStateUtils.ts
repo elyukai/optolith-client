@@ -5,7 +5,7 @@ import { EntryWithGroup } from '../types/wiki';
 import { getIdPrefix } from './IDUtils';
 import { adjustOrM, convertMapToValues, deleteMapItem, setMapItem } from './collectionUtils';
 import { match } from './match';
-import { Maybe, Maybe } from './maybe';
+import { Maybe } from './maybe';
 
 export type HeroStateListKey =
   'advantages' |
@@ -31,7 +31,7 @@ export type HeroStateMapKey =
 
 export const getHeroStateListKeyById = (
   id: string,
-): Maybe<HeroStateListKey | undefined> => {
+): Maybe<HeroStateListKey> => {
   return Maybe.from(
     match<IdPrefixes, HeroStateListKey | undefined>(getIdPrefix(id))
       .on(IdPrefixes.ADVANTAGES, () => 'advantages')
@@ -50,7 +50,7 @@ export const getHeroStateListKeyById = (
 
 export const getHeroStateListItem =
   <D extends Dependent = Dependent>(id: string) =>
-    (state: HeroDependent): Maybe<D | undefined> =>
+    (state: HeroDependent): Maybe<D> =>
       getHeroStateListKeyById(id)
         .map(key => state[key])
         .map(slice => slice instanceof Map

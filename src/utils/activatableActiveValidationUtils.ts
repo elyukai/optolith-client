@@ -357,7 +357,7 @@ export const isRemovalOrChangeDisabled = (
   obj: Data.ActiveObjectWithId,
   wiki: WikiState,
   state: Data.HeroDependent,
-): Maybe<ValidationObject | undefined> => {
+): Maybe<ValidationObject> => {
   return getWikiEntry<Wiki.WikiActivatable>(wiki, obj.id)
     .bind(wikiEntry =>
       getHeroStateListItem<Data.ActivatableDependent>(obj.id)(state)

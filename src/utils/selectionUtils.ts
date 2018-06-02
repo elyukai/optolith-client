@@ -12,7 +12,7 @@ import { Maybe } from './maybe';
 export const findSelectOption = <S extends Wiki.SelectionObject>(
   obj: Wiki.Activatable,
   id?: string | number,
-): Maybe<S | undefined> => Maybe.from(obj.select)
+): Maybe<S> => Maybe.from(obj.select)
   .map(select => select.find<S>((e): e is S => {
     return e.id === id;
   }));
@@ -25,7 +25,7 @@ export const findSelectOption = <S extends Wiki.SelectionObject>(
 export const getSelectOptionName = (
   obj: Wiki.Activatable,
   id?: string | number,
-): Maybe<string | undefined> => {
+): Maybe<string> => {
   return findSelectOption(obj, id)
     .map(e => e.name);
 };
@@ -38,7 +38,7 @@ export const getSelectOptionName = (
 export const getSelectOptionCost = (
   obj: Wiki.Activatable,
   id?: string | number,
-): Maybe<number | undefined> => {
+): Maybe<number> => {
   return findSelectOption(obj, id)
     .map(e => e.cost);
 };
@@ -56,7 +56,7 @@ interface SelectionNameAndCost {
 export const getSelectionNameAndCost = (
   obj: Wiki.Activatable,
   id?: string | number,
-): Maybe<SelectionNameAndCost | undefined> => {
+): Maybe<SelectionNameAndCost> => {
   return findSelectOption(obj, id)
     .map(e => {
       return typeof e.cost === 'number' ? {

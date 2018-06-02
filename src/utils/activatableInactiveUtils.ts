@@ -26,7 +26,7 @@ const getEntrySpecificSelections = (
   state: Data.HeroDependent,
   entry: Wiki.Activatable,
 ) => {
-  return match<string, Maybe<Wiki.SelectionObject[] | undefined>>(entry.id)
+  return match<string, Maybe<Wiki.SelectionObject[]>>(entry.id)
     .on([
       'ADV_4',
       'ADV_17',
@@ -857,7 +857,7 @@ export const getInactiveView = (
   validExtendedSpecialAbilities: string[],
   locale: Data.UIMessages,
   adventurePoints: AdventurePointsObject,
-): Maybe<Data.DeactiveViewObject | undefined> => {
+): Maybe<Data.DeactiveViewObject> => {
   const { id, dependencies } = instance;
 
   return getWikiEntry<Wiki.Activatable>(wiki, id)
@@ -923,6 +923,6 @@ export const getInactiveView = (
           });
       }
 
-      return Maybe.from(undefined);
+      return Maybe.Nothing();
     });
 }

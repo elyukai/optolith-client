@@ -1,5 +1,3 @@
-type OnlyNil<T> = T extends null | undefined ? T : never;
-
 export interface Functor<T> {
   map<U, X>(fn: (t: T) => U): Functor<U | X>;
   map<U>(fn: (t: T) => U): Functor<U>;
@@ -10,68 +8,61 @@ export interface Monad<T> {
   bind<U>(fn: (t: T) => Monad<U>): Monad<U>;
 }
 
-export interface MaybeFunctor<T> extends Functor<T>, Monad<T> {
-  map<U>(fn: (value: NonNullable<T>) => U): Maybe<U | OnlyNil<T>>;
-  bind<U>(fn: (value: NonNullable<T>) => Maybe<U>): Maybe<U | OnlyNil<T>>
-  valueOr<U>(or: U): NonNullable<T> | U;
-  reduce<U>(fn: (acc: U, current: NonNullable<T>) => U, acc: U): U;
+export interface MaybeFunctor<T extends {}> extends Functor<T>, Monad<T> {
+  map<U extends {}>(fn: (value: T) => U): Maybe<U>;
+  bind<U extends {}>(fn: (value: T) => Maybe<U>): Maybe<U>;
+  ap<U extends {}>(m: Maybe<((value: T) => U)>): Maybe<U>;
+  valueOr<U>(or: U): T | U;
+  reduce<U extends {}>(fn: (acc: U, current: T) => U, acc: U): U;
   toString(): string;
 }
 
-export interface Just<T> extends MaybeFunctor<T> {
-  readonly value: NonNullable<T>;
-  map<U>(fn: (value: NonNullable<T>) => U): Maybe<U>;
-  bind<U>(fn: (value: NonNullable<T>) => Maybe<U>): Maybe<U | OnlyNil<T>>
-  valueOr(): NonNullable<T>;
-  reduce<U>(fn: (acc: U, current: NonNullable<T>) => U, acc: U): U;
+export interface Just<T extends {}> extends MaybeFunctor<T> {
+  readonly value: T;
+  map<U extends {}>(fn: (value: T) => U | undefined): Maybe<U>;
+  bind<U extends {}>(fn: (value: T) => Maybe<U>): Maybe<U>
+  valueOr(): T;
 }
 
-export interface Nothing<T> extends MaybeFunctor<T> {
-  readonly value: OnlyNil<T>;
-  map(): Maybe<OnlyNil<T>>;
-  bind(): Maybe<OnlyNil<T>>;
+export interface Nothing<T extends {}> extends MaybeFunctor<T> {
+  readonly value: undefined;
+  map(): Maybe<never>;
+  bind(): Maybe<never>;
   valueOr<U>(or: U): U;
-  reduce<U>(fn: (acc: U, current: NonNullable<T>) => U, acc: U): U;
 }
 
 /**
  * The Maybe type allows the programmer to specify something may not be there.
  */
-export class Maybe<T> implements MaybeFunctor<T> {
-  readonly value: T;
+export class Maybe<T extends {}> implements MaybeFunctor<T> {
+  readonly value: T | undefined;
 
-  private constructor(value: T) {
+  private constructor(value: T | undefined) {
     this.value = value;
   }
 
-  map<U>(fn: (value: NonNullable<T>) => U): Maybe<U | OnlyNil<T>> {
-    return this.value == null
-      ? new Maybe(this.value)
-      : new Maybe(fn(this.value as NonNullable<T>));
+  map<U extends {}>(fn: (value: T) => U | undefined): Maybe<U> {
+    return this.value == null ? Maybe.Nothing() : new Maybe(fn(this.value));
   }
 
-  bind<U>(fn: (value: NonNullable<T>) => Maybe<U>): Maybe<U | OnlyNil<T>> {
-    return this.value == null
-      ? new Maybe(this.value)
-      : fn(this.value as NonNullable<T>)
+  bind<U extends {}>(fn: (value: T) => Maybe<U>): Maybe<U> {
+    return this.value == null ? Maybe.Nothing() : fn(this.value);
   }
 
-  valueOr<U>(or: U): NonNullable<T> | U {
-    return this.value == null
-      ? or
-      : this.value as NonNullable<T>;
+  ap<U extends {}>(m: Maybe<((value: T) => U)>): Maybe<U> {
+    return this.value == null ? Maybe.Nothing() : m.map(fn => fn(this.value!));
   }
 
-  reduce<U>(fn: (acc: U, current: NonNullable<T>) => U, initial: U): U {
-    return this.value == null
-      ? initial
-      : fn(initial, this.value!);
+  valueOr<U>(or: U): T | U {
+    return this.value == null ? or : this.value;
+  }
+
+  reduce<U extends {}>(fn: (acc: U, current: T) => U, initial: U): U {
+    return this.value == null ? initial : fn(initial, this.value);
   }
 
   toString(): string {
-    return this.value == null
-      ? `Nothing`
-      : `Just(${this.value})`;
+    return this.value == null ? `Nothing` : `Just(${this.value})`;
   }
 
   /**
@@ -79,7 +70,7 @@ export class Maybe<T> implements MaybeFunctor<T> {
    *
    * Creates a new `Maybe` from the given value.
    */
-  static from<T>(value: T): Maybe<T> {
+  static from<T extends {}>(value: T | undefined): Maybe<T> {
     return new Maybe(value);
   }
 
@@ -91,7 +82,9 @@ export class Maybe<T> implements MaybeFunctor<T> {
    * value. Otherwise, it applies the function to the value inside the `Just`
    * and returns the result.
    */
-  static maybe<T, U>(defaultTo: U): (fn: (x: T) => U) => (m: Maybe<T>) => U {
+  static maybe<T extends {}, U extends {}>(
+    defaultTo: U
+  ): (fn: (x: T) => U) => (m: Maybe<T>) => U {
     return fn => m => m.reduce((_, x) => fn(x), defaultTo);
   }
 
@@ -101,7 +94,7 @@ export class Maybe<T> implements MaybeFunctor<T> {
    * The `isJust` function returns `true` if its argument is of the form
    * `Just _`.
    */
-  static isJust<T>(x: Maybe<T>): x is Just<T> {
+  static isJust<T extends {}>(x: Maybe<T>): x is Just<T> {
     return x.value != null;
   }
 
@@ -110,7 +103,7 @@ export class Maybe<T> implements MaybeFunctor<T> {
    *
    * The `isNothing` function returns `true` if its argument is `Nothing`.
    */
-  static isNothing<T>(x: Maybe<T>): x is Nothing<T> {
+  static isNothing<T extends {}>(x: Maybe<T>): x is Nothing<T> {
     return x.value == null;
   }
 
@@ -120,7 +113,7 @@ export class Maybe<T> implements MaybeFunctor<T> {
    * The `fromJust` function extracts the element out of a `Just` and throws an
    * error if its argument is `Nothing`.
    */
-  static fromJust<T>(m: Maybe<T>): NonNullable<T> {
+  static fromJust<T extends {}>(m: Maybe<T>): T {
     if (Maybe.isJust(m)) {
       return m.value;
     }
@@ -135,7 +128,7 @@ export class Maybe<T> implements MaybeFunctor<T> {
    * the `Maybe` is `Nothing`, it returns the default values; otherwise, it
    * returns the value contained in the `Maybe`.
    */
-  static fromMaybe<T>(defaultTo: T): (m: Maybe<T | undefined | null>) => T {
+  static fromMaybe<T extends {}>(defaultTo: T): (m: Maybe<T>) => T {
     return m => this.isJust(m) ? m.value : defaultTo;
   }
 
@@ -145,10 +138,10 @@ export class Maybe<T> implements MaybeFunctor<T> {
    * The `catMaybes` function takes a list of `Maybe`s and returns a list of all
    * the `Just` values.
    */
-  static catMaybes<T>(
+  static catMaybes<T extends {}>(
     list: ReadonlyArray<Maybe<T>>
-  ): ReadonlyArray<NonNullable<T>> {
-    return list.reduce<NonNullable<T>[]>(
+  ): ReadonlyArray<T> {
+    return list.reduce<T[]>(
       (acc, e) => Maybe.isJust(e) ? [...acc, e.value] : acc,
       [],
     );
@@ -162,21 +155,21 @@ export class Maybe<T> implements MaybeFunctor<T> {
    * If this is `Nothing`, no element is added on to the result list. If it is
    * `Just b`, then `b` is included in the result list.
    */
-  static mapMaybe<T, U>(
+  static mapMaybe<T extends {}, U extends {}>(
     fn: (x: T) => Maybe<U>,
-  ): (list: ReadonlyArray<T>) => ReadonlyArray<NonNullable<U>>;
-  static mapMaybe<T, U>(
+  ): (list: ReadonlyArray<T>) => ReadonlyArray<U>;
+  static mapMaybe<T extends {}, U extends {}>(
     fn: (x: T) => Maybe<U>,
     list: ReadonlyArray<T>,
-  ): ReadonlyArray<NonNullable<U>>;
-  static mapMaybe<T, U>(
+  ): ReadonlyArray<U>;
+  static mapMaybe<T extends {}, U extends {}>(
     fn: (x: T) => Maybe<U>,
     list?: ReadonlyArray<T>,
-  ): ReadonlyArray<NonNullable<U>> | (
-    (list: ReadonlyArray<T>) => ReadonlyArray<NonNullable<U>>
+  ): ReadonlyArray<U> | (
+    (list: ReadonlyArray<T>) => ReadonlyArray<U>
   ) {
     if (list === undefined) {
-      return list => list.reduce<NonNullable<U>[]>(
+      return list => list.reduce<U[]>(
         (acc, e) => {
           const res = fn(e);
           return Maybe.isJust(res) ? [...acc, res.value] : acc;
@@ -185,13 +178,17 @@ export class Maybe<T> implements MaybeFunctor<T> {
       );
     }
 
-    return list.reduce<NonNullable<U>[]>(
+    return list.reduce<U[]>(
       (acc, e) => {
         const res = fn(e);
         return Maybe.isJust(res) ? [...acc, res.value] : acc;
       },
       [],
     );
+  }
+
+  static Nothing(): Maybe<never> {
+    return new Maybe<never>(undefined);
   }
 
   // /**
