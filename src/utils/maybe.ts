@@ -24,7 +24,7 @@ export interface Just<T extends {}> extends MaybeFunctor<T> {
   valueOr(): T;
 }
 
-export interface Nothing<T extends {}> extends MaybeFunctor<T> {
+export interface Nothing extends MaybeFunctor<never> {
   readonly value: undefined;
   map(): Maybe<never>;
   bind(): Maybe<never>;
@@ -103,7 +103,7 @@ export class Maybe<T extends {}> implements MaybeFunctor<T> {
    *
    * The `isNothing` function returns `true` if its argument is `Nothing`.
    */
-  static isNothing<T extends {}>(x: Maybe<T>): x is Nothing<T> {
+  static isNothing<T extends {}>(x: Maybe<T>): x is Nothing {
     return x.value == null;
   }
 
@@ -187,8 +187,12 @@ export class Maybe<T extends {}> implements MaybeFunctor<T> {
     );
   }
 
-  static Nothing(): Maybe<never> {
-    return new Maybe<never>(undefined);
+  static Just<T extends {}>(value: T): Just<T> {
+    return new Maybe(value) as Just<T>;
+  }
+
+  static Nothing(): Nothing {
+    return new Maybe(undefined) as Nothing;
   }
 
   // /**
@@ -196,7 +200,7 @@ export class Maybe<T extends {}> implements MaybeFunctor<T> {
   //  *
   //  * If the passed value passes the given predicate function, it is passed to
   //  * the second parameter and returned as a Maybe. If the passed value does not
-  //  * pass the given predicate function, Nothing(undefined) is returned.
+  //  * pass the given predicate function, Nothing is returned.
   //  */
   // static fromPred<T, I extends T, R>(
   //   pred: (test: T) => test is I,
