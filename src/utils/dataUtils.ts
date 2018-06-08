@@ -390,7 +390,8 @@ export interface Nothing extends Maybe<never> {
   alt<T>(m: Maybe<T>): Maybe<T>;
 }
 
-export class List<T> implements Al.Functor<T>, Al.Foldable<T>, Al.Semigroup<T> {
+export class List<T> implements Al.Functor<T>, Al.Foldable<T>, Al.Semigroup<T>,
+  Al.Filterable<T> {
   private readonly value: ReadonlyArray<T>;
 
   constructor(initialList?: ReadonlyArray<T>) {
@@ -480,9 +481,7 @@ export class List<T> implements Al.Functor<T>, Al.Foldable<T>, Al.Semigroup<T> {
     initial?: U
   ): U | ((initial: U) => U) {
     const resultFn = (fn: (acc: U) => (current: T) => U) => (initial: U) =>
-      this.value == null
-        ? initial
-        : this.value.reduce<U>((acc, e) => fn(acc)(e), initial);
+      this.value.reduce<U>((acc, e) => fn(acc)(e), initial);
 
     if (arguments.length === 2) {
       return resultFn(fn)(initial!);
@@ -919,7 +918,8 @@ export class Tuple<T, U> implements Al.Functor<U> {
 
 type LookupWithKey<K, V> = Tuple<Maybe<V>, ReadMap<K, V>>;
 
-export class ReadMap<K, V> implements Al.Functor<V> {
+export class ReadMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
+  Al.Foldable<V> {
   private readonly value: ReadonlyMap<K, V>;
 
   constructor(initial?: ReadonlyMap<K, V> | [K, V][] | List<Tuple<K, V>>) {
@@ -1419,6 +1419,32 @@ export class ReadMap<K, V> implements Al.Functor<V> {
     )));
   }
 
+  // FOLDS
+
+  /**
+   * `foldl :: (a -> b -> a) -> a -> Map k b -> a`
+   *
+   * Fold the values in the map using the given left-associative binary
+   * operator, such that `foldl f z == foldl f z . elems`.
+   */
+  foldl<U extends Some>(fn: (acc: U) => (current: V) => U): (initial: U) => U;
+  foldl<U extends Some>(fn: (acc: U) => (current: V) => U, initial: U): U;
+  foldl<U extends Some>(
+    fn: (acc: U) => (current: V) => U,
+    initial?: U
+  ): U | ((initial: U) => U) {
+    const resultFn = (fn: (acc: U) => (current: V) => U) => (initial: U) =>
+      [...this.value].reduce<U>((acc, [_, value]) => fn(acc)(value), initial);
+
+    if (arguments.length === 2) {
+      return resultFn(fn)(initial!);
+    }
+
+    return resultFn(fn);
+  }
+
+  // CONVERSION
+
   /**
    * `elems :: Map k a -> [a]`
    *
@@ -1444,6 +1470,19 @@ export class ReadMap<K, V> implements Al.Functor<V> {
    */
   assocs(): List<Tuple<K, V>> {
     return List.of([...this.value].map(([key, value]) => new Tuple(key, value)));
+  }
+
+  // FILTER
+
+  /**
+   * `filter :: (a -> Bool) -> Map k a -> Map k a`
+   *
+   * Filter all values that satisfy the predicate.
+   */
+  filter<U extends V>(pred: (value: V) => value is U): ReadMap<K, U>;
+  filter(pred: (value: V) => boolean): ReadMap<K, V>;
+  filter(pred: (value: V) => boolean): ReadMap<K, V> {
+    return ReadMap.of([...this.value].filter(([_, value]) => pred(value)));
   }
 
   static of<K, V>(
@@ -1486,9 +1525,178 @@ export class ReadMap<K, V> implements Al.Functor<V> {
   }
 }
 
-export class ReadSet<T> {
+export class ReadSet<T> implements Al.Functor<T>, Al.Foldable<T>,
+  Al.Filterable<T> {
+  private readonly value: ReadonlySet<T>;
+
+  constructor(initial?: ReadonlySet<T> | T[] | List<T>) {
+    if (initial instanceof Set) {
+      this.value = initial;
+    }
+    else if (initial instanceof List) {
+      this.value = new Set(List.toArray(initial));
+    }
+    else if (initial !== undefined) {
+      this.value = new Set(initial);
+    }
+    else {
+      this.value = new Set();
+    }
+  }
+
+  // QUERY
+
   /**
-   * unions
-   * notMember
+   * `null :: Set a -> Bool`
+   *
+   * Is this the empty set?
    */
+  null(): boolean {
+    return this.value.size === 0;
+  }
+
+  /**
+   * `size :: Set a -> Int`
+   *
+   * The number of elements in the set.
+   */
+  size(): number {
+    return this.value.size;
+  }
+
+  /**
+   * `member :: Ord a => a -> Set a -> Bool`
+   *
+   * Is the element in the set?
+   */
+  member(value: T): boolean {
+    return this.value.has(value);
+  }
+
+  /**
+   * `notMember :: Ord k => k -> Set a -> Bool`
+   *
+   * Is the element not in the set?
+   */
+  notMember(value: T): boolean {
+    return !this.member(value);
+  }
+
+  // CONSTRUCTION
+
+  /**
+   * `insert :: Ord a => a -> Set a -> Set a`
+   *
+   * Insert an element in a set. If the set already contains an element equal to
+   * the given value, it is replaced with the new value.
+   */
+  insert(value: T): ReadSet<T> {
+    return ReadSet.of([...this.value, value]);
+  }
+
+  /**
+   * `delete :: Ord a => a -> Set a -> Set a`
+   *
+   * Delete an element from a set.
+   */
+  delete(value: T): ReadSet<T> {
+    return ReadSet.of([...this.value].filter(e => e !== value));
+  }
+
+  // COMBINE
+
+  /**
+   * `union :: Ord a => Set a -> Set a -> Set a`
+   *
+   * The union of two sets, preferring the first set when equal elements are
+   * encountered.
+   */
+  union(add: ReadSet<T>) {
+    return ReadSet.of([...this.value, ...add.value]);
+  }
+
+  // FILTER
+
+  /**
+   * `filter :: (a -> Bool) -> Set a -> Set a`
+   *
+   * Filter all values that satisfy the predicate.
+   */
+  filter<U extends T>(pred: (value: T) => value is U): ReadSet<U>;
+  filter(pred: (value: T) => boolean): ReadSet<T>;
+  filter(pred: (value: T) => boolean): ReadSet<T> {
+    return ReadSet.of([...this.value].filter(pred));
+  }
+
+  // MAP
+
+  /**
+   * `map :: Ord b => (a -> b) -> Set a -> Set b`
+   *
+   * `map f s` is the set obtained by applying `f` to each element of `s`.
+   *
+   * It's worth noting that the size of the result may be smaller if, for some
+   * `(x,y), x /= y && f x == f y`.
+   */
+  map<U>(fn: (value: T) => U): ReadSet<U> {
+    return ReadSet.of([...this.value].map(fn));
+  }
+
+  // FOLDS
+
+  /**
+   * `foldl :: Foldable t => (b -> a -> b) -> b -> t a -> b`
+   *
+   * Fold the elements in the set using the given left-associative binary
+   * operator, such that `foldl f z == foldl f z . toAscList`.
+   */
+  foldl<U extends Some>(fn: (acc: U) => (current: T) => U): (initial: U) => U;
+  foldl<U extends Some>(fn: (acc: U) => (current: T) => U, initial: U): U;
+  foldl<U extends Some>(
+    fn: (acc: U) => (current: T) => U,
+    initial?: U
+  ): U | ((initial: U) => U) {
+    const resultFn = (fn: (acc: U) => (current: T) => U) => (initial: U) =>
+      [...this.value].reduce<U>((acc, e) => fn(acc)(e), initial);
+
+    if (arguments.length === 2) {
+      return resultFn(fn)(initial!);
+    }
+
+    return resultFn(fn);
+  }
+
+  // CONVERSION LIST
+
+  /**
+   * `elems :: Set a -> [a]`
+   *
+   * An alias of toAscList. The elements of a set in ascending order. Subject to
+   * list fusion.
+   */
+  elems(): List<T> {
+    return List.of([...this.value]);
+  }
+
+  static of<T>(set: ReadonlySet<T> | T[] | List<T>): ReadSet<T> {
+    return new ReadSet(set);
+  }
+
+  /**
+   * `empty :: Set a`
+   *
+   * The empty set.
+   */
+  static empty<T>(): ReadSet<T> {
+    return new ReadSet();
+  }
+
+  /**
+   * `singleton :: a -> Set a`
+   *
+   * Create a singleton set.
+   */
+  static singleton<T>(value: T): ReadSet<T> {
+    return new ReadSet([value]);
+  }
 }

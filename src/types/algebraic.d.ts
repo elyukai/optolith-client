@@ -62,3 +62,10 @@ export interface ChainRec<T> extends Bind<T> {
    */
   chainRec<T, U, V>(fn: (fn1: (x: T) => V, fn2: (x: U) => V, x: T) => ChainRec<V>, x: T): ChainRec<U>;
 }
+
+export interface Filterable<T> {
+  /**
+   * `filter :: (a -> Bool) -> Filterable a -> Filterable a`
+   */
+  filter(pred: (value: T) => boolean): Filterable<T>;
+}
