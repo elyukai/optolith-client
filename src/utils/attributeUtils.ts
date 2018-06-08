@@ -16,7 +16,7 @@ export const isIncreasable = (
 ): boolean => {
   if (state.phase < 3) {
     const attributes = convertMapToValues(state.attributes);
-    return Maybe.from(wiki.experienceLevels.get(state.experienceLevel))
+    return Maybe.of(wiki.experienceLevels.get(state.experienceLevel))
       .map(startEl => {
         const total = getSum(attributes);
         const reachedMaxTotal = total >= startEl.maxTotalAttributeValues;
@@ -35,7 +35,7 @@ export const isIncreasable = (
       state.adventurePoints.total,
     );
 
-    return Maybe.from(wiki.experienceLevels.get(currentExperienceLevellId))
+    return Maybe.of(wiki.experienceLevels.get(currentExperienceLevellId))
       .map(currentEl => {
         return instance.value < currentEl.maxAttributeValue + 2;
       })
@@ -58,6 +58,11 @@ export const isDecreasable = (
 
   return instance.value > Math.max(8, ...dependencies);
 };
+
+export const getSkillCheckValues =
+  (attributes: ReadonlyMap<string, Data.AttributeDependent>) => Maybe.mapMaybe(
+    (id: string) => Maybe.of(attributes.get(id)).map(e => e.value)
+  );
 
 export function convertId<T extends string | undefined>(id: T): T {
   switch (id) {

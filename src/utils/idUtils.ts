@@ -1,6 +1,7 @@
 import { Categories } from '../constants/Categories';
 import { IdPrefixes } from '../constants/IdPrefixes';
 import { match } from './match';
+import { Maybe } from './maybe';
 
 export const getNewId = (keys: string[]) => {
   return keys.reduce((n, id) => {
@@ -11,7 +12,7 @@ export const getNewId = (keys: string[]) => {
 export const getNewIdByDate = () => Date.now().valueOf();
 
 export const getCategoryByIdPrefix = (id: IdPrefixes) => {
-  return match<IdPrefixes, Categories | undefined>(id)
+  return Maybe.of(match<IdPrefixes, Categories | undefined>(id)
     .on(IdPrefixes.ADVANTAGES, () => Categories.ADVANTAGES)
     .on(IdPrefixes.ATTRIBUTES, () => Categories.ATTRIBUTES)
     .on(IdPrefixes.BLESSINGS, () => Categories.BLESSINGS)
@@ -27,7 +28,7 @@ export const getCategoryByIdPrefix = (id: IdPrefixes) => {
     .on(IdPrefixes.SPECIAL_ABILITIES, () => Categories.SPECIAL_ABILITIES)
     .on(IdPrefixes.SPELLS, () => Categories.SPELLS)
     .on(IdPrefixes.TALENTS, () => Categories.TALENTS)
-    .otherwise(() => undefined);
+    .otherwise(() => undefined));
 };
 
 export const getCategoryById = (id: string) => {
@@ -71,11 +72,11 @@ export const isMagicalTraditionId = (id: string) => {
 };
 
 export const getMagicalTraditionInstanceIdByNumericId = (id: number) => {
-  return magicalTraditionIdByNumericId.get(id)!;
+  return Maybe.of(magicalTraditionIdByNumericId.get(id));
 };
 
 export const getNumericMagicalTraditionIdByInstanceId = (id: string) => {
-  return magicalNumericIdByTraditionId.get(id)!;
+  return Maybe.of(magicalNumericIdByTraditionId.get(id));
 };
 
 const blessedTraditionIdByNumericId = new Map([
@@ -125,9 +126,9 @@ export const isBlessedTraditionId = (id: string) => {
 };
 
 export const getBlessedTraditionInstanceIdByNumericId = (id: number) => {
-  return blessedTraditionIdByNumericId.get(id)!;
+  return Maybe.of(blessedTraditionIdByNumericId.get(id));
 };
 
 export const getNumericBlessedTraditionIdByInstanceId = (id: string) => {
-  return blessedNumericIdByTraditionId.get(id)!;
+  return Maybe.of(blessedNumericIdByTraditionId.get(id));
 };

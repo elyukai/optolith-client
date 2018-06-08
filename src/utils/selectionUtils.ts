@@ -1,7 +1,7 @@
 import R from 'ramda';
 import * as Data from '../types/data.d';
 import * as Wiki from '../types/wiki.d';
-import { filterExisting, setMapItem } from './collectionUtils';
+import { setMapItem } from './collectionUtils';
 import { Maybe } from './maybe';
 
 /**
@@ -12,7 +12,7 @@ import { Maybe } from './maybe';
 export const findSelectOption = <S extends Wiki.SelectionObject>(
   obj: Wiki.Activatable,
   id?: string | number,
-): Maybe<S> => Maybe.from(obj.select)
+): Maybe<S> => Maybe.of(obj.select)
   .map(select => select.find<S>((e): e is S => {
     return e.id === id;
   }));
@@ -70,16 +70,13 @@ export const getSelectionNameAndCost = (
  * Get all `ActiveObject.sid` values from the given instance.
  * @param obj The entry.
  */
-export const getActiveSelections = R.pipe(
-  (obj: Data.ActivatableDependent | undefined) => Maybe.from(obj),
-  obj => obj
-    .map(R.pipe(
+export const getActiveSelections =
+  (obj: Maybe<Data.ActivatableDependent>) =>
+    obj.map(R.pipe(
       obj => obj.active,
-      R.map<Data.ActiveObject, Data.ActiveObject["sid"]>(e => e.sid),
-      filterExisting,
+      Maybe.mapMaybe<Data.ActiveObject, string | number>(e => Maybe.of(e.sid)),
     ))
-    .valueOr<(string | number)[]>([]),
-);
+    .valueOr<ReadonlyArray<string | number>>([]);
 
 type SecondarySelections = ReadonlyMap<number | string, (string | number)[]>;
 
@@ -88,10 +85,9 @@ type SecondarySelections = ReadonlyMap<number | string, (string | number)[]>;
  * `ActiveObject.sid` in Map.
  * @param entry
  */
-export const getActiveSecondarySelections = R.pipe(
-  (entry: Data.ActivatableDependent | undefined) => Maybe.from(entry),
-  obj => obj
-    .map(R.pipe(
+export const getActiveSecondarySelections =
+  (obj: Maybe<Data.ActivatableDependent>) =>
+    obj.map(R.pipe(
       obj => obj.active,
       (obj: Data.ActiveObject[]) => obj.reduce<SecondarySelections>(
         (map, obj) => {
@@ -104,16 +100,15 @@ export const getActiveSecondarySelections = R.pipe(
         new Map()
       ),
     ))
-    .valueOr<SecondarySelections>(new Map()),
-);
+    .valueOr<SecondarySelections>(new Map());
 
 /**
  * Get all `DependencyObject.sid` values from the given instance.
  * @param obj The entry.
  */
-export const getRequiredSelections = R.pipe(
-  (obj: Data.ActivatableDependent | undefined) => obj ? obj.dependencies : [],
-  list => list.filter((e): e is Data.DependencyObject => isObject(e)),
-  (list: Data.DependencyObject[]) => R.map(e => e.sid, list),
-  filterExisting
-);
+export const getRequiredSelections =
+  (obj: Maybe<Data.ActivatableDependent>) => obj
+    .map(obj => obj.dependencies)
+    .map(list => list.filter((e): e is Data.DependencyObject => isObject(e)))
+    .map(Maybe.mapMaybe(e => Maybe.of(e.sid)))
+    .valueOr<ReadonlyArray<number | string | number[]>>([]);

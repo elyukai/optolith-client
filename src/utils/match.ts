@@ -26,19 +26,3 @@ export const match = <T, R>(x: T): Match<T, R> => ({
   },
   otherwise: (fn: (x: T) => R) => fn(x),
 });
-
-interface IfOrNil {
-  <T, I extends T, R>(
-    pred: (test: T) => test is I,
-    isTrue: (value: I) => R,
-  ): (value: T) => R | undefined;
-  <T, R>(
-    pred: (test: T) => boolean,
-    isTrue: (value: T) => R,
-  ): (value: T) => R | undefined;
-}
-
-export const ifOrUndefined: IfOrNil = <T, R>(
-  pred: (test: T) => boolean,
-  isTrue: (value: T) => R,
-) => (value: T) => pred(value) ? isTrue(value) : undefined;

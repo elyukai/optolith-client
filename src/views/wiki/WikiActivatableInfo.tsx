@@ -197,7 +197,7 @@ export function WikiActivatableInfo(props: WikiActivatableInfoProps) {
       case 25: {
         const SA_639 = specialAbilities.get('SA_639');
 
-        const additionalExtended = SA_639 && SA_639.select && SA_639.select.reduce<ActiveObject[]>((arr, selectionObject) => {
+        const additionalExtended = SA_639 && SA_639.select && SA_639.select.foldl<ActiveObject[]>((arr, selectionObject) => {
           if (selectionObject.prerequisites) {
             if (selectionObject.prerequisites.find(e => e.id === currentObject.id || e.id.includes(currentObject.id))) {
               return [

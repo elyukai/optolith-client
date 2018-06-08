@@ -12,7 +12,7 @@ const getMaxPrimaryAttributeValueById = (
   primaryAttributeIds: string[],
 ) => {
   return primaryAttributeIds.reduce((max, id) => {
-    const attribute = Maybe.from(state.attributes.get(id));
+    const attribute = Maybe.of(state.attributes.get(id));
 
     if (Maybe.isJust(attribute)) {
       return Math.max(max, attribute.value.value);
@@ -70,7 +70,7 @@ export const isIncreaseDisabled = (
 	const bonus = selectedExceptionalSkills.includes(instance.id) ? 1 : 0;
 
 	if (state.phase < 3) {
-    const startEl = Maybe.from(wiki.experienceLevels.get(state.experienceLevel));
+    const startEl = Maybe.of(wiki.experienceLevels.get(state.experienceLevel));
     if (Maybe.isJust(startEl)) {
       max = startEl.value.maxCombatTechniqueRating;
     }

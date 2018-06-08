@@ -1,5 +1,6 @@
 import R from 'ramda';
 import * as Data from '../types/data.d';
+import { List } from './dataUtils';
 import { match } from './match';
 
 const addCustomCost = (
@@ -53,7 +54,7 @@ export const convertUIStateToActiveObject =
  */
 export const convertActivatableToArray = (
   obj: Data.ActivatableDependent,
-): Data.ActiveObjectWithId[] => {
+): List<Data.ActiveObjectWithId> => {
   return obj.active.map((e, index) => ({ ...e, id: obj.id, index }));
 };
 

@@ -139,7 +139,7 @@ const getPrinciplesObligationsDiff = (
   sourceId: string,
 ): number => {
   if (entries.some(e => e.id === sourceId)) {
-    const { active } = state.get(sourceId)!;
+    const { active } = state.get(sourceId);
 
     const maxCurrentTier = active.reduce((a, b) => {
       const isNotCustom = b.cost === undefined;
@@ -170,7 +170,7 @@ const getPrinciplesObligationsDiff = (
       return a;
     }, 0);
 
-    const baseCost = wiki.disadvantages.get(sourceId)!.cost as number;
+    const baseCost = wiki.disadvantages.get(sourceId).cost as number;
     const amountDiff = amountMaxTiers > 1 ? maxCurrentTier * -baseCost : 0;
     const levelDiff = subMaxCurrentTier * -baseCost;
 
@@ -184,7 +184,7 @@ const getPropertyOrAspectKnowledgeDiff = (
   state: Map<string, Data.ActivatableInstance>,
   apArr: number[],
 ): number => {
-  const { active } = state.get('SA_72')!;
+  const { active } = state.get('SA_72');
 
   const actualAPSum = apArr.reduce((a, b, i) => {
     return i + 1 < active.length ? a + b : a;
@@ -207,29 +207,29 @@ export function getAdventurePointsSpentDifference(
   diff += getPrinciplesObligationsDiff(entries, state, wiki, 'DISADV_50');
 
   if (entries.some(e => e.id === 'DISADV_33')) {
-    const { active } = state.get('DISADV_33')!;
+    const { active } = state.get('DISADV_33');
     if (active.filter(e => e.sid === 7 && e.cost === undefined).length > 1) {
-      diff -= wiki.disadvantages.get('DISADV_33')!.select!
-        .find(e => e.id === 7)!.cost!;
+      diff -= wiki.disadvantages.get('DISADV_33').select
+        .find(e => e.id === 7).cost;
     }
   }
 
   if (entries.some(e => e.id === 'DISADV_36')) {
-    const { active } = state.get('DISADV_36')!;
+    const { active } = state.get('DISADV_36');
     if (getActiveWithNoCustomCost(active).length > 3) {
-      diff -= (wiki.disadvantages.get('DISADV_36')!.cost as number) * 3;
+      diff -= (wiki.disadvantages.get('DISADV_36').cost as number) * 3;
     }
   }
 
   if (entries.some(e => e.id === 'SA_9')) {
-    const { active } = state.get('SA_9')!;
+    const { active } = state.get('SA_9');
     const sameSkill = new Map<string, number>();
     const skillDone = new Map<string, number>();
 
     for (const { sid } of active) {
       const id = sid as string;
       if (sameSkill.has(id)) {
-        sameSkill.set(id, sameSkill.get(id)! + 1);
+        sameSkill.set(id, sameSkill.get(id) + 1);
       }
       else {
         sameSkill.set(id, 1);
@@ -238,10 +238,10 @@ export function getAdventurePointsSpentDifference(
 
     for (const { sid } of active) {
       const id = sid as string;
-      const counter = sameSkill.get(id)!;
-      if (!skillDone.has(id) || skillDone.get(id)! < counter) {
+      const counter = sameSkill.get(id);
+      if (!skillDone.has(id) || skillDone.get(id) < counter) {
         const current = skillDone.get(id) || 0;
-        const skill = wiki.skills.get(id)!;
+        const skill = wiki.skills.get(id);
         diff += skill.ic * (current + 1 - counter);
         skillDone.set(id, current + 1);
       }

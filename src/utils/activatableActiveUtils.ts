@@ -2,7 +2,7 @@ import { WikiState } from '../reducers/wikiReducer';
 import * as Data from '../types/data.d';
 import { getCost } from './activatableCostUtils';
 import { getName } from './activatableNameUtils';
-import { Maybe } from './maybe';
+import { Maybe } from './dataUtils';
 
 /**
  * Returns name, splitted and combined, as well as the AP you get when removing
@@ -20,13 +20,14 @@ export const getNameCost = (
   costToAdd: boolean,
   locale?: Data.UIMessages,
 ): Maybe<Data.ActivatableNameCost> =>
-  getCost(obj, wiki, state, costToAdd).bind(currentCost =>
-    getName(obj, wiki, locale).map(names => ({
-      ...obj,
-      ...names,
-      currentCost
-    }))
-  );
+  getCost(obj, wiki, state, costToAdd)
+    .bind(currentCost => getName(obj, wiki, locale)
+      .map(names => ({
+        ...obj,
+        ...names,
+        currentCost
+      }))
+    );
 
 /**
  * Returns name, splitted and combined, as well as the AP you get when removing
@@ -40,10 +41,11 @@ export const getNameCostForWiki = (
   wiki: WikiState,
   locale?: Data.UIMessages,
 ): Maybe<Data.ActivatableNameCost> =>
-  getCost(obj, wiki).bind(currentCost =>
-    getName(obj, wiki, locale).map(names => ({
-      ...obj,
-      ...names,
-      currentCost
-    }))
-  );
+  getCost(obj, wiki)
+    .bind(currentCost => getName(obj, wiki, locale)
+      .map(names => ({
+        ...obj,
+        ...names,
+        currentCost
+      }))
+    );

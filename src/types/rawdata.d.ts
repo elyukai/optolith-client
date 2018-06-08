@@ -4,12 +4,81 @@ import * as Reusable from './reusable.d';
 import * as UI from './ui.d';
 import * as Wiki from './wiki.d';
 
-export interface RawHero extends Data.HeroBaseBase {
+export interface HeroBaseForHerolist {
+}
+
+export interface RawHero {
 	readonly id: string;
+  readonly name: string;
+  readonly avatar?: string;
+  readonly ap: {
+    total: number;
+    spent: number;
+  };
+  readonly r?: string;
+  readonly rv?: string;
+  readonly c?: string;
+  readonly p?: string;
+  professionName?: string;
+  readonly pv?: string;
+  readonly sex: 'm' | 'f';
 	readonly dateCreated: string;
 	readonly dateModified: string;
 	player?: Data.User;
 	rules: RawRules;
+  readonly clientVersion: string;
+  readonly phase: number;
+  readonly el: string;
+  readonly pers: {
+    family?: string;
+    placeofbirth?: string;
+    dateofbirth?: string;
+    age?: string;
+    haircolor?: number;
+    eyecolor?: number;
+    size?: string;
+    weight?: string;
+    title?: string;
+    socialstatus?: number;
+    characteristics?: string;
+    otherinfo?: string;
+    cultureAreaKnowledge?: string;
+  };
+  readonly activatable: StringKeyObject<Data.ActiveObject[]>;
+  readonly attr: {
+    values: [string, number, number][];
+    lp: number;
+    ae: number;
+    kp: number;
+    permanentLP?: {
+      lost: number;
+    };
+    permanentAE: {
+      lost: number;
+      redeemed: number;
+    };
+    permanentKP: {
+      lost: number;
+      redeemed: number;
+    };
+  };
+  readonly talents: StringKeyObject<number>;
+  readonly ct: StringKeyObject<number>;
+  readonly spells: StringKeyObject<number>;
+  readonly cantrips: string[];
+  readonly liturgies: StringKeyObject<number>;
+  readonly blessings: string[];
+  readonly belongings: {
+    items: StringKeyObject<Data.ItemInstance>;
+    armorZones: StringKeyObject<Data.ArmorZonesInstance>;
+    purse: {
+      d: string;
+      s: string;
+      h: string;
+      k: string;
+    };
+  };
+  readonly pets?: StringKeyObject<Data.PetInstance>;
 }
 
 export interface RawRules {
@@ -120,9 +189,9 @@ export interface RawProfession {
 	id: string;
 	ap: number;
 	apOfActivatables: number;
-	pre_req: Data.ProfessionDependencyObject[];
+	pre_req: Wiki.ProfessionDependencyObject[];
 	req: (Reusable.ProfessionRequiresActivatableObject | Reusable.ProfessionRequiresIncreasableObject)[];
-	sel: Data.ProfessionSelections;
+	sel: Wiki.ProfessionSelections;
 	sa: Reusable.ProfessionRequiresActivatableObject[];
 	combattech: [string, number][];
 	talents: [string, number][];
@@ -158,7 +227,7 @@ export interface RawProfessionVariant {
 	id: string;
 	ap: number;
 	apOfActivatables: number;
-	pre_req: Data.ProfessionDependencyObject[];
+	pre_req: Wiki.ProfessionDependencyObject[];
 	req: (Reusable.ProfessionRequiresActivatableObject | Reusable.ProfessionRequiresIncreasableObject)[];
 	sel: Wiki.ProfessionVariantSelections;
 	sa: Reusable.ProfessionRequiresActivatableObject[];
@@ -182,7 +251,7 @@ export interface RawAdvantage {
 	ap: number | number[] | string;
 	tiers?: number;
 	max?: number;
-	sel?: Data.SelectionObject[];
+	sel?: Wiki.SelectionObject[];
 	req: ('RCP' | Reusable.AllRequirementTypes)[];
 	reqIndex: string[];
 	gr: number;
@@ -192,7 +261,7 @@ export interface RawAdvantage {
 export interface RawAdvantageLocale {
 	id: string;
 	name: string;
-	sel?: Data.SelectionObject[];
+	sel?: Wiki.SelectionObject[];
 	input?: string;
 	rules: string;
 	range?: string;
@@ -291,7 +360,7 @@ export interface RawSpecialAbility {
 	ap: number | number[] | string;
 	tiers?: number;
 	max?: number;
-	sel?: Data.SelectionObject[];
+	sel?: Wiki.SelectionObject[];
 	req: ('RCP' | Reusable.AllRequirementTypes | (number | 'RCP' | Reusable.AllRequirementTypes)[])[];
 	gr: number;
 	subgr?: number;
@@ -305,7 +374,7 @@ export interface RawSpecialAbility {
 export interface RawSpecialAbilityLocale {
 	id: string;
 	name: string;
-	sel?: Data.SelectionObject[];
+	sel?: Wiki.SelectionObject[];
 	input?: string;
 	nameInWiki?: string;
 	rules?: string;

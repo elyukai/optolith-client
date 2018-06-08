@@ -2,24 +2,25 @@ import R from 'ramda';
 import { WikiState } from '../reducers/wikiReducer';
 import * as Data from '../types/data.d';
 import * as Reusable from '../types/reusable.d';
+import * as Wiki from '../types/wiki.d';
 import { Skill } from '../types/wiki';
-import { getAllWikiEntriesByGroup } from './WikiUtils';
 import { isActivatableDependent, isActivatableSkillDependent, isDependentSkillExtended } from './checkEntryUtils';
 import * as CheckPrerequisiteUtils from './checkPrerequisiteUtils';
-import { convertMapToArray, filterExisting, spreadOptionalInArray } from './collectionUtils';
+import { convertMapToArray, spreadOptionalInArray } from './collectionUtils';
+import { List, Maybe, ReadMap } from './dataUtils';
 import { matchExists } from './exists';
 import { getHeroStateListItem } from './heroStateUtils';
 import { isActive } from './isActive';
 import { match } from './match';
-import { Maybe } from './maybe';
 import { getPrimaryAttributeId } from './primaryAttributeUtils';
 import { getActiveSelections } from './selectionUtils';
+import { getAllWikiEntriesByGroup } from './WikiUtils';
 
 interface Validator {
   (
     wiki: WikiState,
     state: Data.HeroDependent,
-    req: Data.AllRequirements,
+    req: Wiki.AllRequirements,
     sourceId: string,
   ): boolean;
 }
@@ -29,28 +30,28 @@ const isRCPValid = (
   state: Data.HeroDependent,
   sourceId: string,
 ): boolean => {
-  return R.pipe(
+  return Maybe.of(state.race)
+    .bind(wiki.races.lookup)
+    .map(race => List.of(race.stronglyRecommendedAdvantages)
+      .concat(
+        List.of(race.automaticAdvantages),
+        List.of(race.stronglyRecommendedAdvantages),
+        List.of(race.stronglyRecommendedDisadvantages),
+        List.of(race.commonAdvantages),
+        List.of(race.commonDisadvantages),
+      )
+    ),
     spreadOptionalInArray(
-      Maybe.from(state.race)
-        .map(wiki.races.get)
+      Maybe.of(state.culture)
+        .bind(wiki.cultures.lookup)
         .map(race => [
-          ...race.stronglyRecommendedAdvantages,
-          ...race.stronglyRecommendedDisadvantages,
           ...race.commonAdvantages,
           ...race.commonDisadvantages,
         ]),
     ),
     spreadOptionalInArray(
-      Maybe.from(state.culture)
-        .map(wiki.cultures.get)
-        .map(race => [
-          ...race.commonAdvantages,
-          ...race.commonDisadvantages,
-        ]),
-    ),
-    spreadOptionalInArray(
-      Maybe.from(state.profession)
-        .map(wiki.professions.get)
+      Maybe.of(state.profession)
+        .bind(wiki.professions.lookup)
         .map(race => [
           ...race.suggestedAdvantages,
           ...race.unsuitableAdvantages,
@@ -333,8 +334,8 @@ const isProhibitingHigherLevel = (
 export const validateTier = (
   wiki: WikiState,
   state: Data.HeroDependent,
-  requirements: ReadonlyMap<number, Data.AllRequirements[]>,
-  dependencies: ReadonlyArray<Data.ActivatableInstanceDependency>,
+  requirements: ReadMap<number, Wiki.AllRequirements[]>,
+  dependencies: List<Data.ActivatableDependency>,
   sourceId: string,
 ): number | undefined => {
   return R.pipe<ReqMap, ReqEntries, ReqEntries, number | undefined, number | undefined>(
@@ -346,7 +347,7 @@ export const validateTier = (
         areAllPrerequisitesValid(wiki, state, prerequisites, sourceId)
         ? tier : max;
     }, undefined),
-    max => dependencies.reduce((max, dep) => {
+    max => dependencies.reduce(max => dep => {
       if (isProhibitingHigherLevel(dep)) {
         return Math.min(...filterExisting([max, dep.tier - 1]));
       }

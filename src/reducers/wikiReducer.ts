@@ -7,6 +7,7 @@ import { Advantage, Attribute, Blessing, Book, Cantrip, CombatTechnique, Culture
 import { translate } from '../utils/I18n';
 import { getWikiStateKeyByCategory } from '../utils/IDUtils';
 import { initAdvantage, initAttribute, initBlessing, initCantrip, initCombatTechnique, initCulture, initDisadvantage, initExperienceLevel, initItemTemplate, initLiturgicalChant, initProfession, initProfessionVariant, initRace, initRaceVariant, initSkill, initSpecialAbility, initSpell } from '../utils/InitWikiUtils';
+import { ReadMap } from '../utils/dataUtils';
 
 type Action = ReceiveInitialDataAction;
 
@@ -17,24 +18,24 @@ type RawData = RawAdvantage | RawAttribute | RawBlessing | RawCantrip | RawComba
 type RawLocales = RawAdvantageLocale | RawAttributeLocale | RawBlessingLocale | RawCantripLocale | RawCombatTechniqueLocale | RawDisadvantageLocale | RawLiturgyLocale | RawProfessionLocale | RawProfessionVariantLocale | RawRaceLocale | RawRaceVariantLocale | RawCultureLocale | RawSpecialAbilityLocale | RawSpellLocale | RawTalentLocale;
 
 export interface WikiState {
-	books: Map<string, Book>;
-	experienceLevels: Map<string, ExperienceLevel>;
-	races: Map<string, Race>;
-	raceVariants: Map<string, RaceVariant>;
-	cultures: Map<string, Culture>;
-	professions: Map<string, Profession>;
-	professionVariants: Map<string, ProfessionVariant>;
-	attributes: Map<string, Attribute>;
-	advantages: Map<string, Advantage>;
-	disadvantages: Map<string, Disadvantage>;
-	specialAbilities: Map<string, SpecialAbility>;
-	skills: Map<string, Skill>;
-	combatTechniques: Map<string, CombatTechnique>;
-	spells: Map<string, Spell>;
-	cantrips: Map<string, Cantrip>;
-	liturgicalChants: Map<string, LiturgicalChant>;
-	blessings: Map<string, Blessing>;
-	itemTemplates: Map<string, ItemTemplate>;
+	books: ReadMap<string, Book>;
+	experienceLevels: ReadMap<string, ExperienceLevel>;
+	races: ReadMap<string, Race>;
+	raceVariants: ReadMap<string, RaceVariant>;
+	cultures: ReadMap<string, Culture>;
+	professions: ReadMap<string, Profession>;
+	professionVariants: ReadMap<string, ProfessionVariant>;
+	attributes: ReadMap<string, Attribute>;
+	advantages: ReadMap<string, Advantage>;
+	disadvantages: ReadMap<string, Disadvantage>;
+	specialAbilities: ReadMap<string, SpecialAbility>;
+	skills: ReadMap<string, Skill>;
+	combatTechniques: ReadMap<string, CombatTechnique>;
+	spells: ReadMap<string, Spell>;
+	cantrips: ReadMap<string, Cantrip>;
+	liturgicalChants: ReadMap<string, LiturgicalChant>;
+	blessings: ReadMap<string, Blessing>;
+	itemTemplates: ReadMap<string, ItemTemplate>;
 }
 
 const initialState: WikiState = {

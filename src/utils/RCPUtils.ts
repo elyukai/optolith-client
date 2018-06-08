@@ -1,45 +1,43 @@
 import R from 'ramda';
 import { Race, RaceVariant } from '../types/wiki';
 import { multiplyString } from './NumberUtils';
-import { rollDie } from './dice';
+import { rollDice, rollDie } from './dice';
+import { Maybe } from './maybe';
 
 export const rerollHairColor = (
-  race: Race,
-  raceVariant: RaceVariant | undefined,
-): number => {
-  const result = rollDie(20);
-  const hairColors = race.hairColors || raceVariant && raceVariant.hairColors;
-  return hairColors![result - 1];
-};
+  race: Maybe<Race>,
+  raceVariant: Maybe<RaceVariant>,
+): Maybe<number> =>
+  race
+    .map(e => e.hairColors)
+    .alt(raceVariant.map(e => e.hairColors))
+    .map(e => e[rollDie(20) - 1]);
 
 export const rerollEyeColor = (
-  race: Race,
-  raceVariant: RaceVariant | undefined,
+  race: Maybe<Race>,
+  raceVariant: Maybe<RaceVariant>,
   isAlbino: boolean,
-): number => {
-  if (isAlbino) {
-    return rollDie(2) + 18;
-  }
-
-  const result = rollDie(20);
-  const eyeColors = race.eyeColors || raceVariant && raceVariant.eyeColors;
-  return eyeColors![result - 1];
-};
+): Maybe<number> =>
+  isAlbino ? Maybe.Just(rollDie(2) + 18) : race
+    .map(e => e.eyeColors)
+    .alt(raceVariant.map(e => e.eyeColors))
+    .map(e => e[rollDie(20) - 1]);
 
 export const rerollSize = (
-  race: Race,
-  raceVariant: RaceVariant | undefined,
-): string => {
-  const sizeBase = race.sizeBase || raceVariant && raceVariant.sizeBase;
-  const sizeRandom = race.sizeRandom || raceVariant && raceVariant.sizeRandom;
-
-  const arr: number[] = R.chain(dice => {
-    return Array<number>(dice.amount).fill(dice.sides);
-  }, sizeRandom!);
-
-  const result = sizeBase! + arr.reduce((a, b) => a + rollDie(b), 0);
-  return result.toString();
-};
+  race: Maybe<Race>,
+  raceVariant: Maybe<RaceVariant>,
+): Maybe<string> =>
+  race
+    .map(e => e.sizeBase)
+    .alt(raceVariant.map(e => e.sizeBase))
+    .map(R.add(
+      race
+        .map(e => e.sizeRandom)
+        .alt(raceVariant.map(e => e.sizeRandom))
+        .map(R.reduce((acc, die) => acc + rollDice(die.amount, die.sides), 0))
+        .valueOr(0)
+    ))
+    .map(e => e.toString());
 
 export const getWeightForRerolledSize = (
   weight: string,
@@ -52,37 +50,36 @@ export const getWeightForRerolledSize = (
 };
 
 interface RerolledWeight {
-  size: string;
-  weight: string;
+  size: Maybe<string>;
+  weight: Maybe<string>;
 }
 
 export const rerollWeight = (
-  race: Race,
-  raceVariant: RaceVariant | undefined,
-  size: string = rerollSize(race, raceVariant),
+  race: Maybe<Race>,
+  raceVariant: Maybe<RaceVariant>,
+  size: Maybe<string> = rerollSize(race, raceVariant),
 ): RerolledWeight => {
-  const { id, weightBase, weightRandom } = race;
-
-  const arr: number[] = R.chain(dice => {
-    return Array<number>(dice.amount).fill(dice.sides);
-  }, weightRandom);
-
-  const addFunc = id === 'R_1' ?
-    (acc: number, e: number) => {
-      const result = rollDie(Math.abs(e));
-      return result % 2 > 0 ? acc - result : acc + result;
-    } :
-    (acc: number, e: number) => {
-      const result = rollDie(Math.abs(e));
-      return e < 0 ? acc - result : acc + result;
-    };
-
-  const formattedSize = multiplyString(size);
-  const formattedSizeNum = Number.parseInt(formattedSize);
-  const result = formattedSizeNum + weightBase + arr.reduce<number>(addFunc, 0);
+  const formattedSize = size.map(multiplyString);
 
   return {
-    weight: result.toString(),
+    weight: race
+      .map(e => {
+        const addFunc = e.id === 'R_1' ?
+          (e: number) => (acc: number) => {
+            const result = rollDie(Math.abs(e));
+            return result % 2 > 0 ? acc - result : acc + result;
+          } :
+          (e: number) => (acc: number) => {
+            const result = rollDie(Math.abs(e));
+            return e < 0 ? acc - result : acc + result;
+          };
+
+        return e.weightRandom.reduce((acc, die) => {
+          return acc + rollDice(die.amount, die.sides, addFunc(die.sides));
+        }, e.weightBase);
+      })
+      .map(R.add(formattedSize.map(Number.parseInt).valueOr(0)))
+      .map(e => e.toString()),
     size: formattedSize
   };
 };

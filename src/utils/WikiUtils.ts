@@ -1,12 +1,10 @@
 import R from 'ramda';
 import { ActivatableCategories, Categories } from '../constants/Categories';
 import { WikiState } from '../reducers/wikiReducer';
-import { ActivatableInstance } from '../types/data.d';
 import { Profession as ProfessionView } from '../types/view.d';
 import * as Wiki from '../types/wiki.d';
+import { List, Maybe, ReadMap } from './dataUtils';
 import { getCategoryById } from './IDUtils';
-import { convertMapToValues } from './collectionUtils';
-import { Maybe } from './maybe';
 
 interface WikiKeyByCategory {
   [Categories.ADVANTAGES]: 'advantages';
@@ -48,12 +46,11 @@ export const getWikiStateKeyByCategory = <T extends Categories>(
   category: T,
 ): WikiKeyByCategory[T] => wikiKeyByCategory[category];
 
-export const getWikiStateKeyById = (
-  id: string,
-): Maybe<keyof WikiState> => R.pipe(
-  getCategoryById,
-  category => Maybe.from(category).map(getWikiStateKeyByCategory),
-)(id);
+export const getWikiStateKeyById = (id: string): Maybe<keyof WikiState> =>
+  R.pipe(
+    getCategoryById,
+    category => Maybe.of(category).map(getWikiStateKeyByCategory),
+  )(id);
 
 export function getWikiEntry<T extends Wiki.Entry = Wiki.Entry>(
   state: WikiState,
@@ -69,25 +66,23 @@ export function getWikiEntry<T extends Wiki.Entry = Wiki.Entry>(
   if (id === undefined) {
     return id =>
       getWikiStateKeyById(id)
-        .map(key => state[key].get(id) as T);
+        .bind(key => state[key].lookup(id) as Maybe<T>);
   }
   else {
     return getWikiStateKeyById(id)
-      .map(key => state[key].get(id) as T);
+      .bind(key => state[key].lookup(id) as Maybe<T>);
   }
 };
 
 export const getAllWikiEntriesByGroup =
   <T extends Wiki.EntryWithGroup = Wiki.EntryWithGroup>(
-    wiki: Map<string, T>,
-    ...groups: number[],
-  ) => R.pipe<Map<string, T>, T[], T[]>(
-    convertMapToValues,
-    list => R.filter(e => groups.includes(e.gr), list),
-  )(wiki);
+    wiki: ReadMap<string, T>,
+    ...groups: number[]
+  ): List<T> =>
+    wiki.elems().filter(e => List.of(groups).elem(e.gr));
 
 type ElementMixed =
-  ActivatableInstance |
+  // ActivatableInstance |
   Wiki.Race |
   Wiki.Culture |
   ProfessionView |

@@ -10,6 +10,7 @@ import { getFirstTierPrerequisites } from './flattenPrerequisites';
 import { getAllEntriesByGroup, getHeroStateListItem } from './heroStateUtils';
 import { isActive } from './isActive';
 import { validatePrerequisites } from './validatePrerequisitesUtils';
+import { Maybe } from './maybe';
 
 /**
  * Checks if you can somehow add an ActiveObject to the given entry.
@@ -34,7 +35,7 @@ const isAdditionDisabledEntrySpecific = (
             }
           }
           else {
-            const combinationAvailable = isActive(combinationSA.value);
+            const combinationAvailable = isActive(combinationSA);
 
             if (combinationAvailable) {
               const totalActive = countActiveGroupEntries(wiki, state, 9, 10);
@@ -56,7 +57,7 @@ const isAdditionDisabledEntrySpecific = (
           entry.category === Categories.SPECIAL_ABILITIES
           && entry.gr === 13
         ) {
-          const combinationSA = state.specialAbilities.get('SA_266');
+          const combinationSA = Maybe.of(state.specialAbilities.get('SA_266'));
           const totalActive = countActiveGroupEntries(wiki, state, 13);
 
           if (totalActive >= (isActive(combinationSA) ? 2 : 1)) {
@@ -90,7 +91,7 @@ const isAdditionDisabledEntrySpecific = (
           entry.category === Categories.SPECIAL_ABILITIES
           && entry.gr === 30
         ) {
-          const darkPactSA = state.specialAbilities.get('SA_667');
+          const darkPactSA = Maybe.of(state.specialAbilities.get('SA_667'));
 
           const allPactPresents = getAllEntriesByGroup<Data.ActivatableDependent>(
             wiki.specialAbilities,

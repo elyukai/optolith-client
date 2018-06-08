@@ -2,6 +2,7 @@ import R from 'ramda';
 import { Categories } from '../constants/Categories';
 import * as Data from '../types/data.d';
 import * as Wiki from '../types/wiki.d';
+import { getSkillCheckValues } from './AttributeUtils';
 import { getNumericBlessedTraditionIdByInstanceId } from './IDUtils';
 import { NumberKeyObject, convertMapToValues, setM } from './collectionUtils';
 import { flattenDependencies } from './flattenDependencies';
@@ -26,7 +27,7 @@ export const isOwnTradition = (
 ): boolean => {
   const isBaseTradition = obj.tradition.some(e => {
     const numbericId = getNumericBlessedTraditionIdByInstanceId(tradition.id);
-    return e === 1 || e === numbericId + 1;
+    return e === 1 || Maybe.of(e).equals(numbericId.map(e => e + 1));
   });
 
   const isLiturgicalChant = obj.category === Categories.LITURGIES;
@@ -43,23 +44,20 @@ export const isIncreasable = (
   startEL: Wiki.ExperienceLevel,
   phase: number,
   attributes: ReadonlyMap<string, Data.AttributeDependent>,
-  exceptionalSkill: Data.ActivatableDependent | undefined,
-  aspectKnowledge: Data.ActivatableDependent | undefined,
+  exceptionalSkill: Maybe<Data.ActivatableDependent>,
+  aspectKnowledge: Maybe<Data.ActivatableDependent>,
 ): boolean => {
   let max = 0;
-  const bonus = R.defaultTo(
-    0,
-    Maybe.from(exceptionalSkill)
+  const bonus =
+    exceptionalSkill
       .map(e => e.active.filter(e => e === wikiEntry.id).length)
-      .value
-  );
+      .valueOr(0);
 
   if (phase < 3) {
     max = startEL.maxSkillRating;
   }
   else {
-    const checkValues = wikiEntry.check.map(id => attributes.get(id)!.value);
-    max = Math.max(...checkValues) + 2;
+    max = Math.max(...getSkillCheckValues(attributes)(wikiEntry.check)) + 2;
   }
 
   const aspects = getActiveSelections(aspectKnowledge) as number[];
@@ -81,7 +79,7 @@ export const getAspectCounter = (
     (acc, instance) => {
       return R.defaultTo(
         acc,
-        Maybe.from(wiki.get(instance.id))
+        Maybe.of(wiki.get(instance.id))
           .map(wikiEntry => {
             return wikiEntry.aspects.reduce((acc, aspect) => {
               const existing = R.defaultTo(0, acc.get(aspect));
@@ -101,7 +99,7 @@ export const isDecreasable = (
   wikiEntry: Wiki.LiturgicalChant,
   instance: Data.ActivatableSkillDependent,
   liturgicalChants: ReadonlyMap<string, Data.ActivatableSkillDependent>,
-  aspectKnowledge: Data.ActivatableDependent | undefined,
+  aspectKnowledge: Maybe<Data.ActivatableDependent>,
 ): boolean => {
   const dependencies = flattenDependencies(
     wiki,

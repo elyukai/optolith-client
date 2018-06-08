@@ -2,10 +2,10 @@ import R from 'ramda';
 import { IdPrefixes } from '../constants/IdPrefixes';
 import { Dependent, HeroDependent } from '../types/data.d';
 import { EntryWithGroup } from '../types/wiki';
+import { adjustOrM, deleteMapItem, setMapItem } from './collectionUtils';
+import { List, Maybe, ReadMap } from './dataUtils';
 import { getIdPrefix } from './IDUtils';
-import { adjustOrM, convertMapToValues, deleteMapItem, setMapItem } from './collectionUtils';
 import { match } from './match';
-import { Maybe } from './maybe';
 
 export type HeroStateListKey =
   'advantages' |
@@ -32,7 +32,7 @@ export type HeroStateMapKey =
 export const getHeroStateListKeyById = (
   id: string,
 ): Maybe<HeroStateListKey> => {
-  return Maybe.from(
+  return Maybe.of(
     match<IdPrefixes, HeroStateListKey | undefined>(getIdPrefix(id))
       .on(IdPrefixes.ADVANTAGES, () => 'advantages')
       .on(IdPrefixes.ATTRIBUTES, () => 'attributes')
@@ -53,37 +53,35 @@ export const getHeroStateListItem =
     (state: HeroDependent): Maybe<D> =>
       getHeroStateListKeyById(id)
         .map(key => state[key])
-        .map(slice => slice instanceof Map
-          ? slice.get(id) as D | undefined
-          : undefined
+        .bind(slice => slice instanceof Map
+          ? Maybe.of(slice.get(id) as D | undefined)
+          : Maybe.Nothing()
         );
 
 export const getHeroStateListItemOr =
   <D extends Dependent = Dependent>(id: string, create: (id: string) => D) =>
     (state: HeroDependent): D =>
-      R.defaultTo(create(id), getHeroStateListItem<D>(id)(state).value);
+      getHeroStateListItem<D>(id)(state).valueOr(create(id));
 
 export const setHeroListStateItem =
   <D extends Dependent = Dependent>(id: string) => (item: D) =>
     (state: HeroDependent): HeroDependent =>
-      R.defaultTo(state, getHeroStateListKeyById(id)
+      getHeroStateListKeyById(id)
         .map(key => ({
           ...state,
           [key]: setMapItem(state[key] as Map<string, D>, id, item),
         }))
-        .value
-      );
+        .valueOr(state);
 
 export const removeHeroListStateItem =
   <D extends Dependent = Dependent>(id: string) =>
     (state: HeroDependent): HeroDependent =>
-      R.defaultTo(state, getHeroStateListKeyById(id)
+      getHeroStateListKeyById(id)
         .map(key => ({
           ...state,
           [key]: deleteMapItem<string, D>(state[key] as Map<string, D>, id),
         }))
-        .value
-      );
+        .valueOr(state);
 
 export const adjustHeroSlice = <K extends HeroStateListKey>(
   adjustFn: (slice: HeroDependent[K]) => HeroDependent[K],
@@ -101,7 +99,7 @@ export const adjustHeroListStateItemOr = <D extends Dependent>(
   id: string,
 ) => (
   state: HeroDependent,
-) => R.defaultTo(state, getHeroStateListKeyById(id)
+) => getHeroStateListKeyById(id)
   .map(key => ({
     ...state,
     [key]: adjustOrM<string, D>(
@@ -113,18 +111,15 @@ export const adjustHeroListStateItemOr = <D extends Dependent>(
       id
     )(state[key] as any),
   }))
-  .value
-);
+  .valueOr(state);
 
 export const getAllEntriesByGroup =
   <I extends Dependent = Dependent, T extends EntryWithGroup = EntryWithGroup>(
-    wiki: ReadonlyMap<string, T>,
-    list: ReadonlyMap<string, I>,
-    ...groups: number[],
-  ): I[] => R.pipe<ReadonlyMap<string, I>, ReadonlyArray<I>, I[]>(
-    convertMapToValues,
-    list => list.filter(R.pipe(
-      (e: I) => wiki.get(e.id),
-      e => typeof e === 'object' && groups.includes(e.gr),
-    )),
-  )(list);
+    wiki: ReadMap<string, T>,
+    list: ReadMap<string, I>,
+    ...groups: number[]
+  ): List<I> => list.elems().filter(R.pipe(
+    e => e.id,
+    wiki.lookup,
+    e => Maybe.isJust(e) && groups.includes(e.valueOr().gr)
+  ));

@@ -2,13 +2,13 @@ import R from 'ramda';
 import { WikiState } from '../reducers/wikiReducer';
 import * as Data from '../types/data.d';
 import * as Wiki from '../types/wiki.d';
+import { Maybe } from './dataUtils';
 import { sortStrings } from './FilterSortUtils';
 import { translate } from './I18n';
-import { getRoman } from './NumberUtils';
-import { getWikiEntry } from './WikiUtils';
 import { match } from './match';
-import { Maybe } from './maybe';
+import { getRoman } from './NumberUtils';
 import { findSelectOption, getSelectOptionName } from './selectionUtils';
+import { getWikiEntry } from './WikiUtils';
 
 /**
  * Returns the name of the given object. If the object is a string, it returns
@@ -86,14 +86,14 @@ const getEntrySpecificNameAddition = (
         })
     )
     .on('SA_9', () =>
-      Maybe.from(wiki.skills.get(sid as string))
+      Maybe.of(wiki.skills.get(sid as string))
         .map(skill => {
           return R.pipe(
             (sid2: string | number | undefined) => {
               return R.unless<string | number | undefined, string>(
                 isString,
                 R.always(
-                  Maybe.from(skill.applications)
+                  Maybe.of(skill.applications)
                     .map(R.find(e => e.id === sid2))
                     .map(app => app.name)
                     .valueOr('')
@@ -110,7 +110,7 @@ const getEntrySpecificNameAddition = (
     ].includes, () =>
       findSelectOption(wikiEntry, sid)
         .bind(item =>
-          Maybe.from(item.target)
+          Maybe.of(item.target)
             .map(target => {
               if (id === 'SA_414') {
                 return wiki.spells.get(target);
@@ -123,20 +123,20 @@ const getEntrySpecificNameAddition = (
         )
     )
     .on('SA_680', () =>
-      Maybe.from(wiki.skills.get(sid as string))
+      Maybe.of(wiki.skills.get(sid as string))
         .map(entry => `: ${entry.name}`)
     )
     .on('SA_699', () =>
-      Maybe.from(wiki.specialAbilities.get('SA_29'))
+      Maybe.of(wiki.specialAbilities.get('SA_29'))
         .bind(languages =>
           findSelectOption(languages, sid)
             .map(item => {
               return `${item.name}: ${
                 R.unless<string | number | undefined, string>(
                   isString,
-                  sid2 => Maybe.from(item.spec)
+                  sid2 => Maybe.of(item.spec)
                     .bind(spec =>
-                      Maybe.from(sid2 as number | undefined)
+                      Maybe.of(sid2 as number | undefined)
                         .map(sid2 => spec[sid2 - 1])
                     )
                     .valueOr(''),
@@ -147,7 +147,7 @@ const getEntrySpecificNameAddition = (
     )
     .otherwise(() => {
       if (typeof input === 'string' && typeof sid === 'string') {
-        return Maybe.from(sid);
+        return Maybe.of(sid);
       }
       else if (Array.isArray(select)) {
         return getSelectOptionName(wikiEntry, sid);
@@ -188,7 +188,7 @@ const getEntrySpecificNameReplacements = (
       return `${name} ${nameAddition}`;
     })
     .on(['SA_677', 'SA_678'].includes, () =>
-      Maybe.from(locale)
+      Maybe.of(locale)
         .map(locale => {
           const part = getTraditionNameFromFullName(name);
           const musicTraditionLabels = translate(locale, 'musictraditions');

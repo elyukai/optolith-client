@@ -11,7 +11,7 @@ import { exists } from './exists';
 import { getHeroStateListItem } from './heroStateUtils';
 import { isActive } from './isActive';
 import { match } from './match';
-import { Maybe } from './maybe';
+import { Maybe } from './dataUtils';
 import { getSelectOptionCost } from './selectionUtils';
 
 const getEntrySpecificCost = (
@@ -48,7 +48,7 @@ const getEntrySpecificCost = (
       return getCostForId(sid as string);
     })
     .on(['DISADV_34', 'DISADV_50'].includes, () => {
-      return Maybe.from(active)
+      return Maybe.of(active)
         .map(active => {
           const compareMaxTier = (
             previousMax: number,
@@ -101,7 +101,7 @@ const getEntrySpecificCost = (
     .on('DISADV_33', () => {
       if (
         sid === 7
-        && Maybe.from(active).map(R.pipe(
+        && Maybe.of(active).map(R.pipe(
           arr => R.filter(e => e.sid === 7 && !exists(e.cost), arr),
           filtered => filtered.length,
           R.lt(costToAdd ? 0 : 1),
@@ -125,10 +125,10 @@ const getEntrySpecificCost = (
       )(active);
     })
     .on('SA_9', () => {
-      return R.defaultTo(0, Maybe.from(wiki.skills.get(sid as string))
+      return R.defaultTo(0, Maybe.of(wiki.skills.get(sid as string))
         .map(skill => {
-          return R.defaultTo(skill.ic, Maybe.from(state).map(state => {
-            return Maybe.from(state.specialAbilities.get(id)).map(R.pipe(
+          return R.defaultTo(skill.ic, Maybe.of(state).map(state => {
+            return Maybe.of(state.specialAbilities.get(id)).map(R.pipe(
               instance => instance.active,
               R.reduce<Data.ActiveObject, number>((c, obj) => {
                 return obj.sid === sid && !exists(obj.cost) ? R.inc(c) : c;
@@ -142,7 +142,7 @@ const getEntrySpecificCost = (
     })
     .on('SA_29', () => tier === 4 ? 0 : cost as number)
     .on('SA_72', () => {
-      return Maybe.from(active)
+      return Maybe.of(active)
         .map(R.pipe(
           arr => R.filter(e => !exists(e.cost), arr),
           arr => arr.length,
@@ -152,7 +152,7 @@ const getEntrySpecificCost = (
         .value;
     })
     .on('SA_87', () => {
-      return Maybe.from(active)
+      return Maybe.of(active)
         .map(R.pipe(
           arr => R.filter(e => !exists(e.cost), arr),
           arr => arr.length,
@@ -163,7 +163,7 @@ const getEntrySpecificCost = (
     })
     .on('SA_255', () => {
       const cond = (id: string, state: Data.HeroDependent | undefined) => {
-        return exists(state) && isActive(state.disadvantages.get(id));
+        return isActive(Maybe.of(state).map(state => state.disadvantages.get(id)));
       };
 
       const decreaseCost = (
@@ -184,25 +184,25 @@ const getEntrySpecificCost = (
           type F = Maybe<Data.HeroDependent>;
           type Selection = string | number | undefined;
 
-          return R.defaultTo(0, Maybe.from(wiki.skills.get(sid)).map(entry => {
+          return Maybe.of(wiki.skills.get(sid)).map(entry => {
             return R.pipe(
               (state: F) => state.map(v => v.specialAbilities)
                 .map(v => v.get('SA_531'))
                 .map(v => v.active)
                 .map(v => v && v[0] && v[0].sid),
               sid => match<Selection, Maybe<Wiki.Skill>>(sid.value)
-                .on(isString, sid => Maybe.from(wiki.skills.get(sid)))
-                .otherwise(() => Maybe.from<never>(undefined))
+                .on(isString, sid => Maybe.of(wiki.skills.get(sid)))
+                .otherwise(Maybe.Nothing)
                 .map(firstEntry => {
                   return (cost as number[])[entry.ic - 1] + firstEntry.ic;
                 }).value
-            )(Maybe.from(state));
-          }).value);
+            )(Maybe.of(state));
+          }).valueOr(0);
         })
         .otherwise(() => 0);
     })
     .on('SA_699', () => {
-      return R.defaultTo(cost as number, Maybe.from(state)
+      return R.defaultTo(cost as number, Maybe.of(state)
         .map(v => v.specialAbilities)
         .map(v => v.get('SA_29'))
         .map(v => v.active)
@@ -277,7 +277,7 @@ export const getCost = (
           }
           return currentCost;
         }
-      )(Maybe.from(state));
+      )(Maybe.of(state));
     });
 };
 
@@ -329,7 +329,7 @@ const adjustTierName = (
     }
     else if (
       Array.isArray(obj.currentCost)
-      || getCategoryById(obj.id) === 'SPECIAL_ABILITIES'
+      || getCategoryById(obj.id).equals(Maybe.Just(Categories.SPECIAL_ABILITIES))
     ) {
       tierName = getSpecialAbilityTier(obj.tier);
     }

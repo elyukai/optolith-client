@@ -41,14 +41,6 @@ export const remove = (index: number) => {
   return R.remove(index, 1);
 };
 
-type FilterJust = <T>(list: ReadonlyArray<T | undefined>) => T[];
-
-/**
- * Removes all `undefined` values from `arr`.
- * @param arr
- */
-export const filterExisting: FilterJust = R.filter(R.complement(R.isNil));
-
 /**
  * If `add` is defined joins `add` and given `arr` and returns new array,
  * otherwise returns new instance of `arr`.
@@ -172,7 +164,7 @@ export const deleteM = <K, V>(key: K): ReadonlyMapUpdater<K, V> => R.pipe(
  * @param key The key of the entry.
  */
 export const getM = <K, V>(key: K) => (list: ReadonlyMap<K, V>) => {
-  return Maybe.from(list.get(key));
+  return Maybe.of(list.get(key));
 };
 
 /**
