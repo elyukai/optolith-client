@@ -1,19 +1,20 @@
-import { flatten } from 'lodash';
 import R from 'ramda';
 import { ActivatablePrerequisites, LevelAwarePrerequisites } from '../types/wiki.d';
+import { OrderedMap } from './dataUtils';
 
-type LevelPair = [number, ActivatablePrerequisites];
-type PrerequisiteFilter = (pair: LevelPair) => boolean;
+type PrerequisiteFilter = (key: number) =>
+  (value: ActivatablePrerequisites) => boolean;
 
 const createLowerFilter = (oldTier: number) =>
-  (pair: LevelPair): boolean =>
-    pair[0] <= oldTier;
+  (key: number) => (): boolean =>
+    key <= oldTier;
 
 const createInBetweenFilter = (oldTier: number, newTier: number) => {
   const lower = Math.min(oldTier, newTier);
   const higher = Math.max(oldTier, newTier);
 
-  return (pair: LevelPair): boolean => pair[0] <= higher && pair[0] > lower;
+  return (key: number) => (): boolean =>
+    key <= higher && key > lower;
 };
 
 const createFilter = (newTier?: number) =>
@@ -25,17 +26,17 @@ const createFilter = (newTier?: number) =>
     return createLowerFilter(oldTier);
   }
   else {
-    return R.T;
+    return () => () => true;
   }
 };
 
-const createFlattenFiltered = (prerequisites: Map<number, ActivatablePrerequisites>) =>
-  (filter: PrerequisiteFilter) => {
-    return flatten([...prerequisites].filter(e => filter(e)).map(e => e[1]))
-  };
+const createFlattenFiltered =
+  (prerequisites: OrderedMap<number, ActivatablePrerequisites>) =>
+    (filter: PrerequisiteFilter) =>
+      OrderedMap.toValueList(prerequisites.filterWithKey(filter)).flatten();
 
 const flattenMap = (
-  prerequisites: Map<number, ActivatablePrerequisites>,
+  prerequisites: OrderedMap<number, ActivatablePrerequisites>,
   oldTier?: number,
   newTier?: number,
 ) => R.pipe(
@@ -60,7 +61,7 @@ export function flattenPrerequisites(
   oldTier?: number,
   newTier?: number,
 ): ActivatablePrerequisites {
-  if (prerequisites instanceof Map) {
+  if (prerequisites instanceof OrderedMap) {
     return flattenMap(prerequisites, oldTier, newTier);
   }
 

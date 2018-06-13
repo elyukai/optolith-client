@@ -1,20 +1,15 @@
-import R from 'ramda';
 import * as Data from '../types/data.d';
-import { convertMapToValues } from './collectionUtils';
+import { Maybe, OrderedMap, Record } from './dataUtils';
 
 export const getActiveSkillEntries = (
-  state: Data.HeroDependent,
+  state: Record<Data.HeroDependent>,
   domain: 'spells' | 'liturgicalChants',
-): Data.ActivatableSkillDependent[] => R.pipe(
-  (state: Data.HeroDependent) => state[domain],
-  convertMapToValues,
-  all => R.filter(e => e.active, all),
-)(state);
+): OrderedMap<string, Record<Data.ActivatableSkillDependent>> =>
+  Maybe.fromJust(state.lookup(domain))
+    .filter(e => e.get('active'));
 
 export const countActiveSkillEntries = (
-  state: Data.HeroDependent,
+  state: Record<Data.HeroDependent>,
   domain: 'spells' | 'liturgicalChants',
-): number => R.pipe(
-  (state: Data.HeroDependent) => getActiveSkillEntries(state, domain),
-  active => active.length,
-)(state);
+): number =>
+  getActiveSkillEntries(state, domain).size();

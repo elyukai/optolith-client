@@ -1,7 +1,7 @@
 import { Categories } from '../constants/Categories';
 import { IdPrefixes } from '../constants/IdPrefixes';
+import { Maybe } from './dataUtils';
 import { match } from './match';
-import { Maybe } from './maybe';
 
 export const getNewId = (keys: string[]) => {
   return keys.reduce((n, id) => {

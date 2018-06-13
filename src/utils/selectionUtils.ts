@@ -1,8 +1,7 @@
 import R from 'ramda';
 import * as Data from '../types/data.d';
 import * as Wiki from '../types/wiki.d';
-import { setMapItem } from './collectionUtils';
-import { Maybe } from './maybe';
+import { List, Maybe, OrderedMap, Record } from './dataUtils';
 
 /**
  * Get a selection option with the given id from given wiki entry. Returns
@@ -11,11 +10,11 @@ import { Maybe } from './maybe';
  */
 export const findSelectOption = <S extends Wiki.SelectionObject>(
   obj: Wiki.Activatable,
-  id?: string | number,
-): Maybe<S> => Maybe.of(obj.select)
-  .map(select => select.find<S>((e): e is S => {
-    return e.id === id;
-  }));
+  id: Maybe<string | number>,
+): Maybe<Record<S>> =>
+  obj.lookup('select').bind(select => select.find<any>(
+    (e): e is any => id.equals(e.lookup('id'))
+  ));
 
 /**
  * Get a selection option's name with the given id from given wiki entry.
@@ -24,11 +23,9 @@ export const findSelectOption = <S extends Wiki.SelectionObject>(
  */
 export const getSelectOptionName = (
   obj: Wiki.Activatable,
-  id?: string | number,
-): Maybe<string> => {
-  return findSelectOption(obj, id)
-    .map(e => e.name);
-};
+  id: Maybe<string | number>,
+): Maybe<string> =>
+  findSelectOption(obj, id).bind(e => e.lookup('name'));
 
 /**
  * Get a selection option's name with the given id from given wiki entry.
@@ -37,11 +34,9 @@ export const getSelectOptionName = (
  */
 export const getSelectOptionCost = (
   obj: Wiki.Activatable,
-  id?: string | number,
-): Maybe<number> => {
-  return findSelectOption(obj, id)
-    .map(e => e.cost);
-};
+  id: Maybe<string | number>,
+): Maybe<number> =>
+  findSelectOption(obj, id).bind(e => e.lookup('cost'));
 
 interface SelectionNameAndCost {
   name: string;
@@ -55,30 +50,24 @@ interface SelectionNameAndCost {
  */
 export const getSelectionNameAndCost = (
   obj: Wiki.Activatable,
-  id?: string | number,
-): Maybe<SelectionNameAndCost> => {
-  return findSelectOption(obj, id)
-    .map(e => {
-      return typeof e.cost === 'number' ? {
-        name: e.name,
-        cost: e.cost,
-      } : undefined;
-    });
-};
+  id: Maybe<string | number>,
+): Maybe<SelectionNameAndCost> =>
+  findSelectOption(obj, id)
+    .bind(e => e.lookup('cost').map(cost => ({
+      name: e.get('name'),
+      cost,
+    })));
 
 /**
  * Get all `ActiveObject.sid` values from the given instance.
  * @param obj The entry.
  */
 export const getActiveSelections =
-  (obj: Maybe<Data.ActivatableDependent>) =>
-    obj.map(R.pipe(
-      obj => obj.active,
-      Maybe.mapMaybe<Data.ActiveObject, string | number>(e => Maybe.of(e.sid)),
-    ))
-    .valueOr<ReadonlyArray<string | number>>([]);
+  (obj: Maybe<Record<Data.ActivatableDependent>>) =>
+    obj.bind(obj => obj.lookup('active'))
+      .map(Maybe.mapMaybe(e => e.lookup('sid')));
 
-type SecondarySelections = ReadonlyMap<number | string, (string | number)[]>;
+type SecondarySelections = OrderedMap<number | string, List<string | number>>;
 
 /**
  * Get all `ActiveObject.sid2` values from the given instance, sorted by
@@ -86,29 +75,36 @@ type SecondarySelections = ReadonlyMap<number | string, (string | number)[]>;
  * @param entry
  */
 export const getActiveSecondarySelections =
-  (obj: Maybe<Data.ActivatableDependent>) =>
+  (obj: Maybe<Record<Data.ActivatableDependent>>) =>
     obj.map(R.pipe(
-      obj => obj.active,
-      (obj: Data.ActiveObject[]) => obj.reduce<SecondarySelections>(
-        (map, obj) => {
-          const { sid, sid2 } = obj;
-          if (sid !== undefined && sid2 !== undefined) {
-            return setMapItem(map, sid, [...(map.get(sid) || []), sid2]);
+      r => r.lookup('active'),
+      m => m.map(r => r.foldl<SecondarySelections>(
+        map => obj => {
+          const sid = obj.lookup('sid');
+          const sid2 = obj.lookup('sid2');
+
+          if (Maybe.isJust(sid) && Maybe.isJust(sid2)) {
+            return map.alter(
+              e => e
+                .alt(Maybe.Just(List.of()))
+                .map(e => e.append(Maybe.fromJust(sid2))),
+              Maybe.fromJust(sid)
+            );
           }
+
           return map;
         },
-        new Map()
-      ),
-    ))
-    .valueOr<SecondarySelections>(new Map());
+        new OrderedMap()
+      )),
+    ));
 
 /**
  * Get all `DependencyObject.sid` values from the given instance.
  * @param obj The entry.
  */
 export const getRequiredSelections =
-  (obj: Maybe<Data.ActivatableDependent>) => obj
-    .map(obj => obj.dependencies)
-    .map(list => list.filter((e): e is Data.DependencyObject => isObject(e)))
-    .map(Maybe.mapMaybe(e => Maybe.of(e.sid)))
-    .valueOr<ReadonlyArray<number | string | number[]>>([]);
+  (obj: Maybe<Record<Data.ActivatableDependent>>) => obj
+    .bind(obj => obj.lookup('dependencies'))
+    .map(list => Maybe.mapMaybe(e => e.lookup('sid'), list.filter(
+      (e): e is Record<Data.DependencyObject> => isObject(e)
+    )));

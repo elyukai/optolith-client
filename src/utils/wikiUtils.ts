@@ -1,9 +1,7 @@
-import R from 'ramda';
 import { ActivatableCategories, Categories } from '../constants/Categories';
-import { WikiState } from '../reducers/wikiReducer';
 import { Profession as ProfessionView } from '../types/view.d';
 import * as Wiki from '../types/wiki.d';
-import { List, Maybe, ReadMap } from './dataUtils';
+import { List, Maybe, OrderedMap, Record } from './dataUtils';
 import { getCategoryById } from './IDUtils';
 
 interface WikiKeyByCategory {
@@ -44,42 +42,43 @@ const wikiKeyByCategory: WikiKeyByCategory = {
 
 export const getWikiStateKeyByCategory = <T extends Categories>(
   category: T,
-): WikiKeyByCategory[T] => wikiKeyByCategory[category];
+): WikiKeyByCategory[T] =>
+  wikiKeyByCategory[category];
 
-export const getWikiStateKeyById = (id: string): Maybe<keyof WikiState> =>
-  R.pipe(
-    getCategoryById,
-    category => Maybe.of(category).map(getWikiStateKeyByCategory),
-  )(id);
+export const getWikiStateKeyById = (id: string): Maybe<keyof Wiki.WikiAll> =>
+  getCategoryById(id).map(getWikiStateKeyByCategory);
 
 export function getWikiEntry<T extends Wiki.Entry = Wiki.Entry>(
-  state: WikiState,
+  state: Record<Wiki.WikiAll>,
 ): (id: string) => Maybe<T>;
 export function getWikiEntry<T extends Wiki.Entry = Wiki.Entry>(
-  state: WikiState,
+  state: Record<Wiki.WikiAll>,
   id: string,
 ): Maybe<T>;
 export function getWikiEntry<T extends Wiki.Entry = Wiki.Entry>(
-  state: WikiState,
+  state: Record<Wiki.WikiAll>,
   id?: string,
 ): Maybe<T> | ((id: string) => Maybe<T>) {
   if (id === undefined) {
     return id =>
       getWikiStateKeyById(id)
-        .bind(key => state[key].lookup(id) as Maybe<T>);
+        .bind(state.lookup)
+        .bind(slice => slice.lookup(id) as any);
   }
   else {
     return getWikiStateKeyById(id)
-      .bind(key => state[key].lookup(id) as Maybe<T>);
+      .bind(state.lookup)
+      .bind(slice => slice.lookup(id) as any);
   }
 };
 
 export const getAllWikiEntriesByGroup =
   <T extends Wiki.EntryWithGroup = Wiki.EntryWithGroup>(
-    wiki: ReadMap<string, T>,
+    wiki: OrderedMap<string, T>,
     ...groups: number[]
   ): List<T> =>
-    wiki.elems().filter(e => List.of(groups).elem(e.gr));
+    wiki.elems()
+      .filter(e => groups.includes(e.get('gr')));
 
 type ElementMixed =
   // ActivatableInstance |

@@ -2,8 +2,7 @@ import R from 'ramda';
 import { IdPrefixes } from '../constants/IdPrefixes';
 import { Dependent, HeroDependent } from '../types/data.d';
 import { EntryWithGroup } from '../types/wiki';
-import { adjustOrM, deleteMapItem, setMapItem } from './collectionUtils';
-import { List, Maybe, ReadMap } from './dataUtils';
+import { List, Maybe, OrderedMap, Record, RecordKey } from './dataUtils';
 import { getIdPrefix } from './IDUtils';
 import { match } from './match';
 
@@ -32,94 +31,103 @@ export type HeroStateMapKey =
 export const getHeroStateListKeyById = (
   id: string,
 ): Maybe<HeroStateListKey> => {
-  return Maybe.of(
-    match<IdPrefixes, HeroStateListKey | undefined>(getIdPrefix(id))
-      .on(IdPrefixes.ADVANTAGES, () => 'advantages')
-      .on(IdPrefixes.ATTRIBUTES, () => 'attributes')
-      .on(IdPrefixes.BLESSINGS, () => 'blessings')
-      .on(IdPrefixes.CANTRIPS, () => 'cantrips')
-      .on(IdPrefixes.COMBAT_TECHNIQUES, () => 'combatTechniques')
-      .on(IdPrefixes.DISADVANTAGES, () => 'disadvantages')
-      .on(IdPrefixes.LITURGIES, () => 'liturgicalChants')
-      .on(IdPrefixes.SPECIAL_ABILITIES, () => 'specialAbilities')
-      .on(IdPrefixes.SPELLS, () => 'spells')
-      .on(IdPrefixes.TALENTS, () => 'skills')
-      .otherwise(() => undefined)
-  );
-}
+  return match<IdPrefixes, Maybe<HeroStateListKey>>(getIdPrefix(id))
+    .on(IdPrefixes.ADVANTAGES, () =>
+      Maybe.Just<HeroStateListKey>('advantages')
+    )
+    .on(IdPrefixes.ATTRIBUTES, () =>
+      Maybe.Just<HeroStateListKey>('attributes')
+    )
+    .on(IdPrefixes.BLESSINGS, () =>
+      Maybe.Just<HeroStateListKey>('blessings')
+    )
+    .on(IdPrefixes.CANTRIPS, () =>
+      Maybe.Just<HeroStateListKey>('cantrips')
+    )
+    .on(IdPrefixes.COMBAT_TECHNIQUES, () =>
+      Maybe.Just<HeroStateListKey>('combatTechniques')
+    )
+    .on(IdPrefixes.DISADVANTAGES, () =>
+      Maybe.Just<HeroStateListKey>('disadvantages')
+    )
+    .on(IdPrefixes.LITURGIES, () =>
+      Maybe.Just<HeroStateListKey>('liturgicalChants')
+    )
+    .on(IdPrefixes.SPECIAL_ABILITIES, () =>
+      Maybe.Just<HeroStateListKey>('specialAbilities')
+    )
+    .on(IdPrefixes.SPELLS, () =>
+      Maybe.Just<HeroStateListKey>('spells')
+    )
+    .on(IdPrefixes.TALENTS, () =>
+      Maybe.Just<HeroStateListKey>('skills')
+    )
+    .otherwise(Maybe.Nothing);
+};
 
 export const getHeroStateListItem =
   <D extends Dependent = Dependent>(id: string) =>
-    (state: HeroDependent): Maybe<D> =>
+    (state: Record<HeroDependent>): Maybe<D> =>
       getHeroStateListKeyById(id)
-        .map(key => state[key])
-        .bind(slice => slice instanceof Map
-          ? Maybe.of(slice.get(id) as D | undefined)
+        .bind(state.lookup)
+        .bind(slice => slice instanceof OrderedMap
+          ? slice.lookup(id) as any
           : Maybe.Nothing()
         );
 
-export const getHeroStateListItemOr =
-  <D extends Dependent = Dependent>(id: string, create: (id: string) => D) =>
-    (state: HeroDependent): D =>
-      getHeroStateListItem<D>(id)(state).valueOr(create(id));
+export const getHeroStateListItemOr = <D extends Dependent = Dependent>(
+  id: string,
+  create: (id: string) => D
+) =>
+  (state: Record<HeroDependent>): D =>
+    Maybe.fromMaybe(create(id), getHeroStateListItem<D>(id)(state));
 
 export const setHeroListStateItem =
-  <D extends Dependent = Dependent>(id: string) => (item: D) =>
-    (state: HeroDependent): HeroDependent =>
+  (id: string) => (item: Dependent) =>
+    (state: Record<HeroDependent>): Maybe<Record<HeroDependent>> =>
       getHeroStateListKeyById(id)
-        .map(key => ({
-          ...state,
-          [key]: setMapItem(state[key] as Map<string, D>, id, item),
-        }))
-        .valueOr(state);
+        .map(state.alter(slice => slice.map(slice =>
+          (slice as OrderedMap<string, Dependent>)
+            .insert(id, item)
+        ) as RecordKey<HeroStateListKey, HeroDependent>));
 
-export const removeHeroListStateItem =
-  <D extends Dependent = Dependent>(id: string) =>
-    (state: HeroDependent): HeroDependent =>
-      getHeroStateListKeyById(id)
-        .map(key => ({
-          ...state,
-          [key]: deleteMapItem<string, D>(state[key] as Map<string, D>, id),
-        }))
-        .valueOr(state);
+export const removeHeroListStateItem = (id: string) =>
+  (state: Record<HeroDependent>): Maybe<Record<HeroDependent>> =>
+    getHeroStateListKeyById(id)
+      .map(state.alter(slice => slice.map(slice =>
+        slice.delete(id)
+      ) as RecordKey<HeroStateListKey, HeroDependent>));
 
 export const adjustHeroSlice = <K extends HeroStateListKey>(
-  adjustFn: (slice: HeroDependent[K]) => HeroDependent[K],
+  adjustFn: (slice: RecordKey<K, HeroDependent>) => RecordKey<K, HeroDependent>,
   key: K,
-) => (state: HeroDependent) => {
-  return {
-    ...state,
-    [key]: adjustFn(state[key])
-  };
+) => (state: Record<HeroDependent>) => {
+  return state.alter(adjustFn, key);
 };
 
 export const adjustHeroListStateItemOr = <D extends Dependent>(
   createFn: (id: string) => D,
-  adjustFn: (value: D) => D | undefined,
+  adjustFn: (value: D) => Maybe<D>,
   id: string,
 ) => (
   state: HeroDependent,
 ) => getHeroStateListKeyById(id)
   .map(key => ({
     ...state,
-    [key]: adjustOrM<string, D>(
-      R.pipe(
-        createFn,
-        adjustFn as (x: D) => D,
-      ),
-      adjustFn,
-      id
-    )(state[key] as any),
-  }))
-  .valueOr(state);
+    [key]: (state[key] as any as OrderedMap<string, D>).alter(R.pipe(
+      Maybe.fromMaybe(createFn(id)),
+      adjustFn
+    ), id),
+  }));
 
 export const getAllEntriesByGroup =
   <I extends Dependent = Dependent, T extends EntryWithGroup = EntryWithGroup>(
-    wiki: ReadMap<string, T>,
-    list: ReadMap<string, I>,
+    wiki: OrderedMap<string, T>,
+    list: OrderedMap<string, I>,
     ...groups: number[]
   ): List<I> => list.elems().filter(R.pipe(
-    e => e.id,
-    wiki.lookup,
-    e => Maybe.isJust(e) && groups.includes(e.valueOr().gr)
+    e => e.lookup('id').bind(wiki.lookup),
+    e => Maybe.isJust(e) && groups.includes(
+      Maybe.fromJust(e.bind(e => e.lookup('gr')))
+    )
   ));

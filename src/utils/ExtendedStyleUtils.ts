@@ -1,5 +1,6 @@
 import { HeroDependent, StyleDependency } from '../types/data.d';
 import { SpecialAbility } from '../types/wiki.d';
+import { Record } from './dataUtils';
 
 export type StyleDependencyStateKeys =
   'combatStyleDependencies' |
@@ -302,8 +303,8 @@ export const getAllAvailableExtendedSpecialAbilities = (
  * @param entry The special ability to check.
  */
 export const isStyleValidToRemove = (
-  state: HeroDependent,
-  entry?: SpecialAbility,
+  state: Record<HeroDependent>,
+  entry?: Record<SpecialAbility>,
 ): boolean => {
   if (entry) {
     const key = getStyleStateKey(entry);

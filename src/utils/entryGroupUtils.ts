@@ -1,40 +1,36 @@
-import R from 'ramda';
-import { WikiState } from '../reducers/wikiReducer';
 import * as Data from '../types/data.d';
+import { WikiAll } from '../types/wiki';
+import { List, Record } from './dataUtils';
 import { getAllEntriesByGroup } from './heroStateUtils';
 import { isActive } from './isActive';
 
 export const getActiveGroupEntries = (
-  wiki: WikiState,
-  state: Data.HeroDependent,
-  ...groups: number[],
-): Data.ActivatableDependent[] => R.pipe(
-  (state: Data.HeroDependent) => getAllEntriesByGroup(
-    wiki.specialAbilities,
-    state.specialAbilities,
+  wiki: Record<WikiAll>,
+  state: Record<Data.HeroDependent>,
+  ...groups: number[]
+): List<Record<Data.ActivatableDependent>> =>
+  getAllEntriesByGroup(
+    wiki.get('specialAbilities'),
+    state.get('specialAbilities'),
     ...groups,
-  ),
-  all => R.filter(e => isActive(e), all),
-)(state);
+  )
+    .filter(isActive);
 
 export const countActiveGroupEntries = (
-  wiki: WikiState,
-  state: Data.HeroDependent,
-  ...groups: number[],
-): number => R.pipe(
-  (state: Data.HeroDependent) => getActiveGroupEntries(wiki, state, ...groups),
-  active => active.length,
-)(state);
+  wiki: Record<WikiAll>,
+  state: Record<Data.HeroDependent>,
+  ...groups: number[]
+): number =>
+  getActiveGroupEntries(wiki, state, ...groups).length();
 
 export const hasActiveGroupEntry = (
-  wiki: WikiState,
-  state: Data.HeroDependent,
-  ...groups: number[],
-): boolean => R.pipe(
-  (state: Data.HeroDependent) => getAllEntriesByGroup(
-    wiki.specialAbilities,
-    state.specialAbilities,
+  wiki: Record<WikiAll>,
+  state: Record<Data.HeroDependent>,
+  ...groups: number[]
+): boolean =>
+  getAllEntriesByGroup(
+    wiki.get('specialAbilities'),
+    state.get('specialAbilities'),
     ...groups,
-  ),
-  all => R.any(e => isActive(e), all),
-)(state);
+  )
+    .any(isActive);

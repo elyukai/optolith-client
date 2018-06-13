@@ -1,41 +1,46 @@
 import R from 'ramda';
 import { Race, RaceVariant } from '../types/wiki';
-import { multiplyString } from './NumberUtils';
+import { Maybe, Record } from './dataUtils';
 import { rollDice, rollDie } from './dice';
-import { Maybe } from './maybe';
+import { multiplyString } from './NumberUtils';
 
 export const rerollHairColor = (
-  race: Maybe<Race>,
-  raceVariant: Maybe<RaceVariant>,
+  race: Maybe<Record<Race>>,
+  raceVariant: Maybe<Record<RaceVariant>>,
 ): Maybe<number> =>
   race
-    .map(e => e.hairColors)
-    .alt(raceVariant.map(e => e.hairColors))
-    .map(e => e[rollDie(20) - 1]);
+    .bind(e => e.lookup('hairColors'))
+    .alt(raceVariant.bind(e => e.lookup('hairColors')))
+    .bind(e => e.subscript(rollDie(20) - 1));
 
 export const rerollEyeColor = (
-  race: Maybe<Race>,
-  raceVariant: Maybe<RaceVariant>,
+  race: Maybe<Record<Race>>,
+  raceVariant: Maybe<Record<RaceVariant>>,
   isAlbino: boolean,
 ): Maybe<number> =>
   isAlbino ? Maybe.Just(rollDie(2) + 18) : race
-    .map(e => e.eyeColors)
-    .alt(raceVariant.map(e => e.eyeColors))
-    .map(e => e[rollDie(20) - 1]);
+    .bind(e => e.lookup('eyeColors'))
+    .alt(raceVariant.bind(e => e.lookup('eyeColors')))
+    .bind(e => e.subscript(rollDie(20) - 1));
 
 export const rerollSize = (
-  race: Maybe<Race>,
-  raceVariant: Maybe<RaceVariant>,
+  race: Maybe<Record<Race>>,
+  raceVariant: Maybe<Record<RaceVariant>>,
 ): Maybe<string> =>
   race
-    .map(e => e.sizeBase)
-    .alt(raceVariant.map(e => e.sizeBase))
+    .bind(e => e.lookup('sizeBase'))
+    .alt(raceVariant.bind(e => e.lookup('sizeBase')))
     .map(R.add(
-      race
-        .map(e => e.sizeRandom)
-        .alt(raceVariant.map(e => e.sizeRandom))
-        .map(R.reduce((acc, die) => acc + rollDice(die.amount, die.sides), 0))
-        .valueOr(0)
+      Maybe.fromMaybe(0, race
+        .bind(e => e.lookup('sizeRandom'))
+        .alt(raceVariant.bind(e => e.lookup('sizeRandom')))
+        .map(e => e.foldl(
+          acc => die => acc + rollDice(
+            die.get('amount'),
+            die.get('sides')
+          ), 0
+        ))
+      )
     ))
     .map(e => e.toString());
 
@@ -55,8 +60,8 @@ interface RerolledWeight {
 }
 
 export const rerollWeight = (
-  race: Maybe<Race>,
-  raceVariant: Maybe<RaceVariant>,
+  race: Maybe<Record<Race>>,
+  raceVariant: Maybe<Record<RaceVariant>>,
   size: Maybe<string> = rerollSize(race, raceVariant),
 ): RerolledWeight => {
   const formattedSize = size.map(multiplyString);
@@ -64,7 +69,7 @@ export const rerollWeight = (
   return {
     weight: race
       .map(e => {
-        const addFunc = e.id === 'R_1' ?
+        const addFunc = e.get('id') === 'R_1' ?
           (e: number) => (acc: number) => {
             const result = rollDie(Math.abs(e));
             return result % 2 > 0 ? acc - result : acc + result;
@@ -74,11 +79,15 @@ export const rerollWeight = (
             return e < 0 ? acc - result : acc + result;
           };
 
-        return e.weightRandom.reduce((acc, die) => {
-          return acc + rollDice(die.amount, die.sides, addFunc(die.sides));
-        }, e.weightBase);
+        return e.get('weightRandom').foldl(acc => die => {
+          return acc + rollDice(
+            die.get('amount'),
+            die.get('sides'),
+            addFunc(die.get('sides'))
+          );
+        }, e.get('weightBase'));
       })
-      .map(R.add(formattedSize.map(Number.parseInt).valueOr(0)))
+      .map(R.add(Maybe.fromMaybe(0, formattedSize.map(Number.parseInt))))
       .map(e => e.toString()),
     size: formattedSize
   };

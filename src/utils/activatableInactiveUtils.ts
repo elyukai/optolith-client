@@ -1,107 +1,123 @@
 import R from 'ramda';
-import { WikiState } from '../reducers/wikiReducer';
 import { AdventurePointsObject } from '../selectors/adventurePointsSelectors';
 import * as Data from '../types/data.d';
 import * as Wiki from '../types/wiki.d';
-import { sortObjects } from './FilterSortUtils';
-import { getBlessedTraditionInstanceIdByNumericId } from './IDUtils';
-import { getTraditionOfAspect } from './LiturgyUtils';
-import { getWikiEntry } from './WikiUtils';
 import { isAdditionDisabled } from './activatableInactiveValidationUtils';
 import { countActiveSkillEntries } from './activatableSkillUtils';
 import { convertMapToValues, setM } from './collectionUtils';
+import { List, Maybe, Record } from './dataUtils';
 import { countActiveGroupEntries } from './entryGroupUtils';
 import { exists } from './exists';
+import { sortObjects } from './FilterSortUtils';
 import { getAllEntriesByGroup } from './heroStateUtils';
+import { getBlessedTraditionInstanceIdByNumericId } from './IDUtils';
 import { isActive } from './isActive';
+import { getTraditionOfAspect } from './LiturgyUtils';
 import { match } from './match';
-import { Maybe } from './maybe';
 import { findSelectOption, getActiveSecondarySelections, getActiveSelections, getRequiredSelections } from './selectionUtils';
 import { getBlessedTradition, getMagicalTraditions } from './traditionUtils';
 import { validatePrerequisites, validateTier } from './validatePrerequisitesUtils';
+import { getWikiEntry } from './WikiUtils';
 
-const getIsNoActiveSelection = (instance: Maybe<Data.ActivatableDependent>) => {
-  const activeSelections = getActiveSelections(instance);
-  return (e: Wiki.SelectionObject) => !activeSelections.includes(e.id);
-};
+const getIsNoActiveSelection =
+  (instance: Maybe<Record<Data.ActivatableDependent>>) => {
+    const activeSelections = Maybe.fromMaybe(
+      List.of<string | number>(),
+      getActiveSelections(instance)
+    );
 
-const getIsNoRequiredSelection = (instance: Maybe<Data.ActivatableDependent>) => {
-  const requiredSelections = getRequiredSelections(instance);
-  return (e: Wiki.SelectionObject) => !requiredSelections.includes(e.id);
-};
+    return (e: Record<Wiki.SelectionObject>) =>
+      !activeSelections.elem(e.get('id'));
+  };
+
+const getLessThanTwoSameIdActiveSelections =
+  (instance: Maybe<Record<Data.ActivatableDependent>>) => {
+    const activeSelections = Maybe.fromMaybe(
+      List.of<string | number>(),
+      getActiveSelections(instance)
+    );
+
+    return (e: Record<Wiki.SelectionObject>) =>
+      activeSelections.filter(s => s === e.get('id')).length() < 2
+  };
+
+const getIsNoRequiredSelection =
+  (instance: Maybe<Record<Data.ActivatableDependent>>) => {
+    const requiredSelections = Maybe.fromMaybe(
+      List.of<string | number | List<number>>(),
+      getRequiredSelections(instance)
+    );
+
+    return (e: Record<Wiki.SelectionObject>) =>
+      !requiredSelections.elem(e.get('id'));
+  };
+
+const getIsNoRequiredOrActiveSelection =
+  (instance: Maybe<Record<Data.ActivatableDependent>>) => {
+    const isNoActiveSelection = getIsNoActiveSelection(instance);
+    const isNoRequiredSelection = getIsNoRequiredSelection(instance);
+
+    return (e: Record<Wiki.SelectionObject>) =>
+      isNoActiveSelection(e) && isNoRequiredSelection(e);
+  };
 
 const getEntrySpecificSelections = (
-  wiki: WikiState,
-  instance: Maybe<Data.ActivatableDependent>,
-  state: Data.HeroDependent,
+  wiki: Record<Wiki.WikiAll>,
+  instance: Maybe<Record<Data.ActivatableDependent>>,
+  state: Record<Data.HeroDependent>,
   entry: Wiki.Activatable,
 ) => {
-  return match<string, Maybe<Wiki.SelectionObject[]>>(entry.id)
+  return match<string, Maybe<List<Record<Wiki.SelectionObject>>>>(entry.get('id'))
     .on([
       'ADV_4',
       'ADV_17',
       'ADV_47',
     ].includes, () =>
-      Maybe.of(entry.select)
+      entry.lookup('select')
+        .map(select =>
+          select.filter(getIsNoRequiredOrActiveSelection(instance))
+        )
+    )
+    .on('ADV_16', () =>
+      entry.lookup('select')
         .map(select => {
-          const isNoActiveSelection = getIsNoActiveSelection(instance);
+          const hasLessThanTwoSameIdActiveSelections =
+            getLessThanTwoSameIdActiveSelections(instance);
+
           const isNoRequiredSelection = getIsNoRequiredSelection(instance);
 
           return select.filter(e =>
-            isNoActiveSelection(e) && isNoRequiredSelection(e)
+            hasLessThanTwoSameIdActiveSelections(e)
+            && isNoRequiredSelection(e)
           );
-        })
-    )
-    .on('ADV_16', () =>
-      Maybe.of(entry.select)
-        .map(select => {
-          const activeSelections = getActiveSelections(instance);
-          const isNoRequiredSelection = getIsNoRequiredSelection(instance);
-
-          return R.filter(e => activeSelections.filter(s => s === e.id).length < 2R.both(
-            e => R.lt(
-              R.length(R.filter(R.equals(e.id), activeSelections)),
-              2,
-            ),
-            e => R.not(R.contains(e.id, requiredSelections)),
-          ), select);
         })
     )
     .on([
       'ADV_28',
       'ADV_29',
     ].includes, () =>
-      Maybe.of(entry.select)
-        .map(select => {
-          const requiredSelections = getRequiredSelections(instance);
-
-          return R.filter(
-            e => R.not(R.contains(e.id, requiredSelections)),
-            select,
-          );
-        })
+      entry.lookup('select')
+        .map(select => select.filter(getIsNoRequiredSelection(instance)))
     )
     .on([
       'ADV_32',
       'DISADV_24',
     ].includes, id =>
-      Maybe.of(entry.select)
+      entry.lookup('select')
         .map(select => {
           const flippedId = id === 'DISADV_24' ? 'ADV_32' : id;
 
-          const activeSelections = getActiveSelections(
-            Maybe.of(state.disadvantages.get(flippedId))
+          const hasLessThanTwoSameIdActiveSelections =
+            getLessThanTwoSameIdActiveSelections(
+              state.get('disadvantages').lookup(flippedId)
+            );
+
+          const isNoRequiredSelection = getIsNoRequiredSelection(instance);
+
+          return select.filter(e =>
+            hasLessThanTwoSameIdActiveSelections(e)
+            && isNoRequiredSelection(e)
           );
-
-          const requiredSelections = getRequiredSelections(instance);
-
-          return R.filter(R.both(
-            e => R.lt(
-              R.length(R.filter(R.equals(e.id), activeSelections)),
-              2,
-            ),
-            e => R.not(R.contains(e.id, requiredSelections)),
-          ), select);
         })
     )
     .on([
@@ -109,61 +125,46 @@ const getEntrySpecificSelections = (
       'DISADV_34',
       'DISADV_50',
     ].includes, () =>
-      Maybe.of(entry.select)
-        .map(select => {
-          const requiredSelections = getRequiredSelections(instance);
-
-          return R.filter(
-            e => R.not(R.contains(e.id, requiredSelections)),
-            select,
-          );
-        })
+      entry.lookup('select')
+        .map(select => select.filter(getIsNoRequiredSelection(instance)))
     )
     .on([
       'DISADV_33',
       'DISADV_37',
       'DISADV_51',
     ].includes, id =>
-      Maybe.of(entry.select)
+      entry.lookup('select')
         .map(select => {
-          const activeSelections = getActiveSelections(instance);
-          const requiredSelections = getRequiredSelections(instance);
+          const isNoRequiredOrActiveSelection =
+            getIsNoRequiredOrActiveSelection(instance);
 
-          return R.ifElse(
-            R.equals('DISADV_33'),
-            R.always(R.filter(R.either(
-              e => R.contains(e.id, [7, 8]),
-              R.both(
-                e => R.not(R.contains(e.id, activeSelections)),
-                e => R.not(R.contains(e.id, requiredSelections)),
-              ),
-            ), select)),
-            R.always(R.filter(R.both(
-              e => R.not(R.contains(e.id, activeSelections)),
-              e => R.not(R.contains(e.id, requiredSelections)),
-            ), select)),
-          )(id);
+          if (id === 'DISADV_33') {
+            const specialIds = List.of(7, 8);
+            return select.filter(e =>
+              specialIds.elem(e.get('id') as number)
+              || isNoRequiredOrActiveSelection(e)
+            );
+          }
+          else {
+            return select.filter(isNoRequiredOrActiveSelection);
+          }
         })
     )
     .on('DISADV_36', () =>
-      Maybe.of(entry.select)
-        .map(select => {
-          const activeSelections = getActiveSelections(instance);
-          const requiredSelections = getRequiredSelections(instance);
-
-          return R.filter(R.both(
-            e => R.not(R.contains(e.id, activeSelections)),
-            e => R.not(R.contains(e.id, requiredSelections)),
-          ), select);
-        })
+      entry.lookup('select')
+        .map(select =>
+          select.filter(getIsNoRequiredOrActiveSelection(instance))
+        )
     )
     .on('DISADV_48', () =>
-      Maybe.of(entry.select)
+      entry.lookup('select')
         .map(select => {
-          const activeSelections = getActiveSelections(instance);
-          const requiredSelections = getRequiredSelections(instance);
+          const isNoActiveSelection = getIsNoActiveSelection(instance);
+          const isNoRequiredSelection = getIsNoRequiredSelection(instance);
 
-          return R.filter(R.ifElse(
+          return select.filter(e => {
+
+          }R.ifElse(
             R.both(
               R.either(
                 R.always(R.defaultTo(
@@ -186,11 +187,11 @@ const getEntrySpecificSelections = (
               e => R.not(R.contains(e.id, activeSelections)),
               e => R.not(R.contains(e.id, requiredSelections)),
             ),
-          ), select);
+          ));
         })
     )
     .on('SA_3', () =>
-      Maybe.of(entry.select)
+      entry.lookup('select')
         .map(select => {
           const activeSelections = getActiveSelections(instance);
           const requiredSelections = getRequiredSelections(instance);
@@ -213,7 +214,7 @@ const getEntrySpecificSelections = (
     )
     .on('SA_9', () => {
       const counter = getActiveSecondarySelections(instance);
-      return Maybe.of(entry.select)
+      return entry.lookup('select')
         .map(select => {
           const requiredSelections = getRequiredSelections(instance);
 
@@ -255,7 +256,7 @@ const getEntrySpecificSelections = (
         }));
     })
     .on('SA_28', () =>
-      Maybe.of(entry.select)
+      entry.lookup('select')
         .map(select => {
           const activeSelections = getActiveSelections(instance);
           const requiredSelections = getRequiredSelections(instance);
@@ -281,7 +282,7 @@ const getEntrySpecificSelections = (
         })
     )
     .on('SA_29', () =>
-      Maybe.of(entry.select)
+      entry.lookup('select')
         .map(select => {
           const requiredSelections = getRequiredSelections(instance);
 
@@ -318,7 +319,7 @@ const getEntrySpecificSelections = (
         ),
       );
 
-      return Maybe.of(entry.select)
+      return entry.lookup('select')
         .map(select => {
           const propertiesWithValidSpells =
             getPropertiesWithValidSpells(
@@ -348,7 +349,7 @@ const getEntrySpecificSelections = (
         });
     })
     .on('SA_81', () =>
-      Maybe.of(entry.select)
+      entry.lookup('select')
         .map(select => {
           return Maybe.of(state.specialAbilities.get('SA_72'))
             .map(propertyKnowledge => {
@@ -406,7 +407,7 @@ const getEntrySpecificSelections = (
         ),
       );
 
-      return Maybe.of(entry.select)
+      return entry.lookup('select')
         .bind(select => {
           const aspectsWithValidLiturgicalChants =
             getAspectsWithValidLiturgicalChants(
@@ -445,7 +446,7 @@ const getEntrySpecificSelections = (
         });
     })
     .on('SA_231', () =>
-      Maybe.of(entry.select)
+      entry.lookup('select')
         .map(select => {
           const activeSelections = getActiveSelections(instance);
           const requiredSelections = getRequiredSelections(instance);
@@ -473,7 +474,7 @@ const getEntrySpecificSelections = (
         })
     )
     .on('SA_338', () =>
-      Maybe.of(entry.select)
+      entry.lookup('select')
         .map(select => {
           const activeSelections = getActiveSelections(instance);
 
@@ -504,7 +505,7 @@ const getEntrySpecificSelections = (
       'SA_414',
       'SA_663',
     ].includes, () =>
-      Maybe.of(entry.select)
+      entry.lookup('select')
         .map(select => {
           const activeSelections = getActiveSelections(instance);
           const requiredSelections = getRequiredSelections(instance);
@@ -545,7 +546,7 @@ const getEntrySpecificSelections = (
         })
     )
     .on('SA_639', () =>
-      Maybe.of(entry.select)
+      entry.lookup('select')
         .map(select => {
           const activeSelections = getActiveSelections(instance);
           const requiredSelections = getRequiredSelections(instance);
@@ -620,7 +621,7 @@ const getEntrySpecificSelections = (
         })
     )
     .otherwise(() =>
-      Maybe.of(entry.select)
+      entry.lookup('select')
         .map(select => {
           const activeSelections = getActiveSelections(instance);
           const requiredSelections = getRequiredSelections(instance);

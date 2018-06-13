@@ -7,7 +7,7 @@ import { Advantage, Attribute, Blessing, Book, Cantrip, CombatTechnique, Culture
 import { translate } from '../utils/I18n';
 import { getWikiStateKeyByCategory } from '../utils/IDUtils';
 import { initAdvantage, initAttribute, initBlessing, initCantrip, initCombatTechnique, initCulture, initDisadvantage, initExperienceLevel, initItemTemplate, initLiturgicalChant, initProfession, initProfessionVariant, initRace, initRaceVariant, initSkill, initSpecialAbility, initSpell } from '../utils/InitWikiUtils';
-import { ReadMap } from '../utils/dataUtils';
+import { OrderedMap } from '../utils/dataUtils';
 
 type Action = ReceiveInitialDataAction;
 
@@ -18,45 +18,45 @@ type RawData = RawAdvantage | RawAttribute | RawBlessing | RawCantrip | RawComba
 type RawLocales = RawAdvantageLocale | RawAttributeLocale | RawBlessingLocale | RawCantripLocale | RawCombatTechniqueLocale | RawDisadvantageLocale | RawLiturgyLocale | RawProfessionLocale | RawProfessionVariantLocale | RawRaceLocale | RawRaceVariantLocale | RawCultureLocale | RawSpecialAbilityLocale | RawSpellLocale | RawTalentLocale;
 
 export interface WikiState {
-	books: ReadMap<string, Book>;
-	experienceLevels: ReadMap<string, ExperienceLevel>;
-	races: ReadMap<string, Race>;
-	raceVariants: ReadMap<string, RaceVariant>;
-	cultures: ReadMap<string, Culture>;
-	professions: ReadMap<string, Profession>;
-	professionVariants: ReadMap<string, ProfessionVariant>;
-	attributes: ReadMap<string, Attribute>;
-	advantages: ReadMap<string, Advantage>;
-	disadvantages: ReadMap<string, Disadvantage>;
-	specialAbilities: ReadMap<string, SpecialAbility>;
-	skills: ReadMap<string, Skill>;
-	combatTechniques: ReadMap<string, CombatTechnique>;
-	spells: ReadMap<string, Spell>;
-	cantrips: ReadMap<string, Cantrip>;
-	liturgicalChants: ReadMap<string, LiturgicalChant>;
-	blessings: ReadMap<string, Blessing>;
-	itemTemplates: ReadMap<string, ItemTemplate>;
+	books: OrderedMap<string, Book>;
+	experienceLevels: OrderedMap<string, ExperienceLevel>;
+	races: OrderedMap<string, Race>;
+	raceVariants: OrderedMap<string, RaceVariant>;
+	cultures: OrderedMap<string, Culture>;
+	professions: OrderedMap<string, Profession>;
+	professionVariants: OrderedMap<string, ProfessionVariant>;
+	attributes: OrderedMap<string, Attribute>;
+	advantages: OrderedMap<string, Advantage>;
+	disadvantages: OrderedMap<string, Disadvantage>;
+	specialAbilities: OrderedMap<string, SpecialAbility>;
+	skills: OrderedMap<string, Skill>;
+	combatTechniques: OrderedMap<string, CombatTechnique>;
+	spells: OrderedMap<string, Spell>;
+	cantrips: OrderedMap<string, Cantrip>;
+	liturgicalChants: OrderedMap<string, LiturgicalChant>;
+	blessings: OrderedMap<string, Blessing>;
+	itemTemplates: OrderedMap<string, ItemTemplate>;
 }
 
 const initialState: WikiState = {
-	books: new Map(),
-	experienceLevels: new Map(),
-	races: new Map(),
-	raceVariants: new Map(),
-	cultures: new Map(),
-	professions: new Map(),
-	professionVariants: new Map(),
-	attributes: new Map(),
-	advantages: new Map(),
-	disadvantages: new Map(),
-	specialAbilities: new Map(),
-	skills: new Map(),
-	combatTechniques: new Map(),
-	spells: new Map(),
-	cantrips: new Map(),
-	liturgicalChants: new Map(),
-	blessings: new Map(),
-	itemTemplates: new Map(),
+	books: new OrderedMap(),
+	experienceLevels: new OrderedMap(),
+	races: new OrderedMap(),
+	raceVariants: new OrderedMap(),
+	cultures: new OrderedMap(),
+	professions: new OrderedMap(),
+	professionVariants: new OrderedMap(),
+	attributes: new OrderedMap(),
+	advantages: new OrderedMap(),
+	disadvantages: new OrderedMap(),
+	specialAbilities: new OrderedMap(),
+	skills: new OrderedMap(),
+	combatTechniques: new OrderedMap(),
+	spells: new OrderedMap(),
+	cantrips: new OrderedMap(),
+	liturgicalChants: new OrderedMap(),
+	blessings: new OrderedMap(),
+	itemTemplates: new OrderedMap(),
 };
 
 export function wiki(state: WikiState = initialState, action: Action): WikiState {
@@ -68,18 +68,18 @@ export function wiki(state: WikiState = initialState, action: Action): WikiState
 			const { books, ui } = rawLocale;
 			const { attributes, advantages, blessings, cantrips, cultures, disadvantages, el, talents, combattech, professions, professionvariants, races, racevariants, spells, liturgies, specialabilities, items } = tables;
 
-			const iterate = <R extends RawData, T extends Data, L extends RawLocales>(source: { [id: string]: R }, initFn: (raw: R, locale: ToListById<L>) => T | undefined, locale: ToListById<L>): Map<string, T> => {
+			const iterate = <R extends RawData, T extends Data, L extends RawLocales>(source: { [id: string]: R }, initFn: (raw: R, locale: ToListById<L>) => T | undefined, locale: ToListById<L>): OrderedMap<string, T> => {
 				return Object.entries(source).reduce((map, [id, obj]) => {
 					const result = initFn(obj, locale);
 					if (result) {
 						map.set(id, result);
 					}
 					return map;
-				}, new Map<string, T>());
+				}, new OrderedMap<string, T>());
 			};
 
 			const list: WikiState = {
-				books: new Map(Object.entries(books)),
+				books: new OrderedMap(Object.entries(books)),
 				experienceLevels: iterate(el, initExperienceLevel, rawLocale.el),
 				races: iterate(races, initRace, rawLocale.races),
 				raceVariants: iterate(racevariants, initRaceVariant, rawLocale.racevariants),
@@ -145,7 +145,7 @@ export function wiki(state: WikiState = initialState, action: Action): WikiState
 				return mapped;
 			}
 
-			for (const [id, obj] of list.advantages as Map<string, Advantage>) {
+			for (const [id, obj] of list.advantages as OrderedMap<string, Advantage>) {
 				if (['ADV_4', 'ADV_16', 'ADV_17', 'ADV_47'].includes(id) && obj.select) {
 					// @ts-ignore
 					obj.select = getSelectionCategories(obj.select);
@@ -153,7 +153,7 @@ export function wiki(state: WikiState = initialState, action: Action): WikiState
 				list.advantages.set(id, obj);
 			}
 
-			for (const [id, obj] of list.disadvantages as Map<string, Disadvantage>) {
+			for (const [id, obj] of list.disadvantages as OrderedMap<string, Disadvantage>) {
 				if (['DISADV_48'].includes(id) && obj.select) {
 					// @ts-ignore
 					obj.select = getSelectionCategories(obj.select);
@@ -161,7 +161,7 @@ export function wiki(state: WikiState = initialState, action: Action): WikiState
 				list.disadvantages.set(id, obj);
 			}
 
-			for (const [id, obj] of list.specialAbilities as Map<string, SpecialAbility>) {
+			for (const [id, obj] of list.specialAbilities as OrderedMap<string, SpecialAbility>) {
 				if (['SA_231', 'SA_250', 'SA_562', 'SA_569'].includes(id) && obj.select) {
 					// @ts-ignore
 					obj.select = getSelectionCategories(obj.select);

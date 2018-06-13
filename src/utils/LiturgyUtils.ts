@@ -3,36 +3,44 @@ import { Categories } from '../constants/Categories';
 import * as Data from '../types/data.d';
 import * as Wiki from '../types/wiki.d';
 import { getSkillCheckValues } from './AttributeUtils';
-import { getNumericBlessedTraditionIdByInstanceId } from './IDUtils';
-import { NumberKeyObject, convertMapToValues, setM } from './collectionUtils';
+import { convertMapToValues, NumberKeyObject, setM } from './collectionUtils';
+import { List, Maybe, OrderedMap, Record } from './dataUtils';
 import { flattenDependencies } from './flattenDependencies';
-import { Maybe } from './maybe';
+import { getNumericBlessedTraditionIdByInstanceId } from './IDUtils';
 import { getActiveSelections } from './selectionUtils';
 
-const unavailableBlessingsByTradition = new Map([
-  ['SA_694', ['BLESSING_1', 'BLESSING_5', 'BLESSING_12']],
-  ['SA_695', ['BLESSING_4', 'BLESSING_11', 'BLESSING_12']],
-  ['SA_696', ['BLESSING_3', 'BLESSING_6', 'BLESSING_7']],
-  ['SA_697', ['BLESSING_2', 'BLESSING_8', 'BLESSING_10']],
-  ['SA_698', ['BLESSING_2', 'BLESSING_3', 'BLESSING_9']],
+const unavailableBlessingsByTradition = OrderedMap.of([
+  ['SA_694', List.of('BLESSING_1', 'BLESSING_5', 'BLESSING_12')],
+  ['SA_695', List.of('BLESSING_4', 'BLESSING_11', 'BLESSING_12')],
+  ['SA_696', List.of('BLESSING_3', 'BLESSING_6', 'BLESSING_7')],
+  ['SA_697', List.of('BLESSING_2', 'BLESSING_8', 'BLESSING_10')],
+  ['SA_698', List.of('BLESSING_2', 'BLESSING_3', 'BLESSING_9')],
 ]);
 
-const getUnavailableBlessingsForTradition = (traditionId: string): string[] => {
-  return unavailableBlessingsByTradition.get(traditionId) || [];
+const getUnavailableBlessingsForTradition = (traditionId: string): List<string> => {
+  return unavailableBlessingsByTradition
+    .lookupWithDefault(List.of(), traditionId);
 };
 
 export const isOwnTradition = (
-  tradition: Wiki.SpecialAbility,
-  obj: Wiki.LiturgicalChant | Wiki.Blessing,
+  tradition: Record<Wiki.SpecialAbility>,
+  obj: Record<Wiki.LiturgicalChant> | Record<Wiki.Blessing>,
 ): boolean => {
-  const isBaseTradition = obj.tradition.some(e => {
-    const numbericId = getNumericBlessedTraditionIdByInstanceId(tradition.id);
+  const isBaseTradition = obj.get('tradition').any(e => {
+    const numbericId = tradition.lookup('id')
+      .bind(getNumericBlessedTraditionIdByInstanceId);
     return e === 1 || Maybe.of(e).equals(numbericId.map(e => e + 1));
   });
 
-  const isLiturgicalChant = obj.category === Categories.LITURGIES;
-  const blessings = getUnavailableBlessingsForTradition(tradition.id);
-  const isSpecial = isLiturgicalChant || !blessings.includes(obj.id);
+  const isLiturgicalChant =
+    obj.get('category') === Categories.LITURGIES;
+
+  const blessings = Maybe.fromJust(
+    tradition.lookup('id').map(getUnavailableBlessingsForTradition)
+  );
+
+  const isSpecial = isLiturgicalChant
+    || !blessings.elem(obj.get('id'));
 
   return isBaseTradition && isSpecial;
 };

@@ -1,87 +1,77 @@
 import R from 'ramda';
 import * as Categories from '../constants/Categories';
-import * as Data from '../types/data';
-import * as Reusable from '../types/reusable';
 import * as Wiki from '../types/wiki';
+import { List, Maybe, Record } from './dataUtils';
 import { getCategoryById } from './IDUtils';
-import { match } from './match';
 
 export const isSexRequirement = (
   req: Wiki.AllRequirementObjects,
-): req is Reusable.SexRequirement => req.id === 'SEX';
+): req is Record<Wiki.SexRequirement> =>
+  req.lookup('id').equals(Maybe.Just('SEX'));
 
 export const isRaceRequirement = (
   req: Wiki.AllRequirementObjects,
-): req is Reusable.RaceRequirement => req.id === 'RACE';
+): req is Record<Wiki.RaceRequirement> =>
+  req.lookup('id').equals(Maybe.Just('RACE'));
 
 export const isCultureRequirement = (
   req: Wiki.AllRequirementObjects,
-): req is Reusable.CultureRequirement => req.id === 'CULTURE';
+): req is Record<Wiki.CultureRequirement> =>
+  req.lookup('id').equals(Maybe.Just('CULTURE'));
 
 export const isPactRequirement = (
   req: Wiki.AllRequirementObjects,
-): req is Reusable.PactRequirement => req.id === 'PACT';
+): req is Record<Wiki.PactRequirement> =>
+  req.lookup('id').equals(Maybe.Just('PACT'));
+
+export const isRequiringPrimaryAttribute = (
+  req: Wiki.AllRequirementObjects,
+): req is Record<Wiki.RequiresPrimaryAttribute> =>
+  req.lookup('id').equals(Maybe.Just('ATTR_PRIMARY'));
 
 export const isRequiringIncreasable = (
   req: Wiki.AllRequirementObjects,
-): req is Reusable.RequiresIncreasableObject => {
-  return match<string | string[], boolean>(req.id)
-    .on((id): id is string[] => typeof id === 'object', id => {
-      return req.hasOwnProperty('value') && id.every(R.pipe(
-        getCategoryById,
-        category => typeof category === 'string' &&
-          Categories.IncreasableCategories.includes(category)
-      ));
-    })
-    .otherwise(R.pipe(
+): req is Record<Wiki.RequiresIncreasableObject> => {
+  const id = req.get('id');
+
+  if (id instanceof List) {
+    return req.member('value') && id.all(R.pipe(
       getCategoryById,
-      category => req.hasOwnProperty('value') &&
-        typeof category === 'string' &&
-        Categories.IncreasableCategories.includes(category)
+      category => Maybe.isJust(category) &&
+        Categories.IncreasableCategories.includes(Maybe.fromJust(category))
     ));
+  }
+  else {
+    const category = getCategoryById(id);
+
+    return req.member('value') && Maybe.isJust(category) &&
+      Categories.IncreasableCategories.includes(Maybe.fromJust(category));
+  }
 };
 
 export const isRequiringActivatable = (
   req: Wiki.AllRequirementObjects,
-): req is Reusable.RequiresActivatableObject => {
-  return match<string | string[], boolean>(req.id)
-    .on((id): id is string[] => typeof id === 'object', id => {
-      return req.hasOwnProperty('active') && id.every(R.pipe(
-        getCategoryById,
-        category => typeof category === 'string' &&
-          Categories.ActivatableLikeCategories.includes(category)
-      ));
-    })
-    .otherwise(R.pipe(
+): req is Record<Wiki.RequiresActivatableObject> => {
+  const id = req.get('id');
+
+  if (id instanceof List) {
+    return req.member('active') && id.all(R.pipe(
       getCategoryById,
-      category => req.hasOwnProperty('active') &&
-        typeof category === 'string' &&
-        Categories.ActivatableLikeCategories.includes(category)
+      category => Maybe.isJust(category) &&
+        Categories.ActivatableLikeCategories.includes(Maybe.fromJust(category))
     ));
+  }
+  else {
+    const category = getCategoryById(id);
+
+    return req.member('active') && Maybe.isJust(category) &&
+      Categories.ActivatableLikeCategories.includes(Maybe.fromJust(category));
+  }
 };
-
-export const isRequiringPrimaryAttribute = (
-  req: Wiki.AllRequirementObjects,
-): req is Reusable.RequiresPrimaryAttribute => req.id === 'ATTR_PRIMARY';
-
-export const isIncreasableInstance = (
-  entry?: Data.Instance,
-): entry is Data.IncreasableInstance => typeof entry === 'object' &&
-  Categories.IncreasableCategories.includes(entry.category);
-
-export const isActivatableInstance = (
-  entry?: Data.Instance,
-): entry is Data.ActivatableInstance => typeof entry === 'object' &&
-  Categories.ActivatableCategories.includes(entry.category);
-
-export const isActivatableSkillInstance = (
-  entry?: Data.Instance,
-): entry is Data.ActivatableSkillInstance => typeof entry === 'object' &&
-  Categories.ActivatableSkillCategories.includes(entry.category);
 
 export const isDependentPrerequisite = (
   entry: Wiki.AllRequirements,
-): entry is Data.DependentPrerequisite => entry !== 'RCP' &&
+): entry is Wiki.DependentPrerequisite => entry !== 'RCP' &&
   !isRaceRequirement(entry) &&
   !isCultureRequirement(entry) &&
   !isSexRequirement(entry) &&

@@ -1,6 +1,6 @@
 import R from 'ramda';
 import { ActivatableDependent } from '../types/data.d';
-import { Maybe, ReadMap } from './dataUtils';
+import { Maybe, OrderedMap, Record } from './dataUtils';
 import * as IDUtils from './IDUtils';
 import { match } from './match';
 import { getBlessedTradition, getMagicalTraditions } from './traditionUtils';
@@ -32,23 +32,21 @@ const getAttributeIdByBlessedNumericId = (id: Maybe<number>): Maybe<string> => {
  * @param type 1 = magical, 2 = blessed
  */
 export const getPrimaryAttributeId = (
-  state: ReadMap<string, ActivatableDependent>,
+  state: OrderedMap<string, Record<ActivatableDependent>>,
   type: 1 | 2,
 ): Maybe<string> => {
   return match<(1 | 2), Maybe<string>>(type)
     .on(1, () => Maybe.listToMaybe(getMagicalTraditions(state))
-      .bind(R.pipe(
-        e => e.id,
+      .bind(e => e.lookup('id').bind(R.pipe(
         IDUtils.getNumericMagicalTraditionIdByInstanceId,
         getAttributeIdByMagicalNumericId,
-      ))
+      )))
     )
     .on(2, () => getBlessedTradition(state)
-      .bind(R.pipe(
-        e => e.id,
+      .bind(e => e.lookup('id').bind(R.pipe(
         IDUtils.getNumericBlessedTraditionIdByInstanceId,
         getAttributeIdByBlessedNumericId,
-      ))
+      )))
     )
     .otherwise(Maybe.Nothing);
 };

@@ -1,4 +1,5 @@
 import { UIMessages } from '../types/ui.d';
+import { Just, Maybe, Nothing, Record } from './dataUtils';
 
 export { UIMessages };
 
@@ -11,36 +12,36 @@ export { UIMessages };
  * index.
  */
 export function translate<T extends keyof UIMessages>(
-  messages: UIMessages,
+  messages: Just<Record<UIMessages>>,
   key: T,
-  ...params: (string | number)[],
-): UIMessages[T];
+  ...params: (string | number)[]
+): Just<NonNullable<UIMessages[T]>>;
 export function translate<T extends keyof UIMessages>(
-  messages: undefined,
+  messages: Nothing,
   key: T,
-  ...params: (string | number)[],
-): undefined;
+  ...params: (string | number)[]
+): Nothing;
 export function translate<T extends keyof UIMessages>(
-  messages: UIMessages | undefined,
+  messages: Maybe<Record<UIMessages>>,
   key: T,
-  ...params: (string | number)[],
-): UIMessages[T] | undefined;
+  ...params: (string | number)[]
+): Maybe<NonNullable<UIMessages[T]>>;
 export function translate<T extends keyof UIMessages>(
-  messages: UIMessages | undefined,
+  messages: Maybe<Record<UIMessages>>,
   key: T,
-  ...params: (string | number)[],
-): UIMessages[T] | undefined {
-  if (messages === undefined) {
-    return '...';
-  }
-  const message = messages[key];
-  if (params.length > 0 && typeof message === 'string') {
-    return message.replace(/\{(\d+)\}/g, (_, p1) => {
-      const param = params[Number.parseInt(p1)];
-      return typeof param === 'number' ? param.toString() : param;
-    });
-  }
-  return message;
+  ...params: (string | number)[]
+): Maybe<NonNullable<UIMessages[T]>> {
+  return messages.bind(messages => messages.lookup(key) as Maybe<NonNullable<UIMessages[T]>>)
+    .map(message => {
+      if (params.length > 0 && typeof message === 'string') {
+        return message.replace(/\{(\d+)\}/g, (_, p1) => {
+          const param = params[Number.parseInt(p1)];
+          return typeof param === 'number' ? param.toString() : param;
+        });
+      }
+
+      return message;
+    }) as Maybe<NonNullable<UIMessages[T]>>;
 }
 
 export const localizeNumber = (n: number, locale: string) => {

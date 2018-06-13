@@ -1,8 +1,8 @@
-import { WikiState } from '../reducers/wikiReducer';
 import * as Data from '../types/data.d';
+import { WikiAll } from '../types/wiki';
 import { getCost } from './activatableCostUtils';
 import { getName } from './activatableNameUtils';
-import { Maybe } from './dataUtils';
+import { Maybe, Record } from './dataUtils';
 
 /**
  * Returns name, splitted and combined, as well as the AP you get when removing
@@ -14,11 +14,11 @@ import { Maybe } from './dataUtils';
  * @param locale The locale-dependent messages.
  */
 export const getNameCost = (
-  obj: Data.ActiveObjectWithId,
-  wiki: WikiState,
-  state: Data.HeroDependent,
+  obj: Record<Data.ActiveObjectWithId>,
+  wiki: Record<WikiAll>,
+  state: Record<Data.HeroDependent>,
   costToAdd: boolean,
-  locale?: Data.UIMessages,
+  locale: Maybe<Record<Data.UIMessages>>
 ): Maybe<Data.ActivatableNameCost> =>
   getCost(obj, wiki, state, costToAdd)
     .bind(currentCost => getName(obj, wiki, locale)
@@ -37,9 +37,9 @@ export const getNameCost = (
  * @param locale The locale-dependent messages.
  */
 export const getNameCostForWiki = (
-  obj: Data.ActiveObjectWithId,
-  wiki: WikiState,
-  locale?: Data.UIMessages,
+  obj: Record<Data.ActiveObjectWithId>,
+  wiki: Record<WikiAll>,
+  locale: Maybe<Record<Data.UIMessages>>
 ): Maybe<Data.ActivatableNameCost> =>
   getCost(obj, wiki)
     .bind(currentCost => getName(obj, wiki, locale)

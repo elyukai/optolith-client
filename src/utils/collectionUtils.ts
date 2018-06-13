@@ -1,5 +1,5 @@
 import R from 'ramda';
-import { Maybe } from './maybe';
+import { Maybe } from './dataUtils';
 
 export type ArrayElement<T> = T extends ReadonlyArray<infer I> ? I : never;
 export type ArrayFilter<T> = (list: T[]) => T[];
@@ -48,7 +48,7 @@ export const remove = (index: number) => {
  */
 export const spreadOptionalInArray = <T>(
   add: Maybe<ReadonlyArray<T>>,
-) => (list: ReadonlyArray<T>) => [ ...list, ...add.valueOr([]) ];
+) => (list: ReadonlyArray<T>) => [...list, ...Maybe.fromMaybe([], add)];
 
 /**
  * Converts a Map to an array of key-value pairs.
@@ -100,7 +100,7 @@ export const convertObjectToMap = <V>(
  * @param newList The new/updated Map.
  */
 export const mergeMaps = <K, V>(
-  ...maps: ReadonlyMap<K, V>[],
+  ...maps: ReadonlyMap<K, V>[]
 ): ReadonlyMap<K, V> => {
   return new Map(maps.reduce<[K, V][]>((merged, current) => [
     ...merged,

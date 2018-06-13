@@ -1,16 +1,16 @@
 import R from 'ramda';
 import { ActivatableDependent } from '../types/data.d';
 import { SpecialAbility } from '../types/wiki';
-import { List, Maybe, ReadMap } from './dataUtils';
+import { List, Maybe, OrderedMap, Record } from './dataUtils';
 import { isBlessedTraditionId, isMagicalTraditionId } from './IDUtils';
 import { isActive } from './isActive';
 
-const isActiveMagicalTradition = (e: ActivatableDependent) => {
-  return isMagicalTraditionId(e.id) && isActive(Maybe.of(e));
+const isActiveMagicalTradition = (e: Record<ActivatableDependent>) => {
+  return isMagicalTraditionId(e.get('id')) && isActive(e);
 };
 
-const isActiveBlessedTradition = (e: ActivatableDependent) => {
-  return isBlessedTraditionId(e.id) && isActive(Maybe.of(e));
+const isActiveBlessedTradition = (e: Record<ActivatableDependent>) => {
+  return isBlessedTraditionId(e.get('id')) && isActive(e);
 };
 
 /**
@@ -18,7 +18,7 @@ const isActiveBlessedTradition = (e: ActivatableDependent) => {
  * @param list
  */
 export const getMagicalTraditions =
-  (list: ReadMap<string, ActivatableDependent>) =>
+  (list: OrderedMap<string, Record<ActivatableDependent>>) =>
     list.elems().filter(isActiveMagicalTradition);
 
 
@@ -28,11 +28,11 @@ export const getMagicalTraditions =
  * @param list
  */
 export const getMagicalTraditionsFromWiki = (
-  wiki: ReadMap<string, SpecialAbility>,
-  list: ReadMap<string, ActivatableDependent>,
-): List<SpecialAbility> => R.pipe(
+  wiki: OrderedMap<string, Record<SpecialAbility>>,
+  list: OrderedMap<string, Record<ActivatableDependent>>,
+): List<Record<SpecialAbility>> => R.pipe(
   getMagicalTraditions,
-  Maybe.mapMaybe(e => wiki.lookup(e.id)),
+  Maybe.mapMaybe(e => e.lookup('id').bind(wiki.lookup)),
 )(list);
 
 /**
@@ -40,7 +40,7 @@ export const getMagicalTraditionsFromWiki = (
  * @param list
  */
 export const getBlessedTradition =
-  (list: ReadMap<string, ActivatableDependent>) =>
+  (list: OrderedMap<string, Record<ActivatableDependent>>) =>
     list.elems().find(isActiveBlessedTradition);
 
 /**
@@ -49,6 +49,6 @@ export const getBlessedTradition =
  * @param list
  */
 export const getBlessedTraditionFromWiki = (
-  wiki: ReadMap<string, SpecialAbility>,
-  list: ReadMap<string, ActivatableDependent>,
-) => getBlessedTradition(list).bind(e => wiki.lookup(e.id));
+  wiki: OrderedMap<string, Record<SpecialAbility>>,
+  list: OrderedMap<string, Record<ActivatableDependent>>,
+) => getBlessedTradition(list).bind(e => e.lookup('id').bind(wiki.lookup));

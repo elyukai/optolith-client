@@ -1,30 +1,36 @@
 import * as Data from '../types/data.d';
+import { Just, Maybe, Record } from './dataUtils';
 
 export const isActivatableDependent = (
-  entry: Data.Dependent | undefined
-): entry is Data.ActivatableDependent =>
-  typeof entry === 'object' &&
-  entry.hasOwnProperty('active') &&
-  !entry.hasOwnProperty('value');
+  entry: Maybe<Data.Dependent>
+): entry is Just<Record<Data.ActivatableDependent>> =>
+  Maybe.isJust(entry) &&
+  Maybe.fromJust(entry).member('active') &&
+  !Maybe.fromJust(entry).member('value');
 
 export const isActivatableSkillDependent = (
-  entry: Data.Dependent | undefined
-): entry is Data.ActivatableSkillDependent =>
-  typeof entry === 'object' &&
-  entry.hasOwnProperty('value') &&
-  entry.hasOwnProperty('active');
+  entry: Maybe<Data.Dependent>
+): entry is Just<Record<Data.ActivatableSkillDependent>> =>
+  Maybe.isJust(entry) &&
+  Maybe.fromJust(entry).member('value') &&
+  Maybe.fromJust(entry).member('active');
 
 export const isDependentSkill = (
-  entry: Data.Dependent | undefined
-): entry is Data.SkillDependent =>
-  typeof entry === 'object' &&
-  entry.hasOwnProperty('value') &&
-  !entry.hasOwnProperty('mod') &&
-  !entry.hasOwnProperty('active');
+  entry: Maybe<Data.Dependent> | Data.Dependent
+): entry is Just<Record<Data.SkillDependent>> =>
+  entry instanceof Maybe ? (
+    Maybe.isJust(entry) &&
+    Maybe.fromJust(entry).member('value') &&
+    !Maybe.fromJust(entry).member('mod') &&
+    !Maybe.fromJust(entry).member('active')
+  ) : (
+    entry.member('value') &&
+    !entry.member('mod') &&
+    !entry.member('active')
+  );
 
 export const isDependentSkillExtended = (
-  entry: Data.Dependent | undefined
+  entry: Data.Dependent
 ): entry is Data.ExtendedSkillDependent =>
-  typeof entry === 'object' &&
-  entry.hasOwnProperty('value') &&
-  !entry.hasOwnProperty('mod');
+  entry.member('value') &&
+  !entry.member('mod');

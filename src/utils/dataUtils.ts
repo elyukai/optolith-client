@@ -60,6 +60,7 @@ export class Identity<T> implements Al.Functor<T>, Al.Apply<T>, Al.Bind<T> {
 }
 
 type Some = {};
+type Nullable = null | undefined;
 
 /**
  * The `Maybe` type encapsulates an optional value. A value of type `Maybe a`
@@ -73,9 +74,9 @@ type Some = {};
  */
 export class Maybe<T extends Some> implements Al.Functor<T>, Al.Apply<T>,
   Al.Bind<T>, Al.Foldable<T>, Al.Setoid<T>, Al.Ord<T>, Al.Semigroup<T> {
-  private readonly value: T | undefined;
+  private readonly value: T | Nullable;
 
-  constructor(value: T | undefined) {
+  constructor(value: T | Nullable) {
     this.value = value;
   }
 
@@ -91,21 +92,41 @@ export class Maybe<T extends Some> implements Al.Functor<T>, Al.Apply<T>,
   }
 
   /**
+   * `(>) :: Maybe a -> Maybe a -> Bool`
+   *
+   * Returns if the first value (`this`) is greater than the second value.
+   */
+  gt<T extends number | string>(this: Maybe<T>, comp: Maybe<T>): boolean {
+    return Maybe.fromMaybe(false)(this.bind(x1 => comp.map(x2 => x1 > x2)));
+  }
+
+  /**
+   * `(<) :: Maybe a -> Maybe a -> Bool`
+   *
+   * Returns if the first value (`this`) is lower than the second value.
+   */
+  lt<T extends number | string>(this: Maybe<T>, comp: Maybe<T>): boolean {
+    return Maybe.fromMaybe(false)(this.bind(x1 => comp.map(x2 => x1 < x2)));
+  }
+
+  /**
    * `(>=) :: Maybe a -> Maybe a -> Bool`
    *
-   * Returns if the first value is greater than or equals the second value.
+   * Returns if the first value (`this`) is greater than or equals the second
+   * value.
    */
   gte<T extends number | string>(this: Maybe<T>, comp: Maybe<T>): boolean {
-    return Maybe.fromMaybe(false)(this.bind(x1 => comp.map(x2 => x2 >= x1)));
+    return Maybe.fromMaybe(false)(this.bind(x1 => comp.map(x2 => x1 >= x2)));
   }
 
   /**
    * `(<=) :: Maybe a -> Maybe a -> Bool`
    *
-   * Returns if the first value is lower than or equals the second value.
+   * Returns if the first value (`this`) is lower than or equals the second
+   * value.
    */
   lte<T extends number | string>(this: Maybe<T>, comp: Maybe<T>): boolean {
-    return Maybe.fromMaybe(false)(this.bind(x1 => comp.map(x2 => x2 <= x1)));
+    return Maybe.fromMaybe(false)(this.bind(x1 => comp.map(x2 => x1 <= x2)));
   }
 
   /**
@@ -187,7 +208,7 @@ export class Maybe<T extends Some> implements Al.Functor<T>, Al.Apply<T>,
    *
    * @class Applicative<T>
    */
-  static of<T extends Some>(value: T | undefined): Maybe<T> {
+  static of<T extends Some>(value: T | Nullable): Maybe<T> {
     return new Maybe(value);
   }
 
@@ -198,25 +219,25 @@ export class Maybe<T extends Some> implements Al.Functor<T>, Al.Apply<T>,
    * evaluates to `True` and the given value is not nullable. Otherwise returns
    * `Nothing`.
    */
-  static ofPred<T extends Some, R extends T>(
+  static ensure<T extends Some, R extends T>(
     pred: (value: T) => value is R
-  ): (value: T | undefined) => Maybe<R>;
-  static ofPred<T extends Some>(
+  ): (value: T | Nullable) => Maybe<R>;
+  static ensure<T extends Some>(
     pred: (value: T) => boolean
-  ): (value: T | undefined) => Maybe<T>;
-  static ofPred<T extends Some, R extends T>(
+  ): (value: T | Nullable) => Maybe<T>;
+  static ensure<T extends Some, R extends T>(
     pred: (value: T) => value is R,
-    value: T | undefined,
+    value: T | Nullable,
   ): Maybe<R>;
-  static ofPred<T extends Some>(
+  static ensure<T extends Some>(
     pred: (value: T) => boolean,
-    value: T | undefined,
+    value: T | Nullable,
   ): Maybe<T>;
-  static ofPred<T extends Some>(
+  static ensure<T extends Some>(
     pred: (value: T) => boolean,
-    value?: T | undefined,
-  ): ((value: T | undefined) => Maybe<T>) | Maybe<T> {
-    const curriedReturn = (x: T | undefined) => Maybe.of(x).bind<T>(x =>
+    value?: T | Nullable,
+  ): ((value: T | Nullable) => Maybe<T>) | Maybe<T> {
+    const curriedReturn = (x: T | Nullable) => Maybe.of(x).bind<T>(x =>
       pred(x) ? Maybe.Just(x) : Maybe.Nothing()
     );
 
@@ -301,7 +322,15 @@ export class Maybe<T extends Some> implements Al.Functor<T>, Al.Apply<T>,
    * the `Maybe` is `Nothing`, it returns the default values; otherwise, it
    * returns the value contained in the `Maybe`.
    */
-  static fromMaybe<T extends Some>(def: T): (m: Maybe<T>) => T {
+  static fromMaybe<T extends Some>(def: T): (m: Maybe<T>) => T;
+  static fromMaybe<T extends Some>(def: T, m: Maybe<T>): T;
+  static fromMaybe<T extends Some>(
+    def: T, m?: Maybe<T>
+  ): T | ((m: Maybe<T>) => T) {
+    if (arguments.length === 2 && m !== undefined) {
+      return Maybe.isJust(m) ? Maybe.fromJust(m) : def;
+    }
+
     return m => Maybe.isJust(m) ? Maybe.fromJust(m) : def;
   }
 
@@ -322,7 +351,7 @@ export class Maybe<T extends Some> implements Al.Functor<T>, Al.Apply<T>,
    * singleton list when not given `Nothing`.
    */
   static maybeToList<T extends Some>(m: Maybe<T>): List<T> {
-    return Maybe.isJust(m) ? List.of([m.value as T]) : new List();
+    return Maybe.isJust(m) ? List.of(m.value as T) : new List();
   }
 
   /**
@@ -376,17 +405,66 @@ export class Maybe<T extends Some> implements Al.Functor<T>, Al.Apply<T>,
   static Nothing(): Nothing {
     return new Maybe(undefined) as Nothing;
   }
+
+  // INSTANCE METHODS AS STATIC FUNCTIONS
+
+  /**
+   * `(==) :: Maybe a -> Maybe a -> Bool`
+   *
+   * Returns if both given values are equal.
+   */
+  static equals<T extends Some>(m1: Maybe<T>): (m2: Maybe<T>) => boolean;
+  static equals<T extends Some>(m1: Maybe<T>, m2: Maybe<T>): boolean;
+  static equals<T extends Some>(m1: Maybe<T>, m2?: Maybe<T>): boolean | ((m2: Maybe<T>) => boolean) {
+    const resultFn = (m1: Maybe<T>, m2: Maybe<T>) => m1.equals(m2);
+
+    if (arguments.length === 2) {
+      return resultFn(m1, m2!);
+    }
+    else {
+      return m2 => resultFn(m1, m2);
+    }
+  }
+
+  /**
+   * `map :: (a -> b) -> Maybe a -> Maybe b`
+   */
+  static map<T extends Some, U extends Some>(
+    fn: (value: T) => U
+  ): (m: Maybe<T>) => Maybe<U>;
+  static map<T extends Some, U extends Some>(
+    fn: (value: T) => U, m: Maybe<T>
+  ): Maybe<U>;
+  static map<T extends Some, U extends Some>(
+    fn: (value: T) => U, m?: Maybe<T>
+  ): Maybe<U> | ((m: Maybe<T>) => Maybe<U>) {
+    const resultFn = (fn: (value: T) => U, m: Maybe<T>) => m.map(fn);
+
+    if (arguments.length === 2) {
+      return resultFn(fn, m!);
+    }
+    else {
+      return m => resultFn(fn, m);
+    }
+  }
 }
 
 export interface Just<T extends Some> extends Maybe<T> {
-  map<U extends Some>(fn: (value: T) => U): Maybe<U>;
+  map<U extends Some>(fn: (value: T) => U): Just<U>;
+  bind<U extends Some>(fn: (value: T) => Nothing): Nothing;
+  bind<U extends Some>(fn: (value: T) => Just<U>): Just<U>;
   bind<U extends Some>(fn: (value: T) => Maybe<U>): Maybe<U>;
-  alt(): Maybe<T>;
+  ap<U extends Some>(m: Just<((value: T) => U)>): Just<U>;
+  ap<U extends Some>(m: Maybe<((value: T) => U)>): Maybe<U>;
+  concat<T, A extends Al.Semigroup<T>>(this: Just<A>, m: Just<A>): Just<A>;
+  concat<T, A extends Al.Semigroup<T>>(this: Just<A>, m: Nothing): Just<A>;
+  alt(): Just<T>;
 }
 
 export interface Nothing extends Maybe<never> {
   map(): Nothing;
   bind(): Nothing;
+  concat<T, A extends Al.Semigroup<T>>(this: Nothing, m: Maybe<A>): Nothing;
   alt<T>(m: Maybe<T>): Maybe<T>;
 }
 
@@ -394,8 +472,12 @@ export class List<T> implements Al.Functor<T>, Al.Foldable<T>, Al.Semigroup<T>,
   Al.Filterable<T> {
   private readonly value: ReadonlyArray<T>;
 
-  constructor(initialList?: ReadonlyArray<T>) {
-    this.value = typeof initialList === 'object' ? initialList : [];
+  constructor(...initialElements: T[]) {
+    this.value = initialElements;
+  }
+
+  [Symbol.iterator](): IterableIterator<T> {
+    return this.value[Symbol.iterator]();
   }
 
   // BASIC
@@ -425,7 +507,7 @@ export class List<T> implements Al.Functor<T>, Al.Foldable<T>, Al.Semigroup<T>,
    */
   tail(): List<T> {
     const tail = this.value.slice(1);
-    return this.value.length > 1 ? List.of(tail) : new List();
+    return this.value.length > 1 ? List.of(...tail) : new List();
   }
 
   /**
@@ -435,7 +517,7 @@ export class List<T> implements Al.Functor<T>, Al.Foldable<T>, Al.Semigroup<T>,
    */
   init(): List<T> {
     const init = this.value.slice(0, this.value.length - 2);
-    return this.value.length > 1 ? List.of(init) : new List();
+    return this.value.length > 1 ? List.of(...init) : new List();
   }
 
   /**
@@ -464,7 +546,7 @@ export class List<T> implements Al.Functor<T>, Al.Foldable<T>, Al.Semigroup<T>,
    * `map f xs` is the list obtained by applying `f` to each element of `xs`.
    */
   map<U>(fn: (x: T) => U): List<U> {
-    return List.of(this.value.map(fn));
+    return List.of(...this.value.map(fn));
   }
 
   // REDUCING LISTS (FOLDS)
@@ -490,6 +572,62 @@ export class List<T> implements Al.Functor<T>, Al.Foldable<T>, Al.Semigroup<T>,
     return resultFn(fn);
   }
 
+  /**
+   * `foldli :: Foldable t => (b -> a -> Int -> b) -> b -> t a -> b`
+   *
+   *
+   */
+  foldli<U extends Some>(
+    fn: (acc: U) => (current: T) => (index: number) => U
+  ): (initial: U) => U;
+  foldli<U extends Some>(
+    fn: (acc: U) => (current: T) => (index: number) => U,
+    initial: U
+  ): U;
+  foldli<U extends Some>(
+    fn: (acc: U) => (current: T) => (index: number) => U,
+    initial?: U
+  ): U | ((initial: U) => U) {
+    const resultFn = (
+      fn: (acc: U) => (current: T) => (index: number) => U
+    ) => (initial: U) =>
+      this.value.reduce<U>((acc, e, index) => fn(acc)(e)(index), initial);
+
+    if (arguments.length === 2) {
+      return resultFn(fn)(initial!);
+    }
+
+    return resultFn(fn);
+  }
+
+  /**
+   * `foldl_ :: Foldable t => (b -> a -> Int -> b) -> b -> t a -> b`
+   *
+   *
+   */
+  foldl_<U extends Some>(
+    fn: (acc: U) => (current: T) => (index: number) => (list: List<T>) => U
+  ): (initial: U) => U;
+  foldl_<U extends Some>(
+    fn: (acc: U) => (current: T) => (index: number) => (list: List<T>) => U,
+    initial: U
+  ): U;
+  foldl_<U extends Some>(
+    fn: (acc: U) => (current: T) => (index: number) => (list: List<T>) => U,
+    initial?: U
+  ): U | ((initial: U) => U) {
+    const resultFn = (
+      fn: (acc: U) => (current: T) => (index: number) => (list: List<T>) => U
+    ) => (initial: U) =>
+      this.value.reduce<U>((acc, e, index) => fn(acc)(e)(index)(this), initial);
+
+    if (arguments.length === 2) {
+      return resultFn(fn)(initial!);
+    }
+
+    return resultFn(fn);
+  }
+
   // SPECIAL FOLDS
 
   /**
@@ -498,7 +636,7 @@ export class List<T> implements Al.Functor<T>, Al.Foldable<T>, Al.Semigroup<T>,
    * The concatenation of all the elements of a container of lists.
    */
   concat(add: List<T>): List<T> {
-    return List.of([...this.value, ...add.value]);
+    return List.of(...this.value, ...add.value);
   }
 
   /**
@@ -565,7 +703,7 @@ export class List<T> implements Al.Functor<T>, Al.Foldable<T>, Al.Semigroup<T>,
   take(length: number): List<T> {
     return this.value.length < length
       ? this
-      : List.of(this.value.slice(0, length - 1));
+      : List.of(...this.value.slice(0, length - 1));
   }
 
   // SEARCHING BY EQUALITY
@@ -621,7 +759,7 @@ export class List<T> implements Al.Functor<T>, Al.Foldable<T>, Al.Semigroup<T>,
   filter<U extends T>(pred: (x: T) => x is U): List<U>;
   filter(pred: (x: T) => boolean): List<T>;
   filter(pred: (x: T) => boolean): List<T> {
-    return List.of(this.value.filter(pred));
+    return List.of(...this.value.filter(pred));
   }
 
   // INDEXING LISTS
@@ -645,7 +783,7 @@ export class List<T> implements Al.Functor<T>, Al.Foldable<T>, Al.Semigroup<T>,
    * all elements equal to the query element, in ascending order.
    */
   elemIndices(x: T): List<number> {
-    return List.of(this.value.reduce<number[]>((acc, e, index) => {
+    return List.of(...this.value.reduce<number[]>((acc, e, index) => {
       return e === x ? [...acc, index] : acc;
     }, []));
   }
@@ -669,7 +807,7 @@ export class List<T> implements Al.Functor<T>, Al.Foldable<T>, Al.Semigroup<T>,
    * all elements satisfying the predicate, in ascending order.
    */
   findIndices(pred: (x: T) => boolean): List<number> {
-    return List.of(this.value.reduce<number[]>((acc, e, index) => {
+    return List.of(...this.value.reduce<number[]>((acc, e, index) => {
       return pred(e) ? [...acc, index] : acc;
     }, []));
   }
@@ -683,7 +821,7 @@ export class List<T> implements Al.Functor<T>, Al.Foldable<T>, Al.Semigroup<T>,
    */
   delete(x: T): List<T> {
     let isDeleted = false;
-    return List.of(this.value.filter(e => {
+    return List.of(...this.value.filter(e => {
       if (!isDeleted && R.equals(e, x)) {
         isDeleted = true;
         return false;
@@ -700,7 +838,7 @@ export class List<T> implements Al.Functor<T>, Al.Foldable<T>, Al.Semigroup<T>,
    * The `sortBy` function is the non-overloaded version of `sort`.
    */
   sortBy(fn: (a: T) => (b: T) => number): List<T> {
-    return List.of([...this.value].sort((a, b) => fn(a)(b)));
+    return List.of(...[...this.value].sort((a, b) => fn(a)(b)));
   }
 
   // OWN METHODS (NO HASKELL EQUIVALENT)
@@ -711,7 +849,7 @@ export class List<T> implements Al.Functor<T>, Al.Foldable<T>, Al.Semigroup<T>,
    * Appends an element to the list.
    */
   append(e: T): List<T> {
-    return List.of([...this.value, e]);
+    return List.of(...this.value, e);
   }
 
   /**
@@ -720,7 +858,7 @@ export class List<T> implements Al.Functor<T>, Al.Foldable<T>, Al.Semigroup<T>,
    * Prepends an element to the list.
    */
   prepend(e: T): List<T> {
-    return List.of([e, ...this.value]);
+    return List.of(e, ...this.value);
   }
 
   /**
@@ -732,17 +870,17 @@ export class List<T> implements Al.Functor<T>, Al.Foldable<T>, Al.Semigroup<T>,
    */
   add(index: number, value: T): List<T> {
     if (index >= this.value.length) {
-      return List.of([...this.value, value]);
+      return List.of(...this.value, value);
     }
     else if (index <= 0) {
-      return List.of([value, ...this.value]);
+      return List.of(value, ...this.value);
     }
     else {
-      return List.of([
+      return List.of(
         ...this.value.slice(0, index),
         value,
         ...this.value.slice(index)
-      ]);
+      );
     }
   }
 
@@ -755,7 +893,7 @@ export class List<T> implements Al.Functor<T>, Al.Foldable<T>, Al.Semigroup<T>,
    * list.
    */
   insert(index: number, value: T): List<T> {
-    return List.of(this.value.map((e, i) => i === index ? value : e));
+    return List.of(...this.value.map((e, i) => i === index ? value : e));
   }
 
   /**
@@ -771,7 +909,7 @@ export class List<T> implements Al.Functor<T>, Al.Foldable<T>, Al.Semigroup<T>,
     index?: number
   ): List<T> | ((index: number) => List<T>) {
     const resultFn = (fn: (value: T) => T, index: number) => {
-      const entry = this.get(index);
+      const entry = this.subscript(index);
       return Maybe.isJust(entry)
         ? this.insert(index, fn(Maybe.fromJust(entry)))
         : this;
@@ -799,7 +937,7 @@ export class List<T> implements Al.Functor<T>, Al.Foldable<T>, Al.Semigroup<T>,
     index?: number
   ): List<T> | ((index: number) => List<T>) {
     const resultFn = (fn: (value: T) => Maybe<T>, index: number) => {
-      const entry = this.get(index);
+      const entry = this.subscript(index);
       if (Maybe.isJust(entry)) {
         const res = fn(Maybe.fromJust(entry));
         if (Maybe.isJust(res)) {
@@ -828,7 +966,7 @@ export class List<T> implements Al.Functor<T>, Al.Foldable<T>, Al.Semigroup<T>,
    * Returns the element at the given index. If the index is invalid, returns
    * `Nothing`, otherwise `Just a`.
    */
-  get(index: number): Maybe<T> {
+  subscript(index: number): Maybe<T> {
     return Maybe.of(this.value[index]);
   }
 
@@ -838,16 +976,37 @@ export class List<T> implements Al.Functor<T>, Al.Foldable<T>, Al.Semigroup<T>,
    * The `delete` function removes the value at the given index from the list.
    */
   deleteAt(index: number): List<T> {
-    return List.of([
+    return List.of(
       ...this.value.slice(0, index),
       ...this.value.slice(index + 1)
-    ]);
+    );
+  }
+
+  /**
+   * `flatten :: [[a]] -> [a]`
+   *
+   * The `flatten` function spreads all elements contained in this list's list
+   * elements into a new list.
+   */
+  flatten<T>(this: List<List<T>>): List<T> {
+    return List.of(...this.value.reduce<T[]>((acc, e) => {
+      return acc.concat(e.value);
+    }, []));
+  }
+
+  /**
+   * `mapWithIndex :: (Int -> a -> b) -> [a] -> [b]`
+   *
+   * `map f xs` is the list obtained by applying `f` to each element of `xs`.
+   */
+  mapWithIndex<U>(fn: (index: number) => (x: T) => U): List<U> {
+    return List.of(...this.value.map((e, i) => fn(i)(e)));
   }
 
   // TODO: toString
 
-  static of<T>(list: ReadonlyArray<T>): List<T> {
-    return new List(list);
+  static of<T>(...initialElements: T[]): List<T> {
+    return new List(...initialElements);
   }
 
   static find<T, U extends T>(
@@ -866,14 +1025,18 @@ export class List<T> implements Al.Functor<T>, Al.Foldable<T>, Al.Semigroup<T>,
     return list => list.filter(pred);
   }
 
-  static toMap<K, V>(list: List<Tuple<K, V>>): ReadMap<K, V> {
-    return ReadMap.of(new Map(list.value.map(t =>
+  static toMap<K, V>(list: List<Tuple<K, V>>): OrderedMap<K, V> {
+    return OrderedMap.of(list.value.map(t =>
       [Tuple.fst(t), Tuple.snd(t)] as [K, V]
-    )));
+    ));
   }
 
   static toArray<T>(list: List<T>): ReadonlyArray<T> {
     return list.value;
+  }
+
+  static isList(value: any): value is List<any> {
+    return value instanceof List;
   }
 }
 
@@ -916,9 +1079,9 @@ export class Tuple<T, U> implements Al.Functor<U> {
   }
 }
 
-type LookupWithKey<K, V> = Tuple<Maybe<V>, ReadMap<K, V>>;
+type LookupWithKey<K, V> = Tuple<Maybe<V>, OrderedMap<K, V>>;
 
-export class ReadMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
+export class OrderedMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
   Al.Foldable<V> {
   private readonly value: ReadonlyMap<K, V>;
 
@@ -1013,14 +1176,14 @@ export class ReadMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
    * map, the associated value is replaced with the supplied value. `insert` is
    * equivalent to `insertWith const`.
    */
-  insert(key: K): (value: V) => ReadMap<K, V>;
-  insert(key: K, value: V): ReadMap<K, V>;
-  insert(key: K, value?: V): ReadMap<K, V> | ((value: V) => ReadMap<K, V>) {
+  insert(key: K): (value: V) => OrderedMap<K, V>;
+  insert(key: K, value: V): OrderedMap<K, V>;
+  insert(key: K, value?: V): OrderedMap<K, V> | ((value: V) => OrderedMap<K, V>) {
     if (arguments.length === 2) {
-      return new ReadMap([...this.value, [key, value!]]);
+      return new OrderedMap([...this.value, [key, value!]]);
     }
     else {
-      return value => new ReadMap([...this.value, [key, value]]);
+      return value => new OrderedMap([...this.value, [key, value]]);
     }
   }
 
@@ -1034,28 +1197,28 @@ export class ReadMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
    */
   insertWith(
     fn: (oldValue: V) => (newValue: V) => V
-  ): (key: K) => (value: V) => ReadMap<K, V>;
+  ): (key: K) => (value: V) => OrderedMap<K, V>;
   insertWith(
     fn: (oldValue: V) => (newValue: V) => V, key: K
-  ): (value: V) => ReadMap<K, V>;
+  ): (value: V) => OrderedMap<K, V>;
   insertWith(
     fn: (oldValue: V) => (newValue: V) => V, key: K, value: V
-  ): ReadMap<K, V>;
+  ): OrderedMap<K, V>;
   insertWith(
     fn: (oldValue: V) => (newValue: V) => V, key?: K, value?: V
-  ): ReadMap<K, V> | ((value: V) => ReadMap<K, V>)
-    | ((key: K) => (value: V) => ReadMap<K, V>) {
+  ): OrderedMap<K, V> | ((value: V) => OrderedMap<K, V>)
+    | ((key: K) => (value: V) => OrderedMap<K, V>) {
     const resultFn =
       (fn: (oldValue: V) => (newValue: V) => V, key: K, value: V) => {
         const entry = this.lookup(key);
         if (Maybe.isJust(entry)) {
-          return new ReadMap([
+          return new OrderedMap([
             ...this.value,
             [key, fn(Maybe.fromJust(entry))(value)]
           ]);
         }
         else {
-          return new ReadMap([...this.value, [key, value]]);
+          return new OrderedMap([...this.value, [key, value]]);
         }
       };
 
@@ -1082,17 +1245,17 @@ export class ReadMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
    */
   insertWithKey(
     fn: (key: K) => (oldValue: V) => (newValue: V) => V
-  ): (key: K) => (value: V) => ReadMap<K, V>;
+  ): (key: K) => (value: V) => OrderedMap<K, V>;
   insertWithKey(
     fn: (key: K) => (oldValue: V) => (newValue: V) => V, key: K
-  ): (value: V) => ReadMap<K, V>;
+  ): (value: V) => OrderedMap<K, V>;
   insertWithKey(
     fn: (key: K) => (oldValue: V) => (newValue: V) => V, key: K, value: V
-  ): ReadMap<K, V>;
+  ): OrderedMap<K, V>;
   insertWithKey(
     fn: (key: K) => (oldValue: V) => (newValue: V) => V, key?: K, value?: V
-  ): ReadMap<K, V> | ((value: V) => ReadMap<K, V>)
-    | ((key: K) => (value: V) => ReadMap<K, V>) {
+  ): OrderedMap<K, V> | ((value: V) => OrderedMap<K, V>)
+    | ((key: K) => (value: V) => OrderedMap<K, V>) {
     const resultFn = (
       fn: (key: K) => (oldValue: V) => (newValue: V) => V,
       key: K,
@@ -1100,13 +1263,13 @@ export class ReadMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
     ) => {
       const entry = this.lookup(key);
       if (Maybe.isJust(entry)) {
-        return new ReadMap([
+        return new OrderedMap([
           ...this.value,
           [key, fn(key)(Maybe.fromJust(entry))(value)]
         ]);
       }
       else {
-        return new ReadMap([...this.value, [key, value]]);
+        return new OrderedMap([...this.value, [key, value]]);
       }
     };
 
@@ -1165,8 +1328,8 @@ export class ReadMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
   /**
    * Removes a key without checking its existence before. For internal use only.
    */
-  private removeKey(key: K): ReadMap<K, V> {
-    return List.toMap(ReadMap.toList(this).filter(t => Tuple.fst(t) !== key));
+  private removeKey(key: K): OrderedMap<K, V> {
+    return List.toMap(OrderedMap.toList(this).filter(t => Tuple.fst(t) !== key));
   }
 
   /**
@@ -1175,7 +1338,7 @@ export class ReadMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
    * Delete a key and its value from the map. When the key is not a member of
    * the map, the original map is returned.
    */
-  delete(key: K): ReadMap<K, V> {
+  delete(key: K): OrderedMap<K, V> {
     return this.member(key) ? this.removeKey(key) : this;
   }
 
@@ -1185,16 +1348,16 @@ export class ReadMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
    * Update a value at a specific key with the result of the provided function.
    * When the key is not a member of the map, the original map is returned.
    */
-  adjust(fn: (value: V) => V): (key: K) => ReadMap<K, V>;
-  adjust(fn: (value: V) => V, key: K): ReadMap<K, V>;
+  adjust(fn: (value: V) => V): (key: K) => OrderedMap<K, V>;
+  adjust(fn: (value: V) => V, key: K): OrderedMap<K, V>;
   adjust(
     fn: (value: V) => V,
     key?: K
-  ): ReadMap<K, V> | ((key: K) => ReadMap<K, V>) {
+  ): OrderedMap<K, V> | ((key: K) => OrderedMap<K, V>) {
     const resultFn = (fn: (value: V) => V, key: K) => {
       const entry = this.lookup(key);
       return Maybe.isJust(entry)
-        ? new ReadMap([...this.value, [key, fn(Maybe.fromJust(entry))]])
+        ? new OrderedMap([...this.value, [key, fn(Maybe.fromJust(entry))]])
         : this;
     };
 
@@ -1212,16 +1375,16 @@ export class ReadMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
    * Adjust a value at a specific key. When the key is not a member of the map,
    * the original map is returned.
    */
-  adjustWithKey(fn: (key: K) => (value: V) => V): (key: K) => ReadMap<K, V>;
-  adjustWithKey(fn: (key: K) => (value: V) => V, key: K): ReadMap<K, V>;
+  adjustWithKey(fn: (key: K) => (value: V) => V): (key: K) => OrderedMap<K, V>;
+  adjustWithKey(fn: (key: K) => (value: V) => V, key: K): OrderedMap<K, V>;
   adjustWithKey(
     fn: (key: K) => (value: V) => V,
     key?: K
-  ): ReadMap<K, V> | ((key: K) => ReadMap<K, V>) {
+  ): OrderedMap<K, V> | ((key: K) => OrderedMap<K, V>) {
     const resultFn = (fn: (key: K) => (value: V) => V, key: K) => {
       const entry = this.lookup(key);
       return Maybe.isJust(entry)
-        ? new ReadMap([...this.value, [key, fn(key)(Maybe.fromJust(entry))]])
+        ? new OrderedMap([...this.value, [key, fn(key)(Maybe.fromJust(entry))]])
         : this;
     };
 
@@ -1237,21 +1400,21 @@ export class ReadMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
    * `update :: Ord k => (a -> Maybe a) -> k -> Map k a -> Map k a`
    *
    * The expression `(update f k map)` updates the value `x` at `k` (if it is in
-   * the map). If `(f x)` is `Nothing`, the element is deleted. If it is `(Just
-   * y)`, the key `k` is bound to the new value `y`.
+   * the map). If `(f x)` is `Nothing`, the element is deleted. If it is
+   * `(Just y)`, the key `k` is bound to the new value `y`.
    */
-  update(fn: (value: V) => Maybe<V>): (key: K) => ReadMap<K, V>;
-  update(fn: (value: V) => Maybe<V>, key: K): ReadMap<K, V>;
+  update(fn: (value: V) => Maybe<V>): (key: K) => OrderedMap<K, V>;
+  update(fn: (value: V) => Maybe<V>, key: K): OrderedMap<K, V>;
   update(
     fn: (value: V) => Maybe<V>,
     key?: K
-  ): ReadMap<K, V> | ((key: K) => ReadMap<K, V>) {
+  ): OrderedMap<K, V> | ((key: K) => OrderedMap<K, V>) {
     const resultFn = (fn: (value: V) => Maybe<V>, key: K) => {
       const entry = this.lookup(key);
       if (Maybe.isJust(entry)) {
         const res = fn(Maybe.fromJust(entry));
         if (Maybe.isJust(res)) {
-          return new ReadMap([...this.value, [key, Maybe.fromJust(res)]]);
+          return new OrderedMap([...this.value, [key, Maybe.fromJust(res)]]);
         }
         else {
           return this.removeKey(key);
@@ -1279,20 +1442,20 @@ export class ReadMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
    */
   updateWithKey(
     fn: (key: K) => (value: V) => Maybe<V>
-  ): (key: K) => ReadMap<K, V>;
+  ): (key: K) => OrderedMap<K, V>;
   updateWithKey(
     fn: (key: K) => (value: V) => Maybe<V>, key: K
-  ): ReadMap<K, V>;
+  ): OrderedMap<K, V>;
   updateWithKey(
     fn: (key: K) => (value: V) => Maybe<V>,
     key?: K
-  ): ReadMap<K, V> | ((key: K) => ReadMap<K, V>) {
+  ): OrderedMap<K, V> | ((key: K) => OrderedMap<K, V>) {
     const resultFn = (fn: (key: K) => (value: V) => Maybe<V>, key: K) => {
       const entry = this.lookup(key);
       if (Maybe.isJust(entry)) {
         const res = fn(key)(Maybe.fromJust(entry));
         if (Maybe.isJust(res)) {
-          return new ReadMap([...this.value, [key, Maybe.fromJust(res)]]);
+          return new OrderedMap([...this.value, [key, Maybe.fromJust(res)]]);
         }
         else {
           return this.removeKey(key);
@@ -1331,7 +1494,7 @@ export class ReadMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
         if (Maybe.isJust(entry)) {
           const res = fn(key)(Maybe.fromJust(entry));
           if (Maybe.isJust(res)) {
-            return Tuple.of(res, new ReadMap([
+            return Tuple.of(res, new OrderedMap([
               ...this.value,
               [key, Maybe.fromJust(res)]
             ]));
@@ -1360,12 +1523,12 @@ export class ReadMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
    * thereof. `alter` can be used to insert, delete, or update a value in a
    * `Map`. In short : `lookup k (alter f k m) = f (lookup k m)`.
    */
-  alter(fn: (x: Maybe<V>) => Maybe<V>): (key: K) => ReadMap<K, V>;
-  alter(fn: (x: Maybe<V>) => Maybe<V>, key: K): ReadMap<K, V>;
+  alter(fn: (x: Maybe<V>) => Maybe<V>): (key: K) => OrderedMap<K, V>;
+  alter(fn: (x: Maybe<V>) => Maybe<V>, key: K): OrderedMap<K, V>;
   alter(
     fn: (x: Maybe<V>) => Maybe<V>,
     key?: K
-  ): ReadMap<K, V> | ((key: K) => ReadMap<K, V>) {
+  ): OrderedMap<K, V> | ((key: K) => OrderedMap<K, V>) {
     const resultFn = (key: K) => {
       const entry = this.lookup(key);
       const res = fn(entry);
@@ -1393,8 +1556,8 @@ export class ReadMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
    * `t2`. It prefers `t1` when duplicate keys are encountered, i.e. `(union ==
    * unionWith const)`.
    */
-  union(add: ReadMap<K, V>) {
-    return ReadMap.of(new Map([...this.value, ...add.value]));
+  union(add: OrderedMap<K, V>) {
+    return OrderedMap.of(new Map([...this.value, ...add.value]));
   }
 
   /**
@@ -1402,8 +1565,8 @@ export class ReadMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
    *
    * Map a function over all values in the map.
    */
-  map<U>(fn: (value: V) => U): ReadMap<K, U> {
-    return ReadMap.of(new Map([...this.value].map(([k, x]) =>
+  map<U>(fn: (value: V) => U): OrderedMap<K, U> {
+    return OrderedMap.of(new Map([...this.value].map(([k, x]) =>
       [k, fn(x)] as [K, U]
     )));
   }
@@ -1413,8 +1576,8 @@ export class ReadMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
    *
    * Map a function over all values in the map.
    */
-  mapWithKey<U>(fn: (key: K) => (value: V) => U): ReadMap<K, U> {
-    return ReadMap.of(new Map([...this.value].map(([k, x]) =>
+  mapWithKey<U>(fn: (key: K) => (value: V) => U): OrderedMap<K, U> {
+    return OrderedMap.of(new Map([...this.value].map(([k, x]) =>
       [k, fn(k)(x)] as [K, U]
     )));
   }
@@ -1451,7 +1614,7 @@ export class ReadMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
    * Return all elements of the map.
    */
   elems(): List<V> {
-    return List.of([...this.value.values()]);
+    return List.of(...this.value.values());
   }
 
   /**
@@ -1460,7 +1623,7 @@ export class ReadMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
    * Return all keys of the map.
    */
   keys(): List<K> {
-    return List.of([...this.value.keys()]);
+    return List.of(...this.value.keys());
   }
 
   /**
@@ -1469,7 +1632,9 @@ export class ReadMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
    * Return all key/value pairs in the map.
    */
   assocs(): List<Tuple<K, V>> {
-    return List.of([...this.value].map(([key, value]) => new Tuple(key, value)));
+    return List.of(
+      ...[...this.value].map(([key, value]) => new Tuple(key, value))
+    );
   }
 
   // FILTER
@@ -1479,16 +1644,29 @@ export class ReadMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
    *
    * Filter all values that satisfy the predicate.
    */
-  filter<U extends V>(pred: (value: V) => value is U): ReadMap<K, U>;
-  filter(pred: (value: V) => boolean): ReadMap<K, V>;
-  filter(pred: (value: V) => boolean): ReadMap<K, V> {
-    return ReadMap.of([...this.value].filter(([_, value]) => pred(value)));
+  filter<U extends V>(pred: (value: V) => value is U): OrderedMap<K, U>;
+  filter(pred: (value: V) => boolean): OrderedMap<K, V>;
+  filter(pred: (value: V) => boolean): OrderedMap<K, V> {
+    return OrderedMap.of([...this.value].filter(([_, value]) => pred(value)));
+  }
+
+  /**
+   * `filterWithKey :: (k -> a -> Bool) -> Map k a -> Map k a`
+   *
+   * Filter all keys/values that satisfy the predicate.
+   */
+  filterWithKey<U extends V>(
+    pred: (key: K) => (value: V) => value is U
+  ): OrderedMap<K, U>;
+  filterWithKey(pred: (key: K) => (value: V) => boolean): OrderedMap<K, V>;
+  filterWithKey(pred: (key: K) => (value: V) => boolean): OrderedMap<K, V> {
+    return OrderedMap.of([...this.value].filter(([key, value]) => pred(key)(value)));
   }
 
   static of<K, V>(
     map: ReadonlyMap<K, V> | [K, V][] | List<Tuple<K, V>>
-  ): ReadMap<K, V> {
-    return new ReadMap(map);
+  ): OrderedMap<K, V> {
+    return new OrderedMap(map);
   }
 
   /**
@@ -1496,8 +1674,8 @@ export class ReadMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
    *
    * The empty map.
    */
-  static empty<K, V>(): ReadMap<K, V> {
-    return new ReadMap();
+  static empty<K, V>(): OrderedMap<K, V> {
+    return new OrderedMap();
   }
 
   /**
@@ -1505,27 +1683,55 @@ export class ReadMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
    *
    * A map with a single element.
    */
-  static singleton<K, V>(key: K): (value: V) => ReadMap<K, V>;
-  static singleton<K, V>(key: K, value: V): ReadMap<K, V>;
-  static singleton<K, V>(key: K, value?: V): ReadMap<K, V> | ((value: V) => ReadMap<K, V>) {
+  static singleton<K, V>(key: K): (value: V) => OrderedMap<K, V>;
+  static singleton<K, V>(key: K, value: V): OrderedMap<K, V>;
+  static singleton<K, V>(
+    key: K, value?: V
+  ): OrderedMap<K, V> | ((value: V) => OrderedMap<K, V>) {
     if (arguments.length === 2) {
-      return new ReadMap([[key, value as V]]);
+      return new OrderedMap([[key, value as V]]);
     }
     else {
-      return value => new ReadMap([[key, value]]);
+      return value => new OrderedMap([[key, value]]);
     }
   }
 
-  static toList<K, V>(map: ReadMap<K, V>): List<Tuple<K, V>> {
-    return List.of([...map.value].map(([key, value]) => new Tuple(key, value)));
+  static toList<K, V>(map: OrderedMap<K, V>): List<Tuple<K, V>> {
+    return List.of(
+      ...[...map.value].map(([key, value]) => new Tuple(key, value))
+    );
   }
 
-  static toValueList<K, V>(map: ReadMap<K, V>): List<V> {
-    return List.of([...map.value.values()]);
+  static toValueList<K, V>(map: OrderedMap<K, V>): List<V> {
+    return List.of(...[...map.value.values()]);
+  }
+
+  // INSTANCE METHODS AS STATIC FUNCTIONS
+
+  /**
+   * `lookup :: Ord k => k -> Map k a -> Maybe a`
+   *
+   * Lookup the value at a key in the map. The function will return the
+   * corresponding value as `Just value`, or `Nothing` if the key isn't in the
+   * map.
+   */
+  static lookup<K, V>(key: K): (m: OrderedMap<K, V>) => Maybe<V>;
+  static lookup<K, V>(key: K, m: OrderedMap<K, V>): Maybe<V>;
+  static lookup<K, V>(
+    key: K, m?: OrderedMap<K, V>
+  ): Maybe<V> | ((m: OrderedMap<K, V>) => Maybe<V>) {
+    const resultFn = (key: K, m: OrderedMap<K, V>) => m.lookup(key);
+
+    if (arguments.length === 2) {
+      return resultFn(key, m!);
+    }
+    else {
+      return m => resultFn(key, m);
+    }
   }
 }
 
-export class ReadSet<T> implements Al.Functor<T>, Al.Foldable<T>,
+export class OrderedSet<T> implements Al.Functor<T>, Al.Foldable<T>,
   Al.Filterable<T> {
   private readonly value: ReadonlySet<T>;
 
@@ -1590,8 +1796,8 @@ export class ReadSet<T> implements Al.Functor<T>, Al.Foldable<T>,
    * Insert an element in a set. If the set already contains an element equal to
    * the given value, it is replaced with the new value.
    */
-  insert(value: T): ReadSet<T> {
-    return ReadSet.of([...this.value, value]);
+  insert(value: T): OrderedSet<T> {
+    return OrderedSet.of([...this.value, value]);
   }
 
   /**
@@ -1599,8 +1805,8 @@ export class ReadSet<T> implements Al.Functor<T>, Al.Foldable<T>,
    *
    * Delete an element from a set.
    */
-  delete(value: T): ReadSet<T> {
-    return ReadSet.of([...this.value].filter(e => e !== value));
+  delete(value: T): OrderedSet<T> {
+    return OrderedSet.of([...this.value].filter(e => e !== value));
   }
 
   // COMBINE
@@ -1611,8 +1817,8 @@ export class ReadSet<T> implements Al.Functor<T>, Al.Foldable<T>,
    * The union of two sets, preferring the first set when equal elements are
    * encountered.
    */
-  union(add: ReadSet<T>) {
-    return ReadSet.of([...this.value, ...add.value]);
+  union(add: OrderedSet<T>) {
+    return OrderedSet.of([...this.value, ...add.value]);
   }
 
   // FILTER
@@ -1622,10 +1828,10 @@ export class ReadSet<T> implements Al.Functor<T>, Al.Foldable<T>,
    *
    * Filter all values that satisfy the predicate.
    */
-  filter<U extends T>(pred: (value: T) => value is U): ReadSet<U>;
-  filter(pred: (value: T) => boolean): ReadSet<T>;
-  filter(pred: (value: T) => boolean): ReadSet<T> {
-    return ReadSet.of([...this.value].filter(pred));
+  filter<U extends T>(pred: (value: T) => value is U): OrderedSet<U>;
+  filter(pred: (value: T) => boolean): OrderedSet<T>;
+  filter(pred: (value: T) => boolean): OrderedSet<T> {
+    return OrderedSet.of([...this.value].filter(pred));
   }
 
   // MAP
@@ -1638,8 +1844,8 @@ export class ReadSet<T> implements Al.Functor<T>, Al.Foldable<T>,
    * It's worth noting that the size of the result may be smaller if, for some
    * `(x,y), x /= y && f x == f y`.
    */
-  map<U>(fn: (value: T) => U): ReadSet<U> {
-    return ReadSet.of([...this.value].map(fn));
+  map<U>(fn: (value: T) => U): OrderedSet<U> {
+    return OrderedSet.of([...this.value].map(fn));
   }
 
   // FOLDS
@@ -1675,11 +1881,11 @@ export class ReadSet<T> implements Al.Functor<T>, Al.Foldable<T>,
    * list fusion.
    */
   elems(): List<T> {
-    return List.of([...this.value]);
+    return List.of(...this.value);
   }
 
-  static of<T>(set: ReadonlySet<T> | T[] | List<T>): ReadSet<T> {
-    return new ReadSet(set);
+  static of<T>(set: ReadonlySet<T> | T[] | List<T>): OrderedSet<T> {
+    return new OrderedSet(set);
   }
 
   /**
@@ -1687,8 +1893,8 @@ export class ReadSet<T> implements Al.Functor<T>, Al.Foldable<T>,
    *
    * The empty set.
    */
-  static empty<T>(): ReadSet<T> {
-    return new ReadSet();
+  static empty<T>(): OrderedSet<T> {
+    return new OrderedSet();
   }
 
   /**
@@ -1696,7 +1902,206 @@ export class ReadSet<T> implements Al.Functor<T>, Al.Foldable<T>,
    *
    * Create a singleton set.
    */
-  static singleton<T>(value: T): ReadSet<T> {
-    return new ReadSet([value]);
+  static singleton<T>(value: T): OrderedSet<T> {
+    return new OrderedSet([value]);
+  }
+}
+
+export type RecordKey<K extends keyof T, T> =
+  T[K] extends NonNullable<T[K]> ? Just<T[K]> : Maybe<NonNullable<T[K]>>;
+
+export type RecordMaybe<T> = {
+  [P in keyof T]: T[P] extends Maybe<infer M> ? M | undefined : T[P];
+};
+
+export type RecordOnlySafe<T> = {
+  [P in keyof T]: T[P] extends NonNullable<T[P]> ? T[P] : void;
+};
+
+export class Record<T extends { [key: string]: any }> {
+  private readonly value: T;
+
+  constructor(initial: T = {} as T) {
+    this.value = initial;
+  }
+
+  /**
+   * `lookup :: String -> a -> Maybe a[String]`
+   */
+  lookup<K extends keyof T>(key: K): RecordKey<K, T> {
+    return Maybe.of(this.value[key]) as RecordKey<K, T>;
+  }
+
+  /**
+   * `lookupWithDefault :: a[String] -> a -> String -> Record a -> a[String]`
+   */
+  lookupWithDefault<K extends keyof T>(
+    def: NonNullable<T[K]>
+  ): (key: K) => NonNullable<T[K]>;
+  lookupWithDefault<K extends keyof T>(
+    def: NonNullable<T[K]>, key: K
+  ): NonNullable<T[K]>;
+  lookupWithDefault<K extends keyof T>(
+    def: NonNullable<T[K]>, key?: K
+  ): NonNullable<T[K]> | ((key: K) => NonNullable<T[K]>) {
+    if (arguments.length === 2) {
+      return Maybe.fromMaybe(def)(this.lookup(key!));
+    }
+
+    return (key: K) => Maybe.fromMaybe(def)(this.lookup(key));
+  }
+
+  /**
+   * `get :: String -> a -> a[String]`
+   *
+   * Only use for NonNullable properties, use `lookup` otherwise.
+   */
+  get<K extends keyof RecordOnlySafe<T>>(key: K): RecordOnlySafe<T>[K] {
+    return this.value[key];
+  }
+
+  /**
+   * `member :: String -> a -> Bool`
+   */
+  member(key: string): boolean {
+    return this.value.hasOwnProperty(key);
+  }
+
+  /**
+   * `insert :: keyof a -> a[keyof a] -> Record a -> Record a`
+   */
+  insert<K extends keyof T>(key: K): (value: T[K]) => Record<T>;
+  insert<K extends keyof T>(key: K, value: T[K]): Record<T>;
+  insert<K extends keyof T>(
+    key: K, value?: T[K]
+  ): Record<T> | ((value: T[K]) => Record<T>) {
+    if (arguments.length === 2) {
+      return Record.of({ ...(this.value as any), [key]: value });
+    }
+    else {
+      return value => Record.of({ ...(this.value as any), [key]: value });
+    }
+  }
+
+  /**
+   * `update :: Ord k => (a -> Maybe a) -> k -> Map k a -> Map k a`
+   */
+  update<K extends keyof T>(
+    fn: (value: T[K]) => Maybe<NonNullable<T[K]>>
+  ): (key: K) => Record<T>;
+  update<K extends keyof T>(
+    fn: (value: T[K]) => Maybe<NonNullable<T[K]>>, key: K
+  ): Record<T>;
+  update<K extends keyof T>(
+    fn: (value: T[K]) => Maybe<NonNullable<T[K]>>,
+    key?: K
+  ): Record<T> | ((key: K) => Record<T>) {
+    const resultFn = (
+      fn: (value: T[K]) => Maybe<NonNullable<T[K]>>, key: K
+    ) => {
+      const entry = this.lookup(key);
+      if (Maybe.isJust(entry)) {
+        const res = fn(Maybe.fromJust(entry));
+        if (Maybe.isJust(res)) {
+          return Record.of({
+            ...(this.value as any),
+            [key]: Maybe.fromJust(res)
+          });
+        }
+        else {
+          const { [key]: _, ...other } = (this.value as any);
+          return Record.of(other);
+        }
+      }
+      else {
+        return this;
+      }
+    };
+
+    if (arguments.length === 2) {
+      return resultFn(fn, key!);
+    }
+    else {
+      return (key: K) => resultFn(fn, key);
+    }
+  }
+
+  /**
+   * `alter :: (Maybe a[String] -> Maybe a[String]) -> String -> a ->
+   * Maybe a[String]`
+   */
+  alter<K extends keyof T>(
+    fn: (value: RecordKey<K, T>) => RecordKey<K, T>
+  ): (key: K) => Record<T>;
+  alter<K extends keyof T>(
+    fn: (value: RecordKey<K, T>) => RecordKey<K, T>,
+    key: K
+  ): Record<T>;
+  alter<K extends keyof T>(
+    fn: (value: RecordKey<K, T>) => RecordKey<K, T>,
+    key?: K
+  ): Record<T> | ((key: K) => Record<T>) {
+    const resultFn = (
+      fn: (value: RecordKey<K, T>) => RecordKey<K, T>,
+      key: K
+    ): Record<T> => {
+      const { [key]: _, ...other } = this.value as any;
+      const res = fn(this.lookup(key));
+
+      if (Maybe.isJust(res)) {
+        return Record.of({
+          ...other,
+          [key]: Maybe.fromJust(res)
+        } as T);
+      }
+      else {
+        return Record.of(other as T);
+      }
+    };
+
+    if (arguments.length === 2) {
+      return resultFn(fn, key!);
+    }
+    else {
+      return key => resultFn(fn, key);
+    }
+  }
+
+  merge<U>(record: Record<U>): Record<T & U> {
+    return Record.of({ ...(this.value as any), ...(record.value as any) });
+  }
+
+  mergeMaybe<U>(record: Record<U>): Record<T & RecordMaybe<U>> {
+    return Record.of(Object.entries(record.value).reduce(
+      (acc, [key, value]) => {
+        if (value instanceof Maybe) {
+          if (Maybe.isJust(value)) {
+            return {
+              ...acc,
+              [key]: Maybe.fromJust(value),
+            };
+          }
+          else {
+            const { [key]: _, ...other } = acc;
+            return other;
+          }
+        }
+        else {
+          return {
+            ...acc,
+            [key]: value,
+          };
+        }
+      },
+      { ...(this.value as any) }
+    ));
+  }
+
+  equals(second: Record<T>): boolean {
+    return R.equals(this.value, second.value);
+  }
+
+  static of<T>(initial: T): Record<T> {
+    return new Record(initial);
   }
 }

@@ -1,7 +1,6 @@
-import R from 'ramda';
 import * as Data from '../types/data.d';
-import * as Reusable from '../types/reusable.d';
 import * as Wiki from '../types/wiki.d';
+import { Just, List, Maybe } from './dataUtils';
 import { findSelectOption } from './selectionUtils';
 
 /**
@@ -17,45 +16,48 @@ export function getGeneratedPrerequisites(
   instance: Data.ActivatableDependent,
   active: Data.ActiveObject,
   add: boolean,
-): Reusable.AllRequirementTypes[] {
+): Maybe<List<Wiki.AllRequirementObjects>> {
   const { sid, sid2 } = active;
 
   switch (wikiEntry.id) {
     case 'SA_3': {
       return findSelectOption(wikiEntry, sid)
-        .map(item => item.req)
-        .valueOr([]);
+        .bind(item => item.req);
     }
     case 'SA_9': {
       interface SkillSelectionObject extends Wiki.SelectionObject {
-        applications?: Wiki.Application[];
-        applicationsInput?: string;
+        applications: Just<List<Wiki.Application>>;
+        applicationsInput: Just<string>;
       }
 
-      const sameSkill = instance.active.filter(e => e.sid === sid).length;
+      const sameSkill = instance.active.filter(e => e.sid === sid).length();
 
-      const sameSkillDependency = {
+      const sameSkillDependency = sid.map(sid => ({
         id: sid as string,
-        value: (sameSkill + (add ? 1 : 0)) * 6,
-      };
+        value: (sameSkill + (add ? 1 : 0)) * 6
+      }));
 
       return findSelectOption<SkillSelectionObject>(wikiEntry, sid)
-        .map(skill => skill.applications)
-        .map(R.find(e => e.id === sid2))
-        .map(app => app.prerequisites)
-        .map(prerequisites => [sameSkillDependency, ...prerequisites])
-        .valueOr([sameSkillDependency]);
+        .bind(skill => skill.applications)
+        .bind(list => list.find(e => sid2.equals(Maybe.Just(e.id))))
+        .bind(app => app.prerequisites)
+        .bind(prerequisites =>
+          sameSkillDependency.map(obj => prerequisites.prepend(obj))
+        )
+        .alt(sameSkillDependency.map(obj => List.of(obj)));
     }
     case 'SA_81':
-      return [{
+      return Maybe.Just(List.of<Wiki.RequiresActivatableObject>({
         id: 'SA_72',
         active: true,
         sid,
-      }];
+        sid2: Maybe.Nothing(),
+        tier: Maybe.Nothing()
+      }));
     case 'SA_414':
     case 'SA_663': {
       interface ExtensionSelectionObject extends Wiki.SelectionObject {
-        req: Reusable.AllRequirementTypes[];
+        req: Wiki.AllRequirementObjects[];
         target: string;
         tier: number;
       }
@@ -82,7 +84,7 @@ export function getGeneratedPrerequisites(
     }
   }
 
-  return [];
+  return Maybe.Nothing();
 }
 
 export const addDynamicPrerequisites = (
@@ -91,10 +93,10 @@ export const addDynamicPrerequisites = (
   active: Data.ActiveObject,
   add: boolean,
 ) => (
-  prerequisites: Wiki.AllRequirements[],
-): Wiki.AllRequirements[] => {
-  return [
-    ...prerequisites,
-    ...getGeneratedPrerequisites(wikiEntry, instance, active, add),
-  ];
-};
+  prerequisites: List<Wiki.AllRequirements>,
+): List<Wiki.AllRequirements> =>
+  Maybe.fromMaybe(
+    prerequisites,
+    getGeneratedPrerequisites(wikiEntry, instance, active, add)
+      .map(e => prerequisites.concat(e))
+  );

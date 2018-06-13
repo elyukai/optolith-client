@@ -1,13 +1,12 @@
 import { Action } from 'redux';
 import { Purse } from '../reducers/equipment';
-import { Just, List, Maybe, ReadMap, ReadSet } from '../utils/dataUtils';
+import { List, OrderedMap, OrderedSet, Record, Tuple } from '../utils/dataUtils';
 import { TabId } from '../utils/LocationUtils';
-import * as Reusable from './reusable.d';
 import * as Wiki from './wiki';
 
 export interface ActivatableDependent {
   readonly id: string;
-  readonly active: List<ActiveObject>;
+  readonly active: List<Record<ActiveObject>>;
   readonly dependencies: List<ActivatableDependency>;
 }
 
@@ -32,26 +31,26 @@ export interface ActivatableSkillDependent {
 }
 
 export type ExtendedSkillDependent =
-  SkillDependent |
-  ActivatableSkillDependent;
+  Record<SkillDependent> |
+  Record<ActivatableSkillDependent>;
 
 export type ExtendedActivatableDependent =
-  ActivatableDependent |
-  ActivatableSkillDependent;
+  Record<ActivatableDependent> |
+  Record<ActivatableSkillDependent>;
 
 export type ValueBasedDependent =
-  AttributeDependent |
-  SkillDependent |
-  ActivatableSkillDependent;
+  Record<AttributeDependent> |
+  Record<SkillDependent> |
+  Record<ActivatableSkillDependent>;
 
 export type Dependent =
-  ActivatableDependent |
-  AttributeDependent |
-  SkillDependent |
-  ActivatableSkillDependent;
+  Record<ActivatableDependent> |
+  Record<AttributeDependent> |
+  Record<SkillDependent> |
+  Record<ActivatableSkillDependent>;
 
-export type ActivatableDependency = boolean | DependencyObject;
-export type SkillDependency = number | SkillOptionalDependency;
+export type ActivatableDependency = boolean | Record<DependencyObject>;
+export type SkillDependency = number | Record<SkillOptionalDependency>;
 export type ExtendedSkillDependency = boolean | SkillDependency;
 
 export interface SkillOptionalDependency {
@@ -62,40 +61,41 @@ export interface SkillOptionalDependency {
 export interface HeroDependent {
   readonly id: string;
   readonly clientVersion: string;
-  readonly player: Maybe<string>;
+  readonly player?: string;
   readonly dateCreated: Date;
   readonly dateModified: Date;
   readonly phase: number;
   readonly name: string;
-  readonly avatar: Maybe<string>;
-  readonly adventurePoints: AdventurePoints;
-  readonly race: Maybe<string>;
-  readonly raceVariant: Maybe<string>;
-  readonly culture: Maybe<string>;
-  readonly profession: Maybe<string>;
-  readonly professionName: Maybe<string>;
-  readonly professionVariant: Maybe<string>;
+  readonly avatar?: string;
+  readonly adventurePoints: Record<AdventurePoints>;
+  readonly race?: string;
+  readonly raceVariant?: string;
+  readonly culture?: string;
+  readonly profession?: string;
+  readonly professionName?: string;
+  readonly professionVariant?: string;
   readonly sex: 'm' | 'f';
   readonly experienceLevel: string;
-  readonly personalData: PersonalData;
-  readonly advantages: ReadMap<string, ActivatableDependent>;
-  readonly disadvantages: ReadMap<string, ActivatableDependent>;
-  readonly specialAbilities: ReadMap<string, ActivatableDependent>;
-  readonly attributes: ReadMap<string, AttributeDependent>;
+  readonly personalData: Record<PersonalData>;
+  readonly advantages: OrderedMap<string, Record<ActivatableDependent>>;
+  readonly disadvantages: OrderedMap<string, Record<ActivatableDependent>>;
+  readonly specialAbilities: OrderedMap<string, Record<ActivatableDependent>>;
+  readonly attributes: OrderedMap<string, Record<AttributeDependent>>;
   readonly energies: Energies;
-  readonly skills: ReadMap<string, SkillDependent>;
-  readonly combatTechniques: ReadMap<string, SkillDependent>;
-  readonly spells: ReadMap<string, ActivatableSkillDependent>;
-  readonly cantrips: ReadSet<string>;
-  readonly liturgicalChants: ReadMap<string, ActivatableSkillDependent>;
-  readonly blessings: ReadonlySet<string>;
+  readonly skills: OrderedMap<string, Record<SkillDependent>>;
+  readonly combatTechniques: OrderedMap<string, Record<SkillDependent>>;
+  readonly spells: OrderedMap<string, Record<ActivatableSkillDependent>>;
+  readonly cantrips: OrderedSet<string>;
+  readonly liturgicalChants:
+    OrderedMap<string, Record<ActivatableSkillDependent>>;
+  readonly blessings: OrderedSet<string>;
   readonly belongings: Belongings;
-  readonly rules: Rules;
-  readonly pets: ReadMap<string, PetInstance>;
-  readonly pact: Maybe<Pact>;
-  readonly combatStyleDependencies: StyleDependency[];
-  readonly magicalStyleDependencies: StyleDependency[];
-  readonly blessedStyleDependencies: StyleDependency[];
+  readonly rules: Record<Rules>;
+  readonly pets: OrderedMap<string, Record<PetInstance>>;
+  readonly pact?: Record<Pact>;
+  readonly combatStyleDependencies: List<Record<StyleDependency>>;
+  readonly magicalStyleDependencies: List<Record<StyleDependency>>;
+  readonly blessedStyleDependencies: List<Record<StyleDependency>>;
 }
 
 export interface AdventurePoints {
@@ -104,28 +104,29 @@ export interface AdventurePoints {
 }
 
 export interface PersonalData {
-  readonly family: Maybe<string>;
-  readonly placeOfBirth: Maybe<string>;
-  readonly dateOfBirth: Maybe<string>;
-  readonly age: Maybe<string>;
-  readonly hairColor: Maybe<number>;
-  readonly eyeColor: Maybe<number>;
-  readonly size: Maybe<string>;
-  readonly weight: Maybe<string>;
-  readonly title: Maybe<string>;
-  readonly socialStatus: Maybe<number>;
-  readonly characteristics: Maybe<string>;
-  readonly otherInfo: Maybe<string>;
-  readonly cultureAreaKnowledge: Maybe<string>;
+  readonly family?: string;
+  readonly placeOfBirth?: string;
+  readonly dateOfBirth?: string;
+  readonly age?: string;
+  readonly hairColor?: number;
+  readonly eyeColor?: number;
+  readonly size?: string;
+  readonly weight?: string;
+  readonly title?: string;
+  readonly socialStatus?: number;
+  readonly characteristics?: string;
+  readonly otherInfo?: string;
+  readonly cultureAreaKnowledge?: string;
 }
 
 export interface Energies {
   readonly addedLifePoints: number;
   readonly addedArcaneEnergyPoints: number;
   readonly addedKarmaPoints: number;
-  readonly permanentLifePoints: PermanentEnergyLoss;
-  readonly permanentArcaneEnergyPoints: PermanentEnergyLossAndBoughtBack;
-  readonly permanentKarmaPoints: PermanentEnergyLossAndBoughtBack;
+  readonly permanentLifePoints: Record<PermanentEnergyLoss>;
+  readonly permanentArcaneEnergyPoints:
+    Record<PermanentEnergyLossAndBoughtBack>;
+  readonly permanentKarmaPoints: Record<PermanentEnergyLossAndBoughtBack>;
 }
 
 export interface PermanentEnergyLoss {
@@ -137,9 +138,9 @@ export interface PermanentEnergyLossAndBoughtBack extends PermanentEnergyLoss {
 }
 
 export interface Belongings {
-  readonly items: ReadMap<string, ItemInstance>;
-  readonly armorZones: ReadMap<string, ArmorZonesInstance>;
-  readonly purse: Purse;
+  readonly items: OrderedMap<string, Record<ItemInstance>>;
+  readonly armorZones: OrderedMap<string, Record<ArmorZonesInstance>>;
+  readonly purse: Record<Purse>;
 }
 
 export interface Pact {
@@ -156,11 +157,11 @@ export interface User {
 }
 
 export interface CommonProfessionObject {
-  list: (string | number)[];
+  list: List<string | number>;
   reverse: boolean;
 }
 
-export type CommonProfession = boolean | CommonProfessionObject;
+export type CommonProfession = boolean | Record<CommonProfessionObject>;
 
 export interface Selections {
   attrSel: string;
@@ -168,23 +169,24 @@ export interface Selections {
   lang: number;
   buyLiteracy: boolean;
   litc: number;
-  cantrips: Set<string>;
-  combattech: Set<string>;
-  combatTechniquesSecond: Set<string>;
-  curses: Map<string, number>;
-  langLitc: Map<string, number>;
+  cantrips: OrderedSet<string>;
+  combattech: OrderedSet<string>;
+  combatTechniquesSecond: OrderedSet<string>;
+  curses: OrderedMap<string, number>;
+  langLitc: OrderedMap<string, number>;
   spec: string | number;
-  specTalentId: Maybe<string>;
-  skills: Map<string, number>;
-  map: Map<Wiki.ProfessionSelectionIds, Wiki.ProfessionSelection>;
-  terrainKnowledge: Maybe<number>;
+  specTalentId?: string;
+  skills: OrderedMap<string, number>;
+  map:
+    OrderedMap<Wiki.ProfessionSelectionIds, Record<Wiki.ProfessionSelection>>;
+  terrainKnowledge?: number;
 }
 
 export interface ActiveObject {
-  sid: Maybe<string | number>;
-  sid2: Maybe<string | number>;
-  tier: Maybe<number>;
-  cost: Maybe<number>;
+  sid?: string | number;
+  sid2?: string | number;
+  tier?: number;
+  cost?: number;
 }
 
 export interface ActiveObjectName extends ActiveObject {
@@ -199,8 +201,8 @@ export interface ActiveObjectWithId extends ActiveObject {
 export interface ActivatableNameCost extends ActiveObjectWithId {
   combinedName: string;
   baseName: string;
-  addName: Maybe<string>;
-  currentCost: number | number[];
+  addName?: string;
+  currentCost: number | List<number>;
 }
 
 export interface ActivatableNameCostActive extends ActivatableNameCost {
@@ -209,7 +211,7 @@ export interface ActivatableNameCostActive extends ActivatableNameCost {
 
 export interface ActivatableNameCostEvalTier extends ActivatableNameCost {
   currentCost: number;
-  tierName: Maybe<string>;
+  tierName?: string;
 }
 
 export interface ActiveViewObject<T extends Wiki.Activatable = Wiki.Activatable> {
@@ -217,40 +219,40 @@ export interface ActiveViewObject<T extends Wiki.Activatable = Wiki.Activatable>
   index: number;
   name: string;
   cost: number;
-  tier: Maybe<number>;
-  tierName: Maybe<string>;
-  minTier: Maybe<number>;
-  maxTier: Maybe<number>;
+  tier?: number;
+  tierName?: string;
+  minTier?: number;
+  maxTier?: number;
   disabled: boolean;
-  instance: ActivatableDependent;
-  wiki: T;
-  customCost: Maybe<boolean>;
+  instance: Record<ActivatableDependent>;
+  wiki: Record<T>;
+  customCost?: boolean;
 }
 
 export interface DeactiveViewObject<T extends Wiki.Activatable = Wiki.Activatable> {
   id: string;
   name: string;
-  cost: Maybe<string | number | number[]>;
-  tiers: Maybe<number>;
-  minTier: Maybe<number>;
-  maxTier: Maybe<number>;
-  sel: Maybe<Wiki.SelectionObject[]>;
-  input: Maybe<string>;
-  instance: ActivatableDependent;
-  wiki: T;
-  customCostDisabled: Maybe<boolean>;
+  cost?: string | number | List<number>;
+  tiers?: number;
+  minTier?: number;
+  maxTier?: number;
+  sel?: List<Record<Wiki.SelectionObject>>;
+  input?: string;
+  instance: Record<ActivatableDependent>;
+  wiki: Record<T>;
+  customCostDisabled?: boolean;
 }
 
 export type SetTierObject = ActiveObject;
 
 export interface ActivateArgs {
   id: string;
-  sel: Maybe<string | number>;
-  sel2: Maybe<string | number>;
-  input: Maybe<string>;
-  tier: Maybe<number>;
+  sel?: string | number;
+  sel2?: string | number;
+  input?: string;
+  tier?: number;
   cost: number;
-  customCost: Maybe<number>;
+  customCost?: number;
 }
 
 export interface DeactivateArgs {
@@ -260,23 +262,23 @@ export interface DeactivateArgs {
 }
 
 export interface UndoExtendedDeactivateArgs extends DeactivateArgs {
-  activeObject: Maybe<ActiveObject>;
+  activeObject?: Record<ActiveObject>;
 }
 
 export interface ActivateObject {
-  sel: Maybe<string | number>;
-  sel2: Maybe<string | number>;
-  input: Maybe<string>;
-  tier: Maybe<number>;
-  cost: Maybe<number>;
+  sel?: string | number;
+  sel2?: string | number;
+  input?: string;
+  tier?: number;
+  cost?: number;
 }
 
 export interface DependencyObject {
-  origin: Maybe<string>;
-  active: Maybe<boolean>;
-  sid: Maybe<string | number | number[]>;
-  sid2: Maybe<string | number>;
-  tier: Maybe<number>;
+  origin?: string;
+  active?: boolean;
+  sid?: string | number | List<number>;
+  sid2?: string | number;
+  tier?: number;
 }
 
 export interface ValidationObject extends ActiveObject {
@@ -290,19 +292,17 @@ export interface ProfessionDependencyCost {
   disadv: [number, number, number];
 }
 
-export type ActivatableBasePrerequisites = ('RCP' | Reusable.AllRequirementTypes)[];
-
-export type UnionPlainAndMap<T> = T | Map<number, T>;
+export type UnionPlainAndMap<T> = T | OrderedMap<number, T>;
 
 export interface StyleDependency {
   /**
    * The extended special ability or list of available special abilities.
    */
-  id: string | string[];
+  id: string | List<string>;
   /**
    * If a ability meets a given id, the id, otherwise `undefined`.
    */
-  active: Maybe<string>;
+  active?: string;
   /**
    * The style's id.
    */
@@ -345,59 +345,59 @@ export interface ItemInstanceOld {
 export interface ItemBaseInstance {
   id: string;
   name: string;
-  ammunition: Maybe<string>;
-  combatTechnique: Maybe<string>;
-  damageDiceSides: Maybe<number>;
+  ammunition?: string;
+  combatTechnique?: string;
+  damageDiceSides?: number;
   gr: number;
-  isParryingWeapon: Maybe<boolean>;
+  isParryingWeapon?: boolean;
   isTemplateLocked: boolean;
-  reach: Maybe<number>;
-  template: Maybe<string>;
-  where: Maybe<string>;
-  isTwoHandedWeapon: Maybe<boolean>;
-  improvisedWeaponGroup: Maybe<number>;
-  loss: Maybe<number>;
-  forArmorZoneOnly: Maybe<boolean>;
-  addPenalties: Maybe<boolean>;
-  armorType: Maybe<number>;
+  reach?: number;
+  template?: string;
+  where?: string;
+  isTwoHandedWeapon?: boolean;
+  improvisedWeaponGroup?: number;
+  loss?: number;
+  forArmorZoneOnly?: boolean;
+  addPenalties?: boolean;
+  armorType?: number;
 }
 
 export interface ItemInstance extends ItemBaseInstance {
-  at: Maybe<number>;
-  iniMod: Maybe<number>;
-  movMod: Maybe<number>;
-  damageBonus?: {
-    primary: Maybe<string>;
-    threshold: number | number[];
-  };
-  damageDiceNumber: Maybe<number>;
-  damageFlat: Maybe<number>;
-  enc: Maybe<number>;
-  length: Maybe<number>;
+  at?: number;
+  iniMod?: number;
+  movMod?: number;
+  damageBonus?: Record<{
+    primary?: string;
+    threshold: number | List<number>;
+  }>;
+  damageDiceNumber?: number;
+  damageFlat?: number;
+  enc?: number;
+  length?: number;
   amount: number;
-  pa: Maybe<number>;
+  pa?: number;
   price: number;
-  pro: Maybe<number>;
-  range: Maybe<[number, number, number]>;
-  reloadTime: Maybe<number>;
-  stp: Maybe<number>;
-  weight: Maybe<number>;
-  stabilityMod: Maybe<number>;
-  note: Maybe<string>;
-  rules: Maybe<string>;
-  advantage: Maybe<string>;
-  disadvantage: Maybe<string>;
-  src: Maybe<Wiki.SourceLink[]>;
+  pro?: number;
+  range?: [number, number, number];
+  reloadTime?: number;
+  stp?: number;
+  weight?: number;
+  stabilityMod?: number;
+  note?: string;
+  rules?: string;
+  advantage?: string;
+  disadvantage?: string;
+  src?: List<Record<Wiki.SourceLink>>;
 }
 
 export interface ItemEditorInstance extends ItemBaseInstance {
   at: string;
   iniMod: string;
   movMod: string;
-  damageBonus: {
-    primary: Maybe<string>;
-    threshold: string | string[];
-  };
+  damageBonus: Record<{
+    primary?: string;
+    threshold: string | List<string>;
+  }>;
   damageDiceNumber: string;
   damageFlat: string;
   enc: string;
@@ -415,18 +415,18 @@ export interface ItemEditorInstance extends ItemBaseInstance {
 
 export interface ArmorZonesBaseInstance {
   name: string;
-  head: Maybe<string>;
-  headLoss: Maybe<number>;
-  leftArm: Maybe<string>;
-  leftArmLoss: Maybe<number>;
-  rightArm: Maybe<string>;
-  rightArmLoss: Maybe<number>;
-  torso: Maybe<string>;
-  torsoLoss: Maybe<number>;
-  leftLeg: Maybe<string>;
-  leftLegLoss: Maybe<number>;
-  rightLeg: Maybe<string>;
-  rightLegLoss: Maybe<number>;
+  head?: string;
+  headLoss?: number;
+  leftArm?: string;
+  leftArmLoss?: number;
+  rightArm?: string;
+  rightArmLoss?: number;
+  torso?: string;
+  torsoLoss?: number;
+  leftLeg?: string;
+  leftLegLoss?: number;
+  rightLeg?: string;
+  rightLegLoss?: number;
 }
 
 export interface ArmorZonesInstance extends ArmorZonesBaseInstance {
@@ -434,7 +434,7 @@ export interface ArmorZonesInstance extends ArmorZonesBaseInstance {
 }
 
 export interface ArmorZonesEditorInstance extends ArmorZonesBaseInstance {
-  id: Maybe<string>;
+  id?: string;
 }
 
 export interface SecondaryAttribute<I = string> {
@@ -443,120 +443,113 @@ export interface SecondaryAttribute<I = string> {
   name: string;
   calc: string;
   base: number;
-  add: Maybe<number>;
-  mod: Maybe<number>;
+  add?: number;
+  mod?: number;
   value: number | undefined;
-  maxAdd: Maybe<number>;
-  currentAdd: Maybe<number>;
-  permanentLost: Maybe<number>;
-  permanentRedeemed: Maybe<number>;
+  maxAdd?: number;
+  currentAdd?: number;
+  permanentLost?: number;
+  permanentRedeemed?: number;
 }
 
 export interface Energy<I = string> extends SecondaryAttribute<I> {
   base: number;
-  add: Just<number>;
-  mod: Just<number>;
-  maxAdd: Just<number>;
-  currentAdd: Just<number>;
-  permanentLost: Just<number>;
+  add: number;
+  mod: number;
+  maxAdd: number;
+  currentAdd: number;
+  permanentLost: number;
 }
 
 export interface EnergyWithLoss<I = string> extends Energy<I> {
-  permanentRedeemed: Just<number>;
+  permanentRedeemed: number;
 }
 
 export interface Rules {
   higherParadeValues: number;
   attributeValueLimit: boolean;
   enableAllRuleBooks: boolean;
-  enabledRuleBooks: Set<string>;
+  enabledRuleBooks: OrderedSet<string>;
   enableLanguageSpecializations: boolean;
 }
 
 export interface HistoryPayload {
-  id: Maybe<string | number>;
-  activeObject: Maybe<ActiveObject>;
-  index: Maybe<number>;
-  list: Maybe<(string | [string, number])[]>;
-  buy: Maybe<boolean>;
+  id?: string | number;
+  activeObject?: Record<ActiveObject>;
+  index?: number;
+  list?: List<string | Tuple<string, number>>;
+  buy?: boolean;
 }
 
 export interface HistoryObject {
   type: string;
   cost: number;
-  payload: HistoryPayload;
-  prevState: HistoryPrevState;
+  payload: Record<HistoryPayload>;
+  prevState: Record<HistoryPrevState>;
 }
 
 export interface HistoryPrevState {
 
 }
 
-export interface HistoryObject {
-  type: string;
-  cost: number;
-  payload: HistoryPayload;
-  prevState: HistoryPrevState;
-}
-
 export interface LanguagesSelectionListItem {
   id: string;
   name: string;
-  native: Maybe<boolean>;
+  native?: boolean;
 }
 
 export interface ScriptsSelectionListItem {
   id: string;
   name: string;
   cost: number;
-  native: Maybe<boolean>;
+  native?: boolean;
 }
 
-export type InputTextEvent =  React.FormEvent<HTMLInputElement>;
-export type InputKeyEvent =  React.KeyboardEvent<HTMLInputElement>;
+export type InputTextEvent = React.FormEvent<HTMLInputElement>;
+export type InputKeyEvent = React.KeyboardEvent<HTMLInputElement>;
 
 export interface SubTab {
   id: TabId;
   label: string;
-  disabled: Maybe<boolean>;
+  disabled?: boolean;
   // element: JSX.Element;
 }
 
 interface PetBaseInstance {
-  id: Maybe<string>;
+  id?: string;
   name: string;
-  avatar: Maybe<string>;
+  avatar?: string;
 }
 
 export interface PetInstance extends PetBaseInstance {
-  size: Maybe<string>;
-  type: Maybe<string>;
-  attack: Maybe<string>;
-  dp: Maybe<string>;
-  reach: Maybe<string>;
-  actions: Maybe<string>;
-  talents: Maybe<string>;
-  skills: Maybe<string>;
-  notes: Maybe<string>;
-  spentAp: Maybe<string>;
-  totalAp: Maybe<string>;
-  cou: Maybe<string>;
-  sgc: Maybe<string>;
-  int: Maybe<string>;
-  cha: Maybe<string>;
-  dex: Maybe<string>;
-  agi: Maybe<string>;
-  con: Maybe<string>;
-  str: Maybe<string>;
-  lp: Maybe<string>;
-  ae: Maybe<string>;
-  spi: Maybe<string>;
-  tou: Maybe<string>;
-  pro: Maybe<string>;
-  ini: Maybe<string>;
-  mov: Maybe<string>;
-  at: Maybe<string>;
-  pa: Maybe<string>;
+  size?: string;
+  type?: string;
+  attack?: string;
+  dp?: string;
+  reach?: string;
+  actions?: string;
+  talents?: string;
+  skills?: string;
+  notes?: string;
+  spentAp?: string;
+  totalAp?: string;
+  cou?: string;
+  sgc?: string;
+  int?: string;
+  cha?: string;
+  dex?: string;
+  agi?: string;
+  con?: string;
+  str?: string;
+  lp?: string;
+  ae?: string;
+  spi?: string;
+  tou?: string;
+  pro?: string;
+  ini?: string;
+  mov?: string;
+  at?: string;
+  pa?: string;
 }
 
 export interface PetEditorInstance extends PetBaseInstance {
@@ -614,8 +607,8 @@ export interface Alert {
   title?: string;
   buttons?: AlertButton[];
   confirm?: {
-    resolve: Maybe<Action>;
-    reject: Maybe<Action>;
+    resolve?: Action;
+    reject?: Action;
   };
   confirmYesNo?: boolean;
   onClose?(): void;

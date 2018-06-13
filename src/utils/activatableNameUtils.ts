@@ -213,7 +213,7 @@ const getEntrySpecificNameReplacements = (
 export interface CombinedName {
   combinedName: string;
   baseName: string;
-  addName: Maybe<string>;
+  addName?: string;
 }
 
 /**
@@ -243,11 +243,14 @@ export const getName = (
         locale,
       );
 
-      return {
+      return Maybe.maybe({
+        combinedName,
+        baseName: wikiEntry.name
+      }, addName => ({
         combinedName,
         baseName: wikiEntry.name,
         addName
-      };
+      }), addName);
     });
 };
 

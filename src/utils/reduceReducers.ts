@@ -20,11 +20,11 @@ export interface CrossSliceNoInitialReducer<S, A extends Action> {
 interface ReduceReducers {
   <S, A extends Action>(
     combinedReducer: Reducer<S, A>,
-    ...crossSlicereducers: CrossSliceReducer<S, A>[],
+    ...crossSlicereducers: CrossSliceReducer<S, A>[]
   ): (previous: S | undefined, action: A) => S,
   <S, A extends Action>(
     combinedReducer: NoInitialReducer<S, A>,
-    ...crossSlicereducers: CrossSliceNoInitialReducer<S, A>[],
+    ...crossSlicereducers: CrossSliceNoInitialReducer<S, A>[]
   ): (previous: S, action: A) => S
 }
 
