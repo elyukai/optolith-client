@@ -19,7 +19,7 @@ const unavailableBlessingsByTradition = OrderedMap.of([
 
 const getUnavailableBlessingsForTradition = (traditionId: string): List<string> => {
   return unavailableBlessingsByTradition
-    .lookupWithDefault(List.of(), traditionId);
+    .findWithDefault(List.of(), traditionId);
 };
 
 export const isOwnTradition = (

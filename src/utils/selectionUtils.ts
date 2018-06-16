@@ -1,4 +1,3 @@
-import R from 'ramda';
 import * as Data from '../types/data.d';
 import * as Wiki from '../types/wiki.d';
 import { List, Maybe, OrderedMap, Record } from './dataUtils';
@@ -76,9 +75,9 @@ type SecondarySelections = OrderedMap<number | string, List<string | number>>;
  */
 export const getActiveSecondarySelections =
   (obj: Maybe<Record<Data.ActivatableDependent>>) =>
-    obj.map(R.pipe(
-      r => r.lookup('active'),
-      m => m.map(r => r.foldl<SecondarySelections>(
+    obj.bind(obj => obj
+      .lookup('active')
+      .map(r => r.foldl<SecondarySelections>(
         map => obj => {
           const sid = obj.lookup('sid');
           const sid2 = obj.lookup('sid2');
@@ -94,9 +93,9 @@ export const getActiveSecondarySelections =
 
           return map;
         },
-        new OrderedMap()
-      )),
-    ));
+        OrderedMap.empty()
+      ))
+    );
 
 /**
  * Get all `DependencyObject.sid` values from the given instance.

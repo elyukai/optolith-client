@@ -1152,14 +1152,14 @@ export class OrderedMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
   }
 
   /**
-   * `lookupWithDefault :: Ord k => a -> k -> Map k a -> a`
+   * `findWithDefault :: Ord k => a -> k -> Map k a -> a`
    *
-   * The expression `(lookupWithDefault def k map)` returns the value at key `k`
+   * The expression `(findWithDefault def k map)` returns the value at key `k`
    * or returns default value `def` when the key is not in the map.
    */
-  lookupWithDefault(def: V): (key: K) => V;
-  lookupWithDefault(def: V, key: K): V;
-  lookupWithDefault(def: V, key?: K): V | ((key: K) => V) {
+  findWithDefault(def: V): (key: K) => V;
+  findWithDefault(def: V, key: K): V;
+  findWithDefault(def: V, key?: K): V | ((key: K) => V) {
     if (arguments.length === 2) {
       return Maybe.fromMaybe(def)(this.lookup(key!));
     }
@@ -1598,6 +1598,38 @@ export class OrderedMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
   ): U | ((initial: U) => U) {
     const resultFn = (fn: (acc: U) => (current: V) => U) => (initial: U) =>
       [...this.value].reduce<U>((acc, [_, value]) => fn(acc)(value), initial);
+
+    if (arguments.length === 2) {
+      return resultFn(fn)(initial!);
+    }
+
+    return resultFn(fn);
+  }
+
+  /**
+   * `foldlWithKey :: (a -> k -> b -> a) -> a -> Map k b -> a`
+   *
+   * Fold the values in the map using the given left-associative binary
+   * operator, such that
+   * `foldlWithKey f z == foldl (\z' (kx, x) -> f z' kx x) z . toAscList`.
+   */
+  foldlWithKey<U extends Some>(
+    fn: (acc: U) => (key: K) => (current: V) => U
+  ): (initial: U) => U;
+  foldlWithKey<U extends Some>(
+    fn: (acc: U) => (key: K) => (current: V) => U, initial: U
+  ): U;
+  foldlWithKey<U extends Some>(
+    fn: (acc: U) => (key: K) => (current: V) => U,
+    initial?: U
+  ): U | ((initial: U) => U) {
+    const resultFn = (
+      fn: (acc: U) => (key: K) => (current: V) => U
+    ) => (initial: U) =>
+      [...this.value].reduce<U>(
+        (acc, [key, value]) => fn(acc)(key)(value),
+        initial
+      );
 
     if (arguments.length === 2) {
       return resultFn(fn)(initial!);

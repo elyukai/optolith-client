@@ -1,11 +1,11 @@
 import R from 'ramda';
 import { AdventurePointsObject } from '../selectors/adventurePointsSelectors';
 import * as Data from '../types/data.d';
+import { HeroDependent } from '../types/data.d';
 import * as Wiki from '../types/wiki.d';
 import { isAdditionDisabled } from './activatableInactiveValidationUtils';
 import { countActiveSkillEntries } from './activatableSkillUtils';
-import { convertMapToValues, setM } from './collectionUtils';
-import { List, Maybe, Record } from './dataUtils';
+import { List, Maybe, OrderedMap, Record, Tuple } from './dataUtils';
 import { countActiveGroupEntries } from './entryGroupUtils';
 import { exists } from './exists';
 import { sortObjects } from './FilterSortUtils';
@@ -60,6 +60,47 @@ const getIsNoRequiredOrActiveSelection =
     return (e: Record<Wiki.SelectionObject>) =>
       isNoActiveSelection(e) && isNoRequiredSelection(e);
   };
+
+const addToSkillCategoryCounter = (map: OrderedMap<number, number>) =>
+  map.alter(
+    prop => prop
+      .map(count => count + 1)
+      .alt(Maybe.Just(0))
+  );
+
+const getCategoriesWithSkillsAbove10 = (
+  wiki: Record<Wiki.WikiAll>,
+  state: Record<HeroDependent>,
+  key: 'liturgicalChants' | 'spells',
+) => {
+  const addToCounterByKey = key === 'liturgicalChants'
+    ? (map: OrderedMap<number, number>) =>
+        (skill: Record<Wiki.LiturgicalChant | Wiki.Spell>) =>
+          (skill as Record<Wiki.LiturgicalChant>).get('aspects').foldl(
+            addToSkillCategoryCounter,
+            map
+          )
+    : (map: OrderedMap<number, number>) =>
+        (skill: Record<Wiki.LiturgicalChant | Wiki.Spell>) =>
+          addToSkillCategoryCounter(map)(
+            (skill as Record<Wiki.Spell>).get('property')
+          );
+
+  return state.get(key).elems()
+    .filter(e => e.get('value') >= 10)
+    .foldl<OrderedMap<number, number>>(map => obj => {
+      return Maybe.fromMaybe(
+        map,
+        (wiki.get(key).lookup(
+          obj.get('id')
+        ) as Maybe<Record<Wiki.Spell | Wiki.LiturgicalChant>>)
+          .map(addToCounterByKey(map))
+      )
+    }, OrderedMap.empty())
+    .foldlWithKey<List<number>>(list => key => value => {
+      return value >= 3 ? list.append(key) : list
+    }, List.of());
+};
 
 const getEntrySpecificSelections = (
   wiki: Record<Wiki.WikiAll>,
@@ -159,317 +200,230 @@ const getEntrySpecificSelections = (
     .on('DISADV_48', () =>
       entry.lookup('select')
         .map(select => {
-          const isNoActiveSelection = getIsNoActiveSelection(instance);
-          const isNoRequiredSelection = getIsNoRequiredSelection(instance);
+          const isNoRequiredOrActiveSelection =
+            getIsNoRequiredOrActiveSelection(instance);
+
+          const isAdvantageActive = (id: string) =>
+            isActive(state.get('advantages').lookup(id));
+
+          const isSkillOfIcB = (e: Record<Wiki.SelectionObject>) =>
+            Maybe.fromMaybe(
+              false,
+              wiki.get('skills').lookup(e.get('id') as string)
+                .map(skill => skill.get('ic') === 2)
+            );
 
           return select.filter(e => {
-
-          }R.ifElse(
-            R.both(
-              R.either(
-                R.always(R.defaultTo(
-                  false,
-                  Maybe.of(state.advantages.get('ADV_40'))
-                    .map(e => R.gt(e.active.length, 0)).value,
-                )),
-                R.always(R.defaultTo(
-                  false,
-                  Maybe.of(state.advantages.get('ADV_46'))
-                    .map(e => R.gt(e.active.length, 0)).value,
-                )),
-              ),
-              e => Maybe.of(wiki.skills.get(e.id as string))
-                .map(skill => R.equals(skill.ic, 2))
-                .valueOr(false),
-            ),
-            R.F,
-            R.both(
-              e => R.not(R.contains(e.id, activeSelections)),
-              e => R.not(R.contains(e.id, requiredSelections)),
-            ),
-          ));
+            return (isAdvantageActive('ADV_40') || isAdvantageActive('ADV_46'))
+              && isSkillOfIcB(e)
+              || isNoRequiredOrActiveSelection(e);
+          });
         })
     )
     .on('SA_3', () =>
       entry.lookup('select')
         .map(select => {
-          const activeSelections = getActiveSelections(instance);
-          const requiredSelections = getRequiredSelections(instance);
+          const isNoRequiredOrActiveSelection =
+            getIsNoRequiredOrActiveSelection(instance);
 
-          return R.filter(R.allPass([
-            (e: Wiki.SelectionObject) => R.not(R.contains(
-              e.id,
-              activeSelections,
-            )),
-            (e: Wiki.SelectionObject) => R.not(R.contains(
-              e.id,
-              requiredSelections,
-            )),
-            (e: Wiki.SelectionObject) => R.both(
-              exists,
-              req => validatePrerequisites(wiki, state, req, entry.id)
-            )(e.req),
-          ]), select);
+          return select.filter(e =>
+            isNoRequiredOrActiveSelection(e)
+            && Maybe.fromMaybe(false, e.lookup('req').map(req =>
+              validatePrerequisites(wiki, state, req, entry.get('id'))
+            ))
+          );
         })
     )
     .on('SA_9', () => {
-      const counter = getActiveSecondarySelections(instance);
+      const maybeCounter = getActiveSecondarySelections(instance);
+
       return entry.lookup('select')
         .map(select => {
-          const requiredSelections = getRequiredSelections(instance);
+          const isNoRequiredSelection = getIsNoRequiredSelection(instance);
 
-          return R.filter(e => {
-            return match<string | number, boolean>(e.id)
-              .on(id => R.not(R.contains(id, requiredSelections)), R.F)
-              .on(counter.has, id => {
-                const arr = Maybe.of(counter.get(id));
+          const isValidSelection = Maybe.isJust(maybeCounter)
+            ? (e: Record<Wiki.SelectionObject>) => {
+              const counter = Maybe.fromJust(maybeCounter);
 
-                return Maybe.ofPred(isString, id)
-                  .map(state.skills.get)
-                  .bind(skill => arr.map(arr =>
-                    arr.length < 3 && skill.value >= 6 * (arr.length + 1)
-                  ))
-                  .valueOr(false);
-              })
-              .otherwise(id => Maybe.ofPred(isString, id)
-                .map(state.skills.get)
-                .map(skill => skill.value >= 6)
-                .valueOr(false)
-              );
-          }, select);
+              if (isNoRequiredSelection(e)) {
+                return false;
+              }
+              else if (counter.member(e.get('id'))) {
+                return Maybe.fromMaybe(
+                  false,
+                  Maybe.ensure(isString, e.get('id'))
+                    .bind(state.get('skills').lookup)
+                    .bind(skill => counter.lookup(e.get('id'))
+                      .map(arr =>
+                        arr.length() < 3
+                        && skill.get('value') >= 6 * (arr.length() + 1)
+                      )
+                    )
+                );
+              }
+              else {
+                return Maybe.fromMaybe(
+                  false,
+                  Maybe.ensure(isString, e.get('id'))
+                    .bind(state.get('skills').lookup)
+                    .map(skill => skill.get('value') >= 6)
+                );
+              }
+            }
+            : (e: Record<Wiki.SelectionObject>) => {
+              if (isNoRequiredSelection(e)) {
+                return false;
+              }
+              else {
+                return Maybe.fromMaybe(
+                  false,
+                  Maybe.ensure(isString, e.get('id'))
+                    .bind(state.get('skills').lookup)
+                    .map(skill => skill.get('value') >= 6)
+                );
+              }
+            };
+
+          return select.filter(isValidSelection);
         })
-        .map(R.map(e => {
-          const id = e.id as string;
-          const arr = counter.get(id);
-          return {
-            ...e,
-            cost: arr ? e.cost! * (arr.length + 1) : e.cost,
-            applications: e.applications && e.applications.filter(n => {
-              const isInactive = !arr || !arr.includes(n.id);
-              const arePrerequisitesMet =
-                typeof n.prerequisites !== 'object' ||
-                validatePrerequisites(wiki, state, n.prerequisites, id);
+        .map(select => select.map(e => {
+          const id = e.get('id') as string;
 
-              return isInactive && arePrerequisitesMet;
-            })
-          };
+          const list = maybeCounter.bind(counter => counter.lookup(id));
+
+          return e.mergeMaybe(Record.of({
+            cost: Maybe.isJust(list)
+              ? e.lookup('cost')
+                .map(cost => cost * (Maybe.fromJust(list).length() + 1))
+              : e.lookup('cost'),
+            applications: e.lookup('applications').map(apps =>
+              apps.filter(n => {
+                const isInactive = !Maybe.isJust(list)
+                  || !Maybe.fromJust(list).elem(n.get('id'));
+
+                const req = n.lookup('prerequisites');
+
+                const arePrerequisitesMet =
+                  !Maybe.isJust(req) ||
+                  validatePrerequisites(wiki, state, Maybe.fromJust(req), id);
+
+                return isInactive && arePrerequisitesMet;
+              })
+            )
+          })) as Record<Wiki.SelectionObject>;
         }));
     })
     .on('SA_28', () =>
       entry.lookup('select')
         .map(select => {
-          const activeSelections = getActiveSelections(instance);
-          const requiredSelections = getRequiredSelections(instance);
+          const isNoActiveSelection = getIsNoActiveSelection(instance);
+          const isNoRequiredSelection = getIsNoRequiredSelection(instance);
 
-          return R.filter(e => {
-            return match<string | number, boolean>(e.id)
-              .on(id => R.not(R.contains(id, requiredSelections)), R.F)
-              .otherwise(id => {
-                return R.defaultTo(false, Maybe.of(e.talent)
-                  .map(talent => {
-                    return Maybe.of(state.skills.get(talent[0]))
-                      .map(skill => {
-                        return R.both(
-                          () => R.not(R.contains(id, activeSelections)),
-                          () => R.gte(skill.value, talent[1])
-                        )();
-                      })
-                      .value;
-                  })
-                  .value);
-              });
-          }, select);
+          return select.filter(e => {
+            if (isNoRequiredSelection(e)) {
+              return false;
+            }
+            else {
+              return Maybe.fromMaybe(
+                false,
+                e.lookup('talent')
+                  .bind(talent =>
+                    state.get('skills').lookup(Tuple.fst(talent))
+                      .map(skill =>
+                        isNoActiveSelection(e)
+                        && skill.get('value') >= Tuple.snd(talent)
+                      )
+                  )
+              );
+            }
+          });
         })
     )
     .on('SA_29', () =>
       entry.lookup('select')
         .map(select => {
-          const requiredSelections = getRequiredSelections(instance);
+          const isNoRequiredSelection = getIsNoRequiredSelection(instance);
 
-          const active = instance
-            .map(e => e.active)
-            .valueOr<Data.ActiveObject[]>([]);
+          const active = Maybe.fromMaybe<List<Record<Data.ActiveObject>>>(
+            List.of(),
+            instance.map(e => e.get('active'))
+          );
 
-          return R.filter(e =>
-            !requiredSelections.includes(e.id)
-            && active.every(n => n.sid !== e.id), select);
+          return select.filter(e =>
+            isNoRequiredSelection(e)
+            && active.all(n => !n.lookup('sid').equals(e.lookup('id')))
+          );
         })
     )
     .on('SA_72', () => {
-      const getPropertiesWithValidSpells = R.pipe(
-        (list: Data.ActivatableSkillDependent[]) => R.filter(
-          e => e.value >= 10, list
-        ),
-        list => R.reduce((coll, obj) => {
-          return R.defaultTo(
-            coll,
-            Maybe.of(wiki.spells.get(obj.id))
-              .map(spell => {
-                return setM(
-                  spell.property,
-                  R.defaultTo(0, coll.get(spell.property)) + 1,
-                )(coll);
-              })
-              .value
-          );
-        }, new Map() as ReadonlyMap<number, number>, list),
-        list => [...list].reduce<number[]>(
-          (list, prop) => prop[1] >= 3 ? R.append(prop[0], list) : list,
-          []
-        ),
-      );
-
       return entry.lookup('select')
         .map(select => {
-          const propertiesWithValidSpells =
-            getPropertiesWithValidSpells(
-              convertMapToValues(state.spells)
-            );
-
-          const activeSelections = getActiveSelections(instance);
-          const requiredSelections = getRequiredSelections(instance);
-
-          return R.filter(
-            R.allPass([
-              (e: Wiki.SelectionObject) => R.not(R.contains(
-                e.id,
-                activeSelections,
-              )),
-              (e: Wiki.SelectionObject) => R.not(R.contains(
-                e.id,
-                requiredSelections,
-              )),
-              (e: Wiki.SelectionObject) => R.not(R.contains(
-                e.id,
-                propertiesWithValidSpells,
-              )),
-            ]),
-            select
+          const propertiesWithValidSpells = getCategoriesWithSkillsAbove10(
+            wiki, state, 'spells'
           );
+
+          const isNoRequiredOrActiveSelection =
+            getIsNoRequiredOrActiveSelection(instance);
+
+          return select.filter(e => {
+            return isNoRequiredOrActiveSelection(e)
+              && !propertiesWithValidSpells.elem(e.get('id') as number);
+          });
         });
     })
     .on('SA_81', () =>
       entry.lookup('select')
         .map(select => {
-          return Maybe.of(state.specialAbilities.get('SA_72'))
-            .map(propertyKnowledge => {
-              const activePropertyKnowledges =
-                getActiveSelections(Maybe.Just(propertyKnowledge));
-              const activeSelections =
-                getActiveSelections(instance);
-              const requiredSelections =
-                getRequiredSelections(instance);
-
-              return R.filter(
-                R.allPass([
-                  (e: Wiki.SelectionObject) => R.not(R.contains(
-                    e.id,
-                    activeSelections,
-                  )),
-                  (e: Wiki.SelectionObject) => R.not(R.contains(
-                    e.id,
-                    requiredSelections,
-                  )),
-                  (e: Wiki.SelectionObject) => R.not(R.contains(
-                    e.id,
-                    activePropertyKnowledges,
-                  )),
-                ]),
-                select
-              );
-            })
-            .value;
-        })
-    )
-    .on('SA_87', () => {
-      const getAspectsWithValidLiturgicalChants = R.pipe(
-        (list: Data.ActivatableSkillDependent[]) => R.filter(
-          e => e.value >= 10, list
-        ),
-        list => R.reduce((coll, obj) => {
-          return R.defaultTo(
-            coll,
-            Maybe.of(wiki.liturgicalChants.get(obj.id))
-              .map(chant => {
-                return chant.aspects.reduce((coll, aspect) => {
-                  return setM(
-                    aspect,
-                    R.defaultTo(0, coll.get(aspect)) + 1,
-                  )(coll)
-                }, coll);
-              })
-              .value
-          );
-        }, new Map() as ReadonlyMap<number, number>, list),
-        list => [...list].reduce<number[]>(
-          (list, prop) => prop[1] >= 3 ? R.append(prop[0], list) : list,
-          []
-        ),
-      );
-
-      return entry.lookup('select')
-        .bind(select => {
-          const aspectsWithValidLiturgicalChants =
-            getAspectsWithValidLiturgicalChants(
-              convertMapToValues(state.spells)
+          const isNoActivePropertyKnowledge =
+            getIsNoActiveSelection(
+              state.get('specialAbilities').lookup('SA_72')
             );
 
-          const activeSelections = getActiveSelections(instance);
-          const requiredSelections = getRequiredSelections(instance);
+          const isNoRequiredOrActiveSelection =
+            getIsNoRequiredOrActiveSelection(instance);
 
-          return getBlessedTradition(state.specialAbilities)
-            .map(tradition => {
-              return R.filter(
-                R.allPass([
-                  (e: Wiki.SelectionObject) => R.equals(
-                    getBlessedTraditionInstanceIdByNumericId(
-                      getTraditionOfAspect(e.id as number)
-                    ),
-                    Maybe.Just(tradition.id),
-                  ),
-                  (e: Wiki.SelectionObject) => R.not(R.contains(
-                    e.id,
-                    activeSelections,
-                  )),
-                  (e: Wiki.SelectionObject) => R.not(R.contains(
-                    e.id,
-                    requiredSelections,
-                  )),
-                  (e: Wiki.SelectionObject) => R.not(R.contains(
-                    e.id,
-                    aspectsWithValidLiturgicalChants,
-                  )),
-                ]),
-                select
-              );
-            });
-        });
-    })
+          return select.filter(e =>
+            isNoRequiredOrActiveSelection(e)
+            && isNoActivePropertyKnowledge(e)
+          );
+        })
+    )
+    .on('SA_87', () =>
+      entry.lookup('select')
+        .bind(select => {
+          const aspectsWithValidChants = getCategoriesWithSkillsAbove10(
+            wiki, state, 'liturgicalChants'
+          );
+
+          const isNoRequiredOrActiveSelection =
+            getIsNoRequiredOrActiveSelection(instance);
+
+          return getBlessedTradition(state.get('specialAbilities'))
+            .map(tradition =>
+              select.filter(e =>
+                getBlessedTraditionInstanceIdByNumericId(
+                  getTraditionOfAspect(e.get('id') as number)
+                )
+                  .equals(Maybe.Just(tradition.get('id')))
+                && isNoRequiredOrActiveSelection(e)
+                && !aspectsWithValidChants.elem(e.get('id') as number)
+              )
+            )
+        })
+    )
     .on('SA_231', () =>
       entry.lookup('select')
         .map(select => {
-          const activeSelections = getActiveSelections(instance);
-          const requiredSelections = getRequiredSelections(instance);
+          const isNoRequiredOrActiveSelection =
+            getIsNoRequiredOrActiveSelection(instance);
 
-          return R.filter(
-            R.allPass([
-              (e: Wiki.SelectionObject) => R.not(R.contains(
-                e.id,
-                activeSelections,
-              )),
-              (e: Wiki.SelectionObject) => R.not(R.contains(
-                e.id,
-                requiredSelections,
-              )),
-              (e: Wiki.SelectionObject) =>
-                Maybe.of(state.spells.get(e.id as string))
-                  .map(R.pipe(
-                    spell => spell.value,
-                    R.lte(10),
-                  ))
-                  .valueOr(false),
-            ]),
-            select
+          return select.filter(e =>
+            isNoRequiredOrActiveSelection(e)
+            && Maybe.fromMaybe(
+              false,
+              state.get('spells').lookup(e.get('id') as string)
+                .map(spell => spell.get('value') >= 10)
+            )
           );
         })
     )

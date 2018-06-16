@@ -13,9 +13,9 @@ export const isActive = (
     return Maybe.isJust(obj) && Maybe.fromJust(
       Maybe.fromJust(obj)
         .lookup('active')
-        .map(e => e.length() > 0)
+        .map(e => !e.null())
     );
   }
 
-  return obj.get('active').length() > 0;
+  return !obj.get('active').null();
 };
