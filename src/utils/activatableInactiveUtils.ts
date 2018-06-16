@@ -1,4 +1,3 @@
-import R from 'ramda';
 import { AdventurePointsObject } from '../selectors/adventurePointsSelectors';
 import * as Data from '../types/data.d';
 import { HeroDependent } from '../types/data.d';
@@ -7,7 +6,6 @@ import { isAdditionDisabled } from './activatableInactiveValidationUtils';
 import { countActiveSkillEntries } from './activatableSkillUtils';
 import { List, Maybe, OrderedMap, Record, Tuple } from './dataUtils';
 import { countActiveGroupEntries } from './entryGroupUtils';
-import { exists } from './exists';
 import { sortObjects } from './FilterSortUtils';
 import { getAllEntriesByGroup } from './heroStateUtils';
 import { getBlessedTraditionInstanceIdByNumericId } from './IDUtils';
@@ -434,24 +432,30 @@ const getEntrySpecificSelections = (
 
           if (isActive(instance)) {
             const selectedPath = instance
-              .map(e => e.active[0])
-              .map(e => e.sid)
-              .bind(e => findSelectOption(entry, e))
-              .map(obj => obj.gr);
+              .bind(e => e.get('active').head())
+              .bind(e => e.lookup('sid'))
+              .bind(e => findSelectOption(entry, Maybe.Just(e)))
+              .bind(obj => obj.lookup('gr'));
 
-            const highestLevel = Math.max(...Maybe.catMaybes(
-              activeSelections.map(e => {
-                return findSelectOption(entry, e).map(e => e.tier);
-              })
-            ));
+            const highestLevel = activeSelections.map(activeSelections =>
+              Maybe.catMaybes(
+                activeSelections.map(e =>
+                  findSelectOption(entry, Maybe.Just(e))
+                    .bind(e => e.lookup('tier'))
+                )
+              )
+                .maximum()
+            )
+              .map(e => e + 1);
 
             return select.filter(e =>
-              selectedPath.equals(Maybe.of(e.gr)) &&
-              e.tier === highestLevel + 1
+              selectedPath.equals(e.lookup('gr'))
+              && e.lookup('tier').equals(highestLevel)
             );
           }
           else {
-            return R.filter(e => e.tier === 1, select);
+            const just1 = Maybe.Just(1);
+            return select.filter(e => e.lookup('tier').equals(just1));
           }
         })
     )
@@ -461,135 +465,146 @@ const getEntrySpecificSelections = (
     ].includes, () =>
       entry.lookup('select')
         .map(select => {
-          const activeSelections = getActiveSelections(instance);
-          const requiredSelections = getRequiredSelections(instance);
+          const isNoRequiredOrActiveSelection =
+            getIsNoRequiredOrActiveSelection(instance);
 
-          type GetInstance = (target: string | undefined) =>
-            Data.ActivatableSkillDependent | undefined;
+          type GetInstance = (target: Maybe<string>) =>
+            Maybe<Record<Data.ActivatableSkillDependent>>;
 
-          const getInstance: GetInstance = entry.id === 'SA_414'
-            ? target => state.spells.get(target!)
-            : target => state.liturgicalChants.get(target!);
+          const getInstance: GetInstance = entry.get('id') === 'SA_414'
+            ? target => target.bind(state.get('spells').lookup)
+            : target => target.bind(state.get('liturgicalChants').lookup);
 
-          type GetWikiEntry = (target: string | undefined) =>
-          Wiki.Spell | Wiki.LiturgicalChant | undefined;
+          type GetWikiEntry = (target: Maybe<string>) =>
+          Maybe<Record<Wiki.Spell> | Record<Wiki.LiturgicalChant>>;
 
-          const getWikiEntry: GetWikiEntry = entry.id === 'SA_414'
-            ? target => wiki.spells.get(target!)
-            : target => wiki.liturgicalChants.get(target!);
+          const getWikiEntry: GetWikiEntry = entry.get('id') === 'SA_414'
+            ? target => target.bind(wiki.get('spells').lookup)
+            : target => target.bind(wiki.get('liturgicalChants').lookup);
 
-          return select.reduce<Wiki.SelectionObject[]>((arr, e) => {
-            const targetInstance = getInstance(e.target);
-            const targetWikiEntry = getWikiEntry(e.target);
+          return select.foldl<List<Record<Wiki.SelectionObject>>>(arr => e => {
+            const targetInstance = getInstance(e.lookup('target'));
+            const targetWikiEntry = getWikiEntry(e.lookup('target'));
 
             if (
-              !activeSelections.includes(e.id)
-              && validatePrerequisites(wiki, state, e.req!, entry.id)
-              && !requiredSelections.includes(e.id)
-              && targetWikiEntry
-              && targetInstance
-              && targetInstance.value >= e.tier! * 4 + 4
+              isNoRequiredOrActiveSelection(e)
+              && validatePrerequisites(
+                wiki,
+                state,
+                Maybe.fromMaybe(List.of(), e.lookup('req')),
+                entry.get('id')
+              )
+              && Maybe.isJust(targetWikiEntry)
+              && Maybe.isJust(targetInstance)
+              && targetInstance.map(e => e.get('value'))
+                .gte(e.lookup('tier').map(e => e * 4 + 4))
             ) {
-              return [
-                ...arr,
-                { ...e, name: `${targetWikiEntry.name}: ${e.name}` }
-              ];
+              const target = Maybe.fromJust(targetWikiEntry);
+              return arr.append(e.insert(
+                'name',
+                `${target.get('name')}: ${e.get('name')}`
+              ));
             }
             return arr;
-          }, []);
+          }, List.of());
         })
     )
     .on('SA_639', () =>
       entry.lookup('select')
         .map(select => {
-          const activeSelections = getActiveSelections(instance);
-          const requiredSelections = getRequiredSelections(instance);
+          const isNoRequiredOrActiveSelection =
+            getIsNoRequiredOrActiveSelection(instance);
 
-          return R.filter(e => {
-            return !activeSelections.includes(e.id)
-              && !requiredSelections.includes(e.id)
-              && validatePrerequisites(
-                  wiki,
-                  state,
-                  e.prerequisites!,
-                  entry.id,
-                );
-          }, select);
+          return select.filter(e =>
+            isNoRequiredOrActiveSelection(e)
+            && validatePrerequisites(
+              wiki,
+              state,
+              Maybe.fromMaybe(List.of(), e.lookup('req')),
+              entry.get('id'),
+            )
+          );
         })
     )
     .on('SA_699', () =>
-      Maybe.of(wiki.specialAbilities.get('SA_29'))
-        .bind(languagesWikiEntry => {
-          return Maybe.of(languagesWikiEntry.select)
+      wiki.get('specialAbilities').lookup('SA_29')
+        .bind(languagesWikiEntry =>
+          languagesWikiEntry.lookup('select')
             .map(select => {
               interface AvailableLanguage {
                 id: number;
                 tier: number;
               }
 
-              const availableLanguages: AvailableLanguage[] =
-                Maybe.of(state.specialAbilities.get('SA_29'))
-                  .map(lang => {
-                    return lang.active.reduce<AvailableLanguage[]>(
-                      (arr, obj) => {
-                        if (obj.tier === 3 || obj.tier === 4) {
-                          return [
-                            ...arr,
-                            {
-                              id: obj.sid as number,
-                              tier: obj.tier
-                            }
-                          ];
-                        }
-                        return arr;
-                      },
-                      []
-                    );
-                  })
-                  .valueOr([]);
+              const availableLanguages: List<Record<AvailableLanguage>> =
+                Maybe.fromMaybe(
+                  List.of(),
+                  state.get('specialAbilities').lookup('SA_29')
+                    .map(lang =>
+                      lang.get('active').foldl<List<Record<AvailableLanguage>>>(
+                        arr => obj =>
+                          Maybe.fromMaybe(
+                            arr,
+                            obj.lookup('tier').bind(tier =>
+                              obj.lookup('sid')
+                                .bind(Maybe.ensure(x => x === 3 || x === 4))
+                                .map(sid => arr.append(Record.of({
+                                  id: sid as number,
+                                  tier
+                                })))
+                            )
+                          ),
+                        List.of()
+                      )
+                    )
+                );
 
-              return select.reduce<Wiki.SelectionObject[]>((acc, e) => {
-                const language = Maybe.of(availableLanguages.find(l => {
-                  return l.id === e.id;
-                }));
+              const justTrue = Maybe.Just(true);
+              const just4 = Maybe.Just(4);
 
-                const firstForLanguage = instance
-                  .map(e => e.active)
-                  .map(active => !active.every(a => {
-                    return a.sid === e.id;
-                  }));
+              return select.foldl<List<Record<Wiki.SelectionObject>>>(
+                acc => e => {
+                  const language = availableLanguages.find(
+                    l => l.get('id') === e.get('id')
+                  );
 
-                if (Maybe.isJust(language) && firstForLanguage) {
-                  const isMotherTongue = language.valueOr().tier === 4;
+                  const firstForLanguage = instance
+                    .map(e => e.get('active').all(
+                      a => a.lookup('sid').equals(e.lookup('id'))
+                    ));
 
-                  if (isMotherTongue) {
-                    return R.append({ ...e, cost: 0 }, acc);
+                  if (
+                    Maybe.isJust(language)
+                    && firstForLanguage.equals(justTrue)
+                  ) {
+                    const isMotherTongue = language
+                      .bind(e => e.lookup('tier'))
+                      .equals(just4);
+
+                    if (isMotherTongue) {
+                      return acc.append(e.insert('cost', 0));
+                    }
+
+                    return acc.append(e);
                   }
 
-                  return R.append(e, acc);
-                }
-
-                return acc;
-              }, []);
-            });
-        })
+                  return acc;
+                },
+                List.of()
+              );
+            })
+        )
     )
     .otherwise(() =>
       entry.lookup('select')
-        .map(select => {
-          const activeSelections = getActiveSelections(instance);
-          const requiredSelections = getRequiredSelections(instance);
-
-          return R.filter(R.both(
-            e => R.not(R.contains(e.id, activeSelections)),
-            e => R.not(R.contains(e.id, requiredSelections)),
-          ), select);
-        })
+        .map(select =>
+          select.filter(getIsNoRequiredOrActiveSelection(instance))
+        )
     );
 };
 
 interface InactiveOptions {
-  cost?: string | number | number[];
+  cost?: string | number | List<number>;
   tiers?: number;
   minTier?: number;
   maxTier?: number;
@@ -597,50 +612,48 @@ interface InactiveOptions {
 }
 
 const getOtherOptions = (
-  wiki: WikiState,
-  instance: Data.ActivatableDependent,
-  state: Data.HeroDependent,
-  adventurePoints: AdventurePointsObject,
+  wiki: Record<Wiki.WikiAll>,
+  instance: Maybe<Record<Data.ActivatableDependent>>,
+  state: Record<Data.HeroDependent>,
+  adventurePoints: Record<AdventurePointsObject>,
   entry: Wiki.Activatable,
 ) => {
-  return match<string, Maybe<InactiveOptions>>(entry.id)
-    .on('DISADV_59', () => {
-      return R.ifElse(
-        R.gt(3),
-        activeSpells => ({ maxTier: 3 - activeSpells }),
-        () => undefined,
-      )(countActiveSkillEntries(state, "spells"));
-    })
-    .on('SA_17', () => {
-      return R.ifElse(
-        R.lte(12),
-        activeSpells => ({ maxTier: 3 - activeSpells }),
-        () => undefined,
-      )(R.add(
-        R.defaultTo(0, Maybe.of(state.skills.get('TAL_51'))
-          .map(skill => skill.value)
-          .value
-        ),
-        R.defaultTo(0, Maybe.of(state.skills.get('TAL_55'))
-          .map(skill => skill.value)
-          .value
+  return match<string, Maybe<Record<InactiveOptions>>>(entry.get('id'))
+    .on('DISADV_59', () =>
+      Maybe.ensure(
+        n => n < 3,
+        countActiveSkillEntries(state, "spells")
+      )
+        .map(activeSpells => Record.of<InactiveOptions>({
+          maxTier: 3 - activeSpells
+        }))
+    )
+    .on('SA_17', () =>
+      state.get('skills').lookup('TAL_51')
+        .bind(skill51 =>
+          state.get('skills').lookup('TAL_51')
+            .bind(skill55 =>
+              Maybe.ensure(
+                x => x >= 12,
+                skill51.get('value') + skill55.get('value')
+              )
+                .map(() => Record.of({}))
+            )
         )
-      ));
-    })
-    .on('SA_18', () => {
-      return R.ifElse(
-        R.lt(0),
-        R.always({}),
-        () => undefined,
-      )(R.length(R.filter(
-        e => e.value >= 10,
+    )
+    .on('SA_18', () =>
+      Maybe.ensure(
+        x => x > 0,
         getAllEntriesByGroup(
-          wiki.combatTechniques,
-          state.combatTechniques,
+          wiki.get('combatTechniques'),
+          state.get('combatTechniques'),
           2,
         )
-      )));
-    })
+          .filter(e => e.get('value') >= 10)
+          .length()
+      )
+        .map(() => Record.of({}))
+    )
     .on([
       'SA_70',
       'SA_255',
@@ -648,16 +661,13 @@ const getOtherOptions = (
       'SA_346',
       'SA_676',
       'SA_681',
-    ].includes, () => {
-      return Maybe.ofPred(
-        R.pipe<Data.ActivatableDependent[], number, boolean>(
-          R.length,
-          R.equals(0),
-        ),
-        getMagicalTraditions(state.specialAbilities)
+    ].includes, () =>
+      Maybe.ensure(
+        list => list.length() === 0,
+        getMagicalTraditions(state.get('specialAbilities'))
       )
-        .map(() => ({}));
-    })
+        .map(() => Record.of({}))
+    )
     .on([
       'SA_86',
       'SA_682',
@@ -677,122 +687,122 @@ const getOtherOptions = (
       'SA_696',
       'SA_697',
       'SA_698',
-    ].includes, () => {
-      return getBlessedTradition(state.specialAbilities)
-        .map(() => ({}));
-    })
-    .on('SA_72', () => ({ cost: [10, 20, 40][instance.active.length] }))
-    .on('SA_87', () => ({ cost: [15, 25, 45][instance.active.length] }))
-    .on('SA_533', () => {
-      return Maybe.of(state.specialAbilities.get('SA_531'))
-        .map(specialAbility => specialAbility.active[0])
-        .map(active => active.sid)
-        .map(sid => wiki.skills.get(sid as string))
-        .map(skill => {
-          return { cost: (entry.cost as number[]).map(e => e + skill.ic) };
-        })
-        .value;
-    })
+    ].includes, () =>
+      getBlessedTradition(state.get('specialAbilities'))
+        .map(() => Record.of({}))
+    )
+    .on('SA_72', () => Maybe.Just(Record.of<InactiveOptions>({
+      cost: [10, 20, 40][Maybe.fromMaybe(
+        0,
+        instance.map(e => e.get('active').length())
+      )]
+    })))
+    .on('SA_87', () => Maybe.Just(Record.of<InactiveOptions>({
+      cost: [15, 25, 45][Maybe.fromMaybe(
+        0,
+        instance.map(e => e.get('active').length())
+      )]
+    })))
+    .on('SA_533', () =>
+      state.get('specialAbilities').lookup('SA_531')
+        .bind(specialAbility => specialAbility.get('active').head())
+        .bind(active => active.lookup('sid'))
+        .bind(sid => wiki.get('skills').lookup(sid as string))
+        .map(skill => Record.of<InactiveOptions>({
+          cost: (entry.get('cost') as List<number>).map(
+            e => e + skill.get('ic')
+          )
+        }))
+    )
     .on([
       'SA_544',
       'SA_545',
       'SA_546',
       'SA_547',
       'SA_548',
-    ].includes, () => {
-      return ifOrUndefined(
-        R.either(
-          R.both(
-            () => isActive(state.advantages.get('ADV_77')),
-            () => R.pipe(
-              (max: number) => {
-                if (isActive(state.advantages.get('ADV_79'))) {
-                  return max + R.defaultTo(
-                    1,
-                    Maybe.of(state.advantages.get('ADV_79'))
-                      .map(obj => obj.active[0])
-                      .map(active => active.tier)
-                      .value
-                  );
-                }
-                else if (isActive(state.advantages.get('DISADV_72'))) {
-                  return max - R.defaultTo(
-                    1,
-                    Maybe.of(state.advantages.get('DISADV_72'))
-                      .map(obj => obj.active[0])
-                      .map(active => active.tier)
-                      .value
-                  );
-                }
+    ].includes, () =>
+      Maybe.ensure(
+        () => {
+          let max = 3;
 
-                return max;
-              },
-              R.lt(countActiveGroupEntries(wiki, state, 24)),
-            )(3),
-          ),
-          () => isActive(state.advantages.get('ADV_12')),
-        ),
-        () => ({}),
-      )(undefined);
-    })
+          if (isActive(state.get('advantages').lookup('ADV_79'))) {
+            max += Maybe.fromMaybe(
+              1,
+              state.get('advantages').lookup('ADV_79')
+                .bind(obj => obj.get('active').head())
+                .bind(active => active.lookup('tier'))
+            );
+          }
+          else if (isActive(state.get('disadvantages').lookup('DISADV_72'))) {
+            max -= Maybe.fromMaybe(
+              1,
+              state.get('disadvantages').lookup('DISADV_72')
+                .bind(obj => obj.get('active').head())
+                .bind(active => active.lookup('tier'))
+            );
+          }
+
+          return isActive(state.get('advantages').lookup('ADV_77'))
+            && countActiveGroupEntries(wiki, state, 24) < max
+            || isActive(state.get('advantages').lookup('ADV_12'));
+        },
+        Record.of({})
+      )
+    )
     .on([
       'SA_549',
       'SA_550',
       'SA_551',
       'SA_552',
       'SA_553',
-    ].includes, () => {
-      return ifOrUndefined(
-        R.either(
-          R.both(
-            () => isActive(state.advantages.get('ADV_78')),
-            () => R.pipe(
-              (max: number) => {
-                if (isActive(state.advantages.get('ADV_80'))) {
-                  return max + R.defaultTo(
-                    1,
-                    Maybe.of(state.advantages.get('ADV_80'))
-                      .map(obj => obj.active[0])
-                      .map(active => active.tier)
-                      .value
-                  );
-                }
-                else if (isActive(state.advantages.get('DISADV_73'))) {
-                  return max - R.defaultTo(
-                    1,
-                    Maybe.of(state.advantages.get('DISADV_73'))
-                      .map(obj => obj.active[0])
-                      .map(active => active.tier)
-                      .value
-                  );
-                }
+    ].includes, () =>
+      Maybe.ensure(
+        () => {
+          let max = 3;
 
-                return max;
-              },
-              R.lt(countActiveGroupEntries(wiki, state, 27)),
-            )(3),
-          ),
-          () => isActive(state.advantages.get('ADV_12')),
-        ),
-        () => ({}),
-      )(undefined);
-    })
-    .on('SA_667', () => ({ maxTier: state.pact!.level }))
+          if (isActive(state.get('advantages').lookup('ADV_80'))) {
+            max += Maybe.fromMaybe(
+              1,
+              state.get('advantages').lookup('ADV_80')
+                .bind(obj => obj.get('active').head())
+                .bind(active => active.lookup('tier'))
+            );
+          }
+          else if (isActive(state.get('disadvantages').lookup('DISADV_73'))) {
+            max -= Maybe.fromMaybe(
+              1,
+              state.get('disadvantages').lookup('DISADV_73')
+                .bind(obj => obj.get('active').head())
+                .bind(active => active.lookup('tier'))
+            );
+          }
+
+          return isActive(state.get('advantages').lookup('ADV_78'))
+            && countActiveGroupEntries(wiki, state, 27) < max
+            || isActive(state.get('advantages').lookup('ADV_12'));
+        },
+        Record.of({})
+      )
+    )
+    .on('SA_667', () => state.lookup('pact').map(
+      e => Record.of<InactiveOptions>({
+        maxTier: e.get('level')
+      })
+    ))
     .on([
       'SA_677',
       'SA_678',
       'SA_679',
       'SA_680',
-    ].includes, R.ifElse(
-      () => {
-        return adventurePoints.spentOnMagicalAdvantages <= 25 &&
-          adventurePoints.spentOnMagicalDisadvantages <= 25 &&
-          getMagicalTraditions(state.specialAbilities).length === 0;
-      },
-      () => ({}),
-      () => undefined
-    ) as () => ({} | undefined))
-    .otherwise(() => ({}));
+    ].includes, () =>
+      Maybe.ensure(
+        () => adventurePoints.get('spentOnMagicalAdvantages') <= 25 &&
+          adventurePoints.get('spentOnMagicalDisadvantages') <= 25 &&
+          getMagicalTraditions(state.get('specialAbilities')).length() === 0,
+        Record.of({})
+      )
+    )
+    .otherwise(() => Maybe.Just(Record.of({})));
 };
 
 /**
@@ -807,26 +817,24 @@ const getOtherOptions = (
  * @param adventurePoints
  */
 export const getInactiveView = (
-  wiki: WikiState,
-  instance: Data.ActivatableDependent,
-  state: Data.HeroDependent,
-  validExtendedSpecialAbilities: string[],
-  locale: Data.UIMessages,
-  adventurePoints: AdventurePointsObject,
-): Maybe<Data.DeactiveViewObject> => {
-  const { id, dependencies } = instance;
-
+  wiki: Record<Wiki.WikiAll>,
+  instance: Maybe<Record<Data.ActivatableDependent>>,
+  state: Record<Data.HeroDependent>,
+  validExtendedSpecialAbilities: List<string>,
+  locale: Record<Data.UIMessages>,
+  adventurePoints: Record<AdventurePointsObject>,
+  id: string
+): Maybe<Record<Data.DeactiveViewObject>> => {
   return getWikiEntry<Wiki.Activatable>(wiki, id)
     .bind(entry => {
-      const { cost, name, input, tiers, prerequisites} = entry;
-
-      const maxTier = prerequisites instanceof Map ? validateTier(
+      const prerequisites = entry.get('prerequisites');
+      const maxTier = prerequisites instanceof OrderedMap ? validateTier(
         wiki,
         state,
         prerequisites,
-        dependencies,
+        Maybe.maybe(List.of(), e => e.get('dependencies'), instance),
         id,
-      ) : undefined;
+      ) : Maybe.Nothing();
 
       const isValid = isAdditionDisabled(
         wiki,
@@ -853,30 +861,26 @@ export const getInactiveView = (
           entry,
         );
 
-        type OptionalSelect = Wiki.SelectionObject[] | undefined;
-
-        return Maybe.of(specificSelections.valueOr(entry.select))
-          .map(sel => {
-            if (!exists(sel) || R.gt(R.length(sel), 0)) {
-              return {
+        return otherOptions.bind(otherOptions =>
+          Maybe.ensure(
+            select => !Maybe.isJust(select)
+              || Maybe.fromJust(select).length() > 0,
+            specificSelections.alt(entry.lookup('select'))
+          )
+            .map(select =>
+              otherOptions.mergeMaybe(Record.of({
                 id,
-                name,
-                cost,
-                input,
-                tiers,
+                name: entry.get('name'),
+                cost: entry.get('cost'),
+                input: entry.lookup('input'),
+                tiers: entry.lookup('tiers'),
                 maxTier,
                 instance,
                 wiki: entry,
-                ...otherOptions,
-                sel: ifOrUndefined<OptionalSelect, OptionalSelect>(
-                  sel => exists(sel),
-                  sel => sortObjects(sel!, locale.id),
-                )(sel)
-              };
-            }
-
-            return;
-          });
+                sel: select.map(sel => sortObjects(sel, locale.get('id')))
+              })) as Record<Data.DeactiveViewObject>
+            )
+        );
       }
 
       return Maybe.Nothing();

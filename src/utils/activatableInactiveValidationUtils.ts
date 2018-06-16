@@ -1,6 +1,5 @@
 import R from 'ramda';
 import { Categories } from '../constants/Categories';
-import { WikiState } from '../reducers/wikiReducer';
 import * as Data from '../types/data.d';
 import * as Wiki from '../types/wiki';
 import { getWikiEntry } from './WikiUtils';
@@ -10,7 +9,7 @@ import { getFirstTierPrerequisites } from './flattenPrerequisites';
 import { getAllEntriesByGroup, getHeroStateListItem } from './heroStateUtils';
 import { isActive } from './isActive';
 import { validatePrerequisites } from './validatePrerequisitesUtils';
-import { Maybe } from './maybe';
+import { Maybe, Record } from './dataUtils';
 
 /**
  * Checks if you can somehow add an ActiveObject to the given entry.
@@ -147,12 +146,12 @@ const isAdditionDisabledEntrySpecific = (
  * @param state The current hero's state.
  */
 export const isAdditionDisabled = (
-  wiki: WikiState,
-  instance: Data.ActivatableDependent,
-  state: Data.HeroDependent,
-  validExtendedSpecialAbilities: string[],
+  wiki: Record<Wiki.WikiAll>,
+  instance: Maybe<Record<Data.ActivatableDependent>>,
+  state: Record<Data.HeroDependent>,
+  validExtendedSpecialAbilities: List<string>,
   entry: Wiki.Activatable,
-  maxTier: number | undefined,
+  maxTier: Maybe<number>,
 ) => {
   return R.allPass([
     R.always(isAdditionDisabledEntrySpecific(wiki, state, instance)),

@@ -238,8 +238,8 @@ export interface DeactiveViewObject<T extends Wiki.Activatable = Wiki.Activatabl
   maxTier?: number;
   sel?: List<Record<Wiki.SelectionObject>>;
   input?: string;
-  instance: Record<ActivatableDependent>;
-  wiki: Record<T>;
+  instance?: Record<ActivatableDependent>;
+  wiki: T;
   customCostDisabled?: boolean;
 }
 

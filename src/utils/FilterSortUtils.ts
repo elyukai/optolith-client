@@ -1,4 +1,5 @@
 import { first } from 'lodash';
+import { List, Record } from './dataUtils';
 
 export interface BaseObject {
   name: any;
@@ -23,7 +24,7 @@ function keyIsFunction<T>(key: SortKeyType<T>): key is SortKeyFunction<T> {
   return typeof key === 'function';
 }
 
-export function sortObjects<T extends BaseObject>(list: T[], locale: string, sortOptions: AllSortOptions<T> = 'name') {
+export function sortObjects<T extends BaseObject>(list: List<Record<T>>, locale: string, sortOptions: AllSortOptions<T> = 'name'): List<Record<T>> {
   if (list.length < 2) {
     return list;
   }
