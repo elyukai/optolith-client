@@ -225,7 +225,7 @@ export interface ActiveViewObject<T extends Wiki.Activatable = Wiki.Activatable>
   maxTier?: number;
   disabled: boolean;
   instance: Record<ActivatableDependent>;
-  wiki: Record<T>;
+  wiki: T;
   customCost?: boolean;
 }
 
