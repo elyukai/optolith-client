@@ -13,3 +13,16 @@ It is available for Windows 7+ as well as for Linux (Ubuntu 12.04+, Fedora 21, D
 This repository only contains the code for this app, but you can the bug tracker and more at [here](https://www.github.com/Elytherion/tdeheroes).
 
 Currently there is no need to help coding, so it would be great if you just test the app and provide feedback! But it might be in the future, please check out [respective file](CONTRIBUTING.md) then!
+
+## Development
+
+### Initial start
+
+Please call the following steps initially:
+1. ```npm i```
+1. ```npm run bundle```
+
+### Debug
+
+
+### Release
