@@ -128,8 +128,8 @@ export function filterAndSortObjects<T extends BaseObject>(list: T[], locale: st
   return sortObjects(filterObjects(list, filterText, filterOptionsFinal), locale, sortOptionsFinal);
 }
 
-export function sortStrings(list: string[], locale: string) {
-  return list.sort((a, b) => a.localeCompare(b, locale));
+export function sortStrings(list: List<string>, locale: string) {
+  return list.sortBy(a => b => a.localeCompare(b, locale));
 }
 
 export function filterStrings(list: string[], filterText: string) {

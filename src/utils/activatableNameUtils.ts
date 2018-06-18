@@ -1,8 +1,7 @@
-import R from 'ramda';
-import { WikiState } from '../reducers/wikiReducer';
+import { isNumber } from 'util';
 import * as Data from '../types/data.d';
 import * as Wiki from '../types/wiki.d';
-import { Maybe } from './dataUtils';
+import { List, Maybe, Record } from './dataUtils';
 import { sortStrings } from './FilterSortUtils';
 import { translate } from './I18n';
 import { match } from './match';
@@ -15,23 +14,24 @@ import { getWikiEntry } from './WikiUtils';
  * the string.
  * @param obj
  */
-export const getFullName = (obj: string | Data.ActiveViewObject): string => {
-  if (typeof obj === 'string') {
-    return obj;
-  }
-  const { tierName } = obj;
-  let { name } = obj;
+export const getFullName =
+  (obj: string | Record<Data.ActiveViewObject>): string => {
+    if (typeof obj === 'string') {
+      return obj;
+    }
 
-  if (tierName) {
-    name += tierName;
-  }
+    const name = obj.get('name');
 
-  return name;
-}
+    return Maybe.maybe(
+      name,
+      tierName => name + tierName,
+      obj.lookup('tierName')
+    );
+  }
 
 /**
- * Accepts the full special ability namen and returns only the text between
- * parentheses. If no parentheses were found, returns an empty string.
+ * Accepts the full special ability name and returns only the text between
+ * parentheses. If no parentheses have been found, returns an empty string.
  * @param name
  */
 export const getTraditionNameFromFullName = (name: string): string => {
@@ -46,13 +46,10 @@ export const getTraditionNameFromFullName = (name: string): string => {
 
 const getEntrySpecificNameAddition = (
   wikiEntry: Wiki.Activatable,
-  instance: Data.ActiveObjectWithId,
-  wiki: WikiState,
+  instance: Record<Data.ActiveObjectWithId>,
+  wiki: Record<Wiki.WikiAll>,
 ): Maybe<string> => {
-  const { id, sid, sid2 } = instance;
-  const { select, input } = wikiEntry;
-
-  return match<string, Maybe<string>>(id)
+  return match<string, Maybe<string>>(instance.get('id'))
     .on([
       'ADV_4',
       'ADV_47',
@@ -67,146 +64,163 @@ const getEntrySpecificNameAddition = (
       'SA_533',
       'SA_569',
     ].includes, () =>
-      getWikiEntry<Wiki.Skillish>(wiki, sid as string)
-        .map(entry => entry.name)
+      (instance.lookup('sid') as Maybe<string>)
+        .bind(getWikiEntry<Wiki.Skillish>(wiki))
+        .map(entry => entry.get('name'))
     )
     .on('ADV_68', () =>
-      findSelectOption(wikiEntry, sid)
-        .map(item => item && `${sid2} (${item.name})`)
+      findSelectOption(wikiEntry, instance.lookup('sid'))
+        .bind(item =>
+          instance.lookup('sid2')
+            .map(sid2 => `${sid2} (${item.get('name')})`)
+        )
     )
     .on('DISADV_33', () =>
-      getSelectOptionName(wikiEntry, sid)
+      getSelectOptionName(wikiEntry, instance.lookup('sid'))
         .map(name => {
-          if (isNumber(sid) && [7, 8].includes(sid)) {
-            return `${name}: ${sid2}`;
-          }
-          else {
-            return name;
-          }
+          return Maybe.fromMaybe(
+            name,
+            instance.lookup('sid')
+              .bind(Maybe.ensure(x => isNumber(x) && List.of(7, 8).elem(x)))
+              .bind(() => instance.lookup('sid2'))
+              .map(sid2 => `${name}: ${sid2}`)
+          );
         })
     )
     .on('SA_9', () =>
-      Maybe.of(wiki.skills.get(sid as string))
+    (instance.lookup('sid') as Maybe<string>)
+      .bind(wiki.get('skills').lookup)
         .map(skill => {
-          return R.pipe(
-            (sid2: string | number | undefined) => {
-              return R.unless<string | number | undefined, string>(
-                isString,
-                R.always(
-                  Maybe.of(skill.applications)
-                    .map(R.find(e => e.id === sid2))
-                    .map(app => app.name)
-                    .valueOr('')
+          return Maybe.maybe(
+            skill.get('name'),
+            name => `${skill.get('name')}: ${name}`,
+            instance.lookup('sid2').bind(sid2 =>
+              Maybe.ensure(isString, sid2)
+                .alt(
+                  skill.lookup('applications')
+                    .bind(apps => apps.find(e => e.get('id') === sid2))
+                    .map(app => app.get('name'))
                 )
-              );
-            },
-            name => `${skill.name}: ${name}`
-          )(sid2);
+            )
+          );
         })
     )
     .on([
       'SA_414',
       'SA_663',
     ].includes, () =>
-      findSelectOption(wikiEntry, sid)
+      findSelectOption(wikiEntry, instance.lookup('sid'))
         .bind(item =>
-          Maybe.of(item.target)
-            .map(target => {
-              if (id === 'SA_414') {
-                return wiki.spells.get(target);
+          item.lookup('target')
+            .bind<Record<Wiki.Spell> | Record<Wiki.LiturgicalChant>>(target => {
+              if (instance.get('id') === 'SA_414') {
+                return wiki.get('spells').lookup(target);
               }
               else {
-                return wiki.liturgicalChants.get(target);
+                return wiki.get('liturgicalChants').lookup(target);
               }
             })
-            .map(target => `${target.name}: ${item.name}`)
+            .map(target => `${target.get('name')}: ${item.get('name')}`)
         )
     )
     .on('SA_680', () =>
-      Maybe.of(wiki.skills.get(sid as string))
-        .map(entry => `: ${entry.name}`)
+      (instance.lookup('sid') as Maybe<string>)
+        .bind(wiki.get('skills').lookup)
+          .map(entry => `: ${entry.get('name')}`)
     )
     .on('SA_699', () =>
-      Maybe.of(wiki.specialAbilities.get('SA_29'))
+      wiki.get('specialAbilities').lookup('SA_29')
         .bind(languages =>
-          findSelectOption(languages, sid)
+          findSelectOption(languages, instance.lookup('sid'))
             .map(item => {
-              return `${item.name}: ${
-                R.unless<string | number | undefined, string>(
-                  isString,
-                  sid2 => Maybe.of(item.spec)
-                    .bind(spec =>
-                      Maybe.of(sid2 as number | undefined)
-                        .map(sid2 => spec[sid2 - 1])
+              return `${item.get('name')}: ${
+                Maybe.fromMaybe('', instance.lookup('sid2').bind(sid2 =>
+                  Maybe.ensure(isString, sid2)
+                    .alt(
+                      item.lookup('spec')
+                        .bind(spec => spec.subscript((sid2 as number) - 1))
                     )
-                    .valueOr(''),
-                )(sid2)
+                ))
               }`;
             })
         )
     )
     .otherwise(() => {
-      if (typeof input === 'string' && typeof sid === 'string') {
-        return Maybe.of(sid);
+      const sid = instance.lookup('sid');
+      const stringSid = sid.bind(Maybe.ensure(isString));
+
+      if (
+        Maybe.isJust(wikiEntry.lookup('input'))
+        && Maybe.isJust(stringSid)
+      ) {
+        return stringSid;
       }
-      else if (Array.isArray(select)) {
+      else if (Maybe.isJust(wikiEntry.lookup('select'))) {
         return getSelectOptionName(wikiEntry, sid);
       }
-      return Maybe.Nothing();
+      else {
+        return Maybe.Nothing();
+      }
     });
 };
 
 const getEntrySpecificNameReplacements = (
   wikiEntry: Wiki.Activatable,
-  instance: Data.ActiveObjectWithId,
+  instance: Record<Data.ActiveObjectWithId>,
   nameAddition: Maybe<string>,
-  locale?: Data.UIMessages,
+  locale: Maybe<Record<Data.UIMessages>>
 ): string => {
-  const { id, sid2, tier } = instance;
-  const { name } = wikiEntry;
-
-  return R.defaultTo(name, match<string, string | undefined>(id)
-    .on(['ADV_28', 'ADV_29'].includes, () => {
-      return `${
-        translate(locale, 'activatable.view.immunityto')
-      } ${nameAddition}`;
-    })
-    .on('ADV_68', () => {
-      return `${
-        translate(locale, 'activatable.view.hatredof')
-      } ${nameAddition}`;
-    })
-    .on('DISADV_1', () => {
-      return `${
-        translate(locale, 'activatable.view.afraidof')
-      } ${nameAddition}`;
-    })
-    .on(['DISADV_34', 'DISADV_50'].includes, () => {
-      return `${name} ${getRoman(tier as number)} (${nameAddition})`;
-    })
-    .on('SA_639', () => {
-      return `${name} ${nameAddition}`;
-    })
-    .on(['SA_677', 'SA_678'].includes, () =>
-      Maybe.of(locale)
-        .map(locale => {
-          const part = getTraditionNameFromFullName(name);
-          const musicTraditionLabels = translate(locale, 'musictraditions');
-
-          if (typeof sid2 === 'number') {
-            const musicTradition = musicTraditionLabels[sid2 - 1];
-            return name.replace(part, `${part}: ${musicTradition}`);
-          }
-
-          return;
-        })
-        .valueOr('')
+  return Maybe.fromMaybe(
+    wikiEntry.get('name'),
+    match<string, Maybe<string>>(wikiEntry.get('id'))
+    .on(['ADV_28', 'ADV_29'].includes, () =>
+      translate(locale, 'activatable.view.immunityto')
+        .bind(name =>
+          nameAddition.map(nameAddition => `${name} ${nameAddition}`)
+        )
     )
-    .otherwise(() => R.when(
-      R.complement(R.isNil),
-      () => `${name} (${nameAddition})`,
-      nameAddition
-    ))
+    .on('ADV_68', () =>
+      translate(locale, 'activatable.view.hatredof')
+        .bind(name =>
+          nameAddition.map(nameAddition => `${name} ${nameAddition}`)
+        )
+    )
+    .on('DISADV_1', () =>
+      translate(locale, 'activatable.view.afraidof')
+        .bind(name =>
+          nameAddition.map(nameAddition => `${name} ${nameAddition}`)
+        )
+    )
+    .on(['DISADV_34', 'DISADV_50'].includes, () =>
+      instance.lookup('tier')
+        .bind(tier =>
+          nameAddition.map(nameAddition =>
+            `${wikiEntry.get('name')} ${getRoman(tier)} (${nameAddition})`
+          )
+        )
+    )
+    .on('SA_639', () =>
+      nameAddition.map(nameAddition =>
+        `${wikiEntry.get('name')} ${nameAddition}`
+      )
+    )
+    .on(['SA_677', 'SA_678'].includes, () => {
+      const part = getTraditionNameFromFullName(name);
+      const musicTraditionLabels = translate(locale, 'musictraditions');
+
+      return instance.lookup('sid2')
+        .bind(Maybe.ensure(isNumber))
+        .bind(sid2 =>
+          musicTraditionLabels
+            .map(musicTraditionLabels => musicTraditionLabels[sid2 - 1])
+            .map(musicTradition =>
+              wikiEntry.get('name').replace(part, `${part}: ${musicTradition}`)
+            )
+        );
+    })
+    .otherwise(() =>
+      nameAddition.map(nameAddition => `${name} (${nameAddition})`)
+    )
   );
 }
 
@@ -224,11 +238,11 @@ export interface CombinedName {
  * @param locale The locale-dependent messages.
  */
 export const getName = (
-  instance: Data.ActiveObjectWithId,
-  wiki: WikiState,
-  locale?: Data.UIMessages,
-): Maybe<CombinedName> => {
-  return getWikiEntry<Wiki.Activatable>(wiki, instance.id)
+  instance: Record<Data.ActiveObjectWithId>,
+  wiki: Record<Wiki.WikiAll>,
+  locale: Maybe<Record<Data.UIMessages>>
+): Maybe<Record<CombinedName>> => {
+  return getWikiEntry<Wiki.Activatable>(wiki, instance.get('id'))
     .map(wikiEntry => {
       const addName = getEntrySpecificNameAddition(
         wikiEntry,
@@ -243,68 +257,69 @@ export const getName = (
         locale,
       );
 
-      return Maybe.maybe({
+      return Maybe.maybe<string, Record<CombinedName>>(Record.of({
         combinedName,
-        baseName: wikiEntry.name
-      }, addName => ({
+        baseName: wikiEntry.get('name')
+      }), addName => Record.of<CombinedName>({
         combinedName,
-        baseName: wikiEntry.name,
+        baseName: wikiEntry.get('name'),
         addName
       }), addName);
     });
 };
 
 interface EnhancedReduce {
-	final: string[];
+	final: List<string>;
 	previousLowerTier: boolean;
 }
 
 export const compressList = (
-  list: (Data.ActiveViewObject | string)[],
-  locale: Data.UIMessages,
+  list: List<Record<Data.ActiveViewObject> | string>,
+  locale: Record<Data.UIMessages>,
 ): string => {
-	const listToString = sortStrings(list.reduce<string[]>((acc, obj) => {
+	const listToString = sortStrings(list.foldl<List<string>>(acc => obj => {
     if (isString(obj)) {
-      return R.append(obj, acc);
+      return acc.append(obj);
     }
-    else if (!['SA_27', 'SA_29'].includes(obj.id)) {
-      return R.append(obj.name, acc);
+    else if (!['SA_27', 'SA_29'].includes(obj.get('id'))) {
+      return acc.append(obj.get('name'));
     }
     return acc;
-  }, []), locale.id);
+  }, List.of()), locale.get('id'));
 
   const levelAfterParenthesis = /\(.+\)(?: [IVX]+)?$/;
   const insertLevelBeforeParenthesis = /\)((?: [IVX]+)?)$/;
 
-	const finalList = listToString.reduce<EnhancedReduce>((previous, current) => {
-		const prevElement = R.last(previous.final);
-		if (
-      isString(prevElement)
-      && prevElement.split(' (')[0] === current.split(' (')[0]
-      && levelAfterParenthesis.test(prevElement)
-    ) {
-			const prevElementSplitted = prevElement.split(/\)/);
-			const optionalTier = prevElementSplitted.pop() || '';
-			const beginning = `${prevElementSplitted.join(')')}${optionalTier}`;
-			const currentSplitted = current.split(/\(/);
-      const continuing = currentSplitted.slice(1).join('(')
-        .replace(insertLevelBeforeParenthesis, '$1)');
+	const finalList = listToString.foldl<EnhancedReduce>(previous => current => {
+    return Maybe.fromMaybe(
+      previous,
+      previous.final.last()
+        .bind(Maybe.ensure(x =>
+          x.split(' (')[0] === current.split(' (')[0]
+          && levelAfterParenthesis.test(x)
+        ))
+        .map(prevElement => {
+          const prevElementSplitted = prevElement.split(/\)/);
+          const optionalTier = prevElementSplitted.pop() || '';
+          const beginning = `${prevElementSplitted.join(')')}${optionalTier}`;
+          const currentSplitted = current.split(/\(/);
+          const continuing = currentSplitted.slice(1).join('(')
+            .replace(insertLevelBeforeParenthesis, '$1)');
 
-			const other = previous.final.slice(0, -1);
-
-			return {
-				...previous,
-				final: [ ...other, `${beginning}, ${continuing}` ]
-			};
-		}
-		return {
-			final: [ ...previous.final, current ],
-			previousLowerTier: false
-		};
+          return {
+            ...previous,
+            final: previous.final.init().append(`${beginning}, ${continuing}`)
+          };
+        })
+        .alt(Maybe.Just({
+          final: previous.final.append(current),
+          previousLowerTier: false
+        }))
+    );
 	}, {
-		final: [],
+		final: List.of(),
 		previousLowerTier: false
-	}).final.join(', ');
+  }).final.join(', ');
 
 	return finalList;
 };

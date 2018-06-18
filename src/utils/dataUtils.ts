@@ -516,7 +516,7 @@ export class List<T> implements Al.Functor<T>, Al.Foldable<T>, Al.Semigroup<T>,
    * Return all the elements of a list except the last one.
    */
   init(): List<T> {
-    const init = this.value.slice(0, this.value.length - 2);
+    const init = this.value.slice(0, -1);
     return this.value.length > 1 ? List.of(...init) : new List();
   }
 
@@ -691,6 +691,16 @@ export class List<T> implements Al.Functor<T>, Al.Foldable<T>, Al.Semigroup<T>,
    */
   minimum(this: List<number>): number {
     return Math.min(...this.value);
+  }
+
+  /**
+   * `join :: (Foldable t) => t a -> String`
+   *
+   * Adds all the elements of an array separated by the specified separator
+   * string.
+   */
+  join(separator: string) {
+    return this.value.join(separator);
   }
 
   // EXTRACTING SUBLISTS

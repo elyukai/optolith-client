@@ -1,7 +1,7 @@
 import R from 'ramda';
 import { ActivatableCategory, Categories } from '../constants/Categories';
 import * as Data from '../types/data.d';
-import * as Wiki from '../types/wiki';
+import * as Wiki from '../types/wiki.d';
 import { countActiveSkillEntries } from './activatableSkillUtils';
 import { Just, List, Maybe, Record } from './dataUtils';
 import { countActiveGroupEntries } from './entryGroupUtils';

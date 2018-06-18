@@ -1,5 +1,5 @@
 import * as Data from '../types/data.d';
-import { WikiAll } from '../types/wiki';
+import { WikiAll } from '../types/wiki.d';
 import { getCost } from './activatableCostUtils';
 import { getName } from './activatableNameUtils';
 import { Maybe, Record } from './dataUtils';
@@ -19,14 +19,15 @@ export const getNameCost = (
   state: Record<Data.HeroDependent>,
   costToAdd: boolean,
   locale: Maybe<Record<Data.UIMessages>>
-): Maybe<Data.ActivatableNameCost> =>
+): Maybe<Record<Data.ActivatableNameCost>> =>
   getCost(obj, wiki, state, costToAdd)
     .bind(currentCost => getName(obj, wiki, locale)
-      .map(names => ({
-        ...obj,
-        ...names,
-        currentCost
-      }))
+      .map(names => names
+        .merge(obj)
+        .merge(Record.of({
+          currentCost
+        }))
+      )
     );
 
 /**
@@ -40,12 +41,13 @@ export const getNameCostForWiki = (
   obj: Record<Data.ActiveObjectWithId>,
   wiki: Record<WikiAll>,
   locale: Maybe<Record<Data.UIMessages>>
-): Maybe<Data.ActivatableNameCost> =>
+): Maybe<Record<Data.ActivatableNameCost>> =>
   getCost(obj, wiki)
     .bind(currentCost => getName(obj, wiki, locale)
-      .map(names => ({
-        ...obj,
-        ...names,
-        currentCost
-      }))
+      .map(names => names
+        .merge(obj)
+        .merge(Record.of({
+          currentCost
+        }))
+      )
     );
