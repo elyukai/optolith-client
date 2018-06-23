@@ -16,7 +16,7 @@ export function LiturgiesSheetBlessings(props: LiturgiesSheetBlessingsProps) {
 		<TextBox label={translate(locale, 'charactersheet.chants.blessings.title')} className="blessings activatable-list">
 			<div className="list">
 				{
-					sortStrings(blessings.map(e => e.name), locale.id).join(', ')
+					sortStrings(blessings.map(e => e.name), locale.id).intercalate(', ')
 				}
 			</div>
 		</TextBox>

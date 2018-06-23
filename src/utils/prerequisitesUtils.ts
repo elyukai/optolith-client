@@ -13,8 +13,8 @@ import { findSelectOption } from './selectionUtils';
  */
 export function getGeneratedPrerequisites(
   wikiEntry: Wiki.WikiActivatable,
-  instance: Data.ActivatableDependent,
-  active: Data.ActiveObject,
+  instance: Record<Data.ActivatableDependent>,
+  active: Record<Data.ActiveObject>,
   add: boolean,
 ): Maybe<List<Wiki.AllRequirementObjects>> {
   const { sid, sid2 } = active;

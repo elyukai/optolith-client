@@ -15,7 +15,7 @@ export function SpellsSheetCantrips(props: SpellsSheetCantripsProps) {
 		<TextBox label={translate(locale, 'charactersheet.spells.cantrips.title')} className="cantrips activatable-list">
 			<div className="list">
 				{
-					sortStrings(cantrips.map(e => e.name), locale.id).join(', ')
+					sortStrings(cantrips.map(e => e.name), locale.id).intercalate(', ')
 				}
 			</div>
 		</TextBox>

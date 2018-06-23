@@ -60,14 +60,14 @@ export function WikiRaceInfo(props: WikiRaceInfoProps) {
         {currentObject.stronglyRecommendedDisadvantagesText}
       </WikiProperty>}
       <WikiProperty locale={locale} title="info.commoncultures">
-        {sameCommonCultures && <span>{sortStrings((currentObject.commonCultures.length > 0 ? currentObject.commonCultures.filter(id => cultures.has(id)).map(id => cultures.get(id)!.name) : variants.map(e => e.name)), locale.id).join(', ')}</span>}
+        {sameCommonCultures && <span>{sortStrings((currentObject.commonCultures.length > 0 ? currentObject.commonCultures.filter(id => cultures.has(id)).map(id => cultures.get(id)!.name) : variants.map(e => e.name)), locale.id).intercalate(', ')}</span>}
       </WikiProperty>
       {!sameCommonCultures && <ul className="race-variant-options">
         {variants.map(e => {
           const commonCultures = e.commonCultures.map(id => cultures.has(id) ? cultures.get(id)!.name : '...');
           return <li key={e.id}>
             <span>{e.name}</span>
-            <span>{sortStrings(commonCultures, locale.id).join(', ')}</span>
+            <span>{sortStrings(commonCultures, locale.id).intercalate(', ')}</span>
           </li>;
         })}
       </ul>}

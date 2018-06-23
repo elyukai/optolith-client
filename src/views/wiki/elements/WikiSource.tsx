@@ -33,7 +33,7 @@ export function WikiSource(props: WikiSourceProps) {
 
     return (
       <p className="source">
-        <span>{sortStrings(sourceList, locale.id).join(', ')}</span>
+        <span>{sortStrings(sourceList, locale.id).intercalate(', ')}</span>
       </p>
     );
   }

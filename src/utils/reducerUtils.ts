@@ -1,5 +1,6 @@
 import * as Data from '../types/data.d';
 import * as Wiki from '../types/wiki.d';
+import { Record } from './dataUtils';
 
 export function reduce<T>(
 	initial: T
@@ -21,13 +22,13 @@ export function reduce<T, T2, T3>(
 }
 
 export type ActivatableReducer = (
-  state: Data.HeroDependent,
+  state: Record<Data.HeroDependent>,
   wikiEntry: Wiki.WikiActivatable,
-  instance: Data.ActivatableDependent,
-) => Data.HeroDependent;
+  instance: Record<Data.ActivatableDependent>,
+) => Record<Data.HeroDependent>;
 
 export type OptionalActivatableReducer = (
-  state: Data.HeroDependent,
+  state: Record<Data.HeroDependent>,
   wikiEntry: Wiki.WikiActivatable,
-  instance?: Data.ActivatableDependent,
-) => Data.HeroDependent;
+  instance?: Record<Data.ActivatableDependent>,
+) => Record<Data.HeroDependent>;

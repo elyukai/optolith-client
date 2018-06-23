@@ -60,10 +60,10 @@ export function getWikiEntry<T extends Wiki.Entry = Wiki.Entry>(
   id?: string,
 ): Maybe<T> | ((id: string) => Maybe<T>) {
   if (id === undefined) {
-    return id =>
-      getWikiStateKeyById(id)
+    return xId =>
+      getWikiStateKeyById(xId)
         .bind(state.lookup)
-        .bind(slice => slice.lookup(id) as any);
+        .bind(slice => slice.lookup(xId) as any);
   }
   else {
     return getWikiStateKeyById(id)
@@ -82,50 +82,51 @@ export const getAllWikiEntriesByGroup =
 
 type ElementMixed =
   // ActivatableInstance |
-  Wiki.Race |
-  Wiki.Culture |
-  ProfessionView |
-  Wiki.Advantage |
-  Wiki.Disadvantage |
-  Wiki.Skill |
-  Wiki.CombatTechnique |
-  Wiki.SpecialAbility |
-  Wiki.Spell |
-  Wiki.Cantrip |
-  Wiki.LiturgicalChant |
-  Wiki.Blessing |
-  Wiki.ItemTemplate;
+  Record<Wiki.Race> |
+  Record<Wiki.Culture> |
+  Record<ProfessionView> |
+  Record<Wiki.Advantage> |
+  Record<Wiki.Disadvantage> |
+  Record<Wiki.Skill> |
+  Record<Wiki.CombatTechnique> |
+  Record<Wiki.SpecialAbility> |
+  Record<Wiki.Spell> |
+  Record<Wiki.Cantrip> |
+  Record<Wiki.LiturgicalChant> |
+  Record<Wiki.Blessing> |
+  Record<Wiki.ItemTemplate>;
 
-export const isItemTemplateFromMixed = (obj: ElementMixed): obj is Wiki.ItemTemplate => {
-  return obj.hasOwnProperty('id') &&
-    obj.hasOwnProperty('name') &&
-    obj.hasOwnProperty('isTemplateLocked');
+export const isItemTemplateFromMixed = (obj: ElementMixed): obj is Record<Wiki.ItemTemplate> => {
+  return obj.toJS1().hasOwnProperty('id') &&
+    obj.toJS1().hasOwnProperty('name') &&
+    obj.toJS1().hasOwnProperty('isTemplateLocked');
 }
 
-export const isItemTemplate = (obj: Wiki.Entry): obj is Wiki.ItemTemplate => {
-  return obj.hasOwnProperty('id') &&
-    obj.hasOwnProperty('name') &&
-    obj.hasOwnProperty('isTemplateLocked');
+export const isItemTemplate = (obj: Wiki.Entry): obj is Record<Wiki.ItemTemplate> => {
+  return obj.toJS1().hasOwnProperty('id') &&
+    obj.toJS1().hasOwnProperty('name') &&
+    obj.toJS1().hasOwnProperty('isTemplateLocked');
 }
 
-export const isProfession = (obj: Wiki.Entry): obj is Wiki.Profession => {
-	return !isItemTemplate(obj) && obj.category === Categories.PROFESSIONS;
-}
+export const isProfession =
+  (obj: Wiki.Entry): obj is Record<Wiki.Profession> =>
+    !isItemTemplate(obj)
+      && obj.toJS1().category === Categories.PROFESSIONS;
 
-export const isSpecialAbility = (obj: Wiki.Entry): obj is Wiki.SpecialAbility => {
-	return !isItemTemplate(obj) && obj.category === Categories.SPECIAL_ABILITIES;
-}
+export const isSpecialAbility =
+  (obj: Wiki.Entry): obj is Record<Wiki.SpecialAbility> =>
+    !isItemTemplate(obj)
+      && obj.toJS1().category === Categories.SPECIAL_ABILITIES;
 
-export const isActivatableWikiObj = (
-  obj: Wiki.Entry,
-): obj is Wiki.Activatable => {
-	return !isItemTemplate(obj) && ActivatableCategories.includes(obj.category);
-};
+export const isActivatableWikiObj =
+  (obj: Wiki.Entry): obj is Wiki.Activatable =>
+    !isItemTemplate(obj)
+      && ActivatableCategories.includes(obj.toJS1().category);
 
 export const isRemoveSpecializationSelection = (
   obj: Wiki.ProfessionVariantSelection,
 ): obj is Wiki.RemoveSpecializationSelection => {
-	return obj.id === 'SPECIALISATION' && obj.hasOwnProperty('active');
+  return obj.id === 'SPECIALISATION' && obj.hasOwnProperty('active');
 };
 
 export const isCombatTechniquesSelection = (
@@ -140,11 +141,11 @@ export const isCombatTechniquesSelection = (
 export const isRemoveCombatTechniquesSelection = (
   obj: Wiki.ProfessionVariantSelection,
 ): obj is Wiki.RemoveCombatTechniquesSelection => {
-	return obj.id === 'COMBAT_TECHNIQUES' && obj.hasOwnProperty('active');
+  return obj.id === 'COMBAT_TECHNIQUES' && obj.hasOwnProperty('active');
 };
 
 export const isRemoveSecondCombatTechniquesSelection = (
   obj: Wiki.ProfessionVariantSelection,
 ): obj is Wiki.RemoveCombatTechniquesSecondSelection => {
-	return obj.id === 'COMBAT_TECHNIQUES_SECOND' && obj.hasOwnProperty('active');
+  return obj.id === 'COMBAT_TECHNIQUES_SECOND' && obj.hasOwnProperty('active');
 };

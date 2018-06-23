@@ -1,59 +1,58 @@
 import R from 'ramda';
 import { Categories } from '../constants/Categories';
 import * as Data from '../types/data.d';
-import * as Reusable from '../types/reusable.d';
-import { getCategoryById } from './IDUtils';
+import * as Wiki from '../types/wiki.d';
 import * as AddDependencyUtils from './addDependencyUtils';
 import * as CheckPrerequisiteUtils from './checkPrerequisiteUtils';
-import { maybe } from './exists';
+import { List, Maybe, Record } from './dataUtils';
+import { getCategoryById } from './IDUtils';
 import { match } from './match';
 import { getPrimaryAttributeId } from './primaryAttributeUtils';
 import { ActivatableReducer } from './reducerUtils';
 import * as RemoveDependencyUtils from './removeDependencyUtils';
 
 type ModifyIncreasableDependency =
-  (id: string, value: number | Reusable.ValueOptionalDependency) =>
-  (state: Data.HeroDependent) =>
-  Data.HeroDependent;
+  (id: string, value: Data.SkillDependency) =>
+    (state: Record<Data.HeroDependent>) =>
+      Record<Data.HeroDependent>;
 
 type ModifyActivatableDependency =
-  (id: string, value: Data.ActivatableInstanceDependency) =>
-  (state: Data.HeroDependent) =>
-  Data.HeroDependent;
+  (id: string, value: Data.ActivatableDependency) =>
+    (state: Record<Data.HeroDependent>) =>
+      Record<Data.HeroDependent>;
 
-const createPrimaryAttributeDependencyModifier = (
-  state: Data.HeroDependent,
-  modify: ModifyIncreasableDependency,
-) => (req: Reusable.RequiresPrimaryAttribute) => R.pipe(
-  maybe((id: string) => modify(id, req.value)(state), state)
-)(getPrimaryAttributeId(state.specialAbilities, req.type));
+const createPrimaryAttributeDependencyModifier =
+  (state: Record<Data.HeroDependent>, modify: ModifyIncreasableDependency) =>
+    (req: Record<Wiki.RequiresPrimaryAttribute>) =>
+      getPrimaryAttributeId(state.get('specialAbilities'), req.get('type'))
+        .map(id => modify(id, req.get('value'))(state));
 
 const createIncreasableDependencyModifier = (
-  state: Data.HeroDependent,
+  state: Record<Data.HeroDependent>,
   modifyAttribute: ModifyIncreasableDependency,
   modify: ModifyIncreasableDependency,
   sourceId: string,
-) => (req: Reusable.RequiresIncreasableObject) => {
-  return match<string | string[], Data.HeroDependent>(req.id)
-    .on((id): id is string[] => typeof id === 'object', id => {
-      return R.pipe<Reusable.ValueOptionalDependency, Data.HeroDependent>(
-        add => id.reduce((state, e) => {
-          if (getCategoryById(e) === Categories.ATTRIBUTES) {
-            return modifyAttribute(e, add)(state);
-          }
-          else {
-            return modify(e, add)(state);
-          }
-        }, state)
-      )({ value: req.value, origin: sourceId });
-    })
-    .on(id => getCategoryById(id) === Categories.ATTRIBUTES, id => {
-      return modifyAttribute(id, req.value)(state);
-    })
-    .otherwise(id => {
-      return modify(id, req.value)(state);
-    });
-};
+) =>
+  (req: Record<Wiki.RequiresIncreasableObject>) =>
+    match<string | List<string>, Record<Data.HeroDependent>>(req.get('id'))
+      .on((id): id is List<string> => typeof id === 'object', id => {
+        const add = Record.of({ value: req.get('value'), origin: sourceId });
+
+        return id.foldl(
+          state => e => (
+            getCategoryById(e).equals(Maybe.Just(Categories.ATTRIBUTES))
+              ? modifyAttribute(e, add)(state)
+              : modify(e, add)(state)
+          ),
+          state
+        );
+      })
+      .on(id => getCategoryById(id).equals(Maybe.Just(Categories.ATTRIBUTES)), id => {
+        return modifyAttribute(id, req.value)(state);
+      })
+      .otherwise(id => {
+        return modify(id, req.value)(state);
+      });
 
 const createActivatableDependencyModifier = (
   state: Data.HeroDependent,
@@ -98,14 +97,14 @@ const createActivatableDependencyModifier = (
 };
 
 const modifyDependencies = (
-  state: Data.HeroDependent,
-  prerequisites: Data.AllRequirements[],
+  state: Record<Data.HeroDependent>,
+  prerequisites: List<Data.AllRequirements>,
   sourceId: string,
   modifyAttributeDependency: ModifyIncreasableDependency,
   modifyIncreasableDependency: ModifyIncreasableDependency,
   modifyActivatableDependency: ModifyActivatableDependency,
-): Data.HeroDependent => prerequisites.reduce<Data.HeroDependent>(
-  (state, req) => match<Data.AllRequirements, Data.HeroDependent>(req)
+): Record<Data.HeroDependent> => prerequisites.foldl<Data.HeroDependent>(
+  state => req => match<Data.AllRequirements, Data.HeroDependent>(req)
     .on(CheckPrerequisiteUtils.isDependentPrerequisite, req => {
       return match<Data.DependentPrerequisite, Data.HeroDependent>(req)
         .on(
@@ -148,10 +147,10 @@ const modifyDependencies = (
  * @param sel The SID from the current selection.
  */
 export const addDependencies = (
-  state: Data.HeroDependent,
-  prerequisites: Data.AllRequirements[],
+  state: Record<Data.HeroDependent>,
+  prerequisites: List<Wiki.AllRequirements>,
   sourceId: string,
-): Data.HeroDependent => modifyDependencies(
+): Record<Data.HeroDependent> => modifyDependencies(
   state,
   prerequisites,
   sourceId,
@@ -179,10 +178,10 @@ export const addDependenciesReducer = (
  * @param sel The SID from the current selection.
  */
 export const removeDependencies = (
-  state: Data.HeroDependent,
-  prerequisites: Data.AllRequirements[],
+  state: Record<Data.HeroDependent>,
+  prerequisites: List<Wiki.AllRequirements>,
   sourceId: string,
-): Data.HeroDependent => modifyDependencies(
+): Record<Data.HeroDependent> => modifyDependencies(
   state,
   prerequisites,
   sourceId,

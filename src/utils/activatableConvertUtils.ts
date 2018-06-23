@@ -66,13 +66,14 @@ export const getActiveFromState = (
   state: OrderedMap<string, Record<Data.ActivatableDependent>>,
 ): List<Record<Data.ActiveObjectWithId>> => {
   return state.elems()
-    .foldl<List<Record<Data.ActiveObjectWithId>>>(arr => e => {
-      return arr.concat(convertActivatableToArray(e));
-    }, List.of());
+    .foldl<List<Record<Data.ActiveObjectWithId>>>(
+      arr => e => arr.concat(convertActivatableToArray(e)),
+      List.of()
+    );
 };
 
 export interface ActiveObjectAny extends Data.ActiveObject {
-	[key: string]: any;
+  [key: string]: any;
 }
 
 /**

@@ -92,6 +92,15 @@ export class Maybe<T extends Some> implements Al.Functor<T>, Al.Apply<T>,
   }
 
   /**
+   * `(!=) :: Maybe a -> Maybe a -> Bool`
+   *
+   * Returns if both given values are not equal.
+   */
+  notEquals(x: Maybe<T>): boolean {
+    return !this.equals(x);
+  }
+
+  /**
    * `(>) :: Maybe a -> Maybe a -> Bool`
    *
    * Returns if the first value (`this`) is greater than the second value.
@@ -456,8 +465,7 @@ export interface Just<T extends Some> extends Maybe<T> {
   bind<U extends Some>(fn: (value: T) => Maybe<U>): Maybe<U>;
   ap<U extends Some>(m: Just<((value: T) => U)>): Just<U>;
   ap<U extends Some>(m: Maybe<((value: T) => U)>): Maybe<U>;
-  concat<T, A extends Al.Semigroup<T>>(this: Just<A>, m: Just<A>): Just<A>;
-  concat<T, A extends Al.Semigroup<T>>(this: Just<A>, m: Nothing): Just<A>;
+  concat<T, A extends Al.Semigroup<T>>(this: Just<A>, m: Maybe<A>): Just<A>;
   alt(): Just<T>;
 }
 
@@ -547,6 +555,17 @@ export class List<T> implements Al.Functor<T>, Al.Foldable<T>, Al.Semigroup<T>,
    */
   map<U>(fn: (x: T) => U): List<U> {
     return List.of(...this.value.map(fn));
+  }
+
+  /**
+   * `intercalate :: [a] -> [[a]] -> [a]`
+   *
+   * `intercalate xs xss` is equivalent to `(concat (intersperse xs xss))`. It
+   * inserts the list `xs` in between the lists in `xss` and concatenates the
+   * result.
+   */
+  intercalate(this: List<number | string>, separator: string): string {
+    return this.value.join(separator);
   }
 
   // REDUCING LISTS (FOLDS)
@@ -693,22 +712,13 @@ export class List<T> implements Al.Functor<T>, Al.Foldable<T>, Al.Semigroup<T>,
     return Math.min(...this.value);
   }
 
-  /**
-   * `join :: (Foldable t) => t a -> String`
-   *
-   * Adds all the elements of an array separated by the specified separator
-   * string.
-   */
-  join(separator: string) {
-    return this.value.join(separator);
-  }
-
   // EXTRACTING SUBLISTS
 
   /**
    * `take :: Int -> [a] -> [a]`
    *
-   * `take n`, applied to a list `xs`, returns the prefix of `xs` of length `n`, or `xs` itself if `n > length xs`.
+   * `take n`, applied to a list `xs`, returns the prefix of `xs` of length `n`,
+   * or `xs` itself if `n > length xs`.
    */
   take(length: number): List<T> {
     return this.value.length < length
@@ -1047,6 +1057,34 @@ export class List<T> implements Al.Functor<T>, Al.Foldable<T>, Al.Semigroup<T>,
 
   static isList(value: any): value is List<any> {
     return value instanceof List;
+  }
+
+  // INSTANCE METHODS AS STATIC METHODS
+
+  // LIST TRANSFORMATIONS
+
+  /**
+   * `map :: (a -> b) -> [a] -> [b]`
+   *
+   * `map f xs` is the list obtained by applying `f` to each element of `xs`.
+   */
+  static map<T, U>(fn: (x: T) => U): (list: List<T>) => List<U>;
+  static map<T, U>(fn: (x: T) => U, list: List<T>): List<U>;
+  static map<T, U>(
+    fn: (x: T) => U, list?: List<T>
+  ): List<U> | ((list: List<T>) => List<U>) {
+    if (arguments.length === 1) {
+      return listParam => List.of(...listParam.value.map(fn))
+    }
+    else {
+      return List.of(...list!.value.map(fn));
+    }
+  }
+
+  // SPECIAL FOLDS
+
+  static maximum(list: List<number>): number {
+    return Math.max(...list.value);
   }
 }
 
@@ -2141,6 +2179,10 @@ export class Record<T extends { [key: string]: any }> {
 
   equals(second: Record<T>): boolean {
     return R.equals(this.value, second.value);
+  }
+
+  toJS1(): T {
+    return this.value;
   }
 
   static of<T>(initial: T): Record<T> {

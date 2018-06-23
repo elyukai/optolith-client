@@ -43,7 +43,7 @@ export function LiturgiesSheetLiturgiesTableRow(props: LiturgiesSheetLiturgiesTa
 				<td className="range"></td>
 				<td className="duration"></td>
 				<td className="aspect">
-					<Textfit max={11} min={7} mode="single">{aspects.join(', ')}</Textfit>
+					<Textfit max={11} min={7} mode="single">{aspects.intercalate(', ')}</Textfit>
 				</td>
 				<td className="ic">{getICName(ic)}</td>
 				<td className="effect"></td>

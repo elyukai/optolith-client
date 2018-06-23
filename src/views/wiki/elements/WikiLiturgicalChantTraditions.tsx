@@ -43,9 +43,9 @@ export function WikiLiturgicalChantTraditions(props: WikiLiturgicalChantTraditio
       return mainTradition;
     }
     const mappedAspects = e[1].map(a => aspectsStrings[a - 1]);
-    const completeAspects = sortStrings(mappedAspects, locale.id).join(', ');
+    const completeAspects = sortStrings(mappedAspects, locale.id).intercalate(', ');
     return `${mainTradition} (${completeAspects})`;
-  }), locale.id).join(', ');
+  }), locale.id).intercalate(', ');
 
   return (
     <WikiProperty locale={locale} title="info.traditions">

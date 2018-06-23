@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { Application, Advantage, SpecialAbility } from '../../../types/wiki';
+import { Advantage, Application, SpecialAbility } from '../../../types/wiki';
+import { sortStrings } from '../../../utils/FilterSortUtils';
 import { UIMessages } from '../../../utils/I18n';
 import { WikiProperty } from '../WikiProperty';
-import { sortStrings } from '../../../utils/FilterSortUtils';
 
 export interface WikiApplicationsProps {
   advantages: Map<string, Advantage>;
@@ -46,7 +46,7 @@ export function WikiApplications(props: WikiApplicationsProps): JSX.Element | nu
 
       return (
         <WikiProperty locale={locale} title="info.newapplications">
-          {sortedApplications.join(', ')}
+          {sortedApplications.intercalate(', ')}
         </WikiProperty>
       );
     }
@@ -62,7 +62,7 @@ export function WikiApplications(props: WikiApplicationsProps): JSX.Element | nu
 
     return (
       <WikiProperty locale={locale} title="info.applications">
-        {sortedApplications.join(', ')}
+        {sortedApplications.intercalate(', ')}
         {applicationsInput && ', '}
         {applicationsInput}
       </WikiProperty>

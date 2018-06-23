@@ -1,21 +1,25 @@
 import R from 'ramda';
 import { ActivatableSkillCategories } from '../constants/Categories';
-import * as Data from "../types/data.d";
-import { ValueOptionalDependency } from '../types/reusable.d';
-import { getCategoryById } from './IDUtils';
-import { ArrayElement } from './collectionUtils';
+import * as Data from '../types/data.d';
 import * as CreateEntryUtils from './createEntryUtils';
+import { Just, List, Maybe, Record } from './dataUtils';
 import { adjustHeroListStateItemOr } from './heroStateUtils';
+import { getCategoryById } from './IDUtils';
 
 type IncreasableCreator = (id: string) => Data.ExtendedSkillDependent;
 
+type RecordInterface<T> = T extends Record<infer I> ? I : never;
+type ListElement<T> = T extends List<infer I> ? I : never;
+type Dependency<T extends Data.Dependent> =
+  ListElement<RecordInterface<T>['dependencies']>
+
 const addDependency = <T extends Data.Dependent>(
-  add: ArrayElement<T["dependencies"]>,
-// @ts-ignore
-) => (obj: T): T => ({
-  ...(obj as Data.Dependent),
-  dependencies: R.append(add, obj.dependencies as ArrayElement<T["dependencies"]>[]),
-} as T);
+  add: Dependency<T>,
+) => (obj: T): Just<T> => Maybe.Just((obj as Record<any>).update(
+  (dependencies: RecordInterface<T>['dependencies']) =>
+    Maybe.Just((dependencies as List<any>).append(add)),
+  'dependencies'
+) as T);
 
 /**
  * Returns needed entry creator for given increasable category.
@@ -23,27 +27,25 @@ const addDependency = <T extends Data.Dependent>(
  */
 const getIncreasableCreator: (id: string) => IncreasableCreator = R.pipe(
   getCategoryById,
-  category => {
-    if (category && ActivatableSkillCategories.includes(category)) {
-      return CreateEntryUtils.createActivatableDependentSkill;
-    }
-
-    return CreateEntryUtils.createDependentSkill;
-  }
+  category =>
+    category.map(ActivatableSkillCategories.includes)
+      .equals(Maybe.Just(true))
+      ? CreateEntryUtils.createActivatableDependentSkill
+      : CreateEntryUtils.createDependentSkill
 );
 
 export const addAttributeDependency = (
   id: string,
-  value: number | ValueOptionalDependency,
+  value: Data.SkillDependency,
 ) => adjustHeroListStateItemOr(
   CreateEntryUtils.createAttributeDependent,
-  addDependency<Data.AttributeDependent>(value),
+  addDependency<Record<Data.AttributeDependent>>(value),
   id
 );
 
 export const addIncreasableDependency = (
   id: string,
-  value: number | ValueOptionalDependency,
+  value: Data.SkillDependency,
 ) => adjustHeroListStateItemOr(
   getIncreasableCreator(id),
   addDependency<Data.ExtendedSkillDependent>(value),
@@ -52,9 +54,9 @@ export const addIncreasableDependency = (
 
 export const addActivatableDependency = (
   id: string,
-  value: Data.ActivatableInstanceDependency,
+  value: Data.ActivatableDependency,
 ) => adjustHeroListStateItemOr(
   CreateEntryUtils.createActivatableDependent,
-  addDependency<Data.ActivatableDependent>(value),
+  addDependency<Record<Data.ActivatableDependent>>(value),
   id
 );

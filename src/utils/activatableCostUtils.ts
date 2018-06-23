@@ -12,6 +12,12 @@ import { getRoman } from './NumberUtils';
 import { getSelectOptionCost } from './selectionUtils';
 import { getWikiEntry } from './WikiUtils';
 
+const isDisadvantageActive =
+  (id: string, state: Maybe<Record<Data.HeroDependent>>) =>
+    isActive(state.bind(
+      stateRec => stateRec.get('disadvantages').lookup(id)
+    ));
+
 const getEntrySpecificCost = (
   wiki: Record<Wiki.WikiAll>,
   wikiEntry: Wiki.WikiActivatable,
@@ -21,40 +27,43 @@ const getEntrySpecificCost = (
   costToAdd: Maybe<boolean>,
 ) => {
   return match<string, Maybe<number | List<number>>>(obj.get('id'))
-    .on([
-      'ADV_4',
-      'ADV_47',
-      'ADV_16',
-      'ADV_17',
-      'DISADV_48',
-      'SA_231',
-      'SA_250',
-      'SA_472',
-      'SA_473',
-      'SA_531',
-      'SA_569',
-    ].includes, () => {
-      const getCostForId: (id: string) => Maybe<number> = R.pipe(
-        getWikiEntry<Wiki.Skillish>(wiki),
-        m => m.bind(
-          entry => (wikiEntry.get('cost') as List<number>)
-            .subscript(entry.get('ic') - 1)
-        ),
-        e => e.alt(Maybe.Just(0))
-      );
+    .on(
+      [
+        'ADV_4',
+        'ADV_47',
+        'ADV_16',
+        'ADV_17',
+        'DISADV_48',
+        'SA_231',
+        'SA_250',
+        'SA_472',
+        'SA_473',
+        'SA_531',
+        'SA_569',
+      ].includes,
+      () => {
+        const getCostForId: (id: string) => Maybe<number> = R.pipe(
+          getWikiEntry<Wiki.Skillish>(wiki),
+          m => m.bind(
+            entry => (wikiEntry.get('cost') as List<number>)
+              .subscript(entry.get('ic') - 1)
+          ),
+          e => e.alt(Maybe.Just(0))
+        );
 
-      return getCostForId(Maybe.fromJust(obj.lookup('sid') as Just<string>));
-    })
+        return getCostForId(Maybe.fromJust(obj.lookup('sid') as Just<string>));
+      }
+    )
     .on(['DISADV_34', 'DISADV_50'].includes, () => {
       const compareMaxTier = (previousMax: number) =>
-        (active: Record<Data.ActiveObject>) => {
-          const maybeTier = active.lookup('tier');
+        (activeRec: Record<Data.ActiveObject>) => {
+          const maybeActiveTier = activeRec.lookup('tier');
 
-          if (Maybe.isJust(maybeTier)) {
-            const tier = Maybe.fromJust(maybeTier);
+          if (Maybe.isJust(maybeActiveTier)) {
+            const tier = Maybe.fromJust(maybeActiveTier);
 
             return tier > previousMax
-              && Maybe.isNothing(active.lookup('cost'))
+              && Maybe.isNothing(activeRec.lookup('cost'))
               ? tier
               : previousMax;
           }
@@ -63,15 +72,15 @@ const getEntrySpecificCost = (
         };
 
       const compareSubMaxTier = (maxTier: Maybe<number>) =>
-        (previousMax: number) => (active: Record<Data.ActiveObject>) => {
-          const maybeTier = active.lookup('tier');
+        (previousMax: number) => (activeRec: Record<Data.ActiveObject>) => {
+          const maybeActiveTier = activeRec.lookup('tier');
 
-          if (Maybe.isJust(maybeTier)) {
-            const tier = Maybe.fromJust(maybeTier);
+          if (Maybe.isJust(maybeActiveTier)) {
+            const tier = Maybe.fromJust(maybeActiveTier);
 
             return tier > previousMax
               && (!Maybe.isJust(maxTier) || tier < Maybe.fromJust(maxTier))
-              && Maybe.isNothing(active.lookup('cost'))
+              && Maybe.isNothing(activeRec.lookup('cost'))
               ? tier
               : previousMax;
           }
@@ -79,12 +88,12 @@ const getEntrySpecificCost = (
           return previousMax;
         };
 
-      const maxCurrentTier = active.map(active => active.foldl(
+      const maxCurrentTier = active.map(activeList => activeList.foldl(
         compareMaxTier,
         0,
       ));
 
-      const subMaxCurrentTier = active.map(active => active.foldl(
+      const subMaxCurrentTier = active.map(activeList => activeList.foldl(
         compareSubMaxTier(maxCurrentTier),
         0,
       ));
@@ -92,9 +101,8 @@ const getEntrySpecificCost = (
       const maybeTier = obj.lookup('tier');
 
       if (
-        Maybe.isJust(maybeTier)
-        && maxCurrentTier.gt(maybeTier)
-        || Maybe.fromMaybe(0, active.map(active => active.filter(
+        (Maybe.isJust(maybeTier) && maxCurrentTier.gt(maybeTier))
+        || Maybe.fromMaybe(0, active.map(activeList => activeList.filter(
           e => e.lookup('tier').equals(maybeTier)
         ).length())) > (Maybe.isJust(costToAdd) ? 0 : 1)
       ) {
@@ -111,9 +119,10 @@ const getEntrySpecificCost = (
     .on('DISADV_33', () => {
       if (
         obj.lookup('sid').equals(Maybe.Just(7))
-        && Maybe.fromMaybe(0, active.map(active => active.filter(e =>
-          e.lookup('sid').equals(Maybe.Just(7))
-          && Maybe.isNothing(e.lookup('cost'))
+        && Maybe.fromMaybe(0, active.map(activeList => activeList.filter(
+          e =>
+            e.lookup('sid').equals(Maybe.Just(7))
+            && Maybe.isNothing(e.lookup('cost'))
         ).length())) > (Maybe.isJust(costToAdd) ? 0 : 1)
       ) {
         return Maybe.Just(0);
@@ -123,8 +132,8 @@ const getEntrySpecificCost = (
       }
     })
     .on('DISADV_36', () => {
-      if (Maybe.fromMaybe(0, active.map(active => active.filter(e =>
-        Maybe.isNothing(e.lookup('cost'))
+      if (Maybe.fromMaybe(0, active.map(activeList => activeList.filter(
+        e => Maybe.isNothing(e.lookup('cost'))
       ).length())) > (Maybe.isJust(costToAdd) ? 2 : 3)) {
         return Maybe.Just(0);
       }
@@ -132,33 +141,38 @@ const getEntrySpecificCost = (
         return wikiEntry.lookup('cost') as Just<number>;
       }
     })
-    .on('SA_9', () => {
-      return (obj.lookup('sid') as Maybe<string>)
+    .on(
+      'SA_9',
+      () => (obj.lookup('sid') as Maybe<string>)
         .bind(wiki.get('skills').lookup)
-        .map(skill =>
-          Maybe.fromMaybe(skill.get('ic'), state.bind(state =>
-            state.get('specialAbilities')
+        .map(
+          skill => Maybe.fromMaybe(skill.get('ic'), state.bind(
+            stateRec => stateRec.get('specialAbilities')
               .lookup(wikiEntry.get('id'))
               .map(R.pipe(
                 instance => instance.get('active'),
-                active => active.foldl<number>(counter => e =>
-                  e.lookup('sid').equals(obj.lookup('sid'))
-                  && Maybe.isNothing(e.lookup('cost'))
-                  ? R.inc(counter)
-                  : counter
-                , 0),
+                activeList => activeList.foldl<number>(
+                  counter => e =>
+                    e.lookup('sid').equals(obj.lookup('sid'))
+                    && Maybe.isNothing(e.lookup('cost'))
+                      ? R.inc(counter)
+                      : counter,
+                  0
+                ),
                 R.add(Maybe.isJust(costToAdd) ? 1 : 0),
                 R.multiply(skill.get('ic'))
               ))
           ))
-        );
-    })
-    .on('SA_29', () => obj.lookup('tier').equals(Maybe.Just(4))
-      ? Maybe.Just(0)
-      : obj.lookup('cost')
+        )
+    )
+    .on(
+      'SA_29',
+      () => obj.lookup('tier').equals(Maybe.Just(4))
+        ? Maybe.Just(0)
+        : obj.lookup('cost')
     )
     .on('SA_72', () => {
-      const length = Maybe.fromMaybe(0, active.map(active => active
+      const length = Maybe.fromMaybe(0, active.map(activeList => activeList
         .filter(e => Maybe.isNothing(e.lookup('cost')))
         .length()));
 
@@ -167,7 +181,7 @@ const getEntrySpecificCost = (
       return List.of(10, 20, 40).subscript(index);
     })
     .on('SA_87', () => {
-      const length = Maybe.fromMaybe(0, active.map(active => active
+      const length = Maybe.fromMaybe(0, active.map(activeList => activeList
         .filter(e => Maybe.isNothing(e.lookup('cost')))
         .length()));
 
@@ -176,46 +190,47 @@ const getEntrySpecificCost = (
       return List.of(15, 25, 45).subscript(index);
     })
     .on('SA_255', () => {
-      const cond = (id: string, state: Maybe<Record<Data.HeroDependent>>) =>
-        isActive(state.bind(state =>
-          state.get('disadvantages').lookup(id)
-        ));
-
-      const decreaseCost = (
-        id: string,
-        state: Maybe<Record<Data.HeroDependent>>,
-      ) => (cost: number) =>
-        cond(id, state) ? cost - 10 : cost;
+      const decreaseCost = (id: string) => (cost: number) =>
+        isDisadvantageActive(id, state) ? cost - 10 : cost;
 
       return R.pipe(
-        decreaseCost('DISADV_17', state),
-        decreaseCost('DISADV_18', state),
+        decreaseCost('DISADV_17'),
+        decreaseCost('DISADV_18'),
         Maybe.Just
       )(wikiEntry.get('cost') as number);
     })
-    .on('SA_533', () => {
-      return obj.lookup('sid').bind(Maybe.ensure(isString))
-        .bind(sid =>
-          wiki.get('skills').lookup(sid).bind(entry =>
-            state.bind(state => state.get('specialAbilities').lookup('SA_531'))
-              .bind(e => e.get('active').subscript(0).bind(e => e.lookup('sid')))
+    .on(
+      'SA_533',
+      () =>
+        obj.lookup('sid')
+          .bind(Maybe.ensure(isString))
+          .bind(wiki.get('skills').lookup)
+          .bind(
+            entry => state.bind(
+              stateRec => stateRec.get('specialAbilities').lookup('SA_531')
+            )
+              .bind(
+                e => e.get('active').subscript(0)
+                  .bind(activeElem => activeElem.lookup('sid'))
+              )
               .bind(Maybe.ensure(isString))
               .bind(wiki.get('skills').lookup)
-              .bind(firstEntry =>
-                (wikiEntry.get('cost') as List<number>)
+              .bind(
+                firstEntry => (wikiEntry.get('cost') as List<number>)
                   .subscript(entry.get('ic') - 1)
                   .map(cost => cost + firstEntry.get('ic'))
               )
           )
-        );
-    })
-    .on('SA_699', () =>
-      state
-        .bind(state => state.get('specialAbilities').lookup('SA_29'))
-        .bind(e => e.get('active')
-          .find(e => e.lookup('sid').equals(obj.lookup('sid')))
+    )
+    .on(
+      'SA_699',
+      () => state
+        .bind(stateRec => stateRec.get('specialAbilities').lookup('SA_29'))
+        .bind(
+          specialAbility => specialAbility.get('active')
+            .find(e => e.lookup('sid').equals(obj.lookup('sid')))
         )
-        .bind(active => active.lookup('tier'))
+        .bind(activeRec => activeRec.lookup('tier'))
         .bind<number>(tier => tier === 4 ? Maybe.Just(0) : Maybe.Nothing())
         .alt(Maybe.Just(wikiEntry.get('cost') as number))
     )
@@ -248,14 +263,9 @@ export const getCost = (
   costToAdd?: boolean,
 ): Maybe<number | List<number>> => {
   const id = obj.get('id');
+
   return getWikiEntry<Wiki.Activatable>(wiki, id)
     .map(wikiEntry => {
-      const active = Maybe.of(state)
-        .bind<Record<Data.ActivatableDependent>>(
-          getHeroStateListItem<Record<Data.ActivatableDependent>>(id)
-        )
-        .map(instance => instance.get('active'));
-
       const calculateCost = R.pipe(
         (active: Maybe<List<Record<Data.ActiveObject>>>) => {
           const customCost = obj.lookup('cost');
@@ -288,7 +298,13 @@ export const getCost = (
         }
       );
 
-      return calculateCost(active);
+      return calculateCost(
+        Maybe.of(state)
+          .bind<Record<Data.ActivatableDependent>>(
+            getHeroStateListItem<Record<Data.ActivatableDependent>>(id)
+          )
+          .map(instance => instance.get('active'))
+      );
     });
 };
 
@@ -303,16 +319,23 @@ const adjustCurrentCost = (
     currentCost: match<number | List<number>, number>(obj.get('currentCost'))
       .on((e): e is List<number> => e instanceof List, currentCost => {
         const tier = obj.lookupWithDefault(1, 'tier');
-        return currentCost.foldli(sum => current => index => {
-          return index <= (tier - 1) ? sum + current : sum;
-        }, 0);
+
+        return currentCost.foldli(
+          sum => current => index =>
+            index <= (tier - 1) ? sum + current : sum,
+          0
+        );
       })
-      .on(() => {
-        return Maybe.isJust(obj.lookup('tier'))
+      .on(
+        () => Maybe.isJust(obj.lookup('tier'))
           && obj.get('id') !== 'DISADV_34'
           && obj.get('id') !== 'DISADV_50'
-          && Maybe.isJust(obj.lookup('cost'));
-      }, currentCost => Maybe.fromMaybe(0, obj.lookup('tier').map(tier => currentCost * tier)))
+          && Maybe.isJust(obj.lookup('cost')),
+        currentCost => Maybe.fromMaybe(
+          0,
+          obj.lookup('tier').map(tier => currentCost * tier)
+        )
+      )
       .otherwise(() => obj.get('currentCost') as number)
   }));
 
@@ -324,14 +347,30 @@ const getSpecialAbilityTier = (tier: number) => {
   return tier > 1 ? ` I-${getRoman(tier)}` : getTier(tier);
 };
 
-const adjustTierName = (
+const getAdjustedTierName = (
   locale: Maybe<Record<Data.UIMessages>>,
-  addTierToCombinedTier?: boolean,
-) => (obj: Record<AdjustedCost>): Record<Data.ActivatableNameCostEvalTier> => {
-  let tierName;
+  obj: Record<AdjustedCost>,
+  tier: number
+) => {
+  if (obj.get('id') === 'SA_29' && tier === 4) {
+    return ` ${translate(locale, 'mothertongue.short')}`;
+  }
+  else if (
+    Array.isArray(obj.get('currentCost'))
+    || getCategoryById(obj.get('id')).equals(Maybe.Just(Categories.SPECIAL_ABILITIES))
+  ) {
+    return getSpecialAbilityTier(tier);
+  }
+  else {
+    return getTier(tier);
+  }
+};
 
-  const maybeTier = obj.lookup('tier');
-
+const hasTierName = (
+  locale: Maybe<Record<Data.UIMessages>>,
+  obj: Record<AdjustedCost>,
+  maybeTier: Maybe<number>
+): Maybe<string> => {
   if (
     Maybe.isJust(maybeTier)
     && obj.get('id') !== 'DISADV_34'
@@ -340,26 +379,28 @@ const adjustTierName = (
   ) {
     const tier = Maybe.fromJust(maybeTier);
 
-    if (obj.get('id') === 'SA_29' && tier === 4) {
-      tierName = ` ${translate(locale, 'mothertongue.short')}`;
-    }
-    else if (
-      Array.isArray(obj.get('currentCost'))
-      || getCategoryById(obj.get('id')).equals(Maybe.Just(Categories.SPECIAL_ABILITIES))
-    ) {
-      tierName = getSpecialAbilityTier(tier);
-    }
-    else {
-      tierName = getTier(tier);
-    }
+    return Maybe.Just(getAdjustedTierName(locale, obj, tier))
   }
+  else {
+    return Maybe.Nothing();
+  }
+}
 
-  return R.merge(obj, {
-    combinedName: addTierToCombinedTier !== true && tierName
-      ? obj.get('combinedName') + tierName
-      : obj.get('combinedName'),
-    tierName,
-  });
+const adjustTierName = (
+  locale: Maybe<Record<Data.UIMessages>>,
+  addTierToCombinedTier?: boolean,
+) => (obj: Record<AdjustedCost>): Record<Data.ActivatableNameCostEvalTier> => {
+  const maybeTier = obj.lookup('tier');
+
+  return Maybe.fromMaybe(
+    obj,
+    hasTierName(locale, obj, maybeTier)
+      .bind(Maybe.ensure(() => addTierToCombinedTier !== true))
+      .map(tierName => R.merge(obj, {
+        combinedName: obj.get('combinedName') + tierName,
+        tierName,
+      }))
+  );
 };
 
 /**
@@ -388,28 +429,31 @@ interface SplittedActiveObjectsByCustomCost {
 
 const getSplittedActiveObjectsByCustomCost =
   (entries: List<Record<Data.ActiveObject>>) =>
-    entries.foldl<SplittedActiveObjectsByCustomCost>(res => obj => {
-      if (Maybe.isJust(obj.lookup('cost'))) {
+    entries.foldl<SplittedActiveObjectsByCustomCost>(
+      res => obj => {
+        if (Maybe.isJust(obj.lookup('cost'))) {
+          return {
+            ...res,
+            customCostList: [
+              ...res.customCostList,
+              obj,
+            ],
+          };
+        }
+
         return {
           ...res,
-          customCostList: [
-            ...res.customCostList,
+          defaultCostList: [
+            ...res.defaultCostList,
             obj,
           ],
         };
+      },
+      {
+        defaultCostList: [],
+        customCostList: [],
       }
-
-      return {
-        ...res,
-        defaultCostList: [
-          ...res.defaultCostList,
-          obj,
-        ],
-      };
-    }, {
-      defaultCostList: [],
-      customCostList: [],
-    });
+    );
 
 export const getActiveWithNoCustomCost =
   (entries: List<Record<Data.ActiveObject>>) =>

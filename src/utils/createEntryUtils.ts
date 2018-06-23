@@ -1,4 +1,5 @@
 import * as Data from '../types/data.d';
+import { Record, List } from './dataUtils';
 
 interface AttributeDependentOptions {
   value?: number;
@@ -9,7 +10,7 @@ interface AttributeDependentOptions {
 export function createAttributeDependent(
   id: string,
   options: AttributeDependentOptions = {},
-): Data.AttributeDependent {
+): Record<Data.AttributeDependent> {
   const {
     value = 8,
     mod = 0,
@@ -25,24 +26,24 @@ export function createAttributeDependent(
 }
 
 interface ActivatableDependentOptions {
-  active?: Data.ActiveObject[];
-  dependencies?: Data.ActivatableInstanceDependency[];
+  active?: List<Record<Data.ActiveObject>>;
+  dependencies?: List<Data.ActivatableDependency>;
 }
 
 export function createActivatableDependent(
   id: string,
   options: ActivatableDependentOptions = {},
-): Data.ActivatableDependent {
+): Record<Data.ActivatableDependent> {
   const {
-    active = [],
-    dependencies = [],
+    active = List.of<Record<Data.ActiveObject>>(),
+    dependencies = List.of<Data.ActivatableDependency>(),
   } = options;
 
-  return {
+  return Record.of<Data.ActivatableDependent>({
     id,
     active,
     dependencies,
-  };
+  });
 }
 
 interface DependentSkillOptions {
@@ -53,7 +54,7 @@ interface DependentSkillOptions {
 export function createDependentSkill(
   id: string,
   options: DependentSkillOptions = {},
-): Data.SkillDependent {
+): Record<Data.SkillDependent> {
   const {
     value = 0,
     dependencies = [],
@@ -87,7 +88,7 @@ type JoinedActivatableDependentSkillOptions =
 export function createActivatableDependentSkill(
   id: string,
   options: ActivatableDependentSkillOptions = {},
-): Data.ActivatableSkillDependent {
+): Record<Data.ActivatableSkillDependent> {
   const {
     active,
     value = 0,

@@ -35,7 +35,7 @@ export function WikiCultureInfo(props: WikiCultureInfoProps) {
           <span>
             {sortObjects(culturalPackageSkills, locale.id).map(skill => {
               return `${skill.name} +${skill.value}`;
-            }).join(', ')}
+            }).intercalate(', ')}
           </span>
         </p>
       </WikiBoxTemplate>
@@ -45,16 +45,16 @@ export function WikiCultureInfo(props: WikiCultureInfoProps) {
   return (
     <WikiBoxTemplate className="culture" title={currentObject.name}>
       <WikiProperty locale={locale} title="info.language">
-        {sortStrings(currentObject.languages.map(id => languages.select!.find(e => e.id === id)!.name), locale.id).join(translate(locale, 'info.or'))}
+        {sortStrings(currentObject.languages.map(id => languages.select!.find(e => e.id === id)!.name), locale.id).intercalate(translate(locale, 'info.or'))}
       </WikiProperty>
       <WikiProperty locale={locale} title="info.script">
-        {currentObject.scripts.length > 0 ? `${sortStrings(currentObject.scripts.map(id => scripts.select!.find(e => e.id === id)!.name), locale.id).join(translate(locale, 'info.or'))} (${scripts.select!.find(e => e.id === currentObject.scripts[0])!.cost} ${translate(locale, 'apshort')})` : translate(locale, 'info.none')}
+        {currentObject.scripts.length > 0 ? `${sortStrings(currentObject.scripts.map(id => scripts.select!.find(e => e.id === id)!.name), locale.id).intercalate(translate(locale, 'info.or'))} (${scripts.select!.find(e => e.id === currentObject.scripts[0])!.cost} ${translate(locale, 'apshort')})` : translate(locale, 'info.none')}
       </WikiProperty>
       <WikiProperty locale={locale} title="info.areaknowledge">
         {currentObject.areaKnowledge}
       </WikiProperty>
       <WikiProperty locale={locale} title="info.socialstatus">
-        {currentObject.socialStatus.length > 0 ? sortStrings(currentObject.socialStatus.map(e => translate(locale, 'socialstatus')[e - 1]), locale.id).join(', ') : translate(locale, 'info.none')}
+        {currentObject.socialStatus.length > 0 ? sortStrings(currentObject.socialStatus.map(e => translate(locale, 'socialstatus')[e - 1]), locale.id).intercalate(', ') : translate(locale, 'info.none')}
       </WikiProperty>
       <WikiProperty locale={locale} title="info.commonprofessions">
         {['C_19', 'C_20', 'C_21'].includes(currentObject.id) ? currentObject.commonMagicProfessions : undefined}
@@ -77,10 +77,10 @@ export function WikiCultureInfo(props: WikiCultureInfoProps) {
         {currentObject.uncommonDisadvantagesText || translate(locale, 'info.none')}
       </WikiProperty>
       <WikiProperty locale={locale} title="info.commonskills">
-        {sortStrings(currentObject.commonSkills.map(e => skills.get(e)!.name), locale.id).join(', ')}
+        {sortStrings(currentObject.commonSkills.map(e => skills.get(e)!.name), locale.id).intercalate(', ')}
       </WikiProperty>
       <WikiProperty locale={locale} title="info.uncommonskills">
-        {sortStrings(currentObject.uncommonSkills.map(e => skills.get(e)!.name), locale.id).join(', ')}
+        {sortStrings(currentObject.uncommonSkills.map(e => skills.get(e)!.name), locale.id).intercalate(', ')}
       </WikiProperty>
       <Markdown source={`**${translate(locale, 'info.commonnames')}:**\n${currentObject.commonNames || ''}`} />
       <p className="cultural-package">
@@ -88,7 +88,7 @@ export function WikiCultureInfo(props: WikiCultureInfoProps) {
         <span>
           {sortObjects(culturalPackageSkills, locale.id).map(skill => {
             return `${skill.name} +${skill.value}`;
-          }).join(', ')}
+          }).intercalate(', ')}
         </span>
       </p>
       <WikiSource {...props} />

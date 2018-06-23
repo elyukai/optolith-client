@@ -170,7 +170,7 @@ export function WikiActivatableInfo(props: WikiActivatableInfoProps) {
             subtitle={headerSubName}
             >
             {currentObject.rules && <Markdown source={`**${translate(locale, 'info.rules')}:** ${currentObject.rules}`} />}
-            {currentObject.extended && <Markdown source={`**${translate(locale, 'info.extendedcombatspecialabilities')}:** ${sortStrings(currentObject.extended.map(e => !Array.isArray(e) && specialAbilities.has(e) ? specialAbilities.get(e)!.name : '...'), locale.id).join(', ')}`} />}
+            {currentObject.extended && <Markdown source={`**${translate(locale, 'info.extendedcombatspecialabilities')}:** ${sortStrings(currentObject.extended.map(e => !Array.isArray(e) && specialAbilities.has(e) ? specialAbilities.get(e)!.name : '...'), locale.id).intercalate(', ')}`} />}
             {currentObject.penalty && <Markdown source={`**${translate(locale, 'info.penalty')}:** ${currentObject.penalty}`} />}
             {currentObject.combatTechniques && <Markdown source={`**${translate(locale, 'info.combattechniques')}:** ${currentObject.combatTechniques}`} />}
             <PrerequisitesText {...props} entry={currentObject} />
@@ -187,7 +187,7 @@ export function WikiActivatableInfo(props: WikiActivatableInfoProps) {
             subtitle={headerSubName}
             >
             {currentObject.rules && <Markdown source={`**${translate(locale, 'info.rules')}:** ${currentObject.rules}`} />}
-            {currentObject.extended && <Markdown source={`**${translate(locale, 'info.extendedmagicalspecialabilities')}:** ${sortStrings(currentObject.extended.map(e => !Array.isArray(e) && specialAbilities.has(e) ? specialAbilities.get(e)!.name : '...'), locale.id).join(', ')}`} />}
+            {currentObject.extended && <Markdown source={`**${translate(locale, 'info.extendedmagicalspecialabilities')}:** ${sortStrings(currentObject.extended.map(e => !Array.isArray(e) && specialAbilities.has(e) ? specialAbilities.get(e)!.name : '...'), locale.id).intercalate(', ')}`} />}
             <PrerequisitesText {...props} entry={currentObject} />
             <Markdown source={costText} />
             <WikiSource {...props} />
@@ -219,7 +219,7 @@ export function WikiActivatableInfo(props: WikiActivatableInfoProps) {
             {currentObject.extended && <Markdown source={`**${translate(locale, 'info.extendedblessedtspecialabilities')}:** ${sortStrings([
               ...currentObject.extended.map(e => !Array.isArray(e) && specialAbilities.has(e) ? specialAbilities.get(e)!.name : '...'),
               ...(additionalExtended ? additionalExtended.map(e => getNameCostForWiki({ id: 'SA_639', index: 0, ...e }, wiki, locale).combinedName) : [])
-            ], locale.id).join(', ')}`} />}
+            ], locale.id).intercalate(', ')}`} />}
             {currentObject.penalty && <Markdown source={`**${translate(locale, 'info.penalty')}:** ${currentObject.penalty}`} />}
             {currentObject.combatTechniques && <Markdown source={`**${translate(locale, 'info.combattechniques')}:** ${currentObject.combatTechniques}`} />}
             <PrerequisitesText {...props} entry={currentObject} />
@@ -424,7 +424,7 @@ export function getPrerequisitesSkillsText(list: IncreasablePrerequisiteObjects[
       }
       const { id, value } = e;
       return `${Array.isArray(id) ? id.map(a => getWikiEntry(wiki, a)!.name).join(translate(locale, 'info.or')) : getWikiEntry(wiki, id)!.name} ${value}`;
-    }), locale.id).join(', ')}
+    }), locale.id).intercalate(', ')}
   </span> : <React.Fragment></React.Fragment>;
 }
 
@@ -441,7 +441,7 @@ export function getPrerequisitesActivatedSkillsText(list: ActivatablePrerequisit
     }
     const category = getCategoryById(id);
     return `${category === Categories.LITURGIES ? translate(locale, 'knowledgeofliturgicalchant') : translate(locale, 'knowledgeofspell')} ${getWikiEntry(wiki, id)!.name}`;
-  }), locale.id).join(', ')}
+  }), locale.id).intercalate(', ')}
   </span> : <React.Fragment></React.Fragment>;
 }
 

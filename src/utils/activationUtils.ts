@@ -2,18 +2,18 @@ import R from 'ramda';
 import * as Data from '../types/data.d';
 import * as Wiki from '../types/wiki.d';
 import { convertUIStateToActiveObject } from './activatableConvertUtils';
-import { updateArrayItem } from './collectionUtils';
 import { createActivatableDependent } from './createEntryUtils';
+import { List, Maybe, OrderedMap, Record } from './dataUtils';
 import * as DependencyUtils from './dependencyUtils';
 import { flattenPrerequisites } from './flattenPrerequisites';
 import { removeHeroListStateItem, setHeroListStateItem } from './heroStateUtils';
-import { addDynamicPrerequisites } from './prerequisitesUtils';
+import { getGeneratedPrerequisites } from './prerequisitesUtils';
 import { ActivatableReducer, OptionalActivatableReducer } from './reducerUtils';
 import { isActivatableDependentUnused } from './unusedEntryUtils';
 
 export interface ActivatableActivatePayload extends ActivatableActivateOptions {
   wiki: Wiki.WikiActivatable;
-  instance: Data.ActivatableDependent | undefined;
+  instance?: Record<Data.ActivatableDependent>;
 }
 
 export interface ActivatableActivateOptions {
@@ -26,13 +26,17 @@ export interface ActivatableActivateOptions {
   customCost?: number;
 }
 
-type ChangeActive = (activeArr: Data.ActiveObject[]) => Data.ActiveObject[];
+type ChangeActive =
+  (activeArr: List<Record<Data.ActiveObject>>) => List<Record<Data.ActiveObject>>;
 
-const getStaticPrerequisites = (active: Data.ActiveObject) =>
-  (prerequisites: Wiki.LevelAwarePrerequisites): Wiki.AllRequirements[] => {
-    const { tier = 1 } = active;
-    return flattenPrerequisites(prerequisites, tier);
-  };
+const getStaticPrerequisites = (
+  active: Record<Data.ActiveObject>,
+  prerequisites: Wiki.LevelAwarePrerequisites
+): List<Wiki.AllRequirements> =>
+  flattenPrerequisites(
+    prerequisites,
+    Maybe.fromMaybe(1, active.lookup('tier'))
+  );
 
 /**
  * Get matching flattened final static and dynamic prerequisites.
@@ -42,15 +46,18 @@ const getStaticPrerequisites = (active: Data.ActiveObject) =>
  */
 const getCombinedPrerequisites = (
   wikiEntry: Wiki.WikiActivatable,
-  instance: Data.ActivatableDependent,
-  active: Data.ActiveObject,
+  instance: Record<Data.ActivatableDependent>,
+  active: Record<Data.ActiveObject>,
   add: boolean,
-): Wiki.AllRequirements[] => {
-  return R.pipe(
-    getStaticPrerequisites(active),
-    addDynamicPrerequisites(wikiEntry, instance, active, add),
-  )(wikiEntry.prerequisites);
-};
+): List<Wiki.AllRequirements> =>
+  Maybe.fromJust(
+    Maybe.Just(
+      getStaticPrerequisites(active, wikiEntry.get('prerequisites'))
+    )
+      .concat(
+        getGeneratedPrerequisites(wikiEntry, instance, active, add)
+      )
+  );
 
 /**
  * Calculates changed instance.
@@ -58,23 +65,22 @@ const getCombinedPrerequisites = (
  * @param changeActive
  */
 const getChangedInstance = (
-  instance: Data.ActivatableDependent,
+  instance: Record<Data.ActivatableDependent>,
   changeActive: ChangeActive,
-) => {
-  return R.pipe(
+) => (state: Record<Data.HeroDependent>): Record<Data.HeroDependent> => {
+  const changeInstance = R.pipe(
     changeActive,
-    active => ({
-      ...instance,
-      active,
-    }),
-    current => {
-      if (isActivatableDependentUnused(current)) {
-        return removeHeroListStateItem(instance.id);
-      }
+    active => (
+      instance.merge(Record.of({ active })) as
+      Record<Data.ActivatableDependent>
+    ),
+    current =>
+      isActivatableDependentUnused(current)
+      ? removeHeroListStateItem(instance.get('id'))
+      : setHeroListStateItem(instance.get('id'))(current)
+  );
 
-      return setHeroListStateItem(instance.id)(current);
-    },
-  )(instance.active);
+  return Maybe.fromMaybe(state, changeInstance(instance.get('active'))(state));
 };
 
 /**
@@ -86,25 +92,37 @@ const getChangedInstance = (
  * @param add If an entry should be added or removed.
  */
 const changeActiveLength = (
-  getActive: (instance: Data.ActivatableDependent) => Data.ActiveObject,
+  getActive: (instance: Record<Data.ActivatableDependent>) => Record<Data.ActiveObject>,
   changeDependencies: typeof DependencyUtils.addDependencies,
   changeActive: ChangeActive,
   add: boolean,
-): OptionalActivatableReducer => {
-  return (
-    state,
-    wikiEntry,
-    instance = createActivatableDependent(wikiEntry.id),
-  ) => {
-    const active = getActive(instance);
+) => (
+  state: Record<Data.HeroDependent>,
+  wikiEntry: Wiki.WikiActivatable,
+  instance = createActivatableDependent(wikiEntry.get('id')),
+) => {
+  const active = getActive(instance);
 
-    return changeDependencies(
-      getChangedInstance(instance, changeActive)(state),
-      getCombinedPrerequisites(wikiEntry, instance, active, add),
-      instance.id,
-    );
-  };
+  return changeDependencies(
+    getChangedInstance(instance, changeActive)(state),
+    getCombinedPrerequisites(wikiEntry, instance, active, add),
+    instance.get('id'),
+  );
 };
+
+/**
+ * Activates the entry with the given parameters and adds all needed
+ * dependencies.
+ * @param active The `ActiveObject`.
+ */
+export const activateByObject =
+  (active: Record<Data.ActiveObject>): OptionalActivatableReducer =>
+    changeActiveLength(
+      () => active,
+      DependencyUtils.addDependencies,
+      arr => arr.append(active),
+      true
+    );
 
 /**
  * Activates the entry with the given parameters and adds all needed
@@ -117,34 +135,24 @@ export const activate = R.pipe(
 );
 
 /**
- * Activates the entry with the given parameters and adds all needed
- * dependencies.
- * @param active The `ActiveObject`.
- */
-export function activateByObject(
-  active: Data.ActiveObject
-): OptionalActivatableReducer {
-  return changeActiveLength(
-    () => active,
-    DependencyUtils.addDependencies,
-    R.append(active),
-    true
-  );
-}
-
-/**
  * Deactivates the entry with the given parameters and removes all previously
  * needed dependencies.
  * @param index The index of the `ActiveObject` in `obj.active`.
  */
-export function deactivate(index: number): ActivatableReducer {
-  return changeActiveLength(
-    instance => instance.active[index],
-    DependencyUtils.removeDependencies,
-    R.remove(index, 1),
-    false
-  );
-}
+export const deactivate =
+  (index: number): ActivatableReducer => (state, wikiEntry, instance) =>
+    Maybe.fromMaybe(
+      state,
+      instance.get('active').head()
+        .map(head =>
+          changeActiveLength(
+            () => head,
+            DependencyUtils.removeDependencies,
+            arr => arr.deleteAt(index),
+            false
+          )(state, wikiEntry, instance)
+        )
+    );
 
 /**
  * Changes the tier of a specific active entry and adds or removes dependencies
@@ -154,47 +162,52 @@ export function deactivate(index: number): ActivatableReducer {
  */
 export function setTier(index: number, tier: number): ActivatableReducer {
   return (state, wikiEntry, instance) => {
-    const previousActive = instance.active;
-    const target = previousActive[index];
+    const previousActive = instance.get('active');
+    const previousTier = previousActive
+      .subscript(index)
+      .bind(target => target.lookup('tier'));
 
-    const previousTier = target.tier;
+    const active = previousActive.adjust(
+      prev => prev.insert('tier', tier),
+      index
+    );
 
-    const active = updateArrayItem(previousActive)(index, {
-      ...target,
-      tier,
-    });
+    const firstState = setHeroListStateItem(
+      instance.get('id'),
+      instance.insert('active', active),
+      state
+    );
 
-    const firstState = setHeroListStateItem(instance.id)({
-      ...instance,
-      active,
-    })(state);
+    const prerequisites = wikiEntry.get('prerequisites');
 
     if (
-      wikiEntry.prerequisites instanceof Map
-      && typeof previousTier === 'number'
-      && previousTier !== tier) {
-      const prerequisites = flattenPrerequisites(
-        wikiEntry.prerequisites,
-        previousTier,
+      Maybe.isJust(firstState)
+      && prerequisites instanceof OrderedMap
+      && Maybe.isJust(previousTier)
+      && Maybe.fromJust(previousTier) !== tier
+    ) {
+      const flatPrerequisites = flattenPrerequisites(
+        prerequisites,
+        Maybe.fromJust(previousTier),
         tier,
       );
 
-      if (previousTier > tier) {
+      if (Maybe.fromJust(previousTier) > tier) {
         return DependencyUtils.removeDependencies(
-          firstState,
-          prerequisites,
-          instance.id,
+          Maybe.fromJust(firstState),
+          flatPrerequisites,
+          instance.get('id'),
         );
       }
       else {
         return DependencyUtils.addDependencies(
-          firstState,
-          prerequisites,
-          instance.id,
+          Maybe.fromJust(firstState),
+          flatPrerequisites,
+          instance.get('id'),
         );
       }
     }
 
-    return firstState;
+    return state;
   };
 }

@@ -30,7 +30,7 @@ export function SpellsSheetSpellsTableRow(props: SpellsSheetSpellsTableRowProps)
 		let name = spell.name;
 		if (spell.traditions) {
 			const traditionNames = translate(locale, 'spells.view.traditions');
-			name += ` (${sortStrings(spell.traditions.map(e => traditionNames[e - 1]), locale.id).join(', ')})`;
+			name += ` (${sortStrings(spell.traditions.map(e => traditionNames[e - 1]), locale.id).intercalate(', ')})`;
 		}
 		const propertyNames = translate(locale, 'spells.view.properties');
 		return (

@@ -25,7 +25,7 @@ export function WikiSpellTraditions(props: WikiSpellTraditionsProps) {
       <WikiProperty locale={locale} title="info.musictradition">
         {sortStrings(subtradition.map(e => {
           return translate(locale, 'musictraditions')[e - 1];
-        }), locale.id).join(', ')}
+        }), locale.id).intercalate(', ')}
       </WikiProperty>
     );
   }
@@ -36,7 +36,7 @@ export function WikiSpellTraditions(props: WikiSpellTraditionsProps) {
         return e <= translate(locale, 'spells.view.traditions').length;
       }).map(e => {
         return translate(locale, 'spells.view.traditions')[e - 1];
-      }), locale.id).join(', ')}
+      }), locale.id).intercalate(', ')}
     </WikiProperty>
   );
 }

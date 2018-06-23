@@ -21,13 +21,15 @@ export const getNameCost = (
   locale: Maybe<Record<Data.UIMessages>>
 ): Maybe<Record<Data.ActivatableNameCost>> =>
   getCost(obj, wiki, state, costToAdd)
-    .bind(currentCost => getName(obj, wiki, locale)
-      .map(names => names
-        .merge(obj)
-        .merge(Record.of({
-          currentCost
-        }))
-      )
+    .bind(
+      currentCost => getName(obj, wiki, locale)
+        .map(
+          names => names
+            .merge(obj)
+            .merge(Record.of({
+              currentCost
+            }))
+        )
     );
 
 /**
@@ -43,11 +45,13 @@ export const getNameCostForWiki = (
   locale: Maybe<Record<Data.UIMessages>>
 ): Maybe<Record<Data.ActivatableNameCost>> =>
   getCost(obj, wiki)
-    .bind(currentCost => getName(obj, wiki, locale)
-      .map(names => names
-        .merge(obj)
-        .merge(Record.of({
-          currentCost
-        }))
-      )
+    .bind(
+      currentCost => getName(obj, wiki, locale)
+        .map(
+          names => names
+            .merge(obj)
+            .merge(Record.of({
+              currentCost
+            }))
+        )
     );

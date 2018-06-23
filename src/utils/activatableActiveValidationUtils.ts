@@ -26,18 +26,31 @@ const isRequiredByOthers = (
   instance: Record<Data.ActivatableDependent>,
   active: Record<Data.ActiveObject>,
 ): boolean =>
-  instance.get('dependencies').any(e =>
-    isBoolean(e)
-      ? (e && instance.get('active').length() === 1)
-      : ((active as Record<Data.DependencyObject>).equals(e) ||
-        Maybe.isJust(e.lookup('tier')) &&
-        Maybe.isJust(active.lookup('tier')) &&
-        Maybe.fromMaybe(
-          false,
-          e.lookup('active')
-            .map(ea => ea === active.lookup('tier').gte(e.lookup('tier')))
-        ))
-  );
+  instance
+    .get('dependencies')
+    .any(
+      e => isBoolean(e)
+        ? (
+          e && instance
+            .get('active')
+            .length() === 1
+        )
+        : (
+          (active as Record<Data.DependencyObject>).equals(e)
+          || (
+            Maybe.isJust(e.lookup('tier'))
+            && Maybe.isJust(active.lookup('tier'))
+            && Maybe.fromMaybe(
+              false,
+              e.lookup('active')
+                .map(
+                  ea => ea === active
+                    .lookup('tier')
+                    .gte(e.lookup('tier'))
+                )
+            ))
+        )
+    );
 
 /**
  * Even if th
@@ -53,8 +66,6 @@ const getSuperIsRemoveDisabled = (
   hasRequiredMinimumLevel(tiers, minTier) ||
   // Disable if other entries depend on this entry
   isRequiredByOthers(instance, active);
-
-
 
 /**
  * Checks if you can somehow remove an ActiveObject from the given entry.
@@ -74,19 +85,22 @@ const isRemovalDisabledEntrySpecific = (
   return R.pipe<boolean, boolean>(
     getSuperIsRemoveDisabled(tiers, minTier, instance, active)
   )(
-      match<string, boolean>(entry.get('id'))
-        .on(R.both(
+    match<string, boolean>(entry.get('id'))
+      .on(
+        R.both(
           R.equals('ADV_16'),
           () => Maybe.fromMaybe(
             false,
             active.lookup('sid')
-              .bind(sid => state.get('skills')
-                .lookup(sid as string)
+              .bind(
+                sid => state.get('skills')
+                  .lookup(sid as string)
               )
-              .bind(skill =>
-                state.lookup('experienceLevel')
-                  .bind(e => wiki.lookup('experienceLevels')
-                    .bind(slice => slice.lookup(e))
+              .bind(
+                skill => state.lookup('experienceLevel')
+                  .bind(
+                    e => wiki.lookup('experienceLevels')
+                      .bind(slice => slice.lookup(e))
                   )
                   .map(R.pipe(
                     el => el.lookup('maxSkillRating'),
@@ -103,19 +117,24 @@ const isRemovalDisabledEntrySpecific = (
                   ))
               )
           )
-        ), R.T)
-        .on(R.both(
+        ),
+        R.T
+      )
+      .on(
+        R.both(
           R.equals('ADV_17'),
           () => Maybe.fromMaybe(
             false,
             active.lookup('sid')
-              .bind(sid => state.get('combatTechniques')
-                .lookup(sid as string)
+              .bind(
+                sid => state.get('combatTechniques')
+                  .lookup(sid as string)
               )
-              .bind(skill =>
-                state.lookup('experienceLevel')
-                  .bind(e => wiki.lookup('experienceLevels')
-                    .bind(slice => slice.lookup(e))
+              .bind(
+                skill => state.lookup('experienceLevel')
+                  .bind(
+                    e => wiki.lookup('experienceLevels')
+                      .bind(slice => slice.lookup(e))
                   )
                   .map(R.pipe(
                     el => el.lookup('maxCombatTechniqueRating'),
@@ -124,8 +143,11 @@ const isRemovalDisabledEntrySpecific = (
                   ))
               )
           )
-        ), R.T)
-        .on(R.both(
+        ),
+        R.T
+      )
+      .on(
+        R.both(
           [
             'SA_70',
             'SA_255',
@@ -140,18 +162,24 @@ const isRemovalDisabledEntrySpecific = (
           ].includes,
           R.both(
             () => R.lte(
-              getMagicalTraditions(
-                state.get('specialAbilities')
-              ).length(),
+              getMagicalTraditions(state.get('specialAbilities'))
+                .length(),
               1,
             ),
             R.either(
-              () => R.gt(countActiveSkillEntries(state, "spells"), 0),
-              () => R.gt(state.get('cantrips').size(), 0),
+              () => R.gt(countActiveSkillEntries(state, 'spells'), 0),
+              () => R.gt(
+                state.get('cantrips')
+                  .size(),
+                0
+              ),
             )
           )
-        ), R.T)
-        .on(R.both(
+        ),
+        R.T
+      )
+      .on(
+        R.both(
           [
             'SA_86',
             'SA_682',
@@ -173,11 +201,18 @@ const isRemovalDisabledEntrySpecific = (
             'SA_698',
           ].includes,
           R.either(
-            R.always(R.gt(countActiveSkillEntries(state, "spells"), 0)),
-            R.always(R.gt(state.get('cantrips').size(), 0)),
+            R.always(R.gt(countActiveSkillEntries(state, 'spells'), 0)),
+            R.always(R.gt(
+              state.get('cantrips')
+                .size(),
+              0
+            )),
           )
-        ), R.T)
-        .on(R.both(
+        ),
+        R.T
+      )
+      .on(
+        R.both(
           R.equals('SA_164'),
           () => {
             const armedStyleActive = countActiveGroupEntries(wiki, state, 9);
@@ -188,12 +223,18 @@ const isRemovalDisabledEntrySpecific = (
               || armedStyleActive >= 2
               || unarmedStyleActive >= 2;
           }
-        ), R.T)
-        .on(R.both(
+        ),
+        R.T
+      )
+      .on(
+        R.both(
           R.equals('SA_266'),
           () => R.gte(countActiveGroupEntries(wiki, state, 13), 2),
-        ), R.T)
-        .on(R.both(
+        ),
+        R.T
+      )
+      .on(
+        R.both(
           ['SA_623', 'SA_625', 'SA_632'].includes,
           () => Maybe.fromMaybe(
             false,
@@ -201,15 +242,18 @@ const isRemovalDisabledEntrySpecific = (
               wiki.get('specialAbilities'),
               state.get('specialAbilities'),
             )
-              .bind(blessedTradition =>
-                state.lookup('liturgicalChants')
+              .bind(
+                blessedTradition => state.lookup('liturgicalChants')
                   .map(e => e.elems())
                   .map(R.pipe(
                     (list: List<Record<Data.ActivatableSkillDependent>>) =>
                       list.filter(e => e.get('active')),
-                    Maybe.mapMaybe(e =>
-                      wiki.lookup('liturgicalChants')
-                        .bind(slice => e.lookup('id').bind(slice.lookup))
+                    Maybe.mapMaybe(
+                      e => wiki.lookup('liturgicalChants')
+                        .bind(
+                          slice => e.lookup('id')
+                            .bind(slice.lookup)
+                        )
                     ),
                     list => list.any(e => {
                       return !isOwnTradition(blessedTradition, e);
@@ -217,8 +261,11 @@ const isRemovalDisabledEntrySpecific = (
                   ))
               )
           )
-        ), R.T)
-        .on(R.both(
+        ),
+        R.T
+      )
+      .on(
+        R.both(
           () => Maybe.fromJust<ActivatableCategory>(
             entry.lookup('category')
           ) === Categories.SPECIAL_ABILITIES,
@@ -226,20 +273,23 @@ const isRemovalDisabledEntrySpecific = (
             isStyleValidToRemove(state, entry as Record<Wiki.SpecialAbility>),
             false,
           )
-        ), R.T)
-        .otherwise(() =>
-          instance.get('dependencies').all(e => {
-            if (typeof e === 'object' && Maybe.isJust(e.lookup('origin'))) {
+        ),
+        R.T
+      )
+      .otherwise(
+        () => instance.get('dependencies')
+          .all(dep => {
+            if (typeof dep === 'object' && Maybe.isJust(dep.lookup('origin'))) {
               return Maybe.fromMaybe(
                 true,
                 getWikiEntry<Wiki.WikiActivatable>(
                   wiki,
-                  Maybe.fromJust(e.lookup('origin') as Just<string>)
+                  Maybe.fromJust(dep.lookup('origin') as Just<string>)
                 )
-                  .bind(origin => {
+                  .bind(originEntry => {
                     return flattenPrerequisites(
-                      origin.get('prerequisites'),
-                      Maybe.fromMaybe(1, origin.lookup('tiers')),
+                      originEntry.get('prerequisites'),
+                      Maybe.fromMaybe(1, originEntry.lookup('tiers')),
                     )
                       .find((r): r is Wiki.AllRequirementObjects => {
                         if (typeof r === 'string') {
@@ -247,15 +297,15 @@ const isRemovalDisabledEntrySpecific = (
                         }
                         else {
                           const id = r.get('id');
-                          const origin = e.lookup('origin');
+                          const origin = dep.lookup('origin');
 
                           return typeof id !== 'string'
                             && Maybe.isJust(origin)
                             && id.elem(Maybe.fromJust(origin));
                         }
                       })
-                      .map(req =>
-                        (req.get('id') as List<string>)
+                      .map(
+                        req => (req.get('id') as List<string>)
                           .foldl(
                             acc => e => validateObject(
                               wiki,
@@ -271,32 +321,36 @@ const isRemovalDisabledEntrySpecific = (
                   })
               );
             }
-            else if (typeof e === 'object') {
-              const eSid = e.lookup('sid');
+            else if (typeof dep === 'object') {
+              const eSid = dep.lookup('sid');
 
               if (Maybe.isJust(eSid) && Maybe.fromJust(eSid) instanceof List) {
                 const list = Maybe.fromJust(eSid) as List<number>;
 
-                const sid = active.lookup('sid').bind<boolean>(sid => {
-                  if (list.elem(sid as number)) {
-                    return getActiveSelections(Maybe.Just(instance))
-                      .map(list => !list.any(n =>
-                        n !== sid && list.elem(n as number)
-                      ));
-                  }
-                  else {
-                    return Maybe.Nothing();
-                  }
-                });
+                const maybeSid = active.lookup('sid')
+                  .bind<boolean>(sid => {
+                    if (list.elem(sid as number)) {
+                      return getActiveSelections(Maybe.Just(instance))
+                        .map(
+                          activeSelections => !activeSelections.any(
+                            n => n !== sid && activeSelections.elem(n as number)
+                          )
+                        );
+                    }
+                    else {
+                      return Maybe.Nothing();
+                    }
+                  });
 
-                if (Maybe.isJust(sid)) {
-                  return Maybe.fromJust(sid);
+                if (Maybe.isJust(maybeSid)) {
+                  return Maybe.fromJust(maybeSid);
                 }
               }
             }
 
             return true;
-        }))
+          })
+      )
   );
 };
 
@@ -329,25 +383,29 @@ export function getMinTier(
   sid: Maybe<string | number>,
 ): Maybe<number> {
   return R.pipe(
-    dependencies.foldl<Maybe<number>>(min => dependency =>
-      Maybe.ensure(
-        (e): e is Record<Data.DependencyObject> => isObject(e),
-        dependency
-      )
-        .bind(e =>
-          e.lookup('tier').bind(Maybe.ensure(
-            tier => min.alt(Maybe.Just(0)).lt(Maybe.Just(tier))
-              && Maybe.isJust(e.lookup('sid'))
-              && e.lookup('sid').equals(sid)
-          ))
+    dependencies.foldl<Maybe<number>>(
+      min => dependency =>
+        Maybe.ensure(
+          isObject as (e: Data.ActivatableDependency) => e is Record<Data.DependencyObject>,
+          dependency
         )
-        .alt(min)
+          .bind(
+            e => e.lookup('tier')
+              .bind(Maybe.ensure(
+                tier => min.alt(Maybe.Just(0))
+                  .lt(Maybe.Just(tier))
+                  && Maybe.isJust(e.lookup('sid'))
+                  && e.lookup('sid')
+                    .equals(sid)
+              ))
+          )
+          .alt(min)
     )
   )(
     match<string, Maybe<number>>(obj.get('id'))
       .on('ADV_58', () => Maybe.ensure(
         R.lt(3),
-        countActiveSkillEntries(state, "spells"),
+        countActiveSkillEntries(state, 'spells'),
       )
         .map(R.add(-3)))
       .on('ADV_79', () => getSermonsAndVisionsMinTier(
@@ -389,10 +447,14 @@ export const getMaxTier = (
   id: string,
 ) => {
   return match<string, Maybe<number>>(id)
-    .on(R.both(
-      R.equals('SA_667'),
-      R.always(Maybe.isJust(state.lookup('pact')))
-    ), () => state.lookup('pact').bind(pact => pact.lookup('level')))
+    .on(
+      R.both(
+        R.equals('SA_667'),
+        R.always(Maybe.isJust(state.lookup('pact')))
+      ),
+      () => state.lookup('pact')
+        .bind(pact => pact.lookup('level'))
+    )
     .otherwise(() => !(prerequisites instanceof List) ? validateTier(
       wiki,
       state,
@@ -423,8 +485,8 @@ export const isRemovalOrChangeDisabled = (
     wiki,
     obj.get('id')
   )
-    .bind(wikiEntry =>
-      getHeroStateListItem<Record<Data.ActivatableDependent>>(
+    .bind(
+      wikiEntry => getHeroStateListItem<Record<Data.ActivatableDependent>>(
         obj.get('id')
       )(state)
         .map(instance => {

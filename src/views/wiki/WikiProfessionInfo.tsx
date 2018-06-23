@@ -2,18 +2,18 @@ import { difference } from 'lodash';
 import * as React from 'react';
 import { Categories } from '../../constants/Categories';
 import { CantripsSelection, CombatTechniquesSecondSelection, CombatTechniquesSelection, CursesSelection, LanguagesScriptsSelection, RaceRequirement, SexRequirement, SkillsSelection, SpecialisationSelection } from '../../types/data.d';
-import { Increasable, IncreasableId, Profession, ProfessionVariant, UIMessages, NameBySex } from '../../types/view.d';
-import { Attribute, Book, Cantrip, LiturgicalChant, Race, Skill, SpecialAbility, Spell, TerrainKnowledgeSelection, ProfessionSelections, Blessing, SpecializationSelection, RemoveSpecializationSelection, RemoveCombatTechniquesSelection } from '../../types/wiki';
+import { UIKey } from '../../types/ui';
+import { Increasable, IncreasableId, NameBySex, Profession, ProfessionVariant, UIMessages } from '../../types/view.d';
+import { Attribute, Blessing, Book, Cantrip, LiturgicalChant, ProfessionSelections, Race, RemoveCombatTechniquesSelection, RemoveSpecializationSelection, Skill, SpecialAbility, SpecializationSelection, Spell, TerrainKnowledgeSelection } from '../../types/wiki';
 import { getSelectOptionName } from '../../utils/ActivatableUtils';
 import { sortObjects, sortStrings } from '../../utils/FilterSortUtils';
 import { translate } from '../../utils/I18n';
+import { getNumericId } from '../../utils/IDUtils';
 import { isRaceRequirement, isRequiringIncreasable, isSexRequirement } from '../../utils/RequirementUtils';
+import { isRemoveCombatTechniquesSelection, isRemoveSpecializationSelection } from '../../utils/WikiUtils';
 import { WikiSource } from './elements/WikiSource';
 import { WikiBoxTemplate } from './WikiBoxTemplate';
 import { WikiProperty } from './WikiProperty';
-import { getNumericId } from '../../utils/IDUtils';
-import { UIKey } from '../../types/ui';
-import { isRemoveSpecializationSelection, isRemoveCombatTechniquesSelection } from '../../utils/WikiUtils';
 
 export interface WikiProfessionInfoProps {
   attributes: Map<string, Attribute>;
@@ -217,7 +217,7 @@ function getSpecializationSelection(
     const selectionArr = selection.sid.map(e => skills.get(e)!.name);
     const sortedArr = sortStrings(selectionArr, locale.id);
     const separator = translate(locale, 'info.specialabilitiesspecializationseparator');
-    value = sortedArr.join(separator);
+    value = sortedArr.intercalate(separator);
   }
   else {
     value = skills.get(selection.sid)!.name;
@@ -297,7 +297,7 @@ function getCombatTechniquesSelection(
   const counter: keyof UIMessages = 'info.combattechniquesselectioncounter';
   const firstCounter = translate(locale, counter)[selection.amount - 1];
   const firstValue = selection.value + 6;
-  const entryList = sortStrings(selection.sid, locale.id).join(', ');
+  const entryList = sortStrings(selection.sid, locale.id).intercalate(', ');
 
   let value: string;
 
@@ -348,7 +348,7 @@ function getTerrainKnowledgeSelection(
 
   const last = optionsString.pop();
 
-  const joinedFirst = optionsString.join(', ');
+  const joinedFirst = optionsString.intercalate(', ');
   const joined = `${joinedFirst} ${translate(locale, 'info.or')} ${last}`;
 
   return `${terrainKnowledge.name} (${joined})`;
@@ -378,7 +378,7 @@ function getSpells(
     const options = cantripsSelection.sid.map(e => cantrips.get(e)!.name);
     const sortedOptions = sortStrings(options, locale.id);
 
-    cantripsString = `${precedingText}${sortedOptions.join(', ')}, `;
+    cantripsString = `${precedingText}${sortedOptions.intercalate(', ')}, `;
   }
 
   const spellsArr = profession.spells.map(e => `${spells.get(e.id)!.name} ${e.value}`);
@@ -388,7 +388,7 @@ function getSpells(
     return;
   }
 
-  return `${cantripsString}${sortedSpells.join(', ')}`;
+  return `${cantripsString}${sortedSpells.intercalate(', ')}`;
 }
 
 function getLiturgicalChants(
@@ -429,7 +429,7 @@ function getLiturgicalChants(
     ...liturgicalChantsArr
   ], locale.id);
 
-  return sortedList.length > 0 ? sortedList.join(', ') : undefined;
+  return sortedList.length > 0 ? sortedList.intercalate(', ') : undefined;
 }
 
 interface CombinedSpell {
@@ -859,7 +859,7 @@ function VariantSpecializationSelection(props: VariantSpecializationSelectionPro
       if (typeof variantSelection.sid === 'object') {
         const skillList = variantSelection.sid.map(e => skills.get(e)!.name);
         const separator = translate(locale, separatorKey);
-        skillText = sortStrings(skillList, locale.id).join(separator);
+        skillText = sortStrings(skillList, locale.id).intercalate(separator);
       }
       else {
         skillText = skills.get(variantSelection.sid)!.name;
@@ -932,7 +932,7 @@ function VariantCombatTechniquesSelection(props: VariantCombatTechniquesSelectio
           const separator = translate(locale, 'info.or');
           const instead = translate(locale, 'info.variantsinsteadof');
 
-          const joinedList = sortStrings(selection.sid, locale.id).join(separator);
+          const joinedList = sortStrings(selection.sid, locale.id).intercalate(separator);
 
           return (
             <span>
@@ -942,7 +942,7 @@ function VariantCombatTechniquesSelection(props: VariantCombatTechniquesSelectio
         }
       }
       else {
-        const newString = `${translate(locale, 'info.combattechniquesselection', translate(locale, 'info.combattechniquesselectioncounter')[variantSelection.amount - 1], variantSelection.value + 6)}${sortStrings(variantSelection.sid, locale.id).join(', ')}`;
+        const newString = `${translate(locale, 'info.combattechniquesselection', translate(locale, 'info.combattechniquesselectioncounter')[variantSelection.amount - 1], variantSelection.value + 6)}${sortStrings(variantSelection.sid, locale.id).intercalate(', ')}`;
         return (
           <span>
             <span>{newString}</span>
@@ -1021,7 +1021,7 @@ function VariantSkillsSelection(props: VariantSkillsSelectionProps): JSX.Element
 
     const main = translate(locale, 'info.liturgicalchants');
 
-    const liturgicalChantsString = `; ${main}: ${sortedLiturgicalChants.join(', ')}`;
+    const liturgicalChantsString = `; ${main}: ${sortedLiturgicalChants.intercalate(', ')}`;
 
     return (
       <span>{combinedList}{liturgicalChantsString}</span>

@@ -65,15 +65,32 @@ export const getHeroStateListKeyById = (
     .otherwise(Maybe.Nothing);
 };
 
-export const getHeroStateListItem =
-  <D extends Dependent = Dependent>(id: string) =>
-    (state: Record<HeroDependent>): Maybe<D> =>
-      getHeroStateListKeyById(id)
-        .bind(state.lookup)
-        .bind(slice => slice instanceof OrderedMap
-          ? slice.lookup(id) as any
-          : Maybe.Nothing()
-        );
+export function getHeroStateListItem<D extends Dependent = Dependent>(
+  id: string,
+): (state: Record<HeroDependent>) => Maybe<D>;
+export function getHeroStateListItem<D extends Dependent = Dependent>(
+  id: string,
+  state: Record<HeroDependent>
+): Maybe<D>;
+export function getHeroStateListItem<D extends Dependent = Dependent>(
+  id: string,
+  state?: Record<HeroDependent>
+): Maybe<D> | ((state: Record<HeroDependent>) => Maybe<D>) {
+  const resultFn = (x1: Record<HeroDependent>): Maybe<D> =>
+    getHeroStateListKeyById(id)
+      .bind(x1.lookup)
+      .bind(slice => slice instanceof OrderedMap
+        ? slice.lookup(id) as any
+        : Maybe.Nothing()
+      );
+
+  if (arguments.length === 1) {
+    return resultFn;
+  }
+  else {
+    return resultFn(state!);
+  }
+}
 
 export const getHeroStateListItemOr = <D extends Dependent = Dependent>(
   id: string,
@@ -82,14 +99,50 @@ export const getHeroStateListItemOr = <D extends Dependent = Dependent>(
   (state: Record<HeroDependent>): D =>
     Maybe.fromMaybe(create(id), getHeroStateListItem<D>(id)(state));
 
-export const setHeroListStateItem =
-  (id: string) => (item: Dependent) =>
-    (state: Record<HeroDependent>): Maybe<Record<HeroDependent>> =>
-      getHeroStateListKeyById(id)
-        .map(state.alter(slice => slice.map(slice =>
-          (slice as OrderedMap<string, Dependent>)
-            .insert(id, item)
-        ) as RecordKey<HeroStateListKey, HeroDependent>));
+type SetHeroListState = Maybe<Record<HeroDependent>>;
+type SetHeroListStateFn1 = (state: Record<HeroDependent>) => SetHeroListState;
+type SetHeroListStateFn2 = (item: Dependent) => SetHeroListStateFn1;
+
+export function setHeroListStateItem(
+  id: string
+): SetHeroListStateFn2;
+export function setHeroListStateItem(
+  id: string,
+  item: Dependent
+): SetHeroListStateFn1;
+export function setHeroListStateItem(
+  id: string,
+  item: Dependent,
+  state: Record<HeroDependent>
+): SetHeroListState;
+export function setHeroListStateItem(
+  id: string,
+  item?: Dependent,
+  state?: Record<HeroDependent>
+): SetHeroListState | SetHeroListStateFn1 | SetHeroListStateFn2 {
+  const resultFn = (
+    id: string,
+    item: Dependent,
+    state: Record<HeroDependent>
+  ) => getHeroStateListKeyById(id)
+    .map(
+      state.alter(slice => slice.map(slice =>
+        (slice as OrderedMap<string, Dependent>)
+          .insert(id, item)
+      ) as RecordKey<HeroStateListKey, HeroDependent>)
+    );
+
+  if (arguments.length === 3) {
+    return resultFn(id, item!, state!);
+  }
+  else if (arguments.length === 2) {
+    return (state: Record<HeroDependent>) => resultFn(id, item!, state);
+  }
+  else {
+    return (item: Dependent) =>
+      (state: Record<HeroDependent>) => resultFn(id, item, state);
+  }
+}
 
 export const removeHeroListStateItem = (id: string) =>
   (state: Record<HeroDependent>): Maybe<Record<HeroDependent>> =>
