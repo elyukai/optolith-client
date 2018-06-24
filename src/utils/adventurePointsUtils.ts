@@ -1,7 +1,9 @@
-import { WikiState } from '../reducers/wikiReducer';
+import R from 'ramda';
 import { AdventurePointsObject } from '../selectors/adventurePointsSelectors';
 import * as Data from '../types/data.d';
+import { Skill, WikiAll } from '../types/wiki';
 import { getActiveWithNoCustomCost } from './activatableCostUtils';
+import { List, Maybe, OrderedMap, Record, Tuple } from './dataUtils';
 import { exists } from './exists';
 import { getMagicalTraditions } from './traditionUtils';
 
@@ -36,10 +38,14 @@ export const getDisAdvantagesSubtypeMax = (
   isMagical: boolean,
 ): number => {
   if (isMagical) {
-    const traditionActive = getMagicalTraditions(state.specialAbilities)[0];
+    const maybeTradition = getMagicalTraditions(state.specialAbilities).head();
     const semiTraditionIds = ['SA_677', 'SA_678', 'SA_679', 'SA_680'];
 
-    if (traditionActive && semiTraditionIds.includes(traditionActive.id)) {
+    const maybeIsSemiTradition = maybeTradition.map(
+      traditionActive => semiTraditionIds.includes(traditionActive.get('id'))
+    );
+
+    if (maybeIsSemiTradition.equals(Maybe.Just(true))) {
       return 25;
     }
   }
@@ -133,128 +139,306 @@ export const areSufficientAPAvailableForDisAdvantage = (
 };
 
 const getPrinciplesObligationsDiff = (
-  entries: Data.ActiveViewObject[],
-  state: Map<string, Data.ActivatableInstance>,
-  wiki: WikiState,
+  entries: List<Record<Data.ActiveViewObject>>,
+  state: OrderedMap<string, Record<Data.ActivatableDependent>>,
+  wiki: Record<WikiAll>,
   sourceId: string,
 ): number => {
-  if (entries.some(e => e.id === sourceId)) {
-    const { active } = state.get(sourceId);
+  if (entries.any(e => e.get('id') === sourceId)) {
+    return Maybe.fromMaybe(
+      0,
+      state.lookup(sourceId)
+        .bind(
+          entry => {
+            const active = entry.get('active');
 
-    const maxCurrentTier = active.reduce((a, b) => {
-      const isNotCustom = b.cost === undefined;
-      if (typeof b.tier === 'number' && b.tier > a && isNotCustom) {
-        return b.tier;
-      }
-      return a;
-    }, 0);
+            const maxCurrentTier = active.foldl(
+              a => b => {
+                const tier = b.lookup('tier');
 
-    // next lower tier
-    const subMaxCurrentTier = active.reduce((a, b) => {
-      const isNotCustom = b.cost === undefined;
-      if (
-        typeof b.tier === 'number' &&
-        b.tier > a &&
-        b.tier < maxCurrentTier &&
-        isNotCustom
-      ) {
-        return b.tier;
-      }
-      return a;
-    }, 0);
+                return Maybe.isJust(tier)
+                  && Maybe.fromJust(tier) > a
+                  && Maybe.isNothing(b.lookup('cost'))
+                    ? Maybe.fromJust(tier)
+                    : a;
+              },
+              0
+            );
 
-    const amountMaxTiers = active.reduce((a, b) => {
-      if (maxCurrentTier === b.tier) {
-        return a + 1;
-      }
-      return a;
-    }, 0);
+            // Next lower tier
+            const subMaxCurrentTier = active.foldl(
+              a => b => {
+                const tier = b.lookup('tier');
 
-    const baseCost = wiki.disadvantages.get(sourceId).cost as number;
-    const amountDiff = amountMaxTiers > 1 ? maxCurrentTier * -baseCost : 0;
-    const levelDiff = subMaxCurrentTier * -baseCost;
+                return Maybe.isJust(tier)
+                  && Maybe.fromJust(tier) > a
+                  && Maybe.fromJust(tier) < maxCurrentTier
+                  && Maybe.isNothing(b.lookup('cost'))
+                    ? Maybe.fromJust(tier)
+                    : a;
+              },
+              0
+            );
 
-    return amountDiff + levelDiff;
+            const justMaxCurrentTier = Maybe.Just(maxCurrentTier);
+
+            const amountMaxTiers = active.foldl(
+              a => b => b.lookup('tier').equals(justMaxCurrentTier) ? a + 1 : a,
+              0
+            );
+
+            const baseCost = wiki.get('disadvantages')
+              .lookup(sourceId)
+              .map(e => e.get('cost') as number);
+
+            const amountDiff = amountMaxTiers > 1
+              ? baseCost.map(base => maxCurrentTier * -base)
+              : Maybe.Just(0);
+
+            const levelDiff = baseCost.map(base => subMaxCurrentTier * -base);
+
+            return amountDiff.bind(
+              amount => levelDiff.map(level => amount + level)
+            );
+          },
+        )
+    );
   }
-
-  return 0;
+  else {
+    return 0;
+  }
 }
 
 const getPropertyOrAspectKnowledgeDiff = (
-  state: Map<string, Data.ActivatableInstance>,
-  apArr: number[],
+  state: OrderedMap<string, Record<Data.ActivatableDependent>>,
+  apArr: List<number>,
+): number =>
+  Maybe.fromMaybe(
+    0,
+    state.lookup('SA_72')
+      .map(entry => {
+        const active = entry.get('active');
+
+        const actualAPSum = apArr.foldli(
+          a => b => i => i + 1 < active.length() ? a + b : a,
+          0
+        );
+
+        // Sum of displayed AP values for entries (not actual sum)
+        const displayedAPSumForAll =
+          Maybe.fromMaybe(0, apArr.last()) * (active.length() - 1);
+
+        return actualAPSum - displayedAPSumForAll;
+      })
+  );
+
+const getPersonalityFlawsDiff = (
+  entries: List<Record<Data.ActiveViewObject>>,
+  state: OrderedMap<string, Record<Data.ActivatableDependent>>,
+  wiki: Record<WikiAll>,
 ): number => {
-  const { active } = state.get('SA_72');
+  if (entries.any(e => e.get('id') === 'DISADV_33')) {
+    return Maybe.fromMaybe(
+      0,
+      state.lookup('DISADV_33')
+        .map(
+          entry => {
+            const active = entry.get('active');
 
-  const actualAPSum = apArr.reduce((a, b, i) => {
-    return i + 1 < active.length ? a + b : a;
-  }, 0);
+            const numberOfEntriesWithMultiplePossible =
+              active.filter(
+                e => e.lookup('sid').equals(Maybe.Just(7))
+                  && Maybe.isNothing(e.lookup('cost'))
+              )
+                .length();
 
-  // Sum of displayed AP values for entries (not actual sum)
-  const displayedAPSumForAll = apArr[active.length - 1] * (active.length - 1);
+            if (numberOfEntriesWithMultiplePossible > 1) {
+              return Maybe.fromMaybe(
+                0,
+                wiki.get('disadvantages').lookup('DISADV_33')
+                  .bind(wikiEntry => wikiEntry.lookup('select'))
+                  .bind(select => select.find(e => e.get('id') === 7))
+                  .bind(selection => selection.lookup('cost'))
+                  .map(cost => -cost)
+              );
+            }
 
-  return actualAPSum - displayedAPSumForAll;
-}
+            return 0;
+          }
+        )
+    );
+  }
+  else {
+    return 0;
+  }
+};
+
+const getBadHabitsDiff = (
+  entries: List<Record<Data.ActiveViewObject>>,
+  state: OrderedMap<string, Record<Data.ActivatableDependent>>,
+  wiki: Record<WikiAll>,
+): number => {
+  if (entries.any(e => e.get('id') === 'DISADV_36')) {
+    return Maybe.fromMaybe(
+      0,
+      state.lookup('DISADV_36')
+        .map(
+          entry => {
+            const active = entry.get('active');
+
+            if (getActiveWithNoCustomCost(active).length() > 3) {
+              return Maybe.fromMaybe(
+                0,
+                wiki.get('disadvantages').lookup('DISADV_36')
+                  .map(wikiEntry => wikiEntry.get('cost'))
+                  .bind(Maybe.ensure(isNumber))
+                  .map(cost => cost * -3)
+              );
+            }
+
+            return 0;
+          }
+        )
+    );
+  }
+  else {
+    return 0;
+  }
+};
+
+const getSkillSpecializationsDiff = (
+  entries: List<Record<Data.ActiveViewObject>>,
+  state: OrderedMap<string, Record<Data.ActivatableDependent>>,
+  wiki: Record<WikiAll>,
+): number => {
+  if (entries.any(e => e.get('id') === 'SA_9')) {
+    return Maybe.fromMaybe(
+      0,
+      state.lookup('SA_9')
+        .map(
+          entry => {
+            const active = entry.get('active');
+
+            // Count how many specializations are for the same skill
+            const sameSkill = active.foldl<OrderedMap<string, number>>(
+              acc => current => {
+                const altered = current.lookup('sid')
+                  .bind(Maybe.ensure(isString))
+                  .map(acc.alter(sum => sum.map(R.inc).alt(Maybe.Just(1))))
+
+                return Maybe.isJust(altered) ? Maybe.fromJust(altered) : acc;
+              },
+              new OrderedMap()
+            );
+
+            // Return the accumulated value, otherwise 0.
+            const getFlatSkillDone =
+              (accMap: OrderedMap<string, number>, sid: string) =>
+                Maybe.fromMaybe(0, accMap.lookup(sid));
+
+            // Calculates the diff for a single skill specialization
+            const getSingleDiff = (
+              skill: Record<Skill>,
+              accMap: OrderedMap<string, number>,
+              sid: string,
+              counter: number,
+            ) =>
+              skill.get('ic') * (getFlatSkillDone(accMap, sid) + 1 - counter);
+
+            /*
+             * Iterates through the counter and sums up all cost differences for
+             * each specialization.
+             *
+             * It keeps track of how many specializations have been already
+             * taken into account.
+             */
+            const skillDone =
+              active.foldl<Tuple<number, OrderedMap<string, number>>>(
+                acc => current => {
+                  const altered = current.lookup('sid')
+                    .bind(Maybe.ensure(isString))
+                    .bind(sid =>
+                      sameSkill.lookup(sid)
+                        .map(counter => {
+                          const accMap = Tuple.snd(acc);
+                          if (
+                            !accMap.member(sid)
+                            || accMap.lookup(sid).lt(Maybe.Just(counter))
+                          ) {
+                            const maybeSkill = wiki.get('skills').lookup(sid);
+
+                            return new Tuple(
+                              Maybe.fromMaybe(
+                                Tuple.fst(acc),
+                                maybeSkill.map(skill =>
+                                  Tuple.fst(acc)
+                                  + getSingleDiff(skill, accMap, sid, counter)
+                                )
+                              ),
+                              accMap.alter(
+                                sum => sum.map(R.inc).alt(Maybe.Just(1)),
+                                sid
+                              )
+                            );
+                          }
+
+                          return acc;
+                        })
+                    );
+
+                  return Maybe.isJust(altered) ? Maybe.fromJust(altered) : acc;
+                },
+                new Tuple(0, new OrderedMap())
+              );
+
+            return Tuple.fst(skillDone);
+          }
+        )
+    );
+  }
+  else {
+    return 0;
+  }
+};
+
+const getPropertyKnowledgeDiff = (
+  entries: List<Record<Data.ActiveViewObject>>,
+  state: OrderedMap<string, Record<Data.ActivatableDependent>>,
+): number => {
+  if (entries.any(e => e.get('id') === 'SA_72')) {
+    return getPropertyOrAspectKnowledgeDiff(state, List.of(10, 20, 40));
+  }
+  else {
+    return 0;
+  }
+};
+
+const getAspectKnowledgeDiff = (
+  entries: List<Record<Data.ActiveViewObject>>,
+  state: OrderedMap<string, Record<Data.ActivatableDependent>>,
+): number => {
+  if (entries.any(e => e.get('id') === 'SA_87')) {
+    return getPropertyOrAspectKnowledgeDiff(state, List.of(15, 25, 45));
+  }
+  else {
+    return 0;
+  }
+};
 
 export function getAdventurePointsSpentDifference(
-  entries: Data.ActiveViewObject[],
-  state: Map<string, Data.ActivatableInstance>,
-  wiki: WikiState,
+  entries: List<Record<Data.ActiveViewObject>>,
+  state: OrderedMap<string, Record<Data.ActivatableDependent>>,
+  wiki: Record<WikiAll>,
 ): number {
-  let diff = 0;
+  const sumAdventurePointsSpentDifference = R.pipe(
+    R.add(getPrinciplesObligationsDiff(entries, state, wiki, 'DISADV_34')),
+    R.add(getPrinciplesObligationsDiff(entries, state, wiki, 'DISADV_50')),
+    R.add(getPersonalityFlawsDiff(entries, state, wiki)),
+    R.add(getBadHabitsDiff(entries, state, wiki)),
+    R.add(getSkillSpecializationsDiff(entries, state, wiki)),
+    R.add(getPropertyKnowledgeDiff(entries, state)),
+    R.add(getAspectKnowledgeDiff(entries, state)),
+  );
 
-  diff += getPrinciplesObligationsDiff(entries, state, wiki, 'DISADV_34');
-  diff += getPrinciplesObligationsDiff(entries, state, wiki, 'DISADV_50');
-
-  if (entries.some(e => e.id === 'DISADV_33')) {
-    const { active } = state.get('DISADV_33');
-    if (active.filter(e => e.sid === 7 && e.cost === undefined).length > 1) {
-      diff -= wiki.disadvantages.get('DISADV_33').select
-        .find(e => e.id === 7).cost;
-    }
-  }
-
-  if (entries.some(e => e.id === 'DISADV_36')) {
-    const { active } = state.get('DISADV_36');
-    if (getActiveWithNoCustomCost(active).length > 3) {
-      diff -= (wiki.disadvantages.get('DISADV_36').cost as number) * 3;
-    }
-  }
-
-  if (entries.some(e => e.id === 'SA_9')) {
-    const { active } = state.get('SA_9');
-    const sameSkill = new Map<string, number>();
-    const skillDone = new Map<string, number>();
-
-    for (const { sid } of active) {
-      const id = sid as string;
-      if (sameSkill.has(id)) {
-        sameSkill.set(id, sameSkill.get(id) + 1);
-      }
-      else {
-        sameSkill.set(id, 1);
-      }
-    }
-
-    for (const { sid } of active) {
-      const id = sid as string;
-      const counter = sameSkill.get(id);
-      if (!skillDone.has(id) || skillDone.get(id) < counter) {
-        const current = skillDone.get(id) || 0;
-        const skill = wiki.skills.get(id);
-        diff += skill.ic * (current + 1 - counter);
-        skillDone.set(id, current + 1);
-      }
-    }
-  }
-
-  if (entries.some(e => e.id === 'SA_72')) {
-    diff += getPropertyOrAspectKnowledgeDiff(state, [10, 20, 40]);
-  }
-
-  if (entries.some(e => e.id === 'SA_87')) {
-    diff += getPropertyOrAspectKnowledgeDiff(state, [15, 25, 45]);
-  }
-
-  return diff;
+  return sumAdventurePointsSpentDifference(0);
 }
