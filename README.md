@@ -14,6 +14,7 @@ This repository only contains the code for this app, but you can the bug tracker
 
 Currently there is no need to help coding, so it would be great if you just test the app and provide feedback! But it might be in the future, please check out [respective file](CONTRIBUTING.md) then!
 
+
 ## Development
 
 ### Initial start
@@ -26,3 +27,9 @@ Please call the following steps initially:
 
 
 ### Release
+
+### Hints
+
+Tested with:
+* nodejs (8.11.3)
+* npm (5.6.0)
