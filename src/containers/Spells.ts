@@ -33,34 +33,34 @@ function mapStateToProps(state: AppState) {
 function mapDispatchToProps(dispatch: Dispatch<Action>) {
 	return {
 		addPoint(id: string) {
-			dispatch(SpellsActions._addPoint(id));
+			dispatch<any>(SpellsActions._addPoint(id));
 		},
 		addToList(id: string) {
-			dispatch(SpellsActions._addToList(id));
+			dispatch<any>(SpellsActions._addToList(id));
 		},
 		addCantripToList(id: string) {
-			dispatch(SpellsActions._addCantripToList(id));
+			dispatch<any>(SpellsActions._addCantripToList(id));
 		},
 		removePoint(id: string) {
-			dispatch(SpellsActions._removePoint(id));
+			dispatch<any>(SpellsActions._removePoint(id));
 		},
 		removeFromList(id: string) {
-			dispatch(SpellsActions._removeFromList(id));
+			dispatch<any>(SpellsActions._removeFromList(id));
 		},
 		removeCantripFromList(id: string) {
-			dispatch(SpellsActions._removeCantripFromList(id));
+			dispatch<any>(SpellsActions._removeCantripFromList(id));
 		},
 		setSortOrder(sortOrder: string) {
-			dispatch(SpellsActions._setSortOrder(sortOrder));
+			dispatch<any>(SpellsActions._setSortOrder(sortOrder));
 		},
 		switchActiveItemHints() {
-			dispatch(ConfigActions._switchEnableActiveItemHints());
+			dispatch<any>(ConfigActions._switchEnableActiveItemHints());
 		},
 		setFilterText(filterText: string) {
-			dispatch(SpellsActions.setActiveFilterText(filterText));
+			dispatch<any>(SpellsActions.setActiveFilterText(filterText));
 		},
 		setInactiveFilterText(filterText: string) {
-			dispatch(SpellsActions.setInactiveFilterText(filterText));
+			dispatch<any>(SpellsActions.setInactiveFilterText(filterText));
 		},
 	};
 }

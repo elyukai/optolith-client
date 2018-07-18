@@ -26,16 +26,16 @@ function mapStateToProps(state: AppState) {
 function mapDispatchToProps(dispatch: Dispatch<Action>) {
 	return {
 		addPoint(id: string) {
-			dispatch(CombatTechniquesActions._addPoint(id));
+			dispatch<any>(CombatTechniquesActions._addPoint(id));
 		},
 		removePoint(id: string) {
-			dispatch(CombatTechniquesActions._removePoint(id));
+			dispatch<any>(CombatTechniquesActions._removePoint(id));
 		},
 		setSortOrder(sortOrder: string) {
-			dispatch(CombatTechniquesActions._setSortOrder(sortOrder));
+			dispatch<any>(CombatTechniquesActions._setSortOrder(sortOrder));
 		},
 		setFilterText(filterText: string) {
-			dispatch(CombatTechniquesActions.setFilterText(filterText));
+			dispatch<any>(CombatTechniquesActions.setFilterText(filterText));
 		},
 	};
 }

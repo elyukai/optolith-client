@@ -32,25 +32,25 @@ function mapStateToProps(state: AppState) {
 function mapDispatchToProps(dispatch: Dispatch<Action>) {
 	return {
 		setSortOrder(sortOrder: string) {
-			dispatch(SpecialAbilitiesActions._setSortOrder(sortOrder));
+			dispatch<any>(SpecialAbilitiesActions._setSortOrder(sortOrder));
 		},
 		switchActiveItemHints() {
-			dispatch(ConfigActions._switchEnableActiveItemHints());
+			dispatch<any>(ConfigActions._switchEnableActiveItemHints());
 		},
 		addToList(args: ActivateArgs) {
-			dispatch(SpecialAbilitiesActions._addToList(args));
+			dispatch<any>(SpecialAbilitiesActions._addToList(args));
 		},
 		removeFromList(args: DeactivateArgs) {
-			dispatch(SpecialAbilitiesActions._removeFromList(args));
+			dispatch<any>(SpecialAbilitiesActions._removeFromList(args));
 		},
 		setTier(id: string, index: number, tier: number) {
-			dispatch(SpecialAbilitiesActions._setTier(id, index, tier));
+			dispatch<any>(SpecialAbilitiesActions._setTier(id, index, tier));
 		},
 		setFilterText(filterText: string) {
-			dispatch(SpecialAbilitiesActions.setActiveFilterText(filterText));
+			dispatch<any>(SpecialAbilitiesActions.setActiveFilterText(filterText));
 		},
 		setInactiveFilterText(filterText: string) {
-			dispatch(SpecialAbilitiesActions.setInactiveFilterText(filterText));
+			dispatch<any>(SpecialAbilitiesActions.setInactiveFilterText(filterText));
 		},
 	};
 }

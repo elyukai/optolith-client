@@ -30,34 +30,34 @@ function mapStateToProps(state: AppState) {
 function mapDispatchToProps(dispatch: Dispatch<Action>) {
 	return {
 		addPoint(id: string) {
-			dispatch(LiturgiesActions._addPoint(id));
+			dispatch<any>(LiturgiesActions._addPoint(id));
 		},
 		addToList(id: string) {
-			dispatch(LiturgiesActions._addToList(id));
+			dispatch<any>(LiturgiesActions._addToList(id));
 		},
 		addBlessingToList(id: string) {
-			dispatch(LiturgiesActions._addBlessingToList(id));
+			dispatch<any>(LiturgiesActions._addBlessingToList(id));
 		},
 		removePoint(id: string) {
-			dispatch(LiturgiesActions._removePoint(id));
+			dispatch<any>(LiturgiesActions._removePoint(id));
 		},
 		removeFromList(id: string) {
-			dispatch(LiturgiesActions._removeFromList(id));
+			dispatch<any>(LiturgiesActions._removeFromList(id));
 		},
 		removeBlessingFromList(id: string) {
-			dispatch(LiturgiesActions._removeBlessingFromList(id));
+			dispatch<any>(LiturgiesActions._removeBlessingFromList(id));
 		},
 		setSortOrder(sortOrder: string) {
-			dispatch(LiturgiesActions._setSortOrder(sortOrder));
+			dispatch<any>(LiturgiesActions._setSortOrder(sortOrder));
 		},
 		switchActiveItemHints() {
-			dispatch(ConfigActions._switchEnableActiveItemHints());
+			dispatch<any>(ConfigActions._switchEnableActiveItemHints());
 		},
 		setFilterText(filterText: string) {
-			dispatch(LiturgiesActions.setActiveFilterText(filterText));
+			dispatch<any>(LiturgiesActions.setActiveFilterText(filterText));
 		},
 		setInactiveFilterText(filterText: string) {
-			dispatch(LiturgiesActions.setInactiveFilterText(filterText));
+			dispatch<any>(LiturgiesActions.setInactiveFilterText(filterText));
 		},
 	};
 }

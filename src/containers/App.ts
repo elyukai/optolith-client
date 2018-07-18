@@ -32,7 +32,7 @@ function mapDispatchToProps(dispatch: Dispatch<Action>) {
 			remote.getCurrentWindow().unmaximize();
 		},
 		close() {
-			dispatch(IOActions.requestClose());
+			dispatch<any>(IOActions.requestClose());
 		},
 		enterFullscreen() {
 			remote.getCurrentWindow().setFullScreen(true);
@@ -41,7 +41,7 @@ function mapDispatchToProps(dispatch: Dispatch<Action>) {
 			remote.getCurrentWindow().setFullScreen(false);
 		},
 		setTab(id: TabId) {
-			dispatch(_setTab(id));
+			dispatch<any>(_setTab(id));
 		},
 		checkForUpdates() {
 			ipcRenderer.send('check-for-updates');

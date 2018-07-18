@@ -39,37 +39,37 @@ function mapStateToProps(state: AppState) {
 function mapDispatchToProps(dispatch: Dispatch<Action>) {
 	return {
 		setCategory1(category: string) {
-			dispatch(setWikiCategory1(category));
+			dispatch<any>(setWikiCategory1(category));
 		},
 		setCategory2(category: string) {
-			dispatch(setWikiCategory2(category));
+			dispatch<any>(setWikiCategory2(category));
 		},
 		setFilter(filterText: string) {
-			dispatch(setWikiFilter(filterText));
+			dispatch<any>(setWikiFilter(filterText));
 		},
 		setFilterAll(filterText: string) {
-			dispatch(setWikiFilterAll(filterText));
+			dispatch<any>(setWikiFilterAll(filterText));
 		},
 		setProfessionsGroup(group: number | undefined) {
-			dispatch(setWikiProfessionsGroup(group));
+			dispatch<any>(setWikiProfessionsGroup(group));
 		},
 		setSkillsGroup(group: number | undefined) {
-			dispatch(setWikiSkillsGroup(group));
+			dispatch<any>(setWikiSkillsGroup(group));
 		},
 		setCombatTechniquesGroup(group: number | undefined) {
-			dispatch(setWikiCombatTechniquesGroup(group));
+			dispatch<any>(setWikiCombatTechniquesGroup(group));
 		},
 		setSpecialAbilitiesGroup(group: number | undefined) {
-			dispatch(setWikiSpecialAbilitiesGroup(group));
+			dispatch<any>(setWikiSpecialAbilitiesGroup(group));
 		},
 		setSpellsGroup(group: number | undefined) {
-			dispatch(setWikiSpellsGroup(group));
+			dispatch<any>(setWikiSpellsGroup(group));
 		},
 		setLiturgicalChantsGroup(group: number | undefined) {
-			dispatch(setWikiLiturgicalChantsGroup(group));
+			dispatch<any>(setWikiLiturgicalChantsGroup(group));
 		},
 		setItemTemplatesGroup(group: number | undefined) {
-			dispatch(setWikiItemTemplatesGroup(group));
+			dispatch<any>(setWikiItemTemplatesGroup(group));
 		},
 	};
 }

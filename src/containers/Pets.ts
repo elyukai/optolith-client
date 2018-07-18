@@ -20,21 +20,21 @@ function mapDispatchToProps(dispatch: Dispatch<Action>) {
 		savePet(instance: PetEditorInstance | undefined) {
 			if (instance) {
 				if (typeof instance.id !== 'string') {
-					dispatch(PetActions._addToList(instance));
+					dispatch<any>(PetActions._addToList(instance));
 				}
 				else {
-					dispatch(PetActions._set(instance.id, instance));
+					dispatch<any>(PetActions._set(instance.id, instance));
 				}
 			}
 		},
 		deletePet(id: string) {
-			dispatch(PetActions._removeFromList(id));
+			dispatch<any>(PetActions._removeFromList(id));
 		},
 		openEditPetAvatar() {
-			dispatch(SubwindowsActions.openEditPetAvatar());
+			dispatch<any>(SubwindowsActions.openEditPetAvatar());
 		},
 		closeEditPetAvatar() {
-			dispatch(SubwindowsActions.closeEditPetAvatar());
+			dispatch<any>(SubwindowsActions.closeEditPetAvatar());
 		},
 	};
 }

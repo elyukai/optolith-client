@@ -70,10 +70,10 @@ function mapStateToProps(state: AppState) {
 function mapDispatchToProps(dispatch: Dispatch<Action>) {
 	return {
 		switchAttributeValueVisibility() {
-			dispatch(SheetActions._switchAttributeValueVisibility());
+			dispatch<any>(SheetActions._switchAttributeValueVisibility());
 		},
 		printToPDF() {
-			dispatch(IOActions.requestPrintHeroToPDF());
+			dispatch<any>(IOActions.requestPrintHeroToPDF());
 		}
 	};
 }

@@ -20,133 +20,133 @@ function mapStateToProps(state: AppState) {
 function mapDispatchToProps(dispatch: Dispatch<Action>) {
 	return {
 		addToList(): void {
-      dispatch(EquipmentActions.addToList());
+      dispatch<any>(EquipmentActions.addToList());
     },
 		closeEditor(): void {
-      dispatch(EquipmentActions.closeItemEditor());
+      dispatch<any>(EquipmentActions.closeItemEditor());
     },
 		saveItem(): void {
-      dispatch(EquipmentActions.saveItem());
+      dispatch<any>(EquipmentActions.saveItem());
     },
 		setName(value: string): void {
-      dispatch(EquipmentActions.setName(value));
+      dispatch<any>(EquipmentActions.setName(value));
     },
 		setPrice(value: string): void {
-      dispatch(EquipmentActions.setPrice(value));
+      dispatch<any>(EquipmentActions.setPrice(value));
     },
 		setWeight(value: string): void {
-      dispatch(EquipmentActions.setWeight(value));
+      dispatch<any>(EquipmentActions.setWeight(value));
     },
 		setAmount(value: string): void {
-      dispatch(EquipmentActions.setAmount(value));
+      dispatch<any>(EquipmentActions.setAmount(value));
     },
 		setWhere(value: string): void {
-      dispatch(EquipmentActions.setWhere(value));
+      dispatch<any>(EquipmentActions.setWhere(value));
     },
 		setGroup(gr: number): void {
-      dispatch(EquipmentActions.setGroup(gr));
+      dispatch<any>(EquipmentActions.setGroup(gr));
     },
 		setTemplate(template: string): void {
-      dispatch(EquipmentActions.setTemplate(template));
+      dispatch<any>(EquipmentActions.setTemplate(template));
     },
 		setCombatTechnique(id: string): void {
-      dispatch(EquipmentActions.setCombatTechnique(id));
+      dispatch<any>(EquipmentActions.setCombatTechnique(id));
     },
 		setDamageDiceNumber(value: string): void {
-      dispatch(EquipmentActions.setDamageDiceNumber(value));
+      dispatch<any>(EquipmentActions.setDamageDiceNumber(value));
     },
 		setDamageDiceSides(value: number): void {
-      dispatch(EquipmentActions.setDamageDiceSides(value));
+      dispatch<any>(EquipmentActions.setDamageDiceSides(value));
     },
 		setDamageFlat(value: string): void {
-      dispatch(EquipmentActions.setDamageFlat(value));
+      dispatch<any>(EquipmentActions.setDamageFlat(value));
     },
 		setPrimaryAttribute(primary: string | undefined): void {
-      dispatch(EquipmentActions.setPrimaryAttribute(primary));
+      dispatch<any>(EquipmentActions.setPrimaryAttribute(primary));
     },
 		setDamageThreshold(value: string): void {
-      dispatch(EquipmentActions.setDamageThreshold(value));
+      dispatch<any>(EquipmentActions.setDamageThreshold(value));
     },
 		setFirstDamageThreshold(value: string): void {
-      dispatch(EquipmentActions.setFirstDamageThreshold(value));
+      dispatch<any>(EquipmentActions.setFirstDamageThreshold(value));
     },
 		setSecondDamageThreshold(value: string): void {
-      dispatch(EquipmentActions.setSecondDamageThreshold(value));
+      dispatch<any>(EquipmentActions.setSecondDamageThreshold(value));
     },
 		switchIsDamageThresholdSeparated(): void {
-      dispatch(EquipmentActions.switchIsDamageThresholdSeparated());
+      dispatch<any>(EquipmentActions.switchIsDamageThresholdSeparated());
     },
 		setAttack(value: string): void {
-      dispatch(EquipmentActions.setAttack(value));
+      dispatch<any>(EquipmentActions.setAttack(value));
     },
 		setParry(value: string): void {
-      dispatch(EquipmentActions.setParry(value));
+      dispatch<any>(EquipmentActions.setParry(value));
     },
 		setReach(id: number): void {
-      dispatch(EquipmentActions.setReach(id));
+      dispatch<any>(EquipmentActions.setReach(id));
     },
 		setLength(value: string): void {
-      dispatch(EquipmentActions.setLength(value));
+      dispatch<any>(EquipmentActions.setLength(value));
     },
 		setStructurePoints(value: string): void {
-      dispatch(EquipmentActions.setStructurePoints(value));
+      dispatch<any>(EquipmentActions.setStructurePoints(value));
     },
 		setRange(value: string, index: number): void {
-      dispatch(EquipmentActions.setRange(value, index));
+      dispatch<any>(EquipmentActions.setRange(value, index));
     },
 		setReloadTime(value: string): void {
-      dispatch(EquipmentActions.setReloadTime(value));
+      dispatch<any>(EquipmentActions.setReloadTime(value));
     },
 		setAmmunition(id: string): void {
-      dispatch(EquipmentActions.setAmmunition(id));
+      dispatch<any>(EquipmentActions.setAmmunition(id));
     },
 		setProtection(value: string): void {
-      dispatch(EquipmentActions.setProtection(value));
+      dispatch<any>(EquipmentActions.setProtection(value));
     },
 		setEncumbrance(value: string): void {
-      dispatch(EquipmentActions.setEncumbrance(value));
+      dispatch<any>(EquipmentActions.setEncumbrance(value));
     },
 		setMovementModifier(value: string): void {
-      dispatch(EquipmentActions.setMovementModifier(value));
+      dispatch<any>(EquipmentActions.setMovementModifier(value));
     },
 		setInitiativeModifier(value: string): void {
-      dispatch(EquipmentActions.setInitiativeModifier(value));
+      dispatch<any>(EquipmentActions.setInitiativeModifier(value));
     },
 		setStabilityModifier(value: string): void {
-      dispatch(EquipmentActions.setStabilityModifier(value));
+      dispatch<any>(EquipmentActions.setStabilityModifier(value));
     },
 		switchIsParryingWeapon(): void {
-      dispatch(EquipmentActions.switchIsParryingWeapon());
+      dispatch<any>(EquipmentActions.switchIsParryingWeapon());
     },
 		switchIsTwoHandedWeapon(): void {
-      dispatch(EquipmentActions.switchIsTwoHandedWeapon());
+      dispatch<any>(EquipmentActions.switchIsTwoHandedWeapon());
     },
 		switchIsImprovisedWeapon(): void {
-      dispatch(EquipmentActions.switchIsImprovisedWeapon());
+      dispatch<any>(EquipmentActions.switchIsImprovisedWeapon());
     },
 		setImprovisedWeaponGroup(gr: number): void {
-      dispatch(EquipmentActions.setImprovisedWeaponGroup(gr));
+      dispatch<any>(EquipmentActions.setImprovisedWeaponGroup(gr));
     },
 		setLoss(id: number | undefined): void {
-      dispatch(EquipmentActions.setLoss(id));
+      dispatch<any>(EquipmentActions.setLoss(id));
     },
 		switchIsForArmorZonesOnly(): void {
-      dispatch(EquipmentActions.switchIsForArmorZonesOnly());
+      dispatch<any>(EquipmentActions.switchIsForArmorZonesOnly());
     },
 		setHasAdditionalPenalties(): void {
-      dispatch(EquipmentActions.setHasAdditionalPenalties());
+      dispatch<any>(EquipmentActions.setHasAdditionalPenalties());
     },
 		setArmorType(id: number): void {
-      dispatch(EquipmentActions.setArmorType(id));
+      dispatch<any>(EquipmentActions.setArmorType(id));
     },
 		applyTemplate(): void {
-      dispatch(EquipmentActions.applyItemTemplate());
+      dispatch<any>(EquipmentActions.applyItemTemplate());
     },
 		lockTemplate(): void {
-      dispatch(EquipmentActions.lockItemTemplate());
+      dispatch<any>(EquipmentActions.lockItemTemplate());
     },
 		unlockTemplate(): void {
-      dispatch(EquipmentActions.unlockItemTemplate());
+      dispatch<any>(EquipmentActions.unlockItemTemplate());
     }
 	};
 }

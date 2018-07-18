@@ -36,25 +36,25 @@ function mapStateToProps(state: AppState) {
 function mapDispatchToProps(dispatch: Dispatch<Action>) {
 	return {
 		switchRatingVisibility() {
-			dispatch(DisAdvActions._switchRatingVisibility());
+			dispatch<any>(DisAdvActions._switchRatingVisibility());
 		},
 		switchActiveItemHints() {
-			dispatch(ConfigActions._switchEnableActiveItemHints());
+			dispatch<any>(ConfigActions._switchEnableActiveItemHints());
 		},
 		addToList(args: ActivateArgs) {
-			dispatch(DisAdvActions._addToList(args));
+			dispatch<any>(DisAdvActions._addToList(args));
 		},
 		removeFromList(args: DeactivateArgs) {
-			dispatch(DisAdvActions._removeFromList(args));
+			dispatch<any>(DisAdvActions._removeFromList(args));
 		},
 		setTier(id: string, index: number, tier: number) {
-			dispatch(DisAdvActions._setTier(id, index, tier));
+			dispatch<any>(DisAdvActions._setTier(id, index, tier));
 		},
 		setFilterText(filterText: string) {
-			dispatch(DisAdvActions.setActiveAdvantagesFilterText(filterText));
+			dispatch<any>(DisAdvActions.setActiveAdvantagesFilterText(filterText));
 		},
 		setInactiveFilterText(filterText: string) {
-			dispatch(DisAdvActions.setInactiveAdvantagesFilterText(filterText));
+			dispatch<any>(DisAdvActions.setInactiveAdvantagesFilterText(filterText));
 		},
 	};
 }

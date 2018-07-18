@@ -28,25 +28,25 @@ function mapStateToProps(state: AppState) {
 function mapDispatchToProps(dispatch: Dispatch<Action>) {
 	return {
 		selectProfession(id: string) {
-			dispatch(ProfessionActions._selectProfession(id));
+			dispatch<any>(ProfessionActions._selectProfession(id));
 		},
 		selectProfessionVariant(id: string | undefined) {
-			dispatch(ProfessionVariantActions._selectProfessionVariant(id));
+			dispatch<any>(ProfessionVariantActions._selectProfessionVariant(id));
 		},
 		setSortOrder(sortOrder: string) {
-			dispatch(ProfessionActions._setProfessionsSortOrder(sortOrder));
+			dispatch<any>(ProfessionActions._setProfessionsSortOrder(sortOrder));
 		},
 		setVisibilityFilter(filter: string) {
-			dispatch(ProfessionActions._setProfessionsVisibilityFilter(filter));
+			dispatch<any>(ProfessionActions._setProfessionsVisibilityFilter(filter));
 		},
 		setGroupVisibilityFilter(filter: number) {
-			dispatch(ProfessionActions._setProfessionsGroupVisibilityFilter(filter));
+			dispatch<any>(ProfessionActions._setProfessionsGroupVisibilityFilter(filter));
 		},
 		switchExpansionVisibilityFilter() {
-			dispatch(ProfessionActions._switchProfessionsExpansionVisibilityFilter());
+			dispatch<any>(ProfessionActions._switchProfessionsExpansionVisibilityFilter());
 		},
 		setFilterText(filterText: string) {
-			dispatch(ProfessionActions.setFilterText(filterText));
+			dispatch<any>(ProfessionActions.setFilterText(filterText));
 		},
 	};
 }

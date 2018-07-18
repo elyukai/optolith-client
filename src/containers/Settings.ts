@@ -21,19 +21,19 @@ function mapStateToProps(state: AppState) {
 function mapDispatchToProps(dispatch: Dispatch<Action>) {
 	return {
 		setTheme(theme: string) {
-			dispatch(ConfigActions.setTheme(theme));
+			dispatch<any>(ConfigActions.setTheme(theme));
 		},
 		switchEnableEditingHeroAfterCreationPhase() {
-			dispatch(ConfigActions.switchEnableEditingHeroAfterCreationPhase());
+			dispatch<any>(ConfigActions.switchEnableEditingHeroAfterCreationPhase());
 		},
 		saveConfig() {
-			dispatch(IOActions.requestConfigSave());
+			dispatch<any>(IOActions.requestConfigSave());
 		},
 		setLocale(id?: string) {
-			dispatch(LocaleActions._setLocale(id));
+			dispatch<any>(LocaleActions._setLocale(id));
 		},
 		switchEnableAnimations() {
-			dispatch(ConfigActions.switchEnableAnimations());
+			dispatch<any>(ConfigActions.switchEnableAnimations());
 		},
 	};
 }

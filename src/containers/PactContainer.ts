@@ -17,19 +17,19 @@ function mapStateToProps(state: AppState) {
 function mapDispatchToProps(dispatch: Dispatch<Action>) {
 	return {
 		setPactCategory(category: number | undefined) {
-			dispatch(PactActions.setPactCategory(category));
+			dispatch<any>(PactActions.setPactCategory(category));
 		},
 		setPactLevel(level: number) {
-			dispatch(PactActions.setPactLevel(level));
+			dispatch<any>(PactActions.setPactLevel(level));
 		},
 		setTargetType(type: number) {
-			dispatch(PactActions.setTargetType(type));
+			dispatch<any>(PactActions.setTargetType(type));
 		},
 		setTargetDomain(domain: number | string) {
-			dispatch(PactActions.setTargetDomain(domain));
+			dispatch<any>(PactActions.setTargetDomain(domain));
 		},
 		setTargetName(name: string) {
-			dispatch(PactActions.setTargetName(name));
+			dispatch<any>(PactActions.setTargetName(name));
 		},
 	};
 }

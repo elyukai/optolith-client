@@ -20,19 +20,19 @@ function mapStateToProps(state: AppState) {
 function mapDispatchToProps(dispatch: Dispatch<Action>) {
 	return {
 		selectCulture(id: string) {
-			dispatch(CultureActions._selectCulture(id));
+			dispatch<any>(CultureActions._selectCulture(id));
 		},
 		setSortOrder(sortOrder: string) {
-			dispatch(CultureActions._setSortOrder(sortOrder));
+			dispatch<any>(CultureActions._setSortOrder(sortOrder));
 		},
 		setVisibilityFilter(sortOrder: string) {
-			dispatch(CultureActions._setVisibilityFilter(sortOrder));
+			dispatch<any>(CultureActions._setVisibilityFilter(sortOrder));
 		},
 		switchValueVisibilityFilter() {
-			dispatch(CultureActions._switchValueVisibilityFilter());
+			dispatch<any>(CultureActions._switchValueVisibilityFilter());
 		},
 		setFilterText(filterText: string) {
-			dispatch(CultureActions.setFilterText(filterText));
+			dispatch<any>(CultureActions.setFilterText(filterText));
 		},
 	};
 }

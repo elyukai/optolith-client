@@ -29,76 +29,76 @@ function mapStateToProps(state: AppState) {
 function mapDispatchToProps(dispatch: Dispatch<Action>) {
 	return {
 		addToList() {
-			dispatch(EquipmentActions.addArmorZonesToList());
+			dispatch<any>(EquipmentActions.addArmorZonesToList());
 		},
 		createItem(): void {
-      dispatch(EquipmentActions.createArmorZones());
+      dispatch<any>(EquipmentActions.createArmorZones());
     },
 		editItem(id: string): void {
-      dispatch(EquipmentActions.editArmorZones(id));
+      dispatch<any>(EquipmentActions.editArmorZones(id));
     },
 		deleteItem(id: string) {
-			dispatch(EquipmentActions.removeArmorZonesFromList(id));
+			dispatch<any>(EquipmentActions.removeArmorZonesFromList(id));
 		},
 		closeEditor(): void {
-      dispatch(EquipmentActions.closeArmorZonesEditor());
+      dispatch<any>(EquipmentActions.closeArmorZonesEditor());
     },
 		saveItem(): void {
-      dispatch(EquipmentActions.saveArmorZones());
+      dispatch<any>(EquipmentActions.saveArmorZones());
     },
 		setDucates(value: string) {
-			dispatch(EquipmentActions._setDucates(value));
+			dispatch<any>(EquipmentActions._setDucates(value));
 		},
 		setSilverthalers(value: string) {
-			dispatch(EquipmentActions._setSilverthalers(value));
+			dispatch<any>(EquipmentActions._setSilverthalers(value));
 		},
 		setHellers(value: string) {
-			dispatch(EquipmentActions._setHellers(value));
+			dispatch<any>(EquipmentActions._setHellers(value));
 		},
 		setKreutzers(value: string) {
-			dispatch(EquipmentActions._setKreutzers(value));
+			dispatch<any>(EquipmentActions._setKreutzers(value));
 		},
 		setName(value: string): void {
-      dispatch(EquipmentActions.setArmorZonesName(value));
+      dispatch<any>(EquipmentActions.setArmorZonesName(value));
     },
 		setHead(id: string | undefined): void {
-      dispatch(EquipmentActions.setArmorZonesHead(id));
+      dispatch<any>(EquipmentActions.setArmorZonesHead(id));
     },
 		setHeadLoss(id: number | undefined): void {
-      dispatch(EquipmentActions.setArmorZonesHeadLoss(id));
+      dispatch<any>(EquipmentActions.setArmorZonesHeadLoss(id));
     },
 		setLeftArm(id: string | undefined): void {
-      dispatch(EquipmentActions.setArmorZonesLeftArm(id));
+      dispatch<any>(EquipmentActions.setArmorZonesLeftArm(id));
     },
 		setLeftArmLoss(id: number | undefined): void {
-      dispatch(EquipmentActions.setArmorZonesLeftArmLoss(id));
+      dispatch<any>(EquipmentActions.setArmorZonesLeftArmLoss(id));
     },
 		setLeftLeg(id: string | undefined): void {
-      dispatch(EquipmentActions.setArmorZonesLeftLeg(id));
+      dispatch<any>(EquipmentActions.setArmorZonesLeftLeg(id));
     },
 		setLeftLegLoss(id: number | undefined): void {
-      dispatch(EquipmentActions.setArmorZonesLeftLegLoss(id));
+      dispatch<any>(EquipmentActions.setArmorZonesLeftLegLoss(id));
     },
 		setTorso(id: string | undefined): void {
-      dispatch(EquipmentActions.setArmorZonesTorso(id));
+      dispatch<any>(EquipmentActions.setArmorZonesTorso(id));
     },
 		setTorsoLoss(id: number | undefined): void {
-      dispatch(EquipmentActions.setArmorZonesTorsoLoss(id));
+      dispatch<any>(EquipmentActions.setArmorZonesTorsoLoss(id));
     },
 		setRightArm(id: string | undefined): void {
-      dispatch(EquipmentActions.setArmorZonesRightArm(id));
+      dispatch<any>(EquipmentActions.setArmorZonesRightArm(id));
     },
 		setRightArmLoss(id: number | undefined): void {
-      dispatch(EquipmentActions.setArmorZonesRightArmLoss(id));
+      dispatch<any>(EquipmentActions.setArmorZonesRightArmLoss(id));
     },
 		setRightLeg(id: string | undefined): void {
-      dispatch(EquipmentActions.setArmorZonesRightLeg(id));
+      dispatch<any>(EquipmentActions.setArmorZonesRightLeg(id));
     },
 		setRightLegLoss(id: number | undefined): void {
-      dispatch(EquipmentActions.setArmorZonesRightLegLoss(id));
+      dispatch<any>(EquipmentActions.setArmorZonesRightLegLoss(id));
     },
 		setFilterText(filterText: string) {
-			dispatch(EquipmentActions.setZoneArmorFilterText(filterText));
+			dispatch<any>(EquipmentActions.setZoneArmorFilterText(filterText));
 		},
 	};
 }

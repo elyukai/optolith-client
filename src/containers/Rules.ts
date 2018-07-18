@@ -19,19 +19,19 @@ function mapStateToProps(state: AppState, props?: OptionalRulesOwnProps) {
 function mapDispatchToProps(dispatch: Dispatch<Action>) {
 	return {
 		changeHigherParadeValues(id: number) {
-			dispatch(RulesActions._setHigherParadeValues(id));
+			dispatch<any>(RulesActions._setHigherParadeValues(id));
 		},
 		changeAttributeValueLimit() {
-			dispatch(RulesActions._switchAttributeValueLimit());
+			dispatch<any>(RulesActions._switchAttributeValueLimit());
 		},
 		switchEnableAllRuleBooks() {
-			dispatch(RulesActions.switchEnableAllRuleBooks());
+			dispatch<any>(RulesActions.switchEnableAllRuleBooks());
 		},
 		switchEnableRuleBook(id: string) {
-			dispatch(RulesActions.switchEnableRuleBook(id));
+			dispatch<any>(RulesActions.switchEnableRuleBook(id));
 		},
 		switchEnableLanguageSpecializations() {
-			dispatch(RulesActions.switchEnableLanguageSpecializations());
+			dispatch<any>(RulesActions.switchEnableLanguageSpecializations());
 		},
 	};
 }

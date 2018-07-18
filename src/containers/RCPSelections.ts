@@ -26,7 +26,7 @@ function mapStateToProps(state: AppState) {
 function mapDispatchToProps(dispatch: Dispatch<Action>) {
 	return {
 		setSelections(selections: SelectionsInterface) {
-			dispatch(ProfessionActions._setSelections(selections));
+			dispatch<any>(ProfessionActions._setSelections(selections));
 		}
 	};
 }

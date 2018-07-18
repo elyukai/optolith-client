@@ -32,44 +32,44 @@ function mapDispatchToProps(dispatch: Dispatch<Action>) {
 	return {
 		loadHero(id?: string) {
 			if (id) {
-				dispatch(HerolistActions.loadHeroValidate(id));
+				dispatch<any>(HerolistActions.loadHeroValidate(id));
 			}
 		},
 		showHero() {
-			dispatch(LocationActions._setTab('profile'));
+			dispatch<any>(LocationActions._setTab('profile'));
 		},
 		saveHeroAsJSON(id?: string) {
 			if (id) {
-				dispatch(HerolistActions.exportHeroValidate(id));
+				dispatch<any>(HerolistActions.exportHeroValidate(id));
 			}
 		},
 		deleteHero(id?: string) {
 			if (id) {
-				dispatch(HerolistActions.deleteHeroValidate(id));
+				dispatch<any>(HerolistActions.deleteHeroValidate(id));
 			}
 		},
 		duplicateHero(id?: string) {
 			if (id) {
-				dispatch(HerolistActions._duplicateHero(id));
+				dispatch<any>(HerolistActions._duplicateHero(id));
 			}
 		},
 		createHero(name: string, sex: 'm' | 'f', el: string, enableAllRuleBooks: boolean, enabledRuleBooks: Set<string>) {
-			dispatch(HerolistActions._createHero(name, sex, el, enableAllRuleBooks, enabledRuleBooks));
+			dispatch<any>(HerolistActions._createHero(name, sex, el, enableAllRuleBooks, enabledRuleBooks));
 		},
 		importHero() {
-			dispatch(IOActions.requestHeroImport());
+			dispatch<any>(IOActions.requestHeroImport());
 		},
 		setSortOrder(id: string) {
-			dispatch(HerolistActions._setSortOrder(id));
+			dispatch<any>(HerolistActions._setSortOrder(id));
 		},
 		setVisibilityFilter(id: string) {
-			dispatch(HerolistActions._setVisibilityFilter(id));
+			dispatch<any>(HerolistActions._setVisibilityFilter(id));
 		},
 		openCharacterCreator() {
-			dispatch(SubwindowsActions.openCharacterCreator());
+			dispatch<any>(SubwindowsActions.openCharacterCreator());
 		},
 		closeCharacterCreator() {
-			dispatch(SubwindowsActions.closeCharacterCreator());
+			dispatch<any>(SubwindowsActions.closeCharacterCreator());
 		},
 	};
 }

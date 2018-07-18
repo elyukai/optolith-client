@@ -34,43 +34,43 @@ function mapStateToProps(state: AppState) {
 function mapDispatchToProps(dispatch: Dispatch<Action>) {
 	return {
 		addTemplateToList(id: string): void {
-      dispatch(EquipmentActions.addTemplateToList(id));
+      dispatch<any>(EquipmentActions.addTemplateToList(id));
     },
 		createItem(): void {
-      dispatch(EquipmentActions.createItem());
+      dispatch<any>(EquipmentActions.createItem());
     },
 		editItem(id: string): void {
-      dispatch(EquipmentActions.editItem(id));
+      dispatch<any>(EquipmentActions.editItem(id));
     },
 		deleteItem(id: string) {
-			dispatch(EquipmentActions._removeFromList(id));
+			dispatch<any>(EquipmentActions._removeFromList(id));
 		},
 		setSortOrder(option: string) {
-			dispatch(EquipmentActions._setSortOrder(option));
+			dispatch<any>(EquipmentActions._setSortOrder(option));
 		},
 		setDucates(value: string) {
-			dispatch(EquipmentActions._setDucates(value));
+			dispatch<any>(EquipmentActions._setDucates(value));
 		},
 		setSilverthalers(value: string) {
-			dispatch(EquipmentActions._setSilverthalers(value));
+			dispatch<any>(EquipmentActions._setSilverthalers(value));
 		},
 		setHellers(value: string) {
-			dispatch(EquipmentActions._setHellers(value));
+			dispatch<any>(EquipmentActions._setHellers(value));
 		},
 		setKreutzers(value: string) {
-			dispatch(EquipmentActions._setKreutzers(value));
+			dispatch<any>(EquipmentActions._setKreutzers(value));
 		},
 		setMeleeItemTemplatesCombatTechniqueFilter(filterOption: string | undefined) {
-			dispatch(EquipmentActions.setMeleeItemTemplatesCombatTechniqueFilter(filterOption));
+			dispatch<any>(EquipmentActions.setMeleeItemTemplatesCombatTechniqueFilter(filterOption));
 		},
 		setRangedItemTemplatesCombatTechniqueFilter(filterOption: string | undefined) {
-			dispatch(EquipmentActions.setRangedItemTemplatesCombatTechniqueFilter(filterOption));
+			dispatch<any>(EquipmentActions.setRangedItemTemplatesCombatTechniqueFilter(filterOption));
 		},
 		setFilterText(filterText: string) {
-			dispatch(EquipmentActions.setEquipmentFilterText(filterText));
+			dispatch<any>(EquipmentActions.setEquipmentFilterText(filterText));
 		},
 		setTemplatesFilterText(filterText: string) {
-			dispatch(EquipmentActions.setItemTemplatesFilterText(filterText));
+			dispatch<any>(EquipmentActions.setItemTemplatesFilterText(filterText));
 		},
 	};
 }

@@ -41,97 +41,97 @@ function mapDispatchToProps(dispatch: Dispatch<Action>) {
 	return {
 		loadHero(id?: string) {
 			if (id) {
-				dispatch(HerolistActions.loadHeroValidate(id));
+				dispatch<any>(HerolistActions.loadHeroValidate(id));
 			}
 		},
 		setAvatar(path: string) {
-			dispatch(ProfileActions._setHeroAvatar(path));
+			dispatch<any>(ProfileActions._setHeroAvatar(path));
 		},
 		setHeroName(name: string) {
-			dispatch(ProfileActions._setHeroName(name));
+			dispatch<any>(ProfileActions._setHeroName(name));
 		},
 		setCustomProfessionName(name: string) {
-			dispatch(ProfileActions._setCustomProfessionName(name));
+			dispatch<any>(ProfileActions._setCustomProfessionName(name));
 		},
 		endCharacterCreation() {
-			dispatch(ProfileActions._endHeroCreation());
+			dispatch<any>(ProfileActions._endHeroCreation());
 		},
 		addAdventurePoints(ap: number) {
-			dispatch(ProfileActions._addAdventurePoints(ap));
+			dispatch<any>(ProfileActions._addAdventurePoints(ap));
 		},
 		openAddAdventurePoints() {
-			dispatch(SubwindowsActions.openAddAdventurePoints());
+			dispatch<any>(SubwindowsActions.openAddAdventurePoints());
 		},
 		closeAddAdventurePoints() {
-			dispatch(SubwindowsActions.closeAddAdventurePoints());
+			dispatch<any>(SubwindowsActions.closeAddAdventurePoints());
 		},
 		openEditCharacterAvatar() {
-			dispatch(SubwindowsActions.openEditCharacterAvatar());
+			dispatch<any>(SubwindowsActions.openEditCharacterAvatar());
 		},
 		closeEditCharacterAvatar() {
-			dispatch(SubwindowsActions.closeEditCharacterAvatar());
+			dispatch<any>(SubwindowsActions.closeEditCharacterAvatar());
 		},
 		changeFamily(e: InputTextEvent) {
-			dispatch(ProfileActions._setFamily(e.target.value as string));
+			dispatch<any>(ProfileActions._setFamily(e.target.value as string));
 		},
 		changePlaceOfBirth(e: InputTextEvent) {
-			dispatch(ProfileActions._setPlaceOfBirth(e.target.value as string));
+			dispatch<any>(ProfileActions._setPlaceOfBirth(e.target.value as string));
 		},
 		changeDateOfBirth(e: InputTextEvent) {
-			dispatch(ProfileActions._setDateOfBirth(e.target.value as string));
+			dispatch<any>(ProfileActions._setDateOfBirth(e.target.value as string));
 		},
 		changeAge(e: InputTextEvent) {
-			dispatch(ProfileActions._setAge(e.target.value as string));
+			dispatch<any>(ProfileActions._setAge(e.target.value as string));
 		},
 		changeHaircolor(result: number) {
-			dispatch(ProfileActions._setHairColor(result));
+			dispatch<any>(ProfileActions._setHairColor(result));
 		},
 		changeEyecolor(result: number) {
-			dispatch(ProfileActions._setEyeColor(result));
+			dispatch<any>(ProfileActions._setEyeColor(result));
 		},
 		changeSize(e: InputTextEvent) {
-			dispatch(ProfileActions._setSize(e.target.value as string));
+			dispatch<any>(ProfileActions._setSize(e.target.value as string));
 		},
 		changeWeight(e: InputTextEvent) {
-			dispatch(ProfileActions._setWeight(e.target.value as string));
+			dispatch<any>(ProfileActions._setWeight(e.target.value as string));
 		},
 		changeTitle(e: InputTextEvent) {
-			dispatch(ProfileActions._setTitle(e.target.value as string));
+			dispatch<any>(ProfileActions._setTitle(e.target.value as string));
 		},
 		changeSocialStatus(result: number) {
-			dispatch(ProfileActions._setSocialStatus(result));
+			dispatch<any>(ProfileActions._setSocialStatus(result));
 		},
 		changeCharacteristics(e: InputTextEvent) {
-			dispatch(ProfileActions._setCharacteristics(e.target.value as string));
+			dispatch<any>(ProfileActions._setCharacteristics(e.target.value as string));
 		},
 		changeOtherInfo(e: InputTextEvent) {
-			dispatch(ProfileActions._setOtherInfo(e.target.value as string));
+			dispatch<any>(ProfileActions._setOtherInfo(e.target.value as string));
 		},
 		changeCultureAreaKnowledge(e: InputTextEvent) {
-			dispatch(ProfileActions._setCultureAreaKnowledge(e.target.value as string));
+			dispatch<any>(ProfileActions._setCultureAreaKnowledge(e.target.value as string));
 		},
 		rerollHair() {
 			const action = ProfileActions._rerollHairColor();
 			if (action) {
-				dispatch(action);
+				dispatch<any>(action);
 			}
 		},
 		rerollEyes() {
 			const action = ProfileActions._rerollEyeColor();
 			if (action) {
-				dispatch(action);
+				dispatch<any>(action);
 			}
 		},
 		rerollSize() {
 			const action = ProfileActions._rerollSize();
 			if (action) {
-				dispatch(action);
+				dispatch<any>(action);
 			}
 		},
 		rerollWeight() {
 			const action = ProfileActions._rerollWeight();
 			if (action) {
-				dispatch(action);
+				dispatch<any>(action);
 			}
 		}
 	};

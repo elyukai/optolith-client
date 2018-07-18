@@ -28,19 +28,19 @@ function mapStateToProps(state: AppState) {
 function mapDispatchToProps(dispatch: Dispatch<Action>) {
 	return {
 		addPoint(id: string) {
-			dispatch(TalentsActions._addPoint(id));
+			dispatch<any>(TalentsActions._addPoint(id));
 		},
 		removePoint(id: string) {
-			dispatch(TalentsActions._removePoint(id));
+			dispatch<any>(TalentsActions._removePoint(id));
 		},
 		setSortOrder(sortOrder: string) {
-			dispatch(TalentsActions._setSortOrder(sortOrder));
+			dispatch<any>(TalentsActions._setSortOrder(sortOrder));
 		},
 		switchRatingVisibility() {
-			dispatch(TalentsActions._switchRatingVisibility());
+			dispatch<any>(TalentsActions._switchRatingVisibility());
 		},
 		setFilterText(filterText: string) {
-			dispatch(TalentsActions.setFilterText(filterText));
+			dispatch<any>(TalentsActions.setFilterText(filterText));
 		},
 	};
 }

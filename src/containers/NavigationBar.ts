@@ -37,25 +37,25 @@ function mapStateToProps(state: AppState) {
 function mapDispatchToProps(dispatch: Dispatch<Action>) {
 	return {
 		setTab(id: TabId) {
-			dispatch(LocationActions._setTab(id));
+			dispatch<any>(LocationActions._setTab(id));
 		},
 		undo() {
-			dispatch(HistoryActions.undo());
+			dispatch<any>(HistoryActions.undo());
 		},
 		redo() {
-			dispatch(HistoryActions.redo());
+			dispatch<any>(HistoryActions.redo());
 		},
 		saveHero() {
-			dispatch(HerolistActions._saveHero());
+			dispatch<any>(HerolistActions._saveHero());
 		},
 		openSettings() {
-			dispatch(SubwindowsActions.openSettings());
+			dispatch<any>(SubwindowsActions.openSettings());
 		},
 		closeSettings() {
-			dispatch(SubwindowsActions.closeSettings());
+			dispatch<any>(SubwindowsActions.closeSettings());
 		},
 		saveGroup() {
-			dispatch(InGameActions._save());
+			dispatch<any>(InGameActions._save());
 		}
 	};
 }

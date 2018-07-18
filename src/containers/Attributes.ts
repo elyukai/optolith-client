@@ -31,83 +31,83 @@ function mapDispatchToProps(dispatch: Dispatch<Action>) {
 		addPoint: (id: string) => {
 			const action = AttributesActions._addPoint(id);
 			if (action) {
-				dispatch(action);
+				dispatch<any>(action);
 			}
 		},
 		removePoint: (id: string) => {
-			dispatch(AttributesActions._removePoint(id));
+			dispatch<any>(AttributesActions._removePoint(id));
 		},
 		addLifePoint: () => {
-			dispatch(AttributesActions._addLifePoint());
+			dispatch<any>(AttributesActions._addLifePoint());
 		},
 		addArcaneEnergyPoint: () => {
-			dispatch(AttributesActions._addArcaneEnergyPoint());
+			dispatch<any>(AttributesActions._addArcaneEnergyPoint());
 		},
 		addKarmaPoint: () => {
-			dispatch(AttributesActions._addKarmaPoint());
+			dispatch<any>(AttributesActions._addKarmaPoint());
 		},
 		removeLifePoint: () => {
-			dispatch(AttributesActions.removeLifePoint());
+			dispatch<any>(AttributesActions.removeLifePoint());
 		},
 		removeArcaneEnergyPoint: () => {
-			dispatch(AttributesActions.removeArcaneEnergyPoint());
+			dispatch<any>(AttributesActions.removeArcaneEnergyPoint());
 		},
 		removeKarmaPoint: () => {
-			dispatch(AttributesActions.removeKarmaPoint());
+			dispatch<any>(AttributesActions.removeKarmaPoint());
 		},
 		addLostLPPoint: () => {
-			dispatch(AttributesActions._addLostLPPoint());
+			dispatch<any>(AttributesActions._addLostLPPoint());
 		},
 		removeLostLPPoint: () => {
-			dispatch(AttributesActions._removeLostLPPoint());
+			dispatch<any>(AttributesActions._removeLostLPPoint());
 		},
 		addLostLPPoints: (value: number) => {
-			dispatch(AttributesActions._addLostLPPoints(value));
+			dispatch<any>(AttributesActions._addLostLPPoints(value));
 		},
 		addBoughtBackAEPoint: () => {
-			dispatch(AttributesActions._addBoughtBackAEPoint());
+			dispatch<any>(AttributesActions._addBoughtBackAEPoint());
 		},
 		removeBoughtBackAEPoint: () => {
-			dispatch(AttributesActions._removeBoughtBackAEPoint());
+			dispatch<any>(AttributesActions._removeBoughtBackAEPoint());
 		},
 		addLostAEPoint: () => {
-			dispatch(AttributesActions._addLostAEPoint());
+			dispatch<any>(AttributesActions._addLostAEPoint());
 		},
 		removeLostAEPoint: () => {
-			dispatch(AttributesActions._removeLostAEPoint());
+			dispatch<any>(AttributesActions._removeLostAEPoint());
 		},
 		addLostAEPoints: (value: number) => {
-			dispatch(AttributesActions._addLostAEPoints(value));
+			dispatch<any>(AttributesActions._addLostAEPoints(value));
 		},
 		addBoughtBackKPPoint: () => {
-			dispatch(AttributesActions._addBoughtBackKPPoint());
+			dispatch<any>(AttributesActions._addBoughtBackKPPoint());
 		},
 		removeBoughtBackKPPoint: () => {
-			dispatch(AttributesActions._removeBoughtBackKPPoint());
+			dispatch<any>(AttributesActions._removeBoughtBackKPPoint());
 		},
 		addLostKPPoint: () => {
-			dispatch(AttributesActions._addLostKPPoint());
+			dispatch<any>(AttributesActions._addLostKPPoint());
 		},
 		removeLostKPPoint: () => {
-			dispatch(AttributesActions._removeLostKPPoint());
+			dispatch<any>(AttributesActions._removeLostKPPoint());
 		},
 		addLostKPPoints: (value: number) => {
-			dispatch(AttributesActions._addLostKPPoints(value));
+			dispatch<any>(AttributesActions._addLostKPPoints(value));
 		},
 		openAddPermanentEnergyLoss: (energy: 'LP' | 'AE' | 'KP') => {
-			dispatch(SubwindowsActions.openAddPermanentEnergyLoss(energy));
+			dispatch<any>(SubwindowsActions.openAddPermanentEnergyLoss(energy));
 		},
 		closeAddPermanentEnergyLoss: () => {
-			dispatch(SubwindowsActions.closeAddPermanentEnergyLoss());
+			dispatch<any>(SubwindowsActions.closeAddPermanentEnergyLoss());
 		},
 		openEditPermanentEnergy: (energy: 'LP' | 'AE' | 'KP') => {
-			dispatch(SubwindowsActions.openEditPermanentEnergy(energy));
+			dispatch<any>(SubwindowsActions.openEditPermanentEnergy(energy));
 		},
 		closeEditPermanentEnergy: () => {
-			dispatch(SubwindowsActions.closeEditPermanentEnergy());
+			dispatch<any>(SubwindowsActions.closeEditPermanentEnergy());
 		},
 		setAdjustmentId: (id: string) => {
-			dispatch(AttributesActions.setAdjustmentId(id));
+			dispatch<any>(AttributesActions.setAdjustmentId(id));
 		}
 	};
 }

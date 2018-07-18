@@ -20,19 +20,19 @@ function mapStateToProps(state: AppState) {
 function mapDispatchToProps(dispatch: Dispatch<Action>) {
 	return {
 		selectRace(id: string, variantId?: string) {
-			dispatch(RaceActions._selectRace(id, variantId));
+			dispatch<any>(RaceActions._selectRace(id, variantId));
 		},
 		selectRaceVariant(id: string) {
-			dispatch(RaceActions.setRaceVariant(id));
+			dispatch<any>(RaceActions.setRaceVariant(id));
 		},
 		setSortOrder(sortOrder: string) {
-			dispatch(RaceActions._setRacesSortOrder(sortOrder));
+			dispatch<any>(RaceActions._setRacesSortOrder(sortOrder));
 		},
 		switchValueVisibilityFilter() {
-			dispatch(RaceActions._switchRaceValueVisibilityFilter());
+			dispatch<any>(RaceActions._switchRaceValueVisibilityFilter());
 		},
 		setFilterText(filterText: string) {
-			dispatch(RaceActions.setFilterText(filterText));
+			dispatch<any>(RaceActions.setFilterText(filterText));
 		},
 	};
 }

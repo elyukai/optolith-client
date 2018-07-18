@@ -14,7 +14,7 @@ function mapStateToProps(state: AppState) {
 function mapDispatchToProps(dispatch: Dispatch<Action>) {
 	return {
 		close() {
-			dispatch(AlertActions.removeAlert());
+			dispatch<any>(AlertActions.removeAlert());
 		},
 		dispatch
 	};
