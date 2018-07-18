@@ -30,7 +30,7 @@ export class Dropdown extends React.Component<DropdownProps, DropdownState> {
 		position: 'bottom'
 	};
 
-	containerRef: HTMLDivElement | null;
+	containerRef!: HTMLDivElement | null;
 	clickInside = false;
 
 	switch = () => {

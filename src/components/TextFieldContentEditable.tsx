@@ -10,7 +10,7 @@ export interface TextFieldContentEditableProps {
 }
 
 export class TextFieldContentEditable extends React.Component<TextFieldContentEditableProps> {
-	element: HTMLDivElement | null;
+	element!: HTMLDivElement | null;
 
 	handleChange = () => {
 		if (this.element) {
