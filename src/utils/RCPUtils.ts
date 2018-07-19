@@ -38,7 +38,8 @@ export const rerollSize = (
           acc => die => acc + rollDice(
             die.get('amount'),
             die.get('sides')
-          ), 0
+          ),
+          0
         ))
       )
     ))
@@ -51,6 +52,7 @@ export const getWeightForRerolledSize = (
 ): string => {
   const diff = Number.parseInt(newSize) - Number.parseInt(prevSize);
   const newWeight = Number.parseInt(weight) + diff;
+
   return newWeight.toString();
 };
 
@@ -68,24 +70,30 @@ export const rerollWeight = (
 
   return {
     weight: race
-      .map(e => {
-        const addFunc = e.get('id') === 'R_1' ?
+      .map(justRace => {
+        const addFunc = justRace.get('id') === 'R_1' ?
           (e: number) => (acc: number) => {
             const result = rollDie(Math.abs(e));
+
             return result % 2 > 0 ? acc - result : acc + result;
           } :
           (e: number) => (acc: number) => {
             const result = rollDie(Math.abs(e));
+
             return e < 0 ? acc - result : acc + result;
           };
 
-        return e.get('weightRandom').foldl(acc => die => {
-          return acc + rollDice(
-            die.get('amount'),
-            die.get('sides'),
-            addFunc(die.get('sides'))
+        return justRace.get('weightRandom')
+          .foldl(
+            acc => die => {
+              return acc + rollDice(
+                die.get('amount'),
+                die.get('sides'),
+                addFunc(die.get('sides'))
+              );
+            },
+            justRace.get('weightBase')
           );
-        }, e.get('weightBase'));
       })
       .map(R.add(Maybe.fromMaybe(0, formattedSize.map(Number.parseInt))))
       .map(e => e.toString()),

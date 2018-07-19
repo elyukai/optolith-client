@@ -167,9 +167,9 @@ export function setTier(index: number, tier: number): ActivatableReducer {
       .subscript(index)
       .bind(target => target.lookup('tier'));
 
-    const active = previousActive.adjust(
+    const active = previousActive.modifyAt(
+      index,
       prev => prev.insert('tier', tier),
-      index
     );
 
     const firstState = setHeroListStateItem(

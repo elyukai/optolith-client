@@ -81,7 +81,7 @@ export interface HeroDependent {
   readonly disadvantages: OrderedMap<string, Record<ActivatableDependent>>;
   readonly specialAbilities: OrderedMap<string, Record<ActivatableDependent>>;
   readonly attributes: OrderedMap<string, Record<AttributeDependent>>;
-  readonly energies: Energies;
+  readonly energies: Record<Energies>;
   readonly skills: OrderedMap<string, Record<SkillDependent>>;
   readonly combatTechniques: OrderedMap<string, Record<SkillDependent>>;
   readonly spells: OrderedMap<string, Record<ActivatableSkillDependent>>;
@@ -89,7 +89,7 @@ export interface HeroDependent {
   readonly liturgicalChants:
     OrderedMap<string, Record<ActivatableSkillDependent>>;
   readonly blessings: OrderedSet<string>;
-  readonly belongings: Belongings;
+  readonly belongings: Record<Belongings>;
   readonly rules: Record<Rules>;
   readonly pets: OrderedMap<string, Record<PetInstance>>;
   readonly pact?: Record<Pact>;
@@ -390,7 +390,7 @@ export interface ItemInstance extends ItemBaseInstance {
   src?: List<Record<Wiki.SourceLink>>;
 }
 
-export interface ItemEditorInstance extends ItemBaseInstance {
+export interface ItemEditorSpecific {
   at: string;
   iniMod: string;
   movMod: string;
@@ -412,6 +412,8 @@ export interface ItemEditorInstance extends ItemBaseInstance {
   weight: string;
   stabilityMod: string;
 }
+
+export interface ItemEditorInstance extends ItemBaseInstance, ItemEditorSpecific {}
 
 export interface ArmorZonesBaseInstance {
   name: string;

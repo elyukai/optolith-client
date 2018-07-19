@@ -11,6 +11,7 @@ const getValueMultiplier = (ic: number, value?: number) => {
   }
   else {
     const thresholdValue = getValueThresholdDiff(ic, value);
+
     return Math.max(1, thresholdValue);
   }
 };
@@ -49,9 +50,10 @@ const combineAPRange = (calculator: Calculator, prepareFromValue: PrepareFromVal
     const steps = Math.abs(fromValue - toValue);
     const stepsArr = Array.from({ length: steps })
 
-    return stepsArr.reduce<number>((sum, _, i) => {
-      return sum + calculator(ic, prepareFromValue(fromValue, i));
-    }, 0);
+    return stepsArr.reduce<number>(
+      (sum, _, i) => sum + calculator(ic, prepareFromValue(fromValue, i)),
+      0
+    );
   };
 }
 

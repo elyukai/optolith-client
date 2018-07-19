@@ -52,7 +52,7 @@ export const convertActivatableToArray = (
   obj: Record<Data.ActivatableDependent>,
 ): List<Record<Data.ActiveObjectWithId>> => {
   return obj.get('active')
-    .mapWithIndex(index => e => e.merge(Record.of({
+    .imap(index => e => e.merge(Record.of({
       id: obj.get('id'),
       index
     })));

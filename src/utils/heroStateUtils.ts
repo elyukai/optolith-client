@@ -6,18 +6,6 @@ import { List, Maybe, OrderedMap, Record, RecordKey } from './dataUtils';
 import { getIdPrefix } from './IDUtils';
 import { match } from './match';
 
-export type HeroStateListKey =
-  'advantages' |
-  'attributes' |
-  'blessings' |
-  'cantrips' |
-  'combatTechniques' |
-  'disadvantages' |
-  'liturgicalChants' |
-  'skills' |
-  'specialAbilities' |
-  'spells';
-
 export type HeroStateMapKey =
   'advantages' |
   'attributes' |
@@ -27,6 +15,11 @@ export type HeroStateMapKey =
   'skills' |
   'specialAbilities' |
   'spells';
+
+export type HeroStateListKey =
+  HeroStateMapKey |
+  'blessings' |
+  'cantrips';
 
 export const getHeroStateListKeyById = (
   id: string,
@@ -61,6 +54,37 @@ export const getHeroStateListKeyById = (
     )
     .on(IdPrefixes.TALENTS, () =>
       Maybe.Just<HeroStateListKey>('skills')
+    )
+    .otherwise(Maybe.Nothing);
+};
+
+export const getHeroStateMapKeyById = (
+  id: string,
+): Maybe<HeroStateMapKey> => {
+  return match<IdPrefixes, Maybe<HeroStateMapKey>>(getIdPrefix(id))
+    .on(IdPrefixes.ADVANTAGES, () =>
+      Maybe.Just<HeroStateMapKey>('advantages')
+    )
+    .on(IdPrefixes.ATTRIBUTES, () =>
+      Maybe.Just<HeroStateMapKey>('attributes')
+    )
+    .on(IdPrefixes.COMBAT_TECHNIQUES, () =>
+      Maybe.Just<HeroStateMapKey>('combatTechniques')
+    )
+    .on(IdPrefixes.DISADVANTAGES, () =>
+      Maybe.Just<HeroStateMapKey>('disadvantages')
+    )
+    .on(IdPrefixes.LITURGIES, () =>
+      Maybe.Just<HeroStateMapKey>('liturgicalChants')
+    )
+    .on(IdPrefixes.SPECIAL_ABILITIES, () =>
+      Maybe.Just<HeroStateMapKey>('specialAbilities')
+    )
+    .on(IdPrefixes.SPELLS, () =>
+      Maybe.Just<HeroStateMapKey>('spells')
+    )
+    .on(IdPrefixes.TALENTS, () =>
+      Maybe.Just<HeroStateMapKey>('skills')
     )
     .otherwise(Maybe.Nothing);
 };
@@ -120,36 +144,36 @@ export function setHeroListStateItem(
   item?: Dependent,
   state?: Record<HeroDependent>
 ): SetHeroListState | SetHeroListStateFn1 | SetHeroListStateFn2 {
-  const resultFn = (
-    id: string,
-    item: Dependent,
-    state: Record<HeroDependent>
-  ) => getHeroStateListKeyById(id)
-    .map(
-      state.alter(slice => slice.map(slice =>
-        (slice as OrderedMap<string, Dependent>)
-          .insert(id, item)
-      ) as RecordKey<HeroStateListKey, HeroDependent>)
-    );
+  const resultFn = (x1: string, x2: Dependent, x3: Record<HeroDependent>) =>
+    getHeroStateListKeyById(id)
+      .map(
+        x3.alter(slice => slice.map(justSlice =>
+          (justSlice as OrderedMap<string, Dependent>)
+            .insert(x1, x2)
+        ) as RecordKey<HeroStateListKey, HeroDependent>)
+      );
 
   if (arguments.length === 3) {
     return resultFn(id, item!, state!);
   }
   else if (arguments.length === 2) {
-    return (state: Record<HeroDependent>) => resultFn(id, item!, state);
+    return (x3: Record<HeroDependent>) => resultFn(id, item!, x3);
   }
   else {
-    return (item: Dependent) =>
-      (state: Record<HeroDependent>) => resultFn(id, item, state);
+    return (x2: Dependent) =>
+      (x3: Record<HeroDependent>) =>
+        resultFn(id, x2, x3);
   }
 }
 
 export const removeHeroListStateItem = (id: string) =>
   (state: Record<HeroDependent>): Maybe<Record<HeroDependent>> =>
     getHeroStateListKeyById(id)
-      .map(state.alter(slice => slice.map(slice =>
-        slice.delete(id)
-      ) as RecordKey<HeroStateListKey, HeroDependent>));
+      .map(state.alter(
+        slice => slice.map(
+          justSlice => justSlice.delete(id)
+        ) as RecordKey<HeroStateListKey, HeroDependent>
+      ));
 
 export const adjustHeroSlice = <K extends HeroStateListKey>(
   adjustFn: (slice: RecordKey<K, HeroDependent>) => RecordKey<K, HeroDependent>,
@@ -158,20 +182,30 @@ export const adjustHeroSlice = <K extends HeroStateListKey>(
   return state.alter(adjustFn, key);
 };
 
-export const adjustHeroListStateItemOr = <D extends Dependent>(
-  createFn: (id: string) => D,
-  adjustFn: (value: D) => Maybe<D>,
-  id: string,
-) => (
-  state: HeroDependent,
-) => getHeroStateListKeyById(id)
-  .map(key => ({
-    ...state,
-    [key]: (state[key] as any as OrderedMap<string, D>).alter(R.pipe(
-      Maybe.fromMaybe(createFn(id)),
-      adjustFn
-    ), id),
-  }));
+export const adjustHeroListStateItemOr =
+  <D extends Dependent>(
+    createFn: (id: string) => D,
+    adjustFn: (value: D) => Maybe<D>,
+    id: string,
+  ) =>
+    (state: Record<HeroDependent>) =>
+      Maybe.fromMaybe<Record<HeroDependent>>(
+        state,
+        getHeroStateMapKeyById(id)
+          .map(
+            state.modify(
+              slice =>
+                (slice as any as OrderedMap<string, D>)
+                  .alter(
+                    R.pipe(
+                      Maybe.fromMaybe(createFn(id)),
+                      adjustFn
+                    ),
+                    id
+                  ) as any as (typeof slice)
+            )
+          )
+      );
 
 export const getAllEntriesByGroup =
   <I extends Dependent = Dependent, T extends EntryWithGroup = EntryWithGroup>(
@@ -181,6 +215,6 @@ export const getAllEntriesByGroup =
   ): List<I> => list.elems().filter(R.pipe(
     e => e.lookup('id').bind(wiki.lookup),
     e => Maybe.isJust(e) && groups.includes(
-      Maybe.fromJust(e.bind(e => e.lookup('gr')))
+      Maybe.fromJust(e.bind(just => just.lookup('gr')))
     )
   ));

@@ -31,11 +31,15 @@ export function translate<T extends keyof UIMessages>(
   key: T,
   ...params: (string | number)[]
 ): Maybe<NonNullable<UIMessages[T]>> {
-  return messages.bind(messages => messages.lookup(key) as Maybe<NonNullable<UIMessages[T]>>)
+  return messages.bind(
+    safeMessages =>
+      safeMessages.lookup(key) as Maybe<NonNullable<UIMessages[T]>>
+  )
     .map(message => {
       if (params.length > 0 && typeof message === 'string') {
         return message.replace(/\{(\d+)\}/g, (_, p1) => {
           const param = params[Number.parseInt(p1)];
+
           return typeof param === 'number' ? param.toString() : param;
         });
       }

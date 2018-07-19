@@ -63,7 +63,7 @@ export const getSelectionNameAndCost = (
  */
 export const getActiveSelections =
   (obj: Maybe<Record<Data.ActivatableDependent>>) =>
-    obj.bind(obj => obj.lookup('active'))
+    obj.bind(justObj => justObj.lookup('active'))
       .map(Maybe.mapMaybe(e => e.lookup('sid')));
 
 type SecondarySelections = OrderedMap<number | string, List<string | number>>;
@@ -75,18 +75,18 @@ type SecondarySelections = OrderedMap<number | string, List<string | number>>;
  */
 export const getActiveSecondarySelections =
   (obj: Maybe<Record<Data.ActivatableDependent>>) =>
-    obj.bind(obj => obj
+    obj.bind(justObj => justObj
       .lookup('active')
       .map(r => r.foldl<SecondarySelections>(
-        map => obj => {
-          const sid = obj.lookup('sid');
-          const sid2 = obj.lookup('sid2');
+        map => selection => {
+          const sid = selection.lookup('sid');
+          const sid2 = selection.lookup('sid2');
 
           if (Maybe.isJust(sid) && Maybe.isJust(sid2)) {
             return map.alter(
               e => e
                 .alt(Maybe.Just(List.of()))
-                .map(e => e.append(Maybe.fromJust(sid2))),
+                .map(listForSid => listForSid.append(Maybe.fromJust(sid2))),
               Maybe.fromJust(sid)
             );
           }
@@ -103,7 +103,13 @@ export const getActiveSecondarySelections =
  */
 export const getRequiredSelections =
   (obj: Maybe<Record<Data.ActivatableDependent>>) => obj
-    .bind(obj => obj.lookup('dependencies'))
-    .map(list => Maybe.mapMaybe(e => e.lookup('sid'), list.filter(
-      (e): e is Record<Data.DependencyObject> => isObject(e)
-    )));
+    .map(
+      justObj => Maybe.mapMaybe(
+        dep => Maybe.ensure(
+          (e): e is Record<Data.DependencyObject> => e instanceof Record,
+          dep
+        )
+            .bind(e => e.lookup('sid')),
+        justObj.get('dependencies')
+      )
+    );

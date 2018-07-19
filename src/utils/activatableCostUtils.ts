@@ -320,8 +320,8 @@ const adjustCurrentCost = (
       .on((e): e is List<number> => e instanceof List, currentCost => {
         const tier = obj.lookupWithDefault(1, 'tier');
 
-        return currentCost.foldli(
-          sum => current => index =>
+        return currentCost.ifoldl(
+          sum => index => current =>
             index <= (tier - 1) ? sum + current : sum,
           0
         );

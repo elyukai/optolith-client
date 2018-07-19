@@ -1,87 +1,114 @@
-import { WikiState } from '../reducers/wikiReducer';
-import { AdvantageInstance, AttributeInstance, CantripInstance, SpecialAbilityInstance, SpellInstance } from '../types/data.d';
-import { RequiresIncreasableObject } from '../types/reusable.d';
-import { ExperienceLevel, SpecialAbility } from '../types/wiki';
-import { getSids } from './ActivatableUtils';
-import { getFlatPrerequisites } from './RequirementUtils';
-import { getWikiEntry } from './WikiUtils';
+import R from 'ramda';
+import * as Data from '../types/data';
+import * as Wiki from '../types/wiki';
+import { getSkillCheckValues } from './AttributeUtils';
+import { Just, List, Maybe, OrderedMap, Record } from './dataUtils';
+import { flattenDependencies } from './flattenDependencies';
+import { getNumericMagicalTraditionIdByInstanceId } from './IDUtils';
+import { getActiveSelections } from './selectionUtils';
+import { getExceptionalSkillBonus } from './skillUtils';
 
-export function isOwnTradition(tradition: SpecialAbilityInstance[], obj: SpellInstance | CantripInstance): boolean {
-	return obj.tradition.some(e => e === 1 || !!tradition.find(t => e === getNumericMagicalTraditionIdByInstanceId(t.id) + 1));
-}
+export const isOwnTradition = (
+  tradition: List<Record<Wiki.SpecialAbility>>,
+  obj: Record<Wiki.Spell> | Record<Wiki.Spell>,
+): boolean =>
+  obj.get('tradition').any(
+    e => e === 1 || Maybe.isJust(tradition.find(
+      t => getNumericMagicalTraditionIdByInstanceId(t.get('id'))
+        .map(id => id + 1)
+        .equals(Just(e))
+    ))
+  );
 
-export function isIncreasable(obj: SpellInstance, startEL: ExperienceLevel, phase: number, attributes: Map<string, AttributeInstance>, exceptionalSkill: AdvantageInstance, propertyKnowledge: SpecialAbilityInstance): boolean {
-	let max = 0;
-	const bonus = exceptionalSkill.active.filter(e => e === obj.id).length;
+export const isIncreasable = (
+  wikiEntry: Record<Wiki.Spell>,
+  instance: Record<Data.ActivatableSkillDependent>,
+  startEL: Record<Wiki.ExperienceLevel>,
+  phase: number,
+  attributes: OrderedMap<string, Record<Data.AttributeDependent>>,
+  exceptionalSkill: Maybe<Record<Data.ActivatableDependent>>,
+  propertyKnowledge: Maybe<Record<Data.ActivatableDependent>>
+): boolean => {
+  const bonus = getExceptionalSkillBonus(wikiEntry.lookup('id'), exceptionalSkill);
 
-	if (phase < 3) {
-		max = startEL.maxSkillRating;
-	}
-	else {
-		const checkValues = obj.check.map(id => attributes.get(id)!.value);
-		max = Math.max(...checkValues) + 2;
-	}
+  const hasPropertyKnowledgeRestriction = getActiveSelections(propertyKnowledge)
+    .map(properties => properties.notElem(wikiEntry.get('property')));
 
-	if (!getSids(propertyKnowledge).includes(obj.property)) {
-		max = Math.min(14, max);
-	}
+  const maxList = List.of(
+    getSkillCheckValues(attributes)(wikiEntry.get('check')).maximum() + 2
+  );
 
-	return obj.value < max + bonus;
-}
+  const getAdditionalMax = R.pipe(
+    (list: typeof maxList) => phase < 3
+      ? list.append(startEL.get('maxSkillRating'))
+      : list,
+    (list: typeof maxList) => hasPropertyKnowledgeRestriction.equals(Just(true))
+      ? list.append(14)
+      : list
+  );
 
-export function isDecreasable(wiki: WikiState, obj: SpellInstance, spells: Map<string, SpellInstance>, propertyKnowledge: SpecialAbilityInstance): boolean {
-	const dependencies = obj.dependencies.map(e => {
-		if (typeof e === 'object') {
-			const target = getWikiEntry(wiki, e.origin) as SpecialAbility;
-			const req = getFlatPrerequisites(target.prerequisites).find(r => {
-				return typeof r !== 'string' && Array.isArray(r.id) && r.id.includes(e.origin);
-			}) as RequiresIncreasableObject | undefined;
-			if (req) {
-				const resultOfAll = (req.id as string[]).map(id => spells.get(id)!.value >= e.value);
-				return resultOfAll.reduce((a, b) => b ? a + 1 : a, 0) > 1 ? 0 : e.value;
-			}
-			return 0;
-		}
-		return e;
-	});
+  const max = getAdditionalMax(maxList).minimum();
 
-	const valid = obj.value < 1 ? !dependencies.includes(true) : obj.value > dependencies.reduce((m, d) => typeof d === 'number' && d > m ? d : m, 0);
+  return instance.get('value') < max + bonus;
+};
 
-	if (getSids(propertyKnowledge).includes(obj.property)) {
-		const counter = getPropertyCounter(spells);
-		const countedWithProperty = counter.get(obj.property);
-		return (obj.value !== 10 || typeof countedWithProperty === 'number' && countedWithProperty > 3) && valid;
-	}
+export const getPropertyCounter = (
+  wiki: OrderedMap<string, Record<Wiki.Spell>>,
+  state: OrderedMap<string, Record<Data.ActivatableSkillDependent>>
+) => {
+  return state.filter(e => e.get('value') >= 10)
+    .foldl<OrderedMap<number, number>>(
+      acc => instance => Maybe.maybe(
+        acc,
+        wikiEntry => acc.alter(
+          existing => Just(Maybe.fromMaybe(0, existing) + 1),
+          wikiEntry.get('property')
+        ),
+        wiki.lookup(instance.get('id'))
+      ),
+      OrderedMap.empty<number, number>(),
+    );
+};
 
-	return valid;
-}
+export const isDecreasable = (
+  wiki: Record<Wiki.WikiAll>,
+  state: Record<Data.HeroDependent>,
+  wikiEntry: Record<Wiki.Spell>,
+  instance: Record<Data.ActivatableSkillDependent>,
+  spells: OrderedMap<string, Record<Data.ActivatableSkillDependent>>,
+  propertyKnowledge: Maybe<Record<Data.ActivatableDependent>>,
+): boolean => {
+  const dependencies = flattenDependencies<number | boolean>(
+    wiki,
+    state,
+    instance.get('dependencies'),
+  );
 
-export function getPropertyCounter(spells: Map<string, SpellInstance>) {
-	return [...spells.values()].filter(e => e.value >= 10).reduce((a, b) => {
-		const existing = a.get(b.property);
-		if (typeof existing === 'number') {
-			a.set(b.property, existing + 1);
-		}
-		else {
-			a.set(b.property, 1);
-		}
-		return a;
-	}, new Map<number, number>());
-}
+  // Basic validation
+  const valid = instance.get('value') < 1
+    ? dependencies.notElem(true)
+    : instance.get('value') > Math.max(0, ...dependencies.filter(isNumber));
 
-export function reset(obj: SpellInstance): SpellInstance {
-	return {
-		...obj,
-		active: false,
-		dependencies: [],
-		value: 0
-	};
-}
+  return Maybe.fromMaybe(
+    valid,
+    getActiveSelections(propertyKnowledge)
+      // Check if spell is part of dependencies of active Property Knowledge
+      .bind(Maybe.ensure(
+        activeProperties => activeProperties.any(
+          e => isNumber(e) && wikiEntry.get('property') === e
+        )
+      ))
+      .map(
+        () => {
+          const counter = getPropertyCounter(wiki.get('spells'), spells);
 
-export function resetCantrip(obj: CantripInstance): CantripInstance {
-	return {
-		...obj,
-		active: false,
-		dependencies: []
-	};
-}
+          const countedLowestWithProperty = Maybe.fromMaybe(
+            0,
+            counter.lookup(wikiEntry.get('property'))
+          );
+
+          return (instance.get('value') !== 10 || countedLowestWithProperty > 3) && valid;
+        }
+      )
+  );
+};

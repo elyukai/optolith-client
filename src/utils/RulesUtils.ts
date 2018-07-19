@@ -1,30 +1,54 @@
-import { SourceLink } from '../types/data';
-import { Book } from '../types/wiki';
+import { Book, SourceLink } from '../types/wiki';
+import { List, OrderedMap, OrderedSet, Record } from './dataUtils';
 
-export const isCoreBook = (src: SourceLink) => ['US25001', 'US25002'].includes(src.id);
+export const isCoreBook = (src: Record<SourceLink>) =>
+  ['US25001', 'US25002'].includes(src.get('id'));
 
 interface ObjectWithSource {
-	src: SourceLink[];
-	[key: string]: any;
+  src: List<Record<SourceLink>>;
+  [key: string]: any;
 }
+
+/**
+ * Use because `entry.get('src')` does not work
+ */
+const getSourceLinks = (entry: any): List<Record<SourceLink>> =>
+  entry.get('src' as any);
+
+/**
+ * Use because `entry.get('instance')` does not work
+ */
+const getInstance = <T extends ObjectWithSource>(entry: any): Record<T> =>
+  entry.get('instance' as any);
+
+/**
+ * Use for combination of `getInstance` and `getSourceLinks`
+ */
+const getSourceLinksFromInstance = (entry: any): List<Record<SourceLink>> =>
+getSourceLinks(getInstance(entry));
 
 /**
  * Returns if the given entry is available.
  * @param availablility The availability state.
  */
-export const isAvailable = <T extends ObjectWithSource>(availablility: boolean | Set<string>) => (entry: T) => {
-	if (typeof availablility === 'boolean') {
-		return availablility === true;
-	}
-	return entry.src.some(s => availablility.has(s.id) || isCoreBook(s));
-};
+export const isAvailable =
+  <T extends ObjectWithSource>(availablility: boolean | OrderedSet<string>) =>
+    (entry: Record<T>) => {
+      if (typeof availablility === 'boolean') {
+        return availablility === true;
+      }
+
+      return getSourceLinks(entry).any(
+        s => availablility.member(s.get('id')) || isCoreBook(s)
+      );
+    };
 
 /**
  * Returns if the given entry is from a core rule book.
  * @param entry The entry.
  */
-export const isEntryFromCoreBook = <T extends ObjectWithSource>(entry: T) => {
-	return entry.src.some(s => isCoreBook(s));
+export const isEntryFromCoreBook = <T extends ObjectWithSource>(entry: Record<T>) => {
+  return getSourceLinks(entry).any(isCoreBook);
 };
 
 /**
@@ -33,29 +57,52 @@ export const isEntryFromCoreBook = <T extends ObjectWithSource>(entry: T) => {
  * @param availablility The availability state.
  * @param or An additional function to state the entry should be still shown.
  */
-export const filterByAvailability = <T extends ObjectWithSource>(list: T[], availablility: boolean | Set<string>, or?: (obj: T) => boolean) => {
-	if (or) {
-		return list.filter(e => e.src.length === 0 || isAvailable(availablility)(e) || or(e));
-	}
-	return list.filter(e => e.src.length === 0 || isAvailable(availablility)(e));
+export const filterByAvailability = <T extends ObjectWithSource>(
+  list: List<Record<T>>,
+  availablility: boolean | OrderedSet<string>,
+  or?: (obj: Record<T>) => boolean
+) => {
+  if (or) {
+    return list.filter(
+      e => getSourceLinks(e).null() || isAvailable<T>(availablility)(e) || or(e)
+    );
+  }
+
+  return list.filter(
+    e => getSourceLinks(e).null() || isAvailable<T>(availablility)(e)
+  );
 };
 
 interface ObjectWithInstance {
-	instance: ObjectWithSource;
-	[key: string]: any;
+  instance: ObjectWithSource;
+  [key: string]: any;
 }
 
 /**
- * Filters a list of objects with an `instance` property containing `SourceLink`s by availability.
- * @param list A list of objects with an `instance` property containing `SourceLink`s.
+ * Filters a list of objects with an `instance` property containing
+ * `SourceLink`s by availability.
+ * @param list A list of objects with an `instance` property containing
+ * `SourceLink`s.
  * @param availablility The availability state.
  * @param or An additional function to state the entry should be still shown.
  */
-export const filterByInstancePropertyAvailability = <T extends ObjectWithInstance>(list: T[], availablility: boolean | Set<string>, or?: (obj: T) => boolean) => {
-	if (or) {
-		return list.filter(e => e.instance.src.length === 0 || isAvailable(availablility)(e.instance) || or(e));
-	}
-	return list.filter(e => e.instance.src.length === 0 || isAvailable(availablility)(e.instance));
+export const filterByInstancePropertyAvailability = <T extends ObjectWithInstance>(
+  list: List<Record<T>>,
+  availablility: boolean | OrderedSet<string>,
+  or?: (obj: Record<T>) => boolean
+) => {
+  if (or) {
+    return list.filter(
+      e => getSourceLinksFromInstance(e).null()
+        || isAvailable(availablility)(getInstance(e))
+        || or(e)
+    );
+  }
+
+  return list.filter(
+    e => getSourceLinksFromInstance(e).null()
+      || isAvailable(availablility)(getInstance(e))
+  );
 };
 
 /**
@@ -65,13 +112,9 @@ export const filterByInstancePropertyAvailability = <T extends ObjectWithInstanc
  * are enabled.
  * @param id The book's id.
  */
-export function isBookEnabled(
-	books: Map<string, Book>,
-	availableBooks: true | Set<string>,
-	id: string,
-): boolean {
-	if (availableBooks === true) {
-		return books.has(id);
-	}
-	return availableBooks.has(id);
-}
+export const isBookEnabled = (
+  books: OrderedMap<string, Record<Book>>,
+  availableBooks: true | OrderedSet<string>,
+  id: string
+) =>
+    availableBooks === true ? books.member(id) : availableBooks.member(id);

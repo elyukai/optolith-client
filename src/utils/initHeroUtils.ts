@@ -1,11 +1,12 @@
 import { Categories } from '../constants/Categories';
 import * as Data from '../types/data.d';
 import * as Raw from '../types/rawdata.d';
+import { StringKeyObject } from './collectionUtils';
+import * as CreateDependencyObjectUtils from './createEntryUtils';
+import { List, Maybe, OrderedMap, OrderedSet, Record } from './dataUtils';
+import { exists } from './exists';
 import { getCategoryById } from './IDUtils';
 import { currentVersion } from './VersionUtils';
-import { StringKeyObject, convertMapToArray, convertObjectToMap, setM } from './collectionUtils';
-import * as CreateDependencyObjectUtils from './createEntryUtils';
-import { exists } from './exists';
 
 const getUnchangedProperties = (id: string, hero: Raw.RawHero) => {
   const {
@@ -31,7 +32,7 @@ const getUnchangedProperties = (id: string, hero: Raw.RawHero) => {
     phase,
     name,
     avatar,
-    adventurePoints: ap,
+    adventurePoints: Record.of(ap),
     race: r,
     raceVariant: rv,
     culture: c,
@@ -40,12 +41,13 @@ const getUnchangedProperties = (id: string, hero: Raw.RawHero) => {
     professionVariant: pv,
     sex,
     experienceLevel: el,
-    personalData: pers,
+    personalData: Record.of(pers),
   };
 };
 
 const getPlayer = (hero: Raw.RawHero) => {
   const { player } = hero;
+
   return {
     player: player && player.id,
   };
@@ -53,73 +55,86 @@ const getPlayer = (hero: Raw.RawHero) => {
 
 const getDates = (hero: Raw.RawHero) => {
   const { dateCreated, dateModified } = hero;
+
   return {
     dateCreated: new Date(dateCreated),
     dateModified: new Date(dateModified),
   };
 };
 
+const getActivatableDependent = (
+  source: StringKeyObject<Data.ActiveObject[]>
+): (OrderedMap<string, Record<Data.ActivatableDependent>>) =>
+  OrderedMap.of(
+    Object.entries(source).map<[string, Record<Data.ActivatableDependent>]>(
+      ([id, active]) => [
+        id,
+        CreateDependencyObjectUtils.createActivatableDependent(
+          id,
+          { active: List.of(...active.map(Record.of)) }
+        ),
+      ]
+    )
+  );
+
 interface ActivatableMaps {
-  advantages: ReadonlyMap<string, Data.ActivatableDependent>;
-  disadvantages: ReadonlyMap<string, Data.ActivatableDependent>;
-  specialAbilities: ReadonlyMap<string, Data.ActivatableDependent>;
+  advantages: OrderedMap<string, Record<Data.ActivatableDependent>>;
+  disadvantages: OrderedMap<string, Record<Data.ActivatableDependent>>;
+  specialAbilities: OrderedMap<string, Record<Data.ActivatableDependent>>;
 }
 
 const getActivatables = (hero: Raw.RawHero): ActivatableMaps => {
   const objectsInMap = getActivatableDependent(hero.activatable);
 
-  return convertMapToArray(objectsInMap).reduce<ActivatableMaps>((acc, e) => {
-    const [id, obj] = e;
-    const category = getCategoryById(id);
+  return objectsInMap.foldlWithKey<ActivatableMaps>(
+    acc => id => obj => {
+      const category = getCategoryById(id);
 
-    if (category === Categories.ADVANTAGES) {
-      return {
-        ...acc,
-        advantages: setM(id, obj)(acc.advantages),
-      };
-    }
-    else if (category === Categories.DISADVANTAGES) {
-      return {
-        ...acc,
-        disadvantages: setM(id, obj)(acc.disadvantages),
-      };
-    }
-    else if (category === Categories.SPECIAL_ABILITIES) {
-      return {
-        ...acc,
-        specialAbilities: setM(id, obj)(acc.specialAbilities),
-      };
-    }
+      if (category.equals(Maybe.Just(Categories.ADVANTAGES))) {
+        return {
+          ...acc,
+          advantages: acc.advantages.insert(id, obj),
+        };
+      }
+      else if (category.equals(Maybe.Just(Categories.DISADVANTAGES))) {
+        return {
+          ...acc,
+          disadvantages: acc.disadvantages.insert(id, obj),
+        };
+      }
+      else if (category.equals(Maybe.Just(Categories.SPECIAL_ABILITIES))) {
+        return {
+          ...acc,
+          specialAbilities: acc.specialAbilities.insert(id, obj),
+        };
+      }
 
-    return acc;
-  }, {
-    advantages: new Map(),
-    disadvantages: new Map(),
-    specialAbilities: new Map(),
-  });
+      return acc;
+    },
+    {
+      advantages: new OrderedMap(),
+      disadvantages: new OrderedMap(),
+      specialAbilities: new OrderedMap(),
+    }
+  );
 };
 
 const getAttributes = (
   hero: Raw.RawHero
-): ReadonlyMap<string, Data.AttributeDependent> => {
-  return new Map(
-    hero.attr.values.map<[string, Data.AttributeDependent]>(
-      ([id, value, mod]) => {
-        return [
+): (OrderedMap<string, Record<Data.AttributeDependent>>) =>
+  new OrderedMap(
+    hero.attr.values.map<[string, Record<Data.AttributeDependent>]>(
+      ([id, value, mod]) => [
+        id,
+        CreateDependencyObjectUtils.createAttributeDependent(
           id,
-          {
-            id,
-            value,
-            mod,
-            dependencies: [],
-          }
-        ];
-      }
+          { value, mod }
+        )
+      ]
     )
   );
-};
 
-const getEnergies = (hero: Raw.RawHero): Data.Energies => {
+const getEnergies = (hero: Raw.RawHero): Record<Data.Energies> => {
   const {
     attr: {
       ae: addedArcaneEnergyPoints,
@@ -127,136 +142,125 @@ const getEnergies = (hero: Raw.RawHero): Data.Energies => {
       lp: addedLifePoints,
       permanentAE,
       permanentKP,
-      permanentLP,
+      permanentLP = { lost: 0 },
     },
   } = hero;
 
-  return {
+  return Record.of<Data.Energies>({
     addedArcaneEnergyPoints,
     addedKarmaPoints,
     addedLifePoints,
-    permanentArcaneEnergyPoints: permanentAE,
-    permanentKarmaPoints: permanentKP,
-    permanentLifePoints: permanentLP || { lost: 0 }
-  };
+    permanentArcaneEnergyPoints: Record.of(permanentAE),
+    permanentKarmaPoints: Record.of(permanentKP),
+    permanentLifePoints: Record.of(permanentLP)
+  });
 };
+
+const getDependentSkills = (
+  source: StringKeyObject<number>
+): (OrderedMap<string, Record<Data.SkillDependent>>) =>
+  OrderedMap.of(
+    Object.entries(source).map<[string, Record<Data.SkillDependent>]>(
+      ([id, value]) => [
+        id,
+        CreateDependencyObjectUtils.createDependentSkill(id, { value }),
+      ]
+    )
+  );
 
 const getSkills = (
   hero: Raw.RawHero
-): ReadonlyMap<string, Data.SkillDependent> => {
-  return getDependentSkills(hero.talents);
-};
+): (OrderedMap<string, Record<Data.SkillDependent>>) =>
+  getDependentSkills(hero.talents);
 
 const getCombatTechniques = (
   hero: Raw.RawHero
-): ReadonlyMap<string, Data.SkillDependent> => {
-  return getDependentSkills(hero.ct);
-};
+): (OrderedMap<string, Record<Data.SkillDependent>>) =>
+  getDependentSkills(hero.ct);
+
+const getActivatableDependentSkills = (
+  source: StringKeyObject<number>
+): (OrderedMap<string, Record<Data.ActivatableSkillDependent>>) =>
+  OrderedMap.of(
+    Object.entries(source)
+      .map<[string, Record<Data.ActivatableSkillDependent>]>(
+        ([id, value]) => [
+          id,
+          CreateDependencyObjectUtils.createActivatableDependentSkill(id, {
+            active: true,
+            value
+          }),
+        ]
+      )
+  );
 
 const getSpells = (
   hero: Raw.RawHero
-): ReadonlyMap<string, Data.ActivatableSkillDependent> => {
-  return getActivatableDependentSkills(hero.spells);
-};
+): (OrderedMap<string, Record<Data.ActivatableSkillDependent>>) =>
+  getActivatableDependentSkills(hero.spells);
 
 const getCantrips = (
   hero: Raw.RawHero
-): ReadonlySet<string> => {
-  return new Set(hero.cantrips);
-};
+): OrderedSet<string> =>
+  OrderedSet.of(hero.cantrips);
 
 const getLiturgicalChants = (
   hero: Raw.RawHero
-): ReadonlyMap<string, Data.ActivatableSkillDependent> => {
-  return getActivatableDependentSkills(hero.liturgies);
-};
+): (OrderedMap<string, Record<Data.ActivatableSkillDependent>>) =>
+  getActivatableDependentSkills(hero.liturgies);
 
 const getBlessings = (
   hero: Raw.RawHero
-): ReadonlySet<string> => {
-  return new Set(hero.blessings);
-};
+): OrderedSet<string> =>
+  OrderedSet.of(hero.blessings);
 
-const getBelongings = (hero: Raw.RawHero): Data.Belongings => {
+const getBelongings = (hero: Raw.RawHero): Record<Data.Belongings> => {
   const {
     items,
     armorZones,
     purse,
   } = hero.belongings;
 
-  return {
-    items: convertObjectToMap(items),
-    armorZones: convertObjectToMap(armorZones),
-    purse,
-  };
+  return Record.of<Data.Belongings>({
+    items: OrderedMap.of(
+      Object.entries(items)
+        .map<[string, Record<Data.ItemInstance>]>(
+          ([id, obj]) => [id, Record.of(obj)]
+        )
+    ),
+    armorZones: OrderedMap.of(
+      Object.entries(armorZones)
+        .map<[string, Record<Data.ArmorZonesInstance>]>(
+          ([id, obj]) => [id, Record.of(obj)]
+        )
+    ),
+    purse: Record.of(purse),
+  });
 };
 
-const getRules = (hero: Raw.RawHero): Data.Rules => {
-  return {
-    ...hero.rules,
-    enabledRuleBooks: new Set(hero.rules.enabledRuleBooks),
-  };
-};
+const getRules =
+  (hero: Raw.RawHero): Record<Data.Rules> =>
+    Record.of({
+      ...hero.rules,
+      enabledRuleBooks: OrderedSet.of(hero.rules.enabledRuleBooks),
+    });
 
-const getPets = (hero: Raw.RawHero): ReadonlyMap<string, Data.PetInstance> => {
-  return exists(hero.pets) ? convertObjectToMap(hero.pets) : new Map();
-}
-
-const getActivatableDependent = (
-  source: StringKeyObject<Data.ActiveObject[]>
-): ReadonlyMap<string, Data.ActivatableDependent> => {
-  return new Map(
-    Object.entries(source).map<[string, Data.ActivatableDependent]>(
-      ([id, active]) => {
-        return [
-          id,
-          CreateDependencyObjectUtils.createActivatableDependent(id, {
-            active
-          }),
-        ];
-      }
-    )
-  );
-};
-
-const getDependentSkills = (
-  source: StringKeyObject<number>
-): ReadonlyMap<string, Data.SkillDependent> => {
-  return new Map(
-    Object.entries(source).map<[string, Data.SkillDependent]>(
-      ([id, value]) => {
-        return [
-          id,
-          CreateDependencyObjectUtils.createDependentSkill(id, { value }),
-        ];
-      }
-    )
-  );
-};
-
-const getActivatableDependentSkills = (
-  source: StringKeyObject<number>
-): ReadonlyMap<string, Data.ActivatableSkillDependent> => {
-  return new Map(
-    Object.entries(source).map<[string, Data.ActivatableSkillDependent]>(
-      ([id, value]) => {
-        return [
-          id,
-          CreateDependencyObjectUtils.createActivatableDependentSkill(id, {
-            active: true,
-            value
-          }),
-        ];
-      }
-    )
-  );
-};
+const getPets =
+  (hero: Raw.RawHero): OrderedMap<string, Record<Data.PetInstance>> =>
+    exists(hero.pets)
+      ? OrderedMap.of(
+          Object.entries(hero.pets)
+            .map<[string, Record<Data.PetInstance>]>(
+              ([id, obj]) => [id, Record.of(obj)]
+            )
+        )
+      : OrderedMap.empty();
 
 export const getHeroInstance = (
   id: string,
   hero: Raw.RawHero,
-): Data.HeroDependent => {
-  return {
+): Record<Data.HeroDependent> =>
+  Record.of<Data.HeroDependent>({
     ...getUnchangedProperties(id, hero),
     ...getPlayer(hero),
     ...getDates(hero),
@@ -272,11 +276,10 @@ export const getHeroInstance = (
     belongings: getBelongings(hero),
     rules: getRules(hero),
     pets: getPets(hero),
-    combatStyleDependencies: [],
-    magicalStyleDependencies: [],
-    blessedStyleDependencies: [],
-  };
-};
+    combatStyleDependencies: List.of(),
+    magicalStyleDependencies: List.of(),
+    blessedStyleDependencies: List.of()
+  });
 
 export const getInitialHeroObject = (
   id: string,
@@ -285,68 +288,68 @@ export const getInitialHeroObject = (
   experienceLevel: string,
   totalAp: number,
   enableAllRuleBooks: boolean,
-  enabledRuleBooks: Set<string>,
-): Data.HeroDependent => {
-  return {
+  enabledRuleBooks: OrderedSet<string>,
+): Record<Data.HeroDependent> => {
+  return Record.of<Data.HeroDependent>({
     id,
     clientVersion: currentVersion,
     phase: 1,
     name,
-    adventurePoints: {
+    adventurePoints: Record.of({
       total: totalAp,
       spent: 0,
-    },
+    }),
     sex,
     experienceLevel,
-    personalData: {},
-    rules: {
+    personalData: Record.of({}),
+    rules: Record.of<Data.Rules>({
       higherParadeValues: 0,
       attributeValueLimit: false,
       enableAllRuleBooks,
       enabledRuleBooks,
       enableLanguageSpecializations: false,
-    },
+    }),
     dateCreated: new Date(),
     dateModified: new Date(),
-    advantages: new Map(),
-    disadvantages: new Map(),
-    specialAbilities: new Map(),
-    attributes: new Map(),
-    energies: {
+    advantages: OrderedMap.empty(),
+    disadvantages: OrderedMap.empty(),
+    specialAbilities: OrderedMap.empty(),
+    attributes: OrderedMap.empty(),
+    energies: Record.of({
       addedArcaneEnergyPoints: 0,
       addedKarmaPoints: 0,
       addedLifePoints: 0,
-      permanentArcaneEnergyPoints: {
+      permanentArcaneEnergyPoints: Record.of({
         lost: 0,
         redeemed: 0,
-      },
-      permanentKarmaPoints: {
+      }),
+      permanentKarmaPoints: Record.of({
         lost: 0,
         redeemed: 0,
-      },
-      permanentLifePoints: {
+      }),
+      permanentLifePoints: Record.of({
         lost: 0
-      }
-    },
-    skills: new Map(),
-    combatTechniques: new Map(),
-    spells: new Map(),
-    cantrips: new Set(),
-    liturgicalChants: new Map(),
-    blessings: new Set(),
-    belongings: {
-      items: new Map(),
-      armorZones: new Map(),
-      purse: {
+      })
+    }),
+    skills: OrderedMap.empty(),
+    combatTechniques: OrderedMap.empty(),
+    spells: OrderedMap.empty(),
+    cantrips: OrderedSet.empty(),
+    liturgicalChants: OrderedMap.empty(),
+    blessings: OrderedSet.empty(),
+    belongings: Record.of<Data.Belongings>({
+      items: OrderedMap.empty(),
+      armorZones: OrderedMap.empty(),
+      purse: Record.of({
         d: '',
         s: '',
         h: '',
         k: '',
-      },
-    },
-    pets: new Map(),
-    combatStyleDependencies: [],
-    magicalStyleDependencies: [],
-    blessedStyleDependencies: [],
-  };
+      }),
+    }),
+    pets: OrderedMap.empty(),
+    combatStyleDependencies: List.of(),
+    magicalStyleDependencies: List.of(),
+    blessedStyleDependencies: List.of()
+  });
 };

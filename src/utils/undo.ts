@@ -17,16 +17,19 @@ export function undo<S, A extends Action = Action>(
 ): UndoReducer<S, A> {
   const initialState: UndoState<S> = {
     past: [],
+    // tslint:disable-next-line:no-object-literal-type-assertion
     present: reducer(undefined, {} as A),
     future: []
   };
 
   return function undoHandler(state: UndoState<S> = initialState, action: A) {
     const { past, future, present } = state;
+
     switch (action.type) {
       case ActionTypes.UNDO: {
         const previous = last(past);
         const newPast = past.slice(0, past.length - 1);
+
         if (previous) {
           return {
             past: newPast,
@@ -34,12 +37,14 @@ export function undo<S, A extends Action = Action>(
             future: [present, ...future]
           };
         }
+
         return state;
       }
 
       case ActionTypes.REDO: {
         const next = first(future);
         const newFuture = future.slice(1);
+
         if (next) {
           return {
             future: newFuture,
@@ -47,11 +52,13 @@ export function undo<S, A extends Action = Action>(
             past: [...past, present]
           };
         }
+
         return state;
       }
 
       default: {
         const newPresent = reducer(present, action);
+
         if (present === newPresent) {
           if (resetActionTypes && resetActionTypes.includes(action.type)) {
             return {
@@ -60,8 +67,10 @@ export function undo<S, A extends Action = Action>(
               future: []
             };
           }
+
           return state;
         }
+
         if (resetActionTypes && resetActionTypes.includes(action.type)) {
           return {
             past: [],
@@ -69,6 +78,7 @@ export function undo<S, A extends Action = Action>(
             future: []
           };
         }
+
         return {
           past: [...past, present],
           present: newPresent,
@@ -85,10 +95,12 @@ export function undoExisting<S, A extends Action = Action>(
 ): UndoReducer<S, A> {
   return function undoHandler(state: UndoState<S>, action: A) {
     const { past, future, present } = state;
+
     switch (action.type) {
       case ActionTypes.UNDO: {
         const previous = last(past);
         const newPast = past.slice(0, past.length - 1);
+
         if (previous) {
           return {
             past: newPast,
@@ -96,12 +108,14 @@ export function undoExisting<S, A extends Action = Action>(
             future: [present, ...future]
           };
         }
+
         return state;
       }
 
       case ActionTypes.REDO: {
         const next = first(future);
         const newFuture = future.slice(1);
+
         if (next) {
           return {
             future: newFuture,
@@ -109,11 +123,13 @@ export function undoExisting<S, A extends Action = Action>(
             past: [...past, present]
           };
         }
+
         return state;
       }
 
       default: {
         const newPresent = reducer(present, action);
+
         if (present === newPresent) {
           if (resetActionTypes && resetActionTypes.includes(action.type)) {
             return {
@@ -122,8 +138,10 @@ export function undoExisting<S, A extends Action = Action>(
               future: []
             };
           }
+
           return state;
         }
+
         if (resetActionTypes && resetActionTypes.includes(action.type)) {
           return {
             past: [],
@@ -131,6 +149,7 @@ export function undoExisting<S, A extends Action = Action>(
             future: []
           };
         }
+
         return {
           past: [...past, present],
           present: newPresent,

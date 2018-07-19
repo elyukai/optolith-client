@@ -1,41 +1,40 @@
 import { PetEditorInstance, PetInstance } from '../types/data.d';
+import { Record, RecordSafeKeys } from './dataUtils';
 
-export const convertToEdit = (item: PetInstance): PetEditorInstance => {
-  return {
-    ...item,
-    size: item.size || '',
-    type: item.type || '',
-    attack: item.attack || '',
-    dp: item.dp || '',
-    reach: item.reach || '',
-    actions: item.actions || '',
-    talents: item.talents || '',
-    skills: item.skills || '',
-    notes: item.notes || '',
-    spentAp: item.spentAp || '',
-    totalAp: item.totalAp || '',
-    cou: item.cou || '',
-    sgc: item.sgc || '',
-    int: item.int || '',
-    cha: item.cha || '',
-    dex: item.dex || '',
-    agi: item.agi || '',
-    con: item.con || '',
-    str: item.str || '',
-    lp: item.lp || '',
-    ae: item.ae || '',
-    spi: item.spi || '',
-    tou: item.tou || '',
-    pro: item.pro || '',
-    ini: item.ini || '',
-    mov: item.mov || '',
-    at: item.at || '',
-    pa: item.pa || ''
-  };
-};
+export const convertToEdit = (item: Record<PetInstance>): Record<PetEditorInstance> =>
+  item.merge(Record.of({
+    size: item.lookupWithDefault('', 'size'),
+    type: item.lookupWithDefault('', 'type'),
+    attack: item.lookupWithDefault('', 'attack'),
+    dp: item.lookupWithDefault('', 'dp'),
+    reach: item.lookupWithDefault('', 'reach'),
+    actions: item.lookupWithDefault('', 'actions'),
+    talents: item.lookupWithDefault('', 'talents'),
+    skills: item.lookupWithDefault('', 'skills'),
+    notes: item.lookupWithDefault('', 'notes'),
+    spentAp: item.lookupWithDefault('', 'spentAp'),
+    totalAp: item.lookupWithDefault('', 'totalAp'),
+    cou: item.lookupWithDefault('', 'cou'),
+    sgc: item.lookupWithDefault('', 'sgc'),
+    int: item.lookupWithDefault('', 'int'),
+    cha: item.lookupWithDefault('', 'cha'),
+    dex: item.lookupWithDefault('', 'dex'),
+    agi: item.lookupWithDefault('', 'agi'),
+    con: item.lookupWithDefault('', 'con'),
+    str: item.lookupWithDefault('', 'str'),
+    lp: item.lookupWithDefault('', 'lp'),
+    ae: item.lookupWithDefault('', 'ae'),
+    spi: item.lookupWithDefault('', 'spi'),
+    tou: item.lookupWithDefault('', 'tou'),
+    pro: item.lookupWithDefault('', 'pro'),
+    ini: item.lookupWithDefault('', 'ini'),
+    mov: item.lookupWithDefault('', 'mov'),
+    at: item.lookupWithDefault('', 'at'),
+    pa: item.lookupWithDefault('', 'pa'),
+  }));
 
-export const getNewInstance = (): PetEditorInstance => {
-  return {
+export const getNewInstance = (): Record<PetEditorInstance> =>
+  Record.of<PetEditorInstance>({
     name: '',
     size: '',
     type: '',
@@ -66,39 +65,43 @@ export const getNewInstance = (): PetEditorInstance => {
     at: '',
     pa: '',
     notes: ''
-  };
-};
+  });
 
-export const convertToSave = (item: PetEditorInstance): PetInstance => {
-  return {
-    ...item,
-    size: item.size.length > 0 ? item.size : undefined,
-    type: item.type.length > 0 ? item.type : undefined,
-    attack: item.attack.length > 0 ? item.attack : undefined,
-    dp: item.dp.length > 0 ? item.dp : undefined,
-    reach: item.reach.length > 0 ? item.reach : undefined,
-    actions: item.actions.length > 0 ? item.actions : undefined,
-    talents: item.talents.length > 0 ? item.talents : undefined,
-    skills: item.skills.length > 0 ? item.skills : undefined,
-    notes: item.notes.length > 0 ? item.notes : undefined,
-    spentAp: item.spentAp.length > 0 ? item.spentAp : undefined,
-    totalAp: item.totalAp.length > 0 ? item.totalAp : undefined,
-    cou: item.cou.length > 0 ? item.cou : undefined,
-    sgc: item.sgc.length > 0 ? item.sgc : undefined,
-    int: item.int.length > 0 ? item.int : undefined,
-    cha: item.cha.length > 0 ? item.cha : undefined,
-    dex: item.dex.length > 0 ? item.dex : undefined,
-    agi: item.agi.length > 0 ? item.agi : undefined,
-    con: item.con.length > 0 ? item.con : undefined,
-    str: item.str.length > 0 ? item.str : undefined,
-    lp: item.lp.length > 0 ? item.lp : undefined,
-    ae: item.ae.length > 0 ? item.ae : undefined,
-    spi: item.spi.length > 0 ? item.spi : undefined,
-    tou: item.tou.length > 0 ? item.tou : undefined,
-    pro: item.pro.length > 0 ? item.pro : undefined,
-    ini: item.ini.length > 0 ? item.ini : undefined,
-    mov: item.mov.length > 0 ? item.mov : undefined,
-    at: item.at.length > 0 ? item.at : undefined,
-    pa: item.pa.length > 0 ? item.pa : undefined
-  };
+const getNonEmptyStringOr = <T extends { [key: string]: any }>(
+  record: Record<T>,
+  key: RecordSafeKeys<T>
+): string | undefined =>
+  record.get(key).length > 0 ? record.get(key) : undefined
+
+export const convertToSave = (item: Record<PetEditorInstance>): Record<PetInstance> => {
+  return item.merge(Record.of({
+    size: getNonEmptyStringOr(item, 'size'),
+    type: getNonEmptyStringOr(item, 'type'),
+    attack: getNonEmptyStringOr(item, 'attack'),
+    dp: getNonEmptyStringOr(item, 'dp'),
+    reach: getNonEmptyStringOr(item, 'reach'),
+    actions: getNonEmptyStringOr(item, 'actions'),
+    talents: getNonEmptyStringOr(item, 'talents'),
+    skills: getNonEmptyStringOr(item, 'skills'),
+    notes: getNonEmptyStringOr(item, 'notes'),
+    spentAp: getNonEmptyStringOr(item, 'spentAp'),
+    totalAp: getNonEmptyStringOr(item, 'totalAp'),
+    cou: getNonEmptyStringOr(item, 'cou'),
+    sgc: getNonEmptyStringOr(item, 'sgc'),
+    int: getNonEmptyStringOr(item, 'int'),
+    cha: getNonEmptyStringOr(item, 'cha'),
+    dex: getNonEmptyStringOr(item, 'dex'),
+    agi: getNonEmptyStringOr(item, 'agi'),
+    con: getNonEmptyStringOr(item, 'con'),
+    str: getNonEmptyStringOr(item, 'str'),
+    lp: getNonEmptyStringOr(item, 'lp'),
+    ae: getNonEmptyStringOr(item, 'ae'),
+    spi: getNonEmptyStringOr(item, 'spi'),
+    tou: getNonEmptyStringOr(item, 'tou'),
+    pro: getNonEmptyStringOr(item, 'pro'),
+    ini: getNonEmptyStringOr(item, 'ini'),
+    mov: getNonEmptyStringOr(item, 'mov'),
+    at: getNonEmptyStringOr(item, 'at'),
+    pa: getNonEmptyStringOr(item, 'pa')
+  })) as Record<PetInstance>;
 };

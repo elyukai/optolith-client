@@ -1,10 +1,10 @@
 import { StringKeyObject } from '../utils/collectionUtils';
-import * as Data from './data.d';
-import * as Reusable from './reusable.d';
 import * as UI from './ui.d';
-import * as Wiki from './wiki.d';
+import { ProfessionSelectionIds } from './wiki.d';
 
-export interface HeroBaseForHerolist {
+export interface RawUser {
+  id: string;
+  displayName: string;
 }
 
 export interface RawHero {
@@ -24,7 +24,7 @@ export interface RawHero {
   readonly sex: 'm' | 'f';
 	readonly dateCreated: string;
 	readonly dateModified: string;
-	player?: Data.User;
+	player?: RawUser;
 	rules: RawRules;
   readonly clientVersion: string;
   readonly phase: number;
@@ -44,7 +44,7 @@ export interface RawHero {
     otherinfo?: string;
     cultureAreaKnowledge?: string;
   };
-  readonly activatable: StringKeyObject<Data.ActiveObject[]>;
+  readonly activatable: StringKeyObject<RawActiveObject[]>;
   readonly attr: {
     values: [string, number, number][];
     lp: number;
@@ -69,8 +69,8 @@ export interface RawHero {
   readonly liturgies: StringKeyObject<number>;
   readonly blessings: string[];
   readonly belongings: {
-    items: StringKeyObject<Data.ItemInstance>;
-    armorZones: StringKeyObject<Data.ArmorZonesInstance>;
+    items: StringKeyObject<RawItem>;
+    armorZones: StringKeyObject<RawArmorZone>;
     purse: {
       d: string;
       s: string;
@@ -78,7 +78,14 @@ export interface RawHero {
       k: string;
     };
   };
-  readonly pets?: StringKeyObject<Data.PetInstance>;
+  readonly pets?: StringKeyObject<RawPet>;
+}
+
+export interface RawActiveObject {
+  sid?: string | number;
+  sid2?: string | number;
+  tier?: number;
+  cost?: number;
 }
 
 export interface RawRules {
@@ -152,13 +159,18 @@ export interface RawRaceVariantLocale {
 	uncommonDisadvantages?: string;
 }
 
+export interface RawCommonProfessionObject {
+  list: (string | number)[];
+  reverse: boolean;
+}
+
 export interface RawCulture {
 	id: string;
 	ap: number;
 	lang: number[];
 	literacy: number[];
 	social: number[];
-	typ_prof: Data.CommonProfession[];
+	typ_prof: (boolean | RawCommonProfessionObject)[];
 	typ_adv: string[];
 	typ_dadv: string[];
 	untyp_adv: string[];
@@ -189,10 +201,10 @@ export interface RawProfession {
 	id: string;
 	ap: number;
 	apOfActivatables: number;
-	pre_req: Wiki.ProfessionDependencyObject[];
-	req: (Reusable.ProfessionRequiresActivatableObject | Reusable.ProfessionRequiresIncreasableObject)[];
-	sel: Wiki.ProfessionSelections;
-	sa: Reusable.ProfessionRequiresActivatableObject[];
+	pre_req: RawProfessionDependency[];
+	req: RawProfessionPrerequisite[];
+	sel: RawProfessionSelections;
+	sa: RawProfessionRequiresActivatableObject[];
 	combattech: [string, number][];
 	talents: [string, number][];
 	spells: [string, number][];
@@ -212,7 +224,7 @@ export interface RawProfessionLocale {
 	id: string;
 	name: string | { m: string, f: string };
 	subname?: string | { m: string, f: string };
-	req: (Reusable.ProfessionRequiresActivatableObject | Reusable.ProfessionRequiresIncreasableObject)[];
+	req: RawProfessionPrerequisite[];
 	prerequisitesStart?: string;
 	prerequisitesEnd?: string;
 	twelveBlessingsAdd?: string;
@@ -227,10 +239,10 @@ export interface RawProfessionVariant {
 	id: string;
 	ap: number;
 	apOfActivatables: number;
-	pre_req: Wiki.ProfessionDependencyObject[];
-	req: (Reusable.ProfessionRequiresActivatableObject | Reusable.ProfessionRequiresIncreasableObject)[];
-	sel: Wiki.ProfessionVariantSelections;
-	sa: Reusable.ProfessionRequiresActivatableObject[];
+	pre_req: RawProfessionDependency[];
+	req: (RawProfessionRequiresActivatableObject | RawProfessionRequiresIncreasableObject)[];
+	sel: RawProfessionVariantSelections;
+	sa: RawProfessionRequiresActivatableObject[];
 	combattech: [string, number][];
 	talents: [string, number][];
 	spells: [string, number][];
@@ -246,13 +258,118 @@ export interface RawProfessionVariantLocale {
 	concludingText?: string;
 }
 
+export interface RawSpecializationSelection {
+  readonly id: ProfessionSelectionIds.SPECIALISATION;
+  readonly sid: string | string[];
+}
+
+export interface RawRemoveSpecializationSelection {
+  readonly id: ProfessionSelectionIds.SPECIALISATION;
+  readonly active: boolean;
+}
+
+export type RawVariantSpecializationSelection =
+  RawSpecializationSelection |
+  RawRemoveSpecializationSelection;
+
+export interface RawLanguagesScriptsSelection {
+  readonly id: ProfessionSelectionIds.LANGUAGES_SCRIPTS;
+  readonly value: number;
+}
+
+export interface RawCombatTechniquesSelection {
+  readonly id: ProfessionSelectionIds.COMBAT_TECHNIQUES;
+  readonly amount: number;
+  readonly value: number;
+  readonly sid: string[];
+}
+
+export interface RawRemoveCombatTechniquesSelection {
+  readonly id: ProfessionSelectionIds.COMBAT_TECHNIQUES;
+  readonly active: boolean;
+}
+
+export type RawVariantCombatTechniquesSelection =
+  RawCombatTechniquesSelection |
+  RawRemoveCombatTechniquesSelection;
+
+export interface RawCombatTechniquesSecondSelection {
+  readonly id: ProfessionSelectionIds.COMBAT_TECHNIQUES_SECOND;
+  readonly amount: number;
+  readonly value: number;
+  readonly sid: string[];
+}
+
+export interface RawRemoveCombatTechniquesSecondSelection {
+  readonly id: ProfessionSelectionIds.COMBAT_TECHNIQUES_SECOND;
+  readonly active: boolean;
+}
+
+export type RawVariantCombatTechniquesSecondSelection =
+  RawCombatTechniquesSecondSelection |
+  RawRemoveCombatTechniquesSecondSelection;
+
+export interface RawCantripsSelection {
+  readonly id: ProfessionSelectionIds.CANTRIPS;
+  readonly amount: number;
+  readonly sid: string[];
+}
+
+export interface RawCursesSelection {
+  readonly id: ProfessionSelectionIds.CURSES;
+  readonly value: number;
+}
+
+export interface RawSkillsSelection {
+  readonly id: ProfessionSelectionIds.SKILLS;
+  /**
+   * If specified, only choose from skills of the specified group.
+   */
+  readonly gr?: number;
+  /**
+   * The AP value the user can spend.
+   */
+  readonly value: number;
+}
+
+export interface RawTerrainKnowledgeSelection {
+  readonly id: ProfessionSelectionIds.TERRAIN_KNOWLEDGE;
+  readonly sid: number[];
+}
+
+export type RawProfessionSelection =
+  RawSpecializationSelection |
+  RawLanguagesScriptsSelection |
+  RawCombatTechniquesSelection |
+  RawCombatTechniquesSecondSelection |
+  RawCantripsSelection |
+  RawCursesSelection |
+  RawSkillsSelection |
+  RawTerrainKnowledgeSelection;
+
+export type RawProfessionVariantSelection =
+  RawVariantSpecializationSelection |
+  RawLanguagesScriptsSelection |
+  RawVariantCombatTechniquesSelection |
+  RawVariantCombatTechniquesSecondSelection |
+  RawCantripsSelection |
+  RawCursesSelection |
+  RawSkillsSelection |
+  RawTerrainKnowledgeSelection;
+
+export type RawProfessionSelections =
+  RawProfessionSelection[];
+
+export type RawProfessionVariantSelections =
+  RawProfessionVariantSelection[];
+
 export interface RawAdvantage {
 	id: string;
 	ap: number | number[] | string;
 	tiers?: number;
 	max?: number;
-	sel?: Wiki.SelectionObject[];
-	req: ('RCP' | Reusable.AllRequirementTypes)[];
+	sel?: RawSelectionObject[];
+	req: AllRawRequirements[];
 	reqIndex: string[];
 	gr: number;
 	src: string[];
@@ -261,7 +378,7 @@ export interface RawAdvantage {
 export interface RawAdvantageLocale {
 	id: string;
 	name: string;
-	sel?: Wiki.SelectionObject[];
+	sel?: RawSelectionObject[];
 	input?: string;
 	rules: string;
 	range?: string;
@@ -341,7 +458,7 @@ export interface RawBlessing {
 	id: string;
 	aspc: number[];
 	trad: number[];
-	req: Reusable.AllRequirementTypes[];
+	req: AllRawRequirementObjects[];
 	src: string[];
 }
 
@@ -360,8 +477,8 @@ export interface RawSpecialAbility {
 	ap: number | number[] | string;
 	tiers?: number;
 	max?: number;
-	sel?: Wiki.SelectionObject[];
-	req: ('RCP' | Reusable.AllRequirementTypes | (number | 'RCP' | Reusable.AllRequirementTypes)[])[];
+	sel?: RawSelectionObject[];
+	req: AllRawRequirements[] | [number, AllRawRequirements[]][];
 	gr: number;
 	subgr?: number;
 	extended?: (string | string[])[];
@@ -374,7 +491,7 @@ export interface RawSpecialAbility {
 export interface RawSpecialAbilityLocale {
 	id: string;
 	name: string;
-	sel?: Wiki.SelectionObject[];
+	sel?: RawSelectionObject[];
 	input?: string;
 	nameInWiki?: string;
 	rules?: string;
@@ -402,6 +519,28 @@ export interface RawSpecialAbilityLocale {
 	src: number[];
 }
 
+export interface RawSelectionObject {
+  id: string | number;
+  name: string;
+  cost?: number;
+  req?: AllRawRequirementObjects[];
+  prerequisites?: AllRawRequirementObjects[];
+  target?: string;
+  tier?: number;
+  spec?: string[];
+  specInput?: string;
+  applications?: RawApplication[];
+  applicationsInput?: string;
+  talent?: [string, number];
+  gr?: number;
+}
+
+export interface RawApplication {
+  readonly id: number;
+  readonly name: string;
+  readonly prerequisites?: AllRawRequirementObjects[];
+}
+
 export interface RawSpell {
 	id: string;
 	check: [string, string, string];
@@ -411,7 +550,7 @@ export interface RawSpell {
 	subtrad: number[];
 	merk: number;
 	gr: number;
-	req: Reusable.AllRequirementTypes[];
+	req: AllRawRequirementObjects[];
 	src: string[];
 }
 
@@ -435,7 +574,7 @@ export interface RawCantrip {
 	id: string;
 	merk: number;
 	trad: number[];
-	req: Reusable.AllRequirementTypes[];
+	req: AllRawRequirementObjects[];
 	src: string[];
 }
 
@@ -450,7 +589,7 @@ export interface RawCantripLocale {
 	src: number[];
 }
 
-export interface RawTalent {
+export interface RawSkill {
 	id: string;
 	check: [string, string, string];
 	skt: number;
@@ -458,11 +597,11 @@ export interface RawTalent {
 	gr: number;
 	applications?: {
 		id: number;
-		prerequisites: Reusable.AllRequirementTypes[];
+		prerequisites: AllRawRequirementObjects[];
 	}[];
 }
 
-export interface RawTalentLocale {
+export interface RawSkillLocale {
 	id: string;
 	name: string;
 	spec: {
@@ -520,6 +659,57 @@ export interface RawItemLocale {
 	src: number[];
 }
 
+export interface RawArmorZone {
+  id: string;
+  name: string;
+  head?: string;
+  headLoss?: number;
+  leftArm?: string;
+  leftArmLoss?: number;
+  rightArm?: string;
+  rightArmLoss?: number;
+  torso?: string;
+  torsoLoss?: number;
+  leftLeg?: string;
+  leftLegLoss?: number;
+  rightLeg?: string;
+  rightLegLoss?: number;
+}
+
+export interface RawPet {
+  id?: string;
+  name: string;
+  avatar?: string;
+  size?: string;
+  type?: string;
+  attack?: string;
+  dp?: string;
+  reach?: string;
+  actions?: string;
+  talents?: string;
+  skills?: string;
+  notes?: string;
+  spentAp?: string;
+  totalAp?: string;
+  cou?: string;
+  sgc?: string;
+  int?: string;
+  cha?: string;
+  dex?: string;
+  agi?: string;
+  con?: string;
+  str?: string;
+  lp?: string;
+  ae?: string;
+  spi?: string;
+  tou?: string;
+  pro?: string;
+  ini?: string;
+  mov?: string;
+  at?: string;
+  pa?: string;
+}
+
 export interface RawExperienceLevelLocale {
 	id: string;
 	name: string;
@@ -553,12 +743,18 @@ export interface RawTables {
 	racevariants: StringKeyObject<RawRaceVariant>;
 	specialabilities: StringKeyObject<RawSpecialAbility>;
 	spells: StringKeyObject<RawSpell>;
-	talents: StringKeyObject<RawTalent>;
+	talents: StringKeyObject<RawSkill>;
+}
+
+export interface RawBook {
+  readonly id: string;
+  readonly short: string;
+  readonly name: string;
 }
 
 export interface RawLocale {
 	ui: UI.UIMessages;
-	books: StringKeyObject<Wiki.Book>;
+	books: StringKeyObject<RawBook>;
 	el: StringKeyObject<RawExperienceLevelLocale>;
 	attributes: StringKeyObject<RawAttributeLocale>;
 	races: StringKeyObject<RawRaceLocale>;
@@ -568,7 +764,7 @@ export interface RawLocale {
 	professionvariants: StringKeyObject<RawProfessionVariantLocale>;
 	advantages: StringKeyObject<RawAdvantageLocale>;
 	disadvantages: StringKeyObject<RawDisadvantageLocale>;
-	talents: StringKeyObject<RawTalentLocale>;
+	talents: StringKeyObject<RawSkillLocale>;
 	combattech: StringKeyObject<RawCombatTechniqueLocale>;
 	spells: StringKeyObject<RawSpellLocale>;
 	cantrips: StringKeyObject<RawCantripLocale>;
@@ -618,3 +814,95 @@ export interface Raw {
 	tables: RawTables;
 	locales: StringKeyObject<RawLocale>;
 }
+
+export type SID = string | number | number[];
+
+export interface ValueOptionalDependency {
+  /**
+   * The skill/spell/chant rating or rather attribute value.
+   */
+	value: number;
+  /**
+   * The entry that created this dependency.
+   */
+	origin: string;
+}
+
+export interface ActiveDependency {
+	active?: boolean;
+	sid?: SID;
+	sid2?: string | number;
+	tier?: number;
+}
+
+export interface ActiveOptionalDependency extends ActiveDependency {
+	origin: string;
+}
+
+export interface RawRequiresActivatableObject {
+  id: string | string[];
+  active: boolean;
+  sid?: SID;
+  sid2?: string | number;
+  tier?: number;
+}
+
+export interface RawProfessionRequiresActivatableObject extends RawRequiresActivatableObject {
+  id: string;
+  sid?: string | number;
+}
+
+export interface RawRequiresIncreasableObject {
+  id: string | string[];
+  value: number;
+}
+
+export interface RawProfessionRequiresIncreasableObject extends RawRequiresIncreasableObject {
+  id: string;
+}
+
+export interface RawRequiresPrimaryAttribute {
+  id: "ATTR_PRIMARY";
+  value: number;
+  type: 1 | 2;
+}
+
+export interface RawSexRequirement {
+  id: 'SEX';
+  value: 'm' | 'f';
+}
+
+export interface RawRaceRequirement {
+  id: 'RACE';
+  value: number | number[];
+}
+
+export interface RawCultureRequirement {
+  id: 'CULTURE';
+  value: number | number[];
+}
+
+export interface RawPactRequirement {
+  id: 'PACT';
+  category: number;
+  domain?: number | number[];
+  level?: number;
+}
+
+export type RawProfessionDependency =
+  RawSexRequirement |
+  RawRaceRequirement |
+  RawCultureRequirement;
+
+export type RawProfessionPrerequisite =
+  RawProfessionRequiresActivatableObject |
+  RawProfessionRequiresIncreasableObject;
+
+export type AllRawRequirementObjects =
+  RawProfessionDependency |
+  RawRequiresActivatableObject |
+  RawRequiresIncreasableObject |
+  RawRequiresPrimaryAttribute |
+  RawPactRequirement;
+
+export type AllRawRequirements = 'RCP' | AllRawRequirementObjects;

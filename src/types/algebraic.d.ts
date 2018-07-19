@@ -33,12 +33,12 @@ export interface Apply<T> extends Functor<T> {
   ap<U>(m: Apply<(value: T) => U>): Apply<U>;
 }
 
-export interface Applicative<T> extends Apply<T> {
+// extends Apply<Some>
+export interface Applicative {
   /**
    * `of :: Applicative f => a -> f a`
-   * @static
    */
-  of<U>(t: U): Applicative<U>;
+  of<T>(t: T): Apply<T>;
 }
 
 export interface Foldable<T> {

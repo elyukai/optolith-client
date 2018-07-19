@@ -219,8 +219,8 @@ const getPropertyOrAspectKnowledgeDiff = (
       .map(entry => {
         const active = entry.get('active');
 
-        const actualAPSum = apArr.foldli(
-          a => b => i => i + 1 < active.length() ? a + b : a,
+        const actualAPSum = apArr.ifoldl(
+          a => i => b => i + 1 < active.length() ? a + b : a,
           0
         );
 

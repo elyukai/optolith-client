@@ -270,7 +270,10 @@ const isRemovalDisabledEntrySpecific = (
             entry.lookup('category')
           ) === Categories.SPECIAL_ABILITIES,
           () => R.equals(
-            isStyleValidToRemove(state, entry as Record<Wiki.SpecialAbility>),
+            isStyleValidToRemove(
+              state,
+              Maybe.Just(entry as Record<Wiki.SpecialAbility>)
+            ),
             false,
           )
         ),

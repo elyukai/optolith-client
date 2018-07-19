@@ -1,75 +1,74 @@
 import R from 'ramda';
-import * as Data from "../types/data.d";
+import * as Data from '../types/data.d';
 import { isActivatableSkillDependent } from './checkEntryUtils';
-import { ArrayElement } from './collectionUtils';
+import { List, ListElement, Maybe, Record, RecordInterface } from './dataUtils';
 import { getHeroStateListItem, removeHeroListStateItem, setHeroListStateItem } from './heroStateUtils';
 import * as UnusedEntryUtils from './unusedEntryUtils';
 
-type Dep<T extends Data.Dependent> = ArrayElement<T["dependencies"]>;
-type Deps<T extends Data.Dependent> = T["dependencies"];
+type Deps<T extends Data.Dependent> = RecordInterface<T>['dependencies'];
+type Dep<T extends Data.Dependent> = ListElement<Deps<T>>;
 
 const getDependencies = <T extends Data.Dependent>(obj: T) =>
-  obj.dependencies as Deps<T>;
+  obj.get('dependencies') as Deps<T>;
 
 const getDependencyIndex = <T extends Data.Dependent>(e: Dep<T>) =>
-  R.findIndex(R.equals(e)) as (list: Deps<T>) => number;
+  (list: Deps<T>) => (list as List<any>).findIndex(R.equals(e));
 
 const removeDependency = <T extends Data.Dependent>(e: Dep<T>) =>
   (obj: T): T => {
     const list = getDependencies(obj);
 
-    const index = getDependencyIndex(e)(list);
+    const index = Maybe.fromMaybe(-1, getDependencyIndex(e)(list));
 
-    return {
-      ...(obj as any),
-      dependencies: R.remove(index, 1, list),
-    };
+    return (obj as any).update(
+      (dependencies: List<any>) => dependencies.deleteAt(index),
+      'dependencies'
+    );
   };
 
-const adjustOrRemove = <T extends Data.Dependent>(
-  isUnused: (entry: T) => boolean,
-) => (
-  id: string,
-) => (
-  entry: T,
-) => {
-  if (isUnused(entry)) {
-    return removeHeroListStateItem(id);
-  }
+const adjustOrRemove =
+  <T extends Data.Dependent>(isUnused: (entry: T) => boolean) =>
+    (id: string) =>
+      (entry: T) => {
+        if (isUnused(entry)) {
+          return removeHeroListStateItem(id);
+        }
 
-  return setHeroListStateItem(id)(entry);
-};
+        return setHeroListStateItem(id)(entry);
+      };
 
 const getIncreasableCreator: <T extends Data.ExtendedSkillDependent>(
   id: string,
-) => (entry: T) => (state: Data.HeroDependent) => Data.HeroDependent = R.ifElse(
-  isActivatableSkillDependent,
-  adjustOrRemove(
-    UnusedEntryUtils.isActivatableDependentSkillUnused,
-  ),
-  adjustOrRemove(
-    UnusedEntryUtils.isDependentSkillUnused,
-  )
-);
+) =>
+  (entry: T) =>
+    (state: Record<Data.HeroDependent>) => Maybe<Record<Data.HeroDependent>> =
+      R.ifElse(
+        isActivatableSkillDependent,
+        adjustOrRemove(
+          UnusedEntryUtils.isActivatableDependentSkillUnused,
+        ),
+        adjustOrRemove(
+          UnusedEntryUtils.isDependentSkillUnused,
+        )
+      );
 
 const removeDependencyCreator = <T extends Data.Dependent>(
-  adjustOrRemove: (id: string) =>
-    (entry: T) => (state: Data.HeroDependent) => Data.HeroDependent,
-) => (
-  id: string,
-  value: ArrayElement<T["dependencies"]>,
-) => (state: Data.HeroDependent): Data.HeroDependent => {
-  return R.defaultTo(
-    state,
-    getHeroStateListItem<T>(id)(state)
-      .map(R.pipe(
-        removeDependency(value),
-        adjustOrRemove(id),
-      ))
-      .map(fn => (fn as any)(state))
-      .value
-  );
-};;
+  adjustOrRemoveFn: (id: string) =>
+    (entry: T) =>
+      (state: Record<Data.HeroDependent>) => Maybe<Record<Data.HeroDependent>>,
+) =>
+  (id: string, value: Dep<T>) =>
+    (state: Record<Data.HeroDependent>): Record<Data.HeroDependent> => {
+    return Maybe.fromMaybe(
+      state,
+      getHeroStateListItem<T>(id, state)
+        .map(R.pipe(
+          removeDependency(value),
+          adjustOrRemoveFn(id),
+        ))
+        .bind(fn => fn(state))
+    );
+  };
 
 export const removeAttributeDependency = removeDependencyCreator(
   adjustOrRemove(UnusedEntryUtils.isAttributeDependentUnused)

@@ -1,67 +1,72 @@
-import { WikiState } from '../reducers/wikiReducer';
 import * as Data from '../types/data.d';
+import * as Wiki from '../types/wiki.d';
 import { getExperienceLevelIdByAp } from '../utils/ELUtils';
-import { convertMapToValues } from './collectionUtils';
+import { Maybe, OrderedMap, Record } from './dataUtils';
 import { flattenDependencies } from './flattenDependencies';
-import { Maybe } from './maybe';
 
-export const getSum = (list: Data.AttributeDependent[]): number => {
-  return list.reduce((n, e) => n + e.value, 0);
-};
+export const getSum =
+  (list: OrderedMap<string, Record<Data.AttributeDependent>>): number =>
+    list.foldl(n => e => n + e.get('value'), 0);
 
 export const isIncreasable = (
-  wiki: WikiState,
-  state: Data.HeroDependent,
-  instance: Data.AttributeDependent,
+  wiki: Record<Wiki.WikiAll>,
+  state: Record<Data.HeroDependent>,
+  instance: Record<Data.AttributeDependent>,
 ): boolean => {
-  if (state.phase < 3) {
-    const attributes = convertMapToValues(state.attributes);
-    return Maybe.of(wiki.experienceLevels.get(state.experienceLevel))
-      .map(startEl => {
-        const total = getSum(attributes);
-        const reachedMaxTotal = total >= startEl.maxTotalAttributeValues;
+  if (state.get('phase') < 3) {
+    const total = getSum(state.get('attributes'));
 
-        if (reachedMaxTotal) {
-          return false;
-        }
+    return Maybe.fromMaybe(
+      false,
+      wiki.get('experienceLevels').lookup(state.get('experienceLevel'))
+        .map(startEl => {
+          const reachedMaxTotal = total >= startEl.get('maxTotalAttributeValues');
 
-        return instance.value < startEl.maxAttributeValue + instance.mod;
-      })
-      .valueOr(false);
+          if (reachedMaxTotal) {
+            return false;
+          }
+
+          return instance.get('value')
+            < startEl.get('maxAttributeValue') + instance.get('mod');
+        })
+    );
   }
-  else if (state.rules.attributeValueLimit === true) {
+  else if (state.get('rules').get('attributeValueLimit')) {
     const currentExperienceLevellId = getExperienceLevelIdByAp(
-      wiki.experienceLevels,
-      state.adventurePoints.total,
+      wiki.get('experienceLevels'),
+      state.get('adventurePoints').get('total'),
     );
 
-    return Maybe.of(wiki.experienceLevels.get(currentExperienceLevellId))
-      .map(currentEl => {
-        return instance.value < currentEl.maxAttributeValue + 2;
-      })
-      .valueOr(false);
+    return Maybe.fromMaybe(
+      false,
+      wiki.get('experienceLevels').lookup(currentExperienceLevellId)
+        .map(
+          currentEl =>
+            instance.get('value') < currentEl.get('maxAttributeValue') + 2
+        )
+    );
   }
 
   return true;
 };
 
 export const isDecreasable = (
-  wiki: WikiState,
-  state: Data.HeroDependent,
-  instance: Data.AttributeDependent,
+  wiki: Record<Wiki.WikiAll>,
+  state: Record<Data.HeroDependent>,
+  instance: Record<Data.AttributeDependent>,
 ): boolean => {
   const dependencies = flattenDependencies(
     wiki,
     state,
-    instance.dependencies,
+    instance.get('dependencies'),
   );
 
-  return instance.value > Math.max(8, ...dependencies);
+  return instance.get('value') > Math.max(8, ...dependencies);
 };
 
 export const getSkillCheckValues =
-  (attributes: ReadonlyMap<string, Data.AttributeDependent>) => Maybe.mapMaybe(
-    (id: string) => Maybe.of(attributes.get(id)).map(e => e.value)
+  (attributes: OrderedMap<string, Record<Data.AttributeDependent>>) => Maybe.mapMaybe(
+    (id: string) => attributes.lookup(id).map(e => e.get('value'))
   );
 
 export function convertId<T extends string | undefined>(id: T): T {

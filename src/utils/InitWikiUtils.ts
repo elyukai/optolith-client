@@ -1,85 +1,103 @@
 import { Categories } from '../constants/Categories';
 import { IdPrefixes } from '../constants/IdPrefixes';
-import * as Rawdata from '../types/rawdata.d';
-import * as Reusable from '../types/reusable.d';
+import * as Raw from '../types/rawdata.d';
 import * as Wiki from '../types/wiki.d';
 import { StringKeyObject } from './collectionUtils';
+import { convertRawApplications, convertRawIncreaseSkills, convertRawPrerequisiteObjects, convertRawPrerequisites, convertRawProfessionDependencyObjects, convertRawProfessionPrerequisiteObjects, convertRawProfessionRequiresActivatableObject, convertRawProfessionSelections, convertRawProfessionVariantSelections, convertRawSelections, mapRawWithPrefix } from './convertRawObjectsToWikiUtils';
+import { Just, List, Maybe, Nothing, OrderedMap, Record, Tuple } from './dataUtils';
+
+const getSourceBooks =
+  (srcIds: string[], srcPages: number[]): List<Record<Wiki.SourceLink>> =>
+    List.fromArray(srcIds.map(
+      (bookId, index) => Record.of({ id: bookId, page: srcPages[index] })
+    ));
 
 export const initExperienceLevel = (
-  raw: Rawdata.RawExperienceLevel,
-  locale: StringKeyObject<Rawdata.RawExperienceLevelLocale>,
-): Wiki.ExperienceLevel | undefined => {
+  raw: Raw.RawExperienceLevel,
+  locale: StringKeyObject<Raw.RawExperienceLevelLocale>,
+): (Maybe<Record<Wiki.ExperienceLevel>>) => {
   const { id } = raw;
   const localeObject = locale[id];
 
   if (localeObject) {
     const { name } = localeObject;
-    return {
+
+    return Just(Record.of({
       ...raw,
       id,
       name
-    };
+    }));
   }
 
-  return;
+  return Nothing();
 };
 
 interface SizeNew {
   sizeBase: number;
-  sizeRandom: Wiki.Die[];
+  sizeRandom: List<Record<Wiki.Die>>;
 }
 
 const convertSize = (
   old: (number | [number, number])[] | undefined,
 ): SizeNew | undefined => {
-  return old && old.reduce<SizeNew>((obj, value) => {
-    if (typeof value === 'number') {
+  return old && old.reduce<SizeNew>(
+    (obj, value) => {
+      if (typeof value === 'number') {
+        return {
+          ...obj,
+          sizeBase: obj.sizeBase + value
+        };
+      }
+
+      const [ amount, sides ] = value;
+
       return {
         ...obj,
-        sizeBase: obj.sizeBase + value
+        sizeRandom: obj.sizeRandom.append(Record.of({ amount, sides }))
       };
+    },
+    {
+      sizeBase: 0,
+      sizeRandom: List.of()
     }
-    const [ amount, sides ] = value;
-    return {
-      ...obj,
-      sizeRandom: [...obj.sizeRandom, { amount, sides }]
-    };
-  }, {
-    sizeBase: 0,
-    sizeRandom: []
-  })
+  );
 };
 
 interface WeightNew {
   weightBase: number;
-  weightRandom: Wiki.Die[];
+  weightRandom: List<Record<Wiki.Die>>;
 }
 
 const convertWeight = (
   old: (number | [number, number])[],
 ): WeightNew => {
-  return old.reduce<WeightNew>((obj, value) => {
-    if (typeof value === 'number') {
+  return old.reduce<WeightNew>(
+    (obj, value) => {
+      if (typeof value === 'number') {
+        return {
+          ...obj,
+          weightBase: obj.weightBase + value
+        };
+      }
+
+      const [ amount, sides ] = value;
+
       return {
         ...obj,
-        weightBase: obj.weightBase + value
+        weightRandom: obj.weightRandom.append(Record.of({ amount, sides }))
       };
+    },
+    {
+      weightBase: 0,
+      weightRandom: List.of()
     }
-    const [ amount, sides ] = value;
-    return {
-      ...obj,
-      weightRandom: [...obj.weightRandom, { amount, sides }]
-    };
-  }, {
-    weightBase: 0,
-    weightRandom: []
-  })
+  );
 };
 
 export const initRace = (
-  raw: Rawdata.RawRace,
-  locale: StringKeyObject<Rawdata.RawRaceLocale>,
-): Wiki.Race | undefined => {
+  raw: Raw.RawRace,
+  locale: StringKeyObject<Raw.RawRaceLocale>,
+): (Maybe<Record<Wiki.Race>>) => {
   const { id } = raw;
   const localeObject = locale[id];
 
@@ -122,31 +140,32 @@ export const initRace = (
       vars
     } = raw;
 
-    return {
+    return Just(Record.of<Wiki.Race>({
       ap,
-      attributeAdjustments: attr.map<[number, string]>(e => {
-        return [e[0], `${IdPrefixes.ATTRIBUTES}_${e[1]}`];
-      }),
-      attributeAdjustmentsSelection: [attr_sel[0], attr_sel[1].map(k => {
-        return `${IdPrefixes.ATTRIBUTES}_${k}`;
-      })],
+      attributeAdjustments: List.fromArray(attr.map<Tuple<number, string>>(
+        e => Tuple.of(e[0], `${IdPrefixes.ATTRIBUTES}_${e[1]}`)
+      )),
+      attributeAdjustmentsSelection: List.of(Tuple.of(
+        attr_sel[0],
+        List.fromArray(attr_sel[1].map(k => `${IdPrefixes.ATTRIBUTES}_${k}`))
+      )),
       attributeAdjustmentsText,
-      automaticAdvantages: auto_adv.map(e => {
-        return `${IdPrefixes.ADVANTAGES}_${e}`;
-      }),
+      automaticAdvantages: List.fromArray(auto_adv.map(
+        e => `${IdPrefixes.ADVANTAGES}_${e}`
+      )),
       automaticAdvantagesCost: autoAdvCost,
       automaticAdvantagesText,
       category: Categories.RACES,
-      eyeColors: eyes,
-      hairColors: hair,
+      eyeColors: eyes && List.fromArray(eyes),
+      hairColors: hair && List.fromArray(hair),
       id,
-      stronglyRecommendedAdvantages: imp_adv.map(e => {
-        return `${IdPrefixes.ADVANTAGES}_${e}`;
-      }),
+      stronglyRecommendedAdvantages: List.fromArray(imp_adv.map(
+        e => `${IdPrefixes.ADVANTAGES}_${e}`
+      )),
       stronglyRecommendedAdvantagesText,
-      stronglyRecommendedDisadvantages: imp_dadv.map(e => {
-        return `${IdPrefixes.DISADVANTAGES}_${e}`;
-      }),
+      stronglyRecommendedDisadvantages: List.fromArray(imp_dadv.map(
+        e => `${IdPrefixes.DISADVANTAGES}_${e}`
+      )),
       stronglyRecommendedDisadvantagesText,
       lp: le,
       mov: gs,
@@ -155,37 +174,37 @@ export const initRace = (
       ...convertWeight(weight),
       spi: sk,
       tou: zk,
-      commonAdvantages: typ_adv.map(e => {
-        return `${IdPrefixes.ADVANTAGES}_${e}`;
-      }),
+      commonAdvantages: List.fromArray(typ_adv.map(
+        e => `${IdPrefixes.ADVANTAGES}_${e}`
+      )),
       commonAdvantagesText,
-      commonCultures: typ_cultures.map(e => {
-        return `${IdPrefixes.CULTURES}_${e}`;
-      }),
-      commonDisadvantages: typ_dadv.map(e => {
-        return `${IdPrefixes.DISADVANTAGES}_${e}`;
-      }),
+      commonCultures: List.fromArray(typ_cultures.map(
+        e => `${IdPrefixes.CULTURES}_${e}`
+      )),
+      commonDisadvantages: List.fromArray(typ_dadv.map(
+        e => `${IdPrefixes.DISADVANTAGES}_${e}`
+      )),
       commonDisadvantagesText,
-      uncommonAdvantages: untyp_adv.map(e => {
-        return `${IdPrefixes.ADVANTAGES}_${e}`;
-      }),
+      uncommonAdvantages: List.fromArray(untyp_adv.map(
+        e => `${IdPrefixes.ADVANTAGES}_${e}`
+      )),
       uncommonAdvantagesText,
-      uncommonDisadvantages: untyp_dadv.map(e => {
-        return `${IdPrefixes.DISADVANTAGES}_${e}`;
-      }),
+      uncommonDisadvantages: List.fromArray(untyp_dadv.map(
+        e => `${IdPrefixes.DISADVANTAGES}_${e}`
+      )),
       uncommonDisadvantagesText,
-      variants: vars.map(e => `${IdPrefixes.RACE_VARIANTS}_${e}`),
-      src: srcIds.map((id, index) => ({ id, page: srcPages[index] }))
-    };
+      variants: List.fromArray(vars.map(e => `${IdPrefixes.RACE_VARIANTS}_${e}`)),
+      src: getSourceBooks(srcIds, srcPages)
+    }));
   }
 
-  return;
+  return Nothing();
 };
 
 export const initRaceVariant = (
-  raw: Rawdata.RawRaceVariant,
-  locale: StringKeyObject<Rawdata.RawRaceVariantLocale>,
-): Wiki.RaceVariant | undefined => {
+  raw: Raw.RawRaceVariant,
+  locale: StringKeyObject<Raw.RawRaceVariantLocale>,
+): (Maybe<Record<Wiki.RaceVariant>>) => {
   const { id } = raw;
   const localeObject = locale[id];
 
@@ -209,42 +228,42 @@ export const initRaceVariant = (
       untyp_dadv
     } = raw;
 
-    return {
+    return Just(Record.of<Wiki.RaceVariant>({
       category: Categories.RACE_VARIANTS,
-      eyeColors: eyes,
-      hairColors: hair,
+      eyeColors: eyes && List.fromArray(eyes),
+      hairColors: hair && List.fromArray(hair),
       id,
       name,
       ...convertSize(size),
-      commonAdvantages: typ_adv.map(e => {
-        return `${IdPrefixes.ADVANTAGES}_${e}`;
-      }),
+      commonAdvantages: List.fromArray(typ_adv.map(
+        e => `${IdPrefixes.ADVANTAGES}_${e}`
+      )),
       commonAdvantagesText,
-      commonCultures: typ_cultures.map(e => {
-        return `${IdPrefixes.CULTURES}_${e}`;
-      }),
-      commonDisadvantages: typ_dadv.map(e => {
-        return `${IdPrefixes.DISADVANTAGES}_${e}`;
-      }),
+      commonCultures: List.fromArray(typ_cultures.map(
+        e => `${IdPrefixes.CULTURES}_${e}`
+      )),
+      commonDisadvantages: List.fromArray(typ_dadv.map(
+        e => `${IdPrefixes.DISADVANTAGES}_${e}`
+      )),
       commonDisadvantagesText,
-      uncommonAdvantages: untyp_adv.map(e => {
-        return `${IdPrefixes.ADVANTAGES}_${e}`;
-      }),
+      uncommonAdvantages: List.fromArray(untyp_adv.map(
+        e => `${IdPrefixes.ADVANTAGES}_${e}`
+      )),
       uncommonAdvantagesText,
-      uncommonDisadvantages: untyp_dadv.map(e => {
-        return `${IdPrefixes.DISADVANTAGES}_${e}`;
-      }),
+      uncommonDisadvantages: List.fromArray(untyp_dadv.map(
+        e => `${IdPrefixes.DISADVANTAGES}_${e}`
+      )),
       uncommonDisadvantagesText
-    };
+    }));
   }
 
-  return;
+  return Nothing();
 };
 
 export const initCulture = (
-  raw: Rawdata.RawCulture,
-  locale: StringKeyObject<Rawdata.RawCultureLocale>,
-): Wiki.Culture | undefined => {
+  raw: Raw.RawCulture,
+  locale: StringKeyObject<Raw.RawCultureLocale>,
+): (Maybe<Record<Wiki.Culture>>) => {
   const { id } = raw;
   const localeObject = locale[id];
 
@@ -274,52 +293,59 @@ export const initCulture = (
       src: srcIds
     } = raw;
 
-    return {
+    return Just(Record.of<Wiki.Culture>({
       ...localeRest,
       culturalPackageAdventurePoints: ap,
       category: Categories.CULTURES,
       id,
-      languages: lang,
-      scripts: literacy,
-      socialStatus: social,
-      culturalPackageSkills: talents.map(e => ({
+      languages: List.fromArray(lang),
+      scripts: List.fromArray(literacy),
+      socialStatus: List.fromArray(social),
+      culturalPackageSkills: List.fromArray(talents.map(e => Record.of({
         id: `${IdPrefixes.TALENTS}_${e[0]}`,
         value: e[1]
-      })),
-      commonProfessions: typ_prof,
-      commonAdvantages: typ_adv.map(e => {
-        return `${IdPrefixes.ADVANTAGES}_${e}`;
-      }),
+      }))),
+      commonProfessions: List.fromArray(
+        typ_prof.map<Wiki.CommonProfession>(
+          e => typeof e === 'boolean' ? e : Record.of({
+            ...e,
+            list: List.fromArray(e.list)
+          })
+        )
+      ),
+      commonAdvantages: List.fromArray(typ_adv.map(
+        e => `${IdPrefixes.ADVANTAGES}_${e}`
+      )),
       commonAdvantagesText: commonAdvantages,
-      commonDisadvantages: typ_dadv.map(e => {
-        return `${IdPrefixes.DISADVANTAGES}_${e}`;
-      }),
+      commonDisadvantages: List.fromArray(typ_dadv.map(
+        e => `${IdPrefixes.DISADVANTAGES}_${e}`
+      )),
       commonDisadvantagesText: commonDisadvantages,
-      uncommonAdvantages: untyp_adv.map(e => {
-        return `${IdPrefixes.ADVANTAGES}_${e}`;
-      }),
+      uncommonAdvantages: List.fromArray(untyp_adv.map(
+        e => `${IdPrefixes.ADVANTAGES}_${e}`
+      )),
       uncommonAdvantagesText: uncommonAdvantages,
-      uncommonDisadvantages: untyp_dadv.map(e => {
-        return `${IdPrefixes.DISADVANTAGES}_${e}`;
-      }),
+      uncommonDisadvantages: List.fromArray(untyp_dadv.map(
+        e => `${IdPrefixes.DISADVANTAGES}_${e}`
+      )),
       uncommonDisadvantagesText: uncommonDisadvantages,
-      commonSkills: typ_talents.map(e => {
-        return `${IdPrefixes.TALENTS}_${e}`;
-      }),
-      uncommonSkills: untyp_talents.map(e => {
-        return `${IdPrefixes.TALENTS}_${e}`;
-      }),
-      src: srcIds.map((id, index) => ({ id, page: srcPages[index] }))
-    };
+      commonSkills: List.fromArray(typ_talents.map(
+        e => `${IdPrefixes.TALENTS}_${e}`
+      )),
+      uncommonSkills: List.fromArray(untyp_talents.map(
+        e => `${IdPrefixes.TALENTS}_${e}`
+      )),
+      src: getSourceBooks(srcIds, srcPages)
+    }));
   }
 
-  return;
+  return Nothing();
 };
 
 export const initProfession = (
-  raw: Rawdata.RawProfession,
-  locale: StringKeyObject<Rawdata.RawProfessionLocale>,
-): Wiki.Profession | undefined => {
+  raw: Raw.RawProfession,
+  locale: StringKeyObject<Raw.RawProfessionLocale>,
+): (Maybe<Record<Wiki.Profession>>) => {
   const { id } = raw;
   const localeObject = locale[id];
 
@@ -338,7 +364,6 @@ export const initProfession = (
     } = localeObject;
 
     const {
-      id,
       ap,
       apOfActivatables,
       pre_req,
@@ -360,51 +385,27 @@ export const initProfession = (
       sgr
     } = raw;
 
-    const finalReq = [ ...req, ...localeReq ];
-
-    return {
+    return Just(Record.of<Wiki.Profession>({
+      id,
+      name: typeof name === 'object' ? Record.of(name) : name,
+      subname: typeof subname === 'object' ? Record.of(subname) : subname,
       ap,
       apOfActivatables,
       category: Categories.PROFESSIONS,
-      combatTechniques: combattech.map(e => ({
-        id: `${IdPrefixes.COMBAT_TECHNIQUES}_${e[0]}`,
-        value: e[1]
-      })),
-      dependencies: pre_req,
-      id,
-      liturgicalChants: chants.map(e => ({
-        id: `${IdPrefixes.LITURGIES}_${e[0]}`,
-        value: e[1]
-      })),
-      blessings: blessings.map(e => `${IdPrefixes.BLESSINGS}_${e[0]}`),
-      name,
-      prerequisites: finalReq,
-      selections: sel,
-      specialAbilities: sa,
-      spells: spells.map(e => ({
-        id: `${IdPrefixes.SPELLS}_${e[0]}`,
-        value: e[1]
-      })),
-      subname,
-      skills: talents.map(e => ({
-        id: `${IdPrefixes.TALENTS}_${e[0]}`,
-        value: e[1]
-      })),
-      suggestedAdvantages: typ_adv.map(e => {
-        return `${IdPrefixes.ADVANTAGES}_${e}`;
-      }),
-      suggestedDisadvantages: typ_dadv.map(e => {
-        return `${IdPrefixes.DISADVANTAGES}_${e}`;
-      }),
-      unsuitableAdvantages: untyp_adv.map(e => {
-        return `${IdPrefixes.ADVANTAGES}_${e}`;
-      }),
-      unsuitableDisadvantages: untyp_dadv.map(e => {
-        return `${IdPrefixes.DISADVANTAGES}_${e}`;
-      }),
-      variants: vars.map(e => {
-        return `${IdPrefixes.PROFESSION_VARIANTS}_${e}`;
-      }),
+      dependencies: convertRawProfessionDependencyObjects(pre_req),
+      prerequisites:  convertRawProfessionPrerequisiteObjects([...req, ...localeReq]),
+      selections: convertRawProfessionSelections(sel),
+      specialAbilities: List.fromArray(sa.map(convertRawProfessionRequiresActivatableObject)),
+      combatTechniques: convertRawIncreaseSkills(combattech, IdPrefixes.COMBAT_TECHNIQUES),
+      skills: convertRawIncreaseSkills(talents, IdPrefixes.TALENTS),
+      spells: convertRawIncreaseSkills(spells, IdPrefixes.SPELLS),
+      liturgicalChants: convertRawIncreaseSkills(chants, IdPrefixes.LITURGIES),
+      blessings: mapRawWithPrefix(blessings, IdPrefixes.BLESSINGS),
+      suggestedAdvantages: mapRawWithPrefix(typ_adv, IdPrefixes.ADVANTAGES),
+      suggestedDisadvantages: mapRawWithPrefix(typ_dadv, IdPrefixes.DISADVANTAGES),
+      unsuitableAdvantages: mapRawWithPrefix(untyp_adv, IdPrefixes.ADVANTAGES),
+      unsuitableDisadvantages: mapRawWithPrefix(untyp_dadv, IdPrefixes.DISADVANTAGES),
+      variants: mapRawWithPrefix(vars, IdPrefixes.PROFESSION_VARIANTS),
       gr,
       subgr: sgr,
       prerequisitesEnd,
@@ -413,23 +414,27 @@ export const initProfession = (
       suggestedDisadvantagesText: suggestedDisadvantages,
       unsuitableAdvantagesText: unsuitableAdvantages,
       unsuitableDisadvantagesText: unsuitableDisadvantages,
-      src: srcIds.map((id, index) => ({ id, page: srcPages[index] }))
-    };
+      src: getSourceBooks(srcIds, srcPages)
+    }));
   }
 
-  return;
+  return Nothing();
 };
 
 export const initProfessionVariant = (
-  raw: Rawdata.RawProfessionVariant,
-  locale: StringKeyObject<Rawdata.RawProfessionVariantLocale>,
-): Wiki.ProfessionVariant | undefined => {
+  raw: Raw.RawProfessionVariant,
+  locale: StringKeyObject<Raw.RawProfessionVariantLocale>,
+): (Maybe<Record<Wiki.ProfessionVariant>>) => {
   const { id } = raw;
   const localeObject = locale[id];
 
   if (localeObject) {
     const {
-      id,
+      name,
+      ...otherLocale
+    } = localeObject;
+
+    const {
       ap,
       apOfActivatables,
       pre_req,
@@ -443,43 +448,32 @@ export const initProfessionVariant = (
       blessings
     } = raw;
 
-    return {
-      ...localeObject,
+    return Just(Record.of<Wiki.ProfessionVariant>({
+      ...otherLocale,
+      id,
+      name: typeof name === 'object' ? Record.of(name) : name,
       ap,
       apOfActivatables,
       category: Categories.PROFESSION_VARIANTS,
-      combatTechniques: combattech.map(e => ({
-        id: `${IdPrefixes.COMBAT_TECHNIQUES}_${e[0]}`,
-        value: e[1]
-      })),
-      dependencies: pre_req,
-      id,
-      prerequisites: req,
-      selections: sel,
-      specialAbilities: sa,
-      skills: talents.map(e => ({
-        id: `${IdPrefixes.TALENTS}_${e[0]}`,
-        value: e[1]
-      })),
-      spells: spells.map(e => ({
-        id: `${IdPrefixes.SPELLS}_${e[0]}`,
-        value: e[1]
-      })),
-      liturgicalChants: chants.map(e => ({
-        id: `${IdPrefixes.LITURGIES}_${e[0]}`,
-        value: e[1]
-      })),
-      blessings: blessings.map(e => `${IdPrefixes.BLESSINGS}_${e}`)
-    };
+      dependencies: convertRawProfessionDependencyObjects(pre_req),
+      prerequisites:  convertRawProfessionPrerequisiteObjects(req),
+      selections: convertRawProfessionVariantSelections(sel),
+      specialAbilities: List.fromArray(sa.map(convertRawProfessionRequiresActivatableObject)),
+      combatTechniques: convertRawIncreaseSkills(combattech, IdPrefixes.COMBAT_TECHNIQUES),
+      skills: convertRawIncreaseSkills(talents, IdPrefixes.TALENTS),
+      spells: convertRawIncreaseSkills(spells, IdPrefixes.SPELLS),
+      liturgicalChants: convertRawIncreaseSkills(chants, IdPrefixes.LITURGIES),
+      blessings: mapRawWithPrefix(blessings, IdPrefixes.BLESSINGS),
+    }));
   }
 
-  return;
+  return Nothing();
 };
 
 export const initAdvantage = (
-  raw: Rawdata.RawAdvantage,
-  locale: StringKeyObject<Rawdata.RawAdvantageLocale>,
-): Wiki.Advantage | undefined => {
+  raw: Raw.RawAdvantage,
+  locale: StringKeyObject<Raw.RawAdvantageLocale>,
+): (Maybe<Record<Wiki.Advantage>>) => {
   const { id } = raw;
   const localeObject = locale[id];
 
@@ -503,52 +497,37 @@ export const initAdvantage = (
       ...otherData
     } = raw;
 
-    let finalSel: Wiki.SelectionObject[] | undefined;
-
-    if (localeSel && sel) {
-      finalSel = localeSel.map(e => ({
-        ...sel.find(n => n.id === e.id),
-        ...e,
-      }));
-    }
-    else if (sel) {
-      finalSel = sel;
-    }
-    else if (localeSel) {
-      finalSel = localeSel;
-    }
-
-    return {
+    return Just(Record.of<Wiki.Advantage>({
       ...otherLocale,
       ...otherData,
       category: Categories.ADVANTAGES,
-      cost: ap,
-      id,
-      prerequisites: req,
-      select: finalSel,
+      cost: typeof ap === 'object' ? List.fromArray(ap) : ap,
+      prerequisites: convertRawPrerequisites(req),
+      select: convertRawSelections(localeSel, sel),
       prerequisitesText: reqText,
       prerequisitesTextEnd: reqEnd,
       prerequisitesTextStart: reqStart,
-      prerequisitesTextIndex: new Map<number, string | false>([
-        ...Object.entries(reqIndexText).map<[number, string]>(req => {
-          const [index, text] = req;
+      prerequisitesTextIndex: OrderedMap.of<number, string | false>([
+        ...Object.entries(reqIndexText).map<[number, string]>(pair => {
+          const [index, text] = pair;
+
           return [Number.parseInt(index) - 1, text];
         }),
         ...reqIndexIgnore.map<[number, false]>(e => {
           return [Number.parseInt(e), false];
         })
       ]),
-      src: srcIds.map((id, index) => ({ id, page: srcPages[index] }))
-    };
+      src: getSourceBooks(srcIds, srcPages)
+    }));
   }
 
-  return;
+  return Nothing();
 };
 
 export const initDisadvantage = (
-  raw: Rawdata.RawDisadvantage,
-  locale: StringKeyObject<Rawdata.RawDisadvantageLocale>,
-): Wiki.Disadvantage | undefined => {
+  raw: Raw.RawDisadvantage,
+  locale: StringKeyObject<Raw.RawDisadvantageLocale>,
+): (Maybe<Record<Wiki.Disadvantage>>) => {
   const { id } = raw;
   const localeObject = locale[id];
 
@@ -572,51 +551,37 @@ export const initDisadvantage = (
       ...otherData
     } = raw;
 
-    let finalSel: Wiki.SelectionObject[] | undefined;
-
-    if (localeSel && sel) {
-      finalSel = localeSel.map(e => ({
-        ...sel.find(n => n.id === e.id),
-        ...e
-      }));
-    }
-    else if (sel) {
-      finalSel = sel;
-    }
-    else if (localeSel) {
-      finalSel = localeSel;
-    }
-
-    return {
+    return Just(Record.of<Wiki.Disadvantage>({
       ...otherLocale,
       ...otherData,
       category: Categories.DISADVANTAGES,
-      cost: ap,
-      prerequisites: req,
-      select: finalSel,
+      cost: typeof ap === 'object' ? List.fromArray(ap) : ap,
+      prerequisites: convertRawPrerequisites(req),
+      select: convertRawSelections(localeSel, sel),
       prerequisitesText: reqText,
       prerequisitesTextEnd: reqEnd,
       prerequisitesTextStart: reqStart,
-      prerequisitesTextIndex: new Map<number, string | false>([
-        ...Object.entries(reqIndexText).map<[number, string]>(req => {
-          const [index, text] = req;
+      prerequisitesTextIndex: OrderedMap.of<number, string | false>([
+        ...Object.entries(reqIndexText).map<[number, string]>(pair => {
+          const [index, text] = pair;
+
           return [Number.parseInt(index) - 1, text];
         }),
         ...reqIndexIgnore.map<[number, false]>(e => {
           return [Number.parseInt(e), false];
         })
       ]),
-      src: srcIds.map((id, index) => ({ id, page: srcPages[index] }))
-    };
+      src: getSourceBooks(srcIds, srcPages)
+    }));
   }
 
-  return;
+  return Nothing();
 };
 
 export const initSpecialAbility = (
-  raw: Rawdata.RawSpecialAbility,
-  locale: StringKeyObject<Rawdata.RawSpecialAbilityLocale>,
-): Wiki.SpecialAbility | undefined => {
+  raw: Raw.RawSpecialAbility,
+  locale: StringKeyObject<Raw.RawSpecialAbilityLocale>,
+): (Maybe<Record<Wiki.SpecialAbility>>) => {
   const { id } = raw;
   const localeObject = locale[id];
 
@@ -637,212 +602,184 @@ export const initSpecialAbility = (
       req,
       src: srcIds,
       reqIndex: reqIndexIgnore,
+      extended,
       ...otherData
     } = raw;
 
-    let finalSel: Wiki.SelectionObject[] | undefined;
-
-    if (localeSel && sel) {
-      finalSel = localeSel.map(e => ({
-        ...sel.find(n => n.id === e.id),
-        ...e
-      }));
-    }
-    else if (sel) {
-      finalSel = sel;
-    }
-    else if (localeSel) {
-      finalSel = localeSel;
-    }
-
-    return {
+    return Just(Record.of<Wiki.SpecialAbility>({
       ...otherLocale,
       ...otherData,
       category: Categories.SPECIAL_ABILITIES,
-      cost: ap,
+      cost: typeof ap === 'object' ? List.fromArray(ap) : ap,
       prerequisites: Array.isArray(req[0])
-        ? new Map<number, ('RCP' | Reusable.AllRequirementTypes)[]>(req as any)
-        : req as ('RCP' | Reusable.AllRequirementTypes)[],
-      select: finalSel,
+        ? OrderedMap.of<number, List<Wiki.AllRequirements>>(
+          (req as [number, Raw.AllRawRequirements[]][]).map(
+            e => [
+              e[0],
+              convertRawPrerequisites(e[1])
+            ] as [number, List<Wiki.AllRequirements>]
+          )
+        )
+        : convertRawPrerequisites(req as Raw.AllRawRequirements[]),
+      select: convertRawSelections(localeSel, sel),
       prerequisitesText: reqText,
       prerequisitesTextEnd: reqEnd,
       prerequisitesTextStart: reqStart,
-      prerequisitesTextIndex: new Map<number, string | false>([
-        ...Object.entries(reqIndexText).map<[number, string]>(req => {
-          const [index, text] = req;
+      prerequisitesTextIndex: OrderedMap.of<number, string | false>([
+        ...Object.entries(reqIndexText).map<[number, string]>(pair => {
+          const [index, text] = pair;
+
           return [Number.parseInt(index) - 1, text];
         }),
         ...reqIndexIgnore.map<[number, false]>(e => {
           return [Number.parseInt(e), false];
         })
       ]),
-      src: srcIds.map((id, index) => ({ id, page: srcPages[index] }))
-    };
+      extended: extended && List.fromArray(extended.map(
+        e => typeof e === 'object' ? List.fromArray(e) : e
+      )),
+      src: getSourceBooks(srcIds, srcPages)
+    }));
   }
 
-  return;
+  return Nothing();
 };
 
 export const initAttribute = (
-  raw: Rawdata.RawAttribute,
-  locale: StringKeyObject<Rawdata.RawAttributeLocale>,
-): Wiki.Attribute | undefined => {
+  raw: Raw.RawAttribute,
+  locale: StringKeyObject<Raw.RawAttributeLocale>,
+): (Maybe<Record<Wiki.Attribute>>) => {
   const { id } = raw;
   const localeObject = locale[id];
 
   if (localeObject) {
     const { name, short } = localeObject;
 
-    return {
+    return Just(Record.of<Wiki.Attribute>({
       category: Categories.ATTRIBUTES,
       id,
       name,
       short,
-    };
+    }));
   }
 
-  return;
+  return Nothing();
 };
 
 export const initCombatTechnique = (
-  raw: Rawdata.RawCombatTechnique,
-  locale: StringKeyObject<Rawdata.RawCombatTechniqueLocale>,
-): Wiki.CombatTechnique | undefined => {
+  raw: Raw.RawCombatTechnique,
+  locale: StringKeyObject<Raw.RawCombatTechniqueLocale>,
+): (Maybe<Record<Wiki.CombatTechnique>>) => {
   const { id } = raw;
   const localeObject = locale[id];
 
   if (localeObject) {
     const { src: srcPages, ...otherLocale } = localeObject;
-    const { id, gr, skt, leit, bf, src: srcIds, ...otherData } = raw;
+    const { gr, skt, leit, bf, src: srcIds, ...otherData } = raw;
 
-    return {
+    return Just(Record.of<Wiki.CombatTechnique>({
       ...otherLocale,
       ...otherData,
       category: Categories.COMBAT_TECHNIQUES,
       gr,
       ic: skt,
-      primary: leit,
+      primary: List.fromArray(leit),
       bf,
-      src: srcIds.map((id, index) => ({ id, page: srcPages[index] }))
-    };
+      src: getSourceBooks(srcIds, srcPages)
+    }));
   }
 
-  return;
+  return Nothing();
 };
 
 export const initLiturgicalChant = (
-  raw: Rawdata.RawLiturgy,
-  locale: StringKeyObject<Rawdata.RawLiturgyLocale>,
-): Wiki.LiturgicalChant | undefined => {
+  raw: Raw.RawLiturgy,
+  locale: StringKeyObject<Raw.RawLiturgyLocale>,
+): (Maybe<Record<Wiki.LiturgicalChant>>) => {
   const { id } = raw;
   const localeObject = locale[id];
 
   if (localeObject) {
     const {
-      name,
-      effect,
       castingtime,
       castingtimeShort,
       kpcost,
       kpcostShort,
-      range,
-      rangeShort,
-      duration,
-      durationShort,
-      target,
-      src: srcPages
+      src: srcPages,
+      ...otherLocale
     } = localeObject;
 
-    const { id, check, gr, skt, aspc, trad, mod, src: srcIds } = raw;
+    const { check, gr, skt, aspc, trad, mod, src: srcIds } = raw;
 
-    return {
-      aspects: aspc,
+    return Just(Record.of<Wiki.LiturgicalChant>({
+      ...otherLocale,
+      aspects: List.fromArray(aspc),
       category: Categories.LITURGIES,
-      check,
+      check: List.fromArray(check),
       checkmod: mod,
       gr,
       ic: skt,
       id,
-      name,
-      tradition: trad,
-      effect,
+      tradition: List.fromArray(trad),
       castingTime: castingtime,
       castingTimeShort: castingtimeShort,
       cost: kpcost,
       costShort: kpcostShort,
-      range,
-      rangeShort,
-      duration,
-      durationShort,
-      target,
-      src: srcIds.map((id, index) => ({ id, page: srcPages[index] }))
-    };
+      src: getSourceBooks(srcIds, srcPages)
+    }));
   }
 
-  return;
+  return Nothing();
 }
 
 export const initBlessing = (
-  raw: Rawdata.RawBlessing,
-  locale: StringKeyObject<Rawdata.RawBlessingLocale>,
-): Wiki.Blessing | undefined => {
+  raw: Raw.RawBlessing,
+  locale: StringKeyObject<Raw.RawBlessingLocale>,
+): (Maybe<Record<Wiki.Blessing>>) => {
   const { id } = raw;
   const localeObject = locale[id];
 
   if (localeObject) {
     const {
       name,
-      effect,
-      range,
-      duration,
-      target,
-      src: srcPages
+      src: srcPages,
+      ...otherLocale
     } = localeObject;
 
-    const { id, aspc, trad, req, src: srcIds } = raw;
+    const { aspc, trad, req, src: srcIds } = raw;
 
-    return {
-      id,
+    return Just(Record.of<Wiki.Blessing>({
+      ...otherLocale,
       name,
       category: Categories.BLESSINGS,
-      aspects: aspc,
-      tradition: trad,
-      prerequisites: req,
-      effect,
-      range,
-      duration,
-      target,
-      src: srcIds.map((id, index) => ({ id, page: srcPages[index] }))
-    };
+      aspects: List.fromArray(aspc),
+      tradition: List.fromArray(trad),
+      prerequisites: convertRawPrerequisiteObjects(req),
+      src: getSourceBooks(srcIds, srcPages)
+    }));
   }
-  return;
+
+  return Nothing();
 };
 
 export const initSpell = (
-  raw: Rawdata.RawSpell,
-  locale: StringKeyObject<Rawdata.RawSpellLocale>,
-): Wiki.Spell | undefined => {
+  raw: Raw.RawSpell,
+  locale: StringKeyObject<Raw.RawSpellLocale>,
+): (Maybe<Record<Wiki.Spell>>) => {
   const { id } = raw;
   const localeObject = locale[id];
 
   if (localeObject) {
     const {
-      name,
-      effect,
       castingtime,
       castingtimeShort,
       aecost,
       aecostShort,
-      range,
-      rangeShort,
-      duration,
-      durationShort,
-      target,
-      src: srcPages
+      src: srcPages,
+      ...otherLocale
     } = localeObject;
 
     const {
-      id,
       check,
       gr,
       skt,
@@ -854,83 +791,69 @@ export const initSpell = (
       src: srcIds
     } = raw;
 
-    return {
+    return Just(Record.of<Wiki.Spell>({
+      ...otherLocale,
       category: Categories.SPELLS,
-      check,
+      check: List.fromArray(check),
       checkmod: mod,
       gr,
       ic: skt,
-      id,
-      name,
       property: merk,
-      tradition: trad,
-      subtradition: subtrad,
-      prerequisites: req,
-      effect,
+      tradition: List.fromArray(trad),
+      subtradition: List.fromArray(subtrad),
+      prerequisites: convertRawPrerequisiteObjects(req),
       castingTime: castingtime,
       castingTimeShort: castingtimeShort,
       cost: aecost,
       costShort: aecostShort,
-      range,
-      rangeShort,
-      duration,
-      durationShort,
-      target,
-      src: srcIds.map((id, index) => ({ id, page: srcPages[index] }))
-    };
+      src: getSourceBooks(srcIds, srcPages)
+    }));
   }
-  return;
+
+  return Nothing();
 };
 
 export const initCantrip = (
-  raw: Rawdata.RawCantrip,
-  locale: StringKeyObject<Rawdata.RawCantripLocale>,
-): Wiki.Cantrip | undefined => {
+  raw: Raw.RawCantrip,
+  locale: StringKeyObject<Raw.RawCantripLocale>,
+): (Maybe<Record<Wiki.Cantrip>>) => {
   const { id } = raw;
   const localeObject = locale[id];
 
   if (localeObject) {
     const {
       name,
-      effect,
-      range,
-      duration,
-      target,
-      note,
-      src: srcPages
+      src: srcPages,
+      ...otherLocale
     } = localeObject;
 
-    const { id, merk, trad, req, src: srcIds } = raw;
+    const { merk, trad, req, src: srcIds } = raw;
 
-    return {
-      id,
+    return Just(Record.of<Wiki.Cantrip>({
+      ...otherLocale,
       name,
       category: Categories.CANTRIPS,
       property: merk,
-      tradition: trad,
-      prerequisites: req,
-      effect,
-      range,
-      duration,
-      target,
-      note,
-      src: srcIds.map((id, index) => ({ id, page: srcPages[index] }))
-    };
+      tradition: List.fromArray(trad),
+      prerequisites: convertRawPrerequisiteObjects(req),
+      src: getSourceBooks(srcIds, srcPages)
+    }));
   }
-  return;
+
+  return Nothing();
 };
 
 export const initSkill = (
-  raw: Rawdata.RawTalent,
-  locale: StringKeyObject<Rawdata.RawTalentLocale>,
-): Wiki.Skill | undefined => {
+  raw: Raw.RawSkill,
+  locale: StringKeyObject<Raw.RawSkillLocale>,
+): (Maybe<Record<Wiki.Skill>>) => {
   const { id } = raw;
   const localeObject = locale[id];
 
   if (localeObject) {
     const {
       name,
-      spec: applicationNames,
+      spec: appNames,
       spec_input,
       ...other
     } = localeObject;
@@ -940,60 +863,50 @@ export const initSkill = (
       check,
       gr,
       skt,
-      applications: applicationPrerequisites
+      applications: appPrerequisites
     } = raw;
 
-    return {
+    return Just(Record.of<Wiki.Skill>({
       ...other,
       category: Categories.TALENTS,
-      check,
+      check: List.fromArray(check),
       encumbrance: be,
       gr,
       ic: skt,
       name,
-      applications: applicationNames.map(app => {
-        if (app.id < 0) {
-          const prerequisitesElem =
-            applicationPrerequisites &&
-            applicationPrerequisites.find(e => {
-              return app.id === e.id;
-            });
-
-          if (typeof prerequisitesElem === 'object') {
-            return {
-              ...prerequisitesElem,
-              ...app,
-            };
-          }
-
-          return;
-        }
-        return app;
-      }).filter(e => typeof e === 'object') as Wiki.Application[],
+      applications: convertRawApplications(appNames, appPrerequisites),
       applicationsInput: spec_input,
-    };
+    }));
   }
-  return;
+
+  return Nothing();
 };
 
 export const initItemTemplate = (
-  raw: Rawdata.RawItem,
-  locale: StringKeyObject<Rawdata.RawItemLocale>,
-): Wiki.ItemTemplate | undefined => {
+  raw: Raw.RawItem,
+  locale: StringKeyObject<Raw.RawItemLocale>,
+): (Maybe<Record<Wiki.ItemTemplate>>) => {
   const { id } = raw;
   const localeObject = locale[id];
   if (localeObject) {
     const { src: srcPages, ...otherLocale } = localeObject;
     const { imp, primaryThreshold, src: srcIds, ...otherData } = raw;
-    return {
+
+    return Just(Record.of<Wiki.ItemTemplate>({
       ...otherLocale,
       ...otherData,
       amount: 1,
       improvisedWeaponGroup: imp,
-      damageBonus: primaryThreshold,
+      damageBonus: primaryThreshold && Record.of({
+        ...primaryThreshold,
+        threshold: typeof primaryThreshold.threshold === 'object'
+          ? List.fromArray(primaryThreshold.threshold)
+          : primaryThreshold.threshold
+      }),
       isTemplateLocked: true,
-      src: srcIds.map((id, index) => ({ id, page: srcPages[index] }))
-    };
+      src: getSourceBooks(srcIds, srcPages)
+    }));
   }
-  return;
+
+  return Nothing();
 };

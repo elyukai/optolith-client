@@ -1,65 +1,62 @@
-import { ItemEditorInstance, ItemInstance, SourceLink } from '../types/data.d';
-import { exists } from './exists';
+import { ItemEditorInstance, ItemEditorSpecific, ItemInstance } from '../types/data.d';
+import { Just, List, Maybe, Nothing, Record } from './dataUtils';
 
-const ifNumberOrEmpty = (e: number | undefined): string => {
-  return isNumber(e) ? e.toString() : '';
-};
+const ifNumberOrEmpty = (e: Maybe<number>): string =>
+  Maybe.maybe('', x => x.toString(), e);
 
-export const convertToEdit = (item: ItemInstance): ItemEditorInstance => {
-  const {
-    note: _,
-    rules: _1,
-    advantage: _2,
-    disadvantage: _3,
-    src: _4,
-    ...otherProperties,
-  } = item;
+const convertDamageBonusToEdit =
+  (maybeDamageBonus: Maybe<NonNullable<ItemInstance['damageBonus']>>):
+    ItemEditorInstance['damageBonus'] => {
+      if (Maybe.isJust(maybeDamageBonus)) {
+        const damageBonus = Maybe.fromJust(maybeDamageBonus);
 
-  let damageBonus: ItemEditorInstance['damageBonus'];
+        const threshold = damageBonus.get('threshold');
 
-  if (exists(item.damageBonus)) {
-    if (isObject(item.damageBonus.threshold)) {
-      damageBonus = {
-        ...item.damageBonus,
-        threshold: item.damageBonus.threshold.map(e => e.toString()),
-      };
-    }
-    else {
-      damageBonus = {
-        ...item.damageBonus,
-        threshold: item.damageBonus.threshold.toString(),
-      };
-    }
-  }
-  else {
-    damageBonus = {
-      threshold: ''
+        return damageBonus
+          .merge(Record.of({
+            threshold: threshold instanceof List
+              ? threshold.map(e => e.toString())
+              : threshold.toString(),
+          })) as any as ItemEditorInstance['damageBonus'];
+      }
+      else {
+        return Record.of({
+          threshold: ''
+        }) as ItemEditorInstance['damageBonus'];
+      }
     };
-  }
 
-  return {
-    ...otherProperties,
-    amount: ifNumberOrEmpty(item.amount),
-    at: ifNumberOrEmpty(item.at),
-    damageBonus,
-    damageDiceNumber: ifNumberOrEmpty(item.damageDiceNumber),
-    damageFlat: ifNumberOrEmpty(item.damageFlat),
-    enc: ifNumberOrEmpty(item.enc),
-    length: ifNumberOrEmpty(item.length),
-    pa: ifNumberOrEmpty(item.pa),
-    price: ifNumberOrEmpty(item.price),
-    pro: ifNumberOrEmpty(item.pro),
-    range: (item.range
-      ? item.range.map(e => e.toString())
-      : ['', '', '']
+export const convertToEdit = (item: Record<ItemInstance>): Record<ItemEditorInstance> => {
+  const otherProperties = item
+    .delete('note')
+    .delete('rules')
+    .delete('advantage')
+    .delete('disadvantage')
+    .delete('src');
+
+  return otherProperties.merge(Record.of<ItemEditorSpecific>({
+    amount: ifNumberOrEmpty(item.lookup('amount')),
+    at: ifNumberOrEmpty(item.lookup('at')),
+    damageBonus: convertDamageBonusToEdit(item.lookup('damageBonus')),
+    damageDiceNumber: ifNumberOrEmpty(item.lookup('damageDiceNumber')),
+    damageFlat: ifNumberOrEmpty(item.lookup('damageFlat')),
+    enc: ifNumberOrEmpty(item.lookup('enc')),
+    length: ifNumberOrEmpty(item.lookup('length')),
+    pa: ifNumberOrEmpty(item.lookup('pa')),
+    price: ifNumberOrEmpty(item.lookup('price')),
+    pro: ifNumberOrEmpty(item.lookup('pro')),
+    range: Maybe.maybe(
+      ['', '', ''],
+      range => range.map(e => e.toString()),
+      item.lookup('range')
     ) as [string, string, string],
-    reloadTime: ifNumberOrEmpty(item.reloadTime),
-    stp: ifNumberOrEmpty(item.stp),
-    weight: ifNumberOrEmpty(item.weight),
-    movMod: ifNumberOrEmpty(item.movMod),
-    iniMod: ifNumberOrEmpty(item.iniMod),
-    stabilityMod: ifNumberOrEmpty(item.stabilityMod),
-  };
+    reloadTime: ifNumberOrEmpty(item.lookup('reloadTime')),
+    stp: ifNumberOrEmpty(item.lookup('stp')),
+    weight: ifNumberOrEmpty(item.lookup('weight')),
+    movMod: ifNumberOrEmpty(item.lookup('movMod')),
+    iniMod: ifNumberOrEmpty(item.lookup('iniMod')),
+    stabilityMod: ifNumberOrEmpty(item.lookup('stabilityMod')),
+  })) as any as Record<ItemEditorInstance>;
 };
 
 const toInteger = (e: string, alt = 0) => {
@@ -70,109 +67,104 @@ const toFloat = (e: string, alt = 0) => {
   return e.length > 0 ? Number.parseFloat(e.replace(/\,/, '.')) : alt;
 };
 
-export const convertToSave = (item: ItemEditorInstance): ItemInstance => {
-  const {
-    movMod,
-    iniMod,
-    stabilityMod,
-    improvisedWeaponGroup,
-    ...other
-  } = item;
+const convertDamageBonusToSave =
+  (damageBonus: ItemEditorInstance['damageBonus']):
+    Maybe<NonNullable<ItemInstance['damageBonus']>> => {
+      const threshold = damageBonus.get('threshold');
 
-  const add: {
+      if (
+        threshold instanceof List
+          ? threshold.all(e => e.length > 0)
+          : threshold.length > 0
+      ) {
+        return Just(damageBonus.merge(Record.of({
+          threshold: threshold instanceof List
+            ? threshold.map(Number.parseInt)
+            : Number.parseInt(threshold)
+        })) as any as NonNullable<ItemInstance['damageBonus']>);
+      }
+
+      return Nothing();
+    };
+
+export const convertToSave = (item: Record<ItemEditorInstance>): Record<ItemInstance> => {
+  interface Additional {
     movMod?: number;
     iniMod?: number;
     stabilityMod?: number;
     improvisedWeaponGroup?: number;
-  } = {};
-
-  if (movMod && toInteger(movMod) > 0) {
-    add.movMod = toInteger(movMod);
   }
 
-  if (iniMod && toInteger(iniMod) > 0) {
-    add.iniMod = toInteger(iniMod);
-  }
+  const add = Record.of<Additional>({})
+    .update(
+      () => item.lookup('movMod')
+        .map(toInteger)
+        .bind(Maybe.ensure(e => e > 0)),
+      'movMod'
+    )
+    .update(
+      () => item.lookup('iniMod')
+        .map(toInteger)
+        .bind(Maybe.ensure(e => e > 0)),
+      'iniMod'
+    )
+    .update(
+      () => item.lookup('stabilityMod')
+        .map(toInteger)
+        .bind(Maybe.ensure(e => !Number.isNaN(e))),
+      'stabilityMod'
+    )
+    .update(
+      () => item.lookup('improvisedWeaponGroup'),
+      'improvisedWeaponGroup'
+    );
 
-  if (stabilityMod && !Number.isNaN(toInteger(stabilityMod))) {
-    add.stabilityMod = toInteger(stabilityMod);
-  }
-
-  if (typeof improvisedWeaponGroup === 'number') {
-    add.improvisedWeaponGroup = improvisedWeaponGroup;
-  }
-
-  let damageBonus: ItemInstance['damageBonus'];
-
-  if (
-    isObject(item.damageBonus.threshold)
-    ? item.damageBonus.threshold.every(e => e.length > 0)
-    : item.damageBonus.threshold.length > 0
-  ) {
-    if (isObject(item.damageBonus.threshold)) {
-      damageBonus = {
-        ...item.damageBonus,
-        threshold: item.damageBonus.threshold.map(e => Number.parseInt(e))
-      };
-    }
-    else {
-      damageBonus = {
-        ...item.damageBonus,
-        threshold: Number.parseInt(item.damageBonus.threshold),
-      };
-    }
-  }
-
-  return {
-    ...other,
-    amount: toInteger(item.amount, 1),
-    at: toInteger(item.at),
-    damageBonus,
-    damageDiceNumber: toInteger(item.damageDiceNumber),
-    damageFlat: toInteger(item.damageFlat),
-    enc: toInteger(item.enc),
-    length: toFloat(item.length),
-    pa: toInteger(item.pa),
-    price: toFloat(item.price),
-    pro: toInteger(item.pro),
-    range: item.range.map(toInteger) as [number, number, number],
-    reloadTime: toInteger(item.reloadTime),
-    stp: toInteger(item.stp),
-    weight: toFloat(item.weight),
+  return item.mergeMaybe(Record.of({
+    amount: toInteger(item.get('amount'), 1),
+    at: toInteger(item.get('at')),
+    damageBonus: convertDamageBonusToSave(item.get('damageBonus')),
+    damageDiceNumber: toInteger(item.get('damageDiceNumber')),
+    damageFlat: toInteger(item.get('damageFlat')),
+    enc: toInteger(item.get('enc')),
+    length: toFloat(item.get('length')),
+    pa: toInteger(item.get('pa')),
+    price: toFloat(item.get('price')),
+    pro: toInteger(item.get('pro')),
+    range: item.get('range').map(toInteger) as [number, number, number],
+    reloadTime: toInteger(item.get('reloadTime')),
+    stp: toInteger(item.get('stp')),
+    weight: toFloat(item.get('weight')),
     ...add
-  };
-}
-
-const arrayFilter = (
-  value: [number, number, number] | SourceLink[]
-): value is [number, number, number] => {
-  return value.length === 0 || typeof value[0] === 'number';
+  })) as any as Record<ItemInstance>;
 };
 
-export const containsNaN = (item: ItemInstance): string[] | false => {
-  const keys = Object.keys(item) as (keyof ItemInstance)[];
+export const containsNaN = (item: Record<ItemInstance>): List<string> | false => {
+  const filtered = item.keys().filter(e => {
+    const element = item.lookup(e);
 
-  const filtered = keys.filter(e => {
-    const element = item[e];
+    if (Maybe.isJust(element)) {
+      const justElement = Maybe.fromJust(element);
 
-    if (Array.isArray(element)) {
-      return !arrayFilter(element) || element.every(i => Number.isNaN(i));
-    }
-    else if (typeof element === 'number') {
-      return Number.isNaN(element);
+      if (Array.isArray(justElement) ) {
+        return justElement.every(i => Number.isNaN(i));
+      }
+      else if (typeof element === 'number') {
+        return Number.isNaN(element);
+      }
     }
 
     return false;
   });
 
-  if (filtered.length === 0) {
+  if (filtered.length() === 0) {
     return false;
   }
 
   return filtered;
 };
 
-export const convertPrimaryAttributeToArray = (id: string): string[] => {
+export const convertPrimaryAttributeToArray = (id: string): List<string> => {
   const [attr, ...ids] = id.split(/_/);
-  return ids.map(e => `${attr}_${e}`);
+
+  return List.fromArray(ids.map(e => `${attr}_${e}`));
 };

@@ -1,6 +1,6 @@
 import { HeroDependent, StyleDependency } from '../types/data.d';
 import { SpecialAbility } from '../types/wiki.d';
-import { Record } from './dataUtils';
+import { List, Maybe, Record } from './dataUtils';
 
 export type StyleDependencyStateKeys =
   'combatStyleDependencies' |
@@ -14,18 +14,41 @@ export type StyleDependencyStateKeys =
  * @returns A state key or `undefined` if not a Style Special Ability.
  */
 const getStyleStateKey = (
-  entry: SpecialAbility,
-): StyleDependencyStateKeys | undefined => {
-  if (entry.gr === 9 || entry.gr === 10) {
-    return 'combatStyleDependencies';
+  entry: Record<SpecialAbility>,
+): Maybe<StyleDependencyStateKeys> => {
+  if (entry.get('gr') === 9 || entry.get('gr') === 10) {
+    return Maybe.Just<StyleDependencyStateKeys>('combatStyleDependencies');
   }
-  else if (entry.gr === 13) {
-    return 'magicalStyleDependencies';
+  else if (entry.get('gr') === 13) {
+    return Maybe.Just<StyleDependencyStateKeys>('magicalStyleDependencies');
   }
-  else if (entry.gr === 25) {
-    return 'blessedStyleDependencies';
+  else if (entry.get('gr') === 25) {
+    return Maybe.Just<StyleDependencyStateKeys>('blessedStyleDependencies');
   }
-  return;
+
+  return Maybe.Nothing();
+};
+
+/**
+ * Checks if the given entry is an Extended Special Ability and which state key it
+ * belongs to.
+ * @param entry
+ * @returns A state key or `undefined` if not an Extended Special Ability.
+ */
+const getExtendedStateKey = (
+  entry: Record<SpecialAbility>,
+): Maybe<StyleDependencyStateKeys> => {
+  if (entry.get('gr') === 11) {
+    return Maybe.Just<StyleDependencyStateKeys>('combatStyleDependencies');
+  }
+  else if (entry.get('gr') === 14) {
+    return Maybe.Just<StyleDependencyStateKeys>('magicalStyleDependencies');
+  }
+  else if (entry.get('gr') === 26) {
+    return Maybe.Just<StyleDependencyStateKeys>('blessedStyleDependencies');
+  }
+
+  return Maybe.Nothing();
 };
 
 /**
@@ -37,63 +60,47 @@ const getStyleStateKey = (
  * @returns Changed state slice.
  */
 export const addStyleExtendedSpecialAbilityDependencies = (
-  state: HeroDependent,
-  instance: SpecialAbility,
-): HeroDependent => {
-  const key = getStyleStateKey(instance);
+  state: Record<HeroDependent>,
+  instance: Record<SpecialAbility>,
+): Record<HeroDependent> =>
+  Maybe.fromMaybe(
+    state,
+    getStyleStateKey(instance)
+      .bind(key =>
+        instance.lookup('extended')
+          .map(extended => {
+            const newItems = extended.map(id => Record.of({
+              id,
+              origin: instance.get('id')
+            }));
 
-  if (typeof key === 'string' && instance.extended) {
-    const newItems = instance.extended.map(id => ({
-      id,
-      origin: instance!.id
-    }));
+            return state.modify(
+              slice =>
+                slice
+                  .map(dependency => {
+                    const { id, active } = dependency.toObject();
 
-    const oldItems = state[key].map(e => {
-      const { id, active } = e;
-      if (Array.isArray(id) && typeof active === 'string') {
-        const index = newItems.findIndex(e => e.id === active);
-        if (index > -1) {
-          return {
-            ...e,
-            active: undefined
-          };
-        }
-      }
-      return e;
-    });
+                    if (id instanceof List && typeof active === 'string') {
+                      const index = newItems.findIndex(
+                        e => e.get('id') === active
+                      );
 
-    return {
-      ...state,
-      [key]: [
-        ...oldItems,
-        ...newItems
-      ],
-    };
-  }
+                      if (Maybe.isJust(index)) {
+                        return dependency.update(
+                          () => Maybe.Nothing(),
+                          'active'
+                        );
+                      }
+                    }
 
-  return state;
-};
-
-/**
- * Checks if the given entry is an Extended Special Ability and which state key it
- * belongs to.
- * @param entry
- * @returns A state key or `undefined` if not an Extended Special Ability.
- */
-const getExtendedStateKey = (
-  entry: SpecialAbility,
-): StyleDependencyStateKeys | undefined => {
-  if (entry.gr === 11) {
-    return 'combatStyleDependencies';
-  }
-  else if (entry.gr === 14) {
-    return 'magicalStyleDependencies';
-  }
-  else if (entry.gr === 26) {
-    return 'blessedStyleDependencies';
-  }
-  return;
-};
+                    return dependency;
+                  })
+                  .concat(newItems),
+              key
+            );
+          })
+      )
+  );
 
 /**
  * Modifies a `StyleDependency` object to show a extended special ability has
@@ -103,41 +110,44 @@ const getExtendedStateKey = (
  * @returns Changed state slice.
  */
 export const addExtendedSpecialAbilityDependency = (
-  state: HeroDependent,
-  instance: SpecialAbility,
-): HeroDependent => {
-  const key = getExtendedStateKey(instance);
+  state: Record<HeroDependent>,
+  instance: Record<SpecialAbility>,
+): Record<HeroDependent> =>
+  Maybe.fromMaybe(
+    state,
+    getExtendedStateKey(instance)
+      .map(key =>
+        state.modify(
+          slice => slice.modifyAt(
+            Maybe.fromMaybe(
+              -1,
+              /**
+               * Checks if requested entry is plain dependency.
+               */
+              slice.findIndex(
+                e => e.get('id') === instance.get('id')
+              )
+                /**
+                 * Otherwise check if the requested entry is part of a list of
+                 * options.
+                 */
+                .alt(slice.findIndex(
+                  e =>
+                    e.get('id') instanceof List
+                    && (e.get('id') as List<string>).elem(instance.get('id'))
+                ))
+            ),
+            entry => entry.insert('active', instance.get('id'))
+          ),
+          key
+        )
+      )
+  );
 
-  if (typeof key === 'string') {
-    const entries = state[key];
-    let index = entries.findIndex(e => e.id === instance.id);
-
-    if (index === -1) {
-      // Checks if the requested entry is part of a list of options.
-      index = entries.findIndex(e => {
-        return Array.isArray(e.id) && e.id.includes(instance.id);
-      });
-    }
-
-    if (index > -1) {
-      const prev = entries.slice(0, index);
-      const next = entries.slice(index + 1);
-      return {
-        ...state,
-        [key]: [
-          ...prev,
-          {
-            ...entries[index],
-            active: instance.id
-          },
-          ...next
-        ]
-      };
-    }
-  }
-
-  return state;
-};
+interface SplittedRemainingAndToRemove {
+  itemsToRemove: List<Record<StyleDependency>>;
+  leftItems: List<Record<StyleDependency>>;
+}
 
 /**
  * Split the objects from the ability to remove and remaining objects.
@@ -145,27 +155,58 @@ export const addExtendedSpecialAbilityDependency = (
  * @param styleId The id of the style to remove.
  */
 const getSplittedRemainingAndToRemove = (
-  items: StyleDependency[],
+  items: List<Record<StyleDependency>>,
   styleId: string,
 ): SplittedRemainingAndToRemove => {
-  const initialObj = {
-    itemsToRemove: [],
-    leftItems: []
+  const initialObj: SplittedRemainingAndToRemove = {
+    itemsToRemove: List.of(),
+    leftItems: List.of()
   };
 
-  return items.reduce<SplittedRemainingAndToRemove>((obj, dependency) => {
-    if (dependency.origin === styleId) {
+  return items.foldl<SplittedRemainingAndToRemove>(
+    obj => dependency => {
+      if (dependency.get('origin') === styleId) {
+        return {
+          ...obj,
+          itemsToRemove: obj.itemsToRemove.append(dependency)
+        };
+      }
+
       return {
         ...obj,
-        itemsToRemove: [...obj.itemsToRemove, dependency]
+        leftItems: obj.leftItems.append(dependency)
       };
-    }
-    return {
-      ...obj,
-      leftItems: [...obj.leftItems, dependency]
-    };
-  }, initialObj);
+    },
+    initialObj
+  );
 };
+
+/**
+ * Checks if there is a second object to move the active
+ * dependency
+ */
+const checkForAlternativeIndex = (
+  leftItems: List<Record<StyleDependency>>,
+  dependency: Record<StyleDependency>
+) =>
+  Maybe.fromMaybe(
+    -1,
+    leftItems.findIndex(e => {
+      const id = e.get('id');
+      const active = dependency.lookup('active');
+
+      // If no List, the ids must be equal
+      if (typeof id === 'string') {
+        return active
+          .equals(Maybe.Just(id));
+      }
+
+      // Must be in List but List must not be used
+      return Maybe.isJust(active)
+        && id.elem(Maybe.fromJust(active))
+        && Maybe.isNothing(e.lookup('active'));
+    })
+  );
 
 /**
  * Removes extended special ability dependencies if the passed entry is a style
@@ -176,44 +217,41 @@ const getSplittedRemainingAndToRemove = (
  * @returns Changed state slice.
  */
 export const removeStyleExtendedSpecialAbilityDependencies = (
-  state: HeroDependent,
-  instance: SpecialAbility,
-): HeroDependent => {
-  const key = getStyleStateKey(instance);
+  state: Record<HeroDependent>,
+  instance: Record<SpecialAbility>,
+): Record<HeroDependent> =>
+  Maybe.fromMaybe(
+    state,
+    getStyleStateKey(instance)
+      .bind(key =>
+        instance.lookup('extended')
+          .map(() =>
+            state.modify(
+              slice => {
+                const {
+                  itemsToRemove,
+                  leftItems
+                } = getSplittedRemainingAndToRemove(slice, instance.get('id'));
 
-  if (typeof key === 'string' && instance.extended) {
-    const {
-      itemsToRemove,
-      leftItems
-    } = getSplittedRemainingAndToRemove(state[key], instance.id);
-
-    const usedObjectsToRemove = itemsToRemove.filter(e => {
-      return typeof e.active === 'string';
-    });
-
-    for (const dependency of usedObjectsToRemove) {
-      // Checks if there is a second object to move the active dependency
-      const index = leftItems.findIndex(e => {
-        if (typeof e.id !== 'object') {
-          return dependency.active === e.id;
-        }
-        return e.id.includes(dependency.active!) && e.active === undefined;
-      });
-
-      leftItems[index] = {
-        ...leftItems[index],
-        active: dependency.active
-      };
-    }
-
-    return {
-      ...state,
-      [key]: leftItems
-    };
-  }
-
-  return state;
-};
+                return itemsToRemove
+                  .filter(e => Maybe.isJust(e.lookup('active')))
+                  .foldl(
+                    accRemain => dependency =>
+                      accRemain.modifyAt(
+                        checkForAlternativeIndex(leftItems, dependency),
+                        x => x.update(
+                          () => dependency.lookup('active'),
+                          'active'
+                        )
+                      ),
+                    leftItems
+                  )
+              },
+              key
+            )
+          )
+      )
+  );
 
 /**
  * Modifies a `StyleDependency` object to show a extended special ability has
@@ -223,61 +261,68 @@ export const removeStyleExtendedSpecialAbilityDependencies = (
  * @returns Changed state slice.
  */
 export const removeExtendedSpecialAbilityDependency = (
-  state: HeroDependent,
-  instance: SpecialAbility,
-): HeroDependent => {
-  const key = getExtendedStateKey(instance);
-
-  if (typeof key === 'string') {
-    const entries = state[key];
-    let index = entries.findIndex(e => (
-      Array.isArray(e.id) && e.id.includes(instance.id) && e.active === instance.id
-    ));
-
-    if (index === -1) {
-      index = entries.findIndex(e => (
-        e.id === instance.id && e.active === instance.id
-      ));
-    }
-
-    if (index > -1) {
-      const prev = entries.slice(0, index);
-      const next = entries.slice(index + 1);
-
-      return {
-        ...state,
-        [key]: [
-          ...prev,
-          {
-            ...entries[index],
-            active: undefined
-          },
-          ...next
-        ]
-      };
-    }
-  }
-
-  return state;
-};
+  state: Record<HeroDependent>,
+  instance: Record<SpecialAbility>,
+): Record<HeroDependent> =>
+  Maybe.fromMaybe(
+    state,
+    getExtendedStateKey(instance)
+      .map(key =>
+        state.modify(
+          slice => slice.modifyAt(
+            Maybe.fromMaybe(
+              -1,
+              /**
+               * Check if the requested entry is part of a list of options.
+               *
+               * Also, it only has to affect the current instance, because only
+               * that is about to be removed.
+               */
+              slice.findIndex(
+                e =>
+                  e.get('id') instanceof List
+                  && (e.get('id') as List<string>).elem(instance.get('id'))
+                  && e.lookup('active').equals(instance.lookup('id'))
+              )
+                /**
+                 * Otherwise checks if requested entry is plain dependency.
+                 *
+                 * Also, it only has to affect the current instance, because
+                 * only that is about to be removed.
+                 */
+                .alt(slice.findIndex(
+                  e =>
+                    e.get('id') === instance.get('id')
+                    && e.lookup('active').equals(instance.lookup('id'))
+                ))
+            ),
+            // Maybe.Nothing removes the property from the record.
+            entry => entry.update(() => Maybe.Nothing(), 'active')
+          ),
+          key
+        )
+      )
+  );
 
 /**
  * Return flat array of available extended special abilities' IDs.
  * @param list List of set extended special ability objects.
  */
 const getAvailableExtendedSpecialAbilities = (
-  list: StyleDependency[],
-): string[] => {
-  return list.reduce<string[]>((arr, e) => {
-    if (typeof e.active !== 'string') {
-      if (typeof e.id === 'object') {
-        return [...arr, ...e.id];
+  list: List<Record<StyleDependency>>,
+): List<string> =>
+  list.foldl<List<string>>(
+    arr => e => {
+      if (Maybe.isNothing(e.lookup('active'))) {
+        const id = e.get('id');
+
+        return id instanceof List ? arr.concat(id) : arr.append(id);
       }
-      return [...arr, e.id];
-    }
-    return arr;
-  }, []);
-};
+
+      return arr;
+    },
+    List.of()
+  );
 
 /**
  * Calculates a list of available Extended Special Abilties. The availability is
@@ -286,15 +331,14 @@ const getAvailableExtendedSpecialAbilities = (
  * @param styleDependencies
  */
 export const getAllAvailableExtendedSpecialAbilities = (
-  ...styleDependencies: StyleDependency[][]
-): string[] => {
-  return styleDependencies.reduce<string[]>((idList, dependencyArr) => {
-    return [
-      ...idList,
-      ...getAvailableExtendedSpecialAbilities(dependencyArr),
-    ];
-  }, []);
-};
+  ...styleDependencies: List<Record<StyleDependency>>[]
+): List<string> =>
+  styleDependencies.reduce<List<string>>(
+    (idList, dependencyArr) =>
+      idList.concat(getAvailableExtendedSpecialAbilities(dependencyArr)),
+    List.of()
+  );
+
 
 /**
  * Checks if the passed special ability is a style and if it is valid to remove
@@ -304,42 +348,29 @@ export const getAllAvailableExtendedSpecialAbilities = (
  */
 export const isStyleValidToRemove = (
   state: Record<HeroDependent>,
-  entry?: Record<SpecialAbility>,
-): boolean => {
-  if (entry) {
-    const key = getStyleStateKey(entry);
+  maybeInstance: Maybe<Record<SpecialAbility>>,
+): boolean =>
+  Maybe.fromMaybe(
+    false,
+    maybeInstance.map(
+      instance => Maybe.fromMaybe(
+        true,
+        getStyleStateKey(instance)
+          .map(key => {
+            const {
+              itemsToRemove,
+              leftItems
+            } = getSplittedRemainingAndToRemove(
+              state.get(key),
+              instance.get('id')
+            );
 
-    if (typeof key === 'string') {
-      const {
-        itemsToRemove,
-        leftItems
-      } = getSplittedRemainingAndToRemove(state[key], entry.id);
-
-      const usedObjectsToRemove = itemsToRemove.filter(e => {
-        return typeof e.active === 'string';
-      });
-
-      for (const dependency of usedObjectsToRemove) {
-        // Checks if there is a second object to move the active dependency
-        const index = leftItems.findIndex(e => {
-          if (typeof e.id !== 'object') {
-            return dependency.active === e.id;
-          }
-          return e.id.includes(dependency.active!) && e.active === undefined;
-        });
-
-        // if no other object available style entry must not be removed
-        if (index === -1) {
-          return false;
-        }
-      }
-    }
-    return true;
-  }
-  return false;
-};
-
-interface SplittedRemainingAndToRemove {
-  itemsToRemove: StyleDependency[];
-  leftItems: StyleDependency[];
-}
+            return !itemsToRemove
+              .filter(e => Maybe.isJust(e.lookup('active')))
+              .any(dependency =>
+                checkForAlternativeIndex(leftItems, dependency) === -1
+              )
+          })
+      )
+    )
+  );

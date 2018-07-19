@@ -33,7 +33,7 @@ const createFilter = (newTier?: number) =>
 const createFlattenFiltered =
   (prerequisites: OrderedMap<number, ActivatablePrerequisites>) =>
     (filter: PrerequisiteFilter) =>
-      OrderedMap.toValueList(prerequisites.filterWithKey(filter)).flatten();
+      OrderedMap.toValueList(prerequisites.filterWithKey(filter)).concatInner();
 
 const flattenMap = (
   prerequisites: OrderedMap<number, ActivatablePrerequisites>,
@@ -44,18 +44,6 @@ const flattenMap = (
   createFlattenFiltered(prerequisites),
 )(oldTier);
 
-export function flattenPrerequisites(
-  prerequisites: LevelAwarePrerequisites,
-): ActivatablePrerequisites;
-export function flattenPrerequisites(
-  prerequisites: LevelAwarePrerequisites,
-  tier: number,
-): ActivatablePrerequisites;
-export function flattenPrerequisites(
-  prerequisites: LevelAwarePrerequisites,
-  oldTier: number,
-  newTier: number,
-): ActivatablePrerequisites;
 export function flattenPrerequisites(
   prerequisites: LevelAwarePrerequisites,
   oldTier?: number,

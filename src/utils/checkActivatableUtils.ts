@@ -1,22 +1,22 @@
 import * as Data from '../types/data.d';
 import { Activatable, AllRequirements } from '../types/wiki.d';
 import { isRequiringActivatable } from './checkPrerequisiteUtils';
+import { Record } from './dataUtils';
 import { getFirstTierPrerequisites } from './flattenPrerequisites';
 
-const getMagicalOrBlessedFilter = (advantageId: 'ADV_12' | 'ADV_50') => {
-  return (e: AllRequirements) => {
-    return e !== 'RCP'
-      && e.id === advantageId
-      && isRequiringActivatable(e)
-      && !!e.active;
-  };
-};
+const getMagicalOrBlessedFilter =
+  (advantageId: 'ADV_12' | 'ADV_50') =>
+    (e: AllRequirements) =>
+      e !== 'RCP'
+        && e.get('id') === advantageId
+        && isRequiringActivatable(e)
+        && e.get('active');
 
 export const isMagicalOrBlessed = (obj: Activatable) => {
-  const firstTier = getFirstTierPrerequisites(obj.prerequisites);
+  const firstTier = getFirstTierPrerequisites(obj.get('prerequisites'));
 
-  const isBlessed = firstTier.some(getMagicalOrBlessedFilter('ADV_12'));
-  const isMagical = firstTier.some(getMagicalOrBlessedFilter('ADV_50'));
+  const isBlessed = firstTier.any(getMagicalOrBlessedFilter('ADV_12'));
+  const isMagical = firstTier.any(getMagicalOrBlessedFilter('ADV_50'));
 
   return {
     isBlessed,
@@ -25,7 +25,7 @@ export const isMagicalOrBlessed = (obj: Activatable) => {
 };
 
 export const isActiveViewObject = (
-  obj: Data.ActiveViewObject | Data.DeactiveViewObject,
-): obj is Data.ActiveViewObject => {
-  return obj.hasOwnProperty('index');
+  obj: Record<Data.ActiveViewObject> | Record<Data.DeactiveViewObject>,
+): obj is Record<Data.ActiveViewObject> => {
+  return obj.member('index');
 };

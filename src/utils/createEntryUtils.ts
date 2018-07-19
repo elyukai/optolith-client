@@ -1,10 +1,10 @@
 import * as Data from '../types/data.d';
-import { Record, List } from './dataUtils';
+import { List, Record } from './dataUtils';
 
 interface AttributeDependentOptions {
   value?: number;
   mod?: number;
-  dependencies?: Data.AttributeInstanceDependency[];
+  dependencies?: List<Data.SkillDependency>;
 }
 
 export function createAttributeDependent(
@@ -14,15 +14,15 @@ export function createAttributeDependent(
   const {
     value = 8,
     mod = 0,
-    dependencies = [],
+    dependencies = List.of<Data.SkillDependency>(),
   } = options;
 
-  return {
+  return Record.of({
     id,
     value,
     mod,
     dependencies,
-  };
+  });
 }
 
 interface ActivatableDependentOptions {
@@ -48,7 +48,7 @@ export function createActivatableDependent(
 
 interface DependentSkillOptions {
   value?: number;
-  dependencies?: Data.TalentInstanceDependency[];
+  dependencies?: List<Data.SkillDependency>;
 }
 
 export function createDependentSkill(
@@ -57,24 +57,24 @@ export function createDependentSkill(
 ): Record<Data.SkillDependent> {
   const {
     value = 0,
-    dependencies = [],
+    dependencies = List.of<Data.SkillDependency>(),
   } = options;
 
-  return {
+  return Record.of({
     id,
     value,
     dependencies,
-  };
+  });
 }
 
 interface ActiveActivatableDependentSkillOptions {
   active?: boolean;
-  dependencies?: Data.SpellInstanceDependency[];
+  dependencies?: List<Data.ExtendedSkillDependency>;
 }
 
 interface ValueActivatableDependentSkillOptions {
   value?: number;
-  dependencies?: Data.SpellInstanceDependency[];
+  dependencies?: List<Data.ExtendedSkillDependency>;
 }
 
 type ActivatableDependentSkillOptions =
@@ -92,7 +92,7 @@ export function createActivatableDependentSkill(
   const {
     active,
     value = 0,
-    dependencies = [],
+    dependencies = List.of<Data.ExtendedSkillDependency>(),
   } = options as JoinedActivatableDependentSkillOptions;
 
   if (value > 0) {
@@ -100,23 +100,23 @@ export function createActivatableDependentSkill(
       console.warn('createActivatableDependentSkill called with active === false, but value > 0');
     }
 
-    return {
+    return Record.of({
       id,
       value,
       active: true,
       dependencies,
-    };
+    });
   }
   else {
     const {
-      active = false,
+      active: condActive = false,
     } = options as JoinedActivatableDependentSkillOptions;
 
-    return {
+    return Record.of({
       id,
       value: 0,
-      active,
+      active: condActive,
       dependencies,
-    };
+    });
   }
 }

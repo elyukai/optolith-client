@@ -1,3 +1,5 @@
+import { List } from '../utils/dataUtils';
+
 export enum Categories {
   ADVANTAGES = 'ADVANTAGES',
   ATTRIBUTES = 'ATTRIBUTES',
@@ -21,11 +23,11 @@ export type ActivatableCategory =
   Categories.DISADVANTAGES |
   Categories.SPECIAL_ABILITIES;
 
-export const ActivatableCategories = [
+export const ActivatableCategories = List.of<ActivatableCategory>(
   Categories.ADVANTAGES,
   Categories.DISADVANTAGES,
   Categories.SPECIAL_ABILITIES,
-];
+);
 
 export type CategoryWithGroups =
   Categories.COMBAT_TECHNIQUES |
@@ -41,13 +43,13 @@ export type IncreasableCategory =
   Categories.SPELLS |
   Categories.TALENTS;
 
-export const IncreasableCategories = [
+export const IncreasableCategories = List.of<IncreasableCategory>(
   Categories.ATTRIBUTES,
   Categories.COMBAT_TECHNIQUES,
   Categories.LITURGIES,
   Categories.SPELLS,
   Categories.TALENTS,
-];
+);
 
 export type ActivatableLikeCategory =
   Categories.ADVANTAGES |
@@ -56,19 +58,19 @@ export type ActivatableLikeCategory =
   Categories.LITURGIES |
   Categories.SPELLS;
 
-export const ActivatableLikeCategories = [
+export const ActivatableLikeCategories = List.of<ActivatableLikeCategory>(
   Categories.ADVANTAGES,
   Categories.DISADVANTAGES,
   Categories.SPECIAL_ABILITIES,
   Categories.LITURGIES,
   Categories.SPELLS,
-];
+);
 
 export type ActivatableSkillCategory =
   Categories.LITURGIES |
   Categories.SPELLS;
 
-export const ActivatableSkillCategories = [
+export const ActivatableSkillCategories = List.of<ActivatableSkillCategory>(
   Categories.LITURGIES,
   Categories.SPELLS,
-];
+);

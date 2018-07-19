@@ -1,110 +1,106 @@
 import { AdventurePointsObject } from '../selectors/adventurePointsSelectors';
 import * as Data from '../types/data.d';
+import * as Raw from '../types/rawdata';
 import { currentVersion } from '../utils/VersionUtils';
-import { MapValueElement, StringKeyObject, convertMapToArray, convertMapToObject, mergeMaps } from './collectionUtils';
+import { StringKeyObject } from './collectionUtils';
+import { OrderedMap, OrderedMapValueElement, Record } from './dataUtils';
 import { HeroStateMapKey } from './heroStateUtils';
 
-const getAttributesForSave = (hero: Data.HeroDependent) => {
-  const {
-    addedArcaneEnergyPoints: ae,
-    addedKarmaPoints: kp,
-    addedLifePoints: lp,
-    permanentArcaneEnergyPoints: permanentAE,
-    permanentKarmaPoints: permanentKP
-  } = hero.energies;
+const getAttributesForSave = (hero: Record<Data.HeroDependent>) =>
+  ({
+    values: hero.get('attributes').foldl<[string, number, number][]>(
+      acc => e => [...acc, [e.get('id'), e.get('value'), e.get('mod')]],
+      []
+    ),
+    ae: hero.get('energies').get('addedArcaneEnergyPoints'),
+    kp: hero.get('energies').get('addedKarmaPoints'),
+    lp: hero.get('energies').get('addedLifePoints'),
+    permanentAE: hero.get('energies').get('permanentArcaneEnergyPoints').toObject(),
+    permanentKP: hero.get('energies').get('permanentKarmaPoints').toObject(),
+    permanentLP: hero.get('energies').get('permanentLifePoints').toObject()
+  });
 
-  return {
-    values: [...hero.attributes.values()].map<[string, number, number]>(e => {
-      return [e.id, e.value, e.mod];
-    }),
-    ae,
-    kp,
-    lp,
-    permanentAE,
-    permanentKP
-  };
-};
-
-const getActivatablesForSave = (hero: Data.HeroDependent) => {
-  return convertMapToArray(mergeMaps(
-    hero.advantages,
-    hero.disadvantages,
-    hero.specialAbilities,
-  ))
-    .reduce<StringKeyObject<Data.ActiveObject[]>>((acc, [id, obj]) => {
-      return {
+const getActivatablesForSave = (hero: Record<Data.HeroDependent>) =>
+  hero.get('advantages')
+    .union(hero.get('disadvantages'))
+    .union(hero.get('specialAbilities'))
+    .foldlWithKey<StringKeyObject<Data.ActiveObject[]>>(
+      acc => id => obj => ({
         ...acc,
-        [id]: obj.active,
-      };
-    }, {});
-};
+        [id]: obj.get('active').foldl<Data.ActiveObject[]>(
+          accActive => e => [...accActive, e.toObject()],
+          []
+        ),
+      }),
+      {}
+    );
 
 const getValuesForSave = <T extends HeroStateMapKey>(
   sliceKey: T,
-  testFn: (obj: MapValueElement<Data.HeroDependent[T]>) => boolean,
-) => {
-  return (hero: Data.HeroDependent) => {
-    return convertMapToArray(
-      hero[sliceKey] as ReadonlyMap<string, Data.ExtendedSkillDependent>
-    )
-      .reduce<StringKeyObject<number>>((acc, [id, obj]) => {
-        if (testFn(obj as MapValueElement<Data.HeroDependent[T]>)) {
-          return {
-            ...acc,
-            [id]: obj.value,
-          };
-        }
+  testFn: (obj: OrderedMapValueElement<Data.HeroDependent[T]>) => boolean,
+) =>
+  (hero: Record<Data.HeroDependent>) =>
+    (hero.get(sliceKey) as OrderedMap<string, Data.ExtendedSkillDependent>)
+      .foldlWithKey<StringKeyObject<number>>(
+        acc => id => obj => {
+          if (testFn(obj as OrderedMapValueElement<Data.HeroDependent[T]>)) {
+            return {
+              ...acc,
+              [id]: obj.get('value'),
+            };
+          }
 
-        return acc;
-      }, {});
-  };
-};
+          return acc;
+        },
+        {}
+      );
 
 const getSkillsForSave = getValuesForSave(
   'skills',
-  obj => obj.value > 0
+  obj => obj.get('value') > 0
 );
 
 const getCombatTechniquesForSave = getValuesForSave(
   'combatTechniques',
-  obj => obj.value > 6,
+  obj => obj.get('value') > 6,
 );
 
 const getSpellsForSave = getValuesForSave(
   'spells',
-  obj => obj.active,
+  obj => obj.get('active'),
 );
 
-const getCantripsForSave = (hero: Data.HeroDependent) => [...hero.cantrips];
+const getCantripsForSave =
+  (hero: Record<Data.HeroDependent>) => [...hero.get('cantrips')];
 
 const getLiturgicalChantsForSave = getValuesForSave(
   'liturgicalChants',
-  obj => obj.active,
+  obj => obj.get('active'),
 );
 
-const getBlessingsForSave = (hero: Data.HeroDependent) => [...hero.blessings];
+const getBlessingsForSave =
+  (hero: Record<Data.HeroDependent>) => [...hero.get('blessings')];
 
-const getBelongingsForSave = (hero: Data.HeroDependent) => {
-  return {
-    items: convertMapToObject(hero.belongings.items),
-    armorZones: convertMapToObject(hero.belongings.armorZones),
-    purse: hero.belongings.purse,
-  };
-};
+const getBelongingsForSave = (hero: Record<Data.HeroDependent>) =>
+  ({
+    items: hero.get('belongings').get('items').toJSObjectBy(x => x.toObject()),
+    armorZones: hero.get('belongings').get('armorZones').toJSObjectBy(x => x.toObject()),
+    purse: hero.get('belongings').get('purse').toObject(),
+  });
 
-const getPetsForSave = (hero: Data.HeroDependent) => {
-  return convertMapToObject(hero.pets);
-};
+const getPetsForSave = (hero: Record<Data.HeroDependent>) =>
+  hero.get('pets').toJSObjectBy(x => x.toObject());
 
 export const convertHeroForSave = (
   id: string,
-  hero: Data.HeroDependent,
-  adventurePoints: AdventurePointsObject,
-): Data.HeroForSave => {
+  hero: Record<Data.HeroDependent>,
+  adventurePoints: Record<AdventurePointsObject>,
+): Raw.RawHero => {
   const {
     dateCreated,
     dateModified,
     phase,
+    name,
     avatar,
     experienceLevel,
     race,
@@ -115,19 +111,20 @@ export const convertHeroForSave = (
     professionVariant,
     sex,
     personalData,
-  } = hero;
+    rules
+  } = hero.toObject();
 
-  const obj: Data.HeroForSave = {
+  const obj: Raw.RawHero = {
     clientVersion: currentVersion,
-    dateCreated,
-    dateModified,
+    dateCreated: dateCreated.toJSON(),
+    dateModified: dateModified.toJSON(),
     id,
     phase,
-    name: name!,
+    name,
     avatar,
     ap: {
-      total: adventurePoints.total,
-      spent: adventurePoints.spent,
+      total: adventurePoints.get('total'),
+      spent: adventurePoints.get('spent'),
     },
     el: experienceLevel,
     r: race,
@@ -136,8 +133,8 @@ export const convertHeroForSave = (
     p: profession,
     professionName: profession === 'P_0' ? professionName : undefined,
     pv: professionVariant,
-    sex: sex!,
-    pers: personalData,
+    sex,
+    pers: personalData.toObject(),
     attr: getAttributesForSave(hero),
     activatable: getActivatablesForSave(hero),
     talents: getSkillsForSave(hero),
@@ -148,8 +145,8 @@ export const convertHeroForSave = (
     blessings: getBlessingsForSave(hero),
     belongings: getBelongingsForSave(hero),
     rules: {
-      ...hero.rules,
-      enabledRuleBooks: [...hero.rules.enabledRuleBooks]
+      ...rules.toObject(),
+      enabledRuleBooks: [...rules.get('enabledRuleBooks')]
     },
     pets: getPetsForSave(hero)
   };

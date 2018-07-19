@@ -313,7 +313,10 @@ export const compressList = (
   const finalList = listToString.foldl<EnhancedReduce>(
     previous => current =>
       Maybe.fromMaybe(
-        previous,
+        {
+          final: previous.final.append(current),
+          previousLowerTier: false
+        },
         previous.final.last()
           .bind(Maybe.ensure(x =>
             x.split(' (')[0] === current.split(' (')[0]
@@ -332,10 +335,6 @@ export const compressList = (
               final: previous.final.init().append(`${beginning}, ${continuing}`)
             };
           })
-          .alt(Maybe.Just({
-            final: previous.final.append(current),
-            previousLowerTier: false
-          }))
       ),
     initial
   ).final.intercalate(', ');

@@ -45,7 +45,7 @@
 		"no-eval": true,
 		"no-floating-promises": true,
     "no-for-in-array": true,
-    "no-implicit-dependencies": true,
+    "no-implicit-dependencies": [true, "dev"],
     "no-inferred-empty-object-type": true,
     "no-invalid-template-strings": true,
 		"no-invalid-this": true,
@@ -71,7 +71,6 @@
     "strict-boolean-expressions": [true, "allow-undefined-union"],
 		"strict-type-predicates": true,
 		"triple-equals": true,
-		"typeof-compare": true,
 
     // Maintainability
     "cyclomatic-complexity": true,
@@ -97,7 +96,7 @@
     "arrow-return-shorthand": true,
     "binary-expression-operand-order": true,
 		"class-name": true,
-    "comment-format": [true, "check-space", "check-uppercase"],
+    // "comment-format": [true, "check-space", "check-uppercase"],
     "encoding": true,
     "import-spacing": true,
     "interface-name": [true, "never-prefix"],

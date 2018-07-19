@@ -216,69 +216,69 @@ export interface CommonProfessionObject {
 }
 
 export interface SpecializationSelection {
-  readonly id: 'SPECIALISATION';
+  readonly id: ProfessionSelectionIds.SPECIALISATION;
   readonly sid: string | List<string>;
 }
 
 export interface RemoveSpecializationSelection {
-  readonly id: 'SPECIALISATION';
+  readonly id: ProfessionSelectionIds.SPECIALISATION;
   readonly active: boolean;
 }
 
 export type VariantSpecializationSelection =
-  SpecializationSelection |
-  RemoveSpecializationSelection;
+  Record<SpecializationSelection> |
+  Record<RemoveSpecializationSelection>;
 
 export interface LanguagesScriptsSelection {
-  readonly id: 'LANGUAGES_SCRIPTS';
+  readonly id: ProfessionSelectionIds.LANGUAGES_SCRIPTS;
   readonly value: number;
 }
 
 export interface CombatTechniquesSelection {
-  readonly id: 'COMBAT_TECHNIQUES';
+  readonly id: ProfessionSelectionIds.COMBAT_TECHNIQUES;
   readonly amount: number;
   readonly value: number;
   readonly sid: List<string>;
 }
 
 export interface RemoveCombatTechniquesSelection {
-  readonly id: 'COMBAT_TECHNIQUES';
+  readonly id: ProfessionSelectionIds.COMBAT_TECHNIQUES;
   readonly active: boolean;
 }
 
 export type VariantCombatTechniquesSelection =
-  CombatTechniquesSelection |
-  RemoveCombatTechniquesSelection;
+  Record<CombatTechniquesSelection> |
+  Record<RemoveCombatTechniquesSelection>;
 
 export interface CombatTechniquesSecondSelection {
-  readonly id: 'COMBAT_TECHNIQUES_SECOND';
+  readonly id: ProfessionSelectionIds.COMBAT_TECHNIQUES_SECOND;
   readonly amount: number;
   readonly value: number;
   readonly sid: List<string>;
 }
 
 export interface RemoveCombatTechniquesSecondSelection {
-  readonly id: 'COMBAT_TECHNIQUES_SECOND';
+  readonly id: ProfessionSelectionIds.COMBAT_TECHNIQUES_SECOND;
   readonly active: boolean;
 }
 
 export type VariantCombatTechniquesSecondSelection =
-  CombatTechniquesSecondSelection |
-  RemoveCombatTechniquesSecondSelection;
+  Record<CombatTechniquesSecondSelection> |
+  Record<RemoveCombatTechniquesSecondSelection>;
 
 export interface CantripsSelection {
-  readonly id: 'CANTRIPS';
+  readonly id: ProfessionSelectionIds.CANTRIPS;
   readonly amount: number;
   readonly sid: List<string>;
 }
 
 export interface CursesSelection {
-  readonly id: 'CURSES';
+  readonly id: ProfessionSelectionIds.CURSES;
   readonly value: number;
 }
 
 export interface SkillsSelection {
-  readonly id: 'SKILLS';
+  readonly id: ProfessionSelectionIds.SKILLS;
   /**
    * If specified, only choose from skills of the specified group.
    */
@@ -290,7 +290,7 @@ export interface SkillsSelection {
 }
 
 export interface TerrainKnowledgeSelection {
-  readonly id: 'TERRAIN_KNOWLEDGE';
+  readonly id: ProfessionSelectionIds.TERRAIN_KNOWLEDGE;
   readonly sid: List<number>;
 }
 
@@ -302,32 +302,34 @@ export enum ProfessionSelectionIds {
   CANTRIPS = 'CANTRIPS',
   CURSES = 'CURSES',
   SKILLS = 'SKILLS',
+  TERRAIN_KNOWLEDGE = 'TERRAIN_KNOWLEDGE',
 }
+
 export type ProfessionSelection =
-  SpecializationSelection |
-  LanguagesScriptsSelection |
-  CombatTechniquesSelection |
-  CombatTechniquesSecondSelection |
-  CantripsSelection |
-  CursesSelection |
-  SkillsSelection |
-  TerrainKnowledgeSelection;
+  Record<SpecializationSelection> |
+  Record<LanguagesScriptsSelection> |
+  Record<CombatTechniquesSelection> |
+  Record<CombatTechniquesSecondSelection> |
+  Record<CantripsSelection> |
+  Record<CursesSelection> |
+  Record<SkillsSelection> |
+  Record<TerrainKnowledgeSelection>;
 
 export type ProfessionVariantSelection =
   VariantSpecializationSelection |
-  LanguagesScriptsSelection |
+  Record<LanguagesScriptsSelection> |
   VariantCombatTechniquesSelection |
   VariantCombatTechniquesSecondSelection |
-  CantripsSelection |
-  CursesSelection |
-  SkillsSelection |
-  TerrainKnowledgeSelection;
+  Record<CantripsSelection> |
+  Record<CursesSelection> |
+  Record<SkillsSelection> |
+  Record<TerrainKnowledgeSelection>;
 
 export type ProfessionSelections =
-  List<Record<ProfessionSelection>>;
+  List<ProfessionSelection>;
 
 export type ProfessionVariantSelections =
-  List<Record<ProfessionVariantSelection>>;
+  List<ProfessionVariantSelection>;
 
 export interface ProfessionNameForSexes {
   readonly m: string;
@@ -340,10 +342,8 @@ export interface Profession {
   readonly subname?: string | Record<ProfessionNameForSexes>;
   readonly ap: number;
   readonly apOfActivatables: number;
-  readonly dependencies: List<Record<ProfessionDependency>>;
-  readonly prerequisites: List<Record<
-    ProfessionRequiresActivatableObject | ProfessionRequiresIncreasableObject
-  >>;
+  readonly dependencies: List<ProfessionDependency>;
+  readonly prerequisites: List<ProfessionPrerequisite>;
   readonly prerequisitesStart?: string;
   readonly prerequisitesEnd?: string;
   readonly selections: ProfessionSelections;
@@ -378,10 +378,8 @@ export interface ProfessionVariant {
   readonly name: string | Record<ProfessionNameForSexes>;
   readonly ap: number;
   readonly apOfActivatables: number;
-  readonly dependencies: List<Record<ProfessionDependency>>;
-  readonly prerequisites: List<Record<
-    ProfessionRequiresActivatableObject | ProfessionRequiresIncreasableObject
-  >>;
+  readonly dependencies: List<ProfessionDependency>;
+  readonly prerequisites: List<ProfessionPrerequisite>;
   readonly selections: ProfessionVariantSelections;
   readonly specialAbilities: List<Record<ProfessionRequiresActivatableObject>>;
   readonly combatTechniques: List<Record<IncreaseSkill>>;
@@ -503,7 +501,7 @@ export interface LiturgicalChant {
   readonly name: string;
   readonly aspects: List<number>;
   readonly category: Categories.LITURGIES;
-  readonly check: [string, string, string];
+  readonly check: List<string>;
   readonly checkmod?: "SPI" | "TOU";
   readonly gr: number;
   readonly ic: number;
@@ -539,7 +537,7 @@ export interface Spell {
   readonly id: string;
   readonly name: string;
   readonly category: Categories.SPELLS;
-  readonly check: [string, string, string];
+  readonly check: List<string>;
   readonly checkmod?: "SPI" | "TOU";
   readonly gr: number;
   readonly ic: number;
@@ -741,6 +739,10 @@ export type ProfessionDependency =
   Record<SexRequirement> |
   Record<RaceRequirement> |
   Record<CultureRequirement>;
+
+export type ProfessionPrerequisite =
+  Record<ProfessionRequiresActivatableObject> |
+  Record<ProfessionRequiresIncreasableObject>;
 
 export type AbilityRequirement =
   Record<RequiresActivatableObject> |

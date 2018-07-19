@@ -1,63 +1,36 @@
 import { ValueBasedDependent } from '../types/data.d';
 import { SkillishEntry } from '../types/wiki';
 import { areSufficientAPAvailable } from './adventurePointsUtils';
+import { Maybe, Record } from './dataUtils';
 import { getDecreaseAP, getIncreaseAP } from './improvementCostUtils';
 
-export const set = <T extends ValueBasedDependent>(
-  instance: T,
-  value: number,
-): T => {
-  return {
-    ...(instance as any),
-    value,
-  };
-};
+export const set =
+  <T extends ValueBasedDependent>(instance: T, value: number): T =>
+    (instance as Record<any>).insert('value', value) as T;
 
-export const add = <T extends ValueBasedDependent>(
-  instance: T,
-  value: number,
-): T => {
-  return {
-    ...(instance as any),
-    value: instance.value + value,
-  };
-};
+export const add =
+  <T extends ValueBasedDependent>(instance: T, value: number): T =>
+    (instance as Record<any>).modify(prev => prev + value, 'value') as T;
 
-export const remove = <T extends ValueBasedDependent>(
-  instance: T,
-  value: number,
-): T => {
-  return {
-    ...(instance as any),
-    value: instance.value - value,
-  };
-};
+export const remove =
+  <T extends ValueBasedDependent>(instance: T, value: number): T =>
+    (instance as Record<any>).modify(prev => prev - value, 'value') as T;
 
-export const addPoint = <T extends ValueBasedDependent>(
-  instance: T,
-): T => {
-  return {
-    ...(instance as any),
-    value: instance.value + 1,
-  };
-};
+export const addPoint =
+  <T extends ValueBasedDependent>(instance: T): T =>
+    (instance as Record<any>).modify(prev => prev + 1, 'value') as T;
 
-export const removePoint = <T extends ValueBasedDependent>(
-  instance: T,
-): T => {
-  return {
-    ...(instance as any),
-    value: instance.value - 1,
-  };
-};
+export const removePoint =
+  <T extends ValueBasedDependent>(instance: T): T =>
+    (instance as Record<any>).modify(prev => prev - 1, 'value') as T;
 
 export const getIncreaseCost = <T extends ValueBasedDependent>(
   wikiEntry: SkillishEntry,
   instance: T,
   availableAP: number,
   negativeApValid: boolean,
-): number | undefined => {
-  const cost = getIncreaseAP(wikiEntry.ic, instance.value);
+): Maybe<number> => {
+  const cost = getIncreaseAP(wikiEntry.get('ic'), instance.get('value'));
 
   const validCost = areSufficientAPAvailable(
     cost,
@@ -65,12 +38,12 @@ export const getIncreaseCost = <T extends ValueBasedDependent>(
     negativeApValid,
   );
 
-  return !validCost ? undefined : cost;
+  return validCost ? Maybe.Just(cost) : Maybe.Nothing();
 };
 
 export const getDecreaseCost = <T extends ValueBasedDependent>(
   wikiEntry: SkillishEntry,
   instance: T,
 ): number => {
-  return getDecreaseAP(wikiEntry.ic, instance.value);
+  return getDecreaseAP(wikiEntry.get('ic'), instance.get('value'));
 };

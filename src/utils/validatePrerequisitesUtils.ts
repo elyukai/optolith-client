@@ -86,7 +86,7 @@ const isRaceValid = (
 const isCultureValid = (
   culture: Maybe<string>,
   req: Record<Wiki.CultureRequirement>,
-): boolean =>{
+): boolean => {
   const value = req.get('value');
 
   if (value instanceof List) {
@@ -196,13 +196,13 @@ const isIncreasableValid = (
   state: Record<Data.HeroDependent>,
   sourceId: string,
   req: Record<Wiki.RequiresIncreasableObject>,
-  validateObject: Validator,
+  objectValidator: Validator,
 ): boolean => {
   const id = req.get('id');
 
   if (id instanceof List) {
     return id.any(e =>
-      validateObject(wiki, state, req.insert('id', e), sourceId)
+      objectValidator(wiki, state, req.insert('id', e), sourceId)
     );
   }
   else {
@@ -254,13 +254,13 @@ const isActivatableValid = (
   state: Record<Data.HeroDependent>,
   sourceId: string,
   req: Record<Wiki.RequiresActivatableObject>,
-  validateObject: Validator,
+  objectValidator: Validator,
 ): boolean => {
   const id = req.get('id');
 
   if (id instanceof List) {
     return id.any(e =>
-      validateObject(wiki, state, req.insert('id', e), sourceId)
+      objectValidator(wiki, state, req.insert('id', e), sourceId)
     );
   }
   else {
@@ -299,16 +299,16 @@ const isActivatableValid = (
         const maybeTier = req.lookup('tier');
 
         if (Maybe.isJust(maybeSid) && Maybe.isJust(maybeTier)) {
-          const sid = Maybe.fromJust(maybeSid);
-          const tier = Maybe.fromJust(maybeTier);
+          const justSid = Maybe.fromJust(maybeSid);
+          const justTier = Maybe.fromJust(maybeTier);
 
-          return isActiveSelection(activeSelections, req, sid) &&
-            isNeededLevelGiven(instance, tier);
+          return isActiveSelection(activeSelections, req, justSid) &&
+            isNeededLevelGiven(instance, justTier);
         }
         else if (Maybe.isJust(maybeSid)) {
-          const sid = Maybe.fromJust(maybeSid);
+          const justSid = Maybe.fromJust(maybeSid);
 
-          return isActiveSelection(activeSelections, req, sid);
+          return isActiveSelection(activeSelections, req, justSid);
         }
         else if (Maybe.isJust(maybeTier)) {
           const tier = Maybe.fromJust(maybeTier);
@@ -415,24 +415,28 @@ export const validateTier = (
   dependencies: List<Data.ActivatableDependency>,
   sourceId: string,
 ): Maybe<number> => {
-  return dependencies.foldl(max => dep =>
-    // If `dep` prohibits higher level
-    typeof dep === 'object' &&
-    dep.lookup('active').equals(Maybe.Just(false)) &&
-    Maybe.isJust(dep.lookup('tier'))
-      ? Maybe.Just(
-          Maybe.catMaybes(
-            List.of(max, dep.lookup('tier').map(e => e - 1))
-          ).minimum()
-        )
-      : max,
+  return dependencies.foldl(
+    max => dep =>
+      // If `dep` prohibits higher level
+      typeof dep === 'object' &&
+      dep.lookup('active').equals(Maybe.Just(false)) &&
+      Maybe.isJust(dep.lookup('tier'))
+        ? Maybe.Just(
+            Maybe.catMaybes(
+              List.of(max, dep.lookup('tier').map(e => e - 1))
+            ).minimum()
+          )
+        : max,
     OrderedMap.toList(requirements)
       .sortBy(a => b => Tuple.fst(a) - Tuple.fst(b))
-      .foldl_<Maybe<number>>(acc => entry => index => list =>
-        !isSkipping(list, index, acc) ||
-        areAllPrerequisitesValid(wiki, state, Tuple.snd(entry), sourceId)
-          ? Maybe.Just(Tuple.fst(entry))
-          : acc,
+      .ifoldlWithList<Maybe<number>>(
+        list => acc => index => entry =>
+          (
+            !isSkipping(list, index, acc)
+            || areAllPrerequisitesValid(wiki, state, Tuple.snd(entry), sourceId)
+          )
+            ? Maybe.Just(Tuple.fst(entry))
+            : acc,
         Maybe.Nothing()
       )
   );

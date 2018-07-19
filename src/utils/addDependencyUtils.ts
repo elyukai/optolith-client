@@ -30,8 +30,8 @@ const getIncreasableCreator: (id: string) => IncreasableCreator = R.pipe(
   category =>
     category.map(ActivatableSkillCategories.includes)
       .equals(Maybe.Just(true))
-      ? CreateEntryUtils.createActivatableDependentSkill
-      : CreateEntryUtils.createDependentSkill
+        ? CreateEntryUtils.createActivatableDependentSkill
+        : CreateEntryUtils.createDependentSkill
 );
 
 export const addAttributeDependency = (

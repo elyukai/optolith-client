@@ -2,20 +2,20 @@ import { ReceiveInitialDataAction } from '../actions/IOActions';
 import { ActionTypes } from '../constants/ActionTypes';
 import { Categories } from '../constants/Categories';
 import { ToListById } from '../types/data';
-import { RawAdvantage, RawAdvantageLocale, RawAttribute, RawAttributeLocale, RawBlessing, RawBlessingLocale, RawCantrip, RawCantripLocale, RawCombatTechnique, RawCombatTechniqueLocale, RawCulture, RawCultureLocale, RawDisadvantage, RawDisadvantageLocale, RawLiturgy, RawLiturgyLocale, RawProfession, RawProfessionLocale, RawProfessionVariant, RawProfessionVariantLocale, RawRace, RawRaceLocale, RawRaceVariant, RawRaceVariantLocale, RawSpecialAbility, RawSpecialAbilityLocale, RawSpell, RawSpellLocale, RawTalent, RawTalentLocale } from '../types/rawdata';
+import { RawAdvantage, RawAdvantageLocale, RawAttribute, RawAttributeLocale, RawBlessing, RawBlessingLocale, RawCantrip, RawCantripLocale, RawCombatTechnique, RawCombatTechniqueLocale, RawCulture, RawCultureLocale, RawDisadvantage, RawDisadvantageLocale, RawLiturgy, RawLiturgyLocale, RawProfession, RawProfessionLocale, RawProfessionVariant, RawProfessionVariantLocale, RawRace, RawRaceLocale, RawRaceVariant, RawRaceVariantLocale, RawSkill, RawSkillLocale, RawSpecialAbility, RawSpecialAbilityLocale, RawSpell, RawSpellLocale } from '../types/rawdata';
 import { Advantage, Attribute, Blessing, Book, Cantrip, CombatTechnique, Culture, Disadvantage, ExperienceLevel, ItemTemplate, LiturgicalChant, Profession, ProfessionVariant, Race, RaceVariant, SelectionObject, Skill, SkillishEntry, SpecialAbility, Spell } from '../types/wiki';
+import { OrderedMap } from '../utils/dataUtils';
 import { translate } from '../utils/I18n';
 import { getWikiStateKeyByCategory } from '../utils/IDUtils';
 import { initAdvantage, initAttribute, initBlessing, initCantrip, initCombatTechnique, initCulture, initDisadvantage, initExperienceLevel, initItemTemplate, initLiturgicalChant, initProfession, initProfessionVariant, initRace, initRaceVariant, initSkill, initSpecialAbility, initSpell } from '../utils/InitWikiUtils';
-import { OrderedMap } from '../utils/dataUtils';
 
 type Action = ReceiveInitialDataAction;
 
 type Data = Book | ExperienceLevel | Race | RaceVariant | Culture | Profession | ProfessionVariant | Attribute | Advantage | Disadvantage | SpecialAbility | Skill | CombatTechnique | Spell | Cantrip | LiturgicalChant | Blessing | ItemTemplate;
 
-type RawData = RawAdvantage | RawAttribute | RawBlessing | RawCantrip | RawCombatTechnique | RawCulture | RawDisadvantage | RawLiturgy | RawProfession | RawProfessionVariant | RawRace | RawRaceVariant | RawSpecialAbility | RawSpell | RawTalent;
+type RawData = RawAdvantage | RawAttribute | RawBlessing | RawCantrip | RawCombatTechnique | RawCulture | RawDisadvantage | RawLiturgy | RawProfession | RawProfessionVariant | RawRace | RawRaceVariant | RawSpecialAbility | RawSpell | RawSkill;
 
-type RawLocales = RawAdvantageLocale | RawAttributeLocale | RawBlessingLocale | RawCantripLocale | RawCombatTechniqueLocale | RawDisadvantageLocale | RawLiturgyLocale | RawProfessionLocale | RawProfessionVariantLocale | RawRaceLocale | RawRaceVariantLocale | RawCultureLocale | RawSpecialAbilityLocale | RawSpellLocale | RawTalentLocale;
+type RawLocales = RawAdvantageLocale | RawAttributeLocale | RawBlessingLocale | RawCantripLocale | RawCombatTechniqueLocale | RawDisadvantageLocale | RawLiturgyLocale | RawProfessionLocale | RawProfessionVariantLocale | RawRaceLocale | RawRaceVariantLocale | RawCultureLocale | RawSpecialAbilityLocale | RawSpellLocale | RawSkillLocale;
 
 export interface WikiState {
 	books: OrderedMap<string, Book>;

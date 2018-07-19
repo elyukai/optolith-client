@@ -1,4 +1,5 @@
 import { ExperienceLevel } from '../types/wiki.d';
+import { Maybe, OrderedMap, Record } from './dataUtils';
 import { getNumericId, getStringId } from './IDUtils';
 
 /**
@@ -7,16 +8,26 @@ import { getNumericId, getStringId } from './IDUtils';
  * @param ap The AP value you want to get the corresponding EL for.
  */
 export const getExperienceLevelIdByAp = (
-  experienceLevels: Map<string, ExperienceLevel>,
+  experienceLevels: OrderedMap<string, Record<ExperienceLevel>>,
   ap: number,
 ): string => {
-  return [...experienceLevels].reduce((result, [id, { ap: threshold }]) => {
-    const prev = experienceLevels.get(result);
-    if (ap >= threshold && (!prev || prev.ap < threshold)) {
-      return id;
-    }
-    return result;
-  }, 'EL_1');
+  return experienceLevels.foldlWithKey(
+    result => id => el => {
+      const prev = experienceLevels.lookup(result);
+
+      const threshold = el.get('ap');
+
+      if (
+        ap >= threshold
+        && (!Maybe.isJust(prev) || Maybe.fromJust(prev).get('ap') < threshold)
+      ) {
+        return id;
+      }
+
+      return result;
+    },
+    'EL_1'
+  );
 };
 
 /**
@@ -25,7 +36,7 @@ export const getExperienceLevelIdByAp = (
  * @param ap The AP value you want to get the corresponding EL for.
  */
 export const getExperienceLevelNumericIdByAp = (
-  experienceLevels: Map<string, ExperienceLevel>,
+  experienceLevels: OrderedMap<string, Record<ExperienceLevel>>,
   ap: number,
 ): number => {
   return getNumericId(getExperienceLevelIdByAp(experienceLevels, ap));

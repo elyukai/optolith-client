@@ -24,8 +24,11 @@ type ModifyActivatableDependency =
 const createPrimaryAttributeDependencyModifier =
   (state: Record<Data.HeroDependent>, modify: ModifyIncreasableDependency) =>
     (req: Record<Wiki.RequiresPrimaryAttribute>) =>
-      getPrimaryAttributeId(state.get('specialAbilities'), req.get('type'))
-        .map(id => modify(id, req.get('value'))(state));
+      Maybe.fromMaybe(
+        state,
+        getPrimaryAttributeId(state.get('specialAbilities'), req.get('type'))
+          .map(id => modify(id, req.get('value'))(state))
+      );
 
 const createIncreasableDependencyModifier = (
   state: Record<Data.HeroDependent>,
@@ -35,107 +38,130 @@ const createIncreasableDependencyModifier = (
 ) =>
   (req: Record<Wiki.RequiresIncreasableObject>) =>
     match<string | List<string>, Record<Data.HeroDependent>>(req.get('id'))
-      .on((id): id is List<string> => typeof id === 'object', id => {
-        const add = Record.of({ value: req.get('value'), origin: sourceId });
+      .on(
+        (id): id is List<string> => typeof id === 'object',
+        id => {
+          const add = Record.of({ value: req.get('value'), origin: sourceId });
 
-        return id.foldl(
-          state => e => (
-            getCategoryById(e).equals(Maybe.Just(Categories.ATTRIBUTES))
-              ? modifyAttribute(e, add)(state)
-              : modify(e, add)(state)
-          ),
-          state
-        );
-      })
-      .on(id => getCategoryById(id).equals(Maybe.Just(Categories.ATTRIBUTES)), id => {
-        return modifyAttribute(id, req.value)(state);
-      })
-      .otherwise(id => {
-        return modify(id, req.value)(state);
-      });
+          return id.foldl(
+            accState => e => (
+              getCategoryById(e).equals(Maybe.Just(Categories.ATTRIBUTES))
+                ? modifyAttribute(e, add)(accState)
+                : modify(e, add)(accState)
+            ),
+            state
+          );
+        }
+      )
+      .on(
+        id => getCategoryById(id).equals(Maybe.Just(Categories.ATTRIBUTES)),
+        id => modifyAttribute(id, req.get('value'))(state)
+      )
+      .otherwise(id => modify(id, req.get('value'))(state));
+
+const createActivatableDependency = (
+  state: Record<Data.HeroDependent>,
+  id: List<string>,
+  req: Record<Wiki.RequiresActivatableObject>,
+  modify: ModifyActivatableDependency
+) =>
+  R.pipe(
+    (sourceId: string) =>
+      Record.of<Data.DependencyObject>({ origin: sourceId }),
+    add => {
+      if (Object.keys(req).length === 2) {
+        return add.insert('active', req.get('active'));
+      }
+      else {
+        const { id: _1, active: _2, ...other } = req.toObject();
+
+        return add.merge(Record.of(other));
+      }
+    },
+    add => id.foldl(accState => e => modify(e, add)(accState), state)
+  );
 
 const createActivatableDependencyModifier = (
-  state: Data.HeroDependent,
+  state: Record<Data.HeroDependent>,
   modify: ModifyActivatableDependency,
   sourceId: string,
-) => (req: Reusable.RequiresActivatableObject) => {
-  const { id: _, active, ...other } = req;
-
-  return match<string | string[], Data.HeroDependent>(req.id)
-    .on((id): id is string[] => typeof id === 'object', (id: string[]) => {
-      return R.pipe(
-        add => {
-          if (Object.keys(req).length === 2 && typeof active === 'boolean') {
-            return {
-              ...add,
-              active,
-            };
-          }
-          else {
-            return {
-              ...add,
-              ...other,
-            };
-          }
-        },
-        add => id.reduce((state, e) => modify(e, add)(state), state)
-      )({ origin: sourceId });
-    })
+) => (req: Record<Wiki.RequiresActivatableObject>) => {
+  return match<string | List<string>, Record<Data.HeroDependent>>(req.get('id'))
+    .on(
+      (id): id is List<string> => typeof id === 'object',
+      id => createActivatableDependency(state, id, req, modify)(sourceId)
+    )
     .otherwise(id => {
-      return R.pipe<boolean | Reusable.ActiveDependency, Data.HeroDependent>(
+      const { id: _1, active, ...other } = req.toObject();
+
+      return R.pipe<Data.ActivatableDependency, Record<Data.HeroDependent>>(
         add => modify(id, add)(state),
       )(
-        match<Reusable.RequiresActivatableObject, boolean | Reusable.ActiveDependency>(req)
+        match<(typeof req), Data.ActivatableDependency>(req)
           .on(
-            req => Object.keys(req).length === 2 && typeof active === 'boolean',
+            e => e.keys().length() === 2,
             () => active
           )
-          .on(req => Array.isArray(req.sid), () => ({ active, ...other }))
-          .otherwise(() => other)
+          .on(
+            e => Maybe.isJust(Maybe.ensure(
+              m => m instanceof List,
+              e.lookup('sid')
+            )),
+            () => Record.of<Data.DependencyObject>({ active, ...other }))
+          .otherwise(
+            () => Record.of(other)
+          )
       );
     });
 };
 
 const modifyDependencies = (
   state: Record<Data.HeroDependent>,
-  prerequisites: List<Data.AllRequirements>,
+  prerequisites: List<Wiki.AllRequirements>,
   sourceId: string,
   modifyAttributeDependency: ModifyIncreasableDependency,
   modifyIncreasableDependency: ModifyIncreasableDependency,
   modifyActivatableDependency: ModifyActivatableDependency,
-): Record<Data.HeroDependent> => prerequisites.foldl<Data.HeroDependent>(
-  state => req => match<Data.AllRequirements, Data.HeroDependent>(req)
-    .on(CheckPrerequisiteUtils.isDependentPrerequisite, req => {
-      return match<Data.DependentPrerequisite, Data.HeroDependent>(req)
-        .on(
-          CheckPrerequisiteUtils.isRequiringPrimaryAttribute,
-          createPrimaryAttributeDependencyModifier(
-            state,
-            modifyAttributeDependency,
-          ),
-        )
-        .on(
-          CheckPrerequisiteUtils.isRequiringIncreasable,
-          createIncreasableDependencyModifier(
-            state,
-            modifyAttributeDependency,
-            modifyIncreasableDependency,
-            sourceId,
-          ),
-        )
-        .on(
-          req => req.sid !== 'GR',
-          createActivatableDependencyModifier(
-            state,
-            modifyActivatableDependency,
-            sourceId,
-          ),
-        )
-        .otherwise(() => state);
-    })
-    .otherwise(() => state),
-  { ...state }
-);
+): Record<Data.HeroDependent> =>
+  prerequisites.foldl<Record<Data.HeroDependent>>(
+    accState => req => match<Wiki.AllRequirements, Record<Data.HeroDependent>>(req)
+      .on(
+        CheckPrerequisiteUtils.isDependentPrerequisite,
+        dependentReq =>
+          match<Wiki.DependentPrerequisite, Record<Data.HeroDependent>>(
+            dependentReq
+          )
+            .on(
+              CheckPrerequisiteUtils.isRequiringPrimaryAttribute,
+              createPrimaryAttributeDependencyModifier(
+                accState,
+                modifyAttributeDependency,
+              ),
+            )
+            .on(
+              CheckPrerequisiteUtils.isRequiringIncreasable,
+              createIncreasableDependencyModifier(
+                accState,
+                modifyAttributeDependency,
+                modifyIncreasableDependency,
+                sourceId,
+              ),
+            )
+            .on(
+              e => e.lookup('sid').notEquals(Maybe.Just('GR')),
+              createActivatableDependencyModifier(
+                accState,
+                modifyActivatableDependency,
+                sourceId,
+              ),
+            )
+            .otherwise(() => accState)
+      )
+      .otherwise(
+        () => accState
+      ),
+    state
+  );
 
 /**
  * Adds dependencies to all required entries to ensure rule validity. The
@@ -164,7 +190,7 @@ export const addDependencies = (
  * in `ListUtils#mergeOptionalStateReducers`.
  */
 export const addDependenciesReducer = (
-  prerequisites: Data.AllRequirements[],
+  prerequisites: List<Wiki.AllRequirements>,
   sourceId: string,
 ): ActivatableReducer =>
   state => addDependencies(state, prerequisites, sourceId);

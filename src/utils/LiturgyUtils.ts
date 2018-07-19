@@ -3,11 +3,11 @@ import { Categories } from '../constants/Categories';
 import * as Data from '../types/data.d';
 import * as Wiki from '../types/wiki.d';
 import { getSkillCheckValues } from './AttributeUtils';
-import { convertMapToValues, NumberKeyObject, setM } from './collectionUtils';
-import { List, Maybe, OrderedMap, Record } from './dataUtils';
+import { Just, List, Maybe, OrderedMap, Record } from './dataUtils';
 import { flattenDependencies } from './flattenDependencies';
 import { getNumericBlessedTraditionIdByInstanceId } from './IDUtils';
 import { getActiveSelections } from './selectionUtils';
+import { getExceptionalSkillBonus } from './skillUtils';
 
 const unavailableBlessingsByTradition = OrderedMap.of([
   ['SA_694', List.of('BLESSING_1', 'BLESSING_5', 'BLESSING_12')],
@@ -17,19 +17,18 @@ const unavailableBlessingsByTradition = OrderedMap.of([
   ['SA_698', List.of('BLESSING_2', 'BLESSING_3', 'BLESSING_9')],
 ]);
 
-const getUnavailableBlessingsForTradition = (traditionId: string): List<string> => {
-  return unavailableBlessingsByTradition
-    .findWithDefault(List.of(), traditionId);
-};
+const getUnavailableBlessingsForTradition = (traditionId: string): List<string> =>
+  unavailableBlessingsByTradition.findWithDefault(List.of(), traditionId);
 
 export const isOwnTradition = (
   tradition: Record<Wiki.SpecialAbility>,
   obj: Record<Wiki.LiturgicalChant> | Record<Wiki.Blessing>,
 ): boolean => {
   const isBaseTradition = obj.get('tradition').any(e => {
-    const numbericId = tradition.lookup('id')
+    const numericId = tradition.lookup('id')
       .bind(getNumericBlessedTraditionIdByInstanceId);
-    return e === 1 || Maybe.of(e).equals(numbericId.map(e => e + 1));
+
+    return e === 1 || Maybe.of(e).equals(numericId.map(id => id + 1));
   });
 
   const isLiturgicalChant =
@@ -46,169 +45,181 @@ export const isOwnTradition = (
 };
 
 export const isIncreasable = (
-  tradition: Wiki.SpecialAbility,
-  wikiEntry: Wiki.LiturgicalChant,
-  instance: Data.ActivatableSkillDependent,
-  startEL: Wiki.ExperienceLevel,
+  tradition: Record<Wiki.SpecialAbility>,
+  wikiEntry: Record<Wiki.LiturgicalChant>,
+  instance: Record<Data.ActivatableSkillDependent>,
+  startEL: Record<Wiki.ExperienceLevel>,
   phase: number,
-  attributes: ReadonlyMap<string, Data.AttributeDependent>,
-  exceptionalSkill: Maybe<Data.ActivatableDependent>,
-  aspectKnowledge: Maybe<Data.ActivatableDependent>,
+  attributes: OrderedMap<string, Record<Data.AttributeDependent>>,
+  exceptionalSkill: Maybe<Record<Data.ActivatableDependent>>,
+  aspectKnowledge: Maybe<Record<Data.ActivatableDependent>>,
 ): boolean => {
-  let max = 0;
-  const bonus =
-    exceptionalSkill
-      .map(e => e.active.filter(e => e === wikiEntry.id).length)
-      .valueOr(0);
+  const bonus = getExceptionalSkillBonus(wikiEntry.lookup('id'), exceptionalSkill);
 
-  if (phase < 3) {
-    max = startEL.maxSkillRating;
-  }
-  else {
-    max = Math.max(...getSkillCheckValues(attributes)(wikiEntry.check)) + 2;
-  }
+  const hasAspectKnowledgeRestriction = getActiveSelections(aspectKnowledge)
+    .map(aspects => {
+      const hasActiveAspect = aspects.any(e => wikiEntry.get('aspects').elem(e as number));
+      const noNamelessTradition = tradition.get('id') !== 'SA_693';
 
-  const aspects = getActiveSelections(aspectKnowledge) as number[];
-  const hasActiveAspect = aspects.some(e => wikiEntry.aspects.includes(e));
-  const noNamelessTradition = tradition.id !== 'SA_693';
+      return !hasActiveAspect && noNamelessTradition;
+    });
 
-  if (!hasActiveAspect && noNamelessTradition) {
-    max = Math.min(14, max);
-  }
+  const maxList = List.of(
+    getSkillCheckValues(attributes)(wikiEntry.get('check')).maximum() + 2
+  );
 
-  return instance.value < max + bonus;
+  const getAdditionalMax = R.pipe(
+    (list: typeof maxList) => phase < 3
+      ? list.append(startEL.get('maxSkillRating'))
+      : list,
+    (list: typeof maxList) => hasAspectKnowledgeRestriction.equals(Just(true))
+      ? list.append(14)
+      : list
+  );
+
+  const max = getAdditionalMax(maxList).minimum();
+
+  return instance.get('value') < max + bonus;
 };
 
 export const getAspectCounter = (
-  wiki: ReadonlyMap<string, Wiki.LiturgicalChant>,
-  state: ReadonlyMap<string, Data.ActivatableSkillDependent>,
-) => {
-  return convertMapToValues(state).filter(e => e.value >= 10).reduce(
-    (acc, instance) => {
-      return R.defaultTo(
+  wiki: OrderedMap<string, Record<Wiki.LiturgicalChant>>,
+  state: OrderedMap<string, Record<Data.ActivatableSkillDependent>>
+) =>
+  state.filter(e => e.get('value') >= 10)
+    .foldl(
+      acc => instance => Maybe.maybe(
         acc,
-        Maybe.of(wiki.get(instance.id))
-          .map(wikiEntry => {
-            return wikiEntry.aspects.reduce((acc, aspect) => {
-              const existing = R.defaultTo(0, acc.get(aspect));
-              return setM(aspect, existing + 1)(acc);
-            }, acc);
-          })
-          .value
-      );
-    },
-    new Map<number, number>() as ReadonlyMap<number, number>,
-  );
-};
+        wikiEntry =>
+          wikiEntry.get('aspects').foldl(
+            acc1 => acc1.alter(existing => Just(Maybe.fromMaybe(0, existing) + 1)),
+            acc
+          ),
+        wiki.lookup(instance.get('id'))
+      ),
+      OrderedMap.empty<number, number>(),
+    );
 
 export const isDecreasable = (
-  wiki: Wiki.WikiAll,
-  state: Data.HeroDependent,
-  wikiEntry: Wiki.LiturgicalChant,
-  instance: Data.ActivatableSkillDependent,
-  liturgicalChants: ReadonlyMap<string, Data.ActivatableSkillDependent>,
-  aspectKnowledge: Maybe<Data.ActivatableDependent>,
+  wiki: Record<Wiki.WikiAll>,
+  state: Record<Data.HeroDependent>,
+  wikiEntry: Record<Wiki.LiturgicalChant>,
+  instance: Record<Data.ActivatableSkillDependent>,
+  liturgicalChants: OrderedMap<string, Record<Data.ActivatableSkillDependent>>,
+  aspectKnowledge: Maybe<Record<Data.ActivatableDependent>>,
 ): boolean => {
-  const dependencies = flattenDependencies(
+  const dependencies = flattenDependencies<number | boolean>(
     wiki,
     state,
-    instance.dependencies,
+    instance.get('dependencies'),
   );
 
-  const valid = instance.value < 1
-    ? !dependencies.includes(true)
-    : instance.value > Math.max(0, ...dependencies.filter(isNumber));
+  // Basic validation
+  const valid = instance.get('value') < 1
+    ? dependencies.notElem(true)
+    : instance.get('value') > Math.max(0, ...dependencies.filter(isNumber));
 
-  const activeAspectKnowledges = getActiveSelections(aspectKnowledge);
-  const hasActiveAspectKnowledge = activeAspectKnowledges.some(e => {
-    return isNumber(e) && wikiEntry.aspects.includes(e);
-  });
+  return Maybe.fromMaybe(
+    valid,
+    getActiveSelections(aspectKnowledge)
+      // Check if liturgical chant is part of dependencies of active Aspect Knowledge
+      .bind(Maybe.ensure(
+        activeAspects => activeAspects.any(
+          e => isNumber(e) && wikiEntry.get('aspects').elem(e)
+        )
+      ))
+      .map(
+        activeAspects => {
+          const counter = getAspectCounter(wiki.get('liturgicalChants'), liturgicalChants);
 
-  if (hasActiveAspectKnowledge) {
-    const counter = getAspectCounter(wiki.liturgicalChants, liturgicalChants);
+          const countedLowestWithProperty = wikiEntry.get('aspects').foldl(
+            n => aspect => {
+              const counted = counter.lookup(aspect);
 
-    const countedLowestWithProperty = wikiEntry.aspects.reduce((n, aspect) => {
-      const counted = counter.get(aspect);
-      if (activeAspectKnowledges.includes(aspect) && isNumber(counted)) {
-        return Math.min(counted, n);
-      }
-      return n;
-    }, 4);
+              if (Maybe.isJust(counted) && activeAspects.elem(aspect)) {
+                return Math.min(Maybe.fromJust(counted), n);
+              }
 
-    return (instance.value !== 10 || countedLowestWithProperty > 3) && valid;
-  }
+              return n;
+            },
+            4
+          );
 
-  return valid;
+          return (instance.get('value') !== 10 || countedLowestWithProperty > 3) && valid;
+        }
+      )
+  );
 };
 
-const traditionsByAspect: NumberKeyObject<number> = {
-  1: 1,
-  2: 2,
-  3: 2,
-  4: 3,
-  5: 3,
-  6: 4,
-  7: 4,
-  8: 5,
-  9: 5,
-  10: 6,
-  11: 6,
-  12: 7,
-  13: 7,
-  14: 8,
-  15: 8,
-  16: 9,
-  17: 9,
-  18: 10,
-  19: 10,
-  20: 11,
-  21: 11,
-  22: 12,
-  23: 12,
-  24: 13,
-  25: 13,
-  26: 15,
-  27: 15,
-  28: 16,
-  29: 16,
-  30: 17,
-  31: 17,
-  32: 18,
-  33: 18,
-  34: 19,
-  35: 19,
-};
+// Keys are aspects and their value is the respective tradition
+const traditionsByAspect = OrderedMap.of([
+  [1, 1],
+  [2, 2],
+  [3, 2],
+  [4, 3],
+  [5, 3],
+  [6, 4],
+  [7, 4],
+  [8, 5],
+  [9, 5],
+  [10, 6],
+  [11, 6],
+  [12, 7],
+  [13, 7],
+  [14, 8],
+  [15, 8],
+  [16, 9],
+  [17, 9],
+  [18, 10],
+  [19, 10],
+  [20, 11],
+  [21, 11],
+  [22, 12],
+  [23, 12],
+  [24, 13],
+  [25, 13],
+  [26, 15],
+  [27, 15],
+  [28, 16],
+  [29, 16],
+  [30, 17],
+  [31, 17],
+  [32, 18],
+  [33, 18],
+  [34, 19],
+  [35, 19],
+]);
 
 /**
  * Returns the tradition id used by chants. To get the tradition SId for the
  * actual special ability, you have to decrease the return value by 1.
  * @param aspectId The id used for chants or Aspect Knowledge.
  */
-export const getTraditionOfAspect = (aspectId: number): number => {
-  return traditionsByAspect[aspectId];
-};
+export const getTraditionOfAspect = (aspectId: number): number =>
+  traditionsByAspect.findWithDefault(1, aspectId);
 
-const aspectsByTradition: NumberKeyObject<number[]> = {
-  1: [],
-  2: [2, 3],
-  3: [4, 5],
-  4: [6, 7],
-  5: [8, 9],
-  6: [10, 11],
-  7: [12, 13],
-  8: [14, 15],
-  9: [16, 17],
-  10: [18, 19],
-  11: [20, 21],
-  12: [22, 23],
-  13: [24, 25],
-  14: [],
-  15: [26, 27],
-  16: [28, 29],
-  17: [30, 31],
-  18: [32, 33],
-  19: [34, 35],
-};
+// Keys are traditions and their values are their respective aspects
+const aspectsByTradition = OrderedMap.of([
+  [1, []],
+  [2, [2, 3]],
+  [3, [4, 5]],
+  [4, [6, 7]],
+  [5, [8, 9]],
+  [6, [10, 11]],
+  [7, [12, 13]],
+  [8, [14, 15]],
+  [9, [16, 17]],
+  [10, [18, 19]],
+  [11, [20, 21]],
+  [12, [22, 23]],
+  [13, [24, 25]],
+  [14, []],
+  [15, [26, 27]],
+  [16, [28, 29]],
+  [17, [30, 31]],
+  [18, [32, 33]],
+  [19, [34, 35]],
+]);
 
 /**
  * Return the aspect ids used for chants and Aspect Knowledge.
@@ -216,6 +227,5 @@ const aspectsByTradition: NumberKeyObject<number[]> = {
  * actual special ability, you have to increase the value by 1 before passing
  * it.
  */
-export const getAspectsOfTradition = (traditionId: number): number[] => {
-  return [1, ...aspectsByTradition[traditionId]];
-};
+export const getAspectsOfTradition = (traditionId: number): number[] =>
+  [1, ...aspectsByTradition.findWithDefault([], traditionId)];

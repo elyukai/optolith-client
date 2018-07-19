@@ -1,6 +1,6 @@
 import * as Data from '../types/data.d';
 import * as Wiki from '../types/wiki.d';
-import { Just, List, Maybe } from './dataUtils';
+import { Just, List, Maybe, Nothing, Record } from './dataUtils';
 import { findSelectOption } from './selectionUtils';
 
 /**
@@ -17,80 +17,89 @@ export function getGeneratedPrerequisites(
   active: Record<Data.ActiveObject>,
   add: boolean,
 ): Maybe<List<Wiki.AllRequirementObjects>> {
-  const { sid, sid2 } = active;
+  const sid = active.lookup('sid');
+  const sid2 = active.lookup('sid2');
 
-  switch (wikiEntry.id) {
+  switch (wikiEntry.get('id')) {
     case 'SA_3': {
       return findSelectOption(wikiEntry, sid)
-        .bind(item => item.req);
+        .bind(item => item.lookup('req'));
     }
     case 'SA_9': {
       interface SkillSelectionObject extends Wiki.SelectionObject {
-        applications: Just<List<Wiki.Application>>;
-        applicationsInput: Just<string>;
+        applications: List<Record<Wiki.Application>>;
+        applicationsInput: string;
       }
 
-      const sameSkill = instance.active.filter(e => e.sid === sid).length();
+      const sameSkill = instance.get('active').filter(e => e.lookup('sid').equals(sid)).length();
 
-      const sameSkillDependency = sid.map(sid => ({
-        id: sid as string,
+      const sameSkillDependency = sid.map(justSid => ({
+        id: justSid as string,
         value: (sameSkill + (add ? 1 : 0)) * 6
       }));
 
       return findSelectOption<SkillSelectionObject>(wikiEntry, sid)
-        .bind(skill => skill.applications)
-        .bind(list => list.find(e => sid2.equals(Maybe.Just(e.id))))
-        .bind(app => app.prerequisites)
-        .bind(prerequisites =>
-          sameSkillDependency.map(obj => prerequisites.prepend(obj))
+        .bind(
+          skill => skill.get('applications')
+            .find(e => sid2.equals(e.lookup('id')))
         )
-        .alt(sameSkillDependency.map(obj => List.of(obj)));
+        .bind(app => app.lookup('prerequisites'))
+        .bind(prerequisites =>
+          sameSkillDependency.map(
+            obj => prerequisites.prepend(Record.of<Wiki.RequiresIncreasableObject>(obj))
+          )
+        )
+        .alt(sameSkillDependency.map(
+          obj => List.of(Record.of<Wiki.RequiresIncreasableObject>(obj)))
+        );
     }
     case 'SA_81':
-      return Maybe.Just(List.of<Wiki.RequiresActivatableObject>({
-        id: 'SA_72',
-        active: true,
-        sid,
-        sid2: Maybe.Nothing(),
-        tier: Maybe.Nothing()
-      }));
+      return Just(List.of(
+        Record.ofMaybe({
+          id: 'SA_72',
+          active: true,
+          sid
+        }) as Record<Wiki.RequiresActivatableObject>
+      ));
     case 'SA_414':
     case 'SA_663': {
       interface ExtensionSelectionObject extends Wiki.SelectionObject {
-        req: Wiki.AllRequirementObjects[];
+        req: List<Wiki.AllRequirementObjects>;
         target: string;
         tier: number;
       }
 
       return findSelectOption<ExtensionSelectionObject>(wikiEntry, sid)
-        .map(item => [{
-          id: item.target,
-          value: item.tier * 4 + 4,
-        }])
-        .valueOr([]);
+        .map(
+          item => List.of(Record.of<Wiki.RequiresIncreasableObject>({
+            id: item.get('target'),
+            value: item.get('tier') * 4 + 4,
+          }))
+        );
     }
     case 'SA_639': {
       return findSelectOption(wikiEntry, sid)
-        .map(item => item.prerequisites)
-        .valueOr([]);
+        .bind(item => item.lookup('prerequisites'));
     }
     case 'SA_699': {
-      return [{
-        id: 'SA_29',
-        active: true,
-        sid,
-        tier: 3,
-      }];
+      return Just(List.of(
+        Record.ofMaybe({
+          id: 'SA_29',
+          active: true,
+          sid,
+          tier: 3,
+        }) as Record<Wiki.RequiresActivatableObject>
+      ));
     }
   }
 
-  return Maybe.Nothing();
+  return Nothing();
 }
 
 export const addDynamicPrerequisites = (
-  wikiEntry: Wiki.WikiActivatable,
-  instance: Data.ActivatableDependent,
-  active: Data.ActiveObject,
+  wikiEntry: Wiki.Activatable,
+  instance: Record<Data.ActivatableDependent>,
+  active: Record<Data.ActiveObject>,
   add: boolean,
 ) => (
   prerequisites: List<Wiki.AllRequirements>,

@@ -97,31 +97,31 @@ type ElementMixed =
   Record<Wiki.ItemTemplate>;
 
 export const isItemTemplateFromMixed = (obj: ElementMixed): obj is Record<Wiki.ItemTemplate> => {
-  return obj.toJS1().hasOwnProperty('id') &&
-    obj.toJS1().hasOwnProperty('name') &&
-    obj.toJS1().hasOwnProperty('isTemplateLocked');
+  return obj.toObject().hasOwnProperty('id') &&
+    obj.toObject().hasOwnProperty('name') &&
+    obj.toObject().hasOwnProperty('isTemplateLocked');
 }
 
 export const isItemTemplate = (obj: Wiki.Entry): obj is Record<Wiki.ItemTemplate> => {
-  return obj.toJS1().hasOwnProperty('id') &&
-    obj.toJS1().hasOwnProperty('name') &&
-    obj.toJS1().hasOwnProperty('isTemplateLocked');
+  return obj.toObject().hasOwnProperty('id') &&
+    obj.toObject().hasOwnProperty('name') &&
+    obj.toObject().hasOwnProperty('isTemplateLocked');
 }
 
 export const isProfession =
   (obj: Wiki.Entry): obj is Record<Wiki.Profession> =>
     !isItemTemplate(obj)
-      && obj.toJS1().category === Categories.PROFESSIONS;
+      && obj.toObject().category === Categories.PROFESSIONS;
 
 export const isSpecialAbility =
   (obj: Wiki.Entry): obj is Record<Wiki.SpecialAbility> =>
     !isItemTemplate(obj)
-      && obj.toJS1().category === Categories.SPECIAL_ABILITIES;
+      && obj.toObject().category === Categories.SPECIAL_ABILITIES;
 
 export const isActivatableWikiObj =
   (obj: Wiki.Entry): obj is Wiki.Activatable =>
     !isItemTemplate(obj)
-      && ActivatableCategories.includes(obj.toJS1().category);
+      && ActivatableCategories.includes(obj.toObject().category);
 
 export const isRemoveSpecializationSelection = (
   obj: Wiki.ProfessionVariantSelection,
