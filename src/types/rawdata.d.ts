@@ -69,7 +69,7 @@ export interface RawHero {
   readonly liturgies: StringKeyObject<number>;
   readonly blessings: string[];
   readonly belongings: {
-    items: StringKeyObject<RawItem>;
+    items: StringKeyObject<RawCustomItem>;
     armorZones: StringKeyObject<RawArmorZone>;
     purse: {
       d: string;
@@ -617,8 +617,8 @@ export interface RawSkillLocale {
 	src: string;
 }
 
-export interface RawItem {
-	id: string;
+export interface RawBaseItem {
+  id: string;
 	price: number;
 	weight: number;
 	where: string;
@@ -646,11 +646,20 @@ export interface RawItem {
 	addPenalties?: boolean;
 	isParryingWeapon?: boolean;
 	isTwoHandedWeapon?: boolean;
+}
+
+export interface RawItemTemplate extends RawBaseItem {
 	src: string[];
 }
 
+export interface RawCustomItem extends RawBaseItem {
+  id: string;
+  name: string;
+  amount: number;
+  isTemplateLocked: boolean;
+}
+
 export interface RawItemLocale {
-	id: string;
 	name: string;
 	note?: string;
 	rules?: string;
@@ -735,7 +744,7 @@ export interface RawTables {
 	cultures: StringKeyObject<RawCulture>;
 	disadvantages: StringKeyObject<RawDisadvantage>;
 	el: StringKeyObject<RawExperienceLevel>;
-	items: StringKeyObject<RawItem>;
+  items: StringKeyObject<RawItemTemplate>;
 	liturgies: StringKeyObject<RawLiturgy>;
 	professions: StringKeyObject<RawProfession>;
 	professionvariants: StringKeyObject<RawProfessionVariant>;

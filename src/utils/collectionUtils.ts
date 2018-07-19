@@ -102,10 +102,13 @@ export const convertObjectToMap = <V>(
 export const mergeMaps = <K, V>(
   ...maps: ReadonlyMap<K, V>[]
 ): ReadonlyMap<K, V> => {
-  return new Map(maps.reduce<[K, V][]>((merged, current) => [
-    ...merged,
-    ...current,
-  ], []));
+  return new Map(maps.reduce<[K, V][]>(
+    (merged, current) => [
+      ...merged,
+      ...current,
+    ],
+    []
+  ));
 };
 
 /**
@@ -180,13 +183,16 @@ export const adjustM = <K, V>(
 ): ReadonlyMapUpdater<K, V> => {
   return R.pipe(
     convertMapToArray,
-    R.reduce<[K, V], ReadonlyArray<[K, V]>>((acc, elem) => {
-      return R.equals(elem[0], key) ? R.ifElse(
-        R.complement(R.isNil),
-        res => R.append([elem[0], res] as [K, V], acc),
-        R.always(acc)
-      )(adjustFn(elem[1])) : R.append(elem, acc);
-    }, []),
+    R.reduce<[K, V], ReadonlyArray<[K, V]>>(
+      (acc, elem) => {
+        return R.equals(elem[0], key) ? R.ifElse(
+          R.complement(R.isNil),
+          res => R.append([elem[0], res] as [K, V], acc),
+          R.always(acc)
+        )(adjustFn(elem[1])) : R.append(elem, acc);
+      },
+      []
+    ),
     arr => new Map(arr),
   );
 };

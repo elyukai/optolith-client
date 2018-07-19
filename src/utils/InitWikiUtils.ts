@@ -883,7 +883,7 @@ export const initSkill = (
 };
 
 export const initItemTemplate = (
-  raw: Raw.RawItem,
+  raw: Raw.RawItemTemplate,
   locale: StringKeyObject<Raw.RawItemLocale>,
 ): (Maybe<Record<Wiki.ItemTemplate>>) => {
   const { id } = raw;

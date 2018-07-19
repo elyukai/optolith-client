@@ -367,7 +367,7 @@ const getSkillSpecializationsDiff = (
                           ) {
                             const maybeSkill = wiki.get('skills').lookup(sid);
 
-                            return new Tuple(
+                            return Tuple.of(
                               Maybe.fromMaybe(
                                 Tuple.fst(acc),
                                 maybeSkill.map(skill =>
@@ -388,7 +388,7 @@ const getSkillSpecializationsDiff = (
 
                   return Maybe.isJust(altered) ? Maybe.fromJust(altered) : acc;
                 },
-                new Tuple(0, new OrderedMap())
+                Tuple.of(0, OrderedMap.empty())
               );
 
             return Tuple.fst(skillDone);

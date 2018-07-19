@@ -225,7 +225,24 @@ const getBelongings = (hero: Raw.RawHero): Record<Data.Belongings> => {
     items: OrderedMap.of(
       Object.entries(items)
         .map<[string, Record<Data.ItemInstance>]>(
-          ([id, obj]) => [id, Record.of(obj)]
+          ([id, obj]) => {
+            const {
+              imp,
+              primaryThreshold,
+              ...other
+            } = obj;
+
+            return [id, Record.of<Data.ItemInstance>({
+              ...other,
+              improvisedWeaponGroup: imp,
+              damageBonus: primaryThreshold && Record.of({
+                ...primaryThreshold,
+                threshold: typeof primaryThreshold.threshold === 'object'
+                  ? List.fromArray(primaryThreshold.threshold)
+                  : primaryThreshold.threshold
+              }),
+            })];
+          }
         )
     ),
     armorZones: OrderedMap.of(
