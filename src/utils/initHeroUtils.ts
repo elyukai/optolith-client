@@ -1,10 +1,16 @@
+import R from 'ramda';
 import { Categories } from '../constants/Categories';
 import * as Data from '../types/data.d';
 import * as Raw from '../types/rawdata.d';
+import { WikiAll } from '../types/wiki';
+import { getActiveFromState } from './activatableConvertUtils';
+import { getCombinedPrerequisites } from './activationUtils';
 import { StringKeyObject } from './collectionUtils';
 import * as CreateDependencyObjectUtils from './createEntryUtils';
 import { List, Maybe, OrderedMap, OrderedSet, Record } from './dataUtils';
+import { addDependencies } from './dependencyUtils';
 import { exists } from './exists';
+import { addAllStyleRelatedDependencies } from './ExtendedStyleUtils';
 import { getCategoryById } from './IDUtils';
 import { currentVersion } from './VersionUtils';
 
@@ -112,9 +118,9 @@ const getActivatables = (hero: Raw.RawHero): ActivatableMaps => {
       return acc;
     },
     {
-      advantages: new OrderedMap(),
-      disadvantages: new OrderedMap(),
-      specialAbilities: new OrderedMap(),
+      advantages: OrderedMap.empty(),
+      disadvantages: OrderedMap.empty(),
+      specialAbilities: OrderedMap.empty(),
     }
   );
 };
@@ -122,7 +128,7 @@ const getActivatables = (hero: Raw.RawHero): ActivatableMaps => {
 const getAttributes = (
   hero: Raw.RawHero
 ): (OrderedMap<string, Record<Data.AttributeDependent>>) =>
-  new OrderedMap(
+  OrderedMap.of(
     hero.attr.values.map<[string, Record<Data.AttributeDependent>]>(
       ([id, value, mod]) => [
         id,
@@ -229,6 +235,7 @@ const getBelongings = (hero: Raw.RawHero): Record<Data.Belongings> => {
             const {
               imp,
               primaryThreshold,
+              range,
               ...other
             } = obj;
 
@@ -241,6 +248,7 @@ const getBelongings = (hero: Raw.RawHero): Record<Data.Belongings> => {
                   ? List.fromArray(primaryThreshold.threshold)
                   : primaryThreshold.threshold
               }),
+              range: range ? List.fromArray(range) : undefined
             })];
           }
         )
@@ -252,6 +260,8 @@ const getBelongings = (hero: Raw.RawHero): Record<Data.Belongings> => {
         )
     ),
     purse: Record.of(purse),
+    isInItemCreation: false,
+    isInZoneArmorCreation: false
   });
 };
 
@@ -274,10 +284,11 @@ const getPets =
       : OrderedMap.empty();
 
 export const getHeroInstance = (
+  wiki: Record<WikiAll>,
   id: string,
   hero: Raw.RawHero,
-): Record<Data.HeroDependent> =>
-  Record.of<Data.HeroDependent>({
+): Record<Data.HeroDependent> => {
+  const intermediateState = Record.of<Data.HeroDependent>({
     ...getUnchangedProperties(id, hero),
     ...getPlayer(hero),
     ...getDates(hero),
@@ -297,6 +308,90 @@ export const getHeroInstance = (
     magicalStyleDependencies: List.of(),
     blessedStyleDependencies: List.of()
   });
+
+  const advantages = getActiveFromState(intermediateState.get('advantages'));
+  const disadvantages = getActiveFromState(intermediateState.get('disadvantages'));
+  const specialAbilities = getActiveFromState(intermediateState.get('specialAbilities'));
+  const spells = intermediateState.get('spells').foldl(
+    acc => spell => spell.get('active') ? acc.insert(spell.get('id')) : acc,
+    OrderedSet.empty<string>()
+  );
+
+  const addAllDependencies = R.pipe(
+    advantages.foldl<Record<Data.HeroDependent>>(
+      state => entry => Maybe.fromMaybe(
+        state,
+        wiki.get('advantages').lookup(entry.get('id'))
+          .map(
+            wikiEntry => addDependencies(
+              state,
+              getCombinedPrerequisites(
+                wikiEntry,
+                intermediateState.get('advantages').lookup(entry.get('id')),
+                entry as any as Record<Data.ActiveObject>,
+                true
+              ),
+              entry.get('id')
+            )
+          )
+      )
+    ),
+    disadvantages.foldl<Record<Data.HeroDependent>>(
+      state => entry => Maybe.fromMaybe(
+        state,
+        wiki.get('disadvantages').lookup(entry.get('id'))
+          .map(
+            wikiEntry => addDependencies(
+              state,
+              getCombinedPrerequisites(
+                wikiEntry,
+                intermediateState.get('disadvantages').lookup(entry.get('id')),
+                entry as any as Record<Data.ActiveObject>,
+                true
+              ),
+              entry.get('id')
+            )
+          )
+      )
+    ),
+    specialAbilities.foldl<Record<Data.HeroDependent>>(
+      state => entry => Maybe.fromMaybe(
+        state,
+        wiki.get('specialAbilities').lookup(entry.get('id'))
+          .map(
+            wikiEntry => addAllStyleRelatedDependencies(
+              addDependencies(
+                state,
+                getCombinedPrerequisites(
+                  wikiEntry,
+                  intermediateState.get('specialAbilities').lookup(entry.get('id')),
+                  entry as any as Record<Data.ActiveObject>,
+                  true
+                ),
+                entry.get('id')
+              ),
+              wikiEntry
+            )
+          )
+      )
+    ),
+    spells.foldl<Record<Data.HeroDependent>>(
+      state => spellId => Maybe.fromMaybe(
+        state,
+        wiki.get('spells').lookup(spellId)
+          .map(
+            wikiEntry => addDependencies(
+              state,
+              wikiEntry.get('prerequisites'),
+              spellId
+            )
+          )
+      )
+    )
+  );
+
+  return addAllDependencies(intermediateState);
+}
 
 export const getInitialHeroObject = (
   id: string,
@@ -363,6 +458,8 @@ export const getInitialHeroObject = (
         h: '',
         k: '',
       }),
+      isInItemCreation: false,
+      isInZoneArmorCreation: false,
     }),
     pets: OrderedMap.empty(),
     combatStyleDependencies: List.of(),

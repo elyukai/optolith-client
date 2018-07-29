@@ -8,7 +8,6 @@ import { List, Maybe, Record } from './dataUtils';
 import { getCategoryById } from './IDUtils';
 import { match } from './match';
 import { getPrimaryAttributeId } from './primaryAttributeUtils';
-import { ActivatableReducer } from './reducerUtils';
 import * as RemoveDependencyUtils from './removeDependencyUtils';
 
 type ModifyIncreasableDependency =
@@ -164,8 +163,7 @@ const modifyDependencies = (
   );
 
 /**
- * Adds dependencies to all required entries to ensure rule validity. The
- * returned Map needs to be merged into the main Map in ListStore.
+ * Adds dependencies to all required entries to ensure rule validity.
  * @param state All entries available for dependencies.
  * @param obj The entry of which requirements you want to add dependencies for.
  * @param adds Additional (computed) requirements that are not included in the
@@ -189,11 +187,10 @@ export const addDependencies = (
  * Provides a wrapper for `DependentUtils#addDependencies` to be able to use it
  * in `ListUtils#mergeOptionalStateReducers`.
  */
-export const addDependenciesReducer = (
-  prerequisites: List<Wiki.AllRequirements>,
-  sourceId: string,
-): ActivatableReducer =>
-  state => addDependencies(state, prerequisites, sourceId);
+export const addDependenciesReducer =
+  (prerequisites: List<Wiki.AllRequirements>, sourceId: string) =>
+    (state: Record<Data.HeroDependent>): Record<Data.HeroDependent> =>
+      addDependencies(state, prerequisites, sourceId);
 
 /**
  * Removes dependencies from all required entries to ensure rule validity.
@@ -215,3 +212,16 @@ export const removeDependencies = (
   RemoveDependencyUtils.removeIncreasableDependency,
   RemoveDependencyUtils.removeActivatableDependency,
 );
+
+/**
+ * Removes dependencies from all required entries to ensure rule validity.
+ * @param obj The entry of which requirements you want to remove dependencies
+ * from.
+ * @param adds Additional (computed) requirements that are not included in the
+ * static requirements.
+ * @param sel The SID from the current selection.
+ */
+export const removeDependenciesReducer =
+  (prerequisites: List<Wiki.AllRequirements>, sourceId: string) =>
+    (state: Record<Data.HeroDependent>): Record<Data.HeroDependent> =>
+      removeDependencies(state, prerequisites, sourceId);

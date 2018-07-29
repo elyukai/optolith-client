@@ -1,3 +1,4 @@
+import R from 'ramda';
 import { HeroDependent, StyleDependency } from '../types/data.d';
 import { SpecialAbility } from '../types/wiki.d';
 import { List, Maybe, Record } from './dataUtils';
@@ -143,6 +144,24 @@ export const addExtendedSpecialAbilityDependency = (
         )
       )
   );
+
+/**
+ * A combination of `addStyleExtendedSpecialAbilityDependencies` and
+ * `addExtendedSpecialAbilityDependency`.
+ */
+export const addAllStyleRelatedDependencies = (
+  state: Record<HeroDependent>,
+  instance: Record<SpecialAbility>,
+): Record<HeroDependent> => {
+  const pipe = R.pipe(
+    (pipedState: Record<HeroDependent>) =>
+      addStyleExtendedSpecialAbilityDependencies(pipedState, instance),
+    (pipedState: Record<HeroDependent>) =>
+      addExtendedSpecialAbilityDependency(pipedState, instance),
+  );
+
+  return pipe(state);
+};
 
 interface SplittedRemainingAndToRemove {
   itemsToRemove: List<Record<StyleDependency>>;
@@ -303,6 +322,24 @@ export const removeExtendedSpecialAbilityDependency = (
         )
       )
   );
+
+/**
+ * A combination of `removeStyleExtendedSpecialAbilityDependencies` and
+ * `removeExtendedSpecialAbilityDependency`.
+ */
+export const removeAllStyleRelatedDependencies = (
+  state: Record<HeroDependent>,
+  instance: Record<SpecialAbility>,
+): Record<HeroDependent> => {
+  const pipe = R.pipe(
+    (pipedState: Record<HeroDependent>) =>
+      removeStyleExtendedSpecialAbilityDependencies(pipedState, instance),
+    (pipedState: Record<HeroDependent>) =>
+      removeExtendedSpecialAbilityDependency(pipedState, instance),
+  );
+
+  return pipe(state);
+};
 
 /**
  * Return flat array of available extended special abilities' IDs.

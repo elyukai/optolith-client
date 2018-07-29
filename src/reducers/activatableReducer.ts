@@ -1,15 +1,12 @@
 import * as DisAdvActions from '../actions/DisAdvActions';
 import * as SpecialAbilitiesActions from '../actions/SpecialAbilitiesActions';
 import { ActionTypes } from '../constants/ActionTypes';
-import { get } from '../selectors/dependentInstancesSelectors';
 import * as Data from '../types/data.d';
-import { SpecialAbilityInstance } from '../types/data.d';
-import { activate, deactivate, setTier, rework_activate } from '../utils/ActivatableUtils';
-import * as IncreasableUtils from '../utils/IncreasableUtils';
-import * as ListUtils from '../utils/ListUtils';
-import { DependentInstancesState } from './dependentInstances';
+import { activate, deactivate, setTier } from '../utils/activationUtils';
+import { Maybe, Record } from '../utils/dataUtils';
 import * as ExtendedStyleUtils from '../utils/ExtendedStyleUtils';
-import { reduce } from '../utils/FPUtils';
+import { getHeroStateListItem } from '../utils/heroStateUtils';
+import * as IncreasableUtils from '../utils/IncreasableUtils';
 
 type Action =
   DisAdvActions.ActivateDisAdvAction |
@@ -20,76 +17,89 @@ type Action =
   SpecialAbilitiesActions.SetSpecialAbilityTierAction;
 
 export function activatableReducer(
-  state: Data.HeroDependent,
+  state: Record<Data.HeroDependent>,
   action: Action,
-): Data.HeroDependent {
+): Record<Data.HeroDependent> {
   switch (action.type) {
     case ActionTypes.ACTIVATE_DISADV: {
-      const { id } = action.payload;
+      const { id, wikiEntry } = action.payload;
 
-      return reduce(
+      return activate(action.payload)(
         state,
-      )(
-        rework_activate(action.payload)
+        wikiEntry,
+        state.get('advantages').lookup(id)
+          .alt(state.get('disadvantages').lookup(id))
       );
     }
 
     case ActionTypes.ACTIVATE_SPECIALABILITY: {
-      const { id } = action.payload;
-      const instance = state.specialAbilities.get(id);
-      if (typeof instance === 'object') {
-        return ListUtils.mergeReducedOptionalState<SpecialAbilityInstance>(
-          state,
-          instance,
-          ExtendedStyleUtils.addStyleExtendedSpecialAbilityDependencies,
-          ExtendedStyleUtils.addExtendedSpecialAbilityDependency,
-          activate(action.payload)
-        );
-      }
-      return state;
-    }
+      const { id, wikiEntry } = action.payload;
 
+      return activate(action.payload)(
+        ExtendedStyleUtils.addAllStyleRelatedDependencies(state, wikiEntry),
+        wikiEntry,
+        state.get('specialAbilities').lookup(id)
+      );
+    }
     case ActionTypes.DEACTIVATE_DISADV: {
-      const { id, index } = action.payload;
-      const instance = get(state, id) as Data.ActivatableInstance;
-      return ListUtils.mergeReducedOptionalState(
+      const { id, index, wikiEntry } = action.payload;
+
+      return Maybe.fromMaybe(
         state,
-        instance,
-        deactivate(index)
+        state.get('advantages').lookup(id)
+          .alt(state.get('disadvantages').lookup(id))
+          .map(instance => deactivate(index)(
+            state,
+            wikiEntry,
+            instance
+          ))
       );
     }
 
     case ActionTypes.DEACTIVATE_SPECIALABILITY: {
-      const { id, index } = action.payload;
-      const instance = state.specialAbilities.get(id);
-      if (typeof instance === 'object') {
-        return ListUtils.mergeReducedOptionalState<SpecialAbilityInstance>(
-          state,
-          instance,
-          ExtendedStyleUtils.removeStyleExtendedSpecialAbilityDependencies,
-          ExtendedStyleUtils.removeExtendedSpecialAbilityDependency,
-          deactivate(index),
-          state => {
+      const { id, index, wikiEntry } = action.payload;
+
+      return Maybe.fromMaybe(
+        state,
+        state.get('specialAbilities').lookup(id)
+          .map(instance => deactivate(index)(
+            ExtendedStyleUtils.removeAllStyleRelatedDependencies(state, wikiEntry),
+            wikiEntry,
+            instance
+          ))
+          .map(updatedState => {
             if (id === 'SA_109') {
-              const entry = state.combatTechniques.get('CT_17');
-              if (typeof entry === 'object') {
-                const newEntry = IncreasableUtils.set(entry, 6);
-                return ListUtils.setNewStateItem({}, 'CT_17', newEntry);
-              }
+              return Maybe.fromMaybe(
+                updatedState,
+                updatedState.get('combatTechniques').lookup('CT_17')
+                  .map(entry => IncreasableUtils.set(entry, 6))
+                  .map(
+                    entry => updatedState.modify(
+                      slice => slice.insert('CT_17', entry),
+                      'combatTechniques'
+                    )
+                  )
+              );
             }
-            return state;
-          }
-        );
-      }
-      return state;
+
+            return updatedState;
+          })
+      );
     }
 
     case ActionTypes.SET_DISADV_TIER:
     case ActionTypes.SET_SPECIALABILITY_TIER: {
-      const { id, index, tier } = action.payload;
-      const oldEntry = get(state, id) as Data.ActivatableInstance;
-      const newState = setTier(state, oldEntry, index, tier);
-      return ListUtils.mergeIntoState(state, newState);
+      const { id, index, tier, wikiEntry } = action.payload;
+
+      return Maybe.fromMaybe(
+        state,
+        (getHeroStateListItem(id, state) as Maybe<Record<Data.ActivatableDependent>>)
+          .map(instance => setTier(index, tier)(
+            state,
+            wikiEntry,
+            instance
+          ))
+      );
     }
 
     default:

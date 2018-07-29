@@ -1,14 +1,13 @@
+import { Action } from 'redux';
 import * as HerolistActions from '../actions/HerolistActions';
 import * as IOActions from '../actions/IOActions';
 import { ActionTypes } from '../constants/ActionTypes';
 import { HeroDependent, User } from '../types/data.d';
-import { removeListItem, setListItem } from '../utils/ListUtils';
-import { convertHero } from '../utils/VersionUtils';
-import { getHeroInstance, getInitialHeroObject } from '../utils/InitUtils';
-import { UndoState, wrapWithHistoryObject } from '../utils/undo';
+import { Maybe, OrderedMap, OrderedSet, Record } from '../utils/dataUtils';
+import { getInitialHeroObject } from '../utils/initHeroUtils';
 import { reduceReducers } from '../utils/reduceReducers';
+import { UndoState, wrapWithHistoryObject } from '../utils/undo';
 import { heroReducer } from './heroReducer';
-import { Action } from 'redux';
 
 type PrecedingHerolistReducerAction =
   IOActions.ReceiveInitialDataAction |
@@ -20,14 +19,14 @@ type PrecedingHerolistReducerAction =
   HerolistActions.DuplicateHeroAction;
 
 export interface HerolistState {
-  heroes: Map<string, UndoState<HeroDependent>>;
-  users: Map<string, User>;
+  heroes: OrderedMap<string, UndoState<Record<HeroDependent>>>;
+  users: OrderedMap<string, User>;
   currentId?: string;
 }
 
 const initialState: HerolistState = {
-  heroes: new Map(),
-  users: new Map()
+  heroes: OrderedMap.empty(),
+  users: OrderedMap.empty()
 };
 
 export function precedingHerolistReducer(
@@ -35,35 +34,6 @@ export function precedingHerolistReducer(
   action: PrecedingHerolistReducerAction,
 ): HerolistState {
   switch (action.type) {
-    case ActionTypes.RECEIVE_INITIAL_DATA: {
-      const { heroes: rawHeroes } = action.payload;
-
-      const heroes = new Map<string, UndoState<HeroDependent>>();
-      const users = new Map<string, User>();
-
-      if (rawHeroes) {
-        for (const [key, hero] of Object.entries(rawHeroes)) {
-          const updatedHero = convertHero(hero);
-
-          if (updatedHero.player) {
-            users.set(updatedHero.player.id, updatedHero.player);
-          }
-
-          heroes.set(key, {
-            past: [],
-            present: getHeroInstance(key, updatedHero),
-            future: [],
-          });
-        }
-      }
-
-      return {
-        ...state,
-        heroes,
-        users
-      };
-    }
-
     case ActionTypes.CREATE_HERO: {
       const {
         el,
@@ -82,17 +52,13 @@ export function precedingHerolistReducer(
         el,
         totalAp,
         enableAllRuleBooks,
-        enabledRuleBooks,
+        OrderedSet.of(enabledRuleBooks),
       );
 
       return {
         ...state,
         currentId: id,
-        heroes: setListItem(
-          state.heroes,
-          id,
-          wrapWithHistoryObject(hero),
-        ),
+        heroes: state.heroes.insert(id, wrapWithHistoryObject(hero)),
       };
     }
 
@@ -104,100 +70,68 @@ export function precedingHerolistReducer(
 
     case ActionTypes.SAVE_HERO: {
       const { id } = action.payload.data;
-      const hero = state.heroes.get(id);
 
-      if (hero) {
-        return {
-          ...state,
-          heroes: setListItem(
-            state.heroes,
-            id,
-            {
-              ...hero,
-              past: [],
-            },
-          )
-        };
-      }
-
-      console.warn('SAVE_HERO id not found');
-
-      return state;
+      return {
+        ...state,
+        heroes: state.heroes.adjust(
+          undoState => ({
+            ...undoState,
+            past: []
+          }),
+          id
+        )
+      };
     }
 
     case ActionTypes.DELETE_HERO: {
       const { id } = action.payload;
 
-      const hero = state.heroes.get(id);
-      const heroes = removeListItem(state.heroes, id);
+      const hero = state.heroes.lookup(id);
+      const heroes = state.heroes.delete(id);
 
-      let users = state.users;
-
-      const playerId = hero && hero.present.player;
-      const hasUserMultipleHeroes = [...heroes.values()].some(e => {
-        return e.present.player === playerId;
-      });
-
-      if (playerId && !hasUserMultipleHeroes) {
-        users = removeListItem(users, playerId);
-      }
-
-      return {
-        ...state,
-        heroes,
-        users,
-      };
-    }
-
-    case ActionTypes.RECEIVE_IMPORTED_HERO: {
-      const { data, player } = action.payload;
-      let users = state.users;
-
-      const hero = getHeroInstance(data.id, data);
-
-      if (player) {
-        hero.player = player.id;
-        users = setListItem(users, player.id, player);
-      }
-
-      const heroes = setListItem(
-        state.heroes,
-        hero.id,
-        {
-          past: [],
-          present: hero,
-          future: []
-        }
+      const playerId = hero.bind<string>(
+        justHero => justHero.present.lookup('player')
       );
 
-      return {
-        ...state,
-        heroes,
-        users
-      };
+      const hasUserMultipleHeroes = heroes.elems().any(
+        e => e.present.lookup('player').equals(playerId)
+      );
+
+      if (Maybe.isJust(playerId) && !hasUserMultipleHeroes) {
+        return {
+          ...state,
+          users: state.users.delete(Maybe.fromJust(playerId)),
+          heroes
+        };
+      }
+      else {
+        return {
+          ...state,
+          heroes,
+        };
+      }
     }
 
     case ActionTypes.DUPLICATE_HERO: {
       const { id, newId } = action.payload;
-      const hero = state.heroes.get(id);
 
-      if (hero) {
-        const heroes = setListItem(
-          state.heroes,
-          newId,
-          {
-            ...hero,
-            present: {
-              ...hero.present,
-              id: newId,
-            },
-          }
-        );
-
-        return { ...state, heroes };
-      }
-
-      return state;
+      return Maybe.fromMaybe(
+        state,
+        state.heroes.lookup(id)
+          .map(
+            hero => ({
+              ...state,
+              heroes: state.heroes.insert(
+                newId,
+                wrapWithHistoryObject(
+                  hero.present
+                    .insert('id', newId)
+                    .modify(name => `${name} (2)`, 'name')
+                )
+              )
+            })
+          )
+      );
     }
 
     default:
@@ -206,23 +140,19 @@ export function precedingHerolistReducer(
 }
 
 function prepareHeroReducer(state: HerolistState, action: Action): HerolistState {
-  const heroState = state.currentId && state.heroes.get(state.currentId);
-  if (heroState) {
-    const nextState = heroReducer(heroState, action);
-
-    if (nextState !== heroState) {
-      return {
-        ...state,
-        heroes: setListItem(
-          state.heroes,
-          state.currentId!,
-          nextState
-        ),
-      };
-    }
-  }
-
-  return state;
+  return Maybe.fromMaybe(
+    state,
+    Maybe.of(state.currentId)
+      .map(currentId =>
+        ({
+          ...state,
+          heroes: state.heroes.adjust(
+            heroState => heroReducer(heroState, action),
+            currentId
+          )
+        })
+      )
+  );
 }
 
 export const herolistReducer = reduceReducers(

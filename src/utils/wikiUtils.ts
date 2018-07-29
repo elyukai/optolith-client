@@ -1,4 +1,4 @@
-import { ActivatableCategories, Categories } from '../constants/Categories';
+import { ActivatableCategories, ActivatableCategory, Categories } from '../constants/Categories';
 import { Profession as ProfessionView } from '../types/view.d';
 import * as Wiki from '../types/wiki.d';
 import { List, Maybe, OrderedMap, Record } from './dataUtils';
@@ -121,31 +121,37 @@ export const isSpecialAbility =
 export const isActivatableWikiObj =
   (obj: Wiki.Entry): obj is Wiki.Activatable =>
     !isItemTemplate(obj)
-      && ActivatableCategories.includes(obj.toObject().category);
+      && ActivatableCategories.elem(obj.toObject().category as ActivatableCategory);
 
 export const isRemoveSpecializationSelection = (
   obj: Wiki.ProfessionVariantSelection,
-): obj is Wiki.RemoveSpecializationSelection => {
-  return obj.id === 'SPECIALISATION' && obj.hasOwnProperty('active');
+): obj is Record<Wiki.RemoveSpecializationSelection> => {
+  return obj.get('id') === Wiki.ProfessionSelectionIds.SPECIALISATION
+    && obj.member('active');
 };
 
 export const isCombatTechniquesSelection = (
   obj: Wiki.ProfessionVariantSelection,
-): obj is Wiki.CombatTechniquesSelection => {
-  return obj.id === 'COMBAT_TECHNIQUES' &&
-    obj.hasOwnProperty('sid') &&
-    obj.hasOwnProperty('value') &&
-    obj.hasOwnProperty('amount');
+): obj is Record<Wiki.CombatTechniquesSelection> => {
+  return (obj.get('id') as Wiki.ProfessionSelectionIds)
+    === Wiki.ProfessionSelectionIds.COMBAT_TECHNIQUES
+    && obj.member('sid')
+    && obj.member('value')
+    && obj.member('amount');
 };
 
 export const isRemoveCombatTechniquesSelection = (
   obj: Wiki.ProfessionVariantSelection,
-): obj is Wiki.RemoveCombatTechniquesSelection => {
-  return obj.id === 'COMBAT_TECHNIQUES' && obj.hasOwnProperty('active');
+): obj is Record<Wiki.RemoveCombatTechniquesSelection> => {
+  return (obj.get('id') as Wiki.ProfessionSelectionIds)
+    === Wiki.ProfessionSelectionIds.COMBAT_TECHNIQUES
+    && obj.member('active');
 };
 
 export const isRemoveSecondCombatTechniquesSelection = (
   obj: Wiki.ProfessionVariantSelection,
-): obj is Wiki.RemoveCombatTechniquesSecondSelection => {
-  return obj.id === 'COMBAT_TECHNIQUES_SECOND' && obj.hasOwnProperty('active');
+): obj is Record<Wiki.RemoveCombatTechniquesSecondSelection> => {
+  return (obj.get('id') as Wiki.ProfessionSelectionIds)
+    === Wiki.ProfessionSelectionIds.COMBAT_TECHNIQUES_SECOND
+    && obj.member('active');
 };

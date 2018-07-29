@@ -2,7 +2,8 @@ import R from 'ramda';
 import { IdPrefixes } from '../constants/IdPrefixes';
 import { Dependent, HeroDependent } from '../types/data.d';
 import { EntryWithGroup } from '../types/wiki';
-import { List, Maybe, OrderedMap, Record, RecordKey } from './dataUtils';
+import { createActivatableDependent, createActivatableDependentSkill, createAttributeDependent, createDependentSkill } from './createEntryUtils';
+import { Just, List, Maybe, Nothing, OrderedMap, Record, RecordKey } from './dataUtils';
 import { getIdPrefix } from './IDUtils';
 import { match } from './match';
 
@@ -87,6 +88,28 @@ export const getHeroStateMapKeyById = (
       Maybe.Just<HeroStateMapKey>('skills')
     )
     .otherwise(Maybe.Nothing);
+};
+
+export const getEntryCreatorByHeroStateMapKey = (
+  key: HeroStateMapKey,
+): (id: string) => Dependent => {
+  switch (key) {
+    case 'advantages':
+    case 'disadvantages':
+    case 'specialAbilities':
+      return createActivatableDependent;
+
+    case 'attributes':
+      return createAttributeDependent;
+
+    case 'combatTechniques':
+    case 'skills':
+      return createDependentSkill;
+
+    case 'liturgicalChants':
+    case 'spells':
+      return createActivatableDependentSkill;
+  }
 };
 
 export function getHeroStateListItem<D extends Dependent = Dependent>(
@@ -201,6 +224,85 @@ export const adjustHeroListStateItemOr =
                       Maybe.fromMaybe(createFn(id)),
                       adjustFn
                     ),
+                    id
+                  ) as any as (typeof slice)
+            )
+          )
+      );
+
+export const adjustHeroListStateItemWithDefault =
+  <D extends Dependent>(
+    adjustFn: (value: D) => Maybe<D>,
+    id: string,
+  ) =>
+    (state: Record<HeroDependent>) =>
+      Maybe.fromMaybe<Record<HeroDependent>>(
+        state,
+        getHeroStateMapKeyById(id)
+          .map(
+            stateKey => state.modify(
+              slice =>
+                (slice as any as OrderedMap<string, D>)
+                  .alter(
+                    R.pipe(
+                      Maybe.fromMaybe(
+                        getEntryCreatorByHeroStateMapKey(stateKey)(id) as D
+                      ),
+                      adjustFn
+                    ),
+                    id
+                  ) as any as (typeof slice),
+              stateKey
+            )
+          )
+      );
+
+export const adjustHeroListStateItem =
+  <D extends Dependent>(
+    adjustFn: (value: D) => D,
+    id: string,
+    state: Record<HeroDependent>
+  ) =>
+    Maybe.fromMaybe<Record<HeroDependent>>(
+      state,
+      getHeroStateMapKeyById(id)
+        .map(
+          state.modify(
+            slice =>
+              (slice as any as OrderedMap<string, D>)
+                .adjust(
+                  adjustFn,
+                  id
+                ) as any as (typeof slice)
+          )
+        )
+    );
+
+export const updateHeroListStateItemOrRemove =
+  <D extends Dependent>(
+    unusedCheckFn: (value: D) => boolean,
+    updateFn: (value: D) => D,
+    id: string,
+  ) =>
+    (state: Record<HeroDependent>) =>
+      Maybe.fromMaybe<Record<HeroDependent>>(
+        state,
+        getHeroStateMapKeyById(id)
+          .map(
+            state.modify(
+              slice =>
+                (slice as any as OrderedMap<string, D>)
+                  .update(
+                    value => {
+                      const updatedValue = updateFn(value);
+
+                      if (unusedCheckFn(updatedValue)) {
+                        return Nothing();
+                      }
+                      else {
+                        return Just(updatedValue);
+                      }
+                    },
                     id
                   ) as any as (typeof slice)
             )

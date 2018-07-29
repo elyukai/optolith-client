@@ -1,21 +1,22 @@
 import { AddAlertAction, RemoveAlertAction } from '../actions/AlertActions';
 import { ActionTypes } from '../constants/ActionTypes';
 import { Alert } from '../types/data.d';
+import { List } from '../utils/dataUtils';
 
 type Action = AddAlertAction | RemoveAlertAction;
 
-export type AlertsState = Alert[];
+export type AlertsState = List<Alert>;
 
-export function alerts(state: AlertsState = [], action: Action): AlertsState {
+export function alertsReducer(
+  state: AlertsState = List.of(),
+  action: Action
+): AlertsState {
   switch (action.type) {
     case ActionTypes.ADD_ALERT:
-      return [
-        action.payload,
-        ...state
-      ];
+      return state.prepend(action.payload);
 
     case ActionTypes.REMOVE_ALERT:
-      return state.slice(1);
+      return state.tail();
 
     default:
       return state;

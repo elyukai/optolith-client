@@ -115,19 +115,19 @@ export class Record<T extends { [key: string]: any }> {
    * The value returned by the function will replace the old value.
    */
   modify<K extends keyof T>(
-    fn: (value: T[K]) => T[K]
+    fn: (value: NonNullable<T[K]>) => NonNullable<T[K]>
   ): (key: K) => Record<T>;
   modify<K extends keyof T>(
-    fn: (value: T[K]) => T[K], key: K
+    fn: (value: NonNullable<T[K]>) => NonNullable<T[K]>, key: K
   ): Record<T>;
   modify<K extends keyof T>(
-    fn: (value: T[K]) => T[K],
+    fn: (value: NonNullable<T[K]>) => NonNullable<T[K]>,
     key?: K
   ): Record<T> | ((key: K) => Record<T>) {
-    const resultFn = (x1: (value: T[K]) => T[K], x2: K) => {
+    const resultFn = (x1: (value: NonNullable<T[K]>) => NonNullable<T[K]>, x2: K) => {
       const entry = this.lookup(x2);
       if (Maybe.isJust(entry)) {
-        const res = x1(Maybe.fromJust(entry));
+        const res = x1(Maybe.fromJust(entry as Just<NonNullable<T[K]>>));
 
         return Record.of({
           ...(this.value as any),

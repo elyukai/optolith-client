@@ -3,7 +3,7 @@ import * as Data from '../types/data.d';
 import * as Wiki from '../types/wiki.d';
 import { convertUIStateToActiveObject } from './activatableConvertUtils';
 import { createActivatableDependent } from './createEntryUtils';
-import { List, Maybe, OrderedMap, Record } from './dataUtils';
+import { Just, List, Maybe, OrderedMap, Record } from './dataUtils';
 import * as DependencyUtils from './dependencyUtils';
 import { flattenPrerequisites } from './flattenPrerequisites';
 import { removeHeroListStateItem, setHeroListStateItem } from './heroStateUtils';
@@ -44,9 +44,9 @@ const getStaticPrerequisites = (
  * @param instance
  * @param active
  */
-const getCombinedPrerequisites = (
+export const getCombinedPrerequisites = (
   wikiEntry: Wiki.WikiActivatable,
-  instance: Record<Data.ActivatableDependent>,
+  instance: Maybe<Record<Data.ActivatableDependent>>,
   active: Record<Data.ActiveObject>,
   add: boolean,
 ): List<Wiki.AllRequirements> =>
@@ -99,14 +99,19 @@ const changeActiveLength = (
 ) => (
   state: Record<Data.HeroDependent>,
   wikiEntry: Wiki.WikiActivatable,
-  instance = createActivatableDependent(wikiEntry.get('id')),
+  instance: Maybe<Record<Data.ActivatableDependent>>,
 ) => {
-  const active = getActive(instance);
+  const justInstance = Maybe.fromMaybe(
+    createActivatableDependent(wikiEntry.get('id')),
+    instance
+  );
+
+  const active = getActive(justInstance);
 
   return changeDependencies(
-    getChangedInstance(instance, changeActive)(state),
+    getChangedInstance(justInstance, changeActive)(state),
     getCombinedPrerequisites(wikiEntry, instance, active, add),
-    instance.get('id'),
+    wikiEntry.get('id'),
   );
 };
 
@@ -150,7 +155,7 @@ export const deactivate =
             DependencyUtils.removeDependencies,
             arr => arr.deleteAt(index),
             false
-          )(state, wikiEntry, instance)
+          )(state, wikiEntry, Just(instance))
         )
     );
 

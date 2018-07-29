@@ -13,7 +13,7 @@ export class OrderedMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
   Al.Foldable<V> {
   private readonly value: ReadonlyMap<K, V>;
 
-  constructor(initial?: ReadonlyMap<K, V> | [K, V][] | List<Tuple<K, V>>) {
+  private constructor(initial?: ReadonlyMap<K, V> | [K, V][] | List<Tuple<K, V>>) {
     if (initial instanceof Map) {
       this.value = initial;
     }
@@ -599,7 +599,7 @@ export class OrderedMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
    */
   assocs(): List<Tuple<K, V>> {
     return List.of(
-      ...[...this.value].map(([key, value]) => new Tuple(key, value))
+      ...[...this.value].map(([key, value]) => Tuple.of(key, value))
     );
   }
 
@@ -679,7 +679,7 @@ export class OrderedMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
 
   static toList<K, V>(map: OrderedMap<K, V>): List<Tuple<K, V>> {
     return List.of(
-      ...[...map.value].map(([key, value]) => new Tuple(key, value))
+      ...[...map.value].map(([key, value]) => Tuple.of(key, value))
     );
   }
 

@@ -1,6 +1,6 @@
 import * as Data from '../types/data.d';
 import * as Wiki from '../types/wiki.d';
-import { Record } from './dataUtils';
+import { Maybe, Record } from './dataUtils';
 
 export function reduce<T>(
   initial: T
@@ -33,5 +33,5 @@ export type ActivatableReducer = (
 export type OptionalActivatableReducer = (
   state: Record<Data.HeroDependent>,
   wikiEntry: Wiki.WikiActivatable,
-  instance?: Record<Data.ActivatableDependent>,
+  instance: Maybe<Record<Data.ActivatableDependent>>,
 ) => Record<Data.HeroDependent>;

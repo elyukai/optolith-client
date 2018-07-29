@@ -1,5 +1,4 @@
 import { Action } from 'redux';
-import { Purse } from '../reducers/equipment';
 import { List, OrderedMap, OrderedSet, Record, Tuple } from '../utils/dataUtils';
 import { TabId } from '../utils/LocationUtils';
 import * as Wiki from './wiki';
@@ -139,8 +138,19 @@ export interface PermanentEnergyLossAndBoughtBack extends PermanentEnergyLoss {
 
 export interface Belongings {
   readonly items: OrderedMap<string, Record<ItemInstance>>;
+  readonly itemInEditor?: Record<ItemEditorInstance>;
+  readonly isInItemCreation: boolean;
   readonly armorZones: OrderedMap<string, Record<ArmorZonesInstance>>;
+  readonly zoneArmorInEditor?: Record<ArmorZonesEditorInstance>;
+  readonly isInZoneArmorCreation: boolean;
   readonly purse: Record<Purse>;
+}
+
+export interface Purse {
+  readonly d: string;
+  readonly s: string;
+  readonly k: string;
+  readonly h: string;
 }
 
 export interface Pact {
@@ -177,8 +187,7 @@ export interface Selections {
   spec: string | number;
   specTalentId?: string;
   skills: OrderedMap<string, number>;
-  map:
-    OrderedMap<Wiki.ProfessionSelectionIds, Record<Wiki.ProfessionSelection>>;
+  map: OrderedMap<Wiki.ProfessionSelectionIds, Wiki.ProfessionSelection>;
   terrainKnowledge?: number;
 }
 
@@ -253,12 +262,14 @@ export interface ActivateArgs {
   tier?: number;
   cost: number;
   customCost?: number;
+  wikiEntry: Wiki.Activatable;
 }
 
 export interface DeactivateArgs {
   id: string;
   index: number;
   cost: number;
+  wikiEntry: Wiki.Activatable;
 }
 
 export interface UndoExtendedDeactivateArgs extends DeactivateArgs {
@@ -378,7 +389,7 @@ export interface ItemInstance extends ItemBaseInstance {
   pa?: number;
   price: number;
   pro?: number;
-  range?: [number, number, number];
+  range?: List<number>;
   reloadTime?: number;
   stp?: number;
   weight?: number;
@@ -394,10 +405,7 @@ export interface ItemEditorSpecific {
   at: string;
   iniMod: string;
   movMod: string;
-  damageBonus: Record<{
-    primary?: string;
-    threshold: string | List<string>;
-  }>;
+  damageBonus: Record<EditPrimaryAttributeDamageThreshold>;
   damageDiceNumber: string;
   damageFlat: string;
   enc: string;
@@ -406,11 +414,16 @@ export interface ItemEditorSpecific {
   pa: string;
   price: string;
   pro: string;
-  range: [string, string, string];
+  range: List<string>;
   reloadTime: string;
   stp: string;
   weight: string;
   stabilityMod: string;
+}
+
+export interface EditPrimaryAttributeDamageThreshold {
+  readonly primary?: string;
+  readonly threshold: string | List<string>;
 }
 
 export interface ItemEditorInstance extends ItemBaseInstance, ItemEditorSpecific {}

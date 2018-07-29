@@ -32,15 +32,29 @@ export const isRequiringIncreasable =
       return req.member('value') && id.all(R.pipe(
         getCategoryById,
         category => Maybe.isJust(category) &&
-          Categories.IncreasableCategories.includes(Maybe.fromJust(category))
+          Categories.IncreasableCategories.elem(
+            Maybe.fromJust(category) as Categories.IncreasableCategory
+          )
       ));
     }
     else {
       const category = getCategoryById(id);
 
       return req.member('value') && Maybe.isJust(category) &&
-        Categories.IncreasableCategories.includes(Maybe.fromJust(category));
+        Categories.IncreasableCategories.elem(
+          Maybe.fromJust(category) as Categories.IncreasableCategory
+        );
     }
+  };
+
+export const isProfessionRequiringIncreasable =
+  (req: Wiki.ProfessionPrerequisite): req is Record<Wiki.ProfessionRequiresIncreasableObject> => {
+    const category = getCategoryById(req.get('id'));
+
+    return req.member('value') && Maybe.isJust(category) &&
+      Categories.IncreasableCategories.elem(
+        Maybe.fromJust(category) as Categories.IncreasableCategory
+      );
   };
 
 export const isRequiringActivatable =
@@ -51,15 +65,29 @@ export const isRequiringActivatable =
       return req.member('active') && id.all(R.pipe(
         getCategoryById,
         category => Maybe.isJust(category) &&
-          Categories.ActivatableLikeCategories.includes(Maybe.fromJust(category))
+          Categories.ActivatableLikeCategories.elem(
+            Maybe.fromJust(category) as Categories.ActivatableLikeCategory
+          )
       ));
     }
     else {
       const category = getCategoryById(id);
 
       return req.member('active') && Maybe.isJust(category) &&
-        Categories.ActivatableLikeCategories.includes(Maybe.fromJust(category));
+        Categories.ActivatableLikeCategories.elem(
+          Maybe.fromJust(category) as Categories.ActivatableLikeCategory
+        );
     }
+  };
+
+export const isProfessionRequiringActivatable =
+  (req: Wiki.ProfessionPrerequisite): req is Record<Wiki.ProfessionRequiresActivatableObject> => {
+    const category = getCategoryById(req.get('id'));
+
+    return req.member('active') && Maybe.isJust(category) &&
+      Categories.ActivatableLikeCategories.elem(
+        Maybe.fromJust(category) as Categories.ActivatableLikeCategory
+      );
   };
 
 export const isDependentPrerequisite =

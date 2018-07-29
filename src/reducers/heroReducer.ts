@@ -1,12 +1,34 @@
-import { reduceNoInitialReducers } from "../utils/reduceReducers";
-import { undoExisting } from '../utils/undo';
 import { ActionTypes } from '../constants/ActionTypes';
-import { activatableReducer } from './activatableReducer';
+import { HeroDependent } from '../types/data';
+import { Record } from '../utils/dataUtils';
+import { reduceReducers } from '../utils/reduceReducers';
+import { undoExisting } from '../utils/undo';
+import { adventurePointsReducer } from './adventurePointsReducer';
+import { applyRCPSelectionsReducer } from './applyRCPSelectionsReducer';
+import { dependentReducer } from './dependentReducer';
+import { energiesReducer } from './energiesReducer';
+import { equipmentReducer } from './equipmentReducer';
+import { pactReducer } from './pactReducer';
+import { petsReducer } from './petsReducer';
+import { phaseReducer } from './phaseReducer';
+import { profileReducer } from './profileReducer';
+import { rcpReducer } from './rcpReducer';
+import { rulesReducer } from './rulesReducer';
 
 export const heroReducer = undoExisting(
-  reduceNoInitialReducers(
-		activatableReducer
-	),
+  reduceReducers<Record<HeroDependent>, any>(
+    adventurePointsReducer,
+    dependentReducer,
+    energiesReducer,
+    equipmentReducer,
+    pactReducer,
+    petsReducer,
+    phaseReducer,
+    profileReducer,
+    rcpReducer,
+    rulesReducer,
+    applyRCPSelectionsReducer
+  ),
   [
     ActionTypes.RECEIVE_INITIAL_DATA,
     ActionTypes.CREATE_HERO,

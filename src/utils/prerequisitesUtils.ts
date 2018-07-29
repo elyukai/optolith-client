@@ -7,13 +7,15 @@ import { findSelectOption } from './selectionUtils';
  * Some advantages, disadvantages and special abilities need more prerequisites
  * than given in their respective main array.
  * @param wikiEntry The entry for which you want to add the dependencies.
+ * @param instance The state entry *before* adding or removing the active
+ * object.
  * @param active The actual active object.
  * @param add States if the prerequisites should be added or removed (some
  * prerequisites must be calculated based on that).
  */
 export function getGeneratedPrerequisites(
   wikiEntry: Wiki.WikiActivatable,
-  instance: Record<Data.ActivatableDependent>,
+  instance: Maybe<Record<Data.ActivatableDependent>>,
   active: Record<Data.ActiveObject>,
   add: boolean,
 ): Maybe<List<Wiki.AllRequirementObjects>> {
@@ -31,7 +33,14 @@ export function getGeneratedPrerequisites(
         applicationsInput: string;
       }
 
-      const sameSkill = instance.get('active').filter(e => e.lookup('sid').equals(sid)).length();
+      const sameSkill = Maybe.fromMaybe(
+        0,
+        instance.map(
+          justInstance => justInstance.get('active')
+            .filter(e => e.lookup('sid').equals(sid))
+            .length()
+        )
+      );
 
       const sameSkillDependency = sid.map(justSid => ({
         id: justSid as string,
@@ -98,7 +107,7 @@ export function getGeneratedPrerequisites(
 
 export const addDynamicPrerequisites = (
   wikiEntry: Wiki.Activatable,
-  instance: Record<Data.ActivatableDependent>,
+  instance: Maybe<Record<Data.ActivatableDependent>>,
   active: Record<Data.ActiveObject>,
   add: boolean,
 ) => (

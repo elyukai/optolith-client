@@ -32,9 +32,7 @@ export class Maybe<T extends Some> implements Al.Functor<T>, Al.Apply<T>,
    * Returns if both given values are equal.
    */
   equals(x: Maybe<T>): boolean {
-    return Maybe.isNothing(this) && Maybe.isNothing(x)
-      || Maybe.isJust(this) && Maybe.isJust(x)
-        && R.equals((this as Maybe<T>).value, x.value);
+    return R.equals((this as Maybe<T>).value, x.value);
   }
 
   /**

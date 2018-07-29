@@ -1,5 +1,5 @@
 import R from 'ramda';
-import { ActivatableSkillCategories } from '../constants/Categories';
+import { ActivatableSkillCategories, Categories } from '../constants/Categories';
 import * as Data from '../types/data.d';
 import * as CreateEntryUtils from './createEntryUtils';
 import { Just, List, Maybe, Record } from './dataUtils';
@@ -28,7 +28,7 @@ const addDependency = <T extends Data.Dependent>(
 const getIncreasableCreator: (id: string) => IncreasableCreator = R.pipe(
   getCategoryById,
   category =>
-    category.map(ActivatableSkillCategories.includes)
+    category.map(ActivatableSkillCategories.elem as (value: Categories) => boolean)
       .equals(Maybe.Just(true))
         ? CreateEntryUtils.createActivatableDependentSkill
         : CreateEntryUtils.createDependentSkill
