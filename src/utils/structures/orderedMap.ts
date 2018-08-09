@@ -1,6 +1,7 @@
-import * as Al from '../../types/algebraic.d';
+import * as Al from '../../types/algebraic';
 import { List } from './list';
-import { Maybe, Some } from './maybe';
+import { Just, Maybe, Some } from './maybe';
+import { OrderedSet } from './orderedSet';
 import { StringKeyObject } from './record';
 import { Tuple } from './tuple';
 
@@ -492,7 +493,7 @@ export class OrderedMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
    * unionWith const)`.
    */
   union(add: OrderedMap<K, V>) {
-    return OrderedMap.of(new Map([...this.value, ...add.value]));
+    return OrderedMap.of(new Map([...add.value, ...this.value]));
   }
 
   /**
@@ -603,6 +604,71 @@ export class OrderedMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
     );
   }
 
+  /**
+   * `keysSet :: Map k a -> Set k`
+   *
+   * The set of all keys of the map.
+   */
+  keysSet(): OrderedSet<K> {
+    return OrderedSet.of([...this.value.keys()]);
+  }
+
+  /**
+   * `fromSet :: (k -> a) -> Set k -> Map k a`
+   *
+   * Build a map from a set of keys and a function which for each key computes
+   * its value.
+   */
+  static keysSet<K, V>(f: (key: K) => V): (keys: OrderedSet<K>) => OrderedMap<K, V>;
+  static keysSet<K, V>(f: (key: K) => V, keys: OrderedSet<K>): OrderedMap<K, V>;
+  static keysSet<K, V>(
+    f: (key: K) => V,
+    keys?: OrderedSet<K>
+  ): OrderedMap<K, V> | ((keys: OrderedSet<K>) => OrderedMap<K, V>) {
+    const resultFn = (x1: (key: K) => V, x2: OrderedSet<K>) =>
+      x2.foldl(
+        acc => key => acc.insert(key, x1(key)),
+        OrderedMap.empty<K, V>()
+      );
+
+    if (arguments.length === 2) {
+      return resultFn(f, keys!);
+    }
+    else {
+      return x2 => resultFn(f, x2);
+    }
+  }
+
+  // LISTS
+
+  /**
+   * `toList :: Map k a -> [(k, a)]`
+   *
+   * Convert the map to a list of key/value pairs. Subject to list fusion.
+   */
+  toList(): List<Tuple<K, V>> {
+    return List.of(
+      ...[...this.value].map(([key, value]) => Tuple.of(key, value))
+    );
+  }
+
+  /**
+   * `fromList :: Ord k => [(k, a)] -> Map k a`
+   *
+   * Build a map from a list of key/value pairs. See also `fromAscList`. If the
+   * list contains more than one value for the same key, the last value for the
+   * key is retained.
+   *
+   * If the keys of the list are ordered, linear-time implementation is used,
+   * with the performance equal to fromDistinctAscList.
+   */
+  static fromList<K, V>(list: List<Tuple<K, V>>): OrderedMap<K, V> {
+    return list.foldl(
+      map => tuple => map.insert(Tuple.fst(tuple), Tuple.snd(tuple)),
+      OrderedMap.empty<K, V>()
+    );
+  }
+
   // FILTER
 
   /**
@@ -630,6 +696,34 @@ export class OrderedMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
       .filter(([key, value]) => pred(key)(value)));
   }
 
+  /**
+   * `mapMaybe :: (a -> Maybe b) -> Map k a -> Map k b`
+   *
+   * Map values and collect the `Just` results.
+   */
+  mapMaybe<T>(f: (value: V) => Maybe<T>): OrderedMap<K, T> {
+    return OrderedMap.of(
+      [...this.value]
+        .map(([k, v]) => [k, f(v)] as [K, Maybe<T>])
+        .filter((pair): pair is [K, Just<T>] => Maybe.isJust(pair[1]))
+        .map(([k, v]) => [k, Maybe.fromJust(v)] as [K, T])
+    );
+  }
+
+  /**
+   * `mapMaybeWithKey :: (k -> a -> Maybe b) -> Map k a -> Map k b`
+   *
+   * Map keys/values and collect the `Just` results.
+   */
+  mapMaybeWithKey<T>(f: (key: K) => (value: V) => Maybe<T>): OrderedMap<K, T> {
+    return OrderedMap.of(
+      [...this.value]
+        .map(([k, v]) => [k, f(k)(v)] as [K, Maybe<T>])
+        .filter((pair): pair is [K, Just<T>] => Maybe.isJust(pair[1]))
+        .map(([k, v]) => [k, Maybe.fromJust(v)] as [K, T])
+    );
+  }
+
   toJSObjectBy<U>(
     this: OrderedMap<string, V>,
     fn: (x: V) => U
@@ -645,7 +739,7 @@ export class OrderedMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
   }
 
   static of<K, V>(
-    map: ReadonlyMap<K, V> | [K, V][] | List<Tuple<K, V>>
+    map: ReadonlyMap<K, V> | [K, V][]
   ): OrderedMap<K, V> {
     return new OrderedMap(map);
   }
@@ -678,9 +772,7 @@ export class OrderedMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
   }
 
   static toList<K, V>(map: OrderedMap<K, V>): List<Tuple<K, V>> {
-    return List.of(
-      ...[...map.value].map(([key, value]) => Tuple.of(key, value))
-    );
+    return map.toList();
   }
 
   static toValueList<K, V>(map: OrderedMap<K, V>): List<V> {

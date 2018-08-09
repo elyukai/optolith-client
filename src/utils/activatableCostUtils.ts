@@ -1,7 +1,17 @@
+/**
+ * Calculate the Adventure Points for when removing the entry. This might not
+ * be the actual cost. In those cases the AP difference needs to be calculated
+ * for AP spent total.
+ *
+ * @file src/utils/activatableCostUtils.ts
+ * @author Lukas Obermann
+ * @since 1.1.0
+ */
+
 import R from 'ramda';
 import { ActivatableCategory, Categories } from '../constants/Categories';
-import * as Data from '../types/data.d';
-import * as Wiki from '../types/wiki.d';
+import * as Data from '../types/data';
+import * as Wiki from '../types/wiki';
 import { Just, List, Maybe, Record } from './dataUtils';
 import { getHeroStateListItem } from './heroStateUtils';
 import { translate } from './I18n';

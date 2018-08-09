@@ -9,7 +9,19 @@ export interface Ord<T> extends Setoid<T> {
   /**
    * `lte :: Ord a -> Ord a -> Bool`
    */
-  lte<T extends string | number>(this: Ord<T>, x: Ord<T>): boolean;
+  lte<U extends string | number>(this: Ord<U>, x: Ord<U>): boolean;
+  /**
+   * `gte :: Ord a -> Ord a -> Bool`
+   */
+  gte<U extends string | number>(this: Ord<U>, x: Ord<U>): boolean;
+  /**
+   * `lt :: Ord a -> Ord a -> Bool`
+   */
+  lt<U extends string | number>(this: Ord<U>, x: Ord<U>): boolean;
+  /**
+   * `gt :: Ord a -> Ord a -> Bool`
+   */
+  gt<U extends string | number>(this: Ord<U>, x: Ord<U>): boolean;
 }
 
 export interface Semigroup<T> {
@@ -33,7 +45,7 @@ export interface Apply<T> extends Functor<T> {
   ap<U>(m: Apply<(value: T) => U>): Apply<U>;
 }
 
-// extends Apply<Some>
+// extends Apply<T>
 export interface Applicative {
   /**
    * `of :: Applicative f => a -> f a`
@@ -55,12 +67,16 @@ export interface Bind<T> extends Apply<T> {
   bind<U>(fn: (t: T) => Bind<U>): Bind<U>;
 }
 
-export interface ChainRec<T> extends Bind<T> {
+// extends Bind<T>
+export interface ChainRec {
   /**
    * `chainRec :: ChainRec m => ((a -> c, b -> c, a) -> m c, a) -> m b`
    * @static
    */
-  chainRec<T, U, V>(fn: (fn1: (x: T) => V, fn2: (x: U) => V, x: T) => ChainRec<V>, x: T): ChainRec<U>;
+  chainRec<T, U, V>(
+    fn: (fn1: (x: T) => V, fn2: (x: U) => V, x: T) => ChainRec,
+    x: T
+  ): ChainRec;
 }
 
 export interface Filterable<T> {

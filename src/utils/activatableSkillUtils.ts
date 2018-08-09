@@ -1,4 +1,12 @@
-import * as Data from '../types/data.d';
+/**
+ * Filter and count `ActivatableSkill` entries.
+ *
+ * @file src/utils/activatableSkillUtils.ts
+ * @author Lukas Obermann
+ * @since 1.1.0
+ */
+
+import * as Data from '../types/data';
 import { Maybe, OrderedMap, Record } from './dataUtils';
 
 export const getActiveSkillEntries = (

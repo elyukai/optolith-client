@@ -3,7 +3,7 @@ import { getAvailableAdventurePoints } from '../selectors/adventurePointsSelecto
 import { getAdjustmentValue, getCurrentAdjustmentId } from '../selectors/attributeSelectors';
 import { isInCharacterCreation } from '../selectors/phaseSelectors';
 import { getAddedArcaneEnergyPoints, getAddedKarmaPoints, getAddedLifePoints, getAttributes, getLocaleMessages, getPermanentArcaneEnergyPoints, getPermanentKarmaPoints } from '../selectors/stateSelectors';
-import { AsyncAction } from '../types/actions.d';
+import { AsyncAction } from '../types/actions';
 import { validate } from '../utils/APUtils';
 import { translate } from '../utils/I18n';
 import { getDecreaseAP, getIncreaseAP } from '../utils/ICUtils';

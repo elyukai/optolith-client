@@ -1,4 +1,4 @@
-import * as Data from '../types/data.d';
+import * as Data from '../types/data';
 import { Just, Maybe, Record } from './dataUtils';
 
 type JR<T> = Just<Record<T>>;

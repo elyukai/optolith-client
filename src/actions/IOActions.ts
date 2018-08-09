@@ -9,9 +9,9 @@ import { getHeroesForSave, getHeroForSave } from '../selectors/herolistSelectors
 import { getSystemLocale } from '../selectors/I18n';
 import { getLocaleId, getLocaleMessages } from '../selectors/stateSelectors';
 import { getUISettingsState } from '../selectors/uisettingsSelectors';
-import { AsyncAction } from '../types/actions.d';
-import { ToListById, User } from '../types/data.d';
-import { Config, Raw, RawHero, RawHerolist, RawLocale, RawTables } from '../types/rawdata.d';
+import { AsyncAction } from '../types/actions';
+import { ToListById, User } from '../types/data';
+import { Config, Raw, RawHero, RawHerolist, RawLocale, RawTables } from '../types/rawdata';
 import { translate } from '../utils/I18n';
 import { getNewIdByDate } from '../utils/IDUtils';
 import { bytify, readDir, readFile, showOpenDialog, showSaveDialog, windowPrintToPDF, writeFile } from '../utils/IOUtils';

@@ -1,6 +1,15 @@
+/**
+ * Get the needed options for `Activatable` entries that are available to
+ * activate.
+ *
+ * @file src/utils/activatableInactiveUtils.ts
+ * @author Lukas Obermann
+ * @since 1.1.0
+ */
+
 import { AdventurePointsObject } from '../selectors/adventurePointsSelectors';
-import * as Data from '../types/data.d';
-import * as Wiki from '../types/wiki.d';
+import * as Data from '../types/data';
+import * as Wiki from '../types/wiki';
 import { isAdditionDisabled } from './activatableInactiveValidationUtils';
 import { countActiveSkillEntries } from './activatableSkillUtils';
 import { List, Maybe, OrderedMap, Record, Tuple } from './dataUtils';
@@ -9,7 +18,7 @@ import { sortObjects } from './FilterSortUtils';
 import { getAllEntriesByGroup } from './heroStateUtils';
 import { getBlessedTraditionInstanceIdByNumericId } from './IDUtils';
 import { isActive } from './isActive';
-import { getTraditionOfAspect } from './LiturgyUtils';
+import { getTraditionOfAspect } from './liturgicalChantUtils';
 import { match } from './match';
 import { findSelectOption, getActiveSecondarySelections, getActiveSelections, getRequiredSelections } from './selectionUtils';
 import { getBlessedTradition, getMagicalTraditions } from './traditionUtils';

@@ -1,7 +1,7 @@
 import R from 'ramda';
 import { Categories } from '../constants/Categories';
-import * as Data from '../types/data.d';
-import * as Raw from '../types/rawdata.d';
+import * as Data from '../types/data';
+import * as Raw from '../types/rawdata';
 import { WikiAll } from '../types/wiki';
 import { getActiveFromState } from './activatableConvertUtils';
 import { getCombinedPrerequisites } from './activationUtils';

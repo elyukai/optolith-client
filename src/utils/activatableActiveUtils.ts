@@ -1,5 +1,14 @@
-import * as Data from '../types/data.d';
-import { WikiAll } from '../types/wiki.d';
+/**
+ * This file provides combining functions for displaying `Activatable`
+ * entries.
+ *
+ * @file src/utils/activatableActiveUtils.ts
+ * @author Lukas Obermann
+ * @since 1.1.0
+ */
+
+import * as Data from '../types/data';
+import { WikiAll } from '../types/wiki';
 import { getCost } from './activatableCostUtils';
 import { getName } from './activatableNameUtils';
 import { Maybe, Record } from './dataUtils';

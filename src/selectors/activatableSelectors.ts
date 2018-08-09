@@ -1,30 +1,16 @@
 import { createSelector } from 'reselect';
-import { Categories, ActivatableCategory } from '../constants/Categories';
-import { DependentInstancesState } from '../reducers/dependentInstances';
+import { ActivatableCategory, Categories } from '../constants/Categories';
 import * as Data from '../types/data.d';
-import { convertPerTierCostToFinalCost, getActiveFromState, getNameCost, getSelectionName, getSids, getTraditionNameFromFullName, getValidation, isActive } from '../utils/ActivatableUtils';
 import { filterAndSortObjects } from '../utils/FilterSortUtils';
 import { translate } from '../utils/I18n';
-import { getStateKeyByCategory } from '../utils/IDUtils';
 import { mapGetToSlice } from '../utils/SelectorsUtils';
-import { getAllByCategory } from './dependentInstancesSelectors';
-import { getBlessedTradition } from './liturgiesSelectors';
 import { getMessages } from './localeSelectors';
 import { getValidPact } from './pactSelectors';
 import { getCultureAreaKnowledge } from './profileSelectors';
 import { getCurrentCulture, getCurrentProfession, getCurrentRace } from './rcpSelectors';
 import { getSpecialAbilitiesSortOptions } from './sortOptionsSelectors';
 import { getMagicalTraditions } from './spellsSelectors';
-import { getAdvantages, getAdvantagesFilterText, getCurrentHeroPresent, getDisadvantages, getDisadvantagesFilterText, getLocaleMessages, getSpecialAbilities, getSpecialAbilitiesFilterText, getWiki,  } from './stateSelectors';
-
-export function getForSave(state: DependentInstancesState): Data.ToListById<Data.ActiveObject[]> {
-  const allEntries = [
-    ...getAllByCategory(state, Categories.ADVANTAGES),
-    ...getAllByCategory(state, Categories.DISADVANTAGES),
-    ...getAllByCategory(state, Categories.SPECIAL_ABILITIES),
-  ];
-  return allEntries.filter(e => isActive(e)).reduce((a, b) => ({ ...a, [b.id]: b.active }), {});
-}
+import { getAdvantages, getAdvantagesFilterText, getCurrentHeroPresent, getDisadvantages, getDisadvantagesFilterText, getLocaleMessages, getSpecialAbilities, getSpecialAbilitiesFilterText, getWiki } from './stateSelectors';
 
 export const getActive = <T extends ActivatableCategory>(category: T, addTierToName: boolean) => {
   return createSelector(

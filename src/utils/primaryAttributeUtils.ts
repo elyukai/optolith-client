@@ -1,5 +1,5 @@
 import R from 'ramda';
-import { ActivatableDependent } from '../types/data.d';
+import { ActivatableDependent } from '../types/data';
 import { Maybe, OrderedMap, Record } from './dataUtils';
 import * as IDUtils from './IDUtils';
 import { match } from './match';

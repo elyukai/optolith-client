@@ -1,21 +1,17 @@
-import { createSelector } from 'reselect';
-import { ELState } from '../reducers/el';
-import { ExperienceLevel } from '../types/data.d';
+import { createMaybeSelector } from '../utils/createMaybeSelector';
 import { getExperienceLevelIdByAp } from '../utils/ELUtils';
 import { getExperienceLevelStartId, getTotalAdventurePoints, getWikiExperienceLevels } from './stateSelectors';
 
-export function getStart(state: ELState): ExperienceLevel {
-	return state.all.get(state.startId!)!;
-}
-
-export const getCurrentEl = createSelector(
-	getWikiExperienceLevels,
-	getTotalAdventurePoints,
-	(allEls, totalAp) => allEls.get(getExperienceLevelIdByAp(allEls, totalAp))
+export const getCurrentEl = createMaybeSelector(
+  getWikiExperienceLevels,
+  getTotalAdventurePoints,
+  (allEls, maybeTotalAp) => maybeTotalAp.bind(
+    totalAp => allEls.lookup(getExperienceLevelIdByAp(allEls, totalAp))
+  )
 );
 
-export const getStartEl = createSelector(
-	getWikiExperienceLevels,
-	getExperienceLevelStartId,
-	(allEls, id) => allEls.get(id!)!
+export const getStartEl = createMaybeSelector(
+  getWikiExperienceLevels,
+  getExperienceLevelStartId,
+  (allEls, maybeId) => maybeId.bind(allEls.lookup)!
 );

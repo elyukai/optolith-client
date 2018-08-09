@@ -1,5 +1,5 @@
-import * as Data from '../types/data.d';
-import * as Wiki from '../types/wiki.d';
+import * as Data from '../types/data';
+import * as Wiki from '../types/wiki';
 import { Just, List, Maybe, Nothing, Record } from './dataUtils';
 import { findSelectOption } from './selectionUtils';
 
@@ -64,11 +64,11 @@ export function getGeneratedPrerequisites(
     }
     case 'SA_81':
       return Just(List.of(
-        Record.ofMaybe({
+        Record.ofMaybe<Wiki.RequiresActivatableObject>({
           id: 'SA_72',
           active: true,
           sid
-        }) as Record<Wiki.RequiresActivatableObject>
+        })
       ));
     case 'SA_414':
     case 'SA_663': {
@@ -92,12 +92,12 @@ export function getGeneratedPrerequisites(
     }
     case 'SA_699': {
       return Just(List.of(
-        Record.ofMaybe({
+        Record.ofMaybe<Wiki.RequiresActivatableObject>({
           id: 'SA_29',
           active: true,
           sid,
-          tier: 3,
-        }) as Record<Wiki.RequiresActivatableObject>
+          tier: Just(3),
+        })
       ));
     }
   }

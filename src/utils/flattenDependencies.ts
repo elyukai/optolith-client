@@ -1,10 +1,20 @@
-import * as Data from '../types/data.d';
-import * as Wiki from '../types/wiki.d';
+import * as Data from '../types/data';
+import * as Wiki from '../types/wiki';
 import { List, Maybe, Record } from './dataUtils';
 import { flattenPrerequisites } from './flattenPrerequisites';
 import { getHeroStateListItem } from './heroStateUtils';
 import { getWikiEntry } from './WikiUtils';
 
+/**
+ * `flattenDependencies` flattens the list of dependencies to usable values.
+ * That means, optional dependencies (objects) will be evaluated and will be
+ * included in the resulting list, depending on whether it has to follow the
+ * optional dependency or not. The result is a plain `List` of all non-optional
+ * dependencies.
+ * @param wiki The full wiki.
+ * @param state The current hero.
+ * @param dependencies The list of dependencies to flatten.
+ */
 export const flattenDependencies = <T extends number | boolean>(
   wiki: Record<Wiki.WikiAll>,
   state: Record<Data.HeroDependent>,

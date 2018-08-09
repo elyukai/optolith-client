@@ -1,46 +1,56 @@
-import { createSelector } from 'reselect';
-import { isPactRequirement } from '../utils/RequirementUtils';
+import { AllRequirements } from '../types/wiki';
+import { isPactRequirement } from '../utils/checkPrerequisiteUtils';
+import { createMaybeSelector } from '../utils/createMaybeSelector';
+import { Just, List, Maybe } from '../utils/dataUtils';
 import { getPact, getSpecialAbilities, getWikiSpecialAbilities } from './stateSelectors';
 
-export const isPactValid = createSelector(
-	getPact,
-	pact => {
-		if (pact !== null) {
-			const validDomain = typeof pact.domain === 'number' || pact.domain.length > 0;
-			const validName = pact.name.length > 0;
-			return validDomain && validName;
-		}
-		return false;
-	}
+export const getIsPactValid = createMaybeSelector(
+  getPact,
+  maybePact => {
+    if (Maybe.isJust(maybePact)) {
+      const pact = Maybe.fromJust(maybePact);
+      const domain = pact.get('domain');
+      const validDomain = typeof domain === 'number' || domain.length > 0;
+      const validName = pact.get('name').length > 0;
+
+      return validDomain && validName;
+    }
+
+    return false;
+  }
 );
 
-export const getValidPact = createSelector(
-	getPact,
-	isPactValid,
-	(pact, isValid) => {
-		if (isValid) {
-			return pact!;
-		}
-		return undefined;
-	}
+export const getValidPact = createMaybeSelector(
+  getPact,
+  getIsPactValid,
+  (pact, isValid) => pact.bind(Maybe.ensure(() => isValid))
 );
 
-export const isPactEditable = createSelector(
-	getSpecialAbilities,
-	getWikiSpecialAbilities,
-	(specialAbilities, wiki) => {
-		return ![...specialAbilities.values()].some(e => {
-			if (e.active.length === 0) {
-				return false;
-			}
-			const { prerequisites } = wiki.get(e.id)!;
-			if (Array.isArray(prerequisites)) {
-				return prerequisites.some(e => e !== 'RCP' && isPactRequirement(e));
-			}
-			else if (prerequisites.has(1)) {
-				return prerequisites.get(1)!.some(e => e !== 'RCP' && isPactRequirement(e));
-			}
-			return false;
-		});
-	}
+export const isPactEditable = createMaybeSelector(
+  getSpecialAbilities,
+  getWikiSpecialAbilities,
+  (maybeSpecialAbilities, wiki) =>
+    maybeSpecialAbilities.map(
+      specialAbilities => !specialAbilities.elems().any(e => {
+        if (e.get('active').null()) {
+          return false;
+        }
+
+        const wikiEntry = wiki.lookup(e.get('id'));
+
+        if (Maybe.isJust(wikiEntry)) {
+          const prerequisites = Maybe.fromJust(wikiEntry).get('prerequisites');
+
+          if (prerequisites instanceof List) {
+            return prerequisites.any(req => req !== 'RCP' && isPactRequirement(req));
+          }
+          else if (prerequisites.member(1)) {
+            return Maybe.fromJust(prerequisites.lookup(1) as Just<List<AllRequirements>>)
+              .any(req => req !== 'RCP' && isPactRequirement(req));
+          }
+        }
+
+        return false;
+      })
+    )
 );

@@ -5,7 +5,7 @@ import * as LiturgiesActions from '../actions/LiturgiesActions';
 import * as SpellsActions from '../actions/SpellsActions';
 import * as TalentsActions from '../actions/TalentsActions';
 import { ActionTypes } from '../constants/ActionTypes';
-import * as Data from '../types/data.d';
+import * as Data from '../types/data';
 import { createActivatableDependentSkill } from '../utils/createEntryUtils';
 import { Just, Record } from '../utils/dataUtils';
 import { addDependencies, addDependenciesReducer, removeDependenciesReducer } from '../utils/dependencyUtils';

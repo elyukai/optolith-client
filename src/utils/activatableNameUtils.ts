@@ -1,6 +1,16 @@
+/**
+ * Generates the complete name of an active `Activatable`. Also provides helper
+ * functions for compressing `Activatable` name lists and combining or
+ * extracting parts of the name.
+ *
+ * @file src/utils/activatableNameUtils.ts
+ * @author Lukas Obermann
+ * @since 1.1.0
+ */
+
 import { isNumber } from 'util';
-import * as Data from '../types/data.d';
-import * as Wiki from '../types/wiki.d';
+import * as Data from '../types/data';
+import * as Wiki from '../types/wiki';
 import { List, Maybe, Record } from './dataUtils';
 import { sortStrings } from './FilterSortUtils';
 import { translate } from './I18n';
@@ -90,22 +100,22 @@ const getEntrySpecificNameAddition = (
         })
     )
     .on('SA_9', () =>
-    (instance.lookup('sid') as Maybe<string>)
-      .bind(wiki.get('skills').lookup)
-        .map(skill => {
-          return Maybe.maybe(
-            skill.get('name'),
-            name => `${skill.get('name')}: ${name}`,
-            instance.lookup('sid2').bind(sid2 =>
-              Maybe.ensure(isString, sid2)
-                .alt(
-                  skill.lookup('applications')
-                    .bind(apps => apps.find(e => e.get('id') === sid2))
-                    .map(app => app.get('name'))
-                )
-            )
-          );
-        })
+      (instance.lookup('sid') as Maybe<string>)
+        .bind(wiki.get('skills').lookup)
+          .map(skill => {
+            return Maybe.maybe(
+              skill.get('name'),
+              name => `${skill.get('name')}: ${name}`,
+              instance.lookup('sid2').bind(sid2 =>
+                Maybe.ensure(isString, sid2)
+                  .alt(
+                    skill.lookup('applications')
+                      .bind(apps => apps.find(e => e.get('id') === sid2))
+                      .map(app => app.get('name'))
+                  )
+              )
+            );
+          })
     )
     .on(
       [

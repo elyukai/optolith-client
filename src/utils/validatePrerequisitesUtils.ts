@@ -1,6 +1,6 @@
 import { IdPrefixes } from '../constants/IdPrefixes';
-import * as Data from '../types/data.d';
-import * as Wiki from '../types/wiki.d';
+import * as Data from '../types/data';
+import * as Wiki from '../types/wiki';
 import { isActivatableDependent, isActivatableSkillDependent, isDependentSkillExtended } from './checkEntryUtils';
 import * as CheckPrerequisiteUtils from './checkPrerequisiteUtils';
 import { Just, List, Maybe, OrderedMap, Record, Tuple } from './dataUtils';

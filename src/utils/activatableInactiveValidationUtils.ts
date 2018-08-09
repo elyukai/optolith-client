@@ -1,5 +1,13 @@
-import * as Data from '../types/data.d';
-import * as Wiki from '../types/wiki.d';
+/**
+ * Checks if an `Activatable` entry is available to be activated.
+ *
+ * @file src/utils/activatableInactiveValidationUtils.ts
+ * @author Lukas Obermann
+ * @since 1.1.0
+ */
+
+import * as Data from '../types/data';
+import * as Wiki from '../types/wiki';
 import * as CheckStyleUtils from './checkStyleUtils';
 import { Just, List, Maybe, OrderedMap, Record } from './dataUtils';
 import { countActiveGroupEntries, hasActiveGroupEntry } from './entryGroupUtils';
@@ -102,7 +110,7 @@ const isAdditionDisabledSpecialAbilitySpecific = (
             && Maybe.fromJust(wikiObj)
               .get('prerequisites') instanceof OrderedMap
             && Maybe.fromJust(wikiObj).get('cost') instanceof List
-            && typeof Maybe.fromJust(wikiObj).get('tiers') === 'number'
+            && Maybe.isJust(wikiObj.bind(justWikiObj => justWikiObj.lookup('tiers')))
           ) {
             return n + Maybe.fromMaybe(
               0,

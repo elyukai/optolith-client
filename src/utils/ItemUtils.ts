@@ -1,4 +1,4 @@
-import { ItemEditorInstance, ItemEditorSpecific, ItemInstance } from '../types/data.d';
+import { ItemEditorInstance, ItemEditorSpecific, ItemInstance } from '../types/data';
 import { Just, List, Maybe, Nothing, Record } from './dataUtils';
 
 const ifNumberOrEmpty = (e: Maybe<number>): string =>
@@ -46,10 +46,10 @@ export const convertToEdit = (item: Record<ItemInstance>): Record<ItemEditorInst
     price: ifNumberOrEmpty(item.lookup('price')),
     pro: ifNumberOrEmpty(item.lookup('pro')),
     range: Maybe.maybe(
-      ['', '', ''],
+      List.of('', '', ''),
       range => range.map(e => e.toString()),
       item.lookup('range')
-    ) as [string, string, string],
+    ),
     reloadTime: ifNumberOrEmpty(item.lookup('reloadTime')),
     stp: ifNumberOrEmpty(item.lookup('stp')),
     weight: ifNumberOrEmpty(item.lookup('weight')),
@@ -130,7 +130,7 @@ export const convertToSave = (item: Record<ItemEditorInstance>): Record<ItemInst
     pa: toInteger(item.get('pa')),
     price: toFloat(item.get('price')),
     pro: toInteger(item.get('pro')),
-    range: item.get('range').map(toInteger) as [number, number, number],
+    range: item.get('range').map(toInteger),
     reloadTime: toInteger(item.get('reloadTime')),
     stp: toInteger(item.get('stp')),
     weight: toFloat(item.get('weight')),

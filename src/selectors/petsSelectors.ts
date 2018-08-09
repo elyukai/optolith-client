@@ -1,24 +1,12 @@
 import { createSelector } from 'reselect';
-import { AppState } from '../reducers/app';
-import { PetsState } from '../reducers/pets';
-import { PetInstance, ToListById } from '../types/data.d';
-
-export function getForSave(state: PetsState) {
-	const obj: ToListById<PetInstance> = {};
-	for (const [id, item] of state) {
-		obj[id] = item;
-	}
-	return obj;
-}
-
-export const getPetsState = (state: AppState) => state.currentHero.present.pets;
+import { getPets } from './stateSelectors';
 
 export const getPet = createSelector(
-	getPetsState,
-	pets => [...pets.values()][0]
+  getPets,
+  maybePets => maybePets.bind(pets => pets.elems().head())
 );
 
-export const getPets = createSelector(
-	getPetsState,
-	pets => [...pets.values()]
+export const getAllPets = createSelector(
+  getPets,
+  maybePets => maybePets.map(pets => pets.elems())
 );

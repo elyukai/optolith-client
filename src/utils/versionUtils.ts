@@ -2,7 +2,7 @@ import { remote } from 'electron';
 import * as fs from 'fs';
 import * as path from 'path';
 import { lt, lte, satisfies } from 'semver';
-import { ActiveObject } from '../types/data.d';
+import { ActiveObject } from '../types/data';
 import { RawHero } from '../types/rawdata';
 import { StringKeyObject } from './dataUtils';
 import { getBlessedTraditionInstanceIdByNumericId, getMagicalTraditionInstanceIdByNumericId } from './IDUtils';
@@ -12,7 +12,8 @@ export const currentVersion = JSON.parse(fs.readFileSync(
   'utf8'
 )).version as string;
 
-const convertLowerThan0$49$5 = (hero: RawHero): RawHero => {
+// tslint:disable-next-line:variable-name
+const convertLowerThan0_49_5 = (hero: RawHero): RawHero => {
   const entry = { ...hero };
 
   const newActivatable: StringKeyObject<ActiveObject[]> = {};
@@ -552,7 +553,8 @@ const convertLowerThan0$49$5 = (hero: RawHero): RawHero => {
   return entry;
 };
 
-const convertLowerThanOrEqual0$51$0 = (hero: RawHero): RawHero => {
+// tslint:disable-next-line:variable-name
+const convertLowerThanOrEqual0_51_0 = (hero: RawHero): RawHero => {
   const entry = { ...hero };
 
   const oldRaceId = entry.r;
@@ -617,7 +619,8 @@ const convertLowerThanOrEqual0$51$0 = (hero: RawHero): RawHero => {
   return entry;
 };
 
-const convertLowerThanOrEqual0$51$2 = (hero: RawHero): RawHero => {
+// tslint:disable-next-line:variable-name
+const convertLowerThanOrEqual0_51_2 = (hero: RawHero): RawHero => {
   const entry = { ...hero };
 
   if (entry.activatable.hasOwnProperty('SA_243') && entry.activatable.hasOwnProperty('SA_255')) {
@@ -638,7 +641,8 @@ const convertLowerThanOrEqual0$51$2 = (hero: RawHero): RawHero => {
   return entry;
 };
 
-const convertLowerThanOrEqual0$51$3 = (hero: RawHero): RawHero => {
+// tslint:disable-next-line:variable-name
+const convertLowerThanOrEqual0_51_3 = (hero: RawHero): RawHero => {
   const entry = { ...hero };
 
   if (entry.activatable.hasOwnProperty('SA_344')) {
@@ -739,7 +743,8 @@ const convertLowerThanOrEqual0$51$3 = (hero: RawHero): RawHero => {
   return entry;
 };
 
-const convertLowerThan1$0$0 = (hero: RawHero): RawHero => {
+// tslint:disable-next-line:variable-name
+const convertLowerThan1_0_0 = (hero: RawHero): RawHero => {
   const entry = { ...hero };
 
   if (
@@ -755,7 +760,8 @@ const convertLowerThan1$0$0 = (hero: RawHero): RawHero => {
   return entry;
 };
 
-const convertLowerThan1$0$2 = (hero: RawHero): RawHero => {
+// tslint:disable-next-line:variable-name
+const convertLowerThan1_0_2 = (hero: RawHero): RawHero => {
   const entry = { ...hero };
 
   let adjValue = 0;
@@ -792,30 +798,30 @@ export const convertHero = (hero: RawHero): RawHero => {
   let entry = { ...hero };
 
   if (lt(entry.clientVersion, '0.49.5')) {
-    entry = convertLowerThan0$49$5(entry);
+    entry = convertLowerThan0_49_5(entry);
   }
 
   if (
     lte(entry.clientVersion.split(/-/)[0], '0.51.0')
     || entry.clientVersion === '0.51.1-alpha.1'
   ) {
-    entry = convertLowerThanOrEqual0$51$0(entry);
+    entry = convertLowerThanOrEqual0_51_0(entry);
   }
 
   if (satisfies(entry.clientVersion.split(/-/)[0], '<= 0.51.2 || <= 0.51.3-alpha.3')) {
-    entry = convertLowerThanOrEqual0$51$2(entry);
+    entry = convertLowerThanOrEqual0_51_2(entry);
   }
 
   if (satisfies(entry.clientVersion, '<= 0.51.3 || < 0.51.4-alpha.6')) {
-    entry = convertLowerThanOrEqual0$51$3(entry);
+    entry = convertLowerThanOrEqual0_51_3(entry);
   }
 
   if (satisfies(entry.clientVersion, '< 1.0.0')) {
-    entry = convertLowerThan1$0$0(entry);
+    entry = convertLowerThan1_0_0(entry);
   }
 
   if (satisfies(entry.clientVersion, '< 1.0.2')) {
-    entry = convertLowerThan1$0$2(entry);
+    entry = convertLowerThan1_0_2(entry);
   }
 
   return entry;

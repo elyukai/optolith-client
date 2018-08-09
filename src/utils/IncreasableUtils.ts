@@ -1,4 +1,4 @@
-import { ValueBasedDependent } from '../types/data.d';
+import { ValueBasedDependent } from '../types/data';
 import { SkillishEntry } from '../types/wiki';
 import { areSufficientAPAvailable } from './adventurePointsUtils';
 import { Maybe, Record } from './dataUtils';

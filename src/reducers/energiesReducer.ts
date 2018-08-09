@@ -1,7 +1,7 @@
 import * as AttributesActions from '../actions/AttributesActions';
 import * as ProfessionActions from '../actions/ProfessionActions';
 import { ActionTypes } from '../constants/ActionTypes';
-import * as Data from '../types/data.d';
+import * as Data from '../types/data';
 import { Record } from '../utils/dataUtils';
 
 type AddedEnergyAction =

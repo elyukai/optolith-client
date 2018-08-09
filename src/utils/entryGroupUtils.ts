@@ -1,4 +1,4 @@
-import * as Data from '../types/data.d';
+import * as Data from '../types/data';
 import { WikiAll } from '../types/wiki';
 import { List, Record } from './dataUtils';
 import { getAllEntriesByGroup } from './heroStateUtils';

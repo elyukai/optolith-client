@@ -1,8 +1,8 @@
 import R from 'ramda';
 import * as Categories from '../constants/Categories';
 import { IdPrefixes } from '../constants/IdPrefixes';
-import * as Raw from '../types/rawdata.d';
-import * as Wiki from '../types/wiki.d';
+import * as Raw from '../types/rawdata';
+import * as Wiki from '../types/wiki';
 import { Just, List, Maybe, Nothing, Record, Tuple } from './dataUtils';
 import { getCategoryById, getRawStringId } from './IDUtils';
 

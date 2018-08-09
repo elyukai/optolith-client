@@ -2,7 +2,7 @@ import { ActionTypes } from '../constants/ActionTypes';
 import { getAvailableAdventurePoints } from '../selectors/adventurePointsSelectors';
 import { isInCharacterCreation } from '../selectors/phaseSelectors';
 import { getLiturgicalChants, getLocaleMessages } from '../selectors/stateSelectors';
-import { AsyncAction } from '../types/actions.d';
+import { AsyncAction } from '../types/actions';
 import { validate } from '../utils/APUtils';
 import { translate } from '../utils/I18n';
 import { getDecreaseAP, getIncreaseAP } from '../utils/ICUtils';

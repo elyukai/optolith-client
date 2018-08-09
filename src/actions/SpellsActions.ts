@@ -2,14 +2,14 @@ import { ActionTypes } from '../constants/ActionTypes';
 import { getAvailableAdventurePoints } from '../selectors/adventurePointsSelectors';
 import { isInCharacterCreation } from '../selectors/phaseSelectors';
 import { getLocaleMessages, getSpells } from '../selectors/stateSelectors';
-import { AsyncAction } from '../types/actions.d';
+import { AsyncAction } from '../types/actions';
+import * as Wiki from '../types/wiki';
 import { validate } from '../utils/APUtils';
+import { Record } from '../utils/dataUtils';
 import { translate } from '../utils/I18n';
 import { getDecreaseAP, getIncreaseAP } from '../utils/ICUtils';
 import { getDecreaseCost, getIncreaseCost } from '../utils/IncreasableUtils';
 import { addAlert } from './AlertActions';
-import { Record } from '../utils/dataUtils';
-import * as Wiki from '../types/wiki.d';
 
 export interface ActivateSpellAction {
   type: ActionTypes.ACTIVATE_SPELL;

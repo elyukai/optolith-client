@@ -1,6 +1,6 @@
 import R from 'ramda';
 import { IdPrefixes } from '../constants/IdPrefixes';
-import { Dependent, HeroDependent } from '../types/data.d';
+import { Dependent, HeroDependent } from '../types/data';
 import { EntryWithGroup } from '../types/wiki';
 import { createActivatableDependent, createActivatableDependentSkill, createAttributeDependent, createDependentSkill } from './createEntryUtils';
 import { Just, List, Maybe, Nothing, OrderedMap, Record, RecordKey } from './dataUtils';

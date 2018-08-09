@@ -1,12 +1,11 @@
 import { createSelector } from 'reselect';
-import { getAdvantages, getDisadvantages, getLocaleMessages, getSpecialAbilities, getWikiAdvantages, getWikiAttributes, getWikiBlessings, getWikiBooks, getWikiCantrips, getWikiCombatTechniques, getWikiCombatTechniquesGroup, getWikiCultures, getWikiDisadvantages, getWikiExperienceLevels, getWikiFilterText, getWikiItemTemplates, getWikiItemTemplatesGroup, getWikiLiturgicalChants, getWikiLiturgicalChantsGroup, getWikiMainCategory, getWikiProfessions, getWikiProfessionsGroup, getWikiProfessionVariants, getWikiRaces, getWikiRaceVariants, getWikiSkills, getWikiSkillsGroup, getWikiSpecialAbilities, getWikiSpecialAbilitiesGroup, getWikiSpells, getWikiSpellsGroup } from '../selectors/stateSelectors';
-import { SpecialAbilityInstance } from '../types/data';
-import { Cantrip, CombatTechnique, Culture, ItemTemplate, LiturgicalChant, Profession, Race, Skill, Spell } from '../types/wiki';
-import { AllSortOptions, filterObjects, sortObjects } from '../utils/FilterSortUtils';
+import { getAdvantages, getDisadvantages, getLocaleMessages, getSpecialAbilities, getWikiAdvantages, getWikiBlessings, getWikiCantrips, getWikiCombatTechniques, getWikiCombatTechniquesGroup, getWikiCultures, getWikiDisadvantages, getWikiFilterText, getWikiItemTemplates, getWikiItemTemplatesGroup, getWikiLiturgicalChants, getWikiLiturgicalChantsGroup, getWikiProfessions, getWikiProfessionsGroup, getWikiRaces, getWikiSkills, getWikiSkillsGroup, getWikiSpecialAbilities, getWikiSpecialAbilitiesGroup, getWikiSpells, getWikiSpellsGroup } from '../selectors/stateSelectors';
+import { Profession } from '../types/wiki';
+import { List } from '../utils/dataUtils';
+import { filterObjects, sortObjects } from '../utils/FilterSortUtils';
 import { translate } from '../utils/I18n';
 import { getItems } from './equipmentSelectors';
 import { getAllProfessions } from './rcpSelectors';
-import { getCombatTechniquesSortOrder, getCulturesSortOrder, getEquipmentSortOrder, getLiturgiesSortOrder, getProfessionsSortOrder, getRacesSortOrder, getSpecialAbilitiesSortOrder, getSpellsSortOrder, getTalentsSortOrder } from './uisettingsSelectors';
 
 const getFirstPartWikiEntries = createSelector(
   getWikiBlessings,
@@ -23,23 +22,28 @@ const getFirstPartWikiEntries = createSelector(
   // getWikiBooks,
   // getWikiDisadvantages,
   // getWikiExperienceLevels,
-  (blessings, cantrips, combatTechniques, cultures, itemTemplates, items, advantages, disadvantages, specialAbilties) => {
-    return [
-      ...blessings.values(),
-      ...cantrips.values(),
-      ...combatTechniques.values(),
-      ...cultures.values(),
-      ...itemTemplates.values(),
+  (
+    blessings,
+    cantrips,
+    combatTechniques,
+    cultures,
+    itemTemplates,
+    items,
+    advantages,
+    disadvantages,
+    specialAbilties
+  ) => {
+    return List.of(
+      ...blessings.elems(),
+      ...cantrips.elems(),
+      ...combatTechniques.elems(),
+      ...cultures.elems(),
+      ...itemTemplates.elems(),
       ...items,
-      ...advantages.values(),
-      ...disadvantages.values(),
-      ...specialAbilties.values(),
-      // ...advantages.values(),
-      // ...attributes.values(),
-      // ...books.values(),
-      // ...disadvantages.values(),
-      // ...experienceLevels.values(),
-    ];
+      ...advantages.elems(),
+      ...disadvantages.elems(),
+      ...specialAbilties.elems(),
+    );
   }
 );
 
@@ -50,21 +54,16 @@ export const getAllWikiEntries = createSelector(
   getWikiRaces,
   getWikiSkills,
   getWikiSpells,
-  // getWikiProfessionVariants,
-  // getWikiRaceVariants,
-  // getWikiSpecialAbilities,
   (firstPart, liturgicalChants, professions, races, skills, spells) => {
-    return [
-      ...firstPart,
-      ...liturgicalChants.values(),
-      ...professions,
-      // ...professionVariants.values(),
-      ...races.values(),
-      // ...raceVariants.values(),
-      ...skills.values(),
-      // ...specialAbilities.values(),
-      ...spells.values()
-    ];
+    return firstPart.concat(
+      List.of(
+        ...liturgicalChants.elems(),
+        ...professions,
+        ...races.elems(),
+        ...skills.elems(),
+        ...spells.elems()
+      )
+    );
   }
 );
 

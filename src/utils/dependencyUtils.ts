@@ -1,7 +1,7 @@
 import R from 'ramda';
 import { Categories } from '../constants/Categories';
-import * as Data from '../types/data.d';
-import * as Wiki from '../types/wiki.d';
+import * as Data from '../types/data';
+import * as Wiki from '../types/wiki';
 import * as AddDependencyUtils from './addDependencyUtils';
 import * as CheckPrerequisiteUtils from './checkPrerequisiteUtils';
 import { List, Maybe, Record } from './dataUtils';

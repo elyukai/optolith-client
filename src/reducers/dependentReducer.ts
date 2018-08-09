@@ -8,7 +8,7 @@ import * as SpecialAbilitiesActions from '../actions/SpecialAbilitiesActions';
 import * as SpellsActions from '../actions/SpellsActions';
 import * as TalentsActions from '../actions/TalentsActions';
 import { ActionTypes } from '../constants/ActionTypes';
-import * as Data from '../types/data.d';
+import * as Data from '../types/data';
 import { Record } from '../utils/dataUtils';
 import { activatableReducer } from './activatableReducer';
 import { increasableReducer } from './increasableReducer';

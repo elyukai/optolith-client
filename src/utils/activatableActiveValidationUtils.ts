@@ -1,7 +1,16 @@
+/**
+ * Contains helper functions for calculating restrictions of changing active
+ * `Activatables`: Minimum level, maximum level and if the entry can be removed.
+ *
+ * @file src/utils/activatableActiveValidationUtils.ts
+ * @author Lukas Obermann
+ * @since 1.1.0
+ */
+
 import R from 'ramda';
 import { ActivatableCategory, Categories } from '../constants/Categories';
-import * as Data from '../types/data.d';
-import * as Wiki from '../types/wiki.d';
+import * as Data from '../types/data';
+import * as Wiki from '../types/wiki';
 import { countActiveSkillEntries } from './activatableSkillUtils';
 import { Just, List, Maybe, Record } from './dataUtils';
 import { countActiveGroupEntries } from './entryGroupUtils';
@@ -9,7 +18,7 @@ import { isStyleValidToRemove } from './ExtendedStyleUtils';
 import { flattenPrerequisites } from './flattenPrerequisites';
 import { getAllEntriesByGroup, getHeroStateListItem } from './heroStateUtils';
 import { isActive } from './isActive';
-import { isOwnTradition } from './LiturgyUtils';
+import { isOwnTradition } from './liturgicalChantUtils';
 import { match } from './match';
 import { getActiveSelections } from './selectionUtils';
 import { getBlessedTraditionFromWiki, getMagicalTraditions } from './traditionUtils';
@@ -302,7 +311,7 @@ const isRemovalDisabledEntrySpecific = (
                           const id = r.get('id');
                           const origin = dep.lookup('origin');
 
-                          return typeof id !== 'string'
+                          return id instanceof List
                             && Maybe.isJust(origin)
                             && id.elem(Maybe.fromJust(origin));
                         }

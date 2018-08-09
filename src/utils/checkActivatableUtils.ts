@@ -1,5 +1,5 @@
-import * as Data from '../types/data.d';
-import { Activatable, AllRequirements } from '../types/wiki.d';
+import * as Data from '../types/data';
+import { Activatable, AllRequirements } from '../types/wiki';
 import { isRequiringActivatable } from './checkPrerequisiteUtils';
 import { Record } from './dataUtils';
 import { getFirstTierPrerequisites } from './flattenPrerequisites';
@@ -8,8 +8,8 @@ const getMagicalOrBlessedFilter =
   (advantageId: 'ADV_12' | 'ADV_50') =>
     (e: AllRequirements) =>
       e !== 'RCP'
-        && e.get('id') === advantageId
         && isRequiringActivatable(e)
+        && e.get('id') === advantageId
         && e.get('active');
 
 export const isMagicalOrBlessed = (obj: Activatable) => {

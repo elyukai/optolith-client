@@ -1,5 +1,5 @@
-import * as Data from '../types/data.d';
-import * as Wiki from '../types/wiki.d';
+import * as Data from '../types/data';
+import * as Wiki from '../types/wiki';
 import { Maybe, Record } from './dataUtils';
 
 export function reduce<T>(

@@ -1,5 +1,5 @@
 import R from 'ramda';
-import * as Data from '../types/data.d';
+import * as Data from '../types/data';
 import { CombatTechnique, WikiAll } from '../types/wiki';
 import { List, Maybe, Record } from './dataUtils';
 import { flattenDependencies } from './flattenDependencies';

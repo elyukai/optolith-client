@@ -2,14 +2,14 @@ import { connect } from 'react-redux';
 import { Action, Dispatch } from 'redux';
 import * as PactActions from '../actions/PactActions';
 import { AppState } from '../reducers/app';
-import { isPactEditable, isPactValid } from '../selectors/pactSelectors';
+import { getIsPactValid, isPactEditable } from '../selectors/pactSelectors';
 import { getPact } from '../selectors/stateSelectors';
 import { PactSettings, PactSettingsDispatchProps, PactSettingsOwnProps, PactSettingsStateProps } from '../views/pact/Pact';
 
 function mapStateToProps(state: AppState) {
 	return {
 		pact: getPact(state),
-		isPactValid: isPactValid(state),
+		isPactValid: getIsPactValid(state),
 		isPactEditable: isPactEditable(state),
 	};
 }

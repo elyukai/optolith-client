@@ -1,8 +1,8 @@
 import { ActionTypes } from '../constants/ActionTypes';
-import { AsyncAction } from '../types/actions.d';
-import { Selections } from '../types/data.d';
-import { Race, Skill, Culture, Profession, ProfessionVariant, WikiAll } from '../types/wiki';
-import { Maybe, Record, OrderedMap } from '../utils/dataUtils';
+import { AsyncAction } from '../types/actions';
+import { Selections } from '../types/data';
+import { Culture, Profession, ProfessionVariant, Race, WikiAll } from '../types/wiki';
+import { Maybe, Record } from '../utils/dataUtils';
 
 export interface SelectProfessionAction {
   type: ActionTypes.SELECT_PROFESSION;

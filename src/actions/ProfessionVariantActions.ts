@@ -1,6 +1,6 @@
 import { ActionTypes } from '../constants/ActionTypes';
 import { getCurrentProfessionVariantId, getDependentInstances } from '../selectors/stateSelectors';
-import { AsyncAction } from '../types/actions.d';
+import { AsyncAction } from '../types/actions';
 import { getDiffCost } from '../utils/RCPUtils';
 
 export interface SelectProfessionVariantAction {

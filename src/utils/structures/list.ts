@@ -1,6 +1,6 @@
 import R from 'ramda';
-import * as Al from '../../types/algebraic.d';
-import { Maybe, Some } from './maybe';
+import * as Al from '../../types/algebraic';
+import { Just, Maybe, Nothing, Some } from './maybe';
 import { OrderedMap } from './orderedMap';
 import { Tuple } from './tuple';
 
@@ -91,6 +91,24 @@ export class List<T> implements Al.Functor<T>, Al.Foldable<T>, Al.Semigroup<T>,
   }
 
   /**
+   * `uncons :: [a] -> Maybe (a, [a])`
+   *
+   * Decompose a list into its head and tail. If the list is empty, returns
+   * `Nothing`. If the list is non-empty, returns `Just (x, xs)`, where `x` is
+   * the head of the list and `xs` its tail.
+   */
+  uncons(): Maybe<Tuple<T, List<T>>> {
+    if (this.null()) {
+      return Nothing();
+    }
+    else {
+      const [head, ...tail] = this.value;
+
+      return Just(Tuple.of(head, List.of(...tail)));
+    }
+  }
+
+  /**
    * `null :: Foldable t => t a -> Bool`
    *
    * Test whether the structure is empty.
@@ -126,6 +144,16 @@ export class List<T> implements Al.Functor<T>, Al.Foldable<T>, Al.Semigroup<T>,
    */
   imap<U>(fn: (index: number) => (x: T) => U): List<U> {
     return List.of(...this.value.map((e, i) => fn(i)(e)));
+  }
+
+  /**
+   * `reverse :: [a] -> [a]`
+   *
+   * `reverse xs` returns the elements of `xs` in reverse order. `xs` must be
+   * finite.
+   */
+  reverse(): List<T> {
+    return List.of(...[...this.value].reverse());
   }
 
   /**
@@ -253,6 +281,28 @@ export class List<T> implements Al.Functor<T>, Al.Foldable<T>, Al.Semigroup<T>,
   }
 
   /**
+   * `and :: Foldable t => t Bool -> Bool`
+   *
+   * `and` returns the conjunction of a container of Bools. For the result to be
+   * `True`, the container must be finite; `False`, however, results from a
+   * `False` value finitely far from the left end.
+   */
+  and(this: List<boolean>): boolean {
+    return this.value.every(e => e === true);
+  }
+
+  /**
+   * `or :: Foldable t => t Bool -> Bool`
+   *
+   * `or` returns the disjunction of a container of Bools. For the result to be
+   * `False`, the container must be finite; `True`, however, results from a
+   * `True` value finitely far from the left end.
+   */
+  or(this: List<boolean>): boolean {
+    return this.value.some(e => e === true);
+  }
+
+  /**
    * `any :: Foldable t => (a -> Bool) -> t a -> Bool`
    *
    * Determines whether any element of the structure satisfies the predicate.
@@ -322,6 +372,43 @@ export class List<T> implements Al.Functor<T>, Al.Foldable<T>, Al.Semigroup<T>,
    */
   minimum(this: List<number>): number {
     return Math.min(...this.value);
+  }
+
+  // BUILDING LISTS
+
+  // SCANS
+
+  /**
+   * `scanl :: (b -> a -> b) -> b -> [a] -> [b]`
+   *
+   * scanl is similar to foldl, but returns a list of successive reduced values
+   * from the left:
+   *
+   * ```scanl f z [x1, x2, ...] == [z, z `f` x1, (z `f` x1) `f` x2, ...]```
+   *
+   * Note that
+   *
+   * ```last (scanl f z xs) == foldl f z xs.```
+   */
+  scanl<U extends Some>(fn: (acc: U) => (current: T) => U): (initial: U) => List<U>;
+  scanl<U extends Some>(fn: (acc: U) => (current: T) => U, initial: U): List<U>;
+  scanl<U extends Some>(
+    fn: (acc: U) => (current: T) => U,
+    initial?: U
+  ): List<U> | ((initial: U) => List<U>) {
+    const resultFn = (x1: (acc: U) => (current: T) => U) => (x2: U) =>
+      List.of(
+        ...this.value.reduce<U[]>(
+          (acc, e, index) => [...acc, x1(acc[index])(e)],
+          [x2]
+        )
+      );
+
+    if (arguments.length === 2) {
+      return resultFn(fn)(initial!);
+    }
+
+    return resultFn(fn);
   }
 
   // EXTRACTING SUBLISTS
@@ -417,6 +504,50 @@ export class List<T> implements Al.Functor<T>, Al.Foldable<T>, Al.Semigroup<T>,
   ifilter(pred: (index: number) => (x: T) => boolean): List<T>;
   ifilter(pred: (index: number) => (x: T) => boolean): List<T> {
     return List.of(...this.value.filter((e, i) => pred(i)(e)));
+  }
+
+  /**
+   * `partition :: (a -> Bool) -> [a] -> ([a], [a])`
+   *
+   * The `partition` function takes a predicate a list and returns the pair of
+   * lists of elements which do and do not satisfy the predicate, respectively.
+   *
+```
+>>> partition (`elem` "aeiou") "Hello World!"
+("eoo","Hll Wrld!")
+```
+   */
+  partition(f: (value: T) => boolean): Tuple<List<T>, List<T>> {
+    const pair = this.value.reduce<[List<T>, List<T>]>(
+      ([included, excluded], value) => f(value)
+        ? [included.append(value), excluded]
+        : [included, excluded.append(value)],
+      [List.of(), List.of()]
+    );
+
+    return Tuple.of(...pair);
+  }
+
+  /**
+   * `ipartition :: (Int ->a -> Bool) -> [a] -> ([a], [a])`
+   *
+   * The `ipartition` function takes a predicate a list and returns the pair of
+   * lists of elements which do and do not satisfy the predicate, respectively.
+   *
+```
+>>> partition (`elem` "aeiou") "Hello World!"
+("eoo","Hll Wrld!")
+```
+   */
+  ipartition(f: (index: number) => (value: T) => boolean): Tuple<List<T>, List<T>> {
+    const pair = this.value.reduce<[List<T>, List<T>]>(
+      ([included, excluded], value, index) => f(index)(value)
+        ? [included.append(value), excluded]
+        : [included, excluded.append(value)],
+      [List.of(), List.of()]
+    );
+
+    return Tuple.of(...pair);
   }
 
   // INDEXING LISTS
@@ -769,5 +900,65 @@ export class List<T> implements Al.Functor<T>, Al.Foldable<T>, Al.Semigroup<T>,
 
   static maximum(list: List<number>): number {
     return Math.max(...list.value);
+  }
+
+  // UNFOLDING
+
+  /**
+   * `unfoldr :: (b -> Maybe (a, b)) -> b -> [a]`
+   *
+   * The `unfoldr` function is a 'dual' to `foldr`: while `foldr` reduces a list
+   * to a summary value, `unfoldr` builds a list from a seed value. The function
+   * takes the element and returns `Nothing` if it is done producing the list or
+   * returns `Just (a,b)`, in which case, `a` is a prepended to the list and `b`
+   * is used as the next element in a recursive call. For example,
+```hs
+iterate f == unfoldr (\x -> Just (x, f x))
+```
+   *
+   * In some cases, unfoldr can undo a foldr operation:
+   *
+```hs
+unfoldr f' (foldr f z xs) == xs
+```
+   *
+   * if the following holds:
+   *
+```hs
+f' (f x y) = Just (x,y)
+f' z       = Nothing
+```
+   *
+   * A simple use of unfoldr:
+   *
+```hs
+>>> unfoldr (\b -> if b == 0 then Nothing else Just (b, b-1)) 10
+[10,9,8,7,6,5,4,3,2,1]
+```
+   */
+  static unfoldr<T, U>(f: (value: U) => Maybe<Tuple<T, U>>): (seedValue?: U) => List<T>;
+  static unfoldr<T, U>(f: (value: U) => Maybe<Tuple<T, U>>, seedValue: U): List<T>;
+  static unfoldr<T, U>(
+    f: (value: U) => Maybe<Tuple<T, U>>,
+    seedValue?: U
+  ): List<T> | ((seedValue: U) => List<T>) {
+    const buildList = (acc: List<T>, value: U): List<T> => {
+      const result = f(value);
+
+      if (Maybe.isJust(result)) {
+        const newValue = Maybe.fromJust(result);
+
+        return buildList(acc.append(Tuple.fst(newValue)), Tuple.snd(newValue));
+      }
+
+      return acc;
+    };
+
+    if (arguments.length === 2) {
+      return buildList(List.of(), seedValue!);
+    }
+    else {
+      return x2 => buildList(List.of(), x2);
+    }
   }
 }

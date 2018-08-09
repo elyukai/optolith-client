@@ -1,6 +1,6 @@
 import { ActivatableCategories, ActivatableCategory, Categories } from '../constants/Categories';
-import { Profession as ProfessionView } from '../types/view.d';
-import * as Wiki from '../types/wiki.d';
+import { ProfessionCombined } from '../types/view';
+import * as Wiki from '../types/wiki';
 import { List, Maybe, OrderedMap, Record } from './dataUtils';
 import { getCategoryById } from './IDUtils';
 
@@ -84,7 +84,7 @@ type ElementMixed =
   // ActivatableInstance |
   Record<Wiki.Race> |
   Record<Wiki.Culture> |
-  Record<ProfessionView> |
+  Record<ProfessionCombined> |
   Record<Wiki.Advantage> |
   Record<Wiki.Disadvantage> |
   Record<Wiki.Skill> |

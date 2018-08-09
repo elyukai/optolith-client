@@ -1,5 +1,5 @@
 import R from 'ramda';
-import { ActivatablePrerequisites, LevelAwarePrerequisites } from '../types/wiki.d';
+import { ActivatablePrerequisites, LevelAwarePrerequisites } from '../types/wiki';
 import { OrderedMap } from './dataUtils';
 
 type PrerequisiteFilter = (key: number) =>

@@ -1,6 +1,6 @@
 import { clipboard } from 'electron';
 import { ActionTypes } from '../constants/ActionTypes';
-import { Alert } from '../types/data.d';
+import { Alert } from '../types/data';
 import { translate, UIMessages } from '../utils/I18n';
 
 export interface AddAlertAction {

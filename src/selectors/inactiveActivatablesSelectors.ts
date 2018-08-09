@@ -24,8 +24,8 @@ export const getDeactiveForView = <T extends ActivatableCategory>(category: T) =
     stateSelectors.getCurrentHeroPresent,
     stateSelectors.getLocaleMessages,
     getExtendedSpecialAbilitiesToAdd,
-		getAdventurePointsObject,
-		getValidPact,
+    getAdventurePointsObject,
+    getValidPact,
     (state, locale, validExtendedSpecialAbilities, adventurePoints, pact) => {
       const { dependent } = state;
       const allEntries = getMapByCategory(dependent, category) as Map<string, Data.InstanceByCategory[T]>;
@@ -33,13 +33,13 @@ export const getDeactiveForView = <T extends ActivatableCategory>(category: T) =
       if (locale) {
         for (const entry of allEntries) {
           const obj = getDeactiveView(
-						entry[1],
-						state,
-						validExtendedSpecialAbilities,
-						locale,
-						adventurePoints,
-						pact,
-					);
+            entry[1],
+            state,
+            validExtendedSpecialAbilities,
+            locale,
+            adventurePoints,
+            pact,
+          );
           if (obj) {
             finalEntries.push(obj);
           }
@@ -52,24 +52,24 @@ export const getDeactiveForView = <T extends ActivatableCategory>(category: T) =
 
 export const getDeactiveAdvantages = createSelector(
   getDeactiveForView(Categories.ADVANTAGES),
-	getRuleBooksEnabled,
-	(list, availablility) => {
-		return filterByInstancePropertyAvailability(list, availablility);
-	}
+  getRuleBooksEnabled,
+  (list, availablility) => {
+    return filterByInstancePropertyAvailability(list, availablility);
+  }
 );
 
 export const getDeactiveDisadvantages = createSelector(
   getDeactiveForView(Categories.DISADVANTAGES),
-	getRuleBooksEnabled,
-	(list, availablility) => {
-		return filterByInstancePropertyAvailability(list, availablility);
-	}
+  getRuleBooksEnabled,
+  (list, availablility) => {
+    return filterByInstancePropertyAvailability(list, availablility);
+  }
 );
 
 export const getDeactiveSpecialAbilities = createSelector(
   getDeactiveForView(Categories.SPECIAL_ABILITIES),
-	getRuleBooksEnabled,
-	(list, availablility) => {
-		return filterByInstancePropertyAvailability(list, availablility);
-	}
+  getRuleBooksEnabled,
+  (list, availablility) => {
+    return filterByInstancePropertyAvailability(list, availablility);
+  }
 );

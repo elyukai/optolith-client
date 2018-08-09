@@ -1,6 +1,6 @@
 import { AddAlertAction, RemoveAlertAction } from '../actions/AlertActions';
 import { ActionTypes } from '../constants/ActionTypes';
-import { Alert } from '../types/data.d';
+import { Alert } from '../types/data';
 import { List } from '../utils/dataUtils';
 
 type Action = AddAlertAction | RemoveAlertAction;

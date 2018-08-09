@@ -1,547 +1,584 @@
 import { createSelector } from 'reselect';
 import { Categories } from '../constants/Categories';
-import { Culture, Increasable, Profession, ProfessionVariant, Race } from '../types/view.d';
-import * as ActivatableUtils from '../utils/ActivatableUtils';
+import { ActivatableNameCostActive, ActiveObjectWithId } from '../types/data';
+import { CultureCombined, IncreasableView, MappedProfession, MappedProfessionVariant, ProfessionCombined, ProfessionVariantCombined, RaceCombined } from '../types/view';
+import { Culture } from '../types/wiki';
+import { getNameCostForWiki } from '../utils/activatableActiveUtils';
+import { convertPerTierCostToFinalCost } from '../utils/activatableCostUtils';
+import { isProfessionRequiringActivatable, isProfessionRequiringIncreasable } from '../utils/checkPrerequisiteUtils';
+import { Just, List, ListElement, Maybe, Record } from '../utils/dataUtils';
 import { filterAndSortObjects, FilterOptions } from '../utils/FilterSortUtils';
 import { getCategoryById } from '../utils/IDUtils';
-import { isRequiringIncreasable, validateProfession } from '../utils/RequirementUtils';
 import { filterByAvailability, isEntryFromCoreBook } from '../utils/RulesUtils';
+import { validateProfession } from '../utils/validatePrerequisitesUtils';
 import { isCombatTechniquesSelection } from '../utils/WikiUtils';
 import { getStartEl } from './elSelectors';
 import { getRuleBooksEnabled } from './rulesSelectors';
 import { getCulturesSortOptions, getProfessionsSortOptions, getRacesSortOptions } from './sortOptionsSelectors';
-import { getCulturesFilterText, getCurrentCultureId, getCurrentProfessionId, getCurrentProfessionVariantId, getCurrentRaceId, getCurrentRaceVariantId, getLocaleMessages, getProfessionsFilterText, getRacesFilterText, getSex, getWiki, getWikiCombatTechniques, getWikiCultures, getWikiProfessions, getWikiProfessionVariants, getWikiRaces, getWikiRaceVariants, getWikiSkills } from './stateSelectors';
+import { getCulturesFilterText, getCurrentCultureId, getCurrentProfessionId, getCurrentProfessionVariantId, getCurrentRaceId, getCurrentRaceVariantId, getLocaleAsProp, getLocaleMessages, getProfessionsFilterText, getRacesFilterText, getSex, getWiki, getWikiCultures, getWikiProfessions, getWikiProfessionVariants, getWikiRaces, getWikiRaceVariants, getWikiSkills } from './stateSelectors';
 import { getCulturesVisibilityFilter, getProfessionsGroupVisibilityFilter, getProfessionsVisibilityFilter } from './uisettingsSelectors';
 
 export const getCurrentRace = createSelector(
-	getWikiRaces,
-	getCurrentRaceId,
-	(races, raceId) => raceId ? races.get(raceId) : undefined
+  getWikiRaces,
+  getCurrentRaceId,
+  (races, raceId) => raceId.bind(races.lookup)
 );
 
 export const getCurrentRaceVariant = createSelector(
-	getWikiRaceVariants,
-	getCurrentRaceVariantId,
-	(raceVariants, raceVariantId) => raceVariantId ? raceVariants.get(raceVariantId) : undefined
+  getWikiRaceVariants,
+  getCurrentRaceVariantId,
+  (raceVariants, raceVariantId) => raceVariantId.bind(raceVariants.lookup)
 );
 
 export const getCurrentCulture = createSelector(
-	getWikiCultures,
-	getCurrentCultureId,
-	(cultures, cultureId) => cultureId ? cultures.get(cultureId) : undefined
+  getWikiCultures,
+  getCurrentCultureId,
+  (cultures, cultureId) => cultureId.bind(cultures.lookup)
 );
 
 export const getCurrentProfession = createSelector(
-	getWikiProfessions,
-	getCurrentProfessionId,
-	(professions, professionId) => professionId ? professions.get(professionId) : undefined
+  getWikiProfessions,
+  getCurrentProfessionId,
+  (professions, professionId) => professionId.bind(professions.lookup)
 );
 
 export const getCurrentProfessionVariant = createSelector(
-	getWikiProfessionVariants,
-	getCurrentProfessionVariantId,
-	(professionVariants, professionVariantId) => professionVariantId ? professionVariants.get(professionVariantId) : undefined
+  getWikiProfessionVariants,
+  getCurrentProfessionVariantId,
+  (professionVariants, professionVariantId) => professionVariantId.bind(professionVariants.lookup)
 );
 
 export const getAllRaces = createSelector(
-	getWikiRaces,
-	getWikiRaceVariants,
-	getWikiCultures,
-	(races, raceVariants, cultures) => {
-		const list: Race[] = [];
+  getWikiRaces,
+  getWikiRaceVariants,
+  getWikiCultures,
+  (races, raceVariants, cultures) => {
+    const filterCultures = Maybe.mapMaybe<string, string>(
+      id => cultures.lookup(id).map(culture => culture.get('name'))
+    );
 
-		for (const [id, race] of races) {
-			const {
-				ap,
-				attributeAdjustmentsText,
-				automaticAdvantagesText,
-				commonAdvantagesText,
-				commonCultures,
-				commonDisadvantagesText,
-				lp,
-				mov,
-				name,
-				spi,
-				src,
-				stronglyRecommendedAdvantagesText,
-				stronglyRecommendedDisadvantagesText,
-				tou,
-				uncommonAdvantagesText,
-				uncommonDisadvantagesText,
-				variants: variantIds
-			} = race;
-
-			const filterCultures = (cultureIds: string[]) => cultureIds.filter(e => cultures.has(e)).map(e => cultures.get(e)!.name);
-
-			const filteredCultures = filterCultures(commonCultures);
-
-			const filteredVariants = variantIds.filter(e => raceVariants.has(e)).map(e => raceVariants.get(e)!);
-
-			list.push({
-				id,
-				name,
-				ap,
-				lp,
-				spi,
-				tou,
-				mov,
-				attributeAdjustments: attributeAdjustmentsText,
-				commonCultures: filteredCultures,
-				automaticAdvantages: automaticAdvantagesText,
-				stronglyRecommendedAdvantages: stronglyRecommendedAdvantagesText,
-				stronglyRecommendedDisadvantages: stronglyRecommendedDisadvantagesText,
-				commonAdvantages: commonAdvantagesText,
-				commonDisadvantages: commonDisadvantagesText,
-				uncommonAdvantages: uncommonAdvantagesText,
-				uncommonDisadvantages: uncommonDisadvantagesText,
-				variants: filteredVariants.map(e => {
-					const {
-						id,
-						name,
-						commonAdvantagesText,
-						commonCultures,
-						commonDisadvantagesText,
-						uncommonAdvantagesText,
-						uncommonDisadvantagesText
-					} = e;
-					return {
-						id,
-						name,
-						commonCultures: filterCultures(commonCultures),
-						commonAdvantages: commonAdvantagesText,
-						commonDisadvantages: commonDisadvantagesText,
-						uncommonAdvantages: uncommonAdvantagesText,
-						uncommonDisadvantages: uncommonDisadvantagesText
-					};
-				}),
-				src,
-				category: Categories.RACES
-			});
-		}
-
-		return list;
-	}
+    return races.elems().map<Record<RaceCombined>>(
+      race => race
+        .modify(filterCultures, 'commonCultures')
+        .merge(Record.of({
+          mappedVariants: Maybe.mapMaybe(raceVariants.lookup, race.get('variants'))
+            .map(raceVariant => raceVariant.modify(filterCultures, 'commonCultures'))
+        }))
+    );
+  }
 );
 
 export const getAvailableRaces = createSelector(
-	getAllRaces,
-	getRuleBooksEnabled,
-	(list, availablility) => {
-		return filterByAvailability(list, availablility);
-	}
+  getAllRaces,
+  getRuleBooksEnabled,
+  (list, maybeAvailablility) => maybeAvailablility.map(
+    availablility => filterByAvailability(list, availablility)
+  )
 );
 
 export const getFilteredRaces = createSelector(
-	getAvailableRaces,
-	getRacesFilterText,
-	getRacesSortOptions,
-	getLocaleMessages,
-	(list, filterText, sortOptions, locale) => {
-		return filterAndSortObjects(list, locale!.id, filterText, sortOptions);
-	}
+  getAvailableRaces,
+  getRacesFilterText,
+  getRacesSortOptions,
+  getLocaleAsProp,
+  (maybeList, filterText, sortOptions, locale) => maybeList.map(
+    list => filterAndSortObjects(list, locale.get('id'), filterText, sortOptions)
+  )
 );
 
 export const getAllCultures = createSelector(
-	getWikiCultures,
-	getWikiSkills,
-	(cultures, skills) => {
-		const list: Culture[] = [];
-
-		for (const [id, culture] of cultures) {
-			const {
-				culturalPackageAdventurePoints,
-				name,
-				culturalPackageSkills,
-				src,
-				areaKnowledge,
-				areaKnowledgeShort,
-				languages,
-				scripts,
-				commonAdvantagesText,
-				commonBlessedProfessions,
-				commonDisadvantagesText,
-				commonMagicProfessions,
-				commonMundaneProfessions,
-				commonNames,
-				uncommonAdvantagesText,
-				uncommonDisadvantagesText,
-				commonSkills,
-				uncommonSkills,
-				socialStatus
-			} = culture;
-
-			list.push({
-				id,
-				name,
-				areaKnowledge,
-				areaKnowledgeShort,
-				language: languages,
-				script: scripts,
-				socialStatus,
-				commonAdvantages: commonAdvantagesText,
-				commonBlessedProfessions,
-				commonDisadvantages: commonDisadvantagesText,
-				commonMagicProfessions,
-				commonMundaneProfessions,
-				commonSkills,
-				uncommonSkills,
-				commonNames,
-				uncommonAdvantages: uncommonAdvantagesText,
-				uncommonDisadvantages: uncommonDisadvantagesText,
-				culturalPackageAdventurePoints,
-				culturalPackageSkills: culturalPackageSkills.map(({ id, value }) => ({ name: skills.get(id)!.name, value })),
-				src,
-				category: Categories.CULTURES
-			});
-		}
-
-		return list;
-	}
+  getWikiCultures,
+  getWikiSkills,
+  (cultures, skills) =>
+    cultures.elems().map<Record<CultureCombined>>(
+      culture => culture
+        .merge(Record.of({
+          mappedCulturalPackageSkills: Maybe.mapMaybe(
+            increaseSkill => skills.lookup(increaseSkill.get('id'))
+              .map(
+                skill => increaseSkill.merge(Record.of({
+                  name: skill.get('name'),
+                }))
+              ),
+            culture.get('culturalPackageSkills')
+          )
+        }))
+    )
 );
 
 export const getCommonCultures = createSelector(
-	getCurrentRace,
-	getCurrentRaceVariant,
-	(race, raceVariant) => {
-		const raceCultures = race && race.commonCultures;
-		const raceVariantCultures = raceVariant && raceVariant.commonCultures;
-		return [ ...(raceCultures || []), ...(raceVariantCultures || [])];
-	}
+  getCurrentRace,
+  getCurrentRaceVariant,
+  (maybeRace, maybeRaceVariant) => {
+    const raceCultures = maybeRace.map(
+      race => race.get('commonCultures')
+    );
+
+    const raceVariantCultures = maybeRaceVariant.map(
+      raceVariant => raceVariant.get('commonCultures')
+    );
+
+    return List.of<string>(
+      ...Maybe.fromMaybe(List.of<string>(), raceCultures),
+      ...Maybe.fromMaybe(List.of<string>(), raceVariantCultures),
+    );
+  }
 );
 
 export const getAvailableCultures = createSelector(
-	getAllCultures,
-	getRuleBooksEnabled,
-	getCommonCultures,
-	getCulturesVisibilityFilter,
-	(list, availablility, commonCultures, visibility) => {
-		if (visibility === 'common') {
-			return filterByAvailability(list.filter(e => commonCultures.includes(e.id)), availablility);
-		}
-		return filterByAvailability(list, availablility);
-	}
+  getAllCultures,
+  getRuleBooksEnabled,
+  getCommonCultures,
+  getCulturesVisibilityFilter,
+  (list, maybeAvailablility, commonCultures, visibility) =>
+    maybeAvailablility.map(
+      availablility => visibility === 'common'
+        ? filterByAvailability(list.filter(e => commonCultures.elem(e.get('id'))), availablility)
+        : filterByAvailability(list, availablility)
+    )
 );
 
 export const getFilteredCultures = createSelector(
-	getAvailableCultures,
-	getCulturesFilterText,
-	getCulturesSortOptions,
-	getLocaleMessages,
-	(list, filterText, sortOptions, locale) => {
-		return filterAndSortObjects(list, locale!.id, filterText, sortOptions);
-	}
+  getAvailableCultures,
+  getCulturesFilterText,
+  getCulturesSortOptions,
+  getLocaleAsProp,
+  (maybeList, filterText, sortOptions, locale) => maybeList.map(
+    list => filterAndSortObjects(list, locale.get('id'), filterText, sortOptions)
+  )
 );
 
 interface SkillGroupLists {
-	physicalSkills: Increasable[];
-	socialSkills: Increasable[];
-	natureSkills: Increasable[];
-	knowledgeSkills: Increasable[];
-	craftSkills: Increasable[];
+  physicalSkills: List<Record<IncreasableView>>;
+  socialSkills: List<Record<IncreasableView>>;
+  natureSkills: List<Record<IncreasableView>>;
+  knowledgeSkills: List<Record<IncreasableView>>;
+  craftSkills: List<Record<IncreasableView>>;
 }
 
-export const getAllProfessions = createSelector(
-	getWiki,
-	getWikiProfessions,
-	getWikiProfessionVariants,
-	getWikiCombatTechniques,
-	getWikiSkills,
-	getLocaleMessages,
-	(wiki, professions, professionVariants, combatTechniquesState, wikiSkills, locale) => {
-		const list: Profession[] = [];
-
-		for (const [id, profession] of professions) {
-			const {
-				ap,
-				name,
-				subname,
-				dependencies,
-				prerequisites,
-				specialAbilities,
-				selections,
-				combatTechniques,
-				skills,
-				spells,
-				liturgicalChants,
-				blessings,
-				variants,
-				prerequisitesStart,
-				prerequisitesEnd,
-				suggestedAdvantagesText,
-				suggestedDisadvantagesText,
-				unsuitableAdvantagesText,
-				unsuitableDisadvantagesText,
-				src,
-				gr,
-				subgr,
-			} = profession;
-
-			const {
-				physicalSkills,
-				socialSkills,
-				natureSkills,
-				knowledgeSkills,
-				craftSkills,
-			} = skills.reduce<SkillGroupLists>((obj, { id, value }) => {
-				const { name, gr } = wikiSkills.get(id)!;
-
-				let key: keyof SkillGroupLists = 'craftSkills';
-				if (gr === 1) {
-					key = 'physicalSkills';
-				}
-				else if (gr === 2) {
-					key = 'socialSkills';
-				}
-				else if (gr === 3) {
-					key = 'natureSkills';
-				}
-				else if (gr === 4) {
-					key = 'knowledgeSkills';
-				}
-
-				return {
-					...obj,
-					[key]: [
-						...obj[key],
-						{
-							name,
-							value
-						}
-					],
-				};
-			}, {
-				physicalSkills: [],
-				socialSkills: [],
-				natureSkills: [],
-				knowledgeSkills: [],
-				craftSkills: [],
-			});
-
-			const filteredVariants = variants.filter(e => professionVariants.has(e)).map(v => professionVariants.get(v)!);
-
-			list.push({
-				id,
-				name,
-				subname,
-				ap,
-				prerequisites: prerequisites.map((e, index) => {
-					if (!isRequiringIncreasable(e)) {
-						const { active, ...other } = e;
-						return {
-							active,
-							...ActivatableUtils.convertPerTierCostToFinalCost(ActivatableUtils.getNameCostForWiki({ ...other, index }, wiki, locale))
-						};
-					}
-					return e;
-				}),
-				prerequisitesModel: prerequisites,
-				specialAbilities: specialAbilities.map(({ active, ...other }, index) => ({
-					active,
-					...ActivatableUtils.convertPerTierCostToFinalCost(ActivatableUtils.getNameCostForWiki({ ...other, index }, wiki, locale))
-				})),
-				selections: selections.map(e => {
-					if (e.id === 'COMBAT_TECHNIQUES') {
-						return {
-							...e,
-							sid: e.sid.map(id => combatTechniquesState.get(id)!.name)
-						};
-					}
-					return e;
-				}),
-				combatTechniques: combatTechniques.map(({ id, value }) => ({ name: combatTechniquesState.get(id)!.name, value })),
-				physicalSkills,
-				socialSkills,
-				natureSkills,
-				knowledgeSkills,
-				craftSkills,
-				spells,
-				liturgicalChants,
-				blessings,
-				variants: filteredVariants.map(v => {
-					const {
-						id,
-						name,
-						ap,
-						combatTechniques: combatTechniquesVariant,
-						skills: skillsVariant,
-						concludingText,
-						fullText,
-						precedingText,
-						spells: spellsVariant,
-						dependencies: dependenciesVariant,
-						prerequisites: variantRequires,
-						selections: selectionsVariant,
-						specialAbilities: specialAbilitiesVariant,
-						liturgicalChants: liturgicalChantsVariant,
-						blessings: blessingsVariant,
-					} = v;
-					return {
-						id,
-						name,
-						ap,
-						combatTechniques: combatTechniquesVariant.map(({ id, value }) => {
-							const previousObject = combatTechniques.find(e => e.id === id);
-							return { name: combatTechniquesState.get(id)!.name, value, previous: previousObject && previousObject.value };
-						}),
-						skills: skillsVariant.map(({ id, value }) => {
-							const previousObject = skills.find(e => e.id === id);
-							return { name: wikiSkills.get(id)!.name, value, previous: previousObject && previousObject.value };
-						}),
-						spells: spellsVariant.map(({ id, value }) => {
-							const previousObject = spells.find(e => e.id === id);
-							return { id, value, previous: previousObject && previousObject.value };
-						}),
-						dependencies: dependenciesVariant,
-						prerequisites: variantRequires.map((e, index) => {
-							if (!isRequiringIncreasable(e)) {
-								const { active, ...other } = e;
-								return {
-									active,
-									...ActivatableUtils.convertPerTierCostToFinalCost(ActivatableUtils.getNameCostForWiki({ ...other, index }, wiki, locale))
-								};
-							}
-							return e;
-						}),
-						prerequisitesModel: variantRequires,
-						selections: selectionsVariant.map(e => {
-							if (isCombatTechniquesSelection(e)) {
-								return {
-									...e,
-									sid: e.sid.map(id => combatTechniquesState.get(id)!.name)
-								};
-							}
-							return e;
-						}),
-						specialAbilities: specialAbilitiesVariant.map(({ active, ...other }, index) => ({
-							active,
-							...ActivatableUtils.convertPerTierCostToFinalCost(ActivatableUtils.getNameCostForWiki({ ...other, index }, wiki, locale))
-						})),
-						liturgicalChants: liturgicalChantsVariant.map(({ id, value }) => {
-							const previousObject = liturgicalChants.find(e => e.id === id);
-							return { id, value, previous: previousObject && previousObject.value };
-						}),
-						blessings: blessingsVariant,
-						concludingText,
-						fullText,
-						precedingText
-					};
-				}),
-				src,
-				dependencies,
-				prerequisitesStart,
-				prerequisitesEnd,
-				suggestedAdvantagesText,
-				suggestedDisadvantagesText,
-				unsuitableAdvantagesText,
-				unsuitableDisadvantagesText,
-				category: Categories.PROFESSIONS,
-				gr,
-				subgr,
-			});
-		}
-
-		return list;
-	}
-);
-
-export const getCommonProfessions = createSelector(
-	getAllProfessions,
-	getStartEl,
-	getCurrentRaceId,
-	getCurrentCulture,
-	getSex,
-	getProfessionsGroupVisibilityFilter,
-	getProfessionsVisibilityFilter,
-	(professions, startEl, currentRaceId, currentCulture, sex, groupVisibility, visibility) => {
-		const filterProfession = (e: Profession | ProfessionVariant) => {
-			const { dependencies, prerequisitesModel } = e;
-
-			const isProfessionValid = validateProfession(
-				dependencies,
-				currentRaceId,
-				currentCulture && currentCulture.id,
-				sex,
-			);
-
-			return isProfessionValid && !prerequisitesModel.some(d => {
-				if (isRequiringIncreasable(d) && typeof d.id === 'string') {
-					const category = getCategoryById(d.id);
-
-					const isAttribute = category === Categories.ATTRIBUTES;
-					const isGreaterThanMax = d.value > startEl.maxAttributeValue;
-
-					if (isAttribute && isGreaterThanMax) {
-						return true;
-					}
-
-					return false;
-				}
-
-				return false;
-			});
-		};
-
-		const filterProfessionExtended = (e: Profession) => {
-			const typicalList = currentCulture!.commonProfessions[e.gr - 1];
-      const commonVisible =
-        visibility === 'all'
-        || e.id === 'P_0'
-        || (typeof typicalList === 'boolean'
-          ? (typicalList === true && isEntryFromCoreBook(e))
-          : typicalList.list.includes(e.subgr)
-            ? (typicalList.list.includes(e.subgr) !== typicalList.reverse
-              && isEntryFromCoreBook(e))
-            : typicalList.reverse === true
-              ? !typicalList.list.includes(e.id) && isEntryFromCoreBook(e)
-              : typicalList.list.includes(e.id)
-        );
-			// const commonVisible = visibility === 'all' || e.id === 'P_0' || (typeof typicalList === 'boolean' ? typicalList === true : (typicalList.list.includes(e.subgr) ? typicalList.list.includes(e.subgr) !== typicalList.reverse : typicalList.list.includes(e.id) !== typicalList.reverse));
-			const groupVisible = groupVisibility === 0 || e.gr === 0 || groupVisibility === e.gr;
-			return groupVisible && commonVisible;
-		};
-
-		return professions.filter(e => filterProfession(e) && filterProfessionExtended(e)).map(e => ({
-			...e,
-			variants: e.variants.filter(filterProfession)
-		}));
-	}
-);
-
-const isCustomProfession = (e: Profession) => {
-	return e.id === 'P_0';
+const getGroupSliceKey = (gr: number): keyof SkillGroupLists => {
+  if (gr === 1) {
+    return 'physicalSkills';
+  }
+  else if (gr === 2) {
+    return 'socialSkills';
+  }
+  else if (gr === 3) {
+    return 'natureSkills';
+  }
+  else if (gr === 4) {
+    return 'knowledgeSkills';
+  }
+  else {
+    return 'craftSkills';
+  }
 };
 
-export const getAvailableProfessions = createSelector(
-	getCommonProfessions,
-	getRuleBooksEnabled,
-	getProfessionsVisibilityFilter,
-	(list, availablility, visibility) => {
-		if (visibility === 'all') {
-			return filterByAvailability(list, availablility, isCustomProfession);
-		}
+export const getAllProfessions = createSelector(
+  getWiki,
+  getLocaleMessages,
+  (wiki, locale) => {
+    return wiki.get('professions').elems().map<Record<ProfessionCombined>>(
+      profession => {
+        const {
+          physicalSkills,
+          socialSkills,
+          natureSkills,
+          knowledgeSkills,
+          craftSkills,
+        } = profession.get('skills').foldl<SkillGroupLists>(
+          objByGroups => increasableObj => {
+            const maybeSkill = wiki.get('skills').lookup(increasableObj.get('id'));
 
-		return list;
-	}
+            return Maybe.fromMaybe(
+              objByGroups,
+              maybeSkill.map(
+                skill => {
+                  const key = getGroupSliceKey(skill.get('gr'));
+
+                  return {
+                    ...objByGroups,
+                    [key]: objByGroups[key].append(
+                      increasableObj.merge(
+                        Record.of({
+                          name: skill.get('name'),
+                        })
+                      )
+                    )
+                  };
+                }
+              )
+            );
+          },
+          {
+            physicalSkills: List.of(),
+            socialSkills: List.of(),
+            natureSkills: List.of(),
+            knowledgeSkills: List.of(),
+            craftSkills: List.of(),
+          }
+        );
+
+        const filteredVariants = Maybe.mapMaybe(
+          wiki.get('professionVariants').lookup,
+          profession.get('variants')
+        );
+
+        return profession.merge(
+          Record.of<MappedProfession>({
+            mappedPrerequisites: Maybe.catMaybes(
+              profession.get('prerequisites').imap<
+                Maybe<ListElement<MappedProfession['mappedPrerequisites']>>
+              >(
+                index => e => {
+                  if (isProfessionRequiringActivatable(e)) {
+                    return getNameCostForWiki(
+                      e.merge(Record.of({ index })) as any as Record<ActiveObjectWithId>,
+                      wiki,
+                      locale
+                    )
+                      .map(convertPerTierCostToFinalCost(locale))
+                      .map(
+                        obj => obj.merge(Record.of({
+                          active: e.get('active')
+                        })) as Record<ActivatableNameCostActive>
+                      );
+                  }
+
+                  return Just(e);
+                }
+              )
+            ),
+            mappedSpecialAbilities: Maybe.catMaybes(
+              profession.get('specialAbilities').imap(
+                index => e => getNameCostForWiki(
+                  e.merge(Record.of({ index })) as any as Record<ActiveObjectWithId>,
+                  wiki,
+                  locale
+                )
+                  .map(convertPerTierCostToFinalCost(locale))
+                  .map(
+                    obj => obj.merge(Record.of({
+                      active: e.get('active')
+                    })) as Record<ActivatableNameCostActive>
+                  )
+              )
+            ),
+            selections: profession.get('selections').map(e => {
+              if (isCombatTechniquesSelection(e)) {
+                return e.modify(
+                  sid => Maybe.mapMaybe(
+                    id => wiki.get('combatTechniques').lookup(id)
+                      .map(entry => entry.get('name')),
+                    sid
+                  ),
+                  'sid'
+                );
+              }
+
+              return e;
+            }),
+            mappedCombatTechniques: Maybe.mapMaybe(
+              e => wiki.get('combatTechniques')
+                .lookup(e.get('id'))
+                .map(
+                  wikiEntry => e.merge(Record.of({
+                    name: wikiEntry.get('name'),
+                  }))
+                ),
+              profession.get('combatTechniques')
+            ),
+            mappedPhysicalSkills: physicalSkills,
+            mappedSocialSkills: socialSkills,
+            mappedNatureSkills: natureSkills,
+            mappedKnowledgeSkills: knowledgeSkills,
+            mappedCraftSkills: craftSkills,
+            mappedSpells: Maybe.mapMaybe(
+              e => wiki.get('spells')
+                .lookup(e.get('id'))
+                .map(
+                  wikiEntry => e.merge(Record.of({
+                    name: wikiEntry.get('name'),
+                  }))
+                ),
+              profession.get('spells')
+            ),
+            mappedLiturgicalChants: Maybe.mapMaybe(
+              e => wiki.get('liturgicalChants')
+                .lookup(e.get('id'))
+                .map(
+                  wikiEntry => e.merge(Record.of({
+                    name: wikiEntry.get('name'),
+                  }))
+                ),
+              profession.get('liturgicalChants')
+            ),
+            mappedVariants: filteredVariants.map<Record<ProfessionVariantCombined>>(
+              professionVariant => professionVariant.merge(
+                Record.of<MappedProfessionVariant>({
+                  mappedPrerequisites: Maybe.catMaybes(
+                    professionVariant.get('prerequisites').imap<
+                      Maybe<ListElement<MappedProfession['mappedPrerequisites']>>
+                    >(
+                      index => e => {
+                        if (isProfessionRequiringActivatable(e)) {
+                          return getNameCostForWiki(
+                            e.merge(Record.of({ index })) as any as Record<ActiveObjectWithId>,
+                            wiki,
+                            locale
+                          )
+                            .map(convertPerTierCostToFinalCost(locale))
+                            .map(
+                              obj => obj.merge(Record.of({
+                                active: e.get('active')
+                              })) as Record<ActivatableNameCostActive>
+                            );
+                        }
+
+                        return Just(e);
+                      }
+                    )
+                  ),
+                  mappedSpecialAbilities: Maybe.catMaybes(
+                    professionVariant.get('specialAbilities').imap(
+                      index => e => getNameCostForWiki(
+                        e.merge(Record.of({ index })) as any as Record<ActiveObjectWithId>,
+                        wiki,
+                        locale
+                      )
+                        .map(convertPerTierCostToFinalCost(locale))
+                        .map(
+                          obj => obj.merge(Record.of({
+                            active: e.get('active')
+                          })) as Record<ActivatableNameCostActive>
+                        )
+                    )
+                  ),
+                  selections: professionVariant.get('selections').map(e => {
+                    if (isCombatTechniquesSelection(e)) {
+                      return e.modify(
+                        sid => Maybe.mapMaybe(
+                          id => wiki.get('combatTechniques').lookup(id)
+                            .map(entry => entry.get('name')),
+                          sid
+                        ),
+                        'sid'
+                      );
+                    }
+
+                    return e;
+                  }),
+                  mappedCombatTechniques: Maybe.mapMaybe(
+                    e => wiki.get('combatTechniques')
+                      .lookup(e.get('id'))
+                      .map(
+                        wikiEntry => e.mergeMaybe(Record.of({
+                          name: wikiEntry.get('name'),
+                          previous: profession.get('combatTechniques')
+                            .find(a => a.get('id') === e.get('id'))
+                            .map(a => a.get('value'))
+                        })) as Record<IncreasableView>
+                      ),
+                    professionVariant.get('combatTechniques')
+                  ),
+                  mappedSkills: Maybe.mapMaybe(
+                    e => wiki.get('skills')
+                      .lookup(e.get('id'))
+                      .map(
+                        wikiEntry => e.mergeMaybe(Record.of({
+                          name: wikiEntry.get('name'),
+                          previous: profession.get('skills')
+                            .find(a => a.get('id') === e.get('id'))
+                            .map(a => a.get('value'))
+                        })) as Record<IncreasableView>
+                      ),
+                    professionVariant.get('skills')
+                  ),
+                  mappedSpells: Maybe.mapMaybe(
+                    e => wiki.get('spells')
+                      .lookup(e.get('id'))
+                      .map(
+                        wikiEntry => e.mergeMaybe(Record.of({
+                          name: wikiEntry.get('name'),
+                          previous: profession.get('spells')
+                            .find(a => a.get('id') === e.get('id'))
+                            .map(a => a.get('value'))
+                        })) as Record<IncreasableView>
+                      ),
+                    professionVariant.get('spells')
+                  ),
+                  mappedLiturgicalChants: Maybe.mapMaybe(
+                    e => wiki.get('liturgicalChants')
+                      .lookup(e.get('id'))
+                      .map(
+                        wikiEntry => e.mergeMaybe(Record.of({
+                          name: wikiEntry.get('name'),
+                          previous: profession.get('liturgicalChants')
+                            .find(a => a.get('id') === e.get('id'))
+                            .map(a => a.get('value'))
+                        })) as Record<IncreasableView>
+                      ),
+                    professionVariant.get('liturgicalChants')
+                  ),
+                })
+              )
+            ),
+          })
+        )
+      }
+    );
+  }
+);
+
+const isCustomProfession = (e: Record<ProfessionCombined>) => e.get('id') === 'P_0';
+
+export const getCommonProfessions = createSelector(
+  getAllProfessions,
+  getStartEl,
+  getCurrentRaceId,
+  getCurrentCulture,
+  getSex,
+  getProfessionsGroupVisibilityFilter,
+  getProfessionsVisibilityFilter,
+  (
+    professions,
+    maybeStartEl,
+    currentRaceId,
+    currentCulture,
+    maybeSex,
+    groupVisibility,
+    visibility
+  ) =>
+    Maybe.fromMaybe(
+      professions,
+      maybeSex.bind(
+        sex => maybeStartEl.map(
+          startEl => {
+            const filterProfession = (
+              e: Record<ProfessionCombined> | Record<ProfessionVariantCombined>
+            ): boolean => {
+              const isProfessionValid = validateProfession(
+                e.get('dependencies'),
+                sex,
+                currentRaceId,
+                currentCulture.map(culture => culture.get('id')),
+              );
+
+              const attributeCategory = Just(Categories.ATTRIBUTES);
+
+              return isProfessionValid && e.get('prerequisites').all(d => {
+                if (isProfessionRequiringIncreasable(d)) {
+                  const category = getCategoryById(d.get('id'));
+
+                  const isAttribute = category.equals(attributeCategory);
+                  const isGreaterThanMax = d.get('value') > startEl.get('maxAttributeValue');
+
+                  return isAttribute && isGreaterThanMax;
+                }
+
+                return true;
+              });
+            };
+
+            const filterProfessionExtended = (
+              culture: Record<Culture>,
+              e: Record<ProfessionCombined>
+            ): boolean => {
+              const maybeCommonList = culture.get('commonProfessions').subscript(e.get('gr') - 1);
+
+              const commonVisible =
+                visibility === 'all'
+                || isCustomProfession(e)
+                || Maybe.fromMaybe(
+                  false,
+                  maybeCommonList.map(
+                    commonList => typeof commonList === 'boolean'
+                      ? (commonList === true && isEntryFromCoreBook(e))
+                      : commonList.get('list').elem(e.get('subgr'))
+                        ? (commonList.get('list').elem(e.get('subgr')) !== commonList.get('reverse')
+                          && isEntryFromCoreBook(e))
+                        : commonList.get('reverse') === true
+                          ? !commonList.get('list').elem(e.get('id')) && isEntryFromCoreBook(e)
+                          : commonList.get('list').elem(e.get('id'))
+                  )
+              );
+
+              /**
+               * const commonVisible = visibility === 'all' || e.id === 'P_0'
+               * || (typeof typicalList === 'boolean' ? typicalList === true :
+               * (typicalList.list.includes(e.subgr) ? typicalList.list.includes(e.subgr)
+               * !== typicalList.reverse : typicalList.list.includes(e.id)
+               * !== typicalList.reverse));
+              */
+
+              const groupVisible =
+                groupVisibility === 0
+                || isCustomProfession(e)
+                || groupVisibility === e.get('gr');
+
+              return groupVisible && commonVisible;
+            };
+
+            return professions
+              .filter(
+                Maybe.fromMaybe(
+                  filterProfession,
+                  currentCulture.map(
+                    culture => (e: Record<ProfessionCombined>) =>
+                      filterProfession(e) && filterProfessionExtended(culture, e)
+                  )
+                )
+              )
+              .map(
+                e => e.modify(
+                  variants => variants.filter(filterProfession),
+                  'mappedVariants'
+                )
+              );
+          }
+        )
+      )
+    )
+);
+
+export const getAvailableProfessions = createSelector(
+  getCommonProfessions,
+  getRuleBooksEnabled,
+  getProfessionsVisibilityFilter,
+  (list, maybeAvailablility, visibility) =>
+    Maybe.maybe(
+      list,
+      availablility => visibility === 'all'
+        ? filterByAvailability(list, availablility, isCustomProfession)
+        : list,
+      maybeAvailablility
+    )
 );
 
 export const getFilteredProfessions = createSelector(
-	getAvailableProfessions,
-	getProfessionsFilterText,
-	getProfessionsSortOptions,
-	getLocaleMessages,
-	getSex,
-	(list, filterText, sortOptions, locale, sex) => {
-		const filterOptions: FilterOptions<Profession> = {
-			addProperty: 'subname',
-			keyOfName: sex
-		};
+  getAvailableProfessions,
+  getProfessionsFilterText,
+  getProfessionsSortOptions,
+  getLocaleAsProp,
+  getSex,
+  (list, filterText, sortOptions, locale, maybeSex) =>
+    Maybe.fromMaybe(
+      list,
+      maybeSex.map(
+        sex => {
+          const filterOptions: FilterOptions<ProfessionCombined> = {
+            addProperty: 'subname',
+            keyOfName: sex
+          };
 
-		return filterAndSortObjects(
-			list,
-			locale!.id,
-			filterText,
-			sortOptions,
-			filterOptions,
-		);
-	}
+          return filterAndSortObjects(
+            list,
+            locale.get('id'),
+            filterText,
+            sortOptions,
+            filterOptions,
+          );
+        }
+      )
+    )
 );

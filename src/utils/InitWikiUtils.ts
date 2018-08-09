@@ -1,7 +1,7 @@
 import { Categories } from '../constants/Categories';
 import { IdPrefixes } from '../constants/IdPrefixes';
-import * as Raw from '../types/rawdata.d';
-import * as Wiki from '../types/wiki.d';
+import * as Raw from '../types/rawdata';
+import * as Wiki from '../types/wiki';
 import { StringKeyObject } from './collectionUtils';
 import { convertRawApplications, convertRawIncreaseSkills, convertRawPrerequisiteObjects, convertRawPrerequisites, convertRawProfessionDependencyObjects, convertRawProfessionPrerequisiteObjects, convertRawProfessionRequiresActivatableObject, convertRawProfessionSelections, convertRawProfessionVariantSelections, convertRawSelections, mapRawWithPrefix } from './convertRawObjectsToWikiUtils';
 import { Just, List, Maybe, Nothing, OrderedMap, Record, Tuple } from './dataUtils';
@@ -145,10 +145,10 @@ export const initRace = (
       attributeAdjustments: List.fromArray(attr.map<Tuple<number, string>>(
         e => Tuple.of(e[0], `${IdPrefixes.ATTRIBUTES}_${e[1]}`)
       )),
-      attributeAdjustmentsSelection: List.of(Tuple.of(
+      attributeAdjustmentsSelection: Tuple.of(
         attr_sel[0],
         List.fromArray(attr_sel[1].map(k => `${IdPrefixes.ATTRIBUTES}_${k}`))
-      )),
+      ),
       attributeAdjustmentsText,
       automaticAdvantages: List.fromArray(auto_adv.map(
         e => `${IdPrefixes.ADVANTAGES}_${e}`

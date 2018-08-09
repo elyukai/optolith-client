@@ -1,5 +1,5 @@
 import R from 'ramda';
-import * as Data from '../types/data.d';
+import * as Data from '../types/data';
 import { isActivatableSkillDependent } from './checkEntryUtils';
 import { List, ListElement, Maybe, Record, RecordInterface } from './dataUtils';
 import { getHeroStateListItem, removeHeroListStateItem, setHeroListStateItem } from './heroStateUtils';

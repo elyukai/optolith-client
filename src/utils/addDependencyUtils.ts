@@ -1,6 +1,6 @@
 import R from 'ramda';
 import { ActivatableSkillCategories, Categories } from '../constants/Categories';
-import * as Data from '../types/data.d';
+import * as Data from '../types/data';
 import * as CreateEntryUtils from './createEntryUtils';
 import { Just, List, Maybe, Record } from './dataUtils';
 import { adjustHeroListStateItemOr } from './heroStateUtils';

@@ -1,4 +1,4 @@
-import * as Al from '../../types/algebraic.d';
+import * as Al from '../../types/algebraic';
 
 export class Tuple<T, U> implements Al.Functor<U> {
   private readonly first: T;

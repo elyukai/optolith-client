@@ -2,7 +2,7 @@ import { ActionTypes } from '../constants/ActionTypes';
 import { isAlbino } from '../selectors/activatableSelectors';
 import { getCurrentRace, getCurrentRaceVariant } from '../selectors/rcpSelectors';
 import { getSize, getWeight } from '../selectors/stateSelectors';
-import { AsyncAction } from '../types/actions.d';
+import { AsyncAction } from '../types/actions';
 import * as RCPUtils from '../utils/RCPUtils';
 import { getWeightForRerolledSize } from '../utils/RCPUtils';
 

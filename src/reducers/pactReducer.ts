@@ -1,6 +1,6 @@
 import * as PactActions from '../actions/PactActions';
 import { ActionTypes } from '../constants/ActionTypes';
-import * as Data from '../types/data.d';
+import * as Data from '../types/data';
 import { Record } from '../utils/dataUtils';
 
 type Action =

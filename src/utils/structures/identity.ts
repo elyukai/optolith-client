@@ -1,4 +1,4 @@
-import * as Al from '../../types/algebraic.d';
+import * as Al from '../../types/algebraic';
 
 /**
  * The `Identity` monad is a monad that does not embody any computational

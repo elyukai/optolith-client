@@ -2,8 +2,8 @@ import { ActionTypes } from '../constants/ActionTypes';
 import { getAdventurePointsObject } from '../selectors/adventurePointsSelectors';
 import { getMessages } from '../selectors/localeSelectors';
 import { getCurrentHeroId, getCurrentHeroPast, getExperienceLevelStartId, getHeroes, getLocaleMessages, getWikiExperienceLevels } from '../selectors/stateSelectors';
-import { AsyncAction } from '../types/actions.d';
-import { Hero } from '../types/data.d';
+import { AsyncAction } from '../types/actions';
+import { Hero } from '../types/data';
 import { generateHeroSaveData } from '../utils/generateHeroSaveData';
 import { translate } from '../utils/I18n';
 import { getNewIdByDate } from '../utils/IDUtils';
@@ -105,22 +105,16 @@ export function _createHero(name: string, sex: 'm' | 'f', el: string, enableAllR
 export interface LoadHeroAction {
   type: ActionTypes.LOAD_HERO;
   payload: {
-    data: Hero;
+    id: string;
   };
 }
 
-export function _loadHero(id: string): AsyncAction {
-  return (dispatch, getState) => {
-    const data = getHeroes(getState()).get(id);
-    if (data) {
-      dispatch<LoadHeroAction>({
-        type: ActionTypes.LOAD_HERO,
-        payload: {
-          data
-        }
-      });
+export function _loadHero(id: string): LoadHeroAction {
+  return {
+    type: ActionTypes.LOAD_HERO,
+    payload: {
+      id
     }
-    return;
   };
 }
 

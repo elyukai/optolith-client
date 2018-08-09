@@ -1,143 +1,191 @@
-import { createSelector } from 'reselect';
-import { AppState } from '../reducers/app';
-import { AdvantageInstance, AttributeInstance, CombatTechniqueInstance, ExperienceLevel, SpecialAbilityInstance } from '../types/data.d';
-import { CombatTechnique, CombatTechniqueWithRequirements } from '../types/view.d';
-import { getSids } from '../utils/ActivatableUtils';
+import { ActivatableDependent, Hero, HeroDependent } from '../types/data';
+import { CombatTechniqueCombined, CombatTechniqueWithAttackParryBase, CombatTechniqueWithRequirements } from '../types/view';
+import { ExperienceLevel, WikiRecord } from '../types/wiki';
+import { createMaybeSelector } from '../utils/createMaybeSelector';
+import { Just, List, Maybe, Nothing, Record } from '../utils/dataUtils';
 import { filterAndSortObjects } from '../utils/FilterSortUtils';
+import { flattenDependencies } from '../utils/flattenDependencies';
+import { isActive } from '../utils/isActive';
 import { filterByAvailability } from '../utils/RulesUtils';
-import { mapGetToSlice } from '../utils/SelectorsUtils';
+import { getActiveSelections } from '../utils/selectionUtils';
 import { getMaxAttributeValueByID } from './attributeSelectors';
 import { getStartEl } from './elSelectors';
 import { getRuleBooksEnabled } from './rulesSelectors';
 import { getCombatTechniquesSortOptions } from './sortOptionsSelectors';
-import { getAdvantages, getAttributes, getCombatTechniquesFilterText, getLocaleMessages, getPhase, getSpecialAbilities } from './stateSelectors';
+import { getAttributes, getCombatTechniques, getCombatTechniquesFilterText, getCurrentHeroPresent, getLocaleMessages, getWiki, getWikiCombatTechniques } from './stateSelectors';
 
-export const getCombatTechniques = (state: AppState) => state.currentHero.present.dependent.combatTechniques;
+const getPrimaryAttributeMod = (
+  attributes: HeroDependent['attributes'],
+  ids: List<string>
+) => Math.max(Math.floor((getMaxAttributeValueByID(attributes, ids) - 8) / 3), 0);
 
-export const getForSave = createSelector(
-	getCombatTechniques,
-	combatTechniques => {
-		const active: { [id: string]: number } = {};
-		for (const [id, { value }] of combatTechniques) {
-			if (value > 6) {
-				active[id] = value;
-			}
-		}
-		return active;
-	}
+const getAttackBase = (
+  attributes: HeroDependent['attributes'],
+  obj: Record<CombatTechniqueCombined>
+): number => {
+  const modAttributeList = obj.get('gr') === 2 ? obj.get('primary') : List.of('ATTR_1');
+  const mod = getPrimaryAttributeMod(attributes, modAttributeList);
+
+  return obj.get('value') + mod;
+};
+
+const getParryBase = (
+  attributes: HeroDependent['attributes'],
+  obj: Record<CombatTechniqueCombined>
+): Maybe<number> => {
+  const mod = getPrimaryAttributeMod(attributes, obj.get('primary'));
+
+  return obj.get('gr') === 2 || obj.get('id') === 'CT_6' || obj.get('id') === 'CT_8'
+    ? Nothing()
+    : Just(Math.round(obj.get('value') / 2) + mod);
+};
+
+type CombatTechniquesForSheet = List<Record<CombatTechniqueWithAttackParryBase>>;
+
+export const getCombatTechniquesForSheet = createMaybeSelector(
+  getCombatTechniques,
+  getAttributes,
+  getWikiCombatTechniques,
+  (maybeCombatTechniques, maybeAttributes, wikiCombatTechniques) =>
+    maybeAttributes.bind(
+      attributes => maybeCombatTechniques.map(
+        combatTechniques => combatTechniques.foldlWithKey<CombatTechniquesForSheet>(
+          list => id => entry => Maybe.fromMaybe(
+            list,
+            wikiCombatTechniques.lookup(id)
+              .map(
+                wikiEntry => {
+                  const combined = wikiEntry.merge(entry);
+
+                  const at = getAttackBase(attributes, combined);
+                  const pa = getParryBase(attributes, combined);
+
+                  return list.append(
+                    combined.mergeMaybe(Record.of({ at, pa })) as
+                      Record<CombatTechniqueWithAttackParryBase>
+                  );
+                }
+              )
+          ),
+          List.of()
+        )
+      )
+    )
 );
 
-export const getForSheet = createSelector(
-	getCombatTechniques,
-	getAttributes,
-	(combatTechniques, attributes) => {
-		const array: CombatTechnique[] = [];
-		for (const [id, entry] of combatTechniques) {
-			const { ic, name, primary, value, gr, category, special, src } = entry;
-			array.push({
-				id,
-				name,
-				value,
-				primary,
-				ic,
-				gr,
-				at: getAt(attributes, entry),
-				pa: getPa(attributes, entry),
-				category,
-				special,
-				src,
-			});
-		}
-		return array;
-	}
+const getMaximum = (
+  exceptionalCombatTechnique: Maybe<Record<ActivatableDependent>>,
+  startEl: Maybe<Record<ExperienceLevel>>,
+  attributes: HeroDependent['attributes'],
+  phase: number,
+  obj: Record<CombatTechniqueWithAttackParryBase>
+): number => {
+  const isBonusValid = Maybe.fromMaybe(
+    false,
+    getActiveSelections(exceptionalCombatTechnique)
+      .map(active => active.elem(obj.get('id')))
+  );
+
+  const bonus = isBonusValid ? 1 : 0;
+
+  if (phase < 3 && Maybe.isJust(startEl)) {
+    return Maybe.fromJust(startEl).get('maxCombatTechniqueRating') + bonus;
+  }
+  else {
+    return getMaxAttributeValueByID(attributes, obj.get('primary')) + 2 + bonus;
+  }
+};
+
+const getMinimum = (
+  hunterRequiresMinimum: boolean,
+  wiki: WikiRecord,
+  state: Hero,
+  obj: Record<CombatTechniqueWithAttackParryBase>,
+): number => {
+  const maxList = flattenDependencies(
+    wiki,
+    state,
+    obj.get('dependencies')
+  )
+    .append(6);
+
+  if (hunterRequiresMinimum && obj.get('gr') === 2) {
+    return maxList.append(10).maximum();
+  }
+
+  return maxList.maximum();
+};
+
+export const getAllCombatTechniques = createMaybeSelector(
+  getCombatTechniquesForSheet,
+  getCurrentHeroPresent,
+  getStartEl,
+  getWiki,
+  (
+    maybeCombatTechniques,
+    maybeHero,
+    maybeStartEl,
+    wiki,
+  ) =>
+    maybeCombatTechniques.bind(
+      combatTechniques => maybeHero.map(
+        hero => {
+          const exceptionalCombatTechnique = hero.get('advantages').lookup('ADV_17');
+
+          const hunter = hero.get('specialAbilities').lookup('SA_18');
+          const hunterRequiresMinimum =
+            isActive(hunter)
+            && Maybe.isJust(combatTechniques.find(e => e.get('gr') === 2 && e.get('value') >= 10));
+
+          return combatTechniques.map(
+            entry => entry.mergeMaybe(Record.of({
+              min: getMinimum(
+                hunterRequiresMinimum,
+                wiki,
+                hero,
+                entry
+              ),
+              max: getMaximum(
+                exceptionalCombatTechnique,
+                maybeStartEl,
+                hero.get('attributes'),
+                hero.get('phase'),
+                entry
+              )
+            })) as Record<CombatTechniqueWithRequirements>
+          );
+        }
+      )
+    )
 );
 
-export const getAllCombatTechniques = createSelector(
-	getCombatTechniques,
-	getAttributes,
-	mapGetToSlice(getSpecialAbilities, 'SA_18'),
-	mapGetToSlice(getAdvantages, 'ADV_17'),
-	getPhase,
-	getStartEl,
-	(combatTechniques, attributes, hunter, exceptionalCombatTechnique, phase, startEl) => {
-		const array: CombatTechniqueWithRequirements[] = [];
-		for (const [id, entry] of combatTechniques) {
-			const { ic, name, primary, value, gr, category, special, src } = entry;
-			array.push({
-				id,
-				name,
-				value,
-				primary,
-				ic,
-				gr,
-				at: getAt(attributes, entry),
-				pa: getPa(attributes, entry),
-				min: getMin(hunter, combatTechniques, entry),
-				max: getMax(exceptionalCombatTechnique, startEl, attributes, phase, entry),
-				category,
-				special,
-				src,
-			});
-		}
-		return array;
-	}
+export const getAvailableCombatTechniques = createMaybeSelector(
+  getAllCombatTechniques,
+  getRuleBooksEnabled,
+  (maybeList, maybeAvailablility) =>
+    maybeList.bind(
+      list => maybeAvailablility.map(
+        availablility => filterByAvailability<CombatTechniqueWithRequirements>(
+          list,
+          availablility,
+          obj => obj.get('value') > 6
+        )
+      )
+    )
 );
 
-export const getAvailableCombatTechniques = createSelector(
-	getAllCombatTechniques,
-	getRuleBooksEnabled,
-	(list, availablility) => {
-		return filterByAvailability(list, availablility, obj => obj.value > 6);
-	}
+export const getFilteredCombatTechniques = createMaybeSelector(
+  getAvailableCombatTechniques,
+  getCombatTechniquesSortOptions,
+  getCombatTechniquesFilterText,
+  getLocaleMessages,
+  (maybeCombatTechniques, sortOptions, filterText, locale) =>
+    maybeCombatTechniques.map(
+      combatTechniques => filterAndSortObjects<CombatTechniqueWithRequirements>(
+        combatTechniques,
+        locale!.id,
+        filterText,
+        sortOptions
+      )
+    )
 );
-
-export const getFilteredCombatTechniques = createSelector(
-	getAvailableCombatTechniques,
-	getCombatTechniquesSortOptions,
-	getCombatTechniquesFilterText,
-	getLocaleMessages,
-	(skills, sortOptions, filterText, locale) => {
-		return filterAndSortObjects(skills, locale!.id, filterText, sortOptions);
-	}
-);
-
-function getAt(attributes: Map<string, AttributeInstance>, obj: CombatTechniqueInstance): number {
-	const array = obj.gr === 2 ? obj.primary : ['ATTR_1'];
-	const mod = getPrimaryAttributeMod(attributes, array);
-	return obj.value + mod;
-}
-
-function getPa(attributes: Map<string, AttributeInstance>, obj: CombatTechniqueInstance): number | undefined {
-	const mod = getPrimaryAttributeMod(attributes, obj.primary);
-	return obj.gr === 2 || obj.id === 'CT_6' || obj.id === 'CT_8' ? undefined : Math.round(obj.value / 2) + mod;
-}
-
-function getMax(exceptionalCombatTechnique: AdvantageInstance | undefined, startEl: ExperienceLevel, attributes: Map<string, AttributeInstance>, phase: number, obj: CombatTechniqueInstance): number {
-	let max = 0;
-	const bonus = exceptionalCombatTechnique && getSids(exceptionalCombatTechnique).includes(obj.id) ? 1 : 0;
-
-	if (phase < 3) {
-		max = startEl.maxCombatTechniqueRating;
-	}
-	else {
-		max = getMaxAttributeValueByID(attributes, obj.primary) + 2;
-	}
-
-	return max + bonus;
-}
-
-function getMin(hunter: SpecialAbilityInstance | undefined, combatTechniques: Map<string, CombatTechniqueInstance>, obj: CombatTechniqueInstance): number {
-	const SA_18_REQ = !!hunter && hunter.active.length > 0 && !![...combatTechniques.values()].find(e => e.gr === 2 && e.value >= 10);
-
-	const maxArray = [6, ...obj.dependencies];
-
-	if (SA_18_REQ && obj.gr === 2) {
-		maxArray.push(10);
-	}
-
-	return Math.max(...maxArray);
-}
-
-function getPrimaryAttributeMod(attributes: Map<string, AttributeInstance>, ids: string[]) {
-	return Math.max(Math.floor((getMaxAttributeValueByID(attributes, ids) - 8) / 3), 0);
-}

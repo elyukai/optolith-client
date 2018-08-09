@@ -1,7 +1,7 @@
 import R from 'ramda';
 import { Categories } from '../constants/Categories';
-import * as Data from '../types/data.d';
-import * as Wiki from '../types/wiki.d';
+import * as Data from '../types/data';
+import * as Wiki from '../types/wiki';
 import { getSkillCheckValues } from './AttributeUtils';
 import { Just, List, Maybe, OrderedMap, Record } from './dataUtils';
 import { flattenDependencies } from './flattenDependencies';

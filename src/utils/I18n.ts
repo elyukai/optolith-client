@@ -1,5 +1,5 @@
-import { UIMessages } from '../types/ui.d';
-import { Just, Maybe, Nothing, Record } from './dataUtils';
+import { UIMessages } from '../types/ui';
+import { Maybe, Record } from './dataUtils';
 
 export { UIMessages };
 
@@ -12,40 +12,48 @@ export { UIMessages };
  * index.
  */
 export function translate<T extends keyof UIMessages>(
-  messages: Just<Record<UIMessages>>,
+  messages: Record<UIMessages>,
   key: T,
   ...params: (string | number)[]
-): Just<NonNullable<UIMessages[T]>>;
-export function translate<T extends keyof UIMessages>(
-  messages: Nothing,
-  key: T,
-  ...params: (string | number)[]
-): Nothing;
+): UIMessages[T];
 export function translate<T extends keyof UIMessages>(
   messages: Maybe<Record<UIMessages>>,
   key: T,
   ...params: (string | number)[]
-): Maybe<NonNullable<UIMessages[T]>>;
+): Maybe<UIMessages[T]>;
 export function translate<T extends keyof UIMessages>(
-  messages: Maybe<Record<UIMessages>>,
+  messages: Maybe<Record<UIMessages>> | Record<UIMessages>,
   key: T,
   ...params: (string | number)[]
-): Maybe<NonNullable<UIMessages[T]>> {
-  return messages.bind(
-    safeMessages =>
-      safeMessages.lookup(key) as Maybe<NonNullable<UIMessages[T]>>
-  )
-    .map(message => {
-      if (params.length > 0 && typeof message === 'string') {
-        return message.replace(/\{(\d+)\}/g, (_, p1) => {
-          const param = params[Number.parseInt(p1)];
+): Maybe<UIMessages[T]> | UIMessages[T] {
+  if (messages instanceof Maybe) {
+    return messages
+      .map(safeMessages => safeMessages.get(key) as UIMessages[T])
+      .map(message => {
+        if (params.length > 0 && typeof message === 'string') {
+          return message.replace(/\{(\d+)\}/g, (_, p1) => {
+            const param = params[Number.parseInt(p1)];
 
-          return typeof param === 'number' ? param.toString() : param;
-        });
-      }
+            return typeof param === 'number' ? param.toString() : param;
+          });
+        }
 
-      return message;
-    }) as Maybe<NonNullable<UIMessages[T]>>;
+        return message;
+      }) as Maybe<UIMessages[T]>;
+  }
+  else {
+    const message = messages.get(key) as UIMessages[T];
+
+    if (params.length > 0 && typeof message === 'string') {
+      return message.replace(/\{(\d+)\}/g, (_, p1) => {
+        const param = params[Number.parseInt(p1)];
+
+        return typeof param === 'number' ? param.toString() : param;
+      });
+    }
+
+    return message;
+  }
 }
 
 export const localizeNumber = (n: number, locale: string) => {

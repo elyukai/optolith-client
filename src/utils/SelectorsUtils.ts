@@ -1,9 +1,11 @@
-import { AppState } from '../reducers/app';
+import { AppState } from '../reducers/appReducer';
+import { Maybe, OrderedMap } from './dataUtils';
 
-export function mapGetToSlice<T>(sliceSelector: (state: AppState) => Map<string, T>, id: string) {
-  return (state: AppState) => sliceSelector(state).get(id);
-}
+export const mapGetToSlice = <T>(
+  sliceSelector: (state: AppState) => Maybe<OrderedMap<string, T>>,
+  id: string
+) => (state: AppState) => sliceSelector(state).bind(slice => slice.lookup(id));
 
-export function mapSliceToGet<T>(sliceSelector: (state: AppState) => Map<string, T>) {
-  return (state: AppState) => (id: string) => sliceSelector(state).get(id);
-}
+export const mapSliceToGet = <T>(
+  sliceSelector: (state: AppState) => Maybe<OrderedMap<string, T>>
+) => (state: AppState) => (id: string) => sliceSelector(state).bind(slice => slice.lookup(id));

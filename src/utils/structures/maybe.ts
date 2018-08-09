@@ -1,5 +1,5 @@
 import R from 'ramda';
-import * as Al from '../../types/algebraic.d';
+import * as Al from '../../types/algebraic';
 import { List } from './list';
 
 // tslint:disable-next-line:interface-over-type-literal
@@ -48,6 +48,8 @@ export class Maybe<T extends Some> implements Al.Functor<T>, Al.Apply<T>,
    * `(>) :: Maybe a -> Maybe a -> Bool`
    *
    * Returns if the first value (`this`) is greater than the second value.
+   *
+   * If one of the values is `Nothing`, `(>)` always returns false.
    */
   gt<U extends number | string>(this: Maybe<U>, comp: Maybe<U>): boolean {
     return Maybe.fromMaybe(false, this.bind(x1 => comp.map(x2 => x1 > x2)));
@@ -57,6 +59,8 @@ export class Maybe<T extends Some> implements Al.Functor<T>, Al.Apply<T>,
    * `(<) :: Maybe a -> Maybe a -> Bool`
    *
    * Returns if the first value (`this`) is lower than the second value.
+   *
+   * If one of the values is `Nothing`, `(<)` always returns false.
    */
   lt<U extends number | string>(this: Maybe<U>, comp: Maybe<U>): boolean {
     return Maybe.fromMaybe(false, this.bind(x1 => comp.map(x2 => x1 < x2)));
@@ -67,6 +71,8 @@ export class Maybe<T extends Some> implements Al.Functor<T>, Al.Apply<T>,
    *
    * Returns if the first value (`this`) is greater than or equals the second
    * value.
+   *
+   * If one of the values is `Nothing`, `(>=)` always returns false.
    */
   gte<U extends number | string>(this: Maybe<U>, comp: Maybe<U>): boolean {
     return Maybe.fromMaybe(false, this.bind(x1 => comp.map(x2 => x1 >= x2)));
@@ -77,6 +83,8 @@ export class Maybe<T extends Some> implements Al.Functor<T>, Al.Apply<T>,
    *
    * Returns if the first value (`this`) is lower than or equals the second
    * value.
+   *
+   * If one of the values is `Nothing`, `(<=)` always returns false.
    */
   lte<U extends number | string>(this: Maybe<U>, comp: Maybe<U>): boolean {
     return Maybe.fromMaybe(false, this.bind(x1 => comp.map(x2 => x1 <= x2)));
@@ -153,6 +161,18 @@ export class Maybe<T extends Some> implements Al.Functor<T>, Al.Apply<T>,
   }
 
   /**
+   * `(==) :: Maybe a -> Maybe a -> Bool`
+   *
+   * Returns if both given values are shallowly equal. Used only for selector
+   * memoization.
+   *
+   * @internal
+   */
+  UNSAFE_shallowEquals(x: Maybe<T>): boolean {
+    return (this as Maybe<T>).value === x.value;
+  }
+
+  /**
    * `of :: a -> Maybe a`
    *
    * Creates a new `Maybe` from the given value.
@@ -164,7 +184,7 @@ export class Maybe<T extends Some> implements Al.Functor<T>, Al.Apply<T>,
   }
 
   /**
-   * `ofPred :: (a -> Bool) -> a -> Maybe a`
+   * `ensure :: (a -> Bool) -> a -> Maybe a`
    *
    * Creates a new `Just a` from the given value if the given predicate
    * evaluates to `True` and the given value is not nullable. Otherwise returns
@@ -338,11 +358,26 @@ export class Maybe<T extends Some> implements Al.Functor<T>, Al.Apply<T>,
     fn: (x: T) => Maybe<U>,
     list?: List<T>,
   ): List<U> | ((list: List<T>) => List<U>) {
-    if (list === undefined) {
-      return x2 => x2.map(fn).filter(Maybe.isJust).map(e => e.value as U);
+    const resultFn = (x1: (x: T) => Maybe<U>, x2: List<T>): List<U> =>
+      x2.foldl<List<U>>(
+        acc => x => {
+          const result = x1(x);
+
+          if (Maybe.isJust(result)) {
+            return acc.append(Maybe.fromJust(result));
+          }
+          else {
+            return acc;
+          }
+        },
+        List.of()
+      );
+
+    if (arguments.length === 1) {
+      return x2 => resultFn(fn, x2);
     }
 
-    return list.map(fn).filter(Maybe.isJust).map(e => e.value as U);
+    return resultFn(fn, list!);
   }
 
   /**
@@ -400,6 +435,28 @@ export class Maybe<T extends Some> implements Al.Functor<T>, Al.Apply<T>,
     }
     else {
       return x2 => resultFn(fn, x2);
+    }
+  }
+
+  /**
+   * `(>>=) :: Maybe a -> (a -> Maybe b) -> Maybe b`
+   */
+  static bind<T extends Some, U extends Some>(
+    m: Maybe<T>
+  ): (f: (value: T) => Maybe<U>) => Maybe<U>;
+  static bind<T extends Some, U extends Some>(
+    m: Maybe<T>, f: (value: T) => Maybe<U>
+  ): Maybe<U>;
+  static bind<T extends Some, U extends Some>(
+    m: Maybe<T>, f?: (value: T) => Maybe<U>
+  ): Maybe<U> | ((f: (value: T) => Maybe<U>) => Maybe<U>) {
+    const resultFn = (x1: Maybe<T>, x2: (value: T) => Maybe<U>) => x1.bind(x2);
+
+    if (arguments.length === 2) {
+      return resultFn(m, f!);
+    }
+    else {
+      return x2 => resultFn(m, x2);
     }
   }
 }

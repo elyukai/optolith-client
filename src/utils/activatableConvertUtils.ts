@@ -1,5 +1,13 @@
+/**
+ * This file provides several helper functions for working with `Activatable`s.
+ *
+ * @file src/utils/activatableConvertUtils.ts
+ * @author Lukas Obermann
+ * @since 1.1.0
+ */
+
 import R from 'ramda';
-import * as Data from '../types/data.d';
+import * as Data from '../types/data';
 import { List, OrderedMap, Record } from './dataUtils';
 import { match } from './match';
 

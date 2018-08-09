@@ -1,3 +1,6 @@
+import { List, Tuple } from './dataUtils';
+import { Just, Nothing } from './structures/maybe';
+
 const getBase = (ic: number) => ic === 5 ? 15 : ic;
 
 const getValueThreshold = (ic: number) => ic === 5 ? 15 : 13;
@@ -45,17 +48,21 @@ export const getDecreaseAP = (ic: number, fromValue?: number): number => {
 type Calculator = (ic: number, fromValue?: number) => number;
 type PrepareFromValue = (fromValue: number, index: number) => number;
 
-const combineAPRange = (calculator: Calculator, prepareFromValue: PrepareFromValue) => {
-  return (ic: number, fromValue: number, toValue: number): number => {
-    const steps = Math.abs(fromValue - toValue);
-    const stepsArr = Array.from({ length: steps })
-
-    return stepsArr.reduce<number>(
-      (sum, _, i) => sum + calculator(ic, prepareFromValue(fromValue, i)),
-      0
-    );
-  };
-}
+/**
+ * Builds a list with all the costs for every step and returns it's sum.
+ */
+const combineAPRange = (calculator: Calculator, prepareFromValue: PrepareFromValue) =>
+  (ic: number, fromValue: number, toValue: number): number =>
+    List.unfoldr(
+      step => step === 0
+        ? Nothing()
+        : Just(Tuple.of(
+            calculator(ic, prepareFromValue(fromValue, step - 1)),
+            step - 1
+          )),
+      Math.abs(fromValue - toValue)
+    )
+      .sum();
 
 const getIncreaseRangeAP = combineAPRange(getIncreaseAP, (v, i) => i + v);
 const getDecreaseRangeAP = combineAPRange(getDecreaseAP, (v, i) => v - i);

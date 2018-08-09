@@ -1,6 +1,8 @@
 import { Categories } from '../constants/Categories';
 import { List, OrderedMap, Record, Tuple } from '../utils/dataUtils';
 
+export type WikiRecord = Record<WikiAll>;
+
 export interface WikiAll {
   readonly books: OrderedMap<string, Record<Book>>;
   readonly experienceLevels: OrderedMap<string, Record<ExperienceLevel>>;
@@ -123,7 +125,7 @@ export interface Race {
   readonly tou: number;
   readonly mov: number;
   readonly attributeAdjustments: List<Tuple<number, string>>;
-  readonly attributeAdjustmentsSelection: List<Tuple<number, List<string>>>;
+  readonly attributeAdjustmentsSelection: Tuple<number, List<string>>;
   readonly attributeAdjustmentsText: string;
   readonly commonCultures: List<string>;
   readonly automaticAdvantages: List<string>;
@@ -331,15 +333,15 @@ export type ProfessionSelections =
 export type ProfessionVariantSelections =
   List<ProfessionVariantSelection>;
 
-export interface ProfessionNameForSexes {
+export interface NameBySex {
   readonly m: string;
   readonly f: string;
 }
 
 export interface Profession {
   readonly id: string;
-  readonly name: string | Record<ProfessionNameForSexes>;
-  readonly subname?: string | Record<ProfessionNameForSexes>;
+  readonly name: string | Record<NameBySex>;
+  readonly subname?: string | Record<NameBySex>;
   readonly ap: number;
   readonly apOfActivatables: number;
   readonly dependencies: List<ProfessionDependency>;
@@ -367,7 +369,8 @@ export interface Profession {
   readonly category: Categories.PROFESSIONS;
   readonly gr: number;
   /**
-   * Divides the groups into smaller subgroups, e.g. "Mage", "Blessed One of the Twelve Gods" or "Fighter".
+   * Divides the groups into smaller subgroups, e.g. "Mage", "Blessed One of the
+   * Twelve Gods" or "Fighter".
    */
   readonly subgr: number;
   readonly src: List<Record<SourceLink>>;
@@ -375,7 +378,7 @@ export interface Profession {
 
 export interface ProfessionVariant {
   readonly id: string;
-  readonly name: string | Record<ProfessionNameForSexes>;
+  readonly name: string | Record<NameBySex>;
   readonly ap: number;
   readonly apOfActivatables: number;
   readonly dependencies: List<ProfessionDependency>;
@@ -496,13 +499,15 @@ export interface CombatTechnique {
   readonly src: List<Record<SourceLink>>;
 }
 
+export type CheckModifier = 'SPI' | 'TOU';
+
 export interface LiturgicalChant {
   readonly id: string;
   readonly name: string;
   readonly aspects: List<number>;
   readonly category: Categories.LITURGIES;
   readonly check: List<string>;
-  readonly checkmod?: "SPI" | "TOU";
+  readonly checkmod?: CheckModifier;
   readonly gr: number;
   readonly ic: number;
   readonly tradition: List<number>;
@@ -538,7 +543,7 @@ export interface Spell {
   readonly name: string;
   readonly category: Categories.SPELLS;
   readonly check: List<string>;
-  readonly checkmod?: "SPI" | "TOU";
+  readonly checkmod?: CheckModifier;
   readonly gr: number;
   readonly ic: number;
   readonly property: number;
@@ -667,30 +672,30 @@ export interface ValueOptionalDependency {
   /**
    * The skill/spell/chant rating or rather attribute value.
    */
-	value: number;
+  value: number;
   /**
    * The entry that created this dependency.
    */
-	origin: string;
+  origin: string;
 }
 
 export interface ActiveDependency {
-	active?: boolean;
-	sid?: SID;
-	sid2?: string | number;
-	tier?: number;
+  active?: boolean;
+  sid?: SID;
+  sid2?: string | number;
+  tier?: number;
 }
 
 export interface ActiveOptionalDependency extends ActiveDependency {
-	origin: string;
+  origin: string;
 }
 
 export interface RequiresActivatableObject {
   id: string | List<string>;
   active: boolean;
-	sid?: SID;
-	sid2?: string | number;
-	tier?: number;
+  sid?: SID;
+  sid2?: string | number;
+  tier?: number;
 }
 
 export interface ProfessionRequiresActivatableObject extends RequiresActivatableObject {
@@ -708,7 +713,7 @@ export interface ProfessionRequiresIncreasableObject extends RequiresIncreasable
 }
 
 export interface RequiresPrimaryAttribute {
-  id: "ATTR_PRIMARY";
+  id: 'ATTR_PRIMARY';
   value: number;
   type: 1 | 2;
 }

@@ -2,7 +2,7 @@ import { ActionTypes } from '../constants/ActionTypes';
 import { getAvailableAdventurePoints } from '../selectors/adventurePointsSelectors';
 import { isInCharacterCreation } from '../selectors/phaseSelectors';
 import { getCombatTechniques, getLocaleMessages } from '../selectors/stateSelectors';
-import { AsyncAction } from '../types/actions.d';
+import { AsyncAction } from '../types/actions';
 import { translate } from '../utils/I18n';
 import { getDecreaseCost, getIncreaseCost } from '../utils/IncreasableUtils';
 import { addAlert } from './AlertActions';

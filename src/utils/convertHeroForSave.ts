@@ -1,9 +1,9 @@
 import { AdventurePointsObject } from '../selectors/adventurePointsSelectors';
-import * as Data from '../types/data.d';
+import * as Data from '../types/data';
 import * as Raw from '../types/rawdata';
 import { currentVersion } from '../utils/VersionUtils';
 import { StringKeyObject } from './collectionUtils';
-import { OrderedMap, OrderedMapValueElement, Record } from './dataUtils';
+import { List, OrderedMap, OrderedMapValueElement, Record } from './dataUtils';
 import { HeroStateMapKey } from './heroStateUtils';
 
 const getAttributesForSave = (hero: Record<Data.HeroDependent>) =>
@@ -83,7 +83,29 @@ const getBlessingsForSave =
 
 const getBelongingsForSave = (hero: Record<Data.HeroDependent>) =>
   ({
-    items: hero.get('belongings').get('items').toJSObjectBy(x => x.toObject()),
+    items: hero.get('belongings').get('items')
+      .toJSObjectBy<Raw.RawCustomItem>(
+        obj => {
+          const {
+            improvisedWeaponGroup,
+            damageBonus,
+            range,
+            ...other
+          } = obj.toObject();
+
+          return {
+            ...other,
+            imp: improvisedWeaponGroup,
+            primaryThreshold: damageBonus && {
+              ...damageBonus.toObject(),
+              threshold: damageBonus.get('threshold') instanceof List
+                ? (damageBonus.get('threshold') as List<number>).toArray()
+                : (damageBonus.get('threshold') as number)
+            },
+            range: range ? range.toArray() as [number, number, number] : undefined
+          };
+        }
+      ),
     armorZones: hero.get('belongings').get('armorZones').toJSObjectBy(x => x.toObject()),
     purse: hero.get('belongings').get('purse').toObject(),
   });

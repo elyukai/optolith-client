@@ -1,5 +1,5 @@
 import R from 'ramda';
-import { ActivatableDependent } from '../types/data.d';
+import { ActivatableDependent } from '../types/data';
 import { SpecialAbility } from '../types/wiki';
 import { List, Maybe, OrderedMap, Record } from './dataUtils';
 import { isBlessedTraditionId, isMagicalTraditionId } from './IDUtils';
@@ -17,9 +17,9 @@ const isActiveBlessedTradition = (e: Record<ActivatableDependent>) => {
  * Get magical traditions' dependent entries.
  * @param list
  */
-export const getMagicalTraditions =
-  (list: OrderedMap<string, Record<ActivatableDependent>>) =>
-    list.elems().filter(isActiveMagicalTradition);
+export const getMagicalTraditions = (
+  list: OrderedMap<string, Record<ActivatableDependent>>
+): List<Record<ActivatableDependent>> => list.elems().filter(isActiveMagicalTradition);
 
 
 /**
@@ -39,9 +39,9 @@ export const getMagicalTraditionsFromWiki = (
  * Get blessed tradition's' dependent entry.
  * @param list
  */
-export const getBlessedTradition =
-  (list: OrderedMap<string, Record<ActivatableDependent>>) =>
-    list.elems().find(isActiveBlessedTradition);
+export const getBlessedTradition = (
+  list: OrderedMap<string, Record<ActivatableDependent>>
+): Maybe<Record<ActivatableDependent>> => list.elems().find(isActiveBlessedTradition);
 
 /**
  * Get blessed tradition's' wiki entry.

@@ -1,4 +1,4 @@
-import * as Al from '../../types/algebraic.d';
+import * as Al from '../../types/algebraic';
 import { List } from './list';
 import { Some } from './maybe';
 

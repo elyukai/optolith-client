@@ -1,6 +1,15 @@
+/**
+ * Handles activation, deactivation and level change of active `Activatable`
+ * entries.
+ *
+ * @file src/utils/activatableActivationUtils.ts
+ * @author Lukas Obermann
+ * @since 1.1.0
+ */
+
 import R from 'ramda';
-import * as Data from '../types/data.d';
-import * as Wiki from '../types/wiki.d';
+import * as Data from '../types/data';
+import * as Wiki from '../types/wiki';
 import { convertUIStateToActiveObject } from './activatableConvertUtils';
 import { createActivatableDependent } from './createEntryUtils';
 import { Just, List, Maybe, OrderedMap, Record } from './dataUtils';

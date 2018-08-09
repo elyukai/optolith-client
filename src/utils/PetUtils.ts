@@ -1,4 +1,4 @@
-import { PetEditorInstance, PetInstance } from '../types/data.d';
+import { PetEditorInstance, PetInstance } from '../types/data';
 import { Record, RecordSafeKeys } from './dataUtils';
 
 export const convertToEdit = (item: Record<PetInstance>): Record<PetEditorInstance> =>

@@ -1,6 +1,6 @@
 import { ActionTypes } from '../constants/ActionTypes';
 import { getArmorZonesState, getItemsState } from '../selectors/equipmentSelectors';
-import { AsyncAction } from '../types/actions.d';
+import { AsyncAction } from '../types/actions';
 import { ItemInstance } from '../types/data';
 import { ItemTemplate } from '../types/wiki';
 import { Record } from '../utils/dataUtils';

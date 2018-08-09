@@ -1,7 +1,7 @@
 import { ReceiveInitialDataAction } from '../actions/IOActions';
 import { SetLocaleAction } from '../actions/LocaleActions';
 import { ActionTypes } from '../constants/ActionTypes';
-import { UIMessages } from '../types/ui.d';
+import { UIMessages } from '../types/ui';
 
 type Action = ReceiveInitialDataAction | SetLocaleAction;
 

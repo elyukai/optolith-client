@@ -1,6 +1,7 @@
 import { Action } from 'redux';
 import { List, OrderedMap, OrderedSet, Record, Tuple } from '../utils/dataUtils';
 import { TabId } from '../utils/LocationUtils';
+import { UndoState } from '../utils/undo';
 import * as Wiki from './wiki';
 
 export interface ActivatableDependent {
@@ -56,6 +57,9 @@ export interface SkillOptionalDependency {
   value: number;
   origin: string;
 }
+
+export type Hero = Record<HeroDependent>;
+export type UndoableHero = UndoState<Hero>;
 
 export interface HeroDependent {
   readonly id: string;
@@ -154,11 +158,11 @@ export interface Purse {
 }
 
 export interface Pact {
-	readonly category: number;
-	readonly level: number;
-	readonly type: number;
-	readonly domain: number | string;
-	readonly name: string;
+  readonly category: number;
+  readonly level: number;
+  readonly type: number;
+  readonly domain: number | string;
+  readonly name: string;
 }
 
 export interface User {
@@ -392,7 +396,7 @@ export interface ItemInstance extends ItemBaseInstance {
   range?: List<number>;
   reloadTime?: number;
   stp?: number;
-  weight?: number;
+  weight: number;
   stabilityMod?: number;
   note?: string;
   rules?: string;
@@ -459,8 +463,8 @@ export interface SecondaryAttribute<I = string> {
   calc: string;
   base: number;
   add?: number;
-  mod?: number;
-  value: number | undefined;
+  mod: number;
+  value?: number;
   maxAdd?: number;
   currentAdd?: number;
   permanentLost?: number;
@@ -629,5 +633,5 @@ export interface Alert {
   onClose?(): void;
 }
 
-export { UIMessages } from './ui.d';
+export { UIMessages } from './ui';
 

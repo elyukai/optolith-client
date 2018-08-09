@@ -3,7 +3,7 @@ import { SelectProfessionAction } from '../actions/ProfessionActions';
 import { SelectProfessionVariantAction } from '../actions/ProfessionVariantActions';
 import { SelectRaceAction, SetRaceVariantAction } from '../actions/RaceActions';
 import { ActionTypes } from '../constants/ActionTypes';
-import * as Data from '../types/data.d';
+import * as Data from '../types/data';
 import { Record } from '../utils/dataUtils';
 
 type Action =

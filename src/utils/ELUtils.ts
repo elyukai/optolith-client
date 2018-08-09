@@ -1,4 +1,4 @@
-import { ExperienceLevel } from '../types/wiki.d';
+import { ExperienceLevel } from '../types/wiki';
 import { Maybe, OrderedMap, Record } from './dataUtils';
 import { getNumericId, getStringId } from './IDUtils';
 

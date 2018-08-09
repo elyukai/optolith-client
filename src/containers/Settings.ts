@@ -5,14 +5,14 @@ import * as IOActions from '../actions/IOActions';
 import * as LocaleActions from '../actions/LocaleActions';
 import { AppState } from '../reducers/app';
 import { getLocaleId, getLocaleType } from '../selectors/stateSelectors';
-import { areAnimationsEnabled, getTheme, isEditingHeroAfterCreationPhaseEnabled } from '../selectors/uisettingsSelectors';
+import { areAnimationsEnabled, getTheme, getIsEditingHeroAfterCreationPhaseEnabled } from '../selectors/uisettingsSelectors';
 import { Settings, SettingsDispatchProps, SettingsOwnProps, SettingsStateProps } from '../views/navigationbar/Settings';
 
 function mapStateToProps(state: AppState) {
 	return {
 		localeString: getLocaleId(state),
 		localeType: getLocaleType(state),
-		isEditingHeroAfterCreationPhaseEnabled: isEditingHeroAfterCreationPhaseEnabled(state),
+		isEditingHeroAfterCreationPhaseEnabled: getIsEditingHeroAfterCreationPhaseEnabled(state),
 		areAnimationsEnabled: areAnimationsEnabled(state),
 		theme: getTheme(state),
 	};

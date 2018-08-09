@@ -1,33 +1,26 @@
 import { createSelector } from 'reselect';
 import { Categories } from '../constants/Categories';
-import { ActivatableDependent, CantripInstance, SpellInstance, ToListById } from '../types/data.d';
-import { Spell, SpellWithRequirements } from '../types/view.d';
-import { isActive } from '../utils/ActivatableUtils';
+import { SpellCombined, SpellWithRequirements } from '../types/view.d';
 import { filterAndSortObjects } from '../utils/FilterSortUtils';
-import { validate } from '../utils/RequirementUtils';
 import { filterByAvailability } from '../utils/RulesUtils';
-import { mapGetToSlice } from '../utils/SelectorsUtils';
-import { isDecreasable, isIncreasable, isMagicalTraditionId, isOwnTradition } from '../utils/SpellUtils';
-import { getPresent } from './currentHeroSelectors';
+import { isDecreasable, isIncreasable, isOwnTradition } from '../utils/SpellUtils';
+import { getMagicalTraditions } from '../utils/traditionUtils';
 import { getStartEl } from './elSelectors';
 import { getValidPact } from './pactSelectors';
 import { getRuleBooksEnabled } from './rulesSelectors';
 import { getSpellsSortOptions } from './sortOptionsSelectors';
 import { getAdvantages, getAttributes, getCantrips, getDisadvantages, getInactiveSpellsFilterText, getLocaleMessages, getPhase, getSpecialAbilities, getSpells, getSpellsFilterText, getWiki } from './stateSelectors';
 import { getEnableActiveItemHints } from './uisettingsSelectors';
+import { Maybe } from '../utils/dataUtils';
 
-export const getMagicalTraditionsResultFunc = (list: Map<string, ActivatableDependent>) => {
-  return [...list.values()].filter(e => isMagicalTraditionId(e.id) && isActive(e));
-};
-
-export const getMagicalTraditions = createSelector(
+export const getMagicalTraditionsSelector = createSelector(
   getSpecialAbilities,
-  getMagicalTraditionsResultFunc
+  Maybe.map(getMagicalTraditions)
 );
 
 export const isSpellsTabAvailable = createSelector(
   getMagicalTraditions,
-  traditions => traditions.length > 0
+  traditions => traditions.length() > 0
 );
 
 export const areMaxUnfamiliar = createSelector(

@@ -20,6 +20,10 @@ export type RecordMaybe<T> = {
   [P in keyof T]: T[P] extends Maybe<infer M> ? M | undefined : T[P];
 };
 
+export type RecordWithMaybe<T> = {
+  [P in keyof T]: T[P] extends NonNullable<T[P]> ? T[P] : Maybe<NonNullable<T[P]>>;
+};
+
 export type RecordSafeKeys<T> = {
   [K in keyof T]: T[K] extends NonNullable<T[K]> ? K : never;
 }[keyof T];
@@ -28,7 +32,11 @@ type ObjectDeleteProperty<T, D extends keyof T> = {
   [K in Exclude<keyof T, D>]: T[K];
 };
 
-export class Record<T extends { [key: string]: any }> {
+interface RecordBase {
+  [key: string]: any
+}
+
+export class Record<T extends RecordBase> {
   private readonly value: T;
 
   constructor(initial: T) {
@@ -332,7 +340,7 @@ export class Record<T extends { [key: string]: any }> {
     return new Record(initial);
   }
 
-  static ofMaybe<T>(initial: T): Record<RecordMaybe<T>> {
+  static ofMaybe<T>(initial: RecordWithMaybe<T>): Record<T> {
     return Record.of(Object.entries(initial).reduce(
       (acc, [key, value]) => {
         if (value instanceof Maybe) {
@@ -357,5 +365,25 @@ export class Record<T extends { [key: string]: any }> {
       },
       {} as any
     ));
+  }
+
+  /**
+   * `get :: String -> a -> a[String]`
+   *
+   * Returns the value at the given key. Only use for NonNullable properties,
+   * use `lookup` otherwise.
+   */
+  static get<T extends RecordBase, K extends RecordSafeKeys<T>>(key: K): (x: Record<T>) => T[K];
+  static get<T extends RecordBase, K extends RecordSafeKeys<T>>(key: K, x: Record<T>): T[K];
+  static get<T extends RecordBase, K extends RecordSafeKeys<T>>(
+    key: K,
+    x?: Record<T>
+  ): T[K] | ((x: Record<T>) => T[K]) {
+    if (arguments.length === 2) {
+      return x!.get(key);
+    }
+    else {
+      return (p2: Record<T>) => p2.get(key);
+    }
   }
 }

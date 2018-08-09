@@ -26,34 +26,34 @@ const prepareHerolist = (state: AppState, action: ReceiveInitialDataAction) => {
   if (rawHeroes) {
     return {
       ...state,
-      herolist: {
-        ...state.herolist,
-        ...Object.entries(rawHeroes).reduce<Reduced>(
-          ({ heroes, users }, [key, hero]) => {
-            const updatedHero = convertHero(hero);
-            const heroInstance = getHeroInstance(state.wiki, key, updatedHero);
+      herolist: state.herolist
+        .merge(Record.of(
+          Object.entries(rawHeroes).reduce<Reduced>(
+            ({ heroes, users }, [key, hero]) => {
+              const updatedHero = convertHero(hero);
+              const heroInstance = getHeroInstance(state.wiki, key, updatedHero);
 
-            const undoState = wrapWithHistoryObject(heroInstance);
+              const undoState = wrapWithHistoryObject(heroInstance);
 
-            if (updatedHero.player) {
-              return {
-                users: users.insert(updatedHero.player.id, updatedHero.player),
-                heroes: heroes.insert(key, undoState),
-              };
+              if (updatedHero.player) {
+                return {
+                  users: users.insert(updatedHero.player.id, updatedHero.player),
+                  heroes: heroes.insert(key, undoState),
+                };
+              }
+              else {
+                return {
+                  users,
+                  heroes: heroes.insert(key, undoState),
+                };
+              }
+            },
+            {
+              heroes: OrderedMap.empty(),
+              users: OrderedMap.empty()
             }
-            else {
-              return {
-                users,
-                heroes: heroes.insert(key, undoState),
-              };
-            }
-          },
-          {
-            heroes: OrderedMap.empty(),
-            users: OrderedMap.empty()
-          }
-        )
-      }
+          )
+        ))
     };
   }
 
@@ -74,11 +74,15 @@ const prepareImportedHero = (state: AppState, action: ReceiveImportedHeroAction)
 
     return {
       ...state,
-      herolist: {
-        ...state.herolist,
-        users: state.herolist.users.insert(player.id, player),
-        heroes: state.herolist.heroes.insert(data.id, undoState)
-      }
+      herolist: state.herolist
+        .modify(
+          users => users.insert(player.id, player),
+          'users'
+        )
+        .modify(
+          heroes => heroes.insert(data.id, undoState),
+          'heroes'
+        )
     };
   }
   else {
@@ -86,10 +90,11 @@ const prepareImportedHero = (state: AppState, action: ReceiveImportedHeroAction)
 
     return {
       ...state,
-      herolist: {
-        ...state.herolist,
-        heroes: state.herolist.heroes.insert(data.id, undoState)
-      }
+      herolist: state.herolist
+        .modify(
+          heroes => heroes.insert(data.id, undoState),
+          'heroes'
+        )
     };
   }
 };

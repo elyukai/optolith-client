@@ -1,4 +1,4 @@
-import * as Wiki from '../types/wiki.d';
+import * as Wiki from '../types/wiki';
 import { Just, Maybe, Record } from './dataUtils';
 
 export const isSpecialisationSelection = (

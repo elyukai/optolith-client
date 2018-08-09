@@ -1,16 +1,13 @@
-import { createSelector } from 'reselect';
-import { AppState } from '../reducers/app';
+import { createMaybeSelector } from '../utils/createMaybeSelector';
+import { Maybe } from '../utils/dataUtils';
+import { getCurrentHeroFuture, getCurrentHeroPast } from './stateSelectors';
 
-export const getPast = (state: AppState) => state.currentHero.past;
-export const getPresent = (state: AppState) => state.currentHero.present;
-export const getFuture = (state: AppState) => state.currentHero.future;
-
-export const getUndoAvailability = createSelector(
-	[ getPast ],
-	past => past.length > 0
+export const getUndoAvailability = createMaybeSelector(
+  getCurrentHeroPast,
+  maybePast => Maybe.maybe(false, past => past.length > 0, maybePast)
 );
 
-export const getRedoAvailability = createSelector(
-	[ getFuture ],
-	future => future.length > 0
+export const getRedoAvailability = createMaybeSelector(
+  getCurrentHeroFuture,
+  maybeFuture => Maybe.maybe(false, future => future.length > 0, maybeFuture)
 );

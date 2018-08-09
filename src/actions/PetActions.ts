@@ -1,9 +1,9 @@
 import { ActionTypes } from '../constants/ActionTypes';
-import { AsyncAction } from '../types/actions.d';
-import { PetEditorInstance, PetInstance } from '../types/data.d';
+import { getPetsState } from '../selectors/stateSelectors';
+import { AsyncAction } from '../types/actions';
+import { PetEditorInstance, PetInstance } from '../types/data';
 import { getNewId } from '../utils/IDUtils';
 import { convertToSave } from '../utils/PetUtils';
-import { getPetsState } from '../selectors/stateSelectors';
 
 export interface AddPetAction {
 	type: ActionTypes.ADD_PET;

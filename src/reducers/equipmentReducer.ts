@@ -1,6 +1,6 @@
 import * as EquipmentActions from '../actions/EquipmentActions';
 import { ActionTypes } from '../constants/ActionTypes';
-import * as Data from '../types/data.d';
+import * as Data from '../types/data';
 import { Just, List, Maybe, Nothing, Record } from '../utils/dataUtils';
 import { convertToEdit, convertToSave } from '../utils/ItemUtils';
 

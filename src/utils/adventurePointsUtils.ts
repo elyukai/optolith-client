@@ -1,6 +1,6 @@
 import R from 'ramda';
 import { AdventurePointsObject } from '../selectors/adventurePointsSelectors';
-import * as Data from '../types/data.d';
+import * as Data from '../types/data';
 import { Skill, WikiAll } from '../types/wiki';
 import { getActiveWithNoCustomCost } from './activatableCostUtils';
 import { List, Maybe, OrderedMap, Record, Tuple } from './dataUtils';
@@ -328,7 +328,7 @@ const getSkillSpecializationsDiff = (
 
                 return Maybe.isJust(altered) ? Maybe.fromJust(altered) : acc;
               },
-              new OrderedMap()
+              OrderedMap.empty()
             );
 
             // Return the accumulated value, otherwise 0.
