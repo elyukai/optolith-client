@@ -11,13 +11,11 @@
   "license": "GPL-3.0",
   "main": "app/main.js",
   "dependencies": {
-    "@std/esm": "^0.9.2",
     "classnames": "^2.2.5",
     "electron-localshortcut": "^3.1.0",
     "electron-log": "^2.2.12",
     "electron-updater": "^2.17.3",
     "electron-window-state": "^4.1.1",
-    "lodash": "^4.17.4",
     "ramda": "^0.25.0",
     "react": "^16.2.0",
     "react-custom-scrollbars": "^4.2.1",

@@ -34,9 +34,7 @@ export const isOwnTradition = (
   const isLiturgicalChant =
     obj.get('category') === Categories.LITURGIES;
 
-  const blessings = Maybe.fromJust(
-    tradition.lookup('id').fmap(getUnavailableBlessingsForTradition)
-  );
+  const blessings = getUnavailableBlessingsForTradition(tradition.get('id'));
 
   const isSpecial = isLiturgicalChant
     || !blessings.elem(obj.get('id'));
@@ -199,26 +197,26 @@ export const getTraditionOfAspect = (aspectId: number): number =>
   traditionsByAspect.findWithDefault(1, aspectId);
 
 // Keys are traditions and their values are their respective aspects
-const aspectsByTradition = OrderedMap.of([
-  [1, []],
-  [2, [2, 3]],
-  [3, [4, 5]],
-  [4, [6, 7]],
-  [5, [8, 9]],
-  [6, [10, 11]],
-  [7, [12, 13]],
-  [8, [14, 15]],
-  [9, [16, 17]],
-  [10, [18, 19]],
-  [11, [20, 21]],
-  [12, [22, 23]],
-  [13, [24, 25]],
-  [14, []],
-  [15, [26, 27]],
-  [16, [28, 29]],
-  [17, [30, 31]],
-  [18, [32, 33]],
-  [19, [34, 35]],
+const aspectsByTradition = OrderedMap.of<number, List<number>>([
+  [1, List.of()],
+  [2, List.of(2, 3)],
+  [3, List.of(4, 5)],
+  [4, List.of(6, 7)],
+  [5, List.of(8, 9)],
+  [6, List.of(10, 11)],
+  [7, List.of(12, 13)],
+  [8, List.of(14, 15)],
+  [9, List.of(16, 17)],
+  [10, List.of(18, 19)],
+  [11, List.of(20, 21)],
+  [12, List.of(22, 23)],
+  [13, List.of(24, 25)],
+  [14, List.of()],
+  [15, List.of(26, 27)],
+  [16, List.of(28, 29)],
+  [17, List.of(30, 31)],
+  [18, List.of(32, 33)],
+  [19, List.of(34, 35)],
 ]);
 
 /**
@@ -227,5 +225,5 @@ const aspectsByTradition = OrderedMap.of([
  * actual special ability, you have to increase the value by 1 before passing
  * it.
  */
-export const getAspectsOfTradition = (traditionId: number): number[] =>
-  [1, ...aspectsByTradition.findWithDefault([], traditionId)];
+export const getAspectsOfTradition = (traditionId: number): List<number> =>
+  aspectsByTradition.findWithDefault(List.of(), traditionId).append(1);
