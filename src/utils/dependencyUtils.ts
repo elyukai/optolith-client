@@ -26,7 +26,7 @@ const createPrimaryAttributeDependencyModifier =
       Maybe.fromMaybe(
         state,
         getPrimaryAttributeId(state.get('specialAbilities'), req.get('type'))
-          .map(id => modify(id, req.get('value'))(state))
+          .fmap(id => modify(id, req.get('value'))(state))
       );
 
 const createIncreasableDependencyModifier = (

@@ -70,7 +70,7 @@ const getIsNoRequiredOrActiveSelection =
 const addToSkillCategoryCounter = (map: OrderedMap<number, number>) =>
   map.alter(
     prop => prop
-      .map(count => count + 1)
+      .fmap(count => count + 1)
       .alt(Maybe.Just(0))
   );
 
@@ -101,7 +101,7 @@ const getCategoriesWithSkillsAbove10 = (
           (wiki.get(sliceKey).lookup(
             obj.get('id')
           ) as Maybe<Record<Wiki.Spell | Wiki.LiturgicalChant>>)
-            .map(addToCounterByKey(map))
+            .fmap(addToCounterByKey(map))
         ),
       OrderedMap.empty()
     )
@@ -125,14 +125,14 @@ const getEntrySpecificSelections = (
         'ADV_47',
       ].includes,
       () => entry.lookup('select')
-        .map(
+        .fmap(
           select => select.filter(getIsNoRequiredOrActiveSelection(instance))
         )
     )
     .on(
       'ADV_16',
       () => entry.lookup('select')
-        .map(select => {
+        .fmap(select => {
           const hasLessThanTwoSameIdActiveSelections =
             getLessThanTwoSameIdActiveSelections(instance);
 
@@ -151,7 +151,7 @@ const getEntrySpecificSelections = (
         'ADV_29',
       ].includes,
       () => entry.lookup('select')
-        .map(select => select.filter(getIsNoRequiredSelection(instance)))
+        .fmap(select => select.filter(getIsNoRequiredSelection(instance)))
     )
     .on(
       [
@@ -159,7 +159,7 @@ const getEntrySpecificSelections = (
         'DISADV_24',
       ].includes,
       id => entry.lookup('select')
-        .map(select => {
+        .fmap(select => {
           const flippedId = id === 'DISADV_24' ? 'ADV_32' : id;
 
           const hasLessThanTwoSameIdActiveSelections =
@@ -183,7 +183,7 @@ const getEntrySpecificSelections = (
         'DISADV_50',
       ].includes,
       () => entry.lookup('select')
-        .map(select => select.filter(getIsNoRequiredSelection(instance)))
+        .fmap(select => select.filter(getIsNoRequiredSelection(instance)))
     )
     .on(
       [
@@ -192,7 +192,7 @@ const getEntrySpecificSelections = (
         'DISADV_51',
       ].includes,
       id => entry.lookup('select')
-        .map(select => {
+        .fmap(select => {
           const isNoRequiredOrActiveSelection =
             getIsNoRequiredOrActiveSelection(instance);
 
@@ -213,14 +213,14 @@ const getEntrySpecificSelections = (
     .on(
       'DISADV_36',
       () => entry.lookup('select')
-        .map(
+        .fmap(
           select => select.filter(getIsNoRequiredOrActiveSelection(instance))
         )
     )
     .on(
       'DISADV_48',
       () => entry.lookup('select')
-        .map(select => {
+        .fmap(select => {
           const isNoRequiredOrActiveSelection =
             getIsNoRequiredOrActiveSelection(instance);
 
@@ -231,7 +231,7 @@ const getEntrySpecificSelections = (
             Maybe.fromMaybe(
               false,
               wiki.get('skills').lookup(e.get('id') as string)
-                .map(skill => skill.get('ic') === 2)
+                .fmap(skill => skill.get('ic') === 2)
             );
 
           return select.filter(
@@ -247,14 +247,14 @@ const getEntrySpecificSelections = (
     .on(
       'SA_3',
       () => entry.lookup('select')
-        .map(select => {
+        .fmap(select => {
           const isNoRequiredOrActiveSelection =
             getIsNoRequiredOrActiveSelection(instance);
 
           return select.filter(
             e =>
               isNoRequiredOrActiveSelection(e)
-              && Maybe.fromMaybe(false, e.lookup('req').map(
+              && Maybe.fromMaybe(false, e.lookup('req').fmap(
                 req => validatePrerequisites(wiki, state, req, entry.get('id'))
               ))
           );
@@ -264,7 +264,7 @@ const getEntrySpecificSelections = (
       const maybeCounter = getActiveSecondarySelections(instance);
 
       return entry.lookup('select')
-        .map(select => {
+        .fmap(select => {
           const isNoRequiredSelection = getIsNoRequiredSelection(instance);
 
           const isValidSelection = Maybe.isJust(maybeCounter)
@@ -281,7 +281,7 @@ const getEntrySpecificSelections = (
                     .bind(state.get('skills').lookup)
                     .bind(
                       skill => counter.lookup(e.get('id'))
-                        .map(
+                        .fmap(
                           arr =>
                             arr.length() < 3
                             && skill.get('value') >= (arr.length() + 1) * 6
@@ -294,7 +294,7 @@ const getEntrySpecificSelections = (
                   false,
                   Maybe.ensure(isString, e.get('id'))
                     .bind(state.get('skills').lookup)
-                    .map(skill => skill.get('value') >= 6)
+                    .fmap(skill => skill.get('value') >= 6)
                 );
               }
             }
@@ -307,14 +307,14 @@ const getEntrySpecificSelections = (
                   false,
                   Maybe.ensure(isString, e.get('id'))
                     .bind(state.get('skills').lookup)
-                    .map(skill => skill.get('value') >= 6)
+                    .fmap(skill => skill.get('value') >= 6)
                 );
               }
             };
 
           return select.filter(isValidSelection);
         })
-        .map(select => select.map(e => {
+        .fmap(select => select.map(e => {
           const id = e.get('id') as string;
 
           const list = maybeCounter.bind(counter => counter.lookup(id));
@@ -322,9 +322,9 @@ const getEntrySpecificSelections = (
           return e.mergeMaybe(Record.of({
             cost: Maybe.isJust(list)
               ? e.lookup('cost')
-                .map(cost => cost * (Maybe.fromJust(list).length() + 1))
+                .fmap(cost => cost * (Maybe.fromJust(list).length() + 1))
               : e.lookup('cost'),
-            applications: e.lookup('applications').map(
+            applications: e.lookup('applications').fmap(
               apps => apps.filter(n => {
                 const isInactive = !Maybe.isJust(list)
                   || !Maybe.fromJust(list).elem(n.get('id'));
@@ -344,7 +344,7 @@ const getEntrySpecificSelections = (
     .on(
       'SA_28',
       () => entry.lookup('select')
-        .map(select => {
+        .fmap(select => {
           const isNoActiveSelection = getIsNoActiveSelection(instance);
           const isNoRequiredSelection = getIsNoRequiredSelection(instance);
 
@@ -358,7 +358,7 @@ const getEntrySpecificSelections = (
                 e.lookup('talent')
                   .bind(
                     talent => state.get('skills').lookup(Tuple.fst(talent))
-                      .map(
+                      .fmap(
                         skill =>
                           isNoActiveSelection(e)
                           && skill.get('value') >= Tuple.snd(talent)
@@ -372,12 +372,12 @@ const getEntrySpecificSelections = (
     .on(
       'SA_29',
       () => entry.lookup('select')
-        .map(select => {
+        .fmap(select => {
           const isNoRequiredSelection = getIsNoRequiredSelection(instance);
 
           const active = Maybe.fromMaybe<List<Record<Data.ActiveObject>>>(
             List.of(),
-            instance.map(e => e.get('active'))
+            instance.fmap(e => e.get('active'))
           );
 
           return select.filter(
@@ -389,7 +389,7 @@ const getEntrySpecificSelections = (
     )
     .on('SA_72', () => {
       return entry.lookup('select')
-        .map(select => {
+        .fmap(select => {
           const propertiesWithValidSpells = getCategoriesWithSkillsAbove10(
             wiki, state, 'spells'
           );
@@ -406,7 +406,7 @@ const getEntrySpecificSelections = (
     .on(
       'SA_81',
       () => entry.lookup('select')
-        .map(select => {
+        .fmap(select => {
           const isNoActivePropertyKnowledge =
             getIsNoActiveSelection(
               state.get('specialAbilities').lookup('SA_72')
@@ -434,7 +434,7 @@ const getEntrySpecificSelections = (
             getIsNoRequiredOrActiveSelection(instance);
 
           return getBlessedTradition(state.get('specialAbilities'))
-            .map(
+            .fmap(
               tradition => select.filter(
                 e =>
                   getBlessedTraditionInstanceIdByNumericId(
@@ -450,7 +450,7 @@ const getEntrySpecificSelections = (
     .on(
       'SA_231',
       () => entry.lookup('select')
-        .map(select => {
+        .fmap(select => {
           const isNoRequiredOrActiveSelection =
             getIsNoRequiredOrActiveSelection(instance);
 
@@ -460,7 +460,7 @@ const getEntrySpecificSelections = (
               && Maybe.fromMaybe(
                 false,
                 state.get('spells').lookup(e.get('id') as string)
-                  .map(spell => spell.get('value') >= 10)
+                  .fmap(spell => spell.get('value') >= 10)
               )
           );
         })
@@ -468,7 +468,7 @@ const getEntrySpecificSelections = (
     .on(
       'SA_338',
       () => entry.lookup('select')
-        .map(select => {
+        .fmap(select => {
           const activeSelections = getActiveSelections(instance);
 
           if (isActive(instance)) {
@@ -479,13 +479,13 @@ const getEntrySpecificSelections = (
               .bind(obj => obj.lookup('gr'));
 
             const highestLevel = activeSelections
-              .map(List.map(
+              .fmap(List.map(
                 selection => findSelectOption(entry, Maybe.Just(selection))
                   .bind(e => e.lookup('tier'))
               ))
-              .map(Maybe.catMaybes)
-              .map(List.maximum)
-              .map(e => e + 1);
+              .fmap(Maybe.catMaybes)
+              .fmap(List.maximum)
+              .fmap(e => e + 1);
 
             return select.filter(
               e =>
@@ -506,7 +506,7 @@ const getEntrySpecificSelections = (
         'SA_663',
       ].includes,
       () => entry.lookup('select')
-        .map(select => {
+        .fmap(select => {
           const isNoRequiredOrActiveSelection =
             getIsNoRequiredOrActiveSelection(instance);
 
@@ -539,8 +539,8 @@ const getEntrySpecificSelections = (
                 )
                 && Maybe.isJust(targetWikiEntry)
                 && Maybe.isJust(targetInstance)
-                && targetInstance.map(target => target.get('value'))
-                  .gte(e.lookup('tier').map(tier => tier * 4 + 4))
+                && targetInstance.fmap(target => target.get('value'))
+                  .gte(e.lookup('tier').fmap(tier => tier * 4 + 4))
               ) {
                 const target = Maybe.fromJust(targetWikiEntry);
 
@@ -559,7 +559,7 @@ const getEntrySpecificSelections = (
     .on(
       'SA_639',
       () => entry.lookup('select')
-        .map(select => {
+        .fmap(select => {
           const isNoRequiredOrActiveSelection =
             getIsNoRequiredOrActiveSelection(instance);
 
@@ -580,7 +580,7 @@ const getEntrySpecificSelections = (
       () => wiki.get('specialAbilities').lookup('SA_29')
         .bind(
           languagesWikiEntry => languagesWikiEntry.lookup('select')
-            .map(select => {
+            .fmap(select => {
               interface AvailableLanguage {
                 id: number;
                 tier: number;
@@ -590,7 +590,7 @@ const getEntrySpecificSelections = (
                 Maybe.fromMaybe(
                   List.of(),
                   state.get('specialAbilities').lookup('SA_29')
-                    .map(
+                    .fmap(
                       lang => lang.get('active')
                         .foldl<List<Record<AvailableLanguage>>>(
                           arr => obj =>
@@ -599,7 +599,7 @@ const getEntrySpecificSelections = (
                               obj.lookup('tier').bind(
                                 tier => obj.lookup('sid')
                                   .bind(Maybe.ensure(x => x === 3 || x === 4))
-                                  .map(sid => arr.append(Record.of({
+                                  .fmap(sid => arr.append(Record.of({
                                     id: sid as number,
                                     tier
                                   })))
@@ -620,7 +620,7 @@ const getEntrySpecificSelections = (
                   );
 
                   const firstForLanguage = instance
-                    .map(
+                    .fmap(
                       just => just.get('active').all(
                         a => a.lookup('sid').equals(just.lookup('id'))
                       )
@@ -650,7 +650,7 @@ const getEntrySpecificSelections = (
     )
     .otherwise(
       () => entry.lookup('select')
-        .map(
+        .fmap(
           select => select.filter(getIsNoRequiredOrActiveSelection(instance))
         )
     );
@@ -678,7 +678,7 @@ const getOtherOptions = (
         n => n < 3,
         countActiveSkillEntries(state, 'spells')
       )
-        .map(activeSpells => Record.of<InactiveOptions>({
+        .fmap(activeSpells => Record.of<InactiveOptions>({
           maxTier: 3 - activeSpells
         }))
     )
@@ -692,7 +692,7 @@ const getOtherOptions = (
                 x => x >= 12,
                 skill51.get('value') + skill55.get('value')
               )
-                .map(() => Record.of({}))
+                .fmap(() => Record.of({}))
             )
         )
     )
@@ -708,7 +708,7 @@ const getOtherOptions = (
           .filter(e => e.get('value') >= 10)
           .length()
       )
-        .map(() => Record.of({}))
+        .fmap(() => Record.of({}))
     )
     .on(
       [
@@ -723,7 +723,7 @@ const getOtherOptions = (
         list => list.length() === 0,
         getMagicalTraditions(state.get('specialAbilities'))
       )
-        .map(() => Record.of({}))
+        .fmap(() => Record.of({}))
     )
     .on(
       [
@@ -748,18 +748,18 @@ const getOtherOptions = (
       ].includes,
       () =>
         getBlessedTradition(state.get('specialAbilities'))
-          .map(() => Record.of({}))
+          .fmap(() => Record.of({}))
     )
     .on('SA_72', () => Maybe.Just(Record.of<InactiveOptions>({
       cost: [10, 20, 40][Maybe.fromMaybe(
         0,
-        instance.map(e => e.get('active').length())
+        instance.fmap(e => e.get('active').length())
       )]
     })))
     .on('SA_87', () => Maybe.Just(Record.of<InactiveOptions>({
       cost: [15, 25, 45][Maybe.fromMaybe(
         0,
-        instance.map(e => e.get('active').length())
+        instance.fmap(e => e.get('active').length())
       )]
     })))
     .on(
@@ -769,7 +769,7 @@ const getOtherOptions = (
           .bind(specialAbility => specialAbility.get('active').head())
           .bind(active => active.lookup('sid'))
           .bind(sid => wiki.get('skills').lookup(sid as string))
-          .map(skill => Record.of<InactiveOptions>({
+          .fmap(skill => Record.of<InactiveOptions>({
             cost: (entry.get('cost') as List<number>).map(
               e => e + skill.get('ic')
             )
@@ -865,7 +865,7 @@ const getOtherOptions = (
           Record.of({})
         )
     )
-    .on('SA_667', () => state.lookup('pact').map(
+    .on('SA_667', () => state.lookup('pact').fmap(
       e => Record.of<InactiveOptions>({
         maxTier: e.get('level')
       })
@@ -945,7 +945,7 @@ export const getInactiveView = (
                 || Maybe.fromJust(select).length() > 0,
               specificSelections.alt(entry.lookup('select'))
             )
-              .map(
+              .fmap(
                 select =>
                   otherOptions.mergeMaybe(Record.of({
                     id,
@@ -956,7 +956,7 @@ export const getInactiveView = (
                     maxTier,
                     instance,
                     wiki: entry,
-                    sel: select.map(sel => sortObjects(sel, locale.get('id')))
+                    sel: select.fmap(sel => sortObjects(sel, locale.get('id')))
                   })) as Record<Data.DeactiveViewObject>
               )
         );

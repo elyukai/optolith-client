@@ -84,7 +84,7 @@ const getBlessingsForSave =
 const getBelongingsForSave = (hero: Record<Data.HeroDependent>) =>
   ({
     items: hero.get('belongings').get('items')
-      .toJSObjectBy<Raw.RawCustomItem>(
+      .toKeyValueObjectWith<Raw.RawCustomItem>(
         obj => {
           const {
             improvisedWeaponGroup,
@@ -106,12 +106,12 @@ const getBelongingsForSave = (hero: Record<Data.HeroDependent>) =>
           };
         }
       ),
-    armorZones: hero.get('belongings').get('armorZones').toJSObjectBy(x => x.toObject()),
+    armorZones: hero.get('belongings').get('armorZones').toKeyValueObjectWith(x => x.toObject()),
     purse: hero.get('belongings').get('purse').toObject(),
   });
 
 const getPetsForSave = (hero: Record<Data.HeroDependent>) =>
-  hero.get('pets').toJSObjectBy(x => x.toObject());
+  hero.get('pets').toKeyValueObjectWith(x => x.toObject());
 
 export const convertHeroForSave = (
   id: string,

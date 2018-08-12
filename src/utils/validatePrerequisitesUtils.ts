@@ -24,7 +24,7 @@ const getAllRaceEntries = (
 ) =>
   state.lookup('race')
     .bind(wiki.get('races').lookup)
-    .map(race => race.get('stronglyRecommendedAdvantages')
+    .fmap(race => race.get('stronglyRecommendedAdvantages')
       .concat(race.get('automaticAdvantages'))
       .concat(race.get('stronglyRecommendedAdvantages'))
       .concat(race.get('stronglyRecommendedDisadvantages'))
@@ -37,7 +37,7 @@ const getAllCultureEntries = (
 ) =>
   state.lookup('culture')
     .bind(wiki.get('cultures').lookup)
-    .map(culture => culture.get('commonAdvantages')
+    .fmap(culture => culture.get('commonAdvantages')
       .concat(culture.get('commonDisadvantages'))
     );
 
@@ -46,7 +46,7 @@ const getAllProfessionEntries = (
 ) =>
   state.lookup('profession')
     .bind(wiki.get('professions').lookup)
-    .map(profession => profession.get('suggestedAdvantages')
+    .fmap(profession => profession.get('suggestedAdvantages')
       .concat(profession.get('unsuitableAdvantages'))
     );
 
@@ -127,7 +127,7 @@ const hasNeededPactDomain = (
     return true;
   }
 
-  if (state.lookup('domain').map(e => typeof e !== 'number')) {
+  if (state.lookup('domain').fmap(e => typeof e !== 'number')) {
     return false;
   }
 
@@ -181,7 +181,7 @@ const isPrimaryAttributeValid = (
         specialAbilities,
         req.get('type')
       )
-        .map(id =>
+        .fmap(id =>
           state.lookup('attributes')
             .bind(e => e.lookup(id))
             .bind(e => e.lookup('value'))
@@ -206,7 +206,7 @@ const isIncreasableValid = (
     );
   }
   else {
-    return Maybe.fromMaybe(false, getHeroStateListItem(id)(state).map(instance =>
+    return Maybe.fromMaybe(false, getHeroStateListItem(id)(state).fmap(instance =>
       isDependentSkillExtended(instance) &&
       instance.lookup('value').gte(req.lookup('value'))
     ));
@@ -219,7 +219,7 @@ const isOneOfListActiveSelection = (
   sid: List<number>
 ): boolean =>
   req.lookup('active')
-    .equals(activeSelections.map(list => sid.any(list.elem)));
+    .equals(activeSelections.fmap(list => sid.any(list.elem)));
 
 const isSingleActiveSelection = (
   activeSelections: Maybe<List<string | number>>,
@@ -227,7 +227,7 @@ const isSingleActiveSelection = (
   sid: string | number
 ): boolean =>
   req.lookup('active')
-    .equals(activeSelections.map(list => list.elem(sid)));
+    .equals(activeSelections.fmap(list => list.elem(sid)));
 
 const isActiveSelection = (
   activeSelections: Maybe<List<string | number>>,
@@ -245,7 +245,7 @@ const isNeededLevelGiven = (
   instance.get('active').any(e =>
     Maybe.fromMaybe(
       false,
-      e.lookup('tier').map(etier => etier >= tier)
+      e.lookup('tier').fmap(etier => etier >= tier)
     )
   );
 
@@ -281,7 +281,7 @@ const isActivatableValid = (
               .map(e => e.get('id'));
 
             return getActiveSelections(Maybe.Just(target))
-              .map(list => list.all(e =>
+              .fmap(list => list.all(e =>
                 !arr.elem(e as string)
               ));
           })
@@ -391,7 +391,7 @@ type ReqEntries = List<Tuple<number, List<Wiki.AllRequirements>>>;
 const isSkipping = (arr: ReqEntries, index: number, max: Maybe<number>) =>
   Maybe.isJust(max) &&
     index > 1 &&
-    arr.subscript(index - 2).map(Tuple.fst).lt(max);
+    arr.subscript(index - 2).fmap(Tuple.fst).lt(max);
 
 const areAllPrerequisitesValid = (
   wiki: Record<Wiki.WikiAll>,
@@ -423,7 +423,7 @@ export const validateTier = (
       Maybe.isJust(dep.lookup('tier'))
         ? Maybe.Just(
             Maybe.catMaybes(
-              List.of(max, dep.lookup('tier').map(e => e - 1))
+              List.of(max, dep.lookup('tier').fmap(e => e - 1))
             ).minimum()
           )
         : max,

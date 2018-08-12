@@ -3,7 +3,7 @@ import { CombatTechniqueCombined, CombatTechniqueWithAttackParryBase, CombatTech
 import { ExperienceLevel, WikiRecord } from '../types/wiki';
 import { createMaybeSelector } from '../utils/createMaybeSelector';
 import { Just, List, Maybe, Nothing, Record } from '../utils/dataUtils';
-import { filterAndSortObjects } from '../utils/FilterSortUtils';
+import { AllSortOptions, filterAndSortObjects } from '../utils/FilterSortUtils';
 import { flattenDependencies } from '../utils/flattenDependencies';
 import { isActive } from '../utils/isActive';
 import { filterByAvailability } from '../utils/RulesUtils';
@@ -12,7 +12,7 @@ import { getMaxAttributeValueByID } from './attributeSelectors';
 import { getStartEl } from './elSelectors';
 import { getRuleBooksEnabled } from './rulesSelectors';
 import { getCombatTechniquesSortOptions } from './sortOptionsSelectors';
-import { getAttributes, getCombatTechniques, getCombatTechniquesFilterText, getCurrentHeroPresent, getLocaleMessages, getWiki, getWikiCombatTechniques } from './stateSelectors';
+import { getAttributes, getCombatTechniques, getCombatTechniquesFilterText, getCurrentHeroPresent, getLocaleAsProp, getWiki, getWikiCombatTechniques } from './stateSelectors';
 
 const getPrimaryAttributeMod = (
   attributes: HeroDependent['attributes'],
@@ -48,12 +48,12 @@ export const getCombatTechniquesForSheet = createMaybeSelector(
   getWikiCombatTechniques,
   (maybeCombatTechniques, maybeAttributes, wikiCombatTechniques) =>
     maybeAttributes.bind(
-      attributes => maybeCombatTechniques.map(
+      attributes => maybeCombatTechniques.fmap(
         combatTechniques => combatTechniques.foldlWithKey<CombatTechniquesForSheet>(
           list => id => entry => Maybe.fromMaybe(
             list,
             wikiCombatTechniques.lookup(id)
-              .map(
+              .fmap(
                 wikiEntry => {
                   const combined = wikiEntry.merge(entry);
 
@@ -83,7 +83,7 @@ const getMaximum = (
   const isBonusValid = Maybe.fromMaybe(
     false,
     getActiveSelections(exceptionalCombatTechnique)
-      .map(active => active.elem(obj.get('id')))
+      .fmap(active => active.elem(obj.get('id')))
   );
 
   const bonus = isBonusValid ? 1 : 0;
@@ -128,7 +128,7 @@ export const getAllCombatTechniques = createMaybeSelector(
     wiki,
   ) =>
     maybeCombatTechniques.bind(
-      combatTechniques => maybeHero.map(
+      combatTechniques => maybeHero.fmap(
         hero => {
           const exceptionalCombatTechnique = hero.get('advantages').lookup('ADV_17');
 
@@ -164,7 +164,7 @@ export const getAvailableCombatTechniques = createMaybeSelector(
   getRuleBooksEnabled,
   (maybeList, maybeAvailablility) =>
     maybeList.bind(
-      list => maybeAvailablility.map(
+      list => maybeAvailablility.fmap(
         availablility => filterByAvailability<CombatTechniqueWithRequirements>(
           list,
           availablility,
@@ -178,14 +178,14 @@ export const getFilteredCombatTechniques = createMaybeSelector(
   getAvailableCombatTechniques,
   getCombatTechniquesSortOptions,
   getCombatTechniquesFilterText,
-  getLocaleMessages,
+  getLocaleAsProp,
   (maybeCombatTechniques, sortOptions, filterText, locale) =>
-    maybeCombatTechniques.map(
+    maybeCombatTechniques.fmap(
       combatTechniques => filterAndSortObjects<CombatTechniqueWithRequirements>(
         combatTechniques,
-        locale!.id,
+        locale.get('id'),
         filterText,
-        sortOptions
+        sortOptions as AllSortOptions<CombatTechniqueWithRequirements>
       )
     )
 );

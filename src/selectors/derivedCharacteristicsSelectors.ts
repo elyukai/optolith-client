@@ -1,4 +1,4 @@
-import { ActivatableDependent, Energy, EnergyWithLoss, SecondaryAttribute } from '../types/data.d';
+import { ActivatableDependent, Energy, EnergyWithLoss, SecondaryAttribute } from '../types/data';
 import { createMaybeSelector } from '../utils/createMaybeSelector';
 import { Just, List, Maybe, OrderedMap, OrderedSet, Record, Tuple } from '../utils/dataUtils';
 import { translate } from '../utils/I18n';
@@ -25,7 +25,7 @@ const getModifierByActiveLevel = (
 
   return Maybe.fromMaybe(
     0,
-    maybeBaseMod.map(
+    maybeBaseMod.fmap(
       baseMod => {
         const increaseTier = increaseObject.bind(obj => obj.lookup('tier'));
 
@@ -55,7 +55,7 @@ const getModifierByIsActive = (
 
   return Maybe.fromMaybe(
     0,
-    maybeBaseMod.map(
+    maybeBaseMod.fmap(
       baseMod => hasIncrease ? baseMod + 1 : hasDecrease ? baseMod - 1 : baseMod
     )
   );
@@ -73,13 +73,13 @@ export const getLP = createMaybeSelector(
     const base = Maybe.fromMaybe(
       0,
       currentRace.bind(
-        race => maybeCon.map(
+        race => maybeCon.fmap(
           con => race.get('lp') + con.get('value') * 2
         )
       )
     );
 
-    const lost = permanentLifePoints.map(permanent => -permanent.get('lost'));
+    const lost = permanentLifePoints.fmap(permanent => -permanent.get('lost'));
     const mod = getModifierByActiveLevel(lost, maybeIncrease, maybeDecrease);
 
     const value = Just(base + mod + Maybe.fromMaybe(0, add));
@@ -90,7 +90,7 @@ export const getLP = createMaybeSelector(
       calc: translate(locale, 'secondaryattributes.lp.calc'),
       currentAdd: Maybe.fromMaybe(0, add),
       id: 'LP',
-      maxAdd: Maybe.fromMaybe(0, maybeCon.map(con => con.get('value'))),
+      maxAdd: Maybe.fromMaybe(0, maybeCon.fmap(con => con.get('value'))),
       mod,
       name: translate(locale, 'secondaryattributes.lp.name'),
       permanentLost: Maybe.fromMaybe(0, lost),
@@ -119,19 +119,19 @@ export const getAE = createMaybeSelector(
   ) => {
     const maybeLastTradition = maybeTraditions.bind(traditions => traditions.head());
 
-    const maybeRedeemed = permanentArcaneEnergyPoints.map(permanent => permanent.get('redeemed'));
-    const maybeLost = permanentArcaneEnergyPoints.map(permanent => permanent.get('lost'));
+    const maybeRedeemed = permanentArcaneEnergyPoints.fmap(permanent => permanent.get('redeemed'));
+    const maybeLost = permanentArcaneEnergyPoints.fmap(permanent => permanent.get('lost'));
 
     const mod = getModifierByActiveLevel(
-      maybeRedeemed.bind(redeemed => maybeLost.map(lost => redeemed - lost)),
+      maybeRedeemed.bind(redeemed => maybeLost.fmap(lost => redeemed - lost)),
       maybeIncrease,
       maybeDecrease
     );
 
-    const baseAndAdd = maybeLastTradition.map(
+    const baseAndAdd = maybeLastTradition.fmap(
       lastTradition => Maybe.fromMaybe(
         { base: 20, maxAdd: 0 },
-        maybePrimary.map(
+        maybePrimary.fmap(
           primary => {
             const hasTraditionHalfAE = ['SA_677', 'SA_678'].includes(lastTradition.get('id'));
 
@@ -145,15 +145,15 @@ export const getAE = createMaybeSelector(
       )
     );
 
-    const value = baseAndAdd.map(({ base }) => base + mod + Maybe.fromMaybe(0, add));
+    const value = baseAndAdd.fmap(({ base }) => base + mod + Maybe.fromMaybe(0, add));
 
     return Record.ofMaybe<EnergyWithLoss<'AE'>>({
       add: Maybe.fromMaybe(0, add),
-      base: Maybe.fromMaybe(0, baseAndAdd.map(({ base }) => base)),
+      base: Maybe.fromMaybe(0, baseAndAdd.fmap(({ base }) => base)),
       calc: translate(locale, 'secondaryattributes.ae.calc'),
       currentAdd: Maybe.fromMaybe(0, add),
       id: 'AE',
-      maxAdd: Maybe.fromMaybe(0, baseAndAdd.map(({ maxAdd }) => maxAdd)),
+      maxAdd: Maybe.fromMaybe(0, baseAndAdd.fmap(({ maxAdd }) => maxAdd)),
       mod,
       name: translate(locale, 'secondaryattributes.ae.name'),
       permanentLost: Maybe.fromMaybe(0, maybeLost),
@@ -181,33 +181,33 @@ export const getKP = createMaybeSelector(
     locale,
     maybeHighConsecration
   ) => {
-    const maybeRedeemed = permanentKarmaPoints.map(permanent => permanent.get('redeemed'));
-    const maybeLost = permanentKarmaPoints.map(permanent => permanent.get('lost'));
+    const maybeRedeemed = permanentKarmaPoints.fmap(permanent => permanent.get('redeemed'));
+    const maybeLost = permanentKarmaPoints.fmap(permanent => permanent.get('lost'));
 
     const highConsecrationLevel = maybeHighConsecration
       .bind(highConsecration => highConsecration.get('active').head())
       .bind(active => active.lookup('tier'));
 
-    const highConsecrationMod = Maybe.fromMaybe(0, highConsecrationLevel.map(level => level * 6));
+    const highConsecrationMod = Maybe.fromMaybe(0, highConsecrationLevel.fmap(level => level * 6));
 
     const mod = highConsecrationMod
       + getModifierByActiveLevel(
-        maybeRedeemed.bind(redeemed => maybeLost.map(lost => redeemed - lost)),
+        maybeRedeemed.bind(redeemed => maybeLost.fmap(lost => redeemed - lost)),
         maybeIncrease,
         maybeDecrease
       );
 
-    const maybeBase = maybePrimary.map(primary => primary.get('value') + 20);
+    const maybeBase = maybePrimary.fmap(primary => primary.get('value') + 20);
 
-    const value = maybeBase.map(base => base + mod + Maybe.fromMaybe(0, add));
+    const value = maybeBase.fmap(base => base + mod + Maybe.fromMaybe(0, add));
 
     return Record.ofMaybe<EnergyWithLoss<'KP'>>({
       add: Maybe.fromMaybe(0, add),
-      base: Maybe.fromMaybe(0, maybePrimary.map(primary => primary.get('value') + 20)),
+      base: Maybe.fromMaybe(0, maybePrimary.fmap(primary => primary.get('value') + 20)),
       calc: translate(locale, 'secondaryattributes.kp.calc'),
       currentAdd: Maybe.fromMaybe(0, add),
       id: 'KP',
-      maxAdd: Maybe.fromMaybe(0, maybePrimary.map(primary => primary.get('value'))),
+      maxAdd: Maybe.fromMaybe(0, maybePrimary.fmap(primary => primary.get('value'))),
       mod,
       name: translate(locale, 'secondaryattributes.kp.name'),
       permanentLost: Maybe.fromMaybe(0, maybeLost),
@@ -230,7 +230,7 @@ export const getSPI = createMaybeSelector(
     const maybeBase = maybeCurrentRace.bind(
       race => maybeCou.bind(
         cou => maybeSgc.bind(
-          sgr => maybeInt.map(
+          sgr => maybeInt.fmap(
             int => race.get('spi')
               + Math.round((cou.get('value') + sgr.get('value') + int.get('value')) / 6)
           )
@@ -240,7 +240,7 @@ export const getSPI = createMaybeSelector(
 
     const mod = getModifierByIsActive(Just(0), maybeIncrease, maybeDecrease);
 
-    const value = maybeBase.map(base => base + mod);
+    const value = maybeBase.fmap(base => base + mod);
 
     return Record.ofMaybe<SecondaryAttribute<'SPI'>>({
       base: Maybe.fromMaybe(0, maybeBase),
@@ -264,7 +264,7 @@ export const getTOU = createMaybeSelector(
   (maybeCurrentRace, maybeCon, maybeStr, maybeIncrease, maybeDecrease, locale) => {
     const maybeBase = maybeCurrentRace.bind(
       race => maybeCon.bind(
-        con => maybeStr.map(
+        con => maybeStr.fmap(
           str => race.get('tou')
               + Math.round((con.get('value') * 2 + str.get('value')) / 6)
         )
@@ -273,7 +273,7 @@ export const getTOU = createMaybeSelector(
 
     const mod = getModifierByIsActive(Just(0), maybeIncrease, maybeDecrease);
 
-    const value = maybeBase.map(base => base + mod);
+    const value = maybeBase.fmap(base => base + mod);
 
     return Record.ofMaybe<SecondaryAttribute<'TOU'>>({
       base: Maybe.fromMaybe(0, maybeBase),
@@ -292,7 +292,7 @@ export const getDO = createMaybeSelector(
   mapGetToSlice(getSpecialAbilities, 'SA_64'),
   getLocaleAsProp,
   (maybeAgi, maybeImprovedDodge, locale) => {
-    const maybeBase = maybeAgi.map(agi => Math.round(agi.get('value') / 2));
+    const maybeBase = maybeAgi.fmap(agi => Math.round(agi.get('value') / 2));
 
     const mod = Maybe.fromMaybe(
       0,
@@ -301,7 +301,7 @@ export const getDO = createMaybeSelector(
         .bind(obj => obj.lookup('tier'))
     );
 
-    const value = maybeBase.map(base => base + mod);
+    const value = maybeBase.fmap(base => base + mod);
 
     return Record.ofMaybe<SecondaryAttribute<'DO'>>({
       calc: translate(locale, 'secondaryattributes.do.calc'),
@@ -322,7 +322,7 @@ export const getINI = createMaybeSelector(
   getLocaleAsProp,
   (maybeCou, maybeAgi, maybeCombatReflexes, locale) => {
     const maybeBase = maybeCou.bind(
-      cou => maybeAgi.map(
+      cou => maybeAgi.fmap(
         agi => Math.round((cou.get('value') + agi.get('value')) / 2)
       )
     );
@@ -334,7 +334,7 @@ export const getINI = createMaybeSelector(
         .bind(obj => obj.lookup('tier'))
     );
 
-    const value = maybeBase.map(base => base + mod);
+    const value = maybeBase.fmap(base => base + mod);
 
     return Record.ofMaybe<SecondaryAttribute<'INI'>>({
       calc: translate(locale, 'secondaryattributes.ini.calc'),
@@ -357,16 +357,16 @@ export const getMOV = createMaybeSelector(
   mapGetToSlice(getDisadvantages, 'DISADV_4'),
   getLocaleAsProp,
   (maybeCurrentRace, nimble, maimed, slow, locale) => {
-    const maybeBase = maybeCurrentRace.map(race => race.get('mov'))
-      .map(
-        base => getActiveSelections(maimed).map(list => list.elem(3)).equals(justTrue)
+    const maybeBase = maybeCurrentRace.fmap(race => race.get('mov'))
+      .fmap(
+        base => getActiveSelections(maimed).fmap(list => list.elem(3)).equals(justTrue)
           ? Math.round(base / 2)
           : base
       );
 
     const mod = getModifierByIsActive(Just(0), nimble, slow);
 
-    const value = maybeBase.map(base => base + mod);
+    const value = maybeBase.fmap(base => base + mod);
 
     return Record.ofMaybe<SecondaryAttribute<'MOV'>>({
       calc: translate(locale, 'secondaryattributes.mov.calc'),
@@ -386,11 +386,11 @@ export const getWT = createMaybeSelector(
   mapGetToSlice(getDisadvantages, 'DISADV_56'),
   getLocaleAsProp,
   (maybeCon, maybeIncrease, maybeDecrease, locale) => {
-    const maybeBase = maybeCon.map(con => Math.round(con.get('value') / 2));
+    const maybeBase = maybeCon.fmap(con => Math.round(con.get('value') / 2));
 
     const mod = getModifierByIsActive(Just(0), maybeIncrease, maybeDecrease);
 
-    const value = maybeBase.map(base => base + mod);
+    const value = maybeBase.fmap(base => base + mod);
 
     return Record.ofMaybe<SecondaryAttribute<'WT'>>({
       calc: translate(locale, 'secondaryattributes.ws.calc'),
@@ -432,7 +432,7 @@ export const getDerivedCharacteristicsMap = createMaybeSelector(
       false,
       maybeRuleBooksEnabled
         .bind(Maybe.ensure((x): x is true | OrderedSet<string> => x !== false))
-        .map(ruleBooksEnabled => isBookEnabled(books, ruleBooksEnabled, 'US25003'))
+        .fmap(ruleBooksEnabled => isBookEnabled(books, ruleBooksEnabled, 'US25003'))
     );
 
     if (isWoundThresholdEnabled) {

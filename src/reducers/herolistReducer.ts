@@ -116,7 +116,7 @@ export function precedingHerolistReducer(
       return Maybe.fromMaybe(
         state,
         state.get('heroes').lookup(id)
-          .map(
+          .fmap(
             hero => state.modify(
               heroes => heroes.insert(
                 newId,
@@ -141,7 +141,7 @@ function prepareHeroReducer(state: HerolistState, action: Action): HerolistState
   return Maybe.fromMaybe(
     state,
     state.lookup('currentId')
-      .map(
+      .fmap(
         currentId => state.modify(
           heroes => heroes.adjust(
             heroState => heroReducer(heroState, action),

@@ -32,7 +32,7 @@ export const getNameCost = (
   getCost(obj, wiki, state, costToAdd)
     .bind(
       currentCost => getName(obj, wiki, locale)
-        .map(
+        .fmap(
           names => names
             .merge(obj)
             .merge(Record.of({
@@ -56,7 +56,7 @@ export const getNameCostForWiki = (
   getCost(obj, wiki)
     .bind(
       currentCost => getName(obj, wiki, locale)
-        .map(
+        .fmap(
           names => names
             .merge(obj)
             .merge(Record.of({

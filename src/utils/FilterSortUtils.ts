@@ -39,8 +39,8 @@ export const sortObjects = <T extends BaseObject>(
   if (Maybe.isJust(firstItem)) {
     if (Array.isArray(sortOptions)) {
       for (const option of sortOptions) {
-        const sortFunction = createSortFunction(
-          option as any,
+        const sortFunction = createSortFunction<T>(
+          option,
           Maybe.fromJust(firstItem),
           locale
         );
@@ -51,8 +51,8 @@ export const sortObjects = <T extends BaseObject>(
       }
     }
     else {
-      const sortFunction = createSortFunction(
-        sortOptions as any,
+      const sortFunction = createSortFunction<T>(
+        sortOptions,
         Maybe.fromJust(firstItem),
         locale
       );
@@ -252,7 +252,7 @@ const createSortOptionObjectFunction = <T extends BaseObject>(
       return (a, b) => Maybe.fromMaybe(
         0,
         mapToIndex.subscript(a.get(key as any) as number - 1).bind(
-          mappedA => mapToIndex.subscript(b.get(key as any) as number - 1).map(
+          mappedA => mapToIndex.subscript(b.get(key as any) as number - 1).fmap(
             mappedB => mappedA.localeCompare(mappedB, locale) * -1
           )
         )
@@ -294,7 +294,7 @@ const createSortOptionObjectFunction = <T extends BaseObject>(
     return (a, b) => Maybe.fromMaybe(
       0,
       mapToIndex.subscript(a.get(key as any) as number - 1).bind(
-        mappedA => mapToIndex.subscript(b.get(key as any) as number - 1).map(
+        mappedA => mapToIndex.subscript(b.get(key as any) as number - 1).fmap(
           mappedB => mappedA.localeCompare(mappedB, locale)
         )
       )

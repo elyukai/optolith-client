@@ -2,7 +2,7 @@ import { createSelector } from 'reselect';
 import { Categories, CategoryWithGroups } from '../constants/Categories';
 import { AppState } from '../reducers/app';
 import { DependentInstancesState } from '../reducers/dependentInstances';
-import { Instance, InstanceByCategory, InstanceWithGroups, ToOptionalKeys } from '../types/data.d';
+import { Instance, InstanceByCategory, InstanceWithGroups, ToOptionalKeys } from '../types/data';
 import { getStateKeyByCategory, getStateKeyById } from '../utils/IDUtils';
 
 export const getDependent = (state: AppState) => state.currentHero.present.dependent;

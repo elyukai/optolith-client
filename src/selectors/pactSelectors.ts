@@ -30,7 +30,7 @@ export const isPactEditable = createMaybeSelector(
   getSpecialAbilities,
   getWikiSpecialAbilities,
   (maybeSpecialAbilities, wiki) =>
-    maybeSpecialAbilities.map(
+    maybeSpecialAbilities.fmap(
       specialAbilities => !specialAbilities.elems().any(e => {
         if (e.get('active').null()) {
           return false;

@@ -28,8 +28,8 @@ export function translate<T extends keyof UIMessages>(
 ): Maybe<UIMessages[T]> | UIMessages[T] {
   if (messages instanceof Maybe) {
     return messages
-      .map(safeMessages => safeMessages.get(key) as UIMessages[T])
-      .map(message => {
+      .fmap(safeMessages => safeMessages.get(key) as UIMessages[T])
+      .fmap(message => {
         if (params.length > 0 && typeof message === 'string') {
           return message.replace(/\{(\d+)\}/g, (_, p1) => {
             const param = params[Number.parseInt(p1)];

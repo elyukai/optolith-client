@@ -98,19 +98,19 @@ export const convertToSave = (item: Record<ItemEditorInstance>): Record<ItemInst
   const add = Record.of<Additional>({})
     .update(
       () => item.lookup('movMod')
-        .map(toInteger)
+        .fmap(toInteger)
         .bind(Maybe.ensure(e => e > 0)),
       'movMod'
     )
     .update(
       () => item.lookup('iniMod')
-        .map(toInteger)
+        .fmap(toInteger)
         .bind(Maybe.ensure(e => e > 0)),
       'iniMod'
     )
     .update(
       () => item.lookup('stabilityMod')
-        .map(toInteger)
+        .fmap(toInteger)
         .bind(Maybe.ensure(e => !Number.isNaN(e))),
       'stabilityMod'
     )

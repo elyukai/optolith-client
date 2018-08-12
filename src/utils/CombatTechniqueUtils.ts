@@ -72,13 +72,13 @@ export const isIncreaseDisabled = (
     ? Maybe.fromMaybe(
         0,
         wiki.get('experienceLevels').lookup(state.get('experienceLevel'))
-          .map(startEl => startEl.get('maxCombatTechniqueRating'))
+          .fmap(startEl => startEl.get('maxCombatTechniqueRating'))
       )
     : getMaxPrimaryAttributeValueById(state, wikiEntry.get('primary')) + 2;
 
   const exceptionalSkill = state.get('advantages').lookup('ADV_17');
   const bonus = getActiveSelections(exceptionalSkill)
-    .map(selections => selections.elem(instance.get('id')))
+    .fmap(selections => selections.elem(instance.get('id')))
     .equals(Maybe.Just(true))
       ? 1
       : 0;

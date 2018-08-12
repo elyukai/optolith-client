@@ -19,7 +19,7 @@ export const isIncreasable = (
     return Maybe.fromMaybe(
       false,
       wiki.get('experienceLevels').lookup(state.get('experienceLevel'))
-        .map(startEl => {
+        .fmap(startEl => {
           const reachedMaxTotal = total >= startEl.get('maxTotalAttributeValues');
 
           if (reachedMaxTotal) {
@@ -40,7 +40,7 @@ export const isIncreasable = (
     return Maybe.fromMaybe(
       false,
       wiki.get('experienceLevels').lookup(currentExperienceLevellId)
-        .map(
+        .fmap(
           currentEl =>
             instance.get('value') < currentEl.get('maxAttributeValue') + 2
         )
@@ -66,7 +66,7 @@ export const isDecreasable = (
 
 export const getSkillCheckValues =
   (attributes: OrderedMap<string, Record<Data.AttributeDependent>>) => Maybe.mapMaybe(
-    (id: string) => attributes.lookup(id).map(e => e.get('value'))
+    (id: string) => attributes.lookup(id).fmap(e => e.get('value'))
   );
 
 export function convertId<T extends string | undefined>(id: T): T {

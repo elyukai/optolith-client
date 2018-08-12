@@ -52,7 +52,7 @@ const isRequiredByOthers = (
             && Maybe.fromMaybe(
               false,
               e.lookup('active')
-                .map(
+                .fmap(
                   ea => ea === active
                     .lookup('tier')
                     .gte(e.lookup('tier'))
@@ -111,9 +111,9 @@ const isRemovalDisabledEntrySpecific = (
                     e => wiki.lookup('experienceLevels')
                       .bind(slice => slice.lookup(e))
                   )
-                  .map(R.pipe(
+                  .fmap(R.pipe(
                     el => el.lookup('maxSkillRating'),
-                    Maybe.map(R.add(
+                    Maybe.fmap(R.add(
                       instance.get('active')
                       .foldl(
                         e => obj =>
@@ -145,9 +145,9 @@ const isRemovalDisabledEntrySpecific = (
                     e => wiki.lookup('experienceLevels')
                       .bind(slice => slice.lookup(e))
                   )
-                  .map(R.pipe(
+                  .fmap(R.pipe(
                     el => el.lookup('maxCombatTechniqueRating'),
-                    Maybe.map(R.inc),
+                    Maybe.fmap(R.inc),
                     Maybe.equals(skill.lookup('value')),
                   ))
               )
@@ -253,8 +253,8 @@ const isRemovalDisabledEntrySpecific = (
             )
               .bind(
                 blessedTradition => state.lookup('liturgicalChants')
-                  .map(e => e.elems())
-                  .map(R.pipe(
+                  .fmap(e => e.elems())
+                  .fmap(R.pipe(
                     (list: List<Record<Data.ActivatableSkillDependent>>) =>
                       list.filter(e => e.get('active')),
                     Maybe.mapMaybe(
@@ -316,7 +316,7 @@ const isRemovalDisabledEntrySpecific = (
                             && id.elem(Maybe.fromJust(origin));
                         }
                       })
-                      .map(
+                      .fmap(
                         req => (req.get('id') as List<string>)
                           .foldl(
                             acc => e => validateObject(
@@ -343,7 +343,7 @@ const isRemovalDisabledEntrySpecific = (
                   .bind<boolean>(sid => {
                     if (list.elem(sid as number)) {
                       return getActiveSelections(Maybe.Just(instance))
-                        .map(
+                        .fmap(
                           activeSelections => !activeSelections.any(
                             n => n !== sid && activeSelections.elem(n as number)
                           )
@@ -381,7 +381,7 @@ const getSermonsAndVisionsMinTier = (
     .filter(isActive)
     .length()
 )
-  .map(more ? R.add(-3) : R.subtract(3));
+  .fmap(more ? R.add(-3) : R.subtract(3));
 
 /**
  * Get minimum valid tier.
@@ -419,7 +419,7 @@ export function getMinTier(
         R.lt(3),
         countActiveSkillEntries(state, 'spells'),
       )
-        .map(R.add(-3)))
+        .fmap(R.add(-3)))
       .on('ADV_79', () => getSermonsAndVisionsMinTier(
         wiki,
         state,
@@ -501,7 +501,7 @@ export const isRemovalOrChangeDisabled = (
       wikiEntry => getHeroStateListItem<Record<Data.ActivatableDependent>>(
         obj.get('id')
       )(state)
-        .map(instance => {
+        .fmap(instance => {
           const tiers = wikiEntry.get('id') === 'SA_29'
             ? Maybe.Just(3)
             : wikiEntry.lookup('tiers');

@@ -78,31 +78,31 @@ const getEntrySpecificNameAddition = (
       () =>
         (instance.lookup('sid') as Maybe<string>)
           .bind(getWikiEntry<Wiki.Skillish>(wiki))
-          .map(entry => entry.get('name'))
+          .fmap(entry => entry.get('name'))
     )
     .on('ADV_68', () =>
       findSelectOption(wikiEntry, instance.lookup('sid'))
         .bind(item =>
           instance.lookup('sid2')
-            .map(sid2 => `${sid2} (${item.get('name')})`)
+            .fmap(sid2 => `${sid2} (${item.get('name')})`)
         )
     )
     .on('DISADV_33', () =>
       getSelectOptionName(wikiEntry, instance.lookup('sid'))
-        .map(name => {
+        .fmap(name => {
           return Maybe.fromMaybe(
             name,
             instance.lookup('sid')
               .bind(Maybe.ensure(x => isNumber(x) && List.of(7, 8).elem(x)))
               .bind(() => instance.lookup('sid2'))
-              .map(sid2 => `${name}: ${sid2}`)
+              .fmap(sid2 => `${name}: ${sid2}`)
           );
         })
     )
     .on('SA_9', () =>
       (instance.lookup('sid') as Maybe<string>)
         .bind(wiki.get('skills').lookup)
-          .map(skill => {
+          .fmap(skill => {
             return Maybe.maybe(
               skill.get('name'),
               name => `${skill.get('name')}: ${name}`,
@@ -111,7 +111,7 @@ const getEntrySpecificNameAddition = (
                   .alt(
                     skill.lookup('applications')
                       .bind(apps => apps.find(e => e.get('id') === sid2))
-                      .map(app => app.get('name'))
+                      .fmap(app => app.get('name'))
                   )
               )
             );
@@ -134,19 +134,19 @@ const getEntrySpecificNameAddition = (
                   return wiki.get('liturgicalChants').lookup(target);
                 }
               })
-              .map(target => `${target.get('name')}: ${item.get('name')}`)
+              .fmap(target => `${target.get('name')}: ${item.get('name')}`)
           )
     )
     .on('SA_680', () =>
       (instance.lookup('sid') as Maybe<string>)
         .bind(wiki.get('skills').lookup)
-          .map(entry => `: ${entry.get('name')}`)
+          .fmap(entry => `: ${entry.get('name')}`)
     )
     .on('SA_699', () =>
       wiki.get('specialAbilities').lookup('SA_29')
         .bind(languages =>
           findSelectOption(languages, instance.lookup('sid'))
-            .map(item => {
+            .fmap(item => {
               return `${item.get('name')}: ${
                 Maybe.fromMaybe('', instance.lookup('sid2').bind(sid2 =>
                   Maybe.ensure(isString, sid2)
@@ -190,31 +190,31 @@ const getEntrySpecificNameReplacements = (
     .on(['ADV_28', 'ADV_29'].includes, () =>
       translate(locale, 'activatable.view.immunityto')
         .bind(name =>
-          maybeNameAddition.map(nameAddition => `${name} ${nameAddition}`)
+          maybeNameAddition.fmap(nameAddition => `${name} ${nameAddition}`)
         )
     )
     .on('ADV_68', () =>
       translate(locale, 'activatable.view.hatredof')
         .bind(name =>
-          maybeNameAddition.map(nameAddition => `${name} ${nameAddition}`)
+          maybeNameAddition.fmap(nameAddition => `${name} ${nameAddition}`)
         )
     )
     .on('DISADV_1', () =>
       translate(locale, 'activatable.view.afraidof')
         .bind(name =>
-          maybeNameAddition.map(nameAddition => `${name} ${nameAddition}`)
+          maybeNameAddition.fmap(nameAddition => `${name} ${nameAddition}`)
         )
     )
     .on(['DISADV_34', 'DISADV_50'].includes, () =>
       instance.lookup('tier')
         .bind(tier =>
-          maybeNameAddition.map(nameAddition =>
+          maybeNameAddition.fmap(nameAddition =>
             `${wikiEntry.get('name')} ${getRoman(tier)} (${nameAddition})`
           )
         )
     )
     .on('SA_639', () =>
-      maybeNameAddition.map(nameAddition =>
+      maybeNameAddition.fmap(nameAddition =>
         `${wikiEntry.get('name')} ${nameAddition}`
       )
     )
@@ -226,14 +226,14 @@ const getEntrySpecificNameReplacements = (
         .bind(Maybe.ensure(isNumber))
         .bind(sid2 =>
           maybeMusicTraditionLabels
-            .map(musicTraditionLabels => musicTraditionLabels[sid2 - 1])
-            .map(musicTradition =>
+            .fmap(musicTraditionLabels => musicTraditionLabels[sid2 - 1])
+            .fmap(musicTradition =>
               wikiEntry.get('name').replace(part, `${part}: ${musicTradition}`)
             )
         );
     })
     .otherwise(() =>
-      maybeNameAddition.map(nameAddition => `${name} (${nameAddition})`)
+      maybeNameAddition.fmap(nameAddition => `${name} (${nameAddition})`)
     )
   );
 }
@@ -257,7 +257,7 @@ export const getName = (
   locale: Maybe<Record<Data.UIMessages>>
 ): Maybe<Record<CombinedName>> => {
   return getWikiEntry<Wiki.Activatable>(wiki, instance.get('id'))
-    .map(wikiEntry => {
+    .fmap(wikiEntry => {
       const maybeAddName = getEntrySpecificNameAddition(
         wikiEntry,
         instance,
@@ -332,7 +332,7 @@ export const compressList = (
             x.split(' (')[0] === current.split(' (')[0]
             && levelAfterParenthesis.test(x)
           ))
-          .map(prevElement => {
+          .fmap(prevElement => {
             const prevElementSplitted = prevElement.split(/\)/);
             const optionalTier = prevElementSplitted.pop() || '';
             const beginning = `${prevElementSplitted.join(')')}${optionalTier}`;

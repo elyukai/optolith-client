@@ -3,8 +3,8 @@ import { Categories } from '../constants/Categories';
 import * as Data from '../types/data';
 import * as Raw from '../types/rawdata';
 import { WikiAll } from '../types/wiki';
+import { getCombinedPrerequisites } from './activatableActivationUtils';
 import { getActiveFromState } from './activatableConvertUtils';
-import { getCombinedPrerequisites } from './activationUtils';
 import { StringKeyObject } from './collectionUtils';
 import * as CreateDependencyObjectUtils from './createEntryUtils';
 import { List, Maybe, OrderedMap, OrderedSet, Record } from './dataUtils';
@@ -322,7 +322,7 @@ export const getHeroInstance = (
       state => entry => Maybe.fromMaybe(
         state,
         wiki.get('advantages').lookup(entry.get('id'))
-          .map(
+          .fmap(
             wikiEntry => addDependencies(
               state,
               getCombinedPrerequisites(
@@ -340,7 +340,7 @@ export const getHeroInstance = (
       state => entry => Maybe.fromMaybe(
         state,
         wiki.get('disadvantages').lookup(entry.get('id'))
-          .map(
+          .fmap(
             wikiEntry => addDependencies(
               state,
               getCombinedPrerequisites(
@@ -358,7 +358,7 @@ export const getHeroInstance = (
       state => entry => Maybe.fromMaybe(
         state,
         wiki.get('specialAbilities').lookup(entry.get('id'))
-          .map(
+          .fmap(
             wikiEntry => addAllStyleRelatedDependencies(
               addDependencies(
                 state,
@@ -379,7 +379,7 @@ export const getHeroInstance = (
       state => spellId => Maybe.fromMaybe(
         state,
         wiki.get('spells').lookup(spellId)
-          .map(
+          .fmap(
             wikiEntry => addDependencies(
               state,
               wikiEntry.get('prerequisites'),

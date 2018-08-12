@@ -33,14 +33,14 @@ export const flattenDependencies = <T extends number | boolean>(
               && (r.get('id') as List<string>).elem(e.get('origin'))
           )
         )
-        .map(originPrerequisite =>
+        .fmap(originPrerequisite =>
           (originPrerequisite.get('id') as List<string>)
           .foldl(
             acc => id =>
               Maybe.fromMaybe(
                 false,
                 getHeroStateListItem<Data.ValueBasedDependent>(id)(state)
-                  .map(entry => entry.get('value') >= e.get('value'))
+                  .fmap(entry => entry.get('value') >= e.get('value'))
               ) ? acc + 1 : acc
             ,
             0

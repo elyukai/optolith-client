@@ -1,14 +1,13 @@
-import { ActivatableCategory, Categories } from '../constants/Categories';
-import * as Data from '../types/data.d';
-import * as stateSelectors from './stateSelectors';
 import { createSelector } from 'reselect';
-import { getValidPact } from './pactSelectors';
+import { ActivatableCategory, Categories } from '../constants/Categories';
+import * as Data from '../types/data';
 import { getAllAvailableExtendedSpecialAbilities } from '../utils/ExtendedStyleUtils';
-import { getMapByCategory } from './dependentInstancesSelectors';
-import { getDeactiveView } from '../utils/ActivatableUtils';
-import { getRuleBooksEnabled } from './rulesSelectors';
 import { filterByInstancePropertyAvailability } from '../utils/RulesUtils';
 import { getAdventurePointsObject } from './adventurePointsSelectors';
+import { getMapByCategory } from './dependentInstancesSelectors';
+import { getValidPact } from './pactSelectors';
+import { getRuleBooksEnabled } from './rulesSelectors';
+import * as stateSelectors from './stateSelectors';
 
 export const getExtendedSpecialAbilitiesToAdd = createSelector(
   stateSelectors.getBlessedStyleDependencies,

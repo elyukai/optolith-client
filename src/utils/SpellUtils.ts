@@ -15,7 +15,7 @@ export const isOwnTradition = (
   obj.get('tradition').any(
     e => e === 1 || Maybe.isJust(tradition.find(
       t => getNumericMagicalTraditionIdByInstanceId(t.get('id'))
-        .map(id => id + 1)
+        .fmap(R.inc)
         .equals(Just(e))
     ))
   );
@@ -32,7 +32,7 @@ export const isIncreasable = (
   const bonus = getExceptionalSkillBonus(wikiEntry.lookup('id'), exceptionalSkill);
 
   const hasPropertyKnowledgeRestriction = getActiveSelections(propertyKnowledge)
-    .map(properties => properties.notElem(wikiEntry.get('property')));
+    .fmap(properties => properties.notElem(wikiEntry.get('property')));
 
   const maxList = List.of(
     getSkillCheckValues(attributes)(wikiEntry.get('check')).maximum() + 2
@@ -98,7 +98,7 @@ export const isDecreasable = (
           e => isNumber(e) && wikiEntry.get('property') === e
         )
       ))
-      .map(
+      .fmap(
         () => {
           const counter = getPropertyCounter(wiki.get('spells'), spells);
 

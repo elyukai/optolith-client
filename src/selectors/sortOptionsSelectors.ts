@@ -2,6 +2,7 @@ import { createSelector } from 'reselect';
 import * as Data from '../types/data';
 import * as View from '../types/view';
 import * as Wiki from '../types/wiki';
+import { Maybe, Record } from '../utils/dataUtils';
 import { AllSortOptions } from '../utils/FilterSortUtils';
 import { translate } from '../utils/I18n';
 import { getLocaleMessages, getSex } from './stateSelectors';
@@ -9,55 +10,50 @@ import * as uiSettingsSelectors from './uisettingsSelectors';
 
 export const getRacesSortOptions = createSelector(
   uiSettingsSelectors.getRacesSortOrder,
-  sortOrder => {
-    let sortOptions: AllSortOptions<Wiki.Race | View.Race> = 'name';
-
-    if (sortOrder === 'cost') {
-      sortOptions = ['ap', 'name'];
-    }
-
-    return sortOptions;
-  }
+  (sortOrder): AllSortOptions<Wiki.Race> | AllSortOptions<View.RaceCombined> =>
+    sortOrder === 'cost' ? ['ap', 'name'] : 'name'
 );
 
 export const getCulturesSortOptions = createSelector(
   uiSettingsSelectors.getCulturesSortOrder,
-  sortOrder => {
-    let sortOptions: AllSortOptions<Wiki.Culture | View.Culture> = 'name';
-
-    if (sortOrder === 'cost') {
-      sortOptions = ['culturalPackageAdventurePoints', 'name'];
-    }
-
-    return sortOptions;
-  }
+  (sortOrder): AllSortOptions<Wiki.Culture> | AllSortOptions<View.CultureCombined> =>
+    sortOrder === 'cost' ? ['culturalPackageAdventurePoints', 'name'] : 'name'
 );
 
-function getProfessionSourceKey(e: Wiki.Profession | View.Profession): string {
-  return e.src[0] ? e.src[0].id : 'US25000';
-};
+const getProfessionSourceKey = (
+  e: Record<Wiki.Profession> | Record<View.ProfessionCombined>
+): string => Maybe.fromMaybe('US25000', e.get('src').head().fmap(head => head.get('id')));
+
+type ProfessionSortOptions =
+  AllSortOptions<Wiki.Profession> |
+  AllSortOptions<View.ProfessionCombined>;
 
 export const getProfessionsSortOptions = createSelector(
   uiSettingsSelectors.getProfessionsSortOrder,
   getSex,
-  (sortOrder, sex) => {
-    let sortOptions: AllSortOptions<Wiki.Profession | View.Profession> = [
-      { key: 'name', keyOfProperty: sex },
-      { key: 'subname', keyOfProperty: sex },
-      { key: getProfessionSourceKey }
-    ];
+  (sortOrder, maybeSex): Maybe<ProfessionSortOptions> =>
+    maybeSex.fmap(
+      sex => {
+        if (sortOrder === 'cost') {
+          const sortOptions1: ProfessionSortOptions = [
+            'ap',
+            { key: 'name', keyOfProperty: sex },
+            { key: 'subname', keyOfProperty: sex },
+            { key: getProfessionSourceKey }
+          ];
 
-    if (sortOrder === 'cost') {
-      sortOptions = [
-        'ap',
-        { key: 'name', keyOfProperty: sex },
-        { key: 'subname', keyOfProperty: sex },
-        { key: getProfessionSourceKey }
-      ];
-    }
+          return sortOptions1;
+        }
 
-    return sortOptions;
-  }
+        const sortOptions2: ProfessionSortOptions = [
+          { key: 'name', keyOfProperty: sex },
+          { key: 'subname', keyOfProperty: sex },
+          { key: getProfessionSourceKey }
+        ];
+
+        return sortOptions2;
+      }
+    )
 );
 
 export const getSkillsSortOptions = createSelector(

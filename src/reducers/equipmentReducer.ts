@@ -134,7 +134,7 @@ function equipmentManagingReducer(
       return Maybe.fromMaybe(
         state,
         state.get('belongings').lookup('itemInEditor')
-          .map(
+          .fmap(
             itemInEditor => state.modify(
               belongings => belongings
                 .modify(
@@ -211,7 +211,7 @@ function equipmentManagingReducer(
         state,
         state.get('belongings').lookup('itemInEditor')
           .bind(Maybe.ensure(itemInEditor => itemInEditor.get('id').length > 0))
-          .map(
+          .fmap(
             itemInEditor => state.modify(
               belongings => belongings
                 .modify(
@@ -821,7 +821,7 @@ function armorZonesReducer(
       return Maybe.fromMaybe(
         state,
         state.get('belongings').lookup('zoneArmorInEditor')
-          .map(
+          .fmap(
             zoneArmorInEditor => state.modify(
               belongings => belongings
                 .modify(
@@ -871,7 +871,7 @@ function armorZonesReducer(
               )
             )
           ))
-          .map(
+          .fmap(
             zoneArmorInEditor => state.modify(
               belongings => belongings
                 .modify(
@@ -892,7 +892,7 @@ function armorZonesReducer(
       return Maybe.fromMaybe(
         state,
         state.get('belongings').get('armorZones').lookup(action.payload.id)
-          .map(
+          .fmap(
             zoneArmor => state.modify(
               belongings => belongings
                 .insert('zoneArmorInEditor', zoneArmor as Record<Data.ArmorZonesEditorInstance>)

@@ -30,11 +30,11 @@ export const rerollSize = (
   race
     .bind(e => e.lookup('sizeBase'))
     .alt(raceVariant.bind(e => e.lookup('sizeBase')))
-    .map(R.add(
+    .fmap(R.add(
       Maybe.fromMaybe(0, race
         .bind(e => e.lookup('sizeRandom'))
         .alt(raceVariant.bind(e => e.lookup('sizeRandom')))
-        .map(e => e.foldl(
+        .fmap(e => e.foldl(
           acc => die => acc + rollDice(
             die.get('amount'),
             die.get('sides')
@@ -43,7 +43,7 @@ export const rerollSize = (
         ))
       )
     ))
-    .map(e => e.toString());
+    .fmap(e => e.toString());
 
 export const getWeightForRerolledSize = (
   weight: string,
@@ -66,11 +66,11 @@ export const rerollWeight = (
   raceVariant: Maybe<Record<RaceVariant>>,
   size: Maybe<string> = rerollSize(race, raceVariant),
 ): RerolledWeight => {
-  const formattedSize = size.map(multiplyString);
+  const formattedSize = size.fmap(multiplyString);
 
   return {
     weight: race
-      .map(justRace => {
+      .fmap(justRace => {
         const addFunc = justRace.get('id') === 'R_1' ?
           (e: number) => (acc: number) => {
             const result = rollDie(Math.abs(e));
@@ -95,8 +95,8 @@ export const rerollWeight = (
             justRace.get('weightBase')
           );
       })
-      .map(R.add(Maybe.fromMaybe(0, formattedSize.map(Number.parseInt))))
-      .map(e => e.toString()),
+      .fmap(R.add(Maybe.fromMaybe(0, formattedSize.fmap(Number.parseInt))))
+      .fmap(e => e.toString()),
     size: formattedSize
   };
 };

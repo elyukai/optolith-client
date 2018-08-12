@@ -69,7 +69,7 @@ export const addStyleExtendedSpecialAbilityDependencies = (
     getStyleStateKey(instance)
       .bind(key =>
         instance.lookup('extended')
-          .map(extended => {
+          .fmap(extended => {
             const newItems = extended.map(id => Record.of({
               id,
               origin: instance.get('id')
@@ -117,7 +117,7 @@ export const addExtendedSpecialAbilityDependency = (
   Maybe.fromMaybe(
     state,
     getExtendedStateKey(instance)
-      .map(key =>
+      .fmap(key =>
         state.modify(
           slice => slice.modifyAt(
             Maybe.fromMaybe(
@@ -244,7 +244,7 @@ export const removeStyleExtendedSpecialAbilityDependencies = (
     getStyleStateKey(instance)
       .bind(key =>
         instance.lookup('extended')
-          .map(() =>
+          .fmap(() =>
             state.modify(
               slice => {
                 const {
@@ -286,7 +286,7 @@ export const removeExtendedSpecialAbilityDependency = (
   Maybe.fromMaybe(
     state,
     getExtendedStateKey(instance)
-      .map(key =>
+      .fmap(key =>
         state.modify(
           slice => slice.modifyAt(
             Maybe.fromMaybe(
@@ -389,11 +389,11 @@ export const isStyleValidToRemove = (
 ): boolean =>
   Maybe.fromMaybe(
     false,
-    maybeInstance.map(
+    maybeInstance.fmap(
       instance => Maybe.fromMaybe(
         true,
         getStyleStateKey(instance)
-          .map(key => {
+          .fmap(key => {
             const {
               itemsToRemove,
               leftItems

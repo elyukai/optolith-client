@@ -16,7 +16,7 @@ export const getAttributeSum = createMaybeSelector(
   maybeAttributes => Maybe.fromMaybe(
     0,
     maybeAttributes
-      .map(
+      .fmap(
         attributes => attributes.foldl(
           sum => e => sum + e.get('value'),
           0
@@ -36,10 +36,10 @@ const getAttributeMaximum = (
   attributeValueLimit: Maybe<boolean>
 ): Maybe<number> => {
   if (phase.lt(lastPhase)) {
-    return startEl.map(el => el.get('maxAttributeValue') + mod);
+    return startEl.fmap(el => el.get('maxAttributeValue') + mod);
   }
   else if (attributeValueLimit.equals(justTrue)) {
-    return currentEl.map(el => el.get('maxAttributeValue') + 2);
+    return currentEl.fmap(el => el.get('maxAttributeValue') + 2);
   }
 
   return Nothing();
@@ -79,7 +79,7 @@ export const getAttributesForView = createMaybeSelector(
   ): (List<Record<View.AttributeWithRequirements>>) =>
     Maybe.fromMaybe(
       List.of(),
-      maybeHero.map(
+      maybeHero.fmap(
         hero => hero.get('attributes').foldl<(List<Record<View.AttributeWithRequirements>>)>(
           list => attribute => {
             const max = getAttributeMaximum(
@@ -99,7 +99,7 @@ export const getAttributesForView = createMaybeSelector(
             return Maybe.fromMaybe(
               list,
               wiki.get('attributes').lookup(attribute.get('id'))
-                .map(
+                .fmap(
                   wikiAttribute => list.append(
                     attribute
                       .merge(wikiAttribute)
@@ -129,12 +129,12 @@ export const getForSheet = createMaybeSelector(
   (maybeAttributes, wiki): (List<Record<View.AttributeCombined>>) =>
     Maybe.fromMaybe(
       List.of(),
-      maybeAttributes.map(
+      maybeAttributes.fmap(
         attributes => attributes.foldl<(List<Record<View.AttributeCombined>>)>(
           list => attribute => Maybe.fromMaybe(
             list,
             wiki.lookup(attribute.get('id'))
-              .map(
+              .fmap(
                 wikiAttribute => list.append(
                   attribute
                     .merge(wikiAttribute)
@@ -157,7 +157,7 @@ export const getMaxAttributeValueByID = (
   Maybe.mapMaybe(
     id => attributes
       .lookup(id)
-      .map(attribute => attribute.get('value')),
+      .fmap(attribute => attribute.get('value')),
     ids
   )
     .append(8)
@@ -176,7 +176,7 @@ const getPrimaryMagicalAttributeInstance = (
         .bind(attributes => attributes.lookup('ATTR_2'))
         .bind(
           attribute => wikiAttributes.lookup('ATTR_2')
-            .map(
+            .fmap(
               wikiAttribute => wikiAttribute.merge(attribute)
             )
         );
@@ -185,7 +185,7 @@ const getPrimaryMagicalAttributeInstance = (
         .bind(attributes => attributes.lookup('ATTR_3'))
         .bind(
           attribute => wikiAttributes.lookup('ATTR_3')
-            .map(
+            .fmap(
               wikiAttribute => wikiAttribute.merge(attribute)
             )
         );
@@ -197,7 +197,7 @@ const getPrimaryMagicalAttributeInstance = (
         .bind(attributes => attributes.lookup('ATTR_4'))
         .bind(
           attribute => wikiAttributes.lookup('ATTR_4')
-            .map(
+            .fmap(
               wikiAttribute => wikiAttribute.merge(attribute)
             )
         );
@@ -221,8 +221,8 @@ export const getPrimaryMagicalAttribute = createMaybeSelector(
             wikiAttributes,
           );
 
-          return highestAttribute.map(x => x.get('value'))
-            .lt(attribute.map(x => x.get('value')))
+          return highestAttribute.fmap(x => x.get('value'))
+            .lt(attribute.fmap(x => x.get('value')))
               ? attribute
               : highestAttribute;
         },
@@ -233,7 +233,7 @@ export const getPrimaryMagicalAttribute = createMaybeSelector(
 
 export const getPrimaryMagicalAttributeForSheet = createMaybeSelector(
   getPrimaryMagicalAttribute,
-  Maybe.map(Record.get<View.AttributeCombined, 'short'>('short'))
+  Maybe.fmap(Record.get<View.AttributeCombined, 'short'>('short'))
 );
 
 const getPrimaryBlessedAttributeInstance = (
@@ -252,7 +252,7 @@ const getPrimaryBlessedAttributeInstance = (
         .bind(attributes => attributes.lookup('ATTR_1'))
         .bind(
           attribute => wikiAttributes.lookup('ATTR_1')
-            .map(
+            .fmap(
               wikiAttribute => wikiAttribute.merge(attribute)
             )
         );
@@ -264,7 +264,7 @@ const getPrimaryBlessedAttributeInstance = (
         .bind(attributes => attributes.lookup('ATTR_2'))
         .bind(
           attribute => wikiAttributes.lookup('ATTR_2')
-            .map(
+            .fmap(
               wikiAttribute => wikiAttribute.merge(attribute)
             )
         );
@@ -276,7 +276,7 @@ const getPrimaryBlessedAttributeInstance = (
         .bind(attributes => attributes.lookup('ATTR_3'))
         .bind(
           attribute => wikiAttributes.lookup('ATTR_3')
-            .map(
+            .fmap(
               wikiAttribute => wikiAttribute.merge(attribute)
             )
         );
@@ -288,7 +288,7 @@ const getPrimaryBlessedAttributeInstance = (
         .bind(attributes => attributes.lookup('ATTR_4'))
         .bind(
           attribute => wikiAttributes.lookup('ATTR_4')
-            .map(
+            .fmap(
               wikiAttribute => wikiAttribute.merge(attribute)
             )
         );
@@ -314,19 +314,19 @@ export const getPrimaryBlessedAttribute = createMaybeSelector(
 
 export const getPrimaryBlessedAttributeForSheet = createMaybeSelector(
   getPrimaryBlessedAttribute,
-  Maybe.map(Record.get<View.AttributeCombined, 'short'>('short'))
+  Maybe.fmap(Record.get<View.AttributeCombined, 'short'>('short'))
 );
 
 export const getCarryingCapacity = createMaybeSelector(
   getAttributes,
   maybeAttributes => maybeAttributes
     .bind(attributes => attributes.lookup('ATTR_8'))
-    .map(strength => strength.get('value') * 2)
+    .fmap(strength => strength.get('value') * 2)
 );
 
 export const getAdjustmentValue = createMaybeSelector(
   getCurrentRace,
-  Maybe.map(race => Tuple.fst(race.get('attributeAdjustmentsSelection')))
+  Maybe.fmap(race => Tuple.fst(race.get('attributeAdjustmentsSelection')))
 );
 
 export const getCurrentAdjustmentAttribute = createMaybeSelector(
@@ -341,7 +341,7 @@ export const getCurrentAdjustmentAttribute = createMaybeSelector(
 
 export const getCurrentAdjustmentId = createMaybeSelector(
   getCurrentAdjustmentAttribute,
-  Maybe.map(attribute => attribute.get('id'))
+  Maybe.fmap(attribute => attribute.get('id'))
 );
 
 export const getAvailableAdjustmentIds = createMaybeSelector(
@@ -350,8 +350,8 @@ export const getAvailableAdjustmentIds = createMaybeSelector(
   getAttributesForView,
   getCurrentAdjustmentAttribute,
   (maybeRace, maybeAdjustmentValue, attributesCalculated, maybeCurrentAttribute) =>
-    maybeRace.map(race => Tuple.snd(race.get('attributeAdjustmentsSelection')))
-      .map<List<string>>(
+    maybeRace.fmap(race => Tuple.snd(race.get('attributeAdjustmentsSelection')))
+      .fmap<List<string>>(
         adjustmentIds => {
           if (Maybe.isJust(maybeCurrentAttribute)) {
             const currentAttribute = Maybe.fromJust(maybeCurrentAttribute);
@@ -360,7 +360,7 @@ export const getAvailableAdjustmentIds = createMaybeSelector(
               Maybe.fromMaybe(
                 false,
                 currentAttribute.get('max').bind(
-                  max => maybeAdjustmentValue.map(
+                  max => maybeAdjustmentValue.fmap(
                     adjustmentValue => currentAttribute.get('value') > max - adjustmentValue
                   )
                 )
@@ -379,7 +379,7 @@ export const getAvailableAdjustmentIds = createMaybeSelector(
 
               if (
                 Maybe.isNothing(attribute.get('max')) ||
-                maybeCurrentAttribute.map(x => x.get('id')).equals(Just(id))
+                maybeCurrentAttribute.fmap(x => x.get('id')).equals(Just(id))
               ) {
                 return true;
               }
@@ -387,7 +387,7 @@ export const getAvailableAdjustmentIds = createMaybeSelector(
                 return Maybe.fromMaybe(
                   true,
                   attribute.get('max')
-                    .map(
+                    .fmap(
                       max => max + Maybe.fromJust(maybeAdjustmentValue) >= attribute.get('value')
                     )
                 );

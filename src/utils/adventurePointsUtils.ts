@@ -41,7 +41,7 @@ export const getDisAdvantagesSubtypeMax = (
     const maybeTradition = getMagicalTraditions(state.specialAbilities).head();
     const semiTraditionIds = ['SA_677', 'SA_678', 'SA_679', 'SA_680'];
 
-    const maybeIsSemiTradition = maybeTradition.map(
+    const maybeIsSemiTradition = maybeTradition.fmap(
       traditionActive => semiTraditionIds.includes(traditionActive.get('id'))
     );
 
@@ -189,16 +189,16 @@ const getPrinciplesObligationsDiff = (
 
             const baseCost = wiki.get('disadvantages')
               .lookup(sourceId)
-              .map(e => e.get('cost') as number);
+              .fmap(e => e.get('cost') as number);
 
             const amountDiff = amountMaxTiers > 1
-              ? baseCost.map(base => maxCurrentTier * -base)
+              ? baseCost.fmap(base => maxCurrentTier * -base)
               : Maybe.Just(0);
 
-            const levelDiff = baseCost.map(base => subMaxCurrentTier * -base);
+            const levelDiff = baseCost.fmap(base => subMaxCurrentTier * -base);
 
             return amountDiff.bind(
-              amount => levelDiff.map(level => amount + level)
+              amount => levelDiff.fmap(level => amount + level)
             );
           },
         )
@@ -216,7 +216,7 @@ const getPropertyOrAspectKnowledgeDiff = (
   Maybe.fromMaybe(
     0,
     state.lookup('SA_72')
-      .map(entry => {
+      .fmap(entry => {
         const active = entry.get('active');
 
         const actualAPSum = apArr.ifoldl(
@@ -241,7 +241,7 @@ const getPersonalityFlawsDiff = (
     return Maybe.fromMaybe(
       0,
       state.lookup('DISADV_33')
-        .map(
+        .fmap(
           entry => {
             const active = entry.get('active');
 
@@ -259,7 +259,7 @@ const getPersonalityFlawsDiff = (
                   .bind(wikiEntry => wikiEntry.lookup('select'))
                   .bind(select => select.find(e => e.get('id') === 7))
                   .bind(selection => selection.lookup('cost'))
-                  .map(cost => -cost)
+                  .fmap(cost => -cost)
               );
             }
 
@@ -282,7 +282,7 @@ const getBadHabitsDiff = (
     return Maybe.fromMaybe(
       0,
       state.lookup('DISADV_36')
-        .map(
+        .fmap(
           entry => {
             const active = entry.get('active');
 
@@ -290,9 +290,9 @@ const getBadHabitsDiff = (
               return Maybe.fromMaybe(
                 0,
                 wiki.get('disadvantages').lookup('DISADV_36')
-                  .map(wikiEntry => wikiEntry.get('cost'))
+                  .fmap(wikiEntry => wikiEntry.get('cost'))
                   .bind(Maybe.ensure(isNumber))
-                  .map(cost => cost * -3)
+                  .fmap(cost => cost * -3)
               );
             }
 
@@ -315,7 +315,7 @@ const getSkillSpecializationsDiff = (
     return Maybe.fromMaybe(
       0,
       state.lookup('SA_9')
-        .map(
+        .fmap(
           entry => {
             const active = entry.get('active');
 
@@ -324,7 +324,7 @@ const getSkillSpecializationsDiff = (
               acc => current => {
                 const altered = current.lookup('sid')
                   .bind(Maybe.ensure(isString))
-                  .map(acc.alter(sum => sum.map(R.inc).alt(Maybe.Just(1))))
+                  .fmap(acc.alter(sum => sum.fmap(R.inc).alt(Maybe.Just(1))))
 
                 return Maybe.isJust(altered) ? Maybe.fromJust(altered) : acc;
               },
@@ -359,7 +359,7 @@ const getSkillSpecializationsDiff = (
                     .bind(Maybe.ensure(isString))
                     .bind(sid =>
                       sameSkill.lookup(sid)
-                        .map(counter => {
+                        .fmap(counter => {
                           const accMap = Tuple.snd(acc);
                           if (
                             !accMap.member(sid)
@@ -370,13 +370,13 @@ const getSkillSpecializationsDiff = (
                             return Tuple.of(
                               Maybe.fromMaybe(
                                 Tuple.fst(acc),
-                                maybeSkill.map(skill =>
+                                maybeSkill.fmap(skill =>
                                   Tuple.fst(acc)
                                   + getSingleDiff(skill, accMap, sid, counter)
                                 )
                               ),
                               accMap.alter(
-                                sum => sum.map(R.inc).alt(Maybe.Just(1)),
+                                sum => sum.fmap(R.inc).alt(Maybe.Just(1)),
                                 sid
                               )
                             );

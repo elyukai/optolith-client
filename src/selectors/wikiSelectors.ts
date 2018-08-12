@@ -337,7 +337,7 @@ export const getSpecialAbilityGroups = createSelector(
   getLocaleMessages,
   (wiki, locale) => {
     const specialAbilities = [...wiki.values()];
-    return sortObjects(translate(locale!, 'specialabilities.view.groups').map((name, index) => ({
+    return sortObjects(translate(locale!, 'specialabilities.view.groups').fmap((name, index) => ({
       id: index + 1,
       name
     })).filter(({ id }) => specialAbilities.some(e => e.gr === id)), locale!.id);

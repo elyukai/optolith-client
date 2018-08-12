@@ -1,8 +1,8 @@
 import { createSelector } from 'reselect';
 import { AppState } from '../reducers/app';
 import { EquipmentState } from '../reducers/equipment';
-import { ArmorZonesInstance, CombatTechniqueInstance, ItemInstance, ToListById } from '../types/data.d';
-import { Armor, ArmorZone, Item, MeleeWeapon, RangedWeapon, ShieldOrParryingWeapon } from '../types/view.d';
+import { ArmorZonesInstance, CombatTechniqueInstance, ItemInstance, ToListById } from '../types/data';
+import { Armor, ArmorZone, Item, MeleeWeapon, RangedWeapon, ShieldOrParryingWeapon } from '../types/view';
 import { getAt, getPa } from '../utils/CombatTechniqueUtils';
 import { AllSortOptions, filterAndSortObjects, filterObjects, sortObjects } from '../utils/FilterSortUtils';
 import { translate } from '../utils/I18n';
@@ -14,23 +14,6 @@ import { getRuleBooksEnabled } from './rulesSelectors';
 import { getEquipmentSortOptions } from './sortOptionsSelectors';
 import { getEquipmentFilterText, getHigherParadeValues, getItemTemplatesFilterText, getLocaleMessages, getZoneArmorFilterText } from './stateSelectors';
 import { getEquipmentSortOrder } from './uisettingsSelectors';
-
-export function getForSave(state: EquipmentState) {
-  const { armorZones, items, purse } = state;
-  const itemsObj: ToListById<ItemInstance> = {};
-  for (const [id, item] of items) {
-    itemsObj[id] = item;
-  }
-  const armorZonesObj: ToListById<ArmorZonesInstance> = {};
-  for (const [id, item] of armorZones) {
-    armorZonesObj[id] = item;
-  }
-  return {
-    items: itemsObj,
-    armorZones: armorZonesObj,
-    purse
-  };
-}
 
 export const getEquipmentState = (state: AppState) => state.currentHero.present.equipment;
 export const getItemsState = (state: AppState) => state.currentHero.present.equipment.items;

@@ -8,5 +8,5 @@ export const getPet = createSelector(
 
 export const getAllPets = createSelector(
   getPets,
-  maybePets => maybePets.map(pets => pets.elems())
+  maybePets => maybePets.fmap(pets => pets.elems())
 );

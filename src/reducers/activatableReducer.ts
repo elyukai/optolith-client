@@ -48,7 +48,7 @@ export function activatableReducer(
         state,
         state.get('advantages').lookup(id)
           .alt(state.get('disadvantages').lookup(id))
-          .map(instance => deactivate(index)(
+          .fmap(instance => deactivate(index)(
             state,
             wikiEntry,
             instance
@@ -62,18 +62,18 @@ export function activatableReducer(
       return Maybe.fromMaybe(
         state,
         state.get('specialAbilities').lookup(id)
-          .map(instance => deactivate(index)(
+          .fmap(instance => deactivate(index)(
             ExtendedStyleUtils.removeAllStyleRelatedDependencies(state, wikiEntry),
             wikiEntry,
             instance
           ))
-          .map(updatedState => {
+          .fmap(updatedState => {
             if (id === 'SA_109') {
               return Maybe.fromMaybe(
                 updatedState,
                 updatedState.get('combatTechniques').lookup('CT_17')
-                  .map(entry => IncreasableUtils.set(entry, 6))
-                  .map(
+                  .fmap(entry => IncreasableUtils.set(entry, 6))
+                  .fmap(
                     entry => updatedState.modify(
                       slice => slice.insert('CT_17', entry),
                       'combatTechniques'
@@ -94,7 +94,7 @@ export function activatableReducer(
       return Maybe.fromMaybe(
         state,
         (getHeroStateListItem(id, state) as Maybe<Record<Data.ActivatableDependent>>)
-          .map(instance => setTier(index, tier)(
+          .fmap(instance => setTier(index, tier)(
             state,
             wikiEntry,
             instance

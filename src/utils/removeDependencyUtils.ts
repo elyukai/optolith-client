@@ -62,7 +62,7 @@ const removeDependencyCreator = <T extends Data.Dependent>(
     return Maybe.fromMaybe(
       state,
       getHeroStateListItem<T>(id, state)
-        .map(R.pipe(
+        .fmap(R.pipe(
           removeDependency(value),
           adjustOrRemoveFn(id),
         ))

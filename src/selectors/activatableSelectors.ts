@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect';
 import { ActivatableCategory, Categories } from '../constants/Categories';
-import * as Data from '../types/data.d';
+import * as Data from '../types/data';
 import { filterAndSortObjects } from '../utils/FilterSortUtils';
 import { translate } from '../utils/I18n';
 import { mapGetToSlice } from '../utils/SelectorsUtils';

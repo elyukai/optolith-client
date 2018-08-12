@@ -7,10 +7,13 @@ import { UIMessages } from '../utils/I18n';
 export const getCurrentTab = (state: AppState) => state.ui.location.tab;
 
 
-export const getLocaleMessages = (state: AppState) =>
-  Maybe.of(state.locale.messages).map(Record.of);
+export const getLocaleMessages = createMaybeSelector(
+  (state: AppState) => state.locale.messages,
+  messages => Maybe.of(messages).fmap(Record.of)
+);
+
 export const getLocaleAsProp = (_: AppState, props: { locale: Record<UIMessages> }) => props.locale;
-export const getLocaleId = (state: AppState) => Maybe.of(state.locale.id);
+export const getLocaleId = createMaybeSelector((state: AppState) => state.locale.id, Maybe.of);
 export const getLocaleType = (state: AppState) => state.locale.type;
 
 
@@ -25,70 +28,76 @@ export const getCurrentHero = createMaybeSelector(
   (id, heroes) => id.bind(heroes.lookup)
 );
 
-export const getCurrentHeroPresent = (state: AppState) =>
-  getCurrentHero(state).map(just => just.present);
+export const getCurrentHeroPresent = createMaybeSelector(
+  getCurrentHero,
+  currentHero => currentHero.fmap(just => just.present)
+);
 
-export const getCurrentHeroPast = (state: AppState) =>
-  getCurrentHero(state).map(just => just.past);
+export const getCurrentHeroPast = createMaybeSelector(
+  getCurrentHero,
+  currentHero => currentHero.fmap(just => just.past)
+);
 
-export const getCurrentHeroFuture = (state: AppState) =>
-  getCurrentHero(state).map(just => just.future);
+export const getCurrentHeroFuture = createMaybeSelector(
+  getCurrentHero,
+  currentHero => currentHero.fmap(just => just.future)
+);
 
 
 export const getTotalAdventurePoints = (state: AppState) =>
-  getCurrentHero(state).map(just => just.present.get('adventurePoints').get('total'));
+  getCurrentHero(state).fmap(just => just.present.get('adventurePoints').get('total'));
 
 
 export const getAdvantages = (state: AppState) =>
-  getCurrentHero(state).map(just => just.present.get('advantages'));
+  getCurrentHero(state).fmap(just => just.present.get('advantages'));
 
 export const getAttributes = (state: AppState) =>
-  getCurrentHero(state).map(just => just.present.get('attributes'));
+  getCurrentHero(state).fmap(just => just.present.get('attributes'));
 
 export const getBlessings = (state: AppState) =>
-  getCurrentHero(state).map(just => just.present.get('blessings'));
+  getCurrentHero(state).fmap(just => just.present.get('blessings'));
 
 export const getCantrips = (state: AppState) =>
-  getCurrentHero(state).map(just => just.present.get('cantrips'));
+  getCurrentHero(state).fmap(just => just.present.get('cantrips'));
 
 export const getCombatTechniques = (state: AppState) =>
-  getCurrentHero(state).map(just => just.present.get('combatTechniques'));
+  getCurrentHero(state).fmap(just => just.present.get('combatTechniques'));
 
 export const getDisadvantages = (state: AppState) =>
-  getCurrentHero(state).map(just => just.present.get('disadvantages'));
+  getCurrentHero(state).fmap(just => just.present.get('disadvantages'));
 
 export const getLiturgicalChants = (state: AppState) =>
-  getCurrentHero(state).map(just => just.present.get('liturgicalChants'));
+  getCurrentHero(state).fmap(just => just.present.get('liturgicalChants'));
 
 export const getSkills = (state: AppState) =>
-  getCurrentHero(state).map(just => just.present.get('skills'));
+  getCurrentHero(state).fmap(just => just.present.get('skills'));
 
 export const getSpecialAbilities = (state: AppState) =>
-  getCurrentHero(state).map(just => just.present.get('specialAbilities'));
+  getCurrentHero(state).fmap(just => just.present.get('specialAbilities'));
 
 export const getSpells = (state: AppState) =>
-  getCurrentHero(state).map(just => just.present.get('spells'));
+  getCurrentHero(state).fmap(just => just.present.get('spells'));
 
 
 export const getBlessedStyleDependencies = (state: AppState) =>
-  getCurrentHero(state).map(just => just.present.get('blessedStyleDependencies'));
+  getCurrentHero(state).fmap(just => just.present.get('blessedStyleDependencies'));
 
 export const getCombatStyleDependencies = (state: AppState) =>
-  getCurrentHero(state).map(just => just.present.get('combatStyleDependencies'));
+  getCurrentHero(state).fmap(just => just.present.get('combatStyleDependencies'));
 
 export const getMagicalStyleDependencies = (state: AppState) =>
-  getCurrentHero(state).map(just => just.present.get('magicalStyleDependencies'));
+  getCurrentHero(state).fmap(just => just.present.get('magicalStyleDependencies'));
 
 
 export const getProfile = (state: AppState) =>
-  getCurrentHero(state).map(just => just.present.get('personalData'));
+  getCurrentHero(state).fmap(just => just.present.get('personalData'));
 
 export const getCultureAreaKnowledge = (state: AppState) =>
   getCurrentHero(state)
     .bind(just => just.present.get('personalData').lookup('cultureAreaKnowledge'));
 
 export const getSex = (state: AppState) =>
-  getCurrentHero(state).map(just => just.present.get('sex'));
+  getCurrentHero(state).fmap(just => just.present.get('sex'));
 
 export const getSize = (state: AppState) =>
   getCurrentHero(state).bind(just => just.present.get('personalData').lookup('size'));
@@ -105,19 +114,19 @@ export const getPact = (state: AppState) =>
 
 
 export const getRules = (state: AppState) =>
-  getCurrentHero(state).map(just => just.present.get('rules'));
+  getCurrentHero(state).fmap(just => just.present.get('rules'));
 
 export const getAttributeValueLimit = (state: AppState) =>
-  getCurrentHero(state).map(just => just.present.get('rules').get('attributeValueLimit'));
+  getCurrentHero(state).fmap(just => just.present.get('rules').get('attributeValueLimit'));
 
 export const getHigherParadeValues = (state: AppState) =>
-  getCurrentHero(state).map(just => just.present.get('rules').get('higherParadeValues'));
+  getCurrentHero(state).fmap(just => just.present.get('rules').get('higherParadeValues'));
 
 export const areAllRuleBooksEnabled = (state: AppState) =>
-  getCurrentHero(state).map(just => just.present.get('rules').get('enableAllRuleBooks'));
+  getCurrentHero(state).fmap(just => just.present.get('rules').get('enableAllRuleBooks'));
 
 export const getEnabledRuleBooks = (state: AppState) =>
-  getCurrentHero(state).map(just => just.present.get('rules').get('enabledRuleBooks'));
+  getCurrentHero(state).fmap(just => just.present.get('rules').get('enabledRuleBooks'));
 
 
 export const getCurrentRaceId = (state: AppState) =>
@@ -137,50 +146,50 @@ export const getCurrentProfessionVariantId = (state: AppState) =>
 
 
 export const getEnergies = (state: AppState) =>
-  getCurrentHero(state).map(just => just.present.get('energies'));
+  getCurrentHero(state).fmap(just => just.present.get('energies'));
 
 export const getAddedLifePoints = (state: AppState) =>
-  getCurrentHero(state).map(just => just.present.get('energies').get('addedLifePoints'));
+  getCurrentHero(state).fmap(just => just.present.get('energies').get('addedLifePoints'));
 
 export const getAddedArcaneEnergyPoints = (state: AppState) =>
-  getCurrentHero(state).map(just => just.present.get('energies').get('addedArcaneEnergyPoints'));
+  getCurrentHero(state).fmap(just => just.present.get('energies').get('addedArcaneEnergyPoints'));
 
 export const getAddedKarmaPoints = (state: AppState) =>
-  getCurrentHero(state).map(just => just.present.get('energies').get('addedKarmaPoints'));
+  getCurrentHero(state).fmap(just => just.present.get('energies').get('addedKarmaPoints'));
 
 export const getPermanentLifePoints = (state: AppState) =>
-  getCurrentHero(state).map(just => just.present.get('energies').get('permanentLifePoints'));
+  getCurrentHero(state).fmap(just => just.present.get('energies').get('permanentLifePoints'));
 
 export const getPermanentArcaneEnergyPoints = (state: AppState) =>
   getCurrentHero(state)
-    .map(just => just.present.get('energies').get('permanentArcaneEnergyPoints'));
+    .fmap(just => just.present.get('energies').get('permanentArcaneEnergyPoints'));
 
 export const getPermanentKarmaPoints = (state: AppState) =>
-  getCurrentHero(state).map(just => just.present.get('energies').get('permanentKarmaPoints'));
+  getCurrentHero(state).fmap(just => just.present.get('energies').get('permanentKarmaPoints'));
 
 
 export const getPhase = (state: AppState) =>
-  getCurrentHero(state).map(just => just.present.get('phase'));
+  getCurrentHero(state).fmap(just => just.present.get('phase'));
 
 
 export const getExperienceLevelStartId = (state: AppState) =>
-  getCurrentHero(state).map(just => just.present.get('experienceLevel'));
+  getCurrentHero(state).fmap(just => just.present.get('experienceLevel'));
 
 
 export const getItemEditorInstance = (state: AppState) =>
   getCurrentHero(state).bind(just => just.present.get('belongings').lookup('itemInEditor'));
 
 export const getIsItemCreation = (state: AppState) =>
-  getCurrentHero(state).map(just => just.present.get('belongings').get('isInItemCreation'));
+  getCurrentHero(state).fmap(just => just.present.get('belongings').get('isInItemCreation'));
 
 export const getArmorZonesEditorInstance = (state: AppState) =>
   getCurrentHero(state).bind(just => just.present.get('belongings').lookup('zoneArmorInEditor'));
 
 export const getIsArmorZonesCreation = (state: AppState) =>
-  getCurrentHero(state).map(just => just.present.get('belongings').get('isInZoneArmorCreation'));
+  getCurrentHero(state).fmap(just => just.present.get('belongings').get('isInZoneArmorCreation'));
 
 export const getPets = (state: AppState) =>
-  getCurrentHero(state).map(just => just.present.get('pets'));
+  getCurrentHero(state).fmap(just => just.present.get('pets'));
 
 
 export const getAlerts = (state: AppState) => state.ui.alerts;

@@ -1,11 +1,11 @@
 import { createSelector } from 'reselect';
+import { getAdventurePointsSpentDifference } from '../utils/adventurePointsUtils';
 import { createMaybeSelector } from '../utils/createMaybeSelector';
 import { Maybe } from '../utils/dataUtils';
 import { getAPRange } from '../utils/improvementCostUtils';
 import { getAdvantagesForEdit, getDisadvantagesForEdit, getSpecialAbilitiesForEdit } from './activatableSelectors';
 import { getCurrentProfession, getCurrentProfessionVariant, getCurrentRace } from './rcpSelectors';
 import { getAdvantages, getAttributes, getBlessings, getCantrips, getCombatTechniques, getDisadvantages, getEnergies, getLiturgicalChants, getPhase, getSkills, getSpecialAbilities, getSpells, getTotalAdventurePoints, getWiki, getWikiCombatTechniques, getWikiLiturgicalChants, getWikiSkills, getWikiSpells } from './stateSelectors';
-import { getAdventurePointsSpentDifference } from '../utils/adventurePointsUtils';
 
 export const getAdventurePointsSpentForAttributes = createMaybeSelector(
   getAttributes,
@@ -28,7 +28,7 @@ export const getAdventurePointsSpentForSkills = createMaybeSelector(
       sum => e => Maybe.fromMaybe(
         sum,
         wikiList.lookup(e.get('id'))
-          .map(
+          .fmap(
             skill => sum + getAPRange(
               skill.get('ic'),
               0,
@@ -51,7 +51,7 @@ export const getAdventurePointsSpentForCombatTechniques = createMaybeSelector(
       sum => e => Maybe.fromMaybe(
         sum,
         wikiList.lookup(e.get('id'))
-          .map(
+          .fmap(
             combatTechnique => sum + getAPRange(
               combatTechnique.get('ic'),
               6,
@@ -76,7 +76,7 @@ export const getAdventurePointsSpentForSpells = createMaybeSelector(
         ? Maybe.fromMaybe(
             sum,
             wikiList.lookup(e.get('id'))
-              .map(
+              .fmap(
                 spell => sum + getAPRange(
                   spell.get('ic'),
                   0,
@@ -102,7 +102,7 @@ export const getAdventurePointsSpentForLiturgicalChants = createMaybeSelector(
         ? Maybe.fromMaybe(
             sum,
             wikiList.lookup(e.get('id'))
-              .map(
+              .fmap(
                 liturgicalChant => sum + getAPRange(
                   liturgicalChant.get('ic'),
                   0,
@@ -119,12 +119,12 @@ export const getAdventurePointsSpentForLiturgicalChants = createMaybeSelector(
 
 export const getAdventurePointsSpentForCantrips = createMaybeSelector(
   getCantrips,
-  maybeList => Maybe.fromMaybe(0, maybeList.map(list => list.size()))
+  maybeList => Maybe.fromMaybe(0, maybeList.fmap(list => list.size()))
 );
 
 export const getAdventurePointsSpentForBlessings = createMaybeSelector(
   getBlessings,
-  maybeList => Maybe.fromMaybe(0, maybeList.map(list => list.size()))
+  maybeList => Maybe.fromMaybe(0, maybeList.fmap(list => list.size()))
 );
 
 export const getAdventurePointsSpentForAdvantages = createMaybeSelector(

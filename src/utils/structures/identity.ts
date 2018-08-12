@@ -9,31 +9,23 @@ import * as Al from '../../types/algebraic';
  * theory of monad transformers. Any monad transformer applied to the `Identity`
  * monad yields a non-transformer version of that monad.
  */
-export class Identity<T> implements Al.Functor<T>, Al.Apply<T>, Al.Bind<T> {
+export class Identity<T> implements Al.Functor<T>, Al.Applicative<T>, Al.Monad<T> {
   private readonly value: T;
 
-  constructor(value: T) {
+  private constructor(value: T) {
     this.value = value;
   }
 
-  /**
-   * `map :: (a -> b) -> Identity a -> Identity b`
-   *
-   * Transforms the value contained within the `Identity` instance with the
-   * provided function.
-   */
-  map<U>(fn: (value: T) => U): Identity<U> {
+  fmap<U>(fn: (value: T) => U): Identity<U> {
     return new Identity(fn(this.value));
   }
 
-  /**
-   * `(>>=) :: Identity a -> (a -> Identity b) -> Identity b`
-   *
-   * Produces a new `Identity` instance by applying the value of this `Identity`
-   * to the provided function.
-   */
   bind<U>(fn: (value: T) => Identity<U>): Identity<U> {
     return fn(this.value);
+  }
+
+  sequence<U>(x: Identity<U>): Identity<U> {
+    return x;
   }
 
   /**
@@ -43,17 +35,15 @@ export class Identity<T> implements Al.Functor<T>, Al.Apply<T>, Al.Bind<T> {
    * function contained withing the instance of this `Identity`.
    */
   ap<U>(m: Identity<((value: T) => U)>): Identity<U> {
-    return m.map(fn => fn(this.value));
+    return m.fmap(fn => fn(this.value));
   }
 
   /**
-   * `of :: a -> Identity a`
+   * `return :: a -> Identity a`
    *
-   * Creates a new `Identity` from the given value.
-   *
-   * @class Applicative<T>
+   * Inject a value into a `Identity` type.
    */
-  static of<T>(value: T): Identity<T> {
+  static return<T>(value: T): Identity<T> {
     return new Identity(value);
   }
 }

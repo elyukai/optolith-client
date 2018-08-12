@@ -1,4 +1,3 @@
-import { createSelector } from 'reselect';
 import { Categories } from '../constants/Categories';
 import { ActivatableNameCostActive, ActiveObjectWithId } from '../types/data';
 import { CultureCombined, IncreasableView, MappedProfession, MappedProfessionVariant, ProfessionCombined, ProfessionVariantCombined, RaceCombined } from '../types/view';
@@ -6,8 +5,9 @@ import { Culture } from '../types/wiki';
 import { getNameCostForWiki } from '../utils/activatableActiveUtils';
 import { convertPerTierCostToFinalCost } from '../utils/activatableCostUtils';
 import { isProfessionRequiringActivatable, isProfessionRequiringIncreasable } from '../utils/checkPrerequisiteUtils';
+import { createMaybeSelector } from '../utils/createMaybeSelector';
 import { Just, List, ListElement, Maybe, Record } from '../utils/dataUtils';
-import { filterAndSortObjects, FilterOptions } from '../utils/FilterSortUtils';
+import { AllSortOptions, filterAndSortObjects, FilterOptions } from '../utils/FilterSortUtils';
 import { getCategoryById } from '../utils/IDUtils';
 import { filterByAvailability, isEntryFromCoreBook } from '../utils/RulesUtils';
 import { validateProfession } from '../utils/validatePrerequisitesUtils';
@@ -18,43 +18,43 @@ import { getCulturesSortOptions, getProfessionsSortOptions, getRacesSortOptions 
 import { getCulturesFilterText, getCurrentCultureId, getCurrentProfessionId, getCurrentProfessionVariantId, getCurrentRaceId, getCurrentRaceVariantId, getLocaleAsProp, getLocaleMessages, getProfessionsFilterText, getRacesFilterText, getSex, getWiki, getWikiCultures, getWikiProfessions, getWikiProfessionVariants, getWikiRaces, getWikiRaceVariants, getWikiSkills } from './stateSelectors';
 import { getCulturesVisibilityFilter, getProfessionsGroupVisibilityFilter, getProfessionsVisibilityFilter } from './uisettingsSelectors';
 
-export const getCurrentRace = createSelector(
+export const getCurrentRace = createMaybeSelector(
   getWikiRaces,
   getCurrentRaceId,
   (races, raceId) => raceId.bind(races.lookup)
 );
 
-export const getCurrentRaceVariant = createSelector(
+export const getCurrentRaceVariant = createMaybeSelector(
   getWikiRaceVariants,
   getCurrentRaceVariantId,
   (raceVariants, raceVariantId) => raceVariantId.bind(raceVariants.lookup)
 );
 
-export const getCurrentCulture = createSelector(
+export const getCurrentCulture = createMaybeSelector(
   getWikiCultures,
   getCurrentCultureId,
   (cultures, cultureId) => cultureId.bind(cultures.lookup)
 );
 
-export const getCurrentProfession = createSelector(
+export const getCurrentProfession = createMaybeSelector(
   getWikiProfessions,
   getCurrentProfessionId,
   (professions, professionId) => professionId.bind(professions.lookup)
 );
 
-export const getCurrentProfessionVariant = createSelector(
+export const getCurrentProfessionVariant = createMaybeSelector(
   getWikiProfessionVariants,
   getCurrentProfessionVariantId,
   (professionVariants, professionVariantId) => professionVariantId.bind(professionVariants.lookup)
 );
 
-export const getAllRaces = createSelector(
+export const getAllRaces = createMaybeSelector(
   getWikiRaces,
   getWikiRaceVariants,
   getWikiCultures,
   (races, raceVariants, cultures) => {
     const filterCultures = Maybe.mapMaybe<string, string>(
-      id => cultures.lookup(id).map(culture => culture.get('name'))
+      id => cultures.lookup(id).fmap(culture => culture.get('name'))
     );
 
     return races.elems().map<Record<RaceCombined>>(
@@ -68,25 +68,30 @@ export const getAllRaces = createSelector(
   }
 );
 
-export const getAvailableRaces = createSelector(
+export const getAvailableRaces = createMaybeSelector(
   getAllRaces,
   getRuleBooksEnabled,
-  (list, maybeAvailablility) => maybeAvailablility.map(
+  (list, maybeAvailablility) => maybeAvailablility.fmap(
     availablility => filterByAvailability(list, availablility)
   )
 );
 
-export const getFilteredRaces = createSelector(
+export const getFilteredRaces = createMaybeSelector(
   getAvailableRaces,
   getRacesFilterText,
   getRacesSortOptions,
   getLocaleAsProp,
-  (maybeList, filterText, sortOptions, locale) => maybeList.map(
-    list => filterAndSortObjects(list, locale.get('id'), filterText, sortOptions)
+  (maybeList, filterText, sortOptions, locale) => maybeList.fmap(
+    list => filterAndSortObjects(
+      list,
+      locale.get('id'),
+      filterText,
+      sortOptions as AllSortOptions<RaceCombined>
+    )
   )
 );
 
-export const getAllCultures = createSelector(
+export const getAllCultures = createMaybeSelector(
   getWikiCultures,
   getWikiSkills,
   (cultures, skills) =>
@@ -95,7 +100,7 @@ export const getAllCultures = createSelector(
         .merge(Record.of({
           mappedCulturalPackageSkills: Maybe.mapMaybe(
             increaseSkill => skills.lookup(increaseSkill.get('id'))
-              .map(
+              .fmap(
                 skill => increaseSkill.merge(Record.of({
                   name: skill.get('name'),
                 }))
@@ -106,15 +111,15 @@ export const getAllCultures = createSelector(
     )
 );
 
-export const getCommonCultures = createSelector(
+export const getCommonCultures = createMaybeSelector(
   getCurrentRace,
   getCurrentRaceVariant,
   (maybeRace, maybeRaceVariant) => {
-    const raceCultures = maybeRace.map(
+    const raceCultures = maybeRace.fmap(
       race => race.get('commonCultures')
     );
 
-    const raceVariantCultures = maybeRaceVariant.map(
+    const raceVariantCultures = maybeRaceVariant.fmap(
       raceVariant => raceVariant.get('commonCultures')
     );
 
@@ -125,26 +130,31 @@ export const getCommonCultures = createSelector(
   }
 );
 
-export const getAvailableCultures = createSelector(
+export const getAvailableCultures = createMaybeSelector(
   getAllCultures,
   getRuleBooksEnabled,
   getCommonCultures,
   getCulturesVisibilityFilter,
   (list, maybeAvailablility, commonCultures, visibility) =>
-    maybeAvailablility.map(
+    maybeAvailablility.fmap(
       availablility => visibility === 'common'
         ? filterByAvailability(list.filter(e => commonCultures.elem(e.get('id'))), availablility)
         : filterByAvailability(list, availablility)
     )
 );
 
-export const getFilteredCultures = createSelector(
+export const getFilteredCultures = createMaybeSelector(
   getAvailableCultures,
   getCulturesFilterText,
   getCulturesSortOptions,
   getLocaleAsProp,
-  (maybeList, filterText, sortOptions, locale) => maybeList.map(
-    list => filterAndSortObjects(list, locale.get('id'), filterText, sortOptions)
+  (maybeList, filterText, sortOptions, locale) => maybeList.fmap(
+    list => filterAndSortObjects(
+      list,
+      locale.get('id'),
+      filterText,
+      sortOptions as AllSortOptions<CultureCombined>
+    )
   )
 );
 
@@ -174,7 +184,7 @@ const getGroupSliceKey = (gr: number): keyof SkillGroupLists => {
   }
 };
 
-export const getAllProfessions = createSelector(
+export const getAllProfessions = createMaybeSelector(
   getWiki,
   getLocaleMessages,
   (wiki, locale) => {
@@ -192,7 +202,7 @@ export const getAllProfessions = createSelector(
 
             return Maybe.fromMaybe(
               objByGroups,
-              maybeSkill.map(
+              maybeSkill.fmap(
                 skill => {
                   const key = getGroupSliceKey(skill.get('gr'));
 
@@ -237,8 +247,8 @@ export const getAllProfessions = createSelector(
                       wiki,
                       locale
                     )
-                      .map(convertPerTierCostToFinalCost(locale))
-                      .map(
+                      .fmap(convertPerTierCostToFinalCost(locale))
+                      .fmap(
                         obj => obj.merge(Record.of({
                           active: e.get('active')
                         })) as Record<ActivatableNameCostActive>
@@ -256,8 +266,8 @@ export const getAllProfessions = createSelector(
                   wiki,
                   locale
                 )
-                  .map(convertPerTierCostToFinalCost(locale))
-                  .map(
+                  .fmap(convertPerTierCostToFinalCost(locale))
+                  .fmap(
                     obj => obj.merge(Record.of({
                       active: e.get('active')
                     })) as Record<ActivatableNameCostActive>
@@ -269,7 +279,7 @@ export const getAllProfessions = createSelector(
                 return e.modify(
                   sid => Maybe.mapMaybe(
                     id => wiki.get('combatTechniques').lookup(id)
-                      .map(entry => entry.get('name')),
+                      .fmap(entry => entry.get('name')),
                     sid
                   ),
                   'sid'
@@ -281,7 +291,7 @@ export const getAllProfessions = createSelector(
             mappedCombatTechniques: Maybe.mapMaybe(
               e => wiki.get('combatTechniques')
                 .lookup(e.get('id'))
-                .map(
+                .fmap(
                   wikiEntry => e.merge(Record.of({
                     name: wikiEntry.get('name'),
                   }))
@@ -296,7 +306,7 @@ export const getAllProfessions = createSelector(
             mappedSpells: Maybe.mapMaybe(
               e => wiki.get('spells')
                 .lookup(e.get('id'))
-                .map(
+                .fmap(
                   wikiEntry => e.merge(Record.of({
                     name: wikiEntry.get('name'),
                   }))
@@ -306,7 +316,7 @@ export const getAllProfessions = createSelector(
             mappedLiturgicalChants: Maybe.mapMaybe(
               e => wiki.get('liturgicalChants')
                 .lookup(e.get('id'))
-                .map(
+                .fmap(
                   wikiEntry => e.merge(Record.of({
                     name: wikiEntry.get('name'),
                   }))
@@ -327,8 +337,8 @@ export const getAllProfessions = createSelector(
                             wiki,
                             locale
                           )
-                            .map(convertPerTierCostToFinalCost(locale))
-                            .map(
+                            .fmap(convertPerTierCostToFinalCost(locale))
+                            .fmap(
                               obj => obj.merge(Record.of({
                                 active: e.get('active')
                               })) as Record<ActivatableNameCostActive>
@@ -346,8 +356,8 @@ export const getAllProfessions = createSelector(
                         wiki,
                         locale
                       )
-                        .map(convertPerTierCostToFinalCost(locale))
-                        .map(
+                        .fmap(convertPerTierCostToFinalCost(locale))
+                        .fmap(
                           obj => obj.merge(Record.of({
                             active: e.get('active')
                           })) as Record<ActivatableNameCostActive>
@@ -359,7 +369,7 @@ export const getAllProfessions = createSelector(
                       return e.modify(
                         sid => Maybe.mapMaybe(
                           id => wiki.get('combatTechniques').lookup(id)
-                            .map(entry => entry.get('name')),
+                            .fmap(entry => entry.get('name')),
                           sid
                         ),
                         'sid'
@@ -371,12 +381,12 @@ export const getAllProfessions = createSelector(
                   mappedCombatTechniques: Maybe.mapMaybe(
                     e => wiki.get('combatTechniques')
                       .lookup(e.get('id'))
-                      .map(
+                      .fmap(
                         wikiEntry => e.mergeMaybe(Record.of({
                           name: wikiEntry.get('name'),
                           previous: profession.get('combatTechniques')
                             .find(a => a.get('id') === e.get('id'))
-                            .map(a => a.get('value'))
+                            .fmap(a => a.get('value'))
                         })) as Record<IncreasableView>
                       ),
                     professionVariant.get('combatTechniques')
@@ -384,12 +394,12 @@ export const getAllProfessions = createSelector(
                   mappedSkills: Maybe.mapMaybe(
                     e => wiki.get('skills')
                       .lookup(e.get('id'))
-                      .map(
+                      .fmap(
                         wikiEntry => e.mergeMaybe(Record.of({
                           name: wikiEntry.get('name'),
                           previous: profession.get('skills')
                             .find(a => a.get('id') === e.get('id'))
-                            .map(a => a.get('value'))
+                            .fmap(a => a.get('value'))
                         })) as Record<IncreasableView>
                       ),
                     professionVariant.get('skills')
@@ -397,12 +407,12 @@ export const getAllProfessions = createSelector(
                   mappedSpells: Maybe.mapMaybe(
                     e => wiki.get('spells')
                       .lookup(e.get('id'))
-                      .map(
+                      .fmap(
                         wikiEntry => e.mergeMaybe(Record.of({
                           name: wikiEntry.get('name'),
                           previous: profession.get('spells')
                             .find(a => a.get('id') === e.get('id'))
-                            .map(a => a.get('value'))
+                            .fmap(a => a.get('value'))
                         })) as Record<IncreasableView>
                       ),
                     professionVariant.get('spells')
@@ -410,12 +420,12 @@ export const getAllProfessions = createSelector(
                   mappedLiturgicalChants: Maybe.mapMaybe(
                     e => wiki.get('liturgicalChants')
                       .lookup(e.get('id'))
-                      .map(
+                      .fmap(
                         wikiEntry => e.mergeMaybe(Record.of({
                           name: wikiEntry.get('name'),
                           previous: profession.get('liturgicalChants')
                             .find(a => a.get('id') === e.get('id'))
-                            .map(a => a.get('value'))
+                            .fmap(a => a.get('value'))
                         })) as Record<IncreasableView>
                       ),
                     professionVariant.get('liturgicalChants')
@@ -432,7 +442,7 @@ export const getAllProfessions = createSelector(
 
 const isCustomProfession = (e: Record<ProfessionCombined>) => e.get('id') === 'P_0';
 
-export const getCommonProfessions = createSelector(
+export const getCommonProfessions = createMaybeSelector(
   getAllProfessions,
   getStartEl,
   getCurrentRaceId,
@@ -452,7 +462,7 @@ export const getCommonProfessions = createSelector(
     Maybe.fromMaybe(
       professions,
       maybeSex.bind(
-        sex => maybeStartEl.map(
+        sex => maybeStartEl.fmap(
           startEl => {
             const filterProfession = (
               e: Record<ProfessionCombined> | Record<ProfessionVariantCombined>
@@ -461,7 +471,7 @@ export const getCommonProfessions = createSelector(
                 e.get('dependencies'),
                 sex,
                 currentRaceId,
-                currentCulture.map(culture => culture.get('id')),
+                currentCulture.fmap(culture => culture.get('id')),
               );
 
               const attributeCategory = Just(Categories.ATTRIBUTES);
@@ -491,7 +501,7 @@ export const getCommonProfessions = createSelector(
                 || isCustomProfession(e)
                 || Maybe.fromMaybe(
                   false,
-                  maybeCommonList.map(
+                  maybeCommonList.fmap(
                     commonList => typeof commonList === 'boolean'
                       ? (commonList === true && isEntryFromCoreBook(e))
                       : commonList.get('list').elem(e.get('subgr'))
@@ -523,7 +533,7 @@ export const getCommonProfessions = createSelector(
               .filter(
                 Maybe.fromMaybe(
                   filterProfession,
-                  currentCulture.map(
+                  currentCulture.fmap(
                     culture => (e: Record<ProfessionCombined>) =>
                       filterProfession(e) && filterProfessionExtended(culture, e)
                   )
@@ -541,7 +551,7 @@ export const getCommonProfessions = createSelector(
     )
 );
 
-export const getAvailableProfessions = createSelector(
+export const getAvailableProfessions = createMaybeSelector(
   getCommonProfessions,
   getRuleBooksEnabled,
   getProfessionsVisibilityFilter,
@@ -555,30 +565,32 @@ export const getAvailableProfessions = createSelector(
     )
 );
 
-export const getFilteredProfessions = createSelector(
+export const getFilteredProfessions = createMaybeSelector(
   getAvailableProfessions,
   getProfessionsFilterText,
   getProfessionsSortOptions,
   getLocaleAsProp,
   getSex,
-  (list, filterText, sortOptions, locale, maybeSex) =>
+  (list, filterText, maybeSortOptions, locale, maybeSex) =>
     Maybe.fromMaybe(
       list,
-      maybeSex.map(
-        sex => {
-          const filterOptions: FilterOptions<ProfessionCombined> = {
-            addProperty: 'subname',
-            keyOfName: sex
-          };
+      maybeSex.bind(
+        sex => maybeSortOptions.fmap(
+          sortOptions => {
+            const filterOptions: FilterOptions<ProfessionCombined> = {
+              addProperty: 'subname',
+              keyOfName: sex
+            };
 
-          return filterAndSortObjects(
-            list,
-            locale.get('id'),
-            filterText,
-            sortOptions,
-            filterOptions,
-          );
-        }
+            return filterAndSortObjects(
+              list,
+              locale.get('id'),
+              filterText,
+              sortOptions as AllSortOptions<ProfessionCombined>,
+              filterOptions,
+            );
+          }
+        )
       )
     )
 );

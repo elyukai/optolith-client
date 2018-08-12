@@ -13,7 +13,7 @@ export const isActive = (
     return Maybe.isJust(obj) && Maybe.fromJust(
       Maybe.fromJust(obj)
         .lookup('active')
-        .map(e => !e.null())
+        .fmap(e => !e.null())
     );
   }
 

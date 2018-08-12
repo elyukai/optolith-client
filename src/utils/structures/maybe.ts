@@ -6,7 +6,7 @@ import { List } from './list';
 export type Some = {};
 export type Nullable = null | undefined;
 
-export const isSome = <T>(e: T): e is NonNullable<T> => e !== null || e !== undefined;
+export const isSome = <T>(e: T): e is NonNullable<T> => e !== null && e !== undefined;
 
 /**
  * The `Maybe` type encapsulates an optional value. A value of type `Maybe a`
@@ -18,12 +18,13 @@ export const isSome = <T>(e: T): e is NonNullable<T> => e !== null || e !== unde
  * all errors are represented by `Nothing`. A richer error monad can be built
  * using the `Either` type.
  */
-export class Maybe<T extends Some> implements Al.Functor<T>, Al.Apply<T>,
-  Al.Bind<T>, Al.Foldable<T>, Al.Setoid<T>, Al.Ord<T>, Al.Semigroup<T> {
+export class Maybe<T extends Some> implements Al.Functor<T>, Al.Applicative<T>,
+  Al.Monad<T>, Al.Foldable<T>, Al.Setoid<T>, Al.Ord<T>, Al.Semigroup<T> {
   private readonly value: T | undefined;
 
   private constructor(value: T | Nullable) {
-    this.value = isSome(value) ? value : undefined;
+    // tslint:disable-next-line:triple-equals no-null-keyword
+    this.value = value != null ? value : undefined;
   }
 
   /**
@@ -52,7 +53,7 @@ export class Maybe<T extends Some> implements Al.Functor<T>, Al.Apply<T>,
    * If one of the values is `Nothing`, `(>)` always returns false.
    */
   gt<U extends number | string>(this: Maybe<U>, comp: Maybe<U>): boolean {
-    return Maybe.fromMaybe(false, this.bind(x1 => comp.map(x2 => x1 > x2)));
+    return Maybe.fromMaybe(false, this.bind(x1 => comp.fmap(x2 => x1 > x2)));
   }
 
   /**
@@ -63,7 +64,7 @@ export class Maybe<T extends Some> implements Al.Functor<T>, Al.Apply<T>,
    * If one of the values is `Nothing`, `(<)` always returns false.
    */
   lt<U extends number | string>(this: Maybe<U>, comp: Maybe<U>): boolean {
-    return Maybe.fromMaybe(false, this.bind(x1 => comp.map(x2 => x1 < x2)));
+    return Maybe.fromMaybe(false, this.bind(x1 => comp.fmap(x2 => x1 < x2)));
   }
 
   /**
@@ -75,7 +76,7 @@ export class Maybe<T extends Some> implements Al.Functor<T>, Al.Apply<T>,
    * If one of the values is `Nothing`, `(>=)` always returns false.
    */
   gte<U extends number | string>(this: Maybe<U>, comp: Maybe<U>): boolean {
-    return Maybe.fromMaybe(false, this.bind(x1 => comp.map(x2 => x1 >= x2)));
+    return Maybe.fromMaybe(false, this.bind(x1 => comp.fmap(x2 => x1 >= x2)));
   }
 
   /**
@@ -87,33 +88,28 @@ export class Maybe<T extends Some> implements Al.Functor<T>, Al.Apply<T>,
    * If one of the values is `Nothing`, `(<=)` always returns false.
    */
   lte<U extends number | string>(this: Maybe<U>, comp: Maybe<U>): boolean {
-    return Maybe.fromMaybe(false, this.bind(x1 => comp.map(x2 => x1 <= x2)));
+    return Maybe.fromMaybe(false, this.bind(x1 => comp.fmap(x2 => x1 <= x2)));
   }
 
-  /**
-   * `map :: (a -> b) -> Maybe a -> Maybe b`
-   */
-  map<U extends Some>(fn: (value: T) => U): Maybe<U> {
+  fmap<U extends Some>(fn: (value: T) => U): Maybe<U> {
     return this.value !== undefined ? Maybe.of(fn(this.value)) : this as any;
   }
 
-  /**
-   * `(>>=) :: Maybe a -> (a -> Maybe b) -> Maybe b`
-   */
   bind<U extends Some>(fn: (value: T) => Maybe<U>): Maybe<U> {
     return this.value !== undefined ? fn(this.value) : this as any;
+  }
+
+  sequence<U extends Some>(x: Maybe<U>): Maybe<U> {
+    return this.value !== undefined ? x : this as any;
   }
 
   /**
    * `(<*>) :: Maybe (a -> b) -> Maybe a -> Maybe b`
    */
   ap<U extends Some>(m: Maybe<((value: T) => U)>): Maybe<U> {
-    return this.value !== undefined ? m.map(fn => fn(this.value!)) : this as any;
+    return this.value !== undefined ? m.fmap(fn => fn(this.value!)) : this as any;
   }
 
-  /**
-   * `foldl :: (b -> a -> b) -> b -> Maybe a -> b`
-   */
   foldl<U extends Some>(fn: (acc: U) => (current: T) => U): (initial: U) => U;
   foldl<U extends Some>(fn: (acc: U) => (current: T) => U, initial: U): U;
   foldl<U extends Some>(
@@ -138,7 +134,7 @@ export class Maybe<T extends Some> implements Al.Functor<T>, Al.Apply<T>,
    * element.
    */
   concat<X, U extends Al.Semigroup<X>>(this: Maybe<U>, m: Maybe<U>): Maybe<U> {
-    return this.value !== undefined && isSome(m.value)
+    return this.value !== undefined && m.value !== undefined
       ? Maybe.of(this.value.concat(m.value) as U)
       : this;
   }
@@ -157,7 +153,7 @@ export class Maybe<T extends Some> implements Al.Functor<T>, Al.Apply<T>,
    * `toString :: Maybe m => m a -> String`
    */
   toString(): string {
-    return this.value !== undefined ? `Just(${this.value})` : `Nothing`;
+    return this.value !== undefined ? `Just(${R.toString(this.value)})` : `Nothing`;
   }
 
   /**
@@ -184,6 +180,15 @@ export class Maybe<T extends Some> implements Al.Functor<T>, Al.Apply<T>,
   }
 
   /**
+   * `return :: a -> Maybe a`
+   *
+   * Inject a value into a `Maybe` type.
+   */
+  static return<T extends Some>(value: T | Nullable): Maybe<T> {
+    return new Maybe(value);
+  }
+
+  /**
    * `ensure :: (a -> Bool) -> a -> Maybe a`
    *
    * Creates a new `Just a` from the given value if the given predicate
@@ -193,13 +198,34 @@ export class Maybe<T extends Some> implements Al.Functor<T>, Al.Apply<T>,
   static ensure<T extends Some, O extends T>(
     pred: (value: T) => value is O
   ): (value: T | Nullable) => Maybe<O>;
+  /**
+   * `ensure :: (a -> Bool) -> a -> Maybe a`
+   *
+   * Creates a new `Just a` from the given value if the given predicate
+   * evaluates to `True` and the given value is not nullable. Otherwise returns
+   * `Nothing`.
+   */
   static ensure<T extends Some>(
     pred: (value: T) => boolean
   ): (value: T | Nullable) => Maybe<T>;
+  /**
+   * `ensure :: (a -> Bool) -> a -> Maybe a`
+   *
+   * Creates a new `Just a` from the given value if the given predicate
+   * evaluates to `True` and the given value is not nullable. Otherwise returns
+   * `Nothing`.
+   */
   static ensure<T extends Some, O extends T>(
     pred: (value: T) => value is O,
     value: T | Nullable,
   ): Maybe<O>;
+  /**
+   * `ensure :: (a -> Bool) -> a -> Maybe a`
+   *
+   * Creates a new `Just a` from the given value if the given predicate
+   * evaluates to `True` and the given value is not nullable. Otherwise returns
+   * `Nothing`.
+   */
   static ensure<T extends Some>(
     pred: (value: T) => boolean,
     value: T | Nullable,
@@ -231,9 +257,25 @@ export class Maybe<T extends Some> implements Al.Functor<T>, Al.Apply<T>,
   static maybe<T extends Some, U extends Some>(
     def: U
   ): (fn: (x: T) => U) => (m: Maybe<T>) => U;
+  /**
+   * `maybe :: b -> (a -> b) -> Maybe a -> b`
+   *
+   * The `maybe` function takes a default value, a function, and a `Maybe`
+   * value. If the `Maybe` value is `Nothing`, the function returns the default
+   * value. Otherwise, it applies the function to the value inside the `Just`
+   * and returns the result.
+   */
   static maybe<T extends Some, U extends Some>(
     def: U, fn: (x: T) => U
   ): (m: Maybe<T>) => U;
+  /**
+   * `maybe :: b -> (a -> b) -> Maybe a -> b`
+   *
+   * The `maybe` function takes a default value, a function, and a `Maybe`
+   * value. If the `Maybe` value is `Nothing`, the function returns the default
+   * value. Otherwise, it applies the function to the value inside the `Just`
+   * and returns the result.
+   */
   static maybe<T extends Some, U extends Some>(
     def: U, fn: (x: T) => U, m: Maybe<T>
   ): U;
@@ -296,6 +338,13 @@ export class Maybe<T extends Some> implements Al.Functor<T>, Al.Apply<T>,
    * returns the value contained in the `Maybe`.
    */
   static fromMaybe<T extends Some>(def: T): (m: Maybe<T>) => T;
+  /**
+   * `fromMaybe :: a -> Maybe a -> a`
+   *
+   * The `fromMaybe` function takes a default value and and `Maybe` value. If
+   * the `Maybe` is `Nothing`, it returns the default values; otherwise, it
+   * returns the value contained in the `Maybe`.
+   */
   static fromMaybe<T extends Some>(def: T, m: Maybe<T>): T;
   static fromMaybe<T extends Some>(
     def: T, m?: Maybe<T>
@@ -350,6 +399,14 @@ export class Maybe<T extends Some> implements Al.Functor<T>, Al.Apply<T>,
   static mapMaybe<T extends Some, U extends Some>(
     fn: (x: T) => Maybe<U>,
   ): (list: List<T>) => List<U>;
+  /**
+   * `mapMaybe :: (a -> Maybe b) -> [a] -> [b]`
+   *
+   * The `mapMaybe` function is a version of `map` which can throw out elements.
+   * If particular, the functional argument returns something of type `Maybe b`.
+   * If this is `Nothing`, no element is added on to the result list. If it is
+   * `Just b`, then `b` is included in the result list.
+   */
   static mapMaybe<T extends Some, U extends Some>(
     fn: (x: T) => Maybe<U>,
     list: List<T>,
@@ -384,14 +441,14 @@ export class Maybe<T extends Some> implements Al.Functor<T>, Al.Apply<T>,
    * `Just :: a -> Just a`
    */
   static Just<T extends Some>(value: T): Just<T> {
-    return Maybe.of(value) as Just<T>;
+    return Maybe.return(value) as Just<T>;
   }
 
   /**
    * `Nothing :: () -> Nothing`
    */
   static Nothing(): Nothing {
-    return Maybe.of(undefined) as Nothing;
+    return Maybe.return(undefined) as Nothing;
   }
 
   // INSTANCE METHODS AS STATIC FUNCTIONS
@@ -402,6 +459,11 @@ export class Maybe<T extends Some> implements Al.Functor<T>, Al.Apply<T>,
    * Returns if both given values are equal.
    */
   static equals<T extends Some>(m1: Maybe<T>): (m2: Maybe<T>) => boolean;
+  /**
+   * `(==) :: Maybe a -> Maybe a -> Bool`
+   *
+   * Returns if both given values are equal.
+   */
   static equals<T extends Some>(m1: Maybe<T>, m2: Maybe<T>): boolean;
   static equals<T extends Some>(
     m1: Maybe<T>, m2?: Maybe<T>
@@ -417,18 +479,21 @@ export class Maybe<T extends Some> implements Al.Functor<T>, Al.Apply<T>,
   }
 
   /**
-   * `map :: (a -> b) -> Maybe a -> Maybe b`
+   * `fmap :: (a -> b) -> Maybe a -> Maybe b`
    */
-  static map<T extends Some, U extends Some>(
+  static fmap<T extends Some, U extends Some>(
     fn: (value: T) => U
   ): (m: Maybe<T>) => Maybe<U>;
-  static map<T extends Some, U extends Some>(
+  /**
+   * `fmap :: (a -> b) -> Maybe a -> Maybe b`
+   */
+  static fmap<T extends Some, U extends Some>(
     fn: (value: T) => U, m: Maybe<T>
   ): Maybe<U>;
-  static map<T extends Some, U extends Some>(
+  static fmap<T extends Some, U extends Some>(
     fn: (value: T) => U, m?: Maybe<T>
   ): Maybe<U> | ((m: Maybe<T>) => Maybe<U>) {
-    const resultFn = (x1: (value: T) => U, x2: Maybe<T>) => x2.map(x1);
+    const resultFn = (x1: (value: T) => U, x2: Maybe<T>) => x2.fmap(x1);
 
     if (arguments.length === 2) {
       return resultFn(fn, m!);
@@ -444,6 +509,9 @@ export class Maybe<T extends Some> implements Al.Functor<T>, Al.Apply<T>,
   static bind<T extends Some, U extends Some>(
     m: Maybe<T>
   ): (f: (value: T) => Maybe<U>) => Maybe<U>;
+  /**
+   * `(>>=) :: Maybe a -> (a -> Maybe b) -> Maybe b`
+   */
   static bind<T extends Some, U extends Some>(
     m: Maybe<T>, f: (value: T) => Maybe<U>
   ): Maybe<U>;
@@ -465,7 +533,7 @@ export const Just = <T extends Some>(value: T): Just<T> => Maybe.Just(value);
 export const Nothing = (): Nothing => Maybe.Nothing();
 
 export interface Just<T extends Some> extends Maybe<T> {
-  map<U extends Some>(fn: (value: T) => U): Just<U>;
+  fmap<U extends Some>(fn: (value: T) => U): Just<U>;
   bind<U extends Some>(fn: (value: T) => Nothing): Nothing;
   bind<U extends Some>(fn: (value: T) => Just<U>): Just<U>;
   bind<U extends Some>(fn: (value: T) => Maybe<U>): Maybe<U>;
@@ -476,7 +544,7 @@ export interface Just<T extends Some> extends Maybe<T> {
 }
 
 export interface Nothing extends Maybe<never> {
-  map(): Nothing;
+  fmap(): Nothing;
   bind(): Nothing;
   ap(): Nothing;
   concat<X, U extends Al.Semigroup<X>>(this: Nothing, m: Maybe<U>): Nothing;

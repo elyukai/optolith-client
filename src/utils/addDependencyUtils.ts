@@ -28,7 +28,7 @@ const addDependency = <T extends Data.Dependent>(
 const getIncreasableCreator: (id: string) => IncreasableCreator = R.pipe(
   getCategoryById,
   category =>
-    category.map(ActivatableSkillCategories.elem as (value: Categories) => boolean)
+    category.fmap(ActivatableSkillCategories.elem as (value: Categories) => boolean)
       .equals(Maybe.Just(true))
         ? CreateEntryUtils.createActivatableDependentSkill
         : CreateEntryUtils.createDependentSkill

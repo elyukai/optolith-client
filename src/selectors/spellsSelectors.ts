@@ -1,6 +1,7 @@
 import { createSelector } from 'reselect';
 import { Categories } from '../constants/Categories';
-import { SpellCombined, SpellWithRequirements } from '../types/view.d';
+import { SpellWithRequirements } from '../types/view';
+import { Maybe } from '../utils/dataUtils';
 import { filterAndSortObjects } from '../utils/FilterSortUtils';
 import { filterByAvailability } from '../utils/RulesUtils';
 import { isDecreasable, isIncreasable, isOwnTradition } from '../utils/SpellUtils';
@@ -11,11 +12,10 @@ import { getRuleBooksEnabled } from './rulesSelectors';
 import { getSpellsSortOptions } from './sortOptionsSelectors';
 import { getAdvantages, getAttributes, getCantrips, getDisadvantages, getInactiveSpellsFilterText, getLocaleMessages, getPhase, getSpecialAbilities, getSpells, getSpellsFilterText, getWiki } from './stateSelectors';
 import { getEnableActiveItemHints } from './uisettingsSelectors';
-import { Maybe } from '../utils/dataUtils';
 
 export const getMagicalTraditionsSelector = createSelector(
   getSpecialAbilities,
-  Maybe.map(getMagicalTraditions)
+  Maybe.fmap(getMagicalTraditions)
 );
 
 export const isSpellsTabAvailable = createSelector(

@@ -88,6 +88,8 @@ export interface SpellWithRequirements extends SpellCombined {
   isDecreasable: boolean;
 }
 
+export type SkillCombined = Wiki.Skill & Data.SkillDependent;
+
 export interface Item {
   id: string;
   name: string;

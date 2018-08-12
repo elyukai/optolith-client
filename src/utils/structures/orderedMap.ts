@@ -92,6 +92,12 @@ export class OrderedMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
    * or returns default value `def` when the key is not in the map.
    */
   findWithDefault(def: V): (key: K) => V;
+  /**
+   * `findWithDefault :: Ord k => a -> k -> Map k a -> a`
+   *
+   * The expression `(findWithDefault def k map)` returns the value at key `k`
+   * or returns default value `def` when the key is not in the map.
+   */
   findWithDefault(def: V, key: K): V;
   findWithDefault(def: V, key?: K): V | ((key: K) => V) {
     if (arguments.length === 2) {
@@ -111,6 +117,13 @@ export class OrderedMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
    * equivalent to `insertWith const`.
    */
   insert(key: K): (value: V) => OrderedMap<K, V>;
+  /**
+   * `insert :: Ord k => k -> a -> Map k a -> Map k a`
+   *
+   * Insert a new key and value in the map. If the key is already present in the
+   * map, the associated value is replaced with the supplied value. `insert` is
+   * equivalent to `insertWith const`.
+   */
   insert(key: K, value: V): OrderedMap<K, V>;
   insert(
     key: K, value?: V
@@ -134,9 +147,25 @@ export class OrderedMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
   insertWith(
     fn: (oldValue: V) => (newValue: V) => V
   ): (key: K) => (value: V) => OrderedMap<K, V>;
+  /**
+   * `insertWith :: Ord k => (a -> a -> a) -> k -> a -> Map k a -> Map k a`
+   *
+   * Insert with a function, combining new value and old value.
+   * `insertWith f key value mp` will insert the pair `(key, value)` into `mp`
+   * if `key` does not exist in the map. If the `key` does exist, the function
+   * will insert the pair `(key, f new_value old_value)`.
+   */
   insertWith(
     fn: (oldValue: V) => (newValue: V) => V, key: K
   ): (value: V) => OrderedMap<K, V>;
+  /**
+   * `insertWith :: Ord k => (a -> a -> a) -> k -> a -> Map k a -> Map k a`
+   *
+   * Insert with a function, combining new value and old value.
+   * `insertWith f key value mp` will insert the pair `(key, value)` into `mp`
+   * if `key` does not exist in the map. If the `key` does exist, the function
+   * will insert the pair `(key, f new_value old_value)`.
+   */
   insertWith(
     fn: (oldValue: V) => (newValue: V) => V, key: K, value: V
   ): OrderedMap<K, V>;
@@ -182,9 +211,29 @@ export class OrderedMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
   insertWithKey(
     fn: (key: K) => (oldValue: V) => (newValue: V) => V
   ): (key: K) => (value: V) => OrderedMap<K, V>;
+  /**
+   * `insertWithKey :: Ord k => (k -> a -> a -> a) -> k -> a -> Map k a ->
+     Map k a`
+   *
+   * Insert with a function, combining key, new value and old value.
+   * `insertWithKey f key value mp` will insert the pair `(key, value)` into
+   * `mp` if `key` does not exist in the map. If the key does exist, the
+   * function will insert the pair `(key,f key new_value old_value)`. Note that
+   * the key passed to `f` is the same key passed to `insertWithKey`.
+   */
   insertWithKey(
     fn: (key: K) => (oldValue: V) => (newValue: V) => V, key: K
   ): (value: V) => OrderedMap<K, V>;
+  /**
+   * `insertWithKey :: Ord k => (k -> a -> a -> a) -> k -> a -> Map k a ->
+     Map k a`
+   *
+   * Insert with a function, combining key, new value and old value.
+   * `insertWithKey f key value mp` will insert the pair `(key, value)` into
+   * `mp` if `key` does not exist in the map. If the key does exist, the
+   * function will insert the pair `(key,f key new_value old_value)`. Note that
+   * the key passed to `f` is the same key passed to `insertWithKey`.
+   */
   insertWithKey(
     fn: (key: K) => (oldValue: V) => (newValue: V) => V, key: K, value: V
   ): OrderedMap<K, V>;
@@ -229,9 +278,27 @@ export class OrderedMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
   insertLookupWithKey(
     fn: (key: K) => (oldValue: V) => (newValue: V) => V
   ): (key: K) => (value: V) => LookupWithKey<K, V>;
+  /**
+   * `insertLookupWithKey :: Ord k => (k -> a -> a -> a) -> k -> a -> Map k a ->
+     (Maybe a, Map k a)`
+   *
+   * Combines insert operation with old value retrieval. The expression
+   * `(insertLookupWithKey f k x map)` is a pair where the first element is
+   * equal to `(lookup k map)` and the second element equal to
+   * `(insertWithKey f k x map)`.
+   */
   insertLookupWithKey(
     fn: (key: K) => (oldValue: V) => (newValue: V) => V, key: K
   ): (value: V) => LookupWithKey<K, V>;
+  /**
+   * `insertLookupWithKey :: Ord k => (k -> a -> a -> a) -> k -> a -> Map k a ->
+     (Maybe a, Map k a)`
+   *
+   * Combines insert operation with old value retrieval. The expression
+   * `(insertLookupWithKey f k x map)` is a pair where the first element is
+   * equal to `(lookup k map)` and the second element equal to
+   * `(insertWithKey f k x map)`.
+   */
   insertLookupWithKey(
     fn: (key: K) => (oldValue: V) => (newValue: V) => V, key: K, value: V
   ): LookupWithKey<K, V>;
@@ -283,6 +350,12 @@ export class OrderedMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
    * When the key is not a member of the map, the original map is returned.
    */
   adjust(fn: (value: V) => V): (key: K) => OrderedMap<K, V>;
+  /**
+   * `adjust :: Ord k => (a -> a) -> k -> Map k a -> Map k a`
+   *
+   * Update a value at a specific key with the result of the provided function.
+   * When the key is not a member of the map, the original map is returned.
+   */
   adjust(fn: (value: V) => V, key: K): OrderedMap<K, V>;
   adjust(
     fn: (value: V) => V,
@@ -311,6 +384,12 @@ export class OrderedMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
    * the original map is returned.
    */
   adjustWithKey(fn: (key: K) => (value: V) => V): (key: K) => OrderedMap<K, V>;
+  /**
+   * `adjustWithKey :: Ord k => (k -> a -> a) -> k -> Map k a -> Map k a`
+   *
+   * Adjust a value at a specific key. When the key is not a member of the map,
+   * the original map is returned.
+   */
   adjustWithKey(fn: (key: K) => (value: V) => V, key: K): OrderedMap<K, V>;
   adjustWithKey(
     fn: (key: K) => (value: V) => V,
@@ -340,6 +419,13 @@ export class OrderedMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
    * `(Just y)`, the key `k` is bound to the new value `y`.
    */
   update(fn: (value: V) => Maybe<V>): (key: K) => OrderedMap<K, V>;
+  /**
+   * `update :: Ord k => (a -> Maybe a) -> k -> Map k a -> Map k a`
+   *
+   * The expression `(update f k map)` updates the value `x` at `k` (if it is in
+   * the map). If `(f x)` is `Nothing`, the element is deleted. If it is
+   * `(Just y)`, the key `k` is bound to the new value `y`.
+   */
   update(fn: (value: V) => Maybe<V>, key: K): OrderedMap<K, V>;
   update(
     fn: (value: V) => Maybe<V>,
@@ -379,6 +465,13 @@ export class OrderedMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
   updateWithKey(
     fn: (key: K) => (value: V) => Maybe<V>
   ): (key: K) => OrderedMap<K, V>;
+  /**
+   * `updateWithKey :: Ord k => (k -> a -> Maybe a) -> k -> Map k a -> Map k a`
+   *
+   * The expression `(updateWithKey f k map)` updates the value `x` at `k` (if
+   * it is in the map). If `(f k x)` is `Nothing`, the element is deleted. If it
+   * is `(Just y)`, the key `k` is bound to the new value `y`.
+   */
   updateWithKey(
     fn: (key: K) => (value: V) => Maybe<V>, key: K
   ): OrderedMap<K, V>;
@@ -421,6 +514,9 @@ export class OrderedMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
   updateLookupWithKey(
     fn: (key: K) => (value: V) => Maybe<V>, key?: K
   ): LookupWithKey<K, V> | ((key: K) => LookupWithKey<K, V>)
+  updateLookupWithKey(
+    fn: (key: K) => (value: V) => Maybe<V>, key?: K
+  ): LookupWithKey<K, V> | ((key: K) => LookupWithKey<K, V>)
     | ((key: K) => (value: V) => LookupWithKey<K, V>) {
       const resultFn = (
         x1: (key: K) => (value: V) => Maybe<V>,
@@ -460,6 +556,13 @@ export class OrderedMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
    * `Map`. In short : `lookup k (alter f k m) = f (lookup k m)`.
    */
   alter(fn: (x: Maybe<V>) => Maybe<V>): (key: K) => OrderedMap<K, V>;
+  /**
+   * `alter :: Ord k => (Maybe a -> Maybe a) -> k -> Map k a -> Map k a`
+   *
+   * The expression `(alter f k map)` alters the value `x` at `k`, or absence
+   * thereof. `alter` can be used to insert, delete, or update a value in a
+   * `Map`. In short : `lookup k (alter f k m) = f (lookup k m)`.
+   */
   alter(fn: (x: Maybe<V>) => Maybe<V>, key: K): OrderedMap<K, V>;
   alter(
     fn: (x: Maybe<V>) => Maybe<V>,
@@ -489,11 +592,27 @@ export class OrderedMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
    * `union :: Ord k => Map k a -> Map k a -> Map k a`
    *
    *  The expression `(union t1 t2)` takes the left-biased union of `t1` and
-   * `t2`. It prefers `t1` when duplicate keys are encountered, i.e. `(union ==
-   * unionWith const)`.
+   * `t2`. It prefers `t1` when duplicate keys are encountered, i.e.
+   * `(union == unionWith const)`.
    */
   union(add: OrderedMap<K, V>) {
-    return OrderedMap.of(new Map([...add.value, ...this.value]));
+    return OrderedMap.of(new Map([
+      ...this.value,
+      ...[...add.value].filter(
+        e => !this.value.has(e[0])
+      )
+    ]));
+  }
+
+  /**
+   * `fmap :: (a -> b) -> Map k a -> Map k b`
+   *
+   * Map a function over all values in the map.
+   */
+  fmap<U>(fn: (value: V) => U): OrderedMap<K, U> {
+    return OrderedMap.of(new Map([...this.value].map(([k, x]) =>
+      [k, fn(x)] as [K, U]
+    )));
   }
 
   /**
@@ -502,9 +621,7 @@ export class OrderedMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
    * Map a function over all values in the map.
    */
   map<U>(fn: (value: V) => U): OrderedMap<K, U> {
-    return OrderedMap.of(new Map([...this.value].map(([k, x]) =>
-      [k, fn(x)] as [K, U]
-    )));
+    return this.fmap(fn);
   }
 
   /**
@@ -520,12 +637,6 @@ export class OrderedMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
 
   // FOLDS
 
-  /**
-   * `foldl :: (a -> b -> a) -> a -> Map k b -> a`
-   *
-   * Fold the values in the map using the given left-associative binary
-   * operator, such that `foldl f z == foldl f z . elems`.
-   */
   foldl<U extends Some>(fn: (acc: U) => (current: V) => U): (initial: U) => U;
   foldl<U extends Some>(fn: (acc: U) => (current: V) => U, initial: U): U;
   foldl<U extends Some>(
@@ -552,6 +663,13 @@ export class OrderedMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
   foldlWithKey<U extends Some>(
     fn: (acc: U) => (key: K) => (current: V) => U
   ): (initial: U) => U;
+  /**
+   * `foldlWithKey :: (a -> k -> b -> a) -> a -> Map k b -> a`
+   *
+   * Fold the values in the map using the given left-associative binary
+   * operator, such that
+   * `foldlWithKey f z == foldl (\z' (kx, x) -> f z' kx x) z . toAscList`.
+   */
   foldlWithKey<U extends Some>(
     fn: (acc: U) => (key: K) => (current: V) => U, initial: U
   ): U;
@@ -619,9 +737,15 @@ export class OrderedMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
    * Build a map from a set of keys and a function which for each key computes
    * its value.
    */
-  static keysSet<K, V>(f: (key: K) => V): (keys: OrderedSet<K>) => OrderedMap<K, V>;
-  static keysSet<K, V>(f: (key: K) => V, keys: OrderedSet<K>): OrderedMap<K, V>;
-  static keysSet<K, V>(
+  static fromSet<K, V>(f: (key: K) => V): (keys: OrderedSet<K>) => OrderedMap<K, V>;
+  /**
+   * `fromSet :: (k -> a) -> Set k -> Map k a`
+   *
+   * Build a map from a set of keys and a function which for each key computes
+   * its value.
+   */
+  static fromSet<K, V>(f: (key: K) => V, keys: OrderedSet<K>): OrderedMap<K, V>;
+  static fromSet<K, V>(
     f: (key: K) => V,
     keys?: OrderedSet<K>
   ): OrderedMap<K, V> | ((keys: OrderedSet<K>) => OrderedMap<K, V>) {
@@ -677,6 +801,11 @@ export class OrderedMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
    * Filter all values that satisfy the predicate.
    */
   filter<U extends V>(pred: (value: V) => value is U): OrderedMap<K, U>;
+  /**
+   * `filter :: (a -> Bool) -> Map k a -> Map k a`
+   *
+   * Filter all values that satisfy the predicate.
+   */
   filter(pred: (value: V) => boolean): OrderedMap<K, V>;
   filter(pred: (value: V) => boolean): OrderedMap<K, V> {
     return OrderedMap.of([...this.value].filter(([_, value]) => pred(value)));
@@ -690,6 +819,11 @@ export class OrderedMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
   filterWithKey<U extends V>(
     pred: (key: K) => (value: V) => value is U
   ): OrderedMap<K, U>;
+  /**
+   * `filterWithKey :: (k -> a -> Bool) -> Map k a -> Map k a`
+   *
+   * Filter all keys/values that satisfy the predicate.
+   */
   filterWithKey(pred: (key: K) => (value: V) => boolean): OrderedMap<K, V>;
   filterWithKey(pred: (key: K) => (value: V) => boolean): OrderedMap<K, V> {
     return OrderedMap.of([...this.value]
@@ -724,7 +858,13 @@ export class OrderedMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
     );
   }
 
-  toJSObjectBy<U>(
+  /**
+   * Transforms an `OrderedMap` into a native object, where the keys in the map are the
+   * object keys and the values of the `OrderedMap` are the corresponding
+   * values of the object, applied to the provided `fn` function before.
+   * @param fn Transforms the value before inserting it into the object.
+   */
+  toKeyValueObjectWith<U>(
     this: OrderedMap<string, V>,
     fn: (x: V) => U
   ): StringKeyObject<U> {
@@ -734,10 +874,17 @@ export class OrderedMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
     );
   }
 
+  /**
+   * Transforms the `OrderedMap` instance into a native `Map`.
+   */
   toMap(): ReadonlyMap<K, V> {
     return this.value;
   }
 
+  /**
+   * Creates a new `OrderedMap` from a native Map or an array of arrays of
+   * values of length 2.
+   */
   static of<K, V>(
     map: ReadonlyMap<K, V> | [K, V][]
   ): OrderedMap<K, V> {
@@ -759,6 +906,11 @@ export class OrderedMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
    * A map with a single element.
    */
   static singleton<K, V>(key: K): (value: V) => OrderedMap<K, V>;
+  /**
+   * `singleton :: k -> a -> Map k a`
+   *
+   * A map with a single element.
+   */
   static singleton<K, V>(key: K, value: V): OrderedMap<K, V>;
   static singleton<K, V>(
     key: K, value?: V
@@ -771,12 +923,22 @@ export class OrderedMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
     }
   }
 
+  /**
+   * `toList :: Map k a -> [(k, a)]`
+   *
+   * Convert the map to a list of key/value pairs. Subject to list fusion.
+   */
   static toList<K, V>(map: OrderedMap<K, V>): List<Tuple<K, V>> {
     return map.toList();
   }
 
-  static toValueList<K, V>(map: OrderedMap<K, V>): List<V> {
-    return List.of(...[...map.value.values()]);
+  /**
+   * `elems :: Map k a -> [a]`
+   *
+   * Return all elements of the map.
+   */
+  static elems<K, V>(map: OrderedMap<K, V>): List<V> {
+    return map.elems();
   }
 
   // INSTANCE METHODS AS STATIC FUNCTIONS
@@ -789,6 +951,13 @@ export class OrderedMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
    * map.
    */
   static lookup<K, V>(key: K): (m: OrderedMap<K, V>) => Maybe<V>;
+  /**
+   * `lookup :: Ord k => k -> Map k a -> Maybe a`
+   *
+   * Lookup the value at a key in the map. The function will return the
+   * corresponding value as `Just value`, or `Nothing` if the key isn't in the
+   * map.
+   */
   static lookup<K, V>(key: K, m: OrderedMap<K, V>): Maybe<V>;
   static lookup<K, V>(
     key: K, m?: OrderedMap<K, V>

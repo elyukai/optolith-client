@@ -18,6 +18,7 @@ import { translate } from './I18n';
 import { getCategoryById } from './IDUtils';
 import { isActive } from './isActive';
 import { match } from './match';
+import { subtractBy } from './mathUtils';
 import { getRoman } from './NumberUtils';
 import { getSelectOptionCost } from './selectionUtils';
 import { getWikiEntry } from './WikiUtils';
@@ -74,8 +75,8 @@ const getEntrySpecificCost = (
 
             return tier > previousMax
               && Maybe.isNothing(activeRec.lookup('cost'))
-              ? tier
-              : previousMax;
+                ? tier
+                : previousMax;
           }
 
           return previousMax;
@@ -89,21 +90,21 @@ const getEntrySpecificCost = (
             const tier = Maybe.fromJust(maybeActiveTier);
 
             return tier > previousMax
-              && (!Maybe.isJust(maxTier) || tier < Maybe.fromJust(maxTier))
+              && Maybe.fromMaybe(true, maxTier.fmap(R.lt(tier)))
               && Maybe.isNothing(activeRec.lookup('cost'))
-              ? tier
-              : previousMax;
+                ? tier
+                : previousMax;
           }
 
           return previousMax;
         };
 
-      const maxCurrentTier = active.map(activeList => activeList.foldl(
+      const maxCurrentTier = active.fmap(activeList => activeList.foldl(
         compareMaxTier,
         0,
       ));
 
-      const subMaxCurrentTier = active.map(activeList => activeList.foldl(
+      const subMaxCurrentTier = active.fmap(activeList => activeList.foldl(
         compareSubMaxTier(maxCurrentTier),
         0,
       ));
@@ -111,29 +112,47 @@ const getEntrySpecificCost = (
       const maybeTier = obj.lookup('tier');
 
       if (
-        (Maybe.isJust(maybeTier) && maxCurrentTier.gt(maybeTier))
-        || Maybe.fromMaybe(0, active.map(activeList => activeList.filter(
-          e => e.lookup('tier').equals(maybeTier)
-        ).length())) > (Maybe.isJust(costToAdd) ? 0 : 1)
+        maxCurrentTier.gt(maybeTier)
+        || Maybe.fromMaybe(
+            false,
+            active
+              .fmap(
+                activeList => activeList
+                  .filter(e => e.lookup('tier').equals(maybeTier))
+                  .length()
+              )
+              .fmap(R.lt(Maybe.isJust(costToAdd) ? 0 : 1))
+          )
       ) {
         return Maybe.Just(0);
       }
       else {
         return Maybe.Just(
-          (wikiEntry.get('cost') as number) *
-            (Maybe.fromMaybe(0, maybeTier) -
-              Maybe.fromMaybe(0, subMaxCurrentTier))
+          Maybe.fromMaybe(
+            0,
+            maybeTier
+              .ap(subMaxCurrentTier.fmap(subtractBy))
+              .fmap(diff => diff * (wikiEntry.get('cost') as number))
+          )
         );
       }
     })
     .on('DISADV_33', () => {
       if (
         obj.lookup('sid').equals(Maybe.Just(7))
-        && Maybe.fromMaybe(0, active.map(activeList => activeList.filter(
-          e =>
-            e.lookup('sid').equals(Maybe.Just(7))
-            && Maybe.isNothing(e.lookup('cost'))
-        ).length())) > (Maybe.isJust(costToAdd) ? 0 : 1)
+        && Maybe.fromMaybe(
+          false,
+          active.fmap(
+            activeList => activeList
+              .filter(
+                e =>
+                  e.lookup('sid').equals(Maybe.Just(7))
+                  && Maybe.isNothing(e.lookup('cost'))
+              )
+              .length()
+          )
+          .fmap(R.lt(Maybe.isJust(costToAdd) ? 0 : 1))
+        )
       ) {
         return Maybe.Just(0);
       }
@@ -141,25 +160,28 @@ const getEntrySpecificCost = (
         return getSelectOptionCost(wikiEntry, obj.lookup('sid'));
       }
     })
-    .on('DISADV_36', () => {
-      if (Maybe.fromMaybe(0, active.map(activeList => activeList.filter(
-        e => Maybe.isNothing(e.lookup('cost'))
-      ).length())) > (Maybe.isJust(costToAdd) ? 2 : 3)) {
-        return Maybe.Just(0);
-      }
-      else {
-        return wikiEntry.lookup('cost') as Just<number>;
-      }
-    })
+    .on('DISADV_36', () =>
+      Maybe.fromMaybe(
+        false,
+        active.fmap(
+          activeList => activeList
+            .filter(e => Maybe.isNothing(e.lookup('cost')))
+            .length()
+        )
+        .fmap(R.lt(Maybe.isJust(costToAdd) ? 2 : 3))
+      )
+        ? Just(0)
+        : wikiEntry.lookup('cost') as Just<number>
+    )
     .on(
       'SA_9',
       () => (obj.lookup('sid') as Maybe<string>)
         .bind(wiki.get('skills').lookup)
-        .map(
+        .fmap(
           skill => Maybe.fromMaybe(skill.get('ic'), state.bind(
             stateRec => stateRec.get('specialAbilities')
               .lookup(wikiEntry.get('id'))
-              .map(R.pipe(
+              .fmap(R.pipe(
                 instance => instance.get('active'),
                 activeList => activeList.foldl<number>(
                   counter => e =>
@@ -182,7 +204,7 @@ const getEntrySpecificCost = (
         : obj.lookup('cost')
     )
     .on('SA_72', () => {
-      const length = Maybe.fromMaybe(0, active.map(activeList => activeList
+      const length = Maybe.fromMaybe(0, active.fmap(activeList => activeList
         .filter(e => Maybe.isNothing(e.lookup('cost')))
         .length()));
 
@@ -191,9 +213,14 @@ const getEntrySpecificCost = (
       return List.of(10, 20, 40).subscript(index);
     })
     .on('SA_87', () => {
-      const length = Maybe.fromMaybe(0, active.map(activeList => activeList
-        .filter(e => Maybe.isNothing(e.lookup('cost')))
-        .length()));
+      const length = Maybe.fromMaybe(
+        0,
+        active.fmap(
+          activeList => activeList
+            .filter(e => Maybe.isNothing(e.lookup('cost')))
+            .length()
+        )
+      );
 
       const index = length + (Maybe.isJust(costToAdd) ? 0 : -1);
 
@@ -228,7 +255,7 @@ const getEntrySpecificCost = (
               .bind(
                 firstEntry => (wikiEntry.get('cost') as List<number>)
                   .subscript(entry.get('ic') - 1)
-                  .map(cost => cost + firstEntry.get('ic'))
+                  .fmap(cost => cost + firstEntry.get('ic'))
               )
           )
     )
@@ -248,7 +275,7 @@ const getEntrySpecificCost = (
       if (
         Maybe.fromMaybe(
           false,
-          wikiEntry.lookup('select').map(e => e instanceof List)
+          wikiEntry.lookup('select').fmap(e => e instanceof List)
         )
         && wikiEntry.get('cost') === 'sel'
       ) {
@@ -275,7 +302,7 @@ export const getCost = (
   const id = obj.get('id');
 
   return getWikiEntry<Wiki.Activatable>(wiki, id)
-    .map(wikiEntry => {
+    .fmap(wikiEntry => {
       const calculateCost = R.pipe(
         (active: Maybe<List<Record<Data.ActiveObject>>>) => {
           const customCost = obj.lookup('cost');
@@ -313,7 +340,7 @@ export const getCost = (
           .bind<Record<Data.ActivatableDependent>>(
             getHeroStateListItem<Record<Data.ActivatableDependent>>(id)
           )
-          .map(instance => instance.get('active'))
+          .fmap(instance => instance.get('active'))
       );
     });
 };
@@ -343,7 +370,7 @@ const adjustCurrentCost = (
           && Maybe.isJust(obj.lookup('cost')),
         currentCost => Maybe.fromMaybe(
           0,
-          obj.lookup('tier').map(tier => currentCost * tier)
+          obj.lookup('tier').fmap(tier => currentCost * tier)
         )
       )
       .otherwise(() => obj.get('currentCost') as number)
@@ -406,7 +433,7 @@ const adjustTierName = (
     obj,
     hasTierName(locale, obj, maybeTier)
       .bind(Maybe.ensure(() => addTierToCombinedTier !== true))
-      .map(tierName => R.merge(obj, {
+      .fmap(tierName => R.merge(obj, {
         combinedName: obj.get('combinedName') + tierName,
         tierName,
       }))

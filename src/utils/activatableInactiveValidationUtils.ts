@@ -172,7 +172,7 @@ const isAdditionDisabledEntrySpecific = (
 const hasGeneralRestrictionToAdd =
   (instance: Maybe<Record<Data.ActivatableDependent>>) =>
     instance
-      .map(e => e.get('dependencies').elem(false))
+      .fmap(e => e.get('dependencies').elem(false))
       .equals(Maybe.Just(true));
 
 const hasReachedMaximumEntries = (
@@ -182,7 +182,7 @@ const hasReachedMaximumEntries = (
   const max = entry.lookup('max');
 
   return Maybe.isJust(max) && Maybe.fromMaybe(
-    0, instance.map(e => e.get('active').length())
+    0, instance.fmap(e => e.get('active').length())
   ) >= Maybe.fromJust(max);
 };
 

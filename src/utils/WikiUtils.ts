@@ -46,7 +46,7 @@ export const getWikiStateKeyByCategory = <T extends Categories>(
   wikiKeyByCategory[category];
 
 export const getWikiStateKeyById = (id: string): Maybe<keyof Wiki.WikiAll> =>
-  getCategoryById(id).map(getWikiStateKeyByCategory);
+  getCategoryById(id).fmap(getWikiStateKeyByCategory);
 
 export function getWikiEntry<T extends Wiki.Entry = Wiki.Entry>(
   state: Record<Wiki.WikiAll>,

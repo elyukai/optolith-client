@@ -35,14 +35,14 @@ export function getGeneratedPrerequisites(
 
       const sameSkill = Maybe.fromMaybe(
         0,
-        instance.map(
+        instance.fmap(
           justInstance => justInstance.get('active')
             .filter(e => e.lookup('sid').equals(sid))
             .length()
         )
       );
 
-      const sameSkillDependency = sid.map(justSid => ({
+      const sameSkillDependency = sid.fmap(justSid => ({
         id: justSid as string,
         value: (sameSkill + (add ? 1 : 0)) * 6
       }));
@@ -54,11 +54,11 @@ export function getGeneratedPrerequisites(
         )
         .bind(app => app.lookup('prerequisites'))
         .bind(prerequisites =>
-          sameSkillDependency.map(
+          sameSkillDependency.fmap(
             obj => prerequisites.prepend(Record.of<Wiki.RequiresIncreasableObject>(obj))
           )
         )
-        .alt(sameSkillDependency.map(
+        .alt(sameSkillDependency.fmap(
           obj => List.of(Record.of<Wiki.RequiresIncreasableObject>(obj)))
         );
     }
@@ -79,7 +79,7 @@ export function getGeneratedPrerequisites(
       }
 
       return findSelectOption<ExtensionSelectionObject>(wikiEntry, sid)
-        .map(
+        .fmap(
           item => List.of(Record.of<Wiki.RequiresIncreasableObject>({
             id: item.get('target'),
             value: item.get('tier') * 4 + 4,
@@ -116,5 +116,5 @@ export const addDynamicPrerequisites = (
   Maybe.fromMaybe(
     prerequisites,
     getGeneratedPrerequisites(wikiEntry, instance, active, add)
-      .map(e => prerequisites.concat(e))
+      .fmap(e => prerequisites.concat(e))
   );

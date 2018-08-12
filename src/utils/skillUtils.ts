@@ -63,12 +63,12 @@ export const isDecreasable = (
   ) {
     const woodworkingRating = Maybe.fromMaybe(
       0,
-      state.get('skills').lookup('TAL_51').map(e => e.get('value'))
+      state.get('skills').lookup('TAL_51').fmap(e => e.get('value'))
     );
 
     const metalworkingRating = Maybe.fromMaybe(
       0,
-      state.get('skills').lookup('TAL_55').map(e => e.get('value'))
+      state.get('skills').lookup('TAL_55').fmap(e => e.get('value'))
     );
 
     if (woodworkingRating + metalworkingRating < 12) {

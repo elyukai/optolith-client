@@ -108,7 +108,7 @@ const concatBaseModifications = (action: SetSelectionsAction) => {
             ? Just(action.payload.lang)
             : culture.get('languages').head()
         )
-          .map(motherTongueId => acc.languages.insert(motherTongueId, 4))
+          .fmap(motherTongueId => acc.languages.insert(motherTongueId, 4))
       ),
       scripts: action.payload.buyLiteracy
         ? Maybe.fromMaybe(
@@ -118,7 +118,7 @@ const concatBaseModifications = (action: SetSelectionsAction) => {
                 ? Just(action.payload.litc)
                 : culture.get('scripts').head()
             )
-              .map(motherTongueScriptId => acc.scripts.insert(motherTongueScriptId))
+              .fmap(motherTongueScriptId => acc.scripts.insert(motherTongueScriptId))
           )
         : acc.scripts
     }),
@@ -171,7 +171,7 @@ const concatBaseModifications = (action: SetSelectionsAction) => {
     Maybe.fromMaybe(
       modIdentityFn,
       maybeProfessionVariant
-        .map(
+        .fmap(
           professionVariant => R.pipe(
             (acc: ConcatenatedModifications) => ({
               ...acc,
@@ -219,7 +219,7 @@ const concatBaseModifications = (action: SetSelectionsAction) => {
                         professionPrerequisites.findIndex(
                           R.equals<Wiki.ProfessionPrerequisite>(req)
                         )
-                          .map(professionPrerequisites.deleteAt)
+                          .fmap(professionPrerequisites.deleteAt)
                       );
                     }
                   },
@@ -353,7 +353,7 @@ const concatSpecificModifications = (action: SetSelectionsAction) => {
         (action.payload.map
           .lookup(Wiki.ProfessionSelectionIds.COMBAT_TECHNIQUES) as
             Maybe<Record<Wiki.CombatTechniquesSelection>>)
-          .map(
+          .fmap(
             obj => ({
               ...acc,
               skillRatingList: action.payload.combattech.foldl(
@@ -375,7 +375,7 @@ const concatSpecificModifications = (action: SetSelectionsAction) => {
         (action.payload.map
           .lookup(Wiki.ProfessionSelectionIds.COMBAT_TECHNIQUES_SECOND) as
             Maybe<Record<Wiki.CombatTechniquesSecondSelection>>)
-          .map(
+          .fmap(
             obj => ({
               ...acc,
               skillRatingList: action.payload.combatTechniquesSecond.foldl(
@@ -422,7 +422,7 @@ const concatSpecificModifications = (action: SetSelectionsAction) => {
           skillRatingList => id => value => Maybe.fromMaybe(
             skillRatingList,
             wiki.get('skills').lookup(id)
-              .map(
+              .fmap(
                 skill => addToSkillRatingList(
                   id,
                   value / skill.get('ic'),
@@ -581,7 +581,7 @@ const applyModifications = (action: SetSelectionsAction) => R.pipe(
 
               if (Maybe.fromMaybe(
                 false,
-                entry.map(justEntry => justEntry.get('active').any(checkIfActive))
+                entry.fmap(justEntry => justEntry.get('active').any(checkIfActive))
               )) {
                 return state;
               }
@@ -609,11 +609,11 @@ const applyModifications = (action: SetSelectionsAction) => R.pipe(
       combatTechniques => {
         const maybeMaxCombatTechniqueRating = action.payload.wiki.get('experienceLevels')
           .lookup(acc.state.get('experienceLevel'))
-          .map(el => el.get('maxCombatTechniqueRating'));
+          .fmap(el => el.get('maxCombatTechniqueRating'));
 
         return Maybe.fromMaybe(
           combatTechniques,
-          maybeMaxCombatTechniqueRating.map(
+          maybeMaxCombatTechniqueRating.fmap(
             maxCombatTechniqueRating => combatTechniques.map(
               combatTechnique => combatTechnique.modify(
                 value => Math.min(value, maxCombatTechniqueRating),

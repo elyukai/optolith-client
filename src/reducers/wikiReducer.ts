@@ -3,7 +3,7 @@ import { ActionTypes } from '../constants/ActionTypes';
 import { Categories } from '../constants/Categories';
 import * as Raw from '../types/rawdata';
 import * as Wiki from '../types/wiki';
-import { Just, List, Maybe, OrderedMap, Record, StringKeyObject } from '../utils/dataUtils';
+import { List, Maybe, OrderedMap, Record, StringKeyObject } from '../utils/dataUtils';
 import { translate } from '../utils/I18n';
 import * as InitWikiUtils from '../utils/InitWikiUtils';
 import { getWikiStateKeyByCategory } from '../utils/WikiUtils';
@@ -344,7 +344,7 @@ export function wikiReducer(
                   Maybe.mapMaybe<Record<Wiki.SelectionObject>, Record<Wiki.SelectionObject>>(
                     e => initialState.get('combatTechniques')
                       .lookup(e.get('name'))
-                      .map(combatTechnique => e.insert('name', combatTechnique.get('name')))
+                      .fmap(combatTechnique => e.insert('name', combatTechnique.get('name')))
                   ),
                   'select'
                 );

@@ -83,6 +83,12 @@ export class Record<T extends RecordBase> {
   lookupWithDefault<K extends keyof T>(
     def: NonNullable<T[K]>
   ): (key: K) => NonNullable<T[K]>;
+  /**
+   * `lookupWithDefault :: a[String] -> a -> String -> Record a -> a[String]`
+   *
+   * Returns the requested value if it exists. Returns the given default
+   * otherwise.
+   */
   lookupWithDefault<K extends keyof T>(
     def: NonNullable<T[K]>, key: K
   ): NonNullable<T[K]>;
@@ -104,6 +110,11 @@ export class Record<T extends RecordBase> {
    * Overwrites the value at the given key.
    */
   insert<K extends keyof T>(key: K): (value: T[K]) => Record<T>;
+  /**
+   * `insert :: keyof a -> a[keyof a] -> Record a -> Record a`
+   *
+   * Overwrites the value at the given key.
+   */
   insert<K extends keyof T>(key: K, value: T[K]): Record<T>;
   insert<K extends keyof T>(
     key: K, value?: T[K]
@@ -125,6 +136,12 @@ export class Record<T extends RecordBase> {
   modify<K extends keyof T>(
     fn: (value: NonNullable<T[K]>) => NonNullable<T[K]>
   ): (key: K) => Record<T>;
+  /**
+   * `modify :: Ord k => (a -> a) -> k -> Record a -> Record a`
+   *
+   * Takes a function that is called with the current value at the given key.
+   * The value returned by the function will replace the old value.
+   */
   modify<K extends keyof T>(
     fn: (value: NonNullable<T[K]>) => NonNullable<T[K]>, key: K
   ): Record<T>;
@@ -165,6 +182,13 @@ export class Record<T extends RecordBase> {
   update<K extends keyof T>(
     fn: (value: T[K]) => Maybe<NonNullable<T[K]>>
   ): (key: K) => Record<T>;
+  /**
+   * `update :: Ord k => (a -> Maybe a) -> k -> Map k a -> Map k a`
+   *
+   * Accepts a function that takes the current value at the given key. The
+   * function returns a `Maybe`. If it is a `Just`, it replaces the current
+   * value. If it is a `Nothing`, it removes the key from the record.
+   */
   update<K extends keyof T>(
     fn: (value: T[K]) => Maybe<NonNullable<T[K]>>, key: K
   ): Record<T>;
@@ -213,6 +237,13 @@ export class Record<T extends RecordBase> {
   alter<K extends keyof T>(
     fn: (value: RecordKey<K, T>) => RecordKey<K, T>
   ): (key: K) => Record<T>;
+  /**
+   * `alter :: (Maybe a[String] -> Maybe a[String]) -> String -> a ->
+   * Maybe a[String]`
+   *
+   * `alter` alters the value at the given key, or absence thereof. `alter` can
+   * be used to insert, modify, update or delete a value.
+   */
   alter<K extends keyof T>(
     fn: (value: RecordKey<K, T>) => RecordKey<K, T>,
     key: K
@@ -265,6 +296,12 @@ export class Record<T extends RecordBase> {
 
   // MERGING RECORDS
 
+  /**
+   * Merges the provided `Record` instance into the current `Record` instance.
+   * If a key in the provided `Record` instance is also a member of the current
+   * `Record` instance, the result contains the value from the provided (second)
+   * `Record` instance.
+   */
   merge<U>(record: Record<U>): Record<T & U> {
     return Record.of({
       ...(this.value as any),
@@ -272,6 +309,17 @@ export class Record<T extends RecordBase> {
     });
   }
 
+  /**
+   * Merges the provided `Record` instance into the current `Record` instance.
+   * If a key in the provided `Record` instance is also a member of the current
+   * `Record` instance, the result contains the value from the provided (second)
+   * `Record` instance.
+   *
+   * If a value is a `Maybe`, it will be unwrapped. If it is a `Just`, it will
+   * overwrite the value in the current `Record` instance, if existent. If it is
+   * a `Nothing`, it will delete the value in the current `Record` instance, if
+   * existent.
+   */
   mergeMaybe<U>(record: Record<U>): Record<T & RecordMaybe<U>> {
     return Record.of(Object.entries(record.value).reduce(
       (acc, [key, value]) => {
@@ -301,6 +349,10 @@ export class Record<T extends RecordBase> {
 
   // COMPARE
 
+  /**
+   * Compares the key-value pairs of the current instance with provided (second)
+   * instance's ones. Returns `True` if completely equal.
+   */
   equals(second: Record<T>): boolean {
     return R.equals(this.value, second.value);
   }
@@ -324,7 +376,7 @@ export class Record<T extends RecordBase> {
   /**
    * Return all key/value pairs in the record.
    */
-  assocs(): List<Tuple<T[keyof T], keyof T>> {
+  assocs(): List<Tuple<keyof T, T[keyof T]>> {
     return List.of(
       ...Object.entries(this.value).map(([key, value]) => Tuple.of(key, value))
     );
@@ -336,10 +388,20 @@ export class Record<T extends RecordBase> {
     return this.value;
   }
 
+  /**
+   * Creates a new `Record` from the passed native plain object.
+   */
   static of<T>(initial: T): Record<T> {
     return new Record(initial);
   }
 
+  /**
+   * Creates a new `Record` from the passed native plain object.
+   *
+   * If a value is a `Maybe`, it will be unwrapped. If it is a `Just`, it will
+   * be unwrapped and written to it's key. If it is a `Nothing`, it will not be
+   * included in the `Record` to create.
+   */
   static ofMaybe<T>(initial: RecordWithMaybe<T>): Record<T> {
     return Record.of(Object.entries(initial).reduce(
       (acc, [key, value]) => {
@@ -374,6 +436,12 @@ export class Record<T extends RecordBase> {
    * use `lookup` otherwise.
    */
   static get<T extends RecordBase, K extends RecordSafeKeys<T>>(key: K): (x: Record<T>) => T[K];
+  /**
+   * `get :: String -> a -> a[String]`
+   *
+   * Returns the value at the given key. Only use for NonNullable properties,
+   * use `lookup` otherwise.
+   */
   static get<T extends RecordBase, K extends RecordSafeKeys<T>>(key: K, x: Record<T>): T[K];
   static get<T extends RecordBase, K extends RecordSafeKeys<T>>(
     key: K,

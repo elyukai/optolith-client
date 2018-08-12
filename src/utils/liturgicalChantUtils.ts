@@ -28,14 +28,14 @@ export const isOwnTradition = (
     const numericId = tradition.lookup('id')
       .bind(getNumericBlessedTraditionIdByInstanceId);
 
-    return e === 1 || Maybe.of(e).equals(numericId.map(id => id + 1));
+    return e === 1 || Maybe.return(e).equals(numericId.fmap(R.inc));
   });
 
   const isLiturgicalChant =
     obj.get('category') === Categories.LITURGIES;
 
   const blessings = Maybe.fromJust(
-    tradition.lookup('id').map(getUnavailableBlessingsForTradition)
+    tradition.lookup('id').fmap(getUnavailableBlessingsForTradition)
   );
 
   const isSpecial = isLiturgicalChant
@@ -57,7 +57,7 @@ export const isIncreasable = (
   const bonus = getExceptionalSkillBonus(wikiEntry.lookup('id'), exceptionalSkill);
 
   const hasAspectKnowledgeRestriction = getActiveSelections(aspectKnowledge)
-    .map(aspects => {
+    .fmap(aspects => {
       const hasActiveAspect = aspects.any(e => wikiEntry.get('aspects').elem(e as number));
       const noNamelessTradition = tradition.get('id') !== 'SA_693';
 
@@ -128,7 +128,7 @@ export const isDecreasable = (
           e => isNumber(e) && wikiEntry.get('aspects').elem(e)
         )
       ))
-      .map(
+      .fmap(
         activeAspects => {
           const counter = getAspectCounter(wiki.get('liturgicalChants'), liturgicalChants);
 

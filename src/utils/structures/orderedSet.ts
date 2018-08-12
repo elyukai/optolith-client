@@ -6,7 +6,7 @@ export class OrderedSet<T> implements Al.Functor<T>, Al.Foldable<T>,
   Al.Filterable<T> {
   private readonly value: ReadonlySet<T>;
 
-  constructor(initial?: ReadonlySet<T> | T[] | List<T>) {
+  private constructor(initial?: ReadonlySet<T> | T[] | List<T>) {
     // tslint:disable-next-line:prefer-conditional-expression
     if (initial instanceof Set) {
       this.value = initial;
@@ -105,12 +105,29 @@ export class OrderedSet<T> implements Al.Functor<T>, Al.Foldable<T>,
    * Filter all values that satisfy the predicate.
    */
   filter<U extends T>(pred: (value: T) => value is U): OrderedSet<U>;
+  /**
+   * `filter :: (a -> Bool) -> Set a -> Set a`
+   *
+   * Filter all values that satisfy the predicate.
+   */
   filter(pred: (value: T) => boolean): OrderedSet<T>;
   filter(pred: (value: T) => boolean): OrderedSet<T> {
     return OrderedSet.of([...this.value].filter(pred));
   }
 
   // MAP
+
+  /**
+   * `fmap :: Ord b => (a -> b) -> Set a -> Set b`
+   *
+   * `fmap f s` is the set obtained by applying `f` to each element of `s`.
+   *
+   * It's worth noting that the size of the result may be smaller if, for some
+   * `(x,y), x /= y && f x == f y`.
+   */
+  fmap<U>(fn: (value: T) => U): OrderedSet<U> {
+    return OrderedSet.of([...this.value].map(fn));
+  }
 
   /**
    * `map :: Ord b => (a -> b) -> Set a -> Set b`
@@ -121,7 +138,7 @@ export class OrderedSet<T> implements Al.Functor<T>, Al.Foldable<T>,
    * `(x,y), x /= y && f x == f y`.
    */
   map<U>(fn: (value: T) => U): OrderedSet<U> {
-    return OrderedSet.of([...this.value].map(fn));
+    return this.fmap(fn);
   }
 
   // FOLDS
@@ -133,6 +150,12 @@ export class OrderedSet<T> implements Al.Functor<T>, Al.Foldable<T>,
    * operator, such that `foldl f z == foldl f z . toAscList`.
    */
   foldl<U extends Some>(fn: (acc: U) => (current: T) => U): (initial: U) => U;
+  /**
+   * `foldl :: Foldable t => (b -> a -> b) -> b -> t a -> b`
+   *
+   * Fold the elements in the set using the given left-associative binary
+   * operator, such that `foldl f z == foldl f z . toAscList`.
+   */
   foldl<U extends Some>(fn: (acc: U) => (current: T) => U, initial: U): U;
   foldl<U extends Some>(
     fn: (acc: U) => (current: T) => U,
@@ -148,6 +171,9 @@ export class OrderedSet<T> implements Al.Functor<T>, Al.Foldable<T>,
     return resultFn(fn);
   }
 
+  /**
+   * Converts the `OrderedSet` into a native Set instance.
+   */
   toSet(): ReadonlySet<T> {
     return this.value;
   }
@@ -164,6 +190,9 @@ export class OrderedSet<T> implements Al.Functor<T>, Al.Foldable<T>,
     return List.of(...this.value);
   }
 
+  /**
+   * Creates a new `OrderedSet` from a native Set or an array of values.
+   */
   static of<T>(set: ReadonlySet<T> | T[] | List<T>): OrderedSet<T> {
     return new OrderedSet(set);
   }

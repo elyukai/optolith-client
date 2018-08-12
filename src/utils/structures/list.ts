@@ -10,7 +10,7 @@ export class List<T> implements Al.Functor<T>, Al.Foldable<T>, Al.Semigroup<T>,
   Al.Filterable<T> {
   private readonly value: ReadonlyArray<T>;
 
-  constructor(...initialElements: T[]) {
+  private constructor(...initialElements: T[]) {
     this.value = initialElements;
   }
 
@@ -129,12 +129,21 @@ export class List<T> implements Al.Functor<T>, Al.Foldable<T>, Al.Semigroup<T>,
   // LIST TRANSFORMATIONS
 
   /**
+   * `fmap :: (a -> b) -> [a] -> [b]`
+   *
+   * `fmap f xs` is the list obtained by applying `f` to each element of `xs`.
+   */
+  fmap<U>(fn: (x: T) => U): List<U> {
+    return List.of(...this.value.map(fn));
+  }
+
+  /**
    * `map :: (a -> b) -> [a] -> [b]`
    *
    * `map f xs` is the list obtained by applying `f` to each element of `xs`.
    */
   map<U>(fn: (x: T) => U): List<U> {
-    return List.of(...this.value.map(fn));
+    return this.fmap(fn);
   }
 
   /**
@@ -179,6 +188,17 @@ export class List<T> implements Al.Functor<T>, Al.Foldable<T>, Al.Semigroup<T>,
    * ```foldl f z [x1, x2, ..., xn] == (...((z `f` x1) `f` x2) `f`...) `f` xn```
    */
   foldl<U extends Some>(fn: (acc: U) => (current: T) => U): (initial: U) => U;
+  /**
+   * `foldl :: Foldable t => (b -> a -> b) -> b -> t a -> b`
+   *
+   * Left-associative fold of a structure.
+   *
+   * In the case of lists, foldl, when applied to a binary operator, a starting
+   * value (typically the left-identity of the operator), and a list, reduces
+   * the list using the binary operator, from left to right:
+   *
+   * ```foldl f z [x1, x2, ..., xn] == (...((z `f` x1) `f` x2) `f`...) `f` xn```
+   */
   foldl<U extends Some>(fn: (acc: U) => (current: T) => U, initial: U): U;
   foldl<U extends Some>(
     fn: (acc: U) => (current: T) => U,
@@ -196,10 +216,25 @@ export class List<T> implements Al.Functor<T>, Al.Foldable<T>, Al.Semigroup<T>,
 
   /**
    * `ifoldl :: Foldable t => (b -> Int -> a -> b) -> b -> t a -> b`
+   *
+   * Left-associative fold of a structure.
+   *
+   * In the case of lists, `ifoldl`, when applied to a binary operator, a
+   * starting value (typically the left-identity of the operator), and a list,
+   * reduces the list using the binary operator, from left to right.
    */
   ifoldl<U extends Some>(
     fn: (acc: U) => (index: number) => (current: T) => U
   ): (initial: U) => U;
+  /**
+   * `ifoldl :: Foldable t => (b -> Int -> a -> b) -> b -> t a -> b`
+   *
+   * Left-associative fold of a structure.
+   *
+   * In the case of lists, `ifoldl`, when applied to a binary operator, a
+   * starting value (typically the left-identity of the operator), and a list,
+   * reduces the list using the binary operator, from left to right.
+   */
   ifoldl<U extends Some>(
     fn: (acc: U) => (index: number) => (current: T) => U,
     initial: U
@@ -239,10 +274,31 @@ export class List<T> implements Al.Functor<T>, Al.Foldable<T>, Al.Semigroup<T>,
 
   /**
    * `ifoldlWithList :: Foldable t => (t -> b -> Int -> a -> b) -> b -> t a -> b`
+   *
+   * Left-associative fold of a structure.
+   *
+   * In the case of lists, `ifoldl`, when applied to a binary operator, a
+   * starting value (typically the left-identity of the operator), and a list,
+   * reduces the list using the binary operator, from left to right.
+   *
+   * It does not only include the index of the current element but also the
+   * original `List`.
    */
   ifoldlWithList<U extends Some>(
     fn: (list: List<T>) => (acc: U) => (index: number) => (current: T) => U
   ): (initial: U) => U;
+  /**
+   * `ifoldlWithList :: Foldable t => (t -> b -> Int -> a -> b) -> b -> t a -> b`
+   *
+   * Left-associative fold of a structure.
+   *
+   * In the case of lists, `ifoldl`, when applied to a binary operator, a
+   * starting value (typically the left-identity of the operator), and a list,
+   * reduces the list using the binary operator, from left to right.
+   *
+   * It does not only include the index of the current element but also the
+   * original `List`.
+   */
   ifoldlWithList<U extends Some>(
     fn: (list: List<T>) => (acc: U) => (index: number) => (current: T) => U,
     initial: U
@@ -353,7 +409,7 @@ export class List<T> implements Al.Functor<T>, Al.Foldable<T>, Al.Semigroup<T>,
    * The `product` function computes the product of the numbers of a structure.
    */
   product(this: List<number>): number {
-    return this.value.reduce((acc, e) => acc * e, 0);
+    return this.value.reduce((acc, e) => acc * e, 1);
   }
 
   /**
@@ -391,6 +447,18 @@ export class List<T> implements Al.Functor<T>, Al.Foldable<T>, Al.Semigroup<T>,
    * ```last (scanl f z xs) == foldl f z xs.```
    */
   scanl<U extends Some>(fn: (acc: U) => (current: T) => U): (initial: U) => List<U>;
+  /**
+   * `scanl :: (b -> a -> b) -> b -> [a] -> [b]`
+   *
+   * scanl is similar to foldl, but returns a list of successive reduced values
+   * from the left:
+   *
+   * ```scanl f z [x1, x2, ...] == [z, z `f` x1, (z `f` x1) `f` x2, ...]```
+   *
+   * Note that
+   *
+   * ```last (scanl f z xs) == foldl f z xs.```
+   */
   scanl<U extends Some>(fn: (acc: U) => (current: T) => U, initial: U): List<U>;
   scanl<U extends Some>(
     fn: (acc: U) => (current: T) => U,
@@ -422,7 +490,7 @@ export class List<T> implements Al.Functor<T>, Al.Foldable<T>, Al.Semigroup<T>,
   take(length: number): List<T> {
     return this.value.length < length
       ? this
-      : List.of(...this.value.slice(0, length - 1));
+      : List.of(...this.value.slice(0, length));
   }
 
   // SEARCHING BY EQUALITY
@@ -451,7 +519,7 @@ export class List<T> implements Al.Functor<T>, Al.Foldable<T>, Al.Semigroup<T>,
    * `lookup key assocs` looks up a key in an association list.
    */
   lookup<K, V>(this: List<Tuple<K, V>>, key: K): Maybe<V> {
-    return this.find(e => Tuple.fst(e) === key).map(Tuple.snd);
+    return this.find(e => Tuple.fst(e) === key).fmap(Tuple.snd);
   }
 
   // SEARCHING WITH A PREDICATE
@@ -464,6 +532,13 @@ export class List<T> implements Al.Functor<T>, Al.Foldable<T>, Al.Semigroup<T>,
    * there is no such element.
    */
   find<U extends T>(pred: (x: T) => x is U): Maybe<U>;
+  /**
+   * `find :: Foldable t => (a -> Bool) -> t a -> Maybe a`
+   *
+   * The `find` function takes a predicate and a structure and returns the
+   * leftmost element of the structure matching the predicate, or `Nothing` if
+   * there is no such element.
+   */
   find(pred: (x: T) => boolean): Maybe<T>;
   find(pred: (x: T) => boolean): Maybe<T> {
     return Maybe.of(this.value.find(pred));
@@ -477,6 +552,13 @@ export class List<T> implements Al.Functor<T>, Al.Foldable<T>, Al.Semigroup<T>,
    * there is no such element.
    */
   ifind<U extends T>(pred: (index: number) => (x: T) => x is U): Maybe<U>;
+  /**
+   * `ifind :: Foldable t => (Int -> a -> Bool) -> t a -> Maybe a`
+   *
+   * The `find` function takes a predicate and a structure and returns the
+   * leftmost element of the structure matching the predicate, or `Nothing` if
+   * there is no such element.
+   */
   ifind(pred: (index: number) => (x: T) => boolean): Maybe<T>;
   ifind(pred: (index: number) => (x: T) => boolean): Maybe<T> {
     return Maybe.of(this.value.find((e, i) => pred(i)(e)));
@@ -489,6 +571,12 @@ export class List<T> implements Al.Functor<T>, Al.Foldable<T>, Al.Semigroup<T>,
    * elements that satisfy the predicate.
    */
   filter<U extends T>(pred: (x: T) => x is U): List<U>;
+  /**
+   * `filter :: (a -> Bool) -> [a] -> [a]`
+   *
+   * `filter`, applied to a predicate and a list, returns the list of those
+   * elements that satisfy the predicate.
+   */
   filter(pred: (x: T) => boolean): List<T>;
   filter(pred: (x: T) => boolean): List<T> {
     return List.of(...this.value.filter(pred));
@@ -501,6 +589,12 @@ export class List<T> implements Al.Functor<T>, Al.Foldable<T>, Al.Semigroup<T>,
    * elements that satisfy the predicate.
    */
   ifilter<U extends T>(pred: (index: number) => (x: T) => x is U): List<U>;
+  /**
+   * `ifilter :: (Int -> a -> Bool) -> [a] -> [a]`
+   *
+   * `ifilter`, applied to a predicate and a list, returns the list of those
+   * elements that satisfy the predicate.
+   */
   ifilter(pred: (index: number) => (x: T) => boolean): List<T>;
   ifilter(pred: (index: number) => (x: T) => boolean): List<T> {
     return List.of(...this.value.filter((e, i) => pred(i)(e)));
@@ -690,9 +784,6 @@ export class List<T> implements Al.Functor<T>, Al.Foldable<T>, Al.Semigroup<T>,
    * If the index is negative or exceeds list length, the original list will be
    * returned.
    */
-  // setAt(index: number): (value: T) => List<T>;
-  // setAt(index: number, value: T): List<T>;
-  // setAt(index: number, value?: T): List<T> | ((value: T) => List<T>) {
   setAt(index: number, value: T): List<T> {
     const resultFn = (x1: number, x2: T): List<T> => {
       if (x1 > 0 && x1 < this.value.length) {
@@ -703,12 +794,7 @@ export class List<T> implements Al.Functor<T>, Al.Foldable<T>, Al.Semigroup<T>,
       }
     };
 
-    // if (arguments.length === 2) {
     return resultFn(index, value!);
-    // }
-    // else {
-    //   return x2 => resultFn(index, x2);
-    // }
   }
 
   /**
@@ -719,11 +805,6 @@ export class List<T> implements Al.Functor<T>, Al.Foldable<T>, Al.Semigroup<T>,
    * If the index is negative or exceeds list length, the original list will be
    * returned.
    */
-  // modifyAt(index: number): (fn: (oldValue: T) => T) => List<T>;
-  // modifyAt(index: number, fn: (oldValue: T) => T): List<T>;
-  // modifyAt(
-  //   index: number, fn?: (oldValue: T) => T
-  // ): List<T> | ((fn: (oldValue: T) => T) => List<T>) {
   modifyAt(index: number, fn: (oldValue: T) => T): List<T> {
     const resultFn = (x1: number, x2: (oldValue: T) => T): List<T> => {
       if (x1 > 0 && x1 < this.value.length) {
@@ -734,12 +815,7 @@ export class List<T> implements Al.Functor<T>, Al.Foldable<T>, Al.Semigroup<T>,
       }
     };
 
-    // if (arguments.length === 2) {
     return resultFn(index, fn!);
-    // }
-    // else {
-    //   return x2 => resultFn(index, x2);
-    // }
   }
 
   /**
@@ -752,11 +828,6 @@ export class List<T> implements Al.Functor<T>, Al.Foldable<T>, Al.Semigroup<T>,
    * If the index is negative or exceeds list length, the original list will be
    * returned.
    */
-  // updateAt(index: number): (fn: (oldValue: T) => Maybe<T>) => List<T>;
-  // updateAt(index: number, fn: (oldValue: T) => Maybe<T>): List<T>;
-  // updateAt(
-  //   index: number, fn?: (oldValue: T) => Maybe<T>
-  // ): List<T> | ((fn: (oldValue: T) => Maybe<T>) => List<T>) {
   updateAt(index: number, fn: (oldValue: T) => Maybe<T>): List<T> {
     const resultFn = (x1: number, x2: (oldValue: T) => Maybe<T>): List<T> => {
       if (x1 > 0 && x1 < this.value.length) {
@@ -774,12 +845,7 @@ export class List<T> implements Al.Functor<T>, Al.Foldable<T>, Al.Semigroup<T>,
       }
     };
 
-    // if (arguments.length === 2) {
     return resultFn(index, fn!);
-    // }
-    // else {
-    //   return x2 => resultFn(index, x2);
-    // }
   }
 
   /**
@@ -793,9 +859,6 @@ export class List<T> implements Al.Functor<T>, Al.Foldable<T>, Al.Semigroup<T>,
    * returned. (If the index is equal to the list length, the insertion can be
    * carried out.)
    */
-  // insertAt(index: number): (value: T) => List<T>;
-  // insertAt(index: number, value: T): List<T>;
-  // insertAt(index: number, value?: T): List<T> | ((value: T) => List<T>) {
   insertAt(index: number, value: T): List<T> {
     const resultFn = (x1: number, x2: T): List<T> => {
       if (x1 > 0 && x1 < this.value.length) {
@@ -813,12 +876,7 @@ export class List<T> implements Al.Functor<T>, Al.Foldable<T>, Al.Semigroup<T>,
       }
     };
 
-    // if (arguments.length === 2) {
     return resultFn(index, value!);
-    // }
-    // else {
-    //   return x2 => resultFn(index, x2);
-    // }
   }
 
   // OWN METHODS
@@ -832,44 +890,90 @@ export class List<T> implements Al.Functor<T>, Al.Foldable<T>, Al.Semigroup<T>,
     return List.of(...this.value, e);
   }
 
+  /**
+   * Transforms the list instance into a native array instance.
+   */
   toArray(): ReadonlyArray<T> {
     return this.value;
   }
 
+  /**
+   * Creates a new `List` instance from the passed arguments.
+   */
   static of<T>(...initialElements: T[]): List<T> {
     return new List(...initialElements);
   }
 
+  /**
+   * `find :: Foldable t => (a -> Bool) -> t a -> Maybe a`
+   *
+   * The `find` function takes a predicate and a structure and returns the
+   * leftmost element of the structure matching the predicate, or `Nothing` if
+   * there is no such element.
+   */
   static find<T, U extends T>(
     pred: (x: T) => x is U
   ): (list: List<T>) => Maybe<U>;
+  /**
+   * `find :: Foldable t => (a -> Bool) -> t a -> Maybe a`
+   *
+   * The `find` function takes a predicate and a structure and returns the
+   * leftmost element of the structure matching the predicate, or `Nothing` if
+   * there is no such element.
+   */
   static find<T>(pred: (x: T) => boolean): (list: List<T>) => Maybe<T>;
   static find<T>(pred: (x: T) => boolean): (list: List<T>) => Maybe<T> {
     return list => list.find(pred);
   }
 
+  /**
+   * `filter :: (a -> Bool) -> [a] -> [a]`
+   *
+   * `filter`, applied to a predicate and a list, returns the list of those
+   * elements that satisfy the predicate.
+   */
   static filter<T, U extends T>(
     pred: (x: T) => x is U
   ): (list: List<T>) => List<U>;
+  /**
+   * `filter :: (a -> Bool) -> [a] -> [a]`
+   *
+   * `filter`, applied to a predicate and a list, returns the list of those
+   * elements that satisfy the predicate.
+   */
   static filter<T>(pred: (x: T) => boolean): (list: List<T>) => List<T>;
   static filter<T>(pred: (x: T) => boolean): (list: List<T>) => List<T> {
     return list => list.filter(pred);
   }
 
+  /**
+   * Transforms a `List` of `Tuple`s into an `OrderedMap` where the first values
+   * in the `Tuple` are the keys and the second values are the actual values.
+   */
   static toMap<K, V>(list: List<Tuple<K, V>>): OrderedMap<K, V> {
     return OrderedMap.of(list.value.map(t =>
       [Tuple.fst(t), Tuple.snd(t)] as [K, V]
     ));
   }
 
+  /**
+   * Converts a `List` to a native Array.
+   */
   static toArray<T>(list: List<T>): ReadonlyArray<T> {
     return list.value;
   }
 
+  /**
+   * Converts a native Array to a `List`.
+   */
   static fromArray<T>(arr: ReadonlyArray<T>): List<T> {
     return List.of(...arr);
   }
 
+  /**
+   * Checks if the given value is a `List`.
+   * @param value The value to test.
+   */
   static isList(value: any): value is List<any> {
     return value instanceof List;
   }
@@ -884,6 +988,11 @@ export class List<T> implements Al.Functor<T>, Al.Foldable<T>, Al.Semigroup<T>,
    * `map f xs` is the list obtained by applying `f` to each element of `xs`.
    */
   static map<T, U>(fn: (x: T) => U): (list: List<T>) => List<U>;
+  /**
+   * `map :: (a -> b) -> [a] -> [b]`
+   *
+   * `map f xs` is the list obtained by applying `f` to each element of `xs`.
+   */
   static map<T, U>(fn: (x: T) => U, list: List<T>): List<U>;
   static map<T, U>(
     fn: (x: T) => U, list?: List<T>
@@ -898,6 +1007,11 @@ export class List<T> implements Al.Functor<T>, Al.Foldable<T>, Al.Semigroup<T>,
 
   // SPECIAL FOLDS
 
+  /**
+   * `maximum :: forall a. (Foldable t, Ord a) => t a -> a`
+   *
+   * The largest element of a non-empty structure.
+   */
   static maximum(list: List<number>): number {
     return Math.max(...list.value);
   }
@@ -937,6 +1051,38 @@ f' z       = Nothing
 ```
    */
   static unfoldr<T, U>(f: (value: U) => Maybe<Tuple<T, U>>): (seedValue?: U) => List<T>;
+  /**
+   * `unfoldr :: (b -> Maybe (a, b)) -> b -> [a]`
+   *
+   * The `unfoldr` function is a 'dual' to `foldr`: while `foldr` reduces a list
+   * to a summary value, `unfoldr` builds a list from a seed value. The function
+   * takes the element and returns `Nothing` if it is done producing the list or
+   * returns `Just (a,b)`, in which case, `a` is a prepended to the list and `b`
+   * is used as the next element in a recursive call. For example,
+```hs
+iterate f == unfoldr (\x -> Just (x, f x))
+```
+   *
+   * In some cases, unfoldr can undo a foldr operation:
+   *
+```hs
+unfoldr f' (foldr f z xs) == xs
+```
+   *
+   * if the following holds:
+   *
+```hs
+f' (f x y) = Just (x,y)
+f' z       = Nothing
+```
+   *
+   * A simple use of unfoldr:
+   *
+```hs
+>>> unfoldr (\b -> if b == 0 then Nothing else Just (b, b-1)) 10
+[10,9,8,7,6,5,4,3,2,1]
+```
+   */
   static unfoldr<T, U>(f: (value: U) => Maybe<Tuple<T, U>>, seedValue: U): List<T>;
   static unfoldr<T, U>(
     f: (value: U) => Maybe<Tuple<T, U>>,

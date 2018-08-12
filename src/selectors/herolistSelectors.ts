@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect';
 import { AppState } from '../reducers/appReducer';
-import { RawHero } from '../types/rawdata.d';
+import { RawHero } from '../types/rawdata';
 import { getHeroes, getUsers } from './stateSelectors';
 
 export const getHeroesArray = createSelector(

@@ -158,7 +158,7 @@ export const deactivate =
     Maybe.fromMaybe(
       state,
       instance.get('active').head()
-        .map(head =>
+        .fmap(head =>
           changeActiveLength(
             () => head,
             DependencyUtils.removeDependencies,

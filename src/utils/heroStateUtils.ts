@@ -169,8 +169,8 @@ export function setHeroListStateItem(
 ): SetHeroListState | SetHeroListStateFn1 | SetHeroListStateFn2 {
   const resultFn = (x1: string, x2: Dependent, x3: Record<HeroDependent>) =>
     getHeroStateListKeyById(id)
-      .map(
-        x3.alter(slice => slice.map(justSlice =>
+      .fmap(
+        x3.alter(slice => slice.fmap(justSlice =>
           (justSlice as OrderedMap<string, Dependent>)
             .insert(x1, x2)
         ) as RecordKey<HeroStateListKey, HeroDependent>)
@@ -192,8 +192,8 @@ export function setHeroListStateItem(
 export const removeHeroListStateItem = (id: string) =>
   (state: Record<HeroDependent>): Maybe<Record<HeroDependent>> =>
     getHeroStateListKeyById(id)
-      .map(state.alter(
-        slice => slice.map(
+      .fmap(state.alter(
+        slice => slice.fmap(
           justSlice => justSlice.delete(id)
         ) as RecordKey<HeroStateListKey, HeroDependent>
       ));
@@ -215,7 +215,7 @@ export const adjustHeroListStateItemOr =
       Maybe.fromMaybe<Record<HeroDependent>>(
         state,
         getHeroStateMapKeyById(id)
-          .map(
+          .fmap(
             state.modify(
               slice =>
                 (slice as any as OrderedMap<string, D>)
@@ -239,7 +239,7 @@ export const adjustHeroListStateItemWithDefault =
       Maybe.fromMaybe<Record<HeroDependent>>(
         state,
         getHeroStateMapKeyById(id)
-          .map(
+          .fmap(
             stateKey => state.modify(
               slice =>
                 (slice as any as OrderedMap<string, D>)
@@ -266,7 +266,7 @@ export const adjustHeroListStateItem =
     Maybe.fromMaybe<Record<HeroDependent>>(
       state,
       getHeroStateMapKeyById(id)
-        .map(
+        .fmap(
           state.modify(
             slice =>
               (slice as any as OrderedMap<string, D>)
@@ -288,7 +288,7 @@ export const updateHeroListStateItemOrRemove =
       Maybe.fromMaybe<Record<HeroDependent>>(
         state,
         getHeroStateMapKeyById(id)
-          .map(
+          .fmap(
             state.modify(
               slice =>
                 (slice as any as OrderedMap<string, D>)

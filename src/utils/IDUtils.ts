@@ -45,7 +45,7 @@ export const getCategoryByIdPrefix = (id: IdPrefixes): Maybe<Categories> => {
 export const getCategoryById = (id: string): Maybe<Categories> =>
   getCategoryByIdPrefix(getIdPrefix(id));
 
-export const magicalTraditionIdByNumericId = new OrderedMap([
+export const magicalTraditionIdByNumericId = OrderedMap.of([
   [1, 'SA_70'],
   [2, 'SA_255'],
   [3, 'SA_345'],
@@ -58,7 +58,7 @@ export const magicalTraditionIdByNumericId = new OrderedMap([
   [10, 'SA_681'],
 ]);
 
-export const magicalNumericIdByTraditionId = new OrderedMap([
+export const magicalNumericIdByTraditionId = OrderedMap.of([
   ['SA_70', 1],
   ['SA_255', 2],
   ['SA_345', 3],
@@ -80,7 +80,7 @@ export const getMagicalTraditionInstanceIdByNumericId = (id: number) =>
 export const getNumericMagicalTraditionIdByInstanceId = (id: string) =>
   magicalNumericIdByTraditionId.lookup(id);
 
-const blessedTraditionIdByNumericId = new OrderedMap([
+const blessedTraditionIdByNumericId = OrderedMap.of([
   [1, 'SA_86'],
   [2, 'SA_682'],
   [3, 'SA_683'],
@@ -101,7 +101,7 @@ const blessedTraditionIdByNumericId = new OrderedMap([
   [18, 'SA_698'],
 ]);
 
-const blessedNumericIdByTraditionId = new OrderedMap([
+const blessedNumericIdByTraditionId = OrderedMap.of([
   ['SA_86', 1],
   ['SA_682', 2],
   ['SA_683', 3],
