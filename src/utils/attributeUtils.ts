@@ -5,7 +5,6 @@ import { Maybe, OrderedMap, Record } from './dataUtils';
 import { flattenDependencies } from './flattenDependencies';
 
 export const getSum = OrderedMap.foldl<
-  string,
   Record<Data.AttributeDependent>,
   number
 > (n => e => n + e.get ('value')) (0);
