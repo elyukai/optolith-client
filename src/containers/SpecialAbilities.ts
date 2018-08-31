@@ -5,7 +5,7 @@ import * as SpecialAbilitiesActions from '../actions/SpecialAbilitiesActions';
 import { AppState } from '../reducers/app';
 import { getFilteredActiveSpecialAbilities } from '../selectors/activatableSelectors';
 import { get, getDependent } from '../selectors/dependentInstancesSelectors';
-import { isRemovingEnabled } from '../selectors/phaseSelectors';
+import { getIsRemovingEnabled } from '../selectors/phaseSelectors';
 import { getInactiveSpecialAbilitiesFilterText, getPhase, getSpecialAbilities, getSpecialAbilitiesFilterText } from '../selectors/stateSelectors';
 import { getEnableActiveItemHints, getSpecialAbilitiesSortOrder } from '../selectors/uisettingsSelectors';
 import { ActivateArgs, DeactivateArgs } from '../types/data.d';
@@ -20,7 +20,7 @@ function mapStateToProps(state: AppState) {
 		get(id: string) {
 			return get(getDependent(state), id);
 		},
-		isRemovingEnabled: isRemovingEnabled(state),
+		isRemovingEnabled: getIsRemovingEnabled(state),
 		list: [...getSpecialAbilities(state).values()],
 		phase: getPhase(state),
 		sortOrder: getSpecialAbilitiesSortOrder(state),

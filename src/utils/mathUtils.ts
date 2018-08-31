@@ -13,4 +13,4 @@ interface SubtractBy {
   (b: number): (a: number) => number;
 }
 
-export const subtractBy = R.flip(R.subtract) as SubtractBy;
+export const subtractBy = R.flip (R.subtract) as SubtractBy;

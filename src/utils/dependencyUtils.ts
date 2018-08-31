@@ -23,10 +23,9 @@ type ModifyActivatableDependency =
 const createPrimaryAttributeDependencyModifier =
   (state: Record<Data.HeroDependent>, modify: ModifyIncreasableDependency) =>
     (req: Record<Wiki.RequiresPrimaryAttribute>) =>
-      Maybe.fromMaybe(
-        state,
-        getPrimaryAttributeId(state.get('specialAbilities'), req.get('type'))
-          .fmap(id => modify(id, req.get('value'))(state))
+      Maybe.fromMaybe (state) (
+        getPrimaryAttributeId (state.get ('specialAbilities'), req.get ('type'))
+          .fmap (id => modify (id, req.get ('value')) (state))
       );
 
 const createIncreasableDependencyModifier = (
@@ -36,27 +35,26 @@ const createIncreasableDependencyModifier = (
   sourceId: string,
 ) =>
   (req: Record<Wiki.RequiresIncreasableObject>) =>
-    match<string | List<string>, Record<Data.HeroDependent>>(req.get('id'))
-      .on(
+    match<string | List<string>, Record<Data.HeroDependent>> (req.get ('id'))
+      .on (
         (id): id is List<string> => typeof id === 'object',
         id => {
-          const add = Record.of({ value: req.get('value'), origin: sourceId });
+          const add = Record.of ({ value: req.get ('value'), origin: sourceId });
 
-          return id.foldl(
+          return id.foldl<Data.Hero> (
             accState => e => (
-              getCategoryById(e).equals(Maybe.Just(Categories.ATTRIBUTES))
-                ? modifyAttribute(e, add)(accState)
-                : modify(e, add)(accState)
-            ),
-            state
-          );
+              getCategoryById (e).equals (Maybe.pure (Categories.ATTRIBUTES))
+                ? modifyAttribute (e, add) (accState)
+                : modify (e, add) (accState)
+            )
+          ) (state);
         }
       )
-      .on(
-        id => getCategoryById(id).equals(Maybe.Just(Categories.ATTRIBUTES)),
-        id => modifyAttribute(id, req.get('value'))(state)
+      .on (
+        id => getCategoryById (id).equals (Maybe.pure (Categories.ATTRIBUTES)),
+        id => modifyAttribute (id, req.get ('value')) (state)
       )
-      .otherwise(id => modify(id, req.get('value'))(state));
+      .otherwise (id => modify (id, req.get ('value')) (state));
 
 const createActivatableDependency = (
   state: Record<Data.HeroDependent>,
@@ -64,20 +62,20 @@ const createActivatableDependency = (
   req: Record<Wiki.RequiresActivatableObject>,
   modify: ModifyActivatableDependency
 ) =>
-  R.pipe(
+  R.pipe (
     (sourceId: string) =>
-      Record.of<Data.DependencyObject>({ origin: sourceId }),
+      Record.of<Data.DependencyObject> ({ origin: sourceId }),
     add => {
-      if (Object.keys(req).length === 2) {
-        return add.insert('active', req.get('active'));
+      if (Object.keys (req).length === 2) {
+        return add.insert ('active') (req.get ('active'));
       }
       else {
-        const { id: _1, active: _2, ...other } = req.toObject();
+        const { id: _1, active: _2, ...other } = req.toObject ();
 
-        return add.merge(Record.of(other));
+        return add.merge (Record.of (other));
       }
     },
-    add => id.foldl(accState => e => modify(e, add)(accState), state)
+    add => id.foldl<Data.Hero> (accState => e => modify (e, add) (accState)) (state)
   );
 
 const createActivatableDependencyModifier = (
@@ -85,30 +83,27 @@ const createActivatableDependencyModifier = (
   modify: ModifyActivatableDependency,
   sourceId: string,
 ) => (req: Record<Wiki.RequiresActivatableObject>) => {
-  return match<string | List<string>, Record<Data.HeroDependent>>(req.get('id'))
-    .on(
+  return match<string | List<string>, Record<Data.HeroDependent>> (req.get ('id'))
+    .on (
       (id): id is List<string> => typeof id === 'object',
-      id => createActivatableDependency(state, id, req, modify)(sourceId)
+      id => createActivatableDependency (state, id, req, modify) (sourceId)
     )
-    .otherwise(id => {
-      const { id: _1, active, ...other } = req.toObject();
+    .otherwise (id => {
+      const { id: _1, active, ...other } = req.toObject ();
 
-      return R.pipe<Data.ActivatableDependency, Record<Data.HeroDependent>>(
-        add => modify(id, add)(state),
-      )(
-        match<(typeof req), Data.ActivatableDependency>(req)
-          .on(
-            e => e.keys().length() === 2,
+      return R.pipe<Data.ActivatableDependency, Record<Data.HeroDependent>> (
+        add => modify (id, add) (state),
+      ) (
+        match<(typeof req), Data.ActivatableDependency> (req)
+          .on (
+            e => e.keys ().length () === 2,
             () => active
           )
-          .on(
-            e => Maybe.isJust(Maybe.ensure(
-              m => m instanceof List,
-              e.lookup('sid')
-            )),
-            () => Record.of<Data.DependencyObject>({ active, ...other }))
-          .otherwise(
-            () => Record.of(other)
+          .on (
+            e => Maybe.isJust (Maybe.ensure (m => m instanceof List) (e.lookup ('sid'))),
+            () => Record.of<Data.DependencyObject> ({ active, ...other }))
+          .otherwise (
+            () => Record.of (other)
           )
       );
     });
@@ -122,45 +117,44 @@ const modifyDependencies = (
   modifyIncreasableDependency: ModifyIncreasableDependency,
   modifyActivatableDependency: ModifyActivatableDependency,
 ): Record<Data.HeroDependent> =>
-  prerequisites.foldl<Record<Data.HeroDependent>>(
-    accState => req => match<Wiki.AllRequirements, Record<Data.HeroDependent>>(req)
-      .on(
+  prerequisites.foldl<Data.Hero> (
+    accState => req => match<Wiki.AllRequirements, Record<Data.HeroDependent>> (req)
+      .on (
         CheckPrerequisiteUtils.isDependentPrerequisite,
         dependentReq =>
-          match<Wiki.DependentPrerequisite, Record<Data.HeroDependent>>(
+          match<Wiki.DependentPrerequisite, Record<Data.HeroDependent>> (
             dependentReq
           )
-            .on(
+            .on (
               CheckPrerequisiteUtils.isRequiringPrimaryAttribute,
-              createPrimaryAttributeDependencyModifier(
+              createPrimaryAttributeDependencyModifier (
                 accState,
                 modifyAttributeDependency,
               ),
             )
-            .on(
+            .on (
               CheckPrerequisiteUtils.isRequiringIncreasable,
-              createIncreasableDependencyModifier(
+              createIncreasableDependencyModifier (
                 accState,
                 modifyAttributeDependency,
                 modifyIncreasableDependency,
                 sourceId,
               ),
             )
-            .on(
-              e => e.lookup('sid').notEquals(Maybe.Just('GR')),
-              createActivatableDependencyModifier(
+            .on (
+              e => e.lookup ('sid').notEquals (Maybe.pure ('GR')),
+              createActivatableDependencyModifier (
                 accState,
                 modifyActivatableDependency,
                 sourceId,
               ),
             )
-            .otherwise(() => accState)
+            .otherwise (() => accState)
       )
-      .otherwise(
+      .otherwise (
         () => accState
-      ),
-    state
-  );
+      )
+  ) (state);
 
 /**
  * Adds dependencies to all required entries to ensure rule validity.
@@ -174,7 +168,7 @@ export const addDependencies = (
   state: Record<Data.HeroDependent>,
   prerequisites: List<Wiki.AllRequirements>,
   sourceId: string,
-): Record<Data.HeroDependent> => modifyDependencies(
+): Record<Data.HeroDependent> => modifyDependencies (
   state,
   prerequisites,
   sourceId,
@@ -190,7 +184,7 @@ export const addDependencies = (
 export const addDependenciesReducer =
   (prerequisites: List<Wiki.AllRequirements>, sourceId: string) =>
     (state: Record<Data.HeroDependent>): Record<Data.HeroDependent> =>
-      addDependencies(state, prerequisites, sourceId);
+      addDependencies (state, prerequisites, sourceId);
 
 /**
  * Removes dependencies from all required entries to ensure rule validity.
@@ -204,7 +198,7 @@ export const removeDependencies = (
   state: Record<Data.HeroDependent>,
   prerequisites: List<Wiki.AllRequirements>,
   sourceId: string,
-): Record<Data.HeroDependent> => modifyDependencies(
+): Record<Data.HeroDependent> => modifyDependencies (
   state,
   prerequisites,
   sourceId,
@@ -224,4 +218,4 @@ export const removeDependencies = (
 export const removeDependenciesReducer =
   (prerequisites: List<Wiki.AllRequirements>, sourceId: string) =>
     (state: Record<Data.HeroDependent>): Record<Data.HeroDependent> =>
-      removeDependencies(state, prerequisites, sourceId);
+      removeDependencies (state, prerequisites, sourceId);

@@ -15,11 +15,11 @@ export interface AppState {
   wiki: Record<WikiAll>;
 }
 
-const appSlices = combineReducers<AppState>({
+const appSlices = combineReducers<AppState> ({
   herolist,
   locale,
   ui,
   wiki
 });
 
-export const appReducer = reduceReducers<AppState, Action>(appSlices, appPostReducer);
+export const appReducer = reduceReducers<AppState, Action> (appSlices, appPostReducer);

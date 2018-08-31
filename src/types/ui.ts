@@ -1,4 +1,6 @@
-export interface UIMessages {
+import { List } from '../utils/dataUtils';
+
+export interface RawUIMessages {
   'id': string;
   'titlebar.tabs.home': string;
   'titlebar.tabs.homeintro': string;
@@ -818,5 +820,9 @@ export interface UIMessages {
   'wiki.initialmessage': string;
   'emptylistnoresults': string;
 }
+
+export type UIMessages = {
+  [K in keyof RawUIMessages]: RawUIMessages[K] extends (infer I)[] ? List<I> : RawUIMessages[K];
+};
 
 export type UIKey = keyof UIMessages;

@@ -5,7 +5,7 @@ import * as SpellsActions from '../actions/SpellsActions';
 import { AppState } from '../reducers/app';
 import { getPresent } from '../selectors/currentHeroSelectors';
 import { getDerivedCharacteristicsMap } from '../selectors/derivedCharacteristicsSelectors';
-import { isRemovingEnabled } from '../selectors/phaseSelectors';
+import { getIsRemovingEnabled } from '../selectors/phaseSelectors';
 import { getFilteredActiveSpellsAndCantrips, getFilteredInactiveSpellsAndCantrips, getMagicalTraditions, isActivationDisabled } from '../selectors/spellsSelectors';
 import { getAttributes, getBooks, getInactiveSpellsFilterText, getPhase, getSpellsFilterText } from '../selectors/stateSelectors';
 import { getEnableActiveItemHints, getSpellsSortOrder } from '../selectors/uisettingsSelectors';
@@ -21,7 +21,7 @@ function mapStateToProps(state: AppState) {
 		addSpellsDisabled: isActivationDisabled(state),
 		currentHero: getPresent(state),
 		enableActiveItemHints: getEnableActiveItemHints(state),
-		isRemovingEnabled: isRemovingEnabled(state),
+		isRemovingEnabled: getIsRemovingEnabled(state),
 		traditions: getMagicalTraditions(state),
 		phase: getPhase(state),
 		sortOrder: getSpellsSortOrder(state),

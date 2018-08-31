@@ -77,7 +77,7 @@ const initialState: FiltersState = {
   petsFilterText: '',
 };
 
-export function filtersReducer(
+export function filtersReducer (
   state: FiltersState = initialState,
   action: Action,
 ): FiltersState {

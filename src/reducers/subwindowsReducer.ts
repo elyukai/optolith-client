@@ -42,7 +42,7 @@ const initialState: SubWindowsState = {
   isEditPetAvatarOpen: false,
 };
 
-export function subwindowsReducer(
+export function subwindowsReducer (
   state: SubWindowsState = initialState,
   action: Action
 ): SubWindowsState {

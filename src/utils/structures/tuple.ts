@@ -4,7 +4,7 @@ export class Tuple<T, U> implements Al.Functor<U> {
   private readonly first: T;
   private readonly second: U;
 
-  private constructor(first: T, last: U) {
+  private constructor (first: T, last: U) {
     this.first = first;
     this.second = last;
   }
@@ -15,8 +15,8 @@ export class Tuple<T, U> implements Al.Functor<U> {
    * Transforms the second element of the `Tuple` instance by applying the given
    * function over the value.
    */
-  fmap<V>(fn: (x: U) => V): Tuple<T, V> {
-    return Tuple.of(this.first, fn(this.second));
+  fmap<V> (fn: (x: U) => V): Tuple<T, V> {
+    return Tuple.of<T, V> (this.first) (fn (this.second));
   }
 
   /**
@@ -25,8 +25,8 @@ export class Tuple<T, U> implements Al.Functor<U> {
    * Transforms the second element of the `Tuple` instance by applying the given
    * function over the value.
    */
-  map<V>(fn: (x: U) => V): Tuple<T, V> {
-    return this.fmap(fn);
+  map<V> (fn: (x: U) => V): Tuple<T, V> {
+    return this.fmap (fn);
   }
 
   /**
@@ -34,15 +34,15 @@ export class Tuple<T, U> implements Al.Functor<U> {
    *
    * Transforms the current `Tuple` instance into an Array of length 2.
    */
-  toArray(): [T, U] {
+  toArray (): [T, U] {
     return [this.first, this.second];
   }
 
   /**
    * `of :: a -> b -> Tuple a b`
    */
-  static of<T, U>(first: T, second: U): Tuple<T, U> {
-    return new Tuple(first, second);
+  static of<T, U> (first: T): (second: U) => Tuple<T, U> {
+    return second => new Tuple (first, second);
   }
 
   /**
@@ -50,7 +50,7 @@ export class Tuple<T, U> implements Al.Functor<U> {
    *
    * Returns the first value of the given `Tuple` instance.
    */
-  static fst<T>(t: Tuple<T, any>): T {
+  static fst<T> (t: Tuple<T, any>): T {
     return t.first;
   }
 
@@ -59,7 +59,7 @@ export class Tuple<T, U> implements Al.Functor<U> {
    *
    * Returns the second value of the given `Tuple` instance.
    */
-  static snd<T>(t: Tuple<any, T>): T {
+  static snd<T> (t: Tuple<any, T>): T {
     return t.second;
   }
 }

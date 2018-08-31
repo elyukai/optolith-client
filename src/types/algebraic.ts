@@ -2,33 +2,33 @@ export interface Setoid<T> {
   /**
    * `equals :: Setoid a -> Setoid a -> Bool`
    */
-  equals(x: Setoid<T>): boolean;
+  equals (x: Setoid<T>): boolean;
 }
 
 export interface Ord<T> extends Setoid<T> {
   /**
    * `lte :: Ord a -> Ord a -> Bool`
    */
-  lte<U extends string | number>(this: Ord<U>, x: Ord<U>): boolean;
+  lte<U extends string | number> (this: Ord<U>, x: Ord<U>): boolean;
   /**
    * `gte :: Ord a -> Ord a -> Bool`
    */
-  gte<U extends string | number>(this: Ord<U>, x: Ord<U>): boolean;
+  gte<U extends string | number> (this: Ord<U>, x: Ord<U>): boolean;
   /**
    * `lt :: Ord a -> Ord a -> Bool`
    */
-  lt<U extends string | number>(this: Ord<U>, x: Ord<U>): boolean;
+  lt<U extends string | number> (this: Ord<U>, x: Ord<U>): boolean;
   /**
    * `gt :: Ord a -> Ord a -> Bool`
    */
-  gt<U extends string | number>(this: Ord<U>, x: Ord<U>): boolean;
+  gt<U extends string | number> (this: Ord<U>, x: Ord<U>): boolean;
 }
 
 export interface Semigroup<T> {
   /**
-   * `concat :: Semigroup a -> Semigroup a -> Semigroup a`
+   * `mappend :: Semigroup a -> Semigroup a -> Semigroup a`
    */
-  concat(x: Semigroup<T>): Semigroup<T>;
+  mappend (x: Semigroup<T>): Semigroup<T>;
 }
 
 export interface Functor<T> {
@@ -38,7 +38,7 @@ export interface Functor<T> {
    * Create a new `f b`, from an `f a` using the results of calling a function
    * on every value in the `f a`.
    */
-  fmap<U>(fn: (t: T) => U): Functor<U>;
+  fmap<U> (fn: (t: T) => U): Functor<U>;
   /**
    * `(<$) :: a -> f b -> f a`
    *
@@ -51,15 +51,8 @@ export interface Applicative<T> extends Functor<T> {
   /**
    * `ap :: Apply f => f a ~> f (a -> b) -> f b`
    */
-  ap<U>(m: Applicative<(value: T) => U>): Applicative<U>;
+  ap<U> (m: Applicative<(value: T) => U>): Applicative<U>;
   /**
-   * Other functions:
-   *
-   * `pure :: a -> f a`
-   *
-   * Lift a value.
-   * @static
-   *
    * `liftA2 :: (a -> b -> c) -> f a -> f b -> f c`
    *
    * Lift a binary function to actions.
@@ -68,15 +61,54 @@ export interface Applicative<T> extends Functor<T> {
    * than the default one. In particular, if `fmap` is an expensive operation,
    * it is likely better to use `liftA2` than to `fmap` over the structure and
    * then use `<*>`.
+   */
+  // liftA2<U, V>(f: (x1: T) => (x2: U) => V): (x: Applicative<U>) => Applicative<V>;
+  /**
+   * `liftA2 :: (a -> b -> c) -> f a -> f b -> f c`
    *
+   * Lift a binary function to actions.
+   *
+   * Some functors support an implementation of `liftA2` that is more efficient
+   * than the default one. In particular, if `fmap` is an expensive operation,
+   * it is likely better to use `liftA2` than to `fmap` over the structure and
+   * then use `<*>`.
+   */
+  // liftA2<U, V>(f: (x1: T) => (x2: U) => V, x: Applicative<U>): Applicative<V>;
+  // liftA2<U, V>(
+  //   f: (x1: T) => (x2: U) => V,
+  //   x?: Applicative<U>
+  // ): Applicative<V> | ((x: Applicative<U>) => Applicative<V>);
+  /**
+   * `pure :: a -> f a`
+   *
+   * Lift a value.
+   * @static
+   */
+  /**
    * `(*>) :: f a -> f b -> f b`
    *
    * Sequence actions, discarding the value of the first argument.
-   *
+   */
+  /**
    * `(<*) :: f a -> f b -> f a`
    *
    * Sequence actions, discarding the value of the second argument.
    */
+}
+
+export interface Alternative<T> extends Applicative<T> {
+  /**
+   * `(<|>) :: f a -> f a -> f a`
+   *
+   * An associative binary operation.
+   */
+  alt (m: Alternative<T>): Alternative<T>;
+  // /**
+  //  * `empty :: f a`
+  //  *
+  //  * The identity of `<|>`.
+  //  */
+  // empty(): Alternative<T>;
 }
 
 export interface Foldable<T> {
@@ -106,7 +138,7 @@ export interface Foldable<T> {
    *
    * ```foldl f z = foldl f z . toList```
    */
-  foldl<U>(fn: (acc: U) => (current: T) => U): (initial: U) => U;
+  foldl<U> (fn: (acc: U) => (current: T) => U): (initial: U) => U;
 }
 
 export interface Monad<T> extends Applicative<T> {
@@ -116,7 +148,7 @@ export interface Monad<T> extends Applicative<T> {
    * Sequentially compose two actions, passing any value produced by the first
    * as an argument to the second.
    */
-  bind<U>(fn: (t: T) => Monad<U>): Monad<U>;
+  bind<U> (fn: (t: T) => Monad<U>): Monad<U>;
   /**
    * `(>>) :: forall a b. m a -> m b -> m b`
    *
@@ -126,7 +158,7 @@ export interface Monad<T> extends Applicative<T> {
    *
    * ```a >> b = a >>= \ _ -> b```
    */
-  sequence<U>(x: Monad<U>): Monad<U>;
+  then<U> (x: Monad<U>): Monad<U>;
   /**
    * Other (static) functions:
    *
@@ -140,5 +172,5 @@ export interface Filterable<T> {
   /**
    * `filter :: (a -> Bool) -> Filterable a -> Filterable a`
    */
-  filter(pred: (value: T) => boolean): Filterable<T>;
+  filter (pred: (value: T) => boolean): Filterable<T>;
 }

@@ -15,7 +15,7 @@ export interface UIState {
   wiki: UIWikiState;
 }
 
-export const uiReducer = combineReducers<UIState>({
+export const uiReducer = combineReducers<UIState> ({
   alerts,
   filters,
   location,

@@ -6,7 +6,7 @@ import { AppState } from '../reducers/app';
 import { getAdjustmentValue, getAvailableAdjustmentIds, getCurrentAdjustmentId, getForView, getSum } from '../selectors/attributeSelectors';
 import { getDerivedCharacteristics } from '../selectors/derivedCharacteristicsSelectors';
 import { getStartEl } from '../selectors/elSelectors';
-import { isInCharacterCreation, isRemovingEnabled } from '../selectors/phaseSelectors';
+import { isInCharacterCreation, getIsRemovingEnabled } from '../selectors/phaseSelectors';
 import { getAddPermanentEnergy, getEditPermanentEnergy } from '../selectors/stateSelectors';
 import { Attributes, AttributesDispatchProps, AttributesOwnProps, AttributesStateProps } from '../views/attributes/Attributes';
 
@@ -17,7 +17,7 @@ function mapStateToProps(state: AppState) {
 		availableAttributeIds: getAvailableAdjustmentIds(state),
 		currentAttributeId: getCurrentAdjustmentId(state),
 		isInCharacterCreation: isInCharacterCreation(state),
-		isRemovingEnabled: isRemovingEnabled(state),
+		isRemovingEnabled: getIsRemovingEnabled(state),
 		derived: getDerivedCharacteristics(state),
 		maxTotalAttributeValues: getStartEl(state).maxTotalAttributeValues,
 		sum: getSum(state),

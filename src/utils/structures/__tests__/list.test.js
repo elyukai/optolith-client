@@ -11,12 +11,12 @@ test('Symbol.iterator', () => {
   expect(List.of(...List.of(3, 2, 1))).toEqual(List.of(3, 2, 1));
 });
 
-test('concat', () => {
-  expect(List.of(3, 2, 1).concat(List.of(3, 2, 1))).toEqual(List.of(3, 2, 1, 3, 2, 1));
+test('mappend', () => {
+  expect(List.of(3, 2, 1).mappend(List.of(3, 2, 1))).toEqual(List.of(3, 2, 1, 3, 2, 1));
 });
 
-test('prepend', () => {
-  expect(List.of(3, 2, 1).prepend(4)).toEqual(List.of(4, 3, 2, 1));
+test('cons', () => {
+  expect(List.of(3, 2, 1).cons(4)).toEqual(List.of(4, 3, 2, 1));
 });
 
 test('subscript', () => {
@@ -26,31 +26,76 @@ test('subscript', () => {
 });
 
 test('head', () => {
-  expect(List.of(3, 2, 1).head()).toEqual(Just(3));
-  expect(List.of().head()).toEqual(Nothing());
+  expect(List.of(3, 2, 1).head()).toEqual(3);
+  expect(List.of().head).toThrow();
+});
+
+test('List.head', () => {
+  expect(List.head (List.of(3, 2, 1))).toEqual(3);
+  expect(() => List.head (List.of())).toThrow();
 });
 
 test('last', () => {
-  expect(List.of(3, 2, 1).last()).toEqual(Just(1));
-  expect(List.of().last()).toEqual(Nothing());
+  expect(List.of(3, 2, 1).last()).toEqual(1);
+  expect(List.of().last).toThrow();
+});
+
+test('List.last', () => {
+  expect(List.last (List.of(3, 2, 1))).toEqual(1);
+  expect(() => List.last (List.of())).toThrow();
+});
+
+test('List.last_', () => {
+  expect(List.last_ (List.of(3, 2, 1))).toEqual(Just(1));
+  expect(List.last_ (List.of())).toEqual(Nothing());
 });
 
 test('tail', () => {
   expect(List.of(3, 2, 1).tail()).toEqual(List.of(2, 1));
   expect(List.of(1).tail()).toEqual(List.of());
-  expect(List.of().tail()).toEqual(List.of());
+  expect(List.of().tail).toThrow();
+});
+
+test('List.tail', () => {
+  expect(List.tail (List.of(3, 2, 1))).toEqual(List.of(2, 1));
+  expect(List.tail (List.of(1))).toEqual(List.of());
+  expect(() => List.tail (List.of())).toThrow();
+});
+
+test('List.tail_', () => {
+  expect(List.tail_ (List.of(3, 2, 1))).toEqual(Just(List.of(2, 1)));
+  expect(List.tail_ (List.of(1))).toEqual(Just(List.of()));
+  expect(List.tail_ (List.of())).toEqual(Nothing());
 });
 
 test('init', () => {
   expect(List.of(3, 2, 1).init()).toEqual(List.of(3, 2));
   expect(List.of(1).init()).toEqual(List.of());
-  expect(List.of().init()).toEqual(List.of());
+  expect(List.of().init).toThrow();
+});
+
+test('List.init', () => {
+  expect(List.init (List.of(3, 2, 1))).toEqual(List.of(3, 2));
+  expect(List.init (List.of(1))).toEqual(List.of());
+  expect(() => List.init (List.of())).toThrow();
+});
+
+test('List.init_', () => {
+  expect(List.init_ (List.of(3, 2, 1))).toEqual(Just(List.of(3, 2)));
+  expect(List.init_ (List.of(1))).toEqual(Just(List.of()));
+  expect(List.init_ (List.of())).toEqual(Nothing());
 });
 
 test('uncons', () => {
-  expect(List.of(3, 2, 1).uncons()).toEqual(Just(Tuple.of(3, List.of(2, 1))));
-  expect(List.of(1).uncons()).toEqual(Just(Tuple.of(1, List.of())));
+  expect(List.of(3, 2, 1).uncons()).toEqual(Just(Tuple.of(3)(List.of(2, 1))));
+  expect(List.of(1).uncons()).toEqual(Just(Tuple.of(1)(List.of())));
   expect(List.of().uncons()).toEqual(Nothing());
+});
+
+test('List.uncons', () => {
+  expect(List.uncons (List.of(3, 2, 1))).toEqual(Just(Tuple.of(3)(List.of(2, 1))));
+  expect(List.uncons (List.of(1))).toEqual(Just(Tuple.of(1)(List.of())));
+  expect(List.uncons (List.of())).toEqual(Nothing());
 });
 
 test('null', () => {
@@ -58,9 +103,19 @@ test('null', () => {
   expect(List.of().null()).toBeTruthy();
 });
 
+test('List.null', () => {
+  expect(List.null (List.of(3, 2, 1))).toBeFalsy();
+  expect(List.null (List.of())).toBeTruthy();
+});
+
 test('length', () => {
   expect(List.of(3, 2, 1).length()).toEqual(3);
   expect(List.of().length()).toEqual(0);
+});
+
+test('List.lengthL', () => {
+  expect(List.lengthL (List.of(3, 2, 1))).toEqual(3);
+  expect(List.lengthL (List.of())).toEqual(0);
 });
 
 test('fmap', () => {
@@ -90,29 +145,28 @@ test('intercalate', () => {
 });
 
 test('foldl', () => {
-  expect(List.of(3, 2, 1).foldl(acc => x => acc + x, 0))
-    .toEqual(6);
   expect(List.of(3, 2, 1).foldl(acc => x => acc + x)(0))
     .toEqual(6);
 });
 
 test('ifoldl', () => {
-  expect(List.of(3, 2, 1).ifoldl(acc => i => x => acc + x + i, 0))
-    .toEqual(9);
   expect(List.of(3, 2, 1).ifoldl(acc => i => x => acc + x + i)(0))
     .toEqual(9);
 });
 
 test('ifoldlWithList', () => {
-  expect(List.of(3, 2, 1).ifoldlWithList(list => acc => i => x => acc + x + i + list.length(), 0))
-    .toEqual(18);
   expect(List.of(3, 2, 1).ifoldlWithList(list => acc => i => x => acc + x + i + list.length())(0))
     .toEqual(18);
 });
 
-test('concatInner', () => {
-  expect(List.of(List.of(3), List.of(2), List.of(1)).concatInner())
+test('concat', () => {
+  expect(List.of(List.of(3), List.of(2), List.of(1)).concat())
     .toEqual(List.of(3, 2, 1));
+});
+
+test('List.concat', () => {
+  expect(List.concat (List.of (List.of (3), List.of (2), List.of (1))))
+    .toEqual(List.of (3, 2, 1));
 });
 
 test('and', () => {
@@ -137,6 +191,13 @@ test('any', () => {
   expect(List.of(3, 2, 1).any(x => x > 2))
     .toBeTruthy();
   expect(List.of(3, 2, 1).any(x => x > 3))
+    .toBeFalsy();
+});
+
+test('List.any', () => {
+  expect(List.any (x => x > 2) (List.of(3, 2, 1)))
+    .toBeTruthy();
+  expect(List.any (x => x > 3) (List.of(3, 2, 1)))
     .toBeFalsy();
 });
 
@@ -170,6 +231,11 @@ test('sum', () => {
     .toEqual(6);
 });
 
+test('List.sum', () => {
+  expect(List.sum (List.of(3, 2, 1)))
+    .toEqual(6);
+});
+
 test('product', () => {
   expect(List.of(3, 2, 2).product())
     .toEqual(12);
@@ -190,7 +256,7 @@ test('minimum', () => {
 });
 
 test('scanl', () => {
-  expect(List.of(2, 3, 4).scanl(acc => x => acc * x, 1))
+  expect(List.of(2, 3, 4).scanl (acc => x => acc * x) (1))
     .toEqual(List.of(1, 2, 6, 24));
 });
 
@@ -216,9 +282,9 @@ test('notElem', () => {
 });
 
 test('lookup', () => {
-  expect(List.of(Tuple.of(1, 'a'), Tuple.of(2, 'b')).lookup(1))
+  expect(List.of(Tuple.of(1)('a'), Tuple.of(2)('b')).lookup(1))
     .toEqual(Just('a'));
-  expect(List.of(Tuple.of(1, 'a'), Tuple.of(2, 'b')).lookup(3))
+  expect(List.of(Tuple.of(1)('a'), Tuple.of(2)('b')).lookup(3))
     .toEqual(Nothing());
 });
 
@@ -250,12 +316,12 @@ test('ifilter', () => {
 
 test('partition', () => {
   expect(List.of(1, 2, 3, 4, 5).partition(x => x > 2))
-    .toEqual(Tuple.of(List.of(3, 4, 5), List.of(1, 2)));
+    .toEqual(Tuple.of(List.of(3, 4, 5))(List.of(1, 2)));
 });
 
 test('ipartition', () => {
   expect(List.of(1, 2, 3, 4, 5).ipartition(i => x => x > 2 || i === 0))
-    .toEqual(Tuple.of(List.of(1, 3, 4, 5), List.of(2)));
+    .toEqual(Tuple.of(List.of(1, 3, 4, 5))(List.of(2)));
 });
 
 test('elemIndex', () => {
@@ -345,6 +411,23 @@ test('insertAt', () => {
     .toEqual(List.of(1, 2, 6, 3, 4, 5));
 });
 
+test('bind', () => {
+  expect(List.of(1, 2, 3, 4, 5).bind(e => List.of(e, e)))
+    .toEqual(List.of(1, 1, 2, 2, 3, 3, 4, 4, 5, 5));
+});
+
+test('then', () => {
+  expect(List.of(1, 2, 3, 4, 5).then(List.of('a', 'c')))
+    .toEqual(List.of('a', 'c'));
+  expect(List.of().then(List.of('a', 'c')))
+    .toEqual(List.of());
+});
+
+test('ap', () => {
+  expect(List.of(1, 2, 3, 4, 5).ap(List.of(x => x, x => x * 2)))
+    .toEqual(List.of(1, 2, 2, 4, 3, 6, 4, 8, 5, 10));
+});
+
 test('append', () => {
   expect(List.of(1, 2, 3, 4, 5).append(6))
     .toEqual(List.of(1, 2, 3, 4, 5, 6));
@@ -355,10 +438,75 @@ test('toArray', () => {
     .toEqual([1, 2, 3, 4, 5]);
 });
 
+test('List.of', () => {
+  expect(List.of(3, 2, 1).value).toEqual([3, 2, 1]);
+});
+
+test('List.pure', () => {
+  expect(List.pure(3, 2, 1).value).toEqual([3, 2, 1]);
+});
+
+test('List.return', () => {
+  expect(List.return(3, 2, 1).value).toEqual([3, 2, 1]);
+});
+
+test('List.empty', () => {
+  expect(List.empty().value).toEqual([]);
+});
+
+test('List.mappend', () => {
+  expect(List.mappend (List.of(3, 2, 1)) (List.of(3, 2, 1))).toEqual(List.of(3, 2, 1, 3, 2, 1));
+});
+
+test('List.cons', () => {
+  expect(List.cons (List.of(3, 2, 1)) (4)).toEqual(List.of(4, 3, 2, 1));
+});
+
+test('List.subscript', () => {
+  expect(List.subscript (List.of(3, 2, 1)) (2)).toEqual(Just(1));
+  expect(List.subscript (List.of(3, 2, 1)) (4)).toEqual(Nothing());
+  expect(List.subscript (List.of(3, 2, 1)) (-1)).toEqual(Nothing());
+});
+
+test('List.map', () => {
+  expect(List.map(x => x * 2)(List.of(3, 2, 1))).toEqual(List.of(6, 4, 2));
+});
+
+test('List.foldl', () => {
+  expect(List.foldl (acc => x => acc + x) (0) (List.of(3, 2, 1)))
+    .toEqual(6);
+});
+
+test('List.maximum', () => {
+  expect(List.maximum(List.of(3, 2, 1)))
+    .toEqual(3);
+  expect(List.maximum(List.of()))
+    .toEqual(-Infinity);
+});
+
+test('List.unfoldr', () => {
+  expect(List.unfoldr(x => x < 11 ? Just(Tuple.of(x)(x + 1)) : Nothing())(1))
+    .toEqual(List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10));
+});
+
+test('List.take', () => {
+  expect(List.take (3) (List.of(1, 2, 3, 4, 5)))
+    .toEqual(List.of(1, 2, 3));
+  expect(List.take (6) (List.of(1, 2, 3, 4, 5)))
+    .toEqual(List.of(1, 2, 3, 4, 5));
+});
+
+test('List.elem', () => {
+  expect(List.elem (3) (List.of(1, 2, 3, 4, 5)))
+    .toBeTruthy();
+  expect(List.elem (6) (List.of(1, 2, 3, 4, 5)))
+    .toBeFalsy();
+});
+
 test('List.find', () => {
-  expect(List.find(e => /t/.test(e))(List.of('one', 'two', 'three')))
+  expect(List.find (e => /t/.test(e)) (List.of('one', 'two', 'three')))
     .toEqual(Just('two'));
-  expect(List.find(e => /tr/.test(e))(List.of('one', 'two', 'three')))
+  expect(List.find (e => /tr/.test(e)) (List.of('one', 'two', 'three')))
     .toEqual(Nothing());
 });
 
@@ -368,7 +516,7 @@ test('List.filter', () => {
 });
 
 test('List.toMap', () => {
-  expect(List.toMap(List.of(Tuple.of(1, 'a'), Tuple.of(2, 'b'), Tuple.of(3, 'c'))))
+  expect(List.toMap(List.of(Tuple.of(1)('a'), Tuple.of(2)('b'), Tuple.of(3)('c'))))
     .toEqual(OrderedMap.of([[1, 'a'], [2, 'b'], [3, 'c']]));
 });
 
@@ -387,23 +535,4 @@ test('List.isList', () => {
     .toBeTruthy();
   expect(List.isList(4))
     .toBeFalsy();
-});
-
-test('List.map', () => {
-  expect(List.map(x => x * 2, List.of(3, 2, 1))).toEqual(List.of(6, 4, 2));
-  expect(List.map(x => x * 2)(List.of(3, 2, 1))).toEqual(List.of(6, 4, 2));
-});
-
-test('List.maximum', () => {
-  expect(List.maximum(List.of(3, 2, 1)))
-    .toEqual(3);
-  expect(List.maximum(List.of()))
-    .toEqual(-Infinity);
-});
-
-test('List.unfoldr', () => {
-  expect(List.unfoldr(x => x < 11 ? Just(Tuple.of(x, x + 1)) : Nothing(), 1))
-    .toEqual(List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10));
-  expect(List.unfoldr(x => x < 11 ? Just(Tuple.of(x, x + 1)) : Nothing())(1))
-    .toEqual(List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10));
 });

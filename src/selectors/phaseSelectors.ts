@@ -1,14 +1,14 @@
 import { createSelector } from 'reselect';
-import { Just } from '../utils/dataUtils';
+import { Maybe } from '../utils/dataUtils';
 import { getPhase } from './stateSelectors';
 import { getIsEditingHeroAfterCreationPhaseEnabled } from './uisettingsSelectors';
 
-export const getIsInCharacterCreation = createSelector(
+export const getIsInCharacterCreation = createSelector (
   getPhase,
-  phase => phase.equals(Just(2))
+  Maybe.elem (2)
 );
 
-export const isRemovingEnabled = createSelector(
+export const getIsRemovingEnabled = createSelector (
   getIsInCharacterCreation,
   getIsEditingHeroAfterCreationPhaseEnabled,
   (isInCharacterCreation, isEditingHeroAfterCreationPhaseEnabled) =>

@@ -15,21 +15,22 @@ type Dependency<T extends Data.Dependent> =
 
 const addDependency = <T extends Data.Dependent>(
   add: Dependency<T>,
-) => (obj: T): Just<T> => Maybe.Just((obj as Record<any>).update(
-  (dependencies: RecordInterface<T>['dependencies']) =>
-    Maybe.Just((dependencies as List<any>).append(add)),
-  'dependencies'
-) as T);
+) => (obj: T): Just<T> => Maybe.pure (
+  (obj as Record<any>).update (
+    (dependencies: RecordInterface<T>['dependencies']) =>
+      Maybe.pure ((dependencies as List<any>).append (add))
+  ) ('dependencies') as T
+);
 
 /**
  * Returns needed entry creator for given increasable category.
  * @param category
  */
-const getIncreasableCreator: (id: string) => IncreasableCreator = R.pipe(
+const getIncreasableCreator: (id: string) => IncreasableCreator = R.pipe (
   getCategoryById,
   category =>
-    category.fmap(ActivatableSkillCategories.elem as (value: Categories) => boolean)
-      .equals(Maybe.Just(true))
+    category.fmap (ActivatableSkillCategories.elem as (value: Categories) => boolean)
+      .equals (Maybe.pure (true))
         ? CreateEntryUtils.createActivatableDependentSkill
         : CreateEntryUtils.createDependentSkill
 );
@@ -37,26 +38,26 @@ const getIncreasableCreator: (id: string) => IncreasableCreator = R.pipe(
 export const addAttributeDependency = (
   id: string,
   value: Data.SkillDependency,
-) => adjustHeroListStateItemOr(
+) => adjustHeroListStateItemOr (
   CreateEntryUtils.createAttributeDependent,
-  addDependency<Record<Data.AttributeDependent>>(value),
+  addDependency<Record<Data.AttributeDependent>> (value),
   id
 );
 
 export const addIncreasableDependency = (
   id: string,
   value: Data.SkillDependency,
-) => adjustHeroListStateItemOr(
-  getIncreasableCreator(id),
-  addDependency<Data.ExtendedSkillDependent>(value),
+) => adjustHeroListStateItemOr (
+  getIncreasableCreator (id),
+  addDependency<Data.ExtendedSkillDependent> (value),
   id
 );
 
 export const addActivatableDependency = (
   id: string,
   value: Data.ActivatableDependency,
-) => adjustHeroListStateItemOr(
+) => adjustHeroListStateItemOr (
   CreateEntryUtils.createActivatableDependent,
-  addDependency<Record<Data.ActivatableDependent>>(value),
+  addDependency<Record<Data.ActivatableDependent>> (value),
   id
 );

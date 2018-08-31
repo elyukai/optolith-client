@@ -5,9 +5,8 @@ import * as Raw from '../types/rawdata';
 import { WikiAll } from '../types/wiki';
 import { getCombinedPrerequisites } from './activatableActivationUtils';
 import { getActiveFromState } from './activatableConvertUtils';
-import { StringKeyObject } from './collectionUtils';
 import * as CreateDependencyObjectUtils from './createEntryUtils';
-import { List, Maybe, OrderedMap, OrderedSet, Record } from './dataUtils';
+import { List, Maybe, OrderedMap, OrderedSet, Record, StringKeyObject } from './dataUtils';
 import { addDependencies } from './dependencyUtils';
 import { exists } from './exists';
 import { addAllStyleRelatedDependencies } from './ExtendedStyleUtils';
@@ -38,7 +37,7 @@ const getUnchangedProperties = (id: string, hero: Raw.RawHero) => {
     phase,
     name,
     avatar,
-    adventurePoints: Record.of(ap),
+    adventurePoints: Record.of (ap),
     race: r,
     raceVariant: rv,
     culture: c,
@@ -47,7 +46,7 @@ const getUnchangedProperties = (id: string, hero: Raw.RawHero) => {
     professionVariant: pv,
     sex,
     experienceLevel: el,
-    personalData: Record.of(pers),
+    personalData: Record.of (pers),
   };
 };
 
@@ -63,21 +62,21 @@ const getDates = (hero: Raw.RawHero) => {
   const { dateCreated, dateModified } = hero;
 
   return {
-    dateCreated: new Date(dateCreated),
-    dateModified: new Date(dateModified),
+    dateCreated: new Date (dateCreated),
+    dateModified: new Date (dateModified),
   };
 };
 
 const getActivatableDependent = (
   source: StringKeyObject<Data.ActiveObject[]>
 ): (OrderedMap<string, Record<Data.ActivatableDependent>>) =>
-  OrderedMap.of(
-    Object.entries(source).map<[string, Record<Data.ActivatableDependent>]>(
+  OrderedMap.of (
+    Object.entries (source).map<[string, Record<Data.ActivatableDependent>]> (
       ([id, active]) => [
         id,
-        CreateDependencyObjectUtils.createActivatableDependent(
+        CreateDependencyObjectUtils.createActivatableDependent (
           id,
-          { active: List.of(...active.map(Record.of)) }
+          { active: List.of (...active.map (Record.of)) }
         ),
       ]
     )
@@ -90,37 +89,38 @@ interface ActivatableMaps {
 }
 
 const getActivatables = (hero: Raw.RawHero): ActivatableMaps => {
-  const objectsInMap = getActivatableDependent(hero.activatable);
+  const objectsInMap = getActivatableDependent (hero.activatable);
 
-  return objectsInMap.foldlWithKey<ActivatableMaps>(
+  return objectsInMap.foldlWithKey<ActivatableMaps> (
     acc => id => obj => {
-      const category = getCategoryById(id);
+      const category = getCategoryById (id);
 
-      if (category.equals(Maybe.Just(Categories.ADVANTAGES))) {
+      if (category.equals (Maybe.pure (Categories.ADVANTAGES))) {
         return {
           ...acc,
-          advantages: acc.advantages.insert(id, obj),
+          advantages: acc.advantages.insert (id) (obj),
         };
       }
-      else if (category.equals(Maybe.Just(Categories.DISADVANTAGES))) {
+      else if (category.equals (Maybe.pure (Categories.DISADVANTAGES))) {
         return {
           ...acc,
-          disadvantages: acc.disadvantages.insert(id, obj),
+          disadvantages: acc.disadvantages.insert (id) (obj),
         };
       }
-      else if (category.equals(Maybe.Just(Categories.SPECIAL_ABILITIES))) {
+      else if (category.equals (Maybe.pure (Categories.SPECIAL_ABILITIES))) {
         return {
           ...acc,
-          specialAbilities: acc.specialAbilities.insert(id, obj),
+          specialAbilities: acc.specialAbilities.insert (id) (obj),
         };
       }
 
       return acc;
-    },
+    }
+  ) (
     {
-      advantages: OrderedMap.empty(),
-      disadvantages: OrderedMap.empty(),
-      specialAbilities: OrderedMap.empty(),
+      advantages: OrderedMap.empty (),
+      disadvantages: OrderedMap.empty (),
+      specialAbilities: OrderedMap.empty (),
     }
   );
 };
@@ -128,11 +128,11 @@ const getActivatables = (hero: Raw.RawHero): ActivatableMaps => {
 const getAttributes = (
   hero: Raw.RawHero
 ): (OrderedMap<string, Record<Data.AttributeDependent>>) =>
-  OrderedMap.of(
-    hero.attr.values.map<[string, Record<Data.AttributeDependent>]>(
+  OrderedMap.of (
+    hero.attr.values.map<[string, Record<Data.AttributeDependent>]> (
       ([id, value, mod]) => [
         id,
-        CreateDependencyObjectUtils.createAttributeDependent(
+        CreateDependencyObjectUtils.createAttributeDependent (
           id,
           { value, mod }
         )
@@ -152,24 +152,24 @@ const getEnergies = (hero: Raw.RawHero): Record<Data.Energies> => {
     },
   } = hero;
 
-  return Record.of<Data.Energies>({
+  return Record.of<Data.Energies> ({
     addedArcaneEnergyPoints,
     addedKarmaPoints,
     addedLifePoints,
-    permanentArcaneEnergyPoints: Record.of(permanentAE),
-    permanentKarmaPoints: Record.of(permanentKP),
-    permanentLifePoints: Record.of(permanentLP)
+    permanentArcaneEnergyPoints: Record.of (permanentAE),
+    permanentKarmaPoints: Record.of (permanentKP),
+    permanentLifePoints: Record.of (permanentLP)
   });
 };
 
 const getDependentSkills = (
   source: StringKeyObject<number>
 ): (OrderedMap<string, Record<Data.SkillDependent>>) =>
-  OrderedMap.of(
-    Object.entries(source).map<[string, Record<Data.SkillDependent>]>(
+  OrderedMap.of (
+    Object.entries (source).map<[string, Record<Data.SkillDependent>]> (
       ([id, value]) => [
         id,
-        CreateDependencyObjectUtils.createDependentSkill(id, { value }),
+        CreateDependencyObjectUtils.createDependentSkill (id, { value }),
       ]
     )
   );
@@ -177,22 +177,22 @@ const getDependentSkills = (
 const getSkills = (
   hero: Raw.RawHero
 ): (OrderedMap<string, Record<Data.SkillDependent>>) =>
-  getDependentSkills(hero.talents);
+  getDependentSkills (hero.talents);
 
 const getCombatTechniques = (
   hero: Raw.RawHero
 ): (OrderedMap<string, Record<Data.SkillDependent>>) =>
-  getDependentSkills(hero.ct);
+  getDependentSkills (hero.ct);
 
 const getActivatableDependentSkills = (
   source: StringKeyObject<number>
 ): (OrderedMap<string, Record<Data.ActivatableSkillDependent>>) =>
-  OrderedMap.of(
-    Object.entries(source)
-      .map<[string, Record<Data.ActivatableSkillDependent>]>(
+  OrderedMap.of (
+    Object.entries (source)
+      .map<[string, Record<Data.ActivatableSkillDependent>]> (
         ([id, value]) => [
           id,
-          CreateDependencyObjectUtils.createActivatableDependentSkill(id, {
+          CreateDependencyObjectUtils.createActivatableDependentSkill (id, {
             active: true,
             value
           }),
@@ -203,22 +203,22 @@ const getActivatableDependentSkills = (
 const getSpells = (
   hero: Raw.RawHero
 ): (OrderedMap<string, Record<Data.ActivatableSkillDependent>>) =>
-  getActivatableDependentSkills(hero.spells);
+  getActivatableDependentSkills (hero.spells);
 
 const getCantrips = (
   hero: Raw.RawHero
 ): OrderedSet<string> =>
-  OrderedSet.of(hero.cantrips);
+  OrderedSet.of (hero.cantrips);
 
 const getLiturgicalChants = (
   hero: Raw.RawHero
 ): (OrderedMap<string, Record<Data.ActivatableSkillDependent>>) =>
-  getActivatableDependentSkills(hero.liturgies);
+  getActivatableDependentSkills (hero.liturgies);
 
 const getBlessings = (
   hero: Raw.RawHero
 ): OrderedSet<string> =>
-  OrderedSet.of(hero.blessings);
+  OrderedSet.of (hero.blessings);
 
 const getBelongings = (hero: Raw.RawHero): Record<Data.Belongings> => {
   const {
@@ -227,10 +227,10 @@ const getBelongings = (hero: Raw.RawHero): Record<Data.Belongings> => {
     purse,
   } = hero.belongings;
 
-  return Record.of<Data.Belongings>({
-    items: OrderedMap.of(
-      Object.entries(items)
-        .map<[string, Record<Data.ItemInstance>]>(
+  return Record.of<Data.Belongings> ({
+    items: OrderedMap.of (
+      Object.entries (items)
+        .map<[string, Record<Data.ItemInstance>]> (
           ([id, obj]) => {
             const {
               imp,
@@ -239,27 +239,27 @@ const getBelongings = (hero: Raw.RawHero): Record<Data.Belongings> => {
               ...other
             } = obj;
 
-            return [id, Record.of<Data.ItemInstance>({
+            return [id, Record.of<Data.ItemInstance> ({
               ...other,
               improvisedWeaponGroup: imp,
-              damageBonus: primaryThreshold && Record.of({
+              damageBonus: primaryThreshold && Record.of ({
                 ...primaryThreshold,
                 threshold: typeof primaryThreshold.threshold === 'object'
-                  ? List.fromArray(primaryThreshold.threshold)
+                  ? List.fromArray (primaryThreshold.threshold)
                   : primaryThreshold.threshold
               }),
-              range: range ? List.fromArray(range) : undefined
+              range: range ? List.fromArray (range) : undefined
             })];
           }
         )
     ),
-    armorZones: OrderedMap.of(
-      Object.entries(armorZones)
-        .map<[string, Record<Data.ArmorZonesInstance>]>(
-          ([id, obj]) => [id, Record.of(obj)]
+    armorZones: OrderedMap.of (
+      Object.entries (armorZones)
+        .map<[string, Record<Data.ArmorZonesInstance>]> (
+          ([id, obj]) => [id, Record.of (obj)]
         )
     ),
-    purse: Record.of(purse),
+    purse: Record.of (purse),
     isInItemCreation: false,
     isInZoneArmorCreation: false
   });
@@ -267,122 +267,117 @@ const getBelongings = (hero: Raw.RawHero): Record<Data.Belongings> => {
 
 const getRules =
   (hero: Raw.RawHero): Record<Data.Rules> =>
-    Record.of({
+    Record.of ({
       ...hero.rules,
-      enabledRuleBooks: OrderedSet.of(hero.rules.enabledRuleBooks),
+      enabledRuleBooks: OrderedSet.of (hero.rules.enabledRuleBooks),
     });
 
 const getPets =
   (hero: Raw.RawHero): OrderedMap<string, Record<Data.PetInstance>> =>
-    exists(hero.pets)
-      ? OrderedMap.of(
-          Object.entries(hero.pets)
-            .map<[string, Record<Data.PetInstance>]>(
-              ([id, obj]) => [id, Record.of(obj)]
+    exists (hero.pets)
+      ? OrderedMap.of (
+          Object.entries (hero.pets)
+            .map<[string, Record<Data.PetInstance>]> (
+              ([id, obj]) => [id, Record.of (obj)]
             )
         )
-      : OrderedMap.empty();
+      : OrderedMap.empty ();
 
 export const getHeroInstance = (
   wiki: Record<WikiAll>,
   id: string,
   hero: Raw.RawHero,
 ): Record<Data.HeroDependent> => {
-  const intermediateState = Record.of<Data.HeroDependent>({
-    ...getUnchangedProperties(id, hero),
-    ...getPlayer(hero),
-    ...getDates(hero),
-    ...getActivatables(hero),
-    attributes: getAttributes(hero),
-    energies: getEnergies(hero),
-    skills: getSkills(hero),
-    combatTechniques: getCombatTechniques(hero),
-    spells: getSpells(hero),
-    cantrips: getCantrips(hero),
-    liturgicalChants: getLiturgicalChants(hero),
-    blessings: getBlessings(hero),
-    belongings: getBelongings(hero),
-    rules: getRules(hero),
-    pets: getPets(hero),
-    combatStyleDependencies: List.of(),
-    magicalStyleDependencies: List.of(),
-    blessedStyleDependencies: List.of()
+  const intermediateState = Record.of<Data.HeroDependent> ({
+    ...getUnchangedProperties (id, hero),
+    ...getPlayer (hero),
+    ...getDates (hero),
+    ...getActivatables (hero),
+    attributes: getAttributes (hero),
+    energies: getEnergies (hero),
+    skills: getSkills (hero),
+    combatTechniques: getCombatTechniques (hero),
+    spells: getSpells (hero),
+    cantrips: getCantrips (hero),
+    liturgicalChants: getLiturgicalChants (hero),
+    blessings: getBlessings (hero),
+    belongings: getBelongings (hero),
+    rules: getRules (hero),
+    pets: getPets (hero),
+    combatStyleDependencies: List.of (),
+    magicalStyleDependencies: List.of (),
+    blessedStyleDependencies: List.of ()
   });
 
-  const advantages = getActiveFromState(intermediateState.get('advantages'));
-  const disadvantages = getActiveFromState(intermediateState.get('disadvantages'));
-  const specialAbilities = getActiveFromState(intermediateState.get('specialAbilities'));
-  const spells = intermediateState.get('spells').foldl(
-    acc => spell => spell.get('active') ? acc.insert(spell.get('id')) : acc,
-    OrderedSet.empty<string>()
-  );
+  const advantages = getActiveFromState (intermediateState.get ('advantages'));
+  const disadvantages = getActiveFromState (intermediateState.get ('disadvantages'));
+  const specialAbilities = getActiveFromState (intermediateState.get ('specialAbilities'));
+  const spells = intermediateState.get ('spells').foldl<OrderedSet<string>> (
+    acc => spell => spell.get ('active') ? acc.insert (spell.get ('id')) : acc
+  ) (OrderedSet.empty ());
 
-  const addAllDependencies = R.pipe(
-    advantages.foldl<Record<Data.HeroDependent>>(
-      state => entry => Maybe.fromMaybe(
-        state,
-        wiki.get('advantages').lookup(entry.get('id'))
-          .fmap(
-            wikiEntry => addDependencies(
+  const addAllDependencies = R.pipe (
+    advantages.foldl<Record<Data.HeroDependent>> (
+      state => entry => Maybe.fromMaybe (state) (
+        wiki.get ('advantages').lookup (entry.get ('id'))
+          .fmap (
+            wikiEntry => addDependencies (
               state,
-              getCombinedPrerequisites(
+              getCombinedPrerequisites (
                 wikiEntry,
-                intermediateState.get('advantages').lookup(entry.get('id')),
+                intermediateState.get ('advantages').lookup (entry.get ('id')),
                 entry as any as Record<Data.ActiveObject>,
                 true
               ),
-              entry.get('id')
+              entry.get ('id')
             )
           )
       )
     ),
-    disadvantages.foldl<Record<Data.HeroDependent>>(
-      state => entry => Maybe.fromMaybe(
-        state,
-        wiki.get('disadvantages').lookup(entry.get('id'))
-          .fmap(
-            wikiEntry => addDependencies(
+    disadvantages.foldl<Record<Data.HeroDependent>> (
+      state => entry => Maybe.fromMaybe (state) (
+        wiki.get ('disadvantages').lookup (entry.get ('id'))
+          .fmap (
+            wikiEntry => addDependencies (
               state,
-              getCombinedPrerequisites(
+              getCombinedPrerequisites (
                 wikiEntry,
-                intermediateState.get('disadvantages').lookup(entry.get('id')),
+                intermediateState.get ('disadvantages').lookup (entry.get ('id')),
                 entry as any as Record<Data.ActiveObject>,
                 true
               ),
-              entry.get('id')
+              entry.get ('id')
             )
           )
       )
     ),
-    specialAbilities.foldl<Record<Data.HeroDependent>>(
-      state => entry => Maybe.fromMaybe(
-        state,
-        wiki.get('specialAbilities').lookup(entry.get('id'))
-          .fmap(
-            wikiEntry => addAllStyleRelatedDependencies(
-              addDependencies(
+    specialAbilities.foldl<Record<Data.HeroDependent>> (
+      state => entry => Maybe.fromMaybe (state) (
+        wiki.get ('specialAbilities').lookup (entry.get ('id'))
+          .fmap (
+            wikiEntry => addAllStyleRelatedDependencies (
+              addDependencies (
                 state,
-                getCombinedPrerequisites(
+                getCombinedPrerequisites (
                   wikiEntry,
-                  intermediateState.get('specialAbilities').lookup(entry.get('id')),
+                  intermediateState.get ('specialAbilities').lookup (entry.get ('id')),
                   entry as any as Record<Data.ActiveObject>,
                   true
                 ),
-                entry.get('id')
+                entry.get ('id')
               ),
               wikiEntry
             )
           )
       )
     ),
-    spells.foldl<Record<Data.HeroDependent>>(
-      state => spellId => Maybe.fromMaybe(
-        state,
-        wiki.get('spells').lookup(spellId)
-          .fmap(
-            wikiEntry => addDependencies(
+    spells.foldl<Record<Data.HeroDependent>> (
+      state => spellId => Maybe.fromMaybe (state) (
+        wiki.get ('spells').lookup (spellId)
+          .fmap (
+            wikiEntry => addDependencies (
               state,
-              wikiEntry.get('prerequisites'),
+              wikiEntry.get ('prerequisites'),
               spellId
             )
           )
@@ -390,7 +385,7 @@ export const getHeroInstance = (
     )
   );
 
-  return addAllDependencies(intermediateState);
+  return addAllDependencies (intermediateState);
 }
 
 export const getInitialHeroObject = (
@@ -402,57 +397,57 @@ export const getInitialHeroObject = (
   enableAllRuleBooks: boolean,
   enabledRuleBooks: OrderedSet<string>,
 ): Record<Data.HeroDependent> => {
-  return Record.of<Data.HeroDependent>({
+  return Record.of<Data.HeroDependent> ({
     id,
     clientVersion: currentVersion,
     phase: 1,
     name,
-    adventurePoints: Record.of({
+    adventurePoints: Record.of ({
       total: totalAp,
       spent: 0,
     }),
     sex,
     experienceLevel,
-    personalData: Record.of({}),
-    rules: Record.of<Data.Rules>({
+    personalData: Record.of ({}),
+    rules: Record.of<Data.Rules> ({
       higherParadeValues: 0,
       attributeValueLimit: false,
       enableAllRuleBooks,
       enabledRuleBooks,
       enableLanguageSpecializations: false,
     }),
-    dateCreated: new Date(),
-    dateModified: new Date(),
-    advantages: OrderedMap.empty(),
-    disadvantages: OrderedMap.empty(),
-    specialAbilities: OrderedMap.empty(),
-    attributes: OrderedMap.empty(),
-    energies: Record.of({
+    dateCreated: new Date (),
+    dateModified: new Date (),
+    advantages: OrderedMap.empty (),
+    disadvantages: OrderedMap.empty (),
+    specialAbilities: OrderedMap.empty (),
+    attributes: OrderedMap.empty (),
+    energies: Record.of ({
       addedArcaneEnergyPoints: 0,
       addedKarmaPoints: 0,
       addedLifePoints: 0,
-      permanentArcaneEnergyPoints: Record.of({
+      permanentArcaneEnergyPoints: Record.of ({
         lost: 0,
         redeemed: 0,
       }),
-      permanentKarmaPoints: Record.of({
+      permanentKarmaPoints: Record.of ({
         lost: 0,
         redeemed: 0,
       }),
-      permanentLifePoints: Record.of({
+      permanentLifePoints: Record.of ({
         lost: 0
       })
     }),
-    skills: OrderedMap.empty(),
-    combatTechniques: OrderedMap.empty(),
-    spells: OrderedMap.empty(),
-    cantrips: OrderedSet.empty(),
-    liturgicalChants: OrderedMap.empty(),
-    blessings: OrderedSet.empty(),
-    belongings: Record.of<Data.Belongings>({
-      items: OrderedMap.empty(),
-      armorZones: OrderedMap.empty(),
-      purse: Record.of({
+    skills: OrderedMap.empty (),
+    combatTechniques: OrderedMap.empty (),
+    spells: OrderedMap.empty (),
+    cantrips: OrderedSet.empty (),
+    liturgicalChants: OrderedMap.empty (),
+    blessings: OrderedSet.empty (),
+    belongings: Record.of<Data.Belongings> ({
+      items: OrderedMap.empty (),
+      armorZones: OrderedMap.empty (),
+      purse: Record.of ({
         d: '',
         s: '',
         h: '',
@@ -461,9 +456,9 @@ export const getInitialHeroObject = (
       isInItemCreation: false,
       isInZoneArmorCreation: false,
     }),
-    pets: OrderedMap.empty(),
-    combatStyleDependencies: List.of(),
-    magicalStyleDependencies: List.of(),
-    blessedStyleDependencies: List.of()
+    pets: OrderedMap.empty (),
+    combatStyleDependencies: List.of (),
+    magicalStyleDependencies: List.of (),
+    blessedStyleDependencies: List.of ()
   });
 };

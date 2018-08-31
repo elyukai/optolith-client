@@ -2,39 +2,39 @@ import { remote } from 'electron';
 import * as fs from 'fs';
 
 export const readFile = (path: string, encoding: string = 'utf8') => {
-  return new Promise<string | Buffer>((resolve, reject) => {
-    fs.readFile(path, encoding, (error, data) => {
+  return new Promise<string | Buffer> ((resolve, reject) => {
+    fs.readFile (path, encoding, (error, data) => {
       if (error) {
-        reject(error);
+        reject (error);
       }
       else {
-        resolve(data);
+        resolve (data);
       }
     });
   });
 };
 
 export const readDir = (path: string) => {
-  return new Promise<string[]>((resolve, reject) => {
-    fs.readdir(path, (error, data) => {
+  return new Promise<string[]> ((resolve, reject) => {
+    fs.readdir (path, (error, data) => {
       if (error) {
-        reject(error);
+        reject (error);
       }
       else {
-        resolve(data);
+        resolve (data);
       }
     });
   });
 };
 
 export const writeFile = (path: string, data: any) => {
-  return new Promise<void>((resolve, reject) => {
-    fs.writeFile(path, data, error => {
+  return new Promise<void> ((resolve, reject) => {
+    fs.writeFile (path, data, error => {
       if (error) {
-        reject(error);
+        reject (error);
       }
       else {
-        resolve();
+        resolve ();
       }
     });
   });
@@ -45,15 +45,15 @@ export const writeFile = (path: string, data: any) => {
  */
 export const windowPrintToPDF = (
   options: Electron.PrintToPDFOptions,
-  window: Electron.BrowserWindow = remote.getCurrentWindow(),
+  window: Electron.BrowserWindow = remote.getCurrentWindow (),
 ) => {
-  return new Promise<Buffer>((resolve, reject) => {
-    window.webContents.printToPDF(options, (error, data) => {
+  return new Promise<Buffer> ((resolve, reject) => {
+    window.webContents.printToPDF (options, (error, data) => {
       if (error) {
-        reject(error);
+        reject (error);
       }
       else {
-        resolve(data);
+        resolve (data);
       }
     });
   });
@@ -64,11 +64,11 @@ export const windowPrintToPDF = (
  */
 export const showSaveDialog = (
   options: Electron.SaveDialogOptions,
-  window: Electron.BrowserWindow = remote.getCurrentWindow(),
+  window: Electron.BrowserWindow = remote.getCurrentWindow (),
 ) => {
-  return new Promise<string | undefined>(resolve => {
-    remote.dialog.showSaveDialog(window, options, filename => {
-      resolve(filename);
+  return new Promise<string | undefined> (resolve => {
+    remote.dialog.showSaveDialog (window, options, filename => {
+      resolve (filename);
     });
   });
 };
@@ -78,25 +78,25 @@ export const showSaveDialog = (
  */
 export const showOpenDialog = (
   options: Electron.OpenDialogOptions,
-  window: Electron.BrowserWindow = remote.getCurrentWindow(),
+  window: Electron.BrowserWindow = remote.getCurrentWindow (),
 ) => {
-  return new Promise<string[] | undefined>(resolve => {
-    remote.dialog.showOpenDialog(window, options, filenames => {
+  return new Promise<string[] | undefined> (resolve => {
+    remote.dialog.showOpenDialog (window, options, filenames => {
       if (filenames) {
-        resolve(filenames);
+        resolve (filenames);
       }
-      resolve();
+      resolve ();
     });
   });
 };
 
 export const getSystemLocale = () => {
-  const systemLocale = remote.app.getLocale();
+  const systemLocale = remote.app.getLocale ();
 
-  if (systemLocale.match(/^de/)) {
+  if (systemLocale.match (/^de/)) {
     return 'de-DE';
   }
-  else if (systemLocale.match(/^nl/)) {
+  else if (systemLocale.match (/^nl/)) {
     return 'nl-BE';
   }
 
@@ -113,8 +113,8 @@ export const bytify = (number: number, localeId: string) => {
     number /= 1024;
   }
 
-  const rounded = Math.round(number * 10);
-  const localizedNumber = (rounded / 10).toLocaleString(localeId);
+  const rounded = Math.round (number * 10);
+  const localizedNumber = (rounded / 10).toLocaleString (localeId);
 
   return `${localizedNumber} ${byteTags[tier]}B`;
 };

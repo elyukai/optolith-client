@@ -4,7 +4,7 @@ import * as TalentsActions from '../actions/TalentsActions';
 import { AppState } from '../reducers/app';
 import { getPresent } from '../selectors/currentHeroSelectors';
 import { getDerivedCharacteristicsMap } from '../selectors/derivedCharacteristicsSelectors';
-import { isRemovingEnabled } from '../selectors/phaseSelectors';
+import { getIsRemovingEnabled } from '../selectors/phaseSelectors';
 import { getAttributes, getPhase, getSkillsFilterText } from '../selectors/stateSelectors';
 import { getFilteredSkills, getTalentsRating } from '../selectors/talentsSelectors';
 import { getTalentsCultureRatingVisibility, getTalentsSortOrder } from '../selectors/uisettingsSelectors';
@@ -15,7 +15,7 @@ function mapStateToProps(state: AppState) {
 		attributes: getAttributes(state),
 		currentHero: getPresent(state),
 		derivedCharacteristics: getDerivedCharacteristicsMap(state),
-		isRemovingEnabled: isRemovingEnabled(state),
+		isRemovingEnabled: getIsRemovingEnabled(state),
 		list: getFilteredSkills(state),
 		phase: getPhase(state),
 		sortOrder: getTalentsSortOrder(state),

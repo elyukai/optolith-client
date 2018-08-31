@@ -2,14 +2,13 @@ import { Categories } from '../constants/Categories';
 import { IdPrefixes } from '../constants/IdPrefixes';
 import * as Raw from '../types/rawdata';
 import * as Wiki from '../types/wiki';
-import { StringKeyObject } from './collectionUtils';
 import { convertRawApplications, convertRawIncreaseSkills, convertRawPrerequisiteObjects, convertRawPrerequisites, convertRawProfessionDependencyObjects, convertRawProfessionPrerequisiteObjects, convertRawProfessionRequiresActivatableObject, convertRawProfessionSelections, convertRawProfessionVariantSelections, convertRawSelections, mapRawWithPrefix } from './convertRawObjectsToWikiUtils';
-import { Just, List, Maybe, Nothing, OrderedMap, Record, Tuple } from './dataUtils';
+import { Just, List, Maybe, Nothing, OrderedMap, Record, StringKeyObject, Tuple } from './dataUtils';
 
 const getSourceBooks =
   (srcIds: string[], srcPages: number[]): List<Record<Wiki.SourceLink>> =>
-    List.fromArray(srcIds.map(
-      (bookId, index) => Record.of({ id: bookId, page: srcPages[index] })
+    List.fromArray (srcIds.map (
+      (bookId, index) => Record.of ({ id: bookId, page: srcPages[index] })
     ));
 
 export const initExperienceLevel = (
@@ -22,14 +21,14 @@ export const initExperienceLevel = (
   if (localeObject) {
     const { name } = localeObject;
 
-    return Just(Record.of({
+    return Just (Record.of ({
       ...raw,
       id,
       name
     }));
   }
 
-  return Nothing();
+  return Nothing ();
 };
 
 interface SizeNew {
@@ -40,7 +39,7 @@ interface SizeNew {
 const convertSize = (
   old: (number | [number, number])[] | undefined,
 ): SizeNew | undefined => {
-  return old && old.reduce<SizeNew>(
+  return old && old.reduce<SizeNew> (
     (obj, value) => {
       if (typeof value === 'number') {
         return {
@@ -53,12 +52,12 @@ const convertSize = (
 
       return {
         ...obj,
-        sizeRandom: obj.sizeRandom.append(Record.of({ amount, sides }))
+        sizeRandom: obj.sizeRandom.append (Record.of ({ amount, sides }))
       };
     },
     {
       sizeBase: 0,
-      sizeRandom: List.of()
+      sizeRandom: List.of ()
     }
   );
 };
@@ -71,7 +70,7 @@ interface WeightNew {
 const convertWeight = (
   old: (number | [number, number])[],
 ): WeightNew => {
-  return old.reduce<WeightNew>(
+  return old.reduce<WeightNew> (
     (obj, value) => {
       if (typeof value === 'number') {
         return {
@@ -84,12 +83,12 @@ const convertWeight = (
 
       return {
         ...obj,
-        weightRandom: obj.weightRandom.append(Record.of({ amount, sides }))
+        weightRandom: obj.weightRandom.append (Record.of ({ amount, sides }))
       };
     },
     {
       weightBase: 0,
-      weightRandom: List.of()
+      weightRandom: List.of ()
     }
   );
 };
@@ -140,65 +139,64 @@ export const initRace = (
       vars
     } = raw;
 
-    return Just(Record.of<Wiki.Race>({
+    return Just (Record.of<Wiki.Race> ({
       ap,
-      attributeAdjustments: List.fromArray(attr.map<Tuple<number, string>>(
-        e => Tuple.of(e[0], `${IdPrefixes.ATTRIBUTES}_${e[1]}`)
+      attributeAdjustments: List.fromArray (attr.map (
+        e => Tuple.of<number, string> (e[0]) (`${IdPrefixes.ATTRIBUTES}_${e[1]}`)
       )),
-      attributeAdjustmentsSelection: Tuple.of(
-        attr_sel[0],
-        List.fromArray(attr_sel[1].map(k => `${IdPrefixes.ATTRIBUTES}_${k}`))
+      attributeAdjustmentsSelection: Tuple.of<number, List<string>> (attr_sel[0]) (
+        List.fromArray (attr_sel[1].map (k => `${IdPrefixes.ATTRIBUTES}_${k}`))
       ),
       attributeAdjustmentsText,
-      automaticAdvantages: List.fromArray(auto_adv.map(
+      automaticAdvantages: List.fromArray (auto_adv.map (
         e => `${IdPrefixes.ADVANTAGES}_${e}`
       )),
       automaticAdvantagesCost: autoAdvCost,
       automaticAdvantagesText,
       category: Categories.RACES,
-      eyeColors: eyes && List.fromArray(eyes),
-      hairColors: hair && List.fromArray(hair),
+      eyeColors: eyes && List.fromArray (eyes),
+      hairColors: hair && List.fromArray (hair),
       id,
-      stronglyRecommendedAdvantages: List.fromArray(imp_adv.map(
+      stronglyRecommendedAdvantages: List.fromArray (imp_adv.map (
         e => `${IdPrefixes.ADVANTAGES}_${e}`
       )),
       stronglyRecommendedAdvantagesText,
-      stronglyRecommendedDisadvantages: List.fromArray(imp_dadv.map(
+      stronglyRecommendedDisadvantages: List.fromArray (imp_dadv.map (
         e => `${IdPrefixes.DISADVANTAGES}_${e}`
       )),
       stronglyRecommendedDisadvantagesText,
       lp: le,
       mov: gs,
       name,
-      ...convertSize(size),
-      ...convertWeight(weight),
+      ...convertSize (size),
+      ...convertWeight (weight),
       spi: sk,
       tou: zk,
-      commonAdvantages: List.fromArray(typ_adv.map(
+      commonAdvantages: List.fromArray (typ_adv.map (
         e => `${IdPrefixes.ADVANTAGES}_${e}`
       )),
       commonAdvantagesText,
-      commonCultures: List.fromArray(typ_cultures.map(
+      commonCultures: List.fromArray (typ_cultures.map (
         e => `${IdPrefixes.CULTURES}_${e}`
       )),
-      commonDisadvantages: List.fromArray(typ_dadv.map(
+      commonDisadvantages: List.fromArray (typ_dadv.map (
         e => `${IdPrefixes.DISADVANTAGES}_${e}`
       )),
       commonDisadvantagesText,
-      uncommonAdvantages: List.fromArray(untyp_adv.map(
+      uncommonAdvantages: List.fromArray (untyp_adv.map (
         e => `${IdPrefixes.ADVANTAGES}_${e}`
       )),
       uncommonAdvantagesText,
-      uncommonDisadvantages: List.fromArray(untyp_dadv.map(
+      uncommonDisadvantages: List.fromArray (untyp_dadv.map (
         e => `${IdPrefixes.DISADVANTAGES}_${e}`
       )),
       uncommonDisadvantagesText,
-      variants: List.fromArray(vars.map(e => `${IdPrefixes.RACE_VARIANTS}_${e}`)),
-      src: getSourceBooks(srcIds, srcPages)
+      variants: List.fromArray (vars.map (e => `${IdPrefixes.RACE_VARIANTS}_${e}`)),
+      src: getSourceBooks (srcIds, srcPages)
     }));
   }
 
-  return Nothing();
+  return Nothing ();
 };
 
 export const initRaceVariant = (
@@ -228,36 +226,36 @@ export const initRaceVariant = (
       untyp_dadv
     } = raw;
 
-    return Just(Record.of<Wiki.RaceVariant>({
+    return Just (Record.of<Wiki.RaceVariant> ({
       category: Categories.RACE_VARIANTS,
-      eyeColors: eyes && List.fromArray(eyes),
-      hairColors: hair && List.fromArray(hair),
+      eyeColors: eyes && List.fromArray (eyes),
+      hairColors: hair && List.fromArray (hair),
       id,
       name,
-      ...convertSize(size),
-      commonAdvantages: List.fromArray(typ_adv.map(
+      ...convertSize (size),
+      commonAdvantages: List.fromArray (typ_adv.map (
         e => `${IdPrefixes.ADVANTAGES}_${e}`
       )),
       commonAdvantagesText,
-      commonCultures: List.fromArray(typ_cultures.map(
+      commonCultures: List.fromArray (typ_cultures.map (
         e => `${IdPrefixes.CULTURES}_${e}`
       )),
-      commonDisadvantages: List.fromArray(typ_dadv.map(
+      commonDisadvantages: List.fromArray (typ_dadv.map (
         e => `${IdPrefixes.DISADVANTAGES}_${e}`
       )),
       commonDisadvantagesText,
-      uncommonAdvantages: List.fromArray(untyp_adv.map(
+      uncommonAdvantages: List.fromArray (untyp_adv.map (
         e => `${IdPrefixes.ADVANTAGES}_${e}`
       )),
       uncommonAdvantagesText,
-      uncommonDisadvantages: List.fromArray(untyp_dadv.map(
+      uncommonDisadvantages: List.fromArray (untyp_dadv.map (
         e => `${IdPrefixes.DISADVANTAGES}_${e}`
       )),
       uncommonDisadvantagesText
     }));
   }
 
-  return Nothing();
+  return Nothing ();
 };
 
 export const initCulture = (
@@ -293,53 +291,53 @@ export const initCulture = (
       src: srcIds
     } = raw;
 
-    return Just(Record.of<Wiki.Culture>({
+    return Just (Record.of<Wiki.Culture> ({
       ...localeRest,
       culturalPackageAdventurePoints: ap,
       category: Categories.CULTURES,
       id,
-      languages: List.fromArray(lang),
-      scripts: List.fromArray(literacy),
-      socialStatus: List.fromArray(social),
-      culturalPackageSkills: List.fromArray(talents.map(e => Record.of({
+      languages: List.fromArray (lang),
+      scripts: List.fromArray (literacy),
+      socialStatus: List.fromArray (social),
+      culturalPackageSkills: List.fromArray (talents.map (e => Record.of ({
         id: `${IdPrefixes.TALENTS}_${e[0]}`,
         value: e[1]
       }))),
-      commonProfessions: List.fromArray(
-        typ_prof.map<Wiki.CommonProfession>(
-          e => typeof e === 'boolean' ? e : Record.of({
+      commonProfessions: List.fromArray (
+        typ_prof.map<Wiki.CommonProfession> (
+          e => typeof e === 'boolean' ? e : Record.of ({
             ...e,
-            list: List.fromArray(e.list)
+            list: List.fromArray (e.list)
           })
         )
       ),
-      commonAdvantages: List.fromArray(typ_adv.map(
+      commonAdvantages: List.fromArray (typ_adv.map (
         e => `${IdPrefixes.ADVANTAGES}_${e}`
       )),
       commonAdvantagesText: commonAdvantages,
-      commonDisadvantages: List.fromArray(typ_dadv.map(
+      commonDisadvantages: List.fromArray (typ_dadv.map (
         e => `${IdPrefixes.DISADVANTAGES}_${e}`
       )),
       commonDisadvantagesText: commonDisadvantages,
-      uncommonAdvantages: List.fromArray(untyp_adv.map(
+      uncommonAdvantages: List.fromArray (untyp_adv.map (
         e => `${IdPrefixes.ADVANTAGES}_${e}`
       )),
       uncommonAdvantagesText: uncommonAdvantages,
-      uncommonDisadvantages: List.fromArray(untyp_dadv.map(
+      uncommonDisadvantages: List.fromArray (untyp_dadv.map (
         e => `${IdPrefixes.DISADVANTAGES}_${e}`
       )),
       uncommonDisadvantagesText: uncommonDisadvantages,
-      commonSkills: List.fromArray(typ_talents.map(
+      commonSkills: List.fromArray (typ_talents.map (
         e => `${IdPrefixes.TALENTS}_${e}`
       )),
-      uncommonSkills: List.fromArray(untyp_talents.map(
+      uncommonSkills: List.fromArray (untyp_talents.map (
         e => `${IdPrefixes.TALENTS}_${e}`
       )),
-      src: getSourceBooks(srcIds, srcPages)
+      src: getSourceBooks (srcIds, srcPages)
     }));
   }
 
-  return Nothing();
+  return Nothing ();
 };
 
 export const initProfession = (
@@ -385,27 +383,27 @@ export const initProfession = (
       sgr
     } = raw;
 
-    return Just(Record.of<Wiki.Profession>({
+    return Just (Record.of<Wiki.Profession> ({
       id,
-      name: typeof name === 'object' ? Record.of(name) : name,
-      subname: typeof subname === 'object' ? Record.of(subname) : subname,
+      name: typeof name === 'object' ? Record.of (name) : name,
+      subname: typeof subname === 'object' ? Record.of (subname) : subname,
       ap,
       apOfActivatables,
       category: Categories.PROFESSIONS,
-      dependencies: convertRawProfessionDependencyObjects(pre_req),
-      prerequisites:  convertRawProfessionPrerequisiteObjects([...req, ...localeReq]),
-      selections: convertRawProfessionSelections(sel),
-      specialAbilities: List.fromArray(sa.map(convertRawProfessionRequiresActivatableObject)),
-      combatTechniques: convertRawIncreaseSkills(combattech, IdPrefixes.COMBAT_TECHNIQUES),
-      skills: convertRawIncreaseSkills(talents, IdPrefixes.TALENTS),
-      spells: convertRawIncreaseSkills(spells, IdPrefixes.SPELLS),
-      liturgicalChants: convertRawIncreaseSkills(chants, IdPrefixes.LITURGIES),
-      blessings: mapRawWithPrefix(blessings, IdPrefixes.BLESSINGS),
-      suggestedAdvantages: mapRawWithPrefix(typ_adv, IdPrefixes.ADVANTAGES),
-      suggestedDisadvantages: mapRawWithPrefix(typ_dadv, IdPrefixes.DISADVANTAGES),
-      unsuitableAdvantages: mapRawWithPrefix(untyp_adv, IdPrefixes.ADVANTAGES),
-      unsuitableDisadvantages: mapRawWithPrefix(untyp_dadv, IdPrefixes.DISADVANTAGES),
-      variants: mapRawWithPrefix(vars, IdPrefixes.PROFESSION_VARIANTS),
+      dependencies: convertRawProfessionDependencyObjects (pre_req),
+      prerequisites:  convertRawProfessionPrerequisiteObjects ([...req, ...localeReq]),
+      selections: convertRawProfessionSelections (sel),
+      specialAbilities: List.fromArray (sa.map (convertRawProfessionRequiresActivatableObject)),
+      combatTechniques: convertRawIncreaseSkills (combattech, IdPrefixes.COMBAT_TECHNIQUES),
+      skills: convertRawIncreaseSkills (talents, IdPrefixes.TALENTS),
+      spells: convertRawIncreaseSkills (spells, IdPrefixes.SPELLS),
+      liturgicalChants: convertRawIncreaseSkills (chants, IdPrefixes.LITURGIES),
+      blessings: mapRawWithPrefix (blessings, IdPrefixes.BLESSINGS),
+      suggestedAdvantages: mapRawWithPrefix (typ_adv, IdPrefixes.ADVANTAGES),
+      suggestedDisadvantages: mapRawWithPrefix (typ_dadv, IdPrefixes.DISADVANTAGES),
+      unsuitableAdvantages: mapRawWithPrefix (untyp_adv, IdPrefixes.ADVANTAGES),
+      unsuitableDisadvantages: mapRawWithPrefix (untyp_dadv, IdPrefixes.DISADVANTAGES),
+      variants: mapRawWithPrefix (vars, IdPrefixes.PROFESSION_VARIANTS),
       gr,
       subgr: sgr,
       prerequisitesEnd,
@@ -414,11 +412,11 @@ export const initProfession = (
       suggestedDisadvantagesText: suggestedDisadvantages,
       unsuitableAdvantagesText: unsuitableAdvantages,
       unsuitableDisadvantagesText: unsuitableDisadvantages,
-      src: getSourceBooks(srcIds, srcPages)
+      src: getSourceBooks (srcIds, srcPages)
     }));
   }
 
-  return Nothing();
+  return Nothing ();
 };
 
 export const initProfessionVariant = (
@@ -448,26 +446,26 @@ export const initProfessionVariant = (
       blessings
     } = raw;
 
-    return Just(Record.of<Wiki.ProfessionVariant>({
+    return Just (Record.of<Wiki.ProfessionVariant> ({
       ...otherLocale,
       id,
-      name: typeof name === 'object' ? Record.of(name) : name,
+      name: typeof name === 'object' ? Record.of (name) : name,
       ap,
       apOfActivatables,
       category: Categories.PROFESSION_VARIANTS,
-      dependencies: convertRawProfessionDependencyObjects(pre_req),
-      prerequisites:  convertRawProfessionPrerequisiteObjects(req),
-      selections: convertRawProfessionVariantSelections(sel),
-      specialAbilities: List.fromArray(sa.map(convertRawProfessionRequiresActivatableObject)),
-      combatTechniques: convertRawIncreaseSkills(combattech, IdPrefixes.COMBAT_TECHNIQUES),
-      skills: convertRawIncreaseSkills(talents, IdPrefixes.TALENTS),
-      spells: convertRawIncreaseSkills(spells, IdPrefixes.SPELLS),
-      liturgicalChants: convertRawIncreaseSkills(chants, IdPrefixes.LITURGIES),
-      blessings: mapRawWithPrefix(blessings, IdPrefixes.BLESSINGS),
+      dependencies: convertRawProfessionDependencyObjects (pre_req),
+      prerequisites:  convertRawProfessionPrerequisiteObjects (req),
+      selections: convertRawProfessionVariantSelections (sel),
+      specialAbilities: List.fromArray (sa.map (convertRawProfessionRequiresActivatableObject)),
+      combatTechniques: convertRawIncreaseSkills (combattech, IdPrefixes.COMBAT_TECHNIQUES),
+      skills: convertRawIncreaseSkills (talents, IdPrefixes.TALENTS),
+      spells: convertRawIncreaseSkills (spells, IdPrefixes.SPELLS),
+      liturgicalChants: convertRawIncreaseSkills (chants, IdPrefixes.LITURGIES),
+      blessings: mapRawWithPrefix (blessings, IdPrefixes.BLESSINGS),
     }));
   }
 
-  return Nothing();
+  return Nothing ();
 };
 
 export const initAdvantage = (
@@ -497,31 +495,31 @@ export const initAdvantage = (
       ...otherData
     } = raw;
 
-    return Just(Record.of<Wiki.Advantage>({
+    return Just (Record.of<Wiki.Advantage> ({
       ...otherLocale,
       ...otherData,
       category: Categories.ADVANTAGES,
-      cost: typeof ap === 'object' ? List.fromArray(ap) : ap,
-      prerequisites: convertRawPrerequisites(req),
-      select: convertRawSelections(localeSel, sel),
+      cost: typeof ap === 'object' ? List.fromArray (ap) : ap,
+      prerequisites: convertRawPrerequisites (req),
+      select: convertRawSelections (localeSel, sel),
       prerequisitesText: reqText,
       prerequisitesTextEnd: reqEnd,
       prerequisitesTextStart: reqStart,
-      prerequisitesTextIndex: OrderedMap.of<number, string | false>([
-        ...Object.entries(reqIndexText).map<[number, string]>(pair => {
+      prerequisitesTextIndex: OrderedMap.of<number, string | false> ([
+        ...Object.entries (reqIndexText).map<[number, string]> (pair => {
           const [index, text] = pair;
 
-          return [Number.parseInt(index) - 1, text];
+          return [Number.parseInt (index) - 1, text];
         }),
-        ...reqIndexIgnore.map<[number, false]>(e => {
-          return [Number.parseInt(e), false];
+        ...reqIndexIgnore.map<[number, false]> (e => {
+          return [Number.parseInt (e), false];
         })
       ]),
-      src: getSourceBooks(srcIds, srcPages)
+      src: getSourceBooks (srcIds, srcPages)
     }));
   }
 
-  return Nothing();
+  return Nothing ();
 };
 
 export const initDisadvantage = (
@@ -551,31 +549,31 @@ export const initDisadvantage = (
       ...otherData
     } = raw;
 
-    return Just(Record.of<Wiki.Disadvantage>({
+    return Just (Record.of<Wiki.Disadvantage> ({
       ...otherLocale,
       ...otherData,
       category: Categories.DISADVANTAGES,
-      cost: typeof ap === 'object' ? List.fromArray(ap) : ap,
-      prerequisites: convertRawPrerequisites(req),
-      select: convertRawSelections(localeSel, sel),
+      cost: typeof ap === 'object' ? List.fromArray (ap) : ap,
+      prerequisites: convertRawPrerequisites (req),
+      select: convertRawSelections (localeSel, sel),
       prerequisitesText: reqText,
       prerequisitesTextEnd: reqEnd,
       prerequisitesTextStart: reqStart,
-      prerequisitesTextIndex: OrderedMap.of<number, string | false>([
-        ...Object.entries(reqIndexText).map<[number, string]>(pair => {
+      prerequisitesTextIndex: OrderedMap.of<number, string | false> ([
+        ...Object.entries (reqIndexText).map<[number, string]> (pair => {
           const [index, text] = pair;
 
-          return [Number.parseInt(index) - 1, text];
+          return [Number.parseInt (index) - 1, text];
         }),
-        ...reqIndexIgnore.map<[number, false]>(e => {
-          return [Number.parseInt(e), false];
+        ...reqIndexIgnore.map<[number, false]> (e => {
+          return [Number.parseInt (e), false];
         })
       ]),
-      src: getSourceBooks(srcIds, srcPages)
+      src: getSourceBooks (srcIds, srcPages)
     }));
   }
 
-  return Nothing();
+  return Nothing ();
 };
 
 export const initSpecialAbility = (
@@ -606,43 +604,43 @@ export const initSpecialAbility = (
       ...otherData
     } = raw;
 
-    return Just(Record.of<Wiki.SpecialAbility>({
+    return Just (Record.of<Wiki.SpecialAbility> ({
       ...otherLocale,
       ...otherData,
       category: Categories.SPECIAL_ABILITIES,
-      cost: typeof ap === 'object' ? List.fromArray(ap) : ap,
-      prerequisites: Array.isArray(req[0])
-        ? OrderedMap.of<number, List<Wiki.AllRequirements>>(
-          (req as [number, Raw.AllRawRequirements[]][]).map(
+      cost: typeof ap === 'object' ? List.fromArray (ap) : ap,
+      prerequisites: Array.isArray (req[0])
+        ? OrderedMap.of<number, List<Wiki.AllRequirements>> (
+          (req as [number, Raw.AllRawRequirements[]][]).map (
             e => [
               e[0],
-              convertRawPrerequisites(e[1])
+              convertRawPrerequisites (e[1])
             ] as [number, List<Wiki.AllRequirements>]
           )
         )
-        : convertRawPrerequisites(req as Raw.AllRawRequirements[]),
-      select: convertRawSelections(localeSel, sel),
+        : convertRawPrerequisites (req as Raw.AllRawRequirements[]),
+      select: convertRawSelections (localeSel, sel),
       prerequisitesText: reqText,
       prerequisitesTextEnd: reqEnd,
       prerequisitesTextStart: reqStart,
-      prerequisitesTextIndex: OrderedMap.of<number, string | false>([
-        ...Object.entries(reqIndexText).map<[number, string]>(pair => {
+      prerequisitesTextIndex: OrderedMap.of<number, string | false> ([
+        ...Object.entries (reqIndexText).map<[number, string]> (pair => {
           const [index, text] = pair;
 
-          return [Number.parseInt(index) - 1, text];
+          return [Number.parseInt (index) - 1, text];
         }),
-        ...reqIndexIgnore.map<[number, false]>(e => {
-          return [Number.parseInt(e), false];
+        ...reqIndexIgnore.map<[number, false]> (e => {
+          return [Number.parseInt (e), false];
         })
       ]),
-      extended: extended && List.fromArray(extended.map(
-        e => typeof e === 'object' ? List.fromArray(e) : e
+      extended: extended && List.fromArray (extended.map (
+        e => typeof e === 'object' ? List.fromArray (e) : e
       )),
-      src: getSourceBooks(srcIds, srcPages)
+      src: getSourceBooks (srcIds, srcPages)
     }));
   }
 
-  return Nothing();
+  return Nothing ();
 };
 
 export const initAttribute = (
@@ -655,7 +653,7 @@ export const initAttribute = (
   if (localeObject) {
     const { name, short } = localeObject;
 
-    return Just(Record.of<Wiki.Attribute>({
+    return Just (Record.of<Wiki.Attribute> ({
       category: Categories.ATTRIBUTES,
       id,
       name,
@@ -663,7 +661,7 @@ export const initAttribute = (
     }));
   }
 
-  return Nothing();
+  return Nothing ();
 };
 
 export const initCombatTechnique = (
@@ -677,19 +675,19 @@ export const initCombatTechnique = (
     const { src: srcPages, ...otherLocale } = localeObject;
     const { gr, skt, leit, bf, src: srcIds, ...otherData } = raw;
 
-    return Just(Record.of<Wiki.CombatTechnique>({
+    return Just (Record.of<Wiki.CombatTechnique> ({
       ...otherLocale,
       ...otherData,
       category: Categories.COMBAT_TECHNIQUES,
       gr,
       ic: skt,
-      primary: List.fromArray(leit),
+      primary: List.fromArray (leit),
       bf,
-      src: getSourceBooks(srcIds, srcPages)
+      src: getSourceBooks (srcIds, srcPages)
     }));
   }
 
-  return Nothing();
+  return Nothing ();
 };
 
 export const initLiturgicalChant = (
@@ -711,25 +709,25 @@ export const initLiturgicalChant = (
 
     const { check, gr, skt, aspc, trad, mod, src: srcIds } = raw;
 
-    return Just(Record.of<Wiki.LiturgicalChant>({
+    return Just (Record.of<Wiki.LiturgicalChant> ({
       ...otherLocale,
-      aspects: List.fromArray(aspc),
+      aspects: List.fromArray (aspc),
       category: Categories.LITURGIES,
-      check: List.fromArray(check),
+      check: List.fromArray (check),
       checkmod: mod,
       gr,
       ic: skt,
       id,
-      tradition: List.fromArray(trad),
+      tradition: List.fromArray (trad),
       castingTime: castingtime,
       castingTimeShort: castingtimeShort,
       cost: kpcost,
       costShort: kpcostShort,
-      src: getSourceBooks(srcIds, srcPages)
+      src: getSourceBooks (srcIds, srcPages)
     }));
   }
 
-  return Nothing();
+  return Nothing ();
 }
 
 export const initBlessing = (
@@ -748,18 +746,18 @@ export const initBlessing = (
 
     const { aspc, trad, req, src: srcIds } = raw;
 
-    return Just(Record.of<Wiki.Blessing>({
+    return Just (Record.of<Wiki.Blessing> ({
       ...otherLocale,
       name,
       category: Categories.BLESSINGS,
-      aspects: List.fromArray(aspc),
-      tradition: List.fromArray(trad),
-      prerequisites: convertRawPrerequisiteObjects(req),
-      src: getSourceBooks(srcIds, srcPages)
+      aspects: List.fromArray (aspc),
+      tradition: List.fromArray (trad),
+      prerequisites: convertRawPrerequisiteObjects (req),
+      src: getSourceBooks (srcIds, srcPages)
     }));
   }
 
-  return Nothing();
+  return Nothing ();
 };
 
 export const initSpell = (
@@ -791,26 +789,26 @@ export const initSpell = (
       src: srcIds
     } = raw;
 
-    return Just(Record.of<Wiki.Spell>({
+    return Just (Record.of<Wiki.Spell> ({
       ...otherLocale,
       category: Categories.SPELLS,
-      check: List.fromArray(check),
+      check: List.fromArray (check),
       checkmod: mod,
       gr,
       ic: skt,
       property: merk,
-      tradition: List.fromArray(trad),
-      subtradition: List.fromArray(subtrad),
-      prerequisites: convertRawPrerequisiteObjects(req),
+      tradition: List.fromArray (trad),
+      subtradition: List.fromArray (subtrad),
+      prerequisites: convertRawPrerequisiteObjects (req),
       castingTime: castingtime,
       castingTimeShort: castingtimeShort,
       cost: aecost,
       costShort: aecostShort,
-      src: getSourceBooks(srcIds, srcPages)
+      src: getSourceBooks (srcIds, srcPages)
     }));
   }
 
-  return Nothing();
+  return Nothing ();
 };
 
 export const initCantrip = (
@@ -829,18 +827,18 @@ export const initCantrip = (
 
     const { merk, trad, req, src: srcIds } = raw;
 
-    return Just(Record.of<Wiki.Cantrip>({
+    return Just (Record.of<Wiki.Cantrip> ({
       ...otherLocale,
       name,
       category: Categories.CANTRIPS,
       property: merk,
-      tradition: List.fromArray(trad),
-      prerequisites: convertRawPrerequisiteObjects(req),
-      src: getSourceBooks(srcIds, srcPages)
+      tradition: List.fromArray (trad),
+      prerequisites: convertRawPrerequisiteObjects (req),
+      src: getSourceBooks (srcIds, srcPages)
     }));
   }
 
-  return Nothing();
+  return Nothing ();
 };
 
 export const initSkill = (
@@ -866,20 +864,20 @@ export const initSkill = (
       applications: appPrerequisites
     } = raw;
 
-    return Just(Record.of<Wiki.Skill>({
+    return Just (Record.of<Wiki.Skill> ({
       ...other,
       category: Categories.TALENTS,
-      check: List.fromArray(check),
+      check: List.fromArray (check),
       encumbrance: be,
       gr,
       ic: skt,
       name,
-      applications: convertRawApplications(appNames, appPrerequisites),
+      applications: convertRawApplications (appNames, appPrerequisites),
       applicationsInput: spec_input,
     }));
   }
 
-  return Nothing();
+  return Nothing ();
 };
 
 export const initItemTemplate = (
@@ -892,21 +890,21 @@ export const initItemTemplate = (
     const { src: srcPages, ...otherLocale } = localeObject;
     const { imp, primaryThreshold, src: srcIds, ...otherData } = raw;
 
-    return Just(Record.of<Wiki.ItemTemplate>({
+    return Just (Record.of<Wiki.ItemTemplate> ({
       ...otherLocale,
       ...otherData,
       amount: 1,
       improvisedWeaponGroup: imp,
-      damageBonus: primaryThreshold && Record.of({
+      damageBonus: primaryThreshold && Record.of ({
         ...primaryThreshold,
         threshold: typeof primaryThreshold.threshold === 'object'
-          ? List.fromArray(primaryThreshold.threshold)
+          ? List.fromArray (primaryThreshold.threshold)
           : primaryThreshold.threshold
       }),
       isTemplateLocked: true,
-      src: getSourceBooks(srcIds, srcPages)
+      src: getSourceBooks (srcIds, srcPages)
     }));
   }
 
-  return Nothing();
+  return Nothing ();
 };

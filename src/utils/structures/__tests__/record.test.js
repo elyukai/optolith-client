@@ -22,49 +22,31 @@ test('lookup', () => {
 });
 
 test('lookupWithDefault', () => {
-  expect(Record.of({ a: 1, b: 2 }).lookupWithDefault(0, 'a')).toEqual(1);
   expect(Record.of({ a: 1, b: 2 }).lookupWithDefault(0)('a')).toEqual(1);
-  expect(Record.of({ a: 1, b: 2 }).lookupWithDefault(0, 'c')).toEqual(0);
   expect(Record.of({ a: 1, b: 2 }).lookupWithDefault(0)('c')).toEqual(0);
 });
 
 test('insert', () => {
-  expect(Record.of({ a: 1, b: 2 }).insert('a', 3))
-    .toEqual(Record.of({ a: 3, b: 2 }));
   expect(Record.of({ a: 1, b: 2 }).insert('a')(3))
-    .toEqual(Record.of({ a: 3, b: 2 }));
-  expect(Record.of({ a: 1, b: 2 }).insert('a', 3))
     .toEqual(Record.of({ a: 3, b: 2 }));
   expect(Record.of({ a: 1, b: 2 }).insert('a')(3))
     .toEqual(Record.of({ a: 3, b: 2 }));
 });
 
 test('modify', () => {
-  expect(Record.of({ a: 1, b: 2 }).modify(x => x * 3, 'b'))
-    .toEqual(Record.of({ a: 1, b: 6 }));
   expect(Record.of({ a: 1, b: 2 }).modify(x => x * 3)('b'))
-    .toEqual(Record.of({ a: 1, b: 6 }));
-  expect(Record.of({ a: 1, b: 2 }).modify(x => x * 3, 'b'))
     .toEqual(Record.of({ a: 1, b: 6 }));
   expect(Record.of({ a: 1, b: 2 }).modify(x => x * 3)('b'))
     .toEqual(Record.of({ a: 1, b: 6 }));
 });
 
 test('update', () => {
-  expect(Record.of({ a: 1, b: 2 }).update(x => Just(x * 3), 'b'))
-    .toEqual(Record.of({ a: 1, b: 6 }));
   expect(Record.of({ a: 1, b: 2 }).update(x => Just(x * 3))('b'))
-    .toEqual(Record.of({ a: 1, b: 6 }));
-  expect(Record.of({ a: 1, b: 2 }).update(x => Just(x * 3), 'b'))
     .toEqual(Record.of({ a: 1, b: 6 }));
   expect(Record.of({ a: 1, b: 2 }).update(x => Just(x * 3))('b'))
     .toEqual(Record.of({ a: 1, b: 6 }));
 
-  expect(Record.of({ a: 1, b: 2 }).update(x => Nothing(), 'b'))
-    .toEqual(Record.of({ a: 1 }));
   expect(Record.of({ a: 1, b: 2 }).update(x => Nothing())('b'))
-    .toEqual(Record.of({ a: 1 }));
-  expect(Record.of({ a: 1, b: 2 }).update(x => Nothing(), 'b'))
     .toEqual(Record.of({ a: 1 }));
   expect(Record.of({ a: 1, b: 2 }).update(x => Nothing())('b'))
     .toEqual(Record.of({ a: 1 }));
@@ -72,31 +54,19 @@ test('update', () => {
 
 test('alter', () => {
   // Modify
-  expect(Record.of({ a: 1, b: 2 }).alter(m => m.fmap(x => x * 3), 'b'))
-    .toEqual(Record.of({ a: 1, b: 6 }));
   expect(Record.of({ a: 1, b: 2 }).alter(m => m.fmap(x => x * 3))('b'))
-    .toEqual(Record.of({ a: 1, b: 6 }));
-  expect(Record.of({ a: 1, b: 2 }).alter(m => m.fmap(x => x * 3), 'b'))
     .toEqual(Record.of({ a: 1, b: 6 }));
   expect(Record.of({ a: 1, b: 2 }).alter(m => m.fmap(x => x * 3))('b'))
     .toEqual(Record.of({ a: 1, b: 6 }));
 
   // Insert
-  expect(Record.of({ a: 1, b: 2 }).alter(m => m.fmap(x => x * 3).alt(Just(3)), 'c'))
-    .toEqual(Record.of({ a: 1, b: 2, c: 3 }));
   expect(Record.of({ a: 1, b: 2 }).alter(m => m.fmap(x => x * 3).alt(Just(3)))('c'))
-    .toEqual(Record.of({ a: 1, b: 2, c: 3 }));
-  expect(Record.of({ a: 1, b: 2 }).alter(m => m.fmap(x => x * 3).alt(Just(3)), 'c'))
     .toEqual(Record.of({ a: 1, b: 2, c: 3 }));
   expect(Record.of({ a: 1, b: 2 }).alter(m => m.fmap(x => x * 3).alt(Just(3)))('c'))
     .toEqual(Record.of({ a: 1, b: 2, c: 3 }));
 
   // Delete
-  expect(Record.of({ a: 1, b: 2 }).alter(x => Nothing(), 'b'))
-    .toEqual(Record.of({ a: 1 }));
   expect(Record.of({ a: 1, b: 2 }).alter(x => Nothing())('b'))
-    .toEqual(Record.of({ a: 1 }));
-  expect(Record.of({ a: 1, b: 2 }).alter(x => Nothing(), 'b'))
     .toEqual(Record.of({ a: 1 }));
   expect(Record.of({ a: 1, b: 2 }).alter(x => Nothing())('b'))
     .toEqual(Record.of({ a: 1 }));
@@ -138,7 +108,7 @@ test('keys', () => {
 
 test('assocs', () => {
   expect(Record.of({ a: 1, b: 2 }).assocs())
-    .toEqual(List.of(Tuple.of('a', 1), Tuple.of('b', 2)));
+    .toEqual(List.of(Tuple.of('a')(1), Tuple.of('b')(2)));
 });
 
 test('toObject', () => {
@@ -154,6 +124,5 @@ test('Record.ofMaybe', () => {
 });
 
 test('Record.get', () => {
-  expect(Record.get('a', Record.of({ a: 1, b: 2 }))).toEqual(1);
   expect(Record.get('a')(Record.of({ a: 1, b: 2 }))).toEqual(1);
 });

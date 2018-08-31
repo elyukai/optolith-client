@@ -20,7 +20,7 @@ const initialState: UILocationState = {
   tab: 'herolist'
 };
 
-export function routeReducer(
+export function routeReducer (
   state: UILocationState = initialState,
   action: Action
 ): UILocationState {

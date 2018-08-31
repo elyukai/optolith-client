@@ -29,7 +29,7 @@ export const isFloat = float.test;
  * @param string The string to test.
  */
 export const isEmptyOr = (check: (string: string) => boolean, string: string) =>
-  string === '' || check(string);
+  string === '' || check (string);
 
 /**
  * Checks if the provided string is a base64 encoded image.

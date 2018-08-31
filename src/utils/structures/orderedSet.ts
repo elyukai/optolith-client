@@ -6,65 +6,63 @@ export class OrderedSet<T> implements Al.Functor<T>, Al.Foldable<T>,
   Al.Filterable<T> {
   private readonly value: ReadonlySet<T>;
 
-  private constructor(initial?: ReadonlySet<T> | T[] | List<T>) {
+  private constructor (initial?: ReadonlySet<T> | T[] | List<T>) {
     // tslint:disable-next-line:prefer-conditional-expression
     if (initial instanceof Set) {
       this.value = initial;
     }
     else if (initial instanceof List) {
-      this.value = new Set(List.toArray(initial));
+      this.value = new Set (List.toArray (initial));
     }
     else if (initial !== undefined) {
-      this.value = new Set(initial);
+      this.value = new Set (initial);
     }
     else {
-      this.value = new Set();
+      this.value = new Set ();
     }
   }
 
-  [Symbol.iterator](): IterableIterator<T> {
-    return this.value[Symbol.iterator]();
-  }
-
-  // QUERY
-
-  /**
-   * `null :: Set a -> Bool`
-   *
-   * Is this the empty set?
-   */
-  null(): boolean {
-    return this.value.size === 0;
-  }
-
-  /**
-   * `size :: Set a -> Int`
-   *
-   * The number of elements in the set.
-   */
-  size(): number {
-    return this.value.size;
-  }
-
-  /**
-   * `member :: Ord a => a -> Set a -> Bool`
-   *
-   * Is the element in the set?
-   */
-  member(value: T): boolean {
-    return this.value.has(value);
-  }
-
-  /**
-   * `notMember :: Ord k => k -> Set a -> Bool`
-   *
-   * Is the element not in the set?
-   */
-  notMember(value: T): boolean {
-    return !this.member(value);
+  [Symbol.iterator] (): IterableIterator<T> {
+    return this.value[Symbol.iterator] ();
   }
 
   // CONSTRUCTION
+
+  /**
+   * Creates a new `OrderedSet` from a native Set or an array of values.
+   */
+  static of<T> (set: ReadonlySet<T> | T[]): OrderedSet<T> {
+    return new OrderedSet (set);
+  }
+
+  /**
+   * `empty :: Set a`
+   *
+   * The empty set.
+   */
+  static empty<T> (): OrderedSet<T> {
+    return new OrderedSet ();
+  }
+
+  /**
+   * `singleton :: a -> Set a`
+   *
+   * Create a singleton set.
+   */
+  static singleton<T> (value: T): OrderedSet<T> {
+    return new OrderedSet ([value]);
+  }
+
+  /**
+   * `fromList :: Ord a => [a] -> Set a`
+   *
+   * Create a set from a list of elements.
+   */
+  static fromList<T> (list: List<T>): OrderedSet<T> {
+    return new OrderedSet (list);
+  }
+
+  // INSERTION
 
   /**
    * `insert :: Ord a => a -> Set a -> Set a`
@@ -72,8 +70,29 @@ export class OrderedSet<T> implements Al.Functor<T>, Al.Foldable<T>,
    * Insert an element in a set. If the set already contains an element equal to
    * the given value, it is replaced with the new value.
    */
-  insert(value: T): OrderedSet<T> {
-    return OrderedSet.of([...this.value, value]);
+  insert (value: T): OrderedSet<T> {
+    return OrderedSet.of ([...this.value, value]);
+  }
+
+  /**
+   * `insert :: Ord a => a -> Set a -> Set a`
+   *
+   * Insert an element in a set. If the set already contains an element equal to
+   * the given value, it is replaced with the new value.
+   */
+  static insert<T> (value: T): (set: OrderedSet<T>) => OrderedSet<T> {
+    return set => OrderedSet.of ([...set.value, value]);
+  }
+
+  // DELETION
+
+  /**
+   * `delete :: Ord a => a -> Set a -> Set a`
+   *
+   * Delete an element from a set.
+   */
+  delete (value: T): OrderedSet<T> {
+    return OrderedSet.of ([...this.value].filter (e => e !== value));
   }
 
   /**
@@ -81,8 +100,82 @@ export class OrderedSet<T> implements Al.Functor<T>, Al.Foldable<T>,
    *
    * Delete an element from a set.
    */
-  delete(value: T): OrderedSet<T> {
-    return OrderedSet.of([...this.value].filter(e => e !== value));
+  static delete<T> (value: T): (set: OrderedSet<T>) => OrderedSet<T> {
+    return set => OrderedSet.of ([...set.value].filter (e => e !== value));
+  }
+
+  // QUERY
+
+  /**
+   * `member :: Ord a => a -> Set a -> Bool`
+   *
+   * Is the element in the set?
+   */
+  member (value: T): boolean {
+    return this.value.has (value);
+  }
+
+  /**
+   * `member :: Ord a => a -> Set a -> Bool`
+   *
+   * Is the element in the set?
+   */
+  static member<T> (value: T): (set: OrderedSet<T>) => boolean {
+    return set => set.value.has (value);
+  }
+
+  /**
+   * `notMember :: Ord k => k -> Set a -> Bool`
+   *
+   * Is the element not in the set?
+   */
+  notMember (value: T): boolean {
+    return !this.member (value);
+  }
+
+  /**
+   * `notMember :: Ord k => k -> Set a -> Bool`
+   *
+   * Is the element not in the set?
+   */
+  static notMember<T> (value: T): (set: OrderedSet<T>) => boolean {
+    return set => !set.member (value);
+  }
+
+  /**
+   * `null :: Set a -> Bool`
+   *
+   * Is this the empty set?
+   */
+  null (): boolean {
+    return this.value.size === 0;
+  }
+
+  /**
+   * `null :: Set a -> Bool`
+   *
+   * Is this the empty set?
+   */
+  static null (set: OrderedSet<any>): boolean {
+    return set.value.size === 0;
+  }
+
+  /**
+   * `size :: Set a -> Int`
+   *
+   * The number of elements in the set.
+   */
+  size (): number {
+    return this.value.size;
+  }
+
+  /**
+   * `size :: Set a -> Int`
+   *
+   * The number of elements in the set.
+   */
+  static size (set: OrderedSet<any>): number {
+    return set.value.size;
   }
 
   // COMBINE
@@ -93,8 +186,8 @@ export class OrderedSet<T> implements Al.Functor<T>, Al.Foldable<T>,
    * The union of two sets, preferring the first set when equal elements are
    * encountered.
    */
-  union(add: OrderedSet<T>) {
-    return OrderedSet.of([...this.value, ...add.value]);
+  union (add: OrderedSet<T>) {
+    return OrderedSet.of ([...this.value, ...add.value]);
   }
 
   // FILTER
@@ -104,15 +197,15 @@ export class OrderedSet<T> implements Al.Functor<T>, Al.Foldable<T>,
    *
    * Filter all values that satisfy the predicate.
    */
-  filter<U extends T>(pred: (value: T) => value is U): OrderedSet<U>;
+  filter<U extends T> (pred: (value: T) => value is U): OrderedSet<U>;
   /**
    * `filter :: (a -> Bool) -> Set a -> Set a`
    *
    * Filter all values that satisfy the predicate.
    */
-  filter(pred: (value: T) => boolean): OrderedSet<T>;
-  filter(pred: (value: T) => boolean): OrderedSet<T> {
-    return OrderedSet.of([...this.value].filter(pred));
+  filter (pred: (value: T) => boolean): OrderedSet<T>;
+  filter (pred: (value: T) => boolean): OrderedSet<T> {
+    return OrderedSet.of ([...this.value].filter (pred));
   }
 
   // MAP
@@ -125,8 +218,8 @@ export class OrderedSet<T> implements Al.Functor<T>, Al.Foldable<T>,
    * It's worth noting that the size of the result may be smaller if, for some
    * `(x,y), x /= y && f x == f y`.
    */
-  fmap<U>(fn: (value: T) => U): OrderedSet<U> {
-    return OrderedSet.of([...this.value].map(fn));
+  fmap<U> (fn: (value: T) => U): OrderedSet<U> {
+    return OrderedSet.of ([...this.value].map (fn));
   }
 
   /**
@@ -137,8 +230,8 @@ export class OrderedSet<T> implements Al.Functor<T>, Al.Foldable<T>,
    * It's worth noting that the size of the result may be smaller if, for some
    * `(x,y), x /= y && f x == f y`.
    */
-  map<U>(fn: (value: T) => U): OrderedSet<U> {
-    return this.fmap(fn);
+  map<U> (fn: (value: T) => U): OrderedSet<U> {
+    return this.fmap (fn);
   }
 
   // FOLDS
@@ -149,32 +242,14 @@ export class OrderedSet<T> implements Al.Functor<T>, Al.Foldable<T>,
    * Fold the elements in the set using the given left-associative binary
    * operator, such that `foldl f z == foldl f z . toAscList`.
    */
-  foldl<U extends Some>(fn: (acc: U) => (current: T) => U): (initial: U) => U;
-  /**
-   * `foldl :: Foldable t => (b -> a -> b) -> b -> t a -> b`
-   *
-   * Fold the elements in the set using the given left-associative binary
-   * operator, such that `foldl f z == foldl f z . toAscList`.
-   */
-  foldl<U extends Some>(fn: (acc: U) => (current: T) => U, initial: U): U;
-  foldl<U extends Some>(
-    fn: (acc: U) => (current: T) => U,
-    initial?: U
-  ): U | ((initial: U) => U) {
-    const resultFn = (x1: (acc: U) => (current: T) => U) => (x2: U) =>
-      [...this.value].reduce<U>((acc, e) => x1(acc)(e), x2);
-
-    if (arguments.length === 2) {
-      return resultFn(fn)(initial!);
-    }
-
-    return resultFn(fn);
+  foldl<U extends Some> (fn: (acc: U) => (current: T) => U): (initial: U) => U {
+    return initial => [...this.value].reduce<U> ((acc, e) => fn (acc) (e), initial);
   }
 
   /**
    * Converts the `OrderedSet` into a native Set instance.
    */
-  toSet(): ReadonlySet<T> {
+  toSet (): ReadonlySet<T> {
     return this.value;
   }
 
@@ -186,32 +261,7 @@ export class OrderedSet<T> implements Al.Functor<T>, Al.Foldable<T>,
    * An alias of toAscList. The elements of a set in ascending order. Subject to
    * list fusion.
    */
-  elems(): List<T> {
-    return List.of(...this.value);
-  }
-
-  /**
-   * Creates a new `OrderedSet` from a native Set or an array of values.
-   */
-  static of<T>(set: ReadonlySet<T> | T[] | List<T>): OrderedSet<T> {
-    return new OrderedSet(set);
-  }
-
-  /**
-   * `empty :: Set a`
-   *
-   * The empty set.
-   */
-  static empty<T>(): OrderedSet<T> {
-    return new OrderedSet();
-  }
-
-  /**
-   * `singleton :: a -> Set a`
-   *
-   * Create a singleton set.
-   */
-  static singleton<T>(value: T): OrderedSet<T> {
-    return new OrderedSet([value]);
+  elems (): List<T> {
+    return List.return (...this.value);
   }
 }

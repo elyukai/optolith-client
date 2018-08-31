@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
 import { getAddPermanentEnergy, getArmorZonesEditorInstance, getCurrentAlert, getEditPermanentEnergy, getIsAddAdventurePointsOpen, getIsCharacterCreatorOpen, getIsEditCharacterAvatarOpen, getIsEditPetAvatarOpen, getIsSettingsOpen, getItemEditorInstance, getUpdateDownloadProgress } from './stateSelectors';
 
-export const isDialogOpen = createSelector(
+export const isDialogOpen = createSelector (
   getCurrentAlert,
   getUpdateDownloadProgress,
   getAddPermanentEnergy,

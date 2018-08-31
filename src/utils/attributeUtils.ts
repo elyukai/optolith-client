@@ -4,45 +4,45 @@ import { getExperienceLevelIdByAp } from '../utils/ELUtils';
 import { Maybe, OrderedMap, Record } from './dataUtils';
 import { flattenDependencies } from './flattenDependencies';
 
-export const getSum =
-  (list: OrderedMap<string, Record<Data.AttributeDependent>>): number =>
-    list.foldl(n => e => n + e.get('value'), 0);
+export const getSum = OrderedMap.foldl<
+  string,
+  Record<Data.AttributeDependent>,
+  number
+> (n => e => n + e.get ('value')) (0);
 
 export const isIncreasable = (
   wiki: Record<Wiki.WikiAll>,
   state: Record<Data.HeroDependent>,
   instance: Record<Data.AttributeDependent>,
 ): boolean => {
-  if (state.get('phase') < 3) {
-    const total = getSum(state.get('attributes'));
+  if (state.get ('phase') < 3) {
+    const total = getSum (state.get ('attributes'));
 
-    return Maybe.fromMaybe(
-      false,
-      wiki.get('experienceLevels').lookup(state.get('experienceLevel'))
-        .fmap(startEl => {
-          const reachedMaxTotal = total >= startEl.get('maxTotalAttributeValues');
+    return Maybe.fromMaybe (false) (
+      wiki.get ('experienceLevels').lookup (state.get ('experienceLevel'))
+        .fmap (startEl => {
+          const reachedMaxTotal = total >= startEl.get ('maxTotalAttributeValues');
 
           if (reachedMaxTotal) {
             return false;
           }
 
-          return instance.get('value')
-            < startEl.get('maxAttributeValue') + instance.get('mod');
+          return instance.get ('value')
+            < startEl.get ('maxAttributeValue') + instance.get ('mod');
         })
     );
   }
-  else if (state.get('rules').get('attributeValueLimit')) {
-    const currentExperienceLevellId = getExperienceLevelIdByAp(
-      wiki.get('experienceLevels'),
-      state.get('adventurePoints').get('total'),
+  else if (state.get ('rules').get ('attributeValueLimit')) {
+    const currentExperienceLevellId = getExperienceLevelIdByAp (
+      wiki.get ('experienceLevels'),
+      state.get ('adventurePoints').get ('total'),
     );
 
-    return Maybe.fromMaybe(
-      false,
-      wiki.get('experienceLevels').lookup(currentExperienceLevellId)
-        .fmap(
+    return Maybe.fromMaybe (false) (
+      wiki.get ('experienceLevels').lookup (currentExperienceLevellId)
+        .fmap (
           currentEl =>
-            instance.get('value') < currentEl.get('maxAttributeValue') + 2
+            instance.get ('value') < currentEl.get ('maxAttributeValue') + 2
         )
     );
   }
@@ -55,21 +55,21 @@ export const isDecreasable = (
   state: Record<Data.HeroDependent>,
   instance: Record<Data.AttributeDependent>,
 ): boolean => {
-  const dependencies = flattenDependencies(
+  const dependencies = flattenDependencies (
     wiki,
     state,
-    instance.get('dependencies'),
+    instance.get ('dependencies'),
   );
 
-  return instance.get('value') > Math.max(8, ...dependencies);
+  return instance.get ('value') > Math.max (8, ...dependencies);
 };
 
 export const getSkillCheckValues =
-  (attributes: OrderedMap<string, Record<Data.AttributeDependent>>) => Maybe.mapMaybe(
-    (id: string) => attributes.lookup(id).fmap(e => e.get('value'))
+  (attributes: OrderedMap<string, Record<Data.AttributeDependent>>) => Maybe.mapMaybe (
+    (id: string) => attributes.lookup (id).fmap (e => e.get ('value'))
   );
 
-export function convertId<T extends string | undefined>(id: T): T {
+export function convertId<T extends string | undefined> (id: T): T {
   switch (id) {
     case 'COU':
       return 'ATTR_1' as T;

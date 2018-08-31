@@ -3,7 +3,7 @@ import * as HerolistActions from '../actions/HerolistActions';
 import * as IOActions from '../actions/IOActions';
 import { ActionTypes } from '../constants/ActionTypes';
 import { HeroDependent, User } from '../types/data';
-import { Maybe, OrderedMap, OrderedSet, Record } from '../utils/dataUtils';
+import { List, Maybe, OrderedMap, OrderedSet, Record } from '../utils/dataUtils';
 import { getInitialHeroObject } from '../utils/initHeroUtils';
 import { reduceReducers } from '../utils/reduceReducers';
 import { UndoState, wrapWithHistoryObject } from '../utils/undo';
@@ -26,12 +26,12 @@ interface HerolistStateObject {
 
 export type HerolistState = Record<HerolistStateObject>;
 
-const initialState: HerolistState = Record.of<HerolistStateObject>({
-  heroes: OrderedMap.empty(),
-  users: OrderedMap.empty()
+const initialState: HerolistState = Record.of<HerolistStateObject> ({
+  heroes: OrderedMap.empty (),
+  users: OrderedMap.empty ()
 });
 
-export function precedingHerolistReducer(
+export function precedingHerolistReducer (
   state: HerolistState = initialState,
   action: PrecedingHerolistReducerAction,
 ): HerolistState {
@@ -47,87 +47,77 @@ export function precedingHerolistReducer(
         totalAp,
       } = action.payload;
 
-      const hero = getInitialHeroObject(
+      const hero = getInitialHeroObject (
         id,
         name,
         sex,
         el,
         totalAp,
         enableAllRuleBooks,
-        OrderedSet.of(enabledRuleBooks),
+        OrderedSet.of (enabledRuleBooks),
       );
 
       return state
-        .insert('currentId', id)
-        .modify(
-          heroes => heroes.insert(id, wrapWithHistoryObject(hero)),
-          'heroes'
-        );
+        .insert ('currentId') (id)
+        .modify<'heroes'> (heroes => heroes.insert (id) (wrapWithHistoryObject (hero)))
+                          ('heroes');
     }
 
     case ActionTypes.LOAD_HERO:
-      return state.insert('currentId', action.payload.id);
+      return state.insert ('currentId') (action.payload.id);
 
     case ActionTypes.SAVE_HERO: {
       const { id } = action.payload.data;
 
-      return state.modify(
-        heroes => heroes.adjust(
+      return state.modify<'heroes'> (
+        heroes => heroes.adjust (
           undoState => ({
             ...undoState,
-            past: []
-          }),
-          id
-        ),
-        'heroes'
-      );
+            past: List.of ()
+          })
+        ) (id)
+      ) ('heroes');
     }
 
     case ActionTypes.DELETE_HERO: {
       const { id } = action.payload;
 
-      const hero = state.get('heroes').lookup(id);
-      const heroes = state.get('heroes').delete(id);
+      const hero = state.get ('heroes').lookup (id);
+      const heroes = state.get ('heroes').delete (id);
 
-      const playerId = hero.bind<string>(
-        justHero => justHero.present.lookup('player')
+      const playerId = hero.bind<string> (
+        justHero => justHero.present.lookup ('player')
       );
 
-      const hasUserMultipleHeroes = heroes.elems().any(
-        e => e.present.lookup('player').equals(playerId)
+      const hasUserMultipleHeroes = heroes.elems ().any (
+        e => e.present.lookup ('player').equals (playerId)
       );
 
-      if (Maybe.isJust(playerId) && !hasUserMultipleHeroes) {
+      if (Maybe.isJust (playerId) && !hasUserMultipleHeroes) {
         return state
-          .modify(
-            users => users.delete(Maybe.fromJust(playerId)),
-            'users'
-          )
-          .insert('heroes', heroes);
+          .modify<'users'> (users => users.delete (Maybe.fromJust (playerId))) ('users')
+          .insert ('heroes') (heroes);
       }
       else {
-        return state.insert('heroes', heroes);
+        return state.insert ('heroes') (heroes);
       }
     }
 
     case ActionTypes.DUPLICATE_HERO: {
       const { id, newId } = action.payload;
 
-      return Maybe.fromMaybe(
-        state,
-        state.get('heroes').lookup(id)
-          .fmap(
-            hero => state.modify(
-              heroes => heroes.insert(
-                newId,
-                wrapWithHistoryObject(
+      return Maybe.fromMaybe (state) (
+        state.get ('heroes').lookup (id)
+          .fmap (
+            hero => state.modify<'heroes'> (
+              heroes => heroes.insert (newId) (
+                wrapWithHistoryObject (
                   hero.present
-                    .insert('id', newId)
-                    .modify(name => `${name} (2)`, 'name')
+                    .insert ('id') (newId)
+                    .modify (name => `${name} (2)`) ('name')
                 )
-              ),
-              'heroes'
-            )
+              )
+            ) ('heroes')
           )
       );
     }
@@ -137,23 +127,18 @@ export function precedingHerolistReducer(
   }
 }
 
-function prepareHeroReducer(state: HerolistState, action: Action): HerolistState {
-  return Maybe.fromMaybe(
-    state,
-    state.lookup('currentId')
-      .fmap(
-        currentId => state.modify(
-          heroes => heroes.adjust(
-            heroState => heroReducer(heroState, action),
-            currentId
-          ),
-          'heroes'
-        )
+function prepareHeroReducer (state: HerolistState, action: Action): HerolistState {
+  return Maybe.fromMaybe (state) (
+    state.lookup ('currentId')
+      .fmap (
+        currentId => state.modify<'heroes'> (
+          heroes => heroes.adjust (heroState => heroReducer (heroState, action)) (currentId)
+        ) ('heroes')
       )
   );
 }
 
-export const herolistReducer = reduceReducers(
+export const herolistReducer = reduceReducers (
   precedingHerolistReducer,
   prepareHeroReducer
 );

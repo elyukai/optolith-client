@@ -12,19 +12,19 @@ import * as Al from '../../types/algebraic';
 export class Identity<T> implements Al.Functor<T>, Al.Applicative<T>, Al.Monad<T> {
   private readonly value: T;
 
-  private constructor(value: T) {
+  private constructor (value: T) {
     this.value = value;
   }
 
-  fmap<U>(fn: (value: T) => U): Identity<U> {
-    return new Identity(fn(this.value));
+  fmap<U> (fn: (value: T) => U): Identity<U> {
+    return new Identity (fn (this.value));
   }
 
-  bind<U>(fn: (value: T) => Identity<U>): Identity<U> {
-    return fn(this.value);
+  bind<U> (fn: (value: T) => Identity<U>): Identity<U> {
+    return fn (this.value);
   }
 
-  sequence<U>(x: Identity<U>): Identity<U> {
+  then<U> (x: Identity<U>): Identity<U> {
     return x;
   }
 
@@ -34,8 +34,8 @@ export class Identity<T> implements Al.Functor<T>, Al.Applicative<T>, Al.Monad<T
    * Transforms the value within the provided `Identity` instance using the
    * function contained withing the instance of this `Identity`.
    */
-  ap<U>(m: Identity<((value: T) => U)>): Identity<U> {
-    return m.fmap(fn => fn(this.value));
+  ap<U> (m: Identity<((value: T) => U)>): Identity<U> {
+    return m.fmap (fn => fn (this.value));
   }
 
   /**
@@ -43,7 +43,7 @@ export class Identity<T> implements Al.Functor<T>, Al.Applicative<T>, Al.Monad<T
    *
    * Inject a value into a `Identity` type.
    */
-  static return<T>(value: T): Identity<T> {
-    return new Identity(value);
+  static return<T> (value: T): Identity<T> {
+    return new Identity (value);
   }
 }

@@ -42,6 +42,24 @@ export interface WikiEntryByCategory {
   'TALENTS': Skill;
 }
 
+export interface WikiEntryRecordByCategory {
+  'ADVANTAGES': Record<Advantage>;
+  'ATTRIBUTES': Record<Attribute>;
+  'BLESSINGS': Record<Blessing>;
+  'CANTRIPS': Record<Cantrip>;
+  'COMBAT_TECHNIQUES': Record<CombatTechnique>;
+  'CULTURES': Record<Culture>;
+  'DISADVANTAGES': Record<Disadvantage>;
+  'LITURGIES': Record<LiturgicalChant>;
+  'PROFESSIONS': Record<Profession>;
+  'PROFESSION_VARIANTS': Record<ProfessionVariant>;
+  'RACES': Record<Race>;
+  'RACE_VARIANTS': Record<RaceVariant>;
+  'SPECIAL_ABILITIES': Record<SpecialAbility>;
+  'SPELLS': Record<Spell>;
+  'TALENTS': Record<Skill>;
+}
+
 export type EntryWithGroup =
   Record<CombatTechnique> |
   Record<LiturgicalChant> |

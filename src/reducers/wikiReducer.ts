@@ -65,26 +65,26 @@ type RawLocales =
   Raw.RawSkillLocale |
   Raw.RawItemLocale;
 
-export function wikiReducer(
-  state: Record<Wiki.WikiAll> = Record.of<Wiki.WikiAll>({
-    books: OrderedMap.empty(),
-    experienceLevels: OrderedMap.empty(),
-    races: OrderedMap.empty(),
-    raceVariants: OrderedMap.empty(),
-    cultures: OrderedMap.empty(),
-    professions: OrderedMap.empty(),
-    professionVariants: OrderedMap.empty(),
-    attributes: OrderedMap.empty(),
-    advantages: OrderedMap.empty(),
-    disadvantages: OrderedMap.empty(),
-    specialAbilities: OrderedMap.empty(),
-    skills: OrderedMap.empty(),
-    combatTechniques: OrderedMap.empty(),
-    spells: OrderedMap.empty(),
-    cantrips: OrderedMap.empty(),
-    liturgicalChants: OrderedMap.empty(),
-    blessings: OrderedMap.empty(),
-    itemTemplates: OrderedMap.empty(),
+export function wikiReducer (
+  state: Record<Wiki.WikiAll> = Record.of<Wiki.WikiAll> ({
+    books: OrderedMap.empty (),
+    experienceLevels: OrderedMap.empty (),
+    races: OrderedMap.empty (),
+    raceVariants: OrderedMap.empty (),
+    cultures: OrderedMap.empty (),
+    professions: OrderedMap.empty (),
+    professionVariants: OrderedMap.empty (),
+    attributes: OrderedMap.empty (),
+    advantages: OrderedMap.empty (),
+    disadvantages: OrderedMap.empty (),
+    specialAbilities: OrderedMap.empty (),
+    skills: OrderedMap.empty (),
+    combatTechniques: OrderedMap.empty (),
+    spells: OrderedMap.empty (),
+    cantrips: OrderedMap.empty (),
+    liturgicalChants: OrderedMap.empty (),
+    blessings: OrderedMap.empty (),
+    itemTemplates: OrderedMap.empty (),
   }),
   action: Action
 ): Record<Wiki.WikiAll> {
@@ -123,53 +123,53 @@ export function wikiReducer(
         initFn: (raw: R, locale: StringKeyObject<L>) => Maybe<Record<T>>,
         locale: StringKeyObject<L>
       ): OrderedMap<string, Record<T>> =>
-        Object.entries(source).reduce(
+        Object.entries (source).reduce (
           (map, [id, obj]) => {
-            const result = initFn(obj, locale);
+            const result = initFn (obj, locale);
 
-            if (Maybe.isJust(result)) {
-              return map.insert(id, Maybe.fromJust(result));
+            if (Maybe.isJust (result)) {
+              return map.insert (id) (Maybe.fromJust (result));
             }
 
             return map;
           },
-          OrderedMap.empty<string, Record<T>>()
+          OrderedMap.empty<string, Record<T>> ()
         );
 
-      const initialState: Record<Wiki.WikiAll> = Record.of<Wiki.WikiAll>({
-        books: OrderedMap.of(
-          Object.entries(books)
-            .map<[string, Record<Raw.RawBook>]>(
-              ([key, value]) => [key, Record.of<Raw.RawBook>(value)]
+      const initialState: Record<Wiki.WikiAll> = Record.of<Wiki.WikiAll> ({
+        books: OrderedMap.of (
+          Object.entries (books)
+            .map<[string, Record<Raw.RawBook>]> (
+              ([key, value]) => [key, Record.of<Raw.RawBook> (value)]
             )
         ),
-        experienceLevels: iterate(
+        experienceLevels: iterate (
           el,
           InitWikiUtils.initExperienceLevel,
           rawLocale.el
         ),
-        races: iterate(
+        races: iterate (
           races,
           InitWikiUtils.initRace,
           rawLocale.races
         ),
-        raceVariants: iterate(
+        raceVariants: iterate (
           racevariants,
           InitWikiUtils.initRaceVariant,
           rawLocale.racevariants
         ),
-        cultures: iterate(
+        cultures: iterate (
           cultures,
           InitWikiUtils.initCulture,
           rawLocale.cultures
         ),
-        professions: iterate(
+        professions: iterate (
           professions,
           InitWikiUtils.initProfession,
           rawLocale.professions
         )
-          .alter(
-            () => InitWikiUtils.initProfession(
+          .alter (
+            () => InitWikiUtils.initProfession (
               {
                 ap: 0,
                 apOfActivatables: 0,
@@ -195,70 +195,69 @@ export function wikiReducer(
               {
                 P_0: {
                   id: 'P_0',
-                  name: translate(Record.of(ui), 'professions.ownprofession'),
+                  name: translate (Record.of (ui), 'professions.ownprofession'),
                   req: [],
                   src: []
                 }
               }
-            ),
-            'P_0'
-          ),
-        professionVariants: iterate(
+            )
+          ) ('P_0'),
+        professionVariants: iterate (
           professionvariants,
           InitWikiUtils.initProfessionVariant,
           rawLocale.professionvariants
         ),
-        attributes: iterate(
+        attributes: iterate (
           attributes,
           InitWikiUtils.initAttribute,
           rawLocale.attributes
         ),
-        advantages: iterate(
+        advantages: iterate (
           advantages,
           InitWikiUtils.initAdvantage,
           rawLocale.advantages
         ),
-        disadvantages: iterate(
+        disadvantages: iterate (
           disadvantages,
           InitWikiUtils.initDisadvantage,
           rawLocale.disadvantages
         ),
-        specialAbilities: iterate(
+        specialAbilities: iterate (
           specialabilities,
           InitWikiUtils.initSpecialAbility,
           rawLocale.specialabilities
         ),
-        skills: iterate(
+        skills: iterate (
           talents,
           InitWikiUtils.initSkill,
           rawLocale.talents
         ),
-        combatTechniques: iterate(
+        combatTechniques: iterate (
           combattech,
           InitWikiUtils.initCombatTechnique,
           rawLocale.combattech
         ),
-        spells: iterate(
+        spells: iterate (
           spells,
           InitWikiUtils.initSpell,
           rawLocale.spells
         ),
-        cantrips: iterate(
+        cantrips: iterate (
           cantrips,
           InitWikiUtils.initCantrip,
           rawLocale.cantrips
         ),
-        liturgicalChants: iterate(
+        liturgicalChants: iterate (
           liturgies,
           InitWikiUtils.initLiturgicalChant,
           rawLocale.liturgies
         ),
-        blessings: iterate(
+        blessings: iterate (
           blessings,
           InitWikiUtils.initBlessing,
           rawLocale.blessings
         ),
-        itemTemplates: iterate(
+        itemTemplates: iterate (
           items,
           InitWikiUtils.initItemTemplate,
           rawLocale.items
@@ -267,97 +266,91 @@ export function wikiReducer(
 
       const getSelectionCategories = (source: List<Record<Wiki.SelectionObject>>) =>
         source
-          .foldl<List<Wiki.SkillishEntry>>(
+          .foldl<List<Wiki.SkillishEntry>> (
             arr => e => {
-              const key = getWikiStateKeyByCategory(e.get('id') as Categories);
+              const key = getWikiStateKeyByCategory (e.get ('id') as Categories);
 
               if (key) {
-                return arr.concat(initialState.get(key).elems() as List<Wiki.SkillishEntry>);
+                return arr.mappend (initialState.get (key).elems () as List<Wiki.SkillishEntry>);
               }
 
               return arr;
-            },
-            List.of()
-          )
-          .map(
-            r => Record.of<Wiki.SelectionObject>({
-              id: r.get('id'),
-              name: r.get('name'),
-              cost: r.get('ic')
+            }
+          ) (List.of ())
+          .map (
+            r => Record.of<Wiki.SelectionObject> ({
+              id: r.get ('id'),
+              name: r.get ('name'),
+              cost: r.get ('ic')
             })
           );
 
-      const knowledgeSkills = initialState.get('skills')
-        .foldl<(List<Record<Wiki.SelectionObject>>)>(
+      const knowledgeSkills = initialState.get ('skills')
+        .foldl<(List<Record<Wiki.SelectionObject>>)> (
           acc => skill => {
-            if (skill.get('gr') === 4) {
-              return acc.append(
-                Record.of<Wiki.SelectionObject>({
-                  id: skill.get('id'),
-                  name: skill.get('name'),
-                  cost: skill.get('ic')
+            if (skill.get ('gr') === 4) {
+              return acc.append (
+                Record.of<Wiki.SelectionObject> ({
+                  id: skill.get ('id'),
+                  name: skill.get ('name'),
+                  cost: skill.get ('ic')
                 })
               );
             }
 
             return acc;
-          },
-          List.of()
-        );
+          }
+        ) (List.of ());
 
       return initialState
-        .modify(
-          slice => slice.map(
+        .modify<'advantages'> (
+          slice => slice.map (
             obj => {
-              if (['ADV_4', 'ADV_16', 'ADV_17', 'ADV_47'].includes(obj.get('id'))) {
-                return obj.modify(getSelectionCategories, 'select');
+              if (['ADV_4', 'ADV_16', 'ADV_17', 'ADV_47'].includes (obj.get ('id'))) {
+                return obj.modify<'select'> (getSelectionCategories) ('select');
               }
 
               return obj;
             }
-          ),
-          'advantages'
-        )
-        .modify(
-          slice => slice.map(
+          )
+        ) ('advantages')
+        .modify<'disadvantages'> (
+          slice => slice.map (
             obj => {
-              if (obj.get('id') === 'DISADV_48') {
-                return obj.modify(getSelectionCategories, 'select');
+              if (obj.get ('id') === 'DISADV_48') {
+                return obj.modify<'select'> (getSelectionCategories) ('select');
               }
 
               return obj;
             }
-          ),
-          'disadvantages'
-        )
-        .modify(
-          slice => slice.map(
+          )
+        ) ('disadvantages')
+        .modify<'specialAbilities'> (
+          slice => slice.map (
             obj => {
-              if (['SA_231', 'SA_250', 'SA_258', 'SA_562', 'SA_569'].includes(obj.get('id'))) {
-                return obj.modify(getSelectionCategories, 'select');
+              if (['SA_231', 'SA_250', 'SA_258', 'SA_562', 'SA_569'].includes (obj.get ('id'))) {
+                return obj.modify<'select'> (getSelectionCategories) ('select');
               }
-              else if (['SA_472', 'SA_473', 'SA_531', 'SA_533'].includes(obj.get('id'))) {
-                return obj.insert('select', knowledgeSkills);
+              else if (['SA_472', 'SA_473', 'SA_531', 'SA_533'].includes (obj.get ('id'))) {
+                return obj.insert ('select') (knowledgeSkills);
               }
-              else if (obj.get('id') === 'SA_60') {
-                return obj.modify(
-                  Maybe.mapMaybe<Record<Wiki.SelectionObject>, Record<Wiki.SelectionObject>>(
-                    e => initialState.get('combatTechniques')
-                      .lookup(e.get('name'))
-                      .fmap(combatTechnique => e.insert('name', combatTechnique.get('name')))
-                  ),
-                  'select'
-                );
+              else if (obj.get ('id') === 'SA_60') {
+                return obj.modify<'select'> (
+                  Maybe.mapMaybe<Record<Wiki.SelectionObject>, Record<Wiki.SelectionObject>> (
+                    e => initialState.get ('combatTechniques')
+                      .lookup (e.get ('name'))
+                      .fmap (combatTechnique => e.insert ('name') (combatTechnique.get ('name')))
+                  )
+                ) ('select');
               }
-              else if (obj.get('id') === 'SA_9') {
-                return obj.insert(
-                  'select',
-                  initialState.get('skills').elems()
-                    .map(
+              else if (obj.get ('id') === 'SA_9') {
+                return obj.insert ('select') (
+                  initialState.get ('skills').elems ()
+                    .map (
                       skill => {
-                        const { id, name, ic, applications, applicationsInput } = skill.toObject();
+                        const { id, name, ic, applications, applicationsInput } = skill.toObject ();
 
-                        return Record.of<Wiki.SelectionObject>({
+                        return Record.of<Wiki.SelectionObject> ({
                           id,
                           name,
                           cost: ic,
@@ -371,9 +364,8 @@ export function wikiReducer(
 
               return obj;
             }
-          ),
-          'specialAbilities'
-        );
+          )
+        ) ('specialAbilities');
     }
 
     default:

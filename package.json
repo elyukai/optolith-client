@@ -55,6 +55,7 @@
     "node-sass": "^4.7.2",
     "ts-jest": "^22.4.2",
     "tslint": "^5.10.0",
+    "tslint-eslint-rules": "^5.4.0",
     "typescript": "^3.0.1",
     "typescript-eslint-parser": "^16.0.0",
     "xlsx": "^0.10.9"

@@ -13,19 +13,19 @@ import { findSelectOption } from './selectionUtils';
  * @param add States if the prerequisites should be added or removed (some
  * prerequisites must be calculated based on that).
  */
-export function getGeneratedPrerequisites(
+export function getGeneratedPrerequisites (
   wikiEntry: Wiki.WikiActivatable,
   instance: Maybe<Record<Data.ActivatableDependent>>,
   active: Record<Data.ActiveObject>,
   add: boolean,
 ): Maybe<List<Wiki.AllRequirementObjects>> {
-  const sid = active.lookup('sid');
-  const sid2 = active.lookup('sid2');
+  const sid = active.lookup ('sid');
+  const sid2 = active.lookup ('sid2');
 
-  switch (wikiEntry.get('id')) {
+  switch (wikiEntry.get ('id')) {
     case 'SA_3': {
-      return findSelectOption(wikiEntry, sid)
-        .bind(item => item.lookup('req'));
+      return findSelectOption (wikiEntry, sid)
+        .bind (item => item.lookup ('req'));
     }
     case 'SA_9': {
       interface SkillSelectionObject extends Wiki.SelectionObject {
@@ -33,38 +33,37 @@ export function getGeneratedPrerequisites(
         applicationsInput: string;
       }
 
-      const sameSkill = Maybe.fromMaybe(
-        0,
-        instance.fmap(
-          justInstance => justInstance.get('active')
-            .filter(e => e.lookup('sid').equals(sid))
-            .length()
+      const sameSkill = Maybe.fromMaybe (0) (
+        instance.fmap (
+          justInstance => justInstance.get ('active')
+            .filter (e => e.lookup ('sid').equals (sid))
+            .length ()
         )
       );
 
-      const sameSkillDependency = sid.fmap(justSid => ({
+      const sameSkillDependency = sid.fmap (justSid => ({
         id: justSid as string,
         value: (sameSkill + (add ? 1 : 0)) * 6
       }));
 
-      return findSelectOption<SkillSelectionObject>(wikiEntry, sid)
-        .bind(
-          skill => skill.get('applications')
-            .find(e => sid2.equals(e.lookup('id')))
+      return findSelectOption<SkillSelectionObject> (wikiEntry, sid)
+        .bind (
+          skill => skill.get ('applications')
+            .find (e => sid2.equals (e.lookup ('id')))
         )
-        .bind(app => app.lookup('prerequisites'))
-        .bind(prerequisites =>
-          sameSkillDependency.fmap(
-            obj => prerequisites.prepend(Record.of<Wiki.RequiresIncreasableObject>(obj))
+        .bind (app => app.lookup ('prerequisites'))
+        .bind (prerequisites =>
+          sameSkillDependency.fmap (
+            obj => prerequisites.cons (Record.of<Wiki.RequiresIncreasableObject> (obj))
           )
         )
-        .alt(sameSkillDependency.fmap(
-          obj => List.of(Record.of<Wiki.RequiresIncreasableObject>(obj)))
+        .alt (sameSkillDependency.fmap (
+          obj => List.of (Record.of<Wiki.RequiresIncreasableObject> (obj)))
         );
     }
     case 'SA_81':
-      return Just(List.of(
-        Record.ofMaybe<Wiki.RequiresActivatableObject>({
+      return Just (List.of (
+        Record.ofMaybe<Wiki.RequiresActivatableObject> ({
           id: 'SA_72',
           active: true,
           sid
@@ -78,31 +77,31 @@ export function getGeneratedPrerequisites(
         tier: number;
       }
 
-      return findSelectOption<ExtensionSelectionObject>(wikiEntry, sid)
-        .fmap(
-          item => List.of(Record.of<Wiki.RequiresIncreasableObject>({
-            id: item.get('target'),
-            value: item.get('tier') * 4 + 4,
+      return findSelectOption<ExtensionSelectionObject> (wikiEntry, sid)
+        .fmap (
+          item => List.of (Record.of<Wiki.RequiresIncreasableObject> ({
+            id: item.get ('target'),
+            value: item.get ('tier') * 4 + 4,
           }))
         );
     }
     case 'SA_639': {
-      return findSelectOption(wikiEntry, sid)
-        .bind(item => item.lookup('prerequisites'));
+      return findSelectOption (wikiEntry, sid)
+        .bind (item => item.lookup ('prerequisites'));
     }
     case 'SA_699': {
-      return Just(List.of(
-        Record.ofMaybe<Wiki.RequiresActivatableObject>({
+      return Just (List.of (
+        Record.ofMaybe<Wiki.RequiresActivatableObject> ({
           id: 'SA_29',
           active: true,
           sid,
-          tier: Just(3),
+          tier: Just (3),
         })
       ));
     }
   }
 
-  return Nothing();
+  return Nothing ();
 }
 
 export const addDynamicPrerequisites = (
@@ -113,8 +112,7 @@ export const addDynamicPrerequisites = (
 ) => (
   prerequisites: List<Wiki.AllRequirements>,
 ): List<Wiki.AllRequirements> =>
-  Maybe.fromMaybe(
-    prerequisites,
-    getGeneratedPrerequisites(wikiEntry, instance, active, add)
-      .fmap(e => prerequisites.concat(e))
+  Maybe.fromMaybe (prerequisites) (
+    getGeneratedPrerequisites (wikiEntry, instance, active, add)
+      .fmap (prerequisites.mappend)
   );

@@ -33,7 +33,7 @@ type Action =
   LiturgiesActions.ActivateBlessingAction |
   LiturgiesActions.DeactivateBlessingAction;
 
-export function increasableReducer(
+export function increasableReducer (
   state: Record<Data.HeroDependent>,
   action: Action
 ): Record<Data.HeroDependent> {
@@ -41,24 +41,24 @@ export function increasableReducer(
     case ActionTypes.ACTIVATE_SPELL: {
       const { id, wikiEntry } = action.payload;
 
-      const activateSpell = R.pipe(
-        adjustHeroListStateItemOr(
+      const activateSpell = R.pipe (
+        adjustHeroListStateItemOr (
           createActivatableDependentSkill,
-          value => Just(value.insert('active', true)),
+          value => Just (value.insert ('active') (true)),
           id,
         ),
-        addDependenciesReducer(wikiEntry.get('prerequisites'), id)
+        addDependenciesReducer (wikiEntry.get ('prerequisites'), id)
       );
 
-      return activateSpell(state);
+      return activateSpell (state);
     }
 
     case ActionTypes.ACTIVATE_CANTRIP: {
       const { id, wikiEntry } = action.payload;
 
-      return addDependencies(
-        state.modify(cantrips => cantrips.insert(id), 'cantrips'),
-        wikiEntry.get('prerequisites'),
+      return addDependencies (
+        state.modify<'cantrips'> (cantrips => cantrips.insert (id)) ('cantrips'),
+        wikiEntry.get ('prerequisites'),
         id
       );
     }
@@ -66,42 +66,42 @@ export function increasableReducer(
     case ActionTypes.ACTIVATE_LITURGY: {
       const { id } = action.payload;
 
-      const activateLiturgicalChant = adjustHeroListStateItemOr(
+      const activateLiturgicalChant = adjustHeroListStateItemOr (
         createActivatableDependentSkill,
-        value => Just(value.insert('active', true)),
+        value => Just (value.insert ('active') (true)),
         id,
       );
 
-      return activateLiturgicalChant(state);
+      return activateLiturgicalChant (state);
     }
 
     case ActionTypes.ACTIVATE_BLESSING: {
       const { id } = action.payload;
 
-      return state.modify(blessings => blessings.insert(id), 'blessings');
+      return state.modify<'blessings'> (blessings => blessings.insert (id)) ('blessings');
     }
 
     case ActionTypes.DEACTIVATE_SPELL: {
       const { id, wikiEntry } = action.payload;
 
-      const deactivateSpell = R.pipe(
-        updateHeroListStateItemOrRemove(
+      const deactivateSpell = R.pipe (
+        updateHeroListStateItemOrRemove (
           isActivatableDependentSkillUnused,
-          value => value.insert('active', false),
+          value => value.insert ('active') (false),
           id,
         ),
-        removeDependenciesReducer(wikiEntry.get('prerequisites'), id)
+        removeDependenciesReducer (wikiEntry.get ('prerequisites'), id)
       );
 
-      return deactivateSpell(state);
+      return deactivateSpell (state);
     }
 
     case ActionTypes.DEACTIVATE_CANTRIP: {
       const { id, wikiEntry } = action.payload;
 
-      return addDependencies(
-        state.modify(cantrips => cantrips.delete(id), 'cantrips'),
-        wikiEntry.get('prerequisites'),
+      return addDependencies (
+        state.modify<'cantrips'> (cantrips => cantrips.delete (id)) ('cantrips'),
+        wikiEntry.get ('prerequisites'),
         id
       );
     }
@@ -109,109 +109,89 @@ export function increasableReducer(
     case ActionTypes.DEACTIVATE_LITURGY: {
       const { id } = action.payload;
 
-      const deactivateLiturgicalChant = updateHeroListStateItemOrRemove(
+      const deactivateLiturgicalChant = updateHeroListStateItemOrRemove (
         isActivatableDependentSkillUnused,
-        value => value.insert('active', false),
+        value => value.insert ('active') (false),
         id,
       );
 
-      return deactivateLiturgicalChant(state);
+      return deactivateLiturgicalChant (state);
     }
 
     case ActionTypes.DEACTIVATE_BLESSING: {
       const { id } = action.payload;
 
-      return state.modify(blessings => blessings.delete(id), 'blessings');;
+      return state.modify<'blessings'> (blessings => blessings.delete (id)) ('blessings');;
     }
 
     case ActionTypes.ADD_ATTRIBUTE_POINT: {
       const { id } = action.payload;
 
-      return state.modify(
-        attributes => attributes.adjust(addPoint, id),
-        'attributes'
-      );
+      return state.modify<'attributes'> (attributes => attributes.adjust (addPoint) (id))
+                                        ('attributes');
     }
 
     case ActionTypes.ADD_TALENT_POINT: {
       const { id } = action.payload;
 
-      return state.modify(
-        skills => skills.adjust(addPoint, id),
-        'skills'
-      );
+      return state.modify<'skills'> (skills => skills.adjust (addPoint) (id)) ('skills');
     }
 
     case ActionTypes.ADD_COMBATTECHNIQUE_POINT: {
       const { id } = action.payload;
 
-      return state.modify(
-        combatTechniques => combatTechniques.adjust(addPoint, id),
-        'combatTechniques'
-      );
+      return state.modify<'combatTechniques'> (
+        combatTechniques => combatTechniques.adjust (addPoint) (id)
+      ) ('combatTechniques');
     }
 
     case ActionTypes.ADD_SPELL_POINT: {
       const { id } = action.payload;
 
-      return state.modify(
-        spells => spells.adjust(addPoint, id),
-        'spells'
-      );
+      return state.modify<'spells'> (spells => spells.adjust (addPoint) (id)) ('spells');
     }
 
     case ActionTypes.ADD_LITURGY_POINT: {
       const { id } = action.payload;
 
-      return state.modify(
-        liturgicalChants => liturgicalChants.adjust(addPoint, id),
-        'liturgicalChants'
-      );
+      return state.modify<'liturgicalChants'> (
+        liturgicalChants => liturgicalChants.adjust (addPoint) (id)
+      ) ('liturgicalChants');
     }
 
     case ActionTypes.REMOVE_ATTRIBUTE_POINT: {
       const { id } = action.payload;
 
-      return state.modify(
-        attributes => attributes.adjust(removePoint, id),
-        'attributes'
-      );
+      return state.modify<'attributes'> (attributes => attributes.adjust (removePoint) (id))
+                                        ('attributes');
     }
 
     case ActionTypes.REMOVE_TALENT_POINT: {
       const { id } = action.payload;
 
-      return state.modify(
-        skills => skills.adjust(removePoint, id),
-        'skills'
-      );
+      return state.modify<'skills'> (skills => skills.adjust (removePoint) (id)) ('skills');
     }
 
     case ActionTypes.REMOVE_COMBATTECHNIQUE_POINT: {
       const { id } = action.payload;
 
-      return state.modify(
-        combatTechniques => combatTechniques.adjust(removePoint, id),
-        'combatTechniques'
-      );
+      return state.modify<'combatTechniques'> (
+        combatTechniques => combatTechniques.adjust (removePoint) (id)
+      ) ('combatTechniques');
     }
 
     case ActionTypes.REMOVE_SPELL_POINT: {
       const { id } = action.payload;
 
-      return state.modify(
-        spells => spells.adjust(removePoint, id),
-        'spells'
-      );
+      return state.modify<'spells'> (spells => spells.adjust (removePoint) (id)) ('spells');
     }
 
     case ActionTypes.REMOVE_LITURGY_POINT: {
       const { id } = action.payload;
 
-      return state.modify(
-        liturgicalChants => liturgicalChants.adjust(removePoint, id),
-        'liturgicalChants'
-      );
+      return state.modify<'liturgicalChants'> (
+        liturgicalChants => liturgicalChants.adjust (removePoint) (id)
+      ) ('liturgicalChants');
     }
 
     default:

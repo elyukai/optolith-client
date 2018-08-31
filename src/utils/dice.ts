@@ -5,7 +5,7 @@
  * @example rollDice(6) // D6
  */
 export const rollDie = (sides: number): number =>
-  Math.floor(Math.random() * sides) + 1;
+  Math.floor (Math.random () * sides) + 1;
 
 /**
  * Returns the sum of random integers between 1 (included) and the passed parameter
@@ -16,6 +16,6 @@ export const rollDie = (sides: number): number =>
 export const rollDice = (
   amount: number,
   sides: number,
-  fn = (a: number) => a + rollDie(sides)
+  fn = (a: number) => a + rollDie (sides)
 ): number =>
-  Array(amount).reduce(fn, 0);
+  Array (amount).reduce (fn, 0);

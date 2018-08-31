@@ -15,3 +15,99 @@ Ich habe das jetzt einfach etwas direkter formuliert, da ich bei solchen Geschic
 An dieser Stelle auch Vielen Dank an alle Helfer!
 
 P.S.: Ich sollte an dieser Stelle noch erwähnen, dass ich bis jetzt noch keine Erfahrung gesammelt habe, was kollaboratives Coden angeht. Ich bin auch bis zuletzt nicht davon ausgegangen, dass ich mal nicht der einzige sein werde, der an diesem Projekt arbeiten würde. Es mag daher sein, dass ihr Dateien findet, die etwas älter sind. Ich hoffe trotzdem, dass ihr euch zurechtfindet, da ich momentan nicht die Zeit habe, um alles durchzugehen (man kann ja schon am Switch zu Redux sehen, wie lange alles gedauert hat und wie viel Zeit ich entsprechend hatte). Erstellt bei Fragen/Unklarheiten einfach einen Issue! :)
+
+## Coding Style
+
+Please follow the (AirBnb Style Guide)[https://github.com/airbnb/javascript]. There are, however, some exceptions. If you find any code does not follow the guidelines linked and specified below, please either create a new issue or fork and create a new pull request.
+
+### `if`-`else`
+
+`else if` or `else` must start on a new line.
+
+```ts
+// bad
+if (condition) {
+  expression;
+} else {
+  expression;
+}
+
+// bad
+if (condition)
+{
+  expression;
+}
+else
+{
+  expression;
+}
+
+// good
+if (condition) {
+  expression;
+}
+else {
+  expression;
+}
+```
+
+### Curried functions
+
+Functions (and methods) have to be fully curried. There should not be partial function application, as this would cause different possibilities in calling functions. I want to enforce one style:
+
+```ts
+const add = (a: number) => (b: number) => a + b;
+
+// worst
+const addedNumbers = add(2)(3);
+
+// still bad
+const addedNumbers = add(2) (3);
+
+// still bad
+const addedNumbers = add (2)(3);
+
+// good
+const addedNumbers = add (2) (3);
+```
+
+This style is readable while having curried functions. It's derived from the Haskell style of calling functions, where the arguments are separate by one whitespace as well:
+
+```hs
+add :: Int -> Int -> Int
+
+add 2 3
+```
+
+**Fun fact:** `add (2) (3)` is valid Haskell, it just contains unnecessary groupings.
+
+### Function declarations
+
+Do not use named function expressions if using `function`, e.g. `const fn = function longFunctionName () { ... }`. Prefer arrow functions, which must be declared using `const fn = () => { ... }`, though.
+
+### Arrow functions
+
+Concerning (Arrow Functions 8.4)[https://github.com/airbnb/javascript#arrows--one-arg-parens]: Only use parentheses when there is more than one argument, do not use even if the function uses braces (actually you don't need parentheses at all, because all functions should be curried).
+
+### Modules
+
+Concerning (Modules 10.2)[https://github.com/airbnb/javascript#modules--no-wildcard]: Use wildcards when there are too many imports or for the sake of consistency across files (especially used for files in `src/types`, e.g. `* as Wiki`).
+
+Concerning (Modules 10.3)[https://github.com/airbnb/javascript#modules--no-export-from-import]: Prefer shorter syntax.
+
+Concerning (Modules 10.6)[https://github.com/airbnb/javascript#modules--prefer-default-export]: Do not use default exports, as possible renaming cannot benefit from TypeScript's ability to find all symbol references.
+
+Concerning (Arrow Functions 10.8)[https://github.com/airbnb/javascript#modules--multiline-imports-over-newlines]: Put everything on one line, as it is more compact. TypeScript warns when there are missing or unnecessary imports anyway.
+
+### Unimportant rules
+
+- (Object 3.5)[https://github.com/airbnb/javascript#objects--grouped-shorthand]: Group object shorthand properties
+- (Arrow Functions 8.3)[https://github.com/airbnb/javascript#arrows--paren-wrap]: Wrap expression in parentheses
+- (Arrow Functions 8.5)[https://github.com/airbnb/javascript#arrows--confusing]: Avoid confusing arrow function syntax with comparison operators
+- (Arrow Functions 8.6)[https://github.com/airbnb/javascript#whitespace--implicit-arrow-linebreak]: Enforce the location of arrow function bodies with implicit returns
+- (Variables 13.3)[https://github.com/airbnb/javascript#variables--const-let-group]: Group `const`s and `let`s
+- (Comparison 15.8)[https://github.com/airbnb/javascript#comparison--no-mixed-operators]: Enclose mixing operators in parentheses
+
+### TSLint
+
+A lot of areas are already covered by TSLint and it's plugins. Please use TSLint, it makes following the guidelines a lot easier!

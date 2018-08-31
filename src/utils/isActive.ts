@@ -10,12 +10,12 @@ export const isActive = (
   obj: Maybe<Record<ActivatableDependent>> | Record<ActivatableDependent>
 ): boolean => {
   if (obj instanceof Maybe) {
-    return Maybe.isJust(obj) && Maybe.fromJust(
-      Maybe.fromJust(obj)
-        .lookup('active')
-        .fmap(e => !e.null())
+    return Maybe.isJust (obj) && Maybe.fromJust (
+      Maybe.fromJust (obj)
+        .lookup ('active')
+        .fmap (e => !e.null ())
     );
   }
 
-  return !obj.get('active').null();
+  return !obj.get ('active').null ();
 };

@@ -9,28 +9,28 @@ export const getActiveGroupEntries = (
   state: Record<Data.HeroDependent>,
   ...groups: number[]
 ): List<Record<Data.ActivatableDependent>> =>
-  getAllEntriesByGroup(
-    wiki.get('specialAbilities'),
-    state.get('specialAbilities'),
+  getAllEntriesByGroup (
+    wiki.get ('specialAbilities'),
+    state.get ('specialAbilities'),
     ...groups,
   )
-    .filter(isActive);
+    .filter (isActive);
 
 export const countActiveGroupEntries = (
   wiki: Record<WikiAll>,
   state: Record<Data.HeroDependent>,
   ...groups: number[]
 ): number =>
-  getActiveGroupEntries(wiki, state, ...groups).length();
+  getActiveGroupEntries (wiki, state, ...groups).length ();
 
 export const hasActiveGroupEntry = (
   wiki: Record<WikiAll>,
   state: Record<Data.HeroDependent>,
   ...groups: number[]
 ): boolean =>
-  getAllEntriesByGroup(
-    wiki.get('specialAbilities'),
-    state.get('specialAbilities'),
+  getAllEntriesByGroup (
+    wiki.get ('specialAbilities'),
+    state.get ('specialAbilities'),
     ...groups,
   )
-    .any(isActive);
+    .any (isActive);

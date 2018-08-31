@@ -1,61 +1,66 @@
 import R from 'ramda';
 import { ActivatablePrerequisites, LevelAwarePrerequisites } from '../types/wiki';
-import { OrderedMap } from './dataUtils';
+import { Just, List, Maybe, Nothing, OrderedMap } from './dataUtils';
 
-type PrerequisiteFilter = (key: number) =>
+type LevelFilter = (key: number) =>
   (value: ActivatablePrerequisites) => boolean;
 
-const createLowerFilter = (oldTier: number) =>
+const createLowerFilter = (oldTier: number): LevelFilter =>
   (key: number) => (): boolean =>
     key <= oldTier;
 
-const createInBetweenFilter = (oldTier: number, newTier: number) => {
-  const lower = Math.min(oldTier, newTier);
-  const higher = Math.max(oldTier, newTier);
+const createInBetweenFilter = (oldTier: number) => (newTier: number): LevelFilter => {
+  const lower = Math.min (oldTier, newTier);
+  const higher = Math.max (oldTier, newTier);
 
   return (key: number) => (): boolean =>
     key <= higher && key > lower;
 };
 
-const createFilter = (newTier?: number) =>
-  (oldTier?: number): PrerequisiteFilter => {
-  if (isNumber(oldTier) && isNumber(newTier)) {
-    return createInBetweenFilter(oldTier, newTier)
-  }
-  else if (isNumber(oldTier)) {
-    return createLowerFilter(oldTier);
-  }
-  else {
-    return () => () => true;
-  }
-};
+/**
+ * `createFilter newLevel oldLevel` creates a new filter function for filtering
+ * level-based prerequisites.
+ */
+const createFilter = (newTier: Maybe<number>) =>
+  R.pipe (
+    Maybe.fmap<number, LevelFilter> (
+      oldTier => Maybe.maybe<number, LevelFilter> (createLowerFilter (oldTier))
+                                                  (createInBetweenFilter (oldTier))
+                                                  (newTier)
+    ),
+    Maybe.fromMaybe<LevelFilter> (() => () => true)
+  );
 
-const createFlattenFiltered =
+const createFlattenFiltered = (
   (prerequisites: OrderedMap<number, ActivatablePrerequisites>) =>
-    (filter: PrerequisiteFilter) =>
-      OrderedMap.elems(prerequisites.filterWithKey(filter)).concatInner();
+    R.pipe (
+      prerequisites.filterWithKey,
+      OrderedMap.elems,
+      List.concat
+    )
+);
 
 const flattenMap = (
-  prerequisites: OrderedMap<number, ActivatablePrerequisites>,
-  oldTier?: number,
-  newTier?: number,
-) => R.pipe(
-  createFilter(newTier),
-  createFlattenFiltered(prerequisites),
-)(oldTier);
+  (prerequisites: OrderedMap<number, ActivatablePrerequisites>) =>
+  (newTier: Maybe<number>) =>
+    R.pipe (
+      createFilter (newTier),
+      createFlattenFiltered (prerequisites)
+    )
+);
 
-export function flattenPrerequisites(
-  prerequisites: LevelAwarePrerequisites,
-  oldTier?: number,
-  newTier?: number,
-): ActivatablePrerequisites {
-  if (prerequisites instanceof OrderedMap) {
-    return flattenMap(prerequisites, oldTier, newTier);
+export const flattenPrerequisites = (
+  (prerequisites: LevelAwarePrerequisites) =>
+  (newTier: Maybe<number>) =>
+  (oldTier: Maybe<number>): ActivatablePrerequisites => {
+    if (prerequisites instanceof OrderedMap) {
+      return flattenMap (prerequisites) (newTier) (oldTier);
+    }
+
+    return prerequisites;
   }
-
-  return prerequisites;
-}
+);
 
 export const getFirstTierPrerequisites = (
   prerequisites: LevelAwarePrerequisites,
-): ActivatablePrerequisites => flattenPrerequisites(prerequisites, 1);
+): ActivatablePrerequisites => flattenPrerequisites (prerequisites) (Nothing ()) (Just (1));

@@ -1,25 +1,14 @@
 import { createSelector } from 'reselect';
-import { AppState } from '../reducers/app';
-import { EquipmentState } from '../reducers/equipment';
-import { ArmorZonesInstance, CombatTechniqueInstance, ItemInstance, ToListById } from '../types/data';
+import { ArmorZonesInstance, ItemInstance } from '../types/data';
 import { Armor, ArmorZone, Item, MeleeWeapon, RangedWeapon, ShieldOrParryingWeapon } from '../types/view';
-import { getAt, getPa } from '../utils/CombatTechniqueUtils';
 import { AllSortOptions, filterAndSortObjects, filterObjects, sortObjects } from '../utils/FilterSortUtils';
 import { translate } from '../utils/I18n';
 import { convertPrimaryAttributeToArray } from '../utils/ItemUtils';
 import { isAvailable } from '../utils/RulesUtils';
-import { getCombatTechniques } from './combatTechniquesSelectors';
-import { get as getInstance, getDependent } from './dependentInstancesSelectors';
 import { getRuleBooksEnabled } from './rulesSelectors';
 import { getEquipmentSortOptions } from './sortOptionsSelectors';
 import { getEquipmentFilterText, getHigherParadeValues, getItemTemplatesFilterText, getLocaleMessages, getZoneArmorFilterText } from './stateSelectors';
 import { getEquipmentSortOrder } from './uisettingsSelectors';
-
-export const getEquipmentState = (state: AppState) => state.currentHero.present.equipment;
-export const getItemsState = (state: AppState) => state.currentHero.present.equipment.items;
-export const getItemTemplatesState = (state: AppState) => state.currentHero.present.equipment.itemTemplates;
-export const getArmorZonesState = (state: AppState) => state.currentHero.present.equipment.armorZones;
-export const getPurse = (state: AppState) => state.currentHero.present.equipment.purse;
 
 export function get(state: EquipmentState, id: string) {
   return state.items.get(id);

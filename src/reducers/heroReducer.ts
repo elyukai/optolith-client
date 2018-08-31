@@ -15,8 +15,8 @@ import { profileReducer } from './profileReducer';
 import { rcpReducer } from './rcpReducer';
 import { rulesReducer } from './rulesReducer';
 
-export const heroReducer = undoExisting(
-  reduceReducers<Record<HeroDependent>, any>(
+export const heroReducer = undoExisting (
+  reduceReducers<Record<HeroDependent>, any> (
     adventurePointsReducer,
     dependentReducer,
     energiesReducer,

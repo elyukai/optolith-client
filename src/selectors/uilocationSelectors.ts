@@ -1,311 +1,375 @@
 import { createSelector } from 'reselect';
 import { SubTab } from '../types/data';
+import { Just, List, Maybe, Nothing } from '../utils/dataUtils';
 import { translate } from '../utils/I18n';
 import { isHeroSectionTab, isMainSectionTab, TabId } from '../utils/LocationUtils';
+import { isBookEnabled } from '../utils/RulesUtils';
 import { NavigationBarTabProps } from '../views/navigationbar/NavigationBarTabs';
-import { isLiturgicalChantsTabAvailable } from './liturgiesSelectors';
-import { isRemovingEnabled } from './phaseSelectors';
+import { getIsLiturgicalChantsTabAvailable } from './liturgicalChantsSelectors';
+import { getIsRemovingEnabled } from './phaseSelectors';
 import { getRuleBooksEnabled } from './rulesSelectors';
-import { isSpellsTabAvailable } from './spellsSelectors';
-import { getCurrentCultureId, getCurrentRaceId, getCurrentTab, getLocaleMessages, getPhase } from './stateSelectors';
+import { getIsSpellsTabAvailable } from './spellsSelectors';
+import { getCurrentCultureId, getCurrentRaceId, getCurrentTab, getLocaleAsProp, getPhase, getWikiBooks } from './stateSelectors';
 
-export const isMainSection = createSelector(
+export const getIsMainSection = createSelector (
   getCurrentTab,
-  tab => {
-    return isMainSectionTab(tab);
-  }
+  isMainSectionTab
 );
 
-export const isHeroSection = createSelector(
+export const getIsHeroSection = createSelector (
   getCurrentTab,
-  tab => {
-    return isHeroSectionTab(tab);
-  }
+  isHeroSectionTab
 );
 
-export const getTabs = createSelector(
-  isMainSection,
-  isHeroSection,
-  getLocaleMessages,
+export const getTabs = createSelector (
+  getIsMainSection,
+  getIsHeroSection,
+  getLocaleAsProp,
   getPhase,
-  isRemovingEnabled,
-  (isMainSection, isHeroSection, locale, phase, isRemovingEnabled): NavigationBarTabProps[] => {
+  getIsRemovingEnabled,
+  (isMainSection, isHeroSection, locale, phase, isRemovingEnabled): List<NavigationBarTabProps> => {
     if (isMainSection) {
-      return [
+      return List.of<NavigationBarTabProps> (
         {
           id: 'herolist',
-          label: translate(locale, 'titlebar.tabs.heroes'),
+          label: translate (locale, 'titlebar.tabs.heroes'),
         },
         {
           id: 'grouplist',
-          label: translate(locale, 'titlebar.tabs.groups'),
+          label: translate (locale, 'titlebar.tabs.groups'),
           disabled: true,
         },
         {
           id: 'wiki',
-          label: translate(locale, 'titlebar.tabs.wiki'),
+          label: translate (locale, 'titlebar.tabs.wiki'),
         },
         {
           id: 'faq',
-          label: translate(locale, 'titlebar.tabs.faq'),
+          label: translate (locale, 'titlebar.tabs.faq'),
         },
         {
           id: 'imprint',
-          label: translate(locale, 'titlebar.tabs.about'),
-          subTabs: ['imprint', 'thirdPartyLicenses', 'lastChanges'],
+          label: translate (locale, 'titlebar.tabs.about'),
+          subTabs: List.of<TabId> ('imprint', 'thirdPartyLicenses', 'lastChanges'),
         }
-      ];
+      );
     }
     else if (isHeroSection) {
-      if (phase === 1) {
-        return [
+      if (Maybe.elem (1) (phase)) {
+        return List.of<NavigationBarTabProps> (
           {
             id: 'profile',
-            label: translate(locale, 'titlebar.tabs.profile'),
-            subTabs: ['profile', 'personalData', 'pact', 'rules'],
+            label: translate (locale, 'titlebar.tabs.profile'),
+            subTabs: List.of<TabId> ('profile', 'personalData', 'pact', 'rules'),
           },
           {
             id: 'races',
-            label: translate(locale, 'titlebar.tabs.racecultureprofession'),
-            subTabs: ['races', 'cultures', 'professions'],
+            label: translate (locale, 'titlebar.tabs.racecultureprofession'),
+            subTabs: List.of<TabId> ('races', 'cultures', 'professions'),
           }
-        ];
+        );
       }
       else if (isRemovingEnabled) {
-        return [
+        return List.of<NavigationBarTabProps> (
           {
             id: 'profile',
-            label: translate(locale, 'titlebar.tabs.profile'),
-            subTabs: ['profile', 'personalData', 'characterSheet', 'pact', 'rules'],
+            label: translate (locale, 'titlebar.tabs.profile'),
+            subTabs: List.of<TabId> ('profile', 'personalData', 'characterSheet', 'pact', 'rules'),
           },
           {
             id: 'attributes',
-            label: translate(locale, 'titlebar.tabs.attributes'),
+            label: translate (locale, 'titlebar.tabs.attributes'),
           },
           {
             id: 'advantages',
-            label: translate(locale, 'titlebar.tabs.advantagesdisadvantages'),
-            subTabs: ['advantages', 'disadvantages'],
+            label: translate (locale, 'titlebar.tabs.advantagesdisadvantages'),
+            subTabs: List.of<TabId> ('advantages', 'disadvantages'),
           },
           {
             id: 'skills',
-            label: translate(locale, 'titlebar.tabs.skills'),
-            subTabs: ['skills', 'combatTechniques', 'specialAbilities', 'spells', 'liturgicalChants'],
+            label: translate (locale, 'titlebar.tabs.skills'),
+            subTabs: List.of<TabId> (
+              'skills',
+              'combatTechniques',
+              'specialAbilities',
+              'spells',
+              'liturgicalChants'
+            ),
           },
           {
             id: 'equipment',
-            label: translate(locale, 'titlebar.tabs.belongings'),
-            subTabs: ['equipment', 'zoneArmor', 'pets'],
+            label: translate (locale, 'titlebar.tabs.belongings'),
+            subTabs: List.of<TabId> ('equipment', 'zoneArmor', 'pets'),
           }
-        ];
+        );
       }
-      return [
+
+      return List.of<NavigationBarTabProps> (
         {
           id: 'profile',
-          label: translate(locale, 'titlebar.tabs.profile'),
-          subTabs: ['profile', 'personalData', 'characterSheet', 'pact', 'rules'],
+          label: translate (locale, 'titlebar.tabs.profile'),
+          subTabs: List.of<TabId> ('profile', 'personalData', 'characterSheet', 'pact', 'rules'),
         },
         {
           id: 'attributes',
-          label: translate(locale, 'titlebar.tabs.attributes'),
+          label: translate (locale, 'titlebar.tabs.attributes'),
         },
         {
           id: 'skills',
-          label: translate(locale, 'titlebar.tabs.skills'),
-          subTabs: ['skills', 'combatTechniques', 'specialAbilities', 'spells', 'liturgicalChants'],
+          label: translate (locale, 'titlebar.tabs.skills'),
+          subTabs: List.of<TabId> (
+            'skills',
+            'combatTechniques',
+            'specialAbilities',
+            'spells',
+            'liturgicalChants'
+          ),
         },
         {
           id: 'equipment',
-          label: translate(locale, 'titlebar.tabs.belongings'),
-          subTabs: ['equipment', 'zoneArmor', 'pets'],
+          label: translate (locale, 'titlebar.tabs.belongings'),
+          subTabs: List.of<TabId> ('equipment', 'zoneArmor', 'pets'),
         }
-      ];
+      );
     }
-    return [];
+
+    return List.of<NavigationBarTabProps> ();
   }
 );
 
-export const getSubtabs = createSelector(
+export const getSubtabs = createSelector (
   getCurrentTab,
-  isMainSection,
-  isHeroSection,
-  getLocaleMessages,
+  getIsMainSection,
+  getIsHeroSection,
+  getLocaleAsProp,
   getPhase,
   getCurrentRaceId,
   getCurrentCultureId,
-  isSpellsTabAvailable,
-  isLiturgicalChantsTabAvailable,
+  getIsSpellsTabAvailable,
+  getIsLiturgicalChantsTabAvailable,
   getRuleBooksEnabled,
-  (tab, isMainSection, isHeroSection, locale, phase, raceId, cultureId, isSpellsTabAvailable, isLiturgicalChantsTabAvailable, ruleBooksEnabled): SubTab[] | undefined => {
-    let tabs: SubTab[] | undefined;
-
+  getWikiBooks,
+  (
+    tab,
+    isMainSection,
+    isHeroSection,
+    locale,
+    phase,
+    raceId,
+    cultureId,
+    isSpellsTabAvailable,
+    isLiturgicalChantsTabAvailable,
+    maybeRuleBooksEnabled,
+    books
+  ): Maybe<List<SubTab>> => {
     if (locale) {
       if (isMainSection) {
-        const aboutSubTabs: TabId[] = ['imprint', 'thirdPartyLicenses', 'lastChanges'];
-        if (aboutSubTabs.includes(tab)) {
-          tabs = [
+        const aboutSubTabs = List.of<TabId> ('imprint', 'thirdPartyLicenses', 'lastChanges');
+
+        if (aboutSubTabs.elem (tab)) {
+          return Just (List.of<SubTab> (
             {
               id: 'imprint',
-              label: translate(locale, 'titlebar.tabs.imprint'),
+              label: translate (locale, 'titlebar.tabs.imprint'),
             },
             {
               id: 'thirdPartyLicenses',
-              label: translate(locale, 'titlebar.tabs.thirdpartylicenses'),
+              label: translate (locale, 'titlebar.tabs.thirdpartylicenses'),
             },
             {
               id: 'lastChanges',
-              label: translate(locale, 'titlebar.tabs.lastchanges'),
+              label: translate (locale, 'titlebar.tabs.lastchanges'),
             },
-          ];
+          ));
         }
       }
       else if (isHeroSection) {
-        if (phase === 1) {
-          const profileSubTabs: TabId[] = ['profile', 'personalData', 'pact', 'rules'];
-          const rcpSubTabs: TabId[] = ['races', 'cultures', 'professions'];
-          if (profileSubTabs.includes(tab)) {
-            tabs = [
+        if (Maybe.elem (1) (phase)) {
+          const profileSubTabs = List.of<TabId> ('profile', 'personalData', 'pact', 'rules');
+          const rcpSubTabs = List.of<TabId> ('races', 'cultures', 'professions');
+
+          if (profileSubTabs.elem (tab)) {
+            return Just (List.of<SubTab> (
               {
                 id: 'profile',
-                label: translate(locale, 'titlebar.tabs.profileoverview'),
+                label: translate (locale, 'titlebar.tabs.profileoverview'),
               },
               {
                 id: 'personalData',
-                label: translate(locale, 'titlebar.tabs.personaldata'),
+                label: translate (locale, 'titlebar.tabs.personaldata'),
                 disabled: true,
               },
               {
                 id: 'pact',
-                label: translate(locale, 'titlebar.tabs.pact'),
-                disabled: locale.id !== 'de-DE'
+                label: translate (locale, 'titlebar.tabs.pact'),
+                disabled: locale.get ('id') !== 'de-DE'
               },
               {
                 id: 'rules',
-                label: translate(locale, 'titlebar.tabs.rules'),
+                label: translate (locale, 'titlebar.tabs.rules'),
               },
-            ];
+            ));
           }
-          else if (rcpSubTabs.includes(tab)) {
-            tabs = [
-              {
-                id: 'races',
-                label: translate(locale, 'titlebar.tabs.race'),
-              },
-            ];
+          else if (rcpSubTabs.elem (tab)) {
+            const racesTab: SubTab = {
+              id: 'races',
+              label: translate (locale, 'titlebar.tabs.race'),
+            };
+
+            const culturesTab: SubTab = {
+              id: 'cultures',
+              label: translate (locale, 'titlebar.tabs.culture'),
+            };
+
+            const professionsTab: SubTab = {
+              id: 'professions',
+              label: translate (locale, 'titlebar.tabs.profession'),
+            };
 
             if (typeof raceId === 'string') {
-              tabs.push({
-                id: 'cultures',
-                label: translate(locale, 'titlebar.tabs.culture'),
-              });
+              return Just (List.of<SubTab> (
+                racesTab,
+                culturesTab
+              ));
             }
 
             if (typeof cultureId === 'string') {
-              tabs.push({
-                id: 'professions',
-                label: translate(locale, 'titlebar.tabs.profession'),
-              });
+              return Just (List.of<SubTab> (
+                racesTab,
+                culturesTab,
+                professionsTab
+              ));
             }
+
+            return Just (List.of<SubTab> (
+              racesTab
+            ));
           }
         }
         else {
-          const profileSubTabs: TabId[] = ['profile', 'personalData', 'characterSheet', 'pact', 'rules'];
-          const disadvSubTabs: TabId[] = ['advantages', 'disadvantages'];
-          const abilitiesSubTabs: TabId[] = ['skills', 'combatTechniques', 'specialAbilities', 'spells', 'liturgicalChants'];
-          const belongingsSubTabs: TabId[] = ['equipment', 'zoneArmor', 'pets'];
-          if (profileSubTabs.includes(tab)) {
-            tabs = [
+          const profileSubTabs = List.of<TabId> (
+            'profile', 'personalData', 'characterSheet', 'pact', 'rules'
+          );
+
+          const abilitiesSubTabs = List.of<TabId> (
+            'skills', 'combatTechniques', 'specialAbilities', 'spells', 'liturgicalChants'
+          );
+
+          const disadvSubTabs = List.of<TabId> ('advantages', 'disadvantages');
+          const belongingsSubTabs = List.of<TabId> ('equipment', 'zoneArmor', 'pets');
+
+          if (profileSubTabs.elem (tab)) {
+            const baseTabs = List.of<SubTab> (
               {
                 id: 'profile',
-                label: translate(locale, 'titlebar.tabs.profileoverview'),
+                label: translate (locale, 'titlebar.tabs.profileoverview'),
               },
               {
                 id: 'personalData',
-                label: translate(locale, 'titlebar.tabs.personaldata'),
+                label: translate (locale, 'titlebar.tabs.personaldata'),
                 disabled: true,
               },
               {
                 id: 'pact',
-                label: translate(locale, 'titlebar.tabs.pact'),
-                disabled: locale.id !== 'de-DE',
+                label: translate (locale, 'titlebar.tabs.pact'),
+                disabled: locale.get ('id') !== 'de-DE',
               },
               {
                 id: 'rules',
-                label: translate(locale, 'titlebar.tabs.rules'),
+                label: translate (locale, 'titlebar.tabs.rules'),
               },
-            ];
+            );
 
-            if (phase === 3) {
-              tabs.splice(2, 0, {
-                id: 'characterSheet',
-                label: translate(locale, 'titlebar.tabs.charactersheet'),
-              });
+            if (Maybe.elem (3) (phase)) {
+              return Just (baseTabs.insertAt (
+                2,
+                {
+                  id: 'characterSheet',
+                  label: translate (locale, 'titlebar.tabs.charactersheet'),
+                }
+              ));
             }
+
+            return Just (baseTabs);
           }
-          else if (disadvSubTabs.includes(tab)) {
-            tabs = [
+          else if (disadvSubTabs.elem (tab)) {
+            return Just (List.of<SubTab> (
               {
                 id: 'advantages',
-                label: translate(locale, 'titlebar.tabs.advantages'),
+                label: translate (locale, 'titlebar.tabs.advantages'),
               },
               {
                 id: 'disadvantages',
-                label: translate(locale, 'titlebar.tabs.disadvantages'),
+                label: translate (locale, 'titlebar.tabs.disadvantages'),
               },
-            ];
+            ));
           }
-          else if (abilitiesSubTabs.includes(tab)) {
-            tabs = [
-              {
-                id: 'skills',
-                label: translate(locale, 'titlebar.tabs.talents'),
-              },
-              {
-                id: 'combatTechniques',
-                label: translate(locale, 'titlebar.tabs.combattechniques'),
-              },
-              {
-                id: 'specialAbilities',
-                label: translate(locale, 'titlebar.tabs.specialabilities'),
-              },
-            ];
-
-            if (isSpellsTabAvailable) {
-              tabs.push({
-                id: 'spells',
-                label: translate(locale, 'titlebar.tabs.spells'),
-              });
-            }
-
-            if (isLiturgicalChantsTabAvailable) {
-              tabs.push({
-                id: 'liturgicalChants',
-                label: translate(locale, 'titlebar.tabs.liturgies'),
-              });
-            }
+          else if (abilitiesSubTabs.elem (tab)) {
+            return Just (
+              List.of<SubTab> (
+                {
+                  id: 'skills',
+                  label: translate (locale, 'titlebar.tabs.talents'),
+                },
+                {
+                  id: 'combatTechniques',
+                  label: translate (locale, 'titlebar.tabs.combattechniques'),
+                },
+                {
+                  id: 'specialAbilities',
+                  label: translate (locale, 'titlebar.tabs.specialabilities'),
+                },
+              )
+                .mappend (
+                  isSpellsTabAvailable
+                    ? List.of<SubTab> ({
+                      id: 'spells',
+                      label: translate (locale, 'titlebar.tabs.spells'),
+                    })
+                    : List.of ()
+                )
+                .mappend (
+                  isLiturgicalChantsTabAvailable
+                    ? List.of<SubTab> ({
+                      id: 'liturgicalChants',
+                      label: translate (locale, 'titlebar.tabs.liturgies'),
+                    })
+                    : List.of ()
+                )
+            );
           }
-          else if (belongingsSubTabs.includes(tab)) {
-            tabs = [
+          else if (belongingsSubTabs.elem (tab)) {
+            const baseTabs = List.of<SubTab> (
               {
                 id: 'equipment',
-                label: translate(locale, 'titlebar.tabs.equipment'),
+                label: translate (locale, 'titlebar.tabs.equipment'),
               },
               {
                 id: 'pets',
-                label: translate(locale, 'titlebar.tabs.pets'),
+                label: translate (locale, 'titlebar.tabs.pets'),
               },
-            ];
+            );
 
-            if (locale.id === 'de-DE' && (ruleBooksEnabled === true || ruleBooksEnabled.has('US25208'))) {
-              tabs.splice(1, 0, {
-                id: 'zoneArmor',
-                label: translate(locale, 'titlebar.tabs.zonearmor'),
-              });
+            if (
+              maybeRuleBooksEnabled
+                .fmap (ruleBooksEnabled => isBookEnabled (books) (ruleBooksEnabled) ('US25208'))
+                .equals (Just (true))
+            ) {
+              return Just (baseTabs.insertAt (
+                1,
+                {
+                  id: 'zoneArmor',
+                  label: translate (locale, 'titlebar.tabs.zonearmor'),
+                }
+              ));
             }
+
+            return Just (baseTabs);
           }
         }
       }
     }
-    return tabs;
+
+    return Nothing ();
   }
 );

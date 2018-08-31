@@ -2,7 +2,7 @@ import { Book, SourceLink } from '../types/wiki';
 import { List, OrderedMap, OrderedSet, Record } from './dataUtils';
 
 export const isCoreBook = (src: Record<SourceLink>) =>
-  ['US25001', 'US25002'].includes(src.get('id'));
+  ['US25001', 'US25002'].includes (src.get ('id'));
 
 interface ObjectWithSource {
   src: List<Record<SourceLink>>;
@@ -13,19 +13,19 @@ interface ObjectWithSource {
  * Use because `entry.get('src')` does not work
  */
 const getSourceLinks = (entry: any): List<Record<SourceLink>> =>
-  entry.get('src' as any);
+  entry.get ('src' as any);
 
 /**
- * Use because `entry.get('instance')` does not work
+ * Use because `entry.get('stateEntry')` does not work
  */
 const getInstance = <T extends ObjectWithSource>(entry: any): Record<T> =>
-  entry.get('instance' as any);
+  entry.get ('stateEntry' as any);
 
 /**
  * Use for combination of `getInstance` and `getSourceLinks`
  */
 const getSourceLinksFromInstance = (entry: any): List<Record<SourceLink>> =>
-getSourceLinks(getInstance(entry));
+  getSourceLinks (getInstance (entry));
 
 /**
  * Returns if the given entry is available.
@@ -38,8 +38,8 @@ export const isAvailable =
         return availablility === true;
       }
 
-      return getSourceLinks(entry).any(
-        s => availablility.member(s.get('id')) || isCoreBook(s)
+      return getSourceLinks (entry).any (
+        s => availablility.member (s.get ('id')) || isCoreBook (s)
       );
     };
 
@@ -48,7 +48,7 @@ export const isAvailable =
  * @param entry The entry.
  */
 export const isEntryFromCoreBook = <T extends ObjectWithSource>(entry: Record<T>) => {
-  return getSourceLinks(entry).any(isCoreBook);
+  return getSourceLinks (entry).any (isCoreBook);
 };
 
 /**
@@ -63,18 +63,18 @@ export const filterByAvailability = <T extends ObjectWithSource>(
   or?: (obj: Record<T>) => boolean
 ) => {
   if (or) {
-    return list.filter(
-      e => getSourceLinks(e).null() || isAvailable<T>(availablility)(e) || or(e)
+    return list.filter (
+      e => getSourceLinks (e).null () || isAvailable<T> (availablility) (e) || or (e)
     );
   }
 
-  return list.filter(
-    e => getSourceLinks(e).null() || isAvailable<T>(availablility)(e)
+  return list.filter (
+    e => getSourceLinks (e).null () || isAvailable<T> (availablility) (e)
   );
 };
 
-interface ObjectWithInstance {
-  instance: ObjectWithSource;
+export interface ObjectWithStateEntry {
+  stateEntry: Record<ObjectWithSource>;
   [key: string]: any;
 }
 
@@ -86,22 +86,22 @@ interface ObjectWithInstance {
  * @param availablility The availability state.
  * @param or An additional function to state the entry should be still shown.
  */
-export const filterByInstancePropertyAvailability = <T extends ObjectWithInstance>(
+export const filterByInstancePropertyAvailability = <T extends ObjectWithStateEntry>(
   list: List<Record<T>>,
   availablility: boolean | OrderedSet<string>,
   or?: (obj: Record<T>) => boolean
 ) => {
   if (or) {
-    return list.filter(
-      e => getSourceLinksFromInstance(e).null()
-        || isAvailable(availablility)(getInstance(e))
-        || or(e)
+    return list.filter (
+      e => getSourceLinksFromInstance (e).null ()
+        || isAvailable (availablility) (getInstance (e))
+        || or (e)
     );
   }
 
-  return list.filter(
-    e => getSourceLinksFromInstance(e).null()
-      || isAvailable(availablility)(getInstance(e))
+  return list.filter (
+    e => getSourceLinksFromInstance (e).null ()
+      || isAvailable (availablility) (getInstance (e))
   );
 };
 
@@ -112,9 +112,7 @@ export const filterByInstancePropertyAvailability = <T extends ObjectWithInstanc
  * are enabled.
  * @param id The book's id.
  */
-export const isBookEnabled = (
-  books: OrderedMap<string, Record<Book>>,
-  availableBooks: true | OrderedSet<string>,
-  id: string
-) =>
-    availableBooks === true ? books.member(id) : availableBooks.member(id);
+export const isBookEnabled = (books: OrderedMap<string, Record<Book>>) =>
+  (availableBooks: true | OrderedSet<string>) =>
+  (id: string) =>
+    availableBooks === true ? books.member (id) : availableBooks.member (id);

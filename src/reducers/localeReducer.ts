@@ -2,6 +2,7 @@ import { ReceiveInitialDataAction } from '../actions/IOActions';
 import { SetLocaleAction } from '../actions/LocaleActions';
 import { ActionTypes } from '../constants/ActionTypes';
 import { UIMessages } from '../types/ui';
+import { List, OrderedMap } from '../utils/dataUtils';
 
 type Action = ReceiveInitialDataAction | SetLocaleAction;
 
@@ -15,7 +16,7 @@ const initialState: LocaleState = {
   type: 'default'
 };
 
-export function localeReducer(state: LocaleState = initialState, action: Action): LocaleState {
+export function localeReducer (state: LocaleState = initialState, action: Action): LocaleState {
   switch (action.type) {
     case ActionTypes.RECEIVE_INITIAL_DATA: {
       const id =
@@ -25,7 +26,10 @@ export function localeReducer(state: LocaleState = initialState, action: Action)
       return {
         type: action.payload.config && action.payload.config.locale ? 'set' : 'default',
         id,
-        messages: typeof id === 'string' ? action.payload.locales[id].ui : undefined
+        messages: typeof id === 'string'
+          ? OrderedMap.of (Object.entries (action.payload.locales[id].ui))
+            .toKeyValueObjectWith (e => Array.isArray (e) ? List.fromArray (e) : e) as UIMessages
+          : undefined
       };
     }
 

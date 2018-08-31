@@ -7,7 +7,7 @@ import { AppState } from '../reducers/app';
 import { getAdvantagesForSheet, getDisadvantagesForSheet, isAlbino } from '../selectors/activatableSelectors';
 import { getAvailableAdventurePoints } from '../selectors/adventurePointsSelectors';
 import { getStartEl } from '../selectors/elSelectors';
-import { isRemovingEnabled } from '../selectors/phaseSelectors';
+import { getIsRemovingEnabled } from '../selectors/phaseSelectors';
 import { getProfile } from '../selectors/profileSelectors';
 import { getCurrentCulture, getCurrentProfession, getCurrentProfessionVariant, getCurrentRace, getCurrentRaceVariant } from '../selectors/rcpSelectors';
 import { getPhase, getTotalAdventurePoints, isAddAdventurePointsOpen, isEditCharacterAvatarOpen } from '../selectors/stateSelectors';
@@ -23,7 +23,7 @@ function mapStateToProps(state: AppState) {
 		culture: getCurrentCulture(state),
 		currentEl: getStartEl(state),
 		disadvantages: getDisadvantagesForSheet(state),
-		isRemovingEnabled: isRemovingEnabled(state),
+		isRemovingEnabled: getIsRemovingEnabled(state),
 		isEditingHeroAfterCreationPhaseEnabled: getIsEditingHeroAfterCreationPhaseEnabled(state),
 		phase: getPhase(state),
 		profession: getCurrentProfession(state),

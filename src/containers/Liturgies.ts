@@ -5,7 +5,7 @@ import * as LiturgiesActions from '../actions/LiturgiesActions';
 import { AppState } from '../reducers/app';
 import { getDerivedCharacteristicsMap } from '../selectors/derivedCharacteristicsSelectors';
 import { getBlessedTraditionNumericId, getFilteredActiveLiturgicalChantsAndBlessings, getFilteredInactiveLiturgicalChantsAndBlessings, isActivationDisabled } from '../selectors/liturgiesSelectors';
-import { isRemovingEnabled } from '../selectors/phaseSelectors';
+import { getIsRemovingEnabled } from '../selectors/phaseSelectors';
 import { getAttributes, getInactiveLiturgicalChantsFilterText, getLiturgicalChantsFilterText, getPhase } from '../selectors/stateSelectors';
 import { getEnableActiveItemHints, getLiturgiesSortOrder } from '../selectors/uisettingsSelectors';
 import { Liturgies, LiturgiesDispatchProps, LiturgiesOwnProps, LiturgiesStateProps } from '../views/skills/Liturgies';
@@ -16,7 +16,7 @@ function mapStateToProps(state: AppState) {
 		addChantsDisabled: isActivationDisabled(state),
 		derivedCharacteristics: getDerivedCharacteristicsMap(state),
 		enableActiveItemHints: getEnableActiveItemHints(state),
-		isRemovingEnabled: isRemovingEnabled(state),
+		isRemovingEnabled: getIsRemovingEnabled(state),
 		activeList: getFilteredActiveLiturgicalChantsAndBlessings(state),
 		inactiveList: getFilteredInactiveLiturgicalChantsAndBlessings(state),
 		phase: getPhase(state),

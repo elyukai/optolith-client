@@ -1,12 +1,17 @@
+import R from 'ramda';
 import { createSelector } from 'reselect';
+import { Maybe, OrderedMap } from '../utils/dataUtils';
 import { getPets } from './stateSelectors';
 
-export const getPet = createSelector(
+export const getPet = createSelector (
   getPets,
-  maybePets => maybePets.bind(pets => pets.elems().head())
+  R.pipe (
+    Maybe.fmap (OrderedMap.elems),
+    Maybe.bind_ (Maybe.listToMaybe)
+  )
 );
 
-export const getAllPets = createSelector(
+export const getAllPets = createSelector (
   getPets,
-  maybePets => maybePets.fmap(pets => pets.elems())
+  maybePets => maybePets.fmap (pets => pets.elems ())
 );

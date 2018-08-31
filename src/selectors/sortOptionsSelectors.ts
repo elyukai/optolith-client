@@ -5,16 +5,16 @@ import * as Wiki from '../types/wiki';
 import { Maybe, Record } from '../utils/dataUtils';
 import { AllSortOptions } from '../utils/FilterSortUtils';
 import { translate } from '../utils/I18n';
-import { getLocaleMessages, getSex } from './stateSelectors';
+import { getLocaleAsProp, getSex } from './stateSelectors';
 import * as uiSettingsSelectors from './uisettingsSelectors';
 
-export const getRacesSortOptions = createSelector(
+export const getRacesSortOptions = createSelector (
   uiSettingsSelectors.getRacesSortOrder,
   (sortOrder): AllSortOptions<Wiki.Race> | AllSortOptions<View.RaceCombined> =>
     sortOrder === 'cost' ? ['ap', 'name'] : 'name'
 );
 
-export const getCulturesSortOptions = createSelector(
+export const getCulturesSortOptions = createSelector (
   uiSettingsSelectors.getCulturesSortOrder,
   (sortOrder): AllSortOptions<Wiki.Culture> | AllSortOptions<View.CultureCombined> =>
     sortOrder === 'cost' ? ['culturalPackageAdventurePoints', 'name'] : 'name'
@@ -22,17 +22,18 @@ export const getCulturesSortOptions = createSelector(
 
 const getProfessionSourceKey = (
   e: Record<Wiki.Profession> | Record<View.ProfessionCombined>
-): string => Maybe.fromMaybe('US25000', e.get('src').head().fmap(head => head.get('id')));
+): string => Maybe.fromMaybe ('US25000')
+                             (Maybe.listToMaybe (e.get ('src')).fmap (head => head.get ('id')));
 
 type ProfessionSortOptions =
   AllSortOptions<Wiki.Profession> |
   AllSortOptions<View.ProfessionCombined>;
 
-export const getProfessionsSortOptions = createSelector(
+export const getProfessionsSortOptions = createSelector (
   uiSettingsSelectors.getProfessionsSortOrder,
   getSex,
   (sortOrder, maybeSex): Maybe<ProfessionSortOptions> =>
-    maybeSex.fmap(
+    maybeSex.fmap (
       sex => {
         if (sortOrder === 'cost') {
           const sortOptions1: ProfessionSortOptions = [
@@ -56,10 +57,10 @@ export const getProfessionsSortOptions = createSelector(
     )
 );
 
-export const getSkillsSortOptions = createSelector(
+export const getSkillsSortOptions = createSelector (
   uiSettingsSelectors.getTalentsSortOrder,
   sortOrder => {
-    let sortOptions: AllSortOptions<Wiki.Skill | Data.TalentInstance> = 'name';
+    let sortOptions: AllSortOptions<Wiki.Skill | View.SkillCombined> = 'name';
 
     if (sortOrder === 'ic') {
       sortOptions = ['ic', 'name'];
@@ -72,7 +73,7 @@ export const getSkillsSortOptions = createSelector(
   }
 );
 
-export const getCombatTechniquesSortOptions = createSelector(
+export const getCombatTechniquesSortOptions = createSelector (
   uiSettingsSelectors.getCombatTechniquesSortOrder,
   sortOrder => {
     type Targets = Wiki.CombatTechnique | View.CombatTechniqueWithRequirements;
@@ -90,12 +91,12 @@ export const getCombatTechniquesSortOptions = createSelector(
   }
 );
 
-export const getSpecialAbilitiesSortOptions = createSelector(
+export const getSpecialAbilitiesSortOptions = createSelector (
   uiSettingsSelectors.getSpecialAbilitiesSortOrder,
-  getLocaleMessages,
+  getLocaleAsProp,
   (sortOrder, locale) => {
-    type ActiveTarget = Data.ActiveViewObject<Data.SpecialAbilityInstance>;
-    type InactiveTarget = Data.DeactiveViewObject<Data.SpecialAbilityInstance>;
+    type ActiveTarget = Data.ActiveViewObject<Wiki.SpecialAbility>;
+    type InactiveTarget = Data.DeactiveViewObject<Wiki.SpecialAbility>;
     type Targets = ActiveTarget | InactiveTarget;
 
     let sortOptions: AllSortOptions<Targets> = 'name';
@@ -103,8 +104,8 @@ export const getSpecialAbilitiesSortOptions = createSelector(
     if (sortOrder === 'groupname') {
       sortOptions = [
         {
-          key: obj => obj.instance.gr,
-          mapToIndex: translate(locale, 'specialabilities.view.groups')
+          key: obj => obj.get ('wikiEntry').get ('gr'),
+          mapToIndex: translate (locale, 'specialabilities.view.groups')
         },
         'name'
       ];
@@ -114,11 +115,13 @@ export const getSpecialAbilitiesSortOptions = createSelector(
   }
 );
 
-export const getSpellsSortOptions = createSelector(
+export const getSpellsSortOptions = createSelector (
   uiSettingsSelectors.getSpellsSortOrder,
-  getLocaleMessages,
+  getLocaleAsProp,
   (sortOrder, locale) => {
-    type Targets = Wiki.Spell | Data.SpellInstance | Data.CantripInstance;
+    type Targets = Wiki.Spell
+      | View.SpellCombined
+      | Wiki.Cantrip & { ic?: undefined; gr?: undefined };
 
     let sortOptions: AllSortOptions<Targets> = 'name';
 
@@ -126,76 +129,56 @@ export const getSpellsSortOptions = createSelector(
       sortOptions = [
         {
           key: 'property',
-          mapToIndex: translate(locale, 'spells.view.properties')
+          mapToIndex: translate (locale, 'spells.view.properties')
         },
         'name'
       ];
     }
     else if (sortOrder === 'ic') {
-      sortOptions = [{ key: ({ ic = 0 }) => ic }, 'name'];
+      sortOptions = [{ key: r => r.lookupWithDefault<'ic'> (0) ('ic') }, 'name'];
     }
     else if (sortOrder === 'group') {
-      sortOptions = [{ key: ({ gr = 1000 }) => gr }, 'name'];
+      sortOptions = [{ key: r => r.lookupWithDefault<'gr'> (1000) ('gr') }, 'name'];
     }
 
     return sortOptions;
   }
 );
 
-export const getCantripsSortOptions = createSelector(
-  uiSettingsSelectors.getSpellsSortOrder,
-  getLocaleMessages,
-  (sortOrder, locale) => {
-    let sortOptions: AllSortOptions<Wiki.Cantrip> = 'name';
-
-    if (sortOrder === 'property') {
-      sortOptions = [
-        {
-          key: 'property',
-          mapToIndex: translate(locale, 'spells.view.properties')
-        },
-        'name'
-      ];
-    }
-
-    return sortOptions;
-  }
-);
-
-export const getLiturgicalChantsSortOptions = createSelector(
+export const getLiturgicalChantsSortOptions = createSelector (
   uiSettingsSelectors.getLiturgiesSortOrder,
   sortOrder => {
-    type LiturgicalChantTargets = Wiki.LiturgicalChant | Data.LiturgyInstance;
-    type Targets = LiturgicalChantTargets | Data.BlessingInstance;
+    type LiturgicalChantTargets = Wiki.LiturgicalChant | View.LiturgicalChantCombined;
+    type Targets = LiturgicalChantTargets | Wiki.Blessing & { ic?: undefined; gr?: undefined };
 
     let sortOptions: AllSortOptions<Targets> = 'name';
 
     if (sortOrder === 'ic') {
-      sortOptions = [{ key: ({ ic = 0 }) => ic }, 'name'];
+      sortOptions = [{ key: r => r.lookupWithDefault<'ic'> (0) ('ic') }, 'name'];
     }
     else if (sortOrder === 'group') {
-      sortOptions = [{ key: ({ gr = 1000 }) => gr }, 'name'];
+      sortOptions = [{ key: r => r.lookupWithDefault<'gr'> (1000) ('gr') }, 'name'];
     }
 
     return sortOptions;
   }
 );
 
-export const getEquipmentSortOptions = createSelector(
+export const getEquipmentSortOptions = createSelector (
   uiSettingsSelectors.getEquipmentSortOrder,
-  getLocaleMessages,
+  getLocaleAsProp,
   (sortOrder, locale) => {
     type Targets = Wiki.ItemTemplate | Data.ItemInstance;
 
     let sortOptions: AllSortOptions<Targets> = 'name';
 
     if (sortOrder === 'groupname') {
-      const groups = translate(locale, 'equipment.view.groups');
+      const groups = translate (locale, 'equipment.view.groups');
       sortOptions = [{ key: 'gr', mapToIndex: groups }, 'name'];
     }
     else if (sortOrder === 'weight') {
       sortOptions = [
-        { key: ({ weight = 0 }) => weight, reverse: true },
+        { key: r => r.get ('weight'), reverse: true },
         'name'
       ];
     }

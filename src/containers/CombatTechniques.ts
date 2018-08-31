@@ -5,7 +5,7 @@ import { AppState } from '../reducers/app';
 import { getFilteredCombatTechniques } from '../selectors/combatTechniquesSelectors';
 import { getPresent } from '../selectors/currentHeroSelectors';
 import { getDerivedCharacteristicsMap } from '../selectors/derivedCharacteristicsSelectors';
-import { isRemovingEnabled } from '../selectors/phaseSelectors';
+import { getIsRemovingEnabled } from '../selectors/phaseSelectors';
 import { getAttributes, getCombatTechniquesFilterText, getPhase } from '../selectors/stateSelectors';
 import { getCombatTechniquesSortOrder } from '../selectors/uisettingsSelectors';
 import { CombatTechniques, CombatTechniquesDispatchProps, CombatTechniquesOwnProps, CombatTechniquesStateProps } from '../views/skills/CombatTechniques';
@@ -15,7 +15,7 @@ function mapStateToProps(state: AppState) {
 		attributes: getAttributes(state),
 		currentHero: getPresent(state),
 		derivedCharacteristics: getDerivedCharacteristicsMap(state),
-		isRemovingEnabled: isRemovingEnabled(state),
+		isRemovingEnabled: getIsRemovingEnabled(state),
 		list: getFilteredCombatTechniques(state),
 		phase: getPhase(state),
 		sortOrder: getCombatTechniquesSortOrder(state),

@@ -23,7 +23,7 @@ export type ActivatableCategory =
   Categories.DISADVANTAGES |
   Categories.SPECIAL_ABILITIES;
 
-export const ActivatableCategories = List.of<ActivatableCategory>(
+export const ActivatableCategories = List.of<ActivatableCategory> (
   Categories.ADVANTAGES,
   Categories.DISADVANTAGES,
   Categories.SPECIAL_ABILITIES,
@@ -43,7 +43,7 @@ export type IncreasableCategory =
   Categories.SPELLS |
   Categories.TALENTS;
 
-export const IncreasableCategories = List.of<IncreasableCategory>(
+export const IncreasableCategories = List.of<IncreasableCategory> (
   Categories.ATTRIBUTES,
   Categories.COMBAT_TECHNIQUES,
   Categories.LITURGIES,
@@ -58,7 +58,7 @@ export type ActivatableLikeCategory =
   Categories.LITURGIES |
   Categories.SPELLS;
 
-export const ActivatableLikeCategories = List.of<ActivatableLikeCategory>(
+export const ActivatableLikeCategories = List.of<ActivatableLikeCategory> (
   Categories.ADVANTAGES,
   Categories.DISADVANTAGES,
   Categories.SPECIAL_ABILITIES,
@@ -70,7 +70,7 @@ export type ActivatableSkillCategory =
   Categories.LITURGIES |
   Categories.SPELLS;
 
-export const ActivatableSkillCategories = List.of<ActivatableSkillCategory>(
+export const ActivatableSkillCategories = List.of<ActivatableSkillCategory> (
   Categories.LITURGIES,
   Categories.SPELLS,
 );

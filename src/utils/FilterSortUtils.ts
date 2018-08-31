@@ -1,3 +1,8 @@
+/**
+ * TODO: Refactor the entire file to split the functions into smaller pieces and
+ * to manually curry them.
+ */
+
 import { List, Maybe, Record } from './dataUtils';
 
 export interface BaseObject {
@@ -20,7 +25,7 @@ export interface SortOption<T extends BaseObject> {
 
 type SortFunction<T> = (a: Record<T>, b: Record<T>) => number;
 
-function keyIsFunction<T extends BaseObject>(key: SortKeyType<T>): key is SortKeyFunction<T> {
+function keyIsFunction<T extends BaseObject> (key: SortKeyType<T>): key is SortKeyFunction<T> {
   return typeof key === 'function';
 }
 
@@ -29,43 +34,43 @@ export const sortObjects = <T extends BaseObject>(
   locale: string,
   sortOptions: AllSortOptions<T> = 'name'
 ): List<Record<T>> => {
-  if (list.length() < 2) {
+  if (list.length () < 2) {
     return list;
   }
 
   const sortFunctions: SortFunction<T>[] = [];
-  const firstItem = list.head();
+  const firstItem = Maybe.listToMaybe (list);
 
-  if (Maybe.isJust(firstItem)) {
-    if (Array.isArray(sortOptions)) {
+  if (Maybe.isJust (firstItem)) {
+    if (Array.isArray (sortOptions)) {
       for (const option of sortOptions) {
-        const sortFunction = createSortFunction<T>(
+        const sortFunction = createSortFunction<T> (
           option,
-          Maybe.fromJust(firstItem),
+          Maybe.fromJust (firstItem),
           locale
         );
 
         if (sortFunction) {
-          sortFunctions.push(sortFunction);
+          sortFunctions.push (sortFunction);
         }
       }
     }
     else {
-      const sortFunction = createSortFunction<T>(
+      const sortFunction = createSortFunction<T> (
         sortOptions,
-        Maybe.fromJust(firstItem),
+        Maybe.fromJust (firstItem),
         locale
       );
 
       if (sortFunction) {
-        sortFunctions.push(sortFunction);
+        sortFunctions.push (sortFunction);
       }
     }
   }
 
-  return list.sortBy(a => b => {
+  return list.sortBy (a => b => {
     for (const compare of sortFunctions) {
-      const result = compare(a, b);
+      const result = compare (a, b);
       if (result !== 0) {
         return result;
       }
@@ -87,54 +92,61 @@ export const filterObjects = <T extends BaseObject>(
 ): List<Record<T>> => {
   const { addProperty, keyOfName } = options;
   if (filterText !== '') {
-    filterText = filterText.toLowerCase();
+    filterText = filterText.toLowerCase ();
     if (addProperty) {
-      return list.filter((obj: any) => {
+      return list.filter ((obj: any) => {
         if (
-          typeof obj.get('name') === 'object'
-          && typeof obj.get(addProperty) === 'object'
+          typeof obj.get ('name') === 'object'
+          && typeof obj.get (addProperty) === 'object'
           && keyOfName
         ) {
-          return (obj.get('name').get(keyOfName) as string).toLowerCase().includes(filterText)
-            || (obj.get(addProperty).get(keyOfName) as string).toLowerCase().includes(filterText);
+          return (obj.get ('name').get (keyOfName) as string).toLowerCase ().includes (filterText)
+            || (obj.get (addProperty).get (keyOfName) as string)
+              .toLowerCase ()
+              .includes (filterText);
         }
         else if (
-          typeof obj.get('name') === 'object'
-          && typeof obj.get(addProperty) === 'string'
+          typeof obj.get ('name') === 'object'
+          && typeof obj.get (addProperty) === 'string'
           && keyOfName
         ) {
-          return (obj.get('name').get(keyOfName) as string).toLowerCase().includes(filterText)
-            || (obj.get(addProperty) as string).toLowerCase().includes(filterText);
+          return (obj.get ('name').get (keyOfName) as string).toLowerCase ().includes (filterText)
+            || (obj.get (addProperty) as string).toLowerCase ().includes (filterText);
         }
         else if (
-          typeof obj.get('name') === 'string'
-          && typeof obj.get(addProperty) === 'object'
+          typeof obj.get ('name') === 'string'
+          && typeof obj.get (addProperty) === 'object'
           && keyOfName
         ) {
-          return obj.get('name').toLowerCase().includes(filterText)
-            || (obj.get(addProperty).get(keyOfName) as string).toLowerCase().includes(filterText);
+          return obj.get ('name').toLowerCase ().includes (filterText)
+            || (obj.get (addProperty).get (keyOfName) as string)
+              .toLowerCase ()
+              .includes (filterText);
         }
-        else if (typeof obj.get('name') === 'string' && typeof obj.get(addProperty) === 'string') {
-          return obj.get('name').toLowerCase().includes(filterText)
-            || (obj.get(addProperty) as string).toLowerCase().includes(filterText);
+        else if (
+          typeof obj.get ('name') === 'string'
+          && typeof obj.get (addProperty) === 'string'
+        ) {
+          return obj.get ('name').toLowerCase ().includes (filterText)
+            || (obj.get (addProperty) as string).toLowerCase ().includes (filterText);
         }
-        else if (typeof obj.get('name') === 'object' && keyOfName) {
-          return (obj.get('name').get(keyOfName) as string).toLowerCase().includes(filterText);
+        else if (typeof obj.get ('name') === 'object' && keyOfName) {
+          return (obj.get ('name').get (keyOfName) as string).toLowerCase ().includes (filterText);
         }
-        else if (typeof obj.get('name') === 'string') {
-          return obj.get('name').toLowerCase().includes(filterText);
+        else if (typeof obj.get ('name') === 'string') {
+          return obj.get ('name').toLowerCase ().includes (filterText);
         }
 
         return true;
       });
     }
 
-    return list.filter((obj: any) => {
-      if (typeof obj.get('name') === 'object' && keyOfName) {
-        return (obj.get('name').get(keyOfName) as string).toLowerCase().includes(filterText);
+    return list.filter ((obj: any) => {
+      if (typeof obj.get ('name') === 'object' && keyOfName) {
+        return (obj.get ('name').get (keyOfName) as string).toLowerCase ().includes (filterText);
       }
-      else if (typeof obj.get('name') === 'string') {
-        return obj.get('name').toLowerCase().includes(filterText);
+      else if (typeof obj.get ('name') === 'string') {
+        return obj.get ('name').toLowerCase ().includes (filterText);
       }
 
       return true;
@@ -147,24 +159,24 @@ export const filterObjects = <T extends BaseObject>(
 const isSortOptionType = <T extends BaseObject>(
   test: AllSortOptions<T> | FilterOptions<T> | undefined
 ): test is AllSortOptions<T> =>
-  Array.isArray(test)
+  Array.isArray (test)
   || typeof test === 'string'
-  || typeof test === 'object' && test.hasOwnProperty('key');
+  || typeof test === 'object' && test.hasOwnProperty ('key');
 
-export function filterAndSortObjects<T extends BaseObject>(
+export function filterAndSortObjects<T extends BaseObject> (
   list: List<Record<T>>,
   locale: string,
   filterText: string,
   filterOptions: FilterOptions<T>
 ): List<Record<T>>;
-export function filterAndSortObjects<T extends BaseObject>(
+export function filterAndSortObjects<T extends BaseObject> (
   list: List<Record<T>>,
   locale: string,
   filterText: string,
   sortOptions?: AllSortOptions<T>,
   filterOptions?: FilterOptions<T>
 ): List<Record<T>>;
-export function filterAndSortObjects<T extends BaseObject>(
+export function filterAndSortObjects<T extends BaseObject> (
   list: List<Record<T>>,
   locale: string,
   filterText: string,
@@ -174,7 +186,7 @@ export function filterAndSortObjects<T extends BaseObject>(
   let sortOptionsFinal: AllSortOptions<T> | undefined;
   let filterOptionsFinal: FilterOptions<T> | undefined;
 
-  if (isSortOptionType(sortOrFilterOptions)) {
+  if (isSortOptionType (sortOrFilterOptions)) {
     sortOptionsFinal = sortOrFilterOptions;
   }
   else if (sortOrFilterOptions !== undefined) {
@@ -184,29 +196,29 @@ export function filterAndSortObjects<T extends BaseObject>(
     filterOptionsFinal = filterOptions;
   }
 
-  return sortObjects(
-    filterObjects(list, filterText, filterOptionsFinal),
+  return sortObjects (
+    filterObjects (list, filterText, filterOptionsFinal),
     locale,
     sortOptionsFinal
   );
 }
 
-export function sortStrings(list: List<string>, locale: string) {
-  return list.sortBy(a => b => a.localeCompare(b, locale));
+export function sortStrings (list: List<string>, locale: string) {
+  return list.sortBy (a => b => a.localeCompare (b, locale));
 }
 
-export function filterStrings(list: List<string>, filterText: string) {
+export function filterStrings (list: List<string>, filterText: string) {
   if (filterText !== '') {
-    filterText = filterText.toLowerCase();
+    filterText = filterText.toLowerCase ();
 
-    return list.filter(e => e.toLowerCase().includes(filterText));
+    return list.filter (e => e.toLowerCase ().includes (filterText));
   }
 
   return list;
 }
 
-export function filterAndSortStrings(list: List<string>, locale: string, filterText: string) {
-  return sortStrings(filterStrings(list, filterText), locale);
+export function filterAndSortStrings (list: List<string>, locale: string, filterText: string) {
+  return sortStrings (filterStrings (list, filterText), locale);
 }
 
 const isSortOptionObject = <T extends BaseObject>(
@@ -220,88 +232,87 @@ const createSortOptionObjectFunction = <T extends BaseObject>(
   locale: string
 ): SortFunction<T> | undefined => {
   const { key, mapToIndex, reverse, keyOfProperty } = option;
-  const propertyType = keyIsFunction(key)
-    ? typeof key(firstItem)
-    : typeof firstItem.get(key as any);
+  const propertyType = keyIsFunction (key)
+    ? typeof key (firstItem)
+    : typeof firstItem.get (key as any);
   if (reverse === true) {
-    if (keyIsFunction(key)) {
+    if (keyIsFunction (key)) {
       if (propertyType === 'string') {
-        return (a, b) => key(a).localeCompare(key(b), locale) * -1;
+        return (a, b) => key (a).localeCompare (key (b), locale) * -1;
       }
       else if (propertyType === 'number') {
-        return (a, b) => key(b) - key(a);
+        return (a, b) => key (b) - key (a);
       }
     }
     else if (keyOfProperty !== undefined) {
       return (a, b) => (
-        typeof a.get(key as any) === 'object'
-          ? a.get(key as any).get(keyOfProperty) as string
-          : a.get(key as any) as string
+        typeof a.get (key as any) === 'object'
+          ? a.get (key as any).get (keyOfProperty) as string
+          : a.get (key as any) as string
       )
-        .localeCompare(
-          typeof b.get(key as any) === 'object'
-            ? b.get(key as any).get(keyOfProperty) as string
-            : b.get(key as any) as string,
+        .localeCompare (
+          typeof b.get (key as any) === 'object'
+            ? b.get (key as any).get (keyOfProperty) as string
+            : b.get (key as any) as string,
           locale
         ) * -1;
     }
     else if (propertyType === 'string') {
-      return (a, b) => (a.get(key as any) as string).localeCompare(b.get(key as any), locale) * -1;
+      return (a, b) => (a.get (key as any) as string)
+        .localeCompare (b.get (key as any), locale) * -1;
     }
     else if (propertyType === 'number' && mapToIndex !== undefined) {
-      return (a, b) => Maybe.fromMaybe(
-        0,
-        mapToIndex.subscript(a.get(key as any) as number - 1).bind(
-          mappedA => mapToIndex.subscript(b.get(key as any) as number - 1).fmap(
-            mappedB => mappedA.localeCompare(mappedB, locale) * -1
+      return (a, b) => Maybe.fromMaybe (0) (
+        mapToIndex.subscript (a.get (key as any) as number - 1).bind (
+          mappedA => mapToIndex.subscript (b.get (key as any) as number - 1).fmap (
+            mappedB => mappedA.localeCompare (mappedB, locale) * -1
           )
         )
       );
     }
     else if (propertyType === 'number') {
-      return (a, b) => (b.get(key as any) as number) - (a.get(key as any) as number);
+      return (a, b) => (b.get (key as any) as number) - (a.get (key as any) as number);
     }
   }
-  else if (keyIsFunction(key)) {
+  else if (keyIsFunction (key)) {
     if (propertyType === 'string') {
-      return (a, b) => key(a).localeCompare(key(b), locale);
+      return (a, b) => key (a).localeCompare (key (b), locale);
     }
     else if (propertyType === 'number') {
-      return (a, b) => key(a) - key(b);
+      return (a, b) => key (a) - key (b);
     }
   }
   else if (keyOfProperty !== undefined) {
     return (a, b) => {
-      if (a.get(key as any) === undefined) {
+      if (a.get (key as any) === undefined) {
         return 0;
       }
 
-      const astring = typeof a.get(key as any) === 'object'
-        ? a.get(key as any).get(keyOfProperty) as string
-        : a.get(key as any) as string;
+      const astring = typeof a.get (key as any) === 'object'
+        ? a.get (key as any).get (keyOfProperty) as string
+        : a.get (key as any) as string;
 
-      const bstring = typeof b.get(key as any) === 'object'
-        ? b.get(key as any).get(keyOfProperty) as string
-        : b.get(key as any) as string;
+      const bstring = typeof b.get (key as any) === 'object'
+        ? b.get (key as any).get (keyOfProperty) as string
+        : b.get (key as any) as string;
 
-      return astring.localeCompare(bstring, locale);
+      return astring.localeCompare (bstring, locale);
     };
   }
   else if (propertyType === 'string') {
-    return (a, b) => (a.get(key as any) as string).localeCompare(b.get(key as any), locale);
+    return (a, b) => (a.get (key as any) as string).localeCompare (b.get (key as any), locale);
   }
   else if (propertyType === 'number' && mapToIndex !== undefined) {
-    return (a, b) => Maybe.fromMaybe(
-      0,
-      mapToIndex.subscript(a.get(key as any) as number - 1).bind(
-        mappedA => mapToIndex.subscript(b.get(key as any) as number - 1).fmap(
-          mappedB => mappedA.localeCompare(mappedB, locale)
+    return (a, b) => Maybe.fromMaybe (0) (
+      mapToIndex.subscript (a.get (key as any) as number - 1).bind (
+        mappedA => mapToIndex.subscript (b.get (key as any) as number - 1).fmap (
+          mappedB => mappedA.localeCompare (mappedB, locale)
         )
       )
     );
   }
   else if (propertyType === 'number') {
-    return (a, b) => (a.get(key as any) as number) - (b.get(key as any) as number);
+    return (a, b) => (a.get (key as any) as number) - (b.get (key as any) as number);
   }
 
   return;
@@ -312,16 +323,17 @@ const createSortFunction = <T extends BaseObject>(
   firstItem: Record<T>,
   locale: string
 ): SortFunction<T> | undefined => {
-  if (isSortOptionObject(option)) {
-    return createSortOptionObjectFunction(option, firstItem, locale);
+  if (isSortOptionObject (option)) {
+    return createSortOptionObjectFunction (option, firstItem, locale);
   }
   else {
-    const propertyType = typeof firstItem.get(option as any);
+    const propertyType = typeof firstItem.get (option as any);
     if (propertyType === 'string') {
-      return (a, b) => (a.get(option as any) as string).localeCompare(b.get(option as any), locale);
+      return (a, b) => (a.get (option as any) as string)
+        .localeCompare (b.get (option as any), locale);
     }
     else if (propertyType === 'number') {
-      return (a, b) => (a.get(option as any) as number) - (b.get(option as any) as number);
+      return (a, b) => (a.get (option as any) as number) - (b.get (option as any) as number);
     }
   }
 

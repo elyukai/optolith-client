@@ -1,5 +1,5 @@
 import { Action } from 'redux';
-import { List, OrderedMap, OrderedSet, Record, Tuple } from '../utils/dataUtils';
+import { List, OrderedMap, OrderedSet, Record, RecordInterface, Tuple } from '../utils/dataUtils';
 import { TabId } from '../utils/LocationUtils';
 import { UndoState } from '../utils/undo';
 import * as Wiki from './wiki';
@@ -211,11 +211,14 @@ export interface ActiveObjectWithId extends ActiveObject {
   index: number;
 }
 
-export interface ActivatableNameCost extends ActiveObjectWithId {
-  combinedName: string;
+export interface ActivatableCombinedName {
+  name: string;
   baseName: string;
   addName?: string;
-  currentCost: number | List<number>;
+}
+
+export interface ActivatableNameCost extends ActiveObjectWithId, ActivatableCombinedName {
+  finalCost: number | List<number>;
 }
 
 export interface ActivatableNameCostActive extends ActivatableNameCost {
@@ -223,26 +226,34 @@ export interface ActivatableNameCostActive extends ActivatableNameCost {
 }
 
 export interface ActivatableNameCostEvalTier extends ActivatableNameCost {
-  currentCost: number;
+  finalCost: number;
   tierName?: string;
 }
 
-export interface ActiveViewObject<T extends Wiki.Activatable = Wiki.Activatable> {
-  id: string;
-  index: number;
-  name: string;
-  cost: number;
-  tier?: number;
-  tierName?: string;
-  minTier?: number;
-  maxTier?: number;
+export interface ActivatableActivationValidationObject extends ActiveObjectWithId {
   disabled: boolean;
-  instance: Record<ActivatableDependent>;
-  wiki: T;
+  maxTier?: number;
+  minTier?: number;
+}
+
+export interface ActivatableActivationMeta<
+  T extends RecordInterface<Wiki.Activatable> = RecordInterface<Wiki.Activatable>
+> {
+  stateEntry: Record<ActivatableDependent>;
+  wikiEntry: Record<T>;
   customCost?: boolean;
 }
 
-export interface DeactiveViewObject<T extends Wiki.Activatable = Wiki.Activatable> {
+export type ActiveViewObject<
+  T extends RecordInterface<Wiki.Activatable> = RecordInterface<Wiki.Activatable>
+> =
+  ActivatableNameCostEvalTier
+  & ActivatableActivationValidationObject
+  & ActivatableActivationMeta<T>;
+
+export interface DeactiveViewObject<
+  T extends RecordInterface<Wiki.Activatable> = RecordInterface<Wiki.Activatable>
+> {
   id: string;
   name: string;
   cost?: string | number | List<number>;
@@ -251,8 +262,8 @@ export interface DeactiveViewObject<T extends Wiki.Activatable = Wiki.Activatabl
   maxTier?: number;
   sel?: List<Record<Wiki.SelectionObject>>;
   input?: string;
-  instance?: Record<ActivatableDependent>;
-  wiki: T;
+  stateEntry?: Record<ActivatableDependent>;
+  wikiEntry: Record<T>;
   customCostDisabled?: boolean;
 }
 
@@ -322,6 +333,12 @@ export interface StyleDependency {
    * The style's id.
    */
   origin: string;
+}
+
+export enum EntryRating {
+  Common = 'Common',
+  Uncommon = 'Uncommon',
+  Essential = 'Essential',
 }
 
 export interface ItemInstanceOld {
@@ -618,7 +635,7 @@ export interface AlertButton extends AlertButtonCore {
 }
 
 export interface ViewAlertButton extends AlertButtonCore {
-  onClick?(): void;
+  onClick? (): void;
 }
 
 export interface Alert {
@@ -630,8 +647,7 @@ export interface Alert {
     reject?: Action;
   };
   confirmYesNo?: boolean;
-  onClose?(): void;
+  onClose? (): void;
 }
 
 export { UIMessages } from './ui';
-

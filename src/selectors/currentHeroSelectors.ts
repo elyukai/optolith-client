@@ -1,13 +1,18 @@
+import R from 'ramda';
+import { Hero } from '../types/data';
 import { createMaybeSelector } from '../utils/createMaybeSelector';
-import { Maybe } from '../utils/dataUtils';
+import { List, Maybe } from '../utils/dataUtils';
 import { getCurrentHeroFuture, getCurrentHeroPast } from './stateSelectors';
 
-export const getUndoAvailability = createMaybeSelector(
+const getStateHistoryAvailability = Maybe.maybe<List<Hero>, boolean> (false)
+                                                                     (R.complement (List.null));
+
+export const getUndoAvailability = createMaybeSelector (
   getCurrentHeroPast,
-  maybePast => Maybe.maybe(false, past => past.length > 0, maybePast)
+  getStateHistoryAvailability
 );
 
-export const getRedoAvailability = createMaybeSelector(
+export const getRedoAvailability = createMaybeSelector (
   getCurrentHeroFuture,
-  maybeFuture => Maybe.maybe(false, future => future.length > 0, maybeFuture)
+  getStateHistoryAvailability
 );

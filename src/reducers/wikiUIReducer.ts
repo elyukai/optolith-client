@@ -35,7 +35,7 @@ const initialState: UIWikiState = {
   filterAll: ''
 };
 
-export function wikiUIReducer(state: UIWikiState = initialState, action: Action): UIWikiState {
+export function wikiUIReducer (state: UIWikiState = initialState, action: Action): UIWikiState {
   switch (action.type) {
     case ActionTypes.SET_WIKI_CATEGORY_1:
       return {

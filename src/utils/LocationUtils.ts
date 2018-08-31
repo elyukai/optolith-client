@@ -1,3 +1,5 @@
+import { List } from './dataUtils';
+
 export type TabId =
   'herolist' |
   'grouplist' |
@@ -26,7 +28,7 @@ export type TabId =
   'zoneArmor' |
   'pets';
 
-export const mainSectionTabs: ReadonlyArray<TabId> = [
+export const mainSectionTabs = List.of<TabId> (
   'herolist',
   'grouplist',
   'wiki',
@@ -34,9 +36,9 @@ export const mainSectionTabs: ReadonlyArray<TabId> = [
   'imprint',
   'thirdPartyLicenses',
   'lastChanges',
-];
+);
 
-export const heroSectionTabs: ReadonlyArray<TabId> = [
+export const heroSectionTabs = List.of<TabId> (
   'profile',
   'personalData',
   'characterSheet',
@@ -56,7 +58,7 @@ export const heroSectionTabs: ReadonlyArray<TabId> = [
   'equipment',
   'zoneArmor',
   'pets',
-];
+);
 
-export const isMainSectionTab = (tab: TabId) => mainSectionTabs.includes(tab);
-export const isHeroSectionTab = (tab: TabId) => heroSectionTabs.includes(tab);
+export const isMainSectionTab = mainSectionTabs.elem;
+export const isHeroSectionTab = heroSectionTabs.elem;

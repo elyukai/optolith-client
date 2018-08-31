@@ -7,17 +7,17 @@ interface AttributeDependentOptions {
   dependencies?: List<Data.SkillDependency>;
 }
 
-export function createAttributeDependent(
+export function createAttributeDependent (
   id: string,
   options: AttributeDependentOptions = {},
 ): Record<Data.AttributeDependent> {
   const {
     value = 8,
     mod = 0,
-    dependencies = List.of<Data.SkillDependency>(),
+    dependencies = List.of<Data.SkillDependency> (),
   } = options;
 
-  return Record.of({
+  return Record.of ({
     id,
     value,
     mod,
@@ -30,16 +30,16 @@ interface ActivatableDependentOptions {
   dependencies?: List<Data.ActivatableDependency>;
 }
 
-export function createActivatableDependent(
+export function createActivatableDependent (
   id: string,
   options: ActivatableDependentOptions = {},
 ): Record<Data.ActivatableDependent> {
   const {
-    active = List.of<Record<Data.ActiveObject>>(),
-    dependencies = List.of<Data.ActivatableDependency>(),
+    active = List.of<Record<Data.ActiveObject>> (),
+    dependencies = List.of<Data.ActivatableDependency> (),
   } = options;
 
-  return Record.of<Data.ActivatableDependent>({
+  return Record.of<Data.ActivatableDependent> ({
     id,
     active,
     dependencies,
@@ -51,16 +51,16 @@ interface DependentSkillOptions {
   dependencies?: List<Data.SkillDependency>;
 }
 
-export function createDependentSkill(
+export function createDependentSkill (
   id: string,
   options: DependentSkillOptions = {},
 ): Record<Data.SkillDependent> {
   const {
     value = 0,
-    dependencies = List.of<Data.SkillDependency>(),
+    dependencies = List.of<Data.SkillDependency> (),
   } = options;
 
-  return Record.of({
+  return Record.of ({
     id,
     value,
     dependencies,
@@ -85,22 +85,22 @@ type JoinedActivatableDependentSkillOptions =
   ActiveActivatableDependentSkillOptions &
   ValueActivatableDependentSkillOptions;
 
-export function createActivatableDependentSkill(
+export function createActivatableDependentSkill (
   id: string,
   options: ActivatableDependentSkillOptions = {},
 ): Record<Data.ActivatableSkillDependent> {
   const {
     active,
     value = 0,
-    dependencies = List.of<Data.ExtendedSkillDependency>(),
+    dependencies = List.of<Data.ExtendedSkillDependency> (),
   } = options as JoinedActivatableDependentSkillOptions;
 
   if (value > 0) {
     if (active === false) {
-      console.warn('createActivatableDependentSkill called with active === false, but value > 0');
+      console.warn ('createActivatableDependentSkill called with active === false, but value > 0');
     }
 
-    return Record.of({
+    return Record.of ({
       id,
       value,
       active: true,
@@ -112,7 +112,7 @@ export function createActivatableDependentSkill(
       active: condActive = false,
     } = options as JoinedActivatableDependentSkillOptions;
 
-    return Record.of({
+    return Record.of ({
       id,
       value: 0,
       active: condActive,

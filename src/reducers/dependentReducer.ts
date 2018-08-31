@@ -42,7 +42,7 @@ type Action =
   SpecialAbilitiesActions.DeactivateSpecialAbilityAction |
   SpecialAbilitiesActions.SetSpecialAbilityTierAction;
 
-export function dependentReducer(
+export function dependentReducer (
   state: Record<Data.HeroDependent>,
   action: Action
 ): Record<Data.HeroDependent> {
@@ -65,7 +65,7 @@ export function dependentReducer(
     case ActionTypes.REMOVE_COMBATTECHNIQUE_POINT:
     case ActionTypes.REMOVE_SPELL_POINT:
     case ActionTypes.REMOVE_LITURGY_POINT:
-      return increasableReducer(state, action);
+      return increasableReducer (state, action);
 
     case ActionTypes.ACTIVATE_DISADV:
     case ActionTypes.ACTIVATE_SPECIALABILITY:
@@ -73,27 +73,26 @@ export function dependentReducer(
     case ActionTypes.DEACTIVATE_SPECIALABILITY:
     case ActionTypes.SET_DISADV_TIER:
     case ActionTypes.SET_SPECIALABILITY_TIER:
-      return activatableReducer(state, action);
+      return activatableReducer (state, action);
 
     case ActionTypes.SET_ATTRIBUTE_ADJUSTMENT_SELECTION_ID: {
       const { current, next, value } = action.payload;
 
       const setItem = (id: string, remove?: boolean) =>
         (updatedState: Record<Data.HeroDependent>) =>
-          updatedState.modify(
-            attributes => attributes.adjust(
-              entry => entry.modify(mod => remove ? mod - value : mod + value, 'mod'),
-              id
-            ),
-            'attributes'
-          );
+          updatedState.modify<'attributes'> (
+            attributes => attributes.adjust (
+              entry => entry.modify<'mod'> (remove ? R.flip (R.subtract) (value) : R.add (value))
+                                           ('mod')
+            ) (id)
+          ) ('attributes');
 
-      const setMods = R.pipe(
-        setItem(current, true),
-        setItem(next),
+      const setMods = R.pipe (
+        setItem (current, true),
+        setItem (next),
       );
 
-      return setMods(state);
+      return setMods (state);
     }
 
     default:

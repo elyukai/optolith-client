@@ -1,51 +1,52 @@
+import R from 'ramda';
 import { Categories } from '../constants/Categories';
 import { IdPrefixes } from '../constants/IdPrefixes';
 import { List, Maybe, OrderedMap } from './dataUtils';
 import { match } from './match';
 
-export const getIdPrefix = (id: string) => id.split(/_/)[0] as IdPrefixes;
+export const getIdPrefix = (id: string) => id.split (/_/)[0] as IdPrefixes;
 
-export const getNumericId = (id: string) => Number.parseInt(id.split(/_/)[1]);
+export const getNumericId = (id: string) => Number.parseInt (id.split (/_/)[1]);
 
-export const getStringId = (id: number, prefix: string) => `${prefix}_${id}`;
+export const getStringId = (prefix: IdPrefixes) => (id: number) => `${prefix}_${id}`;
 
-export const getRawStringId = (id: string, prefix: string) => `${prefix}_${id}`;
+export const getRawStringId = (prefix: IdPrefixes) => (id: string) => `${prefix}_${id}`;
 
 /**
  * Gets a list of ids and returns an unused numeric id.
  */
 export const getNewId = (keys: List<string>): number =>
-  keys.foldl(n => id => Math.max(getNumericId(id), n), 0) + 1;
+  keys.foldl<number> (n => R.pipe (getNumericId, R.max (n))) (0) + 1;
 
 /**
  * Returns the current date in milliseconds.
  */
-export const getNewIdByDate = (): number => Date.now().valueOf();
+export const getNewIdByDate = (): number => Date.now ().valueOf ();
 
 export const getCategoryByIdPrefix = (id: IdPrefixes): Maybe<Categories> => {
-  return match<IdPrefixes, Maybe<Categories>>(id)
-    .on(IdPrefixes.ADVANTAGES, () => Maybe.Just(Categories.ADVANTAGES))
-    .on(IdPrefixes.ATTRIBUTES, () => Maybe.Just(Categories.ATTRIBUTES))
-    .on(IdPrefixes.BLESSINGS, () => Maybe.Just(Categories.BLESSINGS))
-    .on(IdPrefixes.CANTRIPS, () => Maybe.Just(Categories.CANTRIPS))
-    .on(IdPrefixes.COMBAT_TECHNIQUES, () => Maybe.Just(Categories.COMBAT_TECHNIQUES))
-    .on(IdPrefixes.CULTURES, () => Maybe.Just(Categories.CULTURES))
-    .on(IdPrefixes.DISADVANTAGES, () => Maybe.Just(Categories.DISADVANTAGES))
-    .on(IdPrefixes.LITURGIES, () => Maybe.Just(Categories.LITURGIES))
-    .on(IdPrefixes.PROFESSIONS, () => Maybe.Just(Categories.PROFESSIONS))
-    .on(IdPrefixes.PROFESSION_VARIANTS, () => Maybe.Just(Categories.PROFESSION_VARIANTS))
-    .on(IdPrefixes.RACES, () => Maybe.Just(Categories.RACES))
-    .on(IdPrefixes.RACE_VARIANTS, () => Maybe.Just(Categories.RACE_VARIANTS))
-    .on(IdPrefixes.SPECIAL_ABILITIES, () => Maybe.Just(Categories.SPECIAL_ABILITIES))
-    .on(IdPrefixes.SPELLS, () => Maybe.Just(Categories.SPELLS))
-    .on(IdPrefixes.TALENTS, () => Maybe.Just(Categories.TALENTS))
-    .otherwise(() => Maybe.Nothing());
+  return match<IdPrefixes, Maybe<Categories>> (id)
+    .on (IdPrefixes.ADVANTAGES, () => Maybe.pure (Categories.ADVANTAGES))
+    .on (IdPrefixes.ATTRIBUTES, () => Maybe.pure (Categories.ATTRIBUTES))
+    .on (IdPrefixes.BLESSINGS, () => Maybe.pure (Categories.BLESSINGS))
+    .on (IdPrefixes.CANTRIPS, () => Maybe.pure (Categories.CANTRIPS))
+    .on (IdPrefixes.COMBAT_TECHNIQUES, () => Maybe.pure (Categories.COMBAT_TECHNIQUES))
+    .on (IdPrefixes.CULTURES, () => Maybe.pure (Categories.CULTURES))
+    .on (IdPrefixes.DISADVANTAGES, () => Maybe.pure (Categories.DISADVANTAGES))
+    .on (IdPrefixes.LITURGIES, () => Maybe.pure (Categories.LITURGIES))
+    .on (IdPrefixes.PROFESSIONS, () => Maybe.pure (Categories.PROFESSIONS))
+    .on (IdPrefixes.PROFESSION_VARIANTS, () => Maybe.pure (Categories.PROFESSION_VARIANTS))
+    .on (IdPrefixes.RACES, () => Maybe.pure (Categories.RACES))
+    .on (IdPrefixes.RACE_VARIANTS, () => Maybe.pure (Categories.RACE_VARIANTS))
+    .on (IdPrefixes.SPECIAL_ABILITIES, () => Maybe.pure (Categories.SPECIAL_ABILITIES))
+    .on (IdPrefixes.SPELLS, () => Maybe.pure (Categories.SPELLS))
+    .on (IdPrefixes.TALENTS, () => Maybe.pure (Categories.TALENTS))
+    .otherwise (() => Maybe.empty ());
 };
 
 export const getCategoryById = (id: string): Maybe<Categories> =>
-  getCategoryByIdPrefix(getIdPrefix(id));
+  getCategoryByIdPrefix (getIdPrefix (id));
 
-export const magicalTraditionIdByNumericId = OrderedMap.of([
+export const magicalTraditionIdByNumericId = OrderedMap.of ([
   [1, 'SA_70'],
   [2, 'SA_255'],
   [3, 'SA_345'],
@@ -58,7 +59,7 @@ export const magicalTraditionIdByNumericId = OrderedMap.of([
   [10, 'SA_681'],
 ]);
 
-export const magicalNumericIdByTraditionId = OrderedMap.of([
+export const magicalNumericIdByTraditionId = OrderedMap.of ([
   ['SA_70', 1],
   ['SA_255', 2],
   ['SA_345', 3],
@@ -72,15 +73,15 @@ export const magicalNumericIdByTraditionId = OrderedMap.of([
 ]);
 
 export const isMagicalTraditionId = (id: string) =>
-  magicalNumericIdByTraditionId.member(id);
+  magicalNumericIdByTraditionId.member (id);
 
 export const getMagicalTraditionInstanceIdByNumericId = (id: number) =>
-  magicalTraditionIdByNumericId.lookup(id);
+  magicalTraditionIdByNumericId.lookup (id);
 
 export const getNumericMagicalTraditionIdByInstanceId = (id: string) =>
-  magicalNumericIdByTraditionId.lookup(id);
+  magicalNumericIdByTraditionId.lookup (id);
 
-const blessedTraditionIdByNumericId = OrderedMap.of([
+const blessedTraditionIdByNumericId = OrderedMap.of ([
   [1, 'SA_86'],
   [2, 'SA_682'],
   [3, 'SA_683'],
@@ -101,7 +102,7 @@ const blessedTraditionIdByNumericId = OrderedMap.of([
   [18, 'SA_698'],
 ]);
 
-const blessedNumericIdByTraditionId = OrderedMap.of([
+const blessedNumericIdByTraditionId = OrderedMap.of ([
   ['SA_86', 1],
   ['SA_682', 2],
   ['SA_683', 3],
@@ -123,10 +124,10 @@ const blessedNumericIdByTraditionId = OrderedMap.of([
 ]);
 
 export const isBlessedTraditionId = (id: string) =>
-  blessedNumericIdByTraditionId.member(id);
+  blessedNumericIdByTraditionId.member (id);
 
 export const getBlessedTraditionInstanceIdByNumericId = (id: number) =>
-  blessedTraditionIdByNumericId.lookup(id);
+  blessedTraditionIdByNumericId.lookup (id);
 
 export const getNumericBlessedTraditionIdByInstanceId = (id: string) =>
-  blessedNumericIdByTraditionId.lookup(id);
+  blessedNumericIdByTraditionId.lookup (id);

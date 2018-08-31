@@ -5,7 +5,7 @@ import * as DisAdvActions from '../actions/DisAdvActions';
 import { AppState } from '../reducers/app';
 import { getDisadvantagesRating, getFilteredActiveDisadvantages } from '../selectors/activatableSelectors';
 import { get, getDependent } from '../selectors/dependentInstancesSelectors';
-import { isRemovingEnabled } from '../selectors/phaseSelectors';
+import { getIsRemovingEnabled } from '../selectors/phaseSelectors';
 import { getDisadvantages, getDisadvantagesFilterText, getInactiveDisadvantagesFilterText } from '../selectors/stateSelectors';
 import { getAdvantagesDisadvantagesCultureRatingVisibility, getEnableActiveItemHints } from '../selectors/uisettingsSelectors';
 import { ActivateArgs, DeactivateArgs } from '../types/data.d';
@@ -23,7 +23,7 @@ function mapStateToProps(state: AppState) {
 		get(id: string) {
 			return get(getDependent(state), id);
 		},
-		isRemovingEnabled: isRemovingEnabled(state),
+		isRemovingEnabled: getIsRemovingEnabled(state),
 		list: [...getDisadvantages(state).values()],
 		magicalMax: getAdvantagesDisadvantagesSubMax(getDependent(state), 1),
 		rating: getDisadvantagesRating(state),

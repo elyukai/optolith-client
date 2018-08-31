@@ -31,12 +31,8 @@ interface ReduceReducers {
 export const reduceReducers: ReduceReducers = <S, A extends Action>(
   combinedReducer: Reducer<S, A>,
   ...crossSlicereducers: CrossSliceReducer<S, A>[]
-) => {
-  return (previous: S | undefined, action: A) =>
-    crossSlicereducers.reduce(
-      (intermediateState, reducer) => {
-        return reducer(intermediateState, action, previous);
-      },
-      combinedReducer(previous, action)
-    );
-};
+) => (previous: S | undefined, action: A) =>
+  crossSlicereducers.reduce (
+    (intermediateState, reducer) => reducer (intermediateState, action, previous),
+    combinedReducer (previous, action)
+  );

@@ -103,7 +103,7 @@ const initialState: UISettingsState = {
   enableAnimations: true
 };
 
-function sortOrderReducer(
+function sortOrderReducer (
   state: UISettingsState,
   action: Action
 ): UISettingsState {
@@ -143,7 +143,7 @@ function sortOrderReducer(
   }
 }
 
-export function uiSettingsReducer(
+export function uiSettingsReducer (
   state: UISettingsState = initialState,
   action: Action
 ): UISettingsState {
@@ -177,7 +177,7 @@ export function uiSettingsReducer(
     case ActionTypes.SET_SPECIALABILITIES_SORT_ORDER:
     case ActionTypes.SET_SPELLS_SORT_ORDER:
     case ActionTypes.SET_TALENTS_SORT_ORDER:
-      return sortOrderReducer(state, action);
+      return sortOrderReducer (state, action);
 
     case ActionTypes.SWITCH_ENABLE_ACTIVE_ITEM_HINTS:
       return { ...state, enableActiveItemHints: !state.enableActiveItemHints };

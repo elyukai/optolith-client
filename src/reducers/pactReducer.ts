@@ -10,7 +10,7 @@ type Action =
   PactActions.SetTargetNameAction |
   PactActions.SetTargetTypeAction;
 
-export function pactReducer(
+export function pactReducer (
   state: Record<Data.HeroDependent>,
   action: Action,
 ): Record<Data.HeroDependent> {
@@ -19,12 +19,11 @@ export function pactReducer(
       const { category } = action.payload;
 
       if (category === undefined) {
-        return state.delete('pact') as Record<Data.HeroDependent>;
+        return state.delete ('pact') as Record<Data.HeroDependent>;
       }
 
-      return state.insert(
-        'pact',
-        Record.of<Data.Pact>({
+      return state.insert ('pact') (
+        Record.of<Data.Pact> ({
           category,
           level: 1,
           type: 1,
@@ -38,10 +37,7 @@ export function pactReducer(
     case ActionTypes.SET_TARGET_TYPE:
     case ActionTypes.SET_TARGET_DOMAIN:
     case ActionTypes.SET_TARGET_NAME:
-      return state.modify(
-        pact => pact.merge(Record.of(action.payload)),
-        'pact'
-      );
+      return state.modify<'pact'> (pact => pact.merge (Record.of (action.payload))) ('pact');
 
     default:
       return state;

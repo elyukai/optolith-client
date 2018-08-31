@@ -1,54 +1,106 @@
-import { createSelector } from 'reselect';
-import { filterAndSortObjects } from '../utils/FilterSortUtils';
-import * as activatableSelectors from './activatableSelectors';
-import * as inactiveActivatablesSelectors from './inactiveActivatablesSelectors';
+import { ActiveViewObject, DeactiveViewObject } from '../types/data';
+import { Advantage, Disadvantage, SpecialAbility } from '../types/wiki';
+import { createMaybeSelector } from '../utils/createMaybeSelector';
+import { List, Maybe, Record, RecordInterface } from '../utils/dataUtils';
+import { AllSortOptions, filterAndSortObjects } from '../utils/FilterSortUtils';
+import { getAdvantagesForEdit, getDisadvantagesForEdit, getSpecialAbilitiesForEdit } from './activatableSelectors';
+import { getDeactiveAdvantages, getDeactiveDisadvantages, getDeactiveSpecialAbilities } from './inactiveActivatablesSelectors';
 import { getSpecialAbilitiesSortOptions } from './sortOptionsSelectors';
-import * as stateSelectors from './stateSelectors';
+import { getInactiveAdvantagesFilterText, getInactiveDisadvantagesFilterText, getInactiveSpecialAbilitiesFilterText, getLocaleAsProp } from './stateSelectors';
 import { getEnableActiveItemHints } from './uisettingsSelectors';
 
+type InactiveOrActiveAdvantage =
+  Record<ActiveViewObject<Advantage>>
+  | Record<DeactiveViewObject<Advantage>>;
 
-export const getFilteredInactiveAdvantages = createSelector(
-  inactiveActivatablesSelectors.getDeactiveAdvantages,
-  activatableSelectors.getAdvantagesForEdit,
-  stateSelectors.getInactiveAdvantagesFilterText,
-  stateSelectors.getLocaleMessages,
+export const getFilteredInactiveAdvantages = createMaybeSelector (
+  getDeactiveAdvantages,
+  getAdvantagesForEdit,
+  getInactiveAdvantagesFilterText,
+  getLocaleAsProp,
   getEnableActiveItemHints,
-  (inactive, active, filterText, locale, areActiveItemHintsEnabled) => {
-    if (areActiveItemHintsEnabled) {
-      return filterAndSortObjects([...inactive, ...active], locale!.id, filterText);
-    }
-
-    return filterAndSortObjects(inactive, locale!.id, filterText);
-  }
+  (maybeInactive, maybeActive, filterText, locale, areActiveItemHintsEnabled) =>
+    maybeInactive.fmap (
+      inactive => areActiveItemHintsEnabled
+        ? filterAndSortObjects<RecordInterface<InactiveOrActiveAdvantage>> (
+          /**
+           * FIXME: Remove `<any>` in future version of TypeScript or when
+           * type inference and compatibility for `Record` is better.
+           */
+          List.mappend<any> (inactive)
+                            (Maybe.maybeToList (maybeActive).concat ()),
+          locale.get ('id'),
+          filterText
+        )
+        : filterAndSortObjects (
+          inactive,
+          locale.get ('id'),
+          filterText
+        )
+    )
 );
 
-export const getFilteredInactiveDisadvantages = createSelector(
-  inactiveActivatablesSelectors.getDeactiveDisadvantages,
-  activatableSelectors.getDisadvantagesForEdit,
-  stateSelectors.getInactiveDisadvantagesFilterText,
-  stateSelectors.getLocaleMessages,
-  getEnableActiveItemHints,
-  (inactive, active, filterText, locale, areActiveItemHintsEnabled) => {
-    if (areActiveItemHintsEnabled) {
-      return filterAndSortObjects([...inactive, ...active], locale!.id, filterText);
-    }
+type InactiveOrActiveDisadvantage =
+  Record<ActiveViewObject<Disadvantage>>
+  | Record<DeactiveViewObject<Disadvantage>>;
 
-    return filterAndSortObjects(inactive, locale!.id, filterText);
-  }
+export const getFilteredInactiveDisadvantages = createMaybeSelector (
+  getDeactiveDisadvantages,
+  getDisadvantagesForEdit,
+  getInactiveDisadvantagesFilterText,
+  getLocaleAsProp,
+  getEnableActiveItemHints,
+  (maybeInactive, maybeActive, filterText, locale, areActiveItemHintsEnabled) =>
+    maybeInactive.fmap (
+      inactive => areActiveItemHintsEnabled
+        ? filterAndSortObjects<RecordInterface<InactiveOrActiveDisadvantage>> (
+          /**
+           * FIXME: Remove `<any>` in future version of TypeScript or when
+           * type inference and compatibility for `Record` is better.
+           */
+          List.mappend<any> (inactive)
+                            (Maybe.maybeToList (maybeActive).concat ()),
+          locale.get ('id'),
+          filterText
+        )
+        : filterAndSortObjects (
+          inactive,
+          locale.get ('id'),
+          filterText
+        )
+    )
 );
 
-export const getFilteredInactiveSpecialAbilities = createSelector(
-  inactiveActivatablesSelectors.getDeactiveSpecialAbilities,
-  activatableSelectors.getSpecialAbilitiesForEdit,
+type InactiveOrActiveSpecialAbility =
+  Record<ActiveViewObject<SpecialAbility>>
+  | Record<DeactiveViewObject<SpecialAbility>>;
+
+export const getFilteredInactiveSpecialAbilities = createMaybeSelector (
+  getDeactiveSpecialAbilities,
+  getSpecialAbilitiesForEdit,
   getSpecialAbilitiesSortOptions,
-  stateSelectors.getInactiveSpecialAbilitiesFilterText,
-  stateSelectors.getLocaleMessages,
+  getInactiveSpecialAbilitiesFilterText,
+  getLocaleAsProp,
   getEnableActiveItemHints,
-  (inactive, active, sortOptions, filterText, locale, areActiveItemHintsEnabled) => {
-    if (areActiveItemHintsEnabled) {
-      return filterAndSortObjects([...inactive, ...active], locale!.id, filterText, sortOptions);
-    }
-
-    return filterAndSortObjects(inactive, locale!.id, filterText, sortOptions);
-  }
+  (maybeInactive, maybeActive, sortOptions, filterText, locale, areActiveItemHintsEnabled) =>
+    maybeInactive.fmap (
+      inactive => areActiveItemHintsEnabled
+        ? filterAndSortObjects<RecordInterface<InactiveOrActiveSpecialAbility>> (
+          /**
+           * FIXME: Remove `<any>` in future version of TypeScript or when
+           * type inference and compatibility for `Record` is better.
+           */
+          List.mappend<any> (inactive)
+                            (Maybe.maybeToList (maybeActive) .concat ()),
+          locale.get ('id'),
+          filterText,
+          sortOptions as AllSortOptions<RecordInterface<InactiveOrActiveSpecialAbility>>
+        )
+        : filterAndSortObjects (
+          inactive,
+          locale.get ('id'),
+          filterText,
+          sortOptions as AllSortOptions<DeactiveViewObject<SpecialAbility>>
+        )
+    )
 );

@@ -1,4 +1,4 @@
-import { StringKeyObject } from '../utils/collectionUtils';
+import { StringKeyObject } from '../utils/dataUtils';
 import * as UI from './ui';
 import { ProfessionSelectionIds } from './wiki';
 
@@ -759,7 +759,7 @@ export interface RawBook {
 }
 
 export interface RawLocale {
-  ui: UI.UIMessages;
+  ui: UI.RawUIMessages;
   books: StringKeyObject<RawBook>;
   el: StringKeyObject<RawExperienceLevelLocale>;
   attributes: StringKeyObject<RawAttributeLocale>;

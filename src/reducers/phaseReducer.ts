@@ -8,16 +8,16 @@ type Action =
   SetSelectionsAction |
   EndHeroCreationAction;
 
-export function phaseReducer(
+export function phaseReducer (
   state: Record<Data.HeroDependent>,
   action: Action
 ): Record<Data.HeroDependent> {
   switch (action.type) {
     case ActionTypes.ASSIGN_RCP_OPTIONS:
-      return state.insert('phase', 2);
+      return state.insert ('phase') (2);
 
     case ActionTypes.END_HERO_CREATION:
-      return state.insert('phase', 3);
+      return state.insert ('phase') (3);
 
     default:
       return state;

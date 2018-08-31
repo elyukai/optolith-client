@@ -14,8 +14,8 @@ test('bind', () => {
     .toEqual(Identity.return(6));
 });
 
-test('sequence', () => {
-  expect(Identity.return(3).sequence(Identity.return(2)))
+test('then', () => {
+  expect(Identity.return(3).then(Identity.return(2)))
     .toEqual(Identity.return(2));
 });
 

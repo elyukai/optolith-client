@@ -5,28 +5,29 @@ import { List, Maybe, Record } from './dataUtils';
 import { flattenDependencies } from './flattenDependencies';
 import { getActiveSelections } from './selectionUtils';
 
-const getMaxPrimaryAttributeValueById =
-  (state: Record<Data.HeroDependent>, primaryAttributeIds: List<string>) =>
-    primaryAttributeIds.foldl(
+const getMaxPrimaryAttributeValueById = (
+  (state: Record<Data.HeroDependent>) =>
+  (primaryAttributeIds: List<string>) =>
+    primaryAttributeIds.foldl<number> (
       max => id => {
-        const attribute = state.get('attributes').lookup(id);
+        const attribute = state.get ('attributes').lookup (id);
 
-        return Maybe.isJust(attribute)
-          ? Math.max(max, Maybe.fromJust(attribute).get('value'))
+        return Maybe.isJust (attribute)
+          ? Math.max (max, Maybe.fromJust (attribute).get ('value'))
           : max;
-      },
-      0
-    );
-
-const calculatePrimaryAttributeMod = R.pipe(
-  R.add(-8),
-  e => R.divide(e, 3),
-  Math.floor,
-  e => Math.max(e, 0),
+      }
+    ) (0)
 );
 
-export const getPrimaryAttributeMod = R.pipe(
-  getMaxPrimaryAttributeValueById,
+const calculatePrimaryAttributeMod = R.pipe (
+  R.add (-8),
+  R.flip (R.divide) (3),
+  Math.floor,
+  R.max<number> (0),
+);
+
+export const getPrimaryAttributeMod = (state: Data.Hero) => R.pipe (
+  getMaxPrimaryAttributeValueById (state),
   calculatePrimaryAttributeMod,
 );
 
@@ -35,13 +36,13 @@ export const getAttack = (
   wikiEntry: Record<CombatTechnique>,
   instance: Record<Data.SkillDependent>,
 ): number => {
-  const array = wikiEntry.get('gr') === 2
-    ? wikiEntry.get('primary')
-    : List.of('ATTR_1');
+  const array = wikiEntry.get ('gr') === 2
+    ? wikiEntry.get ('primary')
+    : List.of ('ATTR_1');
 
-  const mod = getPrimaryAttributeMod(state, array);
+  const mod = getPrimaryAttributeMod (state) (array);
 
-  return instance.get('value') + mod;
+  return instance.get ('value') + mod;
 };
 
 export const getParry = (
@@ -50,16 +51,16 @@ export const getParry = (
   instance: Record<Data.SkillDependent>,
 ): Maybe<number> => {
   if (
-    wikiEntry.get('gr') === 2
-    || instance.get('id') === 'CT_6'
-    || instance.get('id') === 'CT_8'
+    wikiEntry.get ('gr') === 2
+    || instance.get ('id') === 'CT_6'
+    || instance.get ('id') === 'CT_8'
   ) {
-    return Maybe.Nothing();
+    return Maybe.empty ();
   }
 
-  const mod = getPrimaryAttributeMod(state, wikiEntry.get('primary'));
+  const mod = getPrimaryAttributeMod (state) (wikiEntry.get ('primary'));
 
-  return Maybe.Just(Math.round(instance.get('value') / 2) + mod);
+  return Maybe.pure (Math.round (instance.get ('value') / 2) + mod);
 };
 
 export const isIncreaseDisabled = (
@@ -68,22 +69,21 @@ export const isIncreaseDisabled = (
   wikiEntry: Record<CombatTechnique>,
   instance: Record<Data.SkillDependent>,
 ): boolean => {
-  const max = state.get('phase') < 3
-    ? Maybe.fromMaybe(
-        0,
-        wiki.get('experienceLevels').lookup(state.get('experienceLevel'))
-          .fmap(startEl => startEl.get('maxCombatTechniqueRating'))
+  const max = state.get ('phase') < 3
+    ? Maybe.fromMaybe (0) (
+        wiki.get ('experienceLevels').lookup (state.get ('experienceLevel'))
+          .fmap (startEl => startEl.get ('maxCombatTechniqueRating'))
       )
-    : getMaxPrimaryAttributeValueById(state, wikiEntry.get('primary')) + 2;
+    : getMaxPrimaryAttributeValueById (state) (wikiEntry.get ('primary')) + 2;
 
-  const exceptionalSkill = state.get('advantages').lookup('ADV_17');
-  const bonus = getActiveSelections(exceptionalSkill)
-    .fmap(selections => selections.elem(instance.get('id')))
-    .equals(Maybe.Just(true))
+  const exceptionalSkill = state.get ('advantages').lookup ('ADV_17');
+  const bonus = getActiveSelections (exceptionalSkill)
+    .fmap (selections => selections.elem (instance.get ('id')))
+    .equals (Maybe.pure (true))
       ? 1
       : 0;
 
-  return instance.get('value') >= max + bonus;
+  return instance.get ('value') >= max + bonus;
 };
 
 export const isDecreaseDisabled = (
@@ -110,14 +110,14 @@ export const isDecreaseDisabled = (
   // );
 
   const disabledByHunter = onlyOneCombatTechniqueForHunter
-    && wikiEntry.get('gr') === 2
-    && instance.get('value') === 10;
+    && wikiEntry.get ('gr') === 2
+    && instance.get ('value') === 10;
 
-  const dependencies = flattenDependencies(
+  const dependencies = flattenDependencies (
     wiki,
     state,
-    instance.get('dependencies'),
+    instance.get ('dependencies'),
   );
 
-  return disabledByHunter || instance.get('value') <= Math.max(6, ...dependencies);
+  return disabledByHunter || instance.get ('value') <= Math.max (6, ...dependencies);
 };

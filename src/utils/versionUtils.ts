@@ -7,8 +7,8 @@ import { RawHero } from '../types/rawdata';
 import { StringKeyObject } from './dataUtils';
 import { getBlessedTraditionInstanceIdByNumericId, getMagicalTraditionInstanceIdByNumericId } from './IDUtils';
 
-export const currentVersion = JSON.parse(fs.readFileSync(
-  path.join(remote.app.getAppPath(), 'package.json'),
+export const currentVersion = JSON.parse (fs.readFileSync (
+  path.join (remote.app.getAppPath (), 'package.json'),
   'utf8'
 )).version as string;
 
@@ -518,18 +518,18 @@ const convertLowerThan0_49_5 = (hero: RawHero): RawHero => {
   };
 
   const updateObjects = (list: ActiveObject[], sid?: string | number, tier?: number) => {
-    return [...list].map(e => ({
+    return [...list].map (e => ({
       ...e,
       sid: sid === undefined ? e.sid : sid,
       tier: tier === undefined || e.tier && e.tier > tier ? e.tier : tier
     }));
   };
 
-  for (const [id, activeObjects] of Object.entries(entry.activatable)) {
+  for (const [id, activeObjects] of Object.entries (entry.activatable)) {
     if (convertIds[id] !== undefined) {
       const { id: newId, sid, tier } = convertIds[id];
       // @ts-ignore
-      newActivatable[newId] = updateObjects(newActivatable[newId] || activeObjects, sid, tier);
+      newActivatable[newId] = updateObjects (newActivatable[newId] || activeObjects, sid, tier);
     }
     else {
       // @ts-ignore
@@ -539,7 +539,7 @@ const convertLowerThan0_49_5 = (hero: RawHero): RawHero => {
 
   entry.activatable = newActivatable;
 
-  for (const [id, item] of Object.entries(entry.belongings.items)) {
+  for (const [id, item] of Object.entries (entry.belongings.items)) {
     // @ts-ignore
     entry.belongings.items[id] = {
       ...item,
@@ -623,12 +623,12 @@ const convertLowerThanOrEqual0_51_0 = (hero: RawHero): RawHero => {
 const convertLowerThanOrEqual0_51_2 = (hero: RawHero): RawHero => {
   const entry = { ...hero };
 
-  if (entry.activatable.hasOwnProperty('SA_243') && entry.activatable.hasOwnProperty('SA_255')) {
+  if (entry.activatable.hasOwnProperty ('SA_243') && entry.activatable.hasOwnProperty ('SA_255')) {
     const { SA_255: _, ...other } = entry.activatable;
     entry.activatable = other;
     entry.ap.spent -= 10;
   }
-  else if (entry.activatable.hasOwnProperty('SA_255')) {
+  else if (entry.activatable.hasOwnProperty ('SA_255')) {
     const { SA_255: arr, ...other } = entry.activatable;
     entry.activatable = {
       ...other,
@@ -645,16 +645,16 @@ const convertLowerThanOrEqual0_51_2 = (hero: RawHero): RawHero => {
 const convertLowerThanOrEqual0_51_3 = (hero: RawHero): RawHero => {
   const entry = { ...hero };
 
-  if (entry.activatable.hasOwnProperty('SA_344')) {
+  if (entry.activatable.hasOwnProperty ('SA_344')) {
     entry.activatable = {
       ...entry.activatable,
       SA_344: [{ sid: 'CT_3' }]
     };
   }
 
-  if (entry.activatable.hasOwnProperty('SA_345')) {
+  if (entry.activatable.hasOwnProperty ('SA_345')) {
     const { SA_344: arr, ...other } = entry.activatable;
-    if (Array.isArray(arr)) {
+    if (Array.isArray (arr)) {
       entry.activatable = {
         ...other,
         SA_344: [...arr, { sid: 'CT_12' }]
@@ -668,9 +668,9 @@ const convertLowerThanOrEqual0_51_3 = (hero: RawHero): RawHero => {
     }
   }
 
-  if (entry.activatable.hasOwnProperty('SA_346')) {
+  if (entry.activatable.hasOwnProperty ('SA_346')) {
     const { SA_344: arr, ...other } = entry.activatable;
-    if (Array.isArray(arr)) {
+    if (Array.isArray (arr)) {
       entry.activatable = {
         ...other,
         SA_344: [...arr, { sid: 'CT_16' }]
@@ -684,32 +684,32 @@ const convertLowerThanOrEqual0_51_3 = (hero: RawHero): RawHero => {
     }
   }
 
-  if (entry.activatable.hasOwnProperty('SA_70')) {
+  if (entry.activatable.hasOwnProperty ('SA_70')) {
     const { SA_70: arr, ...other } = entry.activatable;
     entry.activatable = other;
     for (const active of arr) {
       const { sid, sid2 } = active;
-      const id = getMagicalTraditionInstanceIdByNumericId(sid as number);
+      const id = getMagicalTraditionInstanceIdByNumericId (sid as number);
       // @ts-ignore
       entry.activatable[id || 'SA_70'] = [{ sid: sid2 }];
     }
   }
 
-  if (entry.activatable.hasOwnProperty('SA_86')) {
+  if (entry.activatable.hasOwnProperty ('SA_86')) {
     const { SA_86: arr, ...other } = entry.activatable;
     entry.activatable = other;
     for (const active of arr) {
       const { sid, sid2 } = active;
-      const id = getBlessedTraditionInstanceIdByNumericId(sid as number);
+      const id = getBlessedTraditionInstanceIdByNumericId (sid as number);
       // @ts-ignore
       entry.activatable[id || 'SA_86'] = [{ sid: sid2 }];
     }
   }
 
-  if (entry.activatable.hasOwnProperty('DISADV_34')) {
+  if (entry.activatable.hasOwnProperty ('DISADV_34')) {
     entry.activatable = {
       ...entry.activatable,
-      DISADV_34: entry.activatable.DISADV_34.map(e => {
+      DISADV_34: entry.activatable.DISADV_34.map (e => {
         switch (e.sid) {
           case 5:
             return { sid: 1, tier: 2 };
@@ -748,8 +748,8 @@ const convertLowerThan1_0_0 = (hero: RawHero): RawHero => {
   const entry = { ...hero };
 
   if (
-    entry.activatable.hasOwnProperty('DISADV_45')
-    && entry.activatable.DISADV_45.some(e => e.sid === 1)
+    entry.activatable.hasOwnProperty ('DISADV_45')
+    && entry.activatable.DISADV_45.some (e => e.sid === 1)
   ) {
     entry.pers.haircolor = 24;
     entry.pers.eyecolor = 19;
@@ -776,13 +776,13 @@ const convertLowerThan1_0_2 = (hero: RawHero): RawHero => {
     adjValue = -2;
   }
 
-  let index = entry.attr.values.findIndex(e => e[2] === adjValue);
+  let index = entry.attr.values.findIndex (e => e[2] === adjValue);
 
   if (index === -1) {
-    index = entry.attr.values.findIndex(e => e[2] !== 0);
+    index = entry.attr.values.findIndex (e => e[2] !== 0);
   }
 
-  entry.attr.values = entry.attr.values.map((e, i) => {
+  entry.attr.values = entry.attr.values.map ((e, i) => {
     const inter = [...e] as [string, number, number];
     inter[2] = i === index ? adjValue : 0;
 
@@ -797,31 +797,31 @@ const convertLowerThan1_0_2 = (hero: RawHero): RawHero => {
 export const convertHero = (hero: RawHero): RawHero => {
   let entry = { ...hero };
 
-  if (lt(entry.clientVersion, '0.49.5')) {
-    entry = convertLowerThan0_49_5(entry);
+  if (lt (entry.clientVersion, '0.49.5')) {
+    entry = convertLowerThan0_49_5 (entry);
   }
 
   if (
-    lte(entry.clientVersion.split(/-/)[0], '0.51.0')
+    lte (entry.clientVersion.split (/-/)[0], '0.51.0')
     || entry.clientVersion === '0.51.1-alpha.1'
   ) {
-    entry = convertLowerThanOrEqual0_51_0(entry);
+    entry = convertLowerThanOrEqual0_51_0 (entry);
   }
 
-  if (satisfies(entry.clientVersion.split(/-/)[0], '<= 0.51.2 || <= 0.51.3-alpha.3')) {
-    entry = convertLowerThanOrEqual0_51_2(entry);
+  if (satisfies (entry.clientVersion.split (/-/)[0], '<= 0.51.2 || <= 0.51.3-alpha.3')) {
+    entry = convertLowerThanOrEqual0_51_2 (entry);
   }
 
-  if (satisfies(entry.clientVersion, '<= 0.51.3 || < 0.51.4-alpha.6')) {
-    entry = convertLowerThanOrEqual0_51_3(entry);
+  if (satisfies (entry.clientVersion, '<= 0.51.3 || < 0.51.4-alpha.6')) {
+    entry = convertLowerThanOrEqual0_51_3 (entry);
   }
 
-  if (satisfies(entry.clientVersion, '< 1.0.0')) {
-    entry = convertLowerThan1_0_0(entry);
+  if (satisfies (entry.clientVersion, '< 1.0.0')) {
+    entry = convertLowerThan1_0_0 (entry);
   }
 
-  if (satisfies(entry.clientVersion, '< 1.0.2')) {
-    entry = convertLowerThan1_0_2(entry);
+  if (satisfies (entry.clientVersion, '< 1.0.2')) {
+    entry = convertLowerThan1_0_2 (entry);
   }
 
   return entry;

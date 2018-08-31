@@ -1,333 +1,424 @@
-import { createSelector } from 'reselect';
-import { Categories } from '../constants/Categories';
+import R from 'ramda';
+import { ActivatableDependent, ActivatableSkillDependent } from '../types/data';
 import { SpellWithRequirements } from '../types/view';
-import { Maybe } from '../utils/dataUtils';
+import { Cantrip, ExperienceLevel, Spell } from '../types/wiki';
+import { getModifierByActiveLevel } from '../utils/activatableModifierUtils';
+import { createMaybeSelector } from '../utils/createMaybeSelector';
+import { Just, List, Maybe, OrderedMap, Record, Tuple } from '../utils/dataUtils';
 import { filterAndSortObjects } from '../utils/FilterSortUtils';
 import { filterByAvailability } from '../utils/RulesUtils';
+import { mapGetToSlice } from '../utils/SelectorsUtils';
 import { isDecreasable, isIncreasable, isOwnTradition } from '../utils/SpellUtils';
 import { getMagicalTraditions } from '../utils/traditionUtils';
+import { validatePrerequisites } from '../utils/validatePrerequisitesUtils';
 import { getStartEl } from './elSelectors';
-import { getValidPact } from './pactSelectors';
 import { getRuleBooksEnabled } from './rulesSelectors';
 import { getSpellsSortOptions } from './sortOptionsSelectors';
-import { getAdvantages, getAttributes, getCantrips, getDisadvantages, getInactiveSpellsFilterText, getLocaleMessages, getPhase, getSpecialAbilities, getSpells, getSpellsFilterText, getWiki } from './stateSelectors';
+import { getAdvantages, getCantrips, getCurrentHeroPresent, getDisadvantages, getInactiveSpellsFilterText, getLocaleAsProp, getPhase, getSpecialAbilities, getSpells, getSpellsFilterText, getWiki, getWikiCantrips, getWikiSpecialAbilities, getWikiSpells } from './stateSelectors';
 import { getEnableActiveItemHints } from './uisettingsSelectors';
 
-export const getMagicalTraditionsSelector = createSelector(
+export const getMagicalTraditionsFromState = createMaybeSelector (
   getSpecialAbilities,
-  Maybe.fmap(getMagicalTraditions)
+  Maybe.fmap (getMagicalTraditions)
 );
 
-export const isSpellsTabAvailable = createSelector(
-  getMagicalTraditions,
-  traditions => traditions.length() > 0
+export const getMagicalTraditionsFromWikiState = createMaybeSelector (
+  getMagicalTraditionsFromState,
+  getWikiSpecialAbilities,
+  (maybeTraditions, specialAbilities) => maybeTraditions.fmap (
+    Maybe.mapMaybe (
+      tradition => specialAbilities.lookup (tradition.get ('id'))
+    )
+  )
 );
 
-export const areMaxUnfamiliar = createSelector(
+export const getIsSpellsTabAvailable = createMaybeSelector (
+  getMagicalTraditionsFromState,
+  R.pipe (
+    Maybe.fmap (List.null),
+    Maybe.elem (true)
+  )
+);
+
+const getActiveSpellsCombined = createMaybeSelector (
+  getSpells,
+  getWikiSpells,
+  (maybeSpells, wikiSpells) => maybeSpells
+    .fmap (OrderedMap.elems)
+    .fmap (
+      Maybe.mapMaybe (
+        e => R.pipe (
+          Maybe.ensure<Record<ActivatableSkillDependent>> (
+            Record.get<ActivatableSkillDependent, 'active'> ('active')
+          ),
+          Maybe.then_ (wikiSpells.lookup (e.get ('id'))),
+          Maybe.fmap (Record.merge (e))
+        ) (e)
+      )
+    )
+);
+
+const getUnfilteredInactiveSpells = createMaybeSelector (
+  getActiveSpellsCombined,
+  getWikiSpells,
+  (maybeActiveSpells, wikiSpells) => maybeActiveSpells.fmap (
+    activeSpells => wikiSpells.filter (
+      wikiSpell => activeSpells.all (
+        spell => spell.get ('id') !== wikiSpell.get ('id')
+      )
+    )
+  )
+);
+
+export const getAreMaxUnfamiliar = createMaybeSelector (
   getPhase,
   getStartEl,
-  getSpells,
-  getMagicalTraditions,
-  (phase, experienceLevel, spells, tradition) => {
-    if (phase > 2) {
+  getActiveSpellsCombined,
+  getMagicalTraditionsFromWikiState,
+  (phase, maybeStartEl, maybeSpells, maybeTraditions) => {
+    if (phase.gt (Just (2))) {
       return false;
     }
-    if (!tradition) {
-      return true;
-    }
-    const max = experienceLevel.maxUnfamiliarSpells;
-    const unfamiliarSpells = [...spells.values()].reduce((n, e) => {
-      const unknownTradition = !isOwnTradition(tradition, e);
-      return unknownTradition && e.gr < 3 && e.active ? n + 1 : n;
-    }, 0);
-    return unfamiliarSpells >= max;
+
+    return Maybe.fromMaybe (true) (
+      maybeTraditions.bind (
+        traditions => maybeStartEl.bind (
+          startEl => maybeSpells.fmap (
+            spells => {
+              const max = startEl.get ('maxUnfamiliarSpells');
+
+              const unfamiliarSpells = spells
+                .filter (
+                  spell => spell.get ('gr') < 3
+                    && spell.get ('active')
+                    && !isOwnTradition (traditions, spell as any as Record<Spell>)
+                )
+                .length ();
+
+              return unfamiliarSpells >= max;
+            }
+          )
+        )
+      )
+    );
   }
 );
 
-export const getActiveSpellsNumber = createSelector(
-  getSpells,
-  spells => {
-    return [...spells.values()].reduce((n, entry) => {
-      if (entry.active === true && [1, 2].includes(entry.gr)) {
-        return n + 1;
-      }
-      return n;
-    }, 0);
-  }
+export const getActiveSpellsCounter = createMaybeSelector (
+  getActiveSpellsCombined,
+  maybeSpells =>
+    maybeSpells.fmap (
+      spells => spells
+        .filter (entry => entry.get ('active') && [1, 2].includes (entry.get ('gr')))
+        .length ()
+    )
 );
 
-export const isMaximumOfSpellsReached = createSelector(
+export const getIsMaximumOfSpellsReached = createMaybeSelector (
   getPhase,
   getStartEl,
-  getSpells,
-  (phase, experienceLevel, spells) => {
-    if (phase > 2) {
+  getActiveSpellsCounter,
+  (phase, maybeStartEl, maybeActiveSpellsCounter) => {
+    if (phase.gt (Just (3))) {
       return false;
     }
-    const max = experienceLevel.maxSpellsLiturgies;
-    const familiarSpells = [...spells.values()].reduce((n, e) => {
-      return e.gr < 3 && e.active ? n + 1 : n;
-    }, 0);
-    return familiarSpells >= max;
+
+    return Maybe.fromMaybe (true) (
+      maybeActiveSpellsCounter.bind (
+        counter => maybeStartEl.fmap (
+          startEl => counter >= startEl.get ('maxSpellsLiturgies')
+        )
+      )
+    );
   }
 );
 
-export const getSpellsAndCantrips = createSelector(
-  getSpells,
+export const getActiveAndInctiveCantrips = createMaybeSelector (
   getCantrips,
-  (spells, cantrips) => {
-    return [...spells.values(), ...cantrips.values()];
-  }
+  getWikiCantrips,
+  (maybeCantrips, wikiCantrips) =>
+    Maybe.fromMaybe (Tuple.of<List<Record<Cantrip>>, List<Record<Cantrip>>> (List.of ())
+                                                                            (List.of ()))
+                    (
+                      maybeCantrips
+                        .fmap (
+                          blessings => wikiCantrips.elems ().partition (
+                            e => blessings.member (e.get ('id'))
+                          )
+                        )
+                    )
 );
 
-export interface InactiveSpells {
-  valid: (SpellInstance | CantripInstance)[];
-  invalid: (SpellInstance | CantripInstance)[];
-}
-
-export const getInactiveSpells = createSelector(
-  getSpellsAndCantrips,
-  areMaxUnfamiliar,
-  isMaximumOfSpellsReached,
-  getPresent,
-  getMagicalTraditions,
-  getValidPact,
-  (allEntries, areMaxUnfamiliar, isMaximumOfSpellsReached, currentHero, tradition, pact): InactiveSpells => {
-    if (tradition.length === 0) {
-      return {
-        valid: [],
-        invalid: []
-      };
-    }
-
-    const allInactiveSpells = allEntries.filter(e => e.active === false);
-    const lastTraditionId = tradition[0].id;
-
-    if (lastTraditionId === 'SA_679') {
-      return allInactiveSpells.reduce<InactiveSpells>((obj, entry) => {
-        if (entry.category === Categories.CANTRIPS || entry.gr < 3 && !isMaximumOfSpellsReached && validate(currentHero, entry.reqs, entry.id, pact) && (isOwnTradition(tradition, entry) || !areMaxUnfamiliar)) {
-          return {
-            ...obj,
-            valid: [...obj.valid, entry]
-          };
-        }
-        else {
-          return {
-            ...obj,
-            invalid: [...obj.invalid, entry]
-          };
-        }
-      }, {
-        valid: [],
-        invalid: []
-      });
-    }
-    else if (lastTraditionId === 'SA_677' || lastTraditionId === 'SA_678') {
-      const lastTradition = tradition[0];
-      const subtradition = lastTradition.active[0] && lastTradition.active[0].sid;
-      if (typeof subtradition === 'number') {
-        return allInactiveSpells.reduce<InactiveSpells>((obj, entry) => {
-          if (entry.category === Categories.CANTRIPS || entry.subtradition.includes(subtradition)) {
-            return {
-              ...obj,
-              valid: [...obj.valid, entry]
-            };
-          }
-          else {
-            return {
-              ...obj,
-              invalid: [...obj.invalid, entry]
-            };
-          }
-        }, {
-          valid: [],
-          invalid: []
-        });
-      }
-      return {
-        valid: [],
-        invalid: []
-      };
-    }
-    return allInactiveSpells.reduce<InactiveSpells>((obj, entry) => {
-      if (entry.category === Categories.CANTRIPS || (!isMaximumOfSpellsReached || entry.gr > 2) && validate(currentHero, entry.reqs, entry.id, pact) && (isOwnTradition(tradition, entry) || (entry.gr < 3 && !areMaxUnfamiliar))) {
-        return {
-          ...obj,
-          valid: [...obj.valid, entry]
-        };
-      }
-      else {
-        return {
-          ...obj,
-          invalid: [...obj.invalid, entry]
-        };
-      }
-    }, {
-      valid: [],
-      invalid: []
-    });
-  }
+export const getActiveCantrips = createMaybeSelector (
+  getActiveAndInctiveCantrips,
+  Tuple.fst
 );
 
-export const getActiveSpells = createSelector(
-  getSpellsAndCantrips,
-  getStartEl,
-  getPhase,
-  getAttributes,
-  mapGetToSlice(getAdvantages, 'ADV_16'),
-  mapGetToSlice(getSpecialAbilities, 'SA_72'),
+export const getInactiveCantrips = createMaybeSelector (
+  getActiveAndInctiveCantrips,
+  Tuple.snd
+);
+
+/**
+ * `Tuple.fst InactiveSpells` are valid spells, `Tuple.snd InactiveSpells` are
+ * invalid spells concerning the current tradition(s) and general state.
+ */
+export type InactiveSpells = Tuple<List<Record<Spell>>, List<Record<Spell>>>;
+
+const emptyInactiveSpells: InactiveSpells = (
+  Tuple.of<List<Record<Spell>>, List<Record<Spell>>> (List.of ()) (List.of ())
+);
+
+export const getInactiveSpells = createMaybeSelector (
+  getUnfilteredInactiveSpells,
+  getAreMaxUnfamiliar,
+  getIsMaximumOfSpellsReached,
+  getCurrentHeroPresent,
+  getMagicalTraditionsFromState,
+  getMagicalTraditionsFromWikiState,
   getWiki,
-  getSpells,
-  (allEntries, el, phase, attributes, exceptionalSkill, propertyKnowledge, wiki, spells) => {
-    const list: (SpellWithRequirements | CantripInstance)[] = [];
-    for (const entry of allEntries) {
-      if (entry.active === true) {
-        if (entry.category === Categories.CANTRIPS) {
-          list.push(entry)
-        }
-        else {
-          list.push({
-            ...entry,
-            isIncreasable: isIncreasable(entry, el, phase, attributes, exceptionalSkill!, propertyKnowledge!),
-            isDecreasable: isDecreasable(wiki, entry, spells, propertyKnowledge!),
-          });
-        }
-      }
-    }
-    return list;
-  }
+  (
+    maybeUnfilteredInactiveSpells,
+    areMaxUnfamiliar,
+    isMaximumOfSpellsReached,
+    maybeHero,
+    maybeStateTraditions,
+    maybeTraditions,
+    wiki
+  ) => maybeHero.bind (
+    hero => maybeTraditions.bind (
+      traditions => maybeStateTraditions.bind (
+        stateTraditions =>
+          maybeUnfilteredInactiveSpells.fmap<InactiveSpells> (
+            unfilteredInactiveSpells => {
+              if (traditions.null ()) {
+                return emptyInactiveSpells;
+              }
+
+              const lastTraditionId = Maybe.listToMaybe (traditions)
+                .fmap (tradition => tradition.get ('id'));
+
+              const validateSpellPrerequisites = (entry: Record<Spell>) =>
+                validatePrerequisites (wiki, hero, entry.get ('prerequisites'), entry.get ('id'));
+
+              if (Maybe.elem ('SA_679') (lastTraditionId)) {
+                return unfilteredInactiveSpells.elems ()
+                  .partition (
+                    entry => entry.get ('gr') < 3
+                      && !isMaximumOfSpellsReached
+                      && validateSpellPrerequisites (entry)
+                      && (isOwnTradition (traditions, entry) || !areMaxUnfamiliar)
+                  );
+              }
+
+              if (
+                Maybe.elem ('SA_677') (lastTraditionId)
+                || Maybe.elem ('SA_678') (lastTraditionId)
+              ) {
+                return Maybe.fromMaybe (emptyInactiveSpells) (
+                  Maybe.listToMaybe (stateTraditions)
+                    .fmap (tradition => tradition.get ('active'))
+                    .bind (Maybe.listToMaybe)
+                    .bind (active => active.lookup ('sid'))
+                    .fmap (
+                      subTradition => unfilteredInactiveSpells.elems ()
+                        .partition (
+                          entry => entry.get ('subtradition').elem (subTradition as number)
+                        )
+                    )
+                );
+              }
+
+              return unfilteredInactiveSpells.elems ()
+                .partition (
+                  entry => (!isMaximumOfSpellsReached || entry.get ('gr') > 2)
+                    && validateSpellPrerequisites (entry)
+                    && (
+                      isOwnTradition (traditions, entry)
+                      || (entry.get ('gr') < 3 && !areMaxUnfamiliar)
+                    )
+                );
+            }
+          )
+      )
+    )
+  )
 );
 
-export const getAvailableInactiveSpells = createSelector(
+export const getActiveSpells = createMaybeSelector (
+  getActiveSpellsCombined,
+  getStartEl,
+  getCurrentHeroPresent,
+  mapGetToSlice (getAdvantages, 'ADV_16'),
+  mapGetToSlice (getSpecialAbilities, 'SA_72'),
+  getWiki,
+  (
+    maybeActiveSpellsCombined,
+    maybeStartEl,
+    maybeHero,
+    maybeExceptionalSkill,
+    maybePropertyKnowledge,
+    wiki,
+  ) => maybeHero.bind (
+    hero => maybeStartEl.bind (
+      startEl => maybeActiveSpellsCombined.fmap (
+        activeSpellsCombined => activeSpellsCombined.map<Record<SpellWithRequirements>> (
+          spell => spell.merge (
+            Record.of ({
+              isIncreasable: isIncreasable (
+                spell,
+                startEl,
+                hero.get ('phase'),
+                hero.get ('attributes'),
+                maybeExceptionalSkill,
+                maybePropertyKnowledge
+              ),
+              isDecreasable: isDecreasable (
+                wiki,
+                hero,
+                spell,
+                maybePropertyKnowledge
+              ),
+            })
+          )
+        )
+      )
+    )
+  )
+);
+
+export const getAvailableInactiveSpells = createMaybeSelector (
   getInactiveSpells,
   getRuleBooksEnabled,
-  (list, availablility) => {
-    return filterByAvailability(list.valid, availablility);
-  }
+  (maybeList, maybeAvailablility) => maybeList.bind (
+    list => maybeAvailablility.fmap (
+      availablility => filterByAvailability (Tuple.fst (list), availablility)
+    )
+  )
 );
 
-export const getFilteredActiveSpellsAndCantrips = createSelector(
+type ActiveListCombined = List<Record<SpellWithRequirements> | Record<Cantrip>>;
+type InactiveListCombined = List<Record<Spell> | Record<Cantrip>>;
+
+export const getActiveSpellsAndCantrips = createMaybeSelector (
   getActiveSpells,
+  getActiveCantrips,
+  (maybeSpells: Maybe<ActiveListCombined>, cantrips) => maybeSpells.fmap (
+    spells => spells.mappend (cantrips)
+  )
+);
+
+export const getAvailableInactiveSpellsAndCantrips = createMaybeSelector (
+  getAvailableInactiveSpells,
+  getInactiveCantrips,
+  (maybeSpells: Maybe<InactiveListCombined>, cantrips) => maybeSpells.fmap (
+    spells => spells.mappend (cantrips)
+  )
+);
+
+export const getFilteredActiveSpellsAndCantrips = createMaybeSelector (
+  getActiveSpellsAndCantrips,
   getSpellsSortOptions,
   getSpellsFilterText,
-  getLocaleMessages,
-  (spells, sortOptions, filterText, locale) => {
-    return filterAndSortObjects(spells, locale!.id, filterText, sortOptions);
-  }
+  getLocaleAsProp,
+  (maybeSpells, sortOptions, filterText, locale) => maybeSpells.fmap (
+    spells => filterAndSortObjects (spells, locale.get ('id'), filterText, sortOptions)
+  )
 );
 
-export const getFilteredInactiveSpellsAndCantrips = createSelector(
-  getAvailableInactiveSpells,
-  getActiveSpells,
+export const getFilteredInactiveSpellsAndCantrips = createMaybeSelector (
+  getAvailableInactiveSpellsAndCantrips,
+  getActiveSpellsAndCantrips,
   getSpellsSortOptions,
   getInactiveSpellsFilterText,
-  getLocaleMessages,
+  getLocaleAsProp,
   getEnableActiveItemHints,
-  (inactive, active, sortOptions, filterText, locale, areActiveItemHintsEnabled) => {
-    if (areActiveItemHintsEnabled) {
-      return filterAndSortObjects([...inactive, ...active], locale!.id, filterText, sortOptions);
-    }
-    return filterAndSortObjects(inactive, locale!.id, filterText, sortOptions);
-  }
+  (maybeInactive, maybeActive, sortOptions, filterText, locale, areActiveItemHintsEnabled) =>
+    maybeInactive.bind (
+      inactive => maybeActive.fmap (
+        active => areActiveItemHintsEnabled
+          ? filterAndSortObjects (
+              inactive.mappend (active as InactiveListCombined),
+              locale.get ('id'),
+              filterText,
+              sortOptions
+            )
+          : filterAndSortObjects (inactive, locale.get ('id'), filterText, sortOptions)
+      )
+    )
 );
 
-export const getSpellsAndCantripsForSave = createSelector(
-  getActiveSpells,
-  list => {
-    const spells: ToListById<number> = {};
-    const cantrips: string[] = [];
-    for (const entry of list) {
-      if (entry.category === Categories.SPELLS) {
-        const { id, value } = entry;
-        spells[id] = value;
-      }
-      else {
-        cantrips.push(entry.id);
-      }
-    }
-    return {
-      spells,
-      cantrips
-    };
-  }
-);
+const getMaxSpellsModifier = (
+  maybeIncrease: Maybe<Record<ActivatableDependent>>,
+  maybeDecrease: Maybe<Record<ActivatableDependent>>
+) => getModifierByActiveLevel (maybeIncrease) (maybeDecrease) (Just (3));
 
-export const isActivationDisabled = createSelector(
+export const isActivationDisabled = createMaybeSelector (
   getStartEl,
   getPhase,
-  getActiveSpellsNumber,
-  getMagicalTraditions,
-  mapGetToSlice(getAdvantages, 'ADV_58'),
-  mapGetToSlice(getDisadvantages, 'DISADV_59'),
-  (startEl, phase, activeSpells, tradition, bonusEntry, penaltyEntry) => {
-    if (tradition.length === 0) {
-      return true;
-    }
-    const lastTraditionId = tradition[0].id;
-    if (lastTraditionId === 'SA_679') {
-      let maxSpells = 3;
-      if (bonusEntry && isActive(bonusEntry)) {
-        const tier = bonusEntry.active[0].tier;
-        if (tier) {
-          maxSpells += tier;
-        }
-      }
-      else if (penaltyEntry && isActive(penaltyEntry)) {
-        const tier = penaltyEntry.active[0].tier;
-        if (tier) {
-          maxSpells -= tier;
-        }
-      }
-      if (activeSpells >= maxSpells) {
-        return true;
-      }
-    }
-    const maxSpellsLiturgies = startEl.maxSpellsLiturgies;
-    return phase < 3 && activeSpells >= maxSpellsLiturgies;
-  }
+  getActiveSpellsCounter,
+  getMagicalTraditionsFromState,
+  mapGetToSlice (getAdvantages, 'ADV_58'),
+  mapGetToSlice (getDisadvantages, 'DISADV_59'),
+  (
+    maybeStartEl,
+    maybePhase,
+    maybeActiveSpellsCounter,
+    maybeTraditions,
+    maybeBonus,
+    maybePenalty
+  ) =>
+    Maybe.fromMaybe (true) (
+      Maybe.liftM4 ((traditions: List<Record<ActivatableDependent>>) =>
+                      (startEl: Record<ExperienceLevel>) =>
+                        (phase: number) =>
+                          (activeSpellsCounter: number) =>
+                            Maybe.fromMaybe (true) (
+                              List.uncons (traditions).fmap (
+                                unconsTraditions => {
+                                  const lastTraditionId = Tuple.fst (unconsTraditions).get ('id');
+
+                                  if (lastTraditionId === 'SA_679') {
+                                    const maxSpells = getMaxSpellsModifier (
+                                      maybeBonus,
+                                      maybePenalty
+                                    );
+
+                                    if (activeSpellsCounter >= maxSpells) {
+                                      return true;
+                                    }
+                                  }
+
+                                  const maxSpellsLiturgies = startEl.get ('maxSpellsLiturgies');
+
+                                  return phase < 3 && activeSpellsCounter >= maxSpellsLiturgies;
+                                }
+                              )
+                            )
+                   )
+                   (maybeTraditions)
+                   (maybeStartEl)
+                   (maybePhase)
+                   (maybeActiveSpellsCounter)
+    )
 );
 
-export const getCantripsForSheet = createSelector(
-  getCantrips,
-  cantrips => [...cantrips.values()].filter(e => e.active)
+export const getCantripsForSheet = createMaybeSelector (
+  getActiveCantrips,
+  R.identity
 );
 
-export const getSpellsForSheet = createSelector(
-  getSpells,
-  getMagicalTraditions,
-  (spells, traditionSA) => {
-    const array: Spell[] = [];
-    for (const [id, entry] of spells) {
-      const { ic, name, active, value, check, checkmod, property, tradition, effect, castingTime, castingTimeShort, cost, costShort, range, rangeShort, duration, durationShort, target, src, category } = entry;
-      if (active) {
-        let traditions;
-        if (traditionSA.length === 0 || !isOwnTradition(traditionSA, entry)) {
-          traditions = tradition;
-        }
-        array.push({
-          id,
-          name,
-          value,
-          ic,
-          check,
-          checkmod,
-          property,
-          traditions,
-          effect,
-          castingTime,
-          castingTimeShort,
-          cost,
-          costShort,
-          range,
-          rangeShort,
-          duration,
-          durationShort,
-          target,
-          src,
-          category
-        });
-      }
-    }
-    return array;
-  }
+export const getSpellsForSheet = createMaybeSelector (
+  getActiveSpellsCombined,
+  getMagicalTraditionsFromWikiState,
+  (maybeSpells, maybeTraditions) =>
+    maybeSpells.bind (
+      spells => maybeTraditions.fmap (
+        traditions => spells.map (
+          spell => spell.modify<'tradition'> (
+            x => isOwnTradition (traditions, spell as any as Record<Spell>) ? List.of () : x
+          ) ('tradition')
+        )
+      )
+    )
 );

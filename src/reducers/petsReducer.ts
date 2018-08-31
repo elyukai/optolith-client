@@ -8,7 +8,7 @@ type Action =
   PetActions.RemovePetAction |
   PetActions.SetPetAction;
 
-export function petsReducer(
+export function petsReducer (
   state: Record<Data.HeroDependent>,
   action: Action
 ): Record<Data.HeroDependent> {
@@ -17,17 +17,13 @@ export function petsReducer(
     case ActionTypes.SET_PET: {
       const { data, id } = action.payload;
 
-      return state.modify(
-        pets => pets.insert('family', Record.of<Data.PetInstance>({ ...data, id })),
-        'pets'
-      );
+      return state.modify<'pets'> (
+        pets => pets.insert ('family') (Record.of<Data.PetInstance> ({ ...data, id }))
+      ) ('pets');
     }
 
     case ActionTypes.REMOVE_PET:
-      return state.modify(
-        pets => pets.delete(action.payload.id),
-        'pets'
-      );
+      return state.modify<'pets'> (pets => pets.delete (action.payload.id)) ('pets');
 
     default:
       return state;

@@ -1,3 +1,4 @@
+import R from 'ramda';
 import * as Data from '../types/data';
 import * as Wiki from '../types/wiki';
 import { List, Maybe, OrderedMap, Record } from './dataUtils';
@@ -11,8 +12,8 @@ export const findSelectOption = <S extends Wiki.SelectionObject>(
   obj: Wiki.Activatable,
   id: Maybe<string | number>,
 ): Maybe<Record<S>> =>
-  obj.lookup('select').bind(select => select.find<any>(
-    (e): e is any => id.equals(e.lookup('id'))
+  obj.lookup ('select').bind (select => select.find<any> (
+    (e): e is any => id.equals (e.lookup ('id'))
   ));
 
 /**
@@ -24,7 +25,7 @@ export const getSelectOptionName = (
   obj: Wiki.Activatable,
   id: Maybe<string | number>,
 ): Maybe<string> =>
-  findSelectOption(obj, id).bind(e => e.lookup('name'));
+  findSelectOption (obj, id).bind (e => e.lookup ('name'));
 
 /**
  * Get a selection option's name with the given id from given wiki entry.
@@ -35,7 +36,7 @@ export const getSelectOptionCost = (
   obj: Wiki.Activatable,
   id: Maybe<string | number>,
 ): Maybe<number> =>
-  findSelectOption(obj, id).bind(e => e.lookup('cost'));
+  findSelectOption (obj, id).bind (e => e.lookup ('cost'));
 
 interface SelectionNameAndCost {
   name: string;
@@ -51,9 +52,9 @@ export const getSelectionNameAndCost = (
   obj: Wiki.Activatable,
   id: Maybe<string | number>,
 ): Maybe<SelectionNameAndCost> =>
-  findSelectOption(obj, id)
-    .bind(e => e.lookup('cost').fmap(cost => ({
-      name: e.get('name'),
+  findSelectOption (obj, id)
+    .bind (e => e.lookup ('cost').fmap (cost => ({
+      name: e.get ('name'),
       cost,
     })));
 
@@ -63,8 +64,8 @@ export const getSelectionNameAndCost = (
  */
 export const getActiveSelections =
   (obj: Maybe<Record<Data.ActivatableDependent>>) =>
-    obj.bind(justObj => justObj.lookup('active'))
-      .fmap(Maybe.mapMaybe(e => e.lookup('sid')));
+    obj.bind (justObj => justObj.lookup ('active'))
+      .fmap (Maybe.mapMaybe (e => e.lookup ('sid')));
 
 type SecondarySelections = OrderedMap<number | string, List<string | number>>;
 
@@ -75,26 +76,28 @@ type SecondarySelections = OrderedMap<number | string, List<string | number>>;
  */
 export const getActiveSecondarySelections =
   (obj: Maybe<Record<Data.ActivatableDependent>>) =>
-    obj.bind(justObj => justObj
-      .lookup('active')
-      .fmap(r => r.foldl<SecondarySelections>(
-        map => selection => {
-          const sid = selection.lookup('sid');
-          const sid2 = selection.lookup('sid2');
+    obj.bind (justObj => justObj
+      .lookup ('active')
+      .fmap (
+        r => r.foldl<SecondarySelections> (
+          map => selection => {
+            const sid = selection.lookup ('sid');
+            const sid2 = selection.lookup ('sid2');
 
-          if (Maybe.isJust(sid) && Maybe.isJust(sid2)) {
-            return map.alter(
-              e => e
-                .alt(Maybe.Just(List.of()))
-                .fmap(listForSid => listForSid.append(Maybe.fromJust(sid2))),
-              Maybe.fromJust(sid)
-            );
+            if (Maybe.isJust (sid) && Maybe.isJust (sid2)) {
+              return map.alter (
+                e => e
+                  .alt (Maybe.pure (List.of ()))
+                  .fmap (
+                    listForSid => listForSid.append (Maybe.fromJust (sid2))
+                  )
+              ) (Maybe.fromJust (sid));
+            }
+
+            return map;
           }
-
-          return map;
-        },
-        OrderedMap.empty()
-      ))
+        ) (OrderedMap.empty ())
+      )
     );
 
 /**
@@ -103,13 +106,11 @@ export const getActiveSecondarySelections =
  */
 export const getRequiredSelections =
   (obj: Maybe<Record<Data.ActivatableDependent>>) => obj
-    .fmap(
-      justObj => Maybe.mapMaybe(
-        dep => Maybe.ensure(
-          (e): e is Record<Data.DependencyObject> => e instanceof Record,
-          dep
+    .fmap (
+      justObj => Maybe.mapMaybe (
+        R.pipe (
+          Maybe.ensure ((e): e is Record<Data.DependencyObject> => e instanceof Record),
+          Maybe.bind_ (e => e.lookup ('sid'))
         )
-            .bind(e => e.lookup('sid')),
-        justObj.get('dependencies')
-      )
+      ) (justObj.get ('dependencies'))
     );

@@ -9,10 +9,10 @@ import { AppState } from '../reducers/app';
 import { getAdventurePointsObject, getMagicalAdvantagesDisadvantagesAdventurePointsMaximum } from '../selectors/adventurePointsSelectors';
 import { getRedoAvailability, getUndoAvailability } from '../selectors/currentHeroSelectors';
 import { isLiturgicalChantsTabAvailable } from '../selectors/liturgiesSelectors';
-import { isRemovingEnabled } from '../selectors/phaseSelectors';
-import { isSpellsTabAvailable } from '../selectors/spellsSelectors';
+import { getIsRemovingEnabled } from '../selectors/phaseSelectors';
+import { getIsSpellsTabAvailable } from '../selectors/spellsSelectors';
 import { getAvatar, getCurrentTab, isSettingsOpen } from '../selectors/stateSelectors';
-import { getSubtabs, getTabs, isHeroSection } from '../selectors/uilocationSelectors';
+import { getSubtabs, getTabs, getIsHeroSection } from '../selectors/uilocationSelectors';
 import { TabId } from '../utils/LocationUtils';
 import { NavigationBar, NavigationBarDispatchProps, NavigationBarOwnProps, NavigationBarStateProps } from '../views/navigationbar/NavigationBar';
 
@@ -22,14 +22,14 @@ function mapStateToProps(state: AppState) {
 		avatar: getAvatar(state),
 		isRedoAvailable: getRedoAvailability(state),
 		isUndoAvailable: getUndoAvailability(state),
-		isRemovingEnabled: isRemovingEnabled(state),
+		isRemovingEnabled: getIsRemovingEnabled(state),
 		isSettingsOpen: isSettingsOpen(state),
-		isHeroSection: isHeroSection(state),
+		isHeroSection: getIsHeroSection(state),
 		tabs: getTabs(state),
 		subtabs: getSubtabs(state),
 		adventurePoints: getAdventurePointsObject(state),
 		maximumForMagicalAdvantagesDisadvantages: getMagicalAdvantagesDisadvantagesAdventurePointsMaximum(state),
-		isSpellcaster: isSpellsTabAvailable(state),
+		isSpellcaster: getIsSpellsTabAvailable(state),
 		isBlessedOne: isLiturgicalChantsTabAvailable(state),
 	};
 }

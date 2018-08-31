@@ -1,16 +1,16 @@
 import { remote } from 'electron';
-import { isHeroSection } from '../selectors/uilocationSelectors';
+import { getIsHeroSection } from '../selectors/uilocationSelectors';
 import { AsyncAction } from '../types/actions';
 import { isDialogOpen } from '../utils/SubwindowsUtils';
 import { _saveHero } from './HerolistActions';
 import { redo, undo } from './HistoryActions';
+import { requestClose } from './IOActions';
 import { _setTab } from './LocationActions';
 import { openSettings } from './SubwindowsActions';
-import { requestClose } from './IOActions';
 
 export function undoAccelerator(): AsyncAction {
 	return (dispatch, getState) => {
-		if (!isDialogOpen() && isHeroSection(getState())) {
+		if (!isDialogOpen() && getIsHeroSection(getState())) {
 			dispatch(undo());
 		}
 	};
@@ -18,7 +18,7 @@ export function undoAccelerator(): AsyncAction {
 
 export function redoAccelerator(): AsyncAction {
 	return (dispatch, getState) => {
-		if (!isDialogOpen() && isHeroSection(getState())) {
+		if (!isDialogOpen() && getIsHeroSection(getState())) {
 			dispatch(redo());
 		}
 	};
@@ -26,7 +26,7 @@ export function redoAccelerator(): AsyncAction {
 
 export function saveHeroAccelerator(): AsyncAction {
 	return (dispatch, getState) => {
-		if (!isDialogOpen() && isHeroSection(getState())) {
+		if (!isDialogOpen() && getIsHeroSection(getState())) {
 			dispatch(_saveHero());
 		}
 	};
@@ -34,7 +34,7 @@ export function saveHeroAccelerator(): AsyncAction {
 
 export function backAccelerator(): AsyncAction {
 	return (dispatch, getState) => {
-		if (!isDialogOpen() && isHeroSection(getState())) {
+		if (!isDialogOpen() && getIsHeroSection(getState())) {
 			dispatch(_setTab('herolist'));
 		}
 	};

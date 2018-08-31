@@ -7,199 +7,215 @@ import { UIMessages } from '../utils/I18n';
 export const getCurrentTab = (state: AppState) => state.ui.location.tab;
 
 
-export const getLocaleMessages = createMaybeSelector(
+export const getLocaleMessages = createMaybeSelector (
   (state: AppState) => state.locale.messages,
-  messages => Maybe.of(messages).fmap(Record.of)
+  messages => Maybe.of (messages).fmap (Record.of)
 );
 
 export const getLocaleAsProp = (_: AppState, props: { locale: Record<UIMessages> }) => props.locale;
-export const getLocaleId = createMaybeSelector((state: AppState) => state.locale.id, Maybe.of);
+export const getLocaleId = createMaybeSelector ((state: AppState) => state.locale.id, Maybe.of);
 export const getLocaleType = (state: AppState) => state.locale.type;
 
 
-export const getCurrentHeroId = (state: AppState) => state.herolist.lookup('currentId');
-export const getHeroes = (state: AppState) => state.herolist.get('heroes');
-export const getUsers = (state: AppState) => state.herolist.get('users');
+export const getCurrentHeroId = (state: AppState) => state.herolist.lookup ('currentId');
+export const getHeroes = (state: AppState) => state.herolist.get ('heroes');
+export const getUsers = (state: AppState) => state.herolist.get ('users');
 
 
-export const getCurrentHero = createMaybeSelector(
+export const getCurrentHero = createMaybeSelector (
   getCurrentHeroId,
   getHeroes,
-  (id, heroes) => id.bind(heroes.lookup)
+  (id, heroes) => id.bind (heroes.lookup)
 );
 
-export const getCurrentHeroPresent = createMaybeSelector(
+export const getCurrentHeroPresent = createMaybeSelector (
   getCurrentHero,
-  currentHero => currentHero.fmap(just => just.present)
+  currentHero => currentHero.fmap (just => just.present)
 );
 
-export const getCurrentHeroPast = createMaybeSelector(
+export const getCurrentHeroPast = createMaybeSelector (
   getCurrentHero,
-  currentHero => currentHero.fmap(just => just.past)
+  currentHero => currentHero.fmap (just => just.past)
 );
 
-export const getCurrentHeroFuture = createMaybeSelector(
+export const getCurrentHeroFuture = createMaybeSelector (
   getCurrentHero,
-  currentHero => currentHero.fmap(just => just.future)
+  currentHero => currentHero.fmap (just => just.future)
 );
 
 
 export const getTotalAdventurePoints = (state: AppState) =>
-  getCurrentHero(state).fmap(just => just.present.get('adventurePoints').get('total'));
+  getCurrentHero (state).fmap (just => just.present.get ('adventurePoints').get ('total'));
 
 
 export const getAdvantages = (state: AppState) =>
-  getCurrentHero(state).fmap(just => just.present.get('advantages'));
+  getCurrentHero (state).fmap (just => just.present.get ('advantages'));
 
 export const getAttributes = (state: AppState) =>
-  getCurrentHero(state).fmap(just => just.present.get('attributes'));
+  getCurrentHero (state).fmap (just => just.present.get ('attributes'));
 
 export const getBlessings = (state: AppState) =>
-  getCurrentHero(state).fmap(just => just.present.get('blessings'));
+  getCurrentHero (state).fmap (just => just.present.get ('blessings'));
 
 export const getCantrips = (state: AppState) =>
-  getCurrentHero(state).fmap(just => just.present.get('cantrips'));
+  getCurrentHero (state).fmap (just => just.present.get ('cantrips'));
 
 export const getCombatTechniques = (state: AppState) =>
-  getCurrentHero(state).fmap(just => just.present.get('combatTechniques'));
+  getCurrentHero (state).fmap (just => just.present.get ('combatTechniques'));
 
 export const getDisadvantages = (state: AppState) =>
-  getCurrentHero(state).fmap(just => just.present.get('disadvantages'));
+  getCurrentHero (state).fmap (just => just.present.get ('disadvantages'));
 
 export const getLiturgicalChants = (state: AppState) =>
-  getCurrentHero(state).fmap(just => just.present.get('liturgicalChants'));
+  getCurrentHero (state).fmap (just => just.present.get ('liturgicalChants'));
 
 export const getSkills = (state: AppState) =>
-  getCurrentHero(state).fmap(just => just.present.get('skills'));
+  getCurrentHero (state).fmap (just => just.present.get ('skills'));
 
 export const getSpecialAbilities = (state: AppState) =>
-  getCurrentHero(state).fmap(just => just.present.get('specialAbilities'));
+  getCurrentHero (state).fmap (just => just.present.get ('specialAbilities'));
 
 export const getSpells = (state: AppState) =>
-  getCurrentHero(state).fmap(just => just.present.get('spells'));
+  getCurrentHero (state).fmap (just => just.present.get ('spells'));
 
 
 export const getBlessedStyleDependencies = (state: AppState) =>
-  getCurrentHero(state).fmap(just => just.present.get('blessedStyleDependencies'));
+  getCurrentHero (state).fmap (just => just.present.get ('blessedStyleDependencies'));
 
 export const getCombatStyleDependencies = (state: AppState) =>
-  getCurrentHero(state).fmap(just => just.present.get('combatStyleDependencies'));
+  getCurrentHero (state).fmap (just => just.present.get ('combatStyleDependencies'));
 
 export const getMagicalStyleDependencies = (state: AppState) =>
-  getCurrentHero(state).fmap(just => just.present.get('magicalStyleDependencies'));
+  getCurrentHero (state).fmap (just => just.present.get ('magicalStyleDependencies'));
 
 
 export const getProfile = (state: AppState) =>
-  getCurrentHero(state).fmap(just => just.present.get('personalData'));
+  getCurrentHero (state).fmap (just => just.present.get ('personalData'));
 
 export const getCultureAreaKnowledge = (state: AppState) =>
-  getCurrentHero(state)
-    .bind(just => just.present.get('personalData').lookup('cultureAreaKnowledge'));
+  getCurrentHero (state)
+    .bind (just => just.present.get ('personalData').lookup ('cultureAreaKnowledge'));
 
 export const getSex = (state: AppState) =>
-  getCurrentHero(state).fmap(just => just.present.get('sex'));
+  getCurrentHero (state).fmap (just => just.present.get ('sex'));
 
 export const getSize = (state: AppState) =>
-  getCurrentHero(state).bind(just => just.present.get('personalData').lookup('size'));
+  getCurrentHero (state).bind (just => just.present.get ('personalData').lookup ('size'));
 
 export const getWeight = (state: AppState) =>
-  getCurrentHero(state).bind(just => just.present.get('personalData').lookup('weight'));
+  getCurrentHero (state).bind (just => just.present.get ('personalData').lookup ('weight'));
 
 export const getAvatar = (state: AppState) =>
-  getCurrentHero(state).bind(just => just.present.lookup('avatar'));
+  getCurrentHero (state).bind (just => just.present.lookup ('avatar'));
 
 
 export const getPact = (state: AppState) =>
-  getCurrentHero(state).bind(just => just.present.lookup('pact'));
+  getCurrentHero (state).bind (just => just.present.lookup ('pact'));
 
 
 export const getRules = (state: AppState) =>
-  getCurrentHero(state).fmap(just => just.present.get('rules'));
+  getCurrentHero (state).fmap (just => just.present.get ('rules'));
 
 export const getAttributeValueLimit = (state: AppState) =>
-  getCurrentHero(state).fmap(just => just.present.get('rules').get('attributeValueLimit'));
+  getCurrentHero (state).fmap (just => just.present.get ('rules').get ('attributeValueLimit'));
 
 export const getHigherParadeValues = (state: AppState) =>
-  getCurrentHero(state).fmap(just => just.present.get('rules').get('higherParadeValues'));
+  getCurrentHero (state).fmap (just => just.present.get ('rules').get ('higherParadeValues'));
 
-export const areAllRuleBooksEnabled = (state: AppState) =>
-  getCurrentHero(state).fmap(just => just.present.get('rules').get('enableAllRuleBooks'));
+export const getAreAllRuleBooksEnabled = (state: AppState) =>
+  getCurrentHero (state).fmap (just => just.present.get ('rules').get ('enableAllRuleBooks'));
 
 export const getEnabledRuleBooks = (state: AppState) =>
-  getCurrentHero(state).fmap(just => just.present.get('rules').get('enabledRuleBooks'));
+  getCurrentHero (state).fmap (just => just.present.get ('rules').get ('enabledRuleBooks'));
 
 
 export const getCurrentRaceId = (state: AppState) =>
-  getCurrentHero(state).bind(just => just.present.lookup('race'));
+  getCurrentHero (state).bind (just => just.present.lookup ('race'));
 
 export const getCurrentRaceVariantId = (state: AppState) =>
-  getCurrentHero(state).bind(just => just.present.lookup('raceVariant'));
+  getCurrentHero (state).bind (just => just.present.lookup ('raceVariant'));
 
 export const getCurrentCultureId = (state: AppState) =>
-  getCurrentHero(state).bind(just => just.present.lookup('culture'));
+  getCurrentHero (state).bind (just => just.present.lookup ('culture'));
 
 export const getCurrentProfessionId = (state: AppState) =>
-  getCurrentHero(state).bind(just => just.present.lookup('profession'));
+  getCurrentHero (state).bind (just => just.present.lookup ('profession'));
 
 export const getCurrentProfessionVariantId = (state: AppState) =>
-  getCurrentHero(state).bind(just => just.present.lookup('professionVariant'));
+  getCurrentHero (state).bind (just => just.present.lookup ('professionVariant'));
 
 
 export const getEnergies = (state: AppState) =>
-  getCurrentHero(state).fmap(just => just.present.get('energies'));
+  getCurrentHero (state).fmap (just => just.present.get ('energies'));
 
 export const getAddedLifePoints = (state: AppState) =>
-  getCurrentHero(state).fmap(just => just.present.get('energies').get('addedLifePoints'));
+  getCurrentHero (state).fmap (just => just.present.get ('energies').get ('addedLifePoints'));
 
 export const getAddedArcaneEnergyPoints = (state: AppState) =>
-  getCurrentHero(state).fmap(just => just.present.get('energies').get('addedArcaneEnergyPoints'));
+  getCurrentHero (state)
+    .fmap (just => just.present.get ('energies').get ('addedArcaneEnergyPoints'));
 
 export const getAddedKarmaPoints = (state: AppState) =>
-  getCurrentHero(state).fmap(just => just.present.get('energies').get('addedKarmaPoints'));
+  getCurrentHero (state).fmap (just => just.present.get ('energies').get ('addedKarmaPoints'));
 
 export const getPermanentLifePoints = (state: AppState) =>
-  getCurrentHero(state).fmap(just => just.present.get('energies').get('permanentLifePoints'));
+  getCurrentHero (state).fmap (just => just.present.get ('energies').get ('permanentLifePoints'));
 
 export const getPermanentArcaneEnergyPoints = (state: AppState) =>
-  getCurrentHero(state)
-    .fmap(just => just.present.get('energies').get('permanentArcaneEnergyPoints'));
+  getCurrentHero (state)
+    .fmap (just => just.present.get ('energies').get ('permanentArcaneEnergyPoints'));
 
 export const getPermanentKarmaPoints = (state: AppState) =>
-  getCurrentHero(state).fmap(just => just.present.get('energies').get('permanentKarmaPoints'));
+  getCurrentHero (state).fmap (just => just.present.get ('energies').get ('permanentKarmaPoints'));
 
 
 export const getPhase = (state: AppState) =>
-  getCurrentHero(state).fmap(just => just.present.get('phase'));
+  getCurrentHero (state).fmap (just => just.present.get ('phase'));
 
 
 export const getExperienceLevelStartId = (state: AppState) =>
-  getCurrentHero(state).fmap(just => just.present.get('experienceLevel'));
+  getCurrentHero (state).fmap (just => just.present.get ('experienceLevel'));
 
+
+export const getEquipmentState = (state: AppState) =>
+  getCurrentHero (state).fmap (just => just.present.get ('belongings'));
+
+export const getItemsState = (state: AppState) =>
+  getCurrentHero (state).bind (just => just.present.get ('belongings').lookup ('items'));
+
+export const getArmorZonesState = (state: AppState) =>
+  getCurrentHero (state).bind (just => just.present.get ('belongings').lookup ('armorZones'));
+
+export const getPurse = (state: AppState) =>
+  getCurrentHero (state).bind (just => just.present.get ('belongings').lookup ('purse'));
 
 export const getItemEditorInstance = (state: AppState) =>
-  getCurrentHero(state).bind(just => just.present.get('belongings').lookup('itemInEditor'));
+  getCurrentHero (state).bind (just => just.present.get ('belongings').lookup ('itemInEditor'));
 
 export const getIsItemCreation = (state: AppState) =>
-  getCurrentHero(state).fmap(just => just.present.get('belongings').get('isInItemCreation'));
+  getCurrentHero (state).fmap (just => just.present.get ('belongings').get ('isInItemCreation'));
 
 export const getArmorZonesEditorInstance = (state: AppState) =>
-  getCurrentHero(state).bind(just => just.present.get('belongings').lookup('zoneArmorInEditor'));
+  getCurrentHero (state)
+    .bind (just => just.present.get ('belongings').lookup ('zoneArmorInEditor'));
 
 export const getIsArmorZonesCreation = (state: AppState) =>
-  getCurrentHero(state).fmap(just => just.present.get('belongings').get('isInZoneArmorCreation'));
+  getCurrentHero (state)
+    .fmap (just => just.present.get ('belongings').get ('isInZoneArmorCreation'));
 
 export const getPets = (state: AppState) =>
-  getCurrentHero(state).fmap(just => just.present.get('pets'));
+  getCurrentHero (state).fmap (just => just.present.get ('pets'));
 
 
 export const getAlerts = (state: AppState) => state.ui.alerts;
-export const getCurrentAlert = (state: AppState): Maybe<Alert> => state.ui.alerts.head();
+export const getCurrentAlert = (state: AppState): Maybe<Alert> =>
+  Maybe.listToMaybe (state.ui.alerts);
 export const getUpdateDownloadProgress = (state: AppState) =>
-  Maybe.of(state.ui.subwindows.updateDownloadProgress);
+  Maybe.of (state.ui.subwindows.updateDownloadProgress);
 export const getAddPermanentEnergy = (state: AppState) =>
-  Maybe.of(state.ui.subwindows.addPermanentEnergy);
+  Maybe.of (state.ui.subwindows.addPermanentEnergy);
 export const getEditPermanentEnergy = (state: AppState) =>
-  Maybe.of(state.ui.subwindows.editPermanentEnergy);
+  Maybe.of (state.ui.subwindows.editPermanentEnergy);
 export const getIsAddAdventurePointsOpen = (state: AppState) =>
   state.ui.subwindows.isAddAdventurePointsOpen;
 export const getIsCharacterCreatorOpen = (state: AppState) =>
@@ -242,39 +258,39 @@ export const getZoneArmorFilterText = (state: AppState) => state.ui.filters.zone
 
 export const getWikiFilterText = (state: AppState) => state.ui.wiki.filter;
 export const getWikiFilterAll = (state: AppState) => state.ui.wiki.filterAll;
-export const getWikiMainCategory = (state: AppState) => Maybe.of(state.ui.wiki.category1);
+export const getWikiMainCategory = (state: AppState) => Maybe.of (state.ui.wiki.category1);
 export const getWikiCombatTechniquesGroup = (state: AppState) =>
-  Maybe.of(state.ui.wiki.combatTechniquesGroup);
+  Maybe.of (state.ui.wiki.combatTechniquesGroup);
 export const getWikiItemTemplatesGroup = (state: AppState) =>
-  Maybe.of(state.ui.wiki.itemTemplatesGroup);
+  Maybe.of (state.ui.wiki.itemTemplatesGroup);
 export const getWikiLiturgicalChantsGroup =(state: AppState) =>
-  Maybe.of(state.ui.wiki.liturgicalChantsGroup);
+  Maybe.of (state.ui.wiki.liturgicalChantsGroup);
 export const getWikiProfessionsGroup = (state: AppState) =>
-  Maybe.of(state.ui.wiki.professionsGroup);
+  Maybe.of (state.ui.wiki.professionsGroup);
 export const getWikiSkillsGroup = (state: AppState) =>
-  Maybe.of(state.ui.wiki.skillsGroup);
+  Maybe.of (state.ui.wiki.skillsGroup);
 export const getWikiSpecialAbilitiesGroup = (state: AppState) =>
-  Maybe.of(state.ui.wiki.specialAbilitiesGroup);
+  Maybe.of (state.ui.wiki.specialAbilitiesGroup);
 export const getWikiSpellsGroup = (state: AppState) =>
-  Maybe.of(state.ui.wiki.spellsGroup);
+  Maybe.of (state.ui.wiki.spellsGroup);
 
 
 export const getWiki = (state: AppState) => state.wiki;
-export const getWikiAdvantages = (state: AppState) => state.wiki.get('advantages');
-export const getWikiAttributes = (state: AppState) => state.wiki.get('attributes');
-export const getWikiBlessings = (state: AppState) => state.wiki.get('blessings');
-export const getWikiBooks = (state: AppState) => state.wiki.get('books');
-export const getWikiCantrips = (state: AppState) => state.wiki.get('cantrips');
-export const getWikiCombatTechniques = (state: AppState) => state.wiki.get('combatTechniques');
-export const getWikiCultures = (state: AppState) => state.wiki.get('cultures');
-export const getWikiDisadvantages = (state: AppState) => state.wiki.get('disadvantages');
-export const getWikiExperienceLevels = (state: AppState) => state.wiki.get('experienceLevels');
-export const getWikiItemTemplates = (state: AppState) => state.wiki.get('itemTemplates');
-export const getWikiLiturgicalChants = (state: AppState) => state.wiki.get('liturgicalChants');
-export const getWikiProfessions = (state: AppState) => state.wiki.get('professions');
-export const getWikiProfessionVariants = (state: AppState) => state.wiki.get('professionVariants');
-export const getWikiRaces = (state: AppState) => state.wiki.get('races');
-export const getWikiRaceVariants = (state: AppState) => state.wiki.get('raceVariants');
-export const getWikiSkills = (state: AppState) => state.wiki.get('skills');
-export const getWikiSpecialAbilities = (state: AppState) => state.wiki.get('specialAbilities');
-export const getWikiSpells = (state: AppState) => state.wiki.get('spells');
+export const getWikiAdvantages = (state: AppState) => state.wiki.get ('advantages');
+export const getWikiAttributes = (state: AppState) => state.wiki.get ('attributes');
+export const getWikiBlessings = (state: AppState) => state.wiki.get ('blessings');
+export const getWikiBooks = (state: AppState) => state.wiki.get ('books');
+export const getWikiCantrips = (state: AppState) => state.wiki.get ('cantrips');
+export const getWikiCombatTechniques = (state: AppState) => state.wiki.get ('combatTechniques');
+export const getWikiCultures = (state: AppState) => state.wiki.get ('cultures');
+export const getWikiDisadvantages = (state: AppState) => state.wiki.get ('disadvantages');
+export const getWikiExperienceLevels = (state: AppState) => state.wiki.get ('experienceLevels');
+export const getWikiItemTemplates = (state: AppState) => state.wiki.get ('itemTemplates');
+export const getWikiLiturgicalChants = (state: AppState) => state.wiki.get ('liturgicalChants');
+export const getWikiProfessions = (state: AppState) => state.wiki.get ('professions');
+export const getWikiProfessionVariants = (state: AppState) => state.wiki.get ('professionVariants');
+export const getWikiRaces = (state: AppState) => state.wiki.get ('races');
+export const getWikiRaceVariants = (state: AppState) => state.wiki.get ('raceVariants');
+export const getWikiSkills = (state: AppState) => state.wiki.get ('skills');
+export const getWikiSpecialAbilities = (state: AppState) => state.wiki.get ('specialAbilities');
+export const getWikiSpells = (state: AppState) => state.wiki.get ('spells');

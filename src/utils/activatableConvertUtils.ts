@@ -21,21 +21,21 @@ export const convertUIStateToActiveObject =
   (activate: Data.ActivateArgs): Record<Data.ActiveObject> => {
     const { id, sel, sel2, input, tier, customCost } = activate;
 
-    return Record.of(
-        match<string, Data.ActiveObject>(id)
-        .on('ADV_68', () => ({
+    return Record.of (
+      match<string, Data.ActiveObject> (id)
+        .on ('ADV_68', () => ({
           sid: sel,
           sid2: input
         }))
-        .on('DISADV_33', () => ({
+        .on ('DISADV_33', () => ({
           sid: sel,
-          ...(([7, 8].includes(sel as number) && input) ? { sid2: input } : {})
+          ...(([7, 8].includes (sel as number) && input) ? { sid2: input } : {})
         }))
-        .on('SA_9', () => ({
+        .on ('SA_9', () => ({
           sid: sel,
           sid2: input || sel2,
         }))
-        .otherwise(() => R.pipe(
+        .otherwise (() => R.pipe (
           (obj: Data.ActiveObject) => (sel !== undefined || input !== undefined) ? {
             ...obj,
             sid: input || sel,
@@ -44,13 +44,13 @@ export const convertUIStateToActiveObject =
             ...obj,
             sid2: sel2,
           } : obj,
-        )(tier !== undefined ? {
+        ) (tier !== undefined ? {
           tier,
         } : {}))
-      )
-        .mergeMaybe(
-          Record.of({ cost: customCost })
-        ) as Record<Data.ActiveObject>;
+    )
+      .mergeMaybe (
+        Record.of ({ cost: customCost })
+      ) as Record<Data.ActiveObject>;
   };
 
 /**
@@ -58,13 +58,16 @@ export const convertUIStateToActiveObject =
  */
 export const convertActivatableToArray = (
   obj: Record<Data.ActivatableDependent>,
-): List<Record<Data.ActiveObjectWithId>> => {
-  return obj.get('active')
-    .imap(index => e => e.merge(Record.of({
-      id: obj.get('id'),
-      index
-    })));
-};
+): List<Record<Data.ActiveObjectWithId>> =>
+  obj.get ('active')
+    .imap (
+      index => e => e.merge (
+        Record.of ({
+          id: obj.get ('id'),
+          index
+        })
+      )
+  );
 
 /**
  * Get all active items in an array.
@@ -72,13 +75,11 @@ export const convertActivatableToArray = (
  */
 export const getActiveFromState = (
   state: OrderedMap<string, Record<Data.ActivatableDependent>>,
-): List<Record<Data.ActiveObjectWithId>> => {
-  return state.elems()
-    .foldl<List<Record<Data.ActiveObjectWithId>>>(
-      arr => e => arr.concat(convertActivatableToArray(e)),
-      List.of()
-    );
-};
+): List<Record<Data.ActiveObjectWithId>> =>
+  state.elems ()
+    .foldl<List<Record<Data.ActiveObjectWithId>>> (
+      arr => e => arr.mappend (convertActivatableToArray (e))
+    ) (List.of ());
 
 export interface ActiveObjectAny extends Data.ActiveObject {
   [key: string]: any;
@@ -90,9 +91,8 @@ export interface ActiveObjectAny extends Data.ActiveObject {
  */
 export const getActiveObjectCore = (
   r: Record<ActiveObjectAny>,
-): Record<Data.ActiveObject> => {
-  return Record.of<Data.ActiveObject>({})
-    .alter(() => r.lookup('sid'), 'sid')
-    .alter(() => r.lookup('sid2'), 'sid2')
-    .alter(() => r.lookup('tier'), 'tier');
-};
+): Record<Data.ActiveObject> =>
+  Record.of<Data.ActiveObject> ({})
+    .alter (() => r.lookup ('sid')) ('sid')
+    .alter (() => r.lookup ('sid2')) ('sid2')
+    .alter (() => r.lookup ('tier')) ('tier');

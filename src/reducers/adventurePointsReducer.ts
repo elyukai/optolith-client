@@ -5,19 +5,15 @@ import { Record } from '../utils/dataUtils';
 
 type Action = AddAdventurePointsAction;
 
-export function adventurePointsReducer(
+export function adventurePointsReducer (
   state: Record<Data.HeroDependent>,
   action: Action,
 ): Record<Data.HeroDependent> {
   switch (action.type) {
     case ActionTypes.ADD_ADVENTURE_POINTS:
-      return state.modify(
-        slice => slice.modify(
-          total => total + action.payload.amount,
-          'total'
-        ),
-        'adventurePoints'
-      );
+      return state.modify<'adventurePoints'> (
+        slice => slice.modify<'total'> (total => total + action.payload.amount) ('total')
+      ) ('adventurePoints');
 
     default:
       return state;

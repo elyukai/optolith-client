@@ -6,11 +6,11 @@ import { isBlessedTraditionId, isMagicalTraditionId } from './IDUtils';
 import { isActive } from './isActive';
 
 const isActiveMagicalTradition = (e: Record<ActivatableDependent>) => {
-  return isMagicalTraditionId(e.get('id')) && isActive(e);
+  return isMagicalTraditionId (e.get ('id')) && isActive (e);
 };
 
 const isActiveBlessedTradition = (e: Record<ActivatableDependent>) => {
-  return isBlessedTraditionId(e.get('id')) && isActive(e);
+  return isBlessedTraditionId (e.get ('id')) && isActive (e);
 };
 
 /**
@@ -19,7 +19,7 @@ const isActiveBlessedTradition = (e: Record<ActivatableDependent>) => {
  */
 export const getMagicalTraditions = (
   list: OrderedMap<string, Record<ActivatableDependent>>
-): List<Record<ActivatableDependent>> => list.elems().filter(isActiveMagicalTradition);
+): List<Record<ActivatableDependent>> => list.elems ().filter (isActiveMagicalTradition);
 
 
 /**
@@ -30,10 +30,10 @@ export const getMagicalTraditions = (
 export const getMagicalTraditionsFromWiki = (
   wiki: OrderedMap<string, Record<SpecialAbility>>,
   list: OrderedMap<string, Record<ActivatableDependent>>,
-): List<Record<SpecialAbility>> => R.pipe(
+): List<Record<SpecialAbility>> => R.pipe (
   getMagicalTraditions,
-  Maybe.mapMaybe(e => e.lookup('id').bind(wiki.lookup)),
-)(list);
+  Maybe.mapMaybe (e => e.lookup ('id').bind (wiki.lookup)),
+) (list);
 
 /**
  * Get blessed tradition's' dependent entry.
@@ -41,7 +41,7 @@ export const getMagicalTraditionsFromWiki = (
  */
 export const getBlessedTradition = (
   list: OrderedMap<string, Record<ActivatableDependent>>
-): Maybe<Record<ActivatableDependent>> => list.elems().find(isActiveBlessedTradition);
+): Maybe<Record<ActivatableDependent>> => list.elems ().find (isActiveBlessedTradition);
 
 /**
  * Get blessed tradition's' wiki entry.
@@ -51,4 +51,4 @@ export const getBlessedTradition = (
 export const getBlessedTraditionFromWiki = (
   wiki: OrderedMap<string, Record<SpecialAbility>>,
   list: OrderedMap<string, Record<ActivatableDependent>>,
-) => getBlessedTradition(list).bind(e => e.lookup('id').bind(wiki.lookup));
+) => getBlessedTradition (list).bind (e => e.lookup ('id').bind (wiki.lookup));

@@ -11,16 +11,16 @@ export const filter: FilterTD = <T, R>(
   testFn: (item: T, acc: R) => boolean,
 ) => (
   reduceFn: (acc: R, item: T) => R,
-) => (acc: R, item: T) => testFn(item, acc) ? reduceFn(acc, item) : acc;
+) => (acc: R, item: T) => testFn (item, acc) ? reduceFn (acc, item) : acc;
 
 export const map = <T, R>(
   mapFn: (item: T, acc: R) => T,
 ) => (
   reduceFn: (acc: R, item: T) => R,
-) => (acc: R, item: T) => reduceFn(acc, mapFn(item, acc));
+) => (acc: R, item: T) => reduceFn (acc, mapFn (item, acc));
 
 export const reduce = <T, R>(
   reducerFn: (acc: R, item: T) => R,
 ) => (
   reduceFn: (acc: R, item: T) => R,
-) => (acc: R, item: T) => reduceFn(reducerFn(acc, item), item);
+) => (acc: R, item: T) => reduceFn (reducerFn (acc, item), item);

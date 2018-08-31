@@ -7,12 +7,14 @@
  * @since 1.1.0
  */
 
+import R from 'ramda';
 import { AdventurePointsObject } from '../selectors/adventurePointsSelectors';
 import * as Data from '../types/data';
 import * as Wiki from '../types/wiki';
 import { isAdditionDisabled } from './activatableInactiveValidationUtils';
+import { getModifierByActiveLevel } from './activatableModifierUtils';
 import { countActiveSkillEntries } from './activatableSkillUtils';
-import { List, Maybe, OrderedMap, Record, Tuple } from './dataUtils';
+import { Just, List, Maybe, OrderedMap, Record, Tuple } from './dataUtils';
 import { countActiveGroupEntries } from './entryGroupUtils';
 import { sortObjects } from './FilterSortUtils';
 import { getAllEntriesByGroup } from './heroStateUtils';
@@ -23,55 +25,52 @@ import { match } from './match';
 import { findSelectOption, getActiveSecondarySelections, getActiveSelections, getRequiredSelections } from './selectionUtils';
 import { getBlessedTradition, getMagicalTraditions } from './traditionUtils';
 import { validatePrerequisites, validateTier } from './validatePrerequisitesUtils';
-import { getWikiEntry } from './WikiUtils';
+import { getWikiEntry, getWikiEntryFromSlice } from './WikiUtils';
 
 const getIsNoActiveSelection =
-  (instance: Maybe<Record<Data.ActivatableDependent>>) => {
-    const activeSelections = Maybe.fromMaybe(
-      List.of<string | number>(),
-      getActiveSelections(instance)
-    );
-
-    return (e: Record<Wiki.SelectionObject>) =>
-      !activeSelections.elem(e.get('id'));
-  };
+  R.pipe (
+    getActiveSelections,
+    Maybe.fromMaybe (List.empty ()),
+    activeSelections => R.pipe (
+      Record.get<Wiki.SelectionObject, 'id'> ('id'),
+      activeSelections.notElem
+    )
+  );
 
 const getLessThanTwoSameIdActiveSelections =
-  (instance: Maybe<Record<Data.ActivatableDependent>>) => {
-    const activeSelections = Maybe.fromMaybe(
-      List.of<string | number>(),
-      getActiveSelections(instance)
-    );
-
-    return (e: Record<Wiki.SelectionObject>) =>
-      activeSelections.filter(s => s === e.get('id')).length() < 2
-  };
+  R.pipe (
+    getActiveSelections,
+    Maybe.fromMaybe (List.empty ()),
+    activeSelections => R.pipe (
+      Record.get<Wiki.SelectionObject, 'id'> ('id'),
+      id => List.lengthL (activeSelections.filter (R.equals (id))) < 2
+    )
+  );
 
 const getIsNoRequiredSelection =
-  (instance: Maybe<Record<Data.ActivatableDependent>>) => {
-    const requiredSelections = Maybe.fromMaybe(
-      List.of<string | number | List<number>>(),
-      getRequiredSelections(instance)
-    );
-
-    return (e: Record<Wiki.SelectionObject>) =>
-      !requiredSelections.elem(e.get('id'));
-  };
+  R.pipe (
+    getRequiredSelections,
+    Maybe.fromMaybe (List.empty ()),
+    requiredSelections => R.pipe (
+      Record.get<Wiki.SelectionObject, 'id'> ('id'),
+      requiredSelections.notElem
+    )
+  );
 
 const getIsNoRequiredOrActiveSelection =
   (instance: Maybe<Record<Data.ActivatableDependent>>) => {
-    const isNoActiveSelection = getIsNoActiveSelection(instance);
-    const isNoRequiredSelection = getIsNoRequiredSelection(instance);
+    const isNoActiveSelection = getIsNoActiveSelection (instance);
+    const isNoRequiredSelection = getIsNoRequiredSelection (instance);
 
     return (e: Record<Wiki.SelectionObject>) =>
-      isNoActiveSelection(e) && isNoRequiredSelection(e);
+      isNoActiveSelection (e) && isNoRequiredSelection (e);
   };
 
 const addToSkillCategoryCounter = (map: OrderedMap<number, number>) =>
-  map.alter(
+  map.alter (
     prop => prop
-      .fmap(count => count + 1)
-      .alt(Maybe.Just(0))
+      .fmap (count => count + 1)
+      .alt (Maybe.pure (0))
   );
 
 const getCategoriesWithSkillsAbove10 = (
@@ -82,33 +81,28 @@ const getCategoriesWithSkillsAbove10 = (
   const addToCounterByKey = sliceKey === 'liturgicalChants'
     ? (map: OrderedMap<number, number>) =>
         (skill: Record<Wiki.LiturgicalChant | Wiki.Spell>) =>
-          (skill as Record<Wiki.LiturgicalChant>).get('aspects').foldl(
-            addToSkillCategoryCounter,
-            map
-          )
+          (skill as Record<Wiki.LiturgicalChant>).get ('aspects').foldl (addToSkillCategoryCounter)
+            (map)
     : (map: OrderedMap<number, number>) =>
         (skill: Record<Wiki.LiturgicalChant | Wiki.Spell>) =>
-          addToSkillCategoryCounter(map)(
-            (skill as Record<Wiki.Spell>).get('property')
+          addToSkillCategoryCounter (map) (
+            (skill as Record<Wiki.Spell>).get ('property')
           );
 
-  return state.get(sliceKey).elems()
-    .filter(e => e.get('value') >= 10)
-    .foldl<OrderedMap<number, number>>(
+  return OrderedMap.elems (state.get (sliceKey))
+    .filter (e => e.get ('value') >= 10)
+    .foldl<OrderedMap<number, number>> (
       map => obj =>
-        Maybe.fromMaybe(
-          map,
-          (wiki.get(sliceKey).lookup(
-            obj.get('id')
+        Maybe.fromMaybe (map) (
+          (wiki.get (sliceKey).lookup (
+            obj.get ('id')
           ) as Maybe<Record<Wiki.Spell | Wiki.LiturgicalChant>>)
-            .fmap(addToCounterByKey(map))
-        ),
-      OrderedMap.empty()
-    )
-    .foldlWithKey<List<number>>(
-      list => key => value => value >= 3 ? list.append(key) : list,
-      List.of()
-    );
+            .fmap (addToCounterByKey (map))
+        )
+    ) (OrderedMap.empty ())
+    .foldlWithKey<List<number>> (
+      list => key => value => value >= 3 ? list.append (key) : list
+    ) (List.empty ());
 };
 
 const getEntrySpecificSelections = (
@@ -117,223 +111,219 @@ const getEntrySpecificSelections = (
   state: Record<Data.HeroDependent>,
   entry: Wiki.Activatable,
 ) => {
-  return match<string, Maybe<List<Record<Wiki.SelectionObject>>>>(entry.get('id'))
-    .on(
+  return match<string, Maybe<List<Record<Wiki.SelectionObject>>>> (entry.get ('id'))
+    .on (
       [
         'ADV_4',
         'ADV_17',
         'ADV_47',
       ].includes,
-      () => entry.lookup('select')
-        .fmap(
-          select => select.filter(getIsNoRequiredOrActiveSelection(instance))
+      () => entry.lookup ('select')
+        .fmap (
+          select => select.filter (getIsNoRequiredOrActiveSelection (instance))
         )
     )
-    .on(
+    .on (
       'ADV_16',
-      () => entry.lookup('select')
-        .fmap(select => {
+      () => entry.lookup ('select')
+        .fmap (select => {
           const hasLessThanTwoSameIdActiveSelections =
-            getLessThanTwoSameIdActiveSelections(instance);
+            getLessThanTwoSameIdActiveSelections (instance);
 
-          const isNoRequiredSelection = getIsNoRequiredSelection(instance);
+          const isNoRequiredSelection = getIsNoRequiredSelection (instance);
 
-          return select.filter(
+          return select.filter (
             e =>
-              hasLessThanTwoSameIdActiveSelections(e)
-              && isNoRequiredSelection(e)
+              hasLessThanTwoSameIdActiveSelections (e)
+              && isNoRequiredSelection (e)
           );
         })
     )
-    .on(
+    .on (
       [
         'ADV_28',
         'ADV_29',
       ].includes,
-      () => entry.lookup('select')
-        .fmap(select => select.filter(getIsNoRequiredSelection(instance)))
+      () => entry.lookup ('select')
+        .fmap (select => select.filter (getIsNoRequiredSelection (instance)))
     )
-    .on(
+    .on (
       [
         'ADV_32',
         'DISADV_24',
       ].includes,
-      id => entry.lookup('select')
-        .fmap(select => {
+      id => entry.lookup ('select')
+        .fmap (select => {
           const flippedId = id === 'DISADV_24' ? 'ADV_32' : id;
 
           const hasLessThanTwoSameIdActiveSelections =
-            getLessThanTwoSameIdActiveSelections(
-              state.get('disadvantages').lookup(flippedId)
+            getLessThanTwoSameIdActiveSelections (
+              state.get ('disadvantages').lookup (flippedId)
             );
 
-          const isNoRequiredSelection = getIsNoRequiredSelection(instance);
+          const isNoRequiredSelection = getIsNoRequiredSelection (instance);
 
-          return select.filter(
+          return select.filter (
             e =>
-              hasLessThanTwoSameIdActiveSelections(e)
-              && isNoRequiredSelection(e)
+              hasLessThanTwoSameIdActiveSelections (e)
+              && isNoRequiredSelection (e)
           );
         })
     )
-    .on(
+    .on (
       [
         'DISADV_1',
         'DISADV_34',
         'DISADV_50',
       ].includes,
-      () => entry.lookup('select')
-        .fmap(select => select.filter(getIsNoRequiredSelection(instance)))
+      () => entry.lookup ('select')
+        .fmap (select => select.filter (getIsNoRequiredSelection (instance)))
     )
-    .on(
+    .on (
       [
         'DISADV_33',
         'DISADV_37',
         'DISADV_51',
       ].includes,
-      id => entry.lookup('select')
-        .fmap(select => {
+      id => entry.lookup ('select')
+        .fmap (select => {
           const isNoRequiredOrActiveSelection =
-            getIsNoRequiredOrActiveSelection(instance);
+            getIsNoRequiredOrActiveSelection (instance);
 
           if (id === 'DISADV_33') {
-            const specialIds = List.of(7, 8);
+            const specialIds = List.of (7, 8);
 
-            return select.filter(
+            return select.filter (
               e =>
-                specialIds.elem(e.get('id') as number)
-                || isNoRequiredOrActiveSelection(e)
+                specialIds.elem (e.get ('id') as number)
+                || isNoRequiredOrActiveSelection (e)
             );
           }
           else {
-            return select.filter(isNoRequiredOrActiveSelection);
+            return select.filter (isNoRequiredOrActiveSelection);
           }
         })
     )
-    .on(
+    .on (
       'DISADV_36',
-      () => entry.lookup('select')
-        .fmap(
-          select => select.filter(getIsNoRequiredOrActiveSelection(instance))
+      () => entry.lookup ('select')
+        .fmap (
+          select => select.filter (getIsNoRequiredOrActiveSelection (instance))
         )
     )
-    .on(
+    .on (
       'DISADV_48',
-      () => entry.lookup('select')
-        .fmap(select => {
+      () => entry.lookup ('select')
+        .fmap (select => {
           const isNoRequiredOrActiveSelection =
-            getIsNoRequiredOrActiveSelection(instance);
+            getIsNoRequiredOrActiveSelection (instance);
 
           const isAdvantageActive = (id: string) =>
-            isActive(state.get('advantages').lookup(id));
+            isActive (state.get ('advantages').lookup (id));
 
           const isSkillOfIcB = (e: Record<Wiki.SelectionObject>) =>
-            Maybe.fromMaybe(
-              false,
-              wiki.get('skills').lookup(e.get('id') as string)
-                .fmap(skill => skill.get('ic') === 2)
+            Maybe.fromMaybe (false) (
+              wiki.get ('skills').lookup (e.get ('id') as string)
+                .fmap (skill => skill.get ('ic') === 2)
             );
 
-          return select.filter(
+          return select.filter (
             e =>
               (
-                (isAdvantageActive('ADV_40') || isAdvantageActive('ADV_46'))
-                && isSkillOfIcB(e)
+                (isAdvantageActive ('ADV_40') || isAdvantageActive ('ADV_46'))
+                && isSkillOfIcB (e)
               )
-              || isNoRequiredOrActiveSelection(e)
+              || isNoRequiredOrActiveSelection (e)
           );
         })
     )
-    .on(
+    .on (
       'SA_3',
-      () => entry.lookup('select')
-        .fmap(select => {
+      () => entry.lookup ('select')
+        .fmap (select => {
           const isNoRequiredOrActiveSelection =
-            getIsNoRequiredOrActiveSelection(instance);
+            getIsNoRequiredOrActiveSelection (instance);
 
-          return select.filter(
+          return select.filter (
             e =>
-              isNoRequiredOrActiveSelection(e)
-              && Maybe.fromMaybe(false, e.lookup('req').fmap(
-                req => validatePrerequisites(wiki, state, req, entry.get('id'))
+              isNoRequiredOrActiveSelection (e)
+              && Maybe.fromMaybe (false) (e.lookup ('req').fmap (
+                req => validatePrerequisites (wiki, state, req, entry.get ('id'))
               ))
           );
         })
     )
-    .on('SA_9', () => {
-      const maybeCounter = getActiveSecondarySelections(instance);
+    .on ('SA_9', () => {
+      const maybeCounter = getActiveSecondarySelections (instance);
 
-      return entry.lookup('select')
-        .fmap(select => {
-          const isNoRequiredSelection = getIsNoRequiredSelection(instance);
+      return entry.lookup ('select')
+        .fmap (select => {
+          const isNoRequiredSelection = getIsNoRequiredSelection (instance);
 
-          const isValidSelection = Maybe.isJust(maybeCounter)
+          const isValidSelection = Maybe.isJust (maybeCounter)
             ? (e: Record<Wiki.SelectionObject>) => {
-              const counter = Maybe.fromJust(maybeCounter);
+              const counter = Maybe.fromJust (maybeCounter);
 
-              if (isNoRequiredSelection(e)) {
+              if (isNoRequiredSelection (e)) {
                 return false;
               }
-              else if (counter.member(e.get('id'))) {
-                return Maybe.fromMaybe(
-                  false,
-                  Maybe.ensure(isString, e.get('id'))
-                    .bind(state.get('skills').lookup)
-                    .bind(
-                      skill => counter.lookup(e.get('id'))
-                        .fmap(
+              else if (counter.member (e.get ('id'))) {
+                return Maybe.fromMaybe (false) (
+                  Maybe.ensure (isString) (e.get ('id'))
+                    .bind (state.get ('skills').lookup)
+                    .bind (
+                      skill => counter.lookup (e.get ('id'))
+                        .fmap (
                           arr =>
-                            arr.length() < 3
-                            && skill.get('value') >= (arr.length() + 1) * 6
+                            arr.length () < 3
+                            && skill.get ('value') >= (arr.length () + 1) * 6
                         )
                     )
                 );
               }
               else {
-                return Maybe.fromMaybe(
-                  false,
-                  Maybe.ensure(isString, e.get('id'))
-                    .bind(state.get('skills').lookup)
-                    .fmap(skill => skill.get('value') >= 6)
+                return Maybe.fromMaybe (false) (
+                  Maybe.ensure (isString) (e.get ('id'))
+                    .bind (state.get ('skills').lookup)
+                    .fmap (skill => skill.get ('value') >= 6)
                 );
               }
             }
             : (e: Record<Wiki.SelectionObject>) => {
-              if (isNoRequiredSelection(e)) {
+              if (isNoRequiredSelection (e)) {
                 return false;
               }
               else {
-                return Maybe.fromMaybe(
-                  false,
-                  Maybe.ensure(isString, e.get('id'))
-                    .bind(state.get('skills').lookup)
-                    .fmap(skill => skill.get('value') >= 6)
+                return Maybe.fromMaybe (false) (
+                  Maybe.ensure (isString) (e.get ('id'))
+                    .bind (state.get ('skills').lookup)
+                    .fmap (skill => skill.get ('value') >= 6)
                 );
               }
             };
 
-          return select.filter(isValidSelection);
+          return select.filter (isValidSelection);
         })
-        .fmap(select => select.map(e => {
-          const id = e.get('id') as string;
+        .fmap (select => select.map (e => {
+          const id = e.get ('id') as string;
 
-          const list = maybeCounter.bind(counter => counter.lookup(id));
+          const list = maybeCounter.bind (counter => counter.lookup (id));
 
-          return e.mergeMaybe(Record.of({
-            cost: Maybe.isJust(list)
-              ? e.lookup('cost')
-                .fmap(cost => cost * (Maybe.fromJust(list).length() + 1))
-              : e.lookup('cost'),
-            applications: e.lookup('applications').fmap(
-              apps => apps.filter(n => {
-                const isInactive = !Maybe.isJust(list)
-                  || !Maybe.fromJust(list).elem(n.get('id'));
+          return e.mergeMaybe (Record.of ({
+            cost: Maybe.isJust (list)
+              ? e.lookup ('cost')
+                .fmap (cost => cost * (Maybe.fromJust (list).length () + 1))
+              : e.lookup ('cost'),
+            applications: e.lookup ('applications').fmap (
+              apps => apps.filter (n => {
+                const isInactive = !Maybe.isJust (list)
+                  || !Maybe.fromJust (list).elem (n.get ('id'));
 
-                const req = n.lookup('prerequisites');
+                const req = n.lookup ('prerequisites');
 
                 const arePrerequisitesMet =
-                  !Maybe.isJust(req) ||
-                  validatePrerequisites(wiki, state, Maybe.fromJust(req), id);
+                  !Maybe.isJust (req) ||
+                  validatePrerequisites (wiki, state, Maybe.fromJust (req), id);
 
                 return isInactive && arePrerequisitesMet;
               })
@@ -341,27 +331,26 @@ const getEntrySpecificSelections = (
           })) as Record<Wiki.SelectionObject>;
         }));
     })
-    .on(
+    .on (
       'SA_28',
-      () => entry.lookup('select')
-        .fmap(select => {
-          const isNoActiveSelection = getIsNoActiveSelection(instance);
-          const isNoRequiredSelection = getIsNoRequiredSelection(instance);
+      () => entry.lookup ('select')
+        .fmap (select => {
+          const isNoActiveSelection = getIsNoActiveSelection (instance);
+          const isNoRequiredSelection = getIsNoRequiredSelection (instance);
 
-          return select.filter(e => {
-            if (isNoRequiredSelection(e)) {
+          return select.filter (e => {
+            if (isNoRequiredSelection (e)) {
               return false;
             }
             else {
-              return Maybe.fromMaybe(
-                false,
-                e.lookup('talent')
-                  .bind(
-                    talent => state.get('skills').lookup(Tuple.fst(talent))
-                      .fmap(
+              return Maybe.fromMaybe (false) (
+                e.lookup ('talent')
+                  .bind (
+                    talent => state.get ('skills').lookup (Tuple.fst (talent))
+                      .fmap (
                         skill =>
-                          isNoActiveSelection(e)
-                          && skill.get('value') >= Tuple.snd(talent)
+                          isNoActiveSelection (e)
+                          && skill.get ('value') >= Tuple.snd (talent)
                       )
                   )
               );
@@ -369,289 +358,282 @@ const getEntrySpecificSelections = (
           });
         })
     )
-    .on(
+    .on (
       'SA_29',
-      () => entry.lookup('select')
-        .fmap(select => {
-          const isNoRequiredSelection = getIsNoRequiredSelection(instance);
+      () => entry.lookup ('select')
+        .fmap (select => {
+          const isNoRequiredSelection = getIsNoRequiredSelection (instance);
 
-          const active = Maybe.fromMaybe<List<Record<Data.ActiveObject>>>(
-            List.of(),
-            instance.fmap(e => e.get('active'))
+          const active = Maybe.fromMaybe<List<Record<Data.ActiveObject>>> (List.of ()) (
+            instance.fmap (e => e.get ('active'))
           );
 
-          return select.filter(
+          return select.filter (
             e =>
-              isNoRequiredSelection(e)
-              && active.all(n => !n.lookup('sid').equals(e.lookup('id')))
+              isNoRequiredSelection (e)
+              && active.all (n => !n.lookup ('sid').equals (e.lookup ('id')))
           );
         })
     )
-    .on('SA_72', () => {
-      return entry.lookup('select')
-        .fmap(select => {
-          const propertiesWithValidSpells = getCategoriesWithSkillsAbove10(
+    .on ('SA_72', () => {
+      return entry.lookup ('select')
+        .fmap (select => {
+          const propertiesWithValidSpells = getCategoriesWithSkillsAbove10 (
             wiki, state, 'spells'
           );
 
           const isNoRequiredOrActiveSelection =
-            getIsNoRequiredOrActiveSelection(instance);
+            getIsNoRequiredOrActiveSelection (instance);
 
-          return select.filter(e => {
-            return isNoRequiredOrActiveSelection(e)
-              && !propertiesWithValidSpells.elem(e.get('id') as number);
+          return select.filter (e => {
+            return isNoRequiredOrActiveSelection (e)
+              && !propertiesWithValidSpells.elem (e.get ('id') as number);
           });
         });
     })
-    .on(
+    .on (
       'SA_81',
-      () => entry.lookup('select')
-        .fmap(select => {
+      () => entry.lookup ('select')
+        .fmap (select => {
           const isNoActivePropertyKnowledge =
-            getIsNoActiveSelection(
-              state.get('specialAbilities').lookup('SA_72')
+            getIsNoActiveSelection (
+              state.get ('specialAbilities').lookup ('SA_72')
             );
 
           const isNoRequiredOrActiveSelection =
-            getIsNoRequiredOrActiveSelection(instance);
+            getIsNoRequiredOrActiveSelection (instance);
 
-          return select.filter(
+          return select.filter (
             e =>
-              isNoRequiredOrActiveSelection(e)
-              && isNoActivePropertyKnowledge(e)
+              isNoRequiredOrActiveSelection (e)
+              && isNoActivePropertyKnowledge (e)
           );
         })
     )
-    .on(
+    .on (
       'SA_87',
-      () => entry.lookup('select')
-        .bind(select => {
-          const aspectsWithValidChants = getCategoriesWithSkillsAbove10(
+      () => entry.lookup ('select')
+        .bind (select => {
+          const aspectsWithValidChants = getCategoriesWithSkillsAbove10 (
             wiki, state, 'liturgicalChants'
           );
 
           const isNoRequiredOrActiveSelection =
-            getIsNoRequiredOrActiveSelection(instance);
+            getIsNoRequiredOrActiveSelection (instance);
 
-          return getBlessedTradition(state.get('specialAbilities'))
-            .fmap(
-              tradition => select.filter(
+          return getBlessedTradition (state.get ('specialAbilities'))
+            .fmap (
+              tradition => select.filter (
                 e =>
-                  getBlessedTraditionInstanceIdByNumericId(
-                    getTraditionOfAspect(e.get('id') as number)
+                  getBlessedTraditionInstanceIdByNumericId (
+                    getTraditionOfAspect (e.get ('id') as number)
                   )
-                    .equals(Maybe.Just(tradition.get('id')))
-                  && isNoRequiredOrActiveSelection(e)
-                  && !aspectsWithValidChants.elem(e.get('id') as number)
+                    .equals (Maybe.pure (tradition.get ('id')))
+                  && isNoRequiredOrActiveSelection (e)
+                  && !aspectsWithValidChants.elem (e.get ('id') as number)
               )
             )
         })
     )
-    .on(
+    .on (
       'SA_231',
-      () => entry.lookup('select')
-        .fmap(select => {
+      () => entry.lookup ('select')
+        .fmap (select => {
           const isNoRequiredOrActiveSelection =
-            getIsNoRequiredOrActiveSelection(instance);
+            getIsNoRequiredOrActiveSelection (instance);
 
-          return select.filter(
+          return select.filter (
             e =>
-              isNoRequiredOrActiveSelection(e)
-              && Maybe.fromMaybe(
-                false,
-                state.get('spells').lookup(e.get('id') as string)
-                  .fmap(spell => spell.get('value') >= 10)
+              isNoRequiredOrActiveSelection (e)
+              && Maybe.fromMaybe (false) (
+                state.get ('spells').lookup (e.get ('id') as string)
+                  .fmap (spell => spell.get ('value') >= 10)
               )
           );
         })
     )
-    .on(
+    .on (
       'SA_338',
-      () => entry.lookup('select')
-        .fmap(select => {
-          const activeSelections = getActiveSelections(instance);
+      () => entry.lookup ('select')
+        .fmap (select => {
+          const activeSelections = getActiveSelections (instance);
 
-          if (isActive(instance)) {
+          if (isActive (instance)) {
             const selectedPath = instance
-              .bind(e => e.get('active').head())
-              .bind(e => e.lookup('sid'))
-              .bind(e => findSelectOption(entry, Maybe.Just(e)))
-              .bind(obj => obj.lookup('gr'));
+              .fmap (e => e.get ('active'))
+              .bind (Maybe.listToMaybe)
+              .bind (e => e.lookup ('sid'))
+              .bind (e => findSelectOption (entry, Maybe.pure (e)))
+              .bind (obj => obj.lookup ('gr'));
 
             const highestLevel = activeSelections
-              .fmap(List.map(
-                selection => findSelectOption(entry, Maybe.Just(selection))
-                  .bind(e => e.lookup('tier'))
+              .fmap (List.map (
+                selection => findSelectOption (entry, Maybe.pure (selection))
+                  .bind (e => e.lookup ('tier'))
               ))
-              .fmap(Maybe.catMaybes)
-              .fmap(List.maximum)
-              .fmap(e => e + 1);
+              .fmap (Maybe.catMaybes)
+              .fmap (List.maximum)
+              .fmap (e => e + 1);
 
-            return select.filter(
+            return select.filter (
               e =>
-                selectedPath.equals(e.lookup('gr'))
-                && e.lookup('tier').equals(highestLevel)
+                selectedPath.equals (e.lookup ('gr'))
+                && e.lookup ('tier').equals (highestLevel)
             );
           }
           else {
-            const just1 = Maybe.Just(1);
+            const just1 = Maybe.pure (1);
 
-            return select.filter(e => e.lookup('tier').equals(just1));
+            return select.filter (e => e.lookup ('tier').equals (just1));
           }
         })
     )
-    .on(
+    .on (
       [
         'SA_414',
         'SA_663',
       ].includes,
-      () => entry.lookup('select')
-        .fmap(select => {
+      () => entry.lookup ('select')
+        .fmap (select => {
           const isNoRequiredOrActiveSelection =
-            getIsNoRequiredOrActiveSelection(instance);
+            getIsNoRequiredOrActiveSelection (instance);
 
           type GetInstance = (target: Maybe<string>) =>
             Maybe<Record<Data.ActivatableSkillDependent>>;
 
-          const getInstance: GetInstance = entry.get('id') === 'SA_414'
-            ? target => target.bind(state.get('spells').lookup)
-            : target => target.bind(state.get('liturgicalChants').lookup);
+          const getInstance: GetInstance = entry.get ('id') === 'SA_414'
+            ? target => target.bind (state.get ('spells').lookup)
+            : target => target.bind (state.get ('liturgicalChants').lookup);
 
           type GetWikiEntry = (target: Maybe<string>) =>
           Maybe<Record<Wiki.Spell> | Record<Wiki.LiturgicalChant>>;
 
-          const createGetWikiEntry: GetWikiEntry = entry.get('id') === 'SA_414'
-            ? target => target.bind(wiki.get('spells').lookup)
-            : target => target.bind(wiki.get('liturgicalChants').lookup);
+          const createGetWikiEntry: GetWikiEntry = entry.get ('id') === 'SA_414'
+            ? target => target.bind (wiki.get ('spells').lookup)
+            : target => target.bind (wiki.get ('liturgicalChants').lookup);
 
-          return select.foldl<List<Record<Wiki.SelectionObject>>>(
+          return select.foldl<List<Record<Wiki.SelectionObject>>> (
             arr => e => {
-              const targetInstance = getInstance(e.lookup('target'));
-              const targetWikiEntry = createGetWikiEntry(e.lookup('target'));
+              const targetInstance = getInstance (e.lookup ('target'));
+              const targetWikiEntry = createGetWikiEntry (e.lookup ('target'));
 
               if (
-                isNoRequiredOrActiveSelection(e)
-                && validatePrerequisites(
+                isNoRequiredOrActiveSelection (e)
+                && validatePrerequisites (
                   wiki,
                   state,
-                  Maybe.fromMaybe(List.of(), e.lookup('req')),
-                  entry.get('id')
+                  Maybe.fromMaybe<List<Wiki.AllRequirements>> (List.of ()) (e.lookup ('req')),
+                  entry.get ('id')
                 )
-                && Maybe.isJust(targetWikiEntry)
-                && Maybe.isJust(targetInstance)
-                && targetInstance.fmap(target => target.get('value'))
-                  .gte(e.lookup('tier').fmap(tier => tier * 4 + 4))
+                && Maybe.isJust (targetWikiEntry)
+                && Maybe.isJust (targetInstance)
+                && targetInstance.fmap (target => target.get ('value'))
+                  .gte (e.lookup ('tier').fmap (tier => tier * 4 + 4))
               ) {
-                const target = Maybe.fromJust(targetWikiEntry);
+                const target = Maybe.fromJust (targetWikiEntry);
 
-                return arr.append(e.insert(
-                  'name',
-                  `${target.get('name')}: ${e.get('name')}`
-                ));
+                return arr.append (
+                  e.insert ('name') (`${target.get ('name')}: ${e.get ('name')}`)
+                );
               }
 
               return arr;
-            },
-            List.of()
-          );
+            }
+          ) (List.of ());
         })
     )
-    .on(
+    .on (
       'SA_639',
-      () => entry.lookup('select')
-        .fmap(select => {
+      () => entry.lookup ('select')
+        .fmap (select => {
           const isNoRequiredOrActiveSelection =
-            getIsNoRequiredOrActiveSelection(instance);
+            getIsNoRequiredOrActiveSelection (instance);
 
-          return select.filter(
+          return select.filter (
             e =>
-              isNoRequiredOrActiveSelection(e)
-              && validatePrerequisites(
+              isNoRequiredOrActiveSelection (e)
+              && validatePrerequisites (
                 wiki,
                 state,
-                Maybe.fromMaybe(List.of(), e.lookup('req')),
-                entry.get('id'),
+                Maybe.fromMaybe<List<Wiki.AllRequirements>> (List.of ()) (e.lookup ('req')),
+                entry.get ('id'),
               )
           );
         })
     )
-    .on(
+    .on (
       'SA_699',
-      () => wiki.get('specialAbilities').lookup('SA_29')
-        .bind(
-          languagesWikiEntry => languagesWikiEntry.lookup('select')
-            .fmap(select => {
+      () => getWikiEntryFromSlice (wiki) ('specialAbilities') ('SA_29')
+        .bind (
+          languagesWikiEntry => languagesWikiEntry.lookup ('select')
+            .fmap (select => {
               interface AvailableLanguage {
                 id: number;
                 tier: number;
               }
 
-              const availableLanguages: List<Record<AvailableLanguage>> =
-                Maybe.fromMaybe(
-                  List.of(),
-                  state.get('specialAbilities').lookup('SA_29')
-                    .fmap(
-                      lang => lang.get('active')
-                        .foldl<List<Record<AvailableLanguage>>>(
+              const availableLanguages =
+                Maybe.fromMaybe<List<Record<AvailableLanguage>>> (List.of ()) (
+                  state.get ('specialAbilities').lookup ('SA_29')
+                    .fmap (
+                      lang => lang.get ('active')
+                        .foldl<List<Record<AvailableLanguage>>> (
                           arr => obj =>
-                            Maybe.fromMaybe(
-                              arr,
-                              obj.lookup('tier').bind(
-                                tier => obj.lookup('sid')
-                                  .bind(Maybe.ensure(x => x === 3 || x === 4))
-                                  .fmap(sid => arr.append(Record.of({
+                            Maybe.fromMaybe (arr) (
+                              obj.lookup ('tier').bind (
+                                tier => obj.lookup ('sid')
+                                  .bind (Maybe.ensure (x => x === 3 || x === 4))
+                                  .fmap (sid => arr.append (Record.of ({
                                     id: sid as number,
                                     tier
                                   })))
                               )
-                            ),
-                          List.of()
-                        )
+                            )
+                        ) (List.of ())
                     )
                 );
 
-              const justTrue = Maybe.Just(true);
-              const just4 = Maybe.Just(4);
+              const justTrue = Maybe.pure (true);
+              const just4 = Maybe.pure (4);
 
-              return select.foldl<List<Record<Wiki.SelectionObject>>>(
+              return select.foldl<List<Record<Wiki.SelectionObject>>> (
                 acc => e => {
-                  const language = availableLanguages.find(
-                    l => l.get('id') === e.get('id')
+                  const language = availableLanguages.find (
+                    l => l.get ('id') === e.get ('id')
                   );
 
                   const firstForLanguage = instance
-                    .fmap(
-                      just => just.get('active').all(
-                        a => a.lookup('sid').equals(just.lookup('id'))
+                    .fmap (
+                      just => just.get ('active').all (
+                        a => a.lookup ('sid').equals (just.lookup ('id'))
                       )
                     );
 
                   if (
-                    Maybe.isJust(language)
-                    && firstForLanguage.equals(justTrue)
+                    Maybe.isJust (language)
+                    && firstForLanguage.equals (justTrue)
                   ) {
                     const isMotherTongue = language
-                      .bind(languageRec => languageRec.lookup('tier'))
-                      .equals(just4);
+                      .bind (languageRec => languageRec.lookup ('tier'))
+                      .equals (just4);
 
                     if (isMotherTongue) {
-                      return acc.append(e.insert('cost', 0));
+                      return acc.append (e.insert ('cost') (0));
                     }
 
-                    return acc.append(e);
+                    return acc.append (e);
                   }
 
                   return acc;
-                },
-                List.of()
-              );
+                }
+              ) (List.of ());
             })
         )
     )
-    .otherwise(
-      () => entry.lookup('select')
-        .fmap(
-          select => select.filter(getIsNoRequiredOrActiveSelection(instance))
+    .otherwise (
+      () => entry.lookup ('select')
+        .fmap (
+          select => select.filter (getIsNoRequiredOrActiveSelection (instance))
         )
     );
 };
@@ -671,46 +653,41 @@ const getOtherOptions = (
   adventurePoints: Record<AdventurePointsObject>,
   entry: Wiki.Activatable,
 ) => {
-  return match<string, Maybe<Record<InactiveOptions>>>(entry.get('id'))
-    .on(
+  return match<string, Maybe<Record<InactiveOptions>>> (entry.get ('id'))
+    .on (
       'DISADV_59',
-      () => Maybe.ensure(
-        n => n < 3,
-        countActiveSkillEntries(state, 'spells')
-      )
-        .fmap(activeSpells => Record.of<InactiveOptions>({
-          maxTier: 3 - activeSpells
+      () => Maybe.ensure ((n: number) => n < 3) (countActiveSkillEntries (state, 'spells'))
+        .fmap (activeSpells => Record.of<InactiveOptions> ({
+          maxTier: -activeSpells + 3
         }))
     )
-    .on(
+    .on (
       'SA_17',
-      () => state.get('skills').lookup('TAL_51')
-        .bind(
-          skill51 => state.get('skills').lookup('TAL_51')
-            .bind(
-              skill55 => Maybe.ensure(
-                x => x >= 12,
-                skill51.get('value') + skill55.get('value')
+      () => state.get ('skills').lookup ('TAL_51')
+        .bind (
+          skill51 => state.get ('skills').lookup ('TAL_51')
+            .bind (
+              skill55 => Maybe.ensure ((x: number) => x >= 12) (
+                skill51.get ('value') + skill55.get ('value')
               )
-                .fmap(() => Record.of({}))
+                .fmap (Record.empty)
             )
         )
     )
-    .on(
+    .on (
       'SA_18',
-      () => Maybe.ensure(
-        x => x > 0,
-        getAllEntriesByGroup(
-          wiki.get('combatTechniques'),
-          state.get('combatTechniques'),
+      () => Maybe.ensure ((x: number) => x > 0) (
+        getAllEntriesByGroup (
+          wiki.get ('combatTechniques'),
+          state.get ('combatTechniques'),
           2,
         )
-          .filter(e => e.get('value') >= 10)
-          .length()
+          .filter (e => e.get ('value') >= 10)
+          .length ()
       )
-        .fmap(() => Record.of({}))
+        .fmap (Record.empty)
     )
-    .on(
+    .on (
       [
         'SA_70',
         'SA_255',
@@ -719,13 +696,10 @@ const getOtherOptions = (
         'SA_676',
         'SA_681',
       ].includes,
-      () => Maybe.ensure(
-        list => list.length() === 0,
-        getMagicalTraditions(state.get('specialAbilities'))
-      )
-        .fmap(() => Record.of({}))
+      () => Maybe.ensure (List.null) (getMagicalTraditions (state.get ('specialAbilities')))
+        .fmap (Record.empty)
     )
-    .on(
+    .on (
       [
         'SA_86',
         'SA_682',
@@ -747,35 +721,34 @@ const getOtherOptions = (
         'SA_698',
       ].includes,
       () =>
-        getBlessedTradition(state.get('specialAbilities'))
-          .fmap(() => Record.of({}))
+        getBlessedTradition (state.get ('specialAbilities'))
+          .fmap (Record.empty)
     )
-    .on('SA_72', () => Maybe.Just(Record.of<InactiveOptions>({
-      cost: [10, 20, 40][Maybe.fromMaybe(
-        0,
-        instance.fmap(e => e.get('active').length())
-      )]
-    })))
-    .on('SA_87', () => Maybe.Just(Record.of<InactiveOptions>({
-      cost: [15, 25, 45][Maybe.fromMaybe(
-        0,
-        instance.fmap(e => e.get('active').length())
-      )]
-    })))
-    .on(
+    .on (
+      ['SA_72', 'SA_87'].includes,
+      () => Maybe.return (entry.get ('cost'))
+        .bind (Maybe.ensure ((e): e is List<number> => List.isList (e)))
+        .bind (
+          costs => instance.fmap (e => e.get ('active').length ())
+            .bind (active => costs.subscript (active))
+        )
+        .fmap (cost => Record.of<InactiveOptions> ({ cost }))
+    )
+    .on (
       'SA_533',
       () =>
-        state.get('specialAbilities').lookup('SA_531')
-          .bind(specialAbility => specialAbility.get('active').head())
-          .bind(active => active.lookup('sid'))
-          .bind(sid => wiki.get('skills').lookup(sid as string))
-          .fmap(skill => Record.of<InactiveOptions>({
-            cost: (entry.get('cost') as List<number>).map(
-              e => e + skill.get('ic')
+        state.get ('specialAbilities').lookup ('SA_531')
+          .fmap (specialAbility => specialAbility.get ('active'))
+          .bind (Maybe.listToMaybe)
+          .bind (active => active.lookup ('sid'))
+          .bind (sid => wiki.get ('skills').lookup (sid as string))
+          .fmap (skill => Record.of<InactiveOptions> ({
+            cost: (entry.get ('cost') as List<number>).map (
+              e => e + skill.get ('ic')
             )
           }))
     )
-    .on(
+    .on (
       [
         'SA_544',
         'SA_545',
@@ -783,44 +756,26 @@ const getOtherOptions = (
         'SA_547',
         'SA_548',
       ].includes,
-      () =>
-        Maybe.ensure(
-          () => {
-            const isAdvantageActive = (id: string) =>
-              isActive(state.get('advantages').lookup(id));
+      () => Maybe.ensure<Record<InactiveOptions>> (
+        () => {
+          const isAdvantageActive = R.pipe (
+            state.get ('advantages').lookup,
+            isActive
+          );
 
-            const isDisadvantageActive = (id: string) =>
-              isActive(state.get('disadvantages').lookup(id));
+          const max = getModifierByActiveLevel
+            (state.get ('advantages').lookup ('ADV_79'))
+            (state.get ('disadvantages').lookup ('DISADV_72'))
+            (Just (3));
 
-            let max = 3;
+          const isLessThanMax = () => countActiveGroupEntries (wiki, state, 24) < max;
 
-            if (isAdvantageActive('ADV_79')) {
-              max += Maybe.fromMaybe(
-                1,
-                state.get('advantages').lookup('ADV_79')
-                  .bind(obj => obj.get('active').head())
-                  .bind(active => active.lookup('tier'))
-              );
-            }
-            else if (isDisadvantageActive('DISADV_72')) {
-              max -= Maybe.fromMaybe(
-                1,
-                state.get('disadvantages').lookup('DISADV_72')
-                  .bind(obj => obj.get('active').head())
-                  .bind(active => active.lookup('tier'))
-              );
-            }
-
-            const isLessThanMax = () =>
-              countActiveGroupEntries(wiki, state, 24) < max;
-
-            return (isAdvantageActive('ADV_77') && isLessThanMax())
-              || isAdvantageActive('ADV_12');
-          },
-          Record.of({})
-        )
+          return (isAdvantageActive ('ADV_77') && isLessThanMax ())
+            || isAdvantageActive ('ADV_12');
+        }
+      ) (Record.empty ())
     )
-    .on(
+    .on (
       [
         'SA_549',
         'SA_550',
@@ -828,49 +783,31 @@ const getOtherOptions = (
         'SA_552',
         'SA_553',
       ].includes,
-      () =>
-        Maybe.ensure(
-          () => {
-            const isAdvantageActive = (id: string) =>
-              isActive(state.get('advantages').lookup(id));
+      () => Maybe.ensure<Record<InactiveOptions>> (
+        () => {
+          const isAdvantageActive = R.pipe (
+            state.get ('advantages').lookup,
+            isActive
+          );
 
-            const isDisadvantageActive = (id: string) =>
-              isActive(state.get('disadvantages').lookup(id));
+          const max = getModifierByActiveLevel
+            (state.get ('advantages').lookup ('ADV_80'))
+            (state.get ('disadvantages').lookup ('DISADV_73'))
+            (Just (3));
 
-            let max = 3;
+          const isLessThanMax = () => countActiveGroupEntries (wiki, state, 27) < max;
 
-            if (isAdvantageActive('ADV_80')) {
-              max += Maybe.fromMaybe(
-                1,
-                state.get('advantages').lookup('ADV_80')
-                  .bind(obj => obj.get('active').head())
-                  .bind(active => active.lookup('tier'))
-              );
-            }
-            else if (isDisadvantageActive('DISADV_73')) {
-              max -= Maybe.fromMaybe(
-                1,
-                state.get('disadvantages').lookup('DISADV_73')
-                  .bind(obj => obj.get('active').head())
-                  .bind(active => active.lookup('tier'))
-              );
-            }
-
-            const isLessThanMax = () =>
-              countActiveGroupEntries(wiki, state, 27) < max;
-
-            return (isAdvantageActive('ADV_78') && isLessThanMax())
-              || isActive(state.get('advantages').lookup('ADV_12'));
-          },
-          Record.of({})
-        )
+          return (isAdvantageActive ('ADV_78') && isLessThanMax ())
+            || isAdvantageActive ('ADV_12');
+        }
+      ) (Record.empty ())
     )
-    .on('SA_667', () => state.lookup('pact').fmap(
-      e => Record.of<InactiveOptions>({
-        maxTier: e.get('level')
+    .on ('SA_667', () => state.lookup ('pact').fmap (
+      e => Record.of<InactiveOptions> ({
+        maxTier: e.get ('level')
       })
     ))
-    .on(
+    .on (
       [
         'SA_677',
         'SA_678',
@@ -878,14 +815,13 @@ const getOtherOptions = (
         'SA_680',
       ].includes,
       () =>
-        Maybe.ensure(
-          () => adventurePoints.get('spentOnMagicalAdvantages') <= 25 &&
-            adventurePoints.get('spentOnMagicalDisadvantages') <= 25 &&
-            getMagicalTraditions(state.get('specialAbilities')).length() === 0,
-          Record.of({})
-        )
+        Maybe.ensure<Record<InactiveOptions>> (
+          () => adventurePoints.get ('spentOnMagicalAdvantages') <= 25
+            && adventurePoints.get ('spentOnMagicalDisadvantages') <= 25
+            && List.null (getMagicalTraditions (state.get ('specialAbilities')))
+        ) (Record.empty ())
     )
-    .otherwise(() => Maybe.Just(Record.of({})));
+    .otherwise (() => Maybe.pure (Record.of ({})));
 };
 
 /**
@@ -902,18 +838,21 @@ export const getInactiveView = (
   adventurePoints: Record<AdventurePointsObject>,
   id: string
 ): Maybe<Record<Data.DeactiveViewObject>> => {
-  return getWikiEntry<Wiki.Activatable>(wiki, id)
-    .bind(entry => {
-      const prerequisites = entry.get('prerequisites');
-      const maxTier = prerequisites instanceof OrderedMap ? validateTier(
+  return getWikiEntry<Wiki.Activatable> (wiki, id)
+    .bind (entry => {
+      const prerequisites = entry.get ('prerequisites');
+      const maxTier = prerequisites instanceof OrderedMap ? validateTier (
         wiki,
         state,
         prerequisites,
-        Maybe.maybe(List.of(), e => e.get('dependencies'), instance),
+        Maybe.maybe<
+          Record<Data.ActivatableDependent>,
+          Data.ActivatableDependent['dependencies']
+        > (List.empty ()) (e => e.get ('dependencies')) (instance),
         id,
-      ) : Maybe.Nothing();
+      ) : Maybe.empty ();
 
-      const isValid = isAdditionDisabled(
+      const isValid = isAdditionDisabled (
         wiki,
         instance,
         state,
@@ -923,14 +862,14 @@ export const getInactiveView = (
       );
 
       if (isValid) {
-        const specificSelections = getEntrySpecificSelections(
+        const specificSelections = getEntrySpecificSelections (
           wiki,
           instance,
           state,
           entry,
         );
 
-        const maybeOtherOptions = getOtherOptions(
+        const maybeOtherOptions = getOtherOptions (
           wiki,
           instance,
           state,
@@ -938,30 +877,28 @@ export const getInactiveView = (
           entry,
         );
 
-        return maybeOtherOptions.bind(
+        return maybeOtherOptions.bind (
           otherOptions =>
-            Maybe.ensure(
-              select => !Maybe.isJust(select)
-                || Maybe.fromJust(select).length() > 0,
-              specificSelections.alt(entry.lookup('select'))
-            )
-              .fmap(
+            Maybe.ensure<Maybe<List<Record<Wiki.SelectionObject>>>> (
+              select => !Maybe.isJust (select) || !List.null (Maybe.fromJust (select))
+            ) (specificSelections.alt (entry.lookup ('select')))
+              .fmap (
                 select =>
-                  otherOptions.mergeMaybe(Record.of({
+                  otherOptions.mergeMaybe (Record.of ({
                     id,
-                    name: entry.get('name'),
-                    cost: entry.get('cost'),
-                    input: entry.lookup('input'),
-                    tiers: entry.lookup('tiers'),
+                    name: entry.get ('name'),
+                    cost: entry.get ('cost'),
+                    input: entry.lookup ('input'),
+                    tiers: entry.lookup ('tiers'),
                     maxTier,
-                    instance,
-                    wiki: entry,
-                    sel: select.fmap(sel => sortObjects(sel, locale.get('id')))
+                    stateEntry: instance,
+                    wikiEntry: entry,
+                    sel: select.fmap (sel => sortObjects (sel, locale.get ('id')))
                   })) as Record<Data.DeactiveViewObject>
               )
         );
       }
 
-      return Maybe.Nothing();
+      return Maybe.empty ();
     });
 }

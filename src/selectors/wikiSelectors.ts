@@ -7,7 +7,7 @@ import { translate } from '../utils/I18n';
 import { getItems } from './equipmentSelectors';
 import { getAllProfessions } from './rcpSelectors';
 
-const getFirstPartWikiEntries = createSelector(
+const getFirstPartWikiEntries = createSelector (
   getWikiBlessings,
   getWikiCantrips,
   getWikiCombatTechniques,
@@ -33,21 +33,21 @@ const getFirstPartWikiEntries = createSelector(
     disadvantages,
     specialAbilties
   ) => {
-    return List.of(
-      ...blessings.elems(),
-      ...cantrips.elems(),
-      ...combatTechniques.elems(),
-      ...cultures.elems(),
-      ...itemTemplates.elems(),
+    return List.of (
+      ...blessings.elems (),
+      ...cantrips.elems (),
+      ...combatTechniques.elems (),
+      ...cultures.elems (),
+      ...itemTemplates.elems (),
       ...items,
-      ...advantages.elems(),
-      ...disadvantages.elems(),
-      ...specialAbilties.elems(),
+      ...advantages.elems (),
+      ...disadvantages.elems (),
+      ...specialAbilties.elems (),
     );
   }
 );
 
-export const getAllWikiEntries = createSelector(
+export const getAllWikiEntries = createSelector (
   getFirstPartWikiEntries,
   getWikiLiturgicalChants,
   getAllProfessions,
@@ -55,291 +55,291 @@ export const getAllWikiEntries = createSelector(
   getWikiSkills,
   getWikiSpells,
   (firstPart, liturgicalChants, professions, races, skills, spells) => {
-    return firstPart.concat(
-      List.of(
-        ...liturgicalChants.elems(),
+    return firstPart.mappend (
+      List.of (
+        ...liturgicalChants.elems (),
         ...professions,
-        ...races.elems(),
-        ...skills.elems(),
-        ...spells.elems()
+        ...races.elems (),
+        ...skills.elems (),
+        ...spells.elems ()
       )
     );
   }
 );
 
-export const getRacesSortedByName = createSelector(
+export const getRacesSortedByName = createSelector (
   getWikiRaces,
   getLocaleMessages,
   (list, locale) => {
-    return sortObjects([...list.values()], locale!.id);
+    return sortObjects (list.elems (), locale!.id);
   }
 );
 
-export const getPreparedRaces = createSelector(
+export const getPreparedRaces = createSelector (
   getRacesSortedByName,
   getWikiFilterText,
   (list, filterText) => {
-    return filterObjects(list, filterText);
+    return filterObjects (list, filterText);
   }
 );
 
-export const getCulturesSortedByName = createSelector(
+export const getCulturesSortedByName = createSelector (
   getWikiCultures,
   getLocaleMessages,
   (list, locale) => {
-    return sortObjects([...list.values()], locale!.id);
+    return sortObjects ([...list.values ()], locale!.id);
   }
 );
 
-export const getPreparedCultures = createSelector(
+export const getPreparedCultures = createSelector (
   getCulturesSortedByName,
   getWikiFilterText,
   (list, filterText) => {
-    return filterObjects(list, filterText);
+    return filterObjects (list, filterText);
   }
 );
 
-export const getProfessionsSortedByName = createSelector(
+export const getProfessionsSortedByName = createSelector (
   getWikiProfessions,
   getLocaleMessages,
   (list, locale) => {
     const key = (e: Profession) => e.src[0] ? e.src[0].id : 'US25000';
-    return sortObjects([...list.values()], locale!.id, [{ key: 'name', keyOfProperty: 'm' }, { key: 'subname', keyOfProperty: 'm' }, { key }]);
+    return sortObjects ([...list.values ()], locale!.id, [{ key: 'name', keyOfProperty: 'm' }, { key: 'subname', keyOfProperty: 'm' }, { key }]);
   }
 );
 
-export const getProfessionsFilteredByOptions = createSelector(
+export const getProfessionsFilteredByOptions = createSelector (
   getProfessionsSortedByName,
   getWikiProfessionsGroup,
   (list, group) => {
-    return group === undefined ? list : list.filter(e => e.gr === group);
+    return group === undefined ? list : list.filter (e => e.gr === group);
   }
 );
 
-export const getPreparedProfessions = createSelector(
+export const getPreparedProfessions = createSelector (
   getProfessionsFilteredByOptions,
   getWikiFilterText,
   (list, filterText) => {
-    return filterObjects(list, filterText, { addProperty: 'subname', keyOfName: 'm' });
+    return filterObjects (list, filterText, { addProperty: 'subname', keyOfName: 'm' });
   }
 );
 
-export const getAdvantagesSortedByName = createSelector(
+export const getAdvantagesSortedByName = createSelector (
   getWikiAdvantages,
   getLocaleMessages,
   (list, locale) => {
-    return sortObjects([...list.values()], locale!.id);
+    return sortObjects ([...list.values ()], locale!.id);
   }
 );
 
-export const getPreparedAdvantages = createSelector(
+export const getPreparedAdvantages = createSelector (
   getAdvantagesSortedByName,
   getWikiFilterText,
   (list, filterText) => {
-    return filterObjects(list, filterText);
+    return filterObjects (list, filterText);
   }
 );
 
-export const getDisadvantagesSortedByName = createSelector(
+export const getDisadvantagesSortedByName = createSelector (
   getWikiDisadvantages,
   getLocaleMessages,
   (list, locale) => {
-    return sortObjects([...list.values()], locale!.id);
+    return sortObjects ([...list.values ()], locale!.id);
   }
 );
 
-export const getPreparedDisadvantages = createSelector(
+export const getPreparedDisadvantages = createSelector (
   getDisadvantagesSortedByName,
   getWikiFilterText,
   (list, filterText) => {
-    return filterObjects(list, filterText);
+    return filterObjects (list, filterText);
   }
 );
 
-export const getSkillsSortedByName = createSelector(
+export const getSkillsSortedByName = createSelector (
   getWikiSkills,
   getLocaleMessages,
   (list, locale) => {
-    return sortObjects([...list.values()], locale!.id);
+    return sortObjects ([...list.values ()], locale!.id);
   }
 );
 
-export const getSkillsFilteredByOptions = createSelector(
+export const getSkillsFilteredByOptions = createSelector (
   getSkillsSortedByName,
   getWikiSkillsGroup,
   (list, group) => {
-    return group === undefined ? list : list.filter(e => e.gr === group);
+    return group === undefined ? list : list.filter (e => e.gr === group);
   }
 );
 
-export const getPreparedSkills = createSelector(
+export const getPreparedSkills = createSelector (
   getSkillsFilteredByOptions,
   getWikiFilterText,
   (list, filterText) => {
-    return filterObjects(list, filterText);
+    return filterObjects (list, filterText);
   }
 );
 
-export const getCombatTechniquesSortedByName = createSelector(
+export const getCombatTechniquesSortedByName = createSelector (
   getWikiCombatTechniques,
   getLocaleMessages,
   (list, locale) => {
-    return sortObjects([...list.values()], locale!.id);
+    return sortObjects ([...list.values ()], locale!.id);
   }
 );
 
-export const getCombatTechniquesFilteredByOptions = createSelector(
+export const getCombatTechniquesFilteredByOptions = createSelector (
   getCombatTechniquesSortedByName,
   getWikiCombatTechniquesGroup,
   (list, group) => {
-    return group === undefined ? list : list.filter(e => e.gr === group);
+    return group === undefined ? list : list.filter (e => e.gr === group);
   }
 );
 
-export const getPreparedCombatTechniques = createSelector(
+export const getPreparedCombatTechniques = createSelector (
   getCombatTechniquesFilteredByOptions,
   getWikiFilterText,
   (list, filterText) => {
-    return filterObjects(list, filterText);
+    return filterObjects (list, filterText);
   }
 );
 
-export const getSpecialAbilitiesSortedByName = createSelector(
+export const getSpecialAbilitiesSortedByName = createSelector (
   getWikiSpecialAbilities,
   getLocaleMessages,
   (list, locale) => {
-    return sortObjects([...list.values()], locale!.id);
+    return sortObjects ([...list.values ()], locale!.id);
   }
 );
 
-export const getSpecialAbilitiesFilteredByOptions = createSelector(
+export const getSpecialAbilitiesFilteredByOptions = createSelector (
   getSpecialAbilitiesSortedByName,
   getWikiSpecialAbilitiesGroup,
   (list, group) => {
-    return group === undefined ? list : list.filter(e => e.gr === group);
+    return group === undefined ? list : list.filter (e => e.gr === group);
   }
 );
 
-export const getPreparedSpecialAbilities = createSelector(
+export const getPreparedSpecialAbilities = createSelector (
   getSpecialAbilitiesFilteredByOptions,
   getWikiFilterText,
   (list, filterText) => {
-    return filterObjects(list, filterText);
+    return filterObjects (list, filterText);
   }
 );
 
-export const getSpellsSortedByName = createSelector(
+export const getSpellsSortedByName = createSelector (
   getWikiSpells,
   getLocaleMessages,
   (list, locale) => {
-    return sortObjects([...list.values()], locale!.id);
+    return sortObjects ([...list.values ()], locale!.id);
   }
 );
 
-export const getSpellsFilteredByOptions = createSelector(
+export const getSpellsFilteredByOptions = createSelector (
   getSpellsSortedByName,
   getWikiSpellsGroup,
   (list, group) => {
-    return group === undefined ? list : list.filter(e => e.gr === group);
+    return group === undefined ? list : list.filter (e => e.gr === group);
   }
 );
 
-export const getPreparedSpells = createSelector(
+export const getPreparedSpells = createSelector (
   getSpellsFilteredByOptions,
   getWikiFilterText,
   (list, filterText) => {
-    return filterObjects(list, filterText);
+    return filterObjects (list, filterText);
   }
 );
 
-export const getCantripsSortedByName = createSelector(
+export const getCantripsSortedByName = createSelector (
   getWikiCantrips,
   getLocaleMessages,
   (list, locale) => {
-    return sortObjects([...list.values()], locale!.id);
+    return sortObjects ([...list.values ()], locale!.id);
   }
 );
 
-export const getPreparedCantrips = createSelector(
+export const getPreparedCantrips = createSelector (
   getCantripsSortedByName,
   getWikiFilterText,
   (list, filterText) => {
-    return filterObjects(list, filterText);
+    return filterObjects (list, filterText);
   }
 );
 
-export const getLiturgicalChantsSortedByName = createSelector(
+export const getLiturgicalChantsSortedByName = createSelector (
   getWikiLiturgicalChants,
   getLocaleMessages,
   (list, locale) => {
-    return sortObjects([...list.values()], locale!.id);
+    return sortObjects ([...list.values ()], locale!.id);
   }
 );
 
-export const getLiturgicalChantsFilteredByOptions = createSelector(
+export const getLiturgicalChantsFilteredByOptions = createSelector (
   getLiturgicalChantsSortedByName,
   getWikiLiturgicalChantsGroup,
   (list, group) => {
-    return group === undefined ? list : list.filter(e => e.gr === group);
+    return group === undefined ? list : list.filter (e => e.gr === group);
   }
 );
 
-export const getPreparedLiturgicalChants = createSelector(
+export const getPreparedLiturgicalChants = createSelector (
   getLiturgicalChantsFilteredByOptions,
   getWikiFilterText,
   (list, filterText) => {
-    return filterObjects(list, filterText);
+    return filterObjects (list, filterText);
   }
 );
 
-export const getBlessingsSortedByName = createSelector(
+export const getBlessingsSortedByName = createSelector (
   getWikiBlessings,
   getLocaleMessages,
   (list, locale) => {
-    return sortObjects([...list.values()], locale!.id);
+    return sortObjects ([...list.values ()], locale!.id);
   }
 );
 
-export const getPreparedBlessings = createSelector(
+export const getPreparedBlessings = createSelector (
   getBlessingsSortedByName,
   getWikiFilterText,
   (list, filterText) => {
-    return filterObjects(list, filterText);
+    return filterObjects (list, filterText);
   }
 );
 
-export const getItemTemplatesSortedByName = createSelector(
+export const getItemTemplatesSortedByName = createSelector (
   getWikiItemTemplates,
   getLocaleMessages,
   (list, locale) => {
-    return sortObjects([...list.values()], locale!.id);
+    return sortObjects ([...list.values ()], locale!.id);
   }
 );
 
-export const getItemTemplatesFilteredByOptions = createSelector(
+export const getItemTemplatesFilteredByOptions = createSelector (
   getItemTemplatesSortedByName,
   getWikiItemTemplatesGroup,
   (list, group) => {
-    return group === undefined ? list : list.filter(e => e.gr === group);
+    return group === undefined ? list : list.filter (e => e.gr === group);
   }
 );
 
-export const getPreparedItemTemplates = createSelector(
+export const getPreparedItemTemplates = createSelector (
   getItemTemplatesFilteredByOptions,
   getWikiFilterText,
   (list, filterText) => {
-    return filterObjects(list, filterText);
+    return filterObjects (list, filterText);
   }
 );
 
-export const getSpecialAbilityGroups = createSelector(
+export const getSpecialAbilityGroups = createSelector (
   getWikiSpecialAbilities,
   getLocaleMessages,
   (wiki, locale) => {
-    const specialAbilities = [...wiki.values()];
-    return sortObjects(translate(locale!, 'specialabilities.view.groups').fmap((name, index) => ({
+    const specialAbilities = [...wiki.values ()];
+    return sortObjects (translate (locale!, 'specialabilities.view.groups').fmap ((name, index) => ({
       id: index + 1,
       name
-    })).filter(({ id }) => specialAbilities.some(e => e.gr === id)), locale!.id);
+    })).filter (({ id }) => specialAbilities.some (e => e.gr === id)), locale!.id);
   }
 );

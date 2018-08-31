@@ -11,30 +11,30 @@ export { UIMessages };
  * inside the string), it will map the params to the placeholders based on
  * index.
  */
-export function translate<T extends keyof UIMessages>(
+export function translate<T extends keyof UIMessages> (
   messages: Record<UIMessages>,
   key: T,
   ...params: (string | number)[]
 ): UIMessages[T];
-export function translate<T extends keyof UIMessages>(
+export function translate<T extends keyof UIMessages> (
   messages: Maybe<Record<UIMessages>>,
   key: T,
   ...params: (string | number)[]
 ): Maybe<UIMessages[T]>;
-export function translate<T extends keyof UIMessages>(
+export function translate<T extends keyof UIMessages> (
   messages: Maybe<Record<UIMessages>> | Record<UIMessages>,
   key: T,
   ...params: (string | number)[]
 ): Maybe<UIMessages[T]> | UIMessages[T] {
   if (messages instanceof Maybe) {
     return messages
-      .fmap(safeMessages => safeMessages.get(key) as UIMessages[T])
-      .fmap(message => {
+      .fmap (safeMessages => safeMessages.get (key) as UIMessages[T])
+      .fmap (message => {
         if (params.length > 0 && typeof message === 'string') {
-          return message.replace(/\{(\d+)\}/g, (_, p1) => {
-            const param = params[Number.parseInt(p1)];
+          return message.replace (/\{(\d+)\}/g, (_, p1) => {
+            const param = params[Number.parseInt (p1)];
 
-            return typeof param === 'number' ? param.toString() : param;
+            return typeof param === 'number' ? param.toString () : param;
           });
         }
 
@@ -42,13 +42,13 @@ export function translate<T extends keyof UIMessages>(
       }) as Maybe<UIMessages[T]>;
   }
   else {
-    const message = messages.get(key) as UIMessages[T];
+    const message = messages.get (key) as UIMessages[T];
 
     if (params.length > 0 && typeof message === 'string') {
-      return message.replace(/\{(\d+)\}/g, (_, p1) => {
-        const param = params[Number.parseInt(p1)];
+      return message.replace (/\{(\d+)\}/g, (_, p1) => {
+        const param = params[Number.parseInt (p1)];
 
-        return typeof param === 'number' ? param.toString() : param;
+        return typeof param === 'number' ? param.toString () : param;
       });
     }
 
@@ -57,7 +57,7 @@ export function translate<T extends keyof UIMessages>(
 }
 
 export const localizeNumber = (n: number, locale: string) => {
-  return n.toLocaleString(locale);
+  return n.toLocaleString (locale);
 };
 
 /**

@@ -1,6 +1,6 @@
 import { List, Maybe } from './dataUtils';
 
-const romanNumbers: List<string> = List.of(
+const romanNumbers: List<string> = List.of (
   'I',
   'II',
   'III',
@@ -22,14 +22,14 @@ const romanNumbers: List<string> = List.of(
  * @param index If the number parameter is 0-based. Default is false.
  */
 export const getRoman = (number: number, index: boolean = false): string =>
-  Maybe.fromMaybe('', romanNumbers.subscript(number + (index ? 0 : -1)));
+  Maybe.fromMaybe ('') (romanNumbers.subscript (number + (index ? 0 : -1)));
 
 /**
  * Forces signing on the given number.
  * @param number
  */
 export const sign = (number: number): string =>
-  number > 0 ? `+${number}` : number.toString();
+  number > 0 ? `+${number}` : number.toString ();
 
 /**
  * Forces signing on the given number, ignores 0.
@@ -40,7 +40,7 @@ export const signNull = (number: number, placeholder: string = ''): string => {
     return `+${number}`
   }
   else if (number < 0) {
-    return number.toString();
+    return number.toString ();
   }
   else {
     return placeholder;
@@ -52,11 +52,11 @@ export const signNull = (number: number, placeholder: string = ''): string => {
  * @param number
  */
 export const multiplyString = (string: string): string => {
-  if (/^\d+[,\.]\d+$/.test(string)) {
-    const float = Number.parseFloat(string.replace(/,/, '.'));
+  if (/^\d+[,\.]\d+$/.test (string)) {
+    const float = Number.parseFloat (string.replace (/,/, '.'));
     const multiplied = float * 100;
 
-    return multiplied.toString();
+    return multiplied.toString ();
   }
   else {
     return string;

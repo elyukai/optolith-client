@@ -9,19 +9,19 @@ type Deps<T extends Data.Dependent> = RecordInterface<T>['dependencies'];
 type Dep<T extends Data.Dependent> = ListElement<Deps<T>>;
 
 const getDependencies = <T extends Data.Dependent>(obj: T) =>
-  obj.get('dependencies') as Deps<T>;
+  obj.get ('dependencies') as Deps<T>;
 
 const getDependencyIndex = <T extends Data.Dependent>(e: Dep<T>) =>
-  (list: Deps<T>) => (list as List<any>).findIndex(R.equals(e));
+  (list: Deps<T>) => (list as List<any>).findIndex (R.equals (e));
 
 const removeDependency = <T extends Data.Dependent>(e: Dep<T>) =>
   (obj: T): T => {
-    const list = getDependencies(obj);
+    const list = getDependencies (obj);
 
-    const index = Maybe.fromMaybe(-1, getDependencyIndex(e)(list));
+    const index = Maybe.fromMaybe (-1) (getDependencyIndex (e) (list));
 
-    return (obj as any).update(
-      (dependencies: List<any>) => dependencies.deleteAt(index),
+    return (obj as any).update (
+      (dependencies: List<any>) => dependencies.deleteAt (index),
       'dependencies'
     );
   };
@@ -30,11 +30,11 @@ const adjustOrRemove =
   <T extends Data.Dependent>(isUnused: (entry: T) => boolean) =>
     (id: string) =>
       (entry: T) => {
-        if (isUnused(entry)) {
-          return removeHeroListStateItem(id);
+        if (isUnused (entry)) {
+          return removeHeroListStateItem (id);
         }
 
-        return setHeroListStateItem(id)(entry);
+        return setHeroListStateItem (id) (entry);
       };
 
 const getIncreasableCreator: <T extends Data.ExtendedSkillDependent>(
@@ -42,12 +42,12 @@ const getIncreasableCreator: <T extends Data.ExtendedSkillDependent>(
 ) =>
   (entry: T) =>
     (state: Record<Data.HeroDependent>) => Maybe<Record<Data.HeroDependent>> =
-      R.ifElse(
+      R.ifElse (
         isActivatableSkillDependent,
-        adjustOrRemove(
+        adjustOrRemove (
           UnusedEntryUtils.isActivatableDependentSkillUnused,
         ),
-        adjustOrRemove(
+        adjustOrRemove (
           UnusedEntryUtils.isDependentSkillUnused,
         )
       );
@@ -59,25 +59,22 @@ const removeDependencyCreator = <T extends Data.Dependent>(
 ) =>
   (id: string, value: Dep<T>) =>
     (state: Record<Data.HeroDependent>): Record<Data.HeroDependent> => {
-    return Maybe.fromMaybe(
-      state,
-      getHeroStateListItem<T>(id, state)
-        .fmap(R.pipe(
-          removeDependency(value),
-          adjustOrRemoveFn(id),
-        ))
-        .bind(fn => fn(state))
-    );
-  };
+      return Maybe.fromMaybe (state) (
+        getHeroStateListItem<T> (id, state)
+          .fmap (R.pipe (
+            removeDependency (value),
+            adjustOrRemoveFn (id),
+          ))
+          .bind (fn => fn (state))
+      );
+    };
 
-export const removeAttributeDependency = removeDependencyCreator(
-  adjustOrRemove(UnusedEntryUtils.isAttributeDependentUnused)
+export const removeAttributeDependency = removeDependencyCreator (
+  adjustOrRemove (UnusedEntryUtils.isAttributeDependentUnused)
 );
 
-export const removeIncreasableDependency = removeDependencyCreator(
-  getIncreasableCreator
-);
+export const removeIncreasableDependency = removeDependencyCreator (getIncreasableCreator);
 
-export const removeActivatableDependency = removeDependencyCreator(
-  adjustOrRemove(UnusedEntryUtils.isActivatableDependentUnused)
+export const removeActivatableDependency = removeDependencyCreator (
+  adjustOrRemove (UnusedEntryUtils.isActivatableDependentUnused)
 );

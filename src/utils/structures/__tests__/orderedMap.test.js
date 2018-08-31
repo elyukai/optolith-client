@@ -7,8 +7,6 @@ const { Tuple } = require('../tuple');
 test('construct an OrderedMap', () => {
   expect(OrderedMap.of(new Map([[1, 'a'],[2, 'b'], [3, 'c']])).value)
     .toEqual(new Map([[1, 'a'],[2, 'b'], [3, 'c']]));
-  expect(OrderedMap.of(List.of(Tuple.of(1, 'a'), Tuple.of(2, 'b'), Tuple.of(3, 'c'))).value)
-    .toEqual(new Map([[1, 'a'],[2, 'b'], [3, 'c']]));
   expect(OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'c']]).value)
     .toEqual(new Map([[1, 'a'],[2, 'b'], [3, 'c']]));
   expect(OrderedMap.of().value)
@@ -56,38 +54,29 @@ test('lookup', () => {
 });
 
 test('findWithDefault', () => {
-  expect(OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'c']]).findWithDefault('...', 2))
-    .toEqual('b');
   expect(OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'c']]).findWithDefault('...')(2))
     .toEqual('b');
-  expect(OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'c']]).findWithDefault('...', 5))
-    .toEqual('...');
   expect(OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'c']]).findWithDefault('...')(5))
     .toEqual('...');
 });
 
 test('insert', () => {
-  expect(OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'c']]).insert(4, 'd'))
-    .toEqual(OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'c'], [4, 'd']]));
   expect(OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'c']]).insert(4)('d'))
     .toEqual(OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'c'], [4, 'd']]));
-  expect(OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'c']]).insert(3, 'd'))
-    .toEqual(OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'd']]));
   expect(OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'c']]).insert(3)('d'))
     .toEqual(OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'd']]));
 });
 
+test('OrderedMap.insert', () => {
+  expect(OrderedMap.insert (4) ('d') (OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'c']])))
+    .toEqual(OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'c'], [4, 'd']]));
+  expect(OrderedMap.insert (3) ('d') (OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'c']])))
+    .toEqual(OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'd']]));
+});
+
 test('insertWith', () => {
-  expect(OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'c']]).insertWith(old => x => old + x, 4, 'd'))
-    .toEqual(OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'c'], [4, 'd']]));
-  expect(OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'c']]).insertWith(old => x => old + x, 4)('d'))
-    .toEqual(OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'c'], [4, 'd']]));
   expect(OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'c']]).insertWith(old => x => old + x)(4)('d'))
     .toEqual(OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'c'], [4, 'd']]));
-  expect(OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'c']]).insertWith(old => x => old + x, 3, 'd'))
-    .toEqual(OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'cd']]));
-  expect(OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'c']]).insertWith(old => x => old + x, 3)('d'))
-    .toEqual(OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'cd']]));
   expect(OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'c']]).insertWith(old => x => old + x)(3)('d'))
     .toEqual(OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'cd']]));
 });
@@ -95,29 +84,9 @@ test('insertWith', () => {
 test('insertWithKey', () => {
   expect(
     OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'c']])
-      .insertWithKey(key => old => x => old + x + key, 4, 'd')
-  )
-    .toEqual(OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'c'], [4, 'd']]));
-  expect(
-    OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'c']])
-      .insertWithKey(key => old => x => old + x + key, 4)('d')
-  )
-    .toEqual(OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'c'], [4, 'd']]));
-  expect(
-    OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'c']])
       .insertWithKey(key => old => x => old + x + key)(4)('d')
   )
     .toEqual(OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'c'], [4, 'd']]));
-  expect(
-    OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'c']])
-      .insertWithKey(key => old => x => old + x + key, 3, 'd')
-  )
-    .toEqual(OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'cd3']]));
-  expect(
-    OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'c']])
-      .insertWithKey(key => old => x => old + x + key, 3)('d')
-  )
-    .toEqual(OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'cd3']]));
   expect(
     OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'c']])
       .insertWithKey(key => old => x => old + x + key)(3)('d')
@@ -128,56 +97,13 @@ test('insertWithKey', () => {
 test('insertLookupWithKey', () => {
   expect(
     OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'c']])
-      .insertLookupWithKey(key => old => x => old + x + key, 4, 'd')
-  )
-    .toEqual(
-      Tuple.of(
-        Nothing(),
-        OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'c'], [4, 'd']])
-      )
-    );
-
-  expect(
-    OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'c']])
-      .insertLookupWithKey(key => old => x => old + x + key, 4)('d')
-  )
-    .toEqual(
-      Tuple.of(
-        Nothing(),
-        OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'c'], [4, 'd']])
-      )
-    );
-
-  expect(
-    OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'c']])
       .insertLookupWithKey(key => old => x => old + x + key)(4)('d')
   )
     .toEqual(
       Tuple.of(
-        Nothing(),
+        Nothing()
+      )(
         OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'c'], [4, 'd']])
-      )
-    );
-
-  expect(
-    OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'c']])
-      .insertLookupWithKey(key => old => x => old + x + key, 3, 'd')
-  )
-    .toEqual(
-      Tuple.of(
-        Just('c'),
-        OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'cd3']])
-      )
-    );
-
-  expect(
-    OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'c']])
-      .insertLookupWithKey(key => old => x => old + x + key, 3)('d')
-  )
-    .toEqual(
-      Tuple.of(
-        Just('c'),
-        OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'cd3']])
       )
     );
 
@@ -187,7 +113,8 @@ test('insertLookupWithKey', () => {
   )
     .toEqual(
       Tuple.of(
-        Just('c'),
+        Just('c')
+      )(
         OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'cd3']])
       )
     );
@@ -206,13 +133,9 @@ test('delete', () => {
 test('adjust', () => {
   const map = OrderedMap.of([[1, 'a'],[2, 'b'],[3, 'c']]);
 
-  expect(map.adjust(x => x + 'd', 3))
-    .toEqual(OrderedMap.of([[1, 'a'],[2, 'b'],[3, 'cd']]));
   expect(map.adjust(x => x + 'd')(3))
     .toEqual(OrderedMap.of([[1, 'a'],[2, 'b'],[3, 'cd']]));
 
-  expect(map.adjust(x => x + 'd', 4) === map)
-    .toBeTruthy();
   expect(map.adjust(x => x + 'd')(4) === map)
     .toBeTruthy();
 });
@@ -220,13 +143,9 @@ test('adjust', () => {
 test('adjustWithKey', () => {
   const map = OrderedMap.of([[1, 'a'],[2, 'b'],[3, 'c']]);
 
-  expect(map.adjustWithKey(key => x => x + key, 3))
-    .toEqual(OrderedMap.of([[1, 'a'],[2, 'b'],[3, 'c3']]));
   expect(map.adjustWithKey(key => x => x + key)(3))
     .toEqual(OrderedMap.of([[1, 'a'],[2, 'b'],[3, 'c3']]));
 
-  expect(map.adjustWithKey(key => x => x + key, 4) === map)
-    .toBeTruthy();
   expect(map.adjustWithKey(key => x => x + key)(4) === map)
     .toBeTruthy();
 });
@@ -234,23 +153,15 @@ test('adjustWithKey', () => {
 test('update', () => {
   const map = OrderedMap.of([[1, 'a'],[2, 'b'],[3, 'c']]);
 
-  expect(map.update(x => Just(x + 'd'), 3))
-    .toEqual(OrderedMap.of([[1, 'a'],[2, 'b'],[3, 'cd']]));
   expect(map.update(x => Just(x + 'd'))(3))
     .toEqual(OrderedMap.of([[1, 'a'],[2, 'b'],[3, 'cd']]));
 
-  expect(map.update(x => Nothing(), 3))
-    .toEqual(OrderedMap.of([[1, 'a'],[2, 'b']]));
   expect(map.update(x => Nothing())(3))
     .toEqual(OrderedMap.of([[1, 'a'],[2, 'b']]));
 
-  expect(map.update(x => Just(x + 'd'), 4) === map)
-    .toBeTruthy();
   expect(map.update(x => Just(x + 'd'))(4) === map)
     .toBeTruthy();
 
-  expect(map.update(x => Nothing(), 4) === map)
-    .toBeTruthy();
   expect(map.update(x => Nothing())(4) === map)
     .toBeTruthy();
 });
@@ -258,23 +169,15 @@ test('update', () => {
 test('updateWithKey', () => {
   const map = OrderedMap.of([[1, 'a'],[2, 'b'],[3, 'c']]);
 
-  expect(map.updateWithKey(key => x => Just(x + key), 3))
-    .toEqual(OrderedMap.of([[1, 'a'],[2, 'b'],[3, 'c3']]));
   expect(map.updateWithKey(key => x => Just(x + key))(3))
     .toEqual(OrderedMap.of([[1, 'a'],[2, 'b'],[3, 'c3']]));
 
-  expect(map.updateWithKey(key => x => Nothing(), 3))
-    .toEqual(OrderedMap.of([[1, 'a'],[2, 'b']]));
   expect(map.updateWithKey(key => x => Nothing())(3))
     .toEqual(OrderedMap.of([[1, 'a'],[2, 'b']]));
 
-  expect(map.updateWithKey(key => x => Just(x + key), 4) === map)
-    .toBeTruthy();
   expect(map.updateWithKey(key => x => Just(x + key))(4) === map)
     .toBeTruthy();
 
-  expect(map.updateWithKey(key => x => Nothing(), 4) === map)
-    .toBeTruthy();
   expect(map.updateWithKey(key => x => Nothing())(4) === map)
     .toBeTruthy();
 });
@@ -282,23 +185,15 @@ test('updateWithKey', () => {
 test('updateLookupWithKey', () => {
   const map = OrderedMap.of([[1, 'a'],[2, 'b'],[3, 'c']]);
 
-  expect(map.updateLookupWithKey(key => x => Just(x + key), 3))
-    .toEqual(Tuple.of(Just('c3'), OrderedMap.of([[1, 'a'],[2, 'b'],[3, 'c3']])));
   expect(map.updateLookupWithKey(key => x => Just(x + key))(3))
-    .toEqual(Tuple.of(Just('c3'), OrderedMap.of([[1, 'a'],[2, 'b'],[3, 'c3']])));
+    .toEqual(Tuple.of(Just('c3'))(OrderedMap.of([[1, 'a'],[2, 'b'],[3, 'c3']])));
 
-  expect(map.updateLookupWithKey(key => x => Nothing(), 3))
-    .toEqual(Tuple.of(Just('c'), OrderedMap.of([[1, 'a'],[2, 'b']])));
   expect(map.updateLookupWithKey(key => x => Nothing())(3))
-    .toEqual(Tuple.of(Just('c'), OrderedMap.of([[1, 'a'],[2, 'b']])));
+    .toEqual(Tuple.of(Just('c'))(OrderedMap.of([[1, 'a'],[2, 'b']])));
 
-  expect(Tuple.snd(map.updateLookupWithKey(key => x => Just(x + key), 4)) === map)
-    .toBeTruthy();
   expect(Tuple.snd(map.updateLookupWithKey(key => x => Just(x + key))(4)) === map)
     .toBeTruthy();
 
-  expect(Tuple.snd(map.updateLookupWithKey(key => x => Nothing(), 4)) === map)
-    .toBeTruthy();
   expect(Tuple.snd(map.updateLookupWithKey(key => x => Nothing())(4)) === map)
     .toBeTruthy();
 });
@@ -307,20 +202,14 @@ test('alter', () => {
   const map = OrderedMap.of([[1, 'a'],[2, 'b'],[3, 'c']]);
 
   // Update
-  expect(map.alter(m => m.fmap(x => x + 'd'), 3))
-    .toEqual(OrderedMap.of([[1, 'a'],[2, 'b'],[3, 'cd']]));
   expect(map.alter(m => m.fmap(x => x + 'd'))(3))
     .toEqual(OrderedMap.of([[1, 'a'],[2, 'b'],[3, 'cd']]));
 
   // Insert
-  expect(map.alter(m => m.fmap(x => x).alt(Just('d')), 4))
-    .toEqual(OrderedMap.of([[1, 'a'],[2, 'b'],[3, 'c'],[4, 'd']]));
   expect(map.alter(m => m.fmap(x => x).alt(Just('d')))(4))
     .toEqual(OrderedMap.of([[1, 'a'],[2, 'b'],[3, 'c'],[4, 'd']]));
 
   // Delete
-  expect(map.alter(m => Nothing(), 3))
-    .toEqual(OrderedMap.of([[1, 'a'],[2, 'b']]));
   expect(map.alter(m => Nothing())(3))
     .toEqual(OrderedMap.of([[1, 'a'],[2, 'b']]));
 });
@@ -358,16 +247,35 @@ test('foldl', () => {
   const map = OrderedMap.of([[1, 'a'],[2, 'b'],[3, 'c']]);
   const res = 'abc';
 
-  expect(map.foldl(acc => x => acc + x, '')).toEqual(res);
   expect(map.foldl(acc => x => acc + x)('')).toEqual(res);
+});
+
+test('OrderedMap.foldl', () => {
+  const map = OrderedMap.of([[1, 'a'],[2, 'b'],[3, 'c']]);
+  const res = 'abc';
+
+  expect(OrderedMap.foldl (acc => x => acc + x) ('') (map)).toEqual(res);
 });
 
 test('foldlWithKey', () => {
   const map = OrderedMap.of([[1, 'a'],[2, 'b'],[3, 'c']]);
   const res = 'a1b2c3';
 
-  expect(map.foldlWithKey(acc => key => x => acc + x + key, '')).toEqual(res);
   expect(map.foldlWithKey(acc => key => x => acc + x + key)('')).toEqual(res);
+});
+
+test('foldr', () => {
+  const map = OrderedMap.of([[1, 'a'],[2, 'b'],[3, 'c']]);
+  const res = 'cba';
+
+  expect(map.foldr(acc => x => acc + x)('')).toEqual(res);
+});
+
+test('OrderedMap.foldr', () => {
+  const map = OrderedMap.of([[1, 'a'],[2, 'b'],[3, 'c']]);
+  const res = 'cba';
+
+  expect(OrderedMap.foldr (acc => x => acc + x) ('') (map)).toEqual(res);
 });
 
 test('elems', () => {
@@ -386,7 +294,7 @@ test('keys', () => {
 
 test('assocs', () => {
   const map = OrderedMap.of([[1, 'a'],[3, 'c'],[2, 'b']]);
-  const res = List.of(Tuple.of(1, 'a'), Tuple.of(3, 'c'), Tuple.of(2, 'b'));
+  const res = List.of(Tuple.of(1)('a'), Tuple.of(3)('c'), Tuple.of(2)('b'));
 
   expect(map.assocs()).toEqual(res);
 });
@@ -402,19 +310,18 @@ test('OrderedMap.fromSet', () => {
   const map = OrderedSet.of([1, 3, 2]);
   const res = OrderedMap.of([[1, 2],[3, 6],[2, 4]]);
 
-  expect(OrderedMap.fromSet(key => key * 2, map)).toEqual(res);
   expect(OrderedMap.fromSet(key => key * 2)(map)).toEqual(res);
 });
 
 test('toList', () => {
   const map = OrderedMap.of([[1, 'a'],[3, 'c'],[2, 'b']]);
-  const res = List.of(Tuple.of(1, 'a'), Tuple.of(3, 'c'), Tuple.of(2, 'b'));
+  const res = List.of(Tuple.of(1)('a'), Tuple.of(3)('c'), Tuple.of(2)('b'));
 
   expect(map.toList()).toEqual(res);
 });
 
 test('OrderedMap.fromList', () => {
-  const map = List.of(Tuple.of(1, 'a'), Tuple.of(3, 'c'), Tuple.of(2, 'b'));
+  const map = List.of(Tuple.of(1)('a'), Tuple.of(3)('c'), Tuple.of(2)('b'));
   const res = OrderedMap.of([[1, 'a'],[3, 'c'],[2, 'b']]);
 
   expect(OrderedMap.fromList(map)).toEqual(res);
@@ -472,13 +379,12 @@ test('OrderedMap.empty', () => {
 test('OrderedMap.singleton', () => {
   const res = OrderedMap.of([[1, 'a']]);
 
-  expect(OrderedMap.singleton(1, 'a')).toEqual(res);
   expect(OrderedMap.singleton(1)('a')).toEqual(res);
 });
 
 test('OrderedMap.toList', () => {
   const map = OrderedMap.of([[1, 'a'],[3, 'c'],[2, 'b']]);
-  const res = List.of(Tuple.of(1, 'a'), Tuple.of(3, 'c'), Tuple.of(2, 'b'));
+  const res = List.of(Tuple.of(1)('a'), Tuple.of(3)('c'), Tuple.of(2)('b'));
 
   expect(OrderedMap.toList(map)).toEqual(res);
 });
@@ -491,12 +397,8 @@ test('OrderedMap.elems', () => {
 });
 
 test('OrderedMap.lookup', () => {
-  expect(OrderedMap.lookup(2, OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'c']])))
-    .toEqual(Just('b'));
   expect(OrderedMap.lookup(2)(OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'c']])))
     .toEqual(Just('b'));
-  expect(OrderedMap.lookup(5, OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'c']])))
-    .toEqual(Nothing());
   expect(OrderedMap.lookup(5)(OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'c']])))
     .toEqual(Nothing());
 });
