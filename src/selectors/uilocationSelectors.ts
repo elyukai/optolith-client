@@ -1,5 +1,5 @@
-import { createSelector } from 'reselect';
 import { SubTab } from '../types/data';
+import { createMaybeSelector } from '../utils/createMaybeSelector';
 import { Just, List, Maybe, Nothing } from '../utils/dataUtils';
 import { translate } from '../utils/I18n';
 import { isHeroSectionTab, isMainSectionTab, TabId } from '../utils/LocationUtils';
@@ -11,17 +11,17 @@ import { getRuleBooksEnabled } from './rulesSelectors';
 import { getIsSpellsTabAvailable } from './spellsSelectors';
 import { getCurrentCultureId, getCurrentRaceId, getCurrentTab, getLocaleAsProp, getPhase, getWikiBooks } from './stateSelectors';
 
-export const getIsMainSection = createSelector (
+export const getIsMainSection = createMaybeSelector (
   getCurrentTab,
   isMainSectionTab
 );
 
-export const getIsHeroSection = createSelector (
+export const getIsHeroSection = createMaybeSelector (
   getCurrentTab,
   isHeroSectionTab
 );
 
-export const getTabs = createSelector (
+export const getTabs = createMaybeSelector (
   getIsMainSection,
   getIsHeroSection,
   getLocaleAsProp,
@@ -137,7 +137,7 @@ export const getTabs = createSelector (
   }
 );
 
-export const getSubtabs = createSelector (
+export const getSubtabs = createMaybeSelector (
   getCurrentTab,
   getIsMainSection,
   getIsHeroSection,

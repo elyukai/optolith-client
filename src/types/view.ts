@@ -104,8 +104,8 @@ export interface MeleeWeapon {
   id: string;
   name: string;
   combatTechnique: string;
-  primary: string[];
-  primaryBonus: number | number[];
+  primary: List<string>;
+  primaryBonus: number | List<number>;
   damageDiceNumber?: number;
   damageDiceSides?: number;
   damageFlat: number;
@@ -130,7 +130,7 @@ export interface RangedWeapon {
   damageDiceSides?: number;
   damageFlat?: number;
   at: number;
-  range?: [number, number, number];
+  range?: List<number>;
   bf: number;
   loss?: number;
   weight?: number;

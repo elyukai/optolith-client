@@ -1,20 +1,20 @@
-import { createSelector } from 'reselect';
 import * as Data from '../types/data';
 import * as View from '../types/view';
 import * as Wiki from '../types/wiki';
+import { createMaybeSelector } from '../utils/createMaybeSelector';
 import { Maybe, Record } from '../utils/dataUtils';
 import { AllSortOptions } from '../utils/FilterSortUtils';
 import { translate } from '../utils/I18n';
 import { getLocaleAsProp, getSex } from './stateSelectors';
 import * as uiSettingsSelectors from './uisettingsSelectors';
 
-export const getRacesSortOptions = createSelector (
+export const getRacesSortOptions = createMaybeSelector (
   uiSettingsSelectors.getRacesSortOrder,
   (sortOrder): AllSortOptions<Wiki.Race> | AllSortOptions<View.RaceCombined> =>
     sortOrder === 'cost' ? ['ap', 'name'] : 'name'
 );
 
-export const getCulturesSortOptions = createSelector (
+export const getCulturesSortOptions = createMaybeSelector (
   uiSettingsSelectors.getCulturesSortOrder,
   (sortOrder): AllSortOptions<Wiki.Culture> | AllSortOptions<View.CultureCombined> =>
     sortOrder === 'cost' ? ['culturalPackageAdventurePoints', 'name'] : 'name'
@@ -29,7 +29,7 @@ type ProfessionSortOptions =
   AllSortOptions<Wiki.Profession> |
   AllSortOptions<View.ProfessionCombined>;
 
-export const getProfessionsSortOptions = createSelector (
+export const getProfessionsSortOptions = createMaybeSelector (
   uiSettingsSelectors.getProfessionsSortOrder,
   getSex,
   (sortOrder, maybeSex): Maybe<ProfessionSortOptions> =>
@@ -57,7 +57,7 @@ export const getProfessionsSortOptions = createSelector (
     )
 );
 
-export const getSkillsSortOptions = createSelector (
+export const getSkillsSortOptions = createMaybeSelector (
   uiSettingsSelectors.getTalentsSortOrder,
   sortOrder => {
     let sortOptions: AllSortOptions<Wiki.Skill | View.SkillCombined> = 'name';
@@ -73,7 +73,7 @@ export const getSkillsSortOptions = createSelector (
   }
 );
 
-export const getCombatTechniquesSortOptions = createSelector (
+export const getCombatTechniquesSortOptions = createMaybeSelector (
   uiSettingsSelectors.getCombatTechniquesSortOrder,
   sortOrder => {
     type Targets = Wiki.CombatTechnique | View.CombatTechniqueWithRequirements;
@@ -91,7 +91,7 @@ export const getCombatTechniquesSortOptions = createSelector (
   }
 );
 
-export const getSpecialAbilitiesSortOptions = createSelector (
+export const getSpecialAbilitiesSortOptions = createMaybeSelector (
   uiSettingsSelectors.getSpecialAbilitiesSortOrder,
   getLocaleAsProp,
   (sortOrder, locale) => {
@@ -115,7 +115,7 @@ export const getSpecialAbilitiesSortOptions = createSelector (
   }
 );
 
-export const getSpellsSortOptions = createSelector (
+export const getSpellsSortOptions = createMaybeSelector (
   uiSettingsSelectors.getSpellsSortOrder,
   getLocaleAsProp,
   (sortOrder, locale) => {
@@ -145,7 +145,7 @@ export const getSpellsSortOptions = createSelector (
   }
 );
 
-export const getLiturgicalChantsSortOptions = createSelector (
+export const getLiturgicalChantsSortOptions = createMaybeSelector (
   uiSettingsSelectors.getLiturgiesSortOrder,
   sortOrder => {
     type LiturgicalChantTargets = Wiki.LiturgicalChant | View.LiturgicalChantCombined;
@@ -164,7 +164,7 @@ export const getLiturgicalChantsSortOptions = createSelector (
   }
 );
 
-export const getEquipmentSortOptions = createSelector (
+export const getEquipmentSortOptions = createMaybeSelector (
   uiSettingsSelectors.getEquipmentSortOrder,
   getLocaleAsProp,
   (sortOrder, locale) => {
@@ -175,6 +175,9 @@ export const getEquipmentSortOptions = createSelector (
     if (sortOrder === 'groupname') {
       const groups = translate (locale, 'equipment.view.groups');
       sortOptions = [{ key: 'gr', mapToIndex: groups }, 'name'];
+    }
+    else if (sortOrder === 'where') {
+      sortOptions = ['where', 'name'];
     }
     else if (sortOrder === 'weight') {
       sortOptions = [

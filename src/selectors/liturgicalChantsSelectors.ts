@@ -4,7 +4,7 @@ import { LiturgicalChantWithRequirements } from '../types/view';
 import { Blessing, LiturgicalChant } from '../types/wiki';
 import { createMaybeSelector } from '../utils/createMaybeSelector';
 import { List, Maybe, OrderedMap, OrderedSet, Record, Tuple } from '../utils/dataUtils';
-import { filterAndSortObjects } from '../utils/FilterSortUtils';
+import { AllSortOptions, filterAndSortObjects } from '../utils/FilterSortUtils';
 import { getNumericBlessedTraditionIdByInstanceId } from '../utils/IDUtils';
 import { isActive } from '../utils/isActive';
 import { getAspectsOfTradition, isDecreasable, isIncreasable, isOwnTradition } from '../utils/liturgicalChantUtils';
@@ -305,10 +305,10 @@ export const getFilteredActiveLiturgicalChantsAndBlessings = createMaybeSelector
   getLiturgicalChantsFilterText,
   getLocaleAsProp,
   (liturgicalChants, sortOptions, filterText, locale) => filterAndSortObjects (
-    liturgicalChants,
+    liturgicalChants as List<Record<Blessing | LiturgicalChantWithRequirements>>,
     locale.get ('id'),
     filterText,
-    sortOptions
+    sortOptions as AllSortOptions<Blessing | LiturgicalChantWithRequirements>
   )
 );
 
@@ -323,12 +323,19 @@ export const getFilteredInactiveLiturgicalChantsAndBlessings = createMaybeSelect
   maybeInactive.fmap (
     inactive => areActiveItemHintsEnabled
       ? filterAndSortObjects (
-          inactive.mappend (active as InactiveListCombined),
-          locale.get ('id'),
-          filterText,
-          sortOptions
-        )
-      : filterAndSortObjects (inactive, locale.get ('id'), filterText, sortOptions)
+        List.mappend (inactive) (active as InactiveListCombined) as List<Record<
+          Blessing | LiturgicalChant
+        >>,
+        locale.get ('id'),
+        filterText,
+        sortOptions as AllSortOptions<Blessing | LiturgicalChant>
+      )
+      : filterAndSortObjects (
+        inactive as List<Record<Blessing | LiturgicalChant>>,
+        locale.get ('id'),
+        filterText,
+        sortOptions as AllSortOptions<Blessing | LiturgicalChant>
+      )
   )
 );
 

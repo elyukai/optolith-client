@@ -642,6 +642,21 @@ export class OrderedMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
   }
 
   /**
+   * `mapMaybe :: (a -> Maybe b) -> Map k a -> Map k b`
+   *
+   * Map values and collect the `Just` results.
+   */
+  static mapMaybe<V, T> (f: (value: V) => Maybe<T>):
+    (map: OrderedMap<any, V>) => OrderedMap<any, T> {
+    return map => OrderedMap.of (
+      [...map.value]
+        .map (([k, v]) => [k, f (v)] as [any, Maybe<T>])
+        .filter ((pair): pair is [any, Just<T>] => Maybe.isJust (pair[1]))
+        .map (([k, v]) => [k, Maybe.fromJust (v)] as [any, T])
+    );
+  }
+
+  /**
    * `mapMaybeWithKey :: (k -> a -> Maybe b) -> Map k a -> Map k b`
    *
    * Map keys/values and collect the `Just` results.

@@ -1,10 +1,10 @@
-import { createSelector } from 'reselect';
+import { createMaybeSelector } from '../utils/createMaybeSelector';
 import { Just, OrderedSet } from '../utils/dataUtils';
 import { isActive } from '../utils/isActive';
 import { mapGetToSlice } from '../utils/SelectorsUtils';
 import { getAreAllRuleBooksEnabled, getEnabledRuleBooks, getSpecialAbilities } from './stateSelectors';
 
-export const getRuleBooksEnabled = createSelector (
+export const getRuleBooksEnabled = createMaybeSelector (
   getAreAllRuleBooksEnabled,
   getEnabledRuleBooks,
   (maybeAreAllRuleBooksEnabled, maybeEnabledRuleBooks) =>
@@ -13,7 +13,7 @@ export const getRuleBooksEnabled = createSelector (
     )
 );
 
-export const isEnableLanguageSpecializationsDeactivatable = createSelector (
+export const isEnableLanguageSpecializationsDeactivatable = createMaybeSelector (
   mapGetToSlice (getSpecialAbilities, 'SA_699'),
   isActive
 );

@@ -31,37 +31,36 @@ export const getPrimaryAttributeMod = (state: Data.Hero) => R.pipe (
   calculatePrimaryAttributeMod,
 );
 
-export const getAttack = (
-  state: Record<Data.HeroDependent>,
-  wikiEntry: Record<CombatTechnique>,
-  instance: Record<Data.SkillDependent>,
-): number => {
-  const array = wikiEntry.get ('gr') === 2
-    ? wikiEntry.get ('primary')
-    : List.of ('ATTR_1');
+const getCombatTechniqueRating = (maybeStateEntry: Maybe<Record<Data.SkillDependent>>) =>
+  Maybe.fromMaybe (6) (maybeStateEntry.fmap (stateEntry => stateEntry.get ('value')));
 
-  const mod = getPrimaryAttributeMod (state) (array);
+export const getAttack = (state: Record<Data.HeroDependent>) =>
+  (wikiEntry: Record<CombatTechnique>) =>
+    (maybeStateEntry: Maybe<Record<Data.SkillDependent>>): number => {
+      const array = wikiEntry.get ('gr') === 2
+        ? wikiEntry.get ('primary')
+        : List.of ('ATTR_1');
 
-  return instance.get ('value') + mod;
-};
+      const mod = getPrimaryAttributeMod (state) (array);
 
-export const getParry = (
-  state: Record<Data.HeroDependent>,
-  wikiEntry: Record<CombatTechnique>,
-  instance: Record<Data.SkillDependent>,
-): Maybe<number> => {
-  if (
-    wikiEntry.get ('gr') === 2
-    || instance.get ('id') === 'CT_6'
-    || instance.get ('id') === 'CT_8'
-  ) {
-    return Maybe.empty ();
-  }
+      return getCombatTechniqueRating (maybeStateEntry) + mod;
+    };
 
-  const mod = getPrimaryAttributeMod (state) (wikiEntry.get ('primary'));
+export const getParry = (state: Record<Data.HeroDependent>) =>
+  (wikiEntry: Record<CombatTechnique>) =>
+    (maybeStateEntry: Maybe<Record<Data.SkillDependent>>): Maybe<number> => {
+      if (
+        wikiEntry.get ('gr') === 2
+        || wikiEntry.get ('id') === 'CT_6'
+        || wikiEntry.get ('id') === 'CT_8'
+      ) {
+        return Maybe.empty ();
+      }
 
-  return Maybe.pure (Math.round (instance.get ('value') / 2) + mod);
-};
+      const mod = getPrimaryAttributeMod (state) (wikiEntry.get ('primary'));
+
+      return Maybe.pure (Math.round (getCombatTechniqueRating (maybeStateEntry) / 2) + mod);
+    };
 
 export const isIncreaseDisabled = (
   wiki: Record<WikiAll>,

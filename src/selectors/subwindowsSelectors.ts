@@ -1,7 +1,7 @@
-import { createSelector } from 'reselect';
+import { createMaybeSelector } from '../utils/createMaybeSelector';
 import { getAddPermanentEnergy, getArmorZonesEditorInstance, getCurrentAlert, getEditPermanentEnergy, getIsAddAdventurePointsOpen, getIsCharacterCreatorOpen, getIsEditCharacterAvatarOpen, getIsEditPetAvatarOpen, getIsSettingsOpen, getItemEditorInstance, getUpdateDownloadProgress } from './stateSelectors';
 
-export const isDialogOpen = createSelector (
+export const isDialogOpen = createMaybeSelector (
   getCurrentAlert,
   getUpdateDownloadProgress,
   getAddPermanentEnergy,

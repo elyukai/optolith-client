@@ -1,11 +1,11 @@
 import R from 'ramda';
-import { createSelector } from 'reselect';
 import { ActivatableCategory, Categories } from '../constants/Categories';
 import * as Data from '../types/data';
 import * as Wiki from '../types/wiki';
 import { getAllActiveByCategory } from '../utils/activatableActiveUtils';
 import { getModifierByActiveLevel, getModifierByIsActive } from '../utils/activatableModifierUtils';
 import { getBracketedNameFromFullName } from '../utils/activatableNameUtils';
+import { createMaybeSelector } from '../utils/createMaybeSelector';
 import { Just, List, Maybe, OrderedMap, Record } from '../utils/dataUtils';
 import { AllSortOptions, filterAndSortObjects } from '../utils/FilterSortUtils';
 import { flip } from '../utils/flip';
@@ -19,7 +19,7 @@ import { getMagicalTraditionsFromWikiState } from './spellsSelectors';
 import { getAdvantages, getAdvantagesFilterText, getCultureAreaKnowledge, getCurrentHeroPresent, getDisadvantages, getDisadvantagesFilterText, getLocaleAsProp, getSpecialAbilities, getSpecialAbilitiesFilterText, getWiki, getWikiSpecialAbilities } from './stateSelectors';
 
 export const getActive = <T extends ActivatableCategory>(category: T, addTierToName: boolean) =>
-  createSelector (
+  createMaybeSelector (
     getCurrentHeroPresent,
     getLocaleAsProp,
     getWiki,
@@ -36,7 +36,7 @@ export const getActiveForView = <T extends ActivatableCategory>(category: T) =>
 export const getActiveForEditView = <T extends ActivatableCategory>(category: T) =>
   getActive (category, true);
 
-export const getAdvantagesRating = createSelector (
+export const getAdvantagesRating = createMaybeSelector (
   getCurrentRace,
   getCurrentCulture,
   getCurrentProfession,
@@ -72,7 +72,7 @@ export const getAdvantagesRating = createSelector (
     )
 );
 
-export const getDisadvantagesRating = createSelector (
+export const getDisadvantagesRating = createMaybeSelector (
   getCurrentRace,
   getCurrentCulture,
   getCurrentProfession,
@@ -108,17 +108,17 @@ export const getDisadvantagesRating = createSelector (
     )
 );
 
-export const getAdvantagesForSheet = createSelector (
+export const getAdvantagesForSheet = createMaybeSelector (
   getActiveForView (Categories.ADVANTAGES),
   R.identity
 );
 
-export const getAdvantagesForEdit = createSelector (
+export const getAdvantagesForEdit = createMaybeSelector (
   getActiveForEditView (Categories.ADVANTAGES),
   R.identity
 );
 
-export const getFilteredActiveAdvantages = createSelector (
+export const getFilteredActiveAdvantages = createMaybeSelector (
   getAdvantagesForEdit,
   getAdvantagesFilterText,
   getLocaleAsProp,
@@ -127,17 +127,17 @@ export const getFilteredActiveAdvantages = createSelector (
   )
 );
 
-export const getDisadvantagesForSheet = createSelector (
+export const getDisadvantagesForSheet = createMaybeSelector (
   getActiveForView (Categories.DISADVANTAGES),
   R.identity
 );
 
-export const getDisadvantagesForEdit = createSelector (
+export const getDisadvantagesForEdit = createMaybeSelector (
   getActiveForEditView (Categories.DISADVANTAGES),
   R.identity
 );
 
-export const getFilteredActiveDisadvantages = createSelector (
+export const getFilteredActiveDisadvantages = createMaybeSelector (
   getDisadvantagesForEdit,
   getDisadvantagesFilterText,
   getLocaleAsProp,
@@ -146,34 +146,34 @@ export const getFilteredActiveDisadvantages = createSelector (
   )
 );
 
-export const getSpecialAbilitiesForSheet = createSelector (
+export const getSpecialAbilitiesForSheet = createMaybeSelector (
   getActiveForView (Categories.SPECIAL_ABILITIES),
   R.identity
 );
 
-export const getSpecialAbilitiesForEdit = createSelector (
+export const getSpecialAbilitiesForEdit = createMaybeSelector (
   getActiveForEditView (Categories.SPECIAL_ABILITIES),
   R.identity
 );
 
-export const getFilteredActiveSpecialAbilities = createSelector (
+export const getFilteredActiveSpecialAbilities = createMaybeSelector (
   getSpecialAbilitiesForEdit,
   getSpecialAbilitiesSortOptions,
   getSpecialAbilitiesFilterText,
   getLocaleAsProp,
   (maybeSpecialAbilities, sortOptions, filterText, locale) => maybeSpecialAbilities.fmap (
-    specialAbilities => filterAndSortObjects<Data.ActiveViewObject<Wiki.SpecialAbility>> (
+    specialAbilities => filterAndSortObjects (
       specialAbilities,
       locale.get ('id'),
       filterText,
-      sortOptions as AllSortOptions<Targets>
+      sortOptions as AllSortOptions<Data.ActiveViewObject<Wiki.SpecialAbility>>
     )
   )
 );
 
 type ActiveSpecialAbilityView = Data.ActiveViewObject<Wiki.SpecialAbility>;
 
-export const getGeneralSpecialAbilitiesForSheet = createSelector (
+export const getGeneralSpecialAbilitiesForSheet = createMaybeSelector (
   getSpecialAbilitiesForSheet,
   getLocaleAsProp,
   getCultureAreaKnowledge,
@@ -194,7 +194,7 @@ export const getGeneralSpecialAbilitiesForSheet = createSelector (
   )
 );
 
-export const getCombatSpecialAbilitiesForSheet = createSelector (
+export const getCombatSpecialAbilitiesForSheet = createMaybeSelector (
   getSpecialAbilitiesForSheet,
   maybeSpecialAbilities => maybeSpecialAbilities.fmap (
     specialAbilities => specialAbilities
@@ -206,7 +206,7 @@ export const getCombatSpecialAbilitiesForSheet = createSelector (
   )
 );
 
-export const getMagicalSpecialAbilitiesForSheet = createSelector (
+export const getMagicalSpecialAbilitiesForSheet = createMaybeSelector (
   getSpecialAbilitiesForSheet,
   maybeSpecialAbilities => maybeSpecialAbilities.fmap (
     specialAbilities => specialAbilities
@@ -219,7 +219,7 @@ export const getMagicalSpecialAbilitiesForSheet = createSelector (
   )
 );
 
-export const getBlessedSpecialAbilitiesForSheet = createSelector (
+export const getBlessedSpecialAbilitiesForSheet = createMaybeSelector (
   getSpecialAbilitiesForSheet,
   maybeSpecialAbilities => maybeSpecialAbilities.fmap (
     specialAbilities => specialAbilities
@@ -231,13 +231,13 @@ export const getBlessedSpecialAbilitiesForSheet = createSelector (
   )
 );
 
-export const getFatePointsModifier = createSelector (
+export const getFatePointsModifier = createMaybeSelector (
   mapGetToSlice (getAdvantages, 'ADV_14'),
   mapGetToSlice (getDisadvantages, 'DISADV_31'),
   getModifierByIsActive
 );
 
-export const getMagicalTraditionForSheet = createSelector (
+export const getMagicalTraditionForSheet = createMaybeSelector (
   getMagicalTraditionsFromWikiState,
   maybeSpecialAbilities => maybeSpecialAbilities.fmap (
     specialAbilities => specialAbilities
@@ -249,7 +249,7 @@ export const getMagicalTraditionForSheet = createSelector (
   )
 );
 
-export const getPropertyKnowledgesForSheet = createSelector (
+export const getPropertyKnowledgesForSheet = createMaybeSelector (
   mapGetToSlice (getSpecialAbilities, 'SA_72'),
   getWikiSpecialAbilities,
   (propertyKnowledge, wikiSpecialAbilities) =>
@@ -263,7 +263,7 @@ export const getPropertyKnowledgesForSheet = createSelector (
     )
 );
 
-export const getBlessedTraditionForSheet = createSelector (
+export const getBlessedTraditionForSheet = createMaybeSelector (
   getBlessedTraditionFromWikiState,
   maybeTradition => maybeTradition.fmap (R.pipe (
     Record.get<Wiki.SpecialAbility, 'name'> ('name'),
@@ -271,7 +271,7 @@ export const getBlessedTraditionForSheet = createSelector (
   ))
 );
 
-export const getAspectKnowledgesForSheet = createSelector (
+export const getAspectKnowledgesForSheet = createMaybeSelector (
   mapGetToSlice (getSpecialAbilities, 'SA_87'),
   getWikiSpecialAbilities,
   (aspectKnowledge, wikiSpecialAbilities) =>
@@ -285,13 +285,13 @@ export const getAspectKnowledgesForSheet = createSelector (
     )
 );
 
-export const getInitialStartingWealth = createSelector (
+export const getInitialStartingWealth = createMaybeSelector (
   mapGetToSlice (getAdvantages, 'ADV_36'),
   mapGetToSlice (getDisadvantages, 'DISADV_2'),
   (rich, poor) => getModifierByActiveLevel (rich) (poor) (Just (0)) * 250 + 750
 );
 
-export const isAlbino = createSelector (
+export const isAlbino = createMaybeSelector (
   mapGetToSlice (getDisadvantages, 'DISADV_45'),
   R.pipe (
     getActiveSelections,

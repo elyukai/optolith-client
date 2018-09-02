@@ -21,6 +21,11 @@ test('lookup', () => {
   expect(Record.of({ a: 1, b: 2 }).lookup('c')).toEqual(Nothing());
 });
 
+test('Record.lookup', () => {
+  expect(Record.lookup ('a') (Record.of({ a: 1, b: 2 }))).toEqual(Just(1));
+  expect(Record.lookup ('c') (Record.of({ a: 1, b: 2 }))).toEqual(Nothing());
+});
+
 test('lookupWithDefault', () => {
   expect(Record.of({ a: 1, b: 2 }).lookupWithDefault(0)('a')).toEqual(1);
   expect(Record.of({ a: 1, b: 2 }).lookupWithDefault(0)('c')).toEqual(0);

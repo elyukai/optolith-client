@@ -5,7 +5,7 @@ import { Cantrip, ExperienceLevel, Spell } from '../types/wiki';
 import { getModifierByActiveLevel } from '../utils/activatableModifierUtils';
 import { createMaybeSelector } from '../utils/createMaybeSelector';
 import { Just, List, Maybe, OrderedMap, Record, Tuple } from '../utils/dataUtils';
-import { filterAndSortObjects } from '../utils/FilterSortUtils';
+import { AllSortOptions, filterAndSortObjects } from '../utils/FilterSortUtils';
 import { filterByAvailability } from '../utils/RulesUtils';
 import { mapGetToSlice } from '../utils/SelectorsUtils';
 import { isDecreasable, isIncreasable, isOwnTradition } from '../utils/SpellUtils';
@@ -322,7 +322,12 @@ export const getFilteredActiveSpellsAndCantrips = createMaybeSelector (
   getSpellsFilterText,
   getLocaleAsProp,
   (maybeSpells, sortOptions, filterText, locale) => maybeSpells.fmap (
-    spells => filterAndSortObjects (spells, locale.get ('id'), filterText, sortOptions)
+    spells => filterAndSortObjects (
+      spells as List<Record<Cantrip | SpellWithRequirements>>,
+      locale.get ('id'),
+      filterText,
+      sortOptions as AllSortOptions<Cantrip | SpellWithRequirements>
+    )
   )
 );
 
@@ -338,12 +343,17 @@ export const getFilteredInactiveSpellsAndCantrips = createMaybeSelector (
       inactive => maybeActive.fmap (
         active => areActiveItemHintsEnabled
           ? filterAndSortObjects (
-              inactive.mappend (active as InactiveListCombined),
-              locale.get ('id'),
-              filterText,
-              sortOptions
-            )
-          : filterAndSortObjects (inactive, locale.get ('id'), filterText, sortOptions)
+            inactive.mappend (active as InactiveListCombined) as List<Record<Cantrip | Spell>>,
+            locale.get ('id'),
+            filterText,
+            sortOptions as AllSortOptions<Cantrip | Spell>
+          )
+          : filterAndSortObjects (
+            inactive as List<Record<Cantrip | Spell>>,
+            locale.get ('id'),
+            filterText,
+            sortOptions as AllSortOptions<Cantrip | Spell>
+          )
       )
     )
 );

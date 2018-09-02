@@ -1,8 +1,10 @@
-import { AdventurePointsObject } from '../selectors/adventurePointsSelectors';
+import R from 'ramda';
 import * as Data from '../types/data';
 import * as Raw from '../types/rawdata';
+import { WikiAll } from '../types/wiki';
 import { currentVersion } from '../utils/VersionUtils';
-import { List, OrderedMap, OrderedMapValueElement, Record, StringKeyObject } from './dataUtils';
+import { APObject, getAPObject } from './adventurePointsSumUtils';
+import { List, Maybe, OrderedMap, OrderedMapValueElement, Record, StringKeyObject } from './dataUtils';
 import { HeroStateMapKey } from './heroStateUtils';
 import { UndoState } from './undo';
 
@@ -113,7 +115,8 @@ const getPetsForSave = (hero: Record<Data.HeroDependent>) =>
 export const convertHeroForSave = (
   id: string,
   hero: Record<Data.HeroDependent>,
-  adventurePoints: Record<AdventurePointsObject>,
+  adventurePoints: Record<APObject>,
+  users: OrderedMap<string, Data.User>
 ): Raw.RawHero => {
   const {
     dateCreated,
@@ -133,12 +136,15 @@ export const convertHeroForSave = (
     rules
   } = hero.toObject ();
 
+  const maybeUser = hero.lookup ('player').bind (users.lookup);
+
   const obj: Raw.RawHero = {
     clientVersion: currentVersion,
     dateCreated: dateCreated.toJSON (),
     dateModified: dateModified.toJSON (),
     id,
     phase,
+    player: Maybe.isJust (maybeUser) ? Maybe.fromJust (maybeUser) : undefined,
     name,
     avatar,
     ap: {
@@ -173,5 +179,18 @@ export const convertHeroForSave = (
   return obj;
 };
 
-export const convertHeroesForSave = (heroes: OrderedMap<string, UndoState<Data.Hero>>) =>
-  heroes.map()
+export const convertHeroesForSave = (wiki: Record<WikiAll>) =>
+  (locale: Record<Data.UIMessages>) =>
+    (users: OrderedMap<string, Data.User>) =>
+      (heroes: OrderedMap<string, UndoState<Data.Hero>>) =>
+        heroes.elems ().map<Raw.RawHero> (
+          R.pipe (
+            state => state.present,
+            hero => convertHeroForSave (
+              hero.get ('id'),
+              hero,
+              getAPObject (wiki) (locale) (hero),
+              users
+            )
+          )
+        );

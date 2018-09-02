@@ -353,7 +353,7 @@ const getAPSpent = (ap: Record<APObjectPart>) =>
 
 const getAPAvailable = (ap: Record<APObjectPart>) => (spent: number) => ap.get ('total') - spent;
 
-interface APObject extends APObjectPart {
+export interface APObject extends APObjectPart {
   spent: number;
   available: number;
 }

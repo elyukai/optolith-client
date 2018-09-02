@@ -41,6 +41,15 @@ export class Maybe<T extends Some> implements Al.Alternative<T>, Al.Monad<T>,
   }
 
   /**
+   * `fromNullable :: a -> Maybe a`
+   *
+   * Creates a new `Maybe` from the given nullable value.
+   */
+  static fromNullable<T extends Some> (value: T | Nullable): Maybe<T> {
+    return new Maybe (value);
+  }
+
+  /**
    * `pure :: a -> Just a`
    *
    * Inject a value into a `Maybe` type.

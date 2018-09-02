@@ -1,5 +1,4 @@
 import R from 'ramda';
-import { createSelector } from 'reselect';
 import { ActiveViewObject, HeroDependent } from '../types/data';
 import { getAdventurePointsSpentDifference, getDisAdvantagesSubtypeMax } from '../utils/adventurePointsUtils';
 import { createMaybeSelector } from '../utils/createMaybeSelector';
@@ -428,7 +427,7 @@ export interface AdventurePointsObjectPart2 {
 
 export type AdventurePointsObject = AdventurePointsObjectPart & AdventurePointsObjectPart2;
 
-export const getAdventurePointsObjectPart = createSelector (
+export const getAdventurePointsObjectPart = createMaybeSelector (
   getAdventurePointsSpentForAttributes,
   getAdventurePointsSpentForSkills,
   getAdventurePointsSpentForCombatTechniques,
@@ -467,7 +466,7 @@ export const getAdventurePointsObjectPart = createSelector (
   })
 );
 
-export const getAdventurePointsObject = createSelector (
+export const getAdventurePointsObject = createMaybeSelector (
   getTotalAdventurePoints,
   getAdventurePointsSpent,
   getAvailableAdventurePoints,

@@ -1,18 +1,18 @@
-import { createSelector } from 'reselect';
 import { ActivatableCategory, Categories } from '../constants/Categories';
 import * as Data from '../types/data';
 import { Advantage, Disadvantage, SpecialAbility, WikiEntryRecordByCategory } from '../types/wiki';
+import { getActivatableStateSliceByCategory } from '../utils/activatableActiveUtils';
 import { getInactiveView } from '../utils/activatableInactiveUtils';
+import { createMaybeSelector } from '../utils/createMaybeSelector';
 import { List, Maybe, MaybeContent, Record } from '../utils/dataUtils';
 import { getAllAvailableExtendedSpecialAbilities } from '../utils/ExtendedStyleUtils';
 import { filterByInstancePropertyAvailability, ObjectWithStateEntry } from '../utils/RulesUtils';
 import { getWikiStateKeyByCategory } from '../utils/WikiUtils';
-import { getActivatableStateSliceByCategory } from './activatableSelectors';
 import { getAdventurePointsObject } from './adventurePointsSelectors';
 import { getRuleBooksEnabled } from './rulesSelectors';
 import * as stateSelectors from './stateSelectors';
 
-export const getExtendedSpecialAbilitiesToAdd = createSelector (
+export const getExtendedSpecialAbilitiesToAdd = createMaybeSelector (
   stateSelectors.getBlessedStyleDependencies,
   stateSelectors.getCombatStyleDependencies,
   stateSelectors.getMagicalStyleDependencies,
@@ -23,7 +23,7 @@ export const getExtendedSpecialAbilitiesToAdd = createSelector (
 );
 
 export const getDeactiveForView = <T extends ActivatableCategory>(category: T) => {
-  return createSelector (
+  return createMaybeSelector (
     stateSelectors.getCurrentHeroPresent,
     stateSelectors.getLocaleAsProp,
     getExtendedSpecialAbilitiesToAdd,
@@ -57,7 +57,7 @@ export const getDeactiveForView = <T extends ActivatableCategory>(category: T) =
   );
 };
 
-export const getDeactiveAdvantages = createSelector (
+export const getDeactiveAdvantages = createMaybeSelector (
   getDeactiveForView (Categories.ADVANTAGES),
   getRuleBooksEnabled,
   (maybeList, maybeAvailability) =>
@@ -71,7 +71,7 @@ export const getDeactiveAdvantages = createSelector (
                  (maybeAvailability)
 );
 
-export const getDeactiveDisadvantages = createSelector (
+export const getDeactiveDisadvantages = createMaybeSelector (
   getDeactiveForView (Categories.DISADVANTAGES),
   getRuleBooksEnabled,
   (maybeList, maybeAvailability) =>
@@ -85,7 +85,7 @@ export const getDeactiveDisadvantages = createSelector (
                  (maybeAvailability)
 );
 
-export const getDeactiveSpecialAbilities = createSelector (
+export const getDeactiveSpecialAbilities = createMaybeSelector (
   getDeactiveForView (Categories.SPECIAL_ABILITIES),
   getRuleBooksEnabled,
   (maybeList, maybeAvailability) =>

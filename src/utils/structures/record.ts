@@ -75,6 +75,16 @@ export class Record<T extends RecordBase> {
   }
 
   /**
+   * `lookup :: String -> a -> Maybe a[String]`
+   *
+   * Returns a `Maybe` of the requested value.
+   */
+  static lookup<T extends RecordBase, K extends keyof T> (key: K):
+    (x: Record<T>) => RecordKey<K, T> {
+    return x => Maybe.of (x.value[key]) as RecordKey<K, T>;
+  }
+
+  /**
    * `lookupWithDefault :: a[String] -> a -> String -> Record a -> a[String]`
    *
    * Returns the requested value if it exists. Returns the given default

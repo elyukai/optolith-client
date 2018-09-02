@@ -665,7 +665,7 @@ export interface ItemTemplate {
   readonly rules?: string;
   readonly advantage?: string;
   readonly disadvantage?: string;
-  readonly src?: List<Record<SourceLink>>;
+  readonly src: List<Record<SourceLink>>;
 }
 
 export interface PrimaryAttributeDamageThreshold {

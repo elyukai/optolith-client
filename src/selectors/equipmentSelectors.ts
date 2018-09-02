@@ -1,457 +1,655 @@
-import { createSelector } from 'reselect';
-import { ArmorZonesInstance, ItemInstance } from '../types/data';
+import R from 'ramda';
+import { ArmorZonesInstance, AttributeDependent, HeroDependent, ItemInstance } from '../types/data';
 import { Armor, ArmorZone, Item, MeleeWeapon, RangedWeapon, ShieldOrParryingWeapon } from '../types/view';
+import { ItemTemplate, WikiAll } from '../types/wiki';
+import { getAttack, getParry } from '../utils/CombatTechniqueUtils';
+import { createMaybeSelector } from '../utils/createMaybeSelector';
+import { List, Maybe, OrderedMap, Record, RecordInterface } from '../utils/dataUtils';
 import { AllSortOptions, filterAndSortObjects, filterObjects, sortObjects } from '../utils/FilterSortUtils';
-import { translate } from '../utils/I18n';
 import { convertPrimaryAttributeToArray } from '../utils/ItemUtils';
 import { isAvailable } from '../utils/RulesUtils';
 import { getRuleBooksEnabled } from './rulesSelectors';
 import { getEquipmentSortOptions } from './sortOptionsSelectors';
-import { getEquipmentFilterText, getHigherParadeValues, getItemTemplatesFilterText, getLocaleMessages, getZoneArmorFilterText } from './stateSelectors';
-import { getEquipmentSortOrder } from './uisettingsSelectors';
+import { getArmorZonesState, getCurrentHeroPresent, getEquipmentFilterText, getEquipmentState, getHigherParadeValues, getItemsState, getItemTemplatesFilterText, getLocaleAsProp, getWiki, getWikiItemTemplates, getZoneArmorFilterText } from './stateSelectors';
 
-export function get(state: EquipmentState, id: string) {
-  return state.items.get(id);
-}
+// export function get(state: EquipmentState, id: string) {
+//   return state.items.get(id);
+// }
 
-export function getTemplate(state: EquipmentState, id: string) {
-  return state.itemTemplates.get(id);
-}
+// export function getTemplate(state: EquipmentState, id: string) {
+//   return state.itemTemplates.get(id);
+// }
 
-export function getZoneArmor(state: EquipmentState, id?: string) {
-  if (id) {
-    return getTemplate(state, id) || get(state, id);
-  }
-  return;
-}
+// export function getZoneArmor(state: EquipmentState, id?: string) {
+//   if (id) {
+//     return getTemplate(state, id) || get(state, id);
+//   }
+//   return;
+// }
 
-export function getZoneArmorFn(state: EquipmentState) {
-  return (id?: string) => {
-    if (id) {
-      return getTemplate(state, id) || get(state, id);
-    }
-    return;
-  };
-}
+// export function getZoneArmorFn(state: EquipmentState) {
+//   return (id?: string) => {
+//     if (id) {
+//       return getTemplate(state, id) || get(state, id);
+//     }
+//     return;
+//   };
+// }
 
-export function getFullItem(items: Map<string, ItemInstance>, templates: Map<string, ItemInstance>, id: string) {
-  if (items.has(id)) {
-    const item = items.get(id)!;
-    const { isTemplateLocked, template, where, amount, loss } = item;
-    const activeTemplate = typeof template === 'string' && templates.get(template);
-    return isTemplateLocked && activeTemplate ? { ...activeTemplate, where, amount, loss, id } : item;
-  }
-  return templates.get(id)!;
-}
+export const getFullItem = (items: RecordInterface<HeroDependent['belongings']>['items']) =>
+  (templates: WikiAll['itemTemplates']) =>
+    (id: string) =>
+      items.lookup (id)
+        .fmap<Record<ItemInstance>> (
+          item => {
+            const { isTemplateLocked, template, where, amount, loss } = item.toObject ();
+            const maybeActiveTemplate =
+              Maybe.bind<string, Record<ItemTemplate>> (Maybe.fromNullable (template))
+                                                       (templates.lookup);
 
-export const getTemplates = createSelector(
-  getItemTemplatesState,
-  templates => [...templates.values()]
+            return Maybe.fromMaybe (item)
+                                   (Maybe.ensure<boolean> (R.identity) (isTemplateLocked)
+                                     .then (maybeActiveTemplate)
+                                     .fmap (
+                                       activeTemplate => activeTemplate.merge (Record.of ({
+                                         where,
+                                         amount,
+                                         loss,
+                                         id
+                                       })) as Record<ItemInstance>
+                                     )
+                                   );
+          }
+        )
+        .alt (templates.lookup (id) as Maybe<Record<ItemInstance>>);
+
+export const getTemplates = createMaybeSelector (
+  getWikiItemTemplates,
+  OrderedMap.elems
 );
 
-export const getSortOptions = createSelector(
-  getLocaleMessages,
-  getEquipmentSortOrder,
-  (locale, sortOrder) => {
-    let sortOptions: AllSortOptions<ItemInstance> | undefined;
-    if (sortOrder === 'groupname') {
-      const groups = translate(locale, 'equipment.view.groups');
-      sortOptions = [{ key: 'gr', mapToIndex: groups }, 'name'];
-    }
-    else if (sortOrder === 'where') {
-      sortOptions = ['where', 'name'];
-    }
-    else if (sortOrder === 'weight') {
-      sortOptions = [
-        { key: ({ weight = 0 }) => weight, reverse: true },
-        'name'
-      ];
-    }
-    return sortOptions;
-  }
-);
-
-export const getSortedTemplates = createSelector(
+export const getSortedTemplates = createMaybeSelector (
   getTemplates,
-  getLocaleMessages,
-  (templates, locale) => {
-    return sortObjects(templates, locale!.id);
-  }
+  getLocaleAsProp,
+  (templates, locale) => sortObjects (templates, locale.get ('id'))
 );
 
-export const getAvailableItemTemplates = createSelector(
+export const getAvailableItemTemplates = createMaybeSelector (
   getSortedTemplates,
   getRuleBooksEnabled,
-  (list, availablility) => {
-    return list.filter(e => !e.src || e.src.length === 0 || isAvailable(availablility)({ ...e, src: e.src }));
-  }
+  (list, maybeAvailablility) => maybeAvailablility.fmap (
+    availablility => list.filter (isAvailable (availablility))
+  )
 );
 
-export const getFilteredItemTemplates = createSelector(
+export const getFilteredItemTemplates = createMaybeSelector (
   getAvailableItemTemplates,
   getItemTemplatesFilterText,
-  (items, filterText) => {
-    return filterObjects(items, filterText);
-  }
+  (maybeItems, filterText) => maybeItems.fmap (items => filterObjects (items, filterText))
 );
 
-export const getItems = createSelector(
+export const getItems = createMaybeSelector (
   getItemsState,
-  getItemTemplatesState,
-  (items, templates) => [...items.values()].map(e => getFullItem(items, templates, e.id))
+  getWikiItemTemplates,
+  (maybeItems, templates) => maybeItems.fmap (
+    items => R.pipe (
+      (map: OrderedMap<string, Record<ItemInstance>>) => OrderedMap.elems (map),
+      Maybe.mapMaybe (R.pipe (
+        Record.get<ItemInstance, 'id'> ('id'),
+        getFullItem (items) (templates)
+      ))
+    ) (items)
+  )
 );
 
-export const getFilteredItems = createSelector(
+export const getFilteredItems = createMaybeSelector (
   getItems,
   getEquipmentFilterText,
   getEquipmentSortOptions,
-  getLocaleMessages,
-  (items, filterText, sortOptions, locale) => {
-    return filterAndSortObjects(items, locale!.id, filterText, sortOptions);
-  }
+  getLocaleAsProp,
+  (maybeItems, filterText, sortOptions, locale) => maybeItems.fmap (
+    items => filterAndSortObjects (
+      items,
+      locale.get ('id'),
+      filterText,
+      sortOptions as AllSortOptions<ItemInstance>
+    )
+  )
 );
 
-export const getArmorZoneInstances = createSelector(
+export const getArmorZoneInstances = createMaybeSelector (
   getArmorZonesState,
-  armorZones => [...armorZones.values()]
+  Maybe.fmap (OrderedMap.elems)
 );
 
-export const getFilteredZoneArmors = createSelector(
+export const getFilteredZoneArmors = createMaybeSelector (
   getArmorZoneInstances,
   getZoneArmorFilterText,
-  getLocaleMessages,
-  (items, filterText, locale) => {
-    return filterAndSortObjects(items, locale!.id, filterText);
-  }
+  getLocaleAsProp,
+  (maybeZoneArmors, filterText, locale) => maybeZoneArmors.fmap (
+    zoneArmors => filterAndSortObjects (zoneArmors, locale.get ('id'), filterText)
+  )
 );
 
-export const getAllItems = createSelector(
+export const getAllItems = createMaybeSelector (
   getItemsState,
   getArmorZonesState,
-  getItemTemplatesState,
-  (items, armorZones, templates) => {
-    const rawItems = [...items.values()];
-    const rawArmorZones = [...armorZones.values()];
-    const mappedItems = rawItems.filter(e => e.forArmorZoneOnly !== true).map(({ id }) => {
-      const {
-        name,
-        amount,
-        price,
-        weight,
-        where,
-        gr
-      } = getFullItem(items, templates, id);
-      return {
-        id,
-        name,
-        amount,
-        price,
-        weight,
-        where,
-        gr
-      } as Item;
-    });
-    const mappedArmorZones = rawArmorZones.map(item => {
-      const {
-        id,
-        name,
-        head,
-        torso,
-        leftArm,
-        rightArm,
-        leftLeg,
-        rightLeg
-      } = item;
-      const headArmor = head ? getFullItem(items, templates, head) : undefined;
-      const torsoArmor = torso ? getFullItem(items, templates, torso) : undefined;
-      const leftArmArmor = leftArm ? getFullItem(items, templates, leftArm) : undefined;
-      const rightArmArmor = rightArm ? getFullItem(items, templates, rightArm) : undefined;
-      const leftLegArmor = leftLeg ? getFullItem(items, templates, leftLeg) : undefined;
-      const rightLegArmor = rightLeg ? getFullItem(items, templates, rightLeg) : undefined;
-      const priceTotal = getPriceTotal(headArmor, leftArmArmor, leftLegArmor, rightArmArmor, rightLegArmor, torsoArmor);
-      const weightTotal = getWeightTotal(headArmor, leftArmArmor, leftLegArmor, rightArmArmor, rightLegArmor, torsoArmor);
-      return {
-        id,
-        name,
-        amount: 1,
-        price: priceTotal,
-        weight: weightTotal,
-        gr: 4
-      } as Item;
-    });
-    return [...mappedArmorZones, ...mappedItems];
-  }
+  getWikiItemTemplates,
+  (maybeItems, maybeZoneArmors, templates) =>
+    Maybe.liftM2 ((items: RecordInterface<HeroDependent['belongings']>['items']) =>
+                    (zoneArmors: RecordInterface<HeroDependent['belongings']>['armorZones']) => {
+                      const rawItems = OrderedMap.elems (items);
+                      const rawArmorZones = OrderedMap.elems (zoneArmors);
+
+                      const mappedItems = R.pipe (
+                        List.filter (R.pipe (
+                          Record.lookup<ItemInstance, 'forArmorZoneOnly'> ('forArmorZoneOnly'),
+                          Maybe.elem (true),
+                          R.not
+                        )),
+                        Maybe.mapMaybe<Record<ItemInstance>, Record<Item>> (R.pipe (
+                          Record.get<ItemInstance, 'id'> ('id'),
+                          getFullItem (items) (templates) as any as
+                            (id: string) => Maybe<Record<Item>>
+                        ))
+                      ) (rawItems);
+
+                      const mappedArmorZones = rawArmorZones.map<Record<Item>> (zoneArmor => {
+                        const headArmor = zoneArmor.lookup ('head').bind (
+                          getFullItem (items) (templates)
+                        );
+
+                        const torsoArmor = zoneArmor.lookup ('torso').bind (
+                          getFullItem (items) (templates)
+                        );
+
+                        const leftArmArmor = zoneArmor.lookup ('leftArm').bind (
+                          getFullItem (items) (templates)
+                        );
+
+                        const rightArmArmor = zoneArmor.lookup ('rightArm').bind (
+                          getFullItem (items) (templates)
+                        );
+
+                        const leftLegArmor = zoneArmor.lookup ('leftLeg').bind (
+                          getFullItem (items) (templates)
+                        );
+
+                        const rightLegArmor = zoneArmor.lookup ('rightLeg').bind (
+                          getFullItem (items) (templates)
+                        );
+
+                        const priceTotal = getPriceTotal (
+                          headArmor,
+                          leftArmArmor,
+                          leftLegArmor,
+                          rightArmArmor,
+                          rightLegArmor,
+                          torsoArmor
+                        );
+
+                        const weightTotal = getWeightTotal (
+                          headArmor,
+                          leftArmArmor,
+                          leftLegArmor,
+                          rightArmArmor,
+                          rightLegArmor,
+                          torsoArmor
+                        );
+
+                        return Record.of<Item> ({
+                          id: zoneArmor.get ('id'),
+                          name: zoneArmor.get ('name'),
+                          amount: 1,
+                          price: priceTotal,
+                          weight: weightTotal,
+                          gr: 4
+                        });
+                      });
+
+                      return mappedArmorZones.mappend (mappedItems);
+                    })
+                 (maybeItems)
+                 (maybeZoneArmors)
 );
 
-export const getTotalPrice = createSelector(
-  [ getAllItems ],
-  items => items.reduce((sum, { amount, price = 0 }) => sum + price * amount, 0)
+export const getTotalPrice = createMaybeSelector (
+  getAllItems,
+  Maybe.fmap (
+    List.foldr<Record<Item>, number> (item => R.add (item.get ('amount') * item.get ('price')))
+                                     (0)
+  )
 );
 
-export const getTotalWeight = createSelector(
-  [ getAllItems ],
-  items => items.reduce((sum, { amount, weight = 0 }) => sum + weight * amount, 0)
+export const getTotalWeight = createMaybeSelector (
+  getAllItems,
+  Maybe.fmap (
+    List.foldr<Record<Item>, number> (item =>
+                                        R.add (
+                                          item.get ('amount')
+                                          * item.lookupWithDefault<'weight'> (0) ('weight')
+                                        ))
+                                     (0)
+  )
 );
 
-export const getMeleeWeapons = createSelector(
-  getItemsState,
-  getDependent,
+export const getMeleeWeapons = createMaybeSelector (
+  getCurrentHeroPresent,
   getHigherParadeValues,
-  getItemTemplatesState,
-  (items, dependent, higherParadeValues, templates) => {
-    const rawItems = [...items.values()];
-    const filteredItems = rawItems.filter(item => {
-      return (item.gr === 1 || item.improvisedWeaponGroup === 1) && item.combatTechnique !== 'CT_10';
-    });
-    return filteredItems.map(({ id }) => {
-      const {
-        name,
-        combatTechnique,
-        damageBonus,
-        damageDiceNumber,
-        damageDiceSides,
-        damageFlat: damageFlatBase,
-        at: atMod,
-        pa: paMod,
-        reach,
-        stabilityMod,
-        loss,
-        weight,
-        improvisedWeaponGroup,
-        isTwoHandedWeapon
-      } = getFullItem(items, templates, id);
-      const combatTechniqueInstance = getInstance(dependent, combatTechnique!) as CombatTechniqueInstance;
-      const atBase = getAt(dependent, combatTechniqueInstance);
-      const at = atBase + (atMod || 0);
-      const paBase = getPa(dependent, combatTechniqueInstance);
-      const pa = paBase && paBase + (paMod || 0) + higherParadeValues;
-      const primaryAttributeIds = damageBonus && typeof damageBonus.primary === 'string' ? convertPrimaryAttributeToArray(damageBonus.primary) : combatTechniqueInstance.primary;
-      const primaryAttributes = primaryAttributeIds.map(attr => dependent.attributes.get(attr)!);
-      const damageThresholds = damageBonus && damageBonus.threshold || 0;
-      const damageFlatBonus = Math.max(...(Array.isArray(damageThresholds) ? primaryAttributes.map((e, index) => e.value - damageThresholds[index]) : primaryAttributes.map(e => e.value - damageThresholds)), 0);
-      const damageFlat = damageFlatBase! + damageFlatBonus;
-      return {
-        id,
-        name,
-        combatTechnique: combatTechniqueInstance.name,
-        primary: primaryAttributes.map(e => e.short),
-        primaryBonus: damageThresholds,
-        damageDiceNumber,
-        damageDiceSides,
-        damageFlat,
-        atMod,
-        at,
-        paMod,
-        pa,
-        reach,
-        bf: combatTechniqueInstance.bf + (stabilityMod || 0),
-        loss,
-        weight,
-        isImprovisedWeapon: typeof improvisedWeaponGroup === 'number',
-        isTwoHandedWeapon
-      } as MeleeWeapon;
-    });
-  }
+  getWiki,
+  (maybeHero, higherParadeValues, wiki) => maybeHero.fmap (
+    hero => {
+      const items = hero.get ('belongings').get ('items');
+      const rawItems = items.elems ();
+
+      const filteredItems = rawItems.filter (
+        item => (item.get ('gr') === 1 || !Maybe.elem (1) (item.lookup ('improvisedWeaponGroup')))
+          && !Maybe.elem ('CT_10') (item.lookup ('combatTechnique'))
+      );
+
+      return Maybe.mapMaybe<Record<ItemInstance>, Record<MeleeWeapon>> (
+        item => getFullItem (items) (wiki.get ('itemTemplates')) (item.get ('id'))
+          .bind (
+            fullItem => fullItem.lookup ('combatTechnique')
+              .bind (wiki.get ('combatTechniques').lookup)
+              .bind (
+                wikiEntry => {
+                  const stateEntry = hero.get ('combatTechniques').lookup (wikiEntry.get ('id'));
+
+                  const atBase = getAttack (hero) (wikiEntry) (stateEntry);
+                  const at = atBase + Maybe.fromMaybe (0) (fullItem.lookup ('at'));
+
+                  const paBase = getParry (hero) (wikiEntry) (stateEntry);
+                  const pa = paBase.fmap (
+                    R.add (Maybe.fromMaybe (0) (fullItem.lookup ('pa'))
+                    + Maybe.fromMaybe (0) (higherParadeValues))
+                  );
+
+                  const primaryAttributeIds = fullItem.lookup ('damageBonus').fmap (
+                    damageBonus => Maybe.fromMaybe (wikiEntry.get ('primary'))
+                                                   (damageBonus.lookup ('primary')
+                                                     .fmap (convertPrimaryAttributeToArray))
+                  );
+
+                  const maybePrimaryAttributes = primaryAttributeIds.fmap (
+                    Maybe.mapMaybe (wiki.get ('attributes').lookup)
+                  );
+
+                  const maybePrimaryAttributeValues = primaryAttributeIds.fmap (
+                    List.map (R.pipe (
+                      hero.get ('attributes').lookup,
+                      Maybe.fmap (Record.get<AttributeDependent, 'value'> ('value')),
+                      Maybe.fromMaybe (8)
+                    ))
+                  );
+
+                  type Thresholds = number | List<number>;
+
+                  const damageThresholds =
+                    Maybe.fromMaybe<Thresholds> (0)
+                                                (fullItem.lookup ('damageBonus').fmap (
+                                                  damageBonus => damageBonus.get ('threshold')
+                                                ));
+
+                  const damageFlatBonus = maybePrimaryAttributeValues.fmap (
+                    primaryAttributeValues => damageThresholds instanceof List
+                      ? primaryAttributeValues.imap (
+                        index => e => Maybe.fromMaybe (0)
+                                                      (damageThresholds.subscript (index).fmap (
+                                                        R.subtract (e)
+                                                      ))
+                      )
+                        .cons (0) .maximum ()
+                      : primaryAttributeValues.map (R.flip (R.subtract) (damageThresholds))
+                        .cons (0) .maximum ()
+                  );
+
+                  const damageFlat =
+                    Maybe.fromMaybe (0)
+                                    (Maybe.liftM2<number, number, number> (R.add)
+                                                                          (fullItem
+                                                                            .lookup ('damageFlat'))
+                                                                          (damageFlatBonus));
+
+                  return maybePrimaryAttributes.fmap (
+                    primaryAttributes => Record.ofMaybe<MeleeWeapon> ({
+                      id: fullItem.get ('id'),
+                      name: fullItem.get ('name'),
+                      combatTechnique: wikiEntry.get ('name'),
+                      primary: primaryAttributes.map (e => e.get ('short')),
+                      primaryBonus: damageThresholds,
+                      damageDiceNumber: fullItem.lookup ('damageDiceNumber'),
+                      damageDiceSides: fullItem.lookup ('damageDiceSides'),
+                      damageFlat,
+                      atMod: fullItem.lookup ('at'),
+                      at,
+                      paMod: fullItem.lookup ('pa'),
+                      pa,
+                      reach: fullItem.lookup ('reach'),
+                      bf: wikiEntry.get ('bf')
+                        + fullItem.lookupWithDefault<'stabilityMod'> (0) ('stabilityMod'),
+                      loss: fullItem.lookup ('loss'),
+                      weight: fullItem.lookup ('weight'),
+                      isImprovisedWeapon: fullItem.member ('improvisedWeaponGroup'),
+                      isTwoHandedWeapon:
+                        fullItem.lookupWithDefault<'isTwoHandedWeapon'> (false)
+                                                                        ('isTwoHandedWeapon')
+                    })
+                  );
+                }
+              )
+          )
+      ) (filteredItems);
+    }
+  )
 );
 
-export const getRangedWeapons = createSelector(
+export const getRangedWeapons = createMaybeSelector (
+  getCurrentHeroPresent,
+  getWiki,
+  (maybeHero, wiki) => maybeHero.fmap (
+    hero => {
+      const items = hero.get ('belongings').get ('items');
+      const rawItems = items.elems ();
+
+      const filteredItems = rawItems.filter (
+        item => item.get ('gr') === 2 || !Maybe.elem (2) (item.lookup ('improvisedWeaponGroup'))
+      );
+
+      return Maybe.mapMaybe<Record<ItemInstance>, Record<RangedWeapon>> (
+        item => getFullItem (items) (wiki.get ('itemTemplates')) (item.get ('id'))
+          .bind (
+            fullItem => fullItem.lookup ('combatTechnique')
+              .bind (wiki.get ('combatTechniques').lookup)
+              .fmap (
+                wikiEntry => {
+                  const stateEntry = hero.get ('combatTechniques').lookup (wikiEntry.get ('id'));
+
+                  const atBase = getAttack (hero) (wikiEntry) (stateEntry);
+                  const at = atBase + Maybe.fromMaybe (0) (fullItem.lookup ('at'));
+
+                  const ammunition = fullItem.lookup ('ammunition')
+                    .bind (getFullItem (items) (wiki.get ('itemTemplates')))
+                    .fmap (ammunitionItem => ammunitionItem.get ('name'));
+
+                  return Record.ofMaybe<RangedWeapon> ({
+                    id: fullItem.get ('id'),
+                    name: fullItem.get ('name'),
+                    combatTechnique: wikiEntry.get ('name'),
+                    reloadTime: fullItem.lookup ('reloadTime'),
+                    damageDiceNumber: fullItem.lookup ('damageDiceNumber'),
+                    damageDiceSides: fullItem.lookup ('damageDiceSides'),
+                    damageFlat: fullItem.lookup ('damageFlat'),
+                    at,
+                    range: fullItem.lookup ('range'),
+                    bf: wikiEntry.get ('bf')
+                      + fullItem.lookupWithDefault<'stabilityMod'> (0) ('stabilityMod'),
+                    loss: fullItem.lookup ('loss'),
+                    weight: fullItem.lookup ('weight'),
+                    ammunition
+                  });
+                }
+              )
+          )
+      ) (filteredItems);
+    }
+  )
+);
+
+export const getStabilityByArmorTypeId = R.pipe (
+  R.dec,
+  List.of (4, 5, 6, 8, 9, 13, 12, 11, 10).subscript
+);
+
+export const getEncumbranceZoneTier = List.of (0, 0, 1, 1, 2, 2, 3, 4, 5, 6, 7, 8).subscript;
+
+export const getArmors = createMaybeSelector (
   getItemsState,
-  getCombatTechniques,
-  getDependent,
-  getItemTemplatesState,
-  (items, combatTechniques, dependent, templates) => {
-    const rawItems = [...items.values()];
-    const filteredItems = rawItems.filter(item => {
-      return item.gr === 2 || item.improvisedWeaponGroup === 2;
-    });
-    return filteredItems.map(({ id }) => {
-      const {
-        name,
-        combatTechnique,
-        reloadTime,
-        damageDiceNumber,
-        damageDiceSides,
-        damageFlat,
-        range,
-        stabilityMod,
-        loss,
-        weight,
-        ammunition: ammunitionId
-      } = getFullItem(items, templates, id);
-      const combatTechniqueInstance = combatTechniques.get(combatTechnique!)!;
-      const at = getAt(dependent, combatTechniqueInstance);
-      const ammunitionInstance = typeof ammunitionId === 'string' && items.get(ammunitionId);
-      const ammunition = ammunitionInstance ? ammunitionInstance.name : undefined;
-      return {
-        id,
-        name,
-        combatTechnique: combatTechniqueInstance.name,
-        reloadTime,
-        damageDiceNumber,
-        damageDiceSides,
-        damageFlat,
-        at,
-        range,
-        bf: combatTechniqueInstance.bf + (stabilityMod || 0),
-        loss,
-        weight,
-        ammunition
-      } as RangedWeapon;
-    });
-  }
+  getWiki,
+  (maybeItems, wiki) => maybeItems.fmap (
+    items => {
+      const rawItems = items.elems ();
+
+      const filteredItems = rawItems.filter (item => item.get ('gr') === 4);
+
+      return Maybe.mapMaybe<Record<ItemInstance>, Record<Armor>> (
+        item => getFullItem (items) (wiki.get ('itemTemplates')) (item.get ('id'))
+          .fmap (
+            fullItem => {
+              const addPenaltiesMod = Maybe.elem (true) (fullItem.lookup ('addPenalties')) ? -1 : 0;
+
+              return Record.ofMaybe<Armor> ({
+                id: fullItem.get ('id'),
+                name: fullItem.get ('name'),
+                st: fullItem.lookup ('armorType')
+                  .bind (getStabilityByArmorTypeId)
+                  .fmap (R.add (fullItem.lookupWithDefault<'stabilityMod'> (0) ('stabilityMod'))),
+                loss: fullItem.lookup ('loss'),
+                pro: fullItem.lookup ('pro'),
+                enc: fullItem.lookup ('enc'),
+                mov: addPenaltiesMod + fullItem.lookupWithDefault<'movMod'> (0) ('movMod'),
+                ini: addPenaltiesMod + fullItem.lookupWithDefault<'iniMod'> (0) ('iniMod'),
+                weight: fullItem.lookup ('weight'),
+                where: fullItem.lookup ('where')
+              });
+            }
+          )
+      ) (filteredItems);
+    }
+  )
 );
 
-export const getStabilityByArmorTypeId = (id: number) => [4, 5, 6, 8, 9, 13, 12, 11, 10][id - 1];
+export const getArmorZones = createMaybeSelector (
+  getEquipmentState,
+  getWikiItemTemplates,
+  (maybeBelongings, templates) => maybeBelongings.fmap (
+    belongings => {
+      const rawZoneArmors = belongings.get ('armorZones').elems ();
 
-export const getEncumbranceZoneTier = (pro: number) => [0, 0, 1, 1, 2, 2, 3, 4, 5, 6, 7, 8][pro];
+      const getZone = Maybe.bind_ (getFullItem (belongings.get ('items')) (templates));
 
-export const getArmors = createSelector(
-  getItemsState,
-  getItemTemplatesState,
-  (items, templates) => {
-    const rawItems = [...items.values()];
-    const filteredItems = rawItems.filter(item => item.gr === 4);
-    return filteredItems.map(({ id }) => {
-      const {
-        name,
-        armorType,
-        stabilityMod,
-        loss,
-        pro,
-        enc,
-        addPenalties,
-        movMod,
-        iniMod,
-        weight,
-        where
-      } = getFullItem(items, templates, id);
-      return {
-        id,
-        name,
-        st: armorType && getStabilityByArmorTypeId(armorType) + (stabilityMod || 0),
-        loss,
-        pro,
-        enc,
-        mov: (addPenalties ? -1 : 0) + (movMod ? movMod : 0),
-        ini: (addPenalties ? -1 : 0) + (iniMod ? iniMod : 0),
-        weight,
-        where
-      } as Armor;
-    });
-  }
+      return rawZoneArmors.map (zoneArmor => {
+        const headArmor = getZone (zoneArmor.lookup ('head'));
+        const torsoArmor = getZone (zoneArmor.lookup ('torso'));
+        const leftArmArmor = getZone (zoneArmor.lookup ('leftArm'));
+        const rightArmArmor = getZone (zoneArmor.lookup ('rightArm'));
+        const leftLegArmor = getZone (zoneArmor.lookup ('leftLeg'));
+        const rightLegArmor = getZone (zoneArmor.lookup ('rightLeg'));
+
+        const proTotal = getProtectionTotal (
+          headArmor,
+          leftArmArmor,
+          leftLegArmor,
+          rightArmArmor,
+          rightLegArmor,
+          torsoArmor
+        );
+
+        const weightTotal = getWeightTotal (
+          headArmor,
+          leftArmArmor,
+          leftLegArmor,
+          rightArmArmor,
+          rightLegArmor,
+          torsoArmor
+        );
+
+        const getPro = Maybe.bind_ (Record.lookup<ItemInstance, 'pro'> ('pro'));
+
+        return Record.ofMaybe<ArmorZone> ({
+          id: zoneArmor.get ('id'),
+          name: zoneArmor.get ('name'),
+          head: getPro (headArmor),
+          leftArm: getPro (leftArmArmor),
+          leftLeg: getPro (leftLegArmor),
+          rightArm: getPro (rightArmArmor),
+          rightLeg: getPro (rightLegArmor),
+          torso: getPro (torsoArmor),
+          enc: Maybe.fromMaybe (0) (getEncumbranceZoneTier (proTotal)),
+          addPenalties: [1, 3, 5].includes (proTotal),
+          weight: weightTotal
+        });
+      });
+    }
+  )
 );
 
-export const getArmorZones = createSelector(
-  getArmorZonesState,
-  getItemsState,
-  getItemTemplatesState,
-  (armorZones, items, templates) => {
-    const rawItems = [...armorZones.values()];
-    return rawItems.map(item => {
-      const {
-        id,
-        name,
-        head,
-        leftArm,
-        leftLeg,
-        rightArm,
-        rightLeg,
-        torso
-      } = item;
-      const headArmor = head ? getFullItem(items, templates, head) : undefined;
-      const torsoArmor = torso ? getFullItem(items, templates, torso) : undefined;
-      const leftArmArmor = leftArm ? getFullItem(items, templates, leftArm) : undefined;
-      const rightArmArmor = rightArm ? getFullItem(items, templates, rightArm) : undefined;
-      const leftLegArmor = leftLeg ? getFullItem(items, templates, leftLeg) : undefined;
-      const rightLegArmor = rightLeg ? getFullItem(items, templates, rightLeg) : undefined;
-      const proTotal = getProtectionTotal(headArmor, leftArmArmor, leftLegArmor, rightArmArmor, rightLegArmor, torsoArmor);
-      const weightTotal = getWeightTotal(headArmor, leftArmArmor, leftLegArmor, rightArmArmor, rightLegArmor, torsoArmor);
-      return {
-        id,
-        name,
-        head: headArmor ? headArmor.pro : undefined,
-        leftArm: leftArmArmor ? leftArmArmor.pro : undefined,
-        leftLeg: leftLegArmor ? leftLegArmor.pro : undefined,
-        rightArm: rightArmArmor ? rightArmArmor.pro : undefined,
-        rightLeg: rightLegArmor ? rightLegArmor.pro : undefined,
-        torso: torsoArmor ? torsoArmor.pro : undefined,
-        enc: getEncumbranceZoneTier(proTotal),
-        addPenalties: [1, 3, 5].includes(proTotal),
-        weight: weightTotal
-      } as ArmorZone;
-    });
-  }
+export const getShieldsAndParryingWeapons = createMaybeSelector (
+  getCurrentHeroPresent,
+  getWiki,
+  (maybeHero, wiki) => maybeHero.fmap (
+    hero => {
+      const items = hero.get ('belongings').get ('items');
+      const rawItems = items.elems ();
+
+      const filteredItems = rawItems.filter (
+        item => item.get ('gr') === 1
+          && (
+            Maybe.elem ('CT_10') (item.lookup ('combatTechnique'))
+            || Maybe.elem (true) (item.lookup ('isParryingWeapon'))
+          )
+      );
+
+      return Maybe.mapMaybe<Record<ItemInstance>, Record<ShieldOrParryingWeapon>> (
+        item => getFullItem (items) (wiki.get ('itemTemplates')) (item.get ('id'))
+          .bind (
+            fullItem => fullItem.lookup ('combatTechnique')
+              .bind (wiki.get ('combatTechniques').lookup)
+              .fmap (
+                wikiEntry => Record.ofMaybe<ShieldOrParryingWeapon> ({
+                  id: fullItem.get ('id'),
+                  name: fullItem.get ('name'),
+                  stp: fullItem.lookup ('stp'),
+                  bf: wikiEntry.get ('bf')
+                    + fullItem.lookupWithDefault<'stabilityMod'> (0) ('stabilityMod'),
+                  loss: fullItem.lookup ('loss'),
+                  atMod: fullItem.lookup ('at'),
+                  paMod: fullItem.lookup ('pa'),
+                  weight: fullItem.lookup ('weight')
+                })
+              )
+          )
+      ) (filteredItems);
+    }
+  )
 );
 
-export const getShieldsAndParryingWeapons = createSelector(
-  getItemsState,
-  getCombatTechniques,
-  getItemTemplatesState,
-  (items, combatTechniques, templates) => {
-    const rawItems = [...items.values()];
-    const filteredItems = rawItems.filter(e => e.gr === 1 && (e.combatTechnique === 'CT_10' || e.isParryingWeapon));
-    return filteredItems.map(({ id }) => {
-      const {
-        name,
-        stp,
-        combatTechnique,
-        stabilityMod,
-        loss,
-        at,
-        pa,
-        weight
-      } = getFullItem(items, templates, id);
-      const combatTechniqueInstance = combatTechniques.get(combatTechnique!)!;
-      return {
-        id,
-        name,
-        stp,
-        bf: combatTechniqueInstance.bf + (stabilityMod || 0),
-        loss,
-        atMod: at,
-        paMod: pa,
-        weight
-      } as ShieldOrParryingWeapon;
-    });
-  }
-);
+function getProtectionTotal (
+  head: Maybe<Record<ItemInstance>>,
+  leftArm: Maybe<Record<ItemInstance>>,
+  leftLeg: Maybe<Record<ItemInstance>>,
+  rightArm: Maybe<Record<ItemInstance>>,
+  rightLeg: Maybe<Record<ItemInstance>>,
+  torso: Maybe<Record<ItemInstance>>
+) {
+  const getProtection = (maybeItem: Maybe<Record<ItemInstance>>) =>
+    Maybe.fromMaybe (0) (maybeItem.bind (item => item.lookup ('pro')));
 
-function getProtectionTotal(head?: ItemInstance, leftArm?: ItemInstance, leftLeg?: ItemInstance, rightArm?: ItemInstance, rightLeg?: ItemInstance, torso?: ItemInstance) {
-  const getProtection = (item?: ItemInstance) => item ? (item.pro || 0) : 0;
-  return Math.ceil((getProtection(head) * 1 + getProtection(torso) * 5 + (getProtection(leftArm) + getProtection(rightArm) + getProtection(leftLeg) + getProtection(rightLeg)) * 2) / 14);
+  const sum =
+    List.of (
+      getProtection (head) * 1,
+      getProtection (torso) * 5,
+      getProtection (leftArm) * 2,
+      getProtection (rightArm) * 2,
+      getProtection (leftLeg) * 2,
+      getProtection (rightLeg) * 2
+    )
+      .sum ();
+
+  return Math.ceil (sum / 14);
 }
 
-function getWeightTotal(head?: ItemInstance, leftArm?: ItemInstance, leftLeg?: ItemInstance, rightArm?: ItemInstance, rightLeg?: ItemInstance, torso?: ItemInstance) {
-  const getWeight = (item?: ItemInstance) => item ? (item.weight || 0) : 0;
-  return Math.floor((getWeight(torso) * 0.5 + (getWeight(head) + getWeight(leftArm) + getWeight(rightArm) + getWeight(leftLeg) + getWeight(rightLeg)) * 0.1) * 100) / 100;
+function getWeightTotal (
+  head: Maybe<Record<ItemInstance>>,
+  leftArm: Maybe<Record<ItemInstance>>,
+  leftLeg: Maybe<Record<ItemInstance>>,
+  rightArm: Maybe<Record<ItemInstance>>,
+  rightLeg: Maybe<Record<ItemInstance>>,
+  torso: Maybe<Record<ItemInstance>>
+) {
+  const getWeight = (maybeItem: Maybe<Record<ItemInstance>>) =>
+    Maybe.fromMaybe (0) (maybeItem.bind (item => item.lookup ('weight')));
+
+  const sum =
+    List.of (
+      getWeight (head) * 0.5,
+      getWeight (torso) * 0.1,
+      getWeight (leftArm) * 0.1,
+      getWeight (rightArm) * 0.1,
+      getWeight (leftLeg) * 0.1,
+      getWeight (rightLeg) * 0.1
+    )
+      .sum ();
+
+  return Math.floor (sum * 100) / 100;
 }
 
-function getPriceTotal(head?: ItemInstance, leftArm?: ItemInstance, leftLeg?: ItemInstance, rightArm?: ItemInstance, rightLeg?: ItemInstance, torso?: ItemInstance) {
-  const getPrice = (item?: ItemInstance) => item ? (item.price || 0) : 0;
-  return Math.floor((getPrice(torso) * 0.5 + (getPrice(head) + getPrice(leftArm) + getPrice(rightArm) + getPrice(leftLeg) + getPrice(rightLeg)) * 0.1) * 100) / 100;
+function getPriceTotal (
+  head: Maybe<Record<ItemInstance>>,
+  leftArm: Maybe<Record<ItemInstance>>,
+  leftLeg: Maybe<Record<ItemInstance>>,
+  rightArm: Maybe<Record<ItemInstance>>,
+  rightLeg: Maybe<Record<ItemInstance>>,
+  torso: Maybe<Record<ItemInstance>>
+) {
+  const getPrice = (maybeItem: Maybe<Record<ItemInstance>>) =>
+    Maybe.fromMaybe (0) (maybeItem.bind (item => item.lookup ('price')));
+
+  const sum =
+    List.of (
+      getPrice (head) * 0.5,
+      getPrice (torso) * 0.1,
+      getPrice (leftArm) * 0.1,
+      getPrice (rightArm) * 0.1,
+      getPrice (leftLeg) * 0.1,
+      getPrice (rightLeg) * 0.1
+    )
+      .sum ();
+
+  return Math.floor (sum * 100) / 100;
 }
 
-export function getProtectionAndWeight(item: ArmorZonesInstance, getZoneArmor: (id?: string | undefined) => ItemInstance | undefined) {
-  const headArmor = getZoneArmor(item.head);
-  const torsoArmor = getZoneArmor(item.torso);
-  const leftArmArmor = getZoneArmor(item.leftArm);
-  const rightArmArmor = getZoneArmor(item.rightArm);
-  const leftLegArmor = getZoneArmor(item.leftLeg);
-  const rightLegArmor = getZoneArmor(item.rightLeg);
-  const headWeight = headArmor !== undefined ? (headArmor.weight || 0) : 0;
-  const headArmorValue = headArmor !== undefined ? (headArmor.pro || 0) : 0;
-  const torsoWeight = torsoArmor !== undefined ? (torsoArmor.weight || 0) : 0;
-  const torsoArmorValue = torsoArmor !== undefined ? (torsoArmor.pro || 0) : 0;
-  const leftArmWeight = leftArmArmor !== undefined ? (leftArmArmor.weight || 0) : 0;
-  const leftArmArmorValue = leftArmArmor !== undefined ? (leftArmArmor.pro || 0) : 0;
-  const rightArmWeight = rightArmArmor !== undefined ? (rightArmArmor.weight || 0) : 0;
-  const rightArmArmorValue = rightArmArmor !== undefined ? (rightArmArmor.pro || 0) : 0;
-  const leftLegWeight = leftLegArmor !== undefined ? (leftLegArmor.weight || 0) : 0;
-  const leftLegArmorValue = leftLegArmor !== undefined ? (leftLegArmor.pro || 0) : 0;
-  const rightLegWeight = rightLegArmor !== undefined ? (rightLegArmor.weight || 0) : 0;
-  const rightLegArmorValue = rightLegArmor !== undefined ? (rightLegArmor.pro || 0) : 0;
+export const getProtectionAndWeight = (
+  zoneArmor: Record<ArmorZonesInstance>,
+  getZoneArmor: (id: Maybe<string>) => Maybe<Record<ItemInstance>>
+) => {
+  const headArmor = getZoneArmor (zoneArmor.lookup ('head'));
+  const torsoArmor = getZoneArmor (zoneArmor.lookup ('torso'));
+  const leftArmArmor = getZoneArmor (zoneArmor.lookup ('leftArm'));
+  const rightArmArmor = getZoneArmor (zoneArmor.lookup ('rightArm'));
+  const leftLegArmor = getZoneArmor (zoneArmor.lookup ('leftLeg'));
+  const rightLegArmor = getZoneArmor (zoneArmor.lookup ('rightLeg'));
+
+  const getProtection = (maybeItem: Maybe<Record<ItemInstance>>) =>
+    Maybe.fromMaybe (0) (maybeItem.bind (item => item.lookup ('pro')));
+
+  const getWeight = (maybeItem: Maybe<Record<ItemInstance>>) =>
+    Maybe.fromMaybe (0) (maybeItem.bind (item => item.lookup ('weight')));
+
+  const protectionSum =
+    List.of (
+      getProtection (headArmor) * 1,
+      getProtection (torsoArmor) * 5,
+      getProtection (leftArmArmor) * 2,
+      getProtection (rightArmArmor) * 2,
+      getProtection (leftLegArmor) * 2,
+      getProtection (rightLegArmor) * 2
+    )
+      .sum ();
+
+  const weightSum =
+    List.of (
+      getWeight (headArmor) * 0.5,
+      getWeight (torsoArmor) * 0.1,
+      getWeight (leftArmArmor) * 0.1,
+      getWeight (rightArmArmor) * 0.1,
+      getWeight (leftLegArmor) * 0.1,
+      getWeight (rightLegArmor) * 0.1
+    )
+      .sum ();
+
   return {
-    pro: headArmorValue * 1 + torsoArmorValue * 5 + (leftArmArmorValue + rightArmArmorValue + leftLegArmorValue + rightLegArmorValue) * 2,
-    weight: torsoWeight * 0.5 + (headWeight + leftArmWeight + rightArmWeight + leftLegWeight + rightLegWeight) * 0.1
+    pro: protectionSum,
+    weight: weightSum
   };
 }
