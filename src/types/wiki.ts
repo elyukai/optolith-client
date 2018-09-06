@@ -72,6 +72,13 @@ export type WikiActivatable =
   Record<Disadvantage> |
   Record<SpecialAbility>;
 
+export type IncreasableEntry =
+  Record<Attribute> |
+  Record<Spell> |
+  Record<LiturgicalChant> |
+  Record<Skill> |
+  Record<CombatTechnique>;
+
 export type SkillishEntry =
   Record<Spell> |
   Record<LiturgicalChant> |
@@ -84,6 +91,7 @@ export type Entry =
   Record<Culture> |
   Record<Profession> |
   Record<ProfessionVariant> |
+  Record<Attribute> |
   Record<Advantage> |
   Record<Disadvantage> |
   Record<Skill> |
@@ -101,6 +109,7 @@ export type EntryWithCategory =
   Record<Culture> |
   Record<Profession> |
   Record<ProfessionVariant> |
+  Record<Attribute> |
   Record<Advantage> |
   Record<Disadvantage> |
   Record<Skill> |

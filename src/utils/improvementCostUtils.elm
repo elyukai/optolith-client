@@ -1,3 +1,4 @@
+-- getBase
 getBase : Int -> Int
 getBase ic = if ic == 5 then 15 else ic
 

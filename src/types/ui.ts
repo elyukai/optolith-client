@@ -1,4 +1,4 @@
-import { List } from '../utils/dataUtils';
+import { List, Record } from '../utils/dataUtils';
 
 export interface RawUIMessages {
   'id': string;
@@ -826,3 +826,5 @@ export type UIMessages = {
 };
 
 export type UIKey = keyof UIMessages;
+
+export type UIMessagesObject = Record<UIMessages>;

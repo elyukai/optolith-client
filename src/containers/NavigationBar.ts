@@ -37,7 +37,7 @@ function mapStateToProps(state: AppState) {
 function mapDispatchToProps(dispatch: Dispatch<Action>) {
 	return {
 		setTab(id: TabId) {
-			dispatch(LocationActions._setTab(id));
+			dispatch(LocationActions.setTab(id));
 		},
 		undo() {
 			dispatch(HistoryActions.undo());

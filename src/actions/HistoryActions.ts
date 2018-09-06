@@ -1,4 +1,6 @@
 import { ActionTypes } from '../constants/ActionTypes';
+import { getWikiBooks } from '../selectors/stateSelectors';
+import { AsyncAction } from '../types/actions';
 import { WikiAll } from '../types/wiki';
 
 export interface UndoAction {
@@ -8,18 +10,19 @@ export interface UndoAction {
   };
 }
 
-export function undo (): UndoAction {
-  return {
-    type: ActionTypes.UNDO
-  };
-}
+export const undo = (): AsyncAction => (dispatch, getState) => {
+  dispatch ({
+    type: ActionTypes.UNDO,
+    payload: {
+      books: getWikiBooks (getState ())
+    }
+  });
+};
 
 export interface RedoAction {
   type: ActionTypes.REDO;
 }
 
-export function redo (): RedoAction {
-  return {
-    type: ActionTypes.REDO
-  };
-}
+export const redo = (): RedoAction => ({
+  type: ActionTypes.REDO
+});

@@ -10,7 +10,7 @@ export interface SetTabAction {
 	};
 }
 
-export function _setTab(tab: TabId): SetTabAction {
+export function setTab(tab: TabId): SetTabAction {
 	return {
 		type: ActionTypes.SET_TAB,
 		payload: {
@@ -23,7 +23,7 @@ export function showAbout(): AsyncAction {
 	return (dispatch, getState) => {
 		const alert = isDialogOpen(getState());
 		if (!alert) {
-			dispatch(_setTab('imprint'));
+			dispatch(setTab('imprint'));
 		}
 	};
 }

@@ -27,7 +27,7 @@ import { app } from './reducers/app';
 import { getLocaleMessages } from './selectors/stateSelectors';
 import { translate } from './utils/I18n';
 import { isDialogOpen } from './utils/SubwindowsUtils';
-import localShortcut = require('electron-localshortcut');
+import localShortcut from 'electron-localshortcut';
 
 const store = createStore(app, applyMiddleware(ReduxThunk));
 

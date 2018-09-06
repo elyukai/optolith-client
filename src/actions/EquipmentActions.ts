@@ -1,5 +1,6 @@
 import { ActionTypes } from '../constants/ActionTypes';
-import { getArmorZonesState, getItemsState } from '../selectors/equipmentSelectors';
+import { getFullItem } from '../selectors/equipmentSelectors';
+import { getArmorZonesState, getItemsState, getWikiItemTemplates } from '../selectors/stateSelectors';
 import { AsyncAction } from '../types/actions';
 import { ItemInstance } from '../types/data';
 import { ItemTemplate } from '../types/wiki';
@@ -13,17 +14,20 @@ export interface AddItemAction {
   };
 }
 
-export function addToList(): AsyncAction {
-  return (dispatch, getState) => {
-    const newId = `ITEM_${getNewId([...getItemsState(getState()).keys()])}`;
-    dispatch<AddItemAction>({
-      type: ActionTypes.ADD_ITEM,
-      payload: {
-        newId
-      }
-    });
-  };
-}
+export const addToList = (): AsyncAction => (dispatch, getState) => {
+  getItemsState (getState ()).fmap (
+    items => {
+      const newId = `ITEM_${getNewId (items.keys ())}`;
+
+      return dispatch<AddItemAction> ({
+        type: ActionTypes.ADD_ITEM,
+        payload: {
+          newId
+        }
+      });
+    }
+  );
+};
 
 export interface AddItemTemplateAction {
   type: ActionTypes.ADD_ITEM_TEMPLATE;
@@ -33,49 +37,49 @@ export interface AddItemTemplateAction {
   };
 }
 
-export function addTemplateToList(id: string): AsyncAction {
-  return (dispatch, getState) => {
-    const { items } = getState().currentHero.present.equipment;
-    const newId = `ITEM_${getNewId([...items.keys()])}`;
-    dispatch({
-      type: ActionTypes.ADD_ITEM_TEMPLATE,
-      payload: {
-        id,
-        newId
-      }
-    } as AddItemTemplateAction);
-  };
-}
+export const addTemplateToList = (id: string): AsyncAction => (dispatch, getState) => {
+  getItemsState (getState ()).bind (
+    items => {
+      const newId = `ITEM_${getNewId (items.keys ())}`;
+
+      return getWikiItemTemplates (getState ())
+        .lookup (id)
+        .fmap (
+          template => dispatch<AddItemTemplateAction> ({
+            type: ActionTypes.ADD_ITEM_TEMPLATE,
+            payload: {
+              newId,
+              template
+            }
+          })
+        );
+    }
+  );
+};
 
 export interface CreateItemAction {
   type: ActionTypes.CREATE_ITEM;
 }
 
-export function createItem(): CreateItemAction {
-  return {
-    type: ActionTypes.CREATE_ITEM
-  };
-}
+export const createItem = (): CreateItemAction => ({
+  type: ActionTypes.CREATE_ITEM
+});
 
 export interface CloseItemEditorAction {
   type: ActionTypes.CLOSE_ITEM_EDITOR;
 }
 
-export function closeItemEditor(): CloseItemEditorAction {
-  return {
-    type: ActionTypes.CLOSE_ITEM_EDITOR
-  };
-}
+export const closeItemEditor = (): CloseItemEditorAction => ({
+  type: ActionTypes.CLOSE_ITEM_EDITOR
+});
 
 export interface SaveItemAction {
   type: ActionTypes.SAVE_ITEM;
 }
 
-export function saveItem(): SaveItemAction {
-  return {
-    type: ActionTypes.SAVE_ITEM
-  };
-}
+export const saveItem = (): SaveItemAction => ({
+  type: ActionTypes.SAVE_ITEM
+});
 
 export interface EditItemAction {
   type: ActionTypes.EDIT_ITEM;
@@ -84,15 +88,18 @@ export interface EditItemAction {
   };
 }
 
-export function editItem(id: string): EditItemAction {
-  // TODO: get item and merge with template if locked ({ ...template, id, where, loss, amount })
-  return {
-    type: ActionTypes.EDIT_ITEM,
-    payload: {
-      id
-    }
-  };
-}
+export const editItem = (id: string): AsyncAction => (dispatch, getState) => {
+  getItemsState (getState ()).bind (
+    items => getFullItem (items) (getWikiItemTemplates (getState ())) (id).fmap (
+      item => dispatch<EditItemAction> ({
+        type: ActionTypes.EDIT_ITEM,
+        payload: {
+          item
+        }
+      })
+    )
+  );
+};
 
 export interface RemoveItemAction {
   type: ActionTypes.REMOVE_ITEM;
@@ -101,14 +108,12 @@ export interface RemoveItemAction {
   };
 }
 
-export function _removeFromList(id: string): RemoveItemAction {
-  return {
-    type: ActionTypes.REMOVE_ITEM,
-    payload: {
-      id
-    }
-  };
-}
+export const removeFromList = (id: string): RemoveItemAction => ({
+  type: ActionTypes.REMOVE_ITEM,
+  payload: {
+    id
+  }
+});
 
 export interface SetItemsSortOrderAction {
   type: ActionTypes.SET_ITEMS_SORT_ORDER;
@@ -117,14 +122,12 @@ export interface SetItemsSortOrderAction {
   };
 }
 
-export function _setSortOrder(sortOrder: string): SetItemsSortOrderAction {
-  return {
-    type: ActionTypes.SET_ITEMS_SORT_ORDER,
-    payload: {
-      sortOrder
-    }
-  };
-}
+export const setSortOrder = (sortOrder: string): SetItemsSortOrderAction => ({
+  type: ActionTypes.SET_ITEMS_SORT_ORDER,
+  payload: {
+    sortOrder
+  }
+});
 
 export interface SetDucatesAction {
   type: ActionTypes.SET_DUCATES;
@@ -133,14 +136,12 @@ export interface SetDucatesAction {
   };
 }
 
-export function _setDucates(value: string): SetDucatesAction {
-  return {
-    type: ActionTypes.SET_DUCATES,
-    payload: {
-      value
-    }
-  };
-}
+export const setDucates = (value: string): SetDucatesAction => ({
+  type: ActionTypes.SET_DUCATES,
+  payload: {
+    value
+  }
+});
 
 export interface SetSilverthalersAction {
   type: ActionTypes.SET_SILVERTHALERS;
@@ -149,14 +150,12 @@ export interface SetSilverthalersAction {
   };
 }
 
-export function _setSilverthalers(value: string): SetSilverthalersAction {
-  return {
-    type: ActionTypes.SET_SILVERTHALERS,
-    payload: {
-      value
-    }
-  };
-}
+export const setSilverthalers = (value: string): SetSilverthalersAction => ({
+  type: ActionTypes.SET_SILVERTHALERS,
+  payload: {
+    value
+  }
+});
 
 export interface SetHellersAction {
   type: ActionTypes.SET_HELLERS;
@@ -165,14 +164,12 @@ export interface SetHellersAction {
   };
 }
 
-export function _setHellers(value: string): SetHellersAction {
-  return {
-    type: ActionTypes.SET_HELLERS,
-    payload: {
-      value
-    }
-  };
-}
+export const setHellers = (value: string): SetHellersAction => ({
+  type: ActionTypes.SET_HELLERS,
+  payload: {
+    value
+  }
+});
 
 export interface SetKreutzersAction {
   type: ActionTypes.SET_KREUTZERS;
@@ -181,14 +178,12 @@ export interface SetKreutzersAction {
   };
 }
 
-export function _setKreutzers(value: string): SetKreutzersAction {
-  return {
-    type: ActionTypes.SET_KREUTZERS,
-    payload: {
-      value
-    }
-  };
-}
+export const setKreutzers = (value: string): SetKreutzersAction => ({
+  type: ActionTypes.SET_KREUTZERS,
+  payload: {
+    value
+  }
+});
 
 export interface SetNameAction {
   type: ActionTypes.SET_ITEM_NAME;
@@ -197,14 +192,12 @@ export interface SetNameAction {
   };
 }
 
-export function setName(value: string): SetNameAction {
-  return {
-    type: ActionTypes.SET_ITEM_NAME,
-    payload: {
-      value
-    }
-  };
-}
+export const setName = (value: string): SetNameAction => ({
+  type: ActionTypes.SET_ITEM_NAME,
+  payload: {
+    value
+  }
+});
 
 export interface SetPriceAction {
   type: ActionTypes.SET_ITEM_PRICE;
@@ -213,14 +206,12 @@ export interface SetPriceAction {
   };
 }
 
-export function setPrice(value: string): SetPriceAction {
-  return {
-    type: ActionTypes.SET_ITEM_PRICE,
-    payload: {
-      value
-    }
-  };
-}
+export const setPrice = (value: string): SetPriceAction => ({
+  type: ActionTypes.SET_ITEM_PRICE,
+  payload: {
+    value
+  }
+});
 
 export interface SetWeightAction {
   type: ActionTypes.SET_ITEM_WEIGHT;
@@ -229,14 +220,12 @@ export interface SetWeightAction {
   };
 }
 
-export function setWeight(value: string): SetWeightAction {
-  return {
-    type: ActionTypes.SET_ITEM_WEIGHT,
-    payload: {
-      value
-    }
-  };
-}
+export const setWeight = (value: string): SetWeightAction => ({
+  type: ActionTypes.SET_ITEM_WEIGHT,
+  payload: {
+    value
+  }
+});
 
 export interface SetAmountAction {
   type: ActionTypes.SET_ITEM_AMOUNT;
@@ -245,14 +234,12 @@ export interface SetAmountAction {
   };
 }
 
-export function setAmount(value: string): SetAmountAction {
-  return {
-    type: ActionTypes.SET_ITEM_AMOUNT,
-    payload: {
-      value
-    }
-  };
-}
+export const setAmount = (value: string): SetAmountAction => ({
+  type: ActionTypes.SET_ITEM_AMOUNT,
+  payload: {
+    value
+  }
+});
 
 export interface SetWhereAction {
   type: ActionTypes.SET_ITEM_WHERE;
@@ -261,14 +248,12 @@ export interface SetWhereAction {
   };
 }
 
-export function setWhere(value: string): SetWhereAction {
-  return {
-    type: ActionTypes.SET_ITEM_WHERE,
-    payload: {
-      value
-    }
-  };
-}
+export const setWhere = (value: string): SetWhereAction => ({
+  type: ActionTypes.SET_ITEM_WHERE,
+  payload: {
+    value
+  }
+});
 
 export interface SetGroupAction {
   type: ActionTypes.SET_ITEM_GROUP;
@@ -277,14 +262,12 @@ export interface SetGroupAction {
   };
 }
 
-export function setGroup(gr: number): SetGroupAction {
-  return {
-    type: ActionTypes.SET_ITEM_GROUP,
-    payload: {
-      gr
-    }
-  };
-}
+export const setGroup = (gr: number): SetGroupAction => ({
+  type: ActionTypes.SET_ITEM_GROUP,
+  payload: {
+    gr
+  }
+});
 
 export interface SetTemplateAction {
   type: ActionTypes.SET_ITEM_TEMPLATE;
@@ -293,14 +276,12 @@ export interface SetTemplateAction {
   };
 }
 
-export function setTemplate(template: string): SetTemplateAction {
-  return {
-    type: ActionTypes.SET_ITEM_TEMPLATE,
-    payload: {
-      template
-    }
-  };
-}
+export const setTemplate = (template: string): SetTemplateAction => ({
+  type: ActionTypes.SET_ITEM_TEMPLATE,
+  payload: {
+    template
+  }
+});
 
 export interface SetCombatTechniqueAction {
   type: ActionTypes.SET_ITEM_COMBAT_TECHNIQUE;
@@ -309,14 +290,12 @@ export interface SetCombatTechniqueAction {
   };
 }
 
-export function setCombatTechnique(id: string): SetCombatTechniqueAction {
-  return {
-    type: ActionTypes.SET_ITEM_COMBAT_TECHNIQUE,
-    payload: {
-      id
-    }
-  };
-}
+export const setCombatTechnique = (id: string): SetCombatTechniqueAction => ({
+  type: ActionTypes.SET_ITEM_COMBAT_TECHNIQUE,
+  payload: {
+    id
+  }
+});
 
 export interface SetDamageDiceNumberAction {
   type: ActionTypes.SET_ITEM_DAMAGE_DICE_NUMBER;
@@ -325,14 +304,12 @@ export interface SetDamageDiceNumberAction {
   };
 }
 
-export function setDamageDiceNumber(value: string): SetDamageDiceNumberAction {
-  return {
-    type: ActionTypes.SET_ITEM_DAMAGE_DICE_NUMBER,
-    payload: {
-      value
-    }
-  };
-}
+export const setDamageDiceNumber = (value: string): SetDamageDiceNumberAction => ({
+  type: ActionTypes.SET_ITEM_DAMAGE_DICE_NUMBER,
+  payload: {
+    value
+  }
+});
 
 export interface SetDamageDiceSidesAction {
   type: ActionTypes.SET_ITEM_DAMAGE_DICE_SIDES;
@@ -341,14 +318,12 @@ export interface SetDamageDiceSidesAction {
   };
 }
 
-export function setDamageDiceSides(value: number): SetDamageDiceSidesAction {
-  return {
-    type: ActionTypes.SET_ITEM_DAMAGE_DICE_SIDES,
-    payload: {
-      value
-    }
-  };
-}
+export const setDamageDiceSides = (value: number): SetDamageDiceSidesAction => ({
+  type: ActionTypes.SET_ITEM_DAMAGE_DICE_SIDES,
+  payload: {
+    value
+  }
+});
 
 export interface SetDamageFlatAction {
   type: ActionTypes.SET_ITEM_DAMAGE_FLAT;
@@ -357,14 +332,12 @@ export interface SetDamageFlatAction {
   };
 }
 
-export function setDamageFlat(value: string): SetDamageFlatAction {
-  return {
-    type: ActionTypes.SET_ITEM_DAMAGE_FLAT,
-    payload: {
-      value
-    }
-  };
-}
+export const setDamageFlat = (value: string): SetDamageFlatAction => ({
+  type: ActionTypes.SET_ITEM_DAMAGE_FLAT,
+  payload: {
+    value
+  }
+});
 
 export interface SetPrimaryAttributeAction {
   type: ActionTypes.SET_ITEM_PRIMARY_ATTRIBUTE;
@@ -373,14 +346,12 @@ export interface SetPrimaryAttributeAction {
   };
 }
 
-export function setPrimaryAttribute(primary: string | undefined): SetPrimaryAttributeAction {
-  return {
-    type: ActionTypes.SET_ITEM_PRIMARY_ATTRIBUTE,
-    payload: {
-      primary
-    }
-  };
-}
+export const setPrimaryAttribute = (primary: string | undefined): SetPrimaryAttributeAction => ({
+  type: ActionTypes.SET_ITEM_PRIMARY_ATTRIBUTE,
+  payload: {
+    primary
+  }
+});
 
 export interface SetDamageThresholdAction {
   type: ActionTypes.SET_ITEM_DAMAGE_THRESHOLD;
@@ -389,14 +360,12 @@ export interface SetDamageThresholdAction {
   };
 }
 
-export function setDamageThreshold(value: string): SetDamageThresholdAction {
-  return {
-    type: ActionTypes.SET_ITEM_DAMAGE_THRESHOLD,
-    payload: {
-      value
-    }
-  };
-}
+export const setDamageThreshold = (value: string): SetDamageThresholdAction => ({
+  type: ActionTypes.SET_ITEM_DAMAGE_THRESHOLD,
+  payload: {
+    value
+  }
+});
 
 export interface SetFirstDamageThresholdAction {
   type: ActionTypes.SET_ITEM_FIRST_DAMAGE_THRESHOLD;
@@ -405,14 +374,12 @@ export interface SetFirstDamageThresholdAction {
   };
 }
 
-export function setFirstDamageThreshold(value: string): SetFirstDamageThresholdAction {
-  return {
-    type: ActionTypes.SET_ITEM_FIRST_DAMAGE_THRESHOLD,
-    payload: {
-      value
-    }
-  };
-}
+export const setFirstDamageThreshold = (value: string): SetFirstDamageThresholdAction => ({
+  type: ActionTypes.SET_ITEM_FIRST_DAMAGE_THRESHOLD,
+  payload: {
+    value
+  }
+});
 
 export interface SetSecondDamageThresholdAction {
   type: ActionTypes.SET_ITEM_SECOND_DAMAGE_THRESHOLD;
@@ -421,24 +388,20 @@ export interface SetSecondDamageThresholdAction {
   };
 }
 
-export function setSecondDamageThreshold(value: string): SetSecondDamageThresholdAction {
-  return {
-    type: ActionTypes.SET_ITEM_SECOND_DAMAGE_THRESHOLD,
-    payload: {
-      value
-    }
-  };
-}
+export const setSecondDamageThreshold = (value: string): SetSecondDamageThresholdAction => ({
+  type: ActionTypes.SET_ITEM_SECOND_DAMAGE_THRESHOLD,
+  payload: {
+    value
+  }
+});
 
 export interface SwitchIsDamageThresholdSeparatedAction {
   type: ActionTypes.SWITCH_IS_ITEM_DAMAGE_THRESHOLD_SEPARATED;
 }
 
-export function switchIsDamageThresholdSeparated(): SwitchIsDamageThresholdSeparatedAction {
-  return {
-    type: ActionTypes.SWITCH_IS_ITEM_DAMAGE_THRESHOLD_SEPARATED
-  };
-}
+export const switchIsDamageThresholdSeparated = (): SwitchIsDamageThresholdSeparatedAction => ({
+  type: ActionTypes.SWITCH_IS_ITEM_DAMAGE_THRESHOLD_SEPARATED
+});
 
 export interface SetAttackAction {
   type: ActionTypes.SET_ITEM_ATTACK;
@@ -447,14 +410,12 @@ export interface SetAttackAction {
   };
 }
 
-export function setAttack(value: string): SetAttackAction {
-  return {
-    type: ActionTypes.SET_ITEM_ATTACK,
-    payload: {
-      value
-    }
-  };
-}
+export const setAttack = (value: string): SetAttackAction => ({
+  type: ActionTypes.SET_ITEM_ATTACK,
+  payload: {
+    value
+  }
+});
 
 export interface SetParryAction {
   type: ActionTypes.SET_ITEM_PARRY;
@@ -463,14 +424,12 @@ export interface SetParryAction {
   };
 }
 
-export function setParry(value: string): SetParryAction {
-  return {
-    type: ActionTypes.SET_ITEM_PARRY,
-    payload: {
-      value
-    }
-  };
-}
+export const setParry = (value: string): SetParryAction => ({
+  type: ActionTypes.SET_ITEM_PARRY,
+  payload: {
+    value
+  }
+});
 
 export interface SetReachAction {
   type: ActionTypes.SET_ITEM_REACH;
@@ -479,14 +438,12 @@ export interface SetReachAction {
   };
 }
 
-export function setReach(id: number): SetReachAction {
-  return {
-    type: ActionTypes.SET_ITEM_REACH,
-    payload: {
-      id
-    }
-  };
-}
+export const setReach = (id: number): SetReachAction => ({
+  type: ActionTypes.SET_ITEM_REACH,
+  payload: {
+    id
+  }
+});
 
 export interface SetLengthAction {
   type: ActionTypes.SET_ITEM_LENGTH;
@@ -495,14 +452,12 @@ export interface SetLengthAction {
   };
 }
 
-export function setLength(value: string): SetLengthAction {
-  return {
-    type: ActionTypes.SET_ITEM_LENGTH,
-    payload: {
-      value
-    }
-  };
-}
+export const setLength = (value: string): SetLengthAction => ({
+  type: ActionTypes.SET_ITEM_LENGTH,
+  payload: {
+    value
+  }
+});
 
 export interface SetStructurePointsAction {
   type: ActionTypes.SET_ITEM_STRUCTURE_POINTS;
@@ -511,14 +466,12 @@ export interface SetStructurePointsAction {
   };
 }
 
-export function setStructurePoints(value: string): SetStructurePointsAction {
-  return {
-    type: ActionTypes.SET_ITEM_STRUCTURE_POINTS,
-    payload: {
-      value
-    }
-  };
-}
+export const setStructurePoints = (value: string): SetStructurePointsAction => ({
+  type: ActionTypes.SET_ITEM_STRUCTURE_POINTS,
+  payload: {
+    value
+  }
+});
 
 export interface SetRangeAction {
   type: ActionTypes.SET_ITEM_RANGE;
@@ -528,15 +481,13 @@ export interface SetRangeAction {
   };
 }
 
-export function setRange(value: string, index: number): SetRangeAction {
-  return {
-    type: ActionTypes.SET_ITEM_RANGE,
-    payload: {
-      value,
-      index
-    }
-  };
-}
+export const setRange = (value: string, index: number): SetRangeAction => ({
+  type: ActionTypes.SET_ITEM_RANGE,
+  payload: {
+    value,
+    index
+  }
+});
 
 export interface SetReloadTimeAction {
   type: ActionTypes.SET_ITEM_RELOAD_TIME;
@@ -545,14 +496,12 @@ export interface SetReloadTimeAction {
   };
 }
 
-export function setReloadTime(value: string): SetReloadTimeAction {
-  return {
-    type: ActionTypes.SET_ITEM_RELOAD_TIME,
-    payload: {
-      value
-    }
-  };
-}
+export const setReloadTime = (value: string): SetReloadTimeAction => ({
+  type: ActionTypes.SET_ITEM_RELOAD_TIME,
+  payload: {
+    value
+  }
+});
 
 export interface SetAmmunitionAction {
   type: ActionTypes.SET_ITEM_AMMUNITION;
@@ -561,14 +510,12 @@ export interface SetAmmunitionAction {
   };
 }
 
-export function setAmmunition(id: string): SetAmmunitionAction {
-  return {
-    type: ActionTypes.SET_ITEM_AMMUNITION,
-    payload: {
-      id
-    }
-  };
-}
+export const setAmmunition = (id: string): SetAmmunitionAction => ({
+  type: ActionTypes.SET_ITEM_AMMUNITION,
+  payload: {
+    id
+  }
+});
 
 export interface SetProtectionAction {
   type: ActionTypes.SET_ITEM_PROTECTION;
@@ -577,14 +524,12 @@ export interface SetProtectionAction {
   };
 }
 
-export function setProtection(value: string): SetProtectionAction {
-  return {
-    type: ActionTypes.SET_ITEM_PROTECTION,
-    payload: {
-      value
-    }
-  };
-}
+export const setProtection = (value: string): SetProtectionAction => ({
+  type: ActionTypes.SET_ITEM_PROTECTION,
+  payload: {
+    value
+  }
+});
 
 export interface SetEncumbranceAction {
   type: ActionTypes.SET_ITEM_ENCUMBRANCE;
@@ -593,14 +538,12 @@ export interface SetEncumbranceAction {
   };
 }
 
-export function setEncumbrance(value: string): SetEncumbranceAction {
-  return {
-    type: ActionTypes.SET_ITEM_ENCUMBRANCE,
-    payload: {
-      value
-    }
-  };
-}
+export const setEncumbrance = (value: string): SetEncumbranceAction => ({
+  type: ActionTypes.SET_ITEM_ENCUMBRANCE,
+  payload: {
+    value
+  }
+});
 
 export interface SetMovementModifierAction {
   type: ActionTypes.SET_ITEM_MOVEMENT_MODIFIER;
@@ -609,14 +552,12 @@ export interface SetMovementModifierAction {
   };
 }
 
-export function setMovementModifier(value: string): SetMovementModifierAction {
-  return {
-    type: ActionTypes.SET_ITEM_MOVEMENT_MODIFIER,
-    payload: {
-      value
-    }
-  };
-}
+export const setMovementModifier = (value: string): SetMovementModifierAction => ({
+  type: ActionTypes.SET_ITEM_MOVEMENT_MODIFIER,
+  payload: {
+    value
+  }
+});
 
 export interface SetInitiativeModifierAction {
   type: ActionTypes.SET_ITEM_INITIATIVE_MODIFIER;
@@ -625,14 +566,12 @@ export interface SetInitiativeModifierAction {
   };
 }
 
-export function setInitiativeModifier(value: string): SetInitiativeModifierAction {
-  return {
-    type: ActionTypes.SET_ITEM_INITIATIVE_MODIFIER,
-    payload: {
-      value
-    }
-  };
-}
+export const setInitiativeModifier = (value: string): SetInitiativeModifierAction => ({
+  type: ActionTypes.SET_ITEM_INITIATIVE_MODIFIER,
+  payload: {
+    value
+  }
+});
 
 export interface SetStabilityModifierAction {
   type: ActionTypes.SET_ITEM_STABILITY_MODIFIER;
@@ -641,44 +580,36 @@ export interface SetStabilityModifierAction {
   };
 }
 
-export function setStabilityModifier(value: string): SetStabilityModifierAction {
-  return {
-    type: ActionTypes.SET_ITEM_STABILITY_MODIFIER,
-    payload: {
-      value
-    }
-  };
-}
+export const setStabilityModifier = (value: string): SetStabilityModifierAction => ({
+  type: ActionTypes.SET_ITEM_STABILITY_MODIFIER,
+  payload: {
+    value
+  }
+});
 
 export interface SwitchIsParryingWeaponAction {
   type: ActionTypes.SWITCH_IS_ITEM_PARRYING_WEAPON;
 }
 
-export function switchIsParryingWeapon(): SwitchIsParryingWeaponAction {
-  return {
-    type: ActionTypes.SWITCH_IS_ITEM_PARRYING_WEAPON
-  };
-}
+export const switchIsParryingWeapon = (): SwitchIsParryingWeaponAction => ({
+  type: ActionTypes.SWITCH_IS_ITEM_PARRYING_WEAPON
+});
 
 export interface SwitchIsTwoHandedWeaponAction {
   type: ActionTypes.SWITCH_IS_ITEM_TWO_HANDED_WEAPON;
 }
 
-export function switchIsTwoHandedWeapon(): SwitchIsTwoHandedWeaponAction {
-  return {
-    type: ActionTypes.SWITCH_IS_ITEM_TWO_HANDED_WEAPON
-  };
-}
+export const switchIsTwoHandedWeapon = (): SwitchIsTwoHandedWeaponAction => ({
+  type: ActionTypes.SWITCH_IS_ITEM_TWO_HANDED_WEAPON
+});
 
 export interface SwitchIsImprovisedWeaponAction {
   type: ActionTypes.SWITCH_IS_ITEM_IMPROVISED_WEAPON;
 }
 
-export function switchIsImprovisedWeapon(): SwitchIsImprovisedWeaponAction {
-  return {
-    type: ActionTypes.SWITCH_IS_ITEM_IMPROVISED_WEAPON
-  };
-}
+export const switchIsImprovisedWeapon = (): SwitchIsImprovisedWeaponAction => ({
+  type: ActionTypes.SWITCH_IS_ITEM_IMPROVISED_WEAPON
+});
 
 export interface SetImprovisedWeaponGroupAction {
   type: ActionTypes.SET_ITEM_IMPROVISED_WEAPON_GROUP;
@@ -687,14 +618,12 @@ export interface SetImprovisedWeaponGroupAction {
   };
 }
 
-export function setImprovisedWeaponGroup(gr: number): SetImprovisedWeaponGroupAction {
-  return {
-    type: ActionTypes.SET_ITEM_IMPROVISED_WEAPON_GROUP,
-    payload: {
-      gr
-    }
-  };
-}
+export const setImprovisedWeaponGroup = (gr: number): SetImprovisedWeaponGroupAction => ({
+  type: ActionTypes.SET_ITEM_IMPROVISED_WEAPON_GROUP,
+  payload: {
+    gr
+  }
+});
 
 export interface SetLossAction {
   type: ActionTypes.SET_ITEM_LOSS;
@@ -703,34 +632,28 @@ export interface SetLossAction {
   };
 }
 
-export function setLoss(id: number | undefined): SetLossAction {
-  return {
-    type: ActionTypes.SET_ITEM_LOSS,
-    payload: {
-      id
-    }
-  };
-}
+export const setLoss = (id: number | undefined): SetLossAction => ({
+  type: ActionTypes.SET_ITEM_LOSS,
+  payload: {
+    id
+  }
+});
 
 export interface SwitchIsForArmorZonesOnlyAction {
   type: ActionTypes.SWITCH_IS_ITEM_FOR_ARMOR_ZONES_ONLY;
 }
 
-export function switchIsForArmorZonesOnly(): SwitchIsForArmorZonesOnlyAction {
-  return {
-    type: ActionTypes.SWITCH_IS_ITEM_FOR_ARMOR_ZONES_ONLY
-  };
-}
+export const switchIsForArmorZonesOnly = (): SwitchIsForArmorZonesOnlyAction => ({
+  type: ActionTypes.SWITCH_IS_ITEM_FOR_ARMOR_ZONES_ONLY
+});
 
 export interface SwitchHasAdditionalPenaltiesAction {
   type: ActionTypes.SWITCH_ITEM_HAS_ADDITIONAL_PENALTIES;
 }
 
-export function setHasAdditionalPenalties(): SwitchHasAdditionalPenaltiesAction {
-  return {
-    type: ActionTypes.SWITCH_ITEM_HAS_ADDITIONAL_PENALTIES
-  };
-}
+export const setHasAdditionalPenalties = (): SwitchHasAdditionalPenaltiesAction => ({
+  type: ActionTypes.SWITCH_ITEM_HAS_ADDITIONAL_PENALTIES
+});
 
 export interface SetArmorTypeAction {
   type: ActionTypes.SET_ITEM_ARMOR_TYPE;
@@ -739,14 +662,12 @@ export interface SetArmorTypeAction {
   };
 }
 
-export function setArmorType(id: number): SetArmorTypeAction {
-  return {
-    type: ActionTypes.SET_ITEM_ARMOR_TYPE,
-    payload: {
-      id
-    }
-  };
-}
+export const setArmorType = (id: number): SetArmorTypeAction => ({
+  type: ActionTypes.SET_ITEM_ARMOR_TYPE,
+  payload: {
+    id
+  }
+});
 
 export interface ApplyItemTemplateAction {
   type: ActionTypes.APPLY_ITEM_TEMPLATE;
@@ -755,11 +676,18 @@ export interface ApplyItemTemplateAction {
   };
 }
 
-export function applyItemTemplate(): ApplyItemTemplateAction {
-  return {
-    type: ActionTypes.APPLY_ITEM_TEMPLATE
-  };
-}
+export const applyItemTemplate = (id: string): AsyncAction => (dispatch, getState) => {
+  getWikiItemTemplates (getState ())
+    .lookup (id)
+    .fmap (
+      template => dispatch<ApplyItemTemplateAction> ({
+        type: ActionTypes.APPLY_ITEM_TEMPLATE,
+        payload: {
+          template
+        }
+      })
+    );
+};
 
 export interface LockItemTemplateAction {
   type: ActionTypes.LOCK_ITEM_TEMPLATE;
@@ -768,21 +696,26 @@ export interface LockItemTemplateAction {
   };
 }
 
-export function lockItemTemplate(): LockItemTemplateAction {
-  return {
-    type: ActionTypes.LOCK_ITEM_TEMPLATE
-  };
-}
+export const lockItemTemplate = (id: string): AsyncAction => (dispatch, getState) => {
+  getWikiItemTemplates (getState ())
+    .lookup (id)
+    .fmap (
+      template => dispatch<LockItemTemplateAction> ({
+        type: ActionTypes.LOCK_ITEM_TEMPLATE,
+        payload: {
+          template
+        }
+      })
+    );
+};
 
 export interface UnlockItemTemplateAction {
   type: ActionTypes.UNLOCK_ITEM_TEMPLATE;
 }
 
-export function unlockItemTemplate(): UnlockItemTemplateAction {
-  return {
-    type: ActionTypes.UNLOCK_ITEM_TEMPLATE
-  };
-}
+export const unlockItemTemplate = (): UnlockItemTemplateAction => ({
+  type: ActionTypes.UNLOCK_ITEM_TEMPLATE
+});
 
 export interface AddArmorZonesAction {
   type: ActionTypes.ADD_ARMOR_ZONES;
@@ -791,47 +724,44 @@ export interface AddArmorZonesAction {
   };
 }
 
-export function addArmorZonesToList(): AsyncAction {
-  return (dispatch, getState) => {
-    const newId = `ARMORZONES_${getNewId([...getArmorZonesState(getState()).keys()])}`;
-    dispatch<AddArmorZonesAction>({
-      type: ActionTypes.ADD_ARMOR_ZONES,
-      payload: {
-        newId
-      }
-    });
-  };
-}
+export const addArmorZonesToList = (): AsyncAction => (dispatch, getState) => {
+  getArmorZonesState (getState ()).fmap (
+    zoneArmors => {
+      const newId = `ARMORZONES_${getNewId (zoneArmors.keys ())}`;
+
+      return dispatch<AddArmorZonesAction> ({
+        type: ActionTypes.ADD_ARMOR_ZONES,
+        payload: {
+          newId
+        }
+      });
+    }
+  );
+};
 
 export interface CreateArmorZonesAction {
   type: ActionTypes.CREATE_ARMOR_ZONES;
 }
 
-export function createArmorZones(): CreateArmorZonesAction {
-  return {
-    type: ActionTypes.CREATE_ARMOR_ZONES
-  };
-}
+export const createArmorZones = (): CreateArmorZonesAction => ({
+  type: ActionTypes.CREATE_ARMOR_ZONES
+});
 
 export interface CloseArmorZonesEditorAction {
   type: ActionTypes.CLOSE_ARMOR_ZONES_EDITOR;
 }
 
-export function closeArmorZonesEditor(): CloseArmorZonesEditorAction {
-  return {
-    type: ActionTypes.CLOSE_ARMOR_ZONES_EDITOR
-  };
-}
+export const closeArmorZonesEditor = (): CloseArmorZonesEditorAction => ({
+  type: ActionTypes.CLOSE_ARMOR_ZONES_EDITOR
+});
 
 export interface SaveArmorZonesAction {
   type: ActionTypes.SAVE_ARMOR_ZONES;
 }
 
-export function saveArmorZones(): SaveArmorZonesAction {
-  return {
-    type: ActionTypes.SAVE_ARMOR_ZONES
-  };
-}
+export const saveArmorZones = (): SaveArmorZonesAction => ({
+  type: ActionTypes.SAVE_ARMOR_ZONES
+});
 
 export interface EditArmorZonesAction {
   type: ActionTypes.EDIT_ARMOR_ZONES;
@@ -840,14 +770,12 @@ export interface EditArmorZonesAction {
   };
 }
 
-export function editArmorZones(id: string): EditArmorZonesAction {
-  return {
-      type: ActionTypes.EDIT_ARMOR_ZONES,
-      payload: {
-        id
-      }
-    };
-}
+export const editArmorZones = (id: string): EditArmorZonesAction => ({
+  type: ActionTypes.EDIT_ARMOR_ZONES,
+  payload: {
+    id
+  }
+});
 
 export interface RemoveArmorZonesAction {
   type: ActionTypes.REMOVE_ARMOR_ZONES;
@@ -856,14 +784,12 @@ export interface RemoveArmorZonesAction {
   };
 }
 
-export function removeArmorZonesFromList(id: string): RemoveArmorZonesAction {
-  return {
-    type: ActionTypes.REMOVE_ARMOR_ZONES,
-    payload: {
-      id
-    }
-  };
-}
+export const removeArmorZonesFromList = (id: string): RemoveArmorZonesAction => ({
+  type: ActionTypes.REMOVE_ARMOR_ZONES,
+  payload: {
+    id
+  }
+});
 
 export interface SetArmorZonesNameAction {
   type: ActionTypes.SET_ARMOR_ZONES_NAME;
@@ -872,14 +798,12 @@ export interface SetArmorZonesNameAction {
   };
 }
 
-export function setArmorZonesName(value: string): SetArmorZonesNameAction {
-  return {
-    type: ActionTypes.SET_ARMOR_ZONES_NAME,
-    payload: {
-      value
-    }
-  };
-}
+export const setArmorZonesName = (value: string): SetArmorZonesNameAction => ({
+  type: ActionTypes.SET_ARMOR_ZONES_NAME,
+  payload: {
+    value
+  }
+});
 
 export interface SetArmorZonesHeadAction {
   type: ActionTypes.SET_ARMOR_ZONES_HEAD;
@@ -888,14 +812,12 @@ export interface SetArmorZonesHeadAction {
   };
 }
 
-export function setArmorZonesHead(id: string | undefined): SetArmorZonesHeadAction {
-  return {
-    type: ActionTypes.SET_ARMOR_ZONES_HEAD,
-    payload: {
-      id
-    }
-  };
-}
+export const setArmorZonesHead = (id: string | undefined): SetArmorZonesHeadAction => ({
+  type: ActionTypes.SET_ARMOR_ZONES_HEAD,
+  payload: {
+    id
+  }
+});
 
 export interface SetArmorZonesHeadLossAction {
   type: ActionTypes.SET_ARMOR_ZONES_HEAD_LOSS;
@@ -904,14 +826,12 @@ export interface SetArmorZonesHeadLossAction {
   };
 }
 
-export function setArmorZonesHeadLoss(id: number | undefined): SetArmorZonesHeadLossAction {
-  return {
-    type: ActionTypes.SET_ARMOR_ZONES_HEAD_LOSS,
-    payload: {
-      id
-    }
-  };
-}
+export const setArmorZonesHeadLoss = (id: number | undefined): SetArmorZonesHeadLossAction => ({
+  type: ActionTypes.SET_ARMOR_ZONES_HEAD_LOSS,
+  payload: {
+    id
+  }
+});
 
 export interface SetArmorZonesLeftArmAction {
   type: ActionTypes.SET_ARMOR_ZONES_LEFT_ARM;
@@ -920,14 +840,12 @@ export interface SetArmorZonesLeftArmAction {
   };
 }
 
-export function setArmorZonesLeftArm(id: string | undefined): SetArmorZonesLeftArmAction {
-  return {
-    type: ActionTypes.SET_ARMOR_ZONES_LEFT_ARM,
-    payload: {
-      id
-    }
-  };
-}
+export const setArmorZonesLeftArm = (id: string | undefined): SetArmorZonesLeftArmAction => ({
+  type: ActionTypes.SET_ARMOR_ZONES_LEFT_ARM,
+  payload: {
+    id
+  }
+});
 
 export interface SetArmorZonesLeftArmLossAction {
   type: ActionTypes.SET_ARMOR_ZONES_LEFT_ARM_LOSS;
@@ -936,14 +854,13 @@ export interface SetArmorZonesLeftArmLossAction {
   };
 }
 
-export function setArmorZonesLeftArmLoss(id: number | undefined): SetArmorZonesLeftArmLossAction {
-  return {
+export const setArmorZonesLeftArmLoss =
+  (id: number | undefined): SetArmorZonesLeftArmLossAction => ({
     type: ActionTypes.SET_ARMOR_ZONES_LEFT_ARM_LOSS,
     payload: {
       id
     }
-  };
-}
+  });
 
 export interface SetArmorZonesLeftLegAction {
   type: ActionTypes.SET_ARMOR_ZONES_LEFT_LEG;
@@ -952,14 +869,12 @@ export interface SetArmorZonesLeftLegAction {
   };
 }
 
-export function setArmorZonesLeftLeg(id: string | undefined): SetArmorZonesLeftLegAction {
-  return {
-    type: ActionTypes.SET_ARMOR_ZONES_LEFT_LEG,
-    payload: {
-      id
-    }
-  };
-}
+export const setArmorZonesLeftLeg = (id: string | undefined): SetArmorZonesLeftLegAction => ({
+  type: ActionTypes.SET_ARMOR_ZONES_LEFT_LEG,
+  payload: {
+    id
+  }
+});
 
 export interface SetArmorZonesLeftLegLossAction {
   type: ActionTypes.SET_ARMOR_ZONES_LEFT_LEG_LOSS;
@@ -968,14 +883,13 @@ export interface SetArmorZonesLeftLegLossAction {
   };
 }
 
-export function setArmorZonesLeftLegLoss(id: number | undefined): SetArmorZonesLeftLegLossAction {
-  return {
+export const setArmorZonesLeftLegLoss =
+  (id: number | undefined): SetArmorZonesLeftLegLossAction => ({
     type: ActionTypes.SET_ARMOR_ZONES_LEFT_LEG_LOSS,
     payload: {
       id
     }
-  };
-}
+  });
 
 export interface SetArmorZonesTorsoAction {
   type: ActionTypes.SET_ARMOR_ZONES_TORSO;
@@ -984,14 +898,12 @@ export interface SetArmorZonesTorsoAction {
   };
 }
 
-export function setArmorZonesTorso(id: string | undefined): SetArmorZonesTorsoAction {
-  return {
-    type: ActionTypes.SET_ARMOR_ZONES_TORSO,
-    payload: {
-      id
-    }
-  };
-}
+export const setArmorZonesTorso = (id: string | undefined): SetArmorZonesTorsoAction => ({
+  type: ActionTypes.SET_ARMOR_ZONES_TORSO,
+  payload: {
+    id
+  }
+});
 
 export interface SetArmorZonesTorsoLossAction {
   type: ActionTypes.SET_ARMOR_ZONES_TORSO_LOSS;
@@ -1000,14 +912,12 @@ export interface SetArmorZonesTorsoLossAction {
   };
 }
 
-export function setArmorZonesTorsoLoss(id: number | undefined): SetArmorZonesTorsoLossAction {
-  return {
-    type: ActionTypes.SET_ARMOR_ZONES_TORSO_LOSS,
-    payload: {
-      id
-    }
-  };
-}
+export const setArmorZonesTorsoLoss = (id: number | undefined): SetArmorZonesTorsoLossAction => ({
+  type: ActionTypes.SET_ARMOR_ZONES_TORSO_LOSS,
+  payload: {
+    id
+  }
+});
 
 export interface SetArmorZonesRightArmAction {
   type: ActionTypes.SET_ARMOR_ZONES_RIGHT_ARM;
@@ -1016,14 +926,12 @@ export interface SetArmorZonesRightArmAction {
   };
 }
 
-export function setArmorZonesRightArm(id: string | undefined): SetArmorZonesRightArmAction {
-  return {
-    type: ActionTypes.SET_ARMOR_ZONES_RIGHT_ARM,
-    payload: {
-      id
-    }
-  };
-}
+export const setArmorZonesRightArm = (id: string | undefined): SetArmorZonesRightArmAction => ({
+  type: ActionTypes.SET_ARMOR_ZONES_RIGHT_ARM,
+  payload: {
+    id
+  }
+});
 
 export interface SetArmorZonesRightArmLossAction {
   type: ActionTypes.SET_ARMOR_ZONES_RIGHT_ARM_LOSS;
@@ -1032,14 +940,13 @@ export interface SetArmorZonesRightArmLossAction {
   };
 }
 
-export function setArmorZonesRightArmLoss(id: number | undefined): SetArmorZonesRightArmLossAction {
-  return {
+export const setArmorZonesRightArmLoss =
+  (id: number | undefined): SetArmorZonesRightArmLossAction => ({
     type: ActionTypes.SET_ARMOR_ZONES_RIGHT_ARM_LOSS,
     payload: {
       id
     }
-  };
-}
+  });
 
 export interface SetArmorZonesRightLegAction {
   type: ActionTypes.SET_ARMOR_ZONES_RIGHT_LEG;
@@ -1048,14 +955,12 @@ export interface SetArmorZonesRightLegAction {
   };
 }
 
-export function setArmorZonesRightLeg(id: string | undefined): SetArmorZonesRightLegAction {
-  return {
-    type: ActionTypes.SET_ARMOR_ZONES_RIGHT_LEG,
-    payload: {
-      id
-    }
-  };
-}
+export const setArmorZonesRightLeg = (id: string | undefined): SetArmorZonesRightLegAction => ({
+  type: ActionTypes.SET_ARMOR_ZONES_RIGHT_LEG,
+  payload: {
+    id
+  }
+});
 
 export interface SetArmorZonesRightLegLossAction {
   type: ActionTypes.SET_ARMOR_ZONES_RIGHT_LEG_LOSS;
@@ -1064,14 +969,13 @@ export interface SetArmorZonesRightLegLossAction {
   };
 }
 
-export function setArmorZonesRightLegLoss(id: number | undefined): SetArmorZonesRightLegLossAction {
-  return {
+export const setArmorZonesRightLegLoss =
+  (id: number | undefined): SetArmorZonesRightLegLossAction => ({
     type: ActionTypes.SET_ARMOR_ZONES_RIGHT_LEG_LOSS,
     payload: {
       id
     }
-  };
-}
+  });
 
 export interface SetMeleeItemTemplatesCombatTechniqueFilterAction {
   type: ActionTypes.SET_MELEE_ITEM_TEMPLATES_COMBAT_TECHNIQUE_FILTER;
@@ -1080,14 +984,13 @@ export interface SetMeleeItemTemplatesCombatTechniqueFilterAction {
   };
 }
 
-export function setMeleeItemTemplatesCombatTechniqueFilter(filterOption: string | undefined): SetMeleeItemTemplatesCombatTechniqueFilterAction {
-  return {
+export const setMeleeItemTemplatesCombatTechniqueFilter =
+  (filterOption: string | undefined): SetMeleeItemTemplatesCombatTechniqueFilterAction => ({
     type: ActionTypes.SET_MELEE_ITEM_TEMPLATES_COMBAT_TECHNIQUE_FILTER,
     payload: {
       filterOption
     }
-  };
-}
+  });
 
 export interface SetRangedItemTemplatesCombatTechniqueFilterAction {
   type: ActionTypes.SET_RANGED_ITEM_TEMPLATES_COMBAT_TECHNIQUE_FILTER;
@@ -1096,14 +999,13 @@ export interface SetRangedItemTemplatesCombatTechniqueFilterAction {
   };
 }
 
-export function setRangedItemTemplatesCombatTechniqueFilter(filterOption: string | undefined): SetRangedItemTemplatesCombatTechniqueFilterAction {
-  return {
+export const setRangedItemTemplatesCombatTechniqueFilter =
+  (filterOption: string | undefined): SetRangedItemTemplatesCombatTechniqueFilterAction => ({
     type: ActionTypes.SET_RANGED_ITEM_TEMPLATES_COMBAT_TECHNIQUE_FILTER,
     payload: {
       filterOption
     }
-  };
-}
+  });
 
 export interface SetEquipmentFilterTextAction {
   type: ActionTypes.SET_EQUIPMENT_FILTER_TEXT;
@@ -1112,14 +1014,12 @@ export interface SetEquipmentFilterTextAction {
   };
 }
 
-export function setEquipmentFilterText(filterText: string): SetEquipmentFilterTextAction {
-  return {
-    type: ActionTypes.SET_EQUIPMENT_FILTER_TEXT,
-    payload: {
-      filterText
-    }
-  };
-}
+export const setEquipmentFilterText = (filterText: string): SetEquipmentFilterTextAction => ({
+  type: ActionTypes.SET_EQUIPMENT_FILTER_TEXT,
+  payload: {
+    filterText
+  }
+});
 
 export interface SetItemTemplatesFilterTextAction {
   type: ActionTypes.SET_ITEM_TEMPLATES_FILTER_TEXT;
@@ -1128,14 +1028,13 @@ export interface SetItemTemplatesFilterTextAction {
   };
 }
 
-export function setItemTemplatesFilterText(filterText: string): SetItemTemplatesFilterTextAction {
-  return {
+export const setItemTemplatesFilterText =
+  (filterText: string): SetItemTemplatesFilterTextAction => ({
     type: ActionTypes.SET_ITEM_TEMPLATES_FILTER_TEXT,
     payload: {
       filterText
     }
-  };
-}
+  });
 
 export interface SetZoneArmorFilterTextAction {
   type: ActionTypes.SET_ZONE_ARMOR_FILTER_TEXT;
@@ -1144,11 +1043,9 @@ export interface SetZoneArmorFilterTextAction {
   };
 }
 
-export function setZoneArmorFilterText(filterText: string): SetZoneArmorFilterTextAction {
-  return {
-    type: ActionTypes.SET_ZONE_ARMOR_FILTER_TEXT,
-    payload: {
-      filterText
-    }
-  };
-}
+export const setZoneArmorFilterText = (filterText: string): SetZoneArmorFilterTextAction => ({
+  type: ActionTypes.SET_ZONE_ARMOR_FILTER_TEXT,
+  payload: {
+    filterText
+  }
+});

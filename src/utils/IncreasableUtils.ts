@@ -1,9 +1,11 @@
 import R from 'ramda';
+import { Categories, IncreasableCategory } from '../constants/Categories';
 import { ValueBasedDependent } from '../types/data';
-import { SkillishEntry } from '../types/wiki';
-import { areSufficientAPAvailable } from './adventurePointsUtils';
+import { IncreasableEntry } from '../types/wiki';
+import { getAreSufficientAPAvailable } from './adventurePointsUtils';
 import { Just, Maybe, Record } from './dataUtils';
-import { getDecreaseAP, getIncreaseAP } from './improvementCostUtils';
+import { getIncreaseAP } from './improvementCostUtils';
+import { isAttribute } from './WikiUtils';
 
 export const set =
   <T extends ValueBasedDependent>(instance: T, value: number): T =>
@@ -25,16 +27,36 @@ export const removePoint =
   <T extends ValueBasedDependent>(instance: T): T =>
     (instance as Record<any>).modify (R.dec) ('value') as T;
 
-export const getIncreaseCost = <T extends ValueBasedDependent>(
-  wikiEntry: SkillishEntry,
-  instance: T,
+export const getBaseValueByCategory = (category: IncreasableCategory) => {
+  switch (category) {
+    case Categories.ATTRIBUTES:
+      return 8;
+    case Categories.COMBAT_TECHNIQUES:
+      return 6;
+    case Categories.LITURGIES:
+      return 0;
+    case Categories.SPELLS:
+      return 0;
+    case Categories.TALENTS:
+      return 0;
+  }
+};
+
+const getValueFromHeroStateEntry = (wikiEntry: IncreasableEntry) =>
+  (maybeEntry: Maybe<ValueBasedDependent>) =>
+    Maybe.fromMaybe (getBaseValueByCategory (wikiEntry.get ('category')))
+                    (maybeEntry.fmap (entry => entry.get ('value')));
+
+export const getAreSufficientAPAvailableForIncrease = <T extends ValueBasedDependent>(
+  wikiEntry: IncreasableEntry,
+  instance: Maybe<T>,
   availableAP: number,
   negativeApValid: boolean,
-): Maybe<number> =>
-  Just (getIncreaseAP (wikiEntry.get ('ic')) (instance.lookup ('value')))
-    .bind (Maybe.ensure (areSufficientAPAvailable (negativeApValid) (availableAP)));
-
-export const getDecreaseCost = <T extends ValueBasedDependent>(
-  wikiEntry: SkillishEntry,
-  instance: T,
-): number => getDecreaseAP (wikiEntry.get ('ic')) (instance.lookup ('value'));
+): boolean =>
+  getAreSufficientAPAvailable (negativeApValid)
+                           (availableAP)
+                           (getIncreaseAP (isAttribute (wikiEntry)
+                                            ? 5
+                                            : wikiEntry.get ('ic'))
+                                          (Just (getValueFromHeroStateEntry (wikiEntry)
+                                                                            (instance))));

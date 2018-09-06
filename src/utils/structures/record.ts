@@ -3,6 +3,10 @@ import { List } from './list';
 import { isSome, Just, Maybe } from './maybe';
 import { Tuple } from './tuple';
 
+export interface UnsafeStringKeyObject<V> {
+  [id: string]: V;
+}
+
 export interface StringKeyObject<V> {
   readonly [id: string]: V;
 }

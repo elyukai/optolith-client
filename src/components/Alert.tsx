@@ -1,82 +1,86 @@
 import { remote } from 'electron';
+import localShortcut from 'electron-localshortcut';
 import * as React from 'react';
 import { Action } from 'redux';
-import { Alert as AlertOptions, UIMessages, ViewAlertButton } from '../types/data.d';
+import { Alert as AlertOptions, UIMessages, ViewAlertButton } from '../types/data';
 import { translate } from '../utils/I18n';
 import { Dialog } from './DialogNew';
 
 export interface AlertProps {
-	locale: UIMessages;
-	options: AlertOptions | undefined;
-	close(): void;
-	dispatch(action: Action): void;
+  locale: UIMessages;
+  options: AlertOptions | undefined;
+  close (): void;
+  dispatch (action: Action): void;
 }
 
-export function Alert(props: AlertProps) {
-	const { close, dispatch, options, locale } = props;
-	let buttons: ViewAlertButton[] | undefined;
-	let message;
-	let title;
-	let onClose: (() => void) | undefined;
+export function Alert (props: AlertProps) {
+  const { close, dispatch, options, locale } = props;
+  let buttons: ViewAlertButton[] | undefined;
+  let message;
+  let title;
+  let onClose: (() => void) | undefined;
 
-	if (options) {
-		const {
-			buttons: buttonsOption = [{ label: 'OK', autoWidth: true }],
-			message: messageOption,
-			title: titleOption,
-			confirm,
-			confirmYesNo,
-			onClose: onCloseOption
-		} = options;
+  if (options) {
+    const {
+      buttons: buttonsOption = [{ label: 'OK', autoWidth: true }],
+      message: messageOption,
+      title: titleOption,
+      confirm,
+      confirmYesNo,
+      onClose: onCloseOption
+    } = options;
 
-		buttons = (confirm ? [
-			{
-				label: confirmYesNo ? translate(locale, 'yes') : translate(locale, 'ok'),
-				dispatchOnClick: confirm.resolve
-			},
-			{
-				label: confirmYesNo ? translate(locale, 'no') : translate(locale, 'cancel'),
-				dispatchOnClick: confirm.reject
-			}
-		] : buttonsOption).map(e => {
-			const { dispatchOnClick, ...other } = e;
-			return { ...other, onClick: () => {
-				if (dispatchOnClick) {
-					dispatch(dispatchOnClick);
-				}
-			}};
-		});
-		message = messageOption;
-		title = titleOption;
-		onClose = onCloseOption;
-	}
+    buttons = (confirm ? [
+      {
+        label: confirmYesNo ? translate (locale, 'yes') : translate (locale, 'ok'),
+        dispatchOnClick: confirm.resolve
+      },
+      {
+        label: confirmYesNo ? translate (locale, 'no') : translate (locale, 'cancel'),
+        dispatchOnClick: confirm.reject
+      }
+    ] : buttonsOption).map (e => {
+      const { dispatchOnClick, ...other } = e;
 
-	const closeEnhanced = () => {
-		if (remote.globalShortcut.isRegistered('Enter')) {
-			remote.globalShortcut.unregister('Enter');
-		}
-		if (onClose) {
-			onClose();
-		}
-		close();
-	};
+      return { ...other, onClick: () => {
+        if (dispatchOnClick) {
+          dispatch (dispatchOnClick);
+        }
+      }};
+    });
+    message = messageOption;
+    title = titleOption;
+    onClose = onCloseOption;
+  }
 
-	if (buttons && buttons.length === 1) {
-		remote.globalShortcut.register('Enter', () => {
-			remote.globalShortcut.unregister('Enter');
-			closeEnhanced();
-		});
-	}
+  const currentWindow = remote.getCurrentWindow ();
 
-	return (
-		<Dialog
-			close={closeEnhanced}
-			buttons={buttons}
-			isOpened={typeof options === 'object'}
-			className="alert"
-			title={title}
-			>
-			{message}
-		</Dialog>
-	);
+  const closeEnhanced = () => {
+    if (localShortcut.isRegistered (currentWindow, 'Enter')) {
+      localShortcut.unregister (currentWindow, 'Enter');
+    }
+    if (onClose) {
+      onClose ();
+    }
+    close ();
+  };
+
+  if (buttons && buttons.length === 1) {
+    localShortcut.register (currentWindow, 'Enter', () => {
+      localShortcut.unregister (currentWindow, 'Enter');
+      closeEnhanced ();
+    });
+  }
+
+  return (
+    <Dialog
+      close={closeEnhanced}
+      buttons={buttons}
+      isOpened={typeof options === 'object'}
+      className="alert"
+      title={title}
+      >
+      {message}
+    </Dialog>
+  );
 }

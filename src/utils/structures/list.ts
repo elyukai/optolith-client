@@ -1016,6 +1016,22 @@ f' z       = Nothing
     );
   }
 
+  // ZIPPING AND UNZIPPING LISTS
+
+  /**
+   * `zip :: [a] -> [b] -> [(a, b)]`
+   *
+   * `zip` takes two lists and returns a list of corresponding pairs. If one
+   * input list is short, excess elements of the longer list are discarded.
+   */
+  static zip<A, B> (list1: List<A>): (list2: List<B>) => List<Tuple<A, B>> {
+    return list2 => Maybe.imapMaybe<A, Tuple<A, B>> (
+                                                      index => e => list2.subscript (index)
+                                                        .fmap (e2 => Tuple.of<A, B> (e) (e2))
+                                                    )
+                                                    (list1)
+  }
+
   // "SET" OPERATIONS
 
   /**

@@ -3,8 +3,7 @@ import { AdventurePointsObject } from '../selectors/adventurePointsSelectors';
 import * as Data from '../types/data';
 import { Disadvantage, Skill, WikiAll } from '../types/wiki';
 import { getActiveWithNoCustomCost } from './activatableCostUtils';
-import { List, Maybe, OrderedMap, Record, Tuple } from './dataUtils';
-import { exists } from './exists';
+import { Just, List, Maybe, Nothing, OrderedMap, Record, Tuple } from './dataUtils';
 import { getMagicalTraditions } from './traditionUtils';
 import { getWikiEntryFromSlice } from './WikiUtils';
 
@@ -15,7 +14,7 @@ import { getWikiEntryFromSlice } from './WikiUtils';
  * @param availableAP The AP currently available.
  * @param cost The AP value you want to check.
  */
-export const areSufficientAPAvailable = (
+export const getAreSufficientAPAvailable = (
   (negativeApValid: boolean) => (availableAP: number) => (cost: number): boolean => {
     if (cost > 0 && negativeApValid === false) {
       return cost <= availableAP;
@@ -66,26 +65,26 @@ const getDisAdvantageSubtypeAPSpent = (
     isMagical: boolean;
   },
   isDisadvantage: boolean,
-  adventurePoints: AdventurePointsObject,
-): number | undefined => {
+  adventurePoints: Record<AdventurePointsObject>,
+): Maybe<number> => {
   const { isBlessed, isMagical } = isMagicalOrBlessed;
 
   if (isDisadvantage) {
     if (isMagical) {
-      return adventurePoints.spentOnMagicalDisadvantages;
+      return Just (adventurePoints.get ('spentOnMagicalDisadvantages'));
     }
     else if (isBlessed) {
-      return adventurePoints.spentOnBlessedDisadvantages;
+      return Just (adventurePoints.get ('spentOnBlessedDisadvantages'));
     }
   }
   else if (isMagical) {
-    return adventurePoints.spentOnMagicalAdvantages;
+    return Just (adventurePoints.get ('spentOnMagicalAdvantages'));
   }
   else if (isBlessed) {
-    return adventurePoints.spentOnBlessedAdvantages;
+    return Just (adventurePoints.get ('spentOnBlessedAdvantages'));
   }
 
-  return;
+  return Nothing ();
 }
 
 /**
@@ -100,44 +99,44 @@ const getDisAdvantageSubtypeAPSpent = (
  * @param isInCharacterCreation If the character's AP left can be a negative
  * value (during character creation) or not.
  */
-export const areSufficientAPAvailableForDisAdvantage = (
-  cost: number,
-  adventurePoints: AdventurePointsObject,
-  state: Data.Hero,
-  isMagicalOrBlessed: {
-    isBlessed: boolean;
-    isMagical: boolean;
-  },
-  isDisadvantage: boolean,
-  isInCharacterCreation: boolean,
-): SufficientAPAvailableForDisAdvantage => {
-  const { isMagical } = isMagicalOrBlessed;
+export const getAreSufficientAPAvailableForDisAdvantage = (isInCharacterCreation: boolean) =>
+  (isDisadvantage: boolean) =>
+    (isMagicalOrBlessed: { isBlessed: boolean; isMagical: boolean }) =>
+      (state: Data.Hero) =>
+        (adventurePoints: Record<AdventurePointsObject>) =>
+          (cost: number): Record<SufficientAPAvailableForDisAdvantage> => {
+            const { isMagical } = isMagicalOrBlessed;
 
-  const currentAPSpent = isDisadvantage
-    ? adventurePoints.spentOnDisadvantages
-    : adventurePoints.spentOnAdvantages;
+            const currentAPSpent = isDisadvantage
+              ? adventurePoints.get ('spentOnDisadvantages')
+              : adventurePoints.get ('spentOnAdvantages');
 
-  const subCurrentAPSpent = getDisAdvantageSubtypeAPSpent (
-    isMagicalOrBlessed,
-    isDisadvantage,
-    adventurePoints,
-  );
+            const subCurrentAPSpent = getDisAdvantageSubtypeAPSpent (
+              isMagicalOrBlessed,
+              isDisadvantage,
+              adventurePoints,
+            );
 
-  const smallMax = getDisAdvantagesSubtypeMax (isMagical) (state);
-  const equalizedCost = isDisadvantage ? cost * -1 : cost;
+            const smallMax = getDisAdvantagesSubtypeMax (isMagical) (state);
+            const equalizedCost = isDisadvantage ? cost * -1 : cost;
 
-  const subValid = !isInCharacterCreation
-    || (exists (subCurrentAPSpent)
-      ? subCurrentAPSpent + equalizedCost <= smallMax
-      : true);
+            const subValid = !isInCharacterCreation
+              || Maybe.maybe<number, boolean> (true)
+                             (R.pipe (
+                               R.add (equalizedCost),
+                               R.lte (smallMax)
+                             ))
+                             (subCurrentAPSpent);
 
-  const mainValid = !isInCharacterCreation
-    || currentAPSpent + equalizedCost <= 80;
+            const mainValid = !isInCharacterCreation
+              || currentAPSpent + equalizedCost <= 80;
 
-  const totalValid = cost <= adventurePoints.available || isInCharacterCreation;
+            const totalValid = getAreSufficientAPAvailable (isInCharacterCreation)
+                                                           (adventurePoints.get ('available'))
+                                                           (cost);
 
-  return { totalValid, mainValid, subValid };
-};
+            return Record.of ({ totalValid, mainValid, subValid });
+          };
 
 const getPrinciplesObligationsDiff = (
   entries: List<Record<Data.ActiveViewObject>>,

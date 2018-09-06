@@ -113,6 +113,11 @@ export const isItemTemplate = (obj: Wiki.Entry): obj is Record<Wiki.ItemTemplate
     obj.toObject ().hasOwnProperty ('isTemplateLocked');
 }
 
+export const isAttribute =
+  (obj: Wiki.Entry): obj is Record<Wiki.Attribute> =>
+    !isItemTemplate (obj)
+      && obj.toObject ().category === Categories.ATTRIBUTES;
+
 export const isProfession =
   (obj: Wiki.Entry): obj is Record<Wiki.Profession> =>
     !isItemTemplate (obj)

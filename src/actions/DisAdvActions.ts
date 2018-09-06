@@ -1,18 +1,83 @@
+import R from 'ramda';
+import { Dispatch } from 'react-redux';
 import { ActionTypes } from '../constants/ActionTypes';
-import { Categories } from '../constants/Categories';
+import { ActivatableCategory, Categories } from '../constants/Categories';
+import { AppState } from '../reducers/appReducer';
 import { getAdventurePointsObject } from '../selectors/adventurePointsSelectors';
-import { get } from '../selectors/dependentInstancesSelectors';
-import { isInCharacterCreation } from '../selectors/phaseSelectors';
+import { getIsInCharacterCreation } from '../selectors/phaseSelectors';
 import { getCurrentRace, getCurrentRaceVariant } from '../selectors/rcpSelectors';
-import { getLocaleMessages, getWiki } from '../selectors/stateSelectors';
+import { getCurrentHeroPresent, getWiki } from '../selectors/stateSelectors';
 import { AsyncAction } from '../types/actions';
-import { ActivateArgs, AdvantageInstance, DeactivateArgs, DisadvantageInstance } from '../types/data';
+import { ActivatableDependent, ActivateArgs, ActiveObjectWithId, DeactivateArgs, Hero } from '../types/data';
+import { UIMessagesObject } from '../types/ui';
 import { Advantage, Disadvantage } from '../types/wiki';
-import { convertPerTierCostToFinalCost, getNameCost, isMagicalOrBlessed } from '../utils/ActivatableUtils';
-import { getAdvantagesDisadvantagesSubMax, validateDisAdvantages } from '../utils/APUtils';
-import { Record } from '../utils/dataUtils';
+import { getNameCost } from '../utils/activatableActiveUtils';
+import { convertPerTierCostToFinalCost } from '../utils/activatableCostUtils';
+import { getAreSufficientAPAvailableForDisAdvantage, getDisAdvantagesSubtypeMax, SufficientAPAvailableForDisAdvantage } from '../utils/adventurePointsUtils';
+import { isMagicalOrBlessed } from '../utils/checkActivatableUtils';
+import { Just, List, Maybe, Record, Tuple } from '../utils/dataUtils';
+import { getHeroStateListItem } from '../utils/heroStateUtils';
 import { translate } from '../utils/I18n';
+import { getWikiEntry } from '../utils/WikiUtils';
 import { addAlert } from './AlertActions';
+
+/**
+ * Advantages and disadvantages might not only be added or removed due to not
+ * enough AP but also due to limitations regarding AP spent on advantages,
+ * disadvantages or subtypes thereof (blessed, magical). This function ensures
+ * that the appropiate error message is displayed if an entry cannot be added or
+ * removed.
+ *
+ * If the addition or removal is valid, the passed `successFn` will be called.
+ */
+const handleAreSufficientAPAvailableForDisAdvantage =
+  (locale: UIMessagesObject) =>
+    (successFn: () => void) =>
+      (hero: Hero) =>
+        (areSufficientAPAvailableForDisAdvantage: Record<SufficientAPAvailableForDisAdvantage>) =>
+          (entryType: { isBlessed: boolean; isMagical: boolean }) =>
+            (isDisadvantage: boolean) =>
+              (dispatch: Dispatch<AppState>) => {
+                if (areSufficientAPAvailableForDisAdvantage.get ('totalValid')) {
+                  dispatch (addAlert ({
+                    title: translate (locale, 'notenoughap.title'),
+                    message: translate (locale, 'notenoughap.content'),
+                  }));
+                }
+                else if (areSufficientAPAvailableForDisAdvantage.get ('mainValid')) {
+                  const type = isDisadvantage
+                    ? translate (locale, 'reachedaplimit.disadvantages')
+                    : translate (locale, 'reachedaplimit.advantages');
+
+                  if (type) {
+                    dispatch (addAlert ({
+                      title: translate (locale, 'reachedaplimit.title', type),
+                      message: translate (locale, 'reachedaplimit.content', type),
+                    }));
+                  }
+                }
+                else if (areSufficientAPAvailableForDisAdvantage.get ('subValid')) {
+                  const type = isDisadvantage
+                    ? entryType.isBlessed
+                      ? translate (locale, 'reachedcategoryaplimit.blesseddisadvantages')
+                      : translate (locale, 'reachedcategoryaplimit.magicaldisadvantages')
+                    : entryType.isBlessed
+                    ? translate (locale, 'reachedcategoryaplimit.blessedadvantages')
+                    : translate (locale, 'reachedcategoryaplimit.magicaladvantages');
+
+                  const ap = getDisAdvantagesSubtypeMax (entryType.isMagical) (hero);
+
+                  if (type) {
+                    dispatch (addAlert ({
+                      title: translate (locale, 'reachedcategoryaplimit.title', type),
+                      message: translate (locale, 'reachedcategoryaplimit.content', ap, type),
+                    }));
+                  }
+                }
+                else {
+                  successFn ();
+                }
+              };
 
 interface ActivateArgsWithEntryType extends ActivateArgs {
   isBlessed: boolean;
@@ -23,70 +88,86 @@ interface ActivateArgsWithEntryType extends ActivateArgs {
   wikiEntry: Record<Advantage> | Record<Disadvantage>;
 }
 
+interface AlbinoChangedColor {
+  hairColor?: number;
+  eyeColor?: number;
+}
+
 export interface ActivateDisAdvAction {
   type: ActionTypes.ACTIVATE_DISADV;
   payload: ActivateArgsWithEntryType;
 }
 
-export function _addToList(args: ActivateArgs): AsyncAction {
-  return (dispatch, getState) => {
-    const state = getState();
-    const locale = getLocaleMessages(state);
-    const { dependent } = state.currentHero.present;
-    const { id, cost, ...other } = args;
-    const entry = get(dependent, id) as AdvantageInstance | DisadvantageInstance;
-    const entryType = isMagicalOrBlessed(entry);
-    const isDisadvantage = entry.category === Categories.DISADVANTAGES;
-    const validCost = validateDisAdvantages(cost, getAdventurePointsObject(state), dependent, entryType, isDisadvantage, isInCharacterCreation(state));
-    if (!validCost[0] && locale) {
-      dispatch(addAlert({
-        title: translate(locale, 'notenoughap.title'),
-        message: translate(locale, 'notenoughap.content'),
-      }));
-    }
-    else if (!validCost[1] && locale) {
-      const type = isDisadvantage ? translate(locale, 'reachedaplimit.disadvantages') : translate(locale, 'reachedaplimit.advantages');
-      if (type) {
-        dispatch(addAlert({
-          title: translate(locale, 'reachedaplimit.title', type),
-          message: translate(locale, 'reachedaplimit.content', type),
-        }));
-      }
-    }
-    else if (!validCost[2] && locale) {
-      const type = isDisadvantage ? entryType.isBlessed ? translate(locale, 'reachedcategoryaplimit.blesseddisadvantages') : translate(locale, 'reachedcategoryaplimit.magicaldisadvantages') : entryType.isBlessed ? translate(locale, 'reachedcategoryaplimit.blessedadvantages') : translate(locale, 'reachedcategoryaplimit.magicaladvantages');
-      const ap = getAdvantagesDisadvantagesSubMax(dependent, entryType.isBlessed ? 2 : entryType.isMagical ? 1 : 0);
-      if (type) {
-        dispatch(addAlert({
-          title: translate(locale, 'reachedcategoryaplimit.title', type),
-          message: translate(locale, 'reachedcategoryaplimit.content', ap, type),
-        }));
-      }
-    }
-    else {
-      let hairColor;
-      let eyeColor;
+/**
+ * Add an advantage or disadvantage with the provided activation properties
+ * (`args`).
+ */
+export const addDisAdvantage = (locale: UIMessagesObject) => (args: ActivateArgs): AsyncAction =>
+  (dispatch, getState) => {
+    const state = getState ();
 
-      if (id === 'DISADV_45' && args.sel === 1) {
-        hairColor = 24;
-        eyeColor = 19;
-      }
+    const maybeHero = getCurrentHeroPresent (state);
 
-      dispatch({
-        type: ActionTypes.ACTIVATE_DISADV,
-        payload: {
-          id,
-          cost,
-          ...other,
-          ...entryType,
-          isDisadvantage,
-          hairColor,
-          eyeColor,
-        }
-      } as ActivateDisAdvAction);
+    if (Maybe.isJust (maybeHero)) {
+      const hero = Maybe.fromJust (maybeHero);
+
+      const { id, cost, ...other } = args;
+
+      const maybeWikiEntry =
+        getWikiEntry<Record<Advantage> | Record<Disadvantage>> (getWiki (state)) (id);
+
+      if (Maybe.isJust (maybeWikiEntry)) {
+        const wikiEntry = Maybe.fromJust (maybeWikiEntry);
+
+        const isDisadvantage =
+          (wikiEntry.get ('category') as ActivatableCategory) === Categories.DISADVANTAGES;
+
+        const entryType = isMagicalOrBlessed (wikiEntry);
+
+        const areSufficientAPAvailableForDisAdvantage =
+          getAreSufficientAPAvailableForDisAdvantage (getIsInCharacterCreation (state))
+                                                     (isDisadvantage)
+                                                     (entryType)
+                                                     (hero)
+                                                     (getAdventurePointsObject (
+                                                       state,
+                                                       { locale }
+                                                     ))
+                                                     (cost);
+
+        const successFn = () => {
+          const color: Record<AlbinoChangedColor> = id === 'DISADV_45' && args.sel === 1
+            ? Record.of<AlbinoChangedColor> ({
+              hairColor: 24,
+              eyeColor: 19
+            })
+            : Record.empty ();
+
+          dispatch<ActivateDisAdvAction> ({
+            type: ActionTypes.ACTIVATE_DISADV,
+            payload: {
+              id,
+              cost,
+              ...other,
+              ...entryType,
+              isDisadvantage,
+              hairColor: color.toObject ().hairColor,
+              eyeColor: color.toObject ().eyeColor,
+              wikiEntry
+            }
+          });
+        };
+
+        handleAreSufficientAPAvailableForDisAdvantage (locale)
+                                                      (successFn)
+                                                      (hero)
+                                                      (areSufficientAPAvailableForDisAdvantage)
+                                                      (entryType)
+                                                      (isDisadvantage)
+                                                      (dispatch);
+      }
     }
   };
-}
 
 interface DeactivateArgsWithEntryType extends DeactivateArgs {
   isBlessed: boolean;
@@ -102,70 +183,105 @@ export interface DeactivateDisAdvAction {
   payload: DeactivateArgsWithEntryType;
 }
 
-export function _removeFromList(args: DeactivateArgs): AsyncAction {
-  return (dispatch, getState) => {
-    const state = getState();
-    const locale = getLocaleMessages(state);
-    const { dependent } = state.currentHero.present;
-    const { id, cost } = args;
-    const negativeCost = cost * -1; // the entry should be removed
-    const entry = get(dependent, id) as AdvantageInstance | DisadvantageInstance;
-    const entryType = isMagicalOrBlessed(entry);
-    const isDisadvantage = entry.category === Categories.DISADVANTAGES;
-    const validCost = validateDisAdvantages(negativeCost, getAdventurePointsObject(state), dependent, entryType, isDisadvantage, isInCharacterCreation(state));
-    if (!validCost[0] && locale) {
-      dispatch(addAlert({
-        title: translate(locale, 'notenoughap.title'),
-        message: translate(locale, 'notenoughap.content'),
-      }));
-    }
-    else if (!validCost[1] && locale) {
-      const type = isDisadvantage ? translate(locale, 'reachedaplimit.disadvantages') : translate(locale, 'reachedaplimit.advantages');
-      if (type) {
-        dispatch(addAlert({
-          title: translate(locale, 'reachedaplimit.title', type),
-          message: translate(locale, 'reachedaplimit.content', type),
-        }));
-      }
-    }
-    else if (!validCost[2] && locale) {
-      const type = isDisadvantage ? entryType.isBlessed ? translate(locale, 'reachedcategoryaplimit.blesseddisadvantages') : translate(locale, 'reachedcategoryaplimit.magicaldisadvantages') : entryType.isBlessed ? translate(locale, 'reachedcategoryaplimit.blessedadvantages') : translate(locale, 'reachedcategoryaplimit.magicaladvantages');
-      const ap = getAdvantagesDisadvantagesSubMax(dependent, entryType.isBlessed ? 2 : entryType.isMagical ? 1 : 0);
-      if (type) {
-        dispatch(addAlert({
-          title: translate(locale, 'reachedcategoryaplimit.title', type),
-          message: translate(locale, 'reachedcategoryaplimit.content', ap, type),
-        }));
-      }
-    }
-    else {
-      let hairColor;
-      let eyeColor;
+/**
+ * Remove an advantage or disadvantage with the provided activation properties
+ * (`args`).
+ */
+export const removeDisAdvantage = (locale: UIMessagesObject) =>
+  (args: DeactivateArgs): AsyncAction =>
+    (dispatch, getState) => {
+      const state = getState ();
 
-      if (id === 'DISADV_45' && entry.active[args.index].sid === 1) {
-        const raceVariant = getCurrentRaceVariant(state);
-        const {
-          hairColors = raceVariant!.hairColors!,
-          eyeColors = raceVariant!.eyeColors!
-        } = getCurrentRace(state)!;
-        hairColor = hairColors[0];
-        eyeColor = eyeColors[0];
-      }
+      const maybeHero = getCurrentHeroPresent (state);
 
-      dispatch({
-        type: ActionTypes.DEACTIVATE_DISADV,
-        payload: {
-          ...args,
-          cost: negativeCost,
-          ...entryType,
-          isDisadvantage,
-          hairColor,
-          eyeColor,
+      if (Maybe.isJust (maybeHero)) {
+        const hero = Maybe.fromJust (maybeHero);
+
+        const negativeCost = args.cost * -1; // the entry should be removed
+
+        const maybeWikiEntry =
+          getWikiEntry<Record<Advantage> | Record<Disadvantage>> (getWiki (state)) (args.id);
+
+        const maybeStateEntry =
+          getHeroStateListItem<Record<ActivatableDependent>> (args.id) (hero);
+
+        if (Maybe.isJust (maybeWikiEntry) && Maybe.isJust (maybeStateEntry)) {
+          const wikiEntry = Maybe.fromJust (maybeWikiEntry);
+          const stateEntry = Maybe.fromJust (maybeStateEntry);
+
+          const isDisadvantage =
+            (wikiEntry.get ('category') as ActivatableCategory) === Categories.DISADVANTAGES;
+
+          const entryType = isMagicalOrBlessed (wikiEntry);
+
+          const areSufficientAPAvailableForDisAdvantage =
+            getAreSufficientAPAvailableForDisAdvantage (getIsInCharacterCreation (state))
+                                                       (isDisadvantage)
+                                                       (entryType)
+                                                       (hero)
+                                                       (getAdventurePointsObject (
+                                                         state,
+                                                         { locale })
+                                                       )
+                                                       (negativeCost);
+
+          const successFn = () => {
+            const color: Record<AlbinoChangedColor> =
+              args.id === 'DISADV_45'
+              && Maybe.elem (1)
+                            (stateEntry.get ('active')
+                              .subscript (args.index)
+                              .bind (active => active.lookup ('sid'))
+                              .bind (Maybe.ensure (isNumber)))
+              ? Maybe.fromMaybe<Record<AlbinoChangedColor>> (Record.empty ()) (
+                getCurrentRace (state)
+                  .fmap (
+                    race => {
+                      const maybeRaceVariant = getCurrentRaceVariant (state);
+
+                      return Record.ofMaybe<AlbinoChangedColor> ({
+                        hairColor: race.lookup ('hairColors')
+                          .alt (
+                            maybeRaceVariant.bind (raceVariant => raceVariant.lookup ('hairColors'))
+                          )
+                          .bind (List.uncons)
+                          .fmap (Tuple.fst),
+                        eyeColor: race.lookup ('eyeColors')
+                          .alt (
+                            maybeRaceVariant.bind (raceVariant => raceVariant.lookup ('eyeColors'))
+                          )
+                          .bind (List.uncons)
+                          .fmap (Tuple.fst)
+                      });
+                    }
+                  )
+              )
+              : Record.empty ();
+
+            dispatch<DeactivateDisAdvAction> ({
+              type: ActionTypes.DEACTIVATE_DISADV,
+              payload: {
+                ...args,
+                cost: negativeCost,
+                ...entryType,
+                isDisadvantage,
+                hairColor: color.toObject ().hairColor,
+                eyeColor: color.toObject ().eyeColor,
+                wikiEntry
+              }
+            });
+          };
+
+          handleAreSufficientAPAvailableForDisAdvantage (locale)
+                                                        (successFn)
+                                                        (hero)
+                                                        (areSufficientAPAvailableForDisAdvantage)
+                                                        (entryType)
+                                                        (isDisadvantage)
+                                                        (dispatch);
         }
-      } as DeactivateDisAdvAction);
-    }
-  };
-}
+      }
+    };
 
 export interface SetDisAdvTierAction {
   type: ActionTypes.SET_DISADV_TIER;
@@ -173,7 +289,6 @@ export interface SetDisAdvTierAction {
     id: string;
     index: number;
     tier: number;
-    cost: number;
     isBlessed: boolean;
     isMagical: boolean;
     isDisadvantage: boolean;
@@ -181,65 +296,115 @@ export interface SetDisAdvTierAction {
   };
 }
 
-export function _setTier(id: string, index: number, tier: number): AsyncAction {
-  return (dispatch, getState) => {
-    const state = getState();
-    const locale = getLocaleMessages(state);
-    const { dependent } = state.currentHero.present;
-    const entry = get(dependent, id) as AdvantageInstance | DisadvantageInstance;
-    const activeObjectWithId = { id, index, ...entry.active[index] };
-    const previousCost = convertPerTierCostToFinalCost(getNameCost(activeObjectWithId, getWiki(state), dependent, false)).currentCost;
-    const nextCost = convertPerTierCostToFinalCost(getNameCost({ ...activeObjectWithId, tier }, getWiki(state), dependent, true)).currentCost;
-    const cost = nextCost - previousCost;
-    const entryType = isMagicalOrBlessed(entry);
-    const isDisadvantage = entry.category === Categories.DISADVANTAGES;
-    const validCost = validateDisAdvantages(cost, getAdventurePointsObject(state), dependent, entryType, isDisadvantage, isInCharacterCreation(state));
-    if (!validCost[0] && locale) {
-      dispatch(addAlert({
-        title: translate(locale, 'notenoughap.title'),
-        message: translate(locale, 'notenoughap.content'),
-      }));
-    }
-    else if (!validCost[1] && locale) {
-      const type = isDisadvantage ? translate(locale, 'reachedaplimit.disadvantages') : translate(locale, 'reachedaplimit.advantages');
-      if (type) {
-        dispatch(addAlert({
-          title: translate(locale, 'reachedaplimit.title', type),
-          message: translate(locale, 'reachedaplimit.content', type),
-        }));
-      }
-    }
-    else if (!validCost[2] && locale) {
-      const type = isDisadvantage ? entryType.isBlessed ? translate(locale, 'reachedcategoryaplimit.blesseddisadvantages') : translate(locale, 'reachedcategoryaplimit.magicaldisadvantages') : entryType.isBlessed ? translate(locale, 'reachedcategoryaplimit.blessedadvantages') : translate(locale, 'reachedcategoryaplimit.magicaladvantages');
-      const ap = getAdvantagesDisadvantagesSubMax(dependent, entryType.isBlessed ? 2 : entryType.isMagical ? 1 : 0);
-      if (type) {
-        dispatch(addAlert({
-          title: translate(locale, 'reachedcategoryaplimit.title', type),
-          message: translate(locale, 'reachedcategoryaplimit.content', ap, type),
-        }));
-      }
-    }
-    else {
-      dispatch({
-        type: ActionTypes.SET_DISADV_TIER,
-        payload: {
-          id,
-          tier,
-          cost,
-          index,
-          ...entryType,
-          isDisadvantage
+/**
+ * Change the current level of an advantage or disadvantage (`args`).
+ */
+export const setDisAdvantageLevel = (locale: UIMessagesObject) =>
+  (id: string) => (index: number) => (level: number): AsyncAction =>
+    (dispatch, getState) => {
+      const state = getState ();
+
+      const maybeHero = getCurrentHeroPresent (state);
+
+      if (Maybe.isJust (maybeHero)) {
+        const hero = Maybe.fromJust (maybeHero);
+
+        const maybeWikiEntry =
+          getWikiEntry<Record<Advantage> | Record<Disadvantage>> (getWiki (state)) (id);
+
+        const maybeStateEntry =
+          getHeroStateListItem<Record<ActivatableDependent>> (id) (hero);
+
+        const maybeActiveObjectWithId = maybeStateEntry
+          .fmap (stateEntry => stateEntry.get ('active'))
+          .bind (active => active.subscript (index))
+          .fmap<Record<ActiveObjectWithId>> (
+            activeObject => activeObject.merge (
+              Record.of ({
+                id,
+                index
+              })
+            )
+          );
+
+        if (Maybe.isJust (maybeWikiEntry) && Maybe.isJust (maybeActiveObjectWithId)) {
+          const wikiEntry = Maybe.fromJust (maybeWikiEntry);
+          const activeObjectWithId = Maybe.fromJust (maybeActiveObjectWithId);
+
+          const wiki = getWiki (state);
+
+          const previousCost = getNameCost (
+            activeObjectWithId,
+            wiki,
+            hero,
+            false,
+            Just (locale)
+          )
+            .fmap (convertPerTierCostToFinalCost (Just (locale)))
+            .fmap (obj => obj.get ('finalCost'));
+
+          const nextCost = getNameCost (
+            activeObjectWithId.insert ('tier') (level),
+            wiki,
+            hero,
+            true,
+            Just (locale)
+          )
+            .fmap (convertPerTierCostToFinalCost (Just (locale)))
+            .fmap (obj => obj.get ('finalCost'));
+
+          const maybeCost = Maybe.liftM2 (R.subtract) (nextCost) (previousCost);
+
+          if (Maybe.isJust (maybeCost)) {
+            const cost = Maybe.fromJust (maybeCost);
+
+            const isDisadvantage =
+              (wikiEntry.get ('category') as ActivatableCategory) === Categories.DISADVANTAGES;
+
+            const entryType = isMagicalOrBlessed (wikiEntry);
+
+            const areSufficientAPAvailableForDisAdvantage =
+              getAreSufficientAPAvailableForDisAdvantage (getIsInCharacterCreation (state))
+                                                         (isDisadvantage)
+                                                         (entryType)
+                                                         (hero)
+                                                         (getAdventurePointsObject (
+                                                           state,
+                                                           { locale })
+                                                         )
+                                                         (cost);
+
+            const successFn = () => {
+              dispatch<SetDisAdvTierAction> ({
+                type: ActionTypes.SET_DISADV_TIER,
+                payload: {
+                  id,
+                  tier: level,
+                  index,
+                  ...entryType,
+                  isDisadvantage,
+                  wikiEntry
+                }
+              });
+            };
+
+            handleAreSufficientAPAvailableForDisAdvantage (locale)
+                                                          (successFn)
+                                                          (hero)
+                                                          (areSufficientAPAvailableForDisAdvantage)
+                                                          (entryType)
+                                                          (isDisadvantage)
+                                                          (dispatch);
+          }
         }
-      } as SetDisAdvTierAction);
-    }
-  };
-}
+      }
+    };
 
 export interface SwitchDisAdvRatingVisibilityAction {
   type: ActionTypes.SWITCH_DISADV_RATING_VISIBILITY;
 }
 
-export function _switchRatingVisibility(): SwitchDisAdvRatingVisibilityAction {
+export const switchRatingVisibility = (): SwitchDisAdvRatingVisibilityAction => {
   return {
     type: ActionTypes.SWITCH_DISADV_RATING_VISIBILITY
   };
@@ -252,14 +417,13 @@ export interface SetActiveAdvantagesFilterTextAction {
   };
 }
 
-export function setActiveAdvantagesFilterText(filterText: string): SetActiveAdvantagesFilterTextAction {
-  return {
+export const setActiveAdvantagesFilterText =
+  (filterText: string): SetActiveAdvantagesFilterTextAction => ({
     type: ActionTypes.SET_ADVANTAGES_FILTER_TEXT,
     payload: {
       filterText
     }
-  };
-}
+  });
 
 export interface SetInactiveAdvantagesFilterTextAction {
   type: ActionTypes.SET_INACTIVE_ADVANTAGES_FILTER_TEXT;
@@ -268,14 +432,13 @@ export interface SetInactiveAdvantagesFilterTextAction {
   };
 }
 
-export function setInactiveAdvantagesFilterText(filterText: string): SetInactiveAdvantagesFilterTextAction {
-  return {
+export const setInactiveAdvantagesFilterText =
+  (filterText: string): SetInactiveAdvantagesFilterTextAction => ({
     type: ActionTypes.SET_INACTIVE_ADVANTAGES_FILTER_TEXT,
     payload: {
       filterText
     }
-  };
-}
+  });
 
 export interface SetActiveDisadvantagesFilterTextAction {
   type: ActionTypes.SET_DISADVANTAGES_FILTER_TEXT;
@@ -284,14 +447,13 @@ export interface SetActiveDisadvantagesFilterTextAction {
   };
 }
 
-export function setActiveDisadvantagesFilterText(filterText: string): SetActiveDisadvantagesFilterTextAction {
-  return {
+export const setActiveDisadvantagesFilterText =
+  (filterText: string): SetActiveDisadvantagesFilterTextAction => ({
     type: ActionTypes.SET_DISADVANTAGES_FILTER_TEXT,
     payload: {
       filterText
     }
-  };
-}
+  });
 
 export interface SetInactiveDisadvantagesFilterTextAction {
   type: ActionTypes.SET_INACTIVE_DISADVANTAGES_FILTER_TEXT;
@@ -300,11 +462,10 @@ export interface SetInactiveDisadvantagesFilterTextAction {
   };
 }
 
-export function setInactiveDisadvantagesFilterText(filterText: string): SetInactiveDisadvantagesFilterTextAction {
-  return {
+export const setInactiveDisadvantagesFilterText =
+  (filterText: string): SetInactiveDisadvantagesFilterTextAction => ({
     type: ActionTypes.SET_INACTIVE_DISADVANTAGES_FILTER_TEXT,
     payload: {
       filterText
     }
-  };
-}
+  });

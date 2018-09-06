@@ -420,6 +420,32 @@ export class Maybe<T extends Some> implements Al.Alternative<T>, Al.Monad<T>,
   }
 
   /**
+   * `imapMaybe :: (Int -> a -> Maybe b) -> [a] -> [b]`
+   *
+   * The `imapMaybe` function is a version of `map` which can throw out
+   * elements. If particular, the functional argument returns something of type
+   * `Maybe b`. If this is `Nothing`, no element is added on to the result list.
+   * If it is `Just b`, then `b` is included in the result list.
+   */
+  static imapMaybe<T extends Some, U extends Some> (
+    fn: (index: number) => (x: T) => Maybe<U>,
+  ): (list: List<T>) => List<U> {
+    return list =>
+      list.ifoldl<List<U>> (
+        acc => index => x => {
+          const result = fn (index) (x);
+
+          if (Maybe.isJust (result)) {
+            return acc.append (Maybe.fromJust (result));
+          }
+          else {
+            return acc;
+          }
+        })
+        (List.of ());
+  }
+
+  /**
    * `fmap :: (a -> b) -> Maybe a -> Maybe b`
    */
   static fmap<T extends Some, U extends Some> (

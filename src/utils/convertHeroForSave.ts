@@ -3,7 +3,7 @@ import * as Data from '../types/data';
 import * as Raw from '../types/rawdata';
 import { WikiAll } from '../types/wiki';
 import { currentVersion } from '../utils/VersionUtils';
-import { APObject, getAPObject } from './adventurePointsSumUtils';
+import { getAPObject } from './adventurePointsSumUtils';
 import { List, Maybe, OrderedMap, OrderedMapValueElement, Record, StringKeyObject } from './dataUtils';
 import { HeroStateMapKey } from './heroStateUtils';
 import { UndoState } from './undo';
@@ -112,72 +112,73 @@ const getBelongingsForSave = (hero: Record<Data.HeroDependent>) =>
 const getPetsForSave = (hero: Record<Data.HeroDependent>) =>
   hero.get ('pets').toKeyValueObjectWith (x => x.toObject ());
 
-export const convertHeroForSave = (
-  id: string,
-  hero: Record<Data.HeroDependent>,
-  adventurePoints: Record<APObject>,
-  users: OrderedMap<string, Data.User>
-): Raw.RawHero => {
-  const {
-    dateCreated,
-    dateModified,
-    phase,
-    name,
-    avatar,
-    experienceLevel,
-    race,
-    raceVariant,
-    culture,
-    profession,
-    professionName,
-    professionVariant,
-    sex,
-    personalData,
-    rules
-  } = hero.toObject ();
+export const convertHeroForSave = (wiki: Record<WikiAll>) =>
+  (locale: Record<Data.UIMessages>) =>
+    (users: OrderedMap<string, Data.User>) =>
+      (hero: Data.Hero): Raw.RawHero => {
+        const {
+          id,
+          dateCreated,
+          dateModified,
+          phase,
+          name,
+          avatar,
+          experienceLevel,
+          race,
+          raceVariant,
+          culture,
+          profession,
+          professionName,
+          professionVariant,
+          sex,
+          personalData,
+          rules
+        } = hero.toObject ();
 
-  const maybeUser = hero.lookup ('player').bind (users.lookup);
+        const adventurePoints = getAPObject (wiki) (locale) (hero);
 
-  const obj: Raw.RawHero = {
-    clientVersion: currentVersion,
-    dateCreated: dateCreated.toJSON (),
-    dateModified: dateModified.toJSON (),
-    id,
-    phase,
-    player: Maybe.isJust (maybeUser) ? Maybe.fromJust (maybeUser) : undefined,
-    name,
-    avatar,
-    ap: {
-      total: adventurePoints.get ('total'),
-      spent: adventurePoints.get ('spent'),
-    },
-    el: experienceLevel,
-    r: race,
-    rv: raceVariant,
-    c: culture,
-    p: profession,
-    professionName: profession === 'P_0' ? professionName : undefined,
-    pv: professionVariant,
-    sex,
-    pers: personalData.toObject (),
-    attr: getAttributesForSave (hero),
-    activatable: getActivatablesForSave (hero),
-    talents: getSkillsForSave (hero),
-    ct: getCombatTechniquesForSave (hero),
-    spells: getSpellsForSave (hero),
-    cantrips: getCantripsForSave (hero),
-    liturgies: getLiturgicalChantsForSave (hero),
-    blessings: getBlessingsForSave (hero),
-    belongings: getBelongingsForSave (hero),
-    rules: {
-      ...rules.toObject (),
-      enabledRuleBooks: [...rules.get ('enabledRuleBooks')]
-    },
-    pets: getPetsForSave (hero)
-  };
+        const maybeUser = hero.lookup ('player').bind (users.lookup);
 
-  return obj;
-};
+        const obj: Raw.RawHero = {
+          clientVersion: currentVersion,
+          dateCreated: dateCreated.toJSON (),
+          dateModified: dateModified.toJSON (),
+          id,
+          phase,
+          player: Maybe.isJust (maybeUser) ? Maybe.fromJust (maybeUser) : undefined,
+          name,
+          avatar,
+          ap: {
+            total: adventurePoints.get ('total'),
+            spent: adventurePoints.get ('spent'),
+          },
+          el: experienceLevel,
+          r: race,
+          rv: raceVariant,
+          c: culture,
+          p: profession,
+          professionName: profession === 'P_0' ? professionName : undefined,
+          pv: professionVariant,
+          sex,
+          pers: personalData.toObject (),
+          attr: getAttributesForSave (hero),
+          activatable: getActivatablesForSave (hero),
+          talents: getSkillsForSave (hero),
+          ct: getCombatTechniquesForSave (hero),
+          spells: getSpellsForSave (hero),
+          cantrips: getCantripsForSave (hero),
+          liturgies: getLiturgicalChantsForSave (hero),
+          blessings: getBlessingsForSave (hero),
+          belongings: getBelongingsForSave (hero),
+          rules: {
+            ...rules.toObject (),
+            enabledRuleBooks: [...rules.get ('enabledRuleBooks')]
+          },
+          pets: getPetsForSave (hero)
+        };
+
+        return obj;
+      };
 
 export const convertHeroesForSave = (wiki: Record<WikiAll>) =>
   (locale: Record<Data.UIMessages>) =>
@@ -186,11 +187,6 @@ export const convertHeroesForSave = (wiki: Record<WikiAll>) =>
         heroes.elems ().map<Raw.RawHero> (
           R.pipe (
             state => state.present,
-            hero => convertHeroForSave (
-              hero.get ('id'),
-              hero,
-              getAPObject (wiki) (locale) (hero),
-              users
-            )
+            hero => convertHeroForSave (wiki) (locale) (users) (hero)
           )
         );

@@ -66,18 +66,15 @@ export function precedingHerolistReducer (
     case ActionTypes.LOAD_HERO:
       return state.insert ('currentId') (action.payload.id);
 
-    case ActionTypes.SAVE_HERO: {
-      const { id } = action.payload.data;
-
+    case ActionTypes.SAVE_HERO:
       return state.modify<'heroes'> (
         heroes => heroes.adjust (
           undoState => ({
             ...undoState,
             past: List.of ()
           })
-        ) (id)
+        ) (action.payload.id)
       ) ('heroes');
-    }
 
     case ActionTypes.DELETE_HERO: {
       const { id } = action.payload;
