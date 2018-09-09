@@ -1,4 +1,6 @@
 import { ActionTypes } from '../constants/ActionTypes';
+import { getCurrentCulture, getCurrentProfession, getCurrentProfessionVariant, getCurrentRace } from '../selectors/rcpSelectors';
+import { getWiki } from '../selectors/stateSelectors';
 import { AsyncAction } from '../types/actions';
 import { Selections } from '../types/data';
 import { Culture, Profession, ProfessionVariant, Race, WikiAll } from '../types/wiki';
@@ -11,14 +13,12 @@ export interface SelectProfessionAction {
   };
 }
 
-export function _selectProfession(id: string): SelectProfessionAction {
-  return {
-    type: ActionTypes.SELECT_PROFESSION,
-    payload: {
-      id
-    }
-  };
-}
+export const selectProfession = (id: string): SelectProfessionAction => ({
+  type: ActionTypes.SELECT_PROFESSION,
+  payload: {
+    id
+  }
+});
 
 interface SelectionsAndWikiEntries extends Selections {
   race: Record<Race>;
@@ -33,14 +33,28 @@ export interface SetSelectionsAction {
   payload: SelectionsAndWikiEntries;
 }
 
-export function _setSelections(selections: Selections): AsyncAction {
-  return (dispatch, getState) => {
-    return {
-      type: ActionTypes.ASSIGN_RCP_OPTIONS,
-      payload: selections
-    }
-  };
-}
+export const setSelections = (selections: Selections): AsyncAction => (dispatch, getState) => {
+  const state = getState ();
+
+  Maybe.liftM3 ((race: Record<Race>) =>
+                  (culture: Record<Culture>) =>
+                    (profession: Record<Profession>) =>
+                      dispatch<SetSelectionsAction> ({
+                        type: ActionTypes.ASSIGN_RCP_OPTIONS,
+                        payload: {
+                          ...selections,
+                          race,
+                          culture,
+                          profession,
+                          professionVariant: getCurrentProfessionVariant (state),
+                          wiki: getWiki (state)
+                        }
+                      })
+                    )
+               (getCurrentRace (state))
+               (getCurrentCulture (state))
+               (getCurrentProfession (state))
+};
 
 export interface SetProfessionsSortOrderAction {
   type: ActionTypes.SET_PROFESSIONS_SORT_ORDER;
@@ -49,14 +63,12 @@ export interface SetProfessionsSortOrderAction {
   };
 }
 
-export function _setProfessionsSortOrder(sortOrder: string): SetProfessionsSortOrderAction {
-  return {
-    type: ActionTypes.SET_PROFESSIONS_SORT_ORDER,
-    payload: {
-      sortOrder
-    }
-  };
-}
+export const setProfessionsSortOrder = (sortOrder: string): SetProfessionsSortOrderAction => ({
+  type: ActionTypes.SET_PROFESSIONS_SORT_ORDER,
+  payload: {
+    sortOrder
+  }
+});
 
 export interface SetProfessionsVisibilityFilterAction {
   type: ActionTypes.SET_PROFESSIONS_VISIBILITY_FILTER;
@@ -65,14 +77,13 @@ export interface SetProfessionsVisibilityFilterAction {
   };
 }
 
-export function _setProfessionsVisibilityFilter(filter: string): SetProfessionsVisibilityFilterAction {
-  return {
+export const setProfessionsVisibilityFilter =
+  (filter: string): SetProfessionsVisibilityFilterAction => ({
     type: ActionTypes.SET_PROFESSIONS_VISIBILITY_FILTER,
     payload: {
       filter
     }
-  };
-}
+  });
 
 export interface SetProfessionsGroupVisibilityFilterAction {
   type: ActionTypes.SET_PROFESSIONS_GROUP_VISIBILITY_FILTER;
@@ -81,24 +92,22 @@ export interface SetProfessionsGroupVisibilityFilterAction {
   };
 }
 
-export function _setProfessionsGroupVisibilityFilter(filter: number): SetProfessionsGroupVisibilityFilterAction {
-  return {
+export const setProfessionsGroupVisibilityFilter =
+  (filter: number): SetProfessionsGroupVisibilityFilterAction => ({
     type: ActionTypes.SET_PROFESSIONS_GROUP_VISIBILITY_FILTER,
     payload: {
       filter
     }
-  };
-}
+  });
 
 export interface SwitchProfessionsExpansionVisibilityFilterAction {
   type: ActionTypes.SWITCH_PROFESSIONS_EXPANSION_VISIBILITY_FILTER;
 }
 
-export function _switchProfessionsExpansionVisibilityFilter(): SwitchProfessionsExpansionVisibilityFilterAction {
-  return {
+export const switchProfessionsExpansionVisibilityFilter =
+  (): SwitchProfessionsExpansionVisibilityFilterAction => ({
     type: ActionTypes.SWITCH_PROFESSIONS_EXPANSION_VISIBILITY_FILTER
-  };
-}
+  });
 
 export interface SetProfessionsFilterTextAction {
   type: ActionTypes.SET_PROFESSIONS_FILTER_TEXT;
@@ -107,11 +116,9 @@ export interface SetProfessionsFilterTextAction {
   };
 }
 
-export function setFilterText(filterText: string): SetProfessionsFilterTextAction {
-  return {
-    type: ActionTypes.SET_PROFESSIONS_FILTER_TEXT,
-    payload: {
-      filterText
-    }
-  };
-}
+export const setProfessionsFilterText = (filterText: string): SetProfessionsFilterTextAction => ({
+  type: ActionTypes.SET_PROFESSIONS_FILTER_TEXT,
+  payload: {
+    filterText
+  }
+});

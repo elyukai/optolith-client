@@ -16,7 +16,7 @@ export interface AddCombatTechniquePointAction {
   };
 }
 
-export const addCombatTechniquePoint = (id: string, locale: UIMessagesObject): AsyncAction =>
+export const addCombatTechniquePoint = (id: string) => (locale: UIMessagesObject): AsyncAction =>
   (dispatch, getState) => {
     const state = getState ();
     const maybeHeroCombatTechniques = getCombatTechniques (state);

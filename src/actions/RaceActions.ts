@@ -1,104 +1,68 @@
 import { ActionTypes } from '../constants/ActionTypes';
-import { getCurrentProfessionId, getCurrentProfessionVariantId, getCurrentRaceId, getDependentInstances } from '../selectors/stateSelectors';
-import { AsyncAction } from '../types/actions';
-import { getDiffCost } from '../utils/RCPUtils';
+import { Maybe } from '../utils/dataUtils';
 
 export interface SelectRaceAction {
-	type: ActionTypes.SELECT_RACE;
-	payload: {
-		id: string;
-		variantId: string | undefined;
-		cost: number;
-	};
+  type: ActionTypes.SELECT_RACE;
+  payload: {
+    id: string;
+    variantId: Maybe<string>;
+  };
 }
 
-export function _selectRace(id: string, variantId?: string): AsyncAction {
-	return (dispatch, getState) => {
-		const state = getState();
-		const dependent = getDependentInstances(state);
-		const race = getCurrentRaceId(state);
-		const profession = getCurrentProfessionId(state);
-		const professionVariant = getCurrentProfessionVariantId(state);
-		const raceDiff = getDiffCost(dependent, race, id);
-		const professionDiff = getDiffCost(dependent, profession);
-		const professionVariantDiff = getDiffCost(dependent, professionVariant);
-		const cost = raceDiff + professionDiff + professionVariantDiff;
-		dispatch<SelectRaceAction>({
-			type: ActionTypes.SELECT_RACE,
-			payload: {
-				id,
-				variantId,
-				cost
-			}
-		});
-	};
-}
+export const selectRace = (id: string) => (variantId: Maybe<string>): SelectRaceAction => ({
+  type: ActionTypes.SELECT_RACE,
+  payload: {
+    id,
+    variantId
+  }
+});
 
 export interface SetRaceVariantAction {
-	type: ActionTypes.SET_RACE_VARIANT;
-	payload: {
-		id: string;
-		cost: number;
-	};
+  type: ActionTypes.SET_RACE_VARIANT;
+  payload: {
+    id: string;
+  };
 }
 
-export function setRaceVariant(id: string): AsyncAction {
-	return (dispatch, getState) => {
-		const state = getState();
-		const dependent = getDependentInstances(state);
-		const profession = getCurrentProfessionId(state);
-		const professionVariant = getCurrentProfessionVariantId(state);
-		const professionDiff = getDiffCost(dependent, profession);
-		const professionVariantDiff = getDiffCost(dependent, professionVariant);
-		const cost = professionDiff + professionVariantDiff;
-		dispatch<SetRaceVariantAction>({
-			type: ActionTypes.SET_RACE_VARIANT,
-			payload: {
-				id,
-				cost
-			}
-		});
-	};
-}
+export const setRaceVariant = (id: string): SetRaceVariantAction => ({
+  type: ActionTypes.SET_RACE_VARIANT,
+  payload: {
+    id
+  }
+});
 
 export interface SetRacesSortOrderAction {
-	type: ActionTypes.SET_RACES_SORT_ORDER;
-	payload: {
-		sortOrder: string;
-	};
+  type: ActionTypes.SET_RACES_SORT_ORDER;
+  payload: {
+    sortOrder: string;
+  };
 }
 
-export function _setRacesSortOrder(sortOrder: string): SetRacesSortOrderAction {
-	return {
-		type: ActionTypes.SET_RACES_SORT_ORDER,
-		payload: {
-			sortOrder
-		}
-	};
-}
+export const setRacesSortOrder = (sortOrder: string): SetRacesSortOrderAction => ({
+  type: ActionTypes.SET_RACES_SORT_ORDER,
+  payload: {
+    sortOrder
+  }
+});
 
 export interface SwitchRaceValueVisibilityAction {
-	type: ActionTypes.SWITCH_RACE_VALUE_VISIBILITY;
+  type: ActionTypes.SWITCH_RACE_VALUE_VISIBILITY;
 }
 
-export function _switchRaceValueVisibilityFilter(): SwitchRaceValueVisibilityAction {
-	return {
-		type: ActionTypes.SWITCH_RACE_VALUE_VISIBILITY
-	};
-}
+export const switchRaceValueVisibilityFilter = (): SwitchRaceValueVisibilityAction => ({
+  type: ActionTypes.SWITCH_RACE_VALUE_VISIBILITY
+});
 
 export interface SetRacesFilterTextAction {
-	type: ActionTypes.SET_RACES_FILTER_TEXT;
-	payload: {
-		filterText: string;
-	};
+  type: ActionTypes.SET_RACES_FILTER_TEXT;
+  payload: {
+    filterText: string;
+  };
 }
 
-export function setFilterText(filterText: string): SetRacesFilterTextAction {
-	return {
-		type: ActionTypes.SET_RACES_FILTER_TEXT,
-		payload: {
-			filterText
-		}
-	};
-}
+export const setFilterText = (filterText: string): SetRacesFilterTextAction => ({
+  type: ActionTypes.SET_RACES_FILTER_TEXT,
+  payload: {
+    filterText
+  }
+});

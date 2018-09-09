@@ -1,28 +1,16 @@
 import { ActionTypes } from '../constants/ActionTypes';
-import { getCurrentProfessionVariantId, getDependentInstances } from '../selectors/stateSelectors';
-import { AsyncAction } from '../types/actions';
-import { getDiffCost } from '../utils/RCPUtils';
+import { Maybe } from '../utils/dataUtils';
 
 export interface SelectProfessionVariantAction {
-	type: ActionTypes.SELECT_PROFESSION_VARIANT;
-	payload: {
-		id?: string;
-		cost: number;
-	};
+  type: ActionTypes.SELECT_PROFESSION_VARIANT;
+  payload: {
+    id: Maybe<string>;
+  };
 }
 
-export function _selectProfessionVariant(id?: string): AsyncAction {
-	return (dispatch, getState) => {
-		const state = getState();
-		const dependent = getDependentInstances(state);
-		const professionVariant = getCurrentProfessionVariantId(state);
-		const cost = getDiffCost(dependent, professionVariant, id);
-		dispatch<SelectProfessionVariantAction>({
-			type: ActionTypes.SELECT_PROFESSION_VARIANT,
-			payload: {
-				id,
-				cost
-			}
-		});
-	};
-}
+export const selectProfessionVariant = (id: Maybe<string>): SelectProfessionVariantAction => ({
+  type: ActionTypes.SELECT_PROFESSION_VARIANT,
+  payload: {
+    id
+  }
+});

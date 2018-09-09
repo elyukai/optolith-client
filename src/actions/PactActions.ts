@@ -1,81 +1,71 @@
 import { ActionTypes } from '../constants/ActionTypes';
 
 export interface SetPactCategoryAction {
-	type: ActionTypes.SET_PACT_CATEGORY;
-	payload: {
-		category: number | undefined;
-	};
+  type: ActionTypes.SET_PACT_CATEGORY;
+  payload: {
+    category: number | undefined;
+  };
 }
 
-export function setPactCategory(category: number | undefined): SetPactCategoryAction {
-	return {
-		type: ActionTypes.SET_PACT_CATEGORY,
-		payload: {
-			category
-		}
-	};
-}
+export const setPactCategory = (category: number | undefined): SetPactCategoryAction => ({
+  type: ActionTypes.SET_PACT_CATEGORY,
+  payload: {
+    category
+  }
+});
 
 export interface SetPactLevelAction {
-	type: ActionTypes.SET_PACT_LEVEL;
-	payload: {
-		level: number;
-	};
+  type: ActionTypes.SET_PACT_LEVEL;
+  payload: {
+    level: number;
+  };
 }
 
-export function setPactLevel(level: number): SetPactLevelAction {
-	return {
-		type: ActionTypes.SET_PACT_LEVEL,
-		payload: {
-			level
-		}
-	};
-}
+export const setPactLevel = (level: number): SetPactLevelAction => ({
+  type: ActionTypes.SET_PACT_LEVEL,
+  payload: {
+    level
+  }
+});
 
 export interface SetTargetTypeAction {
-	type: ActionTypes.SET_TARGET_TYPE;
-	payload: {
-		type: number;
-	};
+  type: ActionTypes.SET_TARGET_TYPE;
+  payload: {
+    type: number;
+  };
 }
 
-export function setTargetType(type: number): SetTargetTypeAction {
-	return {
-		type: ActionTypes.SET_TARGET_TYPE,
-		payload: {
-			type
-		}
-	};
-}
+export const setPactTargetType = (type: number): SetTargetTypeAction => ({
+  type: ActionTypes.SET_TARGET_TYPE,
+  payload: {
+    type
+  }
+});
 
 export interface SetTargetDomainAction {
-	type: ActionTypes.SET_TARGET_DOMAIN;
-	payload: {
-		domain: number | string;
-	};
+  type: ActionTypes.SET_TARGET_DOMAIN;
+  payload: {
+    domain: number | string;
+  };
 }
 
-export function setTargetDomain(domain: number | string): SetTargetDomainAction {
-	return {
-		type: ActionTypes.SET_TARGET_DOMAIN,
-		payload: {
-			domain
-		}
-	};
-}
+export const setPactTargetDomain = (domain: number | string): SetTargetDomainAction => ({
+  type: ActionTypes.SET_TARGET_DOMAIN,
+  payload: {
+    domain
+  }
+});
 
 export interface SetTargetNameAction {
-	type: ActionTypes.SET_TARGET_NAME;
-	payload: {
-		name: string;
-	};
+  type: ActionTypes.SET_TARGET_NAME;
+  payload: {
+    name: string;
+  };
 }
 
-export function setTargetName(name: string): SetTargetNameAction {
-	return {
-		type: ActionTypes.SET_TARGET_NAME,
-		payload: {
-			name
-		}
-	};
-}
+export const setPactTargetName = (name: string): SetTargetNameAction => ({
+  type: ActionTypes.SET_TARGET_NAME,
+  payload: {
+    name
+  }
+});

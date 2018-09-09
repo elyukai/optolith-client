@@ -1,77 +1,75 @@
 import { ActionTypes } from '../constants/ActionTypes';
-import { getPetsState } from '../selectors/stateSelectors';
+import { getPets } from '../selectors/stateSelectors';
 import { AsyncAction } from '../types/actions';
 import { PetEditorInstance, PetInstance } from '../types/data';
+import { Record } from '../utils/dataUtils';
 import { getNewId } from '../utils/IDUtils';
 import { convertToSave } from '../utils/PetUtils';
 
 export interface AddPetAction {
-	type: ActionTypes.ADD_PET;
-	payload: {
-		id: string;
-		data: PetInstance;
-	};
+  type: ActionTypes.ADD_PET;
+  payload: {
+    id: string;
+    data: Record<PetInstance>;
+  };
 }
 
-export function _addToList(data: PetEditorInstance): AsyncAction {
-	return (dispatch, getState) => {
-		const id = `PET_${getNewId([...getPetsState(getState()).keys()])}`;
-		dispatch<AddPetAction>({
-			type: ActionTypes.ADD_PET,
-			payload: {
-				id,
-				data: convertToSave(data)
-			}
-		});
-	};
-}
+export const addPet = (data: Record<PetEditorInstance>): AsyncAction => (dispatch, getState) => {
+  getPets (getState ()).fmap (
+    pets => {
+      const id = `PET_${getNewId (pets.keys ())}`;
+
+      return dispatch<AddPetAction> ({
+        type: ActionTypes.ADD_PET,
+        payload: {
+          id,
+          data: convertToSave (data)
+        }
+      });
+    }
+  )
+};
 
 export interface SetPetAction {
-	type: ActionTypes.SET_PET;
-	payload: {
-		id: string;
-		data: PetInstance;
-	};
+  type: ActionTypes.SET_PET;
+  payload: {
+    id: string;
+    data: Record<PetInstance>;
+  };
 }
 
-export function _set(id: string, data: PetEditorInstance): SetPetAction {
-	return {
-		type: ActionTypes.SET_PET,
-		payload: {
-			id,
-			data: convertToSave(data)
-		}
-	};
-}
+export const adjustPet = (id: string) => (data: Record<PetEditorInstance>): SetPetAction => ({
+  type: ActionTypes.SET_PET,
+  payload: {
+    id,
+    data: convertToSave (data)
+  }
+});
 
 export interface RemovePetAction {
-	type: ActionTypes.REMOVE_PET;
-	payload: {
-		id: string;
-	};
+  type: ActionTypes.REMOVE_PET;
+  payload: {
+    id: string;
+  };
 }
 
-export function _removeFromList(id: string): RemovePetAction {
-	return {
-		type: ActionTypes.REMOVE_PET,
-		payload: {
-			id
-		}
-	};
-}
+export const removePet = (id: string): RemovePetAction => ({
+  type: ActionTypes.REMOVE_PET,
+  payload: {
+    id
+  }
+});
 
 export interface SetPetsSortOrderAction {
-	type: ActionTypes.SET_PETS_SORT_ORDER;
-	payload: {
-		sortOrder: string;
-	};
+  type: ActionTypes.SET_PETS_SORT_ORDER;
+  payload: {
+    sortOrder: string;
+  };
 }
 
-export function _setSortOrder(sortOrder: string): SetPetsSortOrderAction {
-	return {
-		type: ActionTypes.SET_PETS_SORT_ORDER,
-		payload: {
-			sortOrder
-		}
-	};
-}
+export const setPetsSortOrder = (sortOrder: string): SetPetsSortOrderAction => ({
+  type: ActionTypes.SET_PETS_SORT_ORDER,
+  payload: {
+    sortOrder
+  }
+});

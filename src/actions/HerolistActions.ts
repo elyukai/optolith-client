@@ -15,7 +15,7 @@ export interface SetHerolistSortOrderAction {
   };
 }
 
-export const setSortOrder = (sortOrder: string): SetHerolistSortOrderAction => ({
+export const setHerolistSortOrder = (sortOrder: string): SetHerolistSortOrderAction => ({
   type: ActionTypes.SET_HEROLIST_SORT_ORDER,
   payload: {
     sortOrder
@@ -29,12 +29,13 @@ export interface SetHerolistVisibilityFilterAction {
   };
 }
 
-export const setVisibilityFilter = (filterOption: string): SetHerolistVisibilityFilterAction => ({
-  type: ActionTypes.SET_HEROLIST_VISIBILITY_FILTER,
-  payload: {
-    filterOption
-  }
-});
+export const setHerolistVisibilityFilter =
+  (filterOption: string): SetHerolistVisibilityFilterAction => ({
+    type: ActionTypes.SET_HEROLIST_VISIBILITY_FILTER,
+    payload: {
+      filterOption
+    }
+  });
 
 export interface CreateHeroAction {
   type: ActionTypes.CREATE_HERO;

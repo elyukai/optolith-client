@@ -5,7 +5,7 @@ import { SwitchDisAdvRatingVisibilityAction } from '../actions/DisAdvActions';
 import { SetItemsSortOrderAction, SetMeleeItemTemplatesCombatTechniqueFilterAction, SetRangedItemTemplatesCombatTechniqueFilterAction } from '../actions/EquipmentActions';
 import { SetHerolistSortOrderAction, SetHerolistVisibilityFilterAction } from '../actions/HerolistActions';
 import { ReceiveInitialDataAction } from '../actions/IOActions';
-import { SetLiturgiesSortOrderAction } from '../actions/LiturgiesActions';
+import { SetLiturgicalChantsSortOrderAction } from '../actions/LiturgiesActions';
 import { SetProfessionsGroupVisibilityFilterAction, SetProfessionsSortOrderAction, SetProfessionsVisibilityFilterAction, SwitchProfessionsExpansionVisibilityFilterAction } from '../actions/ProfessionActions';
 import { SetRacesSortOrderAction, SwitchRaceValueVisibilityAction } from '../actions/RaceActions';
 import { SwitchSheetAttributeValueVisibilityAction } from '../actions/SheetActions';
@@ -25,7 +25,7 @@ type Action =
   SetItemsSortOrderAction |
   SetHerolistSortOrderAction |
   SetHerolistVisibilityFilterAction |
-  SetLiturgiesSortOrderAction |
+  SetLiturgicalChantsSortOrderAction |
   SetProfessionsGroupVisibilityFilterAction |
   SetProfessionsSortOrderAction |
   SetProfessionsVisibilityFilterAction |

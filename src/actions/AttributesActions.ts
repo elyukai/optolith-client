@@ -19,7 +19,7 @@ export interface AddAttributePointAction {
   };
 }
 
-export const addAttributePoint = (id: string, locale: UIMessagesObject): AsyncAction =>
+export const addAttributePoint = (id: string) => (locale: UIMessagesObject): AsyncAction =>
   (dispatch, getState) => {
     const state = getState ();
     const maybeHeroAttributes = getAttributes (state);
