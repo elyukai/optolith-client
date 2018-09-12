@@ -1,7 +1,7 @@
-import { UIMessages } from '../types/ui';
-import { Maybe, Record } from './dataUtils';
+import { UIMessages, UIMessagesObject } from '../types/ui';
+import { Maybe } from './dataUtils';
 
-export { UIMessages };
+export { UIMessages, UIMessagesObject };
 
 /**
  * Displays a localized message and inserts values if necessary.
@@ -12,17 +12,17 @@ export { UIMessages };
  * index.
  */
 export function translate<T extends keyof UIMessages> (
-  messages: Record<UIMessages>,
+  messages: UIMessagesObject,
   key: T,
   ...params: (string | number)[]
 ): UIMessages[T];
 export function translate<T extends keyof UIMessages> (
-  messages: Maybe<Record<UIMessages>>,
+  messages: Maybe<UIMessagesObject>,
   key: T,
   ...params: (string | number)[]
 ): Maybe<UIMessages[T]>;
 export function translate<T extends keyof UIMessages> (
-  messages: Maybe<Record<UIMessages>> | Record<UIMessages>,
+  messages: Maybe<UIMessagesObject> | UIMessagesObject,
   key: T,
   ...params: (string | number)[]
 ): Maybe<UIMessages[T]> | UIMessages[T] {

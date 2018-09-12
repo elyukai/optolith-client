@@ -1,8 +1,10 @@
 import { remote } from 'electron';
 import { getIsHeroSection } from '../selectors/uilocationSelectors';
 import { AsyncAction } from '../types/actions';
+import { UIMessagesObject } from '../types/ui';
+import { Just, Nothing } from '../utils/dataUtils';
 import { isDialogOpen } from '../utils/SubwindowsUtils';
-import { _saveHero } from './HerolistActions';
+import { saveHero } from './HerolistActions';
 import { redo, undo } from './HistoryActions';
 import { requestClose } from './IOActions';
 import { setTab } from './LocationActions';
@@ -20,11 +22,12 @@ export const redoAccelerator = (): AsyncAction => (dispatch, getState) => {
   }
 };
 
-export const saveHeroAccelerator = (): AsyncAction => (dispatch, getState) => {
-  if (!isDialogOpen () && getIsHeroSection (getState ())) {
-    dispatch (_saveHero ());
-  }
-};
+export const saveHeroAccelerator = (locale: UIMessagesObject): AsyncAction =>
+  (dispatch, getState) => {
+    if (!isDialogOpen () && getIsHeroSection (getState ())) {
+      dispatch (saveHero (locale) (Nothing ()));
+    }
+  };
 
 export const backAccelerator = (): AsyncAction => (dispatch, getState) => {
   if (!isDialogOpen () && getIsHeroSection (getState ())) {
@@ -38,6 +41,6 @@ export const openSettingsAccelerator = (): AsyncAction => dispatch => {
   }
 };
 
-export const quitAccelerator = (): AsyncAction => dispatch => {
-  dispatch (requestClose (() => remote.app.quit ()));
+export const quitAccelerator = (locale: UIMessagesObject): AsyncAction => dispatch => {
+  dispatch (requestClose (locale) (Just (remote.app.quit)));
 };

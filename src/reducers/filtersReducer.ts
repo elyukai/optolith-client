@@ -2,13 +2,13 @@ import { SetCombatTechniquesFilterTextAction } from '../actions/CombatTechniques
 import { SetCulturesFilterTextAction } from '../actions/CultureActions';
 import { SetActiveAdvantagesFilterTextAction, SetActiveDisadvantagesFilterTextAction, SetInactiveAdvantagesFilterTextAction, SetInactiveDisadvantagesFilterTextAction } from '../actions/DisAdvActions';
 import { SetEquipmentFilterTextAction, SetItemTemplatesFilterTextAction, SetZoneArmorFilterTextAction } from '../actions/EquipmentActions';
-import { SetActiveLiturgicalChantsFilterTextAction, SetInactiveLiturgicalChantsFilterTextAction } from '../actions/LiturgiesActions';
+import { SetActiveLiturgicalChantsFilterTextAction, SetInactiveLiturgicalChantsFilterTextAction } from '../actions/LiturgicalChantActions';
 import { SetTabAction } from '../actions/LocationActions';
 import { SetProfessionsFilterTextAction } from '../actions/ProfessionActions';
 import { SetRacesFilterTextAction } from '../actions/RaceActions';
+import { SetSkillsFilterTextAction } from '../actions/SkillActions';
 import { SetActiveSpecialAbilitiesFilterTextAction, SetInactiveSpecialAbilitiesFilterTextAction } from '../actions/SpecialAbilitiesActions';
 import { SetActiveSpellsFilterTextAction, SetInactiveSpellsFilterTextAction } from '../actions/SpellsActions';
-import { SetSkillsFilterTextAction } from '../actions/TalentsActions';
 import { ActionTypes } from '../constants/ActionTypes';
 
 type Action =

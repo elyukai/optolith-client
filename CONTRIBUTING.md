@@ -69,6 +69,21 @@ const addedNumbers = add (2)(3);
 
 // good
 const addedNumbers = add (2) (3);
+
+// multiline
+const addedNumbers = add (2)
+                         (3);
+
+// or
+const addedNumbers =
+  add (2)
+      (3);
+
+// or
+const addedNumbers =
+  add
+    (2)
+    (3);
 ```
 
 This style is readable while having curried functions. It's derived from the Haskell style of calling functions, where the arguments are separate by one whitespace as well:

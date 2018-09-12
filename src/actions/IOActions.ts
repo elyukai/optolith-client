@@ -6,7 +6,7 @@ import * as fs from 'fs';
 import { extname, join } from 'path';
 import { ActionTypes } from '../constants/ActionTypes';
 import { AppState } from '../reducers/appReducer';
-import { getHeroes, getUsers, getWiki } from '../selectors/stateSelectors';
+import { getCurrentHeroId, getHeroes, getUsers, getWiki } from '../selectors/stateSelectors';
 import { getUISettingsState } from '../selectors/uisettingsSelectors';
 import { AsyncAction } from '../types/actions';
 import { User } from '../types/data';
@@ -102,9 +102,12 @@ export interface ReceiveInitialDataAction {
 
 export const requestInitialData = (): AsyncAction<Promise<void>> => async dispatch => {
   const data = await dispatch (getInitialData ());
+
   if (data) {
     dispatch (receiveInitialData (data));
   }
+
+  return;
 };
 
 export const getInitialData = (): AsyncAction<Promise<Raw | undefined>> => async dispatch => {
@@ -209,7 +212,7 @@ export const requestSaveAll = (locale: UIMessagesObject): AsyncAction<Promise<bo
   };
 
 export const requestHeroSave = (locale: UIMessagesObject) =>
-  (id: string): AsyncAction<Promise<boolean>> =>
+  (id: Maybe<string>): AsyncAction<Promise<string | undefined>> =>
     async (dispatch, getState) => {
       const state = getState ();
 
@@ -217,7 +220,9 @@ export const requestHeroSave = (locale: UIMessagesObject) =>
       const heroes = getHeroes (state);
       const users = getUsers (state);
 
-      const maybeHero = heroes.lookup (id)
+      const maybeHero = id
+        .alt (getCurrentHeroId (state))
+        .bind (heroes.lookup)
         .fmap (undoState => undoState.present)
         .fmap (convertHeroForSave (wiki) (locale) (users));
 
@@ -237,7 +242,7 @@ export const requestHeroSave = (locale: UIMessagesObject) =>
                                                              }))
                                                              (maybeSavedHeroes)));
 
-          return true;
+          return hero.id;
         }
         catch (error) {
           dispatch (addAlert ({
@@ -251,11 +256,11 @@ export const requestHeroSave = (locale: UIMessagesObject) =>
             title: translate (locale, 'fileapi.error.title')
           }));
 
-          return false;
+          return;
         }
       }
 
-      return false;
+      return;
     };
 
 export const requestHeroDeletion = (locale: UIMessagesObject) =>

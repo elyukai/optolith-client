@@ -8,7 +8,8 @@ import { TooltipToggle } from '../../components/TooltipToggle';
 import { SettingsContainer } from '../../containers/Settings';
 import { AdventurePointsObject } from '../../selectors/adventurePointsSelectors';
 import { SubTab } from '../../types/data';
-import { UIMessages } from '../../types/ui.d';
+import { UIMessagesObject } from '../../types/ui';
+import { List, Maybe, Record } from '../../utils/dataUtils';
 import { translate } from '../../utils/I18n';
 import { TabId } from '../../utils/LocationUtils';
 import { ApTooltip } from './ApTooltip';
@@ -20,48 +21,63 @@ import { NavigationBarTabProps, NavigationBarTabs } from './NavigationBarTabs';
 import { NavigationBarWrapper } from './NavigationBarWrapper';
 
 export interface NavigationBarOwnProps {
-  locale: UIMessages;
-	platform: string;
-  checkForUpdates(): void;
+  locale: UIMessagesObject;
+  platform: string;
+  checkForUpdates (): void;
 }
 
 export interface NavigationBarStateProps {
   currentTab: TabId;
-  avatar: string | undefined;
+  avatar: Maybe<string>;
   isRedoAvailable: boolean;
   isRemovingEnabled: boolean;
   isUndoAvailable: boolean;
   isSettingsOpen: boolean;
   isHeroSection: boolean;
-  tabs: NavigationBarTabProps[];
-  subtabs: SubTab[] | undefined;
-	adventurePoints: AdventurePointsObject;
-	maximumForMagicalAdvantagesDisadvantages: number;
-	isSpellcaster: boolean;
-	isBlessedOne: boolean;
+  tabs: List<NavigationBarTabProps>;
+  subtabs: Maybe<List<SubTab>>;
+  adventurePoints: Record<AdventurePointsObject>;
+  maximumForMagicalAdvantagesDisadvantages: Maybe<number>;
+  isSpellcaster: boolean;
+  isBlessedOne: boolean;
 }
 
 export interface NavigationBarDispatchProps {
-  undo(): void;
-  redo(): void;
-  saveHero(): void;
-  saveGroup(): void;
-  setTab(id: TabId): void;
-  openSettings(): void;
-  closeSettings(): void;
+  undo (): void;
+  redo (): void;
+  saveHero (): void;
+  saveGroup (): void;
+  setTab (id: TabId): void;
+  openSettings (): void;
+  closeSettings (): void;
 }
 
-export type NavigationBarProps = NavigationBarStateProps & NavigationBarDispatchProps & NavigationBarOwnProps;
+export type NavigationBarProps =
+  NavigationBarStateProps & NavigationBarDispatchProps & NavigationBarOwnProps;
 
-export function NavigationBar(props: NavigationBarProps) {
-  const { subtabs, openSettings, closeSettings, isHeroSection, avatar, locale, undo, isRedoAvailable, isUndoAvailable, redo, saveHero, setTab, adventurePoints } = props;
+export function NavigationBar (props: NavigationBarProps) {
+  const {
+    subtabs,
+    openSettings,
+    closeSettings,
+    isHeroSection,
+    avatar,
+    locale,
+    undo,
+    isRedoAvailable,
+    isUndoAvailable,
+    redo,
+    saveHero,
+    setTab,
+    adventurePoints
+  } = props;
 
   return (
     <>
       <NavigationBarWrapper>
         <NavigationBarLeft>
           {isHeroSection && <>
-            <NavigationBarBack setTab={() => setTab('herolist')} />
+            <NavigationBarBack setTab={() => setTab ('herolist')} />
             <AvatarWrapper src={avatar} />
           </>}
           <NavigationBarTabs {...props} />
@@ -73,7 +89,9 @@ export function NavigationBar(props: NavigationBarProps) {
               margin={12}
               content={<ApTooltip {...props} />}
               >
-              <Text className="collected-ap">{adventurePoints.available} {translate(locale, 'titlebar.view.adventurepoints')}</Text>
+              <Text className="collected-ap">
+                {adventurePoints.available} {translate (locale, 'titlebar.view.adventurepoints')}
+              </Text>
             </TooltipToggle>
             <IconButton
               icon="&#xE90f;"
@@ -86,7 +104,7 @@ export function NavigationBar(props: NavigationBarProps) {
               disabled={!isRedoAvailable}
               />
             <BorderButton
-              label={translate(locale, 'actions.save')}
+              label={translate (locale, 'actions.save')}
               onClick={saveHero}
               />
           </>}
@@ -101,16 +119,16 @@ export function NavigationBar(props: NavigationBarProps) {
             />
         </NavigationBarRight>
       </NavigationBarWrapper>
-      {subtabs && (
+      {Maybe.isJust (subtabs) && (
         <NavigationBarSubTabs
           {...props}
-          tabs={subtabs}
+          tabs={Maybe.fromJust (subtabs)}
           />
       )}
     </>
   );
 }
 
-function toggleDevtools() {
-  remote.getCurrentWindow().webContents.toggleDevTools();
+function toggleDevtools () {
+  remote.getCurrentWindow ().webContents.toggleDevTools ();
 }

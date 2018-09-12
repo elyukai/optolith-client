@@ -32,6 +32,10 @@ export type RecordSafeKeys<T> = {
   [K in keyof T]: T[K] extends NonNullable<T[K]> ? K : never;
 }[keyof T];
 
+export type RecordNullableKeys<T> = {
+  [K in keyof T]: T[K] extends NonNullable<T[K]> ? never : K;
+}[keyof T];
+
 type ObjectDeleteProperty<T, D extends keyof T> = {
   [K in Exclude<keyof T, D>]: T[K];
 };
@@ -105,7 +109,18 @@ export class Record<T extends RecordBase> {
    *
    * Overwrites the value at the given key.
    */
-  insert<K extends keyof T> (key: K): (value: T[K]) => Record<T> {
+  insert<K extends keyof T> (key: K): (value: NonNullable<T[K]>) => Record<T> {
+    return value => Record.of ({ ...(this.value as any), [key]: value });
+  }
+
+  /**
+   * `insertMaybe :: keyof a -> Maybe a[keyof a] -> Record a -> Record a`
+   *
+   * Overwrites the nullable value at the given key.
+   */
+  insertMaybe<K extends RecordNullableKeys<T>> (
+    key: K
+  ): (value: Maybe<NonNullable<T[K]>>) => Record<T> {
     return value => Record.of ({ ...(this.value as any), [key]: value });
   }
 
@@ -142,11 +157,11 @@ export class Record<T extends RecordBase> {
    * function returns a `Maybe`. If it is a `Just`, it replaces the current
    * value. If it is a `Nothing`, it removes the key from the record.
    */
-  update<K extends keyof T> (
-    fn: (value: T[K]) => Maybe<NonNullable<T[K]>>
+  update<K extends RecordNullableKeys<T>> (
+    fn: (value: NonNullable<T[K]>) => Maybe<NonNullable<T[K]>>
   ): (key: K) => Record<T> {
     return key => {
-      const entry = this.lookup (key);
+      const entry = this.lookup (key) as Maybe<NonNullable<T[K]>>;
 
       if (Maybe.isJust (entry)) {
         const res = fn (Maybe.fromJust (entry));

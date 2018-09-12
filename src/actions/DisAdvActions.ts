@@ -297,7 +297,7 @@ export interface SetDisAdvTierAction {
 }
 
 /**
- * Change the current level of an advantage or disadvantage (`args`).
+ * Change the current level of an advantage or disadvantage.
  */
 export const setDisAdvantageLevel = (locale: UIMessagesObject) =>
   (id: string) => (index: number) => (level: number): AsyncAction =>
@@ -404,11 +404,9 @@ export interface SwitchDisAdvRatingVisibilityAction {
   type: ActionTypes.SWITCH_DISADV_RATING_VISIBILITY;
 }
 
-export const switchRatingVisibility = (): SwitchDisAdvRatingVisibilityAction => {
-  return {
-    type: ActionTypes.SWITCH_DISADV_RATING_VISIBILITY
-  };
-}
+export const switchRatingVisibility = (): SwitchDisAdvRatingVisibilityAction => ({
+  type: ActionTypes.SWITCH_DISADV_RATING_VISIBILITY
+});
 
 export interface SetActiveAdvantagesFilterTextAction {
   type: ActionTypes.SET_ADVANTAGES_FILTER_TEXT;

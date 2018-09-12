@@ -1,14 +1,19 @@
+import R from 'ramda';
 import { ActionTypes } from '../constants/ActionTypes';
 import { getAvailableAdventurePoints } from '../selectors/adventurePointsSelectors';
-import { isInCharacterCreation } from '../selectors/phaseSelectors';
-import { getDependentInstances, getLocaleMessages, getSpecialAbilities, getWiki } from '../selectors/stateSelectors';
+import { getIsInCharacterCreation } from '../selectors/phaseSelectors';
+import { getCurrentHeroPresent, getWiki } from '../selectors/stateSelectors';
 import { AsyncAction } from '../types/actions';
-import { ActivateArgs, DeactivateArgs } from '../types/data';
+import { ActivatableDependent, ActivateArgs, ActiveObjectWithId, DeactivateArgs } from '../types/data';
+import { UIMessagesObject } from '../types/ui';
 import { SpecialAbility } from '../types/wiki';
-import { convertPerTierCostToFinalCost, getNameCost } from '../utils/ActivatableUtils';
-import { validate } from '../utils/APUtils';
-import { Record } from '../utils/dataUtils';
+import { getNameCost } from '../utils/activatableActiveUtils';
+import { convertPerTierCostToFinalCost } from '../utils/activatableCostUtils';
+import { getAreSufficientAPAvailable } from '../utils/adventurePointsUtils';
+import { Just, Maybe, Record } from '../utils/dataUtils';
+import { getHeroStateListItem } from '../utils/heroStateUtils';
 import { translate } from '../utils/I18n';
+import { getWikiEntry } from '../utils/WikiUtils';
 import { addAlert } from './AlertActions';
 
 interface SpecialAbilityActivateArgs extends ActivateArgs {
@@ -20,25 +25,48 @@ export interface ActivateSpecialAbilityAction {
   payload: SpecialAbilityActivateArgs;
 }
 
-export function _addToList(args: ActivateArgs): AsyncAction {
-  return (dispatch, getState) => {
-    const state = getState();
-    const validCost = validate(args.cost, getAvailableAdventurePoints(state), isInCharacterCreation(state));
-    const messages = getLocaleMessages(state);
-    if (!validCost && messages) {
-      dispatch(addAlert({
-        title: translate(messages, 'notenoughap.title'),
-        message: translate(messages, 'notenoughap.content'),
-      }));
-    }
-    else {
-      dispatch({
-        type: ActionTypes.ACTIVATE_SPECIALABILITY,
-        payload: args
-      } as ActivateSpecialAbilityAction);
+/**
+ * Add a special ability with the provided activation properties (`args`).
+ */
+export const addSpecialAbility = (locale: UIMessagesObject) => (args: ActivateArgs): AsyncAction =>
+  (dispatch, getState) => {
+    const state = getState ();
+
+    const maybeHero = getCurrentHeroPresent (state);
+
+    if (Maybe.isJust (maybeHero)) {
+      const { id, cost } = args;
+
+      const maybeWikiEntry = getWikiEntry<Record<SpecialAbility>> (getWiki (state)) (id);
+
+      if (Maybe.isJust (maybeWikiEntry)) {
+        const wikiEntry = Maybe.fromJust (maybeWikiEntry);
+
+        const areSufficientAPAvailable = getAvailableAdventurePoints (state, { locale })
+          .fmap (
+            availableAP => getAreSufficientAPAvailable (getIsInCharacterCreation (state))
+                                                       (availableAP)
+                                                       (cost)
+          );
+
+        if (Maybe.elem (true) (areSufficientAPAvailable)) {
+          dispatch<ActivateSpecialAbilityAction> ({
+            type: ActionTypes.ACTIVATE_SPECIALABILITY,
+            payload: {
+              ...args,
+              wikiEntry
+            }
+          });
+        }
+        else {
+          dispatch (addAlert ({
+            title: translate (locale, 'notenoughap.title'),
+            message: translate (locale, 'notenoughap.content'),
+          }));
+        }
+      }
     }
   };
-}
 
 interface SpecialAbilityDeactivateArgs extends DeactivateArgs {
   wikiEntry: Record<SpecialAbility>;
@@ -49,15 +77,38 @@ export interface DeactivateSpecialAbilityAction {
   payload: SpecialAbilityDeactivateArgs;
 }
 
-export function _removeFromList(args: DeactivateArgs): DeactivateSpecialAbilityAction {
-  return {
-    type: ActionTypes.DEACTIVATE_SPECIALABILITY,
-    payload: {
-      ...args,
-      cost: args.cost * -1 // the entry should be removed
-    }
-  };
-}
+/**
+ * Remove a special ability with the provided activation properties
+ * (`args`).
+ */
+export const removeSpecialAbility = (args: DeactivateArgs): AsyncAction =>
+    (dispatch, getState) => {
+      const state = getState ();
+
+      const maybeHero = getCurrentHeroPresent (state);
+
+      if (Maybe.isJust (maybeHero)) {
+        const hero = Maybe.fromJust (maybeHero);
+
+        const maybeWikiEntry =
+          getWikiEntry<Record<SpecialAbility>> (getWiki (state)) (args.id);
+
+        const maybeStateEntry =
+          getHeroStateListItem<Record<ActivatableDependent>> (args.id) (hero);
+
+        if (Maybe.isJust (maybeWikiEntry) && Maybe.isJust (maybeStateEntry)) {
+          const wikiEntry = Maybe.fromJust (maybeWikiEntry);
+
+          dispatch<DeactivateSpecialAbilityAction> ({
+            type: ActionTypes.DEACTIVATE_SPECIALABILITY,
+            payload: {
+              ...args,
+              wikiEntry
+            }
+          });
+        }
+      }
+    };
 
 export interface SetSpecialAbilityTierAction {
   type: ActionTypes.SET_SPECIALABILITY_TIER;
@@ -65,40 +116,101 @@ export interface SetSpecialAbilityTierAction {
     id: string;
     index: number;
     tier: number;
-    cost: number;
     wikiEntry: Record<SpecialAbility>;
   };
 }
 
-export function _setTier(id: string, index: number, tier: number): AsyncAction {
-  return (dispatch, getState) => {
-    const state = getState();
-    const dependent = getDependentInstances(state);
-    const activeObjectWithId = { id, index, ...getSpecialAbilities(state).get(id)!.active[index] };
-    const previousCost = convertPerTierCostToFinalCost(getNameCost(activeObjectWithId, getWiki(state), dependent, false)).currentCost;
-    const nextCost = convertPerTierCostToFinalCost(getNameCost({ ...activeObjectWithId, tier }, getWiki(state), dependent, true)).currentCost;
-    const cost = nextCost - previousCost;
-    const validCost = validate(cost, getAvailableAdventurePoints(state), isInCharacterCreation(state));
-    const messages = getLocaleMessages(state);
-    if (!validCost && messages) {
-      dispatch(addAlert({
-        title: translate(messages, 'notenoughap.title'),
-        message: translate(messages, 'notenoughap.content'),
-      }));
-    }
-    else {
-      dispatch({
-        type: ActionTypes.SET_SPECIALABILITY_TIER,
-        payload: {
-          id,
-          tier,
-          cost,
-          index
+/**
+ * Change the current level of a special ability.
+ */
+export const setSpecialAbilityLevel = (locale: UIMessagesObject) =>
+  (id: string) => (index: number) => (level: number): AsyncAction =>
+    (dispatch, getState) => {
+      const state = getState ();
+
+      const maybeHero = getCurrentHeroPresent (state);
+
+      if (Maybe.isJust (maybeHero)) {
+        const hero = Maybe.fromJust (maybeHero);
+
+        const maybeWikiEntry =
+          getWikiEntry<Record<SpecialAbility>> (getWiki (state)) (id);
+
+        const maybeStateEntry =
+          getHeroStateListItem<Record<ActivatableDependent>> (id) (hero);
+
+        const maybeActiveObjectWithId = maybeStateEntry
+          .fmap (stateEntry => stateEntry.get ('active'))
+          .bind (active => active.subscript (index))
+          .fmap<Record<ActiveObjectWithId>> (
+            activeObject => activeObject.merge (
+              Record.of ({
+                id,
+                index
+              })
+            )
+          );
+
+        if (Maybe.isJust (maybeWikiEntry) && Maybe.isJust (maybeActiveObjectWithId)) {
+          const wikiEntry = Maybe.fromJust (maybeWikiEntry);
+          const activeObjectWithId = Maybe.fromJust (maybeActiveObjectWithId);
+
+          const wiki = getWiki (state);
+
+          const previousCost = getNameCost (
+            activeObjectWithId,
+            wiki,
+            hero,
+            false,
+            Just (locale)
+          )
+            .fmap (convertPerTierCostToFinalCost (Just (locale)))
+            .fmap (obj => obj.get ('finalCost'));
+
+          const nextCost = getNameCost (
+            activeObjectWithId.insert ('tier') (level),
+            wiki,
+            hero,
+            true,
+            Just (locale)
+          )
+            .fmap (convertPerTierCostToFinalCost (Just (locale)))
+            .fmap (obj => obj.get ('finalCost'));
+
+          const maybeCost = Maybe.liftM2 (R.subtract) (nextCost) (previousCost);
+
+          if (Maybe.isJust (maybeCost)) {
+            const cost = Maybe.fromJust (maybeCost);
+
+            const areSufficientAPAvailable =
+              getAvailableAdventurePoints (state, { locale })
+                .fmap (
+                  availableAP => getAreSufficientAPAvailable (getIsInCharacterCreation (state))
+                                                             (availableAP)
+                                                             (cost)
+                );
+
+            if (Maybe.elem (true) (areSufficientAPAvailable)) {
+              dispatch<SetSpecialAbilityTierAction> ({
+                type: ActionTypes.SET_SPECIALABILITY_TIER,
+                payload: {
+                  id,
+                  tier: level,
+                  index,
+                  wikiEntry
+                }
+              });
+            }
+            else {
+              dispatch (addAlert ({
+                title: translate (locale, 'notenoughap.title'),
+                message: translate (locale, 'notenoughap.content'),
+              }));
+            }
+          }
         }
-      } as SetSpecialAbilityTierAction);
-    }
-  };
-}
+      }
+    };
 
 export interface SetSpecialAbilitiesSortOrderAction {
   type: ActionTypes.SET_SPECIALABILITIES_SORT_ORDER;
@@ -107,14 +219,13 @@ export interface SetSpecialAbilitiesSortOrderAction {
   };
 }
 
-export function _setSortOrder(sortOrder: string): SetSpecialAbilitiesSortOrderAction {
-  return {
+export const setSpecialAbilitiesSortOrder =
+  (sortOrder: string): SetSpecialAbilitiesSortOrderAction => ({
     type: ActionTypes.SET_SPECIALABILITIES_SORT_ORDER,
     payload: {
       sortOrder,
     },
-  };
-}
+  });
 
 export interface SetActiveSpecialAbilitiesFilterTextAction {
   type: ActionTypes.SET_SPECIAL_ABILITIES_FILTER_TEXT;
@@ -123,14 +234,13 @@ export interface SetActiveSpecialAbilitiesFilterTextAction {
   };
 }
 
-export function setActiveFilterText(filterText: string): SetActiveSpecialAbilitiesFilterTextAction {
-  return {
+export const setActiveSpecialAbilitiesFilterText =
+  (filterText: string): SetActiveSpecialAbilitiesFilterTextAction => ({
     type: ActionTypes.SET_SPECIAL_ABILITIES_FILTER_TEXT,
     payload: {
       filterText
     }
-  };
-}
+  });
 
 export interface SetInactiveSpecialAbilitiesFilterTextAction {
   type: ActionTypes.SET_INACTIVE_SPECIAL_ABILITIES_FILTER_TEXT;
@@ -139,11 +249,10 @@ export interface SetInactiveSpecialAbilitiesFilterTextAction {
   };
 }
 
-export function setInactiveFilterText(filterText: string): SetInactiveSpecialAbilitiesFilterTextAction {
-  return {
+export const setInactiveSpecialAbilitiesFilterText =
+  (filterText: string): SetInactiveSpecialAbilitiesFilterTextAction => ({
     type: ActionTypes.SET_INACTIVE_SPECIAL_ABILITIES_FILTER_TEXT,
     payload: {
       filterText
     }
-  };
-}
+  });

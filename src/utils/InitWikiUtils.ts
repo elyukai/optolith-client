@@ -744,7 +744,7 @@ export const initBlessing = (
       ...otherLocale
     } = localeObject;
 
-    const { aspc, trad, req, src: srcIds } = raw;
+    const { aspc, trad, src: srcIds } = raw;
 
     return Just (Record.of<Wiki.Blessing> ({
       ...otherLocale,
@@ -752,7 +752,6 @@ export const initBlessing = (
       category: Categories.BLESSINGS,
       aspects: List.fromArray (aspc),
       tradition: List.fromArray (trad),
-      prerequisites: convertRawPrerequisiteObjects (req),
       src: getSourceBooks (srcIds, srcPages)
     }));
   }
@@ -825,7 +824,7 @@ export const initCantrip = (
       ...otherLocale
     } = localeObject;
 
-    const { merk, trad, req, src: srcIds } = raw;
+    const { merk, trad, src: srcIds } = raw;
 
     return Just (Record.of<Wiki.Cantrip> ({
       ...otherLocale,
@@ -833,7 +832,6 @@ export const initCantrip = (
       category: Categories.CANTRIPS,
       property: merk,
       tradition: List.fromArray (trad),
-      prerequisites: convertRawPrerequisiteObjects (req),
       src: getSourceBooks (srcIds, srcPages)
     }));
   }

@@ -108,16 +108,22 @@ export interface SaveHeroAction {
   };
 }
 
-export const saveHero = (locale: UIMessagesObject) => (id: string): AsyncAction => dispatch => {
-  dispatch<SaveHeroAction> ({
-    type: ActionTypes.SAVE_HERO,
-    payload: {
-      id
-    }
-  });
-
-  dispatch (requestHeroSave (locale) (id));
-};
+export const saveHero = (locale: UIMessagesObject) =>
+  (id: Maybe<string>): AsyncAction =>
+    dispatch => {
+      dispatch (requestHeroSave (locale) (id))
+        .then (
+          maybeId => Maybe.fromNullable (maybeId)
+            .fmap (
+              actualId => dispatch<SaveHeroAction> ({
+                type: ActionTypes.SAVE_HERO,
+                payload: {
+                  id: actualId // specified by param or currently open
+                }
+              })
+            )
+        );
+    };
 
 export const exportHeroValidate = (locale: UIMessagesObject) => (id: string): AsyncAction =>
   dispatch => dispatch (requestHeroExport (locale) (id));

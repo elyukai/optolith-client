@@ -3,10 +3,10 @@ import * as AttributesActions from '../actions/AttributesActions';
 import * as CombatTechniquesActions from '../actions/CombatTechniquesActions';
 import * as DisAdvActions from '../actions/DisAdvActions';
 import * as HerolistActions from '../actions/HerolistActions';
-import * as LiturgiesActions from '../actions/LiturgiesActions';
+import * as LiturgicalChantActions from '../actions/LiturgicalChantActions';
+import * as SkillActions from '../actions/SkillActions';
 import * as SpecialAbilitiesActions from '../actions/SpecialAbilitiesActions';
 import * as SpellsActions from '../actions/SpellsActions';
-import * as TalentsActions from '../actions/TalentsActions';
 import { ActionTypes } from '../constants/ActionTypes';
 import * as Data from '../types/data';
 import { Record } from '../utils/dataUtils';
@@ -21,20 +21,20 @@ type Action =
   CombatTechniquesActions.RemoveCombatTechniquePointAction |
   HerolistActions.CreateHeroAction |
   HerolistActions.LoadHeroAction |
-  LiturgiesActions.ActivateLiturgyAction |
-  LiturgiesActions.AddLiturgyPointAction |
-  LiturgiesActions.DeactivateLiturgyAction |
-  LiturgiesActions.RemoveLiturgyPointAction |
-  LiturgiesActions.ActivateBlessingAction |
-  LiturgiesActions.DeactivateBlessingAction |
+  LiturgicalChantActions.ActivateLiturgicalChantAction |
+  LiturgicalChantActions.AddLiturgicalChantPointAction |
+  LiturgicalChantActions.DeactivateLiturgyAction |
+  LiturgicalChantActions.RemoveLiturgicalChantPointAction |
+  LiturgicalChantActions.ActivateBlessingAction |
+  LiturgicalChantActions.DeactivateBlessingAction |
   SpellsActions.ActivateSpellAction |
   SpellsActions.AddSpellPointAction |
   SpellsActions.DeactivateSpellAction |
   SpellsActions.RemoveSpellPointAction |
   SpellsActions.ActivateCantripAction |
   SpellsActions.DeactivateCantripAction |
-  TalentsActions.AddTalentPointAction |
-  TalentsActions.RemoveTalentPointAction |
+  SkillActions.AddSkillPointAction |
+  SkillActions.RemoveSkillPointAction |
   DisAdvActions.ActivateDisAdvAction |
   DisAdvActions.DeactivateDisAdvAction |
   DisAdvActions.SetDisAdvTierAction |

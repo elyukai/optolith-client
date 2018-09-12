@@ -1,4 +1,5 @@
 import { combineReducers } from 'redux';
+import { Record } from '../utils/dataUtils';
 import { alertsReducer as alerts, AlertsState } from './alertsReducer';
 import { filtersReducer as filters, FiltersState } from './filtersReducer';
 import { routeReducer as location, UILocationState } from './routeReducer';
@@ -12,7 +13,7 @@ export interface UIState {
   location: UILocationState;
   settings: UISettingsState;
   subwindows: SubWindowsState;
-  wiki: UIWikiState;
+  wiki: Record<UIWikiState>;
 }
 
 export const uiReducer = combineReducers<UIState> ({

@@ -5,13 +5,13 @@ import { SwitchDisAdvRatingVisibilityAction } from '../actions/DisAdvActions';
 import { SetItemsSortOrderAction, SetMeleeItemTemplatesCombatTechniqueFilterAction, SetRangedItemTemplatesCombatTechniqueFilterAction } from '../actions/EquipmentActions';
 import { SetHerolistSortOrderAction, SetHerolistVisibilityFilterAction } from '../actions/HerolistActions';
 import { ReceiveInitialDataAction } from '../actions/IOActions';
-import { SetLiturgicalChantsSortOrderAction } from '../actions/LiturgiesActions';
+import { SetLiturgicalChantsSortOrderAction } from '../actions/LiturgicalChantActions';
 import { SetProfessionsGroupVisibilityFilterAction, SetProfessionsSortOrderAction, SetProfessionsVisibilityFilterAction, SwitchProfessionsExpansionVisibilityFilterAction } from '../actions/ProfessionActions';
 import { SetRacesSortOrderAction, SwitchRaceValueVisibilityAction } from '../actions/RaceActions';
 import { SwitchSheetAttributeValueVisibilityAction } from '../actions/SheetActions';
+import { SetSkillsSortOrderAction, SwitchSkillRatingVisibilityAction } from '../actions/SkillActions';
 import { SetSpecialAbilitiesSortOrderAction } from '../actions/SpecialAbilitiesActions';
 import { SetSpellsSortOrderAction } from '../actions/SpellsActions';
-import { SetTalentsSortOrderAction, SwitchTalentRatingVisibilityAction } from '../actions/TalentsActions';
 import { ActionTypes } from '../constants/ActionTypes';
 
 type Action =
@@ -34,8 +34,8 @@ type Action =
   SwitchRaceValueVisibilityAction |
   SetSpecialAbilitiesSortOrderAction |
   SetSpellsSortOrderAction |
-  SetTalentsSortOrderAction |
-  SwitchTalentRatingVisibilityAction |
+  SetSkillsSortOrderAction |
+  SwitchSkillRatingVisibilityAction |
   SwitchSheetAttributeValueVisibilityAction |
   SetThemeAction |
   SwitchEnableEditingHeroAfterCreationPhaseAction |

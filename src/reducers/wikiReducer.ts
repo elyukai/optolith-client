@@ -195,7 +195,7 @@ export function wikiReducer (
               {
                 P_0: {
                   id: 'P_0',
-                  name: translate (Record.of (ui), 'professions.ownprofession'),
+                  name: ui['professions.ownprofession'],
                   req: [],
                   src: []
                 }

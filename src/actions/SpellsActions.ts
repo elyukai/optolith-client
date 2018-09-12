@@ -1,175 +1,189 @@
 import { ActionTypes } from '../constants/ActionTypes';
 import { getAvailableAdventurePoints } from '../selectors/adventurePointsSelectors';
-import { isInCharacterCreation } from '../selectors/phaseSelectors';
-import { getLocaleMessages, getSpells } from '../selectors/stateSelectors';
+import { getIsInCharacterCreation } from '../selectors/phaseSelectors';
+import { getSpells, getWikiSpells } from '../selectors/stateSelectors';
 import { AsyncAction } from '../types/actions';
+import { UIMessagesObject } from '../types/ui';
 import * as Wiki from '../types/wiki';
-import { validate } from '../utils/APUtils';
-import { Record } from '../utils/dataUtils';
+import { getAreSufficientAPAvailable } from '../utils/adventurePointsUtils';
+import { Maybe, Nothing, Record } from '../utils/dataUtils';
 import { translate } from '../utils/I18n';
-import { getDecreaseAP, getIncreaseAP } from '../utils/ICUtils';
-import { getDecreaseCost, getIncreaseCost } from '../utils/IncreasableUtils';
+import { getIncreaseAP } from '../utils/improvementCostUtils';
+import { getAreSufficientAPAvailableForIncrease } from '../utils/IncreasableUtils';
 import { addAlert } from './AlertActions';
 
 export interface ActivateSpellAction {
   type: ActionTypes.ACTIVATE_SPELL;
   payload: {
     id: string;
-    cost: number;
     wikiEntry: Record<Wiki.Spell>;
   };
 }
 
-export function _addToList(id: string): AsyncAction {
-  return (dispatch, getState) => {
-    const state = getState();
-    const entry = getSpells(state).get(id)!;
-    const cost = getIncreaseAP(entry.ic);
-    const validCost = validate(cost, getAvailableAdventurePoints(state), isInCharacterCreation(state));
-    const messages = getLocaleMessages(state);
-    if (!validCost && messages) {
-      dispatch(addAlert({
-        title: translate(messages, 'notenoughap.title'),
-        message: translate(messages, 'notenoughap.content'),
-      }));
-    }
-    else {
-      dispatch<ActivateSpellAction>({
-        type: ActionTypes.ACTIVATE_SPELL,
-        payload: {
-          id,
-          cost
-        }
-      });
+export const addSpell = (id: string) => (locale: UIMessagesObject): AsyncAction =>
+  (dispatch, getState) => {
+    const state = getState ();
+    const wikiSpells = getWikiSpells (state);
+
+    const maybeWikiSpell = wikiSpells.lookup (id);
+
+    if (Maybe.isJust (maybeWikiSpell)) {
+      const wikiEntry = Maybe.fromJust (maybeWikiSpell);
+
+      const areSufficientAPAvailableForIncrease = getAvailableAdventurePoints (state, { locale })
+        .fmap (
+          availableAP => getAreSufficientAPAvailable (getIsInCharacterCreation (state))
+                                                     (availableAP)
+                                                     (getIncreaseAP (wikiEntry.get ('ic'))
+                                                                    (Nothing ()))
+        );
+
+      if (Maybe.elem (true) (areSufficientAPAvailableForIncrease)) {
+        dispatch<ActivateSpellAction> ({
+          type: ActionTypes.ACTIVATE_SPELL,
+          payload: {
+            id,
+            wikiEntry
+          }
+        });
+      }
+      else {
+        dispatch (addAlert ({
+          title: translate (locale, 'notenoughap.title'),
+          message: translate (locale, 'notenoughap.content'),
+        }));
+      }
     }
   };
-}
 
 export interface ActivateCantripAction {
   type: ActionTypes.ACTIVATE_CANTRIP;
   payload: {
     id: string;
-    wikiEntry: Record<Wiki.Cantrip>;
   };
 }
 
-export function _addCantripToList(id: string): AsyncAction {
-  return (dispatch, getState) => {
-    const state = getState();
-    const validCost = validate(1, getAvailableAdventurePoints(state), isInCharacterCreation(state));
-    const messages = getLocaleMessages(state);
-    if (!validCost && messages) {
-      dispatch(addAlert({
-        title: translate(messages, 'notenoughap.title'),
-        message: translate(messages, 'notenoughap.content'),
-      }));
-    }
-    else {
-      dispatch<ActivateCantripAction>({
+export const addCantrip = (id: string) => (locale: UIMessagesObject): AsyncAction =>
+  (dispatch, getState) => {
+    const state = getState ();
+
+    const areSufficientAPAvailableForIncrease = getAvailableAdventurePoints (state, { locale })
+      .fmap (
+        availableAP => getAreSufficientAPAvailable (getIsInCharacterCreation (state))
+                                                   (availableAP)
+                                                   (1)
+      );
+
+    if (Maybe.elem (true) (areSufficientAPAvailableForIncrease)) {
+      dispatch<ActivateCantripAction> ({
         type: ActionTypes.ACTIVATE_CANTRIP,
         payload: {
           id
         }
       });
     }
+    else {
+      dispatch (addAlert ({
+        title: translate (locale, 'notenoughap.title'),
+        message: translate (locale, 'notenoughap.content'),
+      }));
+    }
   };
-}
 
 export interface DeactivateSpellAction {
   type: ActionTypes.DEACTIVATE_SPELL;
   payload: {
     id: string;
-    cost: number;
     wikiEntry: Record<Wiki.Spell>;
   };
 }
 
-export function _removeFromList(id: string): AsyncAction {
-  return (dispatch, getState) => {
-    const state = getState();
-    const entry = getSpells(state).get(id)!;
-    const cost = getDecreaseAP(entry.ic);
-    dispatch<DeactivateSpellAction>({
+export const removeSpell = (id: string): AsyncAction => (dispatch, getState) => {
+  const state = getState ();
+  const wikiSpells = getWikiSpells (state);
+
+  const maybeWikiSpell = wikiSpells.lookup (id);
+
+  if (Maybe.isJust (maybeWikiSpell)) {
+    const wikiEntry = Maybe.fromJust (maybeWikiSpell);
+
+    dispatch<DeactivateSpellAction> ({
       type: ActionTypes.DEACTIVATE_SPELL,
       payload: {
         id,
-        cost
+        wikiEntry
       }
     });
-  };
-}
+  }
+};
 
 export interface DeactivateCantripAction {
   type: ActionTypes.DEACTIVATE_CANTRIP;
   payload: {
     id: string;
-    wikiEntry: Record<Wiki.Cantrip>;
   };
 }
 
-export function _removeCantripFromList(id: string): DeactivateCantripAction {
-  return {
-    type: ActionTypes.DEACTIVATE_CANTRIP,
-    payload: {
-      id
-    }
-  };
-}
+export const removeCantrip = (id: string): DeactivateCantripAction => ({
+  type: ActionTypes.DEACTIVATE_CANTRIP,
+  payload: {
+    id
+  }
+});
 
 export interface AddSpellPointAction {
   type: ActionTypes.ADD_SPELL_POINT;
   payload: {
     id: string;
-    cost: number;
   };
 }
 
-export function _addPoint(id: string): AsyncAction {
-  return (dispatch, getState) => {
-    const state = getState();
-    const cost = getIncreaseCost(getSpells(state).get(id)!, getAvailableAdventurePoints(state), isInCharacterCreation(state));
-    const messages = getLocaleMessages(state);
-    if (messages) {
-      if (!cost) {
-        dispatch(addAlert({
-          title: translate(messages, 'notenoughap.title'),
-          message: translate(messages, 'notenoughap.content'),
-        }));
-      }
-      else {
-        dispatch<AddSpellPointAction>({
-          type: ActionTypes.ADD_SPELL_POINT,
-          payload: {
-            id,
-            cost
-          }
-        });
-      }
+export const addSpellPoint = (id: string) => (locale: UIMessagesObject): AsyncAction =>
+  (dispatch, getState) => {
+    const state = getState ();
+    const maybeHeroSpells = getSpells (state);
+    const wikiSpells = getWikiSpells (state);
+
+    const areSufficientAPAvailableForIncrease = wikiSpells.lookup (id).bind (
+      wikiSpell => getAvailableAdventurePoints (state, { locale }).fmap (
+        availableAP => getAreSufficientAPAvailableForIncrease (
+          wikiSpell,
+          maybeHeroSpells.bind (spells => spells.lookup (id)),
+          availableAP,
+          getIsInCharacterCreation (state)
+        )
+      )
+    );
+
+    if (Maybe.elem (true) (areSufficientAPAvailableForIncrease)) {
+      dispatch<AddSpellPointAction> ({
+        type: ActionTypes.ADD_SPELL_POINT,
+        payload: {
+          id
+        }
+      });
+    }
+    else {
+      dispatch (addAlert ({
+        title: translate (locale, 'notenoughap.title'),
+        message: translate (locale, 'notenoughap.content'),
+      }));
     }
   };
-}
 
 export interface RemoveSpellPointAction {
   type: ActionTypes.REMOVE_SPELL_POINT;
   payload: {
     id: string;
-    cost: number;
   };
 }
 
-export function _removePoint(id: string): AsyncAction {
-  return (dispatch, getState) => {
-    const state = getState();
-    const cost = getDecreaseCost(getSpells(state).get(id)!);
-    dispatch<RemoveSpellPointAction>({
-      type: ActionTypes.REMOVE_SPELL_POINT,
-      payload: {
-        id,
-        cost
-      }
-    });
-  };
-}
+export const removeSpellPoint = (id: string): RemoveSpellPointAction => ({
+  type: ActionTypes.REMOVE_SPELL_POINT,
+  payload: {
+    id
+  }
+});
 
 export interface SetSpellsSortOrderAction {
   type: ActionTypes.SET_SPELLS_SORT_ORDER;
@@ -178,14 +192,12 @@ export interface SetSpellsSortOrderAction {
   };
 }
 
-export function _setSortOrder(sortOrder: string): SetSpellsSortOrderAction {
-  return {
-    type: ActionTypes.SET_SPELLS_SORT_ORDER,
-    payload: {
-      sortOrder
-    }
-  };
-}
+export const setSpellsSortOrder = (sortOrder: string): SetSpellsSortOrderAction => ({
+  type: ActionTypes.SET_SPELLS_SORT_ORDER,
+  payload: {
+    sortOrder
+  }
+});
 
 export interface SetActiveSpellsFilterTextAction {
   type: ActionTypes.SET_SPELLS_FILTER_TEXT;
@@ -194,14 +206,12 @@ export interface SetActiveSpellsFilterTextAction {
   };
 }
 
-export function setActiveFilterText(filterText: string): SetActiveSpellsFilterTextAction {
-  return {
-    type: ActionTypes.SET_SPELLS_FILTER_TEXT,
-    payload: {
-      filterText
-    }
-  };
-}
+export const setActiveSpellsFilterText = (filterText: string): SetActiveSpellsFilterTextAction => ({
+  type: ActionTypes.SET_SPELLS_FILTER_TEXT,
+  payload: {
+    filterText
+  }
+});
 
 export interface SetInactiveSpellsFilterTextAction {
   type: ActionTypes.SET_INACTIVE_SPELLS_FILTER_TEXT;
@@ -210,11 +220,10 @@ export interface SetInactiveSpellsFilterTextAction {
   };
 }
 
-export function setInactiveFilterText(filterText: string): SetInactiveSpellsFilterTextAction {
-  return {
+export const setInactiveSpellsFilterText =
+  (filterText: string): SetInactiveSpellsFilterTextAction => ({
     type: ActionTypes.SET_INACTIVE_SPELLS_FILTER_TEXT,
     payload: {
       filterText
     }
-  };
-}
+  });

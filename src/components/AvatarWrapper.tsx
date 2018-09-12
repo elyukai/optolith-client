@@ -1,31 +1,41 @@
 import * as classNames from 'classnames';
 import { existsSync } from 'fs';
 import * as React from 'react';
+import { Maybe } from '../utils/dataUtils';
 import { isBase64Image } from '../utils/RegexUtils';
 import { Avatar } from './Avatar';
 
 export interface AvatarWrapperProps {
-	className?: string;
-	children?: React.ReactNode;
-	img?: boolean;
-	src?: string;
-	onClick?(): void;
+  className?: string;
+  children?: React.ReactNode;
+  img?: boolean;
+  src: Maybe<string>;
+  onClick? (): void;
 }
 
-export function AvatarWrapper(props: AvatarWrapperProps) {
-	const { children, img, onClick, src } = props;
-	let { className } = props;
-	const validPath = typeof src === 'string' && src.length > 0 && (isBase64Image(src) || existsSync(src.replace(/file:[\\\/]+/, '')));
+export function AvatarWrapper (props: AvatarWrapperProps) {
+  const { children, img, onClick, src: maybeSrc } = props;
+  let { className } = props;
 
-	className = classNames(className, {
-		'avatar-wrapper': true,
-		'no-avatar': !validPath
-	});
+  const validPath = Maybe.elem (true)
+                               (maybeSrc
+                                .fmap (
+                                  src => src.length > 0
+                                    && (
+                                      isBase64Image (src)
+                                      || existsSync (src.replace (/file:[\\\/]+/, ''))
+                                    )
+                                ));
 
-	return (
-		<div className={className} onClick={onClick}>
-			{children}
-			<Avatar img={img} src={src} hasWrapper validPath={validPath} />
-		</div>
-	);
+  className = classNames (className, {
+    'avatar-wrapper': true,
+    'no-avatar': !validPath
+  });
+
+  return (
+    <div className={className} onClick={onClick}>
+      {children}
+      <Avatar img={img} src={maybeSrc} hasWrapper validPath={validPath} />
+    </div>
+  );
 }

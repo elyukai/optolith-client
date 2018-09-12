@@ -11,19 +11,19 @@ export interface NavigationBarTabProps extends TabBaseProps {
 export interface NavigationBarTabsProps {
   currentTab: TabId;
   tabs: List<NavigationBarTabProps>;
-  setTab(id: TabId): void;
+  setTab (id: TabId): void;
 }
 
-export function NavigationBarTabs(props: NavigationBarTabsProps) {
+export function NavigationBarTabs (props: NavigationBarTabsProps) {
   const { currentTab, tabs, setTab } = props;
 
   return (
     <div className="navigationbar-tabs">
       {
-        tabs.map(tab => {
+        tabs.map (tab => {
           const { id, subTabs, ...other } = tab;
-          const isActive = subTabs ? subTabs.elem(currentTab) : currentTab === id;
-          const set = () => setTab(id);
+          const isActive = subTabs ? subTabs.elem (currentTab) : currentTab === id;
+          const set = () => setTab (id);
 
           return (
             <Tab

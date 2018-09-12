@@ -458,7 +458,6 @@ export interface RawBlessing {
   id: string;
   aspc: number[];
   trad: number[];
-  req: AllRawRequirementObjects[];
   src: string[];
 }
 
@@ -570,7 +569,6 @@ export interface RawCantrip {
   id: string;
   merk: number;
   trad: number[];
-  req: AllRawRequirementObjects[];
   src: string[];
 }
 

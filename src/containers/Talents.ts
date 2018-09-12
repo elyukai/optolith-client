@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import { Action, Dispatch } from 'redux';
-import * as TalentsActions from '../actions/TalentsActions';
+import * as TalentsActions from '../actions/SkillActions';
 import { AppState } from '../reducers/app';
 import { getPresent } from '../selectors/currentHeroSelectors';
 import { getDerivedCharacteristicsMap } from '../selectors/derivedCharacteristicsSelectors';

@@ -1,6 +1,7 @@
 import { SetTabAction } from '../actions/LocationActions';
 import { SetWikiCategory1Action, SetWikiCategory2Action, SetWikiCombatTechniquesGroupAction, SetWikiFilterAction, SetWikiFilterAllAction, SetWikiItemTemplatesGroupAction, SetWikiLiturgicalChantsGroupAction, SetWikiProfessionsGroupAction, SetWikiSkillsGroupAction, SetWikiSpecialAbilitiesGroupAction, SetWikiSpellsGroupAction } from '../actions/WikiActions';
 import { ActionTypes } from '../constants/ActionTypes';
+import { Nothing, Record } from '../utils/dataUtils';
 
 type Action =
   SetTabAction |
@@ -30,80 +31,51 @@ export interface UIWikiState {
   itemTemplatesGroup?: number;
 }
 
-const initialState: UIWikiState = {
+const initialState: Record<UIWikiState> = Record.of ({
   filter: '',
   filterAll: ''
-};
+});
 
-export function wikiUIReducer (state: UIWikiState = initialState, action: Action): UIWikiState {
+export const wikiUIReducer = (
+  state: Record<UIWikiState> = initialState,
+  action: Action
+): Record<UIWikiState> => {
   switch (action.type) {
     case ActionTypes.SET_WIKI_CATEGORY_1:
-      return {
-        ...state,
-        category1: action.payload.category,
-        category2: undefined,
-        filter: ''
-      };
+      return state
+        .insert ('category1') (action.payload.category)
+        .update (Nothing) ('category2')
+        .insert ('filter') ('');
 
     case ActionTypes.SET_WIKI_CATEGORY_2:
-      return {
-        ...state,
-        category2: action.payload.category
-      };
+      return state.insert ('category2') (action.payload.category);
 
     case ActionTypes.SET_WIKI_FILTER:
-      return {
-        ...state,
-        filter: action.payload.filterText
-      };
+      return state.insert ('filter') (action.payload.filterText);
 
     case ActionTypes.SET_WIKI_FILTER_ALL:
-      return {
-        ...state,
-        filterAll: action.payload.filterText
-      };
+      return state.insert ('filterAll') (action.payload.filterText);
 
     case ActionTypes.SET_WIKI_COMBAT_TECHNIQUES_GROUP:
-      return {
-        ...state,
-        combatTechniquesGroup: action.payload.group
-      };
+      return state.insertMaybe ('combatTechniquesGroup') (action.payload.group);
 
     case ActionTypes.SET_WIKI_ITEM_TEMPLATES_GROUP:
-      return {
-        ...state,
-        itemTemplatesGroup: action.payload.group
-      };
+      return state.insertMaybe ('itemTemplatesGroup') (action.payload.group);
 
     case ActionTypes.SET_WIKI_LITURGICAL_CHANTS_GROUP:
-      return {
-        ...state,
-        liturgicalChantsGroup: action.payload.group
-      };
+      return state.insertMaybe ('liturgicalChantsGroup') (action.payload.group);
 
     case ActionTypes.SET_WIKI_PROFESSIONS_GROUP:
-      return {
-        ...state,
-        professionsGroup: action.payload.group
-      };
+      return state.insertMaybe ('professionsGroup') (action.payload.group);
 
     case ActionTypes.SET_WIKI_SKILLS_GROUP:
-      return {
-        ...state,
-        skillsGroup: action.payload.group
-      };
+      return state.insertMaybe ('skillsGroup') (action.payload.group);
 
     case ActionTypes.SET_WIKI_SPECIAL_ABILITIES_GROUP:
-      return {
-        ...state,
-        specialAbilitiesGroup: action.payload.group
-      };
+      return state.insertMaybe ('specialAbilitiesGroup') (action.payload.group);
 
     case ActionTypes.SET_WIKI_SPELLS_GROUP:
-      return {
-        ...state,
-        spellsGroup: action.payload.group
-      };
+      return state.insertMaybe ('spellsGroup') (action.payload.group);
 
     default:
       return state;

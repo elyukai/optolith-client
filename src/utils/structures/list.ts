@@ -440,22 +440,23 @@ export class List<T> implements Al.Monad<T>, Al.Foldable<T>, Al.Semigroup<T>,
     return initial => this.value.reduce<U> ((acc, e, index) => fn (acc) (index) (e), initial);
   }
 
-  // /**
-  //  * `foldl1 :: Foldable t => (a -> a -> a) -> t a -> a`
-  //  *
-  //  * A variant of `foldl` that has no base case, and thus may only be applied to
-  //  * non-empty structures.
-  //  */
-  // foldl1(fn: (acc: T) => (current: T) => T): T {
-  //   if (this.value.length > 0) {
-  //     const [head, ...tail] = this.value;
+  /**
+   * `foldl1 :: Foldable t => (a -> a -> a) -> t a -> a`
+   *
+   * A variant of `foldl` that has no base case, and thus may only be applied to
+   * non-empty structures.
+   */
+  static foldl1<A> (fn: (acc: A) => (current: A) => A): (list: List<A>) => A {
+    return list => {
+      if (list.value.length > 0) {
+        const [head, ...tail] = list.value;
 
-  //     return tail.reduce<T>((acc, e) => fn(acc)(e), head);
-  //   }
-  //   else {
-  //     throw new TypeError('Cannot apply foldl1 to an empty list.');
-  //   }
-  // }
+        return tail.reduce<A> ((acc, e) => fn (acc) (e), head);
+      }
+
+      throw new TypeError ('Cannot apply foldl1 to an empty list.');
+    }
+  }
 
   /**
    * `ifoldlWithList :: Foldable t => (t -> b -> Int -> a -> b) -> b -> t a -> b`

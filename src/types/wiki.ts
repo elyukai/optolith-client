@@ -556,7 +556,6 @@ export interface Blessing {
   readonly name: string;
   readonly aspects: List<number>;
   readonly tradition: List<number>;
-  readonly prerequisites: List<AllRequirementObjects>;
   readonly category: Categories.BLESSINGS;
   readonly effect: string;
   readonly range: string;
@@ -601,7 +600,6 @@ export interface Cantrip {
   readonly name: string;
   readonly property: number;
   readonly tradition: List<number>;
-  readonly prerequisites: List<AllRequirementObjects>;
   readonly category: Categories.CANTRIPS;
   readonly effect: string;
   readonly range: string;

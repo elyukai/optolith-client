@@ -1,12 +1,15 @@
 import { connect } from 'react-redux';
-import { AppState } from '../reducers/app';
+import { AppState } from '../reducers/appReducer';
 import { getUpdateDownloadProgress } from '../selectors/stateSelectors';
 import { Downloader, DownloaderDispatchProps, DownloaderOwnProps, DownloaderStateProps } from '../views/downloader/Downloader';
 
-function mapStateToProps(state: AppState) {
-	return {
-		progress: getUpdateDownloadProgress(state)
-	};
-}
+const mapStateToProps = (state: AppState) => ({
+  progress: getUpdateDownloadProgress (state)
+});
 
-export const DownloaderContainer = connect<DownloaderStateProps, DownloaderDispatchProps, DownloaderOwnProps>(mapStateToProps)(Downloader);
+export const connectDownloaderContainer =
+  connect<DownloaderStateProps, DownloaderDispatchProps, DownloaderOwnProps, AppState> (
+    mapStateToProps
+  );
+
+export const DownloaderContainer = connectDownloaderContainer (Downloader);

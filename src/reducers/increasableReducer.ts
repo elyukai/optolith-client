@@ -1,14 +1,14 @@
 import R from 'ramda';
 import * as AttributesActions from '../actions/AttributesActions';
 import * as CombatTechniquesActions from '../actions/CombatTechniquesActions';
-import * as LiturgiesActions from '../actions/LiturgiesActions';
+import * as LiturgicalChantActions from '../actions/LiturgicalChantActions';
+import * as SkillActions from '../actions/SkillActions';
 import * as SpellsActions from '../actions/SpellsActions';
-import * as TalentsActions from '../actions/TalentsActions';
 import { ActionTypes } from '../constants/ActionTypes';
 import * as Data from '../types/data';
 import { createActivatableDependentSkill } from '../utils/createEntryUtils';
 import { Just, Record } from '../utils/dataUtils';
-import { addDependencies, addDependenciesReducer, removeDependenciesReducer } from '../utils/dependencyUtils';
+import { addDependenciesReducer, removeDependenciesReducer } from '../utils/dependencyUtils';
 import { adjustHeroListStateItemOr, updateHeroListStateItemOrRemove } from '../utils/heroStateUtils';
 import { addPoint, removePoint } from '../utils/IncreasableUtils';
 import { isActivatableDependentSkillUnused } from '../utils/unusedEntryUtils';
@@ -16,8 +16,8 @@ import { isActivatableDependentSkillUnused } from '../utils/unusedEntryUtils';
 type Action =
   AttributesActions.AddAttributePointAction |
   AttributesActions.RemoveAttributePointAction |
-  TalentsActions.AddTalentPointAction |
-  TalentsActions.RemoveTalentPointAction |
+  SkillActions.AddSkillPointAction |
+  SkillActions.RemoveSkillPointAction |
   CombatTechniquesActions.AddCombatTechniquePointAction |
   CombatTechniquesActions.RemoveCombatTechniquePointAction |
   SpellsActions.ActivateSpellAction |
@@ -26,12 +26,12 @@ type Action =
   SpellsActions.RemoveSpellPointAction |
   SpellsActions.ActivateCantripAction |
   SpellsActions.DeactivateCantripAction |
-  LiturgiesActions.ActivateLiturgyAction |
-  LiturgiesActions.AddLiturgyPointAction |
-  LiturgiesActions.DeactivateLiturgyAction |
-  LiturgiesActions.RemoveLiturgyPointAction |
-  LiturgiesActions.ActivateBlessingAction |
-  LiturgiesActions.DeactivateBlessingAction;
+  LiturgicalChantActions.ActivateLiturgicalChantAction |
+  LiturgicalChantActions.AddLiturgicalChantPointAction |
+  LiturgicalChantActions.DeactivateLiturgyAction |
+  LiturgicalChantActions.RemoveLiturgicalChantPointAction |
+  LiturgicalChantActions.ActivateBlessingAction |
+  LiturgicalChantActions.DeactivateBlessingAction;
 
 export function increasableReducer (
   state: Record<Data.HeroDependent>,
@@ -54,13 +54,9 @@ export function increasableReducer (
     }
 
     case ActionTypes.ACTIVATE_CANTRIP: {
-      const { id, wikiEntry } = action.payload;
+      const { id } = action.payload;
 
-      return addDependencies (
-        state.modify<'cantrips'> (cantrips => cantrips.insert (id)) ('cantrips'),
-        wikiEntry.get ('prerequisites'),
-        id
-      );
+      return state.modify<'cantrips'> (cantrips => cantrips.insert (id)) ('cantrips');
     }
 
     case ActionTypes.ACTIVATE_LITURGY: {
@@ -97,13 +93,9 @@ export function increasableReducer (
     }
 
     case ActionTypes.DEACTIVATE_CANTRIP: {
-      const { id, wikiEntry } = action.payload;
+      const { id } = action.payload;
 
-      return addDependencies (
-        state.modify<'cantrips'> (cantrips => cantrips.delete (id)) ('cantrips'),
-        wikiEntry.get ('prerequisites'),
-        id
-      );
+      return state.modify<'cantrips'> (cantrips => cantrips.delete (id)) ('cantrips');
     }
 
     case ActionTypes.DEACTIVATE_LITURGY: {
