@@ -236,6 +236,13 @@ test('map', () => {
   expect(map.map(x => x + '_')).toEqual(res);
 });
 
+test('OrderedMap.map', () => {
+  const map = OrderedMap.of([[1, 'a'],[2, 'b'],[3, 'c']]);
+  const res = OrderedMap.of([[1, 'a_'],[2, 'b_'],[3, 'c_']]);
+
+  expect(OrderedMap.map (x => x + '_') (map)).toEqual(res);
+});
+
 test('mapWithKey', () => {
   const map = OrderedMap.of([[1, 'a'],[2, 'b'],[3, 'c']]);
   const res = OrderedMap.of([[1, 'a1'],[2, 'b2'],[3, 'c3']]);

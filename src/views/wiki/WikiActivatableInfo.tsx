@@ -2,18 +2,15 @@ import classNames = require('classnames');
 import * as React from 'react';
 import { Markdown } from '../../components/Markdown';
 import { Categories } from '../../constants/Categories';
-import { DependentInstancesState } from '../../reducers/dependentInstances';
 import { WikiState } from '../../reducers/wikiReducer';
-import { ActivatableBasePrerequisites, ActivatableInstance, ActiveObject, SecondaryAttribute } from '../../types/data.d';
-import { RaceRequirement, RequiresActivatableObject, RequiresIncreasableObject, RequiresPrimaryAttribute } from '../../types/reusable';
-import { UIMessages } from '../../types/view.d';
+import { ActivatableBasePrerequisites, ActivatableInstance, ActiveObject, SecondaryAttribute } from '../../types/data';
+import { UIMessages } from '../../types/view';
 import { Attribute, Book, Race, SpecialAbility } from '../../types/wiki';
-import { getNameCostForWiki, isExtendedSpecialAbility } from '../../utils/ActivatableUtils';
 import { sortObjects, sortStrings } from '../../utils/FilterSortUtils';
 import { translate } from '../../utils/I18n';
 import { getCategoryById } from '../../utils/IDUtils';
 import { getRoman } from '../../utils/NumberUtils';
-import { isRaceRequirement, isRequiringActivatable, isRequiringIncreasable, isRequiringPrimaryAttribute } from '../../utils/RequirementUtils';
+import { isRaceRequirement, isRequiringActivatable, isRequiringIncreasable, isRequiringPrimaryAttribute } from '../../utils/prerequisitesUtils';
 import { getWikiEntry } from '../../utils/WikiUtils';
 import { WikiSource } from './elements/WikiSource';
 import { WikiBoxTemplate } from './WikiBoxTemplate';
@@ -423,7 +420,7 @@ export function getPrerequisitesSkillsText(list: IncreasablePrerequisiteObjects[
         return e;
       }
       const { id, value } = e;
-      return `${Array.isArray(id) ? id.map(a => getWikiEntry(wiki, a)!.name).join(translate(locale, 'info.or')) : getWikiEntry(wiki, id)!.name} ${value}`;
+      return `${Array.isArray(id) ? id.map(a => getWikiEntry(wiki) (a)!.name).join(translate(locale, 'info.or')) : getWikiEntry(wiki) (id)!.name} ${value}`;
     }), locale.id).intercalate(', ')}
   </span> : <React.Fragment></React.Fragment>;
 }
@@ -437,10 +434,10 @@ export function getPrerequisitesActivatedSkillsText(list: ActivatablePrerequisit
     const { id } = e;
     if (Array.isArray(id)) {
       const category = getCategoryById(id[0]);
-      return `${category === Categories.LITURGIES ? translate(locale, 'knowledgeofliturgicalchant') : translate(locale, 'knowledgeofspell')} ${id.map(e => getWikiEntry(wiki, e)!.name).join(translate(locale, 'info.or'))}`;
+      return `${category === Categories.LITURGIES ? translate(locale, 'knowledgeofliturgicalchant') : translate(locale, 'knowledgeofspell')} ${id.map(e => getWikiEntry(wiki) (e)!.name).join(translate(locale, 'info.or'))}`;
     }
     const category = getCategoryById(id);
-    return `${category === Categories.LITURGIES ? translate(locale, 'knowledgeofliturgicalchant') : translate(locale, 'knowledgeofspell')} ${getWikiEntry(wiki, id)!.name}`;
+    return `${category === Categories.LITURGIES ? translate(locale, 'knowledgeofliturgicalchant') : translate(locale, 'knowledgeofspell')} ${getWikiEntry(wiki) (id)!.name}`;
   }), locale.id).intercalate(', ')}
   </span> : <React.Fragment></React.Fragment>;
 }
@@ -458,10 +455,10 @@ export function getPrerequisitesActivatablesText(list: ActivatablePrerequisiteOb
     }
     const { id, active, sid, sid2, tier } = e;
     return {
-      name: Array.isArray(id) ? id.filter(a => typeof getWikiEntry(wiki, a) === 'object').map(a => {
+      name: Array.isArray(id) ? id.filter(a => typeof getWikiEntry(wiki) (a) === 'object').map(a => {
         const category = getCategoryById(a);
         return `${category === Categories.ADVANTAGES ? `${translate(locale, 'advantage')} ` : category === Categories.DISADVANTAGES ? `${translate(locale, 'disadvantage')} ` : ''}${getNameCostForWiki({ id: a, sid: sid as string | number | undefined, sid2, tier, index: 0 }, wiki, locale).combinedName}`;
-      }).join(translate(locale, 'info.or')) : typeof getWikiEntry(wiki, id) === 'object' ? (Array.isArray(sid) ? sid.map(a => {
+      }).join(translate(locale, 'info.or')) : typeof getWikiEntry(wiki) (id) === 'object' ? (Array.isArray(sid) ? sid.map(a => {
         const category = getCategoryById(id);
         return `${category === Categories.ADVANTAGES ? `${translate(locale, 'advantage')} ` : category === Categories.DISADVANTAGES ? `${translate(locale, 'disadvantage')} ` : ''}${getNameCostForWiki({ id, sid: a, sid2, tier, index: 0 }, wiki, locale).combinedName}`;
       }).join(translate(locale, 'info.or')) : `${getCategoryById(id) === Categories.ADVANTAGES ? `${translate(locale, 'advantage')} ` : getCategoryById(id) === Categories.DISADVANTAGES ? `${translate(locale, 'disadvantage')} ` : ''}${getNameCostForWiki({ id, sid, sid2, tier, index: 0 }, wiki, locale).combinedName}`) : undefined,

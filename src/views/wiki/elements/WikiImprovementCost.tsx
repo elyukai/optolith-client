@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { UIMessages } from '../../../utils/I18n';
-import { getICName } from '../../../utils/ICUtils';
+import { getICName } from '../../../utils/improvementCostUtils';
 import { WikiProperty } from '../WikiProperty';
 
 export interface WikiImprovementCostProps {
-	currentObject: {
-		ic: number;
-	};
-	locale: UIMessages;
+  currentObject: {
+    ic: number;
+  };
+  locale: UIMessages;
 }
 
 export function WikiImprovementCost(props: WikiImprovementCostProps) {

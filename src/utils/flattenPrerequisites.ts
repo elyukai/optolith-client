@@ -1,6 +1,7 @@
-import R from 'ramda';
-import { ActivatablePrerequisites, LevelAwarePrerequisites } from '../types/wiki';
+import * as R from 'ramda';
+import { ActivatablePrerequisites, AllRequirements, LevelAwarePrerequisites } from '../types/wiki';
 import { Just, List, Maybe, Nothing, OrderedMap } from './dataUtils';
+import { flip } from './flip';
 
 type LevelFilter = (key: number) =>
   (value: ActivatablePrerequisites) => boolean;
@@ -34,7 +35,11 @@ const createFilter = (newTier: Maybe<number>) =>
 const createFlattenFiltered = (
   (prerequisites: OrderedMap<number, ActivatablePrerequisites>) =>
     R.pipe (
-      prerequisites.filterWithKey,
+      flip<
+        (key: number) => (value: List<AllRequirements>) => boolean,
+        OrderedMap<number, List<AllRequirements>>,
+        OrderedMap<number, List<AllRequirements>>
+      > (OrderedMap.filterWithKey) (prerequisites),
       OrderedMap.elems,
       List.concat
     )

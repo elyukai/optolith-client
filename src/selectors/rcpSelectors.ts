@@ -1,12 +1,12 @@
 import { Categories } from '../constants/Categories';
 import { ActivatableNameCostActive, ActiveObjectWithId } from '../types/data';
 import { CultureCombined, IncreasableView, MappedProfession, MappedProfessionVariant, ProfessionCombined, ProfessionVariantCombined, RaceCombined } from '../types/view';
-import { Culture, IncreaseSkill, RaceVariant } from '../types/wiki';
+import { Culture, IncreaseSkill, Profession, ProfessionVariant, Race, RaceVariant } from '../types/wiki';
 import { getNameCostForWiki } from '../utils/activatableActiveUtils';
 import { convertPerTierCostToFinalCost } from '../utils/activatableCostUtils';
 import { isProfessionRequiringActivatable, isProfessionRequiringIncreasable } from '../utils/checkPrerequisiteUtils';
 import { createMaybeSelector } from '../utils/createMaybeSelector';
-import { Just, List, ListElement, Maybe, OrderedSet, Record } from '../utils/dataUtils';
+import { Just, List, ListElement, Maybe, OrderedMap, OrderedSet, Record } from '../utils/dataUtils';
 import { AllSortOptions, filterAndSortObjects, FilterOptions } from '../utils/FilterSortUtils';
 import { getCategoryById } from '../utils/IDUtils';
 import { filterByAvailability, isEntryFromCoreBook } from '../utils/RulesUtils';
@@ -21,31 +21,42 @@ import { getCulturesVisibilityFilter, getProfessionsGroupVisibilityFilter, getPr
 export const getCurrentRace = createMaybeSelector (
   getWikiRaces,
   getCurrentRaceId,
-  (races, raceId) => raceId.bind (races.lookup)
+  (races, raceId) => raceId.bind (
+    id => OrderedMap.lookup<string, Record<Race>> (id) (races)
+  )
 );
 
 export const getCurrentRaceVariant = createMaybeSelector (
   getWikiRaceVariants,
   getCurrentRaceVariantId,
-  (raceVariants, raceVariantId) => raceVariantId.bind (raceVariants.lookup)
+  (raceVariants, raceVariantId) => raceVariantId.bind (
+    id => OrderedMap.lookup<string, Record<RaceVariant>> (id) (raceVariants)
+  )
 );
 
 export const getCurrentCulture = createMaybeSelector (
   getWikiCultures,
   getCurrentCultureId,
-  (cultures, cultureId) => cultureId.bind (cultures.lookup)
+  (cultures, cultureId) => cultureId.bind (
+    id => OrderedMap.lookup<string, Record<Culture>> (id) (cultures)
+  )
 );
 
 export const getCurrentProfession = createMaybeSelector (
   getWikiProfessions,
   getCurrentProfessionId,
-  (professions, professionId) => professionId.bind (professions.lookup)
+  (professions, professionId) => professionId.bind (
+    id => OrderedMap.lookup<string, Record<Profession>> (id) (professions)
+  )
 );
 
 export const getCurrentProfessionVariant = createMaybeSelector (
   getWikiProfessionVariants,
   getCurrentProfessionVariantId,
-  (professionVariants, professionVariantId) => professionVariantId.bind (professionVariants.lookup)
+  (professionVariants, professionVariantId) => professionVariantId.bind (
+    id => OrderedMap.lookup<string, Record<ProfessionVariant>> (id)
+                                                               (professionVariants)
+  )
 );
 
 export const getAllRaces = createMaybeSelector (
@@ -62,8 +73,9 @@ export const getAllRaces = createMaybeSelector (
         .modify<'commonCultures'> (filterCultures)
                                   ('commonCultures')
         .merge (Record.of ({
-          mappedVariants: Maybe.mapMaybe<string, Record<RaceVariant>> (raceVariants.lookup)
-                                                                      (race.get ('variants'))
+          mappedVariants: Maybe.mapMaybe<string, Record<RaceVariant>>
+            (id => OrderedMap.lookup<string, Record<RaceVariant>> (id) (raceVariants))
+            (race.get ('variants'))
             .map (
               raceVariant => raceVariant.modify<'commonCultures'> (filterCultures)
                                                                   ('commonCultures')
@@ -240,8 +252,11 @@ export const getAllProfessions = createMaybeSelector (
           }
         );
 
-        const filteredVariants = Maybe.mapMaybe (wiki.get ('professionVariants').lookup)
-                                                (profession.get ('variants'));
+        const filteredVariants = Maybe.mapMaybe
+          (variantId => OrderedMap.lookup<string, Record<RaceVariant>>
+            (variantId)
+            (wiki.get('professionVariants')))
+          (profession.get ('variants'));
 
         return profession.merge (
           Record.of<MappedProfession> ({

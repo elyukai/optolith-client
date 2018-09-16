@@ -3,10 +3,10 @@ import { UIMessages } from '../../../utils/I18n';
 import { WikiProperty } from '../WikiProperty';
 
 export interface WikiRangeProps {
-	currentObject: {
-		range: string;
-	};
-	locale: UIMessages;
+  currentObject: {
+    range: string;
+  };
+  locale: UIMessages;
 }
 
 export function WikiRange(props: WikiRangeProps) {

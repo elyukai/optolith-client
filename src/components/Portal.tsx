@@ -1,16 +1,16 @@
 import { connect } from 'react-redux';
-import { AppState } from '../reducers/app';
+import { AppState } from '../reducers/appReducer';
 import { getTheme } from '../selectors/uisettingsSelectors';
 import { PortalWrapped, PortalWrappedDispatchProps, PortalWrappedOwnProps, PortalWrappedStateProps } from './PortalWrapped';
 
 function mapStateToProps(state: AppState) {
-	return {
-		theme: getTheme(state)
-	};
+  return {
+    theme: getTheme(state)
+  };
 }
 
 function mapDispatchToProps() {
-	return {};
+  return {};
 }
 
 export { PortalWrappedOwnProps };

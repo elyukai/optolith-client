@@ -5,13 +5,13 @@ import { UIMessages } from '../../../utils/I18n';
 import { WikiProperty } from '../WikiProperty';
 
 export interface WikiSkillCheckProps {
-	attributes: Map<string, Attribute>;
-	currentObject: {
-		check: string[];
-		checkmod?: 'SPI' | 'TOU';
-	};
+  attributes: Map<string, Attribute>;
+  currentObject: {
+    check: string[];
+    checkmod?: 'SPI' | 'TOU';
+  };
   derivedCharacteristics?: Map<string, SecondaryAttribute>;
-	locale: UIMessages;
+  locale: UIMessages;
 }
 
 export function WikiSkillCheck(props: WikiSkillCheckProps) {

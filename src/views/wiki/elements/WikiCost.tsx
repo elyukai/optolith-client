@@ -4,11 +4,11 @@ import { UIMessages } from '../../../utils/I18n';
 import { WikiProperty } from '../WikiProperty';
 
 export interface WikiCostProps {
-	currentObject: {
+  currentObject: {
     cost: string;
     category: Categories;
-	};
-	locale: UIMessages;
+  };
+  locale: UIMessages;
 }
 
 export function WikiCost(props: WikiCostProps) {

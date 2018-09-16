@@ -7,7 +7,7 @@
  * @since 1.1.0
  */
 
-import R from 'ramda';
+import * as R from 'ramda';
 import { AdventurePointsObject } from '../selectors/adventurePointsSelectors';
 import * as Data from '../types/data';
 import * as Wiki from '../types/wiki';
@@ -76,7 +76,7 @@ const addToSkillCategoryCounter = (map: OrderedMap<number, number>) =>
 const getCategoriesWithSkillsAbove10 = (
   wiki: Record<Wiki.WikiAll>,
   state: Record<Data.HeroDependent>,
-  sliceKey: 'liturgicalChants' | 'spells',
+  sliceKey: 'liturgicalChants' | 'spells'
 ) => {
   const addToCounterByKey = sliceKey === 'liturgicalChants'
     ? (map: OrderedMap<number, number>) =>
@@ -109,15 +109,15 @@ const getEntrySpecificSelections = (
   wiki: Record<Wiki.WikiAll>,
   instance: Maybe<Record<Data.ActivatableDependent>>,
   state: Record<Data.HeroDependent>,
-  entry: Wiki.Activatable,
+  entry: Wiki.Activatable
 ) => {
   return match<string, Maybe<List<Record<Wiki.SelectionObject>>>> (entry.get ('id'))
     .on (
-      [
+      List.elem_ (List.of (
         'ADV_4',
         'ADV_17',
-        'ADV_47',
-      ].includes,
+        'ADV_47'
+      )),
       () => entry.lookup ('select')
         .fmap (
           select => select.filter (getIsNoRequiredOrActiveSelection (instance))
@@ -140,18 +140,12 @@ const getEntrySpecificSelections = (
         })
     )
     .on (
-      [
-        'ADV_28',
-        'ADV_29',
-      ].includes,
+      List.elem_ (List.of ('ADV_28', 'ADV_29')),
       () => entry.lookup ('select')
         .fmap (select => select.filter (getIsNoRequiredSelection (instance)))
     )
     .on (
-      [
-        'ADV_32',
-        'DISADV_24',
-      ].includes,
+      List.elem_ (List.of ('ADV_32', 'DISADV_24')),
       id => entry.lookup ('select')
         .fmap (select => {
           const flippedId = id === 'DISADV_24' ? 'ADV_32' : id;
@@ -171,20 +165,20 @@ const getEntrySpecificSelections = (
         })
     )
     .on (
-      [
+      List.elem_ (List.of (
         'DISADV_1',
         'DISADV_34',
-        'DISADV_50',
-      ].includes,
+        'DISADV_50'
+      )),
       () => entry.lookup ('select')
         .fmap (select => select.filter (getIsNoRequiredSelection (instance)))
     )
     .on (
-      [
+      List.elem_ (List.of (
         'DISADV_33',
         'DISADV_37',
-        'DISADV_51',
-      ].includes,
+        'DISADV_51'
+      )),
       id => entry.lookup ('select')
         .fmap (select => {
           const isNoRequiredOrActiveSelection =
@@ -270,7 +264,11 @@ const getEntrySpecificSelections = (
               else if (counter.member (e.get ('id'))) {
                 return Maybe.fromMaybe (false) (
                   Maybe.ensure (isString) (e.get ('id'))
-                    .bind (state.get ('skills').lookup)
+                    .bind (
+                      id => OrderedMap.lookup<string, Record<Data.SkillDependent>>
+                        (id)
+                        (state.get ('skills'))
+                    )
                     .bind (
                       skill => counter.lookup (e.get ('id'))
                         .fmap (
@@ -284,7 +282,11 @@ const getEntrySpecificSelections = (
               else {
                 return Maybe.fromMaybe (false) (
                   Maybe.ensure (isString) (e.get ('id'))
-                    .bind (state.get ('skills').lookup)
+                    .bind (
+                      id => OrderedMap.lookup<string, Record<Data.SkillDependent>>
+                        (id)
+                        (state.get ('skills'))
+                    )
                     .fmap (skill => skill.get ('value') >= 6)
                 );
               }
@@ -296,7 +298,11 @@ const getEntrySpecificSelections = (
               else {
                 return Maybe.fromMaybe (false) (
                   Maybe.ensure (isString) (e.get ('id'))
-                    .bind (state.get ('skills').lookup)
+                    .bind (
+                      id => OrderedMap.lookup<string, Record<Data.SkillDependent>>
+                        (id)
+                        (state.get ('skills'))
+                    )
                     .fmap (skill => skill.get ('value') >= 6)
                 );
               }
@@ -327,7 +333,7 @@ const getEntrySpecificSelections = (
 
                 return isInactive && arePrerequisitesMet;
               })
-            )
+            ),
           })) as Record<Wiki.SelectionObject>;
         }));
     })
@@ -489,10 +495,7 @@ const getEntrySpecificSelections = (
         })
     )
     .on (
-      [
-        'SA_414',
-        'SA_663',
-      ].includes,
+      List.elem_ (List.of ('SA_414', 'SA_663')),
       () => entry.lookup ('select')
         .fmap (select => {
           const isNoRequiredOrActiveSelection =
@@ -502,15 +505,31 @@ const getEntrySpecificSelections = (
             Maybe<Record<Data.ActivatableSkillDependent>>;
 
           const getInstance: GetInstance = entry.get ('id') === 'SA_414'
-            ? target => target.bind (state.get ('spells').lookup)
-            : target => target.bind (state.get ('liturgicalChants').lookup);
+            ? target => target.bind (
+              id => OrderedMap.lookup<string, Record<Data.ActivatableSkillDependent>>
+                (id)
+                (state.get ('spells'))
+            )
+            : target => target.bind (
+              id => OrderedMap.lookup<string, Record<Data.ActivatableSkillDependent>>
+                (id)
+                (state.get ('liturgicalChants'))
+            );
 
           type GetWikiEntry = (target: Maybe<string>) =>
           Maybe<Record<Wiki.Spell> | Record<Wiki.LiturgicalChant>>;
 
           const createGetWikiEntry: GetWikiEntry = entry.get ('id') === 'SA_414'
-            ? target => target.bind (wiki.get ('spells').lookup)
-            : target => target.bind (wiki.get ('liturgicalChants').lookup);
+            ? target => target.bind (
+              id => OrderedMap.lookup<string, Record<Wiki.Spell>>
+                (id)
+                (wiki.get ('spells'))
+            )
+            : target => target.bind (
+              id => OrderedMap.lookup<string, Record<Wiki.LiturgicalChant>>
+                (id)
+                (wiki.get ('liturgicalChants'))
+            );
 
           return select.foldl<List<Record<Wiki.SelectionObject>>> (
             arr => e => {
@@ -556,7 +575,7 @@ const getEntrySpecificSelections = (
                 wiki,
                 state,
                 Maybe.fromMaybe<List<Wiki.AllRequirements>> (List.of ()) (e.lookup ('req')),
-                entry.get ('id'),
+                entry.get ('id')
               )
           );
         })
@@ -585,7 +604,7 @@ const getEntrySpecificSelections = (
                                   .bind (Maybe.ensure (x => x === 3 || x === 4))
                                   .fmap (sid => arr.append (Record.of ({
                                     id: sid as number,
-                                    tier
+                                    tier,
                                   })))
                               )
                             )
@@ -651,14 +670,14 @@ const getOtherOptions = (
   instance: Maybe<Record<Data.ActivatableDependent>>,
   state: Record<Data.HeroDependent>,
   adventurePoints: Record<AdventurePointsObject>,
-  entry: Wiki.Activatable,
+  entry: Wiki.Activatable
 ) => {
   return match<string, Maybe<Record<InactiveOptions>>> (entry.get ('id'))
     .on (
       'DISADV_59',
       () => Maybe.ensure ((n: number) => n < 3) (countActiveSkillEntries (state, 'spells'))
         .fmap (activeSpells => Record.of<InactiveOptions> ({
-          maxTier: -activeSpells + 3
+          maxTier: -activeSpells + 3,
         }))
     )
     .on (
@@ -680,7 +699,7 @@ const getOtherOptions = (
         getAllEntriesByGroup (
           wiki.get ('combatTechniques'),
           state.get ('combatTechniques'),
-          2,
+          2
         )
           .filter (e => e.get ('value') >= 10)
           .length ()
@@ -688,19 +707,19 @@ const getOtherOptions = (
         .fmap (Record.empty)
     )
     .on (
-      [
+      List.elem_ (List.of (
         'SA_70',
         'SA_255',
         'SA_345',
         'SA_346',
         'SA_676',
-        'SA_681',
-      ].includes,
+        'SA_681'
+      )),
       () => Maybe.ensure (List.null) (getMagicalTraditions (state.get ('specialAbilities')))
         .fmap (Record.empty)
     )
     .on (
-      [
+      List.elem_ (List.of (
         'SA_86',
         'SA_682',
         'SA_683',
@@ -718,14 +737,14 @@ const getOtherOptions = (
         'SA_695',
         'SA_696',
         'SA_697',
-        'SA_698',
-      ].includes,
+        'SA_698'
+      )),
       () =>
         getBlessedTradition (state.get ('specialAbilities'))
           .fmap (Record.empty)
     )
     .on (
-      ['SA_72', 'SA_87'].includes,
+      List.elem_ (List.of ('SA_72', 'SA_87')),
       () => Maybe.return (entry.get ('cost'))
         .bind (Maybe.ensure ((e): e is List<number> => List.isList (e)))
         .bind (
@@ -745,17 +764,17 @@ const getOtherOptions = (
           .fmap (skill => Record.of<InactiveOptions> ({
             cost: (entry.get ('cost') as List<number>).map (
               e => e + skill.get ('ic')
-            )
+            ),
           }))
     )
     .on (
-      [
+      List.elem_ (List.of (
         'SA_544',
         'SA_545',
         'SA_546',
         'SA_547',
-        'SA_548',
-      ].includes,
+        'SA_548'
+      )),
       () => Maybe.ensure<Record<InactiveOptions>> (
         () => {
           const isAdvantageActive = R.pipe (
@@ -776,13 +795,13 @@ const getOtherOptions = (
       ) (Record.empty ())
     )
     .on (
-      [
+      List.elem_ (List.of (
         'SA_549',
         'SA_550',
         'SA_551',
         'SA_552',
-        'SA_553',
-      ].includes,
+        'SA_553'
+      )),
       () => Maybe.ensure<Record<InactiveOptions>> (
         () => {
           const isAdvantageActive = R.pipe (
@@ -804,16 +823,16 @@ const getOtherOptions = (
     )
     .on ('SA_667', () => state.lookup ('pact').fmap (
       e => Record.of<InactiveOptions> ({
-        maxTier: e.get ('level')
+        maxTier: e.get ('level'),
       })
     ))
     .on (
-      [
+      List.elem_ (List.of (
         'SA_677',
         'SA_678',
         'SA_679',
-        'SA_680',
-      ].includes,
+        'SA_680'
+      )),
       () =>
         Maybe.ensure<Record<InactiveOptions>> (
           () => adventurePoints.get ('spentOnMagicalAdvantages') <= 25
@@ -838,7 +857,7 @@ export const getInactiveView = (
   adventurePoints: Record<AdventurePointsObject>,
   id: string
 ): Maybe<Record<Data.DeactiveViewObject>> => {
-  return getWikiEntry<Wiki.Activatable> (wiki, id)
+  return getWikiEntry<Wiki.Activatable> (wiki) (id)
     .bind (entry => {
       const prerequisites = entry.get ('prerequisites');
       const maxTier = prerequisites instanceof OrderedMap ? validateTier (
@@ -849,7 +868,7 @@ export const getInactiveView = (
           Record<Data.ActivatableDependent>,
           Data.ActivatableDependent['dependencies']
         > (List.empty ()) (e => e.get ('dependencies')) (instance),
-        id,
+        id
       ) : Maybe.empty ();
 
       const isValid = isAdditionDisabled (
@@ -858,7 +877,7 @@ export const getInactiveView = (
         state,
         validExtendedSpecialAbilities,
         entry,
-        maxTier,
+        maxTier
       );
 
       if (isValid) {
@@ -866,7 +885,7 @@ export const getInactiveView = (
           wiki,
           instance,
           state,
-          entry,
+          entry
         );
 
         const maybeOtherOptions = getOtherOptions (
@@ -874,7 +893,7 @@ export const getInactiveView = (
           instance,
           state,
           adventurePoints,
-          entry,
+          entry
         );
 
         return maybeOtherOptions.bind (
@@ -893,7 +912,7 @@ export const getInactiveView = (
                     maxTier,
                     stateEntry: instance,
                     wikiEntry: entry,
-                    sel: select.fmap (sel => sortObjects (sel, locale.get ('id')))
+                    sel: select.fmap (sel => sortObjects (sel, locale.get ('id'))),
                   })) as Record<Data.DeactiveViewObject>
               )
         );

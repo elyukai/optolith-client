@@ -422,6 +422,17 @@ export class OrderedMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
   }
 
   /**
+   * `map :: (a -> b) -> Map k a -> Map k b`
+   *
+   * Map a function over all values in the map.
+   */
+  static map<K, A, B> (fn: (value: A) => B): (map: OrderedMap<K, A>) => OrderedMap<K, B> {
+    return map => OrderedMap.of ([...map.value].map (([k, x]) =>
+      [k, fn (x)] as [K, B]
+    ));
+  }
+
+  /**
    * `mapWithKey :: (k -> a -> b) -> Map k a -> Map k b`
    *
    * Map a function over all values in the map.
@@ -625,6 +636,31 @@ export class OrderedMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
   filterWithKey (pred: (key: K) => (value: V) => boolean): OrderedMap<K, V> {
     return OrderedMap.of ([...this.value]
       .filter (([key, value]) => pred (key) (value)));
+  }
+
+  /**
+   * `filterWithKey :: (k -> a -> Bool) -> Map k a -> Map k a`
+   *
+   * Filter all keys/values that satisfy the predicate.
+   */
+  static filterWithKey<K, A, B extends A> (
+    pred: (key: K) => (value: A) => value is B
+  ): (map: OrderedMap<K, A>) => OrderedMap<K, B>;
+  /**
+   * `filterWithKey :: (k -> a -> Bool) -> Map k a -> Map k a`
+   *
+   * Filter all keys/values that satisfy the predicate.
+   */
+  static filterWithKey<K, A> (
+    pred: (key: K) => (value: A) => boolean
+  ): (map: OrderedMap<K, A>) => OrderedMap<K, A>;
+  static filterWithKey<K, A> (
+    pred: (key: K) => (value: A) => boolean
+  ): (map: OrderedMap<K, A>) => OrderedMap<K, A> {
+    return map => OrderedMap.of (
+      [...map.value]
+        .filter (([key, value]) => pred (key) (value))
+    );
   }
 
   /**

@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { SecondaryAttribute } from '../../types/data.d';
-import { UIMessages } from '../../types/view.d';
+import { SecondaryAttribute } from '../../types/data';
+import { UIMessages } from '../../types/view';
 import { Attribute, Book, SpecialAbility, Spell } from '../../types/wiki';
 import { WikiCastingTime } from './elements/WikiCastingTime';
 import { WikiCost } from './elements/WikiCost';

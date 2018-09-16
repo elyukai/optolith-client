@@ -1,111 +1,163 @@
 import * as React from 'react';
 import { AvatarWrapper } from '../../components/AvatarWrapper';
+import { BorderButton } from '../../components/BorderButton';
 import { IconButton } from '../../components/IconButton';
 import { ListItem } from '../../components/ListItem';
 import { ListItemButtons } from '../../components/ListItemButtons';
 import { ListItemName } from '../../components/ListItemName';
 import { ListItemSeparator } from '../../components/ListItemSeparator';
 import { VerticalList } from '../../components/VerticalList';
-import { CultureInstance, ProfessionInstance, ProfessionVariantInstance, RaceInstance, RaceVariantInstance, UIMessages, User } from '../../types/data.d';
-import { translate } from '../../utils/I18n';
+import { Hero, User } from '../../types/data';
+import { Culture, Profession, ProfessionVariant, Race, RaceVariant, WikiAll } from '../../types/wiki';
+import { getAPObject } from '../../utils/adventurePointsSumUtils';
+import { Maybe, OrderedMap, OrderedSet, Record } from '../../utils/dataUtils';
+import { translate, UIMessagesObject } from '../../utils/I18n';
 
 export interface HerolistItemProps {
-	currentHeroId?: string;
-	races: Map<string, RaceInstance>;
-	raceVariants: Map<string, RaceVariantInstance>;
-	cultures: Map<string, CultureInstance>;
-	professions: Map<string, ProfessionInstance>;
-	professionVariants: Map<string, ProfessionVariantInstance>;
-	id?: string;
-	name: string;
-	ap: {
-		spent: number;
-		total: number;
-	};
-	avatar?: string;
-	c?: string;
-	p?: string;
-	player?: User;
-	pv?: string;
-	r?: string;
-	rv?: string;
-	professionName?: string;
-	sex?: 'm' | 'f';
-	locale: UIMessages;
-	loadHero(id?: string): void;
-	saveHeroAsJSON(id?: string): void;
-	showHero(): void;
-	deleteHero(id?: string): void;
-	duplicateHero(id?: string): void;
+  hero: Hero;
+  wiki: Record<WikiAll>;
+  users: OrderedMap<string, User>;
+  unsavedHeroesById: OrderedSet<string>;
+  locale: UIMessagesObject;
+  loadHero (id: string): void;
+  saveHero (id: string): void;
+  saveHeroAsJSON (id: string): void;
+  deleteHero (id: string): void;
+  duplicateHero (id: string): void;
 }
 
-export function HerolistItem(props: HerolistItemProps) {
-	const { player, id, currentHeroId, races, raceVariants, cultures, professions, professionVariants, locale, name, avatar, ap: { spent: apSpent, total: apTotal }, r, rv, c, p, pv, sex, professionName, loadHero, saveHeroAsJSON, showHero, deleteHero, duplicateHero } = props;
-	const isOpen = id === currentHeroId;
+export function HerolistItem (props: HerolistItemProps) {
+  const {
+    hero,
+    wiki,
+    users,
+    unsavedHeroesById,
+    locale,
+    loadHero,
+    saveHero,
+    saveHeroAsJSON,
+    deleteHero,
+    duplicateHero,
+  } = props;
 
-	const rcpElement = id !== null && (
-		<VerticalList className="rcp">
-			<span className="race">
-				{(() => {
-					const { name } = r && races.get(r) || { name: '' };
-					return name;
-				})()}
-				{(() => {
-					const raceVariant = rv && raceVariants.get(rv);
-					if (raceVariant) {
-						return ` (${raceVariant.name})`;
-					}
-					return '';
-				})()}
-			</span>
-			<span className="culture">
-				{(() => {
-					const { name } = c && cultures.get(c) || { name: '' };
-					return name;
-				})()}
-			</span>
-			<span className="profession">
-				{(() => {
-					if (p === 'P_0') {
-						return professionName || translate(locale, 'professions.ownprofession');
-					}
-					let { name, subname } = p && professions.get(p) || { name: '', subname: undefined };
-					if (typeof name === 'object' && sex) {
-						name = name[sex];
-					}
-					if (typeof subname === 'object' && sex) {
-						subname = subname[sex];
-					}
-					let { name: vname } = pv && professionVariants.get(pv) || { name: '' };
-					if (typeof vname === 'object' && sex) {
-						vname = vname[sex];
-					}
-					return name + (subname ? ` (${subname})` : pv ? ` (${vname})` : '');
-				})()}
-			</span>
-			<span className="totalap">
-				{apSpent} / {apTotal} AP
-			</span>
-		</VerticalList>
-	);
+  const adventurePoints = getAPObject (wiki) (locale) (hero);
 
-	return (
-		<ListItem>
-			<AvatarWrapper src={avatar} />
-			<ListItemName name={name} addName={player && player.displayName} large>
-				{rcpElement}
-			</ListItemName>
-			<ListItemSeparator/>
-			<ListItemButtons>
-				{id && <IconButton icon="&#xE907;" onClick={duplicateHero.bind(null, id)} />}
-				{id && <IconButton icon="&#xE914;" onClick={saveHeroAsJSON.bind(null, id)} />}
-				{id && <IconButton icon="&#xE90b;" onClick={deleteHero.bind(null, id)} />}
-				{(() => isOpen ? (
-					<IconButton icon="&#xE919;" onClick={showHero} />
-				) : (
-					<IconButton icon="&#xE90e;" onClick={loadHero.bind(null, id)} />
-				))()}
-			</ListItemButtons>
-		</ListItem>
-	);
+  return (
+    <ListItem>
+      <AvatarWrapper src={hero .lookup ('avatar')} />
+      <ListItemName
+        name={hero .get ('name')}
+        addName={
+          hero
+            .lookup ('player')
+            .bind (id => OrderedMap.lookup<string, User> (id) (users))
+            .fmap (user => user.displayName)
+        }
+        large
+        >
+        <VerticalList className="rcp">
+          <span className="race">
+            {Maybe.fromMaybe ('')
+                             (hero
+                               .lookup ('race')
+                               .bind (
+                                 id => OrderedMap.lookup<string, Record<Race>>
+                                   (id)
+                                   (wiki .get ('races'))
+                               )
+                               .fmap (race => race .get ('name')))}
+            {Maybe.fromMaybe ('')
+                             (hero
+                               .lookup ('raceVariant')
+                               .bind (
+                                 id => OrderedMap.lookup<string, Record<RaceVariant>>
+                                   (id)
+                                   (wiki .get ('raceVariants'))
+                               )
+                               .fmap (raceVariant => ` (${raceVariant .get ('name')})`))}
+          </span>
+          <span className="culture">
+            {Maybe.fromMaybe ('')
+                             (hero
+                               .lookup ('culture')
+                               .bind (
+                                 id => OrderedMap.lookup<string, Record<Culture>>
+                                   (id)
+                                   (wiki .get ('cultures'))
+                               )
+                               .fmap (culture => culture .get ('name')))}
+          </span>
+          <span className="profession">
+            {(() => {
+              if (Maybe.elem ('P_0') (hero .lookup ('profession'))) {
+                return Maybe.fromMaybe (translate (locale, 'professions.ownprofession'))
+                                       (hero .lookup ('professionName'));
+              }
+
+              const maybeProfession = hero
+                .lookup ('profession')
+                .bind (
+                  id => OrderedMap.lookup<string, Record<Profession>>
+                    (id)
+                    (wiki .get ('professions'))
+                );
+
+              const professionName = maybeProfession
+                .fmap (profession => profession .get ('name'))
+                .fmap (
+                  name => name instanceof Record ? name .get (hero .get ('sex')) : name
+                );
+
+              const professionSubName = maybeProfession
+                .bind (profession => profession .lookup ('subname'))
+                .fmap (
+                  subname => subname instanceof Record ? subname .get (hero .get ('sex')) : subname
+                );
+
+              const maybeProfessionVariant = hero
+                .lookup ('professionVariant')
+                .bind (
+                  id => OrderedMap.lookup<string, Record<ProfessionVariant>>
+                    (id)
+                    (wiki .get ('professionVariants'))
+                );
+
+              const professionVariantName = maybeProfessionVariant
+                .fmap (professionVariant => professionVariant .get ('name'))
+                .fmap (
+                  name => name instanceof Record ? name .get (hero .get ('sex')) : name
+                );
+
+              return Maybe.fromMaybe ('')
+                                     (professionName
+                                       .fmap (
+                                         name => Maybe.fromMaybe (name)
+                                                                 (professionSubName
+                                                                   .alt (professionVariantName)
+                                                                   .fmap (
+                                                                     addName =>
+                                                                       `${name} (${addName})`
+                                                                   ))
+                                       ));
+            }) ()}
+          </span>
+          <span className="totalap">
+            {adventurePoints.get ('spent')} / {adventurePoints.get ('total')} AP
+          </span>
+        </VerticalList>
+      </ListItemName>
+      <ListItemSeparator/>
+      <ListItemButtons>
+        <BorderButton
+          label={translate (locale, 'actions.save')}
+          onClick={saveHero.bind (undefined, hero.get ('id'))}
+          disabled={unsavedHeroesById .notMember (hero.get ('id'))}
+          />
+        <IconButton icon="&#xE907;" onClick={duplicateHero.bind (undefined, hero.get ('id'))} />
+        <IconButton icon="&#xE914;" onClick={saveHeroAsJSON.bind (undefined, hero.get ('id'))} />
+        <IconButton icon="&#xE90b;" onClick={deleteHero.bind (undefined, hero.get ('id'))} />
+        <IconButton icon="&#xE90e;" onClick={loadHero.bind (undefined, hero.get ('id'))} />
+      </ListItemButtons>
+    </ListItem>
+  );
 }

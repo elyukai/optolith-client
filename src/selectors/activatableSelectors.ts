@@ -1,4 +1,4 @@
-import R from 'ramda';
+import * as R from 'ramda';
 import { ActivatableCategory, Categories } from '../constants/Categories';
 import * as Data from '../types/data';
 import * as Wiki from '../types/wiki';

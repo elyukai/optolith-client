@@ -4,12 +4,12 @@ import { UIMessages } from '../../../utils/I18n';
 import { WikiProperty } from '../WikiProperty';
 
 export interface WikiDurationProps {
-	currentObject: {
+  currentObject: {
     duration: string;
     category: CategoryWithGroups;
     gr: number;
-	};
-	locale: UIMessages;
+  };
+  locale: UIMessages;
 }
 
 export function WikiDuration(props: WikiDurationProps) {

@@ -1,12 +1,14 @@
 import { connect } from 'react-redux';
+import { AppState } from '../reducers/appReducer';
 import { Help, HelpDispatchProps, HelpOwnProps, HelpStateProps } from '../views/help/Help';
 
-function mapStateToProps() {
-	return {};
-}
+const mapStateToProps = () => ({});
 
-function mapDispatchToProps() {
-	return {};
-}
+const mapDispatchToProps = () => ({});
 
-export const HelpContainer = connect<HelpStateProps, HelpDispatchProps, HelpOwnProps>(mapStateToProps, mapDispatchToProps)(Help);
+const connectHelp = connect<HelpStateProps, HelpDispatchProps, HelpOwnProps, AppState> (
+  mapStateToProps,
+  mapDispatchToProps
+);
+
+export const HelpContainer = connectHelp (Help);

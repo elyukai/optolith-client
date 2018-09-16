@@ -6,13 +6,12 @@ import { Markdown } from '../../components/Markdown';
 import { Page } from '../../components/Page';
 import { Scroll } from '../../components/Scroll';
 
-export function LastChanges() {
-	const text = fs.readFileSync(path.join(remote.app.getAppPath(), 'CHANGELOG.md'), 'UTF-8');
-	return (
-		<Page id="last-changes">
-			<Scroll className="text">
-				<Markdown source={text} />
-			</Scroll>
-		</Page>
-	);
-}
+export const LastChanges = () => (
+  <Page id="last-changes">
+    <Scroll className="text">
+      <Markdown
+        source={fs.readFileSync (path.join (remote.app.getAppPath (), 'CHANGELOG.md'), 'UTF-8')}
+        />
+    </Scroll>
+  </Page>
+);

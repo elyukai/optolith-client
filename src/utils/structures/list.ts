@@ -1,4 +1,4 @@
-import R from 'ramda';
+import * as R from 'ramda';
 import * as Al from '../../types/algebraic';
 import { Just, Maybe, Nothing, Some } from './maybe';
 import { OrderedMap } from './orderedMap';
@@ -751,6 +751,17 @@ f' z       = Nothing
    */
   static elem<T> (e: T): (list: List<T>) => boolean {
     return list => list.value.includes (e);
+  }
+
+  /**
+   * `elem_ :: (Foldable t, Eq a) => ta a -> a -> Bool`
+   *
+   * Does the element occur in the structure?
+   *
+   * Same as `List.elem` but with arguments switched.
+   */
+  static elem_<T> (list: List<T>): (e: T) => boolean {
+    return e => list.value.includes (e);
   }
 
   /**

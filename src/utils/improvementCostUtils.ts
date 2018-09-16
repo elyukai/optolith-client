@@ -1,4 +1,4 @@
-import R from 'ramda';
+import * as R from 'ramda';
 import { List, Maybe, Tuple } from './dataUtils';
 import { Just, Nothing } from './structures/maybe';
 

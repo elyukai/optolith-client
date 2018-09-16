@@ -25,14 +25,14 @@ export function Avatar (props: AvatarProps) {
                                   isBase64Image (src)
                                   || existsSync (src.replace (/file:[\\\/]+/, ''))
                                 )
-                            ))
+                            )),
   } = props;
 
   const className = classNames (
     !hasWrapper ? inheritedClassName : undefined,
     {
       'avatar': true,
-      'no-avatar': !hasWrapper && !validPath
+      'no-avatar': !hasWrapper && !validPath,
     }
   );
 

@@ -1,4 +1,5 @@
 import { List } from './dataUtils';
+import { flip } from './flip';
 
 export type TabId =
   'herolist' |
@@ -60,5 +61,5 @@ export const heroSectionTabs = List.of<TabId> (
   'pets',
 );
 
-export const isMainSectionTab = mainSectionTabs.elem;
-export const isHeroSectionTab = heroSectionTabs.elem;
+export const isMainSectionTab = flip<TabId, List<TabId>, boolean> (List.elem) (mainSectionTabs);
+export const isHeroSectionTab = flip<TabId, List<TabId>, boolean> (List.elem) (heroSectionTabs);

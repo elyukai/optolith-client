@@ -1,28 +1,45 @@
-import R from 'ramda';
+import * as R from 'ramda';
 import { ActivatableDependent } from '../types/data';
-import { Maybe, OrderedMap, Record } from './dataUtils';
+import { Just, List, Maybe, Nothing, OrderedMap, Record } from './dataUtils';
+import { flip } from './flip';
 import * as IDUtils from './IDUtils';
 import { match } from './match';
 import { getBlessedTradition, getMagicalTraditions } from './traditionUtils';
 
-const getAttributeIdByMagicalNumericId = (id: Maybe<number>): Maybe<string> =>
-  id.bind (justId =>
-    match<number, Maybe<string>> (justId)
-      .on ([1, 4, 10].includes, () => Maybe.pure ('ATTR_2'))
-      .on (3, () => Maybe.pure ('ATTR_3'))
-      .on ([2, 5, 6, 7].includes, () => Maybe.pure ('ATTR_4'))
-      .otherwise (Maybe.empty)
-  );
+const getAttributeIdByMagicalNumericId = Maybe.bind_ (
+  (id: number) => match<number, Maybe<string>> (id)
+    .on (
+      flip<number, List<number>, boolean> (List.elem) (List.of (1, 4, 10)),
+      () => Just ('ATTR_2')
+    )
+    .on (3, () => Just ('ATTR_3'))
+    .on (
+      flip<number, List<number>, boolean> (List.elem) (List.of (2, 5, 6, 7)),
+      () => Just ('ATTR_4')
+    )
+    .otherwise (Nothing)
+);
 
-const getAttributeIdByBlessedNumericId = (id: Maybe<number>): Maybe<string> =>
-  id.bind (justId =>
-    match<number, Maybe<string>> (justId)
-      .on ([2, 3, 9, 13, 16, 18].includes, () => Maybe.pure ('ATTR_1'))
-      .on ([1, 4, 8, 17].includes, () => Maybe.pure ('ATTR_2'))
-      .on ([5, 6, 11, 14].includes, () => Maybe.pure ('ATTR_3'))
-      .on ([7, 10, 12, 15].includes, () => Maybe.pure ('ATTR_4'))
-      .otherwise (Maybe.empty)
-  );
+const getAttributeIdByBlessedNumericId = Maybe.bind_ (
+  (id: number) => match<number, Maybe<string>> (id)
+    .on (
+      flip<number, List<number>, boolean> (List.elem) (List.of (2, 3, 9, 13, 16, 18)),
+      () => Just ('ATTR_1')
+    )
+    .on (
+      flip<number, List<number>, boolean> (List.elem) (List.of (1, 4, 8, 17)),
+      () => Just ('ATTR_2')
+    )
+    .on (
+      flip<number, List<number>, boolean> (List.elem) (List.of (5, 6, 11, 14)),
+      () => Just ('ATTR_3')
+    )
+    .on (
+      flip<number, List<number>, boolean> (List.elem) (List.of (7, 10, 12, 15)),
+      () => Just ('ATTR_4')
+    )
+    .otherwise (Nothing)
+);
 
 /**
  * Returns the primaty attribute id based on given type.
@@ -46,4 +63,4 @@ export const getPrimaryAttributeId = (
         getAttributeIdByBlessedNumericId,
       )))
     )
-    .otherwise (Maybe.empty);
+    .otherwise (Nothing);

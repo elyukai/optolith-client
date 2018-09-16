@@ -1,4 +1,5 @@
-import R from 'ramda';
+import * as R from 'ramda';
+import { isNumber, isString } from 'util';
 import { AdventurePointsObject } from '../selectors/adventurePointsSelectors';
 import * as Data from '../types/data';
 import { Disadvantage, Skill, WikiAll } from '../types/wiki';
@@ -65,7 +66,7 @@ const getDisAdvantageSubtypeAPSpent = (
     isMagical: boolean;
   },
   isDisadvantage: boolean,
-  adventurePoints: Record<AdventurePointsObject>,
+  adventurePoints: Record<AdventurePointsObject>
 ): Maybe<number> => {
   const { isBlessed, isMagical } = isMagicalOrBlessed;
 
@@ -114,7 +115,7 @@ export const getAreSufficientAPAvailableForDisAdvantage = (isInCharacterCreation
             const subCurrentAPSpent = getDisAdvantageSubtypeAPSpent (
               isMagicalOrBlessed,
               isDisadvantage,
-              adventurePoints,
+              adventurePoints
             );
 
             const smallMax = getDisAdvantagesSubtypeMax (isMagical) (state);
@@ -142,7 +143,7 @@ const getPrinciplesObligationsDiff = (
   entries: List<Record<Data.ActiveViewObject>>,
   state: OrderedMap<string, Record<Data.ActivatableDependent>>,
   wiki: Record<WikiAll>,
-  sourceId: string,
+  sourceId: string
 ): number => {
   if (entries.any (e => e.get ('id') === sourceId)) {
     return Maybe.fromMaybe (0) (
@@ -196,7 +197,7 @@ const getPrinciplesObligationsDiff = (
             return amountDiff.bind (
               amount => levelDiff.fmap (level => amount + level)
             );
-          },
+          }
         )
     );
   }
@@ -228,7 +229,7 @@ const getPropertyOrAspectKnowledgeDiff = (entry: Record<Data.ActiveViewObject>) 
 const getPersonalityFlawsDiff = (
   entries: List<Record<Data.ActiveViewObject>>,
   state: OrderedMap<string, Record<Data.ActivatableDependent>>,
-  wiki: Record<WikiAll>,
+  wiki: Record<WikiAll>
 ): number => {
   if (entries.any (e => e.get ('id') === 'DISADV_33')) {
     return Maybe.fromMaybe (0) (
@@ -267,7 +268,7 @@ const getPersonalityFlawsDiff = (
 const getBadHabitsDiff = (
   entries: List<Record<Data.ActiveViewObject>>,
   state: OrderedMap<string, Record<Data.ActivatableDependent>>,
-  wiki: Record<WikiAll>,
+  wiki: Record<WikiAll>
 ): number => {
   const id = 'DISADV_36';
 
@@ -301,7 +302,7 @@ const getBadHabitsDiff = (
 const getSkillSpecializationsDiff = (
   entries: List<Record<Data.ActiveViewObject>>,
   state: OrderedMap<string, Record<Data.ActivatableDependent>>,
-  wiki: Record<WikiAll>,
+  wiki: Record<WikiAll>
 ): number => {
   if (entries.any (e => e.get ('id') === 'SA_9')) {
     return Maybe.fromMaybe (0) (
@@ -331,7 +332,7 @@ const getSkillSpecializationsDiff = (
               skill: Record<Skill>,
               accMap: OrderedMap<string, number>,
               sid: string,
-              counter: number,
+              counter: number
             ) =>
               skill.get ('ic') * (getFlatSkillDone (accMap, sid) + 1 - counter);
 
@@ -402,7 +403,7 @@ const getAspectKnowledgeDiff = R.pipe (
 export function getAdventurePointsSpentDifference (
   entries: List<Record<Data.ActiveViewObject>>,
   state: OrderedMap<string, Record<Data.ActivatableDependent>>,
-  wiki: Record<WikiAll>,
+  wiki: Record<WikiAll>
 ): number {
   const adventurePointsSpentDifferences = List.of (
     getPrinciplesObligationsDiff (entries, state, wiki, 'DISADV_34'),
@@ -411,7 +412,7 @@ export function getAdventurePointsSpentDifference (
     getBadHabitsDiff (entries, state, wiki),
     getSkillSpecializationsDiff (entries, state, wiki),
     getPropertyKnowledgeDiff (entries),
-    getAspectKnowledgeDiff (entries),
+    getAspectKnowledgeDiff (entries)
   );
 
   return List.sum (adventurePointsSpentDifferences);

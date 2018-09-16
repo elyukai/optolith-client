@@ -1,4 +1,4 @@
-import R from 'ramda';
+import * as R from 'ramda';
 import { createMaybeSelector } from '../utils/createMaybeSelector';
 import { Maybe, OrderedMap } from '../utils/dataUtils';
 import { getPets } from './stateSelectors';

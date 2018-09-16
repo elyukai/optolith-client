@@ -14,7 +14,7 @@ export interface AddItemAction {
   };
 }
 
-export const addToList = (): AsyncAction => (dispatch, getState) => {
+export const addItem = (): AsyncAction => (dispatch, getState) => {
   getItemsState (getState ()).fmap (
     items => {
       const newId = `ITEM_${getNewId (items.keys ())}`;
@@ -108,7 +108,7 @@ export interface RemoveItemAction {
   };
 }
 
-export const removeFromList = (id: string): RemoveItemAction => ({
+export const removeItem = (id: string): RemoveItemAction => ({
   type: ActionTypes.REMOVE_ITEM,
   payload: {
     id
@@ -122,7 +122,7 @@ export interface SetItemsSortOrderAction {
   };
 }
 
-export const setSortOrder = (sortOrder: string): SetItemsSortOrderAction => ({
+export const setItemsSortOrder = (sortOrder: string): SetItemsSortOrderAction => ({
   type: ActionTypes.SET_ITEMS_SORT_ORDER,
   payload: {
     sortOrder

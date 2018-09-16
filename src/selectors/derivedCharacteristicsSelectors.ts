@@ -1,4 +1,4 @@
-import R from 'ramda';
+import * as R from 'ramda';
 import { AttributeDependent, Energy, EnergyWithLoss, SecondaryAttribute } from '../types/data';
 import { Race } from '../types/wiki';
 import { getModifierByActiveLevel, getModifierByIsActive } from '../utils/activatableModifierUtils';

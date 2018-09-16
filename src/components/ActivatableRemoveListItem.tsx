@@ -1,6 +1,6 @@
 import classNames = require('classnames');
 import * as React from 'react';
-import { ActiveViewObject, DeactivateArgs, UIMessages } from '../types/data.d';
+import { ActiveViewObject, DeactivateArgs, UIMessages } from '../types/data';
 import { translate } from '../utils/I18n';
 import { getRoman } from '../utils/NumberUtils';
 import { Dropdown } from './Dropdown';

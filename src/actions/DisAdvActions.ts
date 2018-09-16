@@ -1,4 +1,4 @@
-import R from 'ramda';
+import * as R from 'ramda';
 import { Dispatch } from 'react-redux';
 import { ActionTypes } from '../constants/ActionTypes';
 import { ActivatableCategory, Categories } from '../constants/Categories';

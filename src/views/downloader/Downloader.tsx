@@ -25,8 +25,10 @@ export function Downloader (props: DownloaderProps) {
 
   const id = locale.get ('id');
 
-  return Maybe.fromMaybe (<></>) (maybeProgress.fmap (
-    progress => (
+  if (Maybe.isJust (maybeProgress)) {
+    const progress = Maybe.fromJust (maybeProgress);
+
+    return (
       <Dialog
         id="downloader"
         title={translate (locale, 'downloadupdate')}
@@ -51,6 +53,8 @@ export function Downloader (props: DownloaderProps) {
             />
         </div>}
       </Dialog>
-    )
-  ));
+    );
+  }
+
+  return null;
 }

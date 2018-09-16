@@ -1,12 +1,12 @@
 import { connect } from 'react-redux';
 import { Action, Dispatch } from 'redux';
 import * as TalentsActions from '../actions/SkillActions';
-import { AppState } from '../reducers/app';
+import { AppState } from '../reducers/appReducer';
 import { getPresent } from '../selectors/currentHeroSelectors';
 import { getDerivedCharacteristicsMap } from '../selectors/derivedCharacteristicsSelectors';
 import { getIsRemovingEnabled } from '../selectors/phaseSelectors';
 import { getAttributes, getPhase, getSkillsFilterText } from '../selectors/stateSelectors';
-import { getFilteredSkills, getTalentsRating } from '../selectors/talentsSelectors';
+import { getFilteredSkills, getTalentsRating } from '../selectors/skillsSelectors';
 import { getTalentsCultureRatingVisibility, getTalentsSortOrder } from '../selectors/uisettingsSelectors';
 import { Talents, TalentsDispatchProps, TalentsOwnProps, TalentsStateProps } from '../views/skills/Talents';
 

@@ -4,12 +4,12 @@ import { UIMessages } from '../../../utils/I18n';
 import { WikiProperty } from '../WikiProperty';
 
 export interface WikiCastingTimeProps {
-	currentObject: {
+  currentObject: {
     castingTime: string;
     category: CategoryWithGroups;
     gr: number;
-	};
-	locale: UIMessages;
+  };
+  locale: UIMessages;
 }
 
 export function WikiCastingTime(props: WikiCastingTimeProps) {

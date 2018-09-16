@@ -1,4 +1,4 @@
-import R from 'ramda';
+import * as R from 'ramda';
 import * as Categories from '../constants/Categories';
 import { IdPrefixes } from '../constants/IdPrefixes';
 import * as Raw from '../types/rawdata';

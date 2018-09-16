@@ -1,4 +1,4 @@
-import R from 'ramda';
+import * as R from 'ramda';
 import * as Al from '../../types/algebraic';
 import { List } from './list';
 

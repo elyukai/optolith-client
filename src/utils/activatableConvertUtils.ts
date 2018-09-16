@@ -6,7 +6,7 @@
  * @since 1.1.0
  */
 
-import R from 'ramda';
+import * as R from 'ramda';
 import * as Data from '../types/data';
 import { List, OrderedMap, Record } from './dataUtils';
 import { match } from './match';
@@ -25,11 +25,11 @@ export const convertUIStateToActiveObject =
       match<string, Data.ActiveObject> (id)
         .on ('ADV_68', () => ({
           sid: sel,
-          sid2: input
+          sid2: input,
         }))
         .on ('DISADV_33', () => ({
           sid: sel,
-          ...(([7, 8].includes (sel as number) && input) ? { sid2: input } : {})
+          ...(([7, 8].includes (sel as number) && input) ? { sid2: input } : {}),
         }))
         .on ('SA_9', () => ({
           sid: sel,
@@ -43,7 +43,7 @@ export const convertUIStateToActiveObject =
           obj => (obj.sid !== undefined && sel2 !== undefined) ? {
             ...obj,
             sid2: sel2,
-          } : obj,
+          } : obj
         ) (tier !== undefined ? {
           tier,
         } : {}))
@@ -57,14 +57,14 @@ export const convertUIStateToActiveObject =
  * Generates a list of ActiveObjects based on the given instance.
  */
 export const convertActivatableToArray = (
-  obj: Record<Data.ActivatableDependent>,
+  obj: Record<Data.ActivatableDependent>
 ): List<Record<Data.ActiveObjectWithId>> =>
   obj.get ('active')
     .imap (
       index => e => e.merge (
         Record.of ({
           id: obj.get ('id'),
-          index
+          index,
         })
       )
   );
@@ -74,7 +74,7 @@ export const convertActivatableToArray = (
  * @param state A state slice.
  */
 export const getActiveFromState = (
-  state: OrderedMap<string, Record<Data.ActivatableDependent>>,
+  state: OrderedMap<string, Record<Data.ActivatableDependent>>
 ): List<Record<Data.ActiveObjectWithId>> =>
   state.elems ()
     .foldl<List<Record<Data.ActiveObjectWithId>>> (
@@ -89,9 +89,7 @@ export interface ActiveObjectAny extends Data.ActiveObject {
  * Returns only `sid`, `sid2` and `tier` property of passed `ActiveObject`.
  * @param activeObject
  */
-export const getActiveObjectCore = (
-  r: Record<ActiveObjectAny>,
-): Record<Data.ActiveObject> =>
+export const getActiveObjectCore = (r: Record<ActiveObjectAny>): Record<Data.ActiveObject> =>
   Record.of<Data.ActiveObject> ({})
     .alter (() => r.lookup ('sid')) ('sid')
     .alter (() => r.lookup ('sid2')) ('sid2')

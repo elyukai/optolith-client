@@ -1,4 +1,4 @@
-import R from 'ramda';
+import * as R from 'ramda';
 import { Race, RaceVariant } from '../types/wiki';
 import { Maybe, Record } from './dataUtils';
 import { rollDice, rollDie } from './dice';

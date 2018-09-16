@@ -3,10 +3,10 @@ import { Markdown } from '../../../components/Markdown';
 import { translate, UIMessages } from '../../../utils/I18n';
 
 export interface WikiQualityProps {
-	currentObject: {
-		quality: string;
-	};
-	locale: UIMessages;
+  currentObject: {
+    quality: string;
+  };
+  locale: UIMessages;
 }
 
 export function WikiQuality(props: WikiQualityProps) {

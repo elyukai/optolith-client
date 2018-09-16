@@ -23,7 +23,7 @@ const isAdditionDisabledForCombatStyle = (
   entry: Record<Wiki.SpecialAbility>
 ): Maybe<boolean> => {
   const combinationSA =
-    getHeroStateListItem<Record<Data.ActivatableDependent>> ('SA_164', state);
+    getHeroStateListItem<Record<Data.ActivatableDependent>> ('SA_164') (state);
 
   if (Maybe.isNothing (combinationSA)) {
     if (hasActiveGroupEntry (wiki, state, 9, 10)) {
@@ -57,7 +57,7 @@ const isAdditionDisabledForCombatStyle = (
 const isAdditionDisabledSpecialAbilitySpecific = (
   wiki: Record<Wiki.WikiAll>,
   state: Record<Data.HeroDependent>,
-  entry: Record<Wiki.SpecialAbility>,
+  entry: Record<Wiki.SpecialAbility>
 ): Maybe<boolean> => {
   if (CheckStyleUtils.isCombatStyleSpecialAbility (entry)) {
     return isAdditionDisabledForCombatStyle (wiki, state, entry);
@@ -96,7 +96,7 @@ const isAdditionDisabledSpecialAbilitySpecific = (
     const allPactPresents = getAllEntriesByGroup (
       wiki.get ('specialAbilities'),
       state.get ('specialAbilities'),
-      30,
+      30
     );
 
     const countPactPresents = allPactPresents.foldl<number> (
@@ -151,7 +151,7 @@ const isAdditionDisabledSpecialAbilitySpecific = (
 const isAdditionDisabledEntrySpecific = (
   wiki: Record<Wiki.WikiAll>,
   state: Record<Data.HeroDependent>,
-  entry: Wiki.Activatable,
+  entry: Wiki.Activatable
 ): boolean =>
   Maybe.fromJust (
     Maybe.ensure (isSpecialAbility) (entry)
@@ -163,7 +163,7 @@ const isAdditionDisabledEntrySpecific = (
         wiki,
         state,
         getFirstTierPrerequisites (entry.get ('prerequisites')),
-        entry.get ('id'),
+        entry.get ('id')
       ))) as Just<boolean>
   );
 
@@ -205,7 +205,7 @@ export const isAdditionDisabled = (
   state: Record<Data.HeroDependent>,
   validExtendedSpecialAbilities: List<string>,
   entry: Wiki.Activatable,
-  maxTier: Maybe<number>,
+  maxTier: Maybe<number>
 ) =>
   isAdditionDisabledEntrySpecific (wiki, state, entry)
   && hasGeneralRestrictionToAdd (instance)

@@ -1,4 +1,4 @@
-import R from 'ramda';
+import * as R from 'ramda';
 import { IdPrefixes } from '../constants/IdPrefixes';
 import * as Data from '../types/data';
 import * as Wiki from '../types/wiki';
@@ -25,7 +25,7 @@ const getAllRaceEntries = (
   wiki: Record<Wiki.WikiAll>, state: Record<Data.HeroDependent>
 ) =>
   state.lookup ('race')
-    .bind (wiki.get ('races').lookup)
+    .bind (id => OrderedMap.lookup<string, Record<Wiki.Race>> (id) (wiki.get ('races')))
     .fmap (race => race.get ('stronglyRecommendedAdvantages')
       .mappend (race.get ('automaticAdvantages'))
       .mappend (race.get ('stronglyRecommendedAdvantages'))
@@ -38,7 +38,7 @@ const getAllCultureEntries = (
   wiki: Record<Wiki.WikiAll>, state: Record<Data.HeroDependent>
 ) =>
   state.lookup ('culture')
-    .bind (wiki.get ('cultures').lookup)
+    .bind (id => OrderedMap.lookup<string, Record<Wiki.Culture>> (id) (wiki.get ('cultures')))
     .fmap (culture => culture.get ('commonAdvantages')
       .mappend (culture.get ('commonDisadvantages'))
     );
@@ -47,7 +47,7 @@ const getAllProfessionEntries = (
   wiki: Record<Wiki.WikiAll>, state: Record<Data.HeroDependent>
 ) =>
   state.lookup ('profession')
-    .bind (wiki.get ('professions').lookup)
+    .bind (id => OrderedMap.lookup<string, Record<Wiki.Profession>> (id) (wiki.get ('professions')))
     .fmap (profession => profession.get ('suggestedAdvantages')
       .mappend (profession.get ('unsuitableAdvantages'))
     );

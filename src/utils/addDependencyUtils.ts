@@ -1,8 +1,9 @@
-import R from 'ramda';
+import * as R from 'ramda';
 import { ActivatableSkillCategories, Categories } from '../constants/Categories';
 import * as Data from '../types/data';
 import * as CreateEntryUtils from './createEntryUtils';
 import { Just, List, Maybe, Record } from './dataUtils';
+import { flip } from './flip';
 import { adjustHeroListStateItemOr } from './heroStateUtils';
 import { getCategoryById } from './IDUtils';
 
@@ -16,7 +17,7 @@ type Dependency<T extends Data.Dependent> =
 const addDependency = <T extends Data.Dependent>(
   add: Dependency<T>,
 ) => (obj: T): Just<T> => Maybe.pure (
-  (obj as Record<any>).update (
+  (obj as any as Record<{ dependencies: any }>).update<'dependencies'> (
     (dependencies: RecordInterface<T>['dependencies']) =>
       Maybe.pure ((dependencies as List<any>).append (add))
   ) ('dependencies') as T
@@ -29,7 +30,8 @@ const addDependency = <T extends Data.Dependent>(
 const getIncreasableCreator: (id: string) => IncreasableCreator = R.pipe (
   getCategoryById,
   category =>
-    category.fmap (ActivatableSkillCategories.elem as (value: Categories) => boolean)
+    category.fmap (flip<Categories, List<Categories>, boolean> (List.elem)
+                                                               (ActivatableSkillCategories))
       .equals (Maybe.pure (true))
         ? CreateEntryUtils.createActivatableDependentSkill
         : CreateEntryUtils.createDependentSkill

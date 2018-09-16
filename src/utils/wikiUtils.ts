@@ -40,37 +40,19 @@ const wikiKeyByCategory: WikiKeyByCategory = {
   [Categories.TALENTS]: 'skills',
 }
 
-export const getWikiStateKeyByCategory = <T extends Categories>(
-  category: T,
-): WikiKeyByCategory[T] =>
-  wikiKeyByCategory[category];
+export const getWikiStateKeyByCategory =
+  <T extends Categories>(category: T): WikiKeyByCategory[T] =>
+    wikiKeyByCategory[category];
 
 export const getWikiStateKeyById = (id: string): Maybe<keyof Wiki.WikiAll> =>
   getCategoryById (id).fmap (getWikiStateKeyByCategory);
 
-export function getWikiEntry<T extends Wiki.Entry = Wiki.Entry> (
-  state: Record<Wiki.WikiAll>,
-): (id: string) => Maybe<T>;
-export function getWikiEntry<T extends Wiki.Entry = Wiki.Entry> (
-  state: Record<Wiki.WikiAll>,
-  id: string,
-): Maybe<T>;
-export function getWikiEntry<T extends Wiki.Entry = Wiki.Entry> (
-  state: Record<Wiki.WikiAll>,
-  id?: string,
-): Maybe<T> | ((id: string) => Maybe<T>) {
-  if (id === undefined) {
-    return xId =>
-      getWikiStateKeyById (xId)
-        .bind (state.lookup)
-        .bind (slice => slice.lookup (xId) as any);
-  }
-  else {
-    return getWikiStateKeyById (id)
-      .bind (state.lookup)
-      .bind (slice => slice.lookup (id) as any);
-  }
-};
+export const getWikiEntry =
+  <T extends Wiki.Entry = Wiki.Entry>(state: Record<Wiki.WikiAll>) =>
+    (id: string): Maybe<T> =>
+      getWikiStateKeyById (id)
+        .bind (key => Record.lookup<Wiki.WikiAll, keyof Wiki.WikiAll> (key) (state))
+        .bind (slice => slice.lookup (id) as any);
 
 export const getWikiEntryFromSlice = (wiki: Wiki.WikiRecord) =>
   <K extends keyof Wiki.WikiAll>(key: K) =>
@@ -134,14 +116,14 @@ export const isActivatableWikiObj =
       && ActivatableCategories.elem (obj.toObject ().category as ActivatableCategory);
 
 export const isRemoveSpecializationSelection = (
-  obj: Wiki.ProfessionVariantSelection,
+  obj: Wiki.ProfessionVariantSelection
 ): obj is Record<Wiki.RemoveSpecializationSelection> => {
   return obj.get ('id') === Wiki.ProfessionSelectionIds.SPECIALISATION
     && obj.member ('active');
 };
 
 export const isCombatTechniquesSelection = (
-  obj: Wiki.ProfessionVariantSelection,
+  obj: Wiki.ProfessionVariantSelection
 ): obj is Record<Wiki.CombatTechniquesSelection> => {
   return (obj.get ('id') as Wiki.ProfessionSelectionIds)
     === Wiki.ProfessionSelectionIds.COMBAT_TECHNIQUES
@@ -151,7 +133,7 @@ export const isCombatTechniquesSelection = (
 };
 
 export const isRemoveCombatTechniquesSelection = (
-  obj: Wiki.ProfessionVariantSelection,
+  obj: Wiki.ProfessionVariantSelection
 ): obj is Record<Wiki.RemoveCombatTechniquesSelection> => {
   return (obj.get ('id') as Wiki.ProfessionSelectionIds)
     === Wiki.ProfessionSelectionIds.COMBAT_TECHNIQUES
@@ -159,7 +141,7 @@ export const isRemoveCombatTechniquesSelection = (
 };
 
 export const isRemoveSecondCombatTechniquesSelection = (
-  obj: Wiki.ProfessionVariantSelection,
+  obj: Wiki.ProfessionVariantSelection
 ): obj is Record<Wiki.RemoveCombatTechniquesSecondSelection> => {
   return (obj.get ('id') as Wiki.ProfessionSelectionIds)
     === Wiki.ProfessionSelectionIds.COMBAT_TECHNIQUES_SECOND

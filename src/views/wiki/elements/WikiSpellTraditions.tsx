@@ -4,11 +4,11 @@ import { translate, UIMessages } from '../../../utils/I18n';
 import { WikiProperty } from '../WikiProperty';
 
 export interface WikiSpellTraditionsProps {
-	currentObject: {
+  currentObject: {
     subtradition: number[];
     tradition: number[];
-	};
-	locale: UIMessages;
+  };
+  locale: UIMessages;
 }
 
 export function WikiSpellTraditions(props: WikiSpellTraditionsProps) {

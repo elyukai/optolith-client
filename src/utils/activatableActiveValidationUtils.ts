@@ -7,7 +7,8 @@
  * @since 1.1.0
  */
 
-import R from 'ramda';
+import * as R from 'ramda';
+import { isObject } from 'util';
 import { ActivatableCategory, Categories } from '../constants/Categories';
 import * as Data from '../types/data';
 import * as Wiki from '../types/wiki';
@@ -27,13 +28,13 @@ import { getWikiEntry } from './WikiUtils';
 
 const hasRequiredMinimumLevel = (
   tiers: Maybe<number>,
-  minTier: Maybe<number>,
+  minTier: Maybe<number>
 ): boolean =>
   Maybe.isJust (tiers) && Maybe.isJust (minTier);
 
 const isRequiredByOthers = (
   instance: Record<Data.ActivatableDependent>,
-  active: Record<Data.ActiveObject>,
+  active: Record<Data.ActiveObject>
 ): boolean =>
   instance
     .get ('dependencies')
@@ -67,7 +68,7 @@ const getSuperIsRemoveDisabled = (
   tiers: Maybe<number>,
   minTier: Maybe<number>,
   instance: Record<Data.ActivatableDependent>,
-  active: Record<Data.ActiveObject>,
+  active: Record<Data.ActiveObject>
 ) => (isDisabled: boolean): boolean =>
   isDisabled ||
   // Disable if a minimum level is required
@@ -87,7 +88,7 @@ const isRemovalDisabledEntrySpecific = (
   entry: Wiki.WikiActivatable,
   instance: Record<Data.ActivatableDependent>,
   active: Record<Data.ActiveObject>,
-  minTier: Maybe<number>,
+  minTier: Maybe<number>
 ): boolean => {
   return R.pipe<boolean, boolean> (
     getSuperIsRemoveDisabled (entry.lookup ('tiers'), minTier, instance, active)
@@ -118,7 +119,7 @@ const isRemovalDisabledEntrySpecific = (
                               .equals (active.lookup ('sid')) ? e + 1 : e
                         ) (0)
                     )),
-                    Maybe.equals (skill.lookup ('value')),
+                    Maybe.equals (skill.lookup ('value'))
                   ))
               )
           )
@@ -143,7 +144,7 @@ const isRemovalDisabledEntrySpecific = (
                   .fmap (R.pipe (
                     el => el.lookup ('maxCombatTechniqueRating'),
                     Maybe.fmap (R.inc),
-                    Maybe.equals (skill.lookup ('value')),
+                    Maybe.equals (skill.lookup ('value'))
                   ))
               )
           )
@@ -152,7 +153,7 @@ const isRemovalDisabledEntrySpecific = (
       )
       .on (
         R.both (
-          [
+          List.elem_ (List.of (
             'SA_70',
             'SA_255',
             'SA_345',
@@ -162,17 +163,17 @@ const isRemovalDisabledEntrySpecific = (
             'SA_678',
             'SA_679',
             'SA_680',
-            'SA_681',
-          ].includes,
+            'SA_681'
+          )),
           R.both (
             () => R.lte (
               getMagicalTraditions (state.get ('specialAbilities'))
                 .length (),
-              1,
+              1
             ),
             R.either (
               () => R.gt (countActiveSkillEntries (state, 'spells'), 0),
-              () => R.gt (OrderedSet.size (state.get ('cantrips'))) (0),
+              () => R.gt (OrderedSet.size (state.get ('cantrips'))) (0)
             )
           )
         ),
@@ -180,7 +181,7 @@ const isRemovalDisabledEntrySpecific = (
       )
       .on (
         R.both (
-          [
+          List.elem_ (List.of (
             'SA_86',
             'SA_682',
             'SA_683',
@@ -198,11 +199,11 @@ const isRemovalDisabledEntrySpecific = (
             'SA_695',
             'SA_696',
             'SA_697',
-            'SA_698',
-          ].includes,
+            'SA_698'
+          )),
           R.either (
             () => R.gt (countActiveSkillEntries (state, 'spells'), 0),
-            () => R.gt (OrderedSet.size (state.get ('cantrips'))) (0),
+            () => R.gt (OrderedSet.size (state.get ('cantrips'))) (0)
           )
         ),
         R.T
@@ -225,17 +226,17 @@ const isRemovalDisabledEntrySpecific = (
       .on (
         R.both (
           R.equals ('SA_266'),
-          () => R.gte (countActiveGroupEntries (wiki, state, 13)) (2),
+          () => R.gte (countActiveGroupEntries (wiki, state, 13)) (2)
         ),
         R.T
       )
       .on (
         R.both (
-          ['SA_623', 'SA_625', 'SA_632'].includes,
+          List.elem_ (List.of ('SA_623', 'SA_625', 'SA_632')),
           () => Maybe.fromMaybe (false) (
             getBlessedTraditionFromWiki (
               wiki.get ('specialAbilities'),
-              state.get ('specialAbilities'),
+              state.get ('specialAbilities')
             )
               .bind (
                 blessedTradition => state.lookup ('liturgicalChants')
@@ -247,10 +248,13 @@ const isRemovalDisabledEntrySpecific = (
                       e => wiki.lookup ('liturgicalChants')
                         .bind (
                           slice => e.lookup ('id')
-                            .bind (slice.lookup)
+                            .bind (
+                              id => OrderedMap.lookup<string, Record<Wiki.LiturgicalChant>> (id)
+                                                                                            (slice)
+                            )
                         )
                     ),
-                    list => list.any (e => !isOwnTradition (blessedTradition, e)),
+                    list => list.any (e => !isOwnTradition (blessedTradition, e))
                   ))
               )
           )
@@ -267,7 +271,7 @@ const isRemovalDisabledEntrySpecific = (
               state,
               Maybe.pure (entry as Record<Wiki.SpecialAbility>)
             ),
-            false,
+            false
           )
         ),
         R.T
@@ -277,10 +281,9 @@ const isRemovalDisabledEntrySpecific = (
           .all (dep => {
             if (typeof dep === 'object' && Maybe.isJust (dep.lookup ('origin'))) {
               return Maybe.fromMaybe (true) (
-                getWikiEntry<Wiki.WikiActivatable> (
-                  wiki,
-                  Maybe.fromJust (dep.lookup ('origin') as Just<string>)
-                )
+                getWikiEntry<Wiki.WikiActivatable>
+                  (wiki)
+                  (Maybe.fromJust (dep.lookup ('origin') as Just<string>))
                   .bind (
                     originEntry => flattenPrerequisites (originEntry.get ('prerequisites'))
                                                         (originEntry.lookup ('tiers')
@@ -307,9 +310,9 @@ const isRemovalDisabledEntrySpecific = (
                                 wiki,
                                 state,
                                 req.merge (Record.of ({
-                                  id: e
+                                  id: e,
                                 })) as Wiki.AllRequirementObjects,
-                                entry.get ('id'),
+                                entry.get ('id')
                               ) ? acc + 1 : acc
                             ) (0) > 1
                       )
@@ -353,7 +356,7 @@ const getSermonsAndVisionsMinTier = (
   wiki: Record<Wiki.WikiAll>,
   state: Record<Data.HeroDependent>,
   more: boolean,
-  gr: number,
+  gr: number
 ): Maybe<number> => Maybe.ensure (more ? R.lt (3) : R.gt (3)) (
   getAllEntriesByGroup (
     wiki.get ('specialAbilities'),
@@ -374,7 +377,7 @@ export function getMinTier (
   state: Record<Data.HeroDependent>,
   obj: Record<Data.ActiveObjectWithId>,
   dependencies: List<Data.ActivatableDependency>,
-  sid: Maybe<string | number>,
+  sid: Maybe<string | number>
 ): Maybe<number> {
   return R.pipe (
     dependencies.foldl<Maybe<number>> (
@@ -405,25 +408,25 @@ export function getMinTier (
         wiki,
         state,
         true,
-        24,
+        24
       ))
       .on ('ADV_80', () => getSermonsAndVisionsMinTier (
         wiki,
         state,
         true,
-        27,
+        27
       ))
       .on ('DISADV_72', () => getSermonsAndVisionsMinTier (
         wiki,
         state,
         false,
-        24,
+        24
       ))
       .on ('DISADV_73', () => getSermonsAndVisionsMinTier (
         wiki,
         state,
         false,
-        27,
+        27
       ))
       .otherwise (Maybe.empty)
   );
@@ -437,7 +440,7 @@ export const getMaxTier = (
   state: Record<Data.HeroDependent>,
   prerequisites: Wiki.LevelAwarePrerequisites,
   dependencies: List<Data.ActivatableDependency>,
-  id: string,
+  id: string
 ) => {
   return match<string, Maybe<number>> (id)
     .on (
@@ -453,7 +456,7 @@ export const getMaxTier = (
       state,
       prerequisites,
       dependencies,
-      id,
+      id
     ) : Maybe.empty ());
 };
 
@@ -465,12 +468,9 @@ export const getMaxTier = (
 export const getIsRemovalOrChangeDisabled = (
   obj: Record<Data.ActiveObjectWithId>,
   wiki: Record<Wiki.WikiAll>,
-  state: Record<Data.HeroDependent>,
+  state: Record<Data.HeroDependent>
 ): Maybe<Record<Data.ActivatableActivationValidationObject>> => {
-  return getWikiEntry<Wiki.WikiActivatable> (
-    wiki,
-    obj.get ('id')
-  )
+  return getWikiEntry<Wiki.WikiActivatable> (wiki) (obj.get ('id'))
     .bind (
       wikiEntry => getHeroStateListItem<Record<Data.ActivatableDependent>> (
         obj.get ('id')
@@ -481,7 +481,7 @@ export const getIsRemovalOrChangeDisabled = (
             state,
             obj,
             instance.get ('dependencies'),
-            obj.lookup ('sid'),
+            obj.lookup ('sid')
           );
 
           return obj.mergeMaybe (Record.of ({
@@ -491,7 +491,7 @@ export const getIsRemovalOrChangeDisabled = (
               wikiEntry,
               instance,
               obj as Record<any>,
-              minTier,
+              minTier
             ),
             minTier,
             maxTier: getMaxTier (
@@ -499,8 +499,8 @@ export const getIsRemovalOrChangeDisabled = (
               state,
               wikiEntry.get ('prerequisites'),
               instance.get ('dependencies'),
-              obj.get ('id'),
-            )
+              obj.get ('id')
+            ),
           })) as Record<Data.ActivatableActivationValidationObject>;
         })
     );

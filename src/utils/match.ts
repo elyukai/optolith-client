@@ -1,4 +1,4 @@
-import R from 'ramda';
+import * as R from 'ramda';
 
 type TypeGuard<T, I extends T = T> = (x: T) => x is I;
 type TypeCheck<T> = (x: T) => boolean;

@@ -1,4 +1,4 @@
-import R from 'ramda';
+import * as R from 'ramda';
 import { ActivatableDependent, ActivatableSkillDependent } from '../types/data';
 import { SpellWithRequirements } from '../types/view';
 import { Cantrip, ExperienceLevel, Spell } from '../types/wiki';

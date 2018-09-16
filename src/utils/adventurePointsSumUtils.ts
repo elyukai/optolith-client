@@ -1,4 +1,5 @@
-import R from 'ramda';
+import * as R from 'ramda';
+import { isNumber } from 'util';
 import { Categories } from '../constants/Categories';
 import * as Data from '../types/data';
 import * as Wiki from '../types/wiki';
@@ -203,7 +204,11 @@ const getAPSpentForEnergies = (energies: Record<Data.Energies>) => {
 };
 
 export const getAPSpentForRace = (wiki: Record<Wiki.WikiAll>) => R.pipe (
-  Maybe.bind_ (wiki.get ('races').lookup),
+  Maybe.bind_ (
+    (id: string) => OrderedMap.lookup<string, Record<Wiki.Race>>
+      (id)
+      (wiki.get ('races'))
+  ),
   Maybe.fmap (race => race.get ('ap')),
   Maybe.fromMaybe (0)
 );
@@ -217,12 +222,21 @@ export const getAPSpentForProfession = (wiki: Record<Wiki.WikiAll>) =>
     (professionVariantId: Maybe<string>) => R.pipe (
       Maybe.ensure (R.equals (1)),
       Maybe.then_ (professionId),
-      Maybe.bind_ (wiki.get ('professions').lookup),
+      Maybe.bind_ (
+        (id: string) => OrderedMap.lookup<string, Record<Wiki.Profession>>
+          (id)
+          (wiki.get ('professions'))
+      ),
       Maybe.fmap (Record.get<Wiki.Profession, 'ap'> ('ap')),
       Maybe.fmap (
         R.add (Maybe.fromMaybe (0)
                               (R.pipe (
-                                Maybe.bind_ (wiki.get ('professionVariants').lookup),
+                                Maybe.bind_ (
+                                  (id: string) =>
+                                    OrderedMap.lookup<string, Record<Wiki.ProfessionVariant>>
+                                      (id)
+                                      (wiki.get ('professionVariants'))
+                                ),
                                 Maybe.fmap (Record.get<Wiki.ProfessionVariant, 'ap'> ('ap'))
                               ) (professionVariantId)))
       )
@@ -253,7 +267,7 @@ export const getAPObjectAreas = (wiki: Record<Wiki.WikiAll>) =>
   (locale: Record<Data.UIMessages>) =>
     (hero: Data.Hero) =>
       Record.ofMaybe<APObjectPart> ({
-        total: hero.get ('adventurePoints').get ('total'),
+        total: hero.get ('adventurePointsTotal'),
         spentOnAttributes: getAPSpentForAttributes (hero.get ('attributes')),
         spentOnSkills: getAPSpentForSkills (wiki.get ('skills'))
                                            (hero.get ('skills')),
@@ -347,7 +361,7 @@ const getAPSpent = (ap: Record<APObjectPart>) =>
     ap.get ('spentOnBlessedAdvantages'),
     ap.get ('spentOnDisadvantages'),
     ap.get ('spentOnMagicalDisadvantages'),
-    ap.get ('spentOnBlessedDisadvantages'),
+    ap.get ('spentOnBlessedDisadvantages')
   )
     .sum ();
 
@@ -370,7 +384,7 @@ export const getAPObject = (wiki: Record<Wiki.WikiAll>) =>
       return areas.merge (
         Record.of ({
           spent,
-          available
+          available,
         })
       )
     };

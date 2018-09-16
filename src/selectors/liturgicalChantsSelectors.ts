@@ -1,4 +1,4 @@
-import R from 'ramda';
+import * as R from 'ramda';
 import { ActivatableSkillDependent } from '../types/data';
 import { LiturgicalChantWithRequirements } from '../types/view';
 import { Blessing, LiturgicalChant } from '../types/wiki';

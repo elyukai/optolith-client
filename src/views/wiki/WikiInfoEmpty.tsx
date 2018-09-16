@@ -1,9 +1,7 @@
 import * as React from 'react';
 
-export function WikiInfoEmpty() {
-	return (
-		<div className="info-placeholder">
-			&#xE912;
-		</div>
-	);
-}
+export const WikiInfoEmpty = () => (
+  <div className="info-placeholder">
+    &#xE912;
+  </div>
+);

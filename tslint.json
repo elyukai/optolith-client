@@ -53,7 +53,7 @@
     "no-invalid-template-strings": true,
 		"no-invalid-this": true,
     "no-misused-new": true,
-		"no-null-keyword": true,
+		// "no-null-keyword": true, // needed for React
     "no-object-literal-type-assertion": true,
     "no-return-await": true,
     "no-shadowed-variable": true,
@@ -116,6 +116,7 @@
     "no-unnecessary-initializer": true,
     "no-trailing-whitespace": true,
     "number-literal-format": true,
+    "object-curly-spacing": [true, "always", {"arraysInObjects": true, "objectsInObjects": false}],
 		"object-literal-key-quotes": [true, "consistent"],
 		"object-literal-shorthand": true,
 		"one-line": [true, "check-open-brace", "check-whitespace"],
@@ -150,6 +151,19 @@
     ],
     "ter-prefer-arrow-callback": true,
     "ter-func-call-spacing": [true, "always"],
+    "trailing-comma": [
+      true,
+      {
+        "singeline": "never",
+        "multiline": {
+          "objects": "always",
+          "arrays": "always",
+          "functions": "never",
+          "typeLiterals": "always"
+        },
+        "esSpecCompliant": true
+      }
+    ],
     "type-literal-delimiter": true,
 		"variable-name": [true, "check-format", "allow-leading-underscore", "allow-pascal-case"]
 		// "whitespace": [true, "check-branch", "check-decl", "check-operator", "check-module", "check-preblock", "check-separator", "check-type", "check-typecast"]

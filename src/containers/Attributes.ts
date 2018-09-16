@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 import { Action, Dispatch } from 'redux';
 import * as AttributesActions from '../actions/AttributesActions';
 import * as SubwindowsActions from '../actions/SubwindowsActions';
-import { AppState } from '../reducers/app';
+import { AppState } from '../reducers/appReducer';
 import { getAdjustmentValue, getAvailableAdjustmentIds, getCurrentAdjustmentId, getForView, getSum } from '../selectors/attributeSelectors';
 import { getDerivedCharacteristics } from '../selectors/derivedCharacteristicsSelectors';
 import { getStartEl } from '../selectors/elSelectors';

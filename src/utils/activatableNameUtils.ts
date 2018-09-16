@@ -8,10 +8,10 @@
  * @since 1.1.0
  */
 
-import { isNumber } from 'util';
+import { isNumber, isString } from 'util';
 import * as Data from '../types/data';
 import * as Wiki from '../types/wiki';
-import { List, Maybe, Record } from './dataUtils';
+import { List, Maybe, OrderedMap, Record } from './dataUtils';
 import { sortStrings } from './FilterSortUtils';
 import { translate } from './I18n';
 import { match } from './match';
@@ -53,11 +53,11 @@ export const getBracketedNameFromFullName = (name: string): string => {
 const getEntrySpecificNameAddition = (
   wikiEntry: Wiki.Activatable,
   instance: Record<Data.ActiveObjectWithId>,
-  wiki: Record<Wiki.WikiAll>,
+  wiki: Record<Wiki.WikiAll>
 ): Maybe<string> => {
   return match<string, Maybe<string>> (instance.get ('id'))
     .on (
-      [
+      List.elem_ (List.of (
         'ADV_4',
         'ADV_47',
         'ADV_16',
@@ -69,8 +69,8 @@ const getEntrySpecificNameAddition = (
         'SA_473',
         'SA_531',
         'SA_533',
-        'SA_569',
-      ].includes,
+        'SA_569'
+      )),
       () =>
         (instance.lookup ('sid') as Maybe<string>)
           .bind (getWikiEntry<Wiki.Skillish> (wiki))
@@ -96,7 +96,7 @@ const getEntrySpecificNameAddition = (
     )
     .on ('SA_9', () =>
       (instance.lookup ('sid') as Maybe<string>)
-        .bind (wiki.get ('skills').lookup)
+        .bind (id => OrderedMap.lookup<string, Record<Wiki.Skill>> (id) (wiki.get ('skills')))
         .fmap (skill => {
           return Maybe.maybe (skill.get ('name')) (name => `${skill.get ('name')}: ${name}`) (
             instance.lookup ('sid2').bind (sid2 =>
@@ -111,10 +111,7 @@ const getEntrySpecificNameAddition = (
         })
     )
     .on (
-      [
-        'SA_414',
-        'SA_663',
-      ].includes,
+      List.elem_ (List.of ('SA_414', 'SA_663')),
       () =>
         findSelectOption (wikiEntry, instance.lookup ('sid'))
           .bind (item =>
@@ -132,7 +129,7 @@ const getEntrySpecificNameAddition = (
     )
     .on ('SA_680', () =>
       (instance.lookup ('sid') as Maybe<string>)
-        .bind (wiki.get ('skills').lookup)
+        .bind (id => OrderedMap.lookup<string, Record<Wiki.Skill>> (id) (wiki.get ('skills')))
         .fmap (entry => `: ${entry.get ('name')}`)
     )
     .on ('SA_699', () =>
@@ -179,7 +176,7 @@ const getEntrySpecificNameReplacements = (
 ): string => {
   return Maybe.fromMaybe (wikiEntry.get ('name')) (
     match<string, Maybe<string>> (wikiEntry.get ('id'))
-      .on (['ADV_28', 'ADV_29'].includes, () =>
+      .on (List.elem_ (List.of ('ADV_28', 'ADV_29')), () =>
         translate (locale, 'activatable.view.immunityto')
           .bind (name =>
             maybeNameAddition.fmap (nameAddition => `${name} ${nameAddition}`)
@@ -197,7 +194,7 @@ const getEntrySpecificNameReplacements = (
             maybeNameAddition.fmap (nameAddition => `${name} ${nameAddition}`)
           )
       )
-      .on (['DISADV_34', 'DISADV_50'].includes, () =>
+      .on (List.elem_ (List.of ('DISADV_34', 'DISADV_50')), () =>
         instance.lookup ('tier')
           .bind (tier =>
             maybeNameAddition.fmap (nameAddition =>
@@ -210,7 +207,7 @@ const getEntrySpecificNameReplacements = (
           `${wikiEntry.get ('name')} ${nameAddition}`
         )
       )
-      .on (['SA_677', 'SA_678'].includes, () => {
+      .on (List.elem_ (List.of ('SA_677', 'SA_678')), () => {
         const part = getBracketedNameFromFullName (name);
         const maybeMusicTraditionLabels = translate (locale, 'musictraditions');
 
@@ -218,7 +215,7 @@ const getEntrySpecificNameReplacements = (
           .bind (Maybe.ensure (isNumber))
           .bind (sid2 =>
             maybeMusicTraditionLabels
-              .fmap (musicTraditionLabels => musicTraditionLabels[sid2 - 1])
+              .bind (musicTraditionLabels => musicTraditionLabels.subscript (sid2 - 1))
               .fmap (musicTradition =>
                 wikiEntry.get ('name').replace (part, `${part}: ${musicTradition}`)
               )
@@ -242,31 +239,31 @@ export const getName = (
   wiki: Record<Wiki.WikiAll>,
   locale: Maybe<Record<Data.UIMessages>>
 ): Maybe<Record<Data.ActivatableCombinedName>> => {
-  return getWikiEntry<Wiki.Activatable> (wiki, instance.get ('id'))
+  return getWikiEntry<Wiki.Activatable> (wiki) (instance.get ('id'))
     .fmap (wikiEntry => {
       const maybeAddName = getEntrySpecificNameAddition (
         wikiEntry,
         instance,
-        wiki,
+        wiki
       );
 
       const name = getEntrySpecificNameReplacements (
         wikiEntry,
         instance,
         maybeAddName,
-        locale,
+        locale
       );
 
       return Maybe.maybe<string, Record<Data.ActivatableCombinedName>> (
         Record.of ({
           name,
-          baseName: wikiEntry.get ('name')
+          baseName: wikiEntry.get ('name'),
         })
       ) (
         addName => Record.of<Data.ActivatableCombinedName> ({
           name,
           baseName: wikiEntry.get ('name'),
-          addName
+          addName,
         })
       ) (
         maybeAddName
@@ -281,7 +278,7 @@ interface EnhancedReduce {
 
 export const compressList = (
   list: List<Record<Data.ActiveViewObject> | string>,
-  locale: Record<Data.UIMessages>,
+  locale: Record<Data.UIMessages>
 ): string => {
   const listToString = sortStrings (
     list.foldl<List<string>> (
@@ -304,14 +301,14 @@ export const compressList = (
 
   const initial: EnhancedReduce = {
     final: List.of (),
-    previousLowerTier: false
+    previousLowerTier: false,
   };
 
   const finalList = listToString.foldl<EnhancedReduce> (
     previous => current =>
       Maybe.fromMaybe ({
         final: previous.final.append (current),
-        previousLowerTier: false
+        previousLowerTier: false,
       }) (
         List.last_ (previous.final)
           .bind (Maybe.ensure (x =>
@@ -329,7 +326,7 @@ export const compressList = (
             return Maybe.fmap<List<string>, EnhancedReduce> (
               init => ({
                 ...previous,
-                final: init.append (`${beginning}, ${continuing}`)
+                final: init.append (`${beginning}, ${continuing}`),
               })
             ) (List.init_ (previous.final));
           })

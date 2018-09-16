@@ -1,4 +1,6 @@
+import { ExperienceLevel } from '../types/wiki';
 import { createMaybeSelector } from '../utils/createMaybeSelector';
+import { OrderedMap, Record } from '../utils/dataUtils';
 import { getExperienceLevelIdByAp } from '../utils/ELUtils';
 import { getExperienceLevelStartId, getTotalAdventurePoints, getWikiExperienceLevels } from './stateSelectors';
 
@@ -13,5 +15,7 @@ export const getCurrentEl = createMaybeSelector (
 export const getStartEl = createMaybeSelector (
   getWikiExperienceLevels,
   getExperienceLevelStartId,
-  (allEls, maybeId) => maybeId.bind (allEls.lookup)!
+  (allEls, maybeId) => maybeId.bind (
+    id => OrderedMap.lookup<string, Record<ExperienceLevel>> (id) (allEls)
+  )
 );

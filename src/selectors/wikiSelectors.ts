@@ -1,6 +1,6 @@
-import { getLocaleAsProp, getWikiAdvantages, getWikiBlessings, getWikiCantrips, getWikiCombatTechniques, getWikiCombatTechniquesGroup, getWikiCultures, getWikiDisadvantages, getWikiFilterText, getWikiItemTemplates, getWikiItemTemplatesGroup, getWikiLiturgicalChants, getWikiLiturgicalChantsGroup, getWikiProfessionsGroup, getWikiRaces, getWikiSkills, getWikiSkillsGroup, getWikiSpecialAbilities, getWikiSpecialAbilitiesGroup, getWikiSpells, getWikiSpellsGroup } from '../selectors/stateSelectors';
+import { getLocaleAsProp, getWikiAdvantages, getWikiBlessings, getWikiCantrips, getWikiCombatTechniques, getWikiCombatTechniquesGroup, getWikiCultures, getWikiDisadvantages, getWikiFilterText, getWikiItemTemplates, getWikiItemTemplatesGroup, getWikiLiturgicalChants, getWikiLiturgicalChantsGroup, getWikiProfessions, getWikiProfessionsGroup, getWikiRaces, getWikiSkills, getWikiSkillsGroup, getWikiSpecialAbilities, getWikiSpecialAbilitiesGroup, getWikiSpells, getWikiSpellsGroup } from '../selectors/stateSelectors';
 import { CultureCombined, ProfessionCombined, RaceCombined } from '../types/view';
-import { Advantage, Blessing, Cantrip, CombatTechnique, Disadvantage, ItemTemplate, LiturgicalChant, Skill, SourceLink, SpecialAbility, Spell } from '../types/wiki';
+import { Advantage, Blessing, Cantrip, CombatTechnique, Disadvantage, ItemTemplate, LiturgicalChant, Profession, Skill, SourceLink, SpecialAbility, Spell } from '../types/wiki';
 import { createMaybeSelector } from '../utils/createMaybeSelector';
 import { List, Maybe, Record, Tuple } from '../utils/dataUtils';
 import { filterObjects, sortObjects } from '../utils/FilterSortUtils';
@@ -48,7 +48,7 @@ const getFirstPartWikiEntries = createMaybeSelector (
     ...itemTemplates.elems (),
     ...advantages.elems (),
     ...disadvantages.elems (),
-    ...specialAbilties.elems (),
+    ...specialAbilties.elems ()
   )
 );
 
@@ -95,21 +95,21 @@ export const getPreparedCultures = createMaybeSelector (
 );
 
 export const getProfessionsSortedByName = createMaybeSelector (
-  getAllProfessions,
+  getWikiProfessions,
   getLocaleAsProp,
   (list, locale) => {
-    const key = (e: Record<ProfessionCombined>) =>
+    const key = (e: Record<Profession>) =>
       Maybe.maybe<Record<SourceLink>, string> ('US25000')
                                               (source => source.get ('id'))
                                               (List.uncons (e.get ('src')) .fmap (Tuple.fst));
 
     return sortObjects (
-      list,
+      list.elems (),
       locale.get ('id'),
       [
         { key: 'name', keyOfProperty: 'm' },
         { key: 'subname', keyOfProperty: 'm' },
-        { key }
+        { key },
       ]
     );
   }
@@ -293,7 +293,7 @@ export const getSpecialAbilityGroups = createMaybeSelector (
       translate (locale, 'specialabilities.view.groups')
         .imap (index => name => Record.of ({
           id: index + 1,
-          name
+          name,
         }))
         .filter (r => specialAbilities.any (e => e.get ('gr') === r.get ('id'))),
       locale.get ('id')

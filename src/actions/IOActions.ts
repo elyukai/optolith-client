@@ -9,15 +9,16 @@ import { AppState } from '../reducers/appReducer';
 import { getCurrentHeroId, getHeroes, getUsers, getWiki } from '../selectors/stateSelectors';
 import { getUISettingsState } from '../selectors/uisettingsSelectors';
 import { AsyncAction } from '../types/actions';
-import { User } from '../types/data';
+import { Hero, User } from '../types/data';
 import { Config, Raw, RawHero, RawHerolist, RawLocale, RawTables } from '../types/rawdata';
 import { UIMessagesObject } from '../types/ui';
 import { convertHeroesForSave, convertHeroForSave } from '../utils/convertHeroForSave';
-import { Maybe, StringKeyObject, UnsafeStringKeyObject } from '../utils/dataUtils';
+import { Maybe, OrderedMap, StringKeyObject, UnsafeStringKeyObject } from '../utils/dataUtils';
 import { translate } from '../utils/I18n';
 import { getNewIdByDate } from '../utils/IDUtils';
 import { bytify, getSystemLocale, readDir, readFile, showOpenDialog, showSaveDialog, windowPrintToPDF, writeFile } from '../utils/IOUtils';
 import { isBase64Image } from '../utils/RegexUtils';
+import { UndoState } from '../utils/undo';
 import { addAlert } from './AlertActions';
 
 const getSaveDataPath = (): string => remote.app.getPath ('userData');
@@ -212,7 +213,7 @@ export const requestSaveAll = (locale: UIMessagesObject): AsyncAction<Promise<bo
   };
 
 export const requestHeroSave = (locale: UIMessagesObject) =>
-  (id: Maybe<string>): AsyncAction<Promise<string | undefined>> =>
+  (maybeId: Maybe<string>): AsyncAction<Promise<string | undefined>> =>
     async (dispatch, getState) => {
       const state = getState ();
 
@@ -220,9 +221,9 @@ export const requestHeroSave = (locale: UIMessagesObject) =>
       const heroes = getHeroes (state);
       const users = getUsers (state);
 
-      const maybeHero = id
+      const maybeHero = maybeId
         .alt (getCurrentHeroId (state))
-        .bind (heroes.lookup)
+        .bind (id => OrderedMap.lookup<string, UndoState<Hero>> (id) (heroes))
         .fmap (undoState => undoState.present)
         .fmap (convertHeroForSave (wiki) (locale) (users));
 

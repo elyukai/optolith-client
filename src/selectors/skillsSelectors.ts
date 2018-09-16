@@ -1,4 +1,4 @@
-import R from 'ramda';
+import * as R from 'ramda';
 import { SkillDependent } from '../types/data';
 import { SkillCombined } from '../types/view';
 import { createMaybeSelector } from '../utils/createMaybeSelector';

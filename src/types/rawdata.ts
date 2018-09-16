@@ -70,7 +70,7 @@ export interface RawHero {
   readonly blessings: string[];
   readonly belongings: {
     items: StringKeyObject<RawCustomItem>;
-    armorZones: StringKeyObject<RawArmorZone>;
+    armorZones?: StringKeyObject<RawArmorZone>;
     purse: {
       d: string;
       s: string;

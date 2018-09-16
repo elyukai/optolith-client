@@ -1,14 +1,15 @@
-import { app, BrowserWindow, globalShortcut, ipcMain } from 'electron';
+import { app, BrowserWindow, ipcMain } from 'electron';
 import * as log from 'electron-log';
 import { autoUpdater, UpdateInfo } from 'electron-updater';
-import windowStateKeeper from 'electron-window-state';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as url from 'url';
+// tslint:disable-next-line:ordered-imports
+import windowStateKeeper = require('electron-window-state');
 
 let mainWindow: Electron.BrowserWindow | null | undefined;
 
-app.setAppUserModelId ('lukasobermann.optolyth');
+app.setAppUserModelId ('lukasobermann.optolith');
 
 const userDataPath = app.getPath ('userData');
 
@@ -46,7 +47,7 @@ function createWindow () {
   const mainWindowState = windowStateKeeper ({
     defaultHeight: 720,
     defaultWidth: 1280,
-    file: 'window.json'
+    file: 'window.json',
   });
 
   mainWindow = new BrowserWindow ({
@@ -60,10 +61,10 @@ function createWindow () {
     icon: path.join (app.getAppPath (), 'app', 'icon.png'),
     frame: false,
     center: true,
-    title: 'Optolyth',
+    title: 'Optolith',
     acceptFirstMouse: true,
     backgroundColor: '#000000',
-    show: false
+    show: false,
   });
 
   mainWindowState.manage (mainWindow);
@@ -71,10 +72,10 @@ function createWindow () {
   mainWindow.loadURL (url.format ({
     pathname: path.join (__dirname, 'index.html'),
     protocol: 'file:',
-    slashes: true
+    slashes: true,
   }));
 
-  // mainWindow.webContents.openDevTools();
+  mainWindow.webContents.openDevTools ();
 
   mainWindow.once ('ready-to-show', () => {
     mainWindow!.show ();
@@ -118,9 +119,9 @@ function createWindow () {
   });
 
   mainWindow.on ('closed', () => {
+    mainWindow!.webContents.send ('before-close');
     // tslint:disable-next-line:no-null-keyword
     mainWindow = null;
-    globalShortcut.unregisterAll ();
   });
 }
 

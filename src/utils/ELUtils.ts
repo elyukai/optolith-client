@@ -1,4 +1,4 @@
-import R from 'ramda';
+import * as R from 'ramda';
 import { IdPrefixes } from '../constants/IdPrefixes';
 import { ExperienceLevel } from '../types/wiki';
 import { Maybe, OrderedMap, Record } from './dataUtils';

@@ -1,7 +1,7 @@
-import R from 'ramda';
+import * as R from 'ramda';
 import { Categories } from '../constants/Categories';
 import { IdPrefixes } from '../constants/IdPrefixes';
-import { List, Maybe, OrderedMap } from './dataUtils';
+import { Just, List, Maybe, Nothing, OrderedMap } from './dataUtils';
 import { match } from './match';
 
 export const getIdPrefix = (id: string) => id.split (/_/)[0] as IdPrefixes;
@@ -25,26 +25,28 @@ export const getNewIdByDate = (): number => Date.now ().valueOf ();
 
 export const getCategoryByIdPrefix = (id: IdPrefixes): Maybe<Categories> => {
   return match<IdPrefixes, Maybe<Categories>> (id)
-    .on (IdPrefixes.ADVANTAGES, () => Maybe.pure (Categories.ADVANTAGES))
-    .on (IdPrefixes.ATTRIBUTES, () => Maybe.pure (Categories.ATTRIBUTES))
-    .on (IdPrefixes.BLESSINGS, () => Maybe.pure (Categories.BLESSINGS))
-    .on (IdPrefixes.CANTRIPS, () => Maybe.pure (Categories.CANTRIPS))
-    .on (IdPrefixes.COMBAT_TECHNIQUES, () => Maybe.pure (Categories.COMBAT_TECHNIQUES))
-    .on (IdPrefixes.CULTURES, () => Maybe.pure (Categories.CULTURES))
-    .on (IdPrefixes.DISADVANTAGES, () => Maybe.pure (Categories.DISADVANTAGES))
-    .on (IdPrefixes.LITURGIES, () => Maybe.pure (Categories.LITURGIES))
-    .on (IdPrefixes.PROFESSIONS, () => Maybe.pure (Categories.PROFESSIONS))
-    .on (IdPrefixes.PROFESSION_VARIANTS, () => Maybe.pure (Categories.PROFESSION_VARIANTS))
-    .on (IdPrefixes.RACES, () => Maybe.pure (Categories.RACES))
-    .on (IdPrefixes.RACE_VARIANTS, () => Maybe.pure (Categories.RACE_VARIANTS))
-    .on (IdPrefixes.SPECIAL_ABILITIES, () => Maybe.pure (Categories.SPECIAL_ABILITIES))
-    .on (IdPrefixes.SPELLS, () => Maybe.pure (Categories.SPELLS))
-    .on (IdPrefixes.TALENTS, () => Maybe.pure (Categories.TALENTS))
-    .otherwise (() => Maybe.empty ());
+    .on (IdPrefixes.ADVANTAGES, () => Just (Categories.ADVANTAGES))
+    .on (IdPrefixes.ATTRIBUTES, () => Just (Categories.ATTRIBUTES))
+    .on (IdPrefixes.BLESSINGS, () => Just (Categories.BLESSINGS))
+    .on (IdPrefixes.CANTRIPS, () => Just (Categories.CANTRIPS))
+    .on (IdPrefixes.COMBAT_TECHNIQUES, () => Just (Categories.COMBAT_TECHNIQUES))
+    .on (IdPrefixes.CULTURES, () => Just (Categories.CULTURES))
+    .on (IdPrefixes.DISADVANTAGES, () => Just (Categories.DISADVANTAGES))
+    .on (IdPrefixes.LITURGIES, () => Just (Categories.LITURGIES))
+    .on (IdPrefixes.PROFESSIONS, () => Just (Categories.PROFESSIONS))
+    .on (IdPrefixes.PROFESSION_VARIANTS, () => Just (Categories.PROFESSION_VARIANTS))
+    .on (IdPrefixes.RACES, () => Just (Categories.RACES))
+    .on (IdPrefixes.RACE_VARIANTS, () => Just (Categories.RACE_VARIANTS))
+    .on (IdPrefixes.SPECIAL_ABILITIES, () => Just (Categories.SPECIAL_ABILITIES))
+    .on (IdPrefixes.SPELLS, () => Just (Categories.SPELLS))
+    .on (IdPrefixes.TALENTS, () => Just (Categories.TALENTS))
+    .otherwise (Nothing);
 };
 
-export const getCategoryById = (id: string): Maybe<Categories> =>
-  getCategoryByIdPrefix (getIdPrefix (id));
+export const getCategoryById = R.pipe (
+  getIdPrefix,
+  getCategoryByIdPrefix
+);
 
 export const magicalTraditionIdByNumericId = OrderedMap.of ([
   [1, 'SA_70'],

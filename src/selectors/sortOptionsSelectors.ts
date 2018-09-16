@@ -8,6 +8,14 @@ import { translate } from '../utils/I18n';
 import { getLocaleAsProp, getSex } from './stateSelectors';
 import * as uiSettingsSelectors from './uisettingsSelectors';
 
+export const getHerolistSortOptions = createMaybeSelector (
+  uiSettingsSelectors.getHerolistSortOrder,
+  (sortOrder): AllSortOptions<Data.HeroDependent> =>
+    sortOrder === 'datemodified'
+      ? [{ key: hero => hero.get ('dateModified').valueOf (), reverse: true }, 'name']
+      : 'name'
+);
+
 export const getRacesSortOptions = createMaybeSelector (
   uiSettingsSelectors.getRacesSortOrder,
   (sortOrder): AllSortOptions<Wiki.Race> | AllSortOptions<View.RaceCombined> =>

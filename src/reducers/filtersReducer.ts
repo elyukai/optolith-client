@@ -2,6 +2,7 @@ import { SetCombatTechniquesFilterTextAction } from '../actions/CombatTechniques
 import { SetCulturesFilterTextAction } from '../actions/CultureActions';
 import { SetActiveAdvantagesFilterTextAction, SetActiveDisadvantagesFilterTextAction, SetInactiveAdvantagesFilterTextAction, SetInactiveDisadvantagesFilterTextAction } from '../actions/DisAdvActions';
 import { SetEquipmentFilterTextAction, SetItemTemplatesFilterTextAction, SetZoneArmorFilterTextAction } from '../actions/EquipmentActions';
+import { SetHerolistFilterTextAction } from '../actions/HerolistActions';
 import { SetActiveLiturgicalChantsFilterTextAction, SetInactiveLiturgicalChantsFilterTextAction } from '../actions/LiturgicalChantActions';
 import { SetTabAction } from '../actions/LocationActions';
 import { SetProfessionsFilterTextAction } from '../actions/ProfessionActions';
@@ -13,6 +14,7 @@ import { ActionTypes } from '../constants/ActionTypes';
 
 type Action =
   SetTabAction |
+  SetHerolistFilterTextAction |
   SetActiveAdvantagesFilterTextAction |
   SetActiveDisadvantagesFilterTextAction |
   SetActiveLiturgicalChantsFilterTextAction |
@@ -34,6 +36,7 @@ type Action =
   SetZoneArmorFilterTextAction;
 
 export interface FiltersState {
+  herolistFilterText: string;
   racesFilterText: string;
   culturesFilterText: string;
   professionsFilterText: string;
@@ -56,6 +59,7 @@ export interface FiltersState {
 }
 
 const initialState: FiltersState = {
+  herolistFilterText: '',
   racesFilterText: '',
   culturesFilterText: '',
   professionsFilterText: '',
@@ -77,124 +81,183 @@ const initialState: FiltersState = {
   petsFilterText: '',
 };
 
-export function filtersReducer (
-  state: FiltersState = initialState,
-  action: Action,
-): FiltersState {
+const rcpFiltersReducer = (state: FiltersState, action: Action): FiltersState => {
   switch (action.type) {
-    case ActionTypes.SET_TAB:
-      return initialState;
-
     case ActionTypes.SET_RACES_FILTER_TEXT:
       return {
         ...state,
-        racesFilterText: action.payload.filterText
+        racesFilterText: action.payload.filterText,
       };
 
     case ActionTypes.SET_CULTURES_FILTER_TEXT:
       return {
         ...state,
-        culturesFilterText: action.payload.filterText
+        culturesFilterText: action.payload.filterText,
       };
 
     case ActionTypes.SET_PROFESSIONS_FILTER_TEXT:
       return {
         ...state,
-        professionsFilterText: action.payload.filterText
+        professionsFilterText: action.payload.filterText,
       };
 
+    default:
+      return state;
+  }
+};
+
+const disAdvantageFiltersReducer = (state: FiltersState, action: Action): FiltersState => {
+  switch (action.type) {
     case ActionTypes.SET_ADVANTAGES_FILTER_TEXT:
       return {
         ...state,
-        advantagesFilterText: action.payload.filterText
+        advantagesFilterText: action.payload.filterText,
       };
 
     case ActionTypes.SET_INACTIVE_ADVANTAGES_FILTER_TEXT:
       return {
         ...state,
-        inactiveAdvantagesFilterText: action.payload.filterText
+        inactiveAdvantagesFilterText: action.payload.filterText,
       };
 
     case ActionTypes.SET_DISADVANTAGES_FILTER_TEXT:
       return {
         ...state,
-        disadvantagesFilterText: action.payload.filterText
+        disadvantagesFilterText: action.payload.filterText,
       };
 
     case ActionTypes.SET_INACTIVE_DISADVANTAGES_FILTER_TEXT:
       return {
         ...state,
-        inactiveDisadvantagesFilterText: action.payload.filterText
+        inactiveDisadvantagesFilterText: action.payload.filterText,
       };
 
+    default:
+      return state;
+  }
+};
+
+const abilityFiltersReducer = (state: FiltersState, action: Action): FiltersState => {
+  switch (action.type) {
     case ActionTypes.SET_SKILLS_FILTER_TEXT:
       return {
         ...state,
-        skillsFilterText: action.payload.filterText
+        skillsFilterText: action.payload.filterText,
       };
 
     case ActionTypes.SET_COMBAT_TECHNIQUES_FILTER_TEXT:
       return {
         ...state,
-        combatTechniquesFilterText: action.payload.filterText
+        combatTechniquesFilterText: action.payload.filterText,
       };
 
     case ActionTypes.SET_SPECIAL_ABILITIES_FILTER_TEXT:
       return {
         ...state,
-        specialAbilitiesFilterText: action.payload.filterText
+        specialAbilitiesFilterText: action.payload.filterText,
       };
 
     case ActionTypes.SET_INACTIVE_SPECIAL_ABILITIES_FILTER_TEXT:
       return {
         ...state,
-        inactiveSpecialAbilitiesFilterText: action.payload.filterText
+        inactiveSpecialAbilitiesFilterText: action.payload.filterText,
       };
 
     case ActionTypes.SET_SPELLS_FILTER_TEXT:
       return {
         ...state,
-        spellsFilterText: action.payload.filterText
+        spellsFilterText: action.payload.filterText,
       };
 
     case ActionTypes.SET_INACTIVE_SPELLS_FILTER_TEXT:
       return {
         ...state,
-        inactiveSpellsFilterText: action.payload.filterText
+        inactiveSpellsFilterText: action.payload.filterText,
       };
 
     case ActionTypes.SET_LITURGICAL_CHANTS_FILTER_TEXT:
       return {
         ...state,
-        liturgicalChantsFilterText: action.payload.filterText
+        liturgicalChantsFilterText: action.payload.filterText,
       };
 
     case ActionTypes.SET_INACTIVE_LITURGICAL_CHANTS_FILTER_TEXT:
       return {
         ...state,
-        inactiveLiturgicalChantsFilterText: action.payload.filterText
+        inactiveLiturgicalChantsFilterText: action.payload.filterText,
       };
 
+    default:
+      return state;
+  }
+};
+
+const belongingsFiltersReducer = (state: FiltersState, action: Action): FiltersState => {
+  switch (action.type) {
     case ActionTypes.SET_EQUIPMENT_FILTER_TEXT:
       return {
         ...state,
-        equipmentFilterText: action.payload.filterText
+        equipmentFilterText: action.payload.filterText,
       };
 
     case ActionTypes.SET_ITEM_TEMPLATES_FILTER_TEXT:
       return {
         ...state,
-        itemTemplatesFilterText: action.payload.filterText
+        itemTemplatesFilterText: action.payload.filterText,
       };
 
     case ActionTypes.SET_ZONE_ARMOR_FILTER_TEXT:
       return {
         ...state,
-        zoneArmorFilterText: action.payload.filterText
+        zoneArmorFilterText: action.payload.filterText,
       };
-
 
     default:
       return state;
   }
-}
+};
+
+export const filtersReducer = (
+  state: FiltersState = initialState,
+  action: Action
+): FiltersState => {
+  switch (action.type) {
+    case ActionTypes.SET_TAB:
+      return initialState;
+
+    case ActionTypes.SET_HEROLIST_FILTER_TEXT:
+      return {
+        ...state,
+        herolistFilterText: action.payload.filterText,
+      };
+
+    case ActionTypes.SET_RACES_FILTER_TEXT:
+    case ActionTypes.SET_CULTURES_FILTER_TEXT:
+    case ActionTypes.SET_PROFESSIONS_FILTER_TEXT:
+      return rcpFiltersReducer (state, action);
+
+    case ActionTypes.SET_ADVANTAGES_FILTER_TEXT:
+    case ActionTypes.SET_INACTIVE_ADVANTAGES_FILTER_TEXT:
+    case ActionTypes.SET_DISADVANTAGES_FILTER_TEXT:
+    case ActionTypes.SET_INACTIVE_DISADVANTAGES_FILTER_TEXT:
+      return disAdvantageFiltersReducer (state, action);
+
+    case ActionTypes.SET_SKILLS_FILTER_TEXT:
+    case ActionTypes.SET_COMBAT_TECHNIQUES_FILTER_TEXT:
+    case ActionTypes.SET_SPECIAL_ABILITIES_FILTER_TEXT:
+    case ActionTypes.SET_INACTIVE_SPECIAL_ABILITIES_FILTER_TEXT:
+    case ActionTypes.SET_SPELLS_FILTER_TEXT:
+    case ActionTypes.SET_INACTIVE_SPELLS_FILTER_TEXT:
+    case ActionTypes.SET_LITURGICAL_CHANTS_FILTER_TEXT:
+    case ActionTypes.SET_INACTIVE_LITURGICAL_CHANTS_FILTER_TEXT:
+      return abilityFiltersReducer (state, action);
+
+    case ActionTypes.SET_EQUIPMENT_FILTER_TEXT:
+    case ActionTypes.SET_ITEM_TEMPLATES_FILTER_TEXT:
+    case ActionTypes.SET_ZONE_ARMOR_FILTER_TEXT:
+      return belongingsFiltersReducer (state, action);
+
+    default:
+      return state;
+  }
+};

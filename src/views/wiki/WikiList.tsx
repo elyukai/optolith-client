@@ -1,58 +1,73 @@
+import * as R from 'ramda';
 import * as React from 'react';
-import { List } from '../../components/List';
-import { Advantage, Blessing, Cantrip, CombatTechnique, Culture, Disadvantage, ItemTemplate, LiturgicalChant, Profession, Race, Skill, SpecialAbility, Spell } from '../../types/wiki';
+import { ListView } from '../../components/List';
+import { Entry, NameBySex } from '../../types/wiki';
+import { List, Maybe, Record } from '../../utils/dataUtils';
 import { getRoman } from '../../utils/NumberUtils';
 import { isActivatableWikiObj, isProfession, isSpecialAbility } from '../../utils/WikiUtils';
 import { WikiListItem } from './WikiListItem';
 
 export interface WikiListProps {
-	list: (Race | Culture | Profession | Advantage | Disadvantage | Skill | CombatTechnique | SpecialAbility | Spell | Cantrip | LiturgicalChant | Blessing | ItemTemplate)[];
-	sex?: 'm' | 'f';
-	currentInfoId?: string;
-	showInfo(id: string): void;
+  list: List<Entry>;
+  sex?: 'm' | 'f';
+  currentInfoId?: string;
+  showInfo (id: string): void;
 }
 
 export class WikiList extends React.Component<WikiListProps> {
-	shouldComponentUpdate(nextProps: WikiListProps) {
-		return nextProps.list !== this.props.list || nextProps.sex !== this.props.sex || nextProps.currentInfoId !== this.props.currentInfoId;
-	}
+  shouldComponentUpdate (nextProps: WikiListProps) {
+    return nextProps.list !== this.props.list
+      || nextProps.sex !== this.props.sex
+      || nextProps.currentInfoId !== this.props.currentInfoId;
+  }
 
-	render() {
-		const { list, sex = 'm' } = this.props;
+  render () {
+    const { list, sex = 'm' } = this.props;
 
-		return (
-			<List>
-				{
-					list && list.map(item => {
-						const { id } = item;
-						let { name } = item;
+    return (
+      <ListView>
+        {
+          list && list
+            .map (item => {
+              const id = item.get ('id');
 
-						if (typeof name === 'object') {
-							name = name[sex];
-						}
+              const name = R.pipe (
+                (rawName: string | Record<NameBySex>) => rawName instanceof Record
+                  ? rawName.get (sex)
+                  : rawName,
+                rawName => {
+                  if (isProfession (item)) {
+                    const maybeSubname = item.lookup ('subname');
 
-						if (isProfession(item) && item.subname !== undefined) {
-							if (typeof item.subname === 'object') {
-								name += ` (${item.subname[sex]})`;
-							}
-							else {
-								name += ` (${item.subname})`;
-							}
-						}
-						else if (isSpecialAbility(item) && typeof item.nameInWiki === 'string') {
-							name = item.nameInWiki;
-						}
+                    return Maybe.fromMaybe (rawName)
+                                           (maybeSubname.fmap (
+                                             subname => subname instanceof Record
+                                               ? subname.get (sex)
+                                               : subname
+                                           ));
+                  }
 
-						if (isActivatableWikiObj(item) && typeof item.tiers === 'number') {
-							name += ` I-${getRoman(item.tiers)}`;
-						}
+                  if (isSpecialAbility (item)) {
+                    return Maybe.fromMaybe (rawName) (item.lookup ('nameInWiki'));
+                  }
 
-						return (
-							<WikiListItem {...this.props} {...item} key={id} name={name} />
-						);
-					})
-				}
-			</List>
-		);
-	}
+                  return rawName;
+                },
+                rawName => isActivatableWikiObj (item)
+                  ? Maybe.fromMaybe (rawName)
+                                    (item
+                                      .lookup ('tiers')
+                                      .fmap (levels => `${rawName} I-${getRoman (levels)}`))
+                  : rawName
+              ) (item.get ('name'));
+
+              return (
+                <WikiListItem {...this.props} id={id} key={id} name={name} />
+              );
+            })
+            .toArray ()
+        }
+      </ListView>
+    );
+  }
 }

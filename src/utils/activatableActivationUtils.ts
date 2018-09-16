@@ -7,7 +7,7 @@
  * @since 1.1.0
  */
 
-import R from 'ramda';
+import * as R from 'ramda';
 import * as Data from '../types/data';
 import * as Wiki from '../types/wiki';
 import { convertUIStateToActiveObject } from './activatableConvertUtils';

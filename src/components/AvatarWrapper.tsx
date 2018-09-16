@@ -29,7 +29,7 @@ export function AvatarWrapper (props: AvatarWrapperProps) {
 
   className = classNames (className, {
     'avatar-wrapper': true,
-    'no-avatar': !validPath
+    'no-avatar': !validPath,
   });
 
   return (

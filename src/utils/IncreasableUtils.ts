@@ -1,4 +1,4 @@
-import R from 'ramda';
+import * as R from 'ramda';
 import { Categories, IncreasableCategory } from '../constants/Categories';
 import { ValueBasedDependent } from '../types/data';
 import { IncreasableEntry } from '../types/wiki';

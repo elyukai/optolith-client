@@ -1,4 +1,4 @@
-import R from 'ramda';
+import * as R from 'ramda';
 import * as Data from '../types/data';
 import * as View from '../types/view';
 import * as Wiki from '../types/wiki';

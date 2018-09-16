@@ -18,7 +18,7 @@ type Action =
 
 export function activatableReducer (
   state: Record<Data.HeroDependent>,
-  action: Action,
+  action: Action
 ): Record<Data.HeroDependent> {
   switch (action.type) {
     case ActionTypes.ACTIVATE_DISADV: {
@@ -88,7 +88,7 @@ export function activatableReducer (
       const { id, index, tier, wikiEntry } = action.payload;
 
       return Maybe.fromMaybe (state) (
-        (getHeroStateListItem (id, state) as Maybe<Record<Data.ActivatableDependent>>)
+        (getHeroStateListItem (id) (state) as Maybe<Record<Data.ActivatableDependent>>)
           .fmap (instance => setTier (index, tier) (
             state,
             wikiEntry,

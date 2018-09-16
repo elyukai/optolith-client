@@ -1,7 +1,7 @@
 import * as Data from '../types/data';
 import * as Wiki from '../types/wiki';
-import { getExperienceLevelIdByAp } from '../utils/ELUtils';
 import { Maybe, OrderedMap, Record } from './dataUtils';
+import { getExperienceLevelIdByAp } from './ELUtils';
 import { flattenDependencies } from './flattenDependencies';
 
 export const getSum = OrderedMap.foldl<
@@ -34,7 +34,7 @@ export const isIncreasable = (
   else if (state.get ('rules').get ('attributeValueLimit')) {
     const currentExperienceLevellId = getExperienceLevelIdByAp (
       wiki.get ('experienceLevels'),
-      state.get ('adventurePoints').get ('total'),
+      state.get ('adventurePointsTotal'),
     );
 
     return Maybe.fromMaybe (false) (

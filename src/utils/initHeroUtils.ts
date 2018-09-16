@@ -1,4 +1,4 @@
-import R from 'ramda';
+import * as R from 'ramda';
 import { Categories } from '../constants/Categories';
 import * as Data from '../types/data';
 import * as Raw from '../types/rawdata';
@@ -37,7 +37,7 @@ const getUnchangedProperties = (id: string, hero: Raw.RawHero) => {
     phase,
     name,
     avatar,
-    adventurePoints: Record.of (ap),
+    adventurePointsTotal: ap.total,
     race: r,
     raceVariant: rv,
     culture: c,
@@ -135,7 +135,7 @@ const getAttributes = (
         CreateDependencyObjectUtils.createAttributeDependent (
           id,
           { value, mod }
-        )
+        ),
       ]
     )
   );
@@ -158,7 +158,7 @@ const getEnergies = (hero: Raw.RawHero): Record<Data.Energies> => {
     addedLifePoints,
     permanentArcaneEnergyPoints: Record.of (permanentAE),
     permanentKarmaPoints: Record.of (permanentKP),
-    permanentLifePoints: Record.of (permanentLP)
+    permanentLifePoints: Record.of (permanentLP),
   });
 };
 
@@ -194,7 +194,7 @@ const getActivatableDependentSkills = (
           id,
           CreateDependencyObjectUtils.createActivatableDependentSkill (id, {
             active: true,
-            value
+            value,
           }),
         ]
       )
@@ -246,22 +246,24 @@ const getBelongings = (hero: Raw.RawHero): Record<Data.Belongings> => {
                 ...primaryThreshold,
                 threshold: typeof primaryThreshold.threshold === 'object'
                   ? List.fromArray (primaryThreshold.threshold)
-                  : primaryThreshold.threshold
+                  : primaryThreshold.threshold,
               }),
-              range: range ? List.fromArray (range) : undefined
+              range: range ? List.fromArray (range) : undefined,
             })];
           }
         )
     ),
-    armorZones: OrderedMap.of (
-      Object.entries (armorZones)
-        .map<[string, Record<Data.ArmorZonesInstance>]> (
-          ([id, obj]) => [id, Record.of (obj)]
-        )
-    ),
+    armorZones: armorZones
+      ? OrderedMap.of (
+        Object.entries (armorZones)
+          .map<[string, Record<Data.ArmorZonesInstance>]> (
+            ([id, obj]) => [id, Record.of (obj)]
+          )
+      )
+      : OrderedMap.empty (),
     purse: Record.of (purse),
     isInItemCreation: false,
-    isInZoneArmorCreation: false
+    isInZoneArmorCreation: false,
   });
 };
 
@@ -286,7 +288,7 @@ const getPets =
 export const getHeroInstance = (
   wiki: Record<WikiAll>,
   id: string,
-  hero: Raw.RawHero,
+  hero: Raw.RawHero
 ): Record<Data.HeroDependent> => {
   const intermediateState = Record.of<Data.HeroDependent> ({
     ...getUnchangedProperties (id, hero),
@@ -306,7 +308,7 @@ export const getHeroInstance = (
     pets: getPets (hero),
     combatStyleDependencies: List.of (),
     magicalStyleDependencies: List.of (),
-    blessedStyleDependencies: List.of ()
+    blessedStyleDependencies: List.of (),
   });
 
   const advantages = getActiveFromState (intermediateState.get ('advantages'));
@@ -395,17 +397,14 @@ export const getInitialHeroObject = (
   experienceLevel: string,
   totalAp: number,
   enableAllRuleBooks: boolean,
-  enabledRuleBooks: OrderedSet<string>,
+  enabledRuleBooks: OrderedSet<string>
 ): Record<Data.HeroDependent> => {
   return Record.of<Data.HeroDependent> ({
     id,
     clientVersion: currentVersion,
     phase: 1,
     name,
-    adventurePoints: Record.of ({
-      total: totalAp,
-      spent: 0,
-    }),
+    adventurePointsTotal: totalAp,
     sex,
     experienceLevel,
     personalData: Record.of ({}),
@@ -435,8 +434,8 @@ export const getInitialHeroObject = (
         redeemed: 0,
       }),
       permanentLifePoints: Record.of ({
-        lost: 0
-      })
+        lost: 0,
+      }),
     }),
     skills: OrderedMap.empty (),
     combatTechniques: OrderedMap.empty (),
@@ -459,6 +458,6 @@ export const getInitialHeroObject = (
     pets: OrderedMap.empty (),
     combatStyleDependencies: List.of (),
     magicalStyleDependencies: List.of (),
-    blessedStyleDependencies: List.of ()
+    blessedStyleDependencies: List.of (),
   });
 };

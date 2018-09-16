@@ -2,7 +2,7 @@ import { ActionTypes } from '../constants/ActionTypes';
 import { getHeroes, getWikiExperienceLevels } from '../selectors/stateSelectors';
 import { AsyncAction } from '../types/actions';
 import { UIMessagesObject } from '../types/ui';
-import { Maybe } from '../utils/dataUtils';
+import { Maybe, OrderedSet } from '../utils/dataUtils';
 import { translate } from '../utils/I18n';
 import { getNewIdByDate } from '../utils/IDUtils';
 import { addAlert } from './AlertActions';
@@ -18,8 +18,22 @@ export interface SetHerolistSortOrderAction {
 export const setHerolistSortOrder = (sortOrder: string): SetHerolistSortOrderAction => ({
   type: ActionTypes.SET_HEROLIST_SORT_ORDER,
   payload: {
-    sortOrder
-  }
+    sortOrder,
+  },
+});
+
+export interface SetHerolistFilterTextAction {
+  type: ActionTypes.SET_HEROLIST_FILTER_TEXT;
+  payload: {
+    filterText: string;
+  };
+}
+
+export const setHerolistFilterText = (filterText: string): SetHerolistFilterTextAction => ({
+  type: ActionTypes.SET_HEROLIST_FILTER_TEXT,
+  payload: {
+    filterText,
+  },
 });
 
 export interface SetHerolistVisibilityFilterAction {
@@ -33,8 +47,8 @@ export const setHerolistVisibilityFilter =
   (filterOption: string): SetHerolistVisibilityFilterAction => ({
     type: ActionTypes.SET_HEROLIST_VISIBILITY_FILTER,
     payload: {
-      filterOption
-    }
+      filterOption,
+    },
   });
 
 export interface CreateHeroAction {
@@ -45,7 +59,7 @@ export interface CreateHeroAction {
     sex: 'm' | 'f';
     el: string;
     enableAllRuleBooks: boolean;
-    enabledRuleBooks: Set<string>;
+    enabledRuleBooks: OrderedSet<string>;
     totalAp: number;
   };
 }
@@ -55,7 +69,7 @@ export const createHero = (
   sex: 'm' | 'f',
   el: string,
   enableAllRuleBooks: boolean,
-  enabledRuleBooks: Set<string>,
+  enabledRuleBooks: OrderedSet<string>
 ): AsyncAction => (dispatch, getState) => {
   const state = getState ();
 
@@ -75,7 +89,7 @@ export const createHero = (
         enableAllRuleBooks,
         enabledRuleBooks,
         totalAp,
-      }
+      },
     });
   }
 };
@@ -90,14 +104,14 @@ export interface LoadHeroAction {
 export const loadHero = (id: string): LoadHeroAction => ({
   type: ActionTypes.LOAD_HERO,
   payload: {
-    id
-  }
+    id,
+  },
 });
 
 export const saveHeroes = (locale: UIMessagesObject): AsyncAction => dispatch => {
   dispatch (requestAllHeroesSave (locale));
   dispatch (addAlert ({
-    message: translate (locale, 'fileapi.allsaved')
+    message: translate (locale, 'fileapi.allsaved'),
   }));
 };
 
@@ -118,8 +132,8 @@ export const saveHero = (locale: UIMessagesObject) =>
               actualId => dispatch<SaveHeroAction> ({
                 type: ActionTypes.SAVE_HERO,
                 payload: {
-                  id: actualId // specified by param or currently open
-                }
+                  id: actualId, // specified by param or currently open
+                },
               })
             )
         );
@@ -138,8 +152,8 @@ export interface DeleteHeroAction {
 export const deleteHero = (id: string): DeleteHeroAction => ({
   type: ActionTypes.DELETE_HERO,
   payload: {
-    id
-  }
+    id,
+  },
 });
 
 export const deleteHeroValidate = (locale: UIMessagesObject) =>
@@ -162,9 +176,9 @@ export const deleteHeroValidate = (locale: UIMessagesObject) =>
           title: translate (locale, 'heroes.warnings.delete.title', hero.present.get ('name')),
           message: translate (locale, 'heroes.warnings.delete.message'),
           confirm: {
-            resolve
+            resolve,
           },
-          confirmYesNo: true
+          confirmYesNo: true,
         }));
       }
     };
@@ -184,7 +198,7 @@ export const duplicateHero = (id: string): DuplicateHeroAction => {
     type: ActionTypes.DUPLICATE_HERO,
     payload: {
       id,
-      newId
-    }
+      newId,
+    },
   };
 };

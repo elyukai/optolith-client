@@ -1,8 +1,9 @@
 import { AppState } from '../reducers/appReducer';
-import { Alert } from '../types/data';
+import { Alert, Hero } from '../types/data';
 import { createMaybeSelector } from '../utils/createMaybeSelector';
-import { Maybe, Record } from '../utils/dataUtils';
+import { Maybe, OrderedMap, Record } from '../utils/dataUtils';
 import { UIMessages } from '../utils/I18n';
+import { UndoState } from '../utils/undo';
 
 export const getCurrentTab = (state: AppState) => state.ui.location.tab;
 
@@ -25,7 +26,7 @@ export const getUsers = (state: AppState) => state.herolist.get ('users');
 export const getCurrentHero = createMaybeSelector (
   getCurrentHeroId,
   getHeroes,
-  (id, heroes) => id.bind (heroes.lookup)
+  (maybeId, heroes) => maybeId.bind (id => OrderedMap.lookup<string, UndoState<Hero>> (id) (heroes))
 );
 
 export const getCurrentHeroPresent = createMaybeSelector (
@@ -45,7 +46,7 @@ export const getCurrentHeroFuture = createMaybeSelector (
 
 
 export const getTotalAdventurePoints = (state: AppState) =>
-  getCurrentHero (state).fmap (just => just.present.get ('adventurePoints').get ('total'));
+  getCurrentHero (state).fmap (just => just.present.get ('adventurePointsTotal'));
 
 
 export const getAdvantages = (state: AppState) =>
@@ -233,6 +234,7 @@ export const getCulturesFilterText = (state: AppState) => state.ui.filters.cultu
 export const getDisadvantagesFilterText = (state: AppState) =>
   state.ui.filters.disadvantagesFilterText;
 export const getEquipmentFilterText = (state: AppState) => state.ui.filters.equipmentFilterText;
+export const getHerolistFilterText = (state: AppState) => state.ui.filters.herolistFilterText;
 export const getInactiveAdvantagesFilterText = (state: AppState) =>
   state.ui.filters.inactiveAdvantagesFilterText;
 export const getInactiveDisadvantagesFilterText = (state: AppState) =>
@@ -256,23 +258,23 @@ export const getSpellsFilterText = (state: AppState) => state.ui.filters.spellsF
 export const getZoneArmorFilterText = (state: AppState) => state.ui.filters.zoneArmorFilterText;
 
 
-export const getWikiFilterText = (state: AppState) => state.ui.wiki.filter;
-export const getWikiFilterAll = (state: AppState) => state.ui.wiki.filterAll;
-export const getWikiMainCategory = (state: AppState) => Maybe.of (state.ui.wiki.category1);
+export const getWikiFilterText = (state: AppState) => state.ui.wiki.get ('filter');
+export const getWikiFilterAll = (state: AppState) => state.ui.wiki.get ('filterAll');
+export const getWikiMainCategory = (state: AppState) => state.ui.wiki.lookup ('category1');
 export const getWikiCombatTechniquesGroup = (state: AppState) =>
-  Maybe.of (state.ui.wiki.combatTechniquesGroup);
+  state.ui.wiki.lookup ('combatTechniquesGroup');
 export const getWikiItemTemplatesGroup = (state: AppState) =>
-  Maybe.of (state.ui.wiki.itemTemplatesGroup);
+  state.ui.wiki.lookup ('itemTemplatesGroup');
 export const getWikiLiturgicalChantsGroup =(state: AppState) =>
-  Maybe.of (state.ui.wiki.liturgicalChantsGroup);
+  state.ui.wiki.lookup ('liturgicalChantsGroup');
 export const getWikiProfessionsGroup = (state: AppState) =>
-  Maybe.of (state.ui.wiki.professionsGroup);
+  state.ui.wiki.lookup ('professionsGroup');
 export const getWikiSkillsGroup = (state: AppState) =>
-  Maybe.of (state.ui.wiki.skillsGroup);
+  state.ui.wiki.lookup ('skillsGroup');
 export const getWikiSpecialAbilitiesGroup = (state: AppState) =>
-  Maybe.of (state.ui.wiki.specialAbilitiesGroup);
+  state.ui.wiki.lookup ('specialAbilitiesGroup');
 export const getWikiSpellsGroup = (state: AppState) =>
-  Maybe.of (state.ui.wiki.spellsGroup);
+  state.ui.wiki.lookup ('spellsGroup');
 
 
 export const getWiki = (state: AppState) => state.wiki;

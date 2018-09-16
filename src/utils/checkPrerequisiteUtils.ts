@@ -1,4 +1,4 @@
-import R from 'ramda';
+import * as R from 'ramda';
 import * as Categories from '../constants/Categories';
 import * as Wiki from '../types/wiki';
 import { List, Maybe, Record } from './dataUtils';

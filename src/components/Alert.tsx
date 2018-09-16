@@ -1,5 +1,5 @@
 import { remote } from 'electron';
-import localShortcut from 'electron-localshortcut';
+import * as localShortcut from 'electron-localshortcut';
 import * as React from 'react';
 import { Action } from 'redux';
 import { Alert as AlertOptions, ViewAlertButton } from '../types/data';
@@ -22,70 +22,72 @@ export function Alert (props: AlertProps) {
   let title;
   let onClose: (() => void) | undefined;
 
-  return Maybe.fromMaybe (<></>) (maybeOptions.fmap (
-    options => {
-      const {
-        buttons: buttonsOption = [{ label: 'OK', autoWidth: true }],
-        message: messageOption,
-        title: titleOption,
-        confirm,
-        confirmYesNo,
-        onClose: onCloseOption
-      } = options;
+  if (!Maybe.isJust (maybeOptions)) {
+    return null;
+  }
 
-      buttons = (confirm ? [
-        {
-          label: confirmYesNo ? translate (locale, 'yes') : translate (locale, 'ok'),
-          dispatchOnClick: confirm.resolve
-        },
-        {
-          label: confirmYesNo ? translate (locale, 'no') : translate (locale, 'cancel'),
-          dispatchOnClick: confirm.reject
-        }
-      ] : buttonsOption).map (e => {
-        const { dispatchOnClick, ...other } = e;
+  const options = Maybe.fromJust (maybeOptions);
 
-        return { ...other, onClick: () => {
-          if (dispatchOnClick) {
-            dispatch (dispatchOnClick);
-          }
-        }};
-      });
+  const {
+    buttons: buttonsOption = [{ label: 'OK', autoWidth: true }],
+    message: messageOption,
+    title: titleOption,
+    confirm,
+    confirmYesNo,
+    onClose: onCloseOption
+  } = options;
 
-      message = messageOption;
-      title = titleOption;
-      onClose = onCloseOption;
-
-      const currentWindow = remote.getCurrentWindow ();
-
-      const closeEnhanced = () => {
-        if (localShortcut.isRegistered (currentWindow, 'Enter')) {
-          localShortcut.unregister (currentWindow, 'Enter');
-        }
-        if (onClose) {
-          onClose ();
-        }
-        close ();
-      };
-
-      if (buttons && buttons.length === 1) {
-        localShortcut.register (currentWindow, 'Enter', () => {
-          localShortcut.unregister (currentWindow, 'Enter');
-          closeEnhanced ();
-        });
-      }
-
-      return (
-        <Dialog
-          close={closeEnhanced}
-          buttons={buttons}
-          isOpened={typeof options === 'object'}
-          className="alert"
-          title={title}
-          >
-          {message}
-        </Dialog>
-      );
+  buttons = (confirm ? [
+    {
+      label: confirmYesNo ? translate (locale, 'yes') : translate (locale, 'ok'),
+      dispatchOnClick: confirm.resolve
+    },
+    {
+      label: confirmYesNo ? translate (locale, 'no') : translate (locale, 'cancel'),
+      dispatchOnClick: confirm.reject
     }
-  ));
+  ] : buttonsOption).map (e => {
+    const { dispatchOnClick, ...other } = e;
+
+    return { ...other, onClick: () => {
+      if (dispatchOnClick) {
+        dispatch (dispatchOnClick);
+      }
+    }};
+  });
+
+  message = messageOption;
+  title = titleOption;
+  onClose = onCloseOption;
+
+  const currentWindow = remote.getCurrentWindow ();
+
+  const closeEnhanced = () => {
+    if (localShortcut.isRegistered (currentWindow, 'Enter')) {
+      localShortcut.unregister (currentWindow, 'Enter');
+    }
+    if (onClose) {
+      onClose ();
+    }
+    close ();
+  };
+
+  if (buttons && buttons.length === 1) {
+    localShortcut.register (currentWindow, 'Enter', () => {
+      localShortcut.unregister (currentWindow, 'Enter');
+      closeEnhanced ();
+    });
+  }
+
+  return (
+    <Dialog
+      close={closeEnhanced}
+      buttons={buttons}
+      isOpened={typeof options === 'object'}
+      className="alert"
+      title={title}
+      >
+      {message}
+    </Dialog>
+  );
 }

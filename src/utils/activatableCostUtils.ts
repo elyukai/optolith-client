@@ -8,11 +8,11 @@
  * @since 1.1.0
  */
 
-import R from 'ramda';
+import * as R from 'ramda';
 import { ActivatableCategory, Categories } from '../constants/Categories';
 import * as Data from '../types/data';
 import * as Wiki from '../types/wiki';
-import { Just, List, Maybe, Record } from './dataUtils';
+import { Just, List, Maybe, OrderedMap, Record } from './dataUtils';
 import { getHeroStateListItem } from './heroStateUtils';
 import { translate } from './I18n';
 import { getCategoryById } from './IDUtils';
@@ -35,11 +35,11 @@ const getEntrySpecificCost = (
   obj: Record<Data.ActiveObjectWithId>,
   state: Maybe<Record<Data.HeroDependent>>,
   active: Maybe<List<Record<Data.ActiveObject>>>,
-  costToAdd: Maybe<boolean>,
+  costToAdd: Maybe<boolean>
 ) => {
   return match<string, Maybe<number | List<number>>> (obj.get ('id'))
     .on (
-      [
+      List.elem_ (List.of (
         'ADV_4',
         'ADV_47',
         'ADV_16',
@@ -50,8 +50,8 @@ const getEntrySpecificCost = (
         'SA_472',
         'SA_473',
         'SA_531',
-        'SA_569',
-      ].includes,
+        'SA_569'
+      )),
       () => {
         const getCostForId: (id: string) => Maybe<number> = R.pipe (
           getWikiEntry<Wiki.Skillish> (wiki),
@@ -65,7 +65,7 @@ const getEntrySpecificCost = (
         return getCostForId (Maybe.fromJust (obj.lookup ('sid') as Just<string>));
       }
     )
-    .on (['DISADV_34', 'DISADV_50'].includes, () => {
+    .on (List.elem_ (List.of ('DISADV_34', 'DISADV_50')), () => {
       const compareMaxTier = (previousMax: number) =>
         (activeRec: Record<Data.ActiveObject>) => {
           const maybeActiveTier = activeRec.lookup ('tier');
@@ -139,7 +139,7 @@ const getEntrySpecificCost = (
               )
               .length ()
           )
-          .fmap (R.lt (Maybe.isJust (costToAdd) ? 0 : 1))
+            .fmap (R.lt (Maybe.isJust (costToAdd) ? 0 : 1))
         )
       ) {
         return Maybe.pure (0);
@@ -155,7 +155,7 @@ const getEntrySpecificCost = (
             .filter (e => Maybe.isNothing (e.lookup ('cost')))
             .length ()
         )
-        .fmap (R.lt (Maybe.isJust (costToAdd) ? 2 : 3))
+          .fmap (R.lt (Maybe.isJust (costToAdd) ? 2 : 3))
       )
         ? Just (0)
         : wikiEntry.lookup ('cost') as Just<number>
@@ -163,7 +163,7 @@ const getEntrySpecificCost = (
     .on (
       'SA_9',
       () => (obj.lookup ('sid') as Maybe<string>)
-        .bind (wiki.get ('skills').lookup)
+        .bind (id => OrderedMap.lookup<string, Record<Wiki.Skill>> (id) (wiki.get ('skills')))
         .fmap (
           skill => Maybe.fromMaybe (skill.get ('ic')) (state.bind (
             stateRec => stateRec.get ('specialAbilities')
@@ -190,7 +190,7 @@ const getEntrySpecificCost = (
         : obj.lookup ('cost')
     )
     .on (
-      List.of ('SA_72', 'SA_87').elem,
+      List.elem_ (List.of ('SA_72', 'SA_87')),
       () => {
         const length = Maybe.fromMaybe (0) (
           active.fmap (activeList => activeList
@@ -220,7 +220,7 @@ const getEntrySpecificCost = (
       () =>
         obj.lookup ('sid')
           .bind (Maybe.ensure (isString))
-          .bind (wiki.get ('skills').lookup)
+          .bind (id => OrderedMap.lookup<string, Record<Wiki.Skill>> (id) (wiki.get ('skills')))
           .bind (
             entry => state.bind (
               stateRec => stateRec.get ('specialAbilities').lookup ('SA_531')
@@ -230,7 +230,7 @@ const getEntrySpecificCost = (
                   .bind (activeElem => activeElem.lookup ('sid'))
               )
               .bind (Maybe.ensure (isString))
-              .bind (wiki.get ('skills').lookup)
+              .bind (id => OrderedMap.lookup<string, Record<Wiki.Skill>> (id) (wiki.get ('skills')))
               .bind (
                 firstEntry => (wikiEntry.get ('cost') as List<number>)
                   .subscript (entry.get ('ic') - 1)
@@ -275,11 +275,11 @@ export const getCost = (
   obj: Record<Data.ActiveObjectWithId>,
   wiki: Record<Wiki.WikiAll>,
   state?: Record<Data.HeroDependent>,
-  costToAdd?: boolean,
+  costToAdd?: boolean
 ): Maybe<number | List<number>> => {
   const id = obj.get ('id');
 
-  return getWikiEntry<Wiki.Activatable> (wiki, id)
+  return getWikiEntry<Wiki.Activatable> (wiki) (id)
     .fmap (wikiEntry => {
       const calculateCost = R.pipe (
         (active: Maybe<List<Record<Data.ActiveObject>>>) => {
@@ -295,7 +295,7 @@ export const getCost = (
                 obj,
                 Maybe.of (state),
                 active,
-                Maybe.of (costToAdd),
+                Maybe.of (costToAdd)
               )
             );
           }
@@ -326,9 +326,7 @@ interface AdjustedCost extends Data.ActivatableNameCost {
   finalCost: number;
 }
 
-const adjustCurrentCost = (
-  obj: Record<Data.ActivatableNameCost>,
-): Record<AdjustedCost> =>
+const adjustCurrentCost = (obj: Record<Data.ActivatableNameCost>): Record<AdjustedCost> =>
   obj.merge (Record.of ({
     finalCost: match<number | List<number>, number> (obj.get ('finalCost'))
       .on ((e): e is List<number> => e instanceof List, currentCost => {
@@ -347,7 +345,7 @@ const adjustCurrentCost = (
           obj.lookup ('tier').fmap (tier => currentCost * tier)
         )
       )
-      .otherwise (() => obj.get ('finalCost') as number)
+      .otherwise (() => obj.get ('finalCost') as number),
   }));
 
 const getTier = (tier: number) => {
@@ -399,7 +397,7 @@ const hasTierName = (
 
 const adjustTierName = (
   locale: Maybe<Record<Data.UIMessages>>,
-  addTierToCombinedTier?: boolean,
+  addTierToCombinedTier?: boolean
 ) => (obj: Record<AdjustedCost>): Record<Data.ActivatableNameCostEvalTier> => {
   const maybeTier = obj.lookup ('tier');
 
@@ -420,14 +418,14 @@ const adjustTierName = (
  */
 export const convertPerTierCostToFinalCost = (
   locale: Maybe<Record<Data.UIMessages>>,
-  addTierToCombinedTier?: boolean,
+  addTierToCombinedTier?: boolean
 ): (
   (obj: Record<Data.ActivatableNameCost>) =>
     Record<Data.ActivatableNameCostEvalTier>
 ) =>
   R.pipe (
     adjustCurrentCost,
-    adjustTierName (locale, addTierToCombinedTier),
+    adjustTierName (locale, addTierToCombinedTier)
   );
 
 interface SplittedActiveObjectsByCustomCost {
@@ -456,7 +454,8 @@ const getSplittedActiveObjectsByCustomCost =
             obj,
           ],
         };
-    }) ({ defaultCostList: [], customCostList: [] });
+      }
+    ) ({ defaultCostList: [], customCostList: [] });
 
 export const getActiveWithNoCustomCost =
   (entries: List<Record<Data.ActiveObject>>) =>

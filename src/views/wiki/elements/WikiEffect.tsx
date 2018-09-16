@@ -3,10 +3,10 @@ import { Markdown } from '../../../components/Markdown';
 import { translate, UIMessages } from '../../../utils/I18n';
 
 export interface WikiEffectProps {
-	currentObject: {
-		effect: string;
-	};
-	locale: UIMessages;
+  currentObject: {
+    effect: string;
+  };
+  locale: UIMessages;
 }
 
 export function WikiEffect(props: WikiEffectProps) {

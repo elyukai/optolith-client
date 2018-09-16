@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { UIMessages } from '../../../types/data';
-import { Book, SourceLink } from '../../../types/wiki.d';
+import { Book, SourceLink } from '../../../types/wiki';
 import { sortStrings } from '../../../utils/FilterSortUtils';
 
 export interface WikiSourceProps {

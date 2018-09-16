@@ -52,7 +52,7 @@ export const getNameCost = (
           names => names
             .merge (obj)
             .merge (Record.of ({
-              finalCost
+              finalCost,
             }))
         )
     );
@@ -76,7 +76,7 @@ export const getNameCostForWiki = (
           names => names
             .merge (obj)
             .merge (Record.of ({
-              finalCost
+              finalCost,
             }))
         )
     );
@@ -103,10 +103,7 @@ export const getAllActiveByCategory = <T extends ActivatableCategory>(category: 
                       nameAndCost => stateSlice.lookup (activeObject.get ('id')).bind (
                         stateEntry => getIsRemovalOrChangeDisabled (activeObject, wiki, hero).bind (
                           isRemovalOrChangeDisabled =>
-                            getWikiEntry<GenericWikiEntry> (
-                              wiki,
-                              activeObject.get ('id')
-                            )
+                            getWikiEntry<GenericWikiEntry> (wiki) (activeObject.get ('id'))
                               .fmap<Record<Data.ActiveViewObject<GenericWikiEntryInterface>>> (
                                 wikiEntry => nameAndCost
                                   .merge (isRemovalOrChangeDisabled)
@@ -117,7 +114,7 @@ export const getAllActiveByCategory = <T extends ActivatableCategory>(category: 
                                       stateEntry,
                                       wikiEntry:
                                         wikiEntry as any as Record<GenericWikiEntryInterface>,
-                                      customCost: Maybe.isJust (activeObject.lookup ('cost'))
+                                      customCost: Maybe.isJust (activeObject.lookup ('cost')),
                                     })
                                   )
                               )

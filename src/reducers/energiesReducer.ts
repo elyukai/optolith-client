@@ -1,4 +1,4 @@
-import R from 'ramda';
+import * as R from 'ramda';
 import * as AttributesActions from '../actions/AttributesActions';
 import * as ProfessionActions from '../actions/ProfessionActions';
 import { ActionTypes } from '../constants/ActionTypes';

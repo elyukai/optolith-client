@@ -6,12 +6,12 @@ import { sortObjects } from '../../../utils/FilterSortUtils';
 import { translate, UIMessages } from '../../../utils/I18n';
 
 export interface WikiExtensionsProps {
-	currentObject: {
-		id: string;
+  currentObject: {
+    id: string;
     category: Categories;
-	};
+  };
   extensions: SpecialAbility | undefined;
-	locale: UIMessages;
+  locale: UIMessages;
 }
 
 export function WikiExtensions(props: WikiExtensionsProps) {

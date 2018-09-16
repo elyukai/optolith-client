@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { sortStrings } from '../../../utils/FilterSortUtils';
 import { translate, UIMessages } from '../../../utils/I18n';
-import { getAspectsOfTradition, getTraditionOfAspect } from '../../../utils/LiturgyUtils';
+import { getAspectsOfTradition, getTraditionOfAspect } from '../../../utils/liturgicalChantUtils';
 import { WikiProperty } from '../WikiProperty';
 
 export interface WikiLiturgicalChantTraditionsProps {

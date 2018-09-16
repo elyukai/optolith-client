@@ -3,10 +3,10 @@ import { Markdown } from '../../../components/Markdown';
 import { translate, UIMessages } from '../../../utils/I18n';
 
 export interface WikiBotchProps {
-	currentObject: {
-		botch: string;
-	};
-	locale: UIMessages;
+  currentObject: {
+    botch: string;
+  };
+  locale: UIMessages;
 }
 
 export function WikiBotch(props: WikiBotchProps) {

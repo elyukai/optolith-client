@@ -1,4 +1,4 @@
-import R from 'ramda';
+import * as R from 'ramda';
 import { List } from './list';
 import { isSome, Just, Maybe } from './maybe';
 import { Tuple } from './tuple';
@@ -141,7 +141,7 @@ export class Record<T extends RecordBase> {
 
         return Record.of ({
           ...(this.value as any),
-          [key]: res
+          [key]: res,
         });
       }
       else {
@@ -168,7 +168,7 @@ export class Record<T extends RecordBase> {
         if (Maybe.isJust (res)) {
           return Record.of ({
             ...(this.value as any),
-            [key]: Maybe.fromJust (res)
+            [key]: Maybe.fromJust (res),
           });
         }
         else {
@@ -200,7 +200,7 @@ export class Record<T extends RecordBase> {
       if (Maybe.isJust (res)) {
         const obj: T = {
           ...other,
-          [key]: Maybe.fromJust (res)
+          [key]: Maybe.fromJust (res),
         };
 
         return Record.of (obj);
@@ -236,7 +236,7 @@ export class Record<T extends RecordBase> {
   merge<U> (record: Record<U>): Record<T & U> {
     return Record.of ({
       ...(this.value as any),
-      ...(record.value as any)
+      ...(record.value as any),
     });
   }
 
@@ -249,7 +249,7 @@ export class Record<T extends RecordBase> {
   static merge<T, U> (r1: Record<T>): (r2: Record<U>) => Record<T & U> {
     return r2 => Record.of ({
       ...(r1.value as any),
-      ...(r2.value as any)
+      ...(r2.value as any),
     });
   }
 
@@ -332,6 +332,10 @@ export class Record<T extends RecordBase> {
 
   toObject (): T {
     return this.value;
+  }
+
+  static toObject<T> (x: Record<T>): T {
+    return x.value;
   }
 
   /**

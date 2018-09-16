@@ -18,7 +18,7 @@ import { getWikiEntry } from './WikiUtils';
 export const flattenDependencies = <T extends number | boolean>(
   wiki: Record<Wiki.WikiAll>,
   state: Record<Data.HeroDependent>,
-  dependencies: List<T | Record<Data.SkillOptionalDependency>>,
+  dependencies: List<T | Record<Data.SkillOptionalDependency>>
 ): List<T> => {
   return dependencies.map (e => {
     if (isObject (e)) {

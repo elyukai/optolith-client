@@ -1,4 +1,4 @@
-import R from 'ramda';
+import * as R from 'ramda';
 import { ActivatableDependent } from '../types/data';
 import { SpecialAbility } from '../types/wiki';
 import { List, Maybe, OrderedMap, Record } from './dataUtils';
@@ -32,7 +32,11 @@ export const getMagicalTraditionsFromWiki = (
   list: OrderedMap<string, Record<ActivatableDependent>>,
 ): List<Record<SpecialAbility>> => R.pipe (
   getMagicalTraditions,
-  Maybe.mapMaybe (e => e.lookup ('id').bind (wiki.lookup)),
+  Maybe.mapMaybe (
+    e => e
+      .lookup ('id')
+      .bind (id => OrderedMap.lookup<string, Record<SpecialAbility>> (id) (wiki))
+  ),
 ) (list);
 
 /**
@@ -51,4 +55,9 @@ export const getBlessedTradition = (
 export const getBlessedTraditionFromWiki = (
   wiki: OrderedMap<string, Record<SpecialAbility>>,
   list: OrderedMap<string, Record<ActivatableDependent>>,
-) => getBlessedTradition (list).bind (e => e.lookup ('id').bind (wiki.lookup));
+) => getBlessedTradition (list)
+  .bind (
+    e => e
+      .lookup ('id')
+      .bind (id => OrderedMap.lookup<string, Record<SpecialAbility>> (id) (wiki))
+  );

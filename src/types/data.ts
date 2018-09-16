@@ -70,7 +70,7 @@ export interface HeroDependent {
   readonly phase: number;
   readonly name: string;
   readonly avatar?: string;
-  readonly adventurePoints: Record<AdventurePoints>;
+  readonly adventurePointsTotal: number;
   readonly race?: string;
   readonly raceVariant?: string;
   readonly culture?: string;

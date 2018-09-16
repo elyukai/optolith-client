@@ -7,9 +7,9 @@ const mapStateToProps = (state: AppState) => ({
   progress: getUpdateDownloadProgress (state)
 });
 
-export const connectDownloaderContainer =
+const connectDownloader =
   connect<DownloaderStateProps, DownloaderDispatchProps, DownloaderOwnProps, AppState> (
     mapStateToProps
   );
 
-export const DownloaderContainer = connectDownloaderContainer (Downloader);
+export const DownloaderContainer = connectDownloader (Downloader);

@@ -1,12 +1,12 @@
-import R from 'ramda';
+import * as R from 'ramda';
 import * as Data from '../types/data';
 import * as Raw from '../types/rawdata';
 import { WikiAll } from '../types/wiki';
-import { currentVersion } from '../utils/VersionUtils';
 import { getAPObject } from './adventurePointsSumUtils';
 import { List, Maybe, OrderedMap, OrderedMapValueElement, Record, StringKeyObject } from './dataUtils';
 import { HeroStateMapKey } from './heroStateUtils';
 import { UndoState } from './undo';
+import { currentVersion } from './VersionUtils';
 
 const getAttributesForSave = (hero: Record<Data.HeroDependent>) =>
   ({
@@ -132,12 +132,13 @@ export const convertHeroForSave = (wiki: Record<WikiAll>) =>
           professionVariant,
           sex,
           personalData,
-          rules
+          rules,
         } = hero.toObject ();
 
         const adventurePoints = getAPObject (wiki) (locale) (hero);
 
-        const maybeUser = hero.lookup ('player').bind (users.lookup);
+        const maybeUser = hero.lookup ('player')
+          .bind (userId => OrderedMap.lookup<string, Data.User> (userId) (users));
 
         const obj: Raw.RawHero = {
           clientVersion: currentVersion,

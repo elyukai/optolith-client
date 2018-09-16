@@ -3,10 +3,10 @@ import { translate, UIMessages } from '../../../utils/I18n';
 import { WikiProperty } from '../WikiProperty';
 
 export interface WikiSpellPropertyProps {
-	currentObject: {
-		property: number;
-	};
-	locale: UIMessages;
+  currentObject: {
+    property: number;
+  };
+  locale: UIMessages;
 }
 
 export function WikiSpellProperty(props: WikiSpellPropertyProps) {

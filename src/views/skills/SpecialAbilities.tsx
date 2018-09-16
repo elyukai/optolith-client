@@ -12,135 +12,135 @@ import { Slidein } from '../../components/Slidein';
 import { SortOptions } from '../../components/SortOptions';
 import { TextField } from '../../components/TextField';
 import { WikiInfoContainer } from '../../containers/WikiInfo';
-import { ActivateArgs, ActiveViewObject, DeactivateArgs, DeactiveViewObject, InputTextEvent, Instance, SpecialAbilityInstance } from '../../types/data.d';
-import { UIMessages } from '../../types/ui.d';
+import { ActivateArgs, ActiveViewObject, DeactivateArgs, DeactiveViewObject, InputTextEvent, Instance, SpecialAbilityInstance } from '../../types/data';
+import { UIMessages } from '../../types/ui';
 import { translate } from '../../utils/I18n';
 
 export interface SpecialAbilitiesOwnProps {
-	locale: UIMessages;
+  locale: UIMessages;
 }
 
 export interface SpecialAbilitiesStateProps {
-	activeList: ActiveViewObject[];
-	deactiveList: DeactiveViewObject[];
-	list: SpecialAbilityInstance[];
-	enableActiveItemHints: boolean;
-	isRemovingEnabled: boolean;
-	sortOrder: string;
-	filterText: string;
-	inactiveFilterText: string;
-	get(id: string): Instance | undefined;
+  activeList: ActiveViewObject[];
+  deactiveList: DeactiveViewObject[];
+  list: SpecialAbilityInstance[];
+  enableActiveItemHints: boolean;
+  isRemovingEnabled: boolean;
+  sortOrder: string;
+  filterText: string;
+  inactiveFilterText: string;
+  get(id: string): Instance | undefined;
 }
 
 export interface SpecialAbilitiesDispatchProps {
-	setSortOrder(sortOrder: string): void;
-	switchActiveItemHints(): void;
-	addToList(args: ActivateArgs): void;
-	removeFromList(args: DeactivateArgs): void;
-	setTier(id: string, index: number, tier: number): void;
-	setFilterText(filterText: string): void;
-	setInactiveFilterText(filterText: string): void;
+  setSortOrder(sortOrder: string): void;
+  switchActiveItemHints(): void;
+  addToList(args: ActivateArgs): void;
+  removeFromList(args: DeactivateArgs): void;
+  setTier(id: string, index: number, tier: number): void;
+  setFilterText(filterText: string): void;
+  setInactiveFilterText(filterText: string): void;
 }
 
 export type SpecialAbilitiesProps = SpecialAbilitiesStateProps & SpecialAbilitiesDispatchProps & SpecialAbilitiesOwnProps;
 
 export interface SpecialAbilitiesState {
-	showAddSlidein: boolean;
-	currentId?: string;
-	currentSlideinId?: string;
+  showAddSlidein: boolean;
+  currentId?: string;
+  currentSlideinId?: string;
 }
 
 export class SpecialAbilities extends React.Component<SpecialAbilitiesProps, SpecialAbilitiesState> {
-	state = {
-		showAddSlidein: false,
-		currentId: undefined,
-		currentSlideinId: undefined
-	};
+  state = {
+    showAddSlidein: false,
+    currentId: undefined,
+    currentSlideinId: undefined
+  };
 
-	filter = (event: InputTextEvent) => this.props.setFilterText(event.target.value);
-	filterSlidein = (event: InputTextEvent) => this.props.setInactiveFilterText(event.target.value);
-	showAddSlidein = () => this.setState({ showAddSlidein: true } as SpecialAbilitiesState);
-	hideAddSlidein = () => this.setState({ showAddSlidein: false, filterTextSlidein: '' } as SpecialAbilitiesState);
-	showInfo = (id: string) => this.setState({ currentId: id } as SpecialAbilitiesState);
-	showSlideinInfo = (id: string) => this.setState({ currentSlideinId: id } as SpecialAbilitiesState);
+  filter = (event: InputTextEvent) => this.props.setFilterText(event.target.value);
+  filterSlidein = (event: InputTextEvent) => this.props.setInactiveFilterText(event.target.value);
+  showAddSlidein = () => this.setState({ showAddSlidein: true } as SpecialAbilitiesState);
+  hideAddSlidein = () => this.setState({ showAddSlidein: false, filterTextSlidein: '' } as SpecialAbilitiesState);
+  showInfo = (id: string) => this.setState({ currentId: id } as SpecialAbilitiesState);
+  showSlideinInfo = (id: string) => this.setState({ currentSlideinId: id } as SpecialAbilitiesState);
 
-	render() {
-		const { activeList, addToList, deactiveList, enableActiveItemHints, get, locale, isRemovingEnabled, removeFromList, setSortOrder, setTier, sortOrder, switchActiveItemHints, filterText, inactiveFilterText } = this.props;
-		const { showAddSlidein } = this.state;
+  render() {
+    const { activeList, addToList, deactiveList, enableActiveItemHints, get, locale, isRemovingEnabled, removeFromList, setSortOrder, setTier, sortOrder, switchActiveItemHints, filterText, inactiveFilterText } = this.props;
+    const { showAddSlidein } = this.state;
 
-		return (
-			<Page id="specialabilities">
-				<Slidein isOpened={showAddSlidein} close={this.hideAddSlidein}>
-					<Options>
-						<TextField hint={translate(locale, 'options.filtertext')} value={inactiveFilterText} onChange={this.filterSlidein} fullWidth />
-						<SortOptions
-							sortOrder={sortOrder}
-							sort={setSortOrder}
-							options={['name', 'groupname']}
-							locale={locale}
-							/>
-						<Checkbox checked={enableActiveItemHints} onClick={switchActiveItemHints}>{translate(locale, 'options.showactivated')}</Checkbox>
-					</Options>
-					<MainContent>
-						<ListHeader>
-							<ListHeaderTag className="name">
-								{translate(locale, 'name')}
-							</ListHeaderTag>
-							<ListHeaderTag className="group">
-								{translate(locale, 'group')}
-								</ListHeaderTag>
-							<ListHeaderTag className="cost" hint={translate(locale, 'aptext')}>
-								{translate(locale, 'apshort')}
-							</ListHeaderTag>
-							<ListHeaderTag className="btn-placeholder" />
-							<ListHeaderTag className="btn-placeholder" />
-						</ListHeader>
-						<ActivatableAddList
-							addToList={addToList}
-							list={deactiveList}
-							locale={locale}
-							get={get}
-							selectForInfo={this.showSlideinInfo}
-							/>
-					</MainContent>
-					<WikiInfoContainer {...this.props} currentId={this.state.currentSlideinId}/>
-				</Slidein>
-				<Options>
-					<TextField hint={translate(locale, 'options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
-					<SortOptions
-						sortOrder={sortOrder}
-						sort={setSortOrder}
-						options={['name', 'groupname']}
-						locale={locale}
-						/>
-					<BorderButton label={translate(locale, 'actions.addtolist')} onClick={this.showAddSlidein} />
-				</Options>
-				<MainContent>
-					<ListHeader>
-						<ListHeaderTag className="name">
-							{translate(locale, 'name')}
-						</ListHeaderTag>
-						<ListHeaderTag className="group">
-							{translate(locale, 'group')}
-							</ListHeaderTag>
-						<ListHeaderTag className="cost" hint={translate(locale, 'aptext')}>
-							{translate(locale, 'apshort')}
-						</ListHeaderTag>
-						{isRemovingEnabled && <ListHeaderTag className="btn-placeholder" />}
-						<ListHeaderTag className="btn-placeholder" />
-					</ListHeader>
-					<ActivatableRemoveList
-						filterText={filterText}
-						list={activeList}
-						locale={locale}
-						isRemovingEnabled={isRemovingEnabled}
-						removeFromList={removeFromList}
-						setTier={setTier}
-						selectForInfo={this.showInfo}
-						/>
-				</MainContent>
-				<WikiInfoContainer {...this.props} {...this.state} />
-			</Page>
-		);
-	}
+    return (
+      <Page id="specialabilities">
+        <Slidein isOpened={showAddSlidein} close={this.hideAddSlidein}>
+          <Options>
+            <TextField hint={translate(locale, 'options.filtertext')} value={inactiveFilterText} onChange={this.filterSlidein} fullWidth />
+            <SortOptions
+              sortOrder={sortOrder}
+              sort={setSortOrder}
+              options={['name', 'groupname']}
+              locale={locale}
+              />
+            <Checkbox checked={enableActiveItemHints} onClick={switchActiveItemHints}>{translate(locale, 'options.showactivated')}</Checkbox>
+          </Options>
+          <MainContent>
+            <ListHeader>
+              <ListHeaderTag className="name">
+                {translate(locale, 'name')}
+              </ListHeaderTag>
+              <ListHeaderTag className="group">
+                {translate(locale, 'group')}
+                </ListHeaderTag>
+              <ListHeaderTag className="cost" hint={translate(locale, 'aptext')}>
+                {translate(locale, 'apshort')}
+              </ListHeaderTag>
+              <ListHeaderTag className="btn-placeholder" />
+              <ListHeaderTag className="btn-placeholder" />
+            </ListHeader>
+            <ActivatableAddList
+              addToList={addToList}
+              list={deactiveList}
+              locale={locale}
+              get={get}
+              selectForInfo={this.showSlideinInfo}
+              />
+          </MainContent>
+          <WikiInfoContainer {...this.props} currentId={this.state.currentSlideinId}/>
+        </Slidein>
+        <Options>
+          <TextField hint={translate(locale, 'options.filtertext')} value={filterText} onChange={this.filter} fullWidth />
+          <SortOptions
+            sortOrder={sortOrder}
+            sort={setSortOrder}
+            options={['name', 'groupname']}
+            locale={locale}
+            />
+          <BorderButton label={translate(locale, 'actions.addtolist')} onClick={this.showAddSlidein} />
+        </Options>
+        <MainContent>
+          <ListHeader>
+            <ListHeaderTag className="name">
+              {translate(locale, 'name')}
+            </ListHeaderTag>
+            <ListHeaderTag className="group">
+              {translate(locale, 'group')}
+              </ListHeaderTag>
+            <ListHeaderTag className="cost" hint={translate(locale, 'aptext')}>
+              {translate(locale, 'apshort')}
+            </ListHeaderTag>
+            {isRemovingEnabled && <ListHeaderTag className="btn-placeholder" />}
+            <ListHeaderTag className="btn-placeholder" />
+          </ListHeader>
+          <ActivatableRemoveList
+            filterText={filterText}
+            list={activeList}
+            locale={locale}
+            isRemovingEnabled={isRemovingEnabled}
+            removeFromList={removeFromList}
+            setTier={setTier}
+            selectForInfo={this.showInfo}
+            />
+        </MainContent>
+        <WikiInfoContainer {...this.props} {...this.state} />
+      </Page>
+    );
+  }
 }

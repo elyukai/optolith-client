@@ -3,10 +3,10 @@ import { UIMessages } from '../../../utils/I18n';
 import { WikiProperty } from '../WikiProperty';
 
 export interface WikiTargetCategoryProps {
-	currentObject: {
-		target: string;
-	};
-	locale: UIMessages;
+  currentObject: {
+    target: string;
+  };
+  locale: UIMessages;
 }
 
 export function WikiTargetCategory(props: WikiTargetCategoryProps) {

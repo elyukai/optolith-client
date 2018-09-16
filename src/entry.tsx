@@ -13,7 +13,7 @@ declare global {
 // tslint:disable-next-line:no-implicit-dependencies
 import { ProgressInfo } from 'builder-util-runtime';
 import { ipcRenderer, remote } from 'electron';
-import localShortcut from 'electron-localshortcut';
+import * as localShortcut from 'electron-localshortcut';
 import { UpdateInfo } from 'electron-updater';
 import * as React from 'react';
 import { render } from 'react-dom';
@@ -52,7 +52,7 @@ const store = createStore (appReducer, applyMiddleware (ReduxThunk));
             submenu: [
               {
                 label: translate (locale, 'mac.aboutapp', remote.app.getName ()),
-                click: () => dispatch (showAbout)
+                click: () => dispatch (showAbout),
               },
               { type: 'separator' },
               { role: 'hide' },
@@ -61,34 +61,34 @@ const store = createStore (appReducer, applyMiddleware (ReduxThunk));
               { type: 'separator' },
               {
                 label: translate (locale, 'mac.quit'),
-                click: () => dispatch (requestClose (locale) (Just (remote.app.quit)))
-              }
-            ]
+                click: () => dispatch (requestClose (locale) (Just (remote.app.quit))),
+              },
+            ],
           },
           {
             label: translate (locale, 'edit'),
             submenu: [
-              {role: 'cut'},
-              {role: 'copy'},
-              {role: 'paste'},
-              {role: 'delete'},
-              {role: 'selectall'}
-            ]
+              { role: 'cut' },
+              { role: 'copy' },
+              { role: 'paste' },
+              { role: 'delete' },
+              { role: 'selectall' },
+            ],
           },
           {
             label: translate (locale, 'view'),
             submenu: [
-              {role: 'togglefullscreen'}
-            ]
+              { role: 'togglefullscreen' },
+            ],
           },
           {
             role: 'window',
             submenu: [
-              {role: 'minimize'},
-              {type: 'separator'},
-              {role: 'front'}
-            ]
-          }
+              { role: 'minimize' },
+              { type: 'separator' },
+              { role: 'front' },
+            ],
+          },
         ];
 
         const menu = remote.Menu.buildFromTemplate (menuTemplate);
@@ -102,11 +102,15 @@ const store = createStore (appReducer, applyMiddleware (ReduxThunk));
           const currentMenu = remote.Menu.buildFromTemplate (menuTemplate);
           remote.Menu.setApplicationMenu (currentMenu);
         });
-      }
 
-      localShortcut.register (currentWindow, 'Cmd+Q', () => {
-        dispatch (quitAccelerator ());
-      });
+        localShortcut.register (currentWindow, 'Cmd+Q', () => {
+          dispatch (quitAccelerator (locale));
+        });
+
+        localShortcut.register (currentWindow, 'CmdOrCtrl+S', () => {
+          dispatch (saveHeroAccelerator (locale));
+        });
+      }
     }
 
     localShortcut.register (currentWindow, 'CmdOrCtrl+Z', () => {
@@ -119,10 +123,6 @@ const store = createStore (appReducer, applyMiddleware (ReduxThunk));
 
     localShortcut.register (currentWindow, 'CmdOrCtrl+Shift+Z', () => {
       dispatch (redoAccelerator ());
-    });
-
-    localShortcut.register (currentWindow, 'CmdOrCtrl+S', () => {
-      dispatch (saveHeroAccelerator ());
     });
 
     localShortcut.register (currentWindow, 'CmdOrCtrl+W', () => {
@@ -174,9 +174,13 @@ ipcRenderer.addListener ('auto-updater-error', (_event: Event, err: Error) => {
     dispatch (addErrorAlert (
       {
         title: 'Auto Update Error',
-        message: `An error occured during auto-update. (${JSON.stringify (err)})`
+        message: `An error occured during auto-update. (${JSON.stringify (err)})`,
       },
       Maybe.fromJust (maybeLocale)
     ));
   }
+});
+
+ipcRenderer.addListener ('before-close', () => {
+  localShortcut.unregisterAll (remote.getCurrentWindow ());
 });

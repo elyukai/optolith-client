@@ -1,7 +1,7 @@
-import R from 'ramda';
+import * as R from 'ramda';
 import { ArmorZonesInstance, AttributeDependent, HeroDependent, ItemInstance } from '../types/data';
 import { Armor, ArmorZone, Item, MeleeWeapon, RangedWeapon, ShieldOrParryingWeapon } from '../types/view';
-import { ItemTemplate, WikiAll } from '../types/wiki';
+import { Attribute, CombatTechnique, ItemTemplate, WikiAll } from '../types/wiki';
 import { getAttack, getParry } from '../utils/CombatTechniqueUtils';
 import { createMaybeSelector } from '../utils/createMaybeSelector';
 import { List, Maybe, OrderedMap, Record, RecordInterface } from '../utils/dataUtils';
@@ -44,8 +44,10 @@ export const getFullItem = (items: RecordInterface<HeroDependent['belongings']>[
           item => {
             const { isTemplateLocked, template, where, amount, loss } = item.toObject ();
             const maybeActiveTemplate =
-              Maybe.bind<string, Record<ItemTemplate>> (Maybe.fromNullable (template))
-                                                       (templates.lookup);
+              Maybe.bind<string, Record<ItemTemplate>>
+                (Maybe.fromNullable (template))
+                (templateId => OrderedMap.lookup<string, Record<ItemTemplate>> (templateId)
+                                                                               (templates));
 
             return Maybe.fromMaybe (item)
                                    (Maybe.ensure<boolean> (R.identity) (isTemplateLocked)
@@ -55,7 +57,7 @@ export const getFullItem = (items: RecordInterface<HeroDependent['belongings']>[
                                          where,
                                          amount,
                                          loss,
-                                         id
+                                         id,
                                        })) as Record<ItemInstance>
                                      )
                                    );
@@ -251,7 +253,11 @@ export const getMeleeWeapons = createMaybeSelector (
         item => getFullItem (items) (wiki.get ('itemTemplates')) (item.get ('id'))
           .bind (
             fullItem => fullItem.lookup ('combatTechnique')
-              .bind (wiki.get ('combatTechniques').lookup)
+              .bind (
+                id => OrderedMap.lookup<string, Record<CombatTechnique>>
+                  (id)
+                  (wiki.get ('combatTechniques'))
+              )
               .bind (
                 wikiEntry => {
                   const stateEntry = hero.get ('combatTechniques').lookup (wikiEntry.get ('id'));
@@ -272,12 +278,18 @@ export const getMeleeWeapons = createMaybeSelector (
                   );
 
                   const maybePrimaryAttributes = primaryAttributeIds.fmap (
-                    Maybe.mapMaybe (wiki.get ('attributes').lookup)
+                    Maybe.mapMaybe (
+                      id => OrderedMap.lookup<string, Record<Attribute>> (id)
+                                                                         (wiki.get ('attributes'))
+                    )
                   );
 
                   const maybePrimaryAttributeValues = primaryAttributeIds.fmap (
                     List.map (R.pipe (
-                      hero.get ('attributes').lookup,
+                      (id: string) =>
+                        OrderedMap.lookup<string, Record<AttributeDependent>>
+                          (id)
+                          (hero.get ('attributes')),
                       Maybe.fmap (Record.get<AttributeDependent, 'value'> ('value')),
                       Maybe.fromMaybe (8)
                     ))
@@ -360,7 +372,11 @@ export const getRangedWeapons = createMaybeSelector (
         item => getFullItem (items) (wiki.get ('itemTemplates')) (item.get ('id'))
           .bind (
             fullItem => fullItem.lookup ('combatTechnique')
-              .bind (wiki.get ('combatTechniques').lookup)
+              .bind (
+                id => OrderedMap.lookup<string, Record<CombatTechnique>>
+                  (id)
+                  (wiki.get ('combatTechniques'))
+              )
               .fmap (
                 wikiEntry => {
                   const stateEntry = hero.get ('combatTechniques').lookup (wikiEntry.get ('id'));
@@ -386,7 +402,7 @@ export const getRangedWeapons = createMaybeSelector (
                       + fullItem.lookupWithDefault<'stabilityMod'> (0) ('stabilityMod'),
                     loss: fullItem.lookup ('loss'),
                     weight: fullItem.lookup ('weight'),
-                    ammunition
+                    ammunition,
                   });
                 }
               )
@@ -430,7 +446,7 @@ export const getArmors = createMaybeSelector (
                 mov: addPenaltiesMod + fullItem.lookupWithDefault<'movMod'> (0) ('movMod'),
                 ini: addPenaltiesMod + fullItem.lookupWithDefault<'iniMod'> (0) ('iniMod'),
                 weight: fullItem.lookup ('weight'),
-                where: fullItem.lookup ('where')
+                where: fullItem.lookup ('where'),
               });
             }
           )
@@ -487,7 +503,7 @@ export const getArmorZones = createMaybeSelector (
           torso: getPro (torsoArmor),
           enc: Maybe.fromMaybe (0) (getEncumbranceZoneTier (proTotal)),
           addPenalties: [1, 3, 5].includes (proTotal),
-          weight: weightTotal
+          weight: weightTotal,
         });
       });
     }
@@ -514,7 +530,11 @@ export const getShieldsAndParryingWeapons = createMaybeSelector (
         item => getFullItem (items) (wiki.get ('itemTemplates')) (item.get ('id'))
           .bind (
             fullItem => fullItem.lookup ('combatTechnique')
-              .bind (wiki.get ('combatTechniques').lookup)
+              .bind (
+                id => OrderedMap.lookup<string, Record<CombatTechnique>>
+                  (id)
+                  (wiki.get ('combatTechnique'))
+              )
               .fmap (
                 wikiEntry => Record.ofMaybe<ShieldOrParryingWeapon> ({
                   id: fullItem.get ('id'),
@@ -525,7 +545,7 @@ export const getShieldsAndParryingWeapons = createMaybeSelector (
                   loss: fullItem.lookup ('loss'),
                   atMod: fullItem.lookup ('at'),
                   paMod: fullItem.lookup ('pa'),
-                  weight: fullItem.lookup ('weight')
+                  weight: fullItem.lookup ('weight'),
                 })
               )
           )
@@ -650,6 +670,6 @@ export const getProtectionAndWeight = (
 
   return {
     pro: protectionSum,
-    weight: weightSum
+    weight: weightSum,
   };
 }
