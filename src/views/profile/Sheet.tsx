@@ -1,18 +1,21 @@
 import * as React from 'react';
-import { Attribute, UIMessages } from '../../types/view';
+import { UIMessagesObject } from '../../types/ui';
+import { AttributeCombined } from '../../types/view';
+import { List, Record } from '../../utils/dataUtils';
 import { HeaderValue, SheetHeader } from './SheetHeader';
 
 export interface SheetProps {
-  addHeaderInfo?: HeaderValue[];
-  attributes: Attribute[];
+  addHeaderInfo?: List<Record<HeaderValue>>;
+  attributes: List<Record<AttributeCombined>>;
   children?: React.ReactNode;
   id: string;
-  locale: UIMessages;
+  locale: UIMessagesObject;
   title: string;
 }
 
-export function Sheet(props: SheetProps) {
+export const Sheet = (props: SheetProps) => {
   const { addHeaderInfo, attributes, children, id, locale, title } = props;
+
   return (
     <div className="sheet" id={id}>
       <SheetHeader
@@ -24,4 +27,4 @@ export function Sheet(props: SheetProps) {
       {children}
     </div>
   );
-}
+};

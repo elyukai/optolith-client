@@ -90,6 +90,10 @@ export const getMagicalStyleDependencies = (state: AppState) =>
   getCurrentHero (state).fmap (just => just.present.get ('magicalStyleDependencies'));
 
 
+export const getCurrentHeroName = (state: AppState) =>
+  getCurrentHero (state).fmap (just => just.present.get ('name'));
+
+
 export const getProfile = (state: AppState) =>
   getCurrentHero (state).fmap (just => just.present.get ('personalData'));
 
@@ -141,6 +145,9 @@ export const getCurrentCultureId = (state: AppState) =>
 
 export const getCurrentProfessionId = (state: AppState) =>
   getCurrentHero (state).bind (just => just.present.lookup ('profession'));
+
+export const getCustomProfessionName = (state: AppState) =>
+  getCurrentHero (state).bind (just => just.present.lookup ('professionName'));
 
 export const getCurrentProfessionVariantId = (state: AppState) =>
   getCurrentHero (state).bind (just => just.present.lookup ('professionVariant'));

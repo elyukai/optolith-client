@@ -1,12 +1,14 @@
 import * as R from 'ramda';
-import { Race, RaceVariant } from '../types/wiki';
-import { Maybe, Record } from './dataUtils';
+import { Sex } from '../types/data';
+import { Profession, ProfessionVariant, Race, RaceVariant } from '../types/wiki';
+import { Maybe, OrderedMap, Record } from './dataUtils';
 import { rollDice, rollDie } from './dice';
+import { translate, UIMessagesObject } from './I18n';
 import { multiplyString } from './NumberUtils';
 
 export const rerollHairColor = (
   race: Maybe<Record<Race>>,
-  raceVariant: Maybe<Record<RaceVariant>>,
+  raceVariant: Maybe<Record<RaceVariant>>
 ): Maybe<number> =>
   race
     .bind (e => e.lookup ('hairColors'))
@@ -16,7 +18,7 @@ export const rerollHairColor = (
 export const rerollEyeColor = (
   race: Maybe<Record<Race>>,
   raceVariant: Maybe<Record<RaceVariant>>,
-  isAlbino: boolean,
+  isAlbino: boolean
 ): Maybe<number> =>
   isAlbino ? Maybe.pure (rollDie (2) + 18) : race
     .bind (e => e.lookup ('eyeColors'))
@@ -25,7 +27,7 @@ export const rerollEyeColor = (
 
 export const rerollSize = (
   race: Maybe<Record<Race>>,
-  raceVariant: Maybe<Record<RaceVariant>>,
+  raceVariant: Maybe<Record<RaceVariant>>
 ): Maybe<string> =>
   race
     .bind (e => e.lookup ('sizeBase'))
@@ -47,7 +49,7 @@ export const rerollSize = (
 export const getWeightForRerolledSize = (
   weight: string,
   prevSize: string,
-  newSize: string,
+  newSize: string
 ): string => {
   const diff = Number.parseInt (newSize) - Number.parseInt (prevSize);
   const newWeight = Number.parseInt (weight) + diff;
@@ -63,7 +65,7 @@ interface RerolledWeight {
 export const rerollWeight = (
   race: Maybe<Record<Race>>,
   raceVariant: Maybe<Record<RaceVariant>>,
-  size: Maybe<string> = rerollSize (race, raceVariant),
+  size: Maybe<string> = rerollSize (race, raceVariant)
 ): RerolledWeight => {
   const formattedSize = size.fmap (multiplyString);
 
@@ -93,6 +95,63 @@ export const rerollWeight = (
       })
       .fmap (R.add (Maybe.fromMaybe (0) (formattedSize.fmap (Number.parseInt))))
       .fmap (e => e.toString ()),
-    size: formattedSize
+    size: formattedSize,
   };
 };
+
+export const getFullProfessionName = (locale: UIMessagesObject) =>
+  (wikiProfessions: OrderedMap<string, Record<Profession>>) =>
+    (wikiProfessionVariants: OrderedMap<string, Record<ProfessionVariant>>) =>
+      (sex: Sex) =>
+        (professionId: Maybe<string>) =>
+          (professionVariantId: Maybe<string>) =>
+            (customProfessionName: Maybe<string>) => {
+              if (Maybe.elem ('P_0') (professionId)) {
+                return Maybe.fromMaybe (translate (locale, 'professions.ownprofession'))
+                                      (customProfessionName);
+              }
+
+              const maybeProfession = professionId
+                .bind (
+                  id => OrderedMap.lookup<string, Record<Profession>>
+                    (id)
+                    (wikiProfessions)
+                );
+
+              const professionName = maybeProfession
+                .fmap (profession => profession .get ('name'))
+                .fmap (
+                  name => name instanceof Record ? name .get (sex) : name
+                );
+
+              const professionSubName = maybeProfession
+                .bind (profession => profession .lookup ('subname'))
+                .fmap (
+                  subname => subname instanceof Record ? subname .get (sex) : subname
+                );
+
+              const maybeProfessionVariant = professionVariantId
+                .bind (
+                  id => OrderedMap.lookup<string, Record<ProfessionVariant>>
+                    (id)
+                    (wikiProfessionVariants)
+                );
+
+              const professionVariantName = maybeProfessionVariant
+                .fmap (professionVariant => professionVariant .get ('name'))
+                .fmap (
+                  name => name instanceof Record ? name .get (sex) : name
+                );
+
+              return Maybe.fromMaybe ('')
+                                    (professionName
+                                      .fmap (
+                                        name => Maybe.fromMaybe (name)
+                                                                (professionSubName
+                                                                  .alt (professionVariantName)
+                                                                  .fmap (
+                                                                    addName =>
+                                                                      `${name} (${addName})`
+                                                                  ))
+                                      ));
+            };

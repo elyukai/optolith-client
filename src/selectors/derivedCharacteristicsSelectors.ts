@@ -274,7 +274,7 @@ export const getDO = createMaybeSelector (
       short: translate (locale, 'secondaryattributes.do.short'),
       base: Maybe.fromMaybe (0) (maybeBase),
       mod,
-      value
+      value,
     });
   }
 );
@@ -311,7 +311,7 @@ export const getINI = createMaybeSelector (
       short: translate (locale, 'secondaryattributes.ini.short'),
       base: Maybe.fromMaybe (0) (maybeBase),
       mod,
-      value
+      value,
     });
   }
 );
@@ -343,7 +343,7 @@ export const getMOV = createMaybeSelector (
       short: translate (locale, 'secondaryattributes.mov.short'),
       base: Maybe.fromMaybe (0) (maybeBase),
       mod,
-      value
+      value,
     });
   }
 );
@@ -367,7 +367,7 @@ export const getWT = createMaybeSelector (
       short: translate (locale, 'secondaryattributes.ws.short'),
       base: Maybe.fromMaybe (0) (maybeBase),
       mod,
-      value
+      value,
     });
   }
 );

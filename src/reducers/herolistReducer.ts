@@ -3,7 +3,7 @@ import * as HerolistActions from '../actions/HerolistActions';
 import * as IOActions from '../actions/IOActions';
 import { ActionTypes } from '../constants/ActionTypes';
 import { HeroDependent, User } from '../types/data';
-import { List, Maybe, OrderedMap, OrderedSet, Record } from '../utils/dataUtils';
+import { List, Maybe, OrderedMap, Record } from '../utils/dataUtils';
 import { getInitialHeroObject } from '../utils/initHeroUtils';
 import { reduceReducers } from '../utils/reduceReducers';
 import { UndoState, wrapWithHistoryObject } from '../utils/undo';
@@ -28,12 +28,12 @@ export type HerolistState = Record<HerolistStateObject>;
 
 const initialState: HerolistState = Record.of<HerolistStateObject> ({
   heroes: OrderedMap.empty (),
-  users: OrderedMap.empty ()
+  users: OrderedMap.empty (),
 });
 
 export function precedingHerolistReducer (
   state: HerolistState = initialState,
-  action: PrecedingHerolistReducerAction,
+  action: PrecedingHerolistReducerAction
 ): HerolistState {
   switch (action.type) {
     case ActionTypes.CREATE_HERO: {
@@ -54,7 +54,7 @@ export function precedingHerolistReducer (
         el,
         totalAp,
         enableAllRuleBooks,
-        OrderedSet.of (enabledRuleBooks),
+        enabledRuleBooks
       );
 
       return state
@@ -71,7 +71,7 @@ export function precedingHerolistReducer (
         heroes => heroes.adjust (
           undoState => ({
             ...undoState,
-            past: List.of ()
+            past: List.of (),
           })
         ) (action.payload.id)
       ) ('heroes');

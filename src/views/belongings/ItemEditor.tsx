@@ -141,25 +141,25 @@ export class ItemEditor extends React.Component<ItemEditorProps> {
 
       const validName = typeof name === 'string' && name.length > 0;
       const validATMod = isInteger(at);
-      const validDamageDiceNumber = isEmptyOr(isNaturalNumber, damageDiceNumber);
-      const validDamageFlat = isEmptyOr(isInteger, damageFlat);
+      const validDamageDiceNumber = isEmptyOr(isNaturalNumber) (damageDiceNumber);
+      const validDamageFlat = isEmptyOr(isInteger) (damageFlat);
       const validFirstDamageThreshold = Array.isArray(damageBonus.threshold) && isNaturalNumber(damageBonus.threshold[0]);
       const validSecondDamageThreshold = Array.isArray(damageBonus.threshold) && isNaturalNumber(damageBonus.threshold[1]);
       const validDamageThreshold = Array.isArray(damageBonus.threshold) ? validFirstDamageThreshold && validSecondDamageThreshold : isNaturalNumber(damageBonus.threshold);
       const validENC = isNaturalNumber(enc);
-      const validINIMod = isEmptyOr(isInteger, iniMod);
-      const validLength = isEmptyOr(isNaturalNumber, length);
-      const validMOVMod = isEmptyOr(isInteger, movMod);
-      const validNumber = isEmptyOr(isNaturalNumber, amount);
+      const validINIMod = isEmptyOr(isInteger) (iniMod);
+      const validLength = isEmptyOr(isNaturalNumber) (length);
+      const validMOVMod = isEmptyOr(isInteger) (movMod);
+      const validNumber = isEmptyOr(isNaturalNumber) (amount);
       const validPAMod = isInteger(pa);
-      const validPrice = isEmptyOr(isFloat, price);
+      const validPrice = isEmptyOr(isFloat) (price);
       const validPRO = isNaturalNumber(pro);
-      const validRange1 = isEmptyOr(isNaturalNumber, range1);
-      const validRange2 = isEmptyOr(isNaturalNumber, range2);
-      const validRange3 = isEmptyOr(isNaturalNumber, range3);
-      const validStabilityMod = isEmptyOr(isInteger, stabilityMod);
-      const validStructurePoints = isEmptyOr(isNaturalNumber, stp);
-      const validWeight = isEmptyOr(isFloat, weight);
+      const validRange1 = isEmptyOr(isNaturalNumber) (range1);
+      const validRange2 = isEmptyOr(isNaturalNumber) (range2);
+      const validRange3 = isEmptyOr(isNaturalNumber) (range3);
+      const validStabilityMod = isEmptyOr(isInteger) (stabilityMod);
+      const validStructurePoints = isEmptyOr(isNaturalNumber) (stp);
+      const validWeight = isEmptyOr(isFloat) (weight);
 
       const validMelee = combatTechnique === 'CT_7' ? [validDamageDiceNumber, validDamageFlat, validLength, validNumber, validPrice, validStabilityMod, validStructurePoints, validWeight] : [validATMod, validDamageDiceNumber, validDamageFlat, validDamageThreshold, validLength, validNumber, validPAMod, validPrice, validStabilityMod, validStructurePoints, validWeight, typeof combatTechnique === 'string', typeof reach === 'number'];
       const validRanged = [validDamageDiceNumber, validDamageFlat, validLength, validNumber, validPrice, validRange1, validRange2, validRange3, validStabilityMod, validWeight, typeof combatTechnique === 'string'];

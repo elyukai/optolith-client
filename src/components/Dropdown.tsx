@@ -6,7 +6,7 @@ import { Scroll } from './Scroll';
 
 export interface DropdownProps {
   className?: string;
-  disabled?: boolean;
+  disabled?: boolean | Maybe<boolean>;
   fullWidth?: boolean;
   hint?: string;
   label?: string;
@@ -85,6 +85,8 @@ export class Dropdown extends React.Component<DropdownProps, DropdownState> {
     const { className, disabled, fullWidth, hint, label, options, required, value } = this.props;
     const { isOpen, position } = this.state;
 
+    const trueDisabled = disabled instanceof Maybe ? Maybe.elem (true) (disabled) : disabled;
+
     const style = isOpen ? (options.length () < 6 ? options.length () * 33 + 1 : 166) : 0;
 
     const maybeCurrent = options.find (e => value.equals (e.id));
@@ -109,7 +111,7 @@ export class Dropdown extends React.Component<DropdownProps, DropdownState> {
                       className={classNameInner}
                       key={Maybe.fromMaybe<string | number> ('__DEFAULT__') (option.id)}
                       onClick={
-                        !disabled && !option.disabled
+                        !trueDisabled && !option.disabled
                           ? this.onChange.bind (undefined, option.id)
                           : undefined}
                       >
@@ -132,12 +134,12 @@ export class Dropdown extends React.Component<DropdownProps, DropdownState> {
           dropdown: true,
           active: isOpen,
           fullWidth,
-          disabled,
+          disabled: trueDisabled,
           invalid: required && Maybe.isNothing (maybeCurrent),
         })}
         ref={node => this.containerRef = node}
         >
-        {label && <Label text={label} disabled={disabled} />}
+        {label && <Label text={label} disabled={trueDisabled} />}
         <div
           onMouseDown={this.insideFocus}
           onMouseUp={this.insideBlur}

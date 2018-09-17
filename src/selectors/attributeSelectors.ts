@@ -47,7 +47,7 @@ const getAttributeMaximum = (
 const getAttributeMinimum = (
   wiki: Wiki.WikiRecord,
   state: Data.Hero,
-  dependencies: Data.AttributeDependent['dependencies'],
+  dependencies: Data.AttributeDependent['dependencies']
 ): number =>
   flattenDependencies (
     wiki,
@@ -91,7 +91,7 @@ export const getAttributesForView = createMaybeSelector (
             const min = getAttributeMinimum (
               wiki,
               hero,
-              attribute.get ('dependencies'),
+              attribute.get ('dependencies')
             );
 
             return Maybe.fromMaybe (list) (
@@ -119,7 +119,7 @@ export const getAttributesForView = createMaybeSelector (
  * Returns a `List` of attributes containing the current state and full wiki
  * info.
  */
-export const getForSheet = createMaybeSelector (
+export const getAttributesForSheet = createMaybeSelector (
   getAttributes,
   getWikiAttributes,
   (maybeAttributes, wiki) =>
@@ -208,7 +208,7 @@ export const getPrimaryMagicalAttribute = createMaybeSelector (
           const attribute = getPrimaryMagicalAttributeInstance (
             tradition,
             maybeAttributes,
-            wikiAttributes,
+            wikiAttributes
           );
 
           return highestAttribute.fmap (x => x.get ('value'))

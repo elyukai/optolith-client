@@ -6,7 +6,7 @@ import { getAllActiveByCategory } from '../utils/activatableActiveUtils';
 import { getModifierByActiveLevel, getModifierByIsActive } from '../utils/activatableModifierUtils';
 import { getBracketedNameFromFullName } from '../utils/activatableNameUtils';
 import { createMaybeSelector } from '../utils/createMaybeSelector';
-import { Just, List, Maybe, OrderedMap, Record } from '../utils/dataUtils';
+import { Just, List, Maybe, Nothing, OrderedMap, Record } from '../utils/dataUtils';
 import { AllSortOptions, filterAndSortObjects } from '../utils/FilterSortUtils';
 import { flip } from '../utils/flip';
 import { translate } from '../utils/I18n';
@@ -234,7 +234,9 @@ export const getBlessedSpecialAbilitiesForSheet = createMaybeSelector (
 export const getFatePointsModifier = createMaybeSelector (
   mapGetToSlice (getAdvantages, 'ADV_14'),
   mapGetToSlice (getDisadvantages, 'DISADV_31'),
-  getModifierByIsActive
+  (maybeIncrease, maybeDecrease) => getModifierByIsActive (maybeIncrease)
+                                                          (maybeDecrease)
+                                                          (Nothing ())
 );
 
 export const getMagicalTraditionForSheet = createMaybeSelector (
@@ -253,7 +255,7 @@ export const getPropertyKnowledgesForSheet = createMaybeSelector (
   mapGetToSlice (getSpecialAbilities, 'SA_72'),
   getWikiSpecialAbilities,
   (propertyKnowledge, wikiSpecialAbilities) =>
-    wikiSpecialAbilities.lookup ('SA_72').fmap (
+    wikiSpecialAbilities.lookup ('SA_72').bind (
       wikiPropertyKnowledge => getActiveSelections (propertyKnowledge).fmap (
         Maybe.mapMaybe (R.pipe (
           Maybe.return,
@@ -275,7 +277,7 @@ export const getAspectKnowledgesForSheet = createMaybeSelector (
   mapGetToSlice (getSpecialAbilities, 'SA_87'),
   getWikiSpecialAbilities,
   (aspectKnowledge, wikiSpecialAbilities) =>
-    wikiSpecialAbilities.lookup ('SA_87').fmap (
+    wikiSpecialAbilities.lookup ('SA_87').bind (
       wikiAspectKnowledge => getActiveSelections (aspectKnowledge).fmap (
         Maybe.mapMaybe (R.pipe (
           Maybe.return,

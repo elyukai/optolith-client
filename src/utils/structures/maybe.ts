@@ -402,7 +402,7 @@ export class Maybe<T extends Some> implements Al.Alternative<T>, Al.Monad<T>,
    * `Just b`, then `b` is included in the result list.
    */
   static mapMaybe<T extends Some, U extends Some> (
-    fn: (x: T) => Maybe<U>,
+    fn: (x: T) => Maybe<U>
   ): (list: List<T>) => List<U> {
     return list =>
       list.foldl<List<U>> (
@@ -428,7 +428,7 @@ export class Maybe<T extends Some> implements Al.Alternative<T>, Al.Monad<T>,
    * If it is `Just b`, then `b` is included in the result list.
    */
   static imapMaybe<T extends Some, U extends Some> (
-    fn: (index: number) => (x: T) => Maybe<U>,
+    fn: (index: number) => (x: T) => Maybe<U>
   ): (list: List<T>) => List<U> {
     return list =>
       list.ifoldl<List<U>> (

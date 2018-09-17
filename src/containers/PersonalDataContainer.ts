@@ -7,28 +7,33 @@ import { getAdvantagesForSheet, getDisadvantagesForSheet, isAlbino } from '../se
 import { getAvailableAdventurePoints } from '../selectors/adventurePointsSelectors';
 import { getStartEl } from '../selectors/elSelectors';
 import { getIsRemovingEnabled } from '../selectors/phaseSelectors';
-import { getCurrentCulture, getCurrentProfession, getCurrentProfessionVariant, getCurrentRace, getCurrentRaceVariant } from '../selectors/rcpSelectors';
-import { getIsAddAdventurePointsOpen, getIsEditCharacterAvatarOpen, getPhase, getProfile, getTotalAdventurePoints } from '../selectors/stateSelectors';
+import { getCurrentCulture, getCurrentFullProfessionName, getCurrentProfession, getCurrentProfessionVariant, getCurrentRace, getCurrentRaceVariant } from '../selectors/rcpSelectors';
+import { getAvatar, getCurrentHeroName, getCustomProfessionName, getIsAddAdventurePointsOpen, getIsEditCharacterAvatarOpen, getPhase, getProfile, getSex, getTotalAdventurePoints } from '../selectors/stateSelectors';
 import { getIsEditingHeroAfterCreationPhaseEnabled } from '../selectors/uisettingsSelectors';
 import { InputTextEvent } from '../types/data';
-import { Nothing } from '../utils/dataUtils';
-import { PersonalData, PersonalDataDispatchProps, PersonalDataOwnProps, PersonalDataStateProps } from '../views/profile/Overview';
+import { Maybe, Nothing } from '../utils/dataUtils';
+import { PersonalData, PersonalDataDispatchProps, PersonalDataOwnProps, PersonalDataStateProps } from '../views/profile/PersonalData';
 
 const mapStateToProps = (state: AppState, ownProps: PersonalDataOwnProps) => ({
   advantages: getAdvantagesForSheet (state, ownProps),
   apLeft: getAvailableAdventurePoints (state, ownProps),
   apTotal: getTotalAdventurePoints (state),
+  avatar: getAvatar (state),
   culture: getCurrentCulture (state),
   currentEl: getStartEl (state),
   disadvantages: getDisadvantagesForSheet (state, ownProps),
   isRemovingEnabled: getIsRemovingEnabled (state),
   isEditingHeroAfterCreationPhaseEnabled: getIsEditingHeroAfterCreationPhaseEnabled (state),
+  name: getCurrentHeroName (state),
   phase: getPhase (state),
   profession: getCurrentProfession (state),
+  professionName: getCustomProfessionName (state),
+  fullProfessionName: getCurrentFullProfessionName (state, ownProps),
   professionVariant: getCurrentProfessionVariant (state),
   profile: getProfile (state),
   race: getCurrentRace (state),
   raceVariant: getCurrentRaceVariant (state),
+  sex: getSex (state),
   isAddAdventurePointsOpen: getIsAddAdventurePointsOpen (state),
   isEditCharacterAvatarOpen: getIsEditCharacterAvatarOpen (state),
   isAlbino: isAlbino (state),
@@ -74,11 +79,15 @@ const mapDispatchToProps = (dispatch: Dispatch<Action>) => ({
   changeAge (e: InputTextEvent) {
     dispatch (ProfileActions.setAge (e.target.value as string));
   },
-  changeHaircolor (result: number) {
-    dispatch (ProfileActions.setHairColor (result));
+  changeHaircolor (result: Maybe<number>) {
+    if (Maybe.isJust (result)) {
+      dispatch (ProfileActions.setHairColor (Maybe.fromJust (result)));
+    }
   },
-  changeEyecolor (result: number) {
-    dispatch (ProfileActions.setEyeColor (result));
+  changeEyecolor (result: Maybe<number>) {
+    if (Maybe.isJust (result)) {
+      dispatch (ProfileActions.setEyeColor (Maybe.fromJust (result)));
+    }
   },
   changeSize (e: InputTextEvent) {
     dispatch (ProfileActions.setSize (e.target.value as string) (Nothing ()));
@@ -89,8 +98,10 @@ const mapDispatchToProps = (dispatch: Dispatch<Action>) => ({
   changeTitle (e: InputTextEvent) {
     dispatch (ProfileActions.setTitle (e.target.value as string));
   },
-  changeSocialStatus (result: number) {
-    dispatch (ProfileActions.setSocialStatus (result));
+  changeSocialStatus (result: Maybe<number>) {
+    if (Maybe.isJust (result)) {
+      dispatch (ProfileActions.setSocialStatus (Maybe.fromJust (result)));
+    }
   },
   changeCharacteristics (e: InputTextEvent) {
     dispatch (ProfileActions.setCharacteristics (e.target.value as string));

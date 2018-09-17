@@ -1,25 +1,38 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
+import { Maybe } from '../utils/dataUtils';
 
 export interface ButtonProps {
   active?: boolean;
   autoWidth?: boolean;
   children?: React.ReactNode;
   className?: string;
-  disabled?: boolean;
+  disabled?: boolean | Maybe<boolean>;
   flat?: boolean;
   fullWidth?: boolean;
   primary?: boolean;
   round?: boolean;
-  onClick?(): void;
+  onClick? (): void;
   [id: string]: any;
 }
 
-export function Button(props: ButtonProps) {
-  const { active, autoWidth, primary, flat, fullWidth, disabled, round, children, onClick, ...other } = props;
+export const Button = (props: ButtonProps) => {
+  const {
+    active,
+    autoWidth,
+    primary,
+    flat,
+    fullWidth,
+    disabled,
+    round,
+    children,
+    onClick,
+    ...other
+  } = props;
+
   let { className } = props;
 
-  className = classNames(className, {
+  className = classNames (className, {
     'btn': true,
     'btn-round': round,
     'btn-text': !round,
@@ -27,8 +40,8 @@ export function Button(props: ButtonProps) {
     'btn-flat': flat,
     'autoWidth': autoWidth,
     'fullWidth': fullWidth,
-    'disabled': disabled,
-    'active': active
+    'disabled': disabled instanceof Maybe ? Maybe.elem (true) (disabled) : disabled,
+    'active': active,
   });
 
   return (
@@ -36,4 +49,4 @@ export function Button(props: ButtonProps) {
       {children}
     </div>
   );
-}
+};

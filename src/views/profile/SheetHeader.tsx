@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { Attribute, UIMessages } from '../../types/view';
-import { translate } from '../../utils/I18n';
+import { AttributeCombined } from '../../types/view';
+import { List, Record } from '../../utils/dataUtils';
+import { translate, UIMessagesObject } from '../../utils/I18n';
 import { SheetHeaderAttribute } from './SheetHeaderAttribute';
 
 export interface HeaderValue {
@@ -10,26 +11,37 @@ export interface HeaderValue {
 }
 
 export interface SheetHeaderProps {
-  add?: HeaderValue[];
-  attributes: Attribute[];
-  locale: UIMessages;
+  add?: List<Record<HeaderValue>>;
+  attributes: List<Record<AttributeCombined>>;
+  locale: UIMessagesObject;
   title: string;
 }
 
-export function SheetHeader(props: SheetHeaderProps) {
-  const { add = [], attributes, locale, title } = props;
-  const array: HeaderValue[] = [ ...attributes, ...add ];
+export function SheetHeader (props: SheetHeaderProps) {
+  const { add = List.empty<Record<HeaderValue>> (), attributes, locale, title } = props;
+  const list: List<Record<HeaderValue>> = add.mappend (attributes as any);
 
   return (
     <div className="sheet-header">
       <div className="sheet-title">
-        <h1>{translate(locale, 'charactersheet.title')}</h1>
+        <h1>{translate (locale, 'charactersheet.title')}</h1>
         <p>{title}</p>
         <img src="images/icon.svg" alt="" />
       </div>
       <div className="sheet-attributes">
         {
-          array.map(attr => <SheetHeaderAttribute key={attr.id} id={attr.id} label={attr.short} value={attr.value} />)
+          list
+            .map (
+              attr => (
+                <SheetHeaderAttribute
+                  key={attr.get ('id')}
+                  id={attr.get ('id')}
+                  label={attr.get ('short')}
+                  value={attr.lookup ('value')}
+                  />
+              )
+            )
+            .toArray ()
         }
       </div>
     </div>

@@ -1,4 +1,5 @@
 import { Action } from 'redux';
+import { DCIds } from '../selectors/derivedCharacteristicsSelectors';
 import { List, OrderedMap, OrderedSet, Record, RecordInterface, Tuple } from '../utils/dataUtils';
 import { TabId } from '../utils/LocationUtils';
 import { UndoState } from '../utils/undo';
@@ -77,7 +78,7 @@ export interface HeroDependent {
   readonly profession?: string;
   readonly professionName?: string;
   readonly professionVariant?: string;
-  readonly sex: 'm' | 'f';
+  readonly sex: Sex;
   readonly experienceLevel: string;
   readonly personalData: Record<PersonalData>;
   readonly advantages: OrderedMap<string, Record<ActivatableDependent>>;
@@ -101,10 +102,7 @@ export interface HeroDependent {
   readonly blessedStyleDependencies: List<Record<StyleDependency>>;
 }
 
-export interface AdventurePoints {
-  readonly total: number;
-  readonly spent: number;
-}
+export type Sex = 'm' | 'f';
 
 export interface PersonalData {
   readonly family?: string;
@@ -473,7 +471,7 @@ export interface ArmorZonesEditorInstance extends ArmorZonesBaseInstance {
   id?: string;
 }
 
-export interface SecondaryAttribute<I = string> {
+export interface SecondaryAttribute<I extends DCIds = DCIds> {
   id: I;
   short: string;
   name: string;
@@ -488,7 +486,7 @@ export interface SecondaryAttribute<I = string> {
   permanentRedeemed?: number;
 }
 
-export interface Energy<I = string> extends SecondaryAttribute<I> {
+export interface Energy<I extends DCIds = DCIds> extends SecondaryAttribute<I> {
   base: number;
   add: number;
   mod: number;
@@ -497,7 +495,7 @@ export interface Energy<I = string> extends SecondaryAttribute<I> {
   permanentLost: number;
 }
 
-export interface EnergyWithLoss<I = string> extends Energy<I> {
+export interface EnergyWithLoss<I extends DCIds = DCIds> extends Energy<I> {
   permanentRedeemed: number;
 }
 
@@ -650,4 +648,4 @@ export interface Alert {
   onClose? (): void;
 }
 
-export { UIMessages } from './ui';
+export { UIMessages, UIMessagesObject } from './ui';

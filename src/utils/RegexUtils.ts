@@ -28,7 +28,7 @@ export const isFloat = (test: string) => float.test (test);
  * test function.
  * @param string The string to test.
  */
-export const isEmptyOr = (check: (string: string) => boolean, string: string) =>
+export const isEmptyOr = (check: (string: string) => boolean) => (string: string) =>
   string === '' || check (string);
 
 /**

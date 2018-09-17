@@ -2,6 +2,7 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
 import { findDOMNode } from 'react-dom';
+import { Maybe } from '../utils/dataUtils';
 import { Label } from './Label';
 
 export interface TextFieldProps {
@@ -17,7 +18,7 @@ export interface TextFieldProps {
   onChange (event: React.FormEvent<HTMLInputElement>): void;
   onKeyDown? (event: React.KeyboardEvent<HTMLInputElement>): void;
   type?: string;
-  value?: string | number;
+  value?: string | number | Maybe<string | number>;
   valid?: boolean;
 }
 
@@ -43,16 +44,21 @@ export class TextField extends React.Component<TextFieldProps, {}> {
       onKeyDown,
       type = 'text',
       valid,
-      value = ''
+      value = '',
     } = this.props;
 
+    const trueValue =
+      value instanceof Maybe
+        ? Maybe.fromMaybe<string | number> ('') (value)
+        : value;
+
     const hintElement = hint && (
-      <div className={classNames ('textfield-hint', value && 'hide')}>{hint}</div>
+      <div className={classNames ('textfield-hint', trueValue && 'hide')}>{hint}</div>
     );
 
     // const inputElement = this.props.multiLine ? (
     // 	<TextareaAutosize
-    // 		defaultValue={value}
+    // 		defaultValue={trueValue}
     // 		onChange={onChange}
     // 		onKeyPress={onKeyDown}
     // 	/>
@@ -60,7 +66,7 @@ export class TextField extends React.Component<TextFieldProps, {}> {
     const inputElement = (
       <input
         type={type}
-        value={value}
+        value={trueValue}
         onChange={
           disabled
             ? undefined

@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { AdventurePointsObject } from '../../selectors/adventurePointsSelectors';
-import { UIMessagesObject } from '../../types/ui';
-import { translate } from '../../utils/I18n';
+import { Maybe, Record } from '../../utils/dataUtils';
+import { translate, UIMessagesObject } from '../../utils/I18n';
 
 export interface ApTooltipProps {
   locale: UIMessagesObject;
-  adventurePoints: AdventurePointsObject;
-  maximumForMagicalAdvantagesDisadvantages: number;
+  adventurePoints: Record<AdventurePointsObject>;
+  maximumForMagicalAdvantagesDisadvantages: Maybe<number>;
   isSpellcaster: boolean;
   isBlessedOne: boolean;
 }
@@ -18,50 +18,55 @@ export function ApTooltip (props: ApTooltipProps) {
     <div className="ap-details">
       <h4>{translate (locale, 'titlebar.adventurepoints.title')}</h4>
       <p className="general">
-        <span>{translate (locale, 'titlebar.adventurepoints.total', ap.total)}</span>
-        <span>{translate (locale, 'titlebar.adventurepoints.spent', ap.spent)}</span>
+        <span>{translate (locale, 'titlebar.adventurepoints.total', ap.get ('total'))}</span>
+        <span>{translate (locale, 'titlebar.adventurepoints.spent', ap.get ('spent'))}</span>
       </p>
       <hr />
       <p>
         <span>
-          {translate (locale, 'titlebar.adventurepoints.advantages', ap.spentOnAdvantages, 80)}
-        </span>
-        <span>
-          {ap.spentOnMagicalAdvantages > 0 && translate (
+          {translate (
             locale,
-            'titlebar.adventurepoints.advantagesmagic',
-            ap.spentOnMagicalAdvantages,
-            props.maximumForMagicalAdvantagesDisadvantages
+            'titlebar.adventurepoints.advantages',
+            ap.get ('spentOnAdvantages'),
+            80
           )}
         </span>
         <span>
-          {ap.spentOnBlessedAdvantages > 0 && translate (
+          {ap.get ('spentOnMagicalAdvantages') > 0 && translate (
+            locale,
+            'titlebar.adventurepoints.advantagesmagic',
+            ap.get ('spentOnMagicalAdvantages'),
+            Maybe.fromMaybe (0) (props.maximumForMagicalAdvantagesDisadvantages)
+          )}
+        </span>
+        <span>
+          {ap.get ('spentOnBlessedAdvantages') > 0 && translate (
             locale,
             'titlebar.adventurepoints.advantagesblessed',
-            ap.spentOnBlessedAdvantages,
+            ap.get ('spentOnBlessedAdvantages'),
             50
           )}</span>
         <span>
           {translate (
             locale,
             'titlebar.adventurepoints.disadvantages',
-            -ap.spentOnDisadvantages,
+            -ap.get ('spentOnDisadvantages'),
             80
           )}
         </span>
         <span>
-          {ap.spentOnMagicalDisadvantages > 0 && translate (
+          {ap.get ('spentOnMagicalDisadvantages') > 0 && translate (
             locale,
             'titlebar.adventurepoints.disadvantagesmagic',
-            -ap.spentOnMagicalDisadvantages,
-            props.maximumForMagicalAdvantagesDisadvantages
+            -ap.get ('spentOnMagicalDisadvantages'),
+            Maybe.fromMaybe (0) (props.maximumForMagicalAdvantagesDisadvantages)
           )}
         </span>
         <span>
-          {ap.spentOnBlessedDisadvantages > 0 && translate (
+          {ap.get ('spentOnBlessedDisadvantages') > 0 && translate (
             locale,
             'titlebar.adventurepoints.disadvantagesblessed',
-            -ap.spentOnBlessedDisadvantages,
+            -ap.get ('spentOnBlessedDisadvantages'),
             50
           )}
         </span>
@@ -69,49 +74,61 @@ export function ApTooltip (props: ApTooltipProps) {
       <hr />
       <p>
         <span>
-          {translate (locale, 'titlebar.adventurepoints.race', ap.spentOnRace, 80)}
+          {translate (locale, 'titlebar.adventurepoints.race', ap.get ('spentOnRace'), 80)}
         </span>
-        {typeof ap.spentOnProfession === 'number' && <span>
-          {translate (locale, 'titlebar.adventurepoints.profession', ap.spentOnProfession, 80)}
-        </span>}
+        {Maybe.fromMaybe
+          (<></>)
+          (ap.lookup ('spentOnProfession')
+            .fmap (
+              spentOnProfession => (
+                <span>
+                  {translate (
+                    locale,
+                    'titlebar.adventurepoints.profession',
+                    spentOnProfession,
+                    80
+                  )}
+                </span>
+              )
+            ))}
         <span>
-          {translate (locale, 'titlebar.adventurepoints.attributes', ap.spentOnAttributes)}
+          {translate (locale, 'titlebar.adventurepoints.attributes', ap.get ('spentOnAttributes'))}
         </span>
         <span>
-          {translate (locale, 'titlebar.adventurepoints.skills', ap.spentOnSkills)}
+          {translate (locale, 'titlebar.adventurepoints.skills', ap.get ('spentOnSkills'))}
         </span>
         <span>
           {translate (
             locale,
             'titlebar.adventurepoints.combattechniques',
-            ap.spentOnCombatTechniques
+            ap.get ('spentOnCombatTechniques')
           )}
         </span>
         {props.isSpellcaster && <span>
-          {translate (locale, 'titlebar.adventurepoints.spells', ap.spentOnSpells)}
+          {translate (locale, 'titlebar.adventurepoints.spells', ap.get ('spentOnSpells'))}
         </span>}
         {props.isSpellcaster && <span>
-          {translate (locale, 'titlebar.adventurepoints.cantrips', ap.spentOnCantrips)}
+          {translate (locale, 'titlebar.adventurepoints.cantrips', ap.get ('spentOnCantrips'))}
         </span>}
         {props.isBlessedOne && <span>
           {translate (
             locale,
             'titlebar.adventurepoints.liturgicalchants',
-            ap.spentOnLiturgicalChants
+            ap.get ('spentOnLiturgicalChants')
           )}
         </span>}
         {props.isBlessedOne && <span>
-          {translate (locale, 'titlebar.adventurepoints.blessings', ap.spentOnBlessings)}
+          {translate (locale, 'titlebar.adventurepoints.blessings', ap.get ('spentOnBlessings'))}
         </span>}
         <span>
           {translate (
             locale,
             'titlebar.adventurepoints.specialabilities',
-            ap.spentOnSpecialAbilities
+            ap.get ('spentOnSpecialAbilities')
           )}
         </span>
         <span>
-          {translate (locale, 'titlebar.adventurepoints.energies', ap.spentOnEnergies)}
+          {translate (locale, 'titlebar.adventurepoints.energies', ap.get ('spentOnEnergies'))}
         </span>
       </p>
     </div>

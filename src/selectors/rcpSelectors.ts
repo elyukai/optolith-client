@@ -9,13 +9,14 @@ import { createMaybeSelector } from '../utils/createMaybeSelector';
 import { Just, List, ListElement, Maybe, OrderedMap, OrderedSet, Record } from '../utils/dataUtils';
 import { AllSortOptions, filterAndSortObjects, FilterOptions } from '../utils/FilterSortUtils';
 import { getCategoryById } from '../utils/IDUtils';
+import { getFullProfessionName } from '../utils/RCPUtils';
 import { filterByAvailability, isEntryFromCoreBook } from '../utils/RulesUtils';
 import { validateProfession } from '../utils/validatePrerequisitesUtils';
 import { isCombatTechniquesSelection } from '../utils/WikiUtils';
 import { getStartEl } from './elSelectors';
 import { getRuleBooksEnabled } from './rulesSelectors';
 import { getCulturesSortOptions, getProfessionsSortOptions, getRacesSortOptions } from './sortOptionsSelectors';
-import { getCulturesFilterText, getCurrentCultureId, getCurrentProfessionId, getCurrentProfessionVariantId, getCurrentRaceId, getCurrentRaceVariantId, getLocaleAsProp, getLocaleMessages, getProfessionsFilterText, getRacesFilterText, getSex, getWiki, getWikiCultures, getWikiProfessions, getWikiProfessionVariants, getWikiRaces, getWikiRaceVariants, getWikiSkills } from './stateSelectors';
+import { getCulturesFilterText, getCurrentCultureId, getCurrentProfessionId, getCurrentProfessionVariantId, getCurrentRaceId, getCurrentRaceVariantId, getCustomProfessionName, getLocaleAsProp, getLocaleMessages, getProfessionsFilterText, getRacesFilterText, getSex, getWiki, getWikiCultures, getWikiProfessions, getWikiProfessionVariants, getWikiRaces, getWikiRaceVariants, getWikiSkills } from './stateSelectors';
 import { getCulturesVisibilityFilter, getProfessionsGroupVisibilityFilter, getProfessionsVisibilityFilter } from './uisettingsSelectors';
 
 export const getCurrentRace = createMaybeSelector (
@@ -79,7 +80,7 @@ export const getAllRaces = createMaybeSelector (
             .map (
               raceVariant => raceVariant.modify<'commonCultures'> (filterCultures)
                                                                   ('commonCultures')
-            )
+            ),
         }))
     );
   }
@@ -125,7 +126,7 @@ export const getAllCultures = createMaybeSelector (
                       }))
                     )
                 )
-                (culture.get ('culturalPackageSkills'))
+                (culture.get ('culturalPackageSkills')),
           })
         )
     )
@@ -145,7 +146,7 @@ export const getCommonCultures = createMaybeSelector (
 
     return List.of<string> (
       ...Maybe.fromMaybe (List.of<string> ()) (raceCultures),
-      ...Maybe.fromMaybe (List.of<string> ()) (raceVariantCultures),
+      ...Maybe.fromMaybe (List.of<string> ()) (raceVariantCultures)
     );
   }
 );
@@ -236,7 +237,7 @@ export const getAllProfessions = createMaybeSelector (
                           name: skill.get ('name'),
                         })
                       )
-                    )
+                    ),
                   };
                 }
               )
@@ -253,9 +254,9 @@ export const getAllProfessions = createMaybeSelector (
         );
 
         const filteredVariants = Maybe.mapMaybe
-          (variantId => OrderedMap.lookup<string, Record<RaceVariant>>
+          ((variantId: string) => OrderedMap.lookup<string, Record<ProfessionVariant>>
             (variantId)
-            (wiki.get('professionVariants')))
+            (wiki.get ('professionVariants')))
           (profession.get ('variants'));
 
         return profession.merge (
@@ -274,7 +275,7 @@ export const getAllProfessions = createMaybeSelector (
                       .fmap (convertPerTierCostToFinalCost (locale))
                       .fmap (
                         obj => obj.merge (Record.of ({
-                          active: e.get ('active')
+                          active: e.get ('active'),
                         })) as Record<ActivatableNameCostActive>
                       );
                   }
@@ -293,7 +294,7 @@ export const getAllProfessions = createMaybeSelector (
                   .fmap (convertPerTierCostToFinalCost (locale))
                   .fmap (
                     obj => obj.merge (Record.of ({
-                      active: e.get ('active')
+                      active: e.get ('active'),
                     })) as Record<ActivatableNameCostActive>
                   )
               )
@@ -359,7 +360,7 @@ export const getAllProfessions = createMaybeSelector (
                             .fmap (convertPerTierCostToFinalCost (locale))
                             .fmap (
                               obj => obj.merge (Record.of ({
-                                active: e.get ('active')
+                                active: e.get ('active'),
                               })) as Record<ActivatableNameCostActive>
                             );
                         }
@@ -378,7 +379,7 @@ export const getAllProfessions = createMaybeSelector (
                         .fmap (convertPerTierCostToFinalCost (locale))
                         .fmap (
                           obj => obj.merge (Record.of ({
-                            active: e.get ('active')
+                            active: e.get ('active'),
                           })) as Record<ActivatableNameCostActive>
                         )
                     )
@@ -404,7 +405,7 @@ export const getAllProfessions = createMaybeSelector (
                             name: wikiEntry.get ('name'),
                             previous: profession.get ('combatTechniques')
                               .find (a => a.get ('id') === e.get ('id'))
-                              .fmap (a => a.get ('value'))
+                              .fmap (a => a.get ('value')),
                           })) as Record<IncreasableView>
                         )
                     ) (professionVariant.get ('combatTechniques')),
@@ -416,7 +417,7 @@ export const getAllProfessions = createMaybeSelector (
                           name: wikiEntry.get ('name'),
                           previous: profession.get ('skills')
                             .find (a => a.get ('id') === e.get ('id'))
-                            .fmap (a => a.get ('value'))
+                            .fmap (a => a.get ('value')),
                         })) as Record<IncreasableView>
                       )
                   ) (professionVariant.get ('skills')),
@@ -428,7 +429,7 @@ export const getAllProfessions = createMaybeSelector (
                           name: wikiEntry.get ('name'),
                           previous: profession.get ('spells')
                             .find (a => a.get ('id') === e.get ('id'))
-                            .fmap (a => a.get ('value'))
+                            .fmap (a => a.get ('value')),
                         })) as Record<IncreasableView>
                       )
                   ) (professionVariant.get ('spells')),
@@ -441,7 +442,7 @@ export const getAllProfessions = createMaybeSelector (
                             name: wikiEntry.get ('name'),
                             previous: profession.get ('liturgicalChants')
                               .find (a => a.get ('id') === e.get ('id'))
-                              .fmap (a => a.get ('value'))
+                              .fmap (a => a.get ('value')),
                           })) as Record<IncreasableView>
                         )
                     ) (professionVariant.get ('liturgicalChants')),
@@ -485,7 +486,7 @@ export const getCommonProfessions = createMaybeSelector (
                 e.get ('dependencies'),
                 sex,
                 currentRaceId,
-                currentCulture.fmap (culture => culture.get ('id')),
+                currentCulture.fmap (culture => culture.get ('id'))
               );
 
               const attributeCategory = Just (Categories.ATTRIBUTES);
@@ -595,7 +596,7 @@ export const getFilteredProfessions = createMaybeSelector (
                           sortOptions => {
                             const filterOptions: FilterOptions<ProfessionCombined> = {
                               addProperty: 'subname',
-                              keyOfName: sex
+                              keyOfName: sex,
                             };
 
                             return filterAndSortObjects (
@@ -603,10 +604,36 @@ export const getFilteredProfessions = createMaybeSelector (
                               locale.get ('id'),
                               filterText,
                               sortOptions as AllSortOptions<ProfessionCombined>,
-                              filterOptions,
+                              filterOptions
                             );
                           }
                         )
                       )
                     )
+);
+
+export const getCurrentFullProfessionName = createMaybeSelector (
+  getLocaleAsProp,
+  getWiki,
+  getSex,
+  getCurrentProfessionId,
+  getCurrentProfessionVariantId,
+  getCustomProfessionName,
+  (
+    locale,
+    wiki,
+    maybeSex,
+    maybeProfessionId,
+    maybeProfessionVariantId,
+    maybeCustomProfessionName
+  ) =>
+    maybeSex .fmap (
+      sex => getFullProfessionName (locale)
+                                   (wiki .get ('professions'))
+                                   (wiki .get ('professionVariants'))
+                                   (sex)
+                                   (maybeProfessionId)
+                                   (maybeProfessionVariantId)
+                                   (maybeCustomProfessionName)
+    )
 );

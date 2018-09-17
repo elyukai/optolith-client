@@ -69,7 +69,7 @@ export function NavigationBar (props: NavigationBarProps) {
     redo,
     saveHero,
     setTab,
-    adventurePoints
+    adventurePoints,
   } = props;
 
   return (
@@ -90,7 +90,9 @@ export function NavigationBar (props: NavigationBarProps) {
               content={<ApTooltip {...props} />}
               >
               <Text className="collected-ap">
-                {adventurePoints.available} {translate (locale, 'titlebar.view.adventurepoints')}
+                {adventurePoints.get ('available')}
+                {' '}
+                {translate (locale, 'titlebar.view.adventurepoints')}
               </Text>
             </TooltipToggle>
             <IconButton

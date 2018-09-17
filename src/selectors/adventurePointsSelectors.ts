@@ -1,4 +1,5 @@
 import * as R from 'ramda';
+import { isNumber } from 'util';
 import { ActiveViewObject, HeroDependent } from '../types/data';
 import { getAdventurePointsSpentDifference, getDisAdvantagesSubtypeMax } from '../utils/adventurePointsUtils';
 import { createMaybeSelector } from '../utils/createMaybeSelector';
@@ -462,7 +463,7 @@ export const getAdventurePointsObjectPart = createMaybeSelector (
     spentOnSpecialAbilities,
     spentOnEnergies,
     spentOnRace,
-    spentOnProfession
+    spentOnProfession,
   })
 );
 

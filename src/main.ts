@@ -119,7 +119,6 @@ function createWindow () {
   });
 
   mainWindow.on ('closed', () => {
-    mainWindow!.webContents.send ('before-close');
     // tslint:disable-next-line:no-null-keyword
     mainWindow = null;
   });

@@ -6,7 +6,7 @@ export interface IconButtonProps extends ButtonProps {
   icon: string;
 }
 
-export function IconButton(props: IconButtonProps) {
+export const IconButton = (props: IconButtonProps) => {
   const { icon, ...other } = props;
 
   return (
@@ -14,4 +14,4 @@ export function IconButton(props: IconButtonProps) {
       <Icon>{icon}</Icon>
     </Button>
   );
-}
+};

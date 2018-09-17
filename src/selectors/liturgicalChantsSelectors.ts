@@ -90,7 +90,7 @@ export const getActiveLiturgicalChants = createMaybeSelector (
                               liturgicalChant,
                               hero.get ('liturgicalChants'),
                               aspectKnowledge
-                            )
+                            ),
                           }))
                       )
                   )
@@ -355,7 +355,7 @@ export const getBlessingsForSheet = createMaybeSelector (
   R.identity
 );
 
-export const getLiturgiesForSheet = createMaybeSelector (
+export const getLiturgicalChantsForSheet = createMaybeSelector (
   getActiveLiturgicalChants,
   getBlessedTraditionFromState,
   (liturgicalChants, maybeTradition) => Maybe.fromMaybe (liturgicalChants) (

@@ -180,7 +180,3 @@ ipcRenderer.addListener ('auto-updater-error', (_event: Event, err: Error) => {
     ));
   }
 });
-
-ipcRenderer.addListener ('before-close', () => {
-  localShortcut.unregisterAll (remote.getCurrentWindow ());
-});

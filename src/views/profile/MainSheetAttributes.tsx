@@ -1,104 +1,118 @@
 import * as React from 'react';
 import { SecondaryAttribute } from '../../types/data';
 import { Race } from '../../types/wiki';
-import { translate, UIMessages } from '../../utils/I18n';
+import { Just, List, Maybe, Nothing, Record } from '../../utils/dataUtils';
+import { translate, UIMessagesObject } from '../../utils/I18n';
 import { MainSheetAttributesItem } from './MainSheetAttributesItem';
 import { MainSheetFatePoints } from './MainSheetFatePoints';
 
 export interface MainSheetAttributesProps {
-  attributes: SecondaryAttribute[];
+  attributes: List<Record<SecondaryAttribute>>;
   fatePointsModifier: number;
-  locale: UIMessages;
-  race: Race | undefined;
+  locale: UIMessagesObject;
+  race: Maybe<Record<Race>>;
 }
 
-export function MainSheetAttributes(props: MainSheetAttributesProps) {
+export const MainSheetAttributes = (props: MainSheetAttributesProps) => {
   const { attributes, fatePointsModifier, race, locale } = props;
+
   return (
     <div className="calculated">
       <div className="calc-header">
-        <div>{translate(locale, 'charactersheet.main.headers.value')}</div>
-        <div>{translate(locale, 'charactersheet.main.headers.bonuspenalty')}</div>
-        <div>{translate(locale, 'charactersheet.main.headers.bought')}</div>
-        <div>{translate(locale, 'charactersheet.main.headers.max')}</div>
+        <div>{translate (locale, 'charactersheet.main.headers.value')}</div>
+        <div>{translate (locale, 'charactersheet.main.headers.bonuspenalty')}</div>
+        <div>{translate (locale, 'charactersheet.main.headers.bought')}</div>
+        <div>{translate (locale, 'charactersheet.main.headers.max')}</div>
       </div>
-      <MainSheetAttributesItem
-        label={attributes[0].name}
-        calc={attributes[0].calc}
-        base={attributes[0].base}
-        max={attributes[0].value}
-        add={attributes[0].mod}
-        purchased={attributes[0].currentAdd}
-        subLabel={translate(locale, 'charactersheet.main.subheaders.basestat')}
-        subArray={[race ? race.lp : 0]}
-        />
-      <MainSheetAttributesItem
-        label={attributes[1].name}
-        calc={attributes[1].calc}
-        base={attributes[1].base}
-        max={attributes[1].value}
-        add={attributes[1].mod}
-        purchased={attributes[1].currentAdd}
-        subLabel={translate(locale, 'charactersheet.main.subheaders.permanent')}
-        subArray={[attributes[1].permanentLost!, attributes[1].permanentRedeemed!]}
-        empty={typeof attributes[1].value !== 'number'}
-        />
-      <MainSheetAttributesItem
-        label={attributes[2].name}
-        calc={attributes[2].calc}
-        base={attributes[2].base}
-        max={attributes[2].value}
-        add={attributes[2].mod}
-        purchased={attributes[2].currentAdd}
-        subLabel={translate(locale, 'charactersheet.main.subheaders.permanent')}
-        subArray={[attributes[2].permanentLost!, attributes[2].permanentRedeemed!]}
-        empty={typeof attributes[2].value !== 'number'}
-        />
-      <MainSheetAttributesItem
-        label={attributes[3].name}
-        calc={attributes[3].calc}
-        base={attributes[3].base}
-        max={attributes[3].value}
-        add={attributes[3].mod}
-        subLabel={translate(locale, 'charactersheet.main.subheaders.basestat')}
-        subArray={[race ? race.spi : 0]}
-        />
-      <MainSheetAttributesItem
-        label={attributes[4].name}
-        calc={attributes[4].calc}
-        base={attributes[4].base}
-        max={attributes[4].value}
-        add={attributes[4].mod}
-        subLabel={translate(locale, 'charactersheet.main.subheaders.basestat')}
-        subArray={[race ? race.tou : 0]}
-        />
-      <MainSheetAttributesItem
-        label={attributes[5].name}
-        calc={attributes[5].calc}
-        base={attributes[5].base}
-        max={attributes[5].value}
-        add={attributes[5].mod}
-        />
-      <MainSheetAttributesItem
-        label={attributes[6].name}
-        calc={attributes[6].calc}
-        base={attributes[6].base}
-        max={attributes[6].value}
-        add={attributes[6].mod}
-        />
-      <MainSheetAttributesItem
-        label={attributes[7].name}
-        calc={attributes[7].calc}
-        base={attributes[7].base}
-        max={attributes[7].value}
-        add={attributes[7].mod}
-        subLabel={translate(locale, 'charactersheet.main.subheaders.basestat')}
-        subArray={[race ? race.mov : 0]}
-        />
+      {
+        attributes
+          .map (
+            attribute => (
+              <MainSheetAttributesItem
+                key={attribute .get ('id')}
+                label={attribute .get ('name')}
+                calc={attribute .get ('calc')}
+                base={attribute .get ('base')}
+                max={attribute .lookup ('value')}
+                add={attribute .lookup ('mod')}
+                purchased={attribute .lookup ('currentAdd')}
+                subLabel={(() => {
+                  switch (attribute .get ('id')) {
+                    case 'LP':
+                    case 'SPI':
+                    case 'TOU':
+                    case 'MOV':
+                      return Just (translate (locale, 'charactersheet.main.subheaders.basestat'));
+
+                    case 'AE':
+                    case 'KP':
+                      return Just (translate (locale, 'charactersheet.main.subheaders.permanent'));
+
+                    default:
+                      return Nothing ();
+                  }
+                }) ()}
+                subArray={(() => {
+                  switch (attribute .get ('id')) {
+                    case 'LP':
+                      return Just (
+                        List.of (
+                          Maybe.fromMaybe (0) (race.fmap (Record.get<Race, 'lp'> ('lp')))
+                        )
+                      );
+
+                    case 'AE':
+                    case 'KP':
+                      return Just (
+                        List.of (
+                          Maybe.fromMaybe (0) (attribute .lookup ('permanentLost')),
+                          Maybe.fromMaybe (0) (attribute .lookup ('permanentRedeemed'))
+                        )
+                      );
+
+                    case 'SPI':
+                      return Just (
+                        List.of (
+                          Maybe.fromMaybe (0) (race.fmap (Record.get<Race, 'spi'> ('spi')))
+                        )
+                      );
+
+                    case 'TOU':
+                      return Just (
+                        List.of (
+                          Maybe.fromMaybe (0) (race.fmap (Record.get<Race, 'tou'> ('tou')))
+                        )
+                      );
+
+                    case 'MOV':
+                      return Just (
+                        List.of (
+                          Maybe.fromMaybe (0) (race.fmap (Record.get<Race, 'mov'> ('mov')))
+                        )
+                      );
+
+                    default:
+                      return Nothing ();
+                  }
+                }) ()}
+                empty={(() => {
+                  switch (attribute .get ('id')) {
+                    case 'AE':
+                    case 'KP':
+                      return Just (Maybe.isNothing (attribute .lookup ('value')));
+
+                    default:
+                      return Nothing ();
+                  }
+                }) ()}
+                />
+            )
+          )
+      }
       <MainSheetFatePoints
         fatePointsModifier={fatePointsModifier}
         locale={locale}
         />
     </div>
   );
-}
+};

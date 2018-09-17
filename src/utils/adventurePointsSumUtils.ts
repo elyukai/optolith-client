@@ -26,8 +26,14 @@ const getAPForSkill = (skill: Record<Wiki.Skill>) => R.pipe (
 const getAPSpentForSkills =
   (skills: Wiki.WikiAll['skills']) => OrderedMap.foldl<Record<Data.SkillDependent>, number> (
     sum => e => Maybe.fromMaybe (sum)
-                                (Maybe.ap (skills.lookup (e.get ('id')).fmap (getAPForSkill))
-                                          (Maybe.return (e)))
+                                (Maybe.ap
+                                  (
+                                    skills
+                                      .lookup (e.get ('id'))
+                                      .fmap (getAPForSkill)
+                                  )
+                                  (Maybe.return (e))
+                                  .fmap (R.add (sum)))
   ) (0);
 
 const getAPForCombatTechnique = (skill: Record<Wiki.CombatTechnique>) => R.pipe (
@@ -39,9 +45,14 @@ const getAPSpentForCombatTechniques =
   (combatTechniques: Wiki.WikiAll['combatTechniques']) =>
     OrderedMap.foldl<Record<Data.SkillDependent>, number> (
       sum => e => Maybe.fromMaybe (sum)
-                                  (Maybe.ap (combatTechniques.lookup (e.get ('id'))
-                                    .fmap (getAPForCombatTechnique))
-                                            (Maybe.return (e)))
+                                  (Maybe.ap
+                                    (
+                                      combatTechniques
+                                        .lookup (e.get ('id'))
+                                        .fmap (getAPForCombatTechnique)
+                                    )
+                                    (Maybe.return (e))
+                                    .fmap (R.add (sum)))
     ) (0);
 
 const getAPForSpellOrChant = (skill: Record<Wiki.Spell> | Record<Wiki.LiturgicalChant>) => R.pipe (
@@ -53,18 +64,28 @@ const getAPSpentForSpells =
   (spells: Wiki.WikiAll['spells']) =>
     OrderedMap.foldl<Record<Data.ActivatableSkillDependent>, number> (
       sum => e => Maybe.fromMaybe (sum)
-                                  (Maybe.ap (spells.lookup (e.get ('id'))
-                                    .fmap (getAPForSpellOrChant))
-                                            (Maybe.return (e)))
+                                  (Maybe.ap
+                                    (
+                                      spells
+                                        .lookup (e.get ('id'))
+                                        .fmap (getAPForSpellOrChant)
+                                    )
+                                    (Maybe.return (e))
+                                    .fmap (R.add (sum)))
     ) (0);
 
 const getAPSpentForLiturgicalChants =
   (liturgicalChants: Wiki.WikiAll['liturgicalChants']) =>
     OrderedMap.foldl<Record<Data.ActivatableSkillDependent>, number> (
       sum => e => Maybe.fromMaybe (sum)
-                                  (Maybe.ap (liturgicalChants.lookup (e.get ('id'))
-                                    .fmap (getAPForSpellOrChant))
-                                            (Maybe.return (e)))
+                                  (Maybe.ap
+                                    (
+                                      liturgicalChants
+                                        .lookup (e.get ('id'))
+                                        .fmap (getAPForSpellOrChant)
+                                    )
+                                    (Maybe.return (e))
+                                    .fmap (R.add (sum)))
     ) (0);
 
 const getAPSpentForCantrips: (cantrips: OrderedSet<string>) => number = OrderedSet.size;
