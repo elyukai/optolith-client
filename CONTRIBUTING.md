@@ -98,7 +98,7 @@ add 2 3
 
 ### Methods
 
-If you need to use a class (e.g. the custom data structures *Maybe*, *List* a.s.o. are implementes as classes, consider the following styistic rules for using methods:
+If you need to use a class (e.g. the custom data structures *Maybe*, *List* a.s.o. are implemented as classes, consider the following styistic rules for using methods:
 
 ```ts
 // bad

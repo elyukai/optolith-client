@@ -1,32 +1,35 @@
 import * as React from 'react';
 import { SecondaryAttribute } from '../../types/data';
-import { UIMessages } from '../../types/ui';
+import { UIMessagesObject } from '../../types/ui';
+import { List, Record } from '../../utils/dataUtils';
 import { AttributeCalcItem } from './AttributeCalcItem';
 
 export interface AttributesCalcProps {
-  derived: SecondaryAttribute[];
-  locale: UIMessages;
+  derived: List<Record<SecondaryAttribute>>;
+  locale: UIMessagesObject;
   isInCharacterCreation: boolean;
   isRemovingEnabled: boolean;
-  addLifePoint(): void;
-  addArcaneEnergyPoint(): void;
-  addKarmaPoint(): void;
-  removeLifePoint(): void;
-  removeArcaneEnergyPoint(): void;
-  removeKarmaPoint(): void;
+  addLifePoint (): void;
+  addArcaneEnergyPoint (): void;
+  addKarmaPoint (): void;
+  removeLifePoint (): void;
+  removeArcaneEnergyPoint (): void;
+  removeKarmaPoint (): void;
 }
 
-export function AttributeCalc(props: AttributesCalcProps) {
+export function AttributeCalc (props: AttributesCalcProps) {
   return (
     <div className="calculated">
       {
-        props.derived.map(attribute => (
-          <AttributeCalcItem
-            {...props}
-            key={attribute.id}
-            attribute={attribute}
-            />
-        ))
+        props.derived
+          .map (attribute => (
+            <AttributeCalcItem
+              {...props}
+              key={attribute .get ('id')}
+              attribute={attribute}
+              />
+          ))
+          .toArray ()
       }
     </div>
   );

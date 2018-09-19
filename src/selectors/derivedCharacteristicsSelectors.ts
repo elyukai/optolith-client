@@ -34,8 +34,8 @@ export const getLP = createMaybeSelector (
       )
     );
 
-    const lost = permanentLifePoints.fmap (permanent => -permanent.get ('lost'));
-    const mod = getModifierByActiveLevel (maybeIncrease) (maybeDecrease) (lost);
+    const lost = permanentLifePoints.fmap (permanent => permanent.get ('lost'));
+    const mod = getModifierByActiveLevel (maybeIncrease) (maybeDecrease) (lost .fmap (R.negate));
 
     const value = Just (base + mod + Maybe.fromMaybe (0) (add));
 
@@ -205,7 +205,7 @@ export const getSPI = createMaybeSelector (
       base: Maybe.fromMaybe (0) (maybeBase),
       calc: translate (locale, 'secondaryattributes.spi.calc'),
       id: 'SPI',
-      mod,
+      mod: Just (mod),
       name: translate (locale, 'secondaryattributes.spi.name'),
       short: translate (locale, 'secondaryattributes.spi.short'),
       value,
@@ -243,7 +243,7 @@ export const getTOU = createMaybeSelector (
       base: Maybe.fromMaybe (0) (maybeBase),
       calc: translate (locale, 'secondaryattributes.tou.calc'),
       id: 'TOU',
-      mod,
+      mod: Just (mod),
       name: translate (locale, 'secondaryattributes.tou.name'),
       short: translate (locale, 'secondaryattributes.tou.short'),
       value,
@@ -258,14 +258,13 @@ export const getDO = createMaybeSelector (
   (maybeAgi, maybeImprovedDodge, locale) => {
     const maybeBase = maybeAgi.fmap (agi => Math.round (agi.get ('value') / 2));
 
-    const mod = Maybe.fromMaybe (0) (
+    const mod =
       maybeImprovedDodge
         .fmap (improvedDodge => improvedDodge.get ('active'))
         .bind (Maybe.listToMaybe)
-        .bind (obj => obj.lookup ('tier'))
-    );
+        .bind (obj => obj.lookup ('tier'));
 
-    const value = maybeBase.fmap (base => base + mod);
+    const value = Maybe.liftM2<number, number, number> (R.add) (maybeBase) (mod);
 
     return Record.ofMaybe<SecondaryAttribute<'DO'>> ({
       calc: translate (locale, 'secondaryattributes.do.calc'),
@@ -295,14 +294,13 @@ export const getINI = createMaybeSelector (
                                    (maybeCou)
                                    (maybeAgi);
 
-    const mod = Maybe.fromMaybe (0) (
+    const mod =
       maybeCombatReflexes
         .fmap (combatReflexes => combatReflexes.get ('active'))
         .bind (Maybe.listToMaybe)
-        .bind (obj => obj.lookup ('tier'))
-    );
+        .bind (obj => obj.lookup ('tier'));
 
-    const value = maybeBase.fmap (R.add (mod));
+    const value = Maybe.liftM2<number, number, number> (R.add) (maybeBase) (mod);
 
     return Record.ofMaybe<SecondaryAttribute<'INI'>> ({
       calc: translate (locale, 'secondaryattributes.ini.calc'),
@@ -342,7 +340,7 @@ export const getMOV = createMaybeSelector (
       name: translate (locale, 'secondaryattributes.mov.name'),
       short: translate (locale, 'secondaryattributes.mov.short'),
       base: Maybe.fromMaybe (0) (maybeBase),
-      mod,
+      mod: Just (mod),
       value,
     });
   }
@@ -366,7 +364,7 @@ export const getWT = createMaybeSelector (
       name: translate (locale, 'secondaryattributes.ws.name'),
       short: translate (locale, 'secondaryattributes.ws.short'),
       base: Maybe.fromMaybe (0) (maybeBase),
-      mod,
+      mod: Just (mod),
       value,
     });
   }

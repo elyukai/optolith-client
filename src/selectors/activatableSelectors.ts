@@ -5,6 +5,7 @@ import * as Wiki from '../types/wiki';
 import { getAllActiveByCategory } from '../utils/activatableActiveUtils';
 import { getModifierByActiveLevel, getModifierByIsActive } from '../utils/activatableModifierUtils';
 import { getBracketedNameFromFullName } from '../utils/activatableNameUtils';
+import { getDisAdvantagesSubtypeMax } from '../utils/adventurePointsUtils';
 import { createMaybeSelector } from '../utils/createMaybeSelector';
 import { Just, List, Maybe, Nothing, OrderedMap, Record } from '../utils/dataUtils';
 import { AllSortOptions, filterAndSortObjects } from '../utils/FilterSortUtils';
@@ -299,4 +300,9 @@ export const isAlbino = createMaybeSelector (
     getActiveSelections,
     Maybe.fmap (List.elem<string | number> (1))
   )
+);
+
+export const getCurrentDisAdvantagesSubtypeMax = createMaybeSelector (
+  getCurrentHeroPresent,
+  Maybe.fmap (getDisAdvantagesSubtypeMax (true))
 );

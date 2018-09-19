@@ -1,16 +1,25 @@
 import * as React from 'react';
+import { Maybe } from '../utils/dataUtils';
 
 export interface NumberBoxProps {
-  current?: number;
-  max: number;
+  current?: Maybe<number> | number;
+  max?: Maybe<number> | number;
 }
 
-export function NumberBox(props: NumberBoxProps) {
+export function NumberBox (props: NumberBoxProps) {
   const { current, max } = props;
+
+  const maybeCurrent = current instanceof Maybe ? current : Maybe.fromNullable (current);
+  const maybeMax = max instanceof Maybe ? max : Maybe.fromNullable (max);
+
   return (
     <div className="number-box">
-      { typeof current === 'number' ? <span className="current">{current}</span> : null }
-      { typeof max === 'number' ? <span className="max">{max}</span> : null }
+      {Maybe.fromMaybe
+        (<></>)
+        (maybeCurrent .fmap (trueCurrent => (<span className="current">{trueCurrent}</span>)))}
+      {Maybe.fromMaybe
+        (<></>)
+        (maybeMax .fmap (trueMax => (<span className="max">{trueMax}</span>)))}
     </div>
   );
 }

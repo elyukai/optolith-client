@@ -1,5 +1,5 @@
-import { connect, Dispatch } from 'react-redux';
-import { Action } from 'redux';
+import { connect } from 'react-redux';
+import { Action, Dispatch } from 'redux';
 import * as HerolistActions from '../actions/HerolistActions';
 import * as HistoryActions from '../actions/HistoryActions';
 import * as InGameActions from '../actions/InGameActions';
@@ -36,7 +36,7 @@ const mapStateToProps = (state: AppState, ownProps: { locale: UIMessagesObject }
 });
 
 const mapDispatchToProps = (
-  dispatch: Dispatch<Action>,
+  dispatch: Dispatch<Action, AppState>,
   ownProps: { locale: UIMessagesObject }
 ) => ({
   setTab (id: TabId) {
@@ -59,7 +59,7 @@ const mapDispatchToProps = (
   },
   saveGroup () {
     dispatch (InGameActions._save ());
-  }
+  },
 });
 
 const connectNavigationBarContainer =

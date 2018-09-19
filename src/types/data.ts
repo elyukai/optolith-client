@@ -478,7 +478,7 @@ export interface SecondaryAttribute<I extends DCIds = DCIds> {
   calc: string;
   base: number;
   add?: number;
-  mod: number;
+  mod?: number;
   value?: number;
   maxAdd?: number;
   currentAdd?: number;

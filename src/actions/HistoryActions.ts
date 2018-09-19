@@ -14,8 +14,8 @@ export const undo = (): AsyncAction => (dispatch, getState) => {
   dispatch ({
     type: ActionTypes.UNDO,
     payload: {
-      books: getWikiBooks (getState ())
-    }
+      books: getWikiBooks (getState ()),
+    },
   });
 };
 
@@ -24,5 +24,5 @@ export interface RedoAction {
 }
 
 export const redo = (): RedoAction => ({
-  type: ActionTypes.REDO
+  type: ActionTypes.REDO,
 });

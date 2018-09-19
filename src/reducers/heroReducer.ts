@@ -30,11 +30,10 @@ export const heroReducer = undoExisting (
     applyRCPSelectionsReducer
   ),
   [
-    ActionTypes.RECEIVE_INITIAL_DATA,
-    ActionTypes.CREATE_HERO,
-    ActionTypes.LOAD_HERO,
     ActionTypes.ASSIGN_RCP_OPTIONS,
     ActionTypes.SAVE_HERO,
+  ],
+  [
     ActionTypes.CREATE_ITEM,
     ActionTypes.CLOSE_ITEM_EDITOR,
     ActionTypes.EDIT_ITEM,

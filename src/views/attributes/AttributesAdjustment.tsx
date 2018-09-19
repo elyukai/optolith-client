@@ -1,33 +1,55 @@
 import * as React from 'react';
 import { Dropdown } from '../../components/Dropdown';
-import { UIMessages } from '../../types/ui';
-import { Attribute } from '../../types/view';
-import { translate } from '../../utils/I18n';
+import { AttributeWithRequirements } from '../../types/view';
+import { Just, List, Maybe, Record } from '../../utils/dataUtils';
+import { translate, UIMessagesObject } from '../../utils/I18n';
 import { sign } from '../../utils/NumberUtils';
 
 export interface AttributesAdjustmentProps {
-  adjustmentValue: number | undefined;
-  attributes: Attribute[];
-  availableAttributeIds: string[] | undefined;
-  currentAttributeId: string | undefined;
-  locale: UIMessages;
-  setAdjustmentId(id: string): void;
+  adjustmentValue: Maybe<number>;
+  attributes: List<Record<AttributeWithRequirements>>;
+  availableAttributeIds: Maybe<List<string>>;
+  currentAttributeId: Maybe<string>;
+  locale: UIMessagesObject;
+  setAdjustmentId (id: Maybe<string>): void;
 }
 
-export function AttributesAdjustment(props: AttributesAdjustmentProps) {
-  const { attributes, locale, currentAttributeId, adjustmentValue, availableAttributeIds, setAdjustmentId } = props;
+export function AttributesAdjustment (props: AttributesAdjustmentProps) {
+  const {
+    attributes,
+    locale,
+    currentAttributeId,
+    adjustmentValue: maybeAdjustmentValue,
+    availableAttributeIds: maybeAvailableAttributeIds,
+    setAdjustmentId,
+  } = props;
+
   return (
     <div className="attribute-adjustment">
-      <span className="label">{translate(locale, 'attributeadjustmentselection')}</span>
-      {availableAttributeIds && adjustmentValue && <Dropdown
-        options={attributes.filter(e => availableAttributeIds.includes(e.id)).map(({ id, name }) => ({
-          id,
-          name: `${name} ${sign(adjustmentValue)}`
-        }))}
-        value={currentAttributeId}
-        onChange={setAdjustmentId}
-        disabled={currentAttributeId === undefined || availableAttributeIds.length === 1}
-        />}
+      <span className="label">{translate (locale, 'attributeadjustmentselection')}</span>
+      {Maybe.fromMaybe
+        (<></>)
+        (Maybe.liftM2<List<string>, number, JSX.Element>
+          (availableAttributeIds => adjustmentValue => (
+            <Dropdown
+              options={
+                attributes
+                  .filter (e => availableAttributeIds.elem (e .get ('id')))
+                  .map (e => ({
+                    id: Just (e .get ('id')),
+                    name: `${e .get ('name')} ${sign (adjustmentValue)}`,
+                  }))
+              }
+              value={currentAttributeId}
+              onChange={setAdjustmentId}
+              disabled={
+                Maybe.isNothing (currentAttributeId)
+                || availableAttributeIds.length () === 1
+              }
+              />
+          ))
+          (maybeAvailableAttributeIds)
+          (maybeAdjustmentValue))}
     </div>
   );
 }

@@ -12,14 +12,13 @@ import { TextField } from '../../components/TextField';
 import { WikiInfoContainer } from '../../containers/WikiInfo';
 import { AdventurePointsObject } from '../../selectors/adventurePointsSelectors';
 import { ActivateArgs, ActiveViewObject, AdvantageInstance, DeactivateArgs, DeactiveViewObject, InputTextEvent, Instance, ToListById } from '../../types/data';
-import { UIMessages } from '../../types/ui';
-import { translate } from '../../utils/I18n';
+import { translate, UIMessagesObject } from '../../utils/I18n';
 import { ActiveList } from './ActiveList';
 import { AdvantagesDisadvantagesAdventurePoints } from './AdvantagesDisadvantagesAdventurePoints';
 import { DeactiveList } from './DeactiveList';
 
 export interface AdvantagesOwnProps {
-  locale: UIMessages;
+  locale: UIMessagesObject;
 }
 
 export interface AdvantagesStateProps {

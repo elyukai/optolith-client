@@ -11,7 +11,7 @@ export interface AttributeBorderProps {
   value: number | string;
 }
 
-export function AttributeBorder(props: AttributeBorderProps) {
+export function AttributeBorder (props: AttributeBorderProps) {
   const { children, className, label, tooltip, tooltipMargin, value } = props;
 
   const valueElement = tooltip ? (
@@ -23,7 +23,7 @@ export function AttributeBorder(props: AttributeBorderProps) {
   );
 
   return (
-    <div className={classNames('attr', className)}>
+    <div className={classNames ('attr', className)}>
       <div className="short">{label}</div>
       {valueElement}
       {children}
