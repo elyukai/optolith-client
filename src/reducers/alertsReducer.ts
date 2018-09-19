@@ -16,7 +16,7 @@ export function alertsReducer (
       return state.cons (action.payload);
 
     case ActionTypes.REMOVE_ALERT:
-      return Maybe.fromMaybe (state) (List.uncons (state).fmap(Tuple.snd));
+      return Maybe.fromMaybe (state) (List.uncons (state) .fmap (Tuple.snd));
 
     default:
       return state;

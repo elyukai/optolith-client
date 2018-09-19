@@ -5,8 +5,8 @@ import { InputKeyEvent, InputTextEvent } from '../../types/data';
 
 interface Props {
   name: string;
-  cancel(): void;
-  change(name: string): void;
+  cancel (): void;
+  change (name: string): void;
 }
 
 interface State {
@@ -18,17 +18,17 @@ export class OverviewNameChange extends React.Component<Props, State> {
     name: this.props.name,
   };
 
-  change = () => this.props.change(this.state.name);
+  change = () => this.props.change (this.state.name);
 
   handleEnter = (event: InputKeyEvent) => {
     if (event.charCode === 13 && this.state.name !== '') {
-      this.change();
+      this.change ();
     }
   }
 
-  handleInput = (event: InputTextEvent) => this.setState({ name: event.target.value } as State);
+  handleInput = (event: InputTextEvent) => this.setState (() => ({ name: event.target.value }));
 
-  render() {
+  render () {
     return (
       <div className="change-name">
         <TextField

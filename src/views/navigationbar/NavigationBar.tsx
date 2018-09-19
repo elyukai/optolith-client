@@ -5,7 +5,7 @@ import { BorderButton } from '../../components/BorderButton';
 import { IconButton } from '../../components/IconButton';
 import { Text } from '../../components/Text';
 import { TooltipToggle } from '../../components/TooltipToggle';
-import { SettingsContainer } from '../../containers/Settings';
+import { SettingsContainer } from '../../containers/SettingsContainer';
 import { AdventurePointsObject } from '../../selectors/adventurePointsSelectors';
 import { SubTab } from '../../types/data';
 import { UIMessagesObject } from '../../types/ui';

@@ -93,6 +93,17 @@ export class List<T> implements Al.Monad<T>, Al.Foldable<T>, Al.Semigroup<T>,
   }
 
   /**
+   * `(:) :: a -> [a] -> [a]`
+   *
+   * Prepends an element to the list.
+   *
+   * Same as `List.cons` but with arguments flipped.
+   */
+  static cons_<T> (e: T): (list: List<T>) => List<T> {
+    return list => List.of (e, ...list.value);
+  }
+
+  /**
    * `(!!) :: [a] -> Int -> Maybe a`
    *
    * List index (subscript) operator, starting from 0. If the index is invalid,
@@ -378,6 +389,17 @@ export class List<T> implements Al.Monad<T>, Al.Foldable<T>, Al.Semigroup<T>,
    */
   intercalate (this: List<number | string>, separator: string): string {
     return this.value.join (separator);
+  }
+
+  /**
+   * `intercalate :: [a] -> [[a]] -> [a]`
+   *
+   * `intercalate xs xss` is equivalent to `(concat (intersperse xs xss))`. It
+   * inserts the list `xs` in between the lists in `xss` and concatenates the
+   * result.
+   */
+  static intercalate (separator: string): (list: List<number | string>) => string {
+    return list => list.value.join (separator);
   }
 
   // REDUCING LISTS (FOLDS)
@@ -719,8 +741,6 @@ f' z       = Nothing
       : List.fromArray (this.value.slice (0, length));
   }
 
-  // EXTRACTING SUBLISTS
-
   /**
    * `take :: Int -> [a] -> [a]`
    *
@@ -731,6 +751,30 @@ f' z       = Nothing
     return list => list.value.length < length
       ? list
       : List.fromArray (list.value.slice (0, length));
+  }
+
+  /**
+   * `drop :: Int -> [a] -> [a]`
+   *
+   * `drop n xs` returns the suffix of `xs` after the first `n` elements, or
+   * `[]` if `n > length x`.
+   */
+  static drop<T> (length: number): (list: List<T>) => List<T> {
+    return list => list.value.length < length
+      ? List.empty ()
+      : List.fromArray (list.value.slice (length));
+  }
+
+  /**
+   * `splitAt :: Int -> [a] -> ([a], [a])`
+   *
+   * `splitAt n xs` returns a tuple where first element is `xs` prefix of length
+   * `n` and second element is the remainder of the list.
+   */
+  static splitAt<T> (length: number): (list: List<T>) => Tuple<List<T>, List<T>> {
+    return list => Tuple.of<List<T>, List<T>>
+      (List.fromArray (list.value.slice (0, length)))
+      (List.fromArray (list.value.slice (length)));
   }
 
   // SEARCHING BY EQUALITY

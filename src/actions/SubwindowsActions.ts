@@ -11,8 +11,8 @@ export const openEditPermanentEnergy =
   (energy: 'LP' | 'AE' | 'KP'): OpenEditPermanentEnergyAction => ({
     type: ActionTypes.OPEN_EDIT_PERMANENT_ENERGY,
     payload: {
-      energy
-    }
+      energy,
+    },
   });
 
 export interface CloseEditPermanentEnergyAction {
@@ -20,7 +20,7 @@ export interface CloseEditPermanentEnergyAction {
 }
 
 export const closeEditPermanentEnergy = (): CloseEditPermanentEnergyAction => ({
-  type: ActionTypes.CLOSE_EDIT_PERMANENT_ENERGY
+  type: ActionTypes.CLOSE_EDIT_PERMANENT_ENERGY,
 });
 
 export interface OpenAddPermanentEnergyLossAction {
@@ -34,8 +34,8 @@ export const openAddPermanentEnergyLoss =
   (energy: 'LP' | 'AE' | 'KP'): OpenAddPermanentEnergyLossAction => ({
     type: ActionTypes.OPEN_ADD_PERMANENT_ENERGY_LOSS,
     payload: {
-      energy
-    }
+      energy,
+    },
   });
 
 export interface CloseAddPermanentEnergyLossAction {
@@ -43,7 +43,7 @@ export interface CloseAddPermanentEnergyLossAction {
 }
 
 export const closeAddPermanentEnergyLoss = (): CloseAddPermanentEnergyLossAction => ({
-  type: ActionTypes.CLOSE_ADD_PERMANENT_ENERGY_LOSS
+  type: ActionTypes.CLOSE_ADD_PERMANENT_ENERGY_LOSS,
 });
 
 export interface OpenCharacterCreatorAction {
@@ -51,7 +51,7 @@ export interface OpenCharacterCreatorAction {
 }
 
 export const openCharacterCreator = (): OpenCharacterCreatorAction => ({
-  type: ActionTypes.OPEN_CHARACTER_CREATOR
+  type: ActionTypes.OPEN_CHARACTER_CREATOR,
 });
 
 export interface CloseCharacterCreatorAction {
@@ -59,7 +59,7 @@ export interface CloseCharacterCreatorAction {
 }
 
 export const closeCharacterCreator = (): CloseCharacterCreatorAction => ({
-  type: ActionTypes.CLOSE_CHARACTER_CREATOR
+  type: ActionTypes.CLOSE_CHARACTER_CREATOR,
 });
 
 export interface OpenSettingsAction {
@@ -67,7 +67,7 @@ export interface OpenSettingsAction {
 }
 
 export const openSettings = (): OpenSettingsAction => ({
-  type: ActionTypes.OPEN_SETTINGS
+  type: ActionTypes.OPEN_SETTINGS,
 });
 
 export interface CloseSettingsAction {
@@ -75,7 +75,7 @@ export interface CloseSettingsAction {
 }
 
 export const closeSettings = (): CloseSettingsAction => ({
-  type: ActionTypes.CLOSE_SETTINGS
+  type: ActionTypes.CLOSE_SETTINGS,
 });
 
 export interface OpenAddAdventurePointsAction {
@@ -83,7 +83,7 @@ export interface OpenAddAdventurePointsAction {
 }
 
 export const openAddAdventurePoints = (): OpenAddAdventurePointsAction => ({
-  type: ActionTypes.OPEN_ADD_ADVENTURE_POINTS
+  type: ActionTypes.OPEN_ADD_ADVENTURE_POINTS,
 });
 
 export interface CloseAddAdventurePointsAction {
@@ -91,7 +91,7 @@ export interface CloseAddAdventurePointsAction {
 }
 
 export const closeAddAdventurePoints = (): CloseAddAdventurePointsAction => ({
-  type: ActionTypes.CLOSE_ADD_ADVENTURE_POINTS
+  type: ActionTypes.CLOSE_ADD_ADVENTURE_POINTS,
 });
 
 export interface OpenEditCharacterAvatarAction {
@@ -99,7 +99,7 @@ export interface OpenEditCharacterAvatarAction {
 }
 
 export const openEditCharacterAvatar = (): OpenEditCharacterAvatarAction => ({
-  type: ActionTypes.OPEN_EDIT_CHARACTER_AVATAR
+  type: ActionTypes.OPEN_EDIT_CHARACTER_AVATAR,
 });
 
 export interface CloseEditCharacterAvatarAction {
@@ -107,7 +107,7 @@ export interface CloseEditCharacterAvatarAction {
 }
 
 export const closeEditCharacterAvatar = (): CloseEditCharacterAvatarAction => ({
-  type: ActionTypes.CLOSE_EDIT_CHARACTER_AVATAR
+  type: ActionTypes.CLOSE_EDIT_CHARACTER_AVATAR,
 });
 
 export interface OpenEditPetAvatarAction {
@@ -115,7 +115,7 @@ export interface OpenEditPetAvatarAction {
 }
 
 export const openEditPetAvatar = (): OpenEditPetAvatarAction => ({
-  type: ActionTypes.OPEN_EDIT_PET_AVATAR
+  type: ActionTypes.OPEN_EDIT_PET_AVATAR,
 });
 
 export interface CloseEditPetAvatarAction {
@@ -123,5 +123,5 @@ export interface CloseEditPetAvatarAction {
 }
 
 export const closeEditPetAvatar = (): CloseEditPetAvatarAction => ({
-  type: ActionTypes.CLOSE_EDIT_PET_AVATAR
+  type: ActionTypes.CLOSE_EDIT_PET_AVATAR,
 });

@@ -13,8 +13,8 @@ export interface SetTabAction {
 export const setTab = (tab: TabId): SetTabAction => ({
   type: ActionTypes.SET_TAB,
   payload: {
-    tab
-  }
+    tab,
+  },
 });
 
 export const showAbout: AsyncAction = (dispatch, getState) => {

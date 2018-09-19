@@ -2,7 +2,7 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
 import { findDOMNode } from 'react-dom';
-import { Maybe } from '../utils/dataUtils';
+import { Just, Maybe, Nothing } from '../utils/dataUtils';
 import { Label } from './Label';
 
 export interface TextFieldProps {
@@ -12,7 +12,7 @@ export interface TextFieldProps {
   countMax?: number;
   disabled?: boolean;
   fullWidth?: boolean;
-  hint?: string;
+  hint?: Maybe<string> | string;
   label?: string;
   multiLine?: boolean;
   onChange (event: React.FormEvent<HTMLInputElement>): void;
@@ -38,7 +38,7 @@ export class TextField extends React.Component<TextFieldProps, {}> {
       countMax,
       disabled,
       fullWidth,
-      hint,
+      hint: maybeHint = Nothing (),
       label,
       onChange,
       onKeyDown,
@@ -52,8 +52,15 @@ export class TextField extends React.Component<TextFieldProps, {}> {
         ? Maybe.fromMaybe<string | number> ('') (value)
         : value;
 
-    const hintElement = hint && (
-      <div className={classNames ('textfield-hint', trueValue && 'hide')}>{hint}</div>
+    const trueHint =
+      maybeHint instanceof Maybe
+        ? maybeHint
+        : Just (maybeHint);
+
+    const hintElement = trueHint .fmap (
+      hint => (
+        <div className={classNames ('textfield-hint', trueValue && 'hide')}>{hint}</div>
+      )
     );
 
     // const inputElement = this.props.multiLine ? (
@@ -95,7 +102,7 @@ export class TextField extends React.Component<TextFieldProps, {}> {
       })}>
         {label && <Label text={label} />}
         {inputElement}
-        {hintElement}
+        {Maybe.fromMaybe (<></>) (hintElement)}
         {counterTextElement}
       </div>
     );

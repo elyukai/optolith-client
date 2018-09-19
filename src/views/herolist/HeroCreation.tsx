@@ -29,7 +29,7 @@ export interface HeroCreationProps extends DialogProps {
 
 export interface HeroCreationState {
   name: string;
-  gender: Maybe<'m' | 'f'>;
+  sex: Maybe<'m' | 'f'>;
   el: Maybe<string>;
   enableAllRuleBooks: boolean;
   enabledRuleBooks: OrderedSet<string>;
@@ -40,20 +40,20 @@ export class HeroCreation extends React.Component<HeroCreationProps, HeroCreatio
     name: '',
     enableAllRuleBooks: false,
     enabledRuleBooks: OrderedSet.empty (),
-    gender: Nothing (),
-    el: Nothing ()
+    sex: Nothing (),
+    el: Nothing (),
   };
 
   changeName = (event: InputTextEvent) => this.setState (() => ({ name: event.target.value }));
-  changeGender = (gender: string) => this.setState (() => ({ gender }));
+  changeGender = (sex: Maybe<'m' | 'f'>) => this.setState (() => ({ sex }));
   changeEL = (el: Maybe<string>) => this.setState (() => ({ el }));
   create = () => {
-    const { name, gender, el, enableAllRuleBooks, enabledRuleBooks } = this.state;
+    const { name, sex, el, enableAllRuleBooks, enabledRuleBooks } = this.state;
 
-    if (name.length > 0 && Maybe.isJust (gender) && Maybe.isJust (el)) {
+    if (name.length > 0 && Maybe.isJust (sex) && Maybe.isJust (el)) {
       this.props.createHero (
         name,
-        Maybe.fromJust (gender),
+        Maybe.fromJust (sex),
         Maybe.fromJust (el),
         enableAllRuleBooks,
         enabledRuleBooks
@@ -79,7 +79,7 @@ export class HeroCreation extends React.Component<HeroCreationProps, HeroCreatio
       () => ({
         enabledRuleBooks: enabledRuleBooks .member (id)
           ? enabledRuleBooks .delete (id)
-          : enabledRuleBooks .insert (id)
+          : enabledRuleBooks .insert (id),
       })
     );
   }
@@ -106,7 +106,7 @@ export class HeroCreation extends React.Component<HeroCreationProps, HeroCreatio
         close={this.close}
         buttons={[
           {
-            disabled: this.state.name === '' || !this.state.gender || !this.state.el,
+            disabled: this.state.name === '' || !this.state.sex || !this.state.el,
             label: translate (locale, 'herocreation.actions.start'),
             onClick: this.create,
             primary: true,
@@ -121,16 +121,16 @@ export class HeroCreation extends React.Component<HeroCreationProps, HeroCreatio
           autoFocus
           />
         <SegmentedControls
-          active={this.state.gender}
+          active={this.state.sex}
           onClick={this.changeGender}
           options={List.of<Option<Maybe<'m' | 'f'>>> (
             {
               value: Just<'m'> ('m'),
-              name: translate (locale, 'herocreation.options.selectsex.male')
+              name: translate (locale, 'herocreation.options.selectsex.male'),
             },
             {
               value: Just<'f'> ('f'),
-              name: translate (locale, 'herocreation.options.selectsex.female')
+              name: translate (locale, 'herocreation.options.selectsex.female'),
             }
           )}
           />

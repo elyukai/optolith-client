@@ -35,7 +35,7 @@ export function rulesReducer (
 
       return state.modify<'rules'> (
         rules => rules.modify<'enabledRuleBooks'> (
-          set => set.member (id) ? set.insert (id) : set.delete (id)
+          set => set.member (id) ? set.delete (id) : set.insert (id)
         ) ('enabledRuleBooks')
       ) ('rules');
     }

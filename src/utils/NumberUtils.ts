@@ -13,7 +13,7 @@ const romanNumbers: List<string> = List.of (
   'X',
   'XI',
   'XII',
-  'XIII',
+  'XIII'
 );
 
 /**

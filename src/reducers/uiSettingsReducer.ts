@@ -100,7 +100,7 @@ const initialState: UISettingsState = {
   sheetCheckAttributeValueVisibility: false,
   theme: 'dark',
   enableEditingHeroAfterCreationPhase: false,
-  enableAnimations: true
+  enableAnimations: true,
 };
 
 function sortOrderReducer (
@@ -164,7 +164,7 @@ export function uiSettingsReducer (
     case ActionTypes.SWITCH_SHEET_ATTRIBUTE_VALUE_VISIBILITY:
       return {
         ...state,
-        sheetCheckAttributeValueVisibility: !state.sheetCheckAttributeValueVisibility
+        sheetCheckAttributeValueVisibility: !state.sheetCheckAttributeValueVisibility,
       };
 
     case ActionTypes.SET_COMBATTECHNIQUES_SORT_ORDER:
@@ -192,7 +192,7 @@ export function uiSettingsReducer (
       return {
         ...state,
         advantagesDisadvantagesCultureRatingVisibility:
-          !state.advantagesDisadvantagesCultureRatingVisibility
+          !state.advantagesDisadvantagesCultureRatingVisibility,
       };
 
     case ActionTypes.SET_HEROLIST_VISIBILITY_FILTER:
@@ -207,7 +207,7 @@ export function uiSettingsReducer (
     case ActionTypes.SWITCH_PROFESSIONS_EXPANSION_VISIBILITY_FILTER:
       return {
         ...state,
-        professionsFromExpansionsVisibility: !state.professionsFromExpansionsVisibility
+        professionsFromExpansionsVisibility: !state.professionsFromExpansionsVisibility,
       };
 
     case ActionTypes.SWITCH_RACE_VALUE_VISIBILITY:
@@ -222,7 +222,7 @@ export function uiSettingsReducer (
     case ActionTypes.SWITCH_ENABLE_EDITING_HERO_AFTER_CREATION_PHASE:
       return {
         ...state,
-        enableEditingHeroAfterCreationPhase: !state.enableEditingHeroAfterCreationPhase
+        enableEditingHeroAfterCreationPhase: !state.enableEditingHeroAfterCreationPhase,
       };
 
     case ActionTypes.SET_MELEE_ITEM_TEMPLATES_COMBAT_TECHNIQUE_FILTER:

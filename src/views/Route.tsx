@@ -17,7 +17,7 @@ import { PersonalDataContainer } from '../containers/PersonalDataContainer';
 import { PetsContainer } from '../containers/Pets';
 import { ProfessionsContainer } from '../containers/Professions';
 import { RacesContainer } from '../containers/Races';
-import { RulesContainer } from '../containers/Rules';
+import { RulesContainer } from '../containers/RulesContainer';
 import { SheetsContainer } from '../containers/SheetsContainer';
 import { SpecialAbilitiesContainer } from '../containers/SpecialAbilities';
 import { SpellsContainer } from '../containers/Spells';

@@ -137,7 +137,8 @@ export const getAllItems = createMaybeSelector (
   getItemsState,
   getArmorZonesState,
   getWikiItemTemplates,
-  (maybeItems, maybeZoneArmors, templates) =>
+  getLocaleAsProp,
+  (maybeItems, maybeZoneArmors, templates, locale) =>
     Maybe.liftM2 ((items: RecordInterface<HeroDependent['belongings']>['items']) =>
                     (zoneArmors: RecordInterface<HeroDependent['belongings']>['armorZones']) => {
                       const rawItems = OrderedMap.elems (items);
@@ -205,7 +206,7 @@ export const getAllItems = createMaybeSelector (
                           amount: 1,
                           price: priceTotal,
                           weight: weightTotal,
-                          gr: 4
+                          gr: 4,
                         });
                       });
 
@@ -213,6 +214,7 @@ export const getAllItems = createMaybeSelector (
                     })
                  (maybeItems)
                  (maybeZoneArmors)
+      .fmap (list => sortObjects (list, locale .get ('id')))
 );
 
 export const getTotalPrice = createMaybeSelector (
@@ -345,7 +347,7 @@ export const getMeleeWeapons = createMaybeSelector (
                       isImprovisedWeapon: fullItem.member ('improvisedWeaponGroup'),
                       isTwoHandedWeapon:
                         fullItem.lookupWithDefault<'isTwoHandedWeapon'> (false)
-                                                                        ('isTwoHandedWeapon')
+                                                                        ('isTwoHandedWeapon'),
                     })
                   );
                 }
@@ -414,7 +416,7 @@ export const getRangedWeapons = createMaybeSelector (
 
 export const getStabilityByArmorTypeId = R.pipe (
   R.dec,
-  List.of (4, 5, 6, 8, 9, 13, 12, 11, 10).subscript
+  List.subscript (List.of (4, 5, 6, 8, 9, 13, 12, 11, 10))
 );
 
 export const getEncumbranceZoneTier = List.of (0, 0, 1, 1, 2, 2, 3, 4, 5, 6, 7, 8).subscript;
@@ -533,7 +535,7 @@ export const getShieldsAndParryingWeapons = createMaybeSelector (
               .bind (
                 id => OrderedMap.lookup<string, Record<CombatTechnique>>
                   (id)
-                  (wiki.get ('combatTechnique'))
+                  (wiki.get ('combatTechniques'))
               )
               .fmap (
                 wikiEntry => Record.ofMaybe<ShieldOrParryingWeapon> ({

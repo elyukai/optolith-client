@@ -50,7 +50,7 @@ export function ApTooltip (props: ApTooltipProps) {
           {translate (
             locale,
             'titlebar.adventurepoints.disadvantages',
-            -ap.get ('spentOnDisadvantages'),
+            ap.get ('spentOnDisadvantages'),
             80
           )}
         </span>
@@ -58,7 +58,7 @@ export function ApTooltip (props: ApTooltipProps) {
           {ap.get ('spentOnMagicalDisadvantages') > 0 && translate (
             locale,
             'titlebar.adventurepoints.disadvantagesmagic',
-            -ap.get ('spentOnMagicalDisadvantages'),
+            ap.get ('spentOnMagicalDisadvantages'),
             Maybe.fromMaybe (0) (props.maximumForMagicalAdvantagesDisadvantages)
           )}
         </span>
@@ -66,7 +66,7 @@ export function ApTooltip (props: ApTooltipProps) {
           {ap.get ('spentOnBlessedDisadvantages') > 0 && translate (
             locale,
             'titlebar.adventurepoints.disadvantagesblessed',
-            -ap.get ('spentOnBlessedDisadvantages'),
+            ap.get ('spentOnBlessedDisadvantages'),
             50
           )}
         </span>

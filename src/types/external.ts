@@ -47,7 +47,7 @@ declare module 'react-textfit' {
     /**
      * Will be called when text is fitted.
      */
-    onReady?(): void;
+    onReady? (): void;
   }
 
   export class Textfit extends React.Component<TextfitProps> {}
@@ -141,7 +141,7 @@ declare module 'react-markdown' {
      * receive three arguments argument (`node`, `index`, `parent`), where node
      * contains different properties depending on the node type.
      */
-    allowNode?(node: object, index: number, parent: NodeTypes): boolean;
+    allowNode? (node: object, index: number, parent: NodeTypes): boolean;
     /**
      * Function that gets called for each encountered link with a single
      * argument - `uri`. The returned value is used in place of the original.
@@ -194,7 +194,7 @@ declare module 'electron-localshortcut' {
      * still return false. This behavior is intended by operating systems, since they
      * don't want applications to fight for global shortcuts.
      */
-    export function isRegistered(window: BrowserWindow, accelerator: Accelerator): boolean;
+    export function isRegistered (window: BrowserWindow, accelerator: Accelerator): boolean;
     /**
      * Registers a global shortcut of accelerator. The callback is called when the
      * registered shortcut is pressed by the user. When the accelerator is already
@@ -202,7 +202,7 @@ declare module 'electron-localshortcut' {
      * intended by operating systems, since they don't want applications to fight for
      * global shortcuts.
      */
-    export function register(
+    export function register (
       window: BrowserWindow,
       accelerator: Accelerator,
       callback: Function
@@ -210,11 +210,11 @@ declare module 'electron-localshortcut' {
     /**
      * Unregisters the global shortcut of accelerator.
      */
-    export function unregister(window: BrowserWindow, accelerator: Accelerator): void;
+    export function unregister (window: BrowserWindow, accelerator: Accelerator): void;
     /**
      * Unregisters all of the global shortcuts.
      */
-    export function unregisterAll(window: BrowserWindow): void;
+    export function unregisterAll (window: BrowserWindow): void;
   }
 
   export = LocalShortcut;

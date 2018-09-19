@@ -20,7 +20,7 @@ import { getAvatar, getCurrentHeroName, getProfile, getPurse, getSex, getSpecial
 import { getSheetCheckAttributeValueVisibility } from '../selectors/uisettingsSelectors';
 import { Just } from '../utils/dataUtils';
 import { mapGetToSlice } from '../utils/SelectorsUtils';
-import { Sheets, SheetsDispatchProps, SheetsOwnProps, SheetsStateProps } from '../views/profile/Sheets';
+import { Sheets, SheetsDispatchProps, SheetsOwnProps, SheetsStateProps } from '../views/sheets/Sheets';
 
 const mapStateToProps = (state: AppState, ownProps: SheetsOwnProps): SheetsStateProps => ({
   advantagesActive: getAdvantagesForSheet (state, ownProps),
@@ -49,11 +49,11 @@ const mapStateToProps = (state: AppState, ownProps: SheetsOwnProps): SheetsState
   sex: getSex (state),
   shieldsAndParryingWeapons: getShieldsAndParryingWeapons (state),
   skills: getAllSkills (state),
-  items: getAllItems (state),
+  items: getAllItems (state, ownProps),
   pet: getPet (state),
   purse: getPurse (state),
-  totalPrice: getTotalPrice (state),
-  totalWeight: getTotalWeight (state),
+  totalPrice: getTotalPrice (state, ownProps),
+  totalWeight: getTotalWeight (state, ownProps),
   languagesWikiEntry: mapGetToSlice (R.pipe (getWikiSpecialAbilities, Just), 'SA_29') (state),
   languagesStateEntry: mapGetToSlice (getSpecialAbilities, 'SA_29') (state),
   scriptsWikiEntry: mapGetToSlice (R.pipe (getWikiSpecialAbilities, Just), 'SA_27') (state),
@@ -63,13 +63,13 @@ const mapStateToProps = (state: AppState, ownProps: SheetsOwnProps): SheetsState
   magicalSpecialAbilities: getMagicalSpecialAbilitiesForSheet (state, ownProps),
   magicalTradition: getMagicalTraditionForSheet (state),
   properties: getPropertyKnowledgesForSheet (state),
-  spells: getSpellsForSheet (state),
+  spells: getSpellsForSheet (state, ownProps),
   aspects: getAspectKnowledgesForSheet (state),
   blessedPrimary: getPrimaryBlessedAttributeForSheet (state),
   blessedSpecialAbilities: getBlessedSpecialAbilitiesForSheet (state, ownProps),
   blessedTradition: getBlessedTraditionForSheet (state),
   blessings: getBlessingsForSheet (state),
-  liturgicalChants: getLiturgicalChantsForSheet (state),
+  liturgicalChants: getLiturgicalChantsForSheet (state, ownProps),
 });
 
 const mapDispatchToProps = (dispatch: Dispatch<Action>, { locale }: SheetsOwnProps) => ({

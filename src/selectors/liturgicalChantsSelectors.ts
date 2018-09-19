@@ -4,7 +4,7 @@ import { LiturgicalChantWithRequirements } from '../types/view';
 import { Blessing, LiturgicalChant } from '../types/wiki';
 import { createMaybeSelector } from '../utils/createMaybeSelector';
 import { List, Maybe, OrderedMap, OrderedSet, Record, Tuple } from '../utils/dataUtils';
-import { AllSortOptions, filterAndSortObjects } from '../utils/FilterSortUtils';
+import { AllSortOptions, filterAndSortObjects, sortObjects } from '../utils/FilterSortUtils';
 import { getNumericBlessedTraditionIdByInstanceId } from '../utils/IDUtils';
 import { isActive } from '../utils/isActive';
 import { getAspectsOfTradition, isDecreasable, isIncreasable, isOwnTradition } from '../utils/liturgicalChantUtils';
@@ -358,16 +358,16 @@ export const getBlessingsForSheet = createMaybeSelector (
 export const getLiturgicalChantsForSheet = createMaybeSelector (
   getActiveLiturgicalChants,
   getBlessedTraditionFromState,
-  (liturgicalChants, maybeTradition) => Maybe.fromMaybe (liturgicalChants) (
-    maybeTradition.bind (
-      tradition => getNumericBlessedTraditionIdByInstanceId (tradition.get ('id'))
-        .fmap (R.inc)
-        .fmap (getAspectsOfTradition)
-        .fmap (
-          availableAspects => liturgicalChants.map (
-            chant => chant.modify<'aspects'> (List.filter (availableAspects.elem)) ('aspects')
-          )
+  getLocaleAsProp,
+  (liturgicalChants, maybeTradition, locale) => maybeTradition.bind (
+    tradition => getNumericBlessedTraditionIdByInstanceId (tradition.get ('id'))
+      .fmap (R.inc)
+      .fmap (getAspectsOfTradition)
+      .fmap (
+        availableAspects => liturgicalChants.map (
+          chant => chant.modify<'aspects'> (List.filter (availableAspects.elem)) ('aspects')
         )
-    )
+      )
+      .fmap (list => sortObjects (list, locale .get ('id')))
   )
 );

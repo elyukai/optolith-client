@@ -96,7 +96,7 @@ export interface Item {
   amount: number;
   price: number;
   weight?: number;
-  where?: number;
+  where?: string;
   gr: number;
 }
 

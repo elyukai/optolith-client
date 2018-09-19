@@ -43,8 +43,8 @@ export const addSpell = (id: string) => (locale: UIMessagesObject): AsyncAction 
           type: ActionTypes.ACTIVATE_SPELL,
           payload: {
             id,
-            wikiEntry
-          }
+            wikiEntry,
+          },
         });
       }
       else {
@@ -78,8 +78,8 @@ export const addCantrip = (id: string) => (locale: UIMessagesObject): AsyncActio
       dispatch<ActivateCantripAction> ({
         type: ActionTypes.ACTIVATE_CANTRIP,
         payload: {
-          id
-        }
+          id,
+        },
       });
     }
     else {
@@ -111,8 +111,8 @@ export const removeSpell = (id: string): AsyncAction => (dispatch, getState) => 
       type: ActionTypes.DEACTIVATE_SPELL,
       payload: {
         id,
-        wikiEntry
-      }
+        wikiEntry,
+      },
     });
   }
 };
@@ -127,8 +127,8 @@ export interface DeactivateCantripAction {
 export const removeCantrip = (id: string): DeactivateCantripAction => ({
   type: ActionTypes.DEACTIVATE_CANTRIP,
   payload: {
-    id
-  }
+    id,
+  },
 });
 
 export interface AddSpellPointAction {
@@ -159,8 +159,8 @@ export const addSpellPoint = (id: string) => (locale: UIMessagesObject): AsyncAc
       dispatch<AddSpellPointAction> ({
         type: ActionTypes.ADD_SPELL_POINT,
         payload: {
-          id
-        }
+          id,
+        },
       });
     }
     else {
@@ -181,8 +181,8 @@ export interface RemoveSpellPointAction {
 export const removeSpellPoint = (id: string): RemoveSpellPointAction => ({
   type: ActionTypes.REMOVE_SPELL_POINT,
   payload: {
-    id
-  }
+    id,
+  },
 });
 
 export interface SetSpellsSortOrderAction {
@@ -195,8 +195,8 @@ export interface SetSpellsSortOrderAction {
 export const setSpellsSortOrder = (sortOrder: string): SetSpellsSortOrderAction => ({
   type: ActionTypes.SET_SPELLS_SORT_ORDER,
   payload: {
-    sortOrder
-  }
+    sortOrder,
+  },
 });
 
 export interface SetActiveSpellsFilterTextAction {
@@ -209,8 +209,8 @@ export interface SetActiveSpellsFilterTextAction {
 export const setActiveSpellsFilterText = (filterText: string): SetActiveSpellsFilterTextAction => ({
   type: ActionTypes.SET_SPELLS_FILTER_TEXT,
   payload: {
-    filterText
-  }
+    filterText,
+  },
 });
 
 export interface SetInactiveSpellsFilterTextAction {
@@ -224,6 +224,6 @@ export const setInactiveSpellsFilterText =
   (filterText: string): SetInactiveSpellsFilterTextAction => ({
     type: ActionTypes.SET_INACTIVE_SPELLS_FILTER_TEXT,
     payload: {
-      filterText
-    }
+      filterText,
+    },
   });

@@ -96,6 +96,44 @@ add 2 3
 
 **Fun fact:** `add (2) (3)` is valid Haskell, it just contains unnecessary groupings.
 
+### Methods
+
+If you need to use a class (e.g. the custom data structures *Maybe*, *List* a.s.o. are implementes as classes, consider the following styistic rules for using methods:
+
+```ts
+// bad
+maybeValue.fmap(R.inc)
+
+// still bad
+maybeValue.fmap (R.inc)
+
+// still bad
+maybeValue .fmap(R.inc)
+
+// good
+maybeValue .fmap (R.inc)
+```
+
+This way, a method seems to be more like an infix function. Instance methods are always curried, too.
+
+```ts
+// very bad
+Maybe.fmap(R.inc)(maybeValue)
+
+// still bad
+Maybe.fmap (R.inc) (maybeValue)
+
+// still bad
+Maybe .fmap (R.inc) (maybeValue)
+
+// good
+Maybe.fmap (R.inc) (maybeValue)
+```
+
+Static methods do not need a space before the dot because `Maybe` is no value. So `Maybe.fmap` as a whole is the function (name).
+
+This way, you can also better differenciate between static and instance methods.
+
 ### Function declarations
 
 Do not use named function expressions if using `function`, e.g. `const fn = function longFunctionName () { ... }`. Prefer arrow functions, which must be declared using `const fn = () => { ... }`, though.

@@ -11,7 +11,7 @@ import { getExceptionalSkillBonus } from './skillUtils';
 
 export const isOwnTradition = (
   tradition: Record<Wiki.SpecialAbility>,
-  obj: Record<Wiki.LiturgicalChant> | Record<Wiki.Blessing>,
+  obj: Record<Wiki.LiturgicalChant> | Record<Wiki.Blessing>
 ): boolean => obj.get ('tradition')
   .any (e => {
     const numericId = tradition.lookup ('id')
@@ -28,7 +28,7 @@ export const isIncreasable = (
   phase: number,
   attributes: OrderedMap<string, Record<Data.AttributeDependent>>,
   exceptionalSkill: Maybe<Record<Data.ActivatableDependent>>,
-  aspectKnowledge: Maybe<Record<Data.ActivatableDependent>>,
+  aspectKnowledge: Maybe<Record<Data.ActivatableDependent>>
 ): boolean => {
   const bonus = getExceptionalSkillBonus (wikiEntry.lookup ('id')) (exceptionalSkill);
 
@@ -85,12 +85,12 @@ export const isDecreasable = (
   wikiEntry: Record<Wiki.LiturgicalChant>,
   instance: Record<Data.ActivatableSkillDependent>,
   liturgicalChants: OrderedMap<string, Record<Data.ActivatableSkillDependent>>,
-  aspectKnowledge: Maybe<Record<Data.ActivatableDependent>>,
+  aspectKnowledge: Maybe<Record<Data.ActivatableDependent>>
 ): boolean => {
   const dependencies = flattenDependencies<number | boolean> (
     wiki,
     state,
-    instance.get ('dependencies'),
+    instance.get ('dependencies')
   );
 
   // Basic validation

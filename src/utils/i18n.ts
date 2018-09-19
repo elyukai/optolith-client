@@ -68,7 +68,7 @@ export const localizeNumber = (n: number, locale: string) => {
  */
 export const localizeSize = (
   number: number | undefined,
-  locale: string,
+  locale: string
 ): number => {
   if (typeof number !== 'number') {
     return 0;
@@ -87,7 +87,7 @@ export const localizeSize = (
  */
 export const localizeWeight = (
   number: number | undefined,
-  locale: string,
+  locale: string
 ): number => {
   if (typeof number !== 'number') {
     return 0;

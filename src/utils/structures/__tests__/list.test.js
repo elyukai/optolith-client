@@ -19,6 +19,14 @@ test('cons', () => {
   expect(List.of(3, 2, 1).cons(4)).toEqual(List.of(4, 3, 2, 1));
 });
 
+test('List.cons', () => {
+  expect(List.cons (List.of(3, 2, 1)) (4)).toEqual(List.of(4, 3, 2, 1));
+});
+
+test('List.cons_', () => {
+  expect(List.cons_ (4) (List.of(3, 2, 1))).toEqual(List.of(4, 3, 2, 1));
+});
+
 test('subscript', () => {
   expect(List.of(3, 2, 1).subscript(2)).toEqual(Just(1));
   expect(List.of(3, 2, 1).subscript(4)).toEqual(Nothing());
@@ -144,6 +152,11 @@ test('intercalate', () => {
     .toEqual('3, 2, 1');
 });
 
+test('List.intercalate', () => {
+  expect(List.intercalate (', ') (List.of(3, 2, 1)))
+    .toEqual('3, 2, 1');
+});
+
 test('foldl', () => {
   expect(List.of(3, 2, 1).foldl(acc => x => acc + x)(0))
     .toEqual(6);
@@ -265,6 +278,27 @@ test('take', () => {
     .toEqual(List.of(1, 2, 3));
   expect(List.of(1, 2, 3, 4, 5).take(6))
     .toEqual(List.of(1, 2, 3, 4, 5));
+});
+
+test('List.take', () => {
+  expect(List.take (3) (List.of(1, 2, 3, 4, 5)))
+    .toEqual(List.of(1, 2, 3));
+  expect(List.take (6) (List.of(1, 2, 3, 4, 5)))
+    .toEqual(List.of(1, 2, 3, 4, 5));
+});
+
+test('List.drop', () => {
+  expect(List.drop (3) (List.of(1, 2, 3, 4, 5)))
+    .toEqual(List.of(4, 5));
+  expect(List.drop (6) (List.of(1, 2, 3, 4, 5)))
+    .toEqual(List.of());
+});
+
+test('List.splitAt', () => {
+  expect(List.splitAt (3) (List.of(1, 2, 3, 4, 5)))
+    .toEqual(Tuple.of (List.of(1, 2, 3)) (List.of(4, 5)));
+  expect(List.splitAt (6) (List.of(1, 2, 3, 4, 5)))
+    .toEqual(Tuple.of (List.of(1, 2, 3, 4, 5)) (List.of()));
 });
 
 test('elem', () => {
@@ -458,10 +492,6 @@ test('List.mappend', () => {
   expect(List.mappend (List.of(3, 2, 1)) (List.of(3, 2, 1))).toEqual(List.of(3, 2, 1, 3, 2, 1));
 });
 
-test('List.cons', () => {
-  expect(List.cons (List.of(3, 2, 1)) (4)).toEqual(List.of(4, 3, 2, 1));
-});
-
 test('List.subscript', () => {
   expect(List.subscript (List.of(3, 2, 1)) (2)).toEqual(Just(1));
   expect(List.subscript (List.of(3, 2, 1)) (4)).toEqual(Nothing());
@@ -487,13 +517,6 @@ test('List.maximum', () => {
 test('List.unfoldr', () => {
   expect(List.unfoldr(x => x < 11 ? Just(Tuple.of(x)(x + 1)) : Nothing())(1))
     .toEqual(List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10));
-});
-
-test('List.take', () => {
-  expect(List.take (3) (List.of(1, 2, 3, 4, 5)))
-    .toEqual(List.of(1, 2, 3));
-  expect(List.take (6) (List.of(1, 2, 3, 4, 5)))
-    .toEqual(List.of(1, 2, 3, 4, 5));
 });
 
 test('List.elem', () => {

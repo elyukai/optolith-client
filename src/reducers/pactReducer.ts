@@ -1,7 +1,7 @@
 import * as PactActions from '../actions/PactActions';
 import { ActionTypes } from '../constants/ActionTypes';
 import * as Data from '../types/data';
-import { Record } from '../utils/dataUtils';
+import { Maybe, Record } from '../utils/dataUtils';
 
 type Action =
   PactActions.SetPactCategoryAction |
@@ -12,25 +12,25 @@ type Action =
 
 export function pactReducer (
   state: Record<Data.HeroDependent>,
-  action: Action,
+  action: Action
 ): Record<Data.HeroDependent> {
   switch (action.type) {
     case ActionTypes.SET_PACT_CATEGORY: {
       const { category } = action.payload;
 
-      if (category === undefined) {
-        return state.delete ('pact') as Record<Data.HeroDependent>;
+      if (Maybe.isJust (category)) {
+        return state.insert ('pact') (
+          Record.of<Data.Pact> ({
+            category: Maybe.fromJust (category),
+            level: 1,
+            type: 1,
+            domain: '',
+            name: '',
+          })
+        );
       }
 
-      return state.insert ('pact') (
-        Record.of<Data.Pact> ({
-          category,
-          level: 1,
-          type: 1,
-          domain: '',
-          name: ''
-        })
-      );
+      return state.delete ('pact') as Record<Data.HeroDependent>;
     }
 
     case ActionTypes.SET_PACT_LEVEL:

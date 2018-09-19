@@ -10,7 +10,7 @@ export interface SegmentedControlsProps<T extends OptionValue> {
   disabled?: boolean;
   label?: string;
   options: List<Option<T>>;
-  onClick (option: string | number): void;
+  onClick (option: T): void;
 }
 
 export function SegmentedControls<T extends OptionValue> (props: SegmentedControlsProps<T>) {
@@ -26,7 +26,7 @@ export function SegmentedControls<T extends OptionValue> (props: SegmentedContro
               <Button
                 key={Maybe.fromMaybe<React.Key> ('__default__') (option.value)}
                 active={active.equals (option.value)}
-                onClick={onClick.bind (undefined, option.value)}
+                onClick={() => onClick (option.value)}
                 disabled={option.disabled || disabled}
                 autoWidth
               >

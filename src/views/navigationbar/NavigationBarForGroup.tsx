@@ -3,7 +3,7 @@ import * as React from 'react';
 import { BorderButton } from '../../components/BorderButton';
 import { IconButton } from '../../components/IconButton';
 import { Text } from '../../components/Text';
-import { SettingsContainer } from '../../containers/Settings';
+import { SettingsContainer } from '../../containers/SettingsContainer';
 import { UIMessagesObject } from '../../types/ui';
 import { translate } from '../../utils/I18n';
 import { TabId } from '../../utils/LocationUtils';

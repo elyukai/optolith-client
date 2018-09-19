@@ -5,7 +5,7 @@ export interface SwitchEnableActiveItemHintsAction {
 }
 
 export const switchEnableActiveItemHints = (): SwitchEnableActiveItemHintsAction => ({
-  type: ActionTypes.SWITCH_ENABLE_ACTIVE_ITEM_HINTS
+  type: ActionTypes.SWITCH_ENABLE_ACTIVE_ITEM_HINTS,
 });
 
 export interface SetThemeAction {
@@ -18,8 +18,8 @@ export interface SetThemeAction {
 export const setTheme = (theme: string): SetThemeAction => ({
   type: ActionTypes.SET_THEME,
   payload: {
-    theme
-  }
+    theme,
+  },
 });
 
 export interface SwitchEnableEditingHeroAfterCreationPhaseAction {
@@ -28,7 +28,7 @@ export interface SwitchEnableEditingHeroAfterCreationPhaseAction {
 
 export const switchEnableEditingHeroAfterCreationPhase =
   (): SwitchEnableEditingHeroAfterCreationPhaseAction => ({
-    type: ActionTypes.SWITCH_ENABLE_EDITING_HERO_AFTER_CREATION_PHASE
+    type: ActionTypes.SWITCH_ENABLE_EDITING_HERO_AFTER_CREATION_PHASE,
   });
 
 export interface SwitchEnableAnimationsAction {
@@ -36,5 +36,5 @@ export interface SwitchEnableAnimationsAction {
 }
 
 export const switchEnableAnimations = (): SwitchEnableAnimationsAction => ({
-  type: ActionTypes.SWITCH_ENABLE_ANIMATIONS
+  type: ActionTypes.SWITCH_ENABLE_ANIMATIONS,
 });

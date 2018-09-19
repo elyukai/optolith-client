@@ -4,17 +4,19 @@ import { List, Maybe, Nothing } from '../utils/dataUtils';
 import { Label } from './Label';
 import { Scroll } from './Scroll';
 
+export interface DropdownOption {
+  id: Maybe<number | string>;
+  name: string;
+  disabled?: boolean;
+}
+
 export interface DropdownProps {
   className?: string;
   disabled?: boolean | Maybe<boolean>;
   fullWidth?: boolean;
   hint?: string;
   label?: string;
-  options: List<{
-    id: Maybe<number | string>;
-    name: string;
-    disabled?: boolean;
-  }>;
+  options: List<DropdownOption>;
   required?: boolean;
   value: Maybe<boolean | string | number>;
   onChange? (option: Maybe<number | string>): void;

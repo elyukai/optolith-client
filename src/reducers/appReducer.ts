@@ -19,7 +19,7 @@ const appSlices = combineReducers<AppState> ({
   herolist,
   locale,
   ui,
-  wiki
+  wiki,
 });
 
 export const appReducer = reduceReducers<AppState, Action> (appSlices, appPostReducer);

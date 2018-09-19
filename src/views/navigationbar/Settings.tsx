@@ -5,6 +5,7 @@ import { Dialog } from '../../components/DialogNew';
 import { Dropdown } from '../../components/Dropdown';
 import { SegmentedControls } from '../../components/SegmentedControls';
 import { UIMessagesObject } from '../../types/ui';
+import { Just, List, Maybe, Nothing } from '../../utils/dataUtils';
 import { translate } from '../../utils/I18n';
 
 export interface SettingsOwnProps {
@@ -16,7 +17,7 @@ export interface SettingsOwnProps {
 }
 
 export interface SettingsStateProps {
-  localeString?: string;
+  localeString: Maybe<string>;
   localeType: 'default' | 'set';
   theme: string;
   isEditingHeroAfterCreationPhaseEnabled: boolean;
@@ -25,8 +26,8 @@ export interface SettingsStateProps {
 
 export interface SettingsDispatchProps {
   saveConfig (): void;
-  setLocale (id?: string): void;
-  setTheme (id: string): void;
+  setLocale (id: Maybe<string>): void;
+  setTheme (id: Maybe<string>): void;
   switchEnableEditingHeroAfterCreationPhase (): void;
   switchEnableAnimations (): void;
 }
@@ -49,35 +50,41 @@ export function Settings (props: SettingsProps) {
     switchEnableAnimations,
     areAnimationsEnabled,
     platform,
-    checkForUpdates
+    checkForUpdates,
   } = props;
 
   return (
     <Dialog
       id="settings"
       title={translate (locale, 'settings.title')}
-      buttons={[{label: translate (locale, 'settings.actions.close'), onClick: saveConfig }]}
+      buttons={[
+        {
+          label: translate (locale, 'settings.actions.close'),
+          onClick: saveConfig,
+        },
+      ]}
       close={close}
       isOpened={isSettingsOpen}
       >
       <Dropdown
-        options={[
-          {name: translate (locale, 'settings.options.defaultlanguage')},
-          {id: 'de-DE', name: 'Deutsch (Deutschland)'},
-          {id: 'en-US', name: 'English (United States)'},
-          {id: 'nl-BE', name: 'Nederlands (België)'}
-        ]}
-        value={localeType === 'default' ? undefined : localeString}
+        options={List.of (
+          { id: Nothing (), name: translate (locale, 'settings.options.defaultlanguage') },
+          { id: Just ('de-DE'), name: 'Deutsch (Deutschland)' },
+          { id: Just ('en-US'), name: 'English (United States)' },
+          { id: Just ('nl-BE'), name: 'Nederlands (België)', disabled: true },
+          { id: Just ('fr-FR'), name: 'Français (France)', disabled: true }
+        )}
+        value={localeType === 'default' ? Nothing () : localeString}
         label={translate (locale, 'settings.options.language')}
         onChange={setLocale}
         />
       <p>{translate (locale, 'settings.options.languagehint')}</p>
       <SegmentedControls
-        options={[
-          {name: translate (locale, 'settings.options.themedark'), value: 'dark'},
-          {name: translate (locale, 'settings.options.themelight'), value: 'light'}
-        ]}
-        active={theme}
+        options={List.of (
+          { name: translate (locale, 'settings.options.themedark'), value: Just ('dark') },
+          { name: translate (locale, 'settings.options.themelight'), value: Just ('light') }
+        )}
+        active={Just (theme)}
         onClick={setTheme}
         label={translate (locale, 'settings.options.theme')}
         />

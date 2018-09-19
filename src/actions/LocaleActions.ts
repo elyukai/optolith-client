@@ -14,6 +14,6 @@ export const setLocale = (locale: Maybe<string>): SetLocaleAction => ({
   type: ActionTypes.SET_LOCALE,
   payload: {
     locale: Maybe.fromMaybe (getSystemLocale ()) (locale),
-    localeType: Maybe.isNothing (locale) ? 'default' : 'set'
-  }
+    localeType: Maybe.isNothing (locale) ? 'default' : 'set',
+  },
 });

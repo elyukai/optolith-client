@@ -5,7 +5,7 @@ import { Cantrip, ExperienceLevel, Spell } from '../types/wiki';
 import { getModifierByActiveLevel } from '../utils/activatableModifierUtils';
 import { createMaybeSelector } from '../utils/createMaybeSelector';
 import { Just, List, Maybe, OrderedMap, Record, Tuple } from '../utils/dataUtils';
-import { AllSortOptions, filterAndSortObjects } from '../utils/FilterSortUtils';
+import { AllSortOptions, filterAndSortObjects, sortObjects } from '../utils/FilterSortUtils';
 import { filterByAvailability } from '../utils/RulesUtils';
 import { mapGetToSlice } from '../utils/SelectorsUtils';
 import { isDecreasable, isIncreasable, isOwnTradition } from '../utils/SpellUtils';
@@ -258,7 +258,7 @@ export const getActiveSpells = createMaybeSelector (
     maybeHero,
     maybeExceptionalSkill,
     maybePropertyKnowledge,
-    wiki,
+    wiki
   ) => maybeHero.bind (
     hero => maybeStartEl.bind (
       startEl => maybeActiveSpellsCombined.fmap (
@@ -421,14 +421,17 @@ export const getCantripsForSheet = createMaybeSelector (
 export const getSpellsForSheet = createMaybeSelector (
   getActiveSpellsCombined,
   getMagicalTraditionsFromWikiState,
-  (maybeSpells, maybeTraditions) =>
-    maybeSpells.bind (
-      spells => maybeTraditions.fmap (
-        traditions => spells.map (
-          spell => spell.modify<'tradition'> (
-            x => isOwnTradition (traditions, spell as any as Record<Spell>) ? List.of () : x
-          ) ('tradition')
+  getLocaleAsProp,
+  (maybeSpells, maybeTraditions, locale) =>
+    maybeSpells
+      .bind (
+        spells => maybeTraditions.fmap (
+          traditions => spells.map (
+            spell => spell.modify<'tradition'> (
+              x => isOwnTradition (traditions, spell as any as Record<Spell>) ? List.of () : x
+            ) ('tradition')
+          )
         )
       )
-    )
+      .fmap (list => sortObjects (list, locale .get ('id')))
 );

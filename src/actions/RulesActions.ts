@@ -10,8 +10,8 @@ export interface SetHigherParadeValuesAction {
 export const setHigherParadeValues = (value: number): SetHigherParadeValuesAction => ({
   type: ActionTypes.SET_HIGHER_PARADE_VALUES,
   payload: {
-    value
-  }
+    value,
+  },
 });
 
 export interface SwitchAttributeValueLimitAction {
@@ -19,7 +19,7 @@ export interface SwitchAttributeValueLimitAction {
 }
 
 export const switchAttributeValueLimit = (): SwitchAttributeValueLimitAction => ({
-  type: ActionTypes.SWITCH_ATTRIBUTE_VALUE_LIMIT
+  type: ActionTypes.SWITCH_ATTRIBUTE_VALUE_LIMIT,
 });
 
 export interface SwitchEnableAllRuleBooksAction {
@@ -27,7 +27,7 @@ export interface SwitchEnableAllRuleBooksAction {
 }
 
 export const switchEnableAllRuleBooks = (): SwitchEnableAllRuleBooksAction => ({
-  type: ActionTypes.SWITCH_ENABLE_ALL_RULE_BOOKS
+  type: ActionTypes.SWITCH_ENABLE_ALL_RULE_BOOKS,
 });
 
 export interface SwitchEnableRuleBookAction {
@@ -40,8 +40,8 @@ export interface SwitchEnableRuleBookAction {
 export const switchEnableRuleBook = (id: string): SwitchEnableRuleBookAction => ({
   type: ActionTypes.SWITCH_ENABLE_RULE_BOOK,
   payload: {
-    id
-  }
+    id,
+  },
 });
 
 export interface SwitchEnableLanguageSpecializationsAction {
@@ -50,5 +50,5 @@ export interface SwitchEnableLanguageSpecializationsAction {
 
 export const switchEnableLanguageSpecializations =
   (): SwitchEnableLanguageSpecializationsAction => ({
-    type: ActionTypes.SWITCH_ENABLE_LANGUAGE_SPECIALIZATIONS
+    type: ActionTypes.SWITCH_ENABLE_LANGUAGE_SPECIALIZATIONS,
   });

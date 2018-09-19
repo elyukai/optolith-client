@@ -10,7 +10,7 @@ import { List, Maybe, OrderedMap, Record } from './dataUtils';
  */
 export const findSelectOption = <S extends Wiki.SelectionObject>(
   obj: Wiki.Activatable,
-  id: Maybe<string | number>,
+  id: Maybe<string | number>
 ): Maybe<Record<S>> =>
   obj.lookup ('select').bind (select => select.find<any> (
     (e): e is any => id.equals (e.lookup ('id'))
@@ -23,7 +23,7 @@ export const findSelectOption = <S extends Wiki.SelectionObject>(
  */
 export const getSelectOptionName = (
   obj: Wiki.Activatable,
-  id: Maybe<string | number>,
+  id: Maybe<string | number>
 ): Maybe<string> =>
   findSelectOption (obj, id).bind (e => e.lookup ('name'));
 
@@ -34,7 +34,7 @@ export const getSelectOptionName = (
  */
 export const getSelectOptionCost = (
   obj: Wiki.Activatable,
-  id: Maybe<string | number>,
+  id: Maybe<string | number>
 ): Maybe<number> =>
   findSelectOption (obj, id).bind (e => e.lookup ('cost'));
 
@@ -50,7 +50,7 @@ interface SelectionNameAndCost {
  */
 export const getSelectionNameAndCost = (
   obj: Wiki.Activatable,
-  id: Maybe<string | number>,
+  id: Maybe<string | number>
 ): Maybe<SelectionNameAndCost> =>
   findSelectOption (obj, id)
     .bind (e => e.lookup ('cost').fmap (cost => ({
