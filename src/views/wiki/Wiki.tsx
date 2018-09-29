@@ -6,7 +6,7 @@ import { Options } from '../../components/Options';
 import { Page } from '../../components/Page';
 import { Scroll } from '../../components/Scroll';
 import { TextField } from '../../components/TextField';
-import { WikiInfoContainer } from '../../containers/WikiInfo';
+import { WikiInfoContainer } from '../../containers/WikiInfoContainer';
 import { UIMessagesObject } from '../../types/ui';
 import { Advantage, Blessing, Cantrip, CombatTechnique, Culture, Disadvantage, Entry, ItemTemplate, LiturgicalChant, Profession, Race, Skill, SpecialAbility, Spell } from '../../types/wiki';
 import { Just, List, Maybe, Nothing, Record } from '../../utils/dataUtils';

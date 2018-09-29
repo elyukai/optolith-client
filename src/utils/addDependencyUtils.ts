@@ -15,9 +15,10 @@ type Dependency<T extends Data.Dependent> =
   ListElement<RecordInterface<T>['dependencies']>
 
 const addDependency = <T extends Data.Dependent>(
-  add: Dependency<T>,
+  add: Dependency<T>
 ) => (obj: T): Just<T> => Maybe.pure (
-  (obj as any as Record<{ dependencies: any }>).update<'dependencies'> (
+  // @ts-ignore
+  (obj as any as Record<any>).update<'dependencies'> (
     (dependencies: RecordInterface<T>['dependencies']) =>
       Maybe.pure ((dependencies as List<any>).append (add))
   ) ('dependencies') as T
@@ -39,7 +40,7 @@ const getIncreasableCreator: (id: string) => IncreasableCreator = R.pipe (
 
 export const addAttributeDependency = (
   id: string,
-  value: Data.SkillDependency,
+  value: Data.SkillDependency
 ) => adjustHeroListStateItemOr (
   CreateEntryUtils.createAttributeDependent,
   addDependency<Record<Data.AttributeDependent>> (value),
@@ -48,7 +49,7 @@ export const addAttributeDependency = (
 
 export const addIncreasableDependency = (
   id: string,
-  value: Data.SkillDependency,
+  value: Data.SkillDependency
 ) => adjustHeroListStateItemOr (
   getIncreasableCreator (id),
   addDependency<Data.ExtendedSkillDependent> (value),
@@ -57,7 +58,7 @@ export const addIncreasableDependency = (
 
 export const addActivatableDependency = (
   id: string,
-  value: Data.ActivatableDependency,
+  value: Data.ActivatableDependency
 ) => adjustHeroListStateItemOr (
   CreateEntryUtils.createActivatableDependent,
   addDependency<Record<Data.ActivatableDependent>> (value),

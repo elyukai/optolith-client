@@ -3,6 +3,7 @@ import * as Wiki from '../types/wiki';
 import { List, Maybe, Nothing, Record } from './dataUtils';
 import { flattenPrerequisites } from './flattenPrerequisites';
 import { getHeroStateListItem } from './heroStateUtils';
+import { isObject } from './typeCheckUtils';
 import { getWikiEntry } from './WikiUtils';
 
 /**

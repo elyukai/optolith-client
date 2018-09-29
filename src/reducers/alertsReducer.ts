@@ -1,7 +1,7 @@
 import { AddAlertAction, RemoveAlertAction } from '../actions/AlertActions';
 import { ActionTypes } from '../constants/ActionTypes';
 import { Alert } from '../types/data';
-import { List, Maybe, Tuple } from '../utils/dataUtils';
+import { List, Maybe } from '../utils/dataUtils';
 
 type Action = AddAlertAction | RemoveAlertAction;
 
@@ -16,7 +16,7 @@ export function alertsReducer (
       return state.cons (action.payload);
 
     case ActionTypes.REMOVE_ALERT:
-      return Maybe.fromMaybe (state) (List.uncons (state) .fmap (Tuple.snd));
+      return Maybe.fromMaybe (state) (List.tail_ (state));
 
     default:
       return state;

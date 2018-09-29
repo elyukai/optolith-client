@@ -12,7 +12,7 @@ import { AllSortOptions, filterAndSortObjects } from '../utils/FilterSortUtils';
 import { flip } from '../utils/flip';
 import { translate } from '../utils/I18n';
 import { getActiveSelections, getSelectOptionName } from '../utils/selectionUtils';
-import { mapGetToSlice } from '../utils/SelectorsUtils';
+import { mapGetToMaybeSlice } from '../utils/SelectorsUtils';
 import { getBlessedTraditionFromWikiState } from './liturgicalChantsSelectors';
 import { getCurrentCulture, getCurrentProfession, getCurrentRace } from './rcpSelectors';
 import { getSpecialAbilitiesSortOptions } from './sortOptionsSelectors';
@@ -233,8 +233,8 @@ export const getBlessedSpecialAbilitiesForSheet = createMaybeSelector (
 );
 
 export const getFatePointsModifier = createMaybeSelector (
-  mapGetToSlice (getAdvantages, 'ADV_14'),
-  mapGetToSlice (getDisadvantages, 'DISADV_31'),
+  mapGetToMaybeSlice (getAdvantages, 'ADV_14'),
+  mapGetToMaybeSlice (getDisadvantages, 'DISADV_31'),
   (maybeIncrease, maybeDecrease) => getModifierByIsActive (maybeIncrease)
                                                           (maybeDecrease)
                                                           (Nothing ())
@@ -253,7 +253,7 @@ export const getMagicalTraditionForSheet = createMaybeSelector (
 );
 
 export const getPropertyKnowledgesForSheet = createMaybeSelector (
-  mapGetToSlice (getSpecialAbilities, 'SA_72'),
+  mapGetToMaybeSlice (getSpecialAbilities, 'SA_72'),
   getWikiSpecialAbilities,
   (propertyKnowledge, wikiSpecialAbilities) =>
     wikiSpecialAbilities.lookup ('SA_72').bind (
@@ -275,7 +275,7 @@ export const getBlessedTraditionForSheet = createMaybeSelector (
 );
 
 export const getAspectKnowledgesForSheet = createMaybeSelector (
-  mapGetToSlice (getSpecialAbilities, 'SA_87'),
+  mapGetToMaybeSlice (getSpecialAbilities, 'SA_87'),
   getWikiSpecialAbilities,
   (aspectKnowledge, wikiSpecialAbilities) =>
     wikiSpecialAbilities.lookup ('SA_87').bind (
@@ -289,13 +289,13 @@ export const getAspectKnowledgesForSheet = createMaybeSelector (
 );
 
 export const getInitialStartingWealth = createMaybeSelector (
-  mapGetToSlice (getAdvantages, 'ADV_36'),
-  mapGetToSlice (getDisadvantages, 'DISADV_2'),
+  mapGetToMaybeSlice (getAdvantages, 'ADV_36'),
+  mapGetToMaybeSlice (getDisadvantages, 'DISADV_2'),
   (rich, poor) => getModifierByActiveLevel (rich) (poor) (Just (0)) * 250 + 750
 );
 
 export const isAlbino = createMaybeSelector (
-  mapGetToSlice (getDisadvantages, 'DISADV_45'),
+  mapGetToMaybeSlice (getDisadvantages, 'DISADV_45'),
   R.pipe (
     getActiveSelections,
     Maybe.fmap (List.elem<string | number> (1))

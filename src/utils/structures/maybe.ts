@@ -50,6 +50,16 @@ export class Maybe<T extends Some> implements Al.Alternative<T>, Al.Monad<T>,
   }
 
   /**
+   * `normalize :: (a | Maybe a) -> Maybe a`
+   *
+   * Creates a new `Maybe` from the given nullable value. If the value is
+   * already an instance of `Maybe`, it will just return the value.
+   */
+  static normalize<T extends Some> (value: T | Nullable | Maybe<T>): Maybe<T> {
+    return value instanceof Maybe ? value : Maybe.fromNullable (value);
+  }
+
+  /**
    * `pure :: a -> Just a`
    *
    * Inject a value into a `Maybe` type.
@@ -249,13 +259,38 @@ export class Maybe<T extends Some> implements Al.Alternative<T>, Al.Monad<T>,
   }
 
   /**
-   * `alt :: Maybe m => m a -> m a -> m a`
+   * `alt :: f a -> f a -> f a` *infix*
    *
-   * The `alt` function takes a `Maybe` of the same type. If `this` is
-   * `Nothing`, it returns the passed `Maybe`, otherwise it returns `this`.
+   * The `alt` function takes a `Maybe` of the same type. If the first `Maybe`
+   * is `Nothing`, it returns the second `Maybe`, otherwise it returns the
+   * first.
    */
   alt (m: Maybe<T>): Maybe<T> {
     return this.value !== undefined ? this : m;
+  }
+
+  /**
+   * `alt :: f a -> f a -> f a`
+   *
+   * The `alt` function takes a `Maybe` of the same type. If the first `Maybe`
+   * is `Nothing`, it returns the second `Maybe`, otherwise it returns the
+   * first.
+   */
+  static alt<T extends Some> (m1: Maybe<T>): (m2: Maybe<T>) => Maybe<T> {
+    return m2 => m1.value !== undefined ? m1 : m2;
+  }
+
+  /**
+   * `alt :: f a -> f a -> f a`
+   *
+   * The `alt` function takes a `Maybe` of the same type. If the second `Maybe`
+   * is `Nothing`, it returns the first `Maybe`, otherwise it returns the
+   * second.
+   *
+   * This is the same as `Maybe.alt` but with arguments swapped.
+   */
+  static alt_<T extends Some> (m1: Maybe<T>): (m2: Maybe<T>) => Maybe<T> {
+    return m2 => m2.value === undefined ? m1 : m2;
   }
 
   /**

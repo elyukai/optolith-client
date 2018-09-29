@@ -11,25 +11,38 @@ export interface ListItemProps {
   noIncrease?: boolean;
   recommended?: boolean;
   unrecommended?: boolean;
-  onClick?(): void;
+  onClick? (): void;
 }
 
-export class ListItem extends React.Component<ListItemProps, {}> {
-  render() {
-    const { active, children, className, disabled, important, insertTopMargin, noIncrease, recommended, unrecommended, ...other } = this.props;
-    return (
-      <li {...other} className={classNames(className, {
+export function ListItem (props: ListItemProps) {
+  const {
+    active,
+    children,
+    className,
+    disabled,
+    important,
+    insertTopMargin,
+    noIncrease,
+    recommended,
+    unrecommended,
+    ...other
+  } = props;
+
+  return (
+    <li
+      {...other}
+      className={classNames (className, {
         'active': active,
         'imp': important,
         'typ': recommended,
         'untyp': unrecommended,
         'no-increase': noIncrease,
         'top-margin': insertTopMargin,
-        disabled
-      })}>
-        {insertTopMargin && <div className="separator"></div>}
-        {children}
-      </li>
-    );
-  }
+        disabled,
+      })}
+      >
+      {insertTopMargin && <div className="separator"></div>}
+      {children}
+    </li>
+  );
 }

@@ -12,8 +12,8 @@ export const findSelectOption = <S extends Wiki.SelectionObject>(
   obj: Wiki.Activatable,
   id: Maybe<string | number>
 ): Maybe<Record<S>> =>
-  obj.lookup ('select').bind (select => select.find<any> (
-    (e): e is any => id.equals (e.lookup ('id'))
+  obj .lookup ('select') .bind (select => select .find<any> (
+    (e): e is any => id .equals (e .lookup ('id'))
   ));
 
 /**
@@ -25,18 +25,16 @@ export const getSelectOptionName = (
   obj: Wiki.Activatable,
   id: Maybe<string | number>
 ): Maybe<string> =>
-  findSelectOption (obj, id).bind (e => e.lookup ('name'));
+  findSelectOption (obj, id) .bind (e => e .lookup ('name'));
 
 /**
  * Get a selection option's name with the given id from given wiki entry.
  * Returns `undefined` if not found.
  * @param obj The entry.
  */
-export const getSelectOptionCost = (
-  obj: Wiki.Activatable,
-  id: Maybe<string | number>
-): Maybe<number> =>
-  findSelectOption (obj, id).bind (e => e.lookup ('cost'));
+export const getSelectOptionCost = (obj: Wiki.Activatable) =>
+  (id: Maybe<string | number>): Maybe<number> =>
+    findSelectOption (obj, id) .bind (e => e .lookup ('cost'));
 
 interface SelectionNameAndCost {
   name: string;

@@ -1,7 +1,7 @@
 import { createMaybeSelector } from '../utils/createMaybeSelector';
 import { Just, OrderedSet } from '../utils/dataUtils';
 import { isActive } from '../utils/isActive';
-import { mapGetToSlice } from '../utils/SelectorsUtils';
+import { mapGetToMaybeSlice } from '../utils/SelectorsUtils';
 import { getAreAllRuleBooksEnabled, getEnabledRuleBooks, getSpecialAbilities } from './stateSelectors';
 
 export const getRuleBooksEnabled = createMaybeSelector (
@@ -14,6 +14,6 @@ export const getRuleBooksEnabled = createMaybeSelector (
 );
 
 export const isEnableLanguageSpecializationsDeactivatable = createMaybeSelector (
-  mapGetToSlice (getSpecialAbilities, 'SA_699'),
+  mapGetToMaybeSlice (getSpecialAbilities, 'SA_699'),
   isActive
 );

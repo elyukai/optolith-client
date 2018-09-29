@@ -1,6 +1,10 @@
 import * as React from 'react';
-import { ActivateArgs, ActiveViewObject, DeactiveViewObject, Instance, UIMessages } from '../types/data';
-import { ActivatableAddListItemContainer } from './ActivatableAddListItem';
+import { ActivatableAddListItemContainer } from '../containers/InactiveActivatableContainer';
+import { ActivateArgs, ActiveViewObject, DeactiveViewObject, EntryRating, UIMessagesObject } from '../types/data';
+import { getFullName } from '../utils/activatableNameUtils';
+import { isActiveViewObject } from '../utils/checkActivatableUtils';
+import { List, Maybe, OrderedMap, Record } from '../utils/dataUtils';
+import { isRated } from '../utils/ratingUtils';
 import { ListView } from './List';
 import { ListItem } from './ListItem';
 import { ListItemName } from './ListItemName';
@@ -9,45 +13,59 @@ import { Scroll } from './Scroll';
 
 export interface ActivatableAddListProps {
   hideGroup?: boolean;
-  list: (ActiveViewObject | DeactiveViewObject)[];
-  locale: UIMessages;
-  rating?: { [id: string]: string };
+  inactiveList: Maybe<List<
+    Record<ActiveViewObject>
+    | Record<DeactiveViewObject>
+  >>;
+  locale: UIMessagesObject;
+  rating?: Maybe<OrderedMap<string, EntryRating>>;
   showRating?: boolean;
-  addToList(args: ActivateArgs): void;
-  get(id: string): Instance | undefined;
-  selectForInfo?(id: string): void;
+  addToList (args: ActivateArgs): void;
+  selectForInfo (id: string): void;
 }
 
-export function ActivatableAddList(props: ActivatableAddListProps) {
-  const { list, locale, rating, showRating } = props;
+export function ActivatableAddList (props: ActivatableAddListProps) {
+  const { inactiveList: maybeInactiveList, locale, rating, showRating } = props;
 
-  if (list.length === 0) {
+  if (
+    !Maybe.isJust (maybeInactiveList)
+    || Maybe.elem (true) (maybeInactiveList .fmap (List.null))
+  ) {
     return <ListPlaceholder locale={locale} noResults type="inactiveSpecialAbilities" />;
   }
+
+  const normalizedRating = Maybe.normalize (rating);
+
+  const isRatedWithRating = isRated (showRating) (normalizedRating);
 
   return (
     <Scroll>
       <ListView>
-        {list.map(item => {
-          if (isActiveViewObject(item)) {
-            const name = getFullName(item);
+        {Maybe.fromJust (maybeInactiveList)
+          .map (item => {
+            if (isActiveViewObject (item)) {
+              const name = getFullName (item);
+
+              return (
+                <ListItem key={`${item .get ('id')}_${item .get ('index')}`} disabled>
+                  <ListItemName name={name} />
+                </ListItem>
+              );
+            }
+
+            const isRatedForItem = isRatedWithRating (item);
+
             return (
-              <ListItem key={`${item.id}_${item.index}`} disabled>
-                <ListItemName name={name} />
-              </ListItem>
+              <ActivatableAddListItemContainer
+                {...props}
+                key={item .get ('id')}
+                item={item}
+                isImportant={isRatedForItem (EntryRating.Essential)}
+                isTypical={isRatedForItem (EntryRating.Common)}
+                isUntypical={isRatedForItem (EntryRating.Uncommon)}
+                />
             );
-          }
-          return (
-            <ActivatableAddListItemContainer
-              {...props}
-              key={item.id}
-              item={item}
-              isImportant={showRating && rating && rating[item.id] === 'IMP'}
-              isTypical={showRating && rating && rating[item.id] === 'TYP'}
-              isUntypical={showRating && rating && rating[item.id] === 'UNTYP'}
-              />
-          );
-        })}
+          })}
       </ListView>
     </Scroll>
   );

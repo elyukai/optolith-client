@@ -7,7 +7,7 @@ import { ArmorZonesContainer } from '../containers/ArmorZones';
 import { AttributesContainer } from '../containers/AttributesContainer';
 import { CombatTechniquesContainer } from '../containers/CombatTechniques';
 import { CulturesContainer } from '../containers/Cultures';
-import { DisadvantagesContainer } from '../containers/Disadvantages';
+import { DisadvantagesContainer } from '../containers/DisadvantagesContainer';
 import { EquipmentContainer } from '../containers/Equipment';
 import { HelpContainer } from '../containers/HelpContainer';
 import { HerolistContainer } from '../containers/HerolistContainer';

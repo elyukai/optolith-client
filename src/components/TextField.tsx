@@ -15,7 +15,8 @@ export interface TextFieldProps {
   hint?: Maybe<string> | string;
   label?: string;
   multiLine?: boolean;
-  onChange (event: React.FormEvent<HTMLInputElement>): void;
+  onChange? (event: React.FormEvent<HTMLInputElement>): void;
+  onChangeString? (updatedText: string): void;
   onKeyDown? (event: React.KeyboardEvent<HTMLInputElement>): void;
   type?: string;
   value?: string | number | Maybe<string | number>;
@@ -41,6 +42,7 @@ export class TextField extends React.Component<TextFieldProps, {}> {
       hint: maybeHint = Nothing (),
       label,
       onChange,
+      onChangeString,
       onKeyDown,
       type = 'text',
       valid,
@@ -77,13 +79,16 @@ export class TextField extends React.Component<TextFieldProps, {}> {
         onChange={
           disabled
             ? undefined
-            : (onChange as (event: React.FormEvent<HTMLInputElement>) => void)
+            : (onChange && onChangeString)
+            ? event => {
+              onChange (event);
+              onChangeString (event.target.value);
+            }
+            : onChangeString
+            ? event => onChangeString (event.target.value)
+            : onChange
         }
-        onKeyPress={
-          disabled
-            ? undefined
-            : (onKeyDown as (event: React.KeyboardEvent<HTMLInputElement>) => void)
-        }
+        onKeyPress={disabled ? undefined : onKeyDown}
         readOnly={disabled}
         ref={node => this.inputRef = node}
       />

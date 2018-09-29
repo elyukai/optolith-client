@@ -4,8 +4,9 @@ export interface ListItemSelectionsProps {
   children?: React.ReactNode;
 }
 
-export function ListItemSelections(props: ListItemSelectionsProps) {
+export function ListItemSelections (props: ListItemSelectionsProps) {
   const { children } = props;
+
   return (
     <div className="selections">
       {children}

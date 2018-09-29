@@ -180,7 +180,7 @@ const hasReachedMaximumEntries = (
   const max = entry.lookup ('max');
 
   return Maybe.isJust (max)
-    && Maybe.fromMaybe (0) (instance.fmap (e => e.get ('active').length ()))
+    && Maybe.fromMaybe (0) (instance .fmap (e => e.get ('active') .length ()))
       >= Maybe.fromJust (max);
 };
 
@@ -208,7 +208,7 @@ export const isAdditionDisabled = (
   maxTier: Maybe<number>
 ) =>
   isAdditionDisabledEntrySpecific (wiki, state, entry)
-  && hasGeneralRestrictionToAdd (instance)
-  && hasReachedMaximumEntries (instance, entry)
-  && hasReachedImpossibleMaximumLevel (maxTier)
-  && isInvalidExtendedSpecialAbility (entry, validExtendedSpecialAbilities);
+  || hasGeneralRestrictionToAdd (instance)
+  || hasReachedMaximumEntries (instance, entry)
+  || hasReachedImpossibleMaximumLevel (maxTier)
+  || isInvalidExtendedSpecialAbility (entry, validExtendedSpecialAbilities);

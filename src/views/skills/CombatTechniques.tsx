@@ -9,7 +9,7 @@ import { Page } from '../../components/Page';
 import { RadioButtonGroup } from '../../components/RadioButtonGroup';
 import { Scroll } from '../../components/Scroll';
 import { TextField } from '../../components/TextField';
-import { WikiInfoContainer } from '../../containers/WikiInfo';
+import { WikiInfoContainer } from '../../containers/WikiInfoContainer';
 import { DCIds } from '../../selectors/derivedCharacteristicsSelectors';
 import { AttributeInstance, InputTextEvent, SecondaryAttribute } from '../../types/data';
 import { UIMessages } from '../../types/ui';

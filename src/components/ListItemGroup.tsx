@@ -1,29 +1,32 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
+import { Just, List, Maybe, Nothing } from '../utils/dataUtils';
 
 export interface ListItemGroupProps {
   children?: React.ReactNode;
-  index?: number;
-  list?: string[];
+  index?: number | Maybe<number>;
+  list?: List<string>;
   small?: boolean;
   text?: string;
 }
 
-export function ListItemGroup(props: ListItemGroupProps) {
+export function ListItemGroup (props: ListItemGroupProps) {
   const { children, index, list, small, text } = props;
 
-  let content: React.ReactNode;
+  const normalizedIndex = Maybe.normalize (index);
 
-  if (typeof index === 'number' && Array.isArray(list)) {
-    content = list[index - 1];
-  }
-  else if (typeof text === 'string') {
-    content = text;
-  }
+  const content =
+    Maybe.fromMaybe
+      (children as NonNullable<React.ReactNode>)
+      (Maybe.isJust (normalizedIndex) && list instanceof List
+        ? list .subscript (Maybe.fromJust (normalizedIndex) - 1)
+        : typeof text === 'string'
+        ? Just (text)
+        : Nothing ());
 
   return (
-    <div className={classNames('group', small && 'small-info-text')}>
-      {content || children}
+    <div className={classNames ('group', small && 'small-info-text')}>
+      {content}
     </div>
   );
 }

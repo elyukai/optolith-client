@@ -174,7 +174,7 @@ export class OrderedMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
       if (Maybe.isJust (entry)) {
         return OrderedMap.of ([
           ...this.value,
-          [key, fn (Maybe.fromJust (entry)) (value)]
+          [key, fn (Maybe.fromJust (entry)) (value)],
         ]);
       }
       else {
@@ -201,7 +201,7 @@ export class OrderedMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
       if (Maybe.isJust (entry)) {
         return OrderedMap.of ([
           ...this.value,
-          [key, fn (key) (Maybe.fromJust (entry)) (value)]
+          [key, fn (key) (Maybe.fromJust (entry)) (value)],
         ]);
       }
       else {
@@ -353,7 +353,7 @@ export class OrderedMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
         if (Maybe.isJust (res)) {
           return Tuple.of<Maybe<V>, OrderedMap<K, V>> (res) (new OrderedMap ([
             ...this.value,
-            [key, Maybe.fromJust (res)]
+            [key, Maybe.fromJust (res)],
           ]));
         }
         else {
@@ -397,7 +397,7 @@ export class OrderedMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
   union (add: OrderedMap<K, V>) {
     return OrderedMap.of ([
       ...this.value,
-      ...[...add.value].filter (e => !this.value.has (e[0]))
+      ...[...add.value].filter (e => !this.value.has (e[0])),
     ]);
   }
 

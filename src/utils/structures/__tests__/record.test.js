@@ -34,8 +34,25 @@ test('lookupWithDefault', () => {
 test('insert', () => {
   expect(Record.of({ a: 1, b: 2 }).insert('a')(3))
     .toEqual(Record.of({ a: 3, b: 2 }));
-  expect(Record.of({ a: 1, b: 2 }).insert('a')(3))
+});
+
+test('Record.insert', () => {
+  expect(Record.insert ('a') (3) (Record.of({ a: 1, b: 2 })))
     .toEqual(Record.of({ a: 3, b: 2 }));
+});
+
+test('insertMaybe', () => {
+  expect(Record.of({ a: 1, b: 2 }) .insertMaybe ('a') (Just (3)))
+    .toEqual(Record.of({ a: 3, b: 2 }));
+  expect(Record.of({ a: 1, b: 2 }) .insertMaybe ('a') (Nothing ()))
+    .toEqual(Record.of({ b: 2 }));
+});
+
+test('Record.insertMaybe', () => {
+  expect(Record.insertMaybe ('a') (Just (3)) (Record.of({ a: 1, b: 2 })))
+    .toEqual(Record.of({ a: 3, b: 2 }));
+  expect(Record.insertMaybe ('a') (Nothing ()) (Record.of({ a: 1, b: 2 })))
+    .toEqual(Record.of({ b: 2 }));
 });
 
 test('modify', () => {
@@ -45,14 +62,17 @@ test('modify', () => {
     .toEqual(Record.of({ a: 1, b: 6 }));
 });
 
+test('Record.modify', () => {
+  expect(Record.modify (x => x * 3) ('b') (Record.of({ a: 1, b: 2 })))
+    .toEqual(Record.of({ a: 1, b: 6 }));
+  expect(Record.modify (x => x * 3) ('b') (Record.of({ a: 1, b: 2 })))
+    .toEqual(Record.of({ a: 1, b: 6 }));
+});
+
 test('update', () => {
   expect(Record.of({ a: 1, b: 2 }).update(x => Just(x * 3))('b'))
     .toEqual(Record.of({ a: 1, b: 6 }));
-  expect(Record.of({ a: 1, b: 2 }).update(x => Just(x * 3))('b'))
-    .toEqual(Record.of({ a: 1, b: 6 }));
 
-  expect(Record.of({ a: 1, b: 2 }).update(x => Nothing())('b'))
-    .toEqual(Record.of({ a: 1 }));
   expect(Record.of({ a: 1, b: 2 }).update(x => Nothing())('b'))
     .toEqual(Record.of({ a: 1 }));
 });
@@ -61,18 +81,12 @@ test('alter', () => {
   // Modify
   expect(Record.of({ a: 1, b: 2 }).alter(m => m.fmap(x => x * 3))('b'))
     .toEqual(Record.of({ a: 1, b: 6 }));
-  expect(Record.of({ a: 1, b: 2 }).alter(m => m.fmap(x => x * 3))('b'))
-    .toEqual(Record.of({ a: 1, b: 6 }));
 
   // Insert
   expect(Record.of({ a: 1, b: 2 }).alter(m => m.fmap(x => x * 3).alt(Just(3)))('c'))
     .toEqual(Record.of({ a: 1, b: 2, c: 3 }));
-  expect(Record.of({ a: 1, b: 2 }).alter(m => m.fmap(x => x * 3).alt(Just(3)))('c'))
-    .toEqual(Record.of({ a: 1, b: 2, c: 3 }));
 
   // Delete
-  expect(Record.of({ a: 1, b: 2 }).alter(x => Nothing())('b'))
-    .toEqual(Record.of({ a: 1 }));
   expect(Record.of({ a: 1, b: 2 }).alter(x => Nothing())('b'))
     .toEqual(Record.of({ a: 1 }));
 });

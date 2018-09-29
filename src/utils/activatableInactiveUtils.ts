@@ -14,7 +14,7 @@ import * as Wiki from '../types/wiki';
 import { isAdditionDisabled } from './activatableInactiveValidationUtils';
 import { getModifierByActiveLevel } from './activatableModifierUtils';
 import { countActiveSkillEntries } from './activatableSkillUtils';
-import { Just, List, Maybe, OrderedMap, Record, Tuple } from './dataUtils';
+import { Just, List, Maybe, OrderedMap, Record, RecordInterface, Tuple } from './dataUtils';
 import { countActiveGroupEntries } from './entryGroupUtils';
 import { sortObjects } from './FilterSortUtils';
 import { getAllEntriesByGroup } from './heroStateUtils';
@@ -24,8 +24,9 @@ import { getTraditionOfAspect } from './liturgicalChantUtils';
 import { match } from './match';
 import { findSelectOption, getActiveSecondarySelections, getActiveSelections, getRequiredSelections } from './selectionUtils';
 import { getBlessedTradition, getMagicalTraditions } from './traditionUtils';
+import { isString } from './typeCheckUtils';
 import { validatePrerequisites, validateTier } from './validatePrerequisitesUtils';
-import { getWikiEntry, getWikiEntryFromSlice } from './WikiUtils';
+import { getWikiEntryFromSlice } from './WikiUtils';
 
 const getIsNoActiveSelection =
   R.pipe (
@@ -33,7 +34,7 @@ const getIsNoActiveSelection =
     Maybe.fromMaybe (List.empty ()),
     activeSelections => R.pipe (
       Record.get<Wiki.SelectionObject, 'id'> ('id'),
-      activeSelections.notElem
+      List.notElem_ (activeSelections)
     )
   );
 
@@ -53,7 +54,7 @@ const getIsNoRequiredSelection =
     Maybe.fromMaybe (List.empty ()),
     requiredSelections => R.pipe (
       Record.get<Wiki.SelectionObject, 'id'> ('id'),
-      requiredSelections.notElem
+      List.notElem_ (requiredSelections)
     )
   );
 
@@ -659,7 +660,6 @@ const getEntrySpecificSelections = (
 
 interface InactiveOptions {
   cost?: string | number | List<number>;
-  tiers?: number;
   minTier?: number;
   maxTier?: number;
   customCostDisabled?: boolean;
@@ -855,69 +855,68 @@ export const getInactiveView = (
   validExtendedSpecialAbilities: List<string>,
   locale: Record<Data.UIMessages>,
   adventurePoints: Record<AdventurePointsObject>,
-  id: string
+  wikiEntry: Wiki.Activatable
 ): Maybe<Record<Data.DeactiveViewObject>> => {
-  return getWikiEntry<Wiki.Activatable> (wiki) (id)
-    .bind (entry => {
-      const prerequisites = entry.get ('prerequisites');
-      const maxTier = prerequisites instanceof OrderedMap ? validateTier (
-        wiki,
-        state,
-        prerequisites,
-        Maybe.maybe<
-          Record<Data.ActivatableDependent>,
-          Data.ActivatableDependent['dependencies']
-        > (List.empty ()) (e => e.get ('dependencies')) (instance),
-        id
-      ) : Maybe.empty ();
+  const id = wikiEntry .get ('id');
+  const prerequisites = wikiEntry .get ('prerequisites');
+  const maxTier = prerequisites instanceof OrderedMap
+    ? validateTier (
+      wiki,
+      state,
+      prerequisites,
+      Maybe.maybe<
+        Record<Data.ActivatableDependent>,
+        Data.ActivatableDependent['dependencies']
+      > (List.empty ()) (e => e.get ('dependencies')) (instance),
+      id
+    )
+    : Maybe.empty ();
 
-      const isValid = isAdditionDisabled (
-        wiki,
-        instance,
-        state,
-        validExtendedSpecialAbilities,
-        entry,
-        maxTier
-      );
+  const isNotValid = isAdditionDisabled (
+    wiki,
+    instance,
+    state,
+    validExtendedSpecialAbilities,
+    wikiEntry,
+    maxTier
+  );
 
-      if (isValid) {
-        const specificSelections = getEntrySpecificSelections (
-          wiki,
-          instance,
-          state,
-          entry
-        );
+  if (!isNotValid) {
+    const specificSelections = getEntrySpecificSelections (
+      wiki,
+      instance,
+      state,
+      wikiEntry
+    );
 
-        const maybeOtherOptions = getOtherOptions (
-          wiki,
-          instance,
-          state,
-          adventurePoints,
-          entry
-        );
+    const maybeOtherOptions = getOtherOptions (
+      wiki,
+      instance,
+      state,
+      adventurePoints,
+      wikiEntry
+    );
 
-        return maybeOtherOptions.bind (
-          otherOptions =>
-            Maybe.ensure<Maybe<List<Record<Wiki.SelectionObject>>>> (
-              select => !Maybe.isJust (select) || !List.null (Maybe.fromJust (select))
-            ) (specificSelections.alt (entry.lookup ('select')))
-              .fmap (
-                select =>
-                  otherOptions.mergeMaybe (Record.of ({
-                    id,
-                    name: entry.get ('name'),
-                    cost: entry.get ('cost'),
-                    input: entry.lookup ('input'),
-                    tiers: entry.lookup ('tiers'),
-                    maxTier,
-                    stateEntry: instance,
-                    wikiEntry: entry,
-                    sel: select.fmap (sel => sortObjects (sel, locale.get ('id'))),
-                  })) as Record<Data.DeactiveViewObject>
-              )
-        );
-      }
+    return maybeOtherOptions.bind (
+      otherOptions =>
+        Maybe.ensure<Maybe<List<Record<Wiki.SelectionObject>>>> (
+          select => !Maybe.isJust (select) || !List.null (Maybe.fromJust (select))
+        ) (specificSelections)
+          .fmap (
+            select =>
+              Record.ofMaybe<Data.DeactiveViewObject> ({
+                id,
+                name: wikiEntry.get ('name'),
+                cost: wikiEntry.get ('cost'),
+                maxTier,
+                stateEntry: instance,
+                wikiEntry: wikiEntry as Record<RecordInterface<Wiki.Activatable>>,
+                sel: select.fmap (sel => sortObjects (sel, locale.get ('id'))),
+              })
+                .merge (otherOptions)
+          )
+    );
+  }
 
-      return Maybe.empty ();
-    });
-}
+  return Maybe.empty ();
+};

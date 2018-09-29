@@ -12,7 +12,7 @@ import { Scroll } from '../../components/Scroll';
 import { SortOptions } from '../../components/SortOptions';
 import { TextField } from '../../components/TextField';
 import { SelectionsContainer } from '../../containers/RCPSelections';
-import { WikiInfoContainer } from '../../containers/WikiInfo';
+import { WikiInfoContainer } from '../../containers/WikiInfoContainer';
 import { Book, CantripInstance, InputTextEvent, LiturgyInstance, SMap, SpellInstance } from '../../types/data';
 import { Profession, UIMessages } from '../../types/view';
 import { translate } from '../../utils/I18n';

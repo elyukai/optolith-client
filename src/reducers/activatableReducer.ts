@@ -7,6 +7,7 @@ import { Maybe, Record } from '../utils/dataUtils';
 import * as ExtendedStyleUtils from '../utils/ExtendedStyleUtils';
 import { getHeroStateListItem } from '../utils/heroStateUtils';
 import * as IncreasableUtils from '../utils/IncreasableUtils';
+import { logIdentity } from '../utils/logIdentity';
 
 type Action =
   DisAdvActions.ActivateDisAdvAction |
@@ -45,8 +46,8 @@ export function activatableReducer (
       const { id, index, wikiEntry } = action.payload;
 
       return Maybe.fromMaybe (state) (
-        state.get ('advantages').lookup (id)
-          .alt (state.get ('disadvantages').lookup (id))
+        state .get ('advantages').lookup (id)
+          .alt (state .get ('disadvantages').lookup (id))
           .fmap (instance => deactivate (index) (
             state,
             wikiEntry,
@@ -89,11 +90,11 @@ export function activatableReducer (
 
       return Maybe.fromMaybe (state) (
         (getHeroStateListItem (id) (state) as Maybe<Record<Data.ActivatableDependent>>)
-          .fmap (instance => setTier (index, tier) (
+          .fmap (instance => logIdentity (setTier (index, tier) (
             state,
             wikiEntry,
             instance
-          ))
+          )))
       );
     }
 

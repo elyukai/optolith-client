@@ -13,7 +13,7 @@ const getSourceBooks =
 
 export const initExperienceLevel = (
   raw: Raw.RawExperienceLevel,
-  locale: StringKeyObject<Raw.RawExperienceLevelLocale>,
+  locale: StringKeyObject<Raw.RawExperienceLevelLocale>
 ): (Maybe<Record<Wiki.ExperienceLevel>>) => {
   const { id } = raw;
   const localeObject = locale[id];
@@ -24,7 +24,7 @@ export const initExperienceLevel = (
     return Just (Record.of ({
       ...raw,
       id,
-      name
+      name,
     }));
   }
 
@@ -37,14 +37,14 @@ interface SizeNew {
 }
 
 const convertSize = (
-  old: (number | [number, number])[] | undefined,
+  old: (number | [number, number])[] | undefined
 ): SizeNew | undefined => {
   return old && old.reduce<SizeNew> (
     (obj, value) => {
       if (typeof value === 'number') {
         return {
           ...obj,
-          sizeBase: obj.sizeBase + value
+          sizeBase: obj.sizeBase + value,
         };
       }
 
@@ -52,12 +52,12 @@ const convertSize = (
 
       return {
         ...obj,
-        sizeRandom: obj.sizeRandom.append (Record.of ({ amount, sides }))
+        sizeRandom: obj.sizeRandom.append (Record.of ({ amount, sides })),
       };
     },
     {
       sizeBase: 0,
-      sizeRandom: List.of ()
+      sizeRandom: List.of (),
     }
   );
 };
@@ -68,14 +68,14 @@ interface WeightNew {
 }
 
 const convertWeight = (
-  old: (number | [number, number])[],
+  old: (number | [number, number])[]
 ): WeightNew => {
   return old.reduce<WeightNew> (
     (obj, value) => {
       if (typeof value === 'number') {
         return {
           ...obj,
-          weightBase: obj.weightBase + value
+          weightBase: obj.weightBase + value,
         };
       }
 
@@ -83,19 +83,19 @@ const convertWeight = (
 
       return {
         ...obj,
-        weightRandom: obj.weightRandom.append (Record.of ({ amount, sides }))
+        weightRandom: obj.weightRandom.append (Record.of ({ amount, sides })),
       };
     },
     {
       weightBase: 0,
-      weightRandom: List.of ()
+      weightRandom: List.of (),
     }
   );
 };
 
 export const initRace = (
   raw: Raw.RawRace,
-  locale: StringKeyObject<Raw.RawRaceLocale>,
+  locale: StringKeyObject<Raw.RawRaceLocale>
 ): (Maybe<Record<Wiki.Race>>) => {
   const { id } = raw;
   const localeObject = locale[id];
@@ -111,7 +111,7 @@ export const initRace = (
       stronglyRecommendedAdvantages: stronglyRecommendedAdvantagesText,
       stronglyRecommendedDisadvantages: stronglyRecommendedDisadvantagesText,
       uncommonAdvantages: uncommonAdvantagesText,
-      uncommonDisadvantages: uncommonDisadvantagesText
+      uncommonDisadvantages: uncommonDisadvantagesText,
     } = localeObject;
 
     const {
@@ -136,7 +136,7 @@ export const initRace = (
       untyp_dadv,
       weight,
       zk,
-      vars
+      vars,
     } = raw;
 
     return Just (Record.of<Wiki.Race> ({
@@ -192,7 +192,7 @@ export const initRace = (
       )),
       uncommonDisadvantagesText,
       variants: List.fromArray (vars.map (e => `${IdPrefixes.RACE_VARIANTS}_${e}`)),
-      src: getSourceBooks (srcIds, srcPages)
+      src: getSourceBooks (srcIds, srcPages),
     }));
   }
 
@@ -201,7 +201,7 @@ export const initRace = (
 
 export const initRaceVariant = (
   raw: Raw.RawRaceVariant,
-  locale: StringKeyObject<Raw.RawRaceVariantLocale>,
+  locale: StringKeyObject<Raw.RawRaceVariantLocale>
 ): (Maybe<Record<Wiki.RaceVariant>>) => {
   const { id } = raw;
   const localeObject = locale[id];
@@ -212,7 +212,7 @@ export const initRaceVariant = (
       commonDisadvantages: commonDisadvantagesText,
       name,
       uncommonAdvantages: uncommonAdvantagesText,
-      uncommonDisadvantages: uncommonDisadvantagesText
+      uncommonDisadvantages: uncommonDisadvantagesText,
     } = localeObject;
 
     const {
@@ -223,7 +223,7 @@ export const initRaceVariant = (
       typ_dadv,
       size,
       untyp_adv,
-      untyp_dadv
+      untyp_dadv,
     } = raw;
 
     return Just (Record.of<Wiki.RaceVariant> ({
@@ -251,7 +251,7 @@ export const initRaceVariant = (
       uncommonDisadvantages: List.fromArray (untyp_dadv.map (
         e => `${IdPrefixes.DISADVANTAGES}_${e}`
       )),
-      uncommonDisadvantagesText
+      uncommonDisadvantagesText,
     }));
   }
 
@@ -260,7 +260,7 @@ export const initRaceVariant = (
 
 export const initCulture = (
   raw: Raw.RawCulture,
-  locale: StringKeyObject<Raw.RawCultureLocale>,
+  locale: StringKeyObject<Raw.RawCultureLocale>
 ): (Maybe<Record<Wiki.Culture>>) => {
   const { id } = raw;
   const localeObject = locale[id];
@@ -288,7 +288,7 @@ export const initCulture = (
       typ_talents,
       untyp_talents,
       talents,
-      src: srcIds
+      src: srcIds,
     } = raw;
 
     return Just (Record.of<Wiki.Culture> ({
@@ -301,13 +301,13 @@ export const initCulture = (
       socialStatus: List.fromArray (social),
       culturalPackageSkills: List.fromArray (talents.map (e => Record.of ({
         id: `${IdPrefixes.TALENTS}_${e[0]}`,
-        value: e[1]
+        value: e[1],
       }))),
       commonProfessions: List.fromArray (
         typ_prof.map<Wiki.CommonProfession> (
           e => typeof e === 'boolean' ? e : Record.of ({
             ...e,
-            list: List.fromArray (e.list)
+            list: List.fromArray (e.list),
           })
         )
       ),
@@ -333,7 +333,7 @@ export const initCulture = (
       uncommonSkills: List.fromArray (untyp_talents.map (
         e => `${IdPrefixes.TALENTS}_${e}`
       )),
-      src: getSourceBooks (srcIds, srcPages)
+      src: getSourceBooks (srcIds, srcPages),
     }));
   }
 
@@ -342,7 +342,7 @@ export const initCulture = (
 
 export const initProfession = (
   raw: Raw.RawProfession,
-  locale: StringKeyObject<Raw.RawProfessionLocale>,
+  locale: StringKeyObject<Raw.RawProfessionLocale>
 ): (Maybe<Record<Wiki.Profession>>) => {
   const { id } = raw;
   const localeObject = locale[id];
@@ -358,7 +358,7 @@ export const initProfession = (
       suggestedDisadvantages,
       unsuitableAdvantages,
       unsuitableDisadvantages,
-      src: srcPages
+      src: srcPages,
     } = localeObject;
 
     const {
@@ -380,7 +380,7 @@ export const initProfession = (
       gr,
       src: srcIds,
       blessings,
-      sgr
+      sgr,
     } = raw;
 
     return Just (Record.of<Wiki.Profession> ({
@@ -412,7 +412,7 @@ export const initProfession = (
       suggestedDisadvantagesText: suggestedDisadvantages,
       unsuitableAdvantagesText: unsuitableAdvantages,
       unsuitableDisadvantagesText: unsuitableDisadvantages,
-      src: getSourceBooks (srcIds, srcPages)
+      src: getSourceBooks (srcIds, srcPages),
     }));
   }
 
@@ -421,7 +421,7 @@ export const initProfession = (
 
 export const initProfessionVariant = (
   raw: Raw.RawProfessionVariant,
-  locale: StringKeyObject<Raw.RawProfessionVariantLocale>,
+  locale: StringKeyObject<Raw.RawProfessionVariantLocale>
 ): (Maybe<Record<Wiki.ProfessionVariant>>) => {
   const { id } = raw;
   const localeObject = locale[id];
@@ -443,7 +443,7 @@ export const initProfessionVariant = (
       talents,
       spells,
       chants,
-      blessings
+      blessings,
     } = raw;
 
     return Just (Record.of<Wiki.ProfessionVariant> ({
@@ -470,7 +470,7 @@ export const initProfessionVariant = (
 
 export const initAdvantage = (
   raw: Raw.RawAdvantage,
-  locale: StringKeyObject<Raw.RawAdvantageLocale>,
+  locale: StringKeyObject<Raw.RawAdvantageLocale>
 ): (Maybe<Record<Wiki.Advantage>>) => {
   const { id } = raw;
   const localeObject = locale[id];
@@ -513,9 +513,9 @@ export const initAdvantage = (
         }),
         ...reqIndexIgnore.map<[number, false]> (e => {
           return [Number.parseInt (e), false];
-        })
+        }),
       ]),
-      src: getSourceBooks (srcIds, srcPages)
+      src: getSourceBooks (srcIds, srcPages),
     }));
   }
 
@@ -524,7 +524,7 @@ export const initAdvantage = (
 
 export const initDisadvantage = (
   raw: Raw.RawDisadvantage,
-  locale: StringKeyObject<Raw.RawDisadvantageLocale>,
+  locale: StringKeyObject<Raw.RawDisadvantageLocale>
 ): (Maybe<Record<Wiki.Disadvantage>>) => {
   const { id } = raw;
   const localeObject = locale[id];
@@ -567,9 +567,9 @@ export const initDisadvantage = (
         }),
         ...reqIndexIgnore.map<[number, false]> (e => {
           return [Number.parseInt (e), false];
-        })
+        }),
       ]),
-      src: getSourceBooks (srcIds, srcPages)
+      src: getSourceBooks (srcIds, srcPages),
     }));
   }
 
@@ -578,7 +578,7 @@ export const initDisadvantage = (
 
 export const initSpecialAbility = (
   raw: Raw.RawSpecialAbility,
-  locale: StringKeyObject<Raw.RawSpecialAbilityLocale>,
+  locale: StringKeyObject<Raw.RawSpecialAbilityLocale>
 ): (Maybe<Record<Wiki.SpecialAbility>>) => {
   const { id } = raw;
   const localeObject = locale[id];
@@ -614,7 +614,7 @@ export const initSpecialAbility = (
           (req as [number, Raw.AllRawRequirements[]][]).map (
             e => [
               e[0],
-              convertRawPrerequisites (e[1])
+              convertRawPrerequisites (e[1]),
             ] as [number, List<Wiki.AllRequirements>]
           )
         )
@@ -631,12 +631,12 @@ export const initSpecialAbility = (
         }),
         ...reqIndexIgnore.map<[number, false]> (e => {
           return [Number.parseInt (e), false];
-        })
+        }),
       ]),
       extended: extended && List.fromArray (extended.map (
         e => typeof e === 'object' ? List.fromArray (e) : e
       )),
-      src: getSourceBooks (srcIds, srcPages)
+      src: getSourceBooks (srcIds, srcPages),
     }));
   }
 
@@ -645,7 +645,7 @@ export const initSpecialAbility = (
 
 export const initAttribute = (
   raw: Raw.RawAttribute,
-  locale: StringKeyObject<Raw.RawAttributeLocale>,
+  locale: StringKeyObject<Raw.RawAttributeLocale>
 ): (Maybe<Record<Wiki.Attribute>>) => {
   const { id } = raw;
   const localeObject = locale[id];
@@ -666,7 +666,7 @@ export const initAttribute = (
 
 export const initCombatTechnique = (
   raw: Raw.RawCombatTechnique,
-  locale: StringKeyObject<Raw.RawCombatTechniqueLocale>,
+  locale: StringKeyObject<Raw.RawCombatTechniqueLocale>
 ): (Maybe<Record<Wiki.CombatTechnique>>) => {
   const { id } = raw;
   const localeObject = locale[id];
@@ -683,7 +683,7 @@ export const initCombatTechnique = (
       ic: skt,
       primary: List.fromArray (leit),
       bf,
-      src: getSourceBooks (srcIds, srcPages)
+      src: getSourceBooks (srcIds, srcPages),
     }));
   }
 
@@ -692,7 +692,7 @@ export const initCombatTechnique = (
 
 export const initLiturgicalChant = (
   raw: Raw.RawLiturgy,
-  locale: StringKeyObject<Raw.RawLiturgyLocale>,
+  locale: StringKeyObject<Raw.RawLiturgyLocale>
 ): (Maybe<Record<Wiki.LiturgicalChant>>) => {
   const { id } = raw;
   const localeObject = locale[id];
@@ -723,7 +723,7 @@ export const initLiturgicalChant = (
       castingTimeShort: castingtimeShort,
       cost: kpcost,
       costShort: kpcostShort,
-      src: getSourceBooks (srcIds, srcPages)
+      src: getSourceBooks (srcIds, srcPages),
     }));
   }
 
@@ -732,7 +732,7 @@ export const initLiturgicalChant = (
 
 export const initBlessing = (
   raw: Raw.RawBlessing,
-  locale: StringKeyObject<Raw.RawBlessingLocale>,
+  locale: StringKeyObject<Raw.RawBlessingLocale>
 ): (Maybe<Record<Wiki.Blessing>>) => {
   const { id } = raw;
   const localeObject = locale[id];
@@ -752,7 +752,7 @@ export const initBlessing = (
       category: Categories.BLESSINGS,
       aspects: List.fromArray (aspc),
       tradition: List.fromArray (trad),
-      src: getSourceBooks (srcIds, srcPages)
+      src: getSourceBooks (srcIds, srcPages),
     }));
   }
 
@@ -761,7 +761,7 @@ export const initBlessing = (
 
 export const initSpell = (
   raw: Raw.RawSpell,
-  locale: StringKeyObject<Raw.RawSpellLocale>,
+  locale: StringKeyObject<Raw.RawSpellLocale>
 ): (Maybe<Record<Wiki.Spell>>) => {
   const { id } = raw;
   const localeObject = locale[id];
@@ -785,7 +785,7 @@ export const initSpell = (
       subtrad,
       req,
       mod,
-      src: srcIds
+      src: srcIds,
     } = raw;
 
     return Just (Record.of<Wiki.Spell> ({
@@ -803,7 +803,7 @@ export const initSpell = (
       castingTimeShort: castingtimeShort,
       cost: aecost,
       costShort: aecostShort,
-      src: getSourceBooks (srcIds, srcPages)
+      src: getSourceBooks (srcIds, srcPages),
     }));
   }
 
@@ -812,7 +812,7 @@ export const initSpell = (
 
 export const initCantrip = (
   raw: Raw.RawCantrip,
-  locale: StringKeyObject<Raw.RawCantripLocale>,
+  locale: StringKeyObject<Raw.RawCantripLocale>
 ): (Maybe<Record<Wiki.Cantrip>>) => {
   const { id } = raw;
   const localeObject = locale[id];
@@ -832,7 +832,7 @@ export const initCantrip = (
       category: Categories.CANTRIPS,
       property: merk,
       tradition: List.fromArray (trad),
-      src: getSourceBooks (srcIds, srcPages)
+      src: getSourceBooks (srcIds, srcPages),
     }));
   }
 
@@ -841,7 +841,7 @@ export const initCantrip = (
 
 export const initSkill = (
   raw: Raw.RawSkill,
-  locale: StringKeyObject<Raw.RawSkillLocale>,
+  locale: StringKeyObject<Raw.RawSkillLocale>
 ): (Maybe<Record<Wiki.Skill>>) => {
   const { id } = raw;
   const localeObject = locale[id];
@@ -859,7 +859,7 @@ export const initSkill = (
       check,
       gr,
       skt,
-      applications: appPrerequisites
+      applications: appPrerequisites,
     } = raw;
 
     return Just (Record.of<Wiki.Skill> ({
@@ -880,7 +880,7 @@ export const initSkill = (
 
 export const initItemTemplate = (
   raw: Raw.RawItemTemplate,
-  locale: StringKeyObject<Raw.RawItemLocale>,
+  locale: StringKeyObject<Raw.RawItemLocale>
 ): (Maybe<Record<Wiki.ItemTemplate>>) => {
   const { id } = raw;
   const localeObject = locale[id];
@@ -897,10 +897,10 @@ export const initItemTemplate = (
         ...primaryThreshold,
         threshold: typeof primaryThreshold.threshold === 'object'
           ? List.fromArray (primaryThreshold.threshold)
-          : primaryThreshold.threshold
+          : primaryThreshold.threshold,
       }),
       isTemplateLocked: true,
-      src: getSourceBooks (srcIds, srcPages)
+      src: getSourceBooks (srcIds, srcPages),
     }));
   }
 

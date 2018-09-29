@@ -23,6 +23,7 @@ import { isOwnTradition } from './liturgicalChantUtils';
 import { match } from './match';
 import { getActiveSelections } from './selectionUtils';
 import { getBlessedTraditionFromWiki, getMagicalTraditions } from './traditionUtils';
+import { isBoolean } from './typeCheckUtils';
 import { validateObject, validateTier } from './validatePrerequisitesUtils';
 import { getWikiEntry } from './WikiUtils';
 
@@ -70,11 +71,11 @@ const getSuperIsRemoveDisabled = (
   instance: Record<Data.ActivatableDependent>,
   active: Record<Data.ActiveObject>
 ) => (isDisabled: boolean): boolean =>
-  isDisabled ||
+  isDisabled
   // Disable if a minimum level is required
-  hasRequiredMinimumLevel (tiers, minTier) ||
+  || hasRequiredMinimumLevel (tiers, minTier)
   // Disable if other entries depend on this entry
-  isRequiredByOthers (instance, active);
+  || isRequiredByOthers (instance, active);
 
 /**
  * Checks if you can somehow remove an ActiveObject from the given entry.
@@ -90,9 +91,7 @@ const isRemovalDisabledEntrySpecific = (
   active: Record<Data.ActiveObject>,
   minTier: Maybe<number>
 ): boolean => {
-  return R.pipe<boolean, boolean> (
-    getSuperIsRemoveDisabled (entry.lookup ('tiers'), minTier, instance, active)
-  ) (
+  return R.pipe (getSuperIsRemoveDisabled (entry.lookup ('tiers'), minTier, instance, active)) (
     match<string, boolean> (entry.get ('id'))
       .on (
         R.both (
@@ -277,9 +276,9 @@ const isRemovalDisabledEntrySpecific = (
         R.T
       )
       .otherwise (
-        () => instance.get ('dependencies')
-          .all (dep => {
-            if (typeof dep === 'object' && Maybe.isJust (dep.lookup ('origin'))) {
+        () => instance .get ('dependencies')
+          .any (dep => {
+            if (typeof dep === 'object' && Maybe.isJust (dep .lookup ('origin'))) {
               return Maybe.fromMaybe (true) (
                 getWikiEntry<Wiki.WikiActivatable>
                   (wiki)
@@ -346,7 +345,7 @@ const isRemovalDisabledEntrySpecific = (
               }
             }
 
-            return true;
+            return false;
           })
       )
   );

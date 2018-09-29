@@ -53,7 +53,7 @@ export const getCombinedPrerequisites = (
   wikiEntry: Wiki.WikiActivatable,
   instance: Maybe<Record<Data.ActivatableDependent>>,
   active: Record<Data.ActiveObject>,
-  add: boolean,
+  add: boolean
 ): List<Wiki.AllRequirements> =>
   Maybe.fromJust (
     Maybe.pure (
@@ -71,21 +71,17 @@ export const getCombinedPrerequisites = (
  */
 const getChangedInstance = (
   instance: Record<Data.ActivatableDependent>,
-  changeActive: ChangeActive,
+  changeActive: ChangeActive
 ) => (state: Record<Data.HeroDependent>): Record<Data.HeroDependent> => {
   const changeInstance = R.pipe (
-    changeActive,
-    active => (
-      instance.merge (Record.of ({ active })) as
-      Record<Data.ActivatableDependent>
-    ),
+    Record.modify<Data.ActivatableDependent, 'active'> (changeActive) ('active'),
     current =>
       isActivatableDependentUnused (current)
       ? removeHeroListStateItem (instance.get ('id'))
       : setHeroListStateItem (instance.get ('id')) (current)
   );
 
-  return Maybe.fromMaybe (state) (changeInstance (instance.get ('active')) (state));
+  return Maybe.fromMaybe (state) (changeInstance (instance) (state));
 };
 
 /**
@@ -100,11 +96,11 @@ const changeActiveLength = (
   getActive: (instance: Record<Data.ActivatableDependent>) => Record<Data.ActiveObject>,
   changeDependencies: typeof DependencyUtils.addDependencies,
   changeActive: ChangeActive,
-  add: boolean,
+  add: boolean
 ) => (
   state: Record<Data.HeroDependent>,
   wikiEntry: Wiki.WikiActivatable,
-  instance: Maybe<Record<Data.ActivatableDependent>>,
+  instance: Maybe<Record<Data.ActivatableDependent>>
 ) => {
   const justInstance = Maybe.fromMaybe (createActivatableDependent (wikiEntry.get ('id')))
     (instance);
@@ -114,7 +110,7 @@ const changeActiveLength = (
   return changeDependencies (
     getChangedInstance (justInstance, changeActive) (state),
     getCombinedPrerequisites (wikiEntry, instance, active, add),
-    wikiEntry.get ('id'),
+    wikiEntry.get ('id')
   );
 };
 
@@ -139,7 +135,7 @@ export const activateByObject =
  */
 export const activate = R.pipe (
   convertUIStateToActiveObject,
-  activateByObject,
+  activateByObject
 );
 
 /**
@@ -150,7 +146,7 @@ export const activate = R.pipe (
 export const deactivate =
   (index: number): ActivatableReducer => (state, wikiEntry, instance) =>
     Maybe.fromMaybe (state) (
-      Maybe.listToMaybe (instance.get ('active'))
+      instance.get ('active') .subscript (index)
         .fmap (head =>
           changeActiveLength (
             () => head,
@@ -176,7 +172,7 @@ export function setTier (index: number, tier: number): ActivatableReducer {
 
     const active = previousActive.modifyAt (
       index,
-      prev => prev.insert ('tier') (tier),
+      prev => prev.insert ('tier') (tier)
     );
 
     const firstState = setHeroListStateItem (
@@ -187,28 +183,41 @@ export function setTier (index: number, tier: number): ActivatableReducer {
 
     const prerequisites = wikiEntry.get ('prerequisites');
 
+    console.log (
+      index,
+      tier,
+      previousTier,
+      active,
+      instance.insert ('active') (active),
+      firstState
+    );
+
     if (
       Maybe.isJust (firstState)
-      && prerequisites instanceof OrderedMap
       && Maybe.isJust (previousTier)
       && Maybe.fromJust (previousTier) !== tier
     ) {
-      const flatPrerequisites = flattenPrerequisites (prerequisites) (previousTier) (Just (tier));
+      if (prerequisites instanceof OrderedMap) {
+        const flatPrerequisites = flattenPrerequisites (prerequisites)
+                                                       (previousTier)
+                                                       (Just (tier));
 
-      if (Maybe.fromJust (previousTier) > tier) {
-        return DependencyUtils.removeDependencies (
-          Maybe.fromJust (firstState),
-          flatPrerequisites,
-          instance.get ('id'),
-        );
-      }
-      else {
+        if (Maybe.fromJust (previousTier) > tier) {
+          return DependencyUtils.removeDependencies (
+            Maybe.fromJust (firstState),
+            flatPrerequisites,
+            instance.get ('id')
+          );
+        }
+
         return DependencyUtils.addDependencies (
           Maybe.fromJust (firstState),
           flatPrerequisites,
-          instance.get ('id'),
+          instance.get ('id')
         );
       }
+
+      return Maybe.fromJust (firstState);
     }
 
     return state;

@@ -2,12 +2,28 @@ const { List } = require('../list');
 const { Just, Maybe, Nothing } = require('../maybe');
 
 test('Maybe.of -> Just', () => {
-  expect(Maybe.of(3).value).toEqual(3);
+  expect(Maybe.of (3).value).toEqual(3);
 });
 
 test('Maybe.of -> Nothing', () => {
-  expect(Maybe.of(undefined).value).toBeUndefined();
-  expect(Maybe.of(null).value).toBeUndefined();
+  expect(Maybe.of (undefined).value).toBeUndefined();
+  expect(Maybe.of (null).value).toBeUndefined();
+});
+
+test('Maybe.fromNullable -> Just', () => {
+  expect(Maybe.fromNullable (3).value).toEqual(3);
+});
+
+test('Maybe.fromNullable -> Nothing', () => {
+  expect(Maybe.fromNullable (undefined).value).toBeUndefined();
+  expect(Maybe.fromNullable (null).value).toBeUndefined();
+});
+
+test('Maybe.normalize', () => {
+  expect(Maybe.normalize (4)).toEqual(Just (4));
+  expect(Maybe.normalize (Just (4))).toEqual(Just (4));
+  expect(Maybe.normalize (undefined)).toEqual(Nothing ());
+  expect(Maybe.normalize (null)).toEqual(Nothing ());
 });
 
 test('equals', () => {
@@ -165,6 +181,28 @@ test('alt', () => {
   expect(Maybe.of(null).alt(Maybe.of(2)))
     .toEqual(Maybe.of(2));
   expect(Maybe.of(null).alt(Maybe.of(null)))
+    .toEqual(Maybe.of(null));
+});
+
+test('Maybe.alt', () => {
+  expect(Maybe.alt (Maybe.of(3)) (Maybe.of(2)))
+    .toEqual(Maybe.of(3));
+  expect(Maybe.alt (Maybe.of(3)) (Maybe.of(null)))
+    .toEqual(Maybe.of(3));
+  expect(Maybe.alt (Maybe.of(null)) (Maybe.of(2)))
+    .toEqual(Maybe.of(2));
+  expect(Maybe.alt (Maybe.of(null)) (Maybe.of(null)))
+    .toEqual(Maybe.of(null));
+});
+
+test('Maybe.alt_', () => {
+  expect(Maybe.alt (Maybe.of(2)) (Maybe.of(3)))
+    .toEqual(Maybe.of(3));
+  expect(Maybe.alt (Maybe.of(null)) (Maybe.of(3)))
+    .toEqual(Maybe.of(3));
+  expect(Maybe.alt (Maybe.of(2)) (Maybe.of(null)))
+    .toEqual(Maybe.of(2));
+  expect(Maybe.alt (Maybe.of(null)) (Maybe.of(null)))
     .toEqual(Maybe.of(null));
 });
 

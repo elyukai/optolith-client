@@ -21,6 +21,7 @@ import { match } from './match';
 import { subtractBy } from './mathUtils';
 import { getRoman } from './NumberUtils';
 import { getSelectOptionCost } from './selectionUtils';
+import { isString } from './typeCheckUtils';
 import { getWikiEntry } from './WikiUtils';
 
 const isDisadvantageActive =
@@ -114,7 +115,7 @@ const getEntrySpecificCost = (
                   .filter (e => e.lookup ('tier').equals (maybeTier))
                   .length ()
               )
-              .fmap (R.lt (Maybe.isJust (costToAdd) ? 0 : 1))
+              .fmap (R.lt (Maybe.elem (true) (costToAdd) ? 0 : 1))
           )
       ) {
         return Maybe.return (0);
@@ -139,13 +140,13 @@ const getEntrySpecificCost = (
               )
               .length ()
           )
-            .fmap (R.lt (Maybe.isJust (costToAdd) ? 0 : 1))
+            .fmap (R.lt (Maybe.elem (true) (costToAdd) ? 0 : 1))
         )
       ) {
         return Maybe.pure (0);
       }
       else {
-        return getSelectOptionCost (wikiEntry, obj.lookup ('sid'));
+        return getSelectOptionCost (wikiEntry) (obj.lookup ('sid'));
       }
     })
     .on ('DISADV_36', () =>
@@ -155,7 +156,7 @@ const getEntrySpecificCost = (
             .filter (e => Maybe.isNothing (e.lookup ('cost')))
             .length ()
         )
-          .fmap (R.lt (Maybe.isJust (costToAdd) ? 2 : 3))
+          .fmap (R.lt (Maybe.elem (true) (costToAdd) ? 2 : 3))
       )
         ? Just (0)
         : wikiEntry.lookup ('cost') as Just<number>
@@ -177,7 +178,7 @@ const getEntrySpecificCost = (
                       ? R.inc (counter)
                       : counter
                 ) (0),
-                R.add (Maybe.isJust (costToAdd) ? 1 : 0),
+                R.add (Maybe.elem (true) (costToAdd) ? 1 : 0),
                 R.multiply (skill.get ('ic'))
               ))
           ))
@@ -198,7 +199,7 @@ const getEntrySpecificCost = (
             .length ())
         );
 
-        const index = length + (Maybe.isJust (costToAdd) ? 0 : -1);
+        const index = length + (Maybe.elem (true) (costToAdd) ? 0 : -1);
 
         const cost = wikiEntry.get ('cost');
 
@@ -257,7 +258,7 @@ const getEntrySpecificCost = (
         )
         && wikiEntry.get ('cost') === 'sel'
       ) {
-        return getSelectOptionCost (wikiEntry, obj.lookup ('sid'));
+        return getSelectOptionCost (wikiEntry) (obj.lookup ('sid'));
       }
 
       return wikiEntry.lookup ('cost') as Just<number | List<number>>;
@@ -284,28 +285,25 @@ export const getCost = (
       const calculateCost = R.pipe (
         (active: Maybe<List<Record<Data.ActiveObject>>>) => {
           const customCost = obj.lookup ('cost');
+
           if (Maybe.isJust (customCost)) {
             return Maybe.fromJust (customCost);
           }
-          else {
-            return Maybe.fromMaybe<number | List<number>> (0) (
-              getEntrySpecificCost (
-                wiki,
-                wikiEntry,
-                obj,
-                Maybe.of (state),
-                active,
-                Maybe.of (costToAdd)
-              )
-            );
-          }
+
+          return Maybe.fromMaybe<number | List<number>> (0) (
+            getEntrySpecificCost (
+              wiki,
+              wikiEntry,
+              obj,
+              Maybe.fromNullable (state),
+              active,
+              Maybe.fromNullable (costToAdd)
+            )
+          );
         },
         currentCost => {
-          if (wikiEntry.get ('category') as ActivatableCategory
-            === Categories.DISADVANTAGES) {
-            return typeof currentCost === 'object'
-              ? currentCost.map (e => -e)
-              : -currentCost;
+          if ((wikiEntry.get ('category') as ActivatableCategory) === Categories.DISADVANTAGES) {
+            return currentCost instanceof List ? currentCost .map (R.negate) : -currentCost;
           }
 
           return currentCost;
@@ -322,11 +320,9 @@ export const getCost = (
     });
 };
 
-interface AdjustedCost extends Data.ActivatableNameCost {
-  finalCost: number;
-}
-
-const adjustCurrentCost = (obj: Record<Data.ActivatableNameCost>): Record<AdjustedCost> =>
+const adjustCurrentCost = (
+  obj: Record<Data.ActivatableNameCostEvalTier>
+): Record<Data.ActivatableNameAdjustedCostEvalTier> =>
   obj.merge (Record.of ({
     finalCost: match<number | List<number>, number> (obj.get ('finalCost'))
       .on ((e): e is List<number> => e instanceof List, currentCost => {
@@ -339,8 +335,7 @@ const adjustCurrentCost = (obj: Record<Data.ActivatableNameCost>): Record<Adjust
       .on (
         () => Maybe.isJust (obj.lookup ('tier'))
           && obj.get ('id') !== 'DISADV_34'
-          && obj.get ('id') !== 'DISADV_50'
-          && Maybe.isJust (obj.lookup ('cost')),
+          && obj.get ('id') !== 'DISADV_50',
         currentCost => Maybe.fromMaybe (0) (
           obj.lookup ('tier').fmap (tier => currentCost * tier)
         )
@@ -358,14 +353,14 @@ const getSpecialAbilityTier = (tier: number) => {
 
 const getAdjustedTierName = (
   locale: Maybe<Record<Data.UIMessages>>,
-  obj: Record<AdjustedCost>,
+  obj: Record<Data.ActivatableNameCost>,
   tier: number
 ) => {
   if (obj.get ('id') === 'SA_29' && tier === 4) {
     return ` ${translate (locale, 'mothertongue.short')}`;
   }
   else if (
-    Array.isArray (obj.get ('finalCost'))
+    obj .get ('finalCost') instanceof List
     || getCategoryById (obj.get ('id')).equals (Maybe.pure (Categories.SPECIAL_ABILITIES))
   ) {
     return getSpecialAbilityTier (tier);
@@ -377,15 +372,10 @@ const getAdjustedTierName = (
 
 const hasTierName = (
   locale: Maybe<Record<Data.UIMessages>>,
-  obj: Record<AdjustedCost>,
+  obj: Record<Data.ActivatableNameCost>,
   maybeTier: Maybe<number>
 ): Maybe<string> => {
-  if (
-    Maybe.isJust (maybeTier)
-    && obj.get ('id') !== 'DISADV_34'
-    && obj.get ('id') !== 'DISADV_50'
-    && Maybe.isJust (obj.lookup ('cost'))
-  ) {
+  if (Maybe.isJust (maybeTier) && List.of ('DISADV_34', 'DISADV_50') .notElem (obj.get ('id'))) {
     const tier = Maybe.fromJust (maybeTier);
 
     return Maybe.pure (getAdjustedTierName (locale, obj, tier))
@@ -398,16 +388,16 @@ const hasTierName = (
 const adjustTierName = (
   locale: Maybe<Record<Data.UIMessages>>,
   addTierToCombinedTier?: boolean
-) => (obj: Record<AdjustedCost>): Record<Data.ActivatableNameCostEvalTier> => {
+) => (obj: Record<Data.ActivatableNameCost>): Record<Data.ActivatableNameCostEvalTier> => {
   const maybeTier = obj.lookup ('tier');
 
-  return Maybe.fromMaybe (obj) (
+  return Maybe.fromMaybe<Record<Data.ActivatableNameCostEvalTier>> (obj) (
     hasTierName (locale, obj, maybeTier)
-      .bind (Maybe.ensure (() => addTierToCombinedTier !== true))
-      .fmap (tierName => R.merge (obj, {
+      .bind (Maybe.ensure (() => !addTierToCombinedTier))
+      .fmap (tierName => obj .merge (Record.of<{ name: string; tierName?: string }> ({
         name: obj.get ('name') + tierName,
         tierName,
-      }))
+      })))
   );
 };
 
@@ -419,13 +409,10 @@ const adjustTierName = (
 export const convertPerTierCostToFinalCost = (
   locale: Maybe<Record<Data.UIMessages>>,
   addTierToCombinedTier?: boolean
-): (
-  (obj: Record<Data.ActivatableNameCost>) =>
-    Record<Data.ActivatableNameCostEvalTier>
-) =>
+): ((obj: Record<Data.ActivatableNameCost>) => Record<Data.ActivatableNameAdjustedCostEvalTier>) =>
   R.pipe (
-    adjustCurrentCost,
-    adjustTierName (locale, addTierToCombinedTier)
+    adjustTierName (locale, addTierToCombinedTier),
+    adjustCurrentCost
   );
 
 interface SplittedActiveObjectsByCustomCost {

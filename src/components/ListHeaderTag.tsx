@@ -8,17 +8,19 @@ export interface ListHeaderTagProps {
   hint?: string;
 }
 
-export function ListHeaderTag(props: ListHeaderTagProps) {
+export function ListHeaderTag (props: ListHeaderTagProps) {
   const { children, className, hint } = props;
+
   if (typeof hint === 'string') {
     return (
       <TooltipHint hint={hint}>
-        <div className={classNames(className, 'has-hint')}>
+        <div className={classNames (className, 'has-hint')}>
           {children}
         </div>
       </TooltipHint>
     );
   }
+
   return (
     <div className={className}>
       {children}

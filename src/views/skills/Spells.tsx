@@ -15,7 +15,7 @@ import { Slidein } from '../../components/Slidein';
 import { SortOptions } from '../../components/SortOptions';
 import { TextField } from '../../components/TextField';
 import { Categories } from '../../constants/Categories';
-import { WikiInfoContainer } from '../../containers/WikiInfo';
+import { WikiInfoContainer } from '../../containers/WikiInfoContainer';
 import { DCIds } from '../../selectors/derivedCharacteristicsSelectors';
 import { AttributeInstance, Book, CantripInstance, InputTextEvent, SecondaryAttribute, SpecialAbilityInstance, SpellInstance } from '../../types/data';
 import { UIMessages } from '../../types/ui';

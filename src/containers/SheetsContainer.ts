@@ -19,7 +19,7 @@ import { getCantripsForSheet, getSpellsForSheet } from '../selectors/spellsSelec
 import { getAvatar, getCurrentHeroName, getProfile, getPurse, getSex, getSpecialAbilities, getWikiSpecialAbilities } from '../selectors/stateSelectors';
 import { getSheetCheckAttributeValueVisibility } from '../selectors/uisettingsSelectors';
 import { Just } from '../utils/dataUtils';
-import { mapGetToSlice } from '../utils/SelectorsUtils';
+import { mapGetToMaybeSlice } from '../utils/SelectorsUtils';
 import { Sheets, SheetsDispatchProps, SheetsOwnProps, SheetsStateProps } from '../views/sheets/Sheets';
 
 const mapStateToProps = (state: AppState, ownProps: SheetsOwnProps): SheetsStateProps => ({
@@ -54,10 +54,10 @@ const mapStateToProps = (state: AppState, ownProps: SheetsOwnProps): SheetsState
   purse: getPurse (state),
   totalPrice: getTotalPrice (state, ownProps),
   totalWeight: getTotalWeight (state, ownProps),
-  languagesWikiEntry: mapGetToSlice (R.pipe (getWikiSpecialAbilities, Just), 'SA_29') (state),
-  languagesStateEntry: mapGetToSlice (getSpecialAbilities, 'SA_29') (state),
-  scriptsWikiEntry: mapGetToSlice (R.pipe (getWikiSpecialAbilities, Just), 'SA_27') (state),
-  scriptsStateEntry: mapGetToSlice (getSpecialAbilities, 'SA_27') (state),
+  languagesWikiEntry: mapGetToMaybeSlice (R.pipe (getWikiSpecialAbilities, Just), 'SA_29') (state),
+  languagesStateEntry: mapGetToMaybeSlice (getSpecialAbilities, 'SA_29') (state),
+  scriptsWikiEntry: mapGetToMaybeSlice (R.pipe (getWikiSpecialAbilities, Just), 'SA_27') (state),
+  scriptsStateEntry: mapGetToMaybeSlice (getSpecialAbilities, 'SA_27') (state),
   cantrips: getCantripsForSheet (state),
   magicalPrimary: getPrimaryMagicalAttributeForSheet (state),
   magicalSpecialAbilities: getMagicalSpecialAbilitiesForSheet (state, ownProps),

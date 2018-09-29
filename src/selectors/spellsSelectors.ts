@@ -7,7 +7,7 @@ import { createMaybeSelector } from '../utils/createMaybeSelector';
 import { Just, List, Maybe, OrderedMap, Record, Tuple } from '../utils/dataUtils';
 import { AllSortOptions, filterAndSortObjects, sortObjects } from '../utils/FilterSortUtils';
 import { filterByAvailability } from '../utils/RulesUtils';
-import { mapGetToSlice } from '../utils/SelectorsUtils';
+import { mapGetToMaybeSlice } from '../utils/SelectorsUtils';
 import { isDecreasable, isIncreasable, isOwnTradition } from '../utils/SpellUtils';
 import { getMagicalTraditions } from '../utils/traditionUtils';
 import { validatePrerequisites } from '../utils/validatePrerequisitesUtils';
@@ -249,8 +249,8 @@ export const getActiveSpells = createMaybeSelector (
   getActiveSpellsCombined,
   getStartEl,
   getCurrentHeroPresent,
-  mapGetToSlice (getAdvantages, 'ADV_16'),
-  mapGetToSlice (getSpecialAbilities, 'SA_72'),
+  mapGetToMaybeSlice (getAdvantages, 'ADV_16'),
+  mapGetToMaybeSlice (getSpecialAbilities, 'SA_72'),
   getWiki,
   (
     maybeActiveSpellsCombined,
@@ -368,8 +368,8 @@ export const isActivationDisabled = createMaybeSelector (
   getPhase,
   getActiveSpellsCounter,
   getMagicalTraditionsFromState,
-  mapGetToSlice (getAdvantages, 'ADV_58'),
-  mapGetToSlice (getDisadvantages, 'DISADV_59'),
+  mapGetToMaybeSlice (getAdvantages, 'ADV_58'),
+  mapGetToMaybeSlice (getDisadvantages, 'DISADV_59'),
   (
     maybeStartEl,
     maybePhase,

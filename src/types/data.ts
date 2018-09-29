@@ -1,6 +1,6 @@
 import { Action } from 'redux';
 import { DCIds } from '../selectors/derivedCharacteristicsSelectors';
-import { List, OrderedMap, OrderedSet, Record, RecordInterface, Tuple } from '../utils/dataUtils';
+import { List, Omit, OrderedMap, OrderedSet, Record, RecordInterface, Tuple } from '../utils/dataUtils';
 import { TabId } from '../utils/LocationUtils';
 import { UndoState } from '../utils/undo';
 import * as Wiki from './wiki';
@@ -215,7 +215,8 @@ export interface ActivatableCombinedName {
   addName?: string;
 }
 
-export interface ActivatableNameCost extends ActiveObjectWithId, ActivatableCombinedName {
+export interface ActivatableNameCost
+  extends Omit<ActiveObjectWithId, 'cost'>, ActivatableCombinedName {
   finalCost: number | List<number>;
 }
 
@@ -224,8 +225,11 @@ export interface ActivatableNameCostActive extends ActivatableNameCost {
 }
 
 export interface ActivatableNameCostEvalTier extends ActivatableNameCost {
-  finalCost: number;
   tierName?: string;
+}
+
+export interface ActivatableNameAdjustedCostEvalTier extends ActivatableNameCostEvalTier {
+  finalCost: number;
 }
 
 export interface ActivatableActivationValidationObject extends ActiveObjectWithId {
@@ -245,7 +249,7 @@ export interface ActivatableActivationMeta<
 export type ActiveViewObject<
   T extends RecordInterface<Wiki.Activatable> = RecordInterface<Wiki.Activatable>
 > =
-  ActivatableNameCostEvalTier
+  ActivatableNameAdjustedCostEvalTier
   & ActivatableActivationValidationObject
   & ActivatableActivationMeta<T>;
 
@@ -255,11 +259,9 @@ export interface DeactiveViewObject<
   id: string;
   name: string;
   cost?: string | number | List<number>;
-  tiers?: number;
   minTier?: number;
   maxTier?: number;
   sel?: List<Record<Wiki.SelectionObject>>;
-  input?: string;
   stateEntry?: Record<ActivatableDependent>;
   wikiEntry: Record<T>;
   customCostDisabled?: boolean;
@@ -275,14 +277,12 @@ export interface ActivateArgs {
   tier?: number;
   cost: number;
   customCost?: number;
-  wikiEntry: Wiki.Activatable;
 }
 
 export interface DeactivateArgs {
   id: string;
   index: number;
   cost: number;
-  wikiEntry: Wiki.Activatable;
 }
 
 export interface UndoExtendedDeactivateArgs extends DeactivateArgs {

@@ -9,7 +9,7 @@ interface AttributeDependentOptions {
 
 export function createAttributeDependent (
   id: string,
-  options: AttributeDependentOptions = {},
+  options: AttributeDependentOptions = {}
 ): Record<Data.AttributeDependent> {
   const {
     value = 8,
@@ -32,7 +32,7 @@ interface ActivatableDependentOptions {
 
 export function createActivatableDependent (
   id: string,
-  options: ActivatableDependentOptions = {},
+  options: ActivatableDependentOptions = {}
 ): Record<Data.ActivatableDependent> {
   const {
     active = List.of<Record<Data.ActiveObject>> (),
@@ -53,7 +53,7 @@ interface DependentSkillOptions {
 
 export function createDependentSkill (
   id: string,
-  options: DependentSkillOptions = {},
+  options: DependentSkillOptions = {}
 ): Record<Data.SkillDependent> {
   const {
     value = 0,
@@ -87,7 +87,7 @@ type JoinedActivatableDependentSkillOptions =
 
 export function createActivatableDependentSkill (
   id: string,
-  options: ActivatableDependentSkillOptions = {},
+  options: ActivatableDependentSkillOptions = {}
 ): Record<Data.ActivatableSkillDependent> {
   const {
     active,

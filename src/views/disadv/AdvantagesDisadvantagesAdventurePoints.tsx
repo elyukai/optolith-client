@@ -1,15 +1,18 @@
 import * as React from 'react';
-import { translate, UIMessages } from '../../utils/I18n';
+import { Maybe } from '../../utils/dataUtils';
+import { translate, UIMessagesObject } from '../../utils/I18n';
 
 export interface AdvantagesDisadvantagesAdventurePointsProps {
   total: number;
   magical: number;
-  magicalMax: number;
+  magicalMax: Maybe<number>;
   blessed: number;
-  locale: UIMessages;
+  locale: UIMessagesObject;
 }
 
-export function AdvantagesDisadvantagesAdventurePoints(props: AdvantagesDisadvantagesAdventurePointsProps) {
+export function AdvantagesDisadvantagesAdventurePoints (
+  props: AdvantagesDisadvantagesAdventurePointsProps
+) {
   const {
     total,
     magical,
@@ -20,10 +23,26 @@ export function AdvantagesDisadvantagesAdventurePoints(props: AdvantagesDisadvan
 
   return (
     <p>
-      {translate(locale, 'titlebar.adventurepoints.advantages', total, 80)}<br/>
-      {magical > 0 && translate(locale, 'titlebar.adventurepoints.advantagesmagic', magical, magicalMax)}
+      {translate (locale, 'titlebar.adventurepoints.advantages', total, 80)}<br/>
+      {
+        magical > 0
+        && translate (
+          locale,
+          'titlebar.adventurepoints.advantagesmagic',
+          magical,
+          Maybe.fromMaybe (50) (magicalMax)
+        )
+      }
       {magical > 0 && blessed > 0 && <br/>}
-      {blessed > 0 && translate(locale, 'titlebar.adventurepoints.advantagesblessed', blessed, 50)}
+      {
+        blessed > 0
+        && translate (
+          locale,
+          'titlebar.adventurepoints.advantagesblessed',
+          blessed,
+          50
+        )
+      }
     </p>
   );
 }

@@ -1,19 +1,21 @@
 import * as React from 'react';
 import { ActivatableAddList } from '../../components/ActivatableAddList';
-import { ActivateArgs, ActiveViewObject, DeactiveViewObject, Instance, UIMessages } from '../../types/data';
+import { ActivateArgs, ActiveViewObject, DeactiveViewObject, EntryRating, UIMessagesObject } from '../../types/data';
+import { List, Maybe, OrderedMap, Record } from '../../utils/dataUtils';
 
-export interface DeactiveListProps {
-  activeList?: ActiveViewObject[];
-  list: DeactiveViewObject[];
-  locale: UIMessages;
-  rating: { [id: string]: string };
+export interface InactiveListProps {
+  inactiveList: Maybe<List<
+    Record<ActiveViewObject>
+    | Record<DeactiveViewObject>
+  >>;
+  locale: UIMessagesObject;
+  rating: Maybe<OrderedMap<string, EntryRating>>;
   showRating: boolean;
-  get(id: string): Instance | undefined;
-  addToList(args: ActivateArgs): void;
-  selectForInfo(id: string): void;
+  addToList (args: ActivateArgs): void;
+  selectForInfo (id: string): void;
 }
 
-export function DeactiveList(props: DeactiveListProps) {
+export function InactiveList (props: InactiveListProps) {
   return (
     <ActivatableAddList {...props} hideGroup />
   );

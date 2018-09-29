@@ -62,3 +62,9 @@ export const multiplyString = (string: string): string => {
     return string;
   }
 };
+
+/**
+ * Converts a string to a decimal number. This function does NOT check if the
+ * string is a valid number.
+ */
+export const numberFromString = (string: string) => Number.parseInt (string, 10);

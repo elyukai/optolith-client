@@ -11,7 +11,7 @@ import { Page } from '../../components/Page';
 import { Slidein } from '../../components/Slidein';
 import { SortOptions } from '../../components/SortOptions';
 import { TextField } from '../../components/TextField';
-import { WikiInfoContainer } from '../../containers/WikiInfo';
+import { WikiInfoContainer } from '../../containers/WikiInfoContainer';
 import { ActivateArgs, ActiveViewObject, DeactivateArgs, DeactiveViewObject, InputTextEvent, Instance, SpecialAbilityInstance } from '../../types/data';
 import { UIMessages } from '../../types/ui';
 import { translate } from '../../utils/I18n';

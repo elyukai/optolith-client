@@ -1,5 +1,4 @@
 import * as R from 'ramda';
-import { isNumber } from 'util';
 import { Categories } from '../constants/Categories';
 import * as Data from '../types/data';
 import * as Wiki from '../types/wiki';
@@ -97,9 +96,7 @@ const getAPSpentForAdvantages = (wiki: Record<Wiki.WikiAll>) =>
       Maybe.fmap (
         (active: List<Record<Data.ActiveViewObject<Wiki.Advantage>>>) => R.pipe (
           active.foldl<number> (
-            sum => obj => sum + Maybe.fromMaybe (0) (
-              Maybe.ensure (isNumber) (obj.get ('wikiEntry').get ('cost'))
-            )
+            sum => obj => sum + obj .get ('finalCost')
           ),
           R.add (
             getAdventurePointsSpentDifference (
@@ -141,9 +138,7 @@ const getAPSpentForDisadvantages = (wiki: Record<Wiki.WikiAll>) =>
       Maybe.fmap (
         (active: List<Record<Data.ActiveViewObject<Wiki.Disadvantage>>>) => R.pipe (
           active.foldl<number> (
-            sum => obj => sum + Maybe.fromMaybe (0) (
-              Maybe.ensure (isNumber) (obj.get ('wikiEntry').get ('cost'))
-            )
+            sum => obj => sum + obj .get ('finalCost')
           ),
           R.add (
             getAdventurePointsSpentDifference (
@@ -185,9 +180,7 @@ const getAPSpentForSpecialAbilities = (wiki: Record<Wiki.WikiAll>) =>
       Maybe.fmap (
         (active: List<Record<Data.ActiveViewObject<Wiki.SpecialAbility>>>) => R.pipe (
           active.foldl<number> (
-            sum => obj => sum + Maybe.fromMaybe (0) (
-              Maybe.ensure (isNumber) (obj.get ('wikiEntry').get ('cost'))
-            )
+            sum => obj => sum + obj .get ('finalCost')
           ),
           R.add (
             getAdventurePointsSpentDifference (

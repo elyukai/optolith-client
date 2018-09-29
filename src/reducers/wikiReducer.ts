@@ -4,7 +4,6 @@ import { Categories } from '../constants/Categories';
 import * as Raw from '../types/rawdata';
 import * as Wiki from '../types/wiki';
 import { List, Maybe, OrderedMap, Record, StringKeyObject } from '../utils/dataUtils';
-import { translate } from '../utils/I18n';
 import * as InitWikiUtils from '../utils/InitWikiUtils';
 import { getWikiStateKeyByCategory } from '../utils/WikiUtils';
 
@@ -115,7 +114,7 @@ export function wikiReducer (
         spells,
         liturgies,
         specialabilities,
-        items
+        items,
       } = tables;
 
       const iterate = <R extends RawData, T extends Data, L extends RawLocales>(
@@ -190,15 +189,15 @@ export function wikiReducer (
                 vars: [],
                 gr: 0,
                 sgr: 0,
-                src: []
+                src: [],
               },
               {
                 P_0: {
                   id: 'P_0',
                   name: ui['professions.ownprofession'],
                   req: [],
-                  src: []
-                }
+                  src: [],
+                },
               }
             )
           ) ('P_0'),
@@ -281,7 +280,7 @@ export function wikiReducer (
             r => Record.of<Wiki.SelectionObject> ({
               id: r.get ('id'),
               name: r.get ('name'),
-              cost: r.get ('ic')
+              cost: r.get ('ic'),
             })
           );
 
@@ -293,7 +292,7 @@ export function wikiReducer (
                 Record.of<Wiki.SelectionObject> ({
                   id: skill.get ('id'),
                   name: skill.get ('name'),
-                  cost: skill.get ('ic')
+                  cost: skill.get ('ic'),
                 })
               );
             }

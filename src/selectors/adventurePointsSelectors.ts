@@ -1,5 +1,4 @@
 import * as R from 'ramda';
-import { isNumber } from 'util';
 import { ActiveViewObject, HeroDependent } from '../types/data';
 import { getAdventurePointsSpentDifference, getDisAdvantagesSubtypeMax } from '../utils/adventurePointsUtils';
 import { createMaybeSelector } from '../utils/createMaybeSelector';
@@ -105,9 +104,7 @@ export const getAdventurePointsSpentForAdvantages = createMaybeSelector (
       state => maybeList.fmap (
         list => {
           const baseAP = list.foldl<number> (
-            sum => obj => sum + Maybe.fromMaybe (0) (
-              Maybe.ensure (isNumber) (obj.get ('wikiEntry').get ('cost'))
-            )
+            sum => obj => sum + obj .get ('finalCost')
           ) (0);
 
           const diffAP = getAdventurePointsSpentDifference (
@@ -134,9 +131,7 @@ export const getAdventurePointsSpentForMagicalAdvantages = createMaybeSelector (
           const filteredList = list.filter (e => e.get ('wikiEntry').get ('gr') === 2);
 
           const baseAP = filteredList.foldl<number> (
-            sum => obj => sum + Maybe.fromMaybe (0) (
-              Maybe.ensure (isNumber) (obj.get ('wikiEntry').get ('cost'))
-            )
+            sum => obj => sum + obj .get ('finalCost')
           ) (0);
 
           const diffAP = getAdventurePointsSpentDifference (
@@ -163,9 +158,7 @@ export const getAdventurePointsSpentForBlessedAdvantages = createMaybeSelector (
           const filteredList = list.filter (e => e.get ('wikiEntry').get ('gr') === 3);
 
           const baseAP = filteredList.foldl<number> (
-            sum => obj => sum + Maybe.fromMaybe (0) (
-              Maybe.ensure (isNumber) (obj.get ('wikiEntry').get ('cost'))
-            )
+            sum => obj => sum + obj .get ('finalCost')
           ) (0);
 
           const diffAP = getAdventurePointsSpentDifference (
@@ -190,9 +183,7 @@ export const getAdventurePointsSpentForDisadvantages = createMaybeSelector (
       state => maybeList.fmap (
         list => {
           const baseAP = list.foldl<number> (
-            sum => obj => sum + Maybe.fromMaybe (0) (
-              Maybe.ensure (isNumber) (obj.get ('wikiEntry').get ('cost'))
-            )
+            sum => obj => sum + obj .get ('finalCost')
           ) (0);
 
           const diffAP = getAdventurePointsSpentDifference (
@@ -219,9 +210,7 @@ export const getAdventurePointsSpentForMagicalDisadvantages = createMaybeSelecto
           const filteredList = list.filter (e => e.get ('wikiEntry').get ('gr') === 2);
 
           const baseAP = filteredList.foldl<number> (
-            sum => obj => sum + Maybe.fromMaybe (0) (
-              Maybe.ensure (isNumber) (obj.get ('wikiEntry').get ('cost'))
-            )
+            sum => obj => sum + obj .get ('finalCost')
           ) (0);
 
           const diffAP = getAdventurePointsSpentDifference (
@@ -248,9 +237,7 @@ export const getAdventurePointsSpentForBlessedDisadvantages = createMaybeSelecto
           const filteredList = list.filter (e => e.get ('wikiEntry').get ('gr') === 3);
 
           const baseAP = filteredList.foldl<number> (
-            sum => obj => sum + Maybe.fromMaybe (0) (
-              Maybe.ensure (isNumber) (obj.get ('wikiEntry').get ('cost'))
-            )
+            sum => obj => sum + obj .get ('finalCost')
           ) (0);
 
           const diffAP = getAdventurePointsSpentDifference (
@@ -280,9 +267,7 @@ export const getAdventurePointsSpentForSpecialAbilities = createMaybeSelector (
       state => maybeList.fmap (
         list => {
           const baseAP = list.foldl<number> (
-            sum => obj => sum + Maybe.fromMaybe (0) (
-              Maybe.ensure (isNumber) (obj.get ('wikiEntry').get ('cost'))
-            )
+            sum => obj => sum + obj .get ('finalCost')
           ) (0);
 
           const diffAP = getAdventurePointsSpentDifference (

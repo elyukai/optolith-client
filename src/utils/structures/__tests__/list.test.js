@@ -33,6 +33,18 @@ test('subscript', () => {
   expect(List.of(3, 2, 1).subscript(-1)).toEqual(Nothing());
 });
 
+test('List.subscript', () => {
+  expect(List.subscript (List.of(3, 2, 1)) (2)).toEqual(Just(1));
+  expect(List.subscript (List.of(3, 2, 1)) (4)).toEqual(Nothing());
+  expect(List.subscript (List.of(3, 2, 1)) (-1)).toEqual(Nothing());
+});
+
+test('List.subscript_', () => {
+  expect(List.subscript (2) (List.of(3, 2, 1))).toEqual(Just(1));
+  expect(List.subscript (4) (List.of(3, 2, 1))).toEqual(Nothing());
+  expect(List.subscript (-1) (List.of(3, 2, 1))).toEqual(Nothing());
+});
+
 test('head', () => {
   expect(List.of(3, 2, 1).head()).toEqual(3);
   expect(List.of().head).toThrow();
@@ -136,6 +148,10 @@ test('map', () => {
 
 test('imap', () => {
   expect(List.of(3, 2, 1).imap(i => x => x * 2 + i)).toEqual(List.of(6, 5, 4));
+});
+
+test('List.imap', () => {
+  expect(List.imap (i => x => x * 2 + i) (List.of(3, 2, 1))).toEqual(List.of(6, 5, 4));
 });
 
 test('reverse', () => {
@@ -308,10 +324,38 @@ test('elem', () => {
     .toBeFalsy();
 });
 
+test('List.elem', () => {
+  expect(List.elem (3) (List.of(1, 2, 3, 4, 5)))
+    .toBeTruthy();
+  expect(List.elem (6) (List.of(1, 2, 3, 4, 5)))
+    .toBeFalsy();
+});
+
+test('List.elem_', () => {
+  expect(List.elem (List.of(1, 2, 3, 4, 5)) (3))
+    .toBeTruthy();
+  expect(List.elem (List.of(1, 2, 3, 4, 5)) (6))
+    .toBeFalsy();
+});
+
 test('notElem', () => {
   expect(List.of(1, 2, 3, 4, 5).notElem(3))
     .toBeFalsy();
   expect(List.of(1, 2, 3, 4, 5).notElem(6))
+    .toBeTruthy();
+});
+
+test('List.notElem', () => {
+  expect(List.notElem (3) (List.of(1, 2, 3, 4, 5)))
+    .toBeFalsy();
+  expect(List.notElem (6) (List.of(1, 2, 3, 4, 5)))
+    .toBeTruthy();
+});
+
+test('List.notElem_', () => {
+  expect(List.notElem (List.of(1, 2, 3, 4, 5)) (3))
+    .toBeFalsy();
+  expect(List.notElem (List.of(1, 2, 3, 4, 5)) (6))
     .toBeTruthy();
 });
 
@@ -492,12 +536,6 @@ test('List.mappend', () => {
   expect(List.mappend (List.of(3, 2, 1)) (List.of(3, 2, 1))).toEqual(List.of(3, 2, 1, 3, 2, 1));
 });
 
-test('List.subscript', () => {
-  expect(List.subscript (List.of(3, 2, 1)) (2)).toEqual(Just(1));
-  expect(List.subscript (List.of(3, 2, 1)) (4)).toEqual(Nothing());
-  expect(List.subscript (List.of(3, 2, 1)) (-1)).toEqual(Nothing());
-});
-
 test('List.map', () => {
   expect(List.map(x => x * 2)(List.of(3, 2, 1))).toEqual(List.of(6, 4, 2));
 });
@@ -517,13 +555,6 @@ test('List.maximum', () => {
 test('List.unfoldr', () => {
   expect(List.unfoldr(x => x < 11 ? Just(Tuple.of(x)(x + 1)) : Nothing())(1))
     .toEqual(List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10));
-});
-
-test('List.elem', () => {
-  expect(List.elem (3) (List.of(1, 2, 3, 4, 5)))
-    .toBeTruthy();
-  expect(List.elem (6) (List.of(1, 2, 3, 4, 5)))
-    .toBeFalsy();
 });
 
 test('List.find', () => {

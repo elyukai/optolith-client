@@ -1,5 +1,6 @@
 import * as R from 'ramda';
 import * as Al from '../../types/algebraic';
+import { not } from '../not';
 import { Just, Maybe, Nothing, Some } from './maybe';
 import { OrderedMap } from './orderedMap';
 import { Tuple } from './tuple';
@@ -110,7 +111,7 @@ export class List<T> implements Al.Monad<T>, Al.Foldable<T>, Al.Semigroup<T>,
    * returns `Nothing`, otherwise `Just a`.
    */
   subscript (index: number): Maybe<T> {
-    return Maybe.of (this.value[index]);
+    return Maybe.fromNullable (this.value[index]);
   }
 
   /**
@@ -120,7 +121,19 @@ export class List<T> implements Al.Monad<T>, Al.Foldable<T>, Al.Semigroup<T>,
    * returns `Nothing`, otherwise `Just a`.
    */
   static subscript<T> (list: List<T>): (index: number) => Maybe<T> {
-    return index => Maybe.of (list.value[index]);
+    return index => Maybe.fromNullable (list.value[index]);
+  }
+
+  /**
+   * `(!!) :: [a] -> Int -> Maybe a`
+   *
+   * List index (subscript) operator, starting from 0. If the index is invalid,
+   * returns `Nothing`, otherwise `Just a`.
+   *
+   * Same as `List.subscript` but with arguments flipped.
+   */
+  static subscript_ (index: number): <T>(list: List<T>) => Maybe<T> {
+    return list => Maybe.fromNullable (list.value[index]);
   }
 
   /**
@@ -368,6 +381,15 @@ export class List<T> implements Al.Monad<T>, Al.Foldable<T>, Al.Semigroup<T>,
    */
   imap<U> (fn: (index: number) => (x: T) => U): List<U> {
     return List.fromArray (this.value.map ((e, i) => fn (i) (e)));
+  }
+
+  /**
+   * `imap :: (Int -> a -> b) -> [a] -> [b]`
+   *
+   * `imap f xs` is the list obtained by applying `f` to each element of `xs`.
+   */
+  static imap<T, U> (fn: (index: number) => (x: T) => U): (list: List<T>) => List<U> {
+    return list => List.fromArray (list.value.map ((e, i) => fn (i) (e)));
   }
 
   /**
@@ -798,7 +820,7 @@ f' z       = Nothing
   }
 
   /**
-   * `elem_ :: (Foldable t, Eq a) => ta a -> a -> Bool`
+   * `elem_ :: (Foldable t, Eq a) => t a -> a -> Bool`
    *
    * Does the element occur in the structure?
    *
@@ -815,6 +837,32 @@ f' z       = Nothing
    */
   notElem (e: T): boolean {
     return !this.elem (e);
+  }
+
+  /**
+   * `notElem :: (Foldable t, Eq a) => a -> t a -> Bool`
+   *
+   * `notElem` is the negation of `elem`.
+   */
+  static notElem<T> (e: T): (list: List<T>) => boolean {
+    return R.pipe (
+      List.elem (e),
+      not
+    );
+  }
+
+  /**
+   * `notElem_ :: (Foldable t, Eq a) => t a -> a -> Bool`
+   *
+   * `notElem_` is the negation of `elem_`.
+   *
+   * Same as `List.elem_` but with arguments swapped.
+   */
+  static notElem_<T> (list: List<T>): (e: T) => boolean {
+    return R.pipe (
+      List.elem_ (list),
+      not
+    );
   }
 
   /**
@@ -845,7 +893,7 @@ f' z       = Nothing
    */
   find (pred: (x: T) => boolean): Maybe<T>;
   find (pred: (x: T) => boolean): Maybe<T> {
-    return Maybe.of (this.value.find (pred));
+    return Maybe.fromNullable (this.value.find (pred));
   }
 
   /**
@@ -885,7 +933,7 @@ f' z       = Nothing
    */
   ifind (pred: (index: number) => (x: T) => boolean): Maybe<T>;
   ifind (pred: (index: number) => (x: T) => boolean): Maybe<T> {
-    return Maybe.of (this.value.find ((e, i) => pred (i) (e)));
+    return Maybe.fromNullable (this.value.find ((e, i) => pred (i) (e)));
   }
 
   /**
@@ -1123,7 +1171,7 @@ f' z       = Nothing
    * returned.
    */
   deleteAt (index: number): List<T> {
-    if (index > 0 && index < this.value.length) {
+    if (index > -1 && index < this.value.length) {
       return List.of (
         ...this.value.slice (0, index),
         ...this.value.slice (index + 1)
@@ -1144,7 +1192,7 @@ f' z       = Nothing
    */
   setAt (index: number, value: T): List<T> {
     const resultFn = (x1: number, x2: T): List<T> => {
-      if (x1 > 0 && x1 < this.value.length) {
+      if (x1 > -1 && x1 < this.value.length) {
         return List.fromArray (this.value.map ((e, i) => i === x1 ? x2 : e));
       }
       else {
@@ -1165,7 +1213,7 @@ f' z       = Nothing
    */
   modifyAt (index: number, fn: (oldValue: T) => T): List<T> {
     const resultFn = (x1: number, x2: (oldValue: T) => T): List<T> => {
-      if (x1 > 0 && x1 < this.value.length) {
+      if (x1 > -1 && x1 < this.value.length) {
         return List.fromArray (this.value.map ((e, i) => i === x1 ? x2 (e) : e));
       }
       else {
@@ -1188,7 +1236,7 @@ f' z       = Nothing
    */
   updateAt (index: number, fn: (oldValue: T) => Maybe<T>): List<T> {
     const resultFn = (x1: number, x2: (oldValue: T) => Maybe<T>): List<T> => {
-      if (x1 > 0 && x1 < this.value.length) {
+      if (x1 > -1 && x1 < this.value.length) {
         const maybeRes = x2 (this.value[x1]);
 
         if (Maybe.isJust (maybeRes)) {
@@ -1219,7 +1267,7 @@ f' z       = Nothing
    */
   insertAt (index: number, value: T): List<T> {
     const resultFn = (x1: number, x2: T): List<T> => {
-      if (x1 > 0 && x1 < this.value.length) {
+      if (x1 > -1 && x1 < this.value.length) {
         return List.of (
           ...this.value.slice (0, x1),
           x2,

@@ -179,7 +179,7 @@ export const getSubtabs = createMaybeSelector (
             {
               id: 'lastChanges',
               label: translate (locale, 'titlebar.tabs.lastchanges'),
-            },
+            }
           ));
         }
       }
@@ -202,12 +202,12 @@ export const getSubtabs = createMaybeSelector (
               {
                 id: 'pact',
                 label: translate (locale, 'titlebar.tabs.pact'),
-                disabled: locale.get ('id') !== 'de-DE'
+                disabled: locale.get ('id') !== 'de-DE',
               },
               {
                 id: 'rules',
                 label: translate (locale, 'titlebar.tabs.rules'),
-              },
+              }
             ));
           }
           else if (rcpSubTabs.elem (tab)) {
@@ -277,7 +277,7 @@ export const getSubtabs = createMaybeSelector (
               {
                 id: 'rules',
                 label: translate (locale, 'titlebar.tabs.rules'),
-              },
+              }
             );
 
             if (Maybe.elem (3) (phase)) {
@@ -301,7 +301,7 @@ export const getSubtabs = createMaybeSelector (
               {
                 id: 'disadvantages',
                 label: translate (locale, 'titlebar.tabs.disadvantages'),
-              },
+              }
             ));
           }
           else if (abilitiesSubTabs.elem (tab)) {
@@ -318,7 +318,7 @@ export const getSubtabs = createMaybeSelector (
                 {
                   id: 'specialAbilities',
                   label: translate (locale, 'titlebar.tabs.specialabilities'),
-                },
+                }
               )
                 .mappend (
                   isSpellsTabAvailable
@@ -347,7 +347,7 @@ export const getSubtabs = createMaybeSelector (
               {
                 id: 'pets',
                 label: translate (locale, 'titlebar.tabs.pets'),
-              },
+              }
             );
 
             if (

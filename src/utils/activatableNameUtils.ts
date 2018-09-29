@@ -208,7 +208,7 @@ const getEntrySpecificNameReplacements = (
         )
       )
       .on (List.elem_ (List.of ('SA_677', 'SA_678')), () => {
-        const part = getBracketedNameFromFullName (name);
+        const part = getBracketedNameFromFullName (wikiEntry.get ('name'));
         const maybeMusicTraditionLabels = translate (locale, 'musictraditions');
 
         return instance.lookup ('sid2')
@@ -222,7 +222,7 @@ const getEntrySpecificNameReplacements = (
           );
       })
       .otherwise (() =>
-        maybeNameAddition.fmap (nameAddition => `${name} (${nameAddition})`)
+        maybeNameAddition.fmap (nameAddition => `${wikiEntry.get ('name')} (${nameAddition})`)
       )
   );
 }

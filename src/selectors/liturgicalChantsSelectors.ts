@@ -9,7 +9,7 @@ import { getNumericBlessedTraditionIdByInstanceId } from '../utils/IDUtils';
 import { isActive } from '../utils/isActive';
 import { getAspectsOfTradition, isDecreasable, isIncreasable, isOwnTradition } from '../utils/liturgicalChantUtils';
 import { filterByAvailability } from '../utils/RulesUtils';
-import { mapGetToSlice } from '../utils/SelectorsUtils';
+import { mapGetToMaybeSlice } from '../utils/SelectorsUtils';
 import { getBlessedTradition } from '../utils/traditionUtils';
 import { getStartEl } from './elSelectors';
 import { getRuleBooksEnabled } from './rulesSelectors';
@@ -43,8 +43,8 @@ export const getBlessedTraditionNumericId = createMaybeSelector (
 export const getActiveLiturgicalChants = createMaybeSelector (
   getBlessedTraditionFromWikiState,
   getStartEl,
-  mapGetToSlice (getAdvantages, 'ADV_16'),
-  mapGetToSlice (getSpecialAbilities, 'SA_87'),
+  mapGetToMaybeSlice (getAdvantages, 'ADV_16'),
+  mapGetToMaybeSlice (getSpecialAbilities, 'SA_87'),
   getWiki,
   getCurrentHeroPresent,
   (
@@ -170,9 +170,9 @@ export const getAdditionalValidLiturgicalChants = createMaybeSelector (
   getInactiveLiturgicalChants,
   getActiveLiturgicalChants,
   getBlessedTraditionFromWikiState,
-  mapGetToSlice (getSpecialAbilities, 'SA_623'),
-  mapGetToSlice (getSpecialAbilities, 'SA_625'),
-  mapGetToSlice (getSpecialAbilities, 'SA_632'),
+  mapGetToMaybeSlice (getSpecialAbilities, 'SA_623'),
+  mapGetToMaybeSlice (getSpecialAbilities, 'SA_625'),
+  mapGetToMaybeSlice (getSpecialAbilities, 'SA_632'),
   (
     maybeInactiveList,
     activeList,

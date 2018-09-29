@@ -54,8 +54,8 @@ export const addSpecialAbility = (locale: UIMessagesObject) => (args: ActivateAr
             type: ActionTypes.ACTIVATE_SPECIALABILITY,
             payload: {
               ...args,
-              wikiEntry
-            }
+              wikiEntry,
+            },
           });
         }
         else {
@@ -103,8 +103,8 @@ export const removeSpecialAbility = (args: DeactivateArgs): AsyncAction =>
             type: ActionTypes.DEACTIVATE_SPECIALABILITY,
             payload: {
               ...args,
-              wikiEntry
-            }
+              wikiEntry,
+            },
           });
         }
       }
@@ -146,7 +146,7 @@ export const setSpecialAbilityLevel = (locale: UIMessagesObject) =>
             activeObject => activeObject.merge (
               Record.of ({
                 id,
-                index
+                index,
               })
             )
           );
@@ -197,8 +197,8 @@ export const setSpecialAbilityLevel = (locale: UIMessagesObject) =>
                   id,
                   tier: level,
                   index,
-                  wikiEntry
-                }
+                  wikiEntry,
+                },
               });
             }
             else {
@@ -238,8 +238,8 @@ export const setActiveSpecialAbilitiesFilterText =
   (filterText: string): SetActiveSpecialAbilitiesFilterTextAction => ({
     type: ActionTypes.SET_SPECIAL_ABILITIES_FILTER_TEXT,
     payload: {
-      filterText
-    }
+      filterText,
+    },
   });
 
 export interface SetInactiveSpecialAbilitiesFilterTextAction {
@@ -253,6 +253,6 @@ export const setInactiveSpecialAbilitiesFilterText =
   (filterText: string): SetInactiveSpecialAbilitiesFilterTextAction => ({
     type: ActionTypes.SET_INACTIVE_SPECIAL_ABILITIES_FILTER_TEXT,
     payload: {
-      filterText
-    }
+      filterText,
+    },
   });

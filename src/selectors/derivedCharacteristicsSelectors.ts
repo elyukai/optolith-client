@@ -7,7 +7,7 @@ import { Just, List, Maybe, OrderedMap, OrderedSet, Record, Tuple } from '../uti
 import { translate } from '../utils/I18n';
 import { isBookEnabled } from '../utils/RulesUtils';
 import { getActiveSelections } from '../utils/selectionUtils';
-import { mapGetToSlice } from '../utils/SelectorsUtils';
+import { mapGetToMaybeSlice } from '../utils/SelectorsUtils';
 import { getPrimaryBlessedAttribute, getPrimaryMagicalAttribute } from './attributeSelectors';
 import { getCurrentRace } from './rcpSelectors';
 import { getRuleBooksEnabled } from './rulesSelectors';
@@ -19,10 +19,10 @@ export type DCIdsWithoutWT = 'LP' | 'AE' | 'KP' | 'SPI' | 'TOU' | 'DO' | 'INI' |
 
 export const getLP = createMaybeSelector (
   getCurrentRace,
-  mapGetToSlice (getAttributes, 'ATTR_7'),
+  mapGetToMaybeSlice (getAttributes, 'ATTR_7'),
   getPermanentLifePoints,
-  mapGetToSlice (getAdvantages, 'ADV_25'),
-  mapGetToSlice (getDisadvantages, 'DISADV_28'),
+  mapGetToMaybeSlice (getAdvantages, 'ADV_25'),
+  mapGetToMaybeSlice (getDisadvantages, 'DISADV_28'),
   getAddedLifePoints,
   getLocaleAsProp,
   (currentRace, maybeCon, permanentLifePoints, maybeIncrease, maybeDecrease, add, locale) => {
@@ -59,8 +59,8 @@ export const getAE = createMaybeSelector (
   getMagicalTraditionsFromState,
   getPrimaryMagicalAttribute,
   getPermanentArcaneEnergyPoints,
-  mapGetToSlice (getAdvantages, 'ADV_23'),
-  mapGetToSlice (getDisadvantages, 'DISADV_26'),
+  mapGetToMaybeSlice (getAdvantages, 'ADV_23'),
+  mapGetToMaybeSlice (getDisadvantages, 'DISADV_26'),
   getAddedArcaneEnergyPoints,
   getLocaleAsProp,
   (
@@ -126,11 +126,11 @@ export const getAE = createMaybeSelector (
 export const getKP = createMaybeSelector (
   getPrimaryBlessedAttribute,
   getPermanentKarmaPoints,
-  mapGetToSlice (getAdvantages, 'ADV_24'),
-  mapGetToSlice (getDisadvantages, 'DISADV_27'),
+  mapGetToMaybeSlice (getAdvantages, 'ADV_24'),
+  mapGetToMaybeSlice (getDisadvantages, 'DISADV_27'),
   getAddedKarmaPoints,
   getLocaleAsProp,
-  mapGetToSlice (getSpecialAbilities, 'SA_563'),
+  mapGetToMaybeSlice (getSpecialAbilities, 'SA_563'),
   (
     maybePrimary,
     permanentKarmaPoints,
@@ -179,11 +179,11 @@ export const getKP = createMaybeSelector (
 
 export const getSPI = createMaybeSelector (
   getCurrentRace,
-  mapGetToSlice (getAttributes, 'ATTR_1'),
-  mapGetToSlice (getAttributes, 'ATTR_2'),
-  mapGetToSlice (getAttributes, 'ATTR_3'),
-  mapGetToSlice (getAdvantages, 'ADV_26'),
-  mapGetToSlice (getDisadvantages, 'DISADV_29'),
+  mapGetToMaybeSlice (getAttributes, 'ATTR_1'),
+  mapGetToMaybeSlice (getAttributes, 'ATTR_2'),
+  mapGetToMaybeSlice (getAttributes, 'ATTR_3'),
+  mapGetToMaybeSlice (getAdvantages, 'ADV_26'),
+  mapGetToMaybeSlice (getDisadvantages, 'DISADV_29'),
   getLocaleAsProp,
   (maybeCurrentRace, maybeCou, maybeSgc, maybeInt, maybeIncrease, maybeDecrease, locale) => {
     const maybeBase = maybeCurrentRace.bind (
@@ -222,10 +222,10 @@ const getTOUBase = (
 
 export const getTOU = createMaybeSelector (
   getCurrentRace,
-  mapGetToSlice (getAttributes, 'ATTR_7'),
-  mapGetToSlice (getAttributes, 'ATTR_8'),
-  mapGetToSlice (getAdvantages, 'ADV_27'),
-  mapGetToSlice (getDisadvantages, 'DISADV_30'),
+  mapGetToMaybeSlice (getAttributes, 'ATTR_7'),
+  mapGetToMaybeSlice (getAttributes, 'ATTR_8'),
+  mapGetToMaybeSlice (getAdvantages, 'ADV_27'),
+  mapGetToMaybeSlice (getDisadvantages, 'DISADV_30'),
   getLocaleAsProp,
   (maybeCurrentRace, maybeCon, maybeStr, maybeIncrease, maybeDecrease, locale) => {
     const maybeBase = Maybe.liftM3 (getTOUBase)
@@ -252,8 +252,8 @@ export const getTOU = createMaybeSelector (
 );
 
 export const getDO = createMaybeSelector (
-  mapGetToSlice (getAttributes, 'ATTR_6'),
-  mapGetToSlice (getSpecialAbilities, 'SA_64'),
+  mapGetToMaybeSlice (getAttributes, 'ATTR_6'),
+  mapGetToMaybeSlice (getSpecialAbilities, 'SA_64'),
   getLocaleAsProp,
   (maybeAgi, maybeImprovedDodge, locale) => {
     const maybeBase = maybeAgi.fmap (agi => Math.round (agi.get ('value') / 2));
@@ -285,9 +285,9 @@ const getINIBase = (
 );
 
 export const getINI = createMaybeSelector (
-  mapGetToSlice (getAttributes, 'ATTR_1'),
-  mapGetToSlice (getAttributes, 'ATTR_6'),
-  mapGetToSlice (getSpecialAbilities, 'SA_51'),
+  mapGetToMaybeSlice (getAttributes, 'ATTR_1'),
+  mapGetToMaybeSlice (getAttributes, 'ATTR_6'),
+  mapGetToMaybeSlice (getSpecialAbilities, 'SA_51'),
   getLocaleAsProp,
   (maybeCou, maybeAgi, maybeCombatReflexes, locale) => {
     const maybeBase = Maybe.liftM2 (getINIBase)
@@ -318,9 +318,9 @@ const justTrue = Just (true);
 
 export const getMOV = createMaybeSelector (
   getCurrentRace,
-  mapGetToSlice (getAdvantages, 'ADV_9'),
-  mapGetToSlice (getDisadvantages, 'DISADV_51'),
-  mapGetToSlice (getDisadvantages, 'DISADV_4'),
+  mapGetToMaybeSlice (getAdvantages, 'ADV_9'),
+  mapGetToMaybeSlice (getDisadvantages, 'DISADV_51'),
+  mapGetToMaybeSlice (getDisadvantages, 'DISADV_4'),
   getLocaleAsProp,
   (maybeCurrentRace, nimble, maimed, slow, locale) => {
     const maybeBase = maybeCurrentRace.fmap (race => race.get ('mov'))
@@ -347,9 +347,9 @@ export const getMOV = createMaybeSelector (
 );
 
 export const getWT = createMaybeSelector (
-  mapGetToSlice (getAttributes, 'ATTR_7'),
-  mapGetToSlice (getAdvantages, 'ADV_54'),
-  mapGetToSlice (getDisadvantages, 'DISADV_56'),
+  mapGetToMaybeSlice (getAttributes, 'ATTR_7'),
+  mapGetToMaybeSlice (getAdvantages, 'ADV_54'),
+  mapGetToMaybeSlice (getDisadvantages, 'DISADV_56'),
   getLocaleAsProp,
   (maybeCon, maybeIncrease, maybeDecrease, locale) => {
     const maybeBase = maybeCon.fmap (con => Math.round (con.get ('value') / 2));

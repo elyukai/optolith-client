@@ -16,10 +16,10 @@ const getSourceLinks = (entry: any): List<Record<SourceLink>> =>
   entry.get ('src' as any);
 
 /**
- * Use because `entry.get('stateEntry')` does not work
+ * Use because `entry.get('wikiEntry')` does not work
  */
 const getInstance = <T extends ObjectWithSource>(entry: any): Record<T> =>
-  entry.get ('stateEntry' as any);
+  entry.get ('wikiEntry' as any);
 
 /**
  * Use for combination of `getInstance` and `getSourceLinks`

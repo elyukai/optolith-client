@@ -20,21 +20,19 @@ const removeDependency = <T extends Data.Dependent>(e: Dep<T>) =>
 
     const index = Maybe.fromMaybe (-1) (getDependencyIndex (e) (list));
 
-    return (obj as any).update (
-      (dependencies: List<any>) => dependencies.deleteAt (index),
-      'dependencies'
-    );
+    return (obj as any).modify ((dependencies: List<any>) => dependencies.deleteAt (index))
+                               ('dependencies');
   };
 
 const adjustOrRemove =
   <T extends Data.Dependent>(isUnused: (entry: T) => boolean) =>
     (id: string) =>
-      (entry: T) => {
-        if (isUnused (entry)) {
-          return removeHeroListStateItem (id);
-        }
+      (entry: T): (state: Record<Data.HeroDependent>) => Maybe<Record<Data.HeroDependent>> => {
+        console.log (isUnused, id, entry);
 
-        return setHeroListStateItem (id) (entry);
+        return isUnused (entry)
+          ? removeHeroListStateItem (id)
+          : setHeroListStateItem (id) (entry);
       };
 
 const getIncreasableCreator: <T extends Data.ExtendedSkillDependent>(id: string) =>

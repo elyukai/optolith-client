@@ -29,31 +29,27 @@ export const getDeactiveForView = <T extends ActivatableCategory>(category: T) =
     getExtendedSpecialAbilitiesToAdd,
     getAdventurePointsObject,
     stateSelectors.getWiki,
-    (maybeHero, locale, validExtendedSpecialAbilities, adventurePoints, wiki) => {
-      return maybeHero.fmap (
+    (maybeHero, locale, validExtendedSpecialAbilities, adventurePoints, wiki) =>
+      maybeHero.fmap (
         hero => {
           const wikiKey = getWikiStateKeyByCategory (category);
           const wikiSlice = wiki.get (wikiKey);
 
           const stateSlice = getActivatableStateSliceByCategory (category) (hero);
 
-          return Maybe.mapMaybe<
-            WikiEntryRecordByCategory[T],
-            Record<Data.DeactiveViewObject>
-          > (
-            wikiEntry => getInactiveView (
+          return Maybe.mapMaybe<WikiEntryRecordByCategory[T], Record<Data.DeactiveViewObject>>
+            (wikiEntry => getInactiveView (
               wiki,
               stateSlice.lookup (wikiEntry.get ('id')),
               hero,
               validExtendedSpecialAbilities,
               locale,
               adventurePoints,
-              wikiEntry.get ('id')
-            )
-          ) (wikiSlice.elems ());
+              wikiEntry
+            ))
+            (wikiSlice.elems ());
         }
-      );
-    }
+      )
   );
 };
 

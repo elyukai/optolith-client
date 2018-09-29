@@ -14,7 +14,7 @@ import { Slidein } from '../../components/Slidein';
 import { SortOptions } from '../../components/SortOptions';
 import { TextField } from '../../components/TextField';
 import { ItemEditorContainer } from '../../containers/ItemEditor';
-import { WikiInfoContainer } from '../../containers/WikiInfo';
+import { WikiInfoContainer } from '../../containers/WikiInfoContainer';
 import { Purse } from '../../reducers/equipment';
 import { AttributeInstance, InputTextEvent, ItemInstance, UIMessages } from '../../types/data';
 import { CombatTechnique } from '../../types/view';

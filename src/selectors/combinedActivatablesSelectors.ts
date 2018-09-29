@@ -19,7 +19,13 @@ export const getFilteredInactiveAdvantages = createMaybeSelector (
   getInactiveAdvantagesFilterText,
   getLocaleAsProp,
   getEnableActiveItemHints,
-  (maybeInactive, maybeActive, filterText, locale, areActiveItemHintsEnabled) =>
+  (
+    maybeInactive,
+    maybeActive,
+    filterText,
+    locale,
+    areActiveItemHintsEnabled
+  ): Maybe<List<InactiveOrActiveAdvantage>> =>
     maybeInactive.fmap (
       inactive => areActiveItemHintsEnabled
         ? filterAndSortObjects<RecordInterface<InactiveOrActiveAdvantage>> (
@@ -27,8 +33,9 @@ export const getFilteredInactiveAdvantages = createMaybeSelector (
            * FIXME: Remove `<any>` in future version of TypeScript or when
            * type inference and compatibility for `Record` is better.
            */
-          List.mappend<any> (inactive)
-                            (Maybe.maybeToList (maybeActive).concat ()),
+          Maybe.fromMaybe<any>
+            (inactive)
+            (maybeActive .fmap (List.mappend<InactiveOrActiveAdvantage> (inactive))),
           locale.get ('id'),
           filterText
         )
@@ -58,8 +65,9 @@ export const getFilteredInactiveDisadvantages = createMaybeSelector (
            * FIXME: Remove `<any>` in future version of TypeScript or when
            * type inference and compatibility for `Record` is better.
            */
-          List.mappend<any> (inactive)
-                            (Maybe.maybeToList (maybeActive).concat ()),
+          Maybe.fromMaybe<any>
+            (inactive)
+            (maybeActive .fmap (List.mappend<InactiveOrActiveDisadvantage> (inactive))),
           locale.get ('id'),
           filterText
         )
@@ -90,8 +98,9 @@ export const getFilteredInactiveSpecialAbilities = createMaybeSelector (
            * FIXME: Remove `<any>` in future version of TypeScript or when
            * type inference and compatibility for `Record` is better.
            */
-          List.mappend<any> (inactive)
-                            (Maybe.maybeToList (maybeActive) .concat ()),
+          Maybe.fromMaybe<any>
+            (inactive)
+            (maybeActive .fmap (List.mappend<InactiveOrActiveSpecialAbility> (inactive))),
           locale.get ('id'),
           filterText,
           sortOptions as AllSortOptions<RecordInterface<InactiveOrActiveSpecialAbility>>

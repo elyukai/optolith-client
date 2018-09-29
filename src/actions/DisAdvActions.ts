@@ -18,6 +18,7 @@ import { isMagicalOrBlessed } from '../utils/checkActivatableUtils';
 import { Just, List, Maybe, Record, Tuple } from '../utils/dataUtils';
 import { getHeroStateListItem } from '../utils/heroStateUtils';
 import { translate } from '../utils/I18n';
+import { isNumber } from '../utils/typeCheckUtils';
 import { getWikiEntry } from '../utils/WikiUtils';
 import { addAlert } from './AlertActions';
 
@@ -38,13 +39,13 @@ const handleAreSufficientAPAvailableForDisAdvantage =
           (entryType: { isBlessed: boolean; isMagical: boolean }) =>
             (isDisadvantage: boolean) =>
               (dispatch: Dispatch<AppState>) => {
-                if (areSufficientAPAvailableForDisAdvantage.get ('totalValid')) {
+                if (!areSufficientAPAvailableForDisAdvantage.get ('totalValid')) {
                   dispatch (addAlert ({
                     title: translate (locale, 'notenoughap.title'),
                     message: translate (locale, 'notenoughap.content'),
                   }));
                 }
-                else if (areSufficientAPAvailableForDisAdvantage.get ('mainValid')) {
+                else if (!areSufficientAPAvailableForDisAdvantage.get ('mainValid')) {
                   const type = isDisadvantage
                     ? translate (locale, 'reachedaplimit.disadvantages')
                     : translate (locale, 'reachedaplimit.advantages');
@@ -56,7 +57,7 @@ const handleAreSufficientAPAvailableForDisAdvantage =
                     }));
                   }
                 }
-                else if (areSufficientAPAvailableForDisAdvantage.get ('subValid')) {
+                else if (!areSufficientAPAvailableForDisAdvantage.get ('subValid')) {
                   const type = isDisadvantage
                     ? entryType.isBlessed
                       ? translate (locale, 'reachedcategoryaplimit.blesseddisadvantages')
@@ -139,7 +140,7 @@ export const addDisAdvantage = (locale: UIMessagesObject) => (args: ActivateArgs
           const color: Record<AlbinoChangedColor> = id === 'DISADV_45' && args.sel === 1
             ? Record.of<AlbinoChangedColor> ({
               hairColor: 24,
-              eyeColor: 19
+              eyeColor: 19,
             })
             : Record.empty ();
 
@@ -153,8 +154,8 @@ export const addDisAdvantage = (locale: UIMessagesObject) => (args: ActivateArgs
               isDisadvantage,
               hairColor: color.toObject ().hairColor,
               eyeColor: color.toObject ().eyeColor,
-              wikiEntry
-            }
+              wikiEntry,
+            },
           });
         };
 
@@ -251,7 +252,7 @@ export const removeDisAdvantage = (locale: UIMessagesObject) =>
                             maybeRaceVariant.bind (raceVariant => raceVariant.lookup ('eyeColors'))
                           )
                           .bind (List.uncons)
-                          .fmap (Tuple.fst)
+                          .fmap (Tuple.fst),
                       });
                     }
                   )
@@ -267,8 +268,8 @@ export const removeDisAdvantage = (locale: UIMessagesObject) =>
                 isDisadvantage,
                 hairColor: color.toObject ().hairColor,
                 eyeColor: color.toObject ().eyeColor,
-                wikiEntry
-              }
+                wikiEntry,
+              },
             });
           };
 
@@ -306,6 +307,8 @@ export const setDisAdvantageLevel = (locale: UIMessagesObject) =>
 
       const maybeHero = getCurrentHeroPresent (state);
 
+      console.log (id, index, level);
+
       if (Maybe.isJust (maybeHero)) {
         const hero = Maybe.fromJust (maybeHero);
 
@@ -322,10 +325,12 @@ export const setDisAdvantageLevel = (locale: UIMessagesObject) =>
             activeObject => activeObject.merge (
               Record.of ({
                 id,
-                index
+                index,
               })
             )
           );
+
+        console.log (hero, maybeWikiEntry, maybeStateEntry, maybeActiveObjectWithId);
 
         if (Maybe.isJust (maybeWikiEntry) && Maybe.isJust (maybeActiveObjectWithId)) {
           const wikiEntry = Maybe.fromJust (maybeWikiEntry);
@@ -355,6 +360,8 @@ export const setDisAdvantageLevel = (locale: UIMessagesObject) =>
 
           const maybeCost = Maybe.liftM2 (R.subtract) (nextCost) (previousCost);
 
+          console.log (previousCost, nextCost, maybeCost);
+
           if (Maybe.isJust (maybeCost)) {
             const cost = Maybe.fromJust (maybeCost);
 
@@ -383,8 +390,8 @@ export const setDisAdvantageLevel = (locale: UIMessagesObject) =>
                   index,
                   ...entryType,
                   isDisadvantage,
-                  wikiEntry
-                }
+                  wikiEntry,
+                },
               });
             };
 
@@ -405,7 +412,7 @@ export interface SwitchDisAdvRatingVisibilityAction {
 }
 
 export const switchRatingVisibility = (): SwitchDisAdvRatingVisibilityAction => ({
-  type: ActionTypes.SWITCH_DISADV_RATING_VISIBILITY
+  type: ActionTypes.SWITCH_DISADV_RATING_VISIBILITY,
 });
 
 export interface SetActiveAdvantagesFilterTextAction {
@@ -419,8 +426,8 @@ export const setActiveAdvantagesFilterText =
   (filterText: string): SetActiveAdvantagesFilterTextAction => ({
     type: ActionTypes.SET_ADVANTAGES_FILTER_TEXT,
     payload: {
-      filterText
-    }
+      filterText,
+    },
   });
 
 export interface SetInactiveAdvantagesFilterTextAction {
@@ -434,8 +441,8 @@ export const setInactiveAdvantagesFilterText =
   (filterText: string): SetInactiveAdvantagesFilterTextAction => ({
     type: ActionTypes.SET_INACTIVE_ADVANTAGES_FILTER_TEXT,
     payload: {
-      filterText
-    }
+      filterText,
+    },
   });
 
 export interface SetActiveDisadvantagesFilterTextAction {
@@ -449,8 +456,8 @@ export const setActiveDisadvantagesFilterText =
   (filterText: string): SetActiveDisadvantagesFilterTextAction => ({
     type: ActionTypes.SET_DISADVANTAGES_FILTER_TEXT,
     payload: {
-      filterText
-    }
+      filterText,
+    },
   });
 
 export interface SetInactiveDisadvantagesFilterTextAction {
@@ -464,6 +471,6 @@ export const setInactiveDisadvantagesFilterText =
   (filterText: string): SetInactiveDisadvantagesFilterTextAction => ({
     type: ActionTypes.SET_INACTIVE_DISADVANTAGES_FILTER_TEXT,
     payload: {
-      filterText
-    }
+      filterText,
+    },
   });

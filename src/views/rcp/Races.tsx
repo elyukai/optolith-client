@@ -10,7 +10,7 @@ import { Page } from '../../components/Page';
 import { Scroll } from '../../components/Scroll';
 import { SortOptions } from '../../components/SortOptions';
 import { TextField } from '../../components/TextField';
-import { WikiInfoContainer } from '../../containers/WikiInfo';
+import { WikiInfoContainer } from '../../containers/WikiInfoContainer';
 import { InputTextEvent } from '../../types/data';
 import { Race, UIMessages } from '../../types/view';
 import { translate } from '../../utils/I18n';
