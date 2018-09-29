@@ -699,6 +699,35 @@ export class List<T> implements Al.Monad<T>, Al.Foldable<T>, Al.Semigroup<T>,
     );
   }
 
+  // ACCUMULATING MAPS
+
+  /**
+   * `mapAccumL :: Traversable t => (a -> b -> (a, c)) -> a -> t b -> (a, t c)`
+   *
+   * The `mapAccumL` function behaves like a combination of `fmap` and `foldl`;
+   * it applies a function to each element of a structure, passing an
+   * accumulating parameter from left to right, and returning a final value of
+   * this accumulator together with the new structure.
+   */
+  static mapAccumL<A, B, C> (
+    f: (acc: A) => (current: B) => Tuple<A, C>
+  ): (initial: A) => (list: List<B>) => Tuple<A, List<C>> {
+    return initial => list => {
+      const pair = list
+        .toArray ()
+        .reduce<[A, C[]]> (
+          (acc, current) => {
+            const result = f (acc[0]) (current);
+
+            return [Tuple.fst (result), [...acc[1], Tuple.snd (result)]]
+          },
+          [initial, []]
+        );
+
+      return Tuple.of<A, List<C>> (pair[0]) (List.fromArray (pair[1]));
+    };
+  }
+
   // UNFOLDING
 
   /**

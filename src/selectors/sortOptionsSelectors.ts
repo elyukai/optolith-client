@@ -48,7 +48,7 @@ export const getProfessionsSortOptions = createMaybeSelector (
             'ap',
             { key: 'name', keyOfProperty: sex },
             { key: 'subname', keyOfProperty: sex },
-            { key: getProfessionSourceKey }
+            { key: getProfessionSourceKey },
           ];
 
           return sortOptions1;
@@ -57,7 +57,7 @@ export const getProfessionsSortOptions = createMaybeSelector (
         const sortOptions2: ProfessionSortOptions = [
           { key: 'name', keyOfProperty: sex },
           { key: 'subname', keyOfProperty: sex },
-          { key: getProfessionSourceKey }
+          { key: getProfessionSourceKey },
         ];
 
         return sortOptions2;
@@ -66,7 +66,7 @@ export const getProfessionsSortOptions = createMaybeSelector (
 );
 
 export const getSkillsSortOptions = createMaybeSelector (
-  uiSettingsSelectors.getTalentsSortOrder,
+  uiSettingsSelectors.getSkillsSortOrder,
   sortOrder => {
     let sortOptions: AllSortOptions<Wiki.Skill | View.SkillCombined> = 'name';
 
@@ -113,9 +113,9 @@ export const getSpecialAbilitiesSortOptions = createMaybeSelector (
       sortOptions = [
         {
           key: obj => obj.get ('wikiEntry').get ('gr'),
-          mapToIndex: translate (locale, 'specialabilities.view.groups')
+          mapToIndex: translate (locale, 'specialabilities.view.groups'),
         },
-        'name'
+        'name',
       ];
     }
 
@@ -137,9 +137,9 @@ export const getSpellsSortOptions = createMaybeSelector (
       sortOptions = [
         {
           key: 'property',
-          mapToIndex: translate (locale, 'spells.view.properties')
+          mapToIndex: translate (locale, 'spells.view.properties'),
         },
-        'name'
+        'name',
       ];
     }
     else if (sortOrder === 'ic') {
@@ -190,7 +190,7 @@ export const getEquipmentSortOptions = createMaybeSelector (
     else if (sortOrder === 'weight') {
       sortOptions = [
         { key: r => r.get ('weight'), reverse: true },
-        'name'
+        'name',
       ];
     }
 

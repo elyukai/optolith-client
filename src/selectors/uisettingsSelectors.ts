@@ -39,10 +39,10 @@ export const getProfessionsFromExpansionsVisibility = (state: AppState) =>
 export const getAdvantagesDisadvantagesCultureRatingVisibility = (state: AppState) =>
   state.ui.settings.advantagesDisadvantagesCultureRatingVisibility;
 
-export const getTalentsSortOrder = (state: AppState) =>
+export const getSkillsSortOrder = (state: AppState) =>
   state.ui.settings.talentsSortOrder;
 
-export const getTalentsCultureRatingVisibility = (state: AppState) =>
+export const getSkillsCultureRatingVisibility = (state: AppState) =>
   state.ui.settings.talentsCultureRatingVisibility;
 
 export const getCombatTechniquesSortOrder = (state: AppState) =>

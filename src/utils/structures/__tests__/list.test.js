@@ -289,6 +289,15 @@ test('scanl', () => {
     .toEqual(List.of(1, 2, 6, 24));
 });
 
+test('List.mapAccumL', () => {
+  expect(
+    List.mapAccumL (acc => current => Tuple.of (acc + current) (current * 2))
+                   (0)
+                   (List.of (1, 2, 3))
+  )
+    .toEqual(Tuple.of (6) (List.of(2, 4, 6)));
+});
+
 test('take', () => {
   expect(List.of(1, 2, 3, 4, 5).take(3))
     .toEqual(List.of(1, 2, 3));

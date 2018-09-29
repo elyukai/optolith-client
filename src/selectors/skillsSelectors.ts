@@ -1,6 +1,7 @@
 import * as R from 'ramda';
-import { SkillDependent } from '../types/data';
+import { EntryRating } from '../types/data';
 import { SkillCombined } from '../types/view';
+import { createDependentSkill } from '../utils/createEntryUtils';
 import { createMaybeSelector } from '../utils/createMaybeSelector';
 import { List, Maybe, OrderedMap, Record } from '../utils/dataUtils';
 import { AllSortOptions, filterAndSortObjects } from '../utils/FilterSortUtils';
@@ -14,10 +15,15 @@ export const getAllSkills = createMaybeSelector (
   (maybeSkills, wikiSkills) =>
     Maybe.fromMaybe<List<Record<SkillCombined>>> (List.of ()) (
       maybeSkills.fmap (
-        skills => Maybe.mapMaybe<Record<SkillDependent>, Record<SkillCombined>> (
-          skill => wikiSkills.lookup (skill.get ('id'))
-            .fmap (wikiSkill => wikiSkill.merge (skill))
-        ) (skills.elems ())
+        skills => wikiSkills
+          .map (
+            wikiSkill => wikiSkill .merge (
+              Maybe.fromMaybe
+                (createDependentSkill (wikiSkill .get ('id')))
+                (skills .lookup (wikiSkill .get ('id')))
+            )
+          )
+          .elems ()
       )
     )
 );
@@ -36,17 +42,17 @@ export const getFilteredSkills = createMaybeSelector (
     )
 );
 
-export const getSkillsRating = createMaybeSelector (
+export const getSkillRating = createMaybeSelector (
   getCurrentCulture,
   maybeCulture =>
-    Maybe.fromMaybe<OrderedMap<string, string>> (OrderedMap.empty ()) (
+    Maybe.fromMaybe<OrderedMap<string, EntryRating>> (OrderedMap.empty ()) (
       maybeCulture.fmap (
         culture => R.pipe (
-          culture.get ('commonSkills').foldl<OrderedMap<string, string>> (
-            acc => id => acc.insert (id) ('TYP')
+          culture.get ('commonSkills').foldl<OrderedMap<string, EntryRating>> (
+            acc => id => acc.insert (id) (EntryRating.Common)
           ),
           culture.get ('uncommonSkills').foldl (
-            acc => id => acc.insert (id) ('UNTYP')
+            acc => id => acc.insert (id) (EntryRating.Uncommon)
           )
         ) (OrderedMap.empty ())
       )

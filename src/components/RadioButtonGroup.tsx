@@ -12,7 +12,7 @@ export interface Option<T extends OptionValue> {
 }
 
 export interface RadioButtonGroupProps<T extends OptionValue> {
-  active: T;
+  active: T | string | number;
   array: List<Option<T>>;
   disabled?: boolean;
   onClick (option: T): void;
@@ -20,6 +20,8 @@ export interface RadioButtonGroupProps<T extends OptionValue> {
 
 export function RadioButtonGroup<T extends OptionValue> (props: RadioButtonGroupProps<T>) {
   const { active, array, disabled, onClick } = props;
+
+  const normalizedActive = Maybe.normalize<string | number> (active);
 
   return (
     <div className="radiobutton-group">
@@ -29,7 +31,7 @@ export function RadioButtonGroup<T extends OptionValue> (props: RadioButtonGroup
             <RadioButton
               key={Maybe.fromMaybe<React.Key> ('__default__') (option.value)}
               value={option.value}
-              active={active.equals (option.value)}
+              active={normalizedActive.equals (option.value)}
               onClick={onClick.bind (undefined, option.value)}
               disabled={option.disabled || disabled}
             >

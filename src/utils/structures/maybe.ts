@@ -246,6 +246,18 @@ export class Maybe<T extends Some> implements Al.Alternative<T>, Al.Monad<T>,
   }
 
   /**
+   * `notElem :: Eq a => a -> Maybe a -> Bool`
+   *
+   * `notElem` is the negation of `elem`.
+   */
+  static notElem<T extends Some> (e: T): (m: Maybe<T>) => boolean {
+    return R.pipe<Maybe<T>, boolean, boolean> (
+      Maybe.elem (e),
+      R.not
+    );
+  }
+
+  /**
    * `mappend :: Semigroup a => Maybe a -> Maybe a -> Maybe a`
    *
    * Concatenates the `Semigroup`s contained in the two `Maybe`s, if both are of

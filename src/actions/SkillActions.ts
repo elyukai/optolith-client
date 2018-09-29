@@ -16,7 +16,7 @@ export interface AddSkillPointAction {
   };
 }
 
-export const addSkillPoint = (id: string) => (locale: UIMessagesObject): AsyncAction =>
+export const addSkillPoint = (locale: UIMessagesObject) => (id: string): AsyncAction =>
   (dispatch, getState) => {
     const state = getState ();
     const maybeHeroSkills = getSkills (state);
@@ -37,8 +37,8 @@ export const addSkillPoint = (id: string) => (locale: UIMessagesObject): AsyncAc
       dispatch<AddSkillPointAction> ({
         type: ActionTypes.ADD_TALENT_POINT,
         payload: {
-          id
-        }
+          id,
+        },
       });
     }
     else {
@@ -56,11 +56,11 @@ export interface RemoveSkillPointAction {
   };
 }
 
-export const removePoint = (id: string): RemoveSkillPointAction => ({
+export const removeSkillPoint = (id: string): RemoveSkillPointAction => ({
   type: ActionTypes.REMOVE_TALENT_POINT,
   payload: {
-    id
-  }
+    id,
+  },
 });
 
 export interface SetSkillsSortOrderAction {
@@ -73,8 +73,8 @@ export interface SetSkillsSortOrderAction {
 export const setSkillsSortOrder = (sortOrder: string): SetSkillsSortOrderAction => ({
   type: ActionTypes.SET_TALENTS_SORT_ORDER,
   payload: {
-    sortOrder
-  }
+    sortOrder,
+  },
 });
 
 export interface SwitchSkillRatingVisibilityAction {
@@ -82,7 +82,7 @@ export interface SwitchSkillRatingVisibilityAction {
 }
 
 export const switchSkillRatingVisibility = (): SwitchSkillRatingVisibilityAction => ({
-  type: ActionTypes.SWITCH_TALENT_RATING_VISIBILITY
+  type: ActionTypes.SWITCH_TALENT_RATING_VISIBILITY,
 });
 
 export interface SetSkillsFilterTextAction {
@@ -95,6 +95,6 @@ export interface SetSkillsFilterTextAction {
 export const setSkillsFilterText = (filterText: string): SetSkillsFilterTextAction => ({
   type: ActionTypes.SET_SKILLS_FILTER_TEXT,
   payload: {
-    filterText
-  }
+    filterText,
+  },
 });

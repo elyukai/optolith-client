@@ -19,9 +19,9 @@ import { ProfessionsContainer } from '../containers/Professions';
 import { RacesContainer } from '../containers/Races';
 import { RulesContainer } from '../containers/RulesContainer';
 import { SheetsContainer } from '../containers/SheetsContainer';
+import { SkillsContainer } from '../containers/SkillsContainer';
 import { SpecialAbilitiesContainer } from '../containers/SpecialAbilities';
 import { SpellsContainer } from '../containers/Spells';
-import { TalentsContainer } from '../containers/Talents';
 import { WikiContainer } from '../containers/WikiContainer';
 import { UIMessagesObject } from '../types/ui';
 import { TabId } from '../utils/LocationUtils';
@@ -98,7 +98,7 @@ export class Route extends React.Component<RouteProps> {
       advantages: <AdvantagesContainer locale={locale} />,
       disadvantages: <DisadvantagesContainer locale={locale} />,
 
-      skills: <TalentsContainer locale={locale} />,
+      skills: <SkillsContainer locale={locale} />,
       combatTechniques: <CombatTechniquesContainer locale={locale} />,
       specialAbilities: <SpecialAbilitiesContainer locale={locale} />,
       spells: <SpellsContainer locale={locale} />,

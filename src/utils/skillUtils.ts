@@ -2,9 +2,10 @@ import * as R from 'ramda';
 import * as Data from '../types/data';
 import * as Wiki from '../types/wiki';
 import { getSkillCheckValues } from './AttributeUtils';
-import { Just, List, Maybe, Nothing, OrderedMap, Record, StringKeyObject, Tuple } from './dataUtils';
+import { Just, List, Maybe, Nothing, OrderedMap, Record, Tuple } from './dataUtils';
 import { flattenDependencies } from './flattenDependencies';
 import { isActive } from './isActive';
+import { isNumber } from './typeCheckUtils';
 
 /**
  * `getExceptionalSkillBonus skillId exceptionalSkill`
@@ -24,7 +25,7 @@ export const isIncreasable = (
   startEL: Record<Wiki.ExperienceLevel>,
   phase: number,
   attributes: OrderedMap<string, Record<Data.AttributeDependent>>,
-  exceptionalSkill: Maybe<Record<Data.ActivatableDependent>>,
+  exceptionalSkill: Maybe<Record<Data.ActivatableDependent>>
 ): boolean => {
   const bonus = getExceptionalSkillBonus (wikiEntry.lookup ('id')) (exceptionalSkill);
 
@@ -46,12 +47,12 @@ export const isIncreasable = (
 export const isDecreasable = (
   wiki: Record<Wiki.WikiAll>,
   state: Record<Data.HeroDependent>,
-  instance: Record<Data.ActivatableSkillDependent>,
+  instance: Record<Data.ActivatableSkillDependent>
 ): boolean => {
   const dependencies = flattenDependencies<number | boolean> (
     wiki,
     state,
-    instance.get ('dependencies'),
+    instance.get ('dependencies')
   );
 
   /**
@@ -79,22 +80,13 @@ export const isDecreasable = (
   return instance.get ('value') > Math.max (0, ...dependencies.filter (isNumber));
 };
 
-export enum CommonVisualIds {
-  Common = 'TYP',
-  Uncommon = 'UNTYP'
-}
+export const isCommon = (rating: OrderedMap<string, Data.EntryRating>) =>
+  (obj: Record<Wiki.Skill>): boolean =>
+    Maybe.elem (Data.EntryRating.Common) (rating .lookup (obj.get ('id')));
 
-export const isCommon = (
-  rating: StringKeyObject<string>,
-  obj: Record<Wiki.Skill>
-): boolean =>
-  rating[obj.get ('id')] === CommonVisualIds.Common;
-
-export const isUntyp = (
-  rating: StringKeyObject<string>,
-  obj: Record<Wiki.Skill>
-): boolean =>
-  rating[obj.get ('id')] === CommonVisualIds.Uncommon;
+export const isUncommon = (rating: OrderedMap<string, Data.EntryRating>) =>
+  (obj: Record<Wiki.Skill>): boolean =>
+    Maybe.elem (Data.EntryRating.Uncommon) (rating .lookup (obj.get ('id')));
 
 export const getRoutineValue = (
   sr: number,

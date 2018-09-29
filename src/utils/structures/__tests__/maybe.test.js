@@ -162,6 +162,15 @@ test('Maybe.elem', () => {
     .toBeTruthy();
 });
 
+test('Maybe.notElem', () => {
+  expect(Maybe.notElem (3) (Maybe.of(null)))
+    .toBeTruthy();
+  expect(Maybe.notElem (3) (Maybe.of(2)))
+    .toBeTruthy();
+  expect(Maybe.notElem (3) (Maybe.of(3)))
+    .toBeFalsy();
+});
+
 test('mappend', () => {
   expect(Maybe.of(List.of(3)).mappend(Maybe.of(List.of(2))))
     .toEqual(Maybe.of(List.of(3, 2)));
