@@ -4,7 +4,9 @@ import { ListItemName } from '../../components/ListItemName';
 import { ListItemSeparator } from '../../components/ListItemSeparator';
 import { ListItemValues } from '../../components/ListItemValues';
 import { DCIds } from '../../selectors/derivedCharacteristicsSelectors';
-import { AttributeInstance, SecondaryAttribute } from '../../types/data.d';
+import { SecondaryAttribute } from '../../types/data';
+import { AttributeCombined } from '../../types/view';
+import { List, OrderedMap, Record } from '../../utils/dataUtils';
 import { AdditionalValue, SkillAdditionalValues } from './SkillAdditionalValues';
 import { SkillButtons } from './SkillButtons';
 import { SkillCheck } from './SkillCheck';
@@ -14,17 +16,17 @@ import { SkillImprovementCost } from './SkillImprovementCost';
 import { SkillRating } from './SkillRating';
 
 export interface SkillListItemProps {
-  attributes: Map<string, AttributeInstance>;
+  attributes: List<Record<AttributeCombined>>;
   activateDisabled?: boolean;
   addDisabled?: boolean;
   addFillElement?: boolean;
-  addValues?: AdditionalValue[];
+  addValues?: List<AdditionalValue>;
   addText?: string;
-  check?: string[];
+  check?: List<string>;
   checkDisabled?: boolean;
   checkmod?: 'SPI' | 'TOU';
-  derivedCharacteristics?: Map<DCIds, SecondaryAttribute>;
-  groupList?: string[];
+  derivedCharacteristics?: OrderedMap<DCIds, Record<SecondaryAttribute>>;
+  groupList?: List<string>;
   groupIndex?: number;
   ic?: number;
   id: string;
@@ -36,14 +38,14 @@ export interface SkillListItemProps {
   sr?: number;
   typ?: boolean;
   untyp?: boolean;
-  activate?(): void;
-  addPoint?(): void;
-  removePoint?(): void;
-  selectForInfo(id: string): void;
+  activate? (): void;
+  addPoint? (): void;
+  removePoint? (): void;
+  selectForInfo (id: string): void;
 }
 
 export class SkillListItem extends React.Component<SkillListItemProps> {
-  shouldComponentUpdate(nextProps: SkillListItemProps) {
+  shouldComponentUpdate (nextProps: SkillListItemProps) {
     return this.props.sr !== nextProps.sr ||
       this.props.addText !== nextProps.addText ||
       this.props.activateDisabled !== nextProps.activateDisabled ||
@@ -54,7 +56,7 @@ export class SkillListItem extends React.Component<SkillListItemProps> {
       this.props.untyp !== nextProps.untyp;
   }
 
-  render() {
+  render () {
     const {
       insertTopMargin,
       name,

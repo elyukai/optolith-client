@@ -1,3 +1,4 @@
+import * as R from 'ramda';
 import * as React from 'react';
 import { Checkbox } from '../../components/Checkbox';
 import { ListView } from '../../components/List';
@@ -13,12 +14,12 @@ import { SortNames, SortOptions } from '../../components/SortOptions';
 import { TextField } from '../../components/TextField';
 import { WikiInfoContainer } from '../../containers/WikiInfoContainer';
 import { DCIds } from '../../selectors/derivedCharacteristicsSelectors';
-import { AttributeDependent, EntryRating, Hero, SecondaryAttribute } from '../../types/data';
-import { SkillCombined } from '../../types/view';
+import { EntryRating, SecondaryAttribute } from '../../types/data';
+import { AttributeCombined, SkillWithRequirements } from '../../types/view';
 import { Skill } from '../../types/wiki';
 import { Just, List, Maybe, Nothing, OrderedMap, Record, Tuple } from '../../utils/dataUtils';
 import { translate, UIMessagesObject } from '../../utils/I18n';
-import { isCommon, isDecreasable, isIncreasable, isUncommon } from '../../utils/skillUtils';
+import { isCommon, isUncommon } from '../../utils/skillUtils';
 import { SkillListItem } from './SkillListItem';
 
 export interface SkillsOwnProps {
@@ -26,10 +27,9 @@ export interface SkillsOwnProps {
 }
 
 export interface SkillsStateProps {
-  attributes: Maybe<OrderedMap<string, Record<AttributeDependent>>>;
-  currentHero: Maybe<Hero>;
+  attributes: List<Record<AttributeCombined>>;
   derivedCharacteristics: OrderedMap<DCIds, Record<SecondaryAttribute>>;
-  list: List<Record<SkillCombined>>;
+  list: Maybe<List<Record<SkillWithRequirements>>>;
   isRemovingEnabled: boolean;
   sortOrder: string;
   filterText: string;
@@ -59,7 +59,6 @@ export class Skills extends React.Component<SkillsProps, SkillsState> {
   render () {
     const {
       addPoint,
-      currentHero,
       attributes,
       derivedCharacteristics,
       locale,
@@ -123,50 +122,62 @@ export class Skills extends React.Component<SkillsProps, SkillsState> {
           <Scroll>
             <ListView>
               {
-                list .null ()
-                  ? <ListPlaceholder locale={locale} type="skills" noResults />
-                  : Tuple.snd (
-                    List.mapAccumL<Maybe<Record<SkillCombined>>, Record<SkillCombined>, JSX.Element>
-                      (previous => current =>
-                        Tuple.of<Maybe<Record<SkillCombined>>, JSX.Element>
-                          (Just (current))
-                          (
-                            <SkillListItem
-                              key={current .get ('id')}
-                              id={current .get ('id')}
-                              typ={
-                                ratingVisibility
-                                && isCommon (skillRating) (current as any as Record<Skill>)
-                              }
-                              untyp={
-                                ratingVisibility
-                                && isUncommon (skillRating) (current as any as Record<Skill>)
-                              }
-                              name={current .get ('name')}
-                              sr={current .get ('value')}
-                              check={current .get ('check')}
-                              ic={current .get ('ic')}
-                              addPoint={addPoint.bind (null, obj.id)}
-                              addDisabled={!isIncreasable (currentHero, obj)}
-                              removePoint={isRemovingEnabled ? removePoint.bind (null, obj.id) : undefined}
-                              removeDisabled={!isDecreasable (currentHero, obj)}
-                              insertTopMargin={
-                                sortOrder === 'group'
-                                && Maybe.notElem
-                                  (current .get ('gr'))
-                                  (previous .fmap (Record.get<SkillCombined, 'gr'> ('gr')))
-                              }
-                              selectForInfo={this.showInfo}
-                              attributes={attributes}
-                              derivedCharacteristics={derivedCharacteristics}
-                              groupIndex={obj.gr}
-                              groupList={translate (locale, 'skills.view.groups')}
-                              />
-                          ))
-                      (Nothing ())
-                      (list)
-                  )
-                    .toArray ()
+                Maybe.fromMaybe<NonNullable<React.ReactNode>>
+                  (<ListPlaceholder locale={locale} type="skills" noResults />)
+                  (list
+                    .bind (Maybe.ensure (R.complement (List.null)))
+                    .fmap (R.pipe (
+                      List.mapAccumL<
+                        Maybe<Record<SkillWithRequirements>>,
+                        Record<SkillWithRequirements>,
+                        JSX.Element
+                      >
+                        (previous => current =>
+                          Tuple.of<Maybe<Record<SkillWithRequirements>>, JSX.Element>
+                            (Just (current))
+                            (
+                              <SkillListItem
+                                key={current .get ('id')}
+                                id={current .get ('id')}
+                                typ={
+                                  ratingVisibility
+                                  && isCommon (skillRating) (current as any as Record<Skill>)
+                                }
+                                untyp={
+                                  ratingVisibility
+                                  && isUncommon (skillRating) (current as any as Record<Skill>)
+                                }
+                                name={current .get ('name')}
+                                sr={current .get ('value')}
+                                check={current .get ('check')}
+                                ic={current .get ('ic')}
+                                addPoint={addPoint.bind (null, current .get ('id'))}
+                                addDisabled={!current .get ('isIncreasable')}
+                                removePoint={
+                                  isRemovingEnabled
+                                    ? removePoint.bind (null, current .get ('id'))
+                                    : undefined
+                                }
+                                removeDisabled={!current .get ('isDecreasable')}
+                                insertTopMargin={
+                                  sortOrder === 'group'
+                                  && Maybe.notElem
+                                    (current .get ('gr'))
+                                    (previous .fmap (
+                                      Record.get<SkillWithRequirements, 'gr'> ('gr')
+                                    ))
+                                }
+                                selectForInfo={this.showInfo}
+                                attributes={attributes}
+                                derivedCharacteristics={derivedCharacteristics}
+                                groupIndex={current .get ('gr')}
+                                groupList={translate (locale, 'skills.view.groups')}
+                                />
+                            ))
+                        (Nothing ()),
+                      Tuple.snd,
+                      List.toArray
+                    )))
               }
             </ListView>
           </Scroll>

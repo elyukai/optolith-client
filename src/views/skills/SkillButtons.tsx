@@ -10,13 +10,13 @@ export interface SkillButtonsProps {
   isNotActive?: boolean;
   removeDisabled?: boolean;
   sr?: number;
-  activate?(): void;
-  addPoint?(): void;
-  removePoint?(): void;
-  selectForInfo(id: string): void;
+  activate? (): void;
+  addPoint? (): void;
+  removePoint? (): void;
+  selectForInfo (id: string): void;
 }
 
-export function SkillButtons(props: SkillButtonsProps) {
+export function SkillButtons (props: SkillButtonsProps) {
   const {
     activateDisabled,
     addDisabled,
@@ -31,14 +31,9 @@ export function SkillButtons(props: SkillButtonsProps) {
     selectForInfo,
   } = props;
 
-  const boundSelectForInfo = () => selectForInfo(id);
+  const boundSelectForInfo = () => selectForInfo (id);
 
-  const getRemoveIcon = () => {
-    if (ic && sr === 0 && !removeDisabled || !ic) {
-      return '\uE90b';
-    }
-    return '\uE909';
-  };
+  const getRemoveIcon = () => ic && sr === 0 && !removeDisabled || !ic ? '\uE90b' : '\uE909';
 
   return (
     <ListItemButtons>
@@ -61,7 +56,7 @@ export function SkillButtons(props: SkillButtonsProps) {
           )}
           {removePoint && (
             <IconButton
-              icon={getRemoveIcon()}
+              icon={getRemoveIcon ()}
               onClick={removePoint}
               disabled={removeDisabled}
               flat

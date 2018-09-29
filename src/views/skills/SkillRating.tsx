@@ -4,10 +4,10 @@ export interface SkillRatingProps {
   isNotActive?: boolean;
   noIncrease?: boolean;
   sr?: number;
-  addPoint?(): void;
+  addPoint? (): void;
 }
 
-export function SkillRating(props: SkillRatingProps) {
+export function SkillRating (props: SkillRatingProps) {
   const {
     isNotActive,
     noIncrease,

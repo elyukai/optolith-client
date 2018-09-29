@@ -1,5 +1,6 @@
 import * as R from 'ramda';
 import * as Data from '../types/data';
+import { SkillCombined } from '../types/view';
 import * as Wiki from '../types/wiki';
 import { getSkillCheckValues } from './AttributeUtils';
 import { Just, List, Maybe, Nothing, OrderedMap, Record, Tuple } from './dataUtils';
@@ -8,7 +9,7 @@ import { isActive } from './isActive';
 import { isNumber } from './typeCheckUtils';
 
 /**
- * `getExceptionalSkillBonus skillId exceptionalSkill`
+ * `getExceptionalSkillBonus skillId exceptionalSkillStateEntry`
  * @param skillId The skill's id.
  * @param exceptionalSkill The state entry of Exceptional Skill.
  */
@@ -20,39 +21,38 @@ export const getExceptionalSkillBonus = (skillId: Maybe<string>) =>
   );
 
 export const isIncreasable = (
-  wikiEntry: Record<Wiki.Skill>,
-  instance: Record<Data.ActivatableSkillDependent>,
+  skill: Record<SkillCombined>,
   startEL: Record<Wiki.ExperienceLevel>,
   phase: number,
   attributes: OrderedMap<string, Record<Data.AttributeDependent>>,
   exceptionalSkill: Maybe<Record<Data.ActivatableDependent>>
 ): boolean => {
-  const bonus = getExceptionalSkillBonus (wikiEntry.lookup ('id')) (exceptionalSkill);
+  const bonus = getExceptionalSkillBonus (skill .lookup ('id')) (exceptionalSkill);
 
   const maxList = List.of (
-    getSkillCheckValues (attributes) (wikiEntry.get ('check')).maximum () + 2
+    getSkillCheckValues (attributes) (skill .get ('check')) .maximum () + 2
   );
 
   const getAdditionalMax = R.pipe (
     (list: typeof maxList) => phase < 3
-      ? list.append (startEL.get ('maxSkillRating'))
+      ? list.append (startEL .get ('maxSkillRating'))
       : list
   );
 
-  const max = getAdditionalMax (maxList).minimum ();
+  const max = getAdditionalMax (maxList) .minimum ();
 
-  return instance.get ('value') < max + bonus;
+  return skill .get ('value') < max + bonus;
 };
 
 export const isDecreasable = (
   wiki: Record<Wiki.WikiAll>,
   state: Record<Data.HeroDependent>,
-  instance: Record<Data.ActivatableSkillDependent>
+  skill: Record<SkillCombined>
 ): boolean => {
   const dependencies = flattenDependencies<number | boolean> (
     wiki,
     state,
-    instance.get ('dependencies')
+    skill .get ('dependencies')
   );
 
   /**
@@ -60,7 +60,7 @@ export const isDecreasable = (
    * => sum of Woodworking and Metalworking must be at least 12.
    */
   if (
-    ['TAL_51', 'TAL_55'].includes (instance.get ('id'))
+    ['TAL_51', 'TAL_55'].includes (skill .get ('id'))
     && isActive (state.get ('specialAbilities').lookup ('SA_17'))
   ) {
     const woodworkingRating = Maybe.fromMaybe (0) (
@@ -77,7 +77,7 @@ export const isDecreasable = (
   }
 
   // Basic validation
-  return instance.get ('value') > Math.max (0, ...dependencies.filter (isNumber));
+  return skill .get ('value') > Math.max (0, ...dependencies.filter (isNumber));
 };
 
 export const isCommon = (rating: OrderedMap<string, Data.EntryRating>) =>

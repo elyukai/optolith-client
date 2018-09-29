@@ -1,16 +1,18 @@
 import * as React from 'react';
 import { DCIds } from '../../selectors/derivedCharacteristicsSelectors';
-import { AttributeInstance, SecondaryAttribute } from '../../types/data.d';
+import { SecondaryAttribute } from '../../types/data';
+import { AttributeCombined } from '../../types/view';
+import { List, Maybe, OrderedMap, Record } from '../../utils/dataUtils';
 
 export interface SkillCheckProps {
-  attributes: Map<string, AttributeInstance>;
-  check?: string[];
+  attributes: List<Record<AttributeCombined>>;
+  check?: List<string>;
   checkDisabled?: boolean;
   checkmod?: 'SPI' | 'TOU';
-  derivedCharacteristics?: Map<DCIds, SecondaryAttribute>;
+  derivedCharacteristics?: OrderedMap<DCIds, Record<SecondaryAttribute>>;
 }
 
-export function SkillCheck(props: SkillCheckProps) {
+export function SkillCheck (props: SkillCheckProps) {
   const {
     attributes,
     check,
@@ -22,20 +24,34 @@ export function SkillCheck(props: SkillCheckProps) {
   if (!checkDisabled && check) {
     return (
       <>
-        {check.map((id, index) => {
-          const attribute = attributes.get(id)!;
-          return (
-            <div key={id + index} className={'check ' + id}>
-              <span className="short">{attribute.short}</span>
-              <span className="value">{attribute.value}</span>
-            </div>
-          );
-        })}
-        {checkmod && derived && derived.has(checkmod) && (
-          <div className="check mod">
-            +{derived.get(checkmod)!.short}
-          </div>
-        )}
+        {
+          Maybe.imapMaybe<string, JSX.Element>
+            (index => id => attributes
+              .find (attr => attr .get ('id') === id)
+              .fmap (attr => (
+                <div key={id + index} className={`check ${id}`}>
+                  <span className="short">{attr .get ('short')}</span>
+                  <span className="value">{attr .get ('value')}</span>
+                </div>
+              )))
+            (check)
+            .toArray ()
+        }
+        {
+          checkmod
+          && derived
+          && Maybe.fromMaybe
+            (<></>)
+            (derived
+              .lookup (checkmod)
+              .fmap (
+                characteristic => (
+                  <div className="check mod">
+                    +{characteristic .get ('short')}
+                  </div>
+                )
+              ))
+        }
       </>
     );
   }

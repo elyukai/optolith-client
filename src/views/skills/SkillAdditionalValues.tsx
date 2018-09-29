@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { List } from '../../utils/dataUtils';
 
 export interface AdditionalValue {
   className: string;
@@ -6,22 +7,24 @@ export interface AdditionalValue {
 }
 
 export interface SkillAdditionalValuesProps {
-  addValues?: AdditionalValue[];
+  addValues?: List<AdditionalValue>;
 }
 
-export function SkillAdditionalValues(props: SkillAdditionalValuesProps) {
+export function SkillAdditionalValues (props: SkillAdditionalValuesProps) {
   const { addValues } = props;
 
   if (typeof addValues === 'object') {
     return (
       <>
-        {...addValues.map(e => {
-          return (
-            <div key={e.className} className={e.className}>
-              {e.value}
-            </div>
-          );
-        })}
+        {
+          ...addValues
+            .map (e => (
+              <div key={e.className} className={e.className}>
+                {e.value}
+              </div>
+            ))
+            .toArray () as JSX.Element[]
+        }
       </>
     );
   }
