@@ -5,13 +5,13 @@ import { Scroll } from '../components/Scroll';
 import { AdvantagesContainer } from '../containers/AdvantagesContainer';
 import { ArmorZonesContainer } from '../containers/ArmorZones';
 import { AttributesContainer } from '../containers/AttributesContainer';
-import { CombatTechniquesContainer } from '../containers/CombatTechniques';
+import { CombatTechniquesContainer } from '../containers/CombatTechniquesContainer';
 import { CulturesContainer } from '../containers/Cultures';
 import { DisadvantagesContainer } from '../containers/DisadvantagesContainer';
 import { EquipmentContainer } from '../containers/Equipment';
 import { HelpContainer } from '../containers/HelpContainer';
 import { HerolistContainer } from '../containers/HerolistContainer';
-import { LiturgiesContainer } from '../containers/Liturgies';
+import { LiturgicalChantsContainer } from '../containers/LiturgicalChantsContainer';
 import { PactContainer } from '../containers/PactContainer';
 import { PersonalDataContainer } from '../containers/PersonalDataContainer';
 import { PetsContainer } from '../containers/Pets';
@@ -20,8 +20,8 @@ import { RacesContainer } from '../containers/Races';
 import { RulesContainer } from '../containers/RulesContainer';
 import { SheetsContainer } from '../containers/SheetsContainer';
 import { SkillsContainer } from '../containers/SkillsContainer';
-import { SpecialAbilitiesContainer } from '../containers/SpecialAbilities';
-import { SpellsContainer } from '../containers/Spells';
+import { SpecialAbilitiesContainer } from '../containers/SpecialAbilitiesContainer';
+import { SpellsContainer } from '../containers/SpellsContainer';
 import { WikiContainer } from '../containers/WikiContainer';
 import { UIMessagesObject } from '../types/ui';
 import { TabId } from '../utils/LocationUtils';
@@ -102,7 +102,7 @@ export class Route extends React.Component<RouteProps> {
       combatTechniques: <CombatTechniquesContainer locale={locale} />,
       specialAbilities: <SpecialAbilitiesContainer locale={locale} />,
       spells: <SpellsContainer locale={locale} />,
-      liturgicalChants: <LiturgiesContainer locale={locale} />,
+      liturgicalChants: <LiturgicalChantsContainer locale={locale} />,
 
       equipment: <EquipmentContainer locale={locale} />,
       zoneArmor: <ArmorZonesContainer locale={locale} />,

@@ -20,7 +20,7 @@ export interface ActivateSpellAction {
   };
 }
 
-export const addSpell = (id: string) => (locale: UIMessagesObject): AsyncAction =>
+export const addSpell = (locale: UIMessagesObject) => (id: string): AsyncAction =>
   (dispatch, getState) => {
     const state = getState ();
     const wikiSpells = getWikiSpells (state);
@@ -63,7 +63,7 @@ export interface ActivateCantripAction {
   };
 }
 
-export const addCantrip = (id: string) => (locale: UIMessagesObject): AsyncAction =>
+export const addCantrip = (locale: UIMessagesObject) => (id: string): AsyncAction =>
   (dispatch, getState) => {
     const state = getState ();
 
@@ -138,7 +138,7 @@ export interface AddSpellPointAction {
   };
 }
 
-export const addSpellPoint = (id: string) => (locale: UIMessagesObject): AsyncAction =>
+export const addSpellPoint = (locale: UIMessagesObject) => (id: string): AsyncAction =>
   (dispatch, getState) => {
     const state = getState ();
     const maybeHeroSpells = getSpells (state);

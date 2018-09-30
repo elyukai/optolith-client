@@ -16,7 +16,7 @@ export interface AddCombatTechniquePointAction {
   };
 }
 
-export const addCombatTechniquePoint = (id: string) => (locale: UIMessagesObject): AsyncAction =>
+export const addCombatTechniquePoint = (locale: UIMessagesObject) => (id: string): AsyncAction =>
   (dispatch, getState) => {
     const state = getState ();
     const maybeHeroCombatTechniques = getCombatTechniques (state);
@@ -37,8 +37,8 @@ export const addCombatTechniquePoint = (id: string) => (locale: UIMessagesObject
       dispatch<AddCombatTechniquePointAction> ({
         type: ActionTypes.ADD_COMBATTECHNIQUE_POINT,
         payload: {
-          id
-        }
+          id,
+        },
       });
     }
     else {
@@ -59,8 +59,8 @@ export interface RemoveCombatTechniquePointAction {
 export const removeCombatTechniquePoint = (id: string): RemoveCombatTechniquePointAction => ({
   type: ActionTypes.REMOVE_COMBATTECHNIQUE_POINT,
   payload: {
-    id
-  }
+    id,
+  },
 });
 
 export interface SetCombatTechniquesSortOrderAction {
@@ -70,12 +70,13 @@ export interface SetCombatTechniquesSortOrderAction {
   };
 }
 
-export const setSortOrder = (sortOrder: string): SetCombatTechniquesSortOrderAction => ({
-  type: ActionTypes.SET_COMBATTECHNIQUES_SORT_ORDER,
-  payload: {
-    sortOrder
-  }
-});
+export const setCombatTechniquesSortOrder =
+  (sortOrder: string): SetCombatTechniquesSortOrderAction => ({
+    type: ActionTypes.SET_COMBATTECHNIQUES_SORT_ORDER,
+    payload: {
+      sortOrder,
+    },
+  });
 
 export interface SetCombatTechniquesFilterTextAction {
   type: ActionTypes.SET_COMBAT_TECHNIQUES_FILTER_TEXT;
@@ -84,9 +85,10 @@ export interface SetCombatTechniquesFilterTextAction {
   };
 }
 
-export const setFilterText = (filterText: string): SetCombatTechniquesFilterTextAction => ({
-  type: ActionTypes.SET_COMBAT_TECHNIQUES_FILTER_TEXT,
-  payload: {
-    filterText
-  }
-});
+export const setCombatTechniquesFilterText =
+  (filterText: string): SetCombatTechniquesFilterTextAction => ({
+    type: ActionTypes.SET_COMBAT_TECHNIQUES_FILTER_TEXT,
+    payload: {
+      filterText,
+    },
+  });

@@ -264,7 +264,7 @@ export class Maybe<T extends Some> implements Al.Alternative<T>, Al.Monad<T>,
    * type `Just a`. If at least one of them is `Nothing`, it returns the first
    * element.
    */
-  mappend<U> (this: Maybe<Al.Semigroup<U>>, m: Maybe<Al.Semigroup<U>>): Maybe<Al.Semigroup<U>> {
+  mappend<U, S extends Al.Semigroup<U>> (this: Maybe<S>, m: Maybe<S>): Maybe<S> {
     return this.value !== undefined && m.value !== undefined
       ? Maybe.return (this.value.mappend (m.value))
       : this;

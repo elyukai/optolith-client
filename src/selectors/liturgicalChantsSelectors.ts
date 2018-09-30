@@ -1,7 +1,7 @@
 import * as R from 'ramda';
 import { ActivatableSkillDependent } from '../types/data';
 import { LiturgicalChantWithRequirements } from '../types/view';
-import { Blessing, LiturgicalChant } from '../types/wiki';
+import { Blessing, ExperienceLevel, LiturgicalChant } from '../types/wiki';
 import { createMaybeSelector } from '../utils/createMaybeSelector';
 import { List, Maybe, OrderedMap, OrderedSet, Record, Tuple } from '../utils/dataUtils';
 import { AllSortOptions, filterAndSortObjects, sortObjects } from '../utils/FilterSortUtils';
@@ -37,7 +37,7 @@ export const getIsLiturgicalChantsTabAvailable = createMaybeSelector (
 
 export const getBlessedTraditionNumericId = createMaybeSelector (
   getBlessedTraditionFromState,
-  Maybe.fmap (x => getNumericBlessedTraditionIdByInstanceId (x.get ('id')))
+  Maybe.bind_ (x => getNumericBlessedTraditionIdByInstanceId (x.get ('id')))
 );
 
 export const getActiveLiturgicalChants = createMaybeSelector (
@@ -55,77 +55,69 @@ export const getActiveLiturgicalChants = createMaybeSelector (
     wiki,
     maybeHero
   ) =>
-    Maybe.fromMaybe<List<Record<LiturgicalChantWithRequirements>>> (List.of ()) (
-      maybeBlessedTradition
-        .bind (
-          blessedTradition => maybeHero.bind (
-            hero => maybeStartEl.fmap (
-              startEl => Maybe.mapMaybe<
-                Record<ActivatableSkillDependent>,
-                Record<LiturgicalChantWithRequirements>
-              >(
-                R.pipe (
-                  Maybe.ensure (x => x.get ('active')),
-                  Maybe.bind_ (
-                    liturgicalChant => wiki.get ('liturgicalChants')
-                      .lookup (liturgicalChant.get ('id'))
-                      .fmap (
-                        wikiLiturgicalChant => wikiLiturgicalChant
-                          .merge (liturgicalChant)
-                          .merge (Record.of ({
-                            isIncreasable: isIncreasable (
-                              blessedTradition,
-                              wikiLiturgicalChant,
-                              liturgicalChant,
-                              startEl,
-                              hero.get ('phase'),
-                              hero.get ('attributes'),
-                              exceptionalSkill,
-                              aspectKnowledge
-                            ),
-                            isDecreasable: isDecreasable (
-                              wiki,
-                              hero,
-                              wikiLiturgicalChant,
-                              liturgicalChant,
-                              hero.get ('liturgicalChants'),
-                              aspectKnowledge
-                            ),
-                          }))
-                      )
-                  )
+    maybeBlessedTradition
+      .bind (
+        blessedTradition => maybeHero.bind (
+          hero => maybeStartEl.fmap (
+            startEl => Maybe.mapMaybe<
+              Record<ActivatableSkillDependent>,
+              Record<LiturgicalChantWithRequirements>
+            >(
+              R.pipe (
+                Maybe.ensure (x => x.get ('active')),
+                Maybe.bind_ (
+                  liturgicalChant => wiki.get ('liturgicalChants')
+                    .lookup (liturgicalChant.get ('id'))
+                    .fmap (
+                      wikiLiturgicalChant => wikiLiturgicalChant
+                        .merge (liturgicalChant)
+                        .merge (Record.of ({
+                          isIncreasable: isIncreasable (
+                            blessedTradition,
+                            wikiLiturgicalChant,
+                            liturgicalChant,
+                            startEl,
+                            hero.get ('phase'),
+                            hero.get ('attributes'),
+                            exceptionalSkill,
+                            aspectKnowledge
+                          ),
+                          isDecreasable: isDecreasable (
+                            wiki,
+                            hero,
+                            wikiLiturgicalChant,
+                            liturgicalChant,
+                            hero.get ('liturgicalChants'),
+                            aspectKnowledge
+                          ),
+                        }))
+                    )
                 )
-              ) (hero.get ('liturgicalChants').elems ())
-            )
+              )
+            ) (hero.get ('liturgicalChants').elems ())
           )
         )
-    )
+      )
 );
 
 export const getActiveAndInctiveBlessings = createMaybeSelector (
   getBlessings,
   getWikiBlessings,
-  (maybeBlessings, wikiBlessings) =>
-    Maybe.fromMaybe (Tuple.of<List<Record<Blessing>>, List<Record<Blessing>>> (List.of ())
-                                                                             (List.of ()))
-                    (
-                      maybeBlessings
-                        .fmap (
-                          blessings => wikiBlessings.elems ().partition (
-                            e => blessings.member (e.get ('id'))
-                          )
-                        )
-                    )
+  (maybeBlessings, wikiBlessings) => maybeBlessings .fmap (
+    blessings => wikiBlessings.elems ().partition (
+      e => blessings.member (e.get ('id'))
+    )
+  )
 );
 
 export const getActiveBlessings = createMaybeSelector (
   getActiveAndInctiveBlessings,
-  Tuple.fst
+  Maybe.fmap (Tuple.fst)
 );
 
 export const getInactiveBlessings = createMaybeSelector (
   getActiveAndInctiveBlessings,
-  Tuple.snd
+  Maybe.fmap (Tuple.snd)
 );
 
 export const getInactiveLiturgicalChants = createMaybeSelector (
@@ -175,13 +167,17 @@ export const getAdditionalValidLiturgicalChants = createMaybeSelector (
   mapGetToMaybeSlice (getSpecialAbilities, 'SA_632'),
   (
     maybeInactiveList,
-    activeList,
+    maybeActiveList,
     tradition,
     zugvoegel,
     jaegerinnenDerWeissenMaid,
     anhaengerDesGueldenen
-  ): Maybe<List<string>> => maybeInactiveList.fmap (
-    inactiveList => {
+  ): Maybe<List<string>> => Maybe.liftM2<
+      OrderedMap<string, Record<LiturgicalChant>>,
+      List<Record<LiturgicalChantWithRequirements>>,
+      List<string>
+    >
+    (inactiveList => activeList => {
       if (isActive (zugvoegel)) {
         // Phex
         return additionalInactiveListFilter (
@@ -243,8 +239,9 @@ export const getAdditionalValidLiturgicalChants = createMaybeSelector (
       }
 
       return List.of ();
-    }
-  )
+    })
+    (maybeInactiveList)
+    (maybeActiveList)
 );
 
 export const getAvailableInactiveLiturgicalChants = createMaybeSelector (
@@ -288,15 +285,15 @@ type InactiveListCombined = List<Record<LiturgicalChant> | Record<Blessing>>;
 export const getActiveLiturgicalChantsAndBlessings = createMaybeSelector (
   getActiveLiturgicalChants,
   getActiveBlessings,
-  (liturgicalChants: ActiveListCombined, blessings) => liturgicalChants.mappend (blessings)
+  (liturgicalChants: Maybe<ActiveListCombined>, blessings) =>
+    liturgicalChants .mappend (blessings)
 );
 
 export const getAvailableInactiveLiturgicalChantsAndBlessings = createMaybeSelector (
   getAvailableInactiveLiturgicalChants,
   getInactiveBlessings,
-  (maybeLiturgicalChants: Maybe<InactiveListCombined>, blessings) => maybeLiturgicalChants.fmap (
-    liturgicalChants => liturgicalChants.mappend (blessings)
-  )
+  (liturgicalChants: Maybe<InactiveListCombined>, blessings) =>
+    liturgicalChants .mappend (blessings)
 );
 
 export const getFilteredActiveLiturgicalChantsAndBlessings = createMaybeSelector (
@@ -304,11 +301,13 @@ export const getFilteredActiveLiturgicalChantsAndBlessings = createMaybeSelector
   getLiturgicalChantsSortOptions,
   getLiturgicalChantsFilterText,
   getLocaleAsProp,
-  (liturgicalChants, sortOptions, filterText, locale) => filterAndSortObjects (
-    liturgicalChants as List<Record<Blessing | LiturgicalChantWithRequirements>>,
-    locale.get ('id'),
-    filterText,
-    sortOptions as AllSortOptions<Blessing | LiturgicalChantWithRequirements>
+  (maybeLiturgicalChants, sortOptions, filterText, locale) => maybeLiturgicalChants .fmap (
+    liturgicalChants => filterAndSortObjects (
+      liturgicalChants as List<Record<Blessing | LiturgicalChantWithRequirements>>,
+      locale.get ('id'),
+      filterText,
+      sortOptions as AllSortOptions<Blessing | LiturgicalChantWithRequirements>
+    )
   )
 );
 
@@ -319,35 +318,42 @@ export const getFilteredInactiveLiturgicalChantsAndBlessings = createMaybeSelect
   getInactiveLiturgicalChantsFilterText,
   getLocaleAsProp,
   getEnableActiveItemHints,
-  (maybeInactive, active, sortOptions, filterText, locale, areActiveItemHintsEnabled) =>
-  maybeInactive.fmap (
-    inactive => areActiveItemHintsEnabled
-      ? filterAndSortObjects (
-        List.mappend (inactive) (active as InactiveListCombined) as List<Record<
-          Blessing | LiturgicalChant
-        >>,
-        locale.get ('id'),
-        filterText,
-        sortOptions as AllSortOptions<Blessing | LiturgicalChant>
-      )
-      : filterAndSortObjects (
-        inactive as List<Record<Blessing | LiturgicalChant>>,
-        locale.get ('id'),
-        filterText,
-        sortOptions as AllSortOptions<Blessing | LiturgicalChant>
-      )
-  )
+  (maybeInactive, maybeActive, sortOptions, filterText, locale, areActiveItemHintsEnabled) =>
+    Maybe.liftM2<InactiveListCombined, InactiveListCombined, List<Record<
+      Blessing | LiturgicalChant
+    >>>
+      (active => inactive => areActiveItemHintsEnabled
+        ? filterAndSortObjects (
+          List.mappend (inactive) (active) as List<Record<
+            Blessing | LiturgicalChant
+          >>,
+          locale.get ('id'),
+          filterText,
+          sortOptions as AllSortOptions<Blessing | LiturgicalChant>
+        )
+        : filterAndSortObjects (
+          inactive as List<Record<Blessing | LiturgicalChant>>,
+          locale.get ('id'),
+          filterText,
+          sortOptions as AllSortOptions<Blessing | LiturgicalChant>
+        ))
+      (maybeActive as Maybe<InactiveListCombined>)
+      (maybeInactive)
 );
 
 export const isActivationDisabled = createMaybeSelector (
   getStartEl,
   getPhase,
   getActiveLiturgicalChants,
-  (maybeStartEl, maybePhase, liturgicalChants) =>
-    Maybe.fromMaybe (false) (maybePhase.fmap (R.gt (3)))
-    && maybeStartEl.fmap (
-        startEl => liturgicalChants.length () >= startEl.get ('maxSpellsLiturgies')
-      )
+  (maybeStartEl, maybePhase, maybeLiturgicalChants) =>
+    Maybe.elem (true) (maybePhase.fmap (R.gt (3)))
+    && Maybe.elem
+      (true)
+      (Maybe.liftM2<List<Record<LiturgicalChantWithRequirements>>, Record<ExperienceLevel>, boolean>
+        (liturgicalChants => startEl =>
+          liturgicalChants.length () >= startEl.get ('maxSpellsLiturgies'))
+        (maybeLiturgicalChants)
+        (maybeStartEl))
 );
 
 export const getBlessingsForSheet = createMaybeSelector (
@@ -359,13 +365,15 @@ export const getLiturgicalChantsForSheet = createMaybeSelector (
   getActiveLiturgicalChants,
   getBlessedTraditionFromState,
   getLocaleAsProp,
-  (liturgicalChants, maybeTradition, locale) => maybeTradition.bind (
+  (maybeLiturgicalChants, maybeTradition, locale) => maybeTradition.bind (
     tradition => getNumericBlessedTraditionIdByInstanceId (tradition.get ('id'))
       .fmap (R.inc)
       .fmap (getAspectsOfTradition)
-      .fmap (
-        availableAspects => liturgicalChants.map (
-          chant => chant.modify<'aspects'> (List.filter (availableAspects.elem)) ('aspects')
+      .bind (
+        availableAspects => maybeLiturgicalChants .fmap (
+          List.map (
+            chant => chant.modify<'aspects'> (List.filter (availableAspects.elem)) ('aspects')
+          )
         )
       )
       .fmap (list => sortObjects (list, locale .get ('id')))

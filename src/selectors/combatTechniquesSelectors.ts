@@ -88,16 +88,15 @@ const getMaximum = (
   if (phase < 3 && Maybe.isJust (startEl)) {
     return Maybe.fromJust (startEl).get ('maxCombatTechniqueRating') + bonus;
   }
-  else {
-    return getMaxAttributeValueByID (attributes) (obj.get ('primary')) + 2 + bonus;
-  }
+
+  return getMaxAttributeValueByID (attributes) (obj.get ('primary')) + 2 + bonus;
 };
 
 const getMinimum = (
   hunterRequiresMinimum: boolean,
   wiki: WikiRecord,
   state: Hero,
-  obj: Record<CombatTechniqueWithAttackParryBase>,
+  obj: Record<CombatTechniqueWithAttackParryBase>
 ): number => {
   const maxList = flattenDependencies (
     wiki,
@@ -122,7 +121,7 @@ export const getAllCombatTechniques = createMaybeSelector (
     maybeCombatTechniques,
     maybeHero,
     maybeStartEl,
-    wiki,
+    wiki
   ) =>
     maybeCombatTechniques.bind (
       combatTechniques => maybeHero.fmap (
@@ -150,7 +149,7 @@ export const getAllCombatTechniques = createMaybeSelector (
                 hero.get ('attributes'),
                 hero.get ('phase'),
                 entry
-              )
+              ),
             })) as Record<CombatTechniqueWithRequirements>
           );
         }

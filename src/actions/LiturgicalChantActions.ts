@@ -18,7 +18,7 @@ export interface ActivateLiturgicalChantAction {
   };
 }
 
-export const addLiturgicalChant = (id: string) => (locale: UIMessagesObject): AsyncAction =>
+export const addLiturgicalChant = (locale: UIMessagesObject) => (id: string): AsyncAction =>
   (dispatch, getState) => {
     const state = getState ();
     const wikiLiturgicalChants = getWikiLiturgicalChants (state);
@@ -36,8 +36,8 @@ export const addLiturgicalChant = (id: string) => (locale: UIMessagesObject): As
       dispatch<ActivateLiturgicalChantAction> ({
         type: ActionTypes.ACTIVATE_LITURGY,
         payload: {
-          id
-        }
+          id,
+        },
       });
     }
     else {
@@ -55,7 +55,7 @@ export interface ActivateBlessingAction {
   };
 }
 
-export const addBlessing = (id: string) => (locale: UIMessagesObject): AsyncAction =>
+export const addBlessing = (locale: UIMessagesObject) => (id: string): AsyncAction =>
   (dispatch, getState) => {
     const state = getState ();
 
@@ -70,8 +70,8 @@ export const addBlessing = (id: string) => (locale: UIMessagesObject): AsyncActi
       dispatch<ActivateBlessingAction> ({
         type: ActionTypes.ACTIVATE_BLESSING,
         payload: {
-          id
-        }
+          id,
+        },
       });
     }
     else {
@@ -92,8 +92,8 @@ export interface DeactivateLiturgyAction {
 export const removeLiturgicalChant = (id: string): DeactivateLiturgyAction => ({
   type: ActionTypes.DEACTIVATE_LITURGY,
   payload: {
-    id
-  }
+    id,
+  },
 });
 
 export interface DeactivateBlessingAction {
@@ -106,8 +106,8 @@ export interface DeactivateBlessingAction {
 export const removeBlessing = (id: string): DeactivateBlessingAction => ({
   type: ActionTypes.DEACTIVATE_BLESSING,
   payload: {
-    id
-  }
+    id,
+  },
 });
 
 export interface AddLiturgicalChantPointAction {
@@ -117,7 +117,7 @@ export interface AddLiturgicalChantPointAction {
   };
 }
 
-export const addLiturgicalChantPoint = (id: string) => (locale: UIMessagesObject): AsyncAction =>
+export const addLiturgicalChantPoint = (locale: UIMessagesObject) => (id: string): AsyncAction =>
   (dispatch, getState) => {
     const state = getState ();
     const maybeHeroLiturgicalChants = getLiturgicalChants (state);
@@ -138,8 +138,8 @@ export const addLiturgicalChantPoint = (id: string) => (locale: UIMessagesObject
       dispatch<AddLiturgicalChantPointAction> ({
         type: ActionTypes.ADD_LITURGY_POINT,
         payload: {
-          id
-        }
+          id,
+        },
       });
     }
     else {
@@ -160,8 +160,8 @@ export interface RemoveLiturgicalChantPointAction {
 export const removeLiturgicalChantPoint = (id: string): RemoveLiturgicalChantPointAction => ({
   type: ActionTypes.REMOVE_LITURGY_POINT,
   payload: {
-    id
-  }
+    id,
+  },
 });
 
 export interface SetLiturgicalChantsSortOrderAction {
@@ -175,8 +175,8 @@ export const setLiturgicalChantsSortOrder =
   (sortOrder: string): SetLiturgicalChantsSortOrderAction => ({
     type: ActionTypes.SET_LITURGIES_SORT_ORDER,
     payload: {
-      sortOrder
-    }
+      sortOrder,
+    },
   });
 
 export interface SetActiveLiturgicalChantsFilterTextAction {
@@ -186,12 +186,12 @@ export interface SetActiveLiturgicalChantsFilterTextAction {
   };
 }
 
-export const setActiveFilterText =
+export const setActiveLiturgicalChantsFilterText =
   (filterText: string): SetActiveLiturgicalChantsFilterTextAction => ({
     type: ActionTypes.SET_LITURGICAL_CHANTS_FILTER_TEXT,
     payload: {
-      filterText
-    }
+      filterText,
+    },
   });
 
 export interface SetInactiveLiturgicalChantsFilterTextAction {
@@ -201,10 +201,10 @@ export interface SetInactiveLiturgicalChantsFilterTextAction {
   };
 }
 
-export const setInactiveFilterText =
+export const setInactiveLiturgicalChantsFilterText =
   (filterText: string): SetInactiveLiturgicalChantsFilterTextAction => ({
     type: ActionTypes.SET_INACTIVE_LITURGICAL_CHANTS_FILTER_TEXT,
     payload: {
-      filterText
-    }
+      filterText,
+    },
   });
