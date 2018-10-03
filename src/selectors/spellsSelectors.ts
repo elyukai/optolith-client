@@ -142,8 +142,8 @@ export const getActiveAndInctiveCantrips = createMaybeSelector (
                     (
                       maybeCantrips
                         .fmap (
-                          blessings => wikiCantrips.elems ().partition (
-                            e => blessings.member (e.get ('id'))
+                          cantrips => wikiCantrips .elems () .partition (
+                            e => cantrips .member (e.get ('id'))
                           )
                         )
                     )

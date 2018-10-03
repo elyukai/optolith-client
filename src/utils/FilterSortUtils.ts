@@ -203,9 +203,8 @@ export function filterAndSortObjects<T extends BaseObject> (
   );
 }
 
-export function sortStrings (list: List<string>, locale: string) {
-  return list.sortBy (a => b => a.localeCompare (b, locale));
-}
+export const sortStrings = (localeId: string) => (list: List<string>) =>
+  list.sortBy (a => b => a.localeCompare (b, localeId));
 
 export function filterStrings (list: List<string>, filterText: string) {
   if (filterText !== '') {
@@ -218,7 +217,7 @@ export function filterStrings (list: List<string>, filterText: string) {
 }
 
 export function filterAndSortStrings (list: List<string>, locale: string, filterText: string) {
-  return sortStrings (filterStrings (list, filterText), locale);
+  return sortStrings (locale) (filterStrings (list, filterText));
 }
 
 const isSortOptionObject = <T extends BaseObject>(

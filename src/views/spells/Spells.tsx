@@ -20,8 +20,9 @@ import { WikiInfoContainer } from '../../containers/WikiInfoContainer';
 import { DCIds } from '../../selectors/derivedCharacteristicsSelectors';
 import { SecondaryAttribute } from '../../types/data';
 import { AttributeCombined, SpellWithRequirements } from '../../types/view';
-import { Cantrip, Spell } from '../../types/wiki';
+import { Cantrip, SpecialAbility, Spell } from '../../types/wiki';
 import { Just, List, Maybe, Nothing, OrderedMap, Record, Tuple } from '../../utils/dataUtils';
+import { sortStrings } from '../../utils/FilterSortUtils';
 import { translate, UIMessagesObject } from '../../utils/I18n';
 import { isOwnTradition } from '../../utils/SpellUtils';
 import { SkillListItem } from '../skills/SkillListItem';
@@ -41,7 +42,7 @@ export interface SpellsStateProps {
   inactiveList: Maybe<List<Record<Spell | Cantrip>>>;
   isRemovingEnabled: boolean;
   sortOrder: string;
-  traditions: SpecialAbilityInstance[];
+  traditions: List<Record<SpecialAbility>>;
 }
 
 export interface SpellsDispatchProps {
@@ -161,12 +162,46 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
                       .bind (Maybe.ensure (R.complement (List.null)))
                       .fmap (R.pipe (
                         List.mapAccumL<
-                          Maybe<Record<SpellWithRequirements>>,
-                          Record<SpellWithRequirements>,
+                          Maybe<Record<SpellWithRequirements | Cantrip>>,
+                          Record<SpellWithRequirements | Cantrip>,
                           JSX.Element
                         >
-                          (previous => current =>
-                            Tuple.of<Maybe<Record<SpellWithRequirements>>, JSX.Element>
+                          (previous => current => {
+                            const unfamiliarTraditions: Maybe<string> =
+                              isOwnTradition (traditions, current as any as Record<Spell>)
+                                ? Nothing ()
+                                : Just (
+                                  R.pipe (
+                                    List.filter<number> (
+                                      e => e <= translate (locale, 'spells.view.traditions')
+                                        .length ()
+                                    ),
+                                    Maybe.mapMaybe (
+                                      e => translate (locale, 'spells.view.traditions')
+                                        .subscript (e - 1)
+                                    ),
+                                    sortStrings (locale .get ('id')),
+                                    List.intercalate (', ')
+                                  ) (current .get ('tradition'))
+                                );
+
+                            const extendName =
+                              Maybe.fromMaybe ('')
+                                              (unfamiliarTraditions
+                                                .fmap (string => ` (${string})`));
+
+                            const insertTopMargin = sortOrder === 'group' && Maybe.isJust (previous)
+                              ? current .get ('category') === Categories.CANTRIPS
+                                ? Maybe.fromJust (previous) .get ('category')
+                                    !== Categories.CANTRIPS
+                                : (
+                                  Maybe.fromJust (previous) .get ('category')
+                                    === Categories.CANTRIPS
+                                  || Maybe.fromJust (previous) .get ('gr') !== current.get ('gr')
+                                )
+                              : false;
+
+                            return Tuple.of<Maybe<Record<SpellWithRequirements>>, JSX.Element>
                               (Just (current))
                               (
                                 <SkillListItem
@@ -206,7 +241,8 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
                                   groupIndex={current .get ('gr')}
                                   groupList={translate (locale, 'skills.view.groups')}
                                   />
-                              ))
+                              );
+                          })
                           (Nothing ()),
                         Tuple.snd,
                         List.toArray
