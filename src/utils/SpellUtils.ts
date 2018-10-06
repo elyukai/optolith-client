@@ -8,10 +8,11 @@ import { flattenDependencies } from './flattenDependencies';
 import { getNumericMagicalTraditionIdByInstanceId } from './IDUtils';
 import { getActiveSelections } from './selectionUtils';
 import { getExceptionalSkillBonus } from './skillUtils';
+import { isNumber } from './typeCheckUtils';
 
 export const isOwnTradition = (
   tradition: List<Record<Wiki.SpecialAbility>>,
-  obj: Record<Wiki.Spell> | Record<Wiki.Spell>,
+  obj: Record<Wiki.Spell> | Record<Wiki.Cantrip>
 ): boolean =>
   obj.get ('tradition').any (
     e => e === 1 || Maybe.isJust (tradition.find (
@@ -71,12 +72,12 @@ export const isDecreasable = (
   wiki: Record<Wiki.WikiAll>,
   state: Record<Data.HeroDependent>,
   entry: Record<View.SpellCombined>,
-  propertyKnowledge: Maybe<Record<Data.ActivatableDependent>>,
+  propertyKnowledge: Maybe<Record<Data.ActivatableDependent>>
 ): boolean => {
   const dependencies = flattenDependencies<number | boolean> (
     wiki,
     state,
-    entry.get ('dependencies'),
+    entry.get ('dependencies')
   );
 
   // Basic validation

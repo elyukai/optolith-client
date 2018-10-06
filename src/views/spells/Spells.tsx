@@ -19,10 +19,9 @@ import { Categories } from '../../constants/Categories';
 import { WikiInfoContainer } from '../../containers/WikiInfoContainer';
 import { DCIds } from '../../selectors/derivedCharacteristicsSelectors';
 import { SecondaryAttribute } from '../../types/data';
-import { AttributeCombined, SpellWithRequirements } from '../../types/view';
+import { AttributeCombined, CantripCombined, SpellIsActive, SpellWithRequirements } from '../../types/view';
 import { Cantrip, SpecialAbility, Spell } from '../../types/wiki';
 import { Just, List, Maybe, Nothing, OrderedMap, Record, Tuple } from '../../utils/dataUtils';
-import { sortStrings } from '../../utils/FilterSortUtils';
 import { translate, UIMessagesObject } from '../../utils/I18n';
 import { isOwnTradition } from '../../utils/SpellUtils';
 import { SkillListItem } from '../skills/SkillListItem';
@@ -32,17 +31,17 @@ export interface SpellsOwnProps {
 }
 
 export interface SpellsStateProps {
-  activeList: Maybe<List<Record<SpellWithRequirements | Cantrip>>>;
+  activeList: Maybe<List<Record<SpellWithRequirements> | Record<CantripCombined>>>;
   addSpellsDisabled: boolean;
   attributes: List<Record<AttributeCombined>>;
   derivedCharacteristics: OrderedMap<DCIds, Record<SecondaryAttribute>>;
   enableActiveItemHints: boolean;
   filterText: string;
   inactiveFilterText: string;
-  inactiveList: Maybe<List<Record<Spell | Cantrip>>>;
+  inactiveList: Maybe<List<Record<SpellIsActive> | Record<CantripCombined>>>;
   isRemovingEnabled: boolean;
   sortOrder: string;
-  traditions: List<Record<SpecialAbility>>;
+  traditions: Maybe<List<Record<SpecialAbility>>>;
 }
 
 export interface SpellsDispatchProps {
@@ -65,6 +64,11 @@ export interface SpellsState {
   currentId?: string;
   currentSlideinId?: string;
 }
+
+const isCantrip = (
+  entry: Record<SpellWithRequirements> | Record<SpellIsActive> | Record<CantripCombined>
+): entry is Record<CantripCombined> =>
+  (entry .get ('category') as Categories.CANTRIPS | Categories.SPELLS) === Categories.CANTRIPS;
 
 export class Spells extends React.Component<SpellsProps, SpellsState> {
   state: SpellsState = {
@@ -100,7 +104,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
       setSortOrder,
       sortOrder,
       switchActiveItemHints,
-      traditions,
+      traditions: maybeTraditions,
       filterText,
       inactiveFilterText,
       setFilterText,
@@ -162,168 +166,128 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
                       .bind (Maybe.ensure (R.complement (List.null)))
                       .fmap (R.pipe (
                         List.mapAccumL<
-                          Maybe<Record<SpellWithRequirements | Cantrip>>,
-                          Record<SpellWithRequirements | Cantrip>,
+                          Maybe<Record<SpellIsActive> | Record<CantripCombined>>,
+                          Record<SpellIsActive> | Record<CantripCombined>,
                           JSX.Element
                         >
-                          (previous => current => {
-                            const unfamiliarTraditions: Maybe<string> =
-                              isOwnTradition (traditions, current as any as Record<Spell>)
-                                ? Nothing ()
-                                : Just (
-                                  R.pipe (
-                                    List.filter<number> (
-                                      e => e <= translate (locale, 'spells.view.traditions')
-                                        .length ()
-                                    ),
-                                    Maybe.mapMaybe (
-                                      e => translate (locale, 'spells.view.traditions')
-                                        .subscript (e - 1)
-                                    ),
-                                    sortStrings (locale .get ('id')),
-                                    List.intercalate (', ')
-                                  ) (current .get ('tradition'))
-                                );
-
-                            const extendName =
-                              Maybe.fromMaybe ('')
-                                              (unfamiliarTraditions
-                                                .fmap (string => ` (${string})`));
-
-                            const insertTopMargin = sortOrder === 'group' && Maybe.isJust (previous)
-                              ? current .get ('category') === Categories.CANTRIPS
-                                ? Maybe.fromJust (previous) .get ('category')
-                                    !== Categories.CANTRIPS
-                                : (
-                                  Maybe.fromJust (previous) .get ('category')
-                                    === Categories.CANTRIPS
-                                  || Maybe.fromJust (previous) .get ('gr') !== current.get ('gr')
+                          (maybePrevious => current => {
+                            const insertTopMargin = Maybe.elem
+                              (true)
+                              (maybePrevious
+                                .bind (
+                                  Maybe.ensure (
+                                    () => sortOrder === 'group' && current .get ('active')
+                                  )
                                 )
-                              : false;
+                                .fmap (
+                                  previous => (current .get ('category') as Categories)
+                                    === Categories.CANTRIPS
+                                    ? (previous .get ('category') as Categories)
+                                      !== Categories.CANTRIPS
+                                    : !isCantrip (previous) && isCantrip (current)
+                                      || isCantrip (previous) && !isCantrip (current)
+                                      || !isCantrip (previous)
+                                        && !isCantrip (current)
+                                        && previous .get ('gr') !== current.get ('gr')
+                                ));
 
-                            return Tuple.of<Maybe<Record<SpellWithRequirements>>, JSX.Element>
+                            const propertyName =
+                              Maybe.fromMaybe
+                                ('')
+                                (translate (locale, 'spells.view.properties')
+                                  .subscript (current .get ('property') - 1));
+
+                            return Tuple.of<
+                              Maybe<Record<SpellIsActive> | Record<CantripCombined>>,
+                              JSX.Element
+                            >
                               (Just (current))
-                              (
-                                <SkillListItem
-                                  key={current .get ('id')}
-                                  id={current .get ('id')}
-                                  typ={
-                                    ratingVisibility
-                                    && isCommon (skillRating) (current as any as Record<Skill>)
-                                  }
-                                  untyp={
-                                    ratingVisibility
-                                    && isUncommon (skillRating) (current as any as Record<Skill>)
-                                  }
-                                  name={current .get ('name')}
-                                  sr={current .get ('value')}
-                                  check={current .get ('check')}
-                                  ic={current .get ('ic')}
-                                  addPoint={addPoint.bind (null, current .get ('id'))}
-                                  addDisabled={!current .get ('isIncreasable')}
-                                  removePoint={
-                                    isRemovingEnabled
-                                      ? removePoint.bind (null, current .get ('id'))
-                                      : undefined
-                                  }
-                                  removeDisabled={!current .get ('isDecreasable')}
-                                  insertTopMargin={
-                                    sortOrder === 'group'
-                                    && Maybe.notElem
-                                      (current .get ('gr'))
-                                      (previous .fmap (
-                                        Record.get<SkillWithRequirements, 'gr'> ('gr')
-                                      ))
-                                  }
-                                  selectForInfo={this.showInfo}
-                                  attributes={attributes}
-                                  derivedCharacteristics={derivedCharacteristics}
-                                  groupIndex={current .get ('gr')}
-                                  groupList={translate (locale, 'skills.view.groups')}
-                                  />
+                              (current .get ('active')
+                                ? (
+                                  <ListItem
+                                    key={current .get ('id')}
+                                    disabled
+                                    insertTopMargin={insertTopMargin}
+                                    >
+                                    <ListItemName name={current .get ('name')} />
+                                  </ListItem>
+                                )
+                                : isCantrip (current)
+                                ? (
+                                  <SkillListItem
+                                    key={current .get ('id')}
+                                    id={current .get ('id')}
+                                    name={current .get ('name')}
+                                    isNotActive
+                                    activate={addCantripToList .bind (null, current .get ('id'))}
+                                    addFillElement
+                                    insertTopMargin={insertTopMargin}
+                                    attributes={attributes}
+                                    derivedCharacteristics={derivedCharacteristics}
+                                    selectForInfo={this.showSlideinInfo}
+                                    addText={
+                                      sortOrder === 'group'
+                                        ? `${propertyName} / ${
+                                          translate (locale, 'spells.view.cantrip')
+                                        }`
+                                        : propertyName
+                                    }
+                                    untyp={
+                                      Maybe.elem
+                                        (true)
+                                        (maybeTraditions .fmap (
+                                          traditions => isOwnTradition (
+                                            traditions,
+                                            current as any as Record<Cantrip>
+                                          )
+                                        ))
+                                    }
+                                    />
+                                )
+                                : (
+                                  <SkillListItem
+                                    key={current .get ('id')}
+                                    id={current .get ('id')}
+                                    name={current .get ('name')}
+                                    isNotActive
+                                    activate={addToList .bind (null, current .get ('id'))}
+                                    activateDisabled={addSpellsDisabled && current .get ('gr') < 3}
+                                    addFillElement
+                                    check={current .get ('check')}
+                                    checkmod={current .lookup ('checkmod')}
+                                    ic={current .get ('ic')}
+                                    insertTopMargin={insertTopMargin}
+                                    attributes={attributes}
+                                    derivedCharacteristics={derivedCharacteristics}
+                                    selectForInfo={this.showSlideinInfo}
+                                    addText={
+                                      sortOrder === 'group'
+                                      ? `${propertyName} / ${
+                                        Maybe.fromMaybe
+                                          ('')
+                                          (translate (locale, 'spells.view.groups')
+                                            .subscript (current .get ('gr') - 1))
+                                      }`
+                                      : propertyName
+                                    }
+                                    untyp={
+                                      Maybe.elem
+                                        (true)
+                                        (maybeTraditions .fmap (
+                                          traditions => isOwnTradition (
+                                            traditions,
+                                            current as any as Record<Spell>
+                                          )
+                                        ))
+                                    }
+                                    />
+                                )
                               );
                           })
                           (Nothing ()),
                         Tuple.snd,
                         List.toArray
                       )))
-                }
-                {
-                  inactiveList.length === 0 ? <ListPlaceholder locale={locale} type="inactiveSpells" noResults /> : inactiveList.map ((obj, index, array) => {
-                    const prevObj = array[index - 1];
-
-                    let extendName = '';
-                    if (!isOwnTradition (traditions, obj)) {
-                      extendName += ` (${obj.tradition.filter (e => e <= translate (locale, 'spells.view.traditions').length).map (e => translate (locale, 'spells.view.traditions')[e - 1]).sort ().join (', ')})`;
-                    }
-
-                    if (obj.active === true) {
-                      const { id, name } = obj;
-                      const extendedName = name + extendName;
-                      let insertTopMargin = false;
-
-                      if (sortOrder === 'group' && prevObj) {
-                        if (obj.category === Categories.CANTRIPS) {
-                          insertTopMargin = prevObj.category !== Categories.CANTRIPS;
-                        }
-                        else {
-                          insertTopMargin = (prevObj.category === Categories.CANTRIPS || prevObj.gr !== obj.gr);
-                        }
-                      }
-
-                      return (
-                        <ListItem
-                          key={id}
-                          disabled
-                          insertTopMargin={insertTopMargin}
-                          >
-                          <ListItemName name={extendedName} />
-                        </ListItem>
-                      );
-                    }
-
-                    const name = obj.name + extendName;
-
-                    if (obj.category === Categories.CANTRIPS) {
-                      return (
-                        <SkillListItem
-                          key={obj.id}
-                          id={obj.id}
-                          name={name}
-                          isNotActive
-                          activate={addCantripToList.bind (null, obj.id)}
-                          addFillElement
-                          insertTopMargin={sortOrder === 'group' && prevObj && prevObj.category !== Categories.CANTRIPS}
-                          attributes={attributes}
-                          derivedCharacteristics={derivedCharacteristics}
-                          selectForInfo={this.showSlideinInfo}
-                          addText={sortOrder === 'group' ? `${translate (locale, 'spells.view.properties')[obj.property - 1]} / ${translate (locale, 'spells.view.cantrip')}` : translate (locale, 'spells.view.properties')[obj.property - 1]}
-                          />
-                      );
-                    }
-
-                    const { check, checkmod, ic } = obj;
-
-                    return (
-                      <SkillListItem
-                        key={obj.id}
-                        id={obj.id}
-                        name={name}
-                        isNotActive
-                        activate={addToList.bind (null, obj.id)}
-                        activateDisabled={addSpellsDisabled && obj.gr < 3}
-                        addFillElement
-                        check={check}
-                        checkmod={checkmod}
-                        ic={ic}
-                        insertTopMargin={sortOrder === 'group' && prevObj && (prevObj.category === Categories.CANTRIPS || prevObj.gr !== obj.gr)}
-                        attributes={attributes}
-                        derivedCharacteristics={derivedCharacteristics}
-                        selectForInfo={this.showSlideinInfo}
-                        addText={sortOrder === 'group' ? `${translate (locale, 'spells.view.properties')[obj.property - 1]} / ${translate (locale, 'spells.view.groups')[obj.gr - 1]}` : translate (locale, 'spells.view.properties')[obj.property - 1]}
-                        />
-                    );
-                  })
                 }
               </ListView>
             </Scroll>
@@ -377,117 +341,135 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
             <ListView>
               {
                 Maybe.fromMaybe<NonNullable<React.ReactNode>>
-                  (<ListPlaceholder locale={locale} type="skills" noResults />)
-                  (list
+                  (
+                    <ListPlaceholder
+                      locale={locale}
+                      type="spells"
+                      noResults={filterText.length > 0}
+                      />
+                  )
+                  (activeList
                     .bind (Maybe.ensure (R.complement (List.null)))
                     .fmap (R.pipe (
                       List.mapAccumL<
-                        Maybe<Record<SkillWithRequirements>>,
-                        Record<SkillWithRequirements>,
+                        Maybe<Record<SpellWithRequirements> | Record<CantripCombined>>,
+                        Record<SpellWithRequirements> | Record<CantripCombined>,
                         JSX.Element
                       >
-                        (previous => current =>
-                          Tuple.of<Maybe<Record<SkillWithRequirements>>, JSX.Element>
+                        (maybePrevious => current => {
+                          const insertTopMargin = Maybe.elem
+                            (true)
+                            (maybePrevious
+                              .bind (Maybe.ensure (() => sortOrder === 'group'))
+                              .fmap (
+                                previous => (current .get ('category') as Categories)
+                                  === Categories.CANTRIPS
+                                  ? (previous .get ('category') as Categories)
+                                    !== Categories.CANTRIPS
+                                  : !isCantrip (previous) && isCantrip (current)
+                                    || isCantrip (previous) && !isCantrip (current)
+                                    || !isCantrip (previous)
+                                      && !isCantrip (current)
+                                      && previous .get ('gr') !== current.get ('gr')
+                              ));
+
+                          const propertyName =
+                            Maybe.fromMaybe
+                              ('')
+                              (translate (locale, 'spells.view.properties')
+                                .subscript (current .get ('property') - 1));
+
+                          return Tuple.of<
+                            Maybe<Record<SpellWithRequirements> | Record<CantripCombined>>,
+                            JSX.Element
+                          >
                             (Just (current))
-                            (
-                              <SkillListItem
-                                key={current .get ('id')}
-                                id={current .get ('id')}
-                                typ={
-                                  ratingVisibility
-                                  && isCommon (skillRating) (current as any as Record<Skill>)
-                                }
-                                untyp={
-                                  ratingVisibility
-                                  && isUncommon (skillRating) (current as any as Record<Skill>)
-                                }
-                                name={current .get ('name')}
-                                sr={current .get ('value')}
-                                check={current .get ('check')}
-                                ic={current .get ('ic')}
-                                addPoint={addPoint.bind (null, current .get ('id'))}
-                                addDisabled={!current .get ('isIncreasable')}
-                                removePoint={
-                                  isRemovingEnabled
-                                    ? removePoint.bind (null, current .get ('id'))
-                                    : undefined
-                                }
-                                removeDisabled={!current .get ('isDecreasable')}
-                                insertTopMargin={
-                                  sortOrder === 'group'
-                                  && Maybe.notElem
-                                    (current .get ('gr'))
-                                    (previous .fmap (
-                                      Record.get<SkillWithRequirements, 'gr'> ('gr')
-                                    ))
-                                }
-                                selectForInfo={this.showInfo}
-                                attributes={attributes}
-                                derivedCharacteristics={derivedCharacteristics}
-                                groupIndex={current .get ('gr')}
-                                groupList={translate (locale, 'skills.view.groups')}
-                                />
-                            ))
+                            (isCantrip (current)
+                              ? (
+                                <SkillListItem
+                                  key={current .get ('id')}
+                                  id={current .get ('id')}
+                                  name={current .get ('name')}
+                                  removePoint={
+                                    isRemovingEnabled
+                                      ? removeCantripFromList.bind (null, current .get ('id'))
+                                      : undefined}
+                                  addFillElement
+                                  noIncrease
+                                  insertTopMargin={insertTopMargin}
+                                  attributes={attributes}
+                                  derivedCharacteristics={derivedCharacteristics}
+                                  selectForInfo={this.showSlideinInfo}
+                                  addText={
+                                    sortOrder === 'group'
+                                      ? `${propertyName} / ${
+                                        translate (locale, 'spells.view.cantrip')
+                                      }`
+                                      : propertyName
+                                  }
+                                  untyp={
+                                    Maybe.elem
+                                      (true)
+                                      (maybeTraditions .fmap (
+                                        traditions => isOwnTradition (
+                                          traditions,
+                                          current as any as Record<Cantrip>
+                                        )
+                                      ))
+                                  }
+                                  />
+                              )
+                              : (
+                                <SkillListItem
+                                  key={current .get ('id')}
+                                  id={current .get ('id')}
+                                  name={current .get ('name')}
+                                  addDisabled={!current .get ('isIncreasable')}
+                                  addPoint={addPoint.bind (null, current .get ('id'))}
+                                  removeDisabled={!current .get ('isDecreasable')}
+                                  removePoint={
+                                    isRemovingEnabled
+                                      ? current .get ('value') === 0
+                                        ? removeFromList.bind (null, current .get ('id'))
+                                        : removePoint.bind (null, current .get ('id'))
+                                      : undefined
+                                  }
+                                  addFillElement
+                                  check={current .get ('check')}
+                                  checkmod={current .lookup ('checkmod')}
+                                  ic={current .get ('ic')}
+                                  sr={current .get ('value')}
+                                  insertTopMargin={insertTopMargin}
+                                  attributes={attributes}
+                                  derivedCharacteristics={derivedCharacteristics}
+                                  selectForInfo={this.showSlideinInfo}
+                                  addText={
+                                    sortOrder === 'group'
+                                    ? `${propertyName} / ${
+                                      Maybe.fromMaybe
+                                        ('')
+                                        (translate (locale, 'spells.view.groups')
+                                          .subscript (current .get ('gr') - 1))
+                                    }`
+                                    : propertyName}
+                                  untyp={
+                                    Maybe.elem
+                                      (true)
+                                      (maybeTraditions .fmap (
+                                        traditions => isOwnTradition (
+                                          traditions,
+                                          current as any as Record<Spell>
+                                        )
+                                      ))
+                                  }
+                                  />
+                              )
+                            );
+                        })
                         (Nothing ()),
                       Tuple.snd,
                       List.toArray
                     )))
-              }
-              {
-                activeList.length === 0 ? <ListPlaceholder locale={locale} type="spells" noResults={filterText.length > 0} /> : activeList.map ((obj, index, array) => {
-                  const prevObj = array[index - 1];
-
-                  let name = obj.name;
-                  if (!isOwnTradition (traditions, obj)) {
-                    name += ` (${obj.tradition.filter (e => e <= translate (locale, 'spells.view.traditions').length).map (e => translate (locale, 'spells.view.traditions')[e - 1]).sort ().join (', ')})`;
-                  }
-
-                  if (obj.category === Categories.CANTRIPS) {
-                    return (
-                      <SkillListItem
-                        key={obj.id}
-                        id={obj.id}
-                        name={name}
-                        removePoint={isRemovingEnabled ? removeCantripFromList.bind (null, obj.id) : undefined}
-                        addFillElement
-                        noIncrease
-                        insertTopMargin={sortOrder === 'group' && prevObj && prevObj.category !== Categories.CANTRIPS}
-                        attributes={attributes}
-                        derivedCharacteristics={derivedCharacteristics}
-                        selectForInfo={this.showInfo}
-                        addText={sortOrder === 'group' ? `${translate (locale, 'spells.view.properties')[obj.property - 1]} / ${translate (locale, 'spells.view.cantrip')}` : translate (locale, 'spells.view.properties')[obj.property - 1]}
-                        />
-                    );
-                  }
-
-                  const { check, checkmod, ic, value, isIncreasable, isDecreasable } = obj;
-
-                  const other = {
-                    addDisabled: !isIncreasable,
-                    addPoint: addPoint.bind (null, obj.id),
-                    check,
-                    checkmod,
-                    ic,
-                    sr: value,
-                  };
-
-                  return (
-                    <SkillListItem
-                      {...other}
-                      key={obj.id}
-                      id={obj.id}
-                      name={name}
-                      removePoint={isRemovingEnabled ? obj.value === 0 ? removeFromList.bind (null, obj.id) : removePoint.bind (null, obj.id) : undefined}
-                      removeDisabled={!isDecreasable}
-                      addFillElement
-                      insertTopMargin={sortOrder === 'group' && prevObj && (prevObj.category === Categories.CANTRIPS || prevObj.gr !== obj.gr)}
-                      attributes={attributes}
-                      derivedCharacteristics={derivedCharacteristics}
-                      selectForInfo={this.showInfo}
-                      addText={sortOrder === 'group' ? `${translate (locale, 'spells.view.properties')[obj.property - 1]} / ${translate (locale, 'spells.view.groups')[obj.gr - 1]}` : translate (locale, 'spells.view.properties')[obj.property - 1]}
-                      />
-                  );
-                })
               }
             </ListView>
           </Scroll>

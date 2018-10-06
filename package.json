@@ -55,7 +55,7 @@
     "ts-jest": "22.4.2",
     "tslint": "5.10.0",
     "tslint-eslint-rules": "5.4.0",
-    "typescript": "3.0.1",
+    "typescript": "3.1.1",
     "typescript-eslint-parser": "16.0.0",
     "xlsx": "0.10.9"
   },
@@ -66,7 +66,7 @@
     "buildMac": "build --config electron-builder.json -m",
     "buildMacTest": "build --config electron-builder.test.json -m",
     "watch": "tsc --watch",
-    "bundle": "tsc",
+    "bundle": "node --max-old-space-size=2048 ./node_modules/typescript/lib/tsc.js",
     "start": "electron .",
     "bundle_l10ns": "node -r @std/esm src/data/buildAllLocales.mjs",
     "bundle_data": "node -r @std/esm src/data/buildData.mjs",

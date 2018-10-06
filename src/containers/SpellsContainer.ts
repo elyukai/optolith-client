@@ -6,7 +6,7 @@ import { AppState } from '../reducers/appReducer';
 import { getAttributesForSheet } from '../selectors/attributeSelectors';
 import { getDerivedCharacteristicsMap } from '../selectors/derivedCharacteristicsSelectors';
 import { getIsRemovingEnabled } from '../selectors/phaseSelectors';
-import { getFilteredActiveSpellsAndCantrips, getFilteredInactiveSpellsAndCantrips, getMagicalTraditions, isActivationDisabled } from '../selectors/spellsSelectors';
+import { getFilteredActiveSpellsAndCantrips, getFilteredInactiveSpellsAndCantrips, getMagicalTraditionsFromWikiState, isActivationDisabled } from '../selectors/spellsSelectors';
 import { getInactiveSpellsFilterText, getSpellsFilterText } from '../selectors/stateSelectors';
 import { getEnableActiveItemHints, getSpellsSortOrder } from '../selectors/uisettingsSelectors';
 import { Maybe } from '../utils/dataUtils';
@@ -20,7 +20,7 @@ const mapStateToProps = (state: AppState, ownProps: SpellsOwnProps): SpellsState
   addSpellsDisabled: isActivationDisabled (state),
   enableActiveItemHints: getEnableActiveItemHints (state),
   isRemovingEnabled: getIsRemovingEnabled (state),
-  traditions: getMagicalTraditions (state),
+  traditions: getMagicalTraditionsFromWikiState (state),
   sortOrder: getSpellsSortOrder (state),
   filterText: getSpellsFilterText (state),
   inactiveFilterText: getInactiveSpellsFilterText (state),

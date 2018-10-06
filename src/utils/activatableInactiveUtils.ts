@@ -778,7 +778,7 @@ const getOtherOptions = (
       () => Maybe.ensure<Record<InactiveOptions>> (
         () => {
           const isAdvantageActive = R.pipe (
-            state.get ('advantages').lookup,
+            OrderedMap.lookup_ (state .get ('advantages')),
             isActive
           );
 
@@ -805,7 +805,7 @@ const getOtherOptions = (
       () => Maybe.ensure<Record<InactiveOptions>> (
         () => {
           const isAdvantageActive = R.pipe (
-            state.get ('advantages').lookup,
+            OrderedMap.lookup_ (state .get ('advantages')),
             isActive
           );
 

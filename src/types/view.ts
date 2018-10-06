@@ -74,26 +74,32 @@ export interface CombatTechniqueWithRequirements extends CombatTechniqueWithAtta
   min: number;
 }
 
+interface IsActive {
+  active: boolean;
+}
+
+interface IncreasableWithRequirements {
+  isIncreasable: boolean;
+  isDecreasable: boolean;
+}
+
+export type BlessingCombined = Wiki.Blessing & IsActive;
+
+export type CantripCombined = Wiki.Cantrip & IsActive;
+
+export type LiturgicalChantIsActive = Wiki.LiturgicalChant & IsActive;
 export type LiturgicalChantCombined = Wiki.LiturgicalChant & Data.ActivatableSkillDependent;
 
-export interface LiturgicalChantWithRequirements extends LiturgicalChantCombined {
-  isIncreasable: boolean;
-  isDecreasable: boolean;
-}
+export type LiturgicalChantWithRequirements = LiturgicalChantCombined & IncreasableWithRequirements;
 
+export type SpellIsActive = Wiki.Spell & IsActive;
 export type SpellCombined = Wiki.Spell & Data.ActivatableSkillDependent;
 
-export interface SpellWithRequirements extends SpellCombined {
-  isIncreasable: boolean;
-  isDecreasable: boolean;
-}
+export type SpellWithRequirements = SpellCombined & IncreasableWithRequirements;
 
 export type SkillCombined = Wiki.Skill & Data.SkillDependent;
 
-export interface SkillWithRequirements extends SkillCombined {
-  isIncreasable: boolean;
-  isDecreasable: boolean;
-}
+export type SkillWithRequirements = SkillCombined & IncreasableWithRequirements;
 
 export interface Item {
   id: string;

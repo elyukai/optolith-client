@@ -53,6 +53,20 @@ test('lookup', () => {
     .toEqual(Nothing());
 });
 
+test('OrderedMap.lookup', () => {
+  expect(OrderedMap.lookup (2) (OrderedMap.of ([[1, 'a'],[2, 'b'], [3, 'c']])))
+    .toEqual(Just ('b'));
+  expect(OrderedMap.lookup (5) (OrderedMap.of ([[1, 'a'],[2, 'b'], [3, 'c']])))
+    .toEqual(Nothing ());
+});
+
+test('OrderedMap.lookup_', () => {
+  expect(OrderedMap.lookup (OrderedMap.of ([[1, 'a'],[2, 'b'], [3, 'c']])) (2))
+    .toEqual(Just ('b'));
+  expect(OrderedMap.lookup (OrderedMap.of ([[1, 'a'],[2, 'b'], [3, 'c']])) (5))
+    .toEqual(Nothing ());
+});
+
 test('findWithDefault', () => {
   expect(OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'c']]).findWithDefault('...')(2))
     .toEqual('b');
@@ -401,11 +415,4 @@ test('OrderedMap.elems', () => {
   const res = List.of('a', 'c', 'b');
 
   expect(OrderedMap.elems(map)).toEqual(res);
-});
-
-test('OrderedMap.lookup', () => {
-  expect(OrderedMap.lookup(2)(OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'c']])))
-    .toEqual(Just('b'));
-  expect(OrderedMap.lookup(5)(OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'c']])))
-    .toEqual(Nothing());
 });

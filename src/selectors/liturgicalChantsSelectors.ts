@@ -1,7 +1,7 @@
 import * as R from 'ramda';
 import { ActivatableSkillDependent } from '../types/data';
-import { LiturgicalChantWithRequirements } from '../types/view';
-import { Blessing, ExperienceLevel, LiturgicalChant } from '../types/wiki';
+import { BlessingCombined, LiturgicalChantIsActive, LiturgicalChantWithRequirements } from '../types/view';
+import { ExperienceLevel, LiturgicalChant } from '../types/wiki';
 import { createMaybeSelector } from '../utils/createMaybeSelector';
 import { List, Maybe, OrderedMap, OrderedSet, Record, Tuple } from '../utils/dataUtils';
 import { AllSortOptions, filterAndSortObjects, sortObjects } from '../utils/FilterSortUtils';
@@ -100,23 +100,26 @@ export const getActiveLiturgicalChants = createMaybeSelector (
       )
 );
 
-export const getActiveAndInctiveBlessings = createMaybeSelector (
+export const getActiveAndInactiveBlessings = createMaybeSelector (
   getBlessings,
   getWikiBlessings,
   (maybeBlessings, wikiBlessings) => maybeBlessings .fmap (
-    blessings => wikiBlessings.elems ().partition (
-      e => blessings.member (e.get ('id'))
-    )
+    blessings => wikiBlessings
+      .elems ()
+      .map<Record<BlessingCombined>> (
+        e => e .merge (Record.of ({ active: blessings .member (e .get ('id')) }))
+      )
+      .partition (Record.get<BlessingCombined, 'active'> ('active'))
   )
 );
 
 export const getActiveBlessings = createMaybeSelector (
-  getActiveAndInctiveBlessings,
+  getActiveAndInactiveBlessings,
   Maybe.fmap (Tuple.fst)
 );
 
 export const getInactiveBlessings = createMaybeSelector (
-  getActiveAndInctiveBlessings,
+  getActiveAndInactiveBlessings,
   Maybe.fmap (Tuple.snd)
 );
 
@@ -124,21 +127,30 @@ export const getInactiveLiturgicalChants = createMaybeSelector (
   getLiturgicalChants,
   getWikiLiturgicalChants,
   (maybeLiturgicalChants, wikiLiturgicalChants) => maybeLiturgicalChants
-    .fmap (liturgicalChants => liturgicalChants.elems ())
-    .fmap (
-      liturgicalChants => wikiLiturgicalChants.filter (
-        wikiLiturgicalChant => liturgicalChants.all (
-          liturgicalChant => liturgicalChant.get ('id') !== wikiLiturgicalChant.get ('id')
-        )
-      )
-    )
+    .fmap (R.pipe (
+      OrderedMap.elems,
+      liturgicalChants => OrderedMap.mapMaybe<
+        string,
+        Record<LiturgicalChant>,
+        Record<LiturgicalChantIsActive>
+      >
+        (R.pipe (
+          Maybe.ensure (
+            wikiLiturgicalChant => liturgicalChants.all (
+              liturgicalChant => liturgicalChant.get ('id') !== wikiLiturgicalChant.get ('id')
+            )
+          ),
+          Maybe.fmap (Record.merge (Record.of ({ active: false })))
+        ))
+        (wikiLiturgicalChants)
+    ))
 );
 
 const additionalInactiveListFilter = (
-  inactiveList: OrderedMap<string, Record<LiturgicalChant>>,
+  inactiveList: OrderedMap<string, Record<LiturgicalChantIsActive>>,
   activeList: List<Record<LiturgicalChantWithRequirements>>,
   validate: (
-    e: Record<LiturgicalChantWithRequirements> | Record<LiturgicalChant>
+    e: Record<LiturgicalChantWithRequirements> | Record<LiturgicalChantIsActive>
   ) => boolean
 ): List<string> => {
   if (!activeList.any (validate)) {
@@ -173,7 +185,7 @@ export const getAdditionalValidLiturgicalChants = createMaybeSelector (
     jaegerinnenDerWeissenMaid,
     anhaengerDesGueldenen
   ): Maybe<List<string>> => Maybe.liftM2<
-      OrderedMap<string, Record<LiturgicalChant>>,
+      OrderedMap<string, Record<LiturgicalChantIsActive>>,
       List<Record<LiturgicalChantWithRequirements>>,
       List<string>
     >
@@ -279,8 +291,8 @@ export const getAvailableInactiveLiturgicalChants = createMaybeSelector (
     )
 );
 
-type ActiveListCombined = List<Record<LiturgicalChantWithRequirements> | Record<Blessing>>;
-type InactiveListCombined = List<Record<LiturgicalChant> | Record<Blessing>>;
+type ActiveListCombined = List<Record<LiturgicalChantWithRequirements> | Record<BlessingCombined>>;
+type InactiveListCombined = List<Record<LiturgicalChantIsActive> | Record<BlessingCombined>>;
 
 export const getActiveLiturgicalChantsAndBlessings = createMaybeSelector (
   getActiveLiturgicalChants,
@@ -303,11 +315,11 @@ export const getFilteredActiveLiturgicalChantsAndBlessings = createMaybeSelector
   getLocaleAsProp,
   (maybeLiturgicalChants, sortOptions, filterText, locale) => maybeLiturgicalChants .fmap (
     liturgicalChants => filterAndSortObjects (
-      liturgicalChants as List<Record<Blessing | LiturgicalChantWithRequirements>>,
+      liturgicalChants as List<Record<BlessingCombined | LiturgicalChantWithRequirements>>,
       locale.get ('id'),
       filterText,
-      sortOptions as AllSortOptions<Blessing | LiturgicalChantWithRequirements>
-    )
+      sortOptions as AllSortOptions<BlessingCombined | LiturgicalChantWithRequirements>
+    ) as ActiveListCombined
   )
 );
 
@@ -319,24 +331,20 @@ export const getFilteredInactiveLiturgicalChantsAndBlessings = createMaybeSelect
   getLocaleAsProp,
   getEnableActiveItemHints,
   (maybeInactive, maybeActive, sortOptions, filterText, locale, areActiveItemHintsEnabled) =>
-    Maybe.liftM2<InactiveListCombined, InactiveListCombined, List<Record<
-      Blessing | LiturgicalChant
-    >>>
+    Maybe.liftM2<InactiveListCombined, InactiveListCombined, InactiveListCombined>
       (active => inactive => areActiveItemHintsEnabled
         ? filterAndSortObjects (
-          List.mappend (inactive) (active) as List<Record<
-            Blessing | LiturgicalChant
-          >>,
+          List.mappend (inactive) (active) as List<Record<BlessingCombined | LiturgicalChant>>,
           locale.get ('id'),
           filterText,
-          sortOptions as AllSortOptions<Blessing | LiturgicalChant>
-        )
+          sortOptions as AllSortOptions<BlessingCombined | LiturgicalChant>
+        ) as InactiveListCombined
         : filterAndSortObjects (
-          inactive as List<Record<Blessing | LiturgicalChant>>,
+          inactive as List<Record<BlessingCombined | LiturgicalChant>>,
           locale.get ('id'),
           filterText,
-          sortOptions as AllSortOptions<Blessing | LiturgicalChant>
-        ))
+          sortOptions as AllSortOptions<BlessingCombined | LiturgicalChant>
+        ) as InactiveListCombined)
       (maybeActive as Maybe<InactiveListCombined>)
       (maybeInactive)
 );

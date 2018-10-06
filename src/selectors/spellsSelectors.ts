@@ -1,7 +1,7 @@
 import * as R from 'ramda';
 import { ActivatableDependent, ActivatableSkillDependent } from '../types/data';
-import { SpellWithRequirements } from '../types/view';
-import { Cantrip, ExperienceLevel, Spell } from '../types/wiki';
+import { CantripCombined, SpellIsActive, SpellWithRequirements } from '../types/view';
+import { ExperienceLevel, Spell } from '../types/wiki';
 import { getModifierByActiveLevel } from '../utils/activatableModifierUtils';
 import { createMaybeSelector } from '../utils/createMaybeSelector';
 import { Just, List, Maybe, OrderedMap, Record, Tuple } from '../utils/dataUtils';
@@ -62,11 +62,16 @@ const getUnfilteredInactiveSpells = createMaybeSelector (
   getActiveSpellsCombined,
   getWikiSpells,
   (maybeActiveSpells, wikiSpells) => maybeActiveSpells.fmap (
-    activeSpells => wikiSpells.filter (
-      wikiSpell => activeSpells.all (
-        spell => spell.get ('id') !== wikiSpell.get ('id')
-      )
-    )
+    activeSpells => OrderedMap.mapMaybe<string, Record<Spell>, Record<SpellIsActive>>
+      (R.pipe (
+        Maybe.ensure (
+          wikiSpell => activeSpells.all (
+            spell => spell.get ('id') !== wikiSpell.get ('id')
+          )
+        ),
+        Maybe.fmap (Record.merge (Record.of ({ active: false })))
+      ))
+      (wikiSpells)
   )
 );
 
@@ -136,37 +141,34 @@ export const getIsMaximumOfSpellsReached = createMaybeSelector (
 export const getActiveAndInctiveCantrips = createMaybeSelector (
   getCantrips,
   getWikiCantrips,
-  (maybeCantrips, wikiCantrips) =>
-    Maybe.fromMaybe (Tuple.of<List<Record<Cantrip>>, List<Record<Cantrip>>> (List.of ())
-                                                                            (List.of ()))
-                    (
-                      maybeCantrips
-                        .fmap (
-                          cantrips => wikiCantrips .elems () .partition (
-                            e => cantrips .member (e.get ('id'))
-                          )
-                        )
-                    )
+  (maybeCantrips, wikiCantrips) => maybeCantrips .fmap (
+    cantrips => wikiCantrips
+      .elems ()
+      .map<Record<CantripCombined>> (
+        e => e .merge (Record.of ({ active: cantrips .member (e .get ('id')) }))
+      )
+      .partition (Record.get<CantripCombined, 'active'> ('active'))
+  )
 );
 
 export const getActiveCantrips = createMaybeSelector (
   getActiveAndInctiveCantrips,
-  Tuple.fst
+  Maybe.fmap (Tuple.fst)
 );
 
 export const getInactiveCantrips = createMaybeSelector (
   getActiveAndInctiveCantrips,
-  Tuple.snd
+  Maybe.fmap (Tuple.snd)
 );
 
 /**
  * `Tuple.fst InactiveSpells` are valid spells, `Tuple.snd InactiveSpells` are
  * invalid spells concerning the current tradition(s) and general state.
  */
-export type InactiveSpells = Tuple<List<Record<Spell>>, List<Record<Spell>>>;
+export type InactiveSpells = Tuple<List<Record<SpellIsActive>>, List<Record<SpellIsActive>>>;
 
 const emptyInactiveSpells: InactiveSpells = (
-  Tuple.of<List<Record<Spell>>, List<Record<Spell>>> (List.of ()) (List.of ())
+  Tuple.of<List<Record<SpellIsActive>>, List<Record<SpellIsActive>>> (List.of ()) (List.of ())
 );
 
 export const getInactiveSpells = createMaybeSelector (
@@ -198,7 +200,7 @@ export const getInactiveSpells = createMaybeSelector (
               const lastTraditionId = Maybe.listToMaybe (traditions)
                 .fmap (tradition => tradition.get ('id'));
 
-              const validateSpellPrerequisites = (entry: Record<Spell>) =>
+              const validateSpellPrerequisites = (entry: Record<SpellIsActive>) =>
                 validatePrerequisites (wiki, hero, entry.get ('prerequisites'), entry.get ('id'));
 
               if (Maybe.elem ('SA_679') (lastTraditionId)) {
@@ -207,7 +209,10 @@ export const getInactiveSpells = createMaybeSelector (
                     entry => entry.get ('gr') < 3
                       && !isMaximumOfSpellsReached
                       && validateSpellPrerequisites (entry)
-                      && (isOwnTradition (traditions, entry) || !areMaxUnfamiliar)
+                      && (
+                        isOwnTradition (traditions, entry as unknown as Record<Spell>)
+                        || !areMaxUnfamiliar
+                      )
                   );
               }
 
@@ -234,7 +239,7 @@ export const getInactiveSpells = createMaybeSelector (
                   entry => (!isMaximumOfSpellsReached || entry.get ('gr') > 2)
                     && validateSpellPrerequisites (entry)
                     && (
-                      isOwnTradition (traditions, entry)
+                      isOwnTradition (traditions, entry as unknown as Record<Spell>)
                       || (entry.get ('gr') < 3 && !areMaxUnfamiliar)
                     )
                 );
@@ -297,23 +302,19 @@ export const getAvailableInactiveSpells = createMaybeSelector (
   )
 );
 
-type ActiveListCombined = List<Record<SpellWithRequirements> | Record<Cantrip>>;
-type InactiveListCombined = List<Record<Spell> | Record<Cantrip>>;
+type ActiveListCombined = List<Record<SpellWithRequirements> | Record<CantripCombined>>;
+type InactiveListCombined = List<Record<SpellIsActive> | Record<CantripCombined>>;
 
 export const getActiveSpellsAndCantrips = createMaybeSelector (
   getActiveSpells,
   getActiveCantrips,
-  (maybeSpells: Maybe<ActiveListCombined>, cantrips) => maybeSpells.fmap (
-    spells => spells.mappend (cantrips)
-  )
+  (spells: Maybe<ActiveListCombined>, cantrips) => spells .mappend (cantrips)
 );
 
 export const getAvailableInactiveSpellsAndCantrips = createMaybeSelector (
   getAvailableInactiveSpells,
   getInactiveCantrips,
-  (maybeSpells: Maybe<InactiveListCombined>, cantrips) => maybeSpells.fmap (
-    spells => spells.mappend (cantrips)
-  )
+  (spells: Maybe<InactiveListCombined>, cantrips) => spells .mappend (cantrips)
 );
 
 export const getFilteredActiveSpellsAndCantrips = createMaybeSelector (
@@ -323,11 +324,11 @@ export const getFilteredActiveSpellsAndCantrips = createMaybeSelector (
   getLocaleAsProp,
   (maybeSpells, sortOptions, filterText, locale) => maybeSpells.fmap (
     spells => filterAndSortObjects (
-      spells as List<Record<Cantrip | SpellWithRequirements>>,
+      spells as List<Record<CantripCombined | SpellWithRequirements>>,
       locale.get ('id'),
       filterText,
-      sortOptions as AllSortOptions<Cantrip | SpellWithRequirements>
-    )
+      sortOptions as AllSortOptions<CantripCombined | SpellWithRequirements>
+    ) as ActiveListCombined
   )
 );
 
@@ -339,23 +340,22 @@ export const getFilteredInactiveSpellsAndCantrips = createMaybeSelector (
   getLocaleAsProp,
   getEnableActiveItemHints,
   (maybeInactive, maybeActive, sortOptions, filterText, locale, areActiveItemHintsEnabled) =>
-    maybeInactive.bind (
-      inactive => maybeActive.fmap (
-        active => areActiveItemHintsEnabled
-          ? filterAndSortObjects (
-            inactive.mappend (active as InactiveListCombined) as List<Record<Cantrip | Spell>>,
-            locale.get ('id'),
-            filterText,
-            sortOptions as AllSortOptions<Cantrip | Spell>
-          )
-          : filterAndSortObjects (
-            inactive as List<Record<Cantrip | Spell>>,
-            locale.get ('id'),
-            filterText,
-            sortOptions as AllSortOptions<Cantrip | Spell>
-          )
-      )
-    )
+    Maybe.liftM2<InactiveListCombined, InactiveListCombined, InactiveListCombined>
+      (active => inactive => areActiveItemHintsEnabled
+        ? filterAndSortObjects (
+          List.mappend (inactive) (active) as List<Record<CantripCombined | Spell>>,
+          locale.get ('id'),
+          filterText,
+          sortOptions as AllSortOptions<CantripCombined | Spell>
+        ) as InactiveListCombined
+        : filterAndSortObjects (
+          inactive as List<Record<CantripCombined | Spell>>,
+          locale.get ('id'),
+          filterText,
+          sortOptions as AllSortOptions<CantripCombined | Spell>
+        ) as InactiveListCombined)
+      (maybeActive as Maybe<InactiveListCombined>)
+      (maybeInactive)
 );
 
 const getMaxSpellsModifier = (

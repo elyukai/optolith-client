@@ -8,7 +8,7 @@ export interface SkillCheckProps {
   attributes: List<Record<AttributeCombined>>;
   check?: List<string>;
   checkDisabled?: boolean;
-  checkmod?: 'SPI' | 'TOU';
+  checkmod?: Maybe<'SPI' | 'TOU'>;
   derivedCharacteristics?: OrderedMap<DCIds, Record<SecondaryAttribute>>;
 }
 
@@ -42,8 +42,8 @@ export function SkillCheck (props: SkillCheckProps) {
           && derived
           && Maybe.fromMaybe
             (<></>)
-            (derived
-              .lookup (checkmod)
+            (checkmod
+              .bind (key => OrderedMap.lookup<DCIds, Record<SecondaryAttribute>> (key) (derived))
               .fmap (
                 characteristic => (
                   <div className="check mod">

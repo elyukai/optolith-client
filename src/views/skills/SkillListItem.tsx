@@ -6,7 +6,7 @@ import { ListItemValues } from '../../components/ListItemValues';
 import { DCIds } from '../../selectors/derivedCharacteristicsSelectors';
 import { SecondaryAttribute } from '../../types/data';
 import { AttributeCombined } from '../../types/view';
-import { List, OrderedMap, Record } from '../../utils/dataUtils';
+import { List, Maybe, OrderedMap, Record } from '../../utils/dataUtils';
 import { AdditionalValue, SkillAdditionalValues } from './SkillAdditionalValues';
 import { SkillButtons } from './SkillButtons';
 import { SkillCheck } from './SkillCheck';
@@ -24,7 +24,7 @@ export interface SkillListItemProps {
   addText?: string;
   check?: List<string>;
   checkDisabled?: boolean;
-  checkmod?: 'SPI' | 'TOU';
+  checkmod?: Maybe<'SPI' | 'TOU'>;
   derivedCharacteristics?: OrderedMap<DCIds, Record<SecondaryAttribute>>;
   groupList?: List<string>;
   groupIndex?: number;

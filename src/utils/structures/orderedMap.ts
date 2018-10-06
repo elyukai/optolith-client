@@ -93,7 +93,20 @@ export class OrderedMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
    * map.
    */
   static lookup<K, V> (key: K): (m: OrderedMap<K, V>) => Maybe<V> {
-    return m => m.lookup (key);
+    return m => Maybe.fromNullable (m.value .get (key));
+  }
+
+  /**
+   * `lookup_ :: Ord k => Map k a -> k -> Maybe a`
+   *
+   * Lookup the value at a key in the map. The function will return the
+   * corresponding value as `Just value`, or `Nothing` if the key isn't in the
+   * map.
+   *
+   * Same as `OrderedMap.lookup` but with arguments switched.
+   */
+  static lookup_<K, V> (m: OrderedMap<K, V>): (key: K) => Maybe<V> {
+    return key => OrderedMap.lookup<K, V> (key) (m);
   }
 
   /**
@@ -682,13 +695,13 @@ export class OrderedMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
    *
    * Map values and collect the `Just` results.
    */
-  static mapMaybe<V, T> (f: (value: V) => Maybe<T>):
-    (map: OrderedMap<any, V>) => OrderedMap<any, T> {
+  static mapMaybe<K, A, B> (f: (value: A) => Maybe<B>):
+    (map: OrderedMap<K, A>) => OrderedMap<K, B> {
     return map => OrderedMap.of (
       [...map.value]
-        .map (([k, v]) => [k, f (v)] as [any, Maybe<T>])
-        .filter ((pair): pair is [any, Just<T>] => Maybe.isJust (pair[1]))
-        .map (([k, v]) => [k, Maybe.fromJust (v)] as [any, T])
+        .map (([k, v]) => [k, f (v)] as [any, Maybe<B>])
+        .filter ((pair): pair is [any, Just<B>] => Maybe.isJust (pair[1]))
+        .map (([k, v]) => [k, Maybe.fromJust (v)] as [any, B])
     );
   }
 

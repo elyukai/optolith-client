@@ -19,9 +19,9 @@ import { Categories } from '../../constants/Categories';
 import { WikiInfoContainer } from '../../containers/WikiInfoContainer';
 import { DCIds } from '../../selectors/derivedCharacteristicsSelectors';
 import { SecondaryAttribute } from '../../types/data';
-import { AttributeCombined, LiturgicalChantWithRequirements } from '../../types/view';
-import { Blessing, LiturgicalChant } from '../../types/wiki';
+import { AttributeCombined, BlessingCombined, LiturgicalChantIsActive, LiturgicalChantWithRequirements } from '../../types/view';
 import { Just, List, Maybe, Nothing, OrderedMap, Record, Tuple } from '../../utils/dataUtils';
+import { sortStrings } from '../../utils/FilterSortUtils';
 import { translate, UIMessagesObject } from '../../utils/I18n';
 import { getAspectsOfTradition } from '../../utils/liturgicalChantUtils';
 import { SkillListItem } from '../skills/SkillListItem';
@@ -31,14 +31,14 @@ export interface LiturgicalChantsOwnProps {
 }
 
 export interface LiturgicalChantsStateProps {
-  activeList: Maybe<List<Record<Blessing | LiturgicalChantWithRequirements>>>;
+  activeList: Maybe<List<Record<BlessingCombined> | Record<LiturgicalChantWithRequirements>>>;
   addChantsDisabled: boolean;
   attributes: List<Record<AttributeCombined>>;
   derivedCharacteristics: OrderedMap<DCIds, Record<SecondaryAttribute>>;
   enableActiveItemHints: boolean;
   filterText: string;
   inactiveFilterText: string;
-  inactiveList: Maybe<List<Record<LiturgicalChant | Blessing>>>;
+  inactiveList: Maybe<List<Record<LiturgicalChantIsActive> | Record<BlessingCombined>>>;
   isRemovingEnabled: boolean;
   sortOrder: string;
   traditionId: Maybe<number>;
@@ -67,6 +67,13 @@ export interface LiturgicalChantsState {
   currentId?: string;
   currentSlideinId?: string;
 }
+
+const isBlessing = (
+  entry: Record<LiturgicalChantWithRequirements>
+    | Record<LiturgicalChantIsActive>
+    | Record<BlessingCombined>
+): entry is Record<BlessingCombined> =>
+  (entry .get ('category') as Categories.BLESSINGS | Categories.LITURGIES) === Categories.BLESSINGS;
 
 export class LiturgicalChants
   extends React.Component<LiturgicalChantsProps, LiturgicalChantsState> {
@@ -103,7 +110,7 @@ export class LiturgicalChants
       setSortOrder,
       sortOrder,
       switchActiveItemHints,
-      traditionId,
+      traditionId: maybeTraditionId,
       filterText,
       inactiveFilterText,
       setFilterText,
@@ -164,133 +171,130 @@ export class LiturgicalChants
               <ListView>
                 {
                   Maybe.fromMaybe<NonNullable<React.ReactNode>>
-                    (<ListPlaceholder locale={locale} type="skills" noResults />)
-                    (list
+                    (<ListPlaceholder locale={locale} type="inactiveLiturgicalChants" noResults />)
+                    (inactiveList
                       .bind (Maybe.ensure (R.complement (List.null)))
                       .fmap (R.pipe (
                         List.mapAccumL<
-                          Maybe<Record<SkillWithRequirements>>,
-                          Record<SkillWithRequirements>,
+                          Maybe<Record<LiturgicalChantIsActive> | Record<BlessingCombined>>,
+                          Record<LiturgicalChantIsActive> | Record<BlessingCombined>,
                           JSX.Element
                         >
-                          (previous => current =>
-                            Tuple.of<Maybe<Record<SkillWithRequirements>>, JSX.Element>
-                              (Just (current))
-                              (
-                                <SkillListItem
-                                  key={current .get ('id')}
-                                  id={current .get ('id')}
-                                  typ={
-                                    ratingVisibility
-                                    && isCommon (skillRating) (current as any as Record<Skill>)
-                                  }
-                                  untyp={
-                                    ratingVisibility
-                                    && isUncommon (skillRating) (current as any as Record<Skill>)
-                                  }
-                                  name={current .get ('name')}
-                                  sr={current .get ('value')}
-                                  check={current .get ('check')}
-                                  ic={current .get ('ic')}
-                                  addPoint={addPoint.bind (null, current .get ('id'))}
-                                  addDisabled={!current .get ('isIncreasable')}
-                                  removePoint={
-                                    isRemovingEnabled
-                                      ? removePoint.bind (null, current .get ('id'))
-                                      : undefined
-                                  }
-                                  removeDisabled={!current .get ('isDecreasable')}
-                                  insertTopMargin={
-                                    sortOrder === 'group'
-                                    && Maybe.notElem
-                                      (current .get ('gr'))
-                                      (previous .fmap (
-                                        Record.get<SkillWithRequirements, 'gr'> ('gr')
+                          (maybePrevious => current => {
+                            const insertTopMargin = Maybe.elem
+                              (true)
+                              (maybePrevious
+                                .bind (
+                                  Maybe.ensure (
+                                    () => sortOrder === 'group' && current .get ('active')
+                                  )
+                                )
+                                .fmap (
+                                  previous => (current .get ('category') as Categories)
+                                    === Categories.BLESSINGS
+                                    ? (previous .get ('category') as Categories)
+                                      !== Categories.BLESSINGS
+                                    : !isBlessing (previous) && isBlessing (current)
+                                      || isBlessing (previous) && !isBlessing (current)
+                                      || !isBlessing (previous)
+                                        && !isBlessing (current)
+                                        && previous .get ('gr') !== current.get ('gr')
+                                ));
+
+                            const aspects =
+                              Maybe.fromMaybe
+                                ('')
+                                (maybeTraditionId .fmap (
+                                  R.pipe (
+                                    traditionId => Maybe.mapMaybe<number, string>
+                                      (R.pipe (
+                                        Maybe.ensure (
+                                          List.elem_ (getAspectsOfTradition (traditionId + 1))
+                                        ),
+                                        Maybe.bind_ (R.pipe (
+                                          R.dec,
+                                          List.subscript (
+                                            translate (locale, 'liturgies.view.aspects')
+                                          )
+                                        ))
                                       ))
-                                  }
-                                  selectForInfo={this.showInfo}
-                                  attributes={attributes}
-                                  derivedCharacteristics={derivedCharacteristics}
-                                  groupIndex={current .get ('gr')}
-                                  groupList={translate (locale, 'skills.view.groups')}
-                                  />
-                              ))
+                                      (current .get ('aspects')),
+                                    sortStrings (locale .get ('id')),
+                                    List.intercalate (', ')
+                                  )
+                                ));
+
+                            return Tuple.of<
+                              Maybe<Record<LiturgicalChantIsActive> | Record<BlessingCombined>>,
+                              JSX.Element
+                            >
+                              (Just (current))
+                              (current .get ('active')
+                                ? (
+                                  <ListItem
+                                    key={current .get ('id')}
+                                    disabled
+                                    insertTopMargin={insertTopMargin}
+                                    >
+                                    <ListItemName name={current .get ('name')} />
+                                  </ListItem>
+                                )
+                                : isBlessing (current)
+                                ? (
+                                  <SkillListItem
+                                    key={current .get ('id')}
+                                    id={current .get ('id')}
+                                    name={current .get ('name')}
+                                    isNotActive
+                                    activate={addBlessingToList .bind (null, current .get ('id'))}
+                                    addFillElement
+                                    insertTopMargin={insertTopMargin}
+                                    attributes={attributes}
+                                    derivedCharacteristics={derivedCharacteristics}
+                                    selectForInfo={this.showSlideinInfo}
+                                    addText={
+                                      sortOrder === 'group'
+                                        ? `${aspects} / ${
+                                          translate (locale, 'liturgies.view.blessing')
+                                        }`
+                                        : aspects
+                                    }
+                                    />
+                                )
+                                : (
+                                  <SkillListItem
+                                    key={current .get ('id')}
+                                    id={current .get ('id')}
+                                    name={current .get ('name')}
+                                    isNotActive
+                                    activate={addToList .bind (null, current .get ('id'))}
+                                    activateDisabled={addChantsDisabled}
+                                    addFillElement
+                                    check={current .get ('check')}
+                                    checkmod={current .lookup ('checkmod')}
+                                    ic={current .get ('ic')}
+                                    insertTopMargin={insertTopMargin}
+                                    attributes={attributes}
+                                    derivedCharacteristics={derivedCharacteristics}
+                                    selectForInfo={this.showSlideinInfo}
+                                    addText={
+                                      sortOrder === 'group'
+                                      ? `${aspects} / ${
+                                        Maybe.fromMaybe
+                                          ('')
+                                          (translate (locale, 'liturgies.view.groups')
+                                            .subscript (current .get ('gr') - 1))
+                                      }`
+                                      : aspects
+                                    }
+                                    />
+                                )
+                              );
+                          })
                           (Nothing ()),
                         Tuple.snd,
                         List.toArray
                       )))
-                }
-                {
-                  inactiveList.length === 0 ? <ListPlaceholder locale={locale} type="inactiveLiturgicalChants" noResults /> : inactiveList.map ((obj, index, array) => {
-                    const prevObj = array[index - 1];
-
-                    if (obj.active === true) {
-                      const { id, name } = obj;
-                      let insertTopMargin = false;
-
-                      if (sortOrder === 'group' && prevObj) {
-                        if (obj.category === Categories.BLESSINGS) {
-                          insertTopMargin = prevObj.category !== Categories.BLESSINGS;
-                        }
-                        else {
-                          insertTopMargin = prevObj.category === Categories.BLESSINGS || prevObj.gr !== obj.gr;
-                        }
-                      }
-
-                      return (
-                        <ListItem
-                          key={id}
-                          disabled
-                          insertTopMargin={insertTopMargin}
-                          >
-                          <ListItemName name={name} />
-                        </ListItem>
-                      );
-                    }
-
-                    const { name } = obj;
-
-                    const aspc = obj.aspects.filter (e => getAspectsOfTradition (traditionId as number + 1).includes (e)).map (e => translate (locale, 'liturgies.view.aspects')[e - 1]).sort ().join (', ');
-
-                    if (obj.category === Categories.BLESSINGS) {
-                      return (
-                        <SkillListItem
-                          key={obj.id}
-                          id={obj.id}
-                          name={name}
-                          isNotActive
-                          activate={addBlessingToList.bind (null, obj.id)}
-                          addFillElement
-                          insertTopMargin={sortOrder === 'group' && prevObj && prevObj.category !== Categories.BLESSINGS}
-                          attributes={attributes}
-                          derivedCharacteristics={derivedCharacteristics}
-                          selectForInfo={this.showSlideinInfo}
-                          addText={sortOrder === 'group' ? `${aspc} / ${translate (locale, 'liturgies.view.blessing')}` : aspc}
-                          />
-                      );
-                    }
-
-                    const { check, checkmod, ic } = obj;
-                    const add = { check, checkmod, ic };
-
-                    return (
-                      <SkillListItem
-                        {...add}
-                        key={obj.id}
-                        id={obj.id}
-                        name={name}
-                        isNotActive
-                        activate={addToList.bind (null, obj.id)}
-                        activateDisabled={addChantsDisabled && obj.gr < 3}
-                        addFillElement
-                        insertTopMargin={sortOrder === 'group' && prevObj && (prevObj.category === Categories.BLESSINGS || prevObj.gr !== obj.gr)}
-                        attributes={attributes}
-                        derivedCharacteristics={derivedCharacteristics}
-                        selectForInfo={this.showSlideinInfo}
-                        addText={sortOrder === 'group' ? aspc.length === 0 ? translate (locale, 'liturgies.view.groups')[obj.gr - 1] : `${aspc} / ${translate (locale, 'liturgies.view.groups')[obj.gr - 1]}` : aspc}
-                        />
-                    );
-                  })
                 }
               </ListView>
             </Scroll>
@@ -344,116 +348,135 @@ export class LiturgicalChants
             <ListView>
               {
                 Maybe.fromMaybe<NonNullable<React.ReactNode>>
-                  (<ListPlaceholder locale={locale} type="skills" noResults />)
-                  (list
+                  (
+                    <ListPlaceholder
+                      locale={locale}
+                      type="liturgicalChants"
+                      noResults={filterText.length > 0}
+                      />
+                  )
+                  (activeList
                     .bind (Maybe.ensure (R.complement (List.null)))
                     .fmap (R.pipe (
                       List.mapAccumL<
-                        Maybe<Record<SkillWithRequirements>>,
-                        Record<SkillWithRequirements>,
+                        Maybe<Record<LiturgicalChantWithRequirements> | Record<BlessingCombined>>,
+                        Record<LiturgicalChantWithRequirements> | Record<BlessingCombined>,
                         JSX.Element
                       >
-                        (previous => current =>
-                          Tuple.of<Maybe<Record<SkillWithRequirements>>, JSX.Element>
-                            (Just (current))
-                            (
-                              <SkillListItem
-                                key={current .get ('id')}
-                                id={current .get ('id')}
-                                typ={
-                                  ratingVisibility
-                                  && isCommon (skillRating) (current as any as Record<Skill>)
-                                }
-                                untyp={
-                                  ratingVisibility
-                                  && isUncommon (skillRating) (current as any as Record<Skill>)
-                                }
-                                name={current .get ('name')}
-                                sr={current .get ('value')}
-                                check={current .get ('check')}
-                                ic={current .get ('ic')}
-                                addPoint={addPoint.bind (null, current .get ('id'))}
-                                addDisabled={!current .get ('isIncreasable')}
-                                removePoint={
-                                  isRemovingEnabled
-                                    ? removePoint.bind (null, current .get ('id'))
-                                    : undefined
-                                }
-                                removeDisabled={!current .get ('isDecreasable')}
-                                insertTopMargin={
-                                  sortOrder === 'group'
-                                  && Maybe.notElem
-                                    (current .get ('gr'))
-                                    (previous .fmap (
-                                      Record.get<SkillWithRequirements, 'gr'> ('gr')
+                        (maybePrevious => current => {
+                          const insertTopMargin = Maybe.elem
+                            (true)
+                            (maybePrevious
+                              .bind (Maybe.ensure (() => sortOrder === 'group'))
+                              .fmap (
+                                previous => (current .get ('category') as Categories)
+                                  === Categories.BLESSINGS
+                                  ? (previous .get ('category') as Categories)
+                                    !== Categories.BLESSINGS
+                                  : !isBlessing (previous) && isBlessing (current)
+                                    || isBlessing (previous) && !isBlessing (current)
+                                    || !isBlessing (previous)
+                                      && !isBlessing (current)
+                                      && previous .get ('gr') !== current.get ('gr')
+                              ));
+
+                          const aspects =
+                            Maybe.fromMaybe
+                              ('')
+                              (maybeTraditionId .fmap (
+                                R.pipe (
+                                  traditionId => Maybe.mapMaybe<number, string>
+                                    (R.pipe (
+                                      Maybe.ensure (
+                                        List.elem_ (getAspectsOfTradition (traditionId + 1))
+                                      ),
+                                      Maybe.bind_ (R.pipe (
+                                        R.dec,
+                                        List.subscript (
+                                          translate (locale, 'liturgies.view.aspects')
+                                        )
+                                      ))
                                     ))
-                                }
-                                selectForInfo={this.showInfo}
-                                attributes={attributes}
-                                derivedCharacteristics={derivedCharacteristics}
-                                groupIndex={current .get ('gr')}
-                                groupList={translate (locale, 'skills.view.groups')}
-                                />
-                            ))
+                                    (current .get ('aspects')),
+                                  sortStrings (locale .get ('id')),
+                                  List.intercalate (', ')
+                                )
+                              ));
+
+                          return Tuple.of<
+                            Maybe<
+                              Record<LiturgicalChantWithRequirements> | Record<BlessingCombined>
+                            >,
+                            JSX.Element
+                          >
+                            (Just (current))
+                            (isBlessing (current)
+                              ? (
+                                <SkillListItem
+                                  key={current .get ('id')}
+                                  id={current .get ('id')}
+                                  name={current .get ('name')}
+                                  removePoint={
+                                    isRemovingEnabled
+                                      ? removeBlessingFromList.bind (null, current .get ('id'))
+                                      : undefined}
+                                  addFillElement
+                                  noIncrease
+                                  insertTopMargin={insertTopMargin}
+                                  attributes={attributes}
+                                  derivedCharacteristics={derivedCharacteristics}
+                                  selectForInfo={this.showSlideinInfo}
+                                  addText={
+                                    sortOrder === 'group'
+                                      ? `${aspects} / ${
+                                        translate (locale, 'liturgies.view.blessing')
+                                      }`
+                                      : aspects
+                                  }
+                                  />
+                              )
+                              : (
+                                <SkillListItem
+                                  key={current .get ('id')}
+                                  id={current .get ('id')}
+                                  name={current .get ('name')}
+                                  addDisabled={!current .get ('isIncreasable')}
+                                  addPoint={addPoint.bind (null, current .get ('id'))}
+                                  removeDisabled={!current .get ('isDecreasable')}
+                                  removePoint={
+                                    isRemovingEnabled
+                                      ? current .get ('value') === 0
+                                        ? removeFromList.bind (null, current .get ('id'))
+                                        : removePoint.bind (null, current .get ('id'))
+                                      : undefined
+                                  }
+                                  addFillElement
+                                  check={current .get ('check')}
+                                  checkmod={current .lookup ('checkmod')}
+                                  ic={current .get ('ic')}
+                                  sr={current .get ('value')}
+                                  insertTopMargin={insertTopMargin}
+                                  attributes={attributes}
+                                  derivedCharacteristics={derivedCharacteristics}
+                                  selectForInfo={this.showSlideinInfo}
+                                  addText={
+                                    sortOrder === 'group'
+                                    ? `${aspects} / ${
+                                      Maybe.fromMaybe
+                                        ('')
+                                        (translate (locale, 'liturgies.view.groups')
+                                          .subscript (current .get ('gr') - 1))
+                                    }`
+                                    : aspects
+                                  }
+                                  />
+                              )
+                            );
+                        })
                         (Nothing ()),
                       Tuple.snd,
                       List.toArray
                     )))
-              }
-              {
-                activeList.length === 0 ? <ListPlaceholder locale={locale} type="liturgicalChants" noResults={filterText.length > 0} /> : activeList.map ((obj, index, array) => {
-                  const prevObj = array[index - 1];
-
-                  const name = obj.name;
-
-                  const aspc = obj.aspects.filter (e => getAspectsOfTradition (traditionId as number + 1).includes (e)).map (e => translate (locale, 'liturgies.view.aspects')[e - 1]).sort ().join (', ');
-
-                  if (obj.category === Categories.BLESSINGS) {
-                    return (
-                      <SkillListItem
-                        key={obj.id}
-                        id={obj.id}
-                        name={name}
-                        removePoint={isRemovingEnabled ? removeBlessingFromList.bind (null, obj.id) : undefined}
-                        addFillElement
-                        noIncrease
-                        insertTopMargin={sortOrder === 'group' && prevObj && prevObj.category !== Categories.BLESSINGS}
-                        attributes={attributes}
-                        derivedCharacteristics={derivedCharacteristics}
-                        selectForInfo={this.showInfo}
-                        addText={sortOrder === 'group' ? `${aspc} / ${translate (locale, 'liturgies.view.blessing')}` : aspc}
-                        />
-                    );
-                  }
-
-                  const { check, checkmod, ic, value, isDecreasable, isIncreasable } = obj;
-
-                  const add = {
-                    addDisabled: !isIncreasable,
-                    addPoint: addPoint.bind (null, obj.id),
-                    check,
-                    checkmod,
-                    ic,
-                    sr: value,
-                  };
-
-                  return (
-                    <SkillListItem
-                      {...add}
-                      key={obj.id}
-                      id={obj.id}
-                      name={name}
-                      removePoint={isRemovingEnabled ? obj.value === 0 ? removeFromList.bind (null, obj.id) : removePoint.bind (null, obj.id) : undefined}
-                      removeDisabled={!isDecreasable}
-                      addFillElement
-                      insertTopMargin={sortOrder === 'group' && prevObj && (prevObj.category === Categories.BLESSINGS || prevObj.gr !== obj.gr)}
-                      attributes={attributes}
-                      derivedCharacteristics={derivedCharacteristics}
-                      selectForInfo={this.showInfo}
-                      addText={sortOrder === 'group' ? aspc.length === 0 ? translate (locale, 'liturgies.view.groups')[obj.gr - 1] : `${aspc} / ${translate (locale, 'liturgies.view.groups')[obj.gr - 1]}` : aspc}
-                      />
-                  );
-                })
               }
             </ListView>
           </Scroll>
