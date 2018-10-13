@@ -20,7 +20,7 @@ export interface SortOptionsProps {
   locale: UIMessagesObject;
   options: List<SortNames>;
   sortOrder: string;
-  sort (option: Maybe<string>): void;
+  sort (option: string): void;
 }
 
 export function SortOptions (props: SortOptionsProps) {
@@ -43,7 +43,13 @@ export function SortOptions (props: SortOptionsProps) {
     <RadioButtonGroup
       {...other}
       active={sortOrder}
-      onClick={sort}
+      onClick={
+        option => {
+          if (Maybe.isJust (option)) {
+            sort (Maybe.fromJust (option));
+          }
+        }
+      }
       array={
         sortObjects (
           options .map (e => Record.of ({ name: SORT_NAMES[e], value: e })),

@@ -1,15 +1,17 @@
+import * as R from 'ramda';
 import * as React from 'react';
-import { Dropdown } from '../../components/Dropdown';
+import { Dropdown, DropdownOption } from '../../components/Dropdown';
 import { IconButton } from '../../components/IconButton';
 import { InputButtonGroup } from '../../components/InputButtonGroup';
 import { TextField } from '../../components/TextField';
 import { InputTextEvent, PersonalData } from '../../types/data';
 import { UIMessagesObject } from '../../types/ui';
 import { Culture, Race, RaceVariant } from '../../types/wiki';
-import { Just, List, Maybe, Record } from '../../utils/dataUtils';
+import { List, Maybe, Record } from '../../utils/dataUtils';
 import { sortObjects } from '../../utils/FilterSortUtils';
 import { translate } from '../../utils/I18n';
 import { isEmptyOr, isFloat, isNaturalNumber } from '../../utils/RegexUtils';
+import { isNumber } from '../../utils/typeCheckUtils';
 
 export interface OverviewPersonalDataOwnProps {
   culture: Maybe<Record<Culture>>;
@@ -48,8 +50,8 @@ export type OverviewPersonalDataProps =
   & OverviewPersonalDataOwnProps;
 
 interface HairColorAndEyeColorOptions {
-  hairOptions: List<{ id: Just<number>; name: string }>;
-  eyeOptions: List<{ id: Just<number>; name: string }>;
+  hairOptions: List<Record<DropdownOption>>;
+  eyeOptions: List<Record<DropdownOption>>;
 }
 
 const getHairColorAndEyeColorOptions = (locale: UIMessagesObject) =>
@@ -63,10 +65,7 @@ const getHairColorAndEyeColorOptions = (locale: UIMessagesObject) =>
                 hairOptions: Maybe.catMaybes (
                   List.of (
                     hairColorTags .subscript (23) .fmap (
-                      name => ({
-                        id: Just (24),
-                        name,
-                      })
+                      name => Record.of<DropdownOption> ({ id: 24, name })
                     )
                   )
                 ),
@@ -74,22 +73,15 @@ const getHairColorAndEyeColorOptions = (locale: UIMessagesObject) =>
                   Maybe.catMaybes (
                     List.of (
                       eyeColorTags .subscript (18) .fmap (
-                        name => Record.of ({
-                          id: Just (19),
-                          name,
-                        })
+                        name => Record.of<DropdownOption> ({ id: 19, name })
                       ),
                       eyeColorTags .subscript (19) .fmap (
-                        name => Record.of ({
-                          id: Just (20),
-                          name,
-                        })
+                        name => Record.of<DropdownOption> ({ id: 20, name })
                       )
                     )
                   ),
                   locale.get ('id')
-                )
-                  .map (Record.toObject),
+                ),
               };
             }
 
@@ -108,33 +100,31 @@ const getHairColorAndEyeColorOptions = (locale: UIMessagesObject) =>
                 hairOptions: sortObjects (
                   Maybe.imapMaybe
                     (index => (name: string) =>
-                      Maybe.ensure<{ id: Just<number>; name: string }>
+                      Maybe.ensure<Record<DropdownOption>>
                         (entry => Maybe.elem
                           (true)
-                          (raceHairColors
-                            .alt (raceVariantHairColors)
-                            .fmap (List.elem (Maybe.fromJust (entry.id)))))
-                        ({ id: Just (index + 1), name })
-                        .fmap (Record.of))
+                          (Maybe.liftM2<number, List<number>, boolean>
+                            (List.elem)
+                            (entry .lookup ('id') .bind (Maybe.ensure (isNumber)))
+                            (raceHairColors .alt (raceVariantHairColors))))
+                        (Record.of<DropdownOption> ({ id: index + 1, name })))
                     (hairColorTags),
                   locale.get ('id')
-                )
-                  .map (Record.toObject),
+                ),
                 eyeOptions: sortObjects (
                   Maybe.imapMaybe
                     (index => (name: string) =>
-                      Maybe.ensure<{ id: Just<number>; name: string }>
+                      Maybe.ensure<Record<DropdownOption>>
                         (entry => Maybe.elem
                           (true)
-                          (raceEyeColors
-                            .alt (raceVariantEyeColors)
-                            .fmap (List.elem (Maybe.fromJust (entry.id)))))
-                        ({ id: Just (index + 1), name })
-                        .fmap (Record.of))
+                          (Maybe.liftM2<number, List<number>, boolean>
+                            (List.elem)
+                            (entry .lookup ('id') .bind (Maybe.ensure (isNumber)))
+                            (raceEyeColors .alt (raceVariantEyeColors))))
+                        (Record.of<DropdownOption> ({ id: index + 1, name })))
                     (eyeColorTags),
                   locale.get ('id')
-                )
-                  .map (Record.toObject),
+                ),
               };
             }
 
@@ -165,13 +155,18 @@ export function OverviewPersonalData (props: OverviewPersonalDataProps) {
                                                                 (isAlbino);
 
   const socialOptions = Maybe.fromMaybe
-    (List.empty<{ id: Just<number>; name: string }> ())
+    (List.empty<Record<DropdownOption>> ())
     (maybeCulture .fmap (
       culture => Maybe.imapMaybe
         (index => (name: string) =>
-          Maybe.ensure<{ id: Just<number>; name: string }>
-            (entry => List.elem (Maybe.fromJust (entry.id)) (culture.get ('socialStatus')))
-            ({ id: Just (index + 1), name }))
+          Maybe.ensure<Record<DropdownOption>>
+            (R.pipe (
+              Record.lookup<DropdownOption, 'id'> ('id'),
+              Maybe.bind_ (Maybe.ensure (isNumber)),
+              Maybe.fmap (List.elem_ (culture .get ('socialStatus'))),
+              Maybe.elem (true)
+            ))
+            (Record.of<DropdownOption> ({ id: index + 1, name })))
         (socialstatusTags)
     ));
 

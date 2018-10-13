@@ -6,7 +6,7 @@ import { AppState } from '../reducers/appReducer';
 import { getPets } from '../selectors/petsSelectors';
 import { isEditPetAvatarOpen } from '../selectors/stateSelectors';
 import { PetEditorInstance } from '../types/data';
-import { Pets, PetsDispatchProps, PetsOwnProps, PetsStateProps } from '../views/belongings/Pets';
+import { Pets, PetsDispatchProps, PetsOwnProps, PetsStateProps } from '../views/pets/Pets';
 
 function mapStateToProps(state: AppState) {
   return {

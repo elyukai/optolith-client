@@ -48,9 +48,9 @@ test('delete', () => {
 });
 
 test('OrderedSet.delete', () => {
-  expect(OrderedSet.insert ('c') (OrderedSet.of(['a', 'b', 'c'])))
+  expect(OrderedSet.delete ('c') (OrderedSet.of(['a', 'b', 'c'])))
     .toEqual(OrderedSet.of(['a', 'b']));
-  expect(OrderedSet.insert ('d') (OrderedSet.of(['a', 'b', 'c'])))
+  expect(OrderedSet.delete ('d') (OrderedSet.of(['a', 'b', 'c'])))
     .toEqual(OrderedSet.of(['a', 'b', 'c']));
 });
 

@@ -665,7 +665,7 @@ export interface ItemTemplate {
   readonly reloadTime?: number;
   readonly stabilityMod?: number;
   readonly stp?: number;
-  readonly template?: string;
+  readonly template: string;
   readonly weight?: number;
   readonly where?: string;
   readonly note?: string;

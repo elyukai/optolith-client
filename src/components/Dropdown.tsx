@@ -1,11 +1,11 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
-import { List, Maybe, Nothing } from '../utils/dataUtils';
+import { List, Maybe, Nothing, Record } from '../utils/dataUtils';
 import { Label } from './Label';
 import { Scroll } from './Scroll';
 
 export interface DropdownOption {
-  id: Maybe<number | string>;
+  id?: number | string;
   name: string;
   disabled?: boolean;
 }
@@ -16,10 +16,11 @@ export interface DropdownProps {
   fullWidth?: boolean;
   hint?: string;
   label?: string;
-  options: List<DropdownOption>;
+  options: List<Record<DropdownOption>>;
   required?: boolean;
   value: Maybe<boolean | string | number>;
   onChange? (option: Maybe<number | string>): void;
+  onChangeJust? (option: number | string): void;
 }
 
 interface DropdownState {
@@ -55,10 +56,14 @@ export class Dropdown extends React.Component<DropdownProps, DropdownState> {
   }
 
   onChange = (option: Maybe<number | string> = Nothing ()) => {
-    const { onChange } = this.props;
+    const { onChange, onChangeJust } = this.props;
 
     if (typeof onChange === 'function') {
       onChange (option);
+    }
+
+    if (typeof onChangeJust === 'function' && Maybe.isJust (option)) {
+      onChangeJust (Maybe.fromJust (option));
     }
 
     this.setState ({ isOpen: false });
@@ -89,11 +94,11 @@ export class Dropdown extends React.Component<DropdownProps, DropdownState> {
 
     const trueDisabled = disabled instanceof Maybe ? Maybe.elem (true) (disabled) : disabled;
 
-    const style = isOpen ? (options.length () < 6 ? options.length () * 33 + 1 : 166) : 0;
+    const style = isOpen ? (options .length () < 6 ? options .length () * 33 + 1 : 166) : 0;
 
-    const maybeCurrent = options.find (e => value.equals (e.id));
+    const maybeCurrent = options.find (e => value .equals (e .lookup ('id')));
     const valueText = maybeCurrent
-      .fmap (current => current.name)
+      .fmap (Record.get<DropdownOption, 'name'> ('name'))
       .alt (Maybe.fromNullable (hint));
 
     const downElement = (
@@ -104,20 +109,20 @@ export class Dropdown extends React.Component<DropdownProps, DropdownState> {
               options
                 .map (option => {
                   const classNameInner = classNames (
-                    value.equals (option.id) && 'active',
-                    option.disabled && 'disabled'
+                    value .equals (option .lookup ('id')) && 'active',
+                    Maybe.elem (true) (option .lookup ('disabled')) && 'disabled'
                   );
 
                   return (
                     <div
                       className={classNameInner}
-                      key={Maybe.fromMaybe<string | number> ('__DEFAULT__') (option.id)}
+                      key={Maybe.fromMaybe<string | number> ('__DEFAULT__') (option .lookup ('id'))}
                       onClick={
-                        !trueDisabled && !option.disabled
-                          ? this.onChange.bind (undefined, option.id)
+                        !trueDisabled && Maybe.elem (false) (option .lookup ('disabled'))
+                          ? this.onChange.bind (undefined, option .lookup ('id'))
                           : undefined}
                       >
-                      {option.name}
+                      {option .get ('name')}
                     </div>
                   );
                 })

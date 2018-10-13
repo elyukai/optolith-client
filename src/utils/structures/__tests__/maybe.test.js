@@ -125,14 +125,14 @@ test('then', () => {
 });
 
 test('Maybe.then', () => {
-  expect(Maybe.then (Maybe.of(3)) (Maybe.of(2)))
-    .toEqual(Maybe.of(2));
-  expect(Maybe.then (Maybe.of(null)) (Maybe.of(2)))
-    .toEqual(Maybe.of(null));
-  expect(Maybe.then (Maybe.of(3)) (Maybe.of(null)))
-    .toEqual(Maybe.of(null));
-  expect(Maybe.then (Maybe.of(null)) (Maybe.of(null)))
-    .toEqual(Maybe.of(null));
+  expect (Maybe.then (Maybe.of (3)) (Maybe.of (2)))
+    .toEqual (Maybe.of (2));
+  expect (Maybe.then (Maybe.of (null)) (Maybe.of (2)))
+    .toEqual (Maybe.of (null));
+  expect (Maybe.then (Maybe.of (3)) (Maybe.of (null)))
+    .toEqual (Maybe.of (null));
+  expect (Maybe.then (Maybe.of (null)) (Maybe.of (null)))
+    .toEqual (Maybe.of (null));
 });
 
 test('ap', () => {
@@ -205,13 +205,13 @@ test('Maybe.alt', () => {
 });
 
 test('Maybe.alt_', () => {
-  expect(Maybe.alt (Maybe.of(2)) (Maybe.of(3)))
+  expect(Maybe.alt_ (Maybe.of(2)) (Maybe.of(3)))
     .toEqual(Maybe.of(3));
-  expect(Maybe.alt (Maybe.of(null)) (Maybe.of(3)))
+  expect(Maybe.alt_ (Maybe.of(null)) (Maybe.of(3)))
     .toEqual(Maybe.of(3));
-  expect(Maybe.alt (Maybe.of(2)) (Maybe.of(null)))
+  expect(Maybe.alt_ (Maybe.of(2)) (Maybe.of(null)))
     .toEqual(Maybe.of(2));
-  expect(Maybe.alt (Maybe.of(null)) (Maybe.of(null)))
+  expect(Maybe.alt_ (Maybe.of(null)) (Maybe.of(null)))
     .toEqual(Maybe.of(null));
 });
 

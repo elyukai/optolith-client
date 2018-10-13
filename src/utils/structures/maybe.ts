@@ -201,7 +201,7 @@ export class Maybe<T extends Some> implements Al.Alternative<T>, Al.Monad<T>,
    * ```a >> b = a >>= \ _ -> b```
    */
   static then<T extends Some> (m1: Maybe<any>): (m2: Maybe<T>) => Maybe<T> {
-    return m2 => m1.value !== undefined ? m2 : this as any;
+    return m2 => m1.value !== undefined ? m2 : Maybe.empty ();
   }
 
   /**
@@ -266,7 +266,7 @@ export class Maybe<T extends Some> implements Al.Alternative<T>, Al.Monad<T>,
    */
   mappend<U, S extends Al.Semigroup<U>> (this: Maybe<S>, m: Maybe<S>): Maybe<S> {
     return this.value !== undefined && m.value !== undefined
-      ? Maybe.return (this.value.mappend (m.value))
+      ? Maybe.return (this.value .mappend (m.value) as S)
       : this;
   }
 

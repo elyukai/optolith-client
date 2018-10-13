@@ -79,7 +79,7 @@ type Action =
 
 function purseReducer (
   state: Record<Data.HeroDependent>,
-  action: Action,
+  action: Action
 ): Record<Data.HeroDependent> {
   switch (action.type) {
     case ActionTypes.SET_DUCATES:
@@ -117,7 +117,7 @@ function purseReducer (
 
 function equipmentManagingReducer (
   state: Record<Data.HeroDependent>,
-  action: Action,
+  action: Action
 ): Record<Data.HeroDependent> {
   switch (action.type) {
     case ActionTypes.ADD_ITEM: {
@@ -163,12 +163,12 @@ function equipmentManagingReducer (
               amount: '',
               at: '',
               damageBonus: Record.of<Data.EditPrimaryAttributeDamageThreshold> ({
-                threshold: ''
+                threshold: '',
               }),
               damageDiceNumber: '',
               damageFlat: '',
               enc: '',
-              gr: 0,
+              gr: 1,
               id: '',
               isParryingWeapon: false,
               isTemplateLocked: false,
@@ -254,7 +254,7 @@ function equipmentManagingReducer (
 
 function itemGeneralReducer (
   state: Record<Data.HeroDependent>,
-  action: Action,
+  action: Action
 ): Record<Data.HeroDependent> {
   switch (action.type) {
     case ActionTypes.SET_ITEM_NAME:
@@ -313,7 +313,7 @@ function itemGeneralReducer (
 
 function itemDetailsReducer (
   state: Record<Data.HeroDependent>,
-  action: Action,
+  action: Action
 ): Record<Data.HeroDependent> {
   switch (action.type) {
     case ActionTypes.SET_ITEM_COMBAT_TECHNIQUE: {
@@ -377,7 +377,7 @@ function itemDetailsReducer (
         belongings => belongings.modify<'itemInEditor'> (
           itemInEditor => itemInEditor.modify<'damageBonus'> (
             damageBonus => damageBonus
-              .insert ('primary') (primary)
+              .insertMaybe ('primary') (primary)
               .modify<'threshold'> (
                 threshold => threshold instanceof List ? '' : threshold
               ) ('threshold')
@@ -513,7 +513,7 @@ function itemDetailsReducer (
 
       return state.modify<'belongings'> (
         belongings => belongings.modify<'itemInEditor'> (
-          itemInEditor => itemInEditor.insert ('loss') (id)
+          itemInEditor => itemInEditor.insertMaybe ('loss') (id)
         ) ('itemInEditor')
       ) ('belongings');
     }
@@ -525,7 +525,7 @@ function itemDetailsReducer (
 
 function itemOptionsReducer (
   state: Record<Data.HeroDependent>,
-  action: Action,
+  action: Action
 ): Record<Data.HeroDependent> {
   switch (action.type) {
     case ActionTypes.SWITCH_IS_ITEM_DAMAGE_THRESHOLD_SEPARATED: {
@@ -583,7 +583,7 @@ function itemOptionsReducer (
 
 function armorReducer (
   state: Record<Data.HeroDependent>,
-  action: Action,
+  action: Action
 ): Record<Data.HeroDependent> {
   switch (action.type) {
     case ActionTypes.SET_ITEM_PROTECTION: {
@@ -659,7 +659,7 @@ function armorReducer (
 
 function itemTemplateReducer (
   state: Record<Data.HeroDependent>,
-  action: Action,
+  action: Action
 ): Record<Data.HeroDependent> {
   switch (action.type) {
     case ActionTypes.APPLY_ITEM_TEMPLATE:
@@ -676,7 +676,7 @@ function itemTemplateReducer (
               where,
               loss,
               amount,
-              isTemplateLocked: action.type === ActionTypes.LOCK_ITEM_TEMPLATE
+              isTemplateLocked: action.type === ActionTypes.LOCK_ITEM_TEMPLATE,
             })) as Record<Data.ItemEditorInstance>
           }
         ) ('itemInEditor')
@@ -698,7 +698,7 @@ function itemTemplateReducer (
 
 function armorZonesReducer (
   state: Record<Data.HeroDependent>,
-  action: Action,
+  action: Action
 ): Record<Data.HeroDependent> {
   switch (action.type) {
     case ActionTypes.ADD_ARMOR_ZONES: {
@@ -731,7 +731,7 @@ function armorZonesReducer (
       return state.modify<'belongings'> (
         belongings => belongings
           .insert ('zoneArmorInEditor') (Record.of<Data.ArmorZonesEditorInstance> ({
-            name: ''
+            name: '',
           }))
           .insert ('isInZoneArmorCreation') (true)
       ) ('belongings');
@@ -795,7 +795,7 @@ function armorZonesReducer (
 
       return state.modify<'belongings'> (
         belongings => belongings.modify<'zoneArmorInEditor'> (
-          zoneArmorInEditor => zoneArmorInEditor.insert ('head') (id)
+          zoneArmorInEditor => zoneArmorInEditor.insertMaybe ('head') (id)
         ) ('zoneArmorInEditor')
       ) ('belongings');
     }
@@ -805,7 +805,7 @@ function armorZonesReducer (
 
       return state.modify<'belongings'> (
         belongings => belongings.modify<'zoneArmorInEditor'> (
-          zoneArmorInEditor => zoneArmorInEditor.insert ('headLoss') (id)
+          zoneArmorInEditor => zoneArmorInEditor.insertMaybe ('headLoss') (id)
         ) ('zoneArmorInEditor')
       ) ('belongings');
     }
@@ -815,7 +815,7 @@ function armorZonesReducer (
 
       return state.modify<'belongings'> (
         belongings => belongings.modify<'zoneArmorInEditor'> (
-          zoneArmorInEditor => zoneArmorInEditor.insert ('leftArm') (id)
+          zoneArmorInEditor => zoneArmorInEditor.insertMaybe ('leftArm') (id)
         ) ('zoneArmorInEditor')
       ) ('belongings');
     }
@@ -825,7 +825,7 @@ function armorZonesReducer (
 
       return state.modify<'belongings'> (
         belongings => belongings.modify<'zoneArmorInEditor'> (
-          zoneArmorInEditor => zoneArmorInEditor.insert ('leftArmLoss') (id)
+          zoneArmorInEditor => zoneArmorInEditor.insertMaybe ('leftArmLoss') (id)
         ) ('zoneArmorInEditor')
       ) ('belongings');
     }
@@ -835,7 +835,7 @@ function armorZonesReducer (
 
       return state.modify<'belongings'> (
         belongings => belongings.modify<'zoneArmorInEditor'> (
-          zoneArmorInEditor => zoneArmorInEditor.insert ('leftLeg') (id)
+          zoneArmorInEditor => zoneArmorInEditor.insertMaybe ('leftLeg') (id)
         ) ('zoneArmorInEditor')
       ) ('belongings');
     }
@@ -845,7 +845,7 @@ function armorZonesReducer (
 
       return state.modify<'belongings'> (
         belongings => belongings.modify<'zoneArmorInEditor'> (
-          zoneArmorInEditor => zoneArmorInEditor.insert ('leftLegLoss') (id)
+          zoneArmorInEditor => zoneArmorInEditor.insertMaybe ('leftLegLoss') (id)
         ) ('zoneArmorInEditor')
       ) ('belongings');
     }
@@ -855,7 +855,7 @@ function armorZonesReducer (
 
       return state.modify<'belongings'> (
         belongings => belongings.modify<'zoneArmorInEditor'> (
-          zoneArmorInEditor => zoneArmorInEditor.insert ('torso') (id)
+          zoneArmorInEditor => zoneArmorInEditor.insertMaybe ('torso') (id)
         ) ('zoneArmorInEditor')
       ) ('belongings');
     }
@@ -865,7 +865,7 @@ function armorZonesReducer (
 
       return state.modify<'belongings'> (
         belongings => belongings.modify<'zoneArmorInEditor'> (
-          zoneArmorInEditor => zoneArmorInEditor.insert ('torsoLoss') (id)
+          zoneArmorInEditor => zoneArmorInEditor.insertMaybe ('torsoLoss') (id)
         ) ('zoneArmorInEditor')
       ) ('belongings');
     }
@@ -875,7 +875,7 @@ function armorZonesReducer (
 
       return state.modify<'belongings'> (
         belongings => belongings.modify<'zoneArmorInEditor'> (
-          zoneArmorInEditor => zoneArmorInEditor.insert ('rightArm') (id)
+          zoneArmorInEditor => zoneArmorInEditor.insertMaybe ('rightArm') (id)
         ) ('zoneArmorInEditor')
       ) ('belongings');
     }
@@ -885,7 +885,7 @@ function armorZonesReducer (
 
       return state.modify<'belongings'> (
         belongings => belongings.modify<'zoneArmorInEditor'> (
-          zoneArmorInEditor => zoneArmorInEditor.insert ('rightArmLoss') (id)
+          zoneArmorInEditor => zoneArmorInEditor.insertMaybe ('rightArmLoss') (id)
         ) ('zoneArmorInEditor')
       ) ('belongings');
     }
@@ -895,7 +895,7 @@ function armorZonesReducer (
 
       return state.modify<'belongings'> (
         belongings => belongings.modify<'zoneArmorInEditor'> (
-          zoneArmorInEditor => zoneArmorInEditor.insert ('rightLeg') (id)
+          zoneArmorInEditor => zoneArmorInEditor.insertMaybe ('rightLeg') (id)
         ) ('zoneArmorInEditor')
       ) ('belongings');
     }
@@ -905,7 +905,7 @@ function armorZonesReducer (
 
       return state.modify<'belongings'> (
         belongings => belongings.modify<'zoneArmorInEditor'> (
-          zoneArmorInEditor => zoneArmorInEditor.insert ('rightLegLoss') (id)
+          zoneArmorInEditor => zoneArmorInEditor.insertMaybe ('rightLegLoss') (id)
         ) ('zoneArmorInEditor')
       ) ('belongings');
     }
@@ -917,7 +917,7 @@ function armorZonesReducer (
 
 export function equipmentReducer (
   state: Record<Data.HeroDependent>,
-  action: Action,
+  action: Action
 ): Record<Data.HeroDependent> {
   switch (action.type) {
     case ActionTypes.SET_DUCATES:

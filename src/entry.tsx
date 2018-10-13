@@ -14,6 +14,7 @@ declare global {
 import { ProgressInfo } from 'builder-util-runtime';
 import { ipcRenderer, remote } from 'electron';
 import * as localShortcut from 'electron-localshortcut';
+// tslint:disable-next-line:no-implicit-dependencies
 import { UpdateInfo } from 'electron-updater';
 import * as React from 'react';
 import { render } from 'react-dom';
@@ -24,7 +25,7 @@ import { backAccelerator, openSettingsAccelerator, quitAccelerator, redoAccelera
 import { addErrorAlert } from './actions/AlertActions';
 import { requestClose, requestInitialData, setUpdateDownloadProgress, updateAvailable, updateNotAvailable } from './actions/IOActions';
 import { showAbout } from './actions/LocationActions';
-import { AppContainer } from './containers/App';
+import { AppContainer } from './containers/AppContainer';
 import { appReducer, AppState } from './reducers/appReducer';
 import { getLocaleMessages } from './selectors/stateSelectors';
 import { Just, Maybe } from './utils/dataUtils';

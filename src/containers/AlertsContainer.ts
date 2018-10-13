@@ -6,14 +6,14 @@ import { getCurrentAlert } from '../selectors/stateSelectors';
 import { Alerts, AlertsDispatchProps, AlertsOwnProps, AlertsStateProps } from '../views/alerts/Alerts';
 
 const mapStateToProps = (state: AppState) => ({
-  options: getCurrentAlert (state)
+  options: getCurrentAlert (state),
 });
 
 const mapDispatchToProps = (dispatch: Dispatch<Action>) => ({
   close () {
     dispatch (AlertActions.removeAlert ());
   },
-  dispatch
+  dispatch,
 });
 
 const connectAlertsContainer =

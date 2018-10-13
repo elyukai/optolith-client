@@ -40,9 +40,9 @@ test('List.subscript', () => {
 });
 
 test('List.subscript_', () => {
-  expect(List.subscript (2) (List.of(3, 2, 1))).toEqual(Just(1));
-  expect(List.subscript (4) (List.of(3, 2, 1))).toEqual(Nothing());
-  expect(List.subscript (-1) (List.of(3, 2, 1))).toEqual(Nothing());
+  expect(List.subscript_ (2) (List.of(3, 2, 1))).toEqual(Just(1));
+  expect(List.subscript_ (4) (List.of(3, 2, 1))).toEqual(Nothing());
+  expect(List.subscript_ (-1) (List.of(3, 2, 1))).toEqual(Nothing());
 });
 
 test('head', () => {
@@ -298,6 +298,11 @@ test('List.mapAccumL', () => {
     .toEqual(Tuple.of (6) (List.of(2, 4, 6)));
 });
 
+test('List.unfoldr', () => {
+  expect(List.unfoldr(x => x < 11 ? Just(Tuple.of(x)(x + 1)) : Nothing())(1))
+    .toEqual(List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10));
+});
+
 test('take', () => {
   expect(List.of(1, 2, 3, 4, 5).take(3))
     .toEqual(List.of(1, 2, 3));
@@ -341,9 +346,9 @@ test('List.elem', () => {
 });
 
 test('List.elem_', () => {
-  expect(List.elem (List.of(1, 2, 3, 4, 5)) (3))
+  expect(List.elem_ (List.of(1, 2, 3, 4, 5)) (3))
     .toBeTruthy();
-  expect(List.elem (List.of(1, 2, 3, 4, 5)) (6))
+  expect(List.elem_ (List.of(1, 2, 3, 4, 5)) (6))
     .toBeFalsy();
 });
 
@@ -362,9 +367,9 @@ test('List.notElem', () => {
 });
 
 test('List.notElem_', () => {
-  expect(List.notElem (List.of(1, 2, 3, 4, 5)) (3))
+  expect(List.notElem_ (List.of(1, 2, 3, 4, 5)) (3))
     .toBeFalsy();
-  expect(List.notElem (List.of(1, 2, 3, 4, 5)) (6))
+  expect(List.notElem_ (List.of(1, 2, 3, 4, 5)) (6))
     .toBeTruthy();
 });
 
@@ -457,6 +462,24 @@ test('ifindIndices', () => {
     .toEqual(List.of(4));
   expect(List.of(1, 2, 3, 4, 5, 3).ifindIndices(i => x => x > 8 && i > 2))
     .toEqual(List.of());
+});
+
+test('List.zip', () => {
+  expect(List.zip (List.of ('A', 'B', 'C')) (List.of (1, 2, 3)))
+    .toEqual(List.of(Tuple.of ('A') (1), Tuple.of ('B') (2), Tuple.of ('C') (3)));
+  expect(List.zip (List.of ('A', 'B', 'C', 'D')) (List.of (1, 2, 3)))
+    .toEqual(List.of(Tuple.of ('A') (1), Tuple.of ('B') (2), Tuple.of ('C') (3)));
+  expect(List.zip (List.of ('A', 'B', 'C')) (List.of (1, 2, 3, 4)))
+    .toEqual(List.of(Tuple.of ('A') (1), Tuple.of ('B') (2), Tuple.of ('C') (3)));
+});
+
+test('List.zipWith', () => {
+  expect(List.zipWith (Tuple.of) (List.of ('A', 'B', 'C')) (List.of (1, 2, 3)))
+    .toEqual(List.of(Tuple.of ('A') (1), Tuple.of ('B') (2), Tuple.of ('C') (3)));
+  expect(List.zipWith (Tuple.of) (List.of ('A', 'B', 'C', 'D')) (List.of (1, 2, 3)))
+    .toEqual(List.of(Tuple.of ('A') (1), Tuple.of ('B') (2), Tuple.of ('C') (3)));
+  expect(List.zipWith (Tuple.of) (List.of ('A', 'B', 'C')) (List.of (1, 2, 3, 4)))
+    .toEqual(List.of(Tuple.of ('A') (1), Tuple.of ('B') (2), Tuple.of ('C') (3)));
 });
 
 test('delete', () => {
@@ -559,11 +582,6 @@ test('List.maximum', () => {
     .toEqual(3);
   expect(List.maximum(List.of()))
     .toEqual(-Infinity);
-});
-
-test('List.unfoldr', () => {
-  expect(List.unfoldr(x => x < 11 ? Just(Tuple.of(x)(x + 1)) : Nothing())(1))
-    .toEqual(List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10));
 });
 
 test('List.find', () => {

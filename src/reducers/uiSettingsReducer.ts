@@ -13,6 +13,7 @@ import { SetSkillsSortOrderAction, SwitchSkillRatingVisibilityAction } from '../
 import { SetSpecialAbilitiesSortOrderAction } from '../actions/SpecialAbilitiesActions';
 import { SetSpellsSortOrderAction } from '../actions/SpellsActions';
 import { ActionTypes } from '../constants/ActionTypes';
+import { Maybe, Nothing } from '../utils/dataUtils';
 
 type Action =
   ReceiveInitialDataAction |
@@ -69,8 +70,8 @@ export interface UISettingsState {
   sheetCheckAttributeValueVisibility: boolean;
   theme: string;
   enableEditingHeroAfterCreationPhase: boolean;
-  meleeItemTemplatesCombatTechniqueFilter?: string;
-  rangedItemTemplatesCombatTechniqueFilter?: string;
+  meleeItemTemplatesCombatTechniqueFilter: Maybe<string>;
+  rangedItemTemplatesCombatTechniqueFilter: Maybe<string>;
   enableAnimations: boolean;
 }
 
@@ -101,6 +102,8 @@ const initialState: UISettingsState = {
   theme: 'dark',
   enableEditingHeroAfterCreationPhase: false,
   enableAnimations: true,
+  meleeItemTemplatesCombatTechniqueFilter: Nothing (),
+  rangedItemTemplatesCombatTechniqueFilter: Nothing (),
 };
 
 function sortOrderReducer (
@@ -155,7 +158,14 @@ export function uiSettingsReducer (
           ...config
         } = action.payload.config;
 
-        return { ...state, ...config };
+        return {
+          ...state,
+          ...config,
+          meleeItemTemplatesCombatTechniqueFilter:
+            Maybe.normalize (config.meleeItemTemplatesCombatTechniqueFilter),
+          rangedItemTemplatesCombatTechniqueFilter:
+            Maybe.normalize (config.rangedItemTemplatesCombatTechniqueFilter),
+        };
       }
 
       return state;

@@ -71,6 +71,18 @@ export class Record<T extends RecordBase> {
   }
 
   /**
+   * `notMember :: String -> a -> Bool`
+   *
+   * Returns if the key is not a member of the record or if the key holds a `Nothing`
+   * when using `lookup key`.
+   *
+   * The opposite of `member`.
+   */
+  notMember (key: string): boolean {
+    return !this.value.hasOwnProperty (key) || !isSome (this.value[key]);
+  }
+
+  /**
    * `get :: String -> a -> a[String]`
    *
    * Returns the value at the given key. Only use for NonNullable properties,

@@ -1,3 +1,4 @@
+import * as R from 'ramda';
 import { UIMessages, UIMessagesObject } from '../types/ui';
 import { Maybe } from './dataUtils';
 
@@ -56,9 +57,7 @@ export function translate<T extends keyof UIMessages> (
   }
 }
 
-export const localizeNumber = (n: number, locale: string) => {
-  return n.toLocaleString (locale);
-};
+export const localizeNumber = (localeId: string) => (num: number) => num .toLocaleString (localeId);
 
 /**
  * If the selected language is English centimeters it will be converted to
@@ -66,35 +65,17 @@ export const localizeNumber = (n: number, locale: string) => {
  *
  * Uses `1cm = 0.4in` instead of `1cm = 0.3937in`.
  */
-export const localizeSize = (
-  number: number | undefined,
-  locale: string
-): number => {
-  if (typeof number !== 'number') {
-    return 0;
-  }
-  else if (locale === 'en-US') {
-    return number * 0.4;
-  }
-
-  return number;
-};
+export const localizeSize = (localeId: string) => R.pipe (
+  Maybe.fmap<number, number> (size => localeId === 'en-US' ? size * 0.4 : size),
+  Maybe.fromMaybe (0)
+);
 
 /**
  * If the selected language is English kilograms will be converted to pounds.
  *
  * Uses `1kg = 2pd` instead of `1kg = 2.2046pd`.
  */
-export const localizeWeight = (
-  number: number | undefined,
-  locale: string
-): number => {
-  if (typeof number !== 'number') {
-    return 0;
-  }
-  else if (locale === 'en-US') {
-    return number * 2;
-  }
-
-  return number;
-};
+export const localizeWeight = (localeId: string) => R.pipe (
+  Maybe.fmap<number, number> (weight => localeId === 'en-US' ? weight * 2 : weight),
+  Maybe.fromMaybe (0)
+);

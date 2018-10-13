@@ -12,7 +12,7 @@ export const getSum = OrderedMap.foldl<
 export const isIncreasable = (
   wiki: Record<Wiki.WikiAll>,
   state: Record<Data.HeroDependent>,
-  instance: Record<Data.AttributeDependent>,
+  instance: Record<Data.AttributeDependent>
 ): boolean => {
   if (state.get ('phase') < 3) {
     const total = getSum (state.get ('attributes'));
@@ -34,7 +34,7 @@ export const isIncreasable = (
   else if (state.get ('rules').get ('attributeValueLimit')) {
     const currentExperienceLevellId = getExperienceLevelIdByAp (
       wiki.get ('experienceLevels'),
-      state.get ('adventurePointsTotal'),
+      state.get ('adventurePointsTotal')
     );
 
     return Maybe.fromMaybe (false) (
@@ -52,12 +52,12 @@ export const isIncreasable = (
 export const isDecreasable = (
   wiki: Record<Wiki.WikiAll>,
   state: Record<Data.HeroDependent>,
-  instance: Record<Data.AttributeDependent>,
+  instance: Record<Data.AttributeDependent>
 ): boolean => {
   const dependencies = flattenDependencies (
     wiki,
     state,
-    instance.get ('dependencies'),
+    instance.get ('dependencies')
   );
 
   return instance.get ('value') > Math.max (8, ...dependencies);
@@ -91,3 +91,5 @@ export function convertId<T extends string | undefined> (id: T): T {
       return id;
   }
 }
+
+export const getAbbreviation = Record.get<Wiki.Attribute, 'short'> ('short');

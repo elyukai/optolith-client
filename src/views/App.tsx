@@ -2,7 +2,7 @@ import * as classNames from 'classnames';
 import * as React from 'react';
 import { Scroll } from '../components/Scroll';
 import { TitleBar } from '../components/TitleBar';
-import { AlertsContainer } from '../containers/Alerts';
+import { AlertsContainer } from '../containers/AlertsContainer';
 import { DownloaderContainer } from '../containers/DownloaderContainer';
 import { NavigationBarContainer } from '../containers/NavigationBarContainer';
 import { UIMessagesObject } from '../types/ui';
@@ -54,7 +54,7 @@ export class App extends React.Component<AppProps, AppState> {
       platform,
       theme,
       setTab,
-      areAnimationsEnabled
+      areAnimationsEnabled,
     } = this.props;
 
     const { hasError } = this.state;

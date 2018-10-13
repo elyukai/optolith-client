@@ -7,7 +7,7 @@ import { getCarryingCapacity } from '../selectors/attributeSelectors';
 import { getStartEl } from '../selectors/elSelectors';
 import { getFilteredZoneArmors, getItems, getPurse, getTemplates, getTotalPrice, getTotalWeight } from '../selectors/equipmentSelectors';
 import { getArmorZonesEditorInstance, getIsArmorZonesCreation, getTotalAdventurePoints, getZoneArmorFilterText } from '../selectors/stateSelectors';
-import { ArmorZones, ArmorZonesDispatchProps, ArmorZonesOwnProps, ArmorZonesStateProps } from '../views/belongings/ArmorZones';
+import { ArmorZones, ArmorZonesDispatchProps, ArmorZonesOwnProps, ArmorZonesStateProps } from '../views/hitZoneArmors/hitZoneArmors';
 
 function mapStateToProps(state: AppState) {
   return {
@@ -103,4 +103,4 @@ function mapDispatchToProps(dispatch: Dispatch<Action>) {
   };
 }
 
-export const ArmorZonesContainer = connect<ArmorZonesStateProps, ArmorZonesDispatchProps, ArmorZonesOwnProps>(mapStateToProps, mapDispatchToProps)(ArmorZones);
+export const HitZoneArmorsContainer = connect<ArmorZonesStateProps, ArmorZonesDispatchProps, ArmorZonesOwnProps>(mapStateToProps, mapDispatchToProps)(ArmorZones);

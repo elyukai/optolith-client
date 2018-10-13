@@ -1,6 +1,7 @@
 import { ActivatableDependent, Hero, HeroDependent } from '../types/data';
 import { CombatTechniqueCombined, CombatTechniqueWithAttackParryBase, CombatTechniqueWithRequirements } from '../types/view';
 import { ExperienceLevel, WikiRecord } from '../types/wiki';
+import { createDependentSkill } from '../utils/createEntryUtils';
 import { createMaybeSelector } from '../utils/createMaybeSelector';
 import { Just, List, Maybe, Nothing, Record } from '../utils/dataUtils';
 import { AllSortOptions, filterAndSortObjects } from '../utils/FilterSortUtils';
@@ -49,23 +50,23 @@ export const getCombatTechniquesForSheet = createMaybeSelector (
   (maybeCombatTechniques, maybeAttributes, wikiCombatTechniques) =>
     maybeAttributes.bind (
       attributes => maybeCombatTechniques.fmap (
-        combatTechniques => combatTechniques.foldlWithKey<CombatTechniquesForSheet> (
-          list => id => entry => Maybe.fromMaybe (list) (
-            wikiCombatTechniques.lookup (id)
-              .fmap (
-                wikiEntry => {
-                  const combined = wikiEntry.merge (entry);
+        combatTechniques => wikiCombatTechniques.foldlWithKey<CombatTechniquesForSheet> (
+          list => id => wikiEntry => {
+            const entry =
+              combatTechniques .findWithDefault
+                (createDependentSkill (id, { value: 6 }))
+                (id);
 
-                  const at = getAttackBase (attributes, combined);
-                  const pa = getParryBase (attributes, combined);
+            const combined = wikiEntry.merge (entry);
 
-                  return list.append (
-                    combined.mergeMaybe (Record.of ({ at, pa })) as
-                      Record<CombatTechniqueWithAttackParryBase>
-                  );
-                }
-              )
-          )
+            const at = getAttackBase (attributes, combined);
+            const pa = getParryBase (attributes, combined);
+
+            return list.append (
+              combined.mergeMaybe (Record.of ({ at, pa })) as
+                Record<CombatTechniqueWithAttackParryBase>
+            );
+          }
         ) (List.of ())
       )
     )

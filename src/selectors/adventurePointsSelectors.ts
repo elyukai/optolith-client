@@ -1,10 +1,12 @@
 import * as R from 'ramda';
 import { ActiveViewObject, HeroDependent } from '../types/data';
+import { ExperienceLevel } from '../types/wiki';
 import { getAdventurePointsSpentDifference, getDisAdvantagesSubtypeMax } from '../utils/adventurePointsUtils';
 import { createMaybeSelector } from '../utils/createMaybeSelector';
 import { List, Maybe, OrderedSet, Record } from '../utils/dataUtils';
 import { getAPRange } from '../utils/improvementCostUtils';
 import { getAdvantagesForEdit, getDisadvantagesForEdit, getSpecialAbilitiesForEdit } from './activatableSelectors';
+import { getStartEl } from './elSelectors';
 import { getCurrentProfession, getCurrentProfessionVariant, getCurrentRace } from './rcpSelectors';
 import { getAdvantages, getAttributes, getBlessings, getCantrips, getCombatTechniques, getCurrentHeroPresent, getDisadvantages, getEnergies, getLiturgicalChants, getPhase, getSkills, getSpecialAbilities, getSpells, getTotalAdventurePoints, getWiki, getWikiCombatTechniques, getWikiLiturgicalChants, getWikiSkills, getWikiSpells } from './stateSelectors';
 
@@ -489,4 +491,17 @@ export const getAdventurePointsObject = createMaybeSelector (
       spentOnBlessedDisadvantages: blessedDisadvantages,
     })
   ) as Record<AdventurePointsObject>
+);
+
+export const getHasCurrentNoAddedAP = createMaybeSelector (
+  getTotalAdventurePoints,
+  getStartEl,
+  (maybeTotalAdventurePoints, maybeExperienceLevel) =>
+    Maybe.elem
+      (true)
+      (Maybe.liftM2<number, Record<ExperienceLevel>, boolean>
+        (totalAdventurePoints => experienceLevel =>
+          totalAdventurePoints === experienceLevel .get ('ap'))
+        (maybeTotalAdventurePoints)
+        (maybeExperienceLevel))
 );

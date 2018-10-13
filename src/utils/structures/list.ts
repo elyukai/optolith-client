@@ -769,7 +769,7 @@ f' z       = Nothing
       if (Maybe.isJust (result)) {
         const newValue = Maybe.fromJust (result);
 
-        return buildList (acc.append (Tuple.fst (newValue))) (Tuple.snd (newValue));
+        return buildList (acc) (Tuple.snd (newValue)) .cons (Tuple.fst (newValue));
       }
 
       return acc;
@@ -1162,7 +1162,25 @@ f' z       = Nothing
                                                       index => e => list2.subscript (index)
                                                         .fmap (e2 => Tuple.of<A, B> (e) (e2))
                                                     )
-                                                    (list1)
+                                                    (list1);
+  }
+
+  /**
+   * `zipWith :: (a -> b -> c) -> [a] -> [b] -> [c]`
+   *
+   * `zipWith` generalises `zip` by zipping with the function given as the first
+   * argument, instead of a tupling function. For example, `zipWith (+)` is
+   * applied to two lists to produce the list of corresponding sums.
+   */
+  static zipWith<A, B, C> (
+    f: (value1: A) => (value2: B) => C
+  ): (list1: List<A>) => (list2: List<B>) => List<C> {
+    return list1 => list2 => Maybe.imapMaybe<A, C> (
+                                                     index => e => list2
+                                                       .subscript (index)
+                                                       .fmap (f (e))
+                                                   )
+                                                   (list1);
   }
 
   // "SET" OPERATIONS

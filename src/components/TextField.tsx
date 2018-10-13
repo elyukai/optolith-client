@@ -6,7 +6,7 @@ import { Just, Maybe, Nothing } from '../utils/dataUtils';
 import { Label } from './Label';
 
 export interface TextFieldProps {
-  autoFocus?: boolean;
+  autoFocus?: boolean | Maybe<boolean>;
   className?: string;
   countCurrent?: number;
   countMax?: number;
@@ -27,7 +27,7 @@ export class TextField extends React.Component<TextFieldProps, {}> {
   inputRef: HTMLInputElement | null = null;
 
   componentDidMount () {
-    if (this.props.autoFocus && this.inputRef !== null) {
+    if (Maybe.elem (true) (Maybe.normalize (this.props.autoFocus)) && this.inputRef !== null) {
       (findDOMNode (this.inputRef) as HTMLInputElement).focus ();
     }
   }

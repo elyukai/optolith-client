@@ -3,18 +3,18 @@ import { MainContent } from '../components/MainContent';
 import { Page } from '../components/Page';
 import { Scroll } from '../components/Scroll';
 import { AdvantagesContainer } from '../containers/AdvantagesContainer';
-import { ArmorZonesContainer } from '../containers/ArmorZones';
 import { AttributesContainer } from '../containers/AttributesContainer';
 import { CombatTechniquesContainer } from '../containers/CombatTechniquesContainer';
 import { CulturesContainer } from '../containers/Cultures';
 import { DisadvantagesContainer } from '../containers/DisadvantagesContainer';
-import { EquipmentContainer } from '../containers/Equipment';
+import { EquipmentContainer } from '../containers/EquipmentContainer';
 import { HelpContainer } from '../containers/HelpContainer';
 import { HerolistContainer } from '../containers/HerolistContainer';
+import { HitZoneArmorsContainer } from '../containers/HitZoneArmorsContainer';
 import { LiturgicalChantsContainer } from '../containers/LiturgicalChantsContainer';
 import { PactContainer } from '../containers/PactContainer';
 import { PersonalDataContainer } from '../containers/PersonalDataContainer';
-import { PetsContainer } from '../containers/Pets';
+import { PetsContainer } from '../containers/PetsContainer';
 import { ProfessionsContainer } from '../containers/Professions';
 import { RacesContainer } from '../containers/Races';
 import { RulesContainer } from '../containers/RulesContainer';
@@ -105,7 +105,7 @@ export class Route extends React.Component<RouteProps> {
       liturgicalChants: <LiturgicalChantsContainer locale={locale} />,
 
       equipment: <EquipmentContainer locale={locale} />,
-      zoneArmor: <ArmorZonesContainer locale={locale} />,
+      zoneArmor: <HitZoneArmorsContainer locale={locale} />,
       pets: <PetsContainer locale={locale} />,
 
       // master: <Master />

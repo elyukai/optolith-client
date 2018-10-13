@@ -61,9 +61,9 @@ test('OrderedMap.lookup', () => {
 });
 
 test('OrderedMap.lookup_', () => {
-  expect(OrderedMap.lookup (OrderedMap.of ([[1, 'a'],[2, 'b'], [3, 'c']])) (2))
+  expect(OrderedMap.lookup_ (OrderedMap.of ([[1, 'a'],[2, 'b'], [3, 'c']])) (2))
     .toEqual(Just ('b'));
-  expect(OrderedMap.lookup (OrderedMap.of ([[1, 'a'],[2, 'b'], [3, 'c']])) (5))
+  expect(OrderedMap.lookup_ (OrderedMap.of ([[1, 'a'],[2, 'b'], [3, 'c']])) (5))
     .toEqual(Nothing ());
 });
 

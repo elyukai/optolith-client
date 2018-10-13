@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { BorderButton } from '../../components/BorderButton';
-import { Dropdown } from '../../components/Dropdown';
+import { Dropdown, DropdownOption } from '../../components/Dropdown';
 import { ListView } from '../../components/List';
 import { Options } from '../../components/Options';
 import { Page } from '../../components/Page';
@@ -109,9 +109,18 @@ export class Herolist extends React.Component<HerolistProps, HerolistState> {
             value={Just (visibilityFilter)}
             onChange={setVisibilityFilter}
             options={List.of (
-              { id: Just ('all'), name: translate (locale, 'heroes.options.filter.all') },
-              { id: Just ('own'), name: translate (locale, 'heroes.options.filter.own') },
-              { id: Just ('shared'), name: translate (locale, 'heroes.options.filter.shared') }
+              Record.of<DropdownOption> ({
+                id: 'all',
+                name: translate (locale, 'heroes.options.filter.all'),
+              }),
+              Record.of<DropdownOption> ({
+                id: 'own',
+                name: translate (locale, 'heroes.options.filter.own'),
+              }),
+              Record.of<DropdownOption> ({
+                id: 'shared',
+                name: translate (locale, 'heroes.options.filter.shared'),
+              })
             )}
             fullWidth
             disabled

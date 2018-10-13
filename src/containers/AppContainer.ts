@@ -14,7 +14,7 @@ const mapStateToProps = (state: AppState) => ({
   locale: getLocaleMessages (state),
   theme: getTheme (state),
   areAnimationsEnabled: areAnimationsEnabled (state),
-  platform: remote.process.platform
+  platform: remote.process.platform,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch<Action>) => ({
