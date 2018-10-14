@@ -9,7 +9,6 @@ import { getBlessedTraditionNumericId, getFilteredActiveLiturgicalChantsAndBless
 import { getIsRemovingEnabled } from '../selectors/phaseSelectors';
 import { getInactiveLiturgicalChantsFilterText, getLiturgicalChantsFilterText } from '../selectors/stateSelectors';
 import { getEnableActiveItemHints, getLiturgiesSortOrder } from '../selectors/uisettingsSelectors';
-import { Maybe } from '../utils/dataUtils';
 import { LiturgicalChants, LiturgicalChantsDispatchProps, LiturgicalChantsOwnProps, LiturgicalChantsStateProps } from '../views/liturgicalChants/LiturgicalChants';
 
 const mapStateToProps = (
@@ -51,10 +50,8 @@ const mapDispatchToProps = (
   removeBlessingFromList (id: string) {
     dispatch (LiturgicalChantActions.removeBlessing (id));
   },
-  setSortOrder (sortOrder: Maybe<string>) {
-    if (Maybe.isJust (sortOrder)) {
-      dispatch (LiturgicalChantActions.setLiturgicalChantsSortOrder (Maybe.fromJust (sortOrder)));
-    }
+  setSortOrder (sortOrder: string) {
+    dispatch (LiturgicalChantActions.setLiturgicalChantsSortOrder (sortOrder));
   },
   switchActiveItemHints () {
     dispatch (ConfigActions.switchEnableActiveItemHints ());

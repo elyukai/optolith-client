@@ -45,7 +45,7 @@ export interface LiturgicalChantsStateProps {
 }
 
 export interface LiturgicalChantsDispatchProps {
-  setSortOrder (sortOrder: Maybe<string>): void;
+  setSortOrder (sortOrder: string): void;
   switchActiveItemHints (): void;
   addPoint (id: string): void;
   addToList (id: string): void;

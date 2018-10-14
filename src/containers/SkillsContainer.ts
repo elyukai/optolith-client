@@ -8,7 +8,6 @@ import { getIsRemovingEnabled } from '../selectors/phaseSelectors';
 import { getFilteredSkills, getSkillRating } from '../selectors/skillsSelectors';
 import { getSkillsFilterText } from '../selectors/stateSelectors';
 import { getSkillsCultureRatingVisibility, getSkillsSortOrder } from '../selectors/uisettingsSelectors';
-import { Maybe } from '../utils/dataUtils';
 import { Skills, SkillsDispatchProps, SkillsOwnProps, SkillsStateProps } from '../views/skills/Skills';
 
 const mapStateToProps = (state: AppState, ownProps: SkillsOwnProps): SkillsStateProps => ({
@@ -32,10 +31,8 @@ const mapDispatchToProps = (
   removePoint (id: string) {
     dispatch (SkillActions.removeSkillPoint (id));
   },
-  setSortOrder (sortOrder: Maybe<string>) {
-    if (Maybe.isJust (sortOrder)) {
-      dispatch (SkillActions.setSkillsSortOrder (Maybe.fromJust (sortOrder)));
-    }
+  setSortOrder (sortOrder: string) {
+    dispatch (SkillActions.setSkillsSortOrder (sortOrder));
   },
   switchRatingVisibility () {
     dispatch (SkillActions.switchSkillRatingVisibility ());

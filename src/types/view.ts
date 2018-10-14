@@ -1,4 +1,4 @@
-import { List, Maybe, Record } from '../utils/dataUtils';
+import { List, Record } from '../utils/dataUtils';
 import * as Data from './data';
 import * as Wiki from './wiki';
 
@@ -58,7 +58,7 @@ export type ProfessionVariantCombined = Wiki.ProfessionVariant & MappedProfessio
 export type AttributeCombined = Wiki.Attribute & Data.AttributeDependent;
 
 export interface AttributeWithRequirements extends AttributeCombined {
-  max: Maybe<number>;
+  max?: number;
   min: number;
 }
 

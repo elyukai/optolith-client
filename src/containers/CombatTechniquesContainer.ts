@@ -8,7 +8,6 @@ import { getDerivedCharacteristicsMap } from '../selectors/derivedCharacteristic
 import { getIsRemovingEnabled } from '../selectors/phaseSelectors';
 import { getCombatTechniquesFilterText } from '../selectors/stateSelectors';
 import { getCombatTechniquesSortOrder } from '../selectors/uisettingsSelectors';
-import { Maybe } from '../utils/dataUtils';
 import { CombatTechniques, CombatTechniquesDispatchProps, CombatTechniquesOwnProps, CombatTechniquesStateProps } from '../views/combatTechniques/CombatTechniques';
 
 const mapStateToProps = (
@@ -33,10 +32,8 @@ const mapDispatchToProps = (
   removePoint (id: string) {
     dispatch (CombatTechniquesActions.removeCombatTechniquePoint (id));
   },
-  setSortOrder (sortOrder: Maybe<string>) {
-    if (Maybe.isJust (sortOrder)) {
-      dispatch (CombatTechniquesActions.setCombatTechniquesSortOrder (Maybe.fromJust (sortOrder)));
-    }
+  setSortOrder (sortOrder: string) {
+    dispatch (CombatTechniquesActions.setCombatTechniquesSortOrder (sortOrder));
   },
   setFilterText (filterText: string) {
     dispatch (CombatTechniquesActions.setCombatTechniquesFilterText (filterText));

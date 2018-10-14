@@ -51,17 +51,16 @@ export function PactSettings (props: PactSettingsProps) {
       <div className="pact-content">
         <Dropdown
           label={translate (locale, 'pact.category')}
-          options={List.of<DropdownOption> (
-            {
-              id: Nothing (),
-              name: translate (locale, 'pact.nopact'),
-            },
-            ...translate (locale, 'pact.categories')
-              .imap (index => name => ({
-                id: Just (index + 1),
+          options={
+            translate (locale, 'pact.categories')
+              .imap (index => name => Record.of<DropdownOption> ({
+                id: index + 1,
                 name,
               }))
-          )}
+              .cons (Record.of<DropdownOption> ({
+                name: translate (locale, 'pact.nopact'),
+              }))
+          }
           onChange={setPactCategory}
           value={maybePact .fmap (Record.get<Pact, 'category'> ('category'))}
           disabled={isPactNotEditable}
@@ -72,13 +71,13 @@ export function PactSettings (props: PactSettingsProps) {
             ((id: number) => id > 3
               ? Nothing ()
               : Just (
-                Tuple.of<DropdownOption, number>
-                  ({
-                    id: Just (id),
+                Tuple.of<Record<DropdownOption>, number>
+                  (Record.of<DropdownOption> ({
+                    id,
                     name: getRoman (id),
                     disabled: !Maybe.isJust (maybePact)
                       || isPactNotEditable && id <= Maybe.fromJust (maybePact) .get ('level'),
-                  })
+                  }))
                   (R.inc (id))
               ))
             (1)}
@@ -90,8 +89,8 @@ export function PactSettings (props: PactSettingsProps) {
           label={translate (locale, 'pact.fairytype')}
           options={
             translate (locale, 'pact.fairytypes')
-              .imap (index => name => ({
-                id: Just (index + 1),
+              .imap (index => name => Record.of<DropdownOption> ({
+                id: index + 1,
                 name,
               }))
           }
@@ -103,8 +102,8 @@ export function PactSettings (props: PactSettingsProps) {
           label={translate (locale, 'domain')}
           options={
             translate (locale, 'pact.fairydomains')
-              .imap (index => name => ({
-                id: Just (index + 1),
+              .imap (index => name => Record.of<DropdownOption> ({
+                id: index + 1,
                 name,
               }))
           }

@@ -76,14 +76,14 @@ export class ActivatableRemoveListItem extends React.Component<ActivatableRemove
           const length = max - min + 1;
 
           const levelOptions =
-            List.unfoldr<DropdownOption, number>
+            List.unfoldr<Record<DropdownOption>, number>
               (index => index < length
                 ? Just (
-                  Tuple.of<DropdownOption, number>
-                    ({
-                      id: Just (index + min),
+                  Tuple.of<Record<DropdownOption>, number>
+                    (Record.of<DropdownOption> ({
+                      id: index + min,
                       name: getRoman (index + min),
-                    })
+                    }))
                     (index + 1)
                 )
                 : Nothing ())
@@ -91,10 +91,10 @@ export class ActivatableRemoveListItem extends React.Component<ActivatableRemove
 
           const levelOptionsWithMotherTongue =
             item .get ('id') === 'SA_29' && (level === 4 || isRemovingEnabled)
-              ? levelOptions.append ({
-                id: Just (4),
+              ? levelOptions .append (Record.of<DropdownOption> ({
+                id: 4,
                 name: translate (locale, 'mothertongue.short'),
-              })
+              }))
               : levelOptions;
 
           return levelOptions .length () > 1
@@ -108,7 +108,7 @@ export class ActivatableRemoveListItem extends React.Component<ActivatableRemove
             )
             : Maybe.fromMaybe ('')
                               (Maybe.listToMaybe (levelOptions)
-                                .fmap (option => ` ${option.name}`))
+                                .fmap (option => ` ${option .get ('name')}`))
         })
         (item .get ('wikiEntry') .lookup ('tiers'))
         (item .lookup ('tier'));

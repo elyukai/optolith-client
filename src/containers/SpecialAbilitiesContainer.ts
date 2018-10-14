@@ -9,7 +9,6 @@ import { getIsRemovingEnabled } from '../selectors/phaseSelectors';
 import { getInactiveSpecialAbilitiesFilterText, getSpecialAbilities, getSpecialAbilitiesFilterText, getWikiSpecialAbilities } from '../selectors/stateSelectors';
 import { getEnableActiveItemHints, getSpecialAbilitiesSortOrder } from '../selectors/uisettingsSelectors';
 import { ActivateArgs, DeactivateArgs } from '../types/data';
-import { Maybe } from '../utils/dataUtils';
 import { SpecialAbilities, SpecialAbilitiesDispatchProps, SpecialAbilitiesOwnProps, SpecialAbilitiesStateProps } from '../views/specialAbilities/SpecialAbilities';
 
 const mapStateToProps = (
@@ -31,12 +30,8 @@ const mapDispatchToProps = (
   dispatch: Dispatch<Action, AppState>,
   { locale }: SpecialAbilitiesOwnProps
 ): SpecialAbilitiesDispatchProps => ({
-  setSortOrder (sortOrder: Maybe<string>) {
-    if (Maybe.isJust (sortOrder)) {
-      dispatch (
-        SpecialAbilitiesActions.setSpecialAbilitiesSortOrder (Maybe.fromJust (sortOrder))
-      );
-    }
+  setSortOrder (sortOrder: string) {
+    dispatch (SpecialAbilitiesActions.setSpecialAbilitiesSortOrder (sortOrder));
   },
   switchActiveItemHints () {
     dispatch (ConfigActions.switchEnableActiveItemHints ());

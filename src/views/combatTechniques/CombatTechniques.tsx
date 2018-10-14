@@ -32,7 +32,7 @@ export interface CombatTechniquesStateProps {
 }
 
 export interface CombatTechniquesDispatchProps {
-  setSortOrder (sortOrder: Maybe<string>): void;
+  setSortOrder (sortOrder: string): void;
   addPoint (id: string): void;
   removePoint (id: string): void;
   setFilterText (filterText: string): void;

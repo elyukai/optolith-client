@@ -37,7 +37,7 @@ export interface SpecialAbilitiesStateProps {
 }
 
 export interface SpecialAbilitiesDispatchProps {
-  setSortOrder (sortOrder: Maybe<string>): void;
+  setSortOrder (sortOrder: string): void;
   switchActiveItemHints (): void;
   addToList (args: ActivateArgs): void;
   removeFromList (args: DeactivateArgs): void;

@@ -179,9 +179,7 @@ export const getIdSpecificAffectedAndDispatchProps =
 
                   const filteredSelectOptions = entry
                     .lookup ('sel')
-                    .fmap (List.filter (e => activeSelections .notElem (e .get ('id'))))
-                    .fmap (List.map (Record.toObject))
-                    .fmap (List.map (e => ({ ...e, id: Just (e.id) })));
+                    .fmap (List.filter (e => activeSelections .notElem (e .get ('id'))));
 
                   return Tuple.of<DispatchRecord, RecordAffectedByState>
                     (Record.ofMaybe<DispatchProps> ({
@@ -225,7 +223,7 @@ export const getIdSpecificAffectedAndDispatchProps =
                             <Dropdown
                               value={selected}
                               onChange={inputHandlers.handleSelect}
-                              options={selectOptions}
+                              options={selectOptions as List<Record<DropdownOption>>}
                               disabled={inputHandlers.selectElementDisabled}
                               />
                           )
@@ -589,23 +587,11 @@ export const getInactiveActivatableControlElements =
           const maybeSel =
             Tuple.snd (props)
               .lookup ('firstSelectOptions')
-              .alt (entry .lookup ('sel'))
-              .fmap (List.map (
-                r => ({
-                  ...r.toObject (),
-                  id: Just (r .get ('id')),
-                })
-              ));
+              .alt (entry .lookup ('sel'));
 
           const maybeSel2 =
             Tuple.snd (props)
-              .lookup ('secondSelectOptions')
-              .fmap (List.map (
-                r => ({
-                  ...r.toObject (),
-                  id: Just (r .get ('id')),
-                })
-              ));
+              .lookup ('secondSelectOptions');
 
           const maybeInputDescription =
             Tuple.snd (props)
@@ -626,14 +612,14 @@ export const getInactiveActivatableControlElements =
                   const length = max - min + 1;
 
                   const levelOptions =
-                    List.unfoldr<DropdownOption, number>
+                    List.unfoldr<Record<DropdownOption>, number>
                       (index => index < length
                         ? Just (
-                          Tuple.of<DropdownOption, number>
-                            ({
-                              id: Just (index + min),
+                          Tuple.of<Record<DropdownOption>, number>
+                            (Record.of<DropdownOption> ({
+                              id: index + min,
                               name: getRoman (index + min),
-                            })
+                            }))
                             (index + 1)
                         )
                         : Nothing ())
@@ -675,7 +661,7 @@ export const getInactiveActivatableControlElements =
                       <Dropdown
                         value={maybeSelected}
                         onChange={inputHandlers.handleSelect}
-                        options={sel}
+                        options={sel as List<Record<DropdownOption>>}
                         disabled={inputHandlers.selectElementDisabled} />
                     )
                 )),
@@ -748,7 +734,7 @@ export const getInactiveActivatableControlElements =
                         <Dropdown
                           value={maybeSelected2}
                           onChange={inputHandlers.handleSecondSelect}
-                          options={secondSelectOptions}
+                          options={secondSelectOptions as List<Record<DropdownOption>>}
                           disabled={Maybe.isJust (maybeInputText) || Maybe.isJust (maybeSelected)}
                           />
                       )
@@ -768,7 +754,7 @@ export const getInactiveActivatableControlElements =
                         <Dropdown
                           value={maybeSelected2}
                           onChange={inputHandlers.handleSecondSelect}
-                          options={secondSelectOptions}
+                          options={secondSelectOptions as List<Record<DropdownOption>>}
                           disabled={Maybe.isNothing (maybeSelected)}
                           />
                       )

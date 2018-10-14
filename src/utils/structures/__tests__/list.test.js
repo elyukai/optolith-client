@@ -617,3 +617,13 @@ test('List.isList', () => {
   expect(List.isList(4))
     .toBeFalsy();
 });
+
+test('toString', () => {
+  expect(List.of (1, 2, 3, 4, 5) .toString ())
+    .toEqual('[1,2,3,4,5]');
+});
+
+test('List.show', () => {
+  expect(List.show (List.of (1, 2, 3, 4, 5)))
+    .toEqual('[1,2,3,4,5]');
+});

@@ -38,7 +38,7 @@ export interface SkillsStateProps {
 }
 
 export interface SkillsDispatchProps {
-  setSortOrder (sortOrder: Maybe<string>): void;
+  setSortOrder (sortOrder: string): void;
   setFilterText (filterText: string): void;
   switchRatingVisibility (): void;
   addPoint (id: string): void;

@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Dropdown } from '../../components/Dropdown';
+import { Dropdown, DropdownOption } from '../../components/Dropdown';
 import { AttributeWithRequirements } from '../../types/view';
-import { Just, List, Maybe, Record } from '../../utils/dataUtils';
+import { List, Maybe, Record } from '../../utils/dataUtils';
 import { translate, UIMessagesObject } from '../../utils/I18n';
 import { sign } from '../../utils/NumberUtils';
 
@@ -35,8 +35,8 @@ export function AttributesAdjustment (props: AttributesAdjustmentProps) {
               options={
                 attributes
                   .filter (e => availableAttributeIds.elem (e .get ('id')))
-                  .map (e => ({
-                    id: Just (e .get ('id')),
+                  .map (e => Record.of<DropdownOption> ({
+                    id: e .get ('id'),
                     name: `${e .get ('name')} ${sign (adjustmentValue)}`,
                   }))
               }

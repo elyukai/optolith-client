@@ -9,7 +9,6 @@ import { getIsRemovingEnabled } from '../selectors/phaseSelectors';
 import { getFilteredActiveSpellsAndCantrips, getFilteredInactiveSpellsAndCantrips, getMagicalTraditionsFromWikiState, isActivationDisabled } from '../selectors/spellsSelectors';
 import { getInactiveSpellsFilterText, getSpellsFilterText } from '../selectors/stateSelectors';
 import { getEnableActiveItemHints, getSpellsSortOrder } from '../selectors/uisettingsSelectors';
-import { Maybe } from '../utils/dataUtils';
 import { Spells, SpellsDispatchProps, SpellsOwnProps, SpellsStateProps } from '../views/spells/Spells';
 
 const mapStateToProps = (state: AppState, ownProps: SpellsOwnProps): SpellsStateProps => ({
@@ -48,10 +47,8 @@ const mapDispatchToProps = (
   removeCantripFromList (id: string) {
     dispatch (SpellsActions.removeCantrip (id));
   },
-  setSortOrder (sortOrder: Maybe<string>) {
-    if (Maybe.isJust (sortOrder)) {
-      dispatch (SpellsActions.setSpellsSortOrder (Maybe.fromJust (sortOrder)));
-    }
+  setSortOrder (sortOrder: string) {
+    dispatch (SpellsActions.setSpellsSortOrder (sortOrder));
   },
   switchActiveItemHints () {
     dispatch (ConfigActions.switchEnableActiveItemHints ());

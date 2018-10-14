@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Checkbox } from '../../components/Checkbox';
-import { Dropdown } from '../../components/Dropdown';
+import { Dropdown, DropdownOption } from '../../components/Dropdown';
 import { Scroll } from '../../components/Scroll';
 import { Rules as RulesState } from '../../types/data';
 import { Book } from '../../types/wiki';
@@ -99,8 +99,8 @@ export function Rules (props: RulesProps) {
             />
           <Dropdown
             options={List.of (
-              { id: Just (2), name: '+2' },
-              { id: Just (4), name: '+4' }
+              Record.of<DropdownOption> ({ id: 2, name: '+2' }),
+              Record.of<DropdownOption> ({ id: 4, name: '+4' })
             )}
             value={higherParadeValues}
             onChange={changeHigherParadeValues}

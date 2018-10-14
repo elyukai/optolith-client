@@ -92,7 +92,7 @@ export class Dropdown extends React.Component<DropdownProps, DropdownState> {
     const { className, disabled, fullWidth, hint, label, options, required, value } = this.props;
     const { isOpen, position } = this.state;
 
-    const trueDisabled = disabled instanceof Maybe ? Maybe.elem (true) (disabled) : disabled;
+    const normalizedDisabled = Maybe.elem (true) (Maybe.normalize (disabled));
 
     const style = isOpen ? (options .length () < 6 ? options .length () * 33 + 1 : 166) : 0;
 
@@ -118,9 +118,10 @@ export class Dropdown extends React.Component<DropdownProps, DropdownState> {
                       className={classNameInner}
                       key={Maybe.fromMaybe<string | number> ('__DEFAULT__') (option .lookup ('id'))}
                       onClick={
-                        !trueDisabled && Maybe.elem (false) (option .lookup ('disabled'))
+                        !normalizedDisabled && !Maybe.elem (true) (option .lookup ('disabled'))
                           ? this.onChange.bind (undefined, option .lookup ('id'))
-                          : undefined}
+                          : undefined
+                      }
                       >
                       {option .get ('name')}
                     </div>
@@ -141,12 +142,12 @@ export class Dropdown extends React.Component<DropdownProps, DropdownState> {
           dropdown: true,
           active: isOpen,
           fullWidth,
-          disabled: trueDisabled,
+          disabled: normalizedDisabled,
           invalid: required && Maybe.isNothing (maybeCurrent),
         })}
         ref={node => this.containerRef = node}
         >
-        {label && <Label text={label} disabled={trueDisabled} />}
+        {label && <Label text={label} disabled={normalizedDisabled} />}
         <div
           onMouseDown={this.insideFocus}
           onMouseUp={this.insideBlur}

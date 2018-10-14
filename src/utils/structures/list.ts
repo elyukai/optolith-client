@@ -1401,4 +1401,12 @@ f' z       = Nothing
   static isList<T> (value: any): value is List<T> {
     return value instanceof List;
   }
+
+  toString (): string {
+    return List.show (this);
+  }
+
+  static show (list: List<any>): string {
+    return `[${list.value.toString}]`;
+  }
 }

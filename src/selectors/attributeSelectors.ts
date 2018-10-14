@@ -101,7 +101,7 @@ export const getAttributesForView = createMaybeSelector (
                     attribute
                       .merge (wikiAttribute)
                       .merge (
-                        Record.of ({
+                        Record.ofMaybe<{ max?: number; min: number }> ({
                           max,
                           min,
                         })
@@ -351,11 +351,13 @@ export const getAvailableAdjustmentIds = createMaybeSelector (
 
             if (
               Maybe.fromMaybe (false) (
-                currentAttribute.get ('max').bind (
-                  max => maybeAdjustmentValue.fmap (
-                    adjustmentValue => currentAttribute.get ('value') > max - adjustmentValue
+                currentAttribute
+                  .lookup ('max')
+                  .bind (
+                    max => maybeAdjustmentValue.fmap (
+                      adjustmentValue => currentAttribute.get ('value') > max - adjustmentValue
+                    )
                   )
-                )
               )
             ) {
               return List.of (currentAttribute.get ('id'));
@@ -370,14 +372,15 @@ export const getAvailableAdjustmentIds = createMaybeSelector (
               const attribute = Maybe.fromJust (maybeAttribute);
 
               if (
-                Maybe.isNothing (attribute.get ('max')) ||
+                Maybe.isNothing (attribute .lookup ('max')) ||
                 maybeCurrentAttribute.fmap (x => x.get ('id')).equals (Just (id))
               ) {
                 return true;
               }
               else if (Maybe.isJust (maybeAdjustmentValue)) {
                 return Maybe.fromMaybe (true) (
-                  attribute.get ('max')
+                  attribute
+                    .lookup ('max')
                     .fmap (
                       max => max + Maybe.fromJust (maybeAdjustmentValue) >= attribute.get ('value')
                     )
