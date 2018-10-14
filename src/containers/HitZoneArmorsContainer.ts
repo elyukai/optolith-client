@@ -3,104 +3,110 @@ import { Action, Dispatch } from 'redux';
 import * as EquipmentActions from '../actions/EquipmentActions';
 import { AppState } from '../reducers/appReducer';
 import { getInitialStartingWealth } from '../selectors/activatableSelectors';
+import { getHasCurrentNoAddedAP } from '../selectors/adventurePointsSelectors';
 import { getCarryingCapacity } from '../selectors/attributeSelectors';
-import { getStartEl } from '../selectors/elSelectors';
-import { getFilteredZoneArmors, getItems, getPurse, getTemplates, getTotalPrice, getTotalWeight } from '../selectors/equipmentSelectors';
-import { getArmorZonesEditorInstance, getIsArmorZonesCreation, getTotalAdventurePoints, getZoneArmorFilterText } from '../selectors/stateSelectors';
-import { ArmorZones, ArmorZonesDispatchProps, ArmorZonesOwnProps, ArmorZonesStateProps } from '../views/hitZoneArmors/hitZoneArmors';
+import { getFilteredZoneArmors, getItems, getTemplates, getTotalPrice, getTotalWeight } from '../selectors/equipmentSelectors';
+import { getArmorZonesEditorInstance, getIsInHitZoneArmorCreation, getPurse, getZoneArmorFilterText } from '../selectors/stateSelectors';
+import { Maybe } from '../utils/dataUtils';
+import { HitZoneArmors, HitZoneArmorsDispatchProps, HitZoneArmorsOwnProps, HitZoneArmorsStateProps } from '../views/hitZoneArmors/HitZoneArmors';
 
-function mapStateToProps(state: AppState) {
-  return {
-    armorZones: getFilteredZoneArmors(state),
-    carryingCapacity: getCarryingCapacity(state),
-    initialStartingWealth: getInitialStartingWealth(state),
-    items: getItems(state),
-    create: getIsArmorZonesCreation(state),
-    armorZonesEditor: getArmorZonesEditorInstance(state),
-    hasNoAddedAP: getTotalAdventurePoints(state) === getStartEl(state).ap,
-    purse: getPurse(state),
-    templates: getTemplates(state),
-    totalPrice: getTotalPrice(state),
-    totalWeight: getTotalWeight(state),
-    filterText: getZoneArmorFilterText(state)
-  };
-}
+const mapStateToProps = (
+  state: AppState,
+  ownProps: HitZoneArmorsOwnProps
+): HitZoneArmorsStateProps => ({
+  armorZones: getFilteredZoneArmors (state, ownProps),
+  carryingCapacity: getCarryingCapacity (state),
+  initialStartingWealth: getInitialStartingWealth (state),
+  items: getItems (state),
+  isInHitZoneArmorCreation: getIsInHitZoneArmorCreation (state),
+  armorZonesEditor: getArmorZonesEditorInstance (state),
+  hasNoAddedAP: getHasCurrentNoAddedAP (state),
+  purse: getPurse (state),
+  templates: getTemplates (state),
+  totalPrice: getTotalPrice (state, ownProps),
+  totalWeight: getTotalWeight (state, ownProps),
+  filterText: getZoneArmorFilterText (state),
+});
 
-function mapDispatchToProps(dispatch: Dispatch<Action>) {
-  return {
-    addToList() {
-      dispatch(EquipmentActions.addArmorZonesToList());
-    },
-    createItem(): void {
-      dispatch(EquipmentActions.createArmorZones());
-    },
-    editItem(id: string): void {
-      dispatch(EquipmentActions.editArmorZones(id));
-    },
-    deleteItem(id: string) {
-      dispatch(EquipmentActions.removeArmorZonesFromList(id));
-    },
-    closeEditor(): void {
-      dispatch(EquipmentActions.closeArmorZonesEditor());
-    },
-    saveItem(): void {
-      dispatch(EquipmentActions.saveArmorZones());
-    },
-    setDucates(value: string) {
-      dispatch(EquipmentActions._setDucates(value));
-    },
-    setSilverthalers(value: string) {
-      dispatch(EquipmentActions._setSilverthalers(value));
-    },
-    setHellers(value: string) {
-      dispatch(EquipmentActions._setHellers(value));
-    },
-    setKreutzers(value: string) {
-      dispatch(EquipmentActions._setKreutzers(value));
-    },
-    setName(value: string): void {
-      dispatch(EquipmentActions.setArmorZonesName(value));
-    },
-    setHead(id: string | undefined): void {
-      dispatch(EquipmentActions.setArmorZonesHead(id));
-    },
-    setHeadLoss(id: number | undefined): void {
-      dispatch(EquipmentActions.setArmorZonesHeadLoss(id));
-    },
-    setLeftArm(id: string | undefined): void {
-      dispatch(EquipmentActions.setArmorZonesLeftArm(id));
-    },
-    setLeftArmLoss(id: number | undefined): void {
-      dispatch(EquipmentActions.setArmorZonesLeftArmLoss(id));
-    },
-    setLeftLeg(id: string | undefined): void {
-      dispatch(EquipmentActions.setArmorZonesLeftLeg(id));
-    },
-    setLeftLegLoss(id: number | undefined): void {
-      dispatch(EquipmentActions.setArmorZonesLeftLegLoss(id));
-    },
-    setTorso(id: string | undefined): void {
-      dispatch(EquipmentActions.setArmorZonesTorso(id));
-    },
-    setTorsoLoss(id: number | undefined): void {
-      dispatch(EquipmentActions.setArmorZonesTorsoLoss(id));
-    },
-    setRightArm(id: string | undefined): void {
-      dispatch(EquipmentActions.setArmorZonesRightArm(id));
-    },
-    setRightArmLoss(id: number | undefined): void {
-      dispatch(EquipmentActions.setArmorZonesRightArmLoss(id));
-    },
-    setRightLeg(id: string | undefined): void {
-      dispatch(EquipmentActions.setArmorZonesRightLeg(id));
-    },
-    setRightLegLoss(id: number | undefined): void {
-      dispatch(EquipmentActions.setArmorZonesRightLegLoss(id));
-    },
-    setFilterText(filterText: string) {
-      dispatch(EquipmentActions.setZoneArmorFilterText(filterText));
-    },
-  };
-}
+const mapDispatchToProps = (dispatch: Dispatch<Action, AppState>): HitZoneArmorsDispatchProps => ({
+  addToList () {
+    dispatch (EquipmentActions.addArmorZonesToList ());
+  },
+  createItem (): void {
+    dispatch (EquipmentActions.createArmorZones ());
+  },
+  editItem (id: string): void {
+    dispatch (EquipmentActions.editArmorZones (id));
+  },
+  deleteItem (id: string) {
+    dispatch (EquipmentActions.removeArmorZonesFromList (id));
+  },
+  closeEditor (): void {
+    dispatch (EquipmentActions.closeArmorZonesEditor ());
+  },
+  saveItem (): void {
+    dispatch (EquipmentActions.saveArmorZones ());
+  },
+  setDucates (value: string) {
+    dispatch (EquipmentActions.setDucates (value));
+  },
+  setSilverthalers (value: string) {
+    dispatch (EquipmentActions.setSilverthalers (value));
+  },
+  setHellers (value: string) {
+    dispatch (EquipmentActions.setHellers (value));
+  },
+  setKreutzers (value: string) {
+    dispatch (EquipmentActions.setKreutzers (value));
+  },
+  setName (value: string): void {
+    dispatch (EquipmentActions.setArmorZonesName (value));
+  },
+  setHead (id: Maybe<string>): void {
+    dispatch (EquipmentActions.setArmorZonesHead (id));
+  },
+  setHeadLoss (id: Maybe<number>): void {
+    dispatch (EquipmentActions.setArmorZonesHeadLoss (id));
+  },
+  setLeftArm (id: Maybe<string>): void {
+    dispatch (EquipmentActions.setArmorZonesLeftArm (id));
+  },
+  setLeftArmLoss (id: Maybe<number>): void {
+    dispatch (EquipmentActions.setArmorZonesLeftArmLoss (id));
+  },
+  setLeftLeg (id: Maybe<string>): void {
+    dispatch (EquipmentActions.setArmorZonesLeftLeg (id));
+  },
+  setLeftLegLoss (id: Maybe<number>): void {
+    dispatch (EquipmentActions.setArmorZonesLeftLegLoss (id));
+  },
+  setTorso (id: Maybe<string>): void {
+    dispatch (EquipmentActions.setArmorZonesTorso (id));
+  },
+  setTorsoLoss (id: Maybe<number>): void {
+    dispatch (EquipmentActions.setArmorZonesTorsoLoss (id));
+  },
+  setRightArm (id: Maybe<string>): void {
+    dispatch (EquipmentActions.setArmorZonesRightArm (id));
+  },
+  setRightArmLoss (id: Maybe<number>): void {
+    dispatch (EquipmentActions.setArmorZonesRightArmLoss (id));
+  },
+  setRightLeg (id: Maybe<string>): void {
+    dispatch (EquipmentActions.setArmorZonesRightLeg (id));
+  },
+  setRightLegLoss (id: Maybe<number>): void {
+    dispatch (EquipmentActions.setArmorZonesRightLegLoss (id));
+  },
+  setFilterText (filterText: string) {
+    dispatch (EquipmentActions.setZoneArmorFilterText (filterText));
+  },
+});
 
-export const HitZoneArmorsContainer = connect<ArmorZonesStateProps, ArmorZonesDispatchProps, ArmorZonesOwnProps>(mapStateToProps, mapDispatchToProps)(ArmorZones);
+export const connectHitZoneArmors =
+  connect<HitZoneArmorsStateProps, HitZoneArmorsDispatchProps, HitZoneArmorsOwnProps, AppState> (
+    mapStateToProps,
+    mapDispatchToProps
+  );
+
+export const HitZoneArmorsContainer = connectHitZoneArmors (HitZoneArmors);

@@ -816,11 +816,11 @@ export const setArmorZonesName = (value: string): SetArmorZonesNameAction => ({
 export interface SetArmorZonesHeadAction {
   type: ActionTypes.SET_ARMOR_ZONES_HEAD;
   payload: {
-    id: string | undefined;
+    id: Maybe<string>;
   };
 }
 
-export const setArmorZonesHead = (id: string | undefined): SetArmorZonesHeadAction => ({
+export const setArmorZonesHead = (id: Maybe<string>): SetArmorZonesHeadAction => ({
   type: ActionTypes.SET_ARMOR_ZONES_HEAD,
   payload: {
     id,
@@ -830,11 +830,11 @@ export const setArmorZonesHead = (id: string | undefined): SetArmorZonesHeadActi
 export interface SetArmorZonesHeadLossAction {
   type: ActionTypes.SET_ARMOR_ZONES_HEAD_LOSS;
   payload: {
-    id: number | undefined;
+    id: Maybe<number>;
   };
 }
 
-export const setArmorZonesHeadLoss = (id: number | undefined): SetArmorZonesHeadLossAction => ({
+export const setArmorZonesHeadLoss = (id: Maybe<number>): SetArmorZonesHeadLossAction => ({
   type: ActionTypes.SET_ARMOR_ZONES_HEAD_LOSS,
   payload: {
     id,
@@ -844,11 +844,11 @@ export const setArmorZonesHeadLoss = (id: number | undefined): SetArmorZonesHead
 export interface SetArmorZonesLeftArmAction {
   type: ActionTypes.SET_ARMOR_ZONES_LEFT_ARM;
   payload: {
-    id: string | undefined;
+    id: Maybe<string>;
   };
 }
 
-export const setArmorZonesLeftArm = (id: string | undefined): SetArmorZonesLeftArmAction => ({
+export const setArmorZonesLeftArm = (id: Maybe<string>): SetArmorZonesLeftArmAction => ({
   type: ActionTypes.SET_ARMOR_ZONES_LEFT_ARM,
   payload: {
     id,
@@ -858,26 +858,25 @@ export const setArmorZonesLeftArm = (id: string | undefined): SetArmorZonesLeftA
 export interface SetArmorZonesLeftArmLossAction {
   type: ActionTypes.SET_ARMOR_ZONES_LEFT_ARM_LOSS;
   payload: {
-    id: number | undefined;
+    id: Maybe<number>;
   };
 }
 
-export const setArmorZonesLeftArmLoss =
-  (id: number | undefined): SetArmorZonesLeftArmLossAction => ({
-    type: ActionTypes.SET_ARMOR_ZONES_LEFT_ARM_LOSS,
-    payload: {
-      id,
-    },
-  });
+export const setArmorZonesLeftArmLoss = (id: Maybe<number>): SetArmorZonesLeftArmLossAction => ({
+  type: ActionTypes.SET_ARMOR_ZONES_LEFT_ARM_LOSS,
+  payload: {
+    id,
+  },
+});
 
 export interface SetArmorZonesLeftLegAction {
   type: ActionTypes.SET_ARMOR_ZONES_LEFT_LEG;
   payload: {
-    id: string | undefined;
+    id: Maybe<string>;
   };
 }
 
-export const setArmorZonesLeftLeg = (id: string | undefined): SetArmorZonesLeftLegAction => ({
+export const setArmorZonesLeftLeg = (id: Maybe<string>): SetArmorZonesLeftLegAction => ({
   type: ActionTypes.SET_ARMOR_ZONES_LEFT_LEG,
   payload: {
     id,
@@ -887,12 +886,12 @@ export const setArmorZonesLeftLeg = (id: string | undefined): SetArmorZonesLeftL
 export interface SetArmorZonesLeftLegLossAction {
   type: ActionTypes.SET_ARMOR_ZONES_LEFT_LEG_LOSS;
   payload: {
-    id: number | undefined;
+    id: Maybe<number>;
   };
 }
 
 export const setArmorZonesLeftLegLoss =
-  (id: number | undefined): SetArmorZonesLeftLegLossAction => ({
+  (id: Maybe<number>): SetArmorZonesLeftLegLossAction => ({
     type: ActionTypes.SET_ARMOR_ZONES_LEFT_LEG_LOSS,
     payload: {
       id,
@@ -902,11 +901,11 @@ export const setArmorZonesLeftLegLoss =
 export interface SetArmorZonesTorsoAction {
   type: ActionTypes.SET_ARMOR_ZONES_TORSO;
   payload: {
-    id: string | undefined;
+    id: Maybe<string>;
   };
 }
 
-export const setArmorZonesTorso = (id: string | undefined): SetArmorZonesTorsoAction => ({
+export const setArmorZonesTorso = (id: Maybe<string>): SetArmorZonesTorsoAction => ({
   type: ActionTypes.SET_ARMOR_ZONES_TORSO,
   payload: {
     id,
@@ -916,11 +915,11 @@ export const setArmorZonesTorso = (id: string | undefined): SetArmorZonesTorsoAc
 export interface SetArmorZonesTorsoLossAction {
   type: ActionTypes.SET_ARMOR_ZONES_TORSO_LOSS;
   payload: {
-    id: number | undefined;
+    id: Maybe<number>;
   };
 }
 
-export const setArmorZonesTorsoLoss = (id: number | undefined): SetArmorZonesTorsoLossAction => ({
+export const setArmorZonesTorsoLoss = (id: Maybe<number>): SetArmorZonesTorsoLossAction => ({
   type: ActionTypes.SET_ARMOR_ZONES_TORSO_LOSS,
   payload: {
     id,
@@ -930,11 +929,11 @@ export const setArmorZonesTorsoLoss = (id: number | undefined): SetArmorZonesTor
 export interface SetArmorZonesRightArmAction {
   type: ActionTypes.SET_ARMOR_ZONES_RIGHT_ARM;
   payload: {
-    id: string | undefined;
+    id: Maybe<string>;
   };
 }
 
-export const setArmorZonesRightArm = (id: string | undefined): SetArmorZonesRightArmAction => ({
+export const setArmorZonesRightArm = (id: Maybe<string>): SetArmorZonesRightArmAction => ({
   type: ActionTypes.SET_ARMOR_ZONES_RIGHT_ARM,
   payload: {
     id,
@@ -944,26 +943,25 @@ export const setArmorZonesRightArm = (id: string | undefined): SetArmorZonesRigh
 export interface SetArmorZonesRightArmLossAction {
   type: ActionTypes.SET_ARMOR_ZONES_RIGHT_ARM_LOSS;
   payload: {
-    id: number | undefined;
+    id: Maybe<number>;
   };
 }
 
-export const setArmorZonesRightArmLoss =
-  (id: number | undefined): SetArmorZonesRightArmLossAction => ({
-    type: ActionTypes.SET_ARMOR_ZONES_RIGHT_ARM_LOSS,
-    payload: {
-      id,
-    },
-  });
+export const setArmorZonesRightArmLoss = (id: Maybe<number>): SetArmorZonesRightArmLossAction => ({
+  type: ActionTypes.SET_ARMOR_ZONES_RIGHT_ARM_LOSS,
+  payload: {
+    id,
+  },
+});
 
 export interface SetArmorZonesRightLegAction {
   type: ActionTypes.SET_ARMOR_ZONES_RIGHT_LEG;
   payload: {
-    id: string | undefined;
+    id: Maybe<string>;
   };
 }
 
-export const setArmorZonesRightLeg = (id: string | undefined): SetArmorZonesRightLegAction => ({
+export const setArmorZonesRightLeg = (id: Maybe<string>): SetArmorZonesRightLegAction => ({
   type: ActionTypes.SET_ARMOR_ZONES_RIGHT_LEG,
   payload: {
     id,
@@ -973,17 +971,16 @@ export const setArmorZonesRightLeg = (id: string | undefined): SetArmorZonesRigh
 export interface SetArmorZonesRightLegLossAction {
   type: ActionTypes.SET_ARMOR_ZONES_RIGHT_LEG_LOSS;
   payload: {
-    id: number | undefined;
+    id: Maybe<number>;
   };
 }
 
-export const setArmorZonesRightLegLoss =
-  (id: number | undefined): SetArmorZonesRightLegLossAction => ({
-    type: ActionTypes.SET_ARMOR_ZONES_RIGHT_LEG_LOSS,
-    payload: {
-      id,
-    },
-  });
+export const setArmorZonesRightLegLoss = (id: Maybe<number>): SetArmorZonesRightLegLossAction => ({
+  type: ActionTypes.SET_ARMOR_ZONES_RIGHT_LEG_LOSS,
+  payload: {
+    id,
+  },
+});
 
 export interface SetMeleeItemTemplatesCombatTechniqueFilterAction {
   type: ActionTypes.SET_MELEE_ITEM_TEMPLATES_COMBAT_TECHNIQUE_FILTER;

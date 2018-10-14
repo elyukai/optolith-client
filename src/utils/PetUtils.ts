@@ -1,8 +1,8 @@
-import { PetEditorInstance, PetInstance } from '../types/data';
+import { PetEditorInstance, PetEditorSpecific, PetInstance } from '../types/data';
 import { Record, RecordSafeKeys } from './dataUtils';
 
 export const convertToEdit = (item: Record<PetInstance>): Record<PetEditorInstance> =>
-  item.merge (Record.of ({
+  item .merge (Record.of<PetEditorSpecific> ({
     size: item.lookupWithDefault<'size'> ('') ('size'),
     type: item.lookupWithDefault<'type'> ('') ('type'),
     attack: item.lookupWithDefault<'attack'> ('') ('attack'),
@@ -31,9 +31,9 @@ export const convertToEdit = (item: Record<PetInstance>): Record<PetEditorInstan
     mov: item.lookupWithDefault<'mov'> ('') ('mov'),
     at: item.lookupWithDefault<'at'> ('') ('at'),
     pa: item.lookupWithDefault<'pa'> ('') ('pa'),
-  }));
+  })) as Record<PetEditorInstance>;
 
-export const getNewInstance = (): Record<PetEditorInstance> =>
+export const getNewPetInstance = (): Record<PetEditorInstance> =>
   Record.of<PetEditorInstance> ({
     name: '',
     size: '',
@@ -64,7 +64,7 @@ export const getNewInstance = (): Record<PetEditorInstance> =>
     mov: '',
     at: '',
     pa: '',
-    notes: ''
+    notes: '',
   });
 
 const getNonEmptyStringOr = <T extends { [key: string]: any }>(
@@ -73,35 +73,36 @@ const getNonEmptyStringOr = <T extends { [key: string]: any }>(
 ): string | undefined =>
   record.get (key).length > 0 ? record.get (key) : undefined
 
-export const convertToSave = (item: Record<PetEditorInstance>): Record<PetInstance> => {
-  return item.merge (Record.of ({
-    size: getNonEmptyStringOr (item, 'size'),
-    type: getNonEmptyStringOr (item, 'type'),
-    attack: getNonEmptyStringOr (item, 'attack'),
-    dp: getNonEmptyStringOr (item, 'dp'),
-    reach: getNonEmptyStringOr (item, 'reach'),
-    actions: getNonEmptyStringOr (item, 'actions'),
-    talents: getNonEmptyStringOr (item, 'talents'),
-    skills: getNonEmptyStringOr (item, 'skills'),
-    notes: getNonEmptyStringOr (item, 'notes'),
-    spentAp: getNonEmptyStringOr (item, 'spentAp'),
-    totalAp: getNonEmptyStringOr (item, 'totalAp'),
-    cou: getNonEmptyStringOr (item, 'cou'),
-    sgc: getNonEmptyStringOr (item, 'sgc'),
-    int: getNonEmptyStringOr (item, 'int'),
-    cha: getNonEmptyStringOr (item, 'cha'),
-    dex: getNonEmptyStringOr (item, 'dex'),
-    agi: getNonEmptyStringOr (item, 'agi'),
-    con: getNonEmptyStringOr (item, 'con'),
-    str: getNonEmptyStringOr (item, 'str'),
-    lp: getNonEmptyStringOr (item, 'lp'),
-    ae: getNonEmptyStringOr (item, 'ae'),
-    spi: getNonEmptyStringOr (item, 'spi'),
-    tou: getNonEmptyStringOr (item, 'tou'),
-    pro: getNonEmptyStringOr (item, 'pro'),
-    ini: getNonEmptyStringOr (item, 'ini'),
-    mov: getNonEmptyStringOr (item, 'mov'),
-    at: getNonEmptyStringOr (item, 'at'),
-    pa: getNonEmptyStringOr (item, 'pa')
-  })) as Record<PetInstance>;
-};
+export const convertToSave =
+  (id: string) => (item: Record<PetEditorInstance>): Record<PetInstance> =>
+    item .merge (Record.of ({
+      id,
+      size: getNonEmptyStringOr (item, 'size'),
+      type: getNonEmptyStringOr (item, 'type'),
+      attack: getNonEmptyStringOr (item, 'attack'),
+      dp: getNonEmptyStringOr (item, 'dp'),
+      reach: getNonEmptyStringOr (item, 'reach'),
+      actions: getNonEmptyStringOr (item, 'actions'),
+      talents: getNonEmptyStringOr (item, 'talents'),
+      skills: getNonEmptyStringOr (item, 'skills'),
+      notes: getNonEmptyStringOr (item, 'notes'),
+      spentAp: getNonEmptyStringOr (item, 'spentAp'),
+      totalAp: getNonEmptyStringOr (item, 'totalAp'),
+      cou: getNonEmptyStringOr (item, 'cou'),
+      sgc: getNonEmptyStringOr (item, 'sgc'),
+      int: getNonEmptyStringOr (item, 'int'),
+      cha: getNonEmptyStringOr (item, 'cha'),
+      dex: getNonEmptyStringOr (item, 'dex'),
+      agi: getNonEmptyStringOr (item, 'agi'),
+      con: getNonEmptyStringOr (item, 'con'),
+      str: getNonEmptyStringOr (item, 'str'),
+      lp: getNonEmptyStringOr (item, 'lp'),
+      ae: getNonEmptyStringOr (item, 'ae'),
+      spi: getNonEmptyStringOr (item, 'spi'),
+      tou: getNonEmptyStringOr (item, 'tou'),
+      pro: getNonEmptyStringOr (item, 'pro'),
+      ini: getNonEmptyStringOr (item, 'ini'),
+      mov: getNonEmptyStringOr (item, 'mov'),
+      at: getNonEmptyStringOr (item, 'at'),
+      pa: getNonEmptyStringOr (item, 'pa'),
+    })) as Record<PetInstance>;

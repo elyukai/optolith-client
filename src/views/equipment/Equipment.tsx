@@ -2,7 +2,7 @@ import * as R from 'ramda';
 import * as React from 'react';
 import { Aside } from '../../components/Aside';
 import { BorderButton } from '../../components/BorderButton';
-import { Dropdown } from '../../components/Dropdown';
+import { Dropdown, DropdownOption } from '../../components/Dropdown';
 import { ListView } from '../../components/List';
 import { ListHeader } from '../../components/ListHeader';
 import { ListHeaderTag } from '../../components/ListHeaderTag';
@@ -19,10 +19,11 @@ import { WikiInfoContainer } from '../../containers/WikiInfoContainer';
 import { ItemInstance, Purse } from '../../types/data';
 import { CombatTechniqueWithRequirements } from '../../types/view';
 import { ItemTemplate } from '../../types/wiki';
-import { Just, List, Maybe, Nothing, Record } from '../../utils/dataUtils';
+import { Just, List, Maybe, Record } from '../../utils/dataUtils';
 import { sortObjects } from '../../utils/FilterSortUtils';
-import { localizeNumber, localizeWeight, translate, UIMessagesObject } from '../../utils/I18n';
+import { translate, UIMessagesObject } from '../../utils/I18n';
 import { EquipmentListItem } from './EquipmentListItem';
+import { PurseAndTotals } from './PurseAndTotals';
 
 export interface EquipmentOwnProps {
   locale: UIMessagesObject;
@@ -71,14 +72,11 @@ export interface EquipmentState {
 }
 
 const prepareCombatTechniquesForSelection = (gr: number) => R.pipe (
-  Maybe.fmap (R.pipe (
-    List.filter<Record<CombatTechniqueWithRequirements>> (e => e .get ('gr') === gr),
-    List.map<
-      Record<CombatTechniqueWithRequirements>,
-      { id: Maybe<string>; name: string }
-    > (e => ({ ...e.toObject (), id: Just (e .get ('id')) }))
-  )),
-  Maybe.fromMaybe (List.empty ())
+  Maybe.fmap (
+    List.filter<Record<CombatTechniqueWithRequirements>> (e => e .get ('gr') === gr)
+  ),
+  Maybe.fromMaybe (List.empty ()) as unknown as
+    (x: Maybe<List<Record<CombatTechniqueWithRequirements>>>) => List<Record<DropdownOption>>
 );
 
 export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
@@ -102,17 +100,11 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
 
   render () {
     const {
-      carryingCapacity,
       combatTechniques: maybeCombatTechniques,
-      hasNoAddedAP,
-      initialStartingWealth,
       items: maybeItems,
       locale,
-      purse,
       sortOrder,
       templates,
-      totalPrice,
-      totalWeight,
       meleeItemTemplateCombatTechniqueFilter,
       rangedItemTemplateCombatTechniqueFilter,
       setMeleeItemTemplatesCombatTechniqueFilter,
@@ -127,10 +119,9 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
 
     const groupsSelectionItems =
       sortObjects (
-        groups .imap (index => e  => Record.of ({ id: Just (index + 1), name: e })),
+        groups .imap (index => e  => Record.of<DropdownOption> ({ id: index + 1, name: e })),
         locale .get ('id')
-      )
-        .map (Record.toObject);
+      );
 
     const getHasValidCombatTechnique = (e: Record<ItemTemplate>) =>
       Maybe.isJust (meleeItemTemplateCombatTechniqueFilter) && e .get ('gr') === 1
@@ -192,10 +183,9 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
               value={meleeItemTemplateCombatTechniqueFilter}
               onChange={setMeleeItemTemplatesCombatTechniqueFilter}
               options={
-                meleeCombatTechniques .cons ({
-                  id: Nothing (),
+                meleeCombatTechniques .cons (Record.of<DropdownOption> ({
                   name: translate (locale, 'allcombattechniques'),
-                })
+                }))
               }
               fullWidth
               />}
@@ -203,10 +193,9 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
               value={rangedItemTemplateCombatTechniqueFilter}
               onChange={setRangedItemTemplatesCombatTechniqueFilter}
               options={
-                rangedCombatTechniques .cons ({
-                  id: Nothing (),
+                rangedCombatTechniques .cons (Record.of<DropdownOption> ({
                   name: translate (locale, 'allcombattechniques'),
-                })
+                }))
               }
               fullWidth
               />}
@@ -310,57 +299,7 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
           </Scroll>
         </MainContent>
         <Aside>
-          <div className="purse">
-            <h4>{translate (locale, 'equipment.view.purse')}</h4>
-            <div className="fields">
-              <TextField
-                label={translate (locale, 'equipment.view.ducates')}
-                value={purse .fmap (Record.get<Purse, 'd'> ('d'))}
-                onChangeString={this.props.setDucates}
-                />
-              <TextField
-                label={translate (locale, 'equipment.view.silverthalers')}
-                value={purse .fmap (Record.get<Purse, 's'> ('s'))}
-                onChangeString={this.props.setSilverthalers}
-                />
-              <TextField
-                label={translate (locale, 'equipment.view.hellers')}
-                value={purse .fmap (Record.get<Purse, 'h'> ('h'))}
-                onChangeString={this.props.setHellers}
-                />
-              <TextField
-                label={translate (locale, 'equipment.view.kreutzers')}
-                value={purse .fmap (Record.get<Purse, 'k'> ('k'))}
-                onChangeString={this.props.setKreutzers}
-                />
-            </div>
-          </div>
-          <div className="total-points">
-            <h4>
-              {hasNoAddedAP && `${translate (locale, 'equipment.view.initialstartingwealth')} & `}
-              {translate (locale, 'equipment.view.carringandliftingcapactity')}
-            </h4>
-            <div className="fields">
-              {hasNoAddedAP && Maybe.isJust (totalPrice) && (
-                <div>
-                  {localizeNumber (locale .get ('id')) (Maybe.fromJust (totalPrice))}
-                  {' / '}
-                  {localizeNumber (locale .get ('id')) (initialStartingWealth)}
-                  {' '}
-                  {translate (locale, 'equipment.view.price')}
-                </div>
-              )}
-              <div>
-                {localizeNumber (locale .get ('id'))
-                                (localizeWeight (locale .get ('id')) (totalWeight))}
-                {' / '}
-                {localizeNumber (locale .get ('id'))
-                                (localizeWeight (locale .get ('id')) (carryingCapacity))}
-                {' '}
-                {translate (locale, 'equipment.view.weight')}
-              </div>
-            </div>
-          </div>
+          <PurseAndTotals {...this.props} />
           <WikiInfoContainer {...this.props} {...this.state} noWrapper />
         </Aside>
         <ItemEditorContainer locale={locale} />

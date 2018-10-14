@@ -4,119 +4,236 @@ import { AvatarWrapper } from '../../components/AvatarWrapper';
 import { BorderButton } from '../../components/BorderButton';
 import { Slidein } from '../../components/Slidein';
 import { TextField } from '../../components/TextField';
-import { InputTextEvent, PetEditorInstance, UIMessages } from '../../types/data';
-import { translate } from '../../utils/I18n';
+import { PetEditorInstance } from '../../types/data';
+import { Maybe, Record } from '../../utils/dataUtils';
+import { translate, UIMessagesObject } from '../../utils/I18n';
 
 export interface PetEditorProps {
-  data?: PetEditorInstance;
-  locale: UIMessages;
+  petInEditor: Maybe<Record<PetEditorInstance>>;
+  locale: UIMessagesObject;
   isEditPetAvatarOpen: boolean;
-  setAvatar(path: string): void;
-  setName(event: InputTextEvent): void;
-  setSize(event: InputTextEvent): void;
-  setType(event: InputTextEvent): void;
-  setSpentAp(event: InputTextEvent): void;
-  setTotalAp(event: InputTextEvent): void;
-  setCourage(event: InputTextEvent): void;
-  setSagacity(event: InputTextEvent): void;
-  setIntuition(event: InputTextEvent): void;
-  setCharisma(event: InputTextEvent): void;
-  setDexterity(event: InputTextEvent): void;
-  setAgility(event: InputTextEvent): void;
-  setConstitution(event: InputTextEvent): void;
-  setStrength(event: InputTextEvent): void;
-  setLp(event: InputTextEvent): void;
-  setAe(event: InputTextEvent): void;
-  setSpi(event: InputTextEvent): void;
-  setTou(event: InputTextEvent): void;
-  setPro(event: InputTextEvent): void;
-  setIni(event: InputTextEvent): void;
-  setMov(event: InputTextEvent): void;
-  setAttack(event: InputTextEvent): void;
-  setAt(event: InputTextEvent): void;
-  setPa(event: InputTextEvent): void;
-  setDp(event: InputTextEvent): void;
-  setReach(event: InputTextEvent): void;
-  setActions(event: InputTextEvent): void;
-  setTalents(event: InputTextEvent): void;
-  setSkills(event: InputTextEvent): void;
-  setNotes(event: InputTextEvent): void;
-  hideSlidein(): void;
-  save(): void;
-  openEditPetAvatar(): void;
-  closeEditPetAvatar(): void;
+  closePetEditor (): void;
+  savePet (): void;
+  openEditPetAvatar (): void;
+  closeEditPetAvatar (): void;
+
+  setAvatar (path: string): void;
+  setName (name: string): void;
+  setSize (size: string): void;
+  setType (type: string): void;
+  setSpentAp (spentAp: string): void;
+  setTotalAp (totalAp: string): void;
+  setCourage (courage: string): void;
+  setSagacity (sagacity: string): void;
+  setIntuition (intuition: string): void;
+  setCharisma (charisma: string): void;
+  setDexterity (dexterity: string): void;
+  setAgility (agility: string): void;
+  setConstitution (constitution: string): void;
+  setStrength (strength: string): void;
+  setLp (lp: string): void;
+  setAe (ae: string): void;
+  setSpi (spi: string): void;
+  setTou (tou: string): void;
+  setPro (pro: string): void;
+  setIni (ini: string): void;
+  setMov (mov: string): void;
+  setAttack (attack: string): void;
+  setAt (at: string): void;
+  setPa (pa: string): void;
+  setDp (dp: string): void;
+  setReach (reach: string): void;
+  setActions (actions: string): void;
+  setSkills (skills: string): void;
+  setAbilities (abilities: string): void;
+  setNotes (notes: string): void;
 }
 
-export class PetEditor extends React.Component<PetEditorProps> {
-  saveEdit = () => {
-    this.props.save();
-    this.props.hideSlidein();
-  }
+export function PetEditor (props: PetEditorProps) {
+  const { petInEditor: maybePetInEditor, locale } = props;
 
-  render() {
-    const { data, hideSlidein, locale, setActions, setAe, setAgility, setAt, setAttack, setCharisma, setConstitution, setCourage, setDexterity, setDp, setIni, setIntuition, setLp, setMov, setName, setPa, setPro, setReach, setSagacity, setSize, setSkills, setSpentAp, setSpi, setStrength, setTalents, setTotalAp, setTou, setType, setNotes, isEditPetAvatarOpen, openEditPetAvatar, closeEditPetAvatar } = this.props;
+  if (Maybe.isJust (maybePetInEditor)) {
+    const pet = Maybe.fromJust (maybePetInEditor);
 
     return (
-      <Slidein isOpened={!!data} close={hideSlidein}>
-        {data && <div className="pet-edit">
+      <Slidein isOpened close={props.closePetEditor}>
+        <div className="pet-edit">
           <div className="left">
-            <AvatarWrapper src={data.avatar} onClick={openEditPetAvatar} />
+            <AvatarWrapper src={pet .lookup ('avatar')} onClick={props.openEditPetAvatar} />
           </div>
           <div className="right">
             <div className="row">
-              <TextField label={translate(locale, 'pet.name')} value={data.name} onChange={setName} />
-              <TextField label={translate(locale, 'pet.sizecategory')} value={data.size} onChange={setSize} />
-              <TextField label={translate(locale, 'pet.type')} value={data.type} onChange={setType} />
-              <TextField label={translate(locale, 'pet.apspent')} value={data.spentAp} onChange={setSpentAp} />
-              <TextField label={translate(locale, 'pet.totalap')} value={data.totalAp} onChange={setTotalAp} />
+              <TextField
+                label={translate (locale, 'pet.name')}
+                value={pet .get ('name')}
+                onChangeString={props.setName}
+                />
+              <TextField
+                label={translate (locale, 'pet.sizecategory')}
+                value={pet .get ('size')}
+                onChangeString={props.setSize}
+                />
+              <TextField
+                label={translate (locale, 'pet.type')}
+                value={pet .get ('type')}
+                onChangeString={props.setType}
+                />
+              <TextField
+                label={translate (locale, 'pet.apspent')}
+                value={pet .get ('spentAp')}
+                onChangeString={props.setSpentAp}
+                />
+              <TextField
+                label={translate (locale, 'pet.totalap')}
+                value={pet .get ('totalAp')}
+                onChangeString={props.setTotalAp}
+                />
             </div>
             <div className="row">
-              <TextField label={translate(locale, 'pet.cou')} value={data.cou} onChange={setCourage} />
-              <TextField label={translate(locale, 'pet.sgc')} value={data.sgc} onChange={setSagacity} />
-              <TextField label={translate(locale, 'pet.int')} value={data.int} onChange={setIntuition} />
-              <TextField label={translate(locale, 'pet.cha')} value={data.cha} onChange={setCharisma} />
-              <TextField label={translate(locale, 'pet.dex')} value={data.dex} onChange={setDexterity} />
-              <TextField label={translate(locale, 'pet.agi')} value={data.agi} onChange={setAgility} />
-              <TextField label={translate(locale, 'pet.con')} value={data.con} onChange={setConstitution} />
-              <TextField label={translate(locale, 'pet.str')} value={data.str} onChange={setStrength} />
+              <TextField
+                label={translate (locale, 'pet.cou')}
+                value={pet .get ('cou')}
+                onChangeString={props.setCourage}
+                />
+              <TextField
+                label={translate (locale, 'pet.sgc')}
+                value={pet .get ('sgc')}
+                onChangeString={props.setSagacity}
+                />
+              <TextField
+                label={translate (locale, 'pet.int')}
+                value={pet .get ('int')}
+                onChangeString={props.setIntuition}
+                />
+              <TextField
+                label={translate (locale, 'pet.cha')}
+                value={pet .get ('cha')}
+                onChangeString={props.setCharisma}
+                />
+              <TextField
+                label={translate (locale, 'pet.dex')}
+                value={pet .get ('dex')}
+                onChangeString={props.setDexterity}
+                />
+              <TextField
+                label={translate (locale, 'pet.agi')}
+                value={pet .get ('agi')}
+                onChangeString={props.setAgility}
+                />
+              <TextField
+                label={translate (locale, 'pet.con')}
+                value={pet .get ('con')}
+                onChangeString={props.setConstitution}
+                />
+              <TextField
+                label={translate (locale, 'pet.str')}
+                value={pet .get ('str')}
+                onChangeString={props.setStrength}
+                />
             </div>
             <div className="row">
-              <TextField label={translate(locale, 'pet.lp')} value={data.lp} onChange={setLp} />
-              <TextField label={translate(locale, 'pet.ae')} value={data.ae} onChange={setAe} />
-              <TextField label={translate(locale, 'pet.spi')} value={data.spi} onChange={setSpi} />
-              <TextField label={translate(locale, 'pet.tou')} value={data.tou} onChange={setTou} />
-              <TextField label={translate(locale, 'pet.pro')} value={data.pro} onChange={setPro} />
-              <TextField label={translate(locale, 'pet.ini')} value={data.ini} onChange={setIni} />
-              <TextField label={translate(locale, 'pet.mov')} value={data.mov} onChange={setMov} />
+              <TextField
+                label={translate (locale, 'pet.lp')}
+                value={pet .get ('lp')}
+                onChangeString={props.setLp}
+                />
+              <TextField
+                label={translate (locale, 'pet.ae')}
+                value={pet .get ('ae')}
+                onChangeString={props.setAe}
+                />
+              <TextField
+                label={translate (locale, 'pet.spi')}
+                value={pet .get ('spi')}
+                onChangeString={props.setSpi}
+                />
+              <TextField
+                label={translate (locale, 'pet.tou')}
+                value={pet .get ('tou')}
+                onChangeString={props.setTou}
+                />
+              <TextField
+                label={translate (locale, 'pet.pro')}
+                value={pet .get ('pro')}
+                onChangeString={props.setPro}
+                />
+              <TextField
+                label={translate (locale, 'pet.ini')}
+                value={pet .get ('ini')}
+                onChangeString={props.setIni}
+                />
+              <TextField
+                label={translate (locale, 'pet.mov')}
+                value={pet .get ('mov')}
+                onChangeString={props.setMov}
+                />
             </div>
             <div className="row">
-              <TextField label={translate(locale, 'pet.attack')} value={data.attack} onChange={setAttack} />
-              <TextField label={translate(locale, 'pet.at')} value={data.at} onChange={setAt} />
-              <TextField label={translate(locale, 'pet.pa')} value={data.pa} onChange={setPa} />
-              <TextField label={translate(locale, 'pet.dp')} value={data.dp} onChange={setDp} />
-              <TextField label={translate(locale, 'pet.reach')} value={data.reach} onChange={setReach} />
+              <TextField
+                label={translate (locale, 'pet.attack')}
+                value={pet .get ('attack')}
+                onChangeString={props.setAttack}
+                />
+              <TextField
+                label={translate (locale, 'pet.at')}
+                value={pet .get ('at')}
+                onChangeString={props.setAt}
+                />
+              <TextField
+                label={translate (locale, 'pet.pa')}
+                value={pet .get ('pa')}
+                onChangeString={props.setPa}
+                />
+              <TextField
+                label={translate (locale, 'pet.dp')}
+                value={pet .get ('dp')}
+                onChangeString={props.setDp}
+                />
+              <TextField
+                label={translate (locale, 'pet.reach')}
+                value={pet .get ('reach')}
+                onChangeString={props.setReach}
+                />
             </div>
             <div className="row">
-              <TextField label={translate(locale, 'pet.actions')} value={data.actions} onChange={setActions} />
-              <TextField label={translate(locale, 'pet.skills')} value={data.talents} onChange={setTalents} />
-              <TextField label={translate(locale, 'pet.specialabilities')} value={data.skills} onChange={setSkills} />
+              <TextField
+                label={translate (locale, 'pet.actions')}
+                value={pet .get ('actions')}
+                onChangeString={props.setActions}
+                />
+              <TextField
+                label={translate (locale, 'pet.skills')}
+                value={pet .get ('talents')}
+                onChangeString={props.setSkills}
+                />
+              <TextField
+                label={translate (locale, 'pet.specialabilities')}
+                value={pet .get ('skills')}
+                onChangeString={props.setAbilities}
+                />
             </div>
             <div className="row">
-              <TextField label={translate(locale, 'pet.notes')} value={data.notes} onChange={setNotes} />
+              <TextField
+                label={translate (locale, 'pet.notes')}
+                value={pet .get ('notes')}
+                onChangeString={props.setNotes}
+                />
             </div>
             <BorderButton
-              label={translate(locale, 'actions.save')}
-              onClick={this.saveEdit}
+              label={translate (locale, 'actions.save')}
+              onClick={props.savePet}
               />
           </div>
-        </div>}
+        </div>
         <AvatarChange
-          {...this.props}
-          setPath={this.props.setAvatar}
-          close={closeEditPetAvatar}
-          isOpened={isEditPetAvatarOpen}
+          locale={locale}
+          setPath={props.setAvatar}
+          close={props.closeEditPetAvatar}
+          isOpened={props.isEditPetAvatarOpen}
           />
       </Slidein>
     );
   }
+
+  return null;
 }

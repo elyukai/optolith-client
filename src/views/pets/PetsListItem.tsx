@@ -7,38 +7,30 @@ import { ListItemName } from '../../components/ListItemName';
 import { ListItemSeparator } from '../../components/ListItemSeparator';
 import { VerticalList } from '../../components/VerticalList';
 import { PetInstance } from '../../types/data';
+import { Record } from '../../utils/dataUtils';
 
-export interface PetsListItemProps extends PetInstance {
-  editPet(id: string): void;
-  deletePet(id: string): void;
+export interface PetsListItemProps {
+  pet: Record<PetInstance>;
+  editPet (id: string): void;
+  deletePet (id: string): void;
 }
 
-export class PetsListItem extends React.Component<PetsListItemProps, {}> {
-  edit = () => {
-    const { editPet, id } = this.props;
-    editPet(id!);
-  }
-  delete = () => {
-    const { deletePet, id } = this.props;
-    deletePet(id!);
-  }
+export function PetsListItem (props: PetsListItemProps) {
+  const { deletePet, editPet, pet } = props;
 
-  render() {
-    const { avatar, name, type } = this.props;
-    return (
-      <ListItem>
-        <AvatarWrapper src={avatar} />
-        <ListItemName name={name} large>
-          <VerticalList>
-            <span>{type}</span>
-          </VerticalList>
-        </ListItemName>
-        <ListItemSeparator/>
-        <ListItemButtons>
-          <IconButton icon="&#xE90b;" onClick={this.delete} />
-          <IconButton icon="&#xE90c;" onClick={this.edit} />
-        </ListItemButtons>
-      </ListItem>
-    );
-  }
+  return (
+    <ListItem>
+      <AvatarWrapper src={pet .lookup ('avatar')} />
+      <ListItemName name={pet .get ('name')} large>
+        <VerticalList>
+          <span>{pet .lookupWithDefault<'type'> ('') ('type')}</span>
+        </VerticalList>
+      </ListItemName>
+      <ListItemSeparator/>
+      <ListItemButtons>
+        <IconButton icon="&#xE90b;" onClick={deletePet .bind (pet .get ('id'))} />
+        <IconButton icon="&#xE90c;" onClick={editPet .bind (pet .get ('id'))} />
+      </ListItemButtons>
+    </ListItem>
+  );
 }

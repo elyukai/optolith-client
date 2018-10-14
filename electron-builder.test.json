@@ -38,7 +38,7 @@
 	},
 	"publish": {
 		"provider": "generic",
-		"url": "http://cha5app.dsa-sh.de/releases/${os}",
+		"url": "http://update.optolith.app/insider/${os}",
 		"channel": "alpha"
 	}
 }

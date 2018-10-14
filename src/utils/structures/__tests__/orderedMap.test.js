@@ -32,10 +32,24 @@ test('size', () => {
     .toEqual(0);
 });
 
+test('OrderedMap.size', () => {
+  expect(OrderedMap.size (OrderedMap.of ([[1, 'a'],[2, 'b'], [3, 'c']])))
+    .toEqual(3);
+  expect(OrderedMap.size (OrderedMap.of ()))
+    .toEqual(0);
+});
+
 test('member', () => {
   expect(OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'c']]).member(2))
     .toBeTruthy();
   expect(OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'c']]).member(5))
+    .toBeFalsy();
+});
+
+test('OrderedMap.member', () => {
+  expect(OrderedMap.member (2) (OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'c']])))
+    .toBeTruthy();
+  expect(OrderedMap.member (5) (OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'c']])))
     .toBeFalsy();
 });
 
@@ -141,6 +155,16 @@ test('delete', () => {
     .toEqual(OrderedMap.of([[1, 'a'],[2, 'b']]));
 
   expect(map.delete(4) === map)
+    .toBeTruthy();
+});
+
+test('OrderedMap.delete', () => {
+  const map = OrderedMap.of([[1, 'a'],[2, 'b'], [3, 'c']]);
+
+  expect(OrderedMap.delete (3) (map))
+    .toEqual(OrderedMap.of([[1, 'a'],[2, 'b']]));
+
+  expect(OrderedMap.delete (4) (map) === map)
     .toBeTruthy();
 });
 

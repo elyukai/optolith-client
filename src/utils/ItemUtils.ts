@@ -87,52 +87,54 @@ const convertDamageBonusToSave =
     return Nothing ();
   };
 
-export const convertToSave = (item: Record<ItemEditorInstance>): Record<ItemInstance> => {
-  interface Additional {
-    movMod?: number;
-    iniMod?: number;
-    stabilityMod?: number;
-    improvisedWeaponGroup?: number;
-  }
+export const convertToSave =
+  (id: string) => (item: Record<ItemEditorInstance>): Record<ItemInstance> => {
+    interface Additional {
+      movMod?: number;
+      iniMod?: number;
+      stabilityMod?: number;
+      improvisedWeaponGroup?: number;
+    }
 
-  const add =
-    Record.of<Additional> ({})
-      .update<'movMod'> (
-        () => item.lookup ('movMod')
-          .fmap (toInteger)
-          .bind (Maybe.ensure (e => e > 0))
-      )
-      ('movMod')
-      .update<'iniMod'> (
-        () => item.lookup ('iniMod')
-          .fmap (toInteger)
-          .bind (Maybe.ensure (e => e > 0))
-      ) ('iniMod')
-      .update<'stabilityMod'> (() => item.lookup ('stabilityMod')
-                              .fmap (toInteger)
-                              .bind (Maybe.ensure (e => !Number.isNaN (e))))
-                            ('stabilityMod')
-      .update<'improvisedWeaponGroup'> (() => item.lookup ('improvisedWeaponGroup'))
-                                      ('improvisedWeaponGroup');
+    const add =
+      Record.of<Additional> ({})
+        .update<'movMod'> (
+          () => item.lookup ('movMod')
+            .fmap (toInteger)
+            .bind (Maybe.ensure (e => e > 0))
+        )
+        ('movMod')
+        .update<'iniMod'> (
+          () => item.lookup ('iniMod')
+            .fmap (toInteger)
+            .bind (Maybe.ensure (e => e > 0))
+        ) ('iniMod')
+        .update<'stabilityMod'> (() => item.lookup ('stabilityMod')
+                                .fmap (toInteger)
+                                .bind (Maybe.ensure (e => !Number.isNaN (e))))
+                              ('stabilityMod')
+        .update<'improvisedWeaponGroup'> (() => item.lookup ('improvisedWeaponGroup'))
+                                        ('improvisedWeaponGroup');
 
-  return item.mergeMaybe (Record.of ({
-    amount: toInteger (item.get ('amount'), 1),
-    at: toInteger (item.get ('at')),
-    damageBonus: convertDamageBonusToSave (item.get ('damageBonus')),
-    damageDiceNumber: toInteger (item.get ('damageDiceNumber')),
-    damageFlat: toInteger (item.get ('damageFlat')),
-    enc: toInteger (item.get ('enc')),
-    length: toFloat (item.get ('length')),
-    pa: toInteger (item.get ('pa')),
-    price: toFloat (item.get ('price')),
-    pro: toInteger (item.get ('pro')),
-    range: item.get ('range').map (toInteger),
-    reloadTime: toInteger (item.get ('reloadTime')),
-    stp: toInteger (item.get ('stp')),
-    weight: toFloat (item.get ('weight')),
-    ...add,
-  })) as any as Record<ItemInstance>;
-};
+    return item.mergeMaybe (Record.of ({
+      id,
+      amount: toInteger (item.get ('amount'), 1),
+      at: toInteger (item.get ('at')),
+      damageBonus: convertDamageBonusToSave (item.get ('damageBonus')),
+      damageDiceNumber: toInteger (item.get ('damageDiceNumber')),
+      damageFlat: toInteger (item.get ('damageFlat')),
+      enc: toInteger (item.get ('enc')),
+      length: toFloat (item.get ('length')),
+      pa: toInteger (item.get ('pa')),
+      price: toFloat (item.get ('price')),
+      pro: toInteger (item.get ('pro')),
+      range: item.get ('range').map (toInteger),
+      reloadTime: toInteger (item.get ('reloadTime')),
+      stp: toInteger (item.get ('stp')),
+      weight: toFloat (item.get ('weight')),
+      ...add,
+    })) as any as Record<ItemInstance>;
+  };
 
 export const containsNaN = (item: Record<ItemInstance>): List<string> | false => {
   const filtered = item.keys ().filter (e => {

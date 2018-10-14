@@ -207,12 +207,18 @@ export const getArmorZonesEditorInstance = (state: AppState) =>
   getCurrentHero (state)
     .bind (just => just.present.get ('belongings').lookup ('zoneArmorInEditor'));
 
-export const getIsArmorZonesCreation = (state: AppState) =>
+export const getIsInHitZoneArmorCreation = (state: AppState) =>
   getCurrentHero (state)
     .fmap (just => just.present.get ('belongings').get ('isInZoneArmorCreation'));
 
 export const getPets = (state: AppState) =>
-  getCurrentHero (state).fmap (just => just.present.get ('pets'));
+  getCurrentHero (state) .fmap (just => just .present .get ('pets'));
+
+export const getPetEditorInstance = (state: AppState) =>
+  getCurrentHero (state) .bind (just => just .present .lookup ('petInEditor'));
+
+export const getIsInPetCreation = (state: AppState) =>
+  getCurrentHero (state) .fmap (just => just .present .get ('isInPetCreation'));
 
 
 export const getAlerts = (state: AppState) => state.ui.alerts;

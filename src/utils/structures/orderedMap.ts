@@ -53,7 +53,16 @@ export class OrderedMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
    * The number of elements in the map.
    */
   size (): number {
-    return this.value.size;
+    return OrderedMap.size (this);
+  }
+
+  /**
+   * `size :: Map k a -> Int`
+   *
+   * The number of elements in the map.
+   */
+  static size (map: OrderedMap<any, any>): number {
+    return map .value .size;
   }
 
   /**
@@ -63,6 +72,15 @@ export class OrderedMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
    */
   member (key: K): boolean {
     return this.value.has (key);
+  }
+
+  /**
+   * `member :: Ord k => k -> Map k a -> Bool`
+   *
+   * Is the key a member of the map?
+   */
+  static member<K> (key: K): (map: OrderedMap<K, any>) => boolean {
+    return map => map .value .has (key);
   }
 
   /**
@@ -257,7 +275,17 @@ export class OrderedMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
    * the map, the original map is returned.
    */
   delete (key: K): OrderedMap<K, V> {
-    return this.member (key) ? this.removeKey (key) : this;
+    return OrderedMap.delete<K, V> (key) (this);
+  }
+
+  /**
+   * `delete :: Ord k => k -> Map k a -> Map k a`
+   *
+   * Delete a key and its value from the map. When the key is not a member of
+   * the map, the original map is returned.
+   */
+  static delete<K, A> (key: K): (map: OrderedMap<K, A>) => OrderedMap<K, A> {
+    return map => OrderedMap.member (key) (map) ? map .removeKey (key) : map;
   }
 
   /**

@@ -96,6 +96,8 @@ export interface HeroDependent {
   readonly belongings: Record<Belongings>;
   readonly rules: Record<Rules>;
   readonly pets: OrderedMap<string, Record<PetInstance>>;
+  readonly petInEditor?: Record<PetEditorInstance>;
+  readonly isInPetCreation: boolean;
   readonly pact?: Record<Pact>;
   readonly combatStyleDependencies: List<Record<StyleDependency>>;
   readonly magicalStyleDependencies: List<Record<StyleDependency>>;
@@ -373,7 +375,7 @@ export interface ItemInstanceOld {
 }
 
 export interface ItemBaseInstance {
-  id: string;
+  id?: string;
   name: string;
   ammunition?: string;
   combatTechnique?: string;
@@ -393,6 +395,7 @@ export interface ItemBaseInstance {
 }
 
 export interface ItemInstance extends ItemBaseInstance {
+  id: string;
   at?: number;
   iniMod?: number;
   movMod?: number;
@@ -556,6 +559,7 @@ interface PetBaseInstance {
 }
 
 export interface PetInstance extends PetBaseInstance {
+  id: string;
   size?: string;
   type?: string;
   attack?: string;
@@ -586,7 +590,7 @@ export interface PetInstance extends PetBaseInstance {
   pa?: string;
 }
 
-export interface PetEditorInstance extends PetBaseInstance {
+export interface PetEditorSpecific {
   size: string;
   type: string;
   attack: string;
@@ -616,6 +620,8 @@ export interface PetEditorInstance extends PetBaseInstance {
   at: string;
   pa: string;
 }
+
+export interface PetEditorInstance extends PetBaseInstance, PetEditorSpecific { }
 
 export interface AlertButtonCore {
   autoWidth?: boolean;

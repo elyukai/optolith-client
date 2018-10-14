@@ -129,10 +129,7 @@ function equipmentManagingReducer (
             itemInEditor => state.modify<'belongings'> (
               belongings => belongings
                 .modify<'items'> (
-                  items => items.insert (newId) (
-                    convertToSave (itemInEditor)
-                      .insert ('id') (newId)
-                  )
+                  items => items.insert (newId) (convertToSave (newId) (itemInEditor))
                 ) ('items')
                 .delete ('itemInEditor') as Record<Data.Belongings>
             ) ('belongings')
@@ -169,7 +166,6 @@ function equipmentManagingReducer (
               damageFlat: '',
               enc: '',
               gr: 1,
-              id: '',
               isParryingWeapon: false,
               isTemplateLocked: false,
               isTwoHandedWeapon: false,
@@ -192,15 +188,23 @@ function equipmentManagingReducer (
     case ActionTypes.SAVE_ITEM: {
       return Maybe.fromMaybe (state) (
         state.get ('belongings').lookup ('itemInEditor')
-          .bind (Maybe.ensure (itemInEditor => itemInEditor.get ('id').length > 0))
+          .bind (Maybe.ensure (itemInEditor => itemInEditor .member ('id')))
           .fmap (
             itemInEditor => state.modify<'belongings'> (
               belongings => belongings
                 .modify<'items'> (
-                  items => items.insert (itemInEditor.get ('id')) (
-                    convertToSave (itemInEditor)
-                    // TODO: does not handle locked templated anymore
-                  )
+                  items => {
+                    const id =
+                      (itemInEditor as Record<Data.ItemEditorInstance & { id: string }>)
+                        .get ('id');
+
+                    return items.insert
+                      (id)
+                      (
+                        convertToSave (id) (itemInEditor)
+                        // TODO: does not handle locked templated anymore
+                      );
+                  }
                 ) ('items')
                 .delete ('itemInEditor') as Record<Data.Belongings>
             ) ('belongings')
