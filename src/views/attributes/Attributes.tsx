@@ -65,7 +65,12 @@ export function Attributes (props: AttributesProps) {
   return (
     <Page id="attribute">
       <Scroll>
-        <div className="counter">{translate (locale, 'attributes.view.attributetotal')}: {sum}{isInCharacterCreation && ` / ${maxTotalAttributeValues}`}</div>
+        <div className="counter">
+          {translate (locale, 'attributes.view.attributetotal')}
+          {': '}
+          {sum}
+          {isInCharacterCreation && ` / ${Maybe.fromMaybe (0) (maxTotalAttributeValues)}`}
+        </div>
         <AttributeList {...props} />
         <div className="secondary">
           {isInCharacterCreation && <AttributesAdjustment {...props} />}

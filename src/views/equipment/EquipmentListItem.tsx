@@ -46,7 +46,9 @@ export function EquipmentListItem (props: EquipmentListItemProps) {
   ) : (
     <ListItem>
       <ListItemName
-        name={`${Maybe.maybe<number, string> ('') (value => `${value}x `) (numberValue)}${name}`}
+        name={
+          `${Maybe.maybe<number, string> ('') (value => `${value}x `) (numberValue)}${data .get ('name')}`
+        }
         />
       <ListItemSeparator />
       <ListItemGroup list={translate (locale, 'equipment.view.groups')} index={data .get ('gr')} />

@@ -27,9 +27,9 @@ export class AttributeListItem extends React.Component<AttributeListItemProps, {
 
     const id = attribute .get ('id');
     const value = attribute .get ('value');
-    const max = attribute .get ('max');
+    const max = attribute .lookup ('max');
 
-    const valueHeader = isInCharacterCreation ? `${value} / ${max}` : value;
+    const valueHeader = isInCharacterCreation ? `${value} / ${Maybe.fromMaybe (0) (max)}` : value;
 
     return (
       <AttributeBorder

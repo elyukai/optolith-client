@@ -40,8 +40,8 @@ export const addAttributePoint = (id: string) => (locale: UIMessagesObject): Asy
       dispatch<AddAttributePointAction> ({
         type: ActionTypes.ADD_ATTRIBUTE_POINT,
         payload: {
-          id
-        }
+          id,
+        },
       });
     }
     else {
@@ -62,8 +62,8 @@ export interface RemoveAttributePointAction {
 export const removeAttributePoint = (id: string): RemoveAttributePointAction => ({
   type: ActionTypes.REMOVE_ATTRIBUTE_POINT,
   payload: {
-    id
-  }
+    id,
+  },
 });
 
 export interface AddLifePointAction {
@@ -83,7 +83,7 @@ export const addLifePoint = (locale: UIMessagesObject): AsyncAction => (dispatch
 
   if (Maybe.elem (true) (areSufficientAPAvailable)) {
     dispatch<AddLifePointAction> ({
-      type: ActionTypes.ADD_LIFE_POINT
+      type: ActionTypes.ADD_LIFE_POINT,
     });
   }
   else {
@@ -112,7 +112,7 @@ export const addArcaneEnergyPoint = (locale: UIMessagesObject): AsyncAction =>
 
     if (Maybe.elem (true) (areSufficientAPAvailable)) {
       dispatch<AddArcaneEnergyPointAction> ({
-        type: ActionTypes.ADD_ARCANE_ENERGY_POINT
+        type: ActionTypes.ADD_ARCANE_ENERGY_POINT,
       });
     }
     else {
@@ -140,7 +140,7 @@ export const addKarmaPoint = (locale: UIMessagesObject): AsyncAction => (dispatc
 
   if (Maybe.elem (true) (areSufficientAPAvailable)) {
     dispatch<AddKarmaPointAction> ({
-      type: ActionTypes.ADD_KARMA_POINT
+      type: ActionTypes.ADD_KARMA_POINT,
     });
   }
   else {
@@ -156,7 +156,7 @@ export interface RemoveLifePointAction {
 }
 
 export const removeLifePoint = (): RemoveLifePointAction => ({
-  type: ActionTypes.REMOVE_LIFE_POINT
+  type: ActionTypes.REMOVE_LIFE_POINT,
 });
 
 export interface RemoveArcaneEnergyPointAction {
@@ -164,7 +164,7 @@ export interface RemoveArcaneEnergyPointAction {
 }
 
 export const removeArcaneEnergyPoint = (): RemoveArcaneEnergyPointAction =>  ({
-  type: ActionTypes.REMOVE_ARCANE_ENERGY_POINT
+  type: ActionTypes.REMOVE_ARCANE_ENERGY_POINT,
 });
 
 export interface RemoveKarmaPointAction {
@@ -193,7 +193,7 @@ export const addBoughtBackAEPoint = (locale: UIMessagesObject): AsyncAction =>
 
     if (Maybe.elem (true) (areSufficientAPAvailable)) {
       dispatch<AddBoughtBackAEPointAction> ({
-        type: ActionTypes.ADD_BOUGHT_BACK_AE_POINT
+        type: ActionTypes.ADD_BOUGHT_BACK_AE_POINT,
       });
     }
     else {
@@ -209,7 +209,7 @@ export interface AddLostLPPointAction {
 }
 
 export const addLostLPPoint = (): AddLostLPPointAction => ({
-  type: ActionTypes.ADD_LOST_LP_POINT
+  type: ActionTypes.ADD_LOST_LP_POINT,
 });
 
 export interface RemoveLostLPPointAction {
@@ -217,7 +217,7 @@ export interface RemoveLostLPPointAction {
 }
 
 export const removeLostLPPoint = (): RemoveLostLPPointAction => ({
-  type: ActionTypes.REMOVE_LOST_LP_POINT
+  type: ActionTypes.REMOVE_LOST_LP_POINT,
 });
 
 export interface AddLostLPPointsAction {
@@ -230,8 +230,8 @@ export interface AddLostLPPointsAction {
 export const addLostLPPoints = (value: number): AddLostLPPointsAction => ({
   type: ActionTypes.ADD_LOST_LP_POINTS,
   payload: {
-    value
-  }
+    value,
+  },
 });
 
 export interface RemoveBoughtBackAEPointAction {
@@ -239,7 +239,7 @@ export interface RemoveBoughtBackAEPointAction {
 }
 
 export const removeBoughtBackAEPoint = (): RemoveBoughtBackAEPointAction => ({
-  type: ActionTypes.REMOVE_BOUGHT_BACK_AE_POINT
+  type: ActionTypes.REMOVE_BOUGHT_BACK_AE_POINT,
 });
 
 export interface AddLostAEPointAction {
@@ -247,7 +247,7 @@ export interface AddLostAEPointAction {
 }
 
 export const addLostAEPoint = (): AddLostAEPointAction => ({
-  type: ActionTypes.ADD_LOST_AE_POINT
+  type: ActionTypes.ADD_LOST_AE_POINT,
 });
 
 export interface RemoveLostAEPointAction {
@@ -255,7 +255,7 @@ export interface RemoveLostAEPointAction {
 }
 
 export const removeLostAEPoint = (): RemoveLostAEPointAction => ({
-  type: ActionTypes.REMOVE_LOST_AE_POINT
+  type: ActionTypes.REMOVE_LOST_AE_POINT,
 });
 
 export interface AddLostAEPointsAction {
@@ -268,8 +268,8 @@ export interface AddLostAEPointsAction {
 export const addLostAEPoints = (value: number): AddLostAEPointsAction => ({
   type: ActionTypes.ADD_LOST_AE_POINTS,
   payload: {
-    value
-  }
+    value,
+  },
 });
 
 export interface AddBoughtBackKPPointAction {
@@ -290,7 +290,7 @@ export const addBoughtBackKPPoint = (locale: UIMessagesObject): AsyncAction =>
 
     if (Maybe.elem (true) (areSufficientAPAvailable)) {
       dispatch<AddBoughtBackKPPointAction> ({
-        type: ActionTypes.ADD_BOUGHT_BACK_KP_POINT
+        type: ActionTypes.ADD_BOUGHT_BACK_KP_POINT,
       });
     }
     else {
@@ -306,7 +306,7 @@ export interface RemoveBoughtBackKPPointAction {
 }
 
 export const removeBoughtBackKPPoint = (): RemoveBoughtBackKPPointAction => ({
-  type: ActionTypes.REMOVE_BOUGHT_BACK_KP_POINT
+  type: ActionTypes.REMOVE_BOUGHT_BACK_KP_POINT,
 });
 
 export interface AddLostKPPointAction {
@@ -314,7 +314,7 @@ export interface AddLostKPPointAction {
 }
 
 export const addLostKPPoint = (): AddLostKPPointAction => ({
-  type: ActionTypes.ADD_LOST_KP_POINT
+  type: ActionTypes.ADD_LOST_KP_POINT,
 });
 
 export interface RemoveLostKPPointAction {
@@ -322,7 +322,7 @@ export interface RemoveLostKPPointAction {
 }
 
 export const removeLostKPPoint = (): RemoveLostKPPointAction => ({
-  type: ActionTypes.REMOVE_LOST_KP_POINT
+  type: ActionTypes.REMOVE_LOST_KP_POINT,
 });
 
 export interface AddLostKPPointsAction {
@@ -335,8 +335,8 @@ export interface AddLostKPPointsAction {
 export const addLostKPPoints = (value: number): AddLostKPPointsAction => ({
   type: ActionTypes.ADD_LOST_KP_POINTS,
   payload: {
-    value
-  }
+    value,
+  },
 });
 
 export interface SetAdjustmentIdAction {
@@ -352,14 +352,14 @@ export const setAdjustmentId = (id: string): AsyncAction => (dispatch, getState)
   const current = getCurrentAdjustmentId (getState ());
   const value = getAdjustmentValue (getState ());
 
-  if (typeof current === 'string' && typeof value === 'number') {
+  if (Maybe.isJust (current) && Maybe.isJust (value)) {
     dispatch<SetAdjustmentIdAction> ({
       type: ActionTypes.SET_ATTRIBUTE_ADJUSTMENT_SELECTION_ID,
       payload: {
-        current,
+        current: Maybe.fromJust (current),
         next: id,
-        value
-      }
+        value: Maybe.fromJust (value),
+      },
     });
   }
 };
