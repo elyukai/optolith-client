@@ -1,35 +1,55 @@
+import * as R from 'ramda';
 import * as React from 'react';
-import { RadioButtonGroup } from '../../components/RadioButtonGroup';
-import { Race, UIMessages } from '../../types/view';
+import { Option, RadioButtonGroup } from '../../components/RadioButtonGroup';
+import { UIMessagesObject } from '../../types/ui';
+import { RaceCombined } from '../../types/view';
+import { List, Maybe, Record } from '../../utils/dataUtils';
 import { sortObjects } from '../../utils/FilterSortUtils';
 
 export interface RaceVariantsProps {
-  currentId?: string;
-  currentVariantId?: string;
-  locale: UIMessages;
-  races: Race[];
-  selectRaceVariant(id: string): void;
+  currentId: Maybe<string>;
+  currentVariantId: Maybe<string>;
+  locale: UIMessagesObject;
+  races: Maybe<List<Record<RaceCombined>>>;
+  selectRaceVariant (id: string): void;
 }
 
-export function RaceVariants(props: RaceVariantsProps) {
+export function RaceVariants (props: RaceVariantsProps) {
   const { currentId, currentVariantId, locale, races, selectRaceVariant } = props;
 
-  const race = races.find(e => e.id === currentId);
+  const variantsList =
+    races
+      .bind (
+        List.find (
+          R.pipe (
+            Record.get<RaceCombined, 'id'> ('id'),
+            Maybe.elem_ (currentId)
+          )
+        )
+      )
+      .fmap (
+        R.pipe (
+          Record.get<RaceCombined, 'mappedVariants'> ('mappedVariants'),
+          List.map (e => Record.of<Option> ({
+            name: e .get ('name'),
+            value: e .get ('id'),
+          })),
+          list => sortObjects (list, locale .get ('id'))
+        )
+      )
+      .bind (
+        Maybe.ensure<List<Record<Option>>> (R.pipe (List.null, R.not))
+      );
 
-  const variants: { name: string; value: string | undefined }[] = race ? sortObjects(race.variants.map(e => {
-    const { id, name } = e;
-    return {
-      name,
-      value: id,
-    };
-  }), locale.id) : [];
-
-  if (variants.length > 0) {
-    return <RadioButtonGroup
-      active={currentVariantId}
-      onClick={selectRaceVariant}
-      array={variants}
-      />;
+  if (Maybe.isJust (variantsList)) {
+    return (
+      <RadioButtonGroup
+        active={currentVariantId}
+        onClickJust={selectRaceVariant}
+        array={Maybe.fromJust (variantsList)}
+        />
+    );
   }
+
   return null;
 }

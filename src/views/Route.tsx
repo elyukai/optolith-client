@@ -16,7 +16,7 @@ import { PactContainer } from '../containers/PactContainer';
 import { PersonalDataContainer } from '../containers/PersonalDataContainer';
 import { PetsContainer } from '../containers/PetsContainer';
 import { ProfessionsContainer } from '../containers/Professions';
-import { RacesContainer } from '../containers/Races';
+import { RacesContainer } from '../containers/RacesContainer';
 import { RulesContainer } from '../containers/RulesContainer';
 import { SheetsContainer } from '../containers/SheetsContainer';
 import { SkillsContainer } from '../containers/SkillsContainer';
@@ -88,7 +88,7 @@ export class Route extends React.Component<RouteProps> {
       pact: <PactContainer locale={locale} />,
       rules: <RulesContainer locale={locale} />,
 
-      races: <RacesContainer locale={locale} switchToCultures={() => setTab ('cultures')} />,
+      races: <RacesContainer locale={locale} />,
       cultures:
         <CulturesContainer locale={locale} switchToProfessions={() => setTab ('professions')} />,
       professions: <ProfessionsContainer locale={locale} />,

@@ -162,6 +162,15 @@ test('Maybe.elem', () => {
     .toBeTruthy();
 });
 
+test('Maybe.elem_', () => {
+  expect(Maybe.elem_ (Maybe.of(null)) (3))
+    .toBeFalsy();
+  expect(Maybe.elem_ (Maybe.of(2)) (3))
+    .toBeFalsy();
+  expect(Maybe.elem_ (Maybe.of(3)) (3))
+    .toBeTruthy();
+});
+
 test('Maybe.notElem', () => {
   expect(Maybe.notElem (3) (Maybe.of(null)))
     .toBeTruthy();

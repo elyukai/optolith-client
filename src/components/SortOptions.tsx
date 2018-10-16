@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Just, List, Maybe, Record } from '../utils/dataUtils';
 import { sortObjects } from '../utils/FilterSortUtils';
 import { translate, UIMessagesObject } from '../utils/I18n';
-import { RadioButtonGroup } from './RadioButtonGroup';
+import { Option, RadioButtonGroup } from './RadioButtonGroup';
 
 export type SortNames =
   'name'
@@ -46,17 +46,15 @@ export function SortOptions (props: SortOptionsProps) {
       onClick={
         option => {
           if (Maybe.isJust (option)) {
-            sort (Maybe.fromJust (option));
+            sort (Maybe.fromJust (option as Just<string>));
           }
         }
       }
       array={
         sortObjects (
-          options .map (e => Record.of ({ name: SORT_NAMES[e], value: e })),
+          options .map (e => Record.of<Option> ({ name: SORT_NAMES[e], value: e })),
           locale .get ('id')
         )
-          .map (Record.toObject)
-          .map (e => ({ ...e, value: Just (e.value) }))
       }
       />
   );

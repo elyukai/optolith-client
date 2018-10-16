@@ -246,6 +246,19 @@ export class Maybe<T extends Some> implements Al.Alternative<T>, Al.Monad<T>,
   }
 
   /**
+   * `elem_ :: Eq a => Maybe a -> a -> Bool`
+   *
+   * Does the element occur in the structure?
+   *
+   * Always returns `False` if the provided `Maybe` is `Nothing`.
+   *
+   * Flipped version of `elem`.
+   */
+  static elem_<T extends Some> (m: Maybe<T>): (e: T) => boolean {
+    return e => Maybe.isJust (m) && e === m.value;
+  }
+
+  /**
    * `notElem :: Eq a => a -> Maybe a -> Bool`
    *
    * `notElem` is the negation of `elem`.

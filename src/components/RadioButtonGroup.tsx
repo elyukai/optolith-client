@@ -1,27 +1,38 @@
 import * as React from 'react';
-import { List, Maybe } from '../utils/dataUtils';
+import { List, Maybe, Record } from '../utils/dataUtils';
 import { RadioButton } from './RadioButton';
 
-export type OptionValue = Maybe<string | number>;
+export type OptionValue = string | number;
 
-export interface Option<T extends OptionValue> {
+export interface Option<T extends OptionValue = OptionValue> {
   className?: string;
   disabled?: boolean;
   name: string;
-  value: T;
+  value?: T;
 }
 
-export interface RadioButtonGroupProps<T extends OptionValue> {
-  active: T | string | number;
-  array: List<Option<T>>;
+export interface RadioButtonGroupProps<T extends OptionValue = OptionValue> {
+  active: Maybe<T> | T;
+  array: List<Record<Option<T>>>;
   disabled?: boolean;
-  onClick (option: T): void;
+  onClick? (option: Maybe<T>): void;
+  onClickJust? (option: T): void;
 }
 
-export function RadioButtonGroup<T extends OptionValue> (props: RadioButtonGroupProps<T>) {
-  const { active, array, disabled, onClick } = props;
+export function RadioButtonGroup (props: RadioButtonGroupProps<OptionValue>) {
+  const { active, array, disabled } = props;
 
-  const normalizedActive = Maybe.normalize<string | number> (active);
+  const normalizedActive = Maybe.normalize (active);
+
+  const onClickCombined = (optionValue: Maybe<OptionValue>) => () => {
+    if (props.onClick) {
+      props.onClick (optionValue);
+    }
+
+    if (props.onClickJust && Maybe.isJust (optionValue)) {
+      props.onClickJust (Maybe.fromJust (optionValue));
+    }
+  };
 
   return (
     <div className="radiobutton-group">
@@ -29,13 +40,13 @@ export function RadioButtonGroup<T extends OptionValue> (props: RadioButtonGroup
         array
           .map (option => (
             <RadioButton
-              key={Maybe.fromMaybe<React.Key> ('__default__') (option.value)}
-              value={option.value}
-              active={normalizedActive.equals (option.value)}
-              onClick={onClick.bind (undefined, option.value)}
-              disabled={option.disabled || disabled}
+              key={Maybe.fromMaybe<React.Key> ('__default__') (option .lookup ('value'))}
+              value={option .lookup ('value')}
+              active={normalizedActive .equals (option .lookup ('value'))}
+              onClick={onClickCombined (option .lookup ('value'))}
+              disabled={Maybe.elem (true) (option .lookup ('disabled')) || disabled}
             >
-              {option.name}
+              {option .get ('name')}
             </RadioButton>
           ))
           .toArray ()

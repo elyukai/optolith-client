@@ -5,36 +5,40 @@ import { ListItemButtons } from '../../components/ListItemButtons';
 import { ListItemName } from '../../components/ListItemName';
 import { ListItemSeparator } from '../../components/ListItemSeparator';
 import { ListItemValues } from '../../components/ListItemValues';
-import { Race, UIMessages } from '../../types/view';
+import { UIMessagesObject } from '../../types/ui';
+import { RaceCombined } from '../../types/view';
+import { Maybe, Record } from '../../utils/dataUtils';
 
 export interface RacesListItemProps {
-  currentId?: string;
-  locale: UIMessages;
-  race: Race;
-  selectRace(id: string, variantId?: string): void;
-  switchToCultures(): void;
+  currentId: Maybe<string>;
+  locale: UIMessagesObject;
+  race: Record<RaceCombined>;
+  selectRace (id: string): (variantId: Maybe<string>) => void;
+  switchToCultures (): void;
 }
 
-export function RacesListItem(props: RacesListItemProps) {
+export function RacesListItem (props: RacesListItemProps) {
   const { currentId, race, selectRace, switchToCultures } = props;
 
   return (
-    <ListItem active={race.id === currentId}>
-      <ListItemName name={race.name} />
+    <ListItem active={Maybe.elem (race .get ('id')) (currentId)}>
+      <ListItemName name={race .get ('name')} />
       <ListItemSeparator />
       <ListItemValues>
-        <div className="cost">{race.ap}</div>
+        <div className="cost">{race .get ('ap')}</div>
       </ListItemValues>
       <ListItemButtons>
         <IconButton
           icon="&#xE90a;"
-          onClick={() => selectRace(race.id, race.variants.length > 0 ? race.variants[0].id : undefined)}
-          disabled={race.id === currentId}
+          onClick={
+            () => selectRace (race .get ('id')) (Maybe.listToMaybe (race .get ('variants')))
+          }
+          disabled={Maybe.elem (race .get ('id')) (currentId)}
           />
         <IconButton
           icon="&#xE90e;"
           onClick={switchToCultures}
-          disabled={race.id !== currentId}
+          disabled={Maybe.notElem (race .get ('id')) (currentId)}
           />
       </ListItemButtons>
     </ListItem>
