@@ -5,7 +5,7 @@ import { Scroll } from '../components/Scroll';
 import { AdvantagesContainer } from '../containers/AdvantagesContainer';
 import { AttributesContainer } from '../containers/AttributesContainer';
 import { CombatTechniquesContainer } from '../containers/CombatTechniquesContainer';
-import { CulturesContainer } from '../containers/Cultures';
+import { CulturesContainer } from '../containers/CulturesContainer';
 import { DisadvantagesContainer } from '../containers/DisadvantagesContainer';
 import { EquipmentContainer } from '../containers/EquipmentContainer';
 import { HelpContainer } from '../containers/HelpContainer';
@@ -15,7 +15,7 @@ import { LiturgicalChantsContainer } from '../containers/LiturgicalChantsContain
 import { PactContainer } from '../containers/PactContainer';
 import { PersonalDataContainer } from '../containers/PersonalDataContainer';
 import { PetsContainer } from '../containers/PetsContainer';
-import { ProfessionsContainer } from '../containers/Professions';
+import { ProfessionsContainer } from '../containers/ProfessionsContainer';
 import { RacesContainer } from '../containers/RacesContainer';
 import { RulesContainer } from '../containers/RulesContainer';
 import { SheetsContainer } from '../containers/SheetsContainer';
@@ -33,7 +33,6 @@ import { Grouplist } from './grouplist/Grouplist';
 export interface RouteProps {
   id: TabId;
   locale: UIMessagesObject;
-  setTab (id: TabId): void;
 }
 
 export interface RouteState {
@@ -57,7 +56,7 @@ export class Route extends React.Component<RouteProps> {
   }
 
   render (): React.ReactNode {
-    const { id, locale, setTab } = this.props;
+    const { id, locale } = this.props;
     const { hasError } = this.state;
 
     if (hasError) {
@@ -89,8 +88,7 @@ export class Route extends React.Component<RouteProps> {
       rules: <RulesContainer locale={locale} />,
 
       races: <RacesContainer locale={locale} />,
-      cultures:
-        <CulturesContainer locale={locale} switchToProfessions={() => setTab ('professions')} />,
+      cultures: <CulturesContainer locale={locale} />,
       professions: <ProfessionsContainer locale={locale} />,
 
       attributes: <AttributesContainer locale={locale} />,

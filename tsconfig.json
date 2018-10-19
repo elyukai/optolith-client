@@ -5,10 +5,7 @@
     "forceConsistentCasingInFileNames": true,
     "importHelpers": true,
     "jsx": "react",
-    "lib": [
-      "dom",
-      "esnext"
-    ],
+    "lib": ["esnext"],
     "module": "commonjs",
     "moduleResolution": "node",
     "noEmitHelpers": true,

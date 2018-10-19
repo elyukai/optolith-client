@@ -4,8 +4,8 @@ import { Dropdown, DropdownOption } from '../../components/Dropdown';
 import { ListView } from '../../components/List';
 import { Options } from '../../components/Options';
 import { Page } from '../../components/Page';
-import { RadioButtonGroup } from '../../components/RadioButtonGroup';
 import { Scroll } from '../../components/Scroll';
+import { SortNames, SortOptions } from '../../components/SortOptions';
 import { TextField } from '../../components/TextField';
 import { AdventurePointsObject } from '../../selectors/adventurePointsSelectors';
 import { Hero, InputTextEvent, User } from '../../types/data';
@@ -51,7 +51,7 @@ export interface HerolistDispatchProps {
   ): void;
   importHero (): void;
   setFilterText (event: InputTextEvent): void;
-  setSortOrder (id: Maybe<string>): void;
+  setSortOrder (id: string): void;
   setVisibilityFilter (id: Maybe<string>): void;
   openCharacterCreator (): void;
   closeCharacterCreator (): void;
@@ -125,19 +125,11 @@ export class Herolist extends React.Component<HerolistProps, HerolistState> {
             fullWidth
             disabled
             />
-          <RadioButtonGroup
-            active={Just (sortOrder)}
-            onClick={setSortOrder}
-            array={List.of (
-              {
-                name: translate (locale, 'options.sortorder.alphabetically'),
-                value: Just ('name'),
-              },
-              {
-                name: translate (locale, 'options.sortorder.datemodified'),
-                value: Just ('datemodified'),
-              }
-            )}
+          <SortOptions
+            locale={locale}
+            options={List.of<SortNames> ('name', 'dateModified')}
+            sort={setSortOrder}
+            sortOrder={sortOrder}
             />
           <BorderButton
             label={translate (locale, 'heroes.actions.create')}

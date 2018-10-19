@@ -6,6 +6,7 @@ import { Option, RadioButtonGroup } from './RadioButtonGroup';
 
 export type SortNames =
   'name'
+  | 'dateModified'
   | 'group'
   | 'groupname'
   | 'where'
@@ -28,6 +29,7 @@ export function SortOptions (props: SortOptionsProps) {
 
   const SORT_NAMES = {
     name: translate (locale, 'options.sortorder.alphabetically'),
+    dateModified: translate (locale, 'options.sortorder.datemodified'),
     group: translate (locale, 'options.sortorder.group'),
     groupname: translate (locale, 'options.sortorder.group'),
     where: translate (locale, 'options.sortorder.location'),

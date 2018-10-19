@@ -1,44 +1,61 @@
 import * as React from 'react';
-import { RadioButtonGroup } from '../../components/RadioButtonGroup';
-import { Profession, UIMessages } from '../../types/view';
+import { Option, RadioButtonGroup } from '../../components/RadioButtonGroup';
+import { Sex } from '../../types/data';
+import { ProfessionCombined } from '../../types/view';
+import { List, Maybe, Record } from '../../utils/dataUtils';
 import { sortObjects } from '../../utils/FilterSortUtils';
-import { translate } from '../../utils/I18n';
+import { translate, UIMessagesObject } from '../../utils/I18n';
 
 export interface ProfessionVariantsProps {
-  currentProfessionId?: string;
-  currentProfessionVariantId?: string;
-  locale: UIMessages;
-  professions: Profession[];
-  sex: 'm' | 'f';
-  selectProfessionVariant(id: string): void;
+  currentProfessionId: Maybe<string>;
+  currentProfessionVariantId: Maybe<string>;
+  locale: UIMessagesObject;
+  professions: List<Record<ProfessionCombined>>;
+  sex: Maybe<Sex>;
+  selectProfessionVariant (id: Maybe<string>): void;
 }
 
-export function ProfessionVariants(props: ProfessionVariantsProps) {
-  const { currentProfessionId, currentProfessionVariantId, locale, professions, selectProfessionVariant, sex } = props;
+export function ProfessionVariants (props: ProfessionVariantsProps) {
+  const {
+    currentProfessionId,
+    currentProfessionVariantId,
+    locale,
+    professions,
+    selectProfessionVariant,
+    sex: maybeSex,
+  } = props;
 
-  const profession = professions.find(e => e.id === currentProfessionId);
+  const variants =
+    Maybe.liftM2<Record<ProfessionCombined>, Sex, List<Record<Option>>>
+      (profession => sex => sortObjects (
+        profession .get ('mappedVariants') .map (variant => {
 
-  const variants: { name: string; value: string | undefined }[] = profession ? [
-    { name: translate(locale, 'professions.options.novariant'), value: undefined },
-    ...sortObjects(profession.variants.map(e => {
-      const { ap, id } = e;
-      let { name } = e;
-      if (typeof name === 'object') {
-        name = name[sex];
-      }
-      return {
-        name: `${name} (${profession.ap + ap} AP)`,
-        value: id,
-      };
-    }), locale.id)
-  ] : [];
+          const name = profession .get ('name');
 
-  if (variants.length > 1) {
+          const finalName = name instanceof Record ? name .get (sex) : name;
+
+          return Record.of<Option> ({
+            name: `${finalName} (${profession .get ('ap') + variant .get ('ap')} AP)`,
+            value: variant .get ('id'),
+          });
+        }),
+        locale .get ('id')
+      )
+        .cons (
+          Record.of<Option> ({
+            name: translate (locale, 'professions.options.novariant'),
+          })
+        ))
+      (professions .find (e => Maybe.elem (e .get ('id')) (currentProfessionId)))
+      (maybeSex);
+
+  if (Maybe.isJust (variants)) {
     return <RadioButtonGroup
       active={currentProfessionVariantId}
       onClick={selectProfessionVariant}
-      array={variants}
+      array={Maybe.fromJust (variants)}
       />;
   }
+
   return null;
 }

@@ -2,10 +2,11 @@ import * as React from 'react';
 import { Aside } from '../../components/Aside';
 import { ErrorMessage } from '../../components/ErrorMessage';
 import { UIMessagesObject } from '../../types/ui';
+import { Maybe } from '../../utils/dataUtils';
 import { WikiInfoContent, WikiInfoContentStateProps } from './WikiInfoContent';
 
 export interface WikiInfoOwnProps {
-  currentId?: string;
+  currentId: Maybe<string>;
   locale: UIMessagesObject;
   noWrapper?: boolean;
 }

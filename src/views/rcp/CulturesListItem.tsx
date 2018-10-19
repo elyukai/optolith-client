@@ -4,33 +4,35 @@ import { ListItem } from '../../components/ListItem';
 import { ListItemButtons } from '../../components/ListItemButtons';
 import { ListItemName } from '../../components/ListItemName';
 import { ListItemSeparator } from '../../components/ListItemSeparator';
-import { Culture, UIMessages } from '../../types/view';
+import { CultureCombined } from '../../types/view';
+import { Maybe, Record } from '../../utils/dataUtils';
+import { UIMessagesObject } from '../../utils/I18n';
 
 export interface CulturesListItemProps {
-  currentId?: string;
-  culture: Culture;
-  locale: UIMessages;
-  selectCulture(id: string): void;
-  switchToProfessions(): void;
+  culture: Record<CultureCombined>;
+  currentId: Maybe<string>;
+  locale: UIMessagesObject;
+  selectCulture (id: string): void;
+  switchToProfessions (): void;
 }
 
-export function CulturesListItem(props: CulturesListItemProps) {
+export function CulturesListItem (props: CulturesListItemProps) {
   const { currentId, culture, selectCulture, switchToProfessions } = props;
 
   return (
-    <ListItem active={culture.id === currentId}>
-      <ListItemName name={culture.name} />
+    <ListItem active={Maybe.elem (culture .get ('id')) (currentId)}>
+      <ListItemName name={culture .get ('name')} />
       <ListItemSeparator />
       <ListItemButtons>
         <IconButton
           icon="&#xE90a;"
-          onClick={() => selectCulture(culture.id)}
-          disabled={culture.id === currentId}
+          onClick={() => selectCulture (culture .get ('id'))}
+          disabled={Maybe.elem (culture .get ('id')) (currentId)}
           />
         <IconButton
           icon="&#xE90e;"
           onClick={switchToProfessions}
-          disabled={culture.id !== currentId}
+          disabled={Maybe.notElem (culture .get ('id')) (currentId)}
           />
       </ListItemButtons>
     </ListItem>

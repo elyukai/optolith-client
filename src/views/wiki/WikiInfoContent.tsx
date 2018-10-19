@@ -2,9 +2,10 @@ import * as React from 'react';
 import { Aside } from '../../components/Aside';
 import { Categories } from '../../constants/Categories';
 import { WikiState } from '../../reducers/wikiReducer';
-import { ActivatableInstance, SecondaryAttribute } from '../../types/data';
-import { Profession, UIMessages } from '../../types/view';
-import { Attribute, Blessing, Book, Cantrip, CombatTechnique, Culture, ItemTemplate, LiturgicalChant, ProfessionVariant, Race, RaceVariant, Skill, SpecialAbility, Spell, Advantage } from '../../types/wiki';
+import { ActivatableInstance, SecondaryAttribute, UIMessagesObject } from '../../types/data';
+import { Profession } from '../../types/view';
+import { Advantage, Attribute, Blessing, Book, Cantrip, CombatTechnique, Culture, ItemTemplate, LiturgicalChant, ProfessionVariant, Race, RaceVariant, Skill, SpecialAbility, Spell } from '../../types/wiki';
+import { Maybe } from '../../utils/dataUtils';
 import { isItemTemplateFromMixed } from '../../utils/WikiUtils';
 import { WikiActivatableInfo } from './WikiActivatableInfo';
 import { WikiBlessingInfo } from './WikiBlessingInfo';
@@ -19,11 +20,22 @@ import { WikiRaceInfo } from './WikiRaceInfo';
 import { WikiSkillInfo } from './WikiSkillInfo';
 import { WikiSpellInfo } from './WikiSpellInfo';
 
-type Instance = ActivatableInstance | Blessing | Cantrip | CombatTechnique | Culture | ItemTemplate | LiturgicalChant | Profession | Race | Skill | Spell;
+type Instance =
+  ActivatableInstance
+  | Blessing
+  | Cantrip
+  | CombatTechnique
+  | Culture
+  | ItemTemplate
+  | LiturgicalChant
+  | Profession
+  | Race
+  | Skill
+  | Spell;
 
 export interface WikiInfoContentOwnProps {
-  currentId?: string;
-  locale: UIMessages;
+  currentId: Maybe<string>;
+  locale: UIMessagesObject;
   noWrapper?: boolean;
 }
 
@@ -54,19 +66,22 @@ export interface WikiInfoContentStateProps {
   wiki: WikiState;
 }
 
-export interface WikiInfoContentDispatchProps {}
+export interface WikiInfoContentDispatchProps { }
 
-export type WikiInfoContentProps = WikiInfoContentStateProps & WikiInfoContentDispatchProps & WikiInfoContentOwnProps;
+export type WikiInfoContentProps =
+  WikiInfoContentStateProps
+  & WikiInfoContentDispatchProps
+  & WikiInfoContentOwnProps;
 
-export function WikiInfoContent(props: WikiInfoContentProps) {
+export function WikiInfoContent (props: WikiInfoContentProps) {
   const { currentId, list, noWrapper } = props;
 
-  const currentObject = typeof currentId === 'string' && list.find(e => currentId === e.id);
+  const currentObject = typeof currentId === 'string' && list.find (e => currentId === e.id);
 
   let currentElement: JSX.Element | null | undefined;
 
   if (typeof currentObject === 'object') {
-    if (isItemTemplateFromMixed(currentObject)) {
+    if (isItemTemplateFromMixed (currentObject)) {
       currentElement = <WikiEquipmentInfo {...props} currentObject={currentObject} />;
     }
     else {

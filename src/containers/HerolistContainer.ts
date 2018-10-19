@@ -65,10 +65,8 @@ const mapDispatchToProps = (
   importHero () {
     (dispatch as Dispatch<Action, AppState>) (IOActions.requestHeroImport (locale));
   },
-  setSortOrder (id: Maybe<string>) {
-    if (Maybe.isJust (id)) {
-      dispatch (HerolistActions.setHerolistSortOrder (Maybe.fromJust (id)));
-    }
+  setSortOrder (id: string) {
+    dispatch (HerolistActions.setHerolistSortOrder (id));
   },
   setFilterText (event: InputTextEvent) {
     dispatch (HerolistActions.setHerolistFilterText (event.target.value));
