@@ -54,6 +54,13 @@ test('OrderedSet.delete', () => {
     .toEqual(OrderedSet.of(['a', 'b', 'c']));
 });
 
+test('OrderedSet.toggle', () => {
+  expect(OrderedSet.toggle ('c') (OrderedSet.of(['a', 'b', 'c'])))
+    .toEqual(OrderedSet.of(['a', 'b']));
+  expect(OrderedSet.toggle ('d') (OrderedSet.of(['a', 'b', 'c'])))
+    .toEqual(OrderedSet.of(['a', 'b', 'c', 'd']));
+});
+
 test('member', () => {
   expect(OrderedSet.of(['a', 'b', 'c']).member('b'))
     .toBeTruthy();

@@ -245,12 +245,12 @@ export interface CommonProfessionObject {
 }
 
 export interface SpecializationSelection {
-  readonly id: ProfessionSelectionIds.SPECIALISATION;
+  readonly id: ProfessionSelectionIds.SPECIALIZATION;
   readonly sid: string | List<string>;
 }
 
 export interface RemoveSpecializationSelection {
-  readonly id: ProfessionSelectionIds.SPECIALISATION;
+  readonly id: ProfessionSelectionIds.SPECIALIZATION;
   readonly active: boolean;
 }
 
@@ -324,7 +324,7 @@ export interface TerrainKnowledgeSelection {
 }
 
 export enum ProfessionSelectionIds {
-  SPECIALISATION = 'SPECIALISATION',
+  SPECIALIZATION = 'SPECIALISATION',
   LANGUAGES_SCRIPTS = 'LANGUAGES_SCRIPTS',
   COMBAT_TECHNIQUES = 'COMBAT_TECHNIQUES',
   COMBAT_TECHNIQUES_SECOND = 'COMBAT_TECHNIQUES_SECOND',
@@ -332,6 +332,17 @@ export enum ProfessionSelectionIds {
   CURSES = 'CURSES',
   SKILLS = 'SKILLS',
   TERRAIN_KNOWLEDGE = 'TERRAIN_KNOWLEDGE',
+}
+
+export interface ProfessionAdjustmentSelections {
+  [ProfessionSelectionIds.CANTRIPS]?: Record<CantripsSelection>;
+  [ProfessionSelectionIds.COMBAT_TECHNIQUES]?: VariantCombatTechniquesSelection;
+  [ProfessionSelectionIds.COMBAT_TECHNIQUES_SECOND]?: VariantCombatTechniquesSecondSelection;
+  [ProfessionSelectionIds.CURSES]?: Record<CursesSelection>;
+  [ProfessionSelectionIds.LANGUAGES_SCRIPTS]?: Record<LanguagesScriptsSelection>;
+  [ProfessionSelectionIds.SPECIALIZATION]?: VariantSpecializationSelection;
+  [ProfessionSelectionIds.SKILLS]?: Record<SkillsSelection>;
+  [ProfessionSelectionIds.TERRAIN_KNOWLEDGE]?: Record<TerrainKnowledgeSelection>;
 }
 
 export type ProfessionSelection =

@@ -4,7 +4,7 @@ import { getCurrentRace, getCurrentRaceVariant } from '../selectors/rcpSelectors
 import { getSize, getWeight } from '../selectors/stateSelectors';
 import { AsyncAction } from '../types/actions';
 import { Just, Maybe, Nothing } from '../utils/dataUtils';
-import * as RCPUtils from '../utils/RCPUtils';
+import * as RCPUtils from '../utils/rcpUtils';
 
 export interface SetHeroNameAction {
   type: ActionTypes.SET_HERO_NAME;
@@ -16,8 +16,8 @@ export interface SetHeroNameAction {
 export const setHeroName = (name: string): SetHeroNameAction => ({
   type: ActionTypes.SET_HERO_NAME,
   payload: {
-    name
-  }
+    name,
+  },
 });
 
 export interface SetCustomProfessionNameAction {
@@ -30,8 +30,8 @@ export interface SetCustomProfessionNameAction {
 export const setCustomProfessionName = (name: string): SetCustomProfessionNameAction => ({
   type: ActionTypes.SET_CUSTOM_PROFESSION_NAME,
   payload: {
-    name
-  }
+    name,
+  },
 });
 
 export interface SetHeroAvatarAction {
@@ -44,8 +44,8 @@ export interface SetHeroAvatarAction {
 export const setHeroAvatar = (path: string): SetHeroAvatarAction => ({
   type: ActionTypes.SET_HERO_AVATAR,
   payload: {
-    url: path
-  }
+    url: path,
+  },
 });
 
 export interface SetFamilyAction {
@@ -72,8 +72,8 @@ export interface SetPlaceOfBirthAction {
 export const setPlaceOfBirth = (placeofbirth: string): SetPlaceOfBirthAction => ({
   type: ActionTypes.SET_PLACEOFBIRTH,
   payload: {
-    placeofbirth
-  }
+    placeofbirth,
+  },
 });
 
 export interface SetDateOfBirthAction {
@@ -86,8 +86,8 @@ export interface SetDateOfBirthAction {
 export const setDateOfBirth = (dateofbirth: string): SetDateOfBirthAction => ({
   type: ActionTypes.SET_DATEOFBIRTH,
   payload: {
-    dateofbirth
-  }
+    dateofbirth,
+  },
 });
 
 export interface SetAgeAction {
@@ -100,8 +100,8 @@ export interface SetAgeAction {
 export const setAge = (age: string): SetAgeAction => ({
   type: ActionTypes.SET_AGE,
   payload: {
-    age
-  }
+    age,
+  },
 });
 
 export interface SetHairColorAction {
@@ -114,8 +114,8 @@ export interface SetHairColorAction {
 export const setHairColor = (haircolor: number): SetHairColorAction => ({
   type: ActionTypes.SET_HAIRCOLOR,
   payload: {
-    haircolor
-  }
+    haircolor,
+  },
 });
 
 export interface SetEyeColorAction {
@@ -128,8 +128,8 @@ export interface SetEyeColorAction {
 export const setEyeColor = (eyecolor: number): SetEyeColorAction => ({
   type: ActionTypes.SET_EYECOLOR,
   payload: {
-    eyecolor
-  }
+    eyecolor,
+  },
 });
 
 export interface SetSizeAction {
@@ -144,8 +144,8 @@ export const setSize = (size: string) => (weight: Maybe<string>): SetSizeAction 
   type: ActionTypes.SET_SIZE,
   payload: {
     size,
-    weight
-  }
+    weight,
+  },
 });
 
 export interface SetWeightAction {
@@ -160,8 +160,8 @@ export const setWeight = (weight: string) => (size: Maybe<string>): SetWeightAct
   type: ActionTypes.SET_WEIGHT,
   payload: {
     size,
-    weight
-  }
+    weight,
+  },
 });
 
 export const rerollHairColor = (): AsyncAction => (dispatch, getState) => {
@@ -237,8 +237,8 @@ export interface SetTitleAction {
 export const setTitle = (title: string): SetTitleAction => ({
   type: ActionTypes.SET_TITLE,
   payload: {
-    title
-  }
+    title,
+  },
 });
 
 export interface SetSocialStatusAction {
@@ -251,8 +251,8 @@ export interface SetSocialStatusAction {
 export const setSocialStatus = (socialstatus: number): SetSocialStatusAction => ({
   type: ActionTypes.SET_SOCIALSTATUS,
   payload: {
-    socialstatus
-  }
+    socialstatus,
+  },
 });
 
 export interface SetCharacteristicsAction {
@@ -265,8 +265,8 @@ export interface SetCharacteristicsAction {
 export const setCharacteristics = (characteristics: string): SetCharacteristicsAction => ({
   type: ActionTypes.SET_CHARACTERISTICS,
   payload: {
-    characteristics
-  }
+    characteristics,
+  },
 });
 
 export interface SetOtherInfoAction {
@@ -279,8 +279,8 @@ export interface SetOtherInfoAction {
 export const setOtherInfo = (otherinfo: string): SetOtherInfoAction => ({
   type: ActionTypes.SET_OTHERINFO,
   payload: {
-    otherinfo
-  }
+    otherinfo,
+  },
 });
 
 export interface SetCultureAreaKnowledge {
@@ -293,8 +293,8 @@ export interface SetCultureAreaKnowledge {
 export const setCultureAreaKnowledge = (cultureAreaKnowledge: string): SetCultureAreaKnowledge => ({
   type: ActionTypes.SET_CULTURE_AREA_KNOWLEDGE,
   payload: {
-    cultureAreaKnowledge
-  }
+    cultureAreaKnowledge,
+  },
 });
 
 export interface EndHeroCreationAction {
@@ -302,7 +302,7 @@ export interface EndHeroCreationAction {
 }
 
 export const endHeroCreation = (): EndHeroCreationAction => ({
-  type: ActionTypes.END_HERO_CREATION
+  type: ActionTypes.END_HERO_CREATION,
 });
 
 export interface AddAdventurePointsAction {
@@ -315,6 +315,6 @@ export interface AddAdventurePointsAction {
 export const addAdventurePoints = (amount: number): AddAdventurePointsAction => ({
   type: ActionTypes.ADD_ADVENTURE_POINTS,
   payload: {
-    amount
-  }
+    amount,
+  },
 });

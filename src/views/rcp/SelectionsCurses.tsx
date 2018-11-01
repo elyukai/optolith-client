@@ -1,49 +1,59 @@
 import * as React from 'react';
 import { BorderButton } from '../../components/BorderButton';
 import { Checkbox } from '../../components/Checkbox';
-import { translate, UIMessages } from '../../utils/I18n';
+import { Spell } from '../../types/wiki';
+import { Just, List, Maybe, Nothing, OrderedMap, Record } from '../../utils/dataUtils';
+import { translate, UIMessagesObject } from '../../utils/I18n';
 
 interface SelectionsCursesProps {
-  active: Map<string, number>;
+  active: OrderedMap<string, number>;
   apLeft: number;
   apTotal: number;
-  change: (id: string, operation: 'add' | 'remove') => void;
-  list: {
-    id: string;
-    name: string;
-  }[];
-  locale: UIMessages;
+  change (id: string): (maybeOption: Maybe<'add' | 'remove'>) => void;
+  list: List<Record<Spell>>;
+  locale: UIMessagesObject;
 }
 
-export function SelectionsCurses(props: SelectionsCursesProps) {
+export function SelectionsCurses (props: SelectionsCursesProps) {
   const { active, apTotal, apLeft, change, list, locale } = props;
 
   return (
     <div className="curses list">
-      <h4>{translate(locale, 'rcpselections.labels.curses', apTotal, apLeft)}</h4>
+      <h4>{translate (locale, 'rcpselections.labels.curses', apTotal, apLeft)}</h4>
       {
-        list.map(obj => {
-          const { id, name } = obj;
-          return (
-            <div key={id}>
-              <Checkbox
-                checked={active.has(id)}
-                disabled={!active.has(id) && apLeft <= 0}
-                onClick={change.bind(null, id)}>
-                {name}
-              </Checkbox>
-              {active.has(id) ? <span>{active.get(id)}</span> : null}
-              <BorderButton
-                label="+"
-                disabled={!active.has(id) || apLeft <= 0}
-                onClick={change.bind(null, id, 'add')}/>
-              <BorderButton
-                label="-"
-                disabled={!active.has(id) || active.get(id)! <= 0}
-                onClick={change.bind(null, id, 'remove')}/>
-            </div>
-          );
-        })
+        list
+          .map (obj => {
+            const id = obj .get ('id');
+            const name = obj .get ('name');
+
+            const maybeValue = active .lookup (id);
+
+            return (
+              <div key={id}>
+                <Checkbox
+                  checked={Maybe.isJust (maybeValue)}
+                  disabled={Maybe.isNothing (maybeValue) && apLeft <= 0}
+                  onClick={() => change (id) (Nothing ())}
+                  >
+                  {name}
+                </Checkbox>
+                {Maybe.maybeToReactNode (
+                  maybeValue .fmap (value => (<span>{value}</span>))
+                )}
+                <BorderButton
+                  label="+"
+                  disabled={Maybe.isNothing (maybeValue) || apLeft <= 0}
+                  onClick={() => change (id) (Just<'add'> ('add'))}
+                  />
+                <BorderButton
+                  label="-"
+                  disabled={!Maybe.isJust (maybeValue) || Maybe.fromJust (maybeValue) <= 0}
+                  onClick={() => change (id) (Just<'remove'> ('remove'))}
+                  />
+              </div>
+            );
+          })
+          .toArray ()
       }
     </div>
   );

@@ -1,44 +1,69 @@
 import * as React from 'react';
 import { BorderButton } from '../../components/BorderButton';
-import { TalentInstance } from '../../types/data';
-import { translate, UIMessages } from '../../utils/I18n';
+import { Skill } from '../../types/wiki';
+import { List, Maybe, OrderedMap, Record } from '../../utils/dataUtils';
+import { translate, UIMessagesObject } from '../../utils/I18n';
+import { divideBy } from '../../utils/mathUtils';
 
 export interface SelectionsSkillsProps {
-  active: Map<string, number>;
-  gr?: number;
+  active: OrderedMap<string, number>;
+  gr: Maybe<number>;
   left: number;
-  list: TalentInstance[];
-  locale: UIMessages;
+  list: List<Record<Skill>>;
+  locale: UIMessagesObject;
   value: number;
-  add(id: string): void;
-  remove(id: string): void;
+  add (id: string): void;
+  remove (id: string): void;
 }
 
-export function SelectionsSkills(props: SelectionsSkillsProps) {
-  const { active, add, gr = 0, left, list, locale, remove, value } = props;
+export function SelectionsSkills (props: SelectionsSkillsProps) {
+  const { active, add, gr, left, list, locale, remove, value } = props;
 
   return (
     <div className="skills list">
-      <h4>{translate(locale, 'rcpselections.labels.skills', translate(locale, 'rcpselections.labels.skillgroups')[gr], value, left)}</h4>
+      <h4>
+        {
+          Maybe.fromMaybe ('')
+                          (translate (locale, 'rcpselections.labels.skillgroups')
+                            .subscript (Maybe.fromMaybe (0) (gr))
+                            .fmap (
+                              group => translate (
+                                locale,
+                                'rcpselections.labels.skills',
+                                group,
+                                value,
+                                left
+                              )
+                           ))
+        }
+      </h4>
       {
-        list.map(obj => {
-          const { id, name, ic } = obj;
-          const sr = active.get(id);
-          return (
-            <div key={id}>
-              <div className="skillname">{name}</div>
-              <span>{typeof sr === 'number' ? sr / ic : 0}</span>
-              <BorderButton
-                label="+"
-                disabled={left < ic}
-                onClick={add.bind(null, id)}/>
-              <BorderButton
-                label="-"
-                disabled={!active.has(id)}
-                onClick={remove.bind(null, id)}/>
-            </div>
-          );
-        })
+        list
+          .map (obj => {
+            const id = obj .get ('id');
+            const name = obj .get ('name');
+            const ic = obj .get ('ic');
+
+            const maybeSR = active .lookup (id);
+
+            return (
+              <div key={id}>
+                <div className="skillname">{name}</div>
+                <span>{Maybe.fromMaybe (0) (maybeSR .fmap (divideBy (ic)))}</span>
+                <BorderButton
+                  label="+"
+                  disabled={left < ic}
+                  onClick={add.bind (null, id)}
+                  />
+                <BorderButton
+                  label="-"
+                  disabled={Maybe.isNothing (maybeSR)}
+                  onClick={remove.bind (null, id)}
+                  />
+              </div>
+            );
+          })
+          .toArray ()
       }
     </div>
   );

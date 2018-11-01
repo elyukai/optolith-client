@@ -9,7 +9,7 @@ import { createMaybeSelector } from '../utils/createMaybeSelector';
 import { Just, List, ListElement, Maybe, OrderedMap, OrderedSet, Record } from '../utils/dataUtils';
 import { AllSortOptions, filterAndSortObjects, FilterOptions } from '../utils/FilterSortUtils';
 import { getCategoryById } from '../utils/IDUtils';
-import { getFullProfessionName } from '../utils/RCPUtils';
+import { getFullProfessionName } from '../utils/rcpUtils';
 import { filterByAvailability, isEntryFromCoreBook } from '../utils/RulesUtils';
 import { validateProfession } from '../utils/validatePrerequisitesUtils';
 import { isCombatTechniquesSelection } from '../utils/WikiUtils';

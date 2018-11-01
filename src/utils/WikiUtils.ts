@@ -118,7 +118,8 @@ export const isActivatableWikiObj =
 export const isRemoveSpecializationSelection = (
   obj: Wiki.ProfessionVariantSelection
 ): obj is Record<Wiki.RemoveSpecializationSelection> => {
-  return obj.get ('id') === Wiki.ProfessionSelectionIds.SPECIALISATION
+  return (obj .get ('id') as Wiki.ProfessionSelectionIds)
+    === Wiki.ProfessionSelectionIds.SPECIALIZATION
     && obj.member ('active');
 };
 

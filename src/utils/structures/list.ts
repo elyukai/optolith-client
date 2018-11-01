@@ -357,6 +357,26 @@ export class List<T> implements Al.Monad<T>, Al.Foldable<T>, Al.Semigroup<T>,
   }
 
   /**
+   * `fmap :: (a -> b) -> [a] -> [b]`
+   *
+   * `fmap f xs` is the list obtained by applying `f` to each element of `xs`.
+   */
+  static fmap<A, B> (fn: (x: A) => B): (list: List<A>) => List<B> {
+    return list => List.fromArray (list.value.map (fn));
+  }
+
+  /**
+   * `(<$) :: Functor f => a -> f b -> f a`
+   *
+   * Replace all locations in the input with the same value. The default
+   * definition is `fmap . const`, but this may be overridden with a more
+   * efficient version.
+   */
+  static mapReplace<A, B> (x: A): (list: List<B>) => List<A> {
+    return List.fmap (_ => x);
+  }
+
+  /**
    * `map :: (a -> b) -> [a] -> [b]`
    *
    * `map f xs` is the list obtained by applying `f` to each element of `xs`.
@@ -371,7 +391,7 @@ export class List<T> implements Al.Monad<T>, Al.Foldable<T>, Al.Semigroup<T>,
    * `map f xs` is the list obtained by applying `f` to each element of `xs`.
    */
   static map<T, U> (fn: (x: T) => U): (list: List<T>) => List<U> {
-    return list => list.map (fn);
+    return List.fmap<T, U> (fn);
   }
 
   /**
@@ -1407,6 +1427,6 @@ f' z       = Nothing
   }
 
   static show (list: List<any>): string {
-    return `[${list.value.toString}]`;
+    return `[${list.value.toString ()}]`;
   }
 }

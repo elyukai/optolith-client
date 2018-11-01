@@ -1,27 +1,41 @@
 import * as React from 'react';
-import { Dropdown } from '../../components/Dropdown';
+import { Dropdown, DropdownOption } from '../../components/Dropdown';
 import { SpecialAbility } from '../../types/wiki';
+import { List, Maybe, Record } from '../../utils/dataUtils';
 
 export interface TerrainKnowledgeProps {
-  active?: number;
-  available: number[];
-  terrainKnowledge: SpecialAbility;
-  set(id: number): void;
+  active: Maybe<number>;
+  available: List<number>;
+  terrainKnowledge: Record<SpecialAbility>;
+  set (id: number): void;
 }
 
-export function TerrainKnowledge(props: TerrainKnowledgeProps) {
+export function TerrainKnowledge (props: TerrainKnowledgeProps) {
   const { active, available, terrainKnowledge, set } = props;
 
   return (
     <div className="terrain-knowledge">
-      <h4>{terrainKnowledge.name}</h4>
-      <Dropdown
-        value={active}
-        options={terrainKnowledge.select!.filter(e => {
-          return available.includes(e.id as number);
-        })}
-        onChange={set}
-        />
+      <h4>{terrainKnowledge .get ('name')}</h4>
+      {Maybe.maybeToReactNode (
+        terrainKnowledge .lookup ('select')
+          .fmap (
+            select => (
+              <Dropdown
+                value={active}
+                options={
+                  select .filter (
+                    e => {
+                      const id = e .get ('id');
+
+                      return typeof id === 'number' && available .elem (id);
+                    }
+                  ) as List<Record<DropdownOption>>
+                }
+                onChangeJust={set}
+                />
+            )
+          )
+      )}
     </div>
   );
 }

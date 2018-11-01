@@ -18,7 +18,7 @@ export interface DropdownProps {
   label?: string;
   options: List<Record<DropdownOption>>;
   required?: boolean;
-  value: Maybe<boolean | string | number>;
+  value: boolean | string | number | Maybe<boolean | string | number>;
   onChange? (option: Maybe<number | string>): void;
   onChangeJust? (option: number | string): void;
 }
@@ -92,11 +92,12 @@ export class Dropdown extends React.Component<DropdownProps, DropdownState> {
     const { className, disabled, fullWidth, hint, label, options, required, value } = this.props;
     const { isOpen, position } = this.state;
 
+    const normalizedValue = Maybe.normalize (value);
     const normalizedDisabled = Maybe.elem (true) (Maybe.normalize (disabled));
 
     const style = isOpen ? (options .length () < 6 ? options .length () * 33 + 1 : 166) : 0;
 
-    const maybeCurrent = options.find (e => value .equals (e .lookup ('id')));
+    const maybeCurrent = options.find (e => normalizedValue .equals (e .lookup ('id')));
     const valueText = maybeCurrent
       .fmap (Record.get<DropdownOption, 'name'> ('name'))
       .alt (Maybe.fromNullable (hint));
@@ -109,7 +110,7 @@ export class Dropdown extends React.Component<DropdownProps, DropdownState> {
               options
                 .map (option => {
                   const classNameInner = classNames (
-                    value .equals (option .lookup ('id')) && 'active',
+                    normalizedValue .equals (option .lookup ('id')) && 'active',
                     Maybe.elem (true) (option .lookup ('disabled')) && 'disabled'
                   );
 

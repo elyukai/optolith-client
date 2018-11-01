@@ -47,3 +47,5 @@ export class Identity<T> implements Al.Functor<T>, Al.Applicative<T>, Al.Monad<T
     return new Identity (value);
   }
 }
+
+export type IdentityFn<T> = (x: T) => T;

@@ -12,7 +12,7 @@ import { Culture, Race, RaceVariant, WikiAll } from '../../types/wiki';
 import { getAPObject } from '../../utils/adventurePointsSumUtils';
 import { Maybe, OrderedMap, OrderedSet, Record } from '../../utils/dataUtils';
 import { translate, UIMessagesObject } from '../../utils/I18n';
-import { getFullProfessionName } from '../../utils/RCPUtils';
+import { getFullProfessionName } from '../../utils/rcpUtils';
 
 export interface HerolistItemProps {
   hero: Hero;

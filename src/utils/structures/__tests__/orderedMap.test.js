@@ -440,3 +440,15 @@ test('OrderedMap.elems', () => {
 
   expect(OrderedMap.elems(map)).toEqual(res);
 });
+
+test('sum', () => {
+  const map = OrderedMap.of ([[1, 2],[3, 3],[2, 4]]);
+
+  expect (map .sum ()) .toEqual (9);
+});
+
+test('OrderedMap.sum', () => {
+  const map = OrderedMap.of ([[1, 2],[3, 3],[2, 4]]);
+
+  expect (OrderedMap .sum (map)) .toEqual (9);
+});

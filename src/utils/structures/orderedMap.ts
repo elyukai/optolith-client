@@ -768,4 +768,24 @@ export class OrderedMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
   toMap (): ReadonlyMap<K, V> {
     return this.value;
   }
+
+  // FOLDABLE
+
+  /**
+   * `sum :: Num a => Map k a -> a`
+   *
+   * The `sum` function computes the sum of the numbers of a structure.
+   */
+  sum (this: OrderedMap<any, number>): number {
+    return OrderedMap.sum (this);
+  }
+
+  /**
+   * `sum :: Num a => Map k a -> a`
+   *
+   * The `sum` function computes the sum of the numbers of a structure.
+   */
+  static sum (map: OrderedMap<any, number>): number {
+    return [...map .value .values ()] .reduce ((acc, e) => acc + e, 0);
+  }
 }

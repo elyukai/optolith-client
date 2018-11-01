@@ -14,3 +14,18 @@ interface SubtractBy {
 }
 
 export const subtractBy = R.flip (R.subtract) as SubtractBy;
+
+interface DivideBy {
+  /**
+   * Divide one number by another number. Equivalent to `a / b` but curried.
+   * Divide the second argument by the first argument.
+   */
+  (b: number, a: number): number;
+  /**
+   * Divide one number by another number. Equivalent to `a / b` but curried.
+   * Divide the second argument by the first argument.
+   */
+  (b: number): (a: number) => number;
+}
+
+export const divideBy = R.flip (R.divide) as DivideBy;

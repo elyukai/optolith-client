@@ -1,3 +1,4 @@
+const React = require('react');
 const { List } = require('../list');
 const { Just, Maybe, Nothing } = require('../maybe');
 
@@ -106,10 +107,31 @@ test('fmap', () => {
     .toEqual(Maybe.of(null));
 });
 
+test('Maybe.fmap', () => {
+  expect(Maybe.fmap(x => x * 2)(Maybe.of(3)))
+    .toEqual(Maybe.of(6));
+  expect(Maybe.fmap(x => x * 2)(Maybe.of(null)))
+    .toEqual(Maybe.of(null));
+});
+
+test('Maybe.mapReplace', () => {
+  expect (Maybe.mapReplace (2) (Maybe.of (3)))
+    .toEqual (Maybe.of (2));
+  expect (Maybe.mapReplace (2) (Maybe.of (null)))
+    .toEqual (Maybe.of (null));
+});
+
 test('bind', () => {
   expect(Maybe.of(3).bind(x => Maybe.of(x * 2)))
     .toEqual(Maybe.of(6));
   expect(Maybe.of(null).bind(x => Maybe.of(x * 2)))
+    .toEqual(Maybe.of(null));
+});
+
+test('Maybe.bind', () => {
+  expect(Maybe.bind(Maybe.of(3))(x => Maybe.of(x * 2)))
+    .toEqual(Maybe.of(6));
+  expect(Maybe.bind(Maybe.of(null))(x => Maybe.of(x * 2)))
     .toEqual(Maybe.of(null));
 });
 
@@ -224,6 +246,13 @@ test('Maybe.alt_', () => {
     .toEqual(Maybe.of(null));
 });
 
+test('Maybe.join', () => {
+  expect(Maybe.join (Maybe.of (Maybe.of (3))))
+    .toEqual(Maybe.of(3));
+  expect(Maybe.join (Maybe.of (Maybe.of (null))))
+    .toEqual(Maybe.of(null));
+});
+
 test('toString', () => {
   expect(Maybe.of(3).toString())
     .toEqual('Just 3');
@@ -332,18 +361,10 @@ test('Maybe.equals', () => {
     .toBeFalsy();
 });
 
-test('Maybe.fmap', () => {
-  expect(Maybe.fmap(x => x * 2)(Maybe.of(3)))
-    .toEqual(Maybe.of(6));
-  expect(Maybe.fmap(x => x * 2)(Maybe.of(null)))
-    .toEqual(Maybe.of(null));
-});
-
-test('Maybe.bind', () => {
-  expect(Maybe.bind(Maybe.of(3))(x => Maybe.of(x * 2)))
-    .toEqual(Maybe.of(6));
-  expect(Maybe.bind(Maybe.of(null))(x => Maybe.of(x * 2)))
-    .toEqual(Maybe.of(null));
+test('Maybe.maybeToReactNode', () => {
+  const element = React.createElement ('div');
+  expect (Maybe.maybeToReactNode (Nothing ())) .toEqual (null);
+  expect (Maybe.maybeToReactNode (Just (element))) .toEqual (element);
 });
 
 test('Just', () => {

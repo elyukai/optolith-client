@@ -1,35 +1,44 @@
 import * as React from 'react';
 import { Checkbox } from '../../components/Checkbox';
-import { translate, UIMessages } from '../../utils/I18n';
+import { Cantrip } from '../../types/wiki';
+import { List, Maybe, OrderedSet, Record } from '../../utils/dataUtils';
+import { translate, UIMessagesObject } from '../../utils/I18n';
 
 export interface SelectionsCantripsProps {
-  active: Set<string>;
-  list: {
-    id: string;
-    name: string;
-  }[];
-  locale: UIMessages;
+  active: OrderedSet<string>;
+  list: List<Record<Cantrip>>;
+  locale: UIMessagesObject;
   num: number;
-  change(id: string): void;
+  change (id: string): void;
 }
 
-export function SelectionsCantrips(props: SelectionsCantripsProps) {
+export function SelectionsCantrips (props: SelectionsCantripsProps) {
   const { active, change, list, locale, num } = props;
-  const nums = [translate(locale, 'rcpselections.labels.onecantrip'), translate(locale, 'rcpselections.labels.twocantrips')];
+
+  const nums = List.of (
+    translate (locale, 'rcpselections.labels.onecantrip'),
+    translate (locale, 'rcpselections.labels.twocantrips')
+  );
 
   return (
     <div className="cantrips list">
-      <h4>{nums[num - 1]} {translate(locale, 'rcpselections.labels.fromthefollowinglist')}</h4>
+      <h4>
+        {Maybe.fromMaybe ('') (nums .subscript (num - 1))}
+        {''}
+        {translate (locale, 'rcpselections.labels.fromthefollowinglist')}
+      </h4>
       {
-        list.map(obj => {
-          const { id, name } = obj;
+        list.map (obj => {
+          const id = obj .get ('id');
+          const name = obj .get ('name');
+
           return (
             <Checkbox
               key={id}
-              checked={active.has(id)}
-              disabled={!active.has(id) && active.size >= num}
+              checked={active .member (id)}
+              disabled={active .notMember (id) && active .size () >= num}
               label={name}
-              onClick={change.bind(null, id)} />
+              onClick={() => change (id)} />
           );
         })
       }

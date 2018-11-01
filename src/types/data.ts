@@ -1,6 +1,6 @@
 import { Action } from 'redux';
 import { DCIds } from '../selectors/derivedCharacteristicsSelectors';
-import { List, Omit, OrderedMap, OrderedSet, Record, RecordInterface, Tuple } from '../utils/dataUtils';
+import { List, Maybe, Omit, OrderedMap, OrderedSet, Record, RecordInterface, Tuple } from '../utils/dataUtils';
 import { TabId } from '../utils/LocationUtils';
 import { UndoState } from '../utils/undo';
 import * as Wiki from './wiki';
@@ -178,21 +178,22 @@ export interface CommonProfessionObject {
 export type CommonProfession = boolean | Record<CommonProfessionObject>;
 
 export interface Selections {
-  attrSel: string;
+  attributeAdjustment: string;
   useCulturePackage: boolean;
-  lang: number;
-  buyLiteracy: boolean;
-  litc: number;
+  motherTongue: number;
+  isBuyingMainScriptEnabled: boolean;
+  mainScript: number;
   cantrips: OrderedSet<string>;
-  combattech: OrderedSet<string>;
+  combatTechniques: OrderedSet<string>;
   combatTechniquesSecond: OrderedSet<string>;
   curses: OrderedMap<string, number>;
-  langLitc: OrderedMap<string, number>;
-  spec: string | number;
-  specTalentId?: string;
+  languages: OrderedMap<number, number>;
+  scripts: OrderedMap<number, number>;
   skills: OrderedMap<string, number>;
+  specialization: Maybe<number | string>;
+  specializationSkillId: Maybe<string>;
+  terrainKnowledge: Maybe<number>;
   map: OrderedMap<Wiki.ProfessionSelectionIds, Wiki.ProfessionSelection>;
-  terrainKnowledge?: number;
 }
 
 export interface ActiveObject {
@@ -530,16 +531,16 @@ export interface HistoryPrevState {
 }
 
 export interface LanguagesSelectionListItem {
-  id: string;
+  id: number;
   name: string;
-  native?: boolean;
+  native: boolean;
 }
 
 export interface ScriptsSelectionListItem {
-  id: string;
+  id: number;
   name: string;
   cost: number;
-  native?: boolean;
+  native: boolean;
 }
 
 export type InputTextEvent = React.FormEvent<HTMLInputElement>;

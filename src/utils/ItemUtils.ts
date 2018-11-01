@@ -1,8 +1,7 @@
 import * as R from 'ramda';
-import { DropdownOption } from '../components/Dropdown';
 import { ItemEditorInstance, ItemEditorSpecific, ItemInstance } from '../types/data';
-import { Just, List, Maybe, Nothing, Record, Tuple } from './dataUtils';
-import { getRoman } from './NumberUtils';
+import { Just, List, Maybe, Nothing, Record } from './dataUtils';
+import { getLevelElementsWithZero } from './levelUtils';
 import { isEmptyOr, isFloat, isInteger, isNaturalNumber } from './RegexUtils';
 
 const ifNumberOrEmpty = Maybe.maybe<number, string> ('') (x => x.toString ());
@@ -340,19 +339,4 @@ export const validateItemEditorInput = (item: Record<ItemEditorInstance>) => {
   });
 };
 
-export const getLossLevelElements = () =>
-  List.unfoldr<Record<DropdownOption>, number>
-    (current => current > 4
-      ? Nothing ()
-      : current === 0
-      ? Just (
-        Tuple.of<Record<DropdownOption>, number>
-          (Record.of<DropdownOption> ({ name: '0' }))
-          (current + 1)
-      )
-      : Just (
-        Tuple.of<Record<DropdownOption>, number>
-          (Record.of<DropdownOption> ({ id: current, name: getRoman (current) }))
-          (current + 1)
-      ))
-    (0);
+export const getLossLevelElements = () => getLevelElementsWithZero (4);

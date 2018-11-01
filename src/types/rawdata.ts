@@ -259,12 +259,12 @@ export interface RawProfessionVariantLocale {
 }
 
 export interface RawSpecializationSelection {
-  readonly id: ProfessionSelectionIds.SPECIALISATION;
+  readonly id: ProfessionSelectionIds.SPECIALIZATION;
   readonly sid: string | string[];
 }
 
 export interface RawRemoveSpecializationSelection {
-  readonly id: ProfessionSelectionIds.SPECIALISATION;
+  readonly id: ProfessionSelectionIds.SPECIALIZATION;
   readonly active: boolean;
 }
 

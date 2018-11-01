@@ -165,6 +165,26 @@ export class Maybe<T extends Some> implements Al.Alternative<T>, Al.Monad<T>,
     return this.value !== undefined ? Maybe.of (fn (this.value)) : this as any;
   }
 
+  /**
+   * `fmap :: (a -> b) -> Maybe a -> Maybe b`
+   */
+  static fmap<T extends Some, U extends Some> (
+    fn: (value: T) => U
+  ): (m: Maybe<T>) => Maybe<U> {
+    return m => m.fmap (fn);
+  }
+
+  /**
+   * `(<$) :: Functor f => a -> f b -> f a`
+   *
+   * Replace all locations in the input with the same value. The default
+   * definition is `fmap . const`, but this may be overridden with a more
+   * efficient version.
+   */
+  static mapReplace<A, B> (x: A): (m: Maybe<B>) => Maybe<A> {
+    return Maybe.fmap (_ => x);
+  }
+
   bind<U extends Some> (fn: (value: T) => Maybe<U>): Maybe<U> {
     return this.value !== undefined ? fn (this.value) : this as any;
   }
@@ -316,6 +336,17 @@ export class Maybe<T extends Some> implements Al.Alternative<T>, Al.Monad<T>,
    */
   static alt_<T extends Some> (m1: Maybe<T>): (m2: Maybe<T>) => Maybe<T> {
     return m2 => m2.value === undefined ? m1 : m2;
+  }
+
+  /**
+   * `join :: Maybe m => m (m a) -> m a`
+   *
+   * The `join` function is the conventional monad join operator. It is used to
+   * remove one level of monadic structure, projecting its bound argument into
+   * the outer level.
+   */
+  static join<A extends Some> (m: Maybe<Maybe<A>>): Maybe<A> {
+    return Maybe.bind<Maybe<A>, A> (m) (R.identity);
   }
 
   /**
@@ -506,15 +537,6 @@ export class Maybe<T extends Some> implements Al.Alternative<T>, Al.Monad<T>,
   }
 
   /**
-   * `fmap :: (a -> b) -> Maybe a -> Maybe b`
-   */
-  static fmap<T extends Some, U extends Some> (
-    fn: (value: T) => U
-  ): (m: Maybe<T>) => Maybe<U> {
-    return m => m.fmap (fn);
-  }
-
-  /**
    * `liftM2 :: (a1 -> a2 -> r) -> Maybe a1 -> Maybe a2 -> Maybe r`
    *
    * Promote a function to a monad, scanning the monadic arguments from left to
@@ -569,6 +591,20 @@ export class Maybe<T extends Some> implements Al.Alternative<T>, Al.Monad<T>,
         )
       )
     );
+  }
+
+  /**
+   * `maybeToReactNode :: Maybe JSXElement -> ReactNode`
+   *
+   * The `maybeToReactNode` function returns `null` when given `Nothing` or
+   * returns the JSX Element inside when given a `Just`.
+   *
+   * Note: Do not use in application flow, only use when return value is
+   * directly used by React. Why? `null` is unsafe! But it's required by React
+   * if you do not want an element to be displayed.
+   */
+  static maybeToReactNode<A extends JSX.Element> (m: Maybe<A>): React.ReactNode {
+    return Maybe.isJust (m) ? Maybe.fromJust (m) : null;
   }
 }
 

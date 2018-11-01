@@ -1,5 +1,4 @@
 import * as R from 'ramda';
-import { CreateHeroAction } from '../actions/HerolistActions';
 import { SetSelectionsAction } from '../actions/ProfessionActions';
 import { ActionTypes } from '../constants/ActionTypes';
 import { Categories } from '../constants/Categories';
@@ -17,7 +16,7 @@ import { adjustHeroListStateItemOr, adjustHeroListStateItemWithDefault, getHeroS
 import { ifElse } from '../utils/ifElse';
 import { getWikiEntry } from '../utils/WikiUtils';
 
-type Action = CreateHeroAction | SetSelectionsAction;
+type Action = SetSelectionsAction;
 
 const addToSkillRatingList = (
   id: string,
@@ -75,7 +74,7 @@ const concatBaseModifications = (action: SetSelectionsAction) => {
             attr => attr.modify<'mod'> (
               R.add (Tuple.fst (race.get ('attributeAdjustmentsSelection')))
             ) ('mod')
-          ) (action.payload.attrSel)
+          ) (action .payload .attributeAdjustment)
         ) ('attributes'),
     }),
 
@@ -91,15 +90,15 @@ const concatBaseModifications = (action: SetSelectionsAction) => {
         : acc.skillRatingList,
       languages: Maybe.fromMaybe (acc.languages) (
         ifElse<List<number>, Maybe<number>> (R.pipe (List.lengthL, R.lt (1)))
-                                            (() => Just (action.payload.lang))
+                                            (() => Just (action .payload .motherTongue))
                                             (Maybe.listToMaybe)
                                             (culture.get ('languages'))
           .fmap (motherTongueId => acc.languages.insert (motherTongueId) (4))
       ),
-      scripts: action.payload.buyLiteracy
+      scripts: action .payload .isBuyingMainScriptEnabled
         ? Maybe.fromMaybe (acc.scripts) (
           ifElse<List<number>, Maybe<number>> (R.pipe (List.lengthL, R.lt (1)))
-                                              (() => Just (action.payload.litc))
+                                              (() => Just (action .payload .mainScript))
                                               (Maybe.listToMaybe)
                                               (culture.get ('scripts'))
             .fmap (motherTongueScriptId => acc.scripts.insert (motherTongueScriptId))
@@ -235,23 +234,28 @@ const concatSpecificModifications = (action: SetSelectionsAction) => {
     // - Skill Specialization
     Maybe.maybe (modIdentityFn) (
       specialization => (acc: ConcatenatedModifications) => {
-        const { spec, specTalentId } = action.payload;
-        const talentId = (specialization as Record<Wiki.SpecializationSelection>).get ('sid');
+        const { specialization: specializationSelection, specializationSkillId } = action.payload;
+        const talentId = (specialization as Record<Wiki.SpecializationSelection>) .get ('sid');
 
-        if (talentId instanceof List && specTalentId) {
+        if (
+          talentId instanceof List
+          && Maybe.isJust (specializationSkillId)
+          && Maybe.isJust (specializationSelection)
+        ) {
           return {
             ...acc,
             activatable: acc.activatable.cons (
               Record.of<Wiki.ProfessionRequiresActivatableObject> ({
                 id: 'SA_9',
                 active: true,
-                sid: specTalentId,
-                sid2: spec,
+                sid: Maybe.fromJust (specializationSkillId),
+                sid2: Maybe.fromJust (specializationSelection),
               })
             ),
           };
         }
-        else if (typeof talentId === 'string') {
+
+        if (typeof talentId === 'string' && Maybe.isJust (specializationSelection)) {
           return {
             ...acc,
             activatable: acc.activatable.cons (
@@ -259,54 +263,53 @@ const concatSpecificModifications = (action: SetSelectionsAction) => {
                 id: 'SA_9',
                 active: true,
                 sid: talentId,
-                sid2: spec,
+                sid2: Maybe.fromJust (specializationSelection),
               })
             ),
           };
         }
-        else {
-          return acc;
-        }
+
+        return acc;
       }
-    ) (action.payload.map.lookup (Wiki.ProfessionSelectionIds.SPECIALISATION)),
+    ) (action.payload.map.lookup (Wiki.ProfessionSelectionIds.SPECIALIZATION)),
 
     // - Terrain Knowledge
     Maybe.maybe (modIdentityFn) (
       () => (acc: ConcatenatedModifications) => {
         const { terrainKnowledge } = action.payload;
 
-        return {
-          ...acc,
-          activatable: acc.activatable.cons (
-            Record.of<Wiki.ProfessionRequiresActivatableObject> ({
-              id: 'SA_9',
-              active: true,
-              sid: terrainKnowledge,
-            })
-          ),
-        };
+        if (Maybe.isJust (terrainKnowledge)) {
+          return {
+            ...acc,
+            activatable: acc.activatable.cons (
+              Record.of<Wiki.ProfessionRequiresActivatableObject> ({
+                id: 'SA_9',
+                active: true,
+                sid: Maybe.fromJust (terrainKnowledge),
+              })
+            ),
+          };
+        }
+
+        return acc;
       }
     ) (action.payload.map.lookup (Wiki.ProfessionSelectionIds.TERRAIN_KNOWLEDGE)),
 
     // - Language and Scripts
-    action.payload.langLitc
+    action.payload.languages
       .foldlWithKey<ConcatenatedModifications> (
-        accAll => key => value => {
-          const [ category, id ] = key.split ('_');
+        accAll => id => value => ({
+          ...accAll,
+          languages: accAll .languages .insert (id) (value),
+        })
+      ),
 
-          if (category === 'LANG') {
-            return {
-              ...accAll,
-              languages: accAll.languages.insert (Number.parseInt (id)) (value / 2),
-            };
-          }
-          else {
-            return {
-              ...accAll,
-              scripts: accAll.scripts.insert (Number.parseInt (id)),
-            };
-          }
-        }
+    action.payload.scripts
+      .foldlWithKey<ConcatenatedModifications> (
+        accAll => id => _ => ({
+          ...accAll,
+          scripts: accAll .scripts .insert (id),
+        })
       ),
 
     // - Combat Techniques
@@ -320,7 +323,7 @@ const concatSpecificModifications = (action: SetSelectionsAction) => {
           .fmap (
             obj => ({
               ...acc,
-              skillRatingList: action.payload.combattech
+              skillRatingList: action .payload .combatTechniques
                 .foldl<ConcatenatedModifications['skillRatingList']> (
                   accSkillRatingList => e => addToSkillRatingList (
                     e,
@@ -341,7 +344,7 @@ const concatSpecificModifications = (action: SetSelectionsAction) => {
           .fmap (
             obj => ({
               ...acc,
-              skillRatingList: action.payload.combatTechniquesSecond
+              skillRatingList: action .payload .combatTechniquesSecond
                 .foldl<ConcatenatedModifications['skillRatingList']> (
                   accSkillRatingList => e => addToSkillRatingList (
                     e,

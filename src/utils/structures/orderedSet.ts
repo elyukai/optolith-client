@@ -104,6 +104,20 @@ export class OrderedSet<T> implements Al.Functor<T>, Al.Foldable<T>,
     return set => OrderedSet.of ([...set.value].filter (e => e !== value));
   }
 
+  // INSERTION/DELETION
+
+  /**
+   * `toggle :: Ord a => a -> Set a -> Set a`
+   *
+   * Delete an element from a set if the value already exists in the set.
+   * Otherwise, insert the element in the set.
+   */
+  static toggle<T> (value: T): (set: OrderedSet<T>) => OrderedSet<T> {
+    return set => OrderedSet.member (value) (set)
+      ? OrderedSet.delete (value) (set)
+      : OrderedSet.insert (value) (set);
+  }
+
   // QUERY
 
   /**

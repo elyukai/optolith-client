@@ -1,525 +1,422 @@
+import * as R from 'ramda';
 import * as React from 'react';
 import { BorderButton } from '../../components/BorderButton';
 import { Checkbox } from '../../components/Checkbox';
-import { Dropdown } from '../../components/Dropdown';
+import { Dropdown, DropdownOption } from '../../components/Dropdown';
 import { Scroll } from '../../components/Scroll';
 import { Slidein } from '../../components/Slidein';
-import { WikiState } from '../../reducers/wikiReducer';
-import { AttributeInstance, CantripInstance, CantripsSelection, CombatTechniqueInstance, CombatTechniquesSecondSelection, CombatTechniquesSelection, CursesSelection, LanguagesScriptsSelection, LanguagesSelectionListItem, ProfessionSelection, ProfessionSelectionIds, ScriptsSelectionListItem, Selections as SelectionsInterface, SkillsSelection, SpecialAbilityInstance, SpecialisationSelection, SpellInstance, TalentInstance } from '../../types/data';
-import { UIMessages } from '../../types/view';
-import { Culture, Profession, ProfessionVariant, ProfessionVariantSelection, Race, TerrainKnowledgeSelection } from '../../types/wiki';
-import { getSelectionItem } from '../../utils/selectionUtils';
-import { sortObjects } from '../../utils/FilterSortUtils';
-import { translate } from '../../utils/I18n';
-import { SelectionsCantrips } from './SelectionsCantrips';
-import { SelectionsCt } from './SelectionsCt';
-import { SelectionsCurses } from './SelectionsCurses';
-import { SelectionsLangLitc } from './SelectionsLangLitc';
-import { SelectionsSkills } from './SelectionsSkills';
-import { SelectionsTalentSpec } from './SelectionsTalentSpec';
-import { TerrainKnowledge } from './SelectionsTerrainKnowledge';
-import { isRemoveCombatTechniquesSelection, isRemoveSecondCombatTechniquesSelection } from '../../utils/WikiUtils';
+import { Selections as SelectionsInterface } from '../../types/data';
+import { Culture, Profession, ProfessionSelection, ProfessionSelectionIds, ProfessionVariant, Race, WikiAll } from '../../types/wiki';
+import { Just, Maybe, Nothing, OrderedMap, OrderedSet, Record, Tuple } from '../../utils/dataUtils';
+import { translate, UIMessagesObject } from '../../utils/I18n';
+import { sign } from '../../utils/NumberUtils';
+import { getAllAdjustmentSelections, getBuyScriptElement, getCantripsElementAndValidation, getCombatTechniquesElementAndValidation, getCombatTechniquesSecondElementAndValidation, getCursesElementAndValidation, getLanguagesAndScriptsElementAndValidation, getMainScriptSelectionElement, getMotherTongueSelectionElement, getSkillsElementAndValidation, getSkillSpecializationElement, getTerrainKnowledgeElement } from '../../utils/rcpAdjustmentSelectionUtils';
 
 export interface SelectionsOwnProps {
-  locale: UIMessages;
-  close(): void;
+  locale: UIMessagesObject;
+  close (): void;
 }
 
 export interface SelectionsStateProps {
-  attributes: Map<string, AttributeInstance>;
-  cantrips: Map<string, CantripInstance>;
-  combatTechniques: Map<string, CombatTechniqueInstance>;
-  currentRace: Race;
-  currentCulture: Culture;
-  currentProfession: Profession;
-  currentProfessionVariant: ProfessionVariant | undefined;
-  skills: Map<string, TalentInstance>;
-  spells: Map<string, SpellInstance>;
-  specialAbilities: Map<string, SpecialAbilityInstance>;
-  wiki: WikiState;
+  currentRace: Maybe<Record<Race>>;
+  currentCulture: Maybe<Record<Culture>>;
+  currentProfession: Maybe<Record<Profession>>;
+  currentProfessionVariant: Maybe<Record<ProfessionVariant>>;
+  wiki: Record<WikiAll>;
 }
 
 export interface SelectionsDispatchProps {
-  setSelections(selections: SelectionsInterface): void;
+  setSelections (selections: SelectionsInterface): void;
 }
 
 export type SelectionsProps = SelectionsStateProps & SelectionsDispatchProps & SelectionsOwnProps;
 
 export interface SelectionsState {
-  attrSel: string;
+  attributeAdjustment: string;
   useCulturePackage: boolean;
-  lang: number;
-  buyLiteracy: boolean;
-  litc: number;
-  cantrips: Set<string>;
-  combattech: Set<string>;
-  combatTechniquesSecond: Set<string>;
-  curses: Map<string, number>;
-  langLitc: Map<string, number>;
-  skills: Map<string, number>;
-  spec: [number | null, string];
-  specTalentId?: string;
-  terrainKnowledge?: number;
+  motherTongue: number;
+  isBuyingMainScriptEnabled: boolean;
+  mainScript: number;
+  cantrips: OrderedSet<string>;
+  combatTechniques: OrderedSet<string>;
+  combatTechniquesSecond: OrderedSet<string>;
+  curses: OrderedMap<string, number>;
+  languages: OrderedMap<number, number>;
+  scripts: OrderedMap<number, number>;
+  skills: OrderedMap<string, number>;
+  specialization: Tuple<Maybe<number>, string>; // first: selection id; second: user input
+  specializationSkillId: Maybe<string>;
+  terrainKnowledge: Maybe<number>;
 }
 
 export class Selections extends React.Component<SelectionsProps, SelectionsState> {
   state: SelectionsState = {
-    attrSel: 'ATTR_0',
-    buyLiteracy: false,
-    cantrips: new Set<string>(),
-    combatTechniquesSecond: new Set<string>(),
-    combattech: new Set<string>(),
-    curses: new Map<string, number>(),
-    lang: 0,
-    langLitc: new Map<string, number>(),
-    litc: 0,
-    skills: new Map<string, number>(),
-    spec: [null, ''] as [number | null, string],
+    attributeAdjustment: 'ATTR_0',
+    isBuyingMainScriptEnabled: false,
+    cantrips: OrderedSet.empty (),
+    combatTechniquesSecond: OrderedSet.empty (),
+    combatTechniques: OrderedSet.empty (),
+    curses: OrderedMap.empty (),
+    motherTongue: 0,
+    languages: OrderedMap.empty (),
+    scripts: OrderedMap.empty (),
+    mainScript: 0,
+    skills: OrderedMap.empty (),
+    specialization: Tuple.of<Maybe<number>, string> (Nothing ()) (''),
+    specializationSkillId: Nothing (),
+    terrainKnowledge: Nothing (),
     useCulturePackage: false,
   };
 
-  changeAttrSel = (option: string) => this.setState({ attrSel: option } as SelectionsState);
-  changeCulturePackage = () => this.setState({ useCulturePackage: !this.state.useCulturePackage } as SelectionsState);
-  changeLang = (option: number) => this.setState({ lang: option } as SelectionsState);
-  changeLiteracy = () => this.setState({ buyLiteracy: !this.state.buyLiteracy } as SelectionsState);
-  changeLitc = (option: number) => this.setState({ litc: option } as SelectionsState);
+  setAttributeAdjustment = (option: string) => this.setState ({ attributeAdjustment: option });
 
-  changeCantrip = (id: string) => {
-    const cantrips = this.state.cantrips;
-    if (!cantrips.delete(id)) {
-      cantrips.add(id);
-    }
-    this.setState({ cantrips } as SelectionsState);
-  }
-  changeCombattech = (id: string) => {
-    const combattech = this.state.combattech;
-    if (!combattech.delete(id)) {
-      combattech.add(id);
-    }
-    this.setState({ combattech } as SelectionsState);
-  }
-  changeSecondCombatTechniques = (id: string) => {
-    const combattech = this.state.combatTechniquesSecond;
-    if (!combattech.delete(id)) {
-      combattech.add(id);
-    }
-    this.setState({ combatTechniquesSecond: combattech } as SelectionsState);
-  }
-  changeCurse = (id: string, option: 'add' | 'remove') => {
-    const { curses } = this.state;
-    switch (option) {
-      case 'add':
-        curses.set(id, (curses.get(id) as number) + 1);
-        break;
-      case 'remove':
-        curses.set(id, (curses.get(id) as number) - 1);
-        break;
-      default:
-        if (!curses.delete(id)) {
-          curses.set(id, 0);
-        }
-    }
-    this.setState({ curses } as SelectionsState);
-  }
-  changeLangLitc = (id: string, ap: number) => {
-    const langLitc = this.state.langLitc;
-    if (langLitc.has(id)) {
-      if (langLitc.get(id) !== ap) {
-        langLitc.set(id, ap);
+  switchIsCulturalPackageEnabled = () => this.setState (
+    prevState => ({ useCulturePackage: !prevState .useCulturePackage })
+  );
+
+  setMotherTongue = (option: number) => this.setState ({ motherTongue: option });
+
+  switchIsBuyingMainScriptEnabled = () => this.setState (
+    prevState => ({ isBuyingMainScriptEnabled: !prevState .isBuyingMainScriptEnabled })
+  );
+
+  setMainCulturalLiteracy = (option: number) => this.setState ({ mainScript: option });
+
+  switchCantrip = (id: string) => this.setState (
+    prevState => ({ cantrips: OrderedSet.toggle (id) (prevState .cantrips) })
+  );
+
+  switchCombatTechnique = (id: string) => this.setState (
+    prevState => ({ combatTechniques: OrderedSet.toggle (id) (prevState .combatTechniques) })
+  );
+
+  switchSecondCombatTechnique = (id: string) => this.setState (
+    prevState => ({
+      combatTechniquesSecond: OrderedSet.toggle (id) (prevState .combatTechniquesSecond),
+    })
+  );
+
+  adjustCurse = (id: string) => (maybeOption: Maybe<'add' | 'remove'>) => {
+    if (Maybe.isJust (maybeOption)) {
+      const option = Maybe.fromJust (maybeOption);
+
+      if (option === 'add') {
+        this.setState (prevState => ({ curses: prevState .curses .adjust (R.inc) (id) }));
       }
       else {
-        langLitc.delete(id);
+        this.setState (prevState => ({ curses: prevState .curses .adjust (R.dec) (id) }));
       }
-    } else {
-      langLitc.set(id, ap);
-    }
-    this.setState({ langLitc } as SelectionsState);
-  }
-  changeSpecId = (id: string) => {
-    this.setState({ specTalentId: id, spec: [null, ''] } as SelectionsState);
-  }
-  changeSpec = (value: number | string) => {
-    const spec = this.state.spec;
-    if (typeof value === 'number') {
-      spec[0] = value;
     }
     else {
-      spec[1] = value;
+      this.setState (
+        prevState => ({
+          curses: prevState .curses .alter (maybe => Maybe.isJust (maybe) ? Nothing () : Just (0))
+                                           (id),
+        })
+      );
     }
-    this.setState({ spec } as SelectionsState);
-  }
-  addSkillPoint = (id: string) => {
-    const skills = this.state.skills;
-    const current = skills.get(id);
-    const ic = this.props.skills.get(id)!.ic;
-    if (current) {
-      skills.set(id, current + ic);
-    }
-    else {
-      skills.set(id, ic);
-    }
-    this.setState({ skills } as SelectionsState);
-  }
-  removeSkillPoint = (id: string) => {
-    const skills = this.state.skills;
-    const current = skills.get(id);
-    const ic = this.props.skills.get(id)!.ic;
-    if (current && current === ic) {
-      skills.delete(id);
-    }
-    else if (current) {
-      skills.set(id, current - ic);
-    }
-    this.setState({ skills } as SelectionsState);
-  }
-  setTerrainKnowledge = (terrainKnowledge: number) => {
-    this.setState(() => ({ terrainKnowledge }));
   }
 
-  assignRCPEntries = (selMap: Map<ProfessionSelectionIds, ProfessionSelection>) => {
-    this.props.setSelections({
-      ...this.state,
-      map: selMap,
-      spec: this.state.spec[1] ? this.state.spec[1] : this.state.spec[0]!,
+  adjustLanguage = (id: number) => (level: Maybe<number>) =>
+    this.setState (prevState => ({ languages: prevState .languages .alter (() => level) (id) }));
+
+  adjustScript = (id: number) => (ap: number) =>
+    this.setState (
+      prevState => ({
+        scripts: prevState .scripts .alter (maybe => Maybe.isJust (maybe) ? Nothing () : Just (ap))
+                                           (id),
+      })
+    );
+
+  setSpecializationSkill = (id: string) => {
+    this.setState ({
+      specializationSkillId: Just (id),
+      specialization: Tuple.of<Maybe<number>, string> (Nothing ()) (''),
     });
   }
 
-  render() {
+  setSpecialization = (value: number | string) => {
+    this.setState (
+      prevState => ({
+        specialization: typeof value === 'number'
+          ? Tuple.first<Maybe<number>, string> (() => Just (value))
+                                               (prevState .specialization)
+          : Tuple.second<Maybe<number>, string> (() => value)
+                                                (prevState .specialization),
+      })
+    );
+  }
+
+  addSkillPoint = (id: string) =>
+    this.setState (
+      prevState => ({
+        skills: prevState .skills
+          .alter (
+                   skill => this .props .wiki .get ('skills') .lookup (id)
+                     .fmap (
+                       wikiSkill => Maybe.fromMaybe (0) (skill) + wikiSkill .get ('ic')
+                     )
+                 )
+                 (id),
+      })
+    );
+
+  removeSkillPoint = (id: string) =>
+    this.setState (
+      prevState => ({
+        skills: prevState .skills
+          .alter (
+                   skill => this .props .wiki .get ('skills') .lookup (id)
+                     .bind (
+                       wikiSkill => Maybe.elem (wikiSkill .get ('ic')) (skill)
+                         ? Nothing ()
+                         : skill .fmap (R.add (-wikiSkill .get ('ic')))
+                     )
+                 )
+                 (id),
+      })
+    );
+
+  setTerrainKnowledge = (terrainKnowledge: number) =>
+    this.setState ({ terrainKnowledge: Just (terrainKnowledge) });
+
+  assignRCPEntries = (selMap: OrderedMap<ProfessionSelectionIds, ProfessionSelection>) => {
+    this.props.setSelections ({
+      ...this.state,
+      map: selMap,
+      specialization: Tuple.snd (this.state.specialization) .length > 0
+        ? Just (Tuple.snd (this.state.specialization))
+        : Tuple.fst (this.state.specialization),
+    });
+  }
+
+  render () {
     const {
-      attributes,
-      cantrips: cantripsState,
       close,
-      combatTechniques,
-      currentCulture,
-      currentProfession,
-      currentProfessionVariant,
-      currentRace,
+      currentCulture: maybeCulture,
+      currentProfession: maybeProfession,
+      currentProfessionVariant: maybeProfessionVariant,
+      currentRace: maybeRace,
       locale,
-      skills: skillsState,
-      specialAbilities,
-      spells,
-      wiki
+      wiki,
     } = this.props;
+
     const {
-      attrSel,
-      buyLiteracy,
-      cantrips,
-      combattech,
-      combatTechniquesSecond,
-      curses,
-      lang,
-      langLitc,
-      litc,
-      skills,
-      spec,
-      specTalentId,
+      attributeAdjustment,
+      isBuyingMainScriptEnabled,
+      cantrips: cantripsActive,
+      combatTechniques: combatTechniquesActive,
+      combatTechniquesSecond: combatTechniquesSecondActive,
+      curses: cursesActive,
+      motherTongue,
+      languages,
+      mainScript,
+      scripts,
+      skills: skillsActive,
+      specialization,
+      specializationSkillId,
       useCulturePackage,
-      terrainKnowledge
+      terrainKnowledge: terrainKnowledgeActive,
     } = this.state;
 
-    const selectLang = currentCulture.languages.length > 1;
-    const selectLitc = currentCulture.scripts.length > 1;
+    return Maybe.maybeToReactNode (
+      Maybe.liftM3<Record<Race>, Record<Culture>, Record<Profession>, JSX.Element>
+        (race => culture => profession => {
+          const attributeAdjustmentValue = Tuple.fst (race .get ('attributeAdjustmentsSelection'));
 
-    const professionSelections = new Map<ProfessionSelectionIds, ProfessionSelection | ProfessionVariantSelection>();
+          const isMotherTongueSelectionNeeded = culture .get ('languages') .length () > 1;
 
-    if (currentProfession.id !== 'P_0') {
-      currentProfession.selections.forEach(e => {
-        professionSelections.set(e.id, e);
-      });
-    }
+          const scriptsListLength = culture .get ('scripts') .length ();
 
-    if (currentProfessionVariant) {
-      currentProfessionVariant.selections.forEach(e => {
-        if ((isRemoveCombatTechniquesSelection(e) || isRemoveSecondCombatTechniquesSelection(e)) && e.active === false) {
-          professionSelections.delete(e.id);
-        }
-        else {
-          professionSelections.set(e.id, e);
-        }
-      });
-    }
+          /**
+           * `Tuple.fst` &ndash; if the culture has any script
+           *
+           * `Tuple.snd` &ndash; if the culture has multiple possible scripts
+           */
+          const isScriptSelectionNeeded =
+            Tuple.of<boolean, boolean> (scriptsListLength > 0) (scriptsListLength > 1);
 
-    let buyScriptElement;
+          const professionSelections = getAllAdjustmentSelections (profession)
+                                                                  (maybeProfessionVariant);
 
-    if (currentCulture.scripts.length > 0) {
-      const selectionItem = getSelectionItem(specialAbilities.get('SA_27')!, currentCulture.scripts[0]);
-      buyScriptElement = (
-        <Checkbox checked={buyLiteracy} onClick={this.changeLiteracy} disabled={langLitc.size > 0}>
-          {translate(locale, 'rcpselections.labels.buyscript')}{!selectLitc && selectionItem && ` (${selectionItem.name}, ${selectionItem.cost} AP)`}
-        </Checkbox>
-      );
-    }
+          const isAnyLanguageOrScriptSelected = languages .size () > 0 || scripts .size () > 0;
 
-    let langLitcElement = null;
-    let langLitcApLeft = 0;
+          const buyScriptElement = getBuyScriptElement (locale)
+                                                       (wiki)
+                                                       (culture)
+                                                       (isScriptSelectionNeeded)
+                                                       (isBuyingMainScriptEnabled)
+                                                       (isAnyLanguageOrScriptSelected)
+                                                       (this.switchIsBuyingMainScriptEnabled);
 
-    if (professionSelections.has('LANGUAGES_SCRIPTS')) {
-      const active = langLitc;
-      const { value } = professionSelections.get('LANGUAGES_SCRIPTS') as LanguagesScriptsSelection;
+          const languagesAndScripts =
+            getLanguagesAndScriptsElementAndValidation (locale)
+                                                       (wiki)
+                                                       (culture)
+                                                       (languages)
+                                                       (scripts)
+                                                       (professionSelections)
+                                                       (mainScript)
+                                                       (motherTongue)
+                                                       (isBuyingMainScriptEnabled)
+                                                       (isMotherTongueSelectionNeeded)
+                                                       (isScriptSelectionNeeded)
+                                                       (this.adjustLanguage)
+                                                       (this.adjustScript);
 
-      const SA_27 = specialAbilities.get('SA_27')!;
-      const SA_29 = specialAbilities.get('SA_29')!;
+          const curses = getCursesElementAndValidation (locale)
+                                                       (wiki)
+                                                       (professionSelections)
+                                                       (cursesActive)
+                                                       (this.adjustCurse);
 
-      let scripts: ScriptsSelectionListItem[] = [];
-      let languages: LanguagesSelectionListItem[] = [];
+          // Tuple.fst: isValidSelection
+          const combatTechniques =
+            getCombatTechniquesElementAndValidation (locale)
+                                                    (wiki)
+                                                    (professionSelections)
+                                                    (combatTechniquesActive)
+                                                    (combatTechniquesSecondActive)
+                                                    (this.switchCombatTechnique);
 
-      const scriptsList = SA_27.sel!;
-      const languagesList = SA_29.sel!;
+          // Tuple.fst: isValidSelection
+          const combatTechniquesSecond =
+            getCombatTechniquesSecondElementAndValidation (locale)
+                                                          (wiki)
+                                                          (professionSelections)
+                                                          (combatTechniquesActive)
+                                                          (combatTechniquesSecondActive)
+                                                          (this.switchSecondCombatTechnique);
 
-      scriptsList.forEach(e => {
-        const { id } = e;
-        const obj = getSelectionItem(SA_27, id);
-        if (typeof obj === 'object') {
-          const { name, cost } = obj;
-          if (typeof cost === 'number') {
-            const native = buyLiteracy && ((!selectLitc && id === currentCulture.scripts[0]) || id === litc);
-            scripts.push({ id: `LITC_${id}`, name, cost, native });
-          }
-        }
-      });
+          // Tuple.fst: isValidSelection
+          const cantrips = getCantripsElementAndValidation (locale)
+                                                           (wiki)
+                                                           (professionSelections)
+                                                           (cantripsActive)
+                                                           (this.switchCantrip);
 
-      languagesList.forEach(e => {
-        const { id } = e;
-        const obj = getSelectionItem(SA_29, id);
-        if (typeof obj === 'object') {
-          const { name } = obj;
-          const native = (selectLang === false && id === currentCulture.languages[0]) || id === lang;
-          languages.push({ id: `LANG_${id}`, name, native });
-        }
-      });
+          const skillSpecialization = getSkillSpecializationElement (locale)
+                                                                    (wiki)
+                                                                    (professionSelections)
+                                                                    (specialization)
+                                                                    (specializationSkillId)
+                                                                    (this.setSpecialization)
+                                                                    (this.setSpecializationSkill);
 
-      scripts = sortObjects(scripts, locale.id);
-      languages = sortObjects(languages, locale.id);
+          const skills = getSkillsElementAndValidation (locale)
+                                                       (wiki)
+                                                       (professionSelections)
+                                                       (skillsActive)
+                                                       (this.addSkillPoint)
+                                                       (this.removeSkillPoint);
 
-      langLitcApLeft = value - Array.from(active.values()).reduce((a, b) => a + b, 0);
+          const terrainKnowledge = getTerrainKnowledgeElement (wiki)
+                                                              (professionSelections)
+                                                              (terrainKnowledgeActive)
+                                                              (this.setTerrainKnowledge);
 
-      langLitcElement = (
-        <SelectionsLangLitc
-          scripts={scripts}
-          languages={languages}
-          active={active}
-          apTotal={value}
-          apLeft={langLitcApLeft}
-          change={this.changeLangLitc}
-          locale={locale}
-          />
-      );
-    }
+          return (
+            <Slidein isOpened close={close} className="rcp-selections">
+              <Scroll>
+                <h3>{translate (locale, 'titlebar.tabs.race')}</h3>
+                <Dropdown
+                  hint={translate (locale, 'rcpselections.labels.selectattributeadjustment')}
+                  value={attributeAdjustment}
+                  onChangeJust={this.setAttributeAdjustment}
+                  options={
+                    Maybe.mapMaybe<string, Record<DropdownOption>>
+                      (R.pipe (
+                        OrderedMap.lookup_ (wiki .get ('attributes')),
+                        Maybe.fmap (
+                          attribute => Record.of<DropdownOption> ({
+                            id: attribute .get ('id'),
+                            name: `${attribute .get ('name')} ${sign (attributeAdjustmentValue)}`,
+                          })
+                        )
+                      ))
+                      (Tuple.snd (race .get ('attributeAdjustmentsSelection')))
+                  }
+                  />
 
-    let cursesElement = null;
-    let cursesApLeft = 0;
+                <h3>{translate (locale, 'titlebar.tabs.culture')}</h3>
+                <Checkbox
+                  checked={useCulturePackage}
+                  onClick={this.switchIsCulturalPackageEnabled}
+                  >
+                  {translate (locale, 'rcpselections.labels.buyculturalpackage')}
+                  {' ('}
+                  {culture .get ('culturalPackageAdventurePoints')}
+                  {' AP)'}
+                </Checkbox>
+                {
+                  getMotherTongueSelectionElement (locale)
+                                                  (wiki)
+                                                  (culture)
+                                                  (isMotherTongueSelectionNeeded)
+                                                  (motherTongue)
+                                                  (isAnyLanguageOrScriptSelected)
+                                                  (this.setMotherTongue)
+                }
+                {buyScriptElement}
+                {
+                  getMainScriptSelectionElement (locale)
+                                                (wiki)
+                                                (culture)
+                                                (isScriptSelectionNeeded)
+                                                (mainScript)
+                                                (isAnyLanguageOrScriptSelected)
+                                                (isBuyingMainScriptEnabled)
+                                                (this.setMainCulturalLiteracy)
+                }
 
-    if (professionSelections.has('CURSES')) {
-      const active = curses;
-      const { value } = professionSelections.get('CURSES') as CursesSelection;
-
-      const list = getAllByGroupFromSlice(spells, 3);
-
-      list.sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
-
-      cursesApLeft = value - (active.size + Array.from(active.values()).reduce((a, b) => a + b, 0)) * 2;
-
-      cursesElement =
-        <SelectionsCurses
-          list={list}
-          active={active}
-          apTotal={value}
-          apLeft={cursesApLeft}
-          change={this.changeCurse}
-          locale={locale}
-          />
-      ;
-    }
-
-    let ctElement = null;
-
-    if (professionSelections.has('COMBAT_TECHNIQUES')) {
-      const active = combattech;
-      const { amount, value, sid } = professionSelections.get('COMBAT_TECHNIQUES') as CombatTechniquesSelection;
-
-      const rawList = [...combatTechniques.values()];
-      const list = rawList.filter(e => sid.includes(e.id));
-
-      ctElement = (
-        <SelectionsCt
-          list={list}
-          active={active}
-          value={value}
-          amount={amount}
-          disabled={combatTechniquesSecond}
-          change={this.changeCombattech}
-          locale={locale}
-          />
-      );
-    }
-
-    let combatTechniqueSecondElement;
-
-    if (professionSelections.has('COMBAT_TECHNIQUES_SECOND')) {
-      const active = combatTechniquesSecond;
-      const { amount, value, sid } = professionSelections.get('COMBAT_TECHNIQUES_SECOND') as CombatTechniquesSecondSelection;
-
-      const rawList = [...combatTechniques.values()];
-      const list = rawList.filter(e => sid.includes(e.id));
-
-      combatTechniqueSecondElement = (
-        <SelectionsCt
-          list={list}
-          active={active}
-          value={value}
-          amount={amount}
-          disabled={combattech}
-          change={this.changeSecondCombatTechniques}
-          locale={locale}
-          second
-          />
-      );
-    }
-
-    let cantripsElement = null;
-
-    if (professionSelections.has('CANTRIPS')) {
-      const active = cantrips;
-      const { amount, sid } = professionSelections.get('CANTRIPS') as CantripsSelection;
-
-      const rawList = [...cantripsState.values()];
-      const list = rawList.filter(e => sid.includes(e.id));
-
-      cantripsElement =
-        <SelectionsCantrips
-          list={list}
-          active={active}
-          num={amount}
-          change={this.changeCantrip}
-          locale={locale}
-          />
-      ;
-    }
-
-    let specElement = null;
-
-    if (professionSelections.has('SPECIALISATION')) {
-      const options = professionSelections.get('SPECIALISATION') as SpecialisationSelection;
-      specElement = (
-        <SelectionsTalentSpec
-          options={options}
-          active={spec}
-          activeId={specTalentId}
-          change={this.changeSpec}
-          changeId={this.changeSpecId}
-          locale={locale}
-          skills={skillsState}
-          />
-      );
-    }
-
-    let skillsElement;
-    let skillsApLeft = 0;
-
-    if (professionSelections.has('SKILLS')) {
-      const { gr, value } = professionSelections.get('SKILLS') as SkillsSelection;
-      const list = [...skillsState.values()].filter(e => gr === undefined || gr === e.gr);
-      skillsApLeft = [...skills.values()].reduce((n, e) => n - e, value);
-      skillsElement = (
-        <SelectionsSkills
-          active={skills}
-          add={this.addSkillPoint}
-          gr={gr}
-          left={skillsApLeft}
-          list={list}
-          remove={this.removeSkillPoint}
-          value={value}
-          locale={locale}
-          />
-      );
-    }
-
-    let terrainKnowledgeElement;
-
-    if (professionSelections.has('TERRAIN_KNOWLEDGE')) {
-      const { sid } = professionSelections.get('TERRAIN_KNOWLEDGE') as TerrainKnowledgeSelection;
-      terrainKnowledgeElement = (
-        <TerrainKnowledge
-          available={sid}
-          terrainKnowledge={wiki.specialAbilities.get('SA_12')!}
-          set={this.setTerrainKnowledge}
-          active={terrainKnowledge}
-          />
-      );
-    }
-
-    return (
-      <Slidein isOpened close={close} className="rcp-selections">
-        <Scroll>
-          <h3>{translate(locale, 'titlebar.tabs.race')}</h3>
-          <Dropdown
-            hint={translate(locale, 'rcpselections.labels.selectattributeadjustment')}
-            value={attrSel}
-            onChange={this.changeAttrSel}
-            options={currentRace.attributeAdjustmentsSelection[1].map(e => {
-              const attr = attributes.get(e);
-              const value = currentRace.attributeAdjustmentsSelection[0];
-              return attr ? { id: attr.id, name: `${attr.name} ${value > 0 ? '+' : ''}${value}` } : { id: e, name: '...' };
-            })} />
-          <h3>{translate(locale, 'titlebar.tabs.culture')}</h3>
-          <Checkbox checked={useCulturePackage} onClick={this.changeCulturePackage}>
-            {translate(locale, 'rcpselections.labels.buyculturalpackage')} ({currentCulture.culturalPackageAdventurePoints} AP)
-          </Checkbox>
-          {
-            selectLang && (
-              <Dropdown
-                hint={translate(locale, 'rcpselections.labels.selectnativetongue')}
-                value={lang}
-                onChange={this.changeLang}
-                options={currentCulture.languages.map(e => {
-                  const lang = getSelectionItem(specialAbilities.get('SA_29')!, e);
-                  return { id: e, name: `${lang && lang.name}` };
-                })}
-                disabled={langLitc.size > 0} />
-            )
-          }
-          {buyScriptElement}
-          {
-            selectLitc ? (
-              <Dropdown
-                hint={translate(locale, 'rcpselections.labels.selectscript')}
-                value={litc}
-                onChange={this.changeLitc}
-                options={currentCulture.scripts.map(e => {
-                  const lit = getSelectionItem(specialAbilities.get('SA_27')!, e);
-                  return { id: e, name: `${lit && lit.name} (${lit && lit.cost} AP)` };
-                })}
-                disabled={!buyLiteracy || langLitc.size > 0} />
-            ) : null
-          }
-          {currentProfession.id !== 'P_0' && <h3>{translate(locale, 'titlebar.tabs.profession')}</h3>}
-          {specElement}
-          {langLitcElement}
-          {ctElement}
-          {combatTechniqueSecondElement}
-          {cursesElement}
-          {cantripsElement}
-          {skillsElement}
-          {terrainKnowledgeElement}
-          <BorderButton
-            label={translate(locale, 'rcpselections.actions.complete')}
-            primary
-            disabled={
-              attrSel === 'ATTR_0' ||
-              (selectLang && lang === 0) ||
-              (buyLiteracy && selectLitc && litc === 0) ||
-              (professionSelections.has('SPECIALISATION') && (spec[1] === '' && spec[0] === null)) ||
-              (professionSelections.has('LANGUAGES_SCRIPTS') && langLitcApLeft !== 0) ||
-              (professionSelections.has('CURSES') && cursesApLeft !== 0) ||
-              (professionSelections.has('COMBAT_TECHNIQUES') && combattech.size !== (professionSelections.get('COMBAT_TECHNIQUES') as CombatTechniquesSelection).amount) ||
-              (professionSelections.has('CANTRIPS') && cantrips.size !== (professionSelections.get('CANTRIPS') as CantripsSelection).amount) ||
-              (professionSelections.has('SKILLS') && skillsApLeft > 0) ||
-              (professionSelections.has('TERRAIN_KNOWLEDGE') && typeof terrainKnowledge !== 'number')
-            }
-            onClick={this.assignRCPEntries.bind(null, professionSelections)}
-            />
-        </Scroll>
-      </Slidein>
+                {
+                  profession .get ('id') !== 'P_0'
+                  && <h3>{translate (locale, 'titlebar.tabs.profession')}</h3>
+                }
+                {Maybe.maybeToReactNode (skillSpecialization)}
+                {Maybe.maybeToReactNode (languagesAndScripts .fmap (Tuple.snd))}
+                {Maybe.maybeToReactNode (combatTechniques .fmap (Tuple.snd))}
+                {Maybe.maybeToReactNode (combatTechniquesSecond .fmap (Tuple.snd))}
+                {Maybe.maybeToReactNode (curses .fmap (Tuple.snd))}
+                {Maybe.maybeToReactNode (cantrips .fmap (Tuple.snd))}
+                {Maybe.maybeToReactNode (skills .fmap (Tuple.snd))}
+                {Maybe.maybeToReactNode (terrainKnowledge)}
+                <BorderButton
+                  label={translate (locale, 'rcpselections.actions.complete')}
+                  primary
+                  disabled={
+                    attributeAdjustment === 'ATTR_0'
+                    || (isMotherTongueSelectionNeeded && motherTongue === 0)
+                    || (
+                      isBuyingMainScriptEnabled
+                      && Tuple.snd (isScriptSelectionNeeded)
+                      && mainScript === 0
+                    )
+                    || (
+                      professionSelections .member ('SPECIALISATION')
+                      && Tuple.snd (specialization) === ''
+                      && Maybe.isNothing (Tuple.fst (specialization))
+                    )
+                    || Maybe.elem (true) (languagesAndScripts .fmap (R.pipe (Tuple.fst, R.lt (0))))
+                    || Maybe.elem (true) (curses .fmap (R.pipe (Tuple.fst, R.lt (0))))
+                    || Maybe.elem (true) (combatTechniques .fmap (R.pipe (Tuple.fst, R.not)))
+                    || Maybe.elem (true) (combatTechniquesSecond .fmap (R.pipe (Tuple.fst, R.not)))
+                    || Maybe.elem (true) (cantrips .fmap (R.pipe (Tuple.fst, R.not)))
+                    || Maybe.elem (true) (skills .fmap (R.pipe (Tuple.fst, R.lt (0))))
+                    || (
+                      professionSelections .member ('TERRAIN_KNOWLEDGE')
+                      && Maybe.isNothing (terrainKnowledgeActive)
+                    )
+                  }
+                  onClick={this.assignRCPEntries.bind (null, professionSelections)}
+                  />
+              </Scroll>
+            </Slidein>
+          );
+        })
+        (maybeRace)
+        (maybeCulture)
+        (maybeProfession)
     );
   }
 }

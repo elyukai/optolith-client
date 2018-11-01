@@ -142,6 +142,14 @@ test('fmap', () => {
   expect(List.of(3, 2, 1).fmap(x => x * 2)).toEqual(List.of(6, 4, 2));
 });
 
+test('List.fmap', () => {
+  expect(List.fmap (x => x * 2) (List.of(3, 2, 1))) .toEqual (List.of (6, 4, 2));
+});
+
+test('List.mapReplace', () => {
+  expect(List.mapReplace (2) (List.of(3, 2, 1))) .toEqual (List.of (2, 2, 2));
+});
+
 test('map', () => {
   expect(List.of(3, 2, 1).map(x => x * 2)).toEqual(List.of(6, 4, 2));
 });

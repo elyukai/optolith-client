@@ -11,7 +11,7 @@ import { Page } from '../../components/Page';
 import { Scroll } from '../../components/Scroll';
 import { SortNames, SortOptions } from '../../components/SortOptions';
 import { TextField } from '../../components/TextField';
-import { SelectionsContainer } from '../../containers/RCPSelections';
+import { SelectionsContainer } from '../../containers/RCPSelectionsContainer';
 import { WikiInfoContainer } from '../../containers/WikiInfoContainer';
 import { InputTextEvent, Sex } from '../../types/data';
 import { ProfessionCombined } from '../../types/view';
