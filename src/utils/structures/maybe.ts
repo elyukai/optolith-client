@@ -603,7 +603,7 @@ export class Maybe<T extends Some> implements Al.Alternative<T>, Al.Monad<T>,
    * directly used by React. Why? `null` is unsafe! But it's required by React
    * if you do not want an element to be displayed.
    */
-  static maybeToReactNode<A extends JSX.Element> (m: Maybe<A>): React.ReactNode {
+  static maybeToReactNode<A extends JSX.Element | string> (m: Maybe<A>): React.ReactNode {
     return Maybe.isJust (m) ? Maybe.fromJust (m) : null;
   }
 }

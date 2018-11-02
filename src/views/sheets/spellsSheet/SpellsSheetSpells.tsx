@@ -91,15 +91,16 @@ export function SpellsSheetSpells (props: SpellsSheetSpellsProps) {
                           {e .get ('tradition') .null ()
                             ? ''
                             : ` (${
-                              sortStrings (
-                                Maybe.mapMaybe<number, string>
-                                  (R.pipe (
-                                    R.dec,
-                                    List.subscript (traditionNames)
-                                  ))
-                                  (e .get ('tradition')),
-                                locale .get ('id')
-                              )
+                              sortStrings
+                                (locale .get ('id'))
+                                (
+                                  Maybe.mapMaybe<number, string>
+                                    (R.pipe (
+                                      R.dec,
+                                      List.subscript (traditionNames)
+                                    ))
+                                    (e .get ('tradition'))
+                                )
                                 .intercalate (', ')
                             })`}
                         </Textfit>

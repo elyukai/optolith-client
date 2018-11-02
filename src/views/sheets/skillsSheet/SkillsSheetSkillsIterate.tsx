@@ -51,7 +51,7 @@ export const iterateList = (locale: UIMessagesObject) =>
 
             return (
               <tr key={obj .get ('id')}>
-                <td className="name">{name}</td>
+                <td className="name">{obj .get ('name')}</td>
                 <td className="check">{checkString}</td>
                 <td className="enc">{encString}</td>
                 <td className="ic">{getICName (obj .get ('ic'))}</td>

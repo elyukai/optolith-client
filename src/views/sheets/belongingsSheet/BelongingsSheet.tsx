@@ -92,7 +92,7 @@ export function BelongingsSheet (props: BelongingsSheetProps) {
                     R.multiply (100),
                     Math.round,
                     R.flip (R.divide) (100),
-                    roundedPrice => localizeNumber (roundedPrice, locale .get ('id'))
+                    roundedPrice => localizeNumber (locale .get ('id')) (roundedPrice)
                   )))}
               </span>
               <span>
@@ -102,8 +102,8 @@ export function BelongingsSheet (props: BelongingsSheetProps) {
                     R.multiply (100),
                     Math.round,
                     R.flip (R.divide) (100),
-                    roundedWeight => localizeWeight (roundedWeight, locale .get ('id')),
-                    localizedWeight => localizeNumber (localizedWeight, locale .get ('id'))
+                    roundedWeight => localizeWeight (locale .get ('id')) (roundedWeight),
+                    localizedWeight => localizeNumber (locale .get ('id')) (localizedWeight)
                   )))}
               </span>
             </div>
@@ -167,7 +167,7 @@ export function BelongingsSheet (props: BelongingsSheetProps) {
               </div>
               <LabelBox
                 label={translate (locale, 'charactersheet.belongings.carryingcapacity.label')}
-                value={Just (localizeWeight (strength * 2, locale .get ('id')))}
+                value={Just (localizeWeight (locale .get ('id')) (strength * 2))}
                 />
             </div>
           </TextBox>

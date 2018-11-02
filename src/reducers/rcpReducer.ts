@@ -4,7 +4,7 @@ import { SelectProfessionVariantAction } from '../actions/ProfessionVariantActio
 import { SelectRaceAction, SetRaceVariantAction } from '../actions/RaceActions';
 import { ActionTypes } from '../constants/ActionTypes';
 import * as Data from '../types/data';
-import { Record } from '../utils/dataUtils';
+import { Nothing, Record } from '../utils/dataUtils';
 
 type Action =
   SelectRaceAction |
@@ -21,31 +21,31 @@ export function rcpReducer (
     case ActionTypes.SELECT_RACE:
       return state
         .insert ('race') (action.payload.id)
-        .insert ('raceVariant') (action.payload.variantId)
-        .insert ('culture') (undefined)
-        .insert ('profession') (undefined)
-        .insert ('professionVariant') (undefined);
+        .insertMaybe ('raceVariant') (action.payload.variantId)
+        .insertMaybe ('culture') (Nothing ())
+        .insertMaybe ('profession') (Nothing ())
+        .insertMaybe ('professionVariant') (Nothing ());
 
     case ActionTypes.SET_RACE_VARIANT:
       return state
         .insert ('raceVariant') (action.payload.id)
-        .insert ('culture') (undefined)
-        .insert ('profession') (undefined)
-        .insert ('professionVariant') (undefined);
+        .insertMaybe ('culture') (Nothing ())
+        .insertMaybe ('profession') (Nothing ())
+        .insertMaybe ('professionVariant') (Nothing ());
 
     case ActionTypes.SELECT_CULTURE:
       return state
         .insert ('culture') (action.payload.id)
-        .insert ('profession') (undefined)
-        .insert ('professionVariant') (undefined);
+        .insertMaybe ('profession') (Nothing ())
+        .insertMaybe ('professionVariant') (Nothing ());
 
     case ActionTypes.SELECT_PROFESSION:
       return state
         .insert ('profession') (action.payload.id)
-        .insert ('professionVariant') (undefined);
+        .insertMaybe ('professionVariant') (Nothing ());
 
     case ActionTypes.SELECT_PROFESSION_VARIANT:
-      return state.insert ('professionVariant') (action.payload.id)
+      return state .insertMaybe ('professionVariant') (action.payload.id);
 
     default:
       return state;

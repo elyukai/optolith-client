@@ -61,8 +61,8 @@ export type SpellsProps = SpellsStateProps & SpellsDispatchProps & SpellsOwnProp
 
 export interface SpellsState {
   showAddSlidein: boolean;
-  currentId?: string;
-  currentSlideinId?: string;
+  currentId: Maybe<string>;
+  currentSlideinId: Maybe<string>;
 }
 
 const isCantrip = (
@@ -73,6 +73,8 @@ const isCantrip = (
 export class Spells extends React.Component<SpellsProps, SpellsState> {
   state: SpellsState = {
     showAddSlidein: false,
+    currentId: Nothing (),
+    currentSlideinId: Nothing (),
   };
 
   showAddSlidein = () => this.setState ({ showAddSlidein: true });
@@ -82,8 +84,8 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
     this.setState ({ showAddSlidein: false, currentSlideinId: undefined });
   };
 
-  showInfo = (id: string) => this.setState ({ currentId: id });
-  showSlideinInfo = (id: string) => this.setState ({ currentSlideinId: id });
+  showInfo = (id: string) => this.setState ({ currentId: Just (id) });
+  showSlideinInfo = (id: string) => this.setState ({ currentSlideinId: Just (id) });
 
   render () {
     const {

@@ -55,7 +55,7 @@ export interface SheetsStateProps {
   languagesStateEntry: Maybe<Record<Data.ActivatableDependent>>;
   scriptsWikiEntry: Maybe<Record<Wiki.SpecialAbility>>;
   scriptsStateEntry: Maybe<Record<Data.ActivatableDependent>>;
-  cantrips: List<Record<Wiki.Cantrip>>;
+  cantrips: Maybe<List<Record<View.CantripCombined>>>;
   magicalPrimary: Maybe<string>;
   magicalSpecialAbilities: Maybe<List<Record<Data.ActiveViewObject<Wiki.SpecialAbility>>>>;
   magicalTradition: Maybe<string>;
@@ -65,7 +65,7 @@ export interface SheetsStateProps {
   blessedPrimary: Maybe<string>;
   blessedSpecialAbilities: Maybe<List<Record<Data.ActiveViewObject<Wiki.SpecialAbility>>>>;
   blessedTradition: Maybe<string>;
-  blessings: List<Record<Wiki.Blessing>>;
+  blessings: Maybe<List<Record<View.BlessingCombined>>>;
   liturgicalChants: Maybe<List<Record<View.LiturgicalChantWithRequirements>>>;
 }
 
@@ -89,16 +89,16 @@ export function Sheets (props: SheetsProps) {
         <CombatSheet {...props} />
         {props.locale.get ('id') === 'de-DE' && <CombatSheetZones {...props} />}
         <BelongingsSheet {...props} />
-        {Maybe.fromMaybe
-          (<></>)
-          (maybeArcaneEnergy
+        {Maybe.maybeToReactNode (
+          maybeArcaneEnergy
             .bind (arcaneEnergy => arcaneEnergy.lookup ('value'))
-            .then (Just (<SpellsSheet {...props} />)))}
-        {Maybe.fromMaybe
-          (<></>)
-          (maybeKarmaPoints
+            .then (Just (<SpellsSheet {...props} />))
+        )}
+        {Maybe.maybeToReactNode (
+          maybeKarmaPoints
             .bind (karmaPoints => karmaPoints.lookup ('value'))
-            .then (Just (<LiturgicalChantsSheet {...props} />)))}
+            .then (Just (<LiturgicalChantsSheet {...props} />))
+        )}
       </Scroll>
     </Page>
   );

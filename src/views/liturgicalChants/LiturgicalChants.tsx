@@ -64,8 +64,8 @@ export type LiturgicalChantsProps =
 
 export interface LiturgicalChantsState {
   showAddSlidein: boolean;
-  currentId?: string;
-  currentSlideinId?: string;
+  currentId: Maybe<string>;
+  currentSlideinId: Maybe<string>;
 }
 
 const isBlessing = (
@@ -79,6 +79,8 @@ export class LiturgicalChants
   extends React.Component<LiturgicalChantsProps, LiturgicalChantsState> {
   state: LiturgicalChantsState = {
     showAddSlidein: false,
+    currentId: Nothing (),
+    currentSlideinId: Nothing (),
   };
 
   showAddSlidein = () => this.setState ({ showAddSlidein: true });
@@ -88,8 +90,8 @@ export class LiturgicalChants
     this.setState ({ showAddSlidein: false });
   }
 
-  showInfo = (id: string) => this.setState ({ currentId: id });
-  showSlideinInfo = (id: string) => this.setState ({ currentSlideinId: id });
+  showInfo = (id: string) => this.setState ({ currentId: Just (id) });
+  showSlideinInfo = (id: string) => this.setState ({ currentSlideinId: Just (id) });
 
   render () {
     const {

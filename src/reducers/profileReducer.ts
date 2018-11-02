@@ -64,7 +64,7 @@ export function personalDataReducer (
         return state.modify<'personalData'> (
           profile => profile
             .insert ('size') (action.payload.size)
-            .insert ('weight') (action.payload.weight)
+            .insertMaybe ('weight') (action.payload.weight)
         ) ('personalData');
       }
       else {
@@ -79,7 +79,7 @@ export function personalDataReducer (
         return state.modify<'personalData'> (
           profile => profile
             .insert ('weight') (action.payload.weight)
-            .insert ('size') (action.payload.size)
+            .insertMaybe ('size') (action.payload.size)
         ) ('personalData');
       }
       else {

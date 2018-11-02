@@ -2,10 +2,10 @@ import * as React from 'react';
 import { BorderButton } from '../../components/BorderButton';
 import { Checkbox } from '../../components/Checkbox';
 import { Dialog } from '../../components/DialogNew';
-import { Dropdown } from '../../components/Dropdown';
-import { SegmentedControls } from '../../components/SegmentedControls';
+import { Dropdown, DropdownOption } from '../../components/Dropdown';
+import { Option, SegmentedControls } from '../../components/SegmentedControls';
 import { UIMessagesObject } from '../../types/ui';
-import { Just, List, Maybe, Nothing } from '../../utils/dataUtils';
+import { Just, List, Maybe, Nothing, Record } from '../../utils/dataUtils';
 import { translate } from '../../utils/I18n';
 
 export interface SettingsOwnProps {
@@ -68,11 +68,27 @@ export function Settings (props: SettingsProps) {
       >
       <Dropdown
         options={List.of (
-          { id: Nothing (), name: translate (locale, 'settings.options.defaultlanguage') },
-          { id: Just ('de-DE'), name: 'Deutsch (Deutschland)' },
-          { id: Just ('en-US'), name: 'English (United States)' },
-          { id: Just ('nl-BE'), name: 'Nederlands (België)', disabled: true },
-          { id: Just ('fr-FR'), name: 'Français (France)', disabled: true }
+          Record.of<DropdownOption> ({
+            name: translate (locale, 'settings.options.defaultlanguage'),
+          }),
+          Record.of<DropdownOption> ({
+            id: 'de-DE',
+            name: 'Deutsch (Deutschland)',
+          }),
+          Record.of<DropdownOption> ({
+            id: 'en-US',
+            name: 'English (United States)',
+          }),
+          Record.of<DropdownOption> ({
+            id: 'nl-BE',
+            name: 'Nederlands (België)',
+            disabled: true,
+          }),
+          Record.of<DropdownOption> ({
+            id: 'fr-FR',
+            name: 'Français (France)',
+            disabled: true,
+          })
         )}
         value={localeType === 'default' ? Nothing () : localeString}
         label={translate (locale, 'settings.options.language')}
@@ -81,8 +97,14 @@ export function Settings (props: SettingsProps) {
       <p>{translate (locale, 'settings.options.languagehint')}</p>
       <SegmentedControls
         options={List.of (
-          { name: translate (locale, 'settings.options.themedark'), value: Just ('dark') },
-          { name: translate (locale, 'settings.options.themelight'), value: Just ('light') }
+          Record.of<Option> ({
+            name: translate (locale, 'settings.options.themedark'),
+            value: 'dark',
+          }),
+          Record.of<Option> ({
+            name: translate (locale, 'settings.options.themelight'),
+            value: 'light',
+          })
         )}
         active={Just (theme)}
         onClick={setTheme}

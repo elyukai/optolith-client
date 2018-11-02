@@ -234,7 +234,7 @@ export class ActivatableAddListItem extends
               },
             ]}
             >
-            {translate (locale, 'customcost.message')}{name}
+            {translate (locale, 'customcost.message')}{item .get ('name')}
             <TextField
               value={customCostPreview}
               onChange={this.setCustomCostPreview}

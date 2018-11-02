@@ -280,21 +280,23 @@ export const compressList = (
   list: List<Record<Data.ActiveViewObject> | string>,
   locale: Record<Data.UIMessages>
 ): string => {
-  const listToString = sortStrings (
-    list.foldl<List<string>> (
-      acc => obj => {
-        if (isString (obj)) {
-          return acc.append (obj);
-        }
-        else if (!['SA_27', 'SA_29'].includes (obj.get ('id'))) {
-          return acc.append (obj.get ('name'));
-        }
+  const listToString =
+    sortStrings
+      (locale.get ('id'))
+      (
+        list.foldl<List<string>> (
+                                  acc => obj => {
+                                    if (isString (obj)) {
+                                      return acc.append (obj);
+                                    }
+                                    else if (!['SA_27', 'SA_29'].includes (obj.get ('id'))) {
+                                      return acc.append (obj.get ('name'));
+                                    }
 
-        return acc;
-      }
-    ) (List.of ()),
-    locale.get ('id')
-  );
+                                    return acc;
+                                  })
+                                (List.of ())
+      );
 
   const levelAfterParenthesis = /\(.+\)(?: [IVX]+)?$/;
   const insertLevelBeforeParenthesis = /\)((?: [IVX]+)?)$/;

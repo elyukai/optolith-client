@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as Portal from 'react-portal';
 
 interface CallBackProps extends React.Props<any> {
-  closePortal(): void;
+  closePortal (): void;
 }
 
 interface ReactPortalProps {
@@ -11,10 +11,10 @@ interface ReactPortalProps {
   openByClickOn?: React.ReactElement<CallBackProps>;
   closeOnEsc?: boolean;
   closeOnOutsideClick?: boolean;
-  onOpen?(node: HTMLDivElement): void;
-  beforeClose?(node: HTMLDivElement, resetPortalState: () => void): void;
-  onClose?(): void;
-  onUpdate?(): void;
+  onOpen? (node: HTMLDivElement): void;
+  beforeClose? (node: HTMLDivElement, resetPortalState: () => void): void;
+  onClose? (): void;
+  onUpdate? (): void;
 }
 
 export interface PortalWrappedOwnProps extends ReactPortalProps {
@@ -29,13 +29,17 @@ export interface PortalWrappedStateProps {
 
 export interface PortalWrappedDispatchProps {}
 
-export type PortalWrappedProps = PortalWrappedStateProps & PortalWrappedDispatchProps & PortalWrappedOwnProps;
+export type PortalWrappedProps =
+  PortalWrappedStateProps
+  & PortalWrappedDispatchProps
+  & PortalWrappedOwnProps;
 
-export function PortalWrapped(props: PortalWrappedProps) {
+export function PortalWrapped (props: PortalWrappedProps) {
   const { children, className, theme, id, ...other } = props;
+
   return (
     <Portal {...other}>
-      <div className={classNames(className, `theme-${theme}`)} id={id}>
+      <div className={classNames (className, `theme-${theme}`)} id={id}>
         {children}
       </div>
     </Portal>

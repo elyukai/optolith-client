@@ -128,7 +128,9 @@ export class ActivatableRemoveListItem extends React.Component<ActivatableRemove
           name={
             Maybe.fromMaybe
               (item .get ('name'))
-              (maybeLevelElement .bind (Maybe.ensure (isString)) .fmap (level => name + level))
+              (maybeLevelElement
+                .bind (Maybe.ensure (isString))
+                .fmap (level => item .get ('name') + level))
           }
           />
         <ListItemSelections>

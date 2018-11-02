@@ -8,6 +8,7 @@ import { flip } from './flip';
 import { getNumericBlessedTraditionIdByInstanceId } from './IDUtils';
 import { getActiveSelections } from './selectionUtils';
 import { getExceptionalSkillBonus } from './skillUtils';
+import { isNumber } from './typeCheckUtils';
 
 export const isOwnTradition = (
   tradition: Record<Wiki.SpecialAbility>,
@@ -96,7 +97,7 @@ export const isDecreasable = (
   // Basic validation
   const valid = instance.get ('value') < 1
     ? dependencies.notElem (true)
-    : instance.get ('value') > Math.max (0, ...dependencies.filter (isNumber));
+    : instance.get ('value') > dependencies .filter (isNumber) .cons (0) .maximum ();
 
   return Maybe.fromMaybe (valid) (
     getActiveSelections (aspectKnowledge)

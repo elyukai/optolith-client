@@ -12,8 +12,8 @@ import { TextField } from '../../components/TextField';
 import { WikiInfoContainer } from '../../containers/WikiInfoContainer';
 import { AdventurePointsObject } from '../../selectors/adventurePointsSelectors';
 import { ActivatableDependent, ActivateArgs, ActiveViewObject, DeactivateArgs, DeactiveViewObject, EntryRating, InputTextEvent } from '../../types/data';
-import { Advantage, Disadvantage } from '../../types/wiki';
-import { List, Maybe, OrderedMap, Record } from '../../utils/dataUtils';
+import { Disadvantage } from '../../types/wiki';
+import { Just, List, Maybe, Nothing, OrderedMap, Record } from '../../utils/dataUtils';
 import { translate, UIMessagesObject } from '../../utils/I18n';
 import { ActiveList } from './ActiveList';
 import { AdvantagesDisadvantagesAdventurePoints } from './AdvantagesDisadvantagesAdventurePoints';
@@ -58,15 +58,15 @@ export type DisadvantagesProps =
 
 export interface DisadvantagesState {
   showAddSlidein: boolean;
-  currentId?: string;
-  currentSlideinId?: string;
+  currentId: Maybe<string>;
+  currentSlideinId: Maybe<string>;
 }
 
 export class Disadvantages extends React.Component<DisadvantagesProps, DisadvantagesState> {
   state = {
     showAddSlidein: false,
-    currentId: undefined,
-    currentSlideinId: undefined,
+    currentId: Nothing (),
+    currentSlideinId: Nothing (),
   };
 
   filter = (event: InputTextEvent) => this.props.setFilterText (event.target.value);
@@ -76,8 +76,8 @@ export class Disadvantages extends React.Component<DisadvantagesProps, Disadvant
     this.props.setInactiveFilterText ('');
     this.setState ({ showAddSlidein: false });
   };
-  showInfo = (id: string) => this.setState ({ currentId: id });
-  showSlideinInfo = (id: string) => this.setState ({ currentSlideinId: id });
+  showInfo = (id: string) => this.setState ({ currentId: Just (id) });
+  showSlideinInfo = (id: string) => this.setState ({ currentSlideinId: Just (id) });
 
   render () {
     const {

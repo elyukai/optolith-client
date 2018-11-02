@@ -681,7 +681,7 @@ export interface RawArmorZone {
 }
 
 export interface RawPet {
-  id?: string;
+  id: string;
   name: string;
   avatar?: string;
   size?: string;
@@ -780,7 +780,7 @@ export interface RawLocale {
 
 export type RawLocaleList = StringKeyObject<RawLocale>;
 
-export interface Config {
+export interface RawConfig {
   herolistSortOrder: string;
   herolistVisibilityFilter: string;
   racesSortOrder: string;
@@ -813,7 +813,7 @@ export interface Config {
 }
 
 export interface Raw {
-  config?: Config;
+  config?: RawConfig;
   heroes?: RawHerolist;
   tables: RawTables;
   locales: StringKeyObject<RawLocale>;

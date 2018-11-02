@@ -20,15 +20,18 @@ export function SkillsSheetScripts (props: SkillsSheetScriptsProps) {
     scriptsWikiEntry: maybeScriptsWikiEntry,
   } = props;
 
-  const scripts = sortStrings (
-    Maybe.mapMaybe<Record<ActiveObject>, string>
-      (activeObject => maybeScriptsWikiEntry .bind (
-        wikiEntry => getSelectOptionName (wikiEntry, activeObject .lookup ('sid'))
-      ))
-      (Maybe.fromMaybe (List.empty<Record<ActiveObject>> ())
-                       (maybeScriptsStateEntry .fmap (stateEntry => stateEntry .get ('active')))),
-    locale .get ('id')
-  );
+  const scripts =
+    sortStrings
+      (locale .get ('id'))
+      (
+        Maybe.mapMaybe<Record<ActiveObject>, string>
+          (activeObject => maybeScriptsWikiEntry .bind (
+            wikiEntry => getSelectOptionName (wikiEntry, activeObject .lookup ('sid'))
+          ))
+          (Maybe.fromMaybe (List.empty<Record<ActiveObject>> ())
+                           (maybeScriptsStateEntry
+                             .fmap (stateEntry => stateEntry .get ('active'))))
+      );
 
   return (
     <TextBox label={translate (locale, 'charactersheet.gamestats.knownscripts.title')}>

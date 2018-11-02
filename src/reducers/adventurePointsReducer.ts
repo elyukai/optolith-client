@@ -1,3 +1,4 @@
+import * as R from 'ramda';
 import { AddAdventurePointsAction } from '../actions/ProfileActions';
 import { ActionTypes } from '../constants/ActionTypes';
 import * as Data from '../types/data';
@@ -7,13 +8,12 @@ type Action = AddAdventurePointsAction;
 
 export function adventurePointsReducer (
   state: Record<Data.HeroDependent>,
-  action: Action,
+  action: Action
 ): Record<Data.HeroDependent> {
   switch (action.type) {
     case ActionTypes.ADD_ADVENTURE_POINTS:
-      return state.modify<'adventurePoints'> (
-        slice => slice.modify<'total'> (total => total + action.payload.amount) ('total')
-      ) ('adventurePoints');
+      return state .modify<'adventurePointsTotal'> (R.add (action.payload.amount))
+                                                   ('adventurePointsTotal');
 
     default:
       return state;

@@ -72,12 +72,12 @@ const mapStateToProps = (state: AppState, ownProps: SheetsOwnProps): SheetsState
   liturgicalChants: getLiturgicalChantsForSheet (state, ownProps),
 });
 
-const mapDispatchToProps = (dispatch: Dispatch<Action>, { locale }: SheetsOwnProps) => ({
+const mapDispatchToProps = (dispatch: Dispatch<Action, AppState>, { locale }: SheetsOwnProps) => ({
   switchAttributeValueVisibility () {
     dispatch (SheetActions.switchAttributeValueVisibility ());
   },
   printToPDF () {
-    (dispatch as Dispatch<Action, AppState>) (IOActions.requestPrintHeroToPDF (locale));
+    dispatch (IOActions.requestPrintHeroToPDF (locale));
   },
 });
 

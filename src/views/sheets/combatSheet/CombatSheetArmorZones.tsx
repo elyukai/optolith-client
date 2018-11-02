@@ -58,10 +58,8 @@ export function CombatSheetArmorZones (props: CombatSheetArmorZonesProps) {
                       {Maybe.fromMaybe<string | number>
                         ('')
                         (e .lookup ('weight') .fmap (
-                          weight => localizeNumber (
-                            localizeWeight (weight, locale .get ('id')),
-                            locale .get ('id')
-                          )
+                          weight => localizeNumber (locale .get ('id'))
+                                                   (localizeWeight (locale .get ('id')) (weight))
                         ))}
                       {' '}
                       {translate (locale, 'charactersheet.combat.headers.weightunit')}

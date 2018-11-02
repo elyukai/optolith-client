@@ -18,7 +18,7 @@ interface OverlayState {
 export class Overlay extends React.Component<OverlayProps, OverlayState> {
   state = {
     style: {},
-    position: ''
+    position: '',
   };
 
   overlayRef: Element | null;
@@ -26,93 +26,126 @@ export class Overlay extends React.Component<OverlayProps, OverlayState> {
   alignToElement = () => {
     if (this.overlayRef) {
       const { margin = 0, position, trigger } = this.props;
-      const triggerCoordinates = trigger.getBoundingClientRect();
-      const overlayCoordinates = this.overlayRef.getBoundingClientRect();
+
+      const triggerCoordinates = trigger.getBoundingClientRect ();
+      const overlayCoordinates = this.overlayRef.getBoundingClientRect ();
+
       let top = 0;
       let left = 0;
 
       const setHorizonally = () => {
-        left = Math.max(0, triggerCoordinates.left + triggerCoordinates.width / 2 - overlayCoordinates.width / 2);
+        left = Math.max (
+          0,
+          triggerCoordinates.left + triggerCoordinates.width / 2 - overlayCoordinates.width / 2
+        );
+
         const right = window.innerWidth - overlayCoordinates.width - left;
+
         if (right < 0) {
-          left = Math.max(left, left + right);
+          left = Math.max (left, left + right);
         }
       };
 
       const setForTop = () => {
         top = triggerCoordinates.top - overlayCoordinates.height - margin;
-        setHorizonally();
+        setHorizonally ();
       };
 
       const setForBottom = () => {
         top = triggerCoordinates.top + triggerCoordinates.height + margin;
-        setHorizonally();
+        setHorizonally ();
       };
 
       const setVertically = () => {
-        top = Math.max(0, triggerCoordinates.top + triggerCoordinates.height / 2 - overlayCoordinates.height / 2);
+        top = Math.max (
+          0,
+          triggerCoordinates.top + triggerCoordinates.height / 2 - overlayCoordinates.height / 2
+        );
+
         const bottom = window.innerHeight - overlayCoordinates.height - top;
+
         if (bottom < 0) {
-          top = Math.max(bottom, top + bottom);
+          top = Math.max (bottom, top + bottom);
         }
       };
 
       const setForLeft = () => {
-        top = Math.max(0, triggerCoordinates.left + triggerCoordinates.width / 2 - overlayCoordinates.width / 2);
-        setVertically();
+        top = Math.max (
+          0,
+          triggerCoordinates.left + triggerCoordinates.width / 2 - overlayCoordinates.width / 2
+        );
+
+        setVertically ();
       };
 
       const setForRight = () => {
-        top = Math.max(0, triggerCoordinates.top + triggerCoordinates.height / 2 - overlayCoordinates.height / 2);
-        setVertically();
+        top = Math.max (
+          0,
+          triggerCoordinates.top + triggerCoordinates.height / 2 - overlayCoordinates.height / 2
+        );
+
+        setVertically ();
       };
 
       let finalPosition = position;
 
       switch (position) {
         case 'top':
-          setForTop();
+          setForTop ();
+
           if (top < 0) {
-            setForBottom();
+            setForBottom ();
             finalPosition = 'bottom';
           }
           break;
         case 'bottom':
-          setForBottom();
+          setForBottom ();
+
           if (top + overlayCoordinates.height + margin > window.innerHeight) {
-            setForTop();
+            setForTop ();
             finalPosition = 'top';
           }
           break;
         case 'left':
-          setForLeft();
+          setForLeft ();
+
           if (left < 0) {
-            setForRight();
+            setForRight ();
             finalPosition = 'right';
           }
           break;
         case 'right':
-          setForRight();
+          setForRight ();
+
           if (left + overlayCoordinates.width + margin > window.innerWidth) {
-            setForLeft();
+            setForLeft ();
             finalPosition = 'left';
           }
           break;
       }
 
-      this.setState({
+      this.setState ({
         style: { top, left },
-        position: finalPosition
+        position: finalPosition,
       });
     }
   }
 
-  componentDidMount() {
-    this.alignToElement();
+  componentDidMount () {
+    this.alignToElement ();
   }
 
-  render() {
-    const { children, className, node: _node, margin: _margin, position: _position, trigger: _trigger, ...other } = this.props;
+  render () {
+    const {
+      children,
+      className,
+      node: _node,
+      margin: _margin,
+      position: _position,
+      trigger: _trigger,
+      ...other
+    } = this.props;
+
     const { position, style } = this.state;
 
     const newOther = { ...other, style };
@@ -120,10 +153,10 @@ export class Overlay extends React.Component<OverlayProps, OverlayState> {
     return (
       <div
         {...newOther}
-        className={classNames(this.props.className, 'overlay', 'overlay-' + position)}
+        className={classNames (this.props.className, 'overlay', `overlay-${position}`)}
         ref={node => {
           if (node !== null) {
-            this.overlayRef = findDOMNode(node);
+            this.overlayRef = findDOMNode (node);
           }
           this.overlayRef = node;
         }}

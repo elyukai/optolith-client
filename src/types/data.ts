@@ -1,8 +1,8 @@
-import { Action } from 'redux';
 import { DCIds } from '../selectors/derivedCharacteristicsSelectors';
 import { List, Maybe, Omit, OrderedMap, OrderedSet, Record, RecordInterface, Tuple } from '../utils/dataUtils';
 import { TabId } from '../utils/LocationUtils';
 import { UndoState } from '../utils/undo';
+import { AllAction } from './actions';
 import * as Wiki from './wiki';
 
 export interface ActivatableDependent {
@@ -636,7 +636,7 @@ export interface AlertButtonCore {
 }
 
 export interface AlertButton extends AlertButtonCore {
-  dispatchOnClick?: Action;
+  dispatchOnClick?: AllAction;
 }
 
 export interface ViewAlertButton extends AlertButtonCore {
@@ -648,8 +648,8 @@ export interface Alert {
   title?: string;
   buttons?: AlertButton[];
   confirm?: {
-    resolve?: Action;
-    reject?: Action;
+    resolve?: AllAction;
+    reject?: AllAction;
   };
   confirmYesNo?: boolean;
   onClose? (): void;

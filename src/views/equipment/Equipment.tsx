@@ -19,7 +19,7 @@ import { WikiInfoContainer } from '../../containers/WikiInfoContainer';
 import { ItemInstance, Purse } from '../../types/data';
 import { CombatTechniqueWithRequirements } from '../../types/view';
 import { ItemTemplate } from '../../types/wiki';
-import { Just, List, Maybe, Record } from '../../utils/dataUtils';
+import { Just, List, Maybe, Nothing, Record } from '../../utils/dataUtils';
 import { sortObjects } from '../../utils/FilterSortUtils';
 import { translate, UIMessagesObject } from '../../utils/I18n';
 import { EquipmentListItem } from './EquipmentListItem';
@@ -67,8 +67,8 @@ export type EquipmentProps = EquipmentStateProps & EquipmentDispatchProps & Equi
 export interface EquipmentState {
   filterGroupSlidein: number;
   showAddSlidein: boolean;
-  currentId?: string;
-  currentSlideinId?: string;
+  currentId: Maybe<string>;
+  currentSlideinId: Maybe<string>;
 }
 
 const prepareCombatTechniquesForSelection = (gr: number) => R.pipe (
@@ -83,8 +83,8 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
   state = {
     filterGroupSlidein: 1,
     showAddSlidein: false,
-    currentId: undefined,
-    currentSlideinId: undefined,
+    currentId: Nothing (),
+    currentSlideinId: Nothing (),
   };
 
   filterGroupSlidein = (gr: Maybe<number>) => {
@@ -92,8 +92,8 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
       this.setState ({ filterGroupSlidein: Maybe.fromJust (gr) });
     }
   };
-  showInfo = (id: string) => this.setState ({ currentId: id });
-  showSlideinInfo = (id: string) => this.setState ({ currentSlideinId: id });
+  showInfo = (id: string) => this.setState ({ currentId: Just (id) });
+  showSlideinInfo = (id: string) => this.setState ({ currentSlideinId: Just (id) });
 
   showAddSlidein = () => this.setState ({ showAddSlidein: true });
   hideAddSlidein = () => this.setState ({ showAddSlidein: false });

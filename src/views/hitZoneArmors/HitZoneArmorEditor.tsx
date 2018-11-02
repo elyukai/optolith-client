@@ -75,7 +75,7 @@ export function HitZoneArmorEditor (props: HitZoneArmorEditorProps) {
       buttons={[
         {
           autoWidth: true,
-          disabled: name === '',
+          disabled: armorZonesEditor .get ('name') === '',
           label: translate (locale, 'actions.save'),
           onClick: Maybe.elem (true) (isInHitZoneArmorCreation) ? props.addToList : props.saveItem,
         },

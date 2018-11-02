@@ -11,7 +11,7 @@ export interface AddAlertAction {
 
 export const addAlert = (options: Alert): AddAlertAction => ({
   type: ActionTypes.ADD_ALERT,
-  payload: options
+  payload: options,
 });
 
 export const addErrorAlert = (options: Alert, locale: Record<UIMessages>): AddAlertAction => {
@@ -20,10 +20,10 @@ export const addErrorAlert = (options: Alert, locale: Record<UIMessages>): AddAl
   const buttons: Alert['buttons'] = [
     {
       label: translate (locale, 'copy'),
-      dispatchOnClick: () => clipboard.writeText (options.message)
+      dispatchOnClick: () => clipboard.writeText (options.message),
     },
     {
-      label: translate (locale, 'ok')
+      label: translate (locale, 'ok'),
     },
   ];
 
@@ -31,8 +31,8 @@ export const addErrorAlert = (options: Alert, locale: Record<UIMessages>): AddAl
     type: ActionTypes.ADD_ALERT,
     payload: {
       ...options,
-      buttons
-    }
+      buttons,
+    },
   };
 };
 
@@ -41,5 +41,5 @@ export interface RemoveAlertAction {
 }
 
 export const removeAlert = (): RemoveAlertAction => ({
-  type: ActionTypes.REMOVE_ALERT
+  type: ActionTypes.REMOVE_ALERT,
 });

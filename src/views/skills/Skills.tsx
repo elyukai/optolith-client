@@ -48,13 +48,15 @@ export interface SkillsDispatchProps {
 export type SkillsProps = SkillsStateProps & SkillsDispatchProps & SkillsOwnProps;
 
 export interface SkillsState {
-  infoId?: string;
+  infoId: Maybe<string>;
 }
 
 export class Skills extends React.Component<SkillsProps, SkillsState> {
-  state: SkillsState = {};
+  state: SkillsState = {
+    infoId: Nothing (),
+  };
 
-  showInfo = (id: string) => this.setState ({ infoId: id });
+  showInfo = (id: string) => this.setState ({ infoId: Just (id) });
 
   render () {
     const {

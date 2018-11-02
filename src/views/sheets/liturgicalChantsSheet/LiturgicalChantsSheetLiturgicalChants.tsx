@@ -120,15 +120,15 @@ export function LiturgicalChantsSheetLiturgicalChants (
                       </td>
                       <td className="aspect">
                         <Textfit max={11} min={7} mode="single">
-                          {sortStrings (
-                            Maybe.mapMaybe<number, string>
-                              (R.pipe (
-                                R.dec,
-                                List.subscript (aspectNames)
-                              ))
-                              (e .get ('aspects')),
-                            locale .get ('id')
-                          )}
+                          {sortStrings (locale .get ('id'))
+                                       (
+                                         Maybe.mapMaybe<number, string>
+                                           (R.pipe (
+                                             R.dec,
+                                             List.subscript (aspectNames)
+                                           ))
+                                           (e .get ('aspects'))
+                                       )}
                         </Textfit>
                       </td>
                       <td className="ic">{getICName (e .get ('ic'))}</td>

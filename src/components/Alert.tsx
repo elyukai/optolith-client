@@ -1,7 +1,7 @@
 import { remote } from 'electron';
 import * as localShortcut from 'electron-localshortcut';
 import * as React from 'react';
-import { Action } from 'redux';
+import { Dispatch } from 'redux';
 import { Alert as AlertOptions, ViewAlertButton } from '../types/data';
 import { UIMessagesObject } from '../types/ui';
 import { Maybe } from '../utils/dataUtils';
@@ -12,7 +12,7 @@ export interface AlertProps {
   locale: UIMessagesObject;
   options: Maybe<AlertOptions>;
   close (): void;
-  dispatch (action: Action): void;
+  dispatch: Dispatch;
 }
 
 export function Alert (props: AlertProps) {
@@ -34,18 +34,18 @@ export function Alert (props: AlertProps) {
     title: titleOption,
     confirm,
     confirmYesNo,
-    onClose: onCloseOption
+    onClose: onCloseOption,
   } = options;
 
   buttons = (confirm ? [
     {
       label: confirmYesNo ? translate (locale, 'yes') : translate (locale, 'ok'),
-      dispatchOnClick: confirm.resolve
+      dispatchOnClick: confirm.resolve,
     },
     {
       label: confirmYesNo ? translate (locale, 'no') : translate (locale, 'cancel'),
-      dispatchOnClick: confirm.reject
-    }
+      dispatchOnClick: confirm.reject,
+    },
   ] : buttonsOption).map (e => {
     const { dispatchOnClick, ...other } = e;
 

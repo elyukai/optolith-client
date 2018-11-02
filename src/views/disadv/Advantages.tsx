@@ -13,7 +13,7 @@ import { WikiInfoContainer } from '../../containers/WikiInfoContainer';
 import { AdventurePointsObject } from '../../selectors/adventurePointsSelectors';
 import { ActivatableDependent, ActivateArgs, ActiveViewObject, DeactivateArgs, DeactiveViewObject, EntryRating, InputTextEvent } from '../../types/data';
 import { Advantage } from '../../types/wiki';
-import { List, Maybe, OrderedMap, Record } from '../../utils/dataUtils';
+import { Just, List, Maybe, Nothing, OrderedMap, Record } from '../../utils/dataUtils';
 import { translate, UIMessagesObject } from '../../utils/I18n';
 import { ActiveList } from './ActiveList';
 import { AdvantagesDisadvantagesAdventurePoints } from './AdvantagesDisadvantagesAdventurePoints';
@@ -55,24 +55,28 @@ export type AdvantagesProps = AdvantagesStateProps & AdvantagesDispatchProps & A
 
 export interface AdvantagesState {
   showAddSlidein: boolean;
-  currentId?: string;
-  currentSlideinId?: string;
+  currentId: Maybe<string>;
+  currentSlideinId: Maybe<string>;
 }
 
 export class Advantages extends React.Component<AdvantagesProps, AdvantagesState> {
   state: AdvantagesState = {
     showAddSlidein: false,
+    currentId: Nothing (),
+    currentSlideinId: Nothing (),
   };
 
   filter = (event: InputTextEvent) => this.props.setFilterText (event.target.value);
   filterSlidein = (event: InputTextEvent) => this.props.setInactiveFilterText (event.target.value);
   showAddSlidein = () => this.setState ({ showAddSlidein: true });
+
   hideAddSlidein = () => {
     this.props.setInactiveFilterText ('');
     this.setState ({ showAddSlidein: false });
   };
-  showInfo = (id: string) => this.setState ({ currentId: id });
-  showSlideinInfo = (id: string) => this.setState ({ currentSlideinId: id });
+
+  showInfo = (id: string) => this.setState ({ currentId: Just (id) });
+  showSlideinInfo = (id: string) => this.setState ({ currentSlideinId: Just (id) });
 
   render () {
     const {

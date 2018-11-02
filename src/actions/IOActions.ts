@@ -1,6 +1,7 @@
 // tslint:disable-next-line:no-implicit-dependencies
 import { ProgressInfo } from 'builder-util-runtime';
 import { ipcRenderer, remote } from 'electron';
+// tslint:disable-next-line:no-implicit-dependencies
 import { UpdateInfo } from 'electron-updater';
 import * as fs from 'fs';
 import { extname, join } from 'path';
@@ -10,10 +11,10 @@ import { getCurrentHeroId, getHeroes, getUsers, getWiki } from '../selectors/sta
 import { getUISettingsState } from '../selectors/uisettingsSelectors';
 import { AsyncAction } from '../types/actions';
 import { Hero, User } from '../types/data';
-import { Config, Raw, RawHero, RawHerolist, RawLocale, RawTables } from '../types/rawdata';
+import { Raw, RawConfig, RawHero, RawHerolist, RawLocale, RawTables } from '../types/rawdata';
 import { UIMessagesObject } from '../types/ui';
 import { convertHeroesForSave, convertHeroForSave } from '../utils/convertHeroForSave';
-import { Maybe, OrderedMap, StringKeyObject, UnsafeStringKeyObject } from '../utils/dataUtils';
+import { Maybe, OrderedMap, Record, StringKeyObject, UnsafeStringKeyObject } from '../utils/dataUtils';
 import { translate } from '../utils/I18n';
 import { getNewIdByDate } from '../utils/IDUtils';
 import { bytify, getSystemLocale, readDir, readFile, showOpenDialog, showSaveDialog, windowPrintToPDF, writeFile } from '../utils/IOUtils';
@@ -35,20 +36,21 @@ const loadDataTables = (): AsyncAction<Promise<RawTables | undefined>> =>
     }
     catch (error) {
       dispatch (addAlert ({
-        message: `The rule tables could not be loaded. Please report this issue! (Error Code: ${JSON.stringify (error)})`,
-        title: 'Error'
+        message:
+          `The rule tables could not be loaded. Please report this issue! (Error Code: ${JSON.stringify (error)})`,
+        title: 'Error',
       }));
 
       return;
     }
   };
 
-const loadConfig = async (): Promise<Config | undefined> => {
+const loadConfig = async (): Promise<RawConfig | undefined> => {
   const appPath = getSaveDataPath ();
   try {
     const result = await readFile (join (appPath, 'config.json'));
 
-    return JSON.parse (result as string) as Config;
+    return JSON.parse (result as string) as RawConfig;
   }
   catch (error) {
     return;
@@ -84,8 +86,9 @@ const loadLocales = (): AsyncAction<Promise<StringKeyObject<RawLocale> | undefin
     }
     catch (error) {
       dispatch (addAlert ({
-        message: `The localizations could not be loaded. Please report this issue! (Error Code: ${JSON.stringify (error)})`,
-        title: 'Error'
+        message:
+          `The localizations could not be loaded. Please report this issue! (Error Code: ${JSON.stringify (error)})`,
+        title: 'Error',
       }));
 
       return;
@@ -122,7 +125,7 @@ export const getInitialData = (): AsyncAction<Promise<Raw | undefined>> => async
       tables,
       heroes,
       locales,
-      config
+      config,
     };
   }
 
@@ -133,17 +136,27 @@ export const receiveInitialData = (data: Raw): ReceiveInitialDataAction => ({
   type: ActionTypes.RECEIVE_INITIAL_DATA,
   payload: {
     ...data,
-    defaultLocale: getSystemLocale ()
-  }
+    defaultLocale: getSystemLocale (),
+  },
 });
 
 export const requestConfigSave = (locale: UIMessagesObject): AsyncAction<Promise<boolean>> =>
   async (dispatch, getState) => {
     const state = getState ();
 
-    const data: Config = {
-      ...getUISettingsState (state),
-      locale: locale.get ('id')
+    const uiSettingsState = getUISettingsState (state);
+
+    const data: RawConfig = {
+      ...uiSettingsState,
+      meleeItemTemplatesCombatTechniqueFilter:
+        Maybe.isJust (uiSettingsState.meleeItemTemplatesCombatTechniqueFilter)
+          ? Maybe.fromJust (uiSettingsState.meleeItemTemplatesCombatTechniqueFilter)
+          : undefined,
+      rangedItemTemplatesCombatTechniqueFilter:
+        Maybe.isJust (uiSettingsState.rangedItemTemplatesCombatTechniqueFilter)
+          ? Maybe.fromJust (uiSettingsState.rangedItemTemplatesCombatTechniqueFilter)
+          : undefined,
+      locale: state .locale .type === 'default' ? undefined : locale .get ('id'),
     };
 
     const dataPath = getSaveDataPath ();
@@ -163,7 +176,7 @@ export const requestConfigSave = (locale: UIMessagesObject): AsyncAction<Promise
         }: ${
           JSON.stringify (error)
         })`,
-        title: translate (locale, 'fileapi.error.title')
+        title: translate (locale, 'fileapi.error.title'),
       }));
 
       return false;
@@ -197,7 +210,7 @@ export const requestAllHeroesSave = (locale: UIMessagesObject): AsyncAction<Prom
         }: ${
           JSON.stringify (error)
         })`,
-        title: translate (locale, 'fileapi.error.title')
+        title: translate (locale, 'fileapi.error.title'),
       }));
 
       return false;
@@ -239,7 +252,7 @@ export const requestHeroSave = (locale: UIMessagesObject) =>
           await writeFile (path, JSON.stringify (Maybe.maybe ({ [hero.id]: hero })
                                                              (savedHeroes => ({
                                                                ...savedHeroes,
-                                                               [hero.id]: hero
+                                                               [hero.id]: hero,
                                                              }))
                                                              (maybeSavedHeroes)));
 
@@ -254,7 +267,7 @@ export const requestHeroSave = (locale: UIMessagesObject) =>
             }: ${
               JSON.stringify (error)
             })`,
-            title: translate (locale, 'fileapi.error.title')
+            title: translate (locale, 'fileapi.error.title'),
           }));
 
           return;
@@ -299,7 +312,7 @@ export const requestHeroDeletion = (locale: UIMessagesObject) =>
           }: ${
             JSON.stringify (error)
           })`,
-          title: translate (locale, 'fileapi.error.title')
+          title: translate (locale, 'fileapi.error.title'),
         }));
 
         return false;
@@ -333,7 +346,7 @@ export const requestHeroExport = (locale: UIMessagesObject) => (id: string): Asy
 
               return {
                 ...hero,
-                avatar: prefix + fileString
+                avatar: prefix + fileString,
               };
             }
           }
@@ -351,7 +364,7 @@ export const requestHeroExport = (locale: UIMessagesObject) => (id: string): Asy
           filters: [
             { name: 'JSON', extensions: ['json'] },
           ],
-          defaultPath: hero.name.replace (/\//, '\/')
+          defaultPath: hero.name.replace (/\//, '\/'),
         })
       );
 
@@ -362,7 +375,7 @@ export const requestHeroExport = (locale: UIMessagesObject) => (id: string): Asy
           await writeFile (filename, JSON.stringify (hero));
 
           dispatch (addAlert ({
-            message: translate (locale, 'fileapi.exporthero.success')
+            message: translate (locale, 'fileapi.exporthero.success'),
           }));
         }
         catch (error) {
@@ -374,7 +387,7 @@ export const requestHeroExport = (locale: UIMessagesObject) => (id: string): Asy
             }: ${
               JSON.stringify (error)
             })`,
-            title: translate (locale, 'fileapi.error.title')
+            title: translate (locale, 'fileapi.error.title'),
           }));
         }
       }
@@ -394,7 +407,7 @@ export const loadImportedHero =
     async dispatch => {
       try {
         const fileNames = await showOpenDialog ({
-          filters: [{ name: 'JSON', extensions: ['json'] }]
+          filters: [{ name: 'JSON', extensions: ['json'] }],
         });
 
         if (fileNames) {
@@ -418,7 +431,7 @@ export const loadImportedHero =
           }: ${
             JSON.stringify (error)
           })`,
-          title: translate (locale, 'fileapi.error.title')
+          title: translate (locale, 'fileapi.error.title'),
         }));
       }
 
@@ -443,15 +456,15 @@ export const receiveHeroImport = (raw: RawHero): ReceiveImportedHeroAction => {
     avatar: avatar
       && (isBase64Image (avatar) || fs.existsSync (avatar.replace (/file:[\\\/]+/, '')))
       ? avatar
-      : undefined
+      : undefined,
   };
 
   return {
     type: ActionTypes.RECEIVE_IMPORTED_HERO,
     payload: {
       data,
-      player
-    }
+      player,
+    },
   };
 };
 
@@ -475,35 +488,39 @@ const close = (locale: UIMessagesObject) => (unsaved: boolean) =>
             }
 
             remote.getCurrentWindow ().close ();
-          }
+          },
         }));
       }
     };
 
-export const requestClose = (locale: UIMessagesObject) =>
-  (optionalCall: Maybe<() => void>): AsyncAction =>
-    (dispatch, getState) => {
-      const state = getState ();
-      const safeToExit = isAnyHeroUnsaved (state);
+export const requestClose = (optionalCall: Maybe<() => void>): AsyncAction =>
+  (dispatch, getState) => {
+    const state = getState ();
+    const safeToExit = isAnyHeroUnsaved (state);
 
-      const closeWindow = remote.getCurrentWindow () .close;
+    const closeWindow = remote.getCurrentWindow () .close;
+
+    const maybeLocale = Maybe.fromNullable (state .locale .messages) .fmap (Record.of);
+
+    if (Maybe.isJust (maybeLocale)) {
+      const locale = Maybe.fromJust (maybeLocale);
 
       if (safeToExit) {
         closeWindow ();
       }
       else {
-        // @ts-ignore
         dispatch (addAlert ({
           title: translate (locale, 'heroes.warnings.unsavedactions.title'),
           message: translate (locale, 'heroes.warnings.unsavedactions.text'),
           confirm: {
             resolve: close (locale) (true) (optionalCall),
-            reject: closeWindow as AsyncAction,
+            reject: closeWindow,
           },
           confirmYesNo: true,
         }));
       }
-    };
+    }
+  };
 
 export const requestPrintHeroToPDF = (locale: UIMessagesObject): AsyncAction => async dispatch => {
   try {
@@ -516,7 +533,7 @@ export const requestPrintHeroToPDF = (locale: UIMessagesObject): AsyncAction => 
     const filename = await showSaveDialog ({
       title: translate (locale, 'fileapi.printcharactersheettopdf.title'),
       filters: [
-        {name: 'PDF', extensions: ['pdf']},
+        { name: 'PDF', extensions: ['pdf'] },
       ],
     });
 
@@ -524,21 +541,23 @@ export const requestPrintHeroToPDF = (locale: UIMessagesObject): AsyncAction => 
       try {
         await writeFile (filename, data);
         dispatch (addAlert ({
-          message: translate (locale, 'fileapi.printcharactersheettopdf.success')
+          message: translate (locale, 'fileapi.printcharactersheettopdf.success'),
         }));
       }
       catch (error) {
         dispatch (addAlert ({
-          message: `${translate (locale, 'fileapi.error.message.printcharactersheettopdf')} (${translate (locale, 'fileapi.error.message.code')}: ${JSON.stringify (error)})`,
-          title: translate (locale, 'fileapi.error.title')
+          message:
+            `${translate (locale, 'fileapi.error.message.printcharactersheettopdf')} (${translate (locale, 'fileapi.error.message.code')}: ${JSON.stringify (error)})`,
+          title: translate (locale, 'fileapi.error.title'),
         }));
       }
     }
   }
   catch (error) {
     dispatch (addAlert ({
-      message: `${translate (locale, 'fileapi.error.message.printcharactersheettopdfpreparation')} (${translate (locale, 'fileapi.error.message.code')}: ${JSON.stringify (error)})`,
-      title: translate (locale, 'fileapi.error.title')
+      message:
+        `${translate (locale, 'fileapi.error.message.printcharactersheettopdfpreparation')} (${translate (locale, 'fileapi.error.message.code')}: ${JSON.stringify (error)})`,
+      title: translate (locale, 'fileapi.error.title'),
     }));
   }
 };
@@ -551,7 +570,7 @@ export interface SetUpdateDownloadProgressAction {
 export const setUpdateDownloadProgress =
   (info?: ProgressInfo): SetUpdateDownloadProgressAction => ({
     type: ActionTypes.SET_UPDATE_DOWNLOAD_PROGRESS,
-    payload: info
+    payload: info,
   });
 
 export const updateAvailable = (locale: UIMessagesObject) => (info: UpdateInfo): AsyncAction =>
@@ -562,7 +581,7 @@ export const updateAvailable = (locale: UIMessagesObject) => (info: UpdateInfo):
         delta: 0,
         transferred: 0,
         percent: 0,
-        bytesPerSecond: 0
+        bytesPerSecond: 0,
       }));
       ipcRenderer.send ('download-update');
     };
@@ -581,18 +600,18 @@ export const updateAvailable = (locale: UIMessagesObject) => (info: UpdateInfo):
       buttons: [
         {
           label: translate (locale, 'newversionavailable.update'),
-          dispatchOnClick: startDownloadingUpdate
+          dispatchOnClick: startDownloadingUpdate,
         },
         {
-          label: translate (locale, 'cancel')
-        }
-      ]
+          label: translate (locale, 'cancel'),
+        },
+      ],
     }));
   };
 
 export const updateNotAvailable = (locale: UIMessagesObject): AsyncAction => async dispatch => {
   dispatch (addAlert ({
     message: translate (locale, 'nonewversionavailable.message'),
-    title: translate (locale, 'nonewversionavailable.title')
+    title: translate (locale, 'nonewversionavailable.title'),
   }));
 };

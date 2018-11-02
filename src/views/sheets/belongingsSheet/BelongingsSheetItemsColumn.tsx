@@ -44,16 +44,14 @@ export function BelongingsSheetItemsColumn (props: BelongingsSheetItemsColumnPro
               </td>
               <td className="amount">{e .get ('amount') > 1 && e.get ('amount')}</td>
               <td className="price">
-                {e .get ('price') > 0 && localizeNumber (e .get ('price'), locale .get ('id'))}
+                {e .get ('price') > 0 && localizeNumber (locale .get ('id')) (e .get ('price'))}
               </td>
               <td className="weight">
                 {Maybe.fromMaybe<string | number>
                   ('')
                   (e .lookup ('weight') .fmap (
-                    weight => localizeNumber (
-                      localizeWeight (weight, locale .get ('id')),
-                      locale .get ('id')
-                    )
+                    weight => localizeNumber (locale .get ('id'))
+                                             (localizeWeight (locale .get ('id')) (weight))
                   ))}
               </td>
               <td className="where">

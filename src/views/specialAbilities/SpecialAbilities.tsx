@@ -14,7 +14,7 @@ import { TextField } from '../../components/TextField';
 import { WikiInfoContainer } from '../../containers/WikiInfoContainer';
 import { ActivatableDependent, ActivateArgs, ActiveViewObject, DeactivateArgs, DeactiveViewObject } from '../../types/data';
 import { SpecialAbility } from '../../types/wiki';
-import { List, Maybe, OrderedMap, Record } from '../../utils/dataUtils';
+import { Just, List, Maybe, Nothing, OrderedMap, Record } from '../../utils/dataUtils';
 import { translate, UIMessagesObject } from '../../utils/I18n';
 
 export interface SpecialAbilitiesOwnProps {
@@ -53,14 +53,16 @@ export type SpecialAbilitiesProps =
 
 export interface SpecialAbilitiesState {
   showAddSlidein: boolean;
-  currentId?: string;
-  currentSlideinId?: string;
+  currentId: Maybe<string>;
+  currentSlideinId: Maybe<string>;
 }
 
 export class SpecialAbilities
   extends React.Component<SpecialAbilitiesProps, SpecialAbilitiesState> {
   state: SpecialAbilitiesState = {
     showAddSlidein: false,
+    currentId: Nothing (),
+    currentSlideinId: Nothing (),
   };
 
   showAddSlidein = () => this.setState ({ showAddSlidein: true });
@@ -70,8 +72,8 @@ export class SpecialAbilities
     this.setState ({ showAddSlidein: false });
   };
 
-  showInfo = (id: string) => this.setState ({ currentId: id });
-  showSlideinInfo = (id: string) => this.setState ({ currentSlideinId: id });
+  showInfo = (id: string) => this.setState ({ currentId: Just (id) });
+  showSlideinInfo = (id: string) => this.setState ({ currentSlideinId: Just (id) });
 
   render () {
     const {

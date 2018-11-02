@@ -2,8 +2,8 @@ import * as React from 'react';
 import { Checkbox } from '../../../components/Checkbox';
 import { Options } from '../../../components/Options';
 import { ActiveViewObject, SecondaryAttribute } from '../../../types/data';
-import { AttributeCombined, SpellCombined } from '../../../types/view';
-import { Cantrip, SpecialAbility } from '../../../types/wiki';
+import { AttributeCombined, CantripCombined, SpellCombined } from '../../../types/view';
+import { SpecialAbility } from '../../../types/wiki';
 import { List, Maybe, Record } from '../../../utils/dataUtils';
 import { translate, UIMessagesObject } from '../../../utils/I18n';
 import { AttributeMods } from '../AttributeMods';
@@ -17,7 +17,7 @@ import { SpellsSheetTraditionsProperties } from './SpellsSheetTraditionsProperti
 
 export interface SpellsSheetProps {
   attributes: List<Record<AttributeCombined>>;
-  cantrips: List<Record<Cantrip>>;
+  cantrips: Maybe<List<Record<CantripCombined>>>;
   checkAttributeValueVisibility: boolean;
   derivedCharacteristics: List<Record<SecondaryAttribute>>;
   locale: UIMessagesObject;

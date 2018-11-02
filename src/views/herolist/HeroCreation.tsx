@@ -1,16 +1,15 @@
 import * as React from 'react';
 import { Checkbox } from '../../components/Checkbox';
 import { Dialog, DialogProps } from '../../components/DialogNew';
-import { Dropdown } from '../../components/Dropdown';
+import { Dropdown, DropdownOption } from '../../components/Dropdown';
 import { Hr } from '../../components/Hr';
-import { Option } from '../../components/RadioButtonGroup';
 import { Scroll } from '../../components/Scroll';
-import { SegmentedControls } from '../../components/SegmentedControls';
+import { Option, SegmentedControls } from '../../components/SegmentedControls';
 import { TextField } from '../../components/TextField';
-import { InputTextEvent } from '../../types/data';
+import { InputTextEvent, Sex } from '../../types/data';
 import { UIMessagesObject } from '../../types/ui';
 import { Book, ExperienceLevel } from '../../types/wiki';
-import { Just, List, Maybe, Nothing, OrderedMap, OrderedSet, Record } from '../../utils/dataUtils';
+import { List, Maybe, Nothing, OrderedMap, OrderedSet, Record } from '../../utils/dataUtils';
 import { translate } from '../../utils/I18n';
 
 export interface HeroCreationProps extends DialogProps {
@@ -96,7 +95,12 @@ export class HeroCreation extends React.Component<HeroCreationProps, HeroCreatio
 
     const experienceLevels = experienceLevelsMap
       .elems ()
-      .map (e => ({ id: e.lookup ('id'), name: `${e.get ('name')} (${e.get ('ap')} AP)` }));
+      .map (
+        e => Record.ofMaybe<DropdownOption> ({
+          id: e.lookup ('id'),
+          name: `${e.get ('name')} (${e.get ('ap')} AP)`,
+        })
+      );
 
     return (
       <Dialog
@@ -123,15 +127,15 @@ export class HeroCreation extends React.Component<HeroCreationProps, HeroCreatio
         <SegmentedControls
           active={this.state.sex}
           onClick={this.changeGender}
-          options={List.of<Option<Maybe<'m' | 'f'>>> (
-            {
-              value: Just<'m'> ('m'),
+          options={List.of (
+            Record.of<Option<Sex>> ({
+              value: 'm',
               name: translate (locale, 'herocreation.options.selectsex.male'),
-            },
-            {
-              value: Just<'f'> ('f'),
+            }),
+            Record.of<Option<Sex>> ({
+              value: 'f',
               name: translate (locale, 'herocreation.options.selectsex.female'),
-            }
+            })
           )}
           />
         <Dropdown

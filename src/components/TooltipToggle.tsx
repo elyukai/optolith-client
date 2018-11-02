@@ -20,45 +20,59 @@ export interface TooltipToggleStateProps {
 export interface TooltipToggleDispatchProps {
 }
 
-export type TooltipToggleProps = TooltipToggleStateProps & TooltipToggleDispatchProps & TooltipToggleOwnProps;
+export type TooltipToggleProps =
+  TooltipToggleStateProps
+  & TooltipToggleDispatchProps
+  & TooltipToggleOwnProps;
 
 export class TooltipToggleWrapped extends React.Component<TooltipToggleProps, {}> {
   node?: HTMLElement;
 
-  componentWillUnmount() {
+  componentWillUnmount () {
     if (this.node) {
-      close(this.node);
+      close (this.node);
     }
   }
 
   open = (event: React.MouseEvent<HTMLElement>) => {
     const { content, margin, position = 'top', small, theme } = this.props;
-    this.node = createOverlay(<Overlay className={classNames('tooltip', `theme-${theme}`, small && 'tooltip-small')} position={position} trigger={event.currentTarget} margin={margin}>
-      {content}
-    </Overlay>);
+
+    this.node = createOverlay (
+      <Overlay
+        className={classNames ('tooltip', `theme-${theme}`, small && 'tooltip-small')}
+        position={position}
+        trigger={event.currentTarget}
+        margin={margin}
+        >
+        {content}
+      </Overlay>
+    );
   }
 
   close = () => {
     if (this.node) {
-      close(this.node);
+      close (this.node);
       this.node = undefined;
     }
   }
 
-  render() {
+  render () {
     const { children } = this.props;
-    return React.cloneElement(React.Children.only(children), {
+
+    return React.cloneElement (React.Children.only (children), {
       onMouseOver: this.open,
-      onMouseOut: this.close
+      onMouseOut: this.close,
     });
   }
 }
 
-function mapStateToProps(state: AppState) {
-  return {
-    theme: getTheme(state)
-  };
-}
+const mapStateToProps = (state: AppState): TooltipToggleStateProps => ({
+  theme: getTheme (state),
+});
 
+const connectTooltipToggle =
+  connect<TooltipToggleStateProps, TooltipToggleDispatchProps, TooltipToggleOwnProps, AppState> (
+    mapStateToProps
+  );
 
-export const TooltipToggle = connect<TooltipToggleStateProps, TooltipToggleDispatchProps, TooltipToggleOwnProps>(mapStateToProps)(TooltipToggleWrapped);
+export const TooltipToggle = connectTooltipToggle (TooltipToggleWrapped);

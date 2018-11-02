@@ -1,12 +1,13 @@
+import * as R from 'ramda';
 import * as React from 'react';
 import { TextBox } from '../../../components/TextBox';
-import { Blessing } from '../../../types/wiki';
-import { List, Record } from '../../../utils/dataUtils';
+import { BlessingCombined } from '../../../types/view';
+import { List, Maybe, Record } from '../../../utils/dataUtils';
 import { sortStrings } from '../../../utils/FilterSortUtils';
 import { translate, UIMessagesObject } from '../../../utils/I18n';
 
 export interface LiturgicalChantSheetBlessingsProps {
-  blessings: List<Record<Blessing>>;
+  blessings: Maybe<List<Record<BlessingCombined>>>;
   locale: UIMessagesObject;
 }
 
@@ -19,7 +20,18 @@ export function LiturgicalChantsSheetBlessings (props: LiturgicalChantSheetBless
       className="blessings activatable-list"
       >
       <div className="list">
-        {sortStrings (blessings.map (e => e .get ('name')), locale .get ('id')).intercalate (', ')}
+        {
+          Maybe.maybeToReactNode (
+            blessings
+              .fmap (
+                R.pipe (
+                  List.map (e => e .get ('name')),
+                  sortStrings (locale .get ('id')),
+                  List.intercalate (', ')
+                )
+              )
+          )
+        }
       </div>
     </TextBox>
   );

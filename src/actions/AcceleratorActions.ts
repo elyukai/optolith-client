@@ -41,6 +41,6 @@ export const openSettingsAccelerator = (): AsyncAction => dispatch => {
   }
 };
 
-export const quitAccelerator = (locale: UIMessagesObject): AsyncAction => dispatch => {
-  dispatch (requestClose (locale) (Just (remote.app.quit)));
+export const quitAccelerator: AsyncAction = dispatch => {
+  dispatch (requestClose (Just (remote.app.quit)));
 };

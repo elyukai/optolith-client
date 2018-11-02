@@ -62,7 +62,7 @@ const store = createStore (appReducer, applyMiddleware (ReduxThunk));
               { type: 'separator' },
               {
                 label: translate (locale, 'mac.quit'),
-                click: () => dispatch (requestClose (locale) (Just (remote.app.quit))),
+                click: () => dispatch (requestClose (Just (remote.app.quit))),
               },
             ],
           },
@@ -105,7 +105,7 @@ const store = createStore (appReducer, applyMiddleware (ReduxThunk));
         });
 
         localShortcut.register (currentWindow, 'Cmd+Q', () => {
-          dispatch (quitAccelerator (locale));
+          dispatch (quitAccelerator);
         });
 
         localShortcut.register (currentWindow, 'CmdOrCtrl+S', () => {

@@ -280,7 +280,7 @@ const getPets =
       ? OrderedMap.of (
           Object.entries (hero.pets)
             .map<[string, Record<Data.PetInstance>]> (
-              ([id, obj]) => [id, Record.of (obj)]
+              ([id, obj]) => [id, Record.of<Data.PetInstance> (obj)]
             )
         )
       : OrderedMap.empty ();
@@ -306,6 +306,7 @@ export const getHeroInstance = (
     belongings: getBelongings (hero),
     rules: getRules (hero),
     pets: getPets (hero),
+    isInPetCreation: false,
     combatStyleDependencies: List.of (),
     magicalStyleDependencies: List.of (),
     blessedStyleDependencies: List.of (),
@@ -456,6 +457,7 @@ export const getInitialHeroObject = (
       isInZoneArmorCreation: false,
     }),
     pets: OrderedMap.empty (),
+    isInPetCreation: false,
     combatStyleDependencies: List.of (),
     magicalStyleDependencies: List.of (),
     blessedStyleDependencies: List.of (),

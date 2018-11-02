@@ -6,6 +6,7 @@ import { setTab } from '../actions/LocationActions';
 import { AppState } from '../reducers/appReducer';
 import { getCurrentTab, getLocaleMessages } from '../selectors/stateSelectors';
 import { areAnimationsEnabled, getTheme } from '../selectors/uisettingsSelectors';
+import { Nothing } from '../utils/dataUtils';
 import { TabId } from '../utils/LocationUtils';
 import { App, AppDispatchProps, AppOwnProps, AppStateProps } from '../views/App';
 
@@ -17,7 +18,7 @@ const mapStateToProps = (state: AppState) => ({
   platform: remote.process.platform,
 });
 
-const mapDispatchToProps = (dispatch: Dispatch<Action>) => ({
+const mapDispatchToProps = (dispatch: Dispatch<Action, AppState>) => ({
   minimize () {
     remote.getCurrentWindow ().minimize ();
   },
@@ -28,7 +29,7 @@ const mapDispatchToProps = (dispatch: Dispatch<Action>) => ({
     remote.getCurrentWindow ().unmaximize ();
   },
   close () {
-    dispatch (IOActions.requestClose ());
+    dispatch (IOActions.requestClose (Nothing ()));
   },
   enterFullscreen () {
     remote.getCurrentWindow ().setFullScreen (true);

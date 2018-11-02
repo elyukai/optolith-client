@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Action } from 'redux';
+import { Dispatch } from 'redux';
 import { Alert } from '../../components/Alert';
 import { Alert as AlertOptions } from '../../types/data';
 import { UIMessagesObject } from '../../types/ui';
@@ -15,7 +15,7 @@ export interface AlertsStateProps {
 
 export interface AlertsDispatchProps {
   close (): void;
-  dispatch (action: Action): void;
+  dispatch: Dispatch;
 }
 
 export type AlertsProps = AlertsStateProps & AlertsDispatchProps & AlertsOwnProps;
@@ -27,4 +27,3 @@ export class Alerts extends React.Component<AlertsProps> {
     );
   }
 }
-

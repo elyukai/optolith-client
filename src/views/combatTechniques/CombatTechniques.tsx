@@ -14,7 +14,7 @@ import { WikiInfoContainer } from '../../containers/WikiInfoContainer';
 import { DCIds } from '../../selectors/derivedCharacteristicsSelectors';
 import { SecondaryAttribute } from '../../types/data';
 import { AttributeCombined, CombatTechniqueWithRequirements } from '../../types/view';
-import { List, Maybe, OrderedMap, Record } from '../../utils/dataUtils';
+import { Just, List, Maybe, Nothing, OrderedMap, Record } from '../../utils/dataUtils';
 import { translate, UIMessagesObject } from '../../utils/I18n';
 import { SkillListItem } from '../skills/SkillListItem';
 
@@ -44,14 +44,16 @@ export type CombatTechniquesProps =
   & CombatTechniquesOwnProps;
 
 export interface CombatTechniquesState {
-  infoId?: string;
+  infoId: Maybe<string>;
 }
 
 export class CombatTechniques
   extends React.Component<CombatTechniquesProps, CombatTechniquesState> {
-  state: CombatTechniquesState = {};
+  state: CombatTechniquesState = {
+    infoId: Nothing (),
+  };
 
-  showInfo = (id: string) => this.setState ({ infoId: id });
+  showInfo = (id: string) => this.setState ({ infoId: Just (id) });
 
   render () {
     const {

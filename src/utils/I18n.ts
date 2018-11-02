@@ -75,7 +75,9 @@ export const localizeSize = (localeId: string) => R.pipe (
  *
  * Uses `1kg = 2pd` instead of `1kg = 2.2046pd`.
  */
-export const localizeWeight = (localeId: string) => R.pipe (
-  Maybe.fmap<number, number> (weight => localeId === 'en-US' ? weight * 2 : weight),
-  Maybe.fromMaybe (0)
-);
+export const localizeWeight = (localeId: string): ((x: number | Maybe<number>) => number) =>
+  R.pipe (
+    Maybe.normalize,
+    Maybe.fmap (weight => localeId === 'en-US' ? weight * 2 : weight),
+    Maybe.fromMaybe (0)
+  );

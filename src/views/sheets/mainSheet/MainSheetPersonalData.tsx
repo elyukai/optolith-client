@@ -33,6 +33,7 @@ export function MainSheetPersonalData (props: MainSheetPersonalDataProps) {
     eyeColorTags,
     hairColorTags,
     locale,
+    name,
     professionName,
     profile: maybeProfile,
     race: maybeRace,

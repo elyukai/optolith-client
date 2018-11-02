@@ -60,7 +60,7 @@ const convertRawRaceCultureRequirement =
   <T extends RawRaceOrCultureRequirement>(e: T): RaceOrCultureRequirement<T> =>
     ({
       id: e.id,
-      value: typeof e.value === 'object' ? List.fromArray (e.value) : e.value
+      value: typeof e.value === 'object' ? List.fromArray (e.value) : e.value,
     }) as any as RaceOrCultureRequirement<T>;
 
 const convertRawPactRequirement =
@@ -68,7 +68,7 @@ const convertRawPactRequirement =
     if (typeof e.domain === 'object') {
       return {
         ...e,
-        domain: List.fromArray (e.domain)
+        domain: List.fromArray (e.domain),
       };
     }
     else {
@@ -80,7 +80,7 @@ const convertRawRequiresIncreasableObject =
   (e: Raw.RawRequiresIncreasableObject): Wiki.RequiresIncreasableObject =>
     ({
       ...e,
-      id: typeof e.id === 'object' ? List.fromArray (e.id) : e.id
+      id: typeof e.id === 'object' ? List.fromArray (e.id) : e.id,
     });
 
 const convertRawRequiresActivatableObject =
@@ -89,13 +89,13 @@ const convertRawRequiresActivatableObject =
 
     const res = {
       ...other,
-      id: typeof e.id === 'object' ? List.fromArray (e.id) : e.id
+      id: typeof e.id === 'object' ? List.fromArray (e.id) : e.id,
     };
 
     if (typeof res.sid === 'object') {
       return {
         ...res,
-        sid: List.fromArray (res.sid)
+        sid: List.fromArray (res.sid),
       };
     }
     else {
@@ -191,7 +191,7 @@ interface ApplicationName {
 
 export const convertRawApplications = (
   locale: Raw.RawSkillLocale['spec'],
-  data?: Raw.RawSkill['applications'],
+  data?: Raw.RawSkill['applications']
 ) =>
   Maybe.mapMaybe<ApplicationName, Record<Wiki.Application>> (
     app => {
@@ -205,7 +205,7 @@ export const convertRawApplications = (
           return Just (Record.of<Wiki.Application> ({
             id: appId,
             name: appName,
-            prerequisites: convertRawPrerequisiteObjects (prerequisites)
+            prerequisites: convertRawPrerequisiteObjects (prerequisites),
           }));
         }
 
@@ -227,12 +227,12 @@ const convertRawSelection = (e: Raw.RawSelectionObject) =>
         ? Record.of<Wiki.Application> ({
           ...app,
           prerequisites:
-            convertRawPrerequisiteObjects (app.prerequisites)
+            convertRawPrerequisiteObjects (app.prerequisites),
         })
         : Record.of (app) as Record<Wiki.Application>
     )),
     spec: e.spec && List.fromArray (e.spec),
-    talent: e.talent && Tuple.of<string, number> (e.talent[0]) (e.talent[1])
+    talent: e.talent && Tuple.of<string, number> (e.talent[0]) (e.talent[1]),
   });
 
 export const convertRawSelections = (
@@ -256,7 +256,7 @@ export const convertRawIncreaseSkills =
   (raw: [string, number][], prefix: IdPrefixes): List<Record<Wiki.IncreaseSkill>> =>
     List.fromArray (raw.map (e => Record.of ({
       id: `${prefix}_${e[0]}`,
-      value: e[1]
+      value: e[1],
     })));
 
 export const mapRawWithPrefix = (list: string[], prefix: IdPrefixes): List<string> =>
@@ -266,7 +266,7 @@ const convertRawSpecializationSelection =
   (raw: Raw.RawSpecializationSelection): Record<Wiki.SpecializationSelection> =>
     Record.of ({
       ...raw,
-      sid: typeof raw.sid === 'object' ? List.fromArray (raw.sid) : raw.sid
+      sid: typeof raw.sid === 'object' ? List.fromArray (raw.sid) : raw.sid,
     });
 
 const convertRawLanguagesScriptsSelection =
@@ -277,21 +277,21 @@ const convertRawCombatTechniquesSelection =
   (raw: Raw.RawCombatTechniquesSelection): Record<Wiki.CombatTechniquesSelection> =>
     Record.of ({
       ...raw,
-      sid: List.fromArray (raw.sid)
+      sid: List.fromArray (raw.sid),
     });
 
 const convertRawCombatTechniquesSecondSelection =
   (raw: Raw.RawCombatTechniquesSecondSelection): Record<Wiki.CombatTechniquesSecondSelection> =>
   Record.of ({
     ...raw,
-    sid: List.fromArray (raw.sid)
+    sid: List.fromArray (raw.sid),
   });
 
 const convertRawCantripsSelection =
   (raw: Raw.RawCantripsSelection): Record<Wiki.CantripsSelection> =>
     Record.of ({
       ...raw,
-      sid: List.fromArray (raw.sid)
+      sid: List.fromArray (raw.sid),
     });
 
 const convertRawCursesSelection =
@@ -306,7 +306,7 @@ const convertRawTerrainKnowledgeSelection =
   (raw: Raw.RawTerrainKnowledgeSelection): Record<Wiki.TerrainKnowledgeSelection> =>
     Record.of ({
       ...raw,
-      sid: List.fromArray (raw.sid)
+      sid: List.fromArray (raw.sid),
     });
 
 

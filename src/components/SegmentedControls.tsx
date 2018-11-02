@@ -1,20 +1,25 @@
 import * as React from 'react';
-import { List, Maybe } from '../utils/dataUtils';
+import { List, Maybe, Record } from '../utils/dataUtils';
 import { Button } from './Button';
 import { Label } from './Label';
 import { Option, OptionValue } from './RadioButtonGroup';
 import { Text } from './Text';
 
+export { Option };
+
 export interface SegmentedControlsProps<T extends OptionValue> {
-  active: T;
+  active: T | Maybe<T>;
   disabled?: boolean;
   label?: string;
-  options: List<Option<T>>;
-  onClick (option: T): void;
+  options: List<Record<Option<T>>>;
+  onClick (option: Maybe<T>): void;
+  onClickJust? (option: T): void;
 }
 
 export function SegmentedControls<T extends OptionValue> (props: SegmentedControlsProps<T>) {
-  const { active, disabled, label, onClick, options } = props;
+  const { active, disabled, label, onClick, onClickJust, options } = props;
+
+  const normalizedActive = Maybe.normalize (active);
 
   return (
     <div className="segmented-controls">
@@ -24,13 +29,24 @@ export function SegmentedControls<T extends OptionValue> (props: SegmentedContro
           options
             .map (option => (
               <Button
-                key={Maybe.fromMaybe<React.Key> ('__default__') (option.value)}
-                active={active.equals (option.value)}
-                onClick={() => onClick (option.value)}
-                disabled={option.disabled || disabled}
+                key={
+                  Maybe.fromMaybe<React.Key> ('__default__')
+                                             (option .lookup ('value') as Maybe<T>)
+                }
+                active={normalizedActive .equals (option .lookup ('value') as Maybe<T>)}
+                onClick={() => {
+                  const value = option .lookup ('value') as Maybe<T>;
+
+                  onClick (value);
+
+                  if (onClickJust && Maybe.isJust (value)) {
+                    onClickJust (Maybe.fromJust (value));
+                  }
+                }}
+                disabled={Maybe.elem (true) (option .lookup ('disabled')) || disabled}
                 autoWidth
               >
-                <Text>{option.name}</Text>
+                <Text>{option .get ('name')}</Text>
               </Button>
             ))
             .toArray ()

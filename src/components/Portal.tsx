@@ -3,16 +3,15 @@ import { AppState } from '../reducers/appReducer';
 import { getTheme } from '../selectors/uisettingsSelectors';
 import { PortalWrapped, PortalWrappedDispatchProps, PortalWrappedOwnProps, PortalWrappedStateProps } from './PortalWrapped';
 
-function mapStateToProps(state: AppState) {
-  return {
-    theme: getTheme(state)
-  };
-}
-
-function mapDispatchToProps() {
-  return {};
-}
+const mapStateToProps = (state: AppState): PortalWrappedStateProps => ({
+  theme: getTheme (state),
+});
 
 export { PortalWrappedOwnProps };
 
-export const Portal = connect<PortalWrappedStateProps, PortalWrappedDispatchProps, PortalWrappedOwnProps>(mapStateToProps, mapDispatchToProps)(PortalWrapped);
+const connectPortal =
+  connect<PortalWrappedStateProps, PortalWrappedDispatchProps, PortalWrappedOwnProps, AppState> (
+    mapStateToProps
+  );
+
+export const Portal = connectPortal (PortalWrapped);

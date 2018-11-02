@@ -23,6 +23,7 @@ const matched = <T, U>(x: U): Match<T, U> => ({
 export const match = <T, U>(x: T): Match<T, U> => ({
   // @ts-ignore
   on: (pred: AllTests<T>, fn: (x: T) => U) => {
+    // @ts-ignore
     const test: Test<T> = typeof pred === 'function' ? pred : R.equals (pred);
 
     return test (x) ? matched<T, U> (fn (x)) : match<T, U> (x);
