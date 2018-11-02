@@ -19,6 +19,7 @@ export const UNSAFE_doM = <M extends Monad<any>>(f: () => Iterator<M>): M => {
   return step ();
 };
 
+// @ts-ignore
 const test = UNSAFE_doM (function* (): Iterator<Maybe<number>> {
   const a: number = yield Just (1);
   const b: number = yield Just (2);

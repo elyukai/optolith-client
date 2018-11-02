@@ -1,7 +1,8 @@
 import { remote } from 'electron';
 import * as localShortcut from 'electron-localshortcut';
 import * as React from 'react';
-import { Dispatch } from 'redux';
+import { Action, AnyAction, Dispatch } from 'redux';
+import { AppState } from '../reducers/appReducer';
 import { Alert as AlertOptions, ViewAlertButton } from '../types/data';
 import { UIMessagesObject } from '../types/ui';
 import { Maybe } from '../utils/dataUtils';
@@ -12,7 +13,7 @@ export interface AlertProps {
   locale: UIMessagesObject;
   options: Maybe<AlertOptions>;
   close (): void;
-  dispatch: Dispatch;
+  dispatch: Dispatch<Action, AppState>;
 }
 
 export function Alert (props: AlertProps) {
@@ -51,7 +52,7 @@ export function Alert (props: AlertProps) {
 
     return { ...other, onClick: () => {
       if (dispatchOnClick) {
-        dispatch (dispatchOnClick);
+        dispatch (dispatchOnClick as AnyAction);
       }
     }};
   });

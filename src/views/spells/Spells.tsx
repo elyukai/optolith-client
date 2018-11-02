@@ -81,7 +81,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 
   hideAddSlidein = () => {
     this.props.setInactiveFilterText ('');
-    this.setState ({ showAddSlidein: false, currentSlideinId: undefined });
+    this.setState ({ showAddSlidein: false, currentSlideinId: Nothing () });
   };
 
   showInfo = (id: string) => this.setState ({ currentId: Just (id) });

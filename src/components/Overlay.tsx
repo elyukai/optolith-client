@@ -21,7 +21,7 @@ export class Overlay extends React.Component<OverlayProps, OverlayState> {
     position: '',
   };
 
-  overlayRef: Element | null;
+  overlayRef: Element | null = null;
 
   alignToElement = () => {
     if (this.overlayRef) {

@@ -2,12 +2,10 @@ import { ipcRenderer, remote } from 'electron';
 import { connect } from 'react-redux';
 import { Action, Dispatch } from 'redux';
 import * as IOActions from '../actions/IOActions';
-import { setTab } from '../actions/LocationActions';
 import { AppState } from '../reducers/appReducer';
 import { getCurrentTab, getLocaleMessages } from '../selectors/stateSelectors';
 import { areAnimationsEnabled, getTheme } from '../selectors/uisettingsSelectors';
 import { Nothing } from '../utils/dataUtils';
-import { TabId } from '../utils/LocationUtils';
 import { App, AppDispatchProps, AppOwnProps, AppStateProps } from '../views/App';
 
 const mapStateToProps = (state: AppState) => ({
@@ -36,9 +34,6 @@ const mapDispatchToProps = (dispatch: Dispatch<Action, AppState>) => ({
   },
   leaveFullscreen () {
     remote.getCurrentWindow ().setFullScreen (false);
-  },
-  setTab (id: TabId) {
-    dispatch (setTab (id));
   },
   checkForUpdates () {
     ipcRenderer.send ('check-for-updates');

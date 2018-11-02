@@ -222,16 +222,17 @@ const convertRawSelection = (e: Raw.RawSelectionObject) =>
     req: e.req && convertRawPrerequisiteObjects (e.req),
     prerequisites: e.prerequisites
       && convertRawPrerequisiteObjects (e.prerequisites),
-    applications: e.applications && List.fromArray (e.applications.map (
-      app => app.prerequisites
-        ? Record.of<Wiki.Application> ({
-          ...app,
-          prerequisites:
-            convertRawPrerequisiteObjects (app.prerequisites),
-        })
-        : Record.of (app) as Record<Wiki.Application>
-    )),
-    spec: e.spec && List.fromArray (e.spec),
+    // TODO: MAKE SURE THE FOLLOWING CAN BE DELETED
+    // applications: e.applications && List.fromArray (e.applications.map (
+    //   app => app.prerequisites
+    //     ? Record.of<Wiki.Application> ({
+    //       ...app,
+    //       prerequisites:
+    //         convertRawPrerequisiteObjects (app.prerequisites),
+    //     })
+    //     : Record.of (app) as Record<Wiki.Application>
+    // )),
+    // spec: e.spec && List.fromArray (e.spec),
     talent: e.talent && Tuple.of<string, number> (e.talent[0]) (e.talent[1]),
   });
 
