@@ -1,5 +1,6 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
 import * as log from 'electron-log';
+// tslint:disable-next-line:no-implicit-dependencies
 import { autoUpdater, UpdateInfo } from 'electron-updater';
 import * as fs from 'fs';
 import * as path from 'path';

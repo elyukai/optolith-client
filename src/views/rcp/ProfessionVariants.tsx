@@ -30,7 +30,7 @@ export function ProfessionVariants (props: ProfessionVariantsProps) {
       (profession => sex => sortObjects (
         profession .get ('mappedVariants') .map (variant => {
 
-          const name = profession .get ('name');
+          const name = variant .get ('name');
 
           const finalName = name instanceof Record ? name .get (sex) : name;
 

@@ -35,6 +35,10 @@ const prepareHerolist = (state: AppState, action: ReceiveInitialDataAction) => {
               const updatedHero = convertHero (hero);
               const heroInstance = getHeroInstance (state.wiki, key, updatedHero);
 
+              if (hero.name === 'ReworkTest#1') {
+                console.log (hero, updatedHero, heroInstance);
+              }
+
               const undoState = wrapWithHistoryObject (heroInstance);
 
               if (updatedHero.player) {
@@ -52,10 +56,10 @@ const prepareHerolist = (state: AppState, action: ReceiveInitialDataAction) => {
             },
             {
               heroes: OrderedMap.empty (),
-              users: OrderedMap.empty ()
+              users: OrderedMap.empty (),
             }
           )
-        ))
+        )),
     };
   }
 
@@ -80,7 +84,7 @@ const prepareImportedHero = (state: AppState, action: ReceiveImportedHeroAction)
         .modify<'users'> (OrderedMap.insert<string, User> (player.id) (player))
                          ('users')
         .modify<'heroes'> (OrderedMap.insert<string, UndoState<Hero>> (data.id) (undoState))
-                          ('heroes')
+                          ('heroes'),
     };
   }
   else {
@@ -90,7 +94,7 @@ const prepareImportedHero = (state: AppState, action: ReceiveImportedHeroAction)
       ...state,
       herolist: state.herolist
         .modify<'heroes'> (OrderedMap.insert<string, UndoState<Hero>> (data.id) (undoState))
-                          ('heroes')
+                          ('heroes'),
     };
   }
 };
@@ -98,7 +102,7 @@ const prepareImportedHero = (state: AppState, action: ReceiveImportedHeroAction)
 export function appPostReducer (
   state: AppState,
   action: Action,
-  previousState: AppState | undefined,
+  previousState: AppState | undefined
 ): AppState {
   switch (action.type) {
     case ActionTypes.RECEIVE_INITIAL_DATA:

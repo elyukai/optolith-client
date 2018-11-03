@@ -2,6 +2,7 @@ import * as R from 'ramda';
 import * as Data from '../types/data';
 import * as View from '../types/view';
 import * as Wiki from '../types/wiki';
+import { createAttributeDependent } from '../utils/createEntryUtils';
 import { createMaybeSelector } from '../utils/createMaybeSelector';
 import { Just, List, Maybe, Nothing, OrderedMap, Record, Tuple } from '../utils/dataUtils';
 import { flattenDependencies } from '../utils/flattenDependencies';
@@ -17,8 +18,9 @@ export const getAttributeSum = createMaybeSelector (
   getAttributes,
   R.pipe (
     Maybe.fmap (
-      OrderedMap.foldl<Record<Data.AttributeDependent>, number> (sum => e => sum + e.get ('value'))
-                                                                (0)
+      OrderedMap.foldl<Record<Data.AttributeDependent>, number> (sum => e =>
+                                                                  sum + e.get ('value') - 8)
+                                                                (64)
     ),
     Maybe.fromMaybe (0)
   )
@@ -78,35 +80,35 @@ export const getAttributesForView = createMaybeSelector (
   ) =>
     Maybe.fromMaybe<List<Record<View.AttributeWithRequirements>>> (List.of ()) (
       maybeHero.fmap (
-        hero => hero.get ('attributes').foldr<List<Record<View.AttributeWithRequirements>>> (
-          list => attribute => {
+        hero => wiki .get ('attributes').foldr<List<Record<View.AttributeWithRequirements>>> (
+          list => wikiEntry => {
+            const stateEntry =
+              Maybe.fromMaybe
+                (createAttributeDependent (wikiEntry .get ('id')))
+                (hero .get ('attributes') .lookup (wikiEntry .get ('id')));
+
             const max = getAttributeMaximum (
               startEl,
               currentEl,
               phase,
-              attribute.get ('mod'),
+              stateEntry .get ('mod'),
               attributeValueLimit
             );
 
             const min = getAttributeMinimum (
               wiki,
               hero,
-              attribute.get ('dependencies')
+              stateEntry .get ('dependencies')
             );
 
-            return Maybe.fromMaybe (list) (
-              wiki.get ('attributes').lookup (attribute.get ('id'))
-                .fmap (
-                  wikiAttribute => list.cons (
-                    attribute
-                      .merge (wikiAttribute)
-                      .merge (
-                        Record.ofMaybe<{ max?: number; min: number }> ({
-                          max,
-                          min,
-                        })
-                      )
-                  )
+            return list.cons (
+              stateEntry
+                .merge (wikiEntry)
+                .merge (
+                  Record.ofMaybe<{ max?: number; min: number }> ({
+                    max,
+                    min,
+                  })
                 )
             );
           }
@@ -125,17 +127,19 @@ export const getAttributesForSheet = createMaybeSelector (
   (maybeAttributes, wiki) =>
     Maybe.fromMaybe<List<Record<View.AttributeCombined>>> (List.of ()) (
       maybeAttributes.fmap (
-        R.pipe (
-          OrderedMap.elems,
-          Maybe.mapMaybe (
-            attribute => wiki.lookup (attribute.get ('id'))
-              .fmap (
-                wikiAttribute => attribute.merge (wikiAttribute)
-              )
-          )
+        stateAttributes =>
+          wiki
+            .elems ()
+            .map (
+              wikiEntry => wikiEntry
+                .merge (
+                  Maybe.fromMaybe
+                    (createAttributeDependent (wikiEntry .get ('id')))
+                    (stateAttributes .lookup (wikiEntry .get ('id')))
+                )
+            )
         )
       )
-    )
 );
 
 /**

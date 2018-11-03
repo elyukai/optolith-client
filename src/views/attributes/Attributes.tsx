@@ -62,6 +62,8 @@ export type AttributesProps = AttributesStateProps & AttributesDispatchProps & A
 export function Attributes (props: AttributesProps) {
   const { locale, isInCharacterCreation, maxTotalAttributeValues, sum } = props;
 
+  console.log (props);
+
   return (
     <Page id="attribute">
       <Scroll>

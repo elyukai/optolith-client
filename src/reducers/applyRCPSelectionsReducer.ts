@@ -7,7 +7,7 @@ import * as Wiki from '../types/wiki';
 import { getCombinedPrerequisites } from '../utils/activatableActivationUtils';
 import { getActiveObjectCore } from '../utils/activatableConvertUtils';
 import { isProfessionRequiringIncreasable } from '../utils/checkPrerequisiteUtils';
-import { createActivatableDependent, createActivatableDependentSkill } from '../utils/createEntryUtils';
+import { createActivatableDependent, createActivatableDependentSkill, createAttributeDependent } from '../utils/createEntryUtils';
 import { Just, List, Maybe, OrderedMap, OrderedSet, Record, Tuple } from '../utils/dataUtils';
 import { addDependencies } from '../utils/dependencyUtils';
 import { addAllStyleRelatedDependencies } from '../utils/ExtendedStyleUtils';
@@ -64,17 +64,30 @@ const concatBaseModifications = (action: SetSelectionsAction) => {
       state: race.get ('attributeAdjustments')
         .foldl<ConcatenatedModifications['state']> (
           accState => adjustment => accState.modify<'attributes'> (
-            attributes => attributes.adjust (
-              attr => attr.modify<'mod'> (mod => mod + Tuple.fst (adjustment)) ('mod')
-            ) (Tuple.snd (adjustment))
+            attributes => attributes
+              .alter
+                (R.pipe (
+                  Maybe.alt_ (Just (createAttributeDependent (Tuple.snd (adjustment)))),
+                  Maybe.fmap
+                    (Record.modify<Data.AttributeDependent, 'mod'> (R.add (Tuple.fst (adjustment)))
+                                                                   ('mod'))
+                ))
+                (Tuple.snd (adjustment))
           ) ('attributes')
         ) (acc.state)
         .modify<'attributes'> (
-          attributes => attributes.adjust (
-            attr => attr.modify<'mod'> (
-              R.add (Tuple.fst (race.get ('attributeAdjustmentsSelection')))
-            ) ('mod')
-          ) (action .payload .attributeAdjustment)
+          attributes => attributes
+            .alter
+              (R.pipe (
+                Maybe.alt_ (
+                  Just (createAttributeDependent (action .payload .attributeAdjustment))
+                ),
+                Maybe.fmap
+                  (Record.modify<Data.AttributeDependent, 'mod'>
+                    (R.add (Tuple.fst (race.get ('attributeAdjustmentsSelection'))))
+                    ('mod'))
+              ))
+              (action .payload .attributeAdjustment)
         ) ('attributes'),
     }),
 

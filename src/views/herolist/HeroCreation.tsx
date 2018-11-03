@@ -6,7 +6,7 @@ import { Hr } from '../../components/Hr';
 import { Scroll } from '../../components/Scroll';
 import { Option, SegmentedControls } from '../../components/SegmentedControls';
 import { TextField } from '../../components/TextField';
-import { InputTextEvent, Sex } from '../../types/data';
+import { Sex } from '../../types/data';
 import { UIMessagesObject } from '../../types/ui';
 import { Book, ExperienceLevel } from '../../types/wiki';
 import { List, Maybe, Nothing, OrderedMap, OrderedSet, Record } from '../../utils/dataUtils';
@@ -43,7 +43,7 @@ export class HeroCreation extends React.Component<HeroCreationProps, HeroCreatio
     el: Nothing (),
   };
 
-  changeName = (event: InputTextEvent) => this.setState (() => ({ name: event.target.value }));
+  changeName = (name: string) => this.setState (() => ({ name }));
   changeGender = (sex: Maybe<'m' | 'f'>) => this.setState (() => ({ sex }));
   changeEL = (el: Maybe<string>) => this.setState (() => ({ el }));
   create = () => {
@@ -120,7 +120,7 @@ export class HeroCreation extends React.Component<HeroCreationProps, HeroCreatio
         <TextField
           hint={translate (locale, 'herocreation.options.nameofhero')}
           value={this.state.name}
-          onChange={this.changeName}
+          onChangeString={this.changeName}
           fullWidth
           autoFocus
           />

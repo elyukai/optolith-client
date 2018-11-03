@@ -357,7 +357,7 @@ export class Selections extends React.Component<SelectionsProps, SelectionsState
                                                   (isAnyLanguageOrScriptSelected)
                                                   (this.setMotherTongue)
                 }
-                {buyScriptElement}
+                {Maybe.maybeToReactNode (buyScriptElement)}
                 {
                   getMainScriptSelectionElement (locale)
                                                 (wiki)

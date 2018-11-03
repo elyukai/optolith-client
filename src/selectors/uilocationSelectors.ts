@@ -226,18 +226,18 @@ export const getSubtabs = createMaybeSelector (
               label: translate (locale, 'titlebar.tabs.profession'),
             };
 
-            if (typeof raceId === 'string') {
-              return Just (List.of<SubTab> (
-                racesTab,
-                culturesTab
-              ));
-            }
-
-            if (typeof cultureId === 'string') {
+            if (Maybe.isJust (cultureId)) {
               return Just (List.of<SubTab> (
                 racesTab,
                 culturesTab,
                 professionsTab
+              ));
+            }
+
+            if (Maybe.isJust (raceId)) {
+              return Just (List.of<SubTab> (
+                racesTab,
+                culturesTab
               ));
             }
 

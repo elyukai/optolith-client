@@ -387,7 +387,7 @@ export const getCursesElementAndValidation =
   (cursesActive: OrderedMap<string, number>) =>
   (adjustCurse: (id: string) => (maybeOption: Maybe<'add' | 'remove'>) => void) =>
     professionSelections
-      .lookup (Wiki.ProfessionSelectionIds.LANGUAGES_SCRIPTS)
+      .lookup (Wiki.ProfessionSelectionIds.CURSES)
       .fmap (
         selection => {
           const value = selection .get ('value');

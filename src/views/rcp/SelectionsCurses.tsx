@@ -42,7 +42,11 @@ export function SelectionsCurses (props: SelectionsCursesProps) {
                 )}
                 <BorderButton
                   label="+"
-                  disabled={Maybe.isNothing (maybeValue) || apLeft <= 0}
+                  disabled={
+                    Maybe.isNothing (maybeValue)
+                    || apLeft <= 0
+                    || apLeft - obj .get ('ic') < 0
+                  }
                   onClick={() => change (id) (Just<'add'> ('add'))}
                   />
                 <BorderButton

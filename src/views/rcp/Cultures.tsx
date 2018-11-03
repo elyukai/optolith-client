@@ -96,13 +96,13 @@ export function Cultures (props: CulturesProps) {
               Maybe.fromMaybe<NonNullable<React.ReactNode>>
                 (<ListPlaceholder locale={locale} type="cultures" noResults />)
                 (cultures
-                  .bind (Maybe.ensure (R.pipe (List.null, R.not)))
+                  .bind<List<Record<CultureCombined>>> (Maybe.ensure (R.pipe (List.null, R.not)))
                   .fmap (R.pipe (
                     List.map (
                       culture => (
                         <CulturesListItem
                           {...props}
-                          key={culture.id}
+                          key={culture .get ('id')}
                           culture={culture}
                           />
                       )

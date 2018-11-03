@@ -102,7 +102,10 @@ export function SelectionsSkillSpecialization (props: SelectionsSkillSpecializat
   return (
     <div className="spec">
       <h4>
-        {translate (locale, 'rcpselections.labels.applicationforskillspecialization')} ({name})
+        {translate (locale, 'rcpselections.labels.applicationforskillspecialization')}
+        {' ('}
+        {Maybe.fromMaybe ('') (name)}
+        {')'}
       </h4>
       {Maybe.maybeToReactNode (selectSkillElement)}
       {Maybe.maybeToReactNode (selectionElement)}

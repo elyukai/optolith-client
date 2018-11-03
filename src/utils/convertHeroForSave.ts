@@ -18,7 +18,7 @@ const getAttributesForSave = (hero: Record<Data.HeroDependent>) =>
     lp: hero.get ('energies').get ('addedLifePoints'),
     permanentAE: hero.get ('energies').get ('permanentArcaneEnergyPoints').toObject (),
     permanentKP: hero.get ('energies').get ('permanentKarmaPoints').toObject (),
-    permanentLP: hero.get ('energies').get ('permanentLifePoints').toObject ()
+    permanentLP: hero.get ('energies').get ('permanentLifePoints').toObject (),
   });
 
 const getActivatablesForSave = (hero: Record<Data.HeroDependent>) =>
@@ -36,7 +36,7 @@ const getActivatablesForSave = (hero: Record<Data.HeroDependent>) =>
 
 const getValuesForSave = <T extends HeroStateMapKey>(
   sliceKey: T,
-  testFn: (obj: OrderedMapValueElement<Data.HeroDependent[T]>) => boolean,
+  testFn: (obj: OrderedMapValueElement<Data.HeroDependent[T]>) => boolean
 ) =>
   (hero: Record<Data.HeroDependent>) =>
     (hero.get (sliceKey) as OrderedMap<string, Data.ExtendedSkillDependent>)
@@ -60,12 +60,12 @@ const getSkillsForSave = getValuesForSave (
 
 const getCombatTechniquesForSave = getValuesForSave (
   'combatTechniques',
-  obj => obj.get ('value') > 6,
+  obj => obj.get ('value') > 6
 );
 
 const getSpellsForSave = getValuesForSave (
   'spells',
-  obj => obj.get ('active'),
+  obj => obj.get ('active')
 );
 
 const getCantripsForSave =
@@ -73,7 +73,7 @@ const getCantripsForSave =
 
 const getLiturgicalChantsForSave = getValuesForSave (
   'liturgicalChants',
-  obj => obj.get ('active'),
+  obj => obj.get ('active')
 );
 
 const getBlessingsForSave =
@@ -98,9 +98,9 @@ const getBelongingsForSave = (hero: Record<Data.HeroDependent>) =>
               ...damageBonus.toObject (),
               threshold: damageBonus.get ('threshold') instanceof List
                 ? (damageBonus.get ('threshold') as List<number>).toArray ()
-                : (damageBonus.get ('threshold') as number)
+                : (damageBonus.get ('threshold') as number),
             },
-            range: range ? range.toArray () as [number, number, number] : undefined
+            range: range ? range.toArray () as [number, number, number] : undefined,
           };
         }
       ),
@@ -173,9 +173,9 @@ export const convertHeroForSave = (wiki: Record<WikiAll>) =>
           belongings: getBelongingsForSave (hero),
           rules: {
             ...rules.toObject (),
-            enabledRuleBooks: [...rules.get ('enabledRuleBooks')]
+            enabledRuleBooks: [...rules.get ('enabledRuleBooks')],
           },
-          pets: getPetsForSave (hero)
+          pets: getPetsForSave (hero),
         };
 
         return obj;
