@@ -178,6 +178,16 @@ test('adjust', () => {
     .toBeTruthy();
 });
 
+test('OrderedMap.adjust', () => {
+  const map = OrderedMap.of ([[1, 'a'], [2, 'b'], [3, 'c']]);
+
+  expect (OrderedMap.adjust (x => x + 'd') (3) (map))
+    .toEqual (OrderedMap.of ([[1, 'a'], [2, 'b'], [3, 'cd']]));
+
+  expect (OrderedMap.adjust (x => x + 'd') (4) (map) === map)
+    .toBeTruthy ();
+});
+
 test('adjustWithKey', () => {
   const map = OrderedMap.of([[1, 'a'],[2, 'b'],[3, 'c']]);
 

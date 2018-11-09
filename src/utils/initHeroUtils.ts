@@ -130,11 +130,11 @@ const getAttributes = (
 ): (OrderedMap<string, Record<Data.AttributeDependent>>) =>
   OrderedMap.of (
     hero.attr.values.map<[string, Record<Data.AttributeDependent>]> (
-      ([id, value, mod]) => [
+      ({ id, value }) => [
         id,
         CreateDependencyObjectUtils.createAttributeDependent (
           id,
-          { value, mod }
+          { value }
         ),
       ]
     )
@@ -296,6 +296,7 @@ export const getHeroInstance = (
     ...getDates (hero),
     ...getActivatables (hero),
     attributes: getAttributes (hero),
+    attributeAdjustmentSelected: hero.attr.attributeAdjustmentSelected,
     energies: getEnergies (hero),
     skills: getSkills (hero),
     combatTechniques: getCombatTechniques (hero),
@@ -422,6 +423,7 @@ export const getInitialHeroObject = (
     disadvantages: OrderedMap.empty (),
     specialAbilities: OrderedMap.empty (),
     attributes: OrderedMap.empty (),
+    attributeAdjustmentSelected: 'ATTR_1',
     energies: Record.of ({
       addedArcaneEnergyPoints: 0,
       addedKarmaPoints: 0,

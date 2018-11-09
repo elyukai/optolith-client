@@ -183,6 +183,70 @@ export const adjustHeroSlice = <K extends HeroStateListKey>(
   return state.alter (adjustFn) (key);
 };
 
+/**
+ * `alterStateEntry :: Dependent a => (String -> a) -> (a -> Maybe a) ->
+(a -> Bool) -> String -> OrderedMap String a`
+ *
+ * `alterStateEntry altFn adjustFn checkUnusedFn id map` adjusts a entry from a
+ * state slice (`map`). If the entry is not present, `altFn` will be called with
+ * the given `id`. `adjustFn` will then be called either on the already present
+ * or created object. If `checkUnusedFn` returns the adjusted entry is unused,
+ * this function will remove the entry from the state slice.
+ */
+export const alterStateEntry =
+  <D extends Dependent>(altFn: (id: string) => D) =>
+  (adjustFn: (value: D) => D) =>
+  (checkUnusedFn: (value: D) => boolean) =>
+  (id: string) =>
+  (map: OrderedMap<string, D>): OrderedMap<string, D> =>
+    map .alter
+      (
+        R.pipe (
+          Maybe.fromMaybe (altFn (id)),
+          adjustFn,
+          Maybe.ensure<D> (R.pipe (checkUnusedFn, R.not))
+        )
+      )
+      (id);
+
+/**
+ * `adjustMaybeStateEntry :: Dependent a => (String -> a) -> (a -> Maybe a) ->
+String -> OrderedMap String a`
+ *
+ * `alterStateEntry altFn adjustFn id map` adjusts a entry from a
+ * state slice (`map`). If the entry is not present, `altFn` will be called with
+ * the given `id`. `adjustFn` will then be called either on the already present
+ * or created object.
+ */
+export const adjustMaybeStateEntry =
+  <D extends Dependent>(altFn: (id: string) => D) =>
+  (adjustFn: (value: D) => D) =>
+    alterStateEntry (altFn) (adjustFn) (() => false);
+
+/**
+ * `updateStateEntry :: Dependent a => (a -> Maybe a) ->
+(a -> Bool) -> String -> OrderedMap String a`
+ *
+ * `updateStateEntry adjustFn checkUnusedFn id map` adjusts a entry from a
+ * state slice (`map`). If the entry is not present, this function will return
+ * the original map. `adjustFn` will then be called on the already present
+ * object. If `checkUnusedFn` returns the adjusted entry is unused, this
+ * function will remove the entry from the state slice.
+ */
+export const updateStateEntry =
+  <D extends Dependent>(adjustFn: (value: D) => D) =>
+  (checkUnusedFn: (value: D) => boolean) =>
+  (id: string) =>
+  (map: OrderedMap<string, D>): OrderedMap<string, D> =>
+    map .update
+      (
+        R.pipe (
+          adjustFn,
+          Maybe.ensure<D> (R.pipe (checkUnusedFn, R.not))
+        )
+      )
+      (id);
+
 export const adjustHeroListStateItemOr =
   <D extends Dependent>(
     createFn: (id: string) => D,

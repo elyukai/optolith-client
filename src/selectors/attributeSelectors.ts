@@ -12,7 +12,7 @@ import { getCurrentEl, getStartEl } from './elSelectors';
 import { getBlessedTraditionFromState } from './liturgicalChantsSelectors';
 import { getCurrentRace } from './rcpSelectors';
 import { getMagicalTraditionsFromState } from './spellsSelectors';
-import { getAttributes, getAttributeValueLimit, getCurrentHeroPresent, getPhase, getWiki, getWikiAttributes } from './stateSelectors';
+import { getAttributes, getAttributeValueLimit, getCurrentAttributeAdjustmentId, getCurrentHeroPresent, getPhase, getWiki, getWikiAttributes } from './stateSelectors';
 
 export const getAttributeSum = createMaybeSelector (
   getAttributes,
@@ -29,18 +29,49 @@ export const getAttributeSum = createMaybeSelector (
 const justTrue = Just (true);
 const lastPhase = Just (3);
 
+const getModIfSelectedAdjustment = (id: string) =>
+  (race: Record<Wiki.Race>) =>
+    R.pipe
+      (
+        Record.get<Wiki.Race, 'attributeAdjustmentsSelection'> ('attributeAdjustmentsSelection'),
+        Tuple.snd,
+        Maybe.ensure (List.elem (id)),
+        Maybe.mapReplace (Tuple.fst (race .get ('attributeAdjustmentsSelection'))),
+        Maybe.fromMaybe (0)
+      )
+      (race);
+
+const getModIfStaticAdjustment = (id: string) => R.pipe (
+  Record.get<Wiki.Race, 'attributeAdjustments'> ('attributeAdjustments'),
+  List.lookup (id),
+  Maybe.fromMaybe (0)
+);
+
 const getAttributeMaximum = (
+  id: string,
+  maybeRace: Maybe<Record<Wiki.Race>>,
+  adjustmentId: string,
   startEl: Maybe<Record<Wiki.ExperienceLevel>>,
   currentEl: Maybe<Record<Wiki.ExperienceLevel>>,
   phase: Maybe<number>,
-  mod: number,
   attributeValueLimit: Maybe<boolean>
 ): Maybe<number> => {
-  if (phase.lt (lastPhase)) {
-    return startEl.fmap (el => el.get ('maxAttributeValue') + mod);
+  if (phase .lt (lastPhase)) {
+    if (Maybe.isJust (maybeRace)) {
+      const race = Maybe.fromJust (maybeRace);
+      const selectedAdjustment = adjustmentId === id ? getModIfSelectedAdjustment (id) (race) : 0;
+      const staticAdjustment = getModIfStaticAdjustment (id) (race);
+
+      return startEl
+        .fmap (
+          el => el.get ('maxAttributeValue') + selectedAdjustment + staticAdjustment
+        );
+    }
+
+    return Just (0);
   }
-  else if (attributeValueLimit.equals (justTrue)) {
-    return currentEl.fmap (el => el.get ('maxAttributeValue') + 2);
+  else if (attributeValueLimit .equals (justTrue)) {
+    return currentEl .fmap (el => el.get ('maxAttributeValue') + 2);
   }
 
   return Nothing ();
@@ -88,10 +119,12 @@ export const getAttributesForView = createMaybeSelector (
                 (hero .get ('attributes') .lookup (wikiEntry .get ('id')));
 
             const max = getAttributeMaximum (
+              wikiEntry .get ('id'),
+              hero .lookup ('race') .bind (OrderedMap.lookup_ (wiki .get ('races'))),
+              hero .get ('attributeAdjustmentSelected'),
               startEl,
               currentEl,
               phase,
-              stateEntry .get ('mod'),
               attributeValueLimit
             );
 
@@ -326,26 +359,17 @@ export const getAdjustmentValue = createMaybeSelector (
   Maybe.fmap (race => Tuple.fst (race.get ('attributeAdjustmentsSelection')))
 );
 
-export const getCurrentAdjustmentAttribute = createMaybeSelector (
-  getAdjustmentValue,
+export const getCurrentAttributeAdjustment = createMaybeSelector (
   getAttributesForView,
-  (maybeAdjustmentValue, attributesCalculated) => maybeAdjustmentValue.bind (
-    adjustmentValue => attributesCalculated.find (
-      attribute => attribute.get ('mod') === adjustmentValue
-    )
-  )
-);
-
-export const getCurrentAdjustmentId = createMaybeSelector (
-  getCurrentAdjustmentAttribute,
-  Maybe.fmap (attribute => attribute.get ('id'))
+  getCurrentAttributeAdjustmentId,
+  (attributes, maybeId) => maybeId .bind (id => attributes .find (e => e .get ('id') === id))
 );
 
 export const getAvailableAdjustmentIds = createMaybeSelector (
   getCurrentRace,
   getAdjustmentValue,
   getAttributesForView,
-  getCurrentAdjustmentAttribute,
+  getCurrentAttributeAdjustment,
   (maybeRace, maybeAdjustmentValue, attributesCalculated, maybeCurrentAttribute) =>
     maybeRace.fmap (race => Tuple.snd (race.get ('attributeAdjustmentsSelection')))
       .fmap<List<string>> (

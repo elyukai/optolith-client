@@ -3,11 +3,11 @@ import { Action, Dispatch } from 'redux';
 import * as AttributesActions from '../actions/AttributesActions';
 import * as SubwindowsActions from '../actions/SubwindowsActions';
 import { AppState } from '../reducers/appReducer';
-import { getAdjustmentValue, getAttributesForView, getAttributeSum, getAvailableAdjustmentIds, getCurrentAdjustmentId } from '../selectors/attributeSelectors';
+import { getAdjustmentValue, getAttributesForView, getAttributeSum, getAvailableAdjustmentIds } from '../selectors/attributeSelectors';
 import { getDerivedCharacteristics } from '../selectors/derivedCharacteristicsSelectors';
 import { getMaxTotalAttributeValues } from '../selectors/elSelectors';
 import { getIsInCharacterCreation, getIsRemovingEnabled } from '../selectors/phaseSelectors';
-import { getAddPermanentEnergy, getEditPermanentEnergy } from '../selectors/stateSelectors';
+import { getAddPermanentEnergy, getCurrentAttributeAdjustmentId, getEditPermanentEnergy } from '../selectors/stateSelectors';
 import { Maybe } from '../utils/dataUtils';
 import { Attributes, AttributesDispatchProps, AttributesOwnProps, AttributesStateProps } from '../views/attributes/Attributes';
 
@@ -15,7 +15,7 @@ const mapStateToProps = (state: AppState, ownProps: AttributesOwnProps): Attribu
   adjustmentValue: getAdjustmentValue (state),
   attributes: getAttributesForView (state),
   availableAttributeIds: getAvailableAdjustmentIds (state),
-  currentAttributeId: getCurrentAdjustmentId (state),
+  currentAttributeId: getCurrentAttributeAdjustmentId (state),
   isInCharacterCreation: getIsInCharacterCreation (state),
   isRemovingEnabled: getIsRemovingEnabled (state),
   derived: getDerivedCharacteristics (state, ownProps),

@@ -514,14 +514,14 @@ const convertLowerThan0_49_5 = (hero: RawHero): RawHero => {
     'SA_498': { id: 'SA_428' },
     'SA_499': { id: 'SA_429' },
     'SA_500': { id: 'SA_430' },
-    'SA_501': { id: 'SA_431' }
+    'SA_501': { id: 'SA_431' },
   };
 
   const updateObjects = (list: ActiveObject[], sid?: string | number, tier?: number) => {
     return [...list].map (e => ({
       ...e,
       sid: sid === undefined ? e.sid : sid,
-      tier: tier === undefined || e.tier && e.tier > tier ? e.tier : tier
+      tier: tier === undefined || e.tier && e.tier > tier ? e.tier : tier,
     }));
   };
 
@@ -544,7 +544,7 @@ const convertLowerThan0_49_5 = (hero: RawHero): RawHero => {
     entry.belongings.items[id] = {
       ...item,
       // @ts-ignore
-      damageBonus: { value: item.damageBonus as number }
+      damageBonus: { value: item.damageBonus as number },
     };
   }
 
@@ -611,7 +611,7 @@ const convertLowerThanOrEqual0_51_0 = (hero: RawHero): RawHero => {
   entry.rules = {
     ...entry.rules,
     enableAllRuleBooks: true,
-    enabledRuleBooks: []
+    enabledRuleBooks: [],
   };
 
   entry.clientVersion = '0.51.1';
@@ -632,7 +632,7 @@ const convertLowerThanOrEqual0_51_2 = (hero: RawHero): RawHero => {
     const { SA_255: arr, ...other } = entry.activatable;
     entry.activatable = {
       ...other,
-      SA_243: arr
+      SA_243: arr,
     };
   }
 
@@ -648,7 +648,7 @@ const convertLowerThanOrEqual0_51_3 = (hero: RawHero): RawHero => {
   if (entry.activatable.hasOwnProperty ('SA_344')) {
     entry.activatable = {
       ...entry.activatable,
-      SA_344: [{ sid: 'CT_3' }]
+      SA_344: [{ sid: 'CT_3' }],
     };
   }
 
@@ -657,13 +657,13 @@ const convertLowerThanOrEqual0_51_3 = (hero: RawHero): RawHero => {
     if (Array.isArray (arr)) {
       entry.activatable = {
         ...other,
-        SA_344: [...arr, { sid: 'CT_12' }]
+        SA_344: [...arr, { sid: 'CT_12' }],
       };
     }
     else {
       entry.activatable = {
         ...other,
-        SA_344: [{ sid: 'CT_12' }]
+        SA_344: [{ sid: 'CT_12' }],
       };
     }
   }
@@ -673,13 +673,13 @@ const convertLowerThanOrEqual0_51_3 = (hero: RawHero): RawHero => {
     if (Array.isArray (arr)) {
       entry.activatable = {
         ...other,
-        SA_344: [...arr, { sid: 'CT_16' }]
+        SA_344: [...arr, { sid: 'CT_16' }],
       };
     }
     else {
       entry.activatable = {
         ...other,
-        SA_344: [{ sid: 'CT_16' }]
+        SA_344: [{ sid: 'CT_16' }],
       };
     }
   }
@@ -734,7 +734,7 @@ const convertLowerThanOrEqual0_51_3 = (hero: RawHero): RawHero => {
         }
 
         return e;
-      })
+      }),
     };
   }
 
@@ -776,13 +776,17 @@ const convertLowerThan1_0_2 = (hero: RawHero): RawHero => {
     adjValue = -2;
   }
 
+  // @ts-ignore
   let index = entry.attr.values.findIndex (e => e[2] === adjValue);
 
   if (index === -1) {
+    // @ts-ignore
     index = entry.attr.values.findIndex (e => e[2] !== 0);
   }
 
+  // @ts-ignore
   entry.attr.values = entry.attr.values.map ((e, i) => {
+    // @ts-ignore
     const inter = [...e] as [string, number, number];
     inter[2] = i === index ? adjValue : 0;
 
@@ -792,6 +796,36 @@ const convertLowerThan1_0_2 = (hero: RawHero): RawHero => {
   entry.clientVersion = '1.0.2';
 
   return entry;
+};
+
+// tslint:disable-next-line:variable-name
+const convertLowerThan1_1_0_Alpha_1 = (hero: RawHero): RawHero => {
+  return {
+    ...hero,
+    attr: {
+      ...hero.attr,
+      // @ts-ignore
+      values: hero .attr .values .map (e => ({ id: e[0], value: e[1] })),
+      attributeAdjustmentSelected: ['R_1', 'R_3'] .includes (hero .r!)
+        ? hero .attr .values .reduce (
+          // @ts-ignore
+          (acc, e) => e[2] === 1 ? e[0] : acc,
+          'ATTR_1'
+        )
+        : hero .r === 'R_2'
+        ? hero .attr .values .reduce (
+          // @ts-ignore
+          (acc, e) => e[0] === 'ATTR_2' && e[2] === 1 ? e[0] : acc,
+          'ATTR_8'
+        )
+        : hero .attr .values .reduce (
+          // @ts-ignore
+          (acc, e) => e[0] === 'ATTR_4' && e[2] === 1 ? e[0] : acc,
+          'ATTR_6'
+        ),
+    },
+    clientVersion: '1.1.0-alpha.1',
+  };
 };
 
 export const convertHero = (hero: RawHero): RawHero => {
@@ -822,6 +856,11 @@ export const convertHero = (hero: RawHero): RawHero => {
 
   if (satisfies (entry.clientVersion, '< 1.0.2')) {
     entry = convertLowerThan1_0_2 (entry);
+  }
+
+  if (satisfies (entry.clientVersion, '< 1.1.0-alpha.1')) {
+    console.log (`${entry.clientVersion} < 1.1.0-alpha.1 working`);
+    entry = convertLowerThan1_1_0_Alpha_1 (entry);
   }
 
   return entry;

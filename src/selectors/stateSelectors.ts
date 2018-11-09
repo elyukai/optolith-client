@@ -55,6 +55,9 @@ export const getAdvantages = (state: AppState) =>
 export const getAttributes = (state: AppState) =>
   getCurrentHero (state).fmap (just => just.present.get ('attributes'));
 
+export const getCurrentAttributeAdjustmentId = (state: AppState) =>
+  getCurrentHero (state).fmap (just => just.present.get ('attributeAdjustmentSelected'));
+
 export const getBlessings = (state: AppState) =>
   getCurrentHero (state).fmap (just => just.present.get ('blessings'));
 

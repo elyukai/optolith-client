@@ -29,3 +29,17 @@ interface DivideBy {
 }
 
 export const divideBy = R.flip (R.divide) as DivideBy;
+
+/**
+ * `even :: Integral a => a -> Bool`
+ *
+ * Checks if a number is even.
+ */
+export const even = (x: number) => x % 2 === 0;
+
+/**
+ * `odd :: Integral a => a -> Bool`
+ *
+ * Checks if a number is odd.
+ */
+export const odd = (x: number) => x % 2 !== 0;

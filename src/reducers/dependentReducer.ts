@@ -1,4 +1,3 @@
-import * as R from 'ramda';
 import * as AttributesActions from '../actions/AttributesActions';
 import * as CombatTechniquesActions from '../actions/CombatTechniquesActions';
 import * as DisAdvActions from '../actions/DisAdvActions';
@@ -12,7 +11,6 @@ import * as Data from '../types/data';
 import { Record } from '../utils/dataUtils';
 import { activatableReducer } from './activatableReducer';
 import { increasableReducer } from './increasableReducer';
-
 type Action =
   AttributesActions.AddAttributePointAction |
   AttributesActions.RemoveAttributePointAction |
@@ -75,25 +73,8 @@ export function dependentReducer (
     case ActionTypes.SET_SPECIALABILITY_TIER:
       return activatableReducer (state, action);
 
-    case ActionTypes.SET_ATTRIBUTE_ADJUSTMENT_SELECTION_ID: {
-      const { current, next, value } = action.payload;
-
-      const setItem = (id: string, remove?: boolean) =>
-        (updatedState: Record<Data.HeroDependent>) =>
-          updatedState.modify<'attributes'> (
-            attributes => attributes.adjust (
-              entry => entry.modify<'mod'> (remove ? R.flip (R.subtract) (value) : R.add (value))
-                                           ('mod')
-            ) (id)
-          ) ('attributes');
-
-      const setMods = R.pipe (
-        setItem (current, true),
-        setItem (next),
-      );
-
-      return setMods (state);
-    }
+    case ActionTypes.SET_ATTRIBUTE_ADJUSTMENT_SELECTION_ID:
+      return state .insert ('attributeAdjustmentSelected') (action.payload.id);
 
     default:
       return state;

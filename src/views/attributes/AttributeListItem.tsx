@@ -1,3 +1,4 @@
+import * as R from 'ramda';
 import * as React from 'react';
 import { IconButton } from '../../components/IconButton';
 import { NumberBox } from '../../components/NumberBox';
@@ -50,7 +51,7 @@ export class AttributeListItem extends React.Component<AttributeListItemProps, {
           onClick={this.props.addPoint.bind (null, id)}
           disabled={
             isInCharacterCreation && sum >= Maybe.fromMaybe (0) (maxTotalAttributeValues)
-            || typeof max === 'number' && value >= max
+            || Maybe.elem (true) (max .fmap (R.gte (value)))
           }
           />
         {isRemovingEnabled && <IconButton

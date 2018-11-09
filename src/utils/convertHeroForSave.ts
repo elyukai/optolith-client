@@ -8,11 +8,12 @@ import { HeroStateMapKey } from './heroStateUtils';
 import { UndoState } from './undo';
 import { currentVersion } from './VersionUtils';
 
-const getAttributesForSave = (hero: Record<Data.HeroDependent>) =>
+const getAttributesForSave = (hero: Record<Data.HeroDependent>): Raw.RawHero['attr'] =>
   ({
-    values: hero.get ('attributes').foldl<[string, number, number][]> (
-      acc => e => [...acc, [e.get ('id'), e.get ('value'), e.get ('mod')]]
+    values: hero.get ('attributes').foldl<{ id: string; value: number }[]> (
+      acc => e => [...acc, { id: e.get ('id'), value: e.get ('value') }]
     ) ([]),
+    attributeAdjustmentSelected: hero .get ('attributeAdjustmentSelected'),
     ae: hero.get ('energies').get ('addedArcaneEnergyPoints'),
     kp: hero.get ('energies').get ('addedKarmaPoints'),
     lp: hero.get ('energies').get ('addedLifePoints'),

@@ -151,7 +151,7 @@ export interface Race {
   readonly spi: number;
   readonly tou: number;
   readonly mov: number;
-  readonly attributeAdjustments: List<Tuple<number, string>>;
+  readonly attributeAdjustments: List<Tuple<string, number>>;
   readonly attributeAdjustmentsSelection: Tuple<number, List<string>>;
   readonly attributeAdjustmentsText: string;
   readonly commonCultures: List<string>;

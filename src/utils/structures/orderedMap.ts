@@ -305,6 +305,24 @@ export class OrderedMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
   }
 
   /**
+   * `adjust :: Ord k => (a -> a) -> k -> Map k a -> Map k a`
+   *
+   * Update a value at a specific key with the result of the provided function.
+   * When the key is not a member of the map, the original map is returned.
+   */
+  static adjust<K, A> (
+    fn: (value: A) => A
+  ): (key: K) => (map: OrderedMap<K, A>) => OrderedMap<K, A> {
+    return key => map => {
+      const entry = map.lookup (key);
+
+      return Maybe.isJust (entry)
+        ? OrderedMap.of ([...map.value, [key, fn (Maybe.fromJust (entry))]])
+        : map;
+    };
+  }
+
+  /**
    * `adjustWithKey :: Ord k => (k -> a -> a) -> k -> Map k a -> Map k a`
    *
    * Adjust a value at a specific key. When the key is not a member of the map,

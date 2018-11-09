@@ -46,7 +46,8 @@ export interface RawHero {
   };
   readonly activatable: StringKeyObject<RawActiveObject[]>;
   readonly attr: {
-    values: [string, number, number][];
+    values: { id: string; value: number }[];
+    readonly attributeAdjustmentSelected: string;
     lp: number;
     ae: number;
     kp: number;

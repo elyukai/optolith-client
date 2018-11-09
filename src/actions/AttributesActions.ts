@@ -1,6 +1,5 @@
 import { ActionTypes } from '../constants/ActionTypes';
 import { getAvailableAdventurePoints } from '../selectors/adventurePointsSelectors';
-import { getAdjustmentValue, getCurrentAdjustmentId } from '../selectors/attributeSelectors';
 import { getIsInCharacterCreation } from '../selectors/phaseSelectors';
 import { getAddedArcaneEnergyPoints, getAddedKarmaPoints, getAddedLifePoints, getAttributes, getWikiAttributes } from '../selectors/stateSelectors';
 import { AsyncAction } from '../types/actions';
@@ -342,24 +341,13 @@ export const addLostKPPoints = (value: number): AddLostKPPointsAction => ({
 export interface SetAdjustmentIdAction {
   type: ActionTypes.SET_ATTRIBUTE_ADJUSTMENT_SELECTION_ID;
   payload: {
-    current: string;
-    next: string;
-    value: number;
+    id: string;
   };
 }
 
-export const setAdjustmentId = (id: string): AsyncAction => (dispatch, getState) => {
-  const current = getCurrentAdjustmentId (getState ());
-  const value = getAdjustmentValue (getState ());
-
-  if (Maybe.isJust (current) && Maybe.isJust (value)) {
-    dispatch<SetAdjustmentIdAction> ({
-      type: ActionTypes.SET_ATTRIBUTE_ADJUSTMENT_SELECTION_ID,
-      payload: {
-        current: Maybe.fromJust (current),
-        next: id,
-        value: Maybe.fromJust (value),
-      },
-    });
-  }
-};
+export const setAdjustmentId = (id: string): SetAdjustmentIdAction => ({
+  type: ActionTypes.SET_ATTRIBUTE_ADJUSTMENT_SELECTION_ID,
+  payload: {
+    id,
+  },
+});

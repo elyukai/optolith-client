@@ -388,6 +388,13 @@ test('lookup', () => {
     .toEqual(Nothing());
 });
 
+test('List.lookup', () => {
+  expect (List.lookup (1) (List.of (Tuple.of (1) ('a'), Tuple.of (2) ('b'))))
+    .toEqual (Just ('a'));
+  expect (List.lookup (3) (List.of (Tuple.of (1) ('a'), Tuple.of (2) ('b'))))
+    .toEqual (Nothing ());
+});
+
 test('find', () => {
   expect(List.of('one', 'two', 'three').find(e => /t/.test(e)))
     .toEqual(Just('two'));

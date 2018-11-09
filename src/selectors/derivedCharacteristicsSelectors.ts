@@ -1,7 +1,7 @@
 import * as R from 'ramda';
-import { AttributeDependent, Energy, EnergyWithLoss, SecondaryAttribute } from '../types/data';
-import { Race } from '../types/wiki';
+import { Energy, EnergyWithLoss, SecondaryAttribute } from '../types/data';
 import { getModifierByActiveLevel, getModifierByIsActive } from '../utils/activatableModifierUtils';
+import { getAttributeValueWithDefault } from '../utils/AttributeUtils';
 import { createMaybeSelector } from '../utils/createMaybeSelector';
 import { Just, List, Maybe, OrderedMap, OrderedSet, Record, Tuple } from '../utils/dataUtils';
 import { translate } from '../utils/I18n';
@@ -17,6 +17,10 @@ import { getAddedArcaneEnergyPoints, getAddedKarmaPoints, getAddedLifePoints, ge
 export type DCIds = 'LP' | 'AE' | 'KP' | 'SPI' | 'TOU' | 'DO' | 'INI' | 'MOV' | 'WT';
 export type DCIdsWithoutWT = 'LP' | 'AE' | 'KP' | 'SPI' | 'TOU' | 'DO' | 'INI' | 'MOV';
 
+const divideByXAndRound = (x: number) => (a: number) => Math.round (a / x);
+const divideBy2AndRound = divideByXAndRound (2);
+const divideBy6AndRound = divideByXAndRound (6);
+
 export const getLP = createMaybeSelector (
   getCurrentRace,
   mapGetToMaybeSlice (getAttributes, 'ATTR_7'),
@@ -27,10 +31,8 @@ export const getLP = createMaybeSelector (
   getLocaleAsProp,
   (currentRace, maybeCon, permanentLifePoints, maybeIncrease, maybeDecrease, add, locale) => {
     const base = Maybe.fromMaybe (0) (
-      currentRace.bind (
-        race => maybeCon.fmap (
-          con => race.get ('lp') + con.get ('value') * 2
-        )
+      currentRace.fmap (
+        race => race.get ('lp') + getAttributeValueWithDefault (maybeCon) * 2
       )
     );
 
@@ -186,15 +188,12 @@ export const getSPI = createMaybeSelector (
   mapGetToMaybeSlice (getDisadvantages, 'DISADV_29'),
   getLocaleAsProp,
   (maybeCurrentRace, maybeCou, maybeSgc, maybeInt, maybeIncrease, maybeDecrease, locale) => {
-    const maybeBase = maybeCurrentRace.bind (
-      race => maybeCou.bind (
-        cou => maybeSgc.bind (
-          sgr => maybeInt.fmap (
-            int => race.get ('spi')
-              + Math.round ((cou.get ('value') + sgr.get ('value') + int.get ('value')) / 6)
-          )
+    const maybeBase = maybeCurrentRace.fmap (
+      race =>
+        race.get ('spi') + divideBy6AndRound (
+          List.of (maybeCou, maybeSgc, maybeInt)
+            .foldl<number> (acc => e => acc + getAttributeValueWithDefault (e)) (0)
         )
-      )
     );
 
     const mod = getModifierByIsActive (maybeIncrease) (maybeDecrease) (Just (0));
@@ -213,13 +212,6 @@ export const getSPI = createMaybeSelector (
   }
 );
 
-const getTOUBase = (
-  (race: Record<Race>) =>
-    (con: Record<AttributeDependent>) =>
-      (str: Record<AttributeDependent>) =>
-        race.get ('tou') + Math.round ((con.get ('value') * 2 + str.get ('value')) / 6)
-);
-
 export const getTOU = createMaybeSelector (
   getCurrentRace,
   mapGetToMaybeSlice (getAttributes, 'ATTR_7'),
@@ -228,10 +220,13 @@ export const getTOU = createMaybeSelector (
   mapGetToMaybeSlice (getDisadvantages, 'DISADV_30'),
   getLocaleAsProp,
   (maybeCurrentRace, maybeCon, maybeStr, maybeIncrease, maybeDecrease, locale) => {
-    const maybeBase = Maybe.liftM3 (getTOUBase)
-                                   (maybeCurrentRace)
-                                   (maybeCon)
-                                   (maybeStr);
+    const maybeBase = maybeCurrentRace
+      .fmap (
+        race => race .get ('tou')
+          + divideBy6AndRound (
+            getAttributeValueWithDefault (maybeCon) * 2 + getAttributeValueWithDefault (maybeStr)
+          )
+      );
 
     const mod = getModifierByIsActive (maybeIncrease)
                                       (maybeDecrease)
@@ -256,7 +251,7 @@ export const getDO = createMaybeSelector (
   mapGetToMaybeSlice (getSpecialAbilities, 'SA_64'),
   getLocaleAsProp,
   (maybeAgi, maybeImprovedDodge, locale) => {
-    const maybeBase = maybeAgi.fmap (agi => Math.round (agi.get ('value') / 2));
+    const base = divideBy2AndRound (getAttributeValueWithDefault (maybeAgi));
 
     const mod =
       maybeImprovedDodge
@@ -264,24 +259,18 @@ export const getDO = createMaybeSelector (
         .bind (Maybe.listToMaybe)
         .bind (obj => obj.lookup ('tier'));
 
-    const value = Maybe.liftM2<number, number, number> (R.add) (maybeBase) (mod);
+    const value = base + Maybe.fromMaybe (0) (mod);
 
     return Record.ofMaybe<SecondaryAttribute<'DO'>> ({
       calc: translate (locale, 'secondaryattributes.do.calc'),
       id: 'DO',
       name: translate (locale, 'secondaryattributes.do.name'),
       short: translate (locale, 'secondaryattributes.do.short'),
-      base: Maybe.fromMaybe (0) (maybeBase),
+      base,
       mod,
       value,
     });
   }
-);
-
-const getINIBase = (
-  (cou: Record<AttributeDependent>) =>
-    (agi: Record<AttributeDependent>) =>
-      Math.round ((cou.get ('value') + agi.get ('value')) / 2)
 );
 
 export const getINI = createMaybeSelector (
@@ -290,9 +279,9 @@ export const getINI = createMaybeSelector (
   mapGetToMaybeSlice (getSpecialAbilities, 'SA_51'),
   getLocaleAsProp,
   (maybeCou, maybeAgi, maybeCombatReflexes, locale) => {
-    const maybeBase = Maybe.liftM2 (getINIBase)
-                                   (maybeCou)
-                                   (maybeAgi);
+    const base = divideBy2AndRound (
+      getAttributeValueWithDefault (maybeCou) + getAttributeValueWithDefault (maybeAgi)
+    );
 
     const mod =
       maybeCombatReflexes
@@ -300,14 +289,14 @@ export const getINI = createMaybeSelector (
         .bind (Maybe.listToMaybe)
         .bind (obj => obj.lookup ('tier'));
 
-    const value = Maybe.liftM2<number, number, number> (R.add) (maybeBase) (mod);
+    const value = base + Maybe.fromMaybe (0) (mod);
 
     return Record.ofMaybe<SecondaryAttribute<'INI'>> ({
       calc: translate (locale, 'secondaryattributes.ini.calc'),
       id: 'INI',
       name: translate (locale, 'secondaryattributes.ini.name'),
       short: translate (locale, 'secondaryattributes.ini.short'),
-      base: Maybe.fromMaybe (0) (maybeBase),
+      base,
       mod,
       value,
     });
@@ -352,18 +341,18 @@ export const getWT = createMaybeSelector (
   mapGetToMaybeSlice (getDisadvantages, 'DISADV_56'),
   getLocaleAsProp,
   (maybeCon, maybeIncrease, maybeDecrease, locale) => {
-    const maybeBase = maybeCon.fmap (con => Math.round (con.get ('value') / 2));
+    const base = divideBy2AndRound (getAttributeValueWithDefault (maybeCon));
 
     const mod = getModifierByIsActive (maybeIncrease) (maybeDecrease) (Just (0));
 
-    const value = maybeBase.fmap (R.add (mod));
+    const value = base + mod;
 
     return Record.ofMaybe<SecondaryAttribute<'WT'>> ({
       calc: translate (locale, 'secondaryattributes.ws.calc'),
       id: 'WT',
       name: translate (locale, 'secondaryattributes.ws.name'),
       short: translate (locale, 'secondaryattributes.ws.short'),
-      base: Maybe.fromMaybe (0) (maybeBase),
+      base,
       mod: Just (mod),
       value,
     });

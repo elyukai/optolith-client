@@ -142,7 +142,7 @@ export const initRace = (
     return Just (Record.of<Wiki.Race> ({
       ap,
       attributeAdjustments: List.fromArray (attr.map (
-        e => Tuple.of<number, string> (e[0]) (`${IdPrefixes.ATTRIBUTES}_${e[1]}`)
+        e => Tuple.of<string, number> (`${IdPrefixes.ATTRIBUTES}_${e[1]}`) (e[0])
       )),
       attributeAdjustmentsSelection: Tuple.of<number, List<string>> (attr_sel[0]) (
         List.fromArray (attr_sel[1].map (k => `${IdPrefixes.ATTRIBUTES}_${k}`))

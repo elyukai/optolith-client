@@ -923,6 +923,15 @@ f' z       = Nothing
     return Maybe.fmap<Tuple<K, V>, V> (Tuple.snd) (this.find (e => Tuple.fst (e) === key));
   }
 
+  /**
+   * `lookup :: Eq a => a -> [(a, b)] -> Maybe b`
+   *
+   * `lookup key assocs` looks up a key in an association list.
+   */
+  static lookup<A, B> (key: A): (list: List<Tuple<A, B>>) => Maybe<B> {
+    return list => Maybe.fmap<Tuple<A, B>, B> (Tuple.snd) (list .find (e => Tuple.fst (e) === key));
+  }
+
   // SEARCHING WITH A PREDICATE
 
   /**

@@ -6,12 +6,12 @@ import * as SkillActions from '../actions/SkillActions';
 import * as SpellsActions from '../actions/SpellsActions';
 import { ActionTypes } from '../constants/ActionTypes';
 import * as Data from '../types/data';
-import { createActivatableDependentSkill } from '../utils/createEntryUtils';
+import { createActivatableDependentSkill, createAttributeDependent, createDependentSkill } from '../utils/createEntryUtils';
 import { Just, Record } from '../utils/dataUtils';
 import { addDependenciesReducer, removeDependenciesReducer } from '../utils/dependencyUtils';
-import { adjustHeroListStateItemOr, updateHeroListStateItemOrRemove } from '../utils/heroStateUtils';
+import { adjustHeroListStateItemOr, adjustMaybeStateEntry, updateHeroListStateItemOrRemove, updateStateEntry } from '../utils/heroStateUtils';
 import { addPoint, removePoint } from '../utils/IncreasableUtils';
-import { isActivatableDependentSkillUnused } from '../utils/unusedEntryUtils';
+import { isActivatableDependentSkillUnused, isAttributeDependentUnused, isDependentSkillUnused } from '../utils/unusedEntryUtils';
 
 type Action =
   AttributesActions.AddAttributePointAction |
@@ -45,7 +45,7 @@ export function increasableReducer (
         adjustHeroListStateItemOr (
           createActivatableDependentSkill,
           value => Just (value.insert ('active') (true)),
-          id,
+          id
         ),
         addDependenciesReducer (wikiEntry.get ('prerequisites'), id)
       );
@@ -65,7 +65,7 @@ export function increasableReducer (
       const activateLiturgicalChant = adjustHeroListStateItemOr (
         createActivatableDependentSkill,
         value => Just (value.insert ('active') (true)),
-        id,
+        id
       );
 
       return activateLiturgicalChant (state);
@@ -84,7 +84,7 @@ export function increasableReducer (
         updateHeroListStateItemOrRemove (
           isActivatableDependentSkillUnused,
           value => value.insert ('active') (false),
-          id,
+          id
         ),
         removeDependenciesReducer (wikiEntry.get ('prerequisites'), id)
       );
@@ -104,7 +104,7 @@ export function increasableReducer (
       const deactivateLiturgicalChant = updateHeroListStateItemOrRemove (
         isActivatableDependentSkillUnused,
         value => value.insert ('active') (false),
-        id,
+        id
       );
 
       return deactivateLiturgicalChant (state);
@@ -119,71 +119,89 @@ export function increasableReducer (
     case ActionTypes.ADD_ATTRIBUTE_POINT: {
       const { id } = action.payload;
 
-      return state.modify<'attributes'> (attributes => attributes.adjust (addPoint) (id))
-                                        ('attributes');
+      return state.modify<'attributes'>
+        (adjustMaybeStateEntry (createAttributeDependent) (addPoint) (id))
+        ('attributes');
     }
 
     case ActionTypes.ADD_TALENT_POINT: {
       const { id } = action.payload;
 
-      return state.modify<'skills'> (skills => skills.adjust (addPoint) (id)) ('skills');
+      return state.modify<'skills'>
+        (adjustMaybeStateEntry (createDependentSkill) (addPoint) (id))
+        ('skills');
     }
 
     case ActionTypes.ADD_COMBATTECHNIQUE_POINT: {
       const { id } = action.payload;
 
-      return state.modify<'combatTechniques'> (
-        combatTechniques => combatTechniques.adjust (addPoint) (id)
-      ) ('combatTechniques');
+      return state.modify<'combatTechniques'>
+        (adjustMaybeStateEntry (createDependentSkill) (addPoint) (id))
+        ('combatTechniques');
     }
 
     case ActionTypes.ADD_SPELL_POINT: {
       const { id } = action.payload;
 
-      return state.modify<'spells'> (spells => spells.adjust (addPoint) (id)) ('spells');
+      return state.modify<'spells'>
+        (adjustMaybeStateEntry (createActivatableDependentSkill) (addPoint) (id))
+        ('spells');
     }
 
     case ActionTypes.ADD_LITURGY_POINT: {
       const { id } = action.payload;
 
-      return state.modify<'liturgicalChants'> (
-        liturgicalChants => liturgicalChants.adjust (addPoint) (id)
-      ) ('liturgicalChants');
+      return state.modify<'liturgicalChants'>
+        (adjustMaybeStateEntry (createActivatableDependentSkill) (addPoint) (id))
+        ('liturgicalChants');
     }
 
     case ActionTypes.REMOVE_ATTRIBUTE_POINT: {
       const { id } = action.payload;
 
-      return state.modify<'attributes'> (attributes => attributes.adjust (removePoint) (id))
-                                        ('attributes');
+      return state.modify<'attributes'>
+        (updateStateEntry<Record<Data.AttributeDependent>> (removePoint)
+                                                           (isAttributeDependentUnused)
+                                                           (id))
+        ('attributes');
     }
 
     case ActionTypes.REMOVE_TALENT_POINT: {
       const { id } = action.payload;
 
-      return state.modify<'skills'> (skills => skills.adjust (removePoint) (id)) ('skills');
+      return state.modify<'skills'>
+        (updateStateEntry<Record<Data.SkillDependent>> (removePoint) (isDependentSkillUnused) (id))
+        ('skills');
     }
 
     case ActionTypes.REMOVE_COMBATTECHNIQUE_POINT: {
       const { id } = action.payload;
 
-      return state.modify<'combatTechniques'> (
-        combatTechniques => combatTechniques.adjust (removePoint) (id)
-      ) ('combatTechniques');
+      return state.modify<'combatTechniques'>
+        (updateStateEntry<Record<Data.SkillDependent>> (removePoint) (isDependentSkillUnused) (id))
+        ('combatTechniques');
     }
 
     case ActionTypes.REMOVE_SPELL_POINT: {
       const { id } = action.payload;
 
-      return state.modify<'spells'> (spells => spells.adjust (removePoint) (id)) ('spells');
+      return state.modify<'spells'>
+        (updateStateEntry<Record<Data.ActivatableSkillDependent>>
+          (removePoint)
+          (isActivatableDependentSkillUnused)
+          (id))
+        ('spells');
     }
 
     case ActionTypes.REMOVE_LITURGY_POINT: {
       const { id } = action.payload;
 
-      return state.modify<'liturgicalChants'> (
-        liturgicalChants => liturgicalChants.adjust (removePoint) (id)
-      ) ('liturgicalChants');
+      return state.modify<'liturgicalChants'>
+        (updateStateEntry<Record<Data.ActivatableSkillDependent>>
+          (removePoint)
+          (isActivatableDependentSkillUnused)
+          (id))
+        ('liturgicalChants');
     }
 
     default:
