@@ -824,6 +824,8 @@ const convertLowerThan1_1_0_Alpha_1 = (hero: RawHero): RawHero => {
           'ATTR_6'
         ),
     },
+    // ct: Object.entries (hero.ct)
+    //   .reduce<StringKeyObject<number>> ((acc, e) => ({ ...acc, [e[0]]: e[1] - 6 }), {}),
     clientVersion: '1.1.0-alpha.1',
   };
 };
@@ -859,7 +861,6 @@ export const convertHero = (hero: RawHero): RawHero => {
   }
 
   if (satisfies (entry.clientVersion, '< 1.1.0-alpha.1')) {
-    console.log (`${entry.clientVersion} < 1.1.0-alpha.1 working`);
     entry = convertLowerThan1_1_0_Alpha_1 (entry);
   }
 

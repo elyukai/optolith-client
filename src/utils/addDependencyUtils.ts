@@ -3,7 +3,6 @@ import { ActivatableSkillCategories, Categories } from '../constants/Categories'
 import * as Data from '../types/data';
 import * as CreateEntryUtils from './createEntryUtils';
 import { Just, List, Maybe, Record } from './dataUtils';
-import { flip } from './flip';
 import { adjustHeroListStateItemOr } from './heroStateUtils';
 import { getCategoryById } from './IDUtils';
 
@@ -31,11 +30,11 @@ const addDependency = <T extends Data.Dependent>(
 const getIncreasableCreator: (id: string) => IncreasableCreator = R.pipe (
   getCategoryById,
   category =>
-    category.fmap (flip<Categories, List<Categories>, boolean> (List.elem)
-                                                               (ActivatableSkillCategories))
-      .equals (Maybe.pure (true))
-        ? CreateEntryUtils.createActivatableDependentSkill
-        : CreateEntryUtils.createDependentSkill
+    Maybe.elem (true) (category .fmap (List.elem_ (ActivatableSkillCategories as List<Categories>)))
+      ? CreateEntryUtils.createActivatableDependentSkill
+      : Maybe.elem (Categories.COMBAT_TECHNIQUES) (category)
+      ? CreateEntryUtils.createDependentSkillWithValue6
+      : CreateEntryUtils.createDependentSkillWithValue0
 );
 
 export const addAttributeDependency = (

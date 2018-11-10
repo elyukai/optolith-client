@@ -166,10 +166,10 @@ const getDependentSkills = (
   source: StringKeyObject<number>
 ): (OrderedMap<string, Record<Data.SkillDependent>>) =>
   OrderedMap.of (
-    Object.entries (source).map<[string, Record<Data.SkillDependent>]> (
+    Object.entries (source) .map<[string, Record<Data.SkillDependent>]> (
       ([id, value]) => [
         id,
-        CreateDependencyObjectUtils.createDependentSkill (id, { value }),
+        CreateDependencyObjectUtils.createDependentSkill (value) (id),
       ]
     )
   );

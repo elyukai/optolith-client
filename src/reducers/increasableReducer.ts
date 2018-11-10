@@ -6,7 +6,7 @@ import * as SkillActions from '../actions/SkillActions';
 import * as SpellsActions from '../actions/SpellsActions';
 import { ActionTypes } from '../constants/ActionTypes';
 import * as Data from '../types/data';
-import { createActivatableDependentSkill, createAttributeDependent, createDependentSkill } from '../utils/createEntryUtils';
+import { createActivatableDependentSkill, createAttributeDependent, createDependentSkillWithValue0, createDependentSkillWithValue6 } from '../utils/createEntryUtils';
 import { Just, Record } from '../utils/dataUtils';
 import { addDependenciesReducer, removeDependenciesReducer } from '../utils/dependencyUtils';
 import { adjustHeroListStateItemOr, adjustMaybeStateEntry, updateHeroListStateItemOrRemove, updateStateEntry } from '../utils/heroStateUtils';
@@ -128,7 +128,7 @@ export function increasableReducer (
       const { id } = action.payload;
 
       return state.modify<'skills'>
-        (adjustMaybeStateEntry (createDependentSkill) (addPoint) (id))
+        (adjustMaybeStateEntry (createDependentSkillWithValue0) (addPoint) (id))
         ('skills');
     }
 
@@ -136,7 +136,7 @@ export function increasableReducer (
       const { id } = action.payload;
 
       return state.modify<'combatTechniques'>
-        (adjustMaybeStateEntry (createDependentSkill) (addPoint) (id))
+        (adjustMaybeStateEntry (createDependentSkillWithValue6) (addPoint) (id))
         ('combatTechniques');
     }
 

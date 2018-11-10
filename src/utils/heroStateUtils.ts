@@ -2,7 +2,7 @@ import * as R from 'ramda';
 import { IdPrefixes } from '../constants/IdPrefixes';
 import { Dependent, HeroDependent } from '../types/data';
 import { EntryWithGroup } from '../types/wiki';
-import { createActivatableDependent, createActivatableDependentSkill, createAttributeDependent, createDependentSkill } from './createEntryUtils';
+import { createActivatableDependent, createActivatableDependentSkill, createAttributeDependent, createDependentSkillWithValue0, createDependentSkillWithValue6 } from './createEntryUtils';
 import { Just, List, Maybe, Nothing, OrderedMap, Record, RecordKey } from './dataUtils';
 import { getIdPrefix } from './IDUtils';
 import { match } from './match';
@@ -97,8 +97,10 @@ export const getEntryCreatorByHeroStateMapKey = (
       return createAttributeDependent;
 
     case 'combatTechniques':
+      return createDependentSkillWithValue6;
+
     case 'skills':
-      return createDependentSkill;
+      return createDependentSkillWithValue0;
 
     case 'liturgicalChants':
     case 'spells':

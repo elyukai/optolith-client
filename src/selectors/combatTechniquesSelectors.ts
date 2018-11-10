@@ -1,7 +1,7 @@
 import { ActivatableDependent, Hero, HeroDependent } from '../types/data';
 import { CombatTechniqueCombined, CombatTechniqueWithAttackParryBase, CombatTechniqueWithRequirements } from '../types/view';
 import { ExperienceLevel, WikiRecord } from '../types/wiki';
-import { createDependentSkill } from '../utils/createEntryUtils';
+import { createDependentSkillWithValue6 } from '../utils/createEntryUtils';
 import { createMaybeSelector } from '../utils/createMaybeSelector';
 import { Just, List, Maybe, Nothing, Record } from '../utils/dataUtils';
 import { AllSortOptions, filterAndSortObjects } from '../utils/FilterSortUtils';
@@ -54,7 +54,7 @@ export const getCombatTechniquesForSheet = createMaybeSelector (
           list => id => wikiEntry => {
             const entry =
               combatTechniques .findWithDefault
-                (createDependentSkill (id, { value: 6 }))
+                (createDependentSkillWithValue6 (id))
                 (id);
 
             const combined = wikiEntry.merge (entry);
@@ -104,13 +104,13 @@ const getMinimum = (
     state,
     obj.get ('dependencies')
   )
-    .append (6);
+    .cons (6);
 
   if (hunterRequiresMinimum && obj.get ('gr') === 2) {
-    return maxList.append (10).maximum ();
+    return maxList .cons (10) .maximum ();
   }
 
-  return maxList.maximum ();
+  return maxList .maximum ();
 };
 
 export const getAllCombatTechniques = createMaybeSelector (

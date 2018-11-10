@@ -113,10 +113,10 @@ export function HitZoneArmors (props: HitZoneArmorsProps) {
                     />
                 )
                 (armorZones
-                  .bind (Maybe.ensure (R.pipe (List.null, R.not)))
+                  .bind (Maybe.ensure<List<Record<ArmorZonesInstance>>> (R.pipe (List.null, R.not)))
                   .fmap (R.pipe (
                     List.map (
-                      obj => (<HitZoneArmorsListItem {...props} key={obj.id} data={obj} />)
+                      obj => (<HitZoneArmorsListItem {...props} key={obj .get ('id')} data={obj} />)
                     ),
                     List.toArray
                   )))

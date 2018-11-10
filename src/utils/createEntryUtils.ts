@@ -1,5 +1,7 @@
+import * as R from 'ramda';
 import * as Data from '../types/data';
 import { List, Record } from './dataUtils';
+import { add } from './mathUtils';
 
 interface AttributeDependentOptions {
   value?: number;
@@ -46,26 +48,21 @@ export function createActivatableDependent (
   });
 }
 
-interface DependentSkillOptions {
-  value?: number;
-  dependencies?: List<Data.SkillDependency>;
-}
-
-export function createDependentSkill (
-  id: string,
-  options: DependentSkillOptions = {}
-): Record<Data.SkillDependent> {
-  const {
-    value = 0,
-    dependencies = List.of<Data.SkillDependency> (),
-  } = options;
-
-  return Record.of ({
+export const createDependentSkill =
+  (value: number) => (id: string) => Record.of<Data.SkillDependent> ({
     id,
     value,
-    dependencies,
+    dependencies: List.of<Data.SkillDependency> (),
   });
-}
+
+export const createDependentSkillWithValue0 = createDependentSkill (0);
+
+export const createDependentSkillWithBaseValue6 = R.pipe (
+  add (6),
+  createDependentSkill
+);
+
+export const createDependentSkillWithValue6 = createDependentSkillWithBaseValue6 (0);
 
 interface ActiveActivatableDependentSkillOptions {
   active?: boolean;

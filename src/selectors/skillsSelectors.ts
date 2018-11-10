@@ -2,7 +2,7 @@ import * as R from 'ramda';
 import { EntryRating, Hero } from '../types/data';
 import { SkillCombined, SkillWithRequirements } from '../types/view';
 import { ExperienceLevel } from '../types/wiki';
-import { createDependentSkill } from '../utils/createEntryUtils';
+import { createDependentSkillWithValue0 } from '../utils/createEntryUtils';
 import { createMaybeSelector } from '../utils/createMaybeSelector';
 import { List, Maybe, OrderedMap, Record } from '../utils/dataUtils';
 import { AllSortOptions, filterAndSortObjects } from '../utils/FilterSortUtils';
@@ -22,7 +22,7 @@ export const getAllSkills = createMaybeSelector (
           .map (
             wikiSkill => wikiSkill .merge (
               Maybe.fromMaybe
-                (createDependentSkill (wikiSkill .get ('id')))
+                (createDependentSkillWithValue0 (wikiSkill .get ('id')))
                 (skills .lookup (wikiSkill .get ('id')))
             )
           )
