@@ -8,7 +8,7 @@
  * @since 1.1.0
  */
 
-import * as R from 'ramda';
+import { add, inc, lt, negate, pipe } from 'ramda';
 import { ActivatableCategory, Categories } from '../constants/Categories';
 import * as Data from '../types/data';
 import * as Wiki from '../types/wiki';
@@ -18,7 +18,7 @@ import { translate } from './I18n';
 import { getCategoryById } from './IDUtils';
 import { isActive } from './isActive';
 import { match } from './match';
-import { subtractBy } from './mathUtils';
+import { multiply, subtractBy } from './mathUtils';
 import { getRoman } from './NumberUtils';
 import { getSelectOptionCost } from './selectionUtils';
 import { isString } from './typeCheckUtils';
@@ -54,7 +54,7 @@ const getEntrySpecificCost = (
         'SA_569'
       )),
       () => {
-        const getCostForId: (id: string) => Maybe<number> = R.pipe (
+        const getCostForId: (id: string) => Maybe<number> = pipe (
           getWikiEntry<Wiki.Skillish> (wiki),
           m => m.bind (
             entry => (wikiEntry.get ('cost') as List<number>)
@@ -91,7 +91,7 @@ const getEntrySpecificCost = (
             const tier = Maybe.fromJust (maybeActiveTier);
 
             return tier > previousMax
-              && Maybe.maybe<number, boolean> (true) (R.lt (tier)) (maxTier)
+              && Maybe.maybe<number, boolean> (true) (lt (tier)) (maxTier)
               && Maybe.isNothing (activeRec.lookup ('cost'))
                 ? tier
                 : previousMax;
@@ -115,7 +115,7 @@ const getEntrySpecificCost = (
                   .filter (e => e.lookup ('tier').equals (maybeTier))
                   .length ()
               )
-              .fmap (R.lt (Maybe.elem (true) (costToAdd) ? 0 : 1))
+              .fmap (lt (Maybe.elem (true) (costToAdd) ? 0 : 1))
           )
       ) {
         return Maybe.return (0);
@@ -140,7 +140,7 @@ const getEntrySpecificCost = (
               )
               .length ()
           )
-            .fmap (R.lt (Maybe.elem (true) (costToAdd) ? 0 : 1))
+            .fmap (lt (Maybe.elem (true) (costToAdd) ? 0 : 1))
         )
       ) {
         return Maybe.pure (0);
@@ -156,7 +156,7 @@ const getEntrySpecificCost = (
             .filter (e => Maybe.isNothing (e.lookup ('cost')))
             .length ()
         )
-          .fmap (R.lt (Maybe.elem (true) (costToAdd) ? 2 : 3))
+          .fmap (lt (Maybe.elem (true) (costToAdd) ? 2 : 3))
       )
         ? Just (0)
         : wikiEntry.lookup ('cost') as Just<number>
@@ -169,26 +169,26 @@ const getEntrySpecificCost = (
           skill => Maybe.fromMaybe (skill.get ('ic')) (state.bind (
             stateRec => stateRec.get ('specialAbilities')
               .lookup (wikiEntry.get ('id'))
-              .fmap (R.pipe (
+              .fmap (pipe (
                 instance => instance.get ('active'),
                 activeList => activeList.foldl<number> (
                   counter => e =>
                     e.lookup ('sid').equals (obj.lookup ('sid'))
                     && Maybe.isNothing (e.lookup ('cost'))
-                      ? R.inc (counter)
+                      ? inc (counter)
                       : counter
                 ) (0),
-                R.add (Maybe.elem (true) (costToAdd) ? 1 : 0),
-                R.multiply (skill.get ('ic'))
+                add (Maybe.elem (true) (costToAdd) ? 1 : 0),
+                multiply (skill.get ('ic'))
               ))
           ))
         )
     )
     .on (
       'SA_29',
-      () => obj.lookup ('tier').equals (Maybe.pure (4))
-        ? Maybe.pure (0)
-        : obj.lookup ('cost')
+      () => obj .lookup ('tier') .equals (Just (4))
+        ? Just (0)
+        : Just (2)
     )
     .on (
       List.elem_ (List.of ('SA_72', 'SA_87')),
@@ -210,7 +210,7 @@ const getEntrySpecificCost = (
       const decreaseCost = (id: string) => (cost: number) =>
         isDisadvantageActive (id, state) ? cost - 10 : cost;
 
-      return R.pipe (
+      return pipe (
         decreaseCost ('DISADV_17'),
         decreaseCost ('DISADV_18'),
         Maybe.pure
@@ -282,7 +282,7 @@ export const getCost = (
 
   return getWikiEntry<Wiki.Activatable> (wiki) (id)
     .fmap (wikiEntry => {
-      const calculateCost = R.pipe (
+      const calculateCost = pipe (
         (active: Maybe<List<Record<Data.ActiveObject>>>) => {
           const customCost = obj.lookup ('cost');
 
@@ -303,7 +303,7 @@ export const getCost = (
         },
         currentCost => {
           if ((wikiEntry.get ('category') as ActivatableCategory) === Categories.DISADVANTAGES) {
-            return currentCost instanceof List ? currentCost .map (R.negate) : -currentCost;
+            return currentCost instanceof List ? currentCost .map (negate) : -currentCost;
           }
 
           return currentCost;
@@ -410,7 +410,7 @@ export const convertPerTierCostToFinalCost = (
   locale: Maybe<Record<Data.UIMessages>>,
   addTierToCombinedTier?: boolean
 ): ((obj: Record<Data.ActivatableNameCost>) => Record<Data.ActivatableNameAdjustedCostEvalTier>) =>
-  R.pipe (
+  pipe (
     adjustTierName (locale, addTierToCombinedTier),
     adjustCurrentCost
   );

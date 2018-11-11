@@ -30,12 +30,12 @@ export const isIncreasable = (
   const bonus = getExceptionalSkillBonus (skill .lookup ('id')) (exceptionalSkill);
 
   const maxList = List.of (
-    getSkillCheckValues (attributes) (skill .get ('check')) .maximum () + 2
+    getSkillCheckValues (attributes) (skill .get ('check')) .cons (8) .maximum () + 2
   );
 
   const getAdditionalMax = R.pipe (
     (list: typeof maxList) => phase < 3
-      ? list.append (startEL .get ('maxSkillRating'))
+      ? list .cons (startEL .get ('maxSkillRating'))
       : list
   );
 

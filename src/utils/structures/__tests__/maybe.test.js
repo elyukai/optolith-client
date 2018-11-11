@@ -361,6 +361,13 @@ test('Maybe.equals', () => {
     .toBeFalsy();
 });
 
+test('Maybe.guard', () => {
+  expect (Maybe.guard (true))
+    .toEqual(Just (true));
+  expect (Maybe.guard (false))
+    .toEqual(Nothing ());
+});
+
 test('Maybe.maybeToReactNode', () => {
   const element = React.createElement ('div');
   expect (Maybe.maybeToReactNode (Nothing ())) .toEqual (null);

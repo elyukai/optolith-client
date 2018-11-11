@@ -4,7 +4,7 @@ import { Maybe, OrderedMap, Record } from './dataUtils';
 
 export const getSkillCheckValues =
   (attributes: OrderedMap<string, Record<Data.AttributeDependent>>) => Maybe.mapMaybe (
-    (id: string) => attributes.lookup (id).fmap (e => e.get ('value'))
+    (id: string) => attributes .lookup (id) .fmap (e => e.get ('value'))
   );
 
 export function convertId<T extends string | undefined> (id: T): T {

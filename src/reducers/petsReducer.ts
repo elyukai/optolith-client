@@ -225,7 +225,7 @@ export function petsReducer (
           .fmap (
             petInEditor => state
               .modify<'pets'>
-                (items => items.insert (newId) (convertToSave (newId) (petInEditor)))
+                (items => items .insert (newId) (convertToSave (newId) (petInEditor)))
                 ('pets')
               .delete ('petInEditor') as Data.Hero
           )

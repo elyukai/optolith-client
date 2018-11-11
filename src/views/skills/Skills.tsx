@@ -163,11 +163,8 @@ export class Skills extends React.Component<SkillsProps, SkillsState> {
                                 removeDisabled={!current .get ('isDecreasable')}
                                 insertTopMargin={
                                   sortOrder === 'group'
-                                  && Maybe.notElem
-                                    (current .get ('gr'))
-                                    (previous .fmap (
-                                      Record.get<SkillWithRequirements, 'gr'> ('gr')
-                                    ))
+                                  && Maybe.isJust (previous)
+                                  && Maybe.fromJust (previous) .get ('gr') !== current .get ('gr')
                                 }
                                 selectForInfo={this.showInfo}
                                 attributes={attributes}

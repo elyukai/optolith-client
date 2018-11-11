@@ -35,7 +35,7 @@ export const getMagicalTraditionsFromWikiState = createMaybeSelector (
 export const getIsSpellsTabAvailable = createMaybeSelector (
   getMagicalTraditionsFromState,
   R.pipe (
-    Maybe.fmap (List.null),
+    Maybe.fmap (R.pipe (List.null, R.not)),
     Maybe.elem (true)
   )
 );

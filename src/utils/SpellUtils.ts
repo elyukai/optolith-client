@@ -36,7 +36,7 @@ export const isIncreasable = (
     .fmap (properties => properties.notElem (entry.get ('property')));
 
   const maxList = List.of (
-    getSkillCheckValues (attributes) (entry.get ('check')).maximum () + 2
+    getSkillCheckValues (attributes) (entry.get ('check')) .cons (8) .maximum () + 2
   );
 
   const getAdditionalMax = R.pipe (

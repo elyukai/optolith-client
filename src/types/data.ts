@@ -480,7 +480,7 @@ export interface SecondaryAttribute<I extends DCIds = DCIds> {
   short: string;
   name: string;
   calc: string;
-  base: number;
+  base?: number;
   add?: number;
   mod?: number;
   value?: number;
@@ -491,7 +491,6 @@ export interface SecondaryAttribute<I extends DCIds = DCIds> {
 }
 
 export interface Energy<I extends DCIds = DCIds> extends SecondaryAttribute<I> {
-  base: number;
   add: number;
   mod: number;
   maxAdd: number;

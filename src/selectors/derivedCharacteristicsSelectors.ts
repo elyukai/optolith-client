@@ -110,7 +110,7 @@ export const getAE = createMaybeSelector (
 
     return Record.ofMaybe<EnergyWithLoss<'AE'>> ({
       add: Maybe.fromMaybe (0) (add),
-      base: Maybe.fromMaybe (0) (baseAndAdd.fmap (({ base }) => base)),
+      base: baseAndAdd.fmap (({ base }) => base),
       calc: translate (locale, 'secondaryattributes.ae.calc'),
       currentAdd: Maybe.fromMaybe (0) (add),
       id: 'AE',
@@ -164,7 +164,7 @@ export const getKP = createMaybeSelector (
 
     return Record.ofMaybe<EnergyWithLoss<'KP'>> ({
       add: Maybe.fromMaybe (0) (add),
-      base: Maybe.fromMaybe (0) (maybePrimary.fmap (primary => primary.get ('value') + 20)),
+      base: maybePrimary.fmap (primary => primary.get ('value') + 20),
       calc: translate (locale, 'secondaryattributes.kp.calc'),
       currentAdd: Maybe.fromMaybe (0) (add),
       id: 'KP',
@@ -198,7 +198,7 @@ export const getSPI = createMaybeSelector (
 
     const mod = getModifierByIsActive (maybeIncrease) (maybeDecrease) (Just (0));
 
-    const value = maybeBase.fmap (R.add (mod));
+    const value = maybeBase .fmap (R.add (mod));
 
     return Record.ofMaybe<SecondaryAttribute<'SPI'>> ({
       base: Maybe.fromMaybe (0) (maybeBase),
@@ -222,17 +222,16 @@ export const getTOU = createMaybeSelector (
   (maybeCurrentRace, maybeCon, maybeStr, maybeIncrease, maybeDecrease, locale) => {
     const maybeBase = maybeCurrentRace
       .fmap (
-        race => race .get ('tou')
-          + divideBy6AndRound (
-            getAttributeValueWithDefault (maybeCon) * 2 + getAttributeValueWithDefault (maybeStr)
-          )
+        race => race .get ('tou') + divideBy6AndRound (
+          getAttributeValueWithDefault (maybeCon) * 2 + getAttributeValueWithDefault (maybeStr)
+        )
       );
 
     const mod = getModifierByIsActive (maybeIncrease)
                                       (maybeDecrease)
                                       (Just (0));
 
-    const value = maybeBase.fmap (R.add (mod));
+    const value = maybeBase .fmap (R.add (mod));
 
     return Record.ofMaybe<SecondaryAttribute<'TOU'>> ({
       base: Maybe.fromMaybe (0) (maybeBase),

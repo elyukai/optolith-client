@@ -53,11 +53,11 @@ export class AttributeCalcItem extends React.Component<AttributeCalcItemProps, {
       isRemovingEnabled,
     } = this.props;
 
-    const base = attribute .get ('base');
+    const base = attribute .lookup ('base');
     const mod = attribute .lookup ('mod');
     const maybeCurrentAdd = attribute .lookup ('currentAdd');
     const maybeMaxAdd = attribute .lookup ('maxAdd');
-    const value = Maybe.fromMaybe<string | number> ('-') (attribute .lookup ('value'));
+    const value = Maybe.fromMaybe<string | number> ('\u2013') (attribute .lookup ('value'));
     const maybePermanentLost = attribute .lookup ('permanentLost');
     const maybePermanentRedeemed = attribute .lookup ('permanentRedeemed');
 
@@ -71,7 +71,7 @@ export class AttributeCalcItem extends React.Component<AttributeCalcItemProps, {
             <p className="calc-text">
               {attribute .get ('calc')}
               {' = '}
-              {base > 0 ? base : '-'}
+              {Maybe.fromMaybe<string | number> ('\u2013') (base)}
             </p>
             {(Maybe.isJust (mod) || (Maybe.isJust (maybeCurrentAdd) && !isInCharacterCreation)) && (
               <p>
@@ -89,7 +89,7 @@ export class AttributeCalcItem extends React.Component<AttributeCalcItemProps, {
                     {': '}
                     {Maybe.fromJust (maybeCurrentAdd)}
                     {' / '}
-                    {Maybe.fromMaybe<string | number> ('-') (maybeMaxAdd)}
+                    {Maybe.fromMaybe<string | number> ('\u2013') (maybeMaxAdd)}
                   </span>
                 )}
               </p>

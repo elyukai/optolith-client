@@ -25,11 +25,11 @@ const accessPromise = (pathToFile: string) => new Promise<boolean> (
   }
 );
 
-async function copyFile (fileName: string) {
-  const newJSONPath = path.join (userDataPath, `${fileName}.json`);
+const copyFile = (origin: string) => (dest: string) => async (fileName: string) => {
+  const newJSONPath = path.join (userDataPath, '..', dest, `${fileName}.json`);
   const hasNewJSON = await accessPromise (newJSONPath);
 
-  const oldJSONPath = path.join (userDataPath, '..', 'TDE5 Heroes', `${fileName}.json`);
+  const oldJSONPath = path.join (userDataPath, '..', origin, `${fileName}.json`);
   const hasOldJSON = await accessPromise (oldJSONPath);
 
   if (!hasNewJSON && hasOldJSON) {
@@ -126,9 +126,13 @@ function createWindow () {
 }
 
 async function main () {
-  await copyFile ('window');
-  await copyFile ('heroes');
-  await copyFile ('config');
+  await copyFile ('TDE5 Heroes') ('Optolyth') ('window');
+  await copyFile ('TDE5 Heroes') ('Optolyth') ('heroes');
+  await copyFile ('TDE5 Heroes') ('Optolyth') ('config');
+
+  await copyFile ('Optolyth') ('Optolith') ('window');
+  await copyFile ('Optolyth') ('Optolith') ('heroes');
+  await copyFile ('Optolyth') ('Optolith') ('config');
 
   autoUpdater.logger = log;
   // @ts-ignore

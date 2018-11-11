@@ -594,6 +594,24 @@ export class Maybe<T extends Some> implements Al.Alternative<T>, Al.Monad<T>,
   }
 
   /**
+   * `guard :: Alternative f => Bool -> f ()`
+   *
+   * Conditional failure of Alternative computations. Defined by
+```hs
+guard True  = pure ()
+guard False = empty
+```
+   * In TypeScript, this is not possible, to instead it's
+```ts
+guard (true)  = pure (true)
+guard (false) = empty ()
+```
+   */
+  static guard (pred: boolean): Maybe<true> {
+    return pred ? Maybe.pure<true> (true) : Maybe.empty ();
+  }
+
+  /**
    * `maybeToReactNode :: Maybe JSXElement -> ReactNode`
    *
    * The `maybeToReactNode` function returns `null` when given `Nothing` or

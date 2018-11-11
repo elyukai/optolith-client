@@ -12,7 +12,10 @@ export interface PetEditorProps {
   petInEditor: Maybe<Record<PetEditorInstance>>;
   locale: UIMessagesObject;
   isEditPetAvatarOpen: boolean;
+  isInCreation: Maybe<boolean>;
+
   closePetEditor (): void;
+  addPet (): void;
   savePet (): void;
   openEditPetAvatar (): void;
   closeEditPetAvatar (): void;
@@ -50,7 +53,7 @@ export interface PetEditorProps {
 }
 
 export function PetEditor (props: PetEditorProps) {
-  const { petInEditor: maybePetInEditor, locale } = props;
+  const { petInEditor: maybePetInEditor, locale, isInCreation } = props;
 
   if (Maybe.isJust (maybePetInEditor)) {
     const pet = Maybe.fromJust (maybePetInEditor);
@@ -219,10 +222,19 @@ export function PetEditor (props: PetEditorProps) {
                 onChangeString={props.setNotes}
                 />
             </div>
-            <BorderButton
-              label={translate (locale, 'actions.save')}
-              onClick={props.savePet}
-              />
+            {Maybe.elem (true) (isInCreation)
+              ? (
+                <BorderButton
+                  label={translate (locale, 'actions.addtolist')}
+                  onClick={props.addPet}
+                  />
+              )
+              : (
+                <BorderButton
+                  label={translate (locale, 'actions.save')}
+                  onClick={props.savePet}
+                  />
+              )}
           </div>
         </div>
         <AvatarChange

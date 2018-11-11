@@ -39,7 +39,7 @@ const MITLicense = () => (
 export const ThirdPartyLicenses = () => (
   <Page id="third-party-software">
     <Scroll className="text">
-      <h2>Optolyth Desktop Client v{currentVersion}</h2>
+      <h2>Optolith Desktop Client v{currentVersion}</h2>
       Third Party Software and Content Licenses
       <div className="third-party-software-body">
         <p>

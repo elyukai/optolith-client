@@ -7,7 +7,7 @@ export interface MainSheetAttributesItemProps {
   calc: string;
   empty: Maybe<boolean>;
   label: string;
-  base: number;
+  base: Maybe<number>;
   max: Maybe<number>;
   purchased: Maybe<number>;
   subArray: Maybe<List<number>>;
@@ -41,8 +41,14 @@ export function MainSheetAttributesItem (props: MainSheetAttributesItemProps) {
         }
       </div>
       <div className="values">
-        <div className="base">{Maybe.elem (true) (empty) ? '-' : base}</div>
-        <div className="add">{Maybe.elem (true) (empty) ? '-' : Maybe.fromMaybe (0) (add)}</div>
+        <div className="base">
+          {Maybe.elem (true) (empty)
+            ? '\u2013'
+            : Maybe.fromMaybe<string | number> ('\u2013') (base)}
+        </div>
+        <div className="add">
+          {Maybe.elem (true) (empty) ? '\u2013' : Maybe.fromMaybe (0) (add)}+
+        </div>
         <div
           className={classNames ({
             'blocked': purchased === undefined,
@@ -51,11 +57,13 @@ export function MainSheetAttributesItem (props: MainSheetAttributesItemProps) {
           >
           {
             Maybe.isJust (purchased)
-              ? Maybe.elem (true) (empty) ? '-' : Maybe.fromJust (purchased)
+              ? Maybe.elem (true) (empty) ? '\u2013' : Maybe.fromJust (purchased)
               : '\uE14B'
           }
         </div>
-        <div className="max">{Maybe.elem (true) (empty) ? '-' : Maybe.fromMaybe (0) (max)}</div>
+        <div className="max">
+          {Maybe.elem (true) (empty) ? '\u2013' : Maybe.fromMaybe (0) (max)}
+        </div>
         {
           Maybe.fromMaybe<NonNullable<React.ReactNode>>
             (<></>)
@@ -63,7 +71,7 @@ export function MainSheetAttributesItem (props: MainSheetAttributesItemProps) {
               subList => subList
                 .imap (
                   index => value => (
-                    <div key={label + index} className="sub">{empty ? '-' : value}</div>
+                    <div key={label + index} className="sub">{empty ? '\u2013' : value}</div>
                   )
                 )
                 .toArray ()

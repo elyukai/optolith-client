@@ -32,7 +32,7 @@ export function MainSheetAttributes (props: MainSheetAttributesProps) {
                 key={attribute .get ('id')}
                 label={attribute .get ('name')}
                 calc={attribute .get ('calc')}
-                base={attribute .get ('base')}
+                base={attribute .lookup ('base')}
                 max={attribute .lookup ('value')}
                 add={attribute .lookup ('mod')}
                 purchased={attribute .lookup ('currentAdd')}
