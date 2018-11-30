@@ -83,7 +83,7 @@ export class Maybe<T extends Some> implements Al.Alternative<T>, Al.Monad<T>,
    * Returns the empty `Maybe`.
    */
   static empty (): Nothing {
-    return new Maybe (undefined) as Nothing;
+    return new Maybe<never> (undefined) as unknown as Nothing;
   }
 
   // EQUALITY

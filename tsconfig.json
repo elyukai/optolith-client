@@ -14,6 +14,11 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "outDir": "app/",
+    "plugins": [
+      {
+        "name": "typescript-tslint-plugin"
+      }
+    ],
     "removeComments": true,
     "rootDir": "src/",
     "strict": true,

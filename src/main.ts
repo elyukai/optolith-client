@@ -14,12 +14,13 @@ app.setAppUserModelId ('lukasobermann.optolith');
 
 const userDataPath = app.getPath ('userData');
 
-const accessPromise = (pathToFile: string) => new Promise<boolean> (
+const accessPromise = async (pathToFile: string) => new Promise<boolean> (
   resolve => {
     fs.access (pathToFile, err => {
-      if (err) {
+      if (err !== null) {
         resolve (false);
       }
+
       resolve (true);
     })
   }

@@ -79,7 +79,7 @@ const loadLocales = (): AsyncAction<Promise<StringKeyObject<RawLocale> | undefin
 
       for (const file of result) {
         const locale = await readFile (join (root, 'app', 'locales', file));
-        locales[file.split ('.')[0]] = JSON.parse (locale as string);
+        locales[file.split ('.')[0]] = JSON.parse (locale as string) as RawLocale;
       }
 
       return locales;
@@ -453,7 +453,7 @@ export const receiveHeroImport = (raw: RawHero): ReceiveImportedHeroAction => {
   const data: RawHero = {
     ...other,
     id: newId,
-    avatar: avatar
+    avatar: !!avatar
       && (isBase64Image (avatar) || fs.existsSync (avatar.replace (/file:[\\\/]+/, '')))
       ? avatar
       : undefined,
@@ -498,7 +498,7 @@ export const requestClose = (optionalCall: Maybe<() => void>): AsyncAction =>
     const state = getState ();
     const safeToExit = isAnyHeroUnsaved (state);
 
-    const closeWindow = remote.getCurrentWindow () .close;
+    const currentWindow = remote.getCurrentWindow ();
 
     const maybeLocale = Maybe.fromNullable (state .locale .messages) .fmap (Record.of);
 
@@ -506,7 +506,7 @@ export const requestClose = (optionalCall: Maybe<() => void>): AsyncAction =>
       const locale = Maybe.fromJust (maybeLocale);
 
       if (safeToExit) {
-        closeWindow ();
+        currentWindow .close ();
       }
       else {
         dispatch (addAlert ({
@@ -514,7 +514,7 @@ export const requestClose = (optionalCall: Maybe<() => void>): AsyncAction =>
           message: translate (locale, 'heroes.warnings.unsavedactions.text'),
           confirm: {
             resolve: close (locale) (true) (optionalCall),
-            reject: closeWindow,
+            reject: currentWindow .close,
           },
           confirmYesNo: true,
         }));

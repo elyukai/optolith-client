@@ -11,8 +11,8 @@ export interface SetWikiFilterAction {
 export const setWikiFilter = (filterText: string): SetWikiFilterAction => ({
   type: ActionTypes.SET_WIKI_FILTER,
   payload: {
-    filterText
-  }
+    filterText,
+  },
 });
 
 export interface SetWikiFilterAllAction {
@@ -25,8 +25,8 @@ export interface SetWikiFilterAllAction {
 export const setWikiFilterAll = (filterText: string): SetWikiFilterAllAction => ({
   type: ActionTypes.SET_WIKI_FILTER_ALL,
   payload: {
-    filterText
-  }
+    filterText,
+  },
 });
 
 export interface SetWikiCategory1Action {
@@ -39,8 +39,8 @@ export interface SetWikiCategory1Action {
 export const setWikiCategory1 = (category: string): SetWikiCategory1Action => ({
   type: ActionTypes.SET_WIKI_CATEGORY_1,
   payload: {
-    category
-  }
+    category,
+  },
 });
 
 export interface SetWikiCategory2Action {
@@ -53,8 +53,8 @@ export interface SetWikiCategory2Action {
 export const setWikiCategory2 = (category: string): SetWikiCategory2Action => ({
   type: ActionTypes.SET_WIKI_CATEGORY_2,
   payload: {
-    category
-  }
+    category,
+  },
 });
 
 export interface SetWikiProfessionsGroupAction {
@@ -68,8 +68,8 @@ export const setWikiProfessionsGroup =
   (group: Maybe<number>): SetWikiProfessionsGroupAction => ({
     type: ActionTypes.SET_WIKI_PROFESSIONS_GROUP,
     payload: {
-      group
-    }
+      group,
+    },
   });
 
 export interface SetWikiSkillsGroupAction {
@@ -82,8 +82,8 @@ export interface SetWikiSkillsGroupAction {
 export const setWikiSkillsGroup = (group: Maybe<number>): SetWikiSkillsGroupAction => ({
   type: ActionTypes.SET_WIKI_SKILLS_GROUP,
   payload: {
-    group
-  }
+    group,
+  },
 });
 
 export interface SetWikiCombatTechniquesGroupAction {
@@ -97,8 +97,8 @@ export const setWikiCombatTechniquesGroup =
   (group: Maybe<number>): SetWikiCombatTechniquesGroupAction => ({
     type: ActionTypes.SET_WIKI_COMBAT_TECHNIQUES_GROUP,
     payload: {
-      group
-    }
+      group,
+    },
   });
 
 export interface SetWikiSpecialAbilitiesGroupAction {
@@ -112,8 +112,8 @@ export const setWikiSpecialAbilitiesGroup =
   (group: Maybe<number>): SetWikiSpecialAbilitiesGroupAction => ({
     type: ActionTypes.SET_WIKI_SPECIAL_ABILITIES_GROUP,
     payload: {
-      group
-    }
+      group,
+    },
   });
 
 export interface SetWikiSpellsGroupAction {
@@ -126,8 +126,8 @@ export interface SetWikiSpellsGroupAction {
 export const setWikiSpellsGroup = (group: Maybe<number>): SetWikiSpellsGroupAction => ({
   type: ActionTypes.SET_WIKI_SPELLS_GROUP,
   payload: {
-    group
-  }
+    group,
+  },
 });
 
 export interface SetWikiLiturgicalChantsGroupAction {
@@ -141,8 +141,8 @@ export const setWikiLiturgicalChantsGroup =
   (group: Maybe<number>): SetWikiLiturgicalChantsGroupAction => ({
     type: ActionTypes.SET_WIKI_LITURGICAL_CHANTS_GROUP,
     payload: {
-      group
-    }
+      group,
+    },
   });
 
 export interface SetWikiItemTemplatesGroupAction {
@@ -156,6 +156,6 @@ export const setWikiItemTemplatesGroup =
   (group: Maybe<number>): SetWikiItemTemplatesGroupAction => ({
     type: ActionTypes.SET_WIKI_ITEM_TEMPLATES_GROUP,
     payload: {
-      group
-    }
+      group,
+    },
   });

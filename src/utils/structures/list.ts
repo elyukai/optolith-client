@@ -505,6 +505,38 @@ export class List<T> implements Al.Monad<T>, Al.Foldable<T>, Al.Semigroup<T>,
   }
 
   /**
+   * `ifoldl :: Foldable t => (b -> Int -> a -> b) -> b -> t a -> b`
+   *
+   * Left-associative fold of a structure.
+   *
+   * In the case of lists, `ifoldl`, when applied to a binary operator, a
+   * starting value (typically the left-identity of the operator), and a list,
+   * reduces the list using the binary operator, from left to right.
+   */
+  static ifoldl<T extends Some, U extends Some> (
+    fn: (acc: U) => (index: number) => (current: T) => U
+  ): (initial: U) => (list: List<T>) => U {
+    return initial => list => list.value.reduce<U> (
+      (acc, e, index) => fn (acc) (index) (e),
+      initial
+    );
+  }
+
+  /**
+   * `ifoldr :: (Int -> a -> b -> b) -> b -> [a] -> b`
+   *
+   * Right-associative fold of a structure.
+   */
+  static ifoldr<T extends Some, U extends Some> (
+    fn: (index: number) => (current: T) => (acc: U) => U
+  ): (initial: U) => (list: List<T>) => U {
+    return initial => list => list.value.reduceRight<U> (
+      (acc, e, index) => fn (index) (e) (acc),
+      initial
+    );
+  }
+
+  /**
    * `foldl1 :: Foldable t => (a -> a -> a) -> t a -> a`
    *
    * A variant of `foldl` that has no base case, and thus may only be applied to
@@ -581,7 +613,7 @@ export class List<T> implements Al.Monad<T>, Al.Foldable<T>, Al.Semigroup<T>,
    * `False` value finitely far from the left end.
    */
   and (this: List<boolean>): boolean {
-    return this.value.every (e => e === true);
+    return this.value.every (e => e);
   }
 
   /**
@@ -592,7 +624,7 @@ export class List<T> implements Al.Monad<T>, Al.Foldable<T>, Al.Semigroup<T>,
    * `True` value finitely far from the left end.
    */
   or (this: List<boolean>): boolean {
-    return this.value.some (e => e === true);
+    return this.value.some (e => e);
   }
 
   /**

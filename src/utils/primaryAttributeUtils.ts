@@ -48,19 +48,19 @@ const getAttributeIdByBlessedNumericId = Maybe.bind_ (
  */
 export const getPrimaryAttributeId = (
   state: OrderedMap<string, Record<ActivatableDependent>>,
-  type: 1 | 2,
+  type: 1 | 2
 ): Maybe<string> =>
   match<(1 | 2), Maybe<string>> (type)
     .on (1, () => Maybe.listToMaybe (getMagicalTraditions (state))
       .bind (e => e.lookup ('id').bind (R.pipe (
         IDUtils.getNumericMagicalTraditionIdByInstanceId,
-        getAttributeIdByMagicalNumericId,
+        getAttributeIdByMagicalNumericId
       )))
     )
     .on (2, () => getBlessedTradition (state)
       .bind (e => e.lookup ('id').bind (R.pipe (
         IDUtils.getNumericBlessedTraditionIdByInstanceId,
-        getAttributeIdByBlessedNumericId,
+        getAttributeIdByBlessedNumericId
       )))
     )
     .otherwise (Nothing);

@@ -52,7 +52,7 @@
     "no-inferred-empty-object-type": true,
     "no-invalid-template-strings": true,
 		"no-invalid-this": true,
-    "no-misused-new": true,
+    // "no-misused-new": true,
 		// "no-null-keyword": true, // needed for React
     "no-object-literal-type-assertion": true,
     "no-return-await": true,
@@ -62,7 +62,7 @@
     "no-string-throw": true,
     "no-switch-case-fall-through": true,
     "no-this-assignment": true,
-    "no-unbound-method": true,
+    // "no-unbound-method": true,
 		"no-unsafe-any": true,
 		"no-unsafe-finally": true,
     // "no-var-keyword": true,
@@ -164,8 +164,8 @@
         "esSpecCompliant": true
       }
     ],
-    "type-literal-delimiter": true,
-		"variable-name": [true, "check-format", "allow-leading-underscore", "allow-pascal-case"]
+    "type-literal-delimiter": true
+		// "variable-name": [true, "check-format", "allow-leading-underscore", "allow-pascal-case"]
 		// "whitespace": [true, "check-branch", "check-decl", "check-operator", "check-module", "check-preblock", "check-separator", "check-type", "check-typecast"]
 	}
 }
