@@ -10,11 +10,11 @@ export const getCurrentTab = (state: AppState) => state.ui.location.tab;
 
 export const getLocaleMessages = createMaybeSelector (
   (state: AppState) => state.locale.messages,
-  messages => Maybe.of (messages).fmap (Record.of)
+  messages => Maybe.fromNullable (messages).fmap (Record.of)
 );
 
 export const getLocaleAsProp = (_: AppState, props: { locale: Record<UIMessages> }) => props.locale;
-export const getLocaleId = createMaybeSelector ((state: AppState) => state.locale.id, Maybe.of);
+export const getLocaleId = createMaybeSelector ((state: AppState) => state.locale.id, Maybe.fromNullable);
 export const getLocaleType = (state: AppState) => state.locale.type;
 
 
@@ -228,11 +228,11 @@ export const getAlerts = (state: AppState) => state.ui.alerts;
 export const getCurrentAlert = (state: AppState): Maybe<Alert> =>
   Maybe.listToMaybe (state.ui.alerts);
 export const getUpdateDownloadProgress = (state: AppState) =>
-  Maybe.of (state.ui.subwindows.updateDownloadProgress);
+  Maybe.fromNullable (state.ui.subwindows.updateDownloadProgress);
 export const getAddPermanentEnergy = (state: AppState) =>
-  Maybe.of (state.ui.subwindows.addPermanentEnergy);
+  Maybe.fromNullable (state.ui.subwindows.addPermanentEnergy);
 export const getEditPermanentEnergy = (state: AppState) =>
-  Maybe.of (state.ui.subwindows.editPermanentEnergy);
+  Maybe.fromNullable (state.ui.subwindows.editPermanentEnergy);
 export const getIsAddAdventurePointsOpen = (state: AppState) =>
   state.ui.subwindows.isAddAdventurePointsOpen;
 export const getIsCharacterCreatorOpen = (state: AppState) =>

@@ -311,7 +311,7 @@ export const getCost = (
       );
 
       return calculateCost (
-        Maybe.of (state)
+        Maybe.fromNullable (state)
           .bind<Record<Data.ActivatableDependent>> (
             getHeroStateListItem<Record<Data.ActivatableDependent>> (id)
           )

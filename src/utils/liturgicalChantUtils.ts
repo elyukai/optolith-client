@@ -18,7 +18,7 @@ export const isOwnTradition = (
     const numericId = tradition.lookup ('id')
       .bind (getNumericBlessedTraditionIdByInstanceId);
 
-    return e === 1 || Maybe.of (e).equals (numericId.fmap (R.inc));
+    return e === 1 || Maybe.fromNullable (e).equals (numericId.fmap (R.inc));
   });
 
 export const isIncreasable = (

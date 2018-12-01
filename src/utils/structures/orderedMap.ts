@@ -100,7 +100,7 @@ export class OrderedMap<K, V> implements Al.Functor<V>, Al.Filterable<V>,
    * map.
    */
   lookup (key: K): Maybe<V> {
-    return Maybe.of (this.value.get (key));
+    return Maybe.fromNullable (this.value.get (key));
   }
 
   /**

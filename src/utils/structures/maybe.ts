@@ -32,15 +32,6 @@ export class Maybe<T extends Some> implements Al.Alternative<T>, Al.Monad<T>,
   // CONSTRUCTORS
 
   /**
-   * `of :: a -> Maybe a`
-   *
-   * Creates a new `Maybe` from the given value.
-   */
-  static of<T extends Some> (value: T | Nullable): Maybe<T> {
-    return new Maybe (value);
-  }
-
-  /**
    * `fromNullable :: a -> Maybe a`
    *
    * Creates a new `Maybe` from the given nullable value.
@@ -162,7 +153,7 @@ export class Maybe<T extends Some> implements Al.Alternative<T>, Al.Monad<T>,
   }
 
   fmap<U extends Some> (fn: (value: T) => U): Maybe<U> {
-    return this.value !== undefined ? Maybe.of (fn (this.value)) : this as any;
+    return this.value !== undefined ? Maybe.fromNullable (fn (this.value)) : this as any;
   }
 
   /**
@@ -387,7 +378,7 @@ export class Maybe<T extends Some> implements Al.Alternative<T>, Al.Monad<T>,
    */
   static ensure<T extends Some> (pred: (value: T) => boolean): (value: T | Nullable) => Maybe<T>;
   static ensure<T extends Some> (pred: (value: T) => boolean): (value: T | Nullable) => Maybe<T> {
-    return value => Maybe.of (value).bind<T> (
+    return value => Maybe.fromNullable (value).bind<T> (
       someX => pred (someX) ? Maybe.return (someX) : Maybe.empty ()
     );
   }

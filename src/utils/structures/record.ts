@@ -98,7 +98,7 @@ export class Record<T extends RecordBase> {
    * Returns a `Maybe` of the requested value.
    */
   lookup<K extends keyof T> (key: K): RecordKey<K, T> {
-    return Maybe.of (this.value[key]) as RecordKey<K, T>;
+    return Maybe.fromNullable (this.value[key]) as RecordKey<K, T>;
   }
 
   /**
@@ -108,7 +108,7 @@ export class Record<T extends RecordBase> {
    */
   static lookup<T extends RecordBase, K extends keyof T> (key: K):
     (x: Record<T>) => RecordKey<K, T> {
-    return x => Maybe.of (x.value[key]) as RecordKey<K, T>;
+    return x => Maybe.fromNullable (x.value[key]) as RecordKey<K, T>;
   }
 
   /**
