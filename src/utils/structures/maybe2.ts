@@ -8,11 +8,13 @@
  * all errors are represented by `Nothing`. A richer error monad can be built
  * using the `Either` type.
  *
- * @author Lukas Obermann, hackage.haskell.org (texts)
+ * @author Lukas Obermann
+ * @author hackage.haskell.org (a lot of JSDocs)
  */
 
 import * as R from 'ramda';
 import { List } from './list';
+import { Mutable } from './typeUtils';
 
 // CONTENT ACCESS KEY
 
@@ -62,7 +64,6 @@ interface Nothing {
   toString (): string;
 }
 
-// tslint:disable-next-line:no-empty
 const _Nothing =
   function (this: Mutable<Nothing>) {
     Object.defineProperty (this, NOTHING, { value: true });
@@ -157,7 +158,7 @@ export const then =
     bind<any, A> (m1) (() => m2);
 
 /**
- * `return :: a -> Just a`
+ * `return :: a -> Maybe a`
  *
  * Inject a value into a `Maybe` type.
  */
@@ -263,14 +264,7 @@ export const pure = Just;
  */
 export const ap =
   <A extends Some, B extends Some> (ma: Maybe<((value: A) => B)>) => (m: Maybe<A>): Maybe<B> =>
-    isJust (m) ? fmap<((value: A) => B), B> (f => f (fromJust (m))) (ma) : m;
-
-/**
- * `empty :: () -> Nothing`
- *
- * Returns the empty `Maybe`.
- */
-export const empty = () => Nothing;
+    isJust (ma) ? isJust (m) ? Just (fromJust (ma) (fromJust (m))) : m : ma;
 
 
 // FOLDABLE
@@ -335,7 +329,7 @@ export const elem_ = <A extends Some> (m: Maybe<A>) => (e: A): boolean => elem (
  */
 export const notElem =
   <A extends Some> (e: A) => (m: Maybe<A>): boolean =>
-    isNothing (m) || e !== fromJust (m);
+    !elem (e) (m);
 
 
 // ALTERNATIVE
@@ -365,6 +359,13 @@ export const alt_ =
     alt (m1) (m2);
 
 /**
+ * `empty :: () -> Nothing`
+ *
+ * Returns the empty `Maybe`.
+ */
+export const empty = () => Nothing;
+
+/**
  * `guard :: Alternative f => Bool -> f ()`
  *
  * Conditional failure of Alternative computations. Defined by
@@ -391,7 +392,7 @@ export const guard = (pred: boolean): Maybe<true> => pred ? Just<true> (true) : 
 export const equals =
   <A extends Some> (m1: Maybe<A>) => (m2: Maybe<A>): boolean =>
     isNothing (m1) && isNothing (m2)
-    || isJust (m1) && isJust (m2) && R.equals (fromJust (m1), fromJust (m2));
+    || isJust (m1) && isJust (m2) && R.equals (fromJust (m1)) (fromJust (m2));
 
 /**
  * `(!=) :: Maybe a -> Maybe a -> Bool`
@@ -400,9 +401,7 @@ export const equals =
  */
 export const notEquals =
   <A extends Some> (m1: Maybe<A>) => (m2: Maybe<A>): boolean =>
-    isNothing (m1) && isJust (m2)
-    || isJust (m1) && isNothing (m2)
-    || isJust (m1) && isJust (m2) && !R.equals (fromJust (m1), fromJust (m2));
+    !equals (m1) (m2);
 
 
 // ORD
@@ -625,10 +624,6 @@ export const maybeToReactNode =
 // TYPE HELPERS
 
 export type MaybeContent<T> = T extends Maybe<infer I> ? I : never;
-
-type Mutable<T> = {
-  -readonly [P in keyof T]: T[P]
-};
 
 // tslint:disable-next-line:interface-over-type-literal
 export type Some = {};

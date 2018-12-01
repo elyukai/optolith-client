@@ -346,10 +346,6 @@ test('ap', () => {
     .toEqual (Nothing);
 });
 
-test('empty', () => {
-  expect (Maybe.empty ()) .toEqual (Nothing);
-});
-
 // FOLDABLE
 
 test('foldl', () => {
@@ -408,6 +404,10 @@ test('alt_', () => {
     .toEqual (Just (2));
   expect (Maybe.alt_ (Nothing) (Nothing))
     .toEqual (Nothing);
+});
+
+test('empty', () => {
+  expect (Maybe.empty ()) .toEqual (Nothing);
 });
 
 test('guard', () => {

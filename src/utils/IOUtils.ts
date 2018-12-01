@@ -1,7 +1,7 @@
 import { remote } from 'electron';
 import * as fs from 'fs';
 
-export const readFile = (path: string, encoding: string = 'utf8') => {
+export const readFile = async (path: string, encoding: string = 'utf8') => {
   return new Promise<string | Buffer> ((resolve, reject) => {
     fs.readFile (path, encoding, (error, data) => {
       if (error) {
@@ -14,7 +14,7 @@ export const readFile = (path: string, encoding: string = 'utf8') => {
   });
 };
 
-export const readDir = (path: string) => {
+export const readDir = async (path: string) => {
   return new Promise<string[]> ((resolve, reject) => {
     fs.readdir (path, (error, data) => {
       if (error) {
@@ -27,7 +27,7 @@ export const readDir = (path: string) => {
   });
 };
 
-export const writeFile = (path: string, data: any) => {
+export const writeFile = async (path: string, data: any) => {
   return new Promise<void> ((resolve, reject) => {
     fs.writeFile (path, data, error => {
       if (error) {
@@ -43,7 +43,7 @@ export const writeFile = (path: string, data: any) => {
 /**
  * Prints windows' web page as PDF with Chromium's preview printing custom settings.
  */
-export const windowPrintToPDF = (
+export const windowPrintToPDF = async (
   options: Electron.PrintToPDFOptions,
   window: Electron.BrowserWindow = remote.getCurrentWindow (),
 ) => {
@@ -62,7 +62,7 @@ export const windowPrintToPDF = (
 /**
  * Shows a native save dialog.
  */
-export const showSaveDialog = (
+export const showSaveDialog = async (
   options: Electron.SaveDialogOptions,
   window: Electron.BrowserWindow = remote.getCurrentWindow (),
 ) => {
@@ -76,7 +76,7 @@ export const showSaveDialog = (
 /**
  * Shows a native open dialog.
  */
-export const showOpenDialog = (
+export const showOpenDialog = async (
   options: Electron.OpenDialogOptions,
   window: Electron.BrowserWindow = remote.getCurrentWindow (),
 ) => {
