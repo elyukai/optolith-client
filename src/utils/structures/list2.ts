@@ -70,9 +70,9 @@ export const fromArray = <A extends Some> (arr: ReadonlyArray<A>) => new _List (
  * `(>>=) :: [a] -> (a -> [b]) -> [b]`
  */
 export const bind =
-  <A extends Some, B extends Some> (m: List<A>) => (f: (value: A) => List<B>): List<B> =>
+  <A extends Some, B extends Some> (xs: List<A>) => (f: (value: A) => List<B>): List<B> =>
     fromElements (
-      ...(m[LIST] .reduce<ReadonlyArray<B>> (
+      ...(xs[LIST] .reduce<ReadonlyArray<B>> (
         (acc, e) => [...acc, ...f (e)],
         []
       ))
@@ -82,8 +82,8 @@ export const bind =
  * `(=<<) :: (a -> [b]) -> [a] -> [b]`
  */
 export const bind_ =
-  <A extends Some, B extends Some> (f: (value: A) => List<B>) => (m: List<A>): List<B> =>
-    bind<A, B> (m) (f);
+  <A extends Some, B extends Some> (f: (value: A) => List<B>) => (xs: List<A>): List<B> =>
+    bind<A, B> (xs) (f);
 
 /**
  * `(>>) :: forall a b. m a -> m b -> m b`
@@ -95,8 +95,8 @@ export const bind_ =
  * ```a >> b = a >>= \ _ -> b```
  */
 export const then =
-  <A extends Some> (m1: List<any>) => (m2: List<A>): List<A> =>
-    bind<any, A> (m1) (() => m2);
+  <A extends Some> (xs1: List<any>) => (xs2: List<A>): List<A> =>
+    bind<any, A> (xs1) (() => xs2);
 
 
 /**
@@ -114,8 +114,8 @@ export const mreturn = <A extends Some> (x: A) => new _List ([x]);
  * outer level.
  */
 export const join =
-  <A extends Some>(value: List<List<A>>): List<A> =>
-    bind<List<A>, A> (value) (e => e);
+  <A extends Some>(xs: List<List<A>>): List<A> =>
+    bind<List<A>, A> (xs) (e => e);
 
 
 // FUNCTOR
@@ -124,8 +124,8 @@ export const join =
  * `fmap :: (a -> b) -> [a] -> [b]`
  */
 export const fmap =
-  <A extends Some, B extends Some> (f: (value: A) => B) => (m: List<A>): List<B> =>
-    fromArray (m[LIST] .map (f));
+  <A extends Some, B extends Some> (f: (value: A) => B) => (xs: List<A>): List<B> =>
+    fromArray (xs[LIST] .map (f));
 
 /**
  * `(<$) :: Functor f => a -> f b -> f a`
@@ -173,8 +173,8 @@ export const foldr =
   <A extends Some, B extends Some>
   (f: (current: A) => (acc: B) => B) =>
   (initial: B) =>
-  (list: List<A>): B =>
-    list[LIST] .reduceRight<B> ((acc, e) => f (e) (acc), initial);
+  (xs: List<A>): B =>
+    xs [LIST] .reduceRight<B> ((acc, e) => f (e) (acc), initial);
 
 /**
  * `foldl :: Foldable t => (b -> a -> b) -> b -> t a -> b`
@@ -191,8 +191,8 @@ export const foldl =
   <A extends Some, B extends Some>
   (f: (acc: B) => (current: A) => B) =>
   (initial: B) =>
-  (list: List<A>): B =>
-    list[LIST] .reduce<B> ((acc, e) => f (acc) (e), initial);
+  (xs: List<A>): B =>
+    xs [LIST] .reduce<B> ((acc, e) => f (acc) (e), initial);
 
 /**
  * `foldr1 :: (a -> a -> a) -> t a -> a`
@@ -205,10 +205,10 @@ export const foldl =
 export const foldr1 =
   <A extends Some>
   (f: (current: A) => (acc: A) => A) =>
-  (list: List<A>): A => {
-    if (list[LIST] .length > 0) {
-      const _init = list[LIST] .slice (0, -1);
-      const _last = list[LIST][list[LIST].length - 1];
+  (xs: List<A>): A => {
+    if (xs [LIST] .length > 0) {
+      const _init = xs [LIST] .slice (0, -1);
+      const _last = xs [LIST] [xs [LIST] .length - 1];
 
       return _init .reduceRight<A> ((acc, e) => f (e) (acc), _last);
     }
@@ -227,9 +227,9 @@ export const foldr1 =
 export const foldl1 =
   <A extends Some>
   (f: (acc: A) => (current: A) => A) =>
-  (list: List<A>): A => {
-    if (list[LIST] .length > 0) {
-      const [_head, ..._tail] = list;
+  (xs: List<A>): A => {
+    if (xs [LIST] .length > 0) {
+      const [_head, ..._tail] = xs;
 
       return _tail .reduce<A> ((acc, e) => f (acc) (e), _head);
     }
@@ -242,7 +242,7 @@ export const foldl1 =
  *
  * List of elements of a structure, from left to right.
  */
-export const toList = <A extends Some>(m: List<A>): List<A> => m;
+export const toList = <A extends Some>(xs: List<A>): List<A> => xs;
 
 /**
  * `null :: t a -> Bool`
@@ -251,7 +251,7 @@ export const toList = <A extends Some>(m: List<A>): List<A> => m;
  * for structures that are similar to cons-lists, because there is no general
  * way to do better.
  */
-export const fnull = (m: List<any>): boolean => m[LIST] .length === 0;
+export const fnull = (xs: List<any>): boolean => xs [LIST] .length === 0;
 
 /**
  * `length :: t a -> Int`
@@ -260,14 +260,14 @@ export const fnull = (m: List<any>): boolean => m[LIST] .length === 0;
  * implementation is optimized for structures that are similar to cons-lists,
  * because there is no general way to do better.
  */
-export const length = (m: List<any>): number => m[LIST] .length;
+export const length = (xs: List<any>): number => xs [LIST] .length;
 
 /**
  * `elem :: (Foldable t, Eq a) => a -> t a -> Bool`
  *
  * Does the element occur in the structure?
  */
-export const elem = <A extends Some>(e: A) => (list: List<A>): boolean => list [LIST] .includes (e);
+export const elem = <A extends Some>(e: A) => (xs: List<A>): boolean => xs [LIST] .includes (e);
 
 /**
  * `elem_ :: (Foldable t, Eq a) => t a -> a -> Bool`
@@ -276,35 +276,35 @@ export const elem = <A extends Some>(e: A) => (list: List<A>): boolean => list [
  *
  * Same as `List.elem` but with arguments switched.
  */
-export const elem_ = <A extends Some>(list: List<A>) => (e: A): boolean => elem (e) (list);
+export const elem_ = <A extends Some>(xs: List<A>) => (e: A): boolean => elem (e) (xs);
 
 /**
  * `sum :: (Foldable t, Num a) => t a -> a`
  *
  * The `sum` function computes the sum of the numbers of a structure.
  */
-export const sum = (list: List<number>): number => list [LIST] .reduce ((acc, e) => acc + e, 0);
+export const sum = (xs: List<number>): number => xs [LIST] .reduce ((acc, e) => acc + e, 0);
 
 /**
  * `product :: (Foldable t, Num a) => t a -> a`
  *
  * The `product` function computes the product of the numbers of a structure.
  */
-export const product = (list: List<number>): number => list [LIST] .reduce ((acc, e) => acc * e, 1);
+export const product = (xs: List<number>): number => xs [LIST] .reduce ((acc, e) => acc * e, 1);
 
 /**
  * `maximum :: forall a. (Foldable t, Ord a) => t a -> a`
  *
  * The largest element of a non-empty structure.
  */
-export const maximum = (list: List<number>): number => Math.max (...list);
+export const maximum = (xs: List<number>): number => Math.max (...xs);
 
 /**
  * `minimum :: forall a. (Foldable t, Ord a) => t a -> a`
  *
  * The least element of a non-empty structure.
  */
-export const minimum = (list: List<number>): number => Math.min (...list);
+export const minimum = (xs: List<number>): number => Math.min (...xs);
 
 // Specialized folds
 
@@ -330,7 +330,7 @@ export const concatMap = bind_;
  * `True`, the container must be finite; `False`, however, results from a
  * `False` value finitely far from the left end.
  */
-export const and = (m: List<boolean>): boolean => m [LIST] .every (e => e);
+export const and = (xs: List<boolean>): boolean => xs [LIST] .every (e => e);
 
 /**
  * `or :: Foldable t => t Bool -> Bool`
@@ -339,7 +339,7 @@ export const and = (m: List<boolean>): boolean => m [LIST] .every (e => e);
  * `False`, the container must be finite; `True`, however, results from a
  * `True` value finitely far from the left end.
  */
-export const or = (m: List<boolean>): boolean => m [LIST] .some (e => e);
+export const or = (xs: List<boolean>): boolean => xs [LIST] .some (e => e);
 
 /**
  * `any :: Foldable t => (a -> Bool) -> t a -> Bool`
@@ -347,8 +347,8 @@ export const or = (m: List<boolean>): boolean => m [LIST] .some (e => e);
  * Determines whether any element of the structure satisfies the predicate.
  */
 export const any =
-  <A extends Some>(f: (x: A) => boolean) => (m: List<A>): boolean =>
-    m [LIST] .some (f);
+  <A extends Some>(f: (x: A) => boolean) => (xs: List<A>): boolean =>
+    xs [LIST] .some (f);
 
 /**
  * `all :: Foldable t => (a -> Bool) -> t a -> Bool`
@@ -356,8 +356,8 @@ export const any =
  * Determines whether all elements of the structure satisfy the predicate.
  */
 export const all =
-  <A extends Some>(f: (x: A) => boolean) => (m: List<A>): boolean =>
-    m [LIST] .every (f);
+  <A extends Some>(f: (x: A) => boolean) => (xs: List<A>): boolean =>
+    xs [LIST] .every (f);
 
 // Searches
 
@@ -379,7 +379,7 @@ interface Find {
    * leftmost element of the structure matching the predicate, or `Nothing` if
    * there is no such element.
    */
-  <A, A1 extends A> (pred: (x: A) => x is A1): (list: List<A>) => Maybe<A1>;
+  <A, A1 extends A> (pred: (x: A) => x is A1): (xs: List<A>) => Maybe<A1>;
   /**
    * `find :: Foldable t => (a -> Bool) -> t a -> Maybe a`
    *
@@ -387,7 +387,7 @@ interface Find {
    * leftmost element of the structure matching the predicate, or `Nothing` if
    * there is no such element.
    */
-  <A> (pred: (x: A) => boolean): (list: List<A>) => Maybe<A>;
+  <A> (pred: (x: A) => boolean): (xs: List<A>) => Maybe<A>;
 }
 
 /**
@@ -398,8 +398,8 @@ interface Find {
  * there is no such element.
  */
 export const find: Find =
-  <A> (pred: (x: A) => boolean) => (list: List<A>): Maybe<A> =>
-    fromNullable (list [LIST] .find (pred));
+  <A> (pred: (x: A) => boolean) => (xs: List<A>): Maybe<A> =>
+    fromNullable (xs [LIST] .find (pred));
 
 
 // ALTERNATIVE
@@ -412,8 +412,8 @@ export const find: Find =
  * first.
  */
 export const alt =
-  <A extends Some> (m1: List<A>) => (m2: List<A>): List<A> =>
-    fnull (m1) ? m2 : m1;
+  <A extends Some> (xs1: List<A>) => (xs2: List<A>): List<A> =>
+    fnull (xs1) ? xs2 : xs1;
 
 /**
  * `alt :: f a -> f a -> f a`
@@ -425,15 +425,15 @@ export const alt =
  * This is the same as `Maybe.alt` but with arguments swapped.
  */
 export const alt_ =
-  <A extends Some> (m2: List<A>) => (m1: List<A>): List<A> =>
-    alt (m1) (m2);
+  <A extends Some> (xs1: List<A>) => (xs2: List<A>): List<A> =>
+    alt (xs2) (xs1);
 
 /**
  * `empty :: () -> Nothing`
  *
  * Returns the empty `Maybe`.
  */
-export const empty = <A extends Some>() => new _List<A> ([]);
+export const empty = <A extends Some> () => new _List<A> ([]);
 
 
 // EQ
@@ -444,9 +444,9 @@ export const empty = <A extends Some>() => new _List<A> ([]);
  * Returns if both given values are equal.
  */
 export const equals =
-  <A extends Some> (m1: List<A>) => (m2: List<A>): boolean =>
-    length (m1) === length (m2)
-    && m1 [LIST] .every ((e, i) => e === m2 [LIST] [i]);
+  <A extends Some> (xs1: List<A>) => (xs2: List<A>): boolean =>
+    length (xs1) === length (xs2)
+    && xs1 [LIST] .every ((e, i) => e === xs2 [LIST] [i]);
 
 /**
  * `(!=) :: Maybe a -> Maybe a -> Bool`
@@ -454,8 +454,8 @@ export const equals =
  * Returns if both given values are not equal.
  */
 export const notEquals =
-  <A extends Some> (m1: List<A>) => (m2: List<A>): boolean =>
-    !equals (m1) (m2);
+  <A extends Some> (xs1: List<A>) => (xs2: List<A>): boolean =>
+    !equals (xs1) (xs2);
 
 
 // SHOW
@@ -463,7 +463,7 @@ export const notEquals =
 /**
  * `show :: [a] -> String`
  */
-export const show = (m: List<any>): string => m.toString ();
+export const show = (xs: List<any>): string => xs.toString ();
 
 
 // BASIC FUNCTIONS
@@ -474,24 +474,24 @@ export const show = (m: List<any>): string => m.toString ();
  * Append two lists.
  */
 export const append =
-  <A> (x1: List<A>) => (x2: List<A>): List<A> =>
-    fromElements (...x1, ...x2);
+  <A> (xs1: List<A>) => (xs2: List<A>): List<A> =>
+    fromElements (...xs1, ...xs2);
 
 /**
  * `(:) :: [a] -> a -> [a]`
  *
  * Prepends an element to the list.
  */
-export const cons = <A> (list: List<A>) => (e: A): List<A> => fromElements (e, ...list);
+export const cons = <A> (xs: List<A>) => (e: A): List<A> => fromElements (e, ...xs);
 
 /**
  * `(:) :: a -> [a] -> [a]`
  *
  * Prepends an element to the list.
  *
- * Same as `List.cons` but with arguments flipped.
+ * Same as `cons` but with arguments flipped.
  */
-export const cons_ = <A> (e: A) => (list: List<A>): List<A> => cons (list) (e);
+export const cons_ = <A> (e: A) => (xs: List<A>): List<A> => cons (xs) (e);
 
 /**
  * `(!!) :: [a] -> Int -> Maybe a`
@@ -500,8 +500,8 @@ export const cons_ = <A> (e: A) => (list: List<A>): List<A> => cons (list) (e);
  * returns `Nothing`, otherwise `Just a`.
  */
 export const subscript =
-  <A> (list: List<A>) => (index: number): Maybe<A> =>
-    fromNullable (list [LIST] [index]);
+  <A> (xs: List<A>) => (index: number): Maybe<A> =>
+    fromNullable (xs [LIST] [index]);
 
 /**
  * `(!!) :: Int -> [a] -> Maybe a`
@@ -509,25 +509,25 @@ export const subscript =
  * List index (subscript) operator, starting from 0. If the index is invalid,
  * returns `Nothing`, otherwise `Just a`.
  *
- * Same as `List.subscript` but with arguments flipped.
+ * Same as `subscript` but with arguments flipped.
  */
 export const subscript_ =
-  (index: number) => <A>(list: List<A>): Maybe<A> =>
-    subscript (list) (index);
+  (index: number) => <A>(xs: List<A>): Maybe<A> =>
+    subscript (xs) (index);
 
 /**
  * `head :: [a] -> a`
  *
  * Extract the first element of a list, which must be non-empty.
  */
-export const head = <A> (list: List<A>): A => {
-  if (fnull (list)) {
+export const head = <A> (xs: List<A>): A => {
+  if (fnull (xs)) {
     throw new TypeError (
       `head does only work on non-empty lists. If you do not know whether the list is empty or not, use listToMaybe instead.`
     );
   }
 
-  return list [LIST] [0];
+  return xs [LIST] [0];
 }
 
 /**
@@ -535,12 +535,12 @@ export const head = <A> (list: List<A>): A => {
  *
  * Extract the last element of a list, which must be finite and non-empty.
  */
-export const last = <A> (list: List<A>): A => {
-  if (fnull (list)) {
+export const last = <A> (xs: List<A>): A => {
+  if (fnull (xs)) {
     throw new TypeError (`last does only work on non-empty lists.`);
   }
 
-  return list [LIST] [length (list) - 1];
+  return xs [LIST] [length (xs) - 1];
 }
 
 /**
@@ -552,19 +552,19 @@ export const last = <A> (list: List<A>): A => {
  *
  * A safe version of `List.last`.
  */
-export const last_ = <A> (list: List<A>): Maybe<A> => fnull (list) ? Nothing : Just (last (list));
+export const last_ = <A> (xs: List<A>): Maybe<A> => fnull (xs) ? Nothing : Just (last (xs));
 
 /**
  * `tail :: [a] -> [a]`
  *
  * Extract the elements after the head of a list, which must be non-empty.
  */
-export const tail = <A> (list: List<A>): List<A> => {
-  if (fnull (list)) {
+export const tail = <A> (xs: List<A>): List<A> => {
+  if (fnull (xs)) {
     throw new TypeError (`tail does only work on non-empty lists.`);
   }
 
-  return fromArray (list [LIST] .slice (1));
+  return fromArray (xs [LIST] .slice (1));
 }
 
 /**
@@ -577,8 +577,8 @@ export const tail = <A> (list: List<A>): List<A> => {
  * A safe version of `List.tail`.
  */
 export const tail_ =
-  <A> (list: List<A>): Maybe<List<A>> =>
-    fnull (list) ? Nothing : Just (tail (list));
+  <A> (xs: List<A>): Maybe<List<A>> =>
+    fnull (xs) ? Nothing : Just (tail (xs));
 
 /**
  * `init :: [a] -> [a]`
@@ -586,12 +586,12 @@ export const tail_ =
  * Return all the elements of a list except the last one. The list must be
  * non-empty.
  */
-export const init = <A> (list: List<A>): List<A> => {
-  if (fnull (list)) {
+export const init = <A> (xs: List<A>): List<A> => {
+  if (fnull (xs)) {
     throw new TypeError (`init does only work on non-empty lists.`);
   }
 
-  return fromArray (list [LIST] .slice (0, -1));
+  return fromArray (xs [LIST] .slice (0, -1));
 }
 
 /**
@@ -604,8 +604,8 @@ export const init = <A> (list: List<A>): List<A> => {
  * A safe version of `List.init`.
  */
 export const init_ =
-  <A> (list: List<A>): Maybe<List<A>> =>
-    fnull (list) ? Nothing : Just (init (list));
+  <A> (xs: List<A>): Maybe<List<A>> =>
+    fnull (xs) ? Nothing : Just (init (xs));
 
 /**
  * `uncons :: [a] -> Maybe (a, [a])`
@@ -615,8 +615,8 @@ export const init_ =
  * the head of the list and `xs` its tail.
  */
 export const uncons =
-  <A> (list: List<A>): Maybe<Tuple<A, List<A>>> =>
-    fnull (list) ? Nothing : Just (Tuple.of<A, List<A>> (head (list)) (tail (list)));
+  <A> (xs: List<A>): Maybe<Tuple<A, List<A>>> =>
+    fnull (xs) ? Nothing : Just (Tuple.of<A, List<A>> (head (xs)) (tail (xs)));
 
 
 // LIST TRANSFORMATIONS
@@ -646,37 +646,24 @@ export const map = fmap;
 //     return list => List.fromArray (list.value.map ((e, i) => fn (i) (e)));
 //   }
 
-//   /**
-//    * `reverse :: [a] -> [a]`
-//    *
-//    * `reverse xs` returns the elements of `xs` in reverse order. `xs` must be
-//    * finite.
-//    */
-//   reverse (): List<T> {
-//     return List.fromArray ([...this.value].reverse ());
-//   }
+/**
+ * `reverse :: [a] -> [a]`
+ *
+ * `reverse xs` returns the elements of `xs` in reverse order. `xs` must be
+ * finite.
+ */
+export const reverse = <A extends Some>(xs: List<A>): List<A> => fromArray ([...xs].reverse ());
 
-//   /**
-//    * `intercalate :: [a] -> [[a]] -> [a]`
-//    *
-//    * `intercalate xs xss` is equivalent to `(concat (intersperse xs xss))`. It
-//    * inserts the list `xs` in between the lists in `xss` and concatenates the
-//    * result.
-//    */
-//   intercalate (this: List<number | string>, separator: string): string {
-//     return this.value.join (separator);
-//   }
-
-//   /**
-//    * `intercalate :: [a] -> [[a]] -> [a]`
-//    *
-//    * `intercalate xs xss` is equivalent to `(concat (intersperse xs xss))`. It
-//    * inserts the list `xs` in between the lists in `xss` and concatenates the
-//    * result.
-//    */
-//   static intercalate (separator: string): (list: List<number | string>) => string {
-//     return list => list.value.join (separator);
-//   }
+/**
+ * `intercalate :: [a] -> [[a]] -> [a]`
+ *
+ * `intercalate xs xss` is equivalent to `(concat (intersperse xs xss))`. It
+ * inserts the list `xs` in between the lists in `xss` and concatenates the
+ * result.
+ */
+export const intercalate =
+  (separator: string) => (list: List<number | string>): string =>
+    list [LIST] .join (separator);
 
 //   // REDUCING LISTS (FOLDS)
 
