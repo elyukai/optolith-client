@@ -12,7 +12,10 @@
  * @author hackage.haskell.org (a lot of JSDocs)
  */
 
-import { Some } from './maybe2';
+import * as R from 'ramda';
+import { not } from '../not';
+import { fromNullable, Just, Maybe, Nothing, Some } from './maybe2';
+import { Tuple } from './tuple';
 import { Mutable } from './typeUtils';
 
 // CONTENT ACCESS KEY
@@ -23,7 +26,7 @@ const LIST = Symbol ('LIST');
 // CONSTRUCTOR
 
 interface ListConstructor {
-  new <A extends Some>(value: A): List<A>;
+  new <A extends Some>(value: ReadonlyArray<A>): List<A>;
   prototype: List<Some>;
 }
 
@@ -46,375 +49,584 @@ _List.prototype[Symbol.iterator] = function (this: List<Some>) {
   return this[LIST][Symbol.iterator] ();
 }
 
+/**
+ * `fromElements :: (...a) -> [a]`
+ *
+ * Creates a new `List` instance from the passed arguments.
+ */
 export const fromElements = <A extends Some> (...values: A[]) => new _List (values);
 
-// export class List<T> implements Al.Monad<T>, Al.Foldable<T>, Al.Semigroup<T>,
-//   Al.Filterable<T> {
-//   /**
-//    * `pure :: a -> [a]`
-//    *
-//    * Creates a new `List` instance from the passed arguments.
-//    */
-//   static pure<T> (...initialElements: T[]): List<T> {
-//     return new List (initialElements);
-//   }
+/**
+ * `fromElements :: Array a -> [a]`
+ *
+ * Creates a new `List` instance from the passed native `Array`.
+ */
+export const fromArray = <A extends Some> (arr: ReadonlyArray<A>) => new _List (arr);
 
-//   /**
-//    * `return :: a -> [a]`
-//    *
-//    * Creates a new `List` instance from the passed arguments.
-//    */
-//   static return<T> (...initialElements: T[]): List<T> {
-//     return new List (initialElements);
-//   }
 
-//   /**
-//    * `empty :: () -> []`
-//    *
-//    * Creates an empty `List`.
-//    */
-//   static empty<T> (): List<T> {
-//     return new List ([]);
-//   }
+// MONAD
 
-//   // BASIC
+/**
+ * `(>>=) :: [a] -> (a -> [b]) -> [b]`
+ */
+export const bind =
+  <A extends Some, B extends Some> (m: List<A>) => (f: (value: A) => List<B>): List<B> =>
+    fromElements (
+      ...(m[LIST] .reduce<ReadonlyArray<B>> (
+        (acc, e) => [...acc, ...f (e)],
+        []
+      ))
+    );
 
-//   /**
-//    * `(++) :: Foldable t => t [a] -> [a]`
-//    *
-//    * Append two lists.
-//    */
-//   mappend (add: List<T>): List<T> {
-//     return List.of (...this.value, ...add.value);
-//   }
+/**
+ * `(=<<) :: (a -> [b]) -> [a] -> [b]`
+ */
+export const bind_ =
+  <A extends Some, B extends Some> (f: (value: A) => List<B>) => (m: List<A>): List<B> =>
+    bind<A, B> (m) (f);
 
-//   /**
-//    * `(++) :: Foldable t => t [a] -> [a]`
-//    *
-//    * Append two lists.
-//    */
-//   static mappend<T> (list1: List<T>): (list2: List<T>) => List<T> {
-//     return list2 => List.of (...list1.value, ...list2.value);
-//   }
+/**
+ * `(>>) :: forall a b. m a -> m b -> m b`
+ *
+ * Sequentially compose two actions, discarding any value produced by the
+ * first, like sequencing operators (such as the semicolon) in imperative
+ * languages.
+ *
+ * ```a >> b = a >>= \ _ -> b```
+ */
+export const then =
+  <A extends Some> (m1: List<any>) => (m2: List<A>): List<A> =>
+    bind<any, A> (m1) (() => m2);
 
-//   /**
-//    * `(:) :: [a] -> a -> [a]`
-//    *
-//    * Prepends an element to the list.
-//    */
-//   cons (e: T): List<T> {
-//     return List.of (e, ...this.value);
-//   }
 
-//   /**
-//    * `(:) :: [a] -> a -> [a]`
-//    *
-//    * Prepends an element to the list.
-//    */
-//   static cons<T> (list: List<T>): (e: T) => List<T> {
-//     return e => List.of (e, ...list.value);
-//   }
+/**
+ * `return :: a -> [a]`
+ *
+ * Inject a value into a list.
+ */
+export const mreturn = <A extends Some> (x: A) => new _List ([x]);
 
-//   /**
-//    * `(:) :: a -> [a] -> [a]`
-//    *
-//    * Prepends an element to the list.
-//    *
-//    * Same as `List.cons` but with arguments flipped.
-//    */
-//   static cons_<T> (e: T): (list: List<T>) => List<T> {
-//     return list => List.of (e, ...list.value);
-//   }
+/**
+ * `join :: Monad m => m (m a) -> m a`
+ *
+ * The `join` function is the conventional monad join operator. It is used to
+ * remove one level of monadic structure, projecting its bound argument into the
+ * outer level.
+ */
+export const join =
+  <A extends Some>(value: List<List<A>>): List<A> =>
+    bind<List<A>, A> (value) (e => e);
 
-//   /**
-//    * `(!!) :: [a] -> Int -> Maybe a`
-//    *
-//    * List index (subscript) operator, starting from 0. If the index is invalid,
-//    * returns `Nothing`, otherwise `Just a`.
-//    */
-//   subscript (index: number): Maybe<T> {
-//     return Maybe.fromNullable (this.value[index]);
-//   }
 
-//   /**
-//    * `(!!) :: [a] -> Int -> Maybe a`
-//    *
-//    * List index (subscript) operator, starting from 0. If the index is invalid,
-//    * returns `Nothing`, otherwise `Just a`.
-//    */
-//   static subscript<T> (list: List<T>): (index: number) => Maybe<T> {
-//     return index => Maybe.fromNullable (list.value[index]);
-//   }
+// FUNCTOR
 
-//   /**
-//    * `(!!) :: [a] -> Int -> Maybe a`
-//    *
-//    * List index (subscript) operator, starting from 0. If the index is invalid,
-//    * returns `Nothing`, otherwise `Just a`.
-//    *
-//    * Same as `List.subscript` but with arguments flipped.
-//    */
-//   static subscript_ (index: number): <T>(list: List<T>) => Maybe<T> {
-//     return list => Maybe.fromNullable (list.value[index]);
-//   }
+/**
+ * `fmap :: (a -> b) -> [a] -> [b]`
+ */
+export const fmap =
+  <A extends Some, B extends Some> (f: (value: A) => B) => (m: List<A>): List<B> =>
+    fromArray (m[LIST] .map (f));
 
-//   /**
-//    * `head :: [a] -> a`
-//    *
-//    * Extract the first element of a list, which must be non-empty.
-//    */
-//   head (): T {
-//     return List.head (this);
-//   }
+/**
+ * `(<$) :: Functor f => a -> f b -> f a`
+ *
+ * Replace all locations in the input with the same value. The default
+ * definition is `fmap . const`, but this may be overridden with a more
+ * efficient version.
+ */
+export const mapReplace =
+  <A extends Some, B extends Some> (x: A) =>
+    fmap<B, A> (() => x);
 
-//   /**
-//    * `head :: [a] -> a`
-//    *
-//    * Extract the first element of a list, which must be non-empty.
-//    */
-//   static head<T> (list: List<T>): T {
-//     if (list.value.length === 0) {
-//       throw new TypeError (
-//         `List.head does only work on non-empty lists. If you
-//         do not know whether the list is empty or not, use Maybe.listToMaybe
-//         instead.`
-//       );
-//     }
 
-//     return list.value[0];
-//   }
+// APPLICATIVE
 
-//   /**
-//    * `last :: [a] -> a`
-//    *
-//    * Extract the last element of a list, which must be finite and non-empty.
-//    */
-//   last (): T {
-//     return List.last (this);
-//   }
+/**
+ * `pure :: a -> [a]`
+ *
+ * Inject a value into a `Maybe` type.
+ */
+export const pure = <A extends Some> (x: A) => new _List ([x]);
 
-//   /**
-//    * `last :: [a] -> a`
-//    *
-//    * Extract the last element of a list, which must be finite and non-empty.
-//    */
-//   static last<T> (list: List<T>): T {
-//     if (List.null (list)) {
-//       throw new TypeError (`List.last does only work on non-empty lists.`);
-//     }
+/**
+ * `(<*>) :: [a -> b] -> [a] -> [b]`
+ */
+export const ap =
+  <A extends Some, B extends Some> (ma: List<(value: A) => B>) => (m: List<A>): List<B> =>
+    bind<(value: A) => B, B> (ma) (f => fmap<A, B> (f) (m));
 
-//     return list.value[list.value.length - 1];
-//   }
 
-//   /**
-//    * `last_ :: [a] -> Maybe a`
-//    *
-//    * Extract the last element of a list, which must be finite. If the list is
-//    * empty, it returns `Nothing`. If the list is not empty, it returns the last
-//    * element wrapped in a `Just`.
-//    *
-//    * A safe version of `List.last`.
-//    */
-//   static last_<T> (list: List<T>): Maybe<T> {
-//     return List.null (list) ? Nothing () : Just (list.value[list.value.length - 1]);
-//   }
+// FOLDABLE
 
-//   /**
-//    * `tail :: [a] -> [a]`
-//    *
-//    * Extract the elements after the head of a list, which must be non-empty.
-//    */
-//   tail (): List<T> {
-//     return List.tail (this);
-//   }
+/**
+ * `foldr :: Foldable t => (a -> b -> b) -> b -> t a -> b`
+ *
+ * Right-associative fold of a structure.
+ *
+ * In the case of lists, `foldr`, when applied to a binary operator, a
+ * starting value (typically the right-identity of the operator), and a list,
+ * reduces the list using the binary operator, from right to left:
+ *
+ * ```foldr f z [x1, x2, ..., xn] == x1 `f` (x2 `f` ... (xn `f` z)...)```
+ */
+export const foldr =
+  <A extends Some, B extends Some>
+  (f: (current: A) => (acc: B) => B) =>
+  (initial: B) =>
+  (list: List<A>): B =>
+    list[LIST] .reduceRight<B> ((acc, e) => f (e) (acc), initial);
 
-//   /**
-//    * `tail :: [a] -> [a]`
-//    *
-//    * Extract the elements after the head of a list, which must be non-empty.
-//    */
-//   static tail<T> (list: List<T>): List<T> {
-//     if (List.null (list)) {
-//       throw new TypeError (`List.tail does only work on non-empty lists.`);
-//     }
+/**
+ * `foldl :: Foldable t => (b -> a -> b) -> b -> t a -> b`
+ *
+ * Left-associative fold of a structure.
+ *
+ * In the case of lists, foldl, when applied to a binary operator, a starting
+ * value (typically the left-identity of the operator), and a list, reduces
+ * the list using the binary operator, from left to right:
+ *
+ * ```foldl f z [x1, x2, ..., xn] == (...((z `f` x1) `f` x2) `f`...) `f` xn```
+ */
+export const foldl =
+  <A extends Some, B extends Some>
+  (f: (acc: B) => (current: A) => B) =>
+  (initial: B) =>
+  (list: List<A>): B =>
+    list[LIST] .reduce<B> ((acc, e) => f (acc) (e), initial);
 
-//     return List.fromArray (list.value.slice (1));
-//   }
+/**
+ * `foldr1 :: (a -> a -> a) -> t a -> a`
+ *
+ * A variant of `foldr` that has no base case, and thus may only be applied to
+ * non-empty structures.
+ *
+ * `foldr1 f = foldr1 f . toList`
+ */
+export const foldr1 =
+  <A extends Some>
+  (f: (current: A) => (acc: A) => A) =>
+  (list: List<A>): A => {
+    if (list[LIST] .length > 0) {
+      const _init = list[LIST] .slice (0, -1);
+      const _last = list[LIST][list[LIST].length - 1];
 
-//   /**
-//    * `tail_ :: [a] -> Maybe [a]`
-//    *
-//    * Extract the elements after the head of a list. If the list is
-//    * empty, it returns `Nothing`. If the list is not empty, it returns the
-//    * elements wrapped in a `Just`.
-//    *
-//    * A safe version of `List.tail`.
-//    */
-//   static tail_<T> (list: List<T>): Maybe<List<T>> {
-//     const tail = list.value.slice (1);
+      return _init .reduceRight<A> ((acc, e) => f (e) (acc), _last);
+    }
 
-//     return List.null (list) ? Nothing () : Just (List.fromArray (tail));
-//   }
+    throw new TypeError ('Cannot apply foldr1 to an empty list.');
+  };
 
-//   /**
-//    * `init :: [a] -> [a]`
-//    *
-//    * Return all the elements of a list except the last one. The list must be
-//    * non-empty.
-//    */
-//   init (): List<T> {
-//     return List.init (this);
-//   }
+/**
+ * `foldl1 :: (a -> a -> a) -> t a -> a`
+ *
+ * A variant of `foldl` that has no base case, and thus may only be applied to
+ * non-empty structures.
+ *
+ * `foldl1 f = foldl1 f . toList`
+ */
+export const foldl1 =
+  <A extends Some>
+  (f: (acc: A) => (current: A) => A) =>
+  (list: List<A>): A => {
+    if (list[LIST] .length > 0) {
+      const [_head, ..._tail] = list;
 
-//   /**
-//    * `init :: [a] -> [a]`
-//    *
-//    * Return all the elements of a list except the last one. The list must be
-//    * non-empty.
-//    */
-//   static init<T> (list: List<T>): List<T> {
-//     if (List.null (list)) {
-//       throw new TypeError (`List.init does only work on non-empty lists.`);
-//     }
+      return _tail .reduce<A> ((acc, e) => f (acc) (e), _head);
+    }
 
-//     return List.fromArray (list.value.slice (0, -1));
-//   }
+    throw new TypeError ('Cannot apply foldl1 to an empty list.');
+  };
 
-//   /**
-//    * `init_ :: [a] -> Maybe [a]`
-//    *
-//    * Return all the elements of a list except the last one. If the list is
-//    * empty, it returns `Nothing`. If the list is not empty, it returns the
-//    * elements wrapped in a `Just`.
-//    *
-//    * A safe version of `List.init`.
-//    */
-//   static init_<T> (list: List<T>): Maybe<List<T>> {
-//     const init = list.value.slice (0, -1);
+/**
+ * `toList :: t a -> [a]`
+ *
+ * List of elements of a structure, from left to right.
+ */
+export const toList = <A extends Some>(m: List<A>): List<A> => m;
 
-//     return List.null (list) ? Nothing () : Just (List.fromArray (init));
-//   }
+/**
+ * `null :: t a -> Bool`
+ *
+ * Test whether the structure is empty. The default implementation is optimized
+ * for structures that are similar to cons-lists, because there is no general
+ * way to do better.
+ */
+export const fnull = (m: List<any>): boolean => m[LIST] .length === 0;
 
-//   /**
-//    * `uncons :: [a] -> Maybe (a, [a])`
-//    *
-//    * Decompose a list into its head and tail. If the list is empty, returns
-//    * `Nothing`. If the list is non-empty, returns `Just (x, xs)`, where `x` is
-//    * the head of the list and `xs` its tail.
-//    */
-//   uncons (): Maybe<Tuple<T, List<T>>> {
-//     if (this.null ()) {
-//       return Nothing ();
-//     }
-//     else {
-//       const [head, ...tail] = this.value;
+/**
+ * `length :: t a -> Int`
+ *
+ * Returns the size/length of a finite structure as an `Int`. The default
+ * implementation is optimized for structures that are similar to cons-lists,
+ * because there is no general way to do better.
+ */
+export const length = (m: List<any>): number => m[LIST] .length;
 
-//       return Just (Tuple.of<T, List<T>> (head) (List.fromArray (tail)));
-//     }
-//   }
+/**
+ * `elem :: (Foldable t, Eq a) => a -> t a -> Bool`
+ *
+ * Does the element occur in the structure?
+ */
+export const elem = <A extends Some>(e: A) => (list: List<A>): boolean => list [LIST] .includes (e);
 
-//   /**
-//    * `uncons :: [a] -> Maybe (a, [a])`
-//    *
-//    * Decompose a list into its head and tail. If the list is empty, returns
-//    * `Nothing`. If the list is non-empty, returns `Just (x, xs)`, where `x` is
-//    * the head of the list and `xs` its tail.
-//    */
-//   static uncons<T> (list: List<T>): Maybe<Tuple<T, List<T>>> {
-//     if (list.null ()) {
-//       return Nothing ();
-//     }
-//     else {
-//       const [head, ...tail] = list.value;
+/**
+ * `elem_ :: (Foldable t, Eq a) => t a -> a -> Bool`
+ *
+ * Does the element occur in the structure?
+ *
+ * Same as `List.elem` but with arguments switched.
+ */
+export const elem_ = <A extends Some>(list: List<A>) => (e: A): boolean => elem (e) (list);
 
-//       return Just (Tuple.of<T, List<T>> (head) (List.fromArray (tail)));
-//     }
-//   }
+/**
+ * `sum :: (Foldable t, Num a) => t a -> a`
+ *
+ * The `sum` function computes the sum of the numbers of a structure.
+ */
+export const sum = (list: List<number>): number => list [LIST] .reduce ((acc, e) => acc + e, 0);
 
-//   /**
-//    * `null :: Foldable t => t a -> Bool`
-//    *
-//    * Test whether the structure is empty.
-//    */
-//   null (): boolean {
-//     return this.value.length === 0;
-//   }
+/**
+ * `product :: (Foldable t, Num a) => t a -> a`
+ *
+ * The `product` function computes the product of the numbers of a structure.
+ */
+export const product = (list: List<number>): number => list [LIST] .reduce ((acc, e) => acc * e, 1);
 
-//   /**
-//    * `null :: Foldable t => t a -> Bool`
-//    *
-//    * Test whether the structure is empty.
-//    */
-//   static null (list: List<any>): boolean {
-//     return list.value.length === 0;
-//   }
+/**
+ * `maximum :: forall a. (Foldable t, Ord a) => t a -> a`
+ *
+ * The largest element of a non-empty structure.
+ */
+export const maximum = (list: List<number>): number => Math.max (...list);
 
-//   /**
-//    * `length :: Foldable t => t a -> Int`
-//    *
-//    * Returns the size/length of a finite structure as an `Int`.
-//    */
-//   length (): number {
-//     return this.value.length;
-//   }
+/**
+ * `minimum :: forall a. (Foldable t, Ord a) => t a -> a`
+ *
+ * The least element of a non-empty structure.
+ */
+export const minimum = (list: List<number>): number => Math.min (...list);
 
-//   /**
-//    * `length :: Foldable t => t a -> Int`
-//    *
-//    * Returns the size/length of a finite structure as an `Int`.
-//    */
-//   static lengthL (list: List<any>): number {
-//     return list.value.length;
-//   }
+// Specialized folds
 
-//   // LIST TRANSFORMATIONS
+/**
+ * `concat :: [[a]] -> [a]`
+ *
+ * The concatenation of all the elements of a container of lists.
+ */
+export const concat = join;
 
-//   /**
-//    * `fmap :: (a -> b) -> [a] -> [b]`
-//    *
-//    * `fmap f xs` is the list obtained by applying `f` to each element of `xs`.
-//    */
-//   fmap<U> (fn: (x: T) => U): List<U> {
-//     return List.fromArray (this.value.map (fn));
-//   }
+/**
+ * `concatMap :: (a -> [b]) -> [a] -> [b]`
+ *
+ * Map a function over all the elements of a container and concatenate the
+ * resulting lists.
+ */
+export const concatMap = bind_;
 
-//   /**
-//    * `fmap :: (a -> b) -> [a] -> [b]`
-//    *
-//    * `fmap f xs` is the list obtained by applying `f` to each element of `xs`.
-//    */
-//   static fmap<A, B> (fn: (x: A) => B): (list: List<A>) => List<B> {
-//     return list => List.fromArray (list.value.map (fn));
-//   }
+/**
+ * `and :: Foldable t => t Bool -> Bool`
+ *
+ * `and` returns the conjunction of a container of Bools. For the result to be
+ * `True`, the container must be finite; `False`, however, results from a
+ * `False` value finitely far from the left end.
+ */
+export const and = (m: List<boolean>): boolean => m [LIST] .every (e => e);
 
-//   /**
-//    * `(<$) :: Functor f => a -> f b -> f a`
-//    *
-//    * Replace all locations in the input with the same value. The default
-//    * definition is `fmap . const`, but this may be overridden with a more
-//    * efficient version.
-//    */
-//   static mapReplace<A, B> (x: A): (list: List<B>) => List<A> {
-//     return List.fmap (_ => x);
-//   }
+/**
+ * `or :: Foldable t => t Bool -> Bool`
+ *
+ * `or` returns the disjunction of a container of Bools. For the result to be
+ * `False`, the container must be finite; `True`, however, results from a
+ * `True` value finitely far from the left end.
+ */
+export const or = (m: List<boolean>): boolean => m [LIST] .some (e => e);
 
-//   /**
-//    * `map :: (a -> b) -> [a] -> [b]`
-//    *
-//    * `map f xs` is the list obtained by applying `f` to each element of `xs`.
-//    */
-//   map<U> (fn: (x: T) => U): List<U> {
-//     return this.fmap (fn);
-//   }
+/**
+ * `any :: Foldable t => (a -> Bool) -> t a -> Bool`
+ *
+ * Determines whether any element of the structure satisfies the predicate.
+ */
+export const any =
+  <A extends Some>(f: (x: A) => boolean) => (m: List<A>): boolean =>
+    m [LIST] .some (f);
 
-//   /**
-//    * `map :: (a -> b) -> [a] -> [b]`
-//    *
-//    * `map f xs` is the list obtained by applying `f` to each element of `xs`.
-//    */
-//   static map<T, U> (fn: (x: T) => U): (list: List<T>) => List<U> {
-//     return List.fmap<T, U> (fn);
-//   }
+/**
+ * `all :: Foldable t => (a -> Bool) -> t a -> Bool`
+ *
+ * Determines whether all elements of the structure satisfy the predicate.
+ */
+export const all =
+  <A extends Some>(f: (x: A) => boolean) => (m: List<A>): boolean =>
+    m [LIST] .every (f);
+
+// Searches
+
+/**
+ * `notElem :: (Foldable t, Eq a) => a -> t a -> Bool`
+ *
+ * `notElem` is the negation of `elem`.
+ */
+export const notElem = <A> (e: A) => R.pipe (
+  elem<A> (e),
+  not
+);
+
+interface Find {
+  /**
+   * `find :: Foldable t => (a -> Bool) -> t a -> Maybe a`
+   *
+   * The `find` function takes a predicate and a structure and returns the
+   * leftmost element of the structure matching the predicate, or `Nothing` if
+   * there is no such element.
+   */
+  <A, A1 extends A> (pred: (x: A) => x is A1): (list: List<A>) => Maybe<A1>;
+  /**
+   * `find :: Foldable t => (a -> Bool) -> t a -> Maybe a`
+   *
+   * The `find` function takes a predicate and a structure and returns the
+   * leftmost element of the structure matching the predicate, or `Nothing` if
+   * there is no such element.
+   */
+  <A> (pred: (x: A) => boolean): (list: List<A>) => Maybe<A>;
+}
+
+/**
+ * `find :: Foldable t => (a -> Bool) -> t a -> Maybe a`
+ *
+ * The `find` function takes a predicate and a structure and returns the
+ * leftmost element of the structure matching the predicate, or `Nothing` if
+ * there is no such element.
+ */
+export const find: Find =
+  <A> (pred: (x: A) => boolean) => (list: List<A>): Maybe<A> =>
+    fromNullable (list [LIST] .find (pred));
+
+
+// ALTERNATIVE
+
+/**
+ * `alt :: [a] -> [a] -> [a]`
+ *
+ * The `alt` function takes a list of the same type. If the first list
+ * is empty, it returns the second list, otherwise it returns the
+ * first.
+ */
+export const alt =
+  <A extends Some> (m1: List<A>) => (m2: List<A>): List<A> =>
+    fnull (m1) ? m2 : m1;
+
+/**
+ * `alt :: f a -> f a -> f a`
+ *
+ * The `alt` function takes a `Maybe` of the same type. If the second `Maybe`
+ * is `Nothing`, it returns the first `Maybe`, otherwise it returns the
+ * second.
+ *
+ * This is the same as `Maybe.alt` but with arguments swapped.
+ */
+export const alt_ =
+  <A extends Some> (m2: List<A>) => (m1: List<A>): List<A> =>
+    alt (m1) (m2);
+
+/**
+ * `empty :: () -> Nothing`
+ *
+ * Returns the empty `Maybe`.
+ */
+export const empty = <A extends Some>() => new _List<A> ([]);
+
+
+// EQ
+
+/**
+ * `(==) :: Maybe a -> Maybe a -> Bool`
+ *
+ * Returns if both given values are equal.
+ */
+export const equals =
+  <A extends Some> (m1: List<A>) => (m2: List<A>): boolean =>
+    length (m1) === length (m2)
+    && m1 [LIST] .every ((e, i) => e === m2 [LIST] [i]);
+
+/**
+ * `(!=) :: Maybe a -> Maybe a -> Bool`
+ *
+ * Returns if both given values are not equal.
+ */
+export const notEquals =
+  <A extends Some> (m1: List<A>) => (m2: List<A>): boolean =>
+    !equals (m1) (m2);
+
+
+// SHOW
+
+/**
+ * `show :: [a] -> String`
+ */
+export const show = (m: List<any>): string => m.toString ();
+
+
+// BASIC FUNCTIONS
+
+/**
+ * `(++) :: [a] -> [a] -> [a]`
+ *
+ * Append two lists.
+ */
+export const append =
+  <A> (x1: List<A>) => (x2: List<A>): List<A> =>
+    fromElements (...x1, ...x2);
+
+/**
+ * `(:) :: [a] -> a -> [a]`
+ *
+ * Prepends an element to the list.
+ */
+export const cons = <A> (list: List<A>) => (e: A): List<A> => fromElements (e, ...list);
+
+/**
+ * `(:) :: a -> [a] -> [a]`
+ *
+ * Prepends an element to the list.
+ *
+ * Same as `List.cons` but with arguments flipped.
+ */
+export const cons_ = <A> (e: A) => (list: List<A>): List<A> => cons (list) (e);
+
+/**
+ * `(!!) :: [a] -> Int -> Maybe a`
+ *
+ * List index (subscript) operator, starting from 0. If the index is invalid,
+ * returns `Nothing`, otherwise `Just a`.
+ */
+export const subscript =
+  <A> (list: List<A>) => (index: number): Maybe<A> =>
+    fromNullable (list [LIST] [index]);
+
+/**
+ * `(!!) :: Int -> [a] -> Maybe a`
+ *
+ * List index (subscript) operator, starting from 0. If the index is invalid,
+ * returns `Nothing`, otherwise `Just a`.
+ *
+ * Same as `List.subscript` but with arguments flipped.
+ */
+export const subscript_ =
+  (index: number) => <A>(list: List<A>): Maybe<A> =>
+    subscript (list) (index);
+
+/**
+ * `head :: [a] -> a`
+ *
+ * Extract the first element of a list, which must be non-empty.
+ */
+export const head = <A> (list: List<A>): A => {
+  if (fnull (list)) {
+    throw new TypeError (
+      `head does only work on non-empty lists. If you do not know whether the list is empty or not, use listToMaybe instead.`
+    );
+  }
+
+  return list [LIST] [0];
+}
+
+/**
+ * `last :: [a] -> a`
+ *
+ * Extract the last element of a list, which must be finite and non-empty.
+ */
+export const last = <A> (list: List<A>): A => {
+  if (fnull (list)) {
+    throw new TypeError (`last does only work on non-empty lists.`);
+  }
+
+  return list [LIST] [length (list) - 1];
+}
+
+/**
+ * `last_ :: [a] -> Maybe a`
+ *
+ * Extract the last element of a list, which must be finite. If the list is
+ * empty, it returns `Nothing`. If the list is not empty, it returns the last
+ * element wrapped in a `Just`.
+ *
+ * A safe version of `List.last`.
+ */
+export const last_ = <A> (list: List<A>): Maybe<A> => fnull (list) ? Nothing : Just (last (list));
+
+/**
+ * `tail :: [a] -> [a]`
+ *
+ * Extract the elements after the head of a list, which must be non-empty.
+ */
+export const tail = <A> (list: List<A>): List<A> => {
+  if (fnull (list)) {
+    throw new TypeError (`tail does only work on non-empty lists.`);
+  }
+
+  return fromArray (list [LIST] .slice (1));
+}
+
+/**
+ * `tail_ :: [a] -> Maybe [a]`
+ *
+ * Extract the elements after the head of a list. If the list is
+ * empty, it returns `Nothing`. If the list is not empty, it returns the
+ * elements wrapped in a `Just`.
+ *
+ * A safe version of `List.tail`.
+ */
+export const tail_ =
+  <A> (list: List<A>): Maybe<List<A>> =>
+    fnull (list) ? Nothing : Just (tail (list));
+
+/**
+ * `init :: [a] -> [a]`
+ *
+ * Return all the elements of a list except the last one. The list must be
+ * non-empty.
+ */
+export const init = <A> (list: List<A>): List<A> => {
+  if (fnull (list)) {
+    throw new TypeError (`init does only work on non-empty lists.`);
+  }
+
+  return fromArray (list [LIST] .slice (0, -1));
+}
+
+/**
+ * `init_ :: [a] -> Maybe [a]`
+ *
+ * Return all the elements of a list except the last one. If the list is
+ * empty, it returns `Nothing`. If the list is not empty, it returns the
+ * elements wrapped in a `Just`.
+ *
+ * A safe version of `List.init`.
+ */
+export const init_ =
+  <A> (list: List<A>): Maybe<List<A>> =>
+    fnull (list) ? Nothing : Just (init (list));
+
+/**
+ * `uncons :: [a] -> Maybe (a, [a])`
+ *
+ * Decompose a list into its head and tail. If the list is empty, returns
+ * `Nothing`. If the list is non-empty, returns `Just (x, xs)`, where `x` is
+ * the head of the list and `xs` its tail.
+ */
+export const uncons =
+  <A> (list: List<A>): Maybe<Tuple<A, List<A>>> =>
+    fnull (list) ? Nothing : Just (Tuple.of<A, List<A>> (head (list)) (tail (list)));
+
+
+// LIST TRANSFORMATIONS
+
+/**
+ * `map :: (a -> b) -> [a] -> [b]`
+ *
+ * `map f xs` is the list obtained by applying `f` to each element of `xs`.
+ */
+export const map = fmap;
 
 //   /**
 //    * `imap :: (Int -> a -> b) -> [a] -> [b]`
@@ -468,136 +680,37 @@ export const fromElements = <A extends Some> (...values: A[]) => new _List (valu
 
 //   // REDUCING LISTS (FOLDS)
 
-//   /**
-//    * `foldl :: Foldable t => (b -> a -> b) -> b -> t a -> b`
-//    *
-//    * Left-associative fold of a structure.
-//    *
-//    * In the case of lists, foldl, when applied to a binary operator, a starting
-//    * value (typically the left-identity of the operator), and a list, reduces
-//    * the list using the binary operator, from left to right:
-//    *
-//    * ```foldl f z [x1, x2, ..., xn] == (...((z `f` x1) `f` x2) `f`...) `f` xn```
-//    */
-//   foldl<U extends Some> (fn: (acc: U) => (current: T) => U): (initial: U) => U {
-//     return initial => this.value.reduce<U> ((acc, e) => fn (acc) (e), initial);
-//   }
+/**
+ * `ifoldl :: Foldable t => (b -> Int -> a -> b) -> b -> t a -> b`
+ *
+ * Left-associative fold of a structure.
+ *
+ * In the case of lists, `ifoldl`, when applied to a binary operator, a
+ * starting value (typically the left-identity of the operator), and a list,
+ * reduces the list using the binary operator, from left to right.
+ */
+// static ifoldl<T extends Some, U extends Some> (
+//   fn: (acc: U) => (index: number) => (current: T) => U
+// ): (initial: U) => (list: List<T>) => U {
+//   return initial => list => list.value.reduce<U> (
+//     (acc, e, index) => fn (acc) (index) (e),
+//     initial
+//   );
+// }
 
-//   /**
-//    * `foldl :: Foldable t => (b -> a -> b) -> b -> t a -> b`
-//    *
-//    * Left-associative fold of a structure.
-//    *
-//    * In the case of lists, foldl, when applied to a binary operator, a starting
-//    * value (typically the left-identity of the operator), and a list, reduces
-//    * the list using the binary operator, from left to right:
-//    *
-//    * ```foldl f z [x1, x2, ..., xn] == (...((z `f` x1) `f` x2) `f`...) `f` xn```
-//    */
-//   static foldl<T, U> (fn: (acc: U) => (current: T) => U): (initial: U) => (list: List<T>) => U {
-//     return initial => list => list.value.reduce<U> ((acc, e) => fn (acc) (e), initial);
-//   }
-
-//   /**
-//    * `foldr :: Foldable t => (a -> b -> b) -> b -> t a -> b`
-//    *
-//    * Right-associative fold of a structure.
-//    *
-//    * In the case of lists, `foldr`, when applied to a binary operator, a
-//    * starting value (typically the right-identity of the operator), and a list,
-//    * reduces the list using the binary operator, from right to left:
-//    *
-//    * ```foldr f z [x1, x2, ..., xn] == x1 `f` (x2 `f` ... (xn `f` z)...)```
-//    */
-//   static foldr<T, U> (fn: (current: T) => (acc: U) => U): (initial: U) => (list: List<T>) => U {
-//     return initial => list => list.value.reduceRight<U> ((acc, e) => fn (e) (acc), initial);
-//   }
-
-//   /**
-//    * `ifoldl :: Foldable t => (b -> Int -> a -> b) -> b -> t a -> b`
-//    *
-//    * Left-associative fold of a structure.
-//    *
-//    * In the case of lists, `ifoldl`, when applied to a binary operator, a
-//    * starting value (typically the left-identity of the operator), and a list,
-//    * reduces the list using the binary operator, from left to right.
-//    */
-//   ifoldl<U extends Some> (
-//     fn: (acc: U) => (index: number) => (current: T) => U
-//   ): (initial: U) => U {
-//     return initial => this.value.reduce<U> ((acc, e, index) => fn (acc) (index) (e), initial);
-//   }
-
-//   /**
-//    * `ifoldl :: Foldable t => (b -> Int -> a -> b) -> b -> t a -> b`
-//    *
-//    * Left-associative fold of a structure.
-//    *
-//    * In the case of lists, `ifoldl`, when applied to a binary operator, a
-//    * starting value (typically the left-identity of the operator), and a list,
-//    * reduces the list using the binary operator, from left to right.
-//    */
-//   static ifoldl<T extends Some, U extends Some> (
-//     fn: (acc: U) => (index: number) => (current: T) => U
-//   ): (initial: U) => (list: List<T>) => U {
-//     return initial => list => list.value.reduce<U> (
-//       (acc, e, index) => fn (acc) (index) (e),
-//       initial
-//     );
-//   }
-
-//   /**
-//    * `ifoldr :: (Int -> a -> b -> b) -> b -> [a] -> b`
-//    *
-//    * Right-associative fold of a structure.
-//    */
-//   static ifoldr<T extends Some, U extends Some> (
-//     fn: (index: number) => (current: T) => (acc: U) => U
-//   ): (initial: U) => (list: List<T>) => U {
-//     return initial => list => list.value.reduceRight<U> (
-//       (acc, e, index) => fn (index) (e) (acc),
-//       initial
-//     );
-//   }
-
-//   /**
-//    * `foldl1 :: Foldable t => (a -> a -> a) -> t a -> a`
-//    *
-//    * A variant of `foldl` that has no base case, and thus may only be applied to
-//    * non-empty structures.
-//    */
-//   static foldl1<A> (fn: (acc: A) => (current: A) => A): (list: List<A>) => A {
-//     return list => {
-//       if (list.value.length > 0) {
-//         const [head, ...tail] = list.value;
-
-//         return tail.reduce<A> ((acc, e) => fn (acc) (e), head);
-//       }
-
-//       throw new TypeError ('Cannot apply foldl1 to an empty list.');
-//     }
-//   }
-
-//   /**
-//    * `ifoldlWithList :: Foldable t => (t -> b -> Int -> a -> b) -> b -> t a -> b`
-//    *
-//    * Left-associative fold of a structure.
-//    *
-//    * In the case of lists, `ifoldl`, when applied to a binary operator, a
-//    * starting value (typically the left-identity of the operator), and a list,
-//    * reduces the list using the binary operator, from left to right.
-//    *
-//    * It does not only include the index of the current element but also the
-//    * original `List`.
-//    */
-//   ifoldlWithList<U extends Some> (
-//     fn: (list: List<T>) => (acc: U) => (index: number) => (current: T) => U
-//   ): (initial: U) => U {
-//     return initial => this.value.reduce<U> (
-//       (acc, e, index) => fn (this) (acc) (index) (e),
-//       initial
-//     );
-//   }
+/**
+ * `ifoldr :: (Int -> a -> b -> b) -> b -> [a] -> b`
+ *
+ * Right-associative fold of a structure.
+ */
+// static ifoldr<T extends Some, U extends Some> (
+//   fn: (index: number) => (current: T) => (acc: U) => U
+// ): (initial: U) => (list: List<T>) => U {
+//   return initial => list => list.value.reduceRight<U> (
+//     (acc, e, index) => fn (index) (e) (acc),
+//     initial
+//   );
+// }
 
 //   // // SPECIAL FOLDS
 
@@ -694,60 +807,6 @@ export const fromElements = <A extends Some> (...values: A[]) => new _List (valu
 //    */
 //   iall (fn: (index: number) => (x: T) => boolean): boolean {
 //     return this.value.every ((e, i) => fn (i) (e));
-//   }
-
-//   /**
-//    * `sum :: (Foldable t, Num a) => t a -> a`
-//    *
-//    * The `sum` function computes the sum of the numbers of a structure.
-//    */
-//   sum (this: List<number>): number {
-//     return this.value.reduce ((acc, e) => acc + e, 0);
-//   }
-
-//   /**
-//    * `sum :: (Foldable t, Num a) => t a -> a`
-//    *
-//    * The `sum` function computes the sum of the numbers of a structure.
-//    */
-//   static sum (list: List<number>): number {
-//     return list.value.reduce ((acc, e) => acc + e, 0);
-//   }
-
-//   /**
-//    * `product :: (Foldable t, Num a) => t a -> a`
-//    *
-//    * The `product` function computes the product of the numbers of a structure.
-//    */
-//   product (this: List<number>): number {
-//     return this.value.reduce ((acc, e) => acc * e, 1);
-//   }
-
-//   /**
-//    * `maximum :: forall a. (Foldable t, Ord a) => t a -> a`
-//    *
-//    * The largest element of a non-empty structure.
-//    */
-//   maximum (this: List<number>): number {
-//     return Math.max (...this.value);
-//   }
-
-//   /**
-//    * `maximum :: forall a. (Foldable t, Ord a) => t a -> a`
-//    *
-//    * The largest element of a non-empty structure.
-//    */
-//   static maximum (list: List<number>): number {
-//     return list.maximum ();
-//   }
-
-//   /**
-//    * `minimum :: forall a. (Foldable t, Ord a) => t a -> a`
-//    *
-//    * The least element of a non-empty structure.
-//    */
-//   minimum (this: List<number>): number {
-//     return Math.min (...this.value);
 //   }
 
 //   // BUILDING LISTS
@@ -915,25 +974,6 @@ export const fromElements = <A extends Some> (...values: A[]) => new _List (valu
 //     return this.value.includes (e);
 //   }
 
-//   /**
-//    * `elem :: (Foldable t, Eq a) => a -> t a -> Bool`
-//    *
-//    * Does the element occur in the structure?
-//    */
-//   static elem<T> (e: T): (list: List<T>) => boolean {
-//     return list => list.value.includes (e);
-//   }
-
-//   /**
-//    * `elem_ :: (Foldable t, Eq a) => t a -> a -> Bool`
-//    *
-//    * Does the element occur in the structure?
-//    *
-//    * Same as `List.elem` but with arguments switched.
-//    */
-//   static elem_<T> (list: List<T>): (e: T) => boolean {
-//     return e => list.value.includes (e);
-//   }
 
 //   /**
 //    * `notElem :: (Foldable t, Eq a) => a -> t a -> Bool`

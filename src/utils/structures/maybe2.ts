@@ -264,7 +264,7 @@ export const pure = Just;
  */
 export const ap =
   <A extends Some, B extends Some> (ma: Maybe<((value: A) => B)>) => (m: Maybe<A>): Maybe<B> =>
-    isJust (ma) ? isJust (m) ? Just (fromJust (ma) (fromJust (m))) : m : ma;
+    bind<(value: A) => B, B> (ma) (f => fmap<A, B> (f) (m));
 
 
 // FOLDABLE
