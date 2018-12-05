@@ -16,7 +16,7 @@
  */
 
 import { pipe } from 'ramda';
-import * as List from './list2';
+import * as List from './List.new';
 import { Mutable } from './typeUtils';
 
 // CONTENT ACCESS KEY

@@ -7,9 +7,9 @@
  * @author Lukas Obermann
  */
 
-import * as Either from './either';
-import * as List from './list2';
-import * as Maybe from './maybe2';
+import * as Either from './Either';
+import * as List from './List.new';
+import * as Maybe from './Maybe.new';
 
 interface Bind {
   /**

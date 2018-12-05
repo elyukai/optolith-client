@@ -9,7 +9,7 @@
 import { pipe } from 'ramda';
 import { not } from '../not';
 import * as Functor from './Functor';
-import { fromJust, fromNullable, imapMaybe, isJust, Just, Maybe, Nothing, Some } from './maybe2';
+import { fromJust, fromNullable, imapMaybe, isJust, Just, Maybe, Nothing, Some } from './Maybe.new';
 import { OrderedMap } from './orderedMap';
 import { Tuple } from './tuple';
 import { Mutable } from './typeUtils';
@@ -166,7 +166,7 @@ export const ap =
 // FOLDABLE
 
 /**
- * `foldr :: Foldable t => (a -> b -> b) -> b -> t a -> b`
+ * `foldr :: (a -> b -> b) -> b -> [a] -> b`
  *
  * Right-associative fold of a structure.
  *

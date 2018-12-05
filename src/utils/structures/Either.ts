@@ -13,8 +13,8 @@
  */
 
 import { equals as requals, pipe } from 'ramda';
-import { List } from './list';
-import { fromJust, isJust, Just, Maybe, Nothing, Some } from './maybe2';
+import { cons, cons_, empty, foldr, List } from './List.new';
+import { fromJust, isJust, Just, Maybe, Nothing, Some } from './Maybe.new';
 import { Tuple } from './tuple';
 import { Mutable } from './typeUtils';
 
@@ -441,9 +441,9 @@ export const either =
  */
 export const lefts =
   <A extends Some, B extends Some> (list: List<Either<A, B>>): List<A> =>
-    List.foldr<Either<A, B>, List<A>> (m => acc => isLeft (m) ? List.cons (acc) (m[LEFT]) : acc)
-                                      (List.empty ())
-                                      (list);
+    foldr<Either<A, B>, List<A>> (m => acc => isLeft (m) ? cons (acc) (m[LEFT]) : acc)
+                                 (empty ())
+                                 (list);
 
 /**
  * `rights :: [Either a b] -> [b]`
@@ -453,9 +453,9 @@ export const lefts =
  */
 export const rights =
   <A extends Some, B extends Some> (list: List<Either<A, B>>): List<B> =>
-    List.foldr<Either<A, B>, List<B>> (m => acc => isRight (m) ? List.cons (acc) (m[RIGHT]) : acc)
-                                      (List.empty ())
-                                      (list);
+    foldr<Either<A, B>, List<B>> (m => acc => isRight (m) ? cons (acc) (m[RIGHT]) : acc)
+                                 (empty ())
+                                 (list);
 
 /**
  * `partitionEithers :: [Either a b] -> ([a], [b])`
@@ -466,9 +466,9 @@ export const rights =
  */
 export const partitionEithers =
   <A extends Some, B extends Some> (list: List<Either<A, B>>): Tuple<List<A>, List<B>> =>
-    List.foldr<Either<A, B>, Tuple<List<A>, List<B>>>
-      (m => isRight (m) ? Tuple.second (List.cons_ (m[RIGHT])) : Tuple.first (List.cons_ (m[LEFT])))
-      (Tuple.of<List<A>, List<B>> (List.empty ()) (List.empty ()))
+    foldr<Either<A, B>, Tuple<List<A>, List<B>>>
+      (m => isRight (m) ? Tuple.second (cons_ (m[RIGHT])) : Tuple.first (cons_ (m[LEFT])))
+      (Tuple.of<List<A>, List<B>> (empty ()) (empty ()))
       (list);
 
 
