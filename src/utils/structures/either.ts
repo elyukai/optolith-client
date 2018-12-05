@@ -78,132 +78,6 @@ _Right.prototype.toString = function (this: Right<Some>) {
 export const Right = <B extends Some> (value: B) => new _Right (value);
 
 
-// EITHER FUNCTIONS (PART 1)
-
-/**
- * `isLeft :: Either a b -> Bool`
- *
- * Return `True` if the given value is a `Left`-value, `False` otherwise.
- */
-export const isLeft =
-  <A extends Some, B extends Some> (x: Either<A, B>): x is Left<A> => x instanceof _Left;
-
-/**
- * `isRight :: Either a b -> Bool`
- *
- * Return `True` if the given value is a `Right`-value, `False` otherwise.
- */
-export const isRight =
-  <A extends Some, B extends Some> (x: Either<A, B>): x is Right<B> => x instanceof _Right;
-
-
-// EITHER.EXTRA
-
-/**
- * `fromLeft :: a -> Either a b -> a`
- *
- * Return the contents of a `Left`-value or a default value otherwise.
- *
- * `fromLeft 1 (Left 3) == 3`
- * `fromLeft 1 (Right "foo") == 1`
- */
-export const fromLeft =
-  <A extends Some> (def: A) => (m: Either<A, any>): A =>
-    isLeft (m) ? m[LEFT] : def;
-
-/**
- * `fromRight :: b -> Either a b -> b`
- *
- *
- * Return the contents of a `Right`-value or a default value otherwise.
- *
- * `fromRight 1 (Right 3) == 3`
- * `fromRight 1 (Left "foo") == 1`
- */
-export const fromRight =
-  <B extends Some> (def: B) => (m: Either<any, B>): B =>
-    isRight (m) ? m[RIGHT] : def;
-
-/**
- * `fromEither :: Either a a -> a`
- *
- * Pull the value out of an `Either` where both alternatives have the same type.
- *
- * `\x -> fromEither (Left x ) == x`
- * `\x -> fromEither (Right x) == x`
- */
-export const fromEither =
-  <A extends Some> (m: Either<A, A>): A =>
-    isRight (m) ? m[RIGHT] : m[LEFT];
-
-/**
- * `fromLeft' :: Either l r -> l`
- *
- * The `fromLeft'` function extracts the element out of a `Left` and throws an
- * error if its argument is `Right`. Much like `fromJust`, using this function
- * in polished code is usually a bad idea.
- *
- * `\x -> fromLeft' (Left  x) == x`
- * `\x -> fromLeft' (Right x) == undefined`
- *
- * @throws TypeError
- */
-export const fromLeft_ =
-  <L extends Some> (x: Either<L, any>): L => {
-    if (isLeft (x)) {
-      return x[LEFT];
-    }
-
-    throw new TypeError (`Cannot extract a Left value out of a Right.`);
-  };
-
-/**
- * `fromRight' :: Either l r -> r`
- *
- * The `fromRight'` function extracts the element out of a `Right` and throws an
- * error if its argument is `Left`. Much like `fromJust`, using this function
- * in polished code is usually a bad idea.
- *
- * `\x -> fromRight' (Right x) == x`
- * `\x -> fromRight' (Left  x) == undefined`
- *
- * @throws TypeError
- */
-export const fromRight_ =
-  <R extends Some> (x: Either<any, R>): R => {
-    if (isRight (x)) {
-      return x[RIGHT];
-    }
-
-    throw new TypeError (`Cannot extract a Right value out of a Left.`);
-  };
-
-/**
- * `eitherToMaybe :: Either a b -> Maybe b`
- *
- * Given an `Either`, convert it to a `Maybe`, where `Left` becomes `Nothing`.
- *
- * `\x -> eitherToMaybe (Left x) == Nothing`
- * `\x -> eitherToMaybe (Right x) == Just x`
- */
-export const eitherToMaybe =
-  <B extends Some> (m: Either<any, B>): Maybe<B> =>
-    isRight (m) ? Just (m[RIGHT]) : Nothing;
-
-/**
- * `maybeToEither :: a -> Maybe b -> Either a b`
- *
- * Given a `Maybe`, convert it to an `Either`, providing a suitable value for
- * the `Left` should the value be `Nothing`.
- *
- * `\a b -> maybeToEither a (Just b) == Right b`
- * `\a -> maybeToEither a Nothing == Left a`
- */
-export const maybeToEither =
-  <A extends Some, B extends Some> (left: A) => (m: Maybe<B>): Either<A, B> =>
-    isJust (m) ? Right (fromJust (m)) : Left (left);
-
-
 // BIFUNCTOR
 
 /**
@@ -526,7 +400,23 @@ export const show = (m: Either<any, any>): string => m.toString ();
 //     : m1;
 
 
-// EITHER FUNCTIONS (PART 2)
+// EITHER FUNCTIONS
+
+/**
+ * `isLeft :: Either a b -> Bool`
+ *
+ * Return `True` if the given value is a `Left`-value, `False` otherwise.
+ */
+export const isLeft =
+<A extends Some, B extends Some> (x: Either<A, B>): x is Left<A> => x instanceof _Left;
+
+/**
+* `isRight :: Either a b -> Bool`
+*
+* Return `True` if the given value is a `Right`-value, `False` otherwise.
+*/
+export const isRight =
+<A extends Some, B extends Some> (x: Either<A, B>): x is Right<B> => x instanceof _Right;
 
 /**
  * `either :: (a -> c) -> (b -> c) -> Either a b -> c`
@@ -580,6 +470,113 @@ export const partitionEithers =
       (m => isRight (m) ? Tuple.second (List.cons_ (m[RIGHT])) : Tuple.first (List.cons_ (m[LEFT])))
       (Tuple.of<List<A>, List<B>> (List.empty ()) (List.empty ()))
       (list);
+
+
+// EITHER.EXTRA
+
+/**
+ * `fromLeft :: a -> Either a b -> a`
+ *
+ * Return the contents of a `Left`-value or a default value otherwise.
+ *
+ * `fromLeft 1 (Left 3) == 3`
+ * `fromLeft 1 (Right "foo") == 1`
+ */
+export const fromLeft =
+  <A extends Some> (def: A) => (m: Either<A, any>): A =>
+    isLeft (m) ? m [LEFT] : def;
+
+/**
+ * `fromRight :: b -> Either a b -> b`
+ *
+ *
+ * Return the contents of a `Right`-value or a default value otherwise.
+ *
+ * `fromRight 1 (Right 3) == 3`
+ * `fromRight 1 (Left "foo") == 1`
+ */
+export const fromRight =
+  <B extends Some> (def: B) => (m: Either<any, B>): B =>
+    isRight (m) ? m [RIGHT] : def;
+
+/**
+ * `fromEither :: Either a a -> a`
+ *
+ * Pull the value out of an `Either` where both alternatives have the same type.
+ *
+ * `\x -> fromEither (Left x ) == x`
+ * `\x -> fromEither (Right x) == x`
+ */
+export const fromEither =
+  <A extends Some> (m: Either<A, A>): A =>
+    isRight (m) ? m [RIGHT] : m [LEFT];
+
+/**
+ * `fromLeft' :: Either l r -> l`
+ *
+ * The `fromLeft'` function extracts the element out of a `Left` and throws an
+ * error if its argument is `Right`. Much like `fromJust`, using this function
+ * in polished code is usually a bad idea.
+ *
+ * `\x -> fromLeft' (Left  x) == x`
+ * `\x -> fromLeft' (Right x) == undefined`
+ *
+ * @throws TypeError
+ */
+export const fromLeft_ =
+  <L extends Some> (x: Left<L>): L => {
+    if (isLeft (x)) {
+      return x [LEFT];
+    }
+
+    throw new TypeError (`Cannot extract a Left value out of ${x}.`);
+  };
+
+/**
+ * `fromRight' :: Either l r -> r`
+ *
+ * The `fromRight'` function extracts the element out of a `Right` and throws an
+ * error if its argument is `Left`. Much like `fromJust`, using this function
+ * in polished code is usually a bad idea.
+ *
+ * `\x -> fromRight' (Right x) == x`
+ * `\x -> fromRight' (Left  x) == undefined`
+ *
+ * @throws TypeError
+ */
+export const fromRight_ =
+  <R extends Some> (x: Right<R>): R => {
+    if (isRight (x)) {
+      return x [RIGHT];
+    }
+
+    throw new TypeError (`Cannot extract a Right value out of ${x}.`);
+  };
+
+/**
+ * `eitherToMaybe :: Either a b -> Maybe b`
+ *
+ * Given an `Either`, convert it to a `Maybe`, where `Left` becomes `Nothing`.
+ *
+ * `\x -> eitherToMaybe (Left x) == Nothing`
+ * `\x -> eitherToMaybe (Right x) == Just x`
+ */
+export const eitherToMaybe =
+  <B extends Some> (m: Either<any, B>): Maybe<B> =>
+    isRight (m) ? Just (m[RIGHT]) : Nothing;
+
+/**
+ * `maybeToEither :: a -> Maybe b -> Either a b`
+ *
+ * Given a `Maybe`, convert it to an `Either`, providing a suitable value for
+ * the `Left` should the value be `Nothing`.
+ *
+ * `\a b -> maybeToEither a (Just b) == Right b`
+ * `\a -> maybeToEither a Nothing == Left a`
+ */
+export const maybeToEither =
+  <A extends Some, B extends Some> (left: A) => (m: Maybe<B>): Either<A, B> =>
+    isJust (m) ? Right (fromJust (m)) : Left (left);
 
 
 // CUSTOM FUNCTIONS
