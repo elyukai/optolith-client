@@ -123,7 +123,7 @@
 		"one-variable-per-declaration": [true, "ignore-for-loop"],
     "ordered-imports": true,
     "prefer-function-over-method": true,
-    "prefer-method-signature": true,
+    // "prefer-method-signature": true,
     "prefer-template": true,
     "prefer-while": true,
     "quotemark": [true, "single", "jsx-double"],

@@ -8,6 +8,14 @@ const { Just, Nothing } = require('../maybe2');
 
 test('Just', () => {
   expect (Maybe.fromJust (Just (3))) .toEqual (3);
+  expect (
+    () => Object.defineProperty (
+      Just (3),
+      Object.getOwnPropertySymbols (Just (3)) [0],
+      { value: 5 }
+    )
+  )
+    .toThrowError (TypeError);
 });
 
 test('Nothing', () => {

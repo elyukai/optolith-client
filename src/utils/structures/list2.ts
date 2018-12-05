@@ -14,7 +14,7 @@
 
 import * as R from 'ramda';
 import { not } from '../not';
-import { fromNullable, Just, Maybe, Nothing, Some } from './maybe2';
+import { fromJust, fromNullable, isJust, Just, Maybe, Nothing, Some } from './maybe2';
 import { Tuple } from './tuple';
 import { Mutable } from './typeUtils';
 
@@ -633,15 +633,6 @@ export const map = fmap;
 //    *
 //    * `imap f xs` is the list obtained by applying `f` to each element of `xs`.
 //    */
-//   imap<U> (fn: (index: number) => (x: T) => U): List<U> {
-//     return List.fromArray (this.value.map ((e, i) => fn (i) (e)));
-//   }
-
-//   /**
-//    * `imap :: (Int -> a -> b) -> [a] -> [b]`
-//    *
-//    * `imap f xs` is the list obtained by applying `f` to each element of `xs`.
-//    */
 //   static imap<T, U> (fn: (index: number) => (x: T) => U): (list: List<T>) => List<U> {
 //     return list => List.fromArray (list.value.map ((e, i) => fn (i) (e)));
 //   }
@@ -665,290 +656,159 @@ export const intercalate =
   (separator: string) => (list: List<number | string>): string =>
     list [LIST] .join (separator);
 
-//   // REDUCING LISTS (FOLDS)
+
+// BUILDING LISTS
+
+
+// SCANS
 
 /**
- * `ifoldl :: Foldable t => (b -> Int -> a -> b) -> b -> t a -> b`
+ * `scanl :: (b -> a -> b) -> b -> [a] -> [b]`
  *
- * Left-associative fold of a structure.
+ * scanl is similar to foldl, but returns a list of successive reduced values
+ * from the left:
  *
- * In the case of lists, `ifoldl`, when applied to a binary operator, a
- * starting value (typically the left-identity of the operator), and a list,
- * reduces the list using the binary operator, from left to right.
+ * ```scanl f z [x1, x2, ...] == [z, z `f` x1, (z `f` x1) `f` x2, ...]```
+ *
+ * Note that
+ *
+ * ```last (scanl f z xs) == foldl f z xs.```
  */
-// static ifoldl<T extends Some, U extends Some> (
-//   fn: (acc: U) => (index: number) => (current: T) => U
-// ): (initial: U) => (list: List<T>) => U {
-//   return initial => list => list.value.reduce<U> (
-//     (acc, e, index) => fn (acc) (index) (e),
-//     initial
-//   );
-// }
+export const scanl =
+  <A extends Some, B extends Some>
+  (fn: (acc: B) => (current: A) => B) =>
+  (initial: B) =>
+  (xs: List<A>): List<B> =>
+    fromElements<B> (
+      ...xs [LIST] .reduce<B[]> (
+        (acc, e, index) => [...acc, fn (acc[index]) (e)],
+        [initial]
+      )
+    );
+
+
+// ACCUMULATING MAPS
 
 /**
- * `ifoldr :: (Int -> a -> b -> b) -> b -> [a] -> b`
+ * `mapAccumL :: Traversable t => (a -> b -> (a, c)) -> a -> t b -> (a, t c)`
  *
- * Right-associative fold of a structure.
+ * The `mapAccumL` function behaves like a combination of `fmap` and `foldl`;
+ * it applies a function to each element of a structure, passing an
+ * accumulating parameter from left to right, and returning a final value of
+ * this accumulator together with the new structure.
  */
-// static ifoldr<T extends Some, U extends Some> (
-//   fn: (index: number) => (current: T) => (acc: U) => U
-// ): (initial: U) => (list: List<T>) => U {
-//   return initial => list => list.value.reduceRight<U> (
-//     (acc, e, index) => fn (index) (e) (acc),
-//     initial
-//   );
-// }
+export const mapAccumL =
+  <A, B, C>
+  (f: (acc: A) => (current: B) => Tuple<A, C>) =>
+  (initial: A) =>
+  (list: List<B>): Tuple<A, List<C>> => {
+    const pair = list [LIST] .reduce<[A, C[]]> (
+        (acc, current) => {
+          const result = f (acc[0]) (current);
 
-//   // // SPECIAL FOLDS
+          return [Tuple.fst (result), [...acc[1], Tuple.snd (result)]]
+        },
+        [initial, []]
+      );
 
-//   /**
-//    * `concat :: [[a]] -> [a]`
-//    *
-//    * The concatenation of all the elements of a container of lists.
-//    */
-//   concat<U> (this: List<List<U>>): List<U> {
-//     return List.fromArray (
-//       this.value.reduce<U[]> (
-//         (acc, e) => acc.concat (e.value),
-//         []
-//       )
-//     );
-//   }
+    return Tuple.of<A, List<C>> (pair[0]) (fromArray (pair[1]));
+  };
 
-//   /**
-//    * `concat :: [[a]] -> [a]`
-//    *
-//    * The concatenation of all the elements of a container of lists.
-//    */
-//   static concat<U> (list: List<List<U>>): List<U> {
-//     return List.fromArray (
-//       list.value.reduce<U[]> (
-//         (acc, e) => acc.concat (e.value),
-//         []
-//       )
-//     );
-//   }
 
-//   /**
-//    * `and :: Foldable t => t Bool -> Bool`
-//    *
-//    * `and` returns the conjunction of a container of Bools. For the result to be
-//    * `True`, the container must be finite; `False`, however, results from a
-//    * `False` value finitely far from the left end.
-//    */
-//   and (this: List<boolean>): boolean {
-//     return this.value.every (e => e);
-//   }
+// UNFOLDING
 
-//   /**
-//    * `or :: Foldable t => t Bool -> Bool`
-//    *
-//    * `or` returns the disjunction of a container of Bools. For the result to be
-//    * `False`, the container must be finite; `True`, however, results from a
-//    * `True` value finitely far from the left end.
-//    */
-//   or (this: List<boolean>): boolean {
-//     return this.value.some (e => e);
-//   }
+const unfoldElement =
+  <A, B>
+  (f: (value: B) => Maybe<Tuple<A, B>>) =>
+  (acc: List<A>) =>
+  (value: B): List<A> => {
+    const result = f (value);
 
-//   /**
-//    * `any :: Foldable t => (a -> Bool) -> t a -> Bool`
-//    *
-//    * Determines whether any element of the structure satisfies the predicate.
-//    */
-//   any (fn: (x: T) => boolean): boolean {
-//     return this.value.some (fn);
-//   }
+    if (isJust (result)) {
+      const newValue = fromJust (result);
 
-//   /**
-//    * `any :: Foldable t => (a -> Bool) -> t a -> Bool`
-//    *
-//    * Determines whether any element of the structure satisfies the predicate.
-//    */
-//   static any<T> (fn: (x: T) => boolean): (list: List<T>) => boolean {
-//     return list => list.value.some (fn);
-//   }
+      return cons (unfoldElement (f) (acc) (Tuple.snd (newValue))) (Tuple.fst (newValue));
+    }
 
-//   /**
-//    * `iany :: Foldable t => (Int -> a -> Bool) -> t a -> Bool`
-//    *
-//    * Determines whether any element of the structure satisfies the predicate.
-//    */
-//   iany (fn: (index: number) => (x: T) => boolean): boolean {
-//     return this.value.some ((e, i) => fn (i) (e));
-//   }
+    return acc;
+  };
 
-//   /**
-//    * `all :: Foldable t => (a -> Bool) -> t a -> Bool`
-//    *
-//    * Determines whether all elements of the structure satisfy the predicate.
-//    */
-//   all (fn: (x: T) => boolean): boolean {
-//     return this.value.every (fn);
-//   }
+/**
+ * `unfoldr :: (b -> Maybe (a, b)) -> b -> [a]`
+ *
+ * The `unfoldr` function is a 'dual' to `foldr`: while `foldr` reduces a list
+ * to a summary value, `unfoldr` builds a list from a seed value. The function
+ * takes the element and returns `Nothing` if it is done producing the list or
+ * returns `Just (a,b)`, in which case, `a` is a prepended to the list and `b`
+ * is used as the next element in a recursive call. For example,
+```hs
+iterate f == unfoldr (\x -> Just (x, f x))
+```
+  *
+  * In some cases, unfoldr can undo a foldr operation:
+  *
+```hs
+unfoldr f' (foldr f z xs) == xs
+```
+  *
+  * if the following holds:
+  *
+```hs
+f' (f x y) = Just (x,y)
+f' z       = Nothing
+```
+  *
+  * A simple use of unfoldr:
+  *
+```hs
+>>> unfoldr (\b -> if b == 0 then Nothing else Just (b, b-1)) 10
+[10,9,8,7,6,5,4,3,2,1]
+```
+  */
+export const unfoldr =
+  <A, B>
+  (f: (value: B) => Maybe<Tuple<A, B>>) =>
+  (seedValue: B): List<A> =>
+    unfoldElement (f) (empty ()) (seedValue);
 
-//   /**
-//    * `iall :: Foldable t => (Int -> a -> Bool) -> t a -> Bool`
-//    *
-//    * Determines whether all elements of the structure satisfy the predicate.
-//    */
-//   iall (fn: (index: number) => (x: T) => boolean): boolean {
-//     return this.value.every ((e, i) => fn (i) (e));
-//   }
 
-//   // BUILDING LISTS
+// EXTRACTING SUBLIST
 
-//   // SCANS
+/**
+ * `take :: Int -> [a] -> [a]`
+ *
+ * `take n`, applied to a list `xs`, returns the prefix of `xs` of length `n`,
+ * or `xs` itself if `n > length xs`.
+ */
+export const take =
+  <A> (size: number) => (list: List<A>): List<A> =>
+    list [LIST] .length < size
+      ? list
+      : fromArray (list [LIST] .slice (0, size));
 
-//   /**
-//    * `scanl :: (b -> a -> b) -> b -> [a] -> [b]`
-//    *
-//    * scanl is similar to foldl, but returns a list of successive reduced values
-//    * from the left:
-//    *
-//    * ```scanl f z [x1, x2, ...] == [z, z `f` x1, (z `f` x1) `f` x2, ...]```
-//    *
-//    * Note that
-//    *
-//    * ```last (scanl f z xs) == foldl f z xs.```
-//    */
-//   scanl<U extends Some> (fn: (acc: U) => (current: T) => U): (initial: U) => List<U> {
-//     return initial => List.of (
-//       ...this.value.reduce<U[]> (
-//         (acc, e, index) => [...acc, fn (acc[index]) (e)],
-//         [initial]
-//       )
-//     );
-//   }
+/**
+ * `drop :: Int -> [a] -> [a]`
+ *
+ * `drop n xs` returns the suffix of `xs` after the first `n` elements, or
+ * `[]` if `n > length x`.
+ */
+export const drop =
+<A> (size: number) => (list: List<A>): List<A> =>
+  list [LIST] .length < size
+    ? list
+    : fromArray (list [LIST] .slice (size));
 
-//   // ACCUMULATING MAPS
-
-//   /**
-//    * `mapAccumL :: Traversable t => (a -> b -> (a, c)) -> a -> t b -> (a, t c)`
-//    *
-//    * The `mapAccumL` function behaves like a combination of `fmap` and `foldl`;
-//    * it applies a function to each element of a structure, passing an
-//    * accumulating parameter from left to right, and returning a final value of
-//    * this accumulator together with the new structure.
-//    */
-//   static mapAccumL<A, B, C> (
-//     f: (acc: A) => (current: B) => Tuple<A, C>
-//   ): (initial: A) => (list: List<B>) => Tuple<A, List<C>> {
-//     return initial => list => {
-//       const pair = list
-//         .toArray ()
-//         .reduce<[A, C[]]> (
-//           (acc, current) => {
-//             const result = f (acc[0]) (current);
-
-//             return [Tuple.fst (result), [...acc[1], Tuple.snd (result)]]
-//           },
-//           [initial, []]
-//         );
-
-//       return Tuple.of<A, List<C>> (pair[0]) (List.fromArray (pair[1]));
-//     };
-//   }
-
-//   // UNFOLDING
-
-//   /**
-//    * `unfoldr :: (b -> Maybe (a, b)) -> b -> [a]`
-//    *
-//    * The `unfoldr` function is a 'dual' to `foldr`: while `foldr` reduces a list
-//    * to a summary value, `unfoldr` builds a list from a seed value. The function
-//    * takes the element and returns `Nothing` if it is done producing the list or
-//    * returns `Just (a,b)`, in which case, `a` is a prepended to the list and `b`
-//    * is used as the next element in a recursive call. For example,
-// ```hs
-// iterate f == unfoldr (\x -> Just (x, f x))
-// ```
-//    *
-//    * In some cases, unfoldr can undo a foldr operation:
-//    *
-// ```hs
-// unfoldr f' (foldr f z xs) == xs
-// ```
-//    *
-//    * if the following holds:
-//    *
-// ```hs
-// f' (f x y) = Just (x,y)
-// f' z       = Nothing
-// ```
-//    *
-//    * A simple use of unfoldr:
-//    *
-// ```hs
-// >>> unfoldr (\b -> if b == 0 then Nothing else Just (b, b-1)) 10
-// [10,9,8,7,6,5,4,3,2,1]
-// ```
-//    */
-//   static unfoldr<T, U> (f: (value: U) => Maybe<Tuple<T, U>>): (seedValue: U) => List<T> {
-//     const buildList = (acc: List<T>) => (value: U): List<T> => {
-//       const result = f (value);
-
-//       if (Maybe.isJust (result)) {
-//         const newValue = Maybe.fromJust (result);
-
-//         return buildList (acc) (Tuple.snd (newValue)) .cons (Tuple.fst (newValue));
-//       }
-
-//       return acc;
-//     };
-
-//     return buildList (List.empty ());
-//   }
-
-//   // EXTRACTING SUBLISTS
-
-//   /**
-//    * `take :: Int -> [a] -> [a]`
-//    *
-//    * `take n`, applied to a list `xs`, returns the prefix of `xs` of length `n`,
-//    * or `xs` itself if `n > length xs`.
-//    */
-//   take (length: number): List<T> {
-//     return this.value.length < length
-//       ? this
-//       : List.fromArray (this.value.slice (0, length));
-//   }
-
-//   /**
-//    * `take :: Int -> [a] -> [a]`
-//    *
-//    * `take n`, applied to a list `xs`, returns the prefix of `xs` of length `n`,
-//    * or `xs` itself if `n > length xs`.
-//    */
-//   static take<T> (length: number): (list: List<T>) => List<T> {
-//     return list => list.value.length < length
-//       ? list
-//       : List.fromArray (list.value.slice (0, length));
-//   }
-
-//   /**
-//    * `drop :: Int -> [a] -> [a]`
-//    *
-//    * `drop n xs` returns the suffix of `xs` after the first `n` elements, or
-//    * `[]` if `n > length x`.
-//    */
-//   static drop<T> (length: number): (list: List<T>) => List<T> {
-//     return list => list.value.length < length
-//       ? List.empty ()
-//       : List.fromArray (list.value.slice (length));
-//   }
-
-//   /**
-//    * `splitAt :: Int -> [a] -> ([a], [a])`
-//    *
-//    * `splitAt n xs` returns a tuple where first element is `xs` prefix of length
-//    * `n` and second element is the remainder of the list.
-//    */
-//   static splitAt<T> (length: number): (list: List<T>) => Tuple<List<T>, List<T>> {
-//     return list => Tuple.of<List<T>, List<T>>
-//       (List.fromArray (list.value.slice (0, length)))
-//       (List.fromArray (list.value.slice (length)));
-//   }
+/**
+ * `splitAt :: Int -> [a] -> ([a], [a])`
+ *
+ * `splitAt n xs` returns a tuple where first element is `xs` prefix of length
+ * `n` and second element is the remainder of the list.
+ */
+export const splitAt =
+  <A> (size: number) => (list: List<A>): Tuple<List<A>, List<A>> =>
+    Tuple.of<List<A>, List<A>>
+      (fromArray (list [LIST] .slice (0, size)))
+      (fromArray (list [LIST] .slice (size)));
 
 //   // SEARCHING BY EQUALITY
 
@@ -1523,6 +1383,61 @@ export const intercalate =
 //     return `[${list.value.toString ()}]`;
 //   }
 // }
+
+
+// INDEX
+
+/**
+ * `ifoldl :: Foldable t => (b -> Int -> a -> b) -> b -> t a -> b`
+ *
+ * Left-associative fold of a structure.
+ *
+ * In the case of lists, `ifoldl`, when applied to a binary operator, a
+ * starting value (typically the left-identity of the operator), and a list,
+ * reduces the list using the binary operator, from left to right.
+ */
+// static ifoldl<T extends Some, U extends Some> (
+//   fn: (acc: U) => (index: number) => (current: T) => U
+// ): (initial: U) => (list: List<T>) => U {
+//   return initial => list => list.value.reduce<U> (
+//     (acc, e, index) => fn (acc) (index) (e),
+//     initial
+//   );
+// }
+
+/**
+ * `ifoldr :: (Int -> a -> b -> b) -> b -> [a] -> b`
+ *
+ * Right-associative fold of a structure.
+ */
+// static ifoldr<T extends Some, U extends Some> (
+//   fn: (index: number) => (current: T) => (acc: U) => U
+// ): (initial: U) => (list: List<T>) => U {
+//   return initial => list => list.value.reduceRight<U> (
+//     (acc, e, index) => fn (index) (e) (acc),
+//     initial
+//   );
+// }
+
+//   // // SPECIAL FOLDS
+
+//   /**
+//    * `iany :: Foldable t => (Int -> a -> Bool) -> t a -> Bool`
+//    *
+//    * Determines whether any element of the structure satisfies the predicate.
+//    */
+//   iany (fn: (index: number) => (x: T) => boolean): boolean {
+//     return this.value.some ((e, i) => fn (i) (e));
+//   }
+
+//   /**
+//    * `iall :: Foldable t => (Int -> a -> Bool) -> t a -> Bool`
+//    *
+//    * Determines whether all elements of the structure satisfy the predicate.
+//    */
+//   iall (fn: (index: number) => (x: T) => boolean): boolean {
+//     return this.value.every ((e, i) => fn (i) (e));
+//   }
 
 // TYPE HELPERS
 

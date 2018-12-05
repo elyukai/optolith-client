@@ -13,7 +13,7 @@
  */
 
 import * as R from 'ramda';
-import { List } from './list';
+import * as List from './list2';
 import { Mutable } from './typeUtils';
 
 // CONTENT ACCESS KEY
@@ -270,35 +270,41 @@ export const ap =
 // FOLDABLE
 
 /**
- * `foldl :: (b -> a -> b) -> b -> Foldable a -> b`
+ * `foldl :: (b -> a -> b) -> b -> Maybe a -> b`
  *
  * Left-associative fold of a structure.
- *
- * In the case of lists, `foldl`, when applied to a binary operator, a
- * starting value (typically the left-identity of the operator), and a list,
- * reduces the list using the binary operator, from left to right:
- *
- * ```foldl f z [x1, x2, ..., xn] == (...((z `f` x1) `f` x2) `f`...) `f` xn```
- *
- * Note that to produce the outermost application of the operator the entire
- * input list must be traversed. This means that `foldl'` will diverge if
- * given an infinite list.
- *
- * Also note that if you want an efficient left-fold, you probably want to use
- * `foldl'` instead of `foldl`. The reason for this is that latter does not
- * force the "inner" results (e.g. `z f x1` in the above example) before
- * applying them to the operator (e.g. to `(f x2)`). This results in a thunk
- * chain `O(n)` elements long, which then must be evaluated from the
- * outside-in.
- *
- * For a general `Foldable` structure this should be semantically identical to,
- *
- * ```foldl f z = foldl f z . toList```
  */
 export const foldl =
   <A extends Some, B extends Some> (fn: (acc: B) => (current: A) => B) =>
     (initial: B) => (m: Maybe<A>): B =>
       isJust (m) ? fn (initial) (fromJust (m)) : initial;
+
+/**
+ * `toList :: Maybe a -> [a]`
+ *
+ * List of elements of a structure, from left to right.
+ */
+export const toList =
+  <A extends Some>(m: Maybe<A>): List.List<A> =>
+    isJust (m) ? List.fromElements (fromJust (m)) : List.empty ();
+
+/**
+ * `null :: Maybe a -> Bool`
+ *
+ * Test whether the structure is empty. The default implementation is optimized
+ * for structures that are similar to cons-lists, because there is no general
+ * way to do better.
+ */
+export const fnull: (m: Maybe<Some>) => boolean = isNothing;
+
+/**
+ * `length :: Maybe a -> Int`
+ *
+ * Returns the size/length of a finite structure as an `Int`. The default
+ * implementation is optimized for structures that are similar to cons-lists,
+ * because there is no general way to do better.
+ */
+export const length = (m: Maybe<Some>): number => isJust (m) ? 1 : 0;
 
 /**
  * `elem :: Eq a => a -> Maybe a -> Bool`
@@ -321,6 +327,81 @@ export const elem =
  * Flipped version of `elem`.
  */
 export const elem_ = <A extends Some> (m: Maybe<A>) => (e: A): boolean => elem (e) (m);
+
+/**
+ * `sum :: Num a => Maybe a -> a`
+ *
+ * The `sum` function computes the sum of the numbers of a structure.
+ */
+export const sum = fromMaybe (0);
+
+/**
+ * `product :: Num a => Maybe a -> a`
+ *
+ * The `product` function computes the product of the numbers of a structure.
+ */
+export const product = fromMaybe (1);
+
+// Special folds
+
+/**
+ * `concat :: Maybe [a] -> [a]`
+ *
+ * The concatenation of all the elements of a container of lists.
+ */
+export const concat =
+  <A extends Some>(m: Maybe<List.List<A>>): List.List<A> =>
+    fromMaybe<List.List<A>> (List.empty<A> ()) (m);
+
+/**
+ * `concatMap :: (a -> [b]) -> Maybe a -> [b]`
+ *
+ * Map a function over all the elements of a container and concatenate the
+ * resulting lists.
+ */
+export const concatMap =
+  <A extends Some, B extends Some>
+  (f: (x: A) => List.List<B>) =>
+  (xs: Maybe<A>): List.List<B> =>
+    fromMaybe (List.empty<B> ()) (fmap (f) (xs));
+
+/**
+ * `and :: Maybe Bool -> Bool`
+ *
+ * `and` returns the conjunction of a container of Bools. For the result to be
+ * `True`, the container must be finite; `False`, however, results from a
+ * `False` value finitely far from the left end.
+ */
+export const and = fromMaybe (true);
+
+/**
+ * `or :: Maybe Bool -> Bool`
+ *
+ * `or` returns the disjunction of a container of Bools. For the result to be
+ * `False`, the container must be finite; `True`, however, results from a
+ * `True` value finitely far from the left end.
+ */
+export const or = fromMaybe (false);
+
+/**
+ * `any :: (a -> Bool) -> Maybe a -> Bool`
+ *
+ * Determines whether any element of the structure satisfies the predicate.
+ */
+export const any =
+  <A extends Some>(f: (x: A) => boolean) => (m: Maybe<A>): boolean =>
+    fromMaybe (false) (fmap (f) (m));
+
+/**
+ * `all :: (a -> Bool) -> Maybe a -> Bool`
+ *
+ * Determines whether all elements of the structure satisfy the predicate.
+ */
+export const all =
+  <A extends Some>(f: (x: A) => boolean) => (m: Maybe<A>): boolean =>
+    fromMaybe (true) (fmap (f) (m));
+
+// Searches
 
 /**
  * `notElem :: Eq a => a -> Maybe a -> Bool`
@@ -497,8 +578,8 @@ export const maybe =
  * where `a` is the first element of the list.
  */
 export const listToMaybe =
-  <A extends Some> (list: List<A>): Maybe<A> =>
-    list .null () ? Nothing : Just (List.head (list));
+  <A extends Some> (list: List.List<A>): Maybe<A> =>
+    List.fnull (list) ? Nothing : Just (List.head (list));
 
 /**
  * `maybeToList :: Maybe a -> [a]`
@@ -506,9 +587,7 @@ export const listToMaybe =
  * The `maybeToList` function returns an empty list when given `Nothing` or a
  * singleton list when not given `Nothing`.
  */
-export const maybeToList =
-  <A extends Some> (m: Maybe<A>): List<A> =>
-    isJust (m) ? List.of (fromJust (m)) : List.empty ();
+export const maybeToList = toList;
 
 /**
  * `catMaybes :: [Maybe a] -> [a]`
@@ -517,8 +596,8 @@ export const maybeToList =
  * the `Just` values.
  */
 export const catMaybes =
-  <A extends Some> (list: List<Maybe<A>>): List<A> =>
-    List.map<Just<A>, A> (fromJust) (list .filter (isJust));
+  <A extends Some> (list: List.List<Maybe<A>>): List.List<A> =>
+    List.map<Just<A>, A> (fromJust) (List.filter<Maybe<A>> (isJust) (list));
 
 /**
  * `mapMaybe :: (a -> Maybe b) -> [a] -> [b]`
@@ -530,9 +609,9 @@ export const catMaybes =
  */
 export const mapMaybe =
   <A extends Some, B extends Some> (fn: (x: A) => Maybe<B>) =>
-    List.foldr<A, List<B>>
-      (x => acc => R.pipe (fn, maybe<B, List<B>> (acc) (List.cons (acc))) (x))
-      (List.of ());
+    List.foldr<A, List.List<B>>
+      (x => acc => R.pipe (fn, maybe<B, List.List<B>> (acc) (List.cons (acc))) (x))
+      (List.empty ());
 
 
 // CUSTOM MAYBE FUNCTIONS
@@ -603,9 +682,9 @@ export const ensure: Ensure =
  */
 export const imapMaybe =
   <A extends Some, B extends Some> (fn: (index: number) => (x: A) => Maybe<B>) =>
-    List.ifoldr<A, List<B>>
-      (index => x => acc => R.pipe (fn (index), maybe<B, List<B>> (acc) (List.cons (acc))) (x))
-      (List.of ());
+    List.ifoldr<A, List.List<B>>
+      (index => x => acc => R.pipe (fn (index), maybe<B, List.List<B>> (acc) (List.cons (acc))) (x))
+      (List.empty ());
 
 /**
  * `maybeToReactNode :: Maybe JSXElement -> ReactNode`

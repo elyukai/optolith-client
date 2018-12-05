@@ -1,7 +1,7 @@
 const React = require('react');
 const { List } = require('../list');
 const { Tuple } = require('../tuple');
-const Either = require('../either');
+const Either = require('../Either');
 const { Just, Nothing } = require('../maybe2');
 const { add } = require('../../mathUtils');
 const { Left, Right } = require('../either');
