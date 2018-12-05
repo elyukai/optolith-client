@@ -1,8 +1,33 @@
+/**
+ * @module Folable
+ *
+ * Provides generalized functions on the `Foldable` typeclass for data
+ * structures, e.g. `Maybe` or `List`.
+ *
+ * @author Lukas Obermann
+ */
+
+import * as Either from './either';
 import * as List from './list2';
 import * as Maybe from './maybe2';
 
-// tslint:disable-next-line: no-unsafe-any
-const isMaybe = (x: any): x is Maybe.Maybe<Maybe.Some> => Maybe.isJust (x) || Maybe.isNothing (x);
+// /**
+//  * `foldr :: Foldable t => (a -> b -> b) -> b -> t a -> b`
+//  *
+//  * Right-associative fold of a structure.
+//  *
+//  * In the case of lists, `foldr`, when applied to a binary operator, a
+//  * starting value (typically the right-identity of the operator), and a list,
+//  * reduces the list using the binary operator, from right to left:
+//  *
+//  * ```foldr f z [x1, x2, ..., xn] == x1 `f` (x2 `f` ... (xn `f` z)...)```
+//  */
+// export const foldr =
+//   <A extends Some, B extends Some>
+//   (f: (current: A) => (acc: B) => B) =>
+//   (initial: B) =>
+//   (xs: List<A>): B =>
+//     xs [LIST] .reduceRight<B> ((acc, e) => f (e) (acc), initial);
 
 /**
  * `foldl :: Foldable t => (b -> a -> b) -> b -> t a -> b`
@@ -20,12 +45,59 @@ export const foldl =
   (f: (acc: B) => (current: A) => B) =>
   (initial: B) =>
   (xs: Maybe.Maybe<A> | List.List<A>): B => {
-    if (isMaybe (xs)) {
+    if (Maybe.isMaybe (xs)) {
       return Maybe.foldl<A, B> (f) (initial) (xs);
+    }
+
+    if (Either.isEither (xs)) {
+      return Either.foldl<A, B> (f) (initial) (xs);
     }
 
     return List.foldl<A, B> (f) (initial) (xs);
   };
+
+// /**
+//  * `foldr1 :: (a -> a -> a) -> t a -> a`
+//  *
+//  * A variant of `foldr` that has no base case, and thus may only be applied to
+//  * non-empty structures.
+//  *
+//  * `foldr1 f = foldr1 f . toList`
+//  */
+// export const foldr1 =
+//   <A extends Some>
+//   (f: (current: A) => (acc: A) => A) =>
+//   (xs: List<A>): A => {
+//     if (xs [LIST] .length > 0) {
+//       const _init = xs [LIST] .slice (0, -1);
+//       const _last = xs [LIST] [xs [LIST] .length - 1];
+
+//       return _init .reduceRight<A> ((acc, e) => f (e) (acc), _last);
+//     }
+
+//     throw new TypeError ('Cannot apply foldr1 to an empty list.');
+//   };
+
+// /**
+//  * `foldl1 :: (a -> a -> a) -> t a -> a`
+//  *
+//  * A variant of `foldl` that has no base case, and thus may only be applied to
+//  * non-empty structures.
+//  *
+//  * `foldl1 f = foldl1 f . toList`
+//  */
+// export const foldl1 =
+//   <A extends Some>
+//   (f: (acc: A) => (current: A) => A) =>
+//   (xs: List<A>): A => {
+//     if (xs [LIST] .length > 0) {
+//       const [_head, ..._tail] = xs;
+
+//       return _tail .reduce<A> ((acc, e) => f (acc) (e), _head);
+//     }
+
+//     throw new TypeError ('Cannot apply foldl1 to an empty list.');
+//   };
 
 /**
  * `toList :: t a -> [a]`
@@ -34,7 +106,7 @@ export const foldl =
  */
 export const toList =
   <A extends Maybe.Some>(xs: List.List<A> | Maybe.Maybe<A>): List.List<A> => {
-    if (isMaybe (xs)) {
+    if (Maybe.isMaybe (xs)) {
       return Maybe.toList<A> (xs);
     }
 
@@ -50,7 +122,7 @@ export const toList =
  */
 export const fnull =
   (xs: List.List<any> | Maybe.Maybe<Maybe.Some>): boolean => {
-    if (isMaybe (xs)) {
+    if (Maybe.isMaybe (xs)) {
       return Maybe.fnull (xs);
     }
 
@@ -66,7 +138,7 @@ export const fnull =
  */
 export const length =
   (xs: List.List<any> | Maybe.Maybe<Maybe.Some>): number => {
-    if (isMaybe (xs)) {
+    if (Maybe.isMaybe (xs)) {
       return Maybe.length (xs);
     }
 
@@ -79,9 +151,15 @@ export const length =
  * Does the element occur in the structure?
  */
 export const elem =
-  <A extends Maybe.Some>(e: A) => (xs: List.List<A> | Maybe.Maybe<A>): boolean => {
-    if (isMaybe (xs)) {
+  <A extends Maybe.Some>
+  (e: A) =>
+  (xs: List.List<A> | Maybe.Maybe<A> | Either.Either<A, A>): boolean => {
+    if (Maybe.isMaybe (xs)) {
       return Maybe.elem<A> (e) (xs);
+    }
+
+    if (Either.isEither (xs)) {
+      return Either.elem<A> (e) (xs);
     }
 
     return List.elem<A> (e) (xs);
@@ -95,7 +173,9 @@ export const elem =
  * Same as `List.elem` but with arguments switched.
  */
 export const elem_ =
-  <A extends Maybe.Some>(xs: List.List<A> | Maybe.Maybe<A>) => (e: A): boolean =>
+  <A extends Maybe.Some>
+  (xs: List.List<A> | Maybe.Maybe<A> | Either.Either<A, A>) =>
+  (e: A): boolean =>
     elem (e) (xs);
 
 /**
@@ -105,7 +185,7 @@ export const elem_ =
  */
 export const sum =
   (xs: List.List<number> | Maybe.Maybe<number>): number => {
-    if (isMaybe (xs)) {
+    if (Maybe.isMaybe (xs)) {
       return Maybe.sum (xs);
     }
 
@@ -119,7 +199,7 @@ export const sum =
  */
 export const product =
   (xs: List.List<number> | Maybe.Maybe<number>): number => {
-    if (isMaybe (xs)) {
+    if (Maybe.isMaybe (xs)) {
       return Maybe.product (xs);
     }
 
@@ -149,7 +229,7 @@ export const product =
  */
 export const concat =
   <A extends Maybe.Some>(xs: List.List<List.List<A>> | Maybe.Maybe<List.List<A>>): List.List<A> => {
-    if (isMaybe (xs)) {
+    if (Maybe.isMaybe (xs)) {
       return Maybe.concat (xs);
     }
 
@@ -166,7 +246,7 @@ export const concatMap =
   <A extends Maybe.Some, B extends Maybe.Some>
   (f: (x: A) => List.List<B>) =>
   (xs: List.List<A> | Maybe.Maybe<A>): List.List<B> => {
-    if (isMaybe (xs)) {
+    if (Maybe.isMaybe (xs)) {
       return Maybe.concatMap<A, B> (f) (xs);
     }
 
@@ -182,7 +262,7 @@ export const concatMap =
  */
 export const and =
   (xs: List.List<boolean> | Maybe.Maybe<boolean>): boolean => {
-    if (isMaybe (xs)) {
+    if (Maybe.isMaybe (xs)) {
       return Maybe.and (xs);
     }
 
@@ -198,7 +278,7 @@ export const and =
  */
 export const or =
   (xs: List.List<boolean> | Maybe.Maybe<boolean>): boolean => {
-    if (isMaybe (xs)) {
+    if (Maybe.isMaybe (xs)) {
       return Maybe.or (xs);
     }
 
@@ -212,7 +292,7 @@ export const or =
  */
 export const any =
   <A extends Maybe.Some>(f: (x: A) => boolean) => (xs: List.List<A> | Maybe.Maybe<A>): boolean => {
-    if (isMaybe (xs)) {
+    if (Maybe.isMaybe (xs)) {
       return Maybe.any<A> (f) (xs);
     }
 
@@ -226,7 +306,7 @@ export const any =
  */
 export const all =
   <A extends Maybe.Some>(f: (x: A) => boolean) => (xs: List.List<A> | Maybe.Maybe<A>): boolean => {
-    if (isMaybe (xs)) {
+    if (Maybe.isMaybe (xs)) {
       return Maybe.all<A> (f) (xs);
     }
 
@@ -243,9 +323,13 @@ export const all =
 export const notElem =
   <A extends Maybe.Some>
   (e: A) =>
-  (xs: List.List<A> | Maybe.Maybe<A>): boolean => {
-    if (isMaybe (xs)) {
+  (xs: List.List<A> | Maybe.Maybe<A> | Either.Either<A, A>): boolean => {
+    if (Maybe.isMaybe (xs)) {
       return Maybe.notElem<A> (e) (xs);
+    }
+
+    if (Either.isEither (xs)) {
+      return Either.notElem<A> (e) (xs);
     }
 
     return List.notElem<A> (e) (xs);

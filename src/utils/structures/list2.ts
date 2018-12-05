@@ -1,20 +1,16 @@
 /**
- * The `Maybe` type encapsulates an optional value. A value of type `Maybe a`
- * either contains a value of type `a` (represented as `Just a`), or it is empty
- * (represented as `Nothing`). Using `Maybe` is a good way to deal with errors
- * or exceptional cases without resorting to drastic measures such as `error`.
+ * @module List
  *
- * The `Maybe` type is also a monad. It is a simple kind of error monad, where
- * all errors are represented by `Nothing`. A richer error monad can be built
- * using the `Either` type.
+ * A list (`[a]`) is a simple flat data structure for values of the same type.
  *
  * @author Lukas Obermann
- * @author hackage.haskell.org (a lot of JSDocs)
  */
 
-import * as R from 'ramda';
+import { pipe } from 'ramda';
 import { not } from '../not';
-import { fromJust, fromNullable, isJust, Just, Maybe, Nothing, Some } from './maybe2';
+import * as Functor from './Functor';
+import { fromJust, fromNullable, imapMaybe, isJust, Just, Maybe, Nothing, Some } from './maybe2';
+import { OrderedMap } from './orderedMap';
 import { Tuple } from './tuple';
 import { Mutable } from './typeUtils';
 
@@ -105,6 +101,17 @@ export const then =
  * Inject a value into a list.
  */
 export const mreturn = <A extends Some> (x: A) => new _List ([x]);
+
+/**
+ * `(>=>) :: (a -> [b]) -> (b -> [c]) -> a -> [c]`
+ *
+ * Left-to-right Kleisli composition of monads.
+ */
+export const kleisli =
+  <A extends Some, B extends Some, C extends Some>
+  (f1: (x: A) => List<B>) =>
+  (f2: (x: B) => List<C>) =>
+    pipe (f1, bind_ (f2));
 
 /**
  * `join :: Monad m => m (m a) -> m a`
@@ -366,7 +373,7 @@ export const all =
  *
  * `notElem` is the negation of `elem`.
  */
-export const notElem = <A> (e: A) => R.pipe (
+export const notElem = <A> (e: A) => pipe (
   elem<A> (e),
   not
 );
@@ -528,7 +535,7 @@ export const head = <A> (xs: List<A>): A => {
   }
 
   return xs [LIST] [0];
-}
+};
 
 /**
  * `last :: [a] -> a`
@@ -541,7 +548,7 @@ export const last = <A> (xs: List<A>): A => {
   }
 
   return xs [LIST] [length (xs) - 1];
-}
+};
 
 /**
  * `last_ :: [a] -> Maybe a`
@@ -565,7 +572,7 @@ export const tail = <A> (xs: List<A>): List<A> => {
   }
 
   return fromArray (xs [LIST] .slice (1));
-}
+};
 
 /**
  * `tail_ :: [a] -> Maybe [a]`
@@ -592,7 +599,7 @@ export const init = <A> (xs: List<A>): List<A> => {
   }
 
   return fromArray (xs [LIST] .slice (0, -1));
-}
+};
 
 /**
  * `init_ :: [a] -> Maybe [a]`
@@ -627,15 +634,6 @@ export const uncons =
  * `map f xs` is the list obtained by applying `f` to each element of `xs`.
  */
 export const map = fmap;
-
-//   /**
-//    * `imap :: (Int -> a -> b) -> [a] -> [b]`
-//    *
-//    * `imap f xs` is the list obtained by applying `f` to each element of `xs`.
-//    */
-//   static imap<T, U> (fn: (index: number) => (x: T) => U): (list: List<T>) => List<U> {
-//     return list => List.fromArray (list.value.map ((e, i) => fn (i) (e)));
-//   }
 
 /**
  * `reverse :: [a] -> [a]`
@@ -810,582 +808,330 @@ export const splitAt =
       (fromArray (list [LIST] .slice (0, size)))
       (fromArray (list [LIST] .slice (size)));
 
-//   // SEARCHING BY EQUALITY
 
-//   /**
-//    * `elem :: (Foldable t, Eq a) => a -> t a -> Bool`
-//    *
-//    * Does the element occur in the structure?
-//    */
-//   elem (e: T): boolean {
-//     return this.value.includes (e);
-//   }
+// SEARCHING BY EQUALITY
 
-
-//   /**
-//    * `notElem :: (Foldable t, Eq a) => a -> t a -> Bool`
-//    *
-//    * `notElem` is the negation of `elem`.
-//    */
-//   notElem (e: T): boolean {
-//     return !this.elem (e);
-//   }
-
-//   /**
-//    * `notElem :: (Foldable t, Eq a) => a -> t a -> Bool`
-//    *
-//    * `notElem` is the negation of `elem`.
-//    */
-//   static notElem<T> (e: T): (list: List<T>) => boolean {
-//     return R.pipe (
-//       List.elem (e),
-//       not
-//     );
-//   }
-
-//   /**
-//    * `notElem_ :: (Foldable t, Eq a) => t a -> a -> Bool`
-//    *
-//    * `notElem_` is the negation of `elem_`.
-//    *
-//    * Same as `List.elem_` but with arguments swapped.
-//    */
-//   static notElem_<T> (list: List<T>): (e: T) => boolean {
-//     return R.pipe (
-//       List.elem_ (list),
-//       not
-//     );
-//   }
-
-//   /**
-//    * `lookup :: Eq a => a -> [(a, b)] -> Maybe b`
-//    *
-//    * `lookup key assocs` looks up a key in an association list.
-//    */
-//   lookup<K, V> (this: List<Tuple<K, V>>, key: K): Maybe<V> {
-//     return Maybe.fmap<Tuple<K, V>, V> (Tuple.snd) (this.find (e => Tuple.fst (e) === key));
-//   }
-
-//   /**
-//    * `lookup :: Eq a => a -> [(a, b)] -> Maybe b`
-//    *
-//    * `lookup key assocs` looks up a key in an association list.
-//    */
-//   static lookup<A, B> (key: A): (list: List<Tuple<A, B>>) => Maybe<B> {
-//     return list => Maybe.fmap<Tuple<A, B>, B> (Tuple.snd)
-//                                               (list .find (e => Tuple.fst (e) === key));
-//   }
-
-//   // SEARCHING WITH A PREDICATE
-
-//   /**
-//    * `find :: Foldable t => (a -> Bool) -> t a -> Maybe a`
-//    *
-//    * The `find` function takes a predicate and a structure and returns the
-//    * leftmost element of the structure matching the predicate, or `Nothing` if
-//    * there is no such element.
-//    */
-//   find<U extends T> (pred: (x: T) => x is U): Maybe<U>;
-//   /**
-//    * `find :: Foldable t => (a -> Bool) -> t a -> Maybe a`
-//    *
-//    * The `find` function takes a predicate and a structure and returns the
-//    * leftmost element of the structure matching the predicate, or `Nothing` if
-//    * there is no such element.
-//    */
-//   find (pred: (x: T) => boolean): Maybe<T>;
-//   find (pred: (x: T) => boolean): Maybe<T> {
-//     return Maybe.fromNullable (this.value.find (pred));
-//   }
-
-//   /**
-//    * `find :: Foldable t => (a -> Bool) -> t a -> Maybe a`
-//    *
-//    * The `find` function takes a predicate and a structure and returns the
-//    * leftmost element of the structure matching the predicate, or `Nothing` if
-//    * there is no such element.
-//    */
-//   static find<T, U extends T> (pred: (x: T) => x is U): (list: List<T>) => Maybe<U>;
-//   /**
-//    * `find :: Foldable t => (a -> Bool) -> t a -> Maybe a`
-//    *
-//    * The `find` function takes a predicate and a structure and returns the
-//    * leftmost element of the structure matching the predicate, or `Nothing` if
-//    * there is no such element.
-//    */
-//   static find<T> (pred: (x: T) => boolean): (list: List<T>) => Maybe<T>;
-//   static find<T> (pred: (x: T) => boolean): (list: List<T>) => Maybe<T> {
-//     return list => list.find (pred);
-//   }
-
-//   /**
-//    * `ifind :: Foldable t => (Int -> a -> Bool) -> t a -> Maybe a`
-//    *
-//    * The `find` function takes a predicate and a structure and returns the
-//    * leftmost element of the structure matching the predicate, or `Nothing` if
-//    * there is no such element.
-//    */
-//   ifind<U extends T> (pred: (index: number) => (x: T) => x is U): Maybe<U>;
-//   /**
-//    * `ifind :: Foldable t => (Int -> a -> Bool) -> t a -> Maybe a`
-//    *
-//    * The `find` function takes a predicate and a structure and returns the
-//    * leftmost element of the structure matching the predicate, or `Nothing` if
-//    * there is no such element.
-//    */
-//   ifind (pred: (index: number) => (x: T) => boolean): Maybe<T>;
-//   ifind (pred: (index: number) => (x: T) => boolean): Maybe<T> {
-//     return Maybe.fromNullable (this.value.find ((e, i) => pred (i) (e)));
-//   }
-
-//   /**
-//    * `filter :: (a -> Bool) -> [a] -> [a]`
-//    *
-//    * `filter`, applied to a predicate and a list, returns the list of those
-//    * elements that satisfy the predicate.
-//    */
-//   filter<U extends T> (pred: (x: T) => x is U): List<U>;
-//   /**
-//    * `filter :: (a -> Bool) -> [a] -> [a]`
-//    *
-//    * `filter`, applied to a predicate and a list, returns the list of those
-//    * elements that satisfy the predicate.
-//    */
-//   filter (pred: (x: T) => boolean): List<T>;
-//   filter (pred: (x: T) => boolean): List<T> {
-//     return List.fromArray (this.value.filter (pred));
-//   }
-
-//   /**
-//    * `filter :: (a -> Bool) -> [a] -> [a]`
-//    *
-//    * `filter`, applied to a predicate and a list, returns the list of those
-//    * elements that satisfy the predicate.
-//    */
-//   static filter<T, U extends T> (pred: (x: T) => x is U): (list: List<T>) => List<U>;
-//   /**
-//    * `filter :: (a -> Bool) -> [a] -> [a]`
-//    *
-//    * `filter`, applied to a predicate and a list, returns the list of those
-//    * elements that satisfy the predicate.
-//    */
-//   static filter<T> (pred: (x: T) => boolean): (list: List<T>) => List<T>;
-//   static filter<T> (pred: (x: T) => boolean): (list: List<T>) => List<T> {
-//     return list => list.filter (pred);
-//   }
-
-//   /**
-//    * `ifilter :: (Int -> a -> Bool) -> [a] -> [a]`
-//    *
-//    * `ifilter`, applied to a predicate and a list, returns the list of those
-//    * elements that satisfy the predicate.
-//    */
-//   ifilter<U extends T> (pred: (index: number) => (x: T) => x is U): List<U>;
-//   /**
-//    * `ifilter :: (Int -> a -> Bool) -> [a] -> [a]`
-//    *
-//    * `ifilter`, applied to a predicate and a list, returns the list of those
-//    * elements that satisfy the predicate.
-//    */
-//   ifilter (pred: (index: number) => (x: T) => boolean): List<T>;
-//   ifilter (pred: (index: number) => (x: T) => boolean): List<T> {
-//     return List.fromArray (this.value.filter ((e, i) => pred (i) (e)));
-//   }
-
-//   /**
-//    * `partition :: (a -> Bool) -> [a] -> ([a], [a])`
-//    *
-//    * The `partition` function takes a predicate a list and returns the pair of
-//    * lists of elements which do and do not satisfy the predicate, respectively.
-//    *
-// ```
-// >>> partition (`elem` "aeiou") "Hello World!"
-// ("eoo","Hll Wrld!")
-// ```
-//    */
-//   partition (f: (value: T) => boolean): Tuple<List<T>, List<T>> {
-//     const pair = this.value.reduce<[List<T>, List<T>]> (
-//       ([included, excluded], value) => f (value)
-//         ? [included.append (value), excluded]
-//         : [included, excluded.append (value)],
-//       [List.empty (), List.empty ()]
-//     );
-
-//     return Tuple.of<List<T>, List<T>> (pair[0]) (pair[1]);
-//   }
-
-//   /**
-//    * `ipartition :: (Int ->a -> Bool) -> [a] -> ([a], [a])`
-//    *
-//    * The `ipartition` function takes a predicate a list and returns the pair of
-//    * lists of elements which do and do not satisfy the predicate, respectively.
-//    *
-// ```
-// >>> partition (`elem` "aeiou") "Hello World!"
-// ("eoo","Hll Wrld!")
-// ```
-//    */
-//   ipartition (f: (index: number) => (value: T) => boolean): Tuple<List<T>, List<T>> {
-//     const pair = this.value.reduce<[List<T>, List<T>]> (
-//       ([included, excluded], value, index) => f (index) (value)
-//         ? [included.append (value), excluded]
-//         : [included, excluded.append (value)],
-//       [List.empty (), List.empty ()]
-//     );
-
-//     return Tuple.of<List<T>, List<T>> (pair[0]) (pair[1]);
-//   }
-
-//   // INDEXING LISTS
-
-//   /**
-//    * `elemIndex :: Eq a => a -> [a] -> Maybe Int`
-//    *
-//    * The `elemIndex` function returns the index of the first element in the
-//    * given list which is equal (by `==`) to the query element, or `Nothing` if
-//    * there is no such element.
-//    */
-//   elemIndex (x: T): Maybe<number> {
-//     const res = this.value.indexOf (x);
-
-//     return res > -1 ? Maybe.return (res) : Maybe.empty ();
-//   }
-
-//   /**
-//    * `elemIndices :: Eq a => a -> [a] -> [Int]`
-//    *
-//    * The `elemIndices` function extends `elemIndex`, by returning the indices of
-//    * all elements equal to the query element, in ascending order.
-//    */
-//   elemIndices (x: T): List<number> {
-//     return List.of (
-//       ...this.value.reduce<number[]> (
-//         (acc, e, index) => e === x ? [...acc, index] : acc,
-//         []
-//       )
-//     );
-//   }
-
-//   /**
-//    * `findIndex :: (a -> Bool) -> [a] -> Maybe Int`
-//    *
-//    * The `findIndex` function takes a predicate and a list and returns the index
-//    * of the first element in the list satisfying the predicate, or `Nothing` if
-//    * there is no such element.
-//    */
-//   findIndex (pred: (x: T) => boolean): Maybe<number> {
-//     const res = this.value.findIndex (pred);
-
-//     return res > -1 ? Maybe.return (res) : Maybe.empty ();
-//   }
-
-//   /**
-//    * `ifindIndex :: (Int -> a -> Bool) -> [a] -> Maybe Int`
-//    *
-//    * The `ifindIndex` function takes a predicate and a list and returns the
-//    * index of the first element in the list satisfying the predicate, or
-//    * `Nothing` if there is no such element.
-//    */
-//   ifindIndex (pred: (index: number) => (x: T) => boolean): Maybe<number> {
-//     const res = this.value.findIndex ((e, i) => pred (i) (e));
-
-//     return res > -1 ? Maybe.return (res) : Maybe.empty ();
-//   }
-
-//   /**
-//    * `findIndices :: (a -> Bool) -> [a] -> [Int]`
-//    *
-//    * The `findIndices` function extends `findIndex`, by returning the indices of
-//    * all elements satisfying the predicate, in ascending order.
-//    */
-//   findIndices (pred: (x: T) => boolean): List<number> {
-//     return List.of (
-//       ...this.value.reduce<number[]> (
-//         (acc, e, index) => pred (e) ? [...acc, index] : acc,
-//         []
-//       )
-//     );
-//   }
-
-//   /**
-//    * `ifindIndices :: (a -> Bool) -> [a] -> [Int]`
-//    *
-//    * The `ifindIndices` function extends `findIndex`, by returning the indices
-//    * of all elements satisfying the predicate, in ascending order.
-//    */
-//   ifindIndices (pred: (index: number) => (x: T) => boolean): List<number> {
-//     return List.of (
-//       ...this.value.reduce<number[]> (
-//         (acc, e, index) => pred (index) (e) ? [...acc, index] : acc,
-//         []
-//       )
-//     );
-//   }
-
-//   // ZIPPING AND UNZIPPING LISTS
-
-//   /**
-//    * `zip :: [a] -> [b] -> [(a, b)]`
-//    *
-//    * `zip` takes two lists and returns a list of corresponding pairs. If one
-//    * input list is short, excess elements of the longer list are discarded.
-//    */
-//   static zip<A, B> (list1: List<A>): (list2: List<B>) => List<Tuple<A, B>> {
-//     return list2 => Maybe.imapMaybe<A, Tuple<A, B>> (
-//                                                       index => e => list2.subscript (index)
-//                                                         .fmap (e2 => Tuple.of<A, B> (e) (e2))
-//                                                     )
-//                                                     (list1);
-//   }
-
-//   /**
-//    * `zipWith :: (a -> b -> c) -> [a] -> [b] -> [c]`
-//    *
-//    * `zipWith` generalises `zip` by zipping with the function given as the first
-//    * argument, instead of a tupling function. For example, `zipWith (+)` is
-//    * applied to two lists to produce the list of corresponding sums.
-//    */
-//   static zipWith<A, B, C> (
-//     f: (value1: A) => (value2: B) => C
-//   ): (list1: List<A>) => (list2: List<B>) => List<C> {
-//     return list1 => list2 => Maybe.imapMaybe<A, C> (
-//                                                      index => e => list2
-//                                                        .subscript (index)
-//                                                        .fmap (f (e))
-//                                                    )
-//                                                    (list1);
-//   }
-
-//   // "SET" OPERATIONS
-
-//   /**
-//    * `delete :: Eq a => a -> [a] -> [a]`
-//    *
-//    * `delete x` removes the first occurrence of `x` from its list argument.
-//    */
-//   delete (x: T): List<T> {
-//     const index = this.value.findIndex (e => R.equals (e, x));
-
-//     return this.deleteAt (index);
-//   }
-
-//   // ORDERED LISTS
-
-//   /**
-//    * `sortBy :: (a -> a -> Ordering) -> [a] -> [a]`
-//    *
-//    * The `sortBy` function is the non-overloaded version of `sort`.
-//    */
-//   sortBy (fn: (a: T) => (b: T) => number): List<T> {
-//     return List.fromArray ([...this.value].sort ((a, b) => fn (a) (b)));
-//   }
-
-//   // BASIC INDEX-BASED (from Data.List.Index)
-
-//   /**
-//    * `deleteAt :: Int -> [a] -> [a]`
-//    *
-//    * `deleteAt` deletes the element at an index.
-//    *
-//    * If the index is negative or exceeds list length, the original list will be
-//    * returned.
-//    */
-//   deleteAt (index: number): List<T> {
-//     if (index > -1 && index < this.value.length) {
-//       return List.of (
-//         ...this.value.slice (0, index),
-//         ...this.value.slice (index + 1)
-//       );
-//     }
-//     else {
-//       return this;
-//     }
-//   }
-
-//   /**
-//    * `setAt :: Int -> a -> [a] -> [a]`
-//    *
-//    * `setAt` sets the element at the index.
-//    *
-//    * If the index is negative or exceeds list length, the original list will be
-//    * returned.
-//    */
-//   setAt (index: number, value: T): List<T> {
-//     const resultFn = (x1: number, x2: T): List<T> => {
-//       if (x1 > -1 && x1 < this.value.length) {
-//         return List.fromArray (this.value.map ((e, i) => i === x1 ? x2 : e));
-//       }
-//       else {
-//         return this;
-//       }
-//     };
-
-//     return resultFn (index, value!);
-//   }
-
-//   /**
-//    * `modifyAt :: Int -> (a -> a) -> [a] -> [a]`
-//    *
-//    * `modifyAt` applies a function to the element at the index.
-//    *
-//    * If the index is negative or exceeds list length, the original list will be
-//    * returned.
-//    */
-//   modifyAt (index: number, fn: (oldValue: T) => T): List<T> {
-//     const resultFn = (x1: number, x2: (oldValue: T) => T): List<T> => {
-//       if (x1 > -1 && x1 < this.value.length) {
-//         return List.fromArray (this.value.map ((e, i) => i === x1 ? x2 (e) : e));
-//       }
-//       else {
-//         return this;
-//       }
-//     };
-
-//     return resultFn (index, fn!);
-//   }
-
-//   /**
-//    * `updateAt :: Int -> (a -> Maybe a) -> [a] -> [a]`
-//    *
-//    * `updateAt` applies a function to the element at the index, and then either
-//    * replaces the element or deletes it (if the function has returned
-//    * `Nothing`).
-//    *
-//    * If the index is negative or exceeds list length, the original list will be
-//    * returned.
-//    */
-//   updateAt (index: number, fn: (oldValue: T) => Maybe<T>): List<T> {
-//     const resultFn = (x1: number, x2: (oldValue: T) => Maybe<T>): List<T> => {
-//       if (x1 > -1 && x1 < this.value.length) {
-//         const maybeRes = x2 (this.value[x1]);
-
-//         if (Maybe.isJust (maybeRes)) {
-//           return this.setAt (x1, Maybe.fromJust (maybeRes));
-//         }
-//         else {
-//           return this.deleteAt (x1);
-//         }
-//       }
-//       else {
-//         return this;
-//       }
-//     };
-
-//     return resultFn (index, fn!);
-//   }
-
-//   /**
-//    * `insertAt :: Int -> a -> [a] -> [a]`
-//    *
-//    * `insertAt` inserts an element at the given position:
-//    *
-//    * `(insertAt i x xs) !! i == x`
-//    *
-//    * If the index is negative or exceeds list length, the original list will be
-//    * returned. (If the index is equal to the list length, the insertion can be
-//    * carried out.)
-//    */
-//   insertAt (index: number, value: T): List<T> {
-//     const resultFn = (x1: number, x2: T): List<T> => {
-//       if (x1 > -1 && x1 < this.value.length) {
-//         return List.of (
-//           ...this.value.slice (0, x1),
-//           x2,
-//           ...this.value.slice (x1)
-//         );
-//       }
-//       else if (x1 === this.value.length) {
-//         return this.append (x2);
-//       }
-//       else {
-//         return this;
-//       }
-//     };
-
-//     return resultFn (index, value!);
-//   }
-
-//   // MONAD METHODS
-
-//   bind<U> (f: (value: T) => List<U>): List<U> {
-//     return List.fromArray (this.value.reduce<U[]> (
-//       (acc, e) => [...acc, ...f (e)],
-//       []
-//     ));
-//   }
-
-//   then<U> (x: List<U>): List<U> {
-//     return this.value.length > 0 ? x : this as any;
-//   }
-
-//   ap<U> (x: List<(value: T) => U>): List<U> {
-//     return List.fromArray (this.value.reduce<U[]> (
-//       (acc, e) => [...acc, ...x.value.map (f => f (e))],
-//       []
-//     ));
-//   }
-
-//   // OWN METHODS
-
-//   /**
-//    * `append :: a -> [a]`
-//    *
-//    * Appends an element to the list.
-//    */
-//   append (e: T): List<T> {
-//     return List.of (...this.value, e);
-//   }
-
-//   /**
-//    * Transforms the list instance into a native array instance.
-//    */
-//   toArray (): ReadonlyArray<T> {
-//     return this.value;
-//   }
-
-//   /**
-//    * Converts a `List` to a native Array.
-//    */
-//   static toArray<T> (list: List<T>): ReadonlyArray<T> {
-//     return list.value;
-//   }
-
-//   /**
-//    * Converts a native Array to a `List`.
-//    */
-//   static fromArray<T> (arr: ReadonlyArray<T>): List<T> {
-//     return new List (arr);
-//   }
-
-//   /**
-//    * Transforms a `List` of `Tuple`s into an `OrderedMap` where the first values
-//    * in the `Tuple` are the keys and the second values are the actual values.
-//    */
-//   static toMap<K, V> (list: List<Tuple<K, V>>): OrderedMap<K, V> {
-//     return OrderedMap.of (list.value.map (t =>
-//       [Tuple.fst (t), Tuple.snd (t)] as [K, V]
-//     ));
-//   }
-
-//   /**
-//    * Checks if the given value is a `List`.
-//    * @param value The value to test.
-//    */
-//   static isList<T> (value: any): value is List<T> {
-//     return value instanceof List;
-//   }
-
-//   toString (): string {
-//     return List.show (this);
-//   }
-
-//   static show (list: List<any>): string {
-//     return `[${list.value.toString ()}]`;
-//   }
-// }
+/**
+ * `lookup :: Eq a => a -> [(a, b)] -> Maybe b`
+ *
+ * `lookup key assocs` looks up a key in an association list.
+ */
+export const lookup = <K, V> (key: K) => (assocs: List<Tuple<K, V>>): Maybe<V> =>
+  Functor.fmap<Tuple<K, V>, V> (Tuple.snd)
+                               (find<Tuple<K, V>> (e => Tuple.fst (e) === key) (assocs));
 
 
-// INDEX
+// SEARCHING WITH A PREDICATE
+
+interface Filter {
+  /**
+   * `filter :: (a -> Bool) -> [a] -> [a]`
+   *
+   * `filter`, applied to a predicate and a list, returns the list of those
+   * elements that satisfy the predicate.
+   */
+  <A, A1 extends A> (pred: (x: A) => x is A1): (list: List<A>) => List<A1>;
+  /**
+   * `filter :: (a -> Bool) -> [a] -> [a]`
+   *
+   * `filter`, applied to a predicate and a list, returns the list of those
+   * elements that satisfy the predicate.
+   */
+  <A> (pred: (x: A) => boolean): (list: List<A>) => List<A>;
+}
+
+export const filter: Filter =
+  <A> (pred: (x: A) => boolean) => (list: List<A>): List<A> =>
+    fromArray (list [LIST] .filter (pred));
+
+/**
+ * `partition :: (a -> Bool) -> [a] -> ([a], [a])`
+ *
+ * The `partition` function takes a predicate a list and returns the pair of
+ * lists of elements which do and do not satisfy the predicate, respectively.
+ *
+```
+>>> partition (`elem` "aeiou") "Hello World!"
+("eoo","Hll Wrld!")
+```
+  */
+export const partition =
+  <A>
+  (f: (value: A) => boolean) =>
+  (xs: List<A>): Tuple<List<A>, List<A>> => {
+    const pair = xs [LIST] .reduceRight<[List<A>, List<A>]> (
+      ([included, excluded], value) => f (value)
+        ? [cons (included) (value), excluded]
+        : [included, cons (excluded) (value)],
+      [empty (), empty ()]
+    );
+
+    return Tuple.of<List<A>, List<A>> (pair[0]) (pair[1]);
+  };
+
+
+// INDEXING LISTS
+
+/**
+ * `elemIndex :: Eq a => a -> [a] -> Maybe Int`
+ *
+ * The `elemIndex` function returns the index of the first element in the
+ * given list which is equal (by `==`) to the query element, or `Nothing` if
+ * there is no such element.
+ */
+export const elemIndex =
+  <A> (x: A) => (xs: List<A>): Maybe<number> => {
+    const res = xs [LIST] .indexOf (x);
+
+    return res > -1 ? Just (res) : Nothing;
+  };
+
+/**
+ * `elemIndices :: Eq a => a -> [a] -> [Int]`
+ *
+ * The `elemIndices` function extends `elemIndex`, by returning the indices of
+ * all elements equal to the query element, in ascending order.
+ */
+export const elemIndices =
+  <A> (x: A) => (xs: List<A>): List<number> =>
+    fromArray (
+      xs [LIST] .reduce<number[]> (
+        (acc, e, index) => e === x ? [...acc, index] : acc,
+        []
+      )
+    );
+
+/**
+ * `findIndex :: (a -> Bool) -> [a] -> Maybe Int`
+ *
+ * The `findIndex` function takes a predicate and a list and returns the index
+ * of the first element in the list satisfying the predicate, or `Nothing` if
+ * there is no such element.
+ */
+export const findIndex =
+  <A> (pred: (x: A) => boolean) => (xs: List<A>): Maybe<number> => {
+    const res = xs [LIST] .findIndex (pred);
+
+    return res > -1 ? Just (res) : Nothing;
+  };
+
+/**
+ * `findIndices :: (a -> Bool) -> [a] -> [Int]`
+ *
+ * The `findIndices` function extends `findIndex`, by returning the indices of
+ * all elements satisfying the predicate, in ascending order.
+ */
+export const findIndices =
+  <A> (pred: (x: A) => boolean) => (xs: List<A>): List<number> =>
+    fromArray (
+      xs [LIST] .reduce<number[]> (
+        (acc, e, index) => pred (e) ? [...acc, index] : acc,
+        []
+      )
+    );
+
+
+// ZIPPING AND UNZIPPING LISTS
+
+/**
+ * `zip :: [a] -> [b] -> [(a, b)]`
+ *
+ * `zip` takes two lists and returns a list of corresponding pairs. If one
+ * input list is short, excess elements of the longer list are discarded.
+ */
+export const zip =
+  <A, B> (xs1: List<A>) => (xs2: List<B>): List<Tuple<A, B>> =>
+    zipWith<A, B, Tuple<A, B>> (Tuple.of) (xs1) (xs2);
+
+/**
+ * `zipWith :: (a -> b -> c) -> [a] -> [b] -> [c]`
+ *
+ * `zipWith` generalises `zip` by zipping with the function given as the first
+ * argument, instead of a tupling function. For example, `zipWith (+)` is
+ * applied to two lists to produce the list of corresponding sums.
+ */
+export const zipWith =
+  <A, B, C>
+  (f: (value1: A) => (value2: B) => C) =>
+  (xs1: List<A>) =>
+  (xs2: List<B>): List<C> =>
+    imapMaybe<A, C> (index => e => Functor.fmap (f (e)) (subscript (xs2) (index)))
+                    (xs1);
+
+
+// "SET" OPERATIONS
+
+/**
+ * `delete :: Eq a => a -> [a] -> [a]`
+ *
+ * `delete x` removes the first occurrence of `x` from its list argument.
+ */
+export const sdelete = <T> (x: T) => (xs: List<T>): List<T> => {
+  const index = xs [LIST] .findIndex (e => e === x);
+
+  return deleteAt<T> (index) (xs);
+};
+
+
+// ORDERED LISTS
+
+/**
+ * `sortBy :: (a -> a -> Ordering) -> [a] -> [a]`
+ *
+ * The `sortBy` function is the non-overloaded version of `sort`.
+ */
+export const sortBy =
+  <T> (fn: (a: T) => (b: T) => number) => (xs: List<T>): List<T> =>
+    fromArray ([...xs [LIST]].sort ((a, b) => fn (a) (b)));
+
+
+// LIST.INDEX
+
+// Original functions
+
+/**
+ * `indexed :: [a] -> [(Int, a)]`
+ *
+ * `indexed` pairs each element with its index.
+```hs
+>>> indexed "hello"
+[(0,'h'),(1,'e'),(2,'l'),(3,'l'),(4,'o')]
+```
+ */
+export const indexed = <A> (xs: List<A>): List<Tuple<number, A>> =>
+  imap<A, Tuple<number, A>> (index => x => Tuple.of<number, A> (index) (x)) (xs);
+
+/**
+ * `deleteAt :: Int -> [a] -> [a]`
+ *
+ * `deleteAt` deletes the element at an index.
+ *
+ * If the index is negative or exceeds list length, the original list will be
+ * returned.
+ */
+export const deleteAt =
+  <T> (index: number) => (xs: List<T>): List<T> => {
+    if (index > -1 && index < xs [LIST] .length) {
+      return fromElements (
+        ...xs [LIST] .slice (0, index),
+        ...xs [LIST] .slice (index + 1)
+      );
+    }
+
+    return xs;
+  };
+
+/**
+ * `setAt :: Int -> a -> [a] -> [a]`
+ *
+ * `setAt` sets the element at the index.
+ *
+ * If the index is negative or exceeds list length, the original list will be
+ * returned.
+ */
+export const setAt =
+  <T> (index: number) => (value: T) => (xs: List<T>): List<T> => {
+    if (index > -1 && index < xs [LIST] .length) {
+      return fromArray (xs [LIST] .map ((e, i) => i === index ? value : e));
+    }
+
+    return xs;
+  };
+
+/**
+ * `modifyAt :: Int -> (a -> a) -> [a] -> [a]`
+ *
+ * `modifyAt` applies a function to the element at the index.
+ *
+ * If the index is negative or exceeds list length, the original list will be
+ * returned.
+ */
+export const modifyAt =
+  <T> (index: number) => (f: (oldValue: T) => T) => (xs: List<T>): List<T> => {
+    if (index > -1 && index < xs [LIST] .length) {
+      return fromArray (xs [LIST] .map ((e, i) => i === index ? f (e) : e));
+    }
+
+    return xs;
+  };
+
+/**
+ * `updateAt :: Int -> (a -> Maybe a) -> [a] -> [a]`
+ *
+ * `updateAt` applies a function to the element at the index, and then either
+ * replaces the element or deletes it (if the function has returned
+ * `Nothing`).
+ *
+ * If the index is negative or exceeds list length, the original list will be
+ * returned.
+ */
+export const updateAt =
+  <T> (index: number) => (f: (oldValue: T) => Maybe<T>) => (xs: List<T>): List<T> => {
+    if (index > -1 && index < xs [LIST] .length) {
+      const maybeRes = f (xs [LIST] [index]);
+
+      if (isJust (maybeRes)) {
+        return setAt<T> (index) (fromJust (maybeRes)) (xs);
+      }
+
+      return deleteAt<T> (index) (xs);
+    }
+
+    return xs;
+  };
+
+/**
+ * `insertAt :: Int -> a -> [a] -> [a]`
+ *
+ * `insertAt` inserts an element at the given position:
+ *
+ * `(insertAt i x xs) !! i == x`
+ *
+ * If the index is negative or exceeds list length, the original list will be
+ * returned. (If the index is equal to the list length, the insertion can be
+ * carried out.)
+ */
+export const insertAt =
+  <T> (index: number) => (value: T) => (xs: List<T>): List<T> => {
+    if (index > -1 && index < xs [LIST] .length) {
+      return fromElements (
+        ...xs [LIST] .slice (0, index),
+        value,
+        ...xs [LIST] .slice (index)
+      );
+    }
+
+    if (index === xs [LIST] .length) {
+      return append (xs) (fromElements (value));
+    }
+
+    return xs;
+  };
+
+// Maps
+
+/**
+ * `imap :: (Int -> a -> b) -> [a] -> [b]`
+ *
+ * `imap f xs` is the list obtained by applying `f` to each element of `xs`.
+ */
+export const imap =
+  <A, B> (fn: (index: number) => (x: A) => B) => (list: List<A>): List<B> =>
+    fromArray (list [LIST] .map ((e, i) => fn (i) (e)));
+
+// Folds
+
+/**
+ * `ifoldr :: (Int -> a -> b -> b) -> b -> [a] -> b`
+ *
+ * Right-associative fold of a structure.
+ */
+export const ifoldr =
+  <A extends Some, B extends Some>
+  (f: (index: number) => (current: A) => (acc: B) => B) =>
+  (initial: B) =>
+  (xs: List<A>): B =>
+    xs [LIST] .reduceRight<B> ((acc, e, i) => f (i) (e) (acc), initial);
 
 /**
  * `ifoldl :: Foldable t => (b -> Int -> a -> b) -> b -> t a -> b`
@@ -1396,48 +1142,183 @@ export const splitAt =
  * starting value (typically the left-identity of the operator), and a list,
  * reduces the list using the binary operator, from left to right.
  */
-// static ifoldl<T extends Some, U extends Some> (
-//   fn: (acc: U) => (index: number) => (current: T) => U
-// ): (initial: U) => (list: List<T>) => U {
-//   return initial => list => list.value.reduce<U> (
-//     (acc, e, index) => fn (acc) (index) (e),
-//     initial
-//   );
-// }
+export const ifoldl =
+  <A extends Some, B extends Some>
+  (f: (acc: B) => (index: number) => (current: A) => B) =>
+  (initial: B) =>
+  (xs: List<A>): B =>
+    xs [LIST] .reduce<B> ((acc, e, i) => f (acc) (i) (e), initial);
 
 /**
- * `ifoldr :: (Int -> a -> b -> b) -> b -> [a] -> b`
+ * `iall :: Foldable t => (Int -> a -> Bool) -> t a -> Bool`
  *
- * Right-associative fold of a structure.
+ * Determines whether all elements of the structure satisfy the predicate.
  */
-// static ifoldr<T extends Some, U extends Some> (
-//   fn: (index: number) => (current: T) => (acc: U) => U
-// ): (initial: U) => (list: List<T>) => U {
-//   return initial => list => list.value.reduceRight<U> (
-//     (acc, e, index) => fn (index) (e) (acc),
-//     initial
-//   );
-// }
+export const iall =
+<A extends Some>(f: (index: number) => (x: A) => boolean) => (xs: List<A>): boolean =>
+  xs [LIST] .every ((e, i) => f (i) (e));
 
-//   // // SPECIAL FOLDS
+/**
+ * `iany :: Foldable t => (Int -> a -> Bool) -> t a -> Bool`
+ *
+ * Determines whether any element of the structure satisfies the predicate.
+ */
+export const iany =
+  <A extends Some>(f: (index: number) => (x: A) => boolean) => (xs: List<A>): boolean =>
+    xs [LIST] .some ((e, i) => f (i) (e));
 
-//   /**
-//    * `iany :: Foldable t => (Int -> a -> Bool) -> t a -> Bool`
-//    *
-//    * Determines whether any element of the structure satisfies the predicate.
-//    */
-//   iany (fn: (index: number) => (x: T) => boolean): boolean {
-//     return this.value.some ((e, i) => fn (i) (e));
-//   }
+/**
+ * `iconcatMap :: (Int -> a -> [b]) -> [a] -> [b]`
+ */
+export const iconcatMap =
+  <A extends Some, B extends Some>
+  (f: (index: number) => (value: A) => List<B>) =>
+  (xs: List<A>): List<B> =>
+    fromElements (
+      ...(xs[LIST] .reduce<ReadonlyArray<B>> (
+        (acc, e, i) => [...acc, ...f (i) (e)],
+        []
+      ))
+    );
 
-//   /**
-//    * `iall :: Foldable t => (Int -> a -> Bool) -> t a -> Bool`
-//    *
-//    * Determines whether all elements of the structure satisfy the predicate.
-//    */
-//   iall (fn: (index: number) => (x: T) => boolean): boolean {
-//     return this.value.every ((e, i) => fn (i) (e));
-//   }
+// Sbblists
+
+interface Ifilter {
+  /**
+   * `ifilter :: (Int -> a -> Bool) -> [a] -> [a]`
+   *
+   * `ifilter`, applied to a predicate and a list, returns the list of those
+   * elements that satisfy the predicate.
+   */
+  <A, A1 extends A> (pred: (index: number) => (x: A) => x is A1): (list: List<A>) => List<A1>;
+  /**
+   * `ifilter :: (Int -> a -> Bool) -> [a] -> [a]`
+   *
+   * `ifilter`, applied to a predicate and a list, returns the list of those
+   * elements that satisfy the predicate.
+   */
+  <A> (pred: (index: number) => (x: A) => boolean): (list: List<A>) => List<A>;
+}
+
+/**
+ * `ifilter :: (Int -> a -> Bool) -> [a] -> [a]`
+ *
+ * `ifilter`, applied to a predicate and a list, returns the list of those
+ * elements that satisfy the predicate.
+ */
+export const ifilter: Ifilter =
+  <A> (pred: (index: number) => (x: A) => boolean) => (list: List<A>): List<A> =>
+    fromArray (list [LIST] .filter ((e, i) => pred (i) (e)));
+
+/**
+ * `ipartition :: (Int ->a -> Bool) -> [a] -> ([a], [a])`
+ *
+ * The `ipartition` function takes a predicate a list and returns the pair of
+ * lists of elements which do and do not satisfy the predicate, respectively.
+ *
+```
+>>> partition (`elem` "aeiou") "Hello World!"
+("eoo","Hll Wrld!")
+```
+  */
+export const ipartition =
+  <A>
+  (f: (index: number) => (value: A) => boolean) =>
+  (xs: List<A>): Tuple<List<A>, List<A>> => {
+    const pair = xs [LIST] .reduceRight<[List<A>, List<A>]> (
+      ([included, excluded], value, i) => f (i) (value)
+        ? [cons (included) (value), excluded]
+        : [included, cons (excluded) (value)],
+      [empty (), empty ()]
+    );
+
+    return Tuple.of<List<A>, List<A>> (pair[0]) (pair[1]);
+  };
+
+// Search
+
+interface Ifind {
+  /**
+   * `ifind :: Foldable t => (Int -> a -> Bool) -> t a -> Maybe a`
+   *
+   * The `find` function takes a predicate and a structure and returns the
+   * leftmost element of the structure matching the predicate, or `Nothing` if
+   * there is no such element.
+   */
+  <A, A1 extends A> (pred: (index: number) => (x: A) => x is A1): (xs: List<A>) => Maybe<A1>;
+  /**
+   * `ifind :: Foldable t => (Int -> a -> Bool) -> t a -> Maybe a`
+   *
+   * The `find` function takes a predicate and a structure and returns the
+   * leftmost element of the structure matching the predicate, or `Nothing` if
+   * there is no such element.
+   */
+  <A> (pred: (index: number) => (x: A) => boolean): (xs: List<A>) => Maybe<A>;
+}
+
+/**
+ * `ifind :: Foldable t => (Int -> a -> Bool) -> t a -> Maybe a`
+ *
+ * The `find` function takes a predicate and a structure and returns the
+ * leftmost element of the structure matching the predicate, or `Nothing` if
+ * there is no such element.
+ */
+export const ifind: Ifind =
+  <A> (pred: (index: number) => (x: A) => boolean) => (xs: List<A>): Maybe<A> =>
+    fromNullable (xs [LIST] .find ((e, i) => pred (i) (e)));
+
+/**
+ * `ifindIndex :: (Int -> a -> Bool) -> [a] -> Maybe Int`
+ *
+ * The `ifindIndex` function takes a predicate and a list and returns the
+ * index of the first element in the list satisfying the predicate, or
+ * `Nothing` if there is no such element.
+ */
+export const ifindIndex =
+  <A> (pred: (index: number) => (x: A) => boolean) => (xs: List<A>): Maybe<number> => {
+    const res = xs [LIST] .findIndex ((e, i) => pred (i) (e));
+
+    return res > -1 ? Just (res) : Nothing;
+  };
+
+/**
+ * `ifindIndices :: (a -> Bool) -> [a] -> [Int]`
+ *
+ * The `ifindIndices` function extends `findIndex`, by returning the indices
+ * of all elements satisfying the predicate, in ascending order.
+ */
+export const ifindIndices =
+  <A> (pred: (index: number) => (x: A) => boolean) => (xs: List<A>): List<number> =>
+    fromArray (
+      xs [LIST] .reduce<number[]> (
+        (acc, e, index) => pred (index) (e) ? [...acc, index] : acc,
+        []
+      )
+    );
+
+
+// OWN METHODS
+
+/**
+ * Converts a `List` to a native Array.
+ */
+export const toArray = <A> (list: List<A>): ReadonlyArray<A> => list [LIST];
+
+/**
+ * Transforms a `List` of `Tuple`s into an `OrderedMap` where the first values
+ * in the `Tuple` are the keys and the second values are the actual values.
+ */
+export const toMap = <K, V> (list: List<Tuple<K, V>>): OrderedMap<K, V> =>
+  OrderedMap.of (list [LIST] .map (t =>
+    [Tuple.fst (t), Tuple.snd (t)] as [K, V]
+  ));
+
+/**
+ * Checks if the given value is a `List`.
+ * @param value The value to test.
+ */
+export const isList = (value: any): value is List<any> => value instanceof _List;
+
 
 // TYPE HELPERS
 

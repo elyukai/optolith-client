@@ -1,4 +1,6 @@
 /**
+ * @module Maybe
+ *
  * The `Maybe` type encapsulates an optional value. A value of type `Maybe a`
  * either contains a value of type `a` (represented as `Just a`), or it is empty
  * (represented as `Nothing`). Using `Maybe` is a good way to deal with errors
@@ -10,9 +12,10 @@
  *
  * @author Lukas Obermann
  * @author hackage.haskell.org (a lot of JSDocs)
+ * @see Either
  */
 
-import * as R from 'ramda';
+import { pipe } from 'ramda';
 import * as List from './list2';
 import { Mutable } from './typeUtils';
 
@@ -165,6 +168,17 @@ export const then =
 export const mreturn = Just;
 
 /**
+ * `(>=>) :: (a -> Maybe b) -> (b -> Maybe c) -> a -> Maybe c`
+ *
+ * Left-to-right Kleisli composition of monads.
+ */
+export const kleisli =
+  <A extends Some, B extends Some, C extends Some>
+  (f1: (x: A) => Maybe<B>) =>
+  (f2: (x: B) => Maybe<C>) =>
+    pipe (f1, bind_ (f2));
+
+/**
  * `join :: Monad m => m (m a) -> m a`
  *
  * The `join` function is the conventional monad join operator. It is used to
@@ -236,7 +250,7 @@ export const liftM4 =
  */
 export const fmap =
   <A extends Some, B extends Some> (f: (value: A) => B) =>
-    bind_<A, B> (R.pipe<A, B, Just<B>> (f, Just));
+    bind_<A, B> (pipe<A, B, Just<B>> (f, Just));
 
 /**
  * `(<$) :: Functor f => a -> f b -> f a`
@@ -469,16 +483,20 @@ export const guard = (pred: boolean): Maybe<true> => pred ? Just<true> (true) : 
  * `(==) :: Maybe a -> Maybe a -> Bool`
  *
  * Returns if both given values are equal.
+ *
+ * *Note: Shallow check for equality, no deep analysis.*
  */
 export const equals =
   <A extends Some> (m1: Maybe<A>) => (m2: Maybe<A>): boolean =>
     isNothing (m1) && isNothing (m2)
-    || isJust (m1) && isJust (m2) && R.equals (fromJust (m1)) (fromJust (m2));
+    || isJust (m1) && isJust (m2) && fromJust (m1) === fromJust (m2);
 
 /**
  * `(!=) :: Maybe a -> Maybe a -> Bool`
  *
  * Returns if both given values are not equal.
+ *
+ * *Note: Shallow check for equality, no deep analysis.*
  */
 export const notEquals =
   <A extends Some> (m1: Maybe<A>) => (m2: Maybe<A>): boolean =>
@@ -597,7 +615,7 @@ export const maybeToList = toList;
  */
 export const catMaybes =
   <A extends Some> (list: List.List<Maybe<A>>): List.List<A> =>
-    List.map<Just<A>, A> (fromJust) (List.filter<Maybe<A>> (isJust) (list));
+    List.map<Just<A>, A> (fromJust) (List.filter<Maybe<A>, Just<A>> (isJust) (list));
 
 /**
  * `mapMaybe :: (a -> Maybe b) -> [a] -> [b]`
@@ -610,11 +628,18 @@ export const catMaybes =
 export const mapMaybe =
   <A extends Some, B extends Some> (fn: (x: A) => Maybe<B>) =>
     List.foldr<A, List.List<B>>
-      (x => acc => R.pipe (fn, maybe<B, List.List<B>> (acc) (List.cons (acc))) (x))
+      (x => acc => pipe (fn, maybe<B, List.List<B>> (acc) (List.cons (acc))) (x))
       (List.empty ());
 
 
 // CUSTOM MAYBE FUNCTIONS
+
+/**
+ * `isMaybe :: a -> Bool`
+ *
+ * The `isMaybe` function returns `True` if its argument is a `Maybe`.
+ */
+export const isMaybe = (x: any): x is Maybe<any> => x instanceof _Just || x === Nothing;
 
 /**
  * `normalize :: (a | Maybe a) -> Maybe a`
@@ -625,19 +650,6 @@ export const mapMaybe =
 export const normalize =
   <A extends Some> (value: A | Nullable | Maybe<A>): Maybe<A> =>
     value instanceof _Just || value === Nothing ? value : fromNullable (value as A | Nullable);
-
-/**
- * `(==) :: Maybe a -> Maybe a -> Bool`
- *
- * Returns if both given values are shallowly equal. Used only for selector
- * memoization.
- *
- * @internal
- */
-export const INTERNAL_shallowEquals =
-  <A extends Some>(m1: Maybe<A>) => (m2: Maybe<A>): boolean =>
-    isNothing (m1) && isNothing (m2)
-    || isJust (m1) && isJust (m2) && fromJust (m1) === fromJust (m2);
 
 interface Ensure {
   /**
@@ -683,7 +695,7 @@ export const ensure: Ensure =
 export const imapMaybe =
   <A extends Some, B extends Some> (fn: (index: number) => (x: A) => Maybe<B>) =>
     List.ifoldr<A, List.List<B>>
-      (index => x => acc => R.pipe (fn (index), maybe<B, List.List<B>> (acc) (List.cons (acc))) (x))
+      (index => x => acc => pipe (fn (index), maybe<B, List.List<B>> (acc) (List.cons (acc))) (x))
       (List.empty ());
 
 /**

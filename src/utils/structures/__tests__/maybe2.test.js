@@ -93,6 +93,15 @@ test('mreturn', () => {
   expect (Maybe.mreturn (2)) .toEqual (Just (2));
 });
 
+test('kleisli', () => {
+  expect (Maybe.kleisli (x => x > 5 ? Nothing : Just (x)) (x => x < 0 ? Nothing : Just (x)) (2))
+    .toEqual (Just (2));
+  expect (Maybe.kleisli (x => x > 5 ? Nothing : Just (x)) (x => x < 0 ? Nothing : Just (x)) (6))
+    .toEqual (Nothing);
+  expect (Maybe.kleisli (x => x > 5 ? Nothing : Just (x)) (x => x < 0 ? Nothing : Just (x)) (-1))
+    .toEqual (Nothing);
+});
+
 test('join', () => {
   expect (Maybe.join (Just (Just (3))))
     .toEqual (Just (3));

@@ -1,4 +1,6 @@
 /**
+ * @module Either
+ *
  * The `Either` type represents values with two possibilities: a value of type
  * `Either a b` is either `Left a` or `Right b`.
  *
@@ -8,10 +10,9 @@
  * (mnemonic: "right" also means "correct").
  *
  * @author Lukas Obermann
- * @author hackage.haskell.org (a lot of JSDocs)
  */
 
-import * as Ra from 'ramda';
+import { equals as requals, pipe } from 'ramda';
 import { List } from './list';
 import { fromJust, isJust, Just, Maybe, Nothing, Some } from './maybe2';
 import { Tuple } from './tuple';
@@ -280,6 +281,17 @@ export const then =
  */
 export const mreturn = Right;
 
+/**
+ * `(>=>) :: (a -> Either e b) -> (b -> Either e c) -> a -> Either e c`
+ *
+ * Left-to-right Kleisli composition of monads.
+ */
+export const kleisli =
+  <E extends Some, A extends Some, B extends Some, C extends Some>
+  (f1: (x: A) => Either<E, B>) =>
+  (f2: (x: B) => Either<E, C>) =>
+    pipe (f1, bind_ (f2));
+
 
 // FUNCTOR
 
@@ -288,7 +300,7 @@ export const mreturn = Right;
  */
 export const fmap =
   <A extends Some, B extends Some> (f: (value: A) => B) =>
-    bind_<A, A, B> (Ra.pipe<A, B, Right<B>> (f, Right));
+    bind_<A, A, B> (pipe<A, B, Right<B>> (f, Right));
 
 /**
  * `(<$) :: a -> Either a b -> Either a a`
@@ -376,6 +388,8 @@ export const elem =
  */
 export const elem_ = <A extends Some> (m: Either<A, A>) => (e: A): boolean => elem (e) (m);
 
+// Searches
+
 /**
  * `notElem :: Eq a => a -> Maybe a -> Bool`
  *
@@ -395,8 +409,8 @@ export const notElem =
  */
 export const equals =
   <A extends Some, B extends Some> (m1: Either<A, B>) => (m2: Either<A, B>): boolean =>
-    isRight (m1) && isRight (m2) && Ra.equals (m1[RIGHT]) (m2[RIGHT])
-    || isLeft (m1) && isLeft (m2) && Ra.equals (m1[LEFT]) (m2[LEFT]);
+    isRight (m1) && isRight (m2) && requals (m1[RIGHT]) (m2[RIGHT])
+    || isLeft (m1) && isLeft (m2) && requals (m1[LEFT]) (m2[LEFT]);
 
 /**
  * `(!=) :: Maybe a -> Maybe a -> Bool`
@@ -566,3 +580,15 @@ export const partitionEithers =
       (m => isRight (m) ? Tuple.second (List.cons_ (m[RIGHT])) : Tuple.first (List.cons_ (m[LEFT])))
       (Tuple.of<List<A>, List<B>> (List.empty ()) (List.empty ()))
       (list);
+
+
+// CUSTOM FUNCTIONS
+
+/**
+ * `isEither :: a -> Bool`
+ *
+ * Return `True` if the given value is an `Either`.
+ */
+export const isEither =
+  (x: any): x is Either<any, any> =>
+    x instanceof _Left || x instanceof _Right;

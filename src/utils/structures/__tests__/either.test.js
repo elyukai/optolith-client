@@ -137,6 +137,21 @@ test('mreturn', () => {
   expect (Either.mreturn (2)) .toEqual (Right (2));
 });
 
+test('kleisli', () => {
+  expect (Either.kleisli (x => x > 5 ? Left ('too large') : Right (x))
+                         (x => x < 0 ? Left ('too low') : Right (x))
+                         (2))
+    .toEqual (Right (2));
+  expect (Either.kleisli (x => x > 5 ? Left ('too large') : Right (x))
+                         (x => x < 0 ? Left ('too low') : Right (x))
+                         (6))
+    .toEqual (Left ('too large'));
+  expect (Either.kleisli (x => x > 5 ? Left ('too large') : Right (x))
+                         (x => x < 0 ? Left ('too low') : Right (x))
+                         (-1))
+    .toEqual (Left ('too low'));
+});
+
 // FUNCTOR
 
 test('fmap', () => {
