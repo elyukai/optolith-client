@@ -19,7 +19,7 @@ import { UpdateInfo } from 'electron-updater';
 import * as React from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
-import { AnyAction, applyMiddleware, createStore, Dispatch } from 'redux';
+import { Action, applyMiddleware, createStore, Dispatch, Store } from 'redux';
 import ReduxThunk from 'redux-thunk';
 import { backAccelerator, openSettingsAccelerator, quitAccelerator, redoAccelerator, saveHeroAccelerator, undoAccelerator } from './actions/AcceleratorActions';
 import { addErrorAlert } from './actions/AlertActions';
@@ -32,14 +32,15 @@ import { Just, Maybe } from './utils/dataUtils';
 import { translate } from './utils/I18n';
 import { isDialogOpen } from './utils/SubwindowsUtils';
 
-const store = createStore (appReducer, applyMiddleware (ReduxThunk));
+const store: Store<AppState, Action<any>> & { dispatch: Dispatch<Action, AppState> } =
+  createStore (appReducer, applyMiddleware (ReduxThunk));
 
-(store.dispatch as Dispatch<AnyAction, AppState>) (requestInitialData ())
+store.dispatch (requestInitialData ())
   .then (() => {
     const currentWindow = remote.getCurrentWindow ();
 
     const { getState } = store;
-    const dispatch = store.dispatch as Dispatch<AnyAction, AppState>;
+    const dispatch = store.dispatch as Dispatch<Action, AppState>;
 
     if (remote.process.platform === 'darwin') {
       const maybeLocale = getLocaleMessages (getState ());

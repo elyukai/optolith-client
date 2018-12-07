@@ -7,27 +7,42 @@
  * @author Lukas Obermann
  */
 
-import * as Either from './Either';
-import * as List from './List.new';
-import * as Maybe from './Maybe.new';
+import { empty } from './Alternative';
+import { Either, isEither, isRight } from './Either';
+import { fromElements, isList, List } from './List.new';
+import { fromJust, isJust, isMaybe, Maybe, Some } from './Maybe.new';
+import { show } from './Show';
 
-// /**
-//  * `foldr :: Foldable t => (a -> b -> b) -> b -> t a -> b`
-//  *
-//  * Right-associative fold of a structure.
-//  *
-//  * In the case of lists, `foldr`, when applied to a binary operator, a
-//  * starting value (typically the right-identity of the operator), and a list,
-//  * reduces the list using the binary operator, from right to left:
-//  *
-//  * ```foldr f z [x1, x2, ..., xn] == x1 `f` (x2 `f` ... (xn `f` z)...)```
-//  */
-// export const foldr =
-//   <A extends Some, B extends Some>
-//   (f: (current: A) => (acc: B) => B) =>
-//   (initial: B) =>
-//   (xs: List<A>): B =>
-//     xs [LIST] .reduceRight<B> ((acc, e) => f (e) (acc), initial);
+/**
+ * `foldr :: Foldable t => (a -> b -> b) -> b -> t a -> b`
+ *
+ * Right-associative fold of a structure.
+ *
+ * In the case of lists, `foldr`, when applied to a binary operator, a
+ * starting value (typically the right-identity of the operator), and a list,
+ * reduces the list using the binary operator, from right to left:
+ *
+ * ```foldr f z [x1, x2, ..., xn] == x1 `f` (x2 `f` ... (xn `f` z)...)```
+ */
+export const foldr =
+  <A extends Some, B extends Some>
+  (f: (current: A) => (acc: B) => B) =>
+  (initial: B) =>
+  (xs: Either<any, A> | List<A> | Maybe<A>): B => {
+    if (isEither (xs)) {
+      return isRight (xs) ? f (xs .value) (initial) : initial;
+    }
+
+    if (isMaybe (xs)) {
+      return isJust (xs) ? f (xs .value) (initial) : initial;
+    }
+
+    if (isList (xs)) {
+      return xs .value .reduceRight<B> ((acc, e) => f (e) (acc), initial);
+    }
+
+    throw new TypeError (`${show (xs)} is no Foldable.`);
+  };
 
 /**
  * `foldl :: Foldable t => (b -> a -> b) -> b -> t a -> b`
@@ -41,63 +56,67 @@ import * as Maybe from './Maybe.new';
  * ```foldl f z [x1, x2, ..., xn] == (...((z `f` x1) `f` x2) `f`...) `f` xn```
  */
 export const foldl =
-  <A extends Maybe.Some, B extends Maybe.Some>
+  <A extends Some, B extends Some>
   (f: (acc: B) => (current: A) => B) =>
   (initial: B) =>
-  (xs: Maybe.Maybe<A> | List.List<A>): B => {
-    if (Maybe.isMaybe (xs)) {
-      return Maybe.foldl<A, B> (f) (initial) (xs);
+  (xs: Either<any, A> | List<A> | Maybe<A>): B => {
+    if (isEither (xs)) {
+      return isRight (xs) ? f (initial) (xs .value) : initial;
     }
 
-    if (Either.isEither (xs)) {
-      return Either.foldl<A, B> (f) (initial) (xs);
+    if (isMaybe (xs)) {
+      return isJust (xs) ? f (initial) (xs .value) : initial;
     }
 
-    return List.foldl<A, B> (f) (initial) (xs);
+    if (isList (xs)) {
+      return xs .value .reduce<B> ((acc, e) => f (acc) (e), initial);
+    }
+
+    throw new TypeError (`${show (xs)} is no Foldable.`);
   };
 
-// /**
-//  * `foldr1 :: (a -> a -> a) -> t a -> a`
-//  *
-//  * A variant of `foldr` that has no base case, and thus may only be applied to
-//  * non-empty structures.
-//  *
-//  * `foldr1 f = foldr1 f . toList`
-//  */
-// export const foldr1 =
-//   <A extends Some>
-//   (f: (current: A) => (acc: A) => A) =>
-//   (xs: List<A>): A => {
-//     if (xs [LIST] .length > 0) {
-//       const _init = xs [LIST] .slice (0, -1);
-//       const _last = xs [LIST] [xs [LIST] .length - 1];
+/**
+ * `foldr1 :: (a -> a -> a) -> t a -> a`
+ *
+ * A variant of `foldr` that has no base case, and thus may only be applied to
+ * non-empty structures.
+ *
+ * `foldr1 f = foldr1 f . toList`
+ */
+export const foldr1 =
+  <A extends Some>
+  (f: (current: A) => (acc: A) => A) =>
+  (xs: List<A>): A => {
+    if (xs .value .length > 0) {
+      const _init = xs .value .slice (0, -1);
+      const _last = xs .value [xs .value .length - 1];
 
-//       return _init .reduceRight<A> ((acc, e) => f (e) (acc), _last);
-//     }
+      return _init .reduceRight<A> ((acc, e) => f (e) (acc), _last);
+    }
 
-//     throw new TypeError ('Cannot apply foldr1 to an empty list.');
-//   };
+    throw new TypeError ('Cannot apply foldr1 to an empty list.');
+  };
 
-// /**
-//  * `foldl1 :: (a -> a -> a) -> t a -> a`
-//  *
-//  * A variant of `foldl` that has no base case, and thus may only be applied to
-//  * non-empty structures.
-//  *
-//  * `foldl1 f = foldl1 f . toList`
-//  */
-// export const foldl1 =
-//   <A extends Some>
-//   (f: (acc: A) => (current: A) => A) =>
-//   (xs: List<A>): A => {
-//     if (xs [LIST] .length > 0) {
-//       const [_head, ..._tail] = xs;
+/**
+ * `foldl1 :: (a -> a -> a) -> t a -> a`
+ *
+ * A variant of `foldl` that has no base case, and thus may only be applied to
+ * non-empty structures.
+ *
+ * `foldl1 f = foldl1 f . toList`
+ */
+export const foldl1 =
+  <A extends Some>
+  (f: (acc: A) => (current: A) => A) =>
+  (xs: List<A>): A => {
+    if (xs .value .length > 0) {
+      const [_head, ..._tail] = xs;
 
-//       return _tail .reduce<A> ((acc, e) => f (acc) (e), _head);
-//     }
+      return _tail .reduce<A> ((acc, e) => f (acc) (e), _head);
+    }
 
-//     throw new TypeError ('Cannot apply foldl1 to an empty list.');
-//   };
+    throw new TypeError ('Cannot apply foldl1 to an empty list.');
+  };
 
 /**
  * `toList :: t a -> [a]`
@@ -105,12 +124,20 @@ export const foldl =
  * List of elements of a structure, from left to right.
  */
 export const toList =
-  <A extends Maybe.Some>(xs: List.List<A> | Maybe.Maybe<A>): List.List<A> => {
-    if (Maybe.isMaybe (xs)) {
-      return Maybe.toList<A> (xs);
+  <A extends Some>(xs: Either<any, A> | List<A> | Maybe<A>): List<A> => {
+    if (isEither (xs)) {
+      return isRight (xs) ? fromElements (xs .value) : empty ('List');
     }
 
-    return List.toList<A> (xs);
+    if (isMaybe (xs)) {
+      return isJust (xs) ? fromElements (xs .value) : empty ('List');
+    }
+
+    if (isList (xs)) {
+      return xs;
+    }
+
+    throw new TypeError (`${show (xs)} is no Foldable.`);
   };
 
 /**
@@ -121,13 +148,7 @@ export const toList =
  * way to do better.
  */
 export const fnull =
-  (xs: List.List<any> | Maybe.Maybe<Maybe.Some>): boolean => {
-    if (Maybe.isMaybe (xs)) {
-      return Maybe.fnull (xs);
-    }
-
-    return List.fnull (xs);
-  };
+  (xs: Either<any, any> | List<any> | Maybe<Some>): boolean => length (xs) === 0;
 
 /**
  * `length :: t a -> Int`
@@ -137,12 +158,20 @@ export const fnull =
  * because there is no general way to do better.
  */
 export const length =
-  (xs: List.List<any> | Maybe.Maybe<Maybe.Some>): number => {
-    if (Maybe.isMaybe (xs)) {
-      return Maybe.length (xs);
+  (xs: Either<any, any> | List<any> | Maybe<Some>): number => {
+    if (isMaybe (xs)) {
+      return isJust (xs) ? 1 : 0;
     }
 
-    return List.length (xs);
+    if (isEither (xs)) {
+      return isRight (xs) ? 1 : 0;
+    }
+
+    if (isList (xs)) {
+      return xs .value .length;
+    }
+
+    throw new TypeError (`${show (xs)} is no Foldable.`);
   };
 
 /**
@@ -151,18 +180,20 @@ export const length =
  * Does the element occur in the structure?
  */
 export const elem =
-  <A extends Maybe.Some>
-  (e: A) =>
-  (xs: List.List<A> | Maybe.Maybe<A> | Either.Either<A, A>): boolean => {
-    if (Maybe.isMaybe (xs)) {
-      return Maybe.elem<A> (e) (xs);
+  <A extends Some> (e: A) => (xs: Either<any, A> | List<A> | Maybe<A>): boolean => {
+    if (isMaybe (xs)) {
+      return isJust (xs) && e === fromJust (xs);
     }
 
-    if (Either.isEither (xs)) {
-      return Either.elem<A> (e) (xs);
+    if (isEither (xs)) {
+      return isRight (xs) && e === xs .value;
     }
 
-    return List.elem<A> (e) (xs);
+    if (isList (xs)) {
+      return xs .value .includes;
+    }
+
+    throw new TypeError (`${show (xs)} is no Foldable.`);
   };
 
 /**

@@ -7,40 +7,82 @@
  * @author Lukas Obermann
  */
 
-import * as Either from './Either';
-import * as List from './List.new';
-import * as Maybe from './Maybe.new';
+import { cnst } from './combinators';
+import { Either, isEither, isRight, Right } from './Either';
+import { fromArray, isList, List } from './List.new';
+import { isJust, isMaybe, Just, Maybe, Some } from './Maybe.new';
+import { show } from './Show';
 
-interface Fmap {
+interface fmap {
   /**
-   * `fmap :: (a -> b) -> Maybe a -> Maybe b`
+   * `fmap :: (a0 -> b) -> Either a a0 -> Either a b`
    */
-  <A extends Maybe.Some, B extends Maybe.Some>
-  (f: (value: A) => B): (m: Maybe.Maybe<A>) => Maybe.Maybe<B>;
+  <A extends Some, A0 extends Some, B extends Some>
+  (f: (value: A0) => B): (m: Either<A, A0>) => Either<A, B>;
+
   /**
-   * `fmap :: (a -> b) -> Either a a -> Either a b`
+   * `fmap :: Functor => (a -> b) -> f a -> f b`
    */
-  <A extends Maybe.Some, B extends Maybe.Some>
-  (f: (value: A) => B): (m: Either.Either<A, A>) => Either.Either<A, B>;
-  /**
-   * `fmap :: (a -> b) -> [a] -> [b]`
-   */
-  <A extends Maybe.Some, B extends Maybe.Some>
-  (f: (value: A) => B): (m: List.List<A>) => List.List<B>;
+  <A extends Some, B extends Some> (f: (value: A) => B): fmap_<A, B>;
+}
+
+interface fmap_<A extends Some, B extends Some> {
+  (m: List<A>): List<B>;
+  (m: Maybe<A>): Maybe<B>;
 }
 
 /**
  * `fmap :: Functor => (a -> b) -> f a -> f b`
  */
-export const fmap: Fmap =
-  <A extends Maybe.Some, B extends Maybe.Some> (f: (value: A) => B) => (x: any): any => {
-    if (Maybe.isMaybe (x)) {
-      return Maybe.fmap<A, B> (f) (x as Maybe.Maybe<A>);
+export const fmap: fmap =
+  <A extends Some, B extends Some> (f: (value: A) => B) => (x: any): any => {
+    if (isMaybe (x)) {
+      return isJust (x) ? Just (f (x .value)) : x;
     }
 
-    if (Either.isEither (x)) {
-      return Either.fmap<A, B> (f) (x as Either.Either<A, A>);
+    if (isEither (x)) {
+      return isRight (x) ? Right (f (x .value)) : x;
     }
 
-    return List.fmap<A, B> (f) (x as List.List<A>);
+    if (isList (x)) {
+      return fromArray (x .value .map (f));
+    }
+
+    throw new TypeError (`${show (x)} is no Functor.`);
   };
+
+interface mapReplace {
+  /**
+   * `(<$) :: a0 -> Either a b -> Either a a0`
+   *
+   * Replace all locations in the input with the same value. The default
+   * definition is `fmap . const`, but this may be overridden with a more
+   * efficient version.
+   */
+  <A extends Some, A0 extends Some> (x: A0): (m: Either<A, any>) => Either<A, A0>;
+
+  /**
+   * `(<$) :: Functor f => a -> f b -> f a`
+   *
+   * Replace all locations in the input with the same value. The default
+   * definition is `fmap . const`, but this may be overridden with a more
+   * efficient version.
+   */
+  <A extends Some> (x: A): mapReplace_<A>;
+}
+
+interface mapReplace_<A extends Some> {
+  (m: List<any>): List<A>;
+  (m: Maybe<Some>): Maybe<A>;
+}
+
+
+/**
+ * `(<$) :: Functor f => a -> f b -> f a`
+ *
+ * Replace all locations in the input with the same value. The default
+ * definition is `fmap . const`, but this may be overridden with a more
+ * efficient version.
+ */
+export const mapReplace: mapReplace =
+  <A extends Some, B extends Some> (x: A) => fmap<B, A> (cnst (x)) as any;

@@ -76,7 +76,7 @@ export class App extends React.Component<AppProps, AppState> {
           className={classNames (
             `theme-${theme}`,
             `platform-${platform}`,
-            areAnimationsEnabled && 'show-animations'
+            { 'show-animations': areAnimationsEnabled }
           )}
           lang={locale.get ('id') .split ('-')[0]}
           >

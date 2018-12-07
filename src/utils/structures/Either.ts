@@ -18,11 +18,6 @@ import { fromJust, isJust, Just, Maybe, Nothing, Some } from './Maybe.new';
 import { Tuple } from './tuple';
 import { Mutable } from './typeUtils';
 
-// CONTENT ACCESS KEY
-
-const LEFT = Symbol ('LEFT');
-const RIGHT = Symbol ('RIGHT');
-
 
 // EITHER TYPE DEFINITION
 
@@ -33,49 +28,51 @@ export type Either<A extends Some, B extends Some> = Left<A> | Right<B>;
 
 // Left
 
-interface LeftConstructor {
-  new <A extends Some>(value: A): Left<A>;
-  prototype: Left<Some>;
+interface LeftPrototype {
+  readonly isLeft: true;
+  readonly isRight: false;
 }
 
-interface Left<A extends Some> {
-  readonly [LEFT]: A;
-  toString (): string;
+export interface Left<A extends Some> extends LeftPrototype {
+  readonly value: A;
+  readonly prototype: LeftPrototype;
 }
 
-const _Left =
-  function <A extends Some> (this: Mutable<Left<A>>, value: A) {
-    Object.defineProperty (this, LEFT, { value });
-  } as unknown as LeftConstructor;
+const LeftPrototype: LeftPrototype = {
+  isLeft: true,
+  isRight: false,
+};
 
-_Left.prototype.toString = function (this: Left<Some>) {
-  return `Left ${this[LEFT]}`;
-}
+export const Left = <A extends Some> (value: A): Left<A> => {
+  const left: Mutable<Left<A>> = Object.create (LeftPrototype);
+  left.value = value;
 
-export const Left = <A extends Some> (value: A) => new _Left (value);
+  return left;
+};
 
 // Right
 
-interface RightConstructor {
-  new <B extends Some>(value: B): Right<B>;
-  prototype: Right<Some>;
+interface RightPrototype {
+  readonly isLeft: false;
+  readonly isRight: true;
 }
 
-interface Right<B extends Some> {
-  readonly [RIGHT]: B;
-  toString (): string;
+export interface Right<B extends Some> extends RightPrototype {
+  readonly value: B;
+  readonly prototype: RightPrototype;
 }
 
-const _Right =
-  function <B extends Some> (this: Mutable<Right<B>>, value: B) {
-    Object.defineProperty (this, RIGHT, { value });
-  } as unknown as RightConstructor;
+const RightPrototype: RightPrototype = {
+  isLeft: false,
+  isRight: true,
+};
 
-_Right.prototype.toString = function (this: Right<Some>) {
-  return `Right ${this[RIGHT]}`;
-}
+export const Right = <B extends Some> (value: B): Right<B> => {
+  const right: Mutable<Right<B>> = Object.create (RightPrototype);
+  right.value = value;
 
-export const Right = <B extends Some> (value: B) => new _Right (value);
+  return right;
+};
 
 
 // BIFUNCTOR
@@ -89,8 +86,8 @@ export const bimap =
   (fRight: (right: C) => D) =>
   (m: Either<A, C>): Either<B, D> =>
     isRight (m)
-      ? Right (fRight (m[RIGHT]))
-      : Left (fLeft (m[LEFT]));
+      ? Right (fRight (m .value))
+      : Left (fLeft (m .value));
 
 /**
  * `first :: (a -> b) -> Either a c -> Either b c`
@@ -100,7 +97,7 @@ export const first =
   (f: (left: A) => B) =>
   (m: Either<A, C>): Either<B, C> =>
     isLeft (m)
-      ? Left (f (m[LEFT]))
+      ? Left (f (m .value))
       : m;
 
 /**
@@ -111,7 +108,7 @@ export const second =
   (f: (right: B) => C) =>
   (m: Either<A, B>): Either<A, C> =>
     isRight (m)
-      ? Right (f (m[RIGHT]))
+      ? Right (f (m .value))
       : m;
 
 
@@ -124,7 +121,7 @@ export const bind =
   <E extends Some, A extends Some, B extends Some>
   (m: Either<E, A>) =>
   (f: (value: A) => Either<E, B>): Either<E, B> =>
-    isLeft (m) ? m : f (m[RIGHT]);
+    isLeft (m) ? m : f (m .value);
 
 /**
  * `(=<<) :: (a -> Maybe b) -> Maybe a -> Maybe b`
@@ -204,7 +201,7 @@ export const ap =
   <E extends Some, A extends Some, B extends Some>
   (ma: Either<E, (value: A) => B>) =>
   (m: Either<E, A>): Either<E, B> =>
-    isRight (ma) ? isRight (m) ? Right (ma[RIGHT] (m[RIGHT])) : m : ma;
+    isRight (ma) ? isRight (m) ? Right (ma .value (m .value)) : m : ma;
 
 
 // FOLDABLE
@@ -238,7 +235,7 @@ export const ap =
 export const foldl =
   <A extends Some, B extends Some> (fn: (acc: B) => (current: A) => B) =>
     (initial: B) => (m: Either<A, A>): B =>
-      isRight (m) ? fn (initial) (m[RIGHT]) : initial;
+      isRight (m) ? fn (initial) (m .value) : initial;
 
 /**
  * `elem :: Eq a => a -> Either a a -> Bool`
@@ -249,7 +246,7 @@ export const foldl =
  */
 export const elem =
   <A extends Some> (e: A) => (m: Either<A, A>): boolean =>
-    isRight (m) && e === m[RIGHT];
+    isRight (m) && e === m .value;
 
 /**
  * `elem_ :: Eq a => Either a a -> a -> Bool`
@@ -283,8 +280,8 @@ export const notElem =
  */
 export const equals =
   <A extends Some, B extends Some> (m1: Either<A, B>) => (m2: Either<A, B>): boolean =>
-    isRight (m1) && isRight (m2) && requals (m1[RIGHT]) (m2[RIGHT])
-    || isLeft (m1) && isLeft (m2) && requals (m1[LEFT]) (m2[LEFT]);
+    isRight (m1) && isRight (m2) && requals (m1 .value) (m2 .value)
+    || isLeft (m1) && isLeft (m2) && requals (m1 .value) (m2 .value);
 
 /**
  * `(!=) :: Maybe a -> Maybe a -> Bool`
@@ -314,8 +311,8 @@ export const gt =
   (m1: Either<A, B>) =>
   (m2: Either<A, B>): boolean =>
     isRight (m1) && isLeft (m2)
-    || isRight (m1) && isRight (m2) && m1[RIGHT] > m2[RIGHT]
-    || isLeft (m1) && isLeft (m2) && m1[LEFT] > m2[LEFT];
+    || isRight (m1) && isRight (m2) && m1 .value > m2 .value
+    || isLeft (m1) && isLeft (m2) && m1 .value > m2 .value;
 
 /**
  * `(<) :: Either a b -> Either a b -> Bool`
@@ -333,8 +330,8 @@ export const lt =
   (m1: Either<A, B>) =>
   (m2: Either<A, B>): boolean =>
     isLeft (m1) && isRight (m2)
-    || isRight (m1) && isRight (m2) && m1[RIGHT] < m2[RIGHT]
-    || isLeft (m1) && isLeft (m2) && m1[LEFT] < m2[LEFT];
+    || isRight (m1) && isRight (m2) && m1 .value < m2 .value
+    || isLeft (m1) && isLeft (m2) && m1 .value < m2 .value;
 
 /**
  * `(>=) :: Either a b -> Either a b -> Bool`
@@ -353,8 +350,8 @@ export const gte =
   (m1: Either<A, B>) =>
   (m2: Either<A, B>): boolean =>
     isRight (m1) && isLeft (m2)
-    || isRight (m1) && isRight (m2) && m1[RIGHT] >= m2[RIGHT]
-    || isLeft (m1) && isLeft (m2) && m1[LEFT] >= m2[LEFT];
+    || isRight (m1) && isRight (m2) && m1 .value >= m2 .value
+    || isLeft (m1) && isLeft (m2) && m1 .value >= m2 .value;
 
 /**
  * `(<=) :: Either a b -> Either a b -> Bool`
@@ -373,16 +370,8 @@ export const lte =
   (m1: Either<A, B>) =>
   (m2: Either<A, B>): boolean =>
     isLeft (m1) && isRight (m2)
-    || isRight (m1) && isRight (m2) && m1[RIGHT] <= m2[RIGHT]
-    || isLeft (m1) && isLeft (m2) && m1[LEFT] <= m2[LEFT];
-
-
-// SHOW
-
-/**
- * `show :: Either a b -> String`
- */
-export const show = (m: Either<any, any>): string => m.toString ();
+    || isRight (m1) && isRight (m2) && m1 .value <= m2 .value
+    || isLeft (m1) && isLeft (m2) && m1 .value <= m2 .value;
 
 
 // SEMIGROUP
@@ -408,7 +397,7 @@ export const show = (m: Either<any, any>): string => m.toString ();
  * Return `True` if the given value is a `Left`-value, `False` otherwise.
  */
 export const isLeft =
-<A extends Some, B extends Some> (x: Either<A, B>): x is Left<A> => x instanceof _Left;
+<A extends Some, B extends Some> (x: Either<A, B>): x is Left<A> => x.prototype === LeftPrototype;
 
 /**
 * `isRight :: Either a b -> Bool`
@@ -416,7 +405,7 @@ export const isLeft =
 * Return `True` if the given value is a `Right`-value, `False` otherwise.
 */
 export const isRight =
-<A extends Some, B extends Some> (x: Either<A, B>): x is Right<B> => x instanceof _Right;
+<A extends Some, B extends Some> (x: Either<A, B>): x is Right<B> => x.prototype === RightPrototype;
 
 /**
  * `either :: (a -> c) -> (b -> c) -> Either a b -> c`
@@ -430,8 +419,8 @@ export const either =
   (fRight: (right: B) => C) =>
   (m: Either<A, B>): C =>
     isRight (m)
-      ? fRight (m[RIGHT])
-      : fLeft (m[LEFT]);
+      ? fRight (m .value)
+      : fLeft (m .value);
 
 /**
  * `lefts :: [Either a b] -> [a]`
@@ -441,7 +430,7 @@ export const either =
  */
 export const lefts =
   <A extends Some, B extends Some> (list: List<Either<A, B>>): List<A> =>
-    foldr<Either<A, B>, List<A>> (m => acc => isLeft (m) ? cons (acc) (m[LEFT]) : acc)
+    foldr<Either<A, B>, List<A>> (m => acc => isLeft (m) ? cons (acc) (m .value) : acc)
                                  (empty ())
                                  (list);
 
@@ -453,7 +442,7 @@ export const lefts =
  */
 export const rights =
   <A extends Some, B extends Some> (list: List<Either<A, B>>): List<B> =>
-    foldr<Either<A, B>, List<B>> (m => acc => isRight (m) ? cons (acc) (m[RIGHT]) : acc)
+    foldr<Either<A, B>, List<B>> (m => acc => isRight (m) ? cons (acc) (m .value) : acc)
                                  (empty ())
                                  (list);
 
@@ -467,7 +456,7 @@ export const rights =
 export const partitionEithers =
   <A extends Some, B extends Some> (list: List<Either<A, B>>): Tuple<List<A>, List<B>> =>
     foldr<Either<A, B>, Tuple<List<A>, List<B>>>
-      (m => isRight (m) ? Tuple.second (cons_ (m[RIGHT])) : Tuple.first (cons_ (m[LEFT])))
+      (m => isRight (m) ? Tuple.second (cons_ (m .value)) : Tuple.first (cons_ (m .value)))
       (Tuple.of<List<A>, List<B>> (empty ()) (empty ()))
       (list);
 
@@ -484,7 +473,7 @@ export const partitionEithers =
  */
 export const fromLeft =
   <A extends Some> (def: A) => (m: Either<A, any>): A =>
-    isLeft (m) ? m [LEFT] : def;
+    isLeft (m) ? m .value : def;
 
 /**
  * `fromRight :: b -> Either a b -> b`
@@ -497,7 +486,7 @@ export const fromLeft =
  */
 export const fromRight =
   <B extends Some> (def: B) => (m: Either<any, B>): B =>
-    isRight (m) ? m [RIGHT] : def;
+    isRight (m) ? m .value : def;
 
 /**
  * `fromEither :: Either a a -> a`
@@ -509,7 +498,7 @@ export const fromRight =
  */
 export const fromEither =
   <A extends Some> (m: Either<A, A>): A =>
-    isRight (m) ? m [RIGHT] : m [LEFT];
+    isRight (m) ? m .value : m .value;
 
 /**
  * `fromLeft' :: Either l r -> l`
@@ -526,7 +515,7 @@ export const fromEither =
 export const fromLeft_ =
   <L extends Some> (x: Left<L>): L => {
     if (isLeft (x)) {
-      return x [LEFT];
+      return x .value;
     }
 
     throw new TypeError (`Cannot extract a Left value out of ${x}.`);
@@ -547,7 +536,7 @@ export const fromLeft_ =
 export const fromRight_ =
   <R extends Some> (x: Right<R>): R => {
     if (isRight (x)) {
-      return x [RIGHT];
+      return x .value;
     }
 
     throw new TypeError (`Cannot extract a Right value out of ${x}.`);
@@ -563,7 +552,7 @@ export const fromRight_ =
  */
 export const eitherToMaybe =
   <B extends Some> (m: Either<any, B>): Maybe<B> =>
-    isRight (m) ? Just (m[RIGHT]) : Nothing;
+    isRight (m) ? Just (m .value) : Nothing;
 
 /**
  * `maybeToEither :: a -> Maybe b -> Either a b`
@@ -588,4 +577,4 @@ export const maybeToEither =
  */
 export const isEither =
   (x: any): x is Either<any, any> =>
-    x instanceof _Left || x instanceof _Right;
+    x && (x.prototype === LeftPrototype || x.prototype === RightPrototype);
