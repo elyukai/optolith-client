@@ -47,9 +47,14 @@ const LeftPrototype: LeftPrototype =
     }
   );
 
+/**
+ * `Left :: a -> Either a b`
+ *
+ * Creates a new `Left` from the passed value.
+ */
 export const Left =
   <A extends Some> (x: A): Left<A> =>
-    Object.create (LeftPrototype, { value: { value: x }});
+    Object.create (LeftPrototype, { value: { value: x, enumerable: true }});
 
 // Right
 
@@ -72,9 +77,14 @@ const RightPrototype: RightPrototype =
     }
   );
 
+/**
+ * `Right :: b -> Either a b`
+ *
+ * Creates a new `Right` from the passed value.
+ */
 export const Right =
   <B extends Some> (x: B): Right<B> =>
-    Object.create (RightPrototype, { value: { value: x }});
+    Object.create (RightPrototype, { value: { value: x, enumerable: true }});
 
 
 // EITHER.EXTRA
@@ -293,7 +303,7 @@ export const bind_ =
  */
 export const then =
   <E extends Some, B extends Some> (m1: Either<E, any>) => (m2: Either<E, B>): Either<E, B> =>
-    bind<E, any, B> (m1) (() => m2);
+    bind<E, any, B> (m1) (_ => m2);
 
 /**
  * `return :: a -> Either e a`
@@ -353,7 +363,7 @@ export const foldl =
  */
 export const toList =
   <A0 extends Some>(xs: Either<any, A0>): List<A0> =>
-    isRight (xs) ? fromElements (xs .value) : emptyList ();
+    isRight (xs) ? fromElements (xs .value) : emptyList;
 
 /**
  * `null :: Either a a0 -> Bool`
@@ -418,7 +428,7 @@ export const product = fromRight (1);
  */
 export const concat =
   <A0 extends Some>(m: Either<any, List<A0>>): List<A0> =>
-    fromRight<List<A0>> (emptyList<A0> ()) (m);
+    fromRight<List<A0>> (emptyList) (m);
 
 /**
  * `concatMap :: (a0 -> [b]) -> Either a a0 -> [b]`
@@ -428,7 +438,7 @@ export const concat =
  */
 export const concatMap =
   <A0 extends Some, B extends Some> (f: (x: A0) => List<B>) => (xs: Either<any, A0>): List<B> =>
-    fromRight (emptyList<B> ()) (fmap (f) (xs));
+    fromRight<List<B>> (emptyList) (fmap (f) (xs));
 
 /**
  * `and :: Either a Bool -> Bool`
@@ -644,8 +654,8 @@ export const either =
 export const lefts =
   <A extends Some, B extends Some> (list: List<Either<A, B>>): List<A> =>
     foldrList<Either<A, B>, List<A>> (m => acc => isLeft (m) ? cons (acc) (m .value) : acc)
-                                 (emptyList ())
-                                 (list);
+                                     (emptyList)
+                                     (list);
 
 /**
  * `rights :: [Either a b] -> [b]`
@@ -656,8 +666,8 @@ export const lefts =
 export const rights =
   <A extends Some, B extends Some> (list: List<Either<A, B>>): List<B> =>
     foldrList<Either<A, B>, List<B>> (m => acc => isRight (m) ? cons (acc) (m .value) : acc)
-                                 (emptyList ())
-                                 (list);
+                                     (emptyList)
+                                     (list);
 
 /**
  * `partitionEithers :: [Either a b] -> ([a], [b])`
@@ -670,7 +680,7 @@ export const partitionEithers =
   <A extends Some, B extends Some> (list: List<Either<A, B>>): Tuple<List<A>, List<B>> =>
     foldrList<Either<A, B>, Tuple<List<A>, List<B>>>
       (m => isRight (m) ? Tuple.second (cons_ (m .value)) : Tuple.first (cons_ (m .value)))
-      (Tuple.of<List<A>, List<B>> (emptyList ()) (emptyList ()))
+      (Tuple.of<List<A>, List<B>> (emptyList) (emptyList))
       (list);
 
 

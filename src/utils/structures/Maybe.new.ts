@@ -48,9 +48,14 @@ const JustPrototype: JustPrototype =
     }
   );
 
+/**
+ * `Just :: a -> Maybe a`
+ *
+ * Creates a new `Just` from the passed value.
+ */
 export const Just = <A extends Some> (x: A): Just<A> => {
   if (x !== null && x !== undefined) {
-    return Object.create (JustPrototype, { value: { value: x }});
+    return Object.create (JustPrototype, { value: { value: x, enumerable: true }});
   }
 
   throw new TypeError ('Cannot create a Just from a nullable value.');
@@ -76,6 +81,11 @@ const NothingPrototype: NothingPrototype =
     }
   );
 
+/**
+ * `Nothing :: Nothing`
+ *
+ * The empty `Maybe`.
+ */
 export const Nothing: Nothing = Object.create (NothingPrototype);
 
 /**
@@ -207,10 +217,10 @@ guard False = empty
   * In TypeScript, this is not possible, so instead it's
 ```ts
 guard (true)  = pure (true)
-guard (false) = empty ()
+guard (false) = empty
 ```
   */
-export const guard = (pred: boolean): Maybe<true> => pred ? Just<true> (true) : Nothing;
+export const guard = (pred: boolean): Maybe<true> => pred ? pure<true> (true) : empty;
 
 
 // MONAD
@@ -369,7 +379,7 @@ export const foldl =
  */
 export const toList =
   <A extends Some>(xs: Maybe<A>): List<A> =>
-    isJust (xs) ? fromElements (xs .value) : emptyList ();
+    isJust (xs) ? fromElements (xs .value) : emptyList;
 
 /**
  * `null :: Maybe a -> Bool`
@@ -434,7 +444,7 @@ export const product = fromMaybe (1);
  */
 export const concat =
   <A extends Some>(m: Maybe<List<A>>): List<A> =>
-    fromMaybe<List<A>> (emptyList<A> ()) (m);
+    fromMaybe<List<A>> (emptyList) (m);
 
 /**
  * `concatMap :: (a -> [b]) -> Maybe a -> [b]`
@@ -444,7 +454,7 @@ export const concat =
  */
 export const concatMap =
   <A extends Some, B extends Some> (f: (x: A) => List<B>) => (xs: Maybe<A>): List<B> =>
-    fromMaybe (emptyList<B> ()) (fmap (f) (xs));
+    fromMaybe<List<B>> (emptyList) (fmap (f) (xs));
 
 /**
  * `and :: Maybe Bool -> Bool`
@@ -573,7 +583,7 @@ export const lte =
     fromMaybe (false) (liftM2 (Math.lte) (m1) (m2));
 
 
-// SEMIGROUP
+// // SEMIGROUP
 
 // /**
 //  * `mappend :: Semigroup a => Maybe a -> Maybe a -> Maybe a`
@@ -582,9 +592,9 @@ export const lte =
 //  * type `Just a`. If at least one of them is `Nothing`, it returns the first
 //  * element.
 //  */
-// export const mappend = <U, S extends Semigroup<U>> (m1: Maybe<S>) => (m2: Maybe<S>): Maybe<S> =>
+// export const mappend = <U> (m1: Maybe<List<U>>) => (m2: Maybe<List<U>>): Maybe<List<U>> =>
 //   isJust (m1) && isJust (m2)
-//     ? Just (mappend (fromJust (m1), fromJust (m2)))
+//     ? Just (List.mappend (fromJust (m1), fromJust (m2)))
 //     : m1;
 
 
@@ -629,7 +639,7 @@ export const maybeToList = toList;
 export const catMaybes =
   <A extends Some> (list: List<Maybe<A>>): List<A> =>
     foldrList<Maybe<A>, List<A>> (maybe<A, (x: List<A>) => List<A>> (id) (cons_))
-                                 (emptyList ())
+                                 (emptyList)
                                  (list);
 
 /**
@@ -643,7 +653,7 @@ export const catMaybes =
 export const mapMaybe =
   <A extends Some, B extends Some> (f: (x: A) => Maybe<B>) =>
     foldrList<A, List<B>> (pipe (f, maybe<B, (x: List<B>) => List<B>> (id) (cons_)))
-                          (emptyList ());
+                          (emptyList);
 
 
 // CUSTOM MAYBE FUNCTIONS
@@ -712,7 +722,7 @@ export const imapMaybe =
   <A extends Some, B extends Some> (fn: (index: number) => (x: A) => Maybe<B>) =>
     ifoldr<A, List<B>>
       (index => x => acc => pipe (fn (index), maybe<B, List<B>> (acc) (cons (acc))) (x))
-      (emptyList ());
+      (emptyList);
 
 /**
  * `maybeToNullable :: Maybe a -> (a | Nullable)`
@@ -794,6 +804,7 @@ export const Maybe = {
   imapMaybe,
   maybeToNullable,
 };
+
 
 // TYPE HELPERS
 

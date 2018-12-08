@@ -8,10 +8,10 @@
 
 import { pipe } from 'ramda';
 import { not } from '../not';
+import { cnst } from './combinators';
 import { fromJust, fromNullable, imapMaybe, isJust, Just, Maybe, Nothing, Some } from './Maybe.new';
 import { OrderedMap } from './orderedMap';
 import { Tuple } from './tuple';
-import { Mutable } from './typeUtils';
 
 
 // CONSTRUCTOR
@@ -25,38 +25,132 @@ export interface List<A extends Some> extends ListPrototype<A> {
   readonly prototype: ListPrototype<A>;
 }
 
-const ListPrototype: ListPrototype<Some> = {
-  [Symbol.iterator] (this: List<Some>) {
-    return this .value [Symbol.iterator] ();
-  },
-};
+const ListPrototype: ListPrototype<Some> =
+  Object.create (
+    Object.prototype,
+    {
+      [Symbol.iterator]: {
+        value (this: List<Some>) {
+          return this .value [Symbol.iterator] ();
+        },
+      },
+      isList: { value: true },
+    }
+  );
 
-const List = <A extends Some> (value: ReadonlyArray<A>): List<A> => {
-  const list: Mutable<List<A>> = Object.create (ListPrototype);
-  list.value = value;
-
-  return list as List<A>;
-};
+const _List =
+  <A extends Some> (x: ReadonlyArray<A>): List<A> =>
+    Object.create (ListPrototype, { value: { value: x, enumerable: true }});
 
 /**
  * `fromElements :: (...a) -> [a]`
  *
  * Creates a new `List` instance from the passed arguments.
  */
-export const fromElements = <A extends Some> (...values: A[]) => List (values);
+export const fromElements = <A extends Some> (...values: A[]) => _List (values);
 
 /**
- * `fromElements :: Array a -> [a]`
+ * `fromArray :: Array a -> [a]`
  *
  * Creates a new `List` instance from the passed native `Array`.
  */
 export const fromArray = <A extends Some> (arr: ReadonlyArray<A>) => {
   if (Array.isArray (arr)) {
-    return List (arr);
+    return _List (arr);
   }
 
   throw new TypeError (`fromArray requires an array but instead it received ${arr}`);
 };
+
+
+// FUNCTOR
+
+/**
+ * `fmap :: (a -> b) -> [a] -> [b]`
+ */
+export const fmap =
+  <A extends Some, B extends Some> (f: (value: A) => B) => (xs: List<A>): List<B> =>
+    fromArray (xs .value .map (f));
+
+/**
+ * `(<$) :: Functor f => a -> f b -> f a`
+ *
+ * Replace all locations in the input with the same value. The default
+ * definition is `fmap . const`, but this may be overridden with a more
+ * efficient version.
+ */
+export const mapReplace =
+  <A extends Some, B extends Some> (x: A) =>
+    fmap<B, A> (cnst (x));
+
+
+// APPLICATIVE
+
+/**
+ * `pure :: a -> [a]`
+ *
+ * Lift a value.
+ */
+export const pure = <A extends Some> (x: A) => _List ([x]);
+
+/**
+ * `(<*>) :: [a -> b] -> [a] -> [b]`
+ *
+ * Sequential application.
+ */
+export const ap =
+  <A extends Some, B extends Some> (ma: List<(value: A) => B>) => (m: List<A>): List<B> =>
+    bind<(value: A) => B, B> (ma) (f => fmap<A, B> (f) (m));
+
+
+// ALTERNATIVE
+
+/**
+ * `alt :: [a] -> [a] -> [a]`
+ *
+ * The `alt` function takes a list of the same type. If the first list
+ * is empty, it returns the second list, otherwise it returns the
+ * first.
+ */
+export const alt =
+  <A extends Some> (xs1: List<A>) => (xs2: List<A>): List<A> =>
+    fnull (xs1) ? xs2 : xs1;
+
+/**
+ * `alt :: f a -> f a -> f a`
+ *
+ * The `alt` function takes a `Maybe` of the same type. If the second `Maybe`
+ * is `Nothing`, it returns the first `Maybe`, otherwise it returns the
+ * second.
+ *
+ * This is the same as `Maybe.alt` but with arguments swapped.
+ */
+export const alt_ =
+  <A extends Some> (xs1: List<A>) => (xs2: List<A>): List<A> =>
+    alt (xs2) (xs1);
+
+/**
+ * `empty :: [a]`
+ *
+ * The empty list.
+ */
+export const empty = _List ([]);
+
+/**
+ * `guard :: Bool -> [()]`
+ *
+ * Conditional failure of Alternative computations. Defined by
+```hs
+guard True  = pure ()
+guard False = empty
+```
+  * In TypeScript, this is not possible, so instead it's
+```ts
+guard (true)  = pure (true)
+guard (false) = empty
+```
+  */
+export const guard = (pred: boolean): List<true> => pred ? pure<true> (true) : empty;
 
 
 // MONAD
@@ -91,7 +185,7 @@ export const bind_ =
  */
 export const then =
   <A extends Some> (xs1: List<any>) => (xs2: List<A>): List<A> =>
-    bind<any, A> (xs1) (() => xs2);
+    bind<any, A> (xs1) (_ => xs2);
 
 
 /**
@@ -99,7 +193,7 @@ export const then =
  *
  * Inject a value into a list.
  */
-export const mreturn = <A extends Some> (x: A) => List ([x]);
+export const mreturn = <A extends Some> (x: A) => _List ([x]);
 
 /**
  * `(>=>) :: (a -> [b]) -> (b -> [c]) -> a -> [c]`
@@ -124,44 +218,6 @@ export const join =
     bind<List<A>, A> (xs) (e => e);
 
 
-// FUNCTOR
-
-/**
- * `fmap :: (a -> b) -> [a] -> [b]`
- */
-export const fmap =
-  <A extends Some, B extends Some> (f: (value: A) => B) => (xs: List<A>): List<B> =>
-    fromArray (xs .value .map (f));
-
-/**
- * `(<$) :: Functor f => a -> f b -> f a`
- *
- * Replace all locations in the input with the same value. The default
- * definition is `fmap . const`, but this may be overridden with a more
- * efficient version.
- */
-export const mapReplace =
-  <A extends Some, B extends Some> (x: A) =>
-    fmap<B, A> (() => x);
-
-
-// APPLICATIVE
-
-/**
- * `pure :: a -> [a]`
- *
- * Inject a value into a `Maybe` type.
- */
-export const pure = <A extends Some> (x: A) => List ([x]);
-
-/**
- * `(<*>) :: [a -> b] -> [a] -> [b]`
- */
-export const ap =
-  <A extends Some, B extends Some> (ma: List<(value: A) => B>) => (m: List<A>): List<B> =>
-    bind<(value: A) => B, B> (ma) (f => fmap<A, B> (f) (m));
-
-
 // FOLDABLE
 
 /**
@@ -183,7 +239,7 @@ export const foldr =
     xs .value .reduceRight<B> ((acc, e) => f (e) (acc), initial);
 
 /**
- * `foldl :: Foldable t => (b -> a -> b) -> b -> t a -> b`
+ * `foldl :: (b -> a -> b) -> b -> [a] -> b`
  *
  * Left-associative fold of a structure.
  *
@@ -201,7 +257,7 @@ export const foldl =
     xs .value .reduce<B> ((acc, e) => f (acc) (e), initial);
 
 /**
- * `foldr1 :: (a -> a -> a) -> t a -> a`
+ * `foldr1 :: (a -> a -> a) -> [a] -> a`
  *
  * A variant of `foldr` that has no base case, and thus may only be applied to
  * non-empty structures.
@@ -408,70 +464,6 @@ export const find: Find =
     fromNullable (xs .value .find (pred));
 
 
-// ALTERNATIVE
-
-/**
- * `alt :: [a] -> [a] -> [a]`
- *
- * The `alt` function takes a list of the same type. If the first list
- * is empty, it returns the second list, otherwise it returns the
- * first.
- */
-export const alt =
-  <A extends Some> (xs1: List<A>) => (xs2: List<A>): List<A> =>
-    fnull (xs1) ? xs2 : xs1;
-
-/**
- * `alt :: f a -> f a -> f a`
- *
- * The `alt` function takes a `Maybe` of the same type. If the second `Maybe`
- * is `Nothing`, it returns the first `Maybe`, otherwise it returns the
- * second.
- *
- * This is the same as `Maybe.alt` but with arguments swapped.
- */
-export const alt_ =
-  <A extends Some> (xs1: List<A>) => (xs2: List<A>): List<A> =>
-    alt (xs2) (xs1);
-
-/**
- * `empty :: () -> Nothing`
- *
- * Returns the empty `Maybe`.
- */
-export const empty = <A extends Some> () => List<A> ([]);
-
-
-// EQ
-
-/**
- * `(==) :: Maybe a -> Maybe a -> Bool`
- *
- * Returns if both given values are equal.
- */
-export const equals =
-  <A extends Some> (xs1: List<A>) => (xs2: List<A>): boolean =>
-    length (xs1) === length (xs2)
-    && xs1 .value .every ((e, i) => e === xs2 .value [i]);
-
-/**
- * `(!=) :: Maybe a -> Maybe a -> Bool`
- *
- * Returns if both given values are not equal.
- */
-export const notEquals =
-  <A extends Some> (xs1: List<A>) => (xs2: List<A>): boolean =>
-    !equals (xs1) (xs2);
-
-
-// SHOW
-
-/**
- * `show :: [a] -> String`
- */
-export const show = (xs: List<any>): string => xs.toString ();
-
-
 // BASIC FUNCTIONS
 
 /**
@@ -479,7 +471,7 @@ export const show = (xs: List<any>): string => xs.toString ();
  *
  * Append two lists.
  */
-export const append =
+export const mappend =
   <A> (xs1: List<A>) => (xs2: List<A>): List<A> =>
     fromElements (...xs1, ...xs2);
 
@@ -766,7 +758,7 @@ export const unfoldr =
   <A, B>
   (f: (value: B) => Maybe<Tuple<A, B>>) =>
   (seedValue: B): List<A> =>
-    unfoldElement (f) (empty ()) (seedValue);
+    unfoldElement (f) (empty) (seedValue);
 
 
 // EXTRACTING SUBLIST
@@ -792,7 +784,7 @@ export const take =
 export const drop =
 <A> (size: number) => (list: List<A>): List<A> =>
   list .value .length < size
-    ? list
+    ? empty
     : fromArray (list .value .slice (size));
 
 /**
@@ -817,7 +809,7 @@ export const splitAt =
  */
 export const lookup = <K, V> (key: K) => (assocs: List<Tuple<K, V>>): Maybe<V> =>
   Maybe.fmap<Tuple<K, V>, V> (Tuple.snd)
-                               (find<Tuple<K, V>> (e => Tuple.fst (e) === key) (assocs));
+                             (find<Tuple<K, V>> (e => Tuple.fst (e) === key) (assocs));
 
 
 // SEARCHING WITH A PREDICATE
@@ -862,7 +854,7 @@ export const partition =
       ([included, excluded], value) => f (value)
         ? [cons (included) (value), excluded]
         : [included, cons (excluded) (value)],
-      [empty (), empty ()]
+      [empty, empty]
     );
 
     return Tuple.of<List<A>, List<A>> (pair[0]) (pair[1]);
@@ -1101,7 +1093,7 @@ export const insertAt =
     }
 
     if (index === xs .value .length) {
-      return append (xs) (fromElements (value));
+      return mappend (xs) (fromElements (value));
     }
 
     return xs;
@@ -1228,7 +1220,7 @@ export const ipartition =
       ([included, excluded], value, i) => f (i) (value)
         ? [cons (included) (value), excluded]
         : [included, cons (excluded) (value)],
-      [empty (), empty ()]
+      [empty, empty]
     );
 
     return Tuple.of<List<A>, List<A>> (pair[0]) (pair[1]);
@@ -1316,7 +1308,121 @@ export const toMap = <K, V> (list: List<Tuple<K, V>>): OrderedMap<K, V> =>
  * Checks if the given value is a `List`.
  * @param value The value to test.
  */
-export const isList = (x: any): x is List<any> => x && x.prototype === ListPrototype;
+export const isList = (x: any): x is List<any> => x && x.isList;
+
+
+// NAMESPACED FUNCTIONS
+
+export const List = {
+  fromElements,
+  fromArray,
+
+  fmap,
+  mapReplace,
+
+  pure,
+  ap,
+
+  alt,
+  alt_,
+  empty,
+  guard,
+
+  bind,
+  bind_,
+  then,
+  mreturn,
+  kleisli,
+  join,
+
+  foldr,
+  foldl,
+  toList,
+  fnull,
+  length,
+  elem,
+  elem_,
+  sum,
+  product,
+  concat,
+  concatMap,
+  and,
+  or,
+  any,
+  all,
+  notElem,
+  find,
+
+  mappend,
+  cons,
+  cons_,
+  subscript,
+  subscript_,
+  head,
+  last,
+  last_,
+  tail,
+  tail_,
+  init,
+  init_,
+  uncons,
+
+  map,
+  reverse,
+  intercalate,
+
+  scanl,
+
+  mapAccumL,
+
+  unfoldr,
+
+  take,
+  drop,
+  splitAt,
+
+  lookup,
+
+  filter,
+  partition,
+
+  elemIndex,
+  elemIndices,
+  findIndex,
+  findIndices,
+
+  zip,
+  zipWith,
+
+  sdelete,
+
+  sortBy,
+
+  indexed,
+  deleteAt,
+  setAt,
+  modifyAt,
+  updateAt,
+  insertAt,
+
+  imap,
+
+  ifoldr,
+  ifoldl,
+  iall,
+  iany,
+  iconcatMap,
+
+  ifilter,
+  ipartition,
+  ifind,
+  ifindIndex,
+  ifindIndices,
+
+  toArray,
+  toMap,
+  isList,
+};
 
 
 // TYPE HELPERS
