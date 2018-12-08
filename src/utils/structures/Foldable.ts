@@ -366,32 +366,32 @@ export const notElem =
     return List.notElem<A> (e) (xs);
   };
 
-// interface Find {
-//   /**
-//    * `find :: Foldable t => (a -> Bool) -> t a -> Maybe a`
-//    *
-//    * The `find` function takes a predicate and a structure and returns the
-//    * leftmost element of the structure matching the predicate, or `Nothing` if
-//    * there is no such element.
-//    */
-//   <A, A1 extends A> (pred: (x: A) => x is A1): (xs: List.List<A>) => Maybe.Maybe<A1>;
-//   /**
-//    * `find :: Foldable t => (a -> Bool) -> t a -> Maybe a`
-//    *
-//    * The `find` function takes a predicate and a structure and returns the
-//    * leftmost element of the structure matching the predicate, or `Nothing` if
-//    * there is no such element.
-//    */
-//   <A> (pred: (x: A) => boolean): (xs: List.List<A>) => Maybe.Maybe<A>;
-// }
+interface Find {
+  /**
+   * `find :: Foldable t => (a -> Bool) -> t a -> Maybe a`
+   *
+   * The `find` function takes a predicate and a structure and returns the
+   * leftmost element of the structure matching the predicate, or `Nothing` if
+   * there is no such element.
+   */
+  <A, A1 extends A> (pred: (x: A) => x is A1): (xs: List.List<A>) => Maybe.Maybe<A1>;
+  /**
+   * `find :: Foldable t => (a -> Bool) -> t a -> Maybe a`
+   *
+   * The `find` function takes a predicate and a structure and returns the
+   * leftmost element of the structure matching the predicate, or `Nothing` if
+   * there is no such element.
+   */
+  <A> (pred: (x: A) => boolean): (xs: List.List<A>) => Maybe.Maybe<A>;
+}
 
-// /**
-//  * `find :: Foldable t => (a -> Bool) -> t a -> Maybe a`
-//  *
-//  * The `find` function takes a predicate and a structure and returns the
-//  * leftmost element of the structure matching the predicate, or `Nothing` if
-//  * there is no such element.
-//  */
-// export const find: Find =
-//   <A> (pred: (x: A) => boolean) => (xs: List.List<A>): Maybe.Maybe<A> =>
-//     fromNullable (xs [LIST] .find (pred));
+/**
+ * `find :: Foldable t => (a -> Bool) -> t a -> Maybe a`
+ *
+ * The `find` function takes a predicate and a structure and returns the
+ * leftmost element of the structure matching the predicate, or `Nothing` if
+ * there is no such element.
+ */
+export const find: Find =
+  <A> (pred: (x: A) => boolean) => (xs: List.List<A>): Maybe.Maybe<A> =>
+    fromNullable (xs [LIST] .find (pred));

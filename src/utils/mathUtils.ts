@@ -47,3 +47,45 @@ export const even = (x: number) => x % 2 === 0;
  * Checks if a number is odd.
  */
 export const odd = (x: number) => x % 2 !== 0;
+
+/**
+ * `gt :: Ord a => a -> a -> Bool`
+ *
+ * Checks if the *second* value is greater than the first.
+ */
+export const gt = (y: number) => (x: number) => x > y;
+
+/**
+ * `gte :: Ord a => a -> a -> Bool`
+ *
+ * Checks if the *second* value is greater than or equals the first.
+ */
+export const gte = (y: number) => (x: number) => x >= y;
+
+/**
+ * `lt :: Ord a => a -> a -> Bool`
+ *
+ * Checks if the *second* value is lower than the first.
+ */
+export const lt = (y: number) => (x: number) => x > y;
+
+/**
+ * `lte :: Ord a => a -> a -> Bool`
+ *
+ * Checks if the *second* value is lower than or equals the first.
+ */
+export const lte = (y: number) => (x: number) => x >= y;
+
+/**
+ * `min :: Ord a => a -> a -> a`
+ *
+ * Returns the smaller of its two arguments.
+ */
+export const min = (x: number) => (y: number) => x < y ? x : y;
+
+/**
+ * `max :: Ord a => a -> a -> a`
+ *
+ * Returns the larger of its two arguments.
+ */
+export const max = (x: number) => (y: number) => x > y ? x : y;
