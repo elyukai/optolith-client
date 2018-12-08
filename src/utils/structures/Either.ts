@@ -17,7 +17,6 @@ import { cnst, id } from './combinators';
 import { cons, cons_, empty as emptyList, foldr as foldrList, fromElements, List } from './List.new';
 import { fromJust, isJust, Just, Maybe, Nothing, Some } from './Maybe.new';
 import { Tuple } from './tuple';
-import { Mutable } from './typeUtils';
 
 
 // EITHER TYPE DEFINITION
@@ -39,17 +38,18 @@ export interface Left<A extends Some> extends LeftPrototype {
   readonly prototype: LeftPrototype;
 }
 
-const LeftPrototype: LeftPrototype = {
-  isLeft: true,
-  isRight: false,
-};
+const LeftPrototype: LeftPrototype =
+  Object.create (
+    Object.prototype,
+    {
+      isLeft: { value: true },
+      isRight: { value: false },
+    }
+  );
 
-export const Left = <A extends Some> (value: A): Left<A> => {
-  const left: Mutable<Left<A>> = Object.create (LeftPrototype);
-  left.value = value;
-
-  return left;
-};
+export const Left =
+  <A extends Some> (x: A): Left<A> =>
+    Object.create (LeftPrototype, { value: { value: x }});
 
 // Right
 
@@ -63,17 +63,18 @@ export interface Right<B extends Some> extends RightPrototype {
   readonly prototype: RightPrototype;
 }
 
-const RightPrototype: RightPrototype = {
-  isLeft: false,
-  isRight: true,
-};
+const RightPrototype: RightPrototype =
+  Object.create (
+    Object.prototype,
+    {
+      isLeft: { value: false },
+      isRight: { value: true },
+    }
+  );
 
-export const Right = <B extends Some> (value: B): Right<B> => {
-  const right: Mutable<Right<B>> = Object.create (RightPrototype);
-  right.value = value;
-
-  return right;
-};
+export const Right =
+  <B extends Some> (x: B): Right<B> =>
+    Object.create (RightPrototype, { value: { value: x }});
 
 
 // EITHER.EXTRA
@@ -611,7 +612,7 @@ export const lte =
  * Return `True` if the given value is a `Left`-value, `False` otherwise.
  */
 export const isLeft =
-<A extends Some, B extends Some> (x: Either<A, B>): x is Left<A> => x.prototype === LeftPrototype;
+<A extends Some, B extends Some> (x: Either<A, B>): x is Left<A> => x.isLeft;
 
 /**
 * `isRight :: Either a b -> Bool`
@@ -619,7 +620,7 @@ export const isLeft =
 * Return `True` if the given value is a `Right`-value, `False` otherwise.
 */
 export const isRight =
-<A extends Some, B extends Some> (x: Either<A, B>): x is Right<B> => x.prototype === RightPrototype;
+<A extends Some, B extends Some> (x: Either<A, B>): x is Right<B> => x.isRight;
 
 /**
  * `either :: (a -> c) -> (b -> c) -> Either a b -> c`
@@ -673,7 +674,7 @@ export const partitionEithers =
       (list);
 
 
-// CUSTOM FUNCTIONS
+// CUSTOM EITHER FUNCTIONS
 
 /**
  * `isEither :: a -> Bool`
@@ -682,7 +683,7 @@ export const partitionEithers =
  */
 export const isEither =
   (x: any): x is Either<any, any> =>
-    x && (x.prototype === LeftPrototype || x.prototype === RightPrototype);
+    typeof x === 'object' && (x.isLeft || x.isRight);
 
 
 // NAMESPACED FUNCTIONS

@@ -18,7 +18,6 @@ import { pipe } from 'ramda';
 import * as Math from '../mathUtils';
 import { cnst, id, T } from './combinators';
 import { cons, cons_, empty as emptyList, fnull as fnullList, foldr as foldrList, fromElements, head, ifoldr, List } from './List.new';
-import { Mutable } from './typeUtils';
 
 
 // MAYBE TYPE DEFINITION
@@ -40,26 +39,26 @@ export interface Just<A extends Some> extends JustPrototype {
   readonly prototype: JustPrototype;
 }
 
-const JustPrototype: JustPrototype = {
-  isJust: true,
-  isNothing: false,
-};
+const JustPrototype: JustPrototype =
+  Object.create (
+    Object.prototype,
+    {
+      isJust: { value: true },
+      isNothing: { value: false },
+    }
+  );
 
 export const Just = <A extends Some> (x: A): Just<A> => {
   if (x !== null && x !== undefined) {
-    const just: Mutable<Just<A>> = Object.create (JustPrototype);
-    just.value = x;
-
-    return just;
+    return Object.create (JustPrototype, { value: { value: x }});
   }
 
   throw new TypeError ('Cannot create a Just from a nullable value.');
-
 };
 
 // Nothing
 
-interface NothingPrototype {
+interface NothingPrototype extends Object {
   readonly isJust: false;
   readonly isNothing: true;
 }
@@ -68,10 +67,14 @@ export interface Nothing extends JustPrototype {
   readonly prototype: JustPrototype;
 }
 
-const NothingPrototype: NothingPrototype = {
-  isJust: false,
-  isNothing: true,
-};
+const NothingPrototype: NothingPrototype =
+  Object.create (
+    Object.prototype,
+    {
+      isJust: { value: false },
+      isNothing: { value: true },
+    }
+  );
 
 export const Nothing: Nothing = Object.create (NothingPrototype);
 
@@ -93,7 +96,7 @@ export const fromNullable =
  * The `isJust` function returns `true` if its argument is of the form
  * `Just _`.
  */
-export const isJust = <A extends Some> (x: Maybe<A>): x is Just<A> => x.prototype === JustPrototype;
+export const isJust = <A extends Some> (x: Maybe<A>): x is Just<A> => x.isJust;
 
 /**
  * `isNothing :: Maybe a -> Bool`
@@ -652,7 +655,7 @@ export const mapMaybe =
  */
 export const isMaybe =
   (x: any): x is Maybe<any> =>
-    x && x.prototype === JustPrototype || x === Nothing;
+    typeof x === 'object' && x.isJust || x === Nothing;
 
 /**
  * `normalize :: (a | Maybe a) -> Maybe a`

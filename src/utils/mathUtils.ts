@@ -67,14 +67,14 @@ export const gte = (y: number) => (x: number) => x >= y;
  *
  * Checks if the *second* value is lower than the first.
  */
-export const lt = (y: number) => (x: number) => x > y;
+export const lt = (y: number) => (x: number) => x < y;
 
 /**
  * `lte :: Ord a => a -> a -> Bool`
  *
  * Checks if the *second* value is lower than or equals the first.
  */
-export const lte = (y: number) => (x: number) => x >= y;
+export const lte = (y: number) => (x: number) => x <= y;
 
 /**
  * `min :: Ord a => a -> a -> a`

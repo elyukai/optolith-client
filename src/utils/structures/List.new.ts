@@ -8,7 +8,6 @@
 
 import { pipe } from 'ramda';
 import { not } from '../not';
-import * as Functor from './Functor';
 import { fromJust, fromNullable, imapMaybe, isJust, Just, Maybe, Nothing, Some } from './Maybe.new';
 import { OrderedMap } from './orderedMap';
 import { Tuple } from './tuple';
@@ -817,7 +816,7 @@ export const splitAt =
  * `lookup key assocs` looks up a key in an association list.
  */
 export const lookup = <K, V> (key: K) => (assocs: List<Tuple<K, V>>): Maybe<V> =>
-  Functor.fmap<Tuple<K, V>, V> (Tuple.snd)
+  Maybe.fmap<Tuple<K, V>, V> (Tuple.snd)
                                (find<Tuple<K, V>> (e => Tuple.fst (e) === key) (assocs));
 
 
@@ -955,7 +954,7 @@ export const zipWith =
   (f: (value1: A) => (value2: B) => C) =>
   (xs1: List<A>) =>
   (xs2: List<B>): List<C> =>
-    imapMaybe<A, C> (index => e => Functor.fmap (f (e)) (subscript (xs2) (index)))
+    imapMaybe<A, C> (index => e => Maybe.fmap (f (e)) (subscript (xs2) (index)))
                     (xs1);
 
 
