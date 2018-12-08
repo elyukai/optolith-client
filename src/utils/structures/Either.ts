@@ -683,3 +683,68 @@ export const partitionEithers =
 export const isEither =
   (x: any): x is Either<any, any> =>
     x && (x.prototype === LeftPrototype || x.prototype === RightPrototype);
+
+
+// NAMESPACED FUNCTIONS
+
+export const Either = {
+  Left,
+  Right,
+
+  fromLeft,
+  fromRight,
+  fromEither,
+  fromLeft_,
+  fromRight_,
+  eitherToMaybe,
+  maybeToEither,
+
+  fmap,
+  mapReplace,
+
+  bimap,
+  first,
+  second,
+
+  pure,
+  ap,
+
+  bind,
+  bind_,
+  then,
+  mreturn,
+  kleisli,
+  join,
+
+  foldr,
+  foldl,
+  toList,
+  fnull,
+  length,
+  elem,
+  elem_,
+  sum,
+  product,
+  concat,
+  concatMap,
+  and,
+  or,
+  any,
+  all,
+  notElem,
+  find,
+
+  gt,
+  lt,
+  gte,
+  lte,
+
+  isLeft,
+  isRight,
+  either,
+  lefts,
+  rights,
+  partitionEithers,
+
+  isEither,
+};

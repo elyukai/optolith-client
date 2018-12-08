@@ -7,25 +7,20 @@ const { Just, Nothing } = require('../maybe2');
 // CONSTRUCTORS
 
 test('Just', () => {
-  expect (Maybe.fromJust (Just (3))) .toEqual (3);
-  expect (
-    () => Object.defineProperty (
-      Just (3),
-      Object.getOwnPropertySymbols (Just (3)) [0],
-      { value: 5 }
-    )
-  )
-    .toThrowError (TypeError);
+  expect (Just (3) .value) .toEqual (3);
+  expect (Just (3) .isJust) .toEqual (true);
+  expect (Just (3) .isNothing) .toEqual (false);
 });
 
 test('Nothing', () => {
-  expect (Maybe.empty ()) .toEqual (Nothing);
+  expect (Nothing .isJust) .toEqual (false);
+  expect (Nothing .isNothing) .toEqual (true);
 });
 
 test('fromNullable', () => {
-  expect (Maybe.fromNullable (3)).toEqual(Just (3));
-  expect (Maybe.fromNullable (undefined)).toEqual(Nothing);
-  expect (Maybe.fromNullable (null)).toEqual(Nothing);
+  expect (Maybe.fromNullable (3)) .toEqual (Just (3));
+  expect (Maybe.fromNullable (undefined)) .toEqual (Nothing);
+  expect (Maybe.fromNullable (null)) .toEqual (Nothing);
 });
 
 // MAYBE FUNCTIONS (PART 1)
