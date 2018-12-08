@@ -351,7 +351,7 @@ export const foldl =
  * List of elements of a structure, from left to right.
  */
 export const toList =
-  <A0 extends Some>(xs: Either<A, A0>): List<A0> =>
+  <A0 extends Some>(xs: Either<any, A0>): List<A0> =>
     isRight (xs) ? fromElements (xs .value) : emptyList ();
 
 /**
@@ -512,80 +512,80 @@ export const find: Find =
 /**
  * `(>) :: Either a b -> Either a b -> Bool`
  *
- * Returns if the first value is greater than the second value.
+ * Returns if the *second* value is greater than the first value.
  *
- * If the first value is a `Right` and the second is a `Left`, `(>)` always
+ * If the second value is a `Right` and the first is a `Left`, `(>)` always
  * returns `True`.
  *
- * If the first value is a `Left` and the second is a `Right`, `(>)` always
+ * If the second value is a `Left` and the first is a `Right`, `(>)` always
  * returns `False`.
  */
 export const gt =
   <A extends number | string, B extends number | string>
   (m1: Either<A, B>) =>
   (m2: Either<A, B>): boolean =>
-    isRight (m1) && isLeft (m2)
-    || isRight (m1) && isRight (m2) && m1 .value > m2 .value
-    || isLeft (m1) && isLeft (m2) && m1 .value > m2 .value;
+    isRight (m2) && isLeft (m1)
+    || isRight (m1) && isRight (m2) && m2 .value > m1 .value
+    || isLeft (m1) && isLeft (m2) && m2 .value > m1 .value;
 
 /**
  * `(<) :: Either a b -> Either a b -> Bool`
  *
- * Returns if the first value is lower than the second value.
+ * Returns if the *second* value is lower than the first value.
  *
- * If the first value is a `Left` and the second is a `Right`, `(<)` always
+ * If the second value is a `Left` and the first is a `Right`, `(<)` always
  * returns `True`.
  *
- * If the first value is a `Right` and the second is a `Left`, `(<)` always
+ * If the second value is a `Right` and the first is a `Left`, `(<)` always
  * returns `False`.
  */
 export const lt =
   <A extends number | string, B extends number | string>
   (m1: Either<A, B>) =>
   (m2: Either<A, B>): boolean =>
-    isLeft (m1) && isRight (m2)
-    || isRight (m1) && isRight (m2) && m1 .value < m2 .value
-    || isLeft (m1) && isLeft (m2) && m1 .value < m2 .value;
+    isLeft (m2) && isRight (m1)
+    || isRight (m1) && isRight (m2) && m2 .value < m1 .value
+    || isLeft (m1) && isLeft (m2) && m2 .value < m1 .value;
 
 /**
  * `(>=) :: Either a b -> Either a b -> Bool`
  *
- * Returns if the first value is greater than or equals the second
+ * Returns if the *second* value is greater than or equals the first
  * value.
  *
- * If the first value is a `Right` and the second is a `Left`, `(>=)` always
+ * If the second value is a `Right` and the first is a `Left`, `(>=)` always
  * returns `True`.
  *
- * If the first value is a `Left` and the second is a `Right`, `(>=)` always
+ * If the second value is a `Left` and the first is a `Right`, `(>=)` always
  * returns `False`.
  */
 export const gte =
   <A extends number | string, B extends number | string>
   (m1: Either<A, B>) =>
   (m2: Either<A, B>): boolean =>
-    isRight (m1) && isLeft (m2)
-    || isRight (m1) && isRight (m2) && m1 .value >= m2 .value
-    || isLeft (m1) && isLeft (m2) && m1 .value >= m2 .value;
+    isRight (m2) && isLeft (m1)
+    || isRight (m1) && isRight (m2) && m2 .value >= m1 .value
+    || isLeft (m1) && isLeft (m2) && m2 .value >= m1 .value;
 
 /**
  * `(<=) :: Either a b -> Either a b -> Bool`
  *
- * Returns if the first value is lower than or equals the second
+ * Returns if the *second* value is lower than or equals the second
  * value.
  *
- * If the first value is a `Left` and the second is a `Right`, `(<=)` always
+ * If the second value is a `Left` and the first is a `Right`, `(<=)` always
  * returns `True`.
  *
- * If the first value is a `Right` and the second is a `Left`, `(<=)` always
+ * If the second value is a `Right` and the first is a `Left`, `(<=)` always
  * returns `False`.
  */
 export const lte =
   <A extends number | string, B extends number | string>
   (m1: Either<A, B>) =>
   (m2: Either<A, B>): boolean =>
-    isLeft (m1) && isRight (m2)
-    || isRight (m1) && isRight (m2) && m1 .value <= m2 .value
-    || isLeft (m1) && isLeft (m2) && m1 .value <= m2 .value;
+    isLeft (m2) && isRight (m1)
+    || isRight (m1) && isRight (m2) && m2 .value <= m1 .value
+    || isLeft (m1) && isLeft (m2) && m2 .value <= m1 .value;
 
 
 // SEMIGROUP
@@ -632,9 +632,7 @@ export const either =
   (fLeft: (left: A) => C) =>
   (fRight: (right: B) => C) =>
   (m: Either<A, B>): C =>
-    isRight (m)
-      ? fRight (m .value)
-      : fLeft (m .value);
+    isRight (m) ? fRight (m .value) : fLeft (m .value);
 
 /**
  * `lefts :: [Either a b] -> [a]`
@@ -645,7 +643,7 @@ export const either =
 export const lefts =
   <A extends Some, B extends Some> (list: List<Either<A, B>>): List<A> =>
     foldrList<Either<A, B>, List<A>> (m => acc => isLeft (m) ? cons (acc) (m .value) : acc)
-                                 (empty ())
+                                 (emptyList ())
                                  (list);
 
 /**
@@ -657,7 +655,7 @@ export const lefts =
 export const rights =
   <A extends Some, B extends Some> (list: List<Either<A, B>>): List<B> =>
     foldrList<Either<A, B>, List<B>> (m => acc => isRight (m) ? cons (acc) (m .value) : acc)
-                                 (empty ())
+                                 (emptyList ())
                                  (list);
 
 /**
@@ -671,7 +669,7 @@ export const partitionEithers =
   <A extends Some, B extends Some> (list: List<Either<A, B>>): Tuple<List<A>, List<B>> =>
     foldrList<Either<A, B>, Tuple<List<A>, List<B>>>
       (m => isRight (m) ? Tuple.second (cons_ (m .value)) : Tuple.first (cons_ (m .value)))
-      (Tuple.of<List<A>, List<B>> (empty ()) (empty ()))
+      (Tuple.of<List<A>, List<B>> (emptyList ()) (emptyList ()))
       (list);
 
 
