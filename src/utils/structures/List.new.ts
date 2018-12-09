@@ -1307,7 +1307,7 @@ export const toMap = <K, V> (list: List<Pair<K, V>>): OrderedMap<K, V> =>
  * Checks if the given value is a `List`.
  * @param value The value to test.
  */
-export const isList = (x: any): x is List<any> => typeof x === 'object' && x.isList;
+export const isList = (x: any): x is List<any> => typeof x === 'object' && x !== null && x.isList;
 
 
 // NAMESPACED FUNCTIONS

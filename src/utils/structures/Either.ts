@@ -693,7 +693,7 @@ export const partitionEithers =
  */
 export const isEither =
   (x: any): x is Either<any, any> =>
-    typeof x === 'object' && (x.isLeft || x.isRight);
+    typeof x === 'object' && x !== null && (x.isLeft || x.isRight);
 
 
 // NAMESPACED FUNCTIONS

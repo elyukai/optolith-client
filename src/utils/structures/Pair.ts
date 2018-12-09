@@ -129,7 +129,9 @@ export const toArray = <A, B> (x: Pair<A, B>): [A, B] => [x .first, x .second];
  *
  * Return `True` if the given value is an pair.
  */
-export const isPair = (x: any): x is Pair<any, any> => typeof x === 'object' && x.isPair;
+export const isPair =
+  (x: any): x is Pair<any, any> =>
+    typeof x === 'object' && x !== null && x.isPair;
 
 
 // NAMESPACED FUNCTIONS
