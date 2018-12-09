@@ -11,13 +11,14 @@ import { not } from '../not';
 import { cnst } from './combinators';
 import { fromJust, fromNullable, imapMaybe, isJust, Just, Maybe, Nothing, Some } from './Maybe.new';
 import { OrderedMap } from './orderedMap';
-import { Tuple } from './tuple';
+import { fromBoth, fst, Pair, snd } from './Pair';
 
 
 // CONSTRUCTOR
 
 interface ListPrototype<A> {
   [Symbol.iterator] (): IterableIterator<A>;
+  readonly isList: true;
 }
 
 export interface List<A extends Some> extends ListPrototype<A> {
@@ -613,8 +614,8 @@ export const init_ =
  * the head of the list and `xs` its tail.
  */
 export const uncons =
-  <A> (xs: List<A>): Maybe<Tuple<A, List<A>>> =>
-    fnull (xs) ? Nothing : Just (Tuple.of<A, List<A>> (head (xs)) (tail (xs)));
+  <A> (xs: List<A>): Maybe<Pair<A, List<A>>> =>
+    fnull (xs) ? Nothing : Just (fromBoth<A, List<A>> (head (xs)) (tail (xs)));
 
 
 // LIST TRANSFORMATIONS
@@ -688,19 +689,19 @@ export const scanl =
  */
 export const mapAccumL =
   <A, B, C>
-  (f: (acc: A) => (current: B) => Tuple<A, C>) =>
+  (f: (acc: A) => (current: B) => Pair<A, C>) =>
   (initial: A) =>
-  (list: List<B>): Tuple<A, List<C>> => {
+  (list: List<B>): Pair<A, List<C>> => {
     const pair = list .value .reduce<[A, C[]]> (
         (acc, current) => {
           const result = f (acc[0]) (current);
 
-          return [Tuple.fst (result), [...acc[1], Tuple.snd (result)]]
+          return [fst (result), [...acc[1], snd (result)]]
         },
         [initial, []]
       );
 
-    return Tuple.of<A, List<C>> (pair[0]) (fromArray (pair[1]));
+    return fromBoth<A, List<C>> (pair[0]) (fromArray (pair[1]));
   };
 
 
@@ -708,7 +709,7 @@ export const mapAccumL =
 
 const unfoldElement =
   <A, B>
-  (f: (value: B) => Maybe<Tuple<A, B>>) =>
+  (f: (value: B) => Maybe<Pair<A, B>>) =>
   (acc: List<A>) =>
   (value: B): List<A> => {
     const result = f (value);
@@ -716,7 +717,7 @@ const unfoldElement =
     if (isJust (result)) {
       const newValue = fromJust (result);
 
-      return cons (unfoldElement (f) (acc) (Tuple.snd (newValue))) (Tuple.fst (newValue));
+      return cons (unfoldElement (f) (acc) (snd (newValue))) (fst (newValue));
     }
 
     return acc;
@@ -756,7 +757,7 @@ f' z       = Nothing
   */
 export const unfoldr =
   <A, B>
-  (f: (value: B) => Maybe<Tuple<A, B>>) =>
+  (f: (value: B) => Maybe<Pair<A, B>>) =>
   (seedValue: B): List<A> =>
     unfoldElement (f) (empty) (seedValue);
 
@@ -794,8 +795,8 @@ export const drop =
  * `n` and second element is the remainder of the list.
  */
 export const splitAt =
-  <A> (size: number) => (list: List<A>): Tuple<List<A>, List<A>> =>
-    Tuple.of<List<A>, List<A>>
+  <A> (size: number) => (list: List<A>): Pair<List<A>, List<A>> =>
+    fromBoth<List<A>, List<A>>
       (fromArray (list .value .slice (0, size)))
       (fromArray (list .value .slice (size)));
 
@@ -807,9 +808,9 @@ export const splitAt =
  *
  * `lookup key assocs` looks up a key in an association list.
  */
-export const lookup = <K, V> (key: K) => (assocs: List<Tuple<K, V>>): Maybe<V> =>
-  Maybe.fmap<Tuple<K, V>, V> (Tuple.snd)
-                             (find<Tuple<K, V>> (e => Tuple.fst (e) === key) (assocs));
+export const lookup = <K, V> (key: K) => (assocs: List<Pair<K, V>>): Maybe<V> =>
+  Maybe.fmap<Pair<K, V>, V> (snd)
+                            (find<Pair<K, V>> (e => fst (e) === key) (assocs));
 
 
 // SEARCHING WITH A PREDICATE
@@ -849,7 +850,7 @@ export const filter: Filter =
 export const partition =
   <A>
   (f: (value: A) => boolean) =>
-  (xs: List<A>): Tuple<List<A>, List<A>> => {
+  (xs: List<A>): Pair<List<A>, List<A>> => {
     const pair = xs .value .reduceRight<[List<A>, List<A>]> (
       ([included, excluded], value) => f (value)
         ? [cons (included) (value), excluded]
@@ -857,7 +858,7 @@ export const partition =
       [empty, empty]
     );
 
-    return Tuple.of<List<A>, List<A>> (pair[0]) (pair[1]);
+    return fromBoth<List<A>, List<A>> (pair[0]) (pair[1]);
   };
 
 
@@ -931,8 +932,8 @@ export const findIndices =
  * input list is short, excess elements of the longer list are discarded.
  */
 export const zip =
-  <A, B> (xs1: List<A>) => (xs2: List<B>): List<Tuple<A, B>> =>
-    zipWith<A, B, Tuple<A, B>> (Tuple.of) (xs1) (xs2);
+  <A, B> (xs1: List<A>) => (xs2: List<B>): List<Pair<A, B>> =>
+    zipWith<A, B, Pair<A, B>> (fromBoth) (xs1) (xs2);
 
 /**
  * `zipWith :: (a -> b -> c) -> [a] -> [b] -> [c]`
@@ -989,8 +990,8 @@ export const sortBy =
 [(0,'h'),(1,'e'),(2,'l'),(3,'l'),(4,'o')]
 ```
  */
-export const indexed = <A> (xs: List<A>): List<Tuple<number, A>> =>
-  imap<A, Tuple<number, A>> (index => x => Tuple.of<number, A> (index) (x)) (xs);
+export const indexed = <A> (xs: List<A>): List<Pair<number, A>> =>
+  imap<A, Pair<number, A>> (index => x => fromBoth<number, A> (index) (x)) (xs);
 
 /**
  * `deleteAt :: Int -> [a] -> [a]`
@@ -1215,7 +1216,7 @@ export const ifilter: Ifilter =
 export const ipartition =
   <A>
   (f: (index: number) => (value: A) => boolean) =>
-  (xs: List<A>): Tuple<List<A>, List<A>> => {
+  (xs: List<A>): Pair<List<A>, List<A>> => {
     const pair = xs .value .reduceRight<[List<A>, List<A>]> (
       ([included, excluded], value, i) => f (i) (value)
         ? [cons (included) (value), excluded]
@@ -1223,7 +1224,7 @@ export const ipartition =
       [empty, empty]
     );
 
-    return Tuple.of<List<A>, List<A>> (pair[0]) (pair[1]);
+    return fromBoth<List<A>, List<A>> (pair[0]) (pair[1]);
   };
 
 // Search
@@ -1299,16 +1300,14 @@ export const toArray = <A> (list: List<A>): ReadonlyArray<A> => list .value;
  * Transforms a `List` of `Tuple`s into an `OrderedMap` where the first values
  * in the `Tuple` are the keys and the second values are the actual values.
  */
-export const toMap = <K, V> (list: List<Tuple<K, V>>): OrderedMap<K, V> =>
-  OrderedMap.of (list .value .map (t =>
-    [Tuple.fst (t), Tuple.snd (t)] as [K, V]
-  ));
+export const toMap = <K, V> (list: List<Pair<K, V>>): OrderedMap<K, V> =>
+  OrderedMap.of (list .value .map (Pair.toArray));
 
 /**
  * Checks if the given value is a `List`.
  * @param value The value to test.
  */
-export const isList = (x: any): x is List<any> => x && x.isList;
+export const isList = (x: any): x is List<any> => typeof x === 'object' && x.isList;
 
 
 // NAMESPACED FUNCTIONS

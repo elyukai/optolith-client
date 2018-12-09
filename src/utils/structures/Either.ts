@@ -14,9 +14,9 @@
 
 import { pipe } from 'ramda';
 import { cnst, id } from './combinators';
-import { cons, cons_, empty as emptyList, foldr as foldrList, fromElements, List } from './List.new';
+import { cons, cons_, fromElements, List } from './List.new';
 import { fromJust, isJust, Just, Maybe, Nothing, Some } from './Maybe.new';
-import { Tuple } from './tuple';
+import { fromBoth, Pair } from './Pair';
 
 
 // EITHER TYPE DEFINITION
@@ -363,7 +363,7 @@ export const foldl =
  */
 export const toList =
   <A0 extends Some>(xs: Either<any, A0>): List<A0> =>
-    isRight (xs) ? fromElements (xs .value) : emptyList;
+    isRight (xs) ? fromElements (xs .value) : List.empty;
 
 /**
  * `null :: Either a a0 -> Bool`
@@ -428,7 +428,7 @@ export const product = fromRight (1);
  */
 export const concat =
   <A0 extends Some>(m: Either<any, List<A0>>): List<A0> =>
-    fromRight<List<A0>> (emptyList) (m);
+    fromRight<List<A0>> (List.empty) (m);
 
 /**
  * `concatMap :: (a0 -> [b]) -> Either a a0 -> [b]`
@@ -438,7 +438,7 @@ export const concat =
  */
 export const concatMap =
   <A0 extends Some, B extends Some> (f: (x: A0) => List<B>) => (xs: Either<any, A0>): List<B> =>
-    fromRight<List<B>> (emptyList) (fmap (f) (xs));
+    fromRight<List<B>> (List.empty) (fmap (f) (xs));
 
 /**
  * `and :: Either a Bool -> Bool`
@@ -653,9 +653,9 @@ export const either =
  */
 export const lefts =
   <A extends Some, B extends Some> (list: List<Either<A, B>>): List<A> =>
-    foldrList<Either<A, B>, List<A>> (m => acc => isLeft (m) ? cons (acc) (m .value) : acc)
-                                     (emptyList)
-                                     (list);
+    List.foldr<Either<A, B>, List<A>> (m => acc => isLeft (m) ? cons (acc) (m .value) : acc)
+                                      (List.empty)
+                                      (list);
 
 /**
  * `rights :: [Either a b] -> [b]`
@@ -665,9 +665,9 @@ export const lefts =
  */
 export const rights =
   <A extends Some, B extends Some> (list: List<Either<A, B>>): List<B> =>
-    foldrList<Either<A, B>, List<B>> (m => acc => isRight (m) ? cons (acc) (m .value) : acc)
-                                     (emptyList)
-                                     (list);
+    List.foldr<Either<A, B>, List<B>> (m => acc => isRight (m) ? cons (acc) (m .value) : acc)
+                                      (List.empty)
+                                      (list);
 
 /**
  * `partitionEithers :: [Either a b] -> ([a], [b])`
@@ -677,10 +677,10 @@ export const rights =
  * `Right` elements are extracted to the second component of the output.
  */
 export const partitionEithers =
-  <A extends Some, B extends Some> (list: List<Either<A, B>>): Tuple<List<A>, List<B>> =>
-    foldrList<Either<A, B>, Tuple<List<A>, List<B>>>
-      (m => isRight (m) ? Tuple.second (cons_ (m .value)) : Tuple.first (cons_ (m .value)))
-      (Tuple.of<List<A>, List<B>> (emptyList) (emptyList))
+  <A extends Some, B extends Some> (list: List<Either<A, B>>): Pair<List<A>, List<B>> =>
+    List.foldr<Either<A, B>, Pair<List<A>, List<B>>>
+      (m => isRight (m) ? Pair.second (cons_ (m .value)) : Pair.first (cons_ (m .value)))
+      (fromBoth<List<A>, List<B>> (List.empty) (List.empty))
       (list);
 
 

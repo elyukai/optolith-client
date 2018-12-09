@@ -4,7 +4,10 @@
  * @author Lukas Obermann
  */
 
-import { fromJust, isJust, isMaybe, isNothing, Maybe, Some } from './Maybe.new';
+import { isEither, isRight } from './Either';
+import { isList, length } from './List.new';
+import { isJust, isMaybe, isNothing, Maybe, Some } from './Maybe.new';
+import { isPair } from './Pair';
 
 /**
  * `(==) :: a -> a -> Bool`
@@ -14,62 +17,71 @@ import { fromJust, isJust, isMaybe, isNothing, Maybe, Some } from './Maybe.new';
  * *Note: Shallow check for equality, no deep analysis.*
  */
 export const equals =
-  <A extends Some> (m1: A) => (m2: A): boolean => {
-    if (typeof m1 !== typeof m2) {
+  // tslint:disable-next-line: cyclomatic-complexity
+  <A extends Some> (x1: A) => (x2: A): boolean => {
+    if (typeof x1 !== typeof x2) {
       return false;
     }
 
-    if (isMaybe (m1)) {
-      return isNothing (m1) && isNothing (m2 as unknown as Maybe<any>)
-      || isJust (m1) && isJust (m2) && fromJust (m1) === fromJust (m2);
+    if (isMaybe (x1)) {
+      return isMaybe (x2)
+        && (
+          isNothing (x1) && isNothing (x2 as unknown as Maybe<any>)
+          || isJust (x1) && isJust (x2) && equals (x1 .value) (x2 .value)
+        );
     }
 
-    if (isEither (x)) {
-      if (isRight (x)) {
-        return `Right (${show (x .value)})`;
-      }
-
-      return `Left (${show (x .value)})`;
+    if (isEither (x1)) {
+      return isEither (x2) && isRight (x1) === isRight (x2) && equals (x1 .value) (x2 .value);
     }
 
-    if (isList (x)) {
-      return `[${x .value .map (show) .join (', ')}]`;
+    if (isList (x1)) {
+      return isList (x2)
+        && length (x1) === length (x2)
+        && x1 .value .every ((e, i) => equals (e) (x2 .value [i]));
+    }
+
+    if (isPair (x1)) {
+      return isPair (x2)
+        && equals (x1 .first) (x2 .first)
+        && equals (x1 .second) (x2 .second);
     }
 
     // tslint:disable-next-line: strict-type-predicates
-    if (typeof x === 'bigint') {
-      return x .toString ();
+    if (typeof x1 === 'bigint') {
+      // tslint:disable-next-line: strict-type-predicates
+      return typeof x2 === 'bigint' && x1 === x2;
     }
 
-    if (typeof x === 'boolean') {
-      return x ? `True` : `False`;
+    if (typeof x1 === 'boolean') {
+      return typeof x2 === 'boolean' && x1 === x2;
     }
 
-    if (typeof x === 'number') {
-      return 1 / x === -Infinity ? '-0' : x .toString (10);
+    if (typeof x1 === 'number') {
+      return typeof x2 === 'number' && x1 === x2;
     }
 
-    if (typeof x === 'string') {
-      return JSON.stringify (x);
+    if (typeof x1 === 'string') {
+      return typeof x2 === 'string' && x1 === x2;
     }
 
-    if (typeof x === 'symbol') {
-      return `Symbol`;
+    if (typeof x1 === 'symbol') {
+      return typeof x2 === 'symbol' && x1 === x2;
     }
 
-    if (x === undefined) {
-      return `undefined`;
+    if (x1 === undefined) {
+      return x2 === undefined;
     }
 
-    if (x === null) {
-      return `null`;
+    if (x1 === null) {
+      return x2 === null;
     }
 
-    if (x instanceof Date) {
-      return `Date (${x .toISOString ()})`;
+    if (x1 instanceof Date) {
+      return x2 instanceof Date && x1 .toISOString () === x2 .toISOString ();
     }
 
-    return String (x);
+    return x1 === x2;
   };
 
 /**

@@ -9,6 +9,7 @@
 import { isEither, isRight } from './Either';
 import { isList } from './List.new';
 import { isJust, isMaybe } from './Maybe.new';
+import { isPair } from './Pair';
 
 /**
  * `show :: a -> String`
@@ -34,6 +35,10 @@ export const show = (x: any): string => {
 
   if (isList (x)) {
     return `[${x .value .map (show) .join (', ')}]`;
+  }
+
+  if (isPair (x)) {
+    return `(${show (x .first)}, ${show (x .second)})`;
   }
 
   // tslint:disable-next-line: strict-type-predicates

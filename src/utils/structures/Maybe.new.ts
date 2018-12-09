@@ -17,7 +17,7 @@
 import { pipe } from 'ramda';
 import * as Math from '../mathUtils';
 import { cnst, id, T } from './combinators';
-import { cons, cons_, empty as emptyList, fnull as fnullList, foldr as foldrList, fromElements, head, ifoldr, List } from './List.new';
+import { cons, cons_, fromElements, head, ifoldr, List } from './List.new';
 
 
 // MAYBE TYPE DEFINITION
@@ -68,8 +68,8 @@ interface NothingPrototype extends Object {
   readonly isNothing: true;
 }
 
-export interface Nothing extends JustPrototype {
-  readonly prototype: JustPrototype;
+export interface Nothing extends NothingPrototype {
+  readonly prototype: NothingPrototype;
 }
 
 const NothingPrototype: NothingPrototype =
@@ -82,7 +82,7 @@ const NothingPrototype: NothingPrototype =
   );
 
 /**
- * `Nothing :: Nothing`
+ * `Nothing :: Maybe a`
  *
  * The empty `Maybe`.
  */
@@ -237,7 +237,7 @@ export const bind =
  */
 export const bind_ =
   <A extends Some, B extends Some> (f: (value: A) => Maybe<B>) => (x: Maybe<A>): Maybe<B> =>
-    bind (x) (f);
+    bind<A, B> (x) (f);
 
 
 /**
@@ -251,7 +251,7 @@ export const bind_ =
  */
 export const then =
   <A extends Some> (x1: Maybe<any>) => (x2: Maybe<A>): Maybe<A> =>
-    bind (x1) (_ => x2);
+    bind<any, A> (x1) (_ => x2);
 
 /**
  * `return :: a -> Maybe a`
@@ -277,7 +277,7 @@ export const kleisli =
  * remove one level of monadic structure, projecting its bound argument into the
  * outer level.
  */
-export const join = <A extends Some> (x: Maybe<Maybe<A>>): Maybe<A> => bind (x) (id);
+export const join = <A extends Some> (x: Maybe<Maybe<A>>): Maybe<A> => bind<Maybe<A>, A> (x) (id);
 
 /**
  * `liftM2 :: (a1 -> a2 -> r) -> Maybe a1 -> Maybe a2 -> Maybe r`
@@ -379,7 +379,7 @@ export const foldl =
  */
 export const toList =
   <A extends Some>(xs: Maybe<A>): List<A> =>
-    isJust (xs) ? fromElements (xs .value) : emptyList;
+    isJust (xs) ? fromElements (xs .value) : List.empty;
 
 /**
  * `null :: Maybe a -> Bool`
@@ -444,7 +444,7 @@ export const product = fromMaybe (1);
  */
 export const concat =
   <A extends Some>(m: Maybe<List<A>>): List<A> =>
-    fromMaybe<List<A>> (emptyList) (m);
+    fromMaybe<List<A>> (List.empty) (m);
 
 /**
  * `concatMap :: (a -> [b]) -> Maybe a -> [b]`
@@ -454,7 +454,7 @@ export const concat =
  */
 export const concatMap =
   <A extends Some, B extends Some> (f: (x: A) => List<B>) => (xs: Maybe<A>): List<B> =>
-    fromMaybe<List<B>> (emptyList) (fmap (f) (xs));
+    fromMaybe<List<B>> (List.empty) (fmap (f) (xs));
 
 /**
  * `and :: Maybe Bool -> Bool`
@@ -620,7 +620,7 @@ export const maybe =
  */
 export const listToMaybe =
   <A extends Some> (list: List<A>): Maybe<A> =>
-    fnullList (list) ? Nothing : Just (head (list));
+    List.fnull (list) ? Nothing : Just (head (list));
 
 /**
  * `maybeToList :: Maybe a -> [a]`
@@ -638,9 +638,9 @@ export const maybeToList = toList;
  */
 export const catMaybes =
   <A extends Some> (list: List<Maybe<A>>): List<A> =>
-    foldrList<Maybe<A>, List<A>> (maybe<A, (x: List<A>) => List<A>> (id) (cons_))
-                                 (emptyList)
-                                 (list);
+    List.foldr<Maybe<A>, List<A>> (maybe<A, (x: List<A>) => List<A>> (id) (cons_))
+                                  (List.empty)
+                                  (list);
 
 /**
  * `mapMaybe :: (a -> Maybe b) -> [a] -> [b]`
@@ -652,8 +652,8 @@ export const catMaybes =
  */
 export const mapMaybe =
   <A extends Some, B extends Some> (f: (x: A) => Maybe<B>) =>
-    foldrList<A, List<B>> (pipe (f, maybe<B, (x: List<B>) => List<B>> (id) (cons_)))
-                          (emptyList);
+    List.foldr<A, List<B>> (pipe (f, maybe<B, (x: List<B>) => List<B>> (id) (cons_)))
+                           (List.empty);
 
 
 // CUSTOM MAYBE FUNCTIONS
@@ -722,7 +722,7 @@ export const imapMaybe =
   <A extends Some, B extends Some> (fn: (index: number) => (x: A) => Maybe<B>) =>
     ifoldr<A, List<B>>
       (index => x => acc => pipe (fn (index), maybe<B, List<B>> (acc) (cons (acc))) (x))
-      (emptyList);
+      (List.empty);
 
 /**
  * `maybeToNullable :: Maybe a -> (a | Nullable)`
