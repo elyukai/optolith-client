@@ -8,10 +8,12 @@
 
 import { pipe } from 'ramda';
 import { not } from '../not';
-import { cnst } from './combinators';
+import { cnst, id } from './combinators';
+import { equals } from './Eq';
 import { fromJust, fromNullable, imapMaybe, isJust, Just, Maybe, Nothing, Some } from './Maybe.new';
 import { OrderedMap } from './orderedMap';
 import { fromBoth, fst, Pair, snd } from './Pair';
+import { show } from './Show';
 
 
 // CONSTRUCTOR
@@ -55,12 +57,12 @@ export const fromElements = <A extends Some> (...values: A[]) => _List (values);
  *
  * Creates a new `List` instance from the passed native `Array`.
  */
-export const fromArray = <A extends Some> (arr: ReadonlyArray<A>) => {
-  if (Array.isArray (arr)) {
-    return _List (arr);
+export const fromArray = <A extends Some> (xs: ReadonlyArray<A>) => {
+  if (Array.isArray (xs)) {
+    return _List (xs);
   }
 
-  throw new TypeError (`fromArray requires an array but instead it received ${arr}`);
+  throw new TypeError (`fromArray requires an array but instead it received ${show (xs)}`);
 };
 
 
@@ -101,7 +103,12 @@ export const pure = <A extends Some> (x: A) => _List ([x]);
  */
 export const ap =
   <A extends Some, B extends Some> (ma: List<(value: A) => B>) => (m: List<A>): List<B> =>
-    bind<(value: A) => B, B> (ma) (f => fmap<A, B> (f) (m));
+    fromElements (
+      ...(ma .value .reduce<ReadonlyArray<B>> (
+        (acc, f) => [...acc, ...fmap (f) (m)],
+        []
+      ))
+    );
 
 
 // ALTERNATIVE
@@ -118,7 +125,7 @@ export const alt =
     fnull (xs1) ? xs2 : xs1;
 
 /**
- * `alt :: f a -> f a -> f a`
+ * `alt :: [a] -> [a] -> [a]`
  *
  * The `alt` function takes a `Maybe` of the same type. If the second `Maybe`
  * is `Nothing`, it returns the first `Maybe`, otherwise it returns the
@@ -176,7 +183,7 @@ export const bind_ =
     bind<A, B> (xs) (f);
 
 /**
- * `(>>) :: forall a b. m a -> m b -> m b`
+ * `(>>) :: [a] -> [b] -> [b]`
  *
  * Sequentially compose two actions, discarding any value produced by the
  * first, like sequencing operators (such as the semicolon) in imperative
@@ -208,7 +215,7 @@ export const kleisli =
     pipe (f1, bind_ (f2));
 
 /**
- * `join :: Monad m => m (m a) -> m a`
+ * `join :: [[a]] -> [a]`
  *
  * The `join` function is the conventional monad join operator. It is used to
  * remove one level of monadic structure, projecting its bound argument into the
@@ -216,7 +223,7 @@ export const kleisli =
  */
 export const join =
   <A extends Some>(xs: List<List<A>>): List<A> =>
-    bind<List<A>, A> (xs) (e => e);
+    bind<List<A>, A> (xs) (id);
 
 
 // FOLDABLE
@@ -280,7 +287,7 @@ export const foldr1 =
   };
 
 /**
- * `foldl1 :: (a -> a -> a) -> t a -> a`
+ * `foldl1 :: (a -> a -> a) -> [a] -> a`
  *
  * A variant of `foldl` that has no base case, and thus may only be applied to
  * non-empty structures.
@@ -301,14 +308,14 @@ export const foldl1 =
   };
 
 /**
- * `toList :: t a -> [a]`
+ * `toList :: [a] -> [a]`
  *
  * List of elements of a structure, from left to right.
  */
 export const toList = <A extends Some>(xs: List<A>): List<A> => xs;
 
 /**
- * `null :: t a -> Bool`
+ * `null :: [a] -> Bool`
  *
  * Test whether the structure is empty. The default implementation is optimized
  * for structures that are similar to cons-lists, because there is no general
@@ -317,7 +324,7 @@ export const toList = <A extends Some>(xs: List<A>): List<A> => xs;
 export const fnull = (xs: List<any>): boolean => xs .value .length === 0;
 
 /**
- * `length :: t a -> Int`
+ * `length :: [a] -> Int`
  *
  * Returns the size/length of a finite structure as an `Int`. The default
  * implementation is optimized for structures that are similar to cons-lists,
@@ -326,14 +333,16 @@ export const fnull = (xs: List<any>): boolean => xs .value .length === 0;
 export const length = (xs: List<any>): number => xs .value .length;
 
 /**
- * `elem :: (Foldable t, Eq a) => a -> t a -> Bool`
+ * `elem :: Eq a => a -> [a] -> Bool`
  *
  * Does the element occur in the structure?
  */
-export const elem = <A extends Some>(e: A) => (xs: List<A>): boolean => xs .value .includes (e);
+export const elem =
+  <A extends Some>(e: A) => (xs: List<A>): boolean =>
+    xs .value .some (equals (e));
 
 /**
- * `elem_ :: (Foldable t, Eq a) => t a -> a -> Bool`
+ * `elem_ :: Eq a => [a] -> a -> Bool`
  *
  * Does the element occur in the structure?
  *
@@ -342,28 +351,28 @@ export const elem = <A extends Some>(e: A) => (xs: List<A>): boolean => xs .valu
 export const elem_ = <A extends Some>(xs: List<A>) => (e: A): boolean => elem (e) (xs);
 
 /**
- * `sum :: (Foldable t, Num a) => t a -> a`
+ * `sum :: Num a => [a] -> a`
  *
  * The `sum` function computes the sum of the numbers of a structure.
  */
 export const sum = (xs: List<number>): number => xs .value .reduce ((acc, e) => acc + e, 0);
 
 /**
- * `product :: (Foldable t, Num a) => t a -> a`
+ * `product :: Num a => [a] -> a`
  *
  * The `product` function computes the product of the numbers of a structure.
  */
 export const product = (xs: List<number>): number => xs .value .reduce ((acc, e) => acc * e, 1);
 
 /**
- * `maximum :: forall a. (Foldable t, Ord a) => t a -> a`
+ * `maximum :: Ord a => [a] -> a`
  *
  * The largest element of a non-empty structure.
  */
 export const maximum = (xs: List<number>): number => Math.max (...xs);
 
 /**
- * `minimum :: forall a. (Foldable t, Ord a) => t a -> a`
+ * `minimum :: Ord a => [a] -> a`
  *
  * The least element of a non-empty structure.
  */
@@ -387,7 +396,7 @@ export const concat = join;
 export const concatMap = bind_;
 
 /**
- * `and :: Foldable t => t Bool -> Bool`
+ * `and :: [Bool] -> Bool`
  *
  * `and` returns the conjunction of a container of Bools. For the result to be
  * `True`, the container must be finite; `False`, however, results from a
@@ -396,7 +405,7 @@ export const concatMap = bind_;
 export const and = (xs: List<boolean>): boolean => xs .value .every (e => e);
 
 /**
- * `or :: Foldable t => t Bool -> Bool`
+ * `or :: [Bool] -> Bool`
  *
  * `or` returns the disjunction of a container of Bools. For the result to be
  * `False`, the container must be finite; `True`, however, results from a
@@ -405,7 +414,7 @@ export const and = (xs: List<boolean>): boolean => xs .value .every (e => e);
 export const or = (xs: List<boolean>): boolean => xs .value .some (e => e);
 
 /**
- * `any :: Foldable t => (a -> Bool) -> t a -> Bool`
+ * `any :: (a -> Bool) -> [a] -> Bool`
  *
  * Determines whether any element of the structure satisfies the predicate.
  */
@@ -414,7 +423,7 @@ export const any =
     xs .value .some (f);
 
 /**
- * `all :: Foldable t => (a -> Bool) -> t a -> Bool`
+ * `all :: (a -> Bool) -> [a] -> Bool`
  *
  * Determines whether all elements of the structure satisfy the predicate.
  */
@@ -425,7 +434,7 @@ export const all =
 // Searches
 
 /**
- * `notElem :: (Foldable t, Eq a) => a -> t a -> Bool`
+ * `notElem :: Eq a => a -> [a] -> Bool`
  *
  * `notElem` is the negation of `elem`.
  */
@@ -436,7 +445,7 @@ export const notElem = <A> (e: A) => pipe (
 
 interface Find {
   /**
-   * `find :: Foldable t => (a -> Bool) -> t a -> Maybe a`
+   * `find :: (a -> Bool) -> [a] -> Maybe a`
    *
    * The `find` function takes a predicate and a structure and returns the
    * leftmost element of the structure matching the predicate, or `Nothing` if
@@ -444,7 +453,7 @@ interface Find {
    */
   <A, A1 extends A> (pred: (x: A) => x is A1): (xs: List<A>) => Maybe<A1>;
   /**
-   * `find :: Foldable t => (a -> Bool) -> t a -> Maybe a`
+   * `find :: (a -> Bool) -> [a] -> Maybe a`
    *
    * The `find` function takes a predicate and a structure and returns the
    * leftmost element of the structure matching the predicate, or `Nothing` if
@@ -454,7 +463,7 @@ interface Find {
 }
 
 /**
- * `find :: Foldable t => (a -> Bool) -> t a -> Maybe a`
+ * `find :: (a -> Bool) -> [a] -> Maybe a`
  *
  * The `find` function takes a predicate and a structure and returns the
  * leftmost element of the structure matching the predicate, or `Nothing` if
@@ -680,7 +689,7 @@ export const scanl =
 // ACCUMULATING MAPS
 
 /**
- * `mapAccumL :: Traversable t => (a -> b -> (a, c)) -> a -> t b -> (a, t c)`
+ * `mapAccumL :: Traversable t => (a -> b -> (a, c)) -> a -> [b] -> (a, t c)`
  *
  * The `mapAccumL` function behaves like a combination of `fmap` and `foldl`;
  * it applies a function to each element of a structure, passing an
@@ -832,9 +841,15 @@ interface Filter {
   <A> (pred: (x: A) => boolean): (list: List<A>) => List<A>;
 }
 
+/**
+ * `filter :: (a -> Bool) -> [a] -> [a]`
+ *
+ * `filter`, applied to a predicate and a list, returns the list of those
+ * elements that satisfy the predicate.
+ */
 export const filter: Filter =
-  <A> (pred: (x: A) => boolean) => (list: List<A>): List<A> =>
-    fromArray (list .value .filter (pred));
+  <A> (pred: (x: A) => boolean) => (xs: List<A>): List<A> =>
+    fromArray (xs .value .filter (pred));
 
 /**
  * `partition :: (a -> Bool) -> [a] -> ([a], [a])`
@@ -1305,7 +1320,7 @@ export const toMap = <K, V> (list: List<Pair<K, V>>): OrderedMap<K, V> =>
 
 /**
  * Checks if the given value is a `List`.
- * @param value The value to test.
+ * @param x The value to test.
  */
 export const isList = (x: any): x is List<any> => typeof x === 'object' && x !== null && x.isList;
 

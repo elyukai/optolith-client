@@ -1,153 +1,269 @@
-const { List } = require('../list');
-const { OrderedSet } = require('../orderedSet');
+const List = require('../List.new');
+const { fromElements } = require('../List.new');
+const OrderedSet = require('../OrderedSet.new');
+const { fromArray, fromSet } = require('../OrderedSet.new');
+const { Just, Nothing } = require('../Maybe.new');
 
-test('construct an OrderedSet', () => {
-  expect(OrderedSet.of(new Set([1, 2, 3])).value)
-    .toEqual(new Set([1, 2, 3]));
-  expect(OrderedSet.of([1, 2, 3]).value)
-    .toEqual(new Set([1, 2, 3]));
-  expect(OrderedSet.of().value)
-    .toEqual(new Set());
+// CONSTRUCTOR
+
+test('fromArray', () => {
+  expect (fromArray ([1, 2, 3]) .value)
+    .toEqual (new Set([1, 2, 3]));
+  expect (fromArray ([1, 2, 3, 1]) .value)
+    .toEqual (new Set([1, 2, 3]));
+  expect (fromArray ([]) .value)
+    .toEqual (new Set());
 });
 
-test('Symbol.iterator', () => {
-  expect([...OrderedSet.of(['a', 'b', 'c'])])
-    .toEqual(['a', 'b', 'c']);
+test('fromSet', () => {
+  expect (fromSet (new Set ([1, 2, 3])) .value)
+    .toEqual (new Set ([1, 2, 3]));
+  expect (fromSet (new Set ([1, 2, 3, 1])) .value)
+    .toEqual (new Set ([1, 2, 3]));
+  expect (fromSet (new Set ()) .value)
+    .toEqual (new Set ());
 });
 
-test('OrderedSet.empty', () => {
-  expect(OrderedSet.empty())
-    .toEqual(OrderedSet.of([]));
+test('[Symbol.iterator]', () => {
+  expect ([...fromArray (['a', 'b', 'c'])])
+    .toEqual (['a', 'b', 'c']);
 });
 
-test('OrderedSet.singleton', () => {
-  expect(OrderedSet.singleton('a'))
-    .toEqual(OrderedSet.of(['a']));
-});
+// FOLDABLE
 
-test('OrderedSet.fromList', () => {
-  expect(OrderedSet.of(List.of(1, 2, 3)).value)
-    .toEqual(new Set([1, 2, 3]));
-});
-
-test('insert', () => {
-  expect(OrderedSet.of(['a', 'b', 'c']).insert('d'))
-    .toEqual(OrderedSet.of(['a', 'b', 'c', 'd']));
-});
-
-test('OrderedSet.insert', () => {
-  expect(OrderedSet.insert ('d') (OrderedSet.of(['a', 'b', 'c'])))
-    .toEqual(OrderedSet.of(['a', 'b', 'c', 'd']));
-});
-
-test('delete', () => {
-  expect(OrderedSet.of(['a', 'b', 'c']).delete('c'))
-    .toEqual(OrderedSet.of(['a', 'b']));
-  expect(OrderedSet.of(['a', 'b', 'c']).delete('d'))
-    .toEqual(OrderedSet.of(['a', 'b', 'c']));
-});
-
-test('OrderedSet.delete', () => {
-  expect(OrderedSet.delete ('c') (OrderedSet.of(['a', 'b', 'c'])))
-    .toEqual(OrderedSet.of(['a', 'b']));
-  expect(OrderedSet.delete ('d') (OrderedSet.of(['a', 'b', 'c'])))
-    .toEqual(OrderedSet.of(['a', 'b', 'c']));
-});
-
-test('OrderedSet.toggle', () => {
-  expect(OrderedSet.toggle ('c') (OrderedSet.of(['a', 'b', 'c'])))
-    .toEqual(OrderedSet.of(['a', 'b']));
-  expect(OrderedSet.toggle ('d') (OrderedSet.of(['a', 'b', 'c'])))
-    .toEqual(OrderedSet.of(['a', 'b', 'c', 'd']));
-});
-
-test('member', () => {
-  expect(OrderedSet.of(['a', 'b', 'c']).member('b'))
-    .toBeTruthy();
-  expect(OrderedSet.of([]).member('d'))
-    .toBeFalsy();
-});
-
-test('OrderedSet.member', () => {
-  expect(OrderedSet.member ('b') (OrderedSet.of(['a', 'b', 'c'])))
-    .toBeTruthy();
-  expect(OrderedSet.member ('d') (OrderedSet.of([])))
-    .toBeFalsy();
-});
-
-test('notMember', () => {
-  expect(OrderedSet.of(['a', 'b', 'c']).notMember('b'))
-    .toBeFalsy();
-  expect(OrderedSet.of([]).notMember('d'))
-    .toBeTruthy();
-});
-
-test('OrderedSet.notMember', () => {
-  expect(OrderedSet.notMember ('b') (OrderedSet.of(['a', 'b', 'c'])))
-    .toBeFalsy();
-  expect(OrderedSet.notMember ('d') (OrderedSet.of([])))
-    .toBeTruthy();
-});
-
-test('null', () => {
-  expect(OrderedSet.of(['a', 'b', 'c']).null())
-    .toBeFalsy();
-  expect(OrderedSet.of([]).null())
-    .toBeTruthy();
-});
-
-test('OrderedSet.null', () => {
-  expect(OrderedSet.null (OrderedSet.of(['a', 'b', 'c'])))
-    .toBeFalsy();
-  expect(OrderedSet.null (OrderedSet.of([])))
-    .toBeTruthy();
-});
-
-test('size', () => {
-  expect(OrderedSet.of(['a', 'b', 'c']).size())
-    .toEqual(3);
-  expect(OrderedSet.of([]).size())
-    .toEqual(0);
-});
-
-test('OrderedSet.size', () => {
-  expect(OrderedSet.size (OrderedSet.of(['a', 'b', 'c'])))
-    .toEqual(3);
-  expect(OrderedSet.size (OrderedSet.of([])))
-    .toEqual(0);
-});
-
-test('union', () => {
-  expect(OrderedSet.of(['a', 'b', 'c']).union(OrderedSet.of(['c', 'd', 'e'])))
-    .toEqual(OrderedSet.of(['a', 'b', 'c', 'd', 'e']));
-});
-
-test('filter', () => {
-  expect(OrderedSet.of(['a', 'b', 'c']).filter(e => e > 'a'))
-    .toEqual(OrderedSet.of(['b', 'c']));
-});
-
-test('fmap', () => {
-  expect(OrderedSet.of(['a', 'b', 'c']).fmap(e => e + '+'))
-    .toEqual(OrderedSet.of(['a+', 'b+', 'c+']));
-});
-
-test('map', () => {
-  expect(OrderedSet.of(['a', 'b', 'c']).map(e => e + '+'))
-    .toEqual(OrderedSet.of(['a+', 'b+', 'c+']));
+test('foldr', () => {
+  expect (OrderedSet.foldr (e => acc => e + acc) ('0') (fromArray ([3, 2, 1])))
+    .toEqual ('3210');
 });
 
 test('foldl', () => {
-  expect(OrderedSet.of(['a', 'b', 'c']).foldl(acc => e => acc + e)(''))
-    .toEqual('abc');
+  expect (OrderedSet.foldl (acc => e => acc + e) ('0') (fromArray ([1, 2, 3])))
+    .toEqual ('0123');
 });
 
-test('toSet', () => {
-  expect(OrderedSet.of(['a', 'b', 'c']).toSet())
-    .toEqual(new Set(['a', 'b', 'c']));
+test('foldr1', () => {
+  expect (OrderedSet.foldr1 (e => acc => e + acc) (fromArray ([3, 2, 1])))
+    .toEqual (6);
 });
+
+test('foldl1', () => {
+  expect (OrderedSet.foldl1 (acc => e => e + acc) (fromArray ([3, 2, 1])))
+    .toEqual (6);
+});
+
+test('toList', () => {
+  expect (OrderedSet.toList (fromArray ([3, 2, 1])))
+    .toEqual (List.fromElements (3, 2, 1));
+});
+
+test('fnull', () => {
+  expect (OrderedSet.fnull (fromArray ([3, 2, 1]))) .toBeFalsy ();
+  expect (OrderedSet.fnull (fromArray ([]))) .toBeTruthy ();
+});
+
+test('length', () => {
+  expect (OrderedSet.length (fromArray ([3, 2, 1]))) .toEqual (3);
+  expect (OrderedSet.length (fromArray ([]))) .toEqual (0);
+});
+
+test('elem', () => {
+  expect (OrderedSet.elem (3) (fromArray ([1, 2, 3, 4, 5])))
+    .toBeTruthy ();
+  expect (OrderedSet.elem (6) (fromArray ([1, 2, 3, 4, 5])))
+    .toBeFalsy ();
+});
+
+test('elem_', () => {
+  expect (OrderedSet.elem_ (fromArray ([1, 2, 3, 4, 5])) (3))
+    .toBeTruthy ();
+  expect (OrderedSet.elem_ (fromArray ([1, 2, 3, 4, 5])) (6))
+    .toBeFalsy ();
+});
+
+test('sum', () => {
+  expect (OrderedSet.sum (fromArray ([3, 2, 1]))) .toEqual (6);
+});
+
+test('product', () => {
+  expect (OrderedSet.product (fromArray ([3, 2, 2]))) .toEqual (6);
+});
+
+test('maximum', () => {
+  expect (OrderedSet.maximum (fromArray ([3, 2, 1]))) .toEqual (3);
+  expect (OrderedSet.maximum (fromArray ([]))) .toEqual (-Infinity);
+});
+
+test('minimum', () => {
+  expect (OrderedSet.minimum (fromArray ([3, 2, 1]))) .toEqual (1);
+  expect (OrderedSet.minimum (fromArray ([]))) .toEqual (Infinity);
+});
+
+test('concat', () => {
+  expect (OrderedSet.concat (
+    fromArray ([
+      fromArray ([3]),
+      fromArray ([2]),
+      fromArray ([1])
+    ])
+  ))
+    .toEqual (fromArray ([3, 2, 1]));
+});
+
+test('concatMap', () => {
+  expect (OrderedSet.concatMap (e => fromArray ([e, e]))
+                               (fromArray ([1, 2, 3, 4, 5])))
+    .toEqual (fromArray ([1, 1, 2, 2, 3, 3, 4, 4, 5, 5]));
+});
+
+test('and', () => {
+  expect (OrderedSet.and (fromArray ([true, true, true])))
+    .toBeTruthy ();
+  expect (OrderedSet.and (fromArray ([true, true, false])))
+    .toBeFalsy ();
+  expect (OrderedSet.and (fromArray ([true, false, true])))
+    .toBeFalsy ();
+});
+
+test('or', () => {
+  expect (OrderedSet.or (fromArray ([true, true, true])))
+    .toBeTruthy ();
+  expect (OrderedSet.or (fromArray ([true, true, false])))
+    .toBeTruthy ();
+  expect (OrderedSet.or (fromArray ([false, false, false])))
+    .toBeFalsy ();
+});
+
+test('any', () => {
+  expect (OrderedSet.any (x => x > 2) (fromArray ([3, 2, 1])))
+    .toBeTruthy ();
+  expect (OrderedSet.any (x => x > 3) (fromArray ([3, 2, 1])))
+    .toBeFalsy ();
+});
+
+test('all', () => {
+  expect (OrderedSet.all (x => x >= 1) (fromArray ([3, 2, 1])))
+    .toBeTruthy ();
+  expect (OrderedSet.all (x => x >= 2) (fromArray ([3, 2, 1])))
+    .toBeFalsy ();
+});
+
+test('notElem', () => {
+  expect (OrderedSet.notElem (3) (fromArray ([1, 2, 3, 4, 5])))
+    .toBeFalsy ();
+  expect (OrderedSet.notElem (6) (fromArray ([1, 2, 3, 4, 5])))
+    .toBeTruthy ();
+});
+
+test('find', () => {
+  expect (OrderedSet.find (e => /t/.test(e))
+                          (fromArray (['one', 'two', 'three'])))
+    .toEqual (Just ('two'));
+  expect (OrderedSet.find (e => /tr/.test(e))
+                          (fromArray (['one', 'two', 'three'])))
+    .toEqual (Nothing);
+});
+
+// CONSTRUCTION
+
+test('empty', () => {
+  expect (OrderedSet.empty)
+    .toEqual (fromArray ([]));
+});
+
+test('singleton', () => {
+  expect (OrderedSet.singleton('a'))
+    .toEqual (fromArray (['a']));
+});
+
+test('fromList', () => {
+  expect (OrderedSet.fromList (fromElements (1, 2, 3)) .value)
+    .toEqual (new Set([1, 2, 3]));
+});
+
+// INSERTION
+
+test('insert', () => {
+  expect (OrderedSet.insert ('d') (fromArray (['a', 'b', 'c'])))
+    .toEqual (fromArray (['a', 'b', 'c', 'd']));
+});
+
+// DELETION
+
+test('sdelete', () => {
+  expect (OrderedSet.sdelete ('c') (fromArray (['a', 'b', 'c'])))
+    .toEqual (fromArray (['a', 'b']));
+  expect (OrderedSet.sdelete ('d') (fromArray (['a', 'b', 'c'])))
+    .toEqual (fromArray (['a', 'b', 'c']));
+});
+
+// QUERY
+
+test('member', () => {
+  expect (OrderedSet.member ('b') (fromArray (['a', 'b', 'c'])))
+    .toBeTruthy ();
+  expect (OrderedSet.member ('d') (fromArray ([])))
+    .toBeFalsy ();
+});
+
+test('notMember', () => {
+  expect (OrderedSet.notMember ('b') (fromArray (['a', 'b', 'c'])))
+    .toBeFalsy ();
+  expect (OrderedSet.notMember ('d') (fromArray ([])))
+    .toBeTruthy ();
+});
+
+test('size', () => {
+  expect (OrderedSet.size (fromArray (['a', 'b', 'c'])))
+    .toEqual (3);
+  expect (OrderedSet.size (fromArray ([])))
+    .toEqual (0);
+});
+
+// COMBINE
+
+test('union', () => {
+  expect (OrderedSet.union (fromArray (['a', 'b', 'c']))
+                           (fromArray (['c', 'd', 'e'])))
+    .toEqual (fromArray (['a', 'b', 'c', 'd', 'e']));
+});
+
+// FILTER
+
+test('filter', () => {
+  expect (OrderedSet.filter (e => e > 'a') (fromArray (['a', 'b', 'c'])))
+    .toEqual (fromArray (['b', 'c']));
+});
+
+// MAP
+
+test('map', () => {
+  expect (OrderedSet.map (e => e + '+') (fromArray (['a', 'b', 'c'])))
+    .toEqual (fromArray (['a+', 'b+', 'c+']));
+});
+
+// CONVERSION LIST
 
 test('elems', () => {
-  expect(OrderedSet.of(['a', 'b', 'c']).elems())
-    .toEqual(List.of('a', 'b', 'c'));
+  expect (OrderedSet.elems (fromArray (['a', 'b', 'c'])))
+    .toEqual (fromElements ('a', 'b', 'c'));
+});
+
+// CUSTOM FUNCTIONS
+
+test('toSet', () => {
+  expect (OrderedSet.toSet (fromArray (['a', 'b', 'c'])))
+    .toEqual (new Set(['a', 'b', 'c']));
+});
+
+test('toggle', () => {
+  expect (OrderedSet.toggle ('c') (fromArray (['a', 'b', 'c'])))
+    .toEqual (fromArray (['a', 'b']));
+  expect (OrderedSet.toggle ('d') (fromArray (['a', 'b', 'c'])))
+    .toEqual (fromArray (['a', 'b', 'c', 'd']));
+});
+
+test('isOrderedSet', () => {
+  expect (OrderedSet.isOrderedSet (fromArray (['a', 'b', 'c'])))
+    .toEqual (true);
+  expect (OrderedSet.isOrderedSet (3)) .toEqual (false);
 });

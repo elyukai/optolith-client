@@ -1,7 +1,8 @@
 /**
- * @module List
+ * @module Pair
  *
- * A list (`[a]`) is a simple flat data structure for values of the same type.
+ * A pair (`(a, b)`) is a simple flat data structure for lists of values of
+ * different types but constant length.
  *
  * @author Lukas Obermann
  */

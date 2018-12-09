@@ -7,6 +7,7 @@
 import { isEither, isRight } from './Either';
 import { isList, length } from './List.new';
 import { isJust, isMaybe, isNothing, Maybe, Some } from './Maybe.new';
+import { isOrderedSet, OrderedSet } from './OrderedSet.new';
 import { isPair } from './Pair';
 
 /**
@@ -45,6 +46,12 @@ export const equals =
       return isPair (x2)
         && equals (x1 .first) (x2 .first)
         && equals (x1 .second) (x2 .second);
+    }
+
+    if (isOrderedSet (x1)) {
+      return isOrderedSet (x2)
+        && OrderedSet.size (x1) === OrderedSet.size (x2)
+        && [...x1 .value] .every (e => OrderedSet.member (e) (x2));
     }
 
     // tslint:disable-next-line: strict-type-predicates
@@ -92,5 +99,5 @@ export const equals =
  * *Note: Shallow check for equality, no deep analysis.*
  */
 export const notEquals =
-  <A extends Some> (m1: Maybe<A>) => (m2: Maybe<A>): boolean =>
+  <A extends Some> (m1: A) => (m2: A): boolean =>
     !equals (m1) (m2);

@@ -9,6 +9,7 @@
 import { isEither, isRight } from './Either';
 import { isList } from './List.new';
 import { isJust, isMaybe } from './Maybe.new';
+import { isOrderedSet } from './OrderedSet.new';
 import { isPair } from './Pair';
 
 /**
@@ -40,6 +41,20 @@ export const show = (x: any): string => {
   if (isPair (x)) {
     return `(${show (x .first)}, ${show (x .second)})`;
   }
+
+  if (isOrderedSet (x)) {
+    return `Set (${[...x .value] .map (show) .join (', ')})`;
+  }
+
+  // if (isOrderedMap (x)) {
+  //   return `Map (${[...x .value] .map (([k, v]) => `${show (k)} = ${show (v)}`) .join (', ')})`;
+  // }
+
+  // if (isRecord (x)) {
+  //   return `{ ${
+  //     Object.entries (x .value) .map (([k, v]) => `${show (k)} = ${show (v)}`) .join (', ')
+  //   } }`;
+  // }
 
   // tslint:disable-next-line: strict-type-predicates
   if (typeof x === 'bigint') {

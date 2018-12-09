@@ -227,7 +227,7 @@ test('or', () => {
     .toBeFalsy ();
 });
 
-test('List.any', () => {
+test('any', () => {
   expect (List.any (x => x > 2) (List.fromElements (3, 2, 1)))
     .toBeTruthy ();
   expect (List.any (x => x > 3) (List.fromElements (3, 2, 1)))
