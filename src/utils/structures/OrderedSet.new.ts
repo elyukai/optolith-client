@@ -50,6 +50,15 @@ const _OrderedSet =
  *
  * Creates a new `Set` instance from the passed native `Array`.
  */
+export const fromUniqueElements =
+  <A extends Some> (...xs: A[]): OrderedSet<A> =>
+    _OrderedSet (new Set (xs));
+
+/**
+ * `fromArray :: Array a -> Set a`
+ *
+ * Creates a new `Set` instance from the passed native `Array`.
+ */
 export const fromArray = <A extends Some> (xs: ReadonlyArray<A>): OrderedSet<A> => {
   if (Array.isArray (xs)) {
     return _OrderedSet (new Set (xs));
@@ -672,6 +681,7 @@ export const isOrderedSet =
 // NAMESPACED FUNCTIONS
 
 export const OrderedSet = {
+  fromUniqueElements,
   fromArray,
   fromSet,
 

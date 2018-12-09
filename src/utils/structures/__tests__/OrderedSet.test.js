@@ -1,10 +1,19 @@
 const List = require('../List.new');
 const { fromElements } = require('../List.new');
 const OrderedSet = require('../OrderedSet.new');
-const { fromArray, fromSet } = require('../OrderedSet.new');
+const { fromArray, fromUniqueElements, fromSet } = require('../OrderedSet.new');
 const { Just, Nothing } = require('../Maybe.new');
 
 // CONSTRUCTOR
+
+test('fromUniqueElements', () => {
+  expect (fromUniqueElements (1, 2, 3) .value)
+    .toEqual (new Set([1, 2, 3]));
+  expect (fromUniqueElements (1, 2, 3, 1) .value)
+    .toEqual (new Set([1, 2, 3]));
+  expect (fromUniqueElements () .value)
+    .toEqual (new Set());
+});
 
 test('fromArray', () => {
   expect (fromArray ([1, 2, 3]) .value)
