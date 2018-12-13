@@ -32,7 +32,8 @@ export const lens =
   <A, B>
   (getter: (m: A) => B) =>
   (setter: (m: A) => (x: B) => A): Lens<A, B> =>
-  <FA, FB> (fmap: (fn: (x: B) => A) => (f: FB) => FA) =>
+  <FA, FB>
+  (fmap: (fn: (x: B) => A) => (f: FB) => FA) =>
   (lift: (x: B) => FB) =>
   (m: A): FA => fmap (setter (m)) (lift (getter (m)))
 
@@ -51,7 +52,7 @@ export const over = <A, B> (l: Lens<A, B>) => (f: (x: B) => B) => (m: A): A =>
 /**
  * `set :: Lens a b -> b -> a -> a`
  */
-export const set = <A, B> (l: Lens<A, B>) => (x: B) => (m: A): A => over (l) (_ => x) (m);
+export const set = <A, B> (l: Lens<A, B>) => (x: B) => over (l) (_ => x);
 
 // /**
 //  * `compose :: Lens b c -> Lens a b -> Lens a c`

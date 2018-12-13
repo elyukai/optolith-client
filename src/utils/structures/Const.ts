@@ -1,6 +1,9 @@
 /**
  * @module Const
  *
+ * `Const` is like the `id` function as a functor. It always keeps its initial
+ * value.
+ *
  * @author Lukas Obermann
  */
 
