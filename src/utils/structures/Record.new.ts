@@ -147,9 +147,6 @@ export const mergeSafe =
 
 // CUSTOM FUNCTIONS
 
-export const toObject = <A extends RecordBase> (r: Record<A>): A =>
-  ({ ...r .defaultValues, ...r .values })
-
 const getter = <A extends RecordBase> (key: keyof A) => (r: Record<A>) => {
   if (member<keyof A> (key) (r .keys)) {
     const specifiedValue = r .values [key]
@@ -174,11 +171,11 @@ const setter = <A extends RecordBase> (key: keyof A) => (r: Record<A>) => (x: A[
              })
 
 /**
- * Creates getter functions for every key in the passed record.
+ * Creates getter functions for every key in the passed record creator.
  */
 export const makeGetters =
-  <A extends RecordBase> (record: Record<A>): Getters<A> =>
-    Object.freeze (Object.keys (record .defaultValues) .reduce<Getters<A>> (
+  <A extends RecordBase> (record: RecordCreator<A>): Getters<A> =>
+    Object.freeze (Object.keys (record ({}) .defaultValues) .reduce<Getters<A>> (
       (acc, key) => ({
         ...acc,
         [key]: getter (key),
@@ -192,8 +189,8 @@ export const makeGetters =
  * If you already generated the getters and if you need better performance for
  * generating them, use `makeLenses_` instead.
  */
-export const makeLenses = <A extends RecordBase> (record: Record<A>): Lenses<A> =>
-  Object.freeze (Object.keys (record .defaultValues) .reduce<Lenses<A>> (
+export const makeLenses = <A extends RecordBase> (record: RecordCreator<A>): Lenses<A> =>
+  Object.freeze (Object.keys (record ({}) .defaultValues) .reduce<Lenses<A>> (
     (acc, key) => ({
       ...acc,
       [key]: lens<Record<A>, A[typeof key]> (getter (key)) (setter (key)),
@@ -207,14 +204,20 @@ export const makeLenses = <A extends RecordBase> (record: Record<A>): Lenses<A> 
  * If you have not already generated the getters, use `makeLenses_` instead.
  */
 export const makeLenses_ =
-  <A extends RecordBase> (getters: Getters<A>) => (record: Record<A>): Lenses<A> =>
-    Object.freeze (Object.keys (record .defaultValues) .reduce<Lenses<A>> (
+  <A extends RecordBase> (getters: Getters<A>) => (record: RecordCreator<A>): Lenses<A> =>
+    Object.freeze (Object.keys (record ({}) .defaultValues) .reduce<Lenses<A>> (
       (acc, key) => ({
         ...acc,
         [key]: lens<Record<A>, A[typeof key]> (getters [key]) (setter (key)),
       }),
       {} as Lenses<A>
     ))
+
+/**
+ * Converts the passed record to a native object.
+ */
+export const toObject = <A extends RecordBase> (r: Record<A>): A =>
+  ({ ...r .defaultValues, ...r .values })
 
 
 // TYPE HELPERS
