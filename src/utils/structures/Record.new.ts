@@ -19,14 +19,6 @@ interface RecordPrototype {
   readonly isRecord: true;
 }
 
-type Getters<A extends RecordBase> = {
-  [K in keyof A]: (r: Record<A>) => A[K];
-}
-
-type Lenses<A extends RecordBase> = {
-  [K in keyof A]: Lens<A, A[K]>;
-}
-
 export interface Record<A extends RecordBase> extends RecordPrototype {
   readonly values: Readonly<Partial<A>>;
   readonly defaultValues: Readonly<A>;
@@ -35,9 +27,7 @@ export interface Record<A extends RecordBase> extends RecordPrototype {
 }
 
 export interface RecordCreator<A extends RecordBase> {
-  readonly fromPartial: (x: Partial<A>) => Record<A>;
-  readonly getters: Getters<A>;
-  readonly lenses: Lenses<A>;
+  (x: Partial<A>): Record<A>;
 }
 
 const RecordPrototype: RecordPrototype =
@@ -92,56 +82,17 @@ export const fromDefault =
 
     const keys = fromArray (Object.keys (def))
 
-    const getters = Object.freeze (Object.keys (def) .reduce<Getters<A>> (
-      (acc, key) => ({
-        ...acc,
-        [key]: (r: Record<A>) => {
-          if (member<keyof A> (key) (r .keys)) {
-            const specifiedValue = r .values [key]
-
-            // tslint:disable-next-line: strict-type-predicates
-            if (specifiedValue !== null && specifiedValue !== undefined) {
-              return specifiedValue as A[typeof key]
-            }
-
-            return r .defaultValues [key]
-          }
-
-          throw new TypeError (`Key ${show (key)} is not in Record ${show (r)}!`)
-        },
-      }),
-      {} as Getters<A>
-    ))
-
-    const lenses = Object.freeze (Object.keys (def) .reduce<Lenses<A>> (
-      (acc, key) => ({
-        ...acc,
-        [key]: lens<Record<A>, A[typeof key]> (getters [key])
-                                              (r => x => _Record<A> (r .keys)
-                                                                    (r .defaultValues)
-                                                                    ({
-                                                                      ...r .values,
-                                                                      [key]: x,
-                                                                    })),
-      }),
-      {} as Lenses<A>
-    ))
-
-    return Object.freeze<RecordCreator<A>> ({
-      fromPartial: (x: Partial<A>) =>
-        _Record<A>
-          (keys)
-          (defaultValues)
-          (Object.entries (x) .reduce<Partial<A>> (
-            // tslint:disable-next-line: strict-type-predicates
-            (acc, [key, value]) => member (key) (keys) && value !== null && value !== undefined
-              ? { ...acc, [key]: value }
-              : acc,
-            {}
-          )),
-      getters,
-      lenses,
-    })
+    return x =>
+      _Record<A>
+        (keys)
+        (defaultValues)
+        (Object.entries (x) .reduce<Partial<A>> (
+          // tslint:disable-next-line: strict-type-predicates
+          (acc, [key, value]) => member (key) (keys) && value !== null && value !== undefined
+            ? { ...acc, [key]: value }
+            : acc,
+          {}
+        ))
   }
 
 // MERGING RECORDS
@@ -193,20 +144,88 @@ export const mergeSafe =
 //     );
 //   }
 
-//   // JS SPECIFIC
-
-//   static toObject<T> (x: Record<T>): T {
-//     return x.value;
-//   }
-
 
 // CUSTOM FUNCTIONS
 
 export const toObject = <A extends RecordBase> (r: Record<A>): A =>
   ({ ...r .defaultValues, ...r .values })
 
+const getter = <A extends RecordBase> (key: keyof A) => (r: Record<A>) => {
+  if (member<keyof A> (key) (r .keys)) {
+    const specifiedValue = r .values [key]
+
+    // tslint:disable-next-line: strict-type-predicates
+    if (specifiedValue !== null && specifiedValue !== undefined) {
+      return specifiedValue as A[typeof key]
+    }
+
+    return r .defaultValues [key]
+  }
+
+  throw new TypeError (`Key ${show (key)} is not in Record ${show (r)}!`)
+}
+
+const setter = <A extends RecordBase> (key: keyof A) => (r: Record<A>) => (x: A[typeof key]) =>
+  _Record<A> (r .keys)
+             (r .defaultValues)
+             ({
+               ...r .values,
+               [key]: x,
+             })
+
+/**
+ * Creates getter functions for every key in the passed record.
+ */
+export const makeGetters =
+  <A extends RecordBase> (record: Record<A>): Getters<A> =>
+    Object.freeze (Object.keys (record .defaultValues) .reduce<Getters<A>> (
+      (acc, key) => ({
+        ...acc,
+        [key]: getter (key),
+      }),
+      {} as Getters<A>
+    ))
+
+/**
+ * Creates lenses for every key in the passed record.
+ *
+ * If you already generated the getters and if you need better performance for
+ * generating them, use `makeLenses_` instead.
+ */
+export const makeLenses = <A extends RecordBase> (record: Record<A>): Lenses<A> =>
+  Object.freeze (Object.keys (record .defaultValues) .reduce<Lenses<A>> (
+    (acc, key) => ({
+      ...acc,
+      [key]: lens<Record<A>, A[typeof key]> (getter (key)) (setter (key)),
+    }),
+    {} as Lenses<A>
+  ))
+
+/**
+ * Creates lenses for every key in the passed record.
+ *
+ * If you have not already generated the getters, use `makeLenses_` instead.
+ */
+export const makeLenses_ =
+  <A extends RecordBase> (getters: Getters<A>) => (record: Record<A>): Lenses<A> =>
+    Object.freeze (Object.keys (record .defaultValues) .reduce<Lenses<A>> (
+      (acc, key) => ({
+        ...acc,
+        [key]: lens<Record<A>, A[typeof key]> (getters [key]) (setter (key)),
+      }),
+      {} as Lenses<A>
+    ))
+
 
 // TYPE HELPERS
+
+type Getters<A extends RecordBase> = {
+  [K in keyof A]: (r: Record<A>) => A[K];
+}
+
+type Lenses<A extends RecordBase> = {
+  [K in keyof A]: Lens<A, A[K]>;
+}
 
 export interface UnsafeStringKeyObject<V> {
   [id: string]: V;
