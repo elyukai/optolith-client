@@ -32,7 +32,7 @@
 
 		// Functionality
     "await-promise": true,
-    "ban-comma-operator": true,
+    // "ban-comma-operator": true,
 		"curly": true,
     "forin": true,
     "label-position": true,
@@ -54,7 +54,7 @@
 		// "no-invalid-this": true,
     // "no-misused-new": true,
 		// "no-null-keyword": true, // needed for React
-    "no-object-literal-type-assertion": true,
+    // "no-object-literal-type-assertion": true,
     "no-return-await": true,
     "no-shadowed-variable": true,
     "no-sparse-arrays": true,
@@ -119,7 +119,7 @@
     "object-curly-spacing": [true, "always", {"arraysInObjects": true, "objectsInObjects": false}],
 		"object-literal-key-quotes": [true, "consistent"],
 		"object-literal-shorthand": true,
-		"one-line": [true, "check-open-brace", "check-whitespace"],
+		// "one-line": [true, "check-open-brace", "check-whitespace"],
 		"one-variable-per-declaration": [true, "ignore-for-loop"],
     "ordered-imports": true,
     "prefer-function-over-method": true,
@@ -130,25 +130,25 @@
     "space-before-function-paren": [true, "always"],
     "space-within-parens": [true, "never"],
     "switch-final-break": [true, "always"],
-    "ter-indent": [
-      true,
-      2,
-      {
-        "SwitchCase": 1,
-        "MemberExpression": 1,
-        "FunctionDeclaration": {
-          "parameters": "first",
-          "body": 1
-        },
-        "FunctionExpression": {
-          "parameters": "first",
-          "body": 1
-        },
-        "CallExpression": {
-          "parameters": "first"
-        }
-      }
-    ],
+    // "ter-indent": [
+    //   true,
+    //   2,
+    //   {
+    //     "SwitchCase": 1,
+    //     "MemberExpression": 1,
+    //     "FunctionDeclaration": {
+    //       "parameters": "first",
+    //       "body": 1
+    //     },
+    //     "FunctionExpression": {
+    //       "parameters": "first",
+    //       "body": 1
+    //     },
+    //     "CallExpression": {
+    //       "parameters": "first"
+    //     }
+    //   }
+    // ],
     "ter-prefer-arrow-callback": true,
     "ter-func-call-spacing": [true, "always"],
     "trailing-comma": [

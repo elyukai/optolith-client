@@ -9,6 +9,16 @@ interface AttributeDependentOptions {
   dependencies?: List<Data.SkillDependency>;
 }
 
+// const AttributeDependentOptions =
+//   fromDefault<Data.AttributeDependent> ({
+//     id: '',
+//     value: 8,
+//     mod: 0,
+//     dependencies: fromElements<Data.SkillDependency> (),
+//   });
+
+// AttributeDependentOptions.getters.value;
+
 export function createAttributeDependent (
   id: string,
   options: AttributeDependentOptions = {}

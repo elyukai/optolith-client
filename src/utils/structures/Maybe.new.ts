@@ -39,14 +39,11 @@ export interface Just<A extends Some> extends JustPrototype {
   readonly prototype: JustPrototype;
 }
 
-const JustPrototype: JustPrototype =
-  Object.create (
-    Object.prototype,
-    {
-      isJust: { value: true },
-      isNothing: { value: false },
-    }
-  );
+const JustPrototype =
+  Object.freeze<JustPrototype> ({
+    isJust: true,
+    isNothing: false,
+  });
 
 /**
  * `Just :: a -> Maybe a`
@@ -73,13 +70,10 @@ export interface Nothing extends NothingPrototype {
 }
 
 const NothingPrototype: NothingPrototype =
-  Object.create (
-    Object.prototype,
-    {
-      isJust: { value: false },
-      isNothing: { value: true },
-    }
-  );
+  Object.freeze<NothingPrototype> ({
+    isJust: false,
+    isNothing: true,
+  });
 
 /**
  * `Nothing :: Maybe a`
