@@ -1,4 +1,4 @@
-export * from './structures/identity';
+export * from './structures/Identity';
 export * from './structures/list';
 export * from './structures/maybe';
 export * from './structures/orderedMap';
