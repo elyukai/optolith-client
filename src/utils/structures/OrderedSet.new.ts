@@ -46,9 +46,9 @@ const _OrderedSet =
     Object.create (OrderedSetPrototype, { value: { value: x, enumerable: true }});
 
 /**
- * `fromArray :: Array a -> Set a`
+ * `fromUniqueElements :: ...a -> Set a`
  *
- * Creates a new `Set` instance from the passed native `Array`.
+ * Creates a new `Set` instance from the passed arguments.
  */
 export const fromUniqueElements =
   <A extends Some> (...xs: A[]): OrderedSet<A> =>
@@ -408,7 +408,7 @@ export const minimum = (xs: OrderedSet<number>): number => Math.min (...xs);
  * The concatenation of all the elements of a container of lists.
  */
 export const concat =
-  <A> (xs: OrderedSet<List<A>>): List<A> =>
+  <A extends Some> (xs: OrderedSet<List<A>>): List<A> =>
     foldl<List<A>, List<A>> (mappend) (List.empty) (xs);
 
 /**
@@ -471,7 +471,7 @@ export const all =
  *
  * `notElem` is the negation of `elem`.
  */
-export const notElem = <A> (e: A) => pipe (
+export const notElem = <A extends Some> (e: A) => pipe (
   elem<A> (e),
   not
 );
@@ -484,7 +484,7 @@ interface Find {
    * leftmost element of the structure matching the predicate, or `Nothing` if
    * there is no such element.
    */
-  <A, A1 extends A> (pred: (x: A) => x is A1): (xs: OrderedSet<A>) => Maybe<A1>;
+  <A extends Some, A1 extends A> (pred: (x: A) => x is A1): (xs: OrderedSet<A>) => Maybe<A1>;
   /**
    * `find :: (a -> Bool) -> Set a -> Maybe a`
    *
@@ -492,7 +492,7 @@ interface Find {
    * leftmost element of the structure matching the predicate, or `Nothing` if
    * there is no such element.
    */
-  <A> (pred: (x: A) => boolean): (xs: OrderedSet<A>) => Maybe<A>;
+  <A extends Some> (pred: (x: A) => boolean): (xs: OrderedSet<A>) => Maybe<A>;
 }
 
 /**
@@ -503,7 +503,7 @@ interface Find {
  * there is no such element.
  */
 export const find: Find =
-  <A> (pred: (x: A) => boolean) => (xs: OrderedSet<A>): Maybe<A> =>
+  <A extends Some> (pred: (x: A) => boolean) => (xs: OrderedSet<A>): Maybe<A> =>
     fromNullable ([...xs .value] .find (pred));
 
 
@@ -546,7 +546,7 @@ export const fromList = <A extends Some> (xs: List<A>): OrderedSet<A> => {
  * the given value, it is replaced with the new value.
  */
 export const insert =
-  <A> (x: A) => (xs: OrderedSet<A>): OrderedSet<A> =>
+  <A extends Some> (x: A) => (xs: OrderedSet<A>): OrderedSet<A> =>
     fromArray ([...xs .value, x]);
 
 
@@ -558,7 +558,7 @@ export const insert =
  * Delete an element from a set.
  */
 export const sdelete =
-  <A> (x: A) => (xs: OrderedSet<A>): OrderedSet<A> =>
+  <A extends Some> (x: A) => (xs: OrderedSet<A>): OrderedSet<A> =>
     fromArray ([...xs .value] .filter (notEquals (x)));
 
 
@@ -595,7 +595,7 @@ export const size = length;
  * encountered.
  */
 export const union =
-  <A> (xs1: OrderedSet<A>) => (xs2: OrderedSet<A>): OrderedSet<A> =>
+  <A extends Some> (xs1: OrderedSet<A>) => (xs2: OrderedSet<A>): OrderedSet<A> =>
     fromArray ([...xs1, ...xs2]);
 
 
@@ -607,13 +607,13 @@ interface Filter {
    *
    * Filter all values that satisfy the predicate.
    */
-  <A, A1 extends A> (pred: (x: A) => x is A1): (list: OrderedSet<A>) => OrderedSet<A1>;
+  <A extends Some, A1 extends A> (pred: (x: A) => x is A1): (list: OrderedSet<A>) => OrderedSet<A1>;
   /**
    * `filter :: (a -> Bool) -> Set a -> [a]`
    *
    * Filter all values that satisfy the predicate.
    */
-  <A> (pred: (x: A) => boolean): (list: OrderedSet<A>) => OrderedSet<A>;
+  <A extends Some> (pred: (x: A) => boolean): (list: OrderedSet<A>) => OrderedSet<A>;
 }
 
 /**
@@ -622,7 +622,7 @@ interface Filter {
  * Filter all values that satisfy the predicate.
  */
 export const filter: Filter =
-  <A> (pred: (x: A) => boolean) => (xs: OrderedSet<A>): OrderedSet<A> =>
+  <A extends Some> (pred: (x: A) => boolean) => (xs: OrderedSet<A>): OrderedSet<A> =>
     fromArray ([...xs .value] .filter (pred));
 
 
@@ -657,7 +657,7 @@ export const elems = toList;
 /**
  * Converts the `OrderedSet` into a native Set instance.
  */
-export const toSet = <A> (xs: OrderedSet<A>): ReadonlySet<A> => xs .value;
+export const toSet = <A extends Some> (xs: OrderedSet<A>): ReadonlySet<A> => xs .value;
 
 /**
  * `toggle :: Ord a => a -> Set a -> Set a`
@@ -666,7 +666,7 @@ export const toSet = <A> (xs: OrderedSet<A>): ReadonlySet<A> => xs .value;
  * Otherwise, insert the element in the set.
  */
 export const toggle =
-  <A> (x: A) => (xs: OrderedSet<A>): OrderedSet<A> =>
+  <A extends Some> (x: A) => (xs: OrderedSet<A>): OrderedSet<A> =>
     member (x) (xs) ? sdelete (x) (xs) : insert (x) (xs);
 
 /**

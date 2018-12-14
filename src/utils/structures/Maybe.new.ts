@@ -728,6 +728,18 @@ export const maybeToNullable =
   <A extends Some> (m: Maybe<A>): A | null =>
     isJust (m) ? m .value : null;
 
+/**
+ * `maybe_ :: (() -> b) -> (a -> b) -> Maybe a -> b`
+ *
+ * The `maybe_` function takes a default value, a function, and a `Maybe`
+ * value. If the `Maybe` value is `Nothing`, the function returns the default
+ * value. Otherwise, it applies the function to the value inside the `Just`
+ * and returns the result.
+ *
+ * This is a lazy variant of `maybe`.
+ */
+export const maybe_ = <A extends Some, B extends Some> (def: () => B) => maybe<A, B> (def ());
+
 
 // NAMESPACED FUNCTIONS
 

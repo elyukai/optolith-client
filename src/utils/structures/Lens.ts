@@ -6,6 +6,7 @@
  * @author Lukas Obermann
  */
 
+import { pipe } from 'ramda';
 import * as Const from './Const';
 import * as Identity from './Identity';
 
@@ -43,7 +44,7 @@ export const view = <A, B> (l: Lens<A, B>) => (m: A): B =>
  * `over :: Lens a b -> (b -> b) -> a -> a`
  */
 export const over = <A, B> (l: Lens<A, B>) => (f: (x: B) => B) => (m: A): A =>
-  Identity.runIdentity (l (Identity.fmap) (y => Identity.Identity (f (y))) (m))
+  Identity.runIdentity (l (Identity.fmap) (pipe (f, Identity.Identity)) (m))
 
 /**
  * `set :: Lens a b -> b -> a -> a`
