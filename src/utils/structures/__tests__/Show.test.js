@@ -4,6 +4,7 @@ const { fromElements } = require('../List.new');
 const { fromBoth } = require('../Pair');
 const { fromUniqueElements } = require('../OrderedSet.new');
 const { Just, Nothing } = require('../Maybe.new');
+const { fromDefault } = require('../Record.new');
 
 test('Maybe', () => {
   expect (show (Just (2))) .toEqual ('Just (2)');
@@ -30,4 +31,10 @@ test('Pair', () => {
 
 test('OrderedSet', () => {
   expect (show (fromUniqueElements (2, 3, 2))) .toEqual ('Set (2, 3)');
+});
+
+test('Record', () => {
+  const creator = fromDefault ({ x: 0, y: 0 });
+
+  expect (show (creator ({ y: 2 }))) .toEqual ('{ x = 0, y = 2 }');
 });

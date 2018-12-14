@@ -22,7 +22,7 @@ interface RecordPrototype {
 export interface Record<A extends RecordBase> extends RecordPrototype {
   readonly values: Readonly<Partial<A>>;
   readonly defaultValues: Readonly<A>;
-  readonly keys: OrderedSet<keyof A>;
+  readonly keys: OrderedSet<string>;
   readonly prototype: RecordPrototype;
 }
 
@@ -35,7 +35,7 @@ const RecordPrototype: RecordPrototype =
 
 const _Record =
   <A extends RecordBase>
-  (keys: OrderedSet<keyof A>) =>
+  (keys: OrderedSet<string>) =>
   (def: A) =>
   (specified: Partial<A>): Record<A> =>
     Object.create (
@@ -95,6 +95,7 @@ export const fromDefault =
         ))
   }
 
+
 // MERGING RECORDS
 
 /**
@@ -105,17 +106,17 @@ export const fromDefault =
  */
 export const mergeSafe =
   <A extends RecordBase>(x: Record<Partial<A>>) => (r: Record<A>): Record<A> =>
-    _Record (r .keys)
-            (r .defaultValues)
-            (foldl<keyof A, A> (acc => key => ({
-                                 ...acc,
-                                 // tslint:disable-next-line: strict-type-predicates
-                                 [key]: x .values [key] === null || x .values [key] === undefined
-                                   ? r .values [key]
-                                   : x .values [key],
-                               }))
-                               ({} as A)
-                               (r .keys))
+    _Record<A> (r .keys)
+               (r .defaultValues)
+               (foldl<string, A> (acc => key => ({
+                                    ...acc,
+                                    // tslint:disable-next-line: strict-type-predicates
+                                    [key]: x .values [key] === null || x .values [key] === undefined
+                                      ? r .values [key]
+                                      : x .values [key],
+                                  }))
+                                  ({} as A)
+                                  (r .keys))
 
 //   // CONVERSION
 
@@ -218,6 +219,29 @@ export const makeLenses_ =
  */
 export const toObject = <A extends RecordBase> (r: Record<A>): A =>
   ({ ...r .defaultValues, ...r .values })
+
+/**
+ * Checks if the given value is a `Record`.
+ * @param x The value to test.
+ */
+export const isRecord =
+  (x: any): x is Record<any> =>
+    typeof x === 'object' && x !== null && x.isRecord;
+
+
+// NAMESPACED FUNCTIONS
+
+export const Record = {
+  fromDefault,
+
+  mergeSafe,
+
+  makeGetters,
+  makeLenses,
+  makeLenses_,
+  toObject,
+  isRecord,
+};
 
 
 // TYPE HELPERS

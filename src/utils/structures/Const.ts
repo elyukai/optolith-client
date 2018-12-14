@@ -25,10 +25,7 @@ export interface Const<A extends Some> extends ConstPrototype {
 const ConstPrototype: ConstPrototype =
   Object.create (
     Object.prototype,
-    {
-      isConst: { value: true },
-      ['@@type/Functor']: { value: true },
-    }
+    { isConst: { value: true }}
   );
 
 /**
@@ -52,7 +49,7 @@ export const getConst = <A extends Some> (x: Const<A>): A => x .value;
 export const fmap = <A extends Some> (_: (value: A) => any) => (c: Const<A>): Const<A> => c;
 
 /**
- * `(<$) :: Functor f => a -> f b -> f a`
+ * `(<$) :: a0 -> Const a b -> Const a a0`
  *
  * Replace all locations in the input with the same value. The default
  * definition is `fmap . const`, but this may be overridden with a more

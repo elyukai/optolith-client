@@ -6,7 +6,6 @@
  * @author Lukas Obermann
  */
 
-// import { pipe } from 'ramda';
 import * as Const from './Const';
 import * as Identity from './Identity';
 
@@ -21,7 +20,7 @@ import * as Identity from './Identity';
  * `Lens a b = Functor f => ((b -> a) -> f b -> f a) -> (b -> f b) -> a -> f a`
  */
 export type Lens<A, B> =
-  <FA, FB> (fmap: (fn: (x: B) => A) => (f: FB) => FA) => (lift: (x: B) => FB) => (m: A) => FA
+  <FA, FB> (fmap: Fmap<FA, FB, A, B>) => (lift: (x: B) => FB) => (m: A) => FA
 
 /**
  * `lens :: (a -> b) -> (a -> b -> a) -> Lens a b`
@@ -32,33 +31,62 @@ export const lens =
   <A, B>
   (getter: (m: A) => B) =>
   (setter: (m: A) => (x: B) => A): Lens<A, B> =>
-  <FA, FB>
-  (fmap: (fn: (x: B) => A) => (f: FB) => FA) =>
-  (lift: (x: B) => FB) =>
-  (m: A): FA => fmap (setter (m)) (lift (getter (m)))
+  fmap => lift => m => fmap (setter (m)) (lift (getter (m)))
 
 /**
  * `view :: Lens a b -> a -> b`
  */
 export const view = <A, B> (l: Lens<A, B>) => (m: A): B =>
-  Const.getConst (l (Const.fmap) (Const.Const) (m));
+  Const.getConst (l (Const.fmap) (Const.Const) (m))
 
 /**
  * `over :: Lens a b -> (b -> b) -> a -> a`
  */
 export const over = <A, B> (l: Lens<A, B>) => (f: (x: B) => B) => (m: A): A =>
-  Identity.runIdentity (l (Identity.fmap) (y => Identity.Identity (f (y))) (m));
+  Identity.runIdentity (l (Identity.fmap) (y => Identity.Identity (f (y))) (m))
 
 /**
  * `set :: Lens a b -> b -> a -> a`
  */
-export const set = <A, B> (l: Lens<A, B>) => (x: B) => over (l) (_ => x);
+export const set = <A, B> (l: Lens<A, B>) => (x: B) => over (l) (_ => x)
 
-// /**
-//  * `compose :: Lens b c -> Lens a b -> Lens a c`
-//  */
-// export const compose = <A, B, C> (second: Lens<B, C>) => (first: Lens<A, B>): Lens<A, C> =>
-//   lens (pipe (first .getter, second .getter))
-//        (m => x => first .setter (m)
-//                                 (second .setter (first .getter (m))
-//                                                 (x)));
+
+// COMPOSING LENSES
+
+interface PipeL {
+  <A, B> (
+    fn0: Lens<A, B>): Lens<A, B>;
+
+  <A, B, C> (
+    fn0: Lens<A, B>,
+    fn1: Lens<B, C>): Lens<A, C>;
+
+  <A, B, C, D> (
+    fn0: Lens<A, B>,
+    fn1: Lens<B, C>,
+    fn2: Lens<C, D>): Lens<A, D>;
+
+  <A, B, C, D, E> (
+    fn0: Lens<A, B>,
+    fn1: Lens<B, C>,
+    fn2: Lens<C, D>,
+    fn3: Lens<D, E>): Lens<A, E>;
+
+  <A, B, C, D, E, F> (
+    fn0: Lens<A, B>,
+    fn1: Lens<B, C>,
+    fn2: Lens<C, D>,
+    fn3: Lens<D, E>,
+    fn4: Lens<E, F>): Lens<A, F>;
+}
+
+type Fmap<FA, FB, A, B> = (fn: (x: B) => A) => (f: FB) => FA
+
+/**
+ * `pipeL`
+ */
+export const pipeL: PipeL =
+  (...lenses: Lens<any, any>[]) =>
+  (fmap: Fmap<any, any, any, any>) =>
+  (lift: (x: any) => any): ((m: any) => any) =>
+    lenses .reduceRight ((liftAcc, f) => f (fmap) (liftAcc), lift)

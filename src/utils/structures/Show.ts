@@ -11,6 +11,7 @@ import { isList } from './List.new';
 import { isJust, isMaybe } from './Maybe.new';
 import { isOrderedSet } from './OrderedSet.new';
 import { isPair } from './Pair';
+import { isRecord } from './Record.new';
 
 /**
  * `show :: a -> String`
@@ -50,11 +51,15 @@ export const show = (x: any): string => {
   //   return `Map (${[...x .value] .map (([k, v]) => `${show (k)} = ${show (v)}`) .join (', ')})`;
   // }
 
-  // if (isRecord (x)) {
-  //   return `{ ${
-  //     Object.entries (x .value) .map (([k, v]) => `${show (k)} = ${show (v)}`) .join (', ')
-  //   } }`;
-  // }
+  if (isRecord (x)) {
+    return `{ ${
+      [...x .keys .value]
+        .map (key =>
+          `${key} = ${show (x .values [key] === null || x .values [key] === undefined ? x .defaultValues [key] : x .values [key])}`
+        )
+        .join (', ')
+    } }`;
+  }
 
   // tslint:disable-next-line: strict-type-predicates
   if (typeof x === 'bigint') {

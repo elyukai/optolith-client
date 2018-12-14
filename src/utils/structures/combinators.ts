@@ -16,6 +16,6 @@ export const cnst = <A> (x: A) => (): A => x;
  * `(&) :: a -> (a -> b) -> b`
  *
  * Takes a value and a function, and returns the result of applying the function
- * to the value.
+ * to the value. Same as `(&)` but with arguments switched.
  */
 export const T = <A, B> (x: A) => (f: (x: A) => B): B => f (x);

@@ -20,7 +20,6 @@ import { Some } from './Maybe.new';
 
 interface IdentityPrototype {
   readonly isIdentity: true;
-  readonly ['@@type/Functor']: true;
 }
 
 export interface Identity<A extends Some> extends IdentityPrototype {
@@ -31,9 +30,7 @@ export interface Identity<A extends Some> extends IdentityPrototype {
 const IdentityPrototype: IdentityPrototype =
   Object.create (
     Object.prototype,
-    {
-      isIdentity: { value: true },
-    }
+    { isIdentity: { value: true }}
   );
 
 /**
