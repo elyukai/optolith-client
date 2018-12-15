@@ -22,34 +22,34 @@ import { isRecord } from './Record.new';
 export const show = (x: any): string => {
   if (isMaybe (x)) {
     if (isJust (x)) {
-      return `Just (${show (x.value)})`;
+      return `Just (${show (x.value)})`
     }
 
-    return `Nothing`;
+    return `Nothing`
   }
 
   if (isEither (x)) {
     if (isRight (x)) {
-      return `Right (${show (x .value)})`;
+      return `Right (${show (x .value)})`
     }
 
-    return `Left (${show (x .value)})`;
+    return `Left (${show (x .value)})`
   }
 
   if (isList (x)) {
-    return `[${x .value .map (show) .join (', ')}]`;
+    return `[${x .value .map (show) .join (', ')}]`
   }
 
   if (isPair (x)) {
-    return `(${show (x .first)}, ${show (x .second)})`;
+    return `(${show (x .first)}, ${show (x .second)})`
   }
 
   if (isOrderedSet (x)) {
-    return `Set (${[...x] .map (show) .join (', ')})`;
+    return `Set (${[...x] .map (show) .join (', ')})`
   }
 
   if (isOrderedMap (x)) {
-    return `Map (${[...x] .map (([k, v]) => `${show (k)} = ${show (v)}`) .join (', ')})`;
+    return `Map (${[...x] .map (([k, v]) => `${show (k)} = ${show (v)}`) .join (', ')})`
   }
 
   if (isRecord (x)) {
@@ -60,41 +60,41 @@ export const show = (x: any): string => {
           `${key} = ${show (x .values [key] === null || x .values [key] === undefined ? x .defaultValues [key] : x .values [key])}`
         )
         .join (', ')
-    } }`;
+    } }`
   }
 
   // tslint:disable-next-line: strict-type-predicates
   if (typeof x === 'bigint') {
-    return x .toString ();
+    return x .toString ()
   }
 
   if (typeof x === 'boolean') {
-    return x ? `True` : `False`;
+    return x ? `True` : `False`
   }
 
   if (typeof x === 'number') {
-    return 1 / x === -Infinity ? '-0' : x .toString (10);
+    return 1 / x === -Infinity ? '-0' : x .toString (10)
   }
 
   if (typeof x === 'string') {
-    return JSON.stringify (x);
+    return JSON.stringify (x)
   }
 
   if (typeof x === 'symbol') {
-    return `Symbol`;
+    return `Symbol`
   }
 
   if (x === undefined) {
-    return `undefined`;
+    return `undefined`
   }
 
   if (x === null) {
-    return `null`;
+    return `null`
   }
 
   if (x instanceof Date) {
-    return `Date (${x .toISOString ()})`;
+    return `Date (${x .toISOString ()})`
   }
 
-  return String (x);
-};
+  return String (x)
+}
