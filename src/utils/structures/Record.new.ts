@@ -118,33 +118,6 @@ export const mergeSafe =
                                   ({} as A)
                                   (r .keys))
 
-//   // CONVERSION
-
-//   /**
-//    * Return all elements of the record.
-//    */
-//   elems (): List<T[keyof T]> {
-//     return List.of (...Object.values (this.value));
-//   }
-
-//   /**
-//    * Return all keys of the record.
-//    */
-//   keys (): List<keyof T> {
-//     return List.of (...Object.keys (this.value));
-//   }
-
-//   /**
-//    * Return all key/value pairs in the record.
-//    */
-//   assocs (): List<Tuple<keyof T, T[keyof T]>> {
-//     return List.of (
-//       ...Object.entries (this.value).map (
-//         ([key, value]) => Tuple.of<keyof T, T[keyof T]> (key) (value)
-//       )
-//     );
-//   }
-
 
 // CUSTOM FUNCTIONS
 

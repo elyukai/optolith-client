@@ -181,13 +181,17 @@ export const ap =
 
 /**
  * `alt :: Maybe a -> Maybe a -> Maybe a`
+ *
+ * Returns the first `Maybe` if it is `Just`, otherwise the second.
  */
 export const alt =
   <A extends Some> (m1: Maybe<A>) => (m2: Maybe<A>): Maybe<A> =>
     isJust (m1) ? m1 : m2;
 
 /**
- * `alt :: f a -> f a -> f a`
+ * `alt :: Maybe a -> Maybe a -> Maybe a`
+ *
+ * Returns the second `Maybe` if it is `Just`, otherwise the first.
  *
  * This is the same as `alt` but with arguments swapped.
  */

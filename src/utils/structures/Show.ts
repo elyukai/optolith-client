@@ -9,6 +9,7 @@
 import { isEither, isRight } from './Either';
 import { isList } from './List.new';
 import { isJust, isMaybe } from './Maybe.new';
+import { isOrderedMap } from './OrderedMap.new';
 import { isOrderedSet } from './OrderedSet.new';
 import { isPair } from './Pair';
 import { isRecord } from './Record.new';
@@ -44,16 +45,17 @@ export const show = (x: any): string => {
   }
 
   if (isOrderedSet (x)) {
-    return `Set (${[...x .value] .map (show) .join (', ')})`;
+    return `Set (${[...x] .map (show) .join (', ')})`;
   }
 
-  // if (isOrderedMap (x)) {
-  //   return `Map (${[...x .value] .map (([k, v]) => `${show (k)} = ${show (v)}`) .join (', ')})`;
-  // }
+  if (isOrderedMap (x)) {
+    return `Map (${[...x] .map (([k, v]) => `${show (k)} = ${show (v)}`) .join (', ')})`;
+  }
 
   if (isRecord (x)) {
     return `{ ${
       [...x .keys .value]
+        .sort ()
         .map (key =>
           `${key} = ${show (x .values [key] === null || x .values [key] === undefined ? x .defaultValues [key] : x .values [key])}`
         )

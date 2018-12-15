@@ -7,15 +7,16 @@
 import { isEither, isRight } from './Either';
 import { isList, length } from './List.new';
 import { isJust, isMaybe, isNothing, Maybe, Some } from './Maybe.new';
-import { isOrderedSet, OrderedSet } from './OrderedSet.new';
+import { isOrderedMap, OrderedMap } from './OrderedMap.new';
+import { isOrderedSet, member, OrderedSet } from './OrderedSet.new';
 import { isPair } from './Pair';
+import { isRecord, Record } from './Record.new';
+import { show } from './Show';
 
 /**
  * `(==) :: a -> a -> Bool`
  *
  * Returns if both given values are equal.
- *
- * *Note: Shallow check for equality, no deep analysis.*
  */
 export const equals =
   // tslint:disable-next-line: cyclomatic-complexity
@@ -49,9 +50,47 @@ export const equals =
     }
 
     if (isOrderedSet (x1)) {
-      return isOrderedSet (x2)
-        && OrderedSet.size (x1) === OrderedSet.size (x2)
-        && [...x1 .value] .every (e => OrderedSet.member (e) (x2));
+      if (isOrderedSet (x2)) {
+        const firstValues = [...x1];
+        const secondValues = [...x2];
+
+        return OrderedSet.size (x1) === OrderedSet.size (x2)
+          && firstValues .every ((e, i) => equals (e) (secondValues [i]));
+      }
+
+      return false;
+    }
+
+    if (isOrderedMap (x1)) {
+      if (isOrderedMap (x2)) {
+        const firstValues = [...x1];
+        const secondValues = [...x2];
+
+        return OrderedMap.size (x1) === OrderedMap.size (x2)
+          && firstValues .every (
+            ([k, v], i) => {
+              const second = secondValues [i];
+
+              return equals (k) (second [0]) && equals (v) (second [1])
+            }
+          );
+      }
+
+      return false;
+    }
+
+    if (isRecord (x1)) {
+      if (isRecord (x2)) {
+        return OrderedSet.size (x1 .keys) === OrderedSet.size (x2 .keys)
+          && OrderedSet.all (key => OrderedSet.member (key) (x2 .keys)
+                              && equals (getRecordField<typeof x1['defaultValues']> (key as string)
+                                                                                    (x1))
+                                        (getRecordField<typeof x2['defaultValues']> (key as string)
+                                                                                    (x2)))
+                            (x1 .keys)
+      }
+
+      return false;
     }
 
     // tslint:disable-next-line: strict-type-predicates
@@ -95,9 +134,22 @@ export const equals =
  * `(!=) :: Maybe a -> Maybe a -> Bool`
  *
  * Returns if both given values are not equal.
- *
- * *Note: Shallow check for equality, no deep analysis.*
  */
 export const notEquals =
   <A extends Some> (m1: A) => (m2: A): boolean =>
     !equals (m1) (m2);
+
+const getRecordField = <A> (key: keyof A) => (r: Record<A>) => {
+  if (member (key as string) (r .keys)) {
+    const specifiedValue = r .values [key]
+
+    // tslint:disable-next-line: strict-type-predicates
+    if (specifiedValue !== null && specifiedValue !== undefined) {
+      return specifiedValue as A[typeof key]
+    }
+
+    return r .defaultValues [key]
+  }
+
+  throw new TypeError (`Key ${show (key)} is not in Record ${show (r)}!`)
+}

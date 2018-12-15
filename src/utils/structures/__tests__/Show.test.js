@@ -3,6 +3,7 @@ const { Left, Right } = require('../Either');
 const { fromElements } = require('../List.new');
 const { fromBoth } = require('../Pair');
 const { fromUniqueElements } = require('../OrderedSet.new');
+const { fromUniquePairs } = require('../OrderedMap.new');
 const { Just, Nothing } = require('../Maybe.new');
 const { fromDefault } = require('../Record.new');
 
@@ -31,6 +32,10 @@ test('Pair', () => {
 
 test('OrderedSet', () => {
   expect (show (fromUniqueElements (2, 3, 2))) .toEqual ('Set (2, 3)');
+});
+
+test('OrderedMap', () => {
+  expect (show (fromUniquePairs (['x',1],['y',2],['z',3]))) .toEqual ('Map ("x" = 1, "y" = 2, "z" = 3)');
 });
 
 test('Record', () => {

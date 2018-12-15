@@ -81,172 +81,6 @@ export const fromSet = <A extends Some> (xs: ReadonlySet<A>): OrderedSet<A> => {
 };
 
 
-// // FUNCTOR
-
-// /**
-//  * `fmap :: (a -> b) -> Set a -> Set b`
-//  *
-//  * `fmap f s` is the set obtained by applying `f` to each element of `s`.
-//  */
-// export const fmap =
-//   <A extends Some, B extends Some> (f: (value: A) => B) => (xs: OrderedSet<A>): OrderedSet<B> =>
-//     fromArray ([...xs .value] .map (f));
-
-// /**
-//  * `(<$) :: a -> Set b -> Set a`
-//  *
-//  * Replace all locations in the input with the same value. The default
-//  * definition is `fmap . const`, but this may be overridden with a more
-//  * efficient version.
-//  */
-// export const mapReplace = <A extends Some> (x: A) => fromArray ([x]);
-
-
-// // APPLICATIVE
-
-// /**
-//  * `pure :: a -> Set a`
-//  *
-//  * Lift a value.
-//  */
-// export const pure = <A extends Some> (x: A) => fromArray ([x]);
-
-// /**
-//  * `(<*>) :: Set (a -> b) -> Set a -> Set b`
-//  *
-//  * Sequential application.
-//  */
-// export const ap =
-//   <A extends Some, B extends Some>
-//   (ma: OrderedSet<(value: A) => B>) =>
-//   (m: OrderedSet<A>): OrderedSet<B> =>
-//     fromArray (
-//       [...ma .value] .reduce<B[]> (
-//         (acc, f) => [...acc, ...fmap (f) (m)],
-//         []
-//       )
-//     );
-
-
-// // ALTERNATIVE
-
-// /**
-//  * `alt :: Set a -> Set a -> Set a`
-//  *
-//  * The `alt` function takes a list of the same type. If the first list
-//  * is empty, it returns the second list, otherwise it returns the
-//  * first.
-//  */
-// export const alt =
-//   <A extends Some> (xs1: OrderedSet<A>) => (xs2: OrderedSet<A>): OrderedSet<A> =>
-//     fnull (xs1) ? xs2 : xs1;
-
-// /**
-//  * `alt :: Set a -> Set a -> Set a`
-//  *
-//  * The `alt` function takes a `Maybe` of the same type. If the second `Maybe`
-//  * is `Nothing`, it returns the first `Maybe`, otherwise it returns the
-//  * second.
-//  *
-//  * This is the same as `Maybe.alt` but with arguments swapped.
-//  */
-// export const alt_ =
-//   <A extends Some> (xs1: OrderedSet<A>) => (xs2: OrderedSet<A>): OrderedSet<A> =>
-//     alt (xs2) (xs1);
-
-// /**
-//  * `empty :: Set a`
-//  *
-//  * The empty `Set`.
-//  */
-// export const empty = fromArray ([]);
-
-// /**
-//  * `guard :: Bool -> Set ()`
-//  *
-//  * Conditional failure of Alternative computations. Defined by
-// ```hs
-// guard True  = pure ()
-// guard False = empty
-// ```
-//   * In TypeScript, this is not possible, so instead it's
-// ```ts
-// guard (true)  = pure (true)
-// guard (false) = empty
-// ```
-//   */
-// export const guard = (pred: boolean): OrderedSet<true> => pred ? pure<true> (true) : empty;
-
-
-// // MONAD
-
-// /**
-//  * `(>>=) :: Set a -> (a -> Set b) -> Set b`
-//  */
-// export const bind =
-//   <A extends Some, B extends Some>
-//   (xs: OrderedSet<A>) =>
-//   (f: (value: A) => OrderedSet<B>): OrderedSet<B> =>
-//     fromArray (
-//       [...xs .value] .reduce<B[]> (
-//         (acc, e) => [...acc, ...f (e)],
-//         []
-//       )
-//     );
-
-// /**
-//  * `(=<<) :: (a -> Set b) -> Set a -> Set b`
-//  */
-// export const bind_ =
-//   <A extends Some, B extends Some>
-//   (f: (value: A) => OrderedSet<B>) =>
-//   (xs: OrderedSet<A>): OrderedSet<B> =>
-//     bind<A, B> (xs) (f);
-
-// /**
-//  * `(>>) :: Set a -> Set b -> Set b`
-//  *
-//  * Sequentially compose two actions, discarding any value produced by the
-//  * first, like sequencing operators (such as the semicolon) in imperative
-//  * languages.
-//  *
-//  * ```a >> b = a >>= \ _ -> b```
-//  */
-// export const then =
-//   <A extends Some> (xs1: OrderedSet<any>) => (xs2: OrderedSet<A>): OrderedSet<A> =>
-//     bind<any, A> (xs1) (_ => xs2);
-
-
-// /**
-//  * `return :: a -> Set a`
-//  *
-//  * Inject a value into a list.
-//  */
-// export const mreturn = <A extends Some> (x: A) => fromArray ([x]);
-
-// /**
-//  * `(>=>) :: (a -> Set b) -> (b -> Set c) -> a -> Set c`
-//  *
-//  * Left-to-right Kleisli composition of monads.
-//  */
-// export const kleisli =
-//   <A extends Some, B extends Some, C extends Some>
-//   (f1: (x: A) => OrderedSet<B>) =>
-//   (f2: (x: B) => OrderedSet<C>) =>
-//     pipe (f1, bind_ (f2));
-
-// /**
-//  * `join :: Set (Set a) -> Set a`
-//  *
-//  * The `join` function is the conventional monad join operator. It is used to
-//  * remove one level of monadic structure, projecting its bound argument into the
-//  * outer level.
-//  */
-// export const join =
-//   <A extends Some>(xs: OrderedSet<OrderedSet<A>>): OrderedSet<A> =>
-//     bind<OrderedSet<A>, A> (xs) (id);
-
-
 // FOLDABLE
 
 /**
@@ -603,13 +437,14 @@ export const union =
 
 interface Filter {
   /**
-   * `filter :: (a -> Bool) -> Set a -> [a]`
+   * `filter :: (a -> Bool) -> Set a -> Set a`
    *
    * Filter all values that satisfy the predicate.
    */
   <A extends Some, A1 extends A> (pred: (x: A) => x is A1): (list: OrderedSet<A>) => OrderedSet<A1>;
+
   /**
-   * `filter :: (a -> Bool) -> Set a -> [a]`
+   * `filter :: (a -> Bool) -> Set a -> Set a`
    *
    * Filter all values that satisfy the predicate.
    */
@@ -617,7 +452,7 @@ interface Filter {
 }
 
 /**
- * `filter :: (a -> Bool) -> Set a -> [a]`
+ * `filter :: (a -> Bool) -> Set a -> Set a`
  *
  * Filter all values that satisfy the predicate.
  */
@@ -670,7 +505,7 @@ export const toggle =
     member (x) (xs) ? sdelete (x) (xs) : insert (x) (xs);
 
 /**
- * Checks if the given value is a `List`.
+ * Checks if the given value is a `OrderedSet`.
  * @param x The value to test.
  */
 export const isOrderedSet =
