@@ -805,3 +805,10 @@ test('maybeToNullable', () => {
   expect (Maybe.maybeToNullable (Nothing)) .toEqual (null);
   expect (Maybe.maybeToNullable (Just (element))) .toEqual (element);
 });
+
+test('maybe_', () => {
+  expect (Maybe.maybe_ (() => 0) (x => x * 2) (Just (3)))
+    .toEqual (6);
+  expect (Maybe.maybe_ (() => 0) (x => x * 2) (Nothing))
+    .toEqual (0);
+});
