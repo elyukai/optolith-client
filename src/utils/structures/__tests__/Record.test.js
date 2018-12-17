@@ -1,5 +1,5 @@
 const { fromUniqueElements } = require('../OrderedSet.new');
-const { fromDefault, mergeSafe, makeGetters, makeLenses, makeLenses_, toObject, isRecord } = require('../Record.new');
+const { fromDefault, mergeSafe, makeGetters, makeLenses, makeLenses_, member, notMember, toObject, isRecord } = require('../Record.new');
 const { view } = require('../Lens');
 
 // CONSTRUCTOR
@@ -48,6 +48,30 @@ test('makeLenses_', () => {
   const lenses = makeLenses_ (getters) (testCreator)
 
   expect (view (lenses .x) (test)) .toEqual (2)
+})
+
+test ('member', () => {
+  const testCreator = fromDefault ({ x: 0, y: 0 })
+  const test = testCreator ({ x: 2 })
+
+  expect (member ('x') (test))
+    .toBeTruthy ()
+  expect (member ('y') (test))
+    .toBeTruthy ()
+  expect (member ('z') (test))
+    .toBeFalsy ()
+})
+
+test ('notMember', () => {
+  const testCreator = fromDefault ({ x: 0, y: 0 })
+  const test = testCreator ({ x: 2 })
+
+  expect (notMember ('x') (test))
+    .toBeFalsy ()
+  expect (notMember ('y') (test))
+    .toBeFalsy ()
+  expect (notMember ('z') (test))
+    .toBeTruthy ()
 })
 
 test('toObject', () => {

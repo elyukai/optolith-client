@@ -13,7 +13,7 @@ import * as Wiki from '../types/wiki';
 import { convertUIStateToActiveObject } from './activatableConvertUtils';
 import { createActivatableDependent } from './createEntryUtils';
 import { Just, List, Maybe, Nothing, OrderedMap, Record } from './dataUtils';
-import * as DependencyUtils from './dependencyUtils';
+import * as DependencyUtils from './dependencies/dependencyUtils';
 import { flattenPrerequisites } from './flattenPrerequisites';
 import { removeHeroListStateItem, setHeroListStateItem } from './heroStateUtils';
 import { getGeneratedPrerequisites } from './prerequisitesUtils';

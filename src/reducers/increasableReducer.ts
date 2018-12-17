@@ -8,7 +8,7 @@ import { ActionTypes } from '../constants/ActionTypes';
 import * as Data from '../types/data';
 import { createActivatableDependentSkill, createAttributeDependent, createDependentSkillWithValue0, createDependentSkillWithValue6 } from '../utils/createEntryUtils';
 import { Just, Record } from '../utils/dataUtils';
-import { addDependenciesReducer, removeDependenciesReducer } from '../utils/dependencyUtils';
+import { addDependenciesReducer, removeDependenciesReducer } from '../utils/dependencies/dependencyUtils';
 import { adjustHeroListStateItemOr, adjustMaybeStateEntry, updateHeroListStateItemOrRemove, updateStateEntry } from '../utils/heroStateUtils';
 import { addPoint, removePoint } from '../utils/IncreasableUtils';
 import { isActivatableDependentSkillUnused, isAttributeDependentUnused, isDependentSkillUnused } from '../utils/unusedEntryUtils';

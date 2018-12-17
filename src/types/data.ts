@@ -1,6 +1,11 @@
 import { DCIds } from '../selectors/derivedCharacteristicsSelectors';
-import { List, Maybe, Omit, OrderedMap, OrderedSet, Record, RecordInterface, Tuple } from '../utils/dataUtils';
 import { TabId } from '../utils/LocationUtils';
+import { List } from '../utils/structures/List.new';
+import { Maybe } from '../utils/structures/Maybe.new';
+import { OrderedMap } from '../utils/structures/OrderedMap.new';
+import { OrderedSet } from '../utils/structures/OrderedSet.new';
+import { Pair } from '../utils/structures/Pair';
+import { Omit, Record, RecordInterface } from '../utils/structures/Record.new';
 import { UndoState } from '../utils/undo';
 import { AllAction } from './actions';
 import * as Wiki from './wiki';
@@ -514,7 +519,7 @@ export interface HistoryPayload {
   id?: string | number;
   activeObject?: Record<ActiveObject>;
   index?: number;
-  list?: List<string | Tuple<string, number>>;
+  list?: List<string | Pair<string, number>>;
   buy?: boolean;
 }
 

@@ -7,9 +7,10 @@
  * @author Lukas Obermann
  */
 
+import { not, pipe } from 'ramda';
 import { Lens, lens } from './Lens';
 import { Just, Maybe } from './Maybe.new';
-import { foldl, fromArray, member, OrderedSet } from './OrderedSet.new';
+import { foldl, fromArray, OrderedSet } from './OrderedSet.new';
 import { show } from './Show';
 
 
@@ -57,7 +58,7 @@ const _Record =
     )
 
 export const fromDefault =
-  <A extends RecordBase> (def: A): RecordCreator<A> => {
+  <A extends RecordBase> (def: Required<A>): RecordCreator<A> => {
     const defaultValues = Object.freeze (Object.entries (def) .reduce<A> (
       (acc, [key, value]) => {
         // tslint:disable-next-line: strict-type-predicates
@@ -87,10 +88,11 @@ export const fromDefault =
         (keys)
         (defaultValues)
         (Object.entries (x) .reduce<Partial<A>> (
-          // tslint:disable-next-line: strict-type-predicates
-          (acc, [key, value]) => member (key) (keys) && value !== null && value !== undefined
-            ? { ...acc, [key]: value }
-            : acc,
+          (acc, [key, value]) =>
+            // tslint:disable-next-line: strict-type-predicates
+            OrderedSet.member (key) (keys) && value !== null && value !== undefined
+              ? { ...acc, [key]: value }
+              : acc,
           {}
         ))
   }
@@ -122,7 +124,7 @@ export const mergeSafe =
 // CUSTOM FUNCTIONS
 
 const getter = <A extends RecordBase> (key: keyof A) => (r: Record<A>) => {
-  if (member<keyof A> (key) (r .keys)) {
+  if (OrderedSet.member<keyof A> (key) (r .keys)) {
     const specifiedValue = r .values [key]
 
     // tslint:disable-next-line: strict-type-predicates
@@ -182,10 +184,26 @@ export const makeLenses_ =
     Object.freeze (Object.keys (record ({}) .defaultValues) .reduce<Lenses<A>> (
       (acc, key) => ({
         ...acc,
-        [key]: lens<Record<A>, A[typeof key]> (getters [key]) (setter (key)),
+        [key]: lens<Record<A>, A[typeof key]> (getters [key] as Getter<A, typeof key>)
+                                              (setter (key)),
       }),
       {} as Lenses<A>
     ))
+
+/**
+ * `member :: String -> Record a -> Bool`
+ *
+ * Is the key a member of the record?
+ */
+export const member =
+  (key: string) => (mp: Record<any>): boolean => OrderedSet.member (key) (mp .keys)
+
+/**
+ * `notMember :: String -> Record a -> Bool`
+ *
+ * Is the key not a member of the record?
+ */
+export const notMember = (key: string) => pipe (member (key), not)
 
 /**
  * Converts the passed record to a native object.
@@ -212,6 +230,8 @@ export const Record = {
   makeGetters,
   makeLenses,
   makeLenses_,
+  member,
+  notMember,
   toObject,
   isRecord,
 };
@@ -219,8 +239,10 @@ export const Record = {
 
 // TYPE HELPERS
 
+type Getter<A extends RecordBase, K extends keyof A> = (r: Record<Pick<A, K>>) => A[K]
+
 type Getters<A extends RecordBase> = {
-  [K in keyof A]: (r: Record<A>) => A[K];
+  [K in keyof A]: Getter<A, K>;
 }
 
 type Lenses<A extends RecordBase> = {

@@ -1,10 +1,10 @@
 import * as R from 'ramda';
-import { ActivatableSkillCategories, Categories } from '../constants/Categories';
-import * as Data from '../types/data';
+import { ActivatableSkillCategories, Categories } from '../../constants/Categories';
+import * as Data from '../../types/data';
+import { Just, List, Maybe, Record } from '../dataUtils';
+import { adjustHeroListStateItemOr } from '../heroStateUtils';
+import { getCategoryById } from '../IDUtils';
 import * as CreateEntryUtils from './createEntryUtils';
-import { Just, List, Maybe, Record } from './dataUtils';
-import { adjustHeroListStateItemOr } from './heroStateUtils';
-import { getCategoryById } from './IDUtils';
 
 type IncreasableCreator = (id: string) => Data.ExtendedSkillDependent;
 

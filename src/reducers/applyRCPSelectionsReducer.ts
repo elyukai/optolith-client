@@ -9,7 +9,7 @@ import { getActiveObjectCore } from '../utils/activatableConvertUtils';
 import { isProfessionRequiringIncreasable } from '../utils/checkPrerequisiteUtils';
 import { createActivatableDependent, createActivatableDependentSkill } from '../utils/createEntryUtils';
 import { Just, List, Maybe, OrderedMap, OrderedSet, Record, Tuple } from '../utils/dataUtils';
-import { addDependencies } from '../utils/dependencyUtils';
+import { addDependencies } from '../utils/dependencies/dependencyUtils';
 import { addAllStyleRelatedDependencies } from '../utils/ExtendedStyleUtils';
 import { flip } from '../utils/flip';
 import { adjustHeroListStateItemOr, adjustHeroListStateItemWithDefault, getHeroStateListItem } from '../utils/heroStateUtils';

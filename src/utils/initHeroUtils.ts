@@ -7,7 +7,7 @@ import { getCombinedPrerequisites } from './activatableActivationUtils';
 import { getActiveFromState } from './activatableConvertUtils';
 import * as CreateDependencyObjectUtils from './createEntryUtils';
 import { List, Maybe, OrderedMap, OrderedSet, Record, StringKeyObject } from './dataUtils';
-import { addDependencies } from './dependencyUtils';
+import { addDependencies } from './dependencies/dependencyUtils';
 import { exists } from './exists';
 import { addAllStyleRelatedDependencies } from './ExtendedStyleUtils';
 import { getCategoryById } from './IDUtils';

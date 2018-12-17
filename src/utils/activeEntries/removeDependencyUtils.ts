@@ -1,9 +1,10 @@
 import * as R from 'ramda';
-import * as Data from '../types/data';
+import * as Data from '../../types/data';
+import { List, ListElement, Maybe, Record, RecordInterface } from '../dataUtils';
+import { getHeroStateListItem, removeHeroListStateItem, setHeroListStateItem } from '../heroStateUtils';
+import * as UnusedEntryUtils from '../unusedEntryUtils';
+import { ActivatableDependentG } from './activatableDependent';
 import { isActivatableSkillDependent } from './checkEntryUtils';
-import { List, ListElement, Maybe, Record, RecordInterface } from './dataUtils';
-import { getHeroStateListItem, removeHeroListStateItem, setHeroListStateItem } from './heroStateUtils';
-import * as UnusedEntryUtils from './unusedEntryUtils';
 
 type Deps<T extends Data.Dependent> = RecordInterface<T>['dependencies'];
 type Dep<T extends Data.Dependent> = ListElement<Deps<T>>;
@@ -16,7 +17,7 @@ const getDependencyIndex = <T extends Data.Dependent>(e: Dep<T>) =>
 
 const removeDependency = <T extends Data.Dependent>(e: Dep<T>) =>
   (obj: T): T => {
-    const list = getDependencies (obj);
+    const list = ActivatableDependentG.dependencies (obj);
 
     const index = Maybe.fromMaybe (-1) (getDependencyIndex (e) (list));
 
