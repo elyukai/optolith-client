@@ -5,7 +5,7 @@ import * as Wiki from '../types/wiki';
 import { createAttributeDependent } from '../utils/createEntryUtils';
 import { createMaybeSelector } from '../utils/createMaybeSelector';
 import { Just, List, Maybe, Nothing, OrderedMap, Record, Tuple } from '../utils/dataUtils';
-import { flattenDependencies } from '../utils/flattenDependencies';
+import { flattenDependencies } from '../utils/dependencies/flattenDependencies';
 import { flip } from '../utils/flip';
 import { getNumericBlessedTraditionIdByInstanceId, getNumericMagicalTraditionIdByInstanceId } from '../utils/IDUtils';
 import { getCurrentEl, getStartEl } from './elSelectors';

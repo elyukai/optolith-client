@@ -8,14 +8,14 @@
 
 import * as Data from '../../types/data';
 import * as Wiki from '../../types/wiki';
-import * as CheckStyleUtils from '../checkStyleUtils';
 import { Just, List, Maybe, OrderedMap, Record } from '../dataUtils';
 import { countActiveGroupEntries, hasActiveGroupEntry } from '../entryGroupUtils';
-import { getFirstTierPrerequisites } from '../flattenPrerequisites';
 import { getAllEntriesByGroup, getHeroStateListItem } from '../heroStateUtils';
-import { isActive } from '../isActive';
-import { validatePrerequisites } from '../validatePrerequisitesUtils';
+import { getFirstTierPrerequisites } from '../prerequisites/flattenPrerequisites';
+import { validatePrerequisites } from '../prerequisites/validatePrerequisitesUtils';
 import { isSpecialAbility } from '../WikiUtils';
+import * as CheckStyleUtils from './checkStyleUtils';
+import { isActive } from './isActive';
 
 const isAdditionDisabledForCombatStyle = (
   wiki: Record<Wiki.WikiAll>,

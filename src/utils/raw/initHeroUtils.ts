@@ -1,16 +1,16 @@
 import * as R from 'ramda';
-import { Categories } from '../constants/Categories';
-import * as Data from '../types/data';
-import * as Raw from '../types/rawdata';
-import { WikiAll } from '../types/wiki';
-import { getCombinedPrerequisites } from './activatable/activatableActivationUtils';
-import { getActiveFromState } from './activatable/activatableConvertUtils';
+import { Categories } from '../../constants/Categories';
+import * as Data from '../../types/data';
+import * as Raw from '../../types/rawdata';
+import { WikiAll } from '../../types/wiki';
+import { getCombinedPrerequisites } from '../activatable/activatableActivationUtils';
+import { getActiveFromState } from '../activatable/activatableConvertUtils';
+import { addAllStyleRelatedDependencies } from '../activatable/ExtendedStyleUtils';
+import { exists } from '../exists';
+import { getCategoryById } from '../IDUtils';
 import * as CreateDependencyObjectUtils from './createEntryUtils';
 import { List, Maybe, OrderedMap, OrderedSet, Record, StringKeyObject } from './dataUtils';
 import { addDependencies } from './dependencies/dependencyUtils';
-import { exists } from './exists';
-import { addAllStyleRelatedDependencies } from './ExtendedStyleUtils';
-import { getCategoryById } from './IDUtils';
 import { currentVersion } from './VersionUtils';
 
 const getUnchangedProperties = (id: string, hero: Raw.RawHero) => {

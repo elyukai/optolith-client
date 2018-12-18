@@ -1,5 +1,5 @@
-import * as Wiki from '../types/wiki';
-import { isSpecialAbility } from './WikiUtils';
+import * as Wiki from '../../types/wiki';
+import { isSpecialAbility } from '../WikiUtils';
 
 export const isCombatStyleSpecialAbility =
   (e: Wiki.EntryWithCategory) =>

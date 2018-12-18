@@ -1,8 +1,8 @@
 import * as Data from '../types/data';
 import { WikiAll } from '../types/wiki';
+import { isActive } from './activatable/isActive';
 import { List, Record } from './dataUtils';
 import { getAllEntriesByGroup } from './heroStateUtils';
-import { isActive } from './isActive';
 
 export const getActiveGroupEntries = (
   wiki: Record<WikiAll>,

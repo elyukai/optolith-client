@@ -3,8 +3,8 @@ import { isNumber, isString } from 'util';
 import { AdventurePointsObject } from '../../selectors/adventurePointsSelectors';
 import * as Data from '../../types/data';
 import { Disadvantage, Skill, WikiAll } from '../../types/wiki';
+import { getMagicalTraditions } from '../activatable/traditionUtils';
 import { Just, List, Maybe, Nothing, OrderedMap, Record, Tuple } from '../dataUtils';
-import { getMagicalTraditions } from '../traditionUtils';
 import { getWikiEntryFromSlice } from '../WikiUtils';
 import { getActiveWithNoCustomCost } from './activatableCostUtils';
 

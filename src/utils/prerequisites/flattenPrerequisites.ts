@@ -1,7 +1,7 @@
 import * as R from 'ramda';
-import { ActivatablePrerequisites, AllRequirements, LevelAwarePrerequisites } from '../types/wiki';
+import { ActivatablePrerequisites, AllRequirements, LevelAwarePrerequisites } from '../../types/wiki';
+import { flip } from '../flip';
 import { Just, List, Maybe, Nothing, OrderedMap } from './dataUtils';
-import { flip } from './flip';
 
 type LevelFilter = (key: number) =>
   (value: ActivatablePrerequisites) => boolean;

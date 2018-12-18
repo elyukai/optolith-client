@@ -2,11 +2,11 @@ import * as React from 'react';
 import { TextBox } from '../../../components/TextBox';
 import { ActivatableDependent, ActiveObject } from '../../../types/data';
 import { SpecialAbility } from '../../../types/wiki';
+import { findSelectOption } from '../../../utils/activatable/selectionUtils';
 import { List, Maybe, Record } from '../../../utils/dataUtils';
 import { sortObjects } from '../../../utils/FilterSortUtils';
 import { translate, UIMessagesObject } from '../../../utils/I18n';
 import { getRoman } from '../../../utils/NumberUtils';
-import { findSelectOption } from '../../../utils/selectionUtils';
 
 export interface SkillsSheetLanguagesProps {
   languagesStateEntry: Maybe<Record<ActivatableDependent>>;

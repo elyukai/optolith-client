@@ -1,16 +1,16 @@
 import * as R from 'ramda';
-import { IdPrefixes } from '../constants/IdPrefixes';
-import * as Data from '../types/data';
-import * as Wiki from '../types/wiki';
+import { IdPrefixes } from '../../constants/IdPrefixes';
+import * as Data from '../../types/data';
+import * as Wiki from '../../types/wiki';
+import { isActive } from '../activatable/isActive';
+import { isPactValid as isPactFromStateValid } from '../activatable/pactUtils';
+import { getActiveSelections } from '../activatable/selectionUtils';
+import { getHeroStateListItem } from '../heroStateUtils';
+import { getPrimaryAttributeId } from '../primaryAttributeUtils';
+import { getAllWikiEntriesByGroup } from '../WikiUtils';
 import * as CheckPrerequisiteUtils from './checkPrerequisiteUtils';
 import { Just, List, Maybe, OrderedMap, Record, Tuple } from './dataUtils';
 import { isActivatableDependent, isActivatableSkillDependent, isDependentSkillExtended } from './dependencies/checkEntryUtils';
-import { getHeroStateListItem } from './heroStateUtils';
-import { isActive } from './isActive';
-import { isPactValid as isPactFromStateValid } from './pactUtils';
-import { getPrimaryAttributeId } from './primaryAttributeUtils';
-import { getActiveSelections } from './selectionUtils';
-import { getAllWikiEntriesByGroup } from './WikiUtils';
 
 interface Validator {
   (

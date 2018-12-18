@@ -13,7 +13,7 @@ import { translate, UIMessagesObject } from '../I18n';
 import { match } from '../match';
 import { getRoman, numberFromString } from '../NumberUtils';
 import { isInteger } from '../RegexUtils';
-import { getActiveSelections, getSelectOptionCost } from '../selectionUtils';
+import { getActiveSelections, getSelectOptionCost } from './selectionUtils';
 
 interface PropertiesAffectedByState {
   currentCost?: number | string;

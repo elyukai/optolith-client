@@ -1,9 +1,9 @@
 import * as R from 'ramda';
 import * as Data from '../types/data';
 import { CombatTechnique, WikiAll } from '../types/wiki';
+import { getActiveSelections } from './activatable/selectionUtils';
 import { List, Maybe, Record } from './dataUtils';
-import { flattenDependencies } from './flattenDependencies';
-import { getActiveSelections } from './selectionUtils';
+import { flattenDependencies } from './dependencies/flattenDependencies';
 
 const getMaxPrimaryAttributeValueById = (
   (state: Record<Data.HeroDependent>) =>

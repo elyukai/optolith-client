@@ -12,9 +12,9 @@ import { ActivatableDependent, ActivateArgs, ActiveObjectWithId, DeactivateArgs,
 import { UIMessagesObject } from '../types/ui';
 import { Advantage, Disadvantage } from '../types/wiki';
 import { getNameCost } from '../utils/activatable/activatableActiveUtils';
+import { isMagicalOrBlessed } from '../utils/activatable/checkActivatableUtils';
 import { convertPerTierCostToFinalCost } from '../utils/adventurePoints/activatableCostUtils';
 import { getAreSufficientAPAvailableForDisAdvantage, getDisAdvantagesSubtypeMax, SufficientAPAvailableForDisAdvantage } from '../utils/adventurePoints/adventurePointsUtils';
-import { isMagicalOrBlessed } from '../utils/checkActivatableUtils';
 import { Just, List, Maybe, Record, Tuple } from '../utils/dataUtils';
 import { getHeroStateListItem } from '../utils/heroStateUtils';
 import { translate } from '../utils/I18n';

@@ -1,8 +1,8 @@
 import * as R from 'ramda';
-import { ActivatableDependent } from '../types/data';
-import { SpecialAbility } from '../types/wiki';
+import { ActivatableDependent } from '../../types/data';
+import { SpecialAbility } from '../../types/wiki';
+import { isBlessedTraditionId, isMagicalTraditionId } from '../IDUtils';
 import { List, Maybe, OrderedMap, Record } from './dataUtils';
-import { isBlessedTraditionId, isMagicalTraditionId } from './IDUtils';
 import { isActive } from './isActive';
 
 const isActiveMagicalTradition = (e: Record<ActivatableDependent>) => {

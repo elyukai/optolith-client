@@ -16,8 +16,8 @@ import { sortStrings } from '../FilterSortUtils';
 import { translate } from '../I18n';
 import { match } from '../match';
 import { getRoman } from '../NumberUtils';
-import { findSelectOption, getSelectOptionName } from '../selectionUtils';
 import { getWikiEntry } from '../WikiUtils';
+import { findSelectOption, getSelectOptionName } from './selectionUtils';
 
 /**
  * Returns the name of the given object. If the object is a string, it returns

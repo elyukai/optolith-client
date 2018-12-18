@@ -10,12 +10,12 @@
 import * as R from 'ramda';
 import * as Data from '../../types/data';
 import * as Wiki from '../../types/wiki';
+import { isActivatableDependentUnused } from '../activeEntries/unusedEntryUtils';
 import { Just, List, Maybe, Nothing, OrderedMap, Record } from '../dataUtils';
-import { flattenPrerequisites } from '../flattenPrerequisites';
 import { removeHeroListStateItem, setHeroListStateItem } from '../heroStateUtils';
-import { getGeneratedPrerequisites } from '../prerequisitesUtils';
+import { flattenPrerequisites } from '../prerequisites/flattenPrerequisites';
+import { getGeneratedPrerequisites } from '../prerequisites/prerequisitesUtils';
 import { ActivatableReducer, OptionalActivatableReducer } from '../reducerUtils';
-import { isActivatableDependentUnused } from '../unusedEntryUtils';
 import { convertUIStateToActiveObject } from './activatableConvertUtils';
 import { createActivatableDependent } from './createEntryUtils';
 import * as DependencyUtils from './dependencies/dependencyUtils';

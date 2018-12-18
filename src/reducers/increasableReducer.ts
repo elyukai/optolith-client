@@ -6,12 +6,12 @@ import * as SkillActions from '../actions/SkillActions';
 import * as SpellsActions from '../actions/SpellsActions';
 import { ActionTypes } from '../constants/ActionTypes';
 import * as Data from '../types/data';
+import { isActivatableDependentSkillUnused, isAttributeDependentUnused, isDependentSkillUnused } from '../utils/activeEntries/unusedEntryUtils';
 import { createActivatableDependentSkill, createAttributeDependent, createDependentSkillWithValue0, createDependentSkillWithValue6 } from '../utils/createEntryUtils';
 import { Just, Record } from '../utils/dataUtils';
 import { addDependenciesReducer, removeDependenciesReducer } from '../utils/dependencies/dependencyUtils';
 import { adjustHeroListStateItemOr, adjustMaybeStateEntry, updateHeroListStateItemOrRemove, updateStateEntry } from '../utils/heroStateUtils';
 import { addPoint, removePoint } from '../utils/IncreasableUtils';
-import { isActivatableDependentSkillUnused, isAttributeDependentUnused, isDependentSkillUnused } from '../utils/unusedEntryUtils';
 
 type Action =
   AttributesActions.AddAttributePointAction |

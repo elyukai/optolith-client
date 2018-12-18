@@ -1,6 +1,6 @@
 import * as R from 'ramda';
-import { HeroDependent, StyleDependency } from '../types/data';
-import { SpecialAbility } from '../types/wiki';
+import { HeroDependent, StyleDependency } from '../../types/data';
+import { SpecialAbility } from '../../types/wiki';
 import { List, Maybe, Record } from './dataUtils';
 
 export type StyleDependencyStateKeys =

@@ -11,11 +11,11 @@ import { SelectionsLanguagesAndScripts } from '../views/rcp/SelectionsLanguagesA
 import { SelectionsSkills } from '../views/rcp/SelectionsSkills';
 import { SelectionsSkillSpecialization } from '../views/rcp/SelectionsSkillSpecialization';
 import { TerrainKnowledge } from '../views/rcp/SelectionsTerrainKnowledge';
+import { findSelectOption } from './activatable/selectionUtils';
 import { IdentityFn, List, Maybe, OrderedMap, OrderedSet, Record, Tuple } from './dataUtils';
 import { sortObjects } from './FilterSortUtils';
 import { translate, UIMessagesObject } from './I18n';
-import { findSelectOption } from './selectionUtils';
-import { Just, Nothing } from './structures/maybe';
+import { Just, Nothing } from './structures/Maybe.new';
 import { getAllWikiEntriesByGroup } from './WikiUtils';
 
 const isProfessionSpecializationSelection =

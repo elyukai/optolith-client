@@ -14,18 +14,18 @@ import * as Data from '../../types/data';
 import * as Wiki from '../../types/wiki';
 import { Just, List, Maybe, Nothing, OrderedMap, OrderedSet, Record } from '../dataUtils';
 import { countActiveGroupEntries } from '../entryGroupUtils';
-import { isStyleValidToRemove } from '../ExtendedStyleUtils';
-import { flattenPrerequisites } from '../flattenPrerequisites';
 import { getAllEntriesByGroup, getHeroStateListItem } from '../heroStateUtils';
-import { isActive } from '../isActive';
 import { isOwnTradition } from '../liturgicalChantUtils';
 import { match } from '../match';
-import { getActiveSelections } from '../selectionUtils';
-import { getBlessedTraditionFromWiki, getMagicalTraditions } from '../traditionUtils';
+import { flattenPrerequisites } from '../prerequisites/flattenPrerequisites';
+import { validateObject, validateTier } from '../prerequisites/validatePrerequisitesUtils';
 import { isBoolean } from '../typeCheckUtils';
-import { validateObject, validateTier } from '../validatePrerequisitesUtils';
 import { getWikiEntry } from '../WikiUtils';
 import { countActiveSkillEntries } from './activatableSkillUtils';
+import { isStyleValidToRemove } from './ExtendedStyleUtils';
+import { isActive } from './isActive';
+import { getActiveSelections } from './selectionUtils';
+import { getBlessedTraditionFromWiki, getMagicalTraditions } from './traditionUtils';
 
 const hasRequiredMinimumLevel = (
   tiers: Maybe<number>,

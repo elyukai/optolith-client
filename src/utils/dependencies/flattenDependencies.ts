@@ -1,10 +1,10 @@
-import * as Data from '../types/data';
-import * as Wiki from '../types/wiki';
+import * as Data from '../../types/data';
+import * as Wiki from '../../types/wiki';
+import { getHeroStateListItem } from '../heroStateUtils';
+import { flattenPrerequisites } from '../prerequisites/flattenPrerequisites';
+import { isObject } from '../typeCheckUtils';
+import { getWikiEntry } from '../WikiUtils';
 import { List, Maybe, Nothing, Record } from './dataUtils';
-import { flattenPrerequisites } from './flattenPrerequisites';
-import { getHeroStateListItem } from './heroStateUtils';
-import { isObject } from './typeCheckUtils';
-import { getWikiEntry } from './WikiUtils';
 
 /**
  * `flattenDependencies` flattens the list of dependencies to usable values.

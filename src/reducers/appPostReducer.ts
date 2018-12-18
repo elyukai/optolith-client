@@ -5,10 +5,10 @@ import { getRuleBooksEnabled } from '../selectors/rulesSelectors';
 import { getCurrentCultureId, getCurrentRaceId, getCurrentTab, getPhase } from '../selectors/stateSelectors';
 import { Hero, HeroDependent, User } from '../types/data';
 import { Maybe, OrderedMap, OrderedSet, Record } from '../utils/dataUtils';
-import { getHeroInstance } from '../utils/initHeroUtils';
+import { getHeroInstance } from '../utils/raw/initHeroUtils';
+import { convertHero } from '../utils/raw/VersionUtils';
 import { isBookEnabled } from '../utils/RulesUtils';
 import { UndoState, wrapWithHistoryObject } from '../utils/undo';
-import { convertHero } from '../utils/VersionUtils';
 import { AppState } from './appReducer';
 
 type Action =

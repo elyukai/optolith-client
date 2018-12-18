@@ -1,4 +1,4 @@
-import * as Data from '../types/data';
+import * as Data from '../../types/data';
 import { Record } from './dataUtils';
 
 export const isAttributeDependentUnused =

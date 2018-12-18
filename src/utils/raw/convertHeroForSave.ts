@@ -1,12 +1,13 @@
 import * as R from 'ramda';
-import * as Data from '../types/data';
-import * as Raw from '../types/rawdata';
-import { WikiAll } from '../types/wiki';
-import { getAPObject } from './adventurePoints/adventurePointsSumUtils';
-import { List, Maybe, OrderedMap, OrderedMapValueElement, Record, StringKeyObject } from './dataUtils';
-import { HeroStateMapKey } from './heroStateUtils';
-import { UndoState } from './undo';
-import { currentVersion } from './VersionUtils';
+import * as Data from '../../types/data';
+import * as Raw from '../../types/rawdata';
+import { WikiAll } from '../../types/wiki';
+import { getAPObject } from '../adventurePoints/adventurePointsSumUtils';
+import { HeroStateMapKey } from '../heroStateUtils';
+import { UndoState } from '../undo';
+import { currentVersion } from '../VersionUtils';
+import { List, Maybe, OrderedMap } from /VersionUtilsueElement, Record, StringKeyObject } from './dataUtils;
+';
 
 const getAttributesForSave = (hero: Record<Data.HeroDependent>): Raw.RawHero['attr'] =>
   ({

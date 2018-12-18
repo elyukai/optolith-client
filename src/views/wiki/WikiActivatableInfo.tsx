@@ -10,7 +10,7 @@ import { sortObjects, sortStrings } from '../../utils/FilterSortUtils';
 import { translate } from '../../utils/I18n';
 import { getCategoryById } from '../../utils/IDUtils';
 import { getRoman } from '../../utils/NumberUtils';
-import { isRaceRequirement, isRequiringActivatable, isRequiringIncreasable, isRequiringPrimaryAttribute } from '../../utils/prerequisitesUtils';
+import { isRaceRequirement, isRequiringActivatable, isRequiringIncreasable, isRequiringPrimaryAttribute } from '../../utils/prerequisites/prerequisitesUtils';
 import { getWikiEntry } from '../../utils/WikiUtils';
 import { WikiSource } from './elements/WikiSource';
 import { WikiBoxTemplate } from './WikiBoxTemplate';

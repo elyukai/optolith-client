@@ -4,7 +4,7 @@ import * as IOActions from '../actions/IOActions';
 import { ActionTypes } from '../constants/ActionTypes';
 import { HeroDependent, User } from '../types/data';
 import { List, Maybe, OrderedMap, Record } from '../utils/dataUtils';
-import { getInitialHeroObject } from '../utils/initHeroUtils';
+import { getInitialHeroObject } from '../utils/raw/initHeroUtils';
 import { reduceReducers } from '../utils/reduceReducers';
 import { UndoState, wrapWithHistoryObject } from '../utils/undo';
 import { heroReducer } from './heroReducer';

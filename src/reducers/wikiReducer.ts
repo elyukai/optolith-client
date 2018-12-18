@@ -4,7 +4,7 @@ import { Categories } from '../constants/Categories';
 import * as Raw from '../types/rawdata';
 import * as Wiki from '../types/wiki';
 import { List, Maybe, OrderedMap, Record, StringKeyObject } from '../utils/dataUtils';
-import * as InitWikiUtils from '../utils/InitWikiUtils';
+import * as InitWikiUtils from '../utils/raw/InitWikiUtils';
 import { getWikiStateKeyByCategory } from '../utils/WikiUtils';
 
 type Action = ReceiveInitialDataAction;

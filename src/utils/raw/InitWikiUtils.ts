@@ -2,8 +2,8 @@ import { Categories } from '../constants/Categories';
 import { IdPrefixes } from '../constants/IdPrefixes';
 import * as Raw from '../types/rawdata';
 import * as Wiki from '../types/wiki';
-import { convertRawApplications, convertRawIncreaseSkills, convertRawPrerequisiteObjects, convertRawPrerequisites, convertRawProfessionDependencyObjects, convertRawProfessionPrerequisiteObjects, convertRawProfessionRequiresActivatableObject, convertRawProfessionSelections, convertRawProfessionVariantSelections, convertRawSelections, mapRawWithPrefix } from './convertRawObjectsToWikiUtils';
 import { Just, List, Maybe, Nothing, OrderedMap, Record, StringKeyObject, Tuple } from './dataUtils';
+import { convertRawApplications, convertRawIncreaseSkills, convertRawPrerequisiteObjects, convertRawPrerequisites, convertRawProfessionDependencyObjects, convertRawProfessionPrerequisiteObjects, convertRawProfessionRequiresActivatableObject, convertRawProfessionSelections, convertRawProfessionVariantSelections, convertRawSelections, mapRawWithPrefix } from './raw/convertRawObjectsToWikiUtils';
 
 const getSourceBooks =
   (srcIds: string[], srcPages: number[]): List<Record<Wiki.SourceLink>> =>

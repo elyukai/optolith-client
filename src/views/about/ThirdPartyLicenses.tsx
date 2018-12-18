@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Page } from '../../components/Page';
 import { Scroll } from '../../components/Scroll';
-import { currentVersion } from '../../utils/VersionUtils';
+import { currentVersion } from '../../utils/raw/VersionUtils';
 
 const Separator = () => (
   <p>

@@ -2,10 +2,10 @@ import * as R from 'ramda';
 import * as Data from '../types/data';
 import { SkillCombined } from '../types/view';
 import * as Wiki from '../types/wiki';
+import { isActive } from './activatable/isActive';
 import { getSkillCheckValues } from './AttributeUtils';
 import { Just, List, Maybe, Nothing, OrderedMap, Record, Tuple } from './dataUtils';
-import { flattenDependencies } from './flattenDependencies';
-import { isActive } from './isActive';
+import { flattenDependencies } from './dependencies/flattenDependencies';
 import { isNumber } from './typeCheckUtils';
 
 /**

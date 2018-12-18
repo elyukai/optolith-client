@@ -1,7 +1,7 @@
-import * as Data from '../types/data';
-import * as Wiki from '../types/wiki';
+import * as Data from '../../types/data';
+import * as Wiki from '../../types/wiki';
+import { findSelectOption } from '../activatable/selectionUtils';
 import { Just, List, Maybe, Nothing, Record } from './dataUtils';
-import { findSelectOption } from './selectionUtils';
 
 /**
  * Some advantages, disadvantages and special abilities need more prerequisites

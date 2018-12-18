@@ -16,17 +16,17 @@ import { countActiveGroupEntries } from '../entryGroupUtils';
 import { sortObjects } from '../FilterSortUtils';
 import { getAllEntriesByGroup } from '../heroStateUtils';
 import { getBlessedTraditionInstanceIdByNumericId } from '../IDUtils';
-import { isActive } from '../isActive';
 import { getTraditionOfAspect } from '../liturgicalChantUtils';
 import { match } from '../match';
-import { findSelectOption, getActiveSecondarySelections, getActiveSelections, getRequiredSelections } from '../selectionUtils';
-import { getBlessedTradition, getMagicalTraditions } from '../traditionUtils';
+import { validatePrerequisites, validateTier } from '../prerequisites/validatePrerequisitesUtils';
 import { isString } from '../typeCheckUtils';
-import { validatePrerequisites, validateTier } from '../validatePrerequisitesUtils';
 import { getWikiEntryFromSlice } from '../WikiUtils';
 import { isAdditionDisabled } from './activatableInactiveValidationUtils';
 import { getModifierByActiveLevel } from './activatableModifierUtils';
 import { countActiveSkillEntries } from './activatableSkillUtils';
+import { isActive } from './isActive';
+import { findSelectOption, getActiveSecondarySelections, getActiveSelections, getRequiredSelections } from './selectionUtils';
+import { getBlessedTradition, getMagicalTraditions } from './traditionUtils';
 
 const getIsNoActiveSelection =
   R.pipe (

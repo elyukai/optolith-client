@@ -4,11 +4,11 @@ import { CantripsSelection, CombatTechniquesSecondSelection, CombatTechniquesSel
 import { UIKey } from '../../types/ui';
 import { Increasable, IncreasableId, NameBySex, Profession, ProfessionVariant, UIMessages } from '../../types/view';
 import { Attribute, Blessing, Book, Cantrip, LiturgicalChant, ProfessionSelections, Race, RemoveCombatTechniquesSelection, RemoveSpecializationSelection, Skill, SpecialAbility, SpecializationSelection, Spell, TerrainKnowledgeSelection } from '../../types/wiki';
-import { getSelectOptionName } from '../../utils/selectionUtils';
+import { getSelectOptionName } from '../../utils/activatable/selectionUtils';
 import { sortObjects, sortStrings } from '../../utils/FilterSortUtils';
 import { translate } from '../../utils/I18n';
 import { getNumericId } from '../../utils/IDUtils';
-import { isRaceRequirement, isRequiringIncreasable, isSexRequirement } from '../../utils/prerequisitesUtils';
+import { isRaceRequirement, isRequiringIncreasable, isSexRequirement } from '../../utils/prerequisites/prerequisitesUtils';
 import { isRemoveCombatTechniquesSelection, isRemoveSpecializationSelection } from '../../utils/WikiUtils';
 import { WikiSource } from './elements/WikiSource';
 import { WikiBoxTemplate } from './WikiBoxTemplate';

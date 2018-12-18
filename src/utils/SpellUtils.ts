@@ -2,11 +2,11 @@ import * as R from 'ramda';
 import * as Data from '../types/data';
 import * as View from '../types/view';
 import * as Wiki from '../types/wiki';
+import { getActiveSelections } from './activatable/selectionUtils';
 import { getSkillCheckValues } from './AttributeUtils';
 import { Just, List, Maybe, OrderedMap, Record } from './dataUtils';
-import { flattenDependencies } from './flattenDependencies';
+import { flattenDependencies } from './dependencies/flattenDependencies';
 import { getNumericMagicalTraditionIdByInstanceId } from './IDUtils';
-import { getActiveSelections } from './selectionUtils';
 import { getExceptionalSkillBonus } from './skillUtils';
 import { isNumber } from './typeCheckUtils';
 

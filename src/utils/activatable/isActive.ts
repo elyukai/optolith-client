@@ -1,4 +1,4 @@
-import { ActivatableDependent } from '../types/data';
+import { ActivatableDependent } from '../../types/data';
 import { Maybe, Record } from './dataUtils';
 
 /**

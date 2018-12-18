@@ -2,10 +2,10 @@ import { remote } from 'electron';
 import * as fs from 'fs';
 import * as path from 'path';
 import { lt, lte, satisfies } from 'semver';
-import { ActiveObject } from '../types/data';
-import { RawHero } from '../types/rawdata';
+import { ActiveObject } from '../../types/data';
+import { RawHero } from '../../types/rawdata';
+import { getBlessedTraditionInstanceIdByNumericId, getMagicalTraditionInstanceIdByNumericId } from '../IDUtils';
 import { StringKeyObject } from './dataUtils';
-import { getBlessedTraditionInstanceIdByNumericId, getMagicalTraditionInstanceIdByNumericId } from './IDUtils';
 
 export const currentVersion = JSON.parse (fs.readFileSync (
   path.join (remote.app.getAppPath (), 'package.json'),

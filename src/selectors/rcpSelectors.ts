@@ -4,14 +4,14 @@ import { CultureCombined, IncreasableView, MappedProfession, MappedProfessionVar
 import { Culture, IncreaseSkill, Profession, ProfessionVariant, Race, RaceVariant } from '../types/wiki';
 import { getNameCostForWiki } from '../utils/activatable/activatableActiveUtils';
 import { convertPerTierCostToFinalCost } from '../utils/adventurePoints/activatableCostUtils';
-import { isProfessionRequiringActivatable, isProfessionRequiringIncreasable } from '../utils/checkPrerequisiteUtils';
 import { createMaybeSelector } from '../utils/createMaybeSelector';
 import { Just, List, ListElement, Maybe, OrderedMap, OrderedSet, Record } from '../utils/dataUtils';
 import { AllSortOptions, filterAndSortObjects, FilterOptions } from '../utils/FilterSortUtils';
 import { getCategoryById } from '../utils/IDUtils';
+import { isProfessionRequiringActivatable, isProfessionRequiringIncreasable } from '../utils/prerequisites/checkPrerequisiteUtils';
+import { validateProfession } from '../utils/prerequisites/validatePrerequisitesUtils';
 import { getFullProfessionName } from '../utils/rcpUtils';
 import { filterByAvailability, isEntryFromCoreBook } from '../utils/RulesUtils';
-import { validateProfession } from '../utils/validatePrerequisitesUtils';
 import { isCombatTechniquesSelection } from '../utils/WikiUtils';
 import { getStartEl } from './elSelectors';
 import { getRuleBooksEnabled } from './rulesSelectors';

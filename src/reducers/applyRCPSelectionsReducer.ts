@@ -6,14 +6,14 @@ import * as Data from '../types/data';
 import * as Wiki from '../types/wiki';
 import { getCombinedPrerequisites } from '../utils/activatable/activatableActivationUtils';
 import { getActiveObjectCore } from '../utils/activatable/activatableConvertUtils';
-import { isProfessionRequiringIncreasable } from '../utils/checkPrerequisiteUtils';
+import { addAllStyleRelatedDependencies } from '../utils/activatable/ExtendedStyleUtils';
 import { createActivatableDependent, createActivatableDependentSkill } from '../utils/createEntryUtils';
 import { Just, List, Maybe, OrderedMap, OrderedSet, Record, Tuple } from '../utils/dataUtils';
 import { addDependencies } from '../utils/dependencies/dependencyUtils';
-import { addAllStyleRelatedDependencies } from '../utils/ExtendedStyleUtils';
 import { flip } from '../utils/flip';
 import { adjustHeroListStateItemOr, adjustHeroListStateItemWithDefault, getHeroStateListItem } from '../utils/heroStateUtils';
 import { ifElse } from '../utils/ifElse';
+import { isProfessionRequiringIncreasable } from '../utils/prerequisites/checkPrerequisiteUtils';
 import { getWikiEntry } from '../utils/WikiUtils';
 
 type Action = SetSelectionsAction;

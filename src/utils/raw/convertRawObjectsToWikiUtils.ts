@@ -1,10 +1,10 @@
 import * as R from 'ramda';
-import * as Categories from '../constants/Categories';
-import { IdPrefixes } from '../constants/IdPrefixes';
-import * as Raw from '../types/rawdata';
-import * as Wiki from '../types/wiki';
+import * as Categories from '../../constants/Categories';
+import { IdPrefixes } from '../../constants/IdPrefixes';
+import * as Raw from '../../types/rawdata';
+import * as Wiki from '../../types/wiki';
+import { getCategoryById, getRawStringId } from '../IDUtils';
 import { Just, List, Maybe, Nothing, Record, Tuple } from './dataUtils';
-import { getCategoryById, getRawStringId } from './IDUtils';
 
 const isRawSexRequirement =
   (req: Raw.AllRawRequirementObjects): req is Raw.RawSexRequirement =>

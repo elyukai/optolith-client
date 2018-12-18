@@ -1,6 +1,6 @@
+import { isActive } from '../utils/activatable/isActive';
 import { createMaybeSelector } from '../utils/createMaybeSelector';
 import { Just, OrderedSet } from '../utils/dataUtils';
-import { isActive } from '../utils/isActive';
 import { mapGetToMaybeSlice } from '../utils/SelectorsUtils';
 import { getAreAllRuleBooksEnabled, getEnabledRuleBooks, getSpecialAbilities } from './stateSelectors';
 

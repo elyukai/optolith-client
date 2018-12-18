@@ -1,8 +1,8 @@
 import * as R from 'ramda';
-import * as Categories from '../constants/Categories';
-import * as Wiki from '../types/wiki';
+import * as Categories from '../../constants/Categories';
+import * as Wiki from '../../types/wiki';
+import { getCategoryById } from '../IDUtils';
 import { List, Maybe, Record } from './dataUtils';
-import { getCategoryById } from './IDUtils';
 
 export const isSexRequirement =
   (req: Wiki.AllRequirementObjects): req is Record<Wiki.SexRequirement> =>

@@ -1,10 +1,10 @@
 import * as R from 'ramda';
 import { ActivatableDependent } from '../types/data';
+import { getBlessedTradition, getMagicalTraditions } from './activatable/traditionUtils';
 import { Just, List, Maybe, Nothing, OrderedMap, Record } from './dataUtils';
 import { flip } from './flip';
 import * as IDUtils from './IDUtils';
 import { match } from './match';
-import { getBlessedTradition, getMagicalTraditions } from './traditionUtils';
 
 const getAttributeIdByMagicalNumericId = Maybe.bind_ (
   (id: number) => match<number, Maybe<string>> (id)

@@ -1,4 +1,4 @@
-import { Pact } from '../types/data';
+import { Pact } from '../../types/data';
 import { Record } from './dataUtils';
 
 export const isPactValid = (pact: Record<Pact>) => {

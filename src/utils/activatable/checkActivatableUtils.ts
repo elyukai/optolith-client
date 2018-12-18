@@ -1,8 +1,8 @@
-import * as Data from '../types/data';
-import { Activatable, AllRequirements } from '../types/wiki';
-import { isRequiringActivatable } from './checkPrerequisiteUtils';
+import * as Data from '../../types/data';
+import { Activatable, AllRequirements } from '../../types/wiki';
+import { isRequiringActivatable } from '../prerequisites/checkPrerequisiteUtils';
+import { getFirstTierPrerequisites } from '../prerequisites/flattenPrerequisites';
 import { Record } from './dataUtils';
-import { getFirstTierPrerequisites } from './flattenPrerequisites';
 
 const getMagicalOrBlessedFilter =
   (advantageId: 'ADV_12' | 'ADV_50') =>

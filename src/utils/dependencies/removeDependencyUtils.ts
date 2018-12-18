@@ -1,17 +1,17 @@
 import { pipe } from 'ramda';
 import * as Data from '../../types/data';
+import { ActivatableDependentL } from '../activeEntries/activatableDependent';
+import { ActivatableSkillDependentL } from '../activeEntries/activatableSkillDependent';
+import { AttributeDependentL } from '../activeEntries/attributeDependent';
+import { isActivatableDependent, isActivatableSkillDependent, isAttributeDependent, isSkillDependent } from '../activeEntries/checkEntryUtils';
+import { SkillDependentL } from '../activeEntries/skillDependent';
+import * as UnusedEntryUtils from '../activeEntries/unusedEntryUtils';
 import { getHeroStateListItem, removeHeroListStateItem, setHeroListStateItem } from '../heroStateUtils';
 import { join } from '../structures/combinators';
 import { over, view } from '../structures/Lens';
 import { deleteAt, elemIndex, ListElement } from '../structures/List';
 import { fromMaybe, Maybe } from '../structures/Maybe';
 import { Record, RecordInterface } from '../structures/Record';
-import * as UnusedEntryUtils from '../unusedEntryUtils';
-import { ActivatableDependentL } from './activatableDependent';
-import { ActivatableSkillDependentL } from './activatableSkillDependent';
-import { AttributeDependentL } from './attributeDependent';
-import { isActivatableDependent, isActivatableSkillDependent, isAttributeDependent, isSkillDependent } from './checkEntryUtils';
-import { SkillDependentL } from './skillDependent';
 
 type Deps<T extends Data.Dependent> = RecordInterface<T>['dependencies'];
 type Dep<T extends Data.Dependent> = ListElement<Deps<T>>;
