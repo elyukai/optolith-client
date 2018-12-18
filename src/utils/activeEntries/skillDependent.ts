@@ -1,7 +1,8 @@
 import { add, pipe } from 'ramda';
-import { SkillDependency, SkillDependent } from '../../types/data';
-import { fromElements } from '../structures/List';
-import { fromDefault, makeGetters, makeLenses_, Omit, Record } from '../structures/Record';
+import { Dependent, ExtendedSkillDependent, SkillDependency, SkillDependent } from '../../types/data';
+import { fnull, fromElements } from '../structures/List';
+import { fromJust, isJust, Just, Maybe } from '../structures/Maybe';
+import { fromDefault, makeGetters, makeLenses_, member, notMember, Omit, Record } from '../structures/Record';
 
 const SkillDependentCreator =
   fromDefault<SkillDependent> ({
@@ -21,8 +22,33 @@ export const createSkillDependent =
 
 export const createPlainSkillDependent = createSkillDependent ({})
 
-export const createSkillDependentWithValue = (value: number) => createSkillDependent ({ value })
+export const createSkillDependentWithValue = (x: number) => createSkillDependent ({ value: x })
 
 export const createDependentSkillWithBaseValue6 = pipe (add (6), createSkillDependentWithValue)
 
 export const createDependentSkillWithValue6 = createSkillDependent ({ value: 6 })
+
+export const isMaybeSkillDependent =
+  (entry: Maybe<Dependent>): entry is Just<Record<SkillDependent>> =>
+    isJust (entry)
+    && member ('value') (fromJust (entry))
+    && notMember ('mod') (fromJust (entry))
+    && notMember ('active') (fromJust (entry))
+
+export const isSkillDependent =
+  (entry: Dependent): entry is Record<SkillDependent> =>
+    member ('value') (entry)
+    && notMember ('mod') (entry)
+    && notMember ('active') (entry)
+
+export const isExtendedSkillDependent =
+  (entry: Dependent): entry is ExtendedSkillDependent =>
+    member ('value') (entry)
+    && notMember ('mod') (entry)
+
+const { value, dependencies } = SkillDependentG
+
+export const isDependentSkillUnused =
+  (entry: Record<SkillDependent>): boolean =>
+    value (entry) === 0
+    && fnull (dependencies (entry))

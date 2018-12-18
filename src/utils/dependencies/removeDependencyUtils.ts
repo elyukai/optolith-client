@@ -1,11 +1,9 @@
 import { pipe } from 'ramda';
 import * as Data from '../../types/data';
-import { ActivatableDependentL } from '../activeEntries/activatableDependent';
+import { ActivatableDependentL, isActivatableDependent } from '../activeEntries/activatableDependent';
 import { ActivatableSkillDependentL } from '../activeEntries/activatableSkillDependent';
-import { AttributeDependentL } from '../activeEntries/attributeDependent';
-import { isActivatableDependent, isActivatableSkillDependent, isAttributeDependent, isSkillDependent } from '../activeEntries/checkEntryUtils';
-import { SkillDependentL } from '../activeEntries/skillDependent';
-import * as UnusedEntryUtils from '../activeEntries/unusedEntryUtils';
+import { AttributeDependentL, isAttributeDependent } from '../activeEntries/attributeDependent';
+import { isSkillDependent, SkillDependentL } from '../activeEntries/skillDependent';
 import { getHeroStateListItem, removeHeroListStateItem, setHeroListStateItem } from '../heroStateUtils';
 import { join } from '../structures/combinators';
 import { over, view } from '../structures/Lens';
@@ -60,7 +58,7 @@ const removeDependency =
                   over (ActivatableSkillDependentL.dependencies)
                 ))
                 (obj)
-  };
+  }
 
 const adjustOrRemove =
   <T extends Data.Dependent>(isUnused: (entry: T) => boolean) =>
