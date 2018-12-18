@@ -1,6 +1,6 @@
 import { ActivatableDependent, ActivatableSkillDependent, AttributeDependent, Dependent, ExtendedSkillDependent, SkillDependent } from '../../types/data';
-import { fromJust, isJust, Just, Maybe } from '../structures/Maybe.new';
-import { member, notMember, Record } from '../structures/Record.new';
+import { fromJust, isJust, Just, Maybe } from '../structures/Maybe';
+import { member, notMember, Record } from '../structures/Record';
 
 export const isMaybeActivatableDependent =
   (entry: Maybe<Dependent>): entry is Just<Record<ActivatableDependent>> =>

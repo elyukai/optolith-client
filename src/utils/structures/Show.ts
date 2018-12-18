@@ -7,12 +7,12 @@
  */
 
 import { isEither, isRight } from './Either';
-import { isList } from './List.new';
-import { isJust, isMaybe } from './Maybe.new';
-import { isOrderedMap } from './OrderedMap.new';
-import { isOrderedSet } from './OrderedSet.new';
+import { isList } from './List';
+import { isJust, isMaybe } from './Maybe';
+import { isOrderedMap } from './OrderedMap';
+import { isOrderedSet } from './OrderedSet';
 import { isPair } from './Pair';
-import { isRecord } from './Record.new';
+import { isRecord } from './Record';
 
 /**
  * `show :: a -> String`

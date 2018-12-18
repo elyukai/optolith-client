@@ -1,5 +1,5 @@
-const { fromUniqueElements } = require('../OrderedSet.new');
-const { fromDefault, mergeSafeR2, mergeSafeR3, mergeSafeR4, mergeSafeR5, makeGetters, makeLenses, makeLenses_, member, notMember, toObject, isRecord } = require('../Record.new');
+const { fromUniqueElements } = require('../OrderedSet');
+const { fromDefault, mergeSafeR2, mergeSafeR3, mergeSafeR4, mergeSafeR5, makeGetters, makeLenses, makeLenses_, member, notMember, toObject, isRecord } = require('../Record');
 const { view } = require('../Lens');
 
 // CONSTRUCTOR

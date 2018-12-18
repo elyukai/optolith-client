@@ -13,7 +13,7 @@
  */
 
 import { cnst } from './combinators';
-import { Some } from './Maybe.new';
+import { Some } from './Maybe';
 
 
 // CONSTRUCTOR

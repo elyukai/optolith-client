@@ -9,8 +9,8 @@
 
 import { not, pipe } from 'ramda';
 import { Lens, lens } from './Lens';
-import { Just, Maybe } from './Maybe.new';
-import { foldl, fromArray, OrderedSet } from './OrderedSet.new';
+import { Just, Maybe } from './Maybe';
+import { foldl, fromArray, OrderedSet } from './OrderedSet';
 import { show } from './Show';
 
 

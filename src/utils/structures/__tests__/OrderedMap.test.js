@@ -1,11 +1,11 @@
 const { pipe } = require('ramda');
-const List = require('../List.new');
+const List = require('../List');
 const { id } = require('../combinators');
-const { fromElements } = require('../List.new');
+const { fromElements } = require('../List');
 const { fromBoth, Pair } = require('../Pair');
-const OrderedSet = require('../OrderedSet.new');
-const { fromArray, fromUniquePairs, fromMap, OrderedMap } = require('../OrderedMap.new');
-const { Just, Nothing, Maybe } = require('../Maybe.new');
+const OrderedSet = require('../OrderedSet');
+const { fromArray, fromUniquePairs, fromMap, OrderedMap } = require('../OrderedMap');
+const { Just, Nothing, Maybe } = require('../Maybe');
 
 // CONSTRUCTOR
 

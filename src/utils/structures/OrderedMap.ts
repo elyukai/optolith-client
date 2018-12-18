@@ -11,11 +11,11 @@ import { not, pipe } from 'ramda';
 import { add, multiply } from '../mathUtils';
 import { cnst, id } from './combinators';
 import { equals } from './Eq';
-import { List, mappend } from './List.new';
-import { fromMaybe, fromNullable, Just, Maybe, maybe, maybe_, Some } from './Maybe.new';
-import { fromUniqueElements, OrderedSet } from './OrderedSet.new';
+import { List, mappend } from './List';
+import { fromMaybe, fromNullable, Just, Maybe, maybe, maybe_, Some } from './Maybe';
+import { fromUniqueElements, OrderedSet } from './OrderedSet';
 import { fromBoth, Pair } from './Pair';
-import { StringKeyObject } from './Record.new';
+import { StringKeyObject } from './Record';
 import { show } from './Show';
 
 

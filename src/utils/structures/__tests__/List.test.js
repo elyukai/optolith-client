@@ -1,5 +1,5 @@
-const List = require('../List.new');
-const { Just, Nothing } = require('../Maybe.new');
+const List = require('../List');
+const { Just, Nothing } = require('../Maybe');
 const { OrderedMap } = require('../orderedMap');
 const { Tuple } = require('../tuple');
 

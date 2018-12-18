@@ -1,8 +1,8 @@
 const React = require('react');
-const List = require('../List.new');
+const List = require('../List');
 const { Tuple } = require('../tuple');
 const Either = require('../Either');
-const { Just, Nothing } = require('../Maybe.new');
+const { Just, Nothing } = require('../Maybe');
 const { add } = require('../../mathUtils');
 const { Left, Right } = require('../Either');
 

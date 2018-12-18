@@ -3,7 +3,6 @@ import { Categories } from '../../constants/Categories';
 import * as Data from '../../types/data';
 import * as Wiki from '../../types/wiki';
 import * as CheckPrerequisiteUtils from '../checkPrerequisiteUtils';
-import { List, Maybe, Record } from '../dataUtils';
 import { getCategoryById } from '../IDUtils';
 import { match } from '../match';
 import { getPrimaryAttributeId } from '../primaryAttributeUtils';

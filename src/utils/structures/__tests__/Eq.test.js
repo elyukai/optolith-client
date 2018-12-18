@@ -1,11 +1,11 @@
 const { equals } = require('../Eq');
 const { Left, Right } = require('../Either');
-const { fromElements } = require('../List.new');
+const { fromElements } = require('../List');
 const { fromBoth } = require('../Pair');
-const { fromUniqueElements } = require('../OrderedSet.new');
-const { fromUniquePairs } = require('../OrderedMap.new');
-const { Just, Nothing } = require('../Maybe.new');
-const { fromDefault } = require('../Record.new');
+const { fromUniqueElements } = require('../OrderedSet');
+const { fromUniquePairs } = require('../OrderedMap');
+const { Just, Nothing } = require('../Maybe');
+const { fromDefault } = require('../Record');
 
 test ('Maybe', () => {
   expect (equals (Just (2)) (Just (2))) .toEqual (true)

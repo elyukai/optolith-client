@@ -10,8 +10,8 @@ import { pipe } from 'ramda';
 import { not } from '../not';
 import { cnst, id } from './combinators';
 import { equals } from './Eq';
-import { fromJust, fromNullable, imapMaybe, isJust, Just, Maybe, Nothing, Some } from './Maybe.new';
-import { OrderedMap } from './orderedMap';
+import { fromJust, fromNullable, imapMaybe, isJust, Just, Maybe, Nothing, Some } from './Maybe';
+import { OrderedMap } from './OrderedMap';
 import { fromBoth, fst, Pair, snd } from './Pair';
 import { show } from './Show';
 
@@ -1316,7 +1316,7 @@ export const toArray = <A> (list: List<A>): ReadonlyArray<A> => list .value;
  * in the `Tuple` are the keys and the second values are the actual values.
  */
 export const toMap = <K, V> (list: List<Pair<K, V>>): OrderedMap<K, V> =>
-  OrderedMap.of (list .value .map (Pair.toArray));
+  OrderedMap.fromArray (list .value .map (Pair.toArray));
 
 /**
  * Checks if the given value is a `List`.

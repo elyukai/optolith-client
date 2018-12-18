@@ -1,8 +1,8 @@
 const React = require('react');
-const List = require('../List.new');
-const Maybe = require('../Maybe.new');
+const List = require('../List');
+const Maybe = require('../Maybe');
 const { add } = require('../../mathUtils');
-const { Just, Nothing } = require('../Maybe.new');
+const { Just, Nothing } = require('../Maybe');
 
 // CONSTRUCTORS
 

@@ -1,8 +1,8 @@
-const List = require('../List.new');
-const { fromElements } = require('../List.new');
-const OrderedSet = require('../OrderedSet.new');
-const { fromArray, fromUniqueElements, fromSet } = require('../OrderedSet.new');
-const { Just, Nothing } = require('../Maybe.new');
+const List = require('../List');
+const { fromElements } = require('../List');
+const OrderedSet = require('../OrderedSet');
+const { fromArray, fromUniqueElements, fromSet } = require('../OrderedSet');
+const { Just, Nothing } = require('../Maybe');
 
 // CONSTRUCTOR
 

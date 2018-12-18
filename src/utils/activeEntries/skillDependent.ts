@@ -1,7 +1,7 @@
 import { add, pipe } from 'ramda';
 import { SkillDependency, SkillDependent } from '../../types/data';
-import { fromElements } from '../structures/List.new';
-import { fromDefault, makeGetters, makeLenses_, Omit, Record } from '../structures/Record.new';
+import { fromElements } from '../structures/List';
+import { fromDefault, makeGetters, makeLenses_, Omit, Record } from '../structures/Record';
 
 const SkillDependentCreator =
   fromDefault<SkillDependent> ({

@@ -1,11 +1,11 @@
 import { DCIds } from '../selectors/derivedCharacteristicsSelectors';
 import { TabId } from '../utils/LocationUtils';
-import { List } from '../utils/structures/List.new';
-import { Maybe } from '../utils/structures/Maybe.new';
-import { OrderedMap } from '../utils/structures/OrderedMap.new';
-import { OrderedSet } from '../utils/structures/OrderedSet.new';
+import { List } from '../utils/structures/List';
+import { Maybe } from '../utils/structures/Maybe';
+import { OrderedMap } from '../utils/structures/OrderedMap';
+import { OrderedSet } from '../utils/structures/OrderedSet';
 import { Pair } from '../utils/structures/Pair';
-import { Omit, Record, RecordInterface } from '../utils/structures/Record.new';
+import { Omit, Record, RecordInterface } from '../utils/structures/Record';
 import { UndoState } from '../utils/undo';
 import { AllAction } from './actions';
 import * as Wiki from './wiki';

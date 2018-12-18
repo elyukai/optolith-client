@@ -17,7 +17,7 @@
 import { pipe } from 'ramda';
 import * as Math from '../mathUtils';
 import { cnst, id, T } from './combinators';
-import { cons, cons_, fromElements, head, ifoldr, List } from './List.new';
+import { cons, cons_, fromElements, head, ifoldr, List } from './List';
 
 
 // MAYBE TYPE DEFINITION
