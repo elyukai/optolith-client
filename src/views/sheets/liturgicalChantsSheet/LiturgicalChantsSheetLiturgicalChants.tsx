@@ -4,10 +4,10 @@ import { Textfit } from 'react-textfit';
 import { TextBox } from '../../../components/TextBox';
 import { SecondaryAttribute } from '../../../types/data';
 import { AttributeCombined, LiturgicalChantWithRequirements } from '../../../types/view';
+import { getICName } from '../../../utils/adventurePoints/improvementCostUtils';
 import { Just, List, Maybe, Nothing, Record, Tuple } from '../../../utils/dataUtils';
 import { sortStrings } from '../../../utils/FilterSortUtils';
 import { translate, UIMessagesObject } from '../../../utils/I18n';
-import { getICName } from '../../../utils/improvementCostUtils';
 import { getAttributeStringByIdList } from '../../../utils/sheetUtils';
 
 export interface LiturgicalChantsSheetLiturgicalChantsProps {

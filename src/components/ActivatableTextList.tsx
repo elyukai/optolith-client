@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ActiveViewObject, UIMessagesObject } from '../types/data';
-import { compressList } from '../utils/activatableNameUtils';
+import { compressList } from '../utils/activatable/activatableNameUtils';
 import { List, Record } from '../utils/dataUtils';
 
 interface ActivatableTextListProps {

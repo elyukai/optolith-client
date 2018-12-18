@@ -2,7 +2,7 @@ import * as DisAdvActions from '../actions/DisAdvActions';
 import * as SpecialAbilitiesActions from '../actions/SpecialAbilitiesActions';
 import { ActionTypes } from '../constants/ActionTypes';
 import * as Data from '../types/data';
-import { activate, deactivate, setTier } from '../utils/activatableActivationUtils';
+import { activate, deactivate, setTier } from '../utils/activatable/activatableActivationUtils';
 import { Maybe, Record } from '../utils/dataUtils';
 import * as ExtendedStyleUtils from '../utils/ExtendedStyleUtils';
 import { getHeroStateListItem } from '../utils/heroStateUtils';

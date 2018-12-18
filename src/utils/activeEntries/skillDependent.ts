@@ -1,7 +1,7 @@
 import { add, pipe } from 'ramda';
 import { SkillDependency, SkillDependent } from '../../types/data';
 import { fromElements } from '../structures/List.new';
-import { fromDefault, makeGetters, Omit, Record } from '../structures/Record.new';
+import { fromDefault, makeGetters, makeLenses_, Omit, Record } from '../structures/Record.new';
 
 const SkillDependentCreator =
   fromDefault<SkillDependent> ({
@@ -11,6 +11,8 @@ const SkillDependentCreator =
   })
 
 export const SkillDependentG = makeGetters (SkillDependentCreator)
+
+export const SkillDependentL = makeLenses_ (SkillDependentG) (SkillDependentCreator)
 
 export const createSkillDependent =
   (options: Partial<Omit<SkillDependent, 'id'>>) =>
@@ -23,4 +25,4 @@ export const createSkillDependentWithValue = (value: number) => createSkillDepen
 
 export const createDependentSkillWithBaseValue6 = pipe (add (6), createSkillDependentWithValue)
 
-export const createDependentSkillWithValue6 = createSkillDependent({ value: 6 })
+export const createDependentSkillWithValue6 = createSkillDependent ({ value: 6 })

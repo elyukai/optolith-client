@@ -8,17 +8,17 @@
  */
 
 import * as R from 'ramda';
-import * as Data from '../types/data';
-import * as Wiki from '../types/wiki';
+import * as Data from '../../types/data';
+import * as Wiki from '../../types/wiki';
+import { Just, List, Maybe, Nothing, OrderedMap, Record } from '../dataUtils';
+import { flattenPrerequisites } from '../flattenPrerequisites';
+import { removeHeroListStateItem, setHeroListStateItem } from '../heroStateUtils';
+import { getGeneratedPrerequisites } from '../prerequisitesUtils';
+import { ActivatableReducer, OptionalActivatableReducer } from '../reducerUtils';
+import { isActivatableDependentUnused } from '../unusedEntryUtils';
 import { convertUIStateToActiveObject } from './activatableConvertUtils';
 import { createActivatableDependent } from './createEntryUtils';
-import { Just, List, Maybe, Nothing, OrderedMap, Record } from './dataUtils';
 import * as DependencyUtils from './dependencies/dependencyUtils';
-import { flattenPrerequisites } from './flattenPrerequisites';
-import { removeHeroListStateItem, setHeroListStateItem } from './heroStateUtils';
-import { getGeneratedPrerequisites } from './prerequisitesUtils';
-import { ActivatableReducer, OptionalActivatableReducer } from './reducerUtils';
-import { isActivatableDependentUnused } from './unusedEntryUtils';
 
 export interface ActivatableActivatePayload extends ActivatableActivateOptions {
   wiki: Wiki.WikiActivatable;

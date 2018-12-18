@@ -1,28 +1,65 @@
-import * as R from 'ramda';
+import { pipe } from 'ramda';
 import * as Data from '../../types/data';
-import { List, ListElement, Maybe, Record, RecordInterface } from '../dataUtils';
 import { getHeroStateListItem, removeHeroListStateItem, setHeroListStateItem } from '../heroStateUtils';
+import { join } from '../structures/combinators';
+import { over, view } from '../structures/Lens';
+import { deleteAt, elemIndex, ListElement } from '../structures/List.new';
+import { fromMaybe, Maybe } from '../structures/Maybe.new';
+import { Record, RecordInterface } from '../structures/Record.new';
 import * as UnusedEntryUtils from '../unusedEntryUtils';
-import { ActivatableDependentG } from './activatableDependent';
-import { isActivatableSkillDependent } from './checkEntryUtils';
+import { ActivatableDependentL } from './activatableDependent';
+import { ActivatableSkillDependentL } from './activatableSkillDependent';
+import { AttributeDependentL } from './attributeDependent';
+import { isActivatableDependent, isActivatableSkillDependent, isAttributeDependent, isSkillDependent } from './checkEntryUtils';
+import { SkillDependentL } from './skillDependent';
 
 type Deps<T extends Data.Dependent> = RecordInterface<T>['dependencies'];
 type Dep<T extends Data.Dependent> = ListElement<Deps<T>>;
 
-const getDependencies = <T extends Data.Dependent>(obj: T) =>
-  obj.get ('dependencies') as Deps<T>;
+const removeDependency =
+  (e: ListElement<RecordInterface<Data.Dependent>['dependencies']>) =>
+  (obj: Data.Dependent): Data.Dependent => {
+    if (isAttributeDependent (obj)) {
+      return join (pipe (
+                    view (AttributeDependentL.dependencies),
+                    elemIndex (e as Data.SkillDependency),
+                    fromMaybe (-1),
+                    deleteAt,
+                    over (AttributeDependentL.dependencies)
+                  ))
+                  (obj)
+    }
 
-const getDependencyIndex = <T extends Data.Dependent>(e: Dep<T>) =>
-  (list: Deps<T>) => (list as List<any>).findIndex (R.equals (e));
+    if (isActivatableDependent (obj)) {
+      return join (pipe (
+                    view (ActivatableDependentL.dependencies),
+                    elemIndex (e as Data.ActivatableDependency),
+                    fromMaybe (-1),
+                    deleteAt,
+                    over (ActivatableDependentL.dependencies)
+                  ))
+                  (obj)
+    }
 
-const removeDependency = <T extends Data.Dependent>(e: Dep<T>) =>
-  (obj: T): T => {
-    const list = ActivatableDependentG.dependencies (obj);
+    if (isSkillDependent (obj)) {
+      return join (pipe (
+                    view (SkillDependentL.dependencies),
+                    elemIndex (e as Data.SkillDependency),
+                    fromMaybe (-1),
+                    deleteAt,
+                    over (SkillDependentL.dependencies)
+                  ))
+                  (obj)
+    }
 
-    const index = Maybe.fromMaybe (-1) (getDependencyIndex (e) (list));
-
-    return (obj as any).modify ((dependencies: List<any>) => dependencies.deleteAt (index))
-                               ('dependencies');
+    return join (pipe (
+                  view (ActivatableSkillDependentL.dependencies),
+                  elemIndex (e as Data.ExtendedSkillDependency),
+                  fromMaybe (-1),
+                  deleteAt,
+                  over (ActivatableSkillDependentL.dependencies)
+                ))
+                (obj)
   };
 
 const adjustOrRemove =

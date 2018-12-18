@@ -9,15 +9,15 @@
  */
 
 import { isNumber, isString } from 'util';
-import * as Data from '../types/data';
-import * as Wiki from '../types/wiki';
-import { List, Maybe, OrderedMap, Record } from './dataUtils';
-import { sortStrings } from './FilterSortUtils';
-import { translate } from './I18n';
-import { match } from './match';
-import { getRoman } from './NumberUtils';
-import { findSelectOption, getSelectOptionName } from './selectionUtils';
-import { getWikiEntry } from './WikiUtils';
+import * as Data from '../../types/data';
+import * as Wiki from '../../types/wiki';
+import { List, Maybe, OrderedMap, Record } from '../dataUtils';
+import { sortStrings } from '../FilterSortUtils';
+import { translate } from '../I18n';
+import { match } from '../match';
+import { getRoman } from '../NumberUtils';
+import { findSelectOption, getSelectOptionName } from '../selectionUtils';
+import { getWikiEntry } from '../WikiUtils';
 
 /**
  * Returns the name of the given object. If the object is a string, it returns

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Markdown } from '../../components/Markdown';
 import { Attribute, Book, CombatTechnique } from '../../types/wiki';
+import { getICName } from '../../utils/adventurePoints/improvementCostUtils';
 import { translate, UIMessages } from '../../utils/I18n';
-import { getICName } from '../../utils/improvementCostUtils';
 import { WikiSource } from './elements/WikiSource';
 import { WikiBoxTemplate } from './WikiBoxTemplate';
 import { WikiProperty } from './WikiProperty';

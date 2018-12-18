@@ -2,7 +2,7 @@ import * as React from 'react';
 import { TextBox } from '../../../components/TextBox';
 import { ActiveViewObject } from '../../../types/data';
 import { SpecialAbility } from '../../../types/wiki';
-import { compressList } from '../../../utils/activatableNameUtils';
+import { compressList } from '../../../utils/activatable/activatableNameUtils';
 import { List, Maybe, Record } from '../../../utils/dataUtils';
 import { translate, UIMessagesObject } from '../../../utils/I18n';
 

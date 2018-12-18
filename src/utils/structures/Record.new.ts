@@ -100,25 +100,78 @@ export const fromDefault =
 
 // MERGING RECORDS
 
+const mergeSafe = <A extends RecordBase> (x: Partial<A>) => (r: Record<A>): Record<A> =>
+  _Record<A> (r .keys)
+             (r .defaultValues)
+             (foldl<string, A> (acc => key => ({
+                                 ...acc,
+                                 // tslint:disable-next-line: strict-type-predicates
+                                 [key]: x [key] === null || x [key] === undefined
+                                   ? r .values [key]
+                                   : x [key],
+                               }))
+                               ({} as A)
+                               (r .keys))
+
 /**
- * `mergeSafe :: Record r => r a -> r a -> r a`
+ * `mergeSafeR2 :: Record r => r a -> r a -> r a`
  *
- * `mergeSafe x r` inserts properties from `x` in `r` that are part of `r`. It
- * ignores all other properties in `x`. Returns the updated `Record`.
+ * `mergeSafeR2 x r` inserts properties from the passed records into `r`
+ * that are part of `r`. It ignores all other properties in the other passed
+ * records. Processes passed records in reverse order, so that `x` is being
+ * merged into `r`. Returns the updated `Record`.
  */
-export const mergeSafe =
-  <A extends RecordBase>(x: Record<Partial<A>>) => (r: Record<A>): Record<A> =>
-    _Record<A> (r .keys)
-               (r .defaultValues)
-               (foldl<string, A> (acc => key => ({
-                                    ...acc,
-                                    // tslint:disable-next-line: strict-type-predicates
-                                    [key]: x .values [key] === null || x .values [key] === undefined
-                                      ? r .values [key]
-                                      : x .values [key],
-                                  }))
-                                  ({} as A)
-                                  (r .keys))
+export const mergeSafeR2 =
+  <A extends RecordBase> (x: Record<Partial<A>>) => (r: Record<A>): Record<A> =>
+    mergeSafe<A> (x .values) (r)
+
+/**
+ * `mergeSafeR3 :: Record r => r a -> r a -> r a -> r a`
+ *
+ * `mergeSafeR3 x2 x1 r` inserts properties from the passed records into `r`
+ * that are part of `r`. It ignores all other properties in the other passed
+ * records. Processes passed records in reverse order, so that `x1` is being
+ * merged into `r` and so on. Returns the updated `Record`.
+ */
+export const mergeSafeR3 =
+  <A extends RecordBase>
+  (x2: Record<Partial<A>>) =>
+  (x1: Record<Partial<A>>) =>
+  (r: Record<A>): Record<A> =>
+    mergeSafe<A> ({ ...x1 .values, ...x2 .values }) (r)
+
+/**
+ * `mergeSafeR4 :: Record r => r a -> r a -> r a -> r a -> r a`
+ *
+ * `mergeSafeR4 x3 x2 x1 r` inserts properties from the passed records into `r`
+ * that are part of `r`. It ignores all other properties in the other passed
+ * records. Processes passed records in reverse order, so that `x1` is being
+ * merged into `r` and so on. Returns the updated `Record`.
+ */
+export const mergeSafeR4 =
+  <A extends RecordBase>
+  (x3: Record<Partial<A>>) =>
+  (x2: Record<Partial<A>>) =>
+  (x1: Record<Partial<A>>) =>
+  (r: Record<A>): Record<A> =>
+    mergeSafe<A> ({ ...x1 .values, ...x2 .values, ...x3 .values }) (r)
+
+/**
+ * `mergeSafeR5 :: Record r => r a -> r a -> r a -> r a -> r a -> r a`
+ *
+ * `mergeSafeR5 x4 x3 x2 x1 r` inserts properties from the passed records into
+ * `r` that are part of `r`. It ignores all other properties in the other passed
+ * records. Processes passed records in reverse order, so that `x1` is being
+ * merged into `r` and so on. Returns the updated `Record`.
+ */
+export const mergeSafeR5 =
+  <A extends RecordBase>
+  (x4: Record<Partial<A>>) =>
+  (x3: Record<Partial<A>>) =>
+  (x2: Record<Partial<A>>) =>
+  (x1: Record<Partial<A>>) =>
+  (r: Record<A>): Record<A> =>
+    mergeSafe<A> ({ ...x1 .values, ...x2 .values, ...x3 .values, ...x4 .values }) (r)
 
 
 // CUSTOM FUNCTIONS
@@ -225,7 +278,7 @@ export const isRecord =
 export const Record = {
   fromDefault,
 
-  mergeSafe,
+  mergeSafe: mergeSafeR2,
 
   makeGetters,
   makeLenses,
@@ -246,7 +299,7 @@ type Getters<A extends RecordBase> = {
 }
 
 type Lenses<A extends RecordBase> = {
-  [K in keyof A]: Lens<A, A[K]>;
+  [K in keyof A]: Lens<Record<A>, A[K]>;
 }
 
 export interface UnsafeStringKeyObject<V> {

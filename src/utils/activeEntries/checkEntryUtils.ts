@@ -14,27 +14,43 @@ export const isMaybeActivatableSkillDependent =
     && member ('value') (fromJust (entry))
     && member ('active') (fromJust (entry))
 
-export const isMaybeSkillDependentSkill =
+export const isMaybeSkillDependent =
   (entry: Maybe<Dependent>): entry is Just<Record<SkillDependent>> =>
     isJust (entry)
     && member ('value') (fromJust (entry))
     && notMember ('mod') (fromJust (entry))
     && notMember ('active') (fromJust (entry))
 
-export const isMaybeAttributeDependentSkill =
+export const isMaybeAttributeDependent =
   (entry: Maybe<Dependent>): entry is Just<Record<AttributeDependent>> =>
     isJust (entry)
     && member ('value') (fromJust (entry))
     && member ('mod') (fromJust (entry))
     && notMember ('active') (fromJust (entry))
 
-export const isDependentSkill =
+export const isActivatableDependent =
+  (entry: Dependent): entry is Record<ActivatableDependent> =>
+    member ('active') (entry)
+    && notMember ('value') (entry)
+
+export const isActivatableSkillDependent =
+  (entry: Dependent): entry is Record<ActivatableSkillDependent> =>
+    member ('value') (entry)
+    && member ('active') (entry)
+
+export const isAttributeDependent =
+  (entry: Dependent): entry is Record<AttributeDependent> =>
+    member ('value') (entry)
+    && member ('mod') (entry)
+    && notMember ('active') (entry)
+
+export const isSkillDependent =
   (entry: Dependent): entry is Record<SkillDependent> =>
     member ('value') (entry)
     && notMember ('mod') (entry)
     && notMember ('active') (entry)
 
-export const isDependentSkillExtended =
+export const isExtendedSkillDependent =
   (entry: Dependent): entry is ExtendedSkillDependent =>
     member ('value') (entry)
     && notMember ('mod') (entry)

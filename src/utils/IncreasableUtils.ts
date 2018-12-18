@@ -2,9 +2,9 @@ import * as R from 'ramda';
 import { Categories, IncreasableCategory } from '../constants/Categories';
 import { ValueBasedDependent } from '../types/data';
 import { IncreasableEntry } from '../types/wiki';
-import { getAreSufficientAPAvailable } from './adventurePointsUtils';
+import { getAreSufficientAPAvailable } from './adventurePoints/adventurePointsUtils';
+import { getIncreaseAP } from './adventurePoints/improvementCostUtils';
 import { Just, Maybe, Record } from './dataUtils';
-import { getIncreaseAP } from './improvementCostUtils';
 import { isAttribute } from './WikiUtils';
 
 export const set =

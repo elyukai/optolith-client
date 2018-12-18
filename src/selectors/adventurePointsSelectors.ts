@@ -1,10 +1,10 @@
 import * as R from 'ramda';
 import { ActiveViewObject, HeroDependent } from '../types/data';
 import { ExperienceLevel } from '../types/wiki';
-import { getAdventurePointsSpentDifference, getDisAdvantagesSubtypeMax } from '../utils/adventurePointsUtils';
+import { getAdventurePointsSpentDifference, getDisAdvantagesSubtypeMax } from '../utils/adventurePoints/adventurePointsUtils';
+import { getAPRange } from '../utils/adventurePoints/improvementCostUtils';
 import { createMaybeSelector } from '../utils/createMaybeSelector';
 import { List, Maybe, OrderedSet, Record } from '../utils/dataUtils';
-import { getAPRange } from '../utils/improvementCostUtils';
 import { getAdvantagesForEdit, getDisadvantagesForEdit, getSpecialAbilitiesForEdit } from './activatableSelectors';
 import { getStartEl } from './elSelectors';
 import { getCurrentProfession, getCurrentProfessionVariant, getCurrentRace } from './rcpSelectors';

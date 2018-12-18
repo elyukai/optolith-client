@@ -6,8 +6,8 @@
  * @since 1.1.0
  */
 
-import * as Data from '../types/data';
-import { Maybe, OrderedMap, Record } from './dataUtils';
+import * as Data from '../../types/data';
+import { Maybe, OrderedMap, Record } from '../dataUtils';
 
 export const getActiveSkillEntries = (
   state: Record<Data.HeroDependent>,

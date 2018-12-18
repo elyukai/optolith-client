@@ -1,10 +1,10 @@
 import * as R from 'ramda';
 import * as React from 'react';
 import { AttributeCombined, SkillCombined } from '../../../types/view';
+import { getICName } from '../../../utils/adventurePoints/improvementCostUtils';
 import { List, Maybe, Record, Tuple } from '../../../utils/dataUtils';
 import { sortObjects } from '../../../utils/FilterSortUtils';
 import { translate, UIMessagesObject } from '../../../utils/I18n';
-import { getICName } from '../../../utils/improvementCostUtils';
 import { sign } from '../../../utils/NumberUtils';
 import { getRoutineValue } from '../../../utils/skillUtils';
 

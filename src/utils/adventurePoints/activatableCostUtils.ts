@@ -9,20 +9,20 @@
  */
 
 import { add, inc, lt, negate, pipe } from 'ramda';
-import { ActivatableCategory, Categories } from '../constants/Categories';
-import * as Data from '../types/data';
-import * as Wiki from '../types/wiki';
-import { Just, List, Maybe, OrderedMap, Record } from './dataUtils';
-import { getHeroStateListItem } from './heroStateUtils';
-import { translate } from './I18n';
-import { getCategoryById } from './IDUtils';
-import { isActive } from './isActive';
-import { match } from './match';
-import { multiply, subtractBy } from './mathUtils';
-import { getRoman } from './NumberUtils';
-import { getSelectOptionCost } from './selectionUtils';
-import { isString } from './typeCheckUtils';
-import { getWikiEntry } from './WikiUtils';
+import { ActivatableCategory, Categories } from '../../constants/Categories';
+import * as Data from '../../types/data';
+import * as Wiki from '../../types/wiki';
+import { Just, List, Maybe, OrderedMap, Record } from '../dataUtils';
+import { getHeroStateListItem } from '../heroStateUtils';
+import { translate } from '../I18n';
+import { getCategoryById } from '../IDUtils';
+import { isActive } from '../isActive';
+import { match } from '../match';
+import { multiply, subtractBy } from '../mathUtils';
+import { getRoman } from '../NumberUtils';
+import { getSelectOptionCost } from '../selectionUtils';
+import { isString } from '../typeCheckUtils';
+import { getWikiEntry } from '../WikiUtils';
 
 const isDisadvantageActive =
   (id: string, state: Maybe<Record<Data.HeroDependent>>) =>

@@ -57,3 +57,13 @@ test('lte', () => {
   expect (Math.lte (3) (3)) .toEqual (true);
   expect (Math.lte (3) (1)) .toEqual (true);
 });
+
+test('min', () => {
+  expect (Math.min (3) (5)) .toEqual (3);
+  expect (Math.min (6) (5)) .toEqual (5);
+});
+
+test('max', () => {
+  expect (Math.max (3) (5)) .toEqual (5);
+  expect (Math.max (6) (5)) .toEqual (6);
+});

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ActivatableAddListItemContainer } from '../containers/InactiveActivatableContainer';
 import { ActivateArgs, ActiveViewObject, DeactiveViewObject, EntryRating, UIMessagesObject } from '../types/data';
-import { getFullName } from '../utils/activatableNameUtils';
+import { getFullName } from '../utils/activatable/activatableNameUtils';
 import { isActiveViewObject } from '../utils/checkActivatableUtils';
 import { List, Maybe, OrderedMap, Record } from '../utils/dataUtils';
 import { isRated } from '../utils/ratingUtils';

@@ -1,6 +1,6 @@
 import { ActivatableSkillDependent, ExtendedSkillDependency } from '../../types/data';
 import { fromElements } from '../structures/List.new';
-import { fromDefault, makeGetters, Omit, Record } from '../structures/Record.new';
+import { fromDefault, makeGetters, makeLenses_, Omit, Record } from '../structures/Record.new';
 
 const ActivatableSkillDependentCreator =
   fromDefault<ActivatableSkillDependent> ({
@@ -11,6 +11,9 @@ const ActivatableSkillDependentCreator =
   })
 
 export const ActivatableSkillDependentG = makeGetters (ActivatableSkillDependentCreator)
+
+export const ActivatableSkillDependentL = makeLenses_ (ActivatableSkillDependentG)
+                                                      (ActivatableSkillDependentCreator)
 
 const createActivatableSkillDependent =
   (options: Partial<Omit<ActivatableSkillDependent, 'id'>>) =>

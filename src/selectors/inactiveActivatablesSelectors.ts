@@ -1,8 +1,8 @@
 import { ActivatableCategory, Categories } from '../constants/Categories';
 import * as Data from '../types/data';
 import { Advantage, Disadvantage, SpecialAbility, WikiEntryRecordByCategory } from '../types/wiki';
-import { getActivatableStateSliceByCategory } from '../utils/activatableActiveUtils';
-import { getInactiveView } from '../utils/activatableInactiveUtils';
+import { getActivatableStateSliceByCategory } from '../utils/activatable/activatableActiveUtils';
+import { getInactiveView } from '../utils/activatable/activatableInactiveUtils';
 import { createMaybeSelector } from '../utils/createMaybeSelector';
 import { List, Maybe, MaybeContent, Record } from '../utils/dataUtils';
 import { getAllAvailableExtendedSpecialAbilities } from '../utils/ExtendedStyleUtils';

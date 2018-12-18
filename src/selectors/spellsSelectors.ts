@@ -2,7 +2,7 @@ import * as R from 'ramda';
 import { ActivatableDependent, ActivatableSkillDependent } from '../types/data';
 import { CantripCombined, SpellIsActive, SpellWithRequirements } from '../types/view';
 import { ExperienceLevel, Spell } from '../types/wiki';
-import { getModifierByActiveLevel } from '../utils/activatableModifierUtils';
+import { getModifierByActiveLevel } from '../utils/activatable/activatableModifierUtils';
 import { createMaybeSelector } from '../utils/createMaybeSelector';
 import { Just, List, Maybe, OrderedMap, Record, Tuple } from '../utils/dataUtils';
 import { AllSortOptions, filterAndSortObjects, sortObjects } from '../utils/FilterSortUtils';

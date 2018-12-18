@@ -1,6 +1,6 @@
 import { AttributeDependent, SkillDependency } from '../../types/data';
 import { fromElements } from '../structures/List.new';
-import { fromDefault, makeGetters, Omit, Record } from '../structures/Record.new';
+import { fromDefault, makeGetters, makeLenses_, Omit, Record } from '../structures/Record.new';
 
 const AttributeDependentCreator =
   fromDefault<AttributeDependent> ({
@@ -11,6 +11,8 @@ const AttributeDependentCreator =
   })
 
 export const AttributeDependentG = makeGetters (AttributeDependentCreator)
+
+export const AttributeDependentL = makeLenses_ (AttributeDependentG) (AttributeDependentCreator)
 
 export const createAttributeDependent =
   (options: Partial<Omit<AttributeDependent, 'id'>>) =>

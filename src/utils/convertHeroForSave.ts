@@ -2,7 +2,7 @@ import * as R from 'ramda';
 import * as Data from '../types/data';
 import * as Raw from '../types/rawdata';
 import { WikiAll } from '../types/wiki';
-import { getAPObject } from './adventurePointsSumUtils';
+import { getAPObject } from './adventurePoints/adventurePointsSumUtils';
 import { List, Maybe, OrderedMap, OrderedMapValueElement, Record, StringKeyObject } from './dataUtils';
 import { HeroStateMapKey } from './heroStateUtils';
 import { UndoState } from './undo';

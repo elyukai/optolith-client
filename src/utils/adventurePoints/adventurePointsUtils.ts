@@ -1,12 +1,12 @@
 import * as R from 'ramda';
 import { isNumber, isString } from 'util';
-import { AdventurePointsObject } from '../selectors/adventurePointsSelectors';
-import * as Data from '../types/data';
-import { Disadvantage, Skill, WikiAll } from '../types/wiki';
+import { AdventurePointsObject } from '../../selectors/adventurePointsSelectors';
+import * as Data from '../../types/data';
+import { Disadvantage, Skill, WikiAll } from '../../types/wiki';
+import { Just, List, Maybe, Nothing, OrderedMap, Record, Tuple } from '../dataUtils';
+import { getMagicalTraditions } from '../traditionUtils';
+import { getWikiEntryFromSlice } from '../WikiUtils';
 import { getActiveWithNoCustomCost } from './activatableCostUtils';
-import { Just, List, Maybe, Nothing, OrderedMap, Record, Tuple } from './dataUtils';
-import { getMagicalTraditions } from './traditionUtils';
-import { getWikiEntryFromSlice } from './WikiUtils';
 
 /**
  * Checks if there are enough AP available.

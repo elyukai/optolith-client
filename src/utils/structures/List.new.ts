@@ -888,7 +888,7 @@ export const partition =
  */
 export const elemIndex =
   <A> (x: A) => (xs: List<A>): Maybe<number> => {
-    const res = xs .value .indexOf (x);
+    const res = xs .value .findIndex (equals (x));
 
     return res > -1 ? Just (res) : Nothing;
   };
@@ -903,7 +903,7 @@ export const elemIndices =
   <A> (x: A) => (xs: List<A>): List<number> =>
     fromArray (
       xs .value .reduce<number[]> (
-        (acc, e, index) => e === x ? [...acc, index] : acc,
+        (acc, e, index) => equals (e) (x) ? [...acc, index] : acc,
         []
       )
     );

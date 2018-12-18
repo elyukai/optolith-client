@@ -1,6 +1,6 @@
-import { ActivatableDependent } from '../types/data';
-import { Maybe, Record } from './dataUtils';
-import { isActive } from './isActive';
+import { ActivatableDependent } from '../../types/data';
+import { Maybe, Record } from '../dataUtils';
+import { isActive } from '../isActive';
 
 export const getModifierByActiveLevel =
   (maybeIncrease: Maybe<Record<ActivatableDependent>>) =>

@@ -4,10 +4,10 @@ import { getIsInCharacterCreation } from '../selectors/phaseSelectors';
 import { getAddedArcaneEnergyPoints, getAddedKarmaPoints, getAddedLifePoints, getAttributes, getWikiAttributes } from '../selectors/stateSelectors';
 import { AsyncAction } from '../types/actions';
 import { UIMessagesObject } from '../types/ui';
-import { getAreSufficientAPAvailable } from '../utils/adventurePointsUtils';
+import { getAreSufficientAPAvailable } from '../utils/adventurePoints/adventurePointsUtils';
+import { getIncreaseAP } from '../utils/adventurePoints/improvementCostUtils';
 import { Maybe } from '../utils/dataUtils';
 import { translate } from '../utils/I18n';
-import { getIncreaseAP } from '../utils/improvementCostUtils';
 import { getAreSufficientAPAvailableForIncrease } from '../utils/IncreasableUtils';
 import { addAlert } from './AlertActions';
 

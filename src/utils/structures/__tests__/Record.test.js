@@ -1,5 +1,5 @@
 const { fromUniqueElements } = require('../OrderedSet.new');
-const { fromDefault, mergeSafe, makeGetters, makeLenses, makeLenses_, member, notMember, toObject, isRecord } = require('../Record.new');
+const { fromDefault, mergeSafeR2, mergeSafeR3, mergeSafeR4, mergeSafeR5, makeGetters, makeLenses, makeLenses_, member, notMember, toObject, isRecord } = require('../Record.new');
 const { view } = require('../Lens');
 
 // CONSTRUCTOR
@@ -15,12 +15,43 @@ test('fromDefault', () => {
 
 // MERGING RECORDS
 
-test('mergeSafe', () => {
+test('mergeSafeR2', () => {
   const testCreator = fromDefault ({ x: 0 })
   const test = testCreator ({ x: 1 })
   const test2 = fromDefault ({ x: 3, y: 3 }) ({ x: 7 })
 
-  expect (mergeSafe (test2) (test)) .toEqual (testCreator ({ x: 7 }))
+  expect (mergeSafeR2 (test2) (test)) .toEqual (testCreator ({ x: 7 }))
+})
+
+test('mergeSafeR3', () => {
+  const testCreator = fromDefault ({ x: 0 })
+  const test = testCreator ({ x: 1 })
+  const test2 = fromDefault ({ x: 3, y: 3 }) ({ x: 7 })
+  const test3 = testCreator ({ y: 4 })
+
+  expect (mergeSafeR3 (test3) (test2) (test)) .toEqual (testCreator ({ x: 7, y: 4 }))
+})
+
+test('mergeSafeR4', () => {
+  const testCreator = fromDefault ({ x: 0 })
+  const test = testCreator ({ x: 1 })
+  const test2 = fromDefault ({ x: 3, y: 3 }) ({ x: 7 })
+  const test3 = testCreator ({ y: 4 })
+  const test4 = testCreator ({ x: 5 })
+
+  expect (mergeSafeR4 (test4) (test3) (test2) (test)) .toEqual (testCreator ({ x: 5, y: 4 }))
+})
+
+test('mergeSafeR5', () => {
+  const testCreator = fromDefault ({ x: 0 })
+  const test = testCreator ({ x: 1 })
+  const test2 = fromDefault ({ x: 3, y: 3 }) ({ x: 7 })
+  const test3 = testCreator ({ y: 4 })
+  const test4 = testCreator ({ x: 5 })
+  const test5 = testCreator ({ y: 8 })
+
+  expect (mergeSafeR5 (test5) (test4) (test3) (test2) (test))
+    .toEqual (testCreator ({ x: 5, y: 8 }))
 })
 
 // CUSTOM FUNCTIONS

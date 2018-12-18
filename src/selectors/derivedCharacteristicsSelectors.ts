@@ -1,6 +1,6 @@
 import * as R from 'ramda';
 import { Energy, EnergyWithLoss, SecondaryAttribute } from '../types/data';
-import { getModifierByActiveLevel, getModifierByIsActive } from '../utils/activatableModifierUtils';
+import { getModifierByActiveLevel, getModifierByIsActive } from '../utils/activatable/activatableModifierUtils';
 import { getAttributeValueWithDefault } from '../utils/AttributeUtils';
 import { createMaybeSelector } from '../utils/createMaybeSelector';
 import { Just, List, Maybe, OrderedMap, OrderedSet, Record, Tuple } from '../utils/dataUtils';

@@ -9,23 +9,23 @@
 
 import * as R from 'ramda';
 import { isObject } from 'util';
-import { ActivatableCategory, Categories } from '../constants/Categories';
-import * as Data from '../types/data';
-import * as Wiki from '../types/wiki';
+import { ActivatableCategory, Categories } from '../../constants/Categories';
+import * as Data from '../../types/data';
+import * as Wiki from '../../types/wiki';
+import { Just, List, Maybe, Nothing, OrderedMap, OrderedSet, Record } from '../dataUtils';
+import { countActiveGroupEntries } from '../entryGroupUtils';
+import { isStyleValidToRemove } from '../ExtendedStyleUtils';
+import { flattenPrerequisites } from '../flattenPrerequisites';
+import { getAllEntriesByGroup, getHeroStateListItem } from '../heroStateUtils';
+import { isActive } from '../isActive';
+import { isOwnTradition } from '../liturgicalChantUtils';
+import { match } from '../match';
+import { getActiveSelections } from '../selectionUtils';
+import { getBlessedTraditionFromWiki, getMagicalTraditions } from '../traditionUtils';
+import { isBoolean } from '../typeCheckUtils';
+import { validateObject, validateTier } from '../validatePrerequisitesUtils';
+import { getWikiEntry } from '../WikiUtils';
 import { countActiveSkillEntries } from './activatableSkillUtils';
-import { Just, List, Maybe, Nothing, OrderedMap, OrderedSet, Record } from './dataUtils';
-import { countActiveGroupEntries } from './entryGroupUtils';
-import { isStyleValidToRemove } from './ExtendedStyleUtils';
-import { flattenPrerequisites } from './flattenPrerequisites';
-import { getAllEntriesByGroup, getHeroStateListItem } from './heroStateUtils';
-import { isActive } from './isActive';
-import { isOwnTradition } from './liturgicalChantUtils';
-import { match } from './match';
-import { getActiveSelections } from './selectionUtils';
-import { getBlessedTraditionFromWiki, getMagicalTraditions } from './traditionUtils';
-import { isBoolean } from './typeCheckUtils';
-import { validateObject, validateTier } from './validatePrerequisitesUtils';
-import { getWikiEntry } from './WikiUtils';
 
 const hasRequiredMinimumLevel = (
   tiers: Maybe<number>,

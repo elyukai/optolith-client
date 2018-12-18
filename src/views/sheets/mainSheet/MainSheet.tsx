@@ -7,7 +7,7 @@ import * as Data from '../../../types/data';
 import { UIMessagesObject } from '../../../types/ui';
 import * as View from '../../../types/view';
 import * as Wiki from '../../../types/wiki';
-import { compressList } from '../../../utils/activatableNameUtils';
+import { compressList } from '../../../utils/activatable/activatableNameUtils';
 import { List, Maybe, Record } from '../../../utils/dataUtils';
 import { translate } from '../../../utils/I18n';
 import { Sheet } from '../Sheet';

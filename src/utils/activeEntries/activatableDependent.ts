@@ -1,6 +1,6 @@
 import { ActivatableDependency, ActivatableDependent, ActiveObject } from '../../types/data';
 import { fromElements } from '../structures/List.new';
-import { fromDefault, makeGetters, Omit, Record } from '../structures/Record.new';
+import { fromDefault, makeGetters, makeLenses_, Omit, Record } from '../structures/Record.new';
 
 const ActivatableDependentCreator =
   fromDefault<ActivatableDependent> ({
@@ -10,6 +10,9 @@ const ActivatableDependentCreator =
   })
 
 export const ActivatableDependentG = makeGetters (ActivatableDependentCreator)
+
+export const ActivatableDependentL = makeLenses_ (ActivatableDependentG)
+                                                 (ActivatableDependentCreator)
 
 export const createActivatableDependent =
   (options: Partial<Omit<ActivatableDependent, 'id'>>) =>
