@@ -5,7 +5,7 @@ import { lt, lte, satisfies } from 'semver';
 import { ActiveObject } from '../../types/data';
 import { RawHero } from '../../types/rawdata';
 import { getBlessedTraditionInstanceIdByNumericId, getMagicalTraditionInstanceIdByNumericId } from '../IDUtils';
-import { StringKeyObject } from './dataUtils';
+import { StringKeyObject } from '../structures/Record';
 
 export const currentVersion = JSON.parse (fs.readFileSync (
   path.join (remote.app.getAppPath (), 'package.json'),
@@ -521,7 +521,7 @@ const convertLowerThan0_49_5 = (hero: RawHero): RawHero => {
     return [...list].map (e => ({
       ...e,
       sid: sid === undefined ? e.sid : sid,
-      tier: tier === undefined || e.tier && e.tier > tier ? e.tier : tier,
+      tier: tier === undefined || typeof e.tier === 'number' && e.tier > tier ? e.tier : tier,
     }));
   };
 
@@ -529,7 +529,12 @@ const convertLowerThan0_49_5 = (hero: RawHero): RawHero => {
     if (convertIds[id] !== undefined) {
       const { id: newId, sid, tier } = convertIds[id];
       // @ts-ignore
-      newActivatable[newId] = updateObjects (newActivatable[newId] || activeObjects, sid, tier);
+      newActivatable[newId] =
+        updateObjects (
+          newActivatable[newId] === undefined ? activeObjects : newActivatable[newId],
+          sid,
+          tier
+        );
     }
     else {
       // @ts-ignore

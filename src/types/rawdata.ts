@@ -1,4 +1,4 @@
-import { StringKeyObject } from '../utils/dataUtils';
+import { StringKeyObject } from '../utils/structures/Record';
 import * as UI from './ui';
 import { ProfessionSelectionIds } from './wiki';
 
