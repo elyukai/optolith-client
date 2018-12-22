@@ -26,6 +26,9 @@ export const PersonalDataCreator =
     cultureAreaKnowledge: Nothing,
   })
 
+export const PersonalDataG = makeGetters (PersonalDataCreator)
+export const PersonalDataL = makeLenses_ (PersonalDataG) (PersonalDataCreator)
+
 /**
  * Create a new `PermanentEnergyLoss` object.
  */
@@ -33,6 +36,9 @@ export const PermanentEnergyLossCreator =
   fromDefault<PermanentEnergyLoss> ({
     lost: 0,
   })
+
+export const PermanentEnergyLossG = makeGetters (PermanentEnergyLossCreator)
+export const PermanentEnergyLossL = makeLenses_ (PermanentEnergyLossG) (PermanentEnergyLossCreator)
 
 /**
  * Create a new `PermanentEnergyLossAndBoughtBack` object.
@@ -42,6 +48,13 @@ export const PermanentEnergyLossAndBoughtBackCreator =
     lost: 0,
     redeemed: 0,
   })
+
+export const PermanentEnergyLossAndBoughtBackG =
+  makeGetters (PermanentEnergyLossAndBoughtBackCreator)
+
+export const PermanentEnergyLossAndBoughtBackL =
+  makeLenses_ (PermanentEnergyLossAndBoughtBackG)
+              (PermanentEnergyLossAndBoughtBackCreator)
 
 /**
  * Create a new `Energies` object.
@@ -56,6 +69,9 @@ export const EnergiesCreator =
     permanentKarmaPoints: PermanentEnergyLossAndBoughtBackCreator ({ }),
   })
 
+export const EnergiesG = makeGetters (EnergiesCreator)
+export const EnergiesL = makeLenses_ (EnergiesG) (EnergiesCreator)
+
 /**
  * Create a new `Purse` object.
  */
@@ -66,6 +82,9 @@ export const PurseCreator =
     h: '',
     k: '',
   })
+
+export const PurseG = makeGetters (PurseCreator)
+export const PurseL = makeLenses_ (PurseG) (PurseCreator)
 
 /**
  * Create a new `Belongings` object.
@@ -81,6 +100,9 @@ export const BelongingsCreator =
     purse: PurseCreator ({ }),
   })
 
+export const BelongingsG = makeGetters (BelongingsCreator)
+export const BelongingsL = makeLenses_ (BelongingsG) (BelongingsCreator)
+
 /**
  * Create a new `Rules` object.
  */
@@ -92,6 +114,9 @@ export const RulesCreator =
     enabledRuleBooks: OrderedSet.empty,
     enableLanguageSpecializations: false,
   })
+
+export const RulesG = makeGetters (RulesCreator)
+export const RulesL = makeLenses_ (RulesG) (RulesCreator)
 
 /**
  * Create a new `Hero` object from scratch. Does not handle special semantic
@@ -140,8 +165,8 @@ export const HeroCreator =
     blessedStyleDependencies: List.empty,
   })
 
-export const HeroG = makeGetters (HeroCreator);
-export const HeroL = makeLenses_ (HeroG) (HeroCreator);
+export const HeroG = makeGetters (HeroCreator)
+export const HeroL = makeLenses_ (HeroG) (HeroCreator)
 
 /**
  * Creates a new `Hero` object based on the input the user gives when creating

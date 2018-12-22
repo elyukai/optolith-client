@@ -495,6 +495,11 @@ export const elems = toList;
 export const toSet = <A extends Some> (xs: OrderedSet<A>): ReadonlySet<A> => xs .value;
 
 /**
+ * Converts the `OrderedSet` into a native array instance.
+ */
+export const toArray = <A extends Some> (xs: OrderedSet<A>): ReadonlyArray<A> => [...xs];
+
+/**
  * `toggle :: Ord a => a -> Set a -> Set a`
  *
  * Delete an element from a set if the value already exists in the set.
@@ -563,6 +568,7 @@ export const OrderedSet = {
   elems,
 
   toSet,
+  toArray,
   toggle,
   isOrderedSet,
 };

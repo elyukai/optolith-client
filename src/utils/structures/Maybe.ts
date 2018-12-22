@@ -723,7 +723,7 @@ export const imapMaybe =
       (List.empty)
 
 /**
- * `maybeToNullable :: Maybe a -> (a | Nullable)`
+ * `maybeToNullable :: Maybe a -> (a | Null)`
  *
  * The `maybeToNullable` function returns `null` when given `Nothing` or
  * returns the value inside the `Just`.
@@ -731,6 +731,16 @@ export const imapMaybe =
 export const maybeToNullable =
   <A extends Some> (m: Maybe<A>): A | null =>
     isJust (m) ? m .value : null
+
+/**
+ * `maybeToUndefined :: Maybe a -> (a | undefined)`
+ *
+ * The `maybeToUndefined` function returns `undefined` when given `Nothing` or
+ * returns the value inside the `Just`.
+ */
+export const maybeToUndefined =
+  <A extends Some> (m: Maybe<A>): A | undefined =>
+    isJust (m) ? m .value : undefined
 
 /**
  * `maybe_ :: (() -> b) -> (a -> b) -> Maybe a -> b`
@@ -803,6 +813,7 @@ export const Maybe = {
   lte,
 
   maybe,
+  maybe_,
   listToMaybe,
   maybeToList,
   catMaybes,
@@ -813,6 +824,7 @@ export const Maybe = {
   ensure,
   imapMaybe,
   maybeToNullable,
+  maybeToUndefined,
 }
 
 

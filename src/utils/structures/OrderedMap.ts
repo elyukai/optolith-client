@@ -1016,3 +1016,8 @@ export const OrderedMap = {
   toMap,
   isOrderedMap,
 }
+
+
+// TYPE HELPERS
+
+export type OrderedMapValueElement<A> = A extends OrderedMap<any, infer V> ? V : never

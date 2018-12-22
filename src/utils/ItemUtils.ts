@@ -5,7 +5,7 @@ import { getLevelElementsWithZero } from './levelUtils';
 import { isEmptyOr, isFloat, isInteger, isNaturalNumber } from './RegexUtils';
 import { List } from './structures/List';
 import { fromJust, isJust, Just, Maybe, maybe, Nothing } from './structures/Maybe';
-import { fromDefault, Record } from './structures/Record';
+import { fromDefault, makeGetters, Record } from './structures/Record';
 
 const ifNumberOrEmpty = maybe<number, string> ('') (x => x.toString ());
 
@@ -349,6 +349,8 @@ export const PrimaryAttributeDamageThresholdCreator =
     primary: Nothing,
     threshold: List.empty,
   })
+
+export const PrimaryAttributeDamageThresholdG = makeGetters (PrimaryAttributeDamageThresholdCreator)
 
 export const ItemCreator =
   fromDefault<ItemInstance> ({

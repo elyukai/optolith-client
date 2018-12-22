@@ -264,6 +264,11 @@ test ('toSet', () => {
     .toEqual (new Set(['a', 'b', 'c']))
 })
 
+test ('toArray', () => {
+  expect (OrderedSet.toArray (fromArray (['a', 'b', 'c'])))
+    .toEqual (['a', 'b', 'c'])
+})
+
 test ('toggle', () => {
   expect (OrderedSet.toggle ('c') (fromArray (['a', 'b', 'c'])))
     .toEqual (fromArray (['a', 'b']))

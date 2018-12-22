@@ -806,6 +806,12 @@ test ('maybeToNullable', () => {
   expect (Maybe.maybeToNullable (Just (element))) .toEqual (element)
 })
 
+test ('maybeToUndefined', () => {
+  const element = React.createElement ('div')
+  expect (Maybe.maybeToUndefined (Nothing)) .toEqual (undefined)
+  expect (Maybe.maybeToUndefined (Just (element))) .toEqual (element)
+})
+
 test ('maybe_', () => {
   expect (Maybe.maybe_ (() => 0) (x => x * 2) (Just (3)))
     .toEqual (6)
