@@ -14,20 +14,20 @@ import { Some } from './Maybe';
 // CONSTRUCTOR
 
 interface PairPrototype<A> {
-  readonly isPair: true;
+  readonly isPair: true
 }
 
 export interface Pair<A extends Some, B extends Some> extends PairPrototype<A> {
-  readonly first: A;
-  readonly second: B;
-  readonly prototype: PairPrototype<A>;
+  readonly first: A
+  readonly second: B
+  readonly prototype: PairPrototype<A>
 }
 
 const PairPrototype: PairPrototype<Some> =
   Object.create (
     Object.prototype,
     { isPair: { value: true }}
-  );
+  )
 
 /**
  * `fromBoth :: a -> b -> (a, b)`
@@ -42,7 +42,7 @@ export const fromBoth =
         first: { value: firstValue, enumerable: true },
         second: { value: secondValue, enumerable: true },
       }
-    );
+    )
 
 
 // FUNCTOR
@@ -53,7 +53,7 @@ export const fromBoth =
 export const fmap =
   <A extends Some, A0 extends Some, B extends Some>
   (f: (value: A0) => B) => (x: Pair<A, A0>): Pair<A, B> =>
-    fromBoth<A, B> (x .first) (f (x .second));
+    fromBoth<A, B> (x .first) (f (x .second))
 
 /**
  * `(<$) :: a0 -> (a, b) -> (a, a0)`
@@ -62,7 +62,7 @@ export const fmap =
  * definition is `fmap . const`, but this may be overridden with a more
  * efficient version.
  */
-export const mapReplace = <A extends Some, A0 extends Some> (x: A0) => fmap<A, Some, A0> (cnst (x));
+export const mapReplace = <A extends Some, A0 extends Some> (x: A0) => fmap<A, Some, A0> (cnst (x))
 
 
 // BIFUNCTOR
@@ -73,7 +73,7 @@ export const mapReplace = <A extends Some, A0 extends Some> (x: A0) => fmap<A, S
 export const bimap =
   <A extends Some, B extends Some, C extends Some, D extends Some>
   (fFirst: (first: A) => B) => (fSecond: (second: C) => D) => (x: Pair<A, C>): Pair<B, D> =>
-    fromBoth<B, D> (fFirst (x .first)) (fSecond (x .second));
+    fromBoth<B, D> (fFirst (x .first)) (fSecond (x .second))
 
 /**
 * `first :: (a -> b) -> (a, c) -> (b, c)`
@@ -81,7 +81,7 @@ export const bimap =
 export const first =
   <A extends Some, B extends Some, C extends Some>
   (f: (first: A) => B) => (x: Pair<A, C>): Pair<B, C> =>
-    fromBoth<B, C> (f (x .first)) (x .second);
+    fromBoth<B, C> (f (x .first)) (x .second)
 
 /**
 * `second :: (b -> c) -> (a, b) -> (a, c)`
@@ -89,7 +89,7 @@ export const first =
 export const second =
   <A extends Some, B extends Some, C extends Some>
   (f: (second: B) => C) => (x: Pair<A, B>): Pair<A, C> =>
-    fromBoth<A, C> (x .first) (f (x .second));
+    fromBoth<A, C> (x .first) (f (x .second))
 
 
 // PAIR FUNCTIONS
@@ -99,21 +99,21 @@ export const second =
  *
  * Extract the first component of a pair.
  */
-export const fst = <A> (x: Pair<A, any>): A => x .first;
+export const fst = <A> (x: Pair<A, any>): A => x .first
 
 /**
  * `snd :: (a, b) -> b`
  *
  * Extract the second component of a pair.
  */
-export const snd = <B> (x: Pair<any, B>): B => x .second;
+export const snd = <B> (x: Pair<any, B>): B => x .second
 
 /**
  * `swap :: (a, b) -> (b, a)`
  *
  * Swap the components of a pair.
  */
-export const swap = <A, B> (x: Pair<A, B>): Pair<B, A> => fromBoth<B, A> (x .second) (x .first);
+export const swap = <A, B> (x: Pair<A, B>): Pair<B, A> => fromBoth<B, A> (x .second) (x .first)
 
 
 // CUSTOM FUNCTIONS
@@ -123,7 +123,14 @@ export const swap = <A, B> (x: Pair<A, B>): Pair<B, A> => fromBoth<B, A> (x .sec
  *
  * Converts the pair to a native `Array`.
  */
-export const toArray = <A, B> (x: Pair<A, B>): [A, B] => [x .first, x .second];
+export const toArray = <A, B> (x: Pair<A, B>): [A, B] => [x .first, x .second]
+
+/**
+ * `fromArray :: (a, b) -> Array (b | a)`
+ *
+ * Creates a pair from a native `Array` of length `2`.
+ */
+export const fromArray = <A, B> (x: [A, B]): Pair<A, B> => fromBoth<A, B> (x [0]) (x [1])
 
 /**
  * `isPair :: a -> Bool`
@@ -132,7 +139,7 @@ export const toArray = <A, B> (x: Pair<A, B>): [A, B] => [x .first, x .second];
  */
 export const isPair =
   (x: any): x is Pair<any, any> =>
-    typeof x === 'object' && x !== null && x.isPair;
+    typeof x === 'object' && x !== null && x.isPair
 
 
 // NAMESPACED FUNCTIONS
@@ -152,4 +159,6 @@ export const Pair = {
   swap,
 
   toArray,
-};
+  fromArray,
+  isPair,
+}

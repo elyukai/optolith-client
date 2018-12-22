@@ -614,9 +614,8 @@ export interface RawSkillLocale {
 
 export interface RawBaseItem {
   id: string;
-  price: number;
+  price?: number;
   weight: number;
-  where?: string;
   template?: string;
   imp?: number;
   gr: number;
@@ -651,7 +650,6 @@ export interface RawPrimaryAttributeDamageThreshold {
 
 export interface RawItemTemplate extends RawBaseItem {
   src: string[];
-  template: string;
 }
 
 export interface RawCustomItem extends RawBaseItem {

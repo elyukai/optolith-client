@@ -1,31 +1,32 @@
 import { Categories } from '../constants/Categories';
 import { List } from '../utils/structures/List';
-import { Maybe } from '../utils/structures/Maybe';
+import { Just, Maybe } from '../utils/structures/Maybe';
 import { OrderedMap } from '../utils/structures/OrderedMap';
 import { Pair } from '../utils/structures/Pair';
 import { Record } from '../utils/structures/Record';
+import { Sex } from './data';
 
 export type WikiRecord = Record<WikiAll>;
 
 export interface WikiAll {
-  readonly books: OrderedMap<string, Record<Book>>;
-  readonly experienceLevels: OrderedMap<string, Record<ExperienceLevel>>;
-  readonly races: OrderedMap<string, Record<Race>>;
-  readonly raceVariants: OrderedMap<string, Record<RaceVariant>>;
-  readonly cultures: OrderedMap<string, Record<Culture>>;
-  readonly professions: OrderedMap<string, Record<Profession>>;
-  readonly professionVariants: OrderedMap<string, Record<ProfessionVariant>>;
-  readonly attributes: OrderedMap<string, Record<Attribute>>;
-  readonly advantages: OrderedMap<string, Record<Advantage>>;
-  readonly disadvantages: OrderedMap<string, Record<Disadvantage>>;
-  readonly specialAbilities: OrderedMap<string, Record<SpecialAbility>>;
-  readonly skills: OrderedMap<string, Record<Skill>>;
-  readonly combatTechniques: OrderedMap<string, Record<CombatTechnique>>;
-  readonly spells: OrderedMap<string, Record<Spell>>;
-  readonly cantrips: OrderedMap<string, Record<Cantrip>>;
-  readonly liturgicalChants: OrderedMap<string, Record<LiturgicalChant>>;
-  readonly blessings: OrderedMap<string, Record<Blessing>>;
-  readonly itemTemplates: OrderedMap<string, Record<ItemTemplate>>;
+  books: OrderedMap<string, Record<Book>>;
+  experienceLevels: OrderedMap<string, Record<ExperienceLevel>>;
+  races: OrderedMap<string, Record<Race>>;
+  raceVariants: OrderedMap<string, Record<RaceVariant>>;
+  cultures: OrderedMap<string, Record<Culture>>;
+  professions: OrderedMap<string, Record<Profession>>;
+  professionVariants: OrderedMap<string, Record<ProfessionVariant>>;
+  attributes: OrderedMap<string, Record<Attribute>>;
+  advantages: OrderedMap<string, Record<Advantage>>;
+  disadvantages: OrderedMap<string, Record<Disadvantage>>;
+  specialAbilities: OrderedMap<string, Record<SpecialAbility>>;
+  skills: OrderedMap<string, Record<Skill>>;
+  combatTechniques: OrderedMap<string, Record<CombatTechnique>>;
+  spells: OrderedMap<string, Record<Spell>>;
+  cantrips: OrderedMap<string, Record<Cantrip>>;
+  liturgicalChants: OrderedMap<string, Record<LiturgicalChant>>;
+  blessings: OrderedMap<string, Record<Blessing>>;
+  itemTemplates: OrderedMap<string, Record<ItemTemplate>>;
 }
 
 export interface WikiEntryByCategory {
@@ -248,13 +249,13 @@ export interface CommonProfessionObject {
 }
 
 export interface SpecializationSelection {
-  readonly id: ProfessionSelectionIds.SPECIALIZATION;
-  readonly sid: string | List<string>;
+  id: ProfessionSelectionIds.SPECIALIZATION;
+  sid: string | List<string>;
 }
 
 export interface RemoveSpecializationSelection {
-  readonly id: ProfessionSelectionIds.SPECIALIZATION;
-  readonly active: boolean;
+  id: ProfessionSelectionIds.SPECIALIZATION;
+  active: false;
 }
 
 export type VariantSpecializationSelection =
@@ -262,20 +263,20 @@ export type VariantSpecializationSelection =
   Record<RemoveSpecializationSelection>;
 
 export interface LanguagesScriptsSelection {
-  readonly id: ProfessionSelectionIds.LANGUAGES_SCRIPTS;
-  readonly value: number;
+  id: ProfessionSelectionIds.LANGUAGES_SCRIPTS;
+  value: number;
 }
 
 export interface CombatTechniquesSelection {
-  readonly id: ProfessionSelectionIds.COMBAT_TECHNIQUES;
-  readonly amount: number;
-  readonly value: number;
-  readonly sid: List<string>;
+  id: ProfessionSelectionIds.COMBAT_TECHNIQUES;
+  amount: number;
+  value: number;
+  sid: List<string>;
 }
 
 export interface RemoveCombatTechniquesSelection {
-  readonly id: ProfessionSelectionIds.COMBAT_TECHNIQUES;
-  readonly active: boolean;
+  id: ProfessionSelectionIds.COMBAT_TECHNIQUES;
+  active: false;
 }
 
 export type VariantCombatTechniquesSelection =
@@ -283,15 +284,15 @@ export type VariantCombatTechniquesSelection =
   Record<RemoveCombatTechniquesSelection>;
 
 export interface CombatTechniquesSecondSelection {
-  readonly id: ProfessionSelectionIds.COMBAT_TECHNIQUES_SECOND;
-  readonly amount: number;
-  readonly value: number;
-  readonly sid: List<string>;
+  id: ProfessionSelectionIds.COMBAT_TECHNIQUES_SECOND;
+  amount: number;
+  value: number;
+  sid: List<string>;
 }
 
 export interface RemoveCombatTechniquesSecondSelection {
-  readonly id: ProfessionSelectionIds.COMBAT_TECHNIQUES_SECOND;
-  readonly active: boolean;
+  id: ProfessionSelectionIds.COMBAT_TECHNIQUES_SECOND;
+  active: false;
 }
 
 export type VariantCombatTechniquesSecondSelection =
@@ -299,31 +300,31 @@ export type VariantCombatTechniquesSecondSelection =
   Record<RemoveCombatTechniquesSecondSelection>;
 
 export interface CantripsSelection {
-  readonly id: ProfessionSelectionIds.CANTRIPS;
-  readonly amount: number;
-  readonly sid: List<string>;
+  id: ProfessionSelectionIds.CANTRIPS;
+  amount: number;
+  sid: List<string>;
 }
 
 export interface CursesSelection {
-  readonly id: ProfessionSelectionIds.CURSES;
-  readonly value: number;
+  id: ProfessionSelectionIds.CURSES;
+  value: number;
 }
 
 export interface SkillsSelection {
-  readonly id: ProfessionSelectionIds.SKILLS;
+  id: ProfessionSelectionIds.SKILLS;
   /**
    * If specified, only choose from skills of the specified group.
    */
-  readonly gr?: number;
+  gr: Maybe<number>;
   /**
    * The AP value the user can spend.
    */
-  readonly value: number;
+  value: number;
 }
 
 export interface TerrainKnowledgeSelection {
-  readonly id: ProfessionSelectionIds.TERRAIN_KNOWLEDGE;
-  readonly sid: List<number>;
+  id: ProfessionSelectionIds.TERRAIN_KNOWLEDGE;
+  sid: List<number>;
 }
 
 export enum ProfessionSelectionIds {
@@ -375,8 +376,8 @@ export type ProfessionVariantSelections =
   List<ProfessionVariantSelection>;
 
 export interface NameBySex {
-  readonly m: string;
-  readonly f: string;
+  m: string;
+  f: string;
 }
 
 export interface Profession {
@@ -417,23 +418,23 @@ export interface Profession {
 }
 
 export interface ProfessionVariant {
-  readonly id: string;
-  readonly name: string | Record<NameBySex>;
-  readonly ap: number;
-  readonly apOfActivatables: number;
-  readonly dependencies: List<ProfessionDependency>;
-  readonly prerequisites: List<ProfessionPrerequisite>;
-  readonly selections: ProfessionVariantSelections;
-  readonly specialAbilities: List<Record<ProfessionRequiresActivatableObject>>;
-  readonly combatTechniques: List<Record<IncreaseSkill>>;
-  readonly skills: List<Record<IncreaseSkill>>;
-  readonly spells: List<Record<IncreaseSkill>>;
-  readonly liturgicalChants: List<Record<IncreaseSkill>>;
-  readonly blessings: List<string>;
-  readonly precedingText?: string;
-  readonly fullText?: string;
-  readonly concludingText?: string;
-  readonly category: Categories.PROFESSION_VARIANTS;
+  id: string;
+  name: string | Record<NameBySex>;
+  ap: number;
+  apOfActivatables: number;
+  dependencies: List<ProfessionDependency>;
+  prerequisites: List<ProfessionPrerequisite>;
+  selections: ProfessionVariantSelections;
+  specialAbilities: List<Record<ProfessionRequiresActivatableObject>>;
+  combatTechniques: List<Record<IncreaseSkill>>;
+  skills: List<Record<IncreaseSkill>>;
+  spells: List<Record<IncreaseSkill>>;
+  liturgicalChants: List<Record<IncreaseSkill>>;
+  blessings: List<string>;
+  precedingText: Maybe<string>;
+  fullText: Maybe<string>;
+  concludingText: Maybe<string>;
+  category: Categories.PROFESSION_VARIANTS;
 }
 
 export interface IncreaseSkill {
@@ -444,17 +445,17 @@ export interface IncreaseSkill {
 export interface SelectionObject {
   id: string | number;
   name: string;
-  cost?: number;
-  req?: List<AllRequirementObjects>;
-  prerequisites?: List<AllRequirementObjects>;
-  target?: string;
-  tier?: number;
-  spec?: List<string>;
-  specInput?: string;
-  applications?: List<Record<Application>>;
-  applicationsInput?: string;
-  talent?: Pair<string, number>;
-  gr?: number;
+  cost: Maybe<number>;
+  req: Maybe<List<AllRequirementObjects>>;
+  prerequisites: Maybe<List<AllRequirementObjects>>;
+  target: Maybe<string>;
+  tier: Maybe<number>;
+  spec: Maybe<List<string>>;
+  specInput: Maybe<string>;
+  applications: Maybe<List<Record<Application>>>;
+  applicationsInput: Maybe<string>;
+  talent: Maybe<Pair<string, number>>;
+  gr: Maybe<number>;
 }
 
 export type AllRequirements = 'RCP' | AllRequirementObjects;
@@ -465,116 +466,116 @@ export type LevelAwarePrerequisites =
   OrderedMap<number, ActivatablePrerequisites>;
 
 interface ActivatableBase {
-  readonly id: string;
-  readonly name: string;
-  readonly cost: string | number | List<number>;
-  readonly input?: string;
-  readonly max?: number;
-  readonly prerequisites: LevelAwarePrerequisites;
-  readonly prerequisitesText?: string;
+  id: string;
+  name: string;
+  cost: string | number | List<number>;
+  input: Maybe<string>;
+  max: Maybe<number>;
+  prerequisites: LevelAwarePrerequisites;
+  prerequisitesText: Maybe<string>;
   /**
    * 0-based index as key!
    */
-  readonly prerequisitesTextIndex: OrderedMap<number, string | false>;
-  readonly prerequisitesTextStart?: string;
-  readonly prerequisitesTextEnd?: string;
-  readonly tiers?: number;
-  readonly select?: List<Record<SelectionObject>>;
-  readonly gr: number;
-  readonly src: List<Record<SourceLink>>;
+  prerequisitesTextIndex: OrderedMap<number, string | false>;
+  prerequisitesTextStart: Maybe<string>;
+  prerequisitesTextEnd: Maybe<string>;
+  tiers: Maybe<number>;
+  select: Maybe<List<Record<SelectionObject>>>;
+  gr: number;
+  src: List<Record<SourceLink>>;
 }
 
 interface AdvantageDisadvantageBase extends ActivatableBase {
-  readonly rules: string;
-  readonly range?: string;
-  readonly actions?: string;
-  readonly apValue?: string;
-  readonly apValueAppend?: string;
+  rules: string;
+  range: Maybe<string>;
+  actions: Maybe<string>;
+  apValue: Maybe<string>;
+  apValueAppend: Maybe<string>;
 }
 
 export interface Advantage extends AdvantageDisadvantageBase {
-  readonly category: Categories.ADVANTAGES;
+  category: Categories.ADVANTAGES;
 }
 
 export interface Disadvantage extends AdvantageDisadvantageBase {
-  readonly category: Categories.DISADVANTAGES;
+  category: Categories.DISADVANTAGES;
 }
 
 export interface SpecialAbility extends ActivatableBase {
-  readonly category: Categories.SPECIAL_ABILITIES;
-  readonly extended?: List<string | List<string>>;
-  readonly nameInWiki?: string;
-  readonly subgr?: number;
-  readonly combatTechniques?: string;
-  readonly rules?: string;
-  readonly effect?: string;
-  readonly volume?: string;
-  readonly penalty?: string;
-  readonly aeCost?: string;
-  readonly protectiveCircle?: string;
-  readonly wardingCircle?: string;
-  readonly bindingCost?: string;
-  readonly property?: number | string;
-  readonly aspect?: number | string;
-  readonly apValue?: string;
-  readonly apValueAppend?: string;
+  category: Categories.SPECIAL_ABILITIES;
+  extended: Maybe<List<string | List<string>>>;
+  nameInWiki: Maybe<string>;
+  subgr: Maybe<number>;
+  combatTechniques: Maybe<string>;
+  rules: Maybe<string>;
+  effect: Maybe<string>;
+  volume: Maybe<string>;
+  penalty: Maybe<string>;
+  aeCost: Maybe<string>;
+  protectiveCircle: Maybe<string>;
+  wardingCircle: Maybe<string>;
+  bindingCost: Maybe<string>;
+  property: Maybe<number | string>;
+  aspect: Maybe<number | string>;
+  apValue: Maybe<string>;
+  apValueAppend: Maybe<string>;
 }
 
 export interface Attribute {
-  readonly id: string;
-  readonly name: string;
-  readonly category: Categories.ATTRIBUTES;
-  readonly short: string;
+  id: string;
+  name: string;
+  category: Categories.ATTRIBUTES;
+  short: string;
 }
 
 export interface CombatTechnique {
-  readonly id: string;
-  readonly name: string;
-  readonly category: Categories.COMBAT_TECHNIQUES;
-  readonly gr: number;
-  readonly ic: number;
-  readonly bf: number;
-  readonly primary: List<string>;
-  readonly special?: string;
-  readonly src: List<Record<SourceLink>>;
+  id: string;
+  name: string;
+  category: Categories.COMBAT_TECHNIQUES;
+  gr: number;
+  ic: number;
+  bf: number;
+  primary: List<string>;
+  special: Maybe<string>;
+  src: List<Record<SourceLink>>;
 }
 
 export type CheckModifier = 'SPI' | 'TOU';
 
 export interface LiturgicalChant {
-  readonly id: string;
-  readonly name: string;
-  readonly aspects: List<number>;
-  readonly category: Categories.LITURGIES;
-  readonly check: List<string>;
-  readonly checkmod?: CheckModifier;
-  readonly gr: number;
-  readonly ic: number;
-  readonly tradition: List<number>;
-  readonly effect: string;
-  readonly castingTime: string;
-  readonly castingTimeShort: string;
-  readonly cost: string;
-  readonly costShort: string;
-  readonly range: string;
-  readonly rangeShort: string;
-  readonly duration: string;
-  readonly durationShort: string;
-  readonly target: string;
-  readonly src: List<Record<SourceLink>>;
+  id: string;
+  name: string;
+  aspects: List<number>;
+  category: Categories.LITURGIES;
+  check: List<string>;
+  checkmod: Maybe<CheckModifier>;
+  gr: number;
+  ic: number;
+  tradition: List<number>;
+  effect: string;
+  castingTime: string;
+  castingTimeShort: string;
+  cost: string;
+  costShort: string;
+  range: string;
+  rangeShort: string;
+  duration: string;
+  durationShort: string;
+  target: string;
+  src: List<Record<SourceLink>>;
 }
 
 export interface Blessing {
-  readonly id: string;
-  readonly name: string;
-  readonly aspects: List<number>;
-  readonly tradition: List<number>;
-  readonly category: Categories.BLESSINGS;
-  readonly effect: string;
-  readonly range: string;
-  readonly duration: string;
-  readonly target: string;
-  readonly src: List<Record<SourceLink>>;
+  id: string;
+  name: string;
+  aspects: List<number>;
+  tradition: List<number>;
+  category: Categories.BLESSINGS;
+  effect: string;
+  range: string;
+  duration: string;
+  target: string;
+  src: List<Record<SourceLink>>;
 }
 
 export interface Spell {
@@ -603,94 +604,93 @@ export interface Spell {
 }
 
 export interface SkillExtension extends SelectionObject {
-  readonly target: string;
-  readonly tier: 1 | 2 | 3;
-  readonly effect: string;
+  target: Just<string>;
+  tier: Just<1 | 2 | 3>;
+  effect: string;
 }
 
 export interface Cantrip {
-  readonly id: string;
-  readonly name: string;
-  readonly property: number;
-  readonly tradition: List<number>;
-  readonly category: Categories.CANTRIPS;
-  readonly effect: string;
-  readonly range: string;
-  readonly duration: string;
-  readonly target: string;
-  readonly note?: string;
-  readonly src: List<Record<SourceLink>>;
+  id: string;
+  name: string;
+  property: number;
+  tradition: List<number>;
+  category: Categories.CANTRIPS;
+  effect: string;
+  range: string;
+  duration: string;
+  target: string;
+  note: Maybe<string>;
+  src: List<Record<SourceLink>>;
 }
 
 export interface Skill {
-  readonly id: string;
-  readonly name: string;
-  readonly category: Categories.TALENTS;
-  readonly check: List<string>;
-  readonly encumbrance: string;
-  readonly gr: number;
-  readonly ic: number;
-  readonly applications?: List<Record<Application>>;
-  readonly applicationsInput?: string;
-  readonly tools?: string;
-  readonly quality: string;
-  readonly failed: string;
-  readonly critical: string;
-  readonly botch: string;
-  readonly src: string;
+  id: string;
+  name: string;
+  category: Categories.TALENTS;
+  check: List<string>;
+  encumbrance: string;
+  gr: number;
+  ic: number;
+  applications: Maybe<List<Record<Application>>>;
+  applicationsInput: Maybe<string>;
+  tools: Maybe<string>;
+  quality: string;
+  failed: string;
+  critical: string;
+  botch: string;
+  src: string;
 }
 
 export interface Application {
-  readonly id: number;
-  readonly name: string;
-  readonly prerequisites?: List<AllRequirementObjects>;
+  id: number;
+  name: string;
+  prerequisites: Maybe<List<AllRequirementObjects>>;
 }
 
 export interface ItemTemplate {
-  readonly id: string;
-  readonly name: string;
-  readonly addPenalties?: boolean;
-  readonly ammunition?: string;
-  readonly amount?: number;
-  readonly armorType?: number;
-  readonly at?: number;
-  readonly combatTechnique?: string;
-  readonly damageBonus?: Record<PrimaryAttributeDamageThreshold>;
-  readonly damageDiceNumber?: number;
-  readonly damageDiceSides?: number;
-  readonly damageFlat?: number;
-  readonly enc?: number;
-  readonly forArmorZoneOnly?: boolean;
-  readonly gr: number;
-  readonly improvisedWeaponGroup?: number;
-  readonly iniMod?: number;
-  readonly isParryingWeapon?: boolean;
-  readonly isTemplateLocked: boolean;
-  readonly isTwoHandedWeapon?: boolean;
-  readonly length?: number;
-  readonly loss?: number;
-  readonly movMod?: number;
-  readonly pa?: number;
-  readonly price?: number;
-  readonly pro?: number;
-  readonly range?: [number, number, number];
-  readonly reach?: number;
-  readonly reloadTime?: number;
-  readonly stabilityMod?: number;
-  readonly stp?: number;
-  readonly template: string;
-  readonly weight?: number;
-  readonly where?: string;
-  readonly note?: string;
-  readonly rules?: string;
-  readonly advantage?: string;
-  readonly disadvantage?: string;
-  readonly src: List<Record<SourceLink>>;
+  id: string;
+  name: string;
+  addPenalties: Maybe<boolean>;
+  ammunition: Maybe<string>;
+  amount: number;
+  armorType: Maybe<number>;
+  at: Maybe<number>;
+  combatTechnique: Maybe<string>;
+  damageBonus: Maybe<Record<PrimaryAttributeDamageThreshold>>;
+  damageDiceNumber: Maybe<number>;
+  damageDiceSides: Maybe<number>;
+  damageFlat: Maybe<number>;
+  enc: Maybe<number>;
+  forArmorZoneOnly: Maybe<boolean>;
+  gr: number;
+  improvisedWeaponGroup: Maybe<number>;
+  iniMod: Maybe<number>;
+  isParryingWeapon: Maybe<boolean>;
+  isTemplateLocked: boolean;
+  isTwoHandedWeapon: Maybe<boolean>;
+  length: Maybe<number>;
+  loss: Maybe<number>;
+  movMod: Maybe<number>;
+  pa: Maybe<number>;
+  price: Maybe<number>;
+  pro: Maybe<number>;
+  range: Maybe<List<number>>;
+  reach: Maybe<number>;
+  reloadTime: Maybe<number>;
+  stabilityMod: Maybe<number>;
+  stp: Maybe<number>;
+  template: string;
+  weight: Maybe<number>;
+  note: Maybe<string>;
+  rules: Maybe<string>;
+  advantage: Maybe<string>;
+  disadvantage: Maybe<string>;
+  src: List<Record<SourceLink>>;
 }
 
 export interface PrimaryAttributeDamageThreshold {
-  readonly primary: Maybe<string>;
-  readonly threshold: number | List<number>;
+  primary: Maybe<string>;
+  threshold: number | List<number>;
 }
 
 export type Activatable =
@@ -718,10 +718,10 @@ export interface ValueOptionalDependency {
 }
 
 export interface ActiveDependency {
-  active?: boolean;
-  sid?: SID;
-  sid2?: string | number;
-  tier?: number;
+  active: Maybe<boolean>;
+  sid: Maybe<SID>;
+  sid2: Maybe<string | number>;
+  tier: Maybe<number>;
 }
 
 export interface ActiveOptionalDependency extends ActiveDependency {
@@ -731,14 +731,14 @@ export interface ActiveOptionalDependency extends ActiveDependency {
 export interface RequiresActivatableObject {
   id: string | List<string>;
   active: boolean;
-  sid?: SID;
-  sid2?: string | number;
-  tier?: number;
+  sid: Maybe<SID>;
+  sid2: Maybe<string | number>;
+  tier: Maybe<number>;
 }
 
 export interface ProfessionRequiresActivatableObject extends RequiresActivatableObject {
   id: string;
-  sid?: string | number;
+  sid: Maybe<string | number>;
 }
 
 export interface RequiresIncreasableObject {
@@ -758,7 +758,7 @@ export interface RequiresPrimaryAttribute {
 
 export interface SexRequirement {
   id: 'SEX';
-  value: 'm' | 'f';
+  value: Sex;
 }
 
 export interface RaceRequirement {
@@ -774,8 +774,8 @@ export interface CultureRequirement {
 export interface PactRequirement {
   id: 'PACT';
   category: number;
-  domain?: number | List<number>;
-  level?: number;
+  domain: Maybe<number | List<number>>;
+  level: Maybe<number>;
 }
 
 export type ProfessionDependency =
