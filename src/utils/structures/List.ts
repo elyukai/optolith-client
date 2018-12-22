@@ -8,8 +8,8 @@
 
 import { pipe } from 'ramda';
 import { not } from '../not';
-import { cnst, id } from './combinators';
 import { equals } from './Eq';
+import { cnst, id } from './Function';
 import { fromJust, fromNullable, imapMaybe, isJust, Just, Maybe, Nothing, Some } from './Maybe';
 import { OrderedMap } from './OrderedMap';
 import { fromBoth, fst, Pair, snd } from './Pair';
@@ -57,7 +57,7 @@ export const fromElements = <A extends Some> (...values: A[]) => _List (values);
  *
  * Creates a new `List` instance from the passed native `Array`.
  */
-export const fromArray = <A extends Some> (xs: ReadonlyArray<A>) => {
+export const fromArray = <A extends Some> (xs: ReadonlyArray<A>): List<A> => {
   if (Array.isArray (xs)) {
     return _List (xs);
   }
@@ -1441,4 +1441,4 @@ export const List = {
 
 // TYPE HELPERS
 
-export type ListElement<T> = T extends List<infer I> ? I : never;
+export type ListElement<A> = A extends List<infer AI> ? AI : never;

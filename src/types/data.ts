@@ -70,19 +70,19 @@ export type UndoableHero = UndoState<Hero>;
 export interface HeroDependent {
   readonly id: string;
   readonly clientVersion: string;
-  readonly player?: string;
+  readonly player: Maybe<string>;
   readonly dateCreated: Date;
   readonly dateModified: Date;
   readonly phase: number;
   readonly name: string;
-  readonly avatar?: string;
+  readonly avatar: Maybe<string>;
   readonly adventurePointsTotal: number;
-  readonly race?: string;
-  readonly raceVariant?: string;
-  readonly culture?: string;
-  readonly profession?: string;
-  readonly professionName?: string;
-  readonly professionVariant?: string;
+  readonly race: Maybe<string>;
+  readonly raceVariant: Maybe<string>;
+  readonly culture: Maybe<string>;
+  readonly profession: Maybe<string>;
+  readonly professionName: Maybe<string>;
+  readonly professionVariant: Maybe<string>;
   readonly sex: Sex;
   readonly experienceLevel: string;
   readonly personalData: Record<PersonalData>;
@@ -101,9 +101,9 @@ export interface HeroDependent {
   readonly belongings: Record<Belongings>;
   readonly rules: Record<Rules>;
   readonly pets: OrderedMap<string, Record<PetInstance>>;
-  readonly petInEditor?: Record<PetEditorInstance>;
+  readonly petInEditor: Maybe<Record<PetEditorInstance>>;
   readonly isInPetCreation: boolean;
-  readonly pact?: Record<Pact>;
+  readonly pact: Maybe<Record<Pact>>;
   readonly combatStyleDependencies: List<Record<StyleDependency>>;
   readonly magicalStyleDependencies: List<Record<StyleDependency>>;
   readonly blessedStyleDependencies: List<Record<StyleDependency>>;
@@ -112,19 +112,19 @@ export interface HeroDependent {
 export type Sex = 'm' | 'f';
 
 export interface PersonalData {
-  readonly family?: string;
-  readonly placeOfBirth?: string;
-  readonly dateOfBirth?: string;
-  readonly age?: string;
-  readonly hairColor?: number;
-  readonly eyeColor?: number;
-  readonly size?: string;
-  readonly weight?: string;
-  readonly title?: string;
-  readonly socialStatus?: number;
-  readonly characteristics?: string;
-  readonly otherInfo?: string;
-  readonly cultureAreaKnowledge?: string;
+  readonly family: Maybe<string>;
+  readonly placeOfBirth: Maybe<string>;
+  readonly dateOfBirth: Maybe<string>;
+  readonly age: Maybe<string>;
+  readonly hairColor: Maybe<number>;
+  readonly eyeColor: Maybe<number>;
+  readonly size: Maybe<string>;
+  readonly weight: Maybe<string>;
+  readonly title: Maybe<string>;
+  readonly socialStatus: Maybe<number>;
+  readonly characteristics: Maybe<string>;
+  readonly otherInfo: Maybe<string>;
+  readonly cultureAreaKnowledge: Maybe<string>;
 }
 
 export interface Energies {
@@ -132,8 +132,7 @@ export interface Energies {
   readonly addedArcaneEnergyPoints: number;
   readonly addedKarmaPoints: number;
   readonly permanentLifePoints: Record<PermanentEnergyLoss>;
-  readonly permanentArcaneEnergyPoints:
-    Record<PermanentEnergyLossAndBoughtBack>;
+  readonly permanentArcaneEnergyPoints: Record<PermanentEnergyLossAndBoughtBack>;
   readonly permanentKarmaPoints: Record<PermanentEnergyLossAndBoughtBack>;
 }
 
@@ -147,10 +146,10 @@ export interface PermanentEnergyLossAndBoughtBack extends PermanentEnergyLoss {
 
 export interface Belongings {
   readonly items: OrderedMap<string, Record<ItemInstance>>;
-  readonly itemInEditor?: Record<ItemEditorInstance>;
+  readonly itemInEditor: Maybe<Record<ItemEditorInstance>>;
   readonly isInItemCreation: boolean;
   readonly armorZones: OrderedMap<string, Record<ArmorZonesInstance>>;
-  readonly zoneArmorInEditor?: Record<ArmorZonesEditorInstance>;
+  readonly zoneArmorInEditor: Maybe<Record<ArmorZonesEditorInstance>>;
   readonly isInZoneArmorCreation: boolean;
   readonly purse: Record<Purse>;
 }
@@ -202,10 +201,10 @@ export interface Selections {
 }
 
 export interface ActiveObject {
-  sid?: string | number;
-  sid2?: string | number;
-  tier?: number;
-  cost?: number;
+  sid: Maybe<string | number>;
+  sid2: Maybe<string | number>;
+  tier: Maybe<number>;
+  cost: Maybe<number>;
 }
 
 export interface ActiveObjectName extends ActiveObject {
@@ -381,55 +380,52 @@ export interface ItemInstanceOld {
 }
 
 export interface ItemBaseInstance {
-  id?: string;
   name: string;
-  ammunition?: string;
-  combatTechnique?: string;
-  damageDiceSides?: number;
+  ammunition: Maybe<string>;
+  combatTechnique: Maybe<string>;
+  damageDiceSides: Maybe<number>;
   gr: number;
-  isParryingWeapon?: boolean;
+  isParryingWeapon: Maybe<boolean>;
   isTemplateLocked: boolean;
-  reach?: number;
-  template?: string;
-  where?: string;
-  isTwoHandedWeapon?: boolean;
-  improvisedWeaponGroup?: number;
-  loss?: number;
-  forArmorZoneOnly?: boolean;
-  addPenalties?: boolean;
-  armorType?: number;
+  reach: Maybe<number>;
+  template: Maybe<string>;
+  where: Maybe<string>;
+  isTwoHandedWeapon: Maybe<boolean>;
+  improvisedWeaponGroup: Maybe<number>;
+  loss: Maybe<number>;
+  forArmorZoneOnly: Maybe<boolean>;
+  addPenalties: Maybe<boolean>;
+  armorType: Maybe<number>;
 }
 
 export interface ItemInstance extends ItemBaseInstance {
   id: string;
-  at?: number;
-  iniMod?: number;
-  movMod?: number;
-  damageBonus?: Record<{
-    primary?: string;
-    threshold: number | List<number>;
-  }>;
-  damageDiceNumber?: number;
-  damageFlat?: number;
-  enc?: number;
-  length?: number;
+  at: Maybe<number>;
+  iniMod: Maybe<number>;
+  movMod: Maybe<number>;
+  damageBonus: Maybe<Record<Wiki.PrimaryAttributeDamageThreshold>>;
+  damageDiceNumber: Maybe<number>;
+  damageFlat: Maybe<number>;
+  enc: Maybe<number>;
+  length: Maybe<number>;
   amount: number;
-  pa?: number;
+  pa: Maybe<number>;
   price: number;
-  pro?: number;
-  range?: List<number>;
-  reloadTime?: number;
-  stp?: number;
+  pro: Maybe<number>;
+  range: Maybe<List<number>>;
+  reloadTime: Maybe<number>;
+  stp: Maybe<number>;
   weight: number;
-  stabilityMod?: number;
-  note?: string;
-  rules?: string;
-  advantage?: string;
-  disadvantage?: string;
-  src?: List<Record<Wiki.SourceLink>>;
+  stabilityMod: Maybe<number>;
+  note: Maybe<string>;
+  rules: Maybe<string>;
+  advantage: Maybe<string>;
+  disadvantage: Maybe<string>;
+  src: Maybe<List<Record<Wiki.SourceLink>>>;
 }
 
 export interface ItemEditorSpecific {
+  id: Maybe<string>;
   at: string;
   iniMod: string;
   movMod: string;
@@ -450,26 +446,26 @@ export interface ItemEditorSpecific {
 }
 
 export interface EditPrimaryAttributeDamageThreshold {
-  readonly primary?: string;
-  readonly threshold: string | List<string>;
+  primary: Maybe<string>;
+  threshold: string | List<string>;
 }
 
 export interface ItemEditorInstance extends ItemBaseInstance, ItemEditorSpecific {}
 
 export interface ArmorZonesBaseInstance {
   name: string;
-  head?: string;
-  headLoss?: number;
-  leftArm?: string;
-  leftArmLoss?: number;
-  rightArm?: string;
-  rightArmLoss?: number;
-  torso?: string;
-  torsoLoss?: number;
-  leftLeg?: string;
-  leftLegLoss?: number;
-  rightLeg?: string;
-  rightLegLoss?: number;
+  head: Maybe<string>;
+  headLoss: Maybe<number>;
+  leftArm: Maybe<string>;
+  leftArmLoss: Maybe<number>;
+  rightArm: Maybe<string>;
+  rightArmLoss: Maybe<number>;
+  torso: Maybe<string>;
+  torsoLoss: Maybe<number>;
+  leftLeg: Maybe<string>;
+  leftLegLoss: Maybe<number>;
+  rightLeg: Maybe<string>;
+  rightLegLoss: Maybe<number>;
 }
 
 export interface ArmorZonesInstance extends ArmorZonesBaseInstance {
@@ -477,7 +473,7 @@ export interface ArmorZonesInstance extends ArmorZonesBaseInstance {
 }
 
 export interface ArmorZonesEditorInstance extends ArmorZonesBaseInstance {
-  id?: string;
+  id: Maybe<string>;
 }
 
 export interface SecondaryAttribute<I extends DCIds = DCIds> {
@@ -558,44 +554,44 @@ export interface SubTab {
 }
 
 interface PetBaseInstance {
-  id?: string;
   name: string;
-  avatar?: string;
+  avatar: Maybe<string>;
 }
 
 export interface PetInstance extends PetBaseInstance {
   id: string;
-  size?: string;
-  type?: string;
-  attack?: string;
-  dp?: string;
-  reach?: string;
-  actions?: string;
-  talents?: string;
-  skills?: string;
-  notes?: string;
-  spentAp?: string;
-  totalAp?: string;
-  cou?: string;
-  sgc?: string;
-  int?: string;
-  cha?: string;
-  dex?: string;
-  agi?: string;
-  con?: string;
-  str?: string;
-  lp?: string;
-  ae?: string;
-  spi?: string;
-  tou?: string;
-  pro?: string;
-  ini?: string;
-  mov?: string;
-  at?: string;
-  pa?: string;
+  size: Maybe<string>;
+  type: Maybe<string>;
+  attack: Maybe<string>;
+  dp: Maybe<string>;
+  reach: Maybe<string>;
+  actions: Maybe<string>;
+  talents: Maybe<string>;
+  skills: Maybe<string>;
+  notes: Maybe<string>;
+  spentAp: Maybe<string>;
+  totalAp: Maybe<string>;
+  cou: Maybe<string>;
+  sgc: Maybe<string>;
+  int: Maybe<string>;
+  cha: Maybe<string>;
+  dex: Maybe<string>;
+  agi: Maybe<string>;
+  con: Maybe<string>;
+  str: Maybe<string>;
+  lp: Maybe<string>;
+  ae: Maybe<string>;
+  spi: Maybe<string>;
+  tou: Maybe<string>;
+  pro: Maybe<string>;
+  ini: Maybe<string>;
+  mov: Maybe<string>;
+  at: Maybe<string>;
+  pa: Maybe<string>;
 }
 
 export interface PetEditorSpecific {
+  id: Maybe<string>;
   size: string;
   type: string;
   attack: string;

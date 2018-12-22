@@ -1,86 +1,250 @@
-import * as R from 'ramda';
+import { pipe } from 'ramda';
 import { Categories } from '../../constants/Categories';
 import * as Data from '../../types/data';
 import * as Raw from '../../types/rawdata';
-import { WikiAll } from '../../types/wiki';
+import { PrimaryAttributeDamageThreshold, WikiAll } from '../../types/wiki';
 import { getCombinedPrerequisites } from '../activatable/activatableActivationUtils';
 import { getActiveFromState } from '../activatable/activatableConvertUtils';
 import { addAllStyleRelatedDependencies } from '../activatable/ExtendedStyleUtils';
-import { exists } from '../exists';
+import { ActiveObjectCreator, createActivatableDependentWithActive } from '../activeEntries/activatableDependent';
+import { ActivatableSkillDependentG, createActivatableSkillDependentWithValue } from '../activeEntries/activatableSkillDependent';
+import { createAttributeDependentWithValue } from '../activeEntries/attributeDependent';
+import { createSkillDependentWithValue } from '../activeEntries/skillDependent';
 import { getCategoryById } from '../IDUtils';
-import * as CreateDependencyObjectUtils from './createEntryUtils';
-import { List, Maybe, OrderedMap, OrderedSet, Record, StringKeyObject } from './dataUtils';
-import { addDependencies } from './dependencies/dependencyUtils';
-import { currentVersion } from './VersionUtils';
+import { HitZoneArmorCreator, ItemCreator, PrimaryAttributeDamageThresholdCreator } from '../ItemUtils';
+import { PetCreator } from '../PetUtils';
+import { Functn } from '../structures/Function';
+import { fromArray, List } from '../structures/List';
+import { elem, fromNullable, Maybe } from '../structures/Maybe';
+import { foldlWithKey, OrderedMap } from '../structures/OrderedMap';
+import { insert, OrderedSet } from '../structures/OrderedSet';
+import { Record, StringKeyObject } from '../structures/Record';
+import { BelongingsCreator, EnergiesCreator, HeroCreator, HeroG, PermanentEnergyLossAndBoughtBackCreator, PermanentEnergyLossCreator, PersonalDataCreator, PurseCreator, RulesCreator } from './heroData';
 
-const getUnchangedProperties = (id: string, hero: Raw.RawHero) => {
-  const {
-    clientVersion,
-    name,
-    avatar,
-    ap,
-    r,
-    rv,
-    c,
-    p,
-    pv,
-    professionName,
-    sex,
-    phase,
-    el,
-    pers,
-  } = hero;
+const createHeroObject = (hero: Raw.RawHero): Record<Data.HeroDependent> =>
+  HeroCreator ({
+    id: hero .id,
+    clientVersion: hero .clientVersion,
+    phase: hero .phase,
+    name: hero .name,
+    avatar: fromNullable (hero .avatar),
+    adventurePointsTotal: hero .ap .total,
+    race: fromNullable (hero .r),
+    raceVariant: fromNullable (hero .rv),
+    culture: fromNullable (hero .c),
+    profession: fromNullable (hero .p),
+    professionName: fromNullable (hero .professionName),
+    professionVariant: fromNullable (hero .pv),
+    sex: hero .sex,
+    experienceLevel: hero .el,
 
-  return {
-    id,
-    clientVersion,
-    phase,
-    name,
-    avatar,
-    adventurePointsTotal: ap.total,
-    race: r,
-    raceVariant: rv,
-    culture: c,
-    profession: p,
-    professionName,
-    professionVariant: pv,
-    sex,
-    experienceLevel: el,
-    personalData: Record.of (pers),
-  };
-};
+    personalData: PersonalDataCreator ({
+      family: fromNullable (hero .pers .family),
+      placeOfBirth: fromNullable (hero .pers .placeofbirth),
+      dateOfBirth: fromNullable (hero .pers .dateofbirth),
+      age: fromNullable (hero .pers .age),
+      hairColor: fromNullable (hero .pers .haircolor),
+      eyeColor: fromNullable (hero .pers .eyecolor),
+      size: fromNullable (hero .pers .size),
+      weight: fromNullable (hero .pers .weight),
+      title: fromNullable (hero .pers .title),
+      socialStatus: fromNullable (hero .pers .socialstatus),
+      characteristics: fromNullable (hero .pers .characteristics),
+      otherInfo: fromNullable (hero .pers .otherinfo),
+      cultureAreaKnowledge: fromNullable (hero .pers .cultureAreaKnowledge),
+    }),
 
-const getPlayer = (hero: Raw.RawHero) => {
-  const { player } = hero;
+    player: Maybe.fmap ((player: Raw.RawUser) => player .id)
+                        (fromNullable (hero .player)),
 
-  return {
-    player: player && player.id,
-  };
-};
+    dateCreated: new Date (hero .dateCreated),
+    dateModified: new Date (hero .dateModified),
 
-const getDates = (hero: Raw.RawHero) => {
-  const { dateCreated, dateModified } = hero;
+    attributes: OrderedMap.fromArray (
+      hero .attr .values .map<[string, Record<Data.AttributeDependent>]> (
+        ({ id, value }) => [id, createAttributeDependentWithValue (value) (id)]
+      )
+    ),
 
-  return {
-    dateCreated: new Date (dateCreated),
-    dateModified: new Date (dateModified),
-  };
-};
+    attributeAdjustmentSelected: hero .attr .attributeAdjustmentSelected,
 
-const getActivatableDependent = (
-  source: StringKeyObject<Data.ActiveObject[]>
-): (OrderedMap<string, Record<Data.ActivatableDependent>>) =>
-  OrderedMap.of (
-    Object.entries (source).map<[string, Record<Data.ActivatableDependent>]> (
-      ([id, active]) => [
-        id,
-        CreateDependencyObjectUtils.createActivatableDependent (
+    energies: EnergiesCreator ({
+      addedArcaneEnergyPoints: hero .attr .ae,
+      addedKarmaPoints: hero .attr .kp,
+      addedLifePoints: hero .attr .lp,
+      permanentArcaneEnergyPoints:
+        PermanentEnergyLossAndBoughtBackCreator (hero .attr .permanentAE),
+      permanentKarmaPoints:
+        PermanentEnergyLossAndBoughtBackCreator (hero .attr .permanentKP),
+      permanentLifePoints:
+        hero .attr .permanentLP
+          ? PermanentEnergyLossCreator (hero .attr .permanentLP)
+          : PermanentEnergyLossCreator ({ }),
+    }),
+
+    ...getActivatables (hero),
+
+    skills: getDependentSkills (hero .talents),
+    combatTechniques: getDependentSkills (hero .talents),
+    spells: getActivatableDependentSkills (hero .spells),
+    cantrips: OrderedSet.fromArray (hero .cantrips),
+    liturgicalChants: getActivatableDependentSkills (hero .liturgies),
+    blessings: OrderedSet.fromArray (hero .blessings),
+
+    belongings: BelongingsCreator ({
+      items: OrderedMap.fromArray (
+        Object.entries (hero .belongings .items) .map<[string, Record<Data.ItemInstance>]> (
+          ([id, obj]) => {
+            return [
+              id,
+              ItemCreator ({
+                id,
+                name: obj .name,
+                ammunition: fromNullable (obj .ammunition),
+                combatTechnique: fromNullable (obj .combatTechnique),
+                damageDiceSides: fromNullable (obj .damageDiceSides),
+                gr: obj .gr,
+                isParryingWeapon: fromNullable (obj .isParryingWeapon),
+                isTemplateLocked: obj .isTemplateLocked,
+                reach: fromNullable (obj .reach),
+                template: fromNullable (obj .template),
+                where: fromNullable (obj .where),
+                isTwoHandedWeapon: fromNullable (obj .isTwoHandedWeapon),
+                improvisedWeaponGroup: fromNullable (obj .imp),
+                loss: fromNullable (obj .loss),
+                forArmorZoneOnly: fromNullable (obj .forArmorZoneOnly),
+                addPenalties: fromNullable (obj .addPenalties),
+                armorType: fromNullable (obj .armorType),
+                at: fromNullable (obj .at),
+                iniMod: fromNullable (obj .iniMod),
+                movMod: fromNullable (obj .movMod),
+                damageBonus:
+                  Maybe.fmap<
+                    Raw.RawPrimaryAttributeDamageThreshold,
+                    Record<PrimaryAttributeDamageThreshold>
+                  >
+                    (primaryThreshold => PrimaryAttributeDamageThresholdCreator ({
+                      primary: fromNullable (primaryThreshold .primary),
+                      threshold: typeof primaryThreshold .threshold === 'object'
+                        ? List.fromArray (primaryThreshold .threshold)
+                        : primaryThreshold .threshold,
+                    }))
+                    (fromNullable (obj .primaryThreshold)),
+                damageDiceNumber: fromNullable (obj .damageDiceNumber),
+                damageFlat: fromNullable (obj .damageFlat),
+                enc: fromNullable (obj .enc),
+                length: fromNullable (obj .length),
+                amount: obj .amount,
+                pa: fromNullable (obj .pa),
+                price: obj .price,
+                pro: fromNullable (obj .pro),
+                range: Maybe.fmap<number[], List<number>> (List.fromArray)
+                                                          (fromNullable (obj .range)),
+                reloadTime: fromNullable (obj .reloadTime),
+                stp: fromNullable (obj .stp),
+                weight: obj .weight,
+                stabilityMod: fromNullable (obj .stabilityMod),
+              }),
+            ];
+          }
+        )
+      ),
+
+      armorZones: hero .belongings .armorZones
+        ? OrderedMap.fromArray (
+          Object.entries (hero .belongings .armorZones)
+            .map<[string, Record<Data.ArmorZonesInstance>]> (
+              ([id, obj]) => [
+                id,
+                HitZoneArmorCreator ({
+                  id,
+                  name: obj .name,
+                  head: fromNullable (obj .head),
+                  headLoss: fromNullable (obj .headLoss),
+                  leftArm: fromNullable (obj .leftArm),
+                  leftArmLoss: fromNullable (obj .leftArmLoss),
+                  rightArm: fromNullable (obj .rightArm),
+                  rightArmLoss: fromNullable (obj .rightArmLoss),
+                  torso: fromNullable (obj .torso),
+                  torsoLoss: fromNullable (obj .torsoLoss),
+                  leftLeg: fromNullable (obj .leftLeg),
+                  leftLegLoss: fromNullable (obj .leftLegLoss),
+                  rightLeg: fromNullable (obj .rightLeg),
+                  rightLegLoss: fromNullable (obj .rightLegLoss),
+                }),
+              ]
+            )
+        )
+        : OrderedMap.empty,
+
+      purse: PurseCreator (hero .belongings .purse),
+    }),
+
+    rules: RulesCreator ({
+      ...hero.rules,
+      enabledRuleBooks: OrderedSet.fromArray (hero.rules.enabledRuleBooks),
+    }),
+
+    pets: hero .pets
+      ? OrderedMap.fromArray (
+        Object.entries (hero .pets)
+          .map<[string, Record<Data.PetInstance>]> (
+            ([id, obj]) => [
+              id,
+              PetCreator ({
+                id,
+                name: obj .name,
+                avatar: fromNullable (obj .avatar),
+                size: fromNullable (obj .size),
+                type: fromNullable (obj .type),
+                attack: fromNullable (obj .attack),
+                dp: fromNullable (obj .dp),
+                reach: fromNullable (obj .reach),
+                actions: fromNullable (obj .actions),
+                talents: fromNullable (obj .talents),
+                skills: fromNullable (obj .skills),
+                notes: fromNullable (obj .notes),
+                spentAp: fromNullable (obj .spentAp),
+                totalAp: fromNullable (obj .totalAp),
+                cou: fromNullable (obj .cou),
+                sgc: fromNullable (obj .sgc),
+                int: fromNullable (obj .int),
+                cha: fromNullable (obj .cha),
+                dex: fromNullable (obj .dex),
+                agi: fromNullable (obj .agi),
+                con: fromNullable (obj .con),
+                str: fromNullable (obj .str),
+                lp: fromNullable (obj .lp),
+                ae: fromNullable (obj .ae),
+                spi: fromNullable (obj .spi),
+                tou: fromNullable (obj .tou),
+                pro: fromNullable (obj .pro),
+                ini: fromNullable (obj .ini),
+                mov: fromNullable (obj .mov),
+                at: fromNullable (obj .at),
+                pa: fromNullable (obj .pa),
+              })]
+          )
+      )
+      : OrderedMap.empty,
+  })
+
+const getActivatableDependent =
+  (source: StringKeyObject<Raw.RawActiveObject[]>): Data.HeroDependent['advantages'] =>
+    OrderedMap.fromArray (
+      Object.entries (source) .map<[string, Record<Data.ActivatableDependent>]> (
+        ([id, active]) => [
           id,
-          { active: List.of (...active.map (Record.of)) }
-        ),
-      ]
+          createActivatableDependentWithActive (fromArray (active .map (e => ActiveObjectCreator ({
+                                                  cost: fromNullable (e .cost),
+                                                  sid: fromNullable (e .sid),
+                                                  sid2: fromNullable (e .sid2),
+                                                  tier: fromNullable (e .tier),
+                                                }))))
+                                                (id),
+        ]
+      )
     )
-  );
 
 interface ActivatableMaps {
   advantages: OrderedMap<string, Record<Data.ActivatableDependent>>;
@@ -89,379 +253,134 @@ interface ActivatableMaps {
 }
 
 const getActivatables = (hero: Raw.RawHero): ActivatableMaps => {
-  const objectsInMap = getActivatableDependent (hero.activatable);
+  const objectsInMap = getActivatableDependent (hero .activatable)
 
-  return objectsInMap.foldlWithKey<ActivatableMaps> (
-    acc => id => obj => {
-      const category = getCategoryById (id);
+  return foldlWithKey<string, Record<Data.ActivatableDependent>, ActivatableMaps>
+    (acc => id => obj => {
+      const category = getCategoryById (id)
 
-      if (category.equals (Maybe.pure (Categories.ADVANTAGES))) {
-        return {
-          ...acc,
-          advantages: acc.advantages.insert (id) (obj),
-        };
+      const key: keyof ActivatableMaps =
+        elem (Categories.ADVANTAGES) (category)
+          ? 'advantages'
+          : elem (Categories.DISADVANTAGES) (category)
+          ? 'disadvantages'
+          : 'specialAbilities'
+
+      return {
+        ...acc,
+        [key]: OrderedMap.insert<string, Record<Data.ActivatableDependent>> (id) (obj) (acc [key]),
       }
-      else if (category.equals (Maybe.pure (Categories.DISADVANTAGES))) {
-        return {
-          ...acc,
-          disadvantages: acc.disadvantages.insert (id) (obj),
-        };
-      }
-      else if (category.equals (Maybe.pure (Categories.SPECIAL_ABILITIES))) {
-        return {
-          ...acc,
-          specialAbilities: acc.specialAbilities.insert (id) (obj),
-        };
-      }
+    })
+    ({
+      advantages: OrderedMap.empty,
+      disadvantages: OrderedMap.empty,
+      specialAbilities: OrderedMap.empty,
+    })
+    (objectsInMap)
+}
 
-      return acc;
-    }
-  ) (
-    {
-      advantages: OrderedMap.empty (),
-      disadvantages: OrderedMap.empty (),
-      specialAbilities: OrderedMap.empty (),
-    }
-  );
-};
-
-const getAttributes = (
-  hero: Raw.RawHero
-): (OrderedMap<string, Record<Data.AttributeDependent>>) =>
-  OrderedMap.of (
-    hero.attr.values.map<[string, Record<Data.AttributeDependent>]> (
-      ({ id, value }) => [
-        id,
-        CreateDependencyObjectUtils.createAttributeDependent (
-          id,
-          { value }
-        ),
-      ]
+const getDependentSkills =
+  (source: StringKeyObject<number>): OrderedMap<string, Record<Data.SkillDependent>> =>
+    OrderedMap.fromArray (
+      Object.entries (source) .map<[string, Record<Data.SkillDependent>]> (
+        ([id, value]) => [id, createSkillDependentWithValue (value) (id)]
+      )
     )
-  );
 
-const getEnergies = (hero: Raw.RawHero): Record<Data.Energies> => {
-  const {
-    attr: {
-      ae: addedArcaneEnergyPoints,
-      kp: addedKarmaPoints,
-      lp: addedLifePoints,
-      permanentAE,
-      permanentKP,
-      permanentLP = { lost: 0 },
-    },
-  } = hero;
-
-  return Record.of<Data.Energies> ({
-    addedArcaneEnergyPoints,
-    addedKarmaPoints,
-    addedLifePoints,
-    permanentArcaneEnergyPoints: Record.of (permanentAE),
-    permanentKarmaPoints: Record.of (permanentKP),
-    permanentLifePoints: Record.of (permanentLP),
-  });
-};
-
-const getDependentSkills = (
-  source: StringKeyObject<number>
-): (OrderedMap<string, Record<Data.SkillDependent>>) =>
-  OrderedMap.of (
-    Object.entries (source) .map<[string, Record<Data.SkillDependent>]> (
-      ([id, value]) => [
-        id,
-        CreateDependencyObjectUtils.createDependentSkill (value) (id),
-      ]
+const getActivatableDependentSkills =
+  (source: StringKeyObject<number>): OrderedMap<string, Record<Data.ActivatableSkillDependent>> =>
+    OrderedMap.fromArray (
+      Object.entries (source) .map<[string, Record<Data.ActivatableSkillDependent>]> (
+        ([id, value]) => [id, createActivatableSkillDependentWithValue (value) (id)]
+      )
     )
-  );
 
-const getSkills = (
-  hero: Raw.RawHero
-): (OrderedMap<string, Record<Data.SkillDependent>>) =>
-  getDependentSkills (hero.talents);
+const { advantages, disadvantages, specialAbilities, spells } = HeroG
 
-const getCombatTechniques = (
-  hero: Raw.RawHero
-): (OrderedMap<string, Record<Data.SkillDependent>>) =>
-  getDependentSkills (hero.ct);
+export const convertFromRawHero =
+  (wiki: Record<WikiAll>) => (hero: Raw.RawHero): Record<Data.HeroDependent> => {
+    const intermediateState = createHeroObject (hero)
 
-const getActivatableDependentSkills = (
-  source: StringKeyObject<number>
-): (OrderedMap<string, Record<Data.ActivatableSkillDependent>>) =>
-  OrderedMap.of (
-    Object.entries (source)
-      .map<[string, Record<Data.ActivatableSkillDependent>]> (
-        ([id, value]) => [
-          id,
-          CreateDependencyObjectUtils.createActivatableDependentSkill (id, {
-            active: true,
-            value,
-          }),
-        ]
-      )
-  );
+    const activeAdvantages = getActiveFromState (advantages (intermediateState))
+    const activeDisadvantages = getActiveFromState (disadvantages (intermediateState))
+    const activeSpecialAbilities = getActiveFromState (specialAbilities (intermediateState))
 
-const getSpells = (
-  hero: Raw.RawHero
-): (OrderedMap<string, Record<Data.ActivatableSkillDependent>>) =>
-  getActivatableDependentSkills (hero.spells);
+    const { active, id } = ActivatableSkillDependentG
 
-const getCantrips = (
-  hero: Raw.RawHero
-): OrderedSet<string> =>
-  OrderedSet.of (hero.cantrips);
+    const activeSpells =
+      OrderedMap.foldr<Record<Data.ActivatableSkillDependent>, OrderedSet<string>>
+        (spell => active (spell) ? insert (id (spell)) : Functn.id)
+        (OrderedSet.empty)
+        (spells (intermediateState))
 
-const getLiturgicalChants = (
-  hero: Raw.RawHero
-): (OrderedMap<string, Record<Data.ActivatableSkillDependent>>) =>
-  getActivatableDependentSkills (hero.liturgies);
-
-const getBlessings = (
-  hero: Raw.RawHero
-): OrderedSet<string> =>
-  OrderedSet.of (hero.blessings);
-
-const getBelongings = (hero: Raw.RawHero): Record<Data.Belongings> => {
-  const {
-    items,
-    armorZones,
-    purse,
-  } = hero.belongings;
-
-  return Record.of<Data.Belongings> ({
-    items: OrderedMap.of (
-      Object.entries (items)
-        .map<[string, Record<Data.ItemInstance>]> (
-          ([id, obj]) => {
-            const {
-              imp,
-              primaryThreshold,
-              range,
-              ...other
-            } = obj;
-
-            return [id, Record.of<Data.ItemInstance> ({
-              ...other,
-              improvisedWeaponGroup: imp,
-              damageBonus: primaryThreshold && Record.of ({
-                ...primaryThreshold,
-                threshold: typeof primaryThreshold.threshold === 'object'
-                  ? List.fromArray (primaryThreshold.threshold)
-                  : primaryThreshold.threshold,
-              }),
-              range: range ? List.fromArray (range) : undefined,
-            })];
-          }
-        )
-    ),
-    armorZones: armorZones
-      ? OrderedMap.of (
-        Object.entries (armorZones)
-          .map<[string, Record<Data.ArmorZonesInstance>]> (
-            ([id, obj]) => [id, Record.of (obj)]
-          )
-      )
-      : OrderedMap.empty (),
-    purse: Record.of (purse),
-    isInItemCreation: false,
-    isInZoneArmorCreation: false,
-  });
-};
-
-const getRules =
-  (hero: Raw.RawHero): Record<Data.Rules> =>
-    Record.of ({
-      ...hero.rules,
-      enabledRuleBooks: OrderedSet.of (hero.rules.enabledRuleBooks),
-    });
-
-const getPets =
-  (hero: Raw.RawHero): OrderedMap<string, Record<Data.PetInstance>> =>
-    exists (hero.pets)
-      ? OrderedMap.of (
-          Object.entries (hero.pets)
-            .map<[string, Record<Data.PetInstance>]> (
-              ([id, obj]) => [id, Record.of<Data.PetInstance> (obj)]
-            )
-        )
-      : OrderedMap.empty ();
-
-export const getHeroInstance = (
-  wiki: Record<WikiAll>,
-  id: string,
-  hero: Raw.RawHero
-): Record<Data.HeroDependent> => {
-  const intermediateState = Record.of<Data.HeroDependent> ({
-    ...getUnchangedProperties (id, hero),
-    ...getPlayer (hero),
-    ...getDates (hero),
-    ...getActivatables (hero),
-    attributes: getAttributes (hero),
-    attributeAdjustmentSelected: hero.attr.attributeAdjustmentSelected,
-    energies: getEnergies (hero),
-    skills: getSkills (hero),
-    combatTechniques: getCombatTechniques (hero),
-    spells: getSpells (hero),
-    cantrips: getCantrips (hero),
-    liturgicalChants: getLiturgicalChants (hero),
-    blessings: getBlessings (hero),
-    belongings: getBelongings (hero),
-    rules: getRules (hero),
-    pets: getPets (hero),
-    isInPetCreation: false,
-    combatStyleDependencies: List.of (),
-    magicalStyleDependencies: List.of (),
-    blessedStyleDependencies: List.of (),
-  });
-
-  const advantages = getActiveFromState (intermediateState.get ('advantages'));
-  const disadvantages = getActiveFromState (intermediateState.get ('disadvantages'));
-  const specialAbilities = getActiveFromState (intermediateState.get ('specialAbilities'));
-  const spells = intermediateState.get ('spells').foldl<OrderedSet<string>> (
-    acc => spell => spell.get ('active') ? acc.insert (spell.get ('id')) : acc
-  ) (OrderedSet.empty ());
-
-  const addAllDependencies = R.pipe (
-    advantages.foldl<Record<Data.HeroDependent>> (
-      state => entry => Maybe.fromMaybe (state) (
-        wiki.get ('advantages').lookup (entry.get ('id'))
-          .fmap (
-            wikiEntry => addDependencies (
-              state,
-              getCombinedPrerequisites (
-                wikiEntry,
-                intermediateState.get ('advantages').lookup (entry.get ('id')),
-                entry as any as Record<Data.ActiveObject>,
-                true
-              ),
-              entry.get ('id')
-            )
-          )
-      )
-    ),
-    disadvantages.foldl<Record<Data.HeroDependent>> (
-      state => entry => Maybe.fromMaybe (state) (
-        wiki.get ('disadvantages').lookup (entry.get ('id'))
-          .fmap (
-            wikiEntry => addDependencies (
-              state,
-              getCombinedPrerequisites (
-                wikiEntry,
-                intermediateState.get ('disadvantages').lookup (entry.get ('id')),
-                entry as any as Record<Data.ActiveObject>,
-                true
-              ),
-              entry.get ('id')
-            )
-          )
-      )
-    ),
-    specialAbilities.foldl<Record<Data.HeroDependent>> (
-      state => entry => Maybe.fromMaybe (state) (
-        wiki.get ('specialAbilities').lookup (entry.get ('id'))
-          .fmap (
-            wikiEntry => addAllStyleRelatedDependencies (
-              addDependencies (
+    const addAllDependencies = pipe (
+      advantages.foldl<Record<Data.HeroDependent>> (
+        state => entry => Maybe.fromMaybe (state) (
+          wiki.get ('advantages').lookup (entry.get ('id'))
+            .fmap (
+              wikiEntry => addDependencies (
                 state,
                 getCombinedPrerequisites (
                   wikiEntry,
-                  intermediateState.get ('specialAbilities').lookup (entry.get ('id')),
+                  intermediateState.get ('advantages').lookup (entry.get ('id')),
                   entry as any as Record<Data.ActiveObject>,
                   true
                 ),
                 entry.get ('id')
-              ),
-              wikiEntry
+              )
             )
-          )
-      )
-    ),
-    spells.foldl<Record<Data.HeroDependent>> (
-      state => spellId => Maybe.fromMaybe (state) (
-        wiki.get ('spells').lookup (spellId)
-          .fmap (
-            wikiEntry => addDependencies (
-              state,
-              wikiEntry.get ('prerequisites'),
-              spellId
+        )
+      ),
+      disadvantages.foldl<Record<Data.HeroDependent>> (
+        state => entry => Maybe.fromMaybe (state) (
+          wiki.get ('disadvantages').lookup (entry.get ('id'))
+            .fmap (
+              wikiEntry => addDependencies (
+                state,
+                getCombinedPrerequisites (
+                  wikiEntry,
+                  intermediateState.get ('disadvantages').lookup (entry.get ('id')),
+                  entry as any as Record<Data.ActiveObject>,
+                  true
+                ),
+                entry.get ('id')
+              )
             )
-          )
+        )
+      ),
+      specialAbilities.foldl<Record<Data.HeroDependent>> (
+        state => entry => Maybe.fromMaybe (state) (
+          wiki.get ('specialAbilities').lookup (entry.get ('id'))
+            .fmap (
+              wikiEntry => addAllStyleRelatedDependencies (
+                addDependencies (
+                  state,
+                  getCombinedPrerequisites (
+                    wikiEntry,
+                    intermediateState.get ('specialAbilities').lookup (entry.get ('id')),
+                    entry as any as Record<Data.ActiveObject>,
+                    true
+                  ),
+                  entry.get ('id')
+                ),
+                wikiEntry
+              )
+            )
+        )
+      ),
+      spells.foldl<Record<Data.HeroDependent>> (
+        state => spellId => Maybe.fromMaybe (state) (
+          wiki.get ('spells').lookup (spellId)
+            .fmap (
+              wikiEntry => addDependencies (
+                state,
+                wikiEntry.get ('prerequisites'),
+                spellId
+              )
+            )
+        )
       )
-    )
-  );
+    );
 
-  return addAllDependencies (intermediateState);
-}
-
-export const getInitialHeroObject = (
-  id: string,
-  name: string,
-  sex: 'm' | 'f',
-  experienceLevel: string,
-  totalAp: number,
-  enableAllRuleBooks: boolean,
-  enabledRuleBooks: OrderedSet<string>
-): Record<Data.HeroDependent> => {
-  return Record.of<Data.HeroDependent> ({
-    id,
-    clientVersion: currentVersion,
-    phase: 1,
-    name,
-    adventurePointsTotal: totalAp,
-    sex,
-    experienceLevel,
-    personalData: Record.of ({}),
-    rules: Record.of<Data.Rules> ({
-      higherParadeValues: 0,
-      attributeValueLimit: false,
-      enableAllRuleBooks,
-      enabledRuleBooks,
-      enableLanguageSpecializations: false,
-    }),
-    dateCreated: new Date (),
-    dateModified: new Date (),
-    advantages: OrderedMap.empty (),
-    disadvantages: OrderedMap.empty (),
-    specialAbilities: OrderedMap.empty (),
-    attributes: OrderedMap.empty (),
-    attributeAdjustmentSelected: 'ATTR_1',
-    energies: Record.of ({
-      addedArcaneEnergyPoints: 0,
-      addedKarmaPoints: 0,
-      addedLifePoints: 0,
-      permanentArcaneEnergyPoints: Record.of ({
-        lost: 0,
-        redeemed: 0,
-      }),
-      permanentKarmaPoints: Record.of ({
-        lost: 0,
-        redeemed: 0,
-      }),
-      permanentLifePoints: Record.of ({
-        lost: 0,
-      }),
-    }),
-    skills: OrderedMap.empty (),
-    combatTechniques: OrderedMap.empty (),
-    spells: OrderedMap.empty (),
-    cantrips: OrderedSet.empty (),
-    liturgicalChants: OrderedMap.empty (),
-    blessings: OrderedSet.empty (),
-    belongings: Record.of<Data.Belongings> ({
-      items: OrderedMap.empty (),
-      armorZones: OrderedMap.empty (),
-      purse: Record.of ({
-        d: '',
-        s: '',
-        h: '',
-        k: '',
-      }),
-      isInItemCreation: false,
-      isInZoneArmorCreation: false,
-    }),
-    pets: OrderedMap.empty (),
-    isInPetCreation: false,
-    combatStyleDependencies: List.of (),
-    magicalStyleDependencies: List.of (),
-    blessedStyleDependencies: List.of (),
-  });
-};
+    return addAllDependencies (intermediateState);
+  }

@@ -2,7 +2,7 @@ import * as R from 'ramda';
 import { IdPrefixes } from '../constants/IdPrefixes';
 import { ExperienceLevel } from '../types/wiki';
 import { Maybe, OrderedMap, Record } from './dataUtils';
-import { getNumericId, getStringId } from './IDUtils';
+import { getNumericId, prefixId } from './IDUtils';
 
 /**
  * Returns the experience level that fits the given AP value.
@@ -46,5 +46,5 @@ export const getExperienceLevelNumericIdByAp = (
 export const getHigherExperienceLevelId = R.pipe (
   getNumericId,
   R.inc,
-  getStringId (IdPrefixes.EXPERIENCE_LEVELS)
+  prefixId (IdPrefixes.EXPERIENCE_LEVELS)
 );

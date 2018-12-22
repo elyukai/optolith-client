@@ -12,7 +12,7 @@
  * @author Lukas Obermann
  */
 
-import { cnst } from './combinators';
+import { cnst } from './Function';
 import { Some } from './Maybe';
 
 

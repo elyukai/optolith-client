@@ -16,7 +16,7 @@
 
 import { pipe } from 'ramda';
 import * as Math from '../mathUtils';
-import { cnst, id, T } from './combinators';
+import { cnst, id, T } from './Function';
 import { cons, cons_, fromElements, head, ifoldr, List } from './List';
 
 
@@ -818,7 +818,7 @@ export const Maybe = {
 
 // TYPE HELPERS
 
-export type MaybeContent<A> = A extends Maybe<infer I> ? I : never
+export type MaybeContent<A> = A extends Maybe<infer AI> ? AI : never
 
 // tslint:disable-next-line:interface-over-type-literal
 export type Some = {}

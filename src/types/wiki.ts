@@ -1,5 +1,9 @@
 import { Categories } from '../constants/Categories';
-import { List, OrderedMap, Record, Tuple } from '../utils/dataUtils';
+import { List } from '../utils/structures/List';
+import { Maybe } from '../utils/structures/Maybe';
+import { OrderedMap } from '../utils/structures/OrderedMap';
+import { Pair } from '../utils/structures/Pair';
+import { Record } from '../utils/structures/Record';
 
 export type WikiRecord = Record<WikiAll>;
 
@@ -121,120 +125,119 @@ export type EntryWithCategory =
   Record<Blessing>;
 
 export interface Book {
-  readonly id: string;
-  readonly short: string;
-  readonly name: string;
+  id: string;
+  short: string;
+  name: string;
 }
 
 export interface SourceLink {
-  readonly id: string;
-  readonly page: number;
+  id: string;
+  page: number;
 }
 
 export interface ExperienceLevel {
-  readonly id: string;
-  readonly name: string;
-  readonly ap: number;
-  readonly maxAttributeValue: number;
-  readonly maxSkillRating: number;
-  readonly maxCombatTechniqueRating: number;
-  readonly maxTotalAttributeValues: number;
-  readonly maxSpellsLiturgies: number;
-  readonly maxUnfamiliarSpells: number;
+  id: string;
+  name: string;
+  ap: number;
+  maxAttributeValue: number;
+  maxSkillRating: number;
+  maxCombatTechniqueRating: number;
+  maxTotalAttributeValues: number;
+  maxSpellsLiturgies: number;
+  maxUnfamiliarSpells: number;
 }
 
 export interface Race {
-  readonly id: string;
-  readonly name: string;
-  readonly ap: number;
-  readonly lp: number;
-  readonly spi: number;
-  readonly tou: number;
-  readonly mov: number;
-  readonly attributeAdjustments: List<Tuple<string, number>>;
-  readonly attributeAdjustmentsSelection: Tuple<number, List<string>>;
-  readonly attributeAdjustmentsText: string;
-  readonly commonCultures: List<string>;
-  readonly automaticAdvantages: List<string>;
-  readonly automaticAdvantagesCost: [number, number, number];
-  readonly automaticAdvantagesText: string;
-  readonly stronglyRecommendedAdvantages: List<string>;
-  readonly stronglyRecommendedAdvantagesText: string;
-  readonly stronglyRecommendedDisadvantages: List<string>;
-  readonly stronglyRecommendedDisadvantagesText: string;
-  readonly commonAdvantages: List<string>;
-  readonly commonAdvantagesText?: string;
-  readonly commonDisadvantages: List<string>;
-  readonly commonDisadvantagesText?: string;
-  readonly uncommonAdvantages: List<string>;
-  readonly uncommonAdvantagesText?: string;
-  readonly uncommonDisadvantages: List<string>;
-  readonly uncommonDisadvantagesText?: string;
-  readonly hairColors?: List<number>;
-  readonly eyeColors?: List<number>;
-  readonly sizeBase?: number;
-  readonly sizeRandom?: List<Record<Die>>;
-  readonly weightBase: number;
-  readonly weightRandom: List<Record<Die>>;
-  readonly variants: List<string>;
-  readonly category: Categories.RACES;
-  readonly src: List<Record<SourceLink>>;
+  id: string;
+  name: string;
+  ap: number;
+  lp: number;
+  spi: number;
+  tou: number;
+  mov: number;
+  attributeAdjustments: List<Pair<string, number>>;
+  attributeAdjustmentsSelection: Pair<number, List<string>>;
+  attributeAdjustmentsText: string;
+  commonCultures: List<string>;
+  automaticAdvantages: List<string>;
+  automaticAdvantagesText: string;
+  stronglyRecommendedAdvantages: List<string>;
+  stronglyRecommendedAdvantagesText: string;
+  stronglyRecommendedDisadvantages: List<string>;
+  stronglyRecommendedDisadvantagesText: string;
+  commonAdvantages: List<string>;
+  commonAdvantagesText: Maybe<string>;
+  commonDisadvantages: List<string>;
+  commonDisadvantagesText: Maybe<string>;
+  uncommonAdvantages: List<string>;
+  uncommonAdvantagesText: Maybe<string>;
+  uncommonDisadvantages: List<string>;
+  uncommonDisadvantagesText: Maybe<string>;
+  hairColors: Maybe<List<number>>;
+  eyeColors: Maybe<List<number>>;
+  sizeBase: Maybe<number>;
+  sizeRandom: Maybe<List<Record<Die>>>;
+  weightBase: number;
+  weightRandom: List<Record<Die>>;
+  variants: List<string>;
+  category: Categories.RACES;
+  src: List<Record<SourceLink>>;
 }
 
 export interface Die {
-  readonly sides: number;
-  readonly amount: number;
+  sides: number;
+  amount: number;
 }
 
 export interface RaceVariant {
-  readonly id: string;
-  readonly name: string;
-  readonly commonCultures: List<string>;
-  readonly commonAdvantages: List<string>;
-  readonly commonAdvantagesText?: string;
-  readonly commonDisadvantages: List<string>;
-  readonly commonDisadvantagesText?: string;
-  readonly uncommonAdvantages: List<string>;
-  readonly uncommonAdvantagesText?: string;
-  readonly uncommonDisadvantages: List<string>;
-  readonly uncommonDisadvantagesText?: string;
-  readonly hairColors?: List<number>;
-  readonly eyeColors?: List<number>;
-  readonly sizeBase?: number;
-  readonly sizeRandom?: List<Record<Die>>;
-  readonly category: Categories.RACE_VARIANTS;
+  id: string;
+  name: string;
+  commonCultures: List<string>;
+  commonAdvantages: List<string>;
+  commonAdvantagesText: Maybe<string>;
+  commonDisadvantages: List<string>;
+  commonDisadvantagesText: Maybe<string>;
+  uncommonAdvantages: List<string>;
+  uncommonAdvantagesText: Maybe<string>;
+  uncommonDisadvantages: List<string>;
+  uncommonDisadvantagesText: Maybe<string>;
+  hairColors: Maybe<List<number>>;
+  eyeColors: Maybe<List<number>>;
+  sizeBase: Maybe<number>;
+  sizeRandom: Maybe<List<Record<Die>>>;
+  category: Categories.RACE_VARIANTS;
 }
 
 export interface Culture {
-  readonly id: string;
-  readonly name: string;
-  readonly culturalPackageAdventurePoints: number;
-  readonly languages: List<number>;
-  readonly scripts: List<number>;
-  readonly socialStatus: List<number>;
-  readonly areaKnowledge: string;
-  readonly areaKnowledgeShort: string;
-  readonly commonProfessions: List<CommonProfession>;
-  readonly commonMundaneProfessions?: string;
-  readonly commonMagicProfessions?: string;
-  readonly commonBlessedProfessions?: string;
-  readonly commonAdvantages: List<string>;
-  readonly commonAdvantagesText?: string;
-  readonly commonDisadvantages: List<string>;
-  readonly commonDisadvantagesText?: string;
-  readonly uncommonAdvantages: List<string>;
-  readonly uncommonAdvantagesText?: string;
-  readonly uncommonDisadvantages: List<string>;
-  readonly uncommonDisadvantagesText?: string;
-  readonly commonSkills: List<string>;
-  readonly uncommonSkills: List<string>;
-  readonly culturalPackageSkills: List<Record<IncreaseSkill>>;
-  readonly category: Categories.CULTURES;
-  readonly src: List<Record<SourceLink>>;
+  id: string;
+  name: string;
+  culturalPackageAdventurePoints: number;
+  languages: List<number>;
+  scripts: List<number>;
+  socialStatus: List<number>;
+  areaKnowledge: string;
+  areaKnowledgeShort: string;
+  commonProfessions: List<CommonProfession>;
+  commonMundaneProfessions: Maybe<string>;
+  commonMagicProfessions: Maybe<string>;
+  commonBlessedProfessions: Maybe<string>;
+  commonAdvantages: List<string>;
+  commonAdvantagesText: Maybe<string>;
+  commonDisadvantages: List<string>;
+  commonDisadvantagesText: Maybe<string>;
+  uncommonAdvantages: List<string>;
+  uncommonAdvantagesText: Maybe<string>;
+  uncommonDisadvantages: List<string>;
+  uncommonDisadvantagesText: Maybe<string>;
+  commonSkills: List<string>;
+  uncommonSkills: List<string>;
   /**
    * Markdown supported.
    */
-  readonly commonNames: string;
+  commonNames: string;
+  culturalPackageSkills: List<Record<IncreaseSkill>>;
+  category: Categories.CULTURES;
+  src: List<Record<SourceLink>>;
 }
 
 export type CommonProfession = boolean | Record<CommonProfessionObject>;
@@ -451,7 +454,7 @@ export interface SelectionObject {
   specInput?: string;
   applications?: List<Record<Application>>;
   applicationsInput?: string;
-  talent?: Tuple<string, number>;
+  talent?: Pair<string, number>;
   gr?: number;
 }
 
@@ -576,28 +579,28 @@ export interface Blessing {
 }
 
 export interface Spell {
-  readonly id: string;
-  readonly name: string;
-  readonly category: Categories.SPELLS;
-  readonly check: List<string>;
-  readonly checkmod?: CheckModifier;
-  readonly gr: number;
-  readonly ic: number;
-  readonly property: number;
-  readonly tradition: List<number>;
-  readonly subtradition: List<number>;
-  readonly prerequisites: List<AllRequirementObjects>;
-  readonly effect: string;
-  readonly castingTime: string;
-  readonly castingTimeShort: string;
-  readonly cost: string;
-  readonly costShort: string;
-  readonly range: string;
-  readonly rangeShort: string;
-  readonly duration: string;
-  readonly durationShort: string;
-  readonly target: string;
-  readonly src: List<Record<SourceLink>>;
+  id: string;
+  name: string;
+  category: Categories.SPELLS;
+  check: List<string>;
+  checkmod: Maybe<CheckModifier>;
+  gr: number;
+  ic: number;
+  property: number;
+  tradition: List<number>;
+  subtradition: List<number>;
+  prerequisites: List<AllRequirementObjects>;
+  effect: string;
+  castingTime: string;
+  castingTimeShort: string;
+  cost: string;
+  costShort: string;
+  range: string;
+  rangeShort: string;
+  duration: string;
+  durationShort: string;
+  target: string;
+  src: List<Record<SourceLink>>;
 }
 
 export interface SkillExtension extends SelectionObject {
@@ -687,7 +690,7 @@ export interface ItemTemplate {
 }
 
 export interface PrimaryAttributeDamageThreshold {
-  readonly primary?: string;
+  readonly primary: Maybe<string>;
   readonly threshold: number | List<number>;
 }
 

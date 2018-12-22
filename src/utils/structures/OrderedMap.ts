@@ -9,8 +9,8 @@
 
 import { not, pipe } from 'ramda';
 import { add, multiply } from '../mathUtils';
-import { cnst, id } from './combinators';
 import { equals } from './Eq';
+import { cnst, id } from './Function';
 import { List, mappend } from './List';
 import { fromMaybe, fromNullable, Just, Maybe, maybe, maybe_, Some } from './Maybe';
 import { fromUniqueElements, OrderedSet } from './OrderedSet';
@@ -117,10 +117,10 @@ export const mapReplace = <K extends Some, A extends Some> (x: A) => fmap<K, any
  * Right-associative fold of a structure.
  */
 export const foldr =
-  <K extends Some, A extends Some, B extends Some>
+  <A extends Some, B extends Some>
   (f: (current: A) => (acc: B) => B) =>
   (initial: B) =>
-  (xs: OrderedMap<K, A>): B =>
+  (xs: OrderedMap<any, A>): B =>
     [...xs .value] .reduceRight<B> ((acc, e) => f (e [1]) (acc), initial);
 
 /**
@@ -135,10 +135,10 @@ export const foldr =
  * ```foldl f z [x1, x2, ..., xn] == (...((z `f` x1) `f` x2) `f`...) `f` xn```
  */
 export const foldl =
-  <K extends Some, A extends Some, B extends Some>
+  <A extends Some, B extends Some>
   (f: (acc: B) => (current: A) => B) =>
   (initial: B) =>
-  (xs: OrderedMap<K, A>): B =>
+  (xs: OrderedMap<any, A>): B =>
     [...xs .value] .reduce<B> ((acc, e) => f (acc) (e [1]), initial);
 
 /**
@@ -150,9 +150,9 @@ export const foldl =
  * `foldr1 f = foldr1 f . toList`
  */
 export const foldr1 =
-  <K extends Some, A extends Some>
+  <A extends Some>
   (f: (current: A) => (acc: A) => A) =>
-  (xs: OrderedMap<K, A>): A => {
+  (xs: OrderedMap<any, A>): A => {
     if (xs .value .size > 0) {
       const arr = [...xs .value];
       const _init = arr .slice (0, -1);
@@ -173,9 +173,9 @@ export const foldr1 =
  * `foldl1 f = foldl1 f . toList`
  */
 export const foldl1 =
-  <K extends Some, A extends Some>
+  <A extends Some>
   (f: (acc: A) => (current: A) => A) =>
-  (xs: OrderedMap<K, A>): A => {
+  (xs: OrderedMap<any, A>): A => {
     if (xs .value .size > 0) {
       const [_head, ..._tail] = xs
 
@@ -268,7 +268,7 @@ export const minimum = (xs: OrderedMap<any, number>): number => Math.min (...xs 
  */
 export const concat =
   <A extends Some> (xs: OrderedMap<any, List<A>>): List<A> =>
-    foldl<any, List<A>, List<A>> (mappend) (List.empty) (xs)
+    foldl<List<A>, List<A>> (mappend) (List.empty) (xs)
 
 /**
  * `concatMap :: (a -> Map k b) -> Map k a -> Map k b`
@@ -384,6 +384,16 @@ export const member = <K extends Some> (key: K) => (mp: OrderedMap<K, any>): boo
   mp .value .has (key)
 
 /**
+ * `member_ :: Ord k => Map k a -> k -> Bool`
+ *
+ * Is the key a member of the map?
+ *
+ * Same as `member` but with arguments flipped.
+ */
+export const member_ = <K extends Some> (mp: OrderedMap<K, any>) => (key: K): boolean =>
+  mp .value .has (key)
+
+/**
  * `notMember :: Ord k => k -> Map k a -> Bool`
  *
  * Is the key not a member of the map?
@@ -435,7 +445,7 @@ export const findWithDefault =
  *
  * The empty map.
  */
-export const empty = fromUniquePairs ();
+export const empty = fromUniquePairs<any, any> ();
 
 /**
  * `singleton :: k -> a -> Map k a`
@@ -959,6 +969,7 @@ export const OrderedMap = {
 
   size,
   member,
+  member_,
   notMember,
   lookup,
   lookup_,

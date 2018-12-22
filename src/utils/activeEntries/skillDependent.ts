@@ -24,9 +24,9 @@ export const createPlainSkillDependent = createSkillDependent ({})
 
 export const createSkillDependentWithValue = (x: number) => createSkillDependent ({ value: x })
 
-export const createDependentSkillWithBaseValue6 = pipe (add (6), createSkillDependentWithValue)
+export const createSkillDependentWithBaseValue6 = pipe (add (6), createSkillDependentWithValue)
 
-export const createDependentSkillWithValue6 = createSkillDependent ({ value: 6 })
+export const createSkillDependentWithValue6 = createSkillDependent ({ value: 6 })
 
 export const isMaybeSkillDependent =
   (entry: Maybe<Dependent>): entry is Just<Record<SkillDependent>> =>

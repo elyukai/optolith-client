@@ -67,3 +67,13 @@ test('max', () => {
   expect (Math.max (3) (5)) .toEqual (5);
   expect (Math.max (6) (5)) .toEqual (6);
 });
+
+test('inc', () => {
+  expect (Math.inc (3)) .toEqual (4);
+  expect (Math.inc (5)) .toEqual (6);
+});
+
+test('dec', () => {
+  expect (Math.dec (3)) .toEqual (2);
+  expect (Math.dec (5)) .toEqual (4);
+});

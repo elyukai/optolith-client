@@ -215,8 +215,8 @@ export const makeGetters =
 /**
  * Creates lenses for every key in the passed record.
  *
- * If you already generated the getters and if you need better performance for
- * generating them, use `makeLenses_` instead.
+ * If you have already generated the getters and if you need better performance
+ * for generating the lenses, use `makeLenses_` instead.
  */
 export const makeLenses = <A extends RecordBase> (record: RecordCreator<A>): Lenses<A> =>
   Object.freeze (Object.keys (record ({}) .defaultValues) .reduce<Lenses<A>> (
@@ -230,7 +230,7 @@ export const makeLenses = <A extends RecordBase> (record: RecordCreator<A>): Len
 /**
  * Creates lenses for every key in the passed record.
  *
- * If you have not already generated the getters, use `makeLenses_` instead.
+ * If you have not already generated the getters, use `makeLenses` instead.
  */
 export const makeLenses_ =
   <A extends RecordBase> (getters: Getters<A>) => (record: RecordCreator<A>): Lenses<A> =>
@@ -327,6 +327,12 @@ export type RecordKey<K extends keyof T, T> =
 // type ObjectDeleteProperty<T, D extends keyof T> = {
 //   [K in Exclude<keyof T, D>]: T[K];
 // };
+
+export type RequiredExcept<A extends RecordBase, K extends keyof A> = {
+  [K1 in Exclude<keyof A, K>]-?: Exclude<A[K1], undefined>;
+} & {
+  [K1 in K]?: A[K1];
+}
 
 interface RecordBase {
   [key: string]: any;

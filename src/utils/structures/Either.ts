@@ -13,7 +13,7 @@
  */
 
 import { pipe } from 'ramda';
-import { cnst, id } from './combinators';
+import { cnst, id } from './Function';
 import { cons, cons_, fromElements, List } from './List';
 import { fromJust, isJust, Just, Maybe, Nothing, Some } from './Maybe';
 import { fromBoth, Pair } from './Pair';

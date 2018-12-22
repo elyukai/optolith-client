@@ -624,16 +624,13 @@ export interface RawBaseItem {
   damageDiceNumber?: number;
   damageDiceSides?: number;
   damageFlat?: number;
-  primaryThreshold?: {
-    primary?: string;
-    threshold: number | ReadonlyArray<number>;
-  };
+  primaryThreshold?: RawPrimaryAttributeDamageThreshold;
   at?: number;
   pa?: number;
   reach?: number;
   length?: number;
   stp?: number;
-  range?: [number, number, number];
+  range?: number[];
   reloadTime?: number;
   ammunition?: string;
   pro?: number;
@@ -641,6 +638,15 @@ export interface RawBaseItem {
   addPenalties?: boolean;
   isParryingWeapon?: boolean;
   isTwoHandedWeapon?: boolean;
+  armorType?: number;
+  iniMod?: number;
+  movMod?: number;
+  stabilityMod?: number;
+}
+
+export interface RawPrimaryAttributeDamageThreshold {
+  primary?: string;
+  threshold: number | ReadonlyArray<number>;
 }
 
 export interface RawItemTemplate extends RawBaseItem {
@@ -653,6 +659,8 @@ export interface RawCustomItem extends RawBaseItem {
   name: string;
   amount: number;
   isTemplateLocked: boolean;
+  loss?: number;
+  forArmorZoneOnly?: boolean;
 }
 
 export interface RawItemLocale {

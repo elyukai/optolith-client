@@ -72,7 +72,7 @@
     "radix": true,
     "restrict-plus-operands": true,
     "strict-boolean-expressions": [true, "allow-undefined-union"],
-		"strict-type-predicates": true,
+		// "strict-type-predicates": true,
 		"triple-equals": true,
 
     // Maintainability

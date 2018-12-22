@@ -1,54 +1,57 @@
-import * as R from 'ramda';
+import { pipe } from 'ramda';
 import { Categories } from '../constants/Categories';
 import { IdPrefixes } from '../constants/IdPrefixes';
-import { Just, List, Maybe, Nothing, OrderedMap } from './dataUtils';
 import { match } from './match';
+import { inc, max } from './mathUtils';
+import { cnst } from './structures/Function';
+import { foldl } from './structures/List';
+import { Just, Maybe, Nothing } from './structures/Maybe';
+import { lookup_, member_, OrderedMap } from './structures/OrderedMap';
 
-export const getIdPrefix = (id: string) => id.split (/_/)[0] as IdPrefixes;
+export const getIdPrefix = (id: string) => id.split (/_/)[0] as IdPrefixes
 
-export const getNumericId = (id: string) => Number.parseInt (id.split (/_/)[1]);
+export const getNumericId = (id: string) => Number.parseInt (id.split (/_/)[1], 10)
 
-export const getStringId = (prefix: IdPrefixes) => (id: number) => `${prefix}_${id}`;
+export const prefixId = (prefix: IdPrefixes) => (id: number) => `${prefix}_${id}`
 
-export const getRawStringId = (prefix: IdPrefixes) => (id: string) => `${prefix}_${id}`;
+export const prefixRawId = (prefix: IdPrefixes) => (id: string) => `${prefix}_${id}`
 
 /**
  * Gets a list of ids and returns an unused numeric id.
  */
-export const getNewId = (keys: List<string>): number =>
-  keys.foldl<number> (n => R.pipe (getNumericId, R.max (n))) (0) + 1;
+export const getNewId = pipe (foldl<string, number> (n => pipe (getNumericId, max (n))) (0), inc)
 
 /**
  * Returns the current date in milliseconds.
  */
-export const getNewIdByDate = (): number => Date.now ().valueOf ();
+export const getNewIdByDate = (): number => Date.now () .valueOf ();
 
-export const getCategoryByIdPrefix = (id: IdPrefixes): Maybe<Categories> => {
-  return match<IdPrefixes, Maybe<Categories>> (id)
-    .on (IdPrefixes.ADVANTAGES, () => Just (Categories.ADVANTAGES))
-    .on (IdPrefixes.ATTRIBUTES, () => Just (Categories.ATTRIBUTES))
-    .on (IdPrefixes.BLESSINGS, () => Just (Categories.BLESSINGS))
-    .on (IdPrefixes.CANTRIPS, () => Just (Categories.CANTRIPS))
-    .on (IdPrefixes.COMBAT_TECHNIQUES, () => Just (Categories.COMBAT_TECHNIQUES))
-    .on (IdPrefixes.CULTURES, () => Just (Categories.CULTURES))
-    .on (IdPrefixes.DISADVANTAGES, () => Just (Categories.DISADVANTAGES))
-    .on (IdPrefixes.LITURGIES, () => Just (Categories.LITURGIES))
-    .on (IdPrefixes.PROFESSIONS, () => Just (Categories.PROFESSIONS))
-    .on (IdPrefixes.PROFESSION_VARIANTS, () => Just (Categories.PROFESSION_VARIANTS))
-    .on (IdPrefixes.RACES, () => Just (Categories.RACES))
-    .on (IdPrefixes.RACE_VARIANTS, () => Just (Categories.RACE_VARIANTS))
-    .on (IdPrefixes.SPECIAL_ABILITIES, () => Just (Categories.SPECIAL_ABILITIES))
-    .on (IdPrefixes.SPELLS, () => Just (Categories.SPELLS))
-    .on (IdPrefixes.TALENTS, () => Just (Categories.TALENTS))
-    .otherwise (Nothing);
-};
+export const getCategoryByIdPrefix =
+  (id: IdPrefixes): Maybe<Categories> =>
+    match<IdPrefixes, Maybe<Categories>> (id)
+      .on (IdPrefixes.ADVANTAGES, () => Just (Categories.ADVANTAGES))
+      .on (IdPrefixes.ATTRIBUTES, () => Just (Categories.ATTRIBUTES))
+      .on (IdPrefixes.BLESSINGS, () => Just (Categories.BLESSINGS))
+      .on (IdPrefixes.CANTRIPS, () => Just (Categories.CANTRIPS))
+      .on (IdPrefixes.COMBAT_TECHNIQUES, () => Just (Categories.COMBAT_TECHNIQUES))
+      .on (IdPrefixes.CULTURES, () => Just (Categories.CULTURES))
+      .on (IdPrefixes.DISADVANTAGES, () => Just (Categories.DISADVANTAGES))
+      .on (IdPrefixes.LITURGIES, () => Just (Categories.LITURGIES))
+      .on (IdPrefixes.PROFESSIONS, () => Just (Categories.PROFESSIONS))
+      .on (IdPrefixes.PROFESSION_VARIANTS, () => Just (Categories.PROFESSION_VARIANTS))
+      .on (IdPrefixes.RACES, () => Just (Categories.RACES))
+      .on (IdPrefixes.RACE_VARIANTS, () => Just (Categories.RACE_VARIANTS))
+      .on (IdPrefixes.SPECIAL_ABILITIES, () => Just (Categories.SPECIAL_ABILITIES))
+      .on (IdPrefixes.SPELLS, () => Just (Categories.SPELLS))
+      .on (IdPrefixes.TALENTS, () => Just (Categories.TALENTS))
+      .otherwise (cnst (Nothing))
 
-export const getCategoryById = R.pipe (
+export const getCategoryById = pipe (
   getIdPrefix,
   getCategoryByIdPrefix
-);
+)
 
-export const magicalTraditionIdByNumericId = OrderedMap.of ([
+export const magicalTraditionIdByNumericId = OrderedMap.fromArray ([
   [1, 'SA_70'],
   [2, 'SA_255'],
   [3, 'SA_345'],
@@ -59,9 +62,9 @@ export const magicalTraditionIdByNumericId = OrderedMap.of ([
   [8, 'SA_679'],
   [9, 'SA_680'],
   [10, 'SA_681'],
-]);
+])
 
-export const magicalNumericIdByTraditionId = OrderedMap.of ([
+export const magicalNumericIdByTraditionId = OrderedMap.fromArray ([
   ['SA_70', 1],
   ['SA_255', 2],
   ['SA_345', 3],
@@ -72,18 +75,15 @@ export const magicalNumericIdByTraditionId = OrderedMap.of ([
   ['SA_679', 8],
   ['SA_680', 9],
   ['SA_681', 10],
-]);
+])
 
-export const isMagicalTraditionId = (id: string) =>
-  magicalNumericIdByTraditionId.member (id);
+export const isMagicalTraditionId = member_ (magicalNumericIdByTraditionId)
 
-export const getMagicalTraditionInstanceIdByNumericId = (id: number) =>
-  magicalTraditionIdByNumericId.lookup (id);
+export const getMagicalTraditionInstanceIdByNumericId = lookup_ (magicalTraditionIdByNumericId)
 
-export const getNumericMagicalTraditionIdByInstanceId = (id: string) =>
-  magicalNumericIdByTraditionId.lookup (id);
+export const getNumericMagicalTraditionIdByInstanceId = lookup_ (magicalNumericIdByTraditionId)
 
-const blessedTraditionIdByNumericId = OrderedMap.of ([
+const blessedTraditionIdByNumericId = OrderedMap.fromArray ([
   [1, 'SA_86'],
   [2, 'SA_682'],
   [3, 'SA_683'],
@@ -102,9 +102,9 @@ const blessedTraditionIdByNumericId = OrderedMap.of ([
   [16, 'SA_696'],
   [17, 'SA_697'],
   [18, 'SA_698'],
-]);
+])
 
-const blessedNumericIdByTraditionId = OrderedMap.of ([
+const blessedNumericIdByTraditionId = OrderedMap.fromArray ([
   ['SA_86', 1],
   ['SA_682', 2],
   ['SA_683', 3],
@@ -123,13 +123,10 @@ const blessedNumericIdByTraditionId = OrderedMap.of ([
   ['SA_696', 16],
   ['SA_697', 17],
   ['SA_698', 18],
-]);
+])
 
-export const isBlessedTraditionId = (id: string) =>
-  blessedNumericIdByTraditionId.member (id);
+export const isBlessedTraditionId = member_ (blessedNumericIdByTraditionId)
 
-export const getBlessedTraditionInstanceIdByNumericId = (id: number) =>
-  blessedTraditionIdByNumericId.lookup (id);
+export const getBlessedTraditionInstanceIdByNumericId = lookup_ (blessedTraditionIdByNumericId)
 
-export const getNumericBlessedTraditionIdByInstanceId = (id: string) =>
-  blessedNumericIdByTraditionId.lookup (id);
+export const getNumericBlessedTraditionIdByInstanceId = lookup_ (blessedNumericIdByTraditionId)

@@ -1,18 +1,21 @@
 import * as R from 'ramda';
-import { ItemEditorInstance, ItemEditorSpecific, ItemInstance } from '../types/data';
-import { Just, List, Maybe, Nothing, Record } from './dataUtils';
+import { ArmorZonesInstance, ItemEditorInstance, ItemEditorSpecific, ItemInstance } from '../types/data';
+import { PrimaryAttributeDamageThreshold } from '../types/wiki';
 import { getLevelElementsWithZero } from './levelUtils';
 import { isEmptyOr, isFloat, isInteger, isNaturalNumber } from './RegexUtils';
+import { List } from './structures/List';
+import { fromJust, isJust, Just, Maybe, maybe, Nothing } from './structures/Maybe';
+import { fromDefault, Record } from './structures/Record';
 
-const ifNumberOrEmpty = Maybe.maybe<number, string> ('') (x => x.toString ());
+const ifNumberOrEmpty = maybe<number, string> ('') (x => x.toString ());
 
 type DamageBonus = ItemInstance['damageBonus'];
 type DamageBonusEditor = ItemEditorInstance['damageBonus'];
 
 const convertDamageBonusToEdit =
   (maybeDamageBonus: Maybe<NonNullable<DamageBonus>>): DamageBonusEditor => {
-    if (Maybe.isJust (maybeDamageBonus)) {
-      const damageBonus = Maybe.fromJust (maybeDamageBonus);
+    if (isJust (maybeDamageBonus)) {
+      const damageBonus = fromJust (maybeDamageBonus);
 
       const threshold = damageBonus.get ('threshold');
 
@@ -340,3 +343,70 @@ export const validateItemEditorInput = (item: Record<ItemEditorInstance>) => {
 };
 
 export const getLossLevelElements = () => getLevelElementsWithZero (4);
+
+export const PrimaryAttributeDamageThresholdCreator =
+  fromDefault<PrimaryAttributeDamageThreshold> ({
+    primary: Nothing,
+    threshold: List.empty,
+  })
+
+export const ItemCreator =
+  fromDefault<ItemInstance> ({
+    id: '',
+    name: '',
+    ammunition: Nothing,
+    combatTechnique: Nothing,
+    damageDiceSides: Nothing,
+    gr: 0,
+    isParryingWeapon: Nothing,
+    isTemplateLocked: false,
+    reach: Nothing,
+    template: Nothing,
+    where: Nothing,
+    isTwoHandedWeapon: Nothing,
+    improvisedWeaponGroup: Nothing,
+    loss: Nothing,
+    forArmorZoneOnly: Nothing,
+    addPenalties: Nothing,
+    armorType: Nothing,
+    at: Nothing,
+    iniMod: Nothing,
+    movMod: Nothing,
+    damageBonus: Nothing,
+    damageDiceNumber: Nothing,
+    damageFlat: Nothing,
+    enc: Nothing,
+    length: Nothing,
+    amount: 1,
+    pa: Nothing,
+    price: 0,
+    pro: Nothing,
+    range: Nothing,
+    reloadTime: Nothing,
+    stp: Nothing,
+    weight: 0,
+    stabilityMod: Nothing,
+    note: Nothing,
+    rules: Nothing,
+    advantage: Nothing,
+    disadvantage: Nothing,
+    src: Nothing,
+  })
+
+export const HitZoneArmorCreator =
+  fromDefault<ArmorZonesInstance> ({
+    id: '',
+    name: '',
+    head: Nothing,
+    headLoss: Nothing,
+    leftArm: Nothing,
+    leftArmLoss: Nothing,
+    rightArm: Nothing,
+    rightArmLoss: Nothing,
+    torso: Nothing,
+    torsoLoss: Nothing,
+    leftLeg: Nothing,
+    leftLegLoss: Nothing,
+    rightLeg: Nothing,
+    rightLegLoss: Nothing,
+  })

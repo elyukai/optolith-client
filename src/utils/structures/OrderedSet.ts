@@ -9,8 +9,8 @@
 import { pipe } from 'ramda';
 import { add, multiply } from '../mathUtils';
 import { not } from '../not';
-import { id } from './combinators';
 import { equals, notEquals } from './Eq';
+import { id } from './Function';
 import { fromElements, isList, List, mappend } from './List';
 import { fromNullable, Maybe, Some } from './Maybe';
 import { show } from './Show';

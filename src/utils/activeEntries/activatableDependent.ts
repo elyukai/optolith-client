@@ -1,6 +1,6 @@
 import { ActivatableDependency, ActivatableDependent, ActiveObject, Dependent } from '../../types/data';
-import { fnull, fromElements } from '../structures/List';
-import { fromJust, isJust, Just, Maybe } from '../structures/Maybe';
+import { fnull, fromElements, List } from '../structures/List';
+import { fromJust, isJust, Just, Maybe, Nothing } from '../structures/Maybe';
 import { fromDefault, makeGetters, makeLenses_, member, notMember, Omit, Record } from '../structures/Record';
 
 const ActivatableDependentCreator =
@@ -15,10 +15,27 @@ export const ActivatableDependentG = makeGetters (ActivatableDependentCreator)
 export const ActivatableDependentL = makeLenses_ (ActivatableDependentG)
                                                  (ActivatableDependentCreator)
 
+export const ActiveObjectCreator =
+  fromDefault<ActiveObject> ({
+    cost: Nothing,
+    sid: Nothing,
+    sid2: Nothing,
+    tier: Nothing,
+  })
+
+export const ActiveObjectG = makeGetters (ActiveObjectCreator)
+
+export const ActiveObjectL = makeLenses_ (ActiveObjectG)
+                                         (ActiveObjectCreator)
+
 export const createActivatableDependent =
   (options: Partial<Omit<ActivatableDependent, 'id'>>) =>
   (id: string): Record<ActivatableDependent> =>
     ActivatableDependentCreator ({ id, ...options })
+
+export const createActivatableDependentWithActive =
+  (activeObjects: List<Record<ActiveObject>>) =>
+    createActivatableDependent ({ active: activeObjects })
 
 export const isMaybeActivatableDependent =
   (entry: Maybe<Dependent>): entry is Just<Record<ActivatableDependent>> =>

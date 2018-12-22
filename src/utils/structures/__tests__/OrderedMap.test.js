@@ -253,6 +253,14 @@ test ('member', () => {
     .toBeFalsy ()
 })
 
+test ('member_', () => {
+  expect (OrderedMap.member_ (fromArray ([[1, 'a'], [2, 'b'], [3, 'c']])) (2))
+    .toBeTruthy ()
+
+  expect (OrderedMap.member_ (fromArray ([[1, 'a'], [2, 'b'], [3, 'c']])) (5))
+    .toBeFalsy ()
+})
+
 test ('notMember', () => {
   expect (OrderedMap.notMember (2) (fromArray ([[1, 'a'], [2, 'b'], [3, 'c']])))
     .toBeFalsy ()

@@ -3,7 +3,7 @@ import * as Categories from '../../constants/Categories';
 import { IdPrefixes } from '../../constants/IdPrefixes';
 import * as Raw from '../../types/rawdata';
 import * as Wiki from '../../types/wiki';
-import { getCategoryById, getRawStringId } from '../IDUtils';
+import { getCategoryById, prefixRawId } from '../IDUtils';
 import { Just, List, Maybe, Nothing, Record, Tuple } from './dataUtils';
 
 const isRawSexRequirement =
@@ -261,7 +261,7 @@ export const convertRawIncreaseSkills =
     })));
 
 export const mapRawWithPrefix = (list: string[], prefix: IdPrefixes): List<string> =>
-  List.fromArray (list.map (getRawStringId (prefix)))
+  List.fromArray (list.map (prefixRawId (prefix)))
 
 const convertRawSpecializationSelection =
   (raw: Raw.RawSpecializationSelection): Record<Wiki.SpecializationSelection> =>

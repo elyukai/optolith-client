@@ -5,12 +5,12 @@
  */
 
 import { isEither, isRight } from './Either';
-import { isList, length } from './List.new';
-import { isJust, isMaybe, isNothing, Maybe, Some } from './Maybe.new';
-import { isOrderedMap, OrderedMap } from './OrderedMap.new';
-import { isOrderedSet, member, OrderedSet } from './OrderedSet.new';
+import { isList, length } from './List';
+import { isJust, isMaybe, isNothing, Maybe, Some } from './Maybe';
+import { isOrderedMap, OrderedMap } from './OrderedMap';
+import { isOrderedSet, member, OrderedSet } from './OrderedSet';
 import { isPair } from './Pair';
-import { isRecord, Record } from './Record.new';
+import { isRecord, Record } from './Record';
 import { show } from './Show';
 
 /**

@@ -5,7 +5,7 @@ import { ActivatableSkillDependentL } from '../activeEntries/activatableSkillDep
 import { AttributeDependentL, isAttributeDependent } from '../activeEntries/attributeDependent';
 import { isSkillDependent, SkillDependentL } from '../activeEntries/skillDependent';
 import { getHeroStateListItem, removeHeroListStateItem, setHeroListStateItem } from '../heroStateUtils';
-import { join } from '../structures/combinators';
+import { join } from '../structures/Function';
 import { over, view } from '../structures/Lens';
 import { deleteAt, elemIndex, ListElement } from '../structures/List';
 import { fromMaybe, Maybe } from '../structures/Maybe';

@@ -1,5 +1,7 @@
 import { PetEditorInstance, PetEditorSpecific, PetInstance } from '../types/data';
 import { Record, RecordSafeKeys } from './dataUtils';
+import { Nothing } from './structures/Maybe';
+import { fromDefault } from './structures/Record';
 
 export const convertToEdit = (item: Record<PetInstance>): Record<PetEditorInstance> =>
   item .merge (Record.of<PetEditorSpecific> ({
@@ -106,3 +108,38 @@ export const convertToSave =
       at: getNonEmptyStringOr (item, 'at'),
       pa: getNonEmptyStringOr (item, 'pa'),
     })) as Record<PetInstance>;
+
+export const PetCreator =
+  fromDefault<PetInstance> ({
+    id: '',
+    name: '',
+    avatar: Nothing,
+    size: Nothing,
+    type: Nothing,
+    attack: Nothing,
+    dp: Nothing,
+    reach: Nothing,
+    actions: Nothing,
+    talents: Nothing,
+    skills: Nothing,
+    notes: Nothing,
+    spentAp: Nothing,
+    totalAp: Nothing,
+    cou: Nothing,
+    sgc: Nothing,
+    int: Nothing,
+    cha: Nothing,
+    dex: Nothing,
+    agi: Nothing,
+    con: Nothing,
+    str: Nothing,
+    lp: Nothing,
+    ae: Nothing,
+    spi: Nothing,
+    tou: Nothing,
+    pro: Nothing,
+    ini: Nothing,
+    mov: Nothing,
+    at: Nothing,
+    pa: Nothing,
+  })
