@@ -9,7 +9,7 @@ import { fmap, fromNullable, Just, Maybe, Nothing } from '../structures/Maybe';
 import { fromBoth } from '../structures/Pair';
 import { Record, StringKeyObject } from '../structures/Record';
 import { convertRawApplications, convertRawIncreaseSkills, convertRawPrerequisiteObjects, convertRawPrerequisites, convertRawProfessionDependencyObjects, convertRawProfessionPrerequisiteObjects, convertRawProfessionRequiresActivatableObject, convertRawProfessionSelections, convertRawProfessionVariantSelections, convertRawSelections, mapRawWithPrefix } from './convertRawObjectsToWikiUtils';
-import { createCulture, createDie, createExperienceLevel, createRace, createRaceVariant, createSourceLink } from './wikiData';
+import { createCommonProfessionObject, createCulture, createDie, createExperienceLevel, createIncreaseSkill, createNameBySex, createProfession, createRace, createRaceVariant, createSourceLink } from './wikiData';
 
 const getSourceBooks =
   (srcIds: string[], srcPages: number[]): List<Record<Wiki.SourceLink>> =>
@@ -292,13 +292,13 @@ export const initCulture =
         languages: List.fromArray (lang),
         scripts: List.fromArray (literacy),
         socialStatus: List.fromArray (social),
-        culturalPackageSkills: List.fromArray (talents.map (e => Record.of ({
-          id: `${IdPrefixes.TALENTS}_${e[0]}`,
-          value: e[1],
+        culturalPackageSkills: List.fromArray (talents .map (e => createIncreaseSkill ({
+          id: prefixRawId (IdPrefixes.TALENTS) (e [0]),
+          value: e [1],
         }))),
         commonProfessions: List.fromArray (
           typ_prof.map<Wiki.CommonProfession> (
-            e => typeof e === 'boolean' ? e : Record.of ({
+            e => typeof e === 'boolean' ? e : createCommonProfessionObject ({
               ...e,
               list: List.fromArray (e.list),
             })
@@ -344,7 +344,7 @@ export const initProfession =
         unsuitableAdvantages,
         unsuitableDisadvantages,
         src: srcPages,
-      } = localeObject;
+      } = localeObject
 
       const {
         ap,
@@ -366,15 +366,16 @@ export const initProfession =
         src: srcIds,
         blessings,
         sgr,
-      } = raw;
+      } = raw
 
-      return Just (Record.of<Wiki.Profession> ({
+      return Just (createProfession ({
         id,
-        name: typeof name === 'object' ? Record.of (name) : name,
-        subname: typeof subname === 'object' ? Record.of (subname) : subname,
+        name: typeof name === 'object' ? createNameBySex (name) : name,
+        subname: typeof subname === 'object'
+          ? Just (createNameBySex (subname))
+          : fromNullable (subname),
         ap,
         apOfActivatables,
-        category: Categories.PROFESSIONS,
         dependencies: convertRawProfessionDependencyObjects (pre_req),
         prerequisites:  convertRawProfessionPrerequisiteObjects ([...req, ...localeReq]),
         selections: convertRawProfessionSelections (sel),
@@ -391,12 +392,13 @@ export const initProfession =
         variants: mapRawWithPrefix (vars, IdPrefixes.PROFESSION_VARIANTS),
         gr,
         subgr: sgr,
-        prerequisitesEnd,
-        prerequisitesStart,
-        suggestedAdvantagesText: suggestedAdvantages,
-        suggestedDisadvantagesText: suggestedDisadvantages,
-        unsuitableAdvantagesText: unsuitableAdvantages,
-        unsuitableDisadvantagesText: unsuitableDisadvantages,
+        prerequisitesEnd: fromNullable (prerequisitesEnd),
+        prerequisitesStart: fromNullable (prerequisitesStart),
+        suggestedAdvantagesText: fromNullable (suggestedAdvantages),
+        suggestedDisadvantagesText: fromNullable (suggestedDisadvantages),
+        unsuitableAdvantagesText: fromNullable (unsuitableAdvantages),
+        unsuitableDisadvantagesText: fromNullable (unsuitableDisadvantages),
+        isVariantRequired: false,
         src: getSourceBooks (srcIds, srcPages),
       }))
     }

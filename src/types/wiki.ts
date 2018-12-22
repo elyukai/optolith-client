@@ -243,8 +243,8 @@ export interface Culture {
 export type CommonProfession = boolean | Record<CommonProfessionObject>;
 
 export interface CommonProfessionObject {
-  readonly list: List<string | number>;
-  readonly reverse: boolean;
+  list: List<string | number>;
+  reverse: boolean;
 }
 
 export interface SpecializationSelection {
@@ -380,41 +380,40 @@ export interface NameBySex {
 }
 
 export interface Profession {
-  readonly id: string;
-  readonly name: string | Record<NameBySex>;
-  readonly subname?: string | Record<NameBySex>;
-  readonly ap: number;
-  readonly apOfActivatables: number;
-  readonly dependencies: List<ProfessionDependency>;
-  readonly prerequisites: List<ProfessionPrerequisite>;
-  readonly prerequisitesStart?: string;
-  readonly prerequisitesEnd?: string;
-  readonly selections: ProfessionSelections;
-  readonly specialAbilities: List<Record<ProfessionRequiresActivatableObject>>;
-  readonly combatTechniques: List<Record<IncreaseSkill>>;
-  readonly skills: List<Record<IncreaseSkill>>;
-  readonly spells: List<Record<IncreaseSkill>>;
-  readonly liturgicalChants: List<Record<IncreaseSkill>>;
-  readonly blessings: List<string>;
-  readonly twelveBlessingsAdd?: string;
-  readonly suggestedAdvantages: List<string>;
-  readonly suggestedAdvantagesText?: string;
-  readonly suggestedDisadvantages: List<string>;
-  readonly suggestedDisadvantagesText?: string;
-  readonly unsuitableAdvantages: List<string>;
-  readonly unsuitableAdvantagesText?: string;
-  readonly unsuitableDisadvantages: List<string>;
-  readonly unsuitableDisadvantagesText?: string;
-  readonly isVariantRequired?: boolean;
-  readonly variants: List<string>;
-  readonly category: Categories.PROFESSIONS;
-  readonly gr: number;
+  id: string;
+  name: string | Record<NameBySex>;
+  subname: Maybe<string | Record<NameBySex>>;
+  ap: number;
+  apOfActivatables: number;
+  dependencies: List<ProfessionDependency>;
+  prerequisites: List<ProfessionPrerequisite>;
+  prerequisitesStart: Maybe<string>;
+  prerequisitesEnd: Maybe<string>;
+  selections: ProfessionSelections;
+  specialAbilities: List<Record<ProfessionRequiresActivatableObject>>;
+  combatTechniques: List<Record<IncreaseSkill>>;
+  skills: List<Record<IncreaseSkill>>;
+  spells: List<Record<IncreaseSkill>>;
+  liturgicalChants: List<Record<IncreaseSkill>>;
+  blessings: List<string>;
+  suggestedAdvantages: List<string>;
+  suggestedAdvantagesText: Maybe<string>;
+  suggestedDisadvantages: List<string>;
+  suggestedDisadvantagesText: Maybe<string>;
+  unsuitableAdvantages: List<string>;
+  unsuitableAdvantagesText: Maybe<string>;
+  unsuitableDisadvantages: List<string>;
+  unsuitableDisadvantagesText: Maybe<string>;
+  isVariantRequired: boolean;
+  variants: List<string>;
+  category: Categories.PROFESSIONS;
+  gr: number;
   /**
    * Divides the groups into smaller subgroups, e.g. "Mage", "Blessed One of the
    * Twelve Gods" or "Fighter".
    */
-  readonly subgr: number;
-  readonly src: List<Record<SourceLink>>;
+  subgr: number;
+  src: List<Record<SourceLink>>;
 }
 
 export interface ProfessionVariant {

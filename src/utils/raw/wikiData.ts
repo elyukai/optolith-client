@@ -1,9 +1,9 @@
 import { Categories } from '../../constants/Categories';
-import { Culture, Die, ExperienceLevel, Race, RaceVariant, SourceLink } from '../../types/wiki';
+import { CommonProfessionObject, Culture, Die, ExperienceLevel, IncreaseSkill, NameBySex, Profession, Race, RaceVariant, SourceLink } from '../../types/wiki';
 import { List } from '../structures/List';
 import { Nothing } from '../structures/Maybe';
 import { fromBoth } from '../structures/Pair';
-import { fromDefault, makeGetters, makeLenses_, Omit, Record } from '../structures/Record';
+import { fromDefault, makeGetters, Omit, Record } from '../structures/Record';
 
 const SourceLinkCreator =
   fromDefault<SourceLink> ({
@@ -12,7 +12,6 @@ const SourceLinkCreator =
   })
 
 export const SourceLinkG = makeGetters (SourceLinkCreator)
-export const SourceLinkL = makeLenses_ (SourceLinkG) (SourceLinkCreator)
 
 export const createSourceLink = (id: string) => (page: number) => SourceLinkCreator ({ id, page })
 
@@ -30,7 +29,6 @@ const ExperienceLevelCreator =
   })
 
 export const ExperienceLevelG = makeGetters (ExperienceLevelCreator)
-export const ExperienceLevelL = makeLenses_ (ExperienceLevelG) (ExperienceLevelCreator)
 
 export const createExperienceLevel: (x: Required<ExperienceLevel>) => Record<ExperienceLevel> =
   ExperienceLevelCreator
@@ -42,7 +40,6 @@ const DieCreator =
   })
 
 export const DieG = makeGetters (DieCreator)
-export const DieL = makeLenses_ (DieG) (DieCreator)
 
 export const createDie = (amount: number) => (sides: number) => DieCreator ({ amount, sides })
 
@@ -85,7 +82,6 @@ const RaceCreator =
   })
 
 export const RaceG = makeGetters (RaceCreator)
-export const RaceL = makeLenses_ (RaceG) (RaceCreator)
 
 export const createRace: (x: Omit<Race, 'category'>) => Record<Race> = RaceCreator
 
@@ -110,10 +106,32 @@ const RaceVariantCreator =
   })
 
 export const RaceVariantG = makeGetters (RaceVariantCreator)
-export const RaceVariantL = makeLenses_ (RaceVariantG) (RaceVariantCreator)
 
 export const createRaceVariant: (x: Omit<RaceVariant, 'category'>) => Record<RaceVariant> =
   RaceVariantCreator
+
+const CommonProfessionObjectCreator =
+  fromDefault<CommonProfessionObject> ({
+    list: List.empty,
+    reverse: false,
+  })
+
+export const CommonProfessionObjectG = makeGetters (CommonProfessionObjectCreator)
+
+export const createCommonProfessionObject:
+  (x: Required<CommonProfessionObject>) => Record<CommonProfessionObject> =
+    CommonProfessionObjectCreator
+
+const IncreaseSkillCreator =
+  fromDefault<IncreaseSkill> ({
+    id: '',
+    value: 0,
+  })
+
+export const IncreaseSkillG = makeGetters (IncreaseSkillCreator)
+
+export const createIncreaseSkill: (x: Required<IncreaseSkill>) => Record<IncreaseSkill> =
+  IncreaseSkillCreator
 
 const CultureCreator =
   fromDefault<Culture> ({
@@ -139,9 +157,6 @@ const CultureCreator =
     uncommonDisadvantagesText: Nothing,
     commonSkills: List.empty,
     uncommonSkills: List.empty,
-    /**
-     * Markdown supported.
-     */
     commonNames: '',
     culturalPackageSkills: List.empty,
     category: Categories.CULTURES,
@@ -149,6 +164,54 @@ const CultureCreator =
   })
 
 export const CultureG = makeGetters (CultureCreator)
-export const CultureL = makeLenses_ (CultureG) (CultureCreator)
 
 export const createCulture: (x: Omit<Culture, 'category'>) => Record<Culture> = CultureCreator
+
+const NameBySexCreator =
+  fromDefault<NameBySex> ({
+    m: '',
+    f: '',
+  })
+
+export const NameBySexG = makeGetters (NameBySexCreator)
+
+export const createNameBySex: (x: Required<NameBySex>) => Record<NameBySex> = NameBySexCreator
+
+const ProfessionCreator =
+  fromDefault<Profession> ({
+    id: '',
+    name: '',
+    subname: Nothing,
+    ap: 0,
+    apOfActivatables: 0,
+    dependencies: List.empty,
+    prerequisites: List.empty,
+    prerequisitesStart: Nothing,
+    prerequisitesEnd: Nothing,
+    selections: List.empty,
+    specialAbilities: List.empty,
+    combatTechniques: List.empty,
+    skills: List.empty,
+    spells: List.empty,
+    liturgicalChants: List.empty,
+    blessings: List.empty,
+    suggestedAdvantages: List.empty,
+    suggestedAdvantagesText: Nothing,
+    suggestedDisadvantages: List.empty,
+    suggestedDisadvantagesText: Nothing,
+    unsuitableAdvantages: List.empty,
+    unsuitableAdvantagesText: Nothing,
+    unsuitableDisadvantages: List.empty,
+    unsuitableDisadvantagesText: Nothing,
+    isVariantRequired: false,
+    variants: List.empty,
+    category: Categories.PROFESSIONS,
+    gr: 0,
+    subgr: 0,
+    src: List.empty,
+  })
+
+export const ProfessionG = makeGetters (ProfessionCreator)
+
+export const createProfession: (x: Omit<Profession, 'category'>) => Record<Profession> =
+  ProfessionCreator
