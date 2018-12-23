@@ -1,15 +1,19 @@
+import { pipe } from 'ramda';
 import * as Data from '../../types/data';
 import * as Wiki from '../../types/wiki';
 import { findSelectOption } from '../activatable/selectionUtils';
-import { ActiveObjectG } from '../activeEntries/activatableDependent';
-import { List } from '../structures/List';
-import { bind_, Just, Maybe, Nothing } from '../structures/Maybe';
+import { ActivatableDependentG, ActiveObjectG } from '../activeEntries/activatableDependent';
+import { equals } from '../structures/Eq';
+import { filter, length, List } from '../structures/List';
+import { bind_, fmap, fromMaybe, Just, Maybe, Nothing } from '../structures/Maybe';
 import { Record } from '../structures/Record';
 import { AdvantageG } from '../wikiData/AdvantageCreator';
+import { createRequireIncreasable } from '../wikiData/prerequisites/IncreasableRequirementCreator';
 import { SelectOptionG } from '../wikiData/sub/SelectOptionCreator';
 
 const { id } = AdvantageG
 const { sid, sid2 } = ActiveObjectG
+const { active } = ActivatableDependentG
 
 /**
  * Some advantages, disadvantages and special abilities need more prerequisites
@@ -24,28 +28,32 @@ const { sid, sid2 } = ActiveObjectG
 export const getGeneratedPrerequisites =
   (wikiEntry: Wiki.WikiActivatable) =>
   (instance: Maybe<Record<Data.ActivatableDependent>>) =>
-  (active: Record<Data.ActiveObject>) =>
+  (current: Record<Data.ActiveObject>) =>
   (add: boolean): Maybe<List<Wiki.AllRequirementObjects>> => {
     switch (id (wikiEntry)) {
       case 'SA_3':
         return bind_ (SelectOptionG.prerequisites)
-                     (findSelectOption (wikiEntry) (sid (active)))
+                     (findSelectOption (wikiEntry) (sid (current)))
 
       case 'SA_9': {
-        const sameSkill = Maybe.fromMaybe (0) (
-          instance.fmap (
-            justInstance => justInstance.get ('active')
-              .filter (e => e.lookup ('sid').equals (sid))
-              .length ()
-          )
-        )
+        const sameSkill = pipe (
+                                 fmap (pipe (
+                                   active,
+                                   filter (pipe (sid, equals (sid (current)))),
+                                   length
+                                 )),
+                                 fromMaybe (0)
+                               )
+                               (instance)
 
-        const sameSkillDependency = sid.fmap (justSid => ({
-          id: justSid as string,
-          value: (sameSkill + (add ? 1 : 0)) * 6
-        }))
+        const sameSkillDependency =
+          fmap ((justSid: string | number) => createRequireIncreasable ({
+                 id: justSid as string,
+                 value: (sameSkill + (add ? 1 : 0)) * 6,
+               }))
+               (sid (current))
 
-        return findSelectOption<SkillSelectionObject> (wikiEntry, sid)
+        return findSelectOption (wikiEntry) (sid (current))
           .bind (
             skill => skill.get ('applications')
               .find (e => sid2.equals (e.lookup ('id')))
