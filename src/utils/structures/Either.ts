@@ -13,7 +13,7 @@
  */
 
 import { pipe } from 'ramda';
-import { cnst, id } from './Function';
+import { cnst, ident } from './Function';
 import { cons, cons_, fromElements, List } from './List';
 import { fromJust, isJust, Just, Maybe, Nothing, Some } from './Maybe';
 import { fromBoth, Pair } from './Pair';
@@ -331,7 +331,7 @@ export const kleisli =
  */
 export const join =
   <E extends Some, A extends Some> (x: Either<E, Either<E, A>>): Either<E, A> =>
-    bind<E, Either<E, A>, A> (x) (id);
+    bind<E, Either<E, A>, A> (x) (ident);
 
 
 // FOLDABLE

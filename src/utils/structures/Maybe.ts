@@ -16,7 +16,7 @@
 
 import { pipe } from 'ramda';
 import * as Math from '../mathUtils';
-import { cnst, id, thrush } from './Function';
+import { cnst, ident, thrush } from './Function';
 import { cons, cons_, fromElements, head, ifoldr, List } from './List';
 
 
@@ -275,7 +275,7 @@ export const kleisli =
  * remove one level of monadic structure, projecting its bound argument into the
  * outer level.
  */
-export const join = <A extends Some> (x: Maybe<Maybe<A>>): Maybe<A> => bind<Maybe<A>, A> (x) (id)
+export const join = <A extends Some> (x: Maybe<Maybe<A>>): Maybe<A> => bind<Maybe<A>, A> (x) (ident)
 
 /**
  * `liftM2 :: (a1 -> a2 -> r) -> Maybe a1 -> Maybe a2 -> Maybe r`
@@ -636,7 +636,7 @@ export const maybeToList = toList
  */
 export const catMaybes =
   <A extends Some> (list: List<Maybe<A>>): List<A> =>
-    List.foldr<Maybe<A>, List<A>> (maybe<A, (x: List<A>) => List<A>> (id) (cons_))
+    List.foldr<Maybe<A>, List<A>> (maybe<A, (x: List<A>) => List<A>> (ident) (cons_))
                                   (List.empty)
                                   (list)
 
@@ -650,7 +650,7 @@ export const catMaybes =
  */
 export const mapMaybe =
   <A extends Some, B extends Some> (f: (x: A) => Maybe<B>) =>
-    List.foldr<A, List<B>> (pipe (f, maybe<B, (x: List<B>) => List<B>> (id) (cons_)))
+    List.foldr<A, List<B>> (pipe (f, maybe<B, (x: List<B>) => List<B>> (ident) (cons_)))
                            (List.empty)
 
 

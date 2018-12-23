@@ -1,11 +1,22 @@
-import * as R from 'ramda';
+import { pipe } from 'ramda';
 import { IdPrefixes } from '../constants/IdPrefixes';
-import { Dependent, HeroDependent } from '../types/data';
+import { Dependent, Hero, HeroDependent } from '../types/data';
 import { EntryWithGroup } from '../types/wiki';
-import { createActivatableDependent, createActivatableDependentSkill, createAttributeDependent, createDependentSkillWithValue0, createDependentSkillWithValue6 } from './createEntryUtils';
-import { Just, List, Maybe, Nothing, OrderedMap, Record, RecordKey } from './dataUtils';
+import { createPlainActivatableDependent as createBaseActivatableDependent } from './activeEntries/activatableDependent';
+import { createInactiveActivatableSkillDependent } from './activeEntries/activatableSkillDependent';
+import { AttributeDependentG, createPlainAttributeDependent } from './activeEntries/attributeDependent';
+import { createPlainSkillDependent, createSkillDependentWithValue6 } from './activeEntries/skillDependent';
+import { HeroG, HeroL } from './heroData/HeroCreator';
 import { getIdPrefix } from './IDUtils';
-import { match } from './match';
+import { ifElse } from './ifElse';
+import { not } from './not';
+import { cnst } from './structures/Function';
+import { Lens, over } from './structures/Lens';
+import { elem_, filter, fromArray, List } from './structures/List';
+import { ap, bind_, ensure, fmap, fromMaybe, Just, Maybe, maybe, Nothing, or } from './structures/Maybe';
+import { adjust, alter, elems, insert, isOrderedMap, lookup, lookup_, OrderedMap, sdelete, update } from './structures/OrderedMap';
+import { OrderedSet } from './structures/OrderedSet';
+import { SkillG } from './wikiData/SkillCreator';
 
 export type HeroStateMapKey =
   'advantages' |
@@ -15,175 +26,218 @@ export type HeroStateMapKey =
   'liturgicalChants' |
   'skills' |
   'specialAbilities' |
-  'spells';
+  'spells'
 
 export type HeroStateListKey =
   HeroStateMapKey |
   'blessings' |
-  'cantrips';
+  'cantrips'
 
-export const getHeroStateListKeyById = (id: string): Maybe<HeroStateListKey> =>
-  match<IdPrefixes, Maybe<HeroStateListKey>> (getIdPrefix (id))
-    .on (IdPrefixes.ADVANTAGES, () =>
-      Maybe.pure<HeroStateListKey> ('advantages')
-    )
-    .on (IdPrefixes.ATTRIBUTES, () =>
-      Maybe.pure<HeroStateListKey> ('attributes')
-    )
-    .on (IdPrefixes.BLESSINGS, () =>
-      Maybe.pure<HeroStateListKey> ('blessings')
-    )
-    .on (IdPrefixes.CANTRIPS, () =>
-      Maybe.pure<HeroStateListKey> ('cantrips')
-    )
-    .on (IdPrefixes.COMBAT_TECHNIQUES, () =>
-      Maybe.pure<HeroStateListKey> ('combatTechniques')
-    )
-    .on (IdPrefixes.DISADVANTAGES, () =>
-      Maybe.pure<HeroStateListKey> ('disadvantages')
-    )
-    .on (IdPrefixes.LITURGIES, () =>
-      Maybe.pure<HeroStateListKey> ('liturgicalChants')
-    )
-    .on (IdPrefixes.SPECIAL_ABILITIES, () =>
-      Maybe.pure<HeroStateListKey> ('specialAbilities')
-    )
-    .on (IdPrefixes.SPELLS, () =>
-      Maybe.pure<HeroStateListKey> ('spells')
-    )
-    .on (IdPrefixes.TALENTS, () =>
-      Maybe.pure<HeroStateListKey> ('skills')
-    )
-    .otherwise (Maybe.empty);
+export type HeroStateListGetter<K extends HeroStateListKey = HeroStateListKey> =
+  (hero: Hero) => HeroDependent[K]
 
-export const getHeroStateMapKeyById = (id: string): Maybe<HeroStateMapKey> =>
-  match<IdPrefixes, Maybe<HeroStateMapKey>> (getIdPrefix (id))
-    .on (IdPrefixes.ADVANTAGES, () =>
-      Maybe.pure<HeroStateMapKey> ('advantages')
-    )
-    .on (IdPrefixes.ATTRIBUTES, () =>
-      Maybe.pure<HeroStateMapKey> ('attributes')
-    )
-    .on (IdPrefixes.COMBAT_TECHNIQUES, () =>
-      Maybe.pure<HeroStateMapKey> ('combatTechniques')
-    )
-    .on (IdPrefixes.DISADVANTAGES, () =>
-      Maybe.pure<HeroStateMapKey> ('disadvantages')
-    )
-    .on (IdPrefixes.LITURGIES, () =>
-      Maybe.pure<HeroStateMapKey> ('liturgicalChants')
-    )
-    .on (IdPrefixes.SPECIAL_ABILITIES, () =>
-      Maybe.pure<HeroStateMapKey> ('specialAbilities')
-    )
-    .on (IdPrefixes.SPELLS, () =>
-      Maybe.pure<HeroStateMapKey> ('spells')
-    )
-    .on (IdPrefixes.TALENTS, () =>
-      Maybe.pure<HeroStateMapKey> ('skills')
-    )
-    .otherwise (Maybe.empty);
+export type HeroStateListLens<K extends HeroStateListKey = HeroStateListKey> =
+  Lens<Hero, HeroDependent[K]>
 
-export const getEntryCreatorByHeroStateMapKey = (
-  key: HeroStateMapKey
-): (id: string) => Dependent => {
-  switch (key) {
-    case 'advantages':
-    case 'disadvantages':
-    case 'specialAbilities':
-      return createActivatableDependent;
+export type HeroStateMapLens<K extends HeroStateMapKey = HeroStateMapKey> =
+  Lens<Hero, HeroDependent[K]>
 
-    case 'attributes':
-      return createAttributeDependent;
+/**
+ * Returns a getter function for a `Hero` object based on the prefix of the
+ * passed id. Returns lenses for `OrderedMap`s and `OrderedSet`s, else
+ * `Nothing`.
+ */
+export const getHeroStateListLensById =
+  (id: string): Maybe<HeroStateListLens> => {
+    switch (getIdPrefix (id)) {
+      case IdPrefixes.ADVANTAGES:
+        return Just<HeroStateListLens> (HeroL.advantages as HeroStateListLens)
 
-    case 'combatTechniques':
-      return createDependentSkillWithValue6;
+      case IdPrefixes.ATTRIBUTES:
+        return Just<HeroStateListLens> (HeroL.attributes as HeroStateListLens)
 
-    case 'skills':
-      return createDependentSkillWithValue0;
+      case IdPrefixes.BLESSINGS:
+        return Just<HeroStateListLens> (HeroL.blessings as HeroStateListLens)
 
-    case 'liturgicalChants':
-    case 'spells':
-      return createActivatableDependentSkill;
+      case IdPrefixes.CANTRIPS:
+        return Just<HeroStateListLens> (HeroL.cantrips as HeroStateListLens)
+
+      case IdPrefixes.COMBAT_TECHNIQUES:
+        return Just<HeroStateListLens> (HeroL.combatTechniques as HeroStateListLens)
+
+      case IdPrefixes.DISADVANTAGES:
+        return Just<HeroStateListLens> (HeroL.disadvantages as HeroStateListLens)
+
+      case IdPrefixes.LITURGICAL_CHANTS:
+        return Just<HeroStateListLens> (HeroL.liturgicalChants as HeroStateListLens)
+
+      case IdPrefixes.SPECIAL_ABILITIES:
+        return Just<HeroStateListLens> (HeroL.specialAbilities as HeroStateListLens)
+
+      case IdPrefixes.SPELLS:
+        return Just<HeroStateListLens> (HeroL.spells as HeroStateListLens)
+
+      case IdPrefixes.SKILLS:
+        return Just<HeroStateListLens> (HeroL.skills as HeroStateListLens)
+
+      default:
+        return Nothing
+    }
   }
-};
 
-export const getHeroStateListItem = <D extends Dependent = Dependent> (id: string) =>
-  (state: Record<HeroDependent>): Maybe<D> =>
-    getHeroStateListKeyById (id)
-      .bind (key => Record.lookup<HeroDependent, keyof HeroDependent> (key) (state))
-      .bind (slice => slice instanceof OrderedMap
-        ? slice.lookup (id) as any
-        : Maybe.empty ()
-      );
+/**
+ * Returns a getter function for a `Hero` object based on the prefix of the
+ * passed id. Only returns lenses for `OrderedMaps`, else `Nothing`.
+ */
+export const getHeroStateMapLensById =
+  (id: string): Maybe<HeroStateMapLens> => {
+    switch (getIdPrefix (id)) {
+      case IdPrefixes.ADVANTAGES:
+        return Just<HeroStateMapLens> (HeroL.advantages as HeroStateMapLens)
 
-export const getHeroStateListItemOr = <D extends Dependent = Dependent>(
-  id: string,
-  create: (id: string) => D
-) =>
-  (state: Record<HeroDependent>): D =>
-    Maybe.fromMaybe (create (id)) (getHeroStateListItem<D> (id) (state));
+      case IdPrefixes.ATTRIBUTES:
+        return Just<HeroStateMapLens> (HeroL.attributes as HeroStateMapLens)
 
-type SetHeroListState = Maybe<Record<HeroDependent>>;
-type SetHeroListStateFn1 = (state: Record<HeroDependent>) => SetHeroListState;
-type SetHeroListStateFn2 = (item: Dependent) => SetHeroListStateFn1;
+      case IdPrefixes.COMBAT_TECHNIQUES:
+        return Just<HeroStateMapLens> (HeroL.combatTechniques as HeroStateMapLens)
 
-export function setHeroListStateItem (
-  id: string
-): SetHeroListStateFn2;
-export function setHeroListStateItem (
-  id: string,
-  item: Dependent
-): SetHeroListStateFn1;
-export function setHeroListStateItem (
-  id: string,
-  item: Dependent,
-  state: Record<HeroDependent>
-): SetHeroListState;
-export function setHeroListStateItem (
-  id: string,
-  item?: Dependent,
-  state?: Record<HeroDependent>
-): SetHeroListState | SetHeroListStateFn1 | SetHeroListStateFn2 {
-  const resultFn = (x1: string, x2: Dependent, x3: Record<HeroDependent>) =>
-    getHeroStateListKeyById (id)
-      .fmap (
-        x3.alter (
-          slice => slice.fmap (
-            justSlice => (justSlice as OrderedMap<string, Dependent>)
-              .insert (x1) (x2)
-          ) as RecordKey<HeroStateListKey, HeroDependent>
-        )
-      );
+      case IdPrefixes.DISADVANTAGES:
+        return Just<HeroStateMapLens> (HeroL.disadvantages as HeroStateMapLens)
 
-  if (arguments.length === 3) {
-    return resultFn (id, item!, state!);
+      case IdPrefixes.LITURGICAL_CHANTS:
+        return Just<HeroStateMapLens> (HeroL.liturgicalChants as HeroStateMapLens)
+
+      case IdPrefixes.SPECIAL_ABILITIES:
+        return Just<HeroStateMapLens> (HeroL.specialAbilities as HeroStateMapLens)
+
+      case IdPrefixes.SPELLS:
+        return Just<HeroStateMapLens> (HeroL.spells as HeroStateMapLens)
+
+      case IdPrefixes.SKILLS:
+        return Just<HeroStateMapLens> (HeroL.skills as HeroStateMapLens)
+
+      default:
+        return Nothing
+    }
   }
-  else if (arguments.length === 2) {
-    return (x3: Record<HeroDependent>) => resultFn (id, item!, x3);
-  }
-  else {
-    return (x2: Dependent) =>
-      (x3: Record<HeroDependent>) =>
-        resultFn (id, x2, x3);
-  }
-}
 
-export const removeHeroListStateItem = (id: string) =>
-  (state: Record<HeroDependent>): Maybe<Record<HeroDependent>> =>
-    getHeroStateListKeyById (id)
-      .fmap (state.alter (
-        slice => slice.fmap (
-          justSlice => justSlice.delete (id)
-        ) as RecordKey<HeroStateListKey, HeroDependent>
-      ));
+/**
+ * Returns a getter function for a `Hero` object based on the prefix of the
+ * passed id.
+ */
+export const getHeroStateListGetterById =
+  (id: string): Maybe<HeroStateListGetter> => {
+    switch (getIdPrefix (id)) {
+      case IdPrefixes.ADVANTAGES:
+        return Just<HeroStateListGetter> (HeroG.advantages)
 
-export const adjustHeroSlice = <K extends HeroStateListKey>(
-  adjustFn: (slice: RecordKey<K, HeroDependent>) => RecordKey<K, HeroDependent>,
-  key: K
-) => (state: Record<HeroDependent>) => {
-  return state.alter (adjustFn) (key);
-};
+      case IdPrefixes.ATTRIBUTES:
+        return Just<HeroStateListGetter> (HeroG.attributes)
+
+      case IdPrefixes.BLESSINGS:
+        return Just<HeroStateListGetter> (HeroG.blessings)
+
+      case IdPrefixes.CANTRIPS:
+        return Just<HeroStateListGetter> (HeroG.cantrips)
+
+      case IdPrefixes.COMBAT_TECHNIQUES:
+        return Just<HeroStateListGetter> (HeroG.combatTechniques)
+
+      case IdPrefixes.DISADVANTAGES:
+        return Just<HeroStateListGetter> (HeroG.disadvantages)
+
+      case IdPrefixes.LITURGICAL_CHANTS:
+        return Just<HeroStateListGetter> (HeroG.liturgicalChants)
+
+      case IdPrefixes.SPECIAL_ABILITIES:
+        return Just<HeroStateListGetter> (HeroG.specialAbilities)
+
+      case IdPrefixes.SPELLS:
+        return Just<HeroStateListGetter> (HeroG.spells)
+
+      case IdPrefixes.SKILLS:
+        return Just<HeroStateListGetter> (HeroG.skills)
+
+      default:
+        return Nothing
+    }
+  }
+
+/**
+ * Returns a matching creator for elements in the `OrderedMap` specified by the
+ * passed key in a `Hero` object.
+ */
+export const getEntryCreatorById =
+  (id: string): Maybe<(id: string) => Dependent> => {
+    switch (getIdPrefix (id)) {
+      case IdPrefixes.ADVANTAGES:
+      case IdPrefixes.DISADVANTAGES:
+      case IdPrefixes.SPECIAL_ABILITIES:
+        return Just (createBaseActivatableDependent)
+
+      case IdPrefixes.ATTRIBUTES:
+        return Just (createPlainAttributeDependent)
+
+      case IdPrefixes.COMBAT_TECHNIQUES:
+        return Just (createSkillDependentWithValue6)
+
+      case IdPrefixes.SKILLS:
+        return Just (createPlainSkillDependent)
+
+      case IdPrefixes.LITURGICAL_CHANTS:
+      case IdPrefixes.SPELLS:
+        return Just (createInactiveActivatableSkillDependent)
+
+      default:
+        return Nothing
+    }
+  }
+
+export const getHeroStateListItem =
+  <D extends Dependent = Dependent>
+  (id: string) =>
+    pipe (
+      Just as (hero: Hero) => Just<Hero>,
+      ap (getHeroStateListGetterById (id) as Maybe<(hero: Hero) => OrderedMap<string, D>>),
+      bind_ (
+        ifElse<
+          OrderedMap<string, D> | OrderedSet<string>,
+          OrderedMap<string, D>,
+          Maybe<D>
+        >
+          (isOrderedMap)
+          (lookup (id) as unknown as (m: OrderedMap<string, D>) => Maybe<D>)
+          (cnst (Nothing))
+      )
+    )
+
+export const getHeroStateListItemOr =
+  <D extends Dependent = Dependent>
+  (create: (id: string) => D) =>
+  (id: string) =>
+  (state: Hero): D =>
+    fromMaybe (create (id)) (getHeroStateListItem<D> (id) (state))
+
+export const setHeroListStateItem =
+  (id: string) =>
+  (item: Dependent) =>
+  (state: Hero) =>
+    fmap ((lens: HeroStateMapLens) =>
+           over (lens)
+                (insert<string, Dependent> (id) (item) as
+                  (m: HeroDependent[HeroStateMapKey]) => HeroDependent[HeroStateMapKey])
+                (state))
+         (getHeroStateMapLensById (id))
+
+export const removeHeroListStateItem =
+  (id: string) =>
+  (state: Hero) =>
+    fmap ((lens: HeroStateMapLens) =>
+           over (lens)
+                (sdelete<string, Dependent> (id) as
+                  (m: HeroDependent[HeroStateMapKey]) => HeroDependent[HeroStateMapKey])
+                (state))
+         (getHeroStateMapLensById (id))
 
 /**
  * `alterStateEntry :: Dependent a => (String -> a) -> (a -> Maybe a) ->
@@ -195,21 +249,18 @@ export const adjustHeroSlice = <K extends HeroStateListKey>(
  * or created object. If `checkUnusedFn` returns the adjusted entry is unused,
  * this function will remove the entry from the state slice.
  */
-export const alterStateEntry =
-  <D extends Dependent>(altFn: (id: string) => D) =>
+export const modifyStateEntry =
+  <D extends Dependent>
+  (altFn: (id: string) => D) =>
   (adjustFn: (value: D) => D) =>
   (checkUnusedFn: (value: D) => boolean) =>
   (id: string) =>
-  (map: OrderedMap<string, D>): OrderedMap<string, D> =>
-    map .alter
-      (
-        R.pipe (
-          Maybe.fromMaybe (altFn (id)),
-          adjustFn,
-          Maybe.ensure<D> (R.pipe (checkUnusedFn, R.not))
-        )
-      )
-      (id);
+    alter<string, D> (pipe (
+                       fromMaybe (altFn (id)),
+                       adjustFn,
+                       ensure<D> (pipe (checkUnusedFn, not))
+                     ))
+                     (id)
 
 /**
  * `adjustMaybeStateEntry :: Dependent a => (String -> a) -> (a -> Maybe a) ->
@@ -220,10 +271,11 @@ String -> OrderedMap String a`
  * the given `id`. `adjustFn` will then be called either on the already present
  * or created object.
  */
-export const adjustMaybeStateEntry =
-  <D extends Dependent>(altFn: (id: string) => D) =>
-  (adjustFn: (value: D) => D) =>
-    alterStateEntry (altFn) (adjustFn) (() => false);
+export const modifyMaybeStateEntry =
+  <D extends Dependent>
+  (altF: (id: string) => D) =>
+  (f: (value: D) => D) =>
+    modifyStateEntry (altF) (f) (cnst (false))
 
 /**
  * `updateStateEntry :: Dependent a => (a -> Maybe a) ->
@@ -236,118 +288,92 @@ export const adjustMaybeStateEntry =
  * function will remove the entry from the state slice.
  */
 export const updateStateEntry =
-  <D extends Dependent>(adjustFn: (value: D) => D) =>
-  (checkUnusedFn: (value: D) => boolean) =>
+  <D extends Dependent>
+  (f: (value: D) => D) =>
+  (checkUnused: (value: D) => boolean) =>
+    update<string, D> (pipe (
+                        f,
+                        ensure<D> (pipe (checkUnused, not))
+                      ))
+
+export const updateHeroListStateItemOr =
+  <D extends Dependent>
+  (creator: (id: string) => D) =>
+  (f: (value: D) => Maybe<D>) =>
   (id: string) =>
-  (map: OrderedMap<string, D>): OrderedMap<string, D> =>
-    map .update
-      (
-        R.pipe (
-          adjustFn,
-          Maybe.ensure<D> (R.pipe (checkUnusedFn, R.not))
-        )
-      )
-      (id);
+  (state: Hero) =>
+    fromMaybe<Hero>
+      (state)
+      (fmap ((lens: HeroStateMapLens) =>
+              over (lens)
+                   (alter<string, D> (pipe (fromMaybe (creator (id)), f))
+                                     (id) as unknown as
+                     (m: HeroDependent[HeroStateMapKey]) => HeroDependent[HeroStateMapKey])
+                   (state))
+            (getHeroStateMapLensById (id)))
 
-export const adjustHeroListStateItemOr =
-  <D extends Dependent>(
-    createFn: (id: string) => D,
-    adjustFn: (value: D) => Maybe<D>,
-    id: string
-  ) =>
-    (state: Record<HeroDependent>) =>
-      Maybe.fromMaybe<Record<HeroDependent>> (state) (
-        getHeroStateMapKeyById (id)
-          .fmap (
-            state.modify (
-              slice =>
-                (slice as any as OrderedMap<string, D>)
-                  .alter (
-                    R.pipe (
-                      Maybe.fromMaybe (createFn (id)),
-                      adjustFn
-                    )
-                  ) (id) as any as (typeof slice)
-            )
-          )
-      );
+export const updateHeroListStateItemWithDefault =
+  <D extends Dependent>
+  (adjustFn: (value: D) => Maybe<D>) =>
+  (id: string) =>
+  (state: Hero) =>
+    maybe<(id: string) => Dependent, Hero>
+      (state)
+      (creator => updateHeroListStateItemOr (creator)
+                                            (adjustFn as (value: Dependent) => Maybe<Dependent>)
+                                            (id)
+                                            (state))
+      (getEntryCreatorById (id))
 
-export const adjustHeroListStateItemWithDefault =
-  <D extends Dependent>(
-    adjustFn: (value: D) => Maybe<D>,
-    id: string
-  ) =>
-    (state: Record<HeroDependent>) =>
-      Maybe.fromMaybe<Record<HeroDependent>> (state) (
-        getHeroStateMapKeyById (id)
-          .fmap (
-            stateKey => state.modify (
-              slice =>
-                (slice as any as OrderedMap<string, D>)
-                  .alter (
-                    R.pipe (
-                      Maybe.fromMaybe (
-                        getEntryCreatorByHeroStateMapKey (stateKey) (id) as D
-                      ),
-                      adjustFn
-                    )
-                  ) (id) as any as (typeof slice)
-            ) (stateKey)
-          )
-      );
+export const modifyHeroListStateItem =
+  <D extends Dependent>
+  (adjustFn: (value: D) => D) =>
+  (id: string) =>
+  (state: Hero) =>
+    fromMaybe (state)
+              (fmap ((lens: HeroStateMapLens) =>
+                      over (lens)
+                           (adjust<string, D> (adjustFn) (id) as unknown as
+                             (m: HeroDependent[HeroStateMapKey]) => HeroDependent[HeroStateMapKey])
+                           (state))
+                    (getHeroStateMapLensById (id)))
 
-export const adjustHeroListStateItem =
-  <D extends Dependent>(
-    adjustFn: (value: D) => D,
-    id: string,
-    state: Record<HeroDependent>
-  ) =>
-    Maybe.fromMaybe<Record<HeroDependent>> (state) (
-      getHeroStateMapKeyById (id)
-        .fmap (
-          state.modify (
-            slice => (slice as any as OrderedMap<string, D>)
-              .adjust (adjustFn) (id) as any as (typeof slice)
-          )
-        )
-    );
+export const modifyHeroListStateItemOrRemove =
+  <D extends Dependent>
+  (unusedCheck: (value: D) => boolean) =>
+  (f: (value: D) => D) =>
+  (id: string) =>
+  (state: Hero) =>
+    fromMaybe (state)
+              (fmap ((lens: HeroStateMapLens) =>
+                      over (lens)
+                           (update<string, D> (value => {
+                                                const updatedValue = f (value)
 
-export const updateHeroListStateItemOrRemove =
-  <D extends Dependent>(
-    unusedCheckFn: (value: D) => boolean,
-    updateFn: (value: D) => D,
-    id: string
-  ) =>
-    (state: Record<HeroDependent>) =>
-      Maybe.fromMaybe<Record<HeroDependent>> (state) (
-        getHeroStateMapKeyById (id)
-          .fmap (
-            state.modify (
-              slice => (slice as any as OrderedMap<string, D>)
-                .update (
-                  value => {
-                    const updatedValue = updateFn (value);
-
-                    if (unusedCheckFn (updatedValue)) {
-                      return Nothing ();
-                    }
-                    else {
-                      return Just (updatedValue);
-                    }
-                  }
-                ) (id) as any as (typeof slice)
-            )
-          )
-      );
+                                                if (unusedCheck (updatedValue)) {
+                                                  return Nothing
+                                                }
+                                                else {
+                                                  return Just (updatedValue)
+                                                }
+                                              })
+                                              (id) as unknown as
+                             (m: HeroDependent[HeroStateMapKey]) => HeroDependent[HeroStateMapKey])
+                           (state))
+                    (getHeroStateMapLensById (id)))
 
 export const getAllEntriesByGroup =
-  <I extends Dependent = Dependent, T extends EntryWithGroup = EntryWithGroup>(
+  <I extends Dependent = Dependent, T extends EntryWithGroup = EntryWithGroup>
+  (
     wiki: OrderedMap<string, T>,
     list: OrderedMap<string, I>,
     ...groups: number[]
-  ): List<I> => list.elems ().filter (R.pipe (
-    e => e.lookup ('id').bind (id => OrderedMap.lookup<string, T> (id) (wiki)),
-    e => Maybe.isJust (e) && groups.includes (
-      Maybe.fromJust (e.bind (just => just.lookup ('gr')))
-    )
-  ));
+  ): List<I> =>
+    filter<I> (pipe (
+                AttributeDependentG.id,
+                lookup_ (wiki),
+                fmap (SkillG.gr),
+                fmap (elem_ (fromArray (groups))),
+                or
+              ))
+              (elems (list))

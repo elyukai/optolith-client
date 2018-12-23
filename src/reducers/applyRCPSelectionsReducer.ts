@@ -11,7 +11,7 @@ import { createActivatableDependent, createActivatableDependentSkill } from '../
 import { Just, List, Maybe, OrderedMap, OrderedSet, Record, Tuple } from '../utils/dataUtils';
 import { addDependencies } from '../utils/dependencies/dependencyUtils';
 import { flip } from '../utils/flip';
-import { adjustHeroListStateItemOr, adjustHeroListStateItemWithDefault, getHeroStateListItem } from '../utils/heroStateUtils';
+import { getHeroStateListItem, updateHeroListStateItemOr, updateHeroListStateItemWithDefault } from '../utils/heroStateUtils';
 import { ifElse } from '../utils/ifElse';
 import { isProfessionRequiringIncreasable } from '../utils/prerequisites/checkPrerequisiteUtils';
 import { getWikiEntry } from '../utils/WikiUtils';
@@ -409,7 +409,7 @@ const applyModifications = (action: SetSelectionsAction) => R.pipe (
   (acc: ConcatenatedModifications) => ({
     ...acc,
     state: acc.skillActivateList.foldl<ConcatenatedModifications['state']> (
-      state => id => adjustHeroListStateItemOr (
+      state => id => updateHeroListStateItemOr (
         createActivatableDependentSkill,
         e => Just (e.insert ('active') (true)),
         id
@@ -421,7 +421,7 @@ const applyModifications = (action: SetSelectionsAction) => R.pipe (
   (acc: ConcatenatedModifications) => ({
     ...acc,
     state: acc.skillRatingList.foldlWithKey<ConcatenatedModifications['state']> (
-      state => id => value => adjustHeroListStateItemWithDefault (
+      state => id => value => updateHeroListStateItemWithDefault (
         e => Just (
           (e as any as Record<{ value: number; [key: string]: any }>)
             .modify<'value'> (R.add (value)) ('value')
@@ -456,7 +456,7 @@ const applyModifications = (action: SetSelectionsAction) => R.pipe (
   // - Scripts additions
   (acc: ConcatenatedModifications) => ({
     ...acc,
-    state: adjustHeroListStateItemOr (
+    state: updateHeroListStateItemOr (
       createActivatableDependent,
       scripts => Just (
         scripts.modify<'active'> (
@@ -474,7 +474,7 @@ const applyModifications = (action: SetSelectionsAction) => R.pipe (
   // - Languages additions
   (acc: ConcatenatedModifications) => ({
     ...acc,
-    state: adjustHeroListStateItemOr (
+    state: updateHeroListStateItemOr (
       createActivatableDependent,
       languages => Just (
         languages.modify<'active'> (
@@ -498,7 +498,7 @@ const applyModifications = (action: SetSelectionsAction) => R.pipe (
     state: acc.professionPrerequisites.foldl<ConcatenatedModifications['state']> (
       state => req => {
         if (isProfessionRequiringIncreasable (req)) {
-          return adjustHeroListStateItemWithDefault (
+          return updateHeroListStateItemWithDefault (
             e => Just (
               (e as any as Record<{ value: number; [key: string]: any }>)
                 .insert ('value') (req.get ('value'))
@@ -596,7 +596,7 @@ function updateListToContainNewEntry (
   type Active = Record<Data.ActiveObject>;
 
   const intermediateState = addDependencies (
-    adjustHeroListStateItemOr (
+    updateHeroListStateItemOr (
       createActivatableDependent,
       currentEntry => Just (
         currentEntry.modify<'active'> (flip<Actives, Active, Actives> (List.cons) (activeObject))

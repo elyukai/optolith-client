@@ -9,8 +9,29 @@ import { alt, fmap, fromNullable, Just, Maybe, Nothing } from '../structures/May
 import { OrderedMap } from '../structures/OrderedMap';
 import { fromBoth } from '../structures/Pair';
 import { Record, StringKeyObject } from '../structures/Record';
+import { createAdvantage } from '../wikiData/AdvantageCreator';
+import { createAttribute } from '../wikiData/AttributeCreator';
+import { createBlessing } from '../wikiData/BlessingCreator';
+import { createCantrip } from '../wikiData/CantripCreator';
+import { createCombatTechnique } from '../wikiData/CombatTechniqueCreator';
+import { createCulture } from '../wikiData/CultureCreator';
+import { createDisadvantage } from '../wikiData/DisadvantageCreator';
+import { createExperienceLevel } from '../wikiData/ExperienceLevelCreator';
+import { createItemTemplate } from '../wikiData/ItemTemplateCreator';
+import { createLiturgicalChant } from '../wikiData/LiturgicalChantCreator';
+import { createProfession } from '../wikiData/ProfessionCreator';
+import { createProfessionVariant } from '../wikiData/ProfessionVariantCreator';
+import { createRace } from '../wikiData/RaceCreator';
+import { createRaceVariant } from '../wikiData/RaceVariantCreator';
+import { createSkill } from '../wikiData/SkillCreator';
+import { createSpecialAbility } from '../wikiData/SpecialAbilityCreator';
+import { createSpell } from '../wikiData/SpellCreator';
+import { createCommonProfessionObject } from '../wikiData/sub/CommonProfessionCreator';
+import { createDie } from '../wikiData/sub/DieCreator';
+import { createIncreaseSkill } from '../wikiData/sub/IncreaseSkillCreator';
+import { createNameBySex } from '../wikiData/sub/NameBySexCreator';
+import { createSourceLink } from '../wikiData/sub/SourceLinkCreator';
 import { convertRawApplications, convertRawIncreaseSkills, convertRawPrerequisiteObjects, convertRawPrerequisites, convertRawProfessionDependencyObjects, convertRawProfessionPrerequisiteObjects, convertRawProfessionRequiresActivatableObject, convertRawProfessionSelections, convertRawProfessionVariantSelections, convertRawSelections, mapRawWithPrefix } from './convertRawObjectsToWikiUtils';
-import { createAdvantage, createAttribute, createBlessing, createCantrip, createCombatTechnique, createCommonProfessionObject, createCulture, createDie, createDisadvantage, createExperienceLevel, createIncreaseSkill, createItemTemplate, createLiturgicalChant, createNameBySex, createProfession, createProfessionVariant, createRace, createRaceVariant, createSkill, createSourceLink, createSpecialAbility, createSpell } from './wikiData';
 
 const getSourceBooks =
   (srcIds: string[], srcPages: number[]): List<Record<Wiki.SourceLink>> =>
@@ -294,7 +315,7 @@ export const initCulture =
         scripts: List.fromArray (literacy),
         socialStatus: List.fromArray (social),
         culturalPackageSkills: List.fromArray (talents .map (e => createIncreaseSkill ({
-          id: prefixRawId (IdPrefixes.TALENTS) (e [0]),
+          id: prefixRawId (IdPrefixes.SKILLS) (e [0]),
           value: e [1],
         }))),
         commonProfessions: List.fromArray (
@@ -318,8 +339,8 @@ export const initCulture =
         uncommonDisadvantages:
           List.fromArray (untyp_dadv .map (prefixRawId (IdPrefixes.DISADVANTAGES))),
         uncommonDisadvantagesText: fromNullable (uncommonDisadvantages),
-        commonSkills: List.fromArray (typ_talents .map (prefixRawId (IdPrefixes.TALENTS))),
-        uncommonSkills: List.fromArray (untyp_talents .map (prefixRawId (IdPrefixes.TALENTS))),
+        commonSkills: List.fromArray (typ_talents .map (prefixRawId (IdPrefixes.SKILLS))),
+        uncommonSkills: List.fromArray (untyp_talents .map (prefixRawId (IdPrefixes.SKILLS))),
         src: getSourceBooks (srcIds, srcPages),
       }))
     }
@@ -382,9 +403,9 @@ export const initProfession =
         selections: convertRawProfessionSelections (sel),
         specialAbilities: List.fromArray (sa.map (convertRawProfessionRequiresActivatableObject)),
         combatTechniques: convertRawIncreaseSkills (IdPrefixes.COMBAT_TECHNIQUES) (combattech),
-        skills: convertRawIncreaseSkills (IdPrefixes.TALENTS) (talents),
+        skills: convertRawIncreaseSkills (IdPrefixes.SKILLS) (talents),
         spells: convertRawIncreaseSkills (IdPrefixes.SPELLS) (spells),
-        liturgicalChants: convertRawIncreaseSkills (IdPrefixes.LITURGIES) (chants),
+        liturgicalChants: convertRawIncreaseSkills (IdPrefixes.LITURGICAL_CHANTS) (chants),
         blessings: mapRawWithPrefix (IdPrefixes.BLESSINGS) (blessings),
         suggestedAdvantages: mapRawWithPrefix (IdPrefixes.ADVANTAGES) (typ_adv),
         suggestedDisadvantages: mapRawWithPrefix (IdPrefixes.DISADVANTAGES) (typ_dadv),
@@ -445,9 +466,9 @@ export const initProfessionVariant =
         selections: convertRawProfessionVariantSelections (sel),
         specialAbilities: List.fromArray (sa .map (convertRawProfessionRequiresActivatableObject)),
         combatTechniques: convertRawIncreaseSkills (IdPrefixes.COMBAT_TECHNIQUES) (combattech),
-        skills: convertRawIncreaseSkills (IdPrefixes.TALENTS) (talents),
+        skills: convertRawIncreaseSkills (IdPrefixes.SKILLS) (talents),
         spells: convertRawIncreaseSkills (IdPrefixes.SPELLS) (spells),
-        liturgicalChants: convertRawIncreaseSkills (IdPrefixes.LITURGIES) (chants),
+        liturgicalChants: convertRawIncreaseSkills (IdPrefixes.LITURGICAL_CHANTS) (chants),
         blessings: mapRawWithPrefix (IdPrefixes.BLESSINGS) (blessings),
         precedingText: fromNullable (precedingText),
         fullText: fromNullable (fullText),

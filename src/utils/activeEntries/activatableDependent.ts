@@ -37,6 +37,8 @@ export const createActivatableDependentWithActive =
   (activeObjects: List<Record<ActiveObject>>) =>
     createActivatableDependent ({ active: activeObjects })
 
+export const createPlainActivatableDependent = createActivatableDependent ({ })
+
 export const isMaybeActivatableDependent =
   (entry: Maybe<Dependent>): entry is Just<Record<ActivatableDependent>> =>
     isJust (entry)

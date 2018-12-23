@@ -36,14 +36,14 @@ export const getCategoryByIdPrefix =
       .on (IdPrefixes.COMBAT_TECHNIQUES, () => Just (Categories.COMBAT_TECHNIQUES))
       .on (IdPrefixes.CULTURES, () => Just (Categories.CULTURES))
       .on (IdPrefixes.DISADVANTAGES, () => Just (Categories.DISADVANTAGES))
-      .on (IdPrefixes.LITURGIES, () => Just (Categories.LITURGIES))
+      .on (IdPrefixes.LITURGICAL_CHANTS, () => Just (Categories.LITURGIES))
       .on (IdPrefixes.PROFESSIONS, () => Just (Categories.PROFESSIONS))
       .on (IdPrefixes.PROFESSION_VARIANTS, () => Just (Categories.PROFESSION_VARIANTS))
       .on (IdPrefixes.RACES, () => Just (Categories.RACES))
       .on (IdPrefixes.RACE_VARIANTS, () => Just (Categories.RACE_VARIANTS))
       .on (IdPrefixes.SPECIAL_ABILITIES, () => Just (Categories.SPECIAL_ABILITIES))
       .on (IdPrefixes.SPELLS, () => Just (Categories.SPELLS))
-      .on (IdPrefixes.TALENTS, () => Just (Categories.TALENTS))
+      .on (IdPrefixes.SKILLS, () => Just (Categories.TALENTS))
       .otherwise (cnst (Nothing))
 
 export const getCategoryById = pipe (

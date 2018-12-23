@@ -10,7 +10,7 @@ import { pipe } from 'ramda';
 import { add, multiply } from '../mathUtils';
 import { not } from '../not';
 import { equals, notEquals } from './Eq';
-import { id } from './Function';
+import { ident } from './Function';
 import { fromElements, isList, List, mappend } from './List';
 import { fromNullable, Maybe, Some } from './Maybe';
 import { show } from './Show';
@@ -269,7 +269,7 @@ export const concatMap =
  * `True`, the container must be finite; `False`, however, results from a
  * `False` value finitely far from the left end.
  */
-export const and = (xs: OrderedSet<boolean>): boolean => [...xs .value] .every (id);
+export const and = (xs: OrderedSet<boolean>): boolean => [...xs .value] .every (ident);
 
 /**
  * `or :: Set Bool -> Bool`
@@ -278,7 +278,7 @@ export const and = (xs: OrderedSet<boolean>): boolean => [...xs .value] .every (
  * `False`, the container must be finite; `True`, however, results from a
  * `True` value finitely far from the left end.
  */
-export const or = (xs: OrderedSet<boolean>): boolean => [...xs .value] .some (id);
+export const or = (xs: OrderedSet<boolean>): boolean => [...xs .value] .some (ident);
 
 /**
  * `any :: (a -> Bool) -> Set a -> Bool`

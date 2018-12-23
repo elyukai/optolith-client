@@ -9,7 +9,7 @@
 import { pipe } from 'ramda';
 import { not } from '../not';
 import { equals } from './Eq';
-import { cnst, id } from './Function';
+import { cnst, ident } from './Function';
 import { fromJust, fromNullable, imapMaybe, isJust, Just, Maybe, Nothing, Some } from './Maybe';
 import { OrderedMap } from './OrderedMap';
 import { fromBoth, fst, Pair, snd } from './Pair';
@@ -223,7 +223,7 @@ export const kleisli =
  */
 export const join =
   <A extends Some>(xs: List<List<A>>): List<A> =>
-    bind<List<A>, A> (xs) (id)
+    bind<List<A>, A> (xs) (ident)
 
 
 // FOLDABLE

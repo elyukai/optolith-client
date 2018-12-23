@@ -23,6 +23,8 @@ export const createAttributeDependent =
 export const createAttributeDependentWithValue =
   (x: number) => createAttributeDependent ({ value: x })
 
+export const createPlainAttributeDependent = createAttributeDependent ({ })
+
 export const isMaybeAttributeDependent =
   (entry: Maybe<Dependent>): entry is Just<Record<AttributeDependent>> =>
     isJust (entry)

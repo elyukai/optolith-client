@@ -1,6 +1,8 @@
 import { Action } from 'redux';
 import { ActionTypes } from '../constants/ActionTypes';
-import { List, Maybe, Tuple } from './dataUtils';
+import { cons, empty, List, uncons } from './structures/List';
+import { maybe, Maybe } from './structures/Maybe';
+import { fst, Pair, snd } from './structures/Pair';
 
 export interface UndoState<S> {
   past: List<S>;
@@ -17,33 +19,33 @@ export function undo<S, A extends Action = Action> (
   ignoreActionTypes?: ActionTypes[]
 ): UndoReducer<S, A> {
   const initialState: UndoState<S> = {
-    past: List.of (),
+    past: empty,
     // tslint:disable-next-line:no-object-literal-type-assertion
     present: reducer (undefined, {} as A),
-    future: List.of (),
+    future: empty,
   };
 
   return function undoHandler (state: UndoState<S> = initialState, action: A): UndoState<S> {
     const { past, future, present } = state;
 
     if (action.type === ActionTypes.UNDO) {
-      return Maybe.maybe<Tuple<S, List<S>>, UndoState<S>> (state) (
+      return maybe<Pair<S, List<S>>, UndoState<S>> (state) (
         unconsed => ({
-          past: Tuple.snd (unconsed),
-          present: Tuple.fst (unconsed),
-          future: future .cons (present),
+          past: snd (unconsed),
+          present: fst (unconsed),
+          future: cons (future) (present),
         })
-      ) (List.uncons (past));
+      ) (uncons (past));
     }
 
     if (action.type === ActionTypes.REDO) {
-      return Maybe.maybe<Tuple<S, List<S>>, UndoState<S>> (state) (
+      return Maybe.maybe<Pair<S, List<S>>, UndoState<S>> (state) (
         unconsed => ({
-          past: past .cons (present),
-          present: Tuple.fst (unconsed),
-          future: Tuple.snd (unconsed),
+          past: cons (past) (present),
+          present: fst (unconsed),
+          future: snd (unconsed),
         })
-      ) (List.uncons (future));
+      ) (uncons (future));
     }
 
     const newPresent = reducer (present, action);
@@ -52,8 +54,8 @@ export function undo<S, A extends Action = Action> (
       if (resetActionTypes && resetActionTypes.includes (action.type)) {
         return {
           present,
-          past: List.empty (),
-          future: List.empty (),
+          past: empty,
+          future: empty,
         };
       }
 
@@ -63,8 +65,8 @@ export function undo<S, A extends Action = Action> (
     if (resetActionTypes && resetActionTypes.includes (action.type)) {
       return {
         present: newPresent,
-        past: List.empty (),
-        future: List.empty (),
+        past: empty,
+        future: empty,
       };
     }
 
@@ -77,9 +79,9 @@ export function undo<S, A extends Action = Action> (
     }
 
     return {
-      past: past.cons (present),
+      past: cons (past) (present),
       present: newPresent,
-      future: List.empty (),
+      future: empty,
     };
   };
 }
@@ -93,25 +95,25 @@ export function undoExisting<S, A extends Action = Action> (
     const { past, future, present } = state;
 
     if (action.type === ActionTypes.UNDO) {
-      return Maybe.maybe<Tuple<S, List<S>>, UndoState<S>>
+      return maybe<Pair<S, List<S>>, UndoState<S>>
         (state)
         (unconsed => ({
-          past: Tuple.snd (unconsed),
-          present: Tuple.fst (unconsed),
-          future: future.cons (present),
+          past: snd (unconsed),
+          present: fst (unconsed),
+          future: cons (future) (present),
         }))
-        (List.uncons (past));
+        (uncons (past));
     }
 
     if (action.type === ActionTypes.REDO) {
-      return Maybe.maybe<Tuple<S, List<S>>, UndoState<S>>
+      return maybe<Pair<S, List<S>>, UndoState<S>>
         (state)
         (unconsed => ({
-          past: past.cons (present),
-          present: Tuple.fst (unconsed),
-          future: Tuple.snd (unconsed),
+          past: cons (past) (present),
+          present: fst (unconsed),
+          future: snd (unconsed),
         }))
-        (List.uncons (future));
+        (uncons (future));
     }
 
     const newPresent = reducer (present, action);
@@ -120,8 +122,8 @@ export function undoExisting<S, A extends Action = Action> (
       if (resetActionTypes && resetActionTypes.includes (action.type)) {
         return {
           present,
-          past: List.empty (),
-          future: List.empty (),
+          past: empty,
+          future: empty,
         };
       }
 
@@ -131,8 +133,8 @@ export function undoExisting<S, A extends Action = Action> (
     if (resetActionTypes && resetActionTypes.includes (action.type)) {
       return {
         present: newPresent,
-        past: List.empty (),
-        future: List.empty (),
+        past: empty,
+        future: empty,
       };
     }
 
@@ -145,17 +147,17 @@ export function undoExisting<S, A extends Action = Action> (
     }
 
     return {
-      past: past.cons (present),
+      past: cons (past) (present),
       present: newPresent,
-      future: List.empty (),
+      future: empty,
     };
   };
 }
 
 export function wrapWithHistoryObject<T> (obj: T): UndoState<T> {
   return {
-    future: List.empty (),
-    past: List.empty (),
+    future: empty,
+    past: empty,
     present: obj,
   };
 }

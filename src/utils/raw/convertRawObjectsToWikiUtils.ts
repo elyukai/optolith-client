@@ -8,7 +8,27 @@ import { List } from '../structures/List';
 import { fmap, fromJust, fromNullable, isJust, Just, Maybe, Nothing } from '../structures/Maybe';
 import { Pair } from '../structures/Pair';
 import { Record } from '../structures/Record';
-import { createApplication, createCantripsSelection, createCombatTechniquesSecondSelection, createCombatTechniquesSelection, createCultureRequirement, createCursesSelection, createIncreaseSkill, createLanguagesScriptsSelection, createPactRequirement, createRaceRequirement, createRemoveCombatTechniquesSecondSelection, createRemoveCombatTechniquesSelection, createRemoveSpecializationSelection, createRequireActivatable, createRequireIncreasable, createRequirePrimaryAttribute, createSelectOption, createSexRequirement, createSkillsSelectionWithGroup, createSpecializationSelection, createTerrainKnowledgeSelection } from './wikiData';
+import { createRequireActivatable } from '../wikiData/prerequisites/ActivatableRequirementCreator';
+import { createCultureRequirement } from '../wikiData/prerequisites/CultureRequirementCreator';
+import { createRequireIncreasable } from '../wikiData/prerequisites/IncreasableRequirementCreator';
+import { createPactRequirement } from '../wikiData/prerequisites/PactRequirementCreator';
+import { createRequirePrimaryAttribute } from '../wikiData/prerequisites/PrimaryAttributeRequirementCreator';
+import { createRaceRequirement } from '../wikiData/prerequisites/RaceRequirementCreator';
+import { createSexRequirement } from '../wikiData/prerequisites/SexRequirementCreator';
+import { createCantripsSelection } from '../wikiData/professionSelections/CantripsSelectionCreator';
+import { createCombatTechniquesSelection } from '../wikiData/professionSelections/CombatTechniquesSelectionCreator';
+import { createCursesSelection } from '../wikiData/professionSelections/CursesSelectionCreator';
+import { createLanguagesScriptsSelection } from '../wikiData/professionSelections/LanguagesScriptsSelectionCreator';
+import { createRemoveCombatTechniquesSelection } from '../wikiData/professionSelections/RemoveCombatTechniquesSelectionCreator';
+import { createRemoveCombatTechniquesSecondSelection } from '../wikiData/professionSelections/RemoveSecondCombatTechniquesSelectionCreator';
+import { createRemoveSpecializationSelection } from '../wikiData/professionSelections/RemoveSpecializationSelectionCreator';
+import { createCombatTechniquesSecondSelection } from '../wikiData/professionSelections/SecondCombatTechniquesSelectionCreator';
+import { createSkillsSelectionWithGroup } from '../wikiData/professionSelections/SkillsSelectionCreator';
+import { createSpecializationSelection } from '../wikiData/professionSelections/SpecializationSelectionCreator';
+import { createTerrainKnowledgeSelection } from '../wikiData/professionSelections/TerrainKnowledgeSelectionCreator';
+import { createApplication } from '../wikiData/sub/ApplicationCreator';
+import { createIncreaseSkill } from '../wikiData/sub/IncreaseSkillCreator';
+import { createSelectOption } from '../wikiData/sub/SelectOptionCreator';
 
 const isRawSexRequirement =
   (req: Raw.AllRawRequirementObjects): req is Raw.RawSexRequirement =>

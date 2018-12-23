@@ -6,18 +6,24 @@ import { ActivatableDependentG, ActiveObjectG } from '../activeEntries/activatab
 import { ActivatableSkillDependentG } from '../activeEntries/activatableSkillDependent';
 import { AttributeDependentG } from '../activeEntries/attributeDependent';
 import { getAPObject } from '../adventurePoints/adventurePointsSumUtils';
+import { BelongingsG } from '../heroData/BelongingsCreator';
+import { EnergiesG } from '../heroData/EnergiesCreator';
+import { HeroG } from '../heroData/HeroCreator';
+import { HitZoneArmorCreatorG } from '../heroData/HitZoneArmorCreator';
+import { PersonalDataG } from '../heroData/PersonalDataCreator';
+import { PrimaryAttributeDamageThresholdG } from '../heroData/PrimaryAttributeDamageThresholdCreator';
+import { RulesG } from '../heroData/RulesCreator';
+import { UndoHeroG } from '../heroData/UndoHeroCreator';
 import { HeroStateMapKey } from '../heroStateUtils';
 import { ifElse } from '../ifElse';
-import { PrimaryAttributeDamageThresholdG } from '../ItemUtils';
 import { gt } from '../mathUtils';
-import { Functn } from '../structures/Function';
+import { ident } from '../structures/Function';
 import { List, map } from '../structures/List';
-import { fmap, maybeToUndefined, bind, elem } from '../structures/Maybe';
+import { bind, elem, fmap, maybeToUndefined } from '../structures/Maybe';
 import { elems, foldl, foldlWithKey, OrderedMap, OrderedMapValueElement, toObjectWith, union } from '../structures/OrderedMap';
 import { toArray } from '../structures/OrderedSet';
 import { Record, StringKeyObject, toObject } from '../structures/Record';
 import { UndoState } from '../undo';
-import { BelongingsG, EnergiesG, HeroG, PersonalDataG, RulesG } from './heroData';
 import { currentVersion } from './VersionUtils';
 
 const {
@@ -75,13 +81,13 @@ const getActivatablesForSave = (hero: Record<Data.HeroDependent>) =>
       ...acc,
       [key]: List.foldl<Record<Data.ActiveObject>, Raw.RawActiveObject[]>
         (accActive => e => [
-          ...accActive, 
-            {
-              cost: maybeToUndefined (cost (e)),
-              sid2: maybeToUndefined (sid2 (e)),
-              sid: maybeToUndefined (sid (e)),
-              tier: maybeToUndefined (tier (e)),
-            }
+          ...accActive,
+          {
+            cost: maybeToUndefined (cost (e)),
+            sid2: maybeToUndefined (sid2 (e)),
+            sid: maybeToUndefined (sid (e)),
+            tier: maybeToUndefined (tier (e)),
+          },
         ])
         ([])
         (activeList (obj)),
@@ -203,7 +209,7 @@ const getBelongingsForSave = (hero: Record<Data.HeroDependent>) =>
                     ifElse<number | List<number>, List<number>, number | number[]>
                       (List.isList)
                       (List.toArray)
-                      (Functn.id)
+                      (ident)
                       (threshold (bonus)),
                 }))
                 (damageBonus)
@@ -214,13 +220,28 @@ const getBelongingsForSave = (hero: Record<Data.HeroDependent>) =>
       (items (belongings (hero))),
     armorZones:
       toObjectWith<Record<Data.ArmorZonesInstance>, Raw.RawArmorZone>
-        (toObject)
+        (obj => ({
+          id: HitZoneArmorCreatorG.id (obj),
+          name: HitZoneArmorCreatorG.name (obj),
+          head: maybeToUndefined (HitZoneArmorCreatorG.head (obj)),
+          headLoss: maybeToUndefined (HitZoneArmorCreatorG.headLoss (obj)),
+          leftArm: maybeToUndefined (HitZoneArmorCreatorG.leftArm (obj)),
+          leftArmLoss: maybeToUndefined (HitZoneArmorCreatorG.leftArmLoss (obj)),
+          rightArm: maybeToUndefined (HitZoneArmorCreatorG.rightArm (obj)),
+          rightArmLoss: maybeToUndefined (HitZoneArmorCreatorG.rightArmLoss (obj)),
+          torso: maybeToUndefined (HitZoneArmorCreatorG.torso (obj)),
+          torsoLoss: maybeToUndefined (HitZoneArmorCreatorG.torsoLoss (obj)),
+          leftLeg: maybeToUndefined (HitZoneArmorCreatorG.leftLeg (obj)),
+          leftLegLoss: maybeToUndefined (HitZoneArmorCreatorG.leftLegLoss (obj)),
+          rightLeg: maybeToUndefined (HitZoneArmorCreatorG.rightLeg (obj)),
+          rightLegLoss: maybeToUndefined (HitZoneArmorCreatorG.rightLegLoss (obj)),
+        }))
         (armorZones (belongings (hero))),
     purse: toObject (purse (belongings (hero))),
   })
 
 const getPetsForSave = pipe (
-  pets, 
+  pets,
   toObjectWith (
     (r): Raw.RawPet => {
       const obj = toObject (r)
@@ -266,7 +287,6 @@ export const convertHeroForSave = (wiki: Record<WikiAll>) =>
     (users: OrderedMap<string, Data.User>) =>
       (hero: Data.Hero): Raw.RawHero => {
         const {
-          id,
           dateCreated,
           dateModified,
           phase,
@@ -286,14 +306,14 @@ export const convertHeroForSave = (wiki: Record<WikiAll>) =>
 
         const adventurePoints = getAPObject (wiki) (locale) (hero)
 
-        const maybeUser = bind<string, Data.User> (player (hero)) 
+        const maybeUser = bind<string, Data.User> (player (hero))
                                                   (OrderedMap.lookup_<string, Data.User> (users))
 
         const obj: Raw.RawHero = {
           clientVersion: currentVersion,
           dateCreated: dateCreated .toJSON (),
           dateModified: dateModified .toJSON (),
-          id,
+          id: id (hero),
           phase,
           player: maybeToUndefined (maybeUser),
           name,
@@ -323,7 +343,8 @@ export const convertHeroForSave = (wiki: Record<WikiAll>) =>
             socialstatus: maybeToUndefined (PersonalDataG.socialStatus (personalData)),
             characteristics: maybeToUndefined (PersonalDataG.characteristics (personalData)),
             otherinfo: maybeToUndefined (PersonalDataG.otherInfo (personalData)),
-            cultureAreaKnowledge: maybeToUndefined (PersonalDataG.cultureAreaKnowledge (personalData)),
+            cultureAreaKnowledge:
+              maybeToUndefined (PersonalDataG.cultureAreaKnowledge (personalData)),
           },
           attr: getAttributesForSave (hero),
           activatable: getActivatablesForSave (hero),
@@ -344,12 +365,11 @@ export const convertHeroForSave = (wiki: Record<WikiAll>) =>
         return obj
       }
 
+const { present } = UndoHeroG
+
 export const convertHeroesForSave = (wiki: Record<WikiAll>) =>
   (locale: Record<Data.UIMessages>) =>
     (users: OrderedMap<string, Data.User>) =>
-      (heroes: OrderedMap<string, UndoState<Data.Hero>>) =>
-       map (pipe (
-             state => state.present,
-             hero => convertHeroForSave (wiki) (locale) (users) (hero)
-           ))
+      (heroes: OrderedMap<string, Record<UndoState<Data.Hero>>>) =>
+       map (pipe (present, convertHeroForSave (wiki) (locale) (users)))
            (elems (heroes))

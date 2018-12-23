@@ -10,7 +10,7 @@ import { isActivatableDependentSkillUnused, isAttributeDependentUnused, isDepend
 import { createActivatableDependentSkill, createAttributeDependent, createDependentSkillWithValue0, createDependentSkillWithValue6 } from '../utils/createEntryUtils';
 import { Just, Record } from '../utils/dataUtils';
 import { addDependenciesReducer, removeDependenciesReducer } from '../utils/dependencies/dependencyUtils';
-import { adjustHeroListStateItemOr, adjustMaybeStateEntry, updateHeroListStateItemOrRemove, updateStateEntry } from '../utils/heroStateUtils';
+import { modifyHeroListStateItemOrRemove, modifyMaybeStateEntry, updateHeroListStateItemOr, updateStateEntry } from '../utils/heroStateUtils';
 import { addPoint, removePoint } from '../utils/IncreasableUtils';
 
 type Action =
@@ -42,7 +42,7 @@ export function increasableReducer (
       const { id, wikiEntry } = action.payload;
 
       const activateSpell = R.pipe (
-        adjustHeroListStateItemOr (
+        updateHeroListStateItemOr (
           createActivatableDependentSkill,
           value => Just (value.insert ('active') (true)),
           id
@@ -62,7 +62,7 @@ export function increasableReducer (
     case ActionTypes.ACTIVATE_LITURGY: {
       const { id } = action.payload;
 
-      const activateLiturgicalChant = adjustHeroListStateItemOr (
+      const activateLiturgicalChant = updateHeroListStateItemOr (
         createActivatableDependentSkill,
         value => Just (value.insert ('active') (true)),
         id
@@ -81,7 +81,7 @@ export function increasableReducer (
       const { id, wikiEntry } = action.payload;
 
       const deactivateSpell = R.pipe (
-        updateHeroListStateItemOrRemove (
+        modifyHeroListStateItemOrRemove (
           isActivatableDependentSkillUnused,
           value => value.insert ('active') (false),
           id
@@ -101,7 +101,7 @@ export function increasableReducer (
     case ActionTypes.DEACTIVATE_LITURGY: {
       const { id } = action.payload;
 
-      const deactivateLiturgicalChant = updateHeroListStateItemOrRemove (
+      const deactivateLiturgicalChant = modifyHeroListStateItemOrRemove (
         isActivatableDependentSkillUnused,
         value => value.insert ('active') (false),
         id
@@ -120,7 +120,7 @@ export function increasableReducer (
       const { id } = action.payload;
 
       return state.modify<'attributes'>
-        (adjustMaybeStateEntry (createAttributeDependent) (addPoint) (id))
+        (modifyMaybeStateEntry (createAttributeDependent) (addPoint) (id))
         ('attributes');
     }
 
@@ -128,7 +128,7 @@ export function increasableReducer (
       const { id } = action.payload;
 
       return state.modify<'skills'>
-        (adjustMaybeStateEntry (createDependentSkillWithValue0) (addPoint) (id))
+        (modifyMaybeStateEntry (createDependentSkillWithValue0) (addPoint) (id))
         ('skills');
     }
 
@@ -136,7 +136,7 @@ export function increasableReducer (
       const { id } = action.payload;
 
       return state.modify<'combatTechniques'>
-        (adjustMaybeStateEntry (createDependentSkillWithValue6) (addPoint) (id))
+        (modifyMaybeStateEntry (createDependentSkillWithValue6) (addPoint) (id))
         ('combatTechniques');
     }
 
@@ -144,7 +144,7 @@ export function increasableReducer (
       const { id } = action.payload;
 
       return state.modify<'spells'>
-        (adjustMaybeStateEntry (createActivatableDependentSkill) (addPoint) (id))
+        (modifyMaybeStateEntry (createActivatableDependentSkill) (addPoint) (id))
         ('spells');
     }
 
@@ -152,7 +152,7 @@ export function increasableReducer (
       const { id } = action.payload;
 
       return state.modify<'liturgicalChants'>
-        (adjustMaybeStateEntry (createActivatableDependentSkill) (addPoint) (id))
+        (modifyMaybeStateEntry (createActivatableDependentSkill) (addPoint) (id))
         ('liturgicalChants');
     }
 

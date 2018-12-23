@@ -1,7 +1,7 @@
 import * as R from 'ramda';
 import { ActivatableSkillCategories, Categories } from '../../constants/Categories';
 import * as Data from '../../types/data';
-import { adjustHeroListStateItemOr } from '../heroStateUtils';
+import { updateHeroListStateItemOr } from '../heroStateUtils';
 import { getCategoryById } from '../IDUtils';
 
 type IncreasableCreator = (id: string) => Data.ExtendedSkillDependent;
@@ -38,7 +38,7 @@ const getIncreasableCreator: (id: string) => IncreasableCreator = R.pipe (
 export const addAttributeDependency = (
   id: string,
   value: Data.SkillDependency
-) => adjustHeroListStateItemOr (
+) => updateHeroListStateItemOr (
   CreateEntryUtils.createAttributeDependent,
   addDependency<Record<Data.AttributeDependent>> (value),
   id
@@ -47,7 +47,7 @@ export const addAttributeDependency = (
 export const addIncreasableDependency = (
   id: string,
   value: Data.SkillDependency
-) => adjustHeroListStateItemOr (
+) => updateHeroListStateItemOr (
   getIncreasableCreator (id),
   addDependency<Data.ExtendedSkillDependent> (value),
   id
@@ -56,7 +56,7 @@ export const addIncreasableDependency = (
 export const addActivatableDependency = (
   id: string,
   value: Data.ActivatableDependency
-) => adjustHeroListStateItemOr (
+) => updateHeroListStateItemOr (
   CreateEntryUtils.createActivatableDependent,
   addDependency<Record<Data.ActivatableDependent>> (value),
   id

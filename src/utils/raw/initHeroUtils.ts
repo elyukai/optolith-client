@@ -10,16 +10,26 @@ import { ActiveObjectCreator, createActivatableDependentWithActive } from '../ac
 import { ActivatableSkillDependentG, createActivatableSkillDependentWithValue } from '../activeEntries/activatableSkillDependent';
 import { createAttributeDependentWithValue } from '../activeEntries/attributeDependent';
 import { createSkillDependentWithValue } from '../activeEntries/skillDependent';
+import { addDependencies } from '../dependencies/dependencyUtils';
+import { BelongingsCreator } from '../heroData/BelongingsCreator';
+import { EnergiesCreator } from '../heroData/EnergiesCreator';
+import { HeroCreator, HeroG } from '../heroData/HeroCreator';
+import { HitZoneArmorCreator } from '../heroData/HitZoneArmorCreator';
+import { ItemCreator } from '../heroData/ItemCreator';
+import { PermanentEnergyLossAndBoughtBackCreator } from '../heroData/PermanentEnergyLossAndBoughtBackCreator';
+import { PermanentEnergyLossCreator } from '../heroData/PermanentEnergyLossCreator';
+import { PersonalDataCreator } from '../heroData/PersonalDataCreator';
+import { PrimaryAttributeDamageThresholdCreator } from '../heroData/PrimaryAttributeDamageThresholdCreator';
+import { PurseCreator } from '../heroData/PurseCreator';
+import { RulesCreator } from '../heroData/RulesCreator';
 import { getCategoryById } from '../IDUtils';
-import { HitZoneArmorCreator, ItemCreator, PrimaryAttributeDamageThresholdCreator } from '../ItemUtils';
 import { PetCreator } from '../PetUtils';
-import { Functn } from '../structures/Function';
+import { ident } from '../structures/Function';
 import { fromArray, List } from '../structures/List';
 import { elem, fromNullable, Maybe } from '../structures/Maybe';
 import { foldlWithKey, OrderedMap } from '../structures/OrderedMap';
 import { insert, OrderedSet } from '../structures/OrderedSet';
 import { Record, StringKeyObject } from '../structures/Record';
-import { BelongingsCreator, EnergiesCreator, HeroCreator, HeroG, PermanentEnergyLossAndBoughtBackCreator, PermanentEnergyLossCreator, PersonalDataCreator, PurseCreator, RulesCreator } from './heroData';
 
 const createHeroObject = (hero: Raw.RawHero): Record<Data.HeroDependent> =>
   HeroCreator ({
@@ -108,7 +118,6 @@ const createHeroObject = (hero: Raw.RawHero): Record<Data.HeroDependent> =>
                 isTemplateLocked: obj .isTemplateLocked,
                 reach: fromNullable (obj .reach),
                 template: fromNullable (obj .template),
-                where: fromNullable (obj .where),
                 isTwoHandedWeapon: fromNullable (obj .isTwoHandedWeapon),
                 improvisedWeaponGroup: fromNullable (obj .imp),
                 loss: fromNullable (obj .loss),
@@ -309,7 +318,7 @@ export const convertFromRawHero =
 
     const activeSpells =
       OrderedMap.foldr<Record<Data.ActivatableSkillDependent>, OrderedSet<string>>
-        (spell => active (spell) ? insert (id (spell)) : Functn.id)
+        (spell => active (spell) ? insert (id (spell)) : ident)
         (OrderedSet.empty)
         (spells (intermediateState))
 

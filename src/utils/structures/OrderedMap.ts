@@ -10,7 +10,7 @@
 import { not, pipe } from 'ramda';
 import { add, multiply } from '../mathUtils';
 import { equals } from './Eq';
-import { cnst, id } from './Function';
+import { cnst, ident } from './Function';
 import { List, mappend } from './List';
 import { fromMaybe, fromNullable, Just, Maybe, maybe, maybe_, Some } from './Maybe';
 import { fromUniqueElements, OrderedSet } from './OrderedSet';
@@ -294,7 +294,8 @@ export const concatMap =
  * `True`, the container must be finite; `False`, however, results from a
  * `False` value finitely far from the left end.
  */
-export const and = (xs: OrderedMap<any, boolean>): boolean => [...xs .value .values ()] .every (id)
+export const and =
+  (xs: OrderedMap<any, boolean>): boolean => [...xs .value .values ()] .every (ident)
 
 /**
  * `or :: Map k Bool -> Bool`
@@ -303,7 +304,8 @@ export const and = (xs: OrderedMap<any, boolean>): boolean => [...xs .value .val
  * `False`, the container must be finite; `True`, however, results from a
  * `True` value finitely far from the left end.
  */
-export const or = (xs: OrderedMap<any, boolean>): boolean => [...xs .value .values ()] .some (id)
+export const or =
+  (xs: OrderedMap<any, boolean>): boolean => [...xs .value .values ()] .some (ident)
 
 /**
  * `any :: (a -> Bool) -> Map k a -> Bool`

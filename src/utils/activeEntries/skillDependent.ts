@@ -20,7 +20,7 @@ export const createSkillDependent =
   (id: string): Record<SkillDependent> =>
     SkillDependentCreator ({ id, ...options })
 
-export const createPlainSkillDependent = createSkillDependent ({})
+export const createPlainSkillDependent = createSkillDependent ({ })
 
 export const createSkillDependentWithValue = (x: number) => createSkillDependent ({ value: x })
 
