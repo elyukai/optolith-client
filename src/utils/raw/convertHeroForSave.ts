@@ -2,7 +2,7 @@ import { pipe } from 'ramda';
 import * as Data from '../../types/data';
 import * as Raw from '../../types/rawdata';
 import { PrimaryAttributeDamageThreshold, WikiAll } from '../../types/wiki';
-import { ActivatableDependentG } from '../activeEntries/activatableDependent';
+import { ActivatableDependentG, ActiveObjectG } from '../activeEntries/activatableDependent';
 import { ActivatableSkillDependentG } from '../activeEntries/activatableSkillDependent';
 import { AttributeDependentG } from '../activeEntries/attributeDependent';
 import { getAPObject } from '../adventurePoints/adventurePointsSumUtils';
@@ -11,13 +11,13 @@ import { ifElse } from '../ifElse';
 import { PrimaryAttributeDamageThresholdG } from '../ItemUtils';
 import { gt } from '../mathUtils';
 import { Functn } from '../structures/Function';
-import { List } from '../structures/List';
-import { fmap, maybeToUndefined } from '../structures/Maybe';
-import { foldl, foldlWithKey, OrderedMap, OrderedMapValueElement, toObjectWith, union } from '../structures/OrderedMap';
+import { List, map } from '../structures/List';
+import { fmap, maybeToUndefined, bind, elem } from '../structures/Maybe';
+import { elems, foldl, foldlWithKey, OrderedMap, OrderedMapValueElement, toObjectWith, union } from '../structures/OrderedMap';
 import { toArray } from '../structures/OrderedSet';
 import { Record, StringKeyObject, toObject } from '../structures/Record';
 import { UndoState } from '../undo';
-import { BelongingsG, EnergiesG, HeroG } from './heroData';
+import { BelongingsG, EnergiesG, HeroG, PersonalDataG, RulesG } from './heroData';
 import { currentVersion } from './VersionUtils';
 
 const {
@@ -34,6 +34,8 @@ const {
   liturgicalChants,
   blessings,
   belongings,
+  pets,
+  player,
 } = HeroG
 
 const { id, value } = AttributeDependentG
@@ -49,6 +51,8 @@ const {
   permanentKarmaPoints,
   permanentLifePoints,
 } = EnergiesG
+
+const { cost, sid, sid2, tier } = ActiveObjectG
 
 const getAttributesForSave = (hero: Record<Data.HeroDependent>): Raw.RawHero['attr'] =>
   ({
@@ -66,11 +70,19 @@ const getAttributesForSave = (hero: Record<Data.HeroDependent>): Raw.RawHero['at
   })
 
 const getActivatablesForSave = (hero: Record<Data.HeroDependent>) =>
-  foldlWithKey<string, Record<Data.ActivatableDependent>, StringKeyObject<Data.ActiveObject[]>>
+  foldlWithKey<string, Record<Data.ActivatableDependent>, StringKeyObject<Raw.RawActiveObject[]>>
     (acc => key => obj => ({
       ...acc,
-      [key]: List.foldl<Record<Data.ActiveObject>, Data.ActiveObject[]>
-        (accActive => e => [...accActive, toObject (e)])
+      [key]: List.foldl<Record<Data.ActiveObject>, Raw.RawActiveObject[]>
+        (accActive => e => [
+          ...accActive, 
+            {
+              cost: maybeToUndefined (cost (e)),
+              sid2: maybeToUndefined (sid2 (e)),
+              sid: maybeToUndefined (sid (e)),
+              tier: maybeToUndefined (tier (e)),
+            }
+        ])
         ([])
         (activeList (obj)),
     }))
@@ -118,36 +130,136 @@ const getBelongingsForSave = (hero: Record<Data.HeroDependent>) =>
           improvisedWeaponGroup,
           damageBonus,
           range,
+          at,
+          iniMod,
+          movMod,
+          damageDiceNumber,
+          damageFlat,
+          enc,
+          length,
+          pa,
+          pro,
+          reloadTime,
+          stp,
+          stabilityMod,
+          note,
+          rules,
+          advantage,
+          disadvantage,
+          src,
+          ammunition,
+          combatTechnique,
+          damageDiceSides,
+          reach,
+          template,
+          isParryingWeapon,
+          where,
+          isTwoHandedWeapon,
+          loss,
+          forArmorZoneOnly,
+          addPenalties,
+          armorType,
           ...other
         } = toObject (obj)
 
         return {
           ...other,
+          at: maybeToUndefined (at),
+          iniMod: maybeToUndefined (iniMod),
+          movMod: maybeToUndefined (movMod),
+          damageDiceNumber: maybeToUndefined (damageDiceNumber),
+          damageFlat: maybeToUndefined (damageFlat),
+          enc: maybeToUndefined (enc),
+          length: maybeToUndefined (length),
+          pa: maybeToUndefined (pa),
+          pro: maybeToUndefined (pro),
+          reloadTime: maybeToUndefined (reloadTime),
+          stp: maybeToUndefined (stp),
+          stabilityMod: maybeToUndefined (stabilityMod),
+          note: maybeToUndefined (note),
+          rules: maybeToUndefined (rules),
+          advantage: maybeToUndefined (advantage),
+          disadvantage: maybeToUndefined (disadvantage),
+          src: maybeToUndefined (src),
+          ammunition: maybeToUndefined (ammunition),
+          combatTechnique: maybeToUndefined (combatTechnique),
+          damageDiceSides: maybeToUndefined (damageDiceSides),
+          reach: maybeToUndefined (reach),
+          template: maybeToUndefined (template),
+          isParryingWeapon: maybeToUndefined (isParryingWeapon),
+          where: maybeToUndefined (where),
+          isTwoHandedWeapon: maybeToUndefined (isTwoHandedWeapon),
+          loss: maybeToUndefined (loss),
+          forArmorZoneOnly: maybeToUndefined (forArmorZoneOnly),
+          addPenalties: maybeToUndefined (addPenalties),
+          armorType: maybeToUndefined (armorType),
           imp: maybeToUndefined (improvisedWeaponGroup),
           primaryThreshold:
-            fmap<Record<PrimaryAttributeDamageThreshold>, Raw.RawPrimaryAttributeDamageThreshold>
-              (bonus => ({
-                primary: maybeToUndefined (primary (bonus)) ,
-                threshold:
-                  ifElse<number | List<number>, List<number>, number | ReadonlyArray<number>>
-                    (List.isList)
-                    (List.toArray)
-                    (Functn.id)
-                    (threshold (bonus)),
-              })),
-          range: range ? range.toArray () as [number, number, number] : undefined,
+            maybeToUndefined (
+              fmap<Record<PrimaryAttributeDamageThreshold>, Raw.RawPrimaryAttributeDamageThreshold>
+                (bonus => ({
+                  primary: maybeToUndefined (primary (bonus)) ,
+                  threshold:
+                    ifElse<number | List<number>, List<number>, number | number[]>
+                      (List.isList)
+                      (List.toArray)
+                      (Functn.id)
+                      (threshold (bonus)),
+                }))
+                (damageBonus)
+            ),
+          range: maybeToUndefined (fmap<List<number>, number[]> (List.toArray) (range)),
         }
       })
       (items (belongings (hero))),
     armorZones:
-      toObjectWith<Record<Data.ArmorZonesInstance>, Data.ArmorZonesInstance>
+      toObjectWith<Record<Data.ArmorZonesInstance>, Raw.RawArmorZone>
         (toObject)
         (armorZones (belongings (hero))),
     purse: toObject (purse (belongings (hero))),
   })
 
-const getPetsForSave = (hero: Record<Data.HeroDependent>) =>
-  hero.get ('pets').toKeyValueObjectWith (x => x.toObject ());
+const getPetsForSave = pipe (
+  pets, 
+  toObjectWith (
+    (r): Raw.RawPet => {
+      const obj = toObject (r)
+
+      return {
+        id: obj .id,
+        name: obj .name,
+        size: maybeToUndefined (obj .size),
+        type: maybeToUndefined (obj .type),
+        attack: maybeToUndefined (obj .attack),
+        dp: maybeToUndefined (obj .dp),
+        reach: maybeToUndefined (obj .reach),
+        actions: maybeToUndefined (obj .actions),
+        talents: maybeToUndefined (obj .talents),
+        skills: maybeToUndefined (obj .skills),
+        notes: maybeToUndefined (obj .notes),
+        spentAp: maybeToUndefined (obj .spentAp),
+        totalAp: maybeToUndefined (obj .totalAp),
+        cou: maybeToUndefined (obj .cou),
+        sgc: maybeToUndefined (obj .sgc),
+        int: maybeToUndefined (obj .int),
+        cha: maybeToUndefined (obj .cha),
+        dex: maybeToUndefined (obj .dex),
+        agi: maybeToUndefined (obj .agi),
+        con: maybeToUndefined (obj .con),
+        str: maybeToUndefined (obj .str),
+        lp: maybeToUndefined (obj .lp),
+        ae: maybeToUndefined (obj .ae),
+        spi: maybeToUndefined (obj .spi),
+        tou: maybeToUndefined (obj .tou),
+        pro: maybeToUndefined (obj .pro),
+        ini: maybeToUndefined (obj .ini),
+        mov: maybeToUndefined (obj .mov),
+        at: maybeToUndefined (obj .at),
+        pa: maybeToUndefined (obj .pa),
+      }
+    }
+  )
+)
 
 export const convertHeroForSave = (wiki: Record<WikiAll>) =>
   (locale: Record<Data.UIMessages>) =>
@@ -170,35 +282,49 @@ export const convertHeroForSave = (wiki: Record<WikiAll>) =>
           sex,
           personalData,
           rules,
-        } = hero.toObject ();
+        } = toObject (hero)
 
-        const adventurePoints = getAPObject (wiki) (locale) (hero);
+        const adventurePoints = getAPObject (wiki) (locale) (hero)
 
-        const maybeUser = hero.lookup ('player')
-          .bind (userId => OrderedMap.lookup<string, Data.User> (userId) (users));
+        const maybeUser = bind<string, Data.User> (player (hero)) 
+                                                  (OrderedMap.lookup_<string, Data.User> (users))
 
         const obj: Raw.RawHero = {
           clientVersion: currentVersion,
-          dateCreated: dateCreated.toJSON (),
-          dateModified: dateModified.toJSON (),
+          dateCreated: dateCreated .toJSON (),
+          dateModified: dateModified .toJSON (),
           id,
           phase,
-          player: Maybe.isJust (maybeUser) ? Maybe.fromJust (maybeUser) : undefined,
+          player: maybeToUndefined (maybeUser),
           name,
-          avatar,
+          avatar: maybeToUndefined (avatar),
           ap: {
             total: adventurePoints.get ('total'),
             spent: adventurePoints.get ('spent'),
           },
           el: experienceLevel,
-          r: race,
-          rv: raceVariant,
-          c: culture,
-          p: profession,
-          professionName: profession === 'P_0' ? professionName : undefined,
-          pv: professionVariant,
+          r: maybeToUndefined (race),
+          rv: maybeToUndefined (raceVariant),
+          c: maybeToUndefined (culture),
+          p: maybeToUndefined (profession),
+          professionName: elem ('P_0') (profession) ? maybeToUndefined (professionName) : undefined,
+          pv: maybeToUndefined (professionVariant),
           sex,
-          pers: personalData.toObject (),
+          pers: {
+            family: maybeToUndefined (PersonalDataG.family (personalData)),
+            placeofbirth: maybeToUndefined (PersonalDataG.placeOfBirth (personalData)),
+            dateofbirth: maybeToUndefined (PersonalDataG.dateOfBirth (personalData)),
+            age: maybeToUndefined (PersonalDataG.age (personalData)),
+            haircolor: maybeToUndefined (PersonalDataG.hairColor (personalData)),
+            eyecolor: maybeToUndefined (PersonalDataG.eyeColor (personalData)),
+            size: maybeToUndefined (PersonalDataG.size (personalData)),
+            weight: maybeToUndefined (PersonalDataG.weight (personalData)),
+            title: maybeToUndefined (PersonalDataG.title (personalData)),
+            socialstatus: maybeToUndefined (PersonalDataG.socialStatus (personalData)),
+            characteristics: maybeToUndefined (PersonalDataG.characteristics (personalData)),
+            otherinfo: maybeToUndefined (PersonalDataG.otherInfo (personalData)),
+            cultureAreaKnowledge: maybeToUndefined (PersonalDataG.cultureAreaKnowledge (personalData)),
+          },
           attr: getAttributesForSave (hero),
           activatable: getActivatablesForSave (hero),
           talents: getSkillsForSave (hero),
@@ -209,22 +335,21 @@ export const convertHeroForSave = (wiki: Record<WikiAll>) =>
           blessings: getBlessingsForSave (hero),
           belongings: getBelongingsForSave (hero),
           rules: {
-            ...rules.toObject (),
-            enabledRuleBooks: [...rules.get ('enabledRuleBooks')],
+            ...toObject (rules),
+            enabledRuleBooks: toArray (RulesG.enabledRuleBooks (rules)),
           },
           pets: getPetsForSave (hero),
-        };
+        }
 
-        return obj;
-      };
+        return obj
+      }
 
 export const convertHeroesForSave = (wiki: Record<WikiAll>) =>
   (locale: Record<Data.UIMessages>) =>
     (users: OrderedMap<string, Data.User>) =>
       (heroes: OrderedMap<string, UndoState<Data.Hero>>) =>
-        heroes.elems ().map<Raw.RawHero> (
-          R.pipe (
-            state => state.present,
-            hero => convertHeroForSave (wiki) (locale) (users) (hero)
-          )
-        );
+       map (pipe (
+             state => state.present,
+             hero => convertHeroForSave (wiki) (locale) (users) (hero)
+           ))
+           (elems (heroes))

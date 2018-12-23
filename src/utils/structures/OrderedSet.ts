@@ -497,7 +497,7 @@ export const toSet = <A extends Some> (xs: OrderedSet<A>): ReadonlySet<A> => xs 
 /**
  * Converts the `OrderedSet` into a native array instance.
  */
-export const toArray = <A extends Some> (xs: OrderedSet<A>): ReadonlyArray<A> => [...xs];
+export const toArray = <A extends Some> (xs: OrderedSet<A>): A[] => [...xs]
 
 /**
  * `toggle :: Ord a => a -> Set a -> Set a`

@@ -19,13 +19,13 @@ import { show } from './Show';
 // CONSTRUCTOR
 
 interface ListPrototype<A> {
-  [Symbol.iterator] (): IterableIterator<A>;
-  readonly isList: true;
+  [Symbol.iterator] (): IterableIterator<A>
+  readonly isList: true
 }
 
 export interface List<A extends Some> extends ListPrototype<A> {
-  readonly value: ReadonlyArray<A>;
-  readonly prototype: ListPrototype<A>;
+  readonly value: ReadonlyArray<A>
+  readonly prototype: ListPrototype<A>
 }
 
 const ListPrototype: ListPrototype<Some> =
@@ -34,23 +34,23 @@ const ListPrototype: ListPrototype<Some> =
     {
       [Symbol.iterator]: {
         value (this: List<Some>) {
-          return this .value [Symbol.iterator] ();
+          return this .value [Symbol.iterator] ()
         },
       },
       isList: { value: true },
     }
-  );
+  )
 
 const _List =
   <A extends Some> (x: ReadonlyArray<A>): List<A> =>
-    Object.create (ListPrototype, { value: { value: x, enumerable: true }});
+    Object.create (ListPrototype, { value: { value: x, enumerable: true }})
 
 /**
  * `fromElements :: (...a) -> [a]`
  *
  * Creates a new `List` instance from the passed arguments.
  */
-export const fromElements = <A extends Some> (...values: A[]) => _List (values);
+export const fromElements = <A extends Some> (...values: A[]) => _List (values)
 
 /**
  * `fromArray :: Array a -> [a]`
@@ -59,11 +59,11 @@ export const fromElements = <A extends Some> (...values: A[]) => _List (values);
  */
 export const fromArray = <A extends Some> (xs: ReadonlyArray<A>): List<A> => {
   if (Array.isArray (xs)) {
-    return _List (xs);
+    return _List (xs)
   }
 
-  throw new TypeError (`fromArray requires an array but instead it received ${show (xs)}`);
-};
+  throw new TypeError (`fromArray requires an array but instead it received ${show (xs)}`)
+}
 
 
 // FUNCTOR
@@ -73,7 +73,7 @@ export const fromArray = <A extends Some> (xs: ReadonlyArray<A>): List<A> => {
  */
 export const fmap =
   <A extends Some, B extends Some> (f: (value: A) => B) => (xs: List<A>): List<B> =>
-    fromArray (xs .value .map (f));
+    fromArray (xs .value .map (f))
 
 /**
  * `(<$) :: Functor f => a -> f b -> f a`
@@ -84,7 +84,7 @@ export const fmap =
  */
 export const mapReplace =
   <A extends Some, B extends Some> (x: A) =>
-    fmap<B, A> (cnst (x));
+    fmap<B, A> (cnst (x))
 
 
 // APPLICATIVE
@@ -94,7 +94,7 @@ export const mapReplace =
  *
  * Lift a value.
  */
-export const pure = <A extends Some> (x: A) => _List ([x]);
+export const pure = <A extends Some> (x: A) => _List ([x])
 
 /**
  * `(<*>) :: [a -> b] -> [a] -> [b]`
@@ -108,7 +108,7 @@ export const ap =
         (acc, f) => [...acc, ...fmap (f) (m)],
         []
       ))
-    );
+    )
 
 
 // ALTERNATIVE
@@ -122,7 +122,7 @@ export const ap =
  */
 export const alt =
   <A extends Some> (xs1: List<A>) => (xs2: List<A>): List<A> =>
-    fnull (xs1) ? xs2 : xs1;
+    fnull (xs1) ? xs2 : xs1
 
 /**
  * `alt :: [a] -> [a] -> [a]`
@@ -135,14 +135,14 @@ export const alt =
  */
 export const alt_ =
   <A extends Some> (xs1: List<A>) => (xs2: List<A>): List<A> =>
-    alt (xs2) (xs1);
+    alt (xs2) (xs1)
 
 /**
  * `empty :: [a]`
  *
  * The empty list.
  */
-export const empty = _List ([]);
+export const empty = _List ([])
 
 /**
  * `guard :: Bool -> [()]`
@@ -158,7 +158,7 @@ guard (true)  = pure (true)
 guard (false) = empty
 ```
   */
-export const guard = (pred: boolean): List<true> => pred ? pure<true> (true) : empty;
+export const guard = (pred: boolean): List<true> => pred ? pure<true> (true) : empty
 
 
 // MONAD
@@ -173,14 +173,14 @@ export const bind =
         (acc, e) => [...acc, ...f (e)],
         []
       ))
-    );
+    )
 
 /**
  * `(=<<) :: (a -> [b]) -> [a] -> [b]`
  */
 export const bind_ =
   <A extends Some, B extends Some> (f: (value: A) => List<B>) => (xs: List<A>): List<B> =>
-    bind<A, B> (xs) (f);
+    bind<A, B> (xs) (f)
 
 /**
  * `(>>) :: [a] -> [b] -> [b]`
@@ -193,7 +193,7 @@ export const bind_ =
  */
 export const then =
   <A extends Some> (xs1: List<any>) => (xs2: List<A>): List<A> =>
-    bind<any, A> (xs1) (_ => xs2);
+    bind<any, A> (xs1) (_ => xs2)
 
 
 /**
@@ -201,7 +201,7 @@ export const then =
  *
  * Inject a value into a list.
  */
-export const mreturn = <A extends Some> (x: A) => _List ([x]);
+export const mreturn = <A extends Some> (x: A) => _List ([x])
 
 /**
  * `(>=>) :: (a -> [b]) -> (b -> [c]) -> a -> [c]`
@@ -212,7 +212,7 @@ export const kleisli =
   <A extends Some, B extends Some, C extends Some>
   (f1: (x: A) => List<B>) =>
   (f2: (x: B) => List<C>) =>
-    pipe (f1, bind_ (f2));
+    pipe (f1, bind_ (f2))
 
 /**
  * `join :: [[a]] -> [a]`
@@ -223,7 +223,7 @@ export const kleisli =
  */
 export const join =
   <A extends Some>(xs: List<List<A>>): List<A> =>
-    bind<List<A>, A> (xs) (id);
+    bind<List<A>, A> (xs) (id)
 
 
 // FOLDABLE
@@ -244,7 +244,7 @@ export const foldr =
   (f: (current: A) => (acc: B) => B) =>
   (initial: B) =>
   (xs: List<A>): B =>
-    xs .value .reduceRight<B> ((acc, e) => f (e) (acc), initial);
+    xs .value .reduceRight<B> ((acc, e) => f (e) (acc), initial)
 
 /**
  * `foldl :: (b -> a -> b) -> b -> [a] -> b`
@@ -262,7 +262,7 @@ export const foldl =
   (f: (acc: B) => (current: A) => B) =>
   (initial: B) =>
   (xs: List<A>): B =>
-    xs .value .reduce<B> ((acc, e) => f (acc) (e), initial);
+    xs .value .reduce<B> ((acc, e) => f (acc) (e), initial)
 
 /**
  * `foldr1 :: (a -> a -> a) -> [a] -> a`
@@ -277,14 +277,14 @@ export const foldr1 =
   (f: (current: A) => (acc: A) => A) =>
   (xs: List<A>): A => {
     if (xs .value .length > 0) {
-      const _init = xs .value .slice (0, -1);
-      const _last = xs .value [xs .value .length - 1];
+      const _init = xs .value .slice (0, -1)
+      const _last = xs .value [xs .value .length - 1]
 
-      return _init .reduceRight<A> ((acc, e) => f (e) (acc), _last);
+      return _init .reduceRight<A> ((acc, e) => f (e) (acc), _last)
     }
 
-    throw new TypeError ('Cannot apply foldr1 to an empty list.');
-  };
+    throw new TypeError ('Cannot apply foldr1 to an empty list.')
+  }
 
 /**
  * `foldl1 :: (a -> a -> a) -> [a] -> a`
@@ -299,20 +299,20 @@ export const foldl1 =
   (f: (acc: A) => (current: A) => A) =>
   (xs: List<A>): A => {
     if (xs .value .length > 0) {
-      const [_head, ..._tail] = xs;
+      const [_head, ..._tail] = xs
 
-      return _tail .reduce<A> ((acc, e) => f (acc) (e), _head);
+      return _tail .reduce<A> ((acc, e) => f (acc) (e), _head)
     }
 
-    throw new TypeError ('Cannot apply foldl1 to an empty list.');
-  };
+    throw new TypeError ('Cannot apply foldl1 to an empty list.')
+  }
 
 /**
  * `toList :: [a] -> [a]`
  *
  * List of elements of a structure, from left to right.
  */
-export const toList = <A extends Some>(xs: List<A>): List<A> => xs;
+export const toList = <A extends Some>(xs: List<A>): List<A> => xs
 
 /**
  * `null :: [a] -> Bool`
@@ -321,7 +321,7 @@ export const toList = <A extends Some>(xs: List<A>): List<A> => xs;
  * for structures that are similar to cons-lists, because there is no general
  * way to do better.
  */
-export const fnull = (xs: List<any>): boolean => xs .value .length === 0;
+export const fnull = (xs: List<any>): boolean => xs .value .length === 0
 
 /**
  * `length :: [a] -> Int`
@@ -330,7 +330,7 @@ export const fnull = (xs: List<any>): boolean => xs .value .length === 0;
  * implementation is optimized for structures that are similar to cons-lists,
  * because there is no general way to do better.
  */
-export const length = (xs: List<any>): number => xs .value .length;
+export const length = (xs: List<any>): number => xs .value .length
 
 /**
  * `elem :: Eq a => a -> [a] -> Bool`
@@ -339,7 +339,7 @@ export const length = (xs: List<any>): number => xs .value .length;
  */
 export const elem =
   <A extends Some>(e: A) => (xs: List<A>): boolean =>
-    xs .value .some (equals (e));
+    xs .value .some (equals (e))
 
 /**
  * `elem_ :: Eq a => [a] -> a -> Bool`
@@ -348,35 +348,35 @@ export const elem =
  *
  * Same as `List.elem` but with arguments switched.
  */
-export const elem_ = <A extends Some>(xs: List<A>) => (e: A): boolean => elem (e) (xs);
+export const elem_ = <A extends Some>(xs: List<A>) => (e: A): boolean => elem (e) (xs)
 
 /**
  * `sum :: Num a => [a] -> a`
  *
  * The `sum` function computes the sum of the numbers of a structure.
  */
-export const sum = (xs: List<number>): number => xs .value .reduce ((acc, e) => acc + e, 0);
+export const sum = (xs: List<number>): number => xs .value .reduce ((acc, e) => acc + e, 0)
 
 /**
  * `product :: Num a => [a] -> a`
  *
  * The `product` function computes the product of the numbers of a structure.
  */
-export const product = (xs: List<number>): number => xs .value .reduce ((acc, e) => acc * e, 1);
+export const product = (xs: List<number>): number => xs .value .reduce ((acc, e) => acc * e, 1)
 
 /**
  * `maximum :: Ord a => [a] -> a`
  *
  * The largest element of a non-empty structure.
  */
-export const maximum = (xs: List<number>): number => Math.max (...xs);
+export const maximum = (xs: List<number>): number => Math.max (...xs)
 
 /**
  * `minimum :: Ord a => [a] -> a`
  *
  * The least element of a non-empty structure.
  */
-export const minimum = (xs: List<number>): number => Math.min (...xs);
+export const minimum = (xs: List<number>): number => Math.min (...xs)
 
 // Specialized folds
 
@@ -385,7 +385,7 @@ export const minimum = (xs: List<number>): number => Math.min (...xs);
  *
  * The concatenation of all the elements of a container of lists.
  */
-export const concat = join;
+export const concat = join
 
 /**
  * `concatMap :: (a -> [b]) -> [a] -> [b]`
@@ -393,25 +393,25 @@ export const concat = join;
  * Map a function over all the elements of a container and concatenate the
  * resulting lists.
  */
-export const concatMap = bind_;
+export const concatMap = bind_
 
 /**
  * `and :: [Bool] -> Bool`
  *
  * `and` returns the conjunction of a container of Bools. For the result to be
- * `True`, the container must be finite; `False`, however, results from a
+ * `True`, the container must be finite `False`, however, results from a
  * `False` value finitely far from the left end.
  */
-export const and = (xs: List<boolean>): boolean => xs .value .every (e => e);
+export const and = (xs: List<boolean>): boolean => xs .value .every (e => e)
 
 /**
  * `or :: [Bool] -> Bool`
  *
  * `or` returns the disjunction of a container of Bools. For the result to be
- * `False`, the container must be finite; `True`, however, results from a
+ * `False`, the container must be finite `True`, however, results from a
  * `True` value finitely far from the left end.
  */
-export const or = (xs: List<boolean>): boolean => xs .value .some (e => e);
+export const or = (xs: List<boolean>): boolean => xs .value .some (e => e)
 
 /**
  * `any :: (a -> Bool) -> [a] -> Bool`
@@ -420,7 +420,7 @@ export const or = (xs: List<boolean>): boolean => xs .value .some (e => e);
  */
 export const any =
   <A extends Some>(f: (x: A) => boolean) => (xs: List<A>): boolean =>
-    xs .value .some (f);
+    xs .value .some (f)
 
 /**
  * `all :: (a -> Bool) -> [a] -> Bool`
@@ -429,7 +429,7 @@ export const any =
  */
 export const all =
   <A extends Some>(f: (x: A) => boolean) => (xs: List<A>): boolean =>
-    xs .value .every (f);
+    xs .value .every (f)
 
 // Searches
 
@@ -441,7 +441,7 @@ export const all =
 export const notElem = <A> (e: A) => pipe (
   elem<A> (e),
   not
-);
+)
 
 interface Find {
   /**
@@ -451,7 +451,7 @@ interface Find {
    * leftmost element of the structure matching the predicate, or `Nothing` if
    * there is no such element.
    */
-  <A, A1 extends A> (pred: (x: A) => x is A1): (xs: List<A>) => Maybe<A1>;
+  <A, A1 extends A> (pred: (x: A) => x is A1): (xs: List<A>) => Maybe<A1>
   /**
    * `find :: (a -> Bool) -> [a] -> Maybe a`
    *
@@ -459,7 +459,7 @@ interface Find {
    * leftmost element of the structure matching the predicate, or `Nothing` if
    * there is no such element.
    */
-  <A> (pred: (x: A) => boolean): (xs: List<A>) => Maybe<A>;
+  <A> (pred: (x: A) => boolean): (xs: List<A>) => Maybe<A>
 }
 
 /**
@@ -471,7 +471,7 @@ interface Find {
  */
 export const find: Find =
   <A> (pred: (x: A) => boolean) => (xs: List<A>): Maybe<A> =>
-    fromNullable (xs .value .find (pred));
+    fromNullable (xs .value .find (pred))
 
 
 // BASIC FUNCTIONS
@@ -483,14 +483,14 @@ export const find: Find =
  */
 export const mappend =
   <A> (xs1: List<A>) => (xs2: List<A>): List<A> =>
-    fromElements (...xs1, ...xs2);
+    fromElements (...xs1, ...xs2)
 
 /**
  * `(:) :: [a] -> a -> [a]`
  *
  * Prepends an element to the list.
  */
-export const cons = <A> (xs: List<A>) => (e: A): List<A> => fromElements (e, ...xs);
+export const cons = <A> (xs: List<A>) => (e: A): List<A> => fromElements (e, ...xs)
 
 /**
  * `(:) :: a -> [a] -> [a]`
@@ -499,7 +499,7 @@ export const cons = <A> (xs: List<A>) => (e: A): List<A> => fromElements (e, ...
  *
  * Same as `cons` but with arguments flipped.
  */
-export const cons_ = <A> (e: A) => (xs: List<A>): List<A> => cons (xs) (e);
+export const cons_ = <A> (e: A) => (xs: List<A>): List<A> => cons (xs) (e)
 
 /**
  * `(!!) :: [a] -> Int -> Maybe a`
@@ -509,7 +509,7 @@ export const cons_ = <A> (e: A) => (xs: List<A>): List<A> => cons (xs) (e);
  */
 export const subscript =
   <A> (xs: List<A>) => (index: number): Maybe<A> =>
-    fromNullable (xs .value [index]);
+    fromNullable (xs .value [index])
 
 /**
  * `(!!) :: Int -> [a] -> Maybe a`
@@ -521,7 +521,7 @@ export const subscript =
  */
 export const subscript_ =
   (index: number) => <A>(xs: List<A>): Maybe<A> =>
-    subscript (xs) (index);
+    subscript (xs) (index)
 
 /**
  * `head :: [a] -> a`
@@ -532,11 +532,11 @@ export const head = <A> (xs: List<A>): A => {
   if (fnull (xs)) {
     throw new TypeError (
       `head does only work on non-empty lists. If you do not know whether the list is empty or not, use listToMaybe instead.`
-    );
+    )
   }
 
-  return xs .value [0];
-};
+  return xs .value [0]
+}
 
 /**
  * `last :: [a] -> a`
@@ -545,11 +545,11 @@ export const head = <A> (xs: List<A>): A => {
  */
 export const last = <A> (xs: List<A>): A => {
   if (fnull (xs)) {
-    throw new TypeError (`last does only work on non-empty lists.`);
+    throw new TypeError (`last does only work on non-empty lists.`)
   }
 
-  return xs .value [length (xs) - 1];
-};
+  return xs .value [length (xs) - 1]
+}
 
 /**
  * `last_ :: [a] -> Maybe a`
@@ -560,7 +560,7 @@ export const last = <A> (xs: List<A>): A => {
  *
  * A safe version of `List.last`.
  */
-export const last_ = <A> (xs: List<A>): Maybe<A> => fnull (xs) ? Nothing : Just (last (xs));
+export const last_ = <A> (xs: List<A>): Maybe<A> => fnull (xs) ? Nothing : Just (last (xs))
 
 /**
  * `tail :: [a] -> [a]`
@@ -569,11 +569,11 @@ export const last_ = <A> (xs: List<A>): Maybe<A> => fnull (xs) ? Nothing : Just 
  */
 export const tail = <A> (xs: List<A>): List<A> => {
   if (fnull (xs)) {
-    throw new TypeError (`tail does only work on non-empty lists.`);
+    throw new TypeError (`tail does only work on non-empty lists.`)
   }
 
-  return fromArray (xs .value .slice (1));
-};
+  return fromArray (xs .value .slice (1))
+}
 
 /**
  * `tail_ :: [a] -> Maybe [a]`
@@ -586,7 +586,7 @@ export const tail = <A> (xs: List<A>): List<A> => {
  */
 export const tail_ =
   <A> (xs: List<A>): Maybe<List<A>> =>
-    fnull (xs) ? Nothing : Just (tail (xs));
+    fnull (xs) ? Nothing : Just (tail (xs))
 
 /**
  * `init :: [a] -> [a]`
@@ -596,11 +596,11 @@ export const tail_ =
  */
 export const init = <A> (xs: List<A>): List<A> => {
   if (fnull (xs)) {
-    throw new TypeError (`init does only work on non-empty lists.`);
+    throw new TypeError (`init does only work on non-empty lists.`)
   }
 
-  return fromArray (xs .value .slice (0, -1));
-};
+  return fromArray (xs .value .slice (0, -1))
+}
 
 /**
  * `init_ :: [a] -> Maybe [a]`
@@ -613,7 +613,7 @@ export const init = <A> (xs: List<A>): List<A> => {
  */
 export const init_ =
   <A> (xs: List<A>): Maybe<List<A>> =>
-    fnull (xs) ? Nothing : Just (init (xs));
+    fnull (xs) ? Nothing : Just (init (xs))
 
 /**
  * `uncons :: [a] -> Maybe (a, [a])`
@@ -624,7 +624,7 @@ export const init_ =
  */
 export const uncons =
   <A> (xs: List<A>): Maybe<Pair<A, List<A>>> =>
-    fnull (xs) ? Nothing : Just (fromBoth<A, List<A>> (head (xs)) (tail (xs)));
+    fnull (xs) ? Nothing : Just (fromBoth<A, List<A>> (head (xs)) (tail (xs)))
 
 
 // LIST TRANSFORMATIONS
@@ -634,7 +634,7 @@ export const uncons =
  *
  * `map f xs` is the list obtained by applying `f` to each element of `xs`.
  */
-export const map = fmap;
+export const map = fmap
 
 /**
  * `reverse :: [a] -> [a]`
@@ -642,7 +642,7 @@ export const map = fmap;
  * `reverse xs` returns the elements of `xs` in reverse order. `xs` must be
  * finite.
  */
-export const reverse = <A extends Some>(xs: List<A>): List<A> => fromArray ([...xs].reverse ());
+export const reverse = <A extends Some>(xs: List<A>): List<A> => fromArray ([...xs].reverse ())
 
 /**
  * `intercalate :: [a] -> [[a]] -> [a]`
@@ -653,7 +653,7 @@ export const reverse = <A extends Some>(xs: List<A>): List<A> => fromArray ([...
  */
 export const intercalate =
   (separator: string) => (list: List<number | string>): string =>
-    list .value .join (separator);
+    list .value .join (separator)
 
 
 // BUILDING LISTS
@@ -683,7 +683,7 @@ export const scanl =
         (acc, e, index) => [...acc, fn (acc[index]) (e)],
         [initial]
       )
-    );
+    )
 
 
 // ACCUMULATING MAPS
@@ -691,7 +691,7 @@ export const scanl =
 /**
  * `mapAccumL :: Traversable t => (a -> b -> (a, c)) -> a -> [b] -> (a, t c)`
  *
- * The `mapAccumL` function behaves like a combination of `fmap` and `foldl`;
+ * The `mapAccumL` function behaves like a combination of `fmap` and `foldl`
  * it applies a function to each element of a structure, passing an
  * accumulating parameter from left to right, and returning a final value of
  * this accumulator together with the new structure.
@@ -703,15 +703,15 @@ export const mapAccumL =
   (list: List<B>): Pair<A, List<C>> => {
     const pair = list .value .reduce<[A, C[]]> (
         (acc, current) => {
-          const result = f (acc[0]) (current);
+          const result = f (acc[0]) (current)
 
           return [fst (result), [...acc[1], snd (result)]]
         },
         [initial, []]
-      );
+      )
 
-    return fromBoth<A, List<C>> (pair[0]) (fromArray (pair[1]));
-  };
+    return fromBoth<A, List<C>> (pair[0]) (fromArray (pair[1]))
+  }
 
 
 // UNFOLDING
@@ -721,16 +721,16 @@ const unfoldElement =
   (f: (value: B) => Maybe<Pair<A, B>>) =>
   (acc: List<A>) =>
   (value: B): List<A> => {
-    const result = f (value);
+    const result = f (value)
 
     if (isJust (result)) {
-      const newValue = fromJust (result);
+      const newValue = fromJust (result)
 
-      return cons (unfoldElement (f) (acc) (snd (newValue))) (fst (newValue));
+      return cons (unfoldElement (f) (acc) (snd (newValue))) (fst (newValue))
     }
 
-    return acc;
-  };
+    return acc
+  }
 
 /**
  * `unfoldr :: (b -> Maybe (a, b)) -> b -> [a]`
@@ -768,7 +768,7 @@ export const unfoldr =
   <A, B>
   (f: (value: B) => Maybe<Pair<A, B>>) =>
   (seedValue: B): List<A> =>
-    unfoldElement (f) (empty) (seedValue);
+    unfoldElement (f) (empty) (seedValue)
 
 
 // EXTRACTING SUBLIST
@@ -783,7 +783,7 @@ export const take =
   <A> (size: number) => (list: List<A>): List<A> =>
     list .value .length < size
       ? list
-      : fromArray (list .value .slice (0, size));
+      : fromArray (list .value .slice (0, size))
 
 /**
  * `drop :: Int -> [a] -> [a]`
@@ -795,7 +795,7 @@ export const drop =
 <A> (size: number) => (list: List<A>): List<A> =>
   list .value .length < size
     ? empty
-    : fromArray (list .value .slice (size));
+    : fromArray (list .value .slice (size))
 
 /**
  * `splitAt :: Int -> [a] -> ([a], [a])`
@@ -807,7 +807,7 @@ export const splitAt =
   <A> (size: number) => (list: List<A>): Pair<List<A>, List<A>> =>
     fromBoth<List<A>, List<A>>
       (fromArray (list .value .slice (0, size)))
-      (fromArray (list .value .slice (size)));
+      (fromArray (list .value .slice (size)))
 
 
 // SEARCHING BY EQUALITY
@@ -819,7 +819,7 @@ export const splitAt =
  */
 export const lookup = <K, V> (key: K) => (assocs: List<Pair<K, V>>): Maybe<V> =>
   Maybe.fmap<Pair<K, V>, V> (snd)
-                            (find<Pair<K, V>> (e => fst (e) === key) (assocs));
+                            (find<Pair<K, V>> (e => fst (e) === key) (assocs))
 
 
 // SEARCHING WITH A PREDICATE
@@ -831,14 +831,14 @@ interface Filter {
    * `filter`, applied to a predicate and a list, returns the list of those
    * elements that satisfy the predicate.
    */
-  <A, A1 extends A> (pred: (x: A) => x is A1): (list: List<A>) => List<A1>;
+  <A, A1 extends A> (pred: (x: A) => x is A1): (list: List<A>) => List<A1>
   /**
    * `filter :: (a -> Bool) -> [a] -> [a]`
    *
    * `filter`, applied to a predicate and a list, returns the list of those
    * elements that satisfy the predicate.
    */
-  <A> (pred: (x: A) => boolean): (list: List<A>) => List<A>;
+  <A> (pred: (x: A) => boolean): (list: List<A>) => List<A>
 }
 
 /**
@@ -849,7 +849,7 @@ interface Filter {
  */
 export const filter: Filter =
   <A> (pred: (x: A) => boolean) => (xs: List<A>): List<A> =>
-    fromArray (xs .value .filter (pred));
+    fromArray (xs .value .filter (pred))
 
 /**
  * `partition :: (a -> Bool) -> [a] -> ([a], [a])`
@@ -871,10 +871,10 @@ export const partition =
         ? [cons (included) (value), excluded]
         : [included, cons (excluded) (value)],
       [empty, empty]
-    );
+    )
 
-    return fromBoth<List<A>, List<A>> (pair[0]) (pair[1]);
-  };
+    return fromBoth<List<A>, List<A>> (pair[0]) (pair[1])
+  }
 
 
 // INDEXING LISTS
@@ -888,10 +888,10 @@ export const partition =
  */
 export const elemIndex =
   <A> (x: A) => (xs: List<A>): Maybe<number> => {
-    const res = xs .value .findIndex (equals (x));
+    const res = xs .value .findIndex (equals (x))
 
-    return res > -1 ? Just (res) : Nothing;
-  };
+    return res > -1 ? Just (res) : Nothing
+  }
 
 /**
  * `elemIndices :: Eq a => a -> [a] -> [Int]`
@@ -906,7 +906,7 @@ export const elemIndices =
         (acc, e, index) => equals (e) (x) ? [...acc, index] : acc,
         []
       )
-    );
+    )
 
 /**
  * `findIndex :: (a -> Bool) -> [a] -> Maybe Int`
@@ -917,10 +917,10 @@ export const elemIndices =
  */
 export const findIndex =
   <A> (pred: (x: A) => boolean) => (xs: List<A>): Maybe<number> => {
-    const res = xs .value .findIndex (pred);
+    const res = xs .value .findIndex (pred)
 
-    return res > -1 ? Just (res) : Nothing;
-  };
+    return res > -1 ? Just (res) : Nothing
+  }
 
 /**
  * `findIndices :: (a -> Bool) -> [a] -> [Int]`
@@ -935,7 +935,7 @@ export const findIndices =
         (acc, e, index) => pred (e) ? [...acc, index] : acc,
         []
       )
-    );
+    )
 
 
 // ZIPPING AND UNZIPPING LISTS
@@ -948,7 +948,7 @@ export const findIndices =
  */
 export const zip =
   <A, B> (xs1: List<A>) => (xs2: List<B>): List<Pair<A, B>> =>
-    zipWith<A, B, Pair<A, B>> (fromBoth) (xs1) (xs2);
+    zipWith<A, B, Pair<A, B>> (fromBoth) (xs1) (xs2)
 
 /**
  * `zipWith :: (a -> b -> c) -> [a] -> [b] -> [c]`
@@ -963,7 +963,7 @@ export const zipWith =
   (xs1: List<A>) =>
   (xs2: List<B>): List<C> =>
     imapMaybe<A, C> (index => e => Maybe.fmap (f (e)) (subscript (xs2) (index)))
-                    (xs1);
+                    (xs1)
 
 
 // "SET" OPERATIONS
@@ -974,10 +974,10 @@ export const zipWith =
  * `delete x` removes the first occurrence of `x` from its list argument.
  */
 export const sdelete = <T> (x: T) => (xs: List<T>): List<T> => {
-  const index = xs .value .findIndex (e => e === x);
+  const index = xs .value .findIndex (e => e === x)
 
-  return deleteAt<T> (index) (xs);
-};
+  return deleteAt<T> (index) (xs)
+}
 
 
 // ORDERED LISTS
@@ -989,7 +989,7 @@ export const sdelete = <T> (x: T) => (xs: List<T>): List<T> => {
  */
 export const sortBy =
   <T> (fn: (a: T) => (b: T) => number) => (xs: List<T>): List<T> =>
-    fromArray ([...xs .value].sort ((a, b) => fn (a) (b)));
+    fromArray ([...xs .value].sort ((a, b) => fn (a) (b)))
 
 
 // LIST.INDEX
@@ -1006,7 +1006,7 @@ export const sortBy =
 ```
  */
 export const indexed = <A> (xs: List<A>): List<Pair<number, A>> =>
-  imap<A, Pair<number, A>> (index => x => fromBoth<number, A> (index) (x)) (xs);
+  imap<A, Pair<number, A>> (index => x => fromBoth<number, A> (index) (x)) (xs)
 
 /**
  * `deleteAt :: Int -> [a] -> [a]`
@@ -1022,11 +1022,11 @@ export const deleteAt =
       return fromElements (
         ...xs .value .slice (0, index),
         ...xs .value .slice (index + 1)
-      );
+      )
     }
 
-    return xs;
-  };
+    return xs
+  }
 
 /**
  * `setAt :: Int -> a -> [a] -> [a]`
@@ -1039,11 +1039,11 @@ export const deleteAt =
 export const setAt =
   <T> (index: number) => (value: T) => (xs: List<T>): List<T> => {
     if (index > -1 && index < xs .value .length) {
-      return fromArray (xs .value .map ((e, i) => i === index ? value : e));
+      return fromArray (xs .value .map ((e, i) => i === index ? value : e))
     }
 
-    return xs;
-  };
+    return xs
+  }
 
 /**
  * `modifyAt :: Int -> (a -> a) -> [a] -> [a]`
@@ -1056,11 +1056,11 @@ export const setAt =
 export const modifyAt =
   <T> (index: number) => (f: (oldValue: T) => T) => (xs: List<T>): List<T> => {
     if (index > -1 && index < xs .value .length) {
-      return fromArray (xs .value .map ((e, i) => i === index ? f (e) : e));
+      return fromArray (xs .value .map ((e, i) => i === index ? f (e) : e))
     }
 
-    return xs;
-  };
+    return xs
+  }
 
 /**
  * `updateAt :: Int -> (a -> Maybe a) -> [a] -> [a]`
@@ -1075,17 +1075,17 @@ export const modifyAt =
 export const updateAt =
   <T> (index: number) => (f: (oldValue: T) => Maybe<T>) => (xs: List<T>): List<T> => {
     if (index > -1 && index < xs .value .length) {
-      const maybeRes = f (xs .value [index]);
+      const maybeRes = f (xs .value [index])
 
       if (isJust (maybeRes)) {
-        return setAt<T> (index) (fromJust (maybeRes)) (xs);
+        return setAt<T> (index) (fromJust (maybeRes)) (xs)
       }
 
-      return deleteAt<T> (index) (xs);
+      return deleteAt<T> (index) (xs)
     }
 
-    return xs;
-  };
+    return xs
+  }
 
 /**
  * `insertAt :: Int -> a -> [a] -> [a]`
@@ -1105,15 +1105,15 @@ export const insertAt =
         ...xs .value .slice (0, index),
         value,
         ...xs .value .slice (index)
-      );
+      )
     }
 
     if (index === xs .value .length) {
-      return mappend (xs) (fromElements (value));
+      return mappend (xs) (fromElements (value))
     }
 
-    return xs;
-  };
+    return xs
+  }
 
 // Maps
 
@@ -1124,7 +1124,7 @@ export const insertAt =
  */
 export const imap =
   <A, B> (fn: (index: number) => (x: A) => B) => (list: List<A>): List<B> =>
-    fromArray (list .value .map ((e, i) => fn (i) (e)));
+    fromArray (list .value .map ((e, i) => fn (i) (e)))
 
 // Folds
 
@@ -1138,7 +1138,7 @@ export const ifoldr =
   (f: (index: number) => (current: A) => (acc: B) => B) =>
   (initial: B) =>
   (xs: List<A>): B =>
-    xs .value .reduceRight<B> ((acc, e, i) => f (i) (e) (acc), initial);
+    xs .value .reduceRight<B> ((acc, e, i) => f (i) (e) (acc), initial)
 
 /**
  * `ifoldl :: Foldable t => (b -> Int -> a -> b) -> b -> t a -> b`
@@ -1154,7 +1154,7 @@ export const ifoldl =
   (f: (acc: B) => (index: number) => (current: A) => B) =>
   (initial: B) =>
   (xs: List<A>): B =>
-    xs .value .reduce<B> ((acc, e, i) => f (acc) (i) (e), initial);
+    xs .value .reduce<B> ((acc, e, i) => f (acc) (i) (e), initial)
 
 /**
  * `iall :: Foldable t => (Int -> a -> Bool) -> t a -> Bool`
@@ -1163,7 +1163,7 @@ export const ifoldl =
  */
 export const iall =
 <A extends Some>(f: (index: number) => (x: A) => boolean) => (xs: List<A>): boolean =>
-  xs .value .every ((e, i) => f (i) (e));
+  xs .value .every ((e, i) => f (i) (e))
 
 /**
  * `iany :: Foldable t => (Int -> a -> Bool) -> t a -> Bool`
@@ -1172,7 +1172,7 @@ export const iall =
  */
 export const iany =
   <A extends Some>(f: (index: number) => (x: A) => boolean) => (xs: List<A>): boolean =>
-    xs .value .some ((e, i) => f (i) (e));
+    xs .value .some ((e, i) => f (i) (e))
 
 /**
  * `iconcatMap :: (Int -> a -> [b]) -> [a] -> [b]`
@@ -1186,7 +1186,7 @@ export const iconcatMap =
         (acc, e, i) => [...acc, ...f (i) (e)],
         []
       ))
-    );
+    )
 
 // Sbblists
 
@@ -1197,14 +1197,14 @@ interface Ifilter {
    * `ifilter`, applied to a predicate and a list, returns the list of those
    * elements that satisfy the predicate.
    */
-  <A, A1 extends A> (pred: (index: number) => (x: A) => x is A1): (list: List<A>) => List<A1>;
+  <A, A1 extends A> (pred: (index: number) => (x: A) => x is A1): (list: List<A>) => List<A1>
   /**
    * `ifilter :: (Int -> a -> Bool) -> [a] -> [a]`
    *
    * `ifilter`, applied to a predicate and a list, returns the list of those
    * elements that satisfy the predicate.
    */
-  <A> (pred: (index: number) => (x: A) => boolean): (list: List<A>) => List<A>;
+  <A> (pred: (index: number) => (x: A) => boolean): (list: List<A>) => List<A>
 }
 
 /**
@@ -1215,7 +1215,7 @@ interface Ifilter {
  */
 export const ifilter: Ifilter =
   <A> (pred: (index: number) => (x: A) => boolean) => (list: List<A>): List<A> =>
-    fromArray (list .value .filter ((e, i) => pred (i) (e)));
+    fromArray (list .value .filter ((e, i) => pred (i) (e)))
 
 /**
  * `ipartition :: (Int ->a -> Bool) -> [a] -> ([a], [a])`
@@ -1237,10 +1237,10 @@ export const ipartition =
         ? [cons (included) (value), excluded]
         : [included, cons (excluded) (value)],
       [empty, empty]
-    );
+    )
 
-    return fromBoth<List<A>, List<A>> (pair[0]) (pair[1]);
-  };
+    return fromBoth<List<A>, List<A>> (pair[0]) (pair[1])
+  }
 
 // Search
 
@@ -1252,7 +1252,7 @@ interface Ifind {
    * leftmost element of the structure matching the predicate, or `Nothing` if
    * there is no such element.
    */
-  <A, A1 extends A> (pred: (index: number) => (x: A) => x is A1): (xs: List<A>) => Maybe<A1>;
+  <A, A1 extends A> (pred: (index: number) => (x: A) => x is A1): (xs: List<A>) => Maybe<A1>
   /**
    * `ifind :: Foldable t => (Int -> a -> Bool) -> t a -> Maybe a`
    *
@@ -1260,7 +1260,7 @@ interface Ifind {
    * leftmost element of the structure matching the predicate, or `Nothing` if
    * there is no such element.
    */
-  <A> (pred: (index: number) => (x: A) => boolean): (xs: List<A>) => Maybe<A>;
+  <A> (pred: (index: number) => (x: A) => boolean): (xs: List<A>) => Maybe<A>
 }
 
 /**
@@ -1272,7 +1272,7 @@ interface Ifind {
  */
 export const ifind: Ifind =
   <A> (pred: (index: number) => (x: A) => boolean) => (xs: List<A>): Maybe<A> =>
-    fromNullable (xs .value .find ((e, i) => pred (i) (e)));
+    fromNullable (xs .value .find ((e, i) => pred (i) (e)))
 
 /**
  * `ifindIndex :: (Int -> a -> Bool) -> [a] -> Maybe Int`
@@ -1283,10 +1283,10 @@ export const ifind: Ifind =
  */
 export const ifindIndex =
   <A> (pred: (index: number) => (x: A) => boolean) => (xs: List<A>): Maybe<number> => {
-    const res = xs .value .findIndex ((e, i) => pred (i) (e));
+    const res = xs .value .findIndex ((e, i) => pred (i) (e))
 
-    return res > -1 ? Just (res) : Nothing;
-  };
+    return res > -1 ? Just (res) : Nothing
+  }
 
 /**
  * `ifindIndices :: (a -> Bool) -> [a] -> [Int]`
@@ -1301,7 +1301,7 @@ export const ifindIndices =
         (acc, e, index) => pred (index) (e) ? [...acc, index] : acc,
         []
       )
-    );
+    )
 
 
 // OWN METHODS
@@ -1309,20 +1309,20 @@ export const ifindIndices =
 /**
  * Converts a `List` to a native Array.
  */
-export const toArray = <A> (list: List<A>): ReadonlyArray<A> => list .value;
+export const toArray = <A> (list: List<A>): A[] => list .value as A[]
 
 /**
  * Transforms a `List` of `Tuple`s into an `OrderedMap` where the first values
  * in the `Tuple` are the keys and the second values are the actual values.
  */
 export const toMap = <K, V> (list: List<Pair<K, V>>): OrderedMap<K, V> =>
-  OrderedMap.fromArray (list .value .map (Pair.toArray));
+  OrderedMap.fromArray (list .value .map (Pair.toArray))
 
 /**
  * Checks if the given value is a `List`.
  * @param x The value to test.
  */
-export const isList = (x: any): x is List<any> => typeof x === 'object' && x !== null && x.isList;
+export const isList = (x: any): x is List<any> => typeof x === 'object' && x !== null && x.isList
 
 
 // NAMESPACED FUNCTIONS
@@ -1436,9 +1436,9 @@ export const List = {
   toArray,
   toMap,
   isList,
-};
+}
 
 
 // TYPE HELPERS
 
-export type ListElement<A> = A extends List<infer AI> ? AI : never;
+export type ListElement<A> = A extends List<infer AI> ? AI : never

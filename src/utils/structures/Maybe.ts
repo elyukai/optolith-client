@@ -16,7 +16,7 @@
 
 import { pipe } from 'ramda';
 import * as Math from '../mathUtils';
-import { cnst, id, T } from './Function';
+import { cnst, id, thrush } from './Function';
 import { cons, cons_, fromElements, head, ifoldr, List } from './List';
 
 
@@ -288,7 +288,7 @@ export const liftM2 =
   (f: (a1: A1) => (a2: A2) => B) =>
   (m1: Maybe<A1>) =>
   (m2: Maybe<A2>): Maybe<B> =>
-    bind<A1, B> (m1) (pipe (f, fmap, T (m2)))
+    bind<A1, B> (m1) (pipe (f, fmap, thrush (m2)))
 
 /**
  * `liftM3 :: (a1 -> a2 -> a3 -> r) -> Maybe a1 -> Maybe a2 -> Maybe a3 -> Maybe r`
