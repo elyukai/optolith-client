@@ -2,8 +2,7 @@ import { remote } from 'electron';
 import * as fs from 'fs';
 import * as path from 'path';
 import { lt, lte, satisfies } from 'semver';
-import { ActiveObject } from '../../types/data';
-import { RawHero } from '../../types/rawdata';
+import { RawActiveObject, RawHero } from '../../types/rawdata';
 import { getBlessedTraditionInstanceIdByNumericId, getMagicalTraditionInstanceIdByNumericId } from '../IDUtils';
 import { StringKeyObject } from '../structures/Record';
 
@@ -16,9 +15,9 @@ export const currentVersion = JSON.parse (fs.readFileSync (
 const convertLowerThan0_49_5 = (hero: RawHero): RawHero => {
   const entry = { ...hero };
 
-  const newActivatable: StringKeyObject<ActiveObject[]> = {};
+  const newActivatable: StringKeyObject<RawActiveObject[]> = {};
 
-  const convertIds: StringKeyObject<ActiveObject & { id: string }> = {
+  const convertIds: StringKeyObject<RawActiveObject & { id: string }> = {
     'SA_6': { id: 'SA_5', tier: 2 },
     'SA_7': { id: 'SA_6' },
     'SA_8': { id: 'SA_7' },
@@ -517,7 +516,7 @@ const convertLowerThan0_49_5 = (hero: RawHero): RawHero => {
     'SA_501': { id: 'SA_431' },
   };
 
-  const updateObjects = (list: ActiveObject[], sid?: string | number, tier?: number) => {
+  const updateObjects = (list: RawActiveObject[], sid?: string | number, tier?: number) => {
     return [...list].map (e => ({
       ...e,
       sid: sid === undefined ? e.sid : sid,
@@ -696,7 +695,7 @@ const convertLowerThanOrEqual0_51_3 = (hero: RawHero): RawHero => {
       const { sid, sid2 } = active;
       const id = getMagicalTraditionInstanceIdByNumericId (sid as number);
       // @ts-ignore
-      entry.activatable[id || 'SA_70'] = [{ sid: sid2 }];
+      entry.activatable[fromMaybe ('SA_70') (id)] = [{ sid: sid2 }];
     }
   }
 
@@ -707,7 +706,7 @@ const convertLowerThanOrEqual0_51_3 = (hero: RawHero): RawHero => {
       const { sid, sid2 } = active;
       const id = getBlessedTraditionInstanceIdByNumericId (sid as number);
       // @ts-ignore
-      entry.activatable[id || 'SA_86'] = [{ sid: sid2 }];
+      entry.activatable[fromMaybe ('SA_86') (id)] = [{ sid: sid2 }];
     }
   }
 

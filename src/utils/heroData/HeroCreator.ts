@@ -1,5 +1,5 @@
 import { HeroDependent } from '../../types/data';
-import { currentVersion } from '../raw/VersionUtils';
+import { currentVersion } from '../raw/compatibilityUtils';
 import { List } from '../structures/List';
 import { Nothing } from '../structures/Maybe';
 import { OrderedMap } from '../structures/OrderedMap';

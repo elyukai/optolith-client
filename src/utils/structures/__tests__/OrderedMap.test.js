@@ -608,6 +608,15 @@ test ('filterWithKey', () => {
     .toEqual (res)
 })
 
+test ('filterWithKey_', () => {
+  const map = fromArray ([[1, 'a'], [3, 'c'], [4, 'd'], [2, 'b']])
+  const res = fromArray ([[3, 'c'], [4, 'd'], [2, 'b']])
+
+  expect (OrderedMap.filterWithKey_ (map)
+                                    (key => e => key % 2 === 0 || e === 'c'))
+    .toEqual (res)
+})
+
 test ('mapMaybe', () => {
   const map = fromArray ([[1, 'a'], [3, 'c'], [4, 'd'], [2, 'b']])
   const res = fromArray ([[4, '+'], [2, '+']])

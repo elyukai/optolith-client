@@ -7,8 +7,8 @@ import { isPactValid as isPactFromStateValid } from '../activatable/pactUtils';
 import { getActiveSelections } from '../activatable/selectionUtils';
 import { getHeroStateListItem } from '../heroStateUtils';
 import { getPrimaryAttributeId } from '../primaryAttributeUtils';
+import * as CheckPrerequisiteUtils from '../wikiData/prerequisites/DependentRequirement';
 import { getAllWikiEntriesByGroup } from '../WikiUtils';
-import * as CheckPrerequisiteUtils from './checkPrerequisiteUtils';
 import { Just, List, Maybe, OrderedMap, Record, Tuple } from './dataUtils';
 import { isActivatableDependent, isActivatableSkillDependent, isDependentSkillExtended } from './dependencies/checkEntryUtils';
 

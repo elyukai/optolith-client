@@ -24,7 +24,7 @@ import { elems, foldl, foldlWithKey, OrderedMap, OrderedMapValueElement, toObjec
 import { toArray } from '../structures/OrderedSet';
 import { Record, StringKeyObject, toObject } from '../structures/Record';
 import { UndoState } from '../undo';
-import { currentVersion } from './VersionUtils';
+import { currentVersion } from './compatibilityUtils';
 
 const {
   attributes,

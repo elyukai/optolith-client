@@ -446,7 +446,7 @@ export interface SelectionObject {
   id: string | number;
   name: string;
   cost: Maybe<number>;
-  req: Maybe<List<AllRequirementObjects>>;
+  // req: Maybe<List<AllRequirementObjects>>;
   prerequisites: Maybe<List<AllRequirementObjects>>;
   target: Maybe<string>;
   tier: Maybe<number>;

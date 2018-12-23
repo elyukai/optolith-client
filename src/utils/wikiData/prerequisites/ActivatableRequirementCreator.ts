@@ -1,6 +1,10 @@
-import { RequiresActivatableObject } from '../../../types/wiki';
-import { Nothing } from '../../structures/Maybe';
-import { fromDefault, makeGetters } from '../../structures/Record';
+import { pipe } from 'ramda';
+import { ActivatableLikeCategories, Categories } from '../../../constants/Categories';
+import { AllRequirementObjects, ProfessionPrerequisite, ProfessionRequiresActivatableObject, RequiresActivatableObject } from '../../../types/wiki';
+import { getCategoryById } from '../../IDUtils';
+import { all, elem_, isList } from '../../structures/List';
+import { fmap, Nothing, or } from '../../structures/Maybe';
+import { fromDefault, makeGetters, member, Record } from '../../structures/Record';
 import { PartialMaybeFunction } from '../sub/typeHelpers';
 
 const RequireActivatableCreator =
@@ -16,3 +20,31 @@ export const RequireActivatableG = makeGetters (RequireActivatableCreator)
 
 export const createRequireActivatable: PartialMaybeFunction<RequiresActivatableObject> =
   RequireActivatableCreator
+
+export const isRequiringActivatable =
+  (req: AllRequirementObjects): req is Record<RequiresActivatableObject> => {
+    const id = RequireActivatableG.id (req)
+
+    if (isList (id)) {
+      return member ('value') (req)
+        && all<string> (pipe (
+                         getCategoryById,
+                         category => or (fmap (elem_<Categories> (ActivatableLikeCategories))
+                                              (category))
+                       ))
+                       (id)
+    }
+
+    return member ('value') (req)
+      && or (fmap (elem_<Categories> (ActivatableLikeCategories))
+                  (getCategoryById (id)))
+  }
+
+export const isProfessionRequiringActivatable =
+  (req: ProfessionPrerequisite): req is Record<ProfessionRequiresActivatableObject> => {
+    const id = RequireActivatableG.id (req) as string
+
+    return member ('value') (req)
+      && or (fmap (elem_<Categories> (ActivatableLikeCategories))
+                  (getCategoryById (id)))
+  }

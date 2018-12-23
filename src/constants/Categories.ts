@@ -1,4 +1,4 @@
-import { List } from '../utils/dataUtils';
+import { fromElements } from '../utils/structures/List';
 
 export enum Categories {
   ADVANTAGES = 'ADVANTAGES',
@@ -21,56 +21,56 @@ export enum Categories {
 export type ActivatableCategory =
   Categories.ADVANTAGES |
   Categories.DISADVANTAGES |
-  Categories.SPECIAL_ABILITIES;
+  Categories.SPECIAL_ABILITIES
 
-export const ActivatableCategories = List.of<ActivatableCategory> (
+export const ActivatableCategories = fromElements<ActivatableCategory> (
   Categories.ADVANTAGES,
   Categories.DISADVANTAGES,
-  Categories.SPECIAL_ABILITIES,
-);
+  Categories.SPECIAL_ABILITIES
+)
 
 export type CategoryWithGroups =
   Categories.COMBAT_TECHNIQUES |
   Categories.LITURGIES |
   Categories.SPECIAL_ABILITIES |
   Categories.SPELLS |
-  Categories.TALENTS;
+  Categories.TALENTS
 
 export type IncreasableCategory =
   Categories.ATTRIBUTES |
   Categories.COMBAT_TECHNIQUES |
   Categories.LITURGIES |
   Categories.SPELLS |
-  Categories.TALENTS;
+  Categories.TALENTS
 
-export const IncreasableCategories = List.of<IncreasableCategory> (
+export const IncreasableCategories = fromElements<IncreasableCategory> (
   Categories.ATTRIBUTES,
   Categories.COMBAT_TECHNIQUES,
   Categories.LITURGIES,
   Categories.SPELLS,
-  Categories.TALENTS,
-);
+  Categories.TALENTS
+)
 
 export type ActivatableLikeCategory =
   Categories.ADVANTAGES |
   Categories.DISADVANTAGES |
   Categories.SPECIAL_ABILITIES |
   Categories.LITURGIES |
-  Categories.SPELLS;
+  Categories.SPELLS
 
-export const ActivatableLikeCategories = List.of<ActivatableLikeCategory> (
+export const ActivatableLikeCategories = fromElements<ActivatableLikeCategory> (
   Categories.ADVANTAGES,
   Categories.DISADVANTAGES,
   Categories.SPECIAL_ABILITIES,
   Categories.LITURGIES,
-  Categories.SPELLS,
-);
+  Categories.SPELLS
+)
 
 export type ActivatableSkillCategory =
   Categories.LITURGIES |
-  Categories.SPELLS;
+  Categories.SPELLS
 
-export const ActivatableSkillCategories = List.of<ActivatableSkillCategory> (
+export const ActivatableSkillCategories = fromElements<ActivatableSkillCategory> (
   Categories.LITURGIES,
-  Categories.SPELLS,
-);
+  Categories.SPELLS
+)

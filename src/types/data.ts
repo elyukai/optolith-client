@@ -305,11 +305,11 @@ export interface ActivateObject {
 }
 
 export interface DependencyObject {
-  origin?: string;
-  active?: boolean;
-  sid?: string | number | List<number>;
-  sid2?: string | number;
-  tier?: number;
+  origin: Maybe<string>;
+  active: Maybe<boolean>;
+  sid: Maybe<string | number | List<number>>;
+  sid2: Maybe<string | number>;
+  tier: Maybe<number>;
 }
 
 export interface ValidationObject extends ActiveObject {

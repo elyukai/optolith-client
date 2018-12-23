@@ -4,8 +4,8 @@ import * as Data from '../../types/data';
 import * as Wiki from '../../types/wiki';
 import { getCategoryById } from '../IDUtils';
 import { match } from '../match';
-import * as CheckPrerequisiteUtils from '../prerequisites/checkPrerequisiteUtils';
 import { getPrimaryAttributeId } from '../primaryAttributeUtils';
+import * as CheckPrerequisiteUtils from '../wikiData/prerequisites/DependentRequirement';
 import * as AddDependencyUtils from './addDependencyUtils';
 import * as RemoveDependencyUtils from './removeDependencyUtils';
 

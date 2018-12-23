@@ -1,8 +1,8 @@
 import { IdPrefixes } from '../../constants/IdPrefixes';
 import * as Raw from '../../types/rawdata';
 import * as Wiki from '../../types/wiki';
+import { PrimaryAttributeDamageThresholdCreator } from '../heroData/PrimaryAttributeDamageThresholdCreator';
 import { prefixId as prefixId, prefixRawId } from '../IDUtils';
-import { PrimaryAttributeDamageThresholdCreator } from '../ItemUtils';
 import { add } from '../mathUtils';
 import { cons, cons_, List } from '../structures/List';
 import { alt, fmap, fromNullable, Just, Maybe, Nothing } from '../structures/Maybe';

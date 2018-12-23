@@ -1,5 +1,8 @@
-import { RequiresPrimaryAttribute } from '../../../types/wiki';
-import { fromDefault, makeGetters } from '../../structures/Record';
+import { equals, pipe } from 'ramda';
+import { AllRequirementObjects, RequiresPrimaryAttribute } from '../../../types/wiki';
+import { List } from '../../structures/List';
+import { fromDefault, makeGetters, Record } from '../../structures/Record';
+import { RequireActivatableG } from './ActivatableRequirementCreator';
 
 const RequirePrimaryAttributeCreator =
   fromDefault<RequiresPrimaryAttribute> ({
@@ -12,3 +15,7 @@ export const RequirePrimaryAttributeG = makeGetters (RequirePrimaryAttributeCrea
 
 export const createRequirePrimaryAttribute =
   (type: 1 | 2) => (value: number) => RequirePrimaryAttributeCreator ({ type, value })
+
+export const isPrimaryAttributeRequirement =
+  pipe (RequireActivatableG.id, equals<string | List<string>> ('ATTR_PRIMARY')) as unknown as
+    (req: AllRequirementObjects) => req is Record<RequiresPrimaryAttribute>

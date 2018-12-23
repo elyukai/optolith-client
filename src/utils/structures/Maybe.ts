@@ -189,7 +189,7 @@ export const alt =
     isJust (m1) ? m1 : m2
 
 /**
- * `alt :: Maybe a -> Maybe a -> Maybe a`
+ * `alt_ :: Maybe a -> Maybe a -> Maybe a`
  *
  * Returns the second `Maybe` if it is `Just`, otherwise the first.
  *

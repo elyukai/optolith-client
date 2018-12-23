@@ -1,7 +1,10 @@
-import { PactRequirement } from '../../../types/wiki';
+import { equals, pipe } from 'ramda';
+import { AllRequirementObjects, PactRequirement } from '../../../types/wiki';
+import { List } from '../../structures/List';
 import { Nothing } from '../../structures/Maybe';
-import { fromDefault, makeGetters } from '../../structures/Record';
+import { fromDefault, makeGetters, Record } from '../../structures/Record';
 import { PartialMaybeFunction } from '../sub/typeHelpers';
+import { RequireActivatableG } from './ActivatableRequirementCreator';
 
 const PactRequirementCreator =
   fromDefault<PactRequirement> ({
@@ -15,3 +18,7 @@ export const PactRequirementG = makeGetters (PactRequirementCreator)
 
 export const createPactRequirement: PartialMaybeFunction<PactRequirement> =
   PactRequirementCreator
+
+export const isPactRequirement =
+  pipe (RequireActivatableG.id, equals<string | List<string>> ('PACT')) as unknown as
+    (req: AllRequirementObjects) => req is Record<PactRequirement>

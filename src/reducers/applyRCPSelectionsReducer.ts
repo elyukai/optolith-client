@@ -13,7 +13,7 @@ import { addDependencies } from '../utils/dependencies/dependencyUtils';
 import { flip } from '../utils/flip';
 import { getHeroStateListItem, updateHeroListStateItemOr, updateHeroListStateItemWithDefault } from '../utils/heroStateUtils';
 import { ifElse } from '../utils/ifElse';
-import { isProfessionRequiringIncreasable } from '../utils/prerequisites/checkPrerequisiteUtils';
+import { isProfessionRequiringIncreasable } from '../utils/wikiData/prerequisites/DependentRequirement';
 import { getWikiEntry } from '../utils/WikiUtils';
 
 type Action = SetSelectionsAction;

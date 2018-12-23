@@ -8,7 +8,7 @@ const SelectOptionCreator =
     id: 0,
     name: '',
     cost: Nothing,
-    req: Nothing,
+    // req: Nothing,
     prerequisites: Nothing,
     target: Nothing,
     tier: Nothing,
