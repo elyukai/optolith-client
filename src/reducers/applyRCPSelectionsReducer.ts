@@ -11,7 +11,7 @@ import { createActivatableDependent, createActivatableDependentSkill } from '../
 import { Just, List, Maybe, OrderedMap, OrderedSet, Record, Tuple } from '../utils/dataUtils';
 import { addDependencies } from '../utils/dependencies/dependencyUtils';
 import { flip } from '../utils/flip';
-import { getHeroStateListItem, updateHeroListStateItemOr, updateHeroListStateItemWithDefault } from '../utils/heroStateUtils';
+import { getHeroStateItem, updateEntryDef, updateHeroListStateItemOr } from '../utils/heroStateUtils';
 import { ifElse } from '../utils/ifElse';
 import { isProfessionRequiringIncreasable } from '../utils/wikiData/prerequisites/DependentRequirement';
 import { getWikiEntry } from '../utils/WikiUtils';
@@ -421,7 +421,7 @@ const applyModifications = (action: SetSelectionsAction) => R.pipe (
   (acc: ConcatenatedModifications) => ({
     ...acc,
     state: acc.skillRatingList.foldlWithKey<ConcatenatedModifications['state']> (
-      state => id => value => updateHeroListStateItemWithDefault (
+      state => id => value => updateEntryDef (
         e => Just (
           (e as any as Record<{ value: number; [key: string]: any }>)
             .modify<'value'> (R.add (value)) ('value')
@@ -437,7 +437,7 @@ const applyModifications = (action: SetSelectionsAction) => R.pipe (
     state: acc.activatable.foldl<ConcatenatedModifications['state']> (
       state => req => Maybe.maybe<Wiki.Activatable, Data.Hero> (state) (
         wikiEntry => {
-          const entry = getHeroStateListItem (req.get ('id')) (state) as
+          const entry = getHeroStateItem (req.get ('id')) (state) as
             Maybe<Record<Data.ActivatableDependent>>;
 
           const activeObject = getActiveObjectCore (req as any);
@@ -498,7 +498,7 @@ const applyModifications = (action: SetSelectionsAction) => R.pipe (
     state: acc.professionPrerequisites.foldl<ConcatenatedModifications['state']> (
       state => req => {
         if (isProfessionRequiringIncreasable (req)) {
-          return updateHeroListStateItemWithDefault (
+          return updateEntryDef (
             e => Just (
               (e as any as Record<{ value: number; [key: string]: any }>)
                 .insert ('value') (req.get ('value'))
@@ -509,7 +509,7 @@ const applyModifications = (action: SetSelectionsAction) => R.pipe (
         else {
           return Maybe.maybe<Wiki.Activatable, Data.Hero> (state) (
             wikiEntry => {
-              const entry = getHeroStateListItem (req.get ('id')) (state) as
+              const entry = getHeroStateItem (req.get ('id')) (state) as
                 Maybe<Record<Data.ActivatableDependent>>;
 
               const activeObject = getActiveObjectCore (req as any);

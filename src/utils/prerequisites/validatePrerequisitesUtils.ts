@@ -12,7 +12,7 @@ import { DependencyObjectG } from '../activeEntries/DependencyObjectCreator';
 import { isExtendedSkillDependent, SkillDependentG } from '../activeEntries/skillDependent';
 import { HeroG } from '../heroData/HeroCreator';
 import { PactG } from '../heroData/PactCreator';
-import { getHeroStateListItem } from '../heroStateUtils';
+import { getHeroStateItem } from '../heroStateUtils';
 import { prefixId } from '../IDUtils';
 import { dec, gte, lt, lte, min, subtract } from '../mathUtils';
 import { not } from '../not';
@@ -226,7 +226,7 @@ const isIncreasableValid =
                       isExtendedSkillDependent (obj)
                       && gte (RequireIncreasableG.value (req))
                              (SkillDependentG.value (obj)))
-                    (getHeroStateListItem (id) (state)))
+                    (getHeroStateItem (id) (state)))
   }
 
 /**
@@ -312,11 +312,11 @@ const isActivatableValid =
                                            (getActiveSelections (Just (target)))
                              })
                          )
-                         (getHeroStateListItem (id) (state)))
+                         (getHeroStateItem (id) (state)))
       }
 
       const maybeInstance =
-        getHeroStateListItem (id) (state) as Maybe<Data.ExtendedActivatableDependent>
+        getHeroStateItem (id) (state) as Maybe<Data.ExtendedActivatableDependent>
 
       if (isMaybeActivatableDependent (maybeInstance)) {
         const instance = Maybe.fromJust (maybeInstance)

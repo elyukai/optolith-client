@@ -1,6 +1,6 @@
 import * as Data from '../../types/data';
 import * as Wiki from '../../types/wiki';
-import { getHeroStateListItem } from '../heroStateUtils';
+import { getHeroStateItem } from '../heroStateUtils';
 import { flattenPrerequisites } from '../prerequisites/flattenPrerequisites';
 import { isObject } from '../typeCheckUtils';
 import { getWikiEntry } from '../WikiUtils';
@@ -38,7 +38,7 @@ export const flattenDependencies = <T extends number | boolean>(
             .foldl<number> (
               acc => id =>
                 Maybe.fromMaybe (false) (
-                  getHeroStateListItem<Data.ValueBasedDependent> (id) (state)
+                  getHeroStateItem<Data.ValueBasedDependent> (id) (state)
                     .fmap (entry => entry.get ('value') >= e.get ('value'))
                 ) ? acc + 1 : acc
             ) (0) > 1 ? 0 : e.get ('value')

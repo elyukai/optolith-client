@@ -15,7 +15,7 @@ import * as Wiki from '../../types/wiki';
 import { isActive } from '../activatable/isActive';
 import { getSelectOptionCost } from '../activatable/selectionUtils';
 import { Just, List, Maybe, OrderedMap, Record } from '../dataUtils';
-import { getHeroStateListItem } from '../heroStateUtils';
+import { getHeroStateItem } from '../heroStateUtils';
 import { translate } from '../I18n';
 import { getCategoryById } from '../IDUtils';
 import { match } from '../match';
@@ -313,7 +313,7 @@ export const getCost = (
       return calculateCost (
         Maybe.fromNullable (state)
           .bind<Record<Data.ActivatableDependent>> (
-            getHeroStateListItem<Record<Data.ActivatableDependent>> (id)
+            getHeroStateItem<Record<Data.ActivatableDependent>> (id)
           )
           .fmap (instance => instance.get ('active'))
       );

@@ -8,14 +8,12 @@ import { AttributeDependentG, createPlainAttributeDependent } from './activeEntr
 import { createPlainSkillDependent, createSkillDependentWithValue6 } from './activeEntries/skillDependent';
 import { HeroG, HeroL } from './heroData/HeroCreator';
 import { getIdPrefix } from './IDUtils';
-import { ifElse } from './ifElse';
 import { not } from './not';
 import { cnst } from './structures/Function';
-import { Lens, over } from './structures/Lens';
+import { Lens, over, view } from './structures/Lens';
 import { elem_, filter, fromArray, List } from './structures/List';
-import { ap, bind_, ensure, fmap, fromMaybe, Just, Maybe, maybe, Nothing, or } from './structures/Maybe';
-import { adjust, alter, elems, insert, isOrderedMap, lookup, lookup_, OrderedMap, sdelete, update } from './structures/OrderedMap';
-import { OrderedSet } from './structures/OrderedSet';
+import { bind_, ensure, fmap, fromMaybe, Just, Maybe, maybe, Nothing, or } from './structures/Maybe';
+import { adjust, alter, elems, insert, lookup, lookup_, OrderedMap, sdelete, update } from './structures/OrderedMap';
 import { SkillG } from './wikiData/SkillCreator';
 
 export type HeroStateMapKey =
@@ -193,31 +191,16 @@ export const getEntryCreatorById =
     }
   }
 
-export const getHeroStateListItem =
+export const getHeroStateItem =
   (id: string) =>
+  (state: Hero) =>
     pipe (
-      Just as (hero: Hero) => Just<Hero>,
-      ap (getHeroStateListGetterById (id) as Maybe<(hero: Hero) => OrderedMap<string, Dependent>>),
-      bind_ (
-        ifElse<
-          OrderedMap<string, Dependent> | OrderedSet<string>,
-          OrderedMap<string, Dependent>,
-          Maybe<Dependent>
-        >
-          (isOrderedMap)
-          (lookup (id) as unknown as (m: OrderedMap<string, Dependent>) => Maybe<Dependent>)
-          (cnst (Nothing))
-      )
-    )
+           fmap ((lens: HeroStateMapLens) => view (lens) (state)),
+           bind_ (lookup (id) as (m: OrderedMap<string, Dependent>) => Maybe<Dependent>)
+         )
+         (getHeroStateMapLensById (id))
 
-export const getHeroStateListItemOr =
-  <D extends Dependent = Dependent>
-  (create: (id: string) => D) =>
-  (id: string) =>
-  (state: Hero): D =>
-    fromMaybe (create (id)) (getHeroStateListItem (id) (state) as Maybe<D>)
-
-export const setHeroListStateItem =
+export const setHeroStateItem =
   (id: string) =>
   (item: Dependent) =>
   (state: Hero) =>
@@ -228,7 +211,7 @@ export const setHeroListStateItem =
                 (state))
          (getHeroStateMapLensById (id))
 
-export const removeHeroListStateItem =
+export const removeHeroStateItem =
   (id: string) =>
   (state: Hero) =>
     fmap ((lens: HeroStateMapLens) =>
@@ -238,43 +221,68 @@ export const removeHeroListStateItem =
                 (state))
          (getHeroStateMapLensById (id))
 
+
 /**
- * `alterStateEntry :: Dependent a => (String -> a) -> (a -> Maybe a) ->
-(a -> Bool) -> String -> OrderedMap String a`
+ * ```haskell
+ * updateEntryDef :: Dependent a => (a -> Maybe a) -> String -> OrderedMap String a
+ * ```
  *
- * `alterStateEntry altFn adjustFn checkUnusedFn id map` adjusts a entry from a
- * state slice (`map`). If the entry is not present, `altFn` will be called with
- * the given `id`. `adjustFn` will then be called either on the already present
- * or created object. If `checkUnusedFn` returns the adjusted entry is unused,
- * this function will remove the entry from the state slice.
+ * `updateEntryDef f id map` adjusts a entry from a state slice (`map`). If the
+ * entry is not present, a plain entry of the needed type will be created with
+ * the given `id`, e.g. `SkillDependent` when `id` is like `SKILL_X`. `f` will
+ * then be called either on the already present or created object. If `f`
+ * returns a `Nothing`, the entry will be removed from the state slice.
  */
-export const modifyStateEntry =
+export const updateEntryDef =
   <D extends Dependent>
-  (altFn: (id: string) => D) =>
+  (f: (value: D) => Maybe<D>) =>
+  (id: string) =>
+  (state: Hero) =>
+    maybe<(id: string) => Dependent, Hero>
+      (state)
+      (creator => updateHeroListStateItemOr (creator)
+                                            (f as (value: Dependent) => Maybe<Dependent>)
+                                            (id)
+                                            (state))
+      (getEntryCreatorById (id))
+
+/**
+ * ```haskell
+ * adjustEntryDef :: Dependent a => (a -> a) -> (a -> Bool) -> String -> OrderedMap String a
+ * ```
+ *
+ * `adjustEntryDef adjustFn checkUnusedFn id map` adjusts a entry from a state
+ * slice (`map`). If the entry is not present, a plain entry of the needed type
+ * will be created with the given `id`. `adjustFn` will then be called either on
+ * the already present or created object. If `checkUnusedFn` returns the
+ * adjusted entry is unused, this function will remove the entry from the state
+ * slice.
+ */
+export const adjustEntryDef =
+  <D extends Dependent>
   (adjustFn: (value: D) => D) =>
   (checkUnusedFn: (value: D) => boolean) =>
   (id: string) =>
-    alter<string, D> (pipe (
-                       fromMaybe (altFn (id)),
-                       adjustFn,
-                       ensure<D> (pipe (checkUnusedFn, not))
-                     ))
-                     (id)
+    updateEntryDef (pipe (
+                           adjustFn,
+                           ensure<D> (pipe (checkUnusedFn, not))
+                         ))
+                   (id)
 
 /**
- * `adjustMaybeStateEntry :: Dependent a => (String -> a) -> (a -> Maybe a) ->
-String -> OrderedMap String a`
+ * ```haskell
+ * modifyEntryDef :: Dependent a => (a -> a) -> String -> OrderedMap String a
+ * ```
  *
- * `alterStateEntry altFn adjustFn id map` adjusts a entry from a
+ * `modifyEntryDef f id map` adjusts a entry from a
  * state slice (`map`). If the entry is not present, `altFn` will be called with
- * the given `id`. `adjustFn` will then be called either on the already present
+ * the given `id`. `f` will then be called either on the already present
  * or created object.
  */
-export const modifyMaybeStateEntry =
+export const modifyEntryDef =
   <D extends Dependent>
-  (altF: (id: string) => D) =>
   (f: (value: D) => D) =>
-    modifyStateEntry (altF) (f) (cnst (false))
+    adjustEntryDef (f) (cnst (false))
 
 /**
  * `updateStateEntry :: Dependent a => (a -> Maybe a) ->
@@ -310,19 +318,6 @@ export const updateHeroListStateItemOr =
                      (m: HeroDependent[HeroStateMapKey]) => HeroDependent[HeroStateMapKey])
                    (state))
             (getHeroStateMapLensById (id)))
-
-export const updateHeroListStateItemWithDefault =
-  <D extends Dependent>
-  (adjustFn: (value: D) => Maybe<D>) =>
-  (id: string) =>
-  (state: Hero) =>
-    maybe<(id: string) => Dependent, Hero>
-      (state)
-      (creator => updateHeroListStateItemOr (creator)
-                                            (adjustFn as (value: Dependent) => Maybe<Dependent>)
-                                            (id)
-                                            (state))
-      (getEntryCreatorById (id))
 
 export const modifyHeroListStateItem =
   <D extends Dependent>

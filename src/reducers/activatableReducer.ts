@@ -5,7 +5,7 @@ import * as Data from '../types/data';
 import { activate, deactivate, setTier } from '../utils/activatable/activatableActivationUtils';
 import * as ExtendedStyleUtils from '../utils/activatable/ExtendedStyleUtils';
 import { Maybe, Record } from '../utils/dataUtils';
-import { getHeroStateListItem } from '../utils/heroStateUtils';
+import { getHeroStateItem } from '../utils/heroStateUtils';
 import * as IncreasableUtils from '../utils/IncreasableUtils';
 import { logIdentity } from '../utils/logIdentity';
 
@@ -89,7 +89,7 @@ export function activatableReducer (
       const { id, index, tier, wikiEntry } = action.payload;
 
       return Maybe.fromMaybe (state) (
-        (getHeroStateListItem (id) (state) as Maybe<Record<Data.ActivatableDependent>>)
+        (getHeroStateItem (id) (state) as Maybe<Record<Data.ActivatableDependent>>)
           .fmap (instance => logIdentity (setTier (index, tier) (
             state,
             wikiEntry,

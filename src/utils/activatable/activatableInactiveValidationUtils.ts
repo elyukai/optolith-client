@@ -10,7 +10,7 @@ import * as Data from '../../types/data';
 import * as Wiki from '../../types/wiki';
 import { Just, List, Maybe, OrderedMap, Record } from '../dataUtils';
 import { countActiveGroupEntries, hasActiveGroupEntry } from '../entryGroupUtils';
-import { getAllEntriesByGroup, getHeroStateListItem } from '../heroStateUtils';
+import { getAllEntriesByGroup, getHeroStateItem } from '../heroStateUtils';
 import { getFirstTierPrerequisites } from '../prerequisites/flattenPrerequisites';
 import { validatePrerequisites } from '../prerequisites/validatePrerequisitesUtils';
 import { isSpecialAbility } from '../WikiUtils';
@@ -23,7 +23,7 @@ const isAdditionDisabledForCombatStyle = (
   entry: Record<Wiki.SpecialAbility>
 ): Maybe<boolean> => {
   const combinationSA =
-    getHeroStateListItem<Record<Data.ActivatableDependent>> ('SA_164') (state);
+    getHeroStateItem<Record<Data.ActivatableDependent>> ('SA_164') (state);
 
   if (Maybe.isNothing (combinationSA)) {
     if (hasActiveGroupEntry (wiki, state, 9, 10)) {

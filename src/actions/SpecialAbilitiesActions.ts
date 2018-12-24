@@ -11,7 +11,7 @@ import { getNameCost } from '../utils/activatable/activatableActiveUtils';
 import { convertPerTierCostToFinalCost } from '../utils/adventurePoints/activatableCostUtils';
 import { getAreSufficientAPAvailable } from '../utils/adventurePoints/adventurePointsUtils';
 import { Just, Maybe, Record } from '../utils/dataUtils';
-import { getHeroStateListItem } from '../utils/heroStateUtils';
+import { getHeroStateItem } from '../utils/heroStateUtils';
 import { translate } from '../utils/I18n';
 import { getWikiEntry } from '../utils/WikiUtils';
 import { addAlert } from './AlertActions';
@@ -94,7 +94,7 @@ export const removeSpecialAbility = (args: DeactivateArgs): AsyncAction =>
           getWikiEntry<Record<SpecialAbility>> (getWiki (state)) (args.id);
 
         const maybeStateEntry =
-          getHeroStateListItem<Record<ActivatableDependent>> (args.id) (hero);
+          getHeroStateItem<Record<ActivatableDependent>> (args.id) (hero);
 
         if (Maybe.isJust (maybeWikiEntry) && Maybe.isJust (maybeStateEntry)) {
           const wikiEntry = Maybe.fromJust (maybeWikiEntry);
@@ -137,7 +137,7 @@ export const setSpecialAbilityLevel = (locale: UIMessagesObject) =>
           getWikiEntry<Record<SpecialAbility>> (getWiki (state)) (id);
 
         const maybeStateEntry =
-          getHeroStateListItem<Record<ActivatableDependent>> (id) (hero);
+          getHeroStateItem<Record<ActivatableDependent>> (id) (hero);
 
         const maybeActiveObjectWithId = maybeStateEntry
           .fmap (stateEntry => stateEntry.get ('active'))

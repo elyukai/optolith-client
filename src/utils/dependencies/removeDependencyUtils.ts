@@ -4,7 +4,7 @@ import { ActivatableDependentL, isActivatableDependent } from '../activeEntries/
 import { ActivatableSkillDependentL } from '../activeEntries/activatableSkillDependent';
 import { AttributeDependentL, isAttributeDependent } from '../activeEntries/attributeDependent';
 import { isSkillDependent, SkillDependentL } from '../activeEntries/skillDependent';
-import { getHeroStateListItem, removeHeroListStateItem, setHeroListStateItem } from '../heroStateUtils';
+import { getHeroStateItem, removeHeroStateItem, setHeroStateItem } from '../heroStateUtils';
 import { join } from '../structures/Function';
 import { over, view } from '../structures/Lens';
 import { deleteAt, elemIndex, ListElement } from '../structures/List';
@@ -67,8 +67,8 @@ const adjustOrRemove =
         console.log (isUnused, id, entry);
 
         return isUnused (entry)
-          ? removeHeroListStateItem (id)
-          : setHeroListStateItem (id) (entry);
+          ? removeHeroStateItem (id)
+          : setHeroStateItem (id) (entry);
       };
 
 const getIncreasableCreator: <T extends Data.ExtendedSkillDependent>(id: string) =>
@@ -88,7 +88,7 @@ const removeDependencyCreator = <T extends Data.Dependent>(
   (id: string, value: Dep<T>) =>
     (state: Record<Data.HeroDependent>): Record<Data.HeroDependent> =>
       Maybe.fromMaybe (state) (
-        getHeroStateListItem<T> (id) (state)
+        getHeroStateItem<T> (id) (state)
           .fmap (R.pipe (
             removeDependency (value),
             adjustOrRemoveFn (id)

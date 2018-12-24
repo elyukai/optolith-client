@@ -16,7 +16,7 @@ import { isMagicalOrBlessed } from '../utils/activatable/checkActivatableUtils';
 import { convertPerTierCostToFinalCost } from '../utils/adventurePoints/activatableCostUtils';
 import { getAreSufficientAPAvailableForDisAdvantage, getDisAdvantagesSubtypeMax, SufficientAPAvailableForDisAdvantage } from '../utils/adventurePoints/adventurePointsUtils';
 import { Just, List, Maybe, Record, Tuple } from '../utils/dataUtils';
-import { getHeroStateListItem } from '../utils/heroStateUtils';
+import { getHeroStateItem } from '../utils/heroStateUtils';
 import { translate } from '../utils/I18n';
 import { isNumber } from '../utils/typeCheckUtils';
 import { getWikiEntry } from '../utils/WikiUtils';
@@ -204,7 +204,7 @@ export const removeDisAdvantage = (locale: UIMessagesObject) =>
           getWikiEntry<Record<Advantage> | Record<Disadvantage>> (getWiki (state)) (args.id);
 
         const maybeStateEntry =
-          getHeroStateListItem<Record<ActivatableDependent>> (args.id) (hero);
+          getHeroStateItem<Record<ActivatableDependent>> (args.id) (hero);
 
         if (Maybe.isJust (maybeWikiEntry) && Maybe.isJust (maybeStateEntry)) {
           const wikiEntry = Maybe.fromJust (maybeWikiEntry);
@@ -316,7 +316,7 @@ export const setDisAdvantageLevel = (locale: UIMessagesObject) =>
           getWikiEntry<Record<Advantage> | Record<Disadvantage>> (getWiki (state)) (id);
 
         const maybeStateEntry =
-          getHeroStateListItem<Record<ActivatableDependent>> (id) (hero);
+          getHeroStateItem<Record<ActivatableDependent>> (id) (hero);
 
         const maybeActiveObjectWithId = maybeStateEntry
           .fmap (stateEntry => stateEntry.get ('active'))

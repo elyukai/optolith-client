@@ -12,7 +12,7 @@ import * as Data from '../../types/data';
 import * as Wiki from '../../types/wiki';
 import { isActivatableDependentUnused } from '../activeEntries/unusedEntryUtils';
 import { Just, List, Maybe, Nothing, OrderedMap, Record } from '../dataUtils';
-import { removeHeroListStateItem, setHeroListStateItem } from '../heroStateUtils';
+import { removeHeroStateItem, setHeroStateItem } from '../heroStateUtils';
 import { flattenPrerequisites } from '../prerequisites/flattenPrerequisites';
 import { getGeneratedPrerequisites } from '../prerequisites/prerequisitesUtils';
 import { ActivatableReducer, OptionalActivatableReducer } from '../reducerUtils';
@@ -77,8 +77,8 @@ const getChangedInstance = (
     Record.modify<Data.ActivatableDependent, 'active'> (changeActive) ('active'),
     current =>
       isActivatableDependentUnused (current)
-      ? removeHeroListStateItem (instance.get ('id'))
-      : setHeroListStateItem (instance.get ('id')) (current)
+      ? removeHeroStateItem (instance.get ('id'))
+      : setHeroStateItem (instance.get ('id')) (current)
   );
 
   return Maybe.fromMaybe (state) (changeInstance (instance) (state));
@@ -175,7 +175,7 @@ export function setTier (index: number, tier: number): ActivatableReducer {
       prev => prev.insert ('tier') (tier)
     );
 
-    const firstState = setHeroListStateItem (
+    const firstState = setHeroStateItem (
       instance.get ('id'),
       instance.insert ('active') (active),
       state

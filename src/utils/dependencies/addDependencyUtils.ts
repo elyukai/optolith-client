@@ -6,8 +6,6 @@ import { getCategoryById } from '../IDUtils';
 
 type IncreasableCreator = (id: string) => Data.ExtendedSkillDependent;
 
-type RecordInterface<T> = T extends Record<infer I> ? I : never;
-type ListElement<T> = T extends List<infer I> ? I : never;
 type Dependency<T extends Data.Dependent> =
   ListElement<RecordInterface<T>['dependencies']>
 

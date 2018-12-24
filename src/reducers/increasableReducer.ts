@@ -10,7 +10,7 @@ import { isActivatableDependentSkillUnused, isAttributeDependentUnused, isDepend
 import { createActivatableDependentSkill, createAttributeDependent, createDependentSkillWithValue0, createDependentSkillWithValue6 } from '../utils/createEntryUtils';
 import { Just, Record } from '../utils/dataUtils';
 import { addDependenciesReducer, removeDependenciesReducer } from '../utils/dependencies/dependencyUtils';
-import { modifyHeroListStateItemOrRemove, modifyMaybeStateEntry, updateHeroListStateItemOr, updateStateEntry } from '../utils/heroStateUtils';
+import { modifyEntryDef, modifyHeroListStateItemOrRemove, updateHeroListStateItemOr, updateStateEntry } from '../utils/heroStateUtils';
 import { addPoint, removePoint } from '../utils/IncreasableUtils';
 
 type Action =
@@ -120,7 +120,7 @@ export function increasableReducer (
       const { id } = action.payload;
 
       return state.modify<'attributes'>
-        (modifyMaybeStateEntry (createAttributeDependent) (addPoint) (id))
+        (modifyEntryDef (createAttributeDependent) (addPoint) (id))
         ('attributes');
     }
 
@@ -128,7 +128,7 @@ export function increasableReducer (
       const { id } = action.payload;
 
       return state.modify<'skills'>
-        (modifyMaybeStateEntry (createDependentSkillWithValue0) (addPoint) (id))
+        (modifyEntryDef (createDependentSkillWithValue0) (addPoint) (id))
         ('skills');
     }
 
@@ -136,7 +136,7 @@ export function increasableReducer (
       const { id } = action.payload;
 
       return state.modify<'combatTechniques'>
-        (modifyMaybeStateEntry (createDependentSkillWithValue6) (addPoint) (id))
+        (modifyEntryDef (createDependentSkillWithValue6) (addPoint) (id))
         ('combatTechniques');
     }
 
@@ -144,7 +144,7 @@ export function increasableReducer (
       const { id } = action.payload;
 
       return state.modify<'spells'>
-        (modifyMaybeStateEntry (createActivatableDependentSkill) (addPoint) (id))
+        (modifyEntryDef (createActivatableDependentSkill) (addPoint) (id))
         ('spells');
     }
 
@@ -152,7 +152,7 @@ export function increasableReducer (
       const { id } = action.payload;
 
       return state.modify<'liturgicalChants'>
-        (modifyMaybeStateEntry (createActivatableDependentSkill) (addPoint) (id))
+        (modifyEntryDef (createActivatableDependentSkill) (addPoint) (id))
         ('liturgicalChants');
     }
 

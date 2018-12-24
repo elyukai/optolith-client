@@ -14,7 +14,7 @@ import * as Data from '../../types/data';
 import * as Wiki from '../../types/wiki';
 import { Just, List, Maybe, Nothing, OrderedMap, OrderedSet, Record } from '../dataUtils';
 import { countActiveGroupEntries } from '../entryGroupUtils';
-import { getAllEntriesByGroup, getHeroStateListItem } from '../heroStateUtils';
+import { getAllEntriesByGroup, getHeroStateItem } from '../heroStateUtils';
 import { isOwnTradition } from '../liturgicalChantUtils';
 import { match } from '../match';
 import { flattenPrerequisites } from '../prerequisites/flattenPrerequisites';
@@ -471,7 +471,7 @@ export const getIsRemovalOrChangeDisabled = (
 ): Maybe<Record<Data.ActivatableActivationValidationObject>> => {
   return getWikiEntry<Wiki.WikiActivatable> (wiki) (obj.get ('id'))
     .bind (
-      wikiEntry => getHeroStateListItem<Record<Data.ActivatableDependent>> (
+      wikiEntry => getHeroStateItem<Record<Data.ActivatableDependent>> (
         obj.get ('id')
       ) (state)
         .fmap (instance => {
