@@ -12,24 +12,22 @@ import { not } from './not';
 import { cnst } from './structures/Function';
 import { Lens, over, view } from './structures/Lens';
 import { elem_, filter, fromArray, List } from './structures/List';
-import { bind_, ensure, fmap, fromMaybe, Just, Maybe, maybe, Nothing, or } from './structures/Maybe';
-import { adjust, alter, elems, insert, lookup, lookup_, OrderedMap, sdelete, update } from './structures/OrderedMap';
+import { bind_, ensure, fmap, fromMaybe, Just, liftM2, Maybe, Nothing, or } from './structures/Maybe';
+import { alter, elems, insert, lookup, lookup_, OrderedMap, sdelete, update } from './structures/OrderedMap';
 import { SkillG } from './wikiData/SkillCreator';
 
-export type HeroStateMapKey =
-  'advantages' |
-  'attributes' |
-  'combatTechniques' |
-  'disadvantages' |
-  'liturgicalChants' |
-  'skills' |
-  'specialAbilities' |
-  'spells'
+export type HeroStateMapKey = 'advantages'
+                            | 'attributes'
+                            | 'combatTechniques'
+                            | 'disadvantages'
+                            | 'liturgicalChants'
+                            | 'skills'
+                            | 'specialAbilities'
+                            | 'spells'
 
-export type HeroStateListKey =
-  HeroStateMapKey |
-  'blessings' |
-  'cantrips'
+export type HeroStateListKey = HeroStateMapKey
+                             | 'blessings'
+                             | 'cantrips'
 
 export type HeroStateListGetter<K extends HeroStateListKey = HeroStateListKey> =
   (hero: Hero) => HeroDependent[K]
@@ -224,145 +222,93 @@ export const removeHeroStateItem =
 
 /**
  * ```haskell
- * updateEntryDef :: Dependent a => (a -> Maybe a) -> String -> OrderedMap String a
+ * updateEntryDef :: Dependent a => (a -> Maybe a) -> String -> Hero -> Hero
  * ```
  *
- * `updateEntryDef f id map` adjusts a entry from a state slice (`map`). If the
- * entry is not present, a plain entry of the needed type will be created with
- * the given `id`, e.g. `SkillDependent` when `id` is like `SKILL_X`. `f` will
- * then be called either on the already present or created object. If `f`
- * returns a `Nothing`, the entry will be removed from the state slice.
+ * `updateEntryDef f id hero` adjusts a entry, specified by `id`, from a state
+ * slice. If the entry is not present, a plain entry of the needed type will be
+ * created with the given `id`, e.g. `SkillDependent` when `id` is like
+ * `SKILL_X`. `f` will then be called either on the already present or created
+ * object. If `f` returns a `Nothing`, the entry will be removed from the state
+ * slice.
  */
 export const updateEntryDef =
   <D extends Dependent>
   (f: (value: D) => Maybe<D>) =>
   (id: string) =>
   (state: Hero) =>
-    maybe<(id: string) => Dependent, Hero>
-      (state)
-      (creator => updateHeroListStateItemOr (creator)
-                                            (f as (value: Dependent) => Maybe<Dependent>)
-                                            (id)
-                                            (state))
-      (getEntryCreatorById (id))
-
-/**
- * ```haskell
- * adjustEntryDef :: Dependent a => (a -> a) -> (a -> Bool) -> String -> OrderedMap String a
- * ```
- *
- * `adjustEntryDef adjustFn checkUnusedFn id map` adjusts a entry from a state
- * slice (`map`). If the entry is not present, a plain entry of the needed type
- * will be created with the given `id`. `adjustFn` will then be called either on
- * the already present or created object. If `checkUnusedFn` returns the
- * adjusted entry is unused, this function will remove the entry from the state
- * slice.
- */
-export const adjustEntryDef =
-  <D extends Dependent>
-  (adjustFn: (value: D) => D) =>
-  (checkUnusedFn: (value: D) => boolean) =>
-  (id: string) =>
-    updateEntryDef (pipe (
-                           adjustFn,
-                           ensure<D> (pipe (checkUnusedFn, not))
-                         ))
-                   (id)
-
-/**
- * ```haskell
- * modifyEntryDef :: Dependent a => (a -> a) -> String -> OrderedMap String a
- * ```
- *
- * `modifyEntryDef f id map` adjusts a entry from a
- * state slice (`map`). If the entry is not present, `altFn` will be called with
- * the given `id`. `f` will then be called either on the already present
- * or created object.
- */
-export const modifyEntryDef =
-  <D extends Dependent>
-  (f: (value: D) => D) =>
-    adjustEntryDef (f) (cnst (false))
-
-/**
- * `updateStateEntry :: Dependent a => (a -> Maybe a) ->
-(a -> Bool) -> String -> OrderedMap String a`
- *
- * `updateStateEntry adjustFn checkUnusedFn id map` adjusts a entry from a
- * state slice (`map`). If the entry is not present, this function will return
- * the original map. `adjustFn` will then be called on the already present
- * object. If `checkUnusedFn` returns the adjusted entry is unused, this
- * function will remove the entry from the state slice.
- */
-export const updateStateEntry =
-  <D extends Dependent>
-  (f: (value: D) => D) =>
-  (checkUnused: (value: D) => boolean) =>
-    update<string, D> (pipe (
-                        f,
-                        ensure<D> (pipe (checkUnused, not))
-                      ))
-
-export const updateHeroListStateItemOr =
-  <D extends Dependent>
-  (creator: (id: string) => D) =>
-  (f: (value: D) => Maybe<D>) =>
-  (id: string) =>
-  (state: Hero) =>
     fromMaybe<Hero>
       (state)
-      (fmap ((lens: HeroStateMapLens) =>
-              over (lens)
-                   (alter<string, D> (pipe (fromMaybe (creator (id)), f))
-                                     (id) as unknown as
-                     (m: HeroDependent[HeroStateMapKey]) => HeroDependent[HeroStateMapKey])
-                   (state))
-            (getHeroStateMapLensById (id)))
+      (liftM2 ((creator: (id: string) => D) => (lens: HeroStateMapLens) =>
+                over (lens)
+                  (alter<string, D> (pipe (fromMaybe (creator (id)), f))
+                                    (id) as unknown as
+                    (m: HeroDependent[HeroStateMapKey]) => HeroDependent[HeroStateMapKey])
+                  (state))
+              (getEntryCreatorById (id) as Maybe<(id: string) => D>)
+              (getHeroStateMapLensById (id)))
 
-export const modifyHeroListStateItem =
+/**
+ * ```haskell
+ * adjustEntryDef :: Dependent a
+ *                => (a -> a) -> (a -> Bool) -> String -> Hero -> Hero
+ * ```
+ *
+ * `adjustEntryDef f unused id hero` adjusts a entry, specified by `id`, from a
+ * state slice. If the entry is not present, a plain entry of the needed type
+ * will be created with the given `id`. `f` will then be called either on the
+ * already present or created object. If `unused` returns the adjusted entry is
+ * unused, this function will remove the entry from the state slice.
+ */
+export const adjustRemoveEntryDef =
   <D extends Dependent>
-  (adjustFn: (value: D) => D) =>
-  (id: string) =>
-  (state: Hero) =>
-    fromMaybe (state)
-              (fmap ((lens: HeroStateMapLens) =>
-                      over (lens)
-                           (adjust<string, D> (adjustFn) (id) as unknown as
-                             (m: HeroDependent[HeroStateMapKey]) => HeroDependent[HeroStateMapKey])
-                           (state))
-                    (getHeroStateMapLensById (id)))
-
-export const modifyHeroListStateItemOrRemove =
-  <D extends Dependent>
-  (unusedCheck: (value: D) => boolean) =>
   (f: (value: D) => D) =>
-  (id: string) =>
-  (state: Hero) =>
-    fromMaybe (state)
-              (fmap ((lens: HeroStateMapLens) =>
-                      over (lens)
-                           (update<string, D> (value => {
-                                                const updatedValue = f (value)
+  (unused: (value: D) => boolean) =>
+    updateEntryDef (pipe (f, ensure<D> (pipe (unused, not))))
 
-                                                if (unusedCheck (updatedValue)) {
-                                                  return Nothing
-                                                }
-                                                else {
-                                                  return Just (updatedValue)
-                                                }
-                                              })
-                                              (id) as unknown as
-                             (m: HeroDependent[HeroStateMapKey]) => HeroDependent[HeroStateMapKey])
-                           (state))
-                    (getHeroStateMapLensById (id)))
+/**
+ * ```haskell
+ * modifyEntryDef :: Dependent a => (a -> a) -> String -> Hero -> Hero
+ * ```
+ *
+ * `modifyEntryDef f id hero` adjusts a entry, specified by `id`, from a state
+ * slice. If the entry is not present, a plain entry of the needed type will be
+ * created with the given `id`. `f` will then be called either on the already
+ * present or created object.
+ */
+export const adjustEntryDef =
+  <D extends Dependent> (f: (value: D) => D) =>
+    adjustRemoveEntryDef (f) (cnst (false))
 
+/**
+ * ```haskell
+ * updateStateEntry :: (Dependent a, (OrderedMap String) m)
+ *                  => (a -> Maybe a) -> (a -> Bool) -> String -> m a -> m a
+ * ```
+ *
+ * `updateStateEntry f unused id map` adjusts a entry, specified by `id`, from a
+ * state slice (`map`). If the entry is not present, this function will return
+ * the original map. `f` will then be called on the already present object. If
+ * `unused` returns the adjusted entry is unused, this function will remove the
+ * entry from the state slice.
+ */
+export const updateSliceEntry =
+  <D extends Dependent>
+  (f: (value: D) => D) =>
+  (unused: (value: D) => boolean) =>
+    update<string, D> (pipe (
+                        f,
+                        ensure<D> (pipe (unused, not))
+                      ))
+
+/**
+ * Filters the passed `list` by the specified groups.
+ */
 export const getAllEntriesByGroup =
   <I extends Dependent = Dependent, T extends EntryWithGroup = EntryWithGroup>
-  (
-    wiki: OrderedMap<string, T>,
-    list: OrderedMap<string, I>,
-    ...groups: number[]
-  ): List<I> =>
+  (wiki: OrderedMap<string, T>) =>
+  (list: OrderedMap<string, I>) =>
+  (...groups: number[]): List<I> =>
     filter<I> (pipe (
                 AttributeDependentG.id,
                 lookup_ (wiki),

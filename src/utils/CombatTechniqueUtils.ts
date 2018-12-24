@@ -1,122 +1,102 @@
-import * as R from 'ramda';
-import * as Data from '../types/data';
+import { pipe } from 'ramda';
+import { AttributeDependent, Hero, SkillDependent } from '../types/data';
 import { CombatTechnique, WikiAll } from '../types/wiki';
 import { getActiveSelections } from './activatable/selectionUtils';
-import { List, Maybe, Record } from './dataUtils';
+import { SkillDependentG } from './activeEntries/skillDependent';
 import { flattenDependencies } from './dependencies/flattenDependencies';
+import { HeroG } from './heroData/HeroCreator';
+import { add, divideBy, max } from './mathUtils';
+import { cons, elem, foldl, fromElements, maximum } from './structures/List';
+import { fmap, guard, Just, Maybe, maybe, sum, then } from './structures/Maybe';
+import { lookup_ } from './structures/OrderedMap';
+import { Record } from './structures/Record';
+import { CombatTechniqueG } from './wikiData/CombatTechniqueCreator';
+import { ExperienceLevelG } from './wikiData/ExperienceLevelCreator';
+import { WikiG } from './wikiData/WikiCreator';
 
-const getMaxPrimaryAttributeValueById = (
-  (state: Record<Data.HeroDependent>) =>
-  (primaryAttributeIds: List<string>) =>
-    primaryAttributeIds.foldl<number> (
-      max => id => {
-        const attribute = state.get ('attributes').lookup (id);
+const { value, dependencies } = SkillDependentG
+const { gr, primary, id } = CombatTechniqueG
+const { attributes, experienceLevel, advantages, phase } = HeroG
+const { experienceLevels } = WikiG
+const { maxCombatTechniqueRating } = ExperienceLevelG
 
-        return Maybe.isJust (attribute)
-          ? Math.max (max, Maybe.fromJust (attribute).get ('value'))
-          : max;
-      }
-    ) (0)
-);
+const getMaxPrimaryAttributeValueById =
+  (state: Hero) =>
+    foldl<string, number> (currentMax => pipe (
+                            lookup_ (attributes (state)),
+                            maybe<Record<AttributeDependent>, number>
+                              (currentMax)
+                              (pipe (value, max (currentMax)))
+                          ))
+                          (0)
 
-const calculatePrimaryAttributeMod = R.pipe (
-  R.add (-8),
-  R.flip (R.divide) (3),
-  Math.floor,
-  R.max<number> (0),
-);
+const calculatePrimaryAttributeMod = pipe (add (-8), divideBy (3), Math.floor, max (0))
 
-export const getPrimaryAttributeMod = (state: Data.Hero) => R.pipe (
-  getMaxPrimaryAttributeValueById (state),
-  calculatePrimaryAttributeMod,
-);
+export const getPrimaryAttributeMod =
+  (state: Hero) => pipe (getMaxPrimaryAttributeValueById (state), calculatePrimaryAttributeMod)
 
-const getCombatTechniqueRating = (maybeStateEntry: Maybe<Record<Data.SkillDependent>>) =>
-  Maybe.fromMaybe (6) (maybeStateEntry.fmap (stateEntry => stateEntry.get ('value')));
+const getCombatTechniqueRating = maybe<Record<SkillDependent>, number> (6) (value)
 
-export const getAttack = (state: Record<Data.HeroDependent>) =>
+export const getAttack =
+  (state: Hero) =>
   (wikiEntry: Record<CombatTechnique>) =>
-    (maybeStateEntry: Maybe<Record<Data.SkillDependent>>): number => {
-      const array = wikiEntry.get ('gr') === 2
-        ? wikiEntry.get ('primary')
-        : List.of ('ATTR_1');
+    pipe (
+      getCombatTechniqueRating,
+      add (getPrimaryAttributeMod (state)
+                                  (gr (wikiEntry) === 2
+                                    ? primary (wikiEntry)
+                                    : fromElements ('ATTR_1')))
+    )
 
-      const mod = getPrimaryAttributeMod (state) (array);
-
-      return getCombatTechniqueRating (maybeStateEntry) + mod;
-    };
-
-export const getParry = (state: Record<Data.HeroDependent>) =>
+export const getParry =
+  (state: Hero) =>
   (wikiEntry: Record<CombatTechnique>) =>
-    (maybeStateEntry: Maybe<Record<Data.SkillDependent>>): Maybe<number> => {
-      if (
-        wikiEntry.get ('gr') === 2
-        || wikiEntry.get ('id') === 'CT_6'
-        || wikiEntry.get ('id') === 'CT_8'
-      ) {
-        return Maybe.empty ();
-      }
+  (maybeStateEntry: Maybe<Record<SkillDependent>>): Maybe<number> =>
+    then<number>
+      (guard (gr (wikiEntry) !== 2 && id (wikiEntry) !== 'CT_6' && id (wikiEntry) !== 'CT_8'))
+      (Just (
+        Math.round (getCombatTechniqueRating (maybeStateEntry) / 2)
+        + getPrimaryAttributeMod (state) (primary (wikiEntry))
+      ))
 
-      const mod = getPrimaryAttributeMod (state) (wikiEntry.get ('primary'));
+export const isIncreaseDisabled =
+  (wiki: Record<WikiAll>) =>
+  (state: Hero) =>
+  (wikiEntry: Record<CombatTechnique>) =>
+  (instance: Record<SkillDependent>): boolean => {
+    const currentMax =
+      phase (state) < 3
+        ? sum (fmap (maxCombatTechniqueRating)
+                    (lookup_ (experienceLevels (wiki)) (experienceLevel (state))))
+        : getMaxPrimaryAttributeValueById (state) (primary (wikiEntry)) + 2
 
-      return Maybe.pure (Math.round (getCombatTechniqueRating (maybeStateEntry) / 2) + mod);
-    };
+    const exceptionalSkill = lookup_ (advantages (state)) ('ADV_17')
 
-export const isIncreaseDisabled = (
-  wiki: Record<WikiAll>,
-  state: Record<Data.HeroDependent>,
-  wikiEntry: Record<CombatTechnique>,
-  instance: Record<Data.SkillDependent>,
-): boolean => {
-  const max = state.get ('phase') < 3
-    ? Maybe.fromMaybe (0) (
-        wiki.get ('experienceLevels').lookup (state.get ('experienceLevel'))
-          .fmap (startEl => startEl.get ('maxCombatTechniqueRating'))
-      )
-    : getMaxPrimaryAttributeValueById (state) (wikiEntry.get ('primary')) + 2;
+    const bonus = pipe (
+                         getActiveSelections,
+                         fmap (elem<string | number> (id (instance))),
+                         Maybe.elem (true),
+                         x => x ? 1 : 0
+                       )
+                       (exceptionalSkill)
 
-  const exceptionalSkill = state.get ('advantages').lookup ('ADV_17');
-  const bonus = getActiveSelections (exceptionalSkill)
-    .fmap (selections => selections.elem (instance.get ('id')))
-    .equals (Maybe.pure (true))
-      ? 1
-      : 0;
+    return value (instance) >= currentMax + bonus
+  }
 
-  return instance.get ('value') >= max + bonus;
-};
+export const isDecreaseDisabled =
+  (wiki: Record<WikiAll>) =>
+  (state: Hero) =>
+  (wikiEntry: Record<CombatTechnique>) =>
+  (instance: Record<SkillDependent>) =>
+  (onlyOneCombatTechniqueForHunter: boolean): boolean => {
+    const disabledByHunter =
+      onlyOneCombatTechniqueForHunter
+      && gr (wikiEntry) === 2
+      && value (instance) === 10
 
-export const isDecreaseDisabled = (
-  wiki: Record<WikiAll>,
-  state: Record<Data.HeroDependent>,
-  wikiEntry: Record<CombatTechnique>,
-  instance: Record<Data.SkillDependent>,
-  onlyOneCombatTechniqueForHunter: boolean
-): boolean => {
-  // const hunterActive = isActive(state.get('specialAbilities').lookup('SA_18'));
-
-  // const onlyOneCombatTechniqueForHunter = hunterActive && R.equals(
-  //   R.length(
-  //     R.filter(
-  //       e => e.value >= 10,
-  //       getAllEntriesByGroup(
-  //         wiki.combatTechniques,
-  //         state.combatTechniques,
-  //         2,
-  //       )
-  //     )
-  //   ),
-  //   1,
-  // );
-
-  const disabledByHunter = onlyOneCombatTechniqueForHunter
-    && wikiEntry.get ('gr') === 2
-    && instance.get ('value') === 10;
-
-  const dependencies = flattenDependencies (
-    wiki,
-    state,
-    instance.get ('dependencies'),
-  );
-
-  return disabledByHunter || instance.get ('value') <= Math.max (6, ...dependencies);
-};
+    return disabledByHunter
+      || value (instance) <= maximum (cons (flattenDependencies<number> (wiki)
+                                                                        (state)
+                                                                        (dependencies (instance)))
+                                           (6))
+  }

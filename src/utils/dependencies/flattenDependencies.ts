@@ -1,10 +1,21 @@
-import * as Data from '../../types/data';
-import * as Wiki from '../../types/wiki';
+import { pipe } from 'ramda';
+import { Hero, SkillOptionalDependency, ValueBasedDependent } from '../../types/data';
+import { AbilityRequirement, Activatable, WikiAll } from '../../types/wiki';
+import { SkillOptionalDependencyG } from '../heroData/SkillOptionalDependencyCreator';
 import { getHeroStateItem } from '../heroStateUtils';
+import { gt, gte, inc } from '../mathUtils';
 import { flattenPrerequisites } from '../prerequisites/flattenPrerequisites';
-import { isObject } from '../typeCheckUtils';
+import { thrush } from '../structures/Function';
+import { elem, find, foldl, isList, List, map } from '../structures/List';
+import { bind_, fmap, Maybe, Nothing, or, sum } from '../structures/Maybe';
+import { isRecord, Record } from '../structures/Record';
+import { AdvantageG } from '../wikiData/AdvantageCreator';
+import { RequireActivatableG } from '../wikiData/prerequisites/ActivatableRequirementCreator';
 import { getWikiEntry } from '../WikiUtils';
-import { List, Maybe, Nothing, Record } from './dataUtils';
+
+const { prerequisites } = AdvantageG
+const { origin, value } = SkillOptionalDependencyG
+const { id } = RequireActivatableG
 
 /**
  * `flattenDependencies` flattens the list of dependencies to usable values.
@@ -16,36 +27,38 @@ import { List, Maybe, Nothing, Record } from './dataUtils';
  * @param state The current hero.
  * @param dependencies The list of dependencies to flatten.
  */
-export const flattenDependencies = <T extends number | boolean>(
-  wiki: Record<Wiki.WikiAll>,
-  state: Record<Data.HeroDependent>,
-  dependencies: List<T | Record<Data.SkillOptionalDependency>>
-): List<T> => {
-  return dependencies.map (e => {
-    if (isObject (e)) {
-      return Maybe.fromMaybe (0) (getWikiEntry<Wiki.Activatable> (wiki) (e.get ('origin'))
-        .bind (
-          target => flattenPrerequisites (target.get ('prerequisites')) (Nothing ()) (Nothing ())
-            .find (
-              (r): r is Wiki.AbilityRequirement =>
-                r !== 'RCP'
-                && isObject (r.get ('id'))
-                && (r.get ('id') as List<string>).elem (e.get ('origin'))
-            )
-        )
-        .fmap (
-          originPrerequisite => (originPrerequisite.get ('id') as List<string>)
-            .foldl<number> (
-              acc => id =>
-                Maybe.fromMaybe (false) (
-                  getHeroStateItem<Data.ValueBasedDependent> (id) (state)
-                    .fmap (entry => entry.get ('value') >= e.get ('value'))
-                ) ? acc + 1 : acc
-            ) (0) > 1 ? 0 : e.get ('value')
-        )
-      ) as T;
-    }
-
-    return e;
-  });
-};
+export const flattenDependencies =
+  <T extends number | boolean> (wiki: Record<WikiAll>) => (state: Hero) =>
+    map<T | Record<SkillOptionalDependency>, T>
+      (e => isRecord (e)
+        ? pipe (
+                 getWikiEntry (wiki) as (id: string) => Maybe<Activatable>,
+                 bind_ (pipe (
+                   prerequisites,
+                   flattenPrerequisites,
+                   thrush (Nothing),
+                   thrush (Nothing),
+                   find ((r): r is AbilityRequirement =>
+                     r !== 'RCP'
+                     && isList (id (r))
+                     && elem (origin (e)) (id (r) as List<string>))
+                 )),
+                 fmap (pipe (
+                   id as (r: AbilityRequirement) => List<string>,
+                   foldl<string, number>
+                     (acc => pipe (
+                       getHeroStateItem as (id: string) =>
+                         (state: Hero) => Maybe<ValueBasedDependent>,
+                       thrush (state),
+                       fmap (pipe (value, gte (value (e)))),
+                       or,
+                       x => x ? inc (acc) : acc
+                     ))
+                     (0),
+                   gt (1),
+                   x => x ? 0 : value (e)
+                 )),
+                 sum
+               )
+               (origin (e)) as T
+        : e)

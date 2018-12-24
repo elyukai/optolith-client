@@ -754,6 +754,10 @@ export const maybeToUndefined =
  */
 export const maybe_ = <A extends Some, B extends Some> (def: () => B) => maybe<A, B> (def ())
 
+export const INTERNAL_shallowEquals =
+  <A extends Some> (m1: Maybe<A>) => (m2: Maybe<A>) =>
+    isNothing (m1) && isNothing (m2) || isJust (m1) && isJust (m2) && m1.value === m2.value
+
 
 // NAMESPACED FUNCTIONS
 

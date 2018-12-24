@@ -10,7 +10,7 @@ import { isActivatableDependentSkillUnused, isAttributeDependentUnused, isDepend
 import { createActivatableDependentSkill, createAttributeDependent, createDependentSkillWithValue0, createDependentSkillWithValue6 } from '../utils/createEntryUtils';
 import { Just, Record } from '../utils/dataUtils';
 import { addDependenciesReducer, removeDependenciesReducer } from '../utils/dependencies/dependencyUtils';
-import { modifyEntryDef, modifyHeroListStateItemOrRemove, updateHeroListStateItemOr, updateStateEntry } from '../utils/heroStateUtils';
+import { adjustEntryDef, modifyHeroListStateItemOrRemove, updateHeroListStateItemOr, updateSliceEntry } from '../utils/heroStateUtils';
 import { addPoint, removePoint } from '../utils/IncreasableUtils';
 
 type Action =
@@ -120,7 +120,7 @@ export function increasableReducer (
       const { id } = action.payload;
 
       return state.modify<'attributes'>
-        (modifyEntryDef (createAttributeDependent) (addPoint) (id))
+        (adjustEntryDef (createAttributeDependent) (addPoint) (id))
         ('attributes');
     }
 
@@ -128,7 +128,7 @@ export function increasableReducer (
       const { id } = action.payload;
 
       return state.modify<'skills'>
-        (modifyEntryDef (createDependentSkillWithValue0) (addPoint) (id))
+        (adjustEntryDef (createDependentSkillWithValue0) (addPoint) (id))
         ('skills');
     }
 
@@ -136,7 +136,7 @@ export function increasableReducer (
       const { id } = action.payload;
 
       return state.modify<'combatTechniques'>
-        (modifyEntryDef (createDependentSkillWithValue6) (addPoint) (id))
+        (adjustEntryDef (createDependentSkillWithValue6) (addPoint) (id))
         ('combatTechniques');
     }
 
@@ -144,7 +144,7 @@ export function increasableReducer (
       const { id } = action.payload;
 
       return state.modify<'spells'>
-        (modifyEntryDef (createActivatableDependentSkill) (addPoint) (id))
+        (adjustEntryDef (createActivatableDependentSkill) (addPoint) (id))
         ('spells');
     }
 
@@ -152,7 +152,7 @@ export function increasableReducer (
       const { id } = action.payload;
 
       return state.modify<'liturgicalChants'>
-        (modifyEntryDef (createActivatableDependentSkill) (addPoint) (id))
+        (adjustEntryDef (createActivatableDependentSkill) (addPoint) (id))
         ('liturgicalChants');
     }
 
@@ -160,7 +160,7 @@ export function increasableReducer (
       const { id } = action.payload;
 
       return state.modify<'attributes'>
-        (updateStateEntry<Record<Data.AttributeDependent>> (removePoint)
+        (updateSliceEntry<Record<Data.AttributeDependent>> (removePoint)
                                                            (isAttributeDependentUnused)
                                                            (id))
         ('attributes');
@@ -170,7 +170,7 @@ export function increasableReducer (
       const { id } = action.payload;
 
       return state.modify<'skills'>
-        (updateStateEntry<Record<Data.SkillDependent>> (removePoint) (isDependentSkillUnused) (id))
+        (updateSliceEntry<Record<Data.SkillDependent>> (removePoint) (isDependentSkillUnused) (id))
         ('skills');
     }
 
@@ -178,7 +178,7 @@ export function increasableReducer (
       const { id } = action.payload;
 
       return state.modify<'combatTechniques'>
-        (updateStateEntry<Record<Data.SkillDependent>> (removePoint) (isDependentSkillUnused) (id))
+        (updateSliceEntry<Record<Data.SkillDependent>> (removePoint) (isDependentSkillUnused) (id))
         ('combatTechniques');
     }
 
@@ -186,7 +186,7 @@ export function increasableReducer (
       const { id } = action.payload;
 
       return state.modify<'spells'>
-        (updateStateEntry<Record<Data.ActivatableSkillDependent>>
+        (updateSliceEntry<Record<Data.ActivatableSkillDependent>>
           (removePoint)
           (isActivatableDependentSkillUnused)
           (id))
@@ -197,7 +197,7 @@ export function increasableReducer (
       const { id } = action.payload;
 
       return state.modify<'liturgicalChants'>
-        (updateStateEntry<Record<Data.ActivatableSkillDependent>>
+        (updateSliceEntry<Record<Data.ActivatableSkillDependent>>
           (removePoint)
           (isActivatableDependentSkillUnused)
           (id))
