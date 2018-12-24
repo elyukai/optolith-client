@@ -9,7 +9,7 @@ import { getAPObject } from '../adventurePoints/adventurePointsSumUtils';
 import { BelongingsG } from '../heroData/BelongingsCreator';
 import { EnergiesG } from '../heroData/EnergiesCreator';
 import { HeroG } from '../heroData/HeroCreator';
-import { HitZoneArmorCreatorG } from '../heroData/HitZoneArmorCreator';
+import { HitZoneArmorG } from '../heroData/HitZoneArmorCreator';
 import { PersonalDataG } from '../heroData/PersonalDataCreator';
 import { PrimaryAttributeDamageThresholdG } from '../heroData/PrimaryAttributeDamageThresholdCreator';
 import { RulesG } from '../heroData/RulesCreator';
@@ -221,20 +221,20 @@ const getBelongingsForSave = (hero: Record<Data.HeroDependent>) =>
     armorZones:
       toObjectWith<Record<Data.ArmorZonesInstance>, Raw.RawArmorZone>
         (obj => ({
-          id: HitZoneArmorCreatorG.id (obj),
-          name: HitZoneArmorCreatorG.name (obj),
-          head: maybeToUndefined (HitZoneArmorCreatorG.head (obj)),
-          headLoss: maybeToUndefined (HitZoneArmorCreatorG.headLoss (obj)),
-          leftArm: maybeToUndefined (HitZoneArmorCreatorG.leftArm (obj)),
-          leftArmLoss: maybeToUndefined (HitZoneArmorCreatorG.leftArmLoss (obj)),
-          rightArm: maybeToUndefined (HitZoneArmorCreatorG.rightArm (obj)),
-          rightArmLoss: maybeToUndefined (HitZoneArmorCreatorG.rightArmLoss (obj)),
-          torso: maybeToUndefined (HitZoneArmorCreatorG.torso (obj)),
-          torsoLoss: maybeToUndefined (HitZoneArmorCreatorG.torsoLoss (obj)),
-          leftLeg: maybeToUndefined (HitZoneArmorCreatorG.leftLeg (obj)),
-          leftLegLoss: maybeToUndefined (HitZoneArmorCreatorG.leftLegLoss (obj)),
-          rightLeg: maybeToUndefined (HitZoneArmorCreatorG.rightLeg (obj)),
-          rightLegLoss: maybeToUndefined (HitZoneArmorCreatorG.rightLegLoss (obj)),
+          id: HitZoneArmorG.id (obj),
+          name: HitZoneArmorG.name (obj),
+          head: maybeToUndefined (HitZoneArmorG.head (obj)),
+          headLoss: maybeToUndefined (HitZoneArmorG.headLoss (obj)),
+          leftArm: maybeToUndefined (HitZoneArmorG.leftArm (obj)),
+          leftArmLoss: maybeToUndefined (HitZoneArmorG.leftArmLoss (obj)),
+          rightArm: maybeToUndefined (HitZoneArmorG.rightArm (obj)),
+          rightArmLoss: maybeToUndefined (HitZoneArmorG.rightArmLoss (obj)),
+          torso: maybeToUndefined (HitZoneArmorG.torso (obj)),
+          torsoLoss: maybeToUndefined (HitZoneArmorG.torsoLoss (obj)),
+          leftLeg: maybeToUndefined (HitZoneArmorG.leftLeg (obj)),
+          leftLegLoss: maybeToUndefined (HitZoneArmorG.leftLegLoss (obj)),
+          rightLeg: maybeToUndefined (HitZoneArmorG.rightLeg (obj)),
+          rightLegLoss: maybeToUndefined (HitZoneArmorG.rightLegLoss (obj)),
         }))
         (armorZones (belongings (hero))),
     purse: toObject (purse (belongings (hero))),

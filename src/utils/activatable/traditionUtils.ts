@@ -1,63 +1,53 @@
-import * as R from 'ramda';
+import { pipe } from 'ramda';
 import { ActivatableDependent } from '../../types/data';
 import { SpecialAbility } from '../../types/wiki';
+import { ActivatableDependentG } from '../activeEntries/activatableDependent';
 import { isBlessedTraditionId, isMagicalTraditionId } from '../IDUtils';
-import { List, Maybe, OrderedMap, Record } from './dataUtils';
+import { filter, List } from '../structures/List';
+import { bind_, mapMaybe } from '../structures/Maybe';
+import { elems, find, lookup_, OrderedMap } from '../structures/OrderedMap';
+import { Record } from '../structures/Record';
 import { isActive } from './isActive';
 
-const isActiveMagicalTradition = (e: Record<ActivatableDependent>) => {
-  return isMagicalTraditionId (e.get ('id')) && isActive (e);
-};
+const { id } = ActivatableDependentG
 
-const isActiveBlessedTradition = (e: Record<ActivatableDependent>) => {
-  return isBlessedTraditionId (e.get ('id')) && isActive (e);
-};
+const isActiveMagicalTradition =
+  (e: Record<ActivatableDependent>) => isMagicalTraditionId (id (e)) && isActive (e)
+
+const isActiveBlessedTradition =
+  (e: Record<ActivatableDependent>) => isBlessedTraditionId (id (e)) && isActive (e)
 
 /**
  * Get magical traditions' dependent entries.
  * @param list
  */
-export const getMagicalTraditions = (
-  list: OrderedMap<string, Record<ActivatableDependent>>
-): List<Record<ActivatableDependent>> => list.elems ().filter (isActiveMagicalTradition);
-
+export const getMagicalTraditions =
+  pipe (
+    elems as
+      (list: OrderedMap<any, Record<ActivatableDependent>>) => List<Record<ActivatableDependent>>,
+    filter (isActiveMagicalTradition)
+  )
 
 /**
  * Get magical traditions' wiki entries.
  * @param wiki
  * @param list
  */
-export const getMagicalTraditionsFromWiki = (
-  wiki: OrderedMap<string, Record<SpecialAbility>>,
-  list: OrderedMap<string, Record<ActivatableDependent>>,
-): List<Record<SpecialAbility>> => R.pipe (
-  getMagicalTraditions,
-  Maybe.mapMaybe (
-    e => e
-      .lookup ('id')
-      .bind (id => OrderedMap.lookup<string, Record<SpecialAbility>> (id) (wiki))
-  ),
-) (list);
+export const getMagicalTraditionsFromWiki =
+  (wiki: OrderedMap<string, Record<SpecialAbility>>) =>
+    pipe (getMagicalTraditions, mapMaybe (pipe (id, lookup_ (wiki))))
 
 /**
- * Get blessed tradition's' dependent entry.
+ * Get blessed traditions' dependent entry.
  * @param list
  */
-export const getBlessedTradition = (
-  list: OrderedMap<string, Record<ActivatableDependent>>
-): Maybe<Record<ActivatableDependent>> => list.elems ().find (isActiveBlessedTradition);
+export const getBlessedTradition = find (isActiveBlessedTradition)
 
 /**
  * Get blessed tradition's' wiki entry.
  * @param wiki
  * @param list
  */
-export const getBlessedTraditionFromWiki = (
-  wiki: OrderedMap<string, Record<SpecialAbility>>,
-  list: OrderedMap<string, Record<ActivatableDependent>>,
-) => getBlessedTradition (list)
-  .bind (
-    e => e
-      .lookup ('id')
-      .bind (id => OrderedMap.lookup<string, Record<SpecialAbility>> (id) (wiki))
-  );
+export const getBlessedTraditionFromWiki =
+  (wiki: OrderedMap<string, Record<SpecialAbility>>) =>
+    pipe (getBlessedTradition, bind_ (pipe (id, lookup_ (wiki))))

@@ -20,4 +20,4 @@ export const HitZoneArmorCreator =
     rightLegLoss: Nothing,
   })
 
-export const HitZoneArmorCreatorG = makeGetters (HitZoneArmorCreator)
+export const HitZoneArmorG = makeGetters (HitZoneArmorCreator)

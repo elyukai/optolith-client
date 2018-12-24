@@ -4,7 +4,7 @@ import { AllRequirementObjects, ProfessionPrerequisite, ProfessionRequiresIncrea
 import { getCategoryById } from '../../IDUtils';
 import { all, elem_, isList } from '../../structures/List';
 import { fmap, or } from '../../structures/Maybe';
-import { fromDefault, makeGetters, member, Record } from '../../structures/Record';
+import { fromDefault, makeGetters, makeLenses_, member, Record } from '../../structures/Record';
 import { RequiredFunction } from '../sub/typeHelpers';
 
 const RequireIncreasableCreator =
@@ -14,6 +14,7 @@ const RequireIncreasableCreator =
   })
 
 export const RequireIncreasableG = makeGetters (RequireIncreasableCreator)
+export const RequireIncreasableL = makeLenses_ (RequireIncreasableG) (RequireIncreasableCreator)
 
 export const createRequireIncreasable: RequiredFunction<RequiresIncreasableObject> =
   RequireIncreasableCreator

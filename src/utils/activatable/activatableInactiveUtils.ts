@@ -18,7 +18,7 @@ import { getAllEntriesByGroup } from '../heroStateUtils';
 import { getBlessedTraditionInstanceIdByNumericId } from '../IDUtils';
 import { getTraditionOfAspect } from '../liturgicalChantUtils';
 import { match } from '../match';
-import { validatePrerequisites, validateTier } from '../prerequisites/validatePrerequisitesUtils';
+import { validateLevel, validatePrerequisites } from '../prerequisites/validatePrerequisitesUtils';
 import { isString } from '../typeCheckUtils';
 import { getWikiEntryFromSlice } from '../WikiUtils';
 import { isAdditionDisabled } from './activatableInactiveValidationUtils';
@@ -860,7 +860,7 @@ export const getInactiveView = (
   const id = wikiEntry .get ('id');
   const prerequisites = wikiEntry .get ('prerequisites');
   const maxTier = prerequisites instanceof OrderedMap
-    ? validateTier (
+    ? validateLevel (
       wiki,
       state,
       prerequisites,

@@ -18,7 +18,7 @@ import { getAllEntriesByGroup, getHeroStateListItem } from '../heroStateUtils';
 import { isOwnTradition } from '../liturgicalChantUtils';
 import { match } from '../match';
 import { flattenPrerequisites } from '../prerequisites/flattenPrerequisites';
-import { validateObject, validateTier } from '../prerequisites/validatePrerequisitesUtils';
+import { validateLevel, validateObject } from '../prerequisites/validatePrerequisitesUtils';
 import { isBoolean } from '../typeCheckUtils';
 import { getWikiEntry } from '../WikiUtils';
 import { countActiveSkillEntries } from './activatableSkillUtils';
@@ -450,7 +450,7 @@ export const getMaxTier = (
       () => state.lookup ('pact')
         .bind (pact => pact.lookup ('level'))
     )
-    .otherwise (() => !(prerequisites instanceof List) ? validateTier (
+    .otherwise (() => !(prerequisites instanceof List) ? validateLevel (
       wiki,
       state,
       prerequisites,

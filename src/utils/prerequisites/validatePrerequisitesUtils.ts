@@ -1,340 +1,348 @@
-import * as R from 'ramda';
+import { pipe } from 'ramda';
 import { IdPrefixes } from '../../constants/IdPrefixes';
 import * as Data from '../../types/data';
 import * as Wiki from '../../types/wiki';
 import { isActive } from '../activatable/isActive';
 import { isPactValid as isPactFromStateValid } from '../activatable/pactUtils';
 import { getActiveSelections } from '../activatable/selectionUtils';
+import { ActivatableDependentG, ActiveObjectG, isActivatableDependent, isMaybeActivatableDependent } from '../activeEntries/activatableDependent';
+import { ActivatableSkillDependentG, isMaybeActivatableSkillDependent } from '../activeEntries/activatableSkillDependent';
+import { AttributeDependentG } from '../activeEntries/attributeDependent';
+import { DependencyObjectG } from '../activeEntries/DependencyObjectCreator';
+import { isExtendedSkillDependent, SkillDependentG } from '../activeEntries/skillDependent';
+import { HeroG } from '../heroData/HeroCreator';
+import { PactG } from '../heroData/PactCreator';
 import { getHeroStateListItem } from '../heroStateUtils';
+import { prefixId } from '../IDUtils';
+import { dec, gte, lt, lte, min, subtract } from '../mathUtils';
+import { not } from '../not';
 import { getPrimaryAttributeId } from '../primaryAttributeUtils';
-import * as CheckPrerequisiteUtils from '../wikiData/prerequisites/DependentRequirement';
+import { equals } from '../structures/Eq';
+import { flip, join, on, thrush } from '../structures/Function';
+import { set } from '../structures/Lens';
+import { all, any, elem, elem_, foldl, fromElements, ifoldl, isList, List, map, sortBy, subscript } from '../structures/List';
+import { and, bind_, catMaybes, ensure, fmap, fromJust, isJust, isNothing, Just, Maybe, maybe, Nothing, or } from '../structures/Maybe';
+import { lookup_, OrderedMap, toList } from '../structures/OrderedMap';
+import { fst, Pair, snd } from '../structures/Pair';
+import { Record } from '../structures/Record';
+import { CultureG } from '../wikiData/CultureCreator';
+import { RequireActivatableG, RequireActivatableL } from '../wikiData/prerequisites/ActivatableRequirementCreator';
+import { CultureRequirementG, isCultureRequirement } from '../wikiData/prerequisites/CultureRequirementCreator';
+import { isIncreasableRequirement, RequireIncreasableG, RequireIncreasableL } from '../wikiData/prerequisites/IncreasableRequirementCreator';
+import { isPactRequirement, PactRequirementG } from '../wikiData/prerequisites/PactRequirementCreator';
+import { isPrimaryAttributeRequirement, RequirePrimaryAttributeG } from '../wikiData/prerequisites/PrimaryAttributeRequirementCreator';
+import { isRaceRequirement, RaceRequirementG } from '../wikiData/prerequisites/RaceRequirementCreator';
+import { isSexRequirement, SexRequirementG } from '../wikiData/prerequisites/SexRequirementCreator';
+import { ProfessionG } from '../wikiData/ProfessionCreator';
+import { RaceG } from '../wikiData/RaceCreator';
+import { SkillG } from '../wikiData/SkillCreator';
+import { WikiG } from '../wikiData/WikiCreator';
 import { getAllWikiEntriesByGroup } from '../WikiUtils';
-import { Just, List, Maybe, OrderedMap, Record, Tuple } from './dataUtils';
-import { isActivatableDependent, isActivatableSkillDependent, isDependentSkillExtended } from './dependencies/checkEntryUtils';
 
-interface Validator {
-  (
-    wiki: Record<Wiki.WikiAll>,
-    state: Record<Data.HeroDependent>,
-    req: Wiki.AllRequirements,
-    sourceId: string,
-  ): boolean;
-}
+type Validator = (wiki: Record<Wiki.WikiAll>) =>
+                 (state: Record<Data.HeroDependent>) =>
+                 (req: Wiki.AllRequirements) =>
+                 (sourceId: string) => boolean
 
-const getAllRaceEntries = (
-  wiki: Record<Wiki.WikiAll>, state: Record<Data.HeroDependent>
-) =>
-  state.lookup ('race')
-    .bind (id => OrderedMap.lookup<string, Record<Wiki.Race>> (id) (wiki.get ('races')))
-    .fmap (race => race.get ('stronglyRecommendedAdvantages')
-      .mappend (race.get ('automaticAdvantages'))
-      .mappend (race.get ('stronglyRecommendedAdvantages'))
-      .mappend (race.get ('stronglyRecommendedDisadvantages'))
-      .mappend (race.get ('commonAdvantages'))
-      .mappend (race.get ('commonDisadvantages'))
-    );
+const { races, cultures, professions, skills } = WikiG
+const { race, culture, profession, specialAbilities, attributes, sex, pact } = HeroG
 
-const getAllCultureEntries = (
-  wiki: Record<Wiki.WikiAll>, state: Record<Data.HeroDependent>
-) =>
-  state.lookup ('culture')
-    .bind (id => OrderedMap.lookup<string, Record<Wiki.Culture>> (id) (wiki.get ('cultures')))
-    .fmap (culture => culture.get ('commonAdvantages')
-      .mappend (culture.get ('commonDisadvantages'))
-    );
-
-const getAllProfessionEntries = (
-  wiki: Record<Wiki.WikiAll>, state: Record<Data.HeroDependent>
-) =>
-  state.lookup ('profession')
-    .bind (id => OrderedMap.lookup<string, Record<Wiki.Profession>> (id) (wiki.get ('professions')))
-    .fmap (profession => profession.get ('suggestedAdvantages')
-      .mappend (profession.get ('unsuitableAdvantages'))
-    );
-
-const isRCPValid = (
-  wiki: Record<Wiki.WikiAll>,
-  state: Record<Data.HeroDependent>,
-  sourceId: string,
-): boolean =>
-  Maybe.catMaybes (
-    List.of (
-      getAllRaceEntries (wiki, state),
-      getAllCultureEntries (wiki, state),
-      getAllProfessionEntries (wiki, state),
-    )
-  )
-    .map (List.elem (sourceId))
-    .or ();
-
-const isSexValid = (
-  sex: Just<'m' | 'f'>,
-  req: Record<Wiki.SexRequirement>
-): boolean =>
-  req.lookup ('value').equals (sex);
-
-const isRaceValid = (
-  race: Maybe<string>,
-  req: Record<Wiki.RaceRequirement>
-): boolean => {
-  const value = req.get ('value');
-
-  if (value instanceof List) {
-    return Maybe.isJust (race) &&
-      value.map (e => `${IdPrefixes.RACES}_${e}`)
-        .elem (Maybe.fromJust (race))
-  }
-  else {
-    return race.equals (Maybe.pure (`${IdPrefixes.RACES}_${value}`));
-  }
-};
-
-const isCultureValid = (
-  culture: Maybe<string>,
-  req: Record<Wiki.CultureRequirement>,
-): boolean => {
-  const value = req.get ('value');
-
-  if (value instanceof List) {
-    return Maybe.isJust (culture) &&
-      value.map (e => `${IdPrefixes.CULTURES}_${e}`)
-        .elem (Maybe.fromJust (culture))
-  }
-  else {
-    return culture.equals (Maybe.pure (`${IdPrefixes.CULTURES}_${value}`));
-  }
-};
-
-const hasSamePactCategory = (
-  state: Record<Data.Pact>,
-  req: Record<Wiki.PactRequirement>,
-) => req.lookup ('category').equals (state.lookup ('category'));
-
-const hasNeededPactType = (
-  state: Record<Data.Pact>,
-  req: Record<Wiki.PactRequirement>,
-) => {
-  switch (req.get ('category')) {
-    case 1:
-      return state.lookup ('type').equals (Maybe.pure (3));
-    default:
-      return true;
-  }
-};
-
-const hasNeededPactDomain = (
-  state: Record<Data.Pact>,
-  req: Record<Wiki.PactRequirement>,
-) => {
-  const reqDomainMaybe = req.lookup ('domain');
-  const stateDomainMaybe = state.lookup ('domain');
-
-  if (!Maybe.isJust (reqDomainMaybe)) {
-    return true;
-  }
-
-  if (state.lookup ('domain').fmap (e => typeof e !== 'number')) {
-    return false;
-  }
-
-  if (!Maybe.isJust (stateDomainMaybe)) {
-    return false;
-  }
-
-  const reqDomain = Maybe.fromJust (reqDomainMaybe);
-  const stateDomain = Maybe.fromJust (stateDomainMaybe);
-
-  if (typeof reqDomain === 'object') {
-    return Maybe.isJust (stateDomainMaybe) &&
-      reqDomain.elem (stateDomain as number);
-  }
-
-  return reqDomain === stateDomain;
-};
-
-const hasNeededPactLevel = (
-  state: Record<Data.Pact>,
-  req: Record<Wiki.PactRequirement>,
-) =>
-  Maybe.isNothing (req.lookup ('level')) ||
-  req.lookup ('level').lte (state.lookup ('level'));
-
-const isPactValid = (
-  pact: Maybe<Record<Data.Pact>>,
-  req: Record<Wiki.PactRequirement>,
-): boolean => {
-  if (Maybe.isJust (pact)) {
-    const just = Maybe.fromJust (pact);
-
-    return isPactFromStateValid (just)
-      && hasSamePactCategory (just, req)
-      && hasNeededPactType (just, req)
-      && hasNeededPactDomain (just, req)
-      && hasNeededPactLevel (just, req);
-  }
-  else {
-    return false;
-  }
-};
-
-const isPrimaryAttributeValid = (
-  state: Record<Data.HeroDependent>,
-  req: Record<Wiki.RequiresPrimaryAttribute>,
-): boolean => {
-  return Maybe.fromMaybe (false) (
-    state.lookup ('specialAbilities').bind (
-      specialAbilities => getPrimaryAttributeId (
-        specialAbilities,
-        req.get ('type')
+const getAllRaceEntries =
+  (wiki: Record<Wiki.WikiAll>) =>
+    pipe (
+      race,
+      bind_ (lookup_ (races (wiki))),
+      fmap (
+        selectedRace => fromElements (
+          ...RaceG.stronglyRecommendedAdvantages (selectedRace),
+          ...RaceG.automaticAdvantages (selectedRace),
+          ...RaceG.stronglyRecommendedAdvantages (selectedRace),
+          ...RaceG.stronglyRecommendedDisadvantages (selectedRace),
+          ...RaceG.commonAdvantages (selectedRace),
+          ...RaceG.commonDisadvantages (selectedRace)
+        )
       )
-        .fmap (id =>
-          state.lookup ('attributes')
-            .bind (e => e.lookup (id))
-            .bind (e => e.lookup ('value'))
-            .equals (req.lookup ('value'))
-        )
     )
-  );
-};
 
-const isIncreasableValid = (
-  wiki: Record<Wiki.WikiAll>,
-  state: Record<Data.HeroDependent>,
-  sourceId: string,
-  req: Record<Wiki.RequiresIncreasableObject>,
-  objectValidator: Validator,
-): boolean => {
-  const id = req.get ('id');
-
-  if (id instanceof List) {
-    return id.any (e =>
-      objectValidator (wiki, state, req.insert ('id') (e), sourceId)
-    );
-  }
-  else {
-    return Maybe.fromMaybe (false) (
-      getHeroStateListItem (id) (state)
-        .fmap (
-          instance => isDependentSkillExtended (instance) &&
-          instance.lookup ('value').gte (req.lookup ('value'))
+const getAllCultureEntries =
+  (wiki: Record<Wiki.WikiAll>) =>
+    pipe (
+      culture,
+      bind_ (lookup_ (cultures (wiki))),
+      fmap (
+        selectedCulture => fromElements (
+          ...CultureG.commonAdvantages (selectedCulture),
+          ...CultureG.commonDisadvantages (selectedCulture)
         )
-    );
-  }
-};
+      )
+    )
 
-const isOneOfListActiveSelection = (
-  activeSelections: Maybe<List<string | number>>,
-  req: Record<Wiki.RequiresActivatableObject>,
-  sid: List<number>
-): boolean =>
-  req.lookup ('active')
-    .equals (activeSelections.fmap (list => sid.any (list.elem)));
+const getAllProfessionEntries =
+  (wiki: Record<Wiki.WikiAll>) =>
+    pipe (
+      profession,
+      bind_ (lookup_ (professions (wiki))),
+      fmap (
+        selectedProfession => fromElements (
+          ...ProfessionG.suggestedAdvantages (selectedProfession),
+          ...ProfessionG.suggestedDisadvantages (selectedProfession)
+        )
+      )
+    )
 
-const isSingleActiveSelection = (
-  activeSelections: Maybe<List<string | number>>,
-  req: Record<Wiki.RequiresActivatableObject>,
-  sid: string | number
-): boolean =>
-  req.lookup ('active')
-    .equals (activeSelections.fmap (list => list.elem (sid)));
+const isRCPValid =
+  (wiki: Record<Wiki.WikiAll>) =>
+  (state: Record<Data.HeroDependent>) =>
+  (sourceId: string): boolean =>
+    any (elem (sourceId))
+        (catMaybes (
+          fromElements (
+            getAllRaceEntries (wiki) (state),
+            getAllCultureEntries (wiki) (state),
+            getAllProfessionEntries (wiki) (state)
+          )
+        ))
 
-const isActiveSelection = (
-  activeSelections: Maybe<List<string | number>>,
-  req: Record<Wiki.RequiresActivatableObject>,
-  sid: Wiki.SID
-): boolean =>
-  sid instanceof List
-    ? isOneOfListActiveSelection (activeSelections, req, sid)
-    : isSingleActiveSelection (activeSelections, req, sid);
+const isSexValid =
+  (currentSex: 'm' | 'f') => (req: Record<Wiki.SexRequirement>): boolean =>
+    equals (currentSex) (SexRequirementG.value (req))
 
-const isNeededLevelGiven = (
-  instance: Record<Data.ActivatableDependent>,
-  tier: number
-): boolean =>
-  instance.get ('active').any (e =>
-    Maybe.fromMaybe (false) (e.lookup ('tier').fmap (R.lte (tier)))
-  );
+const isRaceValid =
+  (maybeCurrentRace: Maybe<string>) =>
+  (req: Record<Wiki.RaceRequirement>): boolean => {
+    const value = RaceRequirementG.value (req)
 
-const isActivatableValid = (
-  wiki: Record<Wiki.WikiAll>,
-  state: Record<Data.HeroDependent>,
-  sourceId: string,
-  req: Record<Wiki.RequiresActivatableObject>,
-  objectValidator: Validator,
-): boolean => {
-  const id = req.get ('id');
-
-  if (id instanceof List) {
-    return id.any (e =>
-      objectValidator (wiki, state, req.insert ('id') (e), sourceId)
-    );
-  }
-  else {
-    const sid = req.lookup ('sid');
-
-    if (sid.equals (Maybe.pure ('sel'))) {
-      return true;
+    if (isList (value)) {
+      return or (fmap<string, boolean> (currentRace => any (pipe (
+                                                                   prefixId (IdPrefixes.RACES),
+                                                                   equals (currentRace)
+                                                                 ))
+                                                           (value))
+                                       (maybeCurrentRace))
     }
-    else if (sid.equals (Maybe.pure ('GR'))) {
-      return Maybe.fromMaybe (true) (
-        getHeroStateListItem<Record<Data.ActivatableDependent>> (id) (state)
-          .bind (target => {
-            const arr = getAllWikiEntriesByGroup (
-              wiki.get ('skills'),
-              ...Maybe.maybeToList (req.lookup ('sid2') as Maybe<number>)
-            )
-              .map (e => e.get ('id'));
 
-            return getActiveSelections (Maybe.pure (target))
-              .fmap (list => list.all (e =>
-                !arr.elem (e as string)
-              ));
-          })
-      );
+    return Maybe.elem (prefixId (IdPrefixes.RACES) (value)) (maybeCurrentRace)
+  }
+
+const isCultureValid =
+  (maybeCurrentCulture: Maybe<string>) =>
+  (req: Record<Wiki.CultureRequirement>): boolean => {
+    const value = CultureRequirementG.value (req)
+
+    if (isList (value)) {
+      return or (
+        fmap<string, boolean> (currentCulture => any (pipe (
+                                                             prefixId (IdPrefixes.CULTURES),
+                                                             equals (currentCulture)
+                                                           ))
+                                                     (value))
+                              (maybeCurrentCulture)
+      )
+    }
+
+    return Maybe.elem (prefixId (IdPrefixes.CULTURES) (value)) (maybeCurrentCulture)
+  }
+
+const hasSamePactCategory =
+  (state: Record<Data.Pact>) =>
+    pipe (
+      PactRequirementG.category,
+      equals (PactG.category (state))
+    )
+
+const hasNeededPactType =
+  (state: Record<Data.Pact>) => (req: Record<Wiki.PactRequirement>) => {
+    switch (PactRequirementG.category (req)) {
+      case 1:
+        return equals (PactG.type (state)) (3)
+      default:
+        return true
+    }
+  }
+
+const hasNeededPactDomain =
+  (state: Record<Data.Pact>) => (req: Record<Wiki.PactRequirement>) => {
+    const maybeReqDomain = PactRequirementG.domain (req)
+    const stateDomain = PactG.domain (state)
+
+    if (isNothing (maybeReqDomain)) {
+      return true
+    }
+
+    if (typeof stateDomain === 'string') {
+      return false
+    }
+
+    const reqDomain = fromJust (maybeReqDomain)
+
+    if (isList (reqDomain)) {
+      return elem (stateDomain) (reqDomain)
+    }
+
+    return reqDomain === stateDomain
+  }
+
+const hasNeededPactLevel = (state: Record<Data.Pact>) => (req: Record<Wiki.PactRequirement>) =>
+  or (fmap (lte (PactG.level (state))) (PactRequirementG.level (req)))
+
+const isPactValid =
+  (maybePact: Maybe<Record<Data.Pact>>) => (req: Record<Wiki.PactRequirement>): boolean =>
+    or (fmap<Record<Data.Pact>, boolean> (currentPact => isPactFromStateValid (currentPact)
+                                           && hasSamePactCategory (currentPact) (req)
+                                           && hasNeededPactType (currentPact) (req)
+                                           && hasNeededPactDomain (currentPact) (req)
+                                           && hasNeededPactLevel (currentPact) (req))
+                                         (maybePact))
+
+const isPrimaryAttributeValid =
+  (state: Record<Data.HeroDependent>) => (req: Record<Wiki.RequiresPrimaryAttribute>): boolean =>
+    or (fmap (pipe (
+               lookup_ (attributes (state)),
+               fmap (AttributeDependentG.value),
+               Maybe.elem (RequirePrimaryAttributeG.value (req))
+             ))
+             (getPrimaryAttributeId (specialAbilities (state))
+                                    (RequirePrimaryAttributeG.type (req))))
+
+const isIncreasableValid =
+  (wiki: Record<Wiki.WikiAll>) =>
+  (state: Record<Data.HeroDependent>) =>
+  (sourceId: string) =>
+  (req: Record<Wiki.RequiresIncreasableObject>) =>
+  (objectValidator: Validator): boolean => {
+    const id = RequireIncreasableG.id (req)
+
+    if (isList (id)) {
+      return any (pipe (
+                   set (RequireIncreasableL.id),
+                   thrush (req),
+                   objectValidator (wiki) (state),
+                   thrush (sourceId)
+                 ))
+                 (id)
+    }
+
+    return or (fmap ((obj: Data.Dependent) =>
+                      isExtendedSkillDependent (obj)
+                      && gte (RequireIncreasableG.value (req))
+                             (SkillDependentG.value (obj)))
+                    (getHeroStateListItem (id) (state)))
+  }
+
+/**
+ * Check if one of the passed selection ids is part of the currently active
+ * selections and if that matches the requirement (`active`).
+ */
+const isOneOfListActiveSelection =
+  (activeSelections: Maybe<List<string | number>>) =>
+  (req: Record<Wiki.RequiresActivatableObject>) =>
+  (sid: List<number>): boolean =>
+    Maybe.elem (RequireActivatableG.active (req))
+               (fmap<List<string | number>, boolean> (pipe (List.elem_, any, thrush (sid)))
+                                                     (activeSelections))
+
+/**
+ * Check if the passed selection id is part of the currently active selections
+ * and if that matches the requirement (`active`).
+ */
+const isSingleActiveSelection =
+  (activeSelections: Maybe<List<string | number>>) =>
+  (req: Record<Wiki.RequiresActivatableObject>) =>
+  (sid: string | number): boolean =>
+    Maybe.elem (RequireActivatableG.active (req))
+               (fmap (elem (sid)) (activeSelections))
+
+const isActiveSelection =
+  (activeSelections: Maybe<List<string | number>>) =>
+  (req: Record<Wiki.RequiresActivatableObject>) =>
+  (sid: Wiki.SID): boolean =>
+    isList (sid)
+      ? isOneOfListActiveSelection (activeSelections) (req) (sid)
+      : isSingleActiveSelection (activeSelections) (req) (sid)
+
+/**
+ * Checks if the passed required level is fulfilled by the passed instance.
+ */
+const isNeededLevelGiven =
+  (level: number) =>
+    pipe (
+      ActivatableDependentG.active,
+      any (pipe (ActiveObjectG.tier, fmap (gte (level)), or))
+    )
+
+const isActivatableValid =
+  (wiki: Record<Wiki.WikiAll>) =>
+  (state: Record<Data.HeroDependent>) =>
+  (sourceId: string) =>
+  (req: Record<Wiki.RequiresActivatableObject>) =>
+  (objectValidator: Validator): boolean => {
+    const id = RequireActivatableG.id (req)
+
+    if (isList (id)) {
+      return any (pipe (
+                   set (RequireActivatableL.id),
+                   thrush (req),
+                   objectValidator (wiki) (state),
+                   thrush (sourceId)
+                 ))
+                 (id)
     }
     else {
+      const sid = RequireActivatableG.sid (req)
+
+      if (Maybe.elem<Wiki.SID> ('sel') (sid)) {
+        return true
+      }
+
+      if (Maybe.elem<Wiki.SID> ('GR') (sid)) {
+        return and (pipe (
+                           bind_<Data.Dependent, Record<Data.ActivatableDependent>>
+                             (ensure (isActivatableDependent)),
+                           bind_<Record<Data.ActivatableDependent>, boolean>
+                             (target => {
+                               const arr =
+                                 map (SkillG.id)
+                                     (getAllWikiEntriesByGroup
+                                       (skills (wiki))
+                                       (Maybe.maybeToList (
+                                         RequireActivatableG.sid2 (req) as Maybe<number>
+                                       )))
+
+                               return fmap (all (pipe (elem_<string | number> (arr), not)))
+                                           (getActiveSelections (Just (target)))
+                             })
+                         )
+                         (getHeroStateListItem (id) (state)))
+      }
+
       const maybeInstance =
-        getHeroStateListItem<Data.ExtendedActivatableDependent> (id) (state);
+        getHeroStateListItem (id) (state) as Maybe<Data.ExtendedActivatableDependent>
 
-      if (isActivatableDependent (maybeInstance)) {
-        const instance = Maybe.fromJust (maybeInstance);
-        const activeSelections = getActiveSelections (maybeInstance);
+      if (isMaybeActivatableDependent (maybeInstance)) {
+        const instance = Maybe.fromJust (maybeInstance)
+        const activeSelections = getActiveSelections (maybeInstance)
 
-        const maybeSid = req.lookup ('sid');
-        const maybeTier = req.lookup ('tier');
+        const maybeSid = RequireActivatableG.sid (req)
+        const maybeLevel = RequireActivatableG.tier (req)
 
-        if (Maybe.isJust (maybeSid) && Maybe.isJust (maybeTier)) {
-          const justSid = Maybe.fromJust (maybeSid);
-          const justTier = Maybe.fromJust (maybeTier);
+        const sidValid = fmap (isActiveSelection (activeSelections) (req)) (maybeSid)
+        const levelValid = fmap (flip (isNeededLevelGiven) (instance)) (maybeLevel)
 
-          return isActiveSelection (activeSelections, req, justSid) &&
-            isNeededLevelGiven (instance, justTier);
+        if (isJust (maybeSid) || isJust (maybeLevel)) {
+          return and (sidValid) && and (levelValid)
         }
-        else if (Maybe.isJust (maybeSid)) {
-          const justSid = Maybe.fromJust (maybeSid);
 
-          return isActiveSelection (activeSelections, req, justSid);
-        }
-        else if (Maybe.isJust (maybeTier)) {
-          const tier = Maybe.fromJust (maybeTier);
-
-          return isNeededLevelGiven (instance, tier);
-        }
-        else {
-          return isActive (instance) === req.get ('active');
-        }
+        return isActive (instance) === RequireActivatableG.active (req)
       }
-      else if (isActivatableSkillDependent (maybeInstance)) {
-        return maybeInstance
-          .bind (e => e.lookup ('active'))
-          .equals (req.lookup ('active'));
+
+      if (isMaybeActivatableSkillDependent (maybeInstance)) {
+        return ActivatableSkillDependentG.active (fromJust (maybeInstance))
+          === RequireActivatableG.active (req)
       }
-      else {
-        return false;
-      }
+
+      return false
     }
   }
-};
 
 /**
  * Checks if the requirement is fulfilled.
@@ -343,132 +351,110 @@ const isActivatableValid = (
  * @param sourceId The id of the entry the requirement object belongs to.
  * @param pact A valid `Pact` object or `undefined`.
  */
-export const validateObject = (
-  wiki: Record<Wiki.WikiAll>,
-  state: Record<Data.HeroDependent>,
-  req: Wiki.AllRequirements,
-  sourceId: string,
-): boolean => {
-  if (req === 'RCP') {
-    return isRCPValid (wiki, state, sourceId);
-  }
-  else if (CheckPrerequisiteUtils.isSexRequirement (req)) {
-    return isSexValid (state.lookup ('sex'), req);
-  }
-  else if (CheckPrerequisiteUtils.isRaceRequirement (req)) {
-    return isRaceValid (state.lookup ('race'), req);
-  }
-  else if (CheckPrerequisiteUtils.isCultureRequirement (req)) {
-    return isCultureValid (state.lookup ('culture'), req);
-  }
-  else if (CheckPrerequisiteUtils.isPactRequirement (req)) {
-    return isPactValid (state.lookup ('pact'), req);
-  }
-  else if (CheckPrerequisiteUtils.isRequiringPrimaryAttribute (req)) {
-    return isPrimaryAttributeValid (state, req);
-  }
-  else if (CheckPrerequisiteUtils.isRequiringIncreasable (req)) {
-    return isIncreasableValid (wiki, state, sourceId, req, validateObject);
-  }
-  else {
-    return isActivatableValid (wiki, state, sourceId, req, validateObject);
-  }
-};
+export const validateObject =
+  (wiki: Record<Wiki.WikiAll>) =>
+  (state: Record<Data.HeroDependent>) =>
+  (req: Wiki.AllRequirements) =>
+  (sourceId: string): boolean =>
+    req === 'RCP'
+      ? isRCPValid (wiki) (state) (sourceId)
+      : isSexRequirement (req)
+      ? isSexValid (sex (state)) (req)
+      : isRaceRequirement (req)
+      ? isRaceValid (race (state)) (req)
+      : isCultureRequirement (req)
+      ? isCultureValid (culture (state)) (req)
+      : isPactRequirement (req)
+      ? isPactValid (pact (state)) (req)
+      : isPrimaryAttributeRequirement (req)
+      ? isPrimaryAttributeValid (state) (req)
+      : isIncreasableRequirement (req)
+      ? isIncreasableValid (wiki) (state) (sourceId) (req) (validateObject)
+      : isActivatableValid (wiki) (state) (sourceId) (req) (validateObject)
 
 /**
  * Checks if all requirements are fulfilled.
  * @param state The current hero data.
- * @param requirements An array of requirement objects.
+ * @param prerequisites An array of requirement objects.
  * @param sourceId The id of the entry the requirement objects belong to.
  * @param pact A valid `Pact` object or `undefined`.
  */
-export const validatePrerequisites = (
-  wiki: Record<Wiki.WikiAll>,
-  state: Record<Data.HeroDependent>,
-  requirements: List<Wiki.AllRequirements>,
-  sourceId: string,
-): boolean => {
-  return requirements.all (e => validateObject (wiki, state, e, sourceId));
-}
+export const validatePrerequisites =
+  (wiki: Record<Wiki.WikiAll>) =>
+  (state: Record<Data.HeroDependent>) =>
+  (prerequisites: List<Wiki.AllRequirements>) =>
+  (sourceId: string): boolean =>
+    all (pipe (validateObject (wiki) (state), thrush (sourceId))) (prerequisites)
 
-type ReqEntries = List<Tuple<number, List<Wiki.AllRequirements>>>;
+type ReqEntries = List<Pair<number, List<Wiki.AllRequirements>>>
 
-const isSkipping = (arr: ReqEntries, index: number, max: Maybe<number>) =>
-  Maybe.isJust (max) &&
-    index > 1 &&
-    arr.subscript (index - 2).fmap (Tuple.fst).lt (max);
-
-const areAllPrerequisitesValid = (
-  wiki: Record<Wiki.WikiAll>,
-  state: Record<Data.HeroDependent>,
-  prerequisites: List<Wiki.AllRequirements>,
-  sourceId: string,
-) => prerequisites.all (e => {
-  return validateObject (wiki, state, e, sourceId);
-});
+const isSkipping =
+  (arr: ReqEntries) => (index: number) => (max: Maybe<number>) =>
+    isJust (max)
+    && index > 1
+    && or (
+      fmap<Pair<number, List<Wiki.AllRequirements>>, boolean>
+        (pipe (fst, lt (fromJust (max))))
+        (subscript (arr) (index - 2))
+    )
 
 /**
- * Get maximum valid tier.
+ * Get maximum valid level.
  * @param state The current hero data.
  * @param requirements A Map of tier prereqisite arrays.
  * @param sourceId The id of the entry the requirement objects belong to.
  */
-export const validateTier = (
-  wiki: Record<Wiki.WikiAll>,
-  state: Record<Data.HeroDependent>,
-  requirements: OrderedMap<number, List<Wiki.AllRequirements>>,
-  dependencies: List<Data.ActivatableDependency>,
-  sourceId: string,
-): Maybe<number> => {
-  return dependencies.foldl<Maybe<number>> (
-    max => dep =>
-      // If `dep` prohibits higher level
-      typeof dep === 'object' &&
-      dep.lookup ('active').equals (Maybe.pure (false)) &&
-      Maybe.isJust (dep.lookup ('tier'))
-        ? Maybe.pure (
-            Maybe.catMaybes (
-              List.of (max, dep.lookup ('tier').fmap (e => e - 1))
-            ).minimum ()
-          )
-        : max
-  ) (
-    OrderedMap.toList (requirements)
-      .sortBy (a => b => Tuple.fst (a) - Tuple.fst (b))
-      .ifoldlWithList<Maybe<number>> (
-        list => acc => index => entry =>
-          (
-            !isSkipping (list, index, acc)
-            || areAllPrerequisitesValid (wiki, state, Tuple.snd (entry), sourceId)
-          )
-            ? Maybe.pure (Tuple.fst (entry))
-            : acc
-      ) (Maybe.empty ())
-  );
-};
+export const validateLevel =
+  (wiki: Record<Wiki.WikiAll>) =>
+  (state: Record<Data.HeroDependent>) =>
+  (requirements: OrderedMap<number, List<Wiki.AllRequirements>>) =>
+  (dependencies: List<Data.ActivatableDependency>) =>
+  (sourceId: string): Maybe<number> =>
+    foldl<Data.ActivatableDependency, Maybe<number>>
+      (max => dep =>
+          // If `dep` prohibits higher level
+          typeof dep === 'object'
+          && Maybe.elem (false) (DependencyObjectG.active (dep))
+          ? maybe<number, Maybe<number>>
+            (max)
+            (pipe (dec, level => Just (maybe<number, number> (level) (min (level)) (max))))
+            (DependencyObjectG.tier (dep))
+          : max)
+      (pipe (
+              toList as (m: OrderedMap<number, List<Wiki.AllRequirements>>) =>
+                List<Pair<number, List<Wiki.AllRequirements>>>,
+              sortBy (
+                on<Pair<number, List<Wiki.AllRequirements>>, number, number> (subtract) (fst)
+              ),
+              join (
+                list => ifoldl<Pair<number, List<Wiki.AllRequirements>>, Maybe<number>>
+                  (max => index => entry =>
+                    !isSkipping (list) (index) (max)
+                    || validatePrerequisites (wiki) (state) (snd (entry)) (sourceId)
+                    ? Just (fst (entry))
+                    : max)
+                  (Nothing)
+              )
+            )
+            (requirements))
+      (dependencies)
 
 /**
  * Checks if all profession prerequisites are fulfilled.
  * @param prerequisites An array of prerequisite objects.
  */
-export function validateProfession (
-  prerequisites: List<Wiki.ProfessionDependency>,
-  sex: 'm' | 'f',
-  race: Maybe<string>,
-  culture: Maybe<string>,
-): boolean {
-  return prerequisites.all (req => {
-    if (CheckPrerequisiteUtils.isSexRequirement (req)) {
-      return isSexValid (Maybe.pure (sex), req);
-    }
-    else if (CheckPrerequisiteUtils.isRaceRequirement (req)) {
-      return isRaceValid (race, req);
-    }
-    else if (CheckPrerequisiteUtils.isCultureRequirement (req)) {
-      return isCultureValid (culture, req);
-    }
-    else {
-      return false;
-    }
-  });
-}
+export const validateProfession =
+  (prerequisites: List<Wiki.ProfessionDependency>) =>
+  (currentSex: Data.Sex) =>
+  (currentRace: Maybe<string>) =>
+  (currentCulture: Maybe<string>): boolean =>
+    all<Wiki.ProfessionDependency> (req =>
+                                     isSexRequirement (req)
+                                     ? isSexValid (currentSex) (req)
+                                     : isRaceRequirement (req)
+                                     ? isRaceValid (currentRace) (req)
+                                     : isCultureRequirement (req)
+                                     ? isCultureValid (currentCulture) (req)
+                                     : false
+                                   )
+                                   (prerequisites)

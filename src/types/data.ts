@@ -162,11 +162,11 @@ export interface Purse {
 }
 
 export interface Pact {
-  readonly category: number;
-  readonly level: number;
-  readonly type: number;
-  readonly domain: number | string;
-  readonly name: string;
+  category: number;
+  level: number;
+  type: number;
+  domain: number | string;
+  name: string;
 }
 
 export interface User {
@@ -656,3 +656,4 @@ export interface Alert {
 }
 
 export { UIMessages, UIMessagesObject } from './ui';
+

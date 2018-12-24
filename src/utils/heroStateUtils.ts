@@ -194,19 +194,18 @@ export const getEntryCreatorById =
   }
 
 export const getHeroStateListItem =
-  <D extends Dependent = Dependent>
   (id: string) =>
     pipe (
       Just as (hero: Hero) => Just<Hero>,
-      ap (getHeroStateListGetterById (id) as Maybe<(hero: Hero) => OrderedMap<string, D>>),
+      ap (getHeroStateListGetterById (id) as Maybe<(hero: Hero) => OrderedMap<string, Dependent>>),
       bind_ (
         ifElse<
-          OrderedMap<string, D> | OrderedSet<string>,
-          OrderedMap<string, D>,
-          Maybe<D>
+          OrderedMap<string, Dependent> | OrderedSet<string>,
+          OrderedMap<string, Dependent>,
+          Maybe<Dependent>
         >
           (isOrderedMap)
-          (lookup (id) as unknown as (m: OrderedMap<string, D>) => Maybe<D>)
+          (lookup (id) as unknown as (m: OrderedMap<string, Dependent>) => Maybe<Dependent>)
           (cnst (Nothing))
       )
     )
@@ -216,7 +215,7 @@ export const getHeroStateListItemOr =
   (create: (id: string) => D) =>
   (id: string) =>
   (state: Hero): D =>
-    fromMaybe (create (id)) (getHeroStateListItem<D> (id) (state))
+    fromMaybe (create (id)) (getHeroStateListItem (id) (state) as Maybe<D>)
 
 export const setHeroListStateItem =
   (id: string) =>
