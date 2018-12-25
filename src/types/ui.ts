@@ -1,4 +1,5 @@
-import { List, Record } from '../utils/dataUtils';
+import { List } from '../utils/structures/List';
+import { Record } from '../utils/structures/Record';
 
 export interface RawUIMessages {
   'id': string;

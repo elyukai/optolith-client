@@ -91,3 +91,14 @@ export const pipeL: PipeL =
   (fmap: Fmap<any, any, any, any>) =>
   (lift: (x: any) => any): ((m: any) => any) =>
     lenses .reduceRight ((liftAcc, f) => f (fmap) (liftAcc), lift)
+
+
+// NAMESPACED FUNCTIONS
+
+export const Lens = {
+  lens,
+  view,
+  over,
+  set,
+  pipeL,
+}

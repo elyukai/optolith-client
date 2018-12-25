@@ -1,21 +1,25 @@
+import { pipe } from 'ramda';
 import { ActivatableDependent } from '../../types/data';
-import { Maybe, Record } from './dataUtils';
+import { ActivatableDependentG } from '../activeEntries/activatableDependent';
+import { not } from '../not';
+import { fnull } from '../structures/List';
+import { fmap, Maybe, or } from '../structures/Maybe';
+import { Record } from '../structures/Record';
+
+const { active } = ActivatableDependentG
 
 /**
  * Checks if the entry is active. This will be the case if there is at least one
  * `ActiveObject` in the `obj.active` array.
  * @param obj The entry.
  */
-export const isActive = (
-  obj: Maybe<Record<ActivatableDependent>> | Record<ActivatableDependent>
-): boolean => {
-  if (obj instanceof Maybe) {
-    return Maybe.isJust (obj) && Maybe.fromJust (
-      Maybe.fromJust (obj)
-        .lookup ('active')
-        .fmap (e => !e.null ())
-    );
-  }
+export const isActive: (obj: Record<ActivatableDependent>) => boolean = pipe (active, fnull, not)
 
-  return !obj.get ('active').null ();
-};
+/**
+ * Checks if the entry is active. This will be the case if there is at least one
+ * `ActiveObject` in the `obj.active` array.
+ * @param obj The entry.
+ */
+export const isMaybeActive =
+  (obj: Maybe<Record<ActivatableDependent>>): boolean =>
+    or (fmap (isActive) (obj))
