@@ -1,120 +1,129 @@
 import { remote } from 'electron';
 import * as fs from 'fs';
+import { divideBy, inc } from './mathUtils';
+import { fromElements, length, subscript } from './structures/List';
+import { fromMaybe, fromNullable, Maybe } from './structures/Maybe';
+import { bimap, fromBoth, fst, Pair, snd } from './structures/Pair';
 
-export const readFile = async (path: string, encoding: string = 'utf8') => {
-  return new Promise<string | Buffer> ((resolve, reject) => {
-    fs.readFile (path, encoding, (error, data) => {
-      if (error) {
-        reject (error);
-      }
-      else {
-        resolve (data);
-      }
-    });
-  });
-};
+// tslint:disable: no-void-expression
 
-export const readDir = async (path: string) => {
-  return new Promise<string[]> ((resolve, reject) => {
-    fs.readdir (path, (error, data) => {
-      if (error) {
-        reject (error);
-      }
-      else {
-        resolve (data);
-      }
-    });
-  });
-};
+export const readFile =
+  async (path: string) =>
+    new Promise<string | Buffer> (
+      (resolve, reject) =>
+        fs.readFile (
+          path,
+          'utf8',
+          (error, data) => error !== null ? reject (error) : resolve (data)
+        )
+    )
 
-export const writeFile = async (path: string, data: any) => {
-  return new Promise<void> ((resolve, reject) => {
-    fs.writeFile (path, data, error => {
-      if (error) {
-        reject (error);
-      }
-      else {
-        resolve ();
-      }
-    });
-  });
-};
+export const readDir =
+  async (path: string) =>
+    new Promise<string[]> (
+      (resolve, reject) =>
+        fs.readdir (
+          path, (error, data) =>
+            error !== null ? reject (error) : resolve (data)
+        )
+    )
+
+export const writeFile =
+  (path: string) =>
+  async (data: any) =>
+    new Promise<void> (
+      (resolve, reject) =>
+        fs.writeFile (
+          path,
+          data,
+          error => error !== null ? reject (error) : resolve ()
+        )
+    )
 
 /**
  * Prints windows' web page as PDF with Chromium's preview printing custom settings.
  */
-export const windowPrintToPDF = async (
-  options: Electron.PrintToPDFOptions,
-  window: Electron.BrowserWindow = remote.getCurrentWindow (),
-) => {
-  return new Promise<Buffer> ((resolve, reject) => {
-    window.webContents.printToPDF (options, (error, data) => {
-      if (error) {
-        reject (error);
-      }
-      else {
-        resolve (data);
-      }
-    });
-  });
-};
+export const windowPrintToPDF =
+  async (options: Electron.PrintToPDFOptions) =>
+    new Promise<Buffer> (
+      (resolve, reject) =>
+        remote
+          .getCurrentWindow ()
+          .webContents
+          .printToPDF (
+            options,
+            (error, data) => error !== null ? reject (error) : resolve (data)
+          )
+    )
 
 /**
  * Shows a native save dialog.
  */
-export const showSaveDialog = async (
-  options: Electron.SaveDialogOptions,
-  window: Electron.BrowserWindow = remote.getCurrentWindow (),
-) => {
-  return new Promise<string | undefined> (resolve => {
-    remote.dialog.showSaveDialog (window, options, filename => {
-      resolve (filename);
-    });
-  });
-};
+export const showSaveDialog =
+  async (options: Electron.SaveDialogOptions) =>
+    new Promise<Maybe<string>> (
+      resolve =>
+        remote.dialog.showSaveDialog (
+          remote .getCurrentWindow (),
+          options,
+          filename => resolve (fromNullable (filename))
+        )
+    )
 
 /**
  * Shows a native open dialog.
  */
-export const showOpenDialog = async (
-  options: Electron.OpenDialogOptions,
-  window: Electron.BrowserWindow = remote.getCurrentWindow (),
-) => {
-  return new Promise<string[] | undefined> (resolve => {
-    remote.dialog.showOpenDialog (window, options, filenames => {
-      if (filenames) {
-        resolve (filenames);
-      }
-      resolve ();
-    });
-  });
-};
+export const showOpenDialog =
+  async (options: Electron.OpenDialogOptions) =>
+    new Promise<Maybe<string[]>> (
+      resolve => remote.dialog.showOpenDialog (
+        remote .getCurrentWindow (),
+        options,
+        filenames => resolve (fromNullable (filenames))
+      )
+    )
 
 export const getSystemLocale = () => {
-  const systemLocale = remote.app.getLocale ();
+  const systemLocale = remote.app.getLocale ()
 
-  if (systemLocale.match (/^de/)) {
-    return 'de-DE';
+  return /^de/ .test (systemLocale)
+    ? 'de-DE'
+    : /^nl/ .test (systemLocale)
+    ? 'nl-BE'
+    : 'en-US'
+}
+
+const byteTags = fromElements ('', 'K', 'M', 'G', 'T')
+
+const foldByteLevels =
+  (x: Pair<number, number>): Pair<number, number> =>
+    fst (x) < length (byteTags)
+    && snd (x) > 1023
+    ? foldByteLevels (bimap<number, number, number, number> (inc) (divideBy (1024)) (x))
+    : x
+
+/**
+ * `bytify :: String -> Int -> String`
+ *
+ * `bytify id value` returns a string representation of `value`, the amount of
+ * bytes, based on the locale specified by `id`. It reduces the value to KB, MB
+ * etc so its readable.
+ *
+ * Examples:
+ *
+ * ```haskell
+ * bytify "de-DE" 1234567 == "1,2 MB"
+ * bytify "en-US" 1234567 == "1.2 MB"
+ * bytify "en-US" 1024 == "1 KB"
+ * bytify "de-DE" 0 == "0 B"
+ * ```
+ */
+export const bytify =
+  (localeId: string) =>
+  (value: number) => {
+    const levelAndNumber = foldByteLevels (fromBoth<number, number> (0) (value))
+    const rounded = Math.round (snd (levelAndNumber) * 10)
+    const localizedNumber = (rounded / 10) .toLocaleString (localeId)
+
+    return `${localizedNumber} ${fromMaybe ('') (subscript (byteTags) (fst (levelAndNumber)))}B`
   }
-  else if (systemLocale.match (/^nl/)) {
-    return 'nl-BE';
-  }
-
-  return 'en-US';
-};
-
-const byteTags = ['', 'K', 'M', 'G', 'T'];
-
-export const bytify = (number: number, localeId: string) => {
-  let tier = 0;
-
-  while (number > 1023 && tier < byteTags.length) {
-    tier++;
-    number /= 1024;
-  }
-
-  const rounded = Math.round (number * 10);
-  const localizedNumber = (rounded / 10).toLocaleString (localeId);
-
-  return `${localizedNumber} ${byteTags[tier]}B`;
-};

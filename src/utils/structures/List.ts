@@ -1307,6 +1307,23 @@ export const ifindIndices =
 // OWN METHODS
 
 /**
+ * `index_ :: [a] -> Int -> a`
+ *
+ * Unsafe list index operator, starting from 0. If the index is invalid this
+ * function throws an error, otherwise returns `a`.
+ */
+export const index_ =
+  <A> (xs: List<A>) => (index: number): A => {
+    if (index >= 0 && index < xs .value .length) {
+      return xs .value [index]
+    }
+
+    throw new RangeError (
+      `Invalid index provided to index_. The list has a length of ${xs .value .length}, but an index of ${index} was provided.`
+    )
+  }
+
+/**
  * Converts a `List` to a native Array.
  */
 export const toArray = <A> (list: List<A>): A[] => list .value as A[]
@@ -1433,6 +1450,7 @@ export const List = {
   ifindIndex,
   ifindIndices,
 
+  index_,
   toArray,
   toMap,
   isList,

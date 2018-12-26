@@ -1,6 +1,6 @@
 import { ItemInstance } from '../../types/data';
 import { Nothing } from '../structures/Maybe';
-import { fromDefault } from '../structures/Record';
+import { fromDefault, makeGetters } from '../structures/Record';
 
 export const ItemCreator =
   fromDefault<ItemInstance> ({
@@ -44,3 +44,5 @@ export const ItemCreator =
     disadvantage: Nothing,
     src: Nothing,
   })
+
+export const ItemG = makeGetters (ItemCreator)
