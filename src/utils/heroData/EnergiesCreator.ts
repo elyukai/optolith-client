@@ -11,9 +11,9 @@ export const EnergiesCreator =
     addedLifePoints: 0,
     addedArcaneEnergyPoints: 0,
     addedKarmaPoints: 0,
-    permanentLifePoints: PermanentEnergyLossCreator ({ }),
-    permanentArcaneEnergyPoints: PermanentEnergyLossAndBoughtBackCreator ({ }),
-    permanentKarmaPoints: PermanentEnergyLossAndBoughtBackCreator ({ }),
+    permanentLifePoints: PermanentEnergyLossCreator ({ lost: 0 }),
+    permanentArcaneEnergyPoints: PermanentEnergyLossAndBoughtBackCreator ({ lost: 0, redeemed: 0 }),
+    permanentKarmaPoints: PermanentEnergyLossAndBoughtBackCreator ({ lost: 0, redeemed: 0 }),
   })
 
 export const EnergiesG = makeGetters (EnergiesCreator)

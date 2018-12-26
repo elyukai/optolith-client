@@ -5,7 +5,6 @@ import { getCategoryById } from '../../IDUtils';
 import { all, elem_, isList } from '../../structures/List';
 import { fmap, or } from '../../structures/Maybe';
 import { fromDefault, makeGetters, makeLenses_, member, Record } from '../../structures/Record';
-import { RequiredFunction } from '../sub/typeHelpers';
 
 const RequireIncreasableCreator =
   fromDefault<RequiresIncreasableObject> ({
@@ -16,8 +15,7 @@ const RequireIncreasableCreator =
 export const RequireIncreasableG = makeGetters (RequireIncreasableCreator)
 export const RequireIncreasableL = makeLenses_ (RequireIncreasableG) (RequireIncreasableCreator)
 
-export const createRequireIncreasable: RequiredFunction<RequiresIncreasableObject> =
-  RequireIncreasableCreator
+export const createRequireIncreasable = RequireIncreasableCreator
 
 export const isIncreasableRequirement =
   (req: AllRequirementObjects): req is Record<RequiresIncreasableObject> => {

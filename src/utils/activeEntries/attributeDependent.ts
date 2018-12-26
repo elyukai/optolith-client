@@ -18,7 +18,13 @@ export const AttributeDependentL = makeLenses_ (AttributeDependentG) (AttributeD
 export const createAttributeDependent =
   (options: Partial<Omit<AttributeDependent, 'id'>>) =>
   (id: string): Record<AttributeDependent> =>
-    AttributeDependentCreator ({ id, ...options })
+    AttributeDependentCreator ({
+      id,
+      value: 8,
+      mod: 0,
+      dependencies: fromElements<SkillDependency> (),
+      ...options,
+    })
 
 export const createAttributeDependentWithValue =
   (x: number) => createAttributeDependent ({ value: x })

@@ -10,7 +10,10 @@ const RemoveCombatTechniquesSelectionCreator =
 export const RemoveCombatTechniquesSelectionG = makeGetters (RemoveCombatTechniquesSelectionCreator)
 
 export const createRemoveCombatTechniquesSelection =
-  () => RemoveCombatTechniquesSelectionCreator ({ })
+  () => RemoveCombatTechniquesSelectionCreator ({
+    id: ProfessionSelectionIds.COMBAT_TECHNIQUES,
+    active: false,
+  })
 
 export const isRemoveCombatTechniquesSelection =
   (obj: ProfessionVariantSelection): obj is Record<RemoveCombatTechniquesSelection> =>

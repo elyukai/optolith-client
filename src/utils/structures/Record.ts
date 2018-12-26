@@ -9,7 +9,7 @@
 
 import { not, pipe } from 'ramda';
 import { Lens, lens } from './Lens';
-import { Just, Maybe } from './Maybe';
+import { isMaybe, isNothing, Just, Maybe } from './Maybe';
 import { foldl, fromArray, OrderedSet } from './OrderedSet';
 import { show } from './Show';
 
@@ -17,28 +17,31 @@ import { show } from './Show';
 // CONSTRUCTOR
 
 interface RecordPrototype {
-  readonly isRecord: true;
+  readonly isRecord: true
 }
 
 export interface Record<A extends RecordBase> extends RecordPrototype {
-  readonly values: Readonly<Partial<A>>;
-  readonly defaultValues: Readonly<A>;
-  readonly keys: OrderedSet<string>;
-  readonly prototype: RecordPrototype;
+  readonly values: Readonly<Required<A>>
+  readonly defaultValues: Readonly<A>
+  readonly keys: OrderedSet<string>
+  readonly prototype: RecordPrototype
 }
 
 export interface RecordCreator<A extends RecordBase> {
-  (x: Partial<A>): Record<A>;
+  (x: PartialMaybe<A>): Record<A>
+  readonly keys: OrderedSet<string>
 }
 
-const RecordPrototype: RecordPrototype =
-  Object.create (Object.prototype, { isRecord: { value: true }})
+const RecordPrototype =
+  Object.freeze<RecordPrototype> ({
+    isRecord: true,
+  })
 
 const _Record =
   <A extends RecordBase>
   (keys: OrderedSet<string>) =>
   (def: A) =>
-  (specified: Partial<A>): Record<A> =>
+  (specified: PartialMaybe<A>): Record<A> =>
     Object.create (
       RecordPrototype,
       {
@@ -76,25 +79,37 @@ export const fromDefault =
         return {
           ...acc,
           [key]: value,
-        };
+        }
       },
       {} as A
     ))
 
     const keys = fromArray (Object.keys (def))
 
-    return x =>
+    const creator = (x: PartialMaybe<A>) =>
       _Record<A>
         (keys)
         (defaultValues)
-        (Object.entries (x) .reduce<Partial<A>> (
-          (acc, [key, value]) =>
+        (foldl<string, PartialMaybe<A>>
+          (acc => key => {
+            const value = (x as Required<A>) [key]
+
             // tslint:disable-next-line: strict-type-predicates
-            OrderedSet.member (key) (keys) && value !== null && value !== undefined
-              ? { ...acc, [key]: value }
-              : acc,
-          {}
-        ))
+            return OrderedSet.member (key) (keys)
+              ? isMaybe (defaultValues [key])
+              ? { ...acc, [key]: isNothing (value) ? defaultValues [key] : value } as
+                PartialMaybe<A>
+              : value !== null && value !== undefined
+              ? { ...acc, [key]: value } as PartialMaybe<A>
+              : acc
+              : acc})
+          ({} as PartialMaybe<A>)
+          (keys)
+        )
+
+    creator.keys = keys
+
+    return Object.freeze (creator)
   }
 
 
@@ -103,15 +118,15 @@ export const fromDefault =
 const mergeSafe = <A extends RecordBase> (x: Partial<A>) => (r: Record<A>): Record<A> =>
   _Record<A> (r .keys)
              (r .defaultValues)
-             (foldl<string, A> (acc => key => ({
-                                 ...acc,
-                                 // tslint:disable-next-line: strict-type-predicates
-                                 [key]: x [key] === null || x [key] === undefined
-                                   ? r .values [key]
-                                   : x [key],
-                               }))
-                               ({} as A)
-                               (r .keys))
+             (foldl<string, Required<A>> (acc => key => ({
+                                           ...acc,
+                                           // tslint:disable-next-line: strict-type-predicates
+                                           [key]: x [key] === null || x [key] === undefined
+                                             ? r .values [key]
+                                             : x [key],
+                                         }))
+                                         ({} as Required<A>)
+                                         (r .keys))
 
 /**
  * `mergeSafeR2 :: Record r => r a -> r a -> r a`
@@ -178,14 +193,9 @@ export const mergeSafeR5 =
 
 const getter = <A extends RecordBase> (key: keyof A) => (r: Record<A>) => {
   if (OrderedSet.member<keyof A> (key) (r .keys)) {
-    const specifiedValue = r .values [key]
+    const x = r .values [key]
 
-    // tslint:disable-next-line: strict-type-predicates
-    if (specifiedValue !== null && specifiedValue !== undefined) {
-      return specifiedValue as A[typeof key]
-    }
-
-    return r .defaultValues [key]
+    return isMaybe (x) && isNothing (x) ? r .defaultValues [key] : x
   }
 
   throw new TypeError (`Key ${show (key)} is not in Record ${show (r)}!`)
@@ -204,13 +214,12 @@ const setter = <A extends RecordBase> (key: keyof A) => (r: Record<A>) => (x: A[
  */
 export const makeGetters =
   <A extends RecordBase> (record: RecordCreator<A>): Getters<A> =>
-    Object.freeze (Object.keys (record ({}) .defaultValues) .reduce<Getters<A>> (
-      (acc, key) => ({
-        ...acc,
-        [key]: getter (key),
-      }),
-      {} as Getters<A>
-    ))
+  Object.freeze (foldl<string, Getters<A>> (acc => key => ({
+                                             ...acc,
+                                             [key]: getter (key),
+                                           }))
+                                           ({} as Getters<A>)
+                                           (record .keys))
 
 /**
  * Creates lenses for every key in the passed record.
@@ -219,13 +228,13 @@ export const makeGetters =
  * for generating the lenses, use `makeLenses_` instead.
  */
 export const makeLenses = <A extends RecordBase> (record: RecordCreator<A>): Lenses<A> =>
-  Object.freeze (Object.keys (record ({}) .defaultValues) .reduce<Lenses<A>> (
-    (acc, key) => ({
-      ...acc,
-      [key]: lens<Record<A>, A[typeof key]> (getter (key)) (setter (key)),
-    }),
-    {} as Lenses<A>
-  ))
+  Object.freeze (foldl<string, Lenses<A>> (acc => key => ({
+                                            ...acc,
+                                            [key]: lens<Record<A>, A[typeof key]> (getter (key))
+                                                                                  (setter (key)),
+                                          }))
+                                          ({} as Lenses<A>)
+                                          (record .keys))
 
 /**
  * Creates lenses for every key in the passed record.
@@ -234,14 +243,16 @@ export const makeLenses = <A extends RecordBase> (record: RecordCreator<A>): Len
  */
 export const makeLenses_ =
   <A extends RecordBase> (getters: Getters<A>) => (record: RecordCreator<A>): Lenses<A> =>
-    Object.freeze (Object.keys (record ({}) .defaultValues) .reduce<Lenses<A>> (
-      (acc, key) => ({
-        ...acc,
-        [key]: lens<Record<A>, A[typeof key]> (getters [key] as Getter<A, typeof key>)
-                                              (setter (key)),
-      }),
-      {} as Lenses<A>
-    ))
+    Object.freeze (
+      foldl<string, Lenses<A>> (acc => key => ({
+                                 ...acc,
+                                 [key]: lens<Record<A>, A[typeof key]>
+                                   (getters [key] as Getter<A, typeof key>)
+                                   (setter (key)),
+                               }))
+                               ({} as Lenses<A>)
+                               (record .keys)
+    )
 
 /**
  * `member :: String -> Record a -> Bool`
@@ -270,7 +281,7 @@ export const toObject = <A extends RecordBase> (r: Record<A>): A =>
  */
 export const isRecord =
   (x: any): x is Record<any> =>
-    typeof x === 'object' && x !== null && x.isRecord;
+    typeof x === 'object' && x !== null && x.isRecord
 
 
 // NAMESPACED FUNCTIONS
@@ -287,7 +298,7 @@ export const Record = {
   notMember,
   toObject,
   isRecord,
-};
+}
 
 
 // TYPE HELPERS
@@ -295,23 +306,23 @@ export const Record = {
 type Getter<A extends RecordBase, K extends keyof A> = (r: Record<Pick<A, K>>) => A[K]
 
 type Getters<A extends RecordBase> = {
-  [K in keyof A]: Getter<A, K>;
+  [K in keyof A]: Getter<A, K>
 }
 
 type Lenses<A extends RecordBase> = {
-  [K in keyof A]: Lens<Record<A>, A[K]>;
+  [K in keyof A]: Lens<Record<A>, A[K]>
 }
 
 export interface UnsafeStringKeyObject<V> {
-  [id: string]: V;
+  [id: string]: V
 }
 
 export interface StringKeyObject<V> {
-  readonly [id: string]: V;
+  readonly [id: string]: V
 }
 
 export interface NumberKeyObject<V> {
-  readonly [id: number]: V;
+  readonly [id: number]: V
 }
 
 /**
@@ -325,15 +336,32 @@ export type RecordKey<K extends keyof T, T> =
   T[K] extends NonNullable<T[K]> ? Just<T[K]> : Maybe<NonNullable<T[K]>>
 
 // type ObjectDeleteProperty<T, D extends keyof T> = {
-//   [K in Exclude<keyof T, D>]: T[K];
-// };
+//   [K in Exclude<keyof T, D>]: T[K]
+// }
 
 export type RequiredExcept<A extends RecordBase, K extends keyof A> = {
-  [K1 in Exclude<keyof A, K>]-?: Exclude<A[K1], undefined>;
+  [K1 in Exclude<keyof A, K>]-?: Exclude<A[K1], undefined>
 } & {
-  [K1 in K]?: A[K1];
+  [K1 in K]?: A[K1]
+}
+
+type PartialMaybeRequiredKeys<A> = {
+  [K in keyof A]: A[K] extends Maybe<any> ? never : K
+} [keyof A]
+
+type PartialMaybePartialKeys<A> = {
+  [K in keyof A]: A[K] extends Maybe<any> ? K : never
+} [keyof A]
+
+/**
+ * All `Maybe` properties will be optional and all others required.
+ */
+export type PartialMaybe<A> = {
+  [K in PartialMaybeRequiredKeys<A>]-?: A[K] extends Maybe<any> ? never : A[K]
+} & {
+  [K in PartialMaybePartialKeys<A>]?: A[K] extends Maybe<any> ? A[K] : never
 }
 
 interface RecordBase {
-  [key: string]: any;
+  [key: string]: any
 }

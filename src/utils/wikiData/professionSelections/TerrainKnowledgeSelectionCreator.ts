@@ -11,4 +11,8 @@ const TerrainKnowledgeSelectionCreator =
 export const TerrainKnowledgeSelectionG = makeGetters (TerrainKnowledgeSelectionCreator)
 
 export const createTerrainKnowledgeSelection =
-  (options: List<number>) => TerrainKnowledgeSelectionCreator ({ sid: options })
+  (options: List<number>) =>
+    TerrainKnowledgeSelectionCreator ({
+      id: ProfessionSelectionIds.TERRAIN_KNOWLEDGE,
+      sid: options,
+    })

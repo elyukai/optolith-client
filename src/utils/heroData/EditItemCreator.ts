@@ -26,7 +26,7 @@ export const EditItemCreator =
     at: '',
     iniMod: '',
     movMod: '',
-    damageBonus: EditPrimaryAttributeDamageThresholdCreator ({ }),
+    damageBonus: EditPrimaryAttributeDamageThresholdCreator ({ threshold: '' }),
     damageDiceNumber: '',
     damageFlat: '',
     enc: '',

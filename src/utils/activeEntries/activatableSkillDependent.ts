@@ -19,7 +19,13 @@ export const ActivatableSkillDependentL = makeLenses_ (ActivatableSkillDependent
 const createActivatableSkillDependent =
   (options: Partial<Omit<ActivatableSkillDependent, 'id'>>) =>
   (id: string): Record<ActivatableSkillDependent> =>
-    ActivatableSkillDependentCreator ({ id, ...options })
+    ActivatableSkillDependentCreator ({
+      id,
+      value: 0,
+      active: false,
+      dependencies: fromElements<ExtendedSkillDependency> (),
+      ...options,
+    })
 
 export const createInactiveActivatableSkillDependent = createActivatableSkillDependent ({})
 

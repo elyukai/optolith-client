@@ -1,9 +1,8 @@
 import { Categories } from '../../constants/Categories';
-import { Cantrip } from '../../types/wiki';
+import { Cantrip, EntryWithCategory } from '../../types/wiki';
 import { List } from '../structures/List';
 import { Nothing } from '../structures/Maybe';
-import { fromDefault, makeGetters } from '../structures/Record';
-import { RequiredExceptCategoryFunction } from './sub/typeHelpers';
+import { fromDefault, makeGetters, Omit } from '../structures/Record';
 
 const CantripCreator =
   fromDefault<Cantrip> ({
@@ -22,5 +21,11 @@ const CantripCreator =
 
 export const CantripG = makeGetters (CantripCreator)
 
-export const createCantrip: RequiredExceptCategoryFunction<Cantrip> =
-  CantripCreator
+export const createCantrip =
+  (xs: Omit<Cantrip, 'category'>) => CantripCreator ({
+    ...xs,
+    category: Categories.CANTRIPS,
+  })
+
+export const isCantrip =
+  (r: EntryWithCategory) => CantripG.category (r) === Categories.CANTRIPS

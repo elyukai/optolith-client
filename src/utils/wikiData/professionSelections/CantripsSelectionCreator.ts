@@ -1,7 +1,6 @@
 import { CantripsSelection, ProfessionSelectionIds } from '../../../types/wiki';
 import { List } from '../../structures/List';
-import { fromDefault, makeGetters } from '../../structures/Record';
-import { RequiredExceptIdFunction } from '../sub/typeHelpers';
+import { fromDefault, makeGetters, Omit } from '../../structures/Record';
 
 const CantripsSelectionCreator =
   fromDefault<CantripsSelection> ({
@@ -12,6 +11,6 @@ const CantripsSelectionCreator =
 
 export const CantripsSelectionG = makeGetters (CantripsSelectionCreator)
 
-export const createCantripsSelection:
-  RequiredExceptIdFunction<CantripsSelection> =
-    CantripsSelectionCreator
+export const createCantripsSelection =
+  (xs: Omit<CantripsSelection, 'id'>) =>
+    CantripsSelectionCreator ({ ...xs, id: ProfessionSelectionIds.CANTRIPS })

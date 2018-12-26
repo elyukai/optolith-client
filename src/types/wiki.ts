@@ -181,7 +181,7 @@ export interface Race {
   weightBase: number;
   weightRandom: List<Record<Die>>;
   variants: List<string>;
-  category: Categories.RACES;
+  category: Categories;
   src: List<Record<SourceLink>>;
 }
 
@@ -206,7 +206,7 @@ export interface RaceVariant {
   eyeColors: Maybe<List<number>>;
   sizeBase: Maybe<number>;
   sizeRandom: Maybe<List<Record<Die>>>;
-  category: Categories.RACE_VARIANTS;
+  category: Categories;
 }
 
 export interface Culture {
@@ -237,7 +237,7 @@ export interface Culture {
    */
   commonNames: string;
   culturalPackageSkills: List<Record<IncreaseSkill>>;
-  category: Categories.CULTURES;
+  category: Categories;
   src: List<Record<SourceLink>>;
 }
 
@@ -407,7 +407,7 @@ export interface Profession {
   unsuitableDisadvantagesText: Maybe<string>;
   isVariantRequired: boolean;
   variants: List<string>;
-  category: Categories.PROFESSIONS;
+  category: Categories;
   gr: number;
   /**
    * Divides the groups into smaller subgroups, e.g. "Mage", "Blessed One of the
@@ -434,7 +434,7 @@ export interface ProfessionVariant {
   precedingText: Maybe<string>;
   fullText: Maybe<string>;
   concludingText: Maybe<string>;
-  category: Categories.PROFESSION_VARIANTS;
+  category: Categories;
 }
 
 export interface IncreaseSkill {
@@ -482,6 +482,7 @@ interface ActivatableBase {
   tiers: Maybe<number>;
   select: Maybe<List<Record<SelectionObject>>>;
   gr: number;
+  category: Categories;
   src: List<Record<SourceLink>>;
 }
 
@@ -493,16 +494,11 @@ interface AdvantageDisadvantageBase extends ActivatableBase {
   apValueAppend: Maybe<string>;
 }
 
-export interface Advantage extends AdvantageDisadvantageBase {
-  category: Categories.ADVANTAGES;
-}
+export interface Advantage extends AdvantageDisadvantageBase { }
 
-export interface Disadvantage extends AdvantageDisadvantageBase {
-  category: Categories.DISADVANTAGES;
-}
+export interface Disadvantage extends AdvantageDisadvantageBase { }
 
 export interface SpecialAbility extends ActivatableBase {
-  category: Categories.SPECIAL_ABILITIES;
   extended: Maybe<List<string | List<string>>>;
   nameInWiki: Maybe<string>;
   subgr: Maybe<number>;
@@ -524,14 +520,14 @@ export interface SpecialAbility extends ActivatableBase {
 export interface Attribute {
   id: string;
   name: string;
-  category: Categories.ATTRIBUTES;
+  category: Categories;
   short: string;
 }
 
 export interface CombatTechnique {
   id: string;
   name: string;
-  category: Categories.COMBAT_TECHNIQUES;
+  category: Categories;
   gr: number;
   ic: number;
   bf: number;
@@ -546,7 +542,7 @@ export interface LiturgicalChant {
   id: string;
   name: string;
   aspects: List<number>;
-  category: Categories.LITURGIES;
+  category: Categories;
   check: List<string>;
   checkmod: Maybe<CheckModifier>;
   gr: number;
@@ -570,7 +566,7 @@ export interface Blessing {
   name: string;
   aspects: List<number>;
   tradition: List<number>;
-  category: Categories.BLESSINGS;
+  category: Categories;
   effect: string;
   range: string;
   duration: string;
@@ -581,7 +577,7 @@ export interface Blessing {
 export interface Spell {
   id: string;
   name: string;
-  category: Categories.SPELLS;
+  category: Categories;
   check: List<string>;
   checkmod: Maybe<CheckModifier>;
   gr: number;
@@ -614,7 +610,7 @@ export interface Cantrip {
   name: string;
   property: number;
   tradition: List<number>;
-  category: Categories.CANTRIPS;
+  category: Categories;
   effect: string;
   range: string;
   duration: string;
@@ -626,7 +622,7 @@ export interface Cantrip {
 export interface Skill {
   id: string;
   name: string;
-  category: Categories.TALENTS;
+  category: Categories;
   check: List<string>;
   encumbrance: string;
   gr: number;

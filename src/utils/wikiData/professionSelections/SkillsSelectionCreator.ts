@@ -12,4 +12,5 @@ const SkillsSelectionCreator =
 export const SkillsSelectionG = makeGetters (SkillsSelectionCreator)
 
 export const createSkillsSelectionWithGroup =
-  (gr: Maybe<number>) => (points: number) => SkillsSelectionCreator ({ value: points, gr })
+  (gr: Maybe<number>) => (points: number) =>
+    SkillsSelectionCreator ({ id: ProfessionSelectionIds.SKILLS, value: points, gr })

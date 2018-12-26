@@ -1,9 +1,8 @@
 import { Categories } from '../../constants/Categories';
-import { Culture } from '../../types/wiki';
+import { Culture, EntryWithCategory } from '../../types/wiki';
 import { List } from '../structures/List';
 import { Nothing } from '../structures/Maybe';
-import { fromDefault, makeGetters } from '../structures/Record';
-import { RequiredExceptCategoryFunction } from './sub/typeHelpers';
+import { fromDefault, makeGetters, Omit } from '../structures/Record';
 
 const CultureCreator =
   fromDefault<Culture> ({
@@ -37,4 +36,11 @@ const CultureCreator =
 
 export const CultureG = makeGetters (CultureCreator)
 
-export const createCulture: RequiredExceptCategoryFunction<Culture> = CultureCreator
+export const createCulture =
+  (xs: Omit<Culture, 'category'>) => CultureCreator ({
+    ...xs,
+    category: Categories.CULTURES,
+  })
+
+export const isCulture =
+  (r: EntryWithCategory) => CultureG.category (r) === Categories.CULTURES

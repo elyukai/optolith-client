@@ -9,7 +9,11 @@ const RemoveSpecializationSelectionCreator =
 
 export const RemoveSpecializationSelectionG = makeGetters (RemoveSpecializationSelectionCreator)
 
-export const createRemoveSpecializationSelection = () => RemoveSpecializationSelectionCreator ({ })
+export const createRemoveSpecializationSelection =
+  () => RemoveSpecializationSelectionCreator ({
+    id: ProfessionSelectionIds.SPECIALIZATION,
+    active: false,
+  })
 
 export const isRemoveSpecializationSelection =
   (obj: ProfessionVariantSelection): obj is Record<RemoveSpecializationSelection> =>

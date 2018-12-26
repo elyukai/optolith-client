@@ -13,7 +13,7 @@ const RaceRequirementCreator =
 export const RaceRequirementG = makeGetters (RaceRequirementCreator)
 
 export const createRaceRequirement =
-  (x: number | List<number>) => RaceRequirementCreator ({ value: x })
+  (x: number | List<number>) => RaceRequirementCreator ({ id: 'RACE', value: x })
 
 export const isRaceRequirement =
   pipe (RequireActivatableG.id, equals<string | List<string>> ('RACE')) as unknown as

@@ -1,10 +1,9 @@
 import { Categories } from '../../constants/Categories';
-import { Race } from '../../types/wiki';
+import { EntryWithCategory, Race } from '../../types/wiki';
 import { List } from '../structures/List';
 import { Nothing } from '../structures/Maybe';
 import { fromBoth } from '../structures/Pair';
-import { fromDefault, makeGetters } from '../structures/Record';
-import { RequiredExceptCategoryFunction } from './sub/typeHelpers';
+import { fromDefault, makeGetters, Omit } from '../structures/Record';
 
 const RaceCreator =
   fromDefault<Race> ({
@@ -46,4 +45,11 @@ const RaceCreator =
 
 export const RaceG = makeGetters (RaceCreator)
 
-export const createRace: RequiredExceptCategoryFunction<Race> = RaceCreator
+export const createRace =
+  (xs: Omit<Race, 'category'>) => RaceCreator ({
+    ...xs,
+    category: Categories.RACES,
+  })
+
+export const isRace =
+  (r: EntryWithCategory) => RaceG.category (r) === Categories.RACES

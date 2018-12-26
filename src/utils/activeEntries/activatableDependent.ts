@@ -31,7 +31,12 @@ export const ActiveObjectL = makeLenses_ (ActiveObjectG)
 export const createActivatableDependent =
   (options: Partial<Omit<ActivatableDependent, 'id'>>) =>
   (id: string): Record<ActivatableDependent> =>
-    ActivatableDependentCreator ({ id, ...options })
+    ActivatableDependentCreator ({
+      id,
+      active: fromElements<Record<ActiveObject>> (),
+      dependencies: fromElements<ActivatableDependency> (),
+      ...options,
+    })
 
 export const createActivatableDependentWithActive =
   (activeObjects: List<Record<ActiveObject>>) =>

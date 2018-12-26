@@ -410,7 +410,7 @@ export interface ItemInstance extends ItemBaseInstance {
   length: Maybe<number>;
   amount: number;
   pa: Maybe<number>;
-  price: number;
+  price: Maybe<number>;
   pro: Maybe<number>;
   range: Maybe<List<number>>;
   reloadTime: Maybe<number>;
@@ -656,4 +656,3 @@ export interface Alert {
 }
 
 export { UIMessages, UIMessagesObject } from './ui';
-

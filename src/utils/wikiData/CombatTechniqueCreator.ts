@@ -1,9 +1,8 @@
 import { Categories } from '../../constants/Categories';
-import { CombatTechnique } from '../../types/wiki';
+import { CombatTechnique, EntryWithCategory } from '../../types/wiki';
 import { List } from '../structures/List';
 import { Nothing } from '../structures/Maybe';
-import { fromDefault, makeGetters } from '../structures/Record';
-import { RequiredExceptCategoryFunction } from './sub/typeHelpers';
+import { fromDefault, makeGetters, Omit } from '../structures/Record';
 
 const CombatTechniqueCreator =
   fromDefault<CombatTechnique> ({
@@ -20,5 +19,11 @@ const CombatTechniqueCreator =
 
 export const CombatTechniqueG = makeGetters (CombatTechniqueCreator)
 
-export const createCombatTechnique: RequiredExceptCategoryFunction<CombatTechnique> =
-  CombatTechniqueCreator
+export const createCombatTechnique =
+  (xs: Omit<CombatTechnique, 'category'>) => CombatTechniqueCreator ({
+    ...xs,
+    category: Categories.COMBAT_TECHNIQUES,
+  })
+
+export const isCombatTechnique =
+  (r: EntryWithCategory) => CombatTechniqueG.category (r) === Categories.COMBAT_TECHNIQUES

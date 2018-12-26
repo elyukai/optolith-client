@@ -1,9 +1,8 @@
 import { Categories } from '../../constants/Categories';
-import { Skill } from '../../types/wiki';
+import { EntryWithCategory, Skill } from '../../types/wiki';
 import { List } from '../structures/List';
 import { Nothing } from '../structures/Maybe';
-import { fromDefault, makeGetters } from '../structures/Record';
-import { RequiredExceptCategoryFunction } from './sub/typeHelpers';
+import { fromDefault, makeGetters, Omit } from '../structures/Record';
 
 const SkillCreator =
   fromDefault<Skill> ({
@@ -26,5 +25,11 @@ const SkillCreator =
 
 export const SkillG = makeGetters (SkillCreator)
 
-export const createSkill: RequiredExceptCategoryFunction<Skill> =
-  SkillCreator
+export const createSkill =
+  (xs: Omit<Skill, 'category'>) => SkillCreator ({
+    ...xs,
+    category: Categories.ADVANTAGES,
+  })
+
+export const isSkill =
+  (r: EntryWithCategory) => SkillG.category (r) === Categories.TALENTS

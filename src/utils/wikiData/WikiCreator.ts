@@ -1,7 +1,6 @@
 import { WikiAll } from '../../types/wiki';
 import { OrderedMap } from '../structures/OrderedMap';
 import { fromDefault, makeGetters } from '../structures/Record';
-import { RequiredFunction } from './sub/typeHelpers';
 
 const WikiCreator =
   fromDefault<WikiAll> ({
@@ -27,4 +26,4 @@ const WikiCreator =
 
 export const WikiG = makeGetters (WikiCreator)
 
-export const createWiki: RequiredFunction<WikiAll> = WikiCreator
+export const createWiki = WikiCreator

@@ -1,8 +1,7 @@
 import { Categories } from '../../constants/Categories';
-import { Blessing } from '../../types/wiki';
+import { Blessing, EntryWithCategory } from '../../types/wiki';
 import { List } from '../structures/List';
-import { fromDefault, makeGetters } from '../structures/Record';
-import { RequiredExceptCategoryFunction } from './sub/typeHelpers';
+import { fromDefault, makeGetters, Omit } from '../structures/Record';
 
 const BlessingCreator =
   fromDefault<Blessing> ({
@@ -20,5 +19,11 @@ const BlessingCreator =
 
 export const BlessingG = makeGetters (BlessingCreator)
 
-export const createBlessing: RequiredExceptCategoryFunction<Blessing> =
-  BlessingCreator
+export const createBlessing =
+  (xs: Omit<Blessing, 'category'>) => BlessingCreator ({
+    ...xs,
+    category: Categories.BLESSINGS,
+  })
+
+export const isBlessing =
+  (r: EntryWithCategory) => BlessingG.category (r) === Categories.BLESSINGS

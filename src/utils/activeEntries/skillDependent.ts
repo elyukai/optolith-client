@@ -18,7 +18,12 @@ export const SkillDependentL = makeLenses_ (SkillDependentG) (SkillDependentCrea
 export const createSkillDependent =
   (options: Partial<Omit<SkillDependent, 'id'>>) =>
   (id: string): Record<SkillDependent> =>
-    SkillDependentCreator ({ id, ...options })
+    SkillDependentCreator ({
+      id,
+      value: 0,
+      dependencies: fromElements<SkillDependency> (),
+      ...options,
+    })
 
 export const createPlainSkillDependent = createSkillDependent ({ })
 

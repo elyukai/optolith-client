@@ -11,4 +11,5 @@ const SpecializationSelectionCreator =
 export const SpecializationSelectionG = makeGetters (SpecializationSelectionCreator)
 
 export const createSpecializationSelection =
-  (id: string | List<string>) => SpecializationSelectionCreator ({ sid: id })
+  (id: string | List<string>) =>
+    SpecializationSelectionCreator ({ id: ProfessionSelectionIds.SPECIALIZATION, sid: id })

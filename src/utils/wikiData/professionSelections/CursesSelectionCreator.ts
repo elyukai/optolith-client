@@ -10,4 +10,4 @@ const CursesSelectionCreator =
 export const CursesSelectionG = makeGetters (CursesSelectionCreator)
 
 export const createCursesSelection =
-  (points: number) => CursesSelectionCreator ({ value: points })
+  (points: number) => CursesSelectionCreator ({ id: ProfessionSelectionIds.CURSES, value: points })

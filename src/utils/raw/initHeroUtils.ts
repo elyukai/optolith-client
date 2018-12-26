@@ -89,7 +89,7 @@ const createHeroObject = (hero: Raw.RawHero): Record<Data.HeroDependent> =>
       permanentLifePoints:
         hero .attr .permanentLP
           ? PermanentEnergyLossCreator (hero .attr .permanentLP)
-          : PermanentEnergyLossCreator ({ }),
+          : PermanentEnergyLossCreator ({ lost: 0 }),
     }),
 
     ...getActivatables (hero),
@@ -145,7 +145,7 @@ const createHeroObject = (hero: Raw.RawHero): Record<Data.HeroDependent> =>
                 length: fromNullable (obj .length),
                 amount: obj .amount,
                 pa: fromNullable (obj .pa),
-                price: obj .price,
+                price: fromNullable (obj .price),
                 pro: fromNullable (obj .pro),
                 range: Maybe.fmap<number[], List<number>> (List.fromArray)
                                                           (fromNullable (obj .range)),
@@ -187,6 +187,9 @@ const createHeroObject = (hero: Raw.RawHero): Record<Data.HeroDependent> =>
         : OrderedMap.empty,
 
       purse: PurseCreator (hero .belongings .purse),
+
+      isInItemCreation: false,
+      isInZoneArmorCreation: false,
     }),
 
     rules: RulesCreator ({
@@ -236,6 +239,11 @@ const createHeroObject = (hero: Raw.RawHero): Record<Data.HeroDependent> =>
           )
       )
       : OrderedMap.empty,
+
+    isInPetCreation: false,
+    blessedStyleDependencies: List.empty,
+    combatStyleDependencies: List.empty,
+    magicalStyleDependencies: List.empty,
   })
 
 const getActivatableDependent =

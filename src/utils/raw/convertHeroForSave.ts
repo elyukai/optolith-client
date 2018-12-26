@@ -131,7 +131,7 @@ const { primary, threshold } = PrimaryAttributeDamageThresholdG
 const getBelongingsForSave = (hero: Record<Data.HeroDependent>) =>
   ({
     items: toObjectWith<Record<Data.ItemInstance>, Raw.RawCustomItem>
-      (obj => {
+      ((obj): Raw.RawCustomItem => {
         const {
           improvisedWeaponGroup,
           damageBonus,
@@ -165,11 +165,13 @@ const getBelongingsForSave = (hero: Record<Data.HeroDependent>) =>
           forArmorZoneOnly,
           addPenalties,
           armorType,
+          price,
           ...other
         } = toObject (obj)
 
         return {
           ...other,
+          price: maybeToUndefined (price),
           at: maybeToUndefined (at),
           iniMod: maybeToUndefined (iniMod),
           movMod: maybeToUndefined (movMod),
@@ -182,11 +184,6 @@ const getBelongingsForSave = (hero: Record<Data.HeroDependent>) =>
           reloadTime: maybeToUndefined (reloadTime),
           stp: maybeToUndefined (stp),
           stabilityMod: maybeToUndefined (stabilityMod),
-          note: maybeToUndefined (note),
-          rules: maybeToUndefined (rules),
-          advantage: maybeToUndefined (advantage),
-          disadvantage: maybeToUndefined (disadvantage),
-          src: maybeToUndefined (src),
           ammunition: maybeToUndefined (ammunition),
           combatTechnique: maybeToUndefined (combatTechnique),
           damageDiceSides: maybeToUndefined (damageDiceSides),

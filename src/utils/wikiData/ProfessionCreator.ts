@@ -1,9 +1,8 @@
 import { Categories } from '../../constants/Categories';
-import { Profession } from '../../types/wiki';
+import { EntryWithCategory, Profession } from '../../types/wiki';
 import { List } from '../structures/List';
 import { Nothing } from '../structures/Maybe';
-import { fromDefault, makeGetters } from '../structures/Record';
-import { RequiredExceptCategoryFunction } from './sub/typeHelpers';
+import { fromDefault, makeGetters, Omit } from '../structures/Record';
 
 const ProfessionCreator =
   fromDefault<Profession> ({
@@ -41,4 +40,11 @@ const ProfessionCreator =
 
 export const ProfessionG = makeGetters (ProfessionCreator)
 
-export const createProfession: RequiredExceptCategoryFunction<Profession> = ProfessionCreator
+export const createProfession =
+  (xs: Omit<Profession, 'category'>) => ProfessionCreator ({
+    ...xs,
+    category: Categories.PROFESSIONS,
+  })
+
+export const isProfession =
+  (r: EntryWithCategory) => ProfessionG.category (r) === Categories.PROFESSIONS

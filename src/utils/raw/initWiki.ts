@@ -16,8 +16,8 @@ import { createCantrip } from '../wikiData/CantripCreator';
 import { createCombatTechnique } from '../wikiData/CombatTechniqueCreator';
 import { createCulture } from '../wikiData/CultureCreator';
 import { createDisadvantage } from '../wikiData/DisadvantageCreator';
-import { createExperienceLevel } from '../wikiData/ExperienceLevelCreator';
-import { createItemTemplate } from '../wikiData/ItemTemplateCreator';
+import { ExperienceLevelCreator } from '../wikiData/ExperienceLevelCreator';
+import { ItemTemplateCreator } from '../wikiData/ItemTemplateCreator';
 import { createLiturgicalChant } from '../wikiData/LiturgicalChantCreator';
 import { createProfession } from '../wikiData/ProfessionCreator';
 import { createProfessionVariant } from '../wikiData/ProfessionVariantCreator';
@@ -48,7 +48,7 @@ export const initExperienceLevel =
     if (localeObject !== undefined) {
       const { name } = localeObject
 
-      return Just (createExperienceLevel ({
+      return Just (ExperienceLevelCreator ({
         ...raw,
         id,
         name,
@@ -981,7 +981,7 @@ export const initItemTemplate =
         stabilityMod,
       } = raw
 
-      return Just (createItemTemplate ({
+      return Just (ItemTemplateCreator ({
         id,
         name,
         gr,

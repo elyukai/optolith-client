@@ -43,7 +43,7 @@ export type IncreasableCategory =
   Categories.SPELLS |
   Categories.TALENTS
 
-export const IncreasableCategories = fromElements<IncreasableCategory> (
+export const IncreasableCategories = fromElements (
   Categories.ATTRIBUTES,
   Categories.COMBAT_TECHNIQUES,
   Categories.LITURGIES,

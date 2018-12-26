@@ -3,7 +3,6 @@ import { AllRequirementObjects, PactRequirement } from '../../../types/wiki';
 import { List } from '../../structures/List';
 import { Nothing } from '../../structures/Maybe';
 import { fromDefault, makeGetters, Record } from '../../structures/Record';
-import { PartialMaybeFunction } from '../sub/typeHelpers';
 import { RequireActivatableG } from './ActivatableRequirementCreator';
 
 const PactRequirementCreator =
@@ -16,8 +15,7 @@ const PactRequirementCreator =
 
 export const PactRequirementG = makeGetters (PactRequirementCreator)
 
-export const createPactRequirement: PartialMaybeFunction<PactRequirement> =
-  PactRequirementCreator
+export const createPactRequirement = PactRequirementCreator
 
 export const isPactRequirement =
   pipe (RequireActivatableG.id, equals<string | List<string>> ('PACT')) as unknown as

@@ -13,7 +13,7 @@ const CultureRequirementCreator =
 export const CultureRequirementG = makeGetters (CultureRequirementCreator)
 
 export const createCultureRequirement =
-  (x: number | List<number>) => CultureRequirementCreator ({ value: x })
+  (x: number | List<number>) => CultureRequirementCreator ({ id: 'CULTURE', value: x })
 
 export const isCultureRequirement =
   pipe (RequireActivatableG.id, equals<string | List<string>> ('CULTURE')) as unknown as

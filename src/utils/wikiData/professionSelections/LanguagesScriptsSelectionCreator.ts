@@ -10,4 +10,8 @@ const LanguagesScriptsSelectionCreator =
 export const LanguagesScriptsSelectionG = makeGetters (LanguagesScriptsSelectionCreator)
 
 export const createLanguagesScriptsSelection =
-  (points: number) => LanguagesScriptsSelectionCreator ({ value: points })
+  (points: number) =>
+    LanguagesScriptsSelectionCreator ({
+      id: ProfessionSelectionIds.LANGUAGES_SCRIPTS,
+      value: points,
+    })

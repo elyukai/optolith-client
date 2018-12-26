@@ -1,9 +1,8 @@
 import { Categories } from '../../constants/Categories';
-import { Spell } from '../../types/wiki';
+import { EntryWithCategory, Spell } from '../../types/wiki';
 import { List } from '../structures/List';
 import { Nothing } from '../structures/Maybe';
-import { fromDefault, makeGetters } from '../structures/Record';
-import { RequiredExceptCategoryFunction } from './sub/typeHelpers';
+import { fromDefault, makeGetters, Omit } from '../structures/Record';
 
 const SpellCreator =
   fromDefault<Spell> ({
@@ -33,5 +32,11 @@ const SpellCreator =
 
 export const SpellG = makeGetters (SpellCreator)
 
-export const createSpell: RequiredExceptCategoryFunction<Spell> =
-  SpellCreator
+export const createSpell =
+  (xs: Omit<Spell, 'category'>) => SpellCreator ({
+    ...xs,
+    category: Categories.SPELLS,
+  })
+
+export const isSpell =
+  (r: EntryWithCategory) => SpellG.category (r) === Categories.SPELLS

@@ -1,9 +1,8 @@
 import { Categories } from '../../constants/Categories';
-import { RaceVariant } from '../../types/wiki';
+import { EntryWithCategory, RaceVariant } from '../../types/wiki';
 import { List } from '../structures/List';
 import { Nothing } from '../structures/Maybe';
-import { fromDefault, makeGetters } from '../structures/Record';
-import { RequiredExceptCategoryFunction } from './sub/typeHelpers';
+import { fromDefault, makeGetters, Omit } from '../structures/Record';
 
 const RaceVariantCreator =
   fromDefault<RaceVariant> ({
@@ -27,4 +26,11 @@ const RaceVariantCreator =
 
 export const RaceVariantG = makeGetters (RaceVariantCreator)
 
-export const createRaceVariant: RequiredExceptCategoryFunction<RaceVariant> = RaceVariantCreator
+export const createRaceVariant =
+  (xs: Omit<RaceVariant, 'category'>) => RaceVariantCreator ({
+    ...xs,
+    category: Categories.RACE_VARIANTS,
+  })
+
+export const isRaceVariant =
+  (r: EntryWithCategory) => RaceVariantG.category (r) === Categories.RACE_VARIANTS

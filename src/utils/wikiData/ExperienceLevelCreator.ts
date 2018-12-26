@@ -1,8 +1,7 @@
 import { ExperienceLevel } from '../../types/wiki';
 import { fromDefault, makeGetters } from '../structures/Record';
-import { RequiredFunction } from './sub/typeHelpers';
 
-const ExperienceLevelCreator =
+export const ExperienceLevelCreator =
   fromDefault<ExperienceLevel> ({
     id: '',
     name: '',
@@ -16,5 +15,3 @@ const ExperienceLevelCreator =
   })
 
 export const ExperienceLevelG = makeGetters (ExperienceLevelCreator)
-
-export const createExperienceLevel: RequiredFunction<ExperienceLevel> = ExperienceLevelCreator

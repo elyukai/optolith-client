@@ -659,6 +659,7 @@ export interface RawCustomItem extends RawBaseItem {
   isTemplateLocked: boolean;
   loss?: number;
   forArmorZoneOnly?: boolean;
+  where?: string;
 }
 
 export interface RawItemLocale {

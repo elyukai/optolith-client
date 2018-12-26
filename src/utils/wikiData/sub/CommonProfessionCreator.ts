@@ -1,7 +1,6 @@
 import { CommonProfessionObject } from '../../../types/data';
 import { List } from '../../structures/List';
 import { fromDefault, makeGetters } from '../../structures/Record';
-import { RequiredFunction } from './typeHelpers';
 
 const CommonProfessionObjectCreator =
   fromDefault<CommonProfessionObject> ({
@@ -11,5 +10,4 @@ const CommonProfessionObjectCreator =
 
 export const CommonProfessionObjectG = makeGetters (CommonProfessionObjectCreator)
 
-export const createCommonProfessionObject: RequiredFunction<CommonProfessionObject> =
-  CommonProfessionObjectCreator
+export const createCommonProfessionObject = CommonProfessionObjectCreator

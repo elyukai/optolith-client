@@ -5,7 +5,6 @@ import { getCategoryById } from '../../IDUtils';
 import { all, elem_, isList } from '../../structures/List';
 import { fmap, Nothing, or } from '../../structures/Maybe';
 import { fromDefault, makeGetters, makeLenses_, member, Record } from '../../structures/Record';
-import { PartialMaybeFunction } from '../sub/typeHelpers';
 
 const RequireActivatableCreator =
   fromDefault<RequiresActivatableObject> ({
@@ -19,8 +18,7 @@ const RequireActivatableCreator =
 export const RequireActivatableG = makeGetters (RequireActivatableCreator)
 export const RequireActivatableL = makeLenses_ (RequireActivatableG) (RequireActivatableCreator)
 
-export const createRequireActivatable: PartialMaybeFunction<RequiresActivatableObject> =
-  RequireActivatableCreator
+export const createRequireActivatable = RequireActivatableCreator
 
 export const isRequiringActivatable =
   (req: AllRequirementObjects): req is Record<RequiresActivatableObject> => {

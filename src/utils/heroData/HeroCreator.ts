@@ -39,7 +39,7 @@ export const HeroCreator =
     specialAbilities: OrderedMap.empty,
     attributes: OrderedMap.empty,
     attributeAdjustmentSelected: '',
-    energies: EnergiesCreator ({ }),
+    energies: EnergiesCreator ({  }),
     skills: OrderedMap.empty,
     combatTechniques: OrderedMap.empty,
     spells: OrderedMap.empty,

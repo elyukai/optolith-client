@@ -1,7 +1,6 @@
 import { Categories } from '../../constants/Categories';
-import { Attribute } from '../../types/wiki';
-import { fromDefault, makeGetters } from '../structures/Record';
-import { RequiredExceptCategoryFunction } from './sub/typeHelpers';
+import { Attribute, EntryWithCategory } from '../../types/wiki';
+import { fromDefault, makeGetters, Omit } from '../structures/Record';
 
 const AttributeCreator =
   fromDefault<Attribute> ({
@@ -13,5 +12,11 @@ const AttributeCreator =
 
 export const AttributeG = makeGetters (AttributeCreator)
 
-export const createAttribute: RequiredExceptCategoryFunction<Attribute> =
-  AttributeCreator
+export const createAttribute =
+  (xs: Omit<Attribute, 'category'>) => AttributeCreator ({
+    ...xs,
+    category: Categories.ATTRIBUTES,
+  })
+
+export const isAttribute =
+  (r: EntryWithCategory) => AttributeG.category (r) === Categories.ADVANTAGES

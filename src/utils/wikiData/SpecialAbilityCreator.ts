@@ -1,10 +1,9 @@
 import { Categories } from '../../constants/Categories';
-import { SpecialAbility } from '../../types/wiki';
+import { EntryWithCategory, SpecialAbility } from '../../types/wiki';
 import { List } from '../structures/List';
 import { Nothing } from '../structures/Maybe';
 import { OrderedMap } from '../structures/OrderedMap';
-import { fromDefault, makeGetters } from '../structures/Record';
-import { RequiredExceptCategoryFunction } from './sub/typeHelpers';
+import { fromDefault, makeGetters, Omit } from '../structures/Record';
 
 const SpecialAbilityCreator =
   fromDefault<SpecialAbility> ({
@@ -43,5 +42,11 @@ const SpecialAbilityCreator =
 
 export const SpecialAbilityG = makeGetters (SpecialAbilityCreator)
 
-export const createSpecialAbility: RequiredExceptCategoryFunction<SpecialAbility> =
-  SpecialAbilityCreator
+export const createSpecialAbility =
+  (xs: Omit<SpecialAbility, 'category'>) => SpecialAbilityCreator ({
+    ...xs,
+    category: Categories.SPECIAL_ABILITIES,
+  })
+
+export const isSpecialAbility =
+  (r: EntryWithCategory) => SpecialAbilityG.category (r) === Categories.SPECIAL_ABILITIES

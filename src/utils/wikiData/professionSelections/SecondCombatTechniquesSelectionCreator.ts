@@ -1,7 +1,6 @@
 import { CombatTechniquesSecondSelection, ProfessionSelectionIds } from '../../../types/wiki';
 import { List } from '../../structures/List';
-import { fromDefault, makeGetters } from '../../structures/Record';
-import { RequiredExceptIdFunction } from '../sub/typeHelpers';
+import { fromDefault, makeGetters, Omit } from '../../structures/Record';
 
 const CombatTechniquesSecondSelectionCreator =
   fromDefault<CombatTechniquesSecondSelection> ({
@@ -13,6 +12,9 @@ const CombatTechniquesSecondSelectionCreator =
 
 export const CombatTechniquesSecondSelectionG = makeGetters (CombatTechniquesSecondSelectionCreator)
 
-export const createCombatTechniquesSecondSelection:
-  RequiredExceptIdFunction<CombatTechniquesSecondSelection> =
-    CombatTechniquesSecondSelectionCreator
+export const createCombatTechniquesSecondSelection =
+  (xs: Omit<CombatTechniquesSecondSelection, 'id'>) =>
+    CombatTechniquesSecondSelectionCreator ({
+      ...xs,
+      id: ProfessionSelectionIds.COMBAT_TECHNIQUES_SECOND,
+    })

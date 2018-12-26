@@ -1,10 +1,9 @@
 import { Categories } from '../../constants/Categories';
-import { Advantage } from '../../types/wiki';
+import { Advantage, EntryWithCategory } from '../../types/wiki';
 import { List } from '../structures/List';
 import { Nothing } from '../structures/Maybe';
 import { OrderedMap } from '../structures/OrderedMap';
-import { fromDefault, makeGetters } from '../structures/Record';
-import { RequiredExceptCategoryFunction } from './sub/typeHelpers';
+import { fromDefault, makeGetters, Omit } from '../structures/Record';
 
 const AdvantageCreator =
   fromDefault<Advantage> ({
@@ -32,4 +31,11 @@ const AdvantageCreator =
 
 export const AdvantageG = makeGetters (AdvantageCreator)
 
-export const createAdvantage: RequiredExceptCategoryFunction<Advantage> = AdvantageCreator
+export const createAdvantage =
+  (xs: Omit<Advantage, 'category'>) => AdvantageCreator ({
+    ...xs,
+    category: Categories.ADVANTAGES,
+  })
+
+export const isAdvantage =
+  (r: EntryWithCategory) => AdvantageG.category (r) === Categories.ADVANTAGES

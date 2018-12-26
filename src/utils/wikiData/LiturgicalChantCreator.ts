@@ -1,9 +1,8 @@
 import { Categories } from '../../constants/Categories';
-import { LiturgicalChant } from '../../types/wiki';
+import { EntryWithCategory, LiturgicalChant } from '../../types/wiki';
 import { List } from '../structures/List';
 import { Nothing } from '../structures/Maybe';
-import { fromDefault, makeGetters } from '../structures/Record';
-import { RequiredExceptCategoryFunction } from './sub/typeHelpers';
+import { fromDefault, makeGetters, Omit } from '../structures/Record';
 
 const LiturgicalChantCreator =
   fromDefault<LiturgicalChant> ({
@@ -31,5 +30,11 @@ const LiturgicalChantCreator =
 
 export const LiturgicalChantG = makeGetters (LiturgicalChantCreator)
 
-export const createLiturgicalChant: RequiredExceptCategoryFunction<LiturgicalChant> =
-  LiturgicalChantCreator
+export const createLiturgicalChant =
+  (xs: Omit<LiturgicalChant, 'category'>) => LiturgicalChantCreator ({
+    ...xs,
+    category: Categories.LITURGIES,
+  })
+
+export const isLiturgicalChant =
+  (r: EntryWithCategory) => LiturgicalChantG.category (r) === Categories.LITURGIES

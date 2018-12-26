@@ -1,10 +1,9 @@
 import { Categories } from '../../constants/Categories';
-import { Disadvantage } from '../../types/wiki';
+import { Disadvantage, EntryWithCategory } from '../../types/wiki';
 import { List } from '../structures/List';
 import { Nothing } from '../structures/Maybe';
 import { OrderedMap } from '../structures/OrderedMap';
-import { fromDefault, makeGetters } from '../structures/Record';
-import { RequiredExceptCategoryFunction } from './sub/typeHelpers';
+import { fromDefault, makeGetters, Omit } from '../structures/Record';
 
 const DisadvantageCreator =
   fromDefault<Disadvantage> ({
@@ -32,4 +31,11 @@ const DisadvantageCreator =
 
 export const DisadvantageG = makeGetters (DisadvantageCreator)
 
-export const createDisadvantage: RequiredExceptCategoryFunction<Disadvantage> = DisadvantageCreator
+export const createDisadvantage =
+  (xs: Omit<Disadvantage, 'category'>) => DisadvantageCreator ({
+    ...xs,
+    category: Categories.DISADVANTAGES,
+  })
+
+export const isDisadvantage =
+  (r: EntryWithCategory) => DisadvantageG.category (r) === Categories.DISADVANTAGES

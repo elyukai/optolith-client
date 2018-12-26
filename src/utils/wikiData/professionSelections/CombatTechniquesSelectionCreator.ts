@@ -1,7 +1,6 @@
 import { CombatTechniquesSelection, ProfessionSelectionIds, ProfessionVariantSelection } from '../../../types/wiki';
 import { List } from '../../structures/List';
-import { fromDefault, makeGetters, member, Record } from '../../structures/Record';
-import { RequiredExceptIdFunction } from '../sub/typeHelpers';
+import { fromDefault, makeGetters, member, Omit, Record } from '../../structures/Record';
 
 const CombatTechniquesSelectionCreator =
   fromDefault<CombatTechniquesSelection> ({
@@ -13,8 +12,9 @@ const CombatTechniquesSelectionCreator =
 
 export const CombatTechniquesSelectionG = makeGetters (CombatTechniquesSelectionCreator)
 
-export const createCombatTechniquesSelection: RequiredExceptIdFunction<CombatTechniquesSelection> =
-  CombatTechniquesSelectionCreator
+export const createCombatTechniquesSelection =
+  (xs: Omit<CombatTechniquesSelection, 'id'>) =>
+    CombatTechniquesSelectionCreator ({ ...xs, id: ProfessionSelectionIds.COMBAT_TECHNIQUES })
 
 export const isCombatTechniquesSelection =
   (obj: ProfessionVariantSelection): obj is Record<CombatTechniquesSelection> =>

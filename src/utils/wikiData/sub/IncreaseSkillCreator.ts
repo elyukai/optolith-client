@@ -1,6 +1,5 @@
 import { IncreaseSkill } from '../../../types/wiki';
 import { fromDefault, makeGetters } from '../../structures/Record';
-import { RequiredFunction } from './typeHelpers';
 
 const IncreaseSkillCreator =
   fromDefault<IncreaseSkill> ({
@@ -10,4 +9,4 @@ const IncreaseSkillCreator =
 
 export const IncreaseSkillG = makeGetters (IncreaseSkillCreator)
 
-export const createIncreaseSkill: RequiredFunction<IncreaseSkill> = IncreaseSkillCreator
+export const createIncreaseSkill = IncreaseSkillCreator

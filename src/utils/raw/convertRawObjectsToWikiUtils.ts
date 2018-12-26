@@ -4,8 +4,8 @@ import { IdPrefixes } from '../../constants/IdPrefixes';
 import * as Raw from '../../types/rawdata';
 import * as Wiki from '../../types/wiki';
 import { getCategoryById, prefixRawId } from '../IDUtils';
-import { List } from '../structures/List';
-import { fmap, fromJust, fromNullable, isJust, Just, Maybe, Nothing } from '../structures/Maybe';
+import { elem_, List } from '../structures/List';
+import { fmap, fromNullable, Just, Maybe, Nothing, or } from '../structures/Maybe';
 import { Pair } from '../structures/Pair';
 import { Record } from '../structures/Record';
 import { createRequireActivatable } from '../wikiData/prerequisites/ActivatableRequirementCreator';
@@ -57,19 +57,15 @@ const isRawRequiringIncreasable =
     if (typeof id === 'object') {
       return req.hasOwnProperty ('value') && id.every (R.pipe (
         getCategoryById,
-        (category: Maybe<Categories.Categories>) => isJust (category) &&
-          Categories.IncreasableCategories.elem (
-            fromJust (category) as Categories.IncreasableCategory
-          )
+        (category: Maybe<Categories.Categories>) =>
+          or (fmap (elem_ (Categories.IncreasableCategories)) (category))
       ))
     }
     else {
       const category = getCategoryById (id)
 
-      return req.hasOwnProperty ('value') && isJust (category) &&
-        Categories.IncreasableCategories.elem (
-          fromJust (category) as Categories.IncreasableCategory
-        )
+      return req.hasOwnProperty ('value')
+        && or (fmap (elem_ (Categories.IncreasableCategories)) (category))
     }
   }
 
@@ -246,7 +242,6 @@ const convertRawSelection = (e: Raw.RawSelectionObject) =>
   createSelectOption ({
     ...e,
     cost: fromNullable (e .cost),
-    req: fmap (convertRawPrerequisiteObjects) (fromNullable (e .req)),
     prerequisites: fmap (convertRawPrerequisiteObjects) (fromNullable (e.prerequisites)),
     // TODO: MAKE SURE THE FOLLOWING CAN BE DELETED
     // applications: e.applications && List.fromArray (e.applications.map (

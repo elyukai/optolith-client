@@ -2,9 +2,8 @@ import { ItemTemplate } from '../../types/wiki';
 import { List } from '../structures/List';
 import { Nothing } from '../structures/Maybe';
 import { fromDefault, makeGetters } from '../structures/Record';
-import { RequiredFunction } from './sub/typeHelpers';
 
-const ItemTemplateCreator =
+export const ItemTemplateCreator =
   fromDefault<ItemTemplate> ({
     id: '',
     name: '',
@@ -47,6 +46,3 @@ const ItemTemplateCreator =
   })
 
 export const ItemTemplateG = makeGetters (ItemTemplateCreator)
-
-export const createItemTemplate: RequiredFunction<ItemTemplate> =
-  ItemTemplateCreator

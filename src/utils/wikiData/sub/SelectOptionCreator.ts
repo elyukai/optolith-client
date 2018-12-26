@@ -1,7 +1,6 @@
 import { SelectionObject } from '../../../types/wiki';
 import { Nothing } from '../../structures/Maybe';
 import { fromDefault, makeGetters } from '../../structures/Record';
-import { PartialMaybeFunction } from './typeHelpers';
 
 const SelectOptionCreator =
   fromDefault<SelectionObject> ({
@@ -22,4 +21,4 @@ const SelectOptionCreator =
 
 export const SelectOptionG = makeGetters (SelectOptionCreator)
 
-export const createSelectOption: PartialMaybeFunction<SelectionObject> = SelectOptionCreator
+export const createSelectOption = SelectOptionCreator

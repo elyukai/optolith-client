@@ -15,7 +15,7 @@ export const BelongingsCreator =
     armorZones: OrderedMap.empty,
     zoneArmorInEditor: Nothing,
     isInZoneArmorCreation: false,
-    purse: PurseCreator ({ }),
+    purse: PurseCreator ({ d: '', s: '', h: '', k: '' }),
   })
 
 export const BelongingsG = makeGetters (BelongingsCreator)

@@ -14,7 +14,7 @@ const SexRequirementCreator =
 
 export const SexRequirementG = makeGetters (SexRequirementCreator)
 
-export const createSexRequirement = (x: Sex) => SexRequirementCreator ({ value: x })
+export const createSexRequirement = (x: Sex) => SexRequirementCreator ({ id: 'SEX', value: x })
 
 export const isSexRequirement =
   pipe (RequireActivatableG.id, equals<string | List<string>> ('SEX')) as unknown as
