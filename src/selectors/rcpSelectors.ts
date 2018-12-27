@@ -1,6 +1,5 @@
 import { Categories } from '../constants/Categories';
 import { ActivatableNameCostActive, ActiveObjectWithId } from '../types/data';
-import { CultureCombined, IncreasableView, MappedProfession, MappedProfessionVariant, ProfessionCombined, ProfessionVariantCombined, RaceCombined } from '../types/view';
 import { Culture, IncreaseSkill, Profession, ProfessionVariant, Race, RaceVariant } from '../types/wiki';
 import { getNameCostForWiki } from '../utils/activatable/activatableActiveUtils';
 import { convertPerTierCostToFinalCost } from '../utils/adventurePoints/activatableCostUtils';
@@ -11,6 +10,7 @@ import { getCategoryById } from '../utils/IDUtils';
 import { validateProfession } from '../utils/prerequisites/validatePrerequisitesUtils';
 import { getFullProfessionName } from '../utils/rcpUtils';
 import { filterByAvailability, isEntryFromCoreBook } from '../utils/RulesUtils';
+import { CultureCombined, IncreasableView, MappedProfession, MappedProfessionVariant, ProfessionCombined, ProfessionVariantCombined, RaceCombined } from '../utils/viewData/viewTypeHelpers';
 import { isProfessionRequiringActivatable, isProfessionRequiringIncreasable } from '../utils/wikiData/prerequisites/DependentRequirement';
 import { isCombatTechniquesSelection } from '../utils/WikiUtils';
 import { getStartEl } from './elSelectors';

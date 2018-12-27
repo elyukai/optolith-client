@@ -1,10 +1,10 @@
 import * as R from 'ramda';
 import * as React from 'react';
 import { TextBox } from '../../../components/TextBox';
-import { BlessingCombined } from '../../../types/view';
 import { List, Maybe, Record } from '../../../utils/dataUtils';
 import { sortStrings } from '../../../utils/FilterSortUtils';
 import { translate, UIMessagesObject } from '../../../utils/I18n';
+import { BlessingCombined } from '../../../utils/viewData/viewTypeHelpers';
 
 export interface LiturgicalChantSheetBlessingsProps {
   blessings: Maybe<List<Record<BlessingCombined>>>;

@@ -2,7 +2,7 @@ import { WikiAll } from '../../types/wiki';
 import { OrderedMap } from '../structures/OrderedMap';
 import { fromDefault, makeGetters } from '../structures/Record';
 
-const WikiCreator =
+export const WikiCreator =
   fromDefault<WikiAll> ({
     books: OrderedMap.empty,
     experienceLevels: OrderedMap.empty,

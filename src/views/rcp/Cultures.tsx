@@ -12,9 +12,9 @@ import { Scroll } from '../../components/Scroll';
 import { SortNames, SortOptions } from '../../components/SortOptions';
 import { TextField } from '../../components/TextField';
 import { WikiInfoContainer } from '../../containers/WikiInfoContainer';
-import { CultureCombined } from '../../types/view';
 import { Just, List, Maybe, Record } from '../../utils/dataUtils';
 import { translate, UIMessagesObject } from '../../utils/I18n';
+import { CultureCombined } from '../../utils/viewData/viewTypeHelpers';
 import { CulturesListItem } from './CulturesListItem';
 
 export interface CulturesOwnProps {

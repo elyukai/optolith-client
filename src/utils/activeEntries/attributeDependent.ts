@@ -3,7 +3,7 @@ import { fnull, fromElements } from '../structures/List';
 import { fromJust, isJust, Just, Maybe } from '../structures/Maybe';
 import { fromDefault, makeGetters, makeLenses_, member, notMember, Omit, Record } from '../structures/Record';
 
-const AttributeDependentCreator =
+export const AttributeDependentCreator =
   fromDefault<AttributeDependent> ({
     id: '',
     value: 8,

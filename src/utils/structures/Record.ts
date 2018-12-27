@@ -30,6 +30,7 @@ export interface Record<A extends RecordBase> extends RecordPrototype {
 export interface RecordCreator<A extends RecordBase> {
   (x: PartialMaybe<A>): Record<A>
   readonly keys: OrderedSet<string>
+  readonly default: Record<A>
 }
 
 const RecordPrototype =
@@ -62,7 +63,7 @@ const _Record =
 
 export const fromDefault =
   <A extends RecordBase> (def: Required<A>): RecordCreator<A> => {
-    const defaultValues = Object.freeze (Object.entries (def) .reduce<A> (
+    const defaultValues = Object.freeze (Object.entries (def) .reduce<Required<A>> (
       (acc, [key, value]) => {
         // tslint:disable-next-line: strict-type-predicates
         if (typeof key !== 'string') {
@@ -81,7 +82,7 @@ export const fromDefault =
           [key]: value,
         }
       },
-      {} as A
+      {} as Required<A>
     ))
 
     const keys = fromArray (Object.keys (def))
@@ -108,6 +109,8 @@ export const fromDefault =
         )
 
     creator.keys = keys
+
+    creator.default = creator (defaultValues)
 
     return Object.freeze (creator)
   }

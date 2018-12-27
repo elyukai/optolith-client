@@ -3,7 +3,7 @@ import { fnull, fromElements } from '../structures/List';
 import { fromJust, isJust, Just, Maybe } from '../structures/Maybe';
 import { fromDefault, makeGetters, makeLenses_, member, Omit, Record } from '../structures/Record';
 
-const ActivatableSkillDependentCreator =
+export const ActivatableSkillDependentCreator =
   fromDefault<ActivatableSkillDependent> ({
     id: '',
     value: 0,

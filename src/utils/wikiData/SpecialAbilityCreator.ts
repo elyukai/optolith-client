@@ -5,7 +5,7 @@ import { Nothing } from '../structures/Maybe';
 import { OrderedMap } from '../structures/OrderedMap';
 import { fromDefault, makeGetters, Omit } from '../structures/Record';
 
-const SpecialAbilityCreator =
+export const SpecialAbilityCreator =
   fromDefault<SpecialAbility> ({
     id: '',
     name: '',

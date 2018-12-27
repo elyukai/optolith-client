@@ -6,8 +6,8 @@ import { ListItemName } from '../../components/ListItemName';
 import { ListItemSeparator } from '../../components/ListItemSeparator';
 import { ListItemValues } from '../../components/ListItemValues';
 import { UIMessagesObject } from '../../types/ui';
-import { RaceCombined } from '../../types/view';
 import { Maybe, Record } from '../../utils/dataUtils';
+import { RaceCombined } from '../../utils/viewData/viewTypeHelpers';
 
 export interface RacesListItemProps {
   currentId: Maybe<string>;

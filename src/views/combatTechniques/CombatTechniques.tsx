@@ -13,9 +13,9 @@ import { TextField } from '../../components/TextField';
 import { WikiInfoContainer } from '../../containers/WikiInfoContainer';
 import { DCIds } from '../../selectors/derivedCharacteristicsSelectors';
 import { SecondaryAttribute } from '../../types/data';
-import { AttributeCombined, CombatTechniqueWithRequirements } from '../../types/view';
 import { Just, List, Maybe, Nothing, OrderedMap, Record } from '../../utils/dataUtils';
 import { translate, UIMessagesObject } from '../../utils/I18n';
+import { AttributeCombined, CombatTechniqueWithRequirements } from '../../utils/viewData/viewTypeHelpers';
 import { SkillListItem } from '../skills/SkillListItem';
 
 export interface CombatTechniquesOwnProps {

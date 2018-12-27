@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { AttributeCombined } from '../../types/view';
 import { List, Record } from '../../utils/dataUtils';
 import { translate, UIMessagesObject } from '../../utils/I18n';
+import { AttributeCombined } from '../../utils/viewData/viewTypeHelpers';
 import { SheetHeaderAttribute } from './SheetHeaderAttribute';
 
 export interface HeaderValue {

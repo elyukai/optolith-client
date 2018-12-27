@@ -5,7 +5,7 @@ import { Nothing } from '../structures/Maybe';
 import { fromBoth } from '../structures/Pair';
 import { fromDefault, makeGetters, Omit } from '../structures/Record';
 
-const RaceCreator =
+export const RaceCreator =
   fromDefault<Race> ({
     id: '',
     name: '',

@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { Dropdown, DropdownOption } from '../../components/Dropdown';
-import { AttributeWithRequirements } from '../../types/view';
 import { List, Maybe, Record } from '../../utils/dataUtils';
 import { translate, UIMessagesObject } from '../../utils/I18n';
 import { sign } from '../../utils/NumberUtils';
+import { AttributeWithRequirements } from '../../utils/viewData/viewTypeHelpers';
 
 export interface AttributesAdjustmentProps {
   adjustmentValue: Maybe<number>;

@@ -19,11 +19,11 @@ import { Categories } from '../../constants/Categories';
 import { WikiInfoContainer } from '../../containers/WikiInfoContainer';
 import { DCIds } from '../../selectors/derivedCharacteristicsSelectors';
 import { SecondaryAttribute } from '../../types/data';
-import { AttributeCombined, BlessingCombined, LiturgicalChantIsActive, LiturgicalChantWithRequirements } from '../../types/view';
 import { Just, List, Maybe, Nothing, OrderedMap, Record, Tuple } from '../../utils/dataUtils';
 import { sortStrings } from '../../utils/FilterSortUtils';
 import { translate, UIMessagesObject } from '../../utils/I18n';
 import { getAspectsOfTradition } from '../../utils/liturgicalChantUtils';
+import { AttributeCombined, BlessingCombined, LiturgicalChantIsActive, LiturgicalChantWithRequirements } from '../../utils/viewData/viewTypeHelpers';
 import { SkillListItem } from '../skills/SkillListItem';
 
 export interface LiturgicalChantsOwnProps {

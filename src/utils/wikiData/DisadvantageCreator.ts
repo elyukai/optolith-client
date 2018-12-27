@@ -5,7 +5,7 @@ import { Nothing } from '../structures/Maybe';
 import { OrderedMap } from '../structures/OrderedMap';
 import { fromDefault, makeGetters, Omit } from '../structures/Record';
 
-const DisadvantageCreator =
+export const DisadvantageCreator =
   fromDefault<Disadvantage> ({
     id: '',
     name: '',

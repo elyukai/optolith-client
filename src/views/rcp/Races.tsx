@@ -12,9 +12,9 @@ import { Scroll } from '../../components/Scroll';
 import { SortNames, SortOptions } from '../../components/SortOptions';
 import { TextField } from '../../components/TextField';
 import { WikiInfoContainer } from '../../containers/WikiInfoContainer';
-import { RaceCombined } from '../../types/view';
 import { List, Maybe, Record } from '../../utils/dataUtils';
 import { translate, UIMessagesObject } from '../../utils/I18n';
+import { RaceCombined } from '../../utils/viewData/viewTypeHelpers';
 import { RacesListItem } from './RacesListItem';
 import { RaceVariants } from './RaceVariants';
 

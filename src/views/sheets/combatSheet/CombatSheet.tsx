@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { Options } from '../../../components/Options';
 import { ActiveViewObject, SecondaryAttribute } from '../../../types/data';
-import { Armor, AttributeCombined, CombatTechniqueWithAttackParryBase, MeleeWeapon, RangedWeapon, ShieldOrParryingWeapon } from '../../../types/view';
 import { SpecialAbility } from '../../../types/wiki';
 import { List, Maybe, Record } from '../../../utils/dataUtils';
 import { translate, UIMessagesObject } from '../../../utils/I18n';
+import { Armor, AttributeCombined, CombatTechniqueWithAttackParryBase, MeleeWeapon, RangedWeapon, ShieldOrParryingWeapon } from '../../../utils/viewData/viewTypeHelpers';
 import { Sheet } from '../Sheet';
 import { HeaderValue } from '../SheetHeader';
 import { SheetWrapper } from '../SheetWrapper';

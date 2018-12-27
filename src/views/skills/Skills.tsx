@@ -15,11 +15,11 @@ import { TextField } from '../../components/TextField';
 import { WikiInfoContainer } from '../../containers/WikiInfoContainer';
 import { DCIds } from '../../selectors/derivedCharacteristicsSelectors';
 import { EntryRating, SecondaryAttribute } from '../../types/data';
-import { AttributeCombined, SkillWithRequirements } from '../../types/view';
 import { Skill } from '../../types/wiki';
 import { Just, List, Maybe, Nothing, OrderedMap, Record, Tuple } from '../../utils/dataUtils';
 import { translate, UIMessagesObject } from '../../utils/I18n';
 import { isCommon, isUncommon } from '../../utils/skillUtils';
+import { AttributeCombined, SkillWithRequirements } from '../../utils/viewData/viewTypeHelpers';
 import { SkillListItem } from './SkillListItem';
 
 export interface SkillsOwnProps {

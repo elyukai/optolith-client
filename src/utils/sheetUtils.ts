@@ -1,6 +1,6 @@
 import * as R from 'ramda';
-import { AttributeCombined } from '../types/view';
 import { List, Maybe, Record } from './dataUtils';
+import { AttributeCombined } from './viewData/viewTypeHelpers';
 
 /**
  * If `attributeValueVisibility` is `True`, this function returns a string of

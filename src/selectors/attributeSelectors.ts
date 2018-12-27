@@ -1,6 +1,5 @@
 import * as R from 'ramda';
 import * as Data from '../types/data';
-import * as View from '../types/view';
 import * as Wiki from '../types/wiki';
 import { createAttributeDependent } from '../utils/createEntryUtils';
 import { createMaybeSelector } from '../utils/createMaybeSelector';
@@ -8,6 +7,7 @@ import { Just, List, Maybe, Nothing, OrderedMap, Record, Tuple } from '../utils/
 import { flattenDependencies } from '../utils/dependencies/flattenDependencies';
 import { flip } from '../utils/flip';
 import { getNumericBlessedTraditionIdByInstanceId, getNumericMagicalTraditionIdByInstanceId } from '../utils/IDUtils';
+import * as View from '../utils/viewData/viewTypeHelpers';
 import { getCurrentEl, getStartEl } from './elSelectors';
 import { getBlessedTraditionFromState } from './liturgicalChantsSelectors';
 import { getCurrentRace } from './rcpSelectors';

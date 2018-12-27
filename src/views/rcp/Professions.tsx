@@ -14,10 +14,10 @@ import { TextField } from '../../components/TextField';
 import { SelectionsContainer } from '../../containers/RCPSelectionsContainer';
 import { WikiInfoContainer } from '../../containers/WikiInfoContainer';
 import { InputTextEvent, Sex } from '../../types/data';
-import { ProfessionCombined } from '../../types/view';
 import { WikiAll } from '../../types/wiki';
 import { Just, List, Maybe, Record } from '../../utils/dataUtils';
 import { translate, UIMessagesObject } from '../../utils/I18n';
+import { ProfessionCombined } from '../../utils/viewData/viewTypeHelpers';
 import { ProfessionsListItem } from './ProfessionsListItem';
 import { ProfessionVariants } from './ProfessionVariants';
 

@@ -2,7 +2,7 @@ import { Categories } from '../../constants/Categories';
 import { Attribute, EntryWithCategory } from '../../types/wiki';
 import { fromDefault, makeGetters, Omit } from '../structures/Record';
 
-const AttributeCreator =
+export const AttributeCreator =
   fromDefault<Attribute> ({
     id: '',
     name: '',

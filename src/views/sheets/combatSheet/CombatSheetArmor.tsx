@@ -2,10 +2,10 @@ import * as R from 'ramda';
 import * as React from 'react';
 import { Textfit } from 'react-textfit';
 import { TextBox } from '../../../components/TextBox';
-import { Armor } from '../../../types/view';
 import { Just, List, Maybe, Nothing, Record, Tuple } from '../../../utils/dataUtils';
 import { localizeNumber, localizeWeight, translate, UIMessagesObject } from '../../../utils/I18n';
 import { getRoman, sign } from '../../../utils/NumberUtils';
+import { Armor } from '../../../utils/viewData/viewTypeHelpers';
 
 export interface CombatSheetArmorProps {
   armors: Maybe<List<Record<Armor>>>;

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { TextBox } from '../../components/TextBox';
-import { AttributeCombined } from '../../types/view';
 import { List, Record } from '../../utils/dataUtils';
 import { translate, UIMessagesObject } from '../../utils/I18n';
+import { AttributeCombined } from '../../utils/viewData/viewTypeHelpers';
 import { AttributeModsListItem } from './AttributeModsListItem';
 
 export interface AttributeModsProps {

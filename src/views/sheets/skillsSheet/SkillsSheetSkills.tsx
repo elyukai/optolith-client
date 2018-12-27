@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { TextBox } from '../../../components/TextBox';
-import { AttributeCombined, SkillCombined } from '../../../types/view';
 import { List, Maybe, OrderedMap, OrderedSet, Record } from '../../../utils/dataUtils';
 import { translate, UIMessagesObject } from '../../../utils/I18n';
+import { AttributeCombined, SkillCombined } from '../../../utils/viewData/viewTypeHelpers';
 import { iterateGroupHeaders } from './SkillsSheetSkillsGroups';
 import { iterateList } from './SkillsSheetSkillsIterate';
 

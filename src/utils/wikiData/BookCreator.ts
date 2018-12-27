@@ -1,7 +1,7 @@
 import { Book } from '../../types/wiki';
 import { fromDefault, makeGetters } from '../structures/Record';
 
-const BookCreator =
+export const BookCreator =
   fromDefault<Book> ({
     id: '',
     name: '',

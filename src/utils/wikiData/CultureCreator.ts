@@ -4,7 +4,7 @@ import { List } from '../structures/List';
 import { Nothing } from '../structures/Maybe';
 import { fromDefault, makeGetters, Omit } from '../structures/Record';
 
-const CultureCreator =
+export const CultureCreator =
   fromDefault<Culture> ({
     id: '',
     name: '',

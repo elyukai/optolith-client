@@ -1,6 +1,5 @@
 import * as R from 'ramda';
 import { ActivatableDependent, ActivatableSkillDependent } from '../types/data';
-import { CantripCombined, SpellIsActive, SpellWithRequirements } from '../types/view';
 import { ExperienceLevel, Spell } from '../types/wiki';
 import { getModifierByActiveLevel } from '../utils/activatable/activatableModifierUtils';
 import { getMagicalTraditions } from '../utils/activatable/traditionUtils';
@@ -11,6 +10,7 @@ import { validatePrerequisites } from '../utils/prerequisites/validatePrerequisi
 import { filterByAvailability } from '../utils/RulesUtils';
 import { mapGetToMaybeSlice } from '../utils/SelectorsUtils';
 import { isDecreasable, isIncreasable, isOwnTradition } from '../utils/SpellUtils';
+import { CantripCombined, SpellIsActive, SpellWithRequirements } from '../utils/viewData/viewTypeHelpers';
 import { getStartEl } from './elSelectors';
 import { getRuleBooksEnabled } from './rulesSelectors';
 import { getSpellsSortOptions } from './sortOptionsSelectors';

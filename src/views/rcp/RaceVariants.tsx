@@ -2,9 +2,9 @@ import * as R from 'ramda';
 import * as React from 'react';
 import { Option, RadioButtonGroup } from '../../components/RadioButtonGroup';
 import { UIMessagesObject } from '../../types/ui';
-import { RaceCombined } from '../../types/view';
 import { List, Maybe, Record } from '../../utils/dataUtils';
 import { sortObjects } from '../../utils/FilterSortUtils';
+import { RaceCombined } from '../../utils/viewData/viewTypeHelpers';
 
 export interface RaceVariantsProps {
   currentId: Maybe<string>;

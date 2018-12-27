@@ -3,7 +3,7 @@ import { Blessing, EntryWithCategory } from '../../types/wiki';
 import { List } from '../structures/List';
 import { fromDefault, makeGetters, Omit } from '../structures/Record';
 
-const BlessingCreator =
+export const BlessingCreator =
   fromDefault<Blessing> ({
     id: '',
     name: '',

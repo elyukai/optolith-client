@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { UIMessagesObject } from '../../types/ui';
-import { AttributeCombined } from '../../types/view';
 import { List, Record } from '../../utils/dataUtils';
+import { AttributeCombined } from '../../utils/viewData/viewTypeHelpers';
 import { HeaderValue, SheetHeader } from './SheetHeader';
 
 export interface SheetProps {

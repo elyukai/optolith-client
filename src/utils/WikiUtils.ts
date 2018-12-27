@@ -1,6 +1,5 @@
 import { pipe } from 'ramda';
 import { ActivatableCategories, Categories } from '../constants/Categories';
-import { ProfessionCombined } from '../types/view';
 import * as Wiki from '../types/wiki';
 import { getCategoryById } from './IDUtils';
 import { thrush } from './structures/Function';
@@ -9,6 +8,7 @@ import { bind_, fmap, Maybe } from './structures/Maybe';
 import { elems, lookup_, OrderedMap, OrderedMapValueElement } from './structures/OrderedMap';
 import { member, Record } from './structures/Record';
 import { show } from './structures/Show';
+import { ProfessionCombined } from './viewData/viewTypeHelpers';
 import { AttributeG } from './wikiData/AttributeCreator';
 import { ProfessionG } from './wikiData/ProfessionCreator';
 import { SkillG } from './wikiData/SkillCreator';

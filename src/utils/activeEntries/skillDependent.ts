@@ -4,7 +4,7 @@ import { fnull, fromElements } from '../structures/List';
 import { fromJust, isJust, Just, Maybe } from '../structures/Maybe';
 import { fromDefault, makeGetters, makeLenses_, member, notMember, Omit, Record } from '../structures/Record';
 
-const SkillDependentCreator =
+export const SkillDependentCreator =
   fromDefault<SkillDependent> ({
     id: '',
     value: 0,

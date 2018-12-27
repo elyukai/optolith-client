@@ -3,7 +3,7 @@ import { fnull, fromElements, List } from '../structures/List';
 import { fromJust, isJust, Just, Maybe, Nothing } from '../structures/Maybe';
 import { fromDefault, makeGetters, makeLenses_, member, notMember, Omit, Record } from '../structures/Record';
 
-const ActivatableDependentCreator =
+export const ActivatableDependentCreator =
   fromDefault<ActivatableDependent> ({
     id: '',
     active: fromElements<Record<ActiveObject>> (),

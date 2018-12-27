@@ -2,8 +2,8 @@ import * as R from 'ramda';
 import * as React from 'react';
 import { IconButton } from '../../components/IconButton';
 import { NumberBox } from '../../components/NumberBox';
-import { AttributeWithRequirements } from '../../types/view';
 import { Maybe, Record } from '../../utils/dataUtils';
+import { AttributeWithRequirements } from '../../utils/viewData/viewTypeHelpers';
 import { AttributeBorder } from './AttributeBorder';
 
 export interface AttributeListItemProps {

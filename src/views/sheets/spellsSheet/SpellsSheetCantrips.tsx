@@ -1,10 +1,10 @@
 import * as R from 'ramda';
 import * as React from 'react';
 import { TextBox } from '../../../components/TextBox';
-import { CantripCombined } from '../../../types/view';
 import { List, Maybe, Record } from '../../../utils/dataUtils';
 import { sortStrings } from '../../../utils/FilterSortUtils';
 import { translate, UIMessagesObject } from '../../../utils/I18n';
+import { CantripCombined } from '../../../utils/viewData/viewTypeHelpers';
 
 export interface SpellsSheetCantripsProps {
   cantrips: Maybe<List<Record<CantripCombined>>>;

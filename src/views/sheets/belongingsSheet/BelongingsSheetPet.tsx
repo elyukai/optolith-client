@@ -3,9 +3,9 @@ import { Textfit } from 'react-textfit';
 import { AvatarWrapper } from '../../../components/AvatarWrapper';
 import { TextBox } from '../../../components/TextBox';
 import { PetInstance } from '../../../types/data';
-import { AttributeCombined } from '../../../types/view';
 import { List, Maybe, Record } from '../../../utils/dataUtils';
 import { translate, UIMessagesObject } from '../../../utils/I18n';
+import { AttributeCombined } from '../../../utils/viewData/viewTypeHelpers';
 
 export interface BelongingsSheetPetProps {
   attributes: List<Record<AttributeCombined>>;

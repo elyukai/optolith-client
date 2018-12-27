@@ -17,11 +17,11 @@ import { TextField } from '../../components/TextField';
 import { ItemEditorContainer } from '../../containers/ItemEditorContainer';
 import { WikiInfoContainer } from '../../containers/WikiInfoContainer';
 import { ItemInstance, Purse } from '../../types/data';
-import { CombatTechniqueWithRequirements } from '../../types/view';
 import { ItemTemplate } from '../../types/wiki';
 import { Just, List, Maybe, Nothing, Record } from '../../utils/dataUtils';
 import { sortObjects } from '../../utils/FilterSortUtils';
 import { translate, UIMessagesObject } from '../../utils/I18n';
+import { CombatTechniqueWithRequirements } from '../../utils/viewData/viewTypeHelpers';
 import { EquipmentListItem } from './EquipmentListItem';
 import { PurseAndTotals } from './PurseAndTotals';
 
