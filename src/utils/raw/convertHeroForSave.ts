@@ -4,7 +4,7 @@ import * as Raw from '../../types/rawdata';
 import { PrimaryAttributeDamageThreshold, WikiAll } from '../../types/wiki';
 import { ActivatableDependent, ActivatableDependentG, ActiveObjectG } from '../activeEntries/ActivatableDependent';
 import { ActivatableSkillDependentG } from '../activeEntries/ActivatableSkillDependent';
-import { AttributeDependent, AttributeDependentG } from '../activeEntries/attributeDependent';
+import { AttributeDependent, AttributeDependentG } from '../activeEntries/AttributeDependent';
 import { getAPObject } from '../adventurePoints/adventurePointsSumUtils';
 import { BelongingsG } from '../heroData/BelongingsCreator';
 import { EnergiesG } from '../heroData/EnergiesCreator';

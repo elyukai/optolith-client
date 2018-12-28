@@ -1,8 +1,9 @@
 import { pipe } from 'ramda';
-import { AttributeDependent, Hero, SkillDependent } from '../types/data';
+import { Hero } from '../types/data';
 import { CombatTechnique, WikiAll } from '../types/wiki';
 import { getActiveSelections } from './activatable/selectionUtils';
-import { SkillDependentG } from './activeEntries/skillDependent';
+import { AttributeDependent } from './activeEntries/AttributeDependent';
+import { SkillDependent, SkillDependentG } from './activeEntries/SkillDependent';
 import { flattenDependencies } from './dependencies/flattenDependencies';
 import { HeroG } from './heroData/HeroCreator';
 import { add, divideBy, max } from './mathUtils';

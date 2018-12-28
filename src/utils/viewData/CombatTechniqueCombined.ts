@@ -1,5 +1,5 @@
 import { CombatTechnique } from '../../types/wiki';
-import { SkillDependent } from '../activeEntries/skillDependent';
+import { SkillDependent } from '../activeEntries/SkillDependent';
 import { fromDefault, makeGetters, Record } from '../structures/Record';
 import { CombatTechniqueCreator } from '../wikiData/CombatTechniqueCreator';
 

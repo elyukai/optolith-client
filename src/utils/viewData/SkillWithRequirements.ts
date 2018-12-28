@@ -1,4 +1,4 @@
-import { SkillDependent } from '../activeEntries/skillDependent';
+import { SkillDependent } from '../activeEntries/SkillDependent';
 import { fromDefault, makeGetters } from '../structures/Record';
 import { SkillCreator } from '../wikiData/SkillCreator';
 import { SkillCombined } from './SkillCombined';

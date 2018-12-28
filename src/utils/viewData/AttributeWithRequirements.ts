@@ -1,4 +1,4 @@
-import { AttributeDependent } from '../activeEntries/attributeDependent';
+import { AttributeDependent } from '../activeEntries/AttributeDependent';
 import { Maybe, Nothing } from '../structures/Maybe';
 import { fromDefault, makeGetters } from '../structures/Record';
 import { AttributeCreator } from '../wikiData/AttributeCreator';

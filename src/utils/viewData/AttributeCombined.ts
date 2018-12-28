@@ -1,5 +1,5 @@
 import { Attribute } from '../../types/wiki';
-import { AttributeDependent } from '../activeEntries/attributeDependent';
+import { AttributeDependent } from '../activeEntries/AttributeDependent';
 import { fromDefault, makeGetters, Record } from '../structures/Record';
 import { AttributeCreator } from '../wikiData/AttributeCreator';
 

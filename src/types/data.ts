@@ -1,9 +1,9 @@
 import { DCIds } from '../selectors/derivedCharacteristicsSelectors';
 import { ActivatableDependent } from '../utils/activeEntries/ActivatableDependent';
 import { ActivatableSkillDependent } from '../utils/activeEntries/ActivatableSkillDependent';
-import { AttributeDependent } from '../utils/activeEntries/attributeDependent';
+import { AttributeDependent } from '../utils/activeEntries/AttributeDependent';
 import { DependencyObject } from '../utils/activeEntries/DependencyObject';
-import { SkillDependent } from '../utils/activeEntries/skillDependent';
+import { SkillDependent } from '../utils/activeEntries/SkillDependent';
 import { TabId } from '../utils/LocationUtils';
 import { List } from '../utils/structures/List';
 import { Maybe } from '../utils/structures/Maybe';

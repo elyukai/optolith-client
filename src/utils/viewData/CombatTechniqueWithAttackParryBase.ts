@@ -1,4 +1,4 @@
-import { SkillDependent } from '../activeEntries/skillDependent';
+import { SkillDependent } from '../activeEntries/SkillDependent';
 import { Maybe, Nothing } from '../structures/Maybe';
 import { fromDefault, makeGetters } from '../structures/Record';
 import { CombatTechniqueCreator } from '../wikiData/CombatTechniqueCreator';

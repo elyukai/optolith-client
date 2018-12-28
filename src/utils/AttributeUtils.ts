@@ -1,6 +1,5 @@
 import { pipe } from 'ramda';
-import * as Data from '../types/data';
-import { AttributeDependentG } from './activeEntries/attributeDependent';
+import { AttributeDependent, AttributeDependentG } from './activeEntries/AttributeDependent';
 import { fmap, mapMaybe, maybe } from './structures/Maybe';
 import { lookup_, OrderedMap } from './structures/OrderedMap';
 import { Record } from './structures/Record';
@@ -8,7 +7,7 @@ import { Record } from './structures/Record';
 const { value } = AttributeDependentG
 
 export const getSkillCheckValues =
-  (attributes: OrderedMap<string, Record<Data.AttributeDependent>>) =>
+  (attributes: OrderedMap<string, Record<AttributeDependent>>) =>
     mapMaybe (pipe (lookup_ (attributes), fmap (value)))
 
 export const convertId = <T extends string | undefined> (id: T): T => {
@@ -25,5 +24,5 @@ export const convertId = <T extends string | undefined> (id: T): T => {
   }
 }
 
-export const getAttributeValueWithDefault = maybe<Record<Data.AttributeDependent>, number> (8)
+export const getAttributeValueWithDefault = maybe<Record<AttributeDependent>, number> (8)
                                                                                            (value)
