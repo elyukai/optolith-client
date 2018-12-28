@@ -7,8 +7,8 @@ import { cons_, find, foldl, List } from '../structures/List';
 import { alt_, bind, bind_, elem_, ensure, fmap, fromMaybe, Just, liftM2, mapMaybe, Maybe } from '../structures/Maybe';
 import { alter, OrderedMap } from '../structures/OrderedMap';
 import { isRecord, Record } from '../structures/Record';
-import { AdvantageG } from '../wikiData/AdvantageCreator';
-import { SelectOptionG } from '../wikiData/sub/SelectOptionCreator';
+import { AdvantageG } from '../wikiData/Advantage';
+import { SelectOptionG } from '../wikiData/sub/SelectOption';
 
 const { select } = AdvantageG
 const { id: getId, name, cost } = SelectOptionG

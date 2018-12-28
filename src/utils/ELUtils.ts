@@ -6,7 +6,7 @@ import { inc, lt } from './mathUtils';
 import { and, fmap } from './structures/Maybe';
 import { foldlWithKey, lookup_, OrderedMap } from './structures/OrderedMap';
 import { Record } from './structures/Record';
-import { ExperienceLevelG } from './wikiData/ExperienceLevelCreator';
+import { ExperienceLevelG } from './wikiData/ExperienceLevel';
 
 const { ap } = ExperienceLevelG
 

@@ -10,8 +10,8 @@ import { ActivatableSkillDependentG, isMaybeActivatableSkillDependent } from '..
 import { AttributeDependentG } from '../activeEntries/AttributeDependent';
 import { DependencyObjectG } from '../activeEntries/DependencyObject';
 import { isExtendedSkillDependent, SkillDependentG } from '../activeEntries/SkillDependent';
-import { HeroG } from '../heroData/HeroCreator';
-import { PactG } from '../heroData/PactCreator';
+import { HeroModelG } from '../heroData/HeroModel';
+import { PactG } from '../heroData/Pact';
 import { getHeroStateItem } from '../heroStateUtils';
 import { prefixId } from '../IDUtils';
 import { dec, gte, lt, lte, min, subtract } from '../mathUtils';
@@ -25,18 +25,18 @@ import { and, bind_, catMaybes, ensure, fmap, fromJust, isJust, isNothing, Just,
 import { lookup_, OrderedMap, toList } from '../structures/OrderedMap';
 import { fst, Pair, snd } from '../structures/Pair';
 import { Record } from '../structures/Record';
-import { CultureG } from '../wikiData/CultureCreator';
-import { RequireActivatableG, RequireActivatableL } from '../wikiData/prerequisites/ActivatableRequirementCreator';
-import { CultureRequirementG, isCultureRequirement } from '../wikiData/prerequisites/CultureRequirementCreator';
-import { isIncreasableRequirement, RequireIncreasableG, RequireIncreasableL } from '../wikiData/prerequisites/IncreasableRequirementCreator';
-import { isPactRequirement, PactRequirementG } from '../wikiData/prerequisites/PactRequirementCreator';
-import { isPrimaryAttributeRequirement, RequirePrimaryAttributeG } from '../wikiData/prerequisites/PrimaryAttributeRequirementCreator';
-import { isRaceRequirement, RaceRequirementG } from '../wikiData/prerequisites/RaceRequirementCreator';
-import { isSexRequirement, SexRequirementG } from '../wikiData/prerequisites/SexRequirementCreator';
-import { ProfessionG } from '../wikiData/ProfessionCreator';
-import { RaceG } from '../wikiData/RaceCreator';
-import { SkillG } from '../wikiData/SkillCreator';
-import { WikiG } from '../wikiData/WikiCreator';
+import { CultureG } from '../wikiData/Culture';
+import { RequireActivatableG, RequireActivatableL } from '../wikiData/prerequisites/ActivatableRequirement';
+import { CultureRequirementG, isCultureRequirement } from '../wikiData/prerequisites/CultureRequirement';
+import { isIncreasableRequirement, RequireIncreasableG, RequireIncreasableL } from '../wikiData/prerequisites/IncreasableRequirement';
+import { isPactRequirement, PactRequirementG } from '../wikiData/prerequisites/PactRequirement';
+import { isPrimaryAttributeRequirement, RequirePrimaryAttributeG } from '../wikiData/prerequisites/PrimaryAttributeRequirement';
+import { isRaceRequirement, RaceRequirementG } from '../wikiData/prerequisites/RaceRequirement';
+import { isSexRequirement, SexRequirementG } from '../wikiData/prerequisites/SexRequirement';
+import { ProfessionG } from '../wikiData/Profession';
+import { RaceG } from '../wikiData/Race';
+import { SkillG } from '../wikiData/Skill';
+import { WikiModelG } from '../wikiData/WikiModel';
 import { getAllWikiEntriesByGroup } from '../WikiUtils';
 
 type Validator = (wiki: Record<Wiki.WikiAll>) =>
@@ -44,8 +44,8 @@ type Validator = (wiki: Record<Wiki.WikiAll>) =>
                  (req: Wiki.AllRequirements) =>
                  (sourceId: string) => boolean
 
-const { races, cultures, professions, skills } = WikiG
-const { race, culture, profession, specialAbilities, attributes, sex, pact } = HeroG
+const { races, cultures, professions, skills } = WikiModelG
+const { race, culture, profession, specialAbilities, attributes, sex, pact } = HeroModelG
 
 const getAllRaceEntries =
   (wiki: Record<Wiki.WikiAll>) =>

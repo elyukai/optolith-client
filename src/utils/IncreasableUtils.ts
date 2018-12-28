@@ -1,6 +1,6 @@
 import { Categories } from '../constants/Categories';
 import { ValueBasedDependent } from '../types/data';
-import { IncreasableEntry, Skill } from '../types/wiki';
+import { IncreasableEntry } from '../types/wiki';
 import { ActivatableSkillDependentL, isActivatableSkillDependent } from './activeEntries/ActivatableSkillDependent';
 import { AttributeDependentL, isAttributeDependent } from './activeEntries/AttributeDependent';
 import { SkillDependent, SkillDependentG, SkillDependentL } from './activeEntries/SkillDependent';
@@ -10,7 +10,7 @@ import { dec, inc } from './mathUtils';
 import { Lens, over } from './structures/Lens';
 import { fmap, fromMaybe, Maybe } from './structures/Maybe';
 import { Record } from './structures/Record';
-import { SkillG } from './wikiData/SkillCreator';
+import { Skill, SkillG } from './wikiData/Skill';
 import { isAttribute } from './WikiUtils';
 
 export const set =

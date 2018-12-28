@@ -1,7 +1,6 @@
-import { LiturgicalChant } from '../../types/wiki';
 import { ActivatableSkillDependent } from '../activeEntries/ActivatableSkillDependent';
 import { fromDefault, makeGetters, Record } from '../structures/Record';
-import { LiturgicalChantCreator } from '../wikiData/LiturgicalChantCreator';
+import { LiturgicalChant } from '../wikiData/LiturgicalChant';
 
 export interface LiturgicalChantCombined {
   wikiEntry: Record<LiturgicalChant>
@@ -10,7 +9,7 @@ export interface LiturgicalChantCombined {
 
 export const LiturgicalChantCombined =
   fromDefault<LiturgicalChantCombined> ({
-    wikiEntry: LiturgicalChantCreator .default,
+    wikiEntry: LiturgicalChant .default,
     stateEntry: ActivatableSkillDependent .default,
   })
 

@@ -1,7 +1,6 @@
-import { Spell } from '../../types/wiki';
 import { ActivatableSkillDependent } from '../activeEntries/ActivatableSkillDependent';
 import { fromDefault, makeGetters, Record } from '../structures/Record';
-import { SpellCreator } from '../wikiData/SpellCreator';
+import { Spell } from '../wikiData/Spell';
 
 export interface SpellCombined {
   wikiEntry: Record<Spell>
@@ -10,7 +9,7 @@ export interface SpellCombined {
 
 const SpellCombined =
   fromDefault<SpellCombined> ({
-    wikiEntry: SpellCreator .default,
+    wikiEntry: Spell .default,
     stateEntry: ActivatableSkillDependent .default,
   })
 

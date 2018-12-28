@@ -9,11 +9,11 @@ import { elems, lookup_, OrderedMap, OrderedMapValueElement } from './structures
 import { member, Record } from './structures/Record';
 import { show } from './structures/Show';
 import { ProfessionCombined } from './viewData/viewTypeHelpers';
-import { AttributeG } from './wikiData/AttributeCreator';
-import { ProfessionG } from './wikiData/ProfessionCreator';
-import { SkillG } from './wikiData/SkillCreator';
+import { AttributeG } from './wikiData/Attribute';
+import { ProfessionG } from './wikiData/Profession';
+import { SkillG } from './wikiData/Skill';
 import { SpecialAbilityG } from './wikiData/SpecialAbilityCreator';
-import { WikiG } from './wikiData/WikiCreator';
+import { WikiModelG } from './wikiData/WikiModel';
 
 interface WikiKeyByCategory {
   [Categories.ADVANTAGES]: 'advantages'
@@ -34,23 +34,23 @@ interface WikiKeyByCategory {
 }
 
 export const getWikiSliceGetterByCategory =
-  <T extends Categories>(category: T): typeof WikiG[WikiKeyByCategory[T]] => {
+  <T extends Categories>(category: T): typeof WikiModelG[WikiKeyByCategory[T]] => {
     switch (category) {
-      case Categories.ADVANTAGES: return WikiG.advantages
-      case Categories.ATTRIBUTES: return WikiG.attributes
-      case Categories.BLESSINGS: return WikiG.blessings
-      case Categories.CANTRIPS: return WikiG.cantrips
-      case Categories.COMBAT_TECHNIQUES: return WikiG.combatTechniques
-      case Categories.CULTURES: return WikiG.cultures
-      case Categories.DISADVANTAGES: return WikiG.disadvantages
-      case Categories.LITURGIES: return WikiG.liturgicalChants
-      case Categories.PROFESSIONS: return WikiG.professions
-      case Categories.PROFESSION_VARIANTS: return WikiG.professionVariants
-      case Categories.RACES: return WikiG.races
-      case Categories.RACE_VARIANTS: return WikiG.raceVariants
-      case Categories.SPECIAL_ABILITIES: return WikiG.specialAbilities
-      case Categories.SPELLS: return WikiG.spells
-      case Categories.TALENTS: return WikiG.skills
+      case Categories.ADVANTAGES: return WikiModelG.advantages
+      case Categories.ATTRIBUTES: return WikiModelG.attributes
+      case Categories.BLESSINGS: return WikiModelG.blessings
+      case Categories.CANTRIPS: return WikiModelG.cantrips
+      case Categories.COMBAT_TECHNIQUES: return WikiModelG.combatTechniques
+      case Categories.CULTURES: return WikiModelG.cultures
+      case Categories.DISADVANTAGES: return WikiModelG.disadvantages
+      case Categories.LITURGIES: return WikiModelG.liturgicalChants
+      case Categories.PROFESSIONS: return WikiModelG.professions
+      case Categories.PROFESSION_VARIANTS: return WikiModelG.professionVariants
+      case Categories.RACES: return WikiModelG.races
+      case Categories.RACE_VARIANTS: return WikiModelG.raceVariants
+      case Categories.SPECIAL_ABILITIES: return WikiModelG.specialAbilities
+      case Categories.SPELLS: return WikiModelG.spells
+      case Categories.TALENTS: return WikiModelG.skills
     }
 
     throw new TypeError (`${show (category)} is no valid wiki category!`)
@@ -58,7 +58,7 @@ export const getWikiSliceGetterByCategory =
 
 export const getWikiEntryWithGetter =
   (wiki: Wiki.WikiRecord) =>
-  <G extends typeof WikiG[WikiKeyByCategory[Categories]]> (getter: G) =>
+  <G extends typeof WikiModelG[WikiKeyByCategory[Categories]]> (getter: G) =>
     lookup_ ((getter as (wiki: Wiki.WikiRecord) => OrderedMap<string, Wiki.Entry>) (wiki)) as
       (id: string) => Maybe<OrderedMapValueElement<ReturnType<G>>>
 

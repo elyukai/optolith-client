@@ -1,7 +1,7 @@
 import { SkillDependent } from '../activeEntries/SkillDependent';
 import { Maybe, Nothing } from '../structures/Maybe';
 import { fromDefault, makeGetters } from '../structures/Record';
-import { CombatTechniqueCreator } from '../wikiData/CombatTechniqueCreator';
+import { CombatTechnique } from '../wikiData/CombatTechnique';
 import { CombatTechniqueCombined } from './CombatTechniqueCombined';
 
 export interface CombatTechniqueWithAttackParryBase extends CombatTechniqueCombined {
@@ -11,7 +11,7 @@ export interface CombatTechniqueWithAttackParryBase extends CombatTechniqueCombi
 
 export const CombatTechniqueWithAttackParryBase =
   fromDefault<CombatTechniqueWithAttackParryBase> ({
-    wikiEntry: CombatTechniqueCreator .default,
+    wikiEntry: CombatTechnique .default,
     stateEntry: SkillDependent .default,
     at: 0,
     pa: Nothing,

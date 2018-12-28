@@ -1,6 +1,5 @@
-import { LiturgicalChant } from '../../types/wiki';
 import { fromDefault, makeGetters, Record } from '../structures/Record';
-import { LiturgicalChantCreator } from '../wikiData/LiturgicalChantCreator';
+import { LiturgicalChant } from '../wikiData/LiturgicalChant';
 import { IsActive } from './viewTypeHelpers';
 
 export interface LiturgicalChantIsActive extends IsActive {
@@ -9,7 +8,7 @@ export interface LiturgicalChantIsActive extends IsActive {
 
 export const LiturgicalChantIsActive =
   fromDefault<LiturgicalChantIsActive> ({
-    wikiEntry: LiturgicalChantCreator .default,
+    wikiEntry: LiturgicalChant .default,
     active: false,
   })
 

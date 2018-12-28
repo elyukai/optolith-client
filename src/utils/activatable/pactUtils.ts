@@ -1,5 +1,5 @@
 import { Pact } from '../../types/data';
-import { PactG } from '../heroData/PactCreator';
+import { PactG } from '../heroData/Pact';
 import { Record } from '../structures/Record';
 
 const { domain, name } = PactG

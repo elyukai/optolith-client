@@ -11,7 +11,7 @@ import { OrderedMap } from '../utils/structures/OrderedMap';
 import { OrderedSet } from '../utils/structures/OrderedSet';
 import { Pair } from '../utils/structures/Pair';
 import { Omit, Record, RecordInterface } from '../utils/structures/Record';
-import { UndoState } from '../utils/undo';
+import { SelectOption } from '../utils/wikiData/sub/SelectOption';
 import { AllAction } from './actions';
 import * as Wiki from './wiki';
 
@@ -38,127 +38,12 @@ export type ActivatableDependency = boolean | Record<DependencyObject>;
 export type SkillDependency = number | Record<SkillOptionalDependency>;
 export type ExtendedSkillDependency = boolean | SkillDependency;
 
-export interface SkillOptionalDependency {
-  value: number;
-  origin: string;
-}
-
-export type Hero = Record<HeroDependent>;
-export type UndoableHero = UndoState<Hero>;
-
-export interface HeroDependent {
-  readonly id: string;
-  readonly clientVersion: string;
-  readonly player: Maybe<string>;
-  readonly dateCreated: Date;
-  readonly dateModified: Date;
-  readonly phase: number;
-  readonly name: string;
-  readonly avatar: Maybe<string>;
-  readonly adventurePointsTotal: number;
-  readonly race: Maybe<string>;
-  readonly raceVariant: Maybe<string>;
-  readonly culture: Maybe<string>;
-  readonly profession: Maybe<string>;
-  readonly professionName: Maybe<string>;
-  readonly professionVariant: Maybe<string>;
-  readonly sex: Sex;
-  readonly experienceLevel: string;
-  readonly personalData: Record<PersonalData>;
-  readonly advantages: OrderedMap<string, Record<ActivatableDependent>>;
-  readonly disadvantages: OrderedMap<string, Record<ActivatableDependent>>;
-  readonly specialAbilities: OrderedMap<string, Record<ActivatableDependent>>;
-  readonly attributes: OrderedMap<string, Record<AttributeDependent>>;
-  readonly attributeAdjustmentSelected: string;
-  readonly energies: Record<Energies>;
-  readonly skills: OrderedMap<string, Record<SkillDependent>>;
-  readonly combatTechniques: OrderedMap<string, Record<SkillDependent>>;
-  readonly spells: OrderedMap<string, Record<ActivatableSkillDependent>>;
-  readonly cantrips: OrderedSet<string>;
-  readonly liturgicalChants: OrderedMap<string, Record<ActivatableSkillDependent>>;
-  readonly blessings: OrderedSet<string>;
-  readonly belongings: Record<Belongings>;
-  readonly rules: Record<Rules>;
-  readonly pets: OrderedMap<string, Record<PetInstance>>;
-  readonly petInEditor: Maybe<Record<PetEditorInstance>>;
-  readonly isInPetCreation: boolean;
-  readonly pact: Maybe<Record<Pact>>;
-  readonly combatStyleDependencies: List<Record<StyleDependency>>;
-  readonly magicalStyleDependencies: List<Record<StyleDependency>>;
-  readonly blessedStyleDependencies: List<Record<StyleDependency>>;
-}
-
 export type Sex = 'm' | 'f';
-
-export interface PersonalData {
-  readonly family: Maybe<string>;
-  readonly placeOfBirth: Maybe<string>;
-  readonly dateOfBirth: Maybe<string>;
-  readonly age: Maybe<string>;
-  readonly hairColor: Maybe<number>;
-  readonly eyeColor: Maybe<number>;
-  readonly size: Maybe<string>;
-  readonly weight: Maybe<string>;
-  readonly title: Maybe<string>;
-  readonly socialStatus: Maybe<number>;
-  readonly characteristics: Maybe<string>;
-  readonly otherInfo: Maybe<string>;
-  readonly cultureAreaKnowledge: Maybe<string>;
-}
-
-export interface Energies {
-  readonly addedLifePoints: number;
-  readonly addedArcaneEnergyPoints: number;
-  readonly addedKarmaPoints: number;
-  readonly permanentLifePoints: Record<PermanentEnergyLoss>;
-  readonly permanentArcaneEnergyPoints: Record<PermanentEnergyLossAndBoughtBack>;
-  readonly permanentKarmaPoints: Record<PermanentEnergyLossAndBoughtBack>;
-}
-
-export interface PermanentEnergyLoss {
-  readonly lost: number;
-}
-
-export interface PermanentEnergyLossAndBoughtBack extends PermanentEnergyLoss {
-  readonly redeemed: number;
-}
-
-export interface Belongings {
-  readonly items: OrderedMap<string, Record<ItemInstance>>;
-  readonly itemInEditor: Maybe<Record<ItemEditorInstance>>;
-  readonly isInItemCreation: boolean;
-  readonly armorZones: OrderedMap<string, Record<ArmorZonesInstance>>;
-  readonly zoneArmorInEditor: Maybe<Record<ArmorZonesEditorInstance>>;
-  readonly isInZoneArmorCreation: boolean;
-  readonly purse: Record<Purse>;
-}
-
-export interface Purse {
-  readonly d: string;
-  readonly s: string;
-  readonly k: string;
-  readonly h: string;
-}
-
-export interface Pact {
-  category: number;
-  level: number;
-  type: number;
-  domain: number | string;
-  name: string;
-}
 
 export interface User {
   id: string;
   displayName: string;
 }
-
-export interface CommonProfessionObject {
-  list: List<string | number>;
-  reverse: boolean;
-}
-
-export type CommonProfession = boolean | Record<CommonProfessionObject>;
 
 export interface Selections {
   attributeAdjustment: string;
@@ -247,7 +132,7 @@ export interface DeactiveViewObject<
   cost?: string | number | List<number>;
   minTier?: number;
   maxTier?: number;
-  sel?: List<Record<Wiki.SelectionObject>>;
+  sel?: List<Record<SelectOption>>;
   stateEntry?: Record<ActivatableDependent>;
   wikiEntry: Record<T>;
   customCostDisabled?: boolean;
@@ -350,51 +235,6 @@ export interface ItemInstanceOld {
   stabilityMod?: number;
 }
 
-export interface ItemBaseInstance {
-  name: string;
-  ammunition: Maybe<string>;
-  combatTechnique: Maybe<string>;
-  damageDiceSides: Maybe<number>;
-  gr: number;
-  isParryingWeapon: Maybe<boolean>;
-  isTemplateLocked: boolean;
-  reach: Maybe<number>;
-  template: Maybe<string>;
-  where: Maybe<string>;
-  isTwoHandedWeapon: Maybe<boolean>;
-  improvisedWeaponGroup: Maybe<number>;
-  loss: Maybe<number>;
-  forArmorZoneOnly: Maybe<boolean>;
-  addPenalties: Maybe<boolean>;
-  armorType: Maybe<number>;
-}
-
-export interface ItemInstance extends ItemBaseInstance {
-  id: string;
-  at: Maybe<number>;
-  iniMod: Maybe<number>;
-  movMod: Maybe<number>;
-  damageBonus: Maybe<Record<Wiki.PrimaryAttributeDamageThreshold>>;
-  damageDiceNumber: Maybe<number>;
-  damageFlat: Maybe<number>;
-  enc: Maybe<number>;
-  length: Maybe<number>;
-  amount: number;
-  pa: Maybe<number>;
-  price: Maybe<number>;
-  pro: Maybe<number>;
-  range: Maybe<List<number>>;
-  reloadTime: Maybe<number>;
-  stp: Maybe<number>;
-  weight: number;
-  stabilityMod: Maybe<number>;
-  note: Maybe<string>;
-  rules: Maybe<string>;
-  advantage: Maybe<string>;
-  disadvantage: Maybe<string>;
-  src: Maybe<List<Record<Wiki.SourceLink>>>;
-}
-
 export interface ItemEditorSpecific {
   id: Maybe<string>;
   at: string;
@@ -414,33 +254,6 @@ export interface ItemEditorSpecific {
   stp: string;
   weight: string;
   stabilityMod: string;
-}
-
-export interface EditPrimaryAttributeDamageThreshold {
-  primary: Maybe<string>;
-  threshold: string | List<string>;
-}
-
-export interface ItemEditorInstance extends ItemBaseInstance, ItemEditorSpecific {}
-
-export interface ArmorZonesBaseInstance {
-  name: string;
-  head: Maybe<string>;
-  headLoss: Maybe<number>;
-  leftArm: Maybe<string>;
-  leftArmLoss: Maybe<number>;
-  rightArm: Maybe<string>;
-  rightArmLoss: Maybe<number>;
-  torso: Maybe<string>;
-  torsoLoss: Maybe<number>;
-  leftLeg: Maybe<string>;
-  leftLegLoss: Maybe<number>;
-  rightLeg: Maybe<string>;
-  rightLegLoss: Maybe<number>;
-}
-
-export interface ArmorZonesInstance extends ArmorZonesBaseInstance {
-  id: string;
 }
 
 export interface ArmorZonesEditorInstance extends ArmorZonesBaseInstance {
@@ -472,14 +285,6 @@ export interface Energy<I extends DCIds = DCIds> extends SecondaryAttribute<I> {
 
 export interface EnergyWithLoss<I extends DCIds = DCIds> extends Energy<I> {
   permanentRedeemed: number;
-}
-
-export interface Rules {
-  higherParadeValues: number;
-  attributeValueLimit: boolean;
-  enableAllRuleBooks: boolean;
-  enabledRuleBooks: OrderedSet<string>;
-  enableLanguageSpecializations: boolean;
 }
 
 export interface HistoryPayload {

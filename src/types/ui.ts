@@ -1,5 +1,3 @@
-import { List } from '../utils/structures/List';
-import { Record } from '../utils/structures/Record';
 
 export interface RawUIMessages {
   'id': string;
@@ -821,11 +819,3 @@ export interface RawUIMessages {
   'wiki.initialmessage': string;
   'emptylistnoresults': string;
 }
-
-export type UIMessages = {
-  [K in keyof RawUIMessages]: RawUIMessages[K] extends (infer I)[] ? List<I> : RawUIMessages[K];
-};
-
-export type UIKey = keyof UIMessages;
-
-export type UIMessagesObject = Record<UIMessages>;

@@ -1,6 +1,5 @@
-import { Blessing } from '../../types/wiki';
 import { fromDefault, makeGetters, Record } from '../structures/Record';
-import { BlessingCreator } from '../wikiData/BlessingCreator';
+import { Blessing } from '../wikiData/Blessing';
 import { IsActive } from './viewTypeHelpers';
 
 export interface BlessingCombined extends IsActive {
@@ -9,7 +8,7 @@ export interface BlessingCombined extends IsActive {
 
 export const BlessingCombined =
   fromDefault<BlessingCombined> ({
-    wikiEntry: BlessingCreator .default,
+    wikiEntry: Blessing .default,
     active: false,
   })
 

@@ -1,8 +1,8 @@
 import { AllRequirements, DependentPrerequisite } from '../../../types/wiki';
-import { isCultureRequirement } from './CultureRequirementCreator';
-import { isPactRequirement } from './PactRequirementCreator';
-import { isRaceRequirement } from './RaceRequirementCreator';
-import { isSexRequirement } from './SexRequirementCreator';
+import { isCultureRequirement } from './CultureRequirement';
+import { isPactRequirement } from './PactRequirement';
+import { isRaceRequirement } from './RaceRequirement';
+import { isSexRequirement } from './SexRequirement';
 
 export const isDependentPrerequisite =
   (entry: AllRequirements): entry is DependentPrerequisite =>

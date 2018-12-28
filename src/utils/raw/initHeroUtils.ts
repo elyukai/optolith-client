@@ -2,7 +2,6 @@ import { pipe } from 'ramda';
 import { Categories } from '../../constants/Categories';
 import * as Data from '../../types/data';
 import * as Raw from '../../types/rawdata';
-import { PrimaryAttributeDamageThreshold, WikiAll } from '../../types/wiki';
 import { getCombinedPrerequisites } from '../activatable/activatableActivationUtils';
 import { getActiveFromState } from '../activatable/activatableConvertUtils';
 import { addAllStyleRelatedDependencies } from '../activatable/ExtendedStyleUtils';
@@ -11,17 +10,16 @@ import { ActivatableSkillDependent, ActivatableSkillDependentG, createActivatabl
 import { AttributeDependent, createAttributeDependentWithValue } from '../activeEntries/AttributeDependent';
 import { createSkillDependentWithValue, SkillDependent } from '../activeEntries/SkillDependent';
 import { addDependencies } from '../dependencies/dependencyUtils';
-import { BelongingsCreator } from '../heroData/BelongingsCreator';
-import { EnergiesCreator } from '../heroData/EnergiesCreator';
-import { HeroCreator, HeroG } from '../heroData/HeroCreator';
-import { HitZoneArmorCreator } from '../heroData/HitZoneArmorCreator';
-import { ItemCreator } from '../heroData/ItemCreator';
-import { PermanentEnergyLossAndBoughtBackCreator } from '../heroData/PermanentEnergyLossAndBoughtBackCreator';
-import { PermanentEnergyLossCreator } from '../heroData/PermanentEnergyLossCreator';
-import { PersonalDataCreator } from '../heroData/PersonalDataCreator';
-import { PrimaryAttributeDamageThresholdCreator } from '../heroData/PrimaryAttributeDamageThresholdCreator';
-import { PurseCreator } from '../heroData/PurseCreator';
-import { RulesCreator } from '../heroData/RulesCreator';
+import { Belongings } from '../heroData/Belongings';
+import { EnergiesCreator } from '../heroData/Energies';
+import { HeroModel, HeroModelG } from '../heroData/HeroModel';
+import { HitZoneArmor } from '../heroData/HitZoneArmor';
+import { Item } from '../heroData/Item';
+import { PermanentEnergyLoss } from '../heroData/PermanentEnergyLoss';
+import { PermanentEnergyLossAndBoughtBack } from '../heroData/PermanentEnergyLossAndBoughtBack';
+import { PersonalData } from '../heroData/PersonalData';
+import { Purse } from '../heroData/Purse';
+import { Rules } from '../heroData/Rules';
 import { getCategoryById } from '../IDUtils';
 import { PetCreator } from '../PetUtils';
 import { ident } from '../structures/Function';
@@ -30,9 +28,10 @@ import { elem, fromNullable, Maybe } from '../structures/Maybe';
 import { foldlWithKey, OrderedMap } from '../structures/OrderedMap';
 import { insert, OrderedSet } from '../structures/OrderedSet';
 import { Record, StringKeyObject } from '../structures/Record';
+import { PrimaryAttributeDamageThreshold } from '../wikiData/sub/PrimaryAttributeDamageThreshold';
 
 const createHeroObject = (hero: Raw.RawHero): Record<Data.HeroDependent> =>
-  HeroCreator ({
+  HeroModel ({
     id: hero .id,
     clientVersion: hero .clientVersion,
     phase: hero .phase,
@@ -48,7 +47,7 @@ const createHeroObject = (hero: Raw.RawHero): Record<Data.HeroDependent> =>
     sex: hero .sex,
     experienceLevel: hero .el,
 
-    personalData: PersonalDataCreator ({
+    personalData: PersonalData ({
       family: fromNullable (hero .pers .family),
       placeOfBirth: fromNullable (hero .pers .placeofbirth),
       dateOfBirth: fromNullable (hero .pers .dateofbirth),
@@ -83,13 +82,13 @@ const createHeroObject = (hero: Raw.RawHero): Record<Data.HeroDependent> =>
       addedKarmaPoints: hero .attr .kp,
       addedLifePoints: hero .attr .lp,
       permanentArcaneEnergyPoints:
-        PermanentEnergyLossAndBoughtBackCreator (hero .attr .permanentAE),
+        PermanentEnergyLossAndBoughtBack (hero .attr .permanentAE),
       permanentKarmaPoints:
-        PermanentEnergyLossAndBoughtBackCreator (hero .attr .permanentKP),
+        PermanentEnergyLossAndBoughtBack (hero .attr .permanentKP),
       permanentLifePoints:
         hero .attr .permanentLP
-          ? PermanentEnergyLossCreator (hero .attr .permanentLP)
-          : PermanentEnergyLossCreator ({ lost: 0 }),
+          ? PermanentEnergyLoss (hero .attr .permanentLP)
+          : PermanentEnergyLoss ({ lost: 0 }),
     }),
 
     ...getActivatables (hero),
@@ -101,13 +100,13 @@ const createHeroObject = (hero: Raw.RawHero): Record<Data.HeroDependent> =>
     liturgicalChants: getActivatableDependentSkills (hero .liturgies),
     blessings: OrderedSet.fromArray (hero .blessings),
 
-    belongings: BelongingsCreator ({
+    belongings: Belongings ({
       items: OrderedMap.fromArray (
         Object.entries (hero .belongings .items) .map<[string, Record<Data.ItemInstance>]> (
           ([id, obj]) => {
             return [
               id,
-              ItemCreator ({
+              Item ({
                 id,
                 name: obj .name,
                 ammunition: fromNullable (obj .ammunition),
@@ -132,7 +131,7 @@ const createHeroObject = (hero: Raw.RawHero): Record<Data.HeroDependent> =>
                     Raw.RawPrimaryAttributeDamageThreshold,
                     Record<PrimaryAttributeDamageThreshold>
                   >
-                    (primaryThreshold => PrimaryAttributeDamageThresholdCreator ({
+                    (primaryThreshold => PrimaryAttributeDamageThreshold ({
                       primary: fromNullable (primaryThreshold .primary),
                       threshold: typeof primaryThreshold .threshold === 'object'
                         ? List.fromArray (primaryThreshold .threshold)
@@ -165,7 +164,7 @@ const createHeroObject = (hero: Raw.RawHero): Record<Data.HeroDependent> =>
             .map<[string, Record<Data.ArmorZonesInstance>]> (
               ([id, obj]) => [
                 id,
-                HitZoneArmorCreator ({
+                HitZoneArmor ({
                   id,
                   name: obj .name,
                   head: fromNullable (obj .head),
@@ -186,13 +185,13 @@ const createHeroObject = (hero: Raw.RawHero): Record<Data.HeroDependent> =>
         )
         : OrderedMap.empty,
 
-      purse: PurseCreator (hero .belongings .purse),
+      purse: Purse (hero .belongings .purse),
 
       isInItemCreation: false,
       isInZoneArmorCreation: false,
     }),
 
-    rules: RulesCreator ({
+    rules: Rules ({
       ...hero.rules,
       enabledRuleBooks: OrderedSet.fromArray (hero.rules.enabledRuleBooks),
     }),
@@ -312,7 +311,7 @@ const getActivatableDependentSkills =
       )
     )
 
-const { advantages, disadvantages, specialAbilities, spells } = HeroG
+const { advantages, disadvantages, specialAbilities, spells } = HeroModelG
 
 export const convertFromRawHero =
   (wiki: Record<WikiAll>) => (hero: Raw.RawHero): Record<Data.HeroDependent> => {

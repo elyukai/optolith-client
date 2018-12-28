@@ -6,13 +6,12 @@ import { ActivatableDependent, ActivatableDependentG, ActiveObjectG } from '../a
 import { ActivatableSkillDependentG } from '../activeEntries/ActivatableSkillDependent';
 import { AttributeDependent, AttributeDependentG } from '../activeEntries/AttributeDependent';
 import { getAPObject } from '../adventurePoints/adventurePointsSumUtils';
-import { BelongingsG } from '../heroData/BelongingsCreator';
-import { EnergiesG } from '../heroData/EnergiesCreator';
-import { HeroG } from '../heroData/HeroCreator';
-import { HitZoneArmorG } from '../heroData/HitZoneArmorCreator';
-import { PersonalDataG } from '../heroData/PersonalDataCreator';
-import { PrimaryAttributeDamageThresholdG } from '../heroData/PrimaryAttributeDamageThresholdCreator';
-import { RulesG } from '../heroData/RulesCreator';
+import { BelongingsG } from '../heroData/Belongings';
+import { EnergiesG } from '../heroData/Energies';
+import { HeroModelG } from '../heroData/HeroModel';
+import { HitZoneArmorG } from '../heroData/HitZoneArmor';
+import { PersonalDataG } from '../heroData/PersonalData';
+import { RulesG } from '../heroData/Rules';
 import { UndoHeroG } from '../heroData/UndoHeroCreator';
 import { HeroStateMapKey } from '../heroStateUtils';
 import { ifElse } from '../ifElse';
@@ -24,6 +23,7 @@ import { elems, foldl, foldlWithKey, OrderedMap, OrderedMapValueElement, toObjec
 import { toArray } from '../structures/OrderedSet';
 import { Record, StringKeyObject, toObject } from '../structures/Record';
 import { UndoState } from '../undo';
+import { PrimaryAttributeDamageThresholdG } from '../wikiData/sub/PrimaryAttributeDamageThreshold';
 import { currentVersion } from './compatibilityUtils';
 
 const {
@@ -42,7 +42,7 @@ const {
   belongings,
   pets,
   player,
-} = HeroG
+} = HeroModelG
 
 const { id, value } = AttributeDependentG
 const { active } = ActivatableSkillDependentG

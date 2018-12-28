@@ -5,20 +5,20 @@ import { getActiveSelections } from './activatable/selectionUtils';
 import { AttributeDependent } from './activeEntries/AttributeDependent';
 import { SkillDependent, SkillDependentG } from './activeEntries/SkillDependent';
 import { flattenDependencies } from './dependencies/flattenDependencies';
-import { HeroG } from './heroData/HeroCreator';
+import { HeroModelG } from './heroData/HeroModel';
 import { add, divideBy, max } from './mathUtils';
 import { cons, elem, foldl, fromElements, maximum } from './structures/List';
 import { fmap, guard, Just, Maybe, maybe, sum, then } from './structures/Maybe';
 import { lookup_ } from './structures/OrderedMap';
 import { Record } from './structures/Record';
-import { CombatTechniqueG } from './wikiData/CombatTechniqueCreator';
-import { ExperienceLevelG } from './wikiData/ExperienceLevelCreator';
-import { WikiG } from './wikiData/WikiCreator';
+import { CombatTechniqueG } from './wikiData/CombatTechnique';
+import { ExperienceLevelG } from './wikiData/ExperienceLevel';
+import { WikiModelG } from './wikiData/WikiModel';
 
 const { value, dependencies } = SkillDependentG
 const { gr, primary, id } = CombatTechniqueG
-const { attributes, experienceLevel, advantages, phase } = HeroG
-const { experienceLevels } = WikiG
+const { attributes, experienceLevel, advantages, phase } = HeroModelG
+const { experienceLevels } = WikiModelG
 const { maxCombatTechniqueRating } = ExperienceLevelG
 
 const getMaxPrimaryAttributeValueById =

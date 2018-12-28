@@ -11,7 +11,7 @@ import { elem, fmap, Just, Maybe } from './structures/Maybe';
 import { OrderedMap } from './structures/OrderedMap';
 import { Record } from './structures/Record';
 import { isNumber } from './typeCheckUtils';
-import { LiturgicalChantG } from './wikiData/LiturgicalChantCreator';
+import { LiturgicalChantG } from './wikiData/LiturgicalChant';
 
 const { id, tradition } = LiturgicalChantG
 

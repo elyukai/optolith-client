@@ -1,7 +1,7 @@
-import { Race, RaceVariant } from '../../types/wiki';
 import { List } from '../structures/List';
 import { fromDefault, makeGetters, Record } from '../structures/Record';
-import { RaceCreator } from '../wikiData/RaceCreator';
+import { Race } from '../wikiData/Race';
+import { RaceVariant } from '../wikiData/RaceVariant';
 
 export interface RaceCombined {
   wikiEntry: Record<Race>
@@ -10,7 +10,7 @@ export interface RaceCombined {
 
 export const RaceCombined =
   fromDefault<RaceCombined> ({
-    wikiEntry: RaceCreator .default,
+    wikiEntry: Race .default,
     mappedVariants: List.empty,
   })
 

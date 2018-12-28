@@ -2,10 +2,9 @@ import { pipe } from 'ramda';
 import { IdPrefixes } from '../constants/IdPrefixes';
 import { EditPrimaryAttributeDamageThreshold, ItemEditorInstance, ItemInstance } from '../types/data';
 import { PrimaryAttributeDamageThreshold } from '../types/wiki';
-import { EditItemCreator, EditItemG } from './heroData/EditItemCreator';
-import { EditPrimaryAttributeDamageThresholdCreator, EditPrimaryAttributeDamageThresholdG } from './heroData/EditPrimaryAttributeDamageThresholdCreator';
-import { ItemCreator, ItemG } from './heroData/ItemCreator';
-import { PrimaryAttributeDamageThresholdCreator, PrimaryAttributeDamageThresholdG } from './heroData/PrimaryAttributeDamageThresholdCreator';
+import { EditItem, EditItemG } from './heroData/EditItem';
+import { EditPrimaryAttributeDamageThresholdG } from './heroData/EditPrimaryAttributeDamageThreshold';
+import { Item, ItemG } from './heroData/Item';
 import { prefixRawId } from './IDUtils';
 import { ifElse } from './ifElse';
 import { getLevelElementsWithZero } from './levelUtils';
@@ -16,15 +15,16 @@ import { all, fromArray, fromElements, isList, length, List, map } from './struc
 import { bind_, ensure, fmap, Just, mapMaybe, Maybe, maybe, Nothing, product, sum } from './structures/Maybe';
 import { Record } from './structures/Record';
 import { show } from './structures/Show';
+import { PrimaryAttributeDamageThresholdG } from './wikiData/sub/PrimaryAttributeDamageThreshold';
 
 const ifNumberOrEmpty = maybe<number, string> ('') (show)
 
 const convertDamageBonusToEdit =
   maybe<Record<PrimaryAttributeDamageThreshold>, Record<EditPrimaryAttributeDamageThreshold>>
-    (EditPrimaryAttributeDamageThresholdCreator ({
+    (EditPrimaryAttributeDamageThreshold ({
       threshold: '',
     }))
-    (damageBonus => EditPrimaryAttributeDamageThresholdCreator ({
+    (damageBonus => EditPrimaryAttributeDamageThreshold ({
       primary: PrimaryAttributeDamageThresholdG.primary (damageBonus),
       threshold: ifElse<number | List<number>, List<number>, string | List<string>>
         (isList)
@@ -35,7 +35,7 @@ const convertDamageBonusToEdit =
 
 export const convertToEdit =
   (item: Record<ItemInstance>): Record<ItemEditorInstance> =>
-    EditItemCreator ({
+    EditItem ({
       id: Just (ItemG.id (item)),
       name: ItemG.name (item),
       ammunition: ItemG.ammunition (item),
@@ -97,13 +97,13 @@ const convertDamageBonusToSave =
     ifElse<string | List<string>, List<string>, Maybe<Record<PrimaryAttributeDamageThreshold>>>
       (isList)
       (threshold => all<string> (e => e .length > 0) (threshold)
-        ? Just (PrimaryAttributeDamageThresholdCreator ({
+        ? Just (PrimaryAttributeDamageThreshold ({
           primary: EditPrimaryAttributeDamageThresholdG.primary (damageBonus),
           threshold: mapMaybe<string, number> (toInt) (threshold),
         }))
         : Nothing)
       (threshold => threshold .length > 0
-        ? fmap ((safeThreshold: number) => PrimaryAttributeDamageThresholdCreator ({
+        ? fmap ((safeThreshold: number) => PrimaryAttributeDamageThreshold ({
                  primary: EditPrimaryAttributeDamageThresholdG.primary (damageBonus),
                  threshold: safeThreshold,
                }))
@@ -114,7 +114,7 @@ const convertDamageBonusToSave =
 export const convertToSave =
   (id: string) =>
   (item: Record<ItemEditorInstance>): Record<ItemInstance> =>
-    ItemCreator ({
+    Item ({
       id,
       name: EditItemG.name (item),
       ammunition: EditItemG.ammunition (item),

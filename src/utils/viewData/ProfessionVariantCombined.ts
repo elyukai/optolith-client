@@ -1,15 +1,15 @@
 import { ActivatableNameCostActive } from '../../types/data';
-import { ProfessionRequiresIncreasableObject, ProfessionVariant } from '../../types/wiki';
 import { List } from '../structures/List';
 import { fromDefault, makeGetters, Record } from '../structures/Record';
-import { ProfessionVariantCreator } from '../wikiData/ProfessionVariantCreator';
+import { ProfessionRequireIncreasable } from '../wikiData/prerequisites/IncreasableRequirement';
+import { ProfessionVariant } from '../wikiData/ProfessionVariant';
 import { IncreasableForView } from './IncreasableForView';
 
 export interface ProfessionVariantCombined {
   wikiEntry: Record<ProfessionVariant>
   mappedPrerequisites: List<
     Record<ActivatableNameCostActive> |
-    Record<ProfessionRequiresIncreasableObject>
+    Record<ProfessionRequireIncreasable>
   >
   mappedSpecialAbilities: List<Record<ActivatableNameCostActive>>
   selections: ProfessionVariant['selections']
@@ -21,7 +21,7 @@ export interface ProfessionVariantCombined {
 
 export const ProfessionVariantCombined =
   fromDefault<ProfessionVariantCombined> ({
-    wikiEntry: ProfessionVariantCreator .default,
+    wikiEntry: ProfessionVariant .default,
     mappedPrerequisites: List.empty,
     mappedSpecialAbilities: List.empty,
     selections: List.empty,

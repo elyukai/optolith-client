@@ -1,7 +1,6 @@
-import { Culture } from '../../types/wiki';
 import { List } from '../structures/List';
 import { fromDefault, makeGetters, Record } from '../structures/Record';
-import { CultureCreator } from '../wikiData/CultureCreator';
+import { Culture } from '../wikiData/Culture';
 import { IncreasableForView } from './IncreasableForView';
 
 export interface CultureCombined {
@@ -11,7 +10,7 @@ export interface CultureCombined {
 
 export const CultureCombined =
   fromDefault<CultureCombined> ({
-    wikiEntry: CultureCreator .default,
+    wikiEntry: Culture .default,
     mappedCulturalPackageSkills: List.empty,
   })
 

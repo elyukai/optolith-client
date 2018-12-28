@@ -1,6 +1,5 @@
-import { Cantrip } from '../../types/wiki';
 import { fromDefault, makeGetters, Record } from '../structures/Record';
-import { CantripCreator } from '../wikiData/CantripCreator';
+import { Cantrip } from '../wikiData/Cantrip';
 import { IsActive } from './viewTypeHelpers';
 
 export interface CantripCombined extends IsActive {
@@ -9,7 +8,7 @@ export interface CantripCombined extends IsActive {
 
 export const CantripCombined =
   fromDefault<CantripCombined> ({
-    wikiEntry: CantripCreator .default,
+    wikiEntry: Cantrip .default,
     active: false,
   })
 

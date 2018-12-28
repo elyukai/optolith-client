@@ -1,7 +1,7 @@
 import { AttributeDependent } from '../activeEntries/AttributeDependent';
 import { Maybe, Nothing } from '../structures/Maybe';
 import { fromDefault, makeGetters } from '../structures/Record';
-import { AttributeCreator } from '../wikiData/AttributeCreator';
+import { Attribute } from '../wikiData/Attribute';
 import { AttributeCombined } from './AttributeCombined';
 
 export interface AttributeWithRequirements extends AttributeCombined {
@@ -11,7 +11,7 @@ export interface AttributeWithRequirements extends AttributeCombined {
 
 export const AttributeWithRequirements =
   fromDefault<AttributeWithRequirements> ({
-    wikiEntry: AttributeCreator .default,
+    wikiEntry: Attribute .default,
     stateEntry: AttributeDependent .default,
     max: Nothing,
     min: 0,

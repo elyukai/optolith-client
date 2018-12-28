@@ -1,7 +1,6 @@
 import { IdPrefixes } from '../../constants/IdPrefixes';
 import * as Raw from '../../types/rawdata';
 import * as Wiki from '../../types/wiki';
-import { PrimaryAttributeDamageThresholdCreator } from '../heroData/PrimaryAttributeDamageThresholdCreator';
 import { prefixId as prefixId, prefixRawId } from '../IDUtils';
 import { add } from '../mathUtils';
 import { cons, cons_, List } from '../structures/List';
@@ -9,34 +8,35 @@ import { alt, fmap, fromNullable, Just, Maybe, Nothing } from '../structures/May
 import { OrderedMap } from '../structures/OrderedMap';
 import { fromBoth } from '../structures/Pair';
 import { Record, StringKeyObject } from '../structures/Record';
-import { createAdvantage } from '../wikiData/AdvantageCreator';
-import { createAttribute } from '../wikiData/AttributeCreator';
-import { createBlessing } from '../wikiData/BlessingCreator';
-import { createCantrip } from '../wikiData/CantripCreator';
-import { createCombatTechnique } from '../wikiData/CombatTechniqueCreator';
-import { createCulture } from '../wikiData/CultureCreator';
-import { createDisadvantage } from '../wikiData/DisadvantageCreator';
-import { ExperienceLevelCreator } from '../wikiData/ExperienceLevelCreator';
-import { ItemTemplateCreator } from '../wikiData/ItemTemplateCreator';
-import { createLiturgicalChant } from '../wikiData/LiturgicalChantCreator';
-import { createProfession } from '../wikiData/ProfessionCreator';
-import { createProfessionVariant } from '../wikiData/ProfessionVariantCreator';
-import { createRace } from '../wikiData/RaceCreator';
-import { createRaceVariant } from '../wikiData/RaceVariantCreator';
-import { createSkill } from '../wikiData/SkillCreator';
-import { createSpecialAbility } from '../wikiData/SpecialAbilityCreator';
-import { createSpell } from '../wikiData/SpellCreator';
-import { createCommonProfessionObject } from '../wikiData/sub/CommonProfessionCreator';
-import { createDie } from '../wikiData/sub/DieCreator';
-import { createIncreaseSkill } from '../wikiData/sub/IncreaseSkillCreator';
-import { createNameBySex } from '../wikiData/sub/NameBySexCreator';
-import { createSourceLink } from '../wikiData/sub/SourceLinkCreator';
-import { convertRawApplications, convertRawIncreaseSkills, convertRawPrerequisiteObjects, convertRawPrerequisites, convertRawProfessionDependencyObjects, convertRawProfessionPrerequisiteObjects, convertRawProfessionRequiresActivatableObject, convertRawProfessionSelections, convertRawProfessionVariantSelections, convertRawSelections, mapRawWithPrefix } from './convertRawObjectsToWikiUtils';
+import { Advantage } from '../wikiData/Advantage';
+import { Attribute } from '../wikiData/Attribute';
+import { Blessing } from '../wikiData/Blessing';
+import { Cantrip } from '../wikiData/Cantrip';
+import { CombatTechnique } from '../wikiData/CombatTechnique';
+import { Culture } from '../wikiData/Culture';
+import { Disadvantage } from '../wikiData/Disadvantage';
+import { ExperienceLevel } from '../wikiData/ExperienceLevel';
+import { ItemTemplate } from '../wikiData/ItemTemplate';
+import { LiturgicalChant } from '../wikiData/LiturgicalChant';
+import { Profession } from '../wikiData/Profession';
+import { ProfessionVariant } from '../wikiData/ProfessionVariant';
+import { Race } from '../wikiData/Race';
+import { RaceVariant } from '../wikiData/RaceVariant';
+import { Skill } from '../wikiData/Skill';
+import { SpecialAbility } from '../wikiData/SpecialAbilityCreator';
+import { Spell } from '../wikiData/SpellCreator';
+import { CommonProfession } from '../wikiData/sub/CommonProfession';
+import { Die } from '../wikiData/sub/Die';
+import { IncreaseSkill } from '../wikiData/sub/IncreaseSkill';
+import { NameBySex } from '../wikiData/sub/NameBySex';
+import { PrimaryAttributeDamageThreshold } from '../wikiData/sub/PrimaryAttributeDamageThreshold';
+import { SourceLink } from '../wikiData/sub/SourceLink';
+import { convertRawApplications, convertRawIncreaseSkills, convertRawPrerequisiteObjects, convertRawPrerequisites, convertRawProfessionDependencyObjects, convertRawProfessionPrerequisiteObjects, convertRawProfessionRequireActivatable, convertRawProfessionSelections, convertRawProfessionVariantSelections, convertRawSelections, mapRawWithPrefix } from './convertRawObjectsToWikiUtils';
 
 const getSourceBooks =
-  (srcIds: string[], srcPages: number[]): List<Record<Wiki.SourceLink>> =>
+  (srcIds: string[], srcPages: number[]): List<Record<SourceLink>> =>
     List.fromArray (srcIds .map (
-      (bookId, index) => createSourceLink (bookId) (srcPages [index])
+      (id, index) => SourceLink ({ id, page: srcPages [index] })
     ))
 
 export const initExperienceLevel =
@@ -48,7 +48,7 @@ export const initExperienceLevel =
     if (localeObject !== undefined) {
       const { name } = localeObject
 
-      return Just (ExperienceLevelCreator ({
+      return Just (ExperienceLevel ({
         ...raw,
         id,
         name,
@@ -60,7 +60,7 @@ export const initExperienceLevel =
 
 interface SizeNew {
   sizeBase: Maybe<number>;
-  sizeRandom: Maybe<List<Record<Wiki.Die>>>;
+  sizeRandom: Maybe<List<Record<Die>>>;
 }
 
 const convertSize = (old: (number | [number, number])[] | undefined): SizeNew =>
@@ -78,7 +78,7 @@ const convertSize = (old: (number | [number, number])[] | undefined): SizeNew =>
 
         return {
           ...obj,
-          sizeRandom: fmap (cons_ (createDie (amount) (sides))) (obj .sizeRandom),
+          sizeRandom: fmap (cons_ (Die ({ amount, sides }))) (obj .sizeRandom),
         };
       },
       {
@@ -93,7 +93,7 @@ const convertSize = (old: (number | [number, number])[] | undefined): SizeNew =>
 
 interface WeightNew {
   weightBase: number;
-  weightRandom: List<Record<Wiki.Die>>;
+  weightRandom: List<Record<Die>>;
 }
 
 const convertWeight = (old: (number | [number, number])[]): WeightNew =>
@@ -110,7 +110,7 @@ const convertWeight = (old: (number | [number, number])[]): WeightNew =>
 
       return {
         ...obj,
-        weightRandom: cons (obj .weightRandom) (createDie (amount) (sides)),
+        weightRandom: cons (obj .weightRandom) (Die ({ amount, sides })),
       }
     },
     {
@@ -163,7 +163,7 @@ export const initRace =
         vars,
       } = raw
 
-      return Just (createRace ({
+      return Just (Race ({
         id,
         name,
         lp: le,
@@ -245,7 +245,7 @@ export const initRaceVariant =
         untyp_dadv,
       } = raw
 
-      return Just (createRaceVariant ({
+      return Just (RaceVariant ({
         id,
         name,
 
@@ -307,20 +307,20 @@ export const initCulture =
         src: srcIds,
       } = raw
 
-      return Just (createCulture ({
+      return Just (Culture ({
         ...localeRest,
         culturalPackageAdventurePoints: ap,
         id,
         languages: List.fromArray (lang),
         scripts: List.fromArray (literacy),
         socialStatus: List.fromArray (social),
-        culturalPackageSkills: List.fromArray (talents .map (e => createIncreaseSkill ({
+        culturalPackageSkills: List.fromArray (talents .map (e => IncreaseSkill ({
           id: prefixRawId (IdPrefixes.SKILLS) (e [0]),
           value: e [1],
         }))),
         commonProfessions: List.fromArray (
-          typ_prof.map<Wiki.CommonProfession> (
-            e => typeof e === 'boolean' ? e : createCommonProfessionObject ({
+          typ_prof.map<boolean | Record<CommonProfession>> (
+            e => typeof e === 'boolean' ? e : CommonProfession ({
               ...e,
               list: List.fromArray (e.list),
             })
@@ -390,18 +390,18 @@ export const initProfession =
         sgr,
       } = raw
 
-      return Just (createProfession ({
+      return Just (Profession ({
         id,
-        name: typeof name === 'object' ? createNameBySex (name) : name,
+        name: typeof name === 'object' ? NameBySex (name) : name,
         subname: typeof subname === 'object'
-          ? Just (createNameBySex (subname))
+          ? Just (NameBySex (subname))
           : fromNullable (subname),
         ap,
         apOfActivatables,
         dependencies: convertRawProfessionDependencyObjects (pre_req),
         prerequisites:  convertRawProfessionPrerequisiteObjects ([...req, ...localeReq]),
         selections: convertRawProfessionSelections (sel),
-        specialAbilities: List.fromArray (sa.map (convertRawProfessionRequiresActivatableObject)),
+        specialAbilities: List.fromArray (sa.map (convertRawProfessionRequireActivatable)),
         combatTechniques: convertRawIncreaseSkills (IdPrefixes.COMBAT_TECHNIQUES) (combattech),
         skills: convertRawIncreaseSkills (IdPrefixes.SKILLS) (talents),
         spells: convertRawIncreaseSkills (IdPrefixes.SPELLS) (spells),
@@ -456,15 +456,15 @@ export const initProfessionVariant =
         blessings,
       } = raw
 
-      return Just (createProfessionVariant ({
+      return Just (ProfessionVariant ({
         id,
-        name: typeof name === 'object' ? createNameBySex (name) : name,
+        name: typeof name === 'object' ? NameBySex (name) : name,
         ap,
         apOfActivatables,
         dependencies: convertRawProfessionDependencyObjects (pre_req),
         prerequisites:  convertRawProfessionPrerequisiteObjects (req),
         selections: convertRawProfessionVariantSelections (sel),
-        specialAbilities: List.fromArray (sa .map (convertRawProfessionRequiresActivatableObject)),
+        specialAbilities: List.fromArray (sa .map (convertRawProfessionRequireActivatable)),
         combatTechniques: convertRawIncreaseSkills (IdPrefixes.COMBAT_TECHNIQUES) (combattech),
         skills: convertRawIncreaseSkills (IdPrefixes.SKILLS) (talents),
         spells: convertRawIncreaseSkills (IdPrefixes.SPELLS) (spells),
@@ -512,7 +512,7 @@ export const initAdvantage =
         ...otherData
       } = raw
 
-      return Just (createAdvantage ({
+      return Just (Advantage ({
         ...otherLocale,
         ...otherData,
         cost: typeof ap === 'object' ? List.fromArray (ap) : ap,
@@ -576,7 +576,7 @@ export const initDisadvantage =
         ...otherData
       } = raw
 
-      return Just (createDisadvantage ({
+      return Just (Disadvantage ({
         ...otherLocale,
         ...otherData,
         cost: typeof ap === 'object' ? List.fromArray (ap) : ap,
@@ -654,7 +654,7 @@ export const initSpecialAbility =
         ...otherData
       } = raw
 
-      return Just (createSpecialAbility ({
+      return Just (SpecialAbility ({
         ...otherLocale,
         ...otherData,
         cost: typeof ap === 'object' ? List.fromArray (ap) : ap,
@@ -718,7 +718,7 @@ export const initAttribute =
     if (localeObject !== undefined) {
       const { name, short } = localeObject
 
-      return Just (createAttribute ({
+      return Just (Attribute ({
         id,
         name,
         short,
@@ -738,7 +738,7 @@ export const initCombatTechnique =
       const { src: srcPages, special, ...otherLocale } = localeObject
       const { gr, skt, leit, bf, src: srcIds, ...otherData } = raw
 
-      return Just (createCombatTechnique ({
+      return Just (CombatTechnique ({
         ...otherLocale,
         ...otherData,
         gr,
@@ -771,7 +771,7 @@ export const initLiturgicalChant =
 
       const { check, gr, skt, aspc, trad, mod, src: srcIds } = raw
 
-      return Just (createLiturgicalChant ({
+      return Just (LiturgicalChant ({
         ...otherLocale,
         aspects: List.fromArray (aspc),
         check: List.fromArray (check),
@@ -806,7 +806,7 @@ export const initBlessing =
 
       const { aspc, trad, src: srcIds } = raw
 
-      return Just (createBlessing ({
+      return Just (Blessing ({
         ...otherLocale,
         name,
         aspects: List.fromArray (aspc),
@@ -846,7 +846,7 @@ export const initSpell =
         src: srcIds,
       } = raw
 
-      return Just (createSpell ({
+      return Just (Spell ({
         ...otherLocale,
         check: List.fromArray (check),
         checkmod: fromNullable (mod),
@@ -883,7 +883,7 @@ export const initCantrip =
 
       const { merk, trad, src: srcIds } = raw
 
-      return Just (createCantrip ({
+      return Just (Cantrip ({
         ...otherLocale,
         name,
         property: merk,
@@ -919,7 +919,7 @@ export const initSkill =
         applications: appPrerequisites,
       } = raw
 
-      return Just (createSkill ({
+      return Just (Skill ({
         ...other,
         check: List.fromArray (check),
         encumbrance: be,
@@ -981,7 +981,7 @@ export const initItemTemplate =
         stabilityMod,
       } = raw
 
-      return Just (ItemTemplateCreator ({
+      return Just (ItemTemplate ({
         id,
         name,
         gr,
@@ -991,7 +991,7 @@ export const initItemTemplate =
         improvisedWeaponGroup: fromNullable (imp),
         damageBonus:
           primaryThreshold !== undefined
-            ? Just (PrimaryAttributeDamageThresholdCreator ({
+            ? Just (PrimaryAttributeDamageThreshold ({
               primary: fromNullable (primaryThreshold .primary),
               threshold: typeof primaryThreshold .threshold === 'object'
                 ? List.fromArray (primaryThreshold .threshold)

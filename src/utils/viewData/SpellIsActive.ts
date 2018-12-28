@@ -1,6 +1,5 @@
-import { Spell } from '../../types/wiki';
 import { fromDefault, makeGetters, Record } from '../structures/Record';
-import { SpellCreator } from '../wikiData/SpellCreator';
+import { Spell } from '../wikiData/Spell';
 import { IsActive } from './viewTypeHelpers';
 
 export interface SpellIsActive extends IsActive {
@@ -9,7 +8,7 @@ export interface SpellIsActive extends IsActive {
 
 const SpellIsActive =
   fromDefault<SpellIsActive> ({
-    wikiEntry: SpellCreator .default,
+    wikiEntry: Spell .default,
     active: false,
   })
 

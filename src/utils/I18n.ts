@@ -3,7 +3,7 @@ import { UIMessages, UIMessagesObject } from '../types/ui';
 import { thrush } from './structures/Function';
 import { fnull, List, subscript } from './structures/List';
 import { fmap, maybe, Maybe, normalize, sum } from './structures/Maybe';
-import { L10nG } from './wikiData/L10nCreator';
+import { L10nG } from './wikiData/L10n';
 
 export { UIMessages, UIMessagesObject };
 

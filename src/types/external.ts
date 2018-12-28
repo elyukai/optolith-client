@@ -1,7 +1,3 @@
-type ToOptionalKeys<T> = {
-  [K in keyof T]?: T[K];
-};
-
 declare module 'react-progress-arc' {
   interface Props {
     completed: number;
@@ -162,7 +158,7 @@ declare module 'react-markdown' {
      * component. The object is merged with the default renderers. The props
      * passed to the component varies based on the type of node.
      */
-    renderers?: ToOptionalKeys<Renderers>;
+    renderers?: Partial<Renderers>;
     /**
      * An object where the keys represent the node type and the value is a React
      * component. The object is merged with the default renderers. The props

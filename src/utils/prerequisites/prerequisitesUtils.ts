@@ -7,11 +7,11 @@ import { equals } from '../structures/Eq';
 import { cons_, filter, find, fromElements, length, List, mappend } from '../structures/List';
 import { alt_, ap, bind_, elem_, fmap, fromMaybe, Just, liftM2, Maybe, Nothing } from '../structures/Maybe';
 import { Record } from '../structures/Record';
-import { AdvantageG } from '../wikiData/AdvantageCreator';
-import { createRequireActivatable } from '../wikiData/prerequisites/ActivatableRequirementCreator';
-import { createRequireIncreasable } from '../wikiData/prerequisites/IncreasableRequirementCreator';
-import { ApplicationG } from '../wikiData/sub/ApplicationCreator';
-import { SelectOptionG } from '../wikiData/sub/SelectOptionCreator';
+import { AdvantageG } from '../wikiData/Advantage';
+import { createRequireActivatable } from '../wikiData/prerequisites/ActivatableRequirement';
+import { createRequireIncreasable } from '../wikiData/prerequisites/IncreasableRequirement';
+import { ApplicationG } from '../wikiData/sub/Application';
+import { SelectOptionG } from '../wikiData/sub/SelectOption';
 
 const { id } = AdvantageG
 const { sid, sid2 } = ActiveObjectG

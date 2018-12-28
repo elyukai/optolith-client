@@ -9,7 +9,7 @@
 
 import { not, pipe } from 'ramda';
 import { Lens, lens } from './Lens';
-import { isMaybe, isNothing, Just, Maybe } from './Maybe';
+import { isJust, isMaybe, isNothing, Just, Maybe, Nothing } from './Maybe';
 import { foldl, fromArray, OrderedSet } from './OrderedSet';
 import { show } from './Show';
 
@@ -28,7 +28,7 @@ export interface Record<A extends RecordBase> extends RecordPrototype {
 }
 
 export interface RecordCreator<A extends RecordBase> {
-  (x: PartialMaybe<A>): Record<A>
+  (x: PartialMaybeOrNothing<A>): Record<A>
   readonly keys: OrderedSet<string>
   readonly default: Record<A>
 }
@@ -42,7 +42,7 @@ const _Record =
   <A extends RecordBase>
   (keys: OrderedSet<string>) =>
   (def: A) =>
-  (specified: PartialMaybe<A>): Record<A> =>
+  (specified: PartialMaybeOrNothing<A>): Record<A> =>
     Object.create (
       RecordPrototype,
       {
@@ -87,24 +87,27 @@ export const fromDefault =
 
     const keys = fromArray (Object.keys (def))
 
-    const creator = (x: PartialMaybe<A>) =>
+    const creator = (x: PartialMaybeOrNothing<A>) =>
       _Record<A>
         (keys)
         (defaultValues)
-        (foldl<string, PartialMaybe<A>>
-          (acc => key => {
-            const value = (x as Required<A>) [key]
+        (foldl<string, PartialMaybeOrNothing<A>>
+          (
+            acc => key => {
+              const value = (x as Required<A>) [key]
 
-            // tslint:disable-next-line: strict-type-predicates
-            return OrderedSet.member (key) (keys)
-              ? isMaybe (defaultValues [key])
-              ? { ...acc, [key]: isNothing (value) ? defaultValues [key] : value } as
-                PartialMaybe<A>
-              : value !== null && value !== undefined
-              ? { ...acc, [key]: value } as PartialMaybe<A>
-              : acc
-              : acc})
-          ({} as PartialMaybe<A>)
+              return OrderedSet.member (key) (keys)
+                && (
+                  isMaybe (defaultValues [key]) && isJust (value)
+                  || (
+                    !isMaybe (defaultValues [key])
+                    && value !== null && value !== undefined && !isNothing (value)
+                  )
+                )
+                ? { ...acc, [key]: value } as PartialMaybeOrNothing<A>
+                : acc
+          })
+          (defaultValues)
           (keys)
         )
 
@@ -359,8 +362,8 @@ type PartialMaybePartialKeys<A> = {
 /**
  * All `Maybe` properties will be optional and all others required.
  */
-export type PartialMaybe<A> = {
-  [K in PartialMaybeRequiredKeys<A>]-?: A[K] extends Maybe<any> ? never : A[K]
+export type PartialMaybeOrNothing<A> = {
+  [K in PartialMaybeRequiredKeys<A>]-?: A[K] extends Maybe<any> ? never : A[K] | Nothing
 } & {
   [K in PartialMaybePartialKeys<A>]?: A[K] extends Maybe<any> ? A[K] : never
 }

@@ -6,7 +6,7 @@ import { createPlainActivatableDependent } from './activeEntries/ActivatableDepe
 import { createInactiveActivatableSkillDependent } from './activeEntries/ActivatableSkillDependent';
 import { AttributeDependentG, createPlainAttributeDependent } from './activeEntries/AttributeDependent';
 import { createPlainSkillDependent, createSkillDependentWithValue6 } from './activeEntries/SkillDependent';
-import { HeroG, HeroL } from './heroData/HeroCreator';
+import { HeroModelG, HeroModelL } from './heroData/HeroModel';
 import { getIdPrefix } from './IDUtils';
 import { not } from './not';
 import { cnst } from './structures/Function';
@@ -14,7 +14,7 @@ import { Lens, over, view } from './structures/Lens';
 import { elem_, filter, fromArray, List } from './structures/List';
 import { bind_, ensure, fmap, fromMaybe, Just, liftM2, Maybe, Nothing, or } from './structures/Maybe';
 import { alter, elems, insert, lookup, lookup_, OrderedMap, sdelete, update } from './structures/OrderedMap';
-import { SkillG } from './wikiData/SkillCreator';
+import { SkillG } from './wikiData/Skill';
 
 export type HeroStateMapKey = 'advantages'
                             | 'attributes'
@@ -47,34 +47,34 @@ export const getHeroStateListLensById =
   (id: string): Maybe<HeroStateListLens> => {
     switch (getIdPrefix (id)) {
       case IdPrefixes.ADVANTAGES:
-        return Just<HeroStateListLens> (HeroL.advantages as HeroStateListLens)
+        return Just<HeroStateListLens> (HeroModelL.advantages as HeroStateListLens)
 
       case IdPrefixes.ATTRIBUTES:
-        return Just<HeroStateListLens> (HeroL.attributes as HeroStateListLens)
+        return Just<HeroStateListLens> (HeroModelL.attributes as HeroStateListLens)
 
       case IdPrefixes.BLESSINGS:
-        return Just<HeroStateListLens> (HeroL.blessings as HeroStateListLens)
+        return Just<HeroStateListLens> (HeroModelL.blessings as HeroStateListLens)
 
       case IdPrefixes.CANTRIPS:
-        return Just<HeroStateListLens> (HeroL.cantrips as HeroStateListLens)
+        return Just<HeroStateListLens> (HeroModelL.cantrips as HeroStateListLens)
 
       case IdPrefixes.COMBAT_TECHNIQUES:
-        return Just<HeroStateListLens> (HeroL.combatTechniques as HeroStateListLens)
+        return Just<HeroStateListLens> (HeroModelL.combatTechniques as HeroStateListLens)
 
       case IdPrefixes.DISADVANTAGES:
-        return Just<HeroStateListLens> (HeroL.disadvantages as HeroStateListLens)
+        return Just<HeroStateListLens> (HeroModelL.disadvantages as HeroStateListLens)
 
       case IdPrefixes.LITURGICAL_CHANTS:
-        return Just<HeroStateListLens> (HeroL.liturgicalChants as HeroStateListLens)
+        return Just<HeroStateListLens> (HeroModelL.liturgicalChants as HeroStateListLens)
 
       case IdPrefixes.SPECIAL_ABILITIES:
-        return Just<HeroStateListLens> (HeroL.specialAbilities as HeroStateListLens)
+        return Just<HeroStateListLens> (HeroModelL.specialAbilities as HeroStateListLens)
 
       case IdPrefixes.SPELLS:
-        return Just<HeroStateListLens> (HeroL.spells as HeroStateListLens)
+        return Just<HeroStateListLens> (HeroModelL.spells as HeroStateListLens)
 
       case IdPrefixes.SKILLS:
-        return Just<HeroStateListLens> (HeroL.skills as HeroStateListLens)
+        return Just<HeroStateListLens> (HeroModelL.skills as HeroStateListLens)
 
       default:
         return Nothing
@@ -89,28 +89,28 @@ export const getHeroStateMapLensById =
   (id: string): Maybe<HeroStateMapLens> => {
     switch (getIdPrefix (id)) {
       case IdPrefixes.ADVANTAGES:
-        return Just<HeroStateMapLens> (HeroL.advantages as HeroStateMapLens)
+        return Just<HeroStateMapLens> (HeroModelL.advantages as HeroStateMapLens)
 
       case IdPrefixes.ATTRIBUTES:
-        return Just<HeroStateMapLens> (HeroL.attributes as HeroStateMapLens)
+        return Just<HeroStateMapLens> (HeroModelL.attributes as HeroStateMapLens)
 
       case IdPrefixes.COMBAT_TECHNIQUES:
-        return Just<HeroStateMapLens> (HeroL.combatTechniques as HeroStateMapLens)
+        return Just<HeroStateMapLens> (HeroModelL.combatTechniques as HeroStateMapLens)
 
       case IdPrefixes.DISADVANTAGES:
-        return Just<HeroStateMapLens> (HeroL.disadvantages as HeroStateMapLens)
+        return Just<HeroStateMapLens> (HeroModelL.disadvantages as HeroStateMapLens)
 
       case IdPrefixes.LITURGICAL_CHANTS:
-        return Just<HeroStateMapLens> (HeroL.liturgicalChants as HeroStateMapLens)
+        return Just<HeroStateMapLens> (HeroModelL.liturgicalChants as HeroStateMapLens)
 
       case IdPrefixes.SPECIAL_ABILITIES:
-        return Just<HeroStateMapLens> (HeroL.specialAbilities as HeroStateMapLens)
+        return Just<HeroStateMapLens> (HeroModelL.specialAbilities as HeroStateMapLens)
 
       case IdPrefixes.SPELLS:
-        return Just<HeroStateMapLens> (HeroL.spells as HeroStateMapLens)
+        return Just<HeroStateMapLens> (HeroModelL.spells as HeroStateMapLens)
 
       case IdPrefixes.SKILLS:
-        return Just<HeroStateMapLens> (HeroL.skills as HeroStateMapLens)
+        return Just<HeroStateMapLens> (HeroModelL.skills as HeroStateMapLens)
 
       default:
         return Nothing
@@ -125,34 +125,34 @@ export const getHeroStateListGetterById =
   (id: string): Maybe<HeroStateListGetter> => {
     switch (getIdPrefix (id)) {
       case IdPrefixes.ADVANTAGES:
-        return Just<HeroStateListGetter> (HeroG.advantages)
+        return Just<HeroStateListGetter> (HeroModelG.advantages)
 
       case IdPrefixes.ATTRIBUTES:
-        return Just<HeroStateListGetter> (HeroG.attributes)
+        return Just<HeroStateListGetter> (HeroModelG.attributes)
 
       case IdPrefixes.BLESSINGS:
-        return Just<HeroStateListGetter> (HeroG.blessings)
+        return Just<HeroStateListGetter> (HeroModelG.blessings)
 
       case IdPrefixes.CANTRIPS:
-        return Just<HeroStateListGetter> (HeroG.cantrips)
+        return Just<HeroStateListGetter> (HeroModelG.cantrips)
 
       case IdPrefixes.COMBAT_TECHNIQUES:
-        return Just<HeroStateListGetter> (HeroG.combatTechniques)
+        return Just<HeroStateListGetter> (HeroModelG.combatTechniques)
 
       case IdPrefixes.DISADVANTAGES:
-        return Just<HeroStateListGetter> (HeroG.disadvantages)
+        return Just<HeroStateListGetter> (HeroModelG.disadvantages)
 
       case IdPrefixes.LITURGICAL_CHANTS:
-        return Just<HeroStateListGetter> (HeroG.liturgicalChants)
+        return Just<HeroStateListGetter> (HeroModelG.liturgicalChants)
 
       case IdPrefixes.SPECIAL_ABILITIES:
-        return Just<HeroStateListGetter> (HeroG.specialAbilities)
+        return Just<HeroStateListGetter> (HeroModelG.specialAbilities)
 
       case IdPrefixes.SPELLS:
-        return Just<HeroStateListGetter> (HeroG.spells)
+        return Just<HeroStateListGetter> (HeroModelG.spells)
 
       case IdPrefixes.SKILLS:
-        return Just<HeroStateListGetter> (HeroG.skills)
+        return Just<HeroStateListGetter> (HeroModelG.skills)
 
       default:
         return Nothing

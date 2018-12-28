@@ -1,7 +1,7 @@
 import { pipe } from 'ramda';
 import { Hero, SkillOptionalDependency, ValueBasedDependent } from '../../types/data';
 import { AbilityRequirement, Activatable, WikiAll } from '../../types/wiki';
-import { SkillOptionalDependencyG } from '../heroData/SkillOptionalDependencyCreator';
+import { SkillOptionalDependencyG } from '../heroData/SkillOptionalDependency';
 import { getHeroStateItem } from '../heroStateUtils';
 import { gt, gte, inc } from '../mathUtils';
 import { flattenPrerequisites } from '../prerequisites/flattenPrerequisites';
@@ -9,8 +9,8 @@ import { thrush } from '../structures/Function';
 import { elem, find, foldl, isList, List, map } from '../structures/List';
 import { bind_, fmap, Maybe, Nothing, or, sum } from '../structures/Maybe';
 import { isRecord, Record } from '../structures/Record';
-import { AdvantageG } from '../wikiData/AdvantageCreator';
-import { RequireActivatableG } from '../wikiData/prerequisites/ActivatableRequirementCreator';
+import { AdvantageG } from '../wikiData/Advantage';
+import { RequireActivatableG } from '../wikiData/prerequisites/ActivatableRequirement';
 import { getWikiEntry } from '../WikiUtils';
 
 const { prerequisites } = AdvantageG

@@ -1,7 +1,6 @@
-import { Skill } from '../../types/wiki';
 import { SkillDependent } from '../activeEntries/SkillDependent';
 import { fromDefault, makeGetters, Record } from '../structures/Record';
-import { SkillCreator } from '../wikiData/SkillCreator';
+import { Skill } from '../wikiData/Skill';
 
 export interface SkillCombined {
   wikiEntry: Record<Skill>
@@ -10,7 +9,7 @@ export interface SkillCombined {
 
 export const SkillCombined =
   fromDefault<SkillCombined> ({
-    wikiEntry: SkillCreator .default,
+    wikiEntry: Skill .default,
     stateEntry: SkillDependent .default,
   })
 

@@ -1,7 +1,7 @@
 import { pipe } from 'ramda';
 import { ItemEditorInstance } from '../types/data';
-import { EditItemG } from './heroData/EditItemCreator';
-import { EditPrimaryAttributeDamageThresholdG } from './heroData/EditPrimaryAttributeDamageThresholdCreator';
+import { EditItemG } from './heroData/EditItem';
+import { EditPrimaryAttributeDamageThresholdG } from './heroData/EditPrimaryAttributeDamageThreshold';
 import { isEmptyOr, isFloat, isInteger, isNaturalNumber } from './RegexUtils';
 import { all, index_, isList, List, subscript_ } from './structures/List';
 import { elem, fmap, isJust, Maybe } from './structures/Maybe';

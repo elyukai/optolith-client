@@ -1,6 +1,6 @@
 import { ActivatableSkillDependent } from '../activeEntries/ActivatableSkillDependent';
 import { fromDefault, makeGetters } from '../structures/Record';
-import { SpellCreator } from '../wikiData/SpellCreator';
+import { Spell } from '../wikiData/Spell';
 import { SpellCombined } from './SpellCombined';
 import { IncreasableWithRequirements } from './viewTypeHelpers';
 
@@ -8,7 +8,7 @@ export interface SpellWithRequirements extends SpellCombined, IncreasableWithReq
 
 const SpellWithRequirements =
   fromDefault<SpellWithRequirements> ({
-    wikiEntry: SpellCreator .default,
+    wikiEntry: Spell .default,
     stateEntry: ActivatableSkillDependent .default,
     isIncreasable: false,
     isDecreasable: false,
