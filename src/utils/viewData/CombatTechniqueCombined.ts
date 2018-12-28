@@ -1,6 +1,5 @@
-import { SkillDependent } from '../../types/data';
 import { CombatTechnique } from '../../types/wiki';
-import { SkillDependentCreator } from '../activeEntries/skillDependent';
+import { SkillDependent } from '../activeEntries/skillDependent';
 import { fromDefault, makeGetters, Record } from '../structures/Record';
 import { CombatTechniqueCreator } from '../wikiData/CombatTechniqueCreator';
 
@@ -12,7 +11,7 @@ export interface CombatTechniqueCombined {
 export const CombatTechniqueCombined =
   fromDefault<CombatTechniqueCombined> ({
     wikiEntry: CombatTechniqueCreator .default,
-    stateEntry: SkillDependentCreator .default,
+    stateEntry: SkillDependent .default,
   })
 
 export const CombatTechniqueCombinedG = makeGetters (CombatTechniqueCombined)

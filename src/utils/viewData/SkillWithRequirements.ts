@@ -1,4 +1,4 @@
-import { SkillDependentCreator } from '../activeEntries/skillDependent';
+import { SkillDependent } from '../activeEntries/skillDependent';
 import { fromDefault, makeGetters } from '../structures/Record';
 import { SkillCreator } from '../wikiData/SkillCreator';
 import { SkillCombined } from './SkillCombined';
@@ -9,7 +9,7 @@ export interface SkillWithRequirements extends SkillCombined, IncreasableWithReq
 const SkillWithRequirements =
   fromDefault<SkillWithRequirements> ({
     wikiEntry: SkillCreator .default,
-    stateEntry: SkillDependentCreator .default,
+    stateEntry: SkillDependent .default,
     isIncreasable: false,
     isDecreasable: false,
   })

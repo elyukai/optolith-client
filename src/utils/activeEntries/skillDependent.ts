@@ -1,24 +1,30 @@
 import { add, pipe } from 'ramda';
-import { Dependent, ExtendedSkillDependent, SkillDependency, SkillDependent } from '../../types/data';
-import { fnull, fromElements } from '../structures/List';
+import { Dependent, ExtendedSkillDependent, SkillDependency } from '../../types/data';
+import { fnull, fromElements, List } from '../structures/List';
 import { fromJust, isJust, Just, Maybe } from '../structures/Maybe';
 import { fromDefault, makeGetters, makeLenses_, member, notMember, Omit, Record } from '../structures/Record';
 
-export const SkillDependentCreator =
+export interface SkillDependent {
+  id: string;
+  value: number;
+  dependencies: List<SkillDependency>;
+}
+
+export const SkillDependent =
   fromDefault<SkillDependent> ({
     id: '',
     value: 0,
     dependencies: fromElements<SkillDependency> (),
   })
 
-export const SkillDependentG = makeGetters (SkillDependentCreator)
+export const SkillDependentG = makeGetters (SkillDependent)
 
-export const SkillDependentL = makeLenses_ (SkillDependentG) (SkillDependentCreator)
+export const SkillDependentL = makeLenses_ (SkillDependentG) (SkillDependent)
 
 export const createSkillDependent =
   (options: Partial<Omit<SkillDependent, 'id'>>) =>
   (id: string): Record<SkillDependent> =>
-    SkillDependentCreator ({
+    SkillDependent ({
       id,
       value: 0,
       dependencies: fromElements<SkillDependency> (),

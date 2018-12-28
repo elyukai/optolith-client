@@ -1,19 +1,25 @@
-import { ActivatableDependency, ActivatableDependent, ActiveObject, Dependent } from '../../types/data';
+import { ActivatableDependency, ActiveObject, Dependent } from '../../types/data';
 import { fnull, fromElements, List } from '../structures/List';
 import { fromJust, isJust, Just, Maybe, Nothing } from '../structures/Maybe';
 import { fromDefault, makeGetters, makeLenses_, member, notMember, Omit, Record } from '../structures/Record';
 
-export const ActivatableDependentCreator =
+export interface ActivatableDependent {
+  id: string;
+  active: List<Record<ActiveObject>>;
+  dependencies: List<ActivatableDependency>;
+}
+
+export const ActivatableDependent =
   fromDefault<ActivatableDependent> ({
     id: '',
     active: fromElements<Record<ActiveObject>> (),
     dependencies: fromElements<ActivatableDependency> (),
   })
 
-export const ActivatableDependentG = makeGetters (ActivatableDependentCreator)
+export const ActivatableDependentG = makeGetters (ActivatableDependent)
 
 export const ActivatableDependentL = makeLenses_ (ActivatableDependentG)
-                                                 (ActivatableDependentCreator)
+                                                 (ActivatableDependent)
 
 export const ActiveObjectCreator =
   fromDefault<ActiveObject> ({
@@ -31,7 +37,7 @@ export const ActiveObjectL = makeLenses_ (ActiveObjectG)
 export const createActivatableDependent =
   (options: Partial<Omit<ActivatableDependent, 'id'>>) =>
   (id: string): Record<ActivatableDependent> =>
-    ActivatableDependentCreator ({
+    ActivatableDependent ({
       id,
       active: fromElements<Record<ActiveObject>> (),
       dependencies: fromElements<ActivatableDependency> (),

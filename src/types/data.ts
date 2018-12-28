@@ -10,32 +10,6 @@ import { UndoState } from '../utils/undo';
 import { AllAction } from './actions';
 import * as Wiki from './wiki';
 
-export interface ActivatableDependent {
-  readonly id: string;
-  readonly active: List<Record<ActiveObject>>;
-  readonly dependencies: List<ActivatableDependency>;
-}
-
-export interface AttributeDependent {
-  readonly id: string;
-  readonly value: number;
-  readonly mod: number;
-  readonly dependencies: List<SkillDependency>;
-}
-
-export interface SkillDependent {
-  readonly id: string;
-  readonly value: number;
-  readonly dependencies: List<SkillDependency>;
-}
-
-export interface ActivatableSkillDependent {
-  readonly id: string;
-  readonly value: number;
-  readonly active: boolean;
-  readonly dependencies: List<ExtendedSkillDependency>;
-}
-
 export type ExtendedSkillDependent =
   Record<SkillDependent> |
   Record<ActivatableSkillDependent>;
@@ -656,3 +630,4 @@ export interface Alert {
 }
 
 export { UIMessages, UIMessagesObject } from './ui';
+

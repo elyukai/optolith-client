@@ -1,4 +1,4 @@
-import { ActivatableSkillDependentCreator } from '../activeEntries/activatableSkillDependent';
+import { ActivatableSkillDependent } from '../activeEntries/activatableSkillDependent';
 import { fromDefault, makeGetters } from '../structures/Record';
 import { LiturgicalChantCreator } from '../wikiData/LiturgicalChantCreator';
 import { LiturgicalChantCombined } from './LiturgicalChantCombined';
@@ -10,7 +10,7 @@ export interface LiturgicalChantWithRequirements
 export const LiturgicalChantWithRequirements =
   fromDefault<LiturgicalChantWithRequirements> ({
     wikiEntry: LiturgicalChantCreator .default,
-    stateEntry: ActivatableSkillDependentCreator .default,
+    stateEntry: ActivatableSkillDependent .default,
     isIncreasable: false,
     isDecreasable: false,
   })

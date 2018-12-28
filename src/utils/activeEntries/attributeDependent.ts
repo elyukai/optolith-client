@@ -1,9 +1,16 @@
-import { AttributeDependent, Dependent, SkillDependency } from '../../types/data';
-import { fnull, fromElements } from '../structures/List';
+import { Dependent, SkillDependency } from '../../types/data';
+import { fnull, fromElements, List } from '../structures/List';
 import { fromJust, isJust, Just, Maybe } from '../structures/Maybe';
 import { fromDefault, makeGetters, makeLenses_, member, notMember, Omit, Record } from '../structures/Record';
 
-export const AttributeDependentCreator =
+export interface AttributeDependent {
+  id: string;
+  value: number;
+  mod: number;
+  dependencies: List<SkillDependency>;
+}
+
+export const AttributeDependent =
   fromDefault<AttributeDependent> ({
     id: '',
     value: 8,
@@ -11,14 +18,14 @@ export const AttributeDependentCreator =
     dependencies: fromElements<SkillDependency> (),
   })
 
-export const AttributeDependentG = makeGetters (AttributeDependentCreator)
+export const AttributeDependentG = makeGetters (AttributeDependent)
 
-export const AttributeDependentL = makeLenses_ (AttributeDependentG) (AttributeDependentCreator)
+export const AttributeDependentL = makeLenses_ (AttributeDependentG) (AttributeDependent)
 
 export const createAttributeDependent =
   (options: Partial<Omit<AttributeDependent, 'id'>>) =>
   (id: string): Record<AttributeDependent> =>
-    AttributeDependentCreator ({
+    AttributeDependent ({
       id,
       value: 8,
       mod: 0,
