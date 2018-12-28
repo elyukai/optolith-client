@@ -1,4 +1,4 @@
-import { ActivatableSkillDependent } from '../activeEntries/activatableSkillDependent';
+import { ActivatableSkillDependent } from '../activeEntries/ActivatableSkillDependent';
 import { fromDefault, makeGetters } from '../structures/Record';
 import { LiturgicalChantCreator } from '../wikiData/LiturgicalChantCreator';
 import { LiturgicalChantCombined } from './LiturgicalChantCombined';

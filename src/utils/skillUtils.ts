@@ -2,7 +2,7 @@ import { pipe } from 'ramda';
 import * as Data from '../types/data';
 import * as Wiki from '../types/wiki';
 import { isActive } from './activatable/isActive';
-import { ActivatableDependentG, ActiveObjectG } from './activeEntries/activatableDependent';
+import { ActivatableDependentG, ActiveObjectG } from './activeEntries/ActivatableDependent';
 import { getSkillCheckValues } from './AttributeUtils';
 import { flattenDependencies } from './dependencies/flattenDependencies';
 import { equals } from './structures/Eq';
@@ -11,7 +11,6 @@ import { Just, Maybe, maybe, Nothing } from './structures/Maybe';
 import { OrderedMap } from './structures/OrderedMap';
 import { Record } from './structures/Record';
 import { isNumber } from './typeCheckUtils';
-import { SkillCombined } from './viewData/viewTypeHelpers';
 
 const { active } = ActivatableDependentG
 const { sid } = ActiveObjectG

@@ -1,7 +1,7 @@
 import { pipe } from 'ramda';
 import * as Data from '../../types/data';
-import { ActivatableDependentL, isActivatableDependent } from '../activeEntries/activatableDependent';
-import { ActivatableSkillDependentL } from '../activeEntries/activatableSkillDependent';
+import { ActivatableDependentL, isActivatableDependent } from '../activeEntries/ActivatableDependent';
+import { ActivatableSkillDependentL } from '../activeEntries/ActivatableSkillDependent';
 import { AttributeDependentL, isAttributeDependent } from '../activeEntries/attributeDependent';
 import { isSkillDependent, SkillDependentL } from '../activeEntries/skillDependent';
 import { getHeroStateItem, removeHeroStateItem, setHeroStateItem } from '../heroStateUtils';

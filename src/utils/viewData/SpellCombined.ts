@@ -1,5 +1,5 @@
 import { Spell } from '../../types/wiki';
-import { ActivatableSkillDependent } from '../activeEntries/activatableSkillDependent';
+import { ActivatableSkillDependent } from '../activeEntries/ActivatableSkillDependent';
 import { fromDefault, makeGetters, Record } from '../structures/Record';
 import { SpellCreator } from '../wikiData/SpellCreator';
 

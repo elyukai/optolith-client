@@ -1,6 +1,5 @@
 import { pipe } from 'ramda';
-import { ActivatableDependent } from '../../types/data';
-import { ActivatableDependentG } from '../activeEntries/activatableDependent';
+import { ActivatableDependent, ActivatableDependentG } from '../activeEntries/ActivatableDependent';
 import { not } from '../not';
 import { fnull } from '../structures/List';
 import { fmap, Maybe, or } from '../structures/Maybe';

@@ -6,10 +6,10 @@ import { PrimaryAttributeDamageThreshold, WikiAll } from '../../types/wiki';
 import { getCombinedPrerequisites } from '../activatable/activatableActivationUtils';
 import { getActiveFromState } from '../activatable/activatableConvertUtils';
 import { addAllStyleRelatedDependencies } from '../activatable/ExtendedStyleUtils';
-import { ActiveObjectCreator, createActivatableDependentWithActive } from '../activeEntries/activatableDependent';
-import { ActivatableSkillDependentG, createActivatableSkillDependentWithValue } from '../activeEntries/activatableSkillDependent';
-import { createAttributeDependentWithValue } from '../activeEntries/attributeDependent';
-import { createSkillDependentWithValue } from '../activeEntries/skillDependent';
+import { ActivatableDependent, ActiveObjectCreator, createActivatableDependentWithActive } from '../activeEntries/ActivatableDependent';
+import { ActivatableSkillDependent, ActivatableSkillDependentG, createActivatableSkillDependentWithValue } from '../activeEntries/ActivatableSkillDependent';
+import { AttributeDependent, createAttributeDependentWithValue } from '../activeEntries/attributeDependent';
+import { createSkillDependentWithValue, SkillDependent } from '../activeEntries/skillDependent';
 import { addDependencies } from '../dependencies/dependencyUtils';
 import { BelongingsCreator } from '../heroData/BelongingsCreator';
 import { EnergiesCreator } from '../heroData/EnergiesCreator';
@@ -71,7 +71,7 @@ const createHeroObject = (hero: Raw.RawHero): Record<Data.HeroDependent> =>
     dateModified: new Date (hero .dateModified),
 
     attributes: OrderedMap.fromArray (
-      hero .attr .values .map<[string, Record<Data.AttributeDependent>]> (
+      hero .attr .values .map<[string, Record<AttributeDependent>]> (
         ({ id, value }) => [id, createAttributeDependentWithValue (value) (id)]
       )
     ),
@@ -249,7 +249,7 @@ const createHeroObject = (hero: Raw.RawHero): Record<Data.HeroDependent> =>
 const getActivatableDependent =
   (source: StringKeyObject<Raw.RawActiveObject[]>): Data.HeroDependent['advantages'] =>
     OrderedMap.fromArray (
-      Object.entries (source) .map<[string, Record<Data.ActivatableDependent>]> (
+      Object.entries (source) .map<[string, Record<ActivatableDependent>]> (
         ([id, active]) => [
           id,
           createActivatableDependentWithActive (fromArray (active .map (e => ActiveObjectCreator ({
@@ -264,15 +264,15 @@ const getActivatableDependent =
     )
 
 interface ActivatableMaps {
-  advantages: OrderedMap<string, Record<Data.ActivatableDependent>>;
-  disadvantages: OrderedMap<string, Record<Data.ActivatableDependent>>;
-  specialAbilities: OrderedMap<string, Record<Data.ActivatableDependent>>;
+  advantages: OrderedMap<string, Record<ActivatableDependent>>;
+  disadvantages: OrderedMap<string, Record<ActivatableDependent>>;
+  specialAbilities: OrderedMap<string, Record<ActivatableDependent>>;
 }
 
 const getActivatables = (hero: Raw.RawHero): ActivatableMaps => {
   const objectsInMap = getActivatableDependent (hero .activatable)
 
-  return foldlWithKey<string, Record<Data.ActivatableDependent>, ActivatableMaps>
+  return foldlWithKey<string, Record<ActivatableDependent>, ActivatableMaps>
     (acc => id => obj => {
       const category = getCategoryById (id)
 
@@ -285,7 +285,7 @@ const getActivatables = (hero: Raw.RawHero): ActivatableMaps => {
 
       return {
         ...acc,
-        [key]: OrderedMap.insert<string, Record<Data.ActivatableDependent>> (id) (obj) (acc [key]),
+        [key]: OrderedMap.insert<string, Record<ActivatableDependent>> (id) (obj) (acc [key]),
       }
     })
     ({
@@ -297,17 +297,17 @@ const getActivatables = (hero: Raw.RawHero): ActivatableMaps => {
 }
 
 const getDependentSkills =
-  (source: StringKeyObject<number>): OrderedMap<string, Record<Data.SkillDependent>> =>
+  (source: StringKeyObject<number>): OrderedMap<string, Record<SkillDependent>> =>
     OrderedMap.fromArray (
-      Object.entries (source) .map<[string, Record<Data.SkillDependent>]> (
+      Object.entries (source) .map<[string, Record<SkillDependent>]> (
         ([id, value]) => [id, createSkillDependentWithValue (value) (id)]
       )
     )
 
 const getActivatableDependentSkills =
-  (source: StringKeyObject<number>): OrderedMap<string, Record<Data.ActivatableSkillDependent>> =>
+  (source: StringKeyObject<number>): OrderedMap<string, Record<ActivatableSkillDependent>> =>
     OrderedMap.fromArray (
-      Object.entries (source) .map<[string, Record<Data.ActivatableSkillDependent>]> (
+      Object.entries (source) .map<[string, Record<ActivatableSkillDependent>]> (
         ([id, value]) => [id, createActivatableSkillDependentWithValue (value) (id)]
       )
     )
@@ -325,7 +325,7 @@ export const convertFromRawHero =
     const { active, id } = ActivatableSkillDependentG
 
     const activeSpells =
-      OrderedMap.foldr<Record<Data.ActivatableSkillDependent>, OrderedSet<string>>
+      OrderedMap.foldr<Record<ActivatableSkillDependent>, OrderedSet<string>>
         (spell => active (spell) ? insert (id (spell)) : ident)
         (OrderedSet.empty)
         (spells (intermediateState))

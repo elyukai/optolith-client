@@ -5,10 +5,10 @@ import * as Wiki from '../../types/wiki';
 import { isActive } from '../activatable/isActive';
 import { isPactValid as isPactFromStateValid } from '../activatable/pactUtils';
 import { getActiveSelections } from '../activatable/selectionUtils';
-import { ActivatableDependentG, ActiveObjectG, isActivatableDependent, isMaybeActivatableDependent } from '../activeEntries/activatableDependent';
-import { ActivatableSkillDependentG, isMaybeActivatableSkillDependent } from '../activeEntries/activatableSkillDependent';
+import { ActivatableDependent, ActivatableDependentG, ActiveObjectG, isActivatableDependent, isMaybeActivatableDependent } from '../activeEntries/ActivatableDependent';
+import { ActivatableSkillDependentG, isMaybeActivatableSkillDependent } from '../activeEntries/ActivatableSkillDependent';
 import { AttributeDependentG } from '../activeEntries/attributeDependent';
-import { DependencyObjectG } from '../activeEntries/DependencyObjectCreator';
+import { DependencyObjectG } from '../activeEntries/DependencyObject';
 import { isExtendedSkillDependent, SkillDependentG } from '../activeEntries/skillDependent';
 import { HeroG } from '../heroData/HeroCreator';
 import { PactG } from '../heroData/PactCreator';
@@ -296,9 +296,9 @@ const isActivatableValid =
 
       if (Maybe.elem<Wiki.SID> ('GR') (sid)) {
         return and (pipe (
-                           bind_<Data.Dependent, Record<Data.ActivatableDependent>>
+                           bind_<Data.Dependent, Record<ActivatableDependent>>
                              (ensure (isActivatableDependent)),
-                           bind_<Record<Data.ActivatableDependent>, boolean>
+                           bind_<Record<ActivatableDependent>, boolean>
                              (target => {
                                const arr =
                                  map (SkillG.id)

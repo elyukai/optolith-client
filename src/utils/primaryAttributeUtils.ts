@@ -1,7 +1,6 @@
 import { pipe } from 'ramda';
-import { ActivatableDependent } from '../types/data';
 import { getBlessedTradition, getMagicalTraditions } from './activatable/traditionUtils';
-import { ActivatableDependentG } from './activeEntries/activatableDependent';
+import { ActivatableDependent, ActivatableDependentG } from './activeEntries/ActivatableDependent';
 import * as IDUtils from './IDUtils';
 import { match } from './match';
 import { cnst } from './structures/Function';

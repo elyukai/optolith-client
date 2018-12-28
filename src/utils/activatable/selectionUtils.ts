@@ -1,8 +1,8 @@
 import { pipe } from 'ramda';
-import { ActivatableDependency, ActivatableDependent, ActiveObject, DependencyObject } from '../../types/data';
+import { ActivatableDependency, ActiveObject } from '../../types/data';
 import { Activatable, SelectionObject } from '../../types/wiki';
-import { ActivatableDependentG, ActiveObjectG } from '../activeEntries/activatableDependent';
-import { DependencyObjectG } from '../activeEntries/DependencyObjectCreator';
+import { ActivatableDependent, ActivatableDependentG, ActiveObjectG } from '../activeEntries/ActivatableDependent';
+import { DependencyObject, DependencyObjectG } from '../activeEntries/DependencyObject';
 import { cons_, find, foldl, List } from '../structures/List';
 import { alt_, bind, bind_, elem_, ensure, fmap, fromMaybe, Just, liftM2, mapMaybe, Maybe } from '../structures/Maybe';
 import { alter, OrderedMap } from '../structures/OrderedMap';

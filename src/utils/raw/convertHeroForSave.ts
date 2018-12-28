@@ -2,9 +2,9 @@ import { pipe } from 'ramda';
 import * as Data from '../../types/data';
 import * as Raw from '../../types/rawdata';
 import { PrimaryAttributeDamageThreshold, WikiAll } from '../../types/wiki';
-import { ActivatableDependentG, ActiveObjectG } from '../activeEntries/activatableDependent';
-import { ActivatableSkillDependentG } from '../activeEntries/activatableSkillDependent';
-import { AttributeDependentG } from '../activeEntries/attributeDependent';
+import { ActivatableDependent, ActivatableDependentG, ActiveObjectG } from '../activeEntries/ActivatableDependent';
+import { ActivatableSkillDependentG } from '../activeEntries/ActivatableSkillDependent';
+import { AttributeDependent, AttributeDependentG } from '../activeEntries/attributeDependent';
 import { getAPObject } from '../adventurePoints/adventurePointsSumUtils';
 import { BelongingsG } from '../heroData/BelongingsCreator';
 import { EnergiesG } from '../heroData/EnergiesCreator';
@@ -62,7 +62,7 @@ const { cost, sid, sid2, tier } = ActiveObjectG
 
 const getAttributesForSave = (hero: Record<Data.HeroDependent>): Raw.RawHero['attr'] =>
   ({
-    values: foldl<Record<Data.AttributeDependent>, { id: string; value: number }[]>
+    values: foldl<Record<AttributeDependent>, { id: string; value: number }[]>
       (acc => e => [...acc, { id: id (e), value: value (e) }])
       ([])
       (attributes (hero)),
@@ -76,7 +76,7 @@ const getAttributesForSave = (hero: Record<Data.HeroDependent>): Raw.RawHero['at
   })
 
 const getActivatablesForSave = (hero: Record<Data.HeroDependent>) =>
-  foldlWithKey<string, Record<Data.ActivatableDependent>, StringKeyObject<Raw.RawActiveObject[]>>
+  foldlWithKey<string, Record<ActivatableDependent>, StringKeyObject<Raw.RawActiveObject[]>>
     (acc => key => obj => ({
       ...acc,
       [key]: List.foldl<Record<Data.ActiveObject>, Raw.RawActiveObject[]>

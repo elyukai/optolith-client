@@ -2,8 +2,8 @@ import { pipe } from 'ramda';
 import { IdPrefixes } from '../constants/IdPrefixes';
 import { Dependent, Hero, HeroDependent } from '../types/data';
 import { EntryWithGroup } from '../types/wiki';
-import { createPlainActivatableDependent as createBaseActivatableDependent } from './activeEntries/activatableDependent';
-import { createInactiveActivatableSkillDependent } from './activeEntries/activatableSkillDependent';
+import { createPlainActivatableDependent } from './activeEntries/ActivatableDependent';
+import { createInactiveActivatableSkillDependent } from './activeEntries/ActivatableSkillDependent';
 import { AttributeDependentG, createPlainAttributeDependent } from './activeEntries/attributeDependent';
 import { createPlainSkillDependent, createSkillDependentWithValue6 } from './activeEntries/skillDependent';
 import { HeroG, HeroL } from './heroData/HeroCreator';
@@ -169,7 +169,7 @@ export const getEntryCreatorById =
       case IdPrefixes.ADVANTAGES:
       case IdPrefixes.DISADVANTAGES:
       case IdPrefixes.SPECIAL_ABILITIES:
-        return Just (createBaseActivatableDependent)
+        return Just (createPlainActivatableDependent)
 
       case IdPrefixes.ATTRIBUTES:
         return Just (createPlainAttributeDependent)

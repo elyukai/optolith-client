@@ -2,7 +2,7 @@ import { pipe } from 'ramda';
 import * as Data from '../../types/data';
 import * as Wiki from '../../types/wiki';
 import { findSelectOption } from '../activatable/selectionUtils';
-import { ActivatableDependentG, ActiveObjectG } from '../activeEntries/activatableDependent';
+import { ActivatableDependent, ActivatableDependentG, ActiveObjectG } from '../activeEntries/ActivatableDependent';
 import { equals } from '../structures/Eq';
 import { cons_, filter, find, fromElements, length, List, mappend } from '../structures/List';
 import { alt_, ap, bind_, elem_, fmap, fromMaybe, Just, liftM2, Maybe, Nothing } from '../structures/Maybe';
@@ -30,7 +30,7 @@ const { applications, target, tier, prerequisites } = SelectOptionG
  */
 export const getGeneratedPrerequisites =
   (wikiEntry: Wiki.Activatable) =>
-  (instance: Maybe<Record<Data.ActivatableDependent>>) =>
+  (instance: Maybe<Record<ActivatableDependent>>) =>
   (current: Record<Data.ActiveObject>) =>
   (add: boolean): Maybe<List<Wiki.AllRequirementObjects>> => {
     switch (id (wikiEntry)) {
@@ -124,7 +124,7 @@ export const getGeneratedPrerequisites =
 
 export const addDynamicPrerequisites =
   (wikiEntry: Wiki.Activatable) =>
-  (instance: Maybe<Record<Data.ActivatableDependent>>) =>
+  (instance: Maybe<Record<ActivatableDependent>>) =>
   (current: Record<Data.ActiveObject>) =>
   (add: boolean) =>
   (staticPrerequisites: List<Wiki.AllRequirements>): List<Wiki.AllRequirements> =>

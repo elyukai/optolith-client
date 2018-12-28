@@ -1,4 +1,9 @@
 import { DCIds } from '../selectors/derivedCharacteristicsSelectors';
+import { ActivatableDependent } from '../utils/activeEntries/ActivatableDependent';
+import { ActivatableSkillDependent } from '../utils/activeEntries/ActivatableSkillDependent';
+import { AttributeDependent } from '../utils/activeEntries/attributeDependent';
+import { DependencyObject } from '../utils/activeEntries/DependencyObject';
+import { SkillDependent } from '../utils/activeEntries/skillDependent';
 import { TabId } from '../utils/LocationUtils';
 import { List } from '../utils/structures/List';
 import { Maybe } from '../utils/structures/Maybe';
@@ -276,14 +281,6 @@ export interface ActivateObject {
   input?: string;
   tier?: number;
   cost?: number;
-}
-
-export interface DependencyObject {
-  origin: Maybe<string>;
-  active: Maybe<boolean>;
-  sid: Maybe<string | number | List<number>>;
-  sid2: Maybe<string | number>;
-  tier: Maybe<number>;
 }
 
 export interface ValidationObject extends ActiveObject {

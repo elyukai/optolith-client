@@ -1,7 +1,6 @@
 import { pipe } from 'ramda';
-import { ActivatableDependent } from '../../types/data';
 import { SpecialAbility } from '../../types/wiki';
-import { ActivatableDependentG } from '../activeEntries/activatableDependent';
+import { ActivatableDependent, ActivatableDependentG } from '../activeEntries/ActivatableDependent';
 import { isBlessedTraditionId, isMagicalTraditionId } from '../IDUtils';
 import { filter, List } from '../structures/List';
 import { bind_, mapMaybe } from '../structures/Maybe';

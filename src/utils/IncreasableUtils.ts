@@ -1,9 +1,9 @@
-import { Categories, IncreasableCategory } from '../constants/Categories';
-import { SkillDependent, ValueBasedDependent } from '../types/data';
+import { Categories } from '../constants/Categories';
+import { ValueBasedDependent } from '../types/data';
 import { IncreasableEntry, Skill } from '../types/wiki';
-import { ActivatableSkillDependentL, isActivatableSkillDependent } from './activeEntries/activatableSkillDependent';
+import { ActivatableSkillDependentL, isActivatableSkillDependent } from './activeEntries/ActivatableSkillDependent';
 import { AttributeDependentL, isAttributeDependent } from './activeEntries/attributeDependent';
-import { SkillDependentG, SkillDependentL } from './activeEntries/skillDependent';
+import { SkillDependent, SkillDependentG, SkillDependentL } from './activeEntries/skillDependent';
 import { getAreSufficientAPAvailable } from './adventurePoints/adventurePointsUtils';
 import { getIncreaseAP } from './adventurePoints/improvementCostUtils';
 import { dec, inc } from './mathUtils';
@@ -38,7 +38,7 @@ export const removePoint =
     : over (SkillDependentL.value) (dec) (instance as Record<SkillDependent>) as T
 
 export const getBaseValueByCategory =
-  (current_category: IncreasableCategory) => {
+  (current_category: Categories) => {
     switch (current_category) {
       case Categories.ATTRIBUTES:
         return 8
@@ -46,13 +46,7 @@ export const getBaseValueByCategory =
       case Categories.COMBAT_TECHNIQUES:
         return 6
 
-      case Categories.LITURGIES:
-        return 0
-
-      case Categories.SPELLS:
-        return 0
-
-      case Categories.TALENTS:
+      default:
         return 0
     }
   }
