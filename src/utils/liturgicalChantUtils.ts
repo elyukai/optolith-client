@@ -1,14 +1,16 @@
+import { pipe } from 'ramda';
 import { getActiveSelections } from './activatable/selectionUtils';
 import { ActivatableDependent } from './activeEntries/ActivatableDependent';
-import { ActivatableSkillDependent } from './activeEntries/ActivatableSkillDependent';
+import { ActivatableSkillDependent, ActivatableSkillDependentG } from './activeEntries/ActivatableSkillDependent';
 import { AttributeDependent } from './activeEntries/AttributeDependent';
-import { getSkillCheckValues } from './AttributeUtils';
 import { flattenDependencies } from './dependencies/flattenDependencies';
 import { getNumericBlessedTraditionIdByInstanceId } from './IDUtils';
+import { ifElse } from './ifElse';
 import { inc } from './mathUtils';
-import { getExceptionalSkillBonus } from './skillUtils';
-import { any, List } from './structures/List';
-import { elem, fmap, Just, Maybe } from './structures/Maybe';
+import { getExceptionalSkillBonus, getInitialMaximumList, putMaximumSkillRatingFromExperienceLevel } from './skillUtils';
+import { cnst, ident } from './structures/Function';
+import { all, any, cons_, List, minimum, notElemF } from './structures/List';
+import { elem, fmap, Just, Maybe, or } from './structures/Maybe';
 import { OrderedMap } from './structures/OrderedMap';
 import { Record } from './structures/Record';
 import { isNumber } from './typeCheckUtils';
@@ -17,19 +19,35 @@ import { ExperienceLevel } from './wikiData/ExperienceLevel';
 import { LiturgicalChant, LiturgicalChantG } from './wikiData/LiturgicalChant';
 import { SpecialAbility } from './wikiData/SpecialAbility';
 
-const { id, tradition } = LiturgicalChantG
+const { id, tradition, aspects } = LiturgicalChantG
+const { value } = ActivatableSkillDependentG
 
 export const isOwnTradition =
-  (current_tradition: Record<SpecialAbility>) =>
+  (currentTradition: Record<SpecialAbility>) =>
   (obj: Record<LiturgicalChant> | Record<Blessing>): boolean => {
     const numeric_tradition_id =
-      fmap (inc) (getNumericBlessedTraditionIdByInstanceId (id (current_tradition)))
+      fmap (inc) (getNumericBlessedTraditionIdByInstanceId (id (currentTradition)))
 
     return any<number> (e => e === 1 || elem (e) (numeric_tradition_id)) (tradition (obj))
   }
 
+const putAspectKnowledgeRestrictionMaximum =
+  (currentTradition: Record<SpecialAbility>) =>
+  (aspectKnowledge: Maybe<Record<ActivatableDependent>>) =>
+  (wikiEntry: Record<LiturgicalChant>) =>
+    ifElse<List<number>, List<number>>
+      (cnst (
+        // is not nameless tradition
+        id (currentTradition) !== 'SA_693'
+        // no aspect knowledge active for the current chant
+        && or (fmap (all (notElemF<string | number> (aspects (wikiEntry))))
+                    (getActiveSelections (aspectKnowledge)))
+      ))
+      (cons_ (14))
+      (ident)
+
 export const isIncreasable =
-  (current_tradition: Record<SpecialAbility>) =>
+  (currentTradition: Record<SpecialAbility>) =>
   (wikiEntry: Record<LiturgicalChant>) =>
   (instance: Record<ActivatableSkillDependent>) =>
   (startEL: Record<ExperienceLevel>) =>
@@ -39,30 +57,17 @@ export const isIncreasable =
   (aspectKnowledge: Maybe<Record<ActivatableDependent>>): boolean => {
     const bonus = getExceptionalSkillBonus (id (wikiEntry)) (exceptionalSkill)
 
-    const hasAspectKnowledgeRestriction = getActiveSelections (aspectKnowledge)
-      .fmap (aspects => {
-        const hasActiveAspect = aspects.any (e => wikiEntry.get ('aspects').elem (e as number))
-        const noNamelessTradition = current_tradition.get ('id') !== 'SA_693'
+    const max = pipe (
+                       getInitialMaximumList (attributes),
+                       putMaximumSkillRatingFromExperienceLevel (startEL) (phase),
+                       putAspectKnowledgeRestrictionMaximum (currentTradition)
+                                                            (aspectKnowledge)
+                                                            (wikiEntry),
+                       minimum
+                     )
+                     (wikiEntry)
 
-        return !hasActiveAspect && noNamelessTradition
-      })
-
-    const maxList = List.of (
-      getSkillCheckValues (attributes) (wikiEntry.get ('check')) .cons (8) .maximum () + 2
-    )
-
-    const getAdditionalMax = R.pipe (
-      (list: typeof maxList) => phase < 3
-        ? list.append (startEL.get ('maxSkillRating'))
-        : list,
-      (list: typeof maxList) => Maybe.elem (true) (hasAspectKnowledgeRestriction)
-        ? list.append (14)
-        : list
-    )
-
-    const max = getAdditionalMax (maxList).minimum ()
-
-    return instance.get ('value') < max + bonus
+    return value (instance) < max + bonus
   }
 
 export const getAspectCounter = (

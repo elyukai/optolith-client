@@ -10,7 +10,7 @@ import { HeroModelG, HeroModelRecord } from './heroData/HeroModel';
 import { ifElse } from './ifElse';
 import { add } from './mathUtils';
 import { cnst, ident } from './structures/Function';
-import { cons, cons_, filter, foldr, fromElements, length, List, maximum, minimum } from './structures/List';
+import { cons_, filter, foldr, length, List, maximum, minimum } from './structures/List';
 import { elem, fmap, Just, Maybe, maybe, Nothing, sum } from './structures/Maybe';
 import { lookup_, OrderedMap } from './structures/OrderedMap';
 import { fromBoth, Pair } from './structures/Pair';
@@ -24,7 +24,7 @@ import { WikiModelRecord } from './wikiData/WikiModel';
 const { specialAbilities, skills } = HeroModelG
 const { active } = ActivatableDependentG
 const { sid } = ActiveObjectG
-const { id, check, value, dependencies } = SkillCombinedG
+const { id, value, dependencies, wikiEntry } = SkillCombinedG
 const { maxSkillRating } = ExperienceLevelG
 
 /**
@@ -38,6 +38,37 @@ export const getExceptionalSkillBonus =
       (0)
       (pipe (active, filter (pipe (sid, elem<string | number> (skillId))), length))
 
+/**
+ * Creates the base for a list for calculating the maximum of a skill based on
+ * the skill check's atrributes' values.
+ */
+export const getInitialMaximumList =
+  (attributes: OrderedMap<string, Record<AttributeDependent>>) =>
+    pipe (
+      SkillG.check,
+      getSkillCheckValues (attributes),
+      cons_ (8),
+      maximum,
+      add (2),
+      List.pure
+    )
+
+/**
+ * Adds the maximum skill rating defined by the chosen experience level to the
+ * list created by `getInitialMaximumList` if the hero is in character creation
+ * phase.
+ */
+export const putMaximumSkillRatingFromExperienceLevel =
+  (startEL: Record<ExperienceLevel>) =>
+  (phase: number) =>
+    ifElse<List<number>, List<number>>
+      (cnst (phase < 3))
+      (cons_ (maxSkillRating (startEL)))
+      (ident)
+
+/**
+ * Returns if the passed skill's skill rating can be increased.
+ */
 export const isIncreasable =
   (startEL: Record<ExperienceLevel>) =>
   (phase: number) =>
@@ -46,20 +77,19 @@ export const isIncreasable =
   (skill: Record<SkillCombined>): boolean => {
     const bonus = getExceptionalSkillBonus (id (skill)) (exceptionalSkill)
 
-    const maxList =
-      fromElements (maximum (cons (getSkillCheckValues (attributes) (check (skill))) (8)) + 2)
-
-    const getAdditionalMax =
-      ifElse<typeof maxList, typeof maxList>
-        (cnst (phase < 3))
-        (cons_ (maxSkillRating (startEL)))
-        (ident)
-
-    const max = minimum (getAdditionalMax (maxList))
+    const max = pipe (
+                       getInitialMaximumList (attributes),
+                       putMaximumSkillRatingFromExperienceLevel (startEL) (phase),
+                       minimum
+                     )
+                     (wikiEntry (skill))
 
     return value (skill) < max + bonus
   }
 
+/**
+ * Returns if the passed skill's skill rating can be decreased.
+ */
 export const isDecreasable =
   (wiki: WikiModelRecord) =>
   (state: HeroModelRecord) =>

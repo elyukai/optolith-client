@@ -443,6 +443,15 @@ export const notElem = <A> (e: A) => pipe (
   not
 )
 
+/**
+ * `notElemF :: Eq a => a -> [a] -> Bool`
+ *
+ * `notElemF` is the negation of `elem_`.
+ *
+ * `notElemF` is the same as `notElem` but with arguments flipped.
+ */
+export const notElemF = <A> (xs: List<A>) => (x: A) => notElem (x) (xs)
+
 interface Find {
   /**
    * `find :: (a -> Bool) -> [a] -> Maybe a`
@@ -1382,6 +1391,7 @@ export const List = {
   any,
   all,
   notElem,
+  notElemF,
   find,
 
   mappend,

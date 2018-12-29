@@ -248,6 +248,13 @@ test ('notElem', () => {
     .toBeTruthy ()
 })
 
+test ('notElemF', () => {
+  expect (List.notElemF (List.fromElements (1, 2, 3, 4, 5)) (3))
+    .toBeFalsy ()
+  expect (List.notElemF (List.fromElements (1, 2, 3, 4, 5)) (6))
+    .toBeTruthy ()
+})
+
 test ('find', () => {
   expect (List.find (e => /t/.test (e))
                     (List.fromElements ('one', 'two', 'three')))
