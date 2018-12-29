@@ -1,19 +1,31 @@
 import { pipe } from 'ramda';
 import * as Data from '../types/data';
-import * as Wiki from '../types/wiki';
-import { isActive } from './activatable/isActive';
-import { ActivatableDependentG, ActiveObjectG } from './activeEntries/ActivatableDependent';
+import { isMaybeActive } from './activatable/isActive';
+import { ActivatableDependent, ActivatableDependentG, ActiveObjectG } from './activeEntries/ActivatableDependent';
+import { AttributeDependent } from './activeEntries/AttributeDependent';
+import { SkillDependentG } from './activeEntries/SkillDependent';
 import { getSkillCheckValues } from './AttributeUtils';
 import { flattenDependencies } from './dependencies/flattenDependencies';
-import { equals } from './structures/Eq';
-import { filter, length, List } from './structures/List';
-import { Just, Maybe, maybe, Nothing } from './structures/Maybe';
-import { OrderedMap } from './structures/OrderedMap';
+import { HeroModelG, HeroModelRecord } from './heroData/HeroModel';
+import { ifElse } from './ifElse';
+import { add } from './mathUtils';
+import { cnst, ident } from './structures/Function';
+import { cons, cons_, filter, foldr, fromElements, length, List, maximum, minimum } from './structures/List';
+import { elem, fmap, Just, Maybe, maybe, Nothing, sum } from './structures/Maybe';
+import { lookup_, OrderedMap } from './structures/OrderedMap';
+import { fromBoth, Pair } from './structures/Pair';
 import { Record } from './structures/Record';
 import { isNumber } from './typeCheckUtils';
+import { SkillCombined, SkillCombinedG } from './viewData/SkillCombined';
+import { ExperienceLevel, ExperienceLevelG } from './wikiData/ExperienceLevel';
+import { SkillG } from './wikiData/Skill';
+import { WikiModelRecord } from './wikiData/WikiModel';
 
+const { specialAbilities, skills } = HeroModelG
 const { active } = ActivatableDependentG
 const { sid } = ActiveObjectG
+const { id, check, value, dependencies } = SkillCombinedG
+const { maxSkillRating } = ExperienceLevelG
 
 /**
  * `getExceptionalSkillBonus skillId exceptionalSkillStateEntry`
@@ -21,92 +33,86 @@ const { sid } = ActiveObjectG
  * @param exceptionalSkill The state entry of Exceptional Skill.
  */
 export const getExceptionalSkillBonus =
-  (skillId: Maybe<string>) =>
-    maybe<Record<Data.ActivatableDependent>, number>
+  (skillId: string) =>
+    maybe<Record<ActivatableDependent>, number>
       (0)
-      (pipe (active, filter (pipe (sid, equals<Maybe<string | number>> (skillId))), length))
+      (pipe (active, filter (pipe (sid, elem<string | number> (skillId))), length))
 
 export const isIncreasable =
-  (skill: Record<SkillCombined>) =>
-  (startEL: Record<Wiki.ExperienceLevel>) =>
+  (startEL: Record<ExperienceLevel>) =>
   (phase: number) =>
-  (attributes: OrderedMap<string, Record<Data.AttributeDependent>>) =>
-  (exceptionalSkill: Maybe<Record<Data.ActivatableDependent>>): boolean => {
+  (attributes: OrderedMap<string, Record<AttributeDependent>>) =>
+  (exceptionalSkill: Maybe<Record<ActivatableDependent>>) =>
+  (skill: Record<SkillCombined>): boolean => {
     const bonus = getExceptionalSkillBonus (id (skill)) (exceptionalSkill)
 
-    const maxList = List.of (
-      getSkillCheckValues (attributes) (skill .get ('check')) .cons (8) .maximum () + 2
-    )
+    const maxList =
+      fromElements (maximum (cons (getSkillCheckValues (attributes) (check (skill))) (8)) + 2)
 
-    const getAdditionalMax = pipe (
-      (list: typeof maxList) => phase < 3
-        ? list .cons (startEL .get ('maxSkillRating'))
-        : list
-    )
+    const getAdditionalMax =
+      ifElse<typeof maxList, typeof maxList>
+        (cnst (phase < 3))
+        (cons_ (maxSkillRating (startEL)))
+        (ident)
 
-    const max = getAdditionalMax (maxList) .minimum ()
+    const max = minimum (getAdditionalMax (maxList))
 
-    return skill .get ('value') < max + bonus
+    return value (skill) < max + bonus
   }
 
-export const isDecreasable = (
-  wiki: Record<Wiki.WikiAll>,
-  state: Record<Data.HeroDependent>,
-  skill: Record<SkillCombined>
-): boolean => {
-  const dependencies = flattenDependencies<number | boolean> (
-    wiki,
-    state,
-    skill .get ('dependencies')
-  )
+export const isDecreasable =
+  (wiki: WikiModelRecord) =>
+  (state: HeroModelRecord) =>
+  (skill: Record<SkillCombined>): boolean => {
+    const flattenedDependencies =
+      flattenDependencies<number | boolean> (wiki) (state) (dependencies (skill))
 
-  /**
-   * Craft Instruments
-   * => sum of Woodworking and Metalworking must be at least 12.
-   */
-  if (
-    ['TAL_51', 'TAL_55'].includes (skill .get ('id'))
-    && isActive (state.get ('specialAbilities').lookup ('SA_17'))
-  ) {
-    const woodworkingRating = Maybe.fromMaybe (0) (
-      state.get ('skills').lookup ('TAL_51').fmap (e => e.get ('value'))
-    )
+    /**
+     * Craft Instruments
+     * => sum of Woodworking and Metalworking must be at least 12.
+     */
+    if (
+      ['TAL_51', 'TAL_55'].includes (id (skill))
+      && isMaybeActive (lookup_ (specialAbilities (state)) ('SA_17'))
+    ) {
+      const woodworkingRating =
+        sum (fmap (SkillDependentG.value) (lookup_ (skills (state)) ('TAL_51')))
 
-    const metalworkingRating = Maybe.fromMaybe (0) (
-      state.get ('skills').lookup ('TAL_55').fmap (e => e.get ('value'))
-    )
+      const metalworkingRating =
+        sum (fmap (SkillDependentG.value) (lookup_ (skills (state)) ('TAL_55')))
 
-    if (woodworkingRating + metalworkingRating < 12) {
-      return false
+      if (woodworkingRating + metalworkingRating < 12) {
+        return false
+      }
     }
+
+    // Basic validation
+    return value (skill) > Math.max (0, ...filter (isNumber) (flattenedDependencies))
   }
 
-  // Basic validation
-  return skill .get ('value') > Math.max (0, ...dependencies.filter (isNumber))
-}
+export const isCommon =
+  (rating: OrderedMap<string, Data.EntryRating>) =>
+    pipe (SkillG.id, lookup_ (rating), elem (Data.EntryRating.Common))
 
-export const isCommon = (rating: OrderedMap<string, Data.EntryRating>) =>
-  (obj: Record<Wiki.Skill>): boolean =>
-    Maybe.elem (Data.EntryRating.Common) (rating .lookup (obj.get ('id')))
+export const isUncommon =
+  (rating: OrderedMap<string, Data.EntryRating>) =>
+    pipe (SkillG.id, lookup_ (rating), elem (Data.EntryRating.Uncommon))
 
-export const isUncommon = (rating: OrderedMap<string, Data.EntryRating>) =>
-  (obj: Record<Wiki.Skill>): boolean =>
-    Maybe.elem (Data.EntryRating.Uncommon) (rating .lookup (obj.get ('id')))
+export const getRoutineValue =
+  (checkAttributeValues: List<number>) =>
+  (sr: number): (Maybe<Pair<number, boolean>>) => {
+    if (sr > 0) {
+      const tooLessAttributePoints =
+        foldr<number, number> (e => e < 13 ? add (13 - e) : ident) (0) (checkAttributeValues)
 
-export const getRoutineValue = (
-  sr: number,
-  checkAttributeValues: List<number>
-): (Maybe<Tuple<number, boolean>>) => {
-  if (sr > 0) {
-    const tooLessAttributePoints = checkAttributeValues.map (e => e < 13 ? 13 - e : 0).sum ()
-    const flatRoutineLevel = Math.floor ((sr - 1) / 3)
-    const checkModThreshold = flatRoutineLevel * -1 + 3
-    const dependentCheckMod = checkModThreshold + tooLessAttributePoints
+      const flatRoutineLevel = Math.floor ((sr - 1) / 3)
+      const checkModThreshold = flatRoutineLevel * -1 + 3
+      const dependentCheckMod = checkModThreshold + tooLessAttributePoints
 
-    return dependentCheckMod < 4
-      ? Just (Tuple.of<number, boolean> (dependentCheckMod) (tooLessAttributePoints > 0))
-      : Nothing ()
+      return dependentCheckMod < 4
+        ? Just (fromBoth<number, boolean> (dependentCheckMod) (tooLessAttributePoints > 0))
+        : Nothing
+    }
+
+    return Nothing
   }
-
-  return Nothing ()
-}

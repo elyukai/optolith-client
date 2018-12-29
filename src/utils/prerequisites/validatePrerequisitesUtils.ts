@@ -10,8 +10,8 @@ import { ActivatableSkillDependentG, isMaybeActivatableSkillDependent } from '..
 import { AttributeDependentG } from '../activeEntries/AttributeDependent';
 import { DependencyObjectG } from '../activeEntries/DependencyObject';
 import { isExtendedSkillDependent, SkillDependentG } from '../activeEntries/SkillDependent';
-import { HeroModelG } from '../heroData/HeroModel';
-import { PactG } from '../heroData/Pact';
+import { HeroModelG, HeroModelRecord } from '../heroData/HeroModel';
+import { Pact, PactG } from '../heroData/Pact';
 import { getHeroStateItem } from '../heroStateUtils';
 import { prefixId } from '../IDUtils';
 import { dec, gte, lt, lte, min, subtract } from '../mathUtils';
@@ -26,21 +26,21 @@ import { lookup_, OrderedMap, toList } from '../structures/OrderedMap';
 import { fst, Pair, snd } from '../structures/Pair';
 import { Record } from '../structures/Record';
 import { CultureG } from '../wikiData/Culture';
-import { RequireActivatableG, RequireActivatableL } from '../wikiData/prerequisites/ActivatableRequirement';
-import { CultureRequirementG, isCultureRequirement } from '../wikiData/prerequisites/CultureRequirement';
-import { isIncreasableRequirement, RequireIncreasableG, RequireIncreasableL } from '../wikiData/prerequisites/IncreasableRequirement';
-import { isPactRequirement, PactRequirementG } from '../wikiData/prerequisites/PactRequirement';
-import { isPrimaryAttributeRequirement, RequirePrimaryAttributeG } from '../wikiData/prerequisites/PrimaryAttributeRequirement';
-import { isRaceRequirement, RaceRequirementG } from '../wikiData/prerequisites/RaceRequirement';
-import { isSexRequirement, SexRequirementG } from '../wikiData/prerequisites/SexRequirement';
+import { RequireActivatable, RequireActivatableG, RequireActivatableL } from '../wikiData/prerequisites/ActivatableRequirement';
+import { CultureRequirement, CultureRequirementG, isCultureRequirement } from '../wikiData/prerequisites/CultureRequirement';
+import { isIncreasableRequirement, RequireIncreasable, RequireIncreasableG, RequireIncreasableL } from '../wikiData/prerequisites/IncreasableRequirement';
+import { isPactRequirement, PactRequirement, PactRequirementG } from '../wikiData/prerequisites/PactRequirement';
+import { isPrimaryAttributeRequirement, RequirePrimaryAttribute, RequirePrimaryAttributeG } from '../wikiData/prerequisites/PrimaryAttributeRequirement';
+import { isRaceRequirement, RaceRequirement, RaceRequirementG } from '../wikiData/prerequisites/RaceRequirement';
+import { isSexRequirement, SexRequirement, SexRequirementG } from '../wikiData/prerequisites/SexRequirement';
 import { ProfessionG } from '../wikiData/Profession';
 import { RaceG } from '../wikiData/Race';
 import { SkillG } from '../wikiData/Skill';
-import { WikiModelG } from '../wikiData/WikiModel';
+import { WikiModelG, WikiModelRecord } from '../wikiData/WikiModel';
 import { getAllWikiEntriesByGroup } from '../WikiUtils';
 
-type Validator = (wiki: Record<Wiki.WikiAll>) =>
-                 (state: Record<Data.HeroDependent>) =>
+type Validator = (wiki: WikiModelRecord) =>
+                 (state: HeroModelRecord) =>
                  (req: Wiki.AllRequirements) =>
                  (sourceId: string) => boolean
 
@@ -48,7 +48,7 @@ const { races, cultures, professions, skills } = WikiModelG
 const { race, culture, profession, specialAbilities, attributes, sex, pact } = HeroModelG
 
 const getAllRaceEntries =
-  (wiki: Record<Wiki.WikiAll>) =>
+  (wiki: WikiModelRecord) =>
     pipe (
       race,
       bind_ (lookup_ (races (wiki))),
@@ -65,7 +65,7 @@ const getAllRaceEntries =
     )
 
 const getAllCultureEntries =
-  (wiki: Record<Wiki.WikiAll>) =>
+  (wiki: WikiModelRecord) =>
     pipe (
       culture,
       bind_ (lookup_ (cultures (wiki))),
@@ -78,7 +78,7 @@ const getAllCultureEntries =
     )
 
 const getAllProfessionEntries =
-  (wiki: Record<Wiki.WikiAll>) =>
+  (wiki: WikiModelRecord) =>
     pipe (
       profession,
       bind_ (lookup_ (professions (wiki))),
@@ -91,8 +91,8 @@ const getAllProfessionEntries =
     )
 
 const isRCPValid =
-  (wiki: Record<Wiki.WikiAll>) =>
-  (state: Record<Data.HeroDependent>) =>
+  (wiki: WikiModelRecord) =>
+  (state: HeroModelRecord) =>
   (sourceId: string): boolean =>
     any (elem (sourceId))
         (catMaybes (
@@ -104,12 +104,12 @@ const isRCPValid =
         ))
 
 const isSexValid =
-  (currentSex: 'm' | 'f') => (req: Record<Wiki.SexRequirement>): boolean =>
+  (currentSex: 'm' | 'f') => (req: Record<SexRequirement>): boolean =>
     equals (currentSex) (SexRequirementG.value (req))
 
 const isRaceValid =
   (maybeCurrentRace: Maybe<string>) =>
-  (req: Record<Wiki.RaceRequirement>): boolean => {
+  (req: Record<RaceRequirement>): boolean => {
     const value = RaceRequirementG.value (req)
 
     if (isList (value)) {
@@ -126,7 +126,7 @@ const isRaceValid =
 
 const isCultureValid =
   (maybeCurrentCulture: Maybe<string>) =>
-  (req: Record<Wiki.CultureRequirement>): boolean => {
+  (req: Record<CultureRequirement>): boolean => {
     const value = CultureRequirementG.value (req)
 
     if (isList (value)) {
@@ -144,14 +144,14 @@ const isCultureValid =
   }
 
 const hasSamePactCategory =
-  (state: Record<Data.Pact>) =>
+  (state: Record<Pact>) =>
     pipe (
       PactRequirementG.category,
       equals (PactG.category (state))
     )
 
 const hasNeededPactType =
-  (state: Record<Data.Pact>) => (req: Record<Wiki.PactRequirement>) => {
+  (state: Record<Pact>) => (req: Record<PactRequirement>) => {
     switch (PactRequirementG.category (req)) {
       case 1:
         return equals (PactG.type (state)) (3)
@@ -161,7 +161,7 @@ const hasNeededPactType =
   }
 
 const hasNeededPactDomain =
-  (state: Record<Data.Pact>) => (req: Record<Wiki.PactRequirement>) => {
+  (state: Record<Pact>) => (req: Record<PactRequirement>) => {
     const maybeReqDomain = PactRequirementG.domain (req)
     const stateDomain = PactG.domain (state)
 
@@ -182,12 +182,12 @@ const hasNeededPactDomain =
     return reqDomain === stateDomain
   }
 
-const hasNeededPactLevel = (state: Record<Data.Pact>) => (req: Record<Wiki.PactRequirement>) =>
+const hasNeededPactLevel = (state: Record<Pact>) => (req: Record<PactRequirement>) =>
   or (fmap (lte (PactG.level (state))) (PactRequirementG.level (req)))
 
 const isPactValid =
-  (maybePact: Maybe<Record<Data.Pact>>) => (req: Record<Wiki.PactRequirement>): boolean =>
-    or (fmap<Record<Data.Pact>, boolean> (currentPact => isPactFromStateValid (currentPact)
+  (maybePact: Maybe<Record<Pact>>) => (req: Record<PactRequirement>): boolean =>
+    or (fmap<Record<Pact>, boolean> (currentPact => isPactFromStateValid (currentPact)
                                            && hasSamePactCategory (currentPact) (req)
                                            && hasNeededPactType (currentPact) (req)
                                            && hasNeededPactDomain (currentPact) (req)
@@ -195,7 +195,7 @@ const isPactValid =
                                          (maybePact))
 
 const isPrimaryAttributeValid =
-  (state: Record<Data.HeroDependent>) => (req: Record<Wiki.RequiresPrimaryAttribute>): boolean =>
+  (state: HeroModelRecord) => (req: Record<RequirePrimaryAttribute>): boolean =>
     or (fmap (pipe (
                lookup_ (attributes (state)),
                fmap (AttributeDependentG.value),
@@ -205,10 +205,10 @@ const isPrimaryAttributeValid =
                                     (RequirePrimaryAttributeG.type (req))))
 
 const isIncreasableValid =
-  (wiki: Record<Wiki.WikiAll>) =>
-  (state: Record<Data.HeroDependent>) =>
+  (wiki: WikiModelRecord) =>
+  (state: HeroModelRecord) =>
   (sourceId: string) =>
-  (req: Record<Wiki.RequiresIncreasableObject>) =>
+  (req: Record<RequireIncreasable>) =>
   (objectValidator: Validator): boolean => {
     const id = RequireIncreasableG.id (req)
 
@@ -235,7 +235,7 @@ const isIncreasableValid =
  */
 const isOneOfListActiveSelection =
   (activeSelections: Maybe<List<string | number>>) =>
-  (req: Record<Wiki.RequiresActivatableObject>) =>
+  (req: Record<RequireActivatable>) =>
   (sid: List<number>): boolean =>
     Maybe.elem (RequireActivatableG.active (req))
                (fmap<List<string | number>, boolean> (pipe (List.elem_, any, thrush (sid)))
@@ -247,14 +247,14 @@ const isOneOfListActiveSelection =
  */
 const isSingleActiveSelection =
   (activeSelections: Maybe<List<string | number>>) =>
-  (req: Record<Wiki.RequiresActivatableObject>) =>
+  (req: Record<RequireActivatable>) =>
   (sid: string | number): boolean =>
     Maybe.elem (RequireActivatableG.active (req))
                (fmap (elem (sid)) (activeSelections))
 
 const isActiveSelection =
   (activeSelections: Maybe<List<string | number>>) =>
-  (req: Record<Wiki.RequiresActivatableObject>) =>
+  (req: Record<RequireActivatable>) =>
   (sid: Wiki.SID): boolean =>
     isList (sid)
       ? isOneOfListActiveSelection (activeSelections) (req) (sid)
@@ -271,10 +271,10 @@ const isNeededLevelGiven =
     )
 
 const isActivatableValid =
-  (wiki: Record<Wiki.WikiAll>) =>
-  (state: Record<Data.HeroDependent>) =>
+  (wiki: WikiModelRecord) =>
+  (state: HeroModelRecord) =>
   (sourceId: string) =>
-  (req: Record<Wiki.RequiresActivatableObject>) =>
+  (req: Record<RequireActivatable>) =>
   (objectValidator: Validator): boolean => {
     const id = RequireActivatableG.id (req)
 
@@ -352,8 +352,8 @@ const isActivatableValid =
  * @param pact A valid `Pact` object or `undefined`.
  */
 export const validateObject =
-  (wiki: Record<Wiki.WikiAll>) =>
-  (state: Record<Data.HeroDependent>) =>
+  (wiki: WikiModelRecord) =>
+  (state: HeroModelRecord) =>
   (req: Wiki.AllRequirements) =>
   (sourceId: string): boolean =>
     req === 'RCP'
@@ -380,8 +380,8 @@ export const validateObject =
  * @param pact A valid `Pact` object or `undefined`.
  */
 export const validatePrerequisites =
-  (wiki: Record<Wiki.WikiAll>) =>
-  (state: Record<Data.HeroDependent>) =>
+  (wiki: WikiModelRecord) =>
+  (state: HeroModelRecord) =>
   (prerequisites: List<Wiki.AllRequirements>) =>
   (sourceId: string): boolean =>
     all (pipe (validateObject (wiki) (state), thrush (sourceId))) (prerequisites)
@@ -405,8 +405,8 @@ const isSkipping =
  * @param sourceId The id of the entry the requirement objects belong to.
  */
 export const validateLevel =
-  (wiki: Record<Wiki.WikiAll>) =>
-  (state: Record<Data.HeroDependent>) =>
+  (wiki: WikiModelRecord) =>
+  (state: HeroModelRecord) =>
   (requirements: OrderedMap<number, List<Wiki.AllRequirements>>) =>
   (dependencies: List<Data.ActivatableDependency>) =>
   (sourceId: string): Maybe<number> =>

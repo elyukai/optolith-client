@@ -8,10 +8,10 @@ import { cons_, filter, find, fromElements, length, List, mappend } from '../str
 import { alt_, ap, bind_, elem_, fmap, fromMaybe, Just, liftM2, Maybe, Nothing } from '../structures/Maybe';
 import { Record } from '../structures/Record';
 import { AdvantageG } from '../wikiData/Advantage';
-import { createRequireActivatable } from '../wikiData/prerequisites/ActivatableRequirement';
-import { createRequireIncreasable } from '../wikiData/prerequisites/IncreasableRequirement';
-import { ApplicationG } from '../wikiData/sub/Application';
-import { SelectOptionG } from '../wikiData/sub/SelectOption';
+import { RequireActivatable } from '../wikiData/prerequisites/ActivatableRequirement';
+import { RequireIncreasable } from '../wikiData/prerequisites/IncreasableRequirement';
+import { Application, ApplicationG } from '../wikiData/sub/Application';
+import { SelectOption, SelectOptionG } from '../wikiData/sub/SelectOption';
 
 const { id } = AdvantageG
 const { sid, sid2 } = ActiveObjectG
@@ -50,7 +50,7 @@ export const getGeneratedPrerequisites =
                                (instance)
 
         const sameSkillDependency =
-          fmap ((justSid: string | number) => createRequireIncreasable ({
+          fmap ((justSid: string | number) => RequireIncreasable ({
                  id: justSid as string,
                  value: (sameSkill + (add ? 1 : 0)) * 6,
                }))
@@ -59,7 +59,7 @@ export const getGeneratedPrerequisites =
         return pipe (
                       bind_ (applications),
                       bind_ (
-                        find<Record<Wiki.Application>> (pipe (
+                        find<Record<Application>> (pipe (
                                                                ApplicationG.id,
                                                                elem_ (sid2 (current))
                                                              ))
@@ -83,7 +83,7 @@ export const getGeneratedPrerequisites =
 
       case 'SA_81':
         return Just (fromElements (
-          createRequireActivatable ({
+          RequireActivatable ({
             id: 'SA_72',
             active: true,
             sid: sid (current),
@@ -92,10 +92,10 @@ export const getGeneratedPrerequisites =
 
       case 'SA_414':
       case 'SA_663':
-        return bind_ ((option: Record<Wiki.SelectionObject>) =>
+        return bind_ ((option: Record<SelectOption>) =>
                        liftM2 ((optionTarget: string) => (optionTier: number) =>
                                 fromElements (
-                                  createRequireIncreasable ({
+                                  RequireIncreasable ({
                                     id: optionTarget,
                                     value: optionTier * 4 + 4,
                                   }))
@@ -109,7 +109,7 @@ export const getGeneratedPrerequisites =
 
       case 'SA_699': {
         return Just (fromElements (
-          createRequireActivatable ({
+          RequireActivatable ({
             id: 'SA_29',
             active: true,
             sid: sid (current),

@@ -9,13 +9,13 @@ import { StringKeyObject } from '../structures/Record';
 export const currentVersion = JSON.parse (fs.readFileSync (
   path.join (remote.app.getAppPath (), 'package.json'),
   'utf8'
-)).version as string;
+)).version as string
 
 // tslint:disable-next-line:variable-name
 const convertLowerThan0_49_5 = (hero: RawHero): RawHero => {
-  const entry = { ...hero };
+  const entry = { ...hero }
 
-  const newActivatable: StringKeyObject<RawActiveObject[]> = {};
+  const newActivatable: StringKeyObject<RawActiveObject[]> = {}
 
   const convertIds: StringKeyObject<RawActiveObject & { id: string }> = {
     'SA_6': { id: 'SA_5', tier: 2 },
@@ -514,34 +514,34 @@ const convertLowerThan0_49_5 = (hero: RawHero): RawHero => {
     'SA_499': { id: 'SA_429' },
     'SA_500': { id: 'SA_430' },
     'SA_501': { id: 'SA_431' },
-  };
+  }
 
   const updateObjects = (list: RawActiveObject[], sid?: string | number, tier?: number) => {
     return [...list].map (e => ({
       ...e,
       sid: sid === undefined ? e.sid : sid,
       tier: tier === undefined || typeof e.tier === 'number' && e.tier > tier ? e.tier : tier,
-    }));
-  };
+    }))
+  }
 
   for (const [id, activeObjects] of Object.entries (entry.activatable)) {
     if (convertIds[id] !== undefined) {
-      const { id: newId, sid, tier } = convertIds[id];
+      const { id: newId, sid, tier } = convertIds[id]
       // @ts-ignore
       newActivatable[newId] =
         updateObjects (
           newActivatable[newId] === undefined ? activeObjects : newActivatable[newId],
           sid,
           tier
-        );
+        )
     }
     else {
       // @ts-ignore
-      newActivatable[id] = activeObjects;
+      newActivatable[id] = activeObjects
     }
   }
 
-  entry.activatable = newActivatable;
+  entry.activatable = newActivatable
 
   for (const [id, item] of Object.entries (entry.belongings.items)) {
     // @ts-ignore
@@ -549,164 +549,164 @@ const convertLowerThan0_49_5 = (hero: RawHero): RawHero => {
       ...item,
       // @ts-ignore
       damageBonus: { value: item.damageBonus as number },
-    };
+    }
   }
 
-  entry.clientVersion = '0.49.5';
+  entry.clientVersion = '0.49.5'
 
-  return entry;
-};
+  return entry
+}
 
 // tslint:disable-next-line:variable-name
 const convertLowerThanOrEqual0_51_0 = (hero: RawHero): RawHero => {
-  const entry = { ...hero };
+  const entry = { ...hero }
 
-  const oldRaceId = entry.r;
+  const oldRaceId = entry.r
 
   switch (oldRaceId) {
     case 'R_1':
-      entry.r = 'R_1';
-      entry.rv = 'RV_1';
-      break;
+      entry.r = 'R_1'
+      entry.rv = 'RV_1'
+      break
     case 'R_2':
-      entry.r = 'R_1';
-      entry.rv = 'RV_2';
-      break;
+      entry.r = 'R_1'
+      entry.rv = 'RV_2'
+      break
     case 'R_3':
-      entry.r = 'R_1';
-      entry.rv = 'RV_3';
-      break;
+      entry.r = 'R_1'
+      entry.rv = 'RV_3'
+      break
     case 'R_4':
-      entry.r = 'R_1';
-      entry.rv = 'RV_4';
-      break;
+      entry.r = 'R_1'
+      entry.rv = 'RV_4'
+      break
     case 'R_5':
-      entry.r = 'R_1';
-      entry.rv = 'RV_5';
-      break;
+      entry.r = 'R_1'
+      entry.rv = 'RV_5'
+      break
     case 'R_6':
-      entry.r = 'R_1';
-      entry.rv = 'RV_6';
-      break;
+      entry.r = 'R_1'
+      entry.rv = 'RV_6'
+      break
     case 'R_7':
-      entry.r = 'R_1';
-      entry.rv = 'RV_7';
-      break;
+      entry.r = 'R_1'
+      entry.rv = 'RV_7'
+      break
     case 'R_8':
-      entry.r = 'R_2';
-      entry.rv = 'RV_1';
-      break;
+      entry.r = 'R_2'
+      entry.rv = 'RV_1'
+      break
     case 'R_9':
-      entry.r = 'R_2';
-      entry.rv = 'RV_2';
-      break;
+      entry.r = 'R_2'
+      entry.rv = 'RV_2'
+      break
     case 'R_10':
-      entry.r = 'R_2';
-      entry.rv = 'RV_3';
-      break;
+      entry.r = 'R_2'
+      entry.rv = 'RV_3'
+      break
     case 'R_11':
-      entry.r = 'R_3';
-      break;
+      entry.r = 'R_3'
+      break
     case 'R_12':
-      entry.r = 'R_4';
-      break;
+      entry.r = 'R_4'
+      break
   }
 
   entry.rules = {
     ...entry.rules,
     enableAllRuleBooks: true,
     enabledRuleBooks: [],
-  };
+  }
 
-  entry.clientVersion = '0.51.1';
+  entry.clientVersion = '0.51.1'
 
-  return entry;
-};
+  return entry
+}
 
 // tslint:disable-next-line:variable-name
 const convertLowerThanOrEqual0_51_2 = (hero: RawHero): RawHero => {
-  const entry = { ...hero };
+  const entry = { ...hero }
 
   if (entry.activatable.hasOwnProperty ('SA_243') && entry.activatable.hasOwnProperty ('SA_255')) {
-    const { SA_255: _, ...other } = entry.activatable;
-    entry.activatable = other;
-    entry.ap.spent -= 10;
+    const { SA_255: _, ...other } = entry.activatable
+    entry.activatable = other
+    entry.ap.spent -= 10
   }
   else if (entry.activatable.hasOwnProperty ('SA_255')) {
-    const { SA_255: arr, ...other } = entry.activatable;
+    const { SA_255: arr, ...other } = entry.activatable
     entry.activatable = {
       ...other,
       SA_243: arr,
-    };
+    }
   }
 
-  entry.clientVersion = '0.51.3';
+  entry.clientVersion = '0.51.3'
 
-  return entry;
-};
+  return entry
+}
 
 // tslint:disable-next-line:variable-name
 const convertLowerThanOrEqual0_51_3 = (hero: RawHero): RawHero => {
-  const entry = { ...hero };
+  const entry = { ...hero }
 
   if (entry.activatable.hasOwnProperty ('SA_344')) {
     entry.activatable = {
       ...entry.activatable,
       SA_344: [{ sid: 'CT_3' }],
-    };
+    }
   }
 
   if (entry.activatable.hasOwnProperty ('SA_345')) {
-    const { SA_344: arr, ...other } = entry.activatable;
+    const { SA_344: arr, ...other } = entry.activatable
     if (Array.isArray (arr)) {
       entry.activatable = {
         ...other,
         SA_344: [...arr, { sid: 'CT_12' }],
-      };
+      }
     }
     else {
       entry.activatable = {
         ...other,
         SA_344: [{ sid: 'CT_12' }],
-      };
+      }
     }
   }
 
   if (entry.activatable.hasOwnProperty ('SA_346')) {
-    const { SA_344: arr, ...other } = entry.activatable;
+    const { SA_344: arr, ...other } = entry.activatable
     if (Array.isArray (arr)) {
       entry.activatable = {
         ...other,
         SA_344: [...arr, { sid: 'CT_16' }],
-      };
+      }
     }
     else {
       entry.activatable = {
         ...other,
         SA_344: [{ sid: 'CT_16' }],
-      };
+      }
     }
   }
 
   if (entry.activatable.hasOwnProperty ('SA_70')) {
-    const { SA_70: arr, ...other } = entry.activatable;
-    entry.activatable = other;
+    const { SA_70: arr, ...other } = entry.activatable
+    entry.activatable = other
     for (const active of arr) {
-      const { sid, sid2 } = active;
-      const id = getMagicalTraditionInstanceIdByNumericId (sid as number);
+      const { sid, sid2 } = active
+      const id = getMagicalTraditionInstanceIdByNumericId (sid as number)
       // @ts-ignore
-      entry.activatable[fromMaybe ('SA_70') (id)] = [{ sid: sid2 }];
+      entry.activatable[fromMaybe ('SA_70') (id)] = [{ sid: sid2 }]
     }
   }
 
   if (entry.activatable.hasOwnProperty ('SA_86')) {
-    const { SA_86: arr, ...other } = entry.activatable;
-    entry.activatable = other;
+    const { SA_86: arr, ...other } = entry.activatable
+    entry.activatable = other
     for (const active of arr) {
-      const { sid, sid2 } = active;
-      const id = getBlessedTraditionInstanceIdByNumericId (sid as number);
+      const { sid, sid2 } = active
+      const id = getBlessedTraditionInstanceIdByNumericId (sid as number)
       // @ts-ignore
-      entry.activatable[fromMaybe ('SA_86') (id)] = [{ sid: sid2 }];
+      entry.activatable[fromMaybe ('SA_86') (id)] = [{ sid: sid2 }]
     }
   }
 
@@ -716,91 +716,91 @@ const convertLowerThanOrEqual0_51_3 = (hero: RawHero): RawHero => {
       DISADV_34: entry.activatable.DISADV_34.map (e => {
         switch (e.sid) {
           case 5:
-            return { sid: 1, tier: 2 };
+            return { sid: 1, tier: 2 }
           case 6:
-            return { sid: 5, tier: 2 };
+            return { sid: 5, tier: 2 }
           case 7:
-            return { sid: 6, tier: 2 };
+            return { sid: 6, tier: 2 }
           case 8:
-            return { sid: 7, tier: 2 };
+            return { sid: 7, tier: 2 }
           case 9:
-            return { sid: 8, tier: 2 };
+            return { sid: 8, tier: 2 }
           case 10:
-            return { sid: 9, tier: 2 };
+            return { sid: 9, tier: 2 }
           case 11:
-            return { sid: 10, tier: 2 };
+            return { sid: 10, tier: 2 }
           case 12:
-            return { sid: 11, tier: 2 };
+            return { sid: 11, tier: 2 }
           case 13:
-            return { sid: 1, tier: 3 };
+            return { sid: 1, tier: 3 }
           case 14:
-            return { sid: 12, tier: 3 };
+            return { sid: 12, tier: 3 }
         }
 
-        return e;
+        return e
       }),
-    };
+    }
   }
 
-  entry.clientVersion = '0.51.4';
+  entry.clientVersion = '0.51.4'
 
-  return entry;
-};
+  return entry
+}
 
 // tslint:disable-next-line:variable-name
 const convertLowerThan1_0_0 = (hero: RawHero): RawHero => {
-  const entry = { ...hero };
+  const entry = { ...hero }
 
   if (
     entry.activatable.hasOwnProperty ('DISADV_45')
     && entry.activatable.DISADV_45.some (e => e.sid === 1)
   ) {
-    entry.pers.haircolor = 24;
-    entry.pers.eyecolor = 19;
+    entry.pers.haircolor = 24
+    entry.pers.eyecolor = 19
   }
 
-  entry.clientVersion = '1.0.0';
+  entry.clientVersion = '1.0.0'
 
-  return entry;
-};
+  return entry
+}
 
 // tslint:disable-next-line:variable-name
 const convertLowerThan1_0_2 = (hero: RawHero): RawHero => {
-  const entry = { ...hero };
+  const entry = { ...hero }
 
-  let adjValue = 0;
+  let adjValue = 0
 
   if (entry.r === 'R_1' || entry.r === 'R_3') {
-    adjValue = 1;
+    adjValue = 1
   }
   else if (entry.r === 'R_2') {
-    adjValue = -2;
+    adjValue = -2
   }
   else if (entry.r === 'R_4') {
-    adjValue = -2;
+    adjValue = -2
   }
 
   // @ts-ignore
-  let index = entry.attr.values.findIndex (e => e[2] === adjValue);
+  let index = entry.attr.values.findIndex (e => e[2] === adjValue)
 
   if (index === -1) {
     // @ts-ignore
-    index = entry.attr.values.findIndex (e => e[2] !== 0);
+    index = entry.attr.values.findIndex (e => e[2] !== 0)
   }
 
   // @ts-ignore
   entry.attr.values = entry.attr.values.map ((e, i) => {
     // @ts-ignore
-    const inter = [...e] as [string, number, number];
-    inter[2] = i === index ? adjValue : 0;
+    const inter = [...e] as [string, number, number]
+    inter[2] = i === index ? adjValue : 0
 
-    return inter;
-  });
+    return inter
+  })
 
-  entry.clientVersion = '1.0.2';
+  entry.clientVersion = '1.0.2'
 
-  return entry;
-};
+  return entry
+}
 
 // tslint:disable-next-line:variable-name
 const convertLowerThan1_1_0_Alpha_1 = (hero: RawHero): RawHero => {
@@ -831,42 +831,42 @@ const convertLowerThan1_1_0_Alpha_1 = (hero: RawHero): RawHero => {
     // ct: Object.entries (hero.ct)
     //   .reduce<StringKeyObject<number>> ((acc, e) => ({ ...acc, [e[0]]: e[1] - 6 }), {}),
     clientVersion: '1.1.0-alpha.1',
-  };
-};
+  }
+}
 
 export const convertHero = (hero: RawHero): RawHero => {
-  let entry = { ...hero };
+  let entry = { ...hero }
 
   if (lt (entry.clientVersion, '0.49.5')) {
-    entry = convertLowerThan0_49_5 (entry);
+    entry = convertLowerThan0_49_5 (entry)
   }
 
   if (
     lte (entry.clientVersion.split (/-/)[0], '0.51.0')
     || entry.clientVersion === '0.51.1-alpha.1'
   ) {
-    entry = convertLowerThanOrEqual0_51_0 (entry);
+    entry = convertLowerThanOrEqual0_51_0 (entry)
   }
 
   if (satisfies (entry.clientVersion.split (/-/)[0], '<= 0.51.2 || <= 0.51.3-alpha.3')) {
-    entry = convertLowerThanOrEqual0_51_2 (entry);
+    entry = convertLowerThanOrEqual0_51_2 (entry)
   }
 
   if (satisfies (entry.clientVersion, '<= 0.51.3 || < 0.51.4-alpha.6')) {
-    entry = convertLowerThanOrEqual0_51_3 (entry);
+    entry = convertLowerThanOrEqual0_51_3 (entry)
   }
 
   if (satisfies (entry.clientVersion, '< 1.0.0')) {
-    entry = convertLowerThan1_0_0 (entry);
+    entry = convertLowerThan1_0_0 (entry)
   }
 
   if (satisfies (entry.clientVersion, '< 1.0.2')) {
-    entry = convertLowerThan1_0_2 (entry);
+    entry = convertLowerThan1_0_2 (entry)
   }
 
   if (satisfies (entry.clientVersion, '< 1.1.0-alpha.1')) {
-    entry = convertLowerThan1_1_0_Alpha_1 (entry);
+    entry = convertLowerThan1_1_0_Alpha_1 (entry)
   }
 
-  return entry;
-};
+  return entry
+}

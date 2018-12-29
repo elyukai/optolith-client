@@ -4,6 +4,9 @@ import { ActivatableSkillDependent } from '../utils/activeEntries/ActivatableSki
 import { AttributeDependent } from '../utils/activeEntries/AttributeDependent';
 import { DependencyObject } from '../utils/activeEntries/DependencyObject';
 import { SkillDependent } from '../utils/activeEntries/SkillDependent';
+import { EditPrimaryAttributeDamageThreshold } from '../utils/heroData/EditPrimaryAttributeDamageThreshold';
+import { HitZoneArmorBase } from '../utils/heroData/HitZoneArmor';
+import { SkillOptionalDependency } from '../utils/heroData/SkillOptionalDependency';
 import { TabId } from '../utils/LocationUtils';
 import { List } from '../utils/structures/List';
 import { Maybe } from '../utils/structures/Maybe';
@@ -256,7 +259,7 @@ export interface ItemEditorSpecific {
   stabilityMod: string;
 }
 
-export interface ArmorZonesEditorInstance extends ArmorZonesBaseInstance {
+export interface ArmorZonesEditorInstance extends HitZoneArmorBase {
   id: Maybe<string>;
 }
 
@@ -430,6 +433,4 @@ export interface Alert {
   confirmYesNo?: boolean;
   onClose? (): void;
 }
-
-export { UIMessages, UIMessagesObject } from './ui';
 

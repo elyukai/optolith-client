@@ -1,6 +1,7 @@
-import { ActivatableDependent, ActivatableSkillDependent, AttributeDependent, HeroDependent } from '../types/data';
-import { Blessing, ExperienceLevel, LiturgicalChant, SpecialAbility, WikiAll } from '../types/wiki';
 import { getActiveSelections } from './activatable/selectionUtils';
+import { ActivatableDependent } from './activeEntries/ActivatableDependent';
+import { ActivatableSkillDependent } from './activeEntries/ActivatableSkillDependent';
+import { AttributeDependent } from './activeEntries/AttributeDependent';
 import { getSkillCheckValues } from './AttributeUtils';
 import { flattenDependencies } from './dependencies/flattenDependencies';
 import { getNumericBlessedTraditionIdByInstanceId } from './IDUtils';
@@ -11,7 +12,10 @@ import { elem, fmap, Just, Maybe } from './structures/Maybe';
 import { OrderedMap } from './structures/OrderedMap';
 import { Record } from './structures/Record';
 import { isNumber } from './typeCheckUtils';
-import { LiturgicalChantG } from './wikiData/LiturgicalChant';
+import { Blessing } from './wikiData/Blessing';
+import { ExperienceLevel } from './wikiData/ExperienceLevel';
+import { LiturgicalChant, LiturgicalChantG } from './wikiData/LiturgicalChant';
+import { SpecialAbility } from './wikiData/SpecialAbility';
 
 const { id, tradition } = LiturgicalChantG
 
@@ -32,35 +36,34 @@ export const isIncreasable =
   (phase: number) =>
   (attributes: OrderedMap<string, Record<AttributeDependent>>) =>
   (exceptionalSkill: Maybe<Record<ActivatableDependent>>) =>
-  (aspectKnowledge: Maybe<Record<ActivatableDependent>>
-): boolean => {
-  const bonus = getExceptionalSkillBonus (id (wikiEntry)) (exceptionalSkill)
+  (aspectKnowledge: Maybe<Record<ActivatableDependent>>): boolean => {
+    const bonus = getExceptionalSkillBonus (id (wikiEntry)) (exceptionalSkill)
 
-  const hasAspectKnowledgeRestriction = getActiveSelections (aspectKnowledge)
-    .fmap (aspects => {
-      const hasActiveAspect = aspects.any (e => wikiEntry.get ('aspects').elem (e as number))
-      const noNamelessTradition = current_tradition.get ('id') !== 'SA_693'
+    const hasAspectKnowledgeRestriction = getActiveSelections (aspectKnowledge)
+      .fmap (aspects => {
+        const hasActiveAspect = aspects.any (e => wikiEntry.get ('aspects').elem (e as number))
+        const noNamelessTradition = current_tradition.get ('id') !== 'SA_693'
 
-      return !hasActiveAspect && noNamelessTradition
-    })
+        return !hasActiveAspect && noNamelessTradition
+      })
 
-  const maxList = List.of (
-    getSkillCheckValues (attributes) (wikiEntry.get ('check')) .cons (8) .maximum () + 2
-  )
+    const maxList = List.of (
+      getSkillCheckValues (attributes) (wikiEntry.get ('check')) .cons (8) .maximum () + 2
+    )
 
-  const getAdditionalMax = R.pipe (
-    (list: typeof maxList) => phase < 3
-      ? list.append (startEL.get ('maxSkillRating'))
-      : list,
-    (list: typeof maxList) => Maybe.elem (true) (hasAspectKnowledgeRestriction)
-      ? list.append (14)
-      : list
-  )
+    const getAdditionalMax = R.pipe (
+      (list: typeof maxList) => phase < 3
+        ? list.append (startEL.get ('maxSkillRating'))
+        : list,
+      (list: typeof maxList) => Maybe.elem (true) (hasAspectKnowledgeRestriction)
+        ? list.append (14)
+        : list
+    )
 
-  const max = getAdditionalMax (maxList).minimum ()
+    const max = getAdditionalMax (maxList).minimum ()
 
-  return instance.get ('value') < max + bonus
-}
+    return instance.get ('value') < max + bonus
+  }
 
 export const getAspectCounter = (
   wiki: OrderedMap<string, Record<LiturgicalChant>>) =>

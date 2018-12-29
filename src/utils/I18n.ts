@@ -1,11 +1,8 @@
 import { pipe } from 'ramda';
-import { UIMessages, UIMessagesObject } from '../types/ui';
 import { thrush } from './structures/Function';
 import { fnull, List, subscript } from './structures/List';
 import { fmap, maybe, Maybe, normalize, sum } from './structures/Maybe';
-import { L10nG } from './wikiData/L10n';
-
-export { UIMessages, UIMessagesObject };
+import { L10nG, L10nRecord } from './wikiData/L10n';
 
 /**
  * Displays a localized message and inserts values into placeholders if
@@ -18,10 +15,10 @@ export { UIMessages, UIMessagesObject };
  */
 export const translateP =
   <T extends typeof L10nG[keyof typeof L10nG]>
-  (messages: UIMessagesObject) =>
+  (messages: L10nRecord) =>
   (getter: T) =>
   (params: List<string | number>): ReturnType<T> => {
-    const message = (getter as unknown as (messages: UIMessagesObject) => ReturnType<T>) (messages)
+    const message = (getter as unknown as (messages: L10nRecord) => ReturnType<T>) (messages)
 
     if (!fnull (params) && typeof message === 'string') {
       return message.replace (
@@ -46,7 +43,7 @@ export const translateP =
  */
 export const translate =
   <T extends typeof L10nG[keyof typeof L10nG]>
-  (messages: UIMessagesObject) =>
+  (messages: L10nRecord) =>
   (getter: T): ReturnType<T> =>
     translateP (messages) (getter) (List.empty) as ReturnType<T>
 
@@ -60,10 +57,10 @@ export const translate =
  */
 export const translateMP =
   <A extends typeof L10nG[keyof typeof L10nG]>
-  (messages: Maybe<UIMessagesObject>) =>
+  (messages: Maybe<L10nRecord>) =>
   (getter: A) =>
   (params: List<string | number>): Maybe<ReturnType<A>> =>
-    fmap<UIMessagesObject, string | List<string>>
+    fmap<L10nRecord, string | List<string>>
       (pipe (translateP, thrush (getter), (thrush (params))))
       (messages) as Maybe<ReturnType<A>>
 
@@ -74,7 +71,7 @@ export const translateMP =
  */
 export const translateM =
   <A extends typeof L10nG[keyof typeof L10nG]>
-  (messages: Maybe<UIMessagesObject>) =>
+  (messages: Maybe<L10nRecord>) =>
   (getter: A): Maybe<ReturnType<A>> =>
     translateMP (messages) (getter) (List.empty) as Maybe<ReturnType<A>>
 

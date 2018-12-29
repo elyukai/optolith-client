@@ -9,14 +9,12 @@ import { Maybe, Nothing } from '../structures/Maybe';
 import { OrderedMap } from '../structures/OrderedMap';
 import { OrderedSet } from '../structures/OrderedSet';
 import { fromDefault, makeGetters, makeLenses_, Record } from '../structures/Record';
-import { UndoState } from '../undo';
 import { Belongings } from './Belongings';
 import { Energies, EnergiesCreator } from './Energies';
 import { Pact } from './Pact';
 import { PersonalData } from './PersonalData';
 import { Rules } from './Rules';
 
-export type UndoableHeroModel = UndoState<HeroModelRecord>
 export type HeroModelRecord = Record<HeroModel>
 
 export interface HeroModel {

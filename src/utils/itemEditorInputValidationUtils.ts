@@ -1,10 +1,9 @@
 import { pipe } from 'ramda';
-import { ItemEditorInstance } from '../types/data';
-import { EditItemG } from './heroData/EditItem';
+import { EditItem, EditItemG } from './heroData/EditItem';
 import { EditPrimaryAttributeDamageThresholdG } from './heroData/EditPrimaryAttributeDamageThreshold';
 import { isEmptyOr, isFloat, isInteger, isNaturalNumber } from './RegexUtils';
 import { all, index_, isList, List, subscript_ } from './structures/List';
-import { elem, fmap, isJust, Maybe } from './structures/Maybe';
+import { elem, fmap, isJust, Nothing } from './structures/Maybe';
 import { fromDefault, makeGetters, Record } from './structures/Record';
 
 export interface ItemEditorInputValidation {
@@ -29,6 +28,7 @@ export interface ItemEditorInputValidation {
   stabilityMod: boolean
   structurePoints: boolean
   weight: boolean
+
   melee: boolean
   ranged: boolean
   armor: boolean
@@ -58,6 +58,7 @@ const ItemEditorInputValidationCreator =
     stabilityMod: true,
     structurePoints: true,
     weight: true,
+
     melee: true,
     ranged: true,
     armor: true,
@@ -104,14 +105,14 @@ const validateRange = (index: 0 | 1 | 2) => pipe (
  * Returns validation info for every input and combined validation for specific
  * item groups.
  */
-export const validateItemEditorInput = (item: Record<ItemEditorInstance>) => {
+export const validateItemEditorInput = (item: Record<EditItem>) => {
   const validName = name (item) .length > 0
   const validATMod = isInteger (at (item))
   const validDamageDiceNumber = isEmptyOr (isNaturalNumber) (damageDiceNumber (item))
   const validDamageFlat = isEmptyOr (isInteger) (damageFlat (item))
 
-  const primaryAttribute = EditPrimaryAttributeDamageThresholdG.primary (damageBonus (item))
-  const damageThreshold = EditPrimaryAttributeDamageThresholdG.threshold (damageBonus (item))
+  const primaryAttribute = primary (damageBonus (item))
+  const damageThreshold = threshold (damageBonus (item))
 
   const validPrimaryAttribute = isJust (primaryAttribute)
 
@@ -146,52 +147,41 @@ export const validateItemEditorInput = (item: Record<ItemEditorInstance>) => {
   const validStructurePoints = isEmptyOr (isNaturalNumber) (stp (item))
   const validWeight = isEmptyOr (isFloat) (weight (item))
 
-  const validMelee = Maybe.elem ('CT_7') (combatTechnique (item))
-    ? validDamageDiceNumber
-      && validDamageFlat
-      && validLength
-      && validNumber
-      && validPrice
-      && validStabilityMod
-      && validStructurePoints
-      && validWeight
-    : validATMod
-      && validDamageDiceNumber
-      && validDamageFlat
-      && validPrimaryAttributeDamageThreshold
-      && validLength
-      && validNumber
-      && validPAMod
-      && validPrice
-      && validStabilityMod
-      && validStructurePoints
-      && validWeight
-      && isJust (combatTechnique (item))
-      && isJust (reach (item))
+  const validSingle = ItemEditorInputValidationCreator ({
+    name: validName,
+    amount: validNumber,
 
-  const validRanged =
-    validDamageDiceNumber
-    && validDamageFlat
-    && validLength
-    && validNumber
-    && validPrice
-    && validRange1
-    && validRange2
-    && validRange3
-    && validStabilityMod
-    && validWeight
-    && isJust (combatTechnique (item))
+    at: validATMod,
+    damageDiceNumber: validDamageDiceNumber,
+    damageFlat: validDamageFlat,
+    firstDamageThreshold: validFirstDamageThreshold,
+    secondDamageThreshold: validSecondDamageThreshold,
+    damageThreshold: validPrimaryAttributeDamageThreshold,
+    enc: validENC,
+    ini: validINIMod,
+    length: validLength,
+    mov: validMOVMod,
+    pa: validPAMod,
+    price: validPrice,
+    pro: validPRO,
+    range1: validRange1,
+    range2: validRange2,
+    range3: validRange3,
+    stabilityMod: validStabilityMod,
+    structurePoints: validStructurePoints,
+    weight: validWeight,
 
-  const validArmor =
-    validENC
-    && validINIMod
-    && validMOVMod
-    && validNumber
-    && validPrice
-    && validPRO
-    && validStabilityMod
-    && validWeight
-    && isJust (armorType (item))
+    melee: Nothing,
+    ranged: Nothing,
+    armor: Nothing,
+    other: Nothing,
+  })
+
+  const validMelee = validateMeleeWeaponInput (item) (validSingle)
+
+  const validRanged = validateRangedWeaponInput (item) (validSingle)
+
+  const validArmor = validateArmorInput (item) (validSingle)
 
   const validOther =
     validName
@@ -230,3 +220,62 @@ export const validateItemEditorInput = (item: Record<ItemEditorInstance>) => {
     other: validOther,
   })
 }
+
+const validateMeleeWeaponInput =
+  (item: Record<EditItem>) =>
+  (validSingle: Record<ItemEditorInputValidation>) =>
+    elem ('CT_7') (combatTechnique (item))
+    ? validateNoParryingWeapons (validSingle)
+    : ItemEditorInputValidationG.at (validSingle)
+      && ItemEditorInputValidationG.damageDiceNumber (validSingle)
+      && ItemEditorInputValidationG.damageFlat (validSingle)
+      && ItemEditorInputValidationG.damageThreshold (validSingle)
+      && ItemEditorInputValidationG.length (validSingle)
+      && ItemEditorInputValidationG.amount (validSingle)
+      && ItemEditorInputValidationG.pa (validSingle)
+      && ItemEditorInputValidationG.price (validSingle)
+      && ItemEditorInputValidationG.stabilityMod (validSingle)
+      && ItemEditorInputValidationG.structurePoints (validSingle)
+      && ItemEditorInputValidationG.weight (validSingle)
+      && isJust (combatTechnique (item))
+      && isJust (reach (item))
+
+// Lances
+const validateNoParryingWeapons =
+  (validSingle: Record<ItemEditorInputValidation>) =>
+    ItemEditorInputValidationG.damageDiceNumber (validSingle)
+    && ItemEditorInputValidationG.damageFlat (validSingle)
+    && ItemEditorInputValidationG.length (validSingle)
+    && ItemEditorInputValidationG.amount (validSingle)
+    && ItemEditorInputValidationG.price (validSingle)
+    && ItemEditorInputValidationG.stabilityMod (validSingle)
+    && ItemEditorInputValidationG.structurePoints (validSingle)
+    && ItemEditorInputValidationG.weight (validSingle)
+
+const validateRangedWeaponInput =
+  (item: Record<EditItem>) =>
+  (validSingle: Record<ItemEditorInputValidation>) =>
+    ItemEditorInputValidationG.damageDiceNumber (validSingle)
+    && ItemEditorInputValidationG.damageFlat (validSingle)
+    && ItemEditorInputValidationG.length (validSingle)
+    && ItemEditorInputValidationG.amount (validSingle)
+    && ItemEditorInputValidationG.price (validSingle)
+    && ItemEditorInputValidationG.range1 (validSingle)
+    && ItemEditorInputValidationG.range2 (validSingle)
+    && ItemEditorInputValidationG.range3 (validSingle)
+    && ItemEditorInputValidationG.stabilityMod (validSingle)
+    && ItemEditorInputValidationG.weight (validSingle)
+    && isJust (combatTechnique (item))
+
+const validateArmorInput =
+  (item: Record<EditItem>) =>
+  (validSingle: Record<ItemEditorInputValidation>) =>
+    ItemEditorInputValidationG.enc (validSingle)
+    && ItemEditorInputValidationG.ini (validSingle)
+    && ItemEditorInputValidationG.mov (validSingle)
+    && ItemEditorInputValidationG.amount (validSingle)
+    && ItemEditorInputValidationG.price (validSingle)
+    && ItemEditorInputValidationG.pro (validSingle)
+    && ItemEditorInputValidationG.stabilityMod (validSingle)
+    && ItemEditorInputValidationG.weight (validSingle)
+    && isJust (armorType (item))

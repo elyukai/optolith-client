@@ -16,7 +16,8 @@
     "outDir": "app/",
     "plugins": [
       {
-        "name": "typescript-tslint-plugin"
+        "name": "typescript-tslint-plugin",
+        "alwaysShowRuleFailuresAsWarnings": false,
       }
     ],
     "removeComments": true,

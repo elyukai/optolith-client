@@ -1,9 +1,7 @@
 import { pipe } from 'ramda';
 import { IdPrefixes } from '../constants/IdPrefixes';
-import { EditPrimaryAttributeDamageThreshold, ItemEditorInstance, ItemInstance } from '../types/data';
-import { PrimaryAttributeDamageThreshold } from '../types/wiki';
 import { EditItem, EditItemG } from './heroData/EditItem';
-import { EditPrimaryAttributeDamageThresholdG } from './heroData/EditPrimaryAttributeDamageThreshold';
+import { EditPrimaryAttributeDamageThreshold, EditPrimaryAttributeDamageThresholdG } from './heroData/EditPrimaryAttributeDamageThreshold';
 import { Item, ItemG } from './heroData/Item';
 import { prefixRawId } from './IDUtils';
 import { ifElse } from './ifElse';
@@ -15,7 +13,7 @@ import { all, fromArray, fromElements, isList, length, List, map } from './struc
 import { bind_, ensure, fmap, Just, mapMaybe, Maybe, maybe, Nothing, product, sum } from './structures/Maybe';
 import { Record } from './structures/Record';
 import { show } from './structures/Show';
-import { PrimaryAttributeDamageThresholdG } from './wikiData/sub/PrimaryAttributeDamageThreshold';
+import { PrimaryAttributeDamageThreshold, PrimaryAttributeDamageThresholdG } from './wikiData/sub/PrimaryAttributeDamageThreshold';
 
 const ifNumberOrEmpty = maybe<number, string> ('') (show)
 
@@ -34,7 +32,7 @@ const convertDamageBonusToEdit =
     }))
 
 export const convertToEdit =
-  (item: Record<ItemInstance>): Record<ItemEditorInstance> =>
+  (item: Record<Item>): Record<EditItem> =>
     EditItem ({
       id: Just (ItemG.id (item)),
       name: ItemG.name (item),
@@ -113,7 +111,7 @@ const convertDamageBonusToSave =
 
 export const convertToSave =
   (id: string) =>
-  (item: Record<ItemEditorInstance>): Record<ItemInstance> =>
+  (item: Record<EditItem>): Record<Item> =>
     Item ({
       id,
       name: EditItemG.name (item),
@@ -142,7 +140,7 @@ export const convertToSave =
       length: toFloat (EditItemG.length (item)),
       amount: product (toMaybeIntGreaterThan1 (EditItemG.amount (item))),
       pa: toInt (EditItemG.pa (item)),
-      price: sum (toFloat (EditItemG.price (item))),
+      price: toFloat (EditItemG.price (item)),
       pro: toInt (EditItemG.pro (item)),
       range: ensure<List<number>> (pipe (length, equals (3)))
                                   (mapMaybe (toInt) (EditItemG.range (item))),

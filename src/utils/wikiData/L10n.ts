@@ -8,7 +8,7 @@ export type L10n = {
 
 export type L10nKey = keyof L10n
 
-export type L10nObj = Record<L10n>
+export type L10nRecord = Record<L10n>
 
 export const L10n =
   fromDefault<L10n> ({

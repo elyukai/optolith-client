@@ -1,7 +1,8 @@
 import { pipe } from 'ramda';
-import { Hero, SkillOptionalDependency, ValueBasedDependent } from '../../types/data';
-import { AbilityRequirement, Activatable, WikiAll } from '../../types/wiki';
-import { SkillOptionalDependencyG } from '../heroData/SkillOptionalDependency';
+import { ValueBasedDependent } from '../../types/data';
+import { AbilityRequirement, Activatable } from '../../types/wiki';
+import { HeroModelRecord } from '../heroData/HeroModel';
+import { SkillOptionalDependency, SkillOptionalDependencyG } from '../heroData/SkillOptionalDependency';
 import { getHeroStateItem } from '../heroStateUtils';
 import { gt, gte, inc } from '../mathUtils';
 import { flattenPrerequisites } from '../prerequisites/flattenPrerequisites';
@@ -11,6 +12,7 @@ import { bind_, fmap, Maybe, Nothing, or, sum } from '../structures/Maybe';
 import { isRecord, Record } from '../structures/Record';
 import { AdvantageG } from '../wikiData/Advantage';
 import { RequireActivatableG } from '../wikiData/prerequisites/ActivatableRequirement';
+import { WikiModelRecord } from '../wikiData/WikiModel';
 import { getWikiEntry } from '../WikiUtils';
 
 const { prerequisites } = AdvantageG
@@ -28,7 +30,7 @@ const { id } = RequireActivatableG
  * @param dependencies The list of dependencies to flatten.
  */
 export const flattenDependencies =
-  <T extends number | boolean> (wiki: Record<WikiAll>) => (state: Hero) =>
+  <T extends number | boolean> (wiki: WikiModelRecord) => (state: HeroModelRecord) =>
     map<T | Record<SkillOptionalDependency>, T>
       (e => isRecord (e)
         ? pipe (
@@ -48,7 +50,7 @@ export const flattenDependencies =
                    foldl<string, number>
                      (acc => pipe (
                        getHeroStateItem as (id: string) =>
-                         (state: Hero) => Maybe<ValueBasedDependent>,
+                         (state: HeroModelRecord) => Maybe<ValueBasedDependent>,
                        thrush (state),
                        fmap (pipe (value, gte (value (e)))),
                        or,

@@ -1,12 +1,12 @@
 import { pipe } from 'ramda';
 import { IdPrefixes } from '../constants/IdPrefixes';
-import { Dependent, Hero, HeroDependent } from '../types/data';
+import { Dependent } from '../types/data';
 import { EntryWithGroup } from '../types/wiki';
 import { createPlainActivatableDependent } from './activeEntries/ActivatableDependent';
 import { createInactiveActivatableSkillDependent } from './activeEntries/ActivatableSkillDependent';
 import { AttributeDependentG, createPlainAttributeDependent } from './activeEntries/AttributeDependent';
 import { createPlainSkillDependent, createSkillDependentWithValue6 } from './activeEntries/SkillDependent';
-import { HeroModelG, HeroModelL } from './heroData/HeroModel';
+import { HeroModel, HeroModelG, HeroModelL, HeroModelRecord } from './heroData/HeroModel';
 import { getIdPrefix } from './IDUtils';
 import { not } from './not';
 import { cnst } from './structures/Function';
@@ -30,13 +30,13 @@ export type HeroStateListKey = HeroStateMapKey
                              | 'cantrips'
 
 export type HeroStateListGetter<K extends HeroStateListKey = HeroStateListKey> =
-  (hero: Hero) => HeroDependent[K]
+  (hero: HeroModelRecord) => HeroModel[K]
 
 export type HeroStateListLens<K extends HeroStateListKey = HeroStateListKey> =
-  Lens<Hero, HeroDependent[K]>
+  Lens<HeroModelRecord, HeroModel[K]>
 
 export type HeroStateMapLens<K extends HeroStateMapKey = HeroStateMapKey> =
-  Lens<Hero, HeroDependent[K]>
+  Lens<HeroModelRecord, HeroModel[K]>
 
 /**
  * Returns a getter function for a `Hero` object based on the prefix of the
@@ -191,7 +191,7 @@ export const getEntryCreatorById =
 
 export const getHeroStateItem =
   (id: string) =>
-  (state: Hero) =>
+  (state: HeroModelRecord) =>
     pipe (
            fmap ((lens: HeroStateMapLens) => view (lens) (state)),
            bind_ (lookup (id) as (m: OrderedMap<string, Dependent>) => Maybe<Dependent>)
@@ -201,21 +201,21 @@ export const getHeroStateItem =
 export const setHeroStateItem =
   (id: string) =>
   (item: Dependent) =>
-  (state: Hero) =>
+  (state: HeroModelRecord) =>
     fmap ((lens: HeroStateMapLens) =>
            over (lens)
                 (insert<string, Dependent> (id) (item) as
-                  (m: HeroDependent[HeroStateMapKey]) => HeroDependent[HeroStateMapKey])
+                  (m: HeroModel[HeroStateMapKey]) => HeroModel[HeroStateMapKey])
                 (state))
          (getHeroStateMapLensById (id))
 
 export const removeHeroStateItem =
   (id: string) =>
-  (state: Hero) =>
+  (state: HeroModelRecord) =>
     fmap ((lens: HeroStateMapLens) =>
            over (lens)
                 (sdelete<string, Dependent> (id) as
-                  (m: HeroDependent[HeroStateMapKey]) => HeroDependent[HeroStateMapKey])
+                  (m: HeroModel[HeroStateMapKey]) => HeroModel[HeroStateMapKey])
                 (state))
          (getHeroStateMapLensById (id))
 
@@ -236,14 +236,14 @@ export const updateEntryDef =
   <D extends Dependent>
   (f: (value: D) => Maybe<D>) =>
   (id: string) =>
-  (state: Hero) =>
-    fromMaybe<Hero>
+  (state: HeroModelRecord) =>
+    fromMaybe<HeroModelRecord>
       (state)
       (liftM2 ((creator: (id: string) => D) => (lens: HeroStateMapLens) =>
                 over (lens)
                   (alter<string, D> (pipe (fromMaybe (creator (id)), f))
                                     (id) as unknown as
-                    (m: HeroDependent[HeroStateMapKey]) => HeroDependent[HeroStateMapKey])
+                    (m: HeroModel[HeroStateMapKey]) => HeroModel[HeroStateMapKey])
                   (state))
               (getEntryCreatorById (id) as Maybe<(id: string) => D>)
               (getHeroStateMapLensById (id)))

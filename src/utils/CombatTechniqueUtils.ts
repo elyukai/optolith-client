@@ -1,19 +1,17 @@
 import { pipe } from 'ramda';
-import { Hero } from '../types/data';
-import { CombatTechnique, WikiAll } from '../types/wiki';
 import { getActiveSelections } from './activatable/selectionUtils';
 import { AttributeDependent } from './activeEntries/AttributeDependent';
 import { SkillDependent, SkillDependentG } from './activeEntries/SkillDependent';
 import { flattenDependencies } from './dependencies/flattenDependencies';
-import { HeroModelG } from './heroData/HeroModel';
+import { HeroModelG, HeroModelRecord } from './heroData/HeroModel';
 import { add, divideBy, max } from './mathUtils';
 import { cons, elem, foldl, fromElements, maximum } from './structures/List';
 import { fmap, guard, Just, Maybe, maybe, sum, then } from './structures/Maybe';
 import { lookup_ } from './structures/OrderedMap';
 import { Record } from './structures/Record';
-import { CombatTechniqueG } from './wikiData/CombatTechnique';
+import { CombatTechnique, CombatTechniqueG } from './wikiData/CombatTechnique';
 import { ExperienceLevelG } from './wikiData/ExperienceLevel';
-import { WikiModelG } from './wikiData/WikiModel';
+import { WikiModelG, WikiModelRecord } from './wikiData/WikiModel';
 
 const { value, dependencies } = SkillDependentG
 const { gr, primary, id } = CombatTechniqueG
@@ -22,7 +20,7 @@ const { experienceLevels } = WikiModelG
 const { maxCombatTechniqueRating } = ExperienceLevelG
 
 const getMaxPrimaryAttributeValueById =
-  (state: Hero) =>
+  (state: HeroModelRecord) =>
     foldl<string, number> (currentMax => pipe (
                             lookup_ (attributes (state)),
                             maybe<Record<AttributeDependent>, number>
@@ -34,12 +32,13 @@ const getMaxPrimaryAttributeValueById =
 const calculatePrimaryAttributeMod = pipe (add (-8), divideBy (3), Math.floor, max (0))
 
 export const getPrimaryAttributeMod =
-  (state: Hero) => pipe (getMaxPrimaryAttributeValueById (state), calculatePrimaryAttributeMod)
+  (state: HeroModelRecord) =>
+    pipe (getMaxPrimaryAttributeValueById (state), calculatePrimaryAttributeMod)
 
 const getCombatTechniqueRating = maybe<Record<SkillDependent>, number> (6) (value)
 
 export const getAttack =
-  (state: Hero) =>
+  (state: HeroModelRecord) =>
   (wikiEntry: Record<CombatTechnique>) =>
     pipe (
       getCombatTechniqueRating,
@@ -50,7 +49,7 @@ export const getAttack =
     )
 
 export const getParry =
-  (state: Hero) =>
+  (state: HeroModelRecord) =>
   (wikiEntry: Record<CombatTechnique>) =>
   (maybeStateEntry: Maybe<Record<SkillDependent>>): Maybe<number> =>
     then<number>
@@ -61,8 +60,8 @@ export const getParry =
       ))
 
 export const isIncreaseDisabled =
-  (wiki: Record<WikiAll>) =>
-  (state: Hero) =>
+  (wiki: WikiModelRecord) =>
+  (state: HeroModelRecord) =>
   (wikiEntry: Record<CombatTechnique>) =>
   (instance: Record<SkillDependent>): boolean => {
     const currentMax =
@@ -85,8 +84,8 @@ export const isIncreaseDisabled =
   }
 
 export const isDecreaseDisabled =
-  (wiki: Record<WikiAll>) =>
-  (state: Hero) =>
+  (wiki: WikiModelRecord) =>
+  (state: HeroModelRecord) =>
   (wikiEntry: Record<CombatTechnique>) =>
   (instance: Record<SkillDependent>) =>
   (onlyOneCombatTechniqueForHunter: boolean): boolean => {

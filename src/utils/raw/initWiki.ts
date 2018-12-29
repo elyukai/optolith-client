@@ -23,8 +23,8 @@ import { ProfessionVariant } from '../wikiData/ProfessionVariant';
 import { Race } from '../wikiData/Race';
 import { RaceVariant } from '../wikiData/RaceVariant';
 import { Skill } from '../wikiData/Skill';
-import { SpecialAbility } from '../wikiData/SpecialAbilityCreator';
-import { Spell } from '../wikiData/SpellCreator';
+import { SpecialAbility } from '../wikiData/SpecialAbility';
+import { Spell } from '../wikiData/Spell';
 import { CommonProfession } from '../wikiData/sub/CommonProfession';
 import { Die } from '../wikiData/sub/Die';
 import { IncreaseSkill } from '../wikiData/sub/IncreaseSkill';
@@ -41,7 +41,7 @@ const getSourceBooks =
 
 export const initExperienceLevel =
   (locale: StringKeyObject<Raw.RawExperienceLevelLocale>) =>
-  (raw: Raw.RawExperienceLevel): Maybe<Record<Wiki.ExperienceLevel>> => {
+  (raw: Raw.RawExperienceLevel): Maybe<Record<ExperienceLevel>> => {
     const { id } = raw
     const localeObject = locale [id]
 
@@ -121,7 +121,7 @@ const convertWeight = (old: (number | [number, number])[]): WeightNew =>
 
 export const initRace =
   (locale: StringKeyObject<Raw.RawRaceLocale>) =>
-  (raw: Raw.RawRace): Maybe<Record<Wiki.Race>> => {
+  (raw: Raw.RawRace): Maybe<Record<Race>> => {
     const { id } = raw
     const localeObject = locale [id]
 
@@ -213,6 +213,8 @@ export const initRace =
 
         variants: List.fromArray (vars .map (prefixRawId (IdPrefixes.RACE_VARIANTS))),
         src: getSourceBooks (srcIds, srcPages),
+
+        category: Nothing,
       }))
     }
 
@@ -221,7 +223,7 @@ export const initRace =
 
 export const initRaceVariant =
   (locale: StringKeyObject<Raw.RawRaceVariantLocale>) =>
-  (raw: Raw.RawRaceVariant): Maybe<Record<Wiki.RaceVariant>> => {
+  (raw: Raw.RawRaceVariant): Maybe<Record<RaceVariant>> => {
     const { id } = raw
     const localeObject = locale [id]
 
@@ -266,6 +268,8 @@ export const initRaceVariant =
         uncommonDisadvantages:
           List.fromArray (untyp_dadv .map (prefixRawId (IdPrefixes.DISADVANTAGES))),
         uncommonDisadvantagesText: fromNullable (uncommonDisadvantagesText),
+
+        category: Nothing,
       }))
     }
 
@@ -274,7 +278,7 @@ export const initRaceVariant =
 
 export const initCulture =
   (locale: StringKeyObject<Raw.RawCultureLocale>) =>
-  (raw: Raw.RawCulture): Maybe<Record<Wiki.Culture>> => {
+  (raw: Raw.RawCulture): Maybe<Record<Culture>> => {
     const { id } = raw
     const localeObject = locale [id]
 
@@ -342,6 +346,8 @@ export const initCulture =
         commonSkills: List.fromArray (typ_talents .map (prefixRawId (IdPrefixes.SKILLS))),
         uncommonSkills: List.fromArray (untyp_talents .map (prefixRawId (IdPrefixes.SKILLS))),
         src: getSourceBooks (srcIds, srcPages),
+
+        category: Nothing,
       }))
     }
 
@@ -350,7 +356,7 @@ export const initCulture =
 
 export const initProfession =
   (locale: StringKeyObject<Raw.RawProfessionLocale>) =>
-  (raw: Raw.RawProfession): Maybe<Record<Wiki.Profession>> => {
+  (raw: Raw.RawProfession): Maybe<Record<Profession>> => {
     const { id } = raw
     const localeObject = locale [id]
 
@@ -422,6 +428,7 @@ export const initProfession =
         unsuitableDisadvantagesText: fromNullable (unsuitableDisadvantages),
         isVariantRequired: false,
         src: getSourceBooks (srcIds, srcPages),
+        category: Nothing,
       }))
     }
 
@@ -430,7 +437,7 @@ export const initProfession =
 
 export const initProfessionVariant =
   (locale: StringKeyObject<Raw.RawProfessionVariantLocale>) =>
-  (raw: Raw.RawProfessionVariant): Maybe<Record<Wiki.ProfessionVariant>> => {
+  (raw: Raw.RawProfessionVariant): Maybe<Record<ProfessionVariant>> => {
     const { id } = raw
     const localeObject = locale [id]
 
@@ -473,6 +480,7 @@ export const initProfessionVariant =
         precedingText: fromNullable (precedingText),
         fullText: fromNullable (fullText),
         concludingText: fromNullable (concludingText),
+        category: Nothing,
       }))
     }
 
@@ -481,7 +489,7 @@ export const initProfessionVariant =
 
 export const initAdvantage =
   (locale: StringKeyObject<Raw.RawAdvantageLocale>) =>
-  (raw: Raw.RawAdvantage): Maybe<Record<Wiki.Advantage>> => {
+  (raw: Raw.RawAdvantage): Maybe<Record<Advantage>> => {
     const { id } = raw
     const localeObject = locale [id]
 
@@ -537,6 +545,7 @@ export const initAdvantage =
         apValue: fromNullable (apValue),
         apValueAppend: fromNullable (apValueAppend),
         src: getSourceBooks (srcIds, srcPages),
+        category: Nothing,
       }))
     }
 
@@ -545,7 +554,7 @@ export const initAdvantage =
 
 export const initDisadvantage =
   (locale: StringKeyObject<Raw.RawDisadvantageLocale>) =>
-  (raw: Raw.RawDisadvantage): Maybe<Record<Wiki.Disadvantage>> => {
+  (raw: Raw.RawDisadvantage): Maybe<Record<Disadvantage>> => {
     const { id } = raw
     const localeObject = locale [id]
 
@@ -601,6 +610,7 @@ export const initDisadvantage =
         apValue: fromNullable (apValue),
         apValueAppend: fromNullable (apValueAppend),
         src: getSourceBooks (srcIds, srcPages),
+        category: Nothing,
       }))
     }
 
@@ -609,7 +619,7 @@ export const initDisadvantage =
 
 export const initSpecialAbility =
   (locale: StringKeyObject<Raw.RawSpecialAbilityLocale>) =>
-  (raw: Raw.RawSpecialAbility): Maybe<Record<Wiki.SpecialAbility>> => {
+  (raw: Raw.RawSpecialAbility): Maybe<Record<SpecialAbility>> => {
     const { id } = raw
     const localeObject = locale [id]
 
@@ -703,6 +713,7 @@ export const initSpecialAbility =
         apValue: fromNullable (apValue),
         apValueAppend: fromNullable (apValueAppend),
         src: getSourceBooks (srcIds, srcPages),
+        category: Nothing,
       }))
     }
 
@@ -711,7 +722,7 @@ export const initSpecialAbility =
 
 export const initAttribute =
   (locale: StringKeyObject<Raw.RawAttributeLocale>) =>
-  (raw: Raw.RawAttribute): Maybe<Record<Wiki.Attribute>> => {
+  (raw: Raw.RawAttribute): Maybe<Record<Attribute>> => {
     const { id } = raw
     const localeObject = locale [id]
 
@@ -722,6 +733,7 @@ export const initAttribute =
         id,
         name,
         short,
+        category: Nothing,
       }))
     }
 
@@ -730,7 +742,7 @@ export const initAttribute =
 
 export const initCombatTechnique =
   (locale: StringKeyObject<Raw.RawCombatTechniqueLocale>) =>
-  (raw: Raw.RawCombatTechnique): Maybe<Record<Wiki.CombatTechnique>> => {
+  (raw: Raw.RawCombatTechnique): Maybe<Record<CombatTechnique>> => {
     const { id } = raw
     const localeObject = locale [id]
 
@@ -747,6 +759,7 @@ export const initCombatTechnique =
         special: fromNullable (special),
         bf,
         src: getSourceBooks (srcIds, srcPages),
+        category: Nothing,
       }))
     }
 
@@ -755,7 +768,7 @@ export const initCombatTechnique =
 
 export const initLiturgicalChant =
   (locale: StringKeyObject<Raw.RawLiturgyLocale>) =>
-  (raw: Raw.RawLiturgy): Maybe<Record<Wiki.LiturgicalChant>> => {
+  (raw: Raw.RawLiturgy): Maybe<Record<LiturgicalChant>> => {
     const { id } = raw
     const localeObject = locale [id]
 
@@ -785,6 +798,7 @@ export const initLiturgicalChant =
         cost: kpcost,
         costShort: kpcostShort,
         src: getSourceBooks (srcIds, srcPages),
+        category: Nothing,
       }))
     }
 
@@ -793,7 +807,7 @@ export const initLiturgicalChant =
 
 export const initBlessing =
   (locale: StringKeyObject<Raw.RawBlessingLocale>) =>
-  (raw: Raw.RawBlessing): Maybe<Record<Wiki.Blessing>> => {
+  (raw: Raw.RawBlessing): Maybe<Record<Blessing>> => {
     const { id } = raw
     const localeObject = locale [id]
 
@@ -812,6 +826,7 @@ export const initBlessing =
         aspects: List.fromArray (aspc),
         tradition: List.fromArray (trad),
         src: getSourceBooks (srcIds, srcPages),
+        category: Nothing,
       }))
     }
 
@@ -820,7 +835,7 @@ export const initBlessing =
 
 export const initSpell =
   (locale: StringKeyObject<Raw.RawSpellLocale>) =>
-  (raw: Raw.RawSpell): Maybe<Record<Wiki.Spell>> => {
+  (raw: Raw.RawSpell): Maybe<Record<Spell>> => {
     const { id } = raw
     const localeObject = locale [id]
 
@@ -861,6 +876,7 @@ export const initSpell =
         cost: aecost,
         costShort: aecostShort,
         src: getSourceBooks (srcIds, srcPages),
+        category: Nothing,
       }))
     }
 
@@ -869,7 +885,7 @@ export const initSpell =
 
 export const initCantrip =
   (locale: StringKeyObject<Raw.RawCantripLocale>) =>
-  (raw: Raw.RawCantrip): Maybe<Record<Wiki.Cantrip>> => {
+  (raw: Raw.RawCantrip): Maybe<Record<Cantrip>> => {
     const { id } = raw
     const localeObject = locale [id]
 
@@ -890,6 +906,7 @@ export const initCantrip =
         tradition: List.fromArray (trad),
         note: fromNullable (note),
         src: getSourceBooks (srcIds, srcPages),
+        category: Nothing,
       }))
     }
 
@@ -898,7 +915,7 @@ export const initCantrip =
 
 export const initSkill =
   (locale: StringKeyObject<Raw.RawSkillLocale>) =>
-  (raw: Raw.RawSkill): Maybe<Record<Wiki.Skill>> => {
+  (raw: Raw.RawSkill): Maybe<Record<Skill>> => {
     const { id } = raw
     const localeObject = locale [id]
 
@@ -929,6 +946,7 @@ export const initSkill =
         applications: convertRawApplications (appNames, appPrerequisites),
         applicationsInput: fromNullable (spec_input),
         tools: fromNullable (tools),
+        category: Nothing,
       }))
     }
 
@@ -937,7 +955,7 @@ export const initSkill =
 
 export const initItemTemplate =
   (locale: StringKeyObject<Raw.RawItemLocale>) =>
-  (raw: Raw.RawItemTemplate): Maybe<Record<Wiki.ItemTemplate>> => {
+  (raw: Raw.RawItemTemplate): Maybe<Record<ItemTemplate>> => {
     const { id } = raw
     const localeObject = locale [id]
 

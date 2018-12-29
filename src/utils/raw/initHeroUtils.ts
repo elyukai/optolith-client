@@ -12,7 +12,7 @@ import { createSkillDependentWithValue, SkillDependent } from '../activeEntries/
 import { addDependencies } from '../dependencies/dependencyUtils';
 import { Belongings } from '../heroData/Belongings';
 import { EnergiesCreator } from '../heroData/Energies';
-import { HeroModel, HeroModelG } from '../heroData/HeroModel';
+import { HeroModel, HeroModelG, HeroModelRecord } from '../heroData/HeroModel';
 import { HitZoneArmor } from '../heroData/HitZoneArmor';
 import { Item } from '../heroData/Item';
 import { PermanentEnergyLoss } from '../heroData/PermanentEnergyLoss';
@@ -29,8 +29,9 @@ import { foldlWithKey, OrderedMap } from '../structures/OrderedMap';
 import { insert, OrderedSet } from '../structures/OrderedSet';
 import { Record, StringKeyObject } from '../structures/Record';
 import { PrimaryAttributeDamageThreshold } from '../wikiData/sub/PrimaryAttributeDamageThreshold';
+import { WikiModelRecord } from '../wikiData/WikiModel';
 
-const createHeroObject = (hero: Raw.RawHero): Record<Data.HeroDependent> =>
+const createHeroObject = (hero: Raw.RawHero): HeroModelRecord =>
   HeroModel ({
     id: hero .id,
     clientVersion: hero .clientVersion,
@@ -102,7 +103,7 @@ const createHeroObject = (hero: Raw.RawHero): Record<Data.HeroDependent> =>
 
     belongings: Belongings ({
       items: OrderedMap.fromArray (
-        Object.entries (hero .belongings .items) .map<[string, Record<Data.ItemInstance>]> (
+        Object.entries (hero .belongings .items) .map<[string, Record<Item>]> (
           ([id, obj]) => {
             return [
               id,
@@ -161,7 +162,7 @@ const createHeroObject = (hero: Raw.RawHero): Record<Data.HeroDependent> =>
       armorZones: hero .belongings .armorZones
         ? OrderedMap.fromArray (
           Object.entries (hero .belongings .armorZones)
-            .map<[string, Record<Data.ArmorZonesInstance>]> (
+            .map<[string, Record<HitZoneArmor>]> (
               ([id, obj]) => [
                 id,
                 HitZoneArmor ({
@@ -246,7 +247,7 @@ const createHeroObject = (hero: Raw.RawHero): Record<Data.HeroDependent> =>
   })
 
 const getActivatableDependent =
-  (source: StringKeyObject<Raw.RawActiveObject[]>): Data.HeroDependent['advantages'] =>
+  (source: StringKeyObject<Raw.RawActiveObject[]>): HeroModel['advantages'] =>
     OrderedMap.fromArray (
       Object.entries (source) .map<[string, Record<ActivatableDependent>]> (
         ([id, active]) => [
@@ -314,7 +315,7 @@ const getActivatableDependentSkills =
 const { advantages, disadvantages, specialAbilities, spells } = HeroModelG
 
 export const convertFromRawHero =
-  (wiki: Record<WikiAll>) => (hero: Raw.RawHero): Record<Data.HeroDependent> => {
+  (wiki: WikiModelRecord) => (hero: Raw.RawHero): HeroModelRecord => {
     const intermediateState = createHeroObject (hero)
 
     const activeAdvantages = getActiveFromState (advantages (intermediateState))
@@ -330,7 +331,7 @@ export const convertFromRawHero =
         (spells (intermediateState))
 
     const addAllDependencies = pipe (
-      advantages.foldl<Record<Data.HeroDependent>> (
+      advantages.foldl<HeroModelRecord> (
         state => entry => Maybe.fromMaybe (state) (
           wiki.get ('advantages').lookup (entry.get ('id'))
             .fmap (
@@ -347,7 +348,7 @@ export const convertFromRawHero =
             )
         )
       ),
-      disadvantages.foldl<Record<Data.HeroDependent>> (
+      disadvantages.foldl<HeroModelRecord> (
         state => entry => Maybe.fromMaybe (state) (
           wiki.get ('disadvantages').lookup (entry.get ('id'))
             .fmap (
@@ -364,7 +365,7 @@ export const convertFromRawHero =
             )
         )
       ),
-      specialAbilities.foldl<Record<Data.HeroDependent>> (
+      specialAbilities.foldl<HeroModelRecord> (
         state => entry => Maybe.fromMaybe (state) (
           wiki.get ('specialAbilities').lookup (entry.get ('id'))
             .fmap (
@@ -384,7 +385,7 @@ export const convertFromRawHero =
             )
         )
       ),
-      spells.foldl<Record<Data.HeroDependent>> (
+      spells.foldl<HeroModelRecord> (
         state => spellId => Maybe.fromMaybe (state) (
           wiki.get ('spells').lookup (spellId)
             .fmap (

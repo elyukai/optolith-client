@@ -1,18 +1,18 @@
 import { pipe } from 'ramda';
 import * as Data from '../../types/data';
 import * as Raw from '../../types/rawdata';
-import { PrimaryAttributeDamageThreshold, WikiAll } from '../../types/wiki';
 import { ActivatableDependent, ActivatableDependentG, ActiveObjectG } from '../activeEntries/ActivatableDependent';
 import { ActivatableSkillDependentG } from '../activeEntries/ActivatableSkillDependent';
 import { AttributeDependent, AttributeDependentG } from '../activeEntries/AttributeDependent';
 import { getAPObject } from '../adventurePoints/adventurePointsSumUtils';
 import { BelongingsG } from '../heroData/Belongings';
 import { EnergiesG } from '../heroData/Energies';
-import { HeroModelG } from '../heroData/HeroModel';
-import { HitZoneArmorG } from '../heroData/HitZoneArmor';
+import { HeroModel, HeroModelG, HeroModelRecord } from '../heroData/HeroModel';
+import { HitZoneArmor, HitZoneArmorG } from '../heroData/HitZoneArmor';
+import { Item } from '../heroData/Item';
 import { PersonalDataG } from '../heroData/PersonalData';
 import { RulesG } from '../heroData/Rules';
-import { UndoHeroG } from '../heroData/UndoHeroCreator';
+import { UndoableHeroG, UndoableHeroModelRecord } from '../heroData/UndoHero';
 import { HeroStateMapKey } from '../heroStateUtils';
 import { ifElse } from '../ifElse';
 import { gt } from '../mathUtils';
@@ -22,8 +22,9 @@ import { bind, elem, fmap, maybeToUndefined } from '../structures/Maybe';
 import { elems, foldl, foldlWithKey, OrderedMap, OrderedMapValueElement, toObjectWith, union } from '../structures/OrderedMap';
 import { toArray } from '../structures/OrderedSet';
 import { Record, StringKeyObject, toObject } from '../structures/Record';
-import { UndoState } from '../undo';
-import { PrimaryAttributeDamageThresholdG } from '../wikiData/sub/PrimaryAttributeDamageThreshold';
+import { L10nRecord } from '../wikiData/L10n';
+import { PrimaryAttributeDamageThreshold, PrimaryAttributeDamageThresholdG } from '../wikiData/sub/PrimaryAttributeDamageThreshold';
+import { WikiModelRecord } from '../wikiData/WikiModel';
 import { currentVersion } from './compatibilityUtils';
 
 const {
@@ -60,7 +61,7 @@ const {
 
 const { cost, sid, sid2, tier } = ActiveObjectG
 
-const getAttributesForSave = (hero: Record<Data.HeroDependent>): Raw.RawHero['attr'] =>
+const getAttributesForSave = (hero: HeroModelRecord): Raw.RawHero['attr'] =>
   ({
     values: foldl<Record<AttributeDependent>, { id: string; value: number }[]>
       (acc => e => [...acc, { id: id (e), value: value (e) }])
@@ -75,31 +76,32 @@ const getAttributesForSave = (hero: Record<Data.HeroDependent>): Raw.RawHero['at
     permanentLP: toObject (permanentLifePoints (energies (hero))),
   })
 
-const getActivatablesForSave = (hero: Record<Data.HeroDependent>) =>
-  foldlWithKey<string, Record<ActivatableDependent>, StringKeyObject<Raw.RawActiveObject[]>>
-    (acc => key => obj => ({
-      ...acc,
-      [key]: List.foldl<Record<Data.ActiveObject>, Raw.RawActiveObject[]>
-        (accActive => e => [
-          ...accActive,
-          {
-            cost: maybeToUndefined (cost (e)),
-            sid2: maybeToUndefined (sid2 (e)),
-            sid: maybeToUndefined (sid (e)),
-            tier: maybeToUndefined (tier (e)),
-          },
-        ])
-        ([])
-        (activeList (obj)),
-    }))
-    ({})
-    (union (advantages (hero)) (union (disadvantages (hero)) (specialAbilities (hero))))
+const getActivatablesForSave =
+  (hero: HeroModelRecord) =>
+    foldlWithKey<string, Record<ActivatableDependent>, StringKeyObject<Raw.RawActiveObject[]>>
+      (acc => key => obj => ({
+        ...acc,
+        [key]: List.foldl<Record<Data.ActiveObject>, Raw.RawActiveObject[]>
+          (accActive => e => [
+            ...accActive,
+            {
+              cost: maybeToUndefined (cost (e)),
+              sid2: maybeToUndefined (sid2 (e)),
+              sid: maybeToUndefined (sid (e)),
+              tier: maybeToUndefined (tier (e)),
+            },
+          ])
+          ([])
+          (activeList (obj)),
+      }))
+      ({})
+      (union (advantages (hero)) (union (disadvantages (hero)) (specialAbilities (hero))))
 
-const getValuesForSave = <T extends Data.HeroDependent[HeroStateMapKey]>(
-  sliceGetter: (hero: Record<Data.HeroDependent>) => T,
-  testFn: (obj: OrderedMapValueElement<T>) => boolean
-) =>
-  (hero: Record<Data.HeroDependent>) =>
+const getValuesForSave =
+  <T extends HeroModel[HeroStateMapKey]>
+  (sliceGetter: (hero: HeroModelRecord) => T) =>
+  (testFn: (obj: OrderedMapValueElement<T>) => boolean) =>
+  (hero: HeroModelRecord) =>
     foldlWithKey<string, Data.ExtendedSkillDependent, StringKeyObject<number>>
       (acc => key => obj => {
         if (testFn (obj as OrderedMapValueElement<T>)) {
@@ -114,23 +116,23 @@ const getValuesForSave = <T extends Data.HeroDependent[HeroStateMapKey]>(
       ({})
       (sliceGetter (hero) as OrderedMap<string, Data.ExtendedSkillDependent>)
 
-const getSkillsForSave = getValuesForSave (skills, pipe (value, gt (0)))
+const getSkillsForSave = getValuesForSave (skills) (pipe (value, gt (0)))
 
-const getCombatTechniquesForSave = getValuesForSave (combatTechniques, pipe (value, gt (6)))
+const getCombatTechniquesForSave = getValuesForSave (combatTechniques) (pipe (value, gt (6)))
 
-const getSpellsForSave = getValuesForSave (spells, active)
+const getSpellsForSave = getValuesForSave (spells) (active)
 
 const getCantripsForSave = pipe (cantrips, toArray)
 
-const getLiturgicalChantsForSave = getValuesForSave (liturgicalChants, active)
+const getLiturgicalChantsForSave = getValuesForSave (liturgicalChants) (active)
 
 const getBlessingsForSave = pipe (blessings, toArray)
 
 const { primary, threshold } = PrimaryAttributeDamageThresholdG
 
-const getBelongingsForSave = (hero: Record<Data.HeroDependent>) =>
+const getBelongingsForSave = (hero: HeroModelRecord) =>
   ({
-    items: toObjectWith<Record<Data.ItemInstance>, Raw.RawCustomItem>
+    items: toObjectWith<Record<Item>, Raw.RawCustomItem>
       ((obj): Raw.RawCustomItem => {
         const {
           improvisedWeaponGroup,
@@ -216,7 +218,7 @@ const getBelongingsForSave = (hero: Record<Data.HeroDependent>) =>
       })
       (items (belongings (hero))),
     armorZones:
-      toObjectWith<Record<Data.ArmorZonesInstance>, Raw.RawArmorZone>
+      toObjectWith<Record<HitZoneArmor>, Raw.RawArmorZone>
         (obj => ({
           id: HitZoneArmorG.id (obj),
           name: HitZoneArmorG.name (obj),
@@ -279,94 +281,96 @@ const getPetsForSave = pipe (
   )
 )
 
-export const convertHeroForSave = (wiki: Record<WikiAll>) =>
-  (locale: Record<Data.UIMessages>) =>
-    (users: OrderedMap<string, Data.User>) =>
-      (hero: Data.Hero): Raw.RawHero => {
-        const {
-          dateCreated,
-          dateModified,
-          phase,
-          name,
-          avatar,
-          experienceLevel,
-          race,
-          raceVariant,
-          culture,
-          profession,
-          professionName,
-          professionVariant,
-          sex,
-          personalData,
-          rules,
-        } = toObject (hero)
+export const convertHeroForSave =
+  (wiki: WikiModelRecord) =>
+  (locale: L10nRecord) =>
+  (users: OrderedMap<string, Data.User>) =>
+  (hero: HeroModelRecord): Raw.RawHero => {
+    const {
+      dateCreated,
+      dateModified,
+      phase,
+      name,
+      avatar,
+      experienceLevel,
+      race,
+      raceVariant,
+      culture,
+      profession,
+      professionName,
+      professionVariant,
+      sex,
+      personalData,
+      rules,
+    } = toObject (hero)
 
-        const adventurePoints = getAPObject (wiki) (locale) (hero)
+    const adventurePoints = getAPObject (wiki) (locale) (hero)
 
-        const maybeUser = bind<string, Data.User> (player (hero))
-                                                  (OrderedMap.lookup_<string, Data.User> (users))
+    const maybeUser = bind<string, Data.User> (player (hero))
+                                              (OrderedMap.lookup_<string, Data.User> (users))
 
-        const obj: Raw.RawHero = {
-          clientVersion: currentVersion,
-          dateCreated: dateCreated .toJSON (),
-          dateModified: dateModified .toJSON (),
-          id: id (hero),
-          phase,
-          player: maybeToUndefined (maybeUser),
-          name,
-          avatar: maybeToUndefined (avatar),
-          ap: {
-            total: adventurePoints.get ('total'),
-            spent: adventurePoints.get ('spent'),
-          },
-          el: experienceLevel,
-          r: maybeToUndefined (race),
-          rv: maybeToUndefined (raceVariant),
-          c: maybeToUndefined (culture),
-          p: maybeToUndefined (profession),
-          professionName: elem ('P_0') (profession) ? maybeToUndefined (professionName) : undefined,
-          pv: maybeToUndefined (professionVariant),
-          sex,
-          pers: {
-            family: maybeToUndefined (PersonalDataG.family (personalData)),
-            placeofbirth: maybeToUndefined (PersonalDataG.placeOfBirth (personalData)),
-            dateofbirth: maybeToUndefined (PersonalDataG.dateOfBirth (personalData)),
-            age: maybeToUndefined (PersonalDataG.age (personalData)),
-            haircolor: maybeToUndefined (PersonalDataG.hairColor (personalData)),
-            eyecolor: maybeToUndefined (PersonalDataG.eyeColor (personalData)),
-            size: maybeToUndefined (PersonalDataG.size (personalData)),
-            weight: maybeToUndefined (PersonalDataG.weight (personalData)),
-            title: maybeToUndefined (PersonalDataG.title (personalData)),
-            socialstatus: maybeToUndefined (PersonalDataG.socialStatus (personalData)),
-            characteristics: maybeToUndefined (PersonalDataG.characteristics (personalData)),
-            otherinfo: maybeToUndefined (PersonalDataG.otherInfo (personalData)),
-            cultureAreaKnowledge:
-              maybeToUndefined (PersonalDataG.cultureAreaKnowledge (personalData)),
-          },
-          attr: getAttributesForSave (hero),
-          activatable: getActivatablesForSave (hero),
-          talents: getSkillsForSave (hero),
-          ct: getCombatTechniquesForSave (hero),
-          spells: getSpellsForSave (hero),
-          cantrips: getCantripsForSave (hero),
-          liturgies: getLiturgicalChantsForSave (hero),
-          blessings: getBlessingsForSave (hero),
-          belongings: getBelongingsForSave (hero),
-          rules: {
-            ...toObject (rules),
-            enabledRuleBooks: toArray (RulesG.enabledRuleBooks (rules)),
-          },
-          pets: getPetsForSave (hero),
-        }
+    const obj: Raw.RawHero = {
+      clientVersion: currentVersion,
+      dateCreated: dateCreated .toJSON (),
+      dateModified: dateModified .toJSON (),
+      id: id (hero),
+      phase,
+      player: maybeToUndefined (maybeUser),
+      name,
+      avatar: maybeToUndefined (avatar),
+      ap: {
+        total: adventurePoints.get ('total'),
+        spent: adventurePoints.get ('spent'),
+      },
+      el: experienceLevel,
+      r: maybeToUndefined (race),
+      rv: maybeToUndefined (raceVariant),
+      c: maybeToUndefined (culture),
+      p: maybeToUndefined (profession),
+      professionName: elem ('P_0') (profession) ? maybeToUndefined (professionName) : undefined,
+      pv: maybeToUndefined (professionVariant),
+      sex,
+      pers: {
+        family: maybeToUndefined (PersonalDataG.family (personalData)),
+        placeofbirth: maybeToUndefined (PersonalDataG.placeOfBirth (personalData)),
+        dateofbirth: maybeToUndefined (PersonalDataG.dateOfBirth (personalData)),
+        age: maybeToUndefined (PersonalDataG.age (personalData)),
+        haircolor: maybeToUndefined (PersonalDataG.hairColor (personalData)),
+        eyecolor: maybeToUndefined (PersonalDataG.eyeColor (personalData)),
+        size: maybeToUndefined (PersonalDataG.size (personalData)),
+        weight: maybeToUndefined (PersonalDataG.weight (personalData)),
+        title: maybeToUndefined (PersonalDataG.title (personalData)),
+        socialstatus: maybeToUndefined (PersonalDataG.socialStatus (personalData)),
+        characteristics: maybeToUndefined (PersonalDataG.characteristics (personalData)),
+        otherinfo: maybeToUndefined (PersonalDataG.otherInfo (personalData)),
+        cultureAreaKnowledge:
+          maybeToUndefined (PersonalDataG.cultureAreaKnowledge (personalData)),
+      },
+      attr: getAttributesForSave (hero),
+      activatable: getActivatablesForSave (hero),
+      talents: getSkillsForSave (hero),
+      ct: getCombatTechniquesForSave (hero),
+      spells: getSpellsForSave (hero),
+      cantrips: getCantripsForSave (hero),
+      liturgies: getLiturgicalChantsForSave (hero),
+      blessings: getBlessingsForSave (hero),
+      belongings: getBelongingsForSave (hero),
+      rules: {
+        ...toObject (rules),
+        enabledRuleBooks: toArray (RulesG.enabledRuleBooks (rules)),
+      },
+      pets: getPetsForSave (hero),
+    }
 
-        return obj
-      }
+    return obj
+  }
 
-const { present } = UndoHeroG
+const { present } = UndoableHeroG
 
-export const convertHeroesForSave = (wiki: Record<WikiAll>) =>
-  (locale: Record<Data.UIMessages>) =>
-    (users: OrderedMap<string, Data.User>) =>
-      (heroes: OrderedMap<string, Record<UndoState<Data.Hero>>>) =>
-       map (pipe (present, convertHeroForSave (wiki) (locale) (users)))
-           (elems (heroes))
+export const convertHeroesForSave =
+  (wiki: WikiModelRecord) =>
+  (locale: L10nRecord) =>
+  (users: OrderedMap<string, Data.User>) =>
+  (heroes: OrderedMap<string, UndoableHeroModelRecord>) =>
+    map (pipe (present, convertHeroForSave (wiki) (locale) (users)))
+        (elems (heroes))
