@@ -9,9 +9,9 @@
 
 import { ActivatableCategory, Categories } from '../../constants/Categories';
 import * as Data from '../../types/data';
-import * as Wiki from '../../types/wiki';
 import { convertPerTierCostToFinalCost, getCost } from '../adventurePoints/activatableCostUtils';
 import { Just, Maybe, OrderedMap, Record, RecordInterface } from '../dataUtils';
+import * as Wiki from '../wikiData/wikiTypeHelpers';
 import { getWikiEntry } from '../WikiUtils';
 import { getIsRemovalOrChangeDisabled } from './activatableActiveValidationUtils';
 import { getActiveFromState } from './activatableConvertUtils';

@@ -1,8 +1,8 @@
 import { equals, pipe } from 'ramda';
-import { AllRequirementObjects } from '../../../types/wiki';
 import { List } from '../../structures/List';
-import { fromDefault, makeGetters, Record } from '../../structures/Record';
-import { RequireActivatableG } from './ActivatableRequirement';
+import { fromDefault, Record } from '../../structures/Record';
+import { AllRequirementObjects } from '../wikiTypeHelpers';
+import { RequireActivatable } from './ActivatableRequirement';
 
 export interface RequirePrimaryAttribute {
   id: 'ATTR_PRIMARY';
@@ -17,8 +17,6 @@ export const RequirePrimaryAttribute =
     value: 0,
   })
 
-export const RequirePrimaryAttributeG = makeGetters (RequirePrimaryAttribute)
-
 export const isPrimaryAttributeRequirement =
-  pipe (RequireActivatableG.id, equals<string | List<string>> ('ATTR_PRIMARY')) as unknown as
+  pipe (RequireActivatable.A.id, equals<string | List<string>> ('ATTR_PRIMARY')) as unknown as
     (req: AllRequirementObjects) => req is Record<RequirePrimaryAttribute>

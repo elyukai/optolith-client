@@ -1,4 +1,4 @@
-import { fromDefault, makeGetters } from '../../structures/Record';
+import { fromDefault } from '../../structures/Record';
 
 export interface NameBySex {
   m: string
@@ -10,5 +10,3 @@ export const NameBySex =
     m: '',
     f: '',
   })
-
-export const NameBySexG = makeGetters (NameBySex)

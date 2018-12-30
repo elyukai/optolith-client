@@ -1,7 +1,7 @@
-import { AllRequirementObjects } from '../../../types/wiki';
 import { List } from '../../structures/List';
 import { Maybe, Nothing } from '../../structures/Maybe';
-import { fromDefault, makeGetters } from '../../structures/Record';
+import { fromDefault } from '../../structures/Record';
+import { AllRequirementObjects } from '../wikiTypeHelpers';
 
 export interface Application {
   id: number
@@ -15,6 +15,3 @@ export const Application =
     name: '',
     prerequisites: Nothing,
   })
-
-export const ApplicationG = makeGetters (Application)
-

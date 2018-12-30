@@ -1,16 +1,16 @@
 import { Categories } from '../constants/Categories';
 import { ValueBasedDependent } from '../types/data';
-import { IncreasableEntry } from '../types/wiki';
 import { ActivatableSkillDependentL, isActivatableSkillDependent } from './activeEntries/ActivatableSkillDependent';
 import { AttributeDependentL, isAttributeDependent } from './activeEntries/AttributeDependent';
-import { SkillDependent, SkillDependentG, SkillDependentL } from './activeEntries/SkillDependent';
+import { SkillDependent, SkillDependentL } from './activeEntries/SkillDependent';
 import { getAreSufficientAPAvailable } from './adventurePoints/adventurePointsUtils';
 import { getIncreaseAP } from './adventurePoints/improvementCostUtils';
 import { dec, inc } from './mathUtils';
 import { Lens, over } from './structures/Lens';
 import { fmap, fromMaybe, Maybe } from './structures/Maybe';
 import { Record } from './structures/Record';
-import { Skill, SkillG } from './wikiData/Skill';
+import { Skill } from './wikiData/Skill';
+import { IncreasableEntry } from './wikiData/wikiTypeHelpers';
 import { isAttribute } from './WikiUtils';
 
 export const set =
@@ -51,8 +51,8 @@ export const getBaseValueByCategory =
     }
   }
 
-const { category, ic } = SkillG
-const { value } = SkillDependentG
+const { category, ic } = Skill.A
+const { value } = SkillDependent.A
 
 const getValueFromHeroStateEntry =
   (wikiEntry: IncreasableEntry) =>

@@ -6,12 +6,12 @@ import { InputButtonGroup } from '../../components/InputButtonGroup';
 import { TextField } from '../../components/TextField';
 import { InputTextEvent, PersonalData } from '../../types/data';
 import { UIMessagesObject } from '../../types/ui';
-import { Culture, Race, RaceVariant } from '../../types/wiki';
 import { List, Maybe, Record } from '../../utils/dataUtils';
 import { sortObjects } from '../../utils/FilterSortUtils';
 import { translate } from '../../utils/I18n';
 import { isEmptyOr, isFloat, isNaturalNumber } from '../../utils/RegexUtils';
 import { isNumber } from '../../utils/typeCheckUtils';
+import { Culture, Race, RaceVariant } from '../../utils/wikiData/wikiTypeHelpers';
 
 export interface OverviewPersonalDataOwnProps {
   culture: Maybe<Record<Culture>>;

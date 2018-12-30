@@ -1,5 +1,5 @@
 import { Maybe, Nothing } from '../structures/Maybe';
-import { fromDefault, makeGetters } from '../structures/Record';
+import { fromDefault } from '../structures/Record';
 
 export interface ShieldOrParryingWeapon {
   id: string
@@ -23,5 +23,3 @@ const ShieldOrParryingWeapon =
     paMod: Nothing,
     weight: Nothing,
   })
-
-export const ShieldOrParryingWeaponG = makeGetters (ShieldOrParryingWeapon)

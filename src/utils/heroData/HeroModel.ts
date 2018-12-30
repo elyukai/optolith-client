@@ -1,4 +1,4 @@
-import { PetEditorInstance, PetInstance, Sex, StyleDependency } from '../../types/data';
+import { Sex, StyleDependency } from '../../types/data';
 import { ActivatableDependent } from '../activeEntries/ActivatableDependent';
 import { ActivatableSkillDependent } from '../activeEntries/ActivatableSkillDependent';
 import { AttributeDependent } from '../activeEntries/AttributeDependent';
@@ -8,11 +8,13 @@ import { List } from '../structures/List';
 import { Maybe, Nothing } from '../structures/Maybe';
 import { OrderedMap } from '../structures/OrderedMap';
 import { OrderedSet } from '../structures/OrderedSet';
-import { fromDefault, makeGetters, makeLenses_, Record } from '../structures/Record';
+import { fromDefault, makeLenses_, Record } from '../structures/Record';
 import { Belongings } from './Belongings';
-import { Energies, EnergiesCreator } from './Energies';
+import { EditPet } from './EditPet';
+import { Energies } from './Energies';
 import { Pact } from './Pact';
 import { PersonalData } from './PersonalData';
+import { Pet } from './Pet';
 import { Rules } from './Rules';
 
 export type HeroModelRecord = Record<HeroModel>
@@ -50,8 +52,8 @@ export interface HeroModel {
   blessings: OrderedSet<string>
   belongings: Record<Belongings>
   rules: Record<Rules>
-  pets: OrderedMap<string, Record<PetInstance>>
-  petInEditor: Maybe<Record<PetEditorInstance>>
+  pets: OrderedMap<string, Record<Pet>>
+  petInEditor: Maybe<Record<EditPet>>
   isInPetCreation: boolean
   pact: Maybe<Record<Pact>>
   combatStyleDependencies: List<Record<StyleDependency>>
@@ -88,7 +90,7 @@ export const HeroModel =
     specialAbilities: OrderedMap.empty,
     attributes: OrderedMap.empty,
     attributeAdjustmentSelected: '',
-    energies: EnergiesCreator .default,
+    energies: Energies .default,
     skills: OrderedMap.empty,
     combatTechniques: OrderedMap.empty,
     spells: OrderedMap.empty,
@@ -106,8 +108,7 @@ export const HeroModel =
     blessedStyleDependencies: List.empty,
   })
 
-export const HeroModelG = makeGetters (HeroModel)
-export const HeroModelL = makeLenses_ (HeroModelG) (HeroModel)
+export const HeroModelL = makeLenses_ (HeroModel)
 
 /**
  * Creates a new `Hero` object based on the input the user gives when creating

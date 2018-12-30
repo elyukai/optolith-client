@@ -1,12 +1,12 @@
 import { ActivatableCategory, Categories } from '../constants/Categories';
 import * as Data from '../types/data';
-import { Advantage, Disadvantage, SpecialAbility, WikiEntryRecordByCategory } from '../types/wiki';
 import { getActivatableStateSliceByCategory } from '../utils/activatable/activatableActiveUtils';
 import { getInactiveView } from '../utils/activatable/activatableInactiveUtils';
 import { getAllAvailableExtendedSpecialAbilities } from '../utils/activatable/ExtendedStyleUtils';
 import { createMaybeSelector } from '../utils/createMaybeSelector';
 import { List, Maybe, MaybeContent, Record } from '../utils/dataUtils';
 import { filterByInstancePropertyAvailability, ObjectWithStateEntry } from '../utils/RulesUtils';
+import { Advantage, Disadvantage, SpecialAbility, WikiEntryRecordByCategory } from '../utils/wikiData/wikiTypeHelpers';
 import { getWikiStateKeyByCategory } from '../utils/WikiUtils';
 import { getAdventurePointsObject } from './adventurePointsSelectors';
 import { getRuleBooksEnabled } from './rulesSelectors';

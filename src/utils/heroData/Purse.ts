@@ -1,4 +1,4 @@
-import { fromDefault, makeGetters, makeLenses_ } from '../structures/Record';
+import { fromDefault, makeLenses_ } from '../structures/Record';
 
 export interface Purse {
   d: string
@@ -18,5 +18,4 @@ export const Purse =
     k: '',
   })
 
-export const PurseG = makeGetters (Purse)
-export const PurseL = makeLenses_ (PurseG) (Purse)
+export const PurseL = makeLenses_ (Purse)

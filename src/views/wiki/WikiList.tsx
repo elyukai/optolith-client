@@ -1,9 +1,9 @@
 import * as R from 'ramda';
 import * as React from 'react';
 import { ListView } from '../../components/List';
-import { Entry, NameBySex } from '../../types/wiki';
 import { List, Maybe, Record } from '../../utils/dataUtils';
 import { getRoman } from '../../utils/NumberUtils';
+import { Entry, NameBySex } from '../../utils/wikiData/wikiTypeHelpers';
 import { isActivatableWikiObj, isProfession, isSpecialAbility } from '../../utils/WikiUtils';
 import { WikiListItem } from './WikiListItem';
 

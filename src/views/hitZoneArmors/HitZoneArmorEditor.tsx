@@ -3,11 +3,11 @@ import { Dialog } from '../../components/DialogNew';
 import { DropdownOption } from '../../components/Dropdown';
 import { TextField } from '../../components/TextField';
 import { ArmorZonesEditorInstance, ItemInstance } from '../../types/data';
-import { ItemTemplate } from '../../types/wiki';
 import { Just, List, Maybe, Record } from '../../utils/dataUtils';
 import { sortObjects } from '../../utils/FilterSortUtils';
 import { translate, UIMessagesObject } from '../../utils/I18n';
 import { getLossLevelElements } from '../../utils/ItemUtils';
+import { ItemTemplate } from '../../utils/wikiData/wikiTypeHelpers';
 import { HitZoneArmorEditorRow } from './HitZoneArmorEditorRow';
 
 export interface HitZoneArmorEditorProps {

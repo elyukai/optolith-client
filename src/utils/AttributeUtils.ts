@@ -1,10 +1,10 @@
 import { pipe } from 'ramda';
-import { AttributeDependent, AttributeDependentG } from './activeEntries/AttributeDependent';
+import { AttributeDependent } from './activeEntries/AttributeDependent';
 import { fmap, mapMaybe, maybe } from './structures/Maybe';
 import { lookup_, OrderedMap } from './structures/OrderedMap';
 import { Record } from './structures/Record';
 
-const { value } = AttributeDependentG
+const { value } = AttributeDependent.A
 
 export const getSkillCheckValues =
   (attributes: OrderedMap<string, Record<AttributeDependent>>) =>

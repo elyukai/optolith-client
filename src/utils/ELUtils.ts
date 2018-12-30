@@ -5,9 +5,9 @@ import { inc, lt } from './mathUtils';
 import { and, fmap } from './structures/Maybe';
 import { foldlWithKey, lookup_, OrderedMap } from './structures/OrderedMap';
 import { Record } from './structures/Record';
-import { ExperienceLevel, ExperienceLevelG } from './wikiData/ExperienceLevel';
+import { ExperienceLevel } from './wikiData/ExperienceLevel';
 
-const { ap } = ExperienceLevelG
+const { ap } = ExperienceLevel.A
 
 /**
  * Returns the experience level that fits the given AP value.

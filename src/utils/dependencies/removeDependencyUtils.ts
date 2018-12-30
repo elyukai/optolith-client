@@ -9,13 +9,13 @@ import { join } from '../structures/Function';
 import { over, view } from '../structures/Lens';
 import { deleteAt, elemIndex, ListElement } from '../structures/List';
 import { fromMaybe, Maybe } from '../structures/Maybe';
-import { Record, RecordInterface } from '../structures/Record';
+import { Record, RecordI } from '../structures/Record';
 
-type Deps<T extends Data.Dependent> = RecordInterface<T>['dependencies'];
+type Deps<T extends Data.Dependent> = RecordI<T>['dependencies'];
 type Dep<T extends Data.Dependent> = ListElement<Deps<T>>;
 
 const removeDependency =
-  (e: ListElement<RecordInterface<Data.Dependent>['dependencies']>) =>
+  (e: ListElement<RecordI<Data.Dependent>['dependencies']>) =>
   (obj: Data.Dependent): Data.Dependent => {
     if (isAttributeDependent (obj)) {
       return join (pipe (

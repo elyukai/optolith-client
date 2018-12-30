@@ -1,10 +1,10 @@
 import * as R from 'ramda';
 import { Sex } from '../types/data';
-import { Profession, ProfessionVariant, Race, RaceVariant } from '../types/wiki';
 import { Maybe, OrderedMap, Record } from './dataUtils';
 import { rollDice, rollDie } from './dice';
 import { translate, UIMessagesObject } from './I18n';
 import { multiplyString } from './NumberUtils';
+import { Profession, ProfessionVariant, Race, RaceVariant } from './wikiData/wikiTypeHelpers';
 
 export const rerollHairColor = (
   race: Maybe<Record<Race>>,

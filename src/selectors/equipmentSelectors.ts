@@ -1,6 +1,5 @@
 import * as R from 'ramda';
 import { ArmorZonesInstance, AttributeDependent, HeroDependent, ItemInstance } from '../types/data';
-import { Attribute, CombatTechnique, ItemTemplate, WikiAll } from '../types/wiki';
 import { getAttack, getParry } from '../utils/CombatTechniqueUtils';
 import { createMaybeSelector } from '../utils/createMaybeSelector';
 import { List, Maybe, OrderedMap, Record, RecordInterface } from '../utils/dataUtils';
@@ -8,6 +7,7 @@ import { AllSortOptions, filterAndSortObjects, filterObjects, sortObjects } from
 import { convertPrimaryAttributeToArray } from '../utils/ItemUtils';
 import { isAvailable } from '../utils/RulesUtils';
 import { Armor, ArmorZone, Item, MeleeWeapon, RangedWeapon, ShieldOrParryingWeapon } from '../utils/viewData/viewTypeHelpers';
+import { Attribute, CombatTechnique, ItemTemplate, WikiAll } from '../utils/wikiData/wikiTypeHelpers';
 import { getRuleBooksEnabled } from './rulesSelectors';
 import { getEquipmentSortOptions } from './sortOptionsSelectors';
 import { getArmorZonesState, getCurrentHeroPresent, getEquipmentFilterText, getEquipmentState, getHigherParadeValues, getItemsState, getItemTemplatesFilterText, getLocaleAsProp, getWiki, getWikiItemTemplates, getZoneArmorFilterText } from './stateSelectors';

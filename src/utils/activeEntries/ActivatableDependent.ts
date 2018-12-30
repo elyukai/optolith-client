@@ -1,7 +1,8 @@
-import { ActivatableDependency, ActiveObject, Dependent } from '../../types/data';
+import { ActivatableDependency, Dependent } from '../../types/data';
 import { fnull, fromElements, List } from '../structures/List';
-import { fromJust, isJust, Just, Maybe, Nothing } from '../structures/Maybe';
-import { fromDefault, makeGetters, makeLenses_, member, notMember, Omit, Record } from '../structures/Record';
+import { fromJust, isJust, Just, Maybe } from '../structures/Maybe';
+import { fromDefault, makeLenses_, member, notMember, Omit, Record } from '../structures/Record';
+import { ActiveObject } from './ActiveObject';
 
 export interface ActivatableDependent {
   id: string;
@@ -16,23 +17,7 @@ export const ActivatableDependent =
     dependencies: fromElements<ActivatableDependency> (),
   })
 
-export const ActivatableDependentG = makeGetters (ActivatableDependent)
-
-export const ActivatableDependentL = makeLenses_ (ActivatableDependentG)
-                                                 (ActivatableDependent)
-
-export const ActiveObjectCreator =
-  fromDefault<ActiveObject> ({
-    cost: Nothing,
-    sid: Nothing,
-    sid2: Nothing,
-    tier: Nothing,
-  })
-
-export const ActiveObjectG = makeGetters (ActiveObjectCreator)
-
-export const ActiveObjectL = makeLenses_ (ActiveObjectG)
-                                         (ActiveObjectCreator)
+export const ActivatableDependentL = makeLenses_ (ActivatableDependent)
 
 export const createActivatableDependent =
   (options: Partial<Omit<ActivatableDependent, 'id'>>) =>
@@ -61,7 +46,7 @@ export const isActivatableDependent =
     member ('active') (entry)
     && notMember ('value') (entry)
 
-const { active, dependencies } = ActivatableDependentG
+const { active, dependencies } = ActivatableDependent.A
 
 export const isActivatableDependentUnused =
   (entry: Record<ActivatableDependent>): boolean =>

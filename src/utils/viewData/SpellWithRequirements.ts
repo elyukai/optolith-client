@@ -1,5 +1,5 @@
 import { ActivatableSkillDependent } from '../activeEntries/ActivatableSkillDependent';
-import { fromDefault, makeGetters } from '../structures/Record';
+import { fromDefault } from '../structures/Record';
 import { Spell } from '../wikiData/Spell';
 import { SpellCombined } from './SpellCombined';
 import { IncreasableWithRequirements } from './viewTypeHelpers';
@@ -13,5 +13,3 @@ const SpellWithRequirements =
     isIncreasable: false,
     isDecreasable: false,
   })
-
-export const SpellWithRequirementsG = makeGetters (SpellWithRequirements)

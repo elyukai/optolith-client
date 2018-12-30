@@ -1,4 +1,4 @@
-import { fromDefault, makeGetters, Record } from '../structures/Record';
+import { fromDefault, Record } from '../structures/Record';
 import { Spell } from '../wikiData/Spell';
 import { IsActive } from './viewTypeHelpers';
 
@@ -11,5 +11,3 @@ const SpellIsActive =
     wikiEntry: Spell .default,
     active: false,
   })
-
-export const SpellIsActiveG = makeGetters (SpellIsActive)

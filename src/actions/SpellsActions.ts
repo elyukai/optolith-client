@@ -4,12 +4,12 @@ import { getIsInCharacterCreation } from '../selectors/phaseSelectors';
 import { getSpells, getWikiSpells } from '../selectors/stateSelectors';
 import { AsyncAction } from '../types/actions';
 import { UIMessagesObject } from '../types/ui';
-import * as Wiki from '../types/wiki';
 import { getAreSufficientAPAvailable } from '../utils/adventurePoints/adventurePointsUtils';
 import { getIncreaseAP } from '../utils/adventurePoints/improvementCostUtils';
 import { Maybe, Nothing, Record } from '../utils/dataUtils';
 import { translate } from '../utils/I18n';
 import { getAreSufficientAPAvailableForIncrease } from '../utils/IncreasableUtils';
+import * as Wiki from '../utils/wikiData/wikiTypeHelpers';
 import { addAlert } from './AlertActions';
 
 export interface ActivateSpellAction {

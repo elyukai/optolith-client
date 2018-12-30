@@ -1,4 +1,4 @@
-import { fromDefault, makeGetters, Record } from '../structures/Record';
+import { fromDefault, Record } from '../structures/Record';
 import { Blessing } from '../wikiData/Blessing';
 import { IsActive } from './viewTypeHelpers';
 
@@ -11,5 +11,3 @@ export const BlessingCombined =
     wikiEntry: Blessing .default,
     active: false,
   })
-
-export const BlessingCombinedG = makeGetters (BlessingCombined)

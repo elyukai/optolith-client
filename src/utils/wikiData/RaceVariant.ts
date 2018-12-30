@@ -1,9 +1,9 @@
 import { Categories } from '../../constants/Categories';
-import { EntryWithCategory } from '../../types/wiki';
 import { List } from '../structures/List';
 import { Maybe, Nothing } from '../structures/Maybe';
-import { fromDefault, makeGetters, Record } from '../structures/Record';
+import { fromDefault, Record } from '../structures/Record';
 import { Die } from './sub/Die';
+import { EntryWithCategory } from './wikiTypeHelpers';
 
 export interface RaceVariant {
   id: string
@@ -44,7 +44,5 @@ export const RaceVariant =
     category: Categories.RACE_VARIANTS,
   })
 
-export const RaceVariantG = makeGetters (RaceVariant)
-
 export const isRaceVariant =
-  (r: EntryWithCategory) => RaceVariantG.category (r) === Categories.RACE_VARIANTS
+  (r: EntryWithCategory) => RaceVariant.A.category (r) === Categories.RACE_VARIANTS

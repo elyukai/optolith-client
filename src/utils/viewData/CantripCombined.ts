@@ -1,4 +1,4 @@
-import { fromDefault, makeGetters, Record } from '../structures/Record';
+import { fromDefault, Record } from '../structures/Record';
 import { Cantrip } from '../wikiData/Cantrip';
 import { IsActive } from './viewTypeHelpers';
 
@@ -11,5 +11,3 @@ export const CantripCombined =
     wikiEntry: Cantrip .default,
     active: false,
   })
-
-export const CantripCombinedG = makeGetters (CantripCombined)

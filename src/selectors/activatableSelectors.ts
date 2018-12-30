@@ -1,7 +1,6 @@
 import * as R from 'ramda';
 import { ActivatableCategory, Categories } from '../constants/Categories';
 import * as Data from '../types/data';
-import * as Wiki from '../types/wiki';
 import { getAllActiveByCategory } from '../utils/activatable/activatableActiveUtils';
 import { getModifierByActiveLevel, getModifierByIsActive } from '../utils/activatable/activatableModifierUtils';
 import { getBracketedNameFromFullName } from '../utils/activatable/activatableNameUtils';
@@ -13,6 +12,7 @@ import { AllSortOptions, filterAndSortObjects } from '../utils/FilterSortUtils';
 import { flip } from '../utils/flip';
 import { translate } from '../utils/I18n';
 import { mapGetToMaybeSlice } from '../utils/SelectorsUtils';
+import * as Wiki from '../utils/wikiData/wikiTypeHelpers';
 import { getBlessedTraditionFromWikiState } from './liturgicalChantsSelectors';
 import { getCurrentCulture, getCurrentProfession, getCurrentRace } from './rcpSelectors';
 import { getSpecialAbilitiesSortOptions } from './sortOptionsSelectors';

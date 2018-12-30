@@ -5,23 +5,24 @@ import * as Raw from '../../types/rawdata';
 import { getCombinedPrerequisites } from '../activatable/activatableActivationUtils';
 import { getActiveFromState } from '../activatable/activatableConvertUtils';
 import { addAllStyleRelatedDependencies } from '../activatable/ExtendedStyleUtils';
-import { ActivatableDependent, ActiveObjectCreator, createActivatableDependentWithActive } from '../activeEntries/ActivatableDependent';
-import { ActivatableSkillDependent, ActivatableSkillDependentG, createActivatableSkillDependentWithValue } from '../activeEntries/ActivatableSkillDependent';
+import { ActivatableDependent, createActivatableDependentWithActive } from '../activeEntries/ActivatableDependent';
+import { ActivatableSkillDependent, createActivatableSkillDependentWithValue } from '../activeEntries/ActivatableSkillDependent';
+import { ActiveObject } from '../activeEntries/ActiveObject';
 import { AttributeDependent, createAttributeDependentWithValue } from '../activeEntries/AttributeDependent';
 import { createSkillDependentWithValue, SkillDependent } from '../activeEntries/SkillDependent';
 import { addDependencies } from '../dependencies/dependencyUtils';
 import { Belongings } from '../heroData/Belongings';
-import { EnergiesCreator } from '../heroData/Energies';
-import { HeroModel, HeroModelG, HeroModelRecord } from '../heroData/HeroModel';
+import { Energies } from '../heroData/Energies';
+import { HeroModel, HeroModelRecord } from '../heroData/HeroModel';
 import { HitZoneArmor } from '../heroData/HitZoneArmor';
 import { Item } from '../heroData/Item';
 import { PermanentEnergyLoss } from '../heroData/PermanentEnergyLoss';
 import { PermanentEnergyLossAndBoughtBack } from '../heroData/PermanentEnergyLossAndBoughtBack';
 import { PersonalData } from '../heroData/PersonalData';
+import { Pet } from '../heroData/Pet';
 import { Purse } from '../heroData/Purse';
 import { Rules } from '../heroData/Rules';
 import { getCategoryById } from '../IDUtils';
-import { PetCreator } from '../PetUtils';
 import { ident } from '../structures/Function';
 import { fromArray, List } from '../structures/List';
 import { elem, fromNullable, Maybe } from '../structures/Maybe';
@@ -78,7 +79,7 @@ const createHeroObject = (hero: Raw.RawHero): HeroModelRecord =>
 
     attributeAdjustmentSelected: hero .attr .attributeAdjustmentSelected,
 
-    energies: EnergiesCreator ({
+    energies: Energies ({
       addedArcaneEnergyPoints: hero .attr .ae,
       addedKarmaPoints: hero .attr .kp,
       addedLifePoints: hero .attr .lp,
@@ -200,10 +201,10 @@ const createHeroObject = (hero: Raw.RawHero): HeroModelRecord =>
     pets: hero .pets
       ? OrderedMap.fromArray (
         Object.entries (hero .pets)
-          .map<[string, Record<Data.PetInstance>]> (
+          .map<[string, Record<Pet>]> (
             ([id, obj]) => [
               id,
-              PetCreator ({
+              Pet ({
                 id,
                 name: obj .name,
                 avatar: fromNullable (obj .avatar),
@@ -252,7 +253,7 @@ const getActivatableDependent =
       Object.entries (source) .map<[string, Record<ActivatableDependent>]> (
         ([id, active]) => [
           id,
-          createActivatableDependentWithActive (fromArray (active .map (e => ActiveObjectCreator ({
+          createActivatableDependentWithActive (fromArray (active .map (e => ActiveObject ({
                                                   cost: fromNullable (e .cost),
                                                   sid: fromNullable (e .sid),
                                                   sid2: fromNullable (e .sid2),
@@ -312,7 +313,7 @@ const getActivatableDependentSkills =
       )
     )
 
-const { advantages, disadvantages, specialAbilities, spells } = HeroModelG
+const { advantages, disadvantages, specialAbilities, spells } = HeroModel.A
 
 export const convertFromRawHero =
   (wiki: WikiModelRecord) => (hero: Raw.RawHero): HeroModelRecord => {
@@ -322,7 +323,7 @@ export const convertFromRawHero =
     const activeDisadvantages = getActiveFromState (disadvantages (intermediateState))
     const activeSpecialAbilities = getActiveFromState (specialAbilities (intermediateState))
 
-    const { active, id } = ActivatableSkillDependentG
+    const { active, id } = ActivatableSkillDependent.A
 
     const activeSpells =
       OrderedMap.foldr<Record<ActivatableSkillDependent>, OrderedSet<string>>

@@ -8,11 +8,11 @@ import { ListItemName } from '../../components/ListItemName';
 import { ListItemSeparator } from '../../components/ListItemSeparator';
 import { VerticalList } from '../../components/VerticalList';
 import { Hero, User } from '../../types/data';
-import { Culture, Race, RaceVariant, WikiAll } from '../../types/wiki';
 import { getAPObject } from '../../utils/adventurePoints/adventurePointsSumUtils';
 import { Maybe, OrderedMap, OrderedSet, Record } from '../../utils/dataUtils';
 import { translate, UIMessagesObject } from '../../utils/I18n';
 import { getFullProfessionName } from '../../utils/rcpUtils';
+import { Culture, Race, RaceVariant, WikiAll } from '../../utils/wikiData/wikiTypeHelpers';
 
 export interface HerolistItemProps {
   hero: Hero;

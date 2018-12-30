@@ -1,12 +1,12 @@
 import * as R from 'ramda';
 import { EntryRating, Hero } from '../types/data';
-import { ExperienceLevel } from '../types/wiki';
 import { createDependentSkillWithValue0 } from '../utils/createEntryUtils';
 import { createMaybeSelector } from '../utils/createMaybeSelector';
 import { List, Maybe, OrderedMap, Record } from '../utils/dataUtils';
 import { AllSortOptions, filterAndSortObjects } from '../utils/FilterSortUtils';
 import { isDecreasable, isIncreasable } from '../utils/skillUtils';
 import { SkillCombined, SkillWithRequirements } from '../utils/viewData/viewTypeHelpers';
+import { ExperienceLevel } from '../utils/wikiData/wikiTypeHelpers';
 import { getStartEl } from './elSelectors';
 import { getCurrentCulture } from './rcpSelectors';
 import { getSkillsSortOptions } from './sortOptionsSelectors';

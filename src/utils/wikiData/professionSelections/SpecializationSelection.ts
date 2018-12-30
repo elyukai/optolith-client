@@ -1,6 +1,6 @@
-import { ProfessionSelectionIds } from '../../../types/wiki';
 import { List } from '../../structures/List';
-import { fromDefault, makeGetters } from '../../structures/Record';
+import { fromDefault } from '../../structures/Record';
+import { ProfessionSelectionIds } from '../wikiTypeHelpers';
 
 export interface SpecializationSelection {
   id: ProfessionSelectionIds.SPECIALIZATION;
@@ -12,5 +12,3 @@ export const SpecializationSelection =
     id: ProfessionSelectionIds.SPECIALIZATION,
     sid: '',
   })
-
-export const SpecializationSelectionG = makeGetters (SpecializationSelection)

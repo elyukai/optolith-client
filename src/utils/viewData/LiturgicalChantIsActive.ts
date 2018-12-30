@@ -1,4 +1,4 @@
-import { fromDefault, makeGetters, Record } from '../structures/Record';
+import { fromDefault, Record } from '../structures/Record';
 import { LiturgicalChant } from '../wikiData/LiturgicalChant';
 import { IsActive } from './viewTypeHelpers';
 
@@ -11,5 +11,3 @@ export const LiturgicalChantIsActive =
     wikiEntry: LiturgicalChant .default,
     active: false,
   })
-
-export const LiturgicalChantIsActiveG = makeGetters (LiturgicalChantIsActive)

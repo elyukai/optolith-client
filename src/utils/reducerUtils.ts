@@ -1,6 +1,6 @@
 import * as Data from '../types/data';
-import * as Wiki from '../types/wiki';
 import { Maybe, Record } from './dataUtils';
+import * as Wiki from './wikiData/wikiTypeHelpers';
 
 export function reduce<T> (
   initial: T

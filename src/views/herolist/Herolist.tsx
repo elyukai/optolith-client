@@ -10,9 +10,9 @@ import { TextField } from '../../components/TextField';
 import { AdventurePointsObject } from '../../selectors/adventurePointsSelectors';
 import { Hero, InputTextEvent, User } from '../../types/data';
 import { UIMessagesObject } from '../../types/ui';
-import { Book, ExperienceLevel, WikiAll } from '../../types/wiki';
 import { Just, List, Maybe, OrderedMap, OrderedSet, Record } from '../../utils/dataUtils';
 import { translate } from '../../utils/I18n';
+import { Book, ExperienceLevel, WikiAll } from '../../utils/wikiData/wikiTypeHelpers';
 import { HeroCreation } from './HeroCreation';
 import { HerolistItem } from './HerolistItem';
 

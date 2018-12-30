@@ -1,5 +1,5 @@
 import { Maybe, Nothing } from '../structures/Maybe';
-import { fromDefault, makeGetters } from '../structures/Record';
+import { fromDefault } from '../structures/Record';
 
 export interface HitZoneArmorBase {
   name: string
@@ -38,5 +38,3 @@ export const HitZoneArmor =
     rightLeg: Nothing,
     rightLegLoss: Nothing,
   })
-
-export const HitZoneArmorG = makeGetters (HitZoneArmor)

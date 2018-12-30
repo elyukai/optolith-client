@@ -1,6 +1,5 @@
 import { IdPrefixes } from '../../constants/IdPrefixes';
 import * as Raw from '../../types/rawdata';
-import * as Wiki from '../../types/wiki';
 import { prefixId as prefixId, prefixRawId } from '../IDUtils';
 import { add } from '../mathUtils';
 import { cons, cons_, List } from '../structures/List';
@@ -31,6 +30,7 @@ import { IncreaseSkill } from '../wikiData/sub/IncreaseSkill';
 import { NameBySex } from '../wikiData/sub/NameBySex';
 import { PrimaryAttributeDamageThreshold } from '../wikiData/sub/PrimaryAttributeDamageThreshold';
 import { SourceLink } from '../wikiData/sub/SourceLink';
+import * as Wiki from '../wikiData/wikiTypeHelpers';
 import { convertRawApplications, convertRawIncreaseSkills, convertRawPrerequisiteObjects, convertRawPrerequisites, convertRawProfessionDependencyObjects, convertRawProfessionPrerequisiteObjects, convertRawProfessionRequireActivatable, convertRawProfessionSelections, convertRawProfessionVariantSelections, convertRawSelections, mapRawWithPrefix } from './convertRawObjectsToWikiUtils';
 
 const getSourceBooks =

@@ -1,5 +1,5 @@
-import { Book, SourceLink } from '../types/wiki';
 import { List, OrderedMap, OrderedSet, Record } from './dataUtils';
+import { Book, SourceLink } from './wikiData/wikiTypeHelpers';
 
 export const isCoreBook = (src: Record<SourceLink>) =>
   ['US25001', 'US25002'].includes (src.get ('id'));

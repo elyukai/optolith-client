@@ -1,6 +1,6 @@
 import { StringKeyObject } from '../utils/structures/Record';
+import { ProfessionSelectionIds } from '../utils/wikiData/wikiTypeHelpers';
 import * as UI from './ui';
-import { ProfessionSelectionIds } from './wiki';
 
 export interface RawUser {
   id: string;

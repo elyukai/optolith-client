@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { BorderButton } from '../../components/BorderButton';
 import { Checkbox } from '../../components/Checkbox';
-import { Spell } from '../../types/wiki';
 import { Just, List, Maybe, Nothing, OrderedMap, Record } from '../../utils/dataUtils';
 import { translate, UIMessagesObject } from '../../utils/I18n';
+import { Spell } from '../../utils/wikiData/wikiTypeHelpers';
 
 interface SelectionsCursesProps {
   active: OrderedMap<string, number>;

@@ -1,5 +1,5 @@
 import { OrderedMap } from '../structures/OrderedMap';
-import { fromDefault, makeGetters, Record } from '../structures/Record';
+import { fromDefault, Record } from '../structures/Record';
 import { Advantage } from './Advantage';
 import { Attribute } from './Attribute';
 import { Blessing } from './Blessing';
@@ -63,5 +63,3 @@ export const WikiModel =
     blessings: OrderedMap.empty,
     itemTemplates: OrderedMap.empty,
   })
-
-export const WikiModelG = makeGetters (WikiModel)

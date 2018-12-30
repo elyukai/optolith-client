@@ -1,7 +1,7 @@
 import { pipe } from 'ramda';
 import { getActiveSelections } from './activatable/selectionUtils';
 import { ActivatableDependent } from './activeEntries/ActivatableDependent';
-import { ActivatableSkillDependent, ActivatableSkillDependentG } from './activeEntries/ActivatableSkillDependent';
+import { ActivatableSkillDependent } from './activeEntries/ActivatableSkillDependent';
 import { AttributeDependent } from './activeEntries/AttributeDependent';
 import { filterAndMaximumNonNegative, flattenDependencies } from './dependencies/flattenDependencies';
 import { HeroModelRecord } from './heroData/HeroModel';
@@ -17,13 +17,13 @@ import { Record } from './structures/Record';
 import { isNumber } from './typeCheckUtils';
 import { Blessing } from './wikiData/Blessing';
 import { ExperienceLevel } from './wikiData/ExperienceLevel';
-import { LiturgicalChant, LiturgicalChantG } from './wikiData/LiturgicalChant';
+import { LiturgicalChant } from './wikiData/LiturgicalChant';
 import { SpecialAbility } from './wikiData/SpecialAbility';
-import { WikiModelG, WikiModelRecord } from './wikiData/WikiModel';
+import { WikiModel, WikiModelRecord } from './wikiData/WikiModel';
 
-const { liturgicalChants } = WikiModelG
-const { id, tradition, aspects } = LiturgicalChantG
-const { value, dependencies } = ActivatableSkillDependentG
+const { liturgicalChants } = WikiModel.A
+const { id, tradition, aspects } = LiturgicalChant.A
+const { value, dependencies } = ActivatableSkillDependent.A
 
 /**
  * Checks if the passed liturgical chant or blessing is valid for the current

@@ -1,4 +1,4 @@
-import { fromDefault, makeGetters, makeLenses_, Record } from '../structures/Record';
+import { fromDefault, makeLenses_, Record } from '../structures/Record';
 import { PermanentEnergyLoss } from './PermanentEnergyLoss';
 import { PermanentEnergyLossAndBoughtBack } from './PermanentEnergyLossAndBoughtBack';
 
@@ -14,7 +14,7 @@ export interface Energies {
 /**
  * Create a new `Energies` object.
  */
-export const EnergiesCreator =
+export const Energies =
   fromDefault<Energies> ({
     addedLifePoints: 0,
     addedArcaneEnergyPoints: 0,
@@ -24,5 +24,4 @@ export const EnergiesCreator =
     permanentKarmaPoints: PermanentEnergyLossAndBoughtBack .default,
   })
 
-export const EnergiesG = makeGetters (EnergiesCreator)
-export const EnergiesL = makeLenses_ (EnergiesG) (EnergiesCreator)
+export const EnergiesL = makeLenses_ (Energies)

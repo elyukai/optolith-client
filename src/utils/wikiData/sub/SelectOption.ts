@@ -1,8 +1,8 @@
-import { AllRequirementObjects } from '../../../types/wiki';
 import { List } from '../../structures/List';
 import { Maybe, Nothing } from '../../structures/Maybe';
 import { Pair } from '../../structures/Pair';
-import { fromDefault, makeGetters, Record } from '../../structures/Record';
+import { fromDefault, Record } from '../../structures/Record';
+import { AllRequirementObjects } from '../wikiTypeHelpers';
 import { Application } from './Application';
 
 export interface SelectOption {
@@ -37,5 +37,3 @@ export const SelectOption =
     talent: Nothing,
     gr: Nothing,
   })
-
-export const SelectOptionG = makeGetters (SelectOption)

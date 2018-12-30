@@ -1,9 +1,9 @@
 import { Categories } from '../../constants/Categories';
-import { AdvantageDisadvantageBase, EntryWithCategory } from '../../types/wiki';
 import { List } from '../structures/List';
 import { Nothing } from '../structures/Maybe';
 import { OrderedMap } from '../structures/OrderedMap';
-import { fromDefault, makeGetters } from '../structures/Record';
+import { fromDefault } from '../structures/Record';
+import { AdvantageDisadvantageBase, EntryWithCategory } from './wikiTypeHelpers';
 
 export interface Disadvantage extends AdvantageDisadvantageBase { }
 
@@ -31,7 +31,5 @@ export const Disadvantage =
     category: Categories.DISADVANTAGES,
   })
 
-export const DisadvantageG = makeGetters (Disadvantage)
-
 export const isDisadvantage =
-  (r: EntryWithCategory) => DisadvantageG.category (r) === Categories.DISADVANTAGES
+  (r: EntryWithCategory) => Disadvantage.A.category (r) === Categories.DISADVANTAGES

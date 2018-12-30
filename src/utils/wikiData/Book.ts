@@ -1,4 +1,4 @@
-import { fromDefault, makeGetters } from '../structures/Record';
+import { fromDefault } from '../structures/Record';
 
 export interface Book {
   id: string
@@ -12,5 +12,3 @@ export const Book =
     name: '',
     short: '',
   })
-
-export const BookG = makeGetters (Book)

@@ -1,5 +1,5 @@
 import { DropdownOption, DropdownOptionCreator } from '../components/Dropdown';
-import { getRoman } from './NumberUtils';
+import { toRoman } from './NumberUtils';
 import { List } from './structures/List';
 import { Just, Nothing } from './structures/Maybe';
 import { fromBoth } from './structures/Pair';
@@ -17,7 +17,7 @@ const getElements = (max: number) =>
       )
       : Just (
         fromBoth<Record<DropdownOption>, number>
-          (DropdownOptionCreator ({ id: Just (current), name: getRoman (current) }))
+          (DropdownOptionCreator ({ id: Just (current), name: toRoman (current) }))
           (current + 1)
       ))
 

@@ -1,12 +1,12 @@
 import { pipe } from 'ramda';
 import * as Data from '../types/data';
 import { isMaybeActive } from './activatable/isActive';
-import { ActivatableDependent, ActivatableDependentG, ActiveObjectG } from './activeEntries/ActivatableDependent';
+import { ActivatableDependent, ActivatableDependentG, ActiveObjectA } from './activeEntries/ActivatableDependent';
 import { AttributeDependent } from './activeEntries/AttributeDependent';
 import { SkillDependentG } from './activeEntries/SkillDependent';
 import { getSkillCheckValues } from './AttributeUtils';
 import { flattenDependencies } from './dependencies/flattenDependencies';
-import { HeroModelG, HeroModelRecord } from './heroData/HeroModel';
+import { HeroModelA, HeroModelRecord } from './heroData/HeroModel';
 import { ifElse } from './ifElse';
 import { add } from './mathUtils';
 import { cnst, ident } from './structures/Function';
@@ -15,15 +15,15 @@ import { elem, fmap, Just, Maybe, maybe, Nothing, sum } from './structures/Maybe
 import { lookup_, OrderedMap } from './structures/OrderedMap';
 import { fromBoth, Pair } from './structures/Pair';
 import { Record } from './structures/Record';
-import { SkillCombined, SkillCombinedG } from './viewData/SkillCombined';
+import { SkillCombined, SkillCombinedAccessors } from './viewData/SkillCombined';
 import { ExperienceLevel, ExperienceLevelG } from './wikiData/ExperienceLevel';
 import { SkillG } from './wikiData/Skill';
 import { WikiModelRecord } from './wikiData/WikiModel';
 
-const { specialAbilities, skills } = HeroModelG
+const { specialAbilities, skills } = HeroModelA
 const { active } = ActivatableDependentG
-const { sid } = ActiveObjectG
-const { id, value, dependencies, wikiEntry } = SkillCombinedG
+const { sid } = ActiveObjectA
+const { id, value, dependencies, wikiEntry } = SkillCombinedAccessors
 const { maxSkillRating } = ExperienceLevelG
 
 /**

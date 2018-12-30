@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { SecondaryAttribute } from '../../types/data';
-import { Attribute, Book, SpecialAbility, Spell } from '../../types/wiki';
 import { UIMessages } from '../../utils/viewData/viewTypeHelpers';
+import { Attribute, Book, SpecialAbility, Spell } from '../../utils/wikiData/wikiTypeHelpers';
 import { WikiCastingTime } from './elements/WikiCastingTime';
 import { WikiCost } from './elements/WikiCost';
 import { WikiDuration } from './elements/WikiDuration';

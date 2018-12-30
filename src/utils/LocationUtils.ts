@@ -1,65 +1,65 @@
-import { List } from './dataUtils';
-import { flip } from './flip';
+import { elem_, fromElements } from './structures/List';
 
-export type TabId =
-  'herolist' |
-  'grouplist' |
-  'wiki' |
-  'faq' |
-  'imprint' |
-  'thirdPartyLicenses' |
-  'lastChanges' |
-  'profile' |
-  'personalData' |
-  'characterSheet' |
-  'pact' |
-  'rules' |
-  'races' |
-  'cultures' |
-  'professions' |
-  'attributes' |
-  'advantages' |
-  'disadvantages' |
-  'skills' |
-  'combatTechniques' |
-  'specialAbilities' |
-  'spells' |
-  'liturgicalChants' |
-  'equipment' |
-  'zoneArmor' |
-  'pets';
+export type TabId = 'herolist'
+                  | 'grouplist'
+                  | 'wiki'
+                  | 'faq'
+                  | 'imprint'
+                  | 'thirdPartyLicenses'
+                  | 'lastChanges'
+                  | 'profile'
+                  | 'personalData'
+                  | 'characterSheet'
+                  | 'pact'
+                  | 'rules'
+                  | 'races'
+                  | 'cultures'
+                  | 'professions'
+                  | 'attributes'
+                  | 'advantages'
+                  | 'disadvantages'
+                  | 'skills'
+                  | 'combatTechniques'
+                  | 'specialAbilities'
+                  | 'spells'
+                  | 'liturgicalChants'
+                  | 'equipment'
+                  | 'zoneArmor'
+                  | 'pets'
 
-export const mainSectionTabs = List.of<TabId> (
-  'herolist',
-  'grouplist',
-  'wiki',
-  'faq',
-  'imprint',
-  'thirdPartyLicenses',
-  'lastChanges',
-);
+export const mainSectionTabs =
+  fromElements<TabId> (
+    'herolist',
+    'grouplist',
+    'wiki',
+    'faq',
+    'imprint',
+    'thirdPartyLicenses',
+    'lastChanges'
+  )
 
-export const heroSectionTabs = List.of<TabId> (
-  'profile',
-  'personalData',
-  'characterSheet',
-  'pact',
-  'rules',
-  'races',
-  'cultures',
-  'professions',
-  'attributes',
-  'advantages',
-  'disadvantages',
-  'skills',
-  'combatTechniques',
-  'specialAbilities',
-  'spells',
-  'liturgicalChants',
-  'equipment',
-  'zoneArmor',
-  'pets',
-);
+export const heroSectionTabs =
+  fromElements<TabId> (
+    'profile',
+    'personalData',
+    'characterSheet',
+    'pact',
+    'rules',
+    'races',
+    'cultures',
+    'professions',
+    'attributes',
+    'advantages',
+    'disadvantages',
+    'skills',
+    'combatTechniques',
+    'specialAbilities',
+    'spells',
+    'liturgicalChants',
+    'equipment',
+    'zoneArmor',
+    'pets'
+  )
 
-export const isMainSectionTab = flip<TabId, List<TabId>, boolean> (List.elem) (mainSectionTabs);
-export const isHeroSectionTab = flip<TabId, List<TabId>, boolean> (List.elem) (heroSectionTabs);
+export const isMainSectionTab = elem_ (mainSectionTabs)
+export const isHeroSectionTab = elem_ (heroSectionTabs)

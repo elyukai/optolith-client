@@ -1,22 +1,22 @@
 import { pipe } from 'ramda';
-import * as Data from '../../types/data';
-import * as Wiki from '../../types/wiki';
 import { findSelectOption } from '../activatable/selectionUtils';
-import { ActivatableDependent, ActivatableDependentG, ActiveObjectG } from '../activeEntries/ActivatableDependent';
+import { ActivatableDependent } from '../activeEntries/ActivatableDependent';
+import { ActiveObject } from '../activeEntries/ActiveObject';
 import { equals } from '../structures/Eq';
 import { cons_, filter, find, fromElements, length, List, mappend } from '../structures/List';
 import { alt_, ap, bind_, elem_, fmap, fromMaybe, Just, liftM2, Maybe, Nothing } from '../structures/Maybe';
 import { Record } from '../structures/Record';
-import { AdvantageG } from '../wikiData/Advantage';
+import { Advantage } from '../wikiData/Advantage';
 import { RequireActivatable } from '../wikiData/prerequisites/ActivatableRequirement';
 import { RequireIncreasable } from '../wikiData/prerequisites/IncreasableRequirement';
-import { Application, ApplicationG } from '../wikiData/sub/Application';
-import { SelectOption, SelectOptionG } from '../wikiData/sub/SelectOption';
+import { Application } from '../wikiData/sub/Application';
+import { SelectOption } from '../wikiData/sub/SelectOption';
+import * as Wiki from '../wikiData/wikiTypeHelpers';
 
-const { id } = AdvantageG
-const { sid, sid2 } = ActiveObjectG
-const { active } = ActivatableDependentG
-const { applications, target, tier, prerequisites } = SelectOptionG
+const { id } = Advantage.A
+const { sid, sid2 } = ActiveObject.A
+const { active } = ActivatableDependent.A
+const { applications, target, tier, prerequisites } = SelectOption.A
 
 /**
  * Some advantages, disadvantages and special abilities need more prerequisites
@@ -31,11 +31,11 @@ const { applications, target, tier, prerequisites } = SelectOptionG
 export const getGeneratedPrerequisites =
   (wikiEntry: Wiki.Activatable) =>
   (instance: Maybe<Record<ActivatableDependent>>) =>
-  (current: Record<Data.ActiveObject>) =>
+  (current: Record<ActiveObject>) =>
   (add: boolean): Maybe<List<Wiki.AllRequirementObjects>> => {
     switch (id (wikiEntry)) {
       case 'SA_3':
-        return bind_ (SelectOptionG.prerequisites)
+        return bind_ (SelectOption.A.prerequisites)
                      (findSelectOption (wikiEntry) (sid (current)))
 
       case 'SA_9': {
@@ -60,11 +60,11 @@ export const getGeneratedPrerequisites =
                       bind_ (applications),
                       bind_ (
                         find<Record<Application>> (pipe (
-                                                               ApplicationG.id,
+                                                               Application.A.id,
                                                                elem_ (sid2 (current))
                                                              ))
                       ),
-                      bind_ (ApplicationG.prerequisites),
+                      bind_ (Application.A.prerequisites),
                       ap (
                         fmap<
                           Wiki.AllRequirementObjects,
@@ -125,7 +125,7 @@ export const getGeneratedPrerequisites =
 export const addDynamicPrerequisites =
   (wikiEntry: Wiki.Activatable) =>
   (instance: Maybe<Record<ActivatableDependent>>) =>
-  (current: Record<Data.ActiveObject>) =>
+  (current: Record<ActiveObject>) =>
   (add: boolean) =>
   (staticPrerequisites: List<Wiki.AllRequirements>): List<Wiki.AllRequirements> =>
     fromMaybe (staticPrerequisites)

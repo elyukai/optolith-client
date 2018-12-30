@@ -1,6 +1,6 @@
 import { List } from '../structures/List';
 import { Maybe, Nothing } from '../structures/Maybe';
-import { fromDefault, makeGetters } from '../structures/Record';
+import { fromDefault } from '../structures/Record';
 
 export interface RangedWeapon {
   id: string
@@ -34,5 +34,3 @@ const RangedWeapon =
     weight: Nothing,
     ammunition: Nothing,
   })
-
-export const RangedWeaponG = makeGetters (RangedWeapon)

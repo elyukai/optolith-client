@@ -1,17 +1,17 @@
 import { pipe } from 'ramda';
 import { IdPrefixes } from '../../constants/IdPrefixes';
 import * as Data from '../../types/data';
-import * as Wiki from '../../types/wiki';
 import { isActive } from '../activatable/isActive';
 import { isPactValid as isPactFromStateValid } from '../activatable/pactUtils';
 import { getActiveSelections } from '../activatable/selectionUtils';
-import { ActivatableDependent, ActivatableDependentG, ActiveObjectG, isActivatableDependent, isMaybeActivatableDependent } from '../activeEntries/ActivatableDependent';
-import { ActivatableSkillDependentG, isMaybeActivatableSkillDependent } from '../activeEntries/ActivatableSkillDependent';
-import { AttributeDependentG } from '../activeEntries/AttributeDependent';
-import { DependencyObjectG } from '../activeEntries/DependencyObject';
-import { isExtendedSkillDependent, SkillDependentG } from '../activeEntries/SkillDependent';
-import { HeroModelG, HeroModelRecord } from '../heroData/HeroModel';
-import { Pact, PactG } from '../heroData/Pact';
+import { ActivatableDependent, isActivatableDependent, isMaybeActivatableDependent } from '../activeEntries/ActivatableDependent';
+import { ActivatableSkillDependent, isMaybeActivatableSkillDependent } from '../activeEntries/ActivatableSkillDependent';
+import { ActiveObject } from '../activeEntries/ActiveObject';
+import { AttributeDependent } from '../activeEntries/AttributeDependent';
+import { DependencyObject } from '../activeEntries/DependencyObject';
+import { isExtendedSkillDependent, SkillDependent } from '../activeEntries/SkillDependent';
+import { HeroModel, HeroModelRecord } from '../heroData/HeroModel';
+import { Pact } from '../heroData/Pact';
 import { getHeroStateItem } from '../heroStateUtils';
 import { prefixId } from '../IDUtils';
 import { dec, gte, lt, lte, min, subtract } from '../mathUtils';
@@ -21,22 +21,23 @@ import { equals } from '../structures/Eq';
 import { flip, join, on, thrush } from '../structures/Function';
 import { set } from '../structures/Lens';
 import { all, any, elem, elem_, foldl, fromElements, ifoldl, isList, List, map, sortBy, subscript } from '../structures/List';
-import { and, bind_, catMaybes, ensure, fmap, fromJust, isJust, isNothing, Just, Maybe, maybe, Nothing, or } from '../structures/Maybe';
+import { and, bind_, catMaybes, ensure, fmap, fromJust, isJust, isNothing, Just, Maybe, maybe, maybeToList, Nothing, or } from '../structures/Maybe';
 import { lookup_, OrderedMap, toList } from '../structures/OrderedMap';
 import { fst, Pair, snd } from '../structures/Pair';
 import { Record } from '../structures/Record';
-import { CultureG } from '../wikiData/Culture';
-import { RequireActivatable, RequireActivatableG, RequireActivatableL } from '../wikiData/prerequisites/ActivatableRequirement';
-import { CultureRequirement, CultureRequirementG, isCultureRequirement } from '../wikiData/prerequisites/CultureRequirement';
-import { isIncreasableRequirement, RequireIncreasable, RequireIncreasableG, RequireIncreasableL } from '../wikiData/prerequisites/IncreasableRequirement';
-import { isPactRequirement, PactRequirement, PactRequirementG } from '../wikiData/prerequisites/PactRequirement';
-import { isPrimaryAttributeRequirement, RequirePrimaryAttribute, RequirePrimaryAttributeG } from '../wikiData/prerequisites/PrimaryAttributeRequirement';
-import { isRaceRequirement, RaceRequirement, RaceRequirementG } from '../wikiData/prerequisites/RaceRequirement';
-import { isSexRequirement, SexRequirement, SexRequirementG } from '../wikiData/prerequisites/SexRequirement';
-import { ProfessionG } from '../wikiData/Profession';
-import { RaceG } from '../wikiData/Race';
-import { SkillG } from '../wikiData/Skill';
-import { WikiModelG, WikiModelRecord } from '../wikiData/WikiModel';
+import { Culture } from '../wikiData/Culture';
+import { RequireActivatable, RequireActivatableL } from '../wikiData/prerequisites/ActivatableRequirement';
+import { CultureRequirement, isCultureRequirement } from '../wikiData/prerequisites/CultureRequirement';
+import { isIncreasableRequirement, RequireIncreasable, RequireIncreasableL } from '../wikiData/prerequisites/IncreasableRequirement';
+import { isPactRequirement, PactRequirement } from '../wikiData/prerequisites/PactRequirement';
+import { isPrimaryAttributeRequirement, RequirePrimaryAttribute } from '../wikiData/prerequisites/PrimaryAttributeRequirement';
+import { isRaceRequirement, RaceRequirement } from '../wikiData/prerequisites/RaceRequirement';
+import { isSexRequirement, SexRequirement } from '../wikiData/prerequisites/SexRequirement';
+import { Profession } from '../wikiData/Profession';
+import { Race } from '../wikiData/Race';
+import { Skill } from '../wikiData/Skill';
+import { WikiModel, WikiModelRecord } from '../wikiData/WikiModel';
+import * as Wiki from '../wikiData/wikiTypeHelpers';
 import { getAllWikiEntriesByGroup } from '../WikiUtils';
 
 type Validator = (wiki: WikiModelRecord) =>
@@ -44,8 +45,8 @@ type Validator = (wiki: WikiModelRecord) =>
                  (req: Wiki.AllRequirements) =>
                  (sourceId: string) => boolean
 
-const { races, cultures, professions, skills } = WikiModelG
-const { race, culture, profession, specialAbilities, attributes, sex, pact } = HeroModelG
+const { races, cultures, professions, skills } = WikiModel.A
+const { race, culture, profession, specialAbilities, attributes, sex, pact } = HeroModel.A
 
 const getAllRaceEntries =
   (wiki: WikiModelRecord) =>
@@ -54,12 +55,12 @@ const getAllRaceEntries =
       bind_ (lookup_ (races (wiki))),
       fmap (
         selectedRace => fromElements (
-          ...RaceG.stronglyRecommendedAdvantages (selectedRace),
-          ...RaceG.automaticAdvantages (selectedRace),
-          ...RaceG.stronglyRecommendedAdvantages (selectedRace),
-          ...RaceG.stronglyRecommendedDisadvantages (selectedRace),
-          ...RaceG.commonAdvantages (selectedRace),
-          ...RaceG.commonDisadvantages (selectedRace)
+          ...Race.A.stronglyRecommendedAdvantages (selectedRace),
+          ...Race.A.automaticAdvantages (selectedRace),
+          ...Race.A.stronglyRecommendedAdvantages (selectedRace),
+          ...Race.A.stronglyRecommendedDisadvantages (selectedRace),
+          ...Race.A.commonAdvantages (selectedRace),
+          ...Race.A.commonDisadvantages (selectedRace)
         )
       )
     )
@@ -71,8 +72,8 @@ const getAllCultureEntries =
       bind_ (lookup_ (cultures (wiki))),
       fmap (
         selectedCulture => fromElements (
-          ...CultureG.commonAdvantages (selectedCulture),
-          ...CultureG.commonDisadvantages (selectedCulture)
+          ...Culture.A.commonAdvantages (selectedCulture),
+          ...Culture.A.commonDisadvantages (selectedCulture)
         )
       )
     )
@@ -84,8 +85,8 @@ const getAllProfessionEntries =
       bind_ (lookup_ (professions (wiki))),
       fmap (
         selectedProfession => fromElements (
-          ...ProfessionG.suggestedAdvantages (selectedProfession),
-          ...ProfessionG.suggestedDisadvantages (selectedProfession)
+          ...Profession.A.suggestedAdvantages (selectedProfession),
+          ...Profession.A.suggestedDisadvantages (selectedProfession)
         )
       )
     )
@@ -105,12 +106,12 @@ const isRCPValid =
 
 const isSexValid =
   (currentSex: 'm' | 'f') => (req: Record<SexRequirement>): boolean =>
-    equals (currentSex) (SexRequirementG.value (req))
+    equals (currentSex) (SexRequirement.A.value (req))
 
 const isRaceValid =
   (maybeCurrentRace: Maybe<string>) =>
   (req: Record<RaceRequirement>): boolean => {
-    const value = RaceRequirementG.value (req)
+    const value = RaceRequirement.A.value (req)
 
     if (isList (value)) {
       return or (fmap<string, boolean> (currentRace => any (pipe (
@@ -127,7 +128,7 @@ const isRaceValid =
 const isCultureValid =
   (maybeCurrentCulture: Maybe<string>) =>
   (req: Record<CultureRequirement>): boolean => {
-    const value = CultureRequirementG.value (req)
+    const value = CultureRequirement.A.value (req)
 
     if (isList (value)) {
       return or (
@@ -146,15 +147,15 @@ const isCultureValid =
 const hasSamePactCategory =
   (state: Record<Pact>) =>
     pipe (
-      PactRequirementG.category,
-      equals (PactG.category (state))
+      PactRequirement.A.category,
+      equals (Pact.A.category (state))
     )
 
 const hasNeededPactType =
   (state: Record<Pact>) => (req: Record<PactRequirement>) => {
-    switch (PactRequirementG.category (req)) {
+    switch (PactRequirement.A.category (req)) {
       case 1:
-        return equals (PactG.type (state)) (3)
+        return equals (Pact.A.type (state)) (3)
       default:
         return true
     }
@@ -162,8 +163,8 @@ const hasNeededPactType =
 
 const hasNeededPactDomain =
   (state: Record<Pact>) => (req: Record<PactRequirement>) => {
-    const maybeReqDomain = PactRequirementG.domain (req)
-    const stateDomain = PactG.domain (state)
+    const maybeReqDomain = PactRequirement.A.domain (req)
+    const stateDomain = Pact.A.domain (state)
 
     if (isNothing (maybeReqDomain)) {
       return true
@@ -183,7 +184,7 @@ const hasNeededPactDomain =
   }
 
 const hasNeededPactLevel = (state: Record<Pact>) => (req: Record<PactRequirement>) =>
-  or (fmap (lte (PactG.level (state))) (PactRequirementG.level (req)))
+  or (fmap (lte (Pact.A.level (state))) (PactRequirement.A.level (req)))
 
 const isPactValid =
   (maybePact: Maybe<Record<Pact>>) => (req: Record<PactRequirement>): boolean =>
@@ -198,11 +199,11 @@ const isPrimaryAttributeValid =
   (state: HeroModelRecord) => (req: Record<RequirePrimaryAttribute>): boolean =>
     or (fmap (pipe (
                lookup_ (attributes (state)),
-               fmap (AttributeDependentG.value),
-               Maybe.elem (RequirePrimaryAttributeG.value (req))
+               fmap (AttributeDependent.A.value),
+               Maybe.elem (RequirePrimaryAttribute.A.value (req))
              ))
              (getPrimaryAttributeId (specialAbilities (state))
-                                    (RequirePrimaryAttributeG.type (req))))
+                                    (RequirePrimaryAttribute.A.type (req))))
 
 const isIncreasableValid =
   (wiki: WikiModelRecord) =>
@@ -210,7 +211,7 @@ const isIncreasableValid =
   (sourceId: string) =>
   (req: Record<RequireIncreasable>) =>
   (objectValidator: Validator): boolean => {
-    const id = RequireIncreasableG.id (req)
+    const id = RequireIncreasable.A.id (req)
 
     if (isList (id)) {
       return any (pipe (
@@ -224,8 +225,8 @@ const isIncreasableValid =
 
     return or (fmap ((obj: Data.Dependent) =>
                       isExtendedSkillDependent (obj)
-                      && gte (RequireIncreasableG.value (req))
-                             (SkillDependentG.value (obj)))
+                      && gte (RequireIncreasable.A.value (req))
+                             (SkillDependent.A.value (obj)))
                     (getHeroStateItem (id) (state)))
   }
 
@@ -237,7 +238,7 @@ const isOneOfListActiveSelection =
   (activeSelections: Maybe<List<string | number>>) =>
   (req: Record<RequireActivatable>) =>
   (sid: List<number>): boolean =>
-    Maybe.elem (RequireActivatableG.active (req))
+    Maybe.elem (RequireActivatable.A.active (req))
                (fmap<List<string | number>, boolean> (pipe (List.elem_, any, thrush (sid)))
                                                      (activeSelections))
 
@@ -249,7 +250,7 @@ const isSingleActiveSelection =
   (activeSelections: Maybe<List<string | number>>) =>
   (req: Record<RequireActivatable>) =>
   (sid: string | number): boolean =>
-    Maybe.elem (RequireActivatableG.active (req))
+    Maybe.elem (RequireActivatable.A.active (req))
                (fmap (elem (sid)) (activeSelections))
 
 const isActiveSelection =
@@ -266,8 +267,8 @@ const isActiveSelection =
 const isNeededLevelGiven =
   (level: number) =>
     pipe (
-      ActivatableDependentG.active,
-      any (pipe (ActiveObjectG.tier, fmap (gte (level)), or))
+      ActivatableDependent.A.active,
+      any (pipe (ActiveObject.A.tier, fmap (gte (level)), or))
     )
 
 const isActivatableValid =
@@ -276,7 +277,7 @@ const isActivatableValid =
   (sourceId: string) =>
   (req: Record<RequireActivatable>) =>
   (objectValidator: Validator): boolean => {
-    const id = RequireActivatableG.id (req)
+    const id = RequireActivatable.A.id (req)
 
     if (isList (id)) {
       return any (pipe (
@@ -288,7 +289,7 @@ const isActivatableValid =
                  (id)
     }
     else {
-      const sid = RequireActivatableG.sid (req)
+      const sid = RequireActivatable.A.sid (req)
 
       if (Maybe.elem<Wiki.SID> ('sel') (sid)) {
         return true
@@ -301,11 +302,11 @@ const isActivatableValid =
                            bind_<Record<ActivatableDependent>, boolean>
                              (target => {
                                const arr =
-                                 map (SkillG.id)
+                                 map (Skill.A.id)
                                      (getAllWikiEntriesByGroup
                                        (skills (wiki))
-                                       (Maybe.maybeToList (
-                                         RequireActivatableG.sid2 (req) as Maybe<number>
+                                       (maybeToList (
+                                         RequireActivatable.A.sid2 (req) as Maybe<number>
                                        )))
 
                                return fmap (all (pipe (elem_<string | number> (arr), not)))
@@ -322,8 +323,8 @@ const isActivatableValid =
         const instance = Maybe.fromJust (maybeInstance)
         const activeSelections = getActiveSelections (maybeInstance)
 
-        const maybeSid = RequireActivatableG.sid (req)
-        const maybeLevel = RequireActivatableG.tier (req)
+        const maybeSid = RequireActivatable.A.sid (req)
+        const maybeLevel = RequireActivatable.A.tier (req)
 
         const sidValid = fmap (isActiveSelection (activeSelections) (req)) (maybeSid)
         const levelValid = fmap (flip (isNeededLevelGiven) (instance)) (maybeLevel)
@@ -332,12 +333,12 @@ const isActivatableValid =
           return and (sidValid) && and (levelValid)
         }
 
-        return isActive (instance) === RequireActivatableG.active (req)
+        return isActive (instance) === RequireActivatable.A.active (req)
       }
 
       if (isMaybeActivatableSkillDependent (maybeInstance)) {
-        return ActivatableSkillDependentG.active (fromJust (maybeInstance))
-          === RequireActivatableG.active (req)
+        return ActivatableSkillDependent.A.active (fromJust (maybeInstance))
+          === RequireActivatable.A.active (req)
       }
 
       return false
@@ -414,11 +415,11 @@ export const validateLevel =
       (max => dep =>
           // If `dep` prohibits higher level
           typeof dep === 'object'
-          && Maybe.elem (false) (DependencyObjectG.active (dep))
+          && Maybe.elem (false) (DependencyObject.A.active (dep))
           ? maybe<number, Maybe<number>>
             (max)
             (pipe (dec, level => Just (maybe<number, number> (level) (min (level)) (max))))
-            (DependencyObjectG.tier (dep))
+            (DependencyObject.A.tier (dep))
           : max)
       (pipe (
               toList as (m: OrderedMap<number, List<Wiki.AllRequirements>>) =>

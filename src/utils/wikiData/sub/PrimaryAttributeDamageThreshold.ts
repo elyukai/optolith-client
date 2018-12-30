@@ -1,6 +1,6 @@
 import { List } from '../../structures/List';
 import { Maybe, Nothing } from '../../structures/Maybe';
-import { fromDefault, makeGetters } from '../../structures/Record';
+import { fromDefault } from '../../structures/Record';
 
 export interface PrimaryAttributeDamageThreshold {
   primary: Maybe<string>
@@ -12,5 +12,3 @@ export const PrimaryAttributeDamageThreshold =
     primary: Nothing,
     threshold: List.empty,
   })
-
-export const PrimaryAttributeDamageThresholdG = makeGetters (PrimaryAttributeDamageThreshold)

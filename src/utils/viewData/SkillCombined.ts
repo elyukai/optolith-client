@@ -1,7 +1,7 @@
 import { pipe } from 'ramda';
-import { SkillDependent, SkillDependentG } from '../activeEntries/SkillDependent';
-import { fromDefault, makeGetters, Record } from '../structures/Record';
-import { Skill, SkillG } from '../wikiData/Skill';
+import { SkillDependent } from '../activeEntries/SkillDependent';
+import { fromDefault, Record } from '../structures/Record';
+import { Skill } from '../wikiData/Skill';
 
 export interface SkillCombined {
   wikiEntry: Record<Skill>
@@ -14,14 +14,12 @@ export const SkillCombined =
     stateEntry: SkillDependent .default,
   })
 
-const getters = makeGetters (SkillCombined)
+const { wikiEntry, stateEntry } = SkillCombined.A
+const { id, check } = Skill.A
+const { value, dependencies } = SkillDependent.A
 
-const { wikiEntry, stateEntry } = getters
-const { id, check } = SkillG
-const { value, dependencies } = SkillDependentG
-
-export const SkillCombinedG = {
-  ...getters,
+export const SkillCombinedAccessors = {
+  ...SkillCombined.A,
   id: pipe (wikiEntry, id),
   check: pipe (wikiEntry, check),
   value: pipe (stateEntry, value),

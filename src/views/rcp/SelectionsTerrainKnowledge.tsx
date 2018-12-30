@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Dropdown, DropdownOption } from '../../components/Dropdown';
-import { SpecialAbility } from '../../types/wiki';
 import { List, Maybe, Record } from '../../utils/dataUtils';
+import { SpecialAbility } from '../../utils/wikiData/wikiTypeHelpers';
 
 export interface TerrainKnowledgeProps {
   active: Maybe<number>;

@@ -1,4 +1,4 @@
-import { fromDefault, makeGetters, makeLenses_ } from '../structures/Record';
+import { fromDefault, makeLenses_ } from '../structures/Record';
 
 export interface PermanentEnergyLoss {
   lost: number
@@ -12,5 +12,4 @@ export const PermanentEnergyLoss =
     lost: 0,
   })
 
-export const PermanentEnergyLossG = makeGetters (PermanentEnergyLoss)
-export const PermanentEnergyLossL = makeLenses_ (PermanentEnergyLossG) (PermanentEnergyLoss)
+export const PermanentEnergyLossL = makeLenses_ (PermanentEnergyLoss)

@@ -3,7 +3,6 @@ import { SetSelectionsAction } from '../actions/ProfessionActions';
 import { ActionTypes } from '../constants/ActionTypes';
 import { Categories } from '../constants/Categories';
 import * as Data from '../types/data';
-import * as Wiki from '../types/wiki';
 import { getCombinedPrerequisites } from '../utils/activatable/activatableActivationUtils';
 import { getActiveObjectCore } from '../utils/activatable/activatableConvertUtils';
 import { addAllStyleRelatedDependencies } from '../utils/activatable/ExtendedStyleUtils';
@@ -14,6 +13,7 @@ import { flip } from '../utils/flip';
 import { getHeroStateItem, updateEntryDef, updateHeroListStateItemOr } from '../utils/heroStateUtils';
 import { ifElse } from '../utils/ifElse';
 import { isProfessionRequiringIncreasable } from '../utils/wikiData/prerequisites/DependentRequirement';
+import * as Wiki from '../utils/wikiData/wikiTypeHelpers';
 import { getWikiEntry } from '../utils/WikiUtils';
 
 type Action = SetSelectionsAction;

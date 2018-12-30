@@ -7,9 +7,9 @@ import { ListItemName } from '../../components/ListItemName';
 import { ListItemSeparator } from '../../components/ListItemSeparator';
 import { ListItemValues } from '../../components/ListItemValues';
 import { Sex } from '../../types/data';
-import { Book, NameBySex, SourceLink, WikiAll } from '../../types/wiki';
 import { Maybe, Record } from '../../utils/dataUtils';
 import { ProfessionCombined } from '../../utils/viewData/viewTypeHelpers';
+import { Book, NameBySex, SourceLink, WikiAll } from '../../utils/wikiData/wikiTypeHelpers';
 
 export interface ProfessionsListItemProps {
   currentProfessionId: Maybe<string>;

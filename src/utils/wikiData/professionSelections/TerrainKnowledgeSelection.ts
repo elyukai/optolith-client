@@ -1,6 +1,6 @@
-import { ProfessionSelectionIds } from '../../../types/wiki';
 import { List } from '../../structures/List';
-import { fromDefault, makeGetters } from '../../structures/Record';
+import { fromDefault } from '../../structures/Record';
+import { ProfessionSelectionIds } from '../wikiTypeHelpers';
 
 export interface TerrainKnowledgeSelection {
   id: ProfessionSelectionIds.TERRAIN_KNOWLEDGE;
@@ -12,5 +12,3 @@ export const TerrainKnowledgeSelection =
     id: ProfessionSelectionIds.TERRAIN_KNOWLEDGE,
     sid: List.empty,
   })
-
-export const TerrainKnowledgeSelectionG = makeGetters (TerrainKnowledgeSelection)

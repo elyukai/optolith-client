@@ -1,5 +1,4 @@
 import { ActivatableDependent, Hero, HeroDependent } from '../types/data';
-import { ExperienceLevel, WikiRecord } from '../types/wiki';
 import { isActive } from '../utils/activatable/isActive';
 import { getActiveSelections } from '../utils/activatable/selectionUtils';
 import { createDependentSkillWithValue6 } from '../utils/createEntryUtils';
@@ -9,6 +8,7 @@ import { flattenDependencies } from '../utils/dependencies/flattenDependencies';
 import { AllSortOptions, filterAndSortObjects } from '../utils/FilterSortUtils';
 import { filterByAvailability } from '../utils/RulesUtils';
 import { CombatTechniqueCombined, CombatTechniqueWithAttackParryBase, CombatTechniqueWithRequirements } from '../utils/viewData/viewTypeHelpers';
+import { ExperienceLevel, WikiRecord } from '../utils/wikiData/wikiTypeHelpers';
 import { getMaxAttributeValueByID } from './attributeSelectors';
 import { getStartEl } from './elSelectors';
 import { getRuleBooksEnabled } from './rulesSelectors';

@@ -9,13 +9,13 @@
 
 import * as R from 'ramda';
 import * as Data from '../../types/data';
-import * as Wiki from '../../types/wiki';
 import { isActivatableDependentUnused } from '../activeEntries/unusedEntryUtils';
 import { Just, List, Maybe, Nothing, OrderedMap, Record } from '../dataUtils';
 import { removeHeroStateItem, setHeroStateItem } from '../heroStateUtils';
 import { flattenPrerequisites } from '../prerequisites/flattenPrerequisites';
 import { getGeneratedPrerequisites } from '../prerequisites/prerequisitesUtils';
 import { ActivatableReducer, OptionalActivatableReducer } from '../reducerUtils';
+import * as Wiki from '../wikiData/wikiTypeHelpers';
 import { convertUIStateToActiveObject } from './activatableConvertUtils';
 import { createActivatableDependent } from './createEntryUtils';
 import * as DependencyUtils from './dependencies/dependencyUtils';

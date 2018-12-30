@@ -1,6 +1,6 @@
 import { RawUIMessages } from '../../types/ui';
 import { List } from '../structures/List';
-import { fromDefault, makeGetters, Record } from '../structures/Record';
+import { fromDefault, Record } from '../structures/Record';
 
 export type L10n = {
   [K in keyof RawUIMessages]: RawUIMessages[K] extends (infer I)[] ? List<I> : RawUIMessages[K]
@@ -831,5 +831,3 @@ export const L10n =
     'wiki.initialmessage': '',
     'emptylistnoresults': '',
   })
-
-export const L10nG = makeGetters (L10n)

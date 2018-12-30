@@ -1,5 +1,5 @@
 import { Maybe, Nothing } from '../structures/Maybe';
-import { fromDefault, makeGetters } from '../structures/Record';
+import { fromDefault } from '../structures/Record';
 
 export interface ItemForView {
   id: string
@@ -11,7 +11,7 @@ export interface ItemForView {
   gr: number
 }
 
-const ItemForViewCreator =
+export const ItemForView =
   fromDefault<ItemForView> ({
     id: '',
     name: '',
@@ -21,5 +21,3 @@ const ItemForViewCreator =
     where: Nothing,
     gr: 0,
   })
-
-export const ItemForViewG = makeGetters (ItemForViewCreator)

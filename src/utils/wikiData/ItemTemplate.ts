@@ -1,6 +1,6 @@
 import { List } from '../structures/List';
 import { Maybe, Nothing } from '../structures/Maybe';
-import { fromDefault, makeGetters, Record } from '../structures/Record';
+import { fromDefault, Record } from '../structures/Record';
 import { PrimaryAttributeDamageThreshold } from './sub/PrimaryAttributeDamageThreshold';
 import { SourceLink } from './sub/SourceLink';
 
@@ -86,5 +86,3 @@ export const ItemTemplate =
     disadvantage: Nothing,
     src: List.empty,
   })
-
-export const ItemTemplateG = makeGetters (ItemTemplate)

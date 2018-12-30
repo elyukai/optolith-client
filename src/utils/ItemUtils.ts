@@ -1,19 +1,19 @@
 import { pipe } from 'ramda';
 import { IdPrefixes } from '../constants/IdPrefixes';
-import { EditItem, EditItemG } from './heroData/EditItem';
-import { EditPrimaryAttributeDamageThreshold, EditPrimaryAttributeDamageThresholdG } from './heroData/EditPrimaryAttributeDamageThreshold';
-import { Item, ItemG } from './heroData/Item';
+import { EditItem } from './heroData/EditItem';
+import { EditPrimaryAttributeDamageThreshold } from './heroData/EditPrimaryAttributeDamageThreshold';
+import { Item } from './heroData/Item';
 import { prefixRawId } from './IDUtils';
 import { ifElse } from './ifElse';
 import { getLevelElementsWithZero } from './levelUtils';
 import { gt } from './mathUtils';
-import { not } from './not';
+import { toFloat, toInt } from './NumberUtils';
 import { equals } from './structures/Eq';
 import { all, fromArray, fromElements, isList, length, List, map } from './structures/List';
 import { bind_, ensure, fmap, Just, mapMaybe, Maybe, maybe, Nothing, product, sum } from './structures/Maybe';
 import { Record } from './structures/Record';
 import { show } from './structures/Show';
-import { PrimaryAttributeDamageThreshold, PrimaryAttributeDamageThresholdG } from './wikiData/sub/PrimaryAttributeDamageThreshold';
+import { PrimaryAttributeDamageThreshold } from './wikiData/sub/PrimaryAttributeDamageThreshold';
 
 const ifNumberOrEmpty = maybe<number, string> ('') (show)
 
@@ -23,66 +23,54 @@ const convertDamageBonusToEdit =
       threshold: '',
     }))
     (damageBonus => EditPrimaryAttributeDamageThreshold ({
-      primary: PrimaryAttributeDamageThresholdG.primary (damageBonus),
+      primary: PrimaryAttributeDamageThreshold.A.primary (damageBonus),
       threshold: ifElse<number | List<number>, List<number>, string | List<string>>
         (isList)
         (map (show))
         (show)
-        (PrimaryAttributeDamageThresholdG.threshold (damageBonus)),
+        (PrimaryAttributeDamageThreshold.A.threshold (damageBonus)),
     }))
 
 export const convertToEdit =
   (item: Record<Item>): Record<EditItem> =>
     EditItem ({
-      id: Just (ItemG.id (item)),
-      name: ItemG.name (item),
-      ammunition: ItemG.ammunition (item),
-      combatTechnique: ItemG.combatTechnique (item),
-      damageDiceSides: ItemG.damageDiceSides (item),
-      gr: ItemG.gr (item),
-      isParryingWeapon: ItemG.isParryingWeapon (item),
-      isTemplateLocked: ItemG.isTemplateLocked (item),
-      reach: ItemG.reach (item),
-      template: ItemG.template (item),
-      where: ItemG.where (item),
-      isTwoHandedWeapon: ItemG.isTwoHandedWeapon (item),
-      improvisedWeaponGroup: ItemG.improvisedWeaponGroup (item),
-      loss: ItemG.loss (item),
-      forArmorZoneOnly: ItemG.forArmorZoneOnly (item),
-      addPenalties: ItemG.addPenalties (item),
-      armorType: ItemG.armorType (item),
-      at: ifNumberOrEmpty (ItemG.at (item)),
-      iniMod: ifNumberOrEmpty (ItemG.iniMod (item)),
-      movMod: ifNumberOrEmpty (ItemG.movMod (item)),
-      damageBonus: convertDamageBonusToEdit (ItemG.damageBonus (item)),
-      damageDiceNumber: ifNumberOrEmpty (ItemG.damageDiceNumber (item)),
-      damageFlat: ifNumberOrEmpty (ItemG.damageFlat (item)),
-      enc: ifNumberOrEmpty (ItemG.enc (item)),
-      length: ifNumberOrEmpty (ItemG.length (item)),
-      amount: show (ItemG.amount (item)),
-      pa: ifNumberOrEmpty (ItemG.pa (item)),
-      price: show (ItemG.price (item)),
-      pro: ifNumberOrEmpty (ItemG.pro (item)),
+      id: Just (Item.A.id (item)),
+      name: Item.A.name (item),
+      ammunition: Item.A.ammunition (item),
+      combatTechnique: Item.A.combatTechnique (item),
+      damageDiceSides: Item.A.damageDiceSides (item),
+      gr: Item.A.gr (item),
+      isParryingWeapon: Item.A.isParryingWeapon (item),
+      isTemplateLocked: Item.A.isTemplateLocked (item),
+      reach: Item.A.reach (item),
+      template: Item.A.template (item),
+      where: Item.A.where (item),
+      isTwoHandedWeapon: Item.A.isTwoHandedWeapon (item),
+      improvisedWeaponGroup: Item.A.improvisedWeaponGroup (item),
+      loss: Item.A.loss (item),
+      forArmorZoneOnly: Item.A.forArmorZoneOnly (item),
+      addPenalties: Item.A.addPenalties (item),
+      armorType: Item.A.armorType (item),
+      at: ifNumberOrEmpty (Item.A.at (item)),
+      iniMod: ifNumberOrEmpty (Item.A.iniMod (item)),
+      movMod: ifNumberOrEmpty (Item.A.movMod (item)),
+      damageBonus: convertDamageBonusToEdit (Item.A.damageBonus (item)),
+      damageDiceNumber: ifNumberOrEmpty (Item.A.damageDiceNumber (item)),
+      damageFlat: ifNumberOrEmpty (Item.A.damageFlat (item)),
+      enc: ifNumberOrEmpty (Item.A.enc (item)),
+      length: ifNumberOrEmpty (Item.A.length (item)),
+      amount: show (Item.A.amount (item)),
+      pa: ifNumberOrEmpty (Item.A.pa (item)),
+      price: show (Item.A.price (item)),
+      pro: ifNumberOrEmpty (Item.A.pro (item)),
       range: maybe<List<number>, List<string>> (fromElements ('', '', ''))
                                               (map (show))
-                                              (ItemG.range (item)),
-      reloadTime: ifNumberOrEmpty (ItemG.reloadTime (item)),
-      stp: ifNumberOrEmpty (ItemG.stp (item)),
-      weight: show (ItemG.weight (item)),
-      stabilityMod: ifNumberOrEmpty (ItemG.stabilityMod (item)),
+                                              (Item.A.range (item)),
+      reloadTime: ifNumberOrEmpty (Item.A.reloadTime (item)),
+      stp: ifNumberOrEmpty (Item.A.stp (item)),
+      weight: show (Item.A.weight (item)),
+      stabilityMod: ifNumberOrEmpty (Item.A.stabilityMod (item)),
     })
-
-const isNotNaN = pipe (Number.isNaN, not)
-
-const ensureIsNotNaN = bind_<number, number> (ensure (isNotNaN))
-
-const toInt =
-  (e: string): Maybe<number> =>
-    e.length > 0 ? ensureIsNotNaN (Just (Number.parseInt (e.replace (/\,/, '.'), 10))) : Nothing
-
-const toFloat =
-  (e: string): Maybe<number> =>
-    e.length > 0 ? ensureIsNotNaN (Just (Number.parseFloat (e.replace (/\,/, '.')))) : Nothing
 
 const toMaybeIntGreaterThan =
   (int: number) => pipe (toInt, bind_<number, number> (ensure (gt (int))))
@@ -96,58 +84,58 @@ const convertDamageBonusToSave =
       (isList)
       (threshold => all<string> (e => e .length > 0) (threshold)
         ? Just (PrimaryAttributeDamageThreshold ({
-          primary: EditPrimaryAttributeDamageThresholdG.primary (damageBonus),
+          primary: EditPrimaryAttributeDamageThreshold.A.primary (damageBonus),
           threshold: mapMaybe<string, number> (toInt) (threshold),
         }))
         : Nothing)
       (threshold => threshold .length > 0
         ? fmap ((safeThreshold: number) => PrimaryAttributeDamageThreshold ({
-                 primary: EditPrimaryAttributeDamageThresholdG.primary (damageBonus),
+                 primary: EditPrimaryAttributeDamageThreshold.A.primary (damageBonus),
                  threshold: safeThreshold,
                }))
                (toInt (threshold))
         : Nothing)
-      (EditPrimaryAttributeDamageThresholdG.threshold (damageBonus))
+      (EditPrimaryAttributeDamageThreshold.A.threshold (damageBonus))
 
 export const convertToSave =
   (id: string) =>
   (item: Record<EditItem>): Record<Item> =>
     Item ({
       id,
-      name: EditItemG.name (item),
-      ammunition: EditItemG.ammunition (item),
-      combatTechnique: EditItemG.combatTechnique (item),
-      damageDiceSides: EditItemG.damageDiceSides (item),
-      gr: EditItemG.gr (item),
-      isParryingWeapon: EditItemG.isParryingWeapon (item),
-      isTemplateLocked: EditItemG.isTemplateLocked (item),
-      reach: EditItemG.reach (item),
-      template: EditItemG.template (item),
-      where: EditItemG.where (item),
-      isTwoHandedWeapon: EditItemG.isTwoHandedWeapon (item),
-      improvisedWeaponGroup: EditItemG.improvisedWeaponGroup (item),
-      loss: EditItemG.loss (item),
-      forArmorZoneOnly: EditItemG.forArmorZoneOnly (item),
-      addPenalties: EditItemG.addPenalties (item),
-      armorType: EditItemG.armorType (item),
-      at: toInt (EditItemG.at (item)),
-      iniMod: toMaybeIntGreaterThan0 (EditItemG.iniMod (item)),
-      movMod: toMaybeIntGreaterThan0 (EditItemG.movMod (item)),
-      damageBonus: convertDamageBonusToSave (EditItemG.damageBonus (item)),
-      damageDiceNumber: toInt (EditItemG.damageDiceNumber (item)),
-      damageFlat: toInt (EditItemG.damageFlat (item)),
-      enc: toInt (EditItemG.enc (item)),
-      length: toFloat (EditItemG.length (item)),
-      amount: product (toMaybeIntGreaterThan1 (EditItemG.amount (item))),
-      pa: toInt (EditItemG.pa (item)),
-      price: toFloat (EditItemG.price (item)),
-      pro: toInt (EditItemG.pro (item)),
+      name: EditItem.A.name (item),
+      ammunition: EditItem.A.ammunition (item),
+      combatTechnique: EditItem.A.combatTechnique (item),
+      damageDiceSides: EditItem.A.damageDiceSides (item),
+      gr: EditItem.A.gr (item),
+      isParryingWeapon: EditItem.A.isParryingWeapon (item),
+      isTemplateLocked: EditItem.A.isTemplateLocked (item),
+      reach: EditItem.A.reach (item),
+      template: EditItem.A.template (item),
+      where: EditItem.A.where (item),
+      isTwoHandedWeapon: EditItem.A.isTwoHandedWeapon (item),
+      improvisedWeaponGroup: EditItem.A.improvisedWeaponGroup (item),
+      loss: EditItem.A.loss (item),
+      forArmorZoneOnly: EditItem.A.forArmorZoneOnly (item),
+      addPenalties: EditItem.A.addPenalties (item),
+      armorType: EditItem.A.armorType (item),
+      at: toInt (EditItem.A.at (item)),
+      iniMod: toMaybeIntGreaterThan0 (EditItem.A.iniMod (item)),
+      movMod: toMaybeIntGreaterThan0 (EditItem.A.movMod (item)),
+      damageBonus: convertDamageBonusToSave (EditItem.A.damageBonus (item)),
+      damageDiceNumber: toInt (EditItem.A.damageDiceNumber (item)),
+      damageFlat: toInt (EditItem.A.damageFlat (item)),
+      enc: toInt (EditItem.A.enc (item)),
+      length: toFloat (EditItem.A.length (item)),
+      amount: product (toMaybeIntGreaterThan1 (EditItem.A.amount (item))),
+      pa: toInt (EditItem.A.pa (item)),
+      price: toFloat (EditItem.A.price (item)),
+      pro: toInt (EditItem.A.pro (item)),
       range: ensure<List<number>> (pipe (length, equals (3)))
-                                  (mapMaybe (toInt) (EditItemG.range (item))),
-      reloadTime: toInt (EditItemG.reloadTime (item)),
-      stp: toInt (EditItemG.stp (item)),
-      weight: sum (toFloat (EditItemG.weight (item))),
-      stabilityMod: toInt (EditItemG.stabilityMod (item)),
+                                  (mapMaybe (toInt) (EditItem.A.range (item))),
+      reloadTime: toInt (EditItem.A.reloadTime (item)),
+      stp: toInt (EditItem.A.stp (item)),
+      weight: sum (toFloat (EditItem.A.weight (item))),
+      stabilityMod: toInt (EditItem.A.stabilityMod (item)),
     })
 
 export const convertPrimaryAttributeToArray =

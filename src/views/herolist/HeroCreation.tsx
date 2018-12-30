@@ -8,9 +8,9 @@ import { Option, SegmentedControls } from '../../components/SegmentedControls';
 import { TextField } from '../../components/TextField';
 import { Sex } from '../../types/data';
 import { UIMessagesObject } from '../../types/ui';
-import { Book, ExperienceLevel } from '../../types/wiki';
 import { List, Maybe, Nothing, OrderedMap, OrderedSet, Record } from '../../utils/dataUtils';
 import { translate } from '../../utils/I18n';
+import { Book, ExperienceLevel } from '../../utils/wikiData/wikiTypeHelpers';
 
 export interface HeroCreationProps extends DialogProps {
   locale: UIMessagesObject;

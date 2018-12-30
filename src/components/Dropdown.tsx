@@ -4,7 +4,7 @@ import * as React from 'react';
 import { equals } from '../utils/structures/Eq';
 import { find, length, List, map, toArray } from '../utils/structures/List';
 import { alt, fmap, fromMaybe, fromNullable, isNothing, Maybe, normalize, Nothing, or } from '../utils/structures/Maybe';
-import { fromDefault, makeGetters, Record } from '../utils/structures/Record';
+import { fromDefault, makeAccessors, Record } from '../utils/structures/Record';
 import { Label } from './Label';
 import { Scroll } from './Scroll';
 
@@ -21,7 +21,7 @@ export const DropdownOptionCreator =
     disabled: Nothing,
   })
 
-const DropdownOptionG = makeGetters (DropdownOptionCreator)
+const DropdownOptionG = makeAccessors (DropdownOptionCreator)
 
 const { disabled: getDisabled, id, name } = DropdownOptionG
 

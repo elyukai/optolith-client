@@ -1,11 +1,11 @@
 import { pipe } from 'ramda';
-import { SpecialAbility } from '../../types/wiki';
 import { ActivatableDependent, ActivatableDependentG } from '../activeEntries/ActivatableDependent';
 import { isBlessedTraditionId, isMagicalTraditionId } from '../IDUtils';
 import { filter, List } from '../structures/List';
 import { bind_, mapMaybe } from '../structures/Maybe';
 import { elems, find, lookup_, OrderedMap } from '../structures/OrderedMap';
 import { Record } from '../structures/Record';
+import { SpecialAbility } from '../wikiData/wikiTypeHelpers';
 import { isActive } from './isActive';
 
 const { id } = ActivatableDependentG

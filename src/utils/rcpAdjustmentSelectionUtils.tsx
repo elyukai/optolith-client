@@ -3,7 +3,6 @@ import * as React from 'react';
 import { Checkbox } from '../components/Checkbox';
 import { Dropdown, DropdownOption } from '../components/Dropdown';
 import { LanguagesSelectionListItem, ScriptsSelectionListItem } from '../types/data';
-import * as Wiki from '../types/wiki';
 import { SelectionsCantrips } from '../views/rcp/SelectionsCantrips';
 import { SelectionsCombatTechniques } from '../views/rcp/SelectionsCombatTechniques';
 import { SelectionsCurses } from '../views/rcp/SelectionsCurses';
@@ -16,6 +15,7 @@ import { IdentityFn, List, Maybe, OrderedMap, OrderedSet, Record, Tuple } from '
 import { sortObjects } from './FilterSortUtils';
 import { translate, UIMessagesObject } from './I18n';
 import { Just, Nothing } from './structures/Maybe.new';
+import * as Wiki from './wikiData/wikiTypeHelpers';
 import { getAllWikiEntriesByGroup } from './WikiUtils';
 
 const isProfessionSpecializationSelection =

@@ -3,8 +3,8 @@ import { getCurrentCulture, getCurrentProfession, getCurrentProfessionVariant, g
 import { getWiki } from '../selectors/stateSelectors';
 import { AsyncAction } from '../types/actions';
 import { Selections } from '../types/data';
-import { Culture, Profession, ProfessionVariant, Race, WikiAll } from '../types/wiki';
 import { Maybe, Record } from '../utils/dataUtils';
+import { Culture, Profession, ProfessionVariant, Race, WikiAll } from '../utils/wikiData/wikiTypeHelpers';
 
 export interface SelectProfessionAction {
   type: ActionTypes.SELECT_PROFESSION;

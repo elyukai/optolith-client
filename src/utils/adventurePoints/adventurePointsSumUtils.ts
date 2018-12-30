@@ -1,9 +1,9 @@
 import * as R from 'ramda';
 import { Categories } from '../../constants/Categories';
 import * as Data from '../../types/data';
-import * as Wiki from '../../types/wiki';
 import { getAllActiveByCategory } from '../activatable/activatableActiveUtils';
 import { Just, List, Maybe, OrderedMap, OrderedSet, Record } from '../dataUtils';
+import * as Wiki from '../wikiData/wikiTypeHelpers';
 import { getAdventurePointsSpentDifference } from './adventurePointsUtils';
 import { getAPRange } from './improvementCostUtils';
 

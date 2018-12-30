@@ -1,6 +1,6 @@
-import { ProfessionSelectionIds, ProfessionVariantSelection } from '../../../types/wiki';
 import { List } from '../../structures/List';
-import { fromDefault, makeGetters, member, Record } from '../../structures/Record';
+import { fromDefault, member, Record } from '../../structures/Record';
+import { ProfessionSelectionIds, ProfessionVariantSelection } from '../wikiTypeHelpers';
 
 export interface CombatTechniquesSelection {
   id: ProfessionSelectionIds.COMBAT_TECHNIQUES;
@@ -17,11 +17,9 @@ export const CombatTechniquesSelection =
     sid: List.empty,
   })
 
-export const CombatTechniquesSelectionG = makeGetters (CombatTechniquesSelection)
-
 export const isCombatTechniquesSelection =
   (obj: ProfessionVariantSelection): obj is Record<CombatTechniquesSelection> =>
-    CombatTechniquesSelectionG.id (obj as unknown as Record<CombatTechniquesSelection>)
+    CombatTechniquesSelection.A.id (obj as unknown as Record<CombatTechniquesSelection>)
       === ProfessionSelectionIds.COMBAT_TECHNIQUES
       && member ('sid') (obj)
       && member ('value') (obj)

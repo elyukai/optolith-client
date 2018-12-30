@@ -1,5 +1,5 @@
 import { Maybe, Nothing } from '../structures/Maybe';
-import { fromDefault, makeGetters, makeLenses_ } from '../structures/Record';
+import { fromDefault, makeLenses_ } from '../structures/Record';
 
 export interface PersonalData {
   family: Maybe<string>
@@ -37,5 +37,4 @@ export const PersonalData =
     cultureAreaKnowledge: Nothing,
   })
 
-export const PersonalDataG = makeGetters (PersonalData)
-export const PersonalDataL = makeLenses_ (PersonalDataG) (PersonalData)
+export const PersonalDataL = makeLenses_ (PersonalData)

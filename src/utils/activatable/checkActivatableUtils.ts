@@ -1,7 +1,7 @@
 import * as Data from '../../types/data';
-import { Activatable, AllRequirements } from '../../types/wiki';
 import { getFirstTierPrerequisites } from '../prerequisites/flattenPrerequisites';
 import { isRequiringActivatable } from '../wikiData/prerequisites/DependentRequirement';
+import { Activatable, AllRequirements } from '../wikiData/wikiTypeHelpers';
 import { Record } from './dataUtils';
 
 const getMagicalOrBlessedFilter =

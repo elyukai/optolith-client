@@ -1,9 +1,9 @@
 import { Categories } from '../../constants/Categories';
-import { CheckModifier, EntryWithCategory } from '../../types/wiki';
 import { List } from '../structures/List';
 import { Maybe, Nothing } from '../structures/Maybe';
-import { fromDefault, makeGetters, Record } from '../structures/Record';
+import { fromDefault, Record } from '../structures/Record';
 import { SourceLink } from './sub/SourceLink';
+import { CheckModifier, EntryWithCategory } from './wikiTypeHelpers';
 
 export interface LiturgicalChant {
   id: string
@@ -52,7 +52,5 @@ export const LiturgicalChant =
     src: List.empty,
   })
 
-export const LiturgicalChantG = makeGetters (LiturgicalChant)
-
 export const isLiturgicalChant =
-  (r: EntryWithCategory) => LiturgicalChantG.category (r) === Categories.LITURGIES
+  (r: EntryWithCategory) => LiturgicalChant.A.category (r) === Categories.LITURGIES

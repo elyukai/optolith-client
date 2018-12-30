@@ -1,8 +1,8 @@
 import { Categories } from '../../constants/Categories';
-import { EntryWithCategory } from '../../types/wiki';
 import { List } from '../structures/List';
-import { fromDefault, makeGetters, Record } from '../structures/Record';
+import { fromDefault, Record } from '../structures/Record';
 import { SourceLink } from './sub/SourceLink';
+import { EntryWithCategory } from './wikiTypeHelpers';
 
 export interface Blessing {
   id: string
@@ -31,7 +31,5 @@ export const Blessing =
     src: List.empty,
   })
 
-export const BlessingG = makeGetters (Blessing)
-
 export const isBlessing =
-  (r: EntryWithCategory) => BlessingG.category (r) === Categories.BLESSINGS
+  (r: EntryWithCategory) => Blessing.A.category (r) === Categories.BLESSINGS

@@ -1,6 +1,6 @@
-import { ProfessionSelectionIds } from '../../../types/wiki';
 import { List } from '../../structures/List';
-import { fromDefault, makeGetters } from '../../structures/Record';
+import { fromDefault } from '../../structures/Record';
+import { ProfessionSelectionIds } from '../wikiTypeHelpers';
 
 export interface CantripsSelection {
   id: ProfessionSelectionIds.CANTRIPS;
@@ -14,5 +14,3 @@ export const CantripsSelection =
     amount: 0,
     sid: List.empty,
   })
-
-export const CantripsSelectionG = makeGetters (CantripsSelection)

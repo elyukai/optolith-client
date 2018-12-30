@@ -1,7 +1,7 @@
 import { Dependent, SkillDependency } from '../../types/data';
 import { fnull, fromElements, List } from '../structures/List';
 import { fromJust, isJust, Just, Maybe } from '../structures/Maybe';
-import { fromDefault, makeGetters, makeLenses_, member, notMember, Omit, Record } from '../structures/Record';
+import { fromDefault, makeLenses_, member, notMember, Omit, Record } from '../structures/Record';
 
 export interface AttributeDependent {
   id: string;
@@ -18,9 +18,7 @@ export const AttributeDependent =
     dependencies: fromElements<SkillDependency> (),
   })
 
-export const AttributeDependentG = makeGetters (AttributeDependent)
-
-export const AttributeDependentL = makeLenses_ (AttributeDependentG) (AttributeDependent)
+export const AttributeDependentL = makeLenses_ (AttributeDependent)
 
 export const createAttributeDependent =
   (options: Partial<Omit<AttributeDependent, 'id'>>) =>
@@ -51,7 +49,7 @@ export const isAttributeDependent =
     && member ('mod') (entry)
     && notMember ('active') (entry)
 
-const { mod, value, dependencies } = AttributeDependentG
+const { mod, value, dependencies } = AttributeDependent.A
 
 export const isAttributeDependentUnused =
   (entry: Record<AttributeDependent>): boolean =>

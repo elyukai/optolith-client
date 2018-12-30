@@ -1,14 +1,14 @@
 import { isActive } from './activatable/isActive';
 import { ActivatableDependent } from './activeEntries/ActivatableDependent';
-import { HeroModelG, HeroModelRecord } from './heroData/HeroModel';
+import { HeroModel, HeroModelRecord } from './heroData/HeroModel';
 import { getAllEntriesByGroup } from './heroStateUtils';
 import { any, filter, length, List } from './structures/List';
 import { Record } from './structures/Record';
 import { SpecialAbility } from './wikiData/SpecialAbility';
-import { WikiModelG, WikiModelRecord } from './wikiData/WikiModel';
+import { WikiModel, WikiModelRecord } from './wikiData/WikiModel';
 
-const { specialAbilities: wikiSpecialAbilities } = WikiModelG
-const { specialAbilities } = HeroModelG
+const { specialAbilities: wikiSpecialAbilities } = WikiModel.A
+const { specialAbilities } = HeroModel.A
 
 export const getActiveGroupEntries =
   (wiki: WikiModelRecord) =>

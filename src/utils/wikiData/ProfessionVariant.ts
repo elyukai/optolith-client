@@ -1,11 +1,11 @@
 import { Categories } from '../../constants/Categories';
-import { EntryWithCategory, ProfessionDependency, ProfessionPrerequisite, ProfessionVariantSelections } from '../../types/wiki';
 import { List } from '../structures/List';
 import { Maybe, Nothing } from '../structures/Maybe';
-import { fromDefault, makeGetters, Record } from '../structures/Record';
+import { fromDefault, Record } from '../structures/Record';
 import { ProfessionRequireActivatable } from './prerequisites/ActivatableRequirement';
 import { IncreaseSkill } from './sub/IncreaseSkill';
 import { NameBySex } from './sub/NameBySex';
+import { EntryWithCategory, ProfessionDependency, ProfessionPrerequisite, ProfessionVariantSelections } from './wikiTypeHelpers';
 
 export interface ProfessionVariant {
   id: string
@@ -48,7 +48,5 @@ export const ProfessionVariant =
     category: Categories.PROFESSION_VARIANTS,
   })
 
-export const ProfessionVariantG = makeGetters (ProfessionVariant)
-
 export const isProfessionVariant =
-  (r: EntryWithCategory) => ProfessionVariantG.category (r) === Categories.PROFESSION_VARIANTS
+  (r: EntryWithCategory) => ProfessionVariant.A.category (r) === Categories.PROFESSION_VARIANTS

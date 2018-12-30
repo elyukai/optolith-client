@@ -1,7 +1,7 @@
 import { ItemEditorSpecific } from '../../types/data';
 import { fromElements } from '../structures/List';
 import { Nothing } from '../structures/Maybe';
-import { fromDefault, makeGetters } from '../structures/Record';
+import { fromDefault } from '../structures/Record';
 import { EditPrimaryAttributeDamageThreshold } from './EditPrimaryAttributeDamageThreshold';
 import { ItemBase } from './Item';
 
@@ -44,5 +44,3 @@ export const EditItem =
     weight: '',
     stabilityMod: '',
   })
-
-export const EditItemG = makeGetters (EditItem)

@@ -1,4 +1,4 @@
-import { fromDefault, makeGetters } from '../structures/Record';
+import { fromDefault } from '../structures/Record';
 
 export interface ExperienceLevel {
   id: string
@@ -24,5 +24,3 @@ export const ExperienceLevel =
     maxSpellsLiturgies: 0,
     maxUnfamiliarSpells: 0,
   })
-
-export const ExperienceLevelG = makeGetters (ExperienceLevel)

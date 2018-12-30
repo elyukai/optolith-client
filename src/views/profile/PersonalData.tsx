@@ -10,9 +10,9 @@ import { Scroll } from '../../components/Scroll';
 import { VerticalList } from '../../components/VerticalList';
 import { ActiveViewObject, PersonalData as PersonalDataInterface } from '../../types/data';
 import { UIMessagesObject } from '../../types/ui';
-import { Advantage, Culture, Disadvantage, ExperienceLevel, Profession, ProfessionVariant, Race, RaceVariant } from '../../types/wiki';
 import { Just, List, Maybe, Record } from '../../utils/dataUtils';
 import { translate } from '../../utils/I18n';
+import { Advantage, Culture, Disadvantage, ExperienceLevel, Profession, ProfessionVariant, Race, RaceVariant } from '../../utils/wikiData/wikiTypeHelpers';
 import { OverviewAddAP } from './OverviewAddAP';
 import { OverviewPersonalData, OverviewPersonalDataDispatchProps } from './OverviewPersonalData';
 

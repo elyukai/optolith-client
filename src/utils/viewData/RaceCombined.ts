@@ -1,5 +1,5 @@
 import { List } from '../structures/List';
-import { fromDefault, makeGetters, Record } from '../structures/Record';
+import { fromDefault, Record } from '../structures/Record';
 import { Race } from '../wikiData/Race';
 import { RaceVariant } from '../wikiData/RaceVariant';
 
@@ -13,5 +13,3 @@ export const RaceCombined =
     wikiEntry: Race .default,
     mappedVariants: List.empty,
   })
-
-export const RaceCombinedG = makeGetters (RaceCombined)

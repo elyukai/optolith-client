@@ -1,9 +1,9 @@
 import { Categories } from '../../constants/Categories';
-import { EntryWithCategory } from '../../types/wiki';
 import { List } from '../structures/List';
 import { Maybe, Nothing } from '../structures/Maybe';
-import { fromDefault, makeGetters, Record } from '../structures/Record';
+import { fromDefault, Record } from '../structures/Record';
 import { SourceLink } from './sub/SourceLink';
+import { EntryWithCategory } from './wikiTypeHelpers';
 
 export interface CombatTechnique {
   id: string
@@ -30,7 +30,5 @@ export const CombatTechnique =
     src: List.empty,
   })
 
-export const CombatTechniqueG = makeGetters (CombatTechnique)
-
 export const isCombatTechnique =
-  (r: EntryWithCategory) => CombatTechniqueG.category (r) === Categories.COMBAT_TECHNIQUES
+  (r: EntryWithCategory) => CombatTechnique.A.category (r) === Categories.COMBAT_TECHNIQUES

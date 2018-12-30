@@ -2,7 +2,6 @@ import * as R from 'ramda';
 import * as Categories from '../../constants/Categories';
 import { IdPrefixes } from '../../constants/IdPrefixes';
 import * as Raw from '../../types/rawdata';
-import * as Wiki from '../../types/wiki';
 import { getCategoryById, prefixRawId } from '../IDUtils';
 import { elem_, List } from '../structures/List';
 import { fmap, fromNullable, Just, Maybe, Nothing, or } from '../structures/Maybe';
@@ -29,6 +28,7 @@ import { TerrainKnowledgeSelection } from '../wikiData/professionSelections/Terr
 import { Application } from '../wikiData/sub/Application';
 import { IncreaseSkill } from '../wikiData/sub/IncreaseSkill';
 import { SelectOption } from '../wikiData/sub/SelectOption';
+import * as Wiki from '../wikiData/wikiTypeHelpers';
 
 const isRawSexRequirement =
   (req: Raw.AllRawRequirementObjects): req is Raw.RawSexRequirement =>

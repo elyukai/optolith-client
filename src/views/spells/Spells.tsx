@@ -19,11 +19,11 @@ import { Categories } from '../../constants/Categories';
 import { WikiInfoContainer } from '../../containers/WikiInfoContainer';
 import { DCIds } from '../../selectors/derivedCharacteristicsSelectors';
 import { SecondaryAttribute } from '../../types/data';
-import { Cantrip, SpecialAbility, Spell } from '../../types/wiki';
 import { Just, List, Maybe, Nothing, OrderedMap, Record, Tuple } from '../../utils/dataUtils';
 import { translate, UIMessagesObject } from '../../utils/I18n';
 import { isOwnTradition } from '../../utils/SpellUtils';
 import { AttributeCombined, CantripCombined, SpellIsActive, SpellWithRequirements } from '../../utils/viewData/viewTypeHelpers';
+import { Cantrip, SpecialAbility, Spell } from '../../utils/wikiData/wikiTypeHelpers';
 import { SkillListItem } from '../skills/SkillListItem';
 
 export interface SpellsOwnProps {

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { UIMessages } from '../../../types/data';
-import { Book, SourceLink } from '../../../types/wiki';
 import { sortStrings } from '../../../utils/FilterSortUtils';
+import { Book, SourceLink } from '../../../utils/wikiData/wikiTypeHelpers';
 
 export interface WikiSourceProps {
   books: Map<string, Book>;

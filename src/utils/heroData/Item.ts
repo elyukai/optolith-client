@@ -1,6 +1,6 @@
 import { List } from '../structures/List';
 import { Maybe, Nothing } from '../structures/Maybe';
-import { fromDefault, makeGetters, Record } from '../structures/Record';
+import { fromDefault, Record } from '../structures/Record';
 import { PrimaryAttributeDamageThreshold } from '../wikiData/sub/PrimaryAttributeDamageThreshold';
 import { SourceLink } from '../wikiData/sub/SourceLink';
 
@@ -91,5 +91,3 @@ export const Item =
     disadvantage: Nothing,
     src: Nothing,
   })
-
-export const ItemG = makeGetters (Item)

@@ -1,9 +1,9 @@
 import { Categories } from '../../constants/Categories';
-import { EntryWithCategory } from '../../types/wiki';
 import { List } from '../structures/List';
 import { Maybe, Nothing } from '../structures/Maybe';
-import { fromDefault, makeGetters, Record } from '../structures/Record';
+import { fromDefault, Record } from '../structures/Record';
 import { Application } from './sub/Application';
+import { EntryWithCategory } from './wikiTypeHelpers';
 
 export interface Skill {
   id: string
@@ -42,7 +42,5 @@ export const Skill =
     src: '',
   })
 
-export const SkillG = makeGetters (Skill)
-
 export const isSkill =
-  (r: EntryWithCategory) => SkillG.category (r) === Categories.TALENTS
+  (r: EntryWithCategory) => Skill.A.category (r) === Categories.TALENTS

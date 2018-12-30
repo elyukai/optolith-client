@@ -2,7 +2,7 @@ import { pipe } from 'ramda';
 import { thrush } from './structures/Function';
 import { fnull, List, subscript } from './structures/List';
 import { fmap, maybe, Maybe, normalize, sum } from './structures/Maybe';
-import { L10nG, L10nRecord } from './wikiData/L10n';
+import { L10n, L10nRecord } from './wikiData/L10n';
 
 /**
  * Displays a localized message and inserts values into placeholders if
@@ -14,7 +14,7 @@ import { L10nG, L10nRecord } from './wikiData/L10n';
  * index.
  */
 export const translateP =
-  <T extends typeof L10nG[keyof typeof L10nG]>
+  <T extends typeof L10n.A[keyof typeof L10n.A]>
   (messages: L10nRecord) =>
   (getter: T) =>
   (params: List<string | number>): ReturnType<T> => {
@@ -42,7 +42,7 @@ export const translateP =
  * @param key The key in messages containing the string you want to display.
  */
 export const translate =
-  <T extends typeof L10nG[keyof typeof L10nG]>
+  <T extends typeof L10n.A[keyof typeof L10n.A]>
   (messages: L10nRecord) =>
   (getter: T): ReturnType<T> =>
     translateP (messages) (getter) (List.empty) as ReturnType<T>
@@ -56,7 +56,7 @@ export const translate =
  * index.
  */
 export const translateMP =
-  <A extends typeof L10nG[keyof typeof L10nG]>
+  <A extends typeof L10n.A[keyof typeof L10n.A]>
   (messages: Maybe<L10nRecord>) =>
   (getter: A) =>
   (params: List<string | number>): Maybe<ReturnType<A>> =>
@@ -70,7 +70,7 @@ export const translateMP =
  * @param key The key in messages containing the string you want to display.
  */
 export const translateM =
-  <A extends typeof L10nG[keyof typeof L10nG]>
+  <A extends typeof L10n.A[keyof typeof L10n.A]>
   (messages: Maybe<L10nRecord>) =>
   (getter: A): Maybe<ReturnType<A>> =>
     translateMP (messages) (getter) (List.empty) as Maybe<ReturnType<A>>

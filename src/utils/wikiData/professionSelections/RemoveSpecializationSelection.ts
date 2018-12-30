@@ -1,5 +1,5 @@
-import { ProfessionSelectionIds, ProfessionVariantSelection } from '../../../types/wiki';
-import { fromDefault, makeGetters, Record } from '../../structures/Record';
+import { fromDefault, Record } from '../../structures/Record';
+import { ProfessionSelectionIds, ProfessionVariantSelection } from '../wikiTypeHelpers';
 import { SpecializationSelection } from './SpecializationSelection';
 
 export interface RemoveSpecializationSelection {
@@ -16,8 +16,6 @@ const _RemoveSpecializationSelection =
     id: ProfessionSelectionIds.SPECIALIZATION,
     active: false,
   })
-
-export const RemoveSpecializationSelectionG = makeGetters (_RemoveSpecializationSelection)
 
 export const RemoveSpecializationSelection =
   _RemoveSpecializationSelection ({

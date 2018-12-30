@@ -1,6 +1,6 @@
 import { pipe } from 'ramda';
 import { getBlessedTradition, getMagicalTraditions } from './activatable/traditionUtils';
-import { ActivatableDependent, ActivatableDependentG } from './activeEntries/ActivatableDependent';
+import { ActivatableDependent } from './activeEntries/ActivatableDependent';
 import * as IDUtils from './IDUtils';
 import { match } from './match';
 import { cnst } from './structures/Function';
@@ -9,7 +9,7 @@ import { bind_, Just, listToMaybe, Maybe, Nothing } from './structures/Maybe';
 import { OrderedMap } from './structures/OrderedMap';
 import { Record } from './structures/Record';
 
-const { id } = ActivatableDependentG
+const { id } = ActivatableDependent.A
 
 const getAttributeIdByMagicalNumericId =
   bind_ (

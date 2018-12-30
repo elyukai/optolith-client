@@ -5,10 +5,10 @@ import { Hr } from '../../components/Hr';
 import { IconButton } from '../../components/IconButton';
 import { TextField } from '../../components/TextField';
 import { ItemEditorInstance } from '../../types/data';
-import { ItemTemplate } from '../../types/wiki';
 import { Just, List, Maybe, Record } from '../../utils/dataUtils';
 import { translate, UIMessagesObject } from '../../utils/I18n';
 import { ItemEditorInputValidation } from '../../utils/ItemUtils';
+import { ItemTemplate } from '../../utils/wikiData/wikiTypeHelpers';
 
 export interface ItemEditorCommonSectionProps {
   isInCreation: Maybe<boolean>;

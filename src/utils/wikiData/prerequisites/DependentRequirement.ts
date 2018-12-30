@@ -1,4 +1,4 @@
-import { AllRequirements, DependentPrerequisite } from '../../../types/wiki';
+import { AllRequirements, DependentPrerequisite } from '../wikiTypeHelpers';
 import { isCultureRequirement } from './CultureRequirement';
 import { isPactRequirement } from './PactRequirement';
 import { isRaceRequirement } from './RaceRequirement';

@@ -13,9 +13,9 @@ import { SortNames, SortOptions } from '../../components/SortOptions';
 import { TextField } from '../../components/TextField';
 import { WikiInfoContainer } from '../../containers/WikiInfoContainer';
 import { ActivatableDependent, ActivateArgs, ActiveViewObject, DeactivateArgs, DeactiveViewObject } from '../../types/data';
-import { SpecialAbility } from '../../types/wiki';
 import { Just, List, Maybe, Nothing, OrderedMap, Record } from '../../utils/dataUtils';
 import { translate, UIMessagesObject } from '../../utils/I18n';
+import { SpecialAbility } from '../../utils/wikiData/wikiTypeHelpers';
 
 export interface SpecialAbilitiesOwnProps {
   locale: UIMessagesObject;

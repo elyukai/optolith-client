@@ -1,9 +1,9 @@
 import { Categories } from '../../constants/Categories';
-import { EntryWithCategory } from '../../types/wiki';
 import { List } from '../structures/List';
 import { Maybe, Nothing } from '../structures/Maybe';
-import { fromDefault, makeGetters, Record } from '../structures/Record';
+import { fromDefault, Record } from '../structures/Record';
 import { SourceLink } from './sub/SourceLink';
+import { EntryWithCategory } from './wikiTypeHelpers';
 
 export interface Cantrip {
   id: string
@@ -34,7 +34,5 @@ export const Cantrip =
     src: List.empty,
   })
 
-export const CantripG = makeGetters (Cantrip)
-
 export const isCantrip =
-  (r: EntryWithCategory) => CantripG.category (r) === Categories.CANTRIPS
+  (r: EntryWithCategory) => Cantrip.A.category (r) === Categories.CANTRIPS

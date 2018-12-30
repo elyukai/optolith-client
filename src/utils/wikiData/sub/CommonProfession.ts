@@ -1,5 +1,5 @@
 import { List } from '../../structures/List';
-import { fromDefault, makeGetters } from '../../structures/Record';
+import { fromDefault } from '../../structures/Record';
 
 export interface CommonProfession {
   list: List<string | number>
@@ -11,6 +11,3 @@ export const CommonProfession =
     list: List.empty,
     reverse: false,
   })
-
-export const CommonProfessionG = makeGetters (CommonProfession)
-

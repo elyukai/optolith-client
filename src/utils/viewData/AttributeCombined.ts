@@ -1,5 +1,5 @@
 import { AttributeDependent } from '../activeEntries/AttributeDependent';
-import { fromDefault, makeGetters, Record } from '../structures/Record';
+import { fromDefault, Record } from '../structures/Record';
 import { Attribute } from '../wikiData/Attribute';
 
 export interface AttributeCombined {
@@ -12,5 +12,3 @@ export const AttributeCombined =
     wikiEntry: Attribute .default,
     stateEntry: AttributeDependent .default,
   })
-
-export const AttributeCombinedG = makeGetters (AttributeCombined)

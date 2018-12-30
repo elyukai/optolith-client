@@ -1,9 +1,9 @@
 import { Categories } from '../../constants/Categories';
-import { AllRequirementObjects, CheckModifier, EntryWithCategory } from '../../types/wiki';
 import { List } from '../structures/List';
 import { Maybe, Nothing } from '../structures/Maybe';
-import { fromDefault, makeGetters, Record } from '../structures/Record';
+import { fromDefault, Record } from '../structures/Record';
 import { SourceLink } from './sub/SourceLink';
+import { AllRequirementObjects, CheckModifier, EntryWithCategory } from './wikiTypeHelpers';
 
 export interface Spell {
   id: string
@@ -56,7 +56,5 @@ export const Spell =
     src: List.empty,
   })
 
-export const SpellG = makeGetters (Spell)
-
 export const isSpell =
-  (r: EntryWithCategory) => SpellG.category (r) === Categories.SPELLS
+  (r: EntryWithCategory) => Spell.A.category (r) === Categories.SPELLS

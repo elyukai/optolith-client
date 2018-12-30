@@ -6,13 +6,13 @@ import { getCurrentHeroPresent, getWiki } from '../selectors/stateSelectors';
 import { AsyncAction } from '../types/actions';
 import { ActivatableDependent, ActivateArgs, ActiveObjectWithId, DeactivateArgs } from '../types/data';
 import { UIMessagesObject } from '../types/ui';
-import { SpecialAbility } from '../types/wiki';
 import { getNameCost } from '../utils/activatable/activatableActiveUtils';
 import { convertPerTierCostToFinalCost } from '../utils/adventurePoints/activatableCostUtils';
 import { getAreSufficientAPAvailable } from '../utils/adventurePoints/adventurePointsUtils';
 import { Just, Maybe, Record } from '../utils/dataUtils';
 import { getHeroStateItem } from '../utils/heroStateUtils';
 import { translate } from '../utils/I18n';
+import { SpecialAbility } from '../utils/wikiData/wikiTypeHelpers';
 import { getWikiEntry } from '../utils/WikiUtils';
 import { addAlert } from './AlertActions';
 

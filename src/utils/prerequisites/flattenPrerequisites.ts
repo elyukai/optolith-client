@@ -1,10 +1,10 @@
 import { pipe } from 'ramda';
-import { ActivatablePrerequisites, AllRequirements, LevelAwarePrerequisites } from '../../types/wiki';
 import { lte, max, min } from '../mathUtils';
 import { cnst } from '../structures/Function';
 import { List } from '../structures/List';
 import { fmap, fromMaybe, Just, Maybe, maybe, Nothing } from '../structures/Maybe';
 import { filterWithKey_, isOrderedMap, OrderedMap } from '../structures/OrderedMap';
+import { ActivatablePrerequisites, AllRequirements, LevelAwarePrerequisites } from '../wikiData/wikiTypeHelpers';
 
 type LevelFilter = (key: number) => (value: ActivatablePrerequisites) => boolean
 

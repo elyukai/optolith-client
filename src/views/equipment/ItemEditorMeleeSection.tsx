@@ -6,11 +6,11 @@ import { Hr } from '../../components/Hr';
 import { Label } from '../../components/Label';
 import { TextField } from '../../components/TextField';
 import { ItemEditorInstance } from '../../types/data';
-import { Attribute, CombatTechnique } from '../../types/wiki';
 import { getAbbreviation } from '../../utils/AttributeUtils';
 import { List, Maybe, OrderedMap, Record } from '../../utils/dataUtils';
 import { translate, UIMessagesObject } from '../../utils/I18n';
 import { getLossLevelElements, ItemEditorInputValidation } from '../../utils/ItemUtils';
+import { Attribute, CombatTechnique } from '../../utils/wikiData/wikiTypeHelpers';
 
 export interface ItemEditorMeleeSectionProps {
   attributes: OrderedMap<string, Record<Attribute>>;

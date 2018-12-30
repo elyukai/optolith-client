@@ -1,19 +1,20 @@
 import { pipe } from 'ramda';
-import { ActivatableDependency, ActiveObject } from '../../types/data';
-import { Activatable, SelectionObject } from '../../types/wiki';
-import { ActivatableDependent, ActivatableDependentG, ActiveObjectG } from '../activeEntries/ActivatableDependent';
-import { DependencyObject, DependencyObjectG } from '../activeEntries/DependencyObject';
+import { ActivatableDependency } from '../../types/data';
+import { ActivatableDependent } from '../activeEntries/ActivatableDependent';
+import { ActiveObject } from '../activeEntries/ActiveObject';
+import { DependencyObject } from '../activeEntries/DependencyObject';
 import { cons_, find, foldl, List } from '../structures/List';
 import { alt_, bind, bind_, elem_, ensure, fmap, fromMaybe, Just, liftM2, mapMaybe, Maybe } from '../structures/Maybe';
 import { alter, OrderedMap } from '../structures/OrderedMap';
 import { isRecord, Record } from '../structures/Record';
-import { AdvantageG } from '../wikiData/Advantage';
-import { SelectOptionG } from '../wikiData/sub/SelectOption';
+import { Advantage } from '../wikiData/Advantage';
+import { SelectOption } from '../wikiData/sub/SelectOption';
+import { Activatable } from '../wikiData/wikiTypeHelpers';
 
-const { select } = AdvantageG
-const { id: getId, name, cost } = SelectOptionG
-const { active, dependencies } = ActivatableDependentG
-const { sid, sid2 } = ActiveObjectG
+const { select } = Advantage.A
+const { id: getId, name, cost } = SelectOption.A
+const { active, dependencies } = ActivatableDependent.A
+const { sid, sid2 } = ActiveObject.A
 
 /**
  * Get a selection option with the given id from given wiki entry. Returns
@@ -22,10 +23,10 @@ const { sid, sid2 } = ActiveObjectG
  */
 export const findSelectOption =
   (obj: Activatable) =>
-  (id: Maybe<string | number>): Maybe<Record<SelectionObject>> =>
-    bind<List<Record<SelectionObject>>, Record<SelectionObject>>
+  (id: Maybe<string | number>): Maybe<Record<SelectOption>> =>
+    bind<List<Record<SelectOption>>, Record<SelectOption>>
       (select (obj))
-      (find<Record<SelectionObject>> (pipe (getId, elem_ (id))))
+      (find<Record<SelectOption>> (pipe (getId, elem_ (id))))
 
 /**
  * Get a selection option's name with the given id from given wiki entry.
@@ -88,7 +89,7 @@ export const getRequiredSelections =
       mapMaybe<ActivatableDependency, string | number | List<number>> (
         pipe (
           ensure<ActivatableDependency, Record<DependencyObject>> (isRecord),
-          bind_ (DependencyObjectG.sid)
+          bind_ (DependencyObject.A.sid)
         )
       )
     )

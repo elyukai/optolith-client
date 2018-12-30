@@ -1,6 +1,6 @@
-import { ProfessionSelectionIds } from '../../../types/wiki';
 import { Maybe, Nothing } from '../../structures/Maybe';
-import { fromDefault, makeGetters } from '../../structures/Record';
+import { fromDefault } from '../../structures/Record';
+import { ProfessionSelectionIds } from '../wikiTypeHelpers';
 
 export interface SkillsSelection {
   id: ProfessionSelectionIds.SKILLS;
@@ -20,5 +20,3 @@ export const SkillsSelection =
     value: 0,
     gr: Nothing,
   })
-
-export const SkillsSelectionG = makeGetters (SkillsSelection)

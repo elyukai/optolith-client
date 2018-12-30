@@ -1,12 +1,11 @@
 import { pipe } from 'ramda';
 import { IdPrefixes } from '../constants/IdPrefixes';
 import { Dependent } from '../types/data';
-import { EntryWithGroup } from '../types/wiki';
 import { createPlainActivatableDependent } from './activeEntries/ActivatableDependent';
 import { createInactiveActivatableSkillDependent } from './activeEntries/ActivatableSkillDependent';
-import { AttributeDependentG, createPlainAttributeDependent } from './activeEntries/AttributeDependent';
+import { AttributeDependent, createPlainAttributeDependent } from './activeEntries/AttributeDependent';
 import { createPlainSkillDependent, createSkillDependentWithValue6 } from './activeEntries/SkillDependent';
-import { HeroModel, HeroModelG, HeroModelL, HeroModelRecord } from './heroData/HeroModel';
+import { HeroModel, HeroModelL, HeroModelRecord } from './heroData/HeroModel';
 import { getIdPrefix } from './IDUtils';
 import { not } from './not';
 import { cnst } from './structures/Function';
@@ -14,7 +13,8 @@ import { Lens, over, view } from './structures/Lens';
 import { elem_, filter, fromArray, List } from './structures/List';
 import { bind_, ensure, fmap, fromMaybe, Just, liftM2, Maybe, Nothing, or } from './structures/Maybe';
 import { alter, elems, insert, lookup, lookup_, OrderedMap, sdelete, update } from './structures/OrderedMap';
-import { SkillG } from './wikiData/Skill';
+import { Skill } from './wikiData/Skill';
+import { EntryWithGroup } from './wikiData/wikiTypeHelpers';
 
 export type HeroStateMapKey = 'advantages'
                             | 'attributes'
@@ -125,34 +125,34 @@ export const getHeroStateListGetterById =
   (id: string): Maybe<HeroStateListGetter> => {
     switch (getIdPrefix (id)) {
       case IdPrefixes.ADVANTAGES:
-        return Just<HeroStateListGetter> (HeroModelG.advantages)
+        return Just<HeroStateListGetter> (HeroModel.A.advantages)
 
       case IdPrefixes.ATTRIBUTES:
-        return Just<HeroStateListGetter> (HeroModelG.attributes)
+        return Just<HeroStateListGetter> (HeroModel.A.attributes)
 
       case IdPrefixes.BLESSINGS:
-        return Just<HeroStateListGetter> (HeroModelG.blessings)
+        return Just<HeroStateListGetter> (HeroModel.A.blessings)
 
       case IdPrefixes.CANTRIPS:
-        return Just<HeroStateListGetter> (HeroModelG.cantrips)
+        return Just<HeroStateListGetter> (HeroModel.A.cantrips)
 
       case IdPrefixes.COMBAT_TECHNIQUES:
-        return Just<HeroStateListGetter> (HeroModelG.combatTechniques)
+        return Just<HeroStateListGetter> (HeroModel.A.combatTechniques)
 
       case IdPrefixes.DISADVANTAGES:
-        return Just<HeroStateListGetter> (HeroModelG.disadvantages)
+        return Just<HeroStateListGetter> (HeroModel.A.disadvantages)
 
       case IdPrefixes.LITURGICAL_CHANTS:
-        return Just<HeroStateListGetter> (HeroModelG.liturgicalChants)
+        return Just<HeroStateListGetter> (HeroModel.A.liturgicalChants)
 
       case IdPrefixes.SPECIAL_ABILITIES:
-        return Just<HeroStateListGetter> (HeroModelG.specialAbilities)
+        return Just<HeroStateListGetter> (HeroModel.A.specialAbilities)
 
       case IdPrefixes.SPELLS:
-        return Just<HeroStateListGetter> (HeroModelG.spells)
+        return Just<HeroStateListGetter> (HeroModel.A.spells)
 
       case IdPrefixes.SKILLS:
-        return Just<HeroStateListGetter> (HeroModelG.skills)
+        return Just<HeroStateListGetter> (HeroModel.A.skills)
 
       default:
         return Nothing
@@ -310,9 +310,9 @@ export const getAllEntriesByGroup =
   (list: OrderedMap<string, I>) =>
   (...groups: number[]): List<I> =>
     filter<I> (pipe (
-                AttributeDependentG.id,
+                AttributeDependent.A.id,
                 lookup_ (wiki),
-                fmap (SkillG.gr),
+                fmap (Skill.A.gr),
                 fmap (elem_ (fromArray (groups))),
                 or
               ))

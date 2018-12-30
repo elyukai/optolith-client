@@ -1,9 +1,9 @@
 import { Pact } from '../types/data';
-import { AllRequirements } from '../types/wiki';
 import { isPactValid } from '../utils/activatable/pactUtils';
 import { createMaybeSelector } from '../utils/createMaybeSelector';
 import { Just, List, Maybe, Record } from '../utils/dataUtils';
 import { isPactRequirement } from '../utils/wikiData/prerequisites/DependentRequirement';
+import { AllRequirements } from '../utils/wikiData/wikiTypeHelpers';
 import { getPact, getSpecialAbilities, getWikiSpecialAbilities } from './stateSelectors';
 
 export const getIsPactValid = createMaybeSelector (

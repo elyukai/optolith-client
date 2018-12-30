@@ -1,6 +1,6 @@
 import { List } from '../structures/List';
 import { Maybe, Nothing } from '../structures/Maybe';
-import { fromDefault, makeGetters } from '../structures/Record';
+import { fromDefault } from '../structures/Record';
 
 export interface MeleeWeapon {
   id: string
@@ -44,5 +44,3 @@ const MeleeWeapon =
     isImprovisedWeapon: false,
     isTwoHandedWeapon: false,
   })
-
-export const MeleeWeaponG = makeGetters (MeleeWeapon)

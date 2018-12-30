@@ -6,11 +6,11 @@ import { Dropdown, DropdownOption } from '../../components/Dropdown';
 import { Scroll } from '../../components/Scroll';
 import { Slidein } from '../../components/Slidein';
 import { Selections as SelectionsInterface } from '../../types/data';
-import { Culture, Profession, ProfessionSelection, ProfessionSelectionIds, ProfessionVariant, Race, WikiAll } from '../../types/wiki';
 import { Just, Maybe, Nothing, OrderedMap, OrderedSet, Record, Tuple } from '../../utils/dataUtils';
 import { translate, UIMessagesObject } from '../../utils/I18n';
 import { sign } from '../../utils/NumberUtils';
 import { getAllAdjustmentSelections, getBuyScriptElement, getCantripsElementAndValidation, getCombatTechniquesElementAndValidation, getCombatTechniquesSecondElementAndValidation, getCursesElementAndValidation, getLanguagesAndScriptsElementAndValidation, getMainScriptSelectionElement, getMotherTongueSelectionElement, getSkillsElementAndValidation, getSkillSpecializationElement, getTerrainKnowledgeElement } from '../../utils/rcpAdjustmentSelectionUtils';
+import { Culture, Profession, ProfessionSelection, ProfessionSelectionIds, ProfessionVariant, Race, WikiAll } from '../../utils/wikiData/wikiTypeHelpers';
 
 export interface SelectionsOwnProps {
   locale: UIMessagesObject;

@@ -1,4 +1,4 @@
-import { fromDefault, makeGetters } from '../../structures/Record';
+import { fromDefault } from '../../structures/Record';
 
 export interface SourceLink {
   id: string
@@ -10,5 +10,3 @@ export const SourceLink =
     id: '',
     page: 0,
   })
-
-export const SourceLinkG = makeGetters (SourceLink)

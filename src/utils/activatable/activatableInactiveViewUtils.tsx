@@ -6,13 +6,13 @@ import { Dropdown, DropdownOption } from '../../components/Dropdown';
 import { TextField } from '../../components/TextField';
 import { Categories } from '../../constants/Categories';
 import { ActivatableDependent, ActivateArgs, ActiveObject, DeactiveViewObject } from '../../types/data';
-import { Activatable, SelectionObject, Skill, WikiAll } from '../../types/wiki';
 import { getActiveWithNoCustomCost } from '../adventurePoints/activatableCostUtils';
 import { Just, List, Maybe, Nothing, Omit, OrderedMap, Record, Tuple } from '../dataUtils';
 import { translate, UIMessagesObject } from '../I18n';
 import { match } from '../match';
-import { getRoman, numberFromString } from '../NumberUtils';
+import { getRoman, unsafeToInt } from '../NumberUtils';
 import { isInteger } from '../RegexUtils';
+import { Activatable, SelectionObject, Skill, WikiAll } from '../wikiData/wikiTypeHelpers';
 import { getActiveSelections, getSelectOptionCost } from './selectionUtils';
 
 interface PropertiesAffectedByState {
@@ -509,7 +509,7 @@ export const insertFinalCurrentCost =
       const maybeCustomCost = Maybe.fromNullable (selectedOptions.customCost)
         .bind (Maybe.ensure (isInteger))
         .fmap (R.pipe (
-          numberFromString,
+          unsafeToInt,
           Math.abs
         ));
 
@@ -530,7 +530,7 @@ export const insertFinalCurrentCost =
                     )
                     .fmap (
                       selected => typeof selected === 'string'
-                        ? numberFromString (selected)
+                        ? unsafeToInt (selected)
                         : selected
                     ))
               ),

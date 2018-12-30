@@ -1,6 +1,6 @@
 import { SkillDependent } from '../activeEntries/SkillDependent';
 import { Maybe, Nothing } from '../structures/Maybe';
-import { fromDefault, makeGetters } from '../structures/Record';
+import { fromDefault } from '../structures/Record';
 import { CombatTechnique } from '../wikiData/CombatTechnique';
 import { CombatTechniqueCombined } from './CombatTechniqueCombined';
 
@@ -16,5 +16,3 @@ export const CombatTechniqueWithAttackParryBase =
     at: 0,
     pa: Nothing,
   })
-
-export const CombatTechniqueWithAttackParryBaseG = makeGetters (CombatTechniqueWithAttackParryBase)

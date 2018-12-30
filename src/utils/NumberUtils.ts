@@ -1,70 +1,112 @@
-import { List, Maybe } from './dataUtils';
+import { pipe } from 'ramda';
+import { inc } from './mathUtils';
+import { not } from './not';
+import { fromElements, subscript } from './structures/List';
+import { bind_, ensure, fromMaybe, Just, Maybe, Nothing } from './structures/Maybe';
 
-const romanNumbers: List<string> = List.of (
-  'I',
-  'II',
-  'III',
-  'IV',
-  'V',
-  'VI',
-  'VII',
-  'VIII',
-  'IX',
-  'X',
-  'XI',
-  'XII',
-  'XIII'
-);
+/**
+ * A list of all Roman numbers from 1 to 13.
+ */
+const romanNumbers =
+  fromElements (
+    'I',
+    'II',
+    'III',
+    'IV',
+    'V',
+    'VI',
+    'VII',
+    'VIII',
+    'IX',
+    'X',
+    'XI',
+    'XII',
+    'XIII'
+  )
 
 /**
  * Converts a number to a Roman number.
- * @param number The number that shall be returned as a Roman number.
- * @param index If the number parameter is 0-based. Default is false.
+ *
+ * Example:
+ *
+ * ```haskell
+ * toRoman 3 == "III"
+ * ```
  */
-export const getRoman = (number: number, index: boolean = false): string =>
-  Maybe.fromMaybe ('') (romanNumbers.subscript (number + (index ? 0 : -1)));
+export const toRoman = pipe (inc, subscript (romanNumbers), fromMaybe (''))
+
+/**
+ * Converts a 0-based number to a Roman number.
+ *
+ * Example:
+ *
+ * ```haskell
+ * toRomanFromIndex 3 == "II"
+ * ```
+ */
+export const toRomanFromIndex = pipe (subscript (romanNumbers), fromMaybe (''))
 
 /**
  * Forces signing on the given number.
- * @param number
  */
 export const sign = (number: number): string =>
-  number > 0 ? `+${number}` : number.toString ();
+  number > 0 ? `+${number}` : String (number)
+
+/**
+ * Forces signing on the given number, returns the specified string when the
+ * number is `0`.
+ */
+export const signNullCustom = (stringFor0: string) => (number: number): string =>
+  number > 0 ? `+${number}` : number < 0 ? String (number) : stringFor0
 
 /**
  * Forces signing on the given number, ignores 0.
- * @param number
  */
-export const signNull = (number: number, placeholder: string = ''): string => {
-  if (number > 0) {
-    return `+${number}`
-  }
-  else if (number < 0) {
-    return number.toString ();
-  }
-  else {
-    return placeholder;
-  }
-};
+export const signNull = signNullCustom ('')
 
 /**
  * Multiplies given string by 100 if it contains `,` o `.`.
- * @param number
  */
 export const multiplyString = (string: string): string => {
   if (/^\d+[,\.]\d+$/.test (string)) {
-    const float = Number.parseFloat (string.replace (/,/, '.'));
-    const multiplied = float * 100;
+    const float = unsafeToFloat (string.replace (/,/, '.'))
+    const multiplied = float * 100
 
-    return multiplied.toString ();
+    return String (multiplied)
   }
-  else {
-    return string;
-  }
-};
+
+  return string
+}
 
 /**
- * Converts a string to a decimal number. This function does **not** check if the
- * string is a valid number.
+ * Converts a string to a decimal integer. This function does **not** check if
+ * the string is a valid number.
  */
-export const numberFromString = (string: string) => Number.parseInt (string, 10);
+export const unsafeToInt = (string: string) => Number.parseInt (string, 10)
+
+/**
+ * Converts a string to a floating point number. This function does
+ * **not** check if the string is a valid number.
+ */
+export const unsafeToFloat = (string: string) => Number.parseFloat (string)
+
+/**
+ * Converts a string to a decimal integer. If the string is not a valid integer,
+ * it returns `Nothing`, otherwise a `Just` of the integer.
+ */
+export const toInt =
+  (e: string): Maybe<number> =>
+    e.length > 0 ? misNotNaN (Just (unsafeToInt (e.replace (/\,/, '.')))) : Nothing
+
+/**
+ * Converts a string to a floating point number. If the string is not a valid
+ * floating point number, it returns `Nothing`, otherwise a `Just` of the
+ * number.
+ */
+export const toFloat =
+  (e: string): Maybe<number> =>
+    e.length > 0 ? misNotNaN (Just (unsafeToFloat (e.replace (/\,/, '.')))) : Nothing
+
+const isNotNaN = pipe (Number.isNaN, not)
+
+const misNotNaN = bind_<number, number> (ensure (isNotNaN))

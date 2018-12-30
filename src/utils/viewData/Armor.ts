@@ -1,5 +1,5 @@
 import { Maybe, Nothing } from '../structures/Maybe';
-import { fromDefault, makeGetters } from '../structures/Record';
+import { fromDefault } from '../structures/Record';
 
 export interface Armor {
   id: string
@@ -27,5 +27,3 @@ export const Armor =
     weight: Nothing,
     where: Nothing,
   })
-
-export const ArmorG = makeGetters (Armor)

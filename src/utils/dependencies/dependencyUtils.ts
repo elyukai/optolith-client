@@ -1,11 +1,11 @@
 import * as R from 'ramda';
 import { Categories } from '../../constants/Categories';
 import * as Data from '../../types/data';
-import * as Wiki from '../../types/wiki';
 import { getCategoryById } from '../IDUtils';
 import { match } from '../match';
 import { getPrimaryAttributeId } from '../primaryAttributeUtils';
 import * as CheckPrerequisiteUtils from '../wikiData/prerequisites/DependentRequirement';
+import * as Wiki from '../wikiData/wikiTypeHelpers';
 import * as AddDependencyUtils from './addDependencyUtils';
 import * as RemoveDependencyUtils from './removeDependencyUtils';
 

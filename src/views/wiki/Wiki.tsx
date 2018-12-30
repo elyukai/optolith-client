@@ -8,10 +8,10 @@ import { Scroll } from '../../components/Scroll';
 import { TextField } from '../../components/TextField';
 import { WikiInfoContainer } from '../../containers/WikiInfoContainer';
 import { UIMessagesObject } from '../../types/ui';
-import { Advantage, Blessing, Cantrip, CombatTechnique, Culture, Disadvantage, Entry, ItemTemplate, LiturgicalChant, Profession, Race, Skill, SpecialAbility, Spell } from '../../types/wiki';
 import { Just, List, Maybe, Nothing, Record } from '../../utils/dataUtils';
 import { sortObjects } from '../../utils/FilterSortUtils';
 import { translate } from '../../utils/I18n';
+import { Advantage, Blessing, Cantrip, CombatTechnique, Culture, Disadvantage, Entry, ItemTemplate, LiturgicalChant, Profession, Race, Skill, SpecialAbility, Spell } from '../../utils/wikiData/wikiTypeHelpers';
 import { WikiList } from './WikiList';
 
 export interface WikiOwnProps {

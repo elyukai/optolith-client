@@ -9,7 +9,7 @@
 
 import { not, pipe } from 'ramda';
 import { Lens, lens } from './Lens';
-import { isJust, isMaybe, isNothing, Just, Maybe, Nothing } from './Maybe';
+import { isJust, isMaybe, isNothing, Maybe, Nothing } from './Maybe';
 import { foldl, fromArray, OrderedSet } from './OrderedSet';
 import { show } from './Show';
 
@@ -31,6 +31,7 @@ export interface RecordCreator<A extends RecordBase> {
   (x: PartialMaybeOrNothing<A>): Record<A>
   readonly keys: OrderedSet<string>
   readonly default: Record<A>
+  readonly A: Accessors<A>
 }
 
 const RecordPrototype =
@@ -115,6 +116,8 @@ export const fromDefault =
 
     creator.default = creator (defaultValues)
 
+    creator.A = makeAccessors<A> (keys)
+
     return Object.freeze (creator)
   }
 
@@ -197,7 +200,7 @@ export const mergeSafeR5 =
 
 // CUSTOM FUNCTIONS
 
-const getter = <A extends RecordBase> (key: keyof A) => (r: Record<A>) => {
+const accessor = <A extends RecordBase> (key: keyof A) => (r: Record<A>) => {
   if (OrderedSet.member<keyof A> (key) (r .keys)) {
     const x = r .values [key]
 
@@ -216,16 +219,16 @@ const setter = <A extends RecordBase> (key: keyof A) => (r: Record<A>) => (x: A[
              })
 
 /**
- * Creates getter functions for every key in the passed record creator.
+ * Creates accessor functions for every key in the passed record creator.
  */
-export const makeGetters =
-  <A extends RecordBase> (record: RecordCreator<A>): Getters<A> =>
-  Object.freeze (foldl<string, Getters<A>> (acc => key => ({
-                                             ...acc,
-                                             [key]: getter (key),
-                                           }))
-                                           ({} as Getters<A>)
-                                           (record .keys))
+const makeAccessors =
+  <A extends RecordBase> (keys: OrderedSet<string>): Accessors<A> =>
+    Object.freeze (foldl<string, Accessors<A>> (acc => key => ({
+                                                 ...acc,
+                                                 [key]: accessor (key),
+                                               }))
+                                               ({} as Accessors<A>)
+                                               (keys))
 
 /**
  * Creates lenses for every key in the passed record.
@@ -236,7 +239,7 @@ export const makeGetters =
 export const makeLenses = <A extends RecordBase> (record: RecordCreator<A>): Lenses<A> =>
   Object.freeze (foldl<string, Lenses<A>> (acc => key => ({
                                             ...acc,
-                                            [key]: lens<Record<A>, A[typeof key]> (getter (key))
+                                            [key]: lens<Record<A>, A[typeof key]> (accessor (key))
                                                                                   (setter (key)),
                                           }))
                                           ({} as Lenses<A>)
@@ -248,12 +251,12 @@ export const makeLenses = <A extends RecordBase> (record: RecordCreator<A>): Len
  * If you have not already generated the getters, use `makeLenses` instead.
  */
 export const makeLenses_ =
-  <A extends RecordBase> (getters: Getters<A>) => (record: RecordCreator<A>): Lenses<A> =>
+  <A extends RecordBase> (record: RecordCreator<A>): Lenses<A> =>
     Object.freeze (
       foldl<string, Lenses<A>> (acc => key => ({
                                  ...acc,
                                  [key]: lens<Record<A>, A[typeof key]>
-                                   (getters [key] as Getter<A, typeof key>)
+                                   (record.A [key] as Accessor<A, typeof key>)
                                    (setter (key)),
                                }))
                                ({} as Lenses<A>)
@@ -297,7 +300,7 @@ export const Record = {
 
   mergeSafe: mergeSafeR2,
 
-  makeGetters,
+  makeGetters: makeAccessors,
   makeLenses,
   makeLenses_,
   member,
@@ -309,10 +312,10 @@ export const Record = {
 
 // TYPE HELPERS
 
-type Getter<A extends RecordBase, K extends keyof A> = (r: Record<Pick<A, K>>) => A[K]
+type Accessor<A extends RecordBase, K extends keyof A> = (r: Record<Pick<A, K>>) => A[K]
 
-type Getters<A extends RecordBase> = {
-  [K in keyof A]: Getter<A, K>
+type Accessors<A extends RecordBase> = {
+  [K in keyof A]: Accessor<A, K>
 }
 
 type Lenses<A extends RecordBase> = {
@@ -336,10 +339,7 @@ export interface NumberKeyObject<V> {
  */
 export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
 
-export type RecordInterface<T> = T extends Record<infer O> ? O : never
-
-export type RecordKey<K extends keyof T, T> =
-  T[K] extends NonNullable<T[K]> ? Just<T[K]> : Maybe<NonNullable<T[K]>>
+export type RecordI<T> = T extends Record<infer O> ? O : never
 
 // type ObjectDeleteProperty<T, D extends keyof T> = {
 //   [K in Exclude<keyof T, D>]: T[K]

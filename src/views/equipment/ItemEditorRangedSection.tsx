@@ -4,10 +4,10 @@ import { Hr } from '../../components/Hr';
 import { Label } from '../../components/Label';
 import { TextField } from '../../components/TextField';
 import { ItemEditorInstance } from '../../types/data';
-import { CombatTechnique, ItemTemplate } from '../../types/wiki';
 import { List, Maybe, OrderedMap, Record } from '../../utils/dataUtils';
 import { translate, UIMessagesObject } from '../../utils/I18n';
 import { getLossLevelElements, ItemEditorInputValidation } from '../../utils/ItemUtils';
+import { CombatTechnique, ItemTemplate } from '../../utils/wikiData/wikiTypeHelpers';
 
 export interface ItemEditorRangedSectionProps {
   combatTechniques: OrderedMap<string, Record<CombatTechnique>>;

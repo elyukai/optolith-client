@@ -1,4 +1,4 @@
-import { fromDefault, makeGetters, makeLenses_ } from '../structures/Record';
+import { fromDefault, makeLenses_ } from '../structures/Record';
 import { PermanentEnergyLoss } from './PermanentEnergyLoss';
 
 export interface PermanentEnergyLossAndBoughtBack extends PermanentEnergyLoss {
@@ -14,9 +14,5 @@ export const PermanentEnergyLossAndBoughtBack =
     redeemed: 0,
   })
 
-export const PermanentEnergyLossAndBoughtBackG =
-  makeGetters (PermanentEnergyLossAndBoughtBack)
-
 export const PermanentEnergyLossAndBoughtBackL =
-  makeLenses_ (PermanentEnergyLossAndBoughtBackG)
-              (PermanentEnergyLossAndBoughtBack)
+  makeLenses_ (PermanentEnergyLossAndBoughtBack)

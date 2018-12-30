@@ -1,23 +1,23 @@
 import { pipe } from 'ramda';
 import { getActiveSelections } from './activatable/selectionUtils';
 import { AttributeDependent } from './activeEntries/AttributeDependent';
-import { SkillDependent, SkillDependentG } from './activeEntries/SkillDependent';
+import { SkillDependent } from './activeEntries/SkillDependent';
 import { flattenDependencies } from './dependencies/flattenDependencies';
-import { HeroModelG, HeroModelRecord } from './heroData/HeroModel';
+import { HeroModel, HeroModelRecord } from './heroData/HeroModel';
 import { add, divideBy, max } from './mathUtils';
 import { cons, elem, foldl, fromElements, maximum } from './structures/List';
 import { fmap, guard, Just, Maybe, maybe, sum, then } from './structures/Maybe';
 import { lookup_ } from './structures/OrderedMap';
 import { Record } from './structures/Record';
-import { CombatTechnique, CombatTechniqueG } from './wikiData/CombatTechnique';
-import { ExperienceLevelG } from './wikiData/ExperienceLevel';
-import { WikiModelG, WikiModelRecord } from './wikiData/WikiModel';
+import { CombatTechnique } from './wikiData/CombatTechnique';
+import { ExperienceLevel } from './wikiData/ExperienceLevel';
+import { WikiModel, WikiModelRecord } from './wikiData/WikiModel';
 
-const { value, dependencies } = SkillDependentG
-const { gr, primary, id } = CombatTechniqueG
-const { attributes, experienceLevel, advantages, phase } = HeroModelG
-const { experienceLevels } = WikiModelG
-const { maxCombatTechniqueRating } = ExperienceLevelG
+const { value, dependencies } = SkillDependent.A
+const { gr, primary, id } = CombatTechnique.A
+const { attributes, experienceLevel, advantages, phase } = HeroModel.A
+const { experienceLevels } = WikiModel.A
+const { maxCombatTechniqueRating } = ExperienceLevel.A
 
 const getMaxPrimaryAttributeValueById =
   (state: HeroModelRecord) =>

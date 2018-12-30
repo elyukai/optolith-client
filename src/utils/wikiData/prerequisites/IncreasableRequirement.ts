@@ -1,10 +1,10 @@
 import { pipe } from 'ramda';
 import { Categories, IncreasableCategories } from '../../../constants/Categories';
-import { AllRequirementObjects, ProfessionPrerequisite } from '../../../types/wiki';
 import { getCategoryById } from '../../IDUtils';
 import { all, elem_, isList, List } from '../../structures/List';
 import { fmap, or } from '../../structures/Maybe';
-import { fromDefault, makeGetters, makeLenses_, member, Record } from '../../structures/Record';
+import { fromDefault, makeLenses_, member, Record } from '../../structures/Record';
+import { AllRequirementObjects, ProfessionPrerequisite } from '../wikiTypeHelpers';
 
 export interface RequireIncreasable {
   id: string | List<string>;
@@ -21,12 +21,11 @@ export const RequireIncreasable =
     value: 0,
   })
 
-export const RequireIncreasableG = makeGetters (RequireIncreasable)
-export const RequireIncreasableL = makeLenses_ (RequireIncreasableG) (RequireIncreasable)
+export const RequireIncreasableL = makeLenses_ (RequireIncreasable)
 
 export const isIncreasableRequirement =
   (req: AllRequirementObjects): req is Record<RequireIncreasable> => {
-    const id = RequireIncreasableG.id (req)
+    const id = RequireIncreasable.A.id (req)
 
     if (isList (id)) {
       return member ('value') (req)
@@ -45,7 +44,7 @@ export const isIncreasableRequirement =
 
 export const isProfessionRequiringIncreasable =
   (req: ProfessionPrerequisite): req is Record<ProfessionRequireIncreasable> => {
-    const id = RequireIncreasableG.id (req) as string
+    const id = RequireIncreasable.A.id (req) as string
 
     return member ('value') (req)
       && or (fmap (elem_<Categories> (IncreasableCategories))

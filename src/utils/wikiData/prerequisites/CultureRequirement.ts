@@ -1,8 +1,8 @@
 import { equals, pipe } from 'ramda';
-import { AllRequirementObjects } from '../../../types/wiki';
 import { List } from '../../structures/List';
-import { fromDefault, makeGetters, Record } from '../../structures/Record';
-import { RequireActivatableG } from './ActivatableRequirement';
+import { fromDefault, Record } from '../../structures/Record';
+import { AllRequirementObjects } from '../wikiTypeHelpers';
+import { RequireActivatable } from './ActivatableRequirement';
 
 export interface CultureRequirement {
   id: 'CULTURE';
@@ -15,8 +15,6 @@ export const CultureRequirement =
     value: 0,
   })
 
-export const CultureRequirementG = makeGetters (CultureRequirement)
-
 export const isCultureRequirement =
-  pipe (RequireActivatableG.id, equals<string | List<string>> ('CULTURE')) as unknown as
+  pipe (RequireActivatable.A.id, equals<string | List<string>> ('CULTURE')) as unknown as
     (req: AllRequirementObjects) => req is Record<CultureRequirement>

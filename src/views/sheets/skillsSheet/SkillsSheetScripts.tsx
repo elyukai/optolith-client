@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { TextBox } from '../../../components/TextBox';
 import { ActivatableDependent, ActiveObject } from '../../../types/data';
-import { SpecialAbility } from '../../../types/wiki';
 import { getSelectOptionName } from '../../../utils/activatable/selectionUtils';
 import { List, Maybe, Record } from '../../../utils/dataUtils';
 import { sortStrings } from '../../../utils/FilterSortUtils';
 import { translate, UIMessagesObject } from '../../../utils/I18n';
+import { SpecialAbility } from '../../../utils/wikiData/wikiTypeHelpers';
 
 export interface SkillsSheetScriptsProps {
   locale: UIMessagesObject;

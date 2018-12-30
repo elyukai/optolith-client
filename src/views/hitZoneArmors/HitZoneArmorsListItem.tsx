@@ -6,8 +6,8 @@ import { ListItemName } from '../../components/ListItemName';
 import { ListItemSeparator } from '../../components/ListItemSeparator';
 import { TooltipToggle } from '../../components/TooltipToggle';
 import { ArmorZonesInstance, ItemInstance, UIMessagesObject } from '../../types/data';
-import { ItemTemplate } from '../../types/wiki';
 import { List, Maybe, Record } from '../../utils/dataUtils';
+import { ItemTemplate } from '../../utils/wikiData/wikiTypeHelpers';
 
 export interface HitZoneArmorsListItemProps {
   data: Record<ArmorZonesInstance>;

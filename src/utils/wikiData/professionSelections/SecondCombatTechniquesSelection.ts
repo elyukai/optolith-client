@@ -1,6 +1,6 @@
-import { ProfessionSelectionIds } from '../../../types/wiki';
 import { List } from '../../structures/List';
-import { fromDefault, makeGetters } from '../../structures/Record';
+import { fromDefault } from '../../structures/Record';
+import { ProfessionSelectionIds } from '../wikiTypeHelpers';
 
 export interface CombatTechniquesSecondSelection {
   id: ProfessionSelectionIds.COMBAT_TECHNIQUES_SECOND;
@@ -16,5 +16,3 @@ export const CombatTechniquesSecondSelection =
     value: 0,
     sid: List.empty,
   })
-
-export const CombatTechniquesSecondSelectionG = makeGetters (CombatTechniquesSecondSelection)

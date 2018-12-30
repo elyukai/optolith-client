@@ -1,4 +1,4 @@
-import * as Wiki from '../../types/wiki';
+import * as Wiki from '../wikiData/wikiTypeHelpers';
 import { isSpecialAbility } from '../WikiUtils';
 
 export const isCombatStyleSpecialAbility =

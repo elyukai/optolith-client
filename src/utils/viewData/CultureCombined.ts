@@ -1,5 +1,5 @@
 import { List } from '../structures/List';
-import { fromDefault, makeGetters, Record } from '../structures/Record';
+import { fromDefault, Record } from '../structures/Record';
 import { Culture } from '../wikiData/Culture';
 import { IncreasableForView } from './IncreasableForView';
 
@@ -13,5 +13,3 @@ export const CultureCombined =
     wikiEntry: Culture .default,
     mappedCulturalPackageSkills: List.empty,
   })
-
-export const CultureCombinedG = makeGetters (CultureCombined)

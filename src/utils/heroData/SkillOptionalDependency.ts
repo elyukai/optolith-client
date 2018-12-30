@@ -1,4 +1,4 @@
-import { fromDefault, makeGetters } from '../structures/Record';
+import { fromDefault } from '../structures/Record';
 
 export interface SkillOptionalDependency {
   value: number
@@ -13,5 +13,3 @@ export const SkillOptionalDependency =
     value: 0,
     origin: '',
   })
-
-export const SkillOptionalDependencyG = makeGetters (SkillOptionalDependency)

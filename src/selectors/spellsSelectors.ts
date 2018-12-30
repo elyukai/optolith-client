@@ -1,6 +1,5 @@
 import * as R from 'ramda';
 import { ActivatableDependent, ActivatableSkillDependent } from '../types/data';
-import { ExperienceLevel, Spell } from '../types/wiki';
 import { getModifierByActiveLevel } from '../utils/activatable/activatableModifierUtils';
 import { getMagicalTraditions } from '../utils/activatable/traditionUtils';
 import { createMaybeSelector } from '../utils/createMaybeSelector';
@@ -11,6 +10,7 @@ import { filterByAvailability } from '../utils/RulesUtils';
 import { mapGetToMaybeSlice } from '../utils/SelectorsUtils';
 import { isDecreasable, isIncreasable, isOwnTradition } from '../utils/SpellUtils';
 import { CantripCombined, SpellIsActive, SpellWithRequirements } from '../utils/viewData/viewTypeHelpers';
+import { ExperienceLevel, Spell } from '../utils/wikiData/wikiTypeHelpers';
 import { getStartEl } from './elSelectors';
 import { getRuleBooksEnabled } from './rulesSelectors';
 import { getSpellsSortOptions } from './sortOptionsSelectors';

@@ -1,5 +1,5 @@
 import { SkillDependent } from '../activeEntries/SkillDependent';
-import { fromDefault, makeGetters } from '../structures/Record';
+import { fromDefault } from '../structures/Record';
 import { Skill } from '../wikiData/Skill';
 import { SkillCombined } from './SkillCombined';
 import { IncreasableWithRequirements } from './viewTypeHelpers';
@@ -13,5 +13,3 @@ const SkillWithRequirements =
     isIncreasable: false,
     isDecreasable: false,
   })
-
-export const SkillWithRequirementsG = makeGetters (SkillWithRequirements)

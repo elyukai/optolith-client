@@ -1,9 +1,9 @@
 import { Categories } from '../../constants/Categories';
-import { ActivatableBase, EntryWithCategory } from '../../types/wiki';
 import { List } from '../structures/List';
 import { Maybe, Nothing } from '../structures/Maybe';
 import { OrderedMap } from '../structures/OrderedMap';
-import { fromDefault, makeGetters } from '../structures/Record';
+import { fromDefault } from '../structures/Record';
+import { ActivatableBase, EntryWithCategory } from './wikiTypeHelpers';
 
 export interface SpecialAbility extends ActivatableBase {
   extended: Maybe<List<string | List<string>>>
@@ -59,7 +59,5 @@ export const SpecialAbility =
     category: Categories.SPECIAL_ABILITIES,
   })
 
-export const SpecialAbilityG = makeGetters (SpecialAbility)
-
 export const isSpecialAbility =
-  (r: EntryWithCategory) => SpecialAbilityG.category (r) === Categories.SPECIAL_ABILITIES
+  (r: EntryWithCategory) => SpecialAbility.A.category (r) === Categories.SPECIAL_ABILITIES

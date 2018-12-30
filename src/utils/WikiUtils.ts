@@ -1,6 +1,5 @@
 import { pipe } from 'ramda';
 import { ActivatableCategories, Categories } from '../constants/Categories';
-import * as Wiki from '../types/wiki';
 import { getCategoryById } from './IDUtils';
 import { thrush } from './structures/Function';
 import { elem_, filter, fromArray, List } from './structures/List';
@@ -14,6 +13,7 @@ import { ProfessionG } from './wikiData/Profession';
 import { SkillG } from './wikiData/Skill';
 import { SpecialAbilityG } from './wikiData/SpecialAbilityCreator';
 import { WikiModelG } from './wikiData/WikiModel';
+import * as Wiki from './wikiData/wikiTypeHelpers';
 
 interface WikiKeyByCategory {
   [Categories.ADVANTAGES]: 'advantages'

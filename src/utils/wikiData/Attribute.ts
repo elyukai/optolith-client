@@ -1,6 +1,6 @@
 import { Categories } from '../../constants/Categories';
-import { EntryWithCategory } from '../../types/wiki';
-import { fromDefault, makeGetters } from '../structures/Record';
+import { fromDefault } from '../structures/Record';
+import { EntryWithCategory } from './wikiTypeHelpers';
 
 export interface Attribute {
   id: string
@@ -17,7 +17,5 @@ export const Attribute =
     category: Categories.ATTRIBUTES,
   })
 
-export const AttributeG = makeGetters (Attribute)
-
 export const isAttribute =
-  (r: EntryWithCategory) => AttributeG.category (r) === Categories.ATTRIBUTES
+  (r: EntryWithCategory) => Attribute.A.category (r) === Categories.ATTRIBUTES

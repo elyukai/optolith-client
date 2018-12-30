@@ -1,4 +1,4 @@
-import { fromDefault, makeGetters } from '../../structures/Record';
+import { fromDefault } from '../../structures/Record';
 
 export interface Die {
   sides: number
@@ -10,5 +10,3 @@ export const Die =
     amount: 0,
     sides: 0,
   })
-
-export const DieG = makeGetters (Die)

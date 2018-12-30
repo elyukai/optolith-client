@@ -1,6 +1,6 @@
 import { ActivatableNameCostActive } from '../../types/data';
 import { List } from '../structures/List';
-import { fromDefault, makeGetters, Record } from '../structures/Record';
+import { fromDefault, Record } from '../structures/Record';
 import { ProfessionRequireIncreasable } from '../wikiData/prerequisites/IncreasableRequirement';
 import { Profession } from '../wikiData/Profession';
 import { IncreasableForView } from './IncreasableForView';
@@ -41,5 +41,3 @@ export const ProfessionCombined =
     mappedLiturgicalChants: List.empty,
     mappedVariants: List.empty,
   })
-
-export const ProfessionCombinedG = makeGetters (ProfessionCombined)

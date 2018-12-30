@@ -1,11 +1,11 @@
 import { Categories } from '../../constants/Categories';
-import { EntryWithCategory } from '../../types/wiki';
 import { List } from '../structures/List';
 import { Maybe, Nothing } from '../structures/Maybe';
-import { fromDefault, makeGetters, Record } from '../structures/Record';
+import { fromDefault, Record } from '../structures/Record';
 import { CommonProfession } from './sub/CommonProfession';
 import { IncreaseSkill } from './sub/IncreaseSkill';
 import { SourceLink } from './sub/SourceLink';
+import { EntryWithCategory } from './wikiTypeHelpers';
 
 export interface Culture {
   id: string
@@ -69,7 +69,5 @@ export const Culture =
     src: List.empty,
   })
 
-export const CultureG = makeGetters (Culture)
-
 export const isCulture =
-  (r: EntryWithCategory) => CultureG.category (r) === Categories.CULTURES
+  (r: EntryWithCategory) => Culture.A.category (r) === Categories.CULTURES

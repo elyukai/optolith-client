@@ -1,6 +1,5 @@
 import * as R from 'ramda';
 import { ActivatableSkillDependent } from '../types/data';
-import { ExperienceLevel, LiturgicalChant } from '../types/wiki';
 import { isActive } from '../utils/activatable/isActive';
 import { getBlessedTradition } from '../utils/activatable/traditionUtils';
 import { createMaybeSelector } from '../utils/createMaybeSelector';
@@ -11,6 +10,7 @@ import { getAspectsOfTradition, isDecreasable, isIncreasable, isOwnTradition } f
 import { filterByAvailability } from '../utils/RulesUtils';
 import { mapGetToMaybeSlice } from '../utils/SelectorsUtils';
 import { BlessingCombined, LiturgicalChantIsActive, LiturgicalChantWithRequirements } from '../utils/viewData/viewTypeHelpers';
+import { ExperienceLevel, LiturgicalChant } from '../utils/wikiData/wikiTypeHelpers';
 import { getStartEl } from './elSelectors';
 import { getRuleBooksEnabled } from './rulesSelectors';
 import { getLiturgicalChantsSortOptions } from './sortOptionsSelectors';

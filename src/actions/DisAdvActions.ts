@@ -10,7 +10,6 @@ import { getCurrentHeroPresent, getWiki } from '../selectors/stateSelectors';
 import { AsyncAction } from '../types/actions';
 import { ActivatableDependent, ActivateArgs, ActiveObjectWithId, DeactivateArgs, Hero } from '../types/data';
 import { UIMessagesObject } from '../types/ui';
-import { Advantage, Disadvantage } from '../types/wiki';
 import { getNameCost } from '../utils/activatable/activatableActiveUtils';
 import { isMagicalOrBlessed } from '../utils/activatable/checkActivatableUtils';
 import { convertPerTierCostToFinalCost } from '../utils/adventurePoints/activatableCostUtils';
@@ -19,6 +18,7 @@ import { Just, List, Maybe, Record, Tuple } from '../utils/dataUtils';
 import { getHeroStateItem } from '../utils/heroStateUtils';
 import { translate } from '../utils/I18n';
 import { isNumber } from '../utils/typeCheckUtils';
+import { Advantage, Disadvantage } from '../utils/wikiData/wikiTypeHelpers';
 import { getWikiEntry } from '../utils/WikiUtils';
 import { addAlert } from './AlertActions';
 

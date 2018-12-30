@@ -1,5 +1,5 @@
-import { ProfessionSelectionIds } from '../../../types/wiki';
-import { fromDefault, makeGetters } from '../../structures/Record';
+import { fromDefault } from '../../structures/Record';
+import { ProfessionSelectionIds } from '../wikiTypeHelpers';
 
 export interface CursesSelection {
   id: ProfessionSelectionIds.CURSES;
@@ -11,5 +11,3 @@ export const CursesSelection =
     id: ProfessionSelectionIds.CURSES,
     value: 0,
   })
-
-export const CursesSelectionG = makeGetters (CursesSelection)

@@ -1,5 +1,5 @@
 import { ActivatableSkillDependent } from '../activeEntries/ActivatableSkillDependent';
-import { fromDefault, makeGetters } from '../structures/Record';
+import { fromDefault } from '../structures/Record';
 import { LiturgicalChant } from '../wikiData/LiturgicalChant';
 import { LiturgicalChantCombined } from './LiturgicalChantCombined';
 import { IncreasableWithRequirements } from './viewTypeHelpers';
@@ -14,5 +14,3 @@ export const LiturgicalChantWithRequirements =
     isIncreasable: false,
     isDecreasable: false,
   })
-
-export const LiturgicalChantWithRequirementsG = makeGetters (LiturgicalChantWithRequirements)

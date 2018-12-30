@@ -7,12 +7,12 @@
  */
 
 import * as Data from '../../types/data';
-import * as Wiki from '../../types/wiki';
 import { Just, List, Maybe, OrderedMap, Record } from '../dataUtils';
 import { countActiveGroupEntries, hasActiveGroupEntry } from '../entryGroupUtils';
 import { getAllEntriesByGroup, getHeroStateItem } from '../heroStateUtils';
 import { getFirstTierPrerequisites } from '../prerequisites/flattenPrerequisites';
 import { validatePrerequisites } from '../prerequisites/validatePrerequisitesUtils';
+import * as Wiki from '../wikiData/wikiTypeHelpers';
 import { isSpecialAbility } from '../WikiUtils';
 import * as CheckStyleUtils from './checkStyleUtils';
 import { isActive } from './isActive';

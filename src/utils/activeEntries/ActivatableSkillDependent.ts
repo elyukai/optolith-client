@@ -1,7 +1,7 @@
 import { Dependent, ExtendedSkillDependency } from '../../types/data';
 import { fnull, fromElements, List } from '../structures/List';
 import { fromJust, isJust, Just, Maybe } from '../structures/Maybe';
-import { fromDefault, makeGetters, makeLenses_, member, Omit, Record } from '../structures/Record';
+import { fromDefault, makeLenses_, member, Omit, Record } from '../structures/Record';
 
 export interface ActivatableSkillDependent {
   id: string;
@@ -18,10 +18,7 @@ export const ActivatableSkillDependent =
     dependencies: fromElements<ExtendedSkillDependency> (),
   })
 
-export const ActivatableSkillDependentG = makeGetters (ActivatableSkillDependent)
-
-export const ActivatableSkillDependentL = makeLenses_ (ActivatableSkillDependentG)
-                                                      (ActivatableSkillDependent)
+export const ActivatableSkillDependentL = makeLenses_ (ActivatableSkillDependent)
 
 const createActivatableSkillDependent =
   (options: Partial<Omit<ActivatableSkillDependent, 'id'>>) =>
@@ -53,7 +50,7 @@ export const isActivatableSkillDependent =
     member ('value') (entry)
     && member ('active') (entry)
 
-const { active, value, dependencies } = ActivatableSkillDependentG
+const { active, value, dependencies } = ActivatableSkillDependent.A
 
 export const isActivatableDependentSkillUnused =
   (entry: Record<ActivatableSkillDependent>): boolean =>

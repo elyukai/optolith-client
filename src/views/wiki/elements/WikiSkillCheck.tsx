@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { SecondaryAttribute } from '../../../types/data';
-import { Attribute } from '../../../types/wiki';
 import { UIMessages } from '../../../utils/I18n';
+import { Attribute } from '../../../utils/wikiData/wikiTypeHelpers';
 import { WikiProperty } from '../WikiProperty';
 
 export interface WikiSkillCheckProps {

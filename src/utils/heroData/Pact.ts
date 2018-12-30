@@ -1,4 +1,4 @@
-import { fromDefault, makeGetters } from '../structures/Record';
+import { fromDefault } from '../structures/Record';
 
 export interface Pact {
   category: number
@@ -16,5 +16,3 @@ export const Pact =
     type: 0,
     level: 0,
   })
-
-export const PactG = makeGetters (Pact)

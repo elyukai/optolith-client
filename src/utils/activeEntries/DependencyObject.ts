@@ -1,6 +1,6 @@
 import { List } from '../structures/List';
 import { Maybe, Nothing } from '../structures/Maybe';
-import { fromDefault, makeGetters } from '../structures/Record';
+import { fromDefault } from '../structures/Record';
 
 export interface DependencyObject {
   origin: Maybe<string>;
@@ -18,5 +18,3 @@ export const DependencyObject =
     sid2: Nothing,
     tier: Nothing,
   })
-
-export const DependencyObjectG = makeGetters (DependencyObject)

@@ -1,5 +1,5 @@
-import { ProfessionSelectionIds, ProfessionVariantSelection } from '../../../types/wiki';
-import { fromDefault, makeGetters, Record } from '../../structures/Record';
+import { fromDefault, Record } from '../../structures/Record';
+import { ProfessionSelectionIds, ProfessionVariantSelection } from '../wikiTypeHelpers';
 import { CombatTechniquesSecondSelection } from './SecondCombatTechniquesSelection';
 
 export interface RemoveCombatTechniquesSecondSelection {
@@ -16,9 +16,6 @@ const _RemoveCombatTechniquesSecondSelection =
     id: ProfessionSelectionIds.COMBAT_TECHNIQUES_SECOND,
     active: false,
   })
-
-export const RemoveCombatTechniquesSecondSelectionG =
-  makeGetters (_RemoveCombatTechniquesSecondSelection)
 
 export const RemoveCombatTechniquesSecondSelection =
   _RemoveCombatTechniquesSecondSelection ({

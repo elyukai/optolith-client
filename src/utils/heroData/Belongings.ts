@@ -1,7 +1,7 @@
 import { ArmorZonesEditorInstance } from '../../types/data';
 import { Maybe, Nothing } from '../structures/Maybe';
 import { OrderedMap } from '../structures/OrderedMap';
-import { fromDefault, makeGetters, makeLenses_, Record } from '../structures/Record';
+import { fromDefault, makeLenses_, Record } from '../structures/Record';
 import { EditItem } from './EditItem';
 import { HitZoneArmor } from './HitZoneArmor';
 import { Item } from './Item';
@@ -31,5 +31,4 @@ export const Belongings =
     purse: Purse .default,
   })
 
-export const BelongingsG = makeGetters (Belongings)
-export const BelongingsL = makeLenses_ (BelongingsG) (Belongings)
+export const BelongingsL = makeLenses_ (Belongings)
