@@ -1,7 +1,7 @@
 import { Dependent, SkillDependency } from '../../types/data';
 import { fnull, fromElements, List } from '../structures/List';
 import { fromJust, isJust, Just, Maybe } from '../structures/Maybe';
-import { fromDefault, makeLenses_, member, notMember, Omit, Record } from '../structures/Record';
+import { fromDefault, makeLenses, member, notMember, Omit, Record } from '../structures/Record';
 
 export interface AttributeDependent {
   id: string;
@@ -18,7 +18,7 @@ export const AttributeDependent =
     dependencies: fromElements<SkillDependency> (),
   })
 
-export const AttributeDependentL = makeLenses_ (AttributeDependent)
+export const AttributeDependentL = makeLenses (AttributeDependent)
 
 export const createAttributeDependent =
   (options: Partial<Omit<AttributeDependent, 'id'>>) =>

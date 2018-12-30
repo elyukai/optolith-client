@@ -3,10 +3,10 @@ import { fromDefault, member, Record } from '../../structures/Record';
 import { ProfessionSelectionIds, ProfessionVariantSelection } from '../wikiTypeHelpers';
 
 export interface CombatTechniquesSelection {
-  id: ProfessionSelectionIds.COMBAT_TECHNIQUES;
-  amount: number;
-  value: number;
-  sid: List<string>;
+  id: ProfessionSelectionIds
+  amount: number
+  value: number
+  sid: List<string>
 }
 
 export const CombatTechniquesSelection =
@@ -19,8 +19,7 @@ export const CombatTechniquesSelection =
 
 export const isCombatTechniquesSelection =
   (obj: ProfessionVariantSelection): obj is Record<CombatTechniquesSelection> =>
-    CombatTechniquesSelection.A.id (obj as unknown as Record<CombatTechniquesSelection>)
-      === ProfessionSelectionIds.COMBAT_TECHNIQUES
+    CombatTechniquesSelection.A.id (obj) === ProfessionSelectionIds.COMBAT_TECHNIQUES
       && member ('sid') (obj)
       && member ('value') (obj)
       && member ('amount') (obj)

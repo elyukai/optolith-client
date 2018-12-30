@@ -3,7 +3,7 @@ import { ActivatableLikeCategories, Categories } from '../../../constants/Catego
 import { getCategoryById } from '../../IDUtils';
 import { all, elem_, isList, List } from '../../structures/List';
 import { fmap, Maybe, Nothing, or } from '../../structures/Maybe';
-import { fromDefault, makeLenses_, member, Record } from '../../structures/Record';
+import { fromDefault, makeLenses, member, Record } from '../../structures/Record';
 import { AllRequirementObjects, ProfessionPrerequisite, SID } from '../wikiTypeHelpers';
 
 export interface RequireActivatable {
@@ -28,7 +28,7 @@ export const RequireActivatable =
     tier: Nothing,
   })
 
-export const RequireActivatableL = makeLenses_ (RequireActivatable)
+export const RequireActivatableL = makeLenses (RequireActivatable)
 
 export const isRequiringActivatable =
   (req: AllRequirementObjects): req is Record<RequireActivatable> => {

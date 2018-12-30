@@ -1,5 +1,5 @@
 import { Maybe, Nothing } from '../structures/Maybe';
-import { fromDefault, makeLenses_ } from '../structures/Record';
+import { fromDefault, makeLenses } from '../structures/Record';
 
 export interface ActiveObject {
   sid: Maybe<string | number>;
@@ -16,4 +16,4 @@ export const ActiveObject =
     tier: Nothing,
   })
 
-export const ActiveObjectL = makeLenses_ (ActiveObject)
+export const ActiveObjectL = makeLenses (ActiveObject)

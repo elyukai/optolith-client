@@ -1,5 +1,5 @@
 import { OrderedSet } from '../structures/OrderedSet';
-import { fromDefault, makeLenses_ } from '../structures/Record';
+import { fromDefault, makeLenses } from '../structures/Record';
 
 export interface Rules {
   higherParadeValues: number
@@ -21,4 +21,4 @@ export const Rules =
     enableLanguageSpecializations: false,
   })
 
-export const RulesL = makeLenses_ (Rules)
+export const RulesL = makeLenses (Rules)

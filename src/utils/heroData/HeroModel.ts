@@ -8,7 +8,7 @@ import { List } from '../structures/List';
 import { Maybe, Nothing } from '../structures/Maybe';
 import { OrderedMap } from '../structures/OrderedMap';
 import { OrderedSet } from '../structures/OrderedSet';
-import { fromDefault, makeLenses_, Record } from '../structures/Record';
+import { fromDefault, makeLenses, Record } from '../structures/Record';
 import { Belongings } from './Belongings';
 import { EditPet } from './EditPet';
 import { Energies } from './Energies';
@@ -108,7 +108,7 @@ export const HeroModel =
     blessedStyleDependencies: List.empty,
   })
 
-export const HeroModelL = makeLenses_ (HeroModel)
+export const HeroModelL = makeLenses (HeroModel)
 
 /**
  * Creates a new `Hero` object based on the input the user gives when creating

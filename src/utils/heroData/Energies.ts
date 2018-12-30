@@ -1,4 +1,4 @@
-import { fromDefault, makeLenses_, Record } from '../structures/Record';
+import { fromDefault, makeLenses, Record } from '../structures/Record';
 import { PermanentEnergyLoss } from './PermanentEnergyLoss';
 import { PermanentEnergyLossAndBoughtBack } from './PermanentEnergyLossAndBoughtBack';
 
@@ -24,4 +24,4 @@ export const Energies =
     permanentKarmaPoints: PermanentEnergyLossAndBoughtBack .default,
   })
 
-export const EnergiesL = makeLenses_ (Energies)
+export const EnergiesL = makeLenses (Energies)

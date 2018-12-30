@@ -1,7 +1,7 @@
 import { ActivatableDependency, Dependent } from '../../types/data';
 import { fnull, fromElements, List } from '../structures/List';
 import { fromJust, isJust, Just, Maybe } from '../structures/Maybe';
-import { fromDefault, makeLenses_, member, notMember, Omit, Record } from '../structures/Record';
+import { fromDefault, makeLenses, member, notMember, Omit, Record } from '../structures/Record';
 import { ActiveObject } from './ActiveObject';
 
 export interface ActivatableDependent {
@@ -17,7 +17,7 @@ export const ActivatableDependent =
     dependencies: fromElements<ActivatableDependency> (),
   })
 
-export const ActivatableDependentL = makeLenses_ (ActivatableDependent)
+export const ActivatableDependentL = makeLenses (ActivatableDependent)
 
 export const createActivatableDependent =
   (options: Partial<Omit<ActivatableDependent, 'id'>>) =>

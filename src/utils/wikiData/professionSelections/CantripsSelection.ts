@@ -1,11 +1,11 @@
 import { List } from '../../structures/List';
-import { fromDefault } from '../../structures/Record';
-import { ProfessionSelectionIds } from '../wikiTypeHelpers';
+import { fromDefault, Record } from '../../structures/Record';
+import { ProfessionSelection, ProfessionSelectionIds } from '../wikiTypeHelpers';
 
 export interface CantripsSelection {
-  id: ProfessionSelectionIds.CANTRIPS;
-  amount: number;
-  sid: List<string>;
+  id: ProfessionSelectionIds
+  amount: number
+  sid: List<string>
 }
 
 export const CantripsSelection =
@@ -14,3 +14,7 @@ export const CantripsSelection =
     amount: 0,
     sid: List.empty,
   })
+
+export const isCantripsSelection =
+  (obj: ProfessionSelection): obj is Record<CantripsSelection> =>
+    CantripsSelection.A.id (obj) === ProfessionSelectionIds.CANTRIPS

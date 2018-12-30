@@ -142,17 +142,6 @@ export enum ProfessionSelectionIds {
   TERRAIN_KNOWLEDGE = 'TERRAIN_KNOWLEDGE',
 }
 
-export interface ProfessionAdjustmentSelections {
-  [ProfessionSelectionIds.CANTRIPS]?: Record<CantripsSelection>
-  [ProfessionSelectionIds.COMBAT_TECHNIQUES]?: VariantCombatTechniquesSelection
-  [ProfessionSelectionIds.COMBAT_TECHNIQUES_SECOND]?: VariantCombatTechniquesSecondSelection
-  [ProfessionSelectionIds.CURSES]?: Record<CursesSelection>
-  [ProfessionSelectionIds.LANGUAGES_SCRIPTS]?: Record<LanguagesScriptsSelection>
-  [ProfessionSelectionIds.SPECIALIZATION]?: VariantSpecializationSelection
-  [ProfessionSelectionIds.SKILLS]?: Record<SkillsSelection>
-  [ProfessionSelectionIds.TERRAIN_KNOWLEDGE]?: Record<TerrainKnowledgeSelection>
-}
-
 export type ProfessionSelection =
   Record<SpecializationSelection> |
   Record<LanguagesScriptsSelection> |

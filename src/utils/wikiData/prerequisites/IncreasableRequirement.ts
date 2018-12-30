@@ -3,7 +3,7 @@ import { Categories, IncreasableCategories } from '../../../constants/Categories
 import { getCategoryById } from '../../IDUtils';
 import { all, elem_, isList, List } from '../../structures/List';
 import { fmap, or } from '../../structures/Maybe';
-import { fromDefault, makeLenses_, member, Record } from '../../structures/Record';
+import { fromDefault, makeLenses, member, Record } from '../../structures/Record';
 import { AllRequirementObjects, ProfessionPrerequisite } from '../wikiTypeHelpers';
 
 export interface RequireIncreasable {
@@ -21,7 +21,7 @@ export const RequireIncreasable =
     value: 0,
   })
 
-export const RequireIncreasableL = makeLenses_ (RequireIncreasable)
+export const RequireIncreasableL = makeLenses (RequireIncreasable)
 
 export const isIncreasableRequirement =
   (req: AllRequirementObjects): req is Record<RequireIncreasable> => {

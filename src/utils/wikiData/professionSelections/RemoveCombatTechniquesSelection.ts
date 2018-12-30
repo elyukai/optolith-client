@@ -3,13 +3,13 @@ import { ProfessionSelectionIds, ProfessionVariantSelection } from '../wikiTypeH
 import { CombatTechniquesSelection } from './CombatTechniquesSelection';
 
 export interface RemoveCombatTechniquesSelection {
-  id: ProfessionSelectionIds.COMBAT_TECHNIQUES;
-  active: false;
+  id: ProfessionSelectionIds
+  active: false
 }
 
 export type VariantCombatTechniquesSelection =
   Record<CombatTechniquesSelection> |
-  Record<RemoveCombatTechniquesSelection>;
+  Record<RemoveCombatTechniquesSelection>
 
 const _RemoveCombatTechniquesSelection =
   fromDefault<RemoveCombatTechniquesSelection> ({

@@ -122,6 +122,25 @@ export const fromDefault =
   }
 
 
+// LENSES
+
+/**
+ * Creates lenses for every key in the passed record creator.
+ */
+export const makeLenses =
+  <A extends RecordBase>
+  (record: RecordCreator<A>): Lenses<A> =>
+    Object.freeze (
+      foldl<string, Lenses<A>> (acc => key => ({
+                                 ...acc,
+                                 [key]: lens<Record<A>, A[typeof key]> (record.A [key])
+                                                                       (setter (key)),
+                               }))
+                               ({} as Lenses<A>)
+                               (record .keys)
+    )
+
+
 // MERGING RECORDS
 
 const mergeSafe = <A extends RecordBase> (x: Partial<A>) => (r: Record<A>): Record<A> =>
@@ -231,39 +250,6 @@ const makeAccessors =
                                                (keys))
 
 /**
- * Creates lenses for every key in the passed record.
- *
- * If you have already generated the getters and if you need better performance
- * for generating the lenses, use `makeLenses_` instead.
- */
-export const makeLenses = <A extends RecordBase> (record: RecordCreator<A>): Lenses<A> =>
-  Object.freeze (foldl<string, Lenses<A>> (acc => key => ({
-                                            ...acc,
-                                            [key]: lens<Record<A>, A[typeof key]> (accessor (key))
-                                                                                  (setter (key)),
-                                          }))
-                                          ({} as Lenses<A>)
-                                          (record .keys))
-
-/**
- * Creates lenses for every key in the passed record.
- *
- * If you have not already generated the getters, use `makeLenses` instead.
- */
-export const makeLenses_ =
-  <A extends RecordBase> (record: RecordCreator<A>): Lenses<A> =>
-    Object.freeze (
-      foldl<string, Lenses<A>> (acc => key => ({
-                                 ...acc,
-                                 [key]: lens<Record<A>, A[typeof key]>
-                                   (record.A [key] as Accessor<A, typeof key>)
-                                   (setter (key)),
-                               }))
-                               ({} as Lenses<A>)
-                               (record .keys)
-    )
-
-/**
  * `member :: String -> Record a -> Bool`
  *
  * Is the key a member of the record?
@@ -298,11 +284,12 @@ export const isRecord =
 export const Record = {
   fromDefault,
 
-  mergeSafe: mergeSafeR2,
+  mergeSafeR2,
+  mergeSafeR3,
+  mergeSafeR4,
+  mergeSafeR5,
 
-  makeGetters: makeAccessors,
   makeLenses,
-  makeLenses_,
   member,
   notMember,
   toObject,

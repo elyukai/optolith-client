@@ -1,4 +1,4 @@
-import * as R from 'ramda';
+import { pipe } from 'ramda';
 import * as React from 'react';
 import { Checkbox } from '../components/Checkbox';
 import { Dropdown, DropdownOption } from '../components/Dropdown';
@@ -11,170 +11,137 @@ import { SelectionsSkills } from '../views/rcp/SelectionsSkills';
 import { SelectionsSkillSpecialization } from '../views/rcp/SelectionsSkillSpecialization';
 import { TerrainKnowledge } from '../views/rcp/SelectionsTerrainKnowledge';
 import { findSelectOption } from './activatable/selectionUtils';
-import { IdentityFn, List, Maybe, OrderedMap, OrderedSet, Record, Tuple } from './dataUtils';
 import { sortObjects } from './FilterSortUtils';
-import { translate, UIMessagesObject } from './I18n';
-import { Just, Nothing } from './structures/Maybe.new';
-import * as Wiki from './wikiData/wikiTypeHelpers';
+import { translate } from './I18n';
+import { flip, ident } from './structures/Function';
+import { set } from './structures/Lens';
+import { foldl, List } from './structures/List';
+import { Just, Maybe, maybe, Nothing } from './structures/Maybe';
+import { OrderedMap } from './structures/OrderedMap';
+import { OrderedSet } from './structures/OrderedSet';
+import { Record } from './structures/Record';
+import { Profession } from './wikiData/Profession';
+import { isCantripsSelection } from './wikiData/professionSelections/CantripsSelection';
+import { isCombatTechniquesSelection } from './wikiData/professionSelections/CombatTechniquesSelection';
+import { isCursesSelection } from './wikiData/professionSelections/CursesSelection';
+import { isLanguagesScriptsSelection } from './wikiData/professionSelections/LanguagesScriptsSelection';
+import { ProfessionSelections, ProfessionSelectionsL } from './wikiData/professionSelections/ProfessionAdjustmentSelections';
+import { isRemoveCombatTechniquesSelection } from './wikiData/professionSelections/RemoveCombatTechniquesSelection';
+import { isRemoveCombatTechniquesSecondSelection } from './wikiData/professionSelections/RemoveSecondCombatTechniquesSelection';
+import { isRemoveSpecializationSelection } from './wikiData/professionSelections/RemoveSpecializationSelection';
+import { isSecondCombatTechniquesSelection } from './wikiData/professionSelections/SecondCombatTechniquesSelection';
+import { isSkillsSelection } from './wikiData/professionSelections/SkillsSelection';
+import { isSpecializationSelection } from './wikiData/professionSelections/SpecializationSelection';
+import { ProfessionVariant } from './wikiData/ProfessionVariant';
+import { ProfessionSelection, ProfessionSelectionIds, ProfessionVariantSelection } from './wikiData/wikiTypeHelpers';
 import { getAllWikiEntriesByGroup } from './WikiUtils';
-
-const isProfessionSpecializationSelection =
-  (obj: Wiki.ProfessionSelection): obj is Record<Wiki.SpecializationSelection> =>
-    (obj .get ('id') as Wiki.ProfessionSelectionIds)
-      === Wiki.ProfessionSelectionIds.SPECIALIZATION;
-
-const isProfessionVariantRemoveSpecializationSelection =
-  (obj: Wiki.ProfessionVariantSelection): obj is Record<Wiki.RemoveSpecializationSelection> =>
-    (obj .get ('id') as Wiki.ProfessionSelectionIds)
-      === Wiki.ProfessionSelectionIds.SPECIALIZATION
-      // `false` explicitly necessary!!! (SpecializationSelection[`active`] === undefined)
-      && (obj as Record<Wiki.RemoveSpecializationSelection>) .get ('active') === false;
-
-const isProfessionLanguagesScriptsSelection =
-  (obj: Wiki.ProfessionSelection): obj is Record<Wiki.LanguagesScriptsSelection> =>
-    (obj .get ('id') as Wiki.ProfessionSelectionIds)
-      === Wiki.ProfessionSelectionIds.LANGUAGES_SCRIPTS;
-
-const isProfessionCombatTechniquesSelection =
-  (obj: Wiki.ProfessionSelection): obj is Record<Wiki.CombatTechniquesSelection> =>
-    (obj .get ('id') as Wiki.ProfessionSelectionIds)
-      === Wiki.ProfessionSelectionIds.COMBAT_TECHNIQUES;
-
-const isProfessionVariantRemoveCombatTechniquesSelection =
-  (obj: Wiki.ProfessionVariantSelection): obj is Record<Wiki.RemoveCombatTechniquesSelection> =>
-    (obj .get ('id') as Wiki.ProfessionSelectionIds)
-      === Wiki.ProfessionSelectionIds.COMBAT_TECHNIQUES
-      // `false` explicitly necessary!!! (CombatTechniquesSelection[`active`] === undefined)
-      && (obj as Record<Wiki.RemoveCombatTechniquesSelection>) .get ('active') === false;
-
-const isProfessionSecondCombatTechniquesSelection =
-  (obj: Wiki.ProfessionSelection): obj is Record<Wiki.CombatTechniquesSecondSelection> =>
-    (obj .get ('id') as Wiki.ProfessionSelectionIds)
-      === Wiki.ProfessionSelectionIds.COMBAT_TECHNIQUES_SECOND;
-
-const isProfessionVariantRemoveSecondCombatTechniquesSelection =
-  (obj: Wiki.ProfessionVariantSelection):
-    obj is Record<Wiki.RemoveCombatTechniquesSecondSelection> =>
-    (obj .get ('id') as Wiki.ProfessionSelectionIds)
-      === Wiki.ProfessionSelectionIds.COMBAT_TECHNIQUES_SECOND
-      // `false` explicitly necessary!!! (CombatTechniquesSecondSelection[`active`] === undefined)
-      && (obj as Record<Wiki.RemoveCombatTechniquesSecondSelection>) .get ('active') === false;
-
-const isProfessionCantripsSelection =
-  (obj: Wiki.ProfessionSelection): obj is Record<Wiki.CantripsSelection> =>
-    (obj .get ('id') as Wiki.ProfessionSelectionIds)
-      === Wiki.ProfessionSelectionIds.CANTRIPS;
-
-const isProfessionCursesSelection =
-  (obj: Wiki.ProfessionSelection): obj is Record<Wiki.CursesSelection> =>
-    (obj .get ('id') as Wiki.ProfessionSelectionIds)
-      === Wiki.ProfessionSelectionIds.CURSES;
-
-const isProfessionSkillsSelection =
-  (obj: Wiki.ProfessionSelection): obj is Record<Wiki.SkillsSelection> =>
-    (obj .get ('id') as Wiki.ProfessionSelectionIds)
-      === Wiki.ProfessionSelectionIds.SKILLS;
 
 /**
  * Collects all available RCP adjustment selections in one record
  */
 export const getAllAdjustmentSelections =
-  (profession: Record<Wiki.Profession>) =>
-    (maybeProfessionVariant: Maybe<Record<Wiki.ProfessionVariant>>):
-      Record<Wiki.ProfessionAdjustmentSelections> => {
-      const base = Record.empty<Wiki.ProfessionAdjustmentSelections> ();
+  (profession: Record<Profession>) =>
+  (maybeProfessionVariant: Maybe<Record<ProfessionVariant>>): Record<ProfessionSelections> => {
+    const buildRecord = pipe (
+      putProfessionSelectionsIntoRecord,
+      putProfessionVariantSelectionsIntoRecord (maybeProfessionVariant)
+    )
 
-      const buildRecord = R.pipe (
-        profession .get ('selections') .foldl<Record<Wiki.ProfessionAdjustmentSelections>> (
-          acc => current => {
-            if (isProfessionSpecializationSelection (current)) {
-              return acc .insert (Wiki.ProfessionSelectionIds.SPECIALIZATION) (current);
-            }
+    return buildRecord (profession)
+  }
 
-            if (isProfessionLanguagesScriptsSelection (current)) {
-              return acc .insert (Wiki.ProfessionSelectionIds.LANGUAGES_SCRIPTS) (current);
-            }
+const putProfessionSelectionIntoRecord =
+  (acc: Record<ProfessionSelections>) => (current: ProfessionSelection) => {
+    if (isSpecializationSelection (current)) {
+      return set (ProfessionSelectionsL[ProfessionSelectionIds.SPECIALIZATION])
+                  (Just (current))
+                  (acc)
+    }
 
-            if (isProfessionCombatTechniquesSelection (current)) {
-              return acc .insert (Wiki.ProfessionSelectionIds.COMBAT_TECHNIQUES) (current);
-            }
+    if (isLanguagesScriptsSelection (current)) {
+      return set (ProfessionSelectionsL[ProfessionSelectionIds.LANGUAGES_SCRIPTS])
+                  (Just (current))
+                  (acc)
+    }
 
-            if (isProfessionSecondCombatTechniquesSelection (current)) {
-              return acc .insert (Wiki.ProfessionSelectionIds.COMBAT_TECHNIQUES_SECOND) (current);
-            }
+    if (isCombatTechniquesSelection (current)) {
+      return set (ProfessionSelectionsL[ProfessionSelectionIds.COMBAT_TECHNIQUES])
+                  (Just (current))
+                  (acc)
+    }
 
-            if (isProfessionCantripsSelection (current)) {
-              return acc .insert (Wiki.ProfessionSelectionIds.CANTRIPS) (current);
-            }
+    if (isSecondCombatTechniquesSelection (current)) {
+      return set (ProfessionSelectionsL[ProfessionSelectionIds.COMBAT_TECHNIQUES_SECOND])
+                  (Just (current))
+                  (acc)
+    }
 
-            if (isProfessionCursesSelection (current)) {
-              return acc .insert (Wiki.ProfessionSelectionIds.CURSES) (current);
-            }
+    if (isCantripsSelection (current)) {
+      return set (ProfessionSelectionsL[ProfessionSelectionIds.CANTRIPS])
+                  (Just (current))
+                  (acc)
+    }
 
-            if (isProfessionSkillsSelection (current)) {
-              return acc .insert (Wiki.ProfessionSelectionIds.SKILLS) (current);
-            }
+    if (isCursesSelection (current)) {
+      return set (ProfessionSelectionsL[ProfessionSelectionIds.CURSES])
+                  (Just (current))
+                  (acc)
+    }
 
-            return acc .insert (Wiki.ProfessionSelectionIds.TERRAIN_KNOWLEDGE) (current);
-          }
-        ),
-        Maybe.maybe<
-          Record<Wiki.ProfessionVariant>,
-          IdentityFn<Record<Wiki.ProfessionAdjustmentSelections>>
-        >
-          (R.identity)
-          (professionVariant => professionVariant .get ('selections') .foldl (
+    if (isSkillsSelection (current)) {
+      return set (ProfessionSelectionsL[ProfessionSelectionIds.SKILLS])
+                  (Just (current))
+                  (acc)
+    }
+
+    return set (ProfessionSelectionsL[ProfessionSelectionIds.TERRAIN_KNOWLEDGE])
+                (Just (current))
+                (acc)
+  }
+
+const putProfessionSelectionsIntoRecord =
+  pipe (
+    Profession.A.selections,
+    foldl<ProfessionSelection, Record<ProfessionSelections>> (putProfessionSelectionIntoRecord)
+                                                             (ProfessionSelections ({ }))
+  )
+
+const putProfessionVariantSelectionsIntoRecord =
+  maybe<
+    Record<ProfessionVariant>,
+    (x: Record<ProfessionSelections>) => Record<ProfessionSelections>
+  >
+    (ident)
+    (pipe (
+      ProfessionVariant.A.selections,
+      flip (
+        foldl<ProfessionVariantSelection, Record<ProfessionSelections>>
+          (
             acc => current => {
-              if (isProfessionVariantRemoveSpecializationSelection (current)) {
-                return acc .insertMaybe (Wiki.ProfessionSelectionIds.SPECIALIZATION) (Nothing ());
+              if (isRemoveSpecializationSelection (current)) {
+                return set (ProfessionSelectionsL[ProfessionSelectionIds.SPECIALIZATION])
+                          (Nothing)
+                          (acc)
               }
 
-              if (isProfessionVariantRemoveCombatTechniquesSelection (current)) {
-                return acc .insertMaybe (Wiki.ProfessionSelectionIds.COMBAT_TECHNIQUES)
-                                        (Nothing ());
+              if (isRemoveCombatTechniquesSelection (current)) {
+                return set (ProfessionSelectionsL[ProfessionSelectionIds.COMBAT_TECHNIQUES])
+                          (Nothing)
+                          (acc)
               }
 
-              if (isProfessionVariantRemoveSecondCombatTechniquesSelection (current)) {
-                return acc .insertMaybe (Wiki.ProfessionSelectionIds.COMBAT_TECHNIQUES_SECOND)
-                                        (Nothing ());
+              if (isRemoveCombatTechniquesSecondSelection (current)) {
+                return set (ProfessionSelectionsL[ProfessionSelectionIds.COMBAT_TECHNIQUES_SECOND])
+                          (Nothing)
+                          (acc)
               }
 
-              if (isProfessionSpecializationSelection (current)) {
-                return acc .insert (Wiki.ProfessionSelectionIds.SPECIALIZATION) (current);
-              }
-
-              if (isProfessionLanguagesScriptsSelection (current)) {
-                return acc .insert (Wiki.ProfessionSelectionIds.LANGUAGES_SCRIPTS) (current);
-              }
-
-              if (isProfessionCombatTechniquesSelection (current)) {
-                return acc .insert (Wiki.ProfessionSelectionIds.COMBAT_TECHNIQUES) (current);
-              }
-
-              if (isProfessionSecondCombatTechniquesSelection (current)) {
-                return acc .insert (Wiki.ProfessionSelectionIds.COMBAT_TECHNIQUES_SECOND) (current);
-              }
-
-              if (isProfessionCantripsSelection (current)) {
-                return acc .insert (Wiki.ProfessionSelectionIds.CANTRIPS) (current);
-              }
-
-              if (isProfessionCursesSelection (current)) {
-                return acc .insert (Wiki.ProfessionSelectionIds.CURSES) (current);
-              }
-
-              if (isProfessionSkillsSelection (current)) {
-                return acc .insert (Wiki.ProfessionSelectionIds.SKILLS) (current);
-              }
-
-              return acc .insert (Wiki.ProfessionSelectionIds.TERRAIN_KNOWLEDGE) (current);
+              return putProfessionSelectionIntoRecord (acc) (current)
             }
-          ))
-          (maybeProfessionVariant)
-      );
+          )
+      )
+    ))
 
-      return buildRecord (base);
-    };
 
 export const getBuyScriptElement =
   (locale: UIMessagesObject) =>
@@ -195,17 +162,17 @@ export const getBuyScriptElement =
                     wikiEntry,
                     Just (culture .get ('scripts') .head ())
                   )
-                );
+                )
 
             const selectionItemName =
               Maybe.fromMaybe ('')
                               (selectionItem
-                                .fmap (Record.get<Wiki.SelectionObject, 'name'> ('name')));
+                                .fmap (Record.get<Wiki.SelectionObject, 'name'> ('name')))
 
             const selectionItemCost =
               Maybe.fromMaybe (0)
                               (selectionItem
-                                .bind (Record.lookup<Wiki.SelectionObject, 'cost'> ('cost')));
+                                .bind (Record.lookup<Wiki.SelectionObject, 'cost'> ('cost')))
 
             return (
               <Checkbox
@@ -220,10 +187,10 @@ export const getBuyScriptElement =
                   && ` (${selectionItemName}, ${selectionItemCost} AP)`
                 }
               </Checkbox>
-            );
+            )
           }) ()
         )
-      : Nothing ();
+      : Nothing ()
 
 const getScripts = (locale: UIMessagesObject) =>
   (culture: Record<Wiki.Culture>) =>
@@ -234,17 +201,17 @@ const getScripts = (locale: UIMessagesObject) =>
             wikiEntryScripts
               .lookup ('select')
               .fmap (
-                R.pipe (
+                pipe (
                   Maybe.mapMaybe (
                     (e): Maybe<Record<ScriptsSelectionListItem>> => {
-                      const id = e .get ('id');
+                      const id = e .get ('id')
 
-                      const maybeOption = findSelectOption (wikiEntryScripts, Just (id));
+                      const maybeOption = findSelectOption (wikiEntryScripts, Just (id))
 
                       if (Maybe.isJust (maybeOption) && typeof id === 'number') {
-                        const option = Maybe.fromJust (maybeOption);
+                        const option = Maybe.fromJust (maybeOption)
 
-                        const maybeCost = option .lookup ('cost');
+                        const maybeCost = option .lookup ('cost')
 
                         if (Maybe.isJust (maybeCost)) {
                           const native =
@@ -254,23 +221,23 @@ const getScripts = (locale: UIMessagesObject) =>
                               && Maybe.elem (id)
                                             (Maybe.listToMaybe (culture .get ('scripts')))
                               || id === mainScript
-                            );
+                            )
 
                           return Just (Record.of<ScriptsSelectionListItem> ({
                             id,
                             name: option .get ('name'),
                             cost: Maybe.fromJust (maybeCost),
                             native,
-                          }));
+                          }))
                         }
                       }
 
-                      return Nothing ();
+                      return Nothing ()
                     }
                   ),
                   list => sortObjects (list, locale .get ('id'))
                 )
-              );
+              )
 
 const getLanguages = (locale: UIMessagesObject) =>
   (culture: Record<Wiki.Culture>) =>
@@ -280,35 +247,35 @@ const getLanguages = (locale: UIMessagesObject) =>
           wikiEntryLanguages
             .lookup ('select')
             .fmap (
-              R.pipe (
+              pipe (
                 Maybe.mapMaybe (
                   (e): Maybe<Record<LanguagesSelectionListItem>> => {
-                    const id = e .get ('id');
+                    const id = e .get ('id')
 
-                    const maybeOption = findSelectOption (wikiEntryLanguages, Just (id));
+                    const maybeOption = findSelectOption (wikiEntryLanguages, Just (id))
 
                     if (Maybe.isJust (maybeOption) && typeof id === 'number') {
-                      const option = Maybe.fromJust (maybeOption);
+                      const option = Maybe.fromJust (maybeOption)
 
                       const native =
                         !isMotherTongueSelectionNeeded
                         && Maybe.elem (id)
                                       (Maybe.listToMaybe (culture .get ('languages')))
-                        || id === motherTongue;
+                        || id === motherTongue
 
                       return Just (Record.of<LanguagesSelectionListItem> ({
                         id,
                         name: option .get ('name'),
                         native,
-                      }));
+                      }))
                     }
 
-                    return Nothing ();
+                    return Nothing ()
                   }
                 ),
                 list => sortObjects (list, locale .get ('id'))
               )
-            );
+            )
 
 export const getLanguagesAndScriptsElementAndValidation =
   (locale: UIMessagesObject) =>
@@ -337,13 +304,13 @@ export const getLanguagesAndScriptsElementAndValidation =
                                               (mainScript)
                                               (isBuyingMainScriptEnabled)
                                               (isScriptSelectionNeeded)
-                                              (wikiEntryScripts);
+                                              (wikiEntryScripts)
 
           const maybeLanguagesList = getLanguages (locale)
                                                   (culture)
                                                   (motherTongue)
                                                   (isMotherTongueSelectionNeeded)
-                                                  (wikiEntryLanguages);
+                                                  (wikiEntryLanguages)
 
           return Maybe.liftM2<
             List<Record<ScriptsSelectionListItem>>,
@@ -351,10 +318,10 @@ export const getLanguagesAndScriptsElementAndValidation =
             Tuple<number, JSX.Element>
           >
             (scriptsList => languagesList => {
-              const value = selection .get ('value');
+              const value = selection .get ('value')
 
               const apLeft =
-                value - languages .sum () * 2 - scripts .sum ();
+                value - languages .sum () * 2 - scripts .sum ()
 
               return Tuple.of<number, JSX.Element>
                 (apLeft)
@@ -370,15 +337,15 @@ export const getLanguagesAndScriptsElementAndValidation =
                     adjustLanguage={adjustLanguage}
                     locale={locale}
                     />
-                );
+                )
             })
             (maybeScriptsList)
-            (maybeLanguagesList);
+            (maybeLanguagesList)
         })
         (professionSelections .lookup (Wiki.ProfessionSelectionIds.LANGUAGES_SCRIPTS))
         (wiki .get ('specialAbilities') .lookup ('SA_27'))
         (wiki .get ('specialAbilities') .lookup ('SA_29'))
-    );
+    )
 
 export const getCursesElementAndValidation =
   (locale: UIMessagesObject) =>
@@ -390,15 +357,15 @@ export const getCursesElementAndValidation =
       .lookup (Wiki.ProfessionSelectionIds.CURSES)
       .fmap (
         selection => {
-          const value = selection .get ('value');
+          const value = selection .get ('value')
 
           const list =
             sortObjects (
               getAllWikiEntriesByGroup (wiki .get ('spells'), 3),
               locale .get ('id')
-            );
+            )
 
-          const apLeft = value - cursesActive .size () - cursesActive .sum () * 2;
+          const apLeft = value - cursesActive .size () - cursesActive .sum () * 2
 
           return Tuple.of<number, JSX.Element>
             (apLeft)
@@ -411,9 +378,9 @@ export const getCursesElementAndValidation =
                 change={adjustCurse}
                 locale={locale}
                 />
-            );
+            )
         }
-      );
+      )
 
 export const getCombatTechniquesElementAndValidation =
   (locale: UIMessagesObject) =>
@@ -426,14 +393,14 @@ export const getCombatTechniquesElementAndValidation =
       .lookup (Wiki.ProfessionSelectionIds.COMBAT_TECHNIQUES)
       .fmap (
         selection => {
-          const amount = selection .get ('amount');
-          const value = selection .get ('value');
-          const sid = selection .get ('sid');
+          const amount = selection .get ('amount')
+          const value = selection .get ('value')
+          const sid = selection .get ('sid')
 
           const list =
             wiki .get ('combatTechniques')
               .elems ()
-              .filter (e => sid .elem (e .get ('id')));
+              .filter (e => sid .elem (e .get ('id')))
 
           // Tuple.fst: isValidSelection
           return Tuple.of<boolean, JSX.Element>
@@ -448,9 +415,9 @@ export const getCombatTechniquesElementAndValidation =
                 change={switchCombatTechnique}
                 locale={locale}
                 />
-            );
+            )
         }
-      );
+      )
 
 export const getCombatTechniquesSecondElementAndValidation =
   (locale: UIMessagesObject) =>
@@ -463,14 +430,14 @@ export const getCombatTechniquesSecondElementAndValidation =
       .lookup (Wiki.ProfessionSelectionIds.COMBAT_TECHNIQUES_SECOND)
       .fmap (
         selection => {
-          const amount = selection .get ('amount');
-          const value = selection .get ('value');
-          const sid = selection .get ('sid');
+          const amount = selection .get ('amount')
+          const value = selection .get ('value')
+          const sid = selection .get ('sid')
 
           const list =
             wiki .get ('combatTechniques')
               .elems ()
-              .filter (e => sid .elem (e .get ('id')));
+              .filter (e => sid .elem (e .get ('id')))
 
           // Tuple.fst: isValidSelection
           return Tuple.of<boolean, JSX.Element>
@@ -486,9 +453,9 @@ export const getCombatTechniquesSecondElementAndValidation =
                 locale={locale}
                 second
                 />
-            );
+            )
         }
-      );
+      )
 
 export const getCantripsElementAndValidation =
   (locale: UIMessagesObject) =>
@@ -500,13 +467,13 @@ export const getCantripsElementAndValidation =
       .lookup (Wiki.ProfessionSelectionIds.CANTRIPS)
       .fmap (
         selection => {
-          const amount = selection .get ('amount');
-          const sid = selection .get ('sid');
+          const amount = selection .get ('amount')
+          const sid = selection .get ('sid')
 
           const list =
             wiki .get ('cantrips')
               .elems ()
-              .filter (e => sid .elem (e .get ('id')));
+              .filter (e => sid .elem (e .get ('id')))
 
           // Tuple.fst: isValidSelection
           return Tuple.of<boolean, JSX.Element>
@@ -519,9 +486,9 @@ export const getCantripsElementAndValidation =
                 change={switchCantrip}
                 locale={locale}
                 />
-            );
+            )
         }
-      );
+      )
 
 export const getSkillSpecializationElement =
   (locale: UIMessagesObject) =>
@@ -545,7 +512,7 @@ export const getSkillSpecializationElement =
             skills={wiki .get ('skills')}
             />
         )
-      );
+      )
 
 export const getSkillsElementAndValidation =
   (locale: UIMessagesObject) =>
@@ -558,8 +525,8 @@ export const getSkillsElementAndValidation =
       .lookup (Wiki.ProfessionSelectionIds.SKILLS)
       .fmap (
         selection => {
-          const value = selection .get ('value');
-          const maybeGroup = selection .lookup ('gr');
+          const value = selection .get ('value')
+          const maybeGroup = selection .lookup ('gr')
 
           const list =
             Maybe.fromMaybe (wiki .get ('skills'))
@@ -568,9 +535,9 @@ export const getSkillsElementAndValidation =
                                 gr => wiki .get ('skills')
                                   .filter (e => e .get ('gr') === gr)
                               ))
-                              .elems ();
+                              .elems ()
 
-          const apLeft = value - skillsActive .sum ();
+          const apLeft = value - skillsActive .sum ()
 
           return Tuple.of<number, JSX.Element>
             (apLeft)
@@ -585,9 +552,9 @@ export const getSkillsElementAndValidation =
                 value={value}
                 locale={locale}
                 />
-            );
+            )
         }
-      );
+      )
 
 export const getTerrainKnowledgeElement =
   (wiki: Record<Wiki.WikiAll>) =>
@@ -604,7 +571,7 @@ export const getTerrainKnowledgeElement =
           />
       ))
       (professionSelections .lookup (Wiki.ProfessionSelectionIds.TERRAIN_KNOWLEDGE))
-      (wiki .get ('specialAbilities') .lookup ('SA_12'));
+      (wiki .get ('specialAbilities') .lookup ('SA_12'))
 
 export const getMotherTongueSelectionElement =
   (locale: UIMessagesObject) =>
@@ -634,7 +601,7 @@ export const getMotherTongueSelectionElement =
               />
           )
         )
-    );
+    )
 
 export const getMainScriptSelectionElement =
   (locale: UIMessagesObject) =>
@@ -675,4 +642,4 @@ export const getMainScriptSelectionElement =
               />
           )
         )
-    );
+    )

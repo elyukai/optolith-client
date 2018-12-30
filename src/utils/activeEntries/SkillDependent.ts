@@ -2,7 +2,7 @@ import { add, pipe } from 'ramda';
 import { Dependent, ExtendedSkillDependent, SkillDependency } from '../../types/data';
 import { fnull, fromElements, List } from '../structures/List';
 import { fromJust, isJust, Just, Maybe } from '../structures/Maybe';
-import { fromDefault, makeLenses_, member, notMember, Omit, Record } from '../structures/Record';
+import { fromDefault, makeLenses, member, notMember, Omit, Record } from '../structures/Record';
 
 export interface SkillDependent {
   id: string;
@@ -17,7 +17,7 @@ export const SkillDependent =
     dependencies: fromElements<SkillDependency> (),
   })
 
-export const SkillDependentL = makeLenses_ (SkillDependent)
+export const SkillDependentL = makeLenses (SkillDependent)
 
 export const createSkillDependent =
   (options: Partial<Omit<SkillDependent, 'id'>>) =>

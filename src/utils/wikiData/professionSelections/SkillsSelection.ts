@@ -1,17 +1,17 @@
 import { Maybe, Nothing } from '../../structures/Maybe';
-import { fromDefault } from '../../structures/Record';
-import { ProfessionSelectionIds } from '../wikiTypeHelpers';
+import { fromDefault, Record } from '../../structures/Record';
+import { ProfessionSelection, ProfessionSelectionIds } from '../wikiTypeHelpers';
 
 export interface SkillsSelection {
-  id: ProfessionSelectionIds.SKILLS;
+  id: ProfessionSelectionIds
   /**
    * If specified, only choose from skills of the specified group.
    */
-  gr: Maybe<number>;
+  gr: Maybe<number>
   /**
    * The AP value the user can spend.
    */
-  value: number;
+  value: number
 }
 
 export const SkillsSelection =
@@ -20,3 +20,7 @@ export const SkillsSelection =
     value: 0,
     gr: Nothing,
   })
+
+export const isSkillsSelection =
+  (obj: ProfessionSelection): obj is Record<SkillsSelection> =>
+    SkillsSelection.A.id (obj) === ProfessionSelectionIds.SKILLS

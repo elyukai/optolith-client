@@ -1,5 +1,5 @@
 import { List } from '../structures/List';
-import { fromDefault, makeLenses_, Record } from '../structures/Record';
+import { fromDefault, makeLenses, Record } from '../structures/Record';
 import { UndoState } from '../undo';
 import { HeroModel, HeroModelRecord } from './HeroModel';
 
@@ -16,4 +16,4 @@ export const UndoableHero =
     future: List.empty,
   })
 
-export const UndoableHeroL = makeLenses_ (UndoableHero)
+export const UndoableHeroL = makeLenses (UndoableHero)

@@ -3,13 +3,13 @@ import { ProfessionSelectionIds, ProfessionVariantSelection } from '../wikiTypeH
 import { SpecializationSelection } from './SpecializationSelection';
 
 export interface RemoveSpecializationSelection {
-  id: ProfessionSelectionIds.SPECIALIZATION;
-  active: false;
+  id: ProfessionSelectionIds
+  active: false
 }
 
 export type VariantSpecializationSelection =
   Record<SpecializationSelection> |
-  Record<RemoveSpecializationSelection>;
+  Record<RemoveSpecializationSelection>
 
 const _RemoveSpecializationSelection =
   fromDefault<RemoveSpecializationSelection> ({
