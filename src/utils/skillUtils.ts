@@ -10,12 +10,11 @@ import { HeroModelG, HeroModelRecord } from './heroData/HeroModel';
 import { ifElse } from './ifElse';
 import { add } from './mathUtils';
 import { cnst, ident } from './structures/Function';
-import { cons_, filter, foldr, length, List, maximum, minimum } from './structures/List';
+import { cons_, countWith, foldr, List, maximum, maximumNonNegative, minimum } from './structures/List';
 import { elem, fmap, Just, Maybe, maybe, Nothing, sum } from './structures/Maybe';
 import { lookup_, OrderedMap } from './structures/OrderedMap';
 import { fromBoth, Pair } from './structures/Pair';
 import { Record } from './structures/Record';
-import { isNumber } from './typeCheckUtils';
 import { SkillCombined, SkillCombinedG } from './viewData/SkillCombined';
 import { ExperienceLevel, ExperienceLevelG } from './wikiData/ExperienceLevel';
 import { SkillG } from './wikiData/Skill';
@@ -36,7 +35,7 @@ export const getExceptionalSkillBonus =
   (skillId: string) =>
     maybe<Record<ActivatableDependent>, number>
       (0)
-      (pipe (active, filter (pipe (sid, elem<string | number> (skillId))), length))
+      (pipe (active, countWith (pipe (sid, elem<string | number> (skillId)))))
 
 /**
  * Creates the base for a list for calculating the maximum of a skill based on
@@ -69,7 +68,7 @@ export const putMaximumSkillRatingFromExperienceLevel =
 /**
  * Returns if the passed skill's skill rating can be increased.
  */
-export const isIncreasable =
+export const isSkillIncreasable =
   (startEL: Record<ExperienceLevel>) =>
   (phase: number) =>
   (attributes: OrderedMap<string, Record<AttributeDependent>>) =>
@@ -90,13 +89,10 @@ export const isIncreasable =
 /**
  * Returns if the passed skill's skill rating can be decreased.
  */
-export const isDecreasable =
+export const isSkillDecreasable =
   (wiki: WikiModelRecord) =>
   (state: HeroModelRecord) =>
   (skill: Record<SkillCombined>): boolean => {
-    const flattenedDependencies =
-      flattenDependencies<number | boolean> (wiki) (state) (dependencies (skill))
-
     /**
      * Craft Instruments
      * => sum of Woodworking and Metalworking must be at least 12.
@@ -116,8 +112,11 @@ export const isDecreasable =
       }
     }
 
+    const flattenedDependencies =
+      flattenDependencies<number> (wiki) (state) (dependencies (skill))
+
     // Basic validation
-    return value (skill) > Math.max (0, ...filter (isNumber) (flattenedDependencies))
+    return value (skill) > maximumNonNegative (flattenedDependencies)
   }
 
 export const isCommon =

@@ -3,34 +3,45 @@ import { getActiveSelections } from './activatable/selectionUtils';
 import { ActivatableDependent } from './activeEntries/ActivatableDependent';
 import { ActivatableSkillDependent, ActivatableSkillDependentG } from './activeEntries/ActivatableSkillDependent';
 import { AttributeDependent } from './activeEntries/AttributeDependent';
-import { flattenDependencies } from './dependencies/flattenDependencies';
+import { filterAndMaximumNonNegative, flattenDependencies } from './dependencies/flattenDependencies';
+import { HeroModelRecord } from './heroData/HeroModel';
 import { getNumericBlessedTraditionIdByInstanceId } from './IDUtils';
 import { ifElse } from './ifElse';
-import { inc } from './mathUtils';
+import { gte, inc, min } from './mathUtils';
 import { getExceptionalSkillBonus, getInitialMaximumList, putMaximumSkillRatingFromExperienceLevel } from './skillUtils';
-import { cnst, ident } from './structures/Function';
-import { all, any, cons_, List, minimum, notElemF } from './structures/List';
-import { elem, fmap, Just, Maybe, or } from './structures/Maybe';
-import { OrderedMap } from './structures/OrderedMap';
+import { cnst, ident, thrush } from './structures/Function';
+import { all, any, cons_, foldr, fromElements, List, minimum, notElem, notElemF } from './structures/List';
+import { bind_, elem, ensure, fmap, fromJust, isJust, Just, Maybe, maybe, or, sum } from './structures/Maybe';
+import { alter, empty, filter, findWithDefault, foldl, fromArray, lookup_, OrderedMap } from './structures/OrderedMap';
 import { Record } from './structures/Record';
 import { isNumber } from './typeCheckUtils';
 import { Blessing } from './wikiData/Blessing';
 import { ExperienceLevel } from './wikiData/ExperienceLevel';
 import { LiturgicalChant, LiturgicalChantG } from './wikiData/LiturgicalChant';
 import { SpecialAbility } from './wikiData/SpecialAbility';
+import { WikiModelG, WikiModelRecord } from './wikiData/WikiModel';
 
+const { liturgicalChants } = WikiModelG
 const { id, tradition, aspects } = LiturgicalChantG
-const { value } = ActivatableSkillDependentG
+const { value, dependencies } = ActivatableSkillDependentG
 
+/**
+ * Checks if the passed liturgical chant or blessing is valid for the current
+ * active blessed tradition.
+ */
 export const isOwnTradition =
-  (currentTradition: Record<SpecialAbility>) =>
-  (obj: Record<LiturgicalChant> | Record<Blessing>): boolean => {
+  (blessedTradition: Record<SpecialAbility>) =>
+  (entry: Record<LiturgicalChant> | Record<Blessing>): boolean => {
     const numeric_tradition_id =
-      fmap (inc) (getNumericBlessedTraditionIdByInstanceId (id (currentTradition)))
+      fmap (inc) (getNumericBlessedTraditionIdByInstanceId (id (blessedTradition)))
 
-    return any<number> (e => e === 1 || elem (e) (numeric_tradition_id)) (tradition (obj))
+    return any<number> (e => e === 1 || elem (e) (numeric_tradition_id)) (tradition (entry))
   }
 
+/**
+ * Add a restriction to the list of maxima if there is no aspect knowledge
+ * active for the passed liturgical chant.
+ */
 const putAspectKnowledgeRestrictionMaximum =
   (currentTradition: Record<SpecialAbility>) =>
   (aspectKnowledge: Maybe<Record<ActivatableDependent>>) =>
@@ -39,6 +50,7 @@ const putAspectKnowledgeRestrictionMaximum =
       (cnst (
         // is not nameless tradition
         id (currentTradition) !== 'SA_693'
+
         // no aspect knowledge active for the current chant
         && or (fmap (all (notElemF<string | number> (aspects (wikiEntry))))
                     (getActiveSelections (aspectKnowledge)))
@@ -46,6 +58,9 @@ const putAspectKnowledgeRestrictionMaximum =
       (cons_ (14))
       (ident)
 
+/**
+ * Checks if the passed liturgical chant's skill rating can be increased.
+ */
 export const isIncreasable =
   (currentTradition: Record<SpecialAbility>) =>
   (wikiEntry: Record<LiturgicalChant>) =>
@@ -70,78 +85,123 @@ export const isIncreasable =
     return value (instance) < max + bonus
   }
 
-export const getAspectCounter = (
-  wiki: OrderedMap<string, Record<LiturgicalChant>>) =>
-  (state: OrderedMap<string, Record<ActivatableSkillDependent>>
-) =>
-  state.filter (e => e.get ('value') >= 10)
-    .foldl<OrderedMap<number, number>> (
-      acc => instance =>
-        Maybe.maybe<Record<LiturgicalChant>, OrderedMap<number, number>> (acc) (
-          wikiEntry => wikiEntry.get ('aspects')
-            .foldl<OrderedMap<number, number>> (
-              acc1 => acc1.alter (
-                R.pipe (
-                  Maybe.fromMaybe (0),
-                  R.inc,
-                  Just
-                )
-              )
-            ) (acc)
-        ) (wiki.lookup (instance.get ('id')))
-    ) (OrderedMap.empty ())
+/**
+ * Counts the active liturgical chants for every aspect. A liturgical can have
+ * multiple aspects and thus can influence multiple counters if active.
+ */
+export const countActiveLiturgicalChantsPerAspect =
+  (wiki: OrderedMap<string, Record<LiturgicalChant>>) =>
+    pipe (
+      filter<string, Record<ActivatableSkillDependent>> (pipe (value, gte (10))),
+      foldl<Record<ActivatableSkillDependent>, OrderedMap<number, number>>
+        (acc => pipe (
+          id,
+          lookup_ (wiki),
+          maybe<Record<LiturgicalChant>, OrderedMap<number, number>>
+            (acc)
+            (pipe (
+              aspects,
+              foldr<number, OrderedMap<number, number>> (alter (pipe (sum, inc, Just)))
+                                                        (acc)
+            ))
+        ))
+        (empty)
+    )
 
-export const isDecreasable = (
-  wiki: Record<WikiAll>) =>
-  (state: Record<HeroDependent>) =>
+/**
+ * Check if the dependencies allow the passed liturgical chant to be decreased.
+ */
+const isLiturgicalChantDecreasableByDependencies =
+  (wiki: WikiModelRecord) =>
+  (state: HeroModelRecord) =>
+  (stateEntry: Record<ActivatableSkillDependent>) => {
+    const flattenedDependencies =
+      flattenDependencies<number | boolean> (wiki) (state) (dependencies (stateEntry))
+
+    return value (stateEntry) < 1
+      ? notElem<number | boolean> (true) (flattenedDependencies)
+      : value (stateEntry) > filterAndMaximumNonNegative (flattenedDependencies)
+  }
+
+/**
+ * Check if the active aspect knowledges allow the passed liturgical chant to be
+ * decreased. (There must be at leased 3 liturgical chants of the
+ * respective aspect active.)
+ */
+const isLiturgicalChantDecreasableByAspectKnowledges =
+  (wiki: WikiModelRecord) =>
+  (liturgicalChantsStateEntries: OrderedMap<string, Record<ActivatableSkillDependent>>) =>
+  (aspectKnowledge: Maybe<Record<ActivatableDependent>>) =>
   (wikiEntry: Record<LiturgicalChant>) =>
-  (instance: Record<ActivatableSkillDependent>) =>
-  (liturgicalChants: OrderedMap<string, Record<ActivatableSkillDependent>>) =>
-  (aspectKnowledge: Maybe<Record<ActivatableDependent>>
-): boolean => {
-  const dependencies = flattenDependencies<number | boolean> (
-    wiki,
-    state,
-    instance.get ('dependencies')
-  )
+  (stateEntry: Record<ActivatableSkillDependent>) =>
+    or (
+      pipe (
+        getActiveSelections,
 
-  // Basic validation
-  const valid = instance.get ('value') < 1
-    ? dependencies.notElem (true)
-    : instance.get ('value') > dependencies .filter (isNumber) .cons (0) .maximum ()
+        // Check if liturgical chant is part of dependencies of active Aspect Knowledge
+        bind_<List<string | number>, List<string | number>>
+          (ensure (any (e => isNumber (e) && List.elem (e) (aspects (wikiEntry))))),
 
-  return Maybe.fromMaybe (valid) (
-    getActiveSelections (aspectKnowledge)
-      // Check if liturgical chant is part of dependencies of active Aspect Knowledge
-      .bind (Maybe.ensure (
-        activeAspects => activeAspects.any (
-          e => isNumber (e) && wikiEntry.get ('aspects').elem (e)
+        fmap (
+          pipe (
+            getLowestSumForMatchingAspectKnowledges,
+            thrush (countActiveLiturgicalChantsPerAspect (liturgicalChants (wiki))
+                                                         (liturgicalChantsStateEntries)),
+            thrush (wikiEntry),
+            lowest => value (stateEntry) !== 10 || lowest > 3
+          )
         )
-      ))
-      .fmap (
-        activeAspects => {
-          const counter = getAspectCounter (wiki.get ('liturgicalChants'), liturgicalChants)
-
-          const countedLowestWithProperty = wikiEntry.get ('aspects').foldl<number> (
-            n => aspect => {
-              const counted = counter.lookup (aspect)
-
-              if (Maybe.isJust (counted) && activeAspects.elem (aspect)) {
-                return Math.min (Maybe.fromJust (counted), n)
-              }
-
-              return n
-            }
-          ) (4)
-
-          return (instance.get ('value') !== 10 || countedLowestWithProperty > 3) && valid
-        }
       )
-  )
-}
+      (aspectKnowledge)
+    )
 
-// Keys are aspects and their value is the respective tradition
-const traditionsByAspect = OrderedMap.of ([
+/**
+ * Calculates how many liturgical chants are valid as a dependency for
+ * all aspect knowledges that also match the current liturgical chant, and
+ * returns the lowest sum. Used to check if the liturgical chant's can be safely
+ * decreased without invalidating an aspect knowledge's prerequisites.
+ */
+const getLowestSumForMatchingAspectKnowledges =
+  (activeAspects: List<string | number>) =>
+  (counter: OrderedMap<number, number>) =>
+    pipe (
+      aspects,
+      List.foldr<number, number>
+        (
+          aspect => {
+            const counted = lookup_ (counter) (aspect)
+
+            if (isJust (counted) && List.elem_ (activeAspects) (aspect)) {
+              return min (fromJust (counted))
+            }
+
+            return ident
+          }
+        )
+        (4)
+    )
+
+/**
+ * Checks if the passed liturgical chant's skill rating can be decreased.
+ */
+export const isLiturgicalChantDecreasable =
+  (wiki: WikiModelRecord) =>
+  (state: HeroModelRecord) =>
+  (liturgicalChantsStateEntries: OrderedMap<string, Record<ActivatableSkillDependent>>) =>
+  (aspectKnowledge: Maybe<Record<ActivatableDependent>>) =>
+  (wikiEntry: Record<LiturgicalChant>) =>
+  (stateEntry: Record<ActivatableSkillDependent>): boolean =>
+    isLiturgicalChantDecreasableByDependencies (wiki) (state) (stateEntry)
+    && isLiturgicalChantDecreasableByAspectKnowledges (wiki)
+                                                      (liturgicalChantsStateEntries)
+                                                      (aspectKnowledge)
+                                                      (wikiEntry)
+                                                      (stateEntry)
+
+/**
+ * Keys are aspects and their value is the respective tradition.
+ */
+const traditionsByAspect = fromArray ([
   [1, 1],
   [2, 2],
   [3, 2],
@@ -184,29 +244,32 @@ const traditionsByAspect = OrderedMap.of ([
  * actual special ability, you have to decrease the return value by 1.
  * @param aspectId The id used for chants or Aspect Knowledge.
  */
-export const getTraditionOfAspect = traditionsByAspect.findWithDefault (1)
+export const getTraditionOfAspect =
+  (key: number) => findWithDefault<number, number> (1) (key) (traditionsByAspect)
 
-// Keys are traditions and their values are their respective aspects
-const aspectsByTradition = OrderedMap.of<number, List<number>> ([
-  [1, List.of ()],
-  [2, List.of (2, 3)],
-  [3, List.of (4, 5)],
-  [4, List.of (6, 7)],
-  [5, List.of (8, 9)],
-  [6, List.of (10, 11)],
-  [7, List.of (12, 13)],
-  [8, List.of (14, 15)],
-  [9, List.of (16, 17)],
-  [10, List.of (18, 19)],
-  [11, List.of (20, 21)],
-  [12, List.of (22, 23)],
-  [13, List.of (24, 25)],
-  [14, List.of ()],
-  [15, List.of (26, 27)],
-  [16, List.of (28, 29)],
-  [17, List.of (30, 31)],
-  [18, List.of (32, 33)],
-  [19, List.of (34, 35)],
+/**
+ * Keys are traditions and their values are their respective aspects
+ */
+const aspectsByTradition = fromArray<number, List<number>> ([
+  [1, List.empty],
+  [2, fromElements (2, 3)],
+  [3, fromElements (4, 5)],
+  [4, fromElements (6, 7)],
+  [5, fromElements (8, 9)],
+  [6, fromElements (10, 11)],
+  [7, fromElements (12, 13)],
+  [8, fromElements (14, 15)],
+  [9, fromElements (16, 17)],
+  [10, fromElements (18, 19)],
+  [11, fromElements (20, 21)],
+  [12, fromElements (22, 23)],
+  [13, fromElements (24, 25)],
+  [14, List.empty],
+  [15, fromElements (26, 27)],
+  [16, fromElements (28, 29)],
+  [17, fromElements (30, 31)],
+  [18, fromElements (32, 33)],
+  [19, fromElements (34, 35)],
 ])
 
 /**
@@ -215,7 +278,9 @@ const aspectsByTradition = OrderedMap.of<number, List<number>> ([
  * actual special ability, you have to increase the value by 1 before passing
  * it.
  */
-export const getAspectsOfTradition = R.pipe (
-  aspectsByTradition.findWithDefault (List.of<number> ()),
-  flip<List<number>, number, List<number>> (List.cons) (1)
+export const getAspectsOfTradition = pipe (
+  (key: number) => findWithDefault<number, List<number>> (List.empty)
+                                                         (key)
+                                                         (aspectsByTradition),
+  cons_ (1)
 )

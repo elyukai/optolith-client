@@ -726,3 +726,22 @@ test ('isList', () => {
   expect (List.isList (4))
     .toBeFalsy ()
 })
+
+test ('countWith', () => {
+  expect (List.countWith (x => x > 2) (List.fromElements (1, 2, 3, 4, 5)))
+    .toEqual (3)
+})
+
+test ('maximumNonNegative', () => {
+  expect (List.maximumNonNegative (List.fromElements (1, 2, 3, 4, 5)))
+    .toEqual (5)
+
+  expect (List.maximumNonNegative (List.fromElements (-1, -2, -3, 4, 5)))
+    .toEqual (5)
+
+  expect (List.maximumNonNegative (List.fromElements (-1, -2, -3, -4, -5)))
+    .toEqual (0)
+
+  expect (List.maximumNonNegative (List.empty))
+    .toEqual (0)
+})

@@ -7,9 +7,10 @@ import { getHeroStateItem } from '../heroStateUtils';
 import { gt, gte, inc } from '../mathUtils';
 import { flattenPrerequisites } from '../prerequisites/flattenPrerequisites';
 import { thrush } from '../structures/Function';
-import { elem, find, foldl, isList, List, map } from '../structures/List';
+import { elem, find, foldl, isList, List, map, maximumNonNegative } from '../structures/List';
 import { bind_, fmap, Maybe, Nothing, or, sum } from '../structures/Maybe';
 import { isRecord, Record } from '../structures/Record';
+import { isNumber } from '../typeCheckUtils';
 import { AdvantageG } from '../wikiData/Advantage';
 import { RequireActivatableG } from '../wikiData/prerequisites/ActivatableRequirement';
 import { WikiModelRecord } from '../wikiData/WikiModel';
@@ -64,3 +65,10 @@ export const flattenDependencies =
                )
                (origin (e)) as T
         : e)
+
+/**
+ * Filters the list of dependencies of `ActivatableSkillDependent`s and returns
+ * the maximum. Minimum: `0`.
+ */
+export const filterAndMaximumNonNegative =
+  pipe (List.filter<number | boolean, number> (isNumber), maximumNonNegative)

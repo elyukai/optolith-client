@@ -1350,6 +1350,18 @@ export const toMap = <K, V> (list: List<Pair<K, V>>): OrderedMap<K, V> =>
  */
 export const isList = (x: any): x is List<any> => typeof x === 'object' && x !== null && x.isList
 
+/**
+ * Returns the sum of all elements of the list that match the provided
+ * predicate.
+ */
+export const countWith = <A> (pred: (x: A) => boolean) => pipe (filter (pred), length)
+
+/**
+ * The largest element of a non-empty structure. The minimum value returned is
+ * `0`.
+ */
+export const maximumNonNegative = pipe (cons_ (0), maximum)
+
 
 // NAMESPACED FUNCTIONS
 
@@ -1464,6 +1476,8 @@ export const List = {
   toArray,
   toMap,
   isList,
+  countWith,
+  maximumNonNegative,
 }
 
 
