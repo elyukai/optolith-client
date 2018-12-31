@@ -55,14 +55,14 @@ test ('alt', () => {
     .toEqual (List.fromElements ())
 })
 
-test ('alt_', () => {
-  expect (List.alt_ (List.fromElements (2)) (List.fromElements (3)))
+test ('altF', () => {
+  expect (List.altF (List.fromElements (2)) (List.fromElements (3)))
     .toEqual (List.fromElements (3))
-  expect (List.alt_ (List.fromElements ()) (List.fromElements (3)))
+  expect (List.altF (List.fromElements ()) (List.fromElements (3)))
     .toEqual (List.fromElements (3))
-  expect (List.alt_ (List.fromElements (2)) (List.fromElements ()))
+  expect (List.altF (List.fromElements (2)) (List.fromElements ()))
     .toEqual (List.fromElements (2))
-  expect (List.alt_ (List.fromElements ()) (List.fromElements ()))
+  expect (List.altF (List.fromElements ()) (List.fromElements ()))
     .toEqual (List.fromElements ())
 })
 

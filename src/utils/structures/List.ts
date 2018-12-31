@@ -19,38 +19,27 @@ import { show } from './Show';
 // CONSTRUCTOR
 
 interface ListPrototype<A> {
-  [Symbol.iterator] (): IterableIterator<A>
   readonly isList: true
 }
 
+interface Node<A> {
+  readonly value: A
+  readonly next?: Node<A>
+}
+
 export interface List<A extends Some> extends ListPrototype<A> {
-  readonly value: ReadonlyArray<A>
+  readonly head?: Node<A>
   readonly prototype: ListPrototype<A>
 }
 
 const ListPrototype: ListPrototype<Some> =
-  Object.create (
-    Object.prototype,
-    {
-      [Symbol.iterator]: {
-        value (this: List<Some>) {
-          return this .value [Symbol.iterator] ()
-        },
-      },
-      isList: { value: true },
-    }
-  )
+  Object.freeze<ListPrototype<Some>> ({
+    isList: true,
+  })
 
 const _List =
-  <A extends Some> (x: ReadonlyArray<A>): List<A> =>
-    Object.create (ListPrototype, { value: { value: x, enumerable: true }})
-
-/**
- * `fromElements :: (...a) -> [a]`
- *
- * Creates a new `List` instance from the passed arguments.
- */
-export const fromElements = <A extends Some> (...values: A[]) => _List (values)
+  <A extends Some> (x: Node<A> | undefined): List<A> =>
+    Object.create (ListPrototype, { head: { value: x, enumerable: true }})
 
 /**
  * `fromArray :: Array a -> [a]`
@@ -59,21 +48,41 @@ export const fromElements = <A extends Some> (...values: A[]) => _List (values)
  */
 export const fromArray = <A extends Some> (xs: ReadonlyArray<A>): List<A> => {
   if (Array.isArray (xs)) {
-    return _List (xs)
+    return _List (buildNodexFromArrayWithLastIndex (xs) (xs .length - 1) (undefined))
   }
 
   throw new TypeError (`fromArray requires an array but instead it received ${show (xs)}`)
 }
 
+/**
+ * `fromElements :: (...a) -> [a]`
+ *
+ * Creates a new `List` instance from the passed arguments.
+ */
+export const fromElements = <A extends Some> (...values: A[]) => fromArray (values)
+
 
 // FUNCTOR
+
+/**
+ * Map over all nodes with the specified function and returns the head.
+ */
+const mapper =
+  <A extends Some, B extends Some>
+  (f: (value: A) => B) =>
+  (node: Node<A> | undefined): Node<B> | undefined =>
+    node !== undefined
+      ? { value: f (node .value), next: mapper (f) (node .next) }
+      : undefined
 
 /**
  * `fmap :: (a -> b) -> [a] -> [b]`
  */
 export const fmap =
-  <A extends Some, B extends Some> (f: (value: A) => B) => (xs: List<A>): List<B> =>
-    fromArray (xs .value .map (f))
+  <A extends Some, B extends Some> (f: (value: A) => B) => (xs: List<A>): List<B> => {
+
+    return _List (mapper (f) (xs .head))
+  }
 
 /**
  * `(<$) :: Functor f => a -> f b -> f a`
@@ -94,7 +103,36 @@ export const mapReplace =
  *
  * Lift a value.
  */
-export const pure = <A extends Some> (x: A) => _List ([x])
+export const pure = <A extends Some> (x: A) => _List (toNode (x))
+
+/**
+ * Map over all nodes with the specified function and returns a pair containing
+ * the head and last element of the list of nodes.
+ */
+const mapperLast =
+  <A extends Some, B extends Some>
+  (f: (value: A) => B) =>
+  (node: Node<A> | undefined): [Node<B> | undefined, Node<B> | undefined] => {
+    if (node !== undefined) {
+      const next = mapperLast (f) (node .next)
+
+      const x = f (node .value)
+
+      // If there is a next element, get the values from the next element
+      // -> This element wont be the last
+      if (next[0] !== undefined) {
+        return [{ value: x, next: next [0] }, next [1]]
+      }
+
+      // There is no next element
+      const n = toNode (x)
+
+      // So this element needs to be returned as the last element
+      return [n, n]
+    }
+
+    return [undefined, undefined]
+  }
 
 /**
  * `(<*>) :: [a -> b] -> [a] -> [b]`
@@ -102,13 +140,16 @@ export const pure = <A extends Some> (x: A) => _List ([x])
  * Sequential application.
  */
 export const ap =
-  <A extends Some, B extends Some> (ma: List<(value: A) => B>) => (m: List<A>): List<B> =>
-    fromElements (
+  <A extends Some, B extends Some> (ma: List<(value: A) => B>) => (m: List<A>): List<B> => {
+
+
+    return fromElements (
       ...(ma .value .reduce<ReadonlyArray<B>> (
         (acc, f) => [...acc, ...fmap (f) (m)],
         []
       ))
     )
+  }
 
 
 // ALTERNATIVE
@@ -125,15 +166,15 @@ export const alt =
     fnull (xs1) ? xs2 : xs1
 
 /**
- * `alt :: [a] -> [a] -> [a]`
+ * `altF :: [a] -> [a] -> [a]`
  *
- * The `alt` function takes a `Maybe` of the same type. If the second `Maybe`
+ * The `altF` function takes a `Maybe` of the same type. If the second `Maybe`
  * is `Nothing`, it returns the first `Maybe`, otherwise it returns the
  * second.
  *
- * This is the same as `Maybe.alt` but with arguments swapped.
+ * Flipped version of `alt`.
  */
-export const alt_ =
+export const altF =
   <A extends Some> (xs1: List<A>) => (xs2: List<A>): List<A> =>
     alt (xs2) (xs1)
 
@@ -142,7 +183,7 @@ export const alt_ =
  *
  * The empty list.
  */
-export const empty = _List ([])
+export const empty = _List<never> (undefined)
 
 /**
  * `guard :: Bool -> [()]`
@@ -1363,6 +1404,22 @@ export const countWith = <A> (pred: (x: A) => boolean) => pipe (filter (pred), l
 export const maximumNonNegative = pipe (cons_ (0), maximum)
 
 
+// MODULE HELPER FUNCTIONS
+
+const buildNodexFromArrayWithLastIndex =
+  <A extends Some>
+  (arr: ReadonlyArray<A>) =>
+  (index: number) =>
+  (h: Node<A> | undefined): Node<A> | undefined =>
+    index < 0
+    ? h
+    : h !== undefined
+    ? buildNodexFromArrayWithLastIndex (arr) (index - 1) ({ value: arr[index], next: h })
+    : buildNodexFromArrayWithLastIndex (arr) (index - 1) ({ value: arr[index] })
+
+const toNode = <A> (x: A): Node<A> => ({ value: x })
+
+
 // NAMESPACED FUNCTIONS
 
 export const List = {
@@ -1376,7 +1433,7 @@ export const List = {
   ap,
 
   alt,
-  alt_,
+  alt_: altF,
   empty,
   guard,
 

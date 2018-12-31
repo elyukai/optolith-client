@@ -20,6 +20,7 @@ import { Just, Maybe, maybe, Nothing } from './structures/Maybe';
 import { OrderedMap } from './structures/OrderedMap';
 import { OrderedSet } from './structures/OrderedSet';
 import { Record } from './structures/Record';
+import { L10nRecord } from './wikiData/L10n';
 import { Profession } from './wikiData/Profession';
 import { isCantripsSelection } from './wikiData/professionSelections/CantripsSelection';
 import { isCombatTechniquesSelection } from './wikiData/professionSelections/CombatTechniquesSelection';
@@ -144,7 +145,7 @@ const putProfessionVariantSelectionsIntoRecord =
 
 
 export const getBuyScriptElement =
-  (locale: UIMessagesObject) =>
+  (locale: L10nRecord) =>
   (wiki: Record<Wiki.WikiAll>) =>
   (culture: Record<Wiki.Culture>) =>
   (isScriptSelectionNeeded: Tuple<boolean, boolean>) =>
