@@ -54,49 +54,49 @@ const putProfessionSelectionIntoRecord =
   (acc: Record<ProfessionSelections>) => (current: ProfessionSelection) => {
     if (isSpecializationSelection (current)) {
       return set (ProfessionSelectionsL[ProfessionSelectionIds.SPECIALIZATION])
-                  (Just (current))
-                  (acc)
+                 (Just (current))
+                 (acc)
     }
 
     if (isLanguagesScriptsSelection (current)) {
       return set (ProfessionSelectionsL[ProfessionSelectionIds.LANGUAGES_SCRIPTS])
-                  (Just (current))
-                  (acc)
+                 (Just (current))
+                 (acc)
     }
 
     if (isCombatTechniquesSelection (current)) {
       return set (ProfessionSelectionsL[ProfessionSelectionIds.COMBAT_TECHNIQUES])
-                  (Just (current))
-                  (acc)
+                 (Just (current))
+                 (acc)
     }
 
     if (isSecondCombatTechniquesSelection (current)) {
       return set (ProfessionSelectionsL[ProfessionSelectionIds.COMBAT_TECHNIQUES_SECOND])
-                  (Just (current))
-                  (acc)
+                 (Just (current))
+                 (acc)
     }
 
     if (isCantripsSelection (current)) {
       return set (ProfessionSelectionsL[ProfessionSelectionIds.CANTRIPS])
-                  (Just (current))
-                  (acc)
+                 (Just (current))
+                 (acc)
     }
 
     if (isCursesSelection (current)) {
       return set (ProfessionSelectionsL[ProfessionSelectionIds.CURSES])
-                  (Just (current))
-                  (acc)
+                 (Just (current))
+                 (acc)
     }
 
     if (isSkillsSelection (current)) {
       return set (ProfessionSelectionsL[ProfessionSelectionIds.SKILLS])
-                  (Just (current))
-                  (acc)
+                 (Just (current))
+                 (acc)
     }
 
     return set (ProfessionSelectionsL[ProfessionSelectionIds.TERRAIN_KNOWLEDGE])
-                (Just (current))
-                (acc)
+               (Just (current))
+               (acc)
   }
 
 const putProfessionSelectionsIntoRecord =
@@ -120,20 +120,20 @@ const putProfessionVariantSelectionsIntoRecord =
             acc => current => {
               if (isRemoveSpecializationSelection (current)) {
                 return set (ProfessionSelectionsL[ProfessionSelectionIds.SPECIALIZATION])
-                          (Nothing)
-                          (acc)
+                           (Nothing)
+                           (acc)
               }
 
               if (isRemoveCombatTechniquesSelection (current)) {
                 return set (ProfessionSelectionsL[ProfessionSelectionIds.COMBAT_TECHNIQUES])
-                          (Nothing)
-                          (acc)
+                           (Nothing)
+                           (acc)
               }
 
               if (isRemoveCombatTechniquesSecondSelection (current)) {
                 return set (ProfessionSelectionsL[ProfessionSelectionIds.COMBAT_TECHNIQUES_SECOND])
-                          (Nothing)
-                          (acc)
+                           (Nothing)
+                           (acc)
               }
 
               return putProfessionSelectionIntoRecord (acc) (current)

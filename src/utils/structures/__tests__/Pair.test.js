@@ -1,9 +1,16 @@
-const { fromBoth, fmap, mapReplace, bimap, first, second, fst, snd, swap, toArray, fromArray, isPair } = require('../Pair')
+const { fromBoth, fromBinary, fmap, mapReplace, bimap, first, second, fst, snd, curry, uncurry, swap, toArray, fromArray, isPair } = require('../Pair')
 
 // CONSTRUCTOR
 
-test ('construct a Pair', () => {
+test ('fromBoth', () => {
   const pair = fromBoth (3) (1)
+  expect (pair .first) .toEqual (3)
+  expect (pair .second) .toEqual (1)
+  expect (pair .isPair) .toEqual (true)
+})
+
+test ('fromBinary', () => {
+  const pair = fromBinary (3, 1)
   expect (pair .first) .toEqual (3)
   expect (pair .second) .toEqual (1)
   expect (pair .isPair) .toEqual (true)
@@ -42,6 +49,14 @@ test ('fst', () => {
 
 test ('snd', () => {
   expect (snd (fromBoth (3) (1))) .toEqual (1)
+})
+
+test ('curry', () => {
+  expect (curry (p => fst (p) + snd (p)) (2) (3)) .toEqual (5)
+})
+
+test ('uncurry', () => {
+  expect (uncurry (a => b => a + b) (fromBinary (2, 3))) .toEqual (5)
 })
 
 test ('swap', () => {
