@@ -3,7 +3,7 @@ import { ActivatableDependency } from '../../types/data';
 import { ActivatableDependent } from '../activeEntries/ActivatableDependent';
 import { ActiveObject } from '../activeEntries/ActiveObject';
 import { DependencyObject } from '../activeEntries/DependencyObject';
-import { cons_, find, foldl, List } from '../structures/List';
+import { consF, find, foldl, List } from '../structures/List';
 import { alt_, bind, bind_, elem_, ensure, fmap, fromMaybe, Just, liftM2, mapMaybe, Maybe } from '../structures/Maybe';
 import { alter, OrderedMap } from '../structures/OrderedMap';
 import { isRecord, Record } from '../structures/Record';
@@ -66,7 +66,7 @@ export const getActiveSecondarySelections =
             (liftM2<string | number, string | number, SecondarySelections>
               (id => id2 => alter<string | number, List<string | number>>
                 (pipe (
-                  fmap (cons_ (id2)),
+                  fmap (consF (id2)),
                   alt_ (Just (List.fromElements (id2)))
                 ))
                 (id)

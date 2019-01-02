@@ -11,7 +11,7 @@ import { add, multiply } from '../mathUtils';
 import { not } from '../not';
 import { equals, notEquals } from './Eq';
 import { ident } from './Function';
-import { fromElements, isList, List, mappend } from './List';
+import { append, fromElements, isList, List } from './List';
 import { fromNullable, Maybe, Some } from './Maybe';
 import { show } from './Show';
 
@@ -243,7 +243,7 @@ export const minimum = (xs: OrderedSet<number>): number => Math.min (...xs);
  */
 export const concat =
   <A extends Some> (xs: OrderedSet<List<A>>): List<A> =>
-    foldl<List<A>, List<A>> (mappend) (List.empty) (xs);
+    foldl<List<A>, List<A>> (append) (List.empty) (xs);
 
 /**
  * `concatMap :: (a -> Set b) -> Set a -> Set b`

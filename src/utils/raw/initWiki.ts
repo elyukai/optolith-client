@@ -2,7 +2,7 @@ import { IdPrefixes } from '../../constants/IdPrefixes';
 import * as Raw from '../../types/rawdata';
 import { prefixId as prefixId, prefixRawId } from '../IDUtils';
 import { add } from '../mathUtils';
-import { cons, cons_, List } from '../structures/List';
+import { cons, consF, List } from '../structures/List';
 import { alt, fmap, fromNullable, Just, Maybe, Nothing } from '../structures/Maybe';
 import { OrderedMap } from '../structures/OrderedMap';
 import { fromBoth } from '../structures/Pair';
@@ -78,7 +78,7 @@ const convertSize = (old: (number | [number, number])[] | undefined): SizeNew =>
 
         return {
           ...obj,
-          sizeRandom: fmap (cons_ (Die ({ amount, sides }))) (obj .sizeRandom),
+          sizeRandom: fmap (consF (Die ({ amount, sides }))) (obj .sizeRandom),
         };
       },
       {

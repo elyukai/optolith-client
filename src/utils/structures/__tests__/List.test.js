@@ -282,24 +282,6 @@ test ('cons_', () => {
     .toEqual (List.fromElements (4, 3, 2, 1))
 })
 
-test ('subscript', () => {
-  expect (List.subscript (List.fromElements (3, 2, 1)) (2))
-    .toEqual (Just (1))
-  expect (List.subscript (List.fromElements (3, 2, 1)) (4))
-    .toEqual (Nothing)
-  expect (List.subscript (List.fromElements (3, 2, 1)) (-1))
-    .toEqual (Nothing)
-})
-
-test ('subscript_', () => {
-  expect (List.subscript_ (2) (List.fromElements (3, 2, 1)))
-    .toEqual (Just (1))
-  expect (List.subscript_ (4) (List.fromElements (3, 2, 1)))
-    .toEqual (Nothing)
-  expect (List.subscript_ (-1) (List.fromElements (3, 2, 1)))
-    .toEqual (Nothing)
-})
-
 test ('head', () => {
   expect (List.head (List.fromElements (3, 2, 1))) .toEqual (3)
   expect (() => List.head (List.fromElements ())) .toThrow ()
@@ -456,6 +438,24 @@ test ('partition', () => {
 })
 
 // INDEXING LISTS
+
+test ('subscript', () => {
+  expect (List.subscript (List.fromElements (3, 2, 1)) (2))
+    .toEqual (Just (1))
+  expect (List.subscript (List.fromElements (3, 2, 1)) (4))
+    .toEqual (Nothing)
+  expect (List.subscript (List.fromElements (3, 2, 1)) (-1))
+    .toEqual (Nothing)
+})
+
+test ('subscript_', () => {
+  expect (List.subscript_ (2) (List.fromElements (3, 2, 1)))
+    .toEqual (Just (1))
+  expect (List.subscript_ (4) (List.fromElements (3, 2, 1)))
+    .toEqual (Nothing)
+  expect (List.subscript_ (-1) (List.fromElements (3, 2, 1)))
+    .toEqual (Nothing)
+})
 
 test ('elemIndex', () => {
   expect (List.elemIndex (3) (List.fromElements (1, 2, 3, 4, 5)))

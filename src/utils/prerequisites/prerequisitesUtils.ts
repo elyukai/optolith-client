@@ -3,7 +3,7 @@ import { findSelectOption } from '../activatable/selectionUtils';
 import { ActivatableDependent } from '../activeEntries/ActivatableDependent';
 import { ActiveObject } from '../activeEntries/ActiveObject';
 import { equals } from '../structures/Eq';
-import { cons_, filter, find, fromElements, length, List, mappend } from '../structures/List';
+import { append, consF, filter, find, fromElements, length, List } from '../structures/List';
 import { alt_, ap, bind_, elem_, fmap, fromMaybe, Just, liftM2, Maybe, Nothing } from '../structures/Maybe';
 import { Record } from '../structures/Record';
 import { Advantage } from '../wikiData/Advantage';
@@ -69,7 +69,7 @@ export const getGeneratedPrerequisites =
                         fmap<
                           Wiki.AllRequirementObjects,
                           (xs: List<Wiki.AllRequirementObjects>) => List<Wiki.AllRequirementObjects>
-                        > (cons_)
+                        > (consF)
                           (sameSkillDependency)
                       ),
                       alt_ (
@@ -129,5 +129,5 @@ export const addDynamicPrerequisites =
   (add: boolean) =>
   (staticPrerequisites: List<Wiki.AllRequirements>): List<Wiki.AllRequirements> =>
     fromMaybe (staticPrerequisites)
-              (fmap (mappend (staticPrerequisites))
+              (fmap (append (staticPrerequisites))
                     (getGeneratedPrerequisites (wikiEntry) (instance) (current) (add)))

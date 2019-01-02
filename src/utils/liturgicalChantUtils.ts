@@ -10,7 +10,7 @@ import { ifElse } from './ifElse';
 import { gte, inc, min } from './mathUtils';
 import { getExceptionalSkillBonus, getInitialMaximumList, putMaximumSkillRatingFromExperienceLevel } from './skillUtils';
 import { cnst, ident, thrush } from './structures/Function';
-import { all, any, cons_, foldr, fromElements, List, minimum, notElem, notElemF } from './structures/List';
+import { all, any, consF, foldr, fromElements, List, minimum, notElem, notElemF } from './structures/List';
 import { bind_, elem, ensure, fmap, fromJust, isJust, Just, Maybe, maybe, or, sum } from './structures/Maybe';
 import { alter, empty, filter, findWithDefault, foldl, fromArray, lookup_, OrderedMap } from './structures/OrderedMap';
 import { Record } from './structures/Record';
@@ -55,7 +55,7 @@ const putAspectKnowledgeRestrictionMaximum =
         && or (fmap (all (notElemF<string | number> (aspects (wikiEntry))))
                     (getActiveSelections (aspectKnowledge)))
       ))
-      (cons_ (14))
+      (consF (14))
       (ident)
 
 /**
@@ -282,5 +282,5 @@ export const getAspectsOfTradition = pipe (
   (key: number) => findWithDefault<number, List<number>> (List.empty)
                                                          (key)
                                                          (aspectsByTradition),
-  cons_ (1)
+  consF (1)
 )

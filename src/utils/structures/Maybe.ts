@@ -17,7 +17,7 @@
 import { pipe } from 'ramda';
 import * as Math from '../mathUtils';
 import { cnst, ident, thrush } from './Function';
-import { cons, cons_, fromElements, head, ifoldr, List } from './List';
+import { cons, consF, fromElements, head, ifoldr, List } from './List';
 
 
 // MAYBE TYPE DEFINITION
@@ -636,7 +636,7 @@ export const maybeToList = toList
  */
 export const catMaybes =
   <A extends Some> (list: List<Maybe<A>>): List<A> =>
-    List.foldr<Maybe<A>, List<A>> (maybe<A, (x: List<A>) => List<A>> (ident) (cons_))
+    List.foldr<Maybe<A>, List<A>> (maybe<A, (x: List<A>) => List<A>> (ident) (consF))
                                   (List.empty)
                                   (list)
 
@@ -650,7 +650,7 @@ export const catMaybes =
  */
 export const mapMaybe =
   <A extends Some, B extends Some> (f: (x: A) => Maybe<B>) =>
-    List.foldr<A, List<B>> (pipe (f, maybe<B, (x: List<B>) => List<B>> (ident) (cons_)))
+    List.foldr<A, List<B>> (pipe (f, maybe<B, (x: List<B>) => List<B>> (ident) (consF)))
                            (List.empty)
 
 

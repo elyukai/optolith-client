@@ -14,7 +14,7 @@
 
 import { pipe } from 'ramda';
 import { cnst, ident } from './Function';
-import { cons, cons_, fromElements, List } from './List';
+import { cons, consF, fromElements, List } from './List';
 import { fromJust, isJust, Just, Maybe, Nothing, Some } from './Maybe';
 import { fromBoth, Pair } from './Pair';
 
@@ -679,7 +679,7 @@ export const rights =
 export const partitionEithers =
   <A extends Some, B extends Some> (list: List<Either<A, B>>): Pair<List<A>, List<B>> =>
     List.foldr<Either<A, B>, Pair<List<A>, List<B>>>
-      (m => isRight (m) ? Pair.second (cons_ (m .value)) : Pair.first (cons_ (m .value)))
+      (m => isRight (m) ? Pair.second (consF (m .value)) : Pair.first (consF (m .value)))
       (fromBoth<List<A>, List<B>> (List.empty) (List.empty))
       (list);
 

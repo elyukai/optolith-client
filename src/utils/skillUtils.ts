@@ -10,7 +10,7 @@ import { HeroModelA, HeroModelRecord } from './heroData/HeroModel';
 import { ifElse } from './ifElse';
 import { add } from './mathUtils';
 import { cnst, ident } from './structures/Function';
-import { cons_, countWith, foldr, List, maximum, maximumNonNegative, minimum } from './structures/List';
+import { consF, countWith, foldr, List, maximum, maximumNonNegative, minimum } from './structures/List';
 import { elem, fmap, Just, Maybe, maybe, Nothing, sum } from './structures/Maybe';
 import { lookup_, OrderedMap } from './structures/OrderedMap';
 import { fromBoth, Pair } from './structures/Pair';
@@ -46,7 +46,7 @@ export const getInitialMaximumList =
     pipe (
       SkillG.check,
       getSkillCheckValues (attributes),
-      cons_ (8),
+      consF (8),
       maximum,
       add (2),
       List.pure
@@ -62,7 +62,7 @@ export const putMaximumSkillRatingFromExperienceLevel =
   (phase: number) =>
     ifElse<List<number>, List<number>>
       (cnst (phase < 3))
-      (cons_ (maxSkillRating (startEL)))
+      (consF (maxSkillRating (startEL)))
       (ident)
 
 /**

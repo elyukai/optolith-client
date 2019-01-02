@@ -11,7 +11,7 @@ import { not, pipe } from 'ramda';
 import { add, multiply } from '../mathUtils';
 import { equals } from './Eq';
 import { cnst, ident } from './Function';
-import { List, mappend } from './List';
+import { append, List } from './List';
 import { fromMaybe, fromNullable, Just, Maybe, maybe, maybe_, Some } from './Maybe';
 import { fromUniqueElements, OrderedSet } from './OrderedSet';
 import { fromBoth, Pair } from './Pair';
@@ -268,7 +268,7 @@ export const minimum = (xs: OrderedMap<any, number>): number => Math.min (...xs 
  */
 export const concat =
   <A extends Some> (xs: OrderedMap<any, List<A>>): List<A> =>
-    foldl<List<A>, List<A>> (mappend) (List.empty) (xs)
+    foldl<List<A>, List<A>> (append) (List.empty) (xs)
 
 /**
  * `concatMap :: (a -> Map k b) -> Map k a -> Map k b`
