@@ -75,10 +75,9 @@
     "bundle_l10ns": "node -r @std/esm src/data/buildAllLocales.mjs",
     "bundle_data": "node -r @std/esm src/data/buildData.mjs",
     "bundle_css": "node --experimental-modules bundleSass.mjs",
-    "test": "jest"
+    "test": ".\\node_modules\\.bin\\jest"
   },
   "repository": {},
-  "false": {},
   "jest": {
     "transform": {
       "^.+\\.tsx?$": "ts-jest"

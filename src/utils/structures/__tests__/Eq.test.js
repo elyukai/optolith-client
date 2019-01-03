@@ -26,6 +26,8 @@ test ('Either', () => {
 test ('List', () => {
   expect (equals (fromElements (2)) (fromElements (2))) .toEqual (true)
   expect (equals (fromElements (2)) (fromElements (3))) .toEqual (false)
+  expect (equals (fromElements (2)) (fromElements (2, 3))) .toEqual (false)
+  expect (equals (fromElements (2, 3)) (fromElements (2, 3))) .toEqual (true)
 })
 
 test ('Pair', () => {

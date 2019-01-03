@@ -29,7 +29,7 @@ test('mergeSafeR3', () => {
   const test2 = fromDefault ({ x: 3, y: 3 }) ({ x: 7 })
   const test3 = testCreator ({ y: 4 })
 
-  expect (mergeSafeR3 (test3) (test2) (test)) .toEqual (testCreator ({ x: 7, y: 4 }))
+  expect (mergeSafeR3 (test3) (test2) (test)) .toEqual (testCreator ({ x: 0, y: 4 }))
 })
 
 test('mergeSafeR4', () => {
@@ -51,32 +51,15 @@ test('mergeSafeR5', () => {
   const test5 = testCreator ({ y: 8 })
 
   expect (mergeSafeR5 (test5) (test4) (test3) (test2) (test))
-    .toEqual (testCreator ({ x: 5, y: 8 }))
+    .toEqual (testCreator ({ x: 0, y: 8 }))
 })
 
 // CUSTOM FUNCTIONS
-
-test('makeGetters', () => {
-  const testCreator = fromDefault ({ x: 0 })
-  const test = testCreator ({ x: 2 })
-  const getters = makeGetters (testCreator)
-
-  expect (getters .x (test)) .toEqual (2)
-})
 
 test('makeLenses', () => {
   const testCreator = fromDefault ({ x: 0 })
   const test = testCreator ({ x: 2 })
   const lenses = makeLenses (testCreator)
-
-  expect (view (lenses .x) (test)) .toEqual (2)
-})
-
-test('makeLenses_', () => {
-  const testCreator = fromDefault ({ x: 0 })
-  const test = testCreator ({ x: 2 })
-  const getters = makeGetters (testCreator)
-  const lenses = makeLenses_ (getters) (testCreator)
 
   expect (view (lenses .x) (test)) .toEqual (2)
 })

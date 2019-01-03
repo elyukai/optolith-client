@@ -110,12 +110,12 @@ test ('minimum', () => {
 test ('concat', () => {
   expect (OrderedSet.concat (
     fromArray ([
-      fromArray ([3]),
-      fromArray ([2]),
-      fromArray ([1])
+      List.fromArray ([3]),
+      List.fromArray ([2]),
+      List.fromArray ([1])
     ])
   ))
-    .toEqual (fromArray ([3, 2, 1]))
+    .toEqual (List.fromArray ([3, 2, 1]))
 })
 
 test ('concatMap', () => {

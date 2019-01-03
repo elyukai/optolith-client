@@ -1,21 +1,21 @@
 const List = require('../List')
 const { Just, Nothing } = require('../Maybe')
-const { OrderedMap } = require('../orderedMap')
-const { Tuple } = require('../tuple')
+const { OrderedMap } = require('../OrderedMap')
+const { Pair } = require('../Pair')
+const { GT, EQ, LT } = require('../Ord')
 
 // CONSTRUCTORS
 
 test ('fromElements', () => {
-  expect (List.fromElements (3, 2, 1) .value) .toEqual ([3, 2, 1])
+  const head = { value: 3, next: { value: 2, next: { value: 1 }}}
+
+  expect (List.fromElements (3, 2, 1) .head) .toEqual (head)
 })
 
 test ('fromArray', () => {
-  expect (List.fromArray ([3, 2, 1]) .value) .toEqual ([3, 2, 1])
-})
+  const head = { value: 3, next: { value: 2, next: { value: 1 }}}
 
-test ('[Symbol.iterator]', () => {
-  expect (List.fromElements (...List.fromElements (3, 2, 1)))
-    .toEqual (List.fromElements (3, 2, 1))
+  expect (List.fromArray ([3, 2, 1]) .head) .toEqual (head)
 })
 
 // FUNCTOR
@@ -37,9 +37,9 @@ test ('pure', () => {
 })
 
 test ('ap', () => {
-  expect(List.ap (List.fromElements (x => x, x => x * 2))
+  expect(List.ap (List.fromElements (x => x * 3, x => x * 2))
                  (List.fromElements (1, 2, 3, 4, 5)))
-    .toEqual(List.fromElements(1, 2, 3, 4, 5, 2, 4, 6, 8, 10))
+    .toEqual (List.fromElements (3, 6, 9, 12, 15, 2, 4, 6, 8, 10))
 })
 
 // ALTERNATIVE
@@ -85,8 +85,8 @@ test ('bind', () => {
     .toEqual (List.fromElements (1, 1, 2, 2, 3, 3, 4, 4, 5, 5))
 })
 
-test ('bind_', () => {
-  expect (List.bind_ (e => List.fromElements (e, e))
+test ('bindF', () => {
+  expect (List.bindF (e => List.fromElements (e, e))
                      (List.fromElements (1, 2, 3, 4, 5)))
     .toEqual (List.fromElements (1, 1, 2, 2, 3, 3, 4, 4, 5, 5))
 })
@@ -266,9 +266,14 @@ test ('find', () => {
 
 // BASIC FUNCTIONS
 
-test ('mappend', () => {
-  expect (List.mappend (List.fromElements (3, 2, 1))
-                       (List.fromElements (3, 2, 1)))
+test ('notNull', () => {
+  expect (List.notNull (List.fromElements (3, 2, 1))) .toEqual (true)
+  expect (List.notNull (List.fromElements ())) .toEqual (false)
+})
+
+test ('append', () => {
+  expect (List.append (List.fromElements (3, 2, 1))
+                      (List.fromElements (3, 2, 1)))
     .toEqual (List.fromElements (3, 2, 1, 3, 2, 1))
 })
 
@@ -277,9 +282,14 @@ test ('cons', () => {
     .toEqual (List.fromElements (4, 3, 2, 1))
 })
 
-test ('cons_', () => {
-  expect (List.cons_ (4) (List.fromElements (3, 2, 1)))
+test ('consF', () => {
+  expect (List.consF (4) (List.fromElements (3, 2, 1)))
     .toEqual (List.fromElements (4, 3, 2, 1))
+})
+
+test ('snoc', () => {
+  expect (List.snoc (List.fromElements (3, 2, 1)) (4))
+    .toEqual (List.fromElements (3, 2, 1, 4))
 })
 
 test ('head', () => {
@@ -292,9 +302,9 @@ test ('last', () => {
   expect (() => List.last (List.fromElements ())) .toThrow ()
 })
 
-test ('last_', () => {
-  expect (List.last_ (List.fromElements (3, 2, 1))) .toEqual (Just (1))
-  expect (List.last_ (List.fromElements ())) .toEqual (Nothing)
+test ('lastS', () => {
+  expect (List.lastS (List.fromElements (3, 2, 1))) .toEqual (Just (1))
+  expect (List.lastS (List.fromElements ())) .toEqual (Nothing)
 })
 
 test ('tail', () => {
@@ -305,12 +315,12 @@ test ('tail', () => {
   expect (() => List.tail (List.fromElements ())) .toThrow ()
 })
 
-test ('tail_', () => {
-  expect (List.tail_ (List.fromElements (3, 2, 1)))
+test ('tailS', () => {
+  expect (List.tailS (List.fromElements (3, 2, 1)))
     .toEqual (Just (List.fromElements (2, 1)))
-  expect (List.tail_ (List.fromElements (1)))
+  expect (List.tailS (List.fromElements (1)))
     .toEqual (Just (List.fromElements ()))
-  expect (List.tail_ (List.fromElements ())) .toEqual (Nothing)
+  expect (List.tailS (List.fromElements ())) .toEqual (Nothing)
 })
 
 test ('init', () => {
@@ -318,22 +328,22 @@ test ('init', () => {
     .toEqual (List.fromElements (3, 2))
   expect (List.init (List.fromElements (1)))
     .toEqual (List.fromElements ())
-  expect (() => List.init (List.fromElements ())) .toThrow()
+  expect (() => List.init (List.fromElements ())) .toThrow ()
 })
 
-test ('init_', () => {
-  expect (List.init_ (List.fromElements (3, 2, 1)))
+test ('initS', () => {
+  expect (List.initS (List.fromElements (3, 2, 1)))
     .toEqual (Just (List.fromElements (3, 2)))
-  expect (List.init_ (List.fromElements (1)))
+  expect (List.initS (List.fromElements (1)))
     .toEqual (Just (List.fromElements ()))
-  expect (List.init_ (List.fromElements ())) .toEqual (Nothing)
+  expect (List.initS (List.fromElements ())) .toEqual (Nothing)
 })
 
 test ('uncons', () => {
   expect (List.uncons (List.fromElements (3, 2, 1)))
-    .toEqual (Just (Tuple.of (3) (List.fromElements (2, 1))))
+    .toEqual (Just (Pair.fromBinary (3, List.fromElements (2, 1))))
   expect (List.uncons (List.fromElements (1)))
-    .toEqual (Just (Tuple.of (1) (List.fromElements ())))
+    .toEqual (Just (Pair.fromBinary (1, List.fromElements ())))
   expect (List.uncons (List.fromElements ())) .toEqual (Nothing)
 })
 
@@ -371,17 +381,17 @@ test ('scanl', () => {
 
 test ('mapAccumL', () => {
   expect (
-    List.mapAccumL (acc => current => Tuple.of (acc + current) (current * 2))
+    List.mapAccumL (acc => current => Pair.fromBoth (acc + current) (current * 2))
                    (0)
                    (List.fromElements (1, 2, 3))
   )
-    .toEqual (Tuple.of (6) (List.fromElements (2, 4, 6)))
+    .toEqual (Pair.fromBinary (6, List.fromElements (2, 4, 6)))
 })
 
 // UNFOLDING
 
 test ('unfoldr', () => {
-  expect (List.unfoldr (x => x < 11 ? Just (Tuple.of (x) (x + 1)) : Nothing)
+  expect (List.unfoldr (x => x < 11 ? Just (Pair.fromBoth (x) (x + 1)) : Nothing)
                        (1))
     .toEqual (List.fromElements (1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
 })
@@ -404,10 +414,10 @@ test ('drop', () => {
 
 test ('splitAt', () => {
   expect (List.splitAt (3) (List.fromElements (1, 2, 3, 4, 5)))
-    .toEqual (Tuple.of (List.fromElements (1, 2, 3))
+    .toEqual (Pair.fromBoth (List.fromElements (1, 2, 3))
                        (List.fromElements (4, 5)))
   expect (List.splitAt (6) (List.fromElements (1, 2, 3, 4, 5)))
-    .toEqual (Tuple.of (List.fromElements (1, 2, 3, 4, 5))
+    .toEqual (Pair.fromBoth (List.fromElements (1, 2, 3, 4, 5))
                        (List.fromElements ()))
 })
 
@@ -415,12 +425,12 @@ test ('splitAt', () => {
 
 test ('lookup', () => {
   expect (List.lookup (1)
-                      (List.fromElements (Tuple.of (1) ('a')
-                                         ,Tuple.of (2) ('b'))))
+                      (List.fromElements (Pair.fromBoth (1) ('a')
+                                         ,Pair.fromBoth (2) ('b'))))
     .toEqual (Just ('a'))
   expect (List.lookup (3)
-                      (List.fromElements (Tuple.of (1) ('a')
-                                         ,Tuple.of (2) ('b'))))
+                      (List.fromElements (Pair.fromBoth (1) ('a')
+                                         ,Pair.fromBoth (2) ('b'))))
     .toEqual (Nothing)
 })
 
@@ -433,7 +443,7 @@ test ('filter', () => {
 
 test ('partition', () => {
   expect (List.partition (x => x > 2) (List.fromElements (1, 2, 3, 4, 5)))
-    .toEqual (Tuple.of (List.fromElements (3, 4, 5))
+    .toEqual (Pair.fromBoth (List.fromElements (3, 4, 5))
                        (List.fromElements (1, 2)))
 })
 
@@ -448,12 +458,12 @@ test ('subscript', () => {
     .toEqual (Nothing)
 })
 
-test ('subscript_', () => {
-  expect (List.subscript_ (2) (List.fromElements (3, 2, 1)))
+test ('subscriptF', () => {
+  expect (List.subscriptF (2) (List.fromElements (3, 2, 1)))
     .toEqual (Just (1))
-  expect (List.subscript_ (4) (List.fromElements (3, 2, 1)))
+  expect (List.subscriptF (4) (List.fromElements (3, 2, 1)))
     .toEqual (Nothing)
-  expect (List.subscript_ (-1) (List.fromElements (3, 2, 1)))
+  expect (List.subscriptF (-1) (List.fromElements (3, 2, 1)))
     .toEqual (Nothing)
 })
 
@@ -496,54 +506,54 @@ test ('zip', () => {
   expect (List.zip (List.fromElements ('A', 'B', 'C'))
                    (List.fromElements (1, 2, 3)))
     .toEqual (List.fromElements (
-      Tuple.of ('A') (1),
-      Tuple.of ('B') (2),
-      Tuple.of ('C') (3)
+      Pair.fromBoth ('A') (1),
+      Pair.fromBoth ('B') (2),
+      Pair.fromBoth ('C') (3)
     ))
 
   expect (List.zip (List.fromElements ('A', 'B', 'C', 'D'))
                    (List.fromElements (1, 2, 3)))
     .toEqual (List.fromElements (
-      Tuple.of ('A') (1),
-      Tuple.of ('B') (2),
-      Tuple.of ('C') (3)
+      Pair.fromBoth ('A') (1),
+      Pair.fromBoth ('B') (2),
+      Pair.fromBoth ('C') (3)
     ))
 
   expect (List.zip (List.fromElements ('A', 'B', 'C'))
                    (List.fromElements (1, 2, 3, 4)))
     .toEqual (List.fromElements (
-      Tuple.of ('A') (1),
-      Tuple.of ('B') (2),
-      Tuple.of ('C') (3)
+      Pair.fromBoth ('A') (1),
+      Pair.fromBoth ('B') (2),
+      Pair.fromBoth ('C') (3)
     ))
 })
 
 test ('zipWith', () => {
-  expect (List.zipWith (Tuple.of)
+  expect (List.zipWith (Pair.fromBoth)
                        (List.fromElements ('A', 'B', 'C'))
                        (List.fromElements (1, 2, 3)))
     .toEqual (List.fromElements (
-      Tuple.of ('A') (1),
-      Tuple.of ('B') (2),
-      Tuple.of ('C') (3)
+      Pair.fromBoth ('A') (1),
+      Pair.fromBoth ('B') (2),
+      Pair.fromBoth ('C') (3)
     ))
 
-  expect (List.zipWith (Tuple.of)
+  expect (List.zipWith (Pair.fromBoth)
                        (List.fromElements ('A', 'B', 'C', 'D'))
                        (List.fromElements (1, 2, 3)))
     .toEqual (List.fromElements (
-      Tuple.of ('A') (1),
-      Tuple.of ('B') (2),
-      Tuple.of ('C') (3)
+      Pair.fromBoth ('A') (1),
+      Pair.fromBoth ('B') (2),
+      Pair.fromBoth ('C') (3)
     ))
 
-  expect (List.zipWith (Tuple.of)
+  expect (List.zipWith (Pair.fromBoth)
                        (List.fromElements ('A', 'B', 'C'))
                        (List.fromElements (1, 2, 3, 4)))
     .toEqual (List.fromElements (
-      Tuple.of ('A') (1),
-      Tuple.of ('B') (2),
-      Tuple.of ('C') (3)
+      Pair.fromBoth ('A') (1),
+      Pair.fromBoth ('B') (2),
+      Pair.fromBoth ('C') (3)
     ))
 })
 
@@ -559,7 +569,7 @@ test ('sdelete', () => {
 // ORDERED LISTS
 
 test ('sortBy', () => {
-  expect (List.sortBy (a => b => a - b) (List.fromElements (2, 3, 1, 5, 4)))
+  expect (List.sortBy (a => b => a > b ? LT : a < b ? GT : EQ) (List.fromElements (2, 3, 1, 5, 4)))
     .toEqual (List.fromElements (1, 2, 3, 4, 5))
 })
 
@@ -570,8 +580,8 @@ test ('sortBy', () => {
 test ('indexed', () => {
   expect (List.indexed (List.fromElements ('a', 'b')))
     .toEqual (List.fromElements (
-      Tuple.of (0) ('a'),
-      Tuple.of (1) ('b')
+      Pair.fromBoth (0) ('a'),
+      Pair.fromBoth (1) ('b')
     ))
 })
 
@@ -658,7 +668,7 @@ test ('ifilter', () => {
 test ('ipartition', () => {
   expect (List.ipartition (i => x => x > 2 || i === 0)
                           (List.fromElements (1, 2, 3, 4, 5)))
-    .toEqual (Tuple.of (List.fromElements (1, 3, 4, 5))
+    .toEqual (Pair.fromBoth (List.fromElements (1, 3, 4, 5))
                        (List.fromElements (2)))
 })
 
@@ -699,25 +709,16 @@ test ('ifindIndices', () => {
 
 // OWN METHODS
 
-test ('index_', () => {
-  expect (List.index_ (List.fromElements (1, 2, 3, 4, 5)) (1))
+test ('unsafeIndex', () => {
+  expect (List.unsafeIndex (List.fromElements (1, 2, 3, 4, 5)) (1))
     .toEqual (2)
-  expect (() => List.index_ (List.fromElements (1, 2, 3, 4, 5)) (5))
+  expect (() => List.unsafeIndex (List.fromElements (1, 2, 3, 4, 5)) (5))
     .toThrow ()
 })
 
 test ('toArray', () => {
   expect (List.toArray (List.fromElements (1, 2, 3, 4, 5)))
     .toEqual ([1, 2, 3, 4, 5])
-})
-
-test ('toMap', () => {
-  expect (List.toMap (List.fromElements (
-    Tuple.of (1) ('a'),
-    Tuple.of (2) ('b'),
-    Tuple.of (3) ('c')
-  )))
-    .toEqual (OrderedMap.of ([[1, 'a'], [2, 'b'], [3, 'c']]))
 })
 
 test ('isList', () => {

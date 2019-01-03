@@ -7,7 +7,7 @@
  */
 
 import { isEither, isRight } from './Either';
-import { isList } from './List';
+import { intercalate, isList, map } from './List';
 import { isJust, isMaybe } from './Maybe';
 import { isOrderedMap } from './OrderedMap';
 import { isOrderedSet } from './OrderedSet';
@@ -37,7 +37,7 @@ export const show = (x: any): string => {
   }
 
   if (isList (x)) {
-    return `[${x .value .map (show) .join (', ')}]`
+    return `[${intercalate (', ') (map (show) (x))}]`
   }
 
   if (isPair (x)) {

@@ -809,7 +809,7 @@ export const fromSet =
  */
 export const fromList =
   <K extends Some, A extends Some> (xs: List<Pair<K, A>>): OrderedMap<K, A> =>
-    fromArray (xs .value .map (Pair.toArray))
+    fromArray (List.toArray (List.map<Pair<K, A>, [K, A]> (Pair.toArray) (xs)))
 
 
 // FILTER

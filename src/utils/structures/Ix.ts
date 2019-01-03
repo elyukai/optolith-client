@@ -38,7 +38,9 @@ export const index =
       return x - fst (b)
     }
 
-    throw new RangeError (`Ix.index: Index (${show (x)}) out of range (${show (b)}`);
+    throw new RangeError (
+      `Ix.index: Index (${show (x)}) out of range (${show (b)}`
+    )
   }
 
 /**
@@ -71,7 +73,7 @@ export const rangeSize =
 
 const buildRangeList =
   (u: number) => (x: number) => (xs: List<number>): List<number> =>
-    x > u ? xs : buildRangeList (u) (inc (x)) (cons (xs) (x))
+    x > u ? xs : cons (buildRangeList (u) (inc (x)) (xs)) (x)
 
 
 // NAMESPACED FUNCTIONS

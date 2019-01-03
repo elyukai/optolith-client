@@ -11,8 +11,8 @@ import { add, max, min, multiply } from '../mathUtils';
 import { not } from '../not';
 import { equals } from './Eq';
 import { cnst, ident } from './Function';
-import { fromJust, fromNullable, imapMaybe, isJust, Just, Maybe, Nothing, Some } from './Maybe';
-import { OrderedMap } from './OrderedMap';
+import { fromJust, imapMaybe, isJust, Just, Maybe, maybe, Nothing, Some } from './Maybe';
+import { isGTorEQ, Ordering } from './Ord';
 import { fromBinary, fromBoth, fst, Pair, snd } from './Pair';
 import { show } from './Show';
 
@@ -28,12 +28,14 @@ interface Node<A> {
   readonly next?: Node<A>
 }
 
-export interface List<A extends Some> extends ListPrototype<A> {
-  readonly head?: Node<A>
+type MaybeNode<A> = Node<A> | undefined
+
+export interface List<A> extends ListPrototype<A> {
+  readonly head: MaybeNode<A>
   readonly prototype: ListPrototype<A>
 }
 
-export interface NonEmptyList<A extends Some> extends List<A> {
+export interface NonEmptyList<A> extends List<A> {
   readonly head: Node<A>
 }
 
@@ -43,15 +45,15 @@ const ListPrototype: ListPrototype<Some> =
   })
 
 const _List =
-  <A extends Some> (x: Node<A> | undefined): List<A> =>
-    Object.create (ListPrototype, { head: { value: x, enumerable: true }})
+  <A> (xs: MaybeNode<A>): List<A> =>
+    Object.create (ListPrototype, { head: { value: xs, enumerable: true }})
 
 /**
  * `fromArray :: Array a -> [a]`
  *
  * Creates a new `List` instance from the passed native `Array`.
  */
-export const fromArray = <A extends Some> (xs: ReadonlyArray<A>): List<A> => {
+export const fromArray = <A> (xs: ReadonlyArray<A>): List<A> => {
   if (Array.isArray (xs)) {
     return _List (buildNodexFromArrayWithLastIndex (xs)
                                                    (xs .length - 1)
@@ -68,9 +70,7 @@ export const fromArray = <A extends Some> (xs: ReadonlyArray<A>): List<A> => {
  *
  * Creates a new `List` instance from the passed arguments.
  */
-export const fromElements =
-  <A extends Some> (...values: A[]) =>
-    fromArray (values)
+export const fromElements = <A> (...values: A[]) => fromArray (values)
 
 
 // FUNCTOR
@@ -79,15 +79,11 @@ export const fromElements =
  * `fmap :: (a -> b) -> [a] -> [b]`
  */
 export const fmap =
-  <A extends Some, B extends Some>
-  (f: (value: A) => B) =>
-  (xs: List<A>): List<B> =>
+  <A, B> (f: (x: A) => B) => (xs: List<A>): List<B> =>
     _List (fmapNode (f) (xs .head))
 
 const fmapNode =
-  <A extends Some, B extends Some>
-  (f: (value: A) => B) =>
-  (xs: Node<A> | undefined): Node<B> | undefined =>
+  <A, B> (f: (x: A) => B) => (xs: MaybeNode<A>): MaybeNode<B> =>
     xs !== undefined
     ? toNodeNext (f (value (xs))) (fmapNode (f) (xs .next))
     : undefined
@@ -99,9 +95,7 @@ const fmapNode =
  * definition is `fmap . const`, but this may be overridden with a more
  * efficient version.
  */
-export const mapReplace =
-  <A extends Some, B extends Some> (x: A) =>
-    fmap<B, A> (cnst (x))
+export const mapReplace = <A, B> (x: A) => fmap<B, A> (cnst (x))
 
 
 // APPLICATIVE
@@ -111,7 +105,7 @@ export const mapReplace =
  *
  * Lift a value.
  */
-export const pure = <A extends Some> (x: A) => _List (toNode (x))
+export const pure = <A> (x: A) => _List (toNode (x))
 
 /**
  * `(<*>) :: [a -> b] -> [a] -> [b]`
@@ -119,27 +113,28 @@ export const pure = <A extends Some> (x: A) => _List (toNode (x))
  * Sequential application.
  */
 export const ap =
-  <A extends Some, B extends Some>
-  (fs: List<(x: A) => B>) =>
-  (xs: List<A>): List<B> =>
+  <A, B> (fs: List<(x: A) => B>) => (xs: List<A>): List<B> =>
     _List (apNode<A, B> (fs .head) (xs .head))
 
 const apNode =
-  <A extends Some, B extends Some>
-  (fs: Node<(x: A) => B> | undefined) =>
-  (xs: Node<A> | undefined): Node<B> | undefined =>
+  <A, B>
+  (fs: MaybeNode<(x: A) => B>) =>
+  (xs: MaybeNode<A>): MaybeNode<B> =>
     fs !== undefined && xs !== undefined
-    ? mapApNode (value (fs)) (apNode (fs .next) (xs)) (xs)
+    ? mapApNode (value (fs))
+                (apNode (fs .next) (xs))
+                (xs)
     : undefined
 
 const mapApNode =
-  <A extends Some, B extends Some>
+  <A, B>
   (f: (x: A) => B) =>
-  (xs: Node<B> | undefined) =>
-  (x: Node<A> | undefined): Node<B> | undefined =>
+  (xs: MaybeNode<B>) =>
+  (x: MaybeNode<A>): MaybeNode<B> =>
     x !== undefined
-    ? consNode (mapApNode (f) (xs) (x . next)) (toNode (f (value (x))))
-    : x
+    ? consNode (mapApNode (f) (xs) (x . next))
+               (toNode (f (value (x))))
+    : xs
 
 
 // ALTERNATIVE
@@ -152,7 +147,7 @@ const mapApNode =
  * first.
  */
 export const alt =
-  <A extends Some> (xs1: List<A>) => (xs2: List<A>): List<A> =>
+  <A> (xs1: List<A>) => (xs2: List<A>): List<A> =>
     xs1 .head === undefined ? xs2 : xs1
 
 /**
@@ -165,7 +160,7 @@ export const alt =
  * Flipped version of `alt`.
  */
 export const altF =
-  <A extends Some> (xs1: List<A>) => (xs2: List<A>): List<A> =>
+  <A> (xs1: List<A>) => (xs2: List<A>): List<A> =>
     alt (xs2) (xs1)
 
 /**
@@ -200,26 +195,20 @@ export const guard =
  * `(>>=) :: [a] -> (a -> [b]) -> [b]`
  */
 export const bind =
-  <A extends Some, B extends Some>
-  (xs: List<A>) =>
-  (f: (value: A) => List<B>): List<B> =>
+  <A, B> (xs: List<A>) => (f: (x: A) => List<B>): List<B> =>
     _List (bindNode<A, B> (xs .head) (f))
 
 const bindNode =
-  <A extends Some, B extends Some>
-  (xs: Node<A> | undefined) =>
-  (f: (value: A) => List<B>): Node<B> | undefined =>
+  <A, B> (xs: MaybeNode<A>) => (f: (x: A) => List<B>): MaybeNode<B> =>
     xs !== undefined
-    ? mappendNode<B> (f (value (xs)) .head) (bindNode<A, B> (xs .next) (f))
+    ? mappendNode (f (value (xs)) .head) (bindNode<A, B> (xs .next) (f))
     : undefined
 
 /**
  * `(=<<) :: (a -> [b]) -> [a] -> [b]`
  */
 export const bindF =
-  <A extends Some, B extends Some>
-  (f: (value: A) => List<B>) =>
-  (xs: List<A>): List<B> =>
+  <A, B> (f: (x: A) => List<B>) => (xs: List<A>): List<B> =>
     bind<A, B> (xs) (f)
 
 /**
@@ -232,7 +221,7 @@ export const bindF =
  * ```a >> b = a >>= \ _ -> b```
  */
 export const then =
-  <A extends Some> (xs1: List<any>) => (xs2: List<A>): List<A> =>
+  <A> (xs1: List<any>) => (xs2: List<A>): List<A> =>
     bind<any, A> (xs1) (_ => xs2)
 
 
@@ -241,7 +230,7 @@ export const then =
  *
  * Inject a value into a list.
  */
-export const mreturn = <A extends Some> (x: A) => _List (toNode (x))
+export const mreturn = <A> (x: A) => _List (toNode (x))
 
 /**
  * `(>=>) :: (a -> [b]) -> (b -> [c]) -> a -> [c]`
@@ -249,9 +238,7 @@ export const mreturn = <A extends Some> (x: A) => _List (toNode (x))
  * Left-to-right Kleisli composition of monads.
  */
 export const kleisli =
-  <A extends Some, B extends Some, C extends Some>
-  (f1: (x: A) => List<B>) =>
-  (f2: (x: B) => List<C>) =>
+  <A, B, C> (f1: (x: A) => List<B>) => (f2: (x: B) => List<C>) =>
     pipe (f1, bindF (f2))
 
 /**
@@ -262,8 +249,8 @@ export const kleisli =
  * outer level.
  */
 export const join =
-  <A extends Some>(xs: List<List<A>>): List<A> =>
-    bind<List<A>, A> (xs) (ident)
+  <A> (xss: List<List<A>>): List<A> =>
+    bind<List<A>, A> (xss) (ident)
 
 
 // FOLDABLE
@@ -280,19 +267,13 @@ export const join =
  * ```foldr f z [x1, x2, ..., xn] == x1 `f` (x2 `f` ... (xn `f` z)...)```
  */
 export const foldr =
-  <A extends Some, B extends Some>
-  (f: (current: A) => (acc: B) => B) =>
-  (initial: B) =>
-  (xs: List<A>): B =>
+  <A, B> (f: (x: A) => (acc: B) => B) => (initial: B) => (xs: List<A>): B =>
     foldrNode (f) (xs .head) (initial)
 
 const foldrNode =
-  <A extends Some, B extends Some>
-  (f: (current: A) => (acc: B) => B) =>
-  (n: Node<A> | undefined) =>
-  (acc: B): B =>
-    n !== undefined
-    ? f (value (n)) (foldrNode (f) (n .next) (acc))
+  <A, B> (f: (x: A) => (acc: B) => B) => (xs: MaybeNode<A>) => (acc: B): B =>
+    xs !== undefined
+    ? f (value (xs)) (foldrNode (f) (xs .next) (acc))
     : acc
 
 /**
@@ -307,19 +288,13 @@ const foldrNode =
  * ```foldl f z [x1, x2, ..., xn] == (...((z `f` x1) `f` x2) `f`...) `f` xn```
  */
 export const foldl =
-  <A extends Some, B extends Some>
-  (f: (acc: B) => (current: A) => B) =>
-  (initial: B) =>
-  (xs: List<A>): B =>
+  <A, B> (f: (acc: B) => (x: A) => B) => (initial: B) => (xs: List<A>): B =>
     foldlNode (f) (xs .head) (initial)
 
 const foldlNode =
-  <A extends Some, B extends Some>
-  (f: (acc: B) => (current: A) => B) =>
-  (n: Node<A> | undefined) =>
-  (acc: B): B =>
-    n !== undefined
-    ? foldlNode (f) (n .next) (f (acc) (value (n)))
+  <A, B> (f: (acc: B) => (x: A) => B) => (xs: MaybeNode<A>) => (acc: B): B =>
+    xs !== undefined
+    ? foldlNode (f) (xs .next) (f (acc) (value (xs)))
     : acc
 
 /**
@@ -331,9 +306,7 @@ const foldlNode =
  * `foldr1 f = foldr1 f . toList`
  */
 export const foldr1 =
-  <A extends Some>
-  (f: (current: A) => (acc: A) => A) =>
-  (xs: List<A>): A => {
+  <A> (f: (x: A) => (acc: A) => A) => (xs: List<A>): A => {
     if (xs .head !== undefined) {
       return foldr1Node (f) (xs .head)
     }
@@ -342,12 +315,10 @@ export const foldr1 =
   }
 
 const foldr1Node =
-  <A extends Some>
-  (f: (current: A) => (acc: A) => A) =>
-  (n: Node<A>): A =>
-    n .next !== undefined && n .next .next !== undefined
-    ? f (value (n)) (foldr1Node (f) (n .next))
-    : value (n)
+  <A> (f: (x: A) => (acc: A) => A) => (xs: Node<A>): A =>
+    xs .next !== undefined
+    ? f (value (xs)) (foldr1Node (f) (xs .next))
+    : value (xs)
 
 /**
  * `foldl1 :: (a -> a -> a) -> [a] -> a`
@@ -358,9 +329,7 @@ const foldr1Node =
  * `foldl1 f = foldl1 f . toList`
  */
 export const foldl1 =
-  <A extends Some>
-  (f: (acc: A) => (current: A) => A) =>
-  (xs: List<A>): A => {
+  <A> (f: (acc: A) => (x: A) => A) => (xs: List<A>): A => {
     if (xs .head !== undefined) {
       return foldl1Node (f) (xs .head .next) (value (xs .head))
     }
@@ -369,18 +338,18 @@ export const foldl1 =
   }
 
 const foldl1Node =
-  <A extends Some>
-  (f: (acc: A) => (current: A) => A) =>
-  (n: Node<A> | undefined) =>
+  <A>
+  (f: (acc: A) => (x: A) => A) =>
+  (xs: MaybeNode<A>) =>
   (acc: A): A =>
-    n === undefined ? acc : foldl1Node (f) (n .next) (f (acc) (value (n)))
+    xs === undefined ? acc : foldl1Node (f) (xs .next) (f (acc) (value (xs)))
 
 /**
  * `toList :: [a] -> [a]`
  *
  * List of elements of a structure, from left to right.
  */
-export const toList = <A extends Some>(xs: List<A>): List<A> => xs
+export const toList = <A> (xs: List<A>): List<A> => xs
 
 /**
  * `null :: [a] -> Bool`
@@ -401,8 +370,7 @@ export const fnull = (xs: List<any>): boolean => xs .head === undefined
 export const length = (xs: List<any>): number => lengthNode (xs .head) (0)
 
 const lengthNode =
-  (node: Node<any> | undefined) =>
-  (acc: number): number =>
+  (node: MaybeNode<any>) => (acc: number): number =>
     node === undefined ? acc : lengthNode (node .next) (acc + 1)
 
 /**
@@ -411,14 +379,14 @@ const lengthNode =
  * Does the element occur in the structure?
  */
 export const elem =
-  <A extends Some>(x: A) => (xs: List<A>): boolean =>
+  <A> (x: A) => (xs: List<A>): boolean =>
     elemNode (x) (xs .head)
 
 const elemNode =
-  <A extends Some> (x: A) => (node: Node<A> | undefined): boolean =>
-    node === undefined
+  <A> (x: A) => (xs: MaybeNode<A>): boolean =>
+    xs === undefined
     ? false
-    : equals (x) (value (node)) || elemNode (x) (node .next)
+    : equals (x) (value (xs)) || elemNode (x) (xs .next)
 
 /**
  * `elem_ :: Eq a => [a] -> a -> Bool`
@@ -427,9 +395,7 @@ const elemNode =
  *
  * Flipped version of `elem` but with arguments switched.
  */
-export const elem_ =
-  <A extends Some> (xs: List<A>) => (e: A): boolean =>
-    elem (e) (xs)
+export const elem_ = <A> (xs: List<A>) => (x: A): boolean => elem (x) (xs)
 
 /**
  * `sum :: Num a => [a] -> a`
@@ -486,9 +452,9 @@ export const concatMap = bindF
 export const and = (xs: List<boolean>): boolean => andNode (xs .head)
 
 const andNode =
-  (n: Node<boolean> | undefined): boolean =>
-    n !== undefined
-    ? value (n) && andNode (n .next)
+  (xs: Node<boolean> | undefined): boolean =>
+    xs !== undefined
+    ? value (xs) && andNode (xs .next)
     : true
 
 /**
@@ -501,9 +467,9 @@ const andNode =
 export const or = (xs: List<boolean>): boolean => orNode (xs .head)
 
 const orNode =
-  (n: Node<boolean> | undefined): boolean =>
-    n !== undefined
-    ? value (n) || orNode (n .next)
+  (xs: MaybeNode<boolean>): boolean =>
+    xs !== undefined
+    ? value (xs) || orNode (xs .next)
     : false
 
 /**
@@ -512,15 +478,13 @@ const orNode =
  * Determines whether any element of the structure satisfies the predicate.
  */
 export const any =
-  <A extends Some> (f: (x: A) => boolean) => (xs: List<A>): boolean =>
+  <A> (f: (x: A) => boolean) => (xs: List<A>): boolean =>
     anyNode (f) (xs .head)
 
 const anyNode =
-  <A extends Some>
-  (f: (x: A) => boolean) =>
-  (n: Node<A> | undefined): boolean =>
-    n !== undefined
-    ? f (value (n)) || anyNode (f) (n .next)
+  <A> (f: (x: A) => boolean) => (xs: MaybeNode<A>): boolean =>
+    xs !== undefined
+    ? f (value (xs)) || anyNode (f) (xs .next)
     : false
 
 /**
@@ -529,15 +493,13 @@ const anyNode =
  * Determines whether all elements of the structure satisfy the predicate.
  */
 export const all =
-  <A extends Some>(f: (x: A) => boolean) => (xs: List<A>): boolean =>
+  <A> (f: (x: A) => boolean) => (xs: List<A>): boolean =>
     allNode (f) (xs .head)
 
 const allNode =
-  <A extends Some>
-  (f: (x: A) => boolean) =>
-  (n: Node<A> | undefined): boolean =>
-    n !== undefined
-    ? f (value (n)) && allNode (f) (n .next)
+  <A> (f: (x: A) => boolean) => (xs: MaybeNode<A>): boolean =>
+    xs !== undefined
+    ? f (value (xs)) && allNode (f) (xs .next)
     : true
 
 // Searches
@@ -547,7 +509,7 @@ const allNode =
  *
  * `notElem` is the negation of `elem`.
  */
-export const notElem = <A> (e: A) => pipe (elem (e), not)
+export const notElem = <A> (x: A) => pipe (elem (x), not)
 
 /**
  * `notElemF :: Eq a => a -> [a] -> Bool`
@@ -567,6 +529,7 @@ interface Find {
    * there is no such element.
    */
   <A, A1 extends A> (pred: (x: A) => x is A1): (xs: List<A>) => Maybe<A1>
+
   /**
    * `find :: (a -> Bool) -> [a] -> Maybe a`
    *
@@ -589,13 +552,11 @@ export const find: Find =
     findNode (pred) (xs .head)
 
 const findNode =
-  <A extends Some>
-  (pred: (x: A) => boolean) =>
-  (n: Node<A> | undefined): Maybe<A> =>
-    n !== undefined
-    ? pred (value (n))
-    ? Just (value (n))
-    : findNode (pred) (n .next)
+  <A> (pred: (x: A) => boolean) => (xs: MaybeNode<A>): Maybe<A> =>
+    xs !== undefined
+    ? pred (value (xs))
+    ? Just (value (xs))
+    : findNode (pred) (xs .next)
     : Nothing
 
 
@@ -606,7 +567,8 @@ const findNode =
  *
  * A composition of `not` and `null`.
  */
-export const notNull = pipe (fnull, not)
+export const notNull =
+  pipe (fnull, not) as (xs: List<any>) => xs is NonEmptyList<any>
 
 
 /**
@@ -615,13 +577,11 @@ export const notNull = pipe (fnull, not)
  * Append two lists.
  */
 export const append =
-  <A extends Some> (xs1: List<A>) => (xs2: List<A>): List<A> =>
+  <A> (xs1: List<A>) => (xs2: List<A>): List<A> =>
     _List (mappendNode (xs1 .head) (xs2 .head))
 
 const mappendNode =
-  <A extends Some>
-  (xs1: Node<A> | undefined) =>
-  (xs2: Node<A> | undefined): Node<A> | undefined =>
+  <A> (xs1: MaybeNode<A>) => (xs2: MaybeNode<A>): MaybeNode<A> =>
     xs2 === undefined
     ? xs1
     : xs1 === undefined
@@ -629,10 +589,10 @@ const mappendNode =
     : mappendNodeSafe (xs1) (xs2)
 
 const mappendNodeSafe =
-  <A extends Some> (xs1: Node<A>) => (xs2: Node<A>): Node<A> =>
+  <A> (xs1: Node<A>) => (xs2: Node<A>): Node<A> =>
     xs1 .next === undefined
     ? { value: value (xs1), next: xs2 }
-    : mappendNodeSafe (xs1 .next) (xs2)
+    : { value: value (xs1), next: mappendNodeSafe (xs1 .next) (xs2) }
 
 /**
  * `(:) :: [a] -> a -> [a]`
@@ -640,7 +600,7 @@ const mappendNodeSafe =
  * Prepends an element to the list.
  */
 export const cons =
-  <A extends Some> (xs: List<A>) => (x: A): List<A> =>
+  <A> (xs: List<A>) => (x: A): List<A> =>
     _List ({ value: x, next: xs .head })
 
 /**
@@ -658,22 +618,20 @@ export const consF = <A> (x: A) => (xs: List<A>): List<A> => cons (xs) (x)
  * Append an element to the end of a list, takes *O(n)* time.
  */
 export const snoc =
-  <A extends Some> (xs: List<A>) => (x: A): List<A> =>
+  <A> (xs: List<A>) => (x: A): List<A> =>
     _List (snocNode (xs .head) (x))
 
 const snocNode =
-  <A extends Some>
-  (xs: Node<A> | undefined) =>
-  (x: A): Node<A> | undefined =>
+  <A> (xs: MaybeNode<A>) => (x: A): MaybeNode<A> =>
     xs === undefined
     ? toNode (x)
     : snocNodeSafe (xs) (x)
 
 const snocNodeSafe =
-  <A extends Some> (xs: Node<A>) => (x: A): Node<A> =>
+  <A> (xs: Node<A>) => (x: A): Node<A> =>
     xs .next === undefined
-    ? { value: value (xs), next: toNode (x) }
-    : snocNodeSafe (xs .next) (x)
+    ? toNodeNext (value (xs)) (toNode (x))
+    : toNodeNext (value (xs)) (snocNodeSafe (xs .next) (x))
 
 /**
  * `head :: [a] -> a`
@@ -705,19 +663,21 @@ export const last = <A> (xs: List<A>): A => {
 }
 
 const lastNode =
-  <A> (node: Node<A>): Node<A> =>
-    node .next === undefined ? node : lastNode (node .next)
+  <A> (xs: Node<A>): Node<A> =>
+    xs .next === undefined ? xs : lastNode (xs .next)
 
 /**
- * `lastF :: [a] -> Maybe a`
+ * `lastS :: [a] -> Maybe a`
  *
  * Extract the last element of a list, which must be finite. If the list is
  * empty, it returns `Nothing`. If the list is not empty, it returns the last
  * element wrapped in a `Just`.
  *
- * A safe version of `List.last`.
+ * A safe version of `last`.
  */
-export const lastF = <A> (xs: List<A>): Maybe<A> => fnull (xs) ? Nothing : Just (last (xs))
+export const lastS =
+  <A> (xs: List<A>): Maybe<A> =>
+    fnull (xs) ? Nothing : Just (last (xs))
 
 /**
  * `tail :: [a] -> [a]`
@@ -733,15 +693,15 @@ export const tail = <A> (xs: List<A>): List<A> => {
 }
 
 /**
- * `tail_ :: [a] -> Maybe [a]`
+ * `tailS :: [a] -> Maybe [a]`
  *
  * Extract the elements after the head of a list. If the list is
  * empty, it returns `Nothing`. If the list is not empty, it returns the
  * elements wrapped in a `Just`.
  *
- * A safe version of `List.tail`.
+ * A safe version of `tail`.
  */
-export const tail_ =
+export const tailS =
   <A> (xs: List<A>): Maybe<List<A>> =>
     fnull (xs) ? Nothing : Just (tail (xs))
 
@@ -756,27 +716,25 @@ export const init = <A> (xs: List<A>): List<A> => {
     throw new TypeError (`init does only work on non-empty lists.`)
   }
 
-  return _List (_init (xs .head))
+  return _List (initNode (xs .head))
 }
 
-const _init =
-  <A> (node: Node<A>): Node<A> =>
-    node .next === undefined
-    ? node
-    : node .next .next === undefined
-    ? node
-    : node .next
+const initNode =
+  <A> (xs: Node<A>): MaybeNode<A> =>
+    xs .next === undefined
+    ? undefined
+    : toNodeNext (value (xs)) (initNode (xs .next))
 
 /**
- * `init_ :: [a] -> Maybe [a]`
+ * `initS :: [a] -> Maybe [a]`
  *
  * Return all the elements of a list except the last one. If the list is
  * empty, it returns `Nothing`. If the list is not empty, it returns the
  * elements wrapped in a `Just`.
  *
- * A safe version of `List.init`.
+ * A safe version of `init`.
  */
-export const init_ =
+export const initS =
   <A> (xs: List<A>): Maybe<List<A>> =>
     fnull (xs) ? Nothing : Just (init (xs))
 
@@ -808,7 +766,7 @@ export const map = fmap
  * finite.
  */
 export const reverse =
-  <A extends Some> (xs: List<A>): List<A> =>
+  <A> (xs: List<A>): List<A> =>
     foldl<A, List<A>> (cons) (empty) (xs)
 
 /**
@@ -824,11 +782,12 @@ export const intercalate =
 
 const intercalateNode =
   (separator: string) =>
-  (n: Node<number | string> | undefined): string =>
-    n !== undefined
-    ? n .next !== undefined
-    ? value (n) .toString () + separator + intercalateNode (separator) (n .next)
-    : value (n) .toString ()
+  (xs: Node<number | string> | undefined): string =>
+    xs !== undefined
+    ? xs .next !== undefined
+    ? value (xs) .toString () + separator + intercalateNode (separator)
+                                                            (xs .next)
+    : value (xs) .toString ()
     : ''
 
 
@@ -850,24 +809,24 @@ const intercalateNode =
  * ```last (scanl f z xs) == foldl f z xs.```
  */
 export const scanl =
-  <A extends Some, B extends Some>
-  (f: (acc: B) => (current: A) => B) =>
+  <A, B>
+  (f: (acc: B) => (x: A) => B) =>
   (initial: B) =>
   (xs: List<A>): List<B> =>
     _List (scanlNode (f) (initial) (xs .head))
 
 const scanlNode =
-  <A extends Some, B extends Some>
-  (f: (acc: B) => (current: A) => B) =>
+  <A, B>
+  (f: (acc: B) => (x: A) => B) =>
   (initial: B) =>
-  (xs: Node<A> | undefined): Node<B> | undefined =>
+  (xs: MaybeNode<A>): MaybeNode<B> =>
     toNodeNext (initial) (scanlNodeIterator (f) (initial) (xs))
 
 const scanlNodeIterator =
-  <A extends Some, B extends Some>
-  (f: (acc: B) => (current: A) => B) =>
+  <A, B>
+  (f: (acc: B) => (x: A) => B) =>
   (acc: B) =>
-  (xs: Node<A> | undefined): Node<B> | undefined => {
+  (xs: MaybeNode<A>): MaybeNode<B> => {
     if (xs !== undefined) {
       const x = f (acc) (value (xs))
 
@@ -889,8 +848,8 @@ const scanlNodeIterator =
  * this accumulator together with the new structure.
  */
 export const mapAccumL =
-  <A extends Some, B extends Some, C extends Some>
-  (f: (acc: A) => (current: B) => Pair<A, C>) =>
+  <A, B, C>
+  (f: (acc: A) => (x: B) => Pair<A, C>) =>
   (initial: A) =>
   (xs: List<B>): Pair<A, List<C>> => {
     const res = mapAccumLNode (f) (initial) (xs .head)
@@ -899,10 +858,10 @@ export const mapAccumL =
   }
 
 export const mapAccumLNode =
-  <A extends Some, B extends Some, C extends Some>
-  (f: (acc: A) => (current: B) => Pair<A, C>) =>
+  <A, B, C>
+  (f: (acc: A) => (x: B) => Pair<A, C>) =>
   (acc: A) =>
-  (xs: Node<B> | undefined): [A, Node<C> | undefined] => {
+  (xs: MaybeNode<B>): [A, MaybeNode<C>] => {
     if (xs !== undefined) {
       const p = f (acc) (value (xs))
 
@@ -950,16 +909,14 @@ f' z       = Nothing
 ```
   */
 export const unfoldr =
-  <A extends Some, B extends Some>
-  (f: (x: B) => Maybe<Pair<A, B>>) =>
-  (seedValue: B): List<A> =>
+  <A, B> (f: (x: B) => Maybe<Pair<A, B>>) => (seedValue: B): List<A> =>
     _List (unfoldrNode (f) (undefined) (seedValue))
 
 const unfoldrNode =
-  <A extends Some, B extends Some>
+  <A, B>
   (f: (x: B) => Maybe<Pair<A, B>>) =>
-  (acc: Node<A> | undefined) =>
-  (x: B): Node<A> | undefined => {
+  (acc: MaybeNode<A>) =>
+  (x: B): MaybeNode<A> => {
     const result = f (x)
 
     if (isJust (result)) {
@@ -986,7 +943,7 @@ export const take =
     _List (takeNode<A> (n) (xs .head))
 
 const takeNode =
-  <A> (n: number) => (xs: Node<A> | undefined): Node<A> | undefined =>
+  <A> (n: number) => (xs: MaybeNode<A>): MaybeNode<A> =>
     n <= 0 || xs === undefined
     ? undefined
     : toNodeNext (value (xs)) (takeNode<A> (n - 1) (xs .next))
@@ -1002,7 +959,7 @@ export const drop =
     _List (dropNode<A> (n) (xs .head))
 
 const dropNode =
-  <A> (n: number) => (xs: Node<A> | undefined): Node<A> | undefined =>
+  <A> (n: number) => (xs: MaybeNode<A>): MaybeNode<A> =>
     n <= 0
     ? xs
     : xs === undefined
@@ -1025,7 +982,7 @@ export const splitAt =
 const splitAtNode =
   <A>
   (n: number) =>
-  (xs: Node<A> | undefined): [Node<A> | undefined, Node<A> | undefined] => {
+  (xs: MaybeNode<A>): [MaybeNode<A>, MaybeNode<A>] => {
     if (n <= 0) {
       return [undefined, xs]
     }
@@ -1051,7 +1008,8 @@ const splitAtNode =
  */
 export const lookup = <K, V> (key: K) => (assocs: List<Pair<K, V>>): Maybe<V> =>
   Maybe.fmap<Pair<K, V>, V> (snd)
-                            (find<Pair<K, V>> (e => fst (e) === key) (assocs))
+                            (find<Pair<K, V>> (pipe (fst, equals (key)))
+                                              (assocs))
 
 
 // SEARCHING WITH A PREDICATE
@@ -1063,14 +1021,15 @@ interface Filter {
    * `filter`, applied to a predicate and a list, returns the list of those
    * elements that satisfy the predicate.
    */
-  <A, A1 extends A> (pred: (x: A) => x is A1): (list: List<A>) => List<A1>
+  <A, A1 extends A> (pred: (x: A) => x is A1): (xs: List<A>) => List<A1>
+
   /**
    * `filter :: (a -> Bool) -> [a] -> [a]`
    *
    * `filter`, applied to a predicate and a list, returns the list of those
    * elements that satisfy the predicate.
    */
-  <A> (pred: (x: A) => boolean): (list: List<A>) => List<A>
+  <A> (pred: (x: A) => boolean): (xs: List<A>) => List<A>
 }
 
 /**
@@ -1081,7 +1040,15 @@ interface Filter {
  */
 export const filter: Filter =
   <A> (pred: (x: A) => boolean) => (xs: List<A>): List<A> =>
-    fromArray (xs .value .filter (pred))
+    _List (filterNode (pred) (xs .head))
+
+const filterNode =
+  <A> (pred: (x: A) => boolean) => (xs: MaybeNode<A>): MaybeNode<A> =>
+    xs !== undefined
+    ? pred (value (xs))
+    ? toNodeNext (value (xs)) (filterNode (pred) (xs .next))
+    : filterNode (pred) (xs .next)
+    : undefined
 
 /**
  * `partition :: (a -> Bool) -> [a] -> ([a], [a])`
@@ -1089,23 +1056,36 @@ export const filter: Filter =
  * The `partition` function takes a predicate a list and returns the pair of
  * lists of elements which do and do not satisfy the predicate, respectively.
  *
-```
->>> partition (`elem` "aeiou") "Hello World!"
-("eoo","Hll Wrld!")
-```
+ * ```haskell
+ * >>> partition (`elem` "aeiou") "Hello World!"
+ * ("eoo","Hll Wrld!")
+ * ```
   */
 export const partition =
   <A>
-  (f: (value: A) => boolean) =>
+  (pred: (value: A) => boolean) =>
   (xs: List<A>): Pair<List<A>, List<A>> => {
-    const pair = xs .value .reduceRight<[List<A>, List<A>]> (
-      ([included, excluded], value) => f (value)
-        ? [cons (included) (value), excluded]
-        : [included, cons (excluded) (value)],
-      [empty, empty]
-    )
+    const [accepted, rejected] = partitionNode (pred) (xs .head)
 
-    return fromBoth<List<A>, List<A>> (pair[0]) (pair[1])
+    return fromBinary (_List (accepted), _List (rejected))
+  }
+
+const partitionNode =
+  <A>
+  (pred: (value: A) => boolean) =>
+  (xs: MaybeNode<A>): [MaybeNode<A>, MaybeNode<A>]  => {
+    if (xs === undefined) {
+      return [undefined, undefined]
+    }
+
+    const x = value (xs)
+    const next = xs .next
+
+    const [accepted, rejected] = partitionNode (pred) (next)
+
+    return pred (x)
+      ? [consNode (accepted) (toNode (x)), rejected]
+      : [accepted, consNode (rejected) (toNode (x))]
   }
 
 
@@ -1118,29 +1098,28 @@ export const partition =
  * returns `Nothing`, otherwise `Just a`.
  */
 export const subscript =
-<A> (xs: List<A>) => (index: number): Maybe<A> =>
-  Maybe.fmap<Node<A>, A> (value)
-                         (fromNullable (_subscript (xs .head) (index)))
+  <A> (xs: List<A>) => (index: number): Maybe<A> =>
+    subscriptNode (xs .head) (index)
 
-const _subscript =
-<A> (node: Node<A> | undefined) => (index: number): Node<A> | undefined =>
-  node === undefined
-  ? undefined
-  : index > 0
-  ? _subscript (node .next) (index - 1)
-  : node
+const subscriptNode =
+  <A> (xs: MaybeNode<A>) => (index: number): Maybe<A> =>
+    xs === undefined || index < 0
+    ? Nothing
+    : index > 0
+    ? subscriptNode (xs .next) (index - 1)
+    : Just (value (xs))
 
 /**
-* `(!!) :: Int -> [a] -> Maybe a`
-*
-* List index (subscript) operator, starting from 0. If the index is invalid,
-* returns `Nothing`, otherwise `Just a`.
-*
-* Same as `subscript` but with arguments flipped.
-*/
-export const subscript_ =
-(index: number) => <A>(xs: List<A>): Maybe<A> =>
-  subscript (xs) (index)
+ * `(!!) :: Int -> [a] -> Maybe a`
+ *
+ * List index (subscript) operator, starting from 0. If the index is invalid,
+ * returns `Nothing`, otherwise `Just a`.
+ *
+ * Flipped version of `subscript`.
+ */
+export const subscriptF =
+  (index: number) => <A> (xs: List<A>): Maybe<A> =>
+    subscript (xs) (index)
 
 /**
  * `elemIndex :: Eq a => a -> [a] -> Maybe Int`
@@ -1150,11 +1129,16 @@ export const subscript_ =
  * there is no such element.
  */
 export const elemIndex =
-  <A> (x: A) => (xs: List<A>): Maybe<number> => {
-    const res = xs .value .findIndex (equals (x))
+  <A> (x: A) => (xs: List<A>): Maybe<number> =>
+    elemIndexNode<A> (x) (0) (xs .head)
 
-    return res > -1 ? Just (res) : Nothing
-  }
+const elemIndexNode =
+  <A> (x: A) => (index: number) => (xs: MaybeNode<A>): Maybe<number> =>
+    xs === undefined
+    ? Nothing
+    : equals (x) (value (xs))
+    ? Just (index)
+    : elemIndexNode (x) (index + 1) (xs .next)
 
 /**
  * `elemIndices :: Eq a => a -> [a] -> [Int]`
@@ -1164,12 +1148,15 @@ export const elemIndex =
  */
 export const elemIndices =
   <A> (x: A) => (xs: List<A>): List<number> =>
-    fromArray (
-      xs .value .reduce<number[]> (
-        (acc, e, index) => equals (e) (x) ? [...acc, index] : acc,
-        []
-      )
-    )
+    _List (elemIndicesNode (x) (0) (xs .head))
+
+const elemIndicesNode =
+  <A> (x: A) => (index: number) => (xs: MaybeNode<A>): MaybeNode<number> =>
+    xs === undefined
+    ? undefined
+    : equals (x) (value (xs))
+    ? toNodeNext (index) (elemIndicesNode (x) (index + 1) (xs .next))
+    : elemIndicesNode (x) (index + 1) (xs .next)
 
 /**
  * `findIndex :: (a -> Bool) -> [a] -> Maybe Int`
@@ -1179,11 +1166,19 @@ export const elemIndices =
  * there is no such element.
  */
 export const findIndex =
-  <A> (pred: (x: A) => boolean) => (xs: List<A>): Maybe<number> => {
-    const res = xs .value .findIndex (pred)
+  <A> (pred: (x: A) => boolean) => (xs: List<A>): Maybe<number> =>
+    findIndexNode (pred) (0) (xs .head)
 
-    return res > -1 ? Just (res) : Nothing
-  }
+const findIndexNode =
+  <A>
+  (pred: (x: A) => boolean) =>
+  (index: number) =>
+  (xs: MaybeNode<A>): Maybe<number> =>
+    xs === undefined
+    ? Nothing
+    : pred (value (xs))
+    ? Just (index)
+    : findIndexNode (pred) (index + 1) (xs .next)
 
 /**
  * `findIndices :: (a -> Bool) -> [a] -> [Int]`
@@ -1193,12 +1188,18 @@ export const findIndex =
  */
 export const findIndices =
   <A> (pred: (x: A) => boolean) => (xs: List<A>): List<number> =>
-    fromArray (
-      xs .value .reduce<number[]> (
-        (acc, e, index) => pred (e) ? [...acc, index] : acc,
-        []
-      )
-    )
+    _List (findIndicesNode (pred) (0) (xs .head))
+
+const findIndicesNode =
+  <A>
+  (pred: (x: A) => boolean) =>
+  (index: number) =>
+  (xs: MaybeNode<A>): MaybeNode<number> =>
+    xs === undefined
+    ? undefined
+    : pred (value (xs))
+    ? toNodeNext (index) (findIndicesNode (pred) (index + 1) (xs .next))
+    : findIndicesNode (pred) (index + 1) (xs .next)
 
 
 // ZIPPING AND UNZIPPING LISTS
@@ -1222,7 +1223,7 @@ export const zip =
  */
 export const zipWith =
   <A, B, C>
-  (f: (value1: A) => (value2: B) => C) =>
+  (f: (x1: A) => (x2: B) => C) =>
   (xs1: List<A>) =>
   (xs2: List<B>): List<C> =>
     imapMaybe<A, C> (index => e => Maybe.fmap (f (e)) (subscript (xs2) (index)))
@@ -1236,11 +1237,16 @@ export const zipWith =
  *
  * `delete x` removes the first occurrence of `x` from its list argument.
  */
-export const sdelete = <T> (x: T) => (xs: List<T>): List<T> => {
-  const index = xs .value .findIndex (e => e === x)
+export const sdelete =
+  <A> (x: A) => (xs: List<A>): List<A> =>
+    _List (deleteNode (x) (xs .head))
 
-  return deleteAt<T> (index) (xs)
-}
+const deleteNode = <A> (x: A) => (xs: MaybeNode<A>): MaybeNode<A> =>
+  xs === undefined
+  ? undefined
+  : equals (x) (value (xs))
+  ? xs .next
+  : toNodeNext (value (xs)) (deleteNode (x) (xs .next))
 
 
 // ORDERED LISTS
@@ -1251,8 +1257,82 @@ export const sdelete = <T> (x: T) => (xs: List<T>): List<T> => {
  * The `sortBy` function is the non-overloaded version of `sort`.
  */
 export const sortBy =
-  <T> (fn: (a: T) => (b: T) => number) => (xs: List<T>): List<T> =>
-    fromArray ([...xs .value].sort ((a, b) => fn (a) (b)))
+  <A> (f: (a: A) => (b: A) => Ordering) => (xs: List<A>): List<A> =>
+    _List (sortByNodeMergeSort (f) (xs .head))
+
+const sortByNodeMergeSort =
+  <A>
+  (f: (a: A) => (b: A) => Ordering) =>
+  (h: MaybeNode<A>): MaybeNode<A> => {
+    // Base case: if head is undefined
+    if (h === undefined || h .next === undefined) {
+      return h
+    }
+
+    // get the middle of the list
+    const middle = sortByNodeGetMiddle (h)!
+    const nextofmiddle = middle .next
+
+    // set the next of middle node to undefined
+    // @ts-ignore
+    middle .next = undefined
+
+    // Apply mergeSort on left list
+    const left = sortByNodeMergeSort (f) (h)
+
+    // Apply mergeSort on right list
+    const right = sortByNodeMergeSort (f) (nextofmiddle)
+
+    // Merge the left and right lists
+    return sortByNodeSortedMerge (f) (left, right)
+  }
+
+const sortByNodeSortedMerge =
+  <A>
+  (f: (a: A) => (b: A) => Ordering) =>
+  (a: MaybeNode<A>, b: MaybeNode<A>): MaybeNode<A> => {
+    /* Base cases */
+    if (a === undefined) {
+      return b
+    }
+
+    if (b === undefined) {
+      return a
+    }
+
+    /* Pick either a or b, and recur */
+    return isGTorEQ (f (value (a)) (value (b)))
+      ? toNodeNext (value (a)) (sortByNodeSortedMerge (f) (a .next, b))
+      : toNodeNext (value (b)) (sortByNodeSortedMerge (f) (a, b .next))
+  }
+
+/**
+ * Utility function to get the middle of the linked list
+ */
+const sortByNodeGetMiddle = <A> (h: MaybeNode<A>): MaybeNode<A> => {
+  //Base case
+  if (h === undefined) {
+    return h
+  }
+
+  let fastptr: MaybeNode<A> = h .next
+  let slowptr: Node<A> = h
+
+  // Move fastptr by two and slowptr by one
+  // Finally slowptr will point to middle node
+  while (fastptr !== undefined)
+  {
+      fastptr = fastptr .next
+
+      if (fastptr !== undefined)
+      {
+          slowptr = slowptr .next!
+          fastptr = fastptr .next
+      }
+  }
+
+  return slowptr
+}
 
 
 // LIST.INDEX
@@ -1263,13 +1343,14 @@ export const sortBy =
  * `indexed :: [a] -> [(Int, a)]`
  *
  * `indexed` pairs each element with its index.
-```hs
->>> indexed "hello"
-[(0,'h'),(1,'e'),(2,'l'),(3,'l'),(4,'o')]
-```
+ *
+ * ```haskell
+ * >>> indexed "hello"
+ * [(0,'h'),(1,'e'),(2,'l'),(3,'l'),(4,'o')]
+ * ```
  */
 export const indexed = <A> (xs: List<A>): List<Pair<number, A>> =>
-  imap<A, Pair<number, A>> (index => x => fromBoth<number, A> (index) (x)) (xs)
+  imap<A, Pair<number, A>> (fromBoth) (xs)
 
 /**
  * `deleteAt :: Int -> [a] -> [a]`
@@ -1280,16 +1361,18 @@ export const indexed = <A> (xs: List<A>): List<Pair<number, A>> =>
  * returned.
  */
 export const deleteAt =
-  <T> (index: number) => (xs: List<T>): List<T> => {
-    if (index > -1 && index < xs .value .length) {
-      return fromElements (
-        ...xs .value .slice (0, index),
-        ...xs .value .slice (index + 1)
-      )
-    }
+  <A> (index: number) => (xs: List<A>): List<A> =>
+    _List (deleteAtNode<A> (index) (xs .head))
 
-    return xs
-  }
+const deleteAtNode =
+  <A> (index: number) => (xs: MaybeNode<A>): MaybeNode<A> =>
+    index < 0
+    ? xs
+    : xs === undefined
+    ? undefined
+    : index === 0
+    ? xs .next
+    : toNodeNext (value (xs)) (deleteAtNode<A> (index - 1) (xs .next))
 
 /**
  * `setAt :: Int -> a -> [a] -> [a]`
@@ -1300,13 +1383,18 @@ export const deleteAt =
  * returned.
  */
 export const setAt =
-  <T> (index: number) => (value: T) => (xs: List<T>): List<T> => {
-    if (index > -1 && index < xs .value .length) {
-      return fromArray (xs .value .map ((e, i) => i === index ? value : e))
-    }
+  <A> (index: number) => (x: A) => (xs: List<A>): List<A> =>
+    _List (setAtNode<A> (index) (x) (xs .head))
 
-    return xs
-  }
+const setAtNode =
+  <A> (index: number) => (x: A) => (xs: MaybeNode<A>): MaybeNode<A> =>
+    index < 0
+    ? xs
+    : xs === undefined
+    ? undefined
+    : index === 0
+    ? toNodeNext (x) (xs .next)
+    : toNodeNext (value (xs)) (setAtNode<A> (index - 1) (x) (xs .next))
 
 /**
  * `modifyAt :: Int -> (a -> a) -> [a] -> [a]`
@@ -1317,13 +1405,21 @@ export const setAt =
  * returned.
  */
 export const modifyAt =
-  <T> (index: number) => (f: (oldValue: T) => T) => (xs: List<T>): List<T> => {
-    if (index > -1 && index < xs .value .length) {
-      return fromArray (xs .value .map ((e, i) => i === index ? f (e) : e))
-    }
+  <A> (index: number) => (f: (old_value: A) => A) => (xs: List<A>): List<A> =>
+    _List (modifyAtNode<A> (index) (f) (xs .head))
 
-    return xs
-  }
+const modifyAtNode =
+  <A>
+  (index: number) =>
+  (f: (old_value: A) => A) =>
+  (xs: MaybeNode<A>): MaybeNode<A> =>
+    index < 0
+    ? xs
+    : xs === undefined
+    ? undefined
+    : index === 0
+    ? toNodeNext (f (value (xs))) (xs .next)
+    : toNodeNext (value (xs)) (modifyAtNode<A> (index - 1) (f) (xs .next))
 
 /**
  * `updateAt :: Int -> (a -> Maybe a) -> [a] -> [a]`
@@ -1336,19 +1432,24 @@ export const modifyAt =
  * returned.
  */
 export const updateAt =
-  <T> (index: number) => (f: (oldValue: T) => Maybe<T>) => (xs: List<T>): List<T> => {
-    if (index > -1 && index < xs .value .length) {
-      const maybeRes = f (xs .value [index])
+  <A> (index: number) => (f: (old_value: A) => Maybe<A>) => (xs: List<A>): List<A> =>
+    _List (updateAtNode<A> (index) (f) (xs .head))
 
-      if (isJust (maybeRes)) {
-        return setAt<T> (index) (fromJust (maybeRes)) (xs)
-      }
-
-      return deleteAt<T> (index) (xs)
-    }
-
-    return xs
-  }
+const updateAtNode =
+  <A>
+  (index: number) =>
+  (f: (old_value: A) => Maybe<A>) =>
+  (xs: MaybeNode<A>): MaybeNode<A> =>
+    index < 0
+    ? xs
+    : xs === undefined
+    ? undefined
+    : index === 0
+    // @ts-ignore
+    ? maybe<A, MaybeNode<A>> (xs .next)
+                             ((x: A) => toNodeNext (x) (xs .next))
+                             (f (value (xs)))
+    : toNodeNext (value (xs)) (updateAtNode<A> (index - 1) (f) (xs .next))
 
 /**
  * `insertAt :: Int -> a -> [a] -> [a]`
@@ -1362,21 +1463,18 @@ export const updateAt =
  * carried out.)
  */
 export const insertAt =
-  <T> (index: number) => (value: T) => (xs: List<T>): List<T> => {
-    if (index > -1 && index < xs .value .length) {
-      return fromElements (
-        ...xs .value .slice (0, index),
-        value,
-        ...xs .value .slice (index)
-      )
-    }
+  <A> (index: number) => (x: A) => (xs: List<A>): List<A> =>
+    _List (insertAtNode<A> (index) (x) (xs .head))
 
-    if (index === xs .value .length) {
-      return append (xs) (fromElements (value))
-    }
-
-    return xs
-  }
+const insertAtNode =
+  <A> (index: number) => (x: A) => (xs: MaybeNode<A>): MaybeNode<A> =>
+    index < 0
+    ? xs
+    : xs === undefined
+    ? undefined
+    : index === 0
+    ? toNodeNext (x) (xs)
+    : toNodeNext (value (xs)) (insertAtNode<A> (index - 1) (x) (xs .next))
 
 // Maps
 
@@ -1386,8 +1484,17 @@ export const insertAt =
  * `imap f xs` is the list obtained by applying `f` to each element of `xs`.
  */
 export const imap =
-  <A, B> (fn: (index: number) => (x: A) => B) => (list: List<A>): List<B> =>
-    fromArray (list .value .map ((e, i) => fn (i) (e)))
+  <A, B> (f: (index: number) => (x: A) => B) => (xs: List<A>): List<B> =>
+    _List (imapNode (f) (0) (xs .head))
+
+const imapNode =
+  <A, B>
+  (f: (index: number) => (x: A) => B) =>
+  (index: number) =>
+  (xs: MaybeNode<A>): MaybeNode<B> =>
+    xs !== undefined
+    ? toNodeNext (f (index) (value (xs))) (imapNode (f) (index + 1) (xs .next))
+    : undefined
 
 // Folds
 
@@ -1397,11 +1504,21 @@ export const imap =
  * Right-associative fold of a structure.
  */
 export const ifoldr =
-  <A extends Some, B extends Some>
+  <A, B>
   (f: (index: number) => (current: A) => (acc: B) => B) =>
   (initial: B) =>
   (xs: List<A>): B =>
-    xs .value .reduceRight<B> ((acc, e, i) => f (i) (e) (acc), initial)
+    ifoldrNode (f) (xs .head) (0) (initial)
+
+const ifoldrNode =
+  <A, B>
+  (f: (index: number) => (current: A) => (acc: B) => B) =>
+  (xs: MaybeNode<A>) =>
+  (index: number) =>
+  (acc: B): B =>
+    xs !== undefined
+    ? f (index) (value (xs)) (ifoldrNode (f) (xs .next) (index + 1) (acc))
+    : acc
 
 /**
  * `ifoldl :: Foldable t => (b -> Int -> a -> b) -> b -> t a -> b`
@@ -1413,11 +1530,21 @@ export const ifoldr =
  * reduces the list using the binary operator, from left to right.
  */
 export const ifoldl =
-  <A extends Some, B extends Some>
+  <A, B>
   (f: (acc: B) => (index: number) => (current: A) => B) =>
   (initial: B) =>
   (xs: List<A>): B =>
-    xs .value .reduce<B> ((acc, e, i) => f (acc) (i) (e), initial)
+    ifoldlNode (f) (xs .head) (0) (initial)
+
+const ifoldlNode =
+  <A, B>
+  (f: (acc: B) => (index: number) => (current: A) => B) =>
+  (xs: MaybeNode<A>) =>
+  (index: number) =>
+  (acc: B): B =>
+    xs !== undefined
+    ? ifoldlNode (f) (xs .next) (index + 1) (f (acc) (index) (value (xs)))
+    : acc
 
 /**
  * `iall :: Foldable t => (Int -> a -> Bool) -> t a -> Bool`
@@ -1425,8 +1552,17 @@ export const ifoldl =
  * Determines whether all elements of the structure satisfy the predicate.
  */
 export const iall =
-<A extends Some>(f: (index: number) => (x: A) => boolean) => (xs: List<A>): boolean =>
-  xs .value .every ((e, i) => f (i) (e))
+  <A> (f: (index: number) => (x: A) => boolean) => (xs: List<A>): boolean =>
+    iallNode (f) (0) (xs .head)
+
+const iallNode =
+  <A>
+  (f: (index: number) => (x: A) => boolean) =>
+  (index: number) =>
+  (xs: MaybeNode<A>): boolean =>
+    xs !== undefined
+    ? f (index) (value (xs)) && iallNode (f) (index + 1) (xs .next)
+    : true
 
 /**
  * `iany :: Foldable t => (Int -> a -> Bool) -> t a -> Bool`
@@ -1434,24 +1570,36 @@ export const iall =
  * Determines whether any element of the structure satisfies the predicate.
  */
 export const iany =
-  <A extends Some>(f: (index: number) => (x: A) => boolean) => (xs: List<A>): boolean =>
-    xs .value .some ((e, i) => f (i) (e))
+  <A> (f: (index: number) => (x: A) => boolean) => (xs: List<A>): boolean =>
+    ianyNode (f) (0) (xs .head)
+
+const ianyNode =
+  <A>
+  (f: (index: number) => (x: A) => boolean) =>
+  (index: number) =>
+  (xs: MaybeNode<A>): boolean =>
+    xs !== undefined
+    ? f (index) (value (xs)) || ianyNode (f) (index + 1) (xs .next)
+    : false
 
 /**
  * `iconcatMap :: (Int -> a -> [b]) -> [a] -> [b]`
  */
 export const iconcatMap =
-  <A extends Some, B extends Some>
-  (f: (index: number) => (value: A) => List<B>) =>
-  (xs: List<A>): List<B> =>
-    fromElements (
-      ...(xs .value .reduce<ReadonlyArray<B>> (
-        (acc, e, i) => [...acc, ...f (i) (e)],
-        []
-      ))
-    )
+  <A, B> (f: (index: number) => (x: A) => List<B>) => (xs: List<A>): List<B> =>
+    _List (iconcatMapNode (f) (0) (xs .head))
 
-// Sbblists
+const iconcatMapNode =
+  <A, B>
+  (f: (index: number) => (x: A) => List<B>) =>
+  (index: number) =>
+  (xs: MaybeNode<A>): MaybeNode<B> =>
+    xs !== undefined
+    ? mappendNode (f (index) (value (xs)) .head)
+                  (iconcatMapNode (f) (index + 1) (xs .next))
+    : undefined
+
+// Sublists
 
 interface Ifilter {
   /**
@@ -1460,14 +1608,17 @@ interface Ifilter {
    * `ifilter`, applied to a predicate and a list, returns the list of those
    * elements that satisfy the predicate.
    */
-  <A, A1 extends A> (pred: (index: number) => (x: A) => x is A1): (list: List<A>) => List<A1>
+  <A, A1 extends A>
+  (pred: (index: number) => (x: A) => x is A1):
+  (xs: List<A>) => List<A1>
+
   /**
    * `ifilter :: (Int -> a -> Bool) -> [a] -> [a]`
    *
    * `ifilter`, applied to a predicate and a list, returns the list of those
    * elements that satisfy the predicate.
    */
-  <A> (pred: (index: number) => (x: A) => boolean): (list: List<A>) => List<A>
+  <A> (pred: (index: number) => (x: A) => boolean): (xs: List<A>) => List<A>
 }
 
 /**
@@ -1477,8 +1628,19 @@ interface Ifilter {
  * elements that satisfy the predicate.
  */
 export const ifilter: Ifilter =
-  <A> (pred: (index: number) => (x: A) => boolean) => (list: List<A>): List<A> =>
-    fromArray (list .value .filter ((e, i) => pred (i) (e)))
+  <A> (pred: (index: number) => (x: A) => boolean) => (xs: List<A>): List<A> =>
+    _List (ifilterNode (pred) (0) (xs .head))
+
+const ifilterNode =
+  <A>
+  (pred: (index: number) => (x: A) => boolean) =>
+  (index: number) =>
+  (xs: MaybeNode<A>): MaybeNode<A> =>
+    xs !== undefined
+    ? pred (index) (value (xs))
+    ? toNodeNext (value (xs)) (ifilterNode (pred) (index + 1) (xs .next))
+    : ifilterNode (pred) (index + 1) (xs .next)
+    : undefined
 
 /**
  * `ipartition :: (Int ->a -> Bool) -> [a] -> ([a], [a])`
@@ -1486,23 +1648,37 @@ export const ifilter: Ifilter =
  * The `ipartition` function takes a predicate a list and returns the pair of
  * lists of elements which do and do not satisfy the predicate, respectively.
  *
-```
->>> partition (`elem` "aeiou") "Hello World!"
-("eoo","Hll Wrld!")
-```
-  */
+ * ```haskell
+ * >>> partition (`elem` "aeiou") "Hello World!"
+ * ("eoo","Hll Wrld!")
+ * ```
+ */
 export const ipartition =
   <A>
-  (f: (index: number) => (value: A) => boolean) =>
+  (pred: (index: number) => (value: A) => boolean) =>
   (xs: List<A>): Pair<List<A>, List<A>> => {
-    const pair = xs .value .reduceRight<[List<A>, List<A>]> (
-      ([included, excluded], value, i) => f (i) (value)
-        ? [cons (included) (value), excluded]
-        : [included, cons (excluded) (value)],
-      [empty, empty]
-    )
+    const [accepted, rejected] = ipartitionNode (pred) (0) (xs .head)
 
-    return fromBoth<List<A>, List<A>> (pair[0]) (pair[1])
+    return fromBinary (_List (accepted), _List (rejected))
+  }
+
+const ipartitionNode =
+  <A>
+  (pred: (index: number) => (value: A) => boolean) =>
+  (index: number) =>
+  (xs: MaybeNode<A>): [MaybeNode<A>, MaybeNode<A>]  => {
+    if (xs === undefined) {
+      return [undefined, undefined]
+    }
+
+    const x = value (xs)
+    const next = xs .next
+
+    const [accepted, rejected] = ipartitionNode (pred) (index + 1) (next)
+
+    return pred (index) (x)
+      ? [consNode (accepted) (toNode (x)), rejected]
+      : [accepted, consNode (rejected) (toNode (x))]
   }
 
 // Search
@@ -1515,7 +1691,10 @@ interface Ifind {
    * leftmost element of the structure matching the predicate, or `Nothing` if
    * there is no such element.
    */
-  <A, A1 extends A> (pred: (index: number) => (x: A) => x is A1): (xs: List<A>) => Maybe<A1>
+  <A, A1 extends A>
+  (pred: (index: number) => (x: A) => x is A1):
+  (xs: List<A>) => Maybe<A1>
+
   /**
    * `ifind :: Foldable t => (Int -> a -> Bool) -> t a -> Maybe a`
    *
@@ -1535,7 +1714,18 @@ interface Ifind {
  */
 export const ifind: Ifind =
   <A> (pred: (index: number) => (x: A) => boolean) => (xs: List<A>): Maybe<A> =>
-    fromNullable (xs .value .find ((e, i) => pred (i) (e)))
+    ifindNode (pred) (0) (xs .head)
+
+const ifindNode =
+  <A>
+  (pred: (index: number) => (x: A) => boolean) =>
+  (index: number) =>
+  (xs: MaybeNode<A>): Maybe<A> =>
+    xs !== undefined
+    ? pred (index) (value (xs))
+    ? Just (value (xs))
+    : ifindNode (pred) (index + 1) (xs .next)
+    : Nothing
 
 /**
  * `ifindIndex :: (Int -> a -> Bool) -> [a] -> Maybe Int`
@@ -1545,11 +1735,21 @@ export const ifind: Ifind =
  * `Nothing` if there is no such element.
  */
 export const ifindIndex =
-  <A> (pred: (index: number) => (x: A) => boolean) => (xs: List<A>): Maybe<number> => {
-    const res = xs .value .findIndex ((e, i) => pred (i) (e))
+  <A>
+  (pred: (index: number) => (x: A) => boolean) =>
+  (xs: List<A>): Maybe<number> =>
+    ifindIndexNode (pred) (0) (xs .head)
 
-    return res > -1 ? Just (res) : Nothing
-  }
+const ifindIndexNode =
+  <A>
+  (pred: (index: number) => (x: A) => boolean) =>
+  (index: number) =>
+  (xs: MaybeNode<A>): Maybe<number> =>
+    xs === undefined
+    ? Nothing
+    : pred (index) (value (xs))
+    ? Just (index)
+    : ifindIndexNode (pred) (index + 1) (xs .next)
 
 /**
  * `ifindIndices :: (a -> Bool) -> [a] -> [Int]`
@@ -1558,57 +1758,81 @@ export const ifindIndex =
  * of all elements satisfying the predicate, in ascending order.
  */
 export const ifindIndices =
-  <A> (pred: (index: number) => (x: A) => boolean) => (xs: List<A>): List<number> =>
-    fromArray (
-      xs .value .reduce<number[]> (
-        (acc, e, index) => pred (index) (e) ? [...acc, index] : acc,
-        []
-      )
-    )
+  <A>
+  (pred: (index: number) => (x: A) => boolean) =>
+  (xs: List<A>): List<number> =>
+    _List (ifindIndicesNode (pred) (0) (xs .head))
+
+const ifindIndicesNode =
+  <A>
+  (pred: (index: number) => (x: A) => boolean) =>
+  (index: number) =>
+  (xs: MaybeNode<A>): MaybeNode<number> =>
+    xs === undefined
+    ? undefined
+    : pred (index) (value (xs))
+    ? toNodeNext (index) (ifindIndicesNode (pred) (index + 1) (xs .next))
+    : ifindIndicesNode (pred) (index + 1) (xs .next)
 
 
 // OWN METHODS
 
 /**
- * `index_ :: [a] -> Int -> a`
+ * `unsafeIndex :: [a] -> Int -> a`
  *
  * Unsafe list index operator, starting from 0. If the index is invalid this
  * function throws an error, otherwise returns `a`.
  */
-export const index_ =
-  <A> (xs: List<A>) => (index: number): A => {
-    if (index >= 0 && index < xs .value .length) {
-      return xs .value [index]
+export const unsafeIndex =
+  <A> (xs: List<A>) => (index: number): A =>
+    unsafeIndexNode (xs .head) (xs .head) (index)
+
+const unsafeIndexNode =
+  <A> (h: MaybeNode<A>) => (xs: MaybeNode<A>) => (index: number): A => {
+    if (xs === undefined && index >= 0) {
+      throw new RangeError (
+        `List.unsafeIndex: Invalid index provided to index_. The list has a `
+        + `length of ${lengthNode (h)}, but an index of ${index} was provided.`
+      )
     }
 
-    throw new RangeError (
-      `Invalid index provided to index_. The list has a length of ${xs .value .length}, but an index of ${index} was provided.`
-    )
+    if (index < 0) {
+      throw new Error (
+        `List.unsafeIndex: Negative index provided to index_ (${index}).`
+      )
+    }
+
+    if (index === 0) {
+      return value (xs as Node<A>)
+    }
+
+    return unsafeIndexNode (h) ((xs as Node<A>) .next) (index - 1)
   }
 
 /**
  * Converts a `List` to a native Array.
  */
-export const toArray = <A> (list: List<A>): A[] => list .value as A[]
+export const toArray = <A> (xs: List<A>): A[] => listToArrayNode (xs .head)
 
-/**
- * Transforms a `List` of `Tuple`s into an `OrderedMap` where the first values
- * in the `Tuple` are the keys and the second values are the actual values.
- */
-export const toMap = <K, V> (list: List<Pair<K, V>>): OrderedMap<K, V> =>
-  OrderedMap.fromArray (list .value .map (Pair.toArray))
+const listToArrayNode =
+  <A> (xs: MaybeNode<A>): A[] =>
+    xs === undefined
+    ? []
+    : [value (xs), ...listToArrayNode (xs .next)]
 
 /**
  * Checks if the given value is a `List`.
  * @param x The value to test.
  */
-export const isList = (x: any): x is List<any> => typeof x === 'object' && x !== null && x.isList
+export const isList =
+  (x: any): x is List<any> => typeof x === 'object' && x !== null && x.isList
 
 /**
  * Returns the sum of all elements of the list that match the provided
  * predicate.
  */
-export const countWith = <A> (pred: (x: A) => boolean) => pipe (filter (pred), length)
+export const countWith =
+  <A> (pred: (x: A) => boolean) => pipe (filter (pred), length)
 
 /**
  * The largest element of a non-empty structure. The minimum value returned is
@@ -1620,7 +1844,7 @@ export const maximumNonNegative = pipe (consF (0), maximum)
 // MODULE HELPER FUNCTIONS
 
 const buildNodexFromArrayWithLastIndex =
-  <A extends Some>
+  <A>
   (arr: ReadonlyArray<A>) =>
   (index: number) =>
   (h: Node<A> | undefined): Node<A> | undefined =>
@@ -1686,16 +1910,16 @@ export const List = {
   notElemF,
   find,
 
-  mappend: append,
+  append,
   cons,
-  cons_: consF,
+  consF,
   head,
   last,
-  last_: lastF,
+  lastS,
   tail,
-  tail_,
+  tailS,
   init,
-  init_,
+  initS,
   uncons,
 
   map,
@@ -1718,7 +1942,7 @@ export const List = {
   partition,
 
   subscript,
-  subscript_,
+  subscriptF,
   elemIndex,
   elemIndices,
   findIndex,
@@ -1752,9 +1976,8 @@ export const List = {
   ifindIndex,
   ifindIndices,
 
-  index_,
+  unsafeIndex,
   toArray,
-  toMap,
   isList,
   countWith,
   maximumNonNegative,

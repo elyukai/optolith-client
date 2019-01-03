@@ -1,6 +1,6 @@
 const { pipe } = require('ramda');
+const { id } = require('../Function');
 const List = require('../List');
-const { id } = require('../combinators');
 const { fromElements } = require('../List');
 const { fromBoth, Pair } = require('../Pair');
 const OrderedSet = require('../OrderedSet');

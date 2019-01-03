@@ -19,13 +19,13 @@ import { show } from './Show';
 // CONSTRUCTOR
 
 interface OrderedSetPrototype<A> {
-  [Symbol.iterator] (): IterableIterator<A>;
-  readonly isOrderedSet: true;
+  [Symbol.iterator] (): IterableIterator<A>
+  readonly isOrderedSet: true
 }
 
 export interface OrderedSet<A extends Some> extends OrderedSetPrototype<A> {
-  readonly value: ReadonlySet<A>;
-  readonly prototype: OrderedSetPrototype<A>;
+  readonly value: ReadonlySet<A>
+  readonly prototype: OrderedSetPrototype<A>
 }
 
 const OrderedSetPrototype: OrderedSetPrototype<Some> =
@@ -34,16 +34,16 @@ const OrderedSetPrototype: OrderedSetPrototype<Some> =
     {
       [Symbol.iterator]: {
         value (this: OrderedSet<Some>) {
-          return this .value [Symbol.iterator] ();
+          return this .value [Symbol.iterator] ()
         },
       },
       isOrderedSet: { value: true },
     }
-  );
+  )
 
 const _OrderedSet =
   <A extends Some> (x: ReadonlySet<A>): OrderedSet<A> =>
-    Object.create (OrderedSetPrototype, { value: { value: x, enumerable: true }});
+    Object.create (OrderedSetPrototype, { value: { value: x, enumerable: true }})
 
 /**
  * `fromUniqueElements :: ...a -> Set a`
@@ -52,7 +52,7 @@ const _OrderedSet =
  */
 export const fromUniqueElements =
   <A extends Some> (...xs: A[]): OrderedSet<A> =>
-    _OrderedSet (new Set (xs));
+    _OrderedSet (new Set (xs))
 
 /**
  * `fromArray :: Array a -> Set a`
@@ -61,11 +61,11 @@ export const fromUniqueElements =
  */
 export const fromArray = <A extends Some> (xs: ReadonlyArray<A>): OrderedSet<A> => {
   if (Array.isArray (xs)) {
-    return _OrderedSet (new Set (xs));
+    return _OrderedSet (new Set (xs))
   }
 
-  throw new TypeError (`fromArray requires an array but instead it received ${show (xs)}`);
-};
+  throw new TypeError (`fromArray requires an array but instead it received ${show (xs)}`)
+}
 
 /**
  * `fromSet :: NSet a -> Set a`
@@ -74,11 +74,11 @@ export const fromArray = <A extends Some> (xs: ReadonlyArray<A>): OrderedSet<A> 
  */
 export const fromSet = <A extends Some> (xs: ReadonlySet<A>): OrderedSet<A> => {
   if (xs instanceof Set) {
-    return _OrderedSet (xs);
+    return _OrderedSet (xs)
   }
 
-  throw new TypeError (`fromArray requires a native Set but instead it received ${show (xs)}`);
-};
+  throw new TypeError (`fromArray requires a native Set but instead it received ${show (xs)}`)
+}
 
 
 // FOLDABLE
@@ -99,7 +99,7 @@ export const foldr =
   (f: (current: A) => (acc: B) => B) =>
   (initial: B) =>
   (xs: OrderedSet<A>): B =>
-    [...xs .value] .reduceRight<B> ((acc, e) => f (e) (acc), initial);
+    [...xs .value] .reduceRight<B> ((acc, e) => f (e) (acc), initial)
 
 /**
  * `foldl :: (b -> a -> b) -> b -> Set a -> b`
@@ -117,7 +117,7 @@ export const foldl =
   (f: (acc: B) => (current: A) => B) =>
   (initial: B) =>
   (xs: OrderedSet<A>): B =>
-    [...xs .value] .reduce<B> ((acc, e) => f (acc) (e), initial);
+    [...xs .value] .reduce<B> ((acc, e) => f (acc) (e), initial)
 
 /**
  * `foldr1 :: (a -> a -> a) -> Set a -> a`
@@ -132,15 +132,15 @@ export const foldr1 =
   (f: (current: A) => (acc: A) => A) =>
   (xs: OrderedSet<A>): A => {
     if (xs .value .size > 0) {
-      const arr = [...xs .value];
-      const _init = arr .slice (0, -1);
-      const _last = arr [arr .length - 1];
+      const arr = [...xs .value]
+      const _init = arr .slice (0, -1)
+      const _last = arr [arr .length - 1]
 
-      return _init .reduceRight<A> ((acc, e) => f (e) (acc), _last);
+      return _init .reduceRight<A> ((acc, e) => f (e) (acc), _last)
     }
 
-    throw new TypeError ('Cannot apply foldr1 to an empty Set.');
-  };
+    throw new TypeError ('Cannot apply foldr1 to an empty Set.')
+  }
 
 /**
  * `foldl1 :: (a -> a -> a) -> Set a -> a`
@@ -155,20 +155,20 @@ export const foldl1 =
   (f: (acc: A) => (current: A) => A) =>
   (xs: OrderedSet<A>): A => {
     if (xs .value .size > 0) {
-      const [_head, ..._tail] = xs;
+      const [_head, ..._tail] = xs
 
-      return _tail .reduce<A> ((acc, e) => f (acc) (e), _head);
+      return _tail .reduce<A> ((acc, e) => f (acc) (e), _head)
     }
 
-    throw new TypeError ('Cannot apply foldl1 to an empty Set.');
-  };
+    throw new TypeError ('Cannot apply foldl1 to an empty Set.')
+  }
 
 /**
  * `toList :: Set a -> [a]`
  *
  * List of elements of a structure, from left to right.
  */
-export const toList = <A extends Some>(xs: OrderedSet<A>): List<A> => fromElements (...xs);
+export const toList = <A extends Some>(xs: OrderedSet<A>): List<A> => fromElements (...xs)
 
 /**
  * `null :: Set a -> Bool`
@@ -177,7 +177,7 @@ export const toList = <A extends Some>(xs: OrderedSet<A>): List<A> => fromElemen
  * for structures that are similar to cons-lists, because there is no general
  * way to do better.
  */
-export const fnull = (xs: OrderedSet<any>): boolean => xs .value .size === 0;
+export const fnull = (xs: OrderedSet<any>): boolean => xs .value .size === 0
 
 /**
  * `length :: Set a -> Int`
@@ -186,7 +186,7 @@ export const fnull = (xs: OrderedSet<any>): boolean => xs .value .size === 0;
  * implementation is optimized for structures that are similar to cons-lists,
  * because there is no general way to do better.
  */
-export const length = (xs: OrderedSet<any>): number => xs .value .size;
+export const length = (xs: OrderedSet<any>): number => xs .value .size
 
 /**
  * `elem :: Eq a => a -> Set a -> Bool`
@@ -195,7 +195,7 @@ export const length = (xs: OrderedSet<any>): number => xs .value .size;
  */
 export const elem =
   <A extends Some>(e: A) => (xs: OrderedSet<A>): boolean =>
-    [...xs .value] .some (equals (e));
+    [...xs .value] .some (equals (e))
 
 /**
  * `elem_ :: Eq a => Set a -> a -> Bool`
@@ -204,35 +204,35 @@ export const elem =
  *
  * Same as `List.elem` but with arguments switched.
  */
-export const elem_ = <A extends Some>(xs: OrderedSet<A>) => (e: A): boolean => elem (e) (xs);
+export const elem_ = <A extends Some>(xs: OrderedSet<A>) => (e: A): boolean => elem (e) (xs)
 
 /**
  * `sum :: Num a => Set a -> a`
  *
  * The `sum` function computes the sum of the numbers of a structure.
  */
-export const sum = foldr (add) (0);
+export const sum = foldr (add) (0)
 
 /**
  * `product :: Num a => Set a -> a`
  *
  * The `product` function computes the product of the numbers of a structure.
  */
-export const product = foldr (multiply) (1);
+export const product = foldr (multiply) (1)
 
 /**
  * `maximum :: Ord a => Set a -> a`
  *
  * The largest element of a non-empty structure.
  */
-export const maximum = (xs: OrderedSet<number>): number => Math.max (...xs);
+export const maximum = (xs: OrderedSet<number>): number => Math.max (...xs)
 
 /**
  * `minimum :: Ord a => Set a -> a`
  *
  * The least element of a non-empty structure.
  */
-export const minimum = (xs: OrderedSet<number>): number => Math.min (...xs);
+export const minimum = (xs: OrderedSet<number>): number => Math.min (...xs)
 
 // Specialized folds
 
@@ -243,7 +243,7 @@ export const minimum = (xs: OrderedSet<number>): number => Math.min (...xs);
  */
 export const concat =
   <A extends Some> (xs: OrderedSet<List<A>>): List<A> =>
-    foldl<List<A>, List<A>> (append) (List.empty) (xs);
+    foldl<List<A>, List<A>> (append) (List.empty) (xs)
 
 /**
  * `concatMap :: (a -> Set b) -> Set a -> Set b`
@@ -260,25 +260,25 @@ export const concatMap =
         (acc, e) => [...acc, ...f (e)],
         []
       )
-    );
+    )
 
 /**
  * `and :: Set Bool -> Bool`
  *
  * `and` returns the conjunction of a container of Bools. For the result to be
- * `True`, the container must be finite; `False`, however, results from a
+ * `True`, the container must be finite `False`, however, results from a
  * `False` value finitely far from the left end.
  */
-export const and = (xs: OrderedSet<boolean>): boolean => [...xs .value] .every (ident);
+export const and = (xs: OrderedSet<boolean>): boolean => [...xs .value] .every (ident)
 
 /**
  * `or :: Set Bool -> Bool`
  *
  * `or` returns the disjunction of a container of Bools. For the result to be
- * `False`, the container must be finite; `True`, however, results from a
+ * `False`, the container must be finite `True`, however, results from a
  * `True` value finitely far from the left end.
  */
-export const or = (xs: OrderedSet<boolean>): boolean => [...xs .value] .some (ident);
+export const or = (xs: OrderedSet<boolean>): boolean => [...xs .value] .some (ident)
 
 /**
  * `any :: (a -> Bool) -> Set a -> Bool`
@@ -287,7 +287,7 @@ export const or = (xs: OrderedSet<boolean>): boolean => [...xs .value] .some (id
  */
 export const any =
   <A extends Some>(f: (x: A) => boolean) => (xs: OrderedSet<A>): boolean =>
-    [...xs .value] .some (f);
+    [...xs .value] .some (f)
 
 /**
  * `all :: (a -> Bool) -> Set a -> Bool`
@@ -296,7 +296,7 @@ export const any =
  */
 export const all =
   <A extends Some>(f: (x: A) => boolean) => (xs: OrderedSet<A>): boolean =>
-    [...xs .value] .every (f);
+    [...xs .value] .every (f)
 
 // Searches
 
@@ -308,7 +308,7 @@ export const all =
 export const notElem = <A extends Some> (e: A) => pipe (
   elem<A> (e),
   not
-);
+)
 
 interface Find {
   /**
@@ -318,7 +318,7 @@ interface Find {
    * leftmost element of the structure matching the predicate, or `Nothing` if
    * there is no such element.
    */
-  <A extends Some, A1 extends A> (pred: (x: A) => x is A1): (xs: OrderedSet<A>) => Maybe<A1>;
+  <A extends Some, A1 extends A> (pred: (x: A) => x is A1): (xs: OrderedSet<A>) => Maybe<A1>
   /**
    * `find :: (a -> Bool) -> Set a -> Maybe a`
    *
@@ -326,7 +326,7 @@ interface Find {
    * leftmost element of the structure matching the predicate, or `Nothing` if
    * there is no such element.
    */
-  <A extends Some> (pred: (x: A) => boolean): (xs: OrderedSet<A>) => Maybe<A>;
+  <A extends Some> (pred: (x: A) => boolean): (xs: OrderedSet<A>) => Maybe<A>
 }
 
 /**
@@ -338,7 +338,7 @@ interface Find {
  */
 export const find: Find =
   <A extends Some> (pred: (x: A) => boolean) => (xs: OrderedSet<A>): Maybe<A> =>
-    fromNullable ([...xs .value] .find (pred));
+    fromNullable ([...xs .value] .find (pred))
 
 
 // CONSTRUCTION
@@ -348,14 +348,14 @@ export const find: Find =
  *
  * The empty `Set`.
  */
-export const empty = fromArray ([]);
+export const empty = fromArray ([])
 
 /**
  * `singleton :: a -> Set a`
  *
  * Create a singleton set.
  */
-export const singleton = <A extends Some> (x: A) => fromArray ([x]);
+export const singleton = <A extends Some> (x: A) => fromArray ([x])
 
 /**
  * `fromList :: [a] -> Set a`
@@ -364,11 +364,11 @@ export const singleton = <A extends Some> (x: A) => fromArray ([x]);
  */
 export const fromList = <A extends Some> (xs: List<A>): OrderedSet<A> => {
   if (isList (xs)) {
-    return _OrderedSet (new Set (xs .value));
+    return _OrderedSet (new Set (List.toArray (xs)))
   }
 
-  throw new TypeError (`fromList requires a list but instead it received ${show (xs)}`);
-};
+  throw new TypeError (`fromList requires a list but instead it received ${show (xs)}`)
+}
 
 
 // INSERTION
@@ -381,7 +381,7 @@ export const fromList = <A extends Some> (xs: List<A>): OrderedSet<A> => {
  */
 export const insert =
   <A extends Some> (x: A) => (xs: OrderedSet<A>): OrderedSet<A> =>
-    fromArray ([...xs .value, x]);
+    fromArray ([...xs .value, x])
 
 
 // DELETION
@@ -393,7 +393,7 @@ export const insert =
  */
 export const sdelete =
   <A extends Some> (x: A) => (xs: OrderedSet<A>): OrderedSet<A> =>
-    fromArray ([...xs .value] .filter (notEquals (x)));
+    fromArray ([...xs .value] .filter (notEquals (x)))
 
 
 // QUERY
@@ -403,21 +403,21 @@ export const sdelete =
  *
  * Is the element in the set?
  */
-export const member = elem;
+export const member = elem
 
 /**
  * `notMember :: Ord k => k -> Set a -> Bool`
  *
  * Is the element not in the set?
  */
-export const notMember = notElem;
+export const notMember = notElem
 
 /**
  * `size :: Set a -> Int`
  *
  * The number of elements in the set.
  */
-export const size = length;
+export const size = length
 
 
 // COMBINE
@@ -430,7 +430,7 @@ export const size = length;
  */
 export const union =
   <A extends Some> (xs1: OrderedSet<A>) => (xs2: OrderedSet<A>): OrderedSet<A> =>
-    fromArray ([...xs1, ...xs2]);
+    fromArray ([...xs1, ...xs2])
 
 
 // FILTER
@@ -441,14 +441,14 @@ interface Filter {
    *
    * Filter all values that satisfy the predicate.
    */
-  <A extends Some, A1 extends A> (pred: (x: A) => x is A1): (list: OrderedSet<A>) => OrderedSet<A1>;
+  <A extends Some, A1 extends A> (pred: (x: A) => x is A1): (list: OrderedSet<A>) => OrderedSet<A1>
 
   /**
    * `filter :: (a -> Bool) -> Set a -> Set a`
    *
    * Filter all values that satisfy the predicate.
    */
-  <A extends Some> (pred: (x: A) => boolean): (list: OrderedSet<A>) => OrderedSet<A>;
+  <A extends Some> (pred: (x: A) => boolean): (list: OrderedSet<A>) => OrderedSet<A>
 }
 
 /**
@@ -458,7 +458,7 @@ interface Filter {
  */
 export const filter: Filter =
   <A extends Some> (pred: (x: A) => boolean) => (xs: OrderedSet<A>): OrderedSet<A> =>
-    fromArray ([...xs .value] .filter (pred));
+    fromArray ([...xs .value] .filter (pred))
 
 
 // MAP
@@ -473,7 +473,7 @@ export const filter: Filter =
  */
 export const map =
   <A extends Some, B extends Some> (f: (value: A) => B) => (xs: OrderedSet<A>): OrderedSet<B> =>
-    fromArray ([...xs .value] .map (f));
+    fromArray ([...xs .value] .map (f))
 
 
 // CONVERSION LIST
@@ -484,7 +484,7 @@ export const map =
  * An alias of toAscList. The elements of a set in ascending order. Subject to
  * list fusion.
  */
-export const elems = toList;
+export const elems = toList
 
 
 // CUSTOM FUNCTIONS
@@ -492,7 +492,7 @@ export const elems = toList;
 /**
  * Converts the `OrderedSet` into a native Set instance.
  */
-export const toSet = <A extends Some> (xs: OrderedSet<A>): ReadonlySet<A> => xs .value;
+export const toSet = <A extends Some> (xs: OrderedSet<A>): ReadonlySet<A> => xs .value
 
 /**
  * Converts the `OrderedSet` into a native array instance.
@@ -507,7 +507,7 @@ export const toArray = <A extends Some> (xs: OrderedSet<A>): A[] => [...xs]
  */
 export const toggle =
   <A extends Some> (x: A) => (xs: OrderedSet<A>): OrderedSet<A> =>
-    member (x) (xs) ? sdelete (x) (xs) : insert (x) (xs);
+    member (x) (xs) ? sdelete (x) (xs) : insert (x) (xs)
 
 /**
  * Checks if the given value is a `OrderedSet`.
@@ -515,7 +515,7 @@ export const toggle =
  */
 export const isOrderedSet =
   (x: any): x is OrderedSet<any> =>
-    typeof x === 'object' && x !== null && x.isOrderedSet;
+    typeof x === 'object' && x !== null && x.isOrderedSet
 
 
 // NAMESPACED FUNCTIONS
@@ -571,4 +571,4 @@ export const OrderedSet = {
   toArray,
   toggle,
   isOrderedSet,
-};
+}
