@@ -569,7 +569,7 @@ test ('sdelete', () => {
 // ORDERED LISTS
 
 test ('sortBy', () => {
-  expect (List.sortBy (a => b => a > b ? LT : a < b ? GT : EQ) (List.fromElements (2, 3, 1, 5, 4)))
+  expect (List.sortBy (a => b => a < b ? LT : a > b ? GT : EQ) (List.fromElements (2, 3, 1, 5, 4)))
     .toEqual (List.fromElements (1, 2, 3, 4, 5))
 })
 

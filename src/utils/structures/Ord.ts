@@ -20,4 +20,4 @@ export const EQ = Symbol ('EQ')
 export type GT = typeof GT
 export const GT = Symbol ('GT')
 
-export const isGTorEQ = (x: Ordering): x is GT | EQ => x === GT || x === EQ
+export const isLTorEQ = (x: Ordering): x is LT | EQ => x === LT || x === EQ

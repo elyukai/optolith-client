@@ -12,7 +12,7 @@ import { not } from '../not';
 import { equals } from './Eq';
 import { cnst, ident } from './Function';
 import { fromJust, imapMaybe, isJust, Just, Maybe, maybe, Nothing, Some } from './Maybe';
-import { isGTorEQ, Ordering } from './Ord';
+import { isLTorEQ, Ordering } from './Ord';
 import { fromBinary, fromBoth, fst, Pair, snd } from './Pair';
 import { show } from './Show';
 
@@ -1301,7 +1301,7 @@ const sortByNodeSortedMerge =
     }
 
     /* Pick either a or b, and recur */
-    return isGTorEQ (f (value (a)) (value (b)))
+    return isLTorEQ (f (value (a)) (value (b)))
       ? toNodeNext (value (a)) (sortByNodeSortedMerge (f) (a .next, b))
       : toNodeNext (value (b)) (sortByNodeSortedMerge (f) (a, b .next))
   }
