@@ -1,16 +1,16 @@
-import { ItemEditorSpecific } from '../../types/data';
-import { fromElements } from '../structures/List';
-import { Nothing } from '../structures/Maybe';
-import { fromDefault } from '../structures/Record';
-import { EditPrimaryAttributeDamageThreshold } from './EditPrimaryAttributeDamageThreshold';
-import { ItemBase } from './Item';
+import { ItemEditorSpecific } from "../../types/data";
+import { fromElements } from "../structures/List";
+import { Nothing } from "../structures/Maybe";
+import { fromDefault } from "../structures/Record";
+import { EditPrimaryAttributeDamageThreshold } from "./EditPrimaryAttributeDamageThreshold";
+import { ItemBase } from "./Item";
 
 export interface EditItem extends ItemBase, ItemEditorSpecific { }
 
 export const EditItem =
   fromDefault<EditItem> ({
     id: Nothing,
-    name: '',
+    name: "",
     ammunition: Nothing,
     combatTechnique: Nothing,
     damageDiceSides: Nothing,
@@ -26,21 +26,21 @@ export const EditItem =
     forArmorZoneOnly: Nothing,
     addPenalties: Nothing,
     armorType: Nothing,
-    at: '',
-    iniMod: '',
-    movMod: '',
+    at: "",
+    iniMod: "",
+    movMod: "",
     damageBonus: EditPrimaryAttributeDamageThreshold .default,
-    damageDiceNumber: '',
-    damageFlat: '',
-    enc: '',
-    length: '',
-    amount: '',
-    pa: '',
-    price: '',
-    pro: '',
-    range: fromElements ('', '', ''),
-    reloadTime: '',
-    stp: '',
-    weight: '',
-    stabilityMod: '',
+    damageDiceNumber: "",
+    damageFlat: "",
+    enc: "",
+    length: "",
+    amount: "",
+    pa: "",
+    price: "",
+    pro: "",
+    range: fromElements ("", "", ""),
+    reloadTime: "",
+    stp: "",
+    weight: "",
+    stabilityMod: "",
   })

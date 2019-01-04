@@ -1,8 +1,8 @@
-import { List } from '../structures/List';
-import { Maybe, Nothing } from '../structures/Maybe';
-import { fromDefault, Record } from '../structures/Record';
-import { PrimaryAttributeDamageThreshold } from '../wikiData/sub/PrimaryAttributeDamageThreshold';
-import { SourceLink } from '../wikiData/sub/SourceLink';
+import { List } from "../structures/List";
+import { Maybe, Nothing } from "../structures/Maybe";
+import { fromDefault, Record } from "../structures/Record";
+import { PrimaryAttributeDamageThreshold } from "../wikiData/sub/PrimaryAttributeDamageThreshold";
+import { SourceLink } from "../wikiData/sub/SourceLink";
 
 export interface ItemBase {
   name: string
@@ -51,8 +51,8 @@ export interface Item extends ItemBase {
 
 export const Item =
   fromDefault<Item> ({
-    id: '',
-    name: '',
+    id: "",
+    name: "",
     ammunition: Nothing,
     combatTechnique: Nothing,
     damageDiceSides: Nothing,

@@ -4,14 +4,14 @@
  * @author Lukas Obermann
  */
 
-import { isEither, isRight } from './Either';
-import { isList } from './List';
-import { isJust, isMaybe, isNothing, Maybe, Some } from './Maybe';
-import { isOrderedMap, OrderedMap } from './OrderedMap';
-import { isOrderedSet, member, OrderedSet } from './OrderedSet';
-import { isPair } from './Pair';
-import { isRecord, Record } from './Record';
-import { show } from './Show';
+import { isEither, isRight } from "./Either";
+import { isList } from "./List";
+import { isJust, isMaybe, isNothing, Maybe, Some } from "./Maybe";
+import { isOrderedMap, OrderedMap } from "./OrderedMap";
+import { isOrderedSet, member, OrderedSet } from "./OrderedSet";
+import { isPair } from "./Pair";
+import { isRecord, Record } from "./Record";
+import { show } from "./Show";
 
 /**
  * `(==) :: a -> a -> Bool`
@@ -90,9 +90,9 @@ export const equals =
       if (isRecord (x2)) {
         return OrderedSet.size (x1 .keys) === OrderedSet.size (x2 .keys)
           && OrderedSet.all (key => OrderedSet.member (key) (x2 .keys)
-                              && equals (getRecordField<typeof x1['defaultValues']> (key as string)
+                              && equals (getRecordField<typeof x1["defaultValues"]> (key as string)
                                                                                     (x1))
-                                        (getRecordField<typeof x2['defaultValues']> (key as string)
+                                        (getRecordField<typeof x2["defaultValues"]> (key as string)
                                                                                     (x2)))
                             (x1 .keys)
       }
@@ -101,25 +101,25 @@ export const equals =
     }
 
     // tslint:disable-next-line: strict-type-predicates
-    if (typeof x1 === 'bigint') {
+    if (typeof x1 === "bigint") {
       // tslint:disable-next-line: strict-type-predicates
-      return typeof x2 === 'bigint' && x1 === x2
+      return typeof x2 === "bigint" && x1 === x2
     }
 
-    if (typeof x1 === 'boolean') {
-      return typeof x2 === 'boolean' && x1 === x2
+    if (typeof x1 === "boolean") {
+      return typeof x2 === "boolean" && x1 === x2
     }
 
-    if (typeof x1 === 'number') {
-      return typeof x2 === 'number' && x1 === x2
+    if (typeof x1 === "number") {
+      return typeof x2 === "number" && x1 === x2
     }
 
-    if (typeof x1 === 'string') {
-      return typeof x2 === 'string' && x1 === x2
+    if (typeof x1 === "string") {
+      return typeof x2 === "string" && x1 === x2
     }
 
-    if (typeof x1 === 'symbol') {
-      return typeof x2 === 'symbol' && x1 === x2
+    if (typeof x1 === "symbol") {
+      return typeof x2 === "symbol" && x1 === x2
     }
 
     if (x1 === undefined) {

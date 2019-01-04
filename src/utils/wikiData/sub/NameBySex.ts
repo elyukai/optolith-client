@@ -1,4 +1,4 @@
-import { fromDefault } from '../../structures/Record';
+import { fromDefault } from "../../structures/Record";
 
 export interface NameBySex {
   m: string
@@ -7,6 +7,6 @@ export interface NameBySex {
 
 export const NameBySex =
   fromDefault<NameBySex> ({
-    m: '',
-    f: '',
+    m: "",
+    f: "",
   })

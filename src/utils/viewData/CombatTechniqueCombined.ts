@@ -1,6 +1,6 @@
-import { SkillDependent } from '../activeEntries/SkillDependent';
-import { fromDefault, Record } from '../structures/Record';
-import { CombatTechnique } from '../wikiData/CombatTechnique';
+import { SkillDependent } from "../activeEntries/SkillDependent";
+import { fromDefault, Record } from "../structures/Record";
+import { CombatTechnique } from "../wikiData/CombatTechnique";
 
 export interface CombatTechniqueCombined {
   wikiEntry: Record<CombatTechnique>

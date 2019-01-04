@@ -1,4 +1,4 @@
-import { flip } from './structures/Function';
+import { flip } from "./structures/Function";
 
 /**
  * Adds two numbers. Equivalent to `a + b` but curried.

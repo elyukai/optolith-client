@@ -1,8 +1,8 @@
-import { Categories } from '../../constants/Categories';
-import { List } from '../structures/List';
-import { fromDefault, Record } from '../structures/Record';
-import { SourceLink } from './sub/SourceLink';
-import { EntryWithCategory } from './wikiTypeHelpers';
+import { Categories } from "../../constants/Categories";
+import { List } from "../structures/List";
+import { fromDefault, Record } from "../structures/Record";
+import { SourceLink } from "./sub/SourceLink";
+import { EntryWithCategory } from "./wikiTypeHelpers";
 
 export interface Blessing {
   id: string
@@ -19,15 +19,15 @@ export interface Blessing {
 
 export const Blessing =
   fromDefault<Blessing> ({
-    id: '',
-    name: '',
+    id: "",
+    name: "",
     aspects: List.empty,
     tradition: List.empty,
     category: Categories.BLESSINGS,
-    effect: '',
-    range: '',
-    duration: '',
-    target: '',
+    effect: "",
+    range: "",
+    duration: "",
+    target: "",
     src: List.empty,
   })
 

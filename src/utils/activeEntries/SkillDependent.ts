@@ -1,8 +1,8 @@
-import { add, pipe } from 'ramda';
-import { Dependent, ExtendedSkillDependent, SkillDependency } from '../../types/data';
-import { fnull, fromElements, List } from '../structures/List';
-import { fromJust, isJust, Just, Maybe } from '../structures/Maybe';
-import { fromDefault, makeLenses, member, notMember, Omit, Record } from '../structures/Record';
+import { add, pipe } from "ramda";
+import { Dependent, ExtendedSkillDependent, SkillDependency } from "../../types/data";
+import { fnull, fromElements, List } from "../structures/List";
+import { fromJust, isJust, Just, Maybe } from "../structures/Maybe";
+import { fromDefault, makeLenses, member, notMember, Omit, Record } from "../structures/Record";
 
 export interface SkillDependent {
   id: string;
@@ -12,7 +12,7 @@ export interface SkillDependent {
 
 export const SkillDependent =
   fromDefault<SkillDependent> ({
-    id: '',
+    id: "",
     value: 0,
     dependencies: fromElements<SkillDependency> (),
   })
@@ -20,7 +20,7 @@ export const SkillDependent =
 export const SkillDependentL = makeLenses (SkillDependent)
 
 export const createSkillDependent =
-  (options: Partial<Omit<SkillDependent, 'id'>>) =>
+  (options: Partial<Omit<SkillDependent, "id">>) =>
   (id: string): Record<SkillDependent> =>
     SkillDependent ({
       id,
@@ -40,20 +40,20 @@ export const createSkillDependentWithValue6 = createSkillDependent ({ value: 6 }
 export const isMaybeSkillDependent =
   (entry: Maybe<Dependent>): entry is Just<Record<SkillDependent>> =>
     isJust (entry)
-    && member ('value') (fromJust (entry))
-    && notMember ('mod') (fromJust (entry))
-    && notMember ('active') (fromJust (entry))
+    && member ("value") (fromJust (entry))
+    && notMember ("mod") (fromJust (entry))
+    && notMember ("active") (fromJust (entry))
 
 export const isSkillDependent =
   (entry: Dependent): entry is Record<SkillDependent> =>
-    member ('value') (entry)
-    && notMember ('mod') (entry)
-    && notMember ('active') (entry)
+    member ("value") (entry)
+    && notMember ("mod") (entry)
+    && notMember ("active") (entry)
 
 export const isExtendedSkillDependent =
   (entry: Dependent): entry is ExtendedSkillDependent =>
-    member ('value') (entry)
-    && notMember ('mod') (entry)
+    member ("value") (entry)
+    && notMember ("mod") (entry)
 
 const { value, dependencies } = SkillDependent.A
 

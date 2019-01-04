@@ -1,4 +1,4 @@
-import { fromDefault } from '../../structures/Record';
+import { fromDefault } from "../../structures/Record";
 
 export interface SourceLink {
   id: string
@@ -7,6 +7,6 @@ export interface SourceLink {
 
 export const SourceLink =
   fromDefault<SourceLink> ({
-    id: '',
+    id: "",
     page: 0,
   })

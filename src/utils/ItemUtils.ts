@@ -1,26 +1,26 @@
-import { pipe } from 'ramda';
-import { IdPrefixes } from '../constants/IdPrefixes';
-import { EditItem } from './heroData/EditItem';
-import { EditPrimaryAttributeDamageThreshold } from './heroData/EditPrimaryAttributeDamageThreshold';
-import { Item } from './heroData/Item';
-import { prefixRawId } from './IDUtils';
-import { ifElse } from './ifElse';
-import { getLevelElementsWithZero } from './levelUtils';
-import { gt } from './mathUtils';
-import { toFloat, toInt } from './NumberUtils';
-import { equals } from './structures/Eq';
-import { all, fromArray, fromElements, isList, length, List, map } from './structures/List';
-import { bind_, ensure, fmap, Just, mapMaybe, Maybe, maybe, Nothing, product, sum } from './structures/Maybe';
-import { Record } from './structures/Record';
-import { show } from './structures/Show';
-import { PrimaryAttributeDamageThreshold } from './wikiData/sub/PrimaryAttributeDamageThreshold';
+import { pipe } from "ramda";
+import { IdPrefixes } from "../constants/IdPrefixes";
+import { EditItem } from "./heroData/EditItem";
+import { EditPrimaryAttributeDamageThreshold } from "./heroData/EditPrimaryAttributeDamageThreshold";
+import { Item } from "./heroData/Item";
+import { prefixRawId } from "./IDUtils";
+import { ifElse } from "./ifElse";
+import { getLevelElementsWithZero } from "./levelUtils";
+import { gt } from "./mathUtils";
+import { toFloat, toInt } from "./NumberUtils";
+import { equals } from "./structures/Eq";
+import { all, fromArray, fromElements, isList, length, List, map } from "./structures/List";
+import { bind_, ensure, fmap, Just, mapMaybe, Maybe, maybe, Nothing, product, sum } from "./structures/Maybe";
+import { Record } from "./structures/Record";
+import { show } from "./structures/Show";
+import { PrimaryAttributeDamageThreshold } from "./wikiData/sub/PrimaryAttributeDamageThreshold";
 
-const ifNumberOrEmpty = maybe<number, string> ('') (show)
+const ifNumberOrEmpty = maybe<number, string> ("") (show)
 
 const convertDamageBonusToEdit =
   maybe<Record<PrimaryAttributeDamageThreshold>, Record<EditPrimaryAttributeDamageThreshold>>
     (EditPrimaryAttributeDamageThreshold ({
-      threshold: '',
+      threshold: "",
     }))
     (damageBonus => EditPrimaryAttributeDamageThreshold ({
       primary: PrimaryAttributeDamageThreshold.A.primary (damageBonus),
@@ -63,7 +63,7 @@ export const convertToEdit =
       pa: ifNumberOrEmpty (Item.A.pa (item)),
       price: show (Item.A.price (item)),
       pro: ifNumberOrEmpty (Item.A.pro (item)),
-      range: maybe<List<number>, List<string>> (fromElements ('', '', ''))
+      range: maybe<List<number>, List<string>> (fromElements ("", "", ""))
                                               (map (show))
                                               (Item.A.range (item)),
       reloadTime: ifNumberOrEmpty (Item.A.reloadTime (item)),

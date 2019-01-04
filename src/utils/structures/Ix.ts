@@ -7,10 +7,10 @@
  * @author Lukas Obermann
  */
 
-import { inc } from '../mathUtils';
-import { cons, List } from './List';
-import { fst, Pair, snd } from './Pair';
-import { show } from './Show';
+import { inc } from "../mathUtils";
+import { cons, List } from "./List";
+import { fst, Pair, snd } from "./Pair";
+import { show } from "./Show";
 
 /**
  * `range :: Int a => (a, a) -> [a]`

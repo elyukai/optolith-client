@@ -1,7 +1,7 @@
-import { List } from '../structures/List';
-import { fromDefault, Record } from '../structures/Record';
-import { Culture } from '../wikiData/Culture';
-import { IncreasableForView } from './IncreasableForView';
+import { List } from "../structures/List";
+import { fromDefault, Record } from "../structures/Record";
+import { Culture } from "../wikiData/Culture";
+import { IncreasableForView } from "./IncreasableForView";
 
 export interface CultureCombined {
   wikiEntry: Record<Culture>

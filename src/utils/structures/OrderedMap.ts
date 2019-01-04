@@ -7,16 +7,16 @@
  * @author Lukas Obermann
  */
 
-import { not, pipe } from 'ramda';
-import { add, multiply } from '../mathUtils';
-import { equals } from './Eq';
-import { cnst, ident } from './Function';
-import { append, List } from './List';
-import { fromMaybe, fromNullable, Just, Maybe, maybe, maybe_, Some } from './Maybe';
-import { fromUniqueElements, OrderedSet } from './OrderedSet';
-import { fromBoth, Pair } from './Pair';
-import { StringKeyObject } from './Record';
-import { show } from './Show';
+import { not, pipe } from "ramda";
+import { add, multiply } from "../mathUtils";
+import { equals } from "./Eq";
+import { cnst, ident } from "./Function";
+import { append, List } from "./List";
+import { fromMaybe, fromNullable, Just, Maybe, maybe, maybe_, Some } from "./Maybe";
+import { fromUniqueElements, OrderedSet } from "./OrderedSet";
+import { fromBoth, Pair } from "./Pair";
+import { StringKeyObject } from "./Record";
+import { show } from "./Show";
 
 
 // CONSTRUCTOR
@@ -161,7 +161,7 @@ export const foldr1 =
       return _init .reduceRight<A> ((acc, e) => f (e [1]) (acc), _last [1])
     }
 
-    throw new TypeError ('Cannot apply foldr1 to an empty Set.')
+    throw new TypeError ("Cannot apply foldr1 to an empty Set.")
   }
 
 /**
@@ -182,7 +182,7 @@ export const foldl1 =
       return _tail .reduce<A> ((acc, e) => f (acc) (e [1]), _head [1])
     }
 
-    throw new TypeError ('Cannot apply foldl1 to an empty Set.')
+    throw new TypeError ("Cannot apply foldl1 to an empty Set.")
   }
 
 /**
@@ -968,7 +968,7 @@ export const toMap = <K extends Some, A extends Some> (mp: OrderedMap<K, A>): Re
  */
 export const isOrderedMap =
   (x: any): x is OrderedMap<any, any> =>
-    typeof x === 'object' && x !== null && x.isOrderedMap
+    typeof x === "object" && x !== null && x.isOrderedMap
 
 
 // NAMESPACED FUNCTIONS

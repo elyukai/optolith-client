@@ -1,5 +1,5 @@
-import { Maybe, Nothing } from '../structures/Maybe';
-import { fromDefault } from '../structures/Record';
+import { Maybe, Nothing } from "../structures/Maybe";
+import { fromDefault } from "../structures/Record";
 
 export interface PetBase {
   name: string
@@ -40,8 +40,8 @@ export interface Pet extends PetBase {
 
 export const Pet =
   fromDefault<Pet> ({
-    id: '',
-    name: '',
+    id: "",
+    name: "",
     avatar: Nothing,
     size: Nothing,
     type: Nothing,

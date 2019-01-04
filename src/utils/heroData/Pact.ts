@@ -1,4 +1,4 @@
-import { fromDefault } from '../structures/Record';
+import { fromDefault } from "../structures/Record";
 
 export interface Pact {
   category: number
@@ -10,7 +10,7 @@ export interface Pact {
 
 export const Pact =
   fromDefault<Pact> ({
-    name: '',
+    name: "",
     category: 0,
     domain: 0,
     type: 0,

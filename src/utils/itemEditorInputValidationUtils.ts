@@ -1,10 +1,10 @@
-import { pipe } from 'ramda';
-import { EditItem } from './heroData/EditItem';
-import { EditPrimaryAttributeDamageThreshold } from './heroData/EditPrimaryAttributeDamageThreshold';
-import { isEmptyOr, isFloat, isInteger, isNaturalNumber } from './RegexUtils';
-import { all, isList, List, subscriptF, unsafeIndex } from './structures/List';
-import { elem, fmap, isJust, Nothing } from './structures/Maybe';
-import { fromDefault, Record } from './structures/Record';
+import { pipe } from "ramda";
+import { EditItem } from "./heroData/EditItem";
+import { EditPrimaryAttributeDamageThreshold } from "./heroData/EditPrimaryAttributeDamageThreshold";
+import { isEmptyOr, isFloat, isInteger, isNaturalNumber } from "./RegexUtils";
+import { all, isList, List, subscriptF, unsafeIndex } from "./structures/List";
+import { elem, fmap, isJust, Nothing } from "./structures/Maybe";
+import { fromDefault, Record } from "./structures/Record";
 
 export interface ItemEditorInputValidation {
   name: boolean
@@ -222,7 +222,7 @@ export const validateItemEditorInput = (item: Record<EditItem>) => {
 const validateMeleeWeaponInput =
   (item: Record<EditItem>) =>
   (validSingle: Record<ItemEditorInputValidation>) =>
-    elem ('CT_7') (combatTechnique (item))
+    elem ("CT_7") (combatTechnique (item))
     ? validateNoParryingWeapons (validSingle)
     : ItemEditorInputValidation.A.at (validSingle)
       && ItemEditorInputValidation.A.damageDiceNumber (validSingle)

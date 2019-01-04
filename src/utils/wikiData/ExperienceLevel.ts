@@ -1,4 +1,4 @@
-import { fromDefault } from '../structures/Record';
+import { fromDefault } from "../structures/Record";
 
 export interface ExperienceLevel {
   id: string
@@ -14,8 +14,8 @@ export interface ExperienceLevel {
 
 export const ExperienceLevel =
   fromDefault<ExperienceLevel> ({
-    id: '',
-    name: '',
+    id: "",
+    name: "",
     ap: 0,
     maxAttributeValue: 0,
     maxSkillRating: 0,

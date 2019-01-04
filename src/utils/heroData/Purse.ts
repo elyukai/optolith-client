@@ -1,4 +1,4 @@
-import { fromDefault, makeLenses } from '../structures/Record';
+import { fromDefault, makeLenses } from "../structures/Record";
 
 export interface Purse {
   d: string
@@ -12,10 +12,10 @@ export interface Purse {
  */
 export const Purse =
   fromDefault<Purse> ({
-    d: '',
-    s: '',
-    h: '',
-    k: '',
+    d: "",
+    s: "",
+    h: "",
+    k: "",
   })
 
 export const PurseL = makeLenses (Purse)

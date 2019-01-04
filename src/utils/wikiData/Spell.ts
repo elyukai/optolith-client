@@ -1,9 +1,9 @@
-import { Categories } from '../../constants/Categories';
-import { List } from '../structures/List';
-import { Maybe, Nothing } from '../structures/Maybe';
-import { fromDefault, Record } from '../structures/Record';
-import { SourceLink } from './sub/SourceLink';
-import { AllRequirementObjects, CheckModifier, EntryWithCategory } from './wikiTypeHelpers';
+import { Categories } from "../../constants/Categories";
+import { List } from "../structures/List";
+import { Maybe, Nothing } from "../structures/Maybe";
+import { fromDefault, Record } from "../structures/Record";
+import { SourceLink } from "./sub/SourceLink";
+import { AllRequirementObjects, CheckModifier, EntryWithCategory } from "./wikiTypeHelpers";
 
 export interface Spell {
   id: string
@@ -32,8 +32,8 @@ export interface Spell {
 
 export const Spell =
   fromDefault<Spell> ({
-    id: '',
-    name: '',
+    id: "",
+    name: "",
     category: Categories.SPELLS,
     check: List.empty,
     checkmod: Nothing,
@@ -43,16 +43,16 @@ export const Spell =
     tradition: List.empty,
     subtradition: List.empty,
     prerequisites: List.empty,
-    effect: '',
-    castingTime: '',
-    castingTimeShort: '',
-    cost: '',
-    costShort: '',
-    range: '',
-    rangeShort: '',
-    duration: '',
-    durationShort: '',
-    target: '',
+    effect: "",
+    castingTime: "",
+    castingTimeShort: "",
+    cost: "",
+    costShort: "",
+    range: "",
+    rangeShort: "",
+    duration: "",
+    durationShort: "",
+    target: "",
     src: List.empty,
   })
 

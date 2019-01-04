@@ -1,6 +1,6 @@
-import { List } from '../../structures/List';
-import { fromDefault, Record } from '../../structures/Record';
-import { ProfessionSelection, ProfessionSelectionIds } from '../wikiTypeHelpers';
+import { List } from "../../structures/List";
+import { fromDefault, Record } from "../../structures/Record";
+import { AnyProfessionSelection, ProfessionSelectionIds } from "../wikiTypeHelpers";
 
 export interface CombatTechniquesSecondSelection {
   id: ProfessionSelectionIds
@@ -18,5 +18,5 @@ export const CombatTechniquesSecondSelection =
   })
 
 export const isSecondCombatTechniquesSelection =
-  (obj: ProfessionSelection): obj is Record<CombatTechniquesSecondSelection> =>
+  (obj: AnyProfessionSelection): obj is Record<CombatTechniquesSecondSelection> =>
     CombatTechniquesSecondSelection.A.id (obj) === ProfessionSelectionIds.COMBAT_TECHNIQUES_SECOND

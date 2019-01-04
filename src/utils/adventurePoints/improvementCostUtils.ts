@@ -1,6 +1,6 @@
-import { inc, negate, pipe } from 'ramda';
-import { add, max, multiply, subtractBy } from '../mathUtils';
-import { bimap, fromBoth, fst, Pair, snd } from '../structures/Pair';
+import { inc, negate, pipe } from "ramda";
+import { add, max, multiply, subtractBy } from "../mathUtils";
+import { bimap, fromBoth, fst, Pair, snd } from "../structures/Pair";
 
 /**
  * `getICMultiplier :: Int -> Int`
@@ -104,7 +104,7 @@ export const getAPRange = (ic: number) => (fromValue: number) => (toValue: numbe
   return getSignedAPRange (ic) (fromValue) (toValue)
 }
 
-const improvementCostNames = ['A', 'B', 'C', 'D', 'E']
+const improvementCostNames = ["A", "B", "C", "D", "E"]
 
 /**
  * `getICName :: Int -> String`

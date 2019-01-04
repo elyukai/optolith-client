@@ -1,61 +1,61 @@
-import * as R from 'ramda';
-import * as Categories from '../../constants/Categories';
-import { IdPrefixes } from '../../constants/IdPrefixes';
-import * as Raw from '../../types/rawdata';
-import { getCategoryById, prefixRawId } from '../IDUtils';
-import { elem_, List } from '../structures/List';
-import { fmap, fromNullable, Just, Maybe, Nothing, or } from '../structures/Maybe';
-import { Pair } from '../structures/Pair';
-import { Record } from '../structures/Record';
-import { ProfessionRequireActivatable, RequireActivatable } from '../wikiData/prerequisites/ActivatableRequirement';
-import { CultureRequirement } from '../wikiData/prerequisites/CultureRequirement';
-import { ProfessionRequireIncreasable, RequireIncreasable } from '../wikiData/prerequisites/IncreasableRequirement';
-import { PactRequirement } from '../wikiData/prerequisites/PactRequirement';
-import { RequirePrimaryAttribute } from '../wikiData/prerequisites/PrimaryAttributeRequirement';
-import { RaceRequirement } from '../wikiData/prerequisites/RaceRequirement';
-import { SexRequirement } from '../wikiData/prerequisites/SexRequirement';
-import { CantripsSelection } from '../wikiData/professionSelections/CantripsSelection';
-import { CombatTechniquesSelection } from '../wikiData/professionSelections/CombatTechniquesSelection';
-import { CursesSelection } from '../wikiData/professionSelections/CursesSelection';
-import { LanguagesScriptsSelection } from '../wikiData/professionSelections/LanguagesScriptsSelection';
-import { RemoveCombatTechniquesSelection, VariantCombatTechniquesSelection } from '../wikiData/professionSelections/RemoveCombatTechniquesSelection';
-import { RemoveCombatTechniquesSecondSelection, VariantCombatTechniquesSecondSelection } from '../wikiData/professionSelections/RemoveSecondCombatTechniquesSelection';
-import { RemoveSpecializationSelection, VariantSpecializationSelection } from '../wikiData/professionSelections/RemoveSpecializationSelection';
-import { CombatTechniquesSecondSelection } from '../wikiData/professionSelections/SecondCombatTechniquesSelection';
-import { SkillsSelection } from '../wikiData/professionSelections/SkillsSelection';
-import { SpecializationSelection } from '../wikiData/professionSelections/SpecializationSelection';
-import { TerrainKnowledgeSelection } from '../wikiData/professionSelections/TerrainKnowledgeSelection';
-import { Application } from '../wikiData/sub/Application';
-import { IncreaseSkill } from '../wikiData/sub/IncreaseSkill';
-import { SelectOption } from '../wikiData/sub/SelectOption';
-import * as Wiki from '../wikiData/wikiTypeHelpers';
+import * as R from "ramda";
+import * as Categories from "../../constants/Categories";
+import { IdPrefixes } from "../../constants/IdPrefixes";
+import * as Raw from "../../types/rawdata";
+import { getCategoryById, prefixRawId } from "../IDUtils";
+import { elem_, List } from "../structures/List";
+import { fmap, fromNullable, Just, Maybe, Nothing, or } from "../structures/Maybe";
+import { Pair } from "../structures/Pair";
+import { Record } from "../structures/Record";
+import { ProfessionRequireActivatable, RequireActivatable } from "../wikiData/prerequisites/ActivatableRequirement";
+import { CultureRequirement } from "../wikiData/prerequisites/CultureRequirement";
+import { ProfessionRequireIncreasable, RequireIncreasable } from "../wikiData/prerequisites/IncreasableRequirement";
+import { PactRequirement } from "../wikiData/prerequisites/PactRequirement";
+import { RequirePrimaryAttribute } from "../wikiData/prerequisites/PrimaryAttributeRequirement";
+import { RaceRequirement } from "../wikiData/prerequisites/RaceRequirement";
+import { SexRequirement } from "../wikiData/prerequisites/SexRequirement";
+import { CantripsSelection } from "../wikiData/professionSelections/CantripsSelection";
+import { CombatTechniquesSelection } from "../wikiData/professionSelections/CombatTechniquesSelection";
+import { CursesSelection } from "../wikiData/professionSelections/CursesSelection";
+import { LanguagesScriptsSelection } from "../wikiData/professionSelections/LanguagesScriptsSelection";
+import { RemoveCombatTechniquesSelection, VariantCombatTechniquesSelection } from "../wikiData/professionSelections/RemoveCombatTechniquesSelection";
+import { RemoveCombatTechniquesSecondSelection, VariantCombatTechniquesSecondSelection } from "../wikiData/professionSelections/RemoveSecondCombatTechniquesSelection";
+import { RemoveSpecializationSelection, VariantSpecializationSelection } from "../wikiData/professionSelections/RemoveSpecializationSelection";
+import { CombatTechniquesSecondSelection } from "../wikiData/professionSelections/SecondCombatTechniquesSelection";
+import { SkillsSelection } from "../wikiData/professionSelections/SkillsSelection";
+import { SpecializationSelection } from "../wikiData/professionSelections/SpecializationSelection";
+import { TerrainKnowledgeSelection } from "../wikiData/professionSelections/TerrainKnowledgeSelection";
+import { Application } from "../wikiData/sub/Application";
+import { IncreaseSkill } from "../wikiData/sub/IncreaseSkill";
+import { SelectOption } from "../wikiData/sub/SelectOption";
+import * as Wiki from "../wikiData/wikiTypeHelpers";
 
 const isRawSexRequirement =
   (req: Raw.AllRawRequirementObjects): req is Raw.RawSexRequirement =>
-    req.id === 'SEX'
+    req.id === "SEX"
 
 const isRawRaceRequirement =
   (req: Raw.AllRawRequirementObjects): req is Raw.RawRaceRequirement =>
-    req.id === 'RACE'
+    req.id === "RACE"
 
 const isRawCultureRequirement =
   (req: Raw.AllRawRequirementObjects): req is Raw.RawCultureRequirement =>
-    req.id === 'CULTURE'
+    req.id === "CULTURE"
 
 const isRawPactRequirement =
   (req: Raw.AllRawRequirementObjects): req is Raw.RawPactRequirement =>
-    req.id === 'PACT'
+    req.id === "PACT"
 
 const isRawRequiringPrimaryAttribute =
   (req: Raw.AllRawRequirementObjects): req is Raw.RawRequiresPrimaryAttribute =>
-    req.id === 'ATTR_PRIMARY'
+    req.id === "ATTR_PRIMARY"
 
 const isRawRequiringIncreasable =
   (req: Raw.AllRawRequirementObjects): req is Raw.RawRequiresIncreasableObject => {
     const id = req.id
 
-    if (typeof id === 'object') {
-      return req.hasOwnProperty ('value') && id.every (R.pipe (
+    if (typeof id === "object") {
+      return req.hasOwnProperty ("value") && id.every (R.pipe (
         getCategoryById,
         (category: Maybe<Categories.Categories>) =>
           or (fmap (elem_ (Categories.IncreasableCategories)) (category))
@@ -64,7 +64,7 @@ const isRawRequiringIncreasable =
     else {
       const category = getCategoryById (id)
 
-      return req.hasOwnProperty ('value')
+      return req.hasOwnProperty ("value")
         && or (fmap (elem_ (Categories.IncreasableCategories)) (category))
     }
   }
@@ -74,18 +74,18 @@ type RawRaceOrCultureRequirement =
   Raw.RawCultureRequirement
 
 type RaceOrCultureRequirement<T extends RawRaceOrCultureRequirement> =
-  T['id'] extends 'RACE' ? RaceRequirement : CultureRequirement
+  T["id"] extends "RACE" ? RaceRequirement : CultureRequirement
 
 const convertRawRaceCultureRequirement =
   <T extends RawRaceOrCultureRequirement>(e: T): RaceOrCultureRequirement<T> =>
     ({
       id: e.id,
-      value: typeof e.value === 'object' ? List.fromArray (e.value) : e.value,
+      value: typeof e.value === "object" ? List.fromArray (e.value) : e.value,
     }) as any as RaceOrCultureRequirement<T>
 
 const convertRawPactRequirement =
   (e: Raw.RawPactRequirement): PactRequirement => {
-    if (typeof e.domain === 'object') {
+    if (typeof e.domain === "object") {
       return {
         ...e,
         level: fromNullable (e .level),
@@ -105,7 +105,7 @@ const convertRawRequireIncreasable =
   (e: Raw.RawRequiresIncreasableObject): RequireIncreasable =>
     ({
       ...e,
-      id: typeof e.id === 'object' ? List.fromArray (e.id) : e.id,
+      id: typeof e.id === "object" ? List.fromArray (e.id) : e.id,
     })
 
 const convertRawRequireActivatable =
@@ -114,10 +114,10 @@ const convertRawRequireActivatable =
 
     const res = {
       ...other,
-      id: typeof e.id === 'object' ? List.fromArray (e.id) : e.id,
+      id: typeof e.id === "object" ? List.fromArray (e.id) : e.id,
     }
 
-    if (typeof res .sid === 'object') {
+    if (typeof res .sid === "object") {
       return {
         ...res,
         sid: Just (List.fromArray (res .sid)),
@@ -201,7 +201,7 @@ export const convertRawPrerequisiteObjects =
 export const convertRawPrerequisites =
   (arr: Raw.AllRawRequirements[]): List<Wiki.AllRequirements> =>
     List.fromArray (arr.map (
-      e => e === 'RCP' ? 'RCP' : convertRawPrerequisiteObject (e)
+      e => e === "RCP" ? "RCP" : convertRawPrerequisiteObject (e)
     ))
 
 interface ApplicationName {
@@ -210,8 +210,8 @@ interface ApplicationName {
 }
 
 export const convertRawApplications = (
-  locale: Raw.RawSkillLocale['spec'],
-  data?: Raw.RawSkill['applications']
+  locale: Raw.RawSkillLocale["spec"],
+  data?: Raw.RawSkill["applications"]
 ) =>
   locale .length === 0
     ? Nothing
@@ -220,7 +220,7 @@ export const convertRawApplications = (
         if (app.id < 0) {
           const prerequisitesElem = data && data.find (e => app.id === e.id)
 
-          if (typeof prerequisitesElem === 'object') {
+          if (typeof prerequisitesElem === "object") {
             const { name: appName } = app
             const { id: appId, prerequisites } = prerequisitesElem
 
@@ -290,7 +290,7 @@ const convertRawSpecializationSelection =
   (raw: Raw.RawSpecializationSelection): Record<SpecializationSelection> =>
     SpecializationSelection ({
       ...raw,
-      sid: typeof raw.sid === 'object' ? List.fromArray (raw.sid) : raw.sid,
+      sid: typeof raw.sid === "object" ? List.fromArray (raw.sid) : raw.sid,
     })
 
 const convertRawLanguagesScriptsSelection = LanguagesScriptsSelection
@@ -333,26 +333,26 @@ const convertRawTerrainKnowledgeSelection =
     })
 
 const convertRawProfessionSelection =
-  (data: Raw.RawProfessionSelection): Wiki.ProfessionSelection => {
-    if (data.id === 'SPECIALISATION') {
+  (data: Raw.RawProfessionSelection): Wiki.AnyProfessionSelection => {
+    if (data.id === "SPECIALISATION") {
       return convertRawSpecializationSelection (data)
     }
-    else if (data.id === 'LANGUAGES_SCRIPTS') {
+    else if (data.id === "LANGUAGES_SCRIPTS") {
       return convertRawLanguagesScriptsSelection (data)
     }
-    else if (data.id === 'COMBAT_TECHNIQUES') {
+    else if (data.id === "COMBAT_TECHNIQUES") {
       return convertRawCombatTechniquesSelection (data)
     }
-    else if (data.id === 'COMBAT_TECHNIQUES_SECOND') {
+    else if (data.id === "COMBAT_TECHNIQUES_SECOND") {
       return convertRawCombatTechniquesSecondSelection (data)
     }
-    else if (data.id === 'CANTRIPS') {
+    else if (data.id === "CANTRIPS") {
       return convertRawCantripsSelection (data)
     }
-    else if (data.id === 'CURSES') {
+    else if (data.id === "CURSES") {
       return convertRawCursesSelection (data)
     }
-    else if (data.id === 'SKILLS') {
+    else if (data.id === "SKILLS") {
       return convertRawSkillsSelection (data)
     }
     else {
@@ -361,12 +361,12 @@ const convertRawProfessionSelection =
   }
 
 export const convertRawProfessionSelections =
-  (data: Raw.RawProfessionSelections): Wiki.ProfessionSelections =>
+  (data: Raw.RawProfessionSelections): Wiki.ProfessionSelectionList =>
     List.fromArray (data .map (convertRawProfessionSelection))
 
 const isRawRemoveSpecializationSelection =
   (raw: Raw.RawVariantSpecializationSelection): raw is Raw.RawRemoveSpecializationSelection =>
-    raw .hasOwnProperty ('active')
+    raw .hasOwnProperty ("active")
 
 const convertRawVariantSpecializationSelectionRecord =
   (raw: Raw.RawVariantSpecializationSelection): VariantSpecializationSelection =>
@@ -376,7 +376,7 @@ const convertRawVariantSpecializationSelectionRecord =
 
 const isRawRemoveCombatTechniquesSelection =
   (raw: Raw.RawVariantCombatTechniquesSelection): raw is Raw.RawRemoveCombatTechniquesSelection =>
-    raw .hasOwnProperty ('active')
+    raw .hasOwnProperty ("active")
 
 const convertRawVariantCombatTechniquesSelectionRecord =
   (raw: Raw.RawVariantCombatTechniquesSelection): VariantCombatTechniquesSelection =>
@@ -387,7 +387,7 @@ const convertRawVariantCombatTechniquesSelectionRecord =
 const isRawRemoveCombatTechniquesSecondSelection =
   (raw: Raw.RawVariantCombatTechniquesSecondSelection):
     raw is Raw.RawRemoveCombatTechniquesSecondSelection =>
-    raw .hasOwnProperty ('active')
+    raw .hasOwnProperty ("active")
 
 const convertRawVariantCombatTechniquesSecondSelectionRecord =
   (raw: Raw.RawVariantCombatTechniquesSecondSelection):
@@ -397,26 +397,26 @@ const convertRawVariantCombatTechniquesSecondSelectionRecord =
         : convertRawCombatTechniquesSecondSelection (raw)
 
 const convertRawProfessionVariantSelection =
-  (data: Raw.RawProfessionVariantSelection): Wiki.ProfessionVariantSelection => {
-    if (data.id === 'SPECIALISATION') {
+  (data: Raw.RawProfessionVariantSelection): Wiki.AnyProfessionVariantSelection => {
+    if (data.id === "SPECIALISATION") {
       return convertRawVariantSpecializationSelectionRecord (data)
     }
-    else if (data.id === 'LANGUAGES_SCRIPTS') {
+    else if (data.id === "LANGUAGES_SCRIPTS") {
       return convertRawLanguagesScriptsSelection (data)
     }
-    else if (data.id === 'COMBAT_TECHNIQUES') {
+    else if (data.id === "COMBAT_TECHNIQUES") {
       return convertRawVariantCombatTechniquesSelectionRecord (data)
     }
-    else if (data.id === 'COMBAT_TECHNIQUES_SECOND') {
+    else if (data.id === "COMBAT_TECHNIQUES_SECOND") {
       return convertRawVariantCombatTechniquesSecondSelectionRecord (data)
     }
-    else if (data.id === 'CANTRIPS') {
+    else if (data.id === "CANTRIPS") {
       return convertRawCantripsSelection (data)
     }
-    else if (data.id === 'CURSES') {
+    else if (data.id === "CURSES") {
       return convertRawCursesSelection (data)
     }
-    else if (data.id === 'SKILLS') {
+    else if (data.id === "SKILLS") {
       return convertRawSkillsSelection (data)
     }
     else {
@@ -425,5 +425,5 @@ const convertRawProfessionVariantSelection =
   }
 
 export const convertRawProfessionVariantSelections =
-  (data: Raw.RawProfessionVariantSelections): Wiki.ProfessionVariantSelections =>
+  (data: Raw.RawProfessionVariantSelections): Wiki.ProfessionVariantSelectionList =>
     List.fromArray (data .map (convertRawProfessionVariantSelection))

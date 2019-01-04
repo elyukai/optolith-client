@@ -1,5 +1,5 @@
-import { Maybe, Nothing } from '../structures/Maybe';
-import { fromDefault, makeLenses } from '../structures/Record';
+import { Maybe, Nothing } from "../structures/Maybe";
+import { fromDefault, makeLenses } from "../structures/Record";
 
 export interface PersonalData {
   family: Maybe<string>

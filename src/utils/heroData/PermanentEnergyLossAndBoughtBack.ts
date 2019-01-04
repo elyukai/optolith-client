@@ -1,5 +1,5 @@
-import { fromDefault, makeLenses } from '../structures/Record';
-import { PermanentEnergyLoss } from './PermanentEnergyLoss';
+import { fromDefault, makeLenses } from "../structures/Record";
+import { PermanentEnergyLoss } from "./PermanentEnergyLoss";
 
 export interface PermanentEnergyLossAndBoughtBack extends PermanentEnergyLoss {
   redeemed: number

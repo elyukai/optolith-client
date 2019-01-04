@@ -1,4 +1,4 @@
-import { fromDefault } from '../../structures/Record';
+import { fromDefault } from "../../structures/Record";
 
 export interface IncreaseSkill {
   id: string
@@ -7,6 +7,6 @@ export interface IncreaseSkill {
 
 export const IncreaseSkill =
   fromDefault<IncreaseSkill> ({
-    id: '',
+    id: "",
     value: 0,
   })

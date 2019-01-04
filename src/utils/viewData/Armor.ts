@@ -1,5 +1,5 @@
-import { Maybe, Nothing } from '../structures/Maybe';
-import { fromDefault } from '../structures/Record';
+import { Maybe, Nothing } from "../structures/Maybe";
+import { fromDefault } from "../structures/Record";
 
 export interface Armor {
   id: string
@@ -16,8 +16,8 @@ export interface Armor {
 
 export const Armor =
   fromDefault<Armor> ({
-    id: '',
-    name: '',
+    id: "",
+    name: "",
     st: Nothing,
     loss: Nothing,
     pro: Nothing,

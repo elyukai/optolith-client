@@ -1,11 +1,11 @@
-import { isActive } from './activatable/isActive';
-import { ActivatableDependent } from './activeEntries/ActivatableDependent';
-import { HeroModel, HeroModelRecord } from './heroData/HeroModel';
-import { getAllEntriesByGroup } from './heroStateUtils';
-import { any, filter, length, List } from './structures/List';
-import { Record } from './structures/Record';
-import { SpecialAbility } from './wikiData/SpecialAbility';
-import { WikiModel, WikiModelRecord } from './wikiData/WikiModel';
+import { isActive } from "./activatable/isActive";
+import { ActivatableDependent } from "./activeEntries/ActivatableDependent";
+import { HeroModel, HeroModelRecord } from "./heroData/HeroModel";
+import { getAllEntriesByGroup } from "./heroStateUtils";
+import { any, filter, length, List } from "./structures/List";
+import { Record } from "./structures/Record";
+import { SpecialAbility } from "./wikiData/SpecialAbility";
+import { WikiModel, WikiModelRecord } from "./wikiData/WikiModel";
 
 const { specialAbilities: wikiSpecialAbilities } = WikiModel.A
 const { specialAbilities } = HeroModel.A

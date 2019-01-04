@@ -1,9 +1,9 @@
-import { ActivatableNameCostActive } from '../../types/data';
-import { List } from '../structures/List';
-import { fromDefault, Record } from '../structures/Record';
-import { ProfessionRequireIncreasable } from '../wikiData/prerequisites/IncreasableRequirement';
-import { ProfessionVariant } from '../wikiData/ProfessionVariant';
-import { IncreasableForView } from './IncreasableForView';
+import { ActivatableNameCostActive } from "../../types/data";
+import { List } from "../structures/List";
+import { fromDefault, Record } from "../structures/Record";
+import { ProfessionRequireIncreasable } from "../wikiData/prerequisites/IncreasableRequirement";
+import { ProfessionVariant } from "../wikiData/ProfessionVariant";
+import { IncreasableForView } from "./IncreasableForView";
 
 export interface ProfessionVariantCombined {
   wikiEntry: Record<ProfessionVariant>
@@ -12,7 +12,7 @@ export interface ProfessionVariantCombined {
     Record<ProfessionRequireIncreasable>
   >
   mappedSpecialAbilities: List<Record<ActivatableNameCostActive>>
-  selections: ProfessionVariant['selections']
+  selections: ProfessionVariant["selections"]
   mappedCombatTechniques: List<Record<IncreasableForView>>
   mappedSkills: List<Record<IncreasableForView>>
   mappedSpells: List<Record<IncreasableForView>>

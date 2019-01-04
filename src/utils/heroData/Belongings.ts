@@ -1,11 +1,11 @@
-import { ArmorZonesEditorInstance } from '../../types/data';
-import { Maybe, Nothing } from '../structures/Maybe';
-import { OrderedMap } from '../structures/OrderedMap';
-import { fromDefault, makeLenses, Record } from '../structures/Record';
-import { EditItem } from './EditItem';
-import { HitZoneArmor } from './HitZoneArmor';
-import { Item } from './Item';
-import { Purse } from './Purse';
+import { ArmorZonesEditorInstance } from "../../types/data";
+import { Maybe, Nothing } from "../structures/Maybe";
+import { OrderedMap } from "../structures/OrderedMap";
+import { fromDefault, makeLenses, Record } from "../structures/Record";
+import { EditItem } from "./EditItem";
+import { HitZoneArmor } from "./HitZoneArmor";
+import { Item } from "./Item";
+import { Purse } from "./Purse";
 
 export interface Belongings {
   items: OrderedMap<string, Record<Item>>

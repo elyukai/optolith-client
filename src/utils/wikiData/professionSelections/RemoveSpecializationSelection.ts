@@ -1,6 +1,6 @@
-import { fromDefault, Record } from '../../structures/Record';
-import { ProfessionSelectionIds, ProfessionVariantSelection } from '../wikiTypeHelpers';
-import { SpecializationSelection } from './SpecializationSelection';
+import { fromDefault, Record } from "../../structures/Record";
+import { AnyProfessionVariantSelection, ProfessionSelectionIds } from "../wikiTypeHelpers";
+import { SpecializationSelection } from "./SpecializationSelection";
 
 export interface RemoveSpecializationSelection {
   id: ProfessionSelectionIds
@@ -24,5 +24,5 @@ export const RemoveSpecializationSelection =
   })
 
 export const isRemoveSpecializationSelection =
-  (obj: ProfessionVariantSelection): obj is Record<RemoveSpecializationSelection> =>
+  (obj: AnyProfessionVariantSelection): obj is Record<RemoveSpecializationSelection> =>
     obj === RemoveSpecializationSelection

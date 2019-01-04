@@ -1,5 +1,5 @@
-import { Maybe, Nothing } from '../structures/Maybe';
-import { fromDefault } from '../structures/Record';
+import { Maybe, Nothing } from "../structures/Maybe";
+import { fromDefault } from "../structures/Record";
 
 export interface ShieldOrParryingWeapon {
   id: string
@@ -14,8 +14,8 @@ export interface ShieldOrParryingWeapon {
 
 const ShieldOrParryingWeapon =
   fromDefault<ShieldOrParryingWeapon> ({
-    id: '',
-    name: '',
+    id: "",
+    name: "",
     stp: Nothing,
     bf: 0,
     loss: Nothing,

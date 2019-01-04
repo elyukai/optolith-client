@@ -1,9 +1,9 @@
-import { EditPet } from './heroData/EditPet';
-import { Pet } from './heroData/Pet';
-import { fromMaybe, Just, Nothing } from './structures/Maybe';
-import { Record } from './structures/Record';
+import { EditPet } from "./heroData/EditPet";
+import { Pet } from "./heroData/Pet";
+import { fromMaybe, Just, Nothing } from "./structures/Maybe";
+import { Record } from "./structures/Record";
 
-const toStringM = fromMaybe ('')
+const toStringM = fromMaybe ("")
 
 export const toEditPet =
   (item: Record<Pet>): Record<EditPet> =>

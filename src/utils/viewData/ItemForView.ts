@@ -1,5 +1,5 @@
-import { Maybe, Nothing } from '../structures/Maybe';
-import { fromDefault } from '../structures/Record';
+import { Maybe, Nothing } from "../structures/Maybe";
+import { fromDefault } from "../structures/Record";
 
 export interface ItemForView {
   id: string
@@ -13,8 +13,8 @@ export interface ItemForView {
 
 export const ItemForView =
   fromDefault<ItemForView> ({
-    id: '',
-    name: '',
+    id: "",
+    name: "",
     amount: 0,
     price: Nothing,
     weight: Nothing,

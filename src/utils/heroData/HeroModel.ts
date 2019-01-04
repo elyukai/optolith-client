@@ -1,21 +1,21 @@
-import { Sex, StyleDependency } from '../../types/data';
-import { ActivatableDependent } from '../activeEntries/ActivatableDependent';
-import { ActivatableSkillDependent } from '../activeEntries/ActivatableSkillDependent';
-import { AttributeDependent } from '../activeEntries/AttributeDependent';
-import { SkillDependent } from '../activeEntries/SkillDependent';
-import { currentVersion } from '../raw/compatibilityUtils';
-import { List } from '../structures/List';
-import { Maybe, Nothing } from '../structures/Maybe';
-import { OrderedMap } from '../structures/OrderedMap';
-import { OrderedSet } from '../structures/OrderedSet';
-import { fromDefault, makeLenses, Record } from '../structures/Record';
-import { Belongings } from './Belongings';
-import { EditPet } from './EditPet';
-import { Energies } from './Energies';
-import { Pact } from './Pact';
-import { PersonalData } from './PersonalData';
-import { Pet } from './Pet';
-import { Rules } from './Rules';
+import { Sex, StyleDependency } from "../../types/data";
+import { ActivatableDependent } from "../activeEntries/ActivatableDependent";
+import { ActivatableSkillDependent } from "../activeEntries/ActivatableSkillDependent";
+import { AttributeDependent } from "../activeEntries/AttributeDependent";
+import { SkillDependent } from "../activeEntries/SkillDependent";
+import { currentVersion } from "../raw/compatibilityUtils";
+import { List } from "../structures/List";
+import { Maybe, Nothing } from "../structures/Maybe";
+import { OrderedMap } from "../structures/OrderedMap";
+import { OrderedSet } from "../structures/OrderedSet";
+import { fromDefault, makeLenses, Record } from "../structures/Record";
+import { Belongings } from "./Belongings";
+import { EditPet } from "./EditPet";
+import { Energies } from "./Energies";
+import { Pact } from "./Pact";
+import { PersonalData } from "./PersonalData";
+import { Pet } from "./Pet";
+import { Rules } from "./Rules";
 
 export type HeroModelRecord = Record<HeroModel>
 
@@ -67,13 +67,13 @@ export interface HeroModel {
  */
 export const HeroModel =
   fromDefault<HeroModel> ({
-    id: '',
+    id: "",
     clientVersion: currentVersion,
     player: Nothing,
     dateCreated: new Date (),
     dateModified: new Date (),
     phase: 1,
-    name: '',
+    name: "",
     avatar: Nothing,
     adventurePointsTotal: 0,
     race: Nothing,
@@ -82,14 +82,14 @@ export const HeroModel =
     profession: Nothing,
     professionName: Nothing,
     professionVariant: Nothing,
-    sex: 'm',
-    experienceLevel: '',
+    sex: "m",
+    experienceLevel: "",
     personalData: PersonalData .default,
     advantages: OrderedMap.empty,
     disadvantages: OrderedMap.empty,
     specialAbilities: OrderedMap.empty,
     attributes: OrderedMap.empty,
-    attributeAdjustmentSelected: '',
+    attributeAdjustmentSelected: "",
     energies: Energies .default,
     skills: OrderedMap.empty,
     combatTechniques: OrderedMap.empty,
@@ -117,7 +117,7 @@ export const HeroModelL = makeLenses (HeroModel)
 export const getInitialHeroObject =
   (id: string) =>
   (name: string) =>
-  (sex: 'm' | 'f') =>
+  (sex: "m" | "f") =>
   (experienceLevel: string) =>
   (totalAp: number) =>
   (enableAllRuleBooks: boolean) =>

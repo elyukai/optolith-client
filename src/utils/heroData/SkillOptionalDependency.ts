@@ -1,4 +1,4 @@
-import { fromDefault } from '../structures/Record';
+import { fromDefault } from "../structures/Record";
 
 export interface SkillOptionalDependency {
   value: number
@@ -11,5 +11,5 @@ export interface SkillOptionalDependency {
 export const SkillOptionalDependency =
   fromDefault<SkillOptionalDependency> ({
     value: 0,
-    origin: '',
+    origin: "",
   })

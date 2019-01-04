@@ -1,25 +1,25 @@
-import { pipe } from 'ramda';
-import { getActiveSelections } from './activatable/selectionUtils';
-import { ActivatableDependent } from './activeEntries/ActivatableDependent';
-import { ActivatableSkillDependent } from './activeEntries/ActivatableSkillDependent';
-import { AttributeDependent } from './activeEntries/AttributeDependent';
-import { filterAndMaximumNonNegative, flattenDependencies } from './dependencies/flattenDependencies';
-import { HeroModelRecord } from './heroData/HeroModel';
-import { getNumericBlessedTraditionIdByInstanceId } from './IDUtils';
-import { ifElse } from './ifElse';
-import { gte, inc, min } from './mathUtils';
-import { getExceptionalSkillBonus, getInitialMaximumList, putMaximumSkillRatingFromExperienceLevel } from './skillUtils';
-import { cnst, ident, thrush } from './structures/Function';
-import { all, any, consF, foldr, fromElements, List, minimum, notElem, notElemF } from './structures/List';
-import { bind_, elem, ensure, fmap, fromJust, isJust, Just, Maybe, maybe, or, sum } from './structures/Maybe';
-import { alter, empty, filter, findWithDefault, foldl, fromArray, lookup_, OrderedMap } from './structures/OrderedMap';
-import { Record } from './structures/Record';
-import { isNumber } from './typeCheckUtils';
-import { Blessing } from './wikiData/Blessing';
-import { ExperienceLevel } from './wikiData/ExperienceLevel';
-import { LiturgicalChant } from './wikiData/LiturgicalChant';
-import { SpecialAbility } from './wikiData/SpecialAbility';
-import { WikiModel, WikiModelRecord } from './wikiData/WikiModel';
+import { pipe } from "ramda";
+import { getActiveSelections } from "./activatable/selectionUtils";
+import { ActivatableDependent } from "./activeEntries/ActivatableDependent";
+import { ActivatableSkillDependent } from "./activeEntries/ActivatableSkillDependent";
+import { AttributeDependent } from "./activeEntries/AttributeDependent";
+import { filterAndMaximumNonNegative, flattenDependencies } from "./dependencies/flattenDependencies";
+import { HeroModelRecord } from "./heroData/HeroModel";
+import { getNumericBlessedTraditionIdByInstanceId } from "./IDUtils";
+import { ifElse } from "./ifElse";
+import { gte, inc, min } from "./mathUtils";
+import { getExceptionalSkillBonus, getInitialMaximumList, putMaximumSkillRatingFromExperienceLevel } from "./skillUtils";
+import { cnst, ident, thrush } from "./structures/Function";
+import { all, any, consF, foldr, fromElements, List, minimum, notElem, notElemF } from "./structures/List";
+import { bind_, elem, ensure, fmap, fromJust, isJust, Just, Maybe, maybe, or, sum } from "./structures/Maybe";
+import { alter, empty, filter, findWithDefault, foldl, fromArray, lookup_, OrderedMap } from "./structures/OrderedMap";
+import { Record } from "./structures/Record";
+import { isNumber } from "./typeCheckUtils";
+import { Blessing } from "./wikiData/Blessing";
+import { ExperienceLevel } from "./wikiData/ExperienceLevel";
+import { LiturgicalChant } from "./wikiData/LiturgicalChant";
+import { SpecialAbility } from "./wikiData/SpecialAbility";
+import { WikiModel, WikiModelRecord } from "./wikiData/WikiModel";
 
 const { liturgicalChants } = WikiModel.A
 const { id, tradition, aspects } = LiturgicalChant.A
@@ -49,7 +49,7 @@ const putAspectKnowledgeRestrictionMaximum =
     ifElse<List<number>, List<number>>
       (cnst (
         // is not nameless tradition
-        id (currentTradition) !== 'SA_693'
+        id (currentTradition) !== "SA_693"
 
         // no aspect knowledge active for the current chant
         && or (fmap (all (notElemF<string | number> (aspects (wikiEntry))))

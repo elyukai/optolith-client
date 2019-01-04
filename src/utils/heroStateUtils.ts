@@ -1,33 +1,33 @@
-import { pipe } from 'ramda';
-import { IdPrefixes } from '../constants/IdPrefixes';
-import { Dependent } from '../types/data';
-import { createPlainActivatableDependent } from './activeEntries/ActivatableDependent';
-import { createInactiveActivatableSkillDependent } from './activeEntries/ActivatableSkillDependent';
-import { AttributeDependent, createPlainAttributeDependent } from './activeEntries/AttributeDependent';
-import { createPlainSkillDependent, createSkillDependentWithValue6 } from './activeEntries/SkillDependent';
-import { HeroModel, HeroModelL, HeroModelRecord } from './heroData/HeroModel';
-import { getIdPrefix } from './IDUtils';
-import { not } from './not';
-import { cnst } from './structures/Function';
-import { Lens, over, view } from './structures/Lens';
-import { elem_, filter, fromArray, List } from './structures/List';
-import { bind_, ensure, fmap, fromMaybe, Just, liftM2, Maybe, Nothing, or } from './structures/Maybe';
-import { alter, elems, insert, lookup, lookup_, OrderedMap, sdelete, update } from './structures/OrderedMap';
-import { Skill } from './wikiData/Skill';
-import { EntryWithGroup } from './wikiData/wikiTypeHelpers';
+import { pipe } from "ramda";
+import { IdPrefixes } from "../constants/IdPrefixes";
+import { Dependent } from "../types/data";
+import { createPlainActivatableDependent } from "./activeEntries/ActivatableDependent";
+import { createInactiveActivatableSkillDependent } from "./activeEntries/ActivatableSkillDependent";
+import { AttributeDependent, createPlainAttributeDependent } from "./activeEntries/AttributeDependent";
+import { createPlainSkillDependent, createSkillDependentWithValue6 } from "./activeEntries/SkillDependent";
+import { HeroModel, HeroModelL, HeroModelRecord } from "./heroData/HeroModel";
+import { getIdPrefix } from "./IDUtils";
+import { not } from "./not";
+import { cnst } from "./structures/Function";
+import { Lens, over, view } from "./structures/Lens";
+import { elem_, filter, fromArray, List } from "./structures/List";
+import { bind_, ensure, fmap, fromMaybe, Just, liftM2, Maybe, Nothing, or } from "./structures/Maybe";
+import { alter, elems, insert, lookup, lookup_, OrderedMap, sdelete, update } from "./structures/OrderedMap";
+import { Skill } from "./wikiData/Skill";
+import { EntryWithGroup } from "./wikiData/wikiTypeHelpers";
 
-export type HeroStateMapKey = 'advantages'
-                            | 'attributes'
-                            | 'combatTechniques'
-                            | 'disadvantages'
-                            | 'liturgicalChants'
-                            | 'skills'
-                            | 'specialAbilities'
-                            | 'spells'
+export type HeroStateMapKey = "advantages"
+                            | "attributes"
+                            | "combatTechniques"
+                            | "disadvantages"
+                            | "liturgicalChants"
+                            | "skills"
+                            | "specialAbilities"
+                            | "spells"
 
 export type HeroStateListKey = HeroStateMapKey
-                             | 'blessings'
-                             | 'cantrips'
+                             | "blessings"
+                             | "cantrips"
 
 export type HeroStateListGetter<K extends HeroStateListKey = HeroStateListKey> =
   (hero: HeroModelRecord) => HeroModel[K]

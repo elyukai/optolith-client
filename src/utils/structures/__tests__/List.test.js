@@ -1,8 +1,7 @@
 const List = require('../List')
 const { Just, Nothing } = require('../Maybe')
-const { OrderedMap } = require('../OrderedMap')
 const { Pair } = require('../Pair')
-const { GT, EQ, LT } = require('../Ord')
+const { Int } = require('../Int')
 
 // CONSTRUCTORS
 
@@ -421,6 +420,15 @@ test ('splitAt', () => {
                        (List.fromElements ()))
 })
 
+// PREDICATES
+
+test ('isSubsequenceOf', () => {
+  expect (List.isSubsequenceOf ('test') ('das asd  dsad   ad teste f as'))
+    .toEqual (true)
+  expect (List.isSubsequenceOf ('test') ('das asd  dsad   ad tese f as'))
+    .toEqual (false)
+})
+
 // SEARCHING BY EQUALITY
 
 test ('lookup', () => {
@@ -569,7 +577,7 @@ test ('sdelete', () => {
 // ORDERED LISTS
 
 test ('sortBy', () => {
-  expect (List.sortBy (a => b => a < b ? LT : a > b ? GT : EQ) (List.fromElements (2, 3, 1, 5, 4)))
+  expect (List.sortBy (Int.compare) (List.fromElements (2, 3, 1, 5, 4)))
     .toEqual (List.fromElements (1, 2, 3, 4, 5))
 })
 

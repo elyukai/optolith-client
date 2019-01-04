@@ -1,6 +1,6 @@
-import { fromDefault, makeLenses, Record } from '../structures/Record';
-import { PermanentEnergyLoss } from './PermanentEnergyLoss';
-import { PermanentEnergyLossAndBoughtBack } from './PermanentEnergyLossAndBoughtBack';
+import { fromDefault, makeLenses, Record } from "../structures/Record";
+import { PermanentEnergyLoss } from "./PermanentEnergyLoss";
+import { PermanentEnergyLossAndBoughtBack } from "./PermanentEnergyLossAndBoughtBack";
 
 export interface Energies {
   addedLifePoints: number

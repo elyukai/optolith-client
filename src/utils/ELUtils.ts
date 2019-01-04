@@ -1,11 +1,11 @@
-import { pipe } from 'ramda';
-import { IdPrefixes } from '../constants/IdPrefixes';
-import { getNumericId, prefixId } from './IDUtils';
-import { inc, lt } from './mathUtils';
-import { and, fmap } from './structures/Maybe';
-import { foldlWithKey, lookup_, OrderedMap } from './structures/OrderedMap';
-import { Record } from './structures/Record';
-import { ExperienceLevel } from './wikiData/ExperienceLevel';
+import { pipe } from "ramda";
+import { IdPrefixes } from "../constants/IdPrefixes";
+import { getNumericId, prefixId } from "./IDUtils";
+import { inc, lt } from "./mathUtils";
+import { and, fmap } from "./structures/Maybe";
+import { foldlWithKey, lookup_, OrderedMap } from "./structures/OrderedMap";
+import { Record } from "./structures/Record";
+import { ExperienceLevel } from "./wikiData/ExperienceLevel";
 
 const { ap } = ExperienceLevel.A
 
@@ -26,7 +26,7 @@ export const getExperienceLevelIdByAp =
             : result
         }
       )
-      ('EL_1')
+      ("EL_1")
       (experience_levels)
 
 /**

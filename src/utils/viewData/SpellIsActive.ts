@@ -1,6 +1,6 @@
-import { fromDefault, Record } from '../structures/Record';
-import { Spell } from '../wikiData/Spell';
-import { IsActive } from './viewTypeHelpers';
+import { fromDefault, Record } from "../structures/Record";
+import { Spell } from "../wikiData/Spell";
+import { IsActive } from "./viewTypeHelpers";
 
 export interface SpellIsActive extends IsActive {
   wikiEntry: Record<Spell>

@@ -1,36 +1,36 @@
-import { pipe } from 'ramda';
-import { Categories } from '../../constants/Categories';
-import * as Data from '../../types/data';
-import * as Raw from '../../types/rawdata';
-import { getCombinedPrerequisites } from '../activatable/activatableActivationUtils';
-import { getActiveFromState } from '../activatable/activatableConvertUtils';
-import { addAllStyleRelatedDependencies } from '../activatable/ExtendedStyleUtils';
-import { ActivatableDependent, createActivatableDependentWithActive } from '../activeEntries/ActivatableDependent';
-import { ActivatableSkillDependent, createActivatableSkillDependentWithValue } from '../activeEntries/ActivatableSkillDependent';
-import { ActiveObject } from '../activeEntries/ActiveObject';
-import { AttributeDependent, createAttributeDependentWithValue } from '../activeEntries/AttributeDependent';
-import { createSkillDependentWithValue, SkillDependent } from '../activeEntries/SkillDependent';
-import { addDependencies } from '../dependencies/dependencyUtils';
-import { Belongings } from '../heroData/Belongings';
-import { Energies } from '../heroData/Energies';
-import { HeroModel, HeroModelRecord } from '../heroData/HeroModel';
-import { HitZoneArmor } from '../heroData/HitZoneArmor';
-import { Item } from '../heroData/Item';
-import { PermanentEnergyLoss } from '../heroData/PermanentEnergyLoss';
-import { PermanentEnergyLossAndBoughtBack } from '../heroData/PermanentEnergyLossAndBoughtBack';
-import { PersonalData } from '../heroData/PersonalData';
-import { Pet } from '../heroData/Pet';
-import { Purse } from '../heroData/Purse';
-import { Rules } from '../heroData/Rules';
-import { getCategoryById } from '../IDUtils';
-import { ident } from '../structures/Function';
-import { fromArray, List } from '../structures/List';
-import { elem, fromNullable, Maybe } from '../structures/Maybe';
-import { foldlWithKey, OrderedMap } from '../structures/OrderedMap';
-import { insert, OrderedSet } from '../structures/OrderedSet';
-import { Record, StringKeyObject } from '../structures/Record';
-import { PrimaryAttributeDamageThreshold } from '../wikiData/sub/PrimaryAttributeDamageThreshold';
-import { WikiModelRecord } from '../wikiData/WikiModel';
+import { pipe } from "ramda";
+import { Categories } from "../../constants/Categories";
+import * as Data from "../../types/data";
+import * as Raw from "../../types/rawdata";
+import { getCombinedPrerequisites } from "../activatable/activatableActivationUtils";
+import { getActiveFromState } from "../activatable/activatableConvertUtils";
+import { addAllStyleRelatedDependencies } from "../activatable/ExtendedStyleUtils";
+import { ActivatableDependent, createActivatableDependentWithActive } from "../activeEntries/ActivatableDependent";
+import { ActivatableSkillDependent, createActivatableSkillDependentWithValue } from "../activeEntries/ActivatableSkillDependent";
+import { ActiveObject } from "../activeEntries/ActiveObject";
+import { AttributeDependent, createAttributeDependentWithValue } from "../activeEntries/AttributeDependent";
+import { createSkillDependentWithValue, SkillDependent } from "../activeEntries/SkillDependent";
+import { addDependencies } from "../dependencies/dependencyUtils";
+import { Belongings } from "../heroData/Belongings";
+import { Energies } from "../heroData/Energies";
+import { HeroModel, HeroModelRecord } from "../heroData/HeroModel";
+import { HitZoneArmor } from "../heroData/HitZoneArmor";
+import { Item } from "../heroData/Item";
+import { PermanentEnergyLoss } from "../heroData/PermanentEnergyLoss";
+import { PermanentEnergyLossAndBoughtBack } from "../heroData/PermanentEnergyLossAndBoughtBack";
+import { PersonalData } from "../heroData/PersonalData";
+import { Pet } from "../heroData/Pet";
+import { Purse } from "../heroData/Purse";
+import { Rules } from "../heroData/Rules";
+import { getCategoryById } from "../IDUtils";
+import { ident } from "../structures/Function";
+import { fromArray, List } from "../structures/List";
+import { elem, fromNullable, Maybe } from "../structures/Maybe";
+import { foldlWithKey, OrderedMap } from "../structures/OrderedMap";
+import { insert, OrderedSet } from "../structures/OrderedSet";
+import { Record, StringKeyObject } from "../structures/Record";
+import { PrimaryAttributeDamageThreshold } from "../wikiData/sub/PrimaryAttributeDamageThreshold";
+import { WikiModelRecord } from "../wikiData/WikiModel";
 
 const createHeroObject = (hero: Raw.RawHero): HeroModelRecord =>
   HeroModel ({
@@ -135,7 +135,7 @@ const createHeroObject = (hero: Raw.RawHero): HeroModelRecord =>
                   >
                     (primaryThreshold => PrimaryAttributeDamageThreshold ({
                       primary: fromNullable (primaryThreshold .primary),
-                      threshold: typeof primaryThreshold .threshold === 'object'
+                      threshold: typeof primaryThreshold .threshold === "object"
                         ? List.fromArray (primaryThreshold .threshold)
                         : primaryThreshold .threshold,
                     }))
@@ -248,7 +248,7 @@ const createHeroObject = (hero: Raw.RawHero): HeroModelRecord =>
   })
 
 const getActivatableDependent =
-  (source: StringKeyObject<Raw.RawActiveObject[]>): HeroModel['advantages'] =>
+  (source: StringKeyObject<Raw.RawActiveObject[]>): HeroModel["advantages"] =>
     OrderedMap.fromArray (
       Object.entries (source) .map<[string, Record<ActivatableDependent>]> (
         ([id, active]) => [
@@ -279,10 +279,10 @@ const getActivatables = (hero: Raw.RawHero): ActivatableMaps => {
 
       const key: keyof ActivatableMaps =
         elem (Categories.ADVANTAGES) (category)
-          ? 'advantages'
+          ? "advantages"
           : elem (Categories.DISADVANTAGES) (category)
-          ? 'disadvantages'
-          : 'specialAbilities'
+          ? "disadvantages"
+          : "specialAbilities"
 
       return {
         ...acc,
@@ -334,52 +334,52 @@ export const convertFromRawHero =
     const addAllDependencies = pipe (
       advantages.foldl<HeroModelRecord> (
         state => entry => Maybe.fromMaybe (state) (
-          wiki.get ('advantages').lookup (entry.get ('id'))
+          wiki.get ("advantages").lookup (entry.get ("id"))
             .fmap (
               wikiEntry => addDependencies (
                 state,
                 getCombinedPrerequisites (
                   wikiEntry,
-                  intermediateState.get ('advantages').lookup (entry.get ('id')),
+                  intermediateState.get ("advantages").lookup (entry.get ("id")),
                   entry as any as Record<Data.ActiveObject>,
                   true
                 ),
-                entry.get ('id')
+                entry.get ("id")
               )
             )
         )
       ),
       disadvantages.foldl<HeroModelRecord> (
         state => entry => Maybe.fromMaybe (state) (
-          wiki.get ('disadvantages').lookup (entry.get ('id'))
+          wiki.get ("disadvantages").lookup (entry.get ("id"))
             .fmap (
               wikiEntry => addDependencies (
                 state,
                 getCombinedPrerequisites (
                   wikiEntry,
-                  intermediateState.get ('disadvantages').lookup (entry.get ('id')),
+                  intermediateState.get ("disadvantages").lookup (entry.get ("id")),
                   entry as any as Record<Data.ActiveObject>,
                   true
                 ),
-                entry.get ('id')
+                entry.get ("id")
               )
             )
         )
       ),
       specialAbilities.foldl<HeroModelRecord> (
         state => entry => Maybe.fromMaybe (state) (
-          wiki.get ('specialAbilities').lookup (entry.get ('id'))
+          wiki.get ("specialAbilities").lookup (entry.get ("id"))
             .fmap (
               wikiEntry => addAllStyleRelatedDependencies (
                 addDependencies (
                   state,
                   getCombinedPrerequisites (
                     wikiEntry,
-                    intermediateState.get ('specialAbilities').lookup (entry.get ('id')),
+                    intermediateState.get ("specialAbilities").lookup (entry.get ("id")),
                     entry as any as Record<Data.ActiveObject>,
                     true
                   ),
-                  entry.get ('id')
+                  entry.get ("id")
                 ),
                 wikiEntry
               )
@@ -388,11 +388,11 @@ export const convertFromRawHero =
       ),
       spells.foldl<HeroModelRecord> (
         state => spellId => Maybe.fromMaybe (state) (
-          wiki.get ('spells').lookup (spellId)
+          wiki.get ("spells").lookup (spellId)
             .fmap (
               wikiEntry => addDependencies (
                 state,
-                wikiEntry.get ('prerequisites'),
+                wikiEntry.get ("prerequisites"),
                 spellId
               )
             )

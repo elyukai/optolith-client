@@ -1,6 +1,6 @@
-import { fromDefault, Record } from '../structures/Record';
-import { Cantrip } from '../wikiData/Cantrip';
-import { IsActive } from './viewTypeHelpers';
+import { fromDefault, Record } from "../structures/Record";
+import { Cantrip } from "../wikiData/Cantrip";
+import { IsActive } from "./viewTypeHelpers";
 
 export interface CantripCombined extends IsActive {
   wikiEntry: Record<Cantrip>

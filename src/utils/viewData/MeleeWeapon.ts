@@ -1,6 +1,6 @@
-import { List } from '../structures/List';
-import { Maybe, Nothing } from '../structures/Maybe';
-import { fromDefault } from '../structures/Record';
+import { List } from "../structures/List";
+import { Maybe, Nothing } from "../structures/Maybe";
+import { fromDefault } from "../structures/Record";
 
 export interface MeleeWeapon {
   id: string
@@ -25,9 +25,9 @@ export interface MeleeWeapon {
 
 const MeleeWeapon =
   fromDefault<MeleeWeapon> ({
-    id: '',
-    name: '',
-    combatTechnique: '',
+    id: "",
+    name: "",
+    combatTechnique: "",
     primary: List.empty,
     primaryBonus: 0,
     damageDiceNumber: Nothing,

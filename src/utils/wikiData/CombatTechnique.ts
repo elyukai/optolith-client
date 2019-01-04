@@ -1,9 +1,9 @@
-import { Categories } from '../../constants/Categories';
-import { List } from '../structures/List';
-import { Maybe, Nothing } from '../structures/Maybe';
-import { fromDefault, Record } from '../structures/Record';
-import { SourceLink } from './sub/SourceLink';
-import { EntryWithCategory } from './wikiTypeHelpers';
+import { Categories } from "../../constants/Categories";
+import { List } from "../structures/List";
+import { Maybe, Nothing } from "../structures/Maybe";
+import { fromDefault, Record } from "../structures/Record";
+import { SourceLink } from "./sub/SourceLink";
+import { EntryWithCategory } from "./wikiTypeHelpers";
 
 export interface CombatTechnique {
   id: string
@@ -19,8 +19,8 @@ export interface CombatTechnique {
 
 export const CombatTechnique =
   fromDefault<CombatTechnique> ({
-    id: '',
-    name: '',
+    id: "",
+    name: "",
     category: Categories.COMBAT_TECHNIQUES,
     gr: 0,
     ic: 0,

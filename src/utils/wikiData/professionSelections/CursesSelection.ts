@@ -1,5 +1,5 @@
-import { fromDefault, Record } from '../../structures/Record';
-import { ProfessionSelection, ProfessionSelectionIds } from '../wikiTypeHelpers';
+import { fromDefault, Record } from "../../structures/Record";
+import { AnyProfessionSelection, ProfessionSelectionIds } from "../wikiTypeHelpers";
 
 export interface CursesSelection {
   id: ProfessionSelectionIds
@@ -13,5 +13,5 @@ export const CursesSelection =
   })
 
 export const isCursesSelection =
-  (obj: ProfessionSelection): obj is Record<CursesSelection> =>
+  (obj: AnyProfessionSelection): obj is Record<CursesSelection> =>
     CursesSelection.A.id (obj) === ProfessionSelectionIds.CURSES

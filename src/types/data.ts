@@ -65,7 +65,7 @@ export interface Selections {
   specialization: Maybe<number | string>
   specializationSkillId: Maybe<string>
   terrainKnowledge: Maybe<number>
-  map: OrderedMap<Wiki.ProfessionSelectionIds, Wiki.ProfessionSelection>
+  map: OrderedMap<Wiki.ProfessionSelectionIds, Wiki.AnyProfessionSelection>
 }
 
 export interface ActiveObjectName extends ActiveObject {

@@ -1,20 +1,20 @@
-import { pipe } from 'ramda';
-import { ValueBasedDependent } from '../../types/data';
-import { HeroModelRecord } from '../heroData/HeroModel';
-import { SkillOptionalDependency } from '../heroData/SkillOptionalDependency';
-import { getHeroStateItem } from '../heroStateUtils';
-import { gt, gte, inc } from '../mathUtils';
-import { flattenPrerequisites } from '../prerequisites/flattenPrerequisites';
-import { thrush } from '../structures/Function';
-import { elem, find, foldl, isList, List, map, maximumNonNegative } from '../structures/List';
-import { bind_, fmap, Maybe, Nothing, or, sum } from '../structures/Maybe';
-import { isRecord, Record } from '../structures/Record';
-import { isNumber } from '../typeCheckUtils';
-import { Advantage } from '../wikiData/Advantage';
-import { RequireActivatable } from '../wikiData/prerequisites/ActivatableRequirement';
-import { WikiModelRecord } from '../wikiData/WikiModel';
-import { AbilityRequirement, Activatable } from '../wikiData/wikiTypeHelpers';
-import { getWikiEntry } from '../WikiUtils';
+import { pipe } from "ramda";
+import { ValueBasedDependent } from "../../types/data";
+import { HeroModelRecord } from "../heroData/HeroModel";
+import { SkillOptionalDependency } from "../heroData/SkillOptionalDependency";
+import { getHeroStateItem } from "../heroStateUtils";
+import { gt, gte, inc } from "../mathUtils";
+import { flattenPrerequisites } from "../prerequisites/flattenPrerequisites";
+import { thrush } from "../structures/Function";
+import { elem, find, foldl, isList, List, map, maximumNonNegative } from "../structures/List";
+import { bind_, fmap, Maybe, Nothing, or, sum } from "../structures/Maybe";
+import { isRecord, Record } from "../structures/Record";
+import { isNumber } from "../typeCheckUtils";
+import { Advantage } from "../wikiData/Advantage";
+import { RequireActivatable } from "../wikiData/prerequisites/ActivatableRequirement";
+import { WikiModelRecord } from "../wikiData/WikiModel";
+import { AbilityRequirement, Activatable } from "../wikiData/wikiTypeHelpers";
+import { getWikiEntry } from "../WikiUtils";
 
 const { prerequisites } = Advantage.A
 const { origin, value } = SkillOptionalDependency.A
@@ -42,7 +42,7 @@ export const flattenDependencies =
                    thrush (Nothing),
                    thrush (Nothing),
                    find ((r): r is AbilityRequirement =>
-                     r !== 'RCP'
+                     r !== "RCP"
                      && isList (id (r))
                      && elem (origin (e)) (id (r) as List<string>))
                  )),

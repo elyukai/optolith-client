@@ -6,13 +6,13 @@
  * @author Lukas Obermann
  */
 
-import { isEither, isRight } from './Either';
-import { intercalate, isList, map } from './List';
-import { isJust, isMaybe } from './Maybe';
-import { isOrderedMap } from './OrderedMap';
-import { isOrderedSet } from './OrderedSet';
-import { isPair } from './Pair';
-import { isRecord } from './Record';
+import { isEither, isRight } from "./Either";
+import { intercalate, isList, map } from "./List";
+import { isJust, isMaybe } from "./Maybe";
+import { isOrderedMap } from "./OrderedMap";
+import { isOrderedSet } from "./OrderedSet";
+import { isPair } from "./Pair";
+import { isRecord } from "./Record";
 
 /**
  * `show :: a -> String`
@@ -37,7 +37,7 @@ export const show = (x: any): string => {
   }
 
   if (isList (x)) {
-    return `[${intercalate (', ') (map (show) (x))}]`
+    return `[${intercalate (", ") (map (show) (x))}]`
   }
 
   if (isPair (x)) {
@@ -45,11 +45,11 @@ export const show = (x: any): string => {
   }
 
   if (isOrderedSet (x)) {
-    return `Set (${[...x] .map (show) .join (', ')})`
+    return `Set (${[...x] .map (show) .join (", ")})`
   }
 
   if (isOrderedMap (x)) {
-    return `Map (${[...x] .map (([k, v]) => `${show (k)} = ${show (v)}`) .join (', ')})`
+    return `Map (${[...x] .map (([k, v]) => `${show (k)} = ${show (v)}`) .join (", ")})`
   }
 
   if (isRecord (x)) {
@@ -59,28 +59,28 @@ export const show = (x: any): string => {
         .map (key =>
           `${key} = ${show (x .values [key] === null || x .values [key] === undefined ? x .defaultValues [key] : x .values [key])}`
         )
-        .join (', ')
+        .join (", ")
     } }`
   }
 
   // tslint:disable-next-line: strict-type-predicates
-  if (typeof x === 'bigint') {
+  if (typeof x === "bigint") {
     return x .toString ()
   }
 
-  if (typeof x === 'boolean') {
+  if (typeof x === "boolean") {
     return x ? `True` : `False`
   }
 
-  if (typeof x === 'number') {
-    return 1 / x === -Infinity ? '-0' : x .toString (10)
+  if (typeof x === "number") {
+    return 1 / x === -Infinity ? "-0" : x .toString (10)
   }
 
-  if (typeof x === 'string') {
+  if (typeof x === "string") {
     return JSON.stringify (x)
   }
 
-  if (typeof x === 'symbol') {
+  if (typeof x === "symbol") {
     return `Symbol`
   }
 

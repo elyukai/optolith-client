@@ -1,16 +1,16 @@
-import { Categories } from '../../constants/Categories';
-import { List } from '../structures/List';
-import { Nothing } from '../structures/Maybe';
-import { OrderedMap } from '../structures/OrderedMap';
-import { fromDefault } from '../structures/Record';
-import { AdvantageDisadvantageBase, EntryWithCategory } from './wikiTypeHelpers';
+import { Categories } from "../../constants/Categories";
+import { List } from "../structures/List";
+import { Nothing } from "../structures/Maybe";
+import { OrderedMap } from "../structures/OrderedMap";
+import { fromDefault } from "../structures/Record";
+import { AdvantageDisadvantageBase, EntryWithCategory } from "./wikiTypeHelpers";
 
 export interface Disadvantage extends AdvantageDisadvantageBase { }
 
 export const Disadvantage =
   fromDefault<Disadvantage> ({
-    id: '',
-    name: '',
+    id: "",
+    name: "",
     cost: 0,
     input: Nothing,
     max: Nothing,
@@ -23,7 +23,7 @@ export const Disadvantage =
     select: Nothing,
     gr: 0,
     src: List.empty,
-    rules: '',
+    rules: "",
     range: Nothing,
     actions: Nothing,
     apValue: Nothing,

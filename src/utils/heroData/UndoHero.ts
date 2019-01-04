@@ -1,7 +1,7 @@
-import { List } from '../structures/List';
-import { fromDefault, makeLenses, Record } from '../structures/Record';
-import { UndoState } from '../undo';
-import { HeroModel, HeroModelRecord } from './HeroModel';
+import { List } from "../structures/List";
+import { fromDefault, makeLenses, Record } from "../structures/Record";
+import { UndoState } from "../undo";
+import { HeroModel, HeroModelRecord } from "./HeroModel";
 
 export type UndoableHeroModelRecord = Record<UndoableHeroModel>
 export type UndoableHeroModel = UndoState<HeroModelRecord>

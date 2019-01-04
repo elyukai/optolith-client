@@ -1,10 +1,10 @@
-import { pipe } from 'ramda';
-import { ActivatableLikeCategories, Categories } from '../../../constants/Categories';
-import { getCategoryById } from '../../IDUtils';
-import { all, elem_, isList, List } from '../../structures/List';
-import { fmap, Maybe, Nothing, or } from '../../structures/Maybe';
-import { fromDefault, makeLenses, member, Record } from '../../structures/Record';
-import { AllRequirementObjects, ProfessionPrerequisite, SID } from '../wikiTypeHelpers';
+import { pipe } from "ramda";
+import { ActivatableLikeCategories, Categories } from "../../../constants/Categories";
+import { getCategoryById } from "../../IDUtils";
+import { all, elem_, isList, List } from "../../structures/List";
+import { fmap, Maybe, Nothing, or } from "../../structures/Maybe";
+import { fromDefault, makeLenses, member, Record } from "../../structures/Record";
+import { AllRequirementObjects, ProfessionPrerequisite, SID } from "../wikiTypeHelpers";
 
 export interface RequireActivatable {
   id: string | List<string>;
@@ -21,7 +21,7 @@ export interface ProfessionRequireActivatable extends RequireActivatable {
 
 export const RequireActivatable =
   fromDefault<RequireActivatable> ({
-    id: '',
+    id: "",
     active: true,
     sid: Nothing,
     sid2: Nothing,
@@ -35,7 +35,7 @@ export const isRequiringActivatable =
     const id = RequireActivatable.A.id (req)
 
     if (isList (id)) {
-      return member ('value') (req)
+      return member ("value") (req)
         && all<string> (pipe (
                          getCategoryById,
                          category => or (fmap (elem_<Categories> (ActivatableLikeCategories))
@@ -44,7 +44,7 @@ export const isRequiringActivatable =
                        (id)
     }
 
-    return member ('value') (req)
+    return member ("value") (req)
       && or (fmap (elem_<Categories> (ActivatableLikeCategories))
                   (getCategoryById (id)))
   }
@@ -53,7 +53,7 @@ export const isProfessionRequiringActivatable =
   (req: ProfessionPrerequisite): req is Record<ProfessionRequireActivatable> => {
     const id = RequireActivatable.A.id (req) as string
 
-    return member ('value') (req)
+    return member ("value") (req)
       && or (fmap (elem_<Categories> (ActivatableLikeCategories))
                   (getCategoryById (id)))
   }

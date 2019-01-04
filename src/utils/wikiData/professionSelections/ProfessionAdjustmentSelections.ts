@@ -1,14 +1,14 @@
-import { Maybe, Nothing } from '../../structures/Maybe';
-import { fromDefault, makeLenses, Record } from '../../structures/Record';
-import { ProfessionSelectionIds } from '../wikiTypeHelpers';
-import { CantripsSelection } from './CantripsSelection';
-import { CursesSelection } from './CursesSelection';
-import { LanguagesScriptsSelection } from './LanguagesScriptsSelection';
-import { VariantCombatTechniquesSelection } from './RemoveCombatTechniquesSelection';
-import { VariantCombatTechniquesSecondSelection } from './RemoveSecondCombatTechniquesSelection';
-import { VariantSpecializationSelection } from './RemoveSpecializationSelection';
-import { SkillsSelection } from './SkillsSelection';
-import { TerrainKnowledgeSelection } from './TerrainKnowledgeSelection';
+import { Maybe, Nothing } from "../../structures/Maybe";
+import { fromDefault, makeLenses, Record } from "../../structures/Record";
+import { ProfessionSelectionIds } from "../wikiTypeHelpers";
+import { CantripsSelection } from "./CantripsSelection";
+import { CursesSelection } from "./CursesSelection";
+import { LanguagesScriptsSelection } from "./LanguagesScriptsSelection";
+import { VariantCombatTechniquesSelection } from "./RemoveCombatTechniquesSelection";
+import { VariantCombatTechniquesSecondSelection } from "./RemoveSecondCombatTechniquesSelection";
+import { VariantSpecializationSelection } from "./RemoveSpecializationSelection";
+import { SkillsSelection } from "./SkillsSelection";
+import { TerrainKnowledgeSelection } from "./TerrainKnowledgeSelection";
 
 export interface ProfessionSelections {
   [ProfessionSelectionIds.CANTRIPS]: Maybe<Record<CantripsSelection>>

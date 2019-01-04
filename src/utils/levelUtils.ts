@@ -1,9 +1,9 @@
-import { DropdownOption, DropdownOptionCreator } from '../components/Dropdown';
-import { toRoman } from './NumberUtils';
-import { List } from './structures/List';
-import { Just, Nothing } from './structures/Maybe';
-import { fromBoth } from './structures/Pair';
-import { Record } from './structures/Record';
+import { DropdownOption, DropdownOptionCreator } from "../components/Dropdown";
+import { toRoman } from "./NumberUtils";
+import { List } from "./structures/List";
+import { Just, Nothing } from "./structures/Maybe";
+import { fromBoth } from "./structures/Pair";
+import { Record } from "./structures/Record";
 
 const getElements = (max: number) =>
   List.unfoldr<Record<DropdownOption>, number>
@@ -12,7 +12,7 @@ const getElements = (max: number) =>
       : current === 0
       ? Just (
         fromBoth<Record<DropdownOption>, number>
-          (DropdownOptionCreator ({ name: '0' }))
+          (DropdownOptionCreator ({ name: "0" }))
           (current + 1)
       )
       : Just (

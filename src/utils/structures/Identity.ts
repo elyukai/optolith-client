@@ -12,8 +12,8 @@
  * @author Lukas Obermann
  */
 
-import { cnst } from './Function';
-import { Some } from './Maybe';
+import { cnst } from "./Function";
+import { Some } from "./Maybe";
 
 
 // CONSTRUCTOR

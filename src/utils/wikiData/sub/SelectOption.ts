@@ -1,9 +1,9 @@
-import { List } from '../../structures/List';
-import { Maybe, Nothing } from '../../structures/Maybe';
-import { Pair } from '../../structures/Pair';
-import { fromDefault, Record } from '../../structures/Record';
-import { AllRequirementObjects } from '../wikiTypeHelpers';
-import { Application } from './Application';
+import { List } from "../../structures/List";
+import { Maybe, Nothing } from "../../structures/Maybe";
+import { Pair } from "../../structures/Pair";
+import { fromDefault, Record } from "../../structures/Record";
+import { AllRequirementObjects } from "../wikiTypeHelpers";
+import { Application } from "./Application";
 
 export interface SelectOption {
   id: string | number
@@ -24,7 +24,7 @@ export interface SelectOption {
 export const SelectOption =
   fromDefault<SelectOption> ({
     id: 0,
-    name: '',
+    name: "",
     cost: Nothing,
     // req: Nothing,
     prerequisites: Nothing,

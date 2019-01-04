@@ -1,6 +1,6 @@
-import { List } from '../structures/List';
-import { Maybe, Nothing } from '../structures/Maybe';
-import { fromDefault } from '../structures/Record';
+import { List } from "../structures/List";
+import { Maybe, Nothing } from "../structures/Maybe";
+import { fromDefault } from "../structures/Record";
 
 export interface DependencyObject {
   origin: Maybe<string>;

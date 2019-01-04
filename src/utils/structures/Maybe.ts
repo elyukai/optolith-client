@@ -14,10 +14,10 @@
  * @see Either
  */
 
-import { pipe } from 'ramda';
-import * as Math from '../mathUtils';
-import { cnst, ident, thrush } from './Function';
-import { cons, consF, fromElements, head, ifoldr, List } from './List';
+import { pipe } from "ramda";
+import * as Math from "../mathUtils";
+import { cnst, ident, thrush } from "./Function";
+import { cons, consF, fromElements, head, ifoldr, List } from "./List";
 
 
 // MAYBE TYPE DEFINITION
@@ -55,7 +55,7 @@ export const Just = <A extends Some> (x: A): Just<A> => {
     return Object.create (JustPrototype, { value: { value: x, enumerable: true }})
   }
 
-  throw new TypeError ('Cannot create a Just from a nullable value.')
+  throw new TypeError ("Cannot create a Just from a nullable value.")
 }
 
 // Nothing
@@ -663,7 +663,7 @@ export const mapMaybe =
  */
 export const isMaybe =
   (x: any): x is Maybe<any> =>
-    typeof x === 'object' && x !== null && x.isJust || x === Nothing
+    typeof x === "object" && x !== null && x.isJust || x === Nothing
 
 /**
  * `normalize :: (a | Maybe a) -> Maybe a`

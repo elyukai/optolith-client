@@ -1,9 +1,9 @@
-import { Categories } from '../../constants/Categories';
-import { List } from '../structures/List';
-import { Maybe, Nothing } from '../structures/Maybe';
-import { fromDefault, Record } from '../structures/Record';
-import { Die } from './sub/Die';
-import { EntryWithCategory } from './wikiTypeHelpers';
+import { Categories } from "../../constants/Categories";
+import { List } from "../structures/List";
+import { Maybe, Nothing } from "../structures/Maybe";
+import { fromDefault, Record } from "../structures/Record";
+import { Die } from "./sub/Die";
+import { EntryWithCategory } from "./wikiTypeHelpers";
 
 export interface RaceVariant {
   id: string
@@ -26,8 +26,8 @@ export interface RaceVariant {
 
 export const RaceVariant =
   fromDefault<RaceVariant> ({
-    id: '',
-    name: '',
+    id: "",
+    name: "",
     commonCultures: List.empty,
     commonAdvantages: List.empty,
     commonAdvantagesText: Nothing,

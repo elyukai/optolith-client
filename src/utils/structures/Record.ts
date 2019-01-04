@@ -7,11 +7,11 @@
  * @author Lukas Obermann
  */
 
-import { not, pipe } from 'ramda';
-import { Lens, lens } from './Lens';
-import { isJust, isMaybe, isNothing, Maybe, Nothing } from './Maybe';
-import { foldl, fromArray, OrderedSet } from './OrderedSet';
-import { show } from './Show';
+import { not, pipe } from "ramda";
+import { Lens, lens } from "./Lens";
+import { isJust, isMaybe, isNothing, Maybe, Nothing } from "./Maybe";
+import { foldl, fromArray, OrderedSet } from "./OrderedSet";
+import { show } from "./Show";
 
 
 // CONSTRUCTOR
@@ -67,7 +67,7 @@ export const fromDefault =
     const defaultValues = Object.freeze (Object.entries (def) .reduce<Required<A>> (
       (acc, [key, value]) => {
         // tslint:disable-next-line: strict-type-predicates
-        if (typeof key !== 'string') {
+        if (typeof key !== "string") {
           throw new TypeError (`Record key must be a String! Got ${show (key)} instead.`)
         }
 
@@ -276,7 +276,7 @@ export const toObject = <A extends RecordBase> (r: Record<A>): A =>
  */
 export const isRecord =
   (x: any): x is Record<any> =>
-    typeof x === 'object' && x !== null && x.isRecord
+    typeof x === "object" && x !== null && x.isRecord
 
 
 // NAMESPACED FUNCTIONS
@@ -299,13 +299,14 @@ export const Record = {
 
 // TYPE HELPERS
 
-type Accessor<A extends RecordBase, K extends keyof A> = (r: Record<Pick<A, K>>) => A[K]
+export type Accessor<A extends RecordBase, K extends keyof A> =
+  (r: Record<Pick<A, K>>) => A[K]
 
-type Accessors<A extends RecordBase> = {
+export type Accessors<A extends RecordBase> = {
   [K in keyof A]: Accessor<A, K>
 }
 
-type Lenses<A extends RecordBase> = {
+export type Lenses<A extends RecordBase> = {
   [K in keyof A]: Lens<Record<A>, A[K]>
 }
 
@@ -355,6 +356,6 @@ export type PartialMaybeOrNothing<A> = {
   [K in PartialMaybePartialKeys<A>]?: A[K] extends Maybe<any> ? A[K] : never
 }
 
-interface RecordBase {
+export interface RecordBase {
   [key: string]: any
 }

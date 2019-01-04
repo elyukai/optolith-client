@@ -1,6 +1,6 @@
-import { List } from '../../structures/List';
-import { fromDefault, Record } from '../../structures/Record';
-import { ProfessionSelection, ProfessionSelectionIds } from '../wikiTypeHelpers';
+import { List } from "../../structures/List";
+import { fromDefault, Record } from "../../structures/Record";
+import { AnyProfessionSelection, ProfessionSelectionIds } from "../wikiTypeHelpers";
 
 export interface TerrainKnowledgeSelection {
   id: ProfessionSelectionIds
@@ -14,5 +14,5 @@ export const TerrainKnowledgeSelection =
   })
 
 export const isSkillsSelection =
-  (obj: ProfessionSelection): obj is Record<TerrainKnowledgeSelection> =>
+  (obj: AnyProfessionSelection): obj is Record<TerrainKnowledgeSelection> =>
     TerrainKnowledgeSelection.A.id (obj) === ProfessionSelectionIds.TERRAIN_KNOWLEDGE

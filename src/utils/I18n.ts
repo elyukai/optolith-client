@@ -1,8 +1,9 @@
-import { pipe } from 'ramda';
-import { thrush } from './structures/Function';
-import { fnull, List, subscript } from './structures/List';
-import { fmap, maybe, Maybe, normalize, sum } from './structures/Maybe';
-import { L10n, L10nRecord } from './wikiData/L10n';
+import { pipe } from "ramda";
+import { thrush } from "./structures/Function";
+import { fnull, List, subscript } from "./structures/List";
+import { fmap, maybe, Maybe, normalize, sum } from "./structures/Maybe";
+import { toOrdering } from "./structures/Ord";
+import { L10n, L10nRecord } from "./wikiData/L10n";
 
 /**
  * Displays a localized message and inserts values into placeholders if
@@ -20,12 +21,12 @@ export const translateP =
   (params: List<string | number>): ReturnType<T> => {
     const message = (getter as unknown as (messages: L10nRecord) => ReturnType<T>) (messages)
 
-    if (!fnull (params) && typeof message === 'string') {
+    if (!fnull (params) && typeof message === "string") {
       return message.replace (
         /\{(\d+)\}/g,
         (_, p1) => {
           return maybe<string | number, string> (`{${p1}}`)
-                                                (param => typeof param === 'number'
+                                                (param => typeof param === "number"
                                                   ? param.toString ()
                                                   : param)
                                                 (subscript (params) (Number.parseInt (p1, 10)))
@@ -42,8 +43,8 @@ export const translateP =
  * @param key The key in messages containing the string you want to display.
  */
 export const translate =
-  <T extends typeof L10n.A[keyof typeof L10n.A]>
   (messages: L10nRecord) =>
+  <T extends typeof L10n.A[keyof typeof L10n.A]>
   (getter: T): ReturnType<T> =>
     translateP (messages) (getter) (List.empty) as ReturnType<T>
 
@@ -85,7 +86,7 @@ export const localizeNumber = (localeId: string) => (num: number) => num .toLoca
  */
 export const localizeSize =
   (localeId: string) =>
-    pipe (fmap<number, number> (size => localeId === 'en-US' ? size * 0.4 : size), sum)
+    pipe (fmap<number, number> (size => localeId === "en-US" ? size * 0.4 : size), sum)
 
 /**
  * If the selected language is English kilograms will be converted to pounds.
@@ -94,4 +95,11 @@ export const localizeSize =
  */
 export const localizeWeight =
   (localeId: string): ((x: number | Maybe<number>) => number) =>
-    pipe (normalize, fmap (weight => localeId === 'en-US' ? weight * 2 : weight), sum)
+    pipe (normalize, fmap (weight => localeId === "en-US" ? weight * 2 : weight), sum)
+
+/**
+ * Takes a locale and returns a locale-aware string compare function.
+ */
+export const compareLocale =
+  (locale: string) => (a: string) => (b: string) =>
+    toOrdering (Intl.Collator (locale, { numeric: true }) .compare (a, b))

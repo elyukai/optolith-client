@@ -1,7 +1,7 @@
-import { List } from '../structures/List';
-import { fromDefault, Record } from '../structures/Record';
-import { Race } from '../wikiData/Race';
-import { RaceVariant } from '../wikiData/RaceVariant';
+import { List } from "../structures/List";
+import { fromDefault, Record } from "../structures/Record";
+import { Race } from "../wikiData/Race";
+import { RaceVariant } from "../wikiData/RaceVariant";
 
 export interface RaceCombined {
   wikiEntry: Record<Race>

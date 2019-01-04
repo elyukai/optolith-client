@@ -6,9 +6,9 @@
  * @author Lukas Obermann
  */
 
-import { pipe } from 'ramda';
-import * as Const from './Const';
-import * as Identity from './Identity';
+import { pipe } from "ramda";
+import * as Const from "./Const";
+import * as Identity from "./Identity";
 
 /**
  * `Lens a b = Functor f => (b -> f b) -> a -> f a`

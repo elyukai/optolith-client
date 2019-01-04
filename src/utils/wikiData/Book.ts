@@ -1,4 +1,4 @@
-import { fromDefault } from '../structures/Record';
+import { fromDefault } from "../structures/Record";
 
 export interface Book {
   id: string
@@ -8,7 +8,7 @@ export interface Book {
 
 export const Book =
   fromDefault<Book> ({
-    id: '',
-    name: '',
-    short: '',
+    id: "",
+    name: "",
+    short: "",
   })

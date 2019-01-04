@@ -1,8 +1,8 @@
-import { ActivatableSkillDependent } from '../activeEntries/ActivatableSkillDependent';
-import { fromDefault } from '../structures/Record';
-import { LiturgicalChant } from '../wikiData/LiturgicalChant';
-import { LiturgicalChantCombined } from './LiturgicalChantCombined';
-import { IncreasableWithRequirements } from './viewTypeHelpers';
+import { ActivatableSkillDependent } from "../activeEntries/ActivatableSkillDependent";
+import { fromDefault } from "../structures/Record";
+import { LiturgicalChant } from "../wikiData/LiturgicalChant";
+import { LiturgicalChantCombined } from "./LiturgicalChantCombined";
+import { IncreasableWithRequirements } from "./viewTypeHelpers";
 
 export interface LiturgicalChantWithRequirements
   extends LiturgicalChantCombined, IncreasableWithRequirements { }

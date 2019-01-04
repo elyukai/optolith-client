@@ -1,37 +1,37 @@
-import { IdPrefixes } from '../../constants/IdPrefixes';
-import * as Raw from '../../types/rawdata';
-import { prefixId as prefixId, prefixRawId } from '../IDUtils';
-import { add } from '../mathUtils';
-import { cons, consF, List } from '../structures/List';
-import { alt, fmap, fromNullable, Just, Maybe, Nothing } from '../structures/Maybe';
-import { OrderedMap } from '../structures/OrderedMap';
-import { fromBoth } from '../structures/Pair';
-import { Record, StringKeyObject } from '../structures/Record';
-import { Advantage } from '../wikiData/Advantage';
-import { Attribute } from '../wikiData/Attribute';
-import { Blessing } from '../wikiData/Blessing';
-import { Cantrip } from '../wikiData/Cantrip';
-import { CombatTechnique } from '../wikiData/CombatTechnique';
-import { Culture } from '../wikiData/Culture';
-import { Disadvantage } from '../wikiData/Disadvantage';
-import { ExperienceLevel } from '../wikiData/ExperienceLevel';
-import { ItemTemplate } from '../wikiData/ItemTemplate';
-import { LiturgicalChant } from '../wikiData/LiturgicalChant';
-import { Profession } from '../wikiData/Profession';
-import { ProfessionVariant } from '../wikiData/ProfessionVariant';
-import { Race } from '../wikiData/Race';
-import { RaceVariant } from '../wikiData/RaceVariant';
-import { Skill } from '../wikiData/Skill';
-import { SpecialAbility } from '../wikiData/SpecialAbility';
-import { Spell } from '../wikiData/Spell';
-import { CommonProfession } from '../wikiData/sub/CommonProfession';
-import { Die } from '../wikiData/sub/Die';
-import { IncreaseSkill } from '../wikiData/sub/IncreaseSkill';
-import { NameBySex } from '../wikiData/sub/NameBySex';
-import { PrimaryAttributeDamageThreshold } from '../wikiData/sub/PrimaryAttributeDamageThreshold';
-import { SourceLink } from '../wikiData/sub/SourceLink';
-import * as Wiki from '../wikiData/wikiTypeHelpers';
-import { convertRawApplications, convertRawIncreaseSkills, convertRawPrerequisiteObjects, convertRawPrerequisites, convertRawProfessionDependencyObjects, convertRawProfessionPrerequisiteObjects, convertRawProfessionRequireActivatable, convertRawProfessionSelections, convertRawProfessionVariantSelections, convertRawSelections, mapRawWithPrefix } from './convertRawObjectsToWikiUtils';
+import { IdPrefixes } from "../../constants/IdPrefixes";
+import * as Raw from "../../types/rawdata";
+import { prefixId as prefixId, prefixRawId } from "../IDUtils";
+import { add } from "../mathUtils";
+import { cons, consF, List } from "../structures/List";
+import { alt, fmap, fromNullable, Just, Maybe, Nothing } from "../structures/Maybe";
+import { OrderedMap } from "../structures/OrderedMap";
+import { fromBoth } from "../structures/Pair";
+import { Record, StringKeyObject } from "../structures/Record";
+import { Advantage } from "../wikiData/Advantage";
+import { Attribute } from "../wikiData/Attribute";
+import { Blessing } from "../wikiData/Blessing";
+import { Cantrip } from "../wikiData/Cantrip";
+import { CombatTechnique } from "../wikiData/CombatTechnique";
+import { Culture } from "../wikiData/Culture";
+import { Disadvantage } from "../wikiData/Disadvantage";
+import { ExperienceLevel } from "../wikiData/ExperienceLevel";
+import { ItemTemplate } from "../wikiData/ItemTemplate";
+import { LiturgicalChant } from "../wikiData/LiturgicalChant";
+import { Profession } from "../wikiData/Profession";
+import { ProfessionVariant } from "../wikiData/ProfessionVariant";
+import { Race } from "../wikiData/Race";
+import { RaceVariant } from "../wikiData/RaceVariant";
+import { Skill } from "../wikiData/Skill";
+import { SpecialAbility } from "../wikiData/SpecialAbility";
+import { Spell } from "../wikiData/Spell";
+import { CommonProfession } from "../wikiData/sub/CommonProfession";
+import { Die } from "../wikiData/sub/Die";
+import { IncreaseSkill } from "../wikiData/sub/IncreaseSkill";
+import { NameBySex } from "../wikiData/sub/NameBySex";
+import { PrimaryAttributeDamageThreshold } from "../wikiData/sub/PrimaryAttributeDamageThreshold";
+import { SourceLink } from "../wikiData/sub/SourceLink";
+import * as Wiki from "../wikiData/wikiTypeHelpers";
+import { convertRawApplications, convertRawIncreaseSkills, convertRawPrerequisiteObjects, convertRawPrerequisites, convertRawProfessionDependencyObjects, convertRawProfessionPrerequisiteObjects, convertRawProfessionRequireActivatable, convertRawProfessionSelections, convertRawProfessionVariantSelections, convertRawSelections, mapRawWithPrefix } from "./convertRawObjectsToWikiUtils";
 
 const getSourceBooks =
   (srcIds: string[], srcPages: number[]): List<Record<SourceLink>> =>
@@ -67,7 +67,7 @@ const convertSize = (old: (number | [number, number])[] | undefined): SizeNew =>
   old !== undefined
     ? old .reduce<SizeNew> (
       (obj, value) => {
-        if (typeof value === 'number') {
+        if (typeof value === "number") {
           return {
             ...obj,
             sizeBase: fmap (add (value)) (obj .sizeBase),
@@ -99,7 +99,7 @@ interface WeightNew {
 const convertWeight = (old: (number | [number, number])[]): WeightNew =>
   old.reduce<WeightNew> (
     (obj, value) => {
-      if (typeof value === 'number') {
+      if (typeof value === "number") {
         return {
           ...obj,
           weightBase: obj .weightBase + value,
@@ -324,7 +324,7 @@ export const initCulture =
         }))),
         commonProfessions: List.fromArray (
           typ_prof.map<boolean | Record<CommonProfession>> (
-            e => typeof e === 'boolean' ? e : CommonProfession ({
+            e => typeof e === "boolean" ? e : CommonProfession ({
               ...e,
               list: List.fromArray (e.list),
             })
@@ -398,8 +398,8 @@ export const initProfession =
 
       return Just (Profession ({
         id,
-        name: typeof name === 'object' ? NameBySex (name) : name,
-        subname: typeof subname === 'object'
+        name: typeof name === "object" ? NameBySex (name) : name,
+        subname: typeof subname === "object"
           ? Just (NameBySex (subname))
           : fromNullable (subname),
         ap,
@@ -465,7 +465,7 @@ export const initProfessionVariant =
 
       return Just (ProfessionVariant ({
         id,
-        name: typeof name === 'object' ? NameBySex (name) : name,
+        name: typeof name === "object" ? NameBySex (name) : name,
         ap,
         apOfActivatables,
         dependencies: convertRawProfessionDependencyObjects (pre_req),
@@ -523,7 +523,7 @@ export const initAdvantage =
       return Just (Advantage ({
         ...otherLocale,
         ...otherData,
-        cost: typeof ap === 'object' ? List.fromArray (ap) : ap,
+        cost: typeof ap === "object" ? List.fromArray (ap) : ap,
         prerequisites: convertRawPrerequisites (req),
         select: convertRawSelections (localeSel) (sel),
         prerequisitesText: fromNullable (reqText),
@@ -588,7 +588,7 @@ export const initDisadvantage =
       return Just (Disadvantage ({
         ...otherLocale,
         ...otherData,
-        cost: typeof ap === 'object' ? List.fromArray (ap) : ap,
+        cost: typeof ap === "object" ? List.fromArray (ap) : ap,
         prerequisites: convertRawPrerequisites (req),
         select: convertRawSelections (localeSel) (sel),
         prerequisitesText: fromNullable (reqText),
@@ -667,7 +667,7 @@ export const initSpecialAbility =
       return Just (SpecialAbility ({
         ...otherLocale,
         ...otherData,
-        cost: typeof ap === 'object' ? List.fromArray (ap) : ap,
+        cost: typeof ap === "object" ? List.fromArray (ap) : ap,
         input: fromNullable (input),
         max: fromNullable (max),
         tiers: fromNullable (tiers),
@@ -694,7 +694,7 @@ export const initSpecialAbility =
           ...reqIndexIgnore .map<[number, false]> (e => [Number.parseInt (e, 10), false]),
         ]),
         extended: fmap ((ext: (string | string[])[]) => List.fromArray (ext .map (
-                         e => typeof e === 'object' ? List.fromArray (e) : e
+                         e => typeof e === "object" ? List.fromArray (e) : e
                        )))
                        (fromNullable (extended)),
         nameInWiki: fromNullable (nameInWiki),
@@ -1011,7 +1011,7 @@ export const initItemTemplate =
           primaryThreshold !== undefined
             ? Just (PrimaryAttributeDamageThreshold ({
               primary: fromNullable (primaryThreshold .primary),
-              threshold: typeof primaryThreshold .threshold === 'object'
+              threshold: typeof primaryThreshold .threshold === "object"
                 ? List.fromArray (primaryThreshold .threshold)
                 : primaryThreshold .threshold,
             }))

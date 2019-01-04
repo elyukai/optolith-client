@@ -1,44 +1,46 @@
-import { pipe } from 'ramda';
-import { IdPrefixes } from '../../constants/IdPrefixes';
-import * as Data from '../../types/data';
-import { isActive } from '../activatable/isActive';
-import { isPactValid as isPactFromStateValid } from '../activatable/pactUtils';
-import { getActiveSelections } from '../activatable/selectionUtils';
-import { ActivatableDependent, isActivatableDependent, isMaybeActivatableDependent } from '../activeEntries/ActivatableDependent';
-import { ActivatableSkillDependent, isMaybeActivatableSkillDependent } from '../activeEntries/ActivatableSkillDependent';
-import { ActiveObject } from '../activeEntries/ActiveObject';
-import { AttributeDependent } from '../activeEntries/AttributeDependent';
-import { DependencyObject } from '../activeEntries/DependencyObject';
-import { isExtendedSkillDependent, SkillDependent } from '../activeEntries/SkillDependent';
-import { HeroModel, HeroModelRecord } from '../heroData/HeroModel';
-import { Pact } from '../heroData/Pact';
-import { getHeroStateItem } from '../heroStateUtils';
-import { prefixId } from '../IDUtils';
-import { dec, gte, lt, lte, min, subtract } from '../mathUtils';
-import { not } from '../not';
-import { getPrimaryAttributeId } from '../primaryAttributeUtils';
-import { equals } from '../structures/Eq';
-import { flip, join, on, thrush } from '../structures/Function';
-import { set } from '../structures/Lens';
-import { all, any, elem, elem_, foldl, fromElements, ifoldl, isList, List, map, sortBy, subscript } from '../structures/List';
-import { and, bind_, catMaybes, ensure, fmap, fromJust, isJust, isNothing, Just, Maybe, maybe, maybeToList, Nothing, or } from '../structures/Maybe';
-import { lookup_, OrderedMap, toList } from '../structures/OrderedMap';
-import { fst, Pair, snd } from '../structures/Pair';
-import { Record } from '../structures/Record';
-import { Culture } from '../wikiData/Culture';
-import { RequireActivatable, RequireActivatableL } from '../wikiData/prerequisites/ActivatableRequirement';
-import { CultureRequirement, isCultureRequirement } from '../wikiData/prerequisites/CultureRequirement';
-import { isIncreasableRequirement, RequireIncreasable, RequireIncreasableL } from '../wikiData/prerequisites/IncreasableRequirement';
-import { isPactRequirement, PactRequirement } from '../wikiData/prerequisites/PactRequirement';
-import { isPrimaryAttributeRequirement, RequirePrimaryAttribute } from '../wikiData/prerequisites/PrimaryAttributeRequirement';
-import { isRaceRequirement, RaceRequirement } from '../wikiData/prerequisites/RaceRequirement';
-import { isSexRequirement, SexRequirement } from '../wikiData/prerequisites/SexRequirement';
-import { Profession } from '../wikiData/Profession';
-import { Race } from '../wikiData/Race';
-import { Skill } from '../wikiData/Skill';
-import { WikiModel, WikiModelRecord } from '../wikiData/WikiModel';
-import * as Wiki from '../wikiData/wikiTypeHelpers';
-import { getAllWikiEntriesByGroup } from '../WikiUtils';
+import { pipe } from "ramda";
+import { IdPrefixes } from "../../constants/IdPrefixes";
+import * as Data from "../../types/data";
+import { isActive } from "../activatable/isActive";
+import { isPactValid as isPactFromStateValid } from "../activatable/pactUtils";
+import { getActiveSelections } from "../activatable/selectionUtils";
+import { ActivatableDependent, isActivatableDependent, isMaybeActivatableDependent } from "../activeEntries/ActivatableDependent";
+import { ActivatableSkillDependent, isMaybeActivatableSkillDependent } from "../activeEntries/ActivatableSkillDependent";
+import { ActiveObject } from "../activeEntries/ActiveObject";
+import { AttributeDependent } from "../activeEntries/AttributeDependent";
+import { DependencyObject } from "../activeEntries/DependencyObject";
+import { isExtendedSkillDependent, SkillDependent } from "../activeEntries/SkillDependent";
+import { HeroModel, HeroModelRecord } from "../heroData/HeroModel";
+import { Pact } from "../heroData/Pact";
+import { getHeroStateItem } from "../heroStateUtils";
+import { prefixId } from "../IDUtils";
+import { dec, gte, lt, lte, min } from "../mathUtils";
+import { not } from "../not";
+import { getPrimaryAttributeId } from "../primaryAttributeUtils";
+import { equals } from "../structures/Eq";
+import { flip, join, on, thrush } from "../structures/Function";
+import { compare } from "../structures/Int";
+import { set } from "../structures/Lens";
+import { all, any, concat, elem, elem_, foldl, fromElements, ifoldl, isList, List, map, sortBy, subscript } from "../structures/List";
+import { and, bind_, catMaybes, ensure, fmap, fromJust, isJust, isNothing, Just, Maybe, maybe, maybeToList, Nothing, or } from "../structures/Maybe";
+import { Ordering } from "../structures/Ord";
+import { lookup_, OrderedMap, toList } from "../structures/OrderedMap";
+import { fst, Pair, snd } from "../structures/Pair";
+import { Record } from "../structures/Record";
+import { Culture } from "../wikiData/Culture";
+import { RequireActivatable, RequireActivatableL } from "../wikiData/prerequisites/ActivatableRequirement";
+import { CultureRequirement, isCultureRequirement } from "../wikiData/prerequisites/CultureRequirement";
+import { isIncreasableRequirement, RequireIncreasable, RequireIncreasableL } from "../wikiData/prerequisites/IncreasableRequirement";
+import { isPactRequirement, PactRequirement } from "../wikiData/prerequisites/PactRequirement";
+import { isPrimaryAttributeRequirement, RequirePrimaryAttribute } from "../wikiData/prerequisites/PrimaryAttributeRequirement";
+import { isRaceRequirement, RaceRequirement } from "../wikiData/prerequisites/RaceRequirement";
+import { isSexRequirement, SexRequirement } from "../wikiData/prerequisites/SexRequirement";
+import { Profession } from "../wikiData/Profession";
+import { Race } from "../wikiData/Race";
+import { Skill } from "../wikiData/Skill";
+import { WikiModel, WikiModelRecord } from "../wikiData/WikiModel";
+import * as Wiki from "../wikiData/wikiTypeHelpers";
+import { getAllWikiEntriesByGroup } from "../WikiUtils";
 
 type Validator = (wiki: WikiModelRecord) =>
                  (state: HeroModelRecord) =>
@@ -54,13 +56,15 @@ const getAllRaceEntries =
       race,
       bind_ (lookup_ (races (wiki))),
       fmap (
-        selectedRace => fromElements (
-          ...Race.A.stronglyRecommendedAdvantages (selectedRace),
-          ...Race.A.automaticAdvantages (selectedRace),
-          ...Race.A.stronglyRecommendedAdvantages (selectedRace),
-          ...Race.A.stronglyRecommendedDisadvantages (selectedRace),
-          ...Race.A.commonAdvantages (selectedRace),
-          ...Race.A.commonDisadvantages (selectedRace)
+        selectedRace => concat (
+          fromElements (
+            Race.A.stronglyRecommendedAdvantages (selectedRace),
+            Race.A.automaticAdvantages (selectedRace),
+            Race.A.stronglyRecommendedAdvantages (selectedRace),
+            Race.A.stronglyRecommendedDisadvantages (selectedRace),
+            Race.A.commonAdvantages (selectedRace),
+            Race.A.commonDisadvantages (selectedRace)
+          )
         )
       )
     )
@@ -71,9 +75,11 @@ const getAllCultureEntries =
       culture,
       bind_ (lookup_ (cultures (wiki))),
       fmap (
-        selectedCulture => fromElements (
-          ...Culture.A.commonAdvantages (selectedCulture),
-          ...Culture.A.commonDisadvantages (selectedCulture)
+        selectedCulture => concat (
+          fromElements (
+            Culture.A.commonAdvantages (selectedCulture),
+            Culture.A.commonDisadvantages (selectedCulture)
+          )
         )
       )
     )
@@ -84,9 +90,11 @@ const getAllProfessionEntries =
       profession,
       bind_ (lookup_ (professions (wiki))),
       fmap (
-        selectedProfession => fromElements (
-          ...Profession.A.suggestedAdvantages (selectedProfession),
-          ...Profession.A.suggestedDisadvantages (selectedProfession)
+        selectedProfession => concat (
+          fromElements (
+            Profession.A.suggestedAdvantages (selectedProfession),
+            Profession.A.suggestedDisadvantages (selectedProfession)
+          )
         )
       )
     )
@@ -105,7 +113,7 @@ const isRCPValid =
         ))
 
 const isSexValid =
-  (currentSex: 'm' | 'f') => (req: Record<SexRequirement>): boolean =>
+  (currentSex: "m" | "f") => (req: Record<SexRequirement>): boolean =>
     equals (currentSex) (SexRequirement.A.value (req))
 
 const isRaceValid =
@@ -170,7 +178,7 @@ const hasNeededPactDomain =
       return true
     }
 
-    if (typeof stateDomain === 'string') {
+    if (typeof stateDomain === "string") {
       return false
     }
 
@@ -291,11 +299,11 @@ const isActivatableValid =
     else {
       const sid = RequireActivatable.A.sid (req)
 
-      if (Maybe.elem<Wiki.SID> ('sel') (sid)) {
+      if (Maybe.elem<Wiki.SID> ("sel") (sid)) {
         return true
       }
 
-      if (Maybe.elem<Wiki.SID> ('GR') (sid)) {
+      if (Maybe.elem<Wiki.SID> ("GR") (sid)) {
         return and (pipe (
                            bind_<Data.Dependent, Record<ActivatableDependent>>
                              (ensure (isActivatableDependent)),
@@ -357,7 +365,7 @@ export const validateObject =
   (state: HeroModelRecord) =>
   (req: Wiki.AllRequirements) =>
   (sourceId: string): boolean =>
-    req === 'RCP'
+    req === "RCP"
       ? isRCPValid (wiki) (state) (sourceId)
       : isSexRequirement (req)
       ? isSexValid (sex (state)) (req)
@@ -414,7 +422,7 @@ export const validateLevel =
     foldl<Data.ActivatableDependency, Maybe<number>>
       (max => dep =>
           // If `dep` prohibits higher level
-          typeof dep === 'object'
+          typeof dep === "object"
           && Maybe.elem (false) (DependencyObject.A.active (dep))
           ? maybe<number, Maybe<number>>
             (max)
@@ -425,7 +433,7 @@ export const validateLevel =
               toList as (m: OrderedMap<number, List<Wiki.AllRequirements>>) =>
                 List<Pair<number, List<Wiki.AllRequirements>>>,
               sortBy (
-                on<Pair<number, List<Wiki.AllRequirements>>, number, number> (subtract) (fst)
+                on<Pair<number, List<Wiki.AllRequirements>>, number, Ordering> (compare) (fst)
               ),
               join (
                 list => ifoldl<Pair<number, List<Wiki.AllRequirements>>, Maybe<number>>

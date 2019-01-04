@@ -1,8 +1,8 @@
-import { ActivatableDependency, Dependent } from '../../types/data';
-import { fnull, fromElements, List } from '../structures/List';
-import { fromJust, isJust, Just, Maybe } from '../structures/Maybe';
-import { fromDefault, makeLenses, member, notMember, Omit, Record } from '../structures/Record';
-import { ActiveObject } from './ActiveObject';
+import { ActivatableDependency, Dependent } from "../../types/data";
+import { fnull, fromElements, List } from "../structures/List";
+import { fromJust, isJust, Just, Maybe } from "../structures/Maybe";
+import { fromDefault, makeLenses, member, notMember, Omit, Record } from "../structures/Record";
+import { ActiveObject } from "./ActiveObject";
 
 export interface ActivatableDependent {
   id: string;
@@ -12,7 +12,7 @@ export interface ActivatableDependent {
 
 export const ActivatableDependent =
   fromDefault<ActivatableDependent> ({
-    id: '',
+    id: "",
     active: fromElements<Record<ActiveObject>> (),
     dependencies: fromElements<ActivatableDependency> (),
   })
@@ -20,7 +20,7 @@ export const ActivatableDependent =
 export const ActivatableDependentL = makeLenses (ActivatableDependent)
 
 export const createActivatableDependent =
-  (options: Partial<Omit<ActivatableDependent, 'id'>>) =>
+  (options: Partial<Omit<ActivatableDependent, "id">>) =>
   (id: string): Record<ActivatableDependent> =>
     ActivatableDependent ({
       id,
@@ -38,13 +38,13 @@ export const createPlainActivatableDependent = createActivatableDependent ({ })
 export const isMaybeActivatableDependent =
   (entry: Maybe<Dependent>): entry is Just<Record<ActivatableDependent>> =>
     isJust (entry)
-    && member ('active') (fromJust (entry))
-    && notMember ('value') (fromJust (entry))
+    && member ("active") (fromJust (entry))
+    && notMember ("value") (fromJust (entry))
 
 export const isActivatableDependent =
   (entry: Dependent): entry is Record<ActivatableDependent> =>
-    member ('active') (entry)
-    && notMember ('value') (entry)
+    member ("active") (entry)
+    && notMember ("value") (entry)
 
 const { active, dependencies } = ActivatableDependent.A
 

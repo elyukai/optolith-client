@@ -10,7 +10,7 @@ import { Just, Maybe, Nothing, OrderedMap, OrderedSet, Record, Tuple } from '../
 import { translate, UIMessagesObject } from '../../utils/I18n';
 import { sign } from '../../utils/NumberUtils';
 import { getAllAdjustmentSelections, getBuyScriptElement, getCantripsElementAndValidation, getCombatTechniquesElementAndValidation, getCombatTechniquesSecondElementAndValidation, getCursesElementAndValidation, getLanguagesAndScriptsElementAndValidation, getMainScriptSelectionElement, getMotherTongueSelectionElement, getSkillsElementAndValidation, getSkillSpecializationElement, getTerrainKnowledgeElement } from '../../utils/rcpAdjustmentSelectionUtils';
-import { Culture, Profession, ProfessionSelection, ProfessionSelectionIds, ProfessionVariant, Race, WikiAll } from '../../utils/wikiData/wikiTypeHelpers';
+import { AnyProfessionSelection, Culture, Profession, ProfessionSelectionIds, ProfessionVariant, Race, WikiAll } from '../../utils/wikiData/wikiTypeHelpers';
 
 export interface SelectionsOwnProps {
   locale: UIMessagesObject;
@@ -180,7 +180,7 @@ export class Selections extends React.Component<SelectionsProps, SelectionsState
   setTerrainKnowledge = (terrainKnowledge: number) =>
     this.setState ({ terrainKnowledge: Just (terrainKnowledge) });
 
-  assignRCPEntries = (selMap: OrderedMap<ProfessionSelectionIds, ProfessionSelection>) => {
+  assignRCPEntries = (selMap: OrderedMap<ProfessionSelectionIds, AnyProfessionSelection>) => {
     this.props.setSelections ({
       ...this.state,
       map: selMap,

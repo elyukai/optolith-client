@@ -1,6 +1,6 @@
-import { ActivatableSkillDependent } from '../activeEntries/ActivatableSkillDependent';
-import { fromDefault, Record } from '../structures/Record';
-import { LiturgicalChant } from '../wikiData/LiturgicalChant';
+import { ActivatableSkillDependent } from "../activeEntries/ActivatableSkillDependent";
+import { fromDefault, Record } from "../structures/Record";
+import { LiturgicalChant } from "../wikiData/LiturgicalChant";
 
 export interface LiturgicalChantCombined {
   wikiEntry: Record<LiturgicalChant>

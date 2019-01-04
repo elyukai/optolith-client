@@ -1,9 +1,9 @@
-import { Categories } from '../../constants/Categories';
-import { List } from '../structures/List';
-import { Maybe, Nothing } from '../structures/Maybe';
-import { fromDefault, Record } from '../structures/Record';
-import { Application } from './sub/Application';
-import { EntryWithCategory } from './wikiTypeHelpers';
+import { Categories } from "../../constants/Categories";
+import { List } from "../structures/List";
+import { Maybe, Nothing } from "../structures/Maybe";
+import { fromDefault, Record } from "../structures/Record";
+import { Application } from "./sub/Application";
+import { EntryWithCategory } from "./wikiTypeHelpers";
 
 export interface Skill {
   id: string
@@ -25,21 +25,21 @@ export interface Skill {
 
 export const Skill =
   fromDefault<Skill> ({
-    id: '',
-    name: '',
+    id: "",
+    name: "",
     category: Categories.TALENTS,
     check: List.empty,
-    encumbrance: '',
+    encumbrance: "",
     gr: 0,
     ic: 0,
     applications: Nothing,
     applicationsInput: Nothing,
     tools: Nothing,
-    quality: '',
-    failed: '',
-    critical: '',
-    botch: '',
-    src: '',
+    quality: "",
+    failed: "",
+    critical: "",
+    botch: "",
+    src: "",
   })
 
 export const isSkill =

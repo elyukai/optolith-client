@@ -1,11 +1,9 @@
-import { remote } from 'electron';
-import * as fs from 'fs';
-import { divideBy, inc } from './mathUtils';
-import { fromElements, length, subscript } from './structures/List';
-import { fromMaybe, fromNullable, Maybe } from './structures/Maybe';
-import { bimap, fromBoth, fst, Pair, snd } from './structures/Pair';
-
-// tslint:disable: no-void-expression
+import { remote } from "electron";
+import * as fs from "fs";
+import { divideBy, inc } from "./mathUtils";
+import { fromElements, length, subscript } from "./structures/List";
+import { fromMaybe, fromNullable, Maybe } from "./structures/Maybe";
+import { bimap, fromBoth, fst, Pair, snd } from "./structures/Pair";
 
 export const readFile =
   async (path: string) =>
@@ -13,7 +11,7 @@ export const readFile =
       (resolve, reject) =>
         fs.readFile (
           path,
-          'utf8',
+          "utf8",
           (error, data) => error !== null ? reject (error) : resolve (data)
         )
     )
@@ -87,13 +85,13 @@ export const getSystemLocale = () => {
   const systemLocale = remote.app.getLocale ()
 
   return /^de/ .test (systemLocale)
-    ? 'de-DE'
+    ? "de-DE"
     : /^nl/ .test (systemLocale)
-    ? 'nl-BE'
-    : 'en-US'
+    ? "nl-BE"
+    : "en-US"
 }
 
-const byteTags = fromElements ('', 'K', 'M', 'G', 'T')
+const byteTags = fromElements ("", "K", "M", "G", "T")
 
 const foldByteLevels =
   (x: Pair<number, number>): Pair<number, number> =>
@@ -125,5 +123,5 @@ export const bytify =
     const rounded = Math.round (snd (levelAndNumber) * 10)
     const localizedNumber = (rounded / 10) .toLocaleString (localeId)
 
-    return `${localizedNumber} ${fromMaybe ('') (subscript (byteTags) (fst (levelAndNumber)))}B`
+    return `${localizedNumber} ${fromMaybe ("") (subscript (byteTags) (fst (levelAndNumber)))}B`
   }

@@ -1,9 +1,9 @@
-import { Categories } from '../../constants/Categories';
-import { List } from '../structures/List';
-import { Maybe, Nothing } from '../structures/Maybe';
-import { fromDefault, Record } from '../structures/Record';
-import { SourceLink } from './sub/SourceLink';
-import { EntryWithCategory } from './wikiTypeHelpers';
+import { Categories } from "../../constants/Categories";
+import { List } from "../structures/List";
+import { Maybe, Nothing } from "../structures/Maybe";
+import { fromDefault, Record } from "../structures/Record";
+import { SourceLink } from "./sub/SourceLink";
+import { EntryWithCategory } from "./wikiTypeHelpers";
 
 export interface Cantrip {
   id: string
@@ -21,15 +21,15 @@ export interface Cantrip {
 
 export const Cantrip =
   fromDefault<Cantrip> ({
-    id: '',
-    name: '',
+    id: "",
+    name: "",
     property: 0,
     tradition: List.empty,
     category: Categories.CANTRIPS,
-    effect: '',
-    range: '',
-    duration: '',
-    target: '',
+    effect: "",
+    range: "",
+    duration: "",
+    target: "",
     note: Nothing,
     src: List.empty,
   })

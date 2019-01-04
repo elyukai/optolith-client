@@ -1,6 +1,6 @@
-import { Maybe, Nothing } from '../../structures/Maybe';
-import { fromDefault, Record } from '../../structures/Record';
-import { ProfessionSelection, ProfessionSelectionIds } from '../wikiTypeHelpers';
+import { Maybe, Nothing } from "../../structures/Maybe";
+import { fromDefault, Record } from "../../structures/Record";
+import { AnyProfessionSelection, ProfessionSelectionIds } from "../wikiTypeHelpers";
 
 export interface SkillsSelection {
   id: ProfessionSelectionIds
@@ -22,5 +22,5 @@ export const SkillsSelection =
   })
 
 export const isSkillsSelection =
-  (obj: ProfessionSelection): obj is Record<SkillsSelection> =>
+  (obj: AnyProfessionSelection): obj is Record<SkillsSelection> =>
     SkillsSelection.A.id (obj) === ProfessionSelectionIds.SKILLS

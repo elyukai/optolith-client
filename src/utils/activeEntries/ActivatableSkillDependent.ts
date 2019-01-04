@@ -1,7 +1,7 @@
-import { Dependent, ExtendedSkillDependency } from '../../types/data';
-import { fnull, fromElements, List } from '../structures/List';
-import { fromJust, isJust, Just, Maybe } from '../structures/Maybe';
-import { fromDefault, makeLenses, member, Omit, Record } from '../structures/Record';
+import { Dependent, ExtendedSkillDependency } from "../../types/data";
+import { fnull, fromElements, List } from "../structures/List";
+import { fromJust, isJust, Just, Maybe } from "../structures/Maybe";
+import { fromDefault, makeLenses, member, Omit, Record } from "../structures/Record";
 
 export interface ActivatableSkillDependent {
   id: string;
@@ -12,7 +12,7 @@ export interface ActivatableSkillDependent {
 
 export const ActivatableSkillDependent =
   fromDefault<ActivatableSkillDependent> ({
-    id: '',
+    id: "",
     value: 0,
     active: false,
     dependencies: fromElements<ExtendedSkillDependency> (),
@@ -21,7 +21,7 @@ export const ActivatableSkillDependent =
 export const ActivatableSkillDependentL = makeLenses (ActivatableSkillDependent)
 
 const createActivatableSkillDependent =
-  (options: Partial<Omit<ActivatableSkillDependent, 'id'>>) =>
+  (options: Partial<Omit<ActivatableSkillDependent, "id">>) =>
   (id: string): Record<ActivatableSkillDependent> =>
     ActivatableSkillDependent ({
       id,
@@ -42,13 +42,13 @@ export const createActivatableSkillDependentWithValue =
 export const isMaybeActivatableSkillDependent =
   (entry: Maybe<Dependent>): entry is Just<Record<ActivatableSkillDependent>> =>
     isJust (entry)
-    && member ('value') (fromJust (entry))
-    && member ('active') (fromJust (entry))
+    && member ("value") (fromJust (entry))
+    && member ("active") (fromJust (entry))
 
 export const isActivatableSkillDependent =
   (entry: Dependent): entry is Record<ActivatableSkillDependent> =>
-    member ('value') (entry)
-    && member ('active') (entry)
+    member ("value") (entry)
+    && member ("active") (entry)
 
 const { active, value, dependencies } = ActivatableSkillDependent.A
 

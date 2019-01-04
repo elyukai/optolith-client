@@ -1,5 +1,5 @@
-import { Maybe, Nothing } from '../structures/Maybe';
-import { fromDefault } from '../structures/Record';
+import { Maybe, Nothing } from "../structures/Maybe";
+import { fromDefault } from "../structures/Record";
 
 export interface HitZoneArmorForView {
   id: string
@@ -17,8 +17,8 @@ export interface HitZoneArmorForView {
 
 const HitZoneArmorForView =
   fromDefault<HitZoneArmorForView> ({
-    id: '',
-    name: '',
+    id: "",
+    name: "",
     head: Nothing,
     leftArm: Nothing,
     leftLeg: Nothing,

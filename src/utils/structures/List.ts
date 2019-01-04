@@ -6,15 +6,15 @@
  * @author Lukas Obermann
  */
 
-import { pipe } from 'ramda';
-import { add, max, min, multiply } from '../mathUtils';
-import { not } from '../not';
-import { equals } from './Eq';
-import { cnst, ident } from './Function';
-import { fromJust, imapMaybe, isJust, Just, Maybe, maybe, Nothing, Some } from './Maybe';
-import { isLTorEQ, Ordering } from './Ord';
-import { fromBinary, fromBoth, fst, Pair, snd } from './Pair';
-import { show } from './Show';
+import { pipe } from "ramda";
+import { add, max, min, multiply } from "../mathUtils";
+import { not } from "../not";
+import { equals } from "./Eq";
+import { cnst, ident } from "./Function";
+import { fromJust, imapMaybe, isJust, Just, Maybe, maybe, Nothing, Some } from "./Maybe";
+import { isLTorEQ, Ordering } from "./Ord";
+import { fromBinary, fromBoth, fst, Pair, snd } from "./Pair";
+import { show } from "./Show";
 
 
 // CONSTRUCTOR
@@ -311,7 +311,7 @@ export const foldr1 =
       return foldr1Node (f) (xs .head)
     }
 
-    throw new TypeError ('Cannot apply foldr1 to an empty list.')
+    throw new TypeError ("Cannot apply foldr1 to an empty list.")
   }
 
 const foldr1Node =
@@ -334,7 +334,7 @@ export const foldl1 =
       return foldl1Node (f) (xs .head .next) (value (xs .head))
     }
 
-    throw new TypeError ('Cannot apply foldl1 to an empty list.')
+    throw new TypeError ("Cannot apply foldl1 to an empty list.")
   }
 
 const foldl1Node =
@@ -788,7 +788,7 @@ const intercalateNode =
     ? value (xs) .toString () + separator + intercalateNode (separator)
                                                             (xs .next)
     : value (xs) .toString ()
-    : ''
+    : ""
 
 
 // BUILDING LISTS
@@ -930,7 +930,7 @@ const unfoldrNode =
   }
 
 
-// EXTRACTING SUBLIST
+// EXTRACTING SUBLISTS
 
 /**
  * `take :: Int -> [a] -> [a]`
@@ -997,6 +997,22 @@ const splitAtNode =
 
     return [consNode (a) (toNode (y)), b]
   }
+
+
+// PREDICATES
+
+/**
+ * `isSubsequenceOf :: Eq a => [a] -> [a] -> Bool`
+ *
+ * The `isSubsequenceOf` function takes two lists and returns `True` if all the
+ * elements of the first list occur, in order, in the second. The elements do
+ * not have to occur consecutively.
+ *
+ * `isSubsequenceOf x y` is equivalent to `elem x (subsequences y)`.
+ */
+export const isSubsequenceOf =
+  (x: string) => (y: string): boolean =>
+    y .includes (x)
 
 
 // SEARCHING BY EQUALITY
@@ -1775,6 +1791,16 @@ const ifindIndicesNode =
     : ifindIndicesNode (pred) (index + 1) (xs .next)
 
 
+// STRING OPERATIONS
+
+/**
+ * `lower :: String -> String`
+ *
+ * Convert a string to lower case.
+ */
+export const lower = (str: string) => str .toLowerCase ()
+
+
 // OWN METHODS
 
 /**
@@ -1825,7 +1851,7 @@ const listToArrayNode =
  * @param x The value to test.
  */
 export const isList =
-  (x: any): x is List<any> => typeof x === 'object' && x !== null && x.isList
+  (x: any): x is List<any> => typeof x === "object" && x !== null && x.isList
 
 /**
  * Returns the sum of all elements of the list that match the provided

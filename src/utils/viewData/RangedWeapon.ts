@@ -1,6 +1,6 @@
-import { List } from '../structures/List';
-import { Maybe, Nothing } from '../structures/Maybe';
-import { fromDefault } from '../structures/Record';
+import { List } from "../structures/List";
+import { Maybe, Nothing } from "../structures/Maybe";
+import { fromDefault } from "../structures/Record";
 
 export interface RangedWeapon {
   id: string
@@ -20,9 +20,9 @@ export interface RangedWeapon {
 
 const RangedWeapon =
   fromDefault<RangedWeapon> ({
-    id: '',
-    name: '',
-    combatTechnique: '',
+    id: "",
+    name: "",
+    combatTechnique: "",
     reloadTime: Nothing,
     damageDiceNumber: Nothing,
     damageDiceSides: Nothing,

@@ -1,32 +1,32 @@
-import { pipe } from 'ramda';
-import * as Data from '../../types/data';
-import * as Raw from '../../types/rawdata';
-import { ActivatableDependent } from '../activeEntries/ActivatableDependent';
-import { ActivatableSkillDependent } from '../activeEntries/ActivatableSkillDependent';
-import { ActiveObject } from '../activeEntries/ActiveObject';
-import { AttributeDependent } from '../activeEntries/AttributeDependent';
-import { getAPObject } from '../adventurePoints/adventurePointsSumUtils';
-import { Belongings } from '../heroData/Belongings';
-import { Energies } from '../heroData/Energies';
-import { HeroModel, HeroModelRecord } from '../heroData/HeroModel';
-import { HitZoneArmor } from '../heroData/HitZoneArmor';
-import { Item } from '../heroData/Item';
-import { PersonalData } from '../heroData/PersonalData';
-import { Rules } from '../heroData/Rules';
-import { UndoableHero, UndoableHeroModelRecord } from '../heroData/UndoHero';
-import { HeroStateMapKey } from '../heroStateUtils';
-import { ifElse } from '../ifElse';
-import { gt } from '../mathUtils';
-import { ident } from '../structures/Function';
-import { List, map } from '../structures/List';
-import { bind, elem, fmap, maybeToUndefined } from '../structures/Maybe';
-import { elems, foldl, foldlWithKey, OrderedMap, OrderedMapValueElement, toObjectWith, union } from '../structures/OrderedMap';
-import { toArray } from '../structures/OrderedSet';
-import { Record, StringKeyObject, toObject } from '../structures/Record';
-import { L10nRecord } from '../wikiData/L10n';
-import { PrimaryAttributeDamageThreshold } from '../wikiData/sub/PrimaryAttributeDamageThreshold';
-import { WikiModelRecord } from '../wikiData/WikiModel';
-import { currentVersion } from './compatibilityUtils';
+import { pipe } from "ramda";
+import * as Data from "../../types/data";
+import * as Raw from "../../types/rawdata";
+import { ActivatableDependent } from "../activeEntries/ActivatableDependent";
+import { ActivatableSkillDependent } from "../activeEntries/ActivatableSkillDependent";
+import { ActiveObject } from "../activeEntries/ActiveObject";
+import { AttributeDependent } from "../activeEntries/AttributeDependent";
+import { getAPObject } from "../adventurePoints/adventurePointsSumUtils";
+import { Belongings } from "../heroData/Belongings";
+import { Energies } from "../heroData/Energies";
+import { HeroModel, HeroModelRecord } from "../heroData/HeroModel";
+import { HitZoneArmor } from "../heroData/HitZoneArmor";
+import { Item } from "../heroData/Item";
+import { PersonalData } from "../heroData/PersonalData";
+import { Rules } from "../heroData/Rules";
+import { UndoableHero, UndoableHeroModelRecord } from "../heroData/UndoHero";
+import { HeroStateMapKey } from "../heroStateUtils";
+import { ifElse } from "../ifElse";
+import { gt } from "../mathUtils";
+import { ident } from "../structures/Function";
+import { List, map } from "../structures/List";
+import { bind, elem, fmap, maybeToUndefined } from "../structures/Maybe";
+import { elems, foldl, foldlWithKey, OrderedMap, OrderedMapValueElement, toObjectWith, union } from "../structures/OrderedMap";
+import { toArray } from "../structures/OrderedSet";
+import { Record, StringKeyObject, toObject } from "../structures/Record";
+import { L10nRecord } from "../wikiData/L10n";
+import { PrimaryAttributeDamageThreshold } from "../wikiData/sub/PrimaryAttributeDamageThreshold";
+import { WikiModelRecord } from "../wikiData/WikiModel";
+import { currentVersion } from "./compatibilityUtils";
 
 const {
   attributes,
@@ -62,7 +62,7 @@ const {
 
 const { cost, sid, sid2, tier } = ActiveObject.A
 
-const getAttributesForSave = (hero: HeroModelRecord): Raw.RawHero['attr'] =>
+const getAttributesForSave = (hero: HeroModelRecord): Raw.RawHero["attr"] =>
   ({
     values: foldl<Record<AttributeDependent>, { id: string; value: number }[]>
       (acc => e => [...acc, { id: id (e), value: value (e) }])
@@ -320,15 +320,15 @@ export const convertHeroForSave =
       name,
       avatar: maybeToUndefined (avatar),
       ap: {
-        total: adventurePoints.get ('total'),
-        spent: adventurePoints.get ('spent'),
+        total: adventurePoints.get ("total"),
+        spent: adventurePoints.get ("spent"),
       },
       el: experienceLevel,
       r: maybeToUndefined (race),
       rv: maybeToUndefined (raceVariant),
       c: maybeToUndefined (culture),
       p: maybeToUndefined (profession),
-      professionName: elem ('P_0') (profession) ? maybeToUndefined (professionName) : undefined,
+      professionName: elem ("P_0") (profession) ? maybeToUndefined (professionName) : undefined,
       pv: maybeToUndefined (professionVariant),
       sex,
       pers: {

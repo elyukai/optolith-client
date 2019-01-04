@@ -1,4 +1,4 @@
-import { fromDefault } from '../../structures/Record';
+import { fromDefault } from "../../structures/Record";
 
 export interface Die {
   sides: number

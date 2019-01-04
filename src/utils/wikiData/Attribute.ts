@@ -1,6 +1,6 @@
-import { Categories } from '../../constants/Categories';
-import { fromDefault } from '../structures/Record';
-import { EntryWithCategory } from './wikiTypeHelpers';
+import { Categories } from "../../constants/Categories";
+import { fromDefault } from "../structures/Record";
+import { EntryWithCategory } from "./wikiTypeHelpers";
 
 export interface Attribute {
   id: string
@@ -11,9 +11,9 @@ export interface Attribute {
 
 export const Attribute =
   fromDefault<Attribute> ({
-    id: '',
-    name: '',
-    short: '',
+    id: "",
+    name: "",
+    short: "",
     category: Categories.ATTRIBUTES,
   })
 

@@ -1,11 +1,11 @@
-import { Categories } from '../../constants/Categories';
-import { List } from '../structures/List';
-import { Maybe, Nothing } from '../structures/Maybe';
-import { fromDefault, Record } from '../structures/Record';
-import { CommonProfession } from './sub/CommonProfession';
-import { IncreaseSkill } from './sub/IncreaseSkill';
-import { SourceLink } from './sub/SourceLink';
-import { EntryWithCategory } from './wikiTypeHelpers';
+import { Categories } from "../../constants/Categories";
+import { List } from "../structures/List";
+import { Maybe, Nothing } from "../structures/Maybe";
+import { fromDefault, Record } from "../structures/Record";
+import { CommonProfession } from "./sub/CommonProfession";
+import { IncreaseSkill } from "./sub/IncreaseSkill";
+import { SourceLink } from "./sub/SourceLink";
+import { EntryWithCategory } from "./wikiTypeHelpers";
 
 export interface Culture {
   id: string
@@ -41,14 +41,14 @@ export interface Culture {
 
 export const Culture =
   fromDefault<Culture> ({
-    id: '',
-    name: '',
+    id: "",
+    name: "",
     culturalPackageAdventurePoints: 0,
     languages: List.empty,
     scripts: List.empty,
     socialStatus: List.empty,
-    areaKnowledge: '',
-    areaKnowledgeShort: '',
+    areaKnowledge: "",
+    areaKnowledgeShort: "",
     commonProfessions: List.empty,
     commonMundaneProfessions: Nothing,
     commonMagicProfessions: Nothing,
@@ -63,7 +63,7 @@ export const Culture =
     uncommonDisadvantagesText: Nothing,
     commonSkills: List.empty,
     uncommonSkills: List.empty,
-    commonNames: '',
+    commonNames: "",
     culturalPackageSkills: List.empty,
     category: Categories.CULTURES,
     src: List.empty,

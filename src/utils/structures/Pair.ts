@@ -7,8 +7,8 @@
  * @author Lukas Obermann
  */
 
-import { cnst } from './Function';
-import { Some } from './Maybe';
+import { cnst } from "./Function";
+import { Some } from "./Maybe";
 
 
 // CONSTRUCTOR
@@ -166,7 +166,7 @@ export const fromArray = <A, B> (x: [A, B]): Pair<A, B> => fromBinary (x [0], x 
  */
 export const isPair =
   (x: any): x is Pair<any, any> =>
-    typeof x === 'object' && x !== null && x.isPair
+    typeof x === "object" && x !== null && x.isPair
 
 
 // NAMESPACED FUNCTIONS

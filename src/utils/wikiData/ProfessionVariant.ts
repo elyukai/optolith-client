@@ -1,11 +1,11 @@
-import { Categories } from '../../constants/Categories';
-import { List } from '../structures/List';
-import { Maybe, Nothing } from '../structures/Maybe';
-import { fromDefault, Record } from '../structures/Record';
-import { ProfessionRequireActivatable } from './prerequisites/ActivatableRequirement';
-import { IncreaseSkill } from './sub/IncreaseSkill';
-import { NameBySex } from './sub/NameBySex';
-import { EntryWithCategory, ProfessionDependency, ProfessionPrerequisite, ProfessionVariantSelections } from './wikiTypeHelpers';
+import { Categories } from "../../constants/Categories";
+import { List } from "../structures/List";
+import { Maybe, Nothing } from "../structures/Maybe";
+import { fromDefault, Record } from "../structures/Record";
+import { ProfessionRequireActivatable } from "./prerequisites/ActivatableRequirement";
+import { IncreaseSkill } from "./sub/IncreaseSkill";
+import { NameBySex } from "./sub/NameBySex";
+import { EntryWithCategory, ProfessionDependency, ProfessionPrerequisite, ProfessionVariantSelectionList } from "./wikiTypeHelpers";
 
 export interface ProfessionVariant {
   id: string
@@ -14,7 +14,7 @@ export interface ProfessionVariant {
   apOfActivatables: number
   dependencies: List<ProfessionDependency>
   prerequisites: List<ProfessionPrerequisite>
-  selections: ProfessionVariantSelections
+  selections: ProfessionVariantSelectionList
   specialAbilities: List<Record<ProfessionRequireActivatable>>
   combatTechniques: List<Record<IncreaseSkill>>
   skills: List<Record<IncreaseSkill>>
@@ -29,8 +29,8 @@ export interface ProfessionVariant {
 
 export const ProfessionVariant =
   fromDefault<ProfessionVariant> ({
-    id: '',
-    name: '',
+    id: "",
+    name: "",
     ap: 0,
     apOfActivatables: 0,
     dependencies: List.empty,

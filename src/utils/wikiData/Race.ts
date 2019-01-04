@@ -1,11 +1,11 @@
-import { Categories } from '../../constants/Categories';
-import { List } from '../structures/List';
-import { Maybe, Nothing } from '../structures/Maybe';
-import { fromBoth, Pair } from '../structures/Pair';
-import { fromDefault, Record } from '../structures/Record';
-import { Die } from './sub/Die';
-import { SourceLink } from './sub/SourceLink';
-import { EntryWithCategory } from './wikiTypeHelpers';
+import { Categories } from "../../constants/Categories";
+import { List } from "../structures/List";
+import { Maybe, Nothing } from "../structures/Maybe";
+import { fromBoth, Pair } from "../structures/Pair";
+import { fromDefault, Record } from "../structures/Record";
+import { Die } from "./sub/Die";
+import { SourceLink } from "./sub/SourceLink";
+import { EntryWithCategory } from "./wikiTypeHelpers";
 
 export interface Race {
   id: string
@@ -46,8 +46,8 @@ export interface Race {
 
 export const Race =
   fromDefault<Race> ({
-    id: '',
-    name: '',
+    id: "",
+    name: "",
     ap: 0,
     lp: 0,
     spi: 0,
@@ -55,14 +55,14 @@ export const Race =
     mov: 0,
     attributeAdjustments: List.empty,
     attributeAdjustmentsSelection: fromBoth<number, List<string>> (0) (List.empty),
-    attributeAdjustmentsText: '',
+    attributeAdjustmentsText: "",
     commonCultures: List.empty,
     automaticAdvantages: List.empty,
-    automaticAdvantagesText: '',
+    automaticAdvantagesText: "",
     stronglyRecommendedAdvantages: List.empty,
-    stronglyRecommendedAdvantagesText: '',
+    stronglyRecommendedAdvantagesText: "",
     stronglyRecommendedDisadvantages: List.empty,
-    stronglyRecommendedDisadvantagesText: '',
+    stronglyRecommendedDisadvantagesText: "",
     commonAdvantages: List.empty,
     commonAdvantagesText: Nothing,
     commonDisadvantages: List.empty,

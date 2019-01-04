@@ -8,7 +8,7 @@ import { translate } from '../../utils/I18n';
 import { getNumericId } from '../../utils/IDUtils';
 import { isRaceRequirement, isRequiringIncreasable, isSexRequirement } from '../../utils/prerequisites/prerequisitesUtils';
 import { Increasable, IncreasableId, NameBySex, Profession, ProfessionVariant, UIMessages } from '../../utils/viewData/viewTypeHelpers';
-import { Attribute, Blessing, Book, Cantrip, LiturgicalChant, ProfessionSelections, Race, RemoveCombatTechniquesSelection, RemoveSpecializationSelection, Skill, SpecialAbility, SpecializationSelection, Spell, TerrainKnowledgeSelection } from '../../utils/wikiData/wikiTypeHelpers';
+import { Attribute, Blessing, Book, Cantrip, LiturgicalChant, ProfessionSelectionList, Race, RemoveCombatTechniquesSelection, RemoveSpecializationSelection, Skill, SpecialAbility, SpecializationSelection, Spell, TerrainKnowledgeSelection } from '../../utils/wikiData/wikiTypeHelpers';
 import { isRemoveCombatTechniquesSelection, isRemoveSpecializationSelection } from '../../utils/WikiUtils';
 import { WikiSource } from './elements/WikiSource';
 import { WikiBoxTemplate } from './WikiBoxTemplate';
@@ -198,7 +198,7 @@ function getName(nameProp: string | NameBySex | undefined, sex: 'm' | 'f'): stri
 }
 
 function getSpecializationSelection(
-  selections: ProfessionSelections,
+  selections: ProfessionSelectionList,
   skills: Map<string, Skill>,
   locale: UIMessages,
 ): string | undefined {
@@ -258,7 +258,7 @@ interface SkillsSelectionJoined {
 }
 
 function getSkillSelection(
-  selections: ProfessionSelections,
+  selections: ProfessionSelectionList,
   locale: UIMessages,
 ): SkillsSelectionJoined | undefined {
   const selection = selections.find(e => {
@@ -278,7 +278,7 @@ function getSkillSelection(
 }
 
 function getCombatTechniquesSelection(
-  selections: ProfessionSelections,
+  selections: ProfessionSelectionList,
   locale: UIMessages,
 ): string | undefined {
   const selection = selections.find(e => {
@@ -327,7 +327,7 @@ function getCombatTechniquesSelection(
 }
 
 function getTerrainKnowledgeSelection(
-  selections: ProfessionSelections,
+  selections: ProfessionSelectionList,
   specialAbilities: Map<string, SpecialAbility>,
   locale: UIMessages,
 ): string | undefined {
@@ -355,7 +355,7 @@ function getTerrainKnowledgeSelection(
 
 function getSpells(
   profession: Profession,
-  selections: ProfessionSelections,
+  selections: ProfessionSelectionList,
   spells: Map<string, Spell>,
   cantrips: Map<string, Cantrip>,
   locale: UIMessages,
@@ -765,7 +765,7 @@ function VariantSpecialAbilities(props: VariantSpecialAbilitiesProps): JSX.Eleme
 
 interface VariantLanguagesLiteracySelectionProps {
   locale: UIMessages;
-  selections: ProfessionSelections;
+  selections: ProfessionSelectionList;
   variant: ProfessionVariant;
 }
 
@@ -814,7 +814,7 @@ function VariantLanguagesLiteracySelection(props: VariantLanguagesLiteracySelect
 
 interface VariantSpecializationSelectionProps {
   locale: UIMessages;
-  selections: ProfessionSelections;
+  selections: ProfessionSelectionList;
   skills: Map<string, Skill>;
   specializationSelectionString: string | undefined;
   variant: ProfessionVariant;
@@ -890,7 +890,7 @@ function VariantSpecializationSelection(props: VariantSpecializationSelectionPro
 interface VariantCombatTechniquesSelectionProps {
   combatTechniquesSelectionString: string | undefined;
   locale: UIMessages;
-  selections: ProfessionSelections;
+  selections: ProfessionSelectionList;
   variant: ProfessionVariant;
 }
 

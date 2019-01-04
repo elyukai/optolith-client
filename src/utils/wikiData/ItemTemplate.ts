@@ -1,8 +1,8 @@
-import { List } from '../structures/List';
-import { Maybe, Nothing } from '../structures/Maybe';
-import { fromDefault, Record } from '../structures/Record';
-import { PrimaryAttributeDamageThreshold } from './sub/PrimaryAttributeDamageThreshold';
-import { SourceLink } from './sub/SourceLink';
+import { List } from "../structures/List";
+import { Maybe, Nothing } from "../structures/Maybe";
+import { fromDefault, Record } from "../structures/Record";
+import { PrimaryAttributeDamageThreshold } from "./sub/PrimaryAttributeDamageThreshold";
+import { SourceLink } from "./sub/SourceLink";
 
 export interface ItemTemplate {
   id: string
@@ -47,8 +47,8 @@ export interface ItemTemplate {
 
 export const ItemTemplate =
   fromDefault<ItemTemplate> ({
-    id: '',
-    name: '',
+    id: "",
+    name: "",
     addPenalties: Nothing,
     ammunition: Nothing,
     amount: 1,
@@ -78,7 +78,7 @@ export const ItemTemplate =
     reloadTime: Nothing,
     stabilityMod: Nothing,
     stp: Nothing,
-    template: '',
+    template: "",
     weight: Nothing,
     note: Nothing,
     rules: Nothing,

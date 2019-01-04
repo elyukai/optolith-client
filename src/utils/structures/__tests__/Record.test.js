@@ -4,7 +4,7 @@ const { view } = require('../Lens');
 
 // CONSTRUCTOR
 
-test('fromDefault', () => {
+test ('fromDefault', () => {
   const test = fromDefault ({ x: 0 }) ({ x: 1 })
 
   expect (test .defaultValues) .toEqual ({ x: 0 })
@@ -15,7 +15,7 @@ test('fromDefault', () => {
 
 // MERGING RECORDS
 
-test('mergeSafeR2', () => {
+test ('mergeSafeR2', () => {
   const testCreator = fromDefault ({ x: 0 })
   const test = testCreator ({ x: 1 })
   const test2 = fromDefault ({ x: 3, y: 3 }) ({ x: 7 })
@@ -23,7 +23,7 @@ test('mergeSafeR2', () => {
   expect (mergeSafeR2 (test2) (test)) .toEqual (testCreator ({ x: 7 }))
 })
 
-test('mergeSafeR3', () => {
+test ('mergeSafeR3', () => {
   const testCreator = fromDefault ({ x: 0 })
   const test = testCreator ({ x: 1 })
   const test2 = fromDefault ({ x: 3, y: 3 }) ({ x: 7 })
@@ -32,7 +32,7 @@ test('mergeSafeR3', () => {
   expect (mergeSafeR3 (test3) (test2) (test)) .toEqual (testCreator ({ x: 0, y: 4 }))
 })
 
-test('mergeSafeR4', () => {
+test ('mergeSafeR4', () => {
   const testCreator = fromDefault ({ x: 0 })
   const test = testCreator ({ x: 1 })
   const test2 = fromDefault ({ x: 3, y: 3 }) ({ x: 7 })
@@ -42,7 +42,7 @@ test('mergeSafeR4', () => {
   expect (mergeSafeR4 (test4) (test3) (test2) (test)) .toEqual (testCreator ({ x: 5, y: 4 }))
 })
 
-test('mergeSafeR5', () => {
+test ('mergeSafeR5', () => {
   const testCreator = fromDefault ({ x: 0 })
   const test = testCreator ({ x: 1 })
   const test2 = fromDefault ({ x: 3, y: 3 }) ({ x: 7 })
@@ -56,7 +56,7 @@ test('mergeSafeR5', () => {
 
 // CUSTOM FUNCTIONS
 
-test('makeLenses', () => {
+test ('makeLenses', () => {
   const testCreator = fromDefault ({ x: 0 })
   const test = testCreator ({ x: 2 })
   const lenses = makeLenses (testCreator)
@@ -88,14 +88,14 @@ test ('notMember', () => {
     .toBeTruthy ()
 })
 
-test('toObject', () => {
+test ('toObject', () => {
   const testCreator = fromDefault ({ x: 0, y: 0 })
   const test = testCreator ({ x: 2 })
 
   expect (toObject (test)) .toEqual ({ x: 2, y: 0 })
 })
 
-test('isRecord', () => {
+test ('isRecord', () => {
   const testCreator = fromDefault ({ x: 0, y: 0 })
   const test = testCreator ({ x: 2 })
 

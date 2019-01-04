@@ -1,7 +1,7 @@
-import { pipe } from 'ramda';
-import { SkillDependent } from '../activeEntries/SkillDependent';
-import { fromDefault, Record } from '../structures/Record';
-import { Skill } from '../wikiData/Skill';
+import { pipe } from "ramda";
+import { SkillDependent } from "../activeEntries/SkillDependent";
+import { fromDefault, Record } from "../structures/Record";
+import { Skill } from "../wikiData/Skill";
 
 export interface SkillCombined {
   wikiEntry: Record<Skill>

@@ -1,4 +1,4 @@
-import { equals } from './structures/Eq';
+import { equals } from "./structures/Eq";
 
 type TypeGuard<T, I extends T = T> = (x: T) => x is I
 type TypeCheck<T> = (x: T) => boolean
@@ -24,7 +24,7 @@ export const match = <T, U>(x: T): Match<T, U> => ({
   // @ts-ignore
   on: (pred: AllTests<T>, fn: (x: T) => U) => {
     // @ts-ignore
-    const test: Test<T> = typeof pred === 'function' ? pred : equals (pred)
+    const test: Test<T> = typeof pred === "function" ? pred : equals (pred)
 
     return test (x) ? matched<T, U> (fn (x)) : match<T, U> (x)
   },

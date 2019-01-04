@@ -1,5 +1,5 @@
-import { List } from '../../structures/List';
-import { fromDefault } from '../../structures/Record';
+import { List } from "../../structures/List";
+import { fromDefault } from "../../structures/Record";
 
 export interface CommonProfession {
   list: List<string | number>

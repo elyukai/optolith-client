@@ -1,9 +1,9 @@
-import { Categories } from '../../constants/Categories';
-import { List } from '../structures/List';
-import { Maybe, Nothing } from '../structures/Maybe';
-import { fromDefault, Record } from '../structures/Record';
-import { SourceLink } from './sub/SourceLink';
-import { CheckModifier, EntryWithCategory } from './wikiTypeHelpers';
+import { Categories } from "../../constants/Categories";
+import { List } from "../structures/List";
+import { Maybe, Nothing } from "../structures/Maybe";
+import { fromDefault, Record } from "../structures/Record";
+import { SourceLink } from "./sub/SourceLink";
+import { CheckModifier, EntryWithCategory } from "./wikiTypeHelpers";
 
 export interface LiturgicalChant {
   id: string
@@ -30,8 +30,8 @@ export interface LiturgicalChant {
 
 export const LiturgicalChant =
   fromDefault<LiturgicalChant> ({
-    id: '',
-    name: '',
+    id: "",
+    name: "",
     aspects: List.empty,
     category: Categories.LITURGIES,
     check: List.empty,
@@ -39,16 +39,16 @@ export const LiturgicalChant =
     gr: 0,
     ic: 0,
     tradition: List.empty,
-    effect: '',
-    castingTime: '',
-    castingTimeShort: '',
-    cost: '',
-    costShort: '',
-    range: '',
-    rangeShort: '',
-    duration: '',
-    durationShort: '',
-    target: '',
+    effect: "",
+    castingTime: "",
+    castingTimeShort: "",
+    cost: "",
+    costShort: "",
+    range: "",
+    rangeShort: "",
+    duration: "",
+    durationShort: "",
+    target: "",
     src: List.empty,
   })
 

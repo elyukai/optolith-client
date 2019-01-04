@@ -6,14 +6,14 @@
  * @author Lukas Obermann
  */
 
-import { pipe } from 'ramda';
-import { add, multiply } from '../mathUtils';
-import { not } from '../not';
-import { equals, notEquals } from './Eq';
-import { ident } from './Function';
-import { append, fromElements, isList, List } from './List';
-import { fromNullable, Maybe, Some } from './Maybe';
-import { show } from './Show';
+import { pipe } from "ramda";
+import { add, multiply } from "../mathUtils";
+import { not } from "../not";
+import { equals, notEquals } from "./Eq";
+import { ident } from "./Function";
+import { append, fromElements, isList, List } from "./List";
+import { fromNullable, Maybe, Some } from "./Maybe";
+import { show } from "./Show";
 
 
 // CONSTRUCTOR
@@ -139,7 +139,7 @@ export const foldr1 =
       return _init .reduceRight<A> ((acc, e) => f (e) (acc), _last)
     }
 
-    throw new TypeError ('Cannot apply foldr1 to an empty Set.')
+    throw new TypeError ("Cannot apply foldr1 to an empty Set.")
   }
 
 /**
@@ -160,7 +160,7 @@ export const foldl1 =
       return _tail .reduce<A> ((acc, e) => f (acc) (e), _head)
     }
 
-    throw new TypeError ('Cannot apply foldl1 to an empty Set.')
+    throw new TypeError ("Cannot apply foldl1 to an empty Set.")
   }
 
 /**
@@ -515,7 +515,7 @@ export const toggle =
  */
 export const isOrderedSet =
   (x: any): x is OrderedSet<any> =>
-    typeof x === 'object' && x !== null && x.isOrderedSet
+    typeof x === "object" && x !== null && x.isOrderedSet
 
 
 // NAMESPACED FUNCTIONS

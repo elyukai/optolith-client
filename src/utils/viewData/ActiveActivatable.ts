@@ -1,9 +1,9 @@
-import { ActivatableActivationMeta, ActivatableActivationValidationObject, ActivatableNameAdjustedCostEvalTier } from '../../types/data';
-import { ActivatableDependent } from '../activeEntries/ActivatableDependent';
-import { Nothing } from '../structures/Maybe';
-import { fromDefault, RecordI } from '../structures/Record';
-import { Advantage } from '../wikiData/Advantage';
-import { Activatable } from '../wikiData/wikiTypeHelpers';
+import { ActivatableActivationMeta, ActivatableActivationValidationObject, ActivatableNameAdjustedCostEvalTier } from "../../types/data";
+import { ActivatableDependent } from "../activeEntries/ActivatableDependent";
+import { Nothing } from "../structures/Maybe";
+import { fromDefault, RecordI } from "../structures/Record";
+import { Advantage } from "../wikiData/Advantage";
+import { Activatable } from "../wikiData/wikiTypeHelpers";
 
 export interface ActiveActivatable<T extends RecordI<Activatable> = RecordI<Activatable>>
   extends ActivatableNameAdjustedCostEvalTier,
@@ -12,7 +12,7 @@ export interface ActiveActivatable<T extends RecordI<Activatable> = RecordI<Acti
 
 export const ActiveActivatable =
   fromDefault<ActiveActivatable> ({
-    id: '',
+    id: "",
 
     sid: Nothing,
     sid2: Nothing,
@@ -21,8 +21,8 @@ export const ActiveActivatable =
 
     index: -1,
 
-    name: '',
-    baseName: '',
+    name: "",
+    baseName: "",
     addName: Nothing,
 
     tierName: Nothing,

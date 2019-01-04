@@ -1,6 +1,6 @@
-import { Maybe, Nothing } from '../structures/Maybe';
-import { fromDefault } from '../structures/Record';
-import { PetBase } from './Pet';
+import { Maybe, Nothing } from "../structures/Maybe";
+import { fromDefault } from "../structures/Record";
+import { PetBase } from "./Pet";
 
 export interface EditPet extends PetBase {
   id: Maybe<string>;
@@ -37,34 +37,34 @@ export interface EditPet extends PetBase {
 export const EditPet =
   fromDefault<EditPet> ({
     id: Nothing,
-    name: '',
+    name: "",
     avatar: Nothing,
-    size: '',
-    type: '',
-    attack: '',
-    dp: '',
-    reach: '',
-    actions: '',
-    talents: '',
-    skills: '',
-    notes: '',
-    spentAp: '',
-    totalAp: '',
-    cou: '',
-    sgc: '',
-    int: '',
-    cha: '',
-    dex: '',
-    agi: '',
-    con: '',
-    str: '',
-    lp: '',
-    ae: '',
-    spi: '',
-    tou: '',
-    pro: '',
-    ini: '',
-    mov: '',
-    at: '',
-    pa: '',
+    size: "",
+    type: "",
+    attack: "",
+    dp: "",
+    reach: "",
+    actions: "",
+    talents: "",
+    skills: "",
+    notes: "",
+    spentAp: "",
+    totalAp: "",
+    cou: "",
+    sgc: "",
+    int: "",
+    cha: "",
+    dex: "",
+    agi: "",
+    con: "",
+    str: "",
+    lp: "",
+    ae: "",
+    spi: "",
+    tou: "",
+    pro: "",
+    ini: "",
+    mov: "",
+    at: "",
+    pa: "",
   })

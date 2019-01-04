@@ -1,6 +1,6 @@
-import { ActivatableSkillDependent } from '../activeEntries/ActivatableSkillDependent';
-import { fromDefault, Record } from '../structures/Record';
-import { Spell } from '../wikiData/Spell';
+import { ActivatableSkillDependent } from "../activeEntries/ActivatableSkillDependent";
+import { fromDefault, Record } from "../structures/Record";
+import { Spell } from "../wikiData/Spell";
 
 export interface SpellCombined {
   wikiEntry: Record<Spell>

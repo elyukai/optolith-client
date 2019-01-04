@@ -1,5 +1,5 @@
-import { Maybe, Nothing } from '../structures/Maybe';
-import { fromDefault } from '../structures/Record';
+import { Maybe, Nothing } from "../structures/Maybe";
+import { fromDefault } from "../structures/Record";
 
 export interface IncreasableForView {
   id: string
@@ -10,8 +10,8 @@ export interface IncreasableForView {
 
 export const IncreasableForView =
   fromDefault<IncreasableForView> ({
-    id: '',
-    name: '',
+    id: "",
+    name: "",
     value: 0,
     previous: Nothing,
   })

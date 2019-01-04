@@ -12,11 +12,11 @@
  * @author Lukas Obermann
  */
 
-import { pipe } from 'ramda';
-import { cnst, ident } from './Function';
-import { cons, consF, fromElements, List } from './List';
-import { fromJust, isJust, Just, Maybe, Nothing, Some } from './Maybe';
-import { fromBoth, Pair } from './Pair';
+import { pipe } from "ramda";
+import { cnst, ident } from "./Function";
+import { cons, consF, fromElements, List } from "./List";
+import { fromJust, isJust, Just, Maybe, Nothing, Some } from "./Maybe";
+import { fromBoth, Pair } from "./Pair";
 
 
 // EITHER TYPE DEFINITION
@@ -693,7 +693,7 @@ export const partitionEithers =
  */
 export const isEither =
   (x: any): x is Either<any, any> =>
-    typeof x === 'object' && x !== null && (x.isLeft || x.isRight);
+    typeof x === "object" && x !== null && (x.isLeft || x.isRight);
 
 
 // NAMESPACED FUNCTIONS

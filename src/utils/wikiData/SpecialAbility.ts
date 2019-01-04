@@ -1,9 +1,9 @@
-import { Categories } from '../../constants/Categories';
-import { List } from '../structures/List';
-import { Maybe, Nothing } from '../structures/Maybe';
-import { OrderedMap } from '../structures/OrderedMap';
-import { fromDefault } from '../structures/Record';
-import { ActivatableBase, EntryWithCategory } from './wikiTypeHelpers';
+import { Categories } from "../../constants/Categories";
+import { List } from "../structures/List";
+import { Maybe, Nothing } from "../structures/Maybe";
+import { OrderedMap } from "../structures/OrderedMap";
+import { fromDefault } from "../structures/Record";
+import { ActivatableBase, EntryWithCategory } from "./wikiTypeHelpers";
 
 export interface SpecialAbility extends ActivatableBase {
   extended: Maybe<List<string | List<string>>>
@@ -26,8 +26,8 @@ export interface SpecialAbility extends ActivatableBase {
 
 export const SpecialAbility =
   fromDefault<SpecialAbility> ({
-    id: '',
-    name: '',
+    id: "",
+    name: "",
     cost: 0,
     input: Nothing,
     max: Nothing,
