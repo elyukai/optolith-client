@@ -9,6 +9,7 @@
 
 import * as R from 'ramda';
 import * as Wiki from '../../App/Models/Wiki/wikiTypeHelpers';
+import { getTraditionOfAspect } from '../../App/Utils/Increasable/liturgicalChantUtils';
 import { AdventurePointsObject } from '../../selectors/adventurePointsSelectors';
 import * as Data from '../../types/data';
 import { Just, List, Maybe, OrderedMap, Record, RecordInterface, Tuple } from '../dataUtils';
@@ -16,7 +17,6 @@ import { countActiveGroupEntries } from '../entryGroupUtils';
 import { sortObjects } from '../FilterSortUtils';
 import { getAllEntriesByGroup } from '../heroStateUtils';
 import { getBlessedTraditionInstanceIdByNumericId } from '../IDUtils';
-import { getTraditionOfAspect } from '../liturgicalChantUtils';
 import { match } from '../match';
 import { validateLevel, validatePrerequisites } from '../prerequisites/validatePrerequisitesUtils';
 import { isString } from '../typeCheckUtils';

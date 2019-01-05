@@ -1,6 +1,7 @@
 import * as R from 'ramda';
 import { CantripCombined, SpellIsActive, SpellWithRequirements } from '../App/Models/View/viewTypeHelpers';
 import { ExperienceLevel, Spell } from '../App/Models/Wiki/wikiTypeHelpers';
+import { isDecreasable, isIncreasable, isOwnTradition } from '../App/Utils/Increasable/SpellUtils';
 import { ActivatableDependent, ActivatableSkillDependent } from '../types/data';
 import { getModifierByActiveLevel } from '../utils/activatable/activatableModifierUtils';
 import { getMagicalTraditions } from '../utils/activatable/traditionUtils';
@@ -10,7 +11,6 @@ import { AllSortOptions, filterAndSortObjects, sortObjects } from '../utils/Filt
 import { validatePrerequisites } from '../utils/prerequisites/validatePrerequisitesUtils';
 import { filterByAvailability } from '../utils/RulesUtils';
 import { mapGetToMaybeSlice } from '../utils/SelectorsUtils';
-import { isDecreasable, isIncreasable, isOwnTradition } from '../utils/SpellUtils';
 import { getStartEl } from './elSelectors';
 import { getRuleBooksEnabled } from './rulesSelectors';
 import { getSpellsSortOptions } from './sortOptionsSelectors';

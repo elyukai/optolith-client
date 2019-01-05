@@ -1,8 +1,8 @@
 import * as R from 'ramda';
 import { Armor, ArmorZone, Item, MeleeWeapon, RangedWeapon, ShieldOrParryingWeapon } from '../App/Models/View/viewTypeHelpers';
 import { Attribute, CombatTechnique, ItemTemplate, WikiAll } from '../App/Models/Wiki/wikiTypeHelpers';
+import { getAttack, getParry } from '../App/Utils/Increasable/CombatTechniqueUtils';
 import { ArmorZonesInstance, AttributeDependent, HeroDependent, ItemInstance } from '../types/data';
-import { getAttack, getParry } from '../utils/CombatTechniqueUtils';
 import { createMaybeSelector } from '../utils/createMaybeSelector';
 import { List, Maybe, OrderedMap, Record, RecordInterface } from '../utils/dataUtils';
 import { AllSortOptions, filterAndSortObjects, filterObjects, sortObjects } from '../utils/FilterSortUtils';

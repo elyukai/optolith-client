@@ -4,6 +4,7 @@ import * as CombatTechniquesActions from '../actions/CombatTechniquesActions';
 import * as LiturgicalChantActions from '../actions/LiturgicalChantActions';
 import * as SkillActions from '../actions/SkillActions';
 import * as SpellsActions from '../actions/SpellsActions';
+import { addPoint, removePoint } from '../App/Utils/Increasable/increasableUtils';
 import { ActionTypes } from '../constants/ActionTypes';
 import * as Data from '../types/data';
 import { isActivatableDependentSkillUnused, isAttributeDependentUnused, isDependentSkillUnused } from '../utils/activeEntries/unusedEntryUtils';
@@ -11,7 +12,6 @@ import { createActivatableDependentSkill, createAttributeDependent, createDepend
 import { Just, Record } from '../utils/dataUtils';
 import { addDependenciesReducer, removeDependenciesReducer } from '../utils/dependencies/dependencyUtils';
 import { adjustEntryDef, modifyHeroListStateItemOrRemove, updateHeroListStateItemOr, updateSliceEntry } from '../utils/heroStateUtils';
-import { addPoint, removePoint } from '../utils/IncreasableUtils';
 
 type Action =
   AttributesActions.AddAttributePointAction |

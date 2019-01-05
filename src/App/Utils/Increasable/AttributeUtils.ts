@@ -1,8 +1,8 @@
 import { pipe } from "ramda";
-import { AttributeDependent } from "../App/Models/ActiveEntries/AttributeDependent";
-import { fmap, mapMaybe, maybe } from "../Data/Maybe";
-import { lookup_, OrderedMap } from "../Data/OrderedMap";
-import { Record } from "../Data/Record";
+import { fmap, mapMaybe, maybe } from "../../../Data/Maybe";
+import { lookup_, OrderedMap } from "../../../Data/OrderedMap";
+import { Record } from "../../../Data/Record";
+import { AttributeDependent } from "../../Models/ActiveEntries/AttributeDependent";
 
 const { value } = AttributeDependent.A
 

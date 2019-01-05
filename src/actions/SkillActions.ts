@@ -1,3 +1,4 @@
+import { getAreSufficientAPAvailableForIncrease } from '../App/Utils/Increasable/increasableUtils';
 import { ActionTypes } from '../constants/ActionTypes';
 import { getAvailableAdventurePoints } from '../selectors/adventurePointsSelectors';
 import { getIsInCharacterCreation } from '../selectors/phaseSelectors';
@@ -6,7 +7,6 @@ import { AsyncAction } from '../types/actions';
 import { UIMessagesObject } from '../types/ui';
 import { Maybe } from '../utils/dataUtils';
 import { translate } from '../utils/I18n';
-import { getAreSufficientAPAvailableForIncrease } from '../utils/IncreasableUtils';
 import { addAlert } from './AlertActions';
 
 export interface AddSkillPointAction {

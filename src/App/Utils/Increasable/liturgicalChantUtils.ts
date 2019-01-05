@@ -1,25 +1,25 @@
 import { pipe } from "ramda";
-import { ActivatableDependent } from "../App/Models/ActiveEntries/ActivatableDependent";
-import { ActivatableSkillDependent } from "../App/Models/ActiveEntries/ActivatableSkillDependent";
-import { AttributeDependent } from "../App/Models/ActiveEntries/AttributeDependent";
-import { HeroModelRecord } from "../App/Models/Hero/HeroModel";
-import { Blessing } from "../App/Models/Wiki/Blessing";
-import { ExperienceLevel } from "../App/Models/Wiki/ExperienceLevel";
-import { LiturgicalChant } from "../App/Models/Wiki/LiturgicalChant";
-import { SpecialAbility } from "../App/Models/Wiki/SpecialAbility";
-import { WikiModel, WikiModelRecord } from "../App/Models/Wiki/WikiModel";
-import { cnst, ident, thrush } from "../Data/Function";
-import { all, any, consF, foldr, fromElements, List, minimum, notElem, notElemF } from "../Data/List";
-import { bindF, elem, ensure, fmap, fromJust, isJust, Just, Maybe, maybe, or, sum } from "../Data/Maybe";
-import { alter, empty, filter, findWithDefault, foldl, fromArray, lookup_, OrderedMap } from "../Data/OrderedMap";
-import { Record } from "../Data/Record";
-import { getActiveSelections } from "./activatable/selectionUtils";
-import { filterAndMaximumNonNegative, flattenDependencies } from "./dependencies/flattenDependencies";
-import { getNumericBlessedTraditionIdByInstanceId } from "./IDUtils";
-import { ifElse } from "./ifElse";
-import { gte, inc, min } from "./mathUtils";
+import { cnst, ident, thrush } from "../../../Data/Function";
+import { all, any, consF, foldr, fromElements, List, minimum, notElem, notElemF } from "../../../Data/List";
+import { bindF, elem, ensure, fmap, fromJust, isJust, Just, Maybe, maybe, or, sum } from "../../../Data/Maybe";
+import { alter, empty, filter, findWithDefault, foldl, fromArray, lookup_, OrderedMap } from "../../../Data/OrderedMap";
+import { Record } from "../../../Data/Record";
+import { getActiveSelections } from "../../../utils/activatable/selectionUtils";
+import { filterAndMaximumNonNegative, flattenDependencies } from "../../../utils/dependencies/flattenDependencies";
+import { getNumericBlessedTraditionIdByInstanceId } from "../../../utils/IDUtils";
+import { ifElse } from "../../../utils/ifElse";
+import { gte, inc, min } from "../../../utils/mathUtils";
+import { isNumber } from "../../../utils/typeCheckUtils";
+import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
+import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
+import { AttributeDependent } from "../../Models/ActiveEntries/AttributeDependent";
+import { HeroModelRecord } from "../../Models/Hero/HeroModel";
+import { Blessing } from "../../Models/Wiki/Blessing";
+import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel";
+import { LiturgicalChant } from "../../Models/Wiki/LiturgicalChant";
+import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
+import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { getExceptionalSkillBonus, getInitialMaximumList, putMaximumSkillRatingFromExperienceLevel } from "./skillUtils";
-import { isNumber } from "./typeCheckUtils";
 
 const { liturgicalChants } = WikiModel.A
 const { id, tradition, aspects } = LiturgicalChant.A

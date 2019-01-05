@@ -1,13 +1,13 @@
 import * as R from 'ramda';
 import * as React from 'react';
 import { Attribute, CombatTechnique } from '../../App/Models/Wiki/wikiTypeHelpers';
+import { getAbbreviation } from '../../App/Utils/Increasable/AttributeUtils';
 import { Checkbox } from '../../components/Checkbox';
 import { Dropdown, DropdownOption } from '../../components/Dropdown';
 import { Hr } from '../../components/Hr';
 import { Label } from '../../components/Label';
 import { TextField } from '../../components/TextField';
 import { ItemEditorInstance } from '../../types/data';
-import { getAbbreviation } from '../../utils/AttributeUtils';
 import { List, Maybe, OrderedMap, Record } from '../../utils/dataUtils';
 import { translate, UIMessagesObject } from '../../utils/I18n';
 import { getLossLevelElements, ItemEditorInputValidation } from '../../utils/ItemUtils';

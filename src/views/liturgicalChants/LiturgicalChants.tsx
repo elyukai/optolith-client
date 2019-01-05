@@ -1,6 +1,7 @@
 import * as R from 'ramda';
 import * as React from 'react';
 import { AttributeCombined, BlessingCombined, LiturgicalChantIsActive, LiturgicalChantWithRequirements } from '../../App/Models/View/viewTypeHelpers';
+import { getAspectsOfTradition } from '../../App/Utils/Increasable/liturgicalChantUtils';
 import { BorderButton } from '../../components/BorderButton';
 import { Checkbox } from '../../components/Checkbox';
 import { ListView } from '../../components/List';
@@ -23,7 +24,6 @@ import { SecondaryAttribute } from '../../types/data';
 import { Just, List, Maybe, Nothing, OrderedMap, Record, Tuple } from '../../utils/dataUtils';
 import { sortStrings } from '../../utils/FilterSortUtils';
 import { translate, UIMessagesObject } from '../../utils/I18n';
-import { getAspectsOfTradition } from '../../utils/liturgicalChantUtils';
 import { SkillListItem } from '../skills/SkillListItem';
 
 export interface LiturgicalChantsOwnProps {

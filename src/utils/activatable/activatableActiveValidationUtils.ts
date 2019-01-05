@@ -10,12 +10,12 @@
 import * as R from 'ramda';
 import { isObject } from 'util';
 import * as Wiki from '../../App/Models/Wiki/wikiTypeHelpers';
+import { isOwnTradition } from '../../App/Utils/Increasable/liturgicalChantUtils';
 import { ActivatableCategory, Categories } from '../../constants/Categories';
 import * as Data from '../../types/data';
 import { Just, List, Maybe, Nothing, OrderedMap, OrderedSet, Record } from '../dataUtils';
 import { countActiveGroupEntries } from '../entryGroupUtils';
 import { getAllEntriesByGroup, getHeroStateItem } from '../heroStateUtils';
-import { isOwnTradition } from '../liturgicalChantUtils';
 import { match } from '../match';
 import { flattenPrerequisites } from '../prerequisites/flattenPrerequisites';
 import { validateLevel, validateObject } from '../prerequisites/validatePrerequisitesUtils';

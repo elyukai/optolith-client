@@ -1,4 +1,5 @@
 import * as Wiki from '../App/Models/Wiki/wikiTypeHelpers';
+import { getAreSufficientAPAvailableForIncrease } from '../App/Utils/Increasable/increasableUtils';
 import { ActionTypes } from '../constants/ActionTypes';
 import { getAvailableAdventurePoints } from '../selectors/adventurePointsSelectors';
 import { getIsInCharacterCreation } from '../selectors/phaseSelectors';
@@ -9,7 +10,6 @@ import { getAreSufficientAPAvailable } from '../utils/adventurePoints/adventureP
 import { getIncreaseAP } from '../utils/adventurePoints/improvementCostUtils';
 import { Maybe, Nothing, Record } from '../utils/dataUtils';
 import { translate } from '../utils/I18n';
-import { getAreSufficientAPAvailableForIncrease } from '../utils/IncreasableUtils';
 import { addAlert } from './AlertActions';
 
 export interface ActivateSpellAction {
