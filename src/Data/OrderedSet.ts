@@ -194,17 +194,18 @@ export const length = (xs: OrderedSet<any>): number => xs .value .size
  * Does the element occur in the structure?
  */
 export const elem =
-  <A extends Some>(e: A) => (xs: OrderedSet<A>): boolean =>
+  <A extends Some> (e: A) => (xs: OrderedSet<A>): boolean =>
     [...xs .value] .some (equals (e))
 
 /**
- * `elem_ :: Eq a => Set a -> a -> Bool`
+ * `elemF :: Eq a => Set a -> a -> Bool`
  *
  * Does the element occur in the structure?
  *
- * Same as `List.elem` but with arguments switched.
+ * Flipped version of `elem`.
  */
-export const elem_ = <A extends Some>(xs: OrderedSet<A>) => (e: A): boolean => elem (e) (xs)
+export const elemF =
+  <A extends Some> (xs: OrderedSet<A>) => (e: A): boolean => elem (e) (xs)
 
 /**
  * `sum :: Num a => Set a -> a`
@@ -533,7 +534,7 @@ export const OrderedSet = {
   fnull,
   length,
   elem,
-  elem_,
+  elemF,
   sum,
   product,
   maximum,

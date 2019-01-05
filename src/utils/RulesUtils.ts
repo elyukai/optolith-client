@@ -1,118 +1,117 @@
-import { Book, SourceLink } from '../App/Models/Wiki/wikiTypeHelpers';
-import { List, OrderedMap, OrderedSet, Record } from './dataUtils';
+import { pipe } from "ramda";
+import { ActiveActivatable } from "../App/Models/View/ActiveActivatable";
+import { Advantage } from "../App/Models/Wiki/Advantage";
+import { Book } from "../App/Models/Wiki/Book";
+import { SourceLink } from "../App/Models/Wiki/sub/SourceLink";
+import { any, elem_, filter, fnull, List } from "../Data/List";
+import { member, OrderedMap } from "../Data/OrderedMap";
+import { elemF, OrderedSet } from "../Data/OrderedSet";
+import { Record, RecordBase } from "../Data/Record";
 
-export const isCoreBook = (src: Record<SourceLink>) =>
-  ['US25001', 'US25002'].includes (src.get ('id'));
 
-interface ObjectWithSource {
-  src: List<Record<SourceLink>>;
-  [key: string]: any;
+// TYPES
+
+export interface ObjectWithSource extends RecordBase {
+  id: string
+  src: List<Record<SourceLink>>
 }
 
-/**
- * Use because `entry.get('src')` does not work
- */
-const getSourceLinks = (entry: any): List<Record<SourceLink>> =>
-  entry.get ('src' as any);
+export interface ObjectWithWikiEntry<A extends ObjectWithSource> {
+  wikiEntry: Record<A>
+  [key: string]: any
+}
+
+
+// LOGIC
+
+const { wikiEntry } = ActiveActivatable.A
+const { src } = Advantage.A
+const { id } = SourceLink.A
+
+const CoreBooks =
+  List.fromElements ("US25001", "US25002", "US25001EN", "US25002EN")
 
 /**
- * Use because `entry.get('wikiEntry')` does not work
+ * Check if the passed `SourceLink` links to a core book.
  */
-const getInstance = <T extends ObjectWithSource>(entry: any): Record<T> =>
-  entry.get ('wikiEntry' as any);
-
-/**
- * Use for combination of `getInstance` and `getSourceLinks`
- */
-const getSourceLinksFromInstance = (entry: any): List<Record<SourceLink>> =>
-  getSourceLinks (getInstance (entry));
+export const isCoreBook =
+  (sourceLink: Record<SourceLink>) => pipe (id, elem_ (CoreBooks)) (sourceLink)
 
 /**
  * Returns if the given entry is available.
  * @param availablility The availability state.
  */
 export const isAvailable =
-  <T extends ObjectWithSource>(availablility: boolean | OrderedSet<string>) =>
-    (entry: Record<T>) => {
-      if (typeof availablility === 'boolean') {
-        return availablility === true;
-      }
+  <A extends ObjectWithSource>
+  (availablility: boolean | OrderedSet<string>) =>
+  (x: Record<A>): boolean => {
+    if (typeof availablility === "boolean") {
+      return availablility
+    }
 
-      return getSourceLinks (entry).any (
-        s => availablility.member (s.get ('id')) || isCoreBook (s)
-      );
-    };
+    return pipe (src, any (s => elemF (availablility) (id (s)) || isCoreBook (s)))
+                (x)
+  }
 
 /**
  * Returns if the given entry is from a core rule book.
- * @param entry The entry.
+ * @param x The entry.
  */
-export const isEntryFromCoreBook = <T extends ObjectWithSource>(entry: Record<T>) => {
-  return getSourceLinks (entry).any (isCoreBook);
-};
+export const isEntryFromCoreBook =
+  <A extends ObjectWithSource> (x: Record<A>) => pipe (src, any (isCoreBook))
+                                                      (x)
 
 /**
- * Filters a list with `SourceLink`s by availability.
- * @param list A list with `SourceLink`s.
- * @param availablility The availability state.
- * @param or An additional function to state the entry should be still shown.
+ * Filters a list of `SourceLink`s by availability.
  */
-export const filterByAvailability = <T extends ObjectWithSource>(
-  list: List<Record<T>>,
-  availablility: boolean | OrderedSet<string>,
-  or?: (obj: Record<T>) => boolean
-) => {
-  if (or) {
-    return list.filter (
-      e => getSourceLinks (e).null () || isAvailable<T> (availablility) (e) || or (e)
-    );
-  }
-
-  return list.filter (
-    e => getSourceLinks (e).null () || isAvailable<T> (availablility) (e)
-  );
-};
-
-export interface ObjectWithStateEntry {
-  stateEntry: Record<ObjectWithSource>;
-  [key: string]: any;
-}
+export const filterByAvailability =
+  <A extends ObjectWithSource>
+  (availablility: boolean | OrderedSet<string>) =>
+    filter<Record<A>> (e => fnull (src (e)) || isAvailable<A> (availablility) (e))
 
 /**
- * Filters a list of objects with an `instance` property containing
+ * Filters a list of `SourceLink`s by availability or by the given predicate (at
+ * least one must be/return `True`).
+ */
+export const filterByAvailabilityAndPred =
+  <A extends ObjectWithSource>
+  (pred: (obj: Record<A>) => boolean) =>
+  (availablility: boolean | OrderedSet<string>) =>
+    filter<Record<A>> (e => fnull (src (e))
+                            || isAvailable<A> (availablility) (e)
+                            || pred (e))
+
+const srcFromWikiEntry = pipe (wikiEntry, src)
+
+/**
+ * Filters a list of objects with an `wikiEntry` property containing
  * `SourceLink`s by availability.
- * @param list A list of objects with an `instance` property containing
- * `SourceLink`s.
- * @param availablility The availability state.
- * @param or An additional function to state the entry should be still shown.
  */
-export const filterByInstancePropertyAvailability = <T extends ObjectWithStateEntry>(
-  list: List<Record<T>>,
-  availablility: boolean | OrderedSet<string>,
-  or?: (obj: Record<T>) => boolean
-) => {
-  if (or) {
-    return list.filter (
-      e => getSourceLinksFromInstance (e).null ()
-        || isAvailable (availablility) (getInstance (e))
-        || or (e)
-    );
-  }
-
-  return list.filter (
-    e => getSourceLinksFromInstance (e).null ()
-      || isAvailable (availablility) (getInstance (e))
-  );
-};
+export const filterByWikiEntryPropertyAvailability =
+  <A extends ObjectWithSource, A0 extends ObjectWithWikiEntry<A>>
+  (availablility: boolean | OrderedSet<string>) =>
+    filter<Record<A0>> (e => fnull (srcFromWikiEntry (e))
+                             || isAvailable<A> (availablility) (wikiEntry (e)))
 
 /**
- * Returns if a book is currently enabled or not.
- * @param books All available books for the selected language.
- * @param availableBooks The current selection of enabled books or if all books
- * are enabled.
- * @param id The book's id.
+ * Filters a list of objects with an `wikiEntry` property containing
+ * `SourceLink`s by availability.
  */
-export const isBookEnabled = (books: OrderedMap<string, Record<Book>>) =>
+export const filterByWikiEntryPropertyAvailabilityAndPred =
+  <A extends ObjectWithSource, A0 extends ObjectWithWikiEntry<A>>
+  (pred: (obj: Record<A0>) => boolean) =>
+  (availablility: boolean | OrderedSet<string>) =>
+    filter<Record<A0>> (e => fnull (srcFromWikiEntry (e))
+                             || isAvailable<A> (availablility) (wikiEntry (e))
+                             || pred (e))
+
+/**
+ * Returns if a book is currently enabled.
+ */
+export const isBookEnabled =
+  (books: OrderedMap<string, Record<Book>>) =>
   (availableBooks: true | OrderedSet<string>) =>
-  (id: string) =>
-    availableBooks === true ? books.member (id) : availableBooks.member (id);
+  (x: string) =>
+    availableBooks === true
+    ? member (x) (books)
+    : OrderedSet.member (x) (availableBooks)

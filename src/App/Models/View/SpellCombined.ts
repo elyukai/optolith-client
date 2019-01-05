@@ -7,7 +7,7 @@ export interface SpellCombined {
   stateEntry: Record<ActivatableSkillDependent>
 }
 
-const SpellCombined =
+export const SpellCombined =
   fromDefault<SpellCombined> ({
     wikiEntry: Spell .default,
     stateEntry: ActivatableSkillDependent .default,

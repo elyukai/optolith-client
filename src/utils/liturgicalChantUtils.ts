@@ -61,10 +61,10 @@ const putAspectKnowledgeRestrictionMaximum =
 /**
  * Checks if the passed liturgical chant's skill rating can be increased.
  */
-export const isIncreasable =
+export const isLiturgicalChantIncreasable =
   (currentTradition: Record<SpecialAbility>) =>
   (wikiEntry: Record<LiturgicalChant>) =>
-  (instance: Record<ActivatableSkillDependent>) =>
+  (stateEntry: Record<ActivatableSkillDependent>) =>
   (startEL: Record<ExperienceLevel>) =>
   (phase: number) =>
   (attributes: OrderedMap<string, Record<AttributeDependent>>) =>
@@ -82,12 +82,12 @@ export const isIncreasable =
                      )
                      (wikiEntry)
 
-    return value (instance) < max + bonus
+    return value (stateEntry) < max + bonus
   }
 
 /**
- * Counts the active liturgical chants for every aspect. A liturgical can have
- * multiple aspects and thus can influence multiple counters if active.
+ * Counts the active liturgical chants for every aspect. A liturgical chant can
+ * have multiple aspects and thus can influence multiple counters if active.
  */
 export const countActiveLiturgicalChantsPerAspect =
   (wiki: OrderedMap<string, Record<LiturgicalChant>>) =>

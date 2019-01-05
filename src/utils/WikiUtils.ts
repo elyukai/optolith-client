@@ -44,7 +44,7 @@ interface WikiKeyByCategory {
 }
 
 export const getWikiSliceGetterByCategory =
-  <T extends Categories>(category: T): typeof WikiModel.A[WikiKeyByCategory[T]] => {
+  <T extends Categories> (category: T): typeof WikiModel.A[WikiKeyByCategory[T]] => {
     switch (category) {
       case Categories.ADVANTAGES: return WikiModel.A.advantages
       case Categories.ATTRIBUTES: return WikiModel.A.attributes

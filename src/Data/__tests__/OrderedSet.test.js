@@ -82,10 +82,10 @@ test ('elem', () => {
     .toBeFalsy ()
 })
 
-test ('elem_', () => {
-  expect (OrderedSet.elem_ (fromArray ([1, 2, 3, 4, 5])) (3))
+test ('elemF', () => {
+  expect (OrderedSet.elemF (fromArray ([1, 2, 3, 4, 5])) (3))
     .toBeTruthy ()
-  expect (OrderedSet.elem_ (fromArray ([1, 2, 3, 4, 5])) (6))
+  expect (OrderedSet.elemF (fromArray ([1, 2, 3, 4, 5])) (6))
     .toBeFalsy ()
 })
 

@@ -1,108 +1,182 @@
-import * as R from 'ramda';
-import * as View from '../App/Models/View/viewTypeHelpers';
-import * as Wiki from '../App/Models/Wiki/wikiTypeHelpers';
-import * as Data from '../types/data';
-import { getActiveSelections } from './activatable/selectionUtils';
-import { getSkillCheckValues } from './AttributeUtils';
-import { Just, List, Maybe, OrderedMap, Record } from './dataUtils';
-import { flattenDependencies } from './dependencies/flattenDependencies';
-import { getNumericMagicalTraditionIdByInstanceId } from './IDUtils';
-import { getExceptionalSkillBonus } from './skillUtils';
-import { isNumber } from './typeCheckUtils';
+import { pipe } from "ramda";
+import { ActivatableDependent } from "../App/Models/ActiveEntries/ActivatableDependent";
+import { ActivatableSkillDependent } from "../App/Models/ActiveEntries/ActivatableSkillDependent";
+import { AttributeDependent } from "../App/Models/ActiveEntries/AttributeDependent";
+import { HeroModel, HeroModelRecord } from "../App/Models/Hero/HeroModel";
+import { SpellCombined } from "../App/Models/View/SpellCombined";
+import { Cantrip } from "../App/Models/Wiki/Cantrip";
+import { ExperienceLevel } from "../App/Models/Wiki/ExperienceLevel";
+import { SpecialAbility } from "../App/Models/Wiki/SpecialAbility";
+import { Spell } from "../App/Models/Wiki/Spell";
+import { WikiModel, WikiModelRecord } from "../App/Models/Wiki/WikiModel";
+import { equals } from "../Data/Eq";
+import { cnst, ident, thrush } from "../Data/Function";
+import { any, consF, find, List, minimum, notElem } from "../Data/List";
+import { bindF, elem, ensure, fmap, isJust, Just, Maybe, maybe, or, sum } from "../Data/Maybe";
+import { alter, empty, filter, foldl, lookup, lookup_, OrderedMap } from "../Data/OrderedMap";
+import { Record } from "../Data/Record";
+import { getActiveSelections } from "./activatable/selectionUtils";
+import { filterAndMaximumNonNegative, flattenDependencies } from "./dependencies/flattenDependencies";
+import { getNumericMagicalTraditionIdByInstanceId } from "./IDUtils";
+import { ifElse } from "./ifElse";
+import { gte, inc } from "./mathUtils";
+import { getExceptionalSkillBonus, getInitialMaximumList, putMaximumSkillRatingFromExperienceLevel } from "./skillUtils";
+import { isNumber } from "./typeCheckUtils";
 
-export const isOwnTradition = (
-  tradition: List<Record<Wiki.SpecialAbility>>,
-  obj: Record<Wiki.Spell> | Record<Wiki.Cantrip>
-): boolean =>
-  obj.get ('tradition').any (
-    e => e === 1 || Maybe.isJust (tradition.find (
-      t => getNumericMagicalTraditionIdByInstanceId (t.get ('id'))
-        .fmap (R.inc)
-        .equals (Just (e))
-    ))
-  );
+const { spells } = WikiModel.A
+const { stateEntry, wikiEntry } = SpellCombined.A
+const { id, tradition, property } = Spell.A
+const { value, dependencies } = ActivatableSkillDependent.A
 
-export const isIncreasable = (
-  entry: Record<View.SpellCombined>,
-  startEL: Record<Wiki.ExperienceLevel>,
-  phase: number,
-  attributes: OrderedMap<string, Record<Data.AttributeDependent>>,
-  exceptionalSkill: Maybe<Record<Data.ActivatableDependent>>,
-  propertyKnowledge: Maybe<Record<Data.ActivatableDependent>>
-): boolean => {
-  const bonus = getExceptionalSkillBonus (entry.lookup ('id')) (exceptionalSkill);
+/**
+ * `isActiveTradition id xs` checks if `id` is a tradition contained in the list
+ * of active traditions `xs`.
+ */
+const isActiveTradition =
+  (e: number) =>
+    find<Record<SpecialAbility>> (pipe (
+                                   id,
+                                   getNumericMagicalTraditionIdByInstanceId,
+                                   fmap (inc),
+                                   elem (e)
+                                 ))
 
-  const hasPropertyKnowledgeRestriction = getActiveSelections (propertyKnowledge)
-    .fmap (properties => properties.notElem (entry.get ('property')));
+/**
+ * Checks if the passed spell or cantrip is valid for the current
+ * active magical traditions.
+ */
+export const isOwnTradition =
+  (activeTradition: List<Record<SpecialAbility>>) =>
+  (x: Record<Spell> | Record<Cantrip>): boolean =>
+    pipe (
+           tradition,
+           any (
+             e =>
+               e === 1
+               || isJust (isActiveTradition (e) (activeTradition))
+           )
+         )
+         (x)
 
-  const maxList = List.of (
-    getSkillCheckValues (attributes) (entry.get ('check')) .cons (8) .maximum () + 2
-  );
-
-  const getAdditionalMax = R.pipe (
-    (list: typeof maxList) => phase < 3
-      ? list.append (startEL.get ('maxSkillRating'))
-      : list,
-    (list: typeof maxList) => Maybe.elem (true) (hasPropertyKnowledgeRestriction)
-      ? list.append (14)
-      : list
-  );
-
-  const max = getAdditionalMax (maxList).minimum ();
-
-  return entry.get ('value') < max + bonus;
-};
-
-export const getPropertyCounter = (
-  wiki: OrderedMap<string, Record<Wiki.Spell>>,
-  state: OrderedMap<string, Record<Data.ActivatableSkillDependent>>
-) => {
-  return state
-    .filter (e => e.get ('value') >= 10)
-    .foldl<OrderedMap<number, number>> (
-      acc => instance => Maybe.maybe<Record<Wiki.Spell>, OrderedMap<number, number>> (acc) (
-        wikiEntry => acc.alter (
-          existing => Just (Maybe.fromMaybe (0) (existing) + 1)
-        ) (wikiEntry.get ('property'))
-      ) (wiki.lookup (instance.get ('id')))
-    ) (OrderedMap.empty<number, number> (),);
-};
-
-export const isDecreasable = (
-  wiki: Record<Wiki.WikiAll>,
-  state: Record<Data.HeroDependent>,
-  entry: Record<View.SpellCombined>,
-  propertyKnowledge: Maybe<Record<Data.ActivatableDependent>>
-): boolean => {
-  const dependencies = flattenDependencies<number | boolean> (
-    wiki,
-    state,
-    entry.get ('dependencies')
-  );
-
-  // Basic validation
-  const valid = entry.get ('value') < 1
-    ? dependencies.notElem (true)
-    : entry.get ('value') > Math.max (0, ...dependencies.filter (isNumber));
-
-  return Maybe.fromMaybe (valid) (
-    getActiveSelections (propertyKnowledge)
-      // Check if spell is part of dependencies of active Property Knowledge
-      .bind (Maybe.ensure (
-        activeProperties => activeProperties.any (
-          e => isNumber (e) && entry.get ('property') === e
-        )
+/**
+* Add a restriction to the list of maxima if there is no aspect knowledge
+* active for the passed liturgical chant.
+*/
+const putPropertyKnowledgeRestrictionMaximum =
+  (propertyKnowledge: Maybe<Record<ActivatableDependent>>) =>
+  (entry: Record<SpellCombined>) =>
+    ifElse<List<number>, List<number>>
+      (cnst (
+        or (fmap (notElem<string | number> (property (wikiEntry (entry))))
+                 (getActiveSelections (propertyKnowledge)))
       ))
-      .fmap (
-        () => {
-          const counter = getPropertyCounter (wiki.get ('spells'), state.get ('spells'));
+      (consF (14))
+      (ident)
 
-          const countedLowestWithProperty = Maybe.fromMaybe (0) (
-            counter.lookup (entry.get ('property'))
-          );
+/**
+ * Checks if the passed spell's skill rating can be increased.
+ */
+export const isSpellIncreasable =
+  (startEL: Record<ExperienceLevel>) =>
+  (phase: number) =>
+  (attributes: OrderedMap<string, Record<AttributeDependent>>) =>
+  (exceptionalSkill: Maybe<Record<ActivatableDependent>>) =>
+  (propertyKnowledge: Maybe<Record<ActivatableDependent>>) =>
+  (entry: Record<SpellCombined>): boolean => {
+    const bonus = getExceptionalSkillBonus (id (wikiEntry (entry)))
+                                           (exceptionalSkill)
 
-          return (entry.get ('value') !== 10 || countedLowestWithProperty > 3) && valid;
-        }
+    const max = pipe (
+                      getInitialMaximumList (attributes),
+                      putMaximumSkillRatingFromExperienceLevel (startEL) (phase),
+                      putPropertyKnowledgeRestrictionMaximum (propertyKnowledge)
+                                                             (entry),
+                      minimum
+                    )
+                    (wikiEntry (entry))
+
+    return value (stateEntry (entry)) < max + bonus
+  }
+
+/**
+ * Counts the active spells for every property. A spell can only have one
+ * property.
+ */
+export const countActiveSpellsPerProperty =
+  (wiki: OrderedMap<string, Record<Spell>>) =>
+    pipe (
+      filter<string, Record<ActivatableSkillDependent>> (pipe (value, gte (10))),
+      foldl<Record<ActivatableSkillDependent>, OrderedMap<number, number>>
+        (acc => pipe (
+          id,
+          lookup_ (wiki),
+          maybe<Record<Spell>, OrderedMap<number, number>>
+            (acc)
+            (pipe (
+              property,
+              alter (pipe (sum, inc, Just)),
+              thrush (acc)
+            ))
+        ))
+        (empty)
+    )
+
+/**
+ * Check if the dependencies allow the passed spell to be decreased.
+ */
+const isSpellDecreasableByDependencies =
+  (wiki: WikiModelRecord) =>
+  (state: HeroModelRecord) =>
+  (entry: Record<SpellCombined>) => {
+    const flattenedDependencies =
+      flattenDependencies<number | boolean> (wiki) (state) (dependencies (stateEntry (entry)))
+
+    return value (stateEntry (entry)) < 1
+      ? notElem<number | boolean> (true) (flattenedDependencies)
+      : value (stateEntry (entry)) > filterAndMaximumNonNegative (flattenedDependencies)
+  }
+
+/**
+ * Check if the active property knowledges allow the passed spell to be
+ * decreased. (There must be at leased 3 spells of the respective property
+ * active.)
+ */
+const isSpellDecreasableByPropertyKnowledges =
+  (wiki: WikiModelRecord) =>
+  (spellsStateEntries: OrderedMap<string, Record<ActivatableSkillDependent>>) =>
+  (propertyKnowledge: Maybe<Record<ActivatableDependent>>) =>
+  (entry: Record<SpellCombined>) =>
+    or (
+      pipe (
+        getActiveSelections,
+
+        // Check if spell is part of dependencies of active Property Knowledge
+        bindF<List<string | number>, List<string | number>>
+          (ensure (any (e => isNumber (e) && equals (e) (property (wikiEntry (entry)))))),
+
+        fmap (
+          pipe (
+            () => countActiveSpellsPerProperty (spells (wiki))
+                                               (spellsStateEntries),
+            lookup (property (wikiEntry (entry))),
+            sum,
+            lowest => value (stateEntry (entry)) !== 10 || lowest > 3
+          )
+        )
       )
-  );
-};
+      (propertyKnowledge)
+    )
+
+/**
+ * Checks if the passed spell's skill rating can be decreased.
+ */
+export const isSpellDecreasable =
+  (wiki: WikiModelRecord) =>
+  (state: HeroModelRecord) =>
+  (propertyKnowledge: Maybe<Record<ActivatableDependent>>) =>
+  (entry: Record<SpellCombined>): boolean =>
+    isSpellDecreasableByDependencies (wiki) (state) (entry)
+    && isSpellDecreasableByPropertyKnowledges (wiki)
+                                              (HeroModel.A.spells (state))
+                                              (propertyKnowledge)
+                                              (entry)

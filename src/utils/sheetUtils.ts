@@ -1,6 +1,15 @@
-import * as R from 'ramda';
-import { AttributeCombined } from '../App/Models/View/viewTypeHelpers';
-import { List, Maybe, Record } from './dataUtils';
+import { pipe } from "ramda";
+import { AttributeDependent } from "../App/Models/ActiveEntries/AttributeDependent";
+import { AttributeCombined } from "../App/Models/View/AttributeCombined";
+import { Attribute } from "../App/Models/Wiki/Attribute";
+import { equals } from "../Data/Eq";
+import { find, List, map } from "../Data/List";
+import { fmap, Maybe, maybe, sum } from "../Data/Maybe";
+import { Record } from "../Data/Record";
+
+const { stateEntry, wikiEntry } = AttributeCombined.A
+const { id, short } = Attribute.A
+const { value } = AttributeDependent.A
 
 /**
  * If `attributeValueVisibility` is `True`, this function returns a string of
@@ -9,21 +18,33 @@ import { List, Maybe, Record } from './dataUtils';
  * If `attributeValueVisibility` is `False`, this function returns a string of
  * attribute abbreviations based on the passed id list, separated by "/".
  */
-export const getAttributeStringByIdList = (attributeValueVisibility: boolean) =>
+export const getAttributeStringByIdList =
+  (attributeValueVisibility: boolean) =>
   (attributes: List<Record<AttributeCombined>>) =>
-    R.pipe (
-      List.map<string, string | number> (
-        id => {
-          const attribute = attributes .find (attr => attr .get ('id') === id);
-
-          return attributeValueVisibility
-            ? Maybe.fromMaybe
-              (0)
-              (attribute .fmap (Record.get<AttributeCombined, 'value'> ('value')))
-            : Maybe.fromMaybe
-              ('')
-              (attribute .fmap (Record.get<AttributeCombined, 'short'> ('short')));
-        }
+    pipe (
+      map<string, string | number> (
+        pipe (
+          findAttribute (attributes),
+          getValuesOrShorts (attributeValueVisibility)
+        )
       ),
-      List.intercalate ('/')
-    );
+      List.intercalate ("/")
+    )
+
+const findAttribute =
+  (attributes: List<Record<AttributeCombined>>) =>
+  (x: string) =>
+    find<Record<AttributeCombined>> (pipe (wikiEntry, id, equals (x)))
+                                    (attributes)
+
+type ValuesOrShorts = (x: Maybe<Record<AttributeCombined>>) => string | number
+
+/**
+ * Returns list of values (`True`) or list of abbreviations (`False`) based on
+ * the passed boolean.
+ */
+const getValuesOrShorts =
+  (attributeValueVisibility: boolean): ValuesOrShorts =>
+    attributeValueVisibility
+      ? pipe (fmap (pipe (stateEntry, value)), sum)
+      : maybe<Record<AttributeCombined>, string> ("") (pipe (wikiEntry, short))
