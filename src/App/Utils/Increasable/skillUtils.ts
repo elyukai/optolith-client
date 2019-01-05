@@ -1,25 +1,26 @@
 import { pipe } from "ramda";
-import { ActivatableDependent } from "../App/Models/ActiveEntries/ActivatableDependent";
-import { ActiveObject } from "../App/Models/ActiveEntries/ActiveObject";
-import { AttributeDependent } from "../App/Models/ActiveEntries/AttributeDependent";
-import { SkillDependent } from "../App/Models/ActiveEntries/SkillDependent";
-import { HeroModel, HeroModelRecord } from "../App/Models/Hero/HeroModel";
-import { SkillCombined, SkillCombinedAccessors } from "../App/Models/View/SkillCombined";
-import { ExperienceLevel } from "../App/Models/Wiki/ExperienceLevel";
-import { Skill } from "../App/Models/Wiki/Skill";
-import { WikiModelRecord } from "../App/Models/Wiki/WikiModel";
-import { cnst, ident } from "../Data/Function";
-import { consF, countWith, foldr, List, maximum, maximumNonNegative, minimum } from "../Data/List";
-import { elem, fmap, Just, Maybe, maybe, Nothing, sum } from "../Data/Maybe";
-import { lookup_, OrderedMap } from "../Data/OrderedMap";
-import { fromBoth, Pair } from "../Data/Pair";
-import { Record } from "../Data/Record";
-import * as Data from "../types/data";
-import { isMaybeActive } from "./activatable/isActive";
-import { getSkillCheckValues } from "./AttributeUtils";
-import { flattenDependencies } from "./dependencies/flattenDependencies";
-import { ifElse } from "./ifElse";
-import { add } from "./mathUtils";
+import { cnst, ident } from "../../../Data/Function";
+import { consF, countWith, foldr, List, maximum, maximumNonNegative, minimum } from "../../../Data/List";
+import { elem, fmap, Just, maybe, Maybe, Nothing, sum } from "../../../Data/Maybe";
+import { lookup_, OrderedMap } from "../../../Data/OrderedMap";
+import { } from "../../../Data/OrderedSet";
+import { fromBoth, Pair } from "../../../Data/Pair";
+import { Record } from "../../../Data/Record";
+import { EntryRating } from "../../../types/data";
+import { isMaybeActive } from "../../../utils/activatable/isActive";
+import { flattenDependencies } from "../../../utils/dependencies/flattenDependencies";
+import { ifElse } from "../../../utils/ifElse";
+import { add } from "../../../utils/mathUtils";
+import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
+import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
+import { AttributeDependent } from "../../Models/ActiveEntries/AttributeDependent";
+import { SkillDependent } from "../../Models/ActiveEntries/SkillDependent";
+import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
+import { SkillCombined, SkillCombinedAccessors } from "../../Models/View/SkillCombined";
+import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel";
+import { Skill } from "../../Models/Wiki/Skill";
+import { WikiModelRecord } from "../../Models/Wiki/WikiModel";
+import { getSkillCheckValues } from "./attributeUtils";
 
 const { specialAbilities, skills } = HeroModel.A
 const { active } = ActivatableDependent.A
@@ -121,12 +122,12 @@ export const isSkillDecreasable =
   }
 
 export const isCommon =
-  (rating: OrderedMap<string, Data.EntryRating>) =>
-    pipe (Skill.A.id, lookup_ (rating), elem (Data.EntryRating.Common))
+  (rating: OrderedMap<string, EntryRating>) =>
+    pipe (Skill.A.id, lookup_ (rating), elem (EntryRating.Common))
 
 export const isUncommon =
-  (rating: OrderedMap<string, Data.EntryRating>) =>
-    pipe (Skill.A.id, lookup_ (rating), elem (Data.EntryRating.Uncommon))
+  (rating: OrderedMap<string, EntryRating>) =>
+    pipe (Skill.A.id, lookup_ (rating), elem (EntryRating.Uncommon))
 
 export const getRoutineValue =
   (checkAttributeValues: List<number>) =>

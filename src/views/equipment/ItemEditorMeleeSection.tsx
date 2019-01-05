@@ -1,7 +1,7 @@
 import * as R from 'ramda';
 import * as React from 'react';
 import { Attribute, CombatTechnique } from '../../App/Models/Wiki/wikiTypeHelpers';
-import { getAbbreviation } from '../../App/Utils/Increasable/AttributeUtils';
+import { getAbbreviation } from '../../App/Utils/Increasable/attributeUtils';
 import { Checkbox } from '../../components/Checkbox';
 import { Dropdown, DropdownOption } from '../../components/Dropdown';
 import { Hr } from '../../components/Hr';

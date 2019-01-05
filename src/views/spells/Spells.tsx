@@ -2,7 +2,7 @@ import * as R from 'ramda';
 import * as React from 'react';
 import { AttributeCombined, CantripCombined, SpellIsActive, SpellWithRequirements } from '../../App/Models/View/viewTypeHelpers';
 import { Cantrip, SpecialAbility, Spell } from '../../App/Models/Wiki/wikiTypeHelpers';
-import { isOwnTradition } from '../../App/Utils/Increasable/SpellUtils';
+import { isOwnTradition } from '../../App/Utils/Increasable/spellUtils';
 import { BorderButton } from '../../components/BorderButton';
 import { Checkbox } from '../../components/Checkbox';
 import { ListView } from '../../components/List';

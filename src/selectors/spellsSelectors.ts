@@ -1,7 +1,7 @@
 import * as R from 'ramda';
 import { CantripCombined, SpellIsActive, SpellWithRequirements } from '../App/Models/View/viewTypeHelpers';
 import { ExperienceLevel, Spell } from '../App/Models/Wiki/wikiTypeHelpers';
-import { isDecreasable, isIncreasable, isOwnTradition } from '../App/Utils/Increasable/SpellUtils';
+import { isDecreasable, isIncreasable, isOwnTradition } from '../App/Utils/Increasable/spellUtils';
 import { ActivatableDependent, ActivatableSkillDependent } from '../types/data';
 import { getModifierByActiveLevel } from '../utils/activatable/activatableModifierUtils';
 import { getMagicalTraditions } from '../utils/activatable/traditionUtils';

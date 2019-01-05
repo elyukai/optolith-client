@@ -1,5 +1,5 @@
 import * as R from 'ramda';
-import { getAttributeValueWithDefault } from '../App/Utils/Increasable/AttributeUtils';
+import { getAttributeValueWithDefault } from '../App/Utils/Increasable/attributeUtils';
 import { Energy, EnergyWithLoss, SecondaryAttribute } from '../types/data';
 import { getModifierByActiveLevel, getModifierByIsActive } from '../utils/activatable/activatableModifierUtils';
 import { getActiveSelections } from '../utils/activatable/selectionUtils';
