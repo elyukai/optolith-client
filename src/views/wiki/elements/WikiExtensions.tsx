@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { SkillExtension, SpecialAbility } from '../../../App/Models/Wiki/wikiTypeHelpers';
+import { translate, UIMessages } from '../../../App/Utils/I18n';
 import { Markdown } from '../../../components/Markdown';
 import { Categories } from '../../../constants/Categories';
 import { sortObjects } from '../../../utils/FilterSortUtils';
-import { translate, UIMessages } from '../../../utils/I18n';
 
 export interface WikiExtensionsProps {
   currentObject: {

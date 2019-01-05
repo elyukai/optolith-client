@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Advantage, Culture, Disadvantage, ExperienceLevel, Profession, ProfessionVariant, Race, RaceVariant } from '../../App/Models/Wiki/wikiTypeHelpers';
+import { translate } from '../../App/Utils/I18n';
 import { ActivatableTextList } from '../../components/ActivatableTextList';
 import { AvatarChange } from '../../components/AvatarChange';
 import { AvatarWrapper } from '../../components/AvatarWrapper';
@@ -12,7 +13,6 @@ import { VerticalList } from '../../components/VerticalList';
 import { ActiveViewObject, PersonalData as PersonalDataInterface } from '../../types/data';
 import { UIMessagesObject } from '../../types/ui';
 import { Just, List, Maybe, Record } from '../../utils/dataUtils';
-import { translate } from '../../utils/I18n';
 import { OverviewAddAP } from './OverviewAddAP';
 import { OverviewPersonalData, OverviewPersonalDataDispatchProps } from './OverviewPersonalData';
 

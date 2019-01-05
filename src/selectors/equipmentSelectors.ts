@@ -1,13 +1,13 @@
 import * as R from 'ramda';
 import { Armor, ArmorZone, Item, MeleeWeapon, RangedWeapon, ShieldOrParryingWeapon } from '../App/Models/View/viewTypeHelpers';
 import { Attribute, CombatTechnique, ItemTemplate, WikiAll } from '../App/Models/Wiki/wikiTypeHelpers';
+import { createMaybeSelector } from '../App/Utils/createMaybeSelector';
 import { getAttack, getParry } from '../App/Utils/Increasable/combatTechniqueUtils';
+import { convertPrimaryAttributeToArray } from '../App/Utils/ItemUtils';
+import { isAvailable } from '../App/Utils/RulesUtils';
 import { ArmorZonesInstance, AttributeDependent, HeroDependent, ItemInstance } from '../types/data';
-import { createMaybeSelector } from '../utils/createMaybeSelector';
 import { List, Maybe, OrderedMap, Record, RecordInterface } from '../utils/dataUtils';
 import { AllSortOptions, filterAndSortObjects, filterObjects, sortObjects } from '../utils/FilterSortUtils';
-import { convertPrimaryAttributeToArray } from '../utils/ItemUtils';
-import { isAvailable } from '../utils/RulesUtils';
 import { getRuleBooksEnabled } from './rulesSelectors';
 import { getEquipmentSortOptions } from './sortOptionsSelectors';
 import { getArmorZonesState, getCurrentHeroPresent, getEquipmentFilterText, getEquipmentState, getHigherParadeValues, getItemsState, getItemTemplatesFilterText, getLocaleAsProp, getWiki, getWikiItemTemplates, getZoneArmorFilterText } from './stateSelectors';

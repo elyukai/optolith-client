@@ -1,6 +1,6 @@
 import * as React from 'react';
+import { translate, UIMessages } from '../../../App/Utils/I18n';
 import { Markdown } from '../../../components/Markdown';
-import { translate, UIMessages } from '../../../utils/I18n';
 
 export interface WikiToolsProps {
   currentObject: {

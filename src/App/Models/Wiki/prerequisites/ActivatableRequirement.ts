@@ -3,7 +3,7 @@ import { ActivatableLikeCategories, Categories } from "../../../../constants/Cat
 import { all, elem_, isList, List } from "../../../../Data/List";
 import { fmap, Maybe, Nothing, or } from "../../../../Data/Maybe";
 import { fromDefault, makeLenses, member, Record } from "../../../../Data/Record";
-import { getCategoryById } from "../../../../utils/IDUtils";
+import { getCategoryById } from "../../../Utils/IDUtils";
 import { AllRequirementObjects, ProfessionPrerequisite, SID } from "../wikiTypeHelpers";
 
 export interface RequireActivatable {

@@ -1,6 +1,10 @@
 import * as R from 'ramda';
 import { Dispatch } from 'react-redux';
 import { Advantage, Disadvantage } from '../App/Models/Wiki/wikiTypeHelpers';
+import { getHeroStateItem } from '../App/Utils/heroStateUtils';
+import { translate } from '../App/Utils/I18n';
+import { isNumber } from '../App/Utils/typeCheckUtils';
+import { getWikiEntry } from '../App/Utils/WikiUtils';
 import { ActionTypes } from '../constants/ActionTypes';
 import { ActivatableCategory, Categories } from '../constants/Categories';
 import { AppState } from '../reducers/appReducer';
@@ -16,10 +20,6 @@ import { isMagicalOrBlessed } from '../utils/activatable/checkActivatableUtils';
 import { convertPerTierCostToFinalCost } from '../utils/adventurePoints/activatableCostUtils';
 import { getAreSufficientAPAvailableForDisAdvantage, getDisAdvantagesSubtypeMax, SufficientAPAvailableForDisAdvantage } from '../utils/adventurePoints/adventurePointsUtils';
 import { Just, List, Maybe, Record, Tuple } from '../utils/dataUtils';
-import { getHeroStateItem } from '../utils/heroStateUtils';
-import { translate } from '../utils/I18n';
-import { isNumber } from '../utils/typeCheckUtils';
-import { getWikiEntry } from '../utils/WikiUtils';
 import { addAlert } from './AlertActions';
 
 /**

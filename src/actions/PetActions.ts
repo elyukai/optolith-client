@@ -1,9 +1,9 @@
+import { getNewId } from '../App/Utils/IDUtils';
 import { ActionTypes } from '../constants/ActionTypes';
 import { getPets } from '../selectors/stateSelectors';
 import { AsyncAction } from '../types/actions';
 import { PetInstance } from '../types/data';
 import { Record } from '../utils/dataUtils';
-import { getNewId } from '../utils/IDUtils';
 
 export interface AddPetAction {
   type: ActionTypes.ADD_PET;

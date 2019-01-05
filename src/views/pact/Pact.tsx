@@ -1,13 +1,13 @@
 import * as R from 'ramda';
 import * as React from 'react';
 import { isNumber, isString } from 'util';
+import { translate, UIMessagesObject } from '../../App/Utils/I18n';
+import { getRoman } from '../../App/Utils/NumberUtils';
 import { Dropdown, DropdownOption } from '../../components/Dropdown';
 import { Page } from '../../components/Page';
 import { TextField } from '../../components/TextField';
 import { InputTextEvent, Pact } from '../../types/data';
 import { Just, List, Maybe, Nothing, Record, Tuple } from '../../utils/dataUtils';
-import { translate, UIMessagesObject } from '../../utils/I18n';
-import { getRoman } from '../../utils/NumberUtils';
 
 export interface PactSettingsOwnProps {
   locale: UIMessagesObject;

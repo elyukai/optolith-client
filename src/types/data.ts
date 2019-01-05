@@ -7,6 +7,7 @@ import { EditPrimaryAttributeDamageThreshold } from "../App/Models/Hero/EditPrim
 import { HitZoneArmorBase } from "../App/Models/Hero/HitZoneArmor";
 import { SkillOptionalDependency } from "../App/Models/Hero/SkillOptionalDependency";
 import * as Wiki from "../App/Models/Wiki/wikiTypeHelpers";
+import { TabId } from "../App/Utils/LocationUtils";
 import { List } from "../Data/List";
 import { Maybe } from "../Data/Maybe";
 import { OrderedMap } from "../Data/OrderedMap";
@@ -15,7 +16,6 @@ import { Pair } from "../Data/Pair";
 import { Omit, Record, RecordI } from "../Data/Record";
 import { DCIds } from "../selectors/derivedCharacteristicsSelectors";
 import { ActiveObject } from "../utils/activeEntries/ActiveObject";
-import { TabId } from "../utils/LocationUtils";
 import { SelectOption } from "../utils/wikiData/sub/SelectOption";
 import { AllAction } from "./actions";
 

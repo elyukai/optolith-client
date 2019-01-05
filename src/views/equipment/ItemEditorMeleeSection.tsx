@@ -1,7 +1,9 @@
 import * as R from 'ramda';
 import * as React from 'react';
 import { Attribute, CombatTechnique } from '../../App/Models/Wiki/wikiTypeHelpers';
+import { translate, UIMessagesObject } from '../../App/Utils/I18n';
 import { getAbbreviation } from '../../App/Utils/Increasable/attributeUtils';
+import { getLossLevelElements, ItemEditorInputValidation } from '../../App/Utils/ItemUtils';
 import { Checkbox } from '../../components/Checkbox';
 import { Dropdown, DropdownOption } from '../../components/Dropdown';
 import { Hr } from '../../components/Hr';
@@ -9,8 +11,6 @@ import { Label } from '../../components/Label';
 import { TextField } from '../../components/TextField';
 import { ItemEditorInstance } from '../../types/data';
 import { List, Maybe, OrderedMap, Record } from '../../utils/dataUtils';
-import { translate, UIMessagesObject } from '../../utils/I18n';
-import { getLossLevelElements, ItemEditorInputValidation } from '../../utils/ItemUtils';
 
 export interface ItemEditorMeleeSectionProps {
   attributes: OrderedMap<string, Record<Attribute>>;

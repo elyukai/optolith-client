@@ -1,5 +1,6 @@
 import * as R from 'ramda';
 import * as React from 'react';
+import { translate, UIMessagesObject } from '../../App/Utils/I18n';
 import { BorderButton } from '../../components/BorderButton';
 import { ListView } from '../../components/List';
 import { Options } from '../../components/Options';
@@ -7,7 +8,6 @@ import { Page } from '../../components/Page';
 import { Scroll } from '../../components/Scroll';
 import { PetEditorInstance, PetInstance } from '../../types/data';
 import { List, Maybe, OrderedMap, Record } from '../../utils/dataUtils';
-import { translate, UIMessagesObject } from '../../utils/I18n';
 import { PetEditor } from './PetEditor';
 import { PetsListItem } from './PetsListItem';
 

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { translate } from '../../App/Utils/I18n';
 import { BorderButton } from '../../components/BorderButton';
 import { Checkbox } from '../../components/Checkbox';
 import { Dialog } from '../../components/DialogNew';
@@ -6,7 +7,6 @@ import { Dropdown, DropdownOption } from '../../components/Dropdown';
 import { Option, SegmentedControls } from '../../components/SegmentedControls';
 import { UIMessagesObject } from '../../types/ui';
 import { Just, List, Maybe, Nothing, Record } from '../../utils/dataUtils';
-import { translate } from '../../utils/I18n';
 
 export interface SettingsOwnProps {
   locale: UIMessagesObject;

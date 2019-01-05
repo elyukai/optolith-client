@@ -1,9 +1,9 @@
 import * as R from 'ramda';
+import { createMaybeSelector } from '../App/Utils/createMaybeSelector';
+import { UndoState } from '../App/Utils/undo';
 import { Hero } from '../types/data';
-import { createMaybeSelector } from '../utils/createMaybeSelector';
 import { List, OrderedMap, OrderedSet } from '../utils/dataUtils';
 import { filterAndSortObjects } from '../utils/FilterSortUtils';
-import { UndoState } from '../utils/undo';
 import { getHerolistSortOptions } from './sortOptionsSelectors';
 import { getHeroes, getHerolistFilterText, getLocaleAsProp } from './stateSelectors';
 

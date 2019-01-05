@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { AttributeCombined, SkillCombined } from '../../../App/Models/View/viewTypeHelpers';
+import { translate, UIMessagesObject } from '../../../App/Utils/I18n';
 import { TextBox } from '../../../components/TextBox';
 import { List, Maybe, OrderedMap, OrderedSet, Record } from '../../../utils/dataUtils';
-import { translate, UIMessagesObject } from '../../../utils/I18n';
 import { iterateGroupHeaders } from './SkillsSheetSkillsGroups';
 import { iterateList } from './SkillsSheetSkillsIterate';
 

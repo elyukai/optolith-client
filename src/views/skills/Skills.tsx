@@ -2,6 +2,7 @@ import * as R from 'ramda';
 import * as React from 'react';
 import { AttributeCombined, SkillWithRequirements } from '../../App/Models/View/viewTypeHelpers';
 import { Skill } from '../../App/Models/Wiki/wikiTypeHelpers';
+import { translate, UIMessagesObject } from '../../App/Utils/I18n';
 import { Checkbox } from '../../components/Checkbox';
 import { ListView } from '../../components/List';
 import { ListHeader } from '../../components/ListHeader';
@@ -18,7 +19,6 @@ import { WikiInfoContainer } from '../../containers/WikiInfoContainer';
 import { DCIds } from '../../selectors/derivedCharacteristicsSelectors';
 import { EntryRating, SecondaryAttribute } from '../../types/data';
 import { Just, List, Maybe, Nothing, OrderedMap, Record, Tuple } from '../../utils/dataUtils';
-import { translate, UIMessagesObject } from '../../utils/I18n';
 import { isCommon, isUncommon } from '../../utils/skillUtils';
 import { SkillListItem } from './SkillListItem';
 

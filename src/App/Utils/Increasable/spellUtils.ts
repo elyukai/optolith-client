@@ -7,10 +7,6 @@ import { alter, empty, filter, foldl, lookup, lookup_, OrderedMap } from "../../
 import { Record } from "../../../Data/Record";
 import { getActiveSelections } from "../../../utils/activatable/selectionUtils";
 import { filterAndMaximumNonNegative, flattenDependencies } from "../../../utils/dependencies/flattenDependencies";
-import { getNumericMagicalTraditionIdByInstanceId } from "../../../utils/IDUtils";
-import { ifElse } from "../../../utils/ifElse";
-import { gte, inc } from "../../../utils/mathUtils";
-import { isNumber } from "../../../utils/typeCheckUtils";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
 import { AttributeDependent } from "../../Models/ActiveEntries/AttributeDependent";
@@ -21,6 +17,10 @@ import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel";
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
 import { Spell } from "../../Models/Wiki/Spell";
 import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
+import { getNumericMagicalTraditionIdByInstanceId } from "../IDUtils";
+import { ifElse } from "../ifElse";
+import { gte, inc } from "../mathUtils";
+import { isNumber } from "../typeCheckUtils";
 import { getExceptionalSkillBonus, getInitialMaximumList, putMaximumSkillRatingFromExperienceLevel } from "./skillUtils";
 
 const { spells } = WikiModel.A

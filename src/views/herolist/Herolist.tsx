@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Book, ExperienceLevel, WikiAll } from '../../App/Models/Wiki/wikiTypeHelpers';
+import { translate } from '../../App/Utils/I18n';
 import { BorderButton } from '../../components/BorderButton';
 import { Dropdown, DropdownOption } from '../../components/Dropdown';
 import { ListView } from '../../components/List';
@@ -12,7 +13,6 @@ import { AdventurePointsObject } from '../../selectors/adventurePointsSelectors'
 import { Hero, InputTextEvent, User } from '../../types/data';
 import { UIMessagesObject } from '../../types/ui';
 import { Just, List, Maybe, OrderedMap, OrderedSet, Record } from '../../utils/dataUtils';
-import { translate } from '../../utils/I18n';
 import { HeroCreation } from './HeroCreation';
 import { HerolistItem } from './HerolistItem';
 

@@ -1,13 +1,13 @@
 import * as R from 'ramda';
+import { createMaybeSelector } from '../App/Utils/createMaybeSelector';
+import { translate } from '../App/Utils/I18n';
 import { getAttributeValueWithDefault } from '../App/Utils/Increasable/attributeUtils';
+import { isBookEnabled } from '../App/Utils/RulesUtils';
+import { mapGetToMaybeSlice } from '../App/Utils/SelectorsUtils';
 import { Energy, EnergyWithLoss, SecondaryAttribute } from '../types/data';
 import { getModifierByActiveLevel, getModifierByIsActive } from '../utils/activatable/activatableModifierUtils';
 import { getActiveSelections } from '../utils/activatable/selectionUtils';
-import { createMaybeSelector } from '../utils/createMaybeSelector';
 import { Just, List, Maybe, OrderedMap, OrderedSet, Record, Tuple } from '../utils/dataUtils';
-import { translate } from '../utils/I18n';
-import { isBookEnabled } from '../utils/RulesUtils';
-import { mapGetToMaybeSlice } from '../utils/SelectorsUtils';
 import { getPrimaryBlessedAttribute, getPrimaryMagicalAttribute } from './attributeSelectors';
 import { getCurrentRace } from './rcpSelectors';
 import { getRuleBooksEnabled } from './rulesSelectors';

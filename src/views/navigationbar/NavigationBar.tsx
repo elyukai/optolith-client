@@ -1,5 +1,7 @@
 import { remote } from 'electron';
 import * as React from 'react';
+import { translate } from '../../App/Utils/I18n';
+import { TabId } from '../../App/Utils/LocationUtils';
 import { AvatarWrapper } from '../../components/AvatarWrapper';
 import { BorderButton } from '../../components/BorderButton';
 import { IconButton } from '../../components/IconButton';
@@ -10,8 +12,6 @@ import { AdventurePointsObject } from '../../selectors/adventurePointsSelectors'
 import { SubTab } from '../../types/data';
 import { UIMessagesObject } from '../../types/ui';
 import { List, Maybe, Record } from '../../utils/dataUtils';
-import { translate } from '../../utils/I18n';
-import { TabId } from '../../utils/LocationUtils';
 import { ApTooltip } from './ApTooltip';
 import { NavigationBarBack } from './NavigationBarBack';
 import { NavigationBarLeft } from './NavigationBarLeft';

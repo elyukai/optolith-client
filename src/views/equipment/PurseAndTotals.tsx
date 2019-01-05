@@ -1,8 +1,8 @@
 import * as React from 'react';
+import { localizeNumber, localizeWeight, translate, UIMessagesObject } from '../../App/Utils/I18n';
 import { TextField } from '../../components/TextField';
 import { Purse } from '../../types/data';
 import { Maybe, Record } from '../../utils/dataUtils';
-import { localizeNumber, localizeWeight, translate, UIMessagesObject } from '../../utils/I18n';
 
 export interface PurseAndTotalsProps {
   carryingCapacity: Maybe<number>;

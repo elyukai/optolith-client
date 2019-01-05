@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { SpecialAbility } from '../../../App/Models/Wiki/wikiTypeHelpers';
+import { translate, UIMessagesObject } from '../../../App/Utils/I18n';
 import { TextBox } from '../../../components/TextBox';
 import { ActiveViewObject } from '../../../types/data';
 import { compressList } from '../../../utils/activatable/activatableNameUtils';
 import { List, Maybe, Record } from '../../../utils/dataUtils';
-import { translate, UIMessagesObject } from '../../../utils/I18n';
 
 export interface SpellsSheetSpecialAbilitiesProps {
   locale: UIMessagesObject;

@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { ItemTemplate } from '../../App/Models/Wiki/wikiTypeHelpers';
+import { translate, UIMessagesObject } from '../../App/Utils/I18n';
+import { getLossLevelElements } from '../../App/Utils/ItemUtils';
 import { Dialog } from '../../components/DialogNew';
 import { DropdownOption } from '../../components/Dropdown';
 import { TextField } from '../../components/TextField';
 import { ArmorZonesEditorInstance, ItemInstance } from '../../types/data';
 import { Just, List, Maybe, Record } from '../../utils/dataUtils';
 import { sortObjects } from '../../utils/FilterSortUtils';
-import { translate, UIMessagesObject } from '../../utils/I18n';
-import { getLossLevelElements } from '../../utils/ItemUtils';
 import { HitZoneArmorEditorRow } from './HitZoneArmorEditorRow';
 
 export interface HitZoneArmorEditorProps {

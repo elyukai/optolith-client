@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { translate, UIMessagesObject } from '../utils/I18n';
+import { translate, UIMessagesObject } from '../App/Utils/I18n';
 
 export interface RecommendedReferenceProps {
   locale: UIMessagesObject;

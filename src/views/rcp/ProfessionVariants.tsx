@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { ProfessionCombined } from '../../App/Models/View/viewTypeHelpers';
+import { translate, UIMessagesObject } from '../../App/Utils/I18n';
 import { Option, RadioButtonGroup } from '../../components/RadioButtonGroup';
 import { Sex } from '../../types/data';
 import { List, Maybe, Record } from '../../utils/dataUtils';
 import { sortObjects } from '../../utils/FilterSortUtils';
-import { translate, UIMessagesObject } from '../../utils/I18n';
 
 export interface ProfessionVariantsProps {
   currentProfessionId: Maybe<string>;

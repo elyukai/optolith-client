@@ -1,9 +1,9 @@
 import { connect } from 'react-redux';
+import { mapGetToSlice } from '../App/Utils/SelectorsUtils';
 import { AppState } from '../reducers/appReducer';
 import { getDerivedCharacteristicsMap } from '../selectors/derivedCharacteristicsSelectors';
 import * as stateSelectors from '../selectors/stateSelectors';
 import { getAllWikiEntries } from '../selectors/wikiSelectors';
-import { mapGetToSlice } from '../utils/SelectorsUtils';
 import { WikiInfo, WikiInfoDispatchProps, WikiInfoOwnProps } from '../views/wiki/WikiInfo';
 import { WikiInfoContentStateProps } from '../views/wiki/WikiInfoContent';
 

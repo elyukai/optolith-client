@@ -1,10 +1,10 @@
+import * as RCPUtils from '../App/Utils/rcpUtils';
 import { ActionTypes } from '../constants/ActionTypes';
 import { isAlbino } from '../selectors/activatableSelectors';
 import { getCurrentRace, getCurrentRaceVariant } from '../selectors/rcpSelectors';
 import { getSize, getWeight } from '../selectors/stateSelectors';
 import { AsyncAction } from '../types/actions';
 import { Just, Maybe, Nothing } from '../utils/dataUtils';
-import * as RCPUtils from '../utils/rcpUtils';
 
 export interface SetHeroNameAction {
   type: ActionTypes.SET_HERO_NAME;

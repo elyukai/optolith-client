@@ -1,8 +1,8 @@
 import * as React from 'react';
+import { TabId } from '../../App/Utils/LocationUtils';
 import { Tab } from '../../components/Tab';
 import { SubTab } from '../../types/data';
 import { List } from '../../utils/dataUtils';
-import { TabId } from '../../utils/LocationUtils';
 
 export interface NavigationBarSubTabsProps {
   currentTab: string;

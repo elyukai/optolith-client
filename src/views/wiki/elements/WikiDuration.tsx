@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { CategoryWithGroups, Categories } from '../../../constants/Categories';
-import { UIMessages } from '../../../utils/I18n';
+import { UIMessages } from '../../../App/Utils/I18n';
+import { Categories, CategoryWithGroups } from '../../../constants/Categories';
 import { WikiProperty } from '../WikiProperty';
 
 export interface WikiDurationProps {

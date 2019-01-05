@@ -1,4 +1,4 @@
-import { createMaybeSelector } from '../utils/createMaybeSelector';
+import { createMaybeSelector } from '../App/Utils/createMaybeSelector';
 import { getAddPermanentEnergy, getArmorZonesEditorInstance, getCurrentAlert, getEditPermanentEnergy, getIsAddAdventurePointsOpen, getIsCharacterCreatorOpen, getIsEditCharacterAvatarOpen, getIsEditPetAvatarOpen, getIsSettingsOpen, getItemEditorInstance, getUpdateDownloadProgress } from './stateSelectors';
 
 export const isDialogOpen = createMaybeSelector (

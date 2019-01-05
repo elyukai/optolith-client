@@ -1,10 +1,10 @@
 import * as View from '../App/Models/View/viewTypeHelpers';
 import * as Wiki from '../App/Models/Wiki/wikiTypeHelpers';
+import { createMaybeSelector } from '../App/Utils/createMaybeSelector';
+import { translate } from '../App/Utils/I18n';
 import * as Data from '../types/data';
-import { createMaybeSelector } from '../utils/createMaybeSelector';
 import { Maybe, Record } from '../utils/dataUtils';
 import { AllSortOptions } from '../utils/FilterSortUtils';
-import { translate } from '../utils/I18n';
 import { getLocaleAsProp, getSex } from './stateSelectors';
 import * as uiSettingsSelectors from './uisettingsSelectors';
 

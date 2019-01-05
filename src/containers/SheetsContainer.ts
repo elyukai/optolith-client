@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { Action, Dispatch } from 'redux';
 import * as IOActions from '../actions/IOActions';
 import * as SheetActions from '../actions/SheetActions';
+import { mapGetToMaybeSlice } from '../App/Utils/SelectorsUtils';
 import { AppState } from '../reducers/appReducer';
 import { getAdvantagesForSheet, getAspectKnowledgesForSheet, getBlessedSpecialAbilitiesForSheet, getBlessedTraditionForSheet, getCombatSpecialAbilitiesForSheet, getDisadvantagesForSheet, getFatePointsModifier, getGeneralSpecialAbilitiesForSheet, getMagicalSpecialAbilitiesForSheet, getMagicalTraditionForSheet, getPropertyKnowledgesForSheet } from '../selectors/activatableSelectors';
 import { getAdventurePointsObject } from '../selectors/adventurePointsSelectors';
@@ -19,7 +20,6 @@ import { getCantripsForSheet, getSpellsForSheet } from '../selectors/spellsSelec
 import { getAvatar, getCurrentHeroName, getProfile, getPurse, getSex, getSpecialAbilities, getWikiSpecialAbilities } from '../selectors/stateSelectors';
 import { getSheetCheckAttributeValueVisibility } from '../selectors/uisettingsSelectors';
 import { Just } from '../utils/dataUtils';
-import { mapGetToMaybeSlice } from '../utils/SelectorsUtils';
 import { Sheets, SheetsDispatchProps, SheetsOwnProps, SheetsStateProps } from '../views/sheets/Sheets';
 
 const mapStateToProps = (state: AppState, ownProps: SheetsOwnProps): SheetsStateProps => ({

@@ -7,8 +7,8 @@
  */
 
 import { pipe } from "ramda";
-import { add, max, min, multiply } from "../utils/mathUtils";
-import { not } from "../utils/not";
+import { add, max, min, multiply } from "../App/Utils/mathUtils";
+import { not } from "../App/Utils/not";
 import { equals } from "./Eq";
 import { cnst, ident } from "./Function";
 import { fromJust, imapMaybe, isJust, Just, Maybe, maybe, Nothing, Some } from "./Maybe";

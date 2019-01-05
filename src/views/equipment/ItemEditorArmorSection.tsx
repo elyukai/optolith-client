@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { translate, UIMessagesObject } from '../../App/Utils/I18n';
+import { getLossLevelElements, ItemEditorInputValidation } from '../../App/Utils/ItemUtils';
 import { Checkbox } from '../../components/Checkbox';
 import { Dropdown, DropdownOption } from '../../components/Dropdown';
 import { Hr } from '../../components/Hr';
@@ -6,8 +8,6 @@ import { TextField } from '../../components/TextField';
 import { ItemEditorInstance } from '../../types/data';
 import { Maybe, Record } from '../../utils/dataUtils';
 import { sortObjects } from '../../utils/FilterSortUtils';
-import { translate, UIMessagesObject } from '../../utils/I18n';
-import { getLossLevelElements, ItemEditorInputValidation } from '../../utils/ItemUtils';
 
 export interface ItemEditorArmorSectionProps {
   item: Record<ItemEditorInstance>;

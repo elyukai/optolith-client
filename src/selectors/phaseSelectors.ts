@@ -1,4 +1,4 @@
-import { createMaybeSelector } from '../utils/createMaybeSelector';
+import { createMaybeSelector } from '../App/Utils/createMaybeSelector';
 import { Maybe } from '../utils/dataUtils';
 import { getPhase } from './stateSelectors';
 import { getIsEditingHeroAfterCreationPhaseEnabled } from './uisettingsSelectors';

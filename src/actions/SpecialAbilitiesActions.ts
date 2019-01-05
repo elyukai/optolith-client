@@ -1,5 +1,8 @@
 import * as R from 'ramda';
 import { SpecialAbility } from '../App/Models/Wiki/wikiTypeHelpers';
+import { getHeroStateItem } from '../App/Utils/heroStateUtils';
+import { translate } from '../App/Utils/I18n';
+import { getWikiEntry } from '../App/Utils/WikiUtils';
 import { ActionTypes } from '../constants/ActionTypes';
 import { getAvailableAdventurePoints } from '../selectors/adventurePointsSelectors';
 import { getIsInCharacterCreation } from '../selectors/phaseSelectors';
@@ -11,9 +14,6 @@ import { getNameCost } from '../utils/activatable/activatableActiveUtils';
 import { convertPerTierCostToFinalCost } from '../utils/adventurePoints/activatableCostUtils';
 import { getAreSufficientAPAvailable } from '../utils/adventurePoints/adventurePointsUtils';
 import { Just, Maybe, Record } from '../utils/dataUtils';
-import { getHeroStateItem } from '../utils/heroStateUtils';
-import { translate } from '../utils/I18n';
-import { getWikiEntry } from '../utils/WikiUtils';
 import { addAlert } from './AlertActions';
 
 interface SpecialAbilityActivateArgs extends ActivateArgs {

@@ -1,12 +1,12 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
+import { translate, UIMessagesObject } from '../../App/Utils/I18n';
+import { getLevelElements } from '../../App/Utils/levelUtils';
+import { isNumber } from '../../App/Utils/typeCheckUtils';
 import { Checkbox } from '../../components/Checkbox';
 import { Dropdown, DropdownOption } from '../../components/Dropdown';
 import { LanguagesSelectionListItem, ScriptsSelectionListItem } from '../../types/data';
 import { Just, List, Maybe, Nothing, OrderedMap, Record } from '../../utils/dataUtils';
-import { translate, UIMessagesObject } from '../../utils/I18n';
-import { getLevelElements } from '../../utils/levelUtils';
-import { isNumber } from '../../utils/typeCheckUtils';
 
 export interface SelectionsLanguagesAndScriptsProps {
   scriptsActive: OrderedMap<number, number>;

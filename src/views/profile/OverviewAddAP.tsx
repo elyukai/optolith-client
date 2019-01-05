@@ -1,9 +1,9 @@
 import * as React from 'react';
+import { translate, UIMessagesObject } from '../../App/Utils/I18n';
+import { isInteger, isNaturalNumber } from '../../App/Utils/RegexUtils';
 import { Dialog } from '../../components/DialogNew';
 import { TextField } from '../../components/TextField';
 import { InputTextEvent } from '../../types/data';
-import { translate, UIMessagesObject } from '../../utils/I18n';
-import { isInteger, isNaturalNumber } from '../../utils/RegexUtils';
 
 interface Props {
   locale: UIMessagesObject;

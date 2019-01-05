@@ -5,13 +5,13 @@ import { lookup_ } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { getActiveSelections } from "../../../utils/activatable/selectionUtils";
 import { flattenDependencies } from "../../../utils/dependencies/flattenDependencies";
-import { add, divideBy, max } from "../../../utils/mathUtils";
 import { AttributeDependent } from "../../Models/ActiveEntries/AttributeDependent";
 import { SkillDependent } from "../../Models/ActiveEntries/SkillDependent";
 import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { CombatTechnique } from "../../Models/Wiki/CombatTechnique";
 import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel";
 import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
+import { add, divideBy, max } from "../mathUtils";
 
 const { value, dependencies } = SkillDependent.A
 const { gr, primary, id } = CombatTechnique.A

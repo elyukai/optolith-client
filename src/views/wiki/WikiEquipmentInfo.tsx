@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { Attribute, Book, CombatTechnique, ItemTemplate } from '../../App/Models/Wiki/wikiTypeHelpers';
+import { localizeNumber, localizeSize, localizeWeight, translate, UIMessages } from '../../App/Utils/I18n';
+import { convertPrimaryAttributeToArray } from '../../App/Utils/ItemUtils';
+import { sign, signNull } from '../../App/Utils/NumberUtils';
 import { Markdown } from '../../components/Markdown';
-import { localizeNumber, localizeSize, localizeWeight, translate, UIMessages } from '../../utils/I18n';
-import { convertPrimaryAttributeToArray } from '../../utils/ItemUtils';
-import { sign, signNull } from '../../utils/NumberUtils';
 import { WikiSource } from './elements/WikiSource';
 import { WikiBoxTemplate } from './WikiBoxTemplate';
 

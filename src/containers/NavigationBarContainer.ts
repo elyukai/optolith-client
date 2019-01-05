@@ -5,6 +5,7 @@ import * as HistoryActions from '../actions/HistoryActions';
 import * as InGameActions from '../actions/InGameActions';
 import * as LocationActions from '../actions/LocationActions';
 import * as SubwindowsActions from '../actions/SubwindowsActions';
+import { TabId } from '../App/Utils/LocationUtils';
 import { AppState } from '../reducers/appReducer';
 import { getAdventurePointsObject, getMagicalAdvantagesDisadvantagesAdventurePointsMaximum } from '../selectors/adventurePointsSelectors';
 import { getRedoAvailability, getUndoAvailability } from '../selectors/currentHeroSelectors';
@@ -15,7 +16,6 @@ import { getAvatar, getCurrentTab, getIsSettingsOpen } from '../selectors/stateS
 import { getIsHeroSection, getSubtabs, getTabs } from '../selectors/uilocationSelectors';
 import { UIMessagesObject } from '../types/ui';
 import { Nothing } from '../utils/dataUtils';
-import { TabId } from '../utils/LocationUtils';
 import { NavigationBar, NavigationBarDispatchProps, NavigationBarOwnProps, NavigationBarStateProps } from '../views/navigationbar/NavigationBar';
 
 const mapStateToProps = (state: AppState, ownProps: { locale: UIMessagesObject }) => ({

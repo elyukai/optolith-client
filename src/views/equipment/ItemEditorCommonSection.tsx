@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { ItemTemplate } from '../../App/Models/Wiki/wikiTypeHelpers';
+import { translate, UIMessagesObject } from '../../App/Utils/I18n';
+import { ItemEditorInputValidation } from '../../App/Utils/ItemUtils';
 import { Checkbox } from '../../components/Checkbox';
 import { Dropdown, DropdownOption } from '../../components/Dropdown';
 import { Hr } from '../../components/Hr';
@@ -7,8 +9,6 @@ import { IconButton } from '../../components/IconButton';
 import { TextField } from '../../components/TextField';
 import { ItemEditorInstance } from '../../types/data';
 import { Just, List, Maybe, Record } from '../../utils/dataUtils';
-import { translate, UIMessagesObject } from '../../utils/I18n';
-import { ItemEditorInputValidation } from '../../utils/ItemUtils';
 
 export interface ItemEditorCommonSectionProps {
   isInCreation: Maybe<boolean>;

@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { Textfit } from 'react-textfit';
 import { AttributeCombined } from '../../../App/Models/View/viewTypeHelpers';
+import { translate, UIMessagesObject } from '../../../App/Utils/I18n';
 import { AvatarWrapper } from '../../../components/AvatarWrapper';
 import { TextBox } from '../../../components/TextBox';
 import { PetInstance } from '../../../types/data';
 import { List, Maybe, Record } from '../../../utils/dataUtils';
-import { translate, UIMessagesObject } from '../../../utils/I18n';
 
 export interface BelongingsSheetPetProps {
   attributes: List<Record<AttributeCombined>>;

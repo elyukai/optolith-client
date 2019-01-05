@@ -3,7 +3,7 @@ import { Categories, IncreasableCategories } from "../../../../constants/Categor
 import { all, elem_, isList, List } from "../../../../Data/List";
 import { fmap, or } from "../../../../Data/Maybe";
 import { fromDefault, makeLenses, member, Record } from "../../../../Data/Record";
-import { getCategoryById } from "../../../../utils/IDUtils";
+import { getCategoryById } from "../../../Utils/IDUtils";
 import { AllRequirementObjects, ProfessionPrerequisite } from "../wikiTypeHelpers";
 
 export interface RequireIncreasable {

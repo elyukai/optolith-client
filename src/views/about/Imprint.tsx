@@ -1,8 +1,8 @@
 import * as React from 'react';
+import { translate } from '../../App/Utils/I18n';
 import { Page } from '../../components/Page';
 import { Scroll } from '../../components/Scroll';
 import { UIMessagesObject } from '../../types/ui';
-import { translate } from '../../utils/I18n';
 
 export interface ImprintProps {
   locale: UIMessagesObject;

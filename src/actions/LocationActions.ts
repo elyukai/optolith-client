@@ -1,7 +1,7 @@
+import { TabId } from '../App/Utils/LocationUtils';
 import { ActionTypes } from '../constants/ActionTypes';
 import { isDialogOpen } from '../selectors/subwindowsSelectors';
 import { AsyncAction } from '../types/actions';
-import { TabId } from '../utils/LocationUtils';
 
 export interface SetTabAction {
   type: ActionTypes.SET_TAB;

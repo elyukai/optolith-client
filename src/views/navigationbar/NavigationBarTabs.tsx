@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { TabId } from '../../App/Utils/LocationUtils';
 import { Tab, TabBaseProps } from '../../components/Tab';
 import { List } from '../../utils/dataUtils';
-import { TabId } from '../../utils/LocationUtils';
 
 export interface NavigationBarTabProps extends TabBaseProps {
   id: TabId;

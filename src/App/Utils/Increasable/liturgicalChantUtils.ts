@@ -6,10 +6,6 @@ import { alter, empty, filter, findWithDefault, foldl, fromArray, lookup_, Order
 import { Record } from "../../../Data/Record";
 import { getActiveSelections } from "../../../utils/activatable/selectionUtils";
 import { filterAndMaximumNonNegative, flattenDependencies } from "../../../utils/dependencies/flattenDependencies";
-import { getNumericBlessedTraditionIdByInstanceId } from "../../../utils/IDUtils";
-import { ifElse } from "../../../utils/ifElse";
-import { gte, inc, min } from "../../../utils/mathUtils";
-import { isNumber } from "../../../utils/typeCheckUtils";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
 import { AttributeDependent } from "../../Models/ActiveEntries/AttributeDependent";
@@ -19,6 +15,10 @@ import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel";
 import { LiturgicalChant } from "../../Models/Wiki/LiturgicalChant";
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
 import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
+import { getNumericBlessedTraditionIdByInstanceId } from "../IDUtils";
+import { ifElse } from "../ifElse";
+import { gte, inc, min } from "../mathUtils";
+import { isNumber } from "../typeCheckUtils";
 import { getExceptionalSkillBonus, getInitialMaximumList, putMaximumSkillRatingFromExperienceLevel } from "./skillUtils";
 
 const { liturgicalChants } = WikiModel.A

@@ -1,7 +1,7 @@
 import { Action, combineReducers } from 'redux';
 import { WikiAll } from '../App/Models/Wiki/wikiTypeHelpers';
+import { reduceReducers } from '../App/Utils/reduceReducers';
 import { Record } from '../utils/dataUtils';
-import { reduceReducers } from '../utils/reduceReducers';
 import { appPostReducer } from './appPostReducer';
 import { herolistReducer as herolist, HerolistState } from './herolistReducer';
 import { localeReducer as locale, LocaleState } from './localeReducer';

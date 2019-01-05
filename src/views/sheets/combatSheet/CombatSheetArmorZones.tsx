@@ -2,9 +2,9 @@ import * as R from 'ramda';
 import * as React from 'react';
 import { Textfit } from 'react-textfit';
 import { ArmorZone } from '../../../App/Models/View/viewTypeHelpers';
+import { localizeNumber, localizeWeight, translate, UIMessagesObject } from '../../../App/Utils/I18n';
 import { TextBox } from '../../../components/TextBox';
 import { Just, List, Maybe, Nothing, Record, Tuple } from '../../../utils/dataUtils';
-import { localizeNumber, localizeWeight, translate, UIMessagesObject } from '../../../utils/I18n';
 
 export interface CombatSheetArmorZonesProps {
   armorZones: Maybe<List<Record<ArmorZone>>>;

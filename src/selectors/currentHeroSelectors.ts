@@ -1,6 +1,6 @@
 import * as R from 'ramda';
+import { createMaybeSelector } from '../App/Utils/createMaybeSelector';
 import { Hero } from '../types/data';
-import { createMaybeSelector } from '../utils/createMaybeSelector';
 import { List, Maybe } from '../utils/dataUtils';
 import { getCurrentHeroFuture, getCurrentHeroPast } from './stateSelectors';
 

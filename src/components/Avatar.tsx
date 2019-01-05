@@ -1,8 +1,8 @@
 import * as classNames from 'classnames';
 import { existsSync } from 'fs';
 import * as React from 'react';
+import { isBase64Image } from '../App/Utils/RegexUtils';
 import { Maybe } from '../utils/dataUtils';
-import { isBase64Image } from '../utils/RegexUtils';
 
 export interface AvatarProps {
   className?: string;

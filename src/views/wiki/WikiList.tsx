@@ -1,10 +1,10 @@
 import * as R from 'ramda';
 import * as React from 'react';
 import { Entry, NameBySex } from '../../App/Models/Wiki/wikiTypeHelpers';
+import { getRoman } from '../../App/Utils/NumberUtils';
+import { isActivatableWikiObj, isProfession, isSpecialAbility } from '../../App/Utils/WikiUtils';
 import { ListView } from '../../components/List';
 import { List, Maybe, Record } from '../../utils/dataUtils';
-import { getRoman } from '../../utils/NumberUtils';
-import { isActivatableWikiObj, isProfession, isSpecialAbility } from '../../utils/WikiUtils';
 import { WikiListItem } from './WikiListItem';
 
 export interface WikiListProps {

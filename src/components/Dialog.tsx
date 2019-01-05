@@ -1,6 +1,6 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
-import { close } from '../utils/createOverlay';
+import { close } from '../App/Utils/createOverlay';
 import { ButtonProps, DialogButtons } from './DialogButtons';
 
 export interface DialogProps {

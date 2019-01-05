@@ -2,11 +2,11 @@ import { remote } from 'electron';
 import * as localShortcut from 'electron-localshortcut';
 import * as React from 'react';
 import { Action, AnyAction, Dispatch } from 'redux';
+import { translate } from '../App/Utils/I18n';
 import { AppState } from '../reducers/appReducer';
 import { Alert as AlertOptions, ViewAlertButton } from '../types/data';
 import { UIMessagesObject } from '../types/ui';
 import { Maybe } from '../utils/dataUtils';
-import { translate } from '../utils/I18n';
 import { Dialog } from './DialogNew';
 
 export interface AlertProps {

@@ -1,5 +1,6 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
+import { TabId } from '../App/Utils/LocationUtils';
 import { Scroll } from '../components/Scroll';
 import { TitleBar } from '../components/TitleBar';
 import { AlertsContainer } from '../containers/AlertsContainer';
@@ -7,7 +8,6 @@ import { DownloaderContainer } from '../containers/DownloaderContainer';
 import { NavigationBarContainer } from '../containers/NavigationBarContainer';
 import { UIMessagesObject } from '../types/ui';
 import { Maybe } from '../utils/dataUtils';
-import { TabId } from '../utils/LocationUtils';
 import { Route } from './Route';
 
 export interface AppOwnProps {}

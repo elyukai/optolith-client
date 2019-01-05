@@ -1,11 +1,11 @@
 import classNames = require('classnames');
 import * as React from 'react';
 import { WikiAll } from '../App/Models/Wiki/wikiTypeHelpers';
+import { translate, UIMessagesObject } from '../App/Utils/I18n';
+import { isInteger } from '../App/Utils/RegexUtils';
 import { ActivateArgs, DeactiveViewObject, HeroDependent, InputTextEvent } from '../types/data';
 import { getIdSpecificAffectedAndDispatchProps, getInactiveActivatableControlElements, insertFinalCurrentCost } from '../utils/activatable/activatableInactiveViewUtils';
 import { Maybe, Record, Tuple } from '../utils/dataUtils';
-import { translate, UIMessagesObject } from '../utils/I18n';
-import { isInteger } from '../utils/RegexUtils';
 import { Dialog } from './DialogNew';
 import { IconButton } from './IconButton';
 import { ListItem } from './ListItem';

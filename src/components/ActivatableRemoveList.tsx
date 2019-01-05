@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { isRated } from '../App/Utils/ratingUtils';
 import { ActiveViewObject, DeactivateArgs, EntryRating, UIMessagesObject } from '../types/data';
 import { List, Maybe, OrderedMap, Record } from '../utils/dataUtils';
-import { isRated } from '../utils/ratingUtils';
 import { ActivatableRemoveListItem } from './ActivatableRemoveListItem';
 import { ListView } from './List';
 import { ListPlaceholder } from './ListPlaceholder';

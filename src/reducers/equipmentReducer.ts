@@ -1,8 +1,8 @@
 import * as EquipmentActions from '../actions/EquipmentActions';
+import { convertToEdit, convertToSave } from '../App/Utils/ItemUtils';
 import { ActionTypes } from '../constants/ActionTypes';
 import * as Data from '../types/data';
 import { Just, List, Maybe, Record } from '../utils/dataUtils';
-import { convertToEdit, convertToSave } from '../utils/ItemUtils';
 
 type Action =
   EquipmentActions.AddItemAction |

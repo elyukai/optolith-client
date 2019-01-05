@@ -1,6 +1,6 @@
 import * as React from 'react';
+import { translate, UIMessagesObject } from '../../../App/Utils/I18n';
 import { TextBox } from '../../../components/TextBox';
-import { translate, UIMessagesObject } from '../../../utils/I18n';
 
 export interface SkillsSheetQualityLevelsProps {
   locale: UIMessagesObject;

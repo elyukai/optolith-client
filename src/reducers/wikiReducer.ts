@@ -1,11 +1,11 @@
 import { ReceiveInitialDataAction } from '../actions/IOActions';
 import * as Wiki from '../App/Models/Wiki/wikiTypeHelpers';
+import { getWikiStateKeyByCategory } from '../App/Utils/WikiUtils';
 import { ActionTypes } from '../constants/ActionTypes';
 import { Categories } from '../constants/Categories';
 import * as Raw from '../types/rawdata';
 import { List, Maybe, OrderedMap, Record, StringKeyObject } from '../utils/dataUtils';
 import * as InitWikiUtils from '../utils/raw/InitWikiUtils';
-import { getWikiStateKeyByCategory } from '../utils/WikiUtils';
 
 type Action = ReceiveInitialDataAction;
 

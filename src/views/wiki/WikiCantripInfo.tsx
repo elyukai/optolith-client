@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Book, Cantrip } from '../../App/Models/Wiki/wikiTypeHelpers';
+import { translate, UIMessages } from '../../App/Utils/I18n';
 import { Markdown } from '../../components/Markdown';
-import { translate, UIMessages } from '../../utils/I18n';
 import { WikiSource } from './elements/WikiSource';
 import { WikiBoxTemplate } from './WikiBoxTemplate';
 import { WikiProperty } from './WikiProperty';

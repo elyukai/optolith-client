@@ -1,3 +1,4 @@
+import { translate } from '../App/Utils/I18n';
 import { getAreSufficientAPAvailableForIncrease } from '../App/Utils/Increasable/increasableUtils';
 import { ActionTypes } from '../constants/ActionTypes';
 import { getAvailableAdventurePoints } from '../selectors/adventurePointsSelectors';
@@ -8,7 +9,6 @@ import { UIMessagesObject } from '../types/ui';
 import { getAreSufficientAPAvailable } from '../utils/adventurePoints/adventurePointsUtils';
 import { getIncreaseAP } from '../utils/adventurePoints/improvementCostUtils';
 import { Maybe, Nothing } from '../utils/dataUtils';
-import { translate } from '../utils/I18n';
 import { addAlert } from './AlertActions';
 
 export interface ActivateLiturgicalChantAction {

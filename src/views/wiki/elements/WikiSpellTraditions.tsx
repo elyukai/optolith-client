@@ -1,6 +1,6 @@
 import * as React from 'react';
+import { translate, UIMessages } from '../../../App/Utils/I18n';
 import { sortStrings } from '../../../utils/FilterSortUtils';
-import { translate, UIMessages } from '../../../utils/I18n';
 import { WikiProperty } from '../WikiProperty';
 
 export interface WikiSpellTraditionsProps {

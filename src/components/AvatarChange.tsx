@@ -1,7 +1,7 @@
 import { remote } from 'electron';
 import * as React from 'react';
+import { translate, UIMessagesObject } from '../App/Utils/I18n';
 import { Just, Maybe } from '../utils/dataUtils';
-import { translate, UIMessagesObject } from '../utils/I18n';
 import { AvatarWrapper } from './AvatarWrapper';
 import { BorderButton } from './BorderButton';
 import { Dialog, DialogProps } from './DialogNew';

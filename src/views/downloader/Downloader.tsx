@@ -1,11 +1,11 @@
 // tslint:disable-next-line:no-implicit-dependencies
 import { ProgressInfo } from 'builder-util-runtime';
 import * as React from 'react';
+import { translate, UIMessagesObject } from '../../App/Utils/I18n';
+import { bytify } from '../../App/Utils/IOUtils';
 import { Dialog } from '../../components/DialogNew';
 import { ProgressBar } from '../../components/ProgressBar';
 import { Maybe } from '../../utils/dataUtils';
-import { translate, UIMessagesObject } from '../../utils/I18n';
-import { bytify } from '../../utils/IOUtils';
 
 export interface DownloaderOwnProps {
   locale: UIMessagesObject;

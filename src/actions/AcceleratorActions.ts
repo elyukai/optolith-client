@@ -1,9 +1,9 @@
 import { remote } from 'electron';
+import { isDialogOpen } from '../App/Utils/SubwindowsUtils';
 import { getIsHeroSection } from '../selectors/uilocationSelectors';
 import { AsyncAction } from '../types/actions';
 import { UIMessagesObject } from '../types/ui';
 import { Just, Nothing } from '../utils/dataUtils';
-import { isDialogOpen } from '../utils/SubwindowsUtils';
 import { saveHero } from './HerolistActions';
 import { redo, undo } from './HistoryActions';
 import { requestClose } from './IOActions';

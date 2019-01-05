@@ -25,12 +25,12 @@ import { backAccelerator, openSettingsAccelerator, quitAccelerator, redoAccelera
 import { addErrorAlert } from './actions/AlertActions';
 import { requestClose, requestInitialData, setUpdateDownloadProgress, updateAvailable, updateNotAvailable } from './actions/IOActions';
 import { showAbout } from './actions/LocationActions';
+import { translate } from './App/Utils/I18n';
+import { isDialogOpen } from './App/Utils/SubwindowsUtils';
 import { AppContainer } from './containers/AppContainer';
 import { appReducer, AppState } from './reducers/appReducer';
 import { getLocaleMessages } from './selectors/stateSelectors';
 import { Just, Maybe } from './utils/dataUtils';
-import { translate } from './utils/I18n';
-import { isDialogOpen } from './utils/SubwindowsUtils';
 
 const store: Store<AppState, Action<any>> & { dispatch: Dispatch<Action, AppState> } =
   createStore (appReducer, applyMiddleware (ReduxThunk));

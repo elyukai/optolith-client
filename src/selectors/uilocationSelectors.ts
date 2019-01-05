@@ -1,9 +1,9 @@
+import { createMaybeSelector } from '../App/Utils/createMaybeSelector';
+import { translate } from '../App/Utils/I18n';
+import { isHeroSectionTab, isMainSectionTab, TabId } from '../App/Utils/LocationUtils';
+import { isBookEnabled } from '../App/Utils/RulesUtils';
 import { SubTab } from '../types/data';
-import { createMaybeSelector } from '../utils/createMaybeSelector';
 import { Just, List, Maybe, Nothing } from '../utils/dataUtils';
-import { translate } from '../utils/I18n';
-import { isHeroSectionTab, isMainSectionTab, TabId } from '../utils/LocationUtils';
-import { isBookEnabled } from '../utils/RulesUtils';
 import { NavigationBarTabProps } from '../views/navigationbar/NavigationBarTabs';
 import { getIsLiturgicalChantsTabAvailable } from './liturgicalChantsSelectors';
 import { getIsRemovingEnabled } from './phaseSelectors';

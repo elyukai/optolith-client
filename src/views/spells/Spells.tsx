@@ -2,6 +2,7 @@ import * as R from 'ramda';
 import * as React from 'react';
 import { AttributeCombined, CantripCombined, SpellIsActive, SpellWithRequirements } from '../../App/Models/View/viewTypeHelpers';
 import { Cantrip, SpecialAbility, Spell } from '../../App/Models/Wiki/wikiTypeHelpers';
+import { translate, UIMessagesObject } from '../../App/Utils/I18n';
 import { isOwnTradition } from '../../App/Utils/Increasable/spellUtils';
 import { BorderButton } from '../../components/BorderButton';
 import { Checkbox } from '../../components/Checkbox';
@@ -23,7 +24,6 @@ import { WikiInfoContainer } from '../../containers/WikiInfoContainer';
 import { DCIds } from '../../selectors/derivedCharacteristicsSelectors';
 import { SecondaryAttribute } from '../../types/data';
 import { Just, List, Maybe, Nothing, OrderedMap, Record, Tuple } from '../../utils/dataUtils';
-import { translate, UIMessagesObject } from '../../utils/I18n';
 import { SkillListItem } from '../skills/SkillListItem';
 
 export interface SpellsOwnProps {

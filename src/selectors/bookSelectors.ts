@@ -1,4 +1,4 @@
-import { createMaybeSelector } from '../utils/createMaybeSelector';
+import { createMaybeSelector } from '../App/Utils/createMaybeSelector';
 import { sortObjects } from '../utils/FilterSortUtils';
 import { getLocaleAsProp, getWikiBooks } from './stateSelectors';
 

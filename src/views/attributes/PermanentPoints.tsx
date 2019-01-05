@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { translate, UIMessagesObject } from '../../App/Utils/I18n';
 import { Dialog, DialogProps } from '../../components/DialogNew';
 import { IconButton } from '../../components/IconButton';
-import { translate, UIMessagesObject } from '../../utils/I18n';
 
 export interface PermanentPointsProps extends DialogProps {
   id: 'LP' | 'AE' | 'KP';

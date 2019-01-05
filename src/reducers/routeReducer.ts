@@ -2,8 +2,8 @@ import { SwitchEnableEditingHeroAfterCreationPhaseAction } from '../actions/Conf
 import { CreateHeroAction, LoadHeroAction } from '../actions/HerolistActions';
 import { SetTabAction } from '../actions/LocationActions';
 import { SetSelectionsAction } from '../actions/ProfessionActions';
+import { TabId } from '../App/Utils/LocationUtils';
 import { ActionTypes } from '../constants/ActionTypes';
-import { TabId } from '../utils/LocationUtils';
 
 type Action =
   SetTabAction |

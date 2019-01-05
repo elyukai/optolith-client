@@ -7,10 +7,6 @@ import { } from "../../../Data/OrderedSet";
 import { fromBoth, Pair } from "../../../Data/Pair";
 import { Record } from "../../../Data/Record";
 import { EntryRating } from "../../../types/data";
-import { isMaybeActive } from "../../../utils/activatable/isActive";
-import { flattenDependencies } from "../../../utils/dependencies/flattenDependencies";
-import { ifElse } from "../../../utils/ifElse";
-import { add } from "../../../utils/mathUtils";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
 import { AttributeDependent } from "../../Models/ActiveEntries/AttributeDependent";
@@ -20,6 +16,10 @@ import { SkillCombined, SkillCombinedAccessors } from "../../Models/View/SkillCo
 import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel";
 import { Skill } from "../../Models/Wiki/Skill";
 import { WikiModelRecord } from "../../Models/Wiki/WikiModel";
+import { isMaybeActive } from "../activatable/isActive";
+import { flattenDependencies } from "../Dependencies/flattenDependencies";
+import { ifElse } from "../ifElse";
+import { add } from "../mathUtils";
 import { getSkillCheckValues } from "./attributeUtils";
 
 const { specialAbilities, skills } = HeroModel.A

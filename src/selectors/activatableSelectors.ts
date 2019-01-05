@@ -1,5 +1,8 @@
 import * as R from 'ramda';
 import * as Wiki from '../App/Models/Wiki/wikiTypeHelpers';
+import { createMaybeSelector } from '../App/Utils/createMaybeSelector';
+import { translate } from '../App/Utils/I18n';
+import { mapGetToMaybeSlice } from '../App/Utils/SelectorsUtils';
 import { ActivatableCategory, Categories } from '../constants/Categories';
 import * as Data from '../types/data';
 import { getAllActiveByCategory } from '../utils/activatable/activatableActiveUtils';
@@ -7,12 +10,9 @@ import { getModifierByActiveLevel, getModifierByIsActive } from '../utils/activa
 import { getBracketedNameFromFullName } from '../utils/activatable/activatableNameUtils';
 import { getActiveSelections, getSelectOptionName } from '../utils/activatable/selectionUtils';
 import { getDisAdvantagesSubtypeMax } from '../utils/adventurePoints/adventurePointsUtils';
-import { createMaybeSelector } from '../utils/createMaybeSelector';
 import { Just, List, Maybe, Nothing, OrderedMap, Record } from '../utils/dataUtils';
 import { AllSortOptions, filterAndSortObjects } from '../utils/FilterSortUtils';
 import { flip } from '../utils/flip';
-import { translate } from '../utils/I18n';
-import { mapGetToMaybeSlice } from '../utils/SelectorsUtils';
 import { getBlessedTraditionFromWikiState } from './liturgicalChantsSelectors';
 import { getCurrentCulture, getCurrentProfession, getCurrentRace } from './rcpSelectors';
 import { getSpecialAbilitiesSortOptions } from './sortOptionsSelectors';

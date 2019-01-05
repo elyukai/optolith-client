@@ -15,7 +15,7 @@
  */
 
 import { pipe } from "ramda";
-import * as Math from "../utils/mathUtils";
+import * as Math from "../App/Utils/mathUtils";
 import { cnst, ident, thrush } from "./Function";
 import { cons, consF, fromElements, head, ifoldr, List } from "./List";
 

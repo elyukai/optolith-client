@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { translate, UIMessages } from '../../utils/I18n';
+import { translate, UIMessages } from '../../App/Utils/I18n';
 
 export interface WikiPropertyProps {
   children?: React.ReactNode;

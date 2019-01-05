@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { TabId } from '../App/Utils/LocationUtils';
 import { MainContent } from '../components/MainContent';
 import { Page } from '../components/Page';
 import { Scroll } from '../components/Scroll';
@@ -24,7 +25,6 @@ import { SpecialAbilitiesContainer } from '../containers/SpecialAbilitiesContain
 import { SpellsContainer } from '../containers/SpellsContainer';
 import { WikiContainer } from '../containers/WikiContainer';
 import { UIMessagesObject } from '../types/ui';
-import { TabId } from '../utils/LocationUtils';
 import { Imprint } from './about/Imprint';
 import { LastChanges } from './about/LastChanges';
 import { ThirdPartyLicenses } from './about/ThirdPartyLicenses';

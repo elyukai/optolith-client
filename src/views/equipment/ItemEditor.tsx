@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { Attribute, CombatTechnique, ItemTemplate } from '../../App/Models/Wiki/wikiTypeHelpers';
+import { translate, UIMessagesObject } from '../../App/Utils/I18n';
+import { validateItemEditorInput } from '../../App/Utils/ItemUtils';
 import { Dialog } from '../../components/DialogNew';
 import { ItemEditorInstance } from '../../types/data';
 import { List, Maybe, OrderedMap, Record } from '../../utils/dataUtils';
-import { translate, UIMessagesObject } from '../../utils/I18n';
-import { validateItemEditorInput } from '../../utils/ItemUtils';
 import { ItemEditorArmorSection } from './ItemEditorArmorSection';
 import { ItemEditorCommonSection } from './ItemEditorCommonSection';
 import { ItemEditorMeleeSection } from './ItemEditorMeleeSection';

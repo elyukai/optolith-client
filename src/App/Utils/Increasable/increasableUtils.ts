@@ -3,15 +3,15 @@ import { Lens, over } from "../../../Data/Lens";
 import { fmap, fromMaybe, Maybe } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
 import { ValueBasedDependent } from "../../../types/data";
-import { getAreSufficientAPAvailable } from "../../../utils/adventurePoints/adventurePointsUtils";
-import { getIncreaseAP } from "../../../utils/adventurePoints/improvementCostUtils";
-import { dec, inc } from "../../../utils/mathUtils";
-import { isAttribute } from "../../../utils/WikiUtils";
 import { ActivatableSkillDependentL, isActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
 import { AttributeDependentL, isAttributeDependent } from "../../Models/ActiveEntries/AttributeDependent";
 import { SkillDependent, SkillDependentL } from "../../Models/ActiveEntries/SkillDependent";
 import { Skill } from "../../Models/Wiki/Skill";
 import { IncreasableEntry } from "../../Models/Wiki/wikiTypeHelpers";
+import { getAreSufficientAPAvailable } from "../AdventurePoints/adventurePointsUtils";
+import { getIncreaseAP } from "../AdventurePoints/improvementCostUtils";
+import { dec, inc } from "../mathUtils";
+import { isAttribute } from "../WikiUtils";
 
 export const set =
   <T extends ValueBasedDependent> (instance: T) => (x: number): T =>

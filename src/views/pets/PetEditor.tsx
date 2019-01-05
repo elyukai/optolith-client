@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { translate, UIMessagesObject } from '../../App/Utils/I18n';
 import { AvatarChange } from '../../components/AvatarChange';
 import { AvatarWrapper } from '../../components/AvatarWrapper';
 import { BorderButton } from '../../components/BorderButton';
@@ -6,7 +7,6 @@ import { Slidein } from '../../components/Slidein';
 import { TextField } from '../../components/TextField';
 import { PetEditorInstance } from '../../types/data';
 import { Maybe, Record } from '../../utils/dataUtils';
-import { translate, UIMessagesObject } from '../../utils/I18n';
 
 export interface PetEditorProps {
   petInEditor: Maybe<Record<PetEditorInstance>>;

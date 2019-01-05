@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { UIMessages } from '../../../utils/I18n';
+import { UIMessages } from '../../../App/Utils/I18n';
 import { WikiProperty } from '../WikiProperty';
 
 export interface WikiRangeProps {

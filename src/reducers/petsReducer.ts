@@ -1,8 +1,8 @@
 import * as PetActions from '../actions/PetActions';
+import { convertToEdit, convertToSave, getNewPetInstance } from '../App/Utils/PetUtils';
 import { ActionTypes } from '../constants/ActionTypes';
 import * as Data from '../types/data';
 import { Maybe, OrderedMap, Record } from '../utils/dataUtils';
-import { convertToEdit, convertToSave, getNewPetInstance } from '../utils/PetUtils';
 
 type Action =
   PetActions.AddPetAction

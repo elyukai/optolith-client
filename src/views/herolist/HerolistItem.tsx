@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { Culture, Race, RaceVariant, WikiAll } from '../../App/Models/Wiki/wikiTypeHelpers';
+import { translate, UIMessagesObject } from '../../App/Utils/I18n';
+import { getFullProfessionName } from '../../App/Utils/rcpUtils';
 import { AvatarWrapper } from '../../components/AvatarWrapper';
 import { BorderButton } from '../../components/BorderButton';
 import { IconButton } from '../../components/IconButton';
@@ -11,8 +13,6 @@ import { VerticalList } from '../../components/VerticalList';
 import { Hero, User } from '../../types/data';
 import { getAPObject } from '../../utils/adventurePoints/adventurePointsSumUtils';
 import { Maybe, OrderedMap, OrderedSet, Record } from '../../utils/dataUtils';
-import { translate, UIMessagesObject } from '../../utils/I18n';
-import { getFullProfessionName } from '../../utils/rcpUtils';
 
 export interface HerolistItemProps {
   hero: Hero;
