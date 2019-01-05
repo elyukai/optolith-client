@@ -1,19 +1,28 @@
+import { pipe } from "ramda";
 import { Categories } from "../../../constants/Categories";
-import { flip } from "../../../Data/Function";
-import { foldr, isList, List } from "../../../Data/List";
-import { fmap, fromMaybe, isNothing, Just, Maybe, Nothing } from "../../../Data/Maybe";
+import { notEquals } from "../../../Data/Eq";
+import { flip, ident, join, thrush } from "../../../Data/Function";
+import { foldr, isList } from "../../../Data/List";
+import { elem_, fmap, fromMaybe, isNothing, Just, Nothing } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
 import { ActivatableDependency, ExtendedSkillDependency, SkillDependency } from "../../../types/data";
 import { DependencyObject } from "../../Models/ActiveEntries/DependencyObject";
 import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
-import { RequireActivatable } from "../../Models/Wiki/prerequisites/ActivatableRequirement";
-import { RequirePrimaryAttribute } from "../../Models/Wiki/prerequisites/PrimaryAttributeRequirement";
-import { AllRequirements, DependentPrerequisite } from "../../Models/Wiki/wikiTypeHelpers";
+import { SkillOptionalDependency } from "../../Models/Hero/SkillOptionalDependency";
+import { isRequiringActivatable, RequireActivatable } from "../../Models/Wiki/prerequisites/ActivatableRequirement";
+import { isDependentPrerequisite } from "../../Models/Wiki/prerequisites/DependentRequirement";
+import { isIncreasableRequirement, RequireIncreasable } from "../../Models/Wiki/prerequisites/IncreasableRequirement";
+import { isPrimaryAttributeRequirement, RequirePrimaryAttribute } from "../../Models/Wiki/prerequisites/PrimaryAttributeRequirement";
+import { AllRequirements } from "../../Models/Wiki/wikiTypeHelpers";
 import { getCategoryById } from "../IDUtils";
-import { match } from "../match";
 import { getPrimaryAttributeId } from "../primaryAttributeUtils";
+import { addActivatableDependency, addActivatableSkillDependency, addAttributeDependency, addSkillDependency } from "./addDependencyUtils";
+import { removeActivatableDependency, removeActivatableSkillDependency, removeAttributeDependency, removeSkillDependency } from "./removeDependencyUtils";
 
 const { specialAbilities } = HeroModel.A
+
+type ModifyAttributeDependency =
+  (d: SkillDependency) => (id: string) => (state: HeroModelRecord) => HeroModelRecord
 
 type ModifySkillDependency =
   (d: SkillDependency) => (id: string) => (state: HeroModelRecord) => HeroModelRecord
@@ -73,7 +82,7 @@ const putActivatableDependency =
   }
 
 const putPrimaryAttributeDependency =
-  (f: ModifySkillDependency) =>
+  (f: ModifyAttributeDependency) =>
   (req: Record<RequirePrimaryAttribute>) =>
   (state: HeroModelRecord): HeroModelRecord => {
     const { type, value } = RequirePrimaryAttribute.A
@@ -84,141 +93,104 @@ const putPrimaryAttributeDependency =
                                                   (type (req))))
   }
 
-const createIncreasableDependencyModifier = (
-  state: HeroModelRecord,
-  modifyAttribute: ModifyIncreasableDependency,
-  modify: ModifyIncreasableDependency,
-  sourceId: string
-) =>
-  (req: Record<RequiresIncreasableObject>) =>
-    match<string | List<string>, HeroModelRecord> (req.get ("id"))
-      .on (
-        (id): id is List<string> => typeof id === "object",
-        id => {
-          const add = Record.of ({ value: req.get ("value"), origin: sourceId })
+const getMatchingIncreasableModifier =
+  (f: ModifyAttributeDependency) =>
+  (g: ModifySkillDependency) =>
+  (h: ModifyActivatableSkillDependency) =>
+  (id: string): ModifySkillDependency => {
+    const isOfCategory = elem_ (getCategoryById (id))
 
-          return id.foldl<Hero> (
-            accState => e => (
-              getCategoryById (e).equals (Maybe.pure (Categories.ATTRIBUTES))
-                ? modifyAttribute (e, add) (accState)
-                : modify (e, add) (accState)
-            )
-          ) (state)
-        }
-      )
-      .on (
-        id => getCategoryById (id).equals (Maybe.pure (Categories.ATTRIBUTES)),
-        id => modifyAttribute (id, req.get ("value")) (state)
-      )
-      .otherwise (id => modify (id, req.get ("value")) (state))
+    if (isOfCategory (Categories.ATTRIBUTES)) {
+      return f
+    }
 
-const modifyDependencies = (
-  state: HeroModelRecord,
-  prerequisites: List<AllRequirements>,
-  sourceId: string,
-  modifyAttributeDependency: ModifyIncreasableDependency,
-  modifyIncreasableDependency: ModifyIncreasableDependency,
-  modifyActivatableDependency: ModifyActivatableDependency
-): HeroModelRecord =>
-  prerequisites.foldl<Hero> (
-    accState => req => match<AllRequirements, HeroModelRecord> (req)
-      .on (
-        CheckPrerequisiteUtils.isDependentPrerequisite,
-        dependentReq =>
-          match<DependentPrerequisite, HeroModelRecord> (
-            dependentReq
-          )
-            .on (
-              CheckPrerequisiteUtils.isRequiringPrimaryAttribute,
-              createPrimaryAttributeDependencyModifier (
-                accState,
-                modifyAttributeDependency
-              )
-            )
-            .on (
-              CheckPrerequisiteUtils.isRequiringIncreasable,
-              createIncreasableDependencyModifier (
-                accState,
-                modifyAttributeDependency,
-                modifyIncreasableDependency,
-                sourceId
-              )
-            )
-            .on (
-              e => e.lookup ("sid").notEquals (Maybe.pure ("GR")),
-              createActivatableDependencyModifier (
-                accState,
-                modifyActivatableDependency,
-                sourceId
-              )
-            )
-            .otherwise (() => accState)
-      )
-      .otherwise (
-        () => accState
-      )
-  ) (state)
+    if (isOfCategory (Categories.LITURGIES) || isOfCategory (Categories.SPELLS)) {
+      return h
+    }
+
+    return g
+  }
+
+const putIncreasableDependency =
+  (f: ModifyAttributeDependency) =>
+  (g: ModifySkillDependency) =>
+  (h: ModifyActivatableSkillDependency) =>
+  (sourceId: string) =>
+  (req: Record<RequireIncreasable>) =>
+  (state: HeroModelRecord): HeroModelRecord => {
+    const { id, value } = RequireIncreasable.A
+
+    const current_id = id (req)
+
+    if (isList (current_id)) {
+      return foldr (join (pipe (
+                                 getMatchingIncreasableModifier (f)
+                                                                (g)
+                                                                (h),
+                                 thrush (SkillOptionalDependency ({
+                                          origin: sourceId,
+                                          value: value (req),
+                                        }))
+                   )))
+                   (state)
+                   (current_id)
+    }
+
+    return getMatchingIncreasableModifier (f)
+                                          (g)
+                                          (h)
+                                          (current_id)
+                                          (value (req))
+                                          (current_id)
+                                          (state)
+  }
+
+const modifyDependencies =
+  (modifyAttributeDependency: ModifyAttributeDependency) =>
+  (modifySkillDependency: ModifySkillDependency) =>
+  (modifyActivatableSkillDependency: ModifyActivatableSkillDependency) =>
+  (modifyActivatableDependency: ModifyActivatableDependency) =>
+  (sourceId: string) =>
+    flip (foldr ((x: AllRequirements): (state: Record<HeroModel>) => Record<HeroModel> => {
+                  if (isDependentPrerequisite (x)) {
+                    if (isPrimaryAttributeRequirement (x)) {
+                      return putPrimaryAttributeDependency (modifyAttributeDependency)
+                                                           (x)
+                    }
+
+                    if (isIncreasableRequirement (x)) {
+                      return putIncreasableDependency (modifyAttributeDependency)
+                                                      (modifySkillDependency)
+                                                      (modifyActivatableSkillDependency)
+                                                      (sourceId)
+                                                      (x)
+                    }
+
+                    if (
+                      isRequiringActivatable (x)
+                      && notEquals (RequireActivatable.A.sid (x)) (Just ("GR"))
+                    ) {
+                      return putActivatableDependency (modifyActivatableDependency)
+                                                      (sourceId)
+                                                      (x)
+                    }
+                  }
+
+                  return ident
+                }))
 
 /**
  * Adds dependencies to all required entries to ensure rule validity.
- * @param state All entries available for dependencies.
- * @param obj The entry of which requirements you want to add dependencies fo
- * @param adds Additional (computed) requirements that are not included in the
- * static requirements.
- * @param sel The SID from the current selection.
  */
-export const addDependencies = (
-  state: HeroModelRecord,
-  prerequisites: List<AllRequirements>,
-  sourceId: string
-): HeroModelRecord => modifyDependencies (
-  state,
-  prerequisites,
-  sourceId,
-  AddDependencyUtils.addAttributeDependency,
-  AddDependencyUtils.addIncreasableDependency,
-  AddDependencyUtils.addActivatableDependency
-)
-
-/**
- * Provides a wrapper for `DependentUtils#addDependencies` to be able to use it
- * in `ListUtils#mergeOptionalStateReducers`.
- */
-export const addDependenciesReducer =
-  (prerequisites: List<AllRequirements>, sourceId: string) =>
-    (state: HeroModelRecord): HeroModelRecord =>
-      addDependencies (state, prerequisites, sourceId)
+export const addDependencies = modifyDependencies (addAttributeDependency)
+                                                  (addSkillDependency)
+                                                  (addActivatableSkillDependency)
+                                                  (addActivatableDependency)
 
 /**
  * Removes dependencies from all required entries to ensure rule validity.
- * @param obj The entry of which requirements you want to remove dependencies
- * from.
- * @param adds Additional (computed) requirements that are not included in the
- * static requirements.
- * @param sel The SID from the current selection.
  */
-export const removeDependencies = (
-  state: HeroModelRecord,
-  prerequisites: List<AllRequirements>,
-  sourceId: string
-): HeroModelRecord => modifyDependencies (
-  state,
-  prerequisites,
-  sourceId,
-  RemoveDependencyUtils.removeAttributeDependency,
-  RemoveDependencyUtils.removeIncreasableDependency,
-  RemoveDependencyUtils.removeActivatableDependency
-)
-
-/**
- * Removes dependencies from all required entries to ensure rule validity.
- * @param obj The entry of which requirements you want to remove dependencies
- * from.
- * @param adds Additional (computed) requirements that are not included in the
- * static requirements.
- * @param sel The SID from the current selection.
- */
-export const removeDependenciesReducer =
-  (prerequisites: List<AllRequirements>, sourceId: string) =>
-    (state: HeroModelRecord): HeroModelRecord =>
-      removeDependencies (state, prerequisites, sourceId)
+export const removeDependencies = modifyDependencies (removeAttributeDependency)
+                                                     (removeSkillDependency)
+                                                     (removeActivatableSkillDependency)
+                                                     (removeActivatableDependency)
