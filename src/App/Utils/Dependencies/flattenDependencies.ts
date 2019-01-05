@@ -1,15 +1,15 @@
 import { pipe } from "ramda";
-import { HeroModelRecord } from "../../App/Models/Hero/HeroModel";
-import { SkillOptionalDependency } from "../../App/Models/Hero/SkillOptionalDependency";
-import { Advantage } from "../../App/Models/Wiki/Advantage";
-import { RequireActivatable } from "../../App/Models/Wiki/prerequisites/ActivatableRequirement";
-import { WikiModelRecord } from "../../App/Models/Wiki/WikiModel";
-import { AbilityRequirement, Activatable } from "../../App/Models/Wiki/wikiTypeHelpers";
-import { thrush } from "../../Data/Function";
-import { elem, find, foldl, isList, List, map, maximumNonNegative } from "../../Data/List";
-import { bindF, fmap, Maybe, Nothing, or, sum } from "../../Data/Maybe";
-import { isRecord, Record } from "../../Data/Record";
-import { ValueBasedDependent } from "../../types/data";
+import { thrush } from "../../../Data/Function";
+import { elem, find, foldl, isList, List, map, maximumNonNegative } from "../../../Data/List";
+import { bindF, fmap, Maybe, Nothing, or, sum } from "../../../Data/Maybe";
+import { isRecord, Record } from "../../../Data/Record";
+import { ValueBasedDependent } from "../../../types/data";
+import { HeroModelRecord } from "../../Models/Hero/HeroModel";
+import { SkillOptionalDependency } from "../../Models/Hero/SkillOptionalDependency";
+import { Advantage } from "../../Models/Wiki/Advantage";
+import { RequireActivatable } from "../../Models/Wiki/prerequisites/ActivatableRequirement";
+import { WikiModelRecord } from "../../Models/Wiki/WikiModel";
+import { AbilityRequirement, Activatable } from "../../Models/Wiki/wikiTypeHelpers";
 import { getHeroStateItem } from "../heroStateUtils";
 import { gt, gte, inc } from "../mathUtils";
 import { flattenPrerequisites } from "../prerequisites/flattenPrerequisites";
@@ -31,7 +31,9 @@ const { id } = RequireActivatable.A
  * @param dependencies The list of dependencies to flatten.
  */
 export const flattenDependencies =
-  <T extends number | boolean> (wiki: WikiModelRecord) => (state: HeroModelRecord) =>
+  <T extends number | boolean>
+  (wiki: WikiModelRecord) =>
+  (state: HeroModelRecord) =>
     map<T | Record<SkillOptionalDependency>, T>
       (e => isRecord (e)
         ? pipe (

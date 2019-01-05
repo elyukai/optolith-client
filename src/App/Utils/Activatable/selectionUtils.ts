@@ -1,15 +1,15 @@
 import { pipe } from "ramda";
-import { ActivatableDependent } from "../../App/Models/ActiveEntries/ActivatableDependent";
-import { ActiveObject } from "../../App/Models/ActiveEntries/ActiveObject";
-import { DependencyObject } from "../../App/Models/ActiveEntries/DependencyObject";
-import { Advantage } from "../../App/Models/Wiki/Advantage";
-import { SelectOption } from "../../App/Models/Wiki/sub/SelectOption";
-import { Activatable } from "../../App/Models/Wiki/wikiTypeHelpers";
-import { consF, find, foldl, List } from "../../Data/List";
-import { altF, bind, bindF, elem_, ensure, fmap, fromMaybe, Just, liftM2, mapMaybe, Maybe } from "../../Data/Maybe";
-import { alter, OrderedMap } from "../../Data/OrderedMap";
-import { isRecord, Record } from "../../Data/Record";
-import { ActivatableDependency } from "../../types/data";
+import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
+import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
+import { DependencyObject } from "../../Models/ActiveEntries/DependencyObject";
+import { Advantage } from "../../Models/Wiki/Advantage";
+import { SelectOption } from "../../Models/Wiki/sub/SelectOption";
+import { Activatable } from "../../Models/Wiki/wikiTypeHelpers";
+import { consF, find, foldl, List } from "../../../Data/List";
+import { altF, bind, bindF, elem_, ensure, fmap, fromMaybe, Just, liftM2, mapMaybe, Maybe } from "../../../Data/Maybe";
+import { alter, OrderedMap } from "../../../Data/OrderedMap";
+import { isRecord, Record } from "../../../Data/Record";
+import { ActivatableDependency } from "../../../types/data";
 
 const { select } = Advantage.A
 const { id: getId, name, cost } = SelectOption.A

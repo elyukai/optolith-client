@@ -262,8 +262,8 @@ export const updateEntryDef =
  */
 export const adjustRemoveEntryDef =
   <D extends Dependent>
-  (f: (value: D) => D) =>
   (unused: (value: D) => boolean) =>
+  (f: (value: D) => D) =>
     updateEntryDef (pipe (f, ensure<D> (pipe (unused, not))))
 
 /**
@@ -278,15 +278,15 @@ export const adjustRemoveEntryDef =
  */
 export const adjustEntryDef =
   <D extends Dependent> (f: (value: D) => D) =>
-    adjustRemoveEntryDef (f) (cnst (false))
+    adjustRemoveEntryDef<D> (cnst (false)) (f)
 
 /**
  * ```haskell
- * updateStateEntry :: (Dependent a, (OrderedMap String) m)
+ * updateSliceEntry :: (Dependent a, (OrderedMap String) m)
  *                  => (a -> Maybe a) -> (a -> Bool) -> String -> m a -> m a
  * ```
  *
- * `updateStateEntry f unused id map` adjusts a entry, specified by `id`, from a
+ * `updateSliceEntry f unused id map` adjusts a entry, specified by `id`, from a
  * state slice (`map`). If the entry is not present, this function will return
  * the original map. `f` will then be called on the already present object. If
  * `unused` returns the adjusted entry is unused, this function will remove the

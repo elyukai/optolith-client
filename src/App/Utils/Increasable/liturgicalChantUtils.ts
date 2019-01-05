@@ -4,8 +4,6 @@ import { all, any, consF, foldr, fromElements, List, minimum, notElem, notElemF 
 import { bindF, elem, ensure, fmap, fromJust, isJust, Just, Maybe, maybe, or, sum } from "../../../Data/Maybe";
 import { alter, empty, filter, findWithDefault, foldl, fromArray, lookup_, OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
-import { getActiveSelections } from "../../../utils/activatable/selectionUtils";
-import { filterAndMaximumNonNegative, flattenDependencies } from "../../../utils/dependencies/flattenDependencies";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
 import { AttributeDependent } from "../../Models/ActiveEntries/AttributeDependent";
@@ -15,6 +13,8 @@ import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel";
 import { LiturgicalChant } from "../../Models/Wiki/LiturgicalChant";
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
 import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
+import { getActiveSelections } from "../activatable/selectionUtils";
+import { filterAndMaximumNonNegative, flattenDependencies } from "../Dependencies/flattenDependencies";
 import { getNumericBlessedTraditionIdByInstanceId } from "../IDUtils";
 import { ifElse } from "../ifElse";
 import { gte, inc, min } from "../mathUtils";

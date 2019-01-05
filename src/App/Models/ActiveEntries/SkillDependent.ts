@@ -57,7 +57,7 @@ export const isExtendedSkillDependent =
 
 const { value, dependencies } = SkillDependent.A
 
-export const isDependentSkillUnused =
+export const isSkillDependentUnused =
   (entry: Record<SkillDependent>): boolean =>
     value (entry) === 0
     && fnull (dependencies (entry))

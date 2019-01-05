@@ -1,5 +1,5 @@
 import { Record } from "../../Data/Record";
-import { Die } from "./wikiData/sub/Die";
+import { Die } from "../Models/Wiki/sub/Die";
 
 /**
  * Return a random integer between 1 (included) and the passed parameter

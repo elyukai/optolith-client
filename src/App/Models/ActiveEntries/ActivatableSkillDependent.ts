@@ -52,7 +52,7 @@ export const isActivatableSkillDependent =
 
 const { active, value, dependencies } = ActivatableSkillDependent.A
 
-export const isActivatableDependentSkillUnused =
+export const isActivatableSkillDependentUnused =
   (entry: Record<ActivatableSkillDependent>): boolean =>
     value (entry) === 0
     && !active (entry)

@@ -3,14 +3,14 @@ import { cons, elem, foldl, fromElements, maximum } from "../../../Data/List";
 import { fmap, guard, Just, Maybe, maybe, sum, then } from "../../../Data/Maybe";
 import { lookup_ } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
-import { getActiveSelections } from "../../../utils/activatable/selectionUtils";
-import { flattenDependencies } from "../../../utils/dependencies/flattenDependencies";
 import { AttributeDependent } from "../../Models/ActiveEntries/AttributeDependent";
 import { SkillDependent } from "../../Models/ActiveEntries/SkillDependent";
 import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { CombatTechnique } from "../../Models/Wiki/CombatTechnique";
 import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel";
 import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
+import { getActiveSelections } from "../activatable/selectionUtils";
+import { flattenDependencies } from "../Dependencies/flattenDependencies";
 import { add, divideBy, max } from "../mathUtils";
 
 const { value, dependencies } = SkillDependent.A
