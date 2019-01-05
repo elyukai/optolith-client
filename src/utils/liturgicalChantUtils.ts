@@ -1,25 +1,25 @@
 import { pipe } from "ramda";
+import { ActivatableDependent } from "../App/Models/ActiveEntries/ActivatableDependent";
+import { ActivatableSkillDependent } from "../App/Models/ActiveEntries/ActivatableSkillDependent";
+import { AttributeDependent } from "../App/Models/ActiveEntries/AttributeDependent";
+import { HeroModelRecord } from "../App/Models/Hero/HeroModel";
+import { Blessing } from "../App/Models/Wiki/Blessing";
+import { ExperienceLevel } from "../App/Models/Wiki/ExperienceLevel";
+import { LiturgicalChant } from "../App/Models/Wiki/LiturgicalChant";
+import { SpecialAbility } from "../App/Models/Wiki/SpecialAbility";
+import { WikiModel, WikiModelRecord } from "../App/Models/Wiki/WikiModel";
+import { cnst, ident, thrush } from "../Data/Function";
+import { all, any, consF, foldr, fromElements, List, minimum, notElem, notElemF } from "../Data/List";
+import { bindF, elem, ensure, fmap, fromJust, isJust, Just, Maybe, maybe, or, sum } from "../Data/Maybe";
+import { alter, empty, filter, findWithDefault, foldl, fromArray, lookup_, OrderedMap } from "../Data/OrderedMap";
+import { Record } from "../Data/Record";
 import { getActiveSelections } from "./activatable/selectionUtils";
-import { ActivatableDependent } from "./activeEntries/ActivatableDependent";
-import { ActivatableSkillDependent } from "./activeEntries/ActivatableSkillDependent";
-import { AttributeDependent } from "./activeEntries/AttributeDependent";
 import { filterAndMaximumNonNegative, flattenDependencies } from "./dependencies/flattenDependencies";
-import { HeroModelRecord } from "./heroData/HeroModel";
 import { getNumericBlessedTraditionIdByInstanceId } from "./IDUtils";
 import { ifElse } from "./ifElse";
 import { gte, inc, min } from "./mathUtils";
 import { getExceptionalSkillBonus, getInitialMaximumList, putMaximumSkillRatingFromExperienceLevel } from "./skillUtils";
-import { cnst, ident, thrush } from "./structures/Function";
-import { all, any, consF, foldr, fromElements, List, minimum, notElem, notElemF } from "./structures/List";
-import { bind_, elem, ensure, fmap, fromJust, isJust, Just, Maybe, maybe, or, sum } from "./structures/Maybe";
-import { alter, empty, filter, findWithDefault, foldl, fromArray, lookup_, OrderedMap } from "./structures/OrderedMap";
-import { Record } from "./structures/Record";
 import { isNumber } from "./typeCheckUtils";
-import { Blessing } from "./wikiData/Blessing";
-import { ExperienceLevel } from "./wikiData/ExperienceLevel";
-import { LiturgicalChant } from "./wikiData/LiturgicalChant";
-import { SpecialAbility } from "./wikiData/SpecialAbility";
-import { WikiModel, WikiModelRecord } from "./wikiData/WikiModel";
 
 const { liturgicalChants } = WikiModel.A
 const { id, tradition, aspects } = LiturgicalChant.A
@@ -139,7 +139,7 @@ const isLiturgicalChantDecreasableByAspectKnowledges =
         getActiveSelections,
 
         // Check if liturgical chant is part of dependencies of active Aspect Knowledge
-        bind_<List<string | number>, List<string | number>>
+        bindF<List<string | number>, List<string | number>>
           (ensure (any (e => isNumber (e) && List.elem (e) (aspects (wikiEntry))))),
 
         fmap (

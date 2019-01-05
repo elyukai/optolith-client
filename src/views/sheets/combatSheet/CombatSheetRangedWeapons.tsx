@@ -1,11 +1,11 @@
 import R from 'ramda';
 import * as React from 'react';
 import { Textfit } from 'react-textfit';
+import { RangedWeapon } from '../../../App/Models/View/viewTypeHelpers';
 import { TextBox } from '../../../components/TextBox';
 import { Just, List, Maybe, Nothing, Record, Tuple } from '../../../utils/dataUtils';
 import { localizeNumber, localizeWeight, translate, UIMessagesObject } from '../../../utils/I18n';
 import { getRoman, signNull } from '../../../utils/NumberUtils';
-import { RangedWeapon } from '../../../utils/viewData/viewTypeHelpers';
 
 export interface CombatSheetRangedWeaponProps {
   locale: UIMessagesObject;

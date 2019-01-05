@@ -1,11 +1,11 @@
 import * as R from 'ramda';
 import * as React from 'react';
+import { AttributeCombined, CombatTechniqueWithAttackParryBase } from '../../../App/Models/View/viewTypeHelpers';
 import { TextBox } from '../../../components/TextBox';
 import { getICName } from '../../../utils/adventurePoints/improvementCostUtils';
 import { List, Maybe, Record } from '../../../utils/dataUtils';
 import { sortObjects } from '../../../utils/FilterSortUtils';
 import { translate, UIMessagesObject } from '../../../utils/I18n';
-import { AttributeCombined, CombatTechniqueWithAttackParryBase } from '../../../utils/viewData/viewTypeHelpers';
 
 export interface CombatSheetTechniquesProps {
   attributes: List<Record<AttributeCombined>>;

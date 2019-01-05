@@ -1,157 +1,191 @@
-import * as R from 'ramda';
-import { Sex } from '../types/data';
-import { Maybe, OrderedMap, Record } from './dataUtils';
-import { rollDice, rollDie } from './dice';
-import { translate, UIMessagesObject } from './I18n';
-import { multiplyString } from './NumberUtils';
-import { Profession, ProfessionVariant, Race, RaceVariant } from './wikiData/wikiTypeHelpers';
+import { pipe } from "ramda";
+import { L10n, L10nRecord } from "../App/Models/Wiki/L10n";
+import { Profession } from "../App/Models/Wiki/Profession";
+import { ProfessionVariant } from "../App/Models/Wiki/ProfessionVariant";
+import { Race } from "../App/Models/Wiki/Race";
+import { RaceVariant } from "../App/Models/Wiki/RaceVariant";
+import { Die } from "../App/Models/Wiki/sub/Die";
+import { nameBySexDef } from "../App/Models/Wiki/sub/NameBySex";
+import { foldr, subscriptF } from "../Data/List";
+import { altF, bindF, elem, fmap, fromMaybe, Just, liftM2, Maybe, sum } from "../Data/Maybe";
+import { lookup_, OrderedMap } from "../Data/OrderedMap";
+import { Record } from "../Data/Record";
+import { show } from "../Data/Show";
+import { Sex } from "../types/data";
+import { rollDiceFold, rollDiceR, rollDie } from "./dice";
+import { translate } from "./I18n";
+import { ifElse } from "./ifElse";
+import { add, lt, odd, subtract, subtractBy } from "./mathUtils";
+import { multiplyString, toInt } from "./NumberUtils";
 
-export const rerollHairColor = (
-  race: Maybe<Record<Race>>,
-  raceVariant: Maybe<Record<RaceVariant>>
-): Maybe<number> =>
-  race
-    .bind (e => e.lookup ('hairColors'))
-    .alt (raceVariant.bind (e => e.lookup ('hairColors')))
-    .bind (e => e.subscript (rollDie (20) - 1));
+const { id, hairColors, eyeColors, sizeBase, sizeRandom, weightBase, weightRandom } = Race.A
+const { amount, sides } = Die.A
+const { name, subname } = Profession.A
 
-export const rerollEyeColor = (
-  race: Maybe<Record<Race>>,
-  raceVariant: Maybe<Record<RaceVariant>>,
-  isAlbino: boolean
-): Maybe<number> =>
-  isAlbino ? Maybe.pure (rollDie (2) + 18) : race
-    .bind (e => e.lookup ('eyeColors'))
-    .alt (raceVariant.bind (e => e.lookup ('eyeColors')))
-    .bind (e => e.subscript (rollDie (20) - 1));
+/**
+ * Reroll the hair color based on the current race and race variant.
+ */
+export const rerollHairColor =
+  (race: Maybe<Record<Race>>) =>
+  (raceVariant: Maybe<Record<RaceVariant>>): Maybe<number> =>
+    pipe (
+           bindF (hairColors),
+           altF (bindF (hairColors) (raceVariant)),
+           bindF (subscriptF (rollDie (20) - 1))
+         )
+         (race)
 
-export const rerollSize = (
-  race: Maybe<Record<Race>>,
-  raceVariant: Maybe<Record<RaceVariant>>
-): Maybe<string> =>
-  race
-    .bind (e => e.lookup ('sizeBase'))
-    .alt (raceVariant.bind (e => e.lookup ('sizeBase')))
-    .fmap (R.add (
-      Maybe.fromMaybe (0) (race
-        .bind (e => e.lookup ('sizeRandom'))
-        .alt (raceVariant.bind (e => e.lookup ('sizeRandom')))
-        .fmap (e => e.foldl<number> (
-          acc => die => acc + rollDice (
-            die.get ('amount'),
-            die.get ('sides')
-          )
-        ) (0))
+/**
+ * Reroll the eye color based on the current race and race variant.
+ */
+export const rerollEyeColor =
+  (isAlbino: boolean) =>
+  (race: Maybe<Record<Race>>) =>
+  (raceVariant: Maybe<Record<RaceVariant>>): Maybe<number> =>
+    isAlbino
+    ? Just (rollDie (2) + 18)
+    : pipe (
+             bindF (eyeColors),
+             altF (bindF (eyeColors) (raceVariant)),
+             bindF (subscriptF (rollDie (20) - 1))
+           )
+           (race)
+
+/**
+ * Reroll the size based on the current race and race variant.
+ */
+export const rerollSize =
+  (race: Maybe<Record<Race>>) =>
+  (raceVariant: Maybe<Record<RaceVariant>>): Maybe<string> =>
+    pipe (
+      bindF (sizeBase),
+      altF (bindF (sizeBase) (raceVariant)),
+      fmap (
+        pipe (
+          add (
+            sum (
+              pipe (
+                     bindF (sizeRandom),
+                     altF (bindF (sizeRandom) (raceVariant)),
+                     fmap (foldr (pipe (rollDiceR, add)) (0))
+                   )
+                   (race)
+            )
+          ),
+          show
+        )
       )
-    ))
-    .fmap (e => e.toString ());
+    )
+    (race)
 
-export const getWeightForRerolledSize = (
-  weight: string,
-  prevSize: string,
-  newSize: string
-): string => {
-  const diff = Number.parseInt (newSize) - Number.parseInt (prevSize);
-  const newWeight = Number.parseInt (weight) + diff;
+/**
+ * Recalculate the weight if the size has been changed.
+ */
+export const getWeightForRerolledSize =
+  (weight: string) =>
+  (prevSize: string) =>
+  (newSize: string): string => {
+    const diff = liftM2 (subtract) (toInt (newSize)) (toInt (prevSize))
+    const newWeight = liftM2 (add) (toInt (weight)) (diff)
 
-  return newWeight.toString ();
-};
+    return fromMaybe ("") (fmap (show) (newWeight))
+  }
+
+/**
+ * `randomWeightRace pred sides acc` takes a race-specific predicate and returns
+ * a function that rolls a die based on the passed `sides` of the die. If the
+ * predicate returns `True` for the result, it subtracts the value from `acc`,
+ * otherwise it adds the value to `acc`.
+ */
+const randomWeightRace =
+  (pred: (x: number) => boolean) =>
+    pipe (
+      Math.abs,
+      rollDie,
+      ifElse<number, (x: number) => number> (pred) (subtractBy) (add)
+    )
 
 interface RerolledWeight {
-  size: Maybe<string>;
-  weight: Maybe<string>;
+  size: Maybe<string>
+  weight: Maybe<string>
 }
 
-export const rerollWeight = (
-  race: Maybe<Record<Race>>,
-  raceVariant: Maybe<Record<RaceVariant>>,
-  size: Maybe<string> = rerollSize (race, raceVariant)
-): RerolledWeight => {
-  const formattedSize = size.fmap (multiplyString);
+/**
+ * Reroll the weight based on the current race and race variant.
+ */
+export const rerollWeight =
+  (size: Maybe<string>) =>
+  (race: Maybe<Record<Race>>): RerolledWeight => {
+    const formattedSize = fmap (multiplyString) (size)
 
-  return {
-    weight: race
-      .fmap (justRace => {
-        const addFunc = justRace.get ('id') === 'R_1' ?
-          (e: number) => (acc: number) => {
-            const result = rollDie (Math.abs (e));
+    const rerolled_weight =
+      fmap (pipe (
+             (justRace: Record<Race>) => {
+               const f = id (justRace) === "R_1"
+                 ? randomWeightRace (odd)
+                 : randomWeightRace (lt (0))
 
-            return result % 2 > 0 ? acc - result : acc + result;
-          } :
-          (e: number) => (acc: number) => {
-            const result = rollDie (Math.abs (e));
+               return foldr
+                 ((die: Record<Die>) => add (rollDiceFold (f (sides (die)))
+                                                          (amount (die))))
+                 (weightBase (justRace))
+                 (weightRandom (justRace))
+             },
+             add (sum (bindF (toInt) (formattedSize))),
+             show
+           ))
+           (race)
 
-            return e < 0 ? acc - result : acc + result;
-          };
+    return {
+      weight: rerolled_weight,
+      size: formattedSize,
+    }
+  }
 
-        return justRace.get ('weightRandom')
-          .foldl<number> (
-            acc => die => acc + rollDice (
-              die.get ('amount'),
-              die.get ('sides'),
-              addFunc (die.get ('sides'))
-            )
-          ) (justRace.get ('weightBase'));
-      })
-      .fmap (R.add (Maybe.fromMaybe (0) (formattedSize.fmap (Number.parseInt))))
-      .fmap (e => e.toString ()),
-    size: formattedSize,
-  };
-};
+/**
+ * Reroll size and weight based on the current race and race variant.
+ */
+export const rerollWeightAndSize =
+  (race: Maybe<Record<Race>>) =>
+  (raceVariant: Maybe<Record<RaceVariant>>) =>
+    rerollWeight (rerollSize (race) (raceVariant)) (race)
 
-export const getFullProfessionName = (locale: UIMessagesObject) =>
+export const getFullProfessionName =
+  (l10n: L10nRecord) =>
   (wikiProfessions: OrderedMap<string, Record<Profession>>) =>
-    (wikiProfessionVariants: OrderedMap<string, Record<ProfessionVariant>>) =>
-      (sex: Sex) =>
-        (professionId: Maybe<string>) =>
-          (professionVariantId: Maybe<string>) =>
-            (customProfessionName: Maybe<string>) => {
-              if (Maybe.elem ('P_0') (professionId)) {
-                return Maybe.fromMaybe (translate (locale, 'professions.ownprofession'))
-                                      (customProfessionName);
-              }
+  (wikiProfessionVariants: OrderedMap<string, Record<ProfessionVariant>>) =>
+  (sex: Sex) =>
+  (professionId: Maybe<string>) =>
+  (professionVariantId: Maybe<string>) =>
+  (customProfessionName: Maybe<string>) => {
+    if (elem ("P_0") (professionId)) {
+      return fromMaybe (translate (l10n) (L10n.A["professions.ownprofession"]))
+                       (customProfessionName)
+    }
 
-              const maybeProfession = professionId
-                .bind (
-                  id => OrderedMap.lookup<string, Record<Profession>>
-                    (id)
-                    (wikiProfessions)
-                );
+    const maybeProfession = bindF (lookup_ (wikiProfessions))
+                                  (professionId)
 
-              const professionName = maybeProfession
-                .fmap (profession => profession .get ('name'))
-                .fmap (
-                  name => name instanceof Record ? name .get (sex) : name
-                );
+    const professionName = fmap (pipe (name, nameBySexDef (sex)))
+                                (maybeProfession)
 
-              const professionSubName = maybeProfession
-                .bind (profession => profession .lookup ('subname'))
-                .fmap (
-                  subname => subname instanceof Record ? subname .get (sex) : subname
-                );
+    const professionSubName = pipe (bindF (subname), fmap (nameBySexDef (sex)))
+                                   (maybeProfession)
 
-              const maybeProfessionVariant = professionVariantId
-                .bind (
-                  id => OrderedMap.lookup<string, Record<ProfessionVariant>>
-                    (id)
-                    (wikiProfessionVariants)
-                );
+    const maybeProfessionVariant = bindF (lookup_ (wikiProfessionVariants))
+                                         (professionVariantId)
 
-              const professionVariantName = maybeProfessionVariant
-                .fmap (professionVariant => professionVariant .get ('name'))
-                .fmap (
-                  name => name instanceof Record ? name .get (sex) : name
-                );
+    const professionVariantName = fmap (pipe (name, nameBySexDef (sex)))
+                                       (maybeProfessionVariant)
 
-              return Maybe.fromMaybe ('')
-                                    (professionName
-                                      .fmap (
-                                        name => Maybe.fromMaybe (name)
-                                                                (professionSubName
-                                                                  .alt (professionVariantName)
-                                                                  .fmap (
-                                                                    addName =>
-                                                                      `${name} (${addName})`
-                                                                  ))
-                                      ));
-            };
+    return pipe (
+                  fmap ((n: string) => fromMaybe (n)
+                                                 (pipe (
+                                                         altF (professionVariantName),
+                                                         fmap (addName => `${n} (${addName})`)
+                                                       )
+                                                       (professionSubName))),
+                  fromMaybe ("")
+                )
+                (professionName)
+  }

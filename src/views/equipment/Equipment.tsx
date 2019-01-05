@@ -1,5 +1,7 @@
 import * as R from 'ramda';
 import * as React from 'react';
+import { CombatTechniqueWithRequirements } from '../../App/Models/View/viewTypeHelpers';
+import { ItemTemplate } from '../../App/Models/Wiki/wikiTypeHelpers';
 import { Aside } from '../../components/Aside';
 import { BorderButton } from '../../components/BorderButton';
 import { Dropdown, DropdownOption } from '../../components/Dropdown';
@@ -20,8 +22,6 @@ import { ItemInstance, Purse } from '../../types/data';
 import { Just, List, Maybe, Nothing, Record } from '../../utils/dataUtils';
 import { sortObjects } from '../../utils/FilterSortUtils';
 import { translate, UIMessagesObject } from '../../utils/I18n';
-import { CombatTechniqueWithRequirements } from '../../utils/viewData/viewTypeHelpers';
-import { ItemTemplate } from '../../utils/wikiData/wikiTypeHelpers';
 import { EquipmentListItem } from './EquipmentListItem';
 import { PurseAndTotals } from './PurseAndTotals';
 

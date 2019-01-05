@@ -1,7 +1,7 @@
-import { EditPet } from "./heroData/EditPet";
-import { Pet } from "./heroData/Pet";
-import { fromMaybe, Just, Nothing } from "./structures/Maybe";
-import { Record } from "./structures/Record";
+import { EditPet } from "../App/Models/Hero/EditPet";
+import { Pet } from "../App/Models/Hero/Pet";
+import { fromMaybe, Just, Nothing } from "../Data/Maybe";
+import { Record } from "../Data/Record";
 
 const toStringM = fromMaybe ("")
 

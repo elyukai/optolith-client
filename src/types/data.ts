@@ -1,23 +1,23 @@
-import { DCIds } from '../selectors/derivedCharacteristicsSelectors';
-import { ActivatableDependent } from '../utils/activeEntries/ActivatableDependent';
-import { ActivatableSkillDependent } from '../utils/activeEntries/ActivatableSkillDependent';
-import { ActiveObject } from '../utils/activeEntries/ActiveObject';
-import { AttributeDependent } from '../utils/activeEntries/AttributeDependent';
-import { DependencyObject } from '../utils/activeEntries/DependencyObject';
-import { SkillDependent } from '../utils/activeEntries/SkillDependent';
-import { EditPrimaryAttributeDamageThreshold } from '../utils/heroData/EditPrimaryAttributeDamageThreshold';
-import { HitZoneArmorBase } from '../utils/heroData/HitZoneArmor';
-import { SkillOptionalDependency } from '../utils/heroData/SkillOptionalDependency';
-import { TabId } from '../utils/LocationUtils';
-import { List } from '../utils/structures/List';
-import { Maybe } from '../utils/structures/Maybe';
-import { OrderedMap } from '../utils/structures/OrderedMap';
-import { OrderedSet } from '../utils/structures/OrderedSet';
-import { Pair } from '../utils/structures/Pair';
-import { Omit, Record, RecordI } from '../utils/structures/Record';
-import { SelectOption } from '../utils/wikiData/sub/SelectOption';
-import * as Wiki from '../utils/wikiData/wikiTypeHelpers';
-import { AllAction } from './actions';
+import { ActivatableDependent } from "../App/Models/ActiveEntries/ActivatableDependent";
+import { ActivatableSkillDependent } from "../App/Models/ActiveEntries/ActivatableSkillDependent";
+import { AttributeDependent } from "../App/Models/ActiveEntries/AttributeDependent";
+import { DependencyObject } from "../App/Models/ActiveEntries/DependencyObject";
+import { SkillDependent } from "../App/Models/ActiveEntries/SkillDependent";
+import { EditPrimaryAttributeDamageThreshold } from "../App/Models/Hero/EditPrimaryAttributeDamageThreshold";
+import { HitZoneArmorBase } from "../App/Models/Hero/HitZoneArmor";
+import { SkillOptionalDependency } from "../App/Models/Hero/SkillOptionalDependency";
+import * as Wiki from "../App/Models/Wiki/wikiTypeHelpers";
+import { List } from "../Data/List";
+import { Maybe } from "../Data/Maybe";
+import { OrderedMap } from "../Data/OrderedMap";
+import { OrderedSet } from "../Data/OrderedSet";
+import { Pair } from "../Data/Pair";
+import { Omit, Record, RecordI } from "../Data/Record";
+import { DCIds } from "../selectors/derivedCharacteristicsSelectors";
+import { ActiveObject } from "../utils/activeEntries/ActiveObject";
+import { TabId } from "../utils/LocationUtils";
+import { SelectOption } from "../utils/wikiData/sub/SelectOption";
+import { AllAction } from "./actions";
 
 export type ExtendedSkillDependent =
   Record<SkillDependent> |
@@ -42,7 +42,7 @@ export type ActivatableDependency = boolean | Record<DependencyObject>
 export type SkillDependency = number | Record<SkillOptionalDependency>
 export type ExtendedSkillDependency = boolean | SkillDependency
 
-export type Sex = 'm' | 'f'
+export type Sex = "m" | "f"
 
 export interface User {
   id: string
@@ -84,7 +84,7 @@ export interface ActivatableCombinedName {
 }
 
 export interface ActivatableNameCost
-  extends Omit<ActiveObjectWithId, 'cost'>, ActivatableCombinedName {
+  extends Omit<ActiveObjectWithId, "cost">, ActivatableCombinedName {
   finalCost: number | List<number>
 }
 
@@ -187,9 +187,9 @@ export interface StyleDependency {
 }
 
 export enum EntryRating {
-  Common = 'Common',
-  Uncommon = 'Uncommon',
-  Essential = 'Essential',
+  Common = "Common",
+  Uncommon = "Uncommon",
+  Essential = "Essential",
 }
 
 export interface ItemEditorSpecific {
@@ -271,19 +271,6 @@ export interface HistoryObject {
 
 export interface HistoryPrevState {
 
-}
-
-export interface LanguagesSelectionListItem {
-  id: number
-  name: string
-  native: boolean
-}
-
-export interface ScriptsSelectionListItem {
-  id: number
-  name: string
-  cost: number
-  native: boolean
 }
 
 export type InputTextEvent = React.FormEvent<HTMLInputElement>

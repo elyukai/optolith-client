@@ -1,5 +1,6 @@
 import * as R from 'ramda';
 import { SetSelectionsAction } from '../actions/ProfessionActions';
+import * as Wiki from '../App/Models/Wiki/wikiTypeHelpers';
 import { ActionTypes } from '../constants/ActionTypes';
 import { Categories } from '../constants/Categories';
 import * as Data from '../types/data';
@@ -13,7 +14,6 @@ import { flip } from '../utils/flip';
 import { getHeroStateItem, updateEntryDef, updateHeroListStateItemOr } from '../utils/heroStateUtils';
 import { ifElse } from '../utils/ifElse';
 import { isProfessionRequiringIncreasable } from '../utils/wikiData/prerequisites/DependentRequirement';
-import * as Wiki from '../utils/wikiData/wikiTypeHelpers';
 import { getWikiEntry } from '../utils/WikiUtils';
 
 type Action = SetSelectionsAction;

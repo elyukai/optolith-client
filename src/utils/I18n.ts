@@ -1,9 +1,9 @@
 import { pipe } from "ramda";
-import { thrush } from "./structures/Function";
-import { fnull, List, subscript } from "./structures/List";
-import { fmap, maybe, Maybe, normalize, sum } from "./structures/Maybe";
-import { toOrdering } from "./structures/Ord";
-import { L10n, L10nRecord } from "./wikiData/L10n";
+import { L10n, L10nRecord } from "../App/Models/Wiki/L10n";
+import { thrush } from "../Data/Function";
+import { fnull, List, subscript } from "../Data/List";
+import { fmap, maybe, Maybe, normalize, sum } from "../Data/Maybe";
+import { toOrdering } from "../Data/Ord";
 
 /**
  * Displays a localized message and inserts values into placeholders if

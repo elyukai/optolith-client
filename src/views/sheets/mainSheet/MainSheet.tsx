@@ -1,4 +1,6 @@
 import * as React from 'react';
+import * as View from '../../../App/Models/View/viewTypeHelpers';
+import * as Wiki from '../../../App/Models/Wiki/wikiTypeHelpers';
 import { BorderButton } from '../../../components/BorderButton';
 import { Options } from '../../../components/Options';
 import { TextBox } from '../../../components/TextBox';
@@ -8,8 +10,6 @@ import { UIMessagesObject } from '../../../types/ui';
 import { compressList } from '../../../utils/activatable/activatableNameUtils';
 import { List, Maybe, Record } from '../../../utils/dataUtils';
 import { translate } from '../../../utils/I18n';
-import * as View from '../../../utils/viewData/viewTypeHelpers';
-import * as Wiki from '../../../utils/wikiData/wikiTypeHelpers';
 import { Sheet } from '../Sheet';
 import { SheetWrapper } from '../SheetWrapper';
 import { MainSheetAttributes } from './MainSheetAttributes';

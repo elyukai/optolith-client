@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Culture, ExperienceLevel, Race } from '../../../App/Models/Wiki/wikiTypeHelpers';
 import { Avatar } from '../../../components/Avatar';
 import { LabelBox } from '../../../components/LabelBox';
 import { Plain } from '../../../components/Plain';
@@ -6,7 +7,6 @@ import { AdventurePointsObject } from '../../../selectors/adventurePointsSelecto
 import { PersonalData, Sex } from '../../../types/data';
 import { Just, List, Maybe, Record } from '../../../utils/dataUtils';
 import { translate, UIMessagesObject } from '../../../utils/I18n';
-import { Culture, ExperienceLevel, Race } from '../../../utils/wikiData/wikiTypeHelpers';
 
 export interface MainSheetPersonalDataProps {
   ap: Record<AdventurePointsObject>;

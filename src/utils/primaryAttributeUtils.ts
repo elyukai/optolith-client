@@ -1,18 +1,18 @@
 import { pipe } from "ramda";
+import { ActivatableDependent } from "../App/Models/ActiveEntries/ActivatableDependent";
+import { cnst } from "../Data/Function";
+import { elem_, fromElements } from "../Data/List";
+import { bindF, Just, listToMaybe, Maybe, Nothing } from "../Data/Maybe";
+import { OrderedMap } from "../Data/OrderedMap";
+import { Record } from "../Data/Record";
 import { getBlessedTradition, getMagicalTraditions } from "./activatable/traditionUtils";
-import { ActivatableDependent } from "./activeEntries/ActivatableDependent";
 import * as IDUtils from "./IDUtils";
 import { match } from "./match";
-import { cnst } from "./structures/Function";
-import { elem_, fromElements } from "./structures/List";
-import { bind_, Just, listToMaybe, Maybe, Nothing } from "./structures/Maybe";
-import { OrderedMap } from "./structures/OrderedMap";
-import { Record } from "./structures/Record";
 
 const { id } = ActivatableDependent.A
 
 const getAttributeIdByMagicalNumericId =
-  bind_ (
+  bindF (
     (numericId: number) => match<number, Maybe<string>> (numericId)
       .on (elem_ (fromElements (1, 4, 10)), cnst (Just ("ATTR_2")))
       .on (3, cnst (Just ("ATTR_3")))
@@ -21,7 +21,7 @@ const getAttributeIdByMagicalNumericId =
   )
 
 const getAttributeIdByBlessedNumericId =
-  bind_ (
+  bindF (
     (numericId: number) => match<number, Maybe<string>> (numericId)
       .on (elem_ (fromElements (2, 3, 9, 13, 16, 18)), cnst (Just ("ATTR_1")))
       .on (elem_ (fromElements (1, 4, 8, 17)), cnst (Just ("ATTR_2")))
@@ -40,7 +40,7 @@ export const getPrimaryAttributeId =
     match<(1 | 2), Maybe<string>> (type)
       .on (
         1,
-        () => bind_ (pipe (
+        () => bindF (pipe (
                       id,
                       IDUtils.getNumericMagicalTraditionIdByInstanceId,
                       getAttributeIdByMagicalNumericId
@@ -49,7 +49,7 @@ export const getPrimaryAttributeId =
       )
       .on (
         2,
-        () => bind_ (pipe (
+        () => bindF (pipe (
                       id,
                       IDUtils.getNumericBlessedTraditionIdByInstanceId,
                       getAttributeIdByBlessedNumericId

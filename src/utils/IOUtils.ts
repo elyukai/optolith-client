@@ -1,9 +1,9 @@
 import { remote } from "electron";
 import * as fs from "fs";
+import { fromElements, length, subscript } from "../Data/List";
+import { fromMaybe, fromNullable, Maybe } from "../Data/Maybe";
+import { bimap, fromBoth, fst, Pair, snd } from "../Data/Pair";
 import { divideBy, inc } from "./mathUtils";
-import { fromElements, length, subscript } from "./structures/List";
-import { fromMaybe, fromNullable, Maybe } from "./structures/Maybe";
-import { bimap, fromBoth, fst, Pair, snd } from "./structures/Pair";
 
 export const readFile =
   async (path: string) =>

@@ -1,9 +1,9 @@
 import { pipe } from 'ramda';
-import { ActivatableDependent, ActivatableDependentG } from '../activeEntries/ActivatableDependent';
+import { ActivatableDependent, ActivatableDependentG } from '../../App/Models/ActiveEntries/ActivatableDependent';
+import { fnull } from '../../Data/List';
+import { fmap, Maybe, or } from '../../Data/Maybe';
+import { Record } from '../../Data/Record';
 import { not } from '../not';
-import { fnull } from '../structures/List';
-import { fmap, Maybe, or } from '../structures/Maybe';
-import { Record } from '../structures/Record';
 
 const { active } = ActivatableDependentG
 

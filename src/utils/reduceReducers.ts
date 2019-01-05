@@ -1,20 +1,20 @@
 interface Action {
-  type: any;
-  payload?: object;
+  type: any
+  payload?: object
 }
 
 export type Reducer<S, A extends Action> =
-  (state: S | undefined, action: A) => S;
+  (state: S | undefined, action: A) => S
 
 export type NoInitialReducer<S, A extends Action> =
-  (state: S, action: A) => S;
+  (state: S, action: A) => S
 
 export interface CrossSliceReducer<S, A extends Action> {
-  (intermediateState: S, action: A, previousState: S | undefined): S;
+  (intermediateState: S, action: A, previousState: S | undefined): S
 }
 
 export interface CrossSliceNoInitialReducer<S, A extends Action> {
-  (intermediateState: S, action: A, previousState: S): S;
+  (intermediateState: S, action: A, previousState: S): S
 }
 
 interface ReduceReducers {
@@ -35,4 +35,4 @@ export const reduceReducers: ReduceReducers = <S, A extends Action>(
   crossSlicereducers.reduce (
     (intermediateState, reducer) => reducer (intermediateState, action, previous),
     combinedReducer (previous, action)
-  );
+  )

@@ -1,15 +1,15 @@
-import { pipe } from 'ramda';
-import { ActivatableDependency } from '../../types/data';
-import { ActivatableDependent } from '../activeEntries/ActivatableDependent';
-import { ActiveObject } from '../activeEntries/ActiveObject';
-import { DependencyObject } from '../activeEntries/DependencyObject';
-import { consF, find, foldl, List } from '../structures/List';
-import { alt_, bind, bind_, elem_, ensure, fmap, fromMaybe, Just, liftM2, mapMaybe, Maybe } from '../structures/Maybe';
-import { alter, OrderedMap } from '../structures/OrderedMap';
-import { isRecord, Record } from '../structures/Record';
-import { Advantage } from '../wikiData/Advantage';
-import { SelectOption } from '../wikiData/sub/SelectOption';
-import { Activatable } from '../wikiData/wikiTypeHelpers';
+import { pipe } from "ramda";
+import { ActivatableDependent } from "../../App/Models/ActiveEntries/ActivatableDependent";
+import { ActiveObject } from "../../App/Models/ActiveEntries/ActiveObject";
+import { DependencyObject } from "../../App/Models/ActiveEntries/DependencyObject";
+import { Advantage } from "../../App/Models/Wiki/Advantage";
+import { SelectOption } from "../../App/Models/Wiki/sub/SelectOption";
+import { Activatable } from "../../App/Models/Wiki/wikiTypeHelpers";
+import { consF, find, foldl, List } from "../../Data/List";
+import { altF, bind, bindF, elem_, ensure, fmap, fromMaybe, Just, liftM2, mapMaybe, Maybe } from "../../Data/Maybe";
+import { alter, OrderedMap } from "../../Data/OrderedMap";
+import { isRecord, Record } from "../../Data/Record";
+import { ActivatableDependency } from "../../types/data";
 
 const { select } = Advantage.A
 const { id: getId, name, cost } = SelectOption.A
@@ -40,7 +40,7 @@ export const getSelectOptionName = (obj: Activatable) => pipe (findSelectOption 
  * Returns `Nothing` if not found.
  * @param obj The entry.
  */
-export const getSelectOptionCost = (obj: Activatable) => pipe (findSelectOption (obj), bind_ (cost))
+export const getSelectOptionCost = (obj: Activatable) => pipe (findSelectOption (obj), bindF (cost))
 
 /**
  * Get all `ActiveObject.sid` values from the given instance.
@@ -58,7 +58,7 @@ type SecondarySelections = OrderedMap<number | string, List<string | number>>
 export const getActiveSecondarySelections =
   fmap (
     pipe (
-      active as (r: Record<ActivatableDependent>) => ActivatableDependent['active'],
+      active as (r: Record<ActivatableDependent>) => ActivatableDependent["active"],
       foldl<Record<ActiveObject>, SecondarySelections>
         (map => selection =>
           fromMaybe
@@ -67,7 +67,7 @@ export const getActiveSecondarySelections =
               (id => id2 => alter<string | number, List<string | number>>
                 (pipe (
                   fmap (consF (id2)),
-                  alt_ (Just (List.fromElements (id2)))
+                  altF (Just (List.fromElements (id2)))
                 ))
                 (id)
                 (map))
@@ -89,7 +89,7 @@ export const getRequiredSelections =
       mapMaybe<ActivatableDependency, string | number | List<number>> (
         pipe (
           ensure<ActivatableDependency, Record<DependencyObject>> (isRecord),
-          bind_ (DependencyObject.A.sid)
+          bindF (DependencyObject.A.sid)
         )
       )
     )

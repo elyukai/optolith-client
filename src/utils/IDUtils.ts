@@ -1,12 +1,12 @@
 import { pipe } from "ramda";
 import { Categories } from "../constants/Categories";
 import { IdPrefixes } from "../constants/IdPrefixes";
+import { cnst } from "../Data/Function";
+import { foldl } from "../Data/List";
+import { Just, Maybe, Nothing } from "../Data/Maybe";
+import { lookup_, member_, OrderedMap } from "../Data/OrderedMap";
 import { match } from "./match";
 import { inc, max } from "./mathUtils";
-import { cnst } from "./structures/Function";
-import { foldl } from "./structures/List";
-import { Just, Maybe, Nothing } from "./structures/Maybe";
-import { lookup_, member_, OrderedMap } from "./structures/OrderedMap";
 
 export const getIdPrefix = (id: string) => id.split (/_/)[0] as IdPrefixes
 

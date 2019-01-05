@@ -1,8 +1,8 @@
 import { pipe } from "ramda";
+import { List } from "../Data/List";
+import { Record, RecordBase } from "../Data/Record";
 import { filterRecordsBy, filterRecordsByE, filterRecordsByName } from "./filterBy";
 import { RecordWithName, SortOptions, sortRecordsBy, sortRecordsByName } from "./sortBy";
-import { List } from "./structures/List";
-import { Record, RecordBase } from "./structures/Record";
 
 /**
  * A combination of `filterRecordsBy` and `sortRecordsBy`.
@@ -17,7 +17,7 @@ export const filterAndSortRecordsBy =
       filterRecordsBy (minFilterTextLength)
                       (filterAccessors)
                       (filterText),
-      sortRecordsBy (sortOptions),
+      sortRecordsBy (sortOptions)
     )
 
 /**
@@ -31,7 +31,7 @@ export const filterEAndSortRecordsBy =
     pipe (
       filterRecordsByE (filterAccessors)
                        (filterText),
-      sortRecordsBy (sortOptions),
+      sortRecordsBy (sortOptions)
     )
 
 /**
@@ -43,7 +43,7 @@ export const filterAndSortRecordsByName =
   <A extends RecordWithName>
   (xs: List<Record<A>>) =>
     pipe (
-           filterRecordsByName (filterText),
-           sortRecordsByName (locale),
+           filterRecordsByName (filterText) as (xs: List<Record<A>>) => List<Record<A>>,
+           sortRecordsByName (locale)
          )
          (xs)

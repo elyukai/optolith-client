@@ -1,11 +1,11 @@
 import * as React from 'react';
+import { AttributeCombined, BlessingCombined, LiturgicalChantWithRequirements } from '../../../App/Models/View/viewTypeHelpers';
+import { SpecialAbility } from '../../../App/Models/Wiki/wikiTypeHelpers';
 import { Checkbox } from '../../../components/Checkbox';
 import { Options } from '../../../components/Options';
 import { ActiveViewObject, SecondaryAttribute } from '../../../types/data';
 import { List, Maybe, Record } from '../../../utils/dataUtils';
 import { translate, UIMessagesObject } from '../../../utils/I18n';
-import { AttributeCombined, BlessingCombined, LiturgicalChantWithRequirements } from '../../../utils/viewData/viewTypeHelpers';
-import { SpecialAbility } from '../../../utils/wikiData/wikiTypeHelpers';
 import { AttributeMods } from '../AttributeMods';
 import { Sheet } from '../Sheet';
 import { HeaderValue } from '../SheetHeader';

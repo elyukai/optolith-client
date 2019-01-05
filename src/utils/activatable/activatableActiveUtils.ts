@@ -7,11 +7,11 @@
  * @since 1.1.0
  */
 
+import * as Wiki from '../../App/Models/Wiki/wikiTypeHelpers';
 import { ActivatableCategory, Categories } from '../../constants/Categories';
 import * as Data from '../../types/data';
 import { convertPerTierCostToFinalCost, getCost } from '../adventurePoints/activatableCostUtils';
 import { Just, Maybe, OrderedMap, Record, RecordInterface } from '../dataUtils';
-import * as Wiki from '../wikiData/wikiTypeHelpers';
 import { getWikiEntry } from '../WikiUtils';
 import { getIsRemovalOrChangeDisabled } from './activatableActiveValidationUtils';
 import { getActiveFromState } from './activatableConvertUtils';

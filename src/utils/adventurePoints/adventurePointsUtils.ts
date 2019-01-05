@@ -1,10 +1,10 @@
 import * as R from 'ramda';
 import { isNumber, isString } from 'util';
+import { Disadvantage, Skill, WikiAll } from '../../App/Models/Wiki/wikiTypeHelpers';
 import { AdventurePointsObject } from '../../selectors/adventurePointsSelectors';
 import * as Data from '../../types/data';
 import { getMagicalTraditions } from '../activatable/traditionUtils';
 import { Just, List, Maybe, Nothing, OrderedMap, Record, Tuple } from '../dataUtils';
-import { Disadvantage, Skill, WikiAll } from '../wikiData/wikiTypeHelpers';
 import { getWikiEntryFromSlice } from '../WikiUtils';
 import { getActiveWithNoCustomCost } from './activatableCostUtils';
 

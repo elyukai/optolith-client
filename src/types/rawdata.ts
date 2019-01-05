@@ -1,5 +1,5 @@
-import { StringKeyObject } from '../utils/structures/Record';
-import { ProfessionSelectionIds } from '../utils/wikiData/wikiTypeHelpers';
+import { ProfessionSelectionIds } from '../App/Models/Wiki/wikiTypeHelpers';
+import { StringKeyObject } from '../Data/Record';
 import * as UI from './ui';
 
 export interface RawUser {

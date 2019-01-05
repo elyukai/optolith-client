@@ -1,9 +1,9 @@
 import * as React from 'react';
+import { Skill } from '../../App/Models/Wiki/wikiTypeHelpers';
 import { BorderButton } from '../../components/BorderButton';
 import { List, Maybe, OrderedMap, Record } from '../../utils/dataUtils';
 import { translate, UIMessagesObject } from '../../utils/I18n';
 import { divideBy } from '../../utils/mathUtils';
-import { Skill } from '../../utils/wikiData/wikiTypeHelpers';
 
 export interface SelectionsSkillsProps {
   active: OrderedMap<string, number>;

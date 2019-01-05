@@ -1,8 +1,8 @@
 import { pipe } from "ramda";
+import { fromElements, subscript } from "../Data/List";
+import { bindF, ensure, fromMaybe, Just, Maybe, Nothing } from "../Data/Maybe";
 import { inc } from "./mathUtils";
 import { not } from "./not";
-import { fromElements, subscript } from "./structures/List";
-import { bind_, ensure, fromMaybe, Just, Maybe, Nothing } from "./structures/Maybe";
 
 /**
  * A list of all Roman numbers from 1 to 13.
@@ -109,4 +109,4 @@ export const toFloat =
 
 const isNotNaN = pipe (Number.isNaN, not)
 
-const misNotNaN = bind_<number, number> (ensure (isNotNaN))
+const misNotNaN = bindF<number, number> (ensure (isNotNaN))

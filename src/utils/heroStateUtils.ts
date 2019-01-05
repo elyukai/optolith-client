@@ -1,20 +1,20 @@
 import { pipe } from "ramda";
+import { createPlainActivatableDependent } from "../App/Models/ActiveEntries/ActivatableDependent";
+import { createInactiveActivatableSkillDependent } from "../App/Models/ActiveEntries/ActivatableSkillDependent";
+import { AttributeDependent, createPlainAttributeDependent } from "../App/Models/ActiveEntries/AttributeDependent";
+import { createPlainSkillDependent, createSkillDependentWithValue6 } from "../App/Models/ActiveEntries/SkillDependent";
+import { HeroModel, HeroModelL, HeroModelRecord } from "../App/Models/Hero/HeroModel";
+import { Skill } from "../App/Models/Wiki/Skill";
+import { EntryWithGroup } from "../App/Models/Wiki/wikiTypeHelpers";
 import { IdPrefixes } from "../constants/IdPrefixes";
+import { cnst } from "../Data/Function";
+import { Lens, over, view } from "../Data/Lens";
+import { elem_, filter, fromArray, List } from "../Data/List";
+import { bindF, ensure, fmap, fromMaybe, Just, liftM2, Maybe, Nothing, or } from "../Data/Maybe";
+import { alter, elems, insert, lookup, lookup_, OrderedMap, sdelete, update } from "../Data/OrderedMap";
 import { Dependent } from "../types/data";
-import { createPlainActivatableDependent } from "./activeEntries/ActivatableDependent";
-import { createInactiveActivatableSkillDependent } from "./activeEntries/ActivatableSkillDependent";
-import { AttributeDependent, createPlainAttributeDependent } from "./activeEntries/AttributeDependent";
-import { createPlainSkillDependent, createSkillDependentWithValue6 } from "./activeEntries/SkillDependent";
-import { HeroModel, HeroModelL, HeroModelRecord } from "./heroData/HeroModel";
 import { getIdPrefix } from "./IDUtils";
 import { not } from "./not";
-import { cnst } from "./structures/Function";
-import { Lens, over, view } from "./structures/Lens";
-import { elem_, filter, fromArray, List } from "./structures/List";
-import { bind_, ensure, fmap, fromMaybe, Just, liftM2, Maybe, Nothing, or } from "./structures/Maybe";
-import { alter, elems, insert, lookup, lookup_, OrderedMap, sdelete, update } from "./structures/OrderedMap";
-import { Skill } from "./wikiData/Skill";
-import { EntryWithGroup } from "./wikiData/wikiTypeHelpers";
 
 export type HeroStateMapKey = "advantages"
                             | "attributes"
@@ -194,7 +194,7 @@ export const getHeroStateItem =
   (state: HeroModelRecord) =>
     pipe (
            fmap ((lens: HeroStateMapLens) => view (lens) (state)),
-           bind_ (lookup (id) as (m: OrderedMap<string, Dependent>) => Maybe<Dependent>)
+           bindF (lookup (id) as (m: OrderedMap<string, Dependent>) => Maybe<Dependent>)
          )
          (getHeroStateMapLensById (id))
 

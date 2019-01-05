@@ -1,8 +1,8 @@
 import * as React from 'react';
+import { CombatTechnique } from '../../App/Models/Wiki/wikiTypeHelpers';
 import { Checkbox } from '../../components/Checkbox';
 import { List, Maybe, OrderedSet, Record } from '../../utils/dataUtils';
 import { translate, UIMessagesObject } from '../../utils/I18n';
-import { CombatTechnique } from '../../utils/wikiData/wikiTypeHelpers';
 
 export interface SelectionsCombatTechniquesProps {
   active: OrderedSet<string>;

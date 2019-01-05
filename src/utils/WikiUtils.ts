@@ -1,143 +1,154 @@
-import { pipe } from 'ramda';
-import { ActivatableCategories, Categories } from '../constants/Categories';
-import { getCategoryById } from './IDUtils';
-import { thrush } from './structures/Function';
-import { elem_, filter, fromArray, List } from './structures/List';
-import { bind_, fmap, Maybe } from './structures/Maybe';
-import { elems, lookup_, OrderedMap, OrderedMapValueElement } from './structures/OrderedMap';
-import { member, Record } from './structures/Record';
-import { show } from './structures/Show';
-import { ProfessionCombined } from './viewData/viewTypeHelpers';
-import { AttributeG } from './wikiData/Attribute';
-import { ProfessionG } from './wikiData/Profession';
-import { SkillG } from './wikiData/Skill';
-import { SpecialAbilityG } from './wikiData/SpecialAbilityCreator';
-import { WikiModelG } from './wikiData/WikiModel';
-import * as Wiki from './wikiData/wikiTypeHelpers';
+import { pipe } from "ramda";
+import { ProfessionCombined } from "../App/Models/View/ProfessionCombined";
+import { Advantage } from "../App/Models/Wiki/Advantage";
+import { Attribute } from "../App/Models/Wiki/Attribute";
+import { Blessing } from "../App/Models/Wiki/Blessing";
+import { Cantrip } from "../App/Models/Wiki/Cantrip";
+import { CombatTechnique } from "../App/Models/Wiki/CombatTechnique";
+import { Culture } from "../App/Models/Wiki/Culture";
+import { Disadvantage } from "../App/Models/Wiki/Disadvantage";
+import { ItemTemplate } from "../App/Models/Wiki/ItemTemplate";
+import { LiturgicalChant } from "../App/Models/Wiki/LiturgicalChant";
+import { Profession } from "../App/Models/Wiki/Profession";
+import { Race } from "../App/Models/Wiki/Race";
+import { Skill } from "../App/Models/Wiki/Skill";
+import { SpecialAbility } from "../App/Models/Wiki/SpecialAbility";
+import { Spell } from "../App/Models/Wiki/Spell";
+import { WikiModel, WikiModelRecord } from "../App/Models/Wiki/WikiModel";
+import { Activatable, Entry, EntryWithGroup } from "../App/Models/Wiki/wikiTypeHelpers";
+import { ActivatableCategories, Categories } from "../constants/Categories";
+import { thrush } from "../Data/Function";
+import { elem_, filter, fromArray, List } from "../Data/List";
+import { bindF, fmap, Maybe } from "../Data/Maybe";
+import { elems, lookup_, OrderedMap, OrderedMapValueElement } from "../Data/OrderedMap";
+import { member, Record } from "../Data/Record";
+import { show } from "../Data/Show";
+import { getCategoryById } from "./IDUtils";
 
 interface WikiKeyByCategory {
-  [Categories.ADVANTAGES]: 'advantages'
-  [Categories.ATTRIBUTES]: 'attributes'
-  [Categories.BLESSINGS]: 'blessings'
-  [Categories.CANTRIPS]: 'cantrips'
-  [Categories.COMBAT_TECHNIQUES]: 'combatTechniques'
-  [Categories.CULTURES]: 'cultures'
-  [Categories.DISADVANTAGES]: 'disadvantages'
-  [Categories.LITURGIES]: 'liturgicalChants'
-  [Categories.PROFESSIONS]: 'professions'
-  [Categories.PROFESSION_VARIANTS]: 'professionVariants'
-  [Categories.RACES]: 'races'
-  [Categories.RACE_VARIANTS]: 'raceVariants'
-  [Categories.SPECIAL_ABILITIES]: 'specialAbilities'
-  [Categories.SPELLS]: 'spells'
-  [Categories.TALENTS]: 'skills'
+  [Categories.ADVANTAGES]: "advantages"
+  [Categories.ATTRIBUTES]: "attributes"
+  [Categories.BLESSINGS]: "blessings"
+  [Categories.CANTRIPS]: "cantrips"
+  [Categories.COMBAT_TECHNIQUES]: "combatTechniques"
+  [Categories.CULTURES]: "cultures"
+  [Categories.DISADVANTAGES]: "disadvantages"
+  [Categories.LITURGIES]: "liturgicalChants"
+  [Categories.PROFESSIONS]: "professions"
+  [Categories.PROFESSION_VARIANTS]: "professionVariants"
+  [Categories.RACES]: "races"
+  [Categories.RACE_VARIANTS]: "raceVariants"
+  [Categories.SPECIAL_ABILITIES]: "specialAbilities"
+  [Categories.SPELLS]: "spells"
+  [Categories.TALENTS]: "skills"
 }
 
 export const getWikiSliceGetterByCategory =
-  <T extends Categories>(category: T): typeof WikiModelG[WikiKeyByCategory[T]] => {
+  <T extends Categories>(category: T): typeof WikiModel.A[WikiKeyByCategory[T]] => {
     switch (category) {
-      case Categories.ADVANTAGES: return WikiModelG.advantages
-      case Categories.ATTRIBUTES: return WikiModelG.attributes
-      case Categories.BLESSINGS: return WikiModelG.blessings
-      case Categories.CANTRIPS: return WikiModelG.cantrips
-      case Categories.COMBAT_TECHNIQUES: return WikiModelG.combatTechniques
-      case Categories.CULTURES: return WikiModelG.cultures
-      case Categories.DISADVANTAGES: return WikiModelG.disadvantages
-      case Categories.LITURGIES: return WikiModelG.liturgicalChants
-      case Categories.PROFESSIONS: return WikiModelG.professions
-      case Categories.PROFESSION_VARIANTS: return WikiModelG.professionVariants
-      case Categories.RACES: return WikiModelG.races
-      case Categories.RACE_VARIANTS: return WikiModelG.raceVariants
-      case Categories.SPECIAL_ABILITIES: return WikiModelG.specialAbilities
-      case Categories.SPELLS: return WikiModelG.spells
-      case Categories.TALENTS: return WikiModelG.skills
+      case Categories.ADVANTAGES: return WikiModel.A.advantages
+      case Categories.ATTRIBUTES: return WikiModel.A.attributes
+      case Categories.BLESSINGS: return WikiModel.A.blessings
+      case Categories.CANTRIPS: return WikiModel.A.cantrips
+      case Categories.COMBAT_TECHNIQUES: return WikiModel.A.combatTechniques
+      case Categories.CULTURES: return WikiModel.A.cultures
+      case Categories.DISADVANTAGES: return WikiModel.A.disadvantages
+      case Categories.LITURGIES: return WikiModel.A.liturgicalChants
+      case Categories.PROFESSIONS: return WikiModel.A.professions
+      case Categories.PROFESSION_VARIANTS: return WikiModel.A.professionVariants
+      case Categories.RACES: return WikiModel.A.races
+      case Categories.RACE_VARIANTS: return WikiModel.A.raceVariants
+      case Categories.SPECIAL_ABILITIES: return WikiModel.A.specialAbilities
+      case Categories.SPELLS: return WikiModel.A.spells
+      case Categories.TALENTS: return WikiModel.A.skills
     }
 
     throw new TypeError (`${show (category)} is no valid wiki category!`)
   }
 
 export const getWikiEntryWithGetter =
-  (wiki: Wiki.WikiRecord) =>
-  <G extends typeof WikiModelG[WikiKeyByCategory[Categories]]> (getter: G) =>
-    lookup_ ((getter as (wiki: Wiki.WikiRecord) => OrderedMap<string, Wiki.Entry>) (wiki)) as
+  (wiki: WikiModelRecord) =>
+  <G extends typeof WikiModel.A[WikiKeyByCategory[Categories]]> (getter: G) =>
+    lookup_ ((getter as (wiki: WikiModelRecord) => OrderedMap<string, Entry>) (wiki)) as
       (id: string) => Maybe<OrderedMapValueElement<ReturnType<G>>>
 
 export const getWikiEntry =
-  (wiki: Wiki.WikiRecord) => (id: string): Maybe<Wiki.Entry> =>
+  (wiki: WikiModelRecord) => (id: string): Maybe<Entry> =>
     pipe (
            getCategoryById,
-           fmap<Categories, (wiki: Wiki.WikiRecord) => OrderedMap<string, Wiki.Entry>>
+           fmap<Categories, (wiki: WikiModelRecord) => OrderedMap<string, Entry>>
              (getWikiSliceGetterByCategory as
-               (category: Categories) => (wiki: Wiki.WikiRecord) =>
-                 OrderedMap<string, Wiki.Entry>),
-           bind_<(wiki: Wiki.WikiRecord) => OrderedMap<string, Wiki.Entry>, Wiki.Entry>
+               (category: Categories) => (wiki: WikiModelRecord) =>
+                 OrderedMap<string, Entry>),
+           bindF<(wiki: WikiModelRecord) => OrderedMap<string, Entry>, Entry>
              (pipe (
                getWikiEntryWithGetter (wiki) as
-                 (g: (wiki: Wiki.WikiRecord) => OrderedMap<string, Wiki.Entry>) =>
-                   (id: string) => Maybe<Wiki.Entry>,
+                 (g: (wiki: WikiModelRecord) => OrderedMap<string, Entry>) =>
+                   (id: string) => Maybe<Entry>,
                thrush (id)
              ))
          )
          (id)
 
 export const getAllWikiEntriesByGroup =
-  <T extends Wiki.EntryWithGroup = Wiki.EntryWithGroup>
+  <T extends EntryWithGroup = EntryWithGroup>
   (wiki: OrderedMap<string, T>) =>
   (groups: List<number>): List<T> =>
-    filter<T> (pipe (SkillG.gr, elem_ (groups)))
+    filter<T> (pipe (Skill.A.gr, elem_ (groups)))
               (elems (wiki))
 
 export const getAllWikiEntriesByVariadicGroups =
-  <T extends Wiki.EntryWithGroup = Wiki.EntryWithGroup>
+  <T extends EntryWithGroup = EntryWithGroup>
   (wiki: OrderedMap<string, T>, ...groups: number[]): List<T> =>
-    filter<T> (pipe (SkillG.gr, elem_ (fromArray (groups))))
+    filter<T> (pipe (Skill.A.gr, elem_ (fromArray (groups))))
               (elems (wiki))
 
 type ElementMixed =
   // ActivatableInstance |
-  Record<Wiki.Race> |
-  Record<Wiki.Culture> |
+  Record<Race> |
+  Record<Culture> |
   Record<ProfessionCombined> |
-  Record<Wiki.Advantage> |
-  Record<Wiki.Disadvantage> |
-  Record<Wiki.Skill> |
-  Record<Wiki.CombatTechnique> |
-  Record<Wiki.SpecialAbility> |
-  Record<Wiki.Spell> |
-  Record<Wiki.Cantrip> |
-  Record<Wiki.LiturgicalChant> |
-  Record<Wiki.Blessing> |
-  Record<Wiki.ItemTemplate>
+  Record<Advantage> |
+  Record<Disadvantage> |
+  Record<Skill> |
+  Record<CombatTechnique> |
+  Record<SpecialAbility> |
+  Record<Spell> |
+  Record<Cantrip> |
+  Record<LiturgicalChant> |
+  Record<Blessing> |
+  Record<ItemTemplate>
 
 export const isItemTemplateFromMixed =
-  (obj: ElementMixed): obj is Record<Wiki.ItemTemplate> =>
-    member ('id') (obj)
-    && member ('name') (obj)
-    && member ('isTemplateLocked') (obj)
+  (obj: ElementMixed): obj is Record<ItemTemplate> =>
+    member ("id") (obj)
+    && member ("name") (obj)
+    && member ("isTemplateLocked") (obj)
 
 export const isItemTemplate =
-  (obj: Wiki.Entry): obj is Record<Wiki.ItemTemplate> =>
-    member ('id') (obj)
-    && member ('name') (obj)
-    && member ('isTemplateLocked') (obj)
+  (obj: Entry): obj is Record<ItemTemplate> =>
+    member ("id") (obj)
+    && member ("name") (obj)
+    && member ("isTemplateLocked") (obj)
 
 export const isAttribute =
-  (obj: Wiki.Entry): obj is Record<Wiki.Attribute> =>
+  (obj: Entry): obj is Record<Attribute> =>
     !isItemTemplate (obj)
-    && AttributeG.category (obj as Record<Wiki.Attribute>) === Categories.ATTRIBUTES
+    && Attribute.A.category (obj as Record<Attribute>) === Categories.ATTRIBUTES
 
 export const isProfession =
-  (obj: Wiki.Entry): obj is Record<Wiki.Profession> =>
+  (obj: Entry): obj is Record<Profession> =>
     !isItemTemplate (obj)
-    && ProfessionG.category (obj as Record<Wiki.Profession>) === Categories.PROFESSIONS
+    && Profession.A.category (obj as Record<Profession>) === Categories.PROFESSIONS
 
 export const isSpecialAbility =
-  (obj: Wiki.Entry): obj is Record<Wiki.SpecialAbility> =>
+  (obj: Entry): obj is Record<SpecialAbility> =>
     !isItemTemplate (obj)
-    && SpecialAbilityG.category (obj as Record<Wiki.SpecialAbility>)
+    && SpecialAbility.A.category (obj as Record<SpecialAbility>)
       === Categories.SPECIAL_ABILITIES
 
 export const isActivatableWikiObj =
-  (obj: Wiki.Entry): obj is Wiki.Activatable =>
+  (obj: Entry): obj is Activatable =>
     !isItemTemplate (obj)
-    && elem_ (ActivatableCategories) (SpecialAbilityG.category (obj as Record<Wiki.SpecialAbility>))
+    && elem_<Categories> (ActivatableCategories)
+                         (SpecialAbility.A.category (obj as Record<SpecialAbility>))

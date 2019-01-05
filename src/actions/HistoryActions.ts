@@ -1,7 +1,7 @@
+import { WikiAll } from '../App/Models/Wiki/wikiTypeHelpers';
 import { ActionTypes } from '../constants/ActionTypes';
 import { getWikiBooks } from '../selectors/stateSelectors';
 import { AsyncAction } from '../types/actions';
-import { WikiAll } from '../utils/wikiData/wikiTypeHelpers';
 
 export interface UndoAction {
   type: ActionTypes.UNDO;

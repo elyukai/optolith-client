@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { RaceCombined } from '../../App/Models/View/viewTypeHelpers';
 import { IconButton } from '../../components/IconButton';
 import { ListItem } from '../../components/ListItem';
 import { ListItemButtons } from '../../components/ListItemButtons';
@@ -7,7 +8,6 @@ import { ListItemSeparator } from '../../components/ListItemSeparator';
 import { ListItemValues } from '../../components/ListItemValues';
 import { UIMessagesObject } from '../../types/ui';
 import { Maybe, Record } from '../../utils/dataUtils';
-import { RaceCombined } from '../../utils/viewData/viewTypeHelpers';
 
 export interface RacesListItemProps {
   currentId: Maybe<string>;

@@ -1,5 +1,6 @@
 import * as R from 'ramda';
 import * as React from 'react';
+import { AttributeCombined, CombatTechniqueWithRequirements } from '../../App/Models/View/viewTypeHelpers';
 import { ListView } from '../../components/List';
 import { ListHeader } from '../../components/ListHeader';
 import { ListHeaderTag } from '../../components/ListHeaderTag';
@@ -15,7 +16,6 @@ import { DCIds } from '../../selectors/derivedCharacteristicsSelectors';
 import { SecondaryAttribute } from '../../types/data';
 import { Just, List, Maybe, Nothing, OrderedMap, Record } from '../../utils/dataUtils';
 import { translate, UIMessagesObject } from '../../utils/I18n';
-import { AttributeCombined, CombatTechniqueWithRequirements } from '../../utils/viewData/viewTypeHelpers';
 import { SkillListItem } from '../skills/SkillListItem';
 
 export interface CombatTechniquesOwnProps {

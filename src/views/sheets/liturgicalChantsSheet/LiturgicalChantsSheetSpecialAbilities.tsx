@@ -1,10 +1,10 @@
 import * as React from 'react';
+import { SpecialAbility } from '../../../App/Models/Wiki/wikiTypeHelpers';
 import { TextBox } from '../../../components/TextBox';
 import { ActiveViewObject } from '../../../types/data';
 import { compressList } from '../../../utils/activatable/activatableNameUtils';
 import { List, Maybe, Record } from '../../../utils/dataUtils';
 import { translate, UIMessagesObject } from '../../../utils/I18n';
-import { SpecialAbility } from '../../../utils/wikiData/wikiTypeHelpers';
 
 export interface LiturgicalChantsSheetSpecialAbilitiesProps {
   blessedSpecialAbilities: Maybe<List<Record<ActiveViewObject<SpecialAbility>>>>;

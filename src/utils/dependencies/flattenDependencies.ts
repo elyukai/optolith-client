@@ -1,19 +1,19 @@
 import { pipe } from "ramda";
+import { HeroModelRecord } from "../../App/Models/Hero/HeroModel";
+import { SkillOptionalDependency } from "../../App/Models/Hero/SkillOptionalDependency";
+import { Advantage } from "../../App/Models/Wiki/Advantage";
+import { RequireActivatable } from "../../App/Models/Wiki/prerequisites/ActivatableRequirement";
+import { WikiModelRecord } from "../../App/Models/Wiki/WikiModel";
+import { AbilityRequirement, Activatable } from "../../App/Models/Wiki/wikiTypeHelpers";
+import { thrush } from "../../Data/Function";
+import { elem, find, foldl, isList, List, map, maximumNonNegative } from "../../Data/List";
+import { bindF, fmap, Maybe, Nothing, or, sum } from "../../Data/Maybe";
+import { isRecord, Record } from "../../Data/Record";
 import { ValueBasedDependent } from "../../types/data";
-import { HeroModelRecord } from "../heroData/HeroModel";
-import { SkillOptionalDependency } from "../heroData/SkillOptionalDependency";
 import { getHeroStateItem } from "../heroStateUtils";
 import { gt, gte, inc } from "../mathUtils";
 import { flattenPrerequisites } from "../prerequisites/flattenPrerequisites";
-import { thrush } from "../structures/Function";
-import { elem, find, foldl, isList, List, map, maximumNonNegative } from "../structures/List";
-import { bind_, fmap, Maybe, Nothing, or, sum } from "../structures/Maybe";
-import { isRecord, Record } from "../structures/Record";
 import { isNumber } from "../typeCheckUtils";
-import { Advantage } from "../wikiData/Advantage";
-import { RequireActivatable } from "../wikiData/prerequisites/ActivatableRequirement";
-import { WikiModelRecord } from "../wikiData/WikiModel";
-import { AbilityRequirement, Activatable } from "../wikiData/wikiTypeHelpers";
 import { getWikiEntry } from "../WikiUtils";
 
 const { prerequisites } = Advantage.A
@@ -36,7 +36,7 @@ export const flattenDependencies =
       (e => isRecord (e)
         ? pipe (
                  getWikiEntry (wiki) as (id: string) => Maybe<Activatable>,
-                 bind_ (pipe (
+                 bindF (pipe (
                    prerequisites,
                    flattenPrerequisites,
                    thrush (Nothing),

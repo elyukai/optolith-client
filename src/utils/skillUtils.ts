@@ -1,30 +1,31 @@
-import { pipe } from 'ramda';
-import * as Data from '../types/data';
-import { isMaybeActive } from './activatable/isActive';
-import { ActivatableDependent, ActivatableDependentG, ActiveObjectA } from './activeEntries/ActivatableDependent';
-import { AttributeDependent } from './activeEntries/AttributeDependent';
-import { SkillDependentG } from './activeEntries/SkillDependent';
-import { getSkillCheckValues } from './AttributeUtils';
-import { flattenDependencies } from './dependencies/flattenDependencies';
-import { HeroModelA, HeroModelRecord } from './heroData/HeroModel';
-import { ifElse } from './ifElse';
-import { add } from './mathUtils';
-import { cnst, ident } from './structures/Function';
-import { consF, countWith, foldr, List, maximum, maximumNonNegative, minimum } from './structures/List';
-import { elem, fmap, Just, Maybe, maybe, Nothing, sum } from './structures/Maybe';
-import { lookup_, OrderedMap } from './structures/OrderedMap';
-import { fromBoth, Pair } from './structures/Pair';
-import { Record } from './structures/Record';
-import { SkillCombined, SkillCombinedAccessors } from './viewData/SkillCombined';
-import { ExperienceLevel, ExperienceLevelG } from './wikiData/ExperienceLevel';
-import { SkillG } from './wikiData/Skill';
-import { WikiModelRecord } from './wikiData/WikiModel';
+import { pipe } from "ramda";
+import { ActivatableDependent } from "../App/Models/ActiveEntries/ActivatableDependent";
+import { ActiveObject } from "../App/Models/ActiveEntries/ActiveObject";
+import { AttributeDependent } from "../App/Models/ActiveEntries/AttributeDependent";
+import { SkillDependent } from "../App/Models/ActiveEntries/SkillDependent";
+import { HeroModel, HeroModelRecord } from "../App/Models/Hero/HeroModel";
+import { SkillCombined, SkillCombinedAccessors } from "../App/Models/View/SkillCombined";
+import { ExperienceLevel } from "../App/Models/Wiki/ExperienceLevel";
+import { Skill } from "../App/Models/Wiki/Skill";
+import { WikiModelRecord } from "../App/Models/Wiki/WikiModel";
+import { cnst, ident } from "../Data/Function";
+import { consF, countWith, foldr, List, maximum, maximumNonNegative, minimum } from "../Data/List";
+import { elem, fmap, Just, Maybe, maybe, Nothing, sum } from "../Data/Maybe";
+import { lookup_, OrderedMap } from "../Data/OrderedMap";
+import { fromBoth, Pair } from "../Data/Pair";
+import { Record } from "../Data/Record";
+import * as Data from "../types/data";
+import { isMaybeActive } from "./activatable/isActive";
+import { getSkillCheckValues } from "./AttributeUtils";
+import { flattenDependencies } from "./dependencies/flattenDependencies";
+import { ifElse } from "./ifElse";
+import { add } from "./mathUtils";
 
-const { specialAbilities, skills } = HeroModelA
-const { active } = ActivatableDependentG
-const { sid } = ActiveObjectA
+const { specialAbilities, skills } = HeroModel.A
+const { active } = ActivatableDependent.A
+const { sid } = ActiveObject.A
 const { id, value, dependencies, wikiEntry } = SkillCombinedAccessors
-const { maxSkillRating } = ExperienceLevelG
+const { maxSkillRating } = ExperienceLevel.A
 
 /**
  * `getExceptionalSkillBonus skillId exceptionalSkillStateEntry`
@@ -44,7 +45,7 @@ export const getExceptionalSkillBonus =
 export const getInitialMaximumList =
   (attributes: OrderedMap<string, Record<AttributeDependent>>) =>
     pipe (
-      SkillG.check,
+      Skill.A.check,
       getSkillCheckValues (attributes),
       consF (8),
       maximum,
@@ -98,14 +99,14 @@ export const isSkillDecreasable =
      * => sum of Woodworking and Metalworking must be at least 12.
      */
     if (
-      ['TAL_51', 'TAL_55'].includes (id (skill))
-      && isMaybeActive (lookup_ (specialAbilities (state)) ('SA_17'))
+      ["TAL_51", "TAL_55"].includes (id (skill))
+      && isMaybeActive (lookup_ (specialAbilities (state)) ("SA_17"))
     ) {
       const woodworkingRating =
-        sum (fmap (SkillDependentG.value) (lookup_ (skills (state)) ('TAL_51')))
+        sum (fmap (SkillDependent.A.value) (lookup_ (skills (state)) ("TAL_51")))
 
       const metalworkingRating =
-        sum (fmap (SkillDependentG.value) (lookup_ (skills (state)) ('TAL_55')))
+        sum (fmap (SkillDependent.A.value) (lookup_ (skills (state)) ("TAL_55")))
 
       if (woodworkingRating + metalworkingRating < 12) {
         return false
@@ -121,11 +122,11 @@ export const isSkillDecreasable =
 
 export const isCommon =
   (rating: OrderedMap<string, Data.EntryRating>) =>
-    pipe (SkillG.id, lookup_ (rating), elem (Data.EntryRating.Common))
+    pipe (Skill.A.id, lookup_ (rating), elem (Data.EntryRating.Common))
 
 export const isUncommon =
   (rating: OrderedMap<string, Data.EntryRating>) =>
-    pipe (SkillG.id, lookup_ (rating), elem (Data.EntryRating.Uncommon))
+    pipe (Skill.A.id, lookup_ (rating), elem (Data.EntryRating.Uncommon))
 
 export const getRoutineValue =
   (checkAttributeValues: List<number>) =>

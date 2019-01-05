@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { SpecialAbility } from '../../App/Models/Wiki/wikiTypeHelpers';
 import { ActivatableAddList } from '../../components/ActivatableAddList';
 import { ActivatableRemoveList } from '../../components/ActivatableRemoveList';
 import { BorderButton } from '../../components/BorderButton';
@@ -15,7 +16,6 @@ import { WikiInfoContainer } from '../../containers/WikiInfoContainer';
 import { ActivatableDependent, ActivateArgs, ActiveViewObject, DeactivateArgs, DeactiveViewObject } from '../../types/data';
 import { Just, List, Maybe, Nothing, OrderedMap, Record } from '../../utils/dataUtils';
 import { translate, UIMessagesObject } from '../../utils/I18n';
-import { SpecialAbility } from '../../utils/wikiData/wikiTypeHelpers';
 
 export interface SpecialAbilitiesOwnProps {
   locale: UIMessagesObject;

@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { AttributeCombined } from '../../../App/Models/View/viewTypeHelpers';
 import { List, Maybe, Record } from '../../../utils/dataUtils';
 import { translate, UIMessagesObject } from '../../../utils/I18n';
-import { AttributeCombined } from '../../../utils/viewData/viewTypeHelpers';
 
 export const iterateGroupHeaders = (attributes: List<Record<AttributeCombined>>) =>
   (checkAttributeValueVisibility: boolean) =>

@@ -1,6 +1,7 @@
 import * as R from 'ramda';
 import * as React from 'react';
 import { isNumber, isString } from 'util';
+import { Activatable, SelectionObject, Skill, WikiAll } from '../../App/Models/Wiki/wikiTypeHelpers';
 import { ActivatableAddListItemState } from '../../components/ActivatableAddListItem';
 import { Dropdown, DropdownOption } from '../../components/Dropdown';
 import { TextField } from '../../components/TextField';
@@ -12,7 +13,6 @@ import { translate, UIMessagesObject } from '../I18n';
 import { match } from '../match';
 import { getRoman, unsafeToInt } from '../NumberUtils';
 import { isInteger } from '../RegexUtils';
-import { Activatable, SelectionObject, Skill, WikiAll } from '../wikiData/wikiTypeHelpers';
 import { getActiveSelections, getSelectOptionCost } from './selectionUtils';
 
 interface PropertiesAffectedByState {

@@ -1,8 +1,8 @@
 import * as React from 'react';
+import { Race } from '../../../App/Models/Wiki/wikiTypeHelpers';
 import { SecondaryAttribute } from '../../../types/data';
 import { Just, List, Maybe, Nothing, Record } from '../../../utils/dataUtils';
 import { translate, UIMessagesObject } from '../../../utils/I18n';
-import { Race } from '../../../utils/wikiData/wikiTypeHelpers';
 import { MainSheetAttributesItem } from './MainSheetAttributesItem';
 import { MainSheetFatePoints } from './MainSheetFatePoints';
 

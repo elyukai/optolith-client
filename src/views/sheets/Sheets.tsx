@@ -1,12 +1,12 @@
 import * as React from 'react';
+import * as View from '../../App/Models/View/viewTypeHelpers';
+import * as Wiki from '../../App/Models/Wiki/wikiTypeHelpers';
 import { Page } from '../../components/Page';
 import { Scroll } from '../../components/Scroll';
 import { AdventurePointsObject } from '../../selectors/adventurePointsSelectors';
 import * as Data from '../../types/data';
 import { UIMessagesObject } from '../../types/ui';
 import { Just, List, Maybe, Record } from '../../utils/dataUtils';
-import * as View from '../../utils/viewData/viewTypeHelpers';
-import * as Wiki from '../../utils/wikiData/wikiTypeHelpers';
 import { BelongingsSheet } from './belongingsSheet/BelongingsSheet';
 import { CombatSheet } from './combatSheet/CombatSheet';
 import { CombatSheetZones } from './combatSheet/CombatSheetZones';

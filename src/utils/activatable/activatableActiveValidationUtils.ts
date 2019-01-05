@@ -9,6 +9,7 @@
 
 import * as R from 'ramda';
 import { isObject } from 'util';
+import * as Wiki from '../../App/Models/Wiki/wikiTypeHelpers';
 import { ActivatableCategory, Categories } from '../../constants/Categories';
 import * as Data from '../../types/data';
 import { Just, List, Maybe, Nothing, OrderedMap, OrderedSet, Record } from '../dataUtils';
@@ -19,7 +20,6 @@ import { match } from '../match';
 import { flattenPrerequisites } from '../prerequisites/flattenPrerequisites';
 import { validateLevel, validateObject } from '../prerequisites/validatePrerequisitesUtils';
 import { isBoolean } from '../typeCheckUtils';
-import * as Wiki from '../wikiData/wikiTypeHelpers';
 import { getWikiEntry } from '../WikiUtils';
 import { countActiveSkillEntries } from './activatableSkillUtils';
 import { isStyleValidToRemove } from './ExtendedStyleUtils';

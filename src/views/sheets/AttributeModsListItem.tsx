@@ -1,6 +1,6 @@
 import * as React from 'react';
+import { AttributeCombined } from '../../App/Models/View/viewTypeHelpers';
 import { Record } from '../../utils/dataUtils';
-import { AttributeCombined } from '../../utils/viewData/viewTypeHelpers';
 
 interface AttributeModsListItemProps {
   attribute: Record<AttributeCombined>;

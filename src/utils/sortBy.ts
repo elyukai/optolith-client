@@ -1,9 +1,9 @@
 import { pipe } from "ramda";
+import { on } from "../Data/Function";
+import { length, List, sortBy } from "../Data/List";
+import { EQ, Ordering, reverseCompare } from "../Data/Ord";
+import { fromDefault, Record, RecordBase } from "../Data/Record";
 import { compareLocale } from "./I18n";
-import { on } from "./structures/Function";
-import { length, List, sortBy } from "./structures/List";
-import { EQ, Ordering, reverseCompare } from "./structures/Ord";
-import { fromDefault, Record, RecordBase } from "./structures/Record";
 
 export type CompareR<A> = (x: Record<A>) => (y: Record<A>) => Ordering
 
@@ -66,7 +66,7 @@ const { name } = RecordWithName.A
 export const sortRecordsByName = (
   (locale: string) =>
     sortRecordsBy<RecordWithName> ([
-      comparingR<RecordWithName, string> (name) (compareLocale (locale))
+      comparingR<RecordWithName, string> (name) (compareLocale (locale)),
     ])
 ) as (locale: string) => <A extends RecordWithName> (xs: List<Record<A>>) => List<Record<A>>
 

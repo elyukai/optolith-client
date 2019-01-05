@@ -1,4 +1,5 @@
 import * as R from 'ramda';
+import * as Wiki from '../App/Models/Wiki/wikiTypeHelpers';
 import { ActivatableCategory, Categories } from '../constants/Categories';
 import * as Data from '../types/data';
 import { getAllActiveByCategory } from '../utils/activatable/activatableActiveUtils';
@@ -12,7 +13,6 @@ import { AllSortOptions, filterAndSortObjects } from '../utils/FilterSortUtils';
 import { flip } from '../utils/flip';
 import { translate } from '../utils/I18n';
 import { mapGetToMaybeSlice } from '../utils/SelectorsUtils';
-import * as Wiki from '../utils/wikiData/wikiTypeHelpers';
 import { getBlessedTraditionFromWikiState } from './liturgicalChantsSelectors';
 import { getCurrentCulture, getCurrentProfession, getCurrentRace } from './rcpSelectors';
 import { getSpecialAbilitiesSortOptions } from './sortOptionsSelectors';

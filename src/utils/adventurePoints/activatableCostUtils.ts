@@ -9,6 +9,7 @@
  */
 
 import { add, inc, lt, negate, pipe } from 'ramda';
+import * as Wiki from '../../App/Models/Wiki/wikiTypeHelpers';
 import { ActivatableCategory, Categories } from '../../constants/Categories';
 import * as Data from '../../types/data';
 import { isActive } from '../activatable/isActive';
@@ -21,7 +22,6 @@ import { match } from '../match';
 import { multiply, subtractBy } from '../mathUtils';
 import { getRoman } from '../NumberUtils';
 import { isString } from '../typeCheckUtils';
-import * as Wiki from '../wikiData/wikiTypeHelpers';
 import { getWikiEntry } from '../WikiUtils';
 
 const isDisadvantageActive =

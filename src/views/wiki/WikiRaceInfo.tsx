@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { Book, Culture, Race, RaceVariant } from '../../App/Models/Wiki/wikiTypeHelpers';
 import { sortStrings } from '../../utils/FilterSortUtils';
 import { translate, UIMessages } from '../../utils/I18n';
-import { Book, Culture, Race, RaceVariant } from '../../utils/wikiData/wikiTypeHelpers';
 import { WikiSource } from './elements/WikiSource';
 import { WikiBoxTemplate } from './WikiBoxTemplate';
 import { WikiProperty } from './WikiProperty';

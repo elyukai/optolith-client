@@ -1,10 +1,10 @@
 import * as React from 'react';
+import { ArmorZone, AttributeCombined, CombatTechniqueWithAttackParryBase, MeleeWeapon, RangedWeapon, ShieldOrParryingWeapon } from '../../../App/Models/View/viewTypeHelpers';
+import { SpecialAbility } from '../../../App/Models/Wiki/wikiTypeHelpers';
 import { Options } from '../../../components/Options';
 import { ActiveViewObject, SecondaryAttribute } from '../../../types/data';
 import { List, Maybe, Record } from '../../../utils/dataUtils';
 import { translate, UIMessagesObject } from '../../../utils/I18n';
-import { ArmorZone, AttributeCombined, CombatTechniqueWithAttackParryBase, MeleeWeapon, RangedWeapon, ShieldOrParryingWeapon } from '../../../utils/viewData/viewTypeHelpers';
-import { SpecialAbility } from '../../../utils/wikiData/wikiTypeHelpers';
 import { Sheet } from '../Sheet';
 import { HeaderValue } from '../SheetHeader';
 import { SheetWrapper } from '../SheetWrapper';

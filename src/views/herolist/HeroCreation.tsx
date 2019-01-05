@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Book, ExperienceLevel } from '../../App/Models/Wiki/wikiTypeHelpers';
 import { Checkbox } from '../../components/Checkbox';
 import { Dialog, DialogProps } from '../../components/DialogNew';
 import { Dropdown, DropdownOption } from '../../components/Dropdown';
@@ -10,7 +11,6 @@ import { Sex } from '../../types/data';
 import { UIMessagesObject } from '../../types/ui';
 import { List, Maybe, Nothing, OrderedMap, OrderedSet, Record } from '../../utils/dataUtils';
 import { translate } from '../../utils/I18n';
-import { Book, ExperienceLevel } from '../../utils/wikiData/wikiTypeHelpers';
 
 export interface HeroCreationProps extends DialogProps {
   locale: UIMessagesObject;

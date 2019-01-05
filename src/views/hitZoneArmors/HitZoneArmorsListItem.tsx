@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { ItemTemplate } from '../../App/Models/Wiki/wikiTypeHelpers';
 import { IconButton } from '../../components/IconButton';
 import { ListItem } from '../../components/ListItem';
 import { ListItemButtons } from '../../components/ListItemButtons';
@@ -7,7 +8,6 @@ import { ListItemSeparator } from '../../components/ListItemSeparator';
 import { TooltipToggle } from '../../components/TooltipToggle';
 import { ArmorZonesInstance, ItemInstance, UIMessagesObject } from '../../types/data';
 import { List, Maybe, Record } from '../../utils/dataUtils';
-import { ItemTemplate } from '../../utils/wikiData/wikiTypeHelpers';
 
 export interface HitZoneArmorsListItemProps {
   data: Record<ArmorZonesInstance>;

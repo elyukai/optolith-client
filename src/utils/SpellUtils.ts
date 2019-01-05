@@ -1,4 +1,6 @@
 import * as R from 'ramda';
+import * as View from '../App/Models/View/viewTypeHelpers';
+import * as Wiki from '../App/Models/Wiki/wikiTypeHelpers';
 import * as Data from '../types/data';
 import { getActiveSelections } from './activatable/selectionUtils';
 import { getSkillCheckValues } from './AttributeUtils';
@@ -7,8 +9,6 @@ import { flattenDependencies } from './dependencies/flattenDependencies';
 import { getNumericMagicalTraditionIdByInstanceId } from './IDUtils';
 import { getExceptionalSkillBonus } from './skillUtils';
 import { isNumber } from './typeCheckUtils';
-import * as View from './viewData/viewTypeHelpers';
-import * as Wiki from './wikiData/wikiTypeHelpers';
 
 export const isOwnTradition = (
   tradition: List<Record<Wiki.SpecialAbility>>,

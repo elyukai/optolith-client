@@ -1,6 +1,7 @@
 import * as R from 'ramda';
 import * as React from 'react';
 import { Textfit } from 'react-textfit';
+import { AttributeCombined, SpellCombined } from '../../../App/Models/View/viewTypeHelpers';
 import { TextBox } from '../../../components/TextBox';
 import { SecondaryAttribute } from '../../../types/data';
 import { getICName } from '../../../utils/adventurePoints/improvementCostUtils';
@@ -8,7 +9,6 @@ import { Just, List, Maybe, Nothing, Record, Tuple } from '../../../utils/dataUt
 import { sortStrings } from '../../../utils/FilterSortUtils';
 import { translate, UIMessagesObject } from '../../../utils/I18n';
 import { getAttributeStringByIdList } from '../../../utils/sheetUtils';
-import { AttributeCombined, SpellCombined } from '../../../utils/viewData/viewTypeHelpers';
 
 export interface SpellsSheetSpellsProps {
   attributes: List<Record<AttributeCombined>>;

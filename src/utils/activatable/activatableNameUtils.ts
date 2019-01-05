@@ -9,13 +9,13 @@
  */
 
 import { isNumber, isString } from 'util';
+import * as Wiki from '../../App/Models/Wiki/wikiTypeHelpers';
 import * as Data from '../../types/data';
 import { List, Maybe, OrderedMap, Record } from '../dataUtils';
 import { sortStrings } from '../FilterSortUtils';
 import { translate } from '../I18n';
 import { match } from '../match';
 import { getRoman } from '../NumberUtils';
-import * as Wiki from '../wikiData/wikiTypeHelpers';
 import { getWikiEntry } from '../WikiUtils';
 import { findSelectOption, getSelectOptionName } from './selectionUtils';
 

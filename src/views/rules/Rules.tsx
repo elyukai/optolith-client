@@ -1,11 +1,11 @@
 import * as React from 'react';
+import { Book } from '../../App/Models/Wiki/wikiTypeHelpers';
 import { Checkbox } from '../../components/Checkbox';
 import { Dropdown, DropdownOption } from '../../components/Dropdown';
 import { Scroll } from '../../components/Scroll';
 import { Rules as RulesState } from '../../types/data';
 import { Just, List, Maybe, OrderedSet, Record } from '../../utils/dataUtils';
 import { translate, UIMessagesObject } from '../../utils/I18n';
-import { Book } from '../../utils/wikiData/wikiTypeHelpers';
 
 export interface RulesOwnProps {
   locale: UIMessagesObject;

@@ -1,7 +1,7 @@
+import { ExperienceLevel } from '../App/Models/Wiki/wikiTypeHelpers';
 import { createMaybeSelector } from '../utils/createMaybeSelector';
 import { Maybe, OrderedMap, Record } from '../utils/dataUtils';
 import { getExperienceLevelIdByAp } from '../utils/ELUtils';
-import { ExperienceLevel } from '../utils/wikiData/wikiTypeHelpers';
 import { getExperienceLevelStartId, getTotalAdventurePoints, getWikiExperienceLevels } from './stateSelectors';
 
 export const getCurrentEl = createMaybeSelector (

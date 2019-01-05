@@ -1,16 +1,16 @@
+import { ActivatableSkillDependentL, isActivatableSkillDependent } from "../App/Models/ActiveEntries/ActivatableSkillDependent";
+import { AttributeDependentL, isAttributeDependent } from "../App/Models/ActiveEntries/AttributeDependent";
+import { SkillDependent, SkillDependentL } from "../App/Models/ActiveEntries/SkillDependent";
+import { Skill } from "../App/Models/Wiki/Skill";
+import { IncreasableEntry } from "../App/Models/Wiki/wikiTypeHelpers";
 import { Categories } from "../constants/Categories";
+import { Lens, over } from "../Data/Lens";
+import { fmap, fromMaybe, Maybe } from "../Data/Maybe";
+import { Record } from "../Data/Record";
 import { ValueBasedDependent } from "../types/data";
-import { ActivatableSkillDependentL, isActivatableSkillDependent } from "./activeEntries/ActivatableSkillDependent";
-import { AttributeDependentL, isAttributeDependent } from "./activeEntries/AttributeDependent";
-import { SkillDependent, SkillDependentL } from "./activeEntries/SkillDependent";
 import { getAreSufficientAPAvailable } from "./adventurePoints/adventurePointsUtils";
 import { getIncreaseAP } from "./adventurePoints/improvementCostUtils";
 import { dec, inc } from "./mathUtils";
-import { Lens, over } from "./structures/Lens";
-import { fmap, fromMaybe, Maybe } from "./structures/Maybe";
-import { Record } from "./structures/Record";
-import { Skill } from "./wikiData/Skill";
-import { IncreasableEntry } from "./wikiData/wikiTypeHelpers";
 import { isAttribute } from "./WikiUtils";
 
 export const set =

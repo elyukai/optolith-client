@@ -1,5 +1,6 @@
 import * as R from 'ramda';
 import * as React from 'react';
+import { Culture, Race, RaceVariant } from '../../App/Models/Wiki/wikiTypeHelpers';
 import { Dropdown, DropdownOption } from '../../components/Dropdown';
 import { IconButton } from '../../components/IconButton';
 import { InputButtonGroup } from '../../components/InputButtonGroup';
@@ -11,7 +12,6 @@ import { sortObjects } from '../../utils/FilterSortUtils';
 import { translate } from '../../utils/I18n';
 import { isEmptyOr, isFloat, isNaturalNumber } from '../../utils/RegexUtils';
 import { isNumber } from '../../utils/typeCheckUtils';
-import { Culture, Race, RaceVariant } from '../../utils/wikiData/wikiTypeHelpers';
 
 export interface OverviewPersonalDataOwnProps {
   culture: Maybe<Record<Culture>>;

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Advantage } from '../../App/Models/Wiki/wikiTypeHelpers';
 import { BorderButton } from '../../components/BorderButton';
 import { Checkbox } from '../../components/Checkbox';
 import { ListHeader } from '../../components/ListHeader';
@@ -14,7 +15,6 @@ import { AdventurePointsObject } from '../../selectors/adventurePointsSelectors'
 import { ActivatableDependent, ActivateArgs, ActiveViewObject, DeactivateArgs, DeactiveViewObject, EntryRating, InputTextEvent } from '../../types/data';
 import { Just, List, Maybe, Nothing, OrderedMap, Record } from '../../utils/dataUtils';
 import { translate, UIMessagesObject } from '../../utils/I18n';
-import { Advantage } from '../../utils/wikiData/wikiTypeHelpers';
 import { ActiveList } from './ActiveList';
 import { AdvantagesDisadvantagesAdventurePoints } from './AdvantagesDisadvantagesAdventurePoints';
 import { InactiveList } from './DeactiveList';

@@ -1,6 +1,6 @@
 import * as React from 'react';
+import { Advantage, Attribute, Book, Skill, SpecialAbility } from '../../App/Models/Wiki/wikiTypeHelpers';
 import { UIMessages } from '../../types/data.d';
-import { Advantage, Attribute, Book, Skill, SpecialAbility } from '../../utils/wikiData/wikiTypeHelpers';
 import { WikiApplications } from './elements/WikiApplications';
 import { WikiBotch } from './elements/WikiBotch';
 import { WikiCriticalSuccess } from './elements/WikiCriticalSuccess';

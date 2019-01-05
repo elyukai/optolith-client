@@ -1,8 +1,8 @@
 import { pipe } from "ramda";
+import { thrush } from "../Data/Function";
+import { filter, isSubsequenceOf, List, lower } from "../Data/List";
+import { Record, RecordBase } from "../Data/Record";
 import { RecordWithName } from "./sortBy";
-import { thrush } from "./structures/Function";
-import { filter, isSubsequenceOf, List, lower } from "./structures/List";
-import { Record, RecordBase } from "./structures/Record";
 
 /**
  * The default minimum filter text length for more efficient filtering of long

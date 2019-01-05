@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { CultureCombined } from '../../App/Models/View/viewTypeHelpers';
 import { IconButton } from '../../components/IconButton';
 import { ListItem } from '../../components/ListItem';
 import { ListItemButtons } from '../../components/ListItemButtons';
@@ -6,7 +7,6 @@ import { ListItemName } from '../../components/ListItemName';
 import { ListItemSeparator } from '../../components/ListItemSeparator';
 import { Maybe, Record } from '../../utils/dataUtils';
 import { UIMessagesObject } from '../../utils/I18n';
-import { CultureCombined } from '../../utils/viewData/viewTypeHelpers';
 
 export interface CulturesListItemProps {
   culture: Record<CultureCombined>;

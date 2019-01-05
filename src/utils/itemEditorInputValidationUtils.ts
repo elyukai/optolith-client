@@ -1,10 +1,10 @@
 import { pipe } from "ramda";
-import { EditItem } from "./heroData/EditItem";
-import { EditPrimaryAttributeDamageThreshold } from "./heroData/EditPrimaryAttributeDamageThreshold";
+import { EditItem } from "../App/Models/Hero/EditItem";
+import { EditPrimaryAttributeDamageThreshold } from "../App/Models/Hero/EditPrimaryAttributeDamageThreshold";
+import { all, isList, List, subscriptF, unsafeIndex } from "../Data/List";
+import { elem, fmap, isJust, Nothing } from "../Data/Maybe";
+import { fromDefault, Record } from "../Data/Record";
 import { isEmptyOr, isFloat, isInteger, isNaturalNumber } from "./RegexUtils";
-import { all, isList, List, subscriptF, unsafeIndex } from "./structures/List";
-import { elem, fmap, isJust, Nothing } from "./structures/Maybe";
-import { fromDefault, Record } from "./structures/Record";
 
 export interface ItemEditorInputValidation {
   name: boolean

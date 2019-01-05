@@ -1,17 +1,17 @@
 import { pipe } from "ramda";
+import { ActivatableDependent } from "../../App/Models/ActiveEntries/ActivatableDependent";
+import { Advantage } from "../../App/Models/Wiki/Advantage";
+import { RequireActivatable } from "../../App/Models/Wiki/prerequisites/ActivatableRequirement";
+import { RequireIncreasable } from "../../App/Models/Wiki/prerequisites/IncreasableRequirement";
+import { Application } from "../../App/Models/Wiki/sub/Application";
+import { SelectOption } from "../../App/Models/Wiki/sub/SelectOption";
+import * as Wiki from "../../App/Models/Wiki/wikiTypeHelpers";
+import { equals } from "../../Data/Eq";
+import { append, consF, filter, find, fromElements, length, List } from "../../Data/List";
+import { altF, ap, bindF, elem_, fmap, fromMaybe, Just, liftM2, Maybe, Nothing } from "../../Data/Maybe";
+import { Record } from "../../Data/Record";
 import { findSelectOption } from "../activatable/selectionUtils";
-import { ActivatableDependent } from "../activeEntries/ActivatableDependent";
 import { ActiveObject } from "../activeEntries/ActiveObject";
-import { equals } from "../structures/Eq";
-import { append, consF, filter, find, fromElements, length, List } from "../structures/List";
-import { alt_, ap, bind_, elem_, fmap, fromMaybe, Just, liftM2, Maybe, Nothing } from "../structures/Maybe";
-import { Record } from "../structures/Record";
-import { Advantage } from "../wikiData/Advantage";
-import { RequireActivatable } from "../wikiData/prerequisites/ActivatableRequirement";
-import { RequireIncreasable } from "../wikiData/prerequisites/IncreasableRequirement";
-import { Application } from "../wikiData/sub/Application";
-import { SelectOption } from "../wikiData/sub/SelectOption";
-import * as Wiki from "../wikiData/wikiTypeHelpers";
 
 const { id } = Advantage.A
 const { sid, sid2 } = ActiveObject.A
@@ -35,7 +35,7 @@ export const getGeneratedPrerequisites =
   (add: boolean): Maybe<List<Wiki.AllRequirementObjects>> => {
     switch (id (wikiEntry)) {
       case "SA_3":
-        return bind_ (SelectOption.A.prerequisites)
+        return bindF (SelectOption.A.prerequisites)
                      (findSelectOption (wikiEntry) (sid (current)))
 
       case "SA_9": {
@@ -57,14 +57,14 @@ export const getGeneratedPrerequisites =
                (sid (current))
 
         return pipe (
-                      bind_ (applications),
-                      bind_ (
+                      bindF (applications),
+                      bindF (
                         find<Record<Application>> (pipe (
                                                                Application.A.id,
                                                                elem_ (sid2 (current))
                                                              ))
                       ),
-                      bind_ (Application.A.prerequisites),
+                      bindF (Application.A.prerequisites),
                       ap (
                         fmap<
                           Wiki.AllRequirementObjects,
@@ -72,7 +72,7 @@ export const getGeneratedPrerequisites =
                         > (consF)
                           (sameSkillDependency)
                       ),
-                      alt_ (
+                      altF (
                         fmap<Wiki.AllRequirementObjects, List<Wiki.AllRequirementObjects>>
                           (fromElements)
                           (sameSkillDependency)
@@ -92,7 +92,7 @@ export const getGeneratedPrerequisites =
 
       case "SA_414":
       case "SA_663":
-        return bind_ ((option: Record<SelectOption>) =>
+        return bindF ((option: Record<SelectOption>) =>
                        liftM2 ((optionTarget: string) => (optionTier: number) =>
                                 fromElements (
                                   RequireIncreasable ({
@@ -105,7 +105,7 @@ export const getGeneratedPrerequisites =
                      (findSelectOption (wikiEntry) (sid (current)))
 
       case "SA_639":
-        return bind_ (prerequisites) (findSelectOption (wikiEntry) (sid (current)))
+        return bindF (prerequisites) (findSelectOption (wikiEntry) (sid (current)))
 
       case "SA_699": {
         return Just (fromElements (

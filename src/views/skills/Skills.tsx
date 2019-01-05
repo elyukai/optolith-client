@@ -1,5 +1,7 @@
 import * as R from 'ramda';
 import * as React from 'react';
+import { AttributeCombined, SkillWithRequirements } from '../../App/Models/View/viewTypeHelpers';
+import { Skill } from '../../App/Models/Wiki/wikiTypeHelpers';
 import { Checkbox } from '../../components/Checkbox';
 import { ListView } from '../../components/List';
 import { ListHeader } from '../../components/ListHeader';
@@ -18,8 +20,6 @@ import { EntryRating, SecondaryAttribute } from '../../types/data';
 import { Just, List, Maybe, Nothing, OrderedMap, Record, Tuple } from '../../utils/dataUtils';
 import { translate, UIMessagesObject } from '../../utils/I18n';
 import { isCommon, isUncommon } from '../../utils/skillUtils';
-import { AttributeCombined, SkillWithRequirements } from '../../utils/viewData/viewTypeHelpers';
-import { Skill } from '../../utils/wikiData/wikiTypeHelpers';
 import { SkillListItem } from './SkillListItem';
 
 export interface SkillsOwnProps {

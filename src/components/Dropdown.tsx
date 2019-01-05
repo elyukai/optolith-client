@@ -1,12 +1,12 @@
-import * as classNames from 'classnames';
-import { pipe } from 'ramda';
-import * as React from 'react';
-import { equals } from '../utils/structures/Eq';
-import { find, length, List, map, toArray } from '../utils/structures/List';
-import { alt, fmap, fromMaybe, fromNullable, isNothing, Maybe, normalize, Nothing, or } from '../utils/structures/Maybe';
-import { fromDefault, makeAccessors, Record } from '../utils/structures/Record';
-import { Label } from './Label';
-import { Scroll } from './Scroll';
+import * as classNames from "classnames";
+import { pipe } from "ramda";
+import * as React from "react";
+import { equals } from "../Data/Eq";
+import { find, length, List, map, toArray } from "../Data/List";
+import { alt, fmap, fromMaybe, fromNullable, isNothing, Maybe, normalize, Nothing, or } from "../Data/Maybe";
+import { fromDefault, Record } from "../Data/Record";
+import { Label } from "./Label";
+import { Scroll } from "./Scroll";
 
 export interface DropdownOption {
   id: Maybe<number | string>
@@ -14,16 +14,14 @@ export interface DropdownOption {
   disabled: Maybe<boolean>
 }
 
-export const DropdownOptionCreator =
+export const DropdownOption =
   fromDefault<DropdownOption> ({
     id: Nothing,
-    name: '',
+    name: "",
     disabled: Nothing,
   })
 
-const DropdownOptionG = makeAccessors (DropdownOptionCreator)
-
-const { disabled: getDisabled, id, name } = DropdownOptionG
+const { disabled: getDisabled, id, name } = DropdownOption.A
 
 export interface DropdownProps {
   className?: string
@@ -46,7 +44,7 @@ interface DropdownState {
 export class Dropdown extends React.Component<DropdownProps, DropdownState> {
   state = {
     isOpen: false,
-    position: 'bottom',
+    position: "bottom",
   }
 
   // tslint:disable-next-line:no-null-keyword
@@ -60,10 +58,10 @@ export class Dropdown extends React.Component<DropdownProps, DropdownState> {
       const containerRect = this.containerRef.getBoundingClientRect ()
 
       if ((window.innerHeight - 32 - containerRect.top) < height) {
-        this.setState (() => ({ isOpen: !this.state.isOpen, position: 'top' }))
+        this.setState (() => ({ isOpen: !this.state.isOpen, position: "top" }))
       }
       else {
-        this.setState (() => ({ isOpen: !this.state.isOpen, position: 'bottom' }))
+        this.setState (() => ({ isOpen: !this.state.isOpen, position: "bottom" }))
       }
     }
 
@@ -73,11 +71,11 @@ export class Dropdown extends React.Component<DropdownProps, DropdownState> {
   onChange = (option: Maybe<number | string> = Nothing) => {
     const { onChange, onChangeJust } = this.props
 
-    if (typeof onChange === 'function') {
+    if (typeof onChange === "function") {
       onChange (option)
     }
 
-    if (typeof onChangeJust === 'function' && Maybe.isJust (option)) {
+    if (typeof onChangeJust === "function" && Maybe.isJust (option)) {
       onChangeJust (Maybe.fromJust (option))
     }
 
@@ -94,13 +92,13 @@ export class Dropdown extends React.Component<DropdownProps, DropdownState> {
   insideBlur = () => this.clickInside = false
 
   componentDidMount () {
-    window.addEventListener ('mousedown', this.outsideClick, false)
-    window.addEventListener ('ontouchstart', this.outsideClick, false)
+    window.addEventListener ("mousedown", this.outsideClick, false)
+    window.addEventListener ("ontouchstart", this.outsideClick, false)
   }
 
   componentWillUnmount () {
-    window.removeEventListener ('mousedown', this.outsideClick, false)
-    window.removeEventListener ('ontouchstart', this.outsideClick, false)
+    window.removeEventListener ("mousedown", this.outsideClick, false)
+    window.removeEventListener ("ontouchstart", this.outsideClick, false)
   }
 
   render () {
@@ -120,20 +118,20 @@ export class Dropdown extends React.Component<DropdownProps, DropdownState> {
     const downElement = (
       <div style={{ height: style }} className="down">
         <div style={{ height: (style - 2) }}>
-          <Scroll noInnerElement className={length (options) > 5 ? 'scroll-active' : ''}>
+          <Scroll noInnerElement className={length (options) > 5 ? "scroll-active" : ""}>
             {
               toArray (
                 map<Record<DropdownOption>, JSX.Element>
                   (option => {
                     const classNameInner = classNames (
-                      equals (normalizedValue) (id (option)) ? 'active' : undefined,
-                      or (getDisabled (option)) ? 'disabled' : undefined
+                      equals (normalizedValue) (id (option)) ? "active" : undefined,
+                      or (getDisabled (option)) ? "disabled" : undefined
                     )
 
                     return (
                       <div
                         className={classNameInner}
-                        key={fromMaybe<string | number> ('__DEFAULT__') (id (option))}
+                        key={fromMaybe<string | number> ("__DEFAULT__") (id (option))}
                         onClick={
                           !normalizedDisabled
                           && !or (getDisabled (option))
@@ -166,21 +164,21 @@ export class Dropdown extends React.Component<DropdownProps, DropdownState> {
         })}
         ref={node => this.containerRef = node}
         >
-        {typeof label === 'string' ? <Label text={label} disabled={normalizedDisabled} /> : null}
+        {typeof label === "string" ? <Label text={label} disabled={normalizedDisabled} /> : null}
         <div
           onMouseDown={this.insideFocus}
           onMouseUp={this.insideBlur}
           onTouchStart={this.insideFocus}
           onTouchEnd={this.insideBlur}
           >
-          {position === 'top' && isOpen ? downElement : placeholder}
+          {position === "top" && isOpen ? downElement : placeholder}
           <div
             onClick={this.switch}
-            className={classNames ('value', isNothing (maybeCurrent) ? 'hint' : undefined)}
+            className={classNames ("value", isNothing (maybeCurrent) ? "hint" : undefined)}
             >
-            {fromMaybe ('') (valueText)}
+            {fromMaybe ("") (valueText)}
           </div>
-          {position === 'bottom' && isOpen ? downElement : placeholder}
+          {position === "bottom" && isOpen ? downElement : placeholder}
         </div>
       </div>
     )

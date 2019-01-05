@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { SpecialAbility } from '../../../App/Models/Wiki/wikiTypeHelpers';
 import { TextBox } from '../../../components/TextBox';
 import { ActivatableDependent, ActiveObject } from '../../../types/data';
 import { findSelectOption } from '../../../utils/activatable/selectionUtils';
@@ -6,7 +7,6 @@ import { List, Maybe, Record } from '../../../utils/dataUtils';
 import { sortObjects } from '../../../utils/FilterSortUtils';
 import { translate, UIMessagesObject } from '../../../utils/I18n';
 import { getRoman } from '../../../utils/NumberUtils';
-import { SpecialAbility } from '../../../utils/wikiData/wikiTypeHelpers';
 
 export interface SkillsSheetLanguagesProps {
   languagesStateEntry: Maybe<Record<ActivatableDependent>>;

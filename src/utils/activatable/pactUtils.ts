@@ -1,6 +1,6 @@
+import { PactG } from '../../App/Models/Hero/Pact';
+import { Record } from '../../Data/Record';
 import { Pact } from '../../types/data';
-import { PactG } from '../heroData/Pact';
-import { Record } from '../structures/Record';
 
 const { domain, name } = PactG
 

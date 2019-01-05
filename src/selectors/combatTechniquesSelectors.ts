@@ -1,3 +1,5 @@
+import { CombatTechniqueCombined, CombatTechniqueWithAttackParryBase, CombatTechniqueWithRequirements } from '../App/Models/View/viewTypeHelpers';
+import { ExperienceLevel, WikiRecord } from '../App/Models/Wiki/wikiTypeHelpers';
 import { ActivatableDependent, Hero, HeroDependent } from '../types/data';
 import { isActive } from '../utils/activatable/isActive';
 import { getActiveSelections } from '../utils/activatable/selectionUtils';
@@ -7,8 +9,6 @@ import { Just, List, Maybe, Nothing, Record } from '../utils/dataUtils';
 import { flattenDependencies } from '../utils/dependencies/flattenDependencies';
 import { AllSortOptions, filterAndSortObjects } from '../utils/FilterSortUtils';
 import { filterByAvailability } from '../utils/RulesUtils';
-import { CombatTechniqueCombined, CombatTechniqueWithAttackParryBase, CombatTechniqueWithRequirements } from '../utils/viewData/viewTypeHelpers';
-import { ExperienceLevel, WikiRecord } from '../utils/wikiData/wikiTypeHelpers';
 import { getMaxAttributeValueByID } from './attributeSelectors';
 import { getStartEl } from './elSelectors';
 import { getRuleBooksEnabled } from './rulesSelectors';

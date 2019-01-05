@@ -1,10 +1,10 @@
+import { CultureCombined, ProfessionCombined, RaceCombined } from '../App/Models/View/viewTypeHelpers';
+import { Advantage, Blessing, Cantrip, CombatTechnique, Disadvantage, ItemTemplate, LiturgicalChant, Profession, Skill, SourceLink, SpecialAbility, Spell } from '../App/Models/Wiki/wikiTypeHelpers';
 import { getLocaleAsProp, getWikiAdvantages, getWikiBlessings, getWikiCantrips, getWikiCombatTechniques, getWikiCombatTechniquesGroup, getWikiCultures, getWikiDisadvantages, getWikiFilterText, getWikiItemTemplates, getWikiItemTemplatesGroup, getWikiLiturgicalChants, getWikiLiturgicalChantsGroup, getWikiProfessions, getWikiProfessionsGroup, getWikiRaces, getWikiSkills, getWikiSkillsGroup, getWikiSpecialAbilities, getWikiSpecialAbilitiesGroup, getWikiSpells, getWikiSpellsGroup } from '../selectors/stateSelectors';
 import { createMaybeSelector } from '../utils/createMaybeSelector';
 import { List, Maybe, Record, Tuple } from '../utils/dataUtils';
 import { filterObjects, sortObjects } from '../utils/FilterSortUtils';
 import { translate } from '../utils/I18n';
-import { CultureCombined, ProfessionCombined, RaceCombined } from '../utils/viewData/viewTypeHelpers';
-import { Advantage, Blessing, Cantrip, CombatTechnique, Disadvantage, ItemTemplate, LiturgicalChant, Profession, Skill, SourceLink, SpecialAbility, Spell } from '../utils/wikiData/wikiTypeHelpers';
 import { getAllCultures, getAllProfessions, getAllRaces } from './rcpSelectors';
 
 export type WikiSectionEntry =

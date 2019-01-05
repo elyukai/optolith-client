@@ -1,10 +1,10 @@
 import * as R from 'ramda';
 import * as React from 'react';
+import { Skill, VariantSpecializationSelection } from '../../App/Models/Wiki/wikiTypeHelpers';
 import { Dropdown, DropdownOption } from '../../components/Dropdown';
 import { TextField } from '../../components/TextField';
 import { Just, List, Maybe, OrderedMap, Record, Tuple } from '../../utils/dataUtils';
 import { translate, UIMessagesObject } from '../../utils/I18n';
-import { Skill, VariantSpecializationSelection } from '../../utils/wikiData/wikiTypeHelpers';
 
 export interface SelectionsSkillSpecializationProps {
   active: Tuple<Maybe<number>, string>;

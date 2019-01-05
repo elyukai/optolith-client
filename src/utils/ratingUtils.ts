@@ -1,8 +1,8 @@
+import { ActiveActivatable } from "../App/Models/View/ActiveActivatable";
+import { bindF, elem, Maybe } from "../Data/Maybe";
+import { lookup, OrderedMap } from "../Data/OrderedMap";
+import { Record } from "../Data/Record";
 import { DeactiveViewObject, EntryRating } from "../types/data";
-import { bind_, elem, Maybe } from "./structures/Maybe";
-import { lookup, OrderedMap } from "./structures/OrderedMap";
-import { Record } from "./structures/Record";
-import { ActiveActivatable } from "./viewData/ActiveActivatable";
 
 export const isRated =
   (showRating: boolean) =>
@@ -11,5 +11,5 @@ export const isRated =
   (category: EntryRating) =>
     showRating
     && elem (category)
-            (bind_ (lookup<string, EntryRating> (ActiveActivatable.A.id (item)))
+            (bindF (lookup<string, EntryRating> (ActiveActivatable.A.id (item)))
                    (rating))

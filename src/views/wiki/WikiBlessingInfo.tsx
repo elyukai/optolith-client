@@ -1,9 +1,9 @@
 import * as React from 'react';
+import { Blessing, Book } from '../../App/Models/Wiki/wikiTypeHelpers';
 import { Markdown } from '../../components/Markdown';
 import { sortStrings } from '../../utils/FilterSortUtils';
 import { translate, UIMessages } from '../../utils/I18n';
 import { getAspectsOfTradition, getTraditionOfAspect } from '../../utils/liturgicalChantUtils';
-import { Blessing, Book } from '../../utils/wikiData/wikiTypeHelpers';
 import { WikiSource } from './elements/WikiSource';
 import { WikiBoxTemplate } from './WikiBoxTemplate';
 import { WikiProperty } from './WikiProperty';

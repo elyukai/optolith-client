@@ -1,5 +1,6 @@
 import * as R from 'ramda';
 import { Dispatch } from 'react-redux';
+import { Advantage, Disadvantage } from '../App/Models/Wiki/wikiTypeHelpers';
 import { ActionTypes } from '../constants/ActionTypes';
 import { ActivatableCategory, Categories } from '../constants/Categories';
 import { AppState } from '../reducers/appReducer';
@@ -18,7 +19,6 @@ import { Just, List, Maybe, Record, Tuple } from '../utils/dataUtils';
 import { getHeroStateItem } from '../utils/heroStateUtils';
 import { translate } from '../utils/I18n';
 import { isNumber } from '../utils/typeCheckUtils';
-import { Advantage, Disadvantage } from '../utils/wikiData/wikiTypeHelpers';
 import { getWikiEntry } from '../utils/WikiUtils';
 import { addAlert } from './AlertActions';
 

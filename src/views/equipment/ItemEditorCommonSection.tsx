@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { ItemTemplate } from '../../App/Models/Wiki/wikiTypeHelpers';
 import { Checkbox } from '../../components/Checkbox';
 import { Dropdown, DropdownOption } from '../../components/Dropdown';
 import { Hr } from '../../components/Hr';
@@ -8,7 +9,6 @@ import { ItemEditorInstance } from '../../types/data';
 import { Just, List, Maybe, Record } from '../../utils/dataUtils';
 import { translate, UIMessagesObject } from '../../utils/I18n';
 import { ItemEditorInputValidation } from '../../utils/ItemUtils';
-import { ItemTemplate } from '../../utils/wikiData/wikiTypeHelpers';
 
 export interface ItemEditorCommonSectionProps {
   isInCreation: Maybe<boolean>;

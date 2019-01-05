@@ -1,11 +1,11 @@
 import * as React from 'react';
+import { Profession } from '../../App/Models/View/viewTypeHelpers';
+import { Advantage, Attribute, Blessing, Book, Cantrip, CombatTechnique, Culture, ItemTemplate, LiturgicalChant, ProfessionVariant, Race, RaceVariant, Skill, SpecialAbility, Spell } from '../../App/Models/Wiki/wikiTypeHelpers';
 import { Aside } from '../../components/Aside';
 import { Categories } from '../../constants/Categories';
 import { WikiState } from '../../reducers/wikiReducer';
 import { ActivatableInstance, SecondaryAttribute, UIMessagesObject } from '../../types/data';
 import { Maybe } from '../../utils/dataUtils';
-import { Profession } from '../../utils/viewData/viewTypeHelpers';
-import { Advantage, Attribute, Blessing, Book, Cantrip, CombatTechnique, Culture, ItemTemplate, LiturgicalChant, ProfessionVariant, Race, RaceVariant, Skill, SpecialAbility, Spell } from '../../utils/wikiData/wikiTypeHelpers';
 import { isItemTemplateFromMixed } from '../../utils/WikiUtils';
 import { WikiActivatableInfo } from './WikiActivatableInfo';
 import { WikiBlessingInfo } from './WikiBlessingInfo';

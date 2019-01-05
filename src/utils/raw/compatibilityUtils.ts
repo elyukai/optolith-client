@@ -2,9 +2,9 @@ import { remote } from "electron";
 import * as fs from "fs";
 import * as path from "path";
 import { lt, lte, satisfies } from "semver";
+import { StringKeyObject } from "../../Data/Record";
 import { RawActiveObject, RawHero } from "../../types/rawdata";
 import { getBlessedTraditionInstanceIdByNumericId, getMagicalTraditionInstanceIdByNumericId } from "../IDUtils";
-import { StringKeyObject } from "../structures/Record";
 
 export const currentVersion = JSON.parse (fs.readFileSync (
   path.join (remote.app.getAppPath (), "package.json"),

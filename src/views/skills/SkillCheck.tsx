@@ -1,8 +1,8 @@
 import * as React from 'react';
+import { AttributeCombined } from '../../App/Models/View/viewTypeHelpers';
 import { DCIds } from '../../selectors/derivedCharacteristicsSelectors';
 import { SecondaryAttribute } from '../../types/data';
 import { List, Maybe, OrderedMap, Record } from '../../utils/dataUtils';
-import { AttributeCombined } from '../../utils/viewData/viewTypeHelpers';
 
 export interface SkillCheckProps {
   attributes: List<Record<AttributeCombined>>;

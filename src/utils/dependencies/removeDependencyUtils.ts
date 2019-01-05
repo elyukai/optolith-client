@@ -1,15 +1,15 @@
 import { pipe } from 'ramda';
+import { ActivatableDependentL, isActivatableDependent } from '../../App/Models/ActiveEntries/ActivatableDependent';
+import { ActivatableSkillDependentL } from '../../App/Models/ActiveEntries/ActivatableSkillDependent';
+import { AttributeDependentL, isAttributeDependent } from '../../App/Models/ActiveEntries/AttributeDependent';
+import { isSkillDependent, SkillDependentL } from '../../App/Models/ActiveEntries/SkillDependent';
+import { join } from '../../Data/Function';
+import { over, view } from '../../Data/Lens';
+import { deleteAt, elemIndex, ListElement } from '../../Data/List';
+import { fromMaybe, Maybe } from '../../Data/Maybe';
+import { Record, RecordI } from '../../Data/Record';
 import * as Data from '../../types/data';
-import { ActivatableDependentL, isActivatableDependent } from '../activeEntries/ActivatableDependent';
-import { ActivatableSkillDependentL } from '../activeEntries/ActivatableSkillDependent';
-import { AttributeDependentL, isAttributeDependent } from '../activeEntries/AttributeDependent';
-import { isSkillDependent, SkillDependentL } from '../activeEntries/SkillDependent';
 import { getHeroStateItem, removeHeroStateItem, setHeroStateItem } from '../heroStateUtils';
-import { join } from '../structures/Function';
-import { over, view } from '../structures/Lens';
-import { deleteAt, elemIndex, ListElement } from '../structures/List';
-import { fromMaybe, Maybe } from '../structures/Maybe';
-import { Record, RecordI } from '../structures/Record';
 
 type Deps<T extends Data.Dependent> = RecordI<T>['dependencies'];
 type Dep<T extends Data.Dependent> = ListElement<Deps<T>>;

@@ -1,12 +1,12 @@
 import * as R from 'ramda';
 import * as React from 'react';
+import { AttributeCombined, Item } from '../../../App/Models/View/viewTypeHelpers';
 import { LabelBox } from '../../../components/LabelBox';
 import { Options } from '../../../components/Options';
 import { TextBox } from '../../../components/TextBox';
 import { PetInstance, Purse } from '../../../types/data';
 import { Just, List, Maybe, Nothing, Record, Tuple } from '../../../utils/dataUtils';
 import { localizeNumber, localizeWeight, translate, UIMessagesObject } from '../../../utils/I18n';
-import { AttributeCombined, Item } from '../../../utils/viewData/viewTypeHelpers';
 import { Sheet } from '../Sheet';
 import { SheetWrapper } from '../SheetWrapper';
 import { BelongingsSheetItemsColumn } from './BelongingsSheetItemsColumn';

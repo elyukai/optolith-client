@@ -1,8 +1,8 @@
 import * as React from 'react';
+import { Cantrip } from '../../App/Models/Wiki/wikiTypeHelpers';
 import { Checkbox } from '../../components/Checkbox';
 import { List, Maybe, OrderedSet, Record } from '../../utils/dataUtils';
 import { translate, UIMessagesObject } from '../../utils/I18n';
-import { Cantrip } from '../../utils/wikiData/wikiTypeHelpers';
 
 export interface SelectionsCantripsProps {
   active: OrderedSet<string>;

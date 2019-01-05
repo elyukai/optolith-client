@@ -1,3 +1,4 @@
+import { ItemTemplate } from '../App/Models/Wiki/wikiTypeHelpers';
 import { ActionTypes } from '../constants/ActionTypes';
 import { getFullItem } from '../selectors/equipmentSelectors';
 import { getArmorZonesState, getItemEditorInstance, getItemsState, getWikiItemTemplates } from '../selectors/stateSelectors';
@@ -5,7 +6,6 @@ import { AsyncAction } from '../types/actions';
 import { ItemInstance } from '../types/data';
 import { Maybe, Record } from '../utils/dataUtils';
 import { getNewId } from '../utils/IDUtils';
-import { ItemTemplate } from '../utils/wikiData/wikiTypeHelpers';
 
 export interface AddItemAction {
   type: ActionTypes.ADD_ITEM;

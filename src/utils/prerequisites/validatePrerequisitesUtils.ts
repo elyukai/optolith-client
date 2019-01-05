@@ -1,45 +1,45 @@
 import { pipe } from "ramda";
+import { ActivatableDependent, isActivatableDependent, isMaybeActivatableDependent } from "../../App/Models/ActiveEntries/ActivatableDependent";
+import { ActivatableSkillDependent, isMaybeActivatableSkillDependent } from "../../App/Models/ActiveEntries/ActivatableSkillDependent";
+import { ActiveObject } from "../../App/Models/ActiveEntries/ActiveObject";
+import { AttributeDependent } from "../../App/Models/ActiveEntries/AttributeDependent";
+import { DependencyObject } from "../../App/Models/ActiveEntries/DependencyObject";
+import { isExtendedSkillDependent, SkillDependent } from "../../App/Models/ActiveEntries/SkillDependent";
+import { HeroModel, HeroModelRecord } from "../../App/Models/Hero/HeroModel";
+import { Pact } from "../../App/Models/Hero/Pact";
+import { Culture } from "../../App/Models/Wiki/Culture";
+import { RequireActivatable, RequireActivatableL } from "../../App/Models/Wiki/prerequisites/ActivatableRequirement";
+import { CultureRequirement, isCultureRequirement } from "../../App/Models/Wiki/prerequisites/CultureRequirement";
+import { isIncreasableRequirement, RequireIncreasable, RequireIncreasableL } from "../../App/Models/Wiki/prerequisites/IncreasableRequirement";
+import { isPactRequirement, PactRequirement } from "../../App/Models/Wiki/prerequisites/PactRequirement";
+import { isPrimaryAttributeRequirement, RequirePrimaryAttribute } from "../../App/Models/Wiki/prerequisites/PrimaryAttributeRequirement";
+import { isRaceRequirement, RaceRequirement } from "../../App/Models/Wiki/prerequisites/RaceRequirement";
+import { isSexRequirement, SexRequirement } from "../../App/Models/Wiki/prerequisites/SexRequirement";
+import { Profession } from "../../App/Models/Wiki/Profession";
+import { Race } from "../../App/Models/Wiki/Race";
+import { Skill } from "../../App/Models/Wiki/Skill";
+import { WikiModel, WikiModelRecord } from "../../App/Models/Wiki/WikiModel";
+import * as Wiki from "../../App/Models/Wiki/wikiTypeHelpers";
 import { IdPrefixes } from "../../constants/IdPrefixes";
+import { equals } from "../../Data/Eq";
+import { flip, join, on, thrush } from "../../Data/Function";
+import { compare } from "../../Data/Int";
+import { set } from "../../Data/Lens";
+import { all, any, concat, elem, elem_, foldl, fromElements, ifoldl, isList, List, map, sortBy, subscript } from "../../Data/List";
+import { and, bindF, catMaybes, ensure, fmap, fromJust, isJust, isNothing, Just, Maybe, maybe, maybeToList, Nothing, or } from "../../Data/Maybe";
+import { Ordering } from "../../Data/Ord";
+import { lookup_, OrderedMap, toList } from "../../Data/OrderedMap";
+import { fst, Pair, snd } from "../../Data/Pair";
+import { Record } from "../../Data/Record";
 import * as Data from "../../types/data";
 import { isActive } from "../activatable/isActive";
 import { isPactValid as isPactFromStateValid } from "../activatable/pactUtils";
 import { getActiveSelections } from "../activatable/selectionUtils";
-import { ActivatableDependent, isActivatableDependent, isMaybeActivatableDependent } from "../activeEntries/ActivatableDependent";
-import { ActivatableSkillDependent, isMaybeActivatableSkillDependent } from "../activeEntries/ActivatableSkillDependent";
-import { ActiveObject } from "../activeEntries/ActiveObject";
-import { AttributeDependent } from "../activeEntries/AttributeDependent";
-import { DependencyObject } from "../activeEntries/DependencyObject";
-import { isExtendedSkillDependent, SkillDependent } from "../activeEntries/SkillDependent";
-import { HeroModel, HeroModelRecord } from "../heroData/HeroModel";
-import { Pact } from "../heroData/Pact";
 import { getHeroStateItem } from "../heroStateUtils";
 import { prefixId } from "../IDUtils";
 import { dec, gte, lt, lte, min } from "../mathUtils";
 import { not } from "../not";
 import { getPrimaryAttributeId } from "../primaryAttributeUtils";
-import { equals } from "../structures/Eq";
-import { flip, join, on, thrush } from "../structures/Function";
-import { compare } from "../structures/Int";
-import { set } from "../structures/Lens";
-import { all, any, concat, elem, elem_, foldl, fromElements, ifoldl, isList, List, map, sortBy, subscript } from "../structures/List";
-import { and, bind_, catMaybes, ensure, fmap, fromJust, isJust, isNothing, Just, Maybe, maybe, maybeToList, Nothing, or } from "../structures/Maybe";
-import { Ordering } from "../structures/Ord";
-import { lookup_, OrderedMap, toList } from "../structures/OrderedMap";
-import { fst, Pair, snd } from "../structures/Pair";
-import { Record } from "../structures/Record";
-import { Culture } from "../wikiData/Culture";
-import { RequireActivatable, RequireActivatableL } from "../wikiData/prerequisites/ActivatableRequirement";
-import { CultureRequirement, isCultureRequirement } from "../wikiData/prerequisites/CultureRequirement";
-import { isIncreasableRequirement, RequireIncreasable, RequireIncreasableL } from "../wikiData/prerequisites/IncreasableRequirement";
-import { isPactRequirement, PactRequirement } from "../wikiData/prerequisites/PactRequirement";
-import { isPrimaryAttributeRequirement, RequirePrimaryAttribute } from "../wikiData/prerequisites/PrimaryAttributeRequirement";
-import { isRaceRequirement, RaceRequirement } from "../wikiData/prerequisites/RaceRequirement";
-import { isSexRequirement, SexRequirement } from "../wikiData/prerequisites/SexRequirement";
-import { Profession } from "../wikiData/Profession";
-import { Race } from "../wikiData/Race";
-import { Skill } from "../wikiData/Skill";
-import { WikiModel, WikiModelRecord } from "../wikiData/WikiModel";
-import * as Wiki from "../wikiData/wikiTypeHelpers";
 import { getAllWikiEntriesByGroup } from "../WikiUtils";
 
 type Validator = (wiki: WikiModelRecord) =>
@@ -54,7 +54,7 @@ const getAllRaceEntries =
   (wiki: WikiModelRecord) =>
     pipe (
       race,
-      bind_ (lookup_ (races (wiki))),
+      bindF (lookup_ (races (wiki))),
       fmap (
         selectedRace => concat (
           fromElements (
@@ -73,7 +73,7 @@ const getAllCultureEntries =
   (wiki: WikiModelRecord) =>
     pipe (
       culture,
-      bind_ (lookup_ (cultures (wiki))),
+      bindF (lookup_ (cultures (wiki))),
       fmap (
         selectedCulture => concat (
           fromElements (
@@ -88,7 +88,7 @@ const getAllProfessionEntries =
   (wiki: WikiModelRecord) =>
     pipe (
       profession,
-      bind_ (lookup_ (professions (wiki))),
+      bindF (lookup_ (professions (wiki))),
       fmap (
         selectedProfession => concat (
           fromElements (
@@ -305,9 +305,9 @@ const isActivatableValid =
 
       if (Maybe.elem<Wiki.SID> ("GR") (sid)) {
         return and (pipe (
-                           bind_<Data.Dependent, Record<ActivatableDependent>>
+                           bindF<Data.Dependent, Record<ActivatableDependent>>
                              (ensure (isActivatableDependent)),
-                           bind_<Record<ActivatableDependent>, boolean>
+                           bindF<Record<ActivatableDependent>, boolean>
                              (target => {
                                const arr =
                                  map (Skill.A.id)

@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { Increasable, IncreasableId, NameBySex, Profession, ProfessionVariant, UIMessages } from '../../App/Models/View/viewTypeHelpers';
+import { Attribute, Blessing, Book, Cantrip, LiturgicalChant, ProfessionSelectionList, Race, RemoveCombatTechniquesSelection, RemoveSpecializationSelection, Skill, SpecialAbility, SpecializationSelection, Spell, TerrainKnowledgeSelection } from '../../App/Models/Wiki/wikiTypeHelpers';
 import { Categories } from '../../constants/Categories';
 import { CantripsSelection, CombatTechniquesSecondSelection, CombatTechniquesSelection, CursesSelection, LanguagesScriptsSelection, RaceRequirement, SexRequirement, SkillsSelection, SpecialisationSelection } from '../../types/data';
 import { UIKey } from '../../types/ui';
@@ -7,8 +9,6 @@ import { sortObjects, sortStrings } from '../../utils/FilterSortUtils';
 import { translate } from '../../utils/I18n';
 import { getNumericId } from '../../utils/IDUtils';
 import { isRaceRequirement, isRequiringIncreasable, isSexRequirement } from '../../utils/prerequisites/prerequisitesUtils';
-import { Increasable, IncreasableId, NameBySex, Profession, ProfessionVariant, UIMessages } from '../../utils/viewData/viewTypeHelpers';
-import { Attribute, Blessing, Book, Cantrip, LiturgicalChant, ProfessionSelectionList, Race, RemoveCombatTechniquesSelection, RemoveSpecializationSelection, Skill, SpecialAbility, SpecializationSelection, Spell, TerrainKnowledgeSelection } from '../../utils/wikiData/wikiTypeHelpers';
 import { isRemoveCombatTechniquesSelection, isRemoveSpecializationSelection } from '../../utils/WikiUtils';
 import { WikiSource } from './elements/WikiSource';
 import { WikiBoxTemplate } from './WikiBoxTemplate';

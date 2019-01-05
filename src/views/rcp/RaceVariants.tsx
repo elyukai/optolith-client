@@ -1,10 +1,10 @@
 import * as R from 'ramda';
 import * as React from 'react';
+import { RaceCombined } from '../../App/Models/View/viewTypeHelpers';
 import { Option, RadioButtonGroup } from '../../components/RadioButtonGroup';
 import { UIMessagesObject } from '../../types/ui';
 import { List, Maybe, Record } from '../../utils/dataUtils';
 import { sortObjects } from '../../utils/FilterSortUtils';
-import { RaceCombined } from '../../utils/viewData/viewTypeHelpers';
 
 export interface RaceVariantsProps {
   currentId: Maybe<string>;

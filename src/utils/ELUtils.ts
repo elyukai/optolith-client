@@ -1,11 +1,11 @@
 import { pipe } from "ramda";
+import { ExperienceLevel } from "../App/Models/Wiki/ExperienceLevel";
 import { IdPrefixes } from "../constants/IdPrefixes";
+import { and, fmap } from "../Data/Maybe";
+import { foldlWithKey, lookup_, OrderedMap } from "../Data/OrderedMap";
+import { Record } from "../Data/Record";
 import { getNumericId, prefixId } from "./IDUtils";
 import { inc, lt } from "./mathUtils";
-import { and, fmap } from "./structures/Maybe";
-import { foldlWithKey, lookup_, OrderedMap } from "./structures/OrderedMap";
-import { Record } from "./structures/Record";
-import { ExperienceLevel } from "./wikiData/ExperienceLevel";
 
 const { ap } = ExperienceLevel.A
 

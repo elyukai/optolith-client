@@ -1,9 +1,9 @@
 import * as R from 'ramda';
 import * as React from 'react';
 import { Textfit } from 'react-textfit';
+import { Item } from '../../../App/Models/View/viewTypeHelpers';
 import { Just, List, Maybe, Nothing, Record, Tuple } from '../../../utils/dataUtils';
 import { localizeNumber, localizeWeight, translate, UIMessagesObject } from '../../../utils/I18n';
-import { Item } from '../../../utils/viewData/viewTypeHelpers';
 
 export interface BelongingsSheetItemsColumnProps {
   columnSize: number;

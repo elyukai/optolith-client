@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { ProfessionCombined } from '../../App/Models/View/viewTypeHelpers';
+import { WikiAll } from '../../App/Models/Wiki/wikiTypeHelpers';
 import { Aside } from '../../components/Aside';
 import { Dropdown, DropdownOption } from '../../components/Dropdown';
 import { ListView } from '../../components/List';
@@ -16,8 +18,6 @@ import { WikiInfoContainer } from '../../containers/WikiInfoContainer';
 import { InputTextEvent, Sex } from '../../types/data';
 import { Just, List, Maybe, Record } from '../../utils/dataUtils';
 import { translate, UIMessagesObject } from '../../utils/I18n';
-import { ProfessionCombined } from '../../utils/viewData/viewTypeHelpers';
-import { WikiAll } from '../../utils/wikiData/wikiTypeHelpers';
 import { ProfessionsListItem } from './ProfessionsListItem';
 import { ProfessionVariants } from './ProfessionVariants';
 

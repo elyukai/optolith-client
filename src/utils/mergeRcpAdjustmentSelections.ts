@@ -1,23 +1,23 @@
 import { pipe } from "ramda";
-import { flip, ident } from "./structures/Function";
-import { set } from "./structures/Lens";
-import { foldl } from "./structures/List";
-import { Just, Maybe, maybe, Nothing } from "./structures/Maybe";
-import { Record } from "./structures/Record";
-import { Profession } from "./wikiData/Profession";
-import { isCantripsSelection } from "./wikiData/professionSelections/CantripsSelection";
-import { isCombatTechniquesSelection } from "./wikiData/professionSelections/CombatTechniquesSelection";
-import { isCursesSelection } from "./wikiData/professionSelections/CursesSelection";
-import { isLanguagesScriptsSelection } from "./wikiData/professionSelections/LanguagesScriptsSelection";
-import { ProfessionSelections, ProfessionSelectionsL } from "./wikiData/professionSelections/ProfessionAdjustmentSelections";
-import { isRemoveCombatTechniquesSelection } from "./wikiData/professionSelections/RemoveCombatTechniquesSelection";
-import { isRemoveCombatTechniquesSecondSelection } from "./wikiData/professionSelections/RemoveSecondCombatTechniquesSelection";
-import { isRemoveSpecializationSelection } from "./wikiData/professionSelections/RemoveSpecializationSelection";
-import { isSecondCombatTechniquesSelection } from "./wikiData/professionSelections/SecondCombatTechniquesSelection";
-import { isSkillsSelection } from "./wikiData/professionSelections/SkillsSelection";
-import { isSpecializationSelection } from "./wikiData/professionSelections/SpecializationSelection";
-import { ProfessionVariant } from "./wikiData/ProfessionVariant";
-import { AnyProfessionSelection, AnyProfessionVariantSelection, ProfessionSelectionIds } from "./wikiData/wikiTypeHelpers";
+import { Profession } from "../App/Models/Wiki/Profession";
+import { isCantripsSelection } from "../App/Models/Wiki/professionSelections/CantripsSelection";
+import { isCombatTechniquesSelection } from "../App/Models/Wiki/professionSelections/CombatTechniquesSelection";
+import { isCursesSelection } from "../App/Models/Wiki/professionSelections/CursesSelection";
+import { isLanguagesScriptsSelection } from "../App/Models/Wiki/professionSelections/LanguagesScriptsSelection";
+import { ProfessionSelections, ProfessionSelectionsL } from "../App/Models/Wiki/professionSelections/ProfessionAdjustmentSelections";
+import { isRemoveCombatTechniquesSelection } from "../App/Models/Wiki/professionSelections/RemoveCombatTechniquesSelection";
+import { isRemoveCombatTechniquesSecondSelection } from "../App/Models/Wiki/professionSelections/RemoveSecondCombatTechniquesSelection";
+import { isRemoveSpecializationSelection } from "../App/Models/Wiki/professionSelections/RemoveSpecializationSelection";
+import { isSecondCombatTechniquesSelection } from "../App/Models/Wiki/professionSelections/SecondCombatTechniquesSelection";
+import { isSkillsSelection } from "../App/Models/Wiki/professionSelections/SkillsSelection";
+import { isSpecializationSelection } from "../App/Models/Wiki/professionSelections/SpecializationSelection";
+import { ProfessionVariant } from "../App/Models/Wiki/ProfessionVariant";
+import { AnyProfessionSelection, AnyProfessionVariantSelection, ProfessionSelectionIds } from "../App/Models/Wiki/wikiTypeHelpers";
+import { flip, ident } from "../Data/Function";
+import { set } from "../Data/Lens";
+import { foldl } from "../Data/List";
+import { Just, Maybe, maybe, Nothing } from "../Data/Maybe";
+import { Record } from "../Data/Record";
 
 /**
  * Collects all available RCP adjustment selections in one record

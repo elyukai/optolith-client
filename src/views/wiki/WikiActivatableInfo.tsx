@@ -1,5 +1,7 @@
 import classNames = require('classnames');
 import * as React from 'react';
+import { UIMessages } from '../../App/Models/View/viewTypeHelpers';
+import { Attribute, Book, Race, SpecialAbility } from '../../App/Models/Wiki/wikiTypeHelpers';
 import { Markdown } from '../../components/Markdown';
 import { Categories } from '../../constants/Categories';
 import { WikiState } from '../../reducers/wikiReducer';
@@ -9,8 +11,6 @@ import { translate } from '../../utils/I18n';
 import { getCategoryById } from '../../utils/IDUtils';
 import { getRoman } from '../../utils/NumberUtils';
 import { isRaceRequirement, isRequiringActivatable, isRequiringIncreasable, isRequiringPrimaryAttribute } from '../../utils/prerequisites/prerequisitesUtils';
-import { UIMessages } from '../../utils/viewData/viewTypeHelpers';
-import { Attribute, Book, Race, SpecialAbility } from '../../utils/wikiData/wikiTypeHelpers';
 import { getWikiEntry } from '../../utils/WikiUtils';
 import { WikiSource } from './elements/WikiSource';
 import { WikiBoxTemplate } from './WikiBoxTemplate';

@@ -1,0 +1,273 @@
+import { Categories } from "../../../constants/Categories";
+import { List } from "../../../Data/List";
+import { Just, Maybe } from "../../../Data/Maybe";
+import { OrderedMap } from "../../../Data/OrderedMap";
+import { Record } from "../../../Data/Record";
+import { Advantage } from "./Advantage";
+import { Attribute } from "./Attribute";
+import { Blessing } from "./Blessing";
+import { Cantrip } from "./Cantrip";
+import { CombatTechnique } from "./CombatTechnique";
+import { Culture } from "./Culture";
+import { Disadvantage } from "./Disadvantage";
+import { ItemTemplate } from "./ItemTemplate";
+import { LiturgicalChant } from "./LiturgicalChant";
+import { ProfessionRequireActivatable, RequireActivatable } from "./prerequisites/ActivatableRequirement";
+import { CultureRequirement } from "./prerequisites/CultureRequirement";
+import { ProfessionRequireIncreasable, RequireIncreasable } from "./prerequisites/IncreasableRequirement";
+import { PactRequirement } from "./prerequisites/PactRequirement";
+import { RequirePrimaryAttribute } from "./prerequisites/PrimaryAttributeRequirement";
+import { RaceRequirement } from "./prerequisites/RaceRequirement";
+import { SexRequirement } from "./prerequisites/SexRequirement";
+import { Profession } from "./Profession";
+import { CantripsSelection } from "./professionSelections/CantripsSelection";
+import { CombatTechniquesSelection } from "./professionSelections/CombatTechniquesSelection";
+import { CursesSelection } from "./professionSelections/CursesSelection";
+import { LanguagesScriptsSelection } from "./professionSelections/LanguagesScriptsSelection";
+import { VariantCombatTechniquesSelection } from "./professionSelections/RemoveCombatTechniquesSelection";
+import { VariantCombatTechniquesSecondSelection } from "./professionSelections/RemoveSecondCombatTechniquesSelection";
+import { VariantSpecializationSelection } from "./professionSelections/RemoveSpecializationSelection";
+import { CombatTechniquesSecondSelection } from "./professionSelections/SecondCombatTechniquesSelection";
+import { SkillsSelection } from "./professionSelections/SkillsSelection";
+import { SpecializationSelection } from "./professionSelections/SpecializationSelection";
+import { TerrainKnowledgeSelection } from "./professionSelections/TerrainKnowledgeSelection";
+import { ProfessionVariant } from "./ProfessionVariant";
+import { Race } from "./Race";
+import { RaceVariant } from "./RaceVariant";
+import { Skill } from "./Skill";
+import { SpecialAbility } from "./SpecialAbility";
+import { Spell } from "./Spell";
+import { SelectOption } from "./sub/SelectOption";
+import { SourceLink } from "./sub/SourceLink";
+
+export interface WikiEntryByCategory {
+  "ADVANTAGES": Advantage
+  "ATTRIBUTES": Attribute
+  "BLESSINGS": Blessing
+  "CANTRIPS": Cantrip
+  "COMBAT_TECHNIQUES": CombatTechnique
+  "CULTURES": Culture
+  "DISADVANTAGES": Disadvantage
+  "LITURGIES": LiturgicalChant
+  "PROFESSIONS": Profession
+  "PROFESSION_VARIANTS": ProfessionVariant
+  "RACES": Race
+  "RACE_VARIANTS": RaceVariant
+  "SPECIAL_ABILITIES": SpecialAbility
+  "SPELLS": Spell
+  "TALENTS": Skill
+}
+
+export interface WikiEntryRecordByCategory {
+  "ADVANTAGES": Record<Advantage>
+  "ATTRIBUTES": Record<Attribute>
+  "BLESSINGS": Record<Blessing>
+  "CANTRIPS": Record<Cantrip>
+  "COMBAT_TECHNIQUES": Record<CombatTechnique>
+  "CULTURES": Record<Culture>
+  "DISADVANTAGES": Record<Disadvantage>
+  "LITURGIES": Record<LiturgicalChant>
+  "PROFESSIONS": Record<Profession>
+  "PROFESSION_VARIANTS": Record<ProfessionVariant>
+  "RACES": Record<Race>
+  "RACE_VARIANTS": Record<RaceVariant>
+  "SPECIAL_ABILITIES": Record<SpecialAbility>
+  "SPELLS": Record<Spell>
+  "TALENTS": Record<Skill>
+}
+
+export type EntryWithGroup =
+  Record<CombatTechnique> |
+  Record<LiturgicalChant> |
+  Record<SpecialAbility> |
+  Record<Spell> |
+  Record<Skill>
+
+export type IncreasableEntry =
+  Record<Attribute> |
+  Record<Spell> |
+  Record<LiturgicalChant> |
+  Record<Skill> |
+  Record<CombatTechnique>
+
+export type SkillishEntry =
+  Record<Spell> |
+  Record<LiturgicalChant> |
+  Record<Skill> |
+  Record<CombatTechnique>
+
+export type Entry =
+  Record<Race> |
+  Record<RaceVariant> |
+  Record<Culture> |
+  Record<Profession> |
+  Record<ProfessionVariant> |
+  Record<Attribute> |
+  Record<Advantage> |
+  Record<Disadvantage> |
+  Record<Skill> |
+  Record<CombatTechnique> |
+  Record<SpecialAbility> |
+  Record<Spell> |
+  Record<Cantrip> |
+  Record<LiturgicalChant> |
+  Record<Blessing> |
+  Record<ItemTemplate>
+
+export type EntryWithCategory =
+  Record<Race> |
+  Record<RaceVariant> |
+  Record<Culture> |
+  Record<Profession> |
+  Record<ProfessionVariant> |
+  Record<Attribute> |
+  Record<Advantage> |
+  Record<Disadvantage> |
+  Record<Skill> |
+  Record<CombatTechnique> |
+  Record<SpecialAbility> |
+  Record<Spell> |
+  Record<Cantrip> |
+  Record<LiturgicalChant> |
+  Record<Blessing>
+
+export enum ProfessionSelectionIds {
+  SPECIALIZATION = "SPECIALISATION",
+  LANGUAGES_SCRIPTS = "LANGUAGES_SCRIPTS",
+  COMBAT_TECHNIQUES = "COMBAT_TECHNIQUES",
+  COMBAT_TECHNIQUES_SECOND = "COMBAT_TECHNIQUES_SECOND",
+  CANTRIPS = "CANTRIPS",
+  CURSES = "CURSES",
+  SKILLS = "SKILLS",
+  TERRAIN_KNOWLEDGE = "TERRAIN_KNOWLEDGE",
+}
+
+export type AnyProfessionSelection =
+  Record<SpecializationSelection> |
+  Record<LanguagesScriptsSelection> |
+  Record<CombatTechniquesSelection> |
+  Record<CombatTechniquesSecondSelection> |
+  Record<CantripsSelection> |
+  Record<CursesSelection> |
+  Record<SkillsSelection> |
+  Record<TerrainKnowledgeSelection>
+
+export type AnyProfessionVariantSelection =
+  VariantSpecializationSelection |
+  Record<LanguagesScriptsSelection> |
+  VariantCombatTechniquesSelection |
+  VariantCombatTechniquesSecondSelection |
+  Record<CantripsSelection> |
+  Record<CursesSelection> |
+  Record<SkillsSelection> |
+  Record<TerrainKnowledgeSelection>
+
+export type ProfessionSelectionList = List<AnyProfessionSelection>
+
+export type ProfessionVariantSelectionList = List<AnyProfessionVariantSelection>
+
+export type AllRequirements = "RCP" | AllRequirementObjects
+export type ActivatablePrerequisites = List<AllRequirements>
+
+export type LevelAwarePrerequisites =
+  ActivatablePrerequisites |
+  OrderedMap<number, ActivatablePrerequisites>
+
+export interface ActivatableBase {
+  id: string
+  name: string
+  cost: string | number | List<number>
+  input: Maybe<string>
+  max: Maybe<number>
+  prerequisites: LevelAwarePrerequisites
+  prerequisitesText: Maybe<string>
+  /**
+   * 0-based index as key!
+   */
+  prerequisitesTextIndex: OrderedMap<number, string | false>
+  prerequisitesTextStart: Maybe<string>
+  prerequisitesTextEnd: Maybe<string>
+  tiers: Maybe<number>
+  select: Maybe<List<Record<SelectOption>>>
+  gr: number
+  category: Categories
+  src: List<Record<SourceLink>>
+}
+
+export interface AdvantageDisadvantageBase extends ActivatableBase {
+  rules: string
+  range: Maybe<string>
+  actions: Maybe<string>
+  apValue: Maybe<string>
+  apValueAppend: Maybe<string>
+}
+
+export type CheckModifier = "SPI" | "TOU"
+
+export interface SkillExtension extends SelectOption {
+  target: Just<string>
+  tier: Just<1 | 2 | 3>
+  effect: string
+}
+
+export type Activatable =
+  Record<Advantage> |
+  Record<Disadvantage> |
+  Record<SpecialAbility>
+
+export type Skillish =
+  Record<Spell> |
+  Record<LiturgicalChant> |
+  Record<Skill> |
+  Record<CombatTechnique>
+
+export type SID = string | number | List<number>
+
+export interface ValueOptionalDependency {
+  /**
+   * The skill/spell/chant rating or rather attribute value.
+   */
+  value: number
+  /**
+   * The entry that created this dependency.
+   */
+  origin: string
+}
+
+export interface ActiveDependency {
+  active: Maybe<boolean>
+  sid: Maybe<SID>
+  sid2: Maybe<string | number>
+  tier: Maybe<number>
+}
+
+export interface ActiveOptionalDependency extends ActiveDependency {
+  origin: string
+}
+
+export type ProfessionDependency =
+  Record<SexRequirement> |
+  Record<RaceRequirement> |
+  Record<CultureRequirement>
+
+export type ProfessionPrerequisite =
+  Record<ProfessionRequireActivatable> |
+  Record<ProfessionRequireIncreasable>
+
+export type AbilityRequirement =
+  Record<RequireActivatable> |
+  Record<RequireIncreasable>
+
+export type DependentPrerequisite =
+  Record<RequireActivatable> |
+  Record<RequireIncreasable> |
+  Record<RequirePrimaryAttribute>
+
+export type AllRequirementObjects =
+  Record<RequireActivatable> |
+  Record<RequireIncreasable> |
+  Record<RequirePrimaryAttribute> |
+  Record<SexRequirement> |
+  Record<RaceRequirement> |
+  Record<CultureRequirement> |
+  Record<PactRequirement>

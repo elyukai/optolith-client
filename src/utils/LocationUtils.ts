@@ -1,4 +1,4 @@
-import { elem_, fromElements } from "./structures/List";
+import { elem_, fromElements } from "../Data/List";
 
 export type TabId = "herolist"
                   | "grouplist"

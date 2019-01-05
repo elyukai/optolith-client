@@ -1,5 +1,6 @@
 import * as R from 'ramda';
 import * as React from 'react';
+import { AnyProfessionSelection, Culture, Profession, ProfessionSelectionIds, ProfessionVariant, Race, WikiAll } from '../../App/Models/Wiki/wikiTypeHelpers';
 import { BorderButton } from '../../components/BorderButton';
 import { Checkbox } from '../../components/Checkbox';
 import { Dropdown, DropdownOption } from '../../components/Dropdown';
@@ -10,7 +11,6 @@ import { Just, Maybe, Nothing, OrderedMap, OrderedSet, Record, Tuple } from '../
 import { translate, UIMessagesObject } from '../../utils/I18n';
 import { sign } from '../../utils/NumberUtils';
 import { getAllAdjustmentSelections, getBuyScriptElement, getCantripsElementAndValidation, getCombatTechniquesElementAndValidation, getCombatTechniquesSecondElementAndValidation, getCursesElementAndValidation, getLanguagesAndScriptsElementAndValidation, getMainScriptSelectionElement, getMotherTongueSelectionElement, getSkillsElementAndValidation, getSkillSpecializationElement, getTerrainKnowledgeElement } from '../../utils/rcpAdjustmentSelectionUtils';
-import { AnyProfessionSelection, Culture, Profession, ProfessionSelectionIds, ProfessionVariant, Race, WikiAll } from '../../utils/wikiData/wikiTypeHelpers';
 
 export interface SelectionsOwnProps {
   locale: UIMessagesObject;

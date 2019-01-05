@@ -6,13 +6,13 @@
  * @since 1.1.0
  */
 
+import * as Wiki from '../../App/Models/Wiki/wikiTypeHelpers';
 import * as Data from '../../types/data';
 import { Just, List, Maybe, OrderedMap, Record } from '../dataUtils';
 import { countActiveGroupEntries, hasActiveGroupEntry } from '../entryGroupUtils';
 import { getAllEntriesByGroup, getHeroStateItem } from '../heroStateUtils';
 import { getFirstTierPrerequisites } from '../prerequisites/flattenPrerequisites';
 import { validatePrerequisites } from '../prerequisites/validatePrerequisitesUtils';
-import * as Wiki from '../wikiData/wikiTypeHelpers';
 import { isSpecialAbility } from '../WikiUtils';
 import * as CheckStyleUtils from './checkStyleUtils';
 import { isActive } from './isActive';

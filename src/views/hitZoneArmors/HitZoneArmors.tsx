@@ -1,5 +1,6 @@
 import * as R from 'ramda';
 import * as React from 'react';
+import { ItemTemplate } from '../../App/Models/Wiki/wikiTypeHelpers';
 import { Aside } from '../../components/Aside';
 import { BorderButton } from '../../components/BorderButton';
 import { ListView } from '../../components/List';
@@ -14,7 +15,6 @@ import { TextField } from '../../components/TextField';
 import { ArmorZonesEditorInstance, ArmorZonesInstance, ItemInstance, Purse } from '../../types/data';
 import { List, Maybe, Record } from '../../utils/dataUtils';
 import { translate, UIMessagesObject } from '../../utils/I18n';
-import { ItemTemplate } from '../../utils/wikiData/wikiTypeHelpers';
 import { PurseAndTotals } from '../equipment/PurseAndTotals';
 import { HitZoneArmorEditor } from './HitZoneArmorEditor';
 import { HitZoneArmorsListItem } from './HitZoneArmorsListItem';

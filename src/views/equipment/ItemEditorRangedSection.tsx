@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { CombatTechnique, ItemTemplate } from '../../App/Models/Wiki/wikiTypeHelpers';
 import { Dropdown, DropdownOption } from '../../components/Dropdown';
 import { Hr } from '../../components/Hr';
 import { Label } from '../../components/Label';
@@ -7,7 +8,6 @@ import { ItemEditorInstance } from '../../types/data';
 import { List, Maybe, OrderedMap, Record } from '../../utils/dataUtils';
 import { translate, UIMessagesObject } from '../../utils/I18n';
 import { getLossLevelElements, ItemEditorInputValidation } from '../../utils/ItemUtils';
-import { CombatTechnique, ItemTemplate } from '../../utils/wikiData/wikiTypeHelpers';
 
 export interface ItemEditorRangedSectionProps {
   combatTechniques: OrderedMap<string, Record<CombatTechnique>>;

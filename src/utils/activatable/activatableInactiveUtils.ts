@@ -8,6 +8,7 @@
  */
 
 import * as R from 'ramda';
+import * as Wiki from '../../App/Models/Wiki/wikiTypeHelpers';
 import { AdventurePointsObject } from '../../selectors/adventurePointsSelectors';
 import * as Data from '../../types/data';
 import { Just, List, Maybe, OrderedMap, Record, RecordInterface, Tuple } from '../dataUtils';
@@ -19,7 +20,6 @@ import { getTraditionOfAspect } from '../liturgicalChantUtils';
 import { match } from '../match';
 import { validateLevel, validatePrerequisites } from '../prerequisites/validatePrerequisitesUtils';
 import { isString } from '../typeCheckUtils';
-import * as Wiki from '../wikiData/wikiTypeHelpers';
 import { getWikiEntryFromSlice } from '../WikiUtils';
 import { isAdditionDisabled } from './activatableInactiveValidationUtils';
 import { getModifierByActiveLevel } from './activatableModifierUtils';

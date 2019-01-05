@@ -1,4 +1,5 @@
 import * as R from 'ramda';
+import { SpecialAbility } from '../App/Models/Wiki/wikiTypeHelpers';
 import { ActionTypes } from '../constants/ActionTypes';
 import { getAvailableAdventurePoints } from '../selectors/adventurePointsSelectors';
 import { getIsInCharacterCreation } from '../selectors/phaseSelectors';
@@ -12,7 +13,6 @@ import { getAreSufficientAPAvailable } from '../utils/adventurePoints/adventureP
 import { Just, Maybe, Record } from '../utils/dataUtils';
 import { getHeroStateItem } from '../utils/heroStateUtils';
 import { translate } from '../utils/I18n';
-import { SpecialAbility } from '../utils/wikiData/wikiTypeHelpers';
 import { getWikiEntry } from '../utils/WikiUtils';
 import { addAlert } from './AlertActions';
 

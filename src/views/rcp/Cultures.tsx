@@ -1,5 +1,6 @@
 import * as R from 'ramda';
 import * as React from 'react';
+import { CultureCombined } from '../../App/Models/View/viewTypeHelpers';
 import { Dropdown, DropdownOption } from '../../components/Dropdown';
 import { ListView } from '../../components/List';
 import { ListHeader } from '../../components/ListHeader';
@@ -14,7 +15,6 @@ import { TextField } from '../../components/TextField';
 import { WikiInfoContainer } from '../../containers/WikiInfoContainer';
 import { Just, List, Maybe, Record } from '../../utils/dataUtils';
 import { translate, UIMessagesObject } from '../../utils/I18n';
-import { CultureCombined } from '../../utils/viewData/viewTypeHelpers';
 import { CulturesListItem } from './CulturesListItem';
 
 export interface CulturesOwnProps {

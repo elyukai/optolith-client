@@ -1,5 +1,6 @@
 import * as R from 'ramda';
 import * as React from 'react';
+import { RaceCombined } from '../../App/Models/View/viewTypeHelpers';
 import { Aside } from '../../components/Aside';
 import { ListView } from '../../components/List';
 import { ListHeader } from '../../components/ListHeader';
@@ -14,7 +15,6 @@ import { TextField } from '../../components/TextField';
 import { WikiInfoContainer } from '../../containers/WikiInfoContainer';
 import { List, Maybe, Record } from '../../utils/dataUtils';
 import { translate, UIMessagesObject } from '../../utils/I18n';
-import { RaceCombined } from '../../utils/viewData/viewTypeHelpers';
 import { RacesListItem } from './RacesListItem';
 import { RaceVariants } from './RaceVariants';
 

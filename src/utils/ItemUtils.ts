@@ -1,19 +1,19 @@
 import { pipe } from "ramda";
+import { EditItem } from "../App/Models/Hero/EditItem";
+import { EditPrimaryAttributeDamageThreshold } from "../App/Models/Hero/EditPrimaryAttributeDamageThreshold";
+import { Item } from "../App/Models/Hero/Item";
+import { PrimaryAttributeDamageThreshold } from "../App/Models/Wiki/sub/PrimaryAttributeDamageThreshold";
 import { IdPrefixes } from "../constants/IdPrefixes";
-import { EditItem } from "./heroData/EditItem";
-import { EditPrimaryAttributeDamageThreshold } from "./heroData/EditPrimaryAttributeDamageThreshold";
-import { Item } from "./heroData/Item";
+import { equals } from "../Data/Eq";
+import { all, fromArray, fromElements, isList, length, List, map } from "../Data/List";
+import { bindF, ensure, fmap, Just, mapMaybe, Maybe, maybe, Nothing, product, sum } from "../Data/Maybe";
+import { Record } from "../Data/Record";
+import { show } from "../Data/Show";
 import { prefixRawId } from "./IDUtils";
 import { ifElse } from "./ifElse";
 import { getLevelElementsWithZero } from "./levelUtils";
 import { gt } from "./mathUtils";
 import { toFloat, toInt } from "./NumberUtils";
-import { equals } from "./structures/Eq";
-import { all, fromArray, fromElements, isList, length, List, map } from "./structures/List";
-import { bind_, ensure, fmap, Just, mapMaybe, Maybe, maybe, Nothing, product, sum } from "./structures/Maybe";
-import { Record } from "./structures/Record";
-import { show } from "./structures/Show";
-import { PrimaryAttributeDamageThreshold } from "./wikiData/sub/PrimaryAttributeDamageThreshold";
 
 const ifNumberOrEmpty = maybe<number, string> ("") (show)
 
@@ -73,7 +73,7 @@ export const convertToEdit =
     })
 
 const toMaybeIntGreaterThan =
-  (int: number) => pipe (toInt, bind_<number, number> (ensure (gt (int))))
+  (int: number) => pipe (toInt, bindF<number, number> (ensure (gt (int))))
 
 const toMaybeIntGreaterThan0 = toMaybeIntGreaterThan (0)
 const toMaybeIntGreaterThan1 = toMaybeIntGreaterThan (1)
