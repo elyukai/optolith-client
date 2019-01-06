@@ -1,11 +1,11 @@
-import { pipe } from 'ramda';
-import { ActivatableDependent, ActivatableDependentG } from '../../App/Models/ActiveEntries/ActivatableDependent';
-import { fnull } from '../../Data/List';
-import { fmap, Maybe, or } from '../../Data/Maybe';
-import { Record } from '../../Data/Record';
-import { not } from '../not';
+import { pipe } from "ramda";
+import { fnull } from "../../../../Data/List";
+import { fmap, Maybe, or } from "../../../../Data/Maybe";
+import { Record } from "../../../../Data/Record";
+import { ActivatableDependent } from "../../../Models/ActiveEntries/ActivatableDependent";
+import { not } from "../../not";
 
-const { active } = ActivatableDependentG
+const { active } = ActivatableDependent.A
 
 /**
  * Checks if the entry is active. This will be the case if there is at least one

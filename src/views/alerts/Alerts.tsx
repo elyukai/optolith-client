@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Dispatch } from 'redux';
+import { Alert as AlertOptions } from '../../App/Models/Hero/heroTypeHelpers';
 import { Alert } from '../../components/Alert';
-import { Alert as AlertOptions } from '../../types/data';
 import { UIMessagesObject } from '../../types/ui';
 import { Maybe } from '../../utils/dataUtils';
 

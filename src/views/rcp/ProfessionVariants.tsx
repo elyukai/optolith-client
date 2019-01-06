@@ -1,8 +1,8 @@
 import * as React from 'react';
+import { Sex } from '../../App/Models/Hero/heroTypeHelpers';
 import { ProfessionCombined } from '../../App/Models/View/viewTypeHelpers';
 import { translate, UIMessagesObject } from '../../App/Utils/I18n';
 import { Option, RadioButtonGroup } from '../../components/RadioButtonGroup';
-import { Sex } from '../../types/data';
 import { List, Maybe, Record } from '../../utils/dataUtils';
 import { sortObjects } from '../../utils/FilterSortUtils';
 

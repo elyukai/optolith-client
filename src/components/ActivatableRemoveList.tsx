@@ -1,6 +1,6 @@
 import * as React from 'react';
+import { ActiveViewObject, DeactivateArgs, EntryRating, UIMessagesObject } from '../App/Models/Hero/heroTypeHelpers';
 import { isRated } from '../App/Utils/ratingUtils';
-import { ActiveViewObject, DeactivateArgs, EntryRating, UIMessagesObject } from '../types/data';
 import { List, Maybe, OrderedMap, Record } from '../utils/dataUtils';
 import { ActivatableRemoveListItem } from './ActivatableRemoveListItem';
 import { ListView } from './List';

@@ -1,6 +1,6 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
-import { InputKeyEvent, InputTextEvent } from '../types/data';
+import { InputKeyEvent, InputTextEvent } from '../App/Models/Hero/heroTypeHelpers';
 import { IconButton } from './IconButton';
 import { TextField } from './TextField';
 

@@ -1,5 +1,6 @@
 import * as R from 'ramda';
 import * as React from 'react';
+import { ItemInstance, Purse } from '../../App/Models/Hero/heroTypeHelpers';
 import { CombatTechniqueWithRequirements } from '../../App/Models/View/viewTypeHelpers';
 import { ItemTemplate } from '../../App/Models/Wiki/wikiTypeHelpers';
 import { translate, UIMessagesObject } from '../../App/Utils/I18n';
@@ -19,7 +20,6 @@ import { SortNames, SortOptions } from '../../components/SortOptions';
 import { TextField } from '../../components/TextField';
 import { ItemEditorContainer } from '../../containers/ItemEditorContainer';
 import { WikiInfoContainer } from '../../containers/WikiInfoContainer';
-import { ItemInstance, Purse } from '../../types/data';
 import { Just, List, Maybe, Nothing, Record } from '../../utils/dataUtils';
 import { sortObjects } from '../../utils/FilterSortUtils';
 import { EquipmentListItem } from './EquipmentListItem';

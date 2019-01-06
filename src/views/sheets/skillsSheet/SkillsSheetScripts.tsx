@@ -1,8 +1,8 @@
 import * as React from 'react';
+import { ActivatableDependent, ActiveObject } from '../../../App/Models/Hero/heroTypeHelpers';
 import { SpecialAbility } from '../../../App/Models/Wiki/wikiTypeHelpers';
 import { translate, UIMessagesObject } from '../../../App/Utils/I18n';
 import { TextBox } from '../../../components/TextBox';
-import { ActivatableDependent, ActiveObject } from '../../../types/data';
 import { getSelectOptionName } from '../../../utils/activatable/selectionUtils';
 import { List, Maybe, Record } from '../../../utils/dataUtils';
 import { sortStrings } from '../../../utils/FilterSortUtils';

@@ -1,10 +1,10 @@
 import * as R from 'ramda';
+import * as Data from '../App/Models/Hero/heroTypeHelpers';
 import * as Wiki from '../App/Models/Wiki/wikiTypeHelpers';
 import { createMaybeSelector } from '../App/Utils/createMaybeSelector';
 import { translate } from '../App/Utils/I18n';
 import { mapGetToMaybeSlice } from '../App/Utils/SelectorsUtils';
 import { ActivatableCategory, Categories } from '../constants/Categories';
-import * as Data from '../types/data';
 import { getAllActiveByCategory } from '../utils/activatable/activatableActiveUtils';
 import { getModifierByActiveLevel, getModifierByIsActive } from '../utils/activatable/activatableModifierUtils';
 import { getBracketedNameFromFullName } from '../utils/activatable/activatableNameUtils';

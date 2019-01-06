@@ -1,9 +1,9 @@
 import * as React from 'react';
+import { SecondaryAttribute } from '../../../App/Models/Hero/heroTypeHelpers';
 import { translate, UIMessagesObject } from '../../../App/Utils/I18n';
 import { Box } from '../../../components/Box';
 import { LabelBox } from '../../../components/LabelBox';
 import { TextBox } from '../../../components/TextBox';
-import { SecondaryAttribute } from '../../../types/data';
 import { Just, List, Maybe, Nothing, Record } from '../../../utils/dataUtils';
 
 export interface CombatSheetLifePointsProps {

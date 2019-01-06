@@ -1,9 +1,9 @@
 import * as R from 'ramda';
 import * as AttributesActions from '../actions/AttributesActions';
 import * as ProfessionActions from '../actions/ProfessionActions';
+import * as Data from '../App/Models/Hero/heroTypeHelpers';
 import { ifElse } from '../App/Utils/ifElse';
 import { ActionTypes } from '../constants/ActionTypes';
-import * as Data from '../types/data';
 import { Record } from '../utils/dataUtils';
 
 type AddedEnergyAction =

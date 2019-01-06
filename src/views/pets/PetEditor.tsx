@@ -1,11 +1,11 @@
 import * as React from 'react';
+import { PetEditorInstance } from '../../App/Models/Hero/heroTypeHelpers';
 import { translate, UIMessagesObject } from '../../App/Utils/I18n';
 import { AvatarChange } from '../../components/AvatarChange';
 import { AvatarWrapper } from '../../components/AvatarWrapper';
 import { BorderButton } from '../../components/BorderButton';
 import { Slidein } from '../../components/Slidein';
 import { TextField } from '../../components/TextField';
-import { PetEditorInstance } from '../../types/data';
 import { Maybe, Record } from '../../utils/dataUtils';
 
 export interface PetEditorProps {

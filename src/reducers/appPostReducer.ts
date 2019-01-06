@@ -1,11 +1,11 @@
 import { RedoAction, UndoAction } from '../actions/HistoryActions';
 import { ReceiveImportedHeroAction, ReceiveInitialDataAction } from '../actions/IOActions';
+import { Hero, HeroDependent, User } from '../App/Models/Hero/heroTypeHelpers';
 import { isBookEnabled } from '../App/Utils/RulesUtils';
 import { UndoState, wrapWithHistoryObject } from '../App/Utils/undo';
 import { ActionTypes } from '../constants/ActionTypes';
 import { getRuleBooksEnabled } from '../selectors/rulesSelectors';
 import { getCurrentCultureId, getCurrentRaceId, getCurrentTab, getPhase } from '../selectors/stateSelectors';
-import { Hero, HeroDependent, User } from '../types/data';
 import { Maybe, OrderedMap, OrderedSet, Record } from '../utils/dataUtils';
 import { convertHero } from '../utils/raw/compatibilityUtils';
 import { getHeroInstance } from '../utils/raw/initHeroUtils';

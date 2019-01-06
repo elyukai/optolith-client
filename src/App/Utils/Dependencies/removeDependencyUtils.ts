@@ -3,11 +3,11 @@ import { join } from "../../../Data/Function";
 import { over, view } from "../../../Data/Lens";
 import { deleteAt, elemIndex } from "../../../Data/List";
 import { fromMaybe } from "../../../Data/Maybe";
-import { ActivatableDependency, ExtendedSkillDependency, SkillDependency } from "../../../types/data";
 import { ActivatableDependentL, isActivatableDependentUnused } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependentL, isActivatableSkillDependentUnused } from "../../Models/ActiveEntries/ActivatableSkillDependent";
 import { AttributeDependentL, isAttributeDependentUnused } from "../../Models/ActiveEntries/AttributeDependent";
 import { isSkillDependentUnused, SkillDependentL } from "../../Models/ActiveEntries/SkillDependent";
+import { ActivatableDependency, ExtendedSkillDependency, SkillDependency } from "../../Models/Hero/heroTypeHelpers";
 import { adjustRemoveEntryDef } from "../heroStateUtils";
 
 export const removeAttributeDependency =

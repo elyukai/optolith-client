@@ -389,13 +389,13 @@ const elemNode =
     : equals (x) (value (xs)) || elemNode (x) (xs .next)
 
 /**
- * `elem_ :: Eq a => [a] -> a -> Bool`
+ * `elemF :: Eq a => [a] -> a -> Bool`
  *
  * Does the element occur in the structure?
  *
- * Flipped version of `elem` but with arguments switched.
+ * Flipped version of `elem`.
  */
-export const elem_ = <A> (xs: List<A>) => (x: A): boolean => elem (x) (xs)
+export const elemF = <A> (xs: List<A>) => (x: A): boolean => elem (x) (xs)
 
 /**
  * `sum :: Num a => [a] -> a`
@@ -2002,7 +2002,7 @@ export const List = {
   fnull,
   length,
   elem,
-  elem_,
+  elemF,
   sum,
   product,
   concat,
@@ -2098,4 +2098,4 @@ export const List = {
 
 // TYPE HELPERS
 
-export type ListElement<A> = A extends List<infer AI> ? AI : never
+export type ListI<A> = A extends List<infer AI> ? AI : never

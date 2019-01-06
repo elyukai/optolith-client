@@ -2,7 +2,7 @@ import { pipe } from "ramda";
 import { cnst, ident, thrush } from "../../../Data/Function";
 import { all, any, consF, foldr, fromElements, List, minimum, notElem, notElemF } from "../../../Data/List";
 import { bindF, elem, ensure, fmap, fromJust, isJust, Just, Maybe, maybe, or, sum } from "../../../Data/Maybe";
-import { alter, empty, filter, findWithDefault, foldl, fromArray, lookup_, OrderedMap } from "../../../Data/OrderedMap";
+import { alter, empty, filter, findWithDefault, foldl, fromArray, lookupF, OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
@@ -13,7 +13,7 @@ import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel";
 import { LiturgicalChant } from "../../Models/Wiki/LiturgicalChant";
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
 import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import { getActiveSelections } from "../activatable/selectionUtils";
+import { getActiveSelections } from "../A/Activatable/selectionUtils";
 import { filterAndMaximumNonNegative, flattenDependencies } from "../Dependencies/flattenDependencies";
 import { getNumericBlessedTraditionIdByInstanceId } from "../IDUtils";
 import { ifElse } from "../ifElse";
@@ -96,7 +96,7 @@ export const countActiveLiturgicalChantsPerAspect =
       foldl<Record<ActivatableSkillDependent>, OrderedMap<number, number>>
         (acc => pipe (
           id,
-          lookup_ (wiki),
+          lookupF (wiki),
           maybe<Record<LiturgicalChant>, OrderedMap<number, number>>
             (acc)
             (pipe (
@@ -169,9 +169,9 @@ const getLowestSumForMatchingAspectKnowledges =
       List.foldr<number, number>
         (
           aspect => {
-            const counted = lookup_ (counter) (aspect)
+            const counted = lookupF (counter) (aspect)
 
-            if (isJust (counted) && List.elem_ (activeAspects) (aspect)) {
+            if (isJust (counted) && List.elemF (activeAspects) (aspect)) {
               return min (fromJust (counted))
             }
 

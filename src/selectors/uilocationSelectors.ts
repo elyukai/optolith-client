@@ -1,8 +1,8 @@
+import { SubTab } from '../App/Models/Hero/heroTypeHelpers';
 import { createMaybeSelector } from '../App/Utils/createMaybeSelector';
 import { translate } from '../App/Utils/I18n';
 import { isHeroSectionTab, isMainSectionTab, TabId } from '../App/Utils/LocationUtils';
 import { isBookEnabled } from '../App/Utils/RulesUtils';
-import { SubTab } from '../types/data';
 import { Just, List, Maybe, Nothing } from '../utils/dataUtils';
 import { NavigationBarTabProps } from '../views/navigationbar/NavigationBarTabs';
 import { getIsLiturgicalChantsTabAvailable } from './liturgicalChantsSelectors';

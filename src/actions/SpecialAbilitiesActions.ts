@@ -1,4 +1,5 @@
 import * as R from 'ramda';
+import { ActivatableDependent, ActivateArgs, ActiveObjectWithId, DeactivateArgs } from '../App/Models/Hero/heroTypeHelpers';
 import { SpecialAbility } from '../App/Models/Wiki/wikiTypeHelpers';
 import { getHeroStateItem } from '../App/Utils/heroStateUtils';
 import { translate } from '../App/Utils/I18n';
@@ -8,7 +9,6 @@ import { getAvailableAdventurePoints } from '../selectors/adventurePointsSelecto
 import { getIsInCharacterCreation } from '../selectors/phaseSelectors';
 import { getCurrentHeroPresent, getWiki } from '../selectors/stateSelectors';
 import { AsyncAction } from '../types/actions';
-import { ActivatableDependent, ActivateArgs, ActiveObjectWithId, DeactivateArgs } from '../types/data';
 import { UIMessagesObject } from '../types/ui';
 import { getNameCost } from '../utils/activatable/activatableActiveUtils';
 import { convertPerTierCostToFinalCost } from '../utils/adventurePoints/activatableCostUtils';

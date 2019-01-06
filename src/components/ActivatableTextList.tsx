@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ActiveViewObject, UIMessagesObject } from '../types/data';
+import { ActiveViewObject, UIMessagesObject } from '../App/Models/Hero/heroTypeHelpers';
 import { compressList } from '../utils/activatable/activatableNameUtils';
 import { List, Record } from '../utils/dataUtils';
 

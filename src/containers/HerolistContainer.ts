@@ -4,13 +4,13 @@ import * as HerolistActions from '../actions/HerolistActions';
 import * as IOActions from '../actions/IOActions';
 import * as LocationActions from '../actions/LocationActions';
 import * as SubwindowsActions from '../actions/SubwindowsActions';
+import { InputTextEvent } from '../App/Models/Hero/heroTypeHelpers';
 import { AppState } from '../reducers/appReducer';
 import { getAdventurePointsObject } from '../selectors/adventurePointsSelectors';
 import { getSortedBooks } from '../selectors/bookSelectors';
 import { getSortedHerolist, getUnsavedHeroesById } from '../selectors/herolistSelectors';
 import { getCurrentHeroPresent, getHerolistFilterText, getIsCharacterCreatorOpen, getUsers, getWiki, getWikiExperienceLevels } from '../selectors/stateSelectors';
 import { getHerolistSortOrder, getHerolistVisibilityFilter } from '../selectors/uisettingsSelectors';
-import { InputTextEvent } from '../types/data';
 import { Just, Maybe, OrderedSet } from '../utils/dataUtils';
 import { Herolist, HerolistDispatchProps, HerolistOwnProps, HerolistStateProps } from '../views/herolist/Herolist';
 

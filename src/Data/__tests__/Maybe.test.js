@@ -573,12 +573,12 @@ test ('elem', () => {
     .toBeTruthy ()
 })
 
-test ('elem_', () => {
-  expect (Maybe.elem_ (Nothing) (3))
+test ('elemF', () => {
+  expect (Maybe.elemF (Nothing) (3))
     .toBeFalsy ()
-  expect (Maybe.elem_ (Just (2)) (3))
+  expect (Maybe.elemF (Just (2)) (3))
     .toBeFalsy ()
-  expect (Maybe.elem_ (Just (3)) (3))
+  expect (Maybe.elemF (Just (3)) (3))
     .toBeTruthy ()
 })
 

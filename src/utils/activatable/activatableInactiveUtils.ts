@@ -8,6 +8,7 @@
  */
 
 import * as R from 'ramda';
+import * as Data from '../../App/Models/Hero/heroTypeHelpers';
 import * as Wiki from '../../App/Models/Wiki/wikiTypeHelpers';
 import { countActiveGroupEntries } from '../../App/Utils/entryGroupUtils';
 import { getAllEntriesByGroup } from '../../App/Utils/heroStateUtils';
@@ -17,7 +18,6 @@ import { match } from '../../App/Utils/match';
 import { isString } from '../../App/Utils/typeCheckUtils';
 import { getWikiEntryFromSlice } from '../../App/Utils/WikiUtils';
 import { AdventurePointsObject } from '../../selectors/adventurePointsSelectors';
-import * as Data from '../../types/data';
 import { Just, List, Maybe, OrderedMap, Record, RecordInterface, Tuple } from '../dataUtils';
 import { sortObjects } from '../FilterSortUtils';
 import { validateLevel, validatePrerequisites } from '../prerequisites/validatePrerequisitesUtils';

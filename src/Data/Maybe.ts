@@ -409,15 +409,15 @@ export const elem =
     isJust (xs) && e === xs .value
 
 /**
- * `elem_ :: Eq a => Maybe a -> a -> Bool`
+ * `elemF :: Eq a => Maybe a -> a -> Bool`
  *
  * Does the element occur in the structure?
  *
  * Always returns `False` if the provided `Maybe` is `Nothing`.
  *
- * Same as `elem` but with arguments switched.
+ * Flipped version of `elem`.
  */
-export const elem_ = <A extends Some> (xs: Maybe<A>) => (e: A): boolean => elem (e) (xs)
+export const elemF = <A extends Some> (xs: Maybe<A>) => (e: A): boolean => elem (e) (xs)
 
 /**
  * `sum :: Num a => Maybe a -> a`
@@ -797,7 +797,7 @@ export const Maybe = {
   fnull,
   length,
   elem,
-  elem_,
+  elemF,
   sum,
   product,
   concat,

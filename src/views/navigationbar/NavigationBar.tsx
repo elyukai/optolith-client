@@ -1,5 +1,6 @@
 import { remote } from 'electron';
 import * as React from 'react';
+import { SubTab } from '../../App/Models/Hero/heroTypeHelpers';
 import { translate } from '../../App/Utils/I18n';
 import { TabId } from '../../App/Utils/LocationUtils';
 import { AvatarWrapper } from '../../components/AvatarWrapper';
@@ -9,7 +10,6 @@ import { Text } from '../../components/Text';
 import { TooltipToggle } from '../../components/TooltipToggle';
 import { SettingsContainer } from '../../containers/SettingsContainer';
 import { AdventurePointsObject } from '../../selectors/adventurePointsSelectors';
-import { SubTab } from '../../types/data';
 import { UIMessagesObject } from '../../types/ui';
 import { List, Maybe, Record } from '../../utils/dataUtils';
 import { ApTooltip } from './ApTooltip';

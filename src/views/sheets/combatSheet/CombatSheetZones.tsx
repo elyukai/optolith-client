@@ -1,9 +1,9 @@
 import * as React from 'react';
+import { ActiveViewObject, SecondaryAttribute } from '../../../App/Models/Hero/heroTypeHelpers';
 import { ArmorZone, AttributeCombined, CombatTechniqueWithAttackParryBase, MeleeWeapon, RangedWeapon, ShieldOrParryingWeapon } from '../../../App/Models/View/viewTypeHelpers';
 import { SpecialAbility } from '../../../App/Models/Wiki/wikiTypeHelpers';
 import { translate, UIMessagesObject } from '../../../App/Utils/I18n';
 import { Options } from '../../../components/Options';
-import { ActiveViewObject, SecondaryAttribute } from '../../../types/data';
 import { List, Maybe, Record } from '../../../utils/dataUtils';
 import { Sheet } from '../Sheet';
 import { HeaderValue } from '../SheetHeader';

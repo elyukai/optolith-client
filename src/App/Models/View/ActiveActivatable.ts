@@ -1,7 +1,7 @@
 import { Nothing } from "../../../Data/Maybe";
 import { fromDefault, RecordI } from "../../../Data/Record";
-import { ActivatableActivationMeta, ActivatableActivationValidationObject, ActivatableNameAdjustedCostEvalTier } from "../../../types/data";
 import { ActivatableDependent } from "../ActiveEntries/ActivatableDependent";
+import { ActivatableActivationMeta, ActivatableActivationValidationObject, ActivatableNameAdjustedCostEvalTier } from "../Hero/heroTypeHelpers";
 import { Advantage } from "../Wiki/Advantage";
 import { Activatable } from "../Wiki/wikiTypeHelpers";
 

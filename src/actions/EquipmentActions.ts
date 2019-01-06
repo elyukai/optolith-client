@@ -1,10 +1,10 @@
+import { ItemInstance } from '../App/Models/Hero/heroTypeHelpers';
 import { ItemTemplate } from '../App/Models/Wiki/wikiTypeHelpers';
 import { getNewId } from '../App/Utils/IDUtils';
 import { ActionTypes } from '../constants/ActionTypes';
 import { getFullItem } from '../selectors/equipmentSelectors';
 import { getArmorZonesState, getItemEditorInstance, getItemsState, getWikiItemTemplates } from '../selectors/stateSelectors';
 import { AsyncAction } from '../types/actions';
-import { ItemInstance } from '../types/data';
 import { Maybe, Record } from '../utils/dataUtils';
 
 export interface AddItemAction {

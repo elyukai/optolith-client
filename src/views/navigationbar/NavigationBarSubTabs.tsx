@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { SubTab } from '../../App/Models/Hero/heroTypeHelpers';
 import { TabId } from '../../App/Utils/LocationUtils';
 import { Tab } from '../../components/Tab';
-import { SubTab } from '../../types/data';
 import { List } from '../../utils/dataUtils';
 
 export interface NavigationBarSubTabsProps {

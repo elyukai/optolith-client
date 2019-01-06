@@ -1,5 +1,5 @@
 import { fromDefault, isRecord, Record } from "../../../../Data/Record";
-import { Sex } from "../../../../types/data";
+import { Sex } from "../../Hero/heroTypeHelpers";
 
 export interface NameBySex {
   m: string

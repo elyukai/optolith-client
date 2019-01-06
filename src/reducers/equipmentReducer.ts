@@ -1,7 +1,7 @@
 import * as EquipmentActions from '../actions/EquipmentActions';
+import * as Data from '../App/Models/Hero/heroTypeHelpers';
 import { convertToEdit, convertToSave } from '../App/Utils/ItemUtils';
 import { ActionTypes } from '../constants/ActionTypes';
-import * as Data from '../types/data';
 import { Just, List, Maybe, Record } from '../utils/dataUtils';
 
 type Action =

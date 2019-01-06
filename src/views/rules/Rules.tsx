@@ -1,10 +1,10 @@
 import * as React from 'react';
+import { Rules as RulesState } from '../../App/Models/Hero/heroTypeHelpers';
 import { Book } from '../../App/Models/Wiki/wikiTypeHelpers';
 import { translate, UIMessagesObject } from '../../App/Utils/I18n';
 import { Checkbox } from '../../components/Checkbox';
 import { Dropdown, DropdownOption } from '../../components/Dropdown';
 import { Scroll } from '../../components/Scroll';
-import { Rules as RulesState } from '../../types/data';
 import { Just, List, Maybe, OrderedSet, Record } from '../../utils/dataUtils';
 
 export interface RulesOwnProps {

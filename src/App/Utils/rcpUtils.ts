@@ -1,10 +1,10 @@
 import { pipe } from "ramda";
 import { foldr, subscriptF } from "../../Data/List";
 import { altF, bindF, elem, fmap, fromMaybe, Just, liftM2, Maybe, sum } from "../../Data/Maybe";
-import { lookup_, OrderedMap } from "../../Data/OrderedMap";
+import { lookupF, OrderedMap } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
 import { show } from "../../Data/Show";
-import { Sex } from "../../types/data";
+import { Sex } from "../Models/Hero/heroTypeHelpers";
 import { L10n, L10nRecord } from "../Models/Wiki/L10n";
 import { Profession } from "../Models/Wiki/Profession";
 import { ProfessionVariant } from "../Models/Wiki/ProfessionVariant";
@@ -163,7 +163,7 @@ export const getFullProfessionName =
                        (customProfessionName)
     }
 
-    const maybeProfession = bindF (lookup_ (wikiProfessions))
+    const maybeProfession = bindF (lookupF (wikiProfessions))
                                   (professionId)
 
     const professionName = fmap (pipe (name, nameBySexDef (sex)))
@@ -172,7 +172,7 @@ export const getFullProfessionName =
     const professionSubName = pipe (bindF (subname), fmap (nameBySexDef (sex)))
                                    (maybeProfession)
 
-    const maybeProfessionVariant = bindF (lookup_ (wikiProfessionVariants))
+    const maybeProfessionVariant = bindF (lookupF (wikiProfessionVariants))
                                          (professionVariantId)
 
     const professionVariantName = fmap (pipe (name, nameBySexDef (sex)))

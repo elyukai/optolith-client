@@ -1,12 +1,12 @@
 import * as R from 'ramda';
 import { SetSelectionsAction } from '../actions/ProfessionActions';
+import * as Data from '../App/Models/Hero/heroTypeHelpers';
 import * as Wiki from '../App/Models/Wiki/wikiTypeHelpers';
 import { getHeroStateItem, updateEntryDef, updateHeroListStateItemOr } from '../App/Utils/heroStateUtils';
 import { ifElse } from '../App/Utils/ifElse';
 import { getWikiEntry } from '../App/Utils/WikiUtils';
 import { ActionTypes } from '../constants/ActionTypes';
 import { Categories } from '../constants/Categories';
-import * as Data from '../types/data';
 import { getCombinedPrerequisites } from '../utils/activatable/activatableActivationUtils';
 import { getActiveObjectCore } from '../utils/activatable/activatableConvertUtils';
 import { addAllStyleRelatedDependencies } from '../utils/activatable/ExtendedStyleUtils';

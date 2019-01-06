@@ -5,7 +5,6 @@ import { bind, elem, fmap, maybeToUndefined } from "../../../Data/Maybe";
 import { elems, foldl, foldlWithKey, OrderedMap, OrderedMapValueElement, toObjectWith, union } from "../../../Data/OrderedMap";
 import { toArray } from "../../../Data/OrderedSet";
 import { Record, StringKeyObject, toObject } from "../../../Data/Record";
-import * as Data from "../../../types/data";
 import * as Raw from "../../../types/rawdata";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
@@ -14,6 +13,7 @@ import { AttributeDependent } from "../../Models/ActiveEntries/AttributeDependen
 import { Belongings } from "../../Models/Hero/Belongings";
 import { Energies } from "../../Models/Hero/Energies";
 import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
+import * as Data from "../../Models/Hero/heroTypeHelpers";
 import { HitZoneArmor } from "../../Models/Hero/HitZoneArmor";
 import { Item } from "../../Models/Hero/Item";
 import { PersonalData } from "../../Models/Hero/PersonalData";
@@ -308,7 +308,7 @@ export const convertHeroForSave =
     const adventurePoints = getAPObject (wiki) (locale) (hero)
 
     const maybeUser = bind<string, Data.User> (player (hero))
-                                              (OrderedMap.lookup_<string, Data.User> (users))
+                                              (OrderedMap.lookupF<string, Data.User> (users))
 
     const obj: Raw.RawHero = {
       clientVersion: currentVersion,

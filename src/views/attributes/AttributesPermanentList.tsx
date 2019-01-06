@@ -1,6 +1,6 @@
 import * as React from 'react';
+import { EnergyWithLoss, SecondaryAttribute } from '../../App/Models/Hero/heroTypeHelpers';
 import { translate, UIMessagesObject } from '../../App/Utils/I18n';
-import { EnergyWithLoss, SecondaryAttribute } from '../../types/data';
 import { List, Maybe, Record } from '../../utils/dataUtils';
 import { AttributesPermanentListItem } from './AttributesPermanentListItem';
 

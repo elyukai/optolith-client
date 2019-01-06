@@ -2,7 +2,7 @@ import { add, pipe } from "ramda";
 import { fnull, fromElements, List } from "../../../Data/List";
 import { fromJust, isJust, Just, Maybe } from "../../../Data/Maybe";
 import { fromDefault, makeLenses, member, notMember, Omit, Record } from "../../../Data/Record";
-import { Dependent, ExtendedSkillDependent, SkillDependency } from "../../../types/data";
+import { Dependent, ExtendedSkillDependent, SkillDependency } from "../Hero/heroTypeHelpers";
 
 export interface SkillDependent {
   id: string;

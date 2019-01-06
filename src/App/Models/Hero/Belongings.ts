@@ -1,8 +1,8 @@
 import { Maybe, Nothing } from "../../../Data/Maybe";
 import { OrderedMap } from "../../../Data/OrderedMap";
 import { fromDefault, makeLenses, Record } from "../../../Data/Record";
-import { ArmorZonesEditorInstance } from "../../../types/data";
 import { EditItem } from "./EditItem";
+import { ArmorZonesEditorInstance } from "./heroTypeHelpers";
 import { HitZoneArmor } from "./HitZoneArmor";
 import { Item } from "./Item";
 import { Purse } from "./Purse";

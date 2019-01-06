@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { PetInstance } from '../../App/Models/Hero/heroTypeHelpers';
 import { AvatarWrapper } from '../../components/AvatarWrapper';
 import { IconButton } from '../../components/IconButton';
 import { ListItem } from '../../components/ListItem';
@@ -6,7 +7,6 @@ import { ListItemButtons } from '../../components/ListItemButtons';
 import { ListItemName } from '../../components/ListItemName';
 import { ListItemSeparator } from '../../components/ListItemSeparator';
 import { VerticalList } from '../../components/VerticalList';
-import { PetInstance } from '../../types/data';
 import { Record } from '../../utils/dataUtils';
 
 export interface PetsListItemProps {

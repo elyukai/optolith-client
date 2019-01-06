@@ -1,5 +1,6 @@
 import * as R from 'ramda';
 import * as React from 'react';
+import { ItemInstance } from '../../App/Models/Hero/heroTypeHelpers';
 import { translate, UIMessagesObject } from '../../App/Utils/I18n';
 import { IconButton } from '../../components/IconButton';
 import { ListItem } from '../../components/ListItem';
@@ -7,7 +8,6 @@ import { ListItemButtons } from '../../components/ListItemButtons';
 import { ListItemGroup } from '../../components/ListItemGroup';
 import { ListItemName } from '../../components/ListItemName';
 import { ListItemSeparator } from '../../components/ListItemSeparator';
-import { ItemInstance } from '../../types/data';
 import { Maybe, Record } from '../../utils/dataUtils';
 
 export interface EquipmentListItemProps {

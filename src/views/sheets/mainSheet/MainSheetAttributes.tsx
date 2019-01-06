@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { SecondaryAttribute } from '../../../App/Models/Hero/heroTypeHelpers';
 import { Race } from '../../../App/Models/Wiki/wikiTypeHelpers';
 import { translate, UIMessagesObject } from '../../../App/Utils/I18n';
-import { SecondaryAttribute } from '../../../types/data';
 import { Just, List, Maybe, Nothing, Record } from '../../../utils/dataUtils';
 import { MainSheetAttributesItem } from './MainSheetAttributesItem';
 import { MainSheetFatePoints } from './MainSheetFatePoints';

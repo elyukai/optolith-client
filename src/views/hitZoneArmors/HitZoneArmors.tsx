@@ -1,5 +1,6 @@
 import * as R from 'ramda';
 import * as React from 'react';
+import { ArmorZonesEditorInstance, ArmorZonesInstance, ItemInstance, Purse } from '../../App/Models/Hero/heroTypeHelpers';
 import { ItemTemplate } from '../../App/Models/Wiki/wikiTypeHelpers';
 import { translate, UIMessagesObject } from '../../App/Utils/I18n';
 import { Aside } from '../../components/Aside';
@@ -13,7 +14,6 @@ import { Options } from '../../components/Options';
 import { Page } from '../../components/Page';
 import { Scroll } from '../../components/Scroll';
 import { TextField } from '../../components/TextField';
-import { ArmorZonesEditorInstance, ArmorZonesInstance, ItemInstance, Purse } from '../../types/data';
 import { List, Maybe, Record } from '../../utils/dataUtils';
 import { PurseAndTotals } from '../equipment/PurseAndTotals';
 import { HitZoneArmorEditor } from './HitZoneArmorEditor';

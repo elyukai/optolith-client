@@ -1,9 +1,9 @@
 import * as R from 'ramda';
+import * as Data from '../App/Models/Hero/heroTypeHelpers';
 import * as View from '../App/Models/View/viewTypeHelpers';
 import * as Wiki from '../App/Models/Wiki/wikiTypeHelpers';
 import { createMaybeSelector } from '../App/Utils/createMaybeSelector';
 import { getNumericBlessedTraditionIdByInstanceId, getNumericMagicalTraditionIdByInstanceId } from '../App/Utils/IDUtils';
-import * as Data from '../types/data';
 import { createAttributeDependent } from '../utils/createEntryUtils';
 import { Just, List, Maybe, Nothing, OrderedMap, Record, Tuple } from '../utils/dataUtils';
 import { flattenDependencies } from '../utils/dependencies/flattenDependencies';

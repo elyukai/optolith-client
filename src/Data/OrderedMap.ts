@@ -415,15 +415,15 @@ export const lookup =
     fromNullable (m .value .get (key))
 
 /**
- * `lookup_ :: Ord k => Map k a -> k -> Maybe a`
+ * `lookupF :: Ord k => Map k a -> k -> Maybe a`
  *
  * Lookup the value at a key in the map. The function will return the
  * corresponding value as `Just value`, or `Nothing` if the key isn't in the
  * map.
  *
- * Same as `OrderedMap.lookup` but with arguments switched.
+ * Flipped version of `lookup`.
  */
-export const lookup_ =
+export const lookupF =
   <K extends Some, A extends Some>
   (m: OrderedMap<K, A>) => (key: K): Maybe<A> =>
     lookup<K, A> (key) (m)
@@ -1008,7 +1008,7 @@ export const OrderedMap = {
   member_,
   notMember,
   lookup,
-  lookup_,
+  lookupF,
   findWithDefault,
 
   empty,

@@ -1,9 +1,9 @@
 import * as React from 'react';
+import { SecondaryAttribute } from '../../App/Models/Hero/heroTypeHelpers';
 import { translate, UIMessagesObject } from '../../App/Utils/I18n';
 import { sign } from '../../App/Utils/NumberUtils';
 import { IconButton } from '../../components/IconButton';
 import { NumberBox } from '../../components/NumberBox';
-import { SecondaryAttribute } from '../../types/data';
 import { Maybe, Record } from '../../utils/dataUtils';
 import { AttributeBorder } from './AttributeBorder';
 

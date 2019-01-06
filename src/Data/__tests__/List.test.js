@@ -166,10 +166,10 @@ test ('elem', () => {
     .toBeFalsy ()
 })
 
-test ('elem_', () => {
-  expect (List.elem_ (List.fromElements (1, 2, 3, 4, 5)) (3))
+test ('elemF', () => {
+  expect (List.elemF (List.fromElements (1, 2, 3, 4, 5)) (3))
     .toBeTruthy ()
-  expect (List.elem_ (List.fromElements (1, 2, 3, 4, 5)) (6))
+  expect (List.elemF (List.fromElements (1, 2, 3, 4, 5)) (6))
     .toBeFalsy ()
 })
 

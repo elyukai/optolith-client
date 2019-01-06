@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { ItemEditorInstance } from '../../App/Models/Hero/heroTypeHelpers';
 import { CombatTechnique, ItemTemplate } from '../../App/Models/Wiki/wikiTypeHelpers';
 import { translate, UIMessagesObject } from '../../App/Utils/I18n';
 import { getLossLevelElements, ItemEditorInputValidation } from '../../App/Utils/ItemUtils';
@@ -6,7 +7,6 @@ import { Dropdown, DropdownOption } from '../../components/Dropdown';
 import { Hr } from '../../components/Hr';
 import { Label } from '../../components/Label';
 import { TextField } from '../../components/TextField';
-import { ItemEditorInstance } from '../../types/data';
 import { List, Maybe, OrderedMap, Record } from '../../utils/dataUtils';
 
 export interface ItemEditorRangedSectionProps {

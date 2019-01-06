@@ -1,7 +1,7 @@
 import { bindF, elem, Maybe } from "../../Data/Maybe";
 import { lookup, OrderedMap } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
-import { DeactiveViewObject, EntryRating } from "../../types/data";
+import { DeactiveViewObject, EntryRating } from "../Models/Hero/heroTypeHelpers";
 import { ActiveActivatable } from "../Models/View/ActiveActivatable";
 
 export const isRated =

@@ -1,6 +1,6 @@
 import { pipe } from "ramda";
 import { ActivatableLikeCategories, Categories } from "../../../../constants/Categories";
-import { all, elem_, isList, List } from "../../../../Data/List";
+import { all, elemF, isList, List } from "../../../../Data/List";
 import { fmap, Maybe, Nothing, or } from "../../../../Data/Maybe";
 import { fromDefault, makeLenses, member, Record } from "../../../../Data/Record";
 import { getCategoryById } from "../../../Utils/IDUtils";
@@ -38,14 +38,14 @@ export const isRequiringActivatable =
       return member ("value") (req)
         && all<string> (pipe (
                          getCategoryById,
-                         category => or (fmap (elem_<Categories> (ActivatableLikeCategories))
+                         category => or (fmap (elemF<Categories> (ActivatableLikeCategories))
                                               (category))
                        ))
                        (id)
     }
 
     return member ("value") (req)
-      && or (fmap (elem_<Categories> (ActivatableLikeCategories))
+      && or (fmap (elemF<Categories> (ActivatableLikeCategories))
                   (getCategoryById (id)))
   }
 
@@ -54,6 +54,6 @@ export const isProfessionRequiringActivatable =
     const id = RequireActivatable.A.id (req) as string
 
     return member ("value") (req)
-      && or (fmap (elem_<Categories> (ActivatableLikeCategories))
+      && or (fmap (elemF<Categories> (ActivatableLikeCategories))
                   (getCategoryById (id)))
   }

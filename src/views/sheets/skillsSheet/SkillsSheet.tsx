@@ -1,10 +1,10 @@
 import * as React from 'react';
+import { ActivatableDependent } from '../../../App/Models/Hero/heroTypeHelpers';
 import { AttributeCombined, SkillCombined } from '../../../App/Models/View/viewTypeHelpers';
 import { SpecialAbility } from '../../../App/Models/Wiki/wikiTypeHelpers';
 import { translate, UIMessagesObject } from '../../../App/Utils/I18n';
 import { Checkbox } from '../../../components/Checkbox';
 import { Options } from '../../../components/Options';
-import { ActivatableDependent } from '../../../types/data';
 import { List, Maybe, Record } from '../../../utils/dataUtils';
 import { AttributeMods } from '../AttributeMods';
 import { Sheet } from '../Sheet';

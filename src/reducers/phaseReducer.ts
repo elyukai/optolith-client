@@ -1,7 +1,7 @@
 import { SetSelectionsAction } from '../actions/ProfessionActions';
 import { EndHeroCreationAction } from '../actions/ProfileActions';
+import * as Data from '../App/Models/Hero/heroTypeHelpers';
 import { ActionTypes } from '../constants/ActionTypes';
-import * as Data from '../types/data';
 import { Record } from '../utils/dataUtils';
 
 type Action =

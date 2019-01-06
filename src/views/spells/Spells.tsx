@@ -1,5 +1,6 @@
 import * as R from 'ramda';
 import * as React from 'react';
+import { SecondaryAttribute } from '../../App/Models/Hero/heroTypeHelpers';
 import { AttributeCombined, CantripCombined, SpellIsActive, SpellWithRequirements } from '../../App/Models/View/viewTypeHelpers';
 import { Cantrip, SpecialAbility, Spell } from '../../App/Models/Wiki/wikiTypeHelpers';
 import { translate, UIMessagesObject } from '../../App/Utils/I18n';
@@ -22,7 +23,6 @@ import { TextField } from '../../components/TextField';
 import { Categories } from '../../constants/Categories';
 import { WikiInfoContainer } from '../../containers/WikiInfoContainer';
 import { DCIds } from '../../selectors/derivedCharacteristicsSelectors';
-import { SecondaryAttribute } from '../../types/data';
 import { Just, List, Maybe, Nothing, OrderedMap, Record, Tuple } from '../../utils/dataUtils';
 import { SkillListItem } from '../skills/SkillListItem';
 

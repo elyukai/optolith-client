@@ -4,12 +4,16 @@ import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDepende
 import { HeroModel, HeroModelRecord } from "../Models/Hero/HeroModel";
 import { SpecialAbility } from "../Models/Wiki/SpecialAbility";
 import { WikiModel, WikiModelRecord } from "../Models/Wiki/WikiModel";
-import { isActive } from "./activatable/isActive";
+import { isActive } from "./A/Activatable/isActive";
 import { getAllEntriesByGroup } from "./heroStateUtils";
 
 const { specialAbilities: wikiSpecialAbilities } = WikiModel.A
 const { specialAbilities } = HeroModel.A
 
+/**
+ * Return all active special ability `ActivatableDependent` entries of the
+ * specified group(s).
+ */
 export const getActiveGroupEntries =
   (wiki: WikiModelRecord) =>
   (state: HeroModelRecord) =>
@@ -20,12 +24,19 @@ export const getActiveGroupEntries =
              (specialAbilities (state))
              (...groups))
 
+/**
+ * Count all active special abilitys of the specified group(s).
+ */
 export const countActiveGroupEntries =
   (wiki: WikiModelRecord) =>
   (state: HeroModelRecord) =>
   (...groups: number[]): number =>
     length (getActiveGroupEntries (wiki) (state) (...groups))
 
+/**
+ * Checks if there is at least one active special ability `ActivatableDependent`
+ * of the specified group(s).
+ */
 export const hasActiveGroupEntry =
   (wiki: WikiModelRecord) =>
   (state: HeroModelRecord) =>

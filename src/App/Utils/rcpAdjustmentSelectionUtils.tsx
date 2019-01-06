@@ -4,9 +4,9 @@ import { Checkbox } from "../../components/Checkbox";
 import { Dropdown, DropdownOption } from "../../components/Dropdown";
 import { equals } from "../../Data/Eq";
 import { flip } from "../../Data/Function";
-import { elem_, filter, List, pure } from "../../Data/List";
+import { elemF, filter, List, pure } from "../../Data/List";
 import { bindF, elem, fmap, fromJust, fromMaybe, guard, isJust, join, Just, liftM2, liftM3, listToMaybe, mapMaybe, Maybe, maybe, maybeToNullable, Nothing } from "../../Data/Maybe";
-import { elems, lookup, lookup_, OrderedMap, size, sum } from "../../Data/OrderedMap";
+import { elems, lookup, lookupF, OrderedMap, size, sum } from "../../Data/OrderedMap";
 import { OrderedSet } from "../../Data/OrderedSet";
 import { fst, Pair, snd } from "../../Data/Pair";
 import { Record } from "../../Data/Record";
@@ -32,7 +32,7 @@ import { SpecialAbility } from "../Models/Wiki/SpecialAbility";
 import { SelectOption } from "../Models/Wiki/sub/SelectOption";
 import { WikiModel, WikiModelRecord } from "../Models/Wiki/WikiModel";
 import { ProfessionSelectionIds } from "../Models/Wiki/wikiTypeHelpers";
-import { findSelectOption } from "./activatable/selectionUtils";
+import { findSelectOption } from "./A/Activatable/selectionUtils";
 import { translate } from "./I18n";
 import { sortRecordsByName } from "./sortBy";
 import { getAllWikiEntriesByGroup } from "./WikiUtils";
@@ -242,8 +242,8 @@ export const getLanguagesAndScriptsElementAndValidation =
             (maybeLanguagesList)
         })
         (ProfessionSelections.A[ProfessionSelectionIds.LANGUAGES_SCRIPTS] (professionSelections))
-        (lookup_ (specialAbilities (wiki)) ("SA_27"))
-        (lookup_ (specialAbilities (wiki)) ("SA_29"))
+        (lookupF (specialAbilities (wiki)) ("SA_27"))
+        (lookupF (specialAbilities (wiki)) ("SA_29"))
     )
 
 export const getCursesElementAndValidation =
@@ -289,7 +289,7 @@ export const getCombatTechniquesElementAndValidation =
                pipe (
                       combatTechniques,
                       elems,
-                      filter (pipe (CombatTechnique.A.id, elem_ (sid (selection))))
+                      filter (pipe (CombatTechnique.A.id, elemF (sid (selection))))
                     )
                     (wiki)
 
@@ -324,7 +324,7 @@ export const getCombatTechniquesSecondElementAndValidation =
               pipe (
                      combatTechniques,
                      elems,
-                     filter (pipe (CombatTechnique.A.id, elem_ (sid (selection))))
+                     filter (pipe (CombatTechnique.A.id, elemF (sid (selection))))
                    )
                    (wiki)
 
@@ -358,7 +358,7 @@ export const getCantripsElementAndValidation =
               pipe (
                     cantrips,
                     elems,
-                    filter (pipe (CombatTechnique.A.id, elem_ (sid (selection))))
+                    filter (pipe (CombatTechnique.A.id, elemF (sid (selection))))
                   )
                   (wiki)
 
@@ -456,7 +456,7 @@ export const getTerrainKnowledgeElement =
             active={terrainKnowledgeActive}
             />
         ))
-        (lookup_ (specialAbilities (wiki)) ("SA_12"))
+        (lookupF (specialAbilities (wiki)) ("SA_12"))
     )
 
 export const getMotherTongueSelectionElement =
@@ -468,7 +468,7 @@ export const getMotherTongueSelectionElement =
   (isAnyLanguageOrScriptSelected: boolean) =>
   (setMotherTongue: (option: number) => void) =>
     pipe (
-           bindF (() => lookup_ (specialAbilities (wiki)) ("SA_29")),
+           bindF (() => lookupF (specialAbilities (wiki)) ("SA_29")),
            fmap ((wikiEntry: Record<SpecialAbility>) => (
                   <Dropdown
                     hint={translate (locale) (L10n.A["rcpselections.labels.selectnativetongue"])}
@@ -503,7 +503,7 @@ export const getMainScriptSelectionElement =
   (isBuyingMainScriptEnabled: boolean) =>
   (setMainCulturalLiteracy: (option: number) => void) =>
     pipe (
-           bindF (() => lookup_ (specialAbilities (wiki)) ("SA_27")),
+           bindF (() => lookupF (specialAbilities (wiki)) ("SA_27")),
            fmap ((wikiEntry: Record<SpecialAbility>) => (
                   <Dropdown
                     hint={translate (l10n) (L10n.A["rcpselections.labels.selectscript"])}

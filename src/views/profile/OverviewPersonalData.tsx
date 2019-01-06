@@ -1,5 +1,6 @@
 import * as R from 'ramda';
 import * as React from 'react';
+import { InputTextEvent, PersonalData } from '../../App/Models/Hero/heroTypeHelpers';
 import { Culture, Race, RaceVariant } from '../../App/Models/Wiki/wikiTypeHelpers';
 import { translate } from '../../App/Utils/I18n';
 import { isEmptyOr, isFloat, isNaturalNumber } from '../../App/Utils/RegexUtils';
@@ -8,7 +9,6 @@ import { Dropdown, DropdownOption } from '../../components/Dropdown';
 import { IconButton } from '../../components/IconButton';
 import { InputButtonGroup } from '../../components/InputButtonGroup';
 import { TextField } from '../../components/TextField';
-import { InputTextEvent, PersonalData } from '../../types/data';
 import { UIMessagesObject } from '../../types/ui';
 import { List, Maybe, Record } from '../../utils/dataUtils';
 import { sortObjects } from '../../utils/FilterSortUtils';

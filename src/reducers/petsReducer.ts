@@ -1,7 +1,7 @@
 import * as PetActions from '../actions/PetActions';
+import * as Data from '../App/Models/Hero/heroTypeHelpers';
 import { convertToEdit, convertToSave, getNewPetInstance } from '../App/Utils/PetUtils';
 import { ActionTypes } from '../constants/ActionTypes';
-import * as Data from '../types/data';
 import { Maybe, OrderedMap, Record } from '../utils/dataUtils';
 
 type Action =

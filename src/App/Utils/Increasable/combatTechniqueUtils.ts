@@ -1,7 +1,7 @@
 import { pipe } from "ramda";
 import { cons, elem, foldl, fromElements, maximum } from "../../../Data/List";
 import { fmap, guard, Just, Maybe, maybe, sum, then } from "../../../Data/Maybe";
-import { lookup_ } from "../../../Data/OrderedMap";
+import { lookupF } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { AttributeDependent } from "../../Models/ActiveEntries/AttributeDependent";
 import { SkillDependent } from "../../Models/ActiveEntries/SkillDependent";
@@ -9,7 +9,7 @@ import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { CombatTechnique } from "../../Models/Wiki/CombatTechnique";
 import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel";
 import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import { getActiveSelections } from "../activatable/selectionUtils";
+import { getActiveSelections } from "../A/Activatable/selectionUtils";
 import { flattenDependencies } from "../Dependencies/flattenDependencies";
 import { add, divideBy, max } from "../mathUtils";
 
@@ -22,7 +22,7 @@ const { maxCombatTechniqueRating } = ExperienceLevel.A
 const getMaxPrimaryAttributeValueById =
   (state: HeroModelRecord) =>
     foldl<string, number> (currentMax => pipe (
-                            lookup_ (attributes (state)),
+                            lookupF (attributes (state)),
                             maybe<Record<AttributeDependent>, number>
                               (currentMax)
                               (pipe (value, max (currentMax)))
@@ -67,10 +67,10 @@ export const isIncreaseDisabled =
     const currentMax =
       phase (state) < 3
         ? sum (fmap (maxCombatTechniqueRating)
-                    (lookup_ (experienceLevels (wiki)) (experienceLevel (state))))
+                    (lookupF (experienceLevels (wiki)) (experienceLevel (state))))
         : getMaxPrimaryAttributeValueById (state) (primary (wikiEntry)) + 2
 
-    const exceptionalSkill = lookup_ (advantages (state)) ("ADV_17")
+    const exceptionalSkill = lookupF (advantages (state)) ("ADV_17")
 
     const bonus = pipe (
                          getActiveSelections,

@@ -1,11 +1,11 @@
 import { pipe } from "ramda";
-import { ActivatableDependent } from "../../App/Models/ActiveEntries/ActivatableDependent";
-import { SpecialAbility } from '../../App/Models/Wiki/SpecialAbility';
-import { filter, List } from "../../Data/List";
-import { bindF, mapMaybe } from "../../Data/Maybe";
-import { elems, find, lookup_, OrderedMap } from "../../Data/OrderedMap";
-import { Record } from "../../Data/Record";
-import { isBlessedTraditionId, isMagicalTraditionId } from "../IDUtils";
+import { filter, List } from "../../../../Data/List";
+import { bindF, mapMaybe } from "../../../../Data/Maybe";
+import { elems, find, lookupF, OrderedMap } from "../../../../Data/OrderedMap";
+import { Record } from "../../../../Data/Record";
+import { ActivatableDependent } from "../../../Models/ActiveEntries/ActivatableDependent";
+import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility";
+import { isBlessedTraditionId, isMagicalTraditionId } from "../../IDUtils";
 import { isActive } from "./isActive";
 
 const { id } = ActivatableDependent.A
@@ -34,7 +34,7 @@ export const getMagicalTraditions =
  */
 export const getMagicalTraditionsFromWiki =
   (wiki: OrderedMap<string, Record<SpecialAbility>>) =>
-    pipe (getMagicalTraditions, mapMaybe (pipe (id, lookup_ (wiki))))
+    pipe (getMagicalTraditions, mapMaybe (pipe (id, lookupF (wiki))))
 
 /**
  * Get blessed traditions' dependent entry.
@@ -49,4 +49,4 @@ export const getBlessedTradition = find (isActiveBlessedTradition)
  */
 export const getBlessedTraditionFromWiki =
   (wiki: OrderedMap<string, Record<SpecialAbility>>) =>
-    pipe (getBlessedTradition, bindF (pipe (id, lookup_ (wiki))))
+    pipe (getBlessedTradition, bindF (pipe (id, lookupF (wiki))))

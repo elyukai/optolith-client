@@ -2,7 +2,7 @@
 import { pipe } from "ramda";
 import { Categories, IncreasableCategories } from "../../../constants/Categories";
 import { IdPrefixes } from "../../../constants/IdPrefixes";
-import { elem_, List } from "../../../Data/List";
+import { elemF, List } from "../../../Data/List";
 import { fmap, fromNullable, Just, Maybe, Nothing, or } from "../../../Data/Maybe";
 import { Pair } from "../../../Data/Pair";
 import { Record } from "../../../Data/Record";
@@ -59,14 +59,14 @@ const isRawRequiringIncreasable =
       return req.hasOwnProperty ("value") && id.every (pipe (
         getCategoryById,
         (category: Maybe<Categories>) =>
-          or (fmap (elem_ (IncreasableCategories)) (category))
+          or (fmap (elemF (IncreasableCategories)) (category))
       ))
     }
     else {
       const category = getCategoryById (id)
 
       return req.hasOwnProperty ("value")
-        && or (fmap (elem_ (IncreasableCategories)) (category))
+        && or (fmap (elemF (IncreasableCategories)) (category))
     }
   }
 

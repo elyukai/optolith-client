@@ -2,6 +2,7 @@ import { connect } from 'react-redux';
 import { Action, Dispatch } from 'redux';
 import * as ConfigActions from '../actions/ConfigActions';
 import * as DisAdvActions from '../actions/DisAdvActions';
+import { ActivateArgs, DeactivateArgs } from '../App/Models/Hero/heroTypeHelpers';
 import { AppState } from '../reducers/appReducer';
 import { getAdvantagesRating, getCurrentDisAdvantagesSubtypeMax, getFilteredActiveAdvantages } from '../selectors/activatableSelectors';
 import { getAdventurePointsObject } from '../selectors/adventurePointsSelectors';
@@ -9,7 +10,6 @@ import { getFilteredInactiveAdvantages } from '../selectors/combinedActivatables
 import { getIsRemovingEnabled } from '../selectors/phaseSelectors';
 import { getAdvantages, getAdvantagesFilterText, getInactiveAdvantagesFilterText, getWikiAdvantages } from '../selectors/stateSelectors';
 import { getAdvantagesDisadvantagesCultureRatingVisibility, getEnableActiveItemHints } from '../selectors/uisettingsSelectors';
-import { ActivateArgs, DeactivateArgs } from '../types/data';
 import { Advantages, AdvantagesDispatchProps, AdvantagesOwnProps, AdvantagesStateProps } from '../views/disadv/Advantages';
 
 const mapStateToProps = (state: AppState, ownProps: AdvantagesOwnProps): AdvantagesStateProps => ({

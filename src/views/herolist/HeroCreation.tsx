@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Sex } from '../../App/Models/Hero/heroTypeHelpers';
 import { Book, ExperienceLevel } from '../../App/Models/Wiki/wikiTypeHelpers';
 import { translate } from '../../App/Utils/I18n';
 import { Checkbox } from '../../components/Checkbox';
@@ -8,7 +9,6 @@ import { Hr } from '../../components/Hr';
 import { Scroll } from '../../components/Scroll';
 import { Option, SegmentedControls } from '../../components/SegmentedControls';
 import { TextField } from '../../components/TextField';
-import { Sex } from '../../types/data';
 import { UIMessagesObject } from '../../types/ui';
 import { List, Maybe, Nothing, OrderedMap, OrderedSet, Record } from '../../utils/dataUtils';
 

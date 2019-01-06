@@ -1,9 +1,9 @@
 import * as React from 'react';
+import { InputTextEvent } from '../../App/Models/Hero/heroTypeHelpers';
 import { translate, UIMessagesObject } from '../../App/Utils/I18n';
 import { isNaturalNumber } from '../../App/Utils/RegexUtils';
 import { Dialog, DialogProps } from '../../components/DialogNew';
 import { TextField } from '../../components/TextField';
-import { InputTextEvent } from '../../types/data';
 
 export interface AttributesRemovePermanentProps extends DialogProps {
   locale: UIMessagesObject;

@@ -1,4 +1,4 @@
-import { elem_, fromElements } from "../../Data/List";
+import { elemF, fromElements } from "../../Data/List";
 
 export type TabId = "herolist"
                   | "grouplist"
@@ -61,5 +61,5 @@ export const heroSectionTabs =
     "pets"
   )
 
-export const isMainSectionTab = elem_ (mainSectionTabs)
-export const isHeroSectionTab = elem_ (heroSectionTabs)
+export const isMainSectionTab = elemF (mainSectionTabs)
+export const isHeroSectionTab = elemF (heroSectionTabs)

@@ -1,7 +1,7 @@
+import { HeroDependent } from '../App/Models/Hero/heroTypeHelpers';
 import { reduceReducers } from '../App/Utils/reduceReducers';
 import { undoExisting } from '../App/Utils/undo';
 import { ActionTypes } from '../constants/ActionTypes';
-import { HeroDependent } from '../types/data';
 import { Record } from '../utils/dataUtils';
 import { adventurePointsReducer } from './adventurePointsReducer';
 import { applyRCPSelectionsReducer } from './applyRCPSelectionsReducer';

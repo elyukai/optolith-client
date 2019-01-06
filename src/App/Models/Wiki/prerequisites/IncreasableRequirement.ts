@@ -1,6 +1,6 @@
 import { pipe } from "ramda";
 import { Categories, IncreasableCategories } from "../../../../constants/Categories";
-import { all, elem_, isList, List } from "../../../../Data/List";
+import { all, elemF, isList, List } from "../../../../Data/List";
 import { fmap, or } from "../../../../Data/Maybe";
 import { fromDefault, makeLenses, member, Record } from "../../../../Data/Record";
 import { getCategoryById } from "../../../Utils/IDUtils";
@@ -31,14 +31,14 @@ export const isIncreasableRequirement =
       return member ("value") (req)
         && all<string> (pipe (
                          getCategoryById,
-                         category => or (fmap (elem_<Categories> (IncreasableCategories))
+                         category => or (fmap (elemF<Categories> (IncreasableCategories))
                                               (category))
                        ))
                        (id)
     }
 
     return member ("value") (req)
-      && or (fmap (elem_<Categories> (IncreasableCategories))
+      && or (fmap (elemF<Categories> (IncreasableCategories))
                   (getCategoryById (id)))
   }
 
@@ -47,6 +47,6 @@ export const isProfessionRequiringIncreasable =
     const id = RequireIncreasable.A.id (req) as string
 
     return member ("value") (req)
-      && or (fmap (elem_<Categories> (IncreasableCategories))
+      && or (fmap (elemF<Categories> (IncreasableCategories))
                   (getCategoryById (id)))
   }

@@ -9,6 +9,7 @@
 
 import * as R from 'ramda';
 import { isObject } from 'util';
+import * as Data from '../../App/Models/Hero/heroTypeHelpers';
 import * as Wiki from '../../App/Models/Wiki/wikiTypeHelpers';
 import { countActiveGroupEntries } from '../../App/Utils/entryGroupUtils';
 import { getAllEntriesByGroup, getHeroStateItem } from '../../App/Utils/heroStateUtils';
@@ -17,7 +18,6 @@ import { match } from '../../App/Utils/match';
 import { isBoolean } from '../../App/Utils/typeCheckUtils';
 import { getWikiEntry } from '../../App/Utils/WikiUtils';
 import { ActivatableCategory, Categories } from '../../constants/Categories';
-import * as Data from '../../types/data';
 import { Just, List, Maybe, Nothing, OrderedMap, OrderedSet, Record } from '../dataUtils';
 import { flattenPrerequisites } from '../prerequisites/flattenPrerequisites';
 import { validateLevel, validateObject } from '../prerequisites/validatePrerequisitesUtils';

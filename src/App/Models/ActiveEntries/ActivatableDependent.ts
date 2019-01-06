@@ -1,7 +1,7 @@
 import { fnull, fromElements, List } from "../../../Data/List";
 import { fromJust, isJust, Just, Maybe } from "../../../Data/Maybe";
 import { fromDefault, makeLenses, member, notMember, Omit, Record } from "../../../Data/Record";
-import { ActivatableDependency, Dependent } from "../../../types/data";
+import { ActivatableDependency, Dependent } from "../Hero/heroTypeHelpers";
 import { ActiveObject } from "./ActiveObject";
 
 export interface ActivatableDependent {

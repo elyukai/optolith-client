@@ -1,10 +1,10 @@
 import * as React from 'react';
+import { InputTextEvent } from '../../App/Models/Hero/heroTypeHelpers';
 import { BorderButton } from '../../components/BorderButton';
 import { Options } from '../../components/Options';
 import { Page } from '../../components/Page';
 import { Scroll } from '../../components/Scroll';
 import { TextField } from '../../components/TextField';
-import { InputTextEvent } from '../../types/data';
 
 export class Grouplist extends React.Component {
   filter = (event: InputTextEvent) => event.target.value;

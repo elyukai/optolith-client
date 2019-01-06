@@ -4,7 +4,7 @@ import { IdPrefixes } from "../../constants/IdPrefixes";
 import { cnst } from "../../Data/Function";
 import { foldl } from "../../Data/List";
 import { Just, Maybe, Nothing } from "../../Data/Maybe";
-import { lookup_, member_, OrderedMap } from "../../Data/OrderedMap";
+import { lookupF, member_, OrderedMap } from "../../Data/OrderedMap";
 import { match } from "./match";
 import { inc, max } from "./mathUtils";
 
@@ -79,9 +79,9 @@ export const magicalNumericIdByTraditionId = OrderedMap.fromArray ([
 
 export const isMagicalTraditionId = member_ (magicalNumericIdByTraditionId)
 
-export const getMagicalTraditionInstanceIdByNumericId = lookup_ (magicalTraditionIdByNumericId)
+export const getMagicalTraditionInstanceIdByNumericId = lookupF (magicalTraditionIdByNumericId)
 
-export const getNumericMagicalTraditionIdByInstanceId = lookup_ (magicalNumericIdByTraditionId)
+export const getNumericMagicalTraditionIdByInstanceId = lookupF (magicalNumericIdByTraditionId)
 
 const blessedTraditionIdByNumericId = OrderedMap.fromArray ([
   [1, "SA_86"],
@@ -127,6 +127,6 @@ const blessedNumericIdByTraditionId = OrderedMap.fromArray ([
 
 export const isBlessedTraditionId = member_ (blessedNumericIdByTraditionId)
 
-export const getBlessedTraditionInstanceIdByNumericId = lookup_ (blessedTraditionIdByNumericId)
+export const getBlessedTraditionInstanceIdByNumericId = lookupF (blessedTraditionIdByNumericId)
 
-export const getNumericBlessedTraditionIdByInstanceId = lookup_ (blessedNumericIdByTraditionId)
+export const getNumericBlessedTraditionIdByInstanceId = lookupF (blessedNumericIdByTraditionId)

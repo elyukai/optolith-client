@@ -2,13 +2,13 @@ import { connect } from 'react-redux';
 import { Action, Dispatch } from 'redux';
 import * as ConfigActions from '../actions/ConfigActions';
 import * as SpecialAbilitiesActions from '../actions/SpecialAbilitiesActions';
+import { ActivateArgs, DeactivateArgs } from '../App/Models/Hero/heroTypeHelpers';
 import { AppState } from '../reducers/appReducer';
 import { getFilteredActiveSpecialAbilities } from '../selectors/activatableSelectors';
 import { getFilteredInactiveSpecialAbilities } from '../selectors/combinedActivatablesSelectors';
 import { getIsRemovingEnabled } from '../selectors/phaseSelectors';
 import { getInactiveSpecialAbilitiesFilterText, getSpecialAbilities, getSpecialAbilitiesFilterText, getWikiSpecialAbilities } from '../selectors/stateSelectors';
 import { getEnableActiveItemHints, getSpecialAbilitiesSortOrder } from '../selectors/uisettingsSelectors';
-import { ActivateArgs, DeactivateArgs } from '../types/data';
 import { SpecialAbilities, SpecialAbilitiesDispatchProps, SpecialAbilitiesOwnProps, SpecialAbilitiesStateProps } from '../views/specialAbilities/SpecialAbilities';
 
 const mapStateToProps = (

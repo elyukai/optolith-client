@@ -1,8 +1,8 @@
 import { fromElements } from "../../../Data/List";
 import { Nothing } from "../../../Data/Maybe";
 import { fromDefault } from "../../../Data/Record";
-import { ItemEditorSpecific } from "../../../types/data";
 import { EditPrimaryAttributeDamageThreshold } from "./EditPrimaryAttributeDamageThreshold";
+import { ItemEditorSpecific } from "./heroTypeHelpers";
 import { ItemBase } from "./Item";
 
 export interface EditItem extends ItemBase, ItemEditorSpecific { }

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { ActiveViewObject, PersonalData as PersonalDataInterface } from '../../App/Models/Hero/heroTypeHelpers';
 import { Advantage, Culture, Disadvantage, ExperienceLevel, Profession, ProfessionVariant, Race, RaceVariant } from '../../App/Models/Wiki/wikiTypeHelpers';
 import { translate } from '../../App/Utils/I18n';
 import { ActivatableTextList } from '../../components/ActivatableTextList';
@@ -10,7 +11,6 @@ import { IconButton } from '../../components/IconButton';
 import { Page } from '../../components/Page';
 import { Scroll } from '../../components/Scroll';
 import { VerticalList } from '../../components/VerticalList';
-import { ActiveViewObject, PersonalData as PersonalDataInterface } from '../../types/data';
 import { UIMessagesObject } from '../../types/ui';
 import { Just, List, Maybe, Record } from '../../utils/dataUtils';
 import { OverviewAddAP } from './OverviewAddAP';

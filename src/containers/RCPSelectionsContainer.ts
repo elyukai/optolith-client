@@ -1,10 +1,10 @@
 import { connect } from 'react-redux';
 import { Action, Dispatch } from 'redux';
 import * as ProfessionActions from '../actions/ProfessionActions';
+import { Selections as SelectionsInterface } from '../App/Models/Hero/heroTypeHelpers';
 import { AppState } from '../reducers/appReducer';
 import { getCurrentCulture, getCurrentProfession, getCurrentProfessionVariant, getCurrentRace } from '../selectors/rcpSelectors';
 import { getWiki } from '../selectors/stateSelectors';
-import { Selections as SelectionsInterface } from '../types/data';
 import { Selections, SelectionsDispatchProps, SelectionsOwnProps, SelectionsStateProps } from '../views/rcp/Selections';
 
 const mapStateToProps = (state: AppState): SelectionsStateProps => ({

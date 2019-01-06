@@ -1,7 +1,7 @@
 import * as R from 'ramda';
+import { ActiveViewObject, HeroDependent } from '../App/Models/Hero/heroTypeHelpers';
 import { ExperienceLevel } from '../App/Models/Wiki/wikiTypeHelpers';
 import { createMaybeSelector } from '../App/Utils/createMaybeSelector';
-import { ActiveViewObject, HeroDependent } from '../types/data';
 import { getAdventurePointsSpentDifference, getDisAdvantagesSubtypeMax } from '../utils/adventurePoints/adventurePointsUtils';
 import { getAPRange } from '../utils/adventurePoints/improvementCostUtils';
 import { List, Maybe, OrderedSet, Record } from '../utils/dataUtils';

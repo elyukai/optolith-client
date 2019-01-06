@@ -1,5 +1,6 @@
 import * as R from 'ramda';
 import { Dispatch } from 'react-redux';
+import { ActivatableDependent, ActivateArgs, ActiveObjectWithId, DeactivateArgs, Hero } from '../App/Models/Hero/heroTypeHelpers';
 import { Advantage, Disadvantage } from '../App/Models/Wiki/wikiTypeHelpers';
 import { getHeroStateItem } from '../App/Utils/heroStateUtils';
 import { translate } from '../App/Utils/I18n';
@@ -13,7 +14,6 @@ import { getIsInCharacterCreation } from '../selectors/phaseSelectors';
 import { getCurrentRace, getCurrentRaceVariant } from '../selectors/rcpSelectors';
 import { getCurrentHeroPresent, getWiki } from '../selectors/stateSelectors';
 import { AsyncAction } from '../types/actions';
-import { ActivatableDependent, ActivateArgs, ActiveObjectWithId, DeactivateArgs, Hero } from '../types/data';
 import { UIMessagesObject } from '../types/ui';
 import { getNameCost } from '../utils/activatable/activatableActiveUtils';
 import { isMagicalOrBlessed } from '../utils/activatable/checkActivatableUtils';

@@ -1,9 +1,9 @@
+import { Selections } from '../App/Models/Hero/heroTypeHelpers';
 import { Culture, Profession, ProfessionVariant, Race, WikiAll } from '../App/Models/Wiki/wikiTypeHelpers';
 import { ActionTypes } from '../constants/ActionTypes';
 import { getCurrentCulture, getCurrentProfession, getCurrentProfessionVariant, getCurrentRace } from '../selectors/rcpSelectors';
 import { getWiki } from '../selectors/stateSelectors';
 import { AsyncAction } from '../types/actions';
-import { Selections } from '../types/data';
 import { Maybe, Record } from '../utils/dataUtils';
 
 export interface SelectProfessionAction {

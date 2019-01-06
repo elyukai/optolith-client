@@ -3,7 +3,7 @@ import { equals } from "../../../Data/Eq";
 import { cnst, ident, thrush } from "../../../Data/Function";
 import { any, consF, find, List, minimum, notElem } from "../../../Data/List";
 import { bindF, elem, ensure, fmap, isJust, Just, Maybe, maybe, or, sum } from "../../../Data/Maybe";
-import { alter, empty, filter, foldl, lookup, lookup_, OrderedMap } from "../../../Data/OrderedMap";
+import { alter, empty, filter, foldl, lookup, lookupF, OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
@@ -15,7 +15,7 @@ import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel";
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
 import { Spell } from "../../Models/Wiki/Spell";
 import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import { getActiveSelections } from "../activatable/selectionUtils";
+import { getActiveSelections } from "../A/Activatable/selectionUtils";
 import { filterAndMaximumNonNegative, flattenDependencies } from "../Dependencies/flattenDependencies";
 import { getNumericMagicalTraditionIdByInstanceId } from "../IDUtils";
 import { ifElse } from "../ifElse";
@@ -109,7 +109,7 @@ export const countActiveSpellsPerProperty =
       foldl<Record<ActivatableSkillDependent>, OrderedMap<number, number>>
         (acc => pipe (
           id,
-          lookup_ (wiki),
+          lookupF (wiki),
           maybe<Record<Spell>, OrderedMap<number, number>>
             (acc)
             (pipe (

@@ -1,7 +1,7 @@
 import { pipe } from "ramda";
-import { any, elem_, filter, fnull, List } from "../../Data/List";
+import { any, elemF, filter, fnull, List } from "../../Data/List";
 import { member, OrderedMap } from "../../Data/OrderedMap";
-import { elemF, OrderedSet } from "../../Data/OrderedSet";
+import { OrderedSet } from "../../Data/OrderedSet";
 import { Record, RecordBase } from "../../Data/Record";
 import { ActiveActivatable } from "../Models/View/ActiveActivatable";
 import { Advantage } from "../Models/Wiki/Advantage";
@@ -21,10 +21,17 @@ export interface ObjectWithWikiEntry<A extends ObjectWithSource> {
   [key: string]: any
 }
 
+type GenericWikiEntryAccessor =
+  <A extends ObjectWithSource> (x: Record<ObjectWithWikiEntry<A>>) => Record<A>
+
+type DefaultWikiEntryAccessor =
+  (x: Record<ObjectWithWikiEntry<ObjectWithSource>>) => Record<ObjectWithSource>
+
 
 // LOGIC
 
-const { wikiEntry } = ActiveActivatable.A
+const wikiEntry = ActiveActivatable.A.wikiEntry as GenericWikiEntryAccessor
+
 const { src } = Advantage.A
 const { id } = SourceLink.A
 
@@ -35,7 +42,7 @@ const CoreBooks =
  * Check if the passed `SourceLink` links to a core book.
  */
 export const isCoreBook =
-  (sourceLink: Record<SourceLink>) => pipe (id, elem_ (CoreBooks)) (sourceLink)
+  (sourceLink: Record<SourceLink>) => pipe (id, elemF (CoreBooks)) (sourceLink)
 
 /**
  * Returns if the given entry is available.
@@ -49,7 +56,7 @@ export const isAvailable =
       return availablility
     }
 
-    return pipe (src, any (s => elemF (availablility) (id (s)) || isCoreBook (s)))
+    return pipe (src, any (s => OrderedSet.elemF (availablility) (id (s)) || isCoreBook (s)))
                 (x)
   }
 
@@ -81,7 +88,7 @@ export const filterByAvailabilityAndPred =
                             || isAvailable<A> (availablility) (e)
                             || pred (e))
 
-const srcFromWikiEntry = pipe (wikiEntry, src)
+const noSrcEntries = pipe (wikiEntry as DefaultWikiEntryAccessor, src, fnull)
 
 /**
  * Filters a list of objects with an `wikiEntry` property containing
@@ -90,7 +97,7 @@ const srcFromWikiEntry = pipe (wikiEntry, src)
 export const filterByWikiEntryPropertyAvailability =
   <A extends ObjectWithSource, A0 extends ObjectWithWikiEntry<A>>
   (availablility: boolean | OrderedSet<string>) =>
-    filter<Record<A0>> (e => fnull (srcFromWikiEntry (e))
+    filter<Record<A0>> (e => noSrcEntries (e)
                              || isAvailable<A> (availablility) (wikiEntry (e)))
 
 /**
@@ -101,7 +108,7 @@ export const filterByWikiEntryPropertyAvailabilityAndPred =
   <A extends ObjectWithSource, A0 extends ObjectWithWikiEntry<A>>
   (pred: (obj: Record<A0>) => boolean) =>
   (availablility: boolean | OrderedSet<string>) =>
-    filter<Record<A0>> (e => fnull (srcFromWikiEntry (e))
+    filter<Record<A0>> (e => noSrcEntries (e)
                              || isAvailable<A> (availablility) (wikiEntry (e))
                              || pred (e))
 

@@ -1,5 +1,6 @@
 import * as R from 'ramda';
 import * as React from 'react';
+import { Selections as SelectionsInterface } from '../../App/Models/Hero/heroTypeHelpers';
 import { AnyProfessionSelection, Culture, Profession, ProfessionSelectionIds, ProfessionVariant, Race, WikiAll } from '../../App/Models/Wiki/wikiTypeHelpers';
 import { translate, UIMessagesObject } from '../../App/Utils/I18n';
 import { sign } from '../../App/Utils/NumberUtils';
@@ -9,7 +10,6 @@ import { Checkbox } from '../../components/Checkbox';
 import { Dropdown, DropdownOption } from '../../components/Dropdown';
 import { Scroll } from '../../components/Scroll';
 import { Slidein } from '../../components/Slidein';
-import { Selections as SelectionsInterface } from '../../types/data';
 import { Just, Maybe, Nothing, OrderedMap, OrderedSet, Record, Tuple } from '../../utils/dataUtils';
 
 export interface SelectionsOwnProps {

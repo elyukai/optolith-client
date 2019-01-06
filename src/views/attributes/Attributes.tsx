@@ -1,9 +1,9 @@
 import * as React from 'react';
+import { SecondaryAttribute } from '../../App/Models/Hero/heroTypeHelpers';
 import { AttributeWithRequirements } from '../../App/Models/View/viewTypeHelpers';
 import { translate, UIMessagesObject } from '../../App/Utils/I18n';
 import { Page } from '../../components/Page';
 import { Scroll } from '../../components/Scroll';
-import { SecondaryAttribute } from '../../types/data';
 import { List, Maybe, Record } from '../../utils/dataUtils';
 import { AttributeCalc } from './AttributeCalc';
 import { AttributeList } from './AttributeList';

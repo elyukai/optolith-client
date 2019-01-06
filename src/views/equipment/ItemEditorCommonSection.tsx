@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { ItemEditorInstance } from '../../App/Models/Hero/heroTypeHelpers';
 import { ItemTemplate } from '../../App/Models/Wiki/wikiTypeHelpers';
 import { translate, UIMessagesObject } from '../../App/Utils/I18n';
 import { ItemEditorInputValidation } from '../../App/Utils/ItemUtils';
@@ -7,7 +8,6 @@ import { Dropdown, DropdownOption } from '../../components/Dropdown';
 import { Hr } from '../../components/Hr';
 import { IconButton } from '../../components/IconButton';
 import { TextField } from '../../components/TextField';
-import { ItemEditorInstance } from '../../types/data';
 import { Just, List, Maybe, Record } from '../../utils/dataUtils';
 
 export interface ItemEditorCommonSectionProps {

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { InputTextEvent, Sex } from '../../App/Models/Hero/heroTypeHelpers';
 import { ProfessionCombined } from '../../App/Models/View/viewTypeHelpers';
 import { WikiAll } from '../../App/Models/Wiki/wikiTypeHelpers';
 import { translate, UIMessagesObject } from '../../App/Utils/I18n';
@@ -16,7 +17,6 @@ import { SortNames, SortOptions } from '../../components/SortOptions';
 import { TextField } from '../../components/TextField';
 import { SelectionsContainer } from '../../containers/RCPSelectionsContainer';
 import { WikiInfoContainer } from '../../containers/WikiInfoContainer';
-import { InputTextEvent, Sex } from '../../types/data';
 import { Just, List, Maybe, Record } from '../../utils/dataUtils';
 import { ProfessionsListItem } from './ProfessionsListItem';
 import { ProfessionVariants } from './ProfessionVariants';

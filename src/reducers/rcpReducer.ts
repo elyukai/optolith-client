@@ -2,8 +2,8 @@ import { SelectCultureAction } from '../actions/CultureActions';
 import { SelectProfessionAction } from '../actions/ProfessionActions';
 import { SelectProfessionVariantAction } from '../actions/ProfessionVariantActions';
 import { SelectRaceAction, SetRaceVariantAction } from '../actions/RaceActions';
+import * as Data from '../App/Models/Hero/heroTypeHelpers';
 import { ActionTypes } from '../constants/ActionTypes';
-import * as Data from '../types/data';
 import { Nothing, Record } from '../utils/dataUtils';
 
 type Action =

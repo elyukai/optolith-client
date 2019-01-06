@@ -1,7 +1,7 @@
 import { fnull, fromElements, List } from "../../../Data/List";
 import { fromJust, isJust, Just, Maybe } from "../../../Data/Maybe";
 import { fromDefault, makeLenses, member, notMember, Omit, Record } from "../../../Data/Record";
-import { Dependent, SkillDependency } from "../../../types/data";
+import { Dependent, SkillDependency } from "../Hero/heroTypeHelpers";
 
 export interface AttributeDependent {
   id: string;

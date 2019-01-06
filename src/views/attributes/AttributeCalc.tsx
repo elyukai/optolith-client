@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { SecondaryAttribute } from '../../types/data';
+import { SecondaryAttribute } from '../../App/Models/Hero/heroTypeHelpers';
 import { UIMessagesObject } from '../../types/ui';
 import { List, Record } from '../../utils/dataUtils';
 import { AttributeCalcItem } from './AttributeCalcItem';

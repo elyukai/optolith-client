@@ -1,17 +1,17 @@
 import { pipe } from "ramda";
+import { equals } from "../../../Data/Eq";
+import { append, consF, filter, find, fromElements, length, List } from "../../../Data/List";
+import { altF, ap, bindF, elemF, fmap, fromMaybe, Just, liftM2, Maybe, Nothing } from "../../../Data/Maybe";
+import { Record } from "../../../Data/Record";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
+import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
 import { Advantage } from "../../Models/Wiki/Advantage";
 import { RequireActivatable } from "../../Models/Wiki/prerequisites/ActivatableRequirement";
 import { RequireIncreasable } from "../../Models/Wiki/prerequisites/IncreasableRequirement";
 import { Application } from "../../Models/Wiki/sub/Application";
 import { SelectOption } from "../../Models/Wiki/sub/SelectOption";
 import * as Wiki from "../../Models/Wiki/wikiTypeHelpers";
-import { equals } from "../../../Data/Eq";
-import { append, consF, filter, find, fromElements, length, List } from "../../../Data/List";
-import { altF, ap, bindF, elem_, fmap, fromMaybe, Just, liftM2, Maybe, Nothing } from "../../../Data/Maybe";
-import { Record } from "../../../Data/Record";
-import { findSelectOption } from "../activatable/selectionUtils";
-import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
+import { findSelectOption } from "../A/Activatable/selectionUtils";
 
 const { id } = Advantage.A
 const { sid, sid2 } = ActiveObject.A
@@ -61,7 +61,7 @@ export const getGeneratedPrerequisites =
                       bindF (
                         find<Record<Application>> (pipe (
                                                                Application.A.id,
-                                                               elem_ (sid2 (current))
+                                                               elemF (sid2 (current))
                                                              ))
                       ),
                       bindF (Application.A.prerequisites),

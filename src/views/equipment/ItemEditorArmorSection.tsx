@@ -1,11 +1,11 @@
 import * as React from 'react';
+import { ItemEditorInstance } from '../../App/Models/Hero/heroTypeHelpers';
 import { translate, UIMessagesObject } from '../../App/Utils/I18n';
 import { getLossLevelElements, ItemEditorInputValidation } from '../../App/Utils/ItemUtils';
 import { Checkbox } from '../../components/Checkbox';
 import { Dropdown, DropdownOption } from '../../components/Dropdown';
 import { Hr } from '../../components/Hr';
 import { TextField } from '../../components/TextField';
-import { ItemEditorInstance } from '../../types/data';
 import { Maybe, Record } from '../../utils/dataUtils';
 import { sortObjects } from '../../utils/FilterSortUtils';
 

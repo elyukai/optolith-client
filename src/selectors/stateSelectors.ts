@@ -1,8 +1,8 @@
+import { Alert, Hero } from '../App/Models/Hero/heroTypeHelpers';
 import { createMaybeSelector } from '../App/Utils/createMaybeSelector';
 import { UIMessages } from '../App/Utils/I18n';
 import { UndoState } from '../App/Utils/undo';
 import { AppState } from '../reducers/appReducer';
-import { Alert, Hero } from '../types/data';
 import { Maybe, OrderedMap, Record } from '../utils/dataUtils';
 
 export const getCurrentTab = (state: AppState) => state.ui.location.tab;

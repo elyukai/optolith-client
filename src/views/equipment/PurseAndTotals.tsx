@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { Purse } from '../../App/Models/Hero/heroTypeHelpers';
 import { localizeNumber, localizeWeight, translate, UIMessagesObject } from '../../App/Utils/I18n';
 import { TextField } from '../../components/TextField';
-import { Purse } from '../../types/data';
 import { Maybe, Record } from '../../utils/dataUtils';
 
 export interface PurseAndTotalsProps {

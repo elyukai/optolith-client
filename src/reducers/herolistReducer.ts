@@ -1,10 +1,10 @@
 import { Action } from 'redux';
 import * as HerolistActions from '../actions/HerolistActions';
 import * as IOActions from '../actions/IOActions';
+import { HeroDependent, User } from '../App/Models/Hero/heroTypeHelpers';
 import { reduceReducers } from '../App/Utils/reduceReducers';
 import { UndoState, wrapWithHistoryObject } from '../App/Utils/undo';
 import { ActionTypes } from '../constants/ActionTypes';
-import { HeroDependent, User } from '../types/data';
 import { List, Maybe, OrderedMap, Record } from '../utils/dataUtils';
 import { getInitialHeroObject } from '../utils/raw/initHeroUtils';
 import { heroReducer } from './heroReducer';

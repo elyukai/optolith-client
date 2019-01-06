@@ -1,23 +1,24 @@
-import { ActivatableDependent } from "../App/Models/ActiveEntries/ActivatableDependent";
-import { ActivatableSkillDependent } from "../App/Models/ActiveEntries/ActivatableSkillDependent";
-import { AttributeDependent } from "../App/Models/ActiveEntries/AttributeDependent";
-import { DependencyObject } from "../App/Models/ActiveEntries/DependencyObject";
-import { SkillDependent } from "../App/Models/ActiveEntries/SkillDependent";
-import { EditPrimaryAttributeDamageThreshold } from "../App/Models/Hero/EditPrimaryAttributeDamageThreshold";
-import { HitZoneArmorBase } from "../App/Models/Hero/HitZoneArmor";
-import { SkillOptionalDependency } from "../App/Models/Hero/SkillOptionalDependency";
-import * as Wiki from "../App/Models/Wiki/wikiTypeHelpers";
-import { TabId } from "../App/Utils/LocationUtils";
-import { List } from "../Data/List";
-import { Maybe } from "../Data/Maybe";
-import { OrderedMap } from "../Data/OrderedMap";
-import { OrderedSet } from "../Data/OrderedSet";
-import { Pair } from "../Data/Pair";
-import { Omit, Record, RecordI } from "../Data/Record";
-import { DCIds } from "../selectors/derivedCharacteristicsSelectors";
-import { ActiveObject } from "../utils/activeEntries/ActiveObject";
-import { SelectOption } from "../utils/wikiData/sub/SelectOption";
-import { AllAction } from "./actions";
+import { List } from "../../../Data/List";
+import { Maybe } from "../../../Data/Maybe";
+import { OrderedMap } from "../../../Data/OrderedMap";
+import { OrderedSet } from "../../../Data/OrderedSet";
+import { Pair } from "../../../Data/Pair";
+import { Omit, Record, RecordI } from "../../../Data/Record";
+import { DCIds } from "../../../selectors/derivedCharacteristicsSelectors";
+import { AllAction } from "../../../types/actions";
+import { TabId } from "../../Utils/LocationUtils";
+import { ActivatableDependent } from "../ActiveEntries/ActivatableDependent";
+import { ActivatableSkillDependent } from "../ActiveEntries/ActivatableSkillDependent";
+import { ActiveObject } from "../ActiveEntries/ActiveObject";
+import { ActiveObjectWithId } from "../ActiveEntries/ActiveObjectWithId";
+import { AttributeDependent } from "../ActiveEntries/AttributeDependent";
+import { DependencyObject } from "../ActiveEntries/DependencyObject";
+import { SkillDependent } from "../ActiveEntries/SkillDependent";
+import { SelectOption } from "../Wiki/sub/SelectOption";
+import * as Wiki from "../Wiki/wikiTypeHelpers";
+import { EditPrimaryAttributeDamageThreshold } from "./EditPrimaryAttributeDamageThreshold";
+import { HitZoneArmorBase } from "./HitZoneArmor";
+import { SkillOptionalDependency } from "./SkillOptionalDependency";
 
 export type ExtendedSkillDependent =
   Record<SkillDependent> |
@@ -70,11 +71,6 @@ export interface Selections {
 
 export interface ActiveObjectName extends ActiveObject {
   name: string
-}
-
-export interface ActiveObjectWithId extends ActiveObject {
-  id: string
-  index: number
 }
 
 export interface ActivatableCombinedName {
@@ -170,21 +166,6 @@ export interface ProfessionDependencyCost {
 }
 
 export type UnionPlainAndMap<T> = T | OrderedMap<number, T>
-
-export interface StyleDependency {
-  /**
-   * The extended special ability or list of available special abilities.
-   */
-  id: string | List<string>
-  /**
-   * If a ability meets a given id, the id, otherwise `undefined`.
-   */
-  active: Maybe<string>
-  /**
-   * The style's id.
-   */
-  origin: string
-}
 
 export enum EntryRating {
   Common = "Common",

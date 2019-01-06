@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { ArmorZonesInstance, ItemInstance, UIMessagesObject } from '../../App/Models/Hero/heroTypeHelpers';
 import { ItemTemplate } from '../../App/Models/Wiki/wikiTypeHelpers';
 import { IconButton } from '../../components/IconButton';
 import { ListItem } from '../../components/ListItem';
@@ -6,7 +7,6 @@ import { ListItemButtons } from '../../components/ListItemButtons';
 import { ListItemName } from '../../components/ListItemName';
 import { ListItemSeparator } from '../../components/ListItemSeparator';
 import { TooltipToggle } from '../../components/TooltipToggle';
-import { ArmorZonesInstance, ItemInstance, UIMessagesObject } from '../../types/data';
 import { List, Maybe, Record } from '../../utils/dataUtils';
 
 export interface HitZoneArmorsListItemProps {

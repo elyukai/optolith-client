@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as Data from '../../../App/Models/Hero/heroTypeHelpers';
 import * as View from '../../../App/Models/View/viewTypeHelpers';
 import * as Wiki from '../../../App/Models/Wiki/wikiTypeHelpers';
 import { translate } from '../../../App/Utils/I18n';
@@ -6,7 +7,6 @@ import { BorderButton } from '../../../components/BorderButton';
 import { Options } from '../../../components/Options';
 import { TextBox } from '../../../components/TextBox';
 import { AdventurePointsObject } from '../../../selectors/adventurePointsSelectors';
-import * as Data from '../../../types/data';
 import { UIMessagesObject } from '../../../types/ui';
 import { compressList } from '../../../utils/activatable/activatableNameUtils';
 import { List, Maybe, Record } from '../../../utils/dataUtils';

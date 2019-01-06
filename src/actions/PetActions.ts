@@ -1,8 +1,8 @@
+import { PetInstance } from '../App/Models/Hero/heroTypeHelpers';
 import { getNewId } from '../App/Utils/IDUtils';
 import { ActionTypes } from '../constants/ActionTypes';
 import { getPets } from '../selectors/stateSelectors';
 import { AsyncAction } from '../types/actions';
-import { PetInstance } from '../types/data';
 import { Record } from '../utils/dataUtils';
 
 export interface AddPetAction {

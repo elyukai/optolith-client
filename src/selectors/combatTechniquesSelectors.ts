@@ -1,8 +1,8 @@
+import { ActivatableDependent, Hero, HeroDependent } from '../App/Models/Hero/heroTypeHelpers';
 import { CombatTechniqueCombined, CombatTechniqueWithAttackParryBase, CombatTechniqueWithRequirements } from '../App/Models/View/viewTypeHelpers';
 import { ExperienceLevel, WikiRecord } from '../App/Models/Wiki/wikiTypeHelpers';
 import { createMaybeSelector } from '../App/Utils/createMaybeSelector';
 import { filterByAvailability } from '../App/Utils/RulesUtils';
-import { ActivatableDependent, Hero, HeroDependent } from '../types/data';
 import { isActive } from '../utils/activatable/isActive';
 import { getActiveSelections } from '../utils/activatable/selectionUtils';
 import { createDependentSkillWithValue6 } from '../utils/createEntryUtils';

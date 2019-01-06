@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Sex } from '../../App/Models/Hero/heroTypeHelpers';
 import { ProfessionCombined } from '../../App/Models/View/viewTypeHelpers';
 import { Book, NameBySex, SourceLink, WikiAll } from '../../App/Models/Wiki/wikiTypeHelpers';
 import { IconButton } from '../../components/IconButton';
@@ -8,7 +9,6 @@ import { ListItemGroup } from '../../components/ListItemGroup';
 import { ListItemName } from '../../components/ListItemName';
 import { ListItemSeparator } from '../../components/ListItemSeparator';
 import { ListItemValues } from '../../components/ListItemValues';
-import { Sex } from '../../types/data';
 import { Maybe, Record } from '../../utils/dataUtils';
 
 export interface ProfessionsListItemProps {

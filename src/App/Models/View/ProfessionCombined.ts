@@ -1,6 +1,6 @@
 import { List } from "../../../Data/List";
 import { fromDefault, Record } from "../../../Data/Record";
-import { ActivatableNameCostActive } from "../../../types/data";
+import { ActivatableNameCostActive } from "../Hero/heroTypeHelpers";
 import { ProfessionRequireIncreasable } from "../Wiki/prerequisites/IncreasableRequirement";
 import { Profession } from "../Wiki/Profession";
 import { IncreasableForView } from "./IncreasableForView";

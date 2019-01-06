@@ -1,8 +1,8 @@
 import * as R from 'ramda';
+import { EntryRating, Hero } from '../App/Models/Hero/heroTypeHelpers';
 import { SkillCombined, SkillWithRequirements } from '../App/Models/View/viewTypeHelpers';
 import { ExperienceLevel } from '../App/Models/Wiki/wikiTypeHelpers';
 import { createMaybeSelector } from '../App/Utils/createMaybeSelector';
-import { EntryRating, Hero } from '../types/data';
 import { createDependentSkillWithValue0 } from '../utils/createEntryUtils';
 import { List, Maybe, OrderedMap, Record } from '../utils/dataUtils';
 import { AllSortOptions, filterAndSortObjects } from '../utils/FilterSortUtils';

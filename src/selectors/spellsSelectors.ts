@@ -1,11 +1,11 @@
 import * as R from 'ramda';
+import { ActivatableDependent, ActivatableSkillDependent } from '../App/Models/Hero/heroTypeHelpers';
 import { CantripCombined, SpellIsActive, SpellWithRequirements } from '../App/Models/View/viewTypeHelpers';
 import { ExperienceLevel, Spell } from '../App/Models/Wiki/wikiTypeHelpers';
 import { createMaybeSelector } from '../App/Utils/createMaybeSelector';
 import { isDecreasable, isIncreasable, isOwnTradition } from '../App/Utils/Increasable/spellUtils';
 import { filterByAvailability } from '../App/Utils/RulesUtils';
 import { mapGetToMaybeSlice } from '../App/Utils/SelectorsUtils';
-import { ActivatableDependent, ActivatableSkillDependent } from '../types/data';
 import { getModifierByActiveLevel } from '../utils/activatable/activatableModifierUtils';
 import { getMagicalTraditions } from '../utils/activatable/traditionUtils';
 import { Just, List, Maybe, OrderedMap, Record, Tuple } from '../utils/dataUtils';

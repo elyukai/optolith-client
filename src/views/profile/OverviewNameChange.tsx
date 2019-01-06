@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { InputKeyEvent, InputTextEvent } from '../../App/Models/Hero/heroTypeHelpers';
 import { IconButton } from '../../components/IconButton';
 import { TextField } from '../../components/TextField';
-import { InputKeyEvent, InputTextEvent } from '../../types/data';
 
 interface Props {
   name: string;

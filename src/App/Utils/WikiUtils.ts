@@ -1,14 +1,13 @@
 import { pipe } from "ramda";
 import { ActivatableCategories, Categories } from "../../constants/Categories";
 import { thrush } from "../../Data/Function";
-import { elem_, filter, fromArray, List } from "../../Data/List";
+import { elemF, filter, fromArray, List } from "../../Data/List";
 import { bindF, fmap, Maybe } from "../../Data/Maybe";
-import { elems, lookup_, OrderedMap, OrderedMapValueElement } from "../../Data/OrderedMap";
+import { elems, lookupF, OrderedMap, OrderedMapValueElement } from "../../Data/OrderedMap";
 import { member, Record } from "../../Data/Record";
 import { show } from "../../Data/Show";
 import { ProfessionCombined } from "../Models/View/ProfessionCombined";
 import { Advantage } from "../Models/Wiki/Advantage";
-import { Attribute } from "../Models/Wiki/Attribute";
 import { Blessing } from "../Models/Wiki/Blessing";
 import { Cantrip } from "../Models/Wiki/Cantrip";
 import { CombatTechnique } from "../Models/Wiki/CombatTechnique";
@@ -16,7 +15,6 @@ import { Culture } from "../Models/Wiki/Culture";
 import { Disadvantage } from "../Models/Wiki/Disadvantage";
 import { ItemTemplate } from "../Models/Wiki/ItemTemplate";
 import { LiturgicalChant } from "../Models/Wiki/LiturgicalChant";
-import { Profession } from "../Models/Wiki/Profession";
 import { Race } from "../Models/Wiki/Race";
 import { Skill } from "../Models/Wiki/Skill";
 import { SpecialAbility } from "../Models/Wiki/SpecialAbility";
@@ -69,7 +67,7 @@ export const getWikiSliceGetterByCategory =
 export const getWikiEntryWithGetter =
   (wiki: WikiModelRecord) =>
   <G extends typeof WikiModel.A[WikiKeyByCategory[Categories]]> (getter: G) =>
-    lookup_ ((getter as (wiki: WikiModelRecord) => OrderedMap<string, Entry>) (wiki)) as
+    lookupF ((getter as (wiki: WikiModelRecord) => OrderedMap<string, Entry>) (wiki)) as
       (id: string) => Maybe<OrderedMapValueElement<ReturnType<G>>>
 
 export const getWikiEntry =
@@ -94,13 +92,13 @@ export const getAllWikiEntriesByGroup =
   <T extends EntryWithGroup = EntryWithGroup>
   (wiki: OrderedMap<string, T>) =>
   (groups: List<number>): List<T> =>
-    filter<T> (pipe (Skill.A.gr, elem_ (groups)))
+    filter<T> (pipe (Skill.A.gr, elemF (groups)))
               (elems (wiki))
 
 export const getAllWikiEntriesByVariadicGroups =
   <T extends EntryWithGroup = EntryWithGroup>
   (wiki: OrderedMap<string, T>, ...groups: number[]): List<T> =>
-    filter<T> (pipe (Skill.A.gr, elem_ (fromArray (groups))))
+    filter<T> (pipe (Skill.A.gr, elemF (fromArray (groups))))
               (elems (wiki))
 
 type ElementMixed =
@@ -131,24 +129,8 @@ export const isItemTemplate =
     && member ("name") (obj)
     && member ("isTemplateLocked") (obj)
 
-export const isAttribute =
-  (obj: Entry): obj is Record<Attribute> =>
-    !isItemTemplate (obj)
-    && Attribute.A.category (obj as Record<Attribute>) === Categories.ATTRIBUTES
-
-export const isProfession =
-  (obj: Entry): obj is Record<Profession> =>
-    !isItemTemplate (obj)
-    && Profession.A.category (obj as Record<Profession>) === Categories.PROFESSIONS
-
-export const isSpecialAbility =
-  (obj: Entry): obj is Record<SpecialAbility> =>
-    !isItemTemplate (obj)
-    && SpecialAbility.A.category (obj as Record<SpecialAbility>)
-      === Categories.SPECIAL_ABILITIES
-
 export const isActivatableWikiObj =
   (obj: Entry): obj is Activatable =>
     !isItemTemplate (obj)
-    && elem_<Categories> (ActivatableCategories)
+    && elemF<Categories> (ActivatableCategories)
                          (SpecialAbility.A.category (obj as Record<SpecialAbility>))

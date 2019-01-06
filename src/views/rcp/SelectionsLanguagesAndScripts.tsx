@@ -1,11 +1,11 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
+import { LanguagesSelectionListItem, ScriptsSelectionListItem } from '../../App/Models/Hero/heroTypeHelpers';
 import { translate, UIMessagesObject } from '../../App/Utils/I18n';
 import { getLevelElements } from '../../App/Utils/levelUtils';
 import { isNumber } from '../../App/Utils/typeCheckUtils';
 import { Checkbox } from '../../components/Checkbox';
 import { Dropdown, DropdownOption } from '../../components/Dropdown';
-import { LanguagesSelectionListItem, ScriptsSelectionListItem } from '../../types/data';
 import { Just, List, Maybe, Nothing, OrderedMap, Record } from '../../utils/dataUtils';
 
 export interface SelectionsLanguagesAndScriptsProps {

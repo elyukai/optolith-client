@@ -1,6 +1,6 @@
 import { AddAlertAction, RemoveAlertAction } from '../actions/AlertActions';
+import { Alert } from '../App/Models/Hero/heroTypeHelpers';
 import { ActionTypes } from '../constants/ActionTypes';
-import { Alert } from '../types/data';
 import { List, Maybe } from '../utils/dataUtils';
 
 type Action = AddAlertAction | RemoveAlertAction;

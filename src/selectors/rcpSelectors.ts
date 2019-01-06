@@ -1,3 +1,4 @@
+import { ActivatableNameCostActive, ActiveObjectWithId } from '../App/Models/Hero/heroTypeHelpers';
 import { CultureCombined, IncreasableView, MappedProfession, MappedProfessionVariant, ProfessionCombined, ProfessionVariantCombined, RaceCombined } from '../App/Models/View/viewTypeHelpers';
 import { Culture, IncreaseSkill, Profession, ProfessionVariant, Race, RaceVariant } from '../App/Models/Wiki/wikiTypeHelpers';
 import { createMaybeSelector } from '../App/Utils/createMaybeSelector';
@@ -6,7 +7,6 @@ import { getFullProfessionName } from '../App/Utils/rcpUtils';
 import { filterByAvailability, isEntryFromCoreBook } from '../App/Utils/RulesUtils';
 import { isCombatTechniquesSelection } from '../App/Utils/WikiUtils';
 import { Categories } from '../constants/Categories';
-import { ActivatableNameCostActive, ActiveObjectWithId } from '../types/data';
 import { getNameCostForWiki } from '../utils/activatable/activatableActiveUtils';
 import { convertPerTierCostToFinalCost } from '../utils/adventurePoints/activatableCostUtils';
 import { Just, List, ListElement, Maybe, OrderedMap, OrderedSet, Record } from '../utils/dataUtils';

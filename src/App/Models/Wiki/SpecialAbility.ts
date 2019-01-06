@@ -2,7 +2,7 @@ import { Categories } from "../../../constants/Categories";
 import { List } from "../../../Data/List";
 import { Maybe, Nothing } from "../../../Data/Maybe";
 import { OrderedMap } from "../../../Data/OrderedMap";
-import { fromDefault } from "../../../Data/Record";
+import { fromDefault, Record } from "../../../Data/Record";
 import { ActivatableBase, EntryWithCategory } from "./wikiTypeHelpers";
 
 export interface SpecialAbility extends ActivatableBase {
@@ -60,4 +60,5 @@ export const SpecialAbility =
   })
 
 export const isSpecialAbility =
-  (r: EntryWithCategory) => SpecialAbility.A.category (r) === Categories.SPECIAL_ABILITIES
+  (r: EntryWithCategory): r is Record<SpecialAbility> =>
+    SpecialAbility.A.category (r) === Categories.SPECIAL_ABILITIES

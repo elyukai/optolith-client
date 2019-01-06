@@ -6,7 +6,6 @@ import { elem, fromNullable, Maybe } from "../../../Data/Maybe";
 import { foldlWithKey, OrderedMap } from "../../../Data/OrderedMap";
 import { insert, OrderedSet } from "../../../Data/OrderedSet";
 import { Record, StringKeyObject } from "../../../Data/Record";
-import * as Data from "../../../types/data";
 import * as Raw from "../../../types/rawdata";
 import { ActivatableDependent, createActivatableDependentWithActive } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent, createActivatableSkillDependentWithValue } from "../../Models/ActiveEntries/ActivatableSkillDependent";
@@ -16,6 +15,7 @@ import { createSkillDependentWithValue, SkillDependent } from "../../Models/Acti
 import { Belongings } from "../../Models/Hero/Belongings";
 import { Energies } from "../../Models/Hero/Energies";
 import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
+import * as Data from "../../Models/Hero/heroTypeHelpers";
 import { HitZoneArmor } from "../../Models/Hero/HitZoneArmor";
 import { Item } from "../../Models/Hero/Item";
 import { PermanentEnergyLoss } from "../../Models/Hero/PermanentEnergyLoss";
@@ -26,9 +26,9 @@ import { Purse } from "../../Models/Hero/Purse";
 import { Rules } from "../../Models/Hero/Rules";
 import { PrimaryAttributeDamageThreshold } from "../../Models/Wiki/sub/PrimaryAttributeDamageThreshold";
 import { WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import { getCombinedPrerequisites } from "../Activatable/activatableActivationUtils";
-import { getActiveFromState } from "../Activatable/activatableConvertUtils";
-import { addAllStyleRelatedDependencies } from "../Activatable/ExtendedStyleUtils";
+import { getCombinedPrerequisites } from "../A/Activatable/activatableActivationUtils";
+import { getActiveFromState } from "../A/Activatable/activatableConvertUtils";
+import { addAllStyleRelatedDependencies } from "../A/Activatable/ExtendedStyleUtils";
 import { addDependencies } from "../Dependencies/dependencyUtils";
 import { getCategoryById } from "../IDUtils";
 

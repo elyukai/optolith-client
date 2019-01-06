@@ -277,11 +277,11 @@ test ('lookup', () => {
     .toEqual (Nothing)
 })
 
-test ('lookup_', () => {
-  expect (OrderedMap.lookup_ (fromArray ([[1, 'a'], [2, 'b'], [3, 'c']])) (2))
+test ('lookupF', () => {
+  expect (OrderedMap.lookupF (fromArray ([[1, 'a'], [2, 'b'], [3, 'c']])) (2))
     .toEqual (Just ('b'))
 
-  expect (OrderedMap.lookup_ (fromArray ([[1, 'a'], [2, 'b'], [3, 'c']])) (5))
+  expect (OrderedMap.lookupF (fromArray ([[1, 'a'], [2, 'b'], [3, 'c']])) (5))
     .toEqual (Nothing)
 })
 

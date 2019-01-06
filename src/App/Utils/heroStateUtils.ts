@@ -2,15 +2,16 @@ import { pipe } from "ramda";
 import { IdPrefixes } from "../../constants/IdPrefixes";
 import { cnst } from "../../Data/Function";
 import { Lens, over, view } from "../../Data/Lens";
-import { elem_, filter, fromArray, List } from "../../Data/List";
-import { bindF, ensure, fmap, fromMaybe, Just, liftM2, Maybe, Nothing, or } from "../../Data/Maybe";
-import { alter, elems, insert, lookup, lookup_, OrderedMap, sdelete, update } from "../../Data/OrderedMap";
-import { Dependent } from "../../types/data";
+import { elemF, filter, fromArray, List } from "../../Data/List";
+import { bindF, ensure, fmap, fromMaybe, Just, liftM2, mapMaybe, Maybe, Nothing, or } from "../../Data/Maybe";
+import { alter, elems, insert, lookup, lookupF, OrderedMap, sdelete, update } from "../../Data/OrderedMap";
+import { Record, RecordBase } from "../../Data/Record";
 import { createPlainActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
 import { createInactiveActivatableSkillDependent } from "../Models/ActiveEntries/ActivatableSkillDependent";
 import { AttributeDependent, createPlainAttributeDependent } from "../Models/ActiveEntries/AttributeDependent";
 import { createPlainSkillDependent, createSkillDependentWithValue6 } from "../Models/ActiveEntries/SkillDependent";
 import { HeroModel, HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel";
+import { Dependent } from "../Models/Hero/heroTypeHelpers";
 import { Skill } from "../Models/Wiki/Skill";
 import { EntryWithGroup } from "../Models/Wiki/wikiTypeHelpers";
 import { getIdPrefix } from "./IDUtils";
@@ -311,9 +312,24 @@ export const getAllEntriesByGroup =
   (...groups: number[]): List<I> =>
     filter<I> (pipe (
                 AttributeDependent.A.id,
-                lookup_ (wiki),
+                lookupF (wiki),
                 fmap (Skill.A.gr),
-                fmap (elem_ (fromArray (groups))),
+                fmap (elemF (fromArray (groups))),
                 or
               ))
               (elems (list))
+
+interface RecordBaseWithId extends RecordBase {
+  id: string
+}
+
+/**
+ * `mapListByIdKeyMap map xs` takes a map of records with an `id` property that
+ * is identical to its key and a list containing records with an `id` property
+ * and maps the records from the list by the `id` property to the records with
+ * matching keys in the map.
+ */
+export const mapListByIdKeyMap =
+  <A extends RecordBaseWithId>
+  (map: OrderedMap<string, Record<A>>) =>
+    mapMaybe<Record<RecordBaseWithId>, Record<A>> (pipe (Skill.A.id, lookupF (map)))

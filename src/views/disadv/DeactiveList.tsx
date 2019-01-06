@@ -1,6 +1,6 @@
 import * as React from 'react';
+import { ActivateArgs, ActiveViewObject, DeactiveViewObject, EntryRating, UIMessagesObject } from '../../App/Models/Hero/heroTypeHelpers';
 import { ActivatableAddList } from '../../components/ActivatableAddList';
-import { ActivateArgs, ActiveViewObject, DeactiveViewObject, EntryRating, UIMessagesObject } from '../../types/data';
 import { List, Maybe, OrderedMap, Record } from '../../utils/dataUtils';
 
 export interface InactiveListProps {

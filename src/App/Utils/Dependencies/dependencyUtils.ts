@@ -3,11 +3,11 @@ import { Categories } from "../../../constants/Categories";
 import { notEquals } from "../../../Data/Eq";
 import { flip, ident, join, thrush } from "../../../Data/Function";
 import { foldr, isList } from "../../../Data/List";
-import { elem_, fmap, fromMaybe, isNothing, Just, Nothing } from "../../../Data/Maybe";
+import { elemF, fmap, fromMaybe, isNothing, Just, Nothing } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
-import { ActivatableDependency, ExtendedSkillDependency, SkillDependency } from "../../../types/data";
 import { DependencyObject } from "../../Models/ActiveEntries/DependencyObject";
 import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
+import { ActivatableDependency, ExtendedSkillDependency, SkillDependency } from "../../Models/Hero/heroTypeHelpers";
 import { SkillOptionalDependency } from "../../Models/Hero/SkillOptionalDependency";
 import { isRequiringActivatable, RequireActivatable } from "../../Models/Wiki/prerequisites/ActivatableRequirement";
 import { isDependentPrerequisite } from "../../Models/Wiki/prerequisites/DependentRequirement";
@@ -98,7 +98,7 @@ const getMatchingIncreasableModifier =
   (g: ModifySkillDependency) =>
   (h: ModifyActivatableSkillDependency) =>
   (id: string): ModifySkillDependency => {
-    const isOfCategory = elem_ (getCategoryById (id))
+    const isOfCategory = elemF (getCategoryById (id))
 
     if (isOfCategory (Categories.ATTRIBUTES)) {
       return f

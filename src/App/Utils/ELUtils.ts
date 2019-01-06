@@ -1,7 +1,7 @@
 import { pipe } from "ramda";
 import { IdPrefixes } from "../../constants/IdPrefixes";
 import { and, fmap } from "../../Data/Maybe";
-import { foldlWithKey, lookup_, OrderedMap } from "../../Data/OrderedMap";
+import { foldlWithKey, lookupF, OrderedMap } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
 import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel";
 import { getNumericId, prefixId } from "./IDUtils";
@@ -17,7 +17,7 @@ export const getExperienceLevelIdByAp =
   (current_ap: number) =>
     foldlWithKey<string, Record<ExperienceLevel>, string>
       (result => id => el => {
-          const prev = lookup_ (experience_levels) (result)
+          const prev = lookupF (experience_levels) (result)
 
           const threshold = ap (el)
 

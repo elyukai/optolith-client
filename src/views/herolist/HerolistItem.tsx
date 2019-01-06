@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Hero, User } from '../../App/Models/Hero/heroTypeHelpers';
 import { Culture, Race, RaceVariant, WikiAll } from '../../App/Models/Wiki/wikiTypeHelpers';
 import { translate, UIMessagesObject } from '../../App/Utils/I18n';
 import { getFullProfessionName } from '../../App/Utils/rcpUtils';
@@ -10,7 +11,6 @@ import { ListItemButtons } from '../../components/ListItemButtons';
 import { ListItemName } from '../../components/ListItemName';
 import { ListItemSeparator } from '../../components/ListItemSeparator';
 import { VerticalList } from '../../components/VerticalList';
-import { Hero, User } from '../../types/data';
 import { getAPObject } from '../../utils/adventurePoints/adventurePointsSumUtils';
 import { Maybe, OrderedMap, OrderedSet, Record } from '../../utils/dataUtils';
 

@@ -1,9 +1,9 @@
 import * as React from 'react';
+import { ItemEditorInstance } from '../../App/Models/Hero/heroTypeHelpers';
 import { Attribute, CombatTechnique, ItemTemplate } from '../../App/Models/Wiki/wikiTypeHelpers';
 import { translate, UIMessagesObject } from '../../App/Utils/I18n';
 import { validateItemEditorInput } from '../../App/Utils/ItemUtils';
 import { Dialog } from '../../components/DialogNew';
-import { ItemEditorInstance } from '../../types/data';
 import { List, Maybe, OrderedMap, Record } from '../../utils/dataUtils';
 import { ItemEditorArmorSection } from './ItemEditorArmorSection';
 import { ItemEditorCommonSection } from './ItemEditorCommonSection';

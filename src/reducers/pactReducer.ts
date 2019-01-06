@@ -1,6 +1,6 @@
 import * as PactActions from '../actions/PactActions';
+import * as Data from '../App/Models/Hero/heroTypeHelpers';
 import { ActionTypes } from '../constants/ActionTypes';
-import * as Data from '../types/data';
 import { Maybe, Record } from '../utils/dataUtils';
 
 type Action =

@@ -1,9 +1,9 @@
 import * as DisAdvActions from '../actions/DisAdvActions';
 import * as SpecialAbilitiesActions from '../actions/SpecialAbilitiesActions';
+import * as Data from '../App/Models/Hero/heroTypeHelpers';
 import { getHeroStateItem } from '../App/Utils/heroStateUtils';
 import * as IncreasableUtils from '../App/Utils/Increasable/increasableUtils';
 import { ActionTypes } from '../constants/ActionTypes';
-import * as Data from '../types/data';
 import { activate, deactivate, setTier } from '../utils/activatable/activatableActivationUtils';
 import * as ExtendedStyleUtils from '../utils/activatable/ExtendedStyleUtils';
 import { Maybe, Record } from '../utils/dataUtils';

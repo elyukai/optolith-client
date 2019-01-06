@@ -1,6 +1,6 @@
+import { Pact } from '../App/Models/Hero/heroTypeHelpers';
 import { AllRequirements } from '../App/Models/Wiki/wikiTypeHelpers';
 import { createMaybeSelector } from '../App/Utils/createMaybeSelector';
-import { Pact } from '../types/data';
 import { isPactValid } from '../utils/activatable/pactUtils';
 import { Just, List, Maybe, Record } from '../utils/dataUtils';
 import { isPactRequirement } from '../utils/wikiData/prerequisites/DependentRequirement';

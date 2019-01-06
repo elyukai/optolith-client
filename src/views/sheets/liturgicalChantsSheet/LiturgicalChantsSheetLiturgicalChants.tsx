@@ -1,11 +1,11 @@
 import * as R from 'ramda';
 import * as React from 'react';
 import { Textfit } from 'react-textfit';
+import { SecondaryAttribute } from '../../../App/Models/Hero/heroTypeHelpers';
 import { AttributeCombined, LiturgicalChantWithRequirements } from '../../../App/Models/View/viewTypeHelpers';
 import { translate, UIMessagesObject } from '../../../App/Utils/I18n';
 import { getAttributeStringByIdList } from '../../../App/Utils/sheetUtils';
 import { TextBox } from '../../../components/TextBox';
-import { SecondaryAttribute } from '../../../types/data';
 import { getICName } from '../../../utils/adventurePoints/improvementCostUtils';
 import { Just, List, Maybe, Nothing, Record, Tuple } from '../../../utils/dataUtils';
 import { sortStrings } from '../../../utils/FilterSortUtils';

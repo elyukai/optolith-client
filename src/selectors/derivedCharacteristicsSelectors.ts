@@ -1,10 +1,10 @@
 import * as R from 'ramda';
+import { Energy, EnergyWithLoss, SecondaryAttribute } from '../App/Models/Hero/heroTypeHelpers';
 import { createMaybeSelector } from '../App/Utils/createMaybeSelector';
 import { translate } from '../App/Utils/I18n';
 import { getAttributeValueWithDefault } from '../App/Utils/Increasable/attributeUtils';
 import { isBookEnabled } from '../App/Utils/RulesUtils';
 import { mapGetToMaybeSlice } from '../App/Utils/SelectorsUtils';
-import { Energy, EnergyWithLoss, SecondaryAttribute } from '../types/data';
 import { getModifierByActiveLevel, getModifierByIsActive } from '../utils/activatable/activatableModifierUtils';
 import { getActiveSelections } from '../utils/activatable/selectionUtils';
 import { Just, List, Maybe, OrderedMap, OrderedSet, Record, Tuple } from '../utils/dataUtils';

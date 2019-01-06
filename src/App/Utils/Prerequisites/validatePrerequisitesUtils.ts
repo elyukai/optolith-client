@@ -4,13 +4,12 @@ import { equals } from "../../../Data/Eq";
 import { flip, join, on, thrush } from "../../../Data/Function";
 import { compare } from "../../../Data/Int";
 import { set } from "../../../Data/Lens";
-import { all, any, concat, elem, elem_, foldl, fromElements, ifoldl, isList, List, map, sortBy, subscript } from "../../../Data/List";
+import { all, any, concat, elem, elemF, foldl, fromElements, ifoldl, isList, List, map, sortBy, subscript } from "../../../Data/List";
 import { and, bindF, catMaybes, ensure, fmap, fromJust, isJust, isNothing, Just, Maybe, maybe, maybeToList, Nothing, or } from "../../../Data/Maybe";
 import { Ordering } from "../../../Data/Ord";
-import { lookup_, OrderedMap, toList } from "../../../Data/OrderedMap";
+import { lookupF, OrderedMap, toList } from "../../../Data/OrderedMap";
 import { fst, Pair, snd } from "../../../Data/Pair";
 import { Record } from "../../../Data/Record";
-import * as Data from "../../../types/data";
 import { ActivatableDependent, isActivatableDependent, isMaybeActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent, isMaybeActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
@@ -18,6 +17,7 @@ import { AttributeDependent } from "../../Models/ActiveEntries/AttributeDependen
 import { DependencyObject } from "../../Models/ActiveEntries/DependencyObject";
 import { isExtendedSkillDependent, SkillDependent } from "../../Models/ActiveEntries/SkillDependent";
 import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
+import * as Data from "../../Models/Hero/heroTypeHelpers";
 import { Pact } from "../../Models/Hero/Pact";
 import { Culture } from "../../Models/Wiki/Culture";
 import { RequireActivatable, RequireActivatableL } from "../../Models/Wiki/prerequisites/ActivatableRequirement";
@@ -32,9 +32,9 @@ import { Race } from "../../Models/Wiki/Race";
 import { Skill } from "../../Models/Wiki/Skill";
 import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import * as Wiki from "../../Models/Wiki/wikiTypeHelpers";
-import { isActive } from "../activatable/isActive";
-import { isPactValid as isPactFromStateValid } from "../activatable/pactUtils";
-import { getActiveSelections } from "../activatable/selectionUtils";
+import { isActive } from "../A/Activatable/isActive";
+import { isPactFromStateValid } from "../A/Activatable/pactUtils";
+import { getActiveSelections } from "../A/Activatable/selectionUtils";
 import { getHeroStateItem } from "../heroStateUtils";
 import { prefixId } from "../IDUtils";
 import { dec, gte, lt, lte, min } from "../mathUtils";
@@ -54,7 +54,7 @@ const getAllRaceEntries =
   (wiki: WikiModelRecord) =>
     pipe (
       race,
-      bindF (lookup_ (races (wiki))),
+      bindF (lookupF (races (wiki))),
       fmap (
         selectedRace => concat (
           fromElements (
@@ -73,7 +73,7 @@ const getAllCultureEntries =
   (wiki: WikiModelRecord) =>
     pipe (
       culture,
-      bindF (lookup_ (cultures (wiki))),
+      bindF (lookupF (cultures (wiki))),
       fmap (
         selectedCulture => concat (
           fromElements (
@@ -88,7 +88,7 @@ const getAllProfessionEntries =
   (wiki: WikiModelRecord) =>
     pipe (
       profession,
-      bindF (lookup_ (professions (wiki))),
+      bindF (lookupF (professions (wiki))),
       fmap (
         selectedProfession => concat (
           fromElements (
@@ -206,7 +206,7 @@ const isPactValid =
 const isPrimaryAttributeValid =
   (state: HeroModelRecord) => (req: Record<RequirePrimaryAttribute>): boolean =>
     or (fmap (pipe (
-               lookup_ (attributes (state)),
+               lookupF (attributes (state)),
                fmap (AttributeDependent.A.value),
                Maybe.elem (RequirePrimaryAttribute.A.value (req))
              ))
@@ -247,7 +247,7 @@ const isOneOfListActiveSelection =
   (req: Record<RequireActivatable>) =>
   (sid: List<number>): boolean =>
     Maybe.elem (RequireActivatable.A.active (req))
-               (fmap<List<string | number>, boolean> (pipe (List.elem_, any, thrush (sid)))
+               (fmap<List<string | number>, boolean> (pipe (List.elemF, any, thrush (sid)))
                                                      (activeSelections))
 
 /**
@@ -317,7 +317,7 @@ const isActivatableValid =
                                          RequireActivatable.A.sid2 (req) as Maybe<number>
                                        )))
 
-                               return fmap (all (pipe (elem_<string | number> (arr), not)))
+                               return fmap (all (pipe (elemF<string | number> (arr), not)))
                                            (getActiveSelections (Just (target)))
                              })
                          )

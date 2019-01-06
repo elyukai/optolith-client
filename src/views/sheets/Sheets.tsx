@@ -1,10 +1,10 @@
 import * as React from 'react';
+import * as Data from '../../App/Models/Hero/heroTypeHelpers';
 import * as View from '../../App/Models/View/viewTypeHelpers';
 import * as Wiki from '../../App/Models/Wiki/wikiTypeHelpers';
 import { Page } from '../../components/Page';
 import { Scroll } from '../../components/Scroll';
 import { AdventurePointsObject } from '../../selectors/adventurePointsSelectors';
-import * as Data from '../../types/data';
 import { UIMessagesObject } from '../../types/ui';
 import { Just, List, Maybe, Record } from '../../utils/dataUtils';
 import { BelongingsSheet } from './belongingsSheet/BelongingsSheet';

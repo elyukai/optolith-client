@@ -2,6 +2,7 @@ import { connect } from 'react-redux';
 import { Action, Dispatch } from 'redux';
 import * as ProfileActions from '../actions/ProfileActions';
 import * as SubwindowsActions from '../actions/SubwindowsActions';
+import { InputTextEvent } from '../App/Models/Hero/heroTypeHelpers';
 import { AppState } from '../reducers/appReducer';
 import { getAdvantagesForSheet, getDisadvantagesForSheet, isAlbino } from '../selectors/activatableSelectors';
 import { getAvailableAdventurePoints } from '../selectors/adventurePointsSelectors';
@@ -10,7 +11,6 @@ import { getIsRemovingEnabled } from '../selectors/phaseSelectors';
 import { getCurrentCulture, getCurrentFullProfessionName, getCurrentProfession, getCurrentProfessionVariant, getCurrentRace, getCurrentRaceVariant } from '../selectors/rcpSelectors';
 import { getAvatar, getCurrentHeroName, getCustomProfessionName, getIsAddAdventurePointsOpen, getIsEditCharacterAvatarOpen, getPhase, getProfile, getSex, getTotalAdventurePoints } from '../selectors/stateSelectors';
 import { getIsEditingHeroAfterCreationPhaseEnabled } from '../selectors/uisettingsSelectors';
-import { InputTextEvent } from '../types/data';
 import { Maybe, Nothing } from '../utils/dataUtils';
 import { PersonalData, PersonalDataDispatchProps, PersonalDataOwnProps, PersonalDataStateProps } from '../views/profile/PersonalData';
 

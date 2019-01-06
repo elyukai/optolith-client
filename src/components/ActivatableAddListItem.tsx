@@ -1,9 +1,9 @@
 import classNames = require('classnames');
 import * as React from 'react';
+import { ActivateArgs, DeactiveViewObject, HeroDependent, InputTextEvent } from '../App/Models/Hero/heroTypeHelpers';
 import { WikiAll } from '../App/Models/Wiki/wikiTypeHelpers';
 import { translate, UIMessagesObject } from '../App/Utils/I18n';
 import { isInteger } from '../App/Utils/RegexUtils';
-import { ActivateArgs, DeactiveViewObject, HeroDependent, InputTextEvent } from '../types/data';
 import { getIdSpecificAffectedAndDispatchProps, getInactiveActivatableControlElements, insertFinalCurrentCost } from '../utils/activatable/activatableInactiveViewUtils';
 import { Maybe, Record, Tuple } from '../utils/dataUtils';
 import { Dialog } from './DialogNew';

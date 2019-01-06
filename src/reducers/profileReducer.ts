@@ -1,7 +1,7 @@
 import * as DisAdvActions from '../actions/DisAdvActions';
 import * as ProfileActions from '../actions/ProfileActions';
+import * as Data from '../App/Models/Hero/heroTypeHelpers';
 import { ActionTypes } from '../constants/ActionTypes';
-import * as Data from '../types/data';
 import { Record } from '../utils/dataUtils';
 
 type Action =
