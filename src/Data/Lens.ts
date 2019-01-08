@@ -7,8 +7,8 @@
  */
 
 import { pipe } from "ramda";
-import * as Const from "./Const";
-import * as Identity from "./Identity";
+import { Identity } from "../Control/Monad/Identity";
+import { Const } from "./Functor/Const";
 
 /**
  * `Lens a b = Functor f => (b -> f b) -> a -> f a`
@@ -38,13 +38,13 @@ export const lens =
  * `view :: Lens a b -> a -> b`
  */
 export const view = <A, B> (l: Lens<A, B>) => (m: A): B =>
-  Const.getConst (l (Const.fmap) (Const.Const) (m))
+  Const.getConst (l (Const.fmap) (Const.pure) (m))
 
 /**
  * `over :: Lens a b -> (b -> b) -> a -> a`
  */
 export const over = <A, B> (l: Lens<A, B>) => (f: (x: B) => B) => (m: A): A =>
-  Identity.runIdentity (l (Identity.fmap) (pipe (f, Identity.Identity)) (m))
+  Identity.runIdentity (l (Identity.fmap) (pipe (f, Identity.pure)) (m))
 
 /**
  * `set :: Lens a b -> b -> a -> a`

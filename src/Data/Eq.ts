@@ -1,5 +1,5 @@
 /**
- * @module Eq
+ * @module Data.Eq
  *
  * @author Lukas Obermann
  */
@@ -34,7 +34,9 @@ export const equals =
     }
 
     if (isEither (x1)) {
-      return isEither (x2) && isRight (x1) === isRight (x2) && equals (x1 .value) (x2 .value)
+      return isEither (x2)
+        && isRight (x1) === isRight (x2)
+        && equals (x1 .value) (x2 .value)
     }
 
     if (isList (x1)) {
@@ -89,12 +91,15 @@ export const equals =
     if (isRecord (x1)) {
       if (isRecord (x2)) {
         return OrderedSet.size (x1 .keys) === OrderedSet.size (x2 .keys)
-          && OrderedSet.all (key => OrderedSet.member (key) (x2 .keys)
-                              && equals (getRecordField<typeof x1["defaultValues"]> (key as string)
-                                                                                    (x1))
-                                        (getRecordField<typeof x2["defaultValues"]> (key as string)
-                                                                                    (x2)))
-                            (x1 .keys)
+          && OrderedSet.all
+            (key => OrderedSet.member (key) (x2 .keys)
+              && equals (getRecordField<typeof x1["defaultValues"]>
+                          (key as string)
+                          (x1))
+                        (getRecordField<typeof x2["defaultValues"]>
+                          (key as string)
+                          (x2)))
+            (x1 .keys)
       }
 
       return false
@@ -159,4 +164,12 @@ const getRecordField = <A> (key: keyof A) => (r: Record<A>) => {
   }
 
   throw new TypeError (`Key ${show (key)} is not in Record ${show (r)}!`)
+}
+
+
+// NAMESPACED FUNCTIONS
+
+export const Eq = {
+  equals,
+  notEquals,
 }

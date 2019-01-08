@@ -1,9 +1,8 @@
-const React = require('react')
 const List = require('../List')
 const { Pair } = require('../Pair')
 const Either = require('../Either')
 const { Just, Nothing } = require('../Maybe')
-const { add } = require('../../mathUtils')
+const { add } = require('../../App/Utils/mathUtils')
 const { Left, Right } = require('../Either')
 
 // CONSTRUCTORS
@@ -18,57 +17,6 @@ test ('Left', () => {
   expect (Left (3) .value) .toEqual (3)
   expect (Left (3) .isRight) .toEqual (false)
   expect (Left (3) .isLeft) .toEqual (true)
-})
-
-// EITHER.EXTRA
-
-test ('fromLeft', () => {
-  expect (Either.fromLeft (0) (Left (3)))
-    .toEqual (3)
-  expect (Either.fromLeft (0) (Right (3)))
-    .toEqual (0)
-})
-
-test ('fromRight', () => {
-  expect (Either.fromRight (0) (Right (3)))
-    .toEqual (3)
-  expect (Either.fromRight (0) (Left (3)))
-    .toEqual (0)
-})
-
-test ('fromEither', () => {
-  expect (Either.fromEither (Right (3)))
-    .toEqual (3)
-  expect (Either.fromEither (Left (0)))
-    .toEqual (0)
-})
-
-test ('fromLeft_', () => {
-  expect (Either.fromLeft_ (Left (3)))
-    .toEqual (3)
-  expect (() => Either.fromLeft_ (Right (3)))
-    .toThrow ()
-})
-
-test ('fromRight_', () => {
-  expect (Either.fromRight_ (Right (3)))
-    .toEqual (3)
-  expect (() => Either.fromRight_ (Left (3)))
-    .toThrow ()
-})
-
-test ('eitherToMaybe', () => {
-  expect (Either.eitherToMaybe (Left (3)))
-    .toEqual (Nothing)
-  expect (Either.eitherToMaybe (Right (3)))
-    .toEqual (Just (3))
-})
-
-test ('maybeToEither', () => {
-  expect (Either.maybeToEither ('test') (Just (3)))
-    .toEqual (Right (3))
-  expect (Either.maybeToEither ('test') (Nothing))
-    .toEqual (Left ('test'))
 })
 
 // FUNCTOR
@@ -141,14 +89,14 @@ test ('bind', () => {
     .toEqual (Left (4))
 })
 
-test ('bind_', () => {
-  expect (Either.bind_ (x => Right (x * 2))
+test ('bindF', () => {
+  expect (Either.bindF (x => Right (x * 2))
                        (Left (3)))
     .toEqual (Left (3))
-  expect (Either.bind_ (x => Right (x * 2))
+  expect (Either.bindF (x => Right (x * 2))
                        (Right (2)))
     .toEqual (Right (4))
-  expect (Either.bind_ (x => Left (x * 2))
+  expect (Either.bindF (x => Left (x * 2))
                        (Right (2)))
     .toEqual (Left (4))
 })
@@ -162,10 +110,6 @@ test ('then', () => {
     .toEqual (Left ('b'))
   expect (Either.then (Left ('a')) (Left ('b')))
     .toEqual (Left ('a'))
-})
-
-test ('mreturn', () => {
-  expect (Either.mreturn (2)) .toEqual (Right (2))
 })
 
 test ('kleisli', () => {
@@ -238,12 +182,12 @@ test ('elem', () => {
     .toBeTruthy ()
 })
 
-test ('elem_', () => {
-  expect (Either.elem_ (Left ('a')) (3))
+test ('elemF', () => {
+  expect (Either.elemF (Left ('a')) (3))
     .toBeFalsy ()
-  expect (Either.elem_ (Right (2)) (3))
+  expect (Either.elemF (Right (2)) (3))
     .toBeFalsy ()
-  expect (Either.elem_ (Right (3)) (3))
+  expect (Either.elemF (Right (3)) (3))
     .toBeTruthy ()
 })
 

@@ -1,5 +1,5 @@
 /**
- * @module Ord
+ * @module Data.Ord
  *
  * The `Ord` class is used for totally ordered datatypes.
  *
@@ -25,7 +25,10 @@ export const invertOrdering =
   (x: Ordering): Ordering => x === LT ? GT : x === GT ? LT : EQ
 
 export const reverseCompare =
-  <A> (f: (x: A) => (y: A) => Ordering) => (x: A) => pipe (f (x), invertOrdering)
+  <A>
+  (f: (x: A) => (y: A) => Ordering) =>
+  (x: A) =>
+    pipe (f (x), invertOrdering)
 
 /**
  * Convert a native ordering returned from a native compare function (e.g.

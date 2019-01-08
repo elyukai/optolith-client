@@ -1,5 +1,5 @@
 const Identity = require ('../Identity')
-const { add } = require ('../../mathUtils')
+const { add } = require ('../../../App/Utils/mathUtils')
 
 // CONSTRUCTORS
 

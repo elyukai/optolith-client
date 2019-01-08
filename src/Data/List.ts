@@ -1,5 +1,5 @@
 /**
- * @module List
+ * @module Data.List
  *
  * A list (`[a]`) is a simple flat data structure for values of the same type.
  *
@@ -11,7 +11,7 @@ import { add, max, min, multiply } from "../App/Utils/mathUtils";
 import { not } from "../App/Utils/not";
 import { equals } from "./Eq";
 import { cnst, ident } from "./Function";
-import { fromJust, imapMaybe, isJust, Just, Maybe, maybe, Nothing, Some } from "./Maybe";
+import { fromJust, imapMaybe, isJust, Just, Maybe, maybe, Nothing } from "./Maybe";
 import { isLTorEQ, Ordering } from "./Ord";
 import { fromBinary, fromBoth, fst, Pair, snd } from "./Pair";
 import { show } from "./Show";
@@ -32,21 +32,27 @@ type MaybeNode<A> = Node<A> | undefined
 
 export interface List<A> extends ListPrototype<A> {
   readonly head: MaybeNode<A>
-  readonly prototype: ListPrototype<A>
 }
 
 export interface NonEmptyList<A> extends List<A> {
   readonly head: Node<A>
 }
 
-const ListPrototype: ListPrototype<Some> =
-  Object.freeze<ListPrototype<Some>> ({
+const ListPrototype =
+  Object.freeze<ListPrototype<any>> ({
     isList: true,
   })
 
 const _List =
   <A> (xs: MaybeNode<A>): List<A> =>
-    Object.create (ListPrototype, { head: { value: xs, enumerable: true }})
+    Object.create (
+      ListPrototype, {
+        head: {
+          value: xs,
+          enumerable: true,
+        },
+      }
+    )
 
 /**
  * `fromArray :: Array a -> [a]`
@@ -223,14 +229,6 @@ export const bindF =
 export const then =
   <A> (xs1: List<any>) => (xs2: List<A>): List<A> =>
     bind<any, A> (xs1) (_ => xs2)
-
-
-/**
- * `return :: a -> [a]`
- *
- * Inject a value into a list.
- */
-export const mreturn = <A> (x: A) => _List (toNode (x))
 
 /**
  * `(>=>) :: (a -> [b]) -> (b -> [c]) -> a -> [c]`
@@ -1418,7 +1416,10 @@ const modifyAtNode =
  * returned.
  */
 export const updateAt =
-  <A> (index: number) => (f: (old_value: A) => Maybe<A>) => (xs: List<A>): List<A> =>
+  <A>
+  (index: number) =>
+  (f: (old_value: A) => Maybe<A>) =>
+  (xs: List<A>): List<A> =>
     _List (updateAtNode<A> (index) (f) (xs .head))
 
 const updateAtNode =
@@ -1903,7 +1904,8 @@ const unsafeIndexNode =
 
     if (index < 0) {
       throw new Error (
-        `List.unsafeIndex: Negative index provided to index_ (${index}).`
+        `List.unsafeIndex: Negative index provided to `
+        + `unsafeIndexNode (${index}).`
       )
     }
 
@@ -1930,7 +1932,8 @@ const listToArrayNode =
  * @param x The value to test.
  */
 export const isList =
-  (x: any): x is List<any> => typeof x === "object" && x !== null && x.isList
+  (x: any): x is List<any> =>
+    Object.getPrototypeOf (x) === ListPrototype
 
 /**
  * Returns the sum of all elements of the list that match the provided
@@ -1956,8 +1959,12 @@ const buildNodexFromArrayWithLastIndex =
     index < 0
     ? h
     : h !== undefined
-    ? buildNodexFromArrayWithLastIndex (arr) (index - 1) ({ value: arr[index], next: h })
-    : buildNodexFromArrayWithLastIndex (arr) (index - 1) ({ value: arr[index] })
+    ? buildNodexFromArrayWithLastIndex (arr)
+                                       (index - 1)
+                                       ({ value: arr[index], next: h })
+    : buildNodexFromArrayWithLastIndex (arr)
+                                       (index - 1)
+                                       ({ value: arr[index] })
 
 const toNode = <A> (x: A): Node<A> => ({ value: x })
 
@@ -1992,7 +1999,6 @@ export const List = {
   bind,
   bindF,
   then,
-  mreturn,
   kleisli,
   join,
 

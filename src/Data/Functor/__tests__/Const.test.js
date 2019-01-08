@@ -1,5 +1,5 @@
 const Const = require ('../Const');
-const { add } = require ('../../mathUtils');
+const { add } = require ('../../../App/Utils/mathUtils');
 
 // CONSTRUCTORS
 

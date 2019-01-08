@@ -1,5 +1,5 @@
 /**
- * @module Pair
+ * @module Data.Pair
  *
  * A pair (`(a, b)`) is a simple flat data structure for lists of values of
  * different types but constant length.
@@ -8,7 +8,6 @@
  */
 
 import { cnst } from "./Function";
-import { Some } from "./Maybe";
 
 
 // CONSTRUCTOR
@@ -17,17 +16,16 @@ interface PairPrototype<A> {
   readonly isPair: true
 }
 
-export interface Pair<A extends Some, B extends Some> extends PairPrototype<A> {
+export interface Pair<A, B> extends PairPrototype<A> {
   readonly first: A
   readonly second: B
   readonly prototype: PairPrototype<A>
 }
 
-const PairPrototype: PairPrototype<Some> =
-  Object.create (
-    Object.prototype,
-    { isPair: { value: true }}
-  )
+const PairPrototype =
+  Object.freeze<PairPrototype<any>> ({
+    isPair: true,
+  })
 
 /**
  * `fromBoth :: a -> b -> (a, b)`
@@ -35,12 +33,18 @@ const PairPrototype: PairPrototype<Some> =
  * Creates a new `Pair` instance from the passed arguments.
  */
 export const fromBoth =
-  <A extends Some, B extends Some> (firstValue: A) => (secondValue: B): Pair<A, B> =>
+  <A, B> (firstValue: A) => (secondValue: B): Pair<A, B> =>
     Object.create (
       PairPrototype,
       {
-        first: { value: firstValue, enumerable: true },
-        second: { value: secondValue, enumerable: true },
+        first: {
+          value: firstValue,
+          enumerable: true,
+        },
+        second: {
+          value: secondValue,
+          enumerable: true,
+        },
       }
     )
 
@@ -50,7 +54,7 @@ export const fromBoth =
  * Creates a new `Pair` instance from the passed arguments.
  */
 export const fromBinary =
-  <A extends Some, B extends Some> (firstValue: A, secondValue: B): Pair<A, B> =>
+  <A, B> (firstValue: A, secondValue: B): Pair<A, B> =>
     fromBoth<A, B> (firstValue) (secondValue)
 
 
@@ -60,7 +64,7 @@ export const fromBinary =
  * `fmap :: (a0 -> b) -> (a, a0) -> (a, b)`
  */
 export const fmap =
-  <A extends Some, A0 extends Some, B extends Some>
+  <A, A0, B>
   (f: (value: A0) => B) => (x: Pair<A, A0>): Pair<A, B> =>
     fromBoth<A, B> (x .first) (f (x .second))
 
@@ -71,7 +75,7 @@ export const fmap =
  * definition is `fmap . const`, but this may be overridden with a more
  * efficient version.
  */
-export const mapReplace = <A extends Some, A0 extends Some> (x: A0) => fmap<A, Some, A0> (cnst (x))
+export const mapReplace = <A, A0> (x: A0) => fmap<A, any, A0> (cnst (x))
 
 
 // BIFUNCTOR
@@ -80,15 +84,17 @@ export const mapReplace = <A extends Some, A0 extends Some> (x: A0) => fmap<A, S
  * `bimap :: (a -> b) -> (c -> d) -> (a, c) -> (b, d)`
  */
 export const bimap =
-  <A extends Some, B extends Some, C extends Some, D extends Some>
-  (fFirst: (first: A) => B) => (fSecond: (second: C) => D) => (x: Pair<A, C>): Pair<B, D> =>
+  <A, B, C, D>
+  (fFirst: (first: A) => B) =>
+  (fSecond: (second: C) => D) =>
+  (x: Pair<A, C>): Pair<B, D> =>
     fromBoth<B, D> (fFirst (x .first)) (fSecond (x .second))
 
 /**
 * `first :: (a -> b) -> (a, c) -> (b, c)`
 */
 export const first =
-  <A extends Some, B extends Some, C extends Some>
+  <A, B, C>
   (f: (first: A) => B) => (x: Pair<A, C>): Pair<B, C> =>
     fromBoth<B, C> (f (x .first)) (x .second)
 
@@ -96,7 +102,7 @@ export const first =
 * `second :: (b -> c) -> (a, b) -> (a, c)`
 */
 export const second =
-  <A extends Some, B extends Some, C extends Some>
+  <A, B, C>
   (f: (second: B) => C) => (x: Pair<A, B>): Pair<A, C> =>
     fromBoth<A, C> (x .first) (f (x .second))
 
@@ -140,7 +146,9 @@ export const uncurry =
  *
  * Swap the components of a pair.
  */
-export const swap = <A, B> (x: Pair<A, B>): Pair<B, A> => fromBinary (x .second, x .first)
+export const swap =
+  <A, B> (x: Pair<A, B>): Pair<B, A> =>
+    fromBinary (x .second, x .first)
 
 
 // CUSTOM FUNCTIONS
@@ -157,7 +165,7 @@ export const toArray = <A, B> (x: Pair<A, B>): [A, B] => [x .first, x .second]
  *
  * Creates a pair from a native `Array` of length `2`.
  */
-export const fromArray = <A, B> (x: [A, B]): Pair<A, B> => fromBinary (x [0], x [1])
+export const fromArray = <A, B> (x: [A, B]): Pair<A, B> => fromBinary (...x)
 
 /**
  * `isPair :: a -> Bool`
@@ -166,7 +174,7 @@ export const fromArray = <A, B> (x: [A, B]): Pair<A, B> => fromBinary (x [0], x 
  */
 export const isPair =
   (x: any): x is Pair<any, any> =>
-    typeof x === "object" && x !== null && x.isPair
+    Object.getPrototypeOf (x) === PairPrototype
 
 
 // NAMESPACED FUNCTIONS

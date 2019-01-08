@@ -1,5 +1,5 @@
 /**
- * @module Int
+ * @module Data.Int
  *
  * @author Lukas Obermann
  */

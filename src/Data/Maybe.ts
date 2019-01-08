@@ -1,5 +1,5 @@
 /**
- * @module Maybe
+ * @module Data.Maybe
  *
  * The `Maybe` type encapsulates an optional value. A value of type `Maybe a`
  * either contains a value of type `a` (represented as `Just a`), or it is empty
@@ -17,7 +17,7 @@
 import { pipe } from "ramda";
 import * as Math from "../App/Utils/mathUtils";
 import { cnst, ident, thrush } from "./Function";
-import { cons, consF, fromElements, head, ifoldr, List } from "./List";
+import { cons, consF, head, ifoldr, List } from "./List";
 
 
 // MAYBE TYPE DEFINITION
@@ -30,13 +30,12 @@ export type Maybe<A extends Some> = Just<A> | Nothing
 // Just
 
 interface JustPrototype {
-  readonly isJust: true;
-  readonly isNothing: false;
+  readonly isJust: true
+  readonly isNothing: false
 }
 
 export interface Just<A extends Some> extends JustPrototype {
-  readonly value: A;
-  readonly prototype: JustPrototype;
+  readonly value: A
 }
 
 const JustPrototype =
@@ -52,7 +51,15 @@ const JustPrototype =
  */
 export const Just = <A extends Some> (x: A): Just<A> => {
   if (x !== null && x !== undefined) {
-    return Object.create (JustPrototype, { value: { value: x, enumerable: true }})
+    return Object.create (
+      JustPrototype,
+      {
+        value: {
+          value: x,
+          enumerable: true,
+        },
+      }
+    )
   }
 
   throw new TypeError ("Cannot create a Just from a nullable value.")
@@ -61,13 +68,11 @@ export const Just = <A extends Some> (x: A): Just<A> => {
 // Nothing
 
 interface NothingPrototype extends Object {
-  readonly isJust: false;
-  readonly isNothing: true;
+  readonly isJust: false
+  readonly isNothing: true
 }
 
-export interface Nothing extends NothingPrototype {
-  readonly prototype: NothingPrototype;
-}
+export interface Nothing extends NothingPrototype { }
 
 const NothingPrototype: NothingPrototype =
   Object.freeze<NothingPrototype> ({
@@ -88,8 +93,8 @@ export const Nothing: Nothing = Object.create (NothingPrototype)
  * Creates a new `Maybe` from the given nullable value.
  */
 export const fromNullable =
-  <A extends Some> (value: A | Nullable): Maybe<A> =>
-    value !== null && value !== undefined ? Just (value) : Nothing
+  <A extends Some> (x: A | Nullable): Maybe<A> =>
+    x !== null && x !== undefined ? Just (x) : Nothing
 
 
 // MAYBE FUNCTIONS (PART 1)
@@ -100,14 +105,16 @@ export const fromNullable =
  * The `isJust` function returns `true` if its argument is of the form
  * `Just _`.
  */
-export const isJust = <A extends Some> (x: Maybe<A>): x is Just<A> => x.isJust
+export const isJust =
+  <A extends Some> (x: Maybe<A>): x is Just<A> =>
+    Object.getPrototypeOf (x) === JustPrototype
 
 /**
  * `isNothing :: Maybe a -> Bool`
  *
  * The `isNothing` function returns `true` if its argument is `Nothing`.
  */
-export const isNothing = <A extends Some> (x: Maybe<A>): x is Nothing => x === Nothing
+export const isNothing = (x: Maybe<Some>): x is Nothing => x === Nothing
 
 /**
  * `fromJust :: Maybe a -> a`
@@ -145,7 +152,7 @@ export const fromMaybe =
  */
 export const fmap =
   <A extends Some, B extends Some>
-  (f: (value: A) => B) => (x: Maybe<A>): Maybe<B> =>
+  (f: (x: A) => B) => (x: Maybe<A>): Maybe<B> =>
     isJust (x) ? Just (f (x .value)) : x
 
 /**
@@ -155,7 +162,10 @@ export const fmap =
  * definition is `fmap . const`, but this may be overridden with a more
  * efficient version.
  */
-export const mapReplace = <A extends Some, B extends Some> (x: A) => fmap<B, A> (cnst (x))
+export const mapReplace =
+  <A extends Some, B extends Some>
+  (x: A) =>
+    fmap<B, A> (cnst (x))
 
 
 // APPLICATIVE
@@ -173,8 +183,10 @@ export const pure = Just
  * Sequential application.
  */
 export const ap =
-  <A extends Some, B extends Some>(ma: Maybe<(value: A) => B>) => (m: Maybe<A>): Maybe<B> =>
-    isJust (ma) ? fmap (ma .value) (m) : ma
+  <A extends Some, B extends Some>
+  (f: Maybe<(x: A) => B>) =>
+  (x: Maybe<A>): Maybe<B> =>
+    isJust (f) ? fmap (f .value) (x) : f
 
 
 // ALTERNATIVE
@@ -185,19 +197,19 @@ export const ap =
  * Returns the first `Maybe` if it is `Just`, otherwise the second.
  */
 export const alt =
-  <A extends Some> (m1: Maybe<A>) => (m2: Maybe<A>): Maybe<A> =>
-    isJust (m1) ? m1 : m2
+  <A extends Some> (x: Maybe<A>) => (y: Maybe<A>): Maybe<A> =>
+    isJust (x) ? x : y
 
 /**
- * `alt_ :: Maybe a -> Maybe a -> Maybe a`
+ * `altF :: Maybe a -> Maybe a -> Maybe a`
  *
  * Returns the second `Maybe` if it is `Just`, otherwise the first.
  *
  * Flipped version of `alt`.
  */
 export const altF =
-  <A extends Some> (m2: Maybe<A>) => (m1: Maybe<A>): Maybe<A> =>
-    alt (m1) (m2)
+  <A extends Some> (y: Maybe<A>) => (x: Maybe<A>): Maybe<A> =>
+    alt (x) (y)
 
 /**
  * `empty :: Maybe a`
@@ -218,7 +230,9 @@ guard (true)  = pure (true)
 guard (false) = empty
 ```
   */
-export const guard = (pred: boolean): Maybe<true> => pred ? pure<true> (true) : empty
+export const guard =
+  (pred: boolean): Maybe<true> =>
+    pred ? pure<true> (true) : empty
 
 
 // MONAD
@@ -227,14 +241,18 @@ export const guard = (pred: boolean): Maybe<true> => pred ? pure<true> (true) : 
  * `(>>=) :: Maybe a -> (a -> Maybe b) -> Maybe b`
  */
 export const bind =
-  <A extends Some, B extends Some> (x: Maybe<A>) => (f: (value: A) => Maybe<B>): Maybe<B> =>
+  <A extends Some, B extends Some>
+  (x: Maybe<A>) =>
+  (f: (x: A) => Maybe<B>): Maybe<B> =>
     isJust (x) ? f (x .value) : x
 
 /**
  * `(=<<) :: Monad m => (a -> m b) -> m a -> m b`
  */
 export const bindF =
-  <A extends Some, B extends Some> (f: (value: A) => Maybe<B>) => (x: Maybe<A>): Maybe<B> =>
+  <A extends Some, B extends Some>
+  (f: (x: A) => Maybe<B>) =>
+  (x: Maybe<A>): Maybe<B> =>
     bind<A, B> (x) (f)
 
 
@@ -248,15 +266,8 @@ export const bindF =
  * ```a >> b = a >>= \ _ -> b```
  */
 export const then =
-  <A extends Some> (x1: Maybe<any>) => (x2: Maybe<A>): Maybe<A> =>
-    bind<any, A> (x1) (_ => x2)
-
-/**
- * `return :: a -> Maybe a`
- *
- * Inject a value into the `Maybe` type.
- */
-export const mreturn = Just
+  <A extends Some> (x: Maybe<any>) => (y: Maybe<A>): Maybe<A> =>
+    bind<any, A> (x) (_ => y)
 
 /**
  * `(>=>) :: (a -> Maybe b) -> (b -> Maybe c) -> a -> Maybe c`
@@ -265,8 +276,9 @@ export const mreturn = Just
  */
 export const kleisli =
   <A extends Some, B extends Some, C extends Some>
-  (f1: (x: A) => Maybe<B>) => (f2: (x: B) => Maybe<C>) =>
-    pipe (f1, bindF (f2))
+  (f: (x: A) => Maybe<B>) =>
+  (g: (x: B) => Maybe<C>) =>
+    pipe (f, bindF (g))
 
 /**
  * `join :: Maybe (Maybe a) -> Maybe a`
@@ -275,7 +287,9 @@ export const kleisli =
  * remove one level of monadic structure, projecting its bound argument into the
  * outer level.
  */
-export const join = <A extends Some> (x: Maybe<Maybe<A>>): Maybe<A> => bind<Maybe<A>, A> (x) (ident)
+export const join =
+  <A extends Some> (x: Maybe<Maybe<A>>): Maybe<A> =>
+    bind<Maybe<A>, A> (x) (ident)
 
 /**
  * `liftM2 :: (a1 -> a2 -> r) -> Maybe a1 -> Maybe a2 -> Maybe r`
@@ -286,9 +300,9 @@ export const join = <A extends Some> (x: Maybe<Maybe<A>>): Maybe<A> => bind<Mayb
 export const liftM2 =
   <A1 extends Some, A2 extends Some, B extends Some>
   (f: (a1: A1) => (a2: A2) => B) =>
-  (m1: Maybe<A1>) =>
-  (m2: Maybe<A2>): Maybe<B> =>
-    bind<A1, B> (m1) (pipe (f, fmap, thrush (m2)))
+  (x1: Maybe<A1>) =>
+  (x2: Maybe<A2>): Maybe<B> =>
+    bind<A1, B> (x1) (pipe (f, fmap, thrush (x2)))
 
 /**
  * `liftM3 :: (a1 -> a2 -> a3 -> r) -> Maybe a1 -> Maybe a2 -> Maybe a3 -> Maybe r`
@@ -298,14 +312,15 @@ export const liftM2 =
  */
 export const liftM3 =
   <A1 extends Some, A2 extends Some, A3 extends Some, B extends Some>
-  (f: (a1: A1) => (a2: A2) => (a3: A3) => B) =>
-  (m1: Maybe<A1>) =>
-  (m2: Maybe<A2>) =>
-  (m3: Maybe<A3>): Maybe<B> =>
-    bind<A1, B> (m1) (a1 => liftM2 (f (a1)) (m2) (m3))
+  (f: (x1: A1) => (x2: A2) => (x3: A3) => B) =>
+  (x1: Maybe<A1>) =>
+  (x2: Maybe<A2>) =>
+  (x3: Maybe<A3>): Maybe<B> =>
+    bind<A1, B> (x1) (a1 => liftM2 (f (a1)) (x2) (x3))
 
 /**
- * `liftM4 :: Maybe m => (a1 -> a2 -> a3 -> a4 -> r) -> m a1 -> m a2 -> m a3 -> m a4 -> m r`
+ * `liftM4 :: Maybe m => (a1 -> a2 -> a3 -> a4 -> r) -> m a1 -> m a2 -> m a3 ->
+m a4 -> m r`
  *
  * Promote a function to a monad, scanning the monadic arguments from left to
  * right.
@@ -313,11 +328,11 @@ export const liftM3 =
 export const liftM4 =
   <A1 extends Some, A2 extends Some, A3 extends Some, A4 extends Some, B extends Some>
   (f: (a1: A1) => (a2: A2) => (a3: A3) => (a4: A4) => B) =>
-  (m1: Maybe<A1>) =>
-  (m2: Maybe<A2>) =>
-  (m3: Maybe<A3>) =>
-  (m4: Maybe<A4>): Maybe<B> =>
-    bind<A1, B> (m1) (a1 => liftM3 (f (a1)) (m2) (m3) (m4))
+  (x1: Maybe<A1>) =>
+  (x2: Maybe<A2>) =>
+  (x3: Maybe<A3>) =>
+  (x4: Maybe<A4>): Maybe<B> =>
+    bind<A1, B> (x1) (a1 => liftM3 (f (a1)) (x2) (x3) (x4))
 
 /**
  * `liftM5 :: Maybe m => (a1 -> a2 -> a3 -> a4 -> a5 -> r) -> m a1 -> m a2 -> m
@@ -336,12 +351,12 @@ export const liftM5 =
     B extends Some
   >
   (f: (a1: A1) => (a2: A2) => (a3: A3) => (a4: A4) => (a5: A5) => B) =>
-  (m1: Maybe<A1>) =>
-  (m2: Maybe<A2>) =>
-  (m3: Maybe<A3>) =>
-  (m4: Maybe<A4>) =>
-  (m5: Maybe<A5>): Maybe<B> =>
-    bind<A1, B> (m1) (a1 => liftM4 (f (a1)) (m2) (m3) (m4) (m5))
+  (x1: Maybe<A1>) =>
+  (x2: Maybe<A2>) =>
+  (x3: Maybe<A3>) =>
+  (x4: Maybe<A4>) =>
+  (x5: Maybe<A5>): Maybe<B> =>
+    bind<A1, B> (x1) (a1 => liftM4 (f (a1)) (x2) (x3) (x4) (x5))
 
 
 // FOLDABLE
@@ -353,7 +368,7 @@ export const liftM5 =
  */
 export const foldr =
   <A extends Some, B extends Some>
-  (f: (current: A) => (acc: B) => B) =>
+  (f: (x: A) => (acc: B) => B) =>
   (initial: B) =>
   (x: Maybe<A>): B =>
     isJust (x) ? f (x .value) (initial) : initial
@@ -365,10 +380,10 @@ export const foldr =
  */
 export const foldl =
   <A extends Some, B extends Some>
-  (f: (acc: B) => (current: A) => B) =>
+  (f: (acc: B) => (x: A) => B) =>
   (initial: B) =>
-  (xs: Maybe<A>): B =>
-    isJust (xs) ? f (initial) (xs .value) : initial
+  (x: Maybe<A>): B =>
+    isJust (x) ? f (initial) (x .value) : initial
 
 /**
  * `toList :: Maybe a -> [a]`
@@ -376,8 +391,8 @@ export const foldl =
  * List of elements of a structure, from left to right.
  */
 export const toList =
-  <A extends Some>(xs: Maybe<A>): List<A> =>
-    isJust (xs) ? fromElements (xs .value) : List.empty
+  <A extends Some>(x: Maybe<A>): List<A> =>
+    isJust (x) ? List.pure (x .value) : List.empty
 
 /**
  * `null :: Maybe a -> Bool`
@@ -386,7 +401,7 @@ export const toList =
  * for structures that are similar to cons-lists, because there is no general
  * way to do better.
  */
-export const fnull = (xs: Maybe<Some>): boolean => length (xs) === 0
+export const fnull = isNothing
 
 /**
  * `length :: Maybe a -> Int`
@@ -395,7 +410,7 @@ export const fnull = (xs: Maybe<Some>): boolean => length (xs) === 0
  * implementation is optimized for structures that are similar to cons-lists,
  * because there is no general way to do better.
  */
-export const length = (xs: Maybe<Some>): number => isJust (xs) ? 1 : 0
+export const length = (x: Maybe<Some>): number => isJust (x) ? 1 : 0
 
 /**
  * `elem :: Eq a => a -> Maybe a -> Bool`
@@ -405,8 +420,8 @@ export const length = (xs: Maybe<Some>): number => isJust (xs) ? 1 : 0
  * Always returns `False` if the provided `Maybe` is `Nothing`.
  */
 export const elem =
-  <A extends Some> (e: A) => (xs: Maybe<A>): boolean =>
-    isJust (xs) && e === xs .value
+  <A extends Some> (x: A) => (y: Maybe<A>): boolean =>
+    isJust (y) && x === y .value
 
 /**
  * `elemF :: Eq a => Maybe a -> a -> Bool`
@@ -417,7 +432,9 @@ export const elem =
  *
  * Flipped version of `elem`.
  */
-export const elemF = <A extends Some> (xs: Maybe<A>) => (e: A): boolean => elem (e) (xs)
+export const elemF =
+  <A extends Some> (y: Maybe<A>) => (x: A): boolean =>
+    elem (x) (y)
 
 /**
  * `sum :: Num a => Maybe a -> a`
@@ -441,8 +458,8 @@ export const product = fromMaybe (1)
  * The concatenation of all the elements of a container of lists.
  */
 export const concat =
-  <A extends Some>(m: Maybe<List<A>>): List<A> =>
-    fromMaybe<List<A>> (List.empty) (m)
+  <A extends Some>(x: Maybe<List<A>>): List<A> =>
+    fromMaybe<List<A>> (List.empty) (x)
 
 /**
  * `concatMap :: (a -> [b]) -> Maybe a -> [b]`
@@ -451,8 +468,10 @@ export const concat =
  * resulting lists.
  */
 export const concatMap =
-  <A extends Some, B extends Some> (f: (x: A) => List<B>) => (xs: Maybe<A>): List<B> =>
-    fromMaybe<List<B>> (List.empty) (fmap (f) (xs))
+  <A extends Some, B extends Some>
+  (f: (x: A) => List<B>) =>
+  (x: Maybe<A>): List<B> =>
+    fromMaybe<List<B>> (List.empty) (fmap (f) (x))
 
 /**
  * `and :: Maybe Bool -> Bool`
@@ -478,16 +497,21 @@ export const or = fromMaybe (false)
  * Determines whether any element of the structure satisfies the predicate.
  */
 export const any =
-  <A extends Some>(f: (x: A) => boolean) => (m: Maybe<A>): boolean =>
-    fromMaybe (false) (fmap (f) (m))
+  <A extends Some>
+  (f: (x: A) => boolean) =>
+  (x: Maybe<A>): boolean =>
+    fromMaybe (false) (fmap (f) (x))
+
 /**
  * `all :: (a -> Bool) -> Maybe a -> Bool`
  *
  * Determines whether all elements of the structure satisfy the predicate.
  */
 export const all =
-  <A extends Some>(f: (x: A) => boolean) => (m: Maybe<A>): boolean =>
-    fromMaybe (true) (fmap (f) (m))
+  <A extends Some>
+  (f: (x: A) => boolean) =>
+  (x: Maybe<A>): boolean =>
+    fromMaybe (true) (fmap (f) (x))
 
 // Searches
 
@@ -508,7 +532,7 @@ interface Find {
    * leftmost element of the structure matching the predicate, or `Nothing` if
    * there is no such element.
    */
-  <A, A1 extends A> (pred: (x: A) => x is A1): (xs: Maybe<A>) => Maybe<A1>;
+  <A, A1 extends A> (pred: (x: A) => x is A1): (x: Maybe<A>) => Maybe<A1>
 
   /**
    * `find :: (a -> Bool) -> Maybe a -> Maybe a`
@@ -517,7 +541,7 @@ interface Find {
    * leftmost element of the structure matching the predicate, or `Nothing` if
    * there is no such element.
    */
-  <A> (pred: (x: A) => boolean): (xs: Maybe<A>) => Maybe<A>;
+  <A> (pred: (x: A) => boolean): (x: Maybe<A>) => Maybe<A>
 }
 
 /**
@@ -528,8 +552,8 @@ interface Find {
  * there is no such element.
  */
 export const find: Find =
-  <A> (pred: (x: A) => boolean) => (xs: Maybe<A>): Maybe<A> =>
-    isJust (xs) && pred (xs .value) ? xs : Nothing
+  <A> (pred: (x: A) => boolean) => (x: Maybe<A>): Maybe<A> =>
+    isJust (x) && pred (x .value) ? x : Nothing
 
 
 // ORD
@@ -542,8 +566,8 @@ export const find: Find =
  * If one of the values is `Nothing`, `(>)` always returns `false`.
  */
 export const gt =
-  (m1: Maybe<number>) => (m2: Maybe<number>): boolean =>
-    fromMaybe (false) (liftM2 (Math.gt) (m1) (m2))
+  (x: Maybe<number>) => (y: Maybe<number>): boolean =>
+    fromMaybe (false) (liftM2 (Math.gt) (x) (y))
 
 /**
  * `(<) :: Maybe a -> Maybe a -> Bool`
@@ -553,8 +577,8 @@ export const gt =
  * If one of the values is `Nothing`, `(<)` always returns `false`.
  */
 export const lt =
-  (m1: Maybe<number>) => (m2: Maybe<number>): boolean =>
-    fromMaybe (false) (liftM2 (Math.lt) (m1) (m2))
+  (x: Maybe<number>) => (y: Maybe<number>): boolean =>
+    fromMaybe (false) (liftM2 (Math.lt) (x) (y))
 
 /**
  * `(>=) :: Maybe a -> Maybe a -> Bool`
@@ -565,8 +589,8 @@ export const lt =
  * If one of the values is `Nothing`, `(>=)` always returns `false`.
  */
 export const gte =
-  (m1: Maybe<number>) => (m2: Maybe<number>): boolean =>
-    fromMaybe (false) (liftM2 (Math.gte) (m1) (m2))
+  (x: Maybe<number>) => (y: Maybe<number>): boolean =>
+    fromMaybe (false) (liftM2 (Math.gte) (x) (y))
 
 /**
  * `(<=) :: Maybe a -> Maybe a -> Bool`
@@ -577,23 +601,24 @@ export const gte =
  * If one of the values is `Nothing`, `(<=)` always returns `false`.
  */
 export const lte =
-  (m1: Maybe<number>) => (m2: Maybe<number>): boolean =>
-    fromMaybe (false) (liftM2 (Math.lte) (m1) (m2))
+  (x: Maybe<number>) => (y: Maybe<number>): boolean =>
+    fromMaybe (false) (liftM2 (Math.lte) (x) (y))
 
 
-// // SEMIGROUP
+// SEMIGROUP
 
-// /**
-//  * `mappend :: Semigroup a => Maybe a -> Maybe a -> Maybe a`
-//  *
-//  * Concatenates the `Semigroup`s contained in the two `Maybe`s, if both are of
-//  * type `Just a`. If at least one of them is `Nothing`, it returns the first
-//  * element.
-//  */
-// export const mappend = <U> (m1: Maybe<List<U>>) => (m2: Maybe<List<U>>): Maybe<List<U>> =>
-//   isJust (m1) && isJust (m2)
-//     ? Just (List.mappend (fromJust (m1), fromJust (m2)))
-//     : m1
+/**
+ * `mappend :: Semigroup a => Maybe a -> Maybe a -> Maybe a`
+ *
+ * Concatenates the `Semigroup`s contained in the two `Maybe`s, if both are of
+ * type `Just a`. If at least one of them is `Nothing`, it returns the first
+ * element.
+ */
+export const mappend =
+  <A> (x: Maybe<List<A>>) => (y: Maybe<List<A>>): Maybe<List<A>> =>
+    isJust (x) && isJust (y)
+      ? Just (List.append (fromJust (x)) (fromJust (y)))
+      : x
 
 
 // MAYBE FUNCTIONS (PART 2)
@@ -607,8 +632,10 @@ export const lte =
  * and returns the result.
  */
 export const maybe =
-  <A extends Some, B extends Some> (def: B) => (fn: (x: A) => B) => (m: Maybe<A>): B =>
-    foldl<A, B> (() => fn) (def) (m)
+  <A extends Some, B extends Some>
+  (def: B) =>
+  (f: (x: A) => B) =>
+    foldl<A, B> (() => f) (def)
 
 /**
  * `listToMaybe :: [a] -> Maybe a`
@@ -617,8 +644,8 @@ export const maybe =
  * where `a` is the first element of the list.
  */
 export const listToMaybe =
-  <A extends Some> (list: List<A>): Maybe<A> =>
-    List.fnull (list) ? Nothing : Just (head (list))
+  <A extends Some> (xs: List<A>): Maybe<A> =>
+    List.fnull (xs) ? Nothing : Just (head (xs))
 
 /**
  * `maybeToList :: Maybe a -> [a]`
@@ -635,10 +662,12 @@ export const maybeToList = toList
  * the `Just` values.
  */
 export const catMaybes =
-  <A extends Some> (list: List<Maybe<A>>): List<A> =>
-    List.foldr<Maybe<A>, List<A>> (maybe<A, (x: List<A>) => List<A>> (ident) (consF))
+  <A extends Some>
+  (xs: List<Maybe<A>>): List<A> =>
+    List.foldr<Maybe<A>, List<A>> (maybe<A, (x: List<A>) => List<A>> (ident)
+                                                                     (consF))
                                   (List.empty)
-                                  (list)
+                                  (xs)
 
 /**
  * `mapMaybe :: (a -> Maybe b) -> [a] -> [b]`
@@ -649,8 +678,13 @@ export const catMaybes =
  * `Just b`, then `b` is included in the result list.
  */
 export const mapMaybe =
-  <A extends Some, B extends Some> (f: (x: A) => Maybe<B>) =>
-    List.foldr<A, List<B>> (pipe (f, maybe<B, (x: List<B>) => List<B>> (ident) (consF)))
+  <A extends Some, B extends Some>
+  (f: (x: A) => Maybe<B>) =>
+    List.foldr<A, List<B>> (pipe (
+                             f,
+                             maybe<B, (x: List<B>) => List<B>> (ident)
+                                                               (consF)
+                           ))
                            (List.empty)
 
 
@@ -663,7 +697,7 @@ export const mapMaybe =
  */
 export const isMaybe =
   (x: any): x is Maybe<any> =>
-    typeof x === "object" && x !== null && x.isJust || x === Nothing
+    typeof x === "object" && x !== null && isJust (x) || isNothing (x)
 
 /**
  * `normalize :: (a | Maybe a) -> Maybe a`
@@ -672,8 +706,9 @@ export const isMaybe =
  * already an instance of `Maybe`, it will just return the value.
  */
 export const normalize =
-  <A extends Some> (value: A | Nullable | Maybe<A>): Maybe<A> =>
-    isMaybe (value) ? value : fromNullable (value)
+  <A extends Some>
+  (x: A | Nullable | Maybe<A>): Maybe<A> =>
+    isMaybe (x) ? x : fromNullable (x)
 
 interface Ensure {
   /**
@@ -683,9 +718,10 @@ interface Ensure {
    * evaluates to `True` and the given value is not nullable. Otherwise returns
    * `Nothing`.
    */
-  <A extends Some, A_ extends A> (
-    pred: (value: A) => value is A_
-  ): (value: A | Nullable) => Maybe<A_>;
+  <A extends Some, A1 extends A>
+  (pred: (x: A) => x is A1):
+  (x: A | Nullable) => Maybe<A1>
+
   /**
    * `ensure :: (a -> Bool) -> a -> Maybe a`
    *
@@ -693,7 +729,9 @@ interface Ensure {
    * evaluates to `True` and the given value is not nullable. Otherwise returns
    * `Nothing`.
    */
-  <A extends Some> (pred: (value: A) => boolean): (value: A | Nullable) => Maybe<A>;
+  <A extends Some>
+  (pred: (x: A) => boolean):
+  (x: A | Nullable) => Maybe<A>
 }
 
 /**
@@ -704,9 +742,11 @@ interface Ensure {
  * `Nothing`.
  */
 export const ensure: Ensure =
-  <A extends Some> (pred: (value: A) => boolean) => (value: A | Nullable): Maybe<A> =>
-    bind<A, A> (fromNullable (value))
-               (x => pred (x) ? Just (x) : Nothing)
+  <A extends Some>
+  (pred: (x: A) => boolean) =>
+  (x: A | Nullable): Maybe<A> =>
+    bind<A, A> (fromNullable (x))
+               (a => pred (a) ? Just (a) : Nothing)
 
 /**
  * `imapMaybe :: (Int -> a -> Maybe b) -> [a] -> [b]`
@@ -717,9 +757,15 @@ export const ensure: Ensure =
  * If it is `Just b`, then `b` is included in the result list.
  */
 export const imapMaybe =
-  <A extends Some, B extends Some> (fn: (index: number) => (x: A) => Maybe<B>) =>
+  <A extends Some, B extends Some>
+  (f: (index: number) => (x: A) => Maybe<B>) =>
     ifoldr<A, List<B>>
-      (index => x => acc => pipe (fn (index), maybe<B, List<B>> (acc) (cons (acc))) (x))
+      (index => x => acc =>
+        pipe (
+          f (index),
+          maybe<B, List<B>> (acc)
+                            (cons (acc)))
+                            (x))
       (List.empty)
 
 /**
@@ -729,8 +775,9 @@ export const imapMaybe =
  * returns the value inside the `Just`.
  */
 export const maybeToNullable =
-  <A extends Some> (m: Maybe<A>): A | null =>
-    isJust (m) ? m .value : null
+  <A extends Some>
+  (x: Maybe<A>): A | null =>
+    isJust (x) ? x .value : null
 
 /**
  * `maybeToUndefined :: Maybe a -> (a | undefined)`
@@ -739,24 +786,31 @@ export const maybeToNullable =
  * returns the value inside the `Just`.
  */
 export const maybeToUndefined =
-  <A extends Some> (m: Maybe<A>): A | undefined =>
-    isJust (m) ? m .value : undefined
+  <A extends Some>
+  (x: Maybe<A>): A | undefined =>
+    isJust (x) ? x .value : undefined
 
 /**
- * `maybe_ :: (() -> b) -> (a -> b) -> Maybe a -> b`
+ * `maybe' :: (() -> b) -> (a -> b) -> Maybe a -> b`
  *
- * The `maybe_` function takes a default value, a function, and a `Maybe`
+ * The `maybe'` function takes a default value, a function, and a `Maybe`
  * value. If the `Maybe` value is `Nothing`, the function returns the default
  * value. Otherwise, it applies the function to the value inside the `Just`
  * and returns the result.
  *
  * This is a lazy variant of `maybe`.
  */
-export const maybe_ = <A extends Some, B extends Some> (def: () => B) => maybe<A, B> (def ())
+export const maybe_ =
+  <A extends Some, B extends Some>
+  (def: () => B) =>
+    maybe<A, B> (def ())
 
 export const INTERNAL_shallowEquals =
-  <A extends Some> (m1: Maybe<A>) => (m2: Maybe<A>) =>
-    isNothing (m1) && isNothing (m2) || isJust (m1) && isJust (m2) && m1.value === m2.value
+  <A extends Some>
+  (x: Maybe<A>) =>
+  (y: Maybe<A>) =>
+    isNothing (x) && isNothing (y)
+    || isJust (x) && isJust (y) && x .value === y .value
 
 
 // NAMESPACED FUNCTIONS
@@ -778,12 +832,12 @@ export const Maybe = {
   ap,
 
   alt,
+  altF,
   empty,
   guard,
 
   bind,
   then,
-  mreturn,
   kleisli,
   join,
   liftM2,

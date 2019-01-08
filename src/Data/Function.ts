@@ -35,7 +35,11 @@ export const thrush = <A, B> (x: A) => (f: (x: A) => B): B => f (x)
  *
  * The W combinator.
  */
-export const join = <A, B> (f: (x1: A) => (x2: A) => B) => (x: A): B => f (x) (x)
+export const join =
+  <A, B>
+  (f: (x1: A) => (x2: A) => B) =>
+  (x: A): B =>
+    f (x) (x)
 
 /**
  * `on :: (b -> b -> c) -> (a -> b) -> a -> a -> c`
@@ -48,15 +52,25 @@ export const join = <A, B> (f: (x1: A) => (x2: A) => B) => (x: A): B => f (x) (x
  *
  * Typical usage: ```sortBy (compare `on` fst)```.
  */
-export const on = <A, B, C> (b: (x: B) => (y: B) => C) => (u: (x: A) => B) => (x: A) => (y: A): C =>
-  b (u (x)) (u (y))
+export const on =
+  <A, B, C>
+  (b: (x: B) => (y: B) => C) =>
+  (u: (x: A) => B) =>
+  (x: A) =>
+  (y: A): C =>
+    b (u (x)) (u (y))
 
 /**
  * `flip :: (a -> b -> c) -> (b -> a -> c)`
  *
  * Reverses the order of the first two arguments of a curried function.
  */
-export const flip = <A, B, C> (f: (p1: A) => (p2: B) => C) => (p1: B) => (p2: A): C => f (p2) (p1)
+export const flip =
+  <A, B, C>
+  (f: (p1: A) => (p2: B) => C) =>
+  (p1: B) =>
+  (p2: A): C =>
+    f (p2) (p1)
 
 
 // NAMESPACED FUNCTIONS

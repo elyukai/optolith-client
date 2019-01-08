@@ -1,5 +1,5 @@
 /**
- * @module Record
+ * @module Data.Record
  *
  * A record is a simple data structure for key-value pairs where the keys must
  * be `String`s and all values can have different types.
@@ -68,13 +68,16 @@ export const fromDefault =
       (acc, [key, value]) => {
         // tslint:disable-next-line: strict-type-predicates
         if (typeof key !== "string") {
-          throw new TypeError (`Record key must be a String! Got ${show (key)} instead.`)
+          throw new TypeError (
+            `Record key must be a String! Got ${show (key)} instead.`
+          )
         }
 
         // tslint:disable-next-line: strict-type-predicates
         if (value === null || value === undefined) {
           throw new TypeError (
-            `Record field must not be a nullable value! Got ${show (value)} at key ${show (key)} instead.`
+            `Record field must not be a nullable value! Got ${show (value)} at `
+            + `key ${show (key)} instead.`
           )
         }
 
@@ -276,7 +279,7 @@ export const toObject = <A extends RecordBase> (r: Record<A>): A =>
  */
 export const isRecord =
   (x: any): x is Record<any> =>
-    typeof x === "object" && x !== null && x.isRecord
+    Object.getPrototypeOf (x) === RecordPrototype
 
 
 // NAMESPACED FUNCTIONS

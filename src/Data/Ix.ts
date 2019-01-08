@@ -1,5 +1,5 @@
 /**
- * @module Ix
+ * @module Data.Ix
  *
  * The `Ix` class is used to map a contiguous subrange of values in type onto
  * integers.
@@ -7,7 +7,7 @@
  * @author Lukas Obermann
  */
 
-import { inc } from "../utils/mathUtils";
+import { inc } from "../App/Utils/mathUtils";
 import { cons, List } from "./List";
 import { fst, Pair, snd } from "./Pair";
 import { show } from "./Show";

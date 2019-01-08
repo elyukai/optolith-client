@@ -100,10 +100,6 @@ test ('then', () => {
     .toEqual (List.fromElements ())
 })
 
-test ('mreturn', () => {
-  expect (List.mreturn (3)) .toEqual (List.fromElements(3))
-})
-
 test ('kleisli', () => {
   expect (List.kleisli (e => List.fromElements (e, e))
                        (e => List.fromElements (e, e * 2))

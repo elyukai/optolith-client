@@ -1,7 +1,7 @@
 const React = require('react');
 const List = require('../List');
 const Maybe = require('../Maybe');
-const { add } = require('../../mathUtils');
+const { add } = require('../../App/Utils/mathUtils');
 const { Just, Nothing } = require('../Maybe');
 
 // CONSTRUCTORS
@@ -99,14 +99,14 @@ test ('alt', () => {
     .toEqual (Nothing)
 })
 
-test ('alt_', () => {
-  expect (Maybe.alt_ (Just (2)) (Just (3)))
+test ('altF', () => {
+  expect (Maybe.altF (Just (2)) (Just (3)))
     .toEqual (Just (3))
-  expect (Maybe.alt_ (Nothing) (Just (3)))
+  expect (Maybe.altF (Nothing) (Just (3)))
     .toEqual (Just (3))
-  expect (Maybe.alt_ (Just (2)) (Nothing))
+  expect (Maybe.altF (Just (2)) (Nothing))
     .toEqual (Just (2))
-  expect (Maybe.alt_ (Nothing) (Nothing))
+  expect (Maybe.altF (Nothing) (Nothing))
     .toEqual (Nothing)
 })
 
@@ -132,11 +132,11 @@ test ('bind', () => {
     .toEqual (Nothing)
 })
 
-test ('bind_', () => {
-  expect (Maybe.bind_ (x => Just (x * 2))
+test ('bindF', () => {
+  expect (Maybe.bindF (x => Just (x * 2))
                       (Maybe.fromNullable (3)))
     .toEqual (Just (6))
-  expect (Maybe.bind_ (x => Just (x * 2))
+  expect (Maybe.bindF (x => Just (x * 2))
                       (Maybe.fromNullable (null)))
     .toEqual (Nothing)
 })
@@ -150,10 +150,6 @@ test ('then', () => {
     .toEqual (Nothing)
   expect (Maybe.then (Nothing) (Nothing))
     .toEqual (Nothing)
-})
-
-test ('mreturn', () => {
-  expect (Maybe.mreturn (2)) .toEqual (Just (2))
 })
 
 test ('kleisli', () => {

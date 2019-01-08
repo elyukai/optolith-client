@@ -1,6 +1,6 @@
 const { cnst, ident, thrush, join, on, flip } = require ('../Function')
 const { fromJust, Just } = require ('../Maybe')
-const { add } = require ('../../mathUtils')
+const { add } = require ('../../App/Utils/mathUtils')
 
 test ('ident', () => {
   expect (ident (5)) .toEqual (5)

@@ -1,5 +1,5 @@
 const Lens = require ('../Lens')
-const { add } = require ('../../mathUtils')
+const { add } = require ('../../App/Utils/mathUtils')
 
 test ('view', () => {
   const customLens = Lens.lens (e => e.value)

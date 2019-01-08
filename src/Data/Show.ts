@@ -1,5 +1,5 @@
 /**
- * @module Show
+ * @module Data.Show
  *
  * Conversion of values to readable `String`s.
  *
@@ -49,7 +49,9 @@ export const show = (x: any): string => {
   }
 
   if (isOrderedMap (x)) {
-    return `Map (${[...x] .map (([k, v]) => `${show (k)} = ${show (v)}`) .join (", ")})`
+    return `Map (${
+      [...x] .map (([k, v]) => `${show (k)} = ${show (v)}`) .join (", ")
+    })`
   }
 
   if (isRecord (x)) {
@@ -57,7 +59,12 @@ export const show = (x: any): string => {
       [...x .keys .value]
         .sort ()
         .map (key =>
-          `${key} = ${show (x .values [key] === null || x .values [key] === undefined ? x .defaultValues [key] : x .values [key])}`
+          `${key} = ${
+            show (
+              x .values [key] === null || x .values [key] === undefined
+              ? x .defaultValues [key]
+              : x .values [key])
+          }`
         )
         .join (", ")
     } }`

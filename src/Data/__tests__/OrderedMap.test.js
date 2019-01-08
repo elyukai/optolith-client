@@ -120,10 +120,10 @@ test ('elem', () => {
 })
 
 test ('elem_', () => {
-  expect (OrderedMap.elem_ (fromArray ([['x', 1], ['y', 2], ['z', 3]])) (3))
+  expect (OrderedMap.elemF (fromArray ([['x', 1], ['y', 2], ['z', 3]])) (3))
     .toBeTruthy ()
 
-  expect (OrderedMap.elem_ (fromArray ([['x', 1], ['y', 2], ['z', 3]])) (6))
+  expect (OrderedMap.elemF (fromArray ([['x', 1], ['y', 2], ['z', 3]])) (6))
     .toBeFalsy ()
 })
 
@@ -254,10 +254,10 @@ test ('member', () => {
 })
 
 test ('member_', () => {
-  expect (OrderedMap.member_ (fromArray ([[1, 'a'], [2, 'b'], [3, 'c']])) (2))
+  expect (OrderedMap.memberF (fromArray ([[1, 'a'], [2, 'b'], [3, 'c']])) (2))
     .toBeTruthy ()
 
-  expect (OrderedMap.member_ (fromArray ([[1, 'a'], [2, 'b'], [3, 'c']])) (5))
+  expect (OrderedMap.memberF (fromArray ([[1, 'a'], [2, 'b'], [3, 'c']])) (5))
     .toBeFalsy ()
 })
 
@@ -482,7 +482,7 @@ test ('alter', () => {
     .toEqual (fromArray ([[1, 'a'], [2, 'b'], [3, 'cd']]))
 
   // Insert
-  expect (OrderedMap.alter (pipe (Maybe.fmap (id), Maybe.alt_ (Just ('d'))))
+  expect (OrderedMap.alter (pipe (Maybe.fmap (id), Maybe.altF (Just ('d'))))
                            (4)
                            (map))
     .toEqual (fromArray ([[1, 'a'], [2, 'b'], [3, 'c'], [4, 'd']]))
@@ -612,7 +612,7 @@ test ('filterWithKey_', () => {
   const map = fromArray ([[1, 'a'], [3, 'c'], [4, 'd'], [2, 'b']])
   const res = fromArray ([[3, 'c'], [4, 'd'], [2, 'b']])
 
-  expect (OrderedMap.filterWithKey_ (map)
+  expect (OrderedMap.filterWithKeyF (map)
                                     (key => e => key % 2 === 0 || e === 'c'))
     .toEqual (res)
 })

@@ -1,5 +1,5 @@
 /**
- * @module OrderedMap
+ * @module Data.Map
  *
  * A map is a data structure for storing values of the same type by keys of the
  * same type. Keys and values do not need to have the same type.
@@ -12,41 +12,43 @@ import { add, multiply } from "../App/Utils/mathUtils";
 import { equals } from "./Eq";
 import { cnst, ident } from "./Function";
 import { append, List } from "./List";
-import { fromMaybe, fromNullable, Just, Maybe, maybe, maybe_, Some } from "./Maybe";
+import { fromMaybe, fromNullable, Just, Maybe, maybe, maybe_ } from "./Maybe";
 import { fromUniqueElements, OrderedSet } from "./OrderedSet";
-import { fromBoth, Pair } from "./Pair";
+import { fromBinary, fromBoth, Pair } from "./Pair";
 import { StringKeyObject } from "./Record";
 import { show } from "./Show";
 
 
 // CONSTRUCTOR
 
-interface OrderedMapPrototype<K extends Some, A extends Some> {
+interface OrderedMapPrototype<K, A> {
   [Symbol.iterator] (): IterableIterator<[K, A]>
   readonly isOrderedMap: true
 }
 
-export interface OrderedMap<K extends Some, A extends Some> extends OrderedMapPrototype<K, A> {
+export interface OrderedMap<K, A> extends OrderedMapPrototype<K, A> {
   readonly value: ReadonlyMap<K, A>
-  readonly prototype: OrderedMapPrototype<K, A>
 }
 
-const OrderedMapPrototype: OrderedMapPrototype<Some, Some> =
-  Object.create (
-    Object.prototype,
-    {
-      [Symbol.iterator]: {
-        value (this: OrderedMap<Some, Some>) {
-          return this .value [Symbol.iterator] ()
-        },
+const OrderedMapPrototype =
+  Object.freeze<OrderedMapPrototype<any, any>> ({
+      [Symbol.iterator] (this: OrderedMap<any, any>) {
+        return this .value [Symbol.iterator] ()
       },
-      isOrderedMap: { value: true },
-    }
-  )
+      isOrderedMap: true,
+  })
 
 const _OrderedMap =
-  <K extends Some, A extends Some> (x: ReadonlyMap<K, A>): OrderedMap<K, A> =>
-    Object.create (OrderedMapPrototype, { value: { value: x, enumerable: true }})
+  <K, A> (x: ReadonlyMap<K, A>): OrderedMap<K, A> =>
+    Object.create (
+      OrderedMapPrototype,
+      {
+        value: {
+          value: x,
+          enumerable: true,
+        },
+      }
+    )
 
 /**
  * `fromUniquePairs :: ...(k, a) -> Map k a`
@@ -54,7 +56,7 @@ const _OrderedMap =
  * Creates a new `Map` instance from the passed arguments.
  */
 export const fromUniquePairs =
-  <K extends Some, A extends Some> (...xs: [K, A][]): OrderedMap<K, A> =>
+  <K, A> (...xs: [K, A][]): OrderedMap<K, A> =>
     _OrderedMap (new Map (xs))
 
 /**
@@ -63,12 +65,14 @@ export const fromUniquePairs =
  * Creates a new `Set` instance from the passed native `Array`.
  */
 export const fromArray =
-  <K extends Some, A extends Some> (xs: ReadonlyArray<[K, A]>): OrderedMap<K, A> => {
+  <K, A> (xs: ReadonlyArray<[K, A]>): OrderedMap<K, A> => {
     if (Array.isArray (xs)) {
       return _OrderedMap (new Map (xs))
     }
 
-    throw new TypeError (`fromArray requires an array but instead it received ${show (xs)}`)
+    throw new TypeError (
+      `fromArray requires an array but instead it received ${show (xs)}`
+    )
   }
 
 /**
@@ -77,12 +81,14 @@ export const fromArray =
  * Creates a new `Map` instance from the passed native `Map`.
  */
 export const fromMap =
-  <K extends Some, A extends Some> (xs: ReadonlyMap<K, A>): OrderedMap<K, A> => {
+  <K, A> (xs: ReadonlyMap<K, A>): OrderedMap<K, A> => {
     if (xs instanceof Map) {
       return _OrderedMap (xs)
     }
 
-    throw new TypeError (`fromArray requires a native Map but instead it received ${show (xs)}`)
+    throw new TypeError (
+      `fromArray requires a native Map but instead it received ${show (xs)}`
+    )
   }
 
 
@@ -94,7 +100,7 @@ export const fromMap =
  * Map a function over all values in the map.
  */
 export const fmap =
-  <K extends Some, A extends Some, B extends Some>
+  <K, A, B>
   (f: (value: A) => B) =>
   (xs: OrderedMap<K, A>): OrderedMap<K, B> =>
     fromArray ([...xs .value] .map (([k, a]) => [k, f (a)] as [K, B]))
@@ -106,7 +112,7 @@ export const fmap =
  * definition is `fmap . const`, but this may be overridden with a more
  * efficient version.
  */
-export const mapReplace = <K extends Some, A extends Some> (x: A) => fmap<K, any, A> (cnst (x))
+export const mapReplace = <K, A> (x: A) => fmap<K, any, A> (cnst (x))
 
 
 // FOLDABLE
@@ -117,7 +123,7 @@ export const mapReplace = <K extends Some, A extends Some> (x: A) => fmap<K, any
  * Right-associative fold of a structure.
  */
 export const foldr =
-  <A extends Some, B extends Some>
+  <A, B>
   (f: (current: A) => (acc: B) => B) =>
   (initial: B) =>
   (xs: OrderedMap<any, A>): B =>
@@ -135,7 +141,7 @@ export const foldr =
  * ```foldl f z [x1, x2, ..., xn] == (...((z `f` x1) `f` x2) `f`...) `f` xn```
  */
 export const foldl =
-  <A extends Some, B extends Some>
+  <A, B>
   (f: (acc: B) => (current: A) => B) =>
   (initial: B) =>
   (xs: OrderedMap<any, A>): B =>
@@ -150,7 +156,7 @@ export const foldl =
  * `foldr1 f = foldr1 f . toList`
  */
 export const foldr1 =
-  <A extends Some>
+  <A>
   (f: (current: A) => (acc: A) => A) =>
   (xs: OrderedMap<any, A>): A => {
     if (xs .value .size > 0) {
@@ -173,7 +179,7 @@ export const foldr1 =
  * `foldl1 f = foldl1 f . toList`
  */
 export const foldl1 =
-  <A extends Some>
+  <A>
   (f: (acc: A) => (current: A) => A) =>
   (xs: OrderedMap<any, A>): A => {
     if (xs .value .size > 0) {
@@ -191,7 +197,7 @@ export const foldl1 =
  * List of elements of a structure, from left to right.
  */
 export const toList =
-  <K extends Some, A extends Some>
+  <K, A>
   (xs: OrderedMap<K, A>): List<Pair<K, A>> =>
     List.fromArray ([...xs .value] .map (([k, a]) => fromBoth<K, A> (k) (a)))
 
@@ -202,7 +208,9 @@ export const toList =
  * for structures that are similar to cons-lists, because there is no general
  * way to do better.
  */
-export const fnull = (xs: OrderedMap<any, any>): boolean => xs .value .size === 0
+export const fnull =
+  (xs: OrderedMap<any, any>): boolean =>
+    xs .value .size === 0
 
 /**
  * `length :: Map k a -> Int`
@@ -219,17 +227,18 @@ export const length = (xs: OrderedMap<any, any>): number => xs .value .size
  * Does the element occur in the structure?
  */
 export const elem =
-  <A extends Some>(e: A) => (xs: OrderedMap<any, A>): boolean =>
+  <A> (e: A) => (xs: OrderedMap<any, A>): boolean =>
     [...xs .value .values ()] .some (equals (e))
 
 /**
- * `elem_ :: Eq a => Map k a -> a -> Bool`
+ * `elemF :: Eq a => Map k a -> a -> Bool`
  *
  * Does the element occur in the structure?
  *
- * Same as `List.elem` but with arguments switched.
+ * Flipped version of `elem`.
  */
-export const elem_ = <A extends Some>(xs: OrderedMap<any, A>) => (e: A): boolean => elem (e) (xs)
+export const elemF =
+  <A> (xs: OrderedMap<any, A>) => (e: A): boolean => elem (e) (xs)
 
 /**
  * `sum :: Num a => Map k a -> a`
@@ -250,14 +259,18 @@ export const product = foldr (multiply) (1)
  *
  * The largest element of a non-empty structure.
  */
-export const maximum = (xs: OrderedMap<any, number>): number => Math.max (...xs .value .values ())
+export const maximum =
+  (xs: OrderedMap<any, number>): number =>
+    Math.max (...xs .value .values ())
 
 /**
  * `minimum :: Ord a => Map k a -> a`
  *
  * The least element of a non-empty structure.
  */
-export const minimum = (xs: OrderedMap<any, number>): number => Math.min (...xs .value .values ())
+export const minimum =
+  (xs: OrderedMap<any, number>): number =>
+    Math.min (...xs .value .values ())
 
 // Specialized folds
 
@@ -267,7 +280,7 @@ export const minimum = (xs: OrderedMap<any, number>): number => Math.min (...xs 
  * The concatenation of all the elements of a container of lists.
  */
 export const concat =
-  <A extends Some> (xs: OrderedMap<any, List<A>>): List<A> =>
+  <A> (xs: OrderedMap<any, List<A>>): List<A> =>
     foldl<List<A>, List<A>> (append) (List.empty) (xs)
 
 /**
@@ -277,7 +290,7 @@ export const concat =
  * resulting lists.
  */
 export const concatMap =
-  <K extends Some, A extends Some, B extends Some>
+  <K, A, B>
   (f: (value: A) => OrderedMap<K, B>) =>
   (xs: OrderedMap<K, A>): OrderedMap<K, B> =>
     fromArray (
@@ -295,7 +308,8 @@ export const concatMap =
  * `False` value finitely far from the left end.
  */
 export const and =
-  (xs: OrderedMap<any, boolean>): boolean => [...xs .value .values ()] .every (ident)
+  (xs: OrderedMap<any, boolean>): boolean =>
+    [...xs .value .values ()] .every (ident)
 
 /**
  * `or :: Map k Bool -> Bool`
@@ -305,7 +319,8 @@ export const and =
  * `True` value finitely far from the left end.
  */
 export const or =
-  (xs: OrderedMap<any, boolean>): boolean => [...xs .value .values ()] .some (ident)
+  (xs: OrderedMap<any, boolean>): boolean =>
+    [...xs .value .values ()] .some (ident)
 
 /**
  * `any :: (a -> Bool) -> Map k a -> Bool`
@@ -313,7 +328,7 @@ export const or =
  * Determines whether any element of the structure satisfies the predicate.
  */
 export const any =
-  <A extends Some>(f: (x: A) => boolean) => (xs: OrderedMap<any, A>): boolean =>
+  <A> (f: (x: A) => boolean) => (xs: OrderedMap<any, A>): boolean =>
     [...xs .value .values ()] .some (f)
 
 /**
@@ -322,7 +337,7 @@ export const any =
  * Determines whether all elements of the structure satisfy the predicate.
  */
 export const all =
-  <A extends Some>(f: (x: A) => boolean) => (xs: OrderedMap<any, A>): boolean =>
+  <A> (f: (x: A) => boolean) => (xs: OrderedMap<any, A>): boolean =>
     [...xs .value .values ()] .every (f)
 
 // Searches
@@ -332,7 +347,7 @@ export const all =
  *
  * `notElem` is the negation of `elem`.
  */
-export const notElem = <A extends Some> (e: A) => pipe (
+export const notElem = <A> (e: A) => pipe (
   elem<A> (e),
   not
 )
@@ -345,7 +360,9 @@ interface Find {
    * leftmost element of the structure matching the predicate, or `Nothing` if
    * there is no such element.
    */
-  <A extends Some, A1 extends A> (pred: (x: A) => x is A1): (xs: OrderedMap<any, A>) => Maybe<A1>
+  <A, A1 extends A>
+  (pred: (x: A) => x is A1):
+  (xs: OrderedMap<any, A>) => Maybe<A1>
   /**
    * `find :: (a -> Bool) -> Map k a -> Maybe a`
    *
@@ -353,7 +370,9 @@ interface Find {
    * leftmost element of the structure matching the predicate, or `Nothing` if
    * there is no such element.
    */
-  <A extends Some> (pred: (x: A) => boolean): (xs: OrderedMap<any, A>) => Maybe<A>
+  <A>
+  (pred: (x: A) => boolean):
+  (xs: OrderedMap<any, A>) => Maybe<A>
 }
 
 /**
@@ -364,7 +383,7 @@ interface Find {
  * there is no such element.
  */
 export const find: Find =
-  <A extends Some> (pred: (x: A) => boolean) => (xs: OrderedMap<any, A>): Maybe<A> =>
+  <A> (pred: (x: A) => boolean) => (xs: OrderedMap<any, A>): Maybe<A> =>
     fromNullable ([...xs .value .values ()] .find (pred))
 
 
@@ -382,25 +401,27 @@ export const size = length
  *
  * Is the key a member of the map?
  */
-export const member = <K extends Some> (key: K) => (mp: OrderedMap<K, any>): boolean =>
-  mp .value .has (key)
+export const member =
+  <K> (key: K) => (mp: OrderedMap<K, any>): boolean =>
+    mp .value .has (key)
 
 /**
- * `member_ :: Ord k => Map k a -> k -> Bool`
+ * `memberF :: Ord k => Map k a -> k -> Bool`
  *
  * Is the key a member of the map?
  *
- * Same as `member` but with arguments flipped.
+ * Flipped version of `member`.
  */
-export const member_ = <K extends Some> (mp: OrderedMap<K, any>) => (key: K): boolean =>
-  mp .value .has (key)
+export const memberF =
+  <K> (mp: OrderedMap<K, any>) => (key: K): boolean =>
+    mp .value .has (key)
 
 /**
  * `notMember :: Ord k => k -> Map k a -> Bool`
  *
  * Is the key not a member of the map?
  */
-export const notMember = <K extends Some> (key: K) => pipe (member (key), not)
+export const notMember = <K> (key: K) => pipe (member (key), not)
 
 /**
  * `lookup :: Ord k => k -> Map k a -> Maybe a`
@@ -410,7 +431,7 @@ export const notMember = <K extends Some> (key: K) => pipe (member (key), not)
  * map.
  */
 export const lookup =
-  <K extends Some, A extends Some>
+  <K, A>
   (key: K) => (m: OrderedMap<K, A>): Maybe<A> =>
     fromNullable (m .value .get (key))
 
@@ -424,7 +445,7 @@ export const lookup =
  * Flipped version of `lookup`.
  */
 export const lookupF =
-  <K extends Some, A extends Some>
+  <K, A>
   (m: OrderedMap<K, A>) => (key: K): Maybe<A> =>
     lookup<K, A> (key) (m)
 
@@ -435,7 +456,7 @@ export const lookupF =
  * or returns default value `def` when the key is not in the map.
  */
 export const findWithDefault =
-  <K extends Some, A extends Some>
+  <K, A>
   (def: A) => (key: K) => (m: OrderedMap<K, A>): A =>
     fromMaybe (def) (lookup<K, A> (key) (m))
 
@@ -455,7 +476,7 @@ export const empty = fromUniquePairs<any, any> ()
  * A map with a single element.
  */
 export const singleton =
-  <K extends Some, A extends Some> (key: K) => (x: A): OrderedMap<K, A> =>
+  <K, A> (key: K) => (x: A): OrderedMap<K, A> =>
     fromArray ([[key, x]])
 
 
@@ -469,7 +490,7 @@ export const singleton =
  * equivalent to `insertWith const`.
  */
 export const insert =
-  <K extends Some, A extends Some>
+  <K, A>
   (key: K) =>
   (value: A) =>
   (mp: OrderedMap<K, A>): OrderedMap<K, A> =>
@@ -484,7 +505,7 @@ export const insert =
  * will insert the pair `(key, f new_value old_value)`.
  */
 export const insertWith =
-  <K extends Some, A extends Some>
+  <K, A>
   (f: (new_value: A) => (old_value: A) => A) =>
   (key: K) =>
   (value: A) =>
@@ -506,7 +527,7 @@ export const insertWith =
  * the key passed to `f` is the same key passed to `insertWithKey`.
  */
 export const insertWithKey =
-  <K extends Some, A extends Some>
+  <K, A>
   (f: (key: K) => (new_value: A) => (old_value: A) => A) =>
   (key: K) =>
   (value: A) =>
@@ -527,19 +548,21 @@ export const insertWithKey =
  * `(insertWithKey f k x map)`.
  */
 export const insertLookupWithKey =
-  <K extends Some, A extends Some>
+  <K, A>
   (f: (key: K) => (new_value: A) => (old_value: A) => A) =>
   (key: K) =>
   (value: A) =>
   (mp: OrderedMap<K, A>): Pair<Maybe<A>, OrderedMap<K, A>> => {
     const maybe_old_value = lookup<K, A> (key) (mp)
 
-    return fromBoth<Maybe<A>, OrderedMap<K, A>> (maybe_old_value)
-                                                (insert<K, A> (key)
-                                                              (maybe<A, A> (value)
-                                                                           (f (key) (value))
-                                                                           (maybe_old_value))
-                                                              (mp))
+    return fromBinary (
+      maybe_old_value,
+      insert<K, A> (key)
+                   (maybe<A, A> (value)
+                                (f (key) (value))
+                                (maybe_old_value))
+                   (mp)
+    )
   }
 
 
@@ -549,7 +572,7 @@ export const insertLookupWithKey =
  * Removes a key without checking its existence before. For internal use only.
  */
 const removeKey =
-  <K extends Some, A extends Some> (key: K) => (mp: OrderedMap<K, A>): OrderedMap<K, A> =>
+  <K, A> (key: K) => (mp: OrderedMap<K, A>): OrderedMap<K, A> =>
     fromArray ([...mp .value] .filter (([k]) => k !== key))
 
 /**
@@ -559,7 +582,7 @@ const removeKey =
  * the map, the original map is returned.
  */
 export const sdelete =
-  <K extends Some, A extends Some> (key: K) => (mp: OrderedMap<K, A>): OrderedMap<K, A> =>
+  <K, A> (key: K) => (mp: OrderedMap<K, A>): OrderedMap<K, A> =>
     member (key) (mp) ? removeKey<K, A> (key) (mp) : mp
 
 /**
@@ -569,7 +592,7 @@ export const sdelete =
  * When the key is not a member of the map, the original map is returned.
  */
 export const adjust =
-  <K extends Some, A extends Some>
+  <K, A>
   (f: (value: A) => A) =>
   (key: K) =>
   (mp: OrderedMap<K, A>): OrderedMap<K, A> =>
@@ -584,7 +607,7 @@ export const adjust =
  * the original map is returned.
  */
 export const adjustWithKey =
-  <K extends Some, A extends Some>
+  <K, A>
   (f: (key: K) => (value: A) => A) =>
   (key: K) =>
   (mp: OrderedMap<K, A>): OrderedMap<K, A> =>
@@ -600,17 +623,18 @@ export const adjustWithKey =
  * `(Just y)`, the key `k` is bound to the new value `y`.
  */
 export const update =
-  <K extends Some, A extends Some>
+  <K, A>
   (f: (value: A) => Maybe<A>) =>
   (key: K) =>
   (mp: OrderedMap<K, A>): OrderedMap<K, A> =>
-    maybe<A, OrderedMap<K, A>> (mp)
-                               (pipe (
-                                 f,
-                                 maybe_<A, OrderedMap<K, A>> (() => removeKey<K, A> (key) (mp))
-                                                             (y => insert<K, A> (key) (y) (mp))
-                               ))
-                               (lookup<K, A> (key) (mp))
+    maybe<A, OrderedMap<K, A>>
+      (mp)
+      (pipe (
+        f,
+        maybe_<A, OrderedMap<K, A>> (() => removeKey<K, A> (key) (mp))
+                                    (y => insert<K, A> (key) (y) (mp))
+      ))
+      (lookup<K, A> (key) (mp))
 
 /**
  * `updateWithKey :: Ord k => (k -> a -> Maybe a) -> k -> Map k a -> Map k a`
@@ -620,17 +644,18 @@ export const update =
  * is `(Just y)`, the key `k` is bound to the new value `y`.
  */
 export const updateWithKey =
-  <K extends Some, A extends Some>
+  <K, A>
   (f: (key: K) => (value: A) => Maybe<A>) =>
   (key: K) =>
   (mp: OrderedMap<K, A>): OrderedMap<K, A> =>
-    maybe<A, OrderedMap<K, A>> (mp)
-                               (pipe (
-                                 f (key),
-                                 maybe_<A, OrderedMap<K, A>> (() => removeKey<K, A> (key) (mp))
-                                                             (y => insert<K, A> (key) (y) (mp))
-                               ))
-                               (lookup<K, A> (key) (mp))
+    maybe<A, OrderedMap<K, A>>
+      (mp)
+      (pipe (
+        f (key),
+        maybe_<A, OrderedMap<K, A>> (() => removeKey<K, A> (key) (mp))
+                                    (y => insert<K, A> (key) (y) (mp))
+      ))
+      (lookup<K, A> (key) (mp))
 
 /**
  * `updateLookupWithKey :: Ord k => (k -> a -> Maybe a) -> k -> Map k a ->
@@ -641,21 +666,19 @@ export const updateWithKey =
  * deleted.
  */
 export const updateLookupWithKey =
-  <K extends Some, A extends Some>
+  <K, A>
   (f: (key: K) => (value: A) => Maybe<A>) =>
   (key: K) =>
   (mp: OrderedMap<K, A>): Pair<Maybe<A>, OrderedMap<K, A>> => {
     const maybe_old_value = lookup<K, A> (key) (mp)
 
     return maybe_<A, Pair<Maybe<A>, OrderedMap<K, A>>>
-      (() => fromBoth<Maybe<A>, OrderedMap<K, A>> (maybe_old_value) (mp))
+      (() => fromBinary (maybe_old_value, mp))
       (pipe (
         f (key),
         maybe_<A, Pair<Maybe<A>, OrderedMap<K, A>>>
-          (() => fromBoth<Maybe<A>, OrderedMap<K, A>> (maybe_old_value)
-                                                      (removeKey<K, A> (key) (mp)))
-          (x => fromBoth<Maybe<A>, OrderedMap<K, A>> (Just (x))
-                                                     (insert<K, A> (key) (x) (mp)))
+          (() => fromBinary (maybe_old_value, removeKey<K, A> (key) (mp)))
+          (x => fromBinary (Just (x), insert<K, A> (key) (x) (mp)))
       ))
       (maybe_old_value)
   }
@@ -668,14 +691,15 @@ export const updateLookupWithKey =
  * `Map`. In short : `lookup k (alter f k m) = f (lookup k m)`.
  */
 export const alter =
-  <K extends Some, A extends Some>
+  <K, A>
   (f: (old_value: Maybe<A>) => Maybe<A>) =>
   (key: K) =>
   (mp: OrderedMap<K, A>): OrderedMap<K, A> =>
-    maybe<A, (mp: OrderedMap<K, A>) => OrderedMap<K, A>> (sdelete<K, A> (key))
-                                                         (insert<K, A> (key))
-                                                         (f (lookup<K, A> (key) (mp)))
-                                                         (mp)
+    maybe<A, (mp: OrderedMap<K, A>) => OrderedMap<K, A>>
+      (sdelete<K, A> (key))
+      (insert<K, A> (key))
+      (f (lookup<K, A> (key) (mp)))
+      (mp)
 
 
 // COMBINE
@@ -688,7 +712,7 @@ export const alter =
   * `(union == unionWith const)`.
   */
 export const union =
-  <K extends Some, A extends Some>
+  <K, A>
   (t1: OrderedMap<K, A>) =>
   (t2: OrderedMap<K, A>): OrderedMap<K, A> =>
     fromArray ([...t1, ...[...t2] .filter (([key]) => !t1 .value .has (key))])
@@ -709,7 +733,7 @@ export const map = fmap
  * Map a function over all values in the map.
  */
 export const mapWithKey =
-  <K extends Some, A extends Some, B extends Some>
+  <K, A, B>
   (f: (key: K) => (value: A) => B) =>
   (xs: OrderedMap<K, A>): OrderedMap<K, B> =>
     fromArray ([...xs .value] .map (([k, a]) => [k, f (k) (a)] as [K, B]))
@@ -725,11 +749,14 @@ export const mapWithKey =
  * `foldrWithKey f z == foldr (uncurry f) z . toAscList`.
  */
 export const foldrWithKey =
-  <K extends Some, A extends Some, B extends Some>
+  <K, A, B>
   (f: (key: K) => (current: A) => (acc: B) => B) =>
   (initial: B) =>
   (xs: OrderedMap<K, A>): B =>
-    [...xs .value] .reduceRight<B> ((acc, e) => f (e [0]) (e [1]) (acc), initial)
+    [...xs .value] .reduceRight<B> (
+      (acc, e) => f (e [0]) (e [1]) (acc),
+      initial
+    )
 
 /**
  * `foldlWithKey :: (a -> k -> b -> a) -> a -> Map k b -> a`
@@ -739,11 +766,14 @@ export const foldrWithKey =
  * `foldlWithKey f z == foldl (\z' (kx, x) -> f z' kx x) z . toAscList`.
  */
 export const foldlWithKey =
-  <K extends Some, A extends Some, B extends Some>
+  <K, A, B>
   (f: (acc: B) => (key: K) => (current: A) => B) =>
   (initial: B) =>
   (xs: OrderedMap<K, A>): B =>
-    [...xs .value] .reduce<B> ((acc, e) => f (acc) (e [0]) (e [1]), initial)
+    [...xs .value] .reduce<B> (
+      (acc, e) => f (acc) (e [0]) (e [1]),
+      initial
+    )
 
 
 // CONVERSION
@@ -754,7 +784,7 @@ export const foldlWithKey =
  * Return all elements of the map.
  */
 export const elems =
-  <A extends Some> (mp: OrderedMap<any, A>): List<A> =>
+  <A> (mp: OrderedMap<any, A>): List<A> =>
     List.fromElements (...mp .value .values ())
 
 /**
@@ -763,7 +793,7 @@ export const elems =
  * Return all keys of the map.
  */
 export const keys =
-  <K extends Some> (mp: OrderedMap<K, any>): List<K> =>
+  <K> (mp: OrderedMap<K, any>): List<K> =>
     List.fromElements (...mp .value .keys ())
 
 /**
@@ -771,7 +801,7 @@ export const keys =
  *
  * Return all key/value pairs in the map.
  */
-export const assocs = <K extends Some, A extends Some> (mp: OrderedMap<K, A>): List<Pair<K, A>> =>
+export const assocs = <K, A> (mp: OrderedMap<K, A>): List<Pair<K, A>> =>
   List.fromArray ([...mp] .map (([key, value]) => fromBoth<K, A> (key) (value)))
 
 /**
@@ -779,7 +809,7 @@ export const assocs = <K extends Some, A extends Some> (mp: OrderedMap<K, A>): L
  *
  * The set of all keys of the map.
  */
-export const keysSet = <K extends Some> (mp: OrderedMap<K, any>): OrderedSet<K> =>
+export const keysSet = <K> (mp: OrderedMap<K, any>): OrderedSet<K> =>
   fromUniqueElements (...mp .value .keys ())
 
 /**
@@ -789,7 +819,7 @@ export const keysSet = <K extends Some> (mp: OrderedMap<K, any>): OrderedSet<K> 
  * its value.
  */
 export const fromSet =
-  <K extends Some, A extends Some>
+  <K, A>
   (f: (key: K) => A) =>
   (ks: OrderedSet<K>): OrderedMap<K, A> =>
     fromArray ([...ks] .map (k => [k, f (k)] as [K, A]))
@@ -808,7 +838,7 @@ export const fromSet =
  * with the performance equal to fromDistinctAscList.
  */
 export const fromList =
-  <K extends Some, A extends Some> (xs: List<Pair<K, A>>): OrderedMap<K, A> =>
+  <K, A> (xs: List<Pair<K, A>>): OrderedMap<K, A> =>
     fromArray (List.toArray (List.map<Pair<K, A>, [K, A]> (Pair.toArray) (xs)))
 
 
@@ -820,7 +850,7 @@ interface Filter {
    *
    * Filter all values that satisfy the predicate.
    */
-  <K extends Some, A extends Some, A1 extends A>
+  <K, A, A1 extends A>
   (pred: (x: A) => x is A1): (list: OrderedMap<K, A>) => OrderedMap<K, A1>
 
   /**
@@ -828,7 +858,7 @@ interface Filter {
    *
    * Filter all values that satisfy the predicate.
    */
-  <K extends Some, A extends Some>
+  <K, A>
   (pred: (x: A) => boolean): (list: OrderedMap<K, A>) => OrderedMap<K, A>
 }
 
@@ -838,7 +868,7 @@ interface Filter {
  * Filter all values that satisfy the predicate.
  */
 export const filter: Filter =
-  <K extends Some, A extends Some>
+  <K, A>
   (pred: (x: A) => boolean) => (xs: OrderedMap<K, A>): OrderedMap<K, A> =>
     fromArray ([...xs .value] .filter (([_, value]) => pred (value)))
 
@@ -848,16 +878,18 @@ interface FilterWithKey {
    *
    * Filter all keys/values that satisfy the predicate.
    */
-  <K extends Some, A extends Some, A1 extends A>
-  (pred: (key: K) => (x: A) => x is A1): (list: OrderedMap<K, A>) => OrderedMap<K, A1>
+  <K, A, A1 extends A>
+  (pred: (key: K) => (x: A) => x is A1):
+  (list: OrderedMap<K, A>) => OrderedMap<K, A1>
 
   /**
    * `filterWithKey :: (k -> a -> Bool) -> Map k a -> Map k a`
    *
    * Filter all keys/values that satisfy the predicate.
    */
-  <K extends Some, A extends Some>
-  (pred: (key: K) => (x: A) => boolean): (list: OrderedMap<K, A>) => OrderedMap<K, A>
+  <K, A>
+  (pred: (key: K) => (x: A) => boolean):
+  (list: OrderedMap<K, A>) => OrderedMap<K, A>
 }
 
 /**
@@ -866,42 +898,46 @@ interface FilterWithKey {
  * Filter all keys/values that satisfy the predicate.
  */
 export const filterWithKey: FilterWithKey =
-  <K extends Some, A extends Some>
-  (pred: (key: K) => (x: A) => boolean) => (xs: OrderedMap<K, A>): OrderedMap<K, A> =>
+  <K, A>
+  (pred: (key: K) => (x: A) => boolean) =>
+  (xs: OrderedMap<K, A>): OrderedMap<K, A> =>
     fromArray ([...xs .value] .filter (([key, value]) => pred (key) (value)))
 
-interface FilterWithKey_ {
+interface FilterWithKeyF {
   /**
-   * `filterWithKey :: Map k a -> (k -> a -> Bool) -> Map k a`
+   * `filterWithKeyF :: Map k a -> (k -> a -> Bool) -> Map k a`
    *
    * Filter all keys/values that satisfy the predicate.
    *
    * Same as `filterWithKey` but with arguments flipped.
    */
-  <K extends Some, A extends Some, A1 extends A>
-  (list: OrderedMap<K, A>): (pred: (key: K) => (x: A) => x is A1) => OrderedMap<K, A1>
+  <K, A, A1 extends A>
+  (list: OrderedMap<K, A>):
+  (pred: (key: K) => (x: A) => x is A1) => OrderedMap<K, A1>
 
   /**
-   * `filterWithKey :: Map k a -> (k -> a -> Bool) -> Map k a`
+   * `filterWithKeyF :: Map k a -> (k -> a -> Bool) -> Map k a`
    *
    * Filter all keys/values that satisfy the predicate.
    *
    * Same as `filterWithKey` but with arguments flipped.
    */
-  <K extends Some, A extends Some>
-  (list: OrderedMap<K, A>): (pred: (key: K) => (x: A) => boolean) => OrderedMap<K, A>
+  <K, A>
+  (list: OrderedMap<K, A>):
+  (pred: (key: K) => (x: A) => boolean) => OrderedMap<K, A>
 }
 
 /**
- * `filterWithKey_ :: Map k a -> (k -> a -> Bool) -> Map k a`
+ * `filterWithKeyF :: Map k a -> (k -> a -> Bool) -> Map k a`
  *
  * Filter all keys/values that satisfy the predicate.
  *
  * Same as `filterWithKey` but with arguments flipped.
  */
-export const filterWithKey_: FilterWithKey_ =
-  <K extends Some, A extends Some>
-  (xs: OrderedMap<K, A>) => (pred: (key: K) => (x: A) => boolean): OrderedMap<K, A> =>
+export const filterWithKeyF: FilterWithKeyF =
+  <K, A>
+  (xs: OrderedMap<K, A>) =>
+  (pred: (key: K) => (x: A) => boolean): OrderedMap<K, A> =>
     fromArray ([...xs .value] .filter (([key, value]) => pred (key) (value)))
 
 /**
@@ -910,12 +946,14 @@ export const filterWithKey_: FilterWithKey_ =
  * Map values and collect the `Just` results.
  */
 export const mapMaybe =
-  <K extends Some, A extends Some, B extends Some>
+  <K, A, B>
   (f: (value: A) => Maybe<B>) =>
   (mp: OrderedMap<K, A>): OrderedMap<K, B> =>
     fromArray (
       [...mp] .reduce<[K, B][]> (
-        (acc, [key, value]) => maybe<B, [K, B][]> (acc) (x => [...acc, [key, x]]) (f (value)),
+        (acc, [key, value]) => maybe<B, [K, B][]> (acc)
+                                                  (x => [...acc, [key, x]])
+                                                  (f (value)),
         []
       )
     )
@@ -926,12 +964,14 @@ export const mapMaybe =
  * Map keys/values and collect the `Just` results.
  */
 export const mapMaybeWithKey =
-  <K extends Some, A extends Some, B extends Some>
+  <K, A, B>
   (f: (key: K) => (value: A) => Maybe<B>) =>
   (mp: OrderedMap<K, A>): OrderedMap<K, B> =>
     fromArray (
       [...mp] .reduce<[K, B][]> (
-        (acc, [key, value]) => maybe<B, [K, B][]> (acc) (x => [...acc, [key, x]]) (f (key) (value)),
+        (acc, [key, value]) => maybe<B, [K, B][]> (acc)
+                                                  (x => [...acc, [key, x]])
+                                                  (f (key) (value)),
         []
       )
     )
@@ -946,20 +986,20 @@ export const mapMaybeWithKey =
   * @param f Transforms the value before inserting it into the object.
   */
 export const toObjectWith =
-  <A extends Some, B extends Some>
+  <A, B>
   (f: (x: A) => B) =>
   (mp: OrderedMap<string, A>): StringKeyObject<B> =>
     foldlWithKey<string, A, StringKeyObject<B>> (acc => key => value => ({
                                                   ...acc,
                                                   [key]: f (value),
                                                 }))
-                                                ({})
+                                                ({ })
                                                 (mp)
 
 /**
   * Transforms the `OrderedMap` instance into a native `Map`.
   */
-export const toMap = <K extends Some, A extends Some> (mp: OrderedMap<K, A>): ReadonlyMap<K, A> =>
+export const toMap = <K, A> (mp: OrderedMap<K, A>): ReadonlyMap<K, A> =>
   mp .value
 
 /**
@@ -968,7 +1008,7 @@ export const toMap = <K extends Some, A extends Some> (mp: OrderedMap<K, A>): Re
  */
 export const isOrderedMap =
   (x: any): x is OrderedMap<any, any> =>
-    typeof x === "object" && x !== null && x.isOrderedMap
+    Object.getPrototypeOf (x) === OrderedMapPrototype
 
 
 // NAMESPACED FUNCTIONS
@@ -989,7 +1029,7 @@ export const OrderedMap = {
   fnull,
   length,
   elem,
-  elem_,
+  elemF,
   sum,
   product,
   maximum,
@@ -1005,7 +1045,7 @@ export const OrderedMap = {
 
   size,
   member,
-  member_,
+  memberF,
   notMember,
   lookup,
   lookupF,
@@ -1045,7 +1085,7 @@ export const OrderedMap = {
 
   filter,
   filterWithKey,
-  filterWithKey_,
+  filterWithKeyF,
   mapMaybe,
   mapMaybeWithKey,
 
