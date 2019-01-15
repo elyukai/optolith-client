@@ -12,9 +12,7 @@ export const getIdPrefix = (id: string) => id.split (/_/)[0] as IdPrefixes
 
 export const getNumericId = (id: string) => Number.parseInt (id.split (/_/)[1], 10)
 
-export const prefixId = (prefix: IdPrefixes) => (id: number) => `${prefix}_${id}`
-
-export const prefixRawId = (prefix: IdPrefixes) => (id: string) => `${prefix}_${id}`
+export const prefixId = (prefix: IdPrefixes) => (id: number | string) => `${prefix}_${id}`
 
 /**
  * Gets a list of ids and returns an unused numeric id.

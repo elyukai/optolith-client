@@ -13,7 +13,6 @@ import { Cantrip } from "../../Models/Wiki/Cantrip";
 import { CombatTechnique } from "../../Models/Wiki/CombatTechnique";
 import { Culture } from "../../Models/Wiki/Culture";
 import { Disadvantage } from "../../Models/Wiki/Disadvantage";
-import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel";
 import { ItemTemplate } from "../../Models/Wiki/ItemTemplate";
 import { LiturgicalChant } from "../../Models/Wiki/LiturgicalChant";
 import { Profession } from "../../Models/Wiki/Profession";
@@ -39,25 +38,6 @@ const getSourceBooks =
     List.fromArray (srcIds .map (
       (id, index) => SourceLink ({ id, page: srcPages [index] })
     ))
-
-export const initExperienceLevel =
-  (locale: StringKeyObject<Raw.RawExperienceLevelLocale>) =>
-  (raw: Raw.RawExperienceLevel): Maybe<Record<ExperienceLevel>> => {
-    const { id } = raw
-    const localeObject = locale [id]
-
-    if (localeObject !== undefined) {
-      const { name } = localeObject
-
-      return Just (ExperienceLevel ({
-        ...raw,
-        id,
-        name,
-      }))
-    }
-
-    return Nothing
-  }
 
 interface SizeNew {
   sizeBase: Maybe<number>;

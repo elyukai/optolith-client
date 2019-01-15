@@ -8,7 +8,7 @@ export interface ExperienceLevel {
   maxSkillRating: number
   maxCombatTechniqueRating: number
   maxTotalAttributeValues: number
-  maxSpellsLiturgies: number
+  maxSpellsLiturgicalChants: number
   maxUnfamiliarSpells: number
 }
 
@@ -21,6 +21,6 @@ export const ExperienceLevel =
     maxSkillRating: 0,
     maxCombatTechniqueRating: 0,
     maxTotalAttributeValues: 0,
-    maxSpellsLiturgies: 0,
+    maxSpellsLiturgicalChants: 0,
     maxUnfamiliarSpells: 0,
   })

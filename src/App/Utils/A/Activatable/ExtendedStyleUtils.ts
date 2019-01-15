@@ -1,14 +1,15 @@
 import { pipe } from "ramda";
 import { equals } from "../../../../Data/Eq";
-import { thrush } from "../../../../Data/Function";
-import { Lens, over, set } from "../../../../Data/Lens";
-import { append, elem, findIndex, isList, List, ListI, map, modifyAt, partition } from "../../../../Data/List";
-import { alt, fmap, fromJust, fromMaybe, isJust, isNothing, Just, liftM2, Maybe, Nothing } from "../../../../Data/Maybe";
+import { flip, thrush } from "../../../../Data/Function";
+import { Lens, over, set, view } from "../../../../Data/Lens";
+import { all, append, concatMap, elem, empty, filter, findIndex, foldr, isList, length, List, ListI, map, modifyAt, partition, pure } from "../../../../Data/List";
+import { alt, and, any, fmap, fromJust, fromMaybe, isJust, isNothing, Just, liftM2, Maybe, Nothing, or } from "../../../../Data/Maybe";
 import { fst, snd } from "../../../../Data/Pair";
 import { Record } from "../../../../Data/Record";
 import { HeroModelL, HeroModelRecord } from "../../../Models/Hero/HeroModel";
 import { StyleDependency, StyleDependencyL } from "../../../Models/Hero/StyleDependency";
 import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility";
+import { gt } from "../../mathUtils";
 
 const {
   combatStyleDependencies,
@@ -32,6 +33,10 @@ export type StyleDependencyStateKeys =
  */
 const lensByStyle =
   (x: Record<SpecialAbility>): Maybe<StyleDependenciesLens> => {
+    if (any (pipe ((length), equals (3))) (extended (x))) {
+      return Nothing
+    }
+
     if (gr (x) === 9 || gr (x) === 10) {
       return Just (combatStyleDependencies)
     }
@@ -169,7 +174,6 @@ const getIndexForExtendedSpecialAbilityDependency =
                    })
                    (xs))
 
-
 /**
  * A combination of `addStyleExtendedSpecialAbilityDependencies` and
  * `addExtendedSpecialAbilityDependency`.
@@ -194,7 +198,8 @@ const getSplittedRemainingAndToRemove =
  * dependency
  */
 const checkForAlternativeIndex =
-  (dependency: Record<StyleDependency>): (leftItems: List<Record<StyleDependency>>) => number =>
+  (dependency: Record<StyleDependency>):
+  (leftItems: List<Record<StyleDependency>>) => number =>
     pipe (
       findIndex (e => {
                   const current_id = dpid (e)
@@ -224,116 +229,78 @@ const checkForAlternativeIndex =
 export const removeStyleExtendedSpecialAbilityDependencies =
   (hero_entry: Record<SpecialAbility>) =>
   (hero: HeroModelRecord): HeroModelRecord =>
-  Maybe.fromMaybe (hero) (
-    lensByStyle (hero_entry)
-      .bind (key =>
-        hero_entry.lookup ("extended")
-          .fmap (() =>
-            hero.modify<StyleDependencyStateKeys> (
-              slice => {
-                const splitted = getSplittedRemainingAndToRemove (hero_entry.get ("id")) (slice)
-                const itemsToRemove = fst (splitted)
-                const leftItems = snd (splitted)
+    fromMaybe
+      (hero)
+      (fmap ((l: Lens<HeroModelRecord, List<Record<StyleDependency>>>) =>
+              over (l)
+                   (xs => {
+                     const splitted = getSplittedRemainingAndToRemove (id (hero_entry)) (xs)
+                     const itemsToRemove = fst (splitted)
+                     const leftItems = snd (splitted)
 
-                return itemsToRemove
-                  .filter (e => Maybe.isJust (e.lookup ("active")))
-                  .foldl<List<Record<StyleDependency>>> (
-                    accRemain => dependency =>
-                      accRemain.modifyAt (
-                        checkForAlternativeIndex (leftItems, dependency),
-                        x => x.update (() => dependency.lookup ("active")) ("active")
-                      )
-                  ) (leftItems)
-              }
-            ) (key)
-          )
-      )
-  )
+                     return pipe (
+                                   filter<Record<StyleDependency>> (pipe (active, isJust)),
+                                   foldr<Record<StyleDependency>, List<Record<StyleDependency>>>
+                                     (d => modifyAt<ListI<typeof xs>>
+                                       (checkForAlternativeIndex (d) (leftItems))
+                                       (set (StyleDependencyL.active) (active (d))))
+                                     (leftItems)
+                                 )
+                                 (itemsToRemove)
+                   })
+                   (hero))
+            (lensByStyle (hero_entry)))
 
 /**
  * Modifies a `StyleDependency` object to show a extended special ability has
  * been removed.
- * @param state Dependent instances state slice.
- * @param instance The special ability you want to modify a dependency for.
+ * @param hero Dependent instances state slice.
+ * @param hero_entry The special ability you want to modify a dependency for.
  * @returns Changed state slice.
  */
-export const removeExtendedSpecialAbilityDependency = (
-  state: HeroModelRecord,
-  instance: Record<SpecialAbility>,
-): HeroModelRecord =>
-  Maybe.fromMaybe (state) (
-    lensByExtended (instance)
-      .fmap (key =>
-        state.modify<StyleDependencyStateKeys> (
-          slice => slice.modifyAt (
-            Maybe.fromMaybe (-1) (
-              /**
-               * Check if the requested entry is part of a list of options.
-               *
-               * Also, it only has to affect the current instance, because only
-               * that is about to be removed.
-               */
-              slice.findIndex (
-                e =>
-                  e.get ("id") instanceof List
-                  && (e.get ("id") as List<string>).elem (instance.get ("id"))
-                  && e.lookup ("active").equals (instance.lookup ("id"))
-              )
-                /**
-                 * Otherwise checks if requested entry is plain dependency.
-                 *
-                 * Also, it only has to affect the current instance, because
-                 * only that is about to be removed.
-                 */
-                .alt (slice.findIndex (
-                  e =>
-                    e.get ("id") === instance.get ("id")
-                    && e.lookup ("active").equals (instance.lookup ("id"))
-                ))
-            ),
-            // Maybe.Nothing removes the property from the record.
-            entry => entry.update (Maybe.empty) ("active")
-          )
-        ) (key)
-      )
-  )
+export const removeExtendedSpecialAbilityDependency =
+  (hero_entry: Record<SpecialAbility>) =>
+  (hero: HeroModelRecord): HeroModelRecord =>
+    fromMaybe
+      (hero)
+      (fmap ((l: Lens<HeroModelRecord, List<Record<StyleDependency>>>) =>
+              over (l)
+                   (xs => modifyAt<ListI<typeof xs>>
+                      (fromMaybe
+                        (-1)
+                        (getIndexForExtendedSpecialAbilityDependency (hero_entry)
+                                                                     (xs)))
+                      (set (StyleDependencyL.active) (Nothing))
+                      (xs))
+                   (hero))
+            (lensByStyle (hero_entry)))
 
 /**
  * A combination of `removeStyleExtendedSpecialAbilityDependencies` and
  * `removeExtendedSpecialAbilityDependency`.
  */
-export const removeAllStyleRelatedDependencies = (
-  state: HeroModelRecord,
-  instance: Record<SpecialAbility>,
-): HeroModelRecord => {
-  const pipe = pipe (
-    (pipedState: HeroModelRecord) =>
-      removeStyleExtendedSpecialAbilityDependencies (pipedState, instance),
-    (pipedState: HeroModelRecord) =>
-      removeExtendedSpecialAbilityDependency (pipedState, instance),
-  )
-
-  return pipe (state)
-}
+export const removeAllStyleRelatedDependencies =
+  (hero_entry: Record<SpecialAbility>) =>
+    pipe (
+      removeStyleExtendedSpecialAbilityDependencies (hero_entry),
+      removeExtendedSpecialAbilityDependency (hero_entry)
+    )
 
 /**
  * Return flat array of available extended special abilities' IDs.
- * @param list List of set extended special ability objects.
+ * @param xs List of set extended special ability objects.
  */
-const getAvailableExtendedSpecialAbilities = (
-  list: List<Record<StyleDependency>>,
-): List<string> =>
-  list.foldl<List<string>> (
-    arr => e => {
-      if (Maybe.isNothing (e.lookup ("active"))) {
-        const id = e.get ("id")
+const getAvailableExtendedSpecialAbilities =
+  concatMap<Record<StyleDependency>, string>
+    (e => {
+      if (isNothing (active (e))) {
+        const current_id = dpid (e)
 
-        return id instanceof List ? arr.mappend (id) : arr.append (id)
+        return isList (current_id) ? current_id : pure (current_id)
       }
 
-      return arr
-    }
-  ) (List.of ())
+      return empty
+    })
 
 /**
  * Calculates a list of available Extended Special Abilties. The availability is
@@ -341,14 +308,8 @@ const getAvailableExtendedSpecialAbilities = (
  * to be checked separately.
  * @param styleDependencies
  */
-export const getAllAvailableExtendedSpecialAbilities = (
-  ...styleDependencies: List<Record<StyleDependency>>[]
-): List<string> =>
-  styleDependencies.reduce<List<string>> (
-    (idList, dependencyArr) =>
-      idList.mappend (getAvailableExtendedSpecialAbilities (dependencyArr)),
-    List.of ()
-  )
+export const getAllAvailableExtendedSpecialAbilities =
+  foldr (pipe (getAvailableExtendedSpecialAbilities, append)) (empty)
 
 
 /**
@@ -357,29 +318,27 @@ export const getAllAvailableExtendedSpecialAbilities = (
  * @param state Dependent instances state slice.
  * @param entry The special ability to check.
  */
-export const isStyleValidToRemove = (
-  state: HeroModelRecord,
-  maybeInstance: Maybe<Record<SpecialAbility>>,
-): boolean =>
-  Maybe.fromMaybe (false) (
-    maybeInstance.fmap (
-      instance => Maybe.fromMaybe (true) (
-        lensByStyle (instance)
-          .fmap (key => {
-            const {
-              itemsToRemove,
-              leftItems
-            } = getSplittedRemainingAndToRemove (
-              state.get (key),
-              instance.get ("id")
-            )
+export const isStyleValidToRemove =
+  (hero: HeroModelRecord):
+  (mhero_entry: Maybe<Record<SpecialAbility>>) => boolean =>
+    pipe (
+      fmap (
+        hero_entry =>
+          and (fmap ((l: Lens<HeroModelRecord, List<Record<StyleDependency>>>) => {
+                      const splitted =
+                        getSplittedRemainingAndToRemove (id (hero_entry))
+                                                        (view (l) (hero))
 
-            return !itemsToRemove
-              .filter (e => Maybe.isJust (e.lookup ("active")))
-              .any (dependency =>
-                checkForAlternativeIndex (leftItems, dependency) === -1
-              )
-          })
-      )
+                      const itemsToRemove = fst (splitted)
+                      const leftItems = snd (splitted)
+
+                      return pipe (
+                               filter<Record<StyleDependency>> (pipe (active, isJust)),
+                               all (pipe (flip (checkForAlternativeIndex) (leftItems), gt (-1)))
+                             )
+                             (itemsToRemove)
+                    })
+                    (lensByStyle (hero_entry)))
+      ),
+      or
     )
-  )

@@ -19,6 +19,57 @@ test ('Left', () => {
   expect (Left (3) .isLeft) .toEqual (true)
 })
 
+// EITHER.EXTRA
+
+test ('fromLeft', () => {
+  expect (Either.fromLeft (0) (Left (3)))
+    .toEqual (3)
+  expect (Either.fromLeft (0) (Right (3)))
+    .toEqual (0)
+})
+
+test ('fromRight', () => {
+  expect (Either.fromRight (0) (Right (3)))
+    .toEqual (3)
+  expect (Either.fromRight (0) (Left (3)))
+    .toEqual (0)
+})
+
+test ('fromEither', () => {
+  expect (Either.fromEither (Right (3)))
+    .toEqual (3)
+  expect (Either.fromEither (Left (0)))
+    .toEqual (0)
+})
+
+test ('fromLeft_', () => {
+  expect (Either.fromLeft_ (Left (3)))
+    .toEqual (3)
+  expect (() => Either.fromLeft_ (Right (3)))
+    .toThrow ()
+})
+
+test ('fromRight_', () => {
+  expect (Either.fromRight_ (Right (3)))
+    .toEqual (3)
+  expect (() => Either.fromRight_ (Left (3)))
+    .toThrow ()
+})
+
+test ('eitherToMaybe', () => {
+  expect (Either.eitherToMaybe (Left (3)))
+    .toEqual (Nothing)
+  expect (Either.eitherToMaybe (Right (3)))
+    .toEqual (Just (3))
+})
+
+test ('maybeToEither', () => {
+  expect (Either.maybeToEither ('test') (Just (3)))
+    .toEqual (Right (3))
+  expect (Either.maybeToEither ('test') (Nothing))
+    .toEqual (Left ('test'))
+})
+
 // FUNCTOR
 
 test ('fmap', () => {

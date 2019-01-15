@@ -5,16 +5,9 @@ const { Int } = require('../Int')
 
 // CONSTRUCTORS
 
-test ('fromElements', () => {
-  const head = { value: 3, next: { value: 2, next: { value: 1 }}}
-
-  expect (List.fromElements (3, 2, 1) .head) .toEqual (head)
-})
-
 test ('fromArray', () => {
-  const head = { value: 3, next: { value: 2, next: { value: 1 }}}
-
-  expect (List.fromArray ([3, 2, 1]) .head) .toEqual (head)
+  expect (List.fromArray ([3, 2, 1]))
+    .toEqual (List.fromElements (3, 2, 1))
 })
 
 // FUNCTOR
@@ -261,15 +254,14 @@ test ('find', () => {
 
 // BASIC FUNCTIONS
 
-test ('notNull', () => {
-  expect (List.notNull (List.fromElements (3, 2, 1))) .toEqual (true)
-  expect (List.notNull (List.fromElements ())) .toEqual (false)
-})
-
 test ('append', () => {
   expect (List.append (List.fromElements (3, 2, 1))
                       (List.fromElements (3, 2, 1)))
     .toEqual (List.fromElements (3, 2, 1, 3, 2, 1))
+})
+
+test ('appendStr', () => {
+  expect (List.appendStr ("abc") ("def")) .toEqual ("abcdef")
 })
 
 test ('cons', () => {
@@ -551,6 +543,33 @@ test ('zipWith', () => {
     ))
 })
 
+// SPECIAL LISTS
+
+// Functions on strings
+
+test ('lines', () => {
+  expect (List.lines (""))
+    .toEqual (List.fromElements ())
+
+  expect (List.lines ("\n"))
+    .toEqual (List.fromElements (""))
+
+  expect (List.lines ("one"))
+    .toEqual (List.fromElements ("one"))
+
+  expect (List.lines ("one\n"))
+    .toEqual (List.fromElements ("one"))
+
+  expect (List.lines ("one\n\n"))
+    .toEqual (List.fromElements ("one", ""))
+
+  expect (List.lines ("one\ntwo"))
+    .toEqual (List.fromElements ("one", "two"))
+
+  expect (List.lines ("one\ntwo\n"))
+    .toEqual (List.fromElements ("one", "two"))
+})
+
 // "SET" OPERATIONS
 
 test ('sdelete', () => {
@@ -710,7 +729,32 @@ test ('lower', () => {
   expect (List.lower ('TEst')) .toEqual ('test')
 })
 
+// Splitting
+
+test ('splitOn', () => {
+  expect (List.splitOn (";;") ("x;;y;;z;;"))
+    .toEqual (List.fromElements ("x", "y", "z", ""))
+})
+
 // Basics
+
+test ('notNull', () => {
+  expect (List.notNull (List.fromElements (3, 2, 1))) .toEqual (true)
+  expect (List.notNull (List.fromElements ())) .toEqual (false)
+})
+
+test ('notNullStr', () => {
+  expect (List.notNullStr ("1")) .toEqual (true)
+  expect (List.notNullStr ("")) .toEqual (false)
+})
+
+test ('list', () => {
+  expect (List.list (1) (v => _ => v - 2) (List.fromElements (5, 6, 7)))
+    .toEqual (3)
+
+  expect (List.list (1) (v => _ => v - 2) (List.fromElements ()))
+    .toEqual (1)
+})
 
 test ('consF', () => {
   expect (List.consF (4) (List.fromElements (3, 2, 1)))

@@ -499,7 +499,7 @@ export const or = fromMaybe (false)
 export const any =
   <A extends Some>
   (f: (x: A) => boolean) =>
-  (x: Maybe<A>): boolean =>
+  (x: Maybe<A>): x is Just<A> =>
     fromMaybe (false) (fmap (f) (x))
 
 /**

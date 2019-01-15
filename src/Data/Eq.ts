@@ -5,7 +5,7 @@
  */
 
 import { isEither, isRight } from "./Either";
-import { isList } from "./List";
+import { fnull, isList, notNull } from "./List";
 import { isJust, isMaybe, isNothing, Maybe, Some } from "./Maybe";
 import { isOrderedMap, OrderedMap } from "./OrderedMap";
 import { isOrderedSet, member, OrderedSet } from "./OrderedSet";
@@ -40,16 +40,16 @@ export const equals =
     }
 
     if (isList (x1)) {
-      const equalsNode =
+      const equalsCons =
         (xs1: any, xs2: any): boolean =>
-          xs1 === undefined
-          && xs2 === undefined
-          || xs1 !== undefined
-          && xs2 !== undefined
-          && equals (xs1 .value) (xs2 .value)
-          && equalsNode (xs1 .next, xs2 .next)
+          fnull (xs1)
+          && fnull (xs2)
+          || notNull (xs1)
+          && notNull (xs2)
+          && equals (xs1 .x) (xs2 .x)
+          && equalsCons (xs1 .xs, xs2 .xs)
 
-      return isList (x2) && equalsNode (x1 .head, x2 .head)
+      return isList (x2) && equalsCons (x1, x2)
     }
 
     if (isPair (x1)) {
