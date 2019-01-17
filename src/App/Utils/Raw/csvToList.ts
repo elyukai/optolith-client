@@ -36,7 +36,7 @@ export const csvToList =
       // header and body
       uncons,
 
-      maybeToEither ("empty file"),
+      maybeToEither ("csvToList: Empty file"),
 
       bindF (headerAndBody => {
              const header = fst (headerAndBody)
@@ -50,7 +50,8 @@ export const csvToList =
                    bindF (
                      acc => length (l) !== header_length
                        ? Left (
-                         `Line ${i + 1} has different length than header. Source: ${show (l)}`
+                         `csvToList: Line ${i + 1} has different length than header.`
+                         + ` Source: ${show (l)}`
                        )
                        : Right (cons (acc) (fromList (zip<string, string> (header) (l))))
                    ))

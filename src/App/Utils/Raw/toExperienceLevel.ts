@@ -1,27 +1,24 @@
-import { pipe } from "ramda";
 import { IdPrefixes } from "../../../constants/IdPrefixes";
-import { fromRight_, isLeft, Right } from "../../../Data/Either";
 import { fromJust } from "../../../Data/Maybe";
-import { lookupF } from "../../../Data/OrderedMap";
 import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel";
 import { prefixId } from "../IDUtils";
 import { unsafeToInt } from "../NumberUtils";
 import { mergeRowsById } from "./mergeTableRows";
-import { validateNaturalNumberProp, validateNonEmptyStringProp } from "./validateValueUtils";
+import { allRights, lookupKeyValid, validateRequiredNaturalNumberProp, validateRequiredNonEmptyStringProp } from "./validateValueUtils";
 
 export const toExperienceLevel =
   mergeRowsById
     ("toExperienceLevel")
-    (id => l10n_row => univ_row => {
+    (id => lookup_l10n => lookup_univ => {
       // Shortcuts
 
       const checkUnivNaturalNumber =
-        pipe (lookupF (univ_row), validateNaturalNumberProp)
+        lookupKeyValid (lookup_univ) (validateRequiredNaturalNumberProp)
 
       // Check fields
 
       const ename =
-        validateNonEmptyStringProp (lookupF (l10n_row) ("name"))
+        validateRequiredNonEmptyStringProp (lookup_l10n ("name"))
 
       const eap =
         checkUnivNaturalNumber ("ap")
@@ -44,59 +41,36 @@ export const toExperienceLevel =
       const emaxUnfamiliarSpells =
         checkUnivNaturalNumber ("maxUnfamiliarSpells")
 
-      // Return early on error
+      // Return error or result
 
-      if (isLeft (ename)) {
-        return ename
-      }
-
-      if (isLeft (eap)) {
-        return eap
-      }
-
-      if (isLeft (emaxAttributeValue)) {
-        return emaxAttributeValue
-      }
-
-      if (isLeft (emaxSkillRating)) {
-        return emaxSkillRating
-      }
-
-      if (isLeft (emaxCombatTechniqueRating)) {
-        return emaxCombatTechniqueRating
-      }
-
-      if (isLeft (emaxTotalAttributeValues)) {
-        return emaxTotalAttributeValues
-      }
-
-      if (isLeft (emaxSpellsLiturgicalChants)) {
-        return emaxSpellsLiturgicalChants
-      }
-
-      if (isLeft (emaxUnfamiliarSpells)) {
-        return emaxUnfamiliarSpells
-      }
-
-      // Return valid record
-
-      return Right (ExperienceLevel ({
-        id: prefixId (IdPrefixes.EXPERIENCE_LEVELS) (id),
-        name:
-          fromJust (fromRight_ (ename)),
-        ap:
-          unsafeToInt (fromJust (fromRight_ (eap))),
-        maxAttributeValue:
-          unsafeToInt (fromJust (fromRight_ (emaxAttributeValue))),
-        maxSkillRating:
-          unsafeToInt (fromJust (fromRight_ (emaxSkillRating))),
-        maxCombatTechniqueRating:
-          unsafeToInt (fromJust (fromRight_ (emaxCombatTechniqueRating))),
-        maxTotalAttributeValues:
-          unsafeToInt (fromJust (fromRight_ (emaxTotalAttributeValues))),
-        maxSpellsLiturgicalChants:
-          unsafeToInt (fromJust (fromRight_ (emaxSpellsLiturgicalChants))),
-        maxUnfamiliarSpells:
-          unsafeToInt (fromJust (fromRight_ (emaxUnfamiliarSpells))),
-      }))
+      return allRights
+        ({
+          ename,
+          eap,
+          emaxAttributeValue,
+          emaxSkillRating,
+          emaxCombatTechniqueRating,
+          emaxTotalAttributeValues,
+          emaxSpellsLiturgicalChants,
+          emaxUnfamiliarSpells,
+        })
+        (rs => ExperienceLevel ({
+          id: prefixId (IdPrefixes.EXPERIENCE_LEVELS) (id),
+          name:
+            fromJust (rs.ename),
+          ap:
+            unsafeToInt (fromJust (rs.eap)),
+          maxAttributeValue:
+            unsafeToInt (fromJust (rs.emaxAttributeValue)),
+          maxSkillRating:
+            unsafeToInt (fromJust (rs.emaxSkillRating)),
+          maxCombatTechniqueRating:
+            unsafeToInt (fromJust (rs.emaxCombatTechniqueRating)),
+          maxTotalAttributeValues:
+            unsafeToInt (fromJust (rs.emaxTotalAttributeValues)),
+          maxSpellsLiturgicalChants:
+            unsafeToInt (fromJust (rs.emaxSpellsLiturgicalChants)),
+          maxUnfamiliarSpells:
+            unsafeToInt (fromJust (rs.emaxUnfamiliarSpells)),
+        }))
     })

@@ -33,7 +33,7 @@
 		// Functionality
     "await-promise": true,
     // "ban-comma-operator": true,
-		"curly": true,
+		// "curly": true,
     "forin": true,
     "label-position": true,
     "no-arg": true,

@@ -20,11 +20,11 @@ export interface Race {
   attributeAdjustmentsText: string
   commonCultures: List<string>
   automaticAdvantages: List<string>
-  automaticAdvantagesText: string
+  automaticAdvantagesText: Maybe<string>
   stronglyRecommendedAdvantages: List<string>
-  stronglyRecommendedAdvantagesText: string
+  stronglyRecommendedAdvantagesText: Maybe<string>
   stronglyRecommendedDisadvantages: List<string>
-  stronglyRecommendedDisadvantagesText: string
+  stronglyRecommendedDisadvantagesText: Maybe<string>
   commonAdvantages: List<string>
   commonAdvantagesText: Maybe<string>
   commonDisadvantages: List<string>
@@ -58,11 +58,11 @@ export const Race =
     attributeAdjustmentsText: "",
     commonCultures: List.empty,
     automaticAdvantages: List.empty,
-    automaticAdvantagesText: "",
+    automaticAdvantagesText: Nothing,
     stronglyRecommendedAdvantages: List.empty,
-    stronglyRecommendedAdvantagesText: "",
+    stronglyRecommendedAdvantagesText: Nothing,
     stronglyRecommendedDisadvantages: List.empty,
-    stronglyRecommendedDisadvantagesText: "",
+    stronglyRecommendedDisadvantagesText: Nothing,
     commonAdvantages: List.empty,
     commonAdvantagesText: Nothing,
     commonDisadvantages: List.empty,

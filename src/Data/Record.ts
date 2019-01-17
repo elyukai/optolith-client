@@ -233,12 +233,14 @@ const accessor = <A extends RecordBase> (key: keyof A) => (r: Record<A>) => {
 }
 
 const setter = <A extends RecordBase> (key: keyof A) => (r: Record<A>) => (x: A[typeof key]) =>
-  _Record<A> (r .keys)
-             (r .defaultValues)
-             ({
-               ...r .values,
-               [key]: x,
-             })
+  r .values [key] === x
+  ? r
+  : _Record<A> (r .keys)
+               (r .defaultValues)
+               ({
+                 ...r .values,
+                 [key]: x,
+               })
 
 /**
  * Creates accessor functions for every key in the passed record creator.

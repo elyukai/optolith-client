@@ -17,15 +17,15 @@ const lookupId =
   (univ_row: OrderedMap<string, string>) =>
     pipe (
            lookup<string, string> ("id"),
-           bindF (ensure (isInteger)),
+           bindF<string, string> (ensure (isInteger)),
            maybeToEither (`${origin}: key "id" is missing in ${show (univ_row)}`)
          )
          (univ_row)
 
 type MergeRowsByIdFunction<A> =
   (id: string) =>
-  (l10n_row: OrderedMap<string, string>) =>
-  (univ_row: OrderedMap<string, string>) => Either<string, Record<A>>
+  (lookup_l10n: (key: string) => Maybe<string>) =>
+  (lookup_univ: (key: string) => Maybe<string>) => Either<string, Record<A>>
 
 /**
  * Receives the name of the origin function (how it would be called), a function
@@ -55,7 +55,7 @@ export const mergeRowsById =
       return bimap<string, string, Record<A>, Maybe<Record<A>>>
         (appendStr (`${origin}: `))
         (Just)
-        (f (id) (l10n_row) (univ_row))
+        (f (id) (lookupF (l10n_row)) (lookupF (univ_row)))
     }
 
     return Right (Nothing)

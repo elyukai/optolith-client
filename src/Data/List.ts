@@ -40,7 +40,7 @@ const ListPrototype =
 
 // Nil
 
-interface Nil extends ListPrototype { }
+export interface Nil extends ListPrototype { }
 
 const Nil: Nil = Object.create (ListPrototype)
 
@@ -48,7 +48,7 @@ const isNil = (xs: List<any>): xs is Nil => xs === Nil
 
 // Cons
 
-interface Cons<A> {
+export interface Cons<A> {
   readonly x: A
   readonly xs: List<A>
 }

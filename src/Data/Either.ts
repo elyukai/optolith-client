@@ -732,6 +732,12 @@ export const isEither =
     typeof x === "object" && x !== null && (isLeft (x) || isRight (x))
 
 
+// TYPE HELPERS
+
+export type LeftI<A> = A extends Left<infer I> ? I : never
+export type RightI<A> = A extends Right<infer I> ? I : never
+
+
 // NAMESPACED FUNCTIONS
 
 export const Either = {
