@@ -1,7 +1,7 @@
 import { pipe } from "ramda";
 import { Either, first, fromRight_, isEither, isLeft, Left, Right, RightI } from "../../../Data/Either";
 import { appendStr, notNullStr } from "../../../Data/List";
-import { all, any, bindF, ensure, isJust, Maybe } from "../../../Data/Maybe";
+import { all, any, bindF, elem, ensure, isJust, Maybe } from "../../../Data/Maybe";
 import { show } from "../../../Data/Show";
 import { isInteger, isNaturalNumber } from "../RegexUtils";
 
@@ -9,6 +9,7 @@ export const Expect = Object.freeze ({
   NonEmptyString: "String (non-empty)",
   NaturalNumber: "Natural",
   Integer: "Int",
+  Boolean: "Bool",
   Maybe: (x: string) => `Maybe ${x}`,
 })
 
@@ -72,6 +73,10 @@ export const validateRequiredIntegerProp =
 export const validateOptionalIntegerProp =
   validateRawProp (Expect.Maybe (Expect.Integer)) (all (isInteger))
 
+export const validateBooleanProp =
+  validateRawProp (Expect.Boolean)
+                  (all ((x: string) => x === "TRUE" || x === "FALSE"))
+
 interface LookupKeyValid {
   <A1 extends Maybe<string>>
   (validate: (received: Maybe<string>) => Either<string, A1>):
@@ -133,3 +138,5 @@ export const allRights =
 
     return Right (f (rs))
   }
+
+export const maybeRawToBoolean = elem ("TRUE")

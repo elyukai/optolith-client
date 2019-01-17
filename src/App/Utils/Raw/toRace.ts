@@ -7,7 +7,7 @@ import { Race } from "../../Models/Wiki/Race";
 import { Die } from "../../Models/Wiki/sub/Die";
 import { prefixId } from "../IDUtils";
 import { unsafeToInt } from "../NumberUtils";
-import { integer, isEmptyOr, naturalNumber } from "../RegexUtils";
+import { integer, naturalNumber } from "../RegexUtils";
 import { listLengthRx, listRx, pairRx, qmPairRx } from "./csvRegexUtils";
 import { mergeRowsById } from "./mergeTableRows";
 import { lookupValidSourceLinks, toSourceLinks } from "./toSourceLinks";
@@ -18,7 +18,7 @@ const attributeAdjustment = qmPairRx (naturalNumber.source, integer.source)
 const attributeAdjustments = new RegExp (listRx ("&") (attributeAdjustment))
 
 const checkAttributeAdjustments =
-  isEmptyOr (x => attributeAdjustments .test (x))
+  (x: string) => attributeAdjustments .test (x)
 
 const naturalNumberListWithAndDel =
   new RegExp (listRx ("&") (naturalNumber.source))
@@ -107,7 +107,7 @@ export const toRace =
       const ecommonCultures =
         lookupKeyValid (lookup_univ)
                        (validateRawProp ("List Natural")
-                                        (any (checkNaturalNumberListWithAndDel)))
+                                        (all (checkNaturalNumberListWithAndDel)))
                        ("commonCultures")
 
       const eautomaticAdvantages =
@@ -243,19 +243,13 @@ export const toRace =
           esrc,
         })
         (rs => Race ({
-          id: prefixId (IdPrefixes.EXPERIENCE_LEVELS) (id),
-          name:
-            fromJust (rs.ename),
-          lp:
-            unsafeToInt (fromJust (rs.elp)),
-          spi:
-            unsafeToInt (fromJust (rs.espi)),
-          tou:
-            unsafeToInt (fromJust (rs.etou)),
-          mov:
-            unsafeToInt (fromJust (rs.emov)),
-          ap:
-            unsafeToInt (fromJust (rs.ecost)),
+          id: prefixId (IdPrefixes.RACES) (id),
+          name: fromJust (rs.ename),
+          lp: unsafeToInt (fromJust (rs.elp)),
+          spi: unsafeToInt (fromJust (rs.espi)),
+          tou: unsafeToInt (fromJust (rs.etou)),
+          mov: unsafeToInt (fromJust (rs.emov)),
+          ap: unsafeToInt (fromJust (rs.ecost)),
 
           attributeAdjustments:
             maybe<string, List<Pair<string, number>>>
