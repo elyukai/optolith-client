@@ -1,12 +1,12 @@
 import { pipe } from "ramda";
-import { Cons, fnull, map, splitOn } from "../../../Data/List";
-import { any, fromJust, Just, Maybe } from "../../../Data/Maybe";
-import { fromBinary } from "../../../Data/Pair";
-import { SourceLink } from "../../Models/Wiki/sub/SourceLink";
-import { unsafeToInt } from "../NumberUtils";
-import { naturalNumber } from "../RegexUtils";
-import { listRx } from "./csvRegexUtils";
-import { lookupKeyValid, validateRawProp } from "./validateValueUtils";
+import { Cons, fnull, map, splitOn } from "../../../../../Data/List";
+import { any, fromJust, Just, Maybe } from "../../../../../Data/Maybe";
+import { fromBinary } from "../../../../../Data/Pair";
+import { SourceLink } from "../../../../Models/Wiki/sub/SourceLink";
+import { unsafeToInt } from "../../../NumberUtils";
+import { naturalNumber } from "../../../RegexUtils";
+import { listRx } from "../../csvRegexUtils";
+import { lookupKeyValid, validateRawProp } from "../../validateValueUtils";
 
 const srcDel = ","
 

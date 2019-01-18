@@ -7,12 +7,12 @@ import { getCategoryById } from "../../../Utils/IDUtils";
 import { AllRequirementObjects, ProfessionPrerequisite } from "../wikiTypeHelpers";
 
 export interface RequireIncreasable {
-  id: string | List<string>;
-  value: number;
+  id: string | List<string>
+  value: number
 }
 
 export interface ProfessionRequireIncreasable extends RequireIncreasable {
-  id: string;
+  id: string
 }
 
 export const RequireIncreasable =

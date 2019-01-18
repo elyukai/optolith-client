@@ -5,8 +5,8 @@ import { AllRequirementObjects } from "../wikiTypeHelpers";
 import { RequireActivatable } from "./ActivatableRequirement";
 
 export interface CultureRequirement {
-  id: "CULTURE";
-  value: number | List<number>;
+  id: "CULTURE"
+  value: number | List<number>
 }
 
 export const CultureRequirement =

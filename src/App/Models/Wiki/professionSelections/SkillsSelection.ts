@@ -4,10 +4,12 @@ import { AnyProfessionSelection, ProfessionSelectionIds } from "../wikiTypeHelpe
 
 export interface SkillsSelection {
   id: ProfessionSelectionIds
+
   /**
    * If specified, only choose from skills of the specified group.
    */
   gr: Maybe<number>
+
   /**
    * The AP value the user can spend.
    */

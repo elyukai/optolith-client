@@ -6,10 +6,10 @@ import { AllRequirementObjects } from "../wikiTypeHelpers";
 import { RequireActivatable } from "./ActivatableRequirement";
 
 export interface PactRequirement {
-  id: "PACT";
-  category: number;
-  domain: Maybe<number | List<number>>;
-  level: Maybe<number>;
+  id: "PACT"
+  category: number
+  domain: Maybe<number | List<number>>
+  level: Maybe<number>
 }
 
 export const PactRequirement =

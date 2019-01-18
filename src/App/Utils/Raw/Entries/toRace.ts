@@ -1,17 +1,17 @@
 import { pipe } from "ramda";
-import { IdPrefixes } from "../../../constants/IdPrefixes";
-import { Cons, empty, List, map, splitOn } from "../../../Data/List";
-import { all, any, fmap, fromJust, fromMaybe, maybe, Nothing } from "../../../Data/Maybe";
-import { fromBinary, Pair } from "../../../Data/Pair";
-import { Race } from "../../Models/Wiki/Race";
-import { Die } from "../../Models/Wiki/sub/Die";
-import { prefixId } from "../IDUtils";
-import { unsafeToInt } from "../NumberUtils";
-import { integer, naturalNumber } from "../RegexUtils";
-import { listLengthRx, listRx, pairRx, qmPairRx } from "./csvRegexUtils";
-import { mergeRowsById } from "./mergeTableRows";
-import { lookupValidSourceLinks, toSourceLinks } from "./toSourceLinks";
-import { allRights, lookupKeyValid, validateOptionalIntegerProp, validateRawProp, validateRequiredIntegerProp, validateRequiredNaturalNumberProp, validateRequiredNonEmptyStringProp } from "./validateValueUtils";
+import { IdPrefixes } from "../../../../constants/IdPrefixes";
+import { Cons, empty, List, map, splitOn } from "../../../../Data/List";
+import { all, any, fmap, fromJust, fromMaybe, maybe, Nothing } from "../../../../Data/Maybe";
+import { fromBinary, Pair } from "../../../../Data/Pair";
+import { Race } from "../../../Models/Wiki/Race";
+import { Die } from "../../../Models/Wiki/sub/Die";
+import { prefixId } from "../../IDUtils";
+import { unsafeToInt } from "../../NumberUtils";
+import { integer, naturalNumber } from "../../RegexUtils";
+import { listLengthRx, listRx, pairRx, qmPairRx } from "../csvRegexUtils";
+import { mergeRowsById } from "../mergeTableRows";
+import { allRights, lookupKeyValid, validateOptionalIntegerProp, validateRawProp, validateRequiredIntegerProp, validateRequiredNaturalNumberProp, validateRequiredNonEmptyStringProp } from "../validateValueUtils";
+import { lookupValidSourceLinks, toSourceLinks } from "./Sub/toSourceLinks";
 
 const attributeAdjustment = qmPairRx (naturalNumber.source, integer.source)
 
@@ -205,7 +205,7 @@ export const toRace =
 
       const evariants =
         lookupKeyValid (lookup_univ)
-                       (validateRawProp ("List Natural")
+                       (validateRawProp ("Maybe (List Natural)")
                                         (all (checkNaturalNumberListWithAndDel)))
                        ("variants")
 

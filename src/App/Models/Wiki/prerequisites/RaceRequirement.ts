@@ -5,8 +5,8 @@ import { AllRequirementObjects } from "../wikiTypeHelpers";
 import { RequireActivatable } from "./ActivatableRequirement";
 
 export interface RaceRequirement {
-  id: "RACE";
-  value: number | List<number>;
+  id: "RACE"
+  value: number | List<number>
 }
 
 export const RaceRequirement =

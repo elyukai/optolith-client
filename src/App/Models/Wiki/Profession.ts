@@ -13,7 +13,6 @@ export interface Profession {
   name: string | Record<NameBySex>
   subname: Maybe<string | Record<NameBySex>>
   ap: number
-  apOfActivatables: number
   dependencies: List<ProfessionDependency>
   prerequisites: List<ProfessionPrerequisite>
   prerequisitesStart: Maybe<string>
@@ -51,7 +50,6 @@ export const Profession =
     name: "",
     subname: Nothing,
     ap: 0,
-    apOfActivatables: 0,
     dependencies: List.empty,
     prerequisites: List.empty,
     prerequisitesStart: Nothing,

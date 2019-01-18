@@ -1,18 +1,18 @@
 import { pipe } from "ramda";
-import { IdPrefixes } from "../../../constants/IdPrefixes";
-import { Cons, empty, List, map, notNull, splitOn } from "../../../Data/List";
-import { all, any, fmap, fromJust, fromMaybe, maybe, Nothing } from "../../../Data/Maybe";
-import { Record } from "../../../Data/Record";
-import { Culture } from "../../Models/Wiki/Culture";
-import { CommonProfession } from "../../Models/Wiki/sub/CommonProfession";
-import { IncreaseSkill } from "../../Models/Wiki/sub/IncreaseSkill";
-import { prefixId } from "../IDUtils";
-import { unsafeToInt } from "../NumberUtils";
-import { isNaturalNumber, naturalNumber } from "../RegexUtils";
-import { listRx, qmPairRx } from "./csvRegexUtils";
-import { mergeRowsById } from "./mergeTableRows";
-import { lookupValidSourceLinks, toSourceLinks } from "./toSourceLinks";
-import { allRights, lookupKeyValid, maybeRawToBoolean, validateBooleanProp, validateRawProp, validateRequiredNaturalNumberProp, validateRequiredNonEmptyStringProp } from "./validateValueUtils";
+import { IdPrefixes } from "../../../../constants/IdPrefixes";
+import { Cons, empty, List, map, notNull, splitOn } from "../../../../Data/List";
+import { all, any, fmap, fromJust, fromMaybe, maybe, Nothing } from "../../../../Data/Maybe";
+import { Record } from "../../../../Data/Record";
+import { Culture } from "../../../Models/Wiki/Culture";
+import { CommonProfession } from "../../../Models/Wiki/sub/CommonProfession";
+import { IncreaseSkill } from "../../../Models/Wiki/sub/IncreaseSkill";
+import { prefixId } from "../../IDUtils";
+import { unsafeToInt } from "../../NumberUtils";
+import { isNaturalNumber, naturalNumber } from "../../RegexUtils";
+import { listRx, qmPairRx } from "../csvRegexUtils";
+import { mergeRowsById } from "../mergeTableRows";
+import { allRights, lookupKeyValid, maybeRawToBoolean, validateBooleanProp, validateRawProp, validateRequiredNaturalNumberProp, validateRequiredNonEmptyStringProp } from "../validateValueUtils";
+import { lookupValidSourceLinks, toSourceLinks } from "./Sub/toSourceLinks";
 
 const naturalNumberListWithAndDel =
   new RegExp (listRx ("&") (naturalNumber.source))
@@ -21,7 +21,10 @@ const checkNaturalNumberListWithAndDel =
   (x: string) => naturalNumberListWithAndDel .test (x)
 
 const exceptions =
-  new RegExp (listRx (",") (`${naturalNumber.source}|(?:P_${naturalNumber.source})`))
+  new RegExp (
+    listRx (",")
+           (`${naturalNumber.source}|(?:${IdPrefixes.PROFESSIONS}_${naturalNumber.source})`)
+  )
 
 const checkExceptions =
   (x: string) => exceptions .test (x)
@@ -74,7 +77,7 @@ export const toCulture =
 
       const eliteracy =
         lookupKeyValid (lookup_univ)
-                       (validateRawProp ("List (Natural)")
+                       (validateRawProp ("Maybe (List (Natural))")
                                         (all (checkNaturalNumberListWithAndDel)))
                        ("literacy")
 
@@ -158,7 +161,7 @@ export const toCulture =
 
       const ecommonSkills =
         lookupKeyValid (lookup_univ)
-                       (validateRawProp ("Maybe (List Natural)")
+                       (validateRawProp ("List Natural")
                                         (any (checkNaturalNumberListWithAndDel)))
                        ("commonSkills")
 
@@ -176,7 +179,7 @@ export const toCulture =
       const eculturalPackageSkills =
         lookupKeyValid (lookup_univ)
                        (validateRawProp ("List (Natural, Natural)")
-                                        (all (checkCulturalPackageSkills)))
+                                        (any (checkCulturalPackageSkills)))
                        ("culturalPackageSkills")
 
       const esrc = lookupValidSourceLinks (lookup_l10n)

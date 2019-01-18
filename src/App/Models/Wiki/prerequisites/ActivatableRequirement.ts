@@ -7,16 +7,16 @@ import { getCategoryById } from "../../../Utils/IDUtils";
 import { AllRequirementObjects, ProfessionPrerequisite, SID } from "../wikiTypeHelpers";
 
 export interface RequireActivatable {
-  id: string | List<string>;
-  active: boolean;
-  sid: Maybe<SID>;
-  sid2: Maybe<string | number>;
-  tier: Maybe<number>;
+  id: string | List<string>
+  active: boolean
+  sid: Maybe<SID>
+  sid2: Maybe<string | number>
+  tier: Maybe<number>
 }
 
 export interface ProfessionRequireActivatable extends RequireActivatable {
-  id: string;
-  sid: Maybe<string | number>;
+  id: string
+  sid: Maybe<string | number>
 }
 
 export const RequireActivatable =

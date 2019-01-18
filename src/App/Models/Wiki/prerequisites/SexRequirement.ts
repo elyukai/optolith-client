@@ -7,8 +7,8 @@ import { AllRequirementObjects } from "../wikiTypeHelpers";
 import { RequireActivatable } from "./ActivatableRequirement";
 
 export interface SexRequirement {
-  id: "SEX";
-  value: Sex;
+  id: "SEX"
+  value: Sex
 }
 
 export const SexRequirement =

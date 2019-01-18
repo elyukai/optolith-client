@@ -1,10 +1,10 @@
-import { IdPrefixes } from "../../../constants/IdPrefixes";
-import { fromJust } from "../../../Data/Maybe";
-import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel";
-import { prefixId } from "../IDUtils";
-import { unsafeToInt } from "../NumberUtils";
-import { mergeRowsById } from "./mergeTableRows";
-import { allRights, lookupKeyValid, validateRequiredNaturalNumberProp, validateRequiredNonEmptyStringProp } from "./validateValueUtils";
+import { IdPrefixes } from "../../../../constants/IdPrefixes";
+import { fromJust } from "../../../../Data/Maybe";
+import { ExperienceLevel } from "../../../Models/Wiki/ExperienceLevel";
+import { prefixId } from "../../IDUtils";
+import { unsafeToInt } from "../../NumberUtils";
+import { mergeRowsById } from "../mergeTableRows";
+import { allRights, lookupKeyValid, validateRequiredNaturalNumberProp, validateRequiredNonEmptyStringProp } from "../validateValueUtils";
 
 export const toExperienceLevel =
   mergeRowsById

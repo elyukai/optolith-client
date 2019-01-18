@@ -1,15 +1,15 @@
 import { pipe } from "ramda";
-import { IdPrefixes } from "../../../constants/IdPrefixes";
-import { Cons, empty, List, map, splitOn } from "../../../Data/List";
-import { all, fmap, fromJust, fromMaybe, Nothing } from "../../../Data/Maybe";
-import { RaceVariant } from "../../Models/Wiki/RaceVariant";
-import { Die } from "../../Models/Wiki/sub/Die";
-import { prefixId } from "../IDUtils";
-import { unsafeToInt } from "../NumberUtils";
-import { naturalNumber } from "../RegexUtils";
-import { listLengthRx, listRx, pairRx } from "./csvRegexUtils";
-import { mergeRowsById } from "./mergeTableRows";
-import { allRights, lookupKeyValid, validateOptionalIntegerProp, validateRawProp, validateRequiredNonEmptyStringProp } from "./validateValueUtils";
+import { IdPrefixes } from "../../../../constants/IdPrefixes";
+import { Cons, empty, List, map, splitOn } from "../../../../Data/List";
+import { all, fmap, fromJust, fromMaybe, Nothing } from "../../../../Data/Maybe";
+import { RaceVariant } from "../../../Models/Wiki/RaceVariant";
+import { Die } from "../../../Models/Wiki/sub/Die";
+import { prefixId } from "../../IDUtils";
+import { unsafeToInt } from "../../NumberUtils";
+import { naturalNumber } from "../../RegexUtils";
+import { listLengthRx, listRx, pairRx } from "../csvRegexUtils";
+import { mergeRowsById } from "../mergeTableRows";
+import { allRights, lookupKeyValid, validateOptionalIntegerProp, validateRawProp, validateRequiredNonEmptyStringProp } from "../validateValueUtils";
 
 const naturalNumberListWithAndDel =
   new RegExp (listRx ("&") (naturalNumber.source))
