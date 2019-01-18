@@ -11,7 +11,6 @@ export interface ProfessionVariant {
   id: string
   name: string | Record<NameBySex>
   ap: number
-  apOfActivatables: number
   dependencies: List<ProfessionDependency>
   prerequisites: List<ProfessionPrerequisite>
   selections: ProfessionVariantSelectionList
@@ -32,7 +31,6 @@ export const ProfessionVariant =
     id: "",
     name: "",
     ap: 0,
-    apOfActivatables: 0,
     dependencies: List.empty,
     prerequisites: List.empty,
     selections: List.empty,

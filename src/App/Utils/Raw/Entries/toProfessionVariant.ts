@@ -1,22 +1,25 @@
 import { pipe } from "ramda";
 import { IdPrefixes } from "../../../../constants/IdPrefixes";
 import { Cons, empty, fromArray, List, map, splitOn } from "../../../../Data/List";
-import { all, fmap, fromJust, fromMaybe, fromNullable, maybe, Nothing } from "../../../../Data/Maybe";
+import { all, fromJust, fromNullable, maybe, Nothing } from "../../../../Data/Maybe";
 import { Record } from "../../../../Data/Record";
 import { ProfessionRequireActivatable, RequireActivatable } from "../../../Models/Wiki/prerequisites/ActivatableRequirement";
 import { CultureRequirement } from "../../../Models/Wiki/prerequisites/CultureRequirement";
 import { ProfessionRequireIncreasable, RequireIncreasable } from "../../../Models/Wiki/prerequisites/IncreasableRequirement";
 import { RaceRequirement } from "../../../Models/Wiki/prerequisites/RaceRequirement";
 import { SexRequirement } from "../../../Models/Wiki/prerequisites/SexRequirement";
-import { Profession } from "../../../Models/Wiki/Profession";
 import { CantripsSelection } from "../../../Models/Wiki/professionSelections/CantripsSelection";
 import { CombatTechniquesSelection } from "../../../Models/Wiki/professionSelections/CombatTechniquesSelection";
 import { CursesSelection } from "../../../Models/Wiki/professionSelections/CursesSelection";
 import { LanguagesScriptsSelection } from "../../../Models/Wiki/professionSelections/LanguagesScriptsSelection";
+import { RemoveCombatTechniquesSelection } from "../../../Models/Wiki/professionSelections/RemoveCombatTechniquesSelection";
+import { isRemoveCombatTechniquesSecondSelection, RemoveCombatTechniquesSecondSelection } from "../../../Models/Wiki/professionSelections/RemoveSecondCombatTechniquesSelection";
+import { RemoveSpecializationSelection } from "../../../Models/Wiki/professionSelections/RemoveSpecializationSelection";
 import { CombatTechniquesSecondSelection } from "../../../Models/Wiki/professionSelections/SecondCombatTechniquesSelection";
 import { SkillsSelection } from "../../../Models/Wiki/professionSelections/SkillsSelection";
 import { SpecializationSelection } from "../../../Models/Wiki/professionSelections/SpecializationSelection";
 import { TerrainKnowledgeSelection } from "../../../Models/Wiki/professionSelections/TerrainKnowledgeSelection";
+import { ProfessionVariant } from "../../../Models/Wiki/ProfessionVariant";
 import { IncreaseSkill } from "../../../Models/Wiki/sub/IncreaseSkill";
 import { NameBySex } from "../../../Models/Wiki/sub/NameBySex";
 import { prefixId } from "../../IDUtils";
@@ -24,7 +27,7 @@ import { unsafeToInt } from "../../NumberUtils";
 import { naturalNumber } from "../../RegexUtils";
 import { listLengthRx, listRx, qmPairRx } from "../csvRegexUtils";
 import { mergeRowsById } from "../mergeTableRows";
-import { allRights, lookupKeyValid, validateRawProp, validateRequiredNaturalNumberProp, validateRequiredNonEmptyStringProp } from "../validateValueUtils";
+import { allRights, lookupKeyValid, validateRawProp, validateRequiredIntegerProp, validateRequiredNonEmptyStringProp } from "../validateValueUtils";
 import { isRawProfessionRequiringActivatable } from "./Prerequisites/ActivatableRequirement";
 import { isRawCultureRequirement } from "./Prerequisites/CultureRequirement";
 import { isRawProfessionRequiringIncreasable } from "./Prerequisites/IncreasableRequirement";
@@ -34,11 +37,12 @@ import { isRawCantripsSelection } from "./ProfessionSelections/CantripsSelection
 import { isRawCombatTechniquesSelection } from "./ProfessionSelections/CombatTechniquesSelection";
 import { isRawCursesSelection } from "./ProfessionSelections/CursesSelection";
 import { isRawLanguagesScriptsSelection } from "./ProfessionSelections/LanguagesScriptsSelection";
+import { isRemoveRawCombatTechniquesSelection } from "./ProfessionSelections/RemoveCombatTechniquesSelection";
+import { isRemoveRawSpecializationSelection } from "./ProfessionSelections/RemoveSpecializationSelection";
 import { isRawSecondCombatTechniquesSelection } from "./ProfessionSelections/SecondCombatTechniquesSelection";
 import { isRawSkillsSelection } from "./ProfessionSelections/SkillsSelection";
 import { isRawSpecializationSelection } from "./ProfessionSelections/SpecializationSelection";
 import { isRawTerrainKnowledgeSelection } from "./ProfessionSelections/TerrainKnowledgeSelection";
-import { lookupValidSourceLinks, toSourceLinks } from "./Sub/toSourceLinks";
 
 const validateDependencies =
   pipe (
@@ -90,9 +94,12 @@ const validateSelections =
           if (typeof obj !== "object" || obj === null) return false
 
           return isRawSpecializationSelection (obj)
+            || isRemoveRawSpecializationSelection (obj)
             || isRawLanguagesScriptsSelection (obj)
             || isRawCombatTechniquesSelection (obj)
+            || isRemoveRawCombatTechniquesSelection (obj)
             || isRawSecondCombatTechniquesSelection (obj)
+            || isRemoveCombatTechniquesSecondSelection (obj)
             || isRawCantripsSelection (obj)
             || isRawCursesSelection (obj)
             || isRawTerrainKnowledgeSelection (obj)
@@ -122,12 +129,6 @@ const validateSpecialAbilities =
     )
   )
 
-const naturalNumberListWithAndDel =
-  new RegExp (listRx ("&") (naturalNumber.source))
-
-const checkNaturalNumberListWithAndDel =
-  (x: string) => naturalNumberListWithAndDel .test (x)
-
 const skill = qmPairRx (naturalNumber.source, naturalNumber.source)
 
 const skills = new RegExp (listRx ("&") (skill))
@@ -135,7 +136,7 @@ const skills = new RegExp (listRx ("&") (skill))
 const checkSkills =
   (x: string) => skills .test (x)
 
-const combatTechnique = qmPairRx (naturalNumber.source, "[1-6]")
+const combatTechnique = qmPairRx (naturalNumber.source, "-?[1-6]")
 
 const combatTechniques = new RegExp (listRx ("&") (combatTechnique))
 
@@ -151,17 +152,17 @@ const blessings =
 const checkBlessings =
   (x: string) => blessings .test (x)
 
-export const toProfession =
+export const toProfessionVariant =
   mergeRowsById
-    ("toProfession")
+    ("toProfessionVariant")
     (id => lookup_l10n => lookup_univ => {
       // Shortcuts
 
       const checkL10nNonEmptyString =
         lookupKeyValid (lookup_l10n) (validateRequiredNonEmptyStringProp)
 
-      const checkUnivNaturalNumber =
-        lookupKeyValid (lookup_univ) (validateRequiredNaturalNumberProp)
+      const checkUnivInteger =
+        lookupKeyValid (lookup_univ) (validateRequiredIntegerProp)
 
       // Check fields
 
@@ -170,12 +171,8 @@ export const toProfession =
 
       const nameFemale = lookup_l10n ("nameFemale")
 
-      const subname = lookup_l10n ("subname")
-
-      const subnameFemale = lookup_l10n ("subnameFemale")
-
       const ecost =
-        checkUnivNaturalNumber ("cost")
+        checkUnivInteger ("cost")
 
       const edependencies =
         lookupKeyValid (lookup_univ)
@@ -202,31 +199,18 @@ export const toProfession =
                          (all (validatePrerequisites)))
                        ("prerequisites")
 
-      const eprerequisitesL10n =
-        lookupKeyValid (lookup_l10n)
-                       (validateRawProp
-                         (
-                           "Maybe (List ("
-                           + "ProfessionRequireActivatable "
-                           + "| ProfessionRequireIncreasable"
-                           + "))"
-                         )
-                         (all (validatePrerequisites)))
-                       ("prerequisites")
-
-      const prerequisitesStart = lookup_l10n ("prerequisitesStart")
-
-      const prerequisitesEnd = lookup_l10n ("prerequisitesEnd")
-
       const eselections =
         lookupKeyValid (lookup_univ)
                        (validateRawProp
                          (
                            "Maybe (List ("
                            + "SpecializationSelection "
+                           + "| RemoveSpecializationSelection "
                            + "| LanguagesScriptsSelection "
                            + "| CombatTechniquesSelection "
+                           + "| RemoveCombatTechniquesSelection "
                            + "| CombatTechniquesSecondSelection "
+                           + "| RemoveCombatTechniquesSecondSelection "
                            + "| CantripsSelection "
                            + "| CursesSelection "
                            + "| TerrainKnowledgeSelection "
@@ -273,55 +257,14 @@ export const toProfession =
                                         (all (checkBlessings)))
                        ("blessings")
 
-      const esuggestedAdvantages =
-        lookupKeyValid (lookup_univ)
-                       (validateRawProp ("Maybe (List Natural)")
-                                        (all (checkNaturalNumberListWithAndDel)))
-                       ("suggestedAdvantages")
+      const precedingText =
+        lookup_l10n ("precedingText")
 
-      const suggestedAdvantagesText =
-        lookup_l10n ("suggestedAdvantages")
+      const fullText =
+        lookup_l10n ("fullText")
 
-      const esuggestedDisadvantages =
-        lookupKeyValid (lookup_univ)
-                       (validateRawProp ("Maybe (List Natural)")
-                                        (all (checkNaturalNumberListWithAndDel)))
-                       ("suggestedDisadvantages")
-
-      const suggestedDisadvantagesText =
-        lookup_l10n ("suggestedDisadvantages")
-
-      const eunsuitableAdvantages =
-        lookupKeyValid (lookup_univ)
-                       (validateRawProp ("Maybe (List Natural)")
-                                        (all (checkNaturalNumberListWithAndDel)))
-                       ("unsuitableAdvantages")
-
-      const unsuitableAdvantagesText =
-        lookup_l10n ("unsuitableAdvantages")
-
-      const eunsuitableDisadvantages =
-        lookupKeyValid (lookup_univ)
-                       (validateRawProp ("Maybe (List Natural)")
-                                        (all (checkNaturalNumberListWithAndDel)))
-                       ("unsuitableDisadvantages")
-
-      const unsuitableDisadvantagesText =
-        lookup_l10n ("unsuitableDisadvantages")
-
-      const evariants =
-        lookupKeyValid (lookup_univ)
-                       (validateRawProp ("Maybe (List Natural)")
-                                        (all (checkNaturalNumberListWithAndDel)))
-                       ("variants")
-
-      const egr =
-        checkUnivNaturalNumber ("gr")
-
-      const esgr =
-        checkUnivNaturalNumber ("sgr")
-
-      const esrc = lookupValidSourceLinks (lookup_l10n)
+      const concludingText =
+        lookup_l10n ("concludingText")
 
       // Return error or result
 
@@ -331,7 +274,6 @@ export const toProfession =
           ecost,
           edependencies,
           eprerequisites,
-          eprerequisitesL10n,
           eselections,
           especialAbilities,
           ecombatTechniques,
@@ -339,36 +281,20 @@ export const toProfession =
           espells,
           eliturgicalChants,
           eblessings,
-          esuggestedAdvantages,
-          esuggestedDisadvantages,
-          eunsuitableAdvantages,
-          eunsuitableDisadvantages,
-          evariants,
-          egr,
-          esgr,
-          esrc,
         })
-        (rs => Profession ({
-          id: prefixId (IdPrefixes.PROFESSIONS) (id),
+        (rs => ProfessionVariant ({
+          id: prefixId (IdPrefixes.PROFESSION_VARIANTS) (id),
 
           name:
-            maybe<string, Profession["name"]>
+            maybe<string, ProfessionVariant["name"]>
               (fromJust (rs.ename))
               (f => NameBySex ({ m: fromJust (rs.ename), f }))
               (nameFemale),
 
-          subname:
-            fmap<string, Profession["name"]>
-              (m => maybe<string, Profession["name"]>
-                (m)
-                (f => NameBySex ({ m, f }))
-                (subnameFemale))
-              (subname),
-
           ap: unsafeToInt (fromJust (rs.ecost)),
 
           dependencies:
-            maybe<string, Profession["dependencies"]>
+            maybe<string, ProfessionVariant["dependencies"]>
               (empty)
               (pipe (
                 splitOn ("&"),
@@ -393,7 +319,7 @@ export const toProfession =
               (rs.edependencies),
 
           prerequisites:
-            maybe<string, Profession["prerequisites"]>
+            maybe<string, ProfessionVariant["prerequisites"]>
               (empty)
               (pipe (
                 splitOn ("&"),
@@ -415,11 +341,8 @@ export const toProfession =
               ))
               (rs.eprerequisites),
 
-          prerequisitesStart,
-          prerequisitesEnd,
-
           selections:
-            maybe<string, Profession["selections"]>
+            maybe<string, ProfessionVariant["selections"]>
               (empty)
               (pipe (
                 splitOn ("&"),
@@ -430,6 +353,8 @@ export const toProfession =
                         id: Nothing,
                         sid: Array.isArray (x .sid) ? fromArray (x .sid) : x .sid,
                       })
+                    : isRemoveRawSpecializationSelection (x)
+                    ? RemoveSpecializationSelection
                     : isRawLanguagesScriptsSelection (x)
                     ? LanguagesScriptsSelection ({
                         id: Nothing,
@@ -442,6 +367,8 @@ export const toProfession =
                         value: x .value,
                         sid: fromArray (x .sid),
                       })
+                    : isRemoveRawCombatTechniquesSelection (x)
+                    ? RemoveCombatTechniquesSelection
                     : isRawSecondCombatTechniquesSelection (x)
                     ? CombatTechniquesSecondSelection ({
                         id: Nothing,
@@ -449,6 +376,8 @@ export const toProfession =
                         value: x .value,
                         sid: fromArray (x .sid),
                       })
+                    : isRemoveCombatTechniquesSecondSelection (x)
+                    ? RemoveCombatTechniquesSecondSelection
                     : isRawCantripsSelection (x)
                     ? CantripsSelection ({
                         id: Nothing,
@@ -474,7 +403,7 @@ export const toProfession =
               (rs.eselections),
 
           specialAbilities:
-            maybe<string, Profession["specialAbilities"]>
+            maybe<string, ProfessionVariant["specialAbilities"]>
               (empty)
               (pipe (
                 splitOn ("&"),
@@ -492,7 +421,7 @@ export const toProfession =
               (rs.especialAbilities),
 
           combatTechniques:
-            maybe<string, Profession["combatTechniques"]>
+            maybe<string, ProfessionVariant["combatTechniques"]>
               (empty)
               (pipe (
                 splitOn ("&"),
@@ -510,7 +439,7 @@ export const toProfession =
               (rs.ecombatTechniques),
 
           skills:
-            maybe<string, Profession["skills"]>
+            maybe<string, ProfessionVariant["skills"]>
               (empty)
               (pipe (
                 splitOn ("&"),
@@ -528,7 +457,7 @@ export const toProfession =
               (rs.eskills),
 
           spells:
-            maybe<string, Profession["spells"]>
+            maybe<string, ProfessionVariant["spells"]>
               (empty)
               (pipe (
                 splitOn ("&"),
@@ -546,7 +475,7 @@ export const toProfession =
               (rs.espells),
 
           liturgicalChants:
-            maybe<string, Profession["liturgicalChants"]>
+            maybe<string, ProfessionVariant["liturgicalChants"]>
               (empty)
               (pipe (
                 splitOn ("&"),
@@ -564,7 +493,7 @@ export const toProfession =
               (rs.eliturgicalChants),
 
           blessings:
-            maybe<string, Profession["blessings"]>
+            maybe<string, ProfessionVariant["blessings"]>
               (empty)
               (pipe (
                 splitOn ("&"),
@@ -572,50 +501,9 @@ export const toProfession =
               ))
               (rs.eblessings),
 
-          suggestedAdvantages:
-            fromMaybe<List<string>>
-              (empty)
-              (fmap (pipe (splitOn ("&"), map (prefixId (IdPrefixes.ADVANTAGES))))
-                    (rs.esuggestedAdvantages)),
-
-          suggestedAdvantagesText,
-
-          suggestedDisadvantages:
-            fromMaybe<List<string>>
-              (empty)
-              (fmap (pipe (splitOn ("&"), map (prefixId (IdPrefixes.DISADVANTAGES))))
-                    (rs.esuggestedDisadvantages)),
-
-          suggestedDisadvantagesText,
-
-          unsuitableAdvantages:
-            fromMaybe<List<string>>
-              (empty)
-              (fmap (pipe (splitOn ("&"), map (prefixId (IdPrefixes.ADVANTAGES))))
-                    (rs.eunsuitableAdvantages)),
-
-          unsuitableAdvantagesText,
-
-          unsuitableDisadvantages:
-            fromMaybe<List<string>>
-              (empty)
-              (fmap (pipe (splitOn ("&"), map (prefixId (IdPrefixes.DISADVANTAGES))))
-                    (rs.eunsuitableDisadvantages)),
-
-          unsuitableDisadvantagesText,
-
-          isVariantRequired: Nothing,
-
-          variants:
-            fromMaybe<List<string>>
-              (empty)
-              (fmap (pipe (splitOn ("&"), map (prefixId (IdPrefixes.PROFESSION_VARIANTS))))
-                    (rs.evariants)),
-
-          gr: unsafeToInt (fromJust (rs.egr)),
-          subgr: unsafeToInt (fromJust (rs.esgr)),
-
-          src: toSourceLinks (rs.esrc),
+          precedingText,
+          fullText,
+          concludingText,
 
           category: Nothing,
         }))
