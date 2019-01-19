@@ -214,6 +214,13 @@ test ('mapM', () => {
     .toEqual (Left ("test"))
 })
 
+test ('liftM2', () => {
+  expect (Either.liftM2 (x => y => x + y) (Right (1)) (Right (2))) .toEqual (Right (3))
+  expect (Either.liftM2 (x => y => x + y) (Left ("x")) (Right (2))) .toEqual (Left ("x"))
+  expect (Either.liftM2 (x => y => x + y) (Right (1)) (Left ("y"))) .toEqual (Left ("y"))
+  expect (Either.liftM2 (x => y => x + y) (Left ("x")) (Left ("y"))) .toEqual (Left ("x"))
+})
+
 // FOLDABLE
 
 test ('foldr', () => {

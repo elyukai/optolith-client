@@ -13,6 +13,10 @@ export const Expect = Object.freeze ({
   Maybe: (x: string) => `Maybe ${x}`,
   List: (x: string) => `[${x}]`,
   ListLength: (len: number) => (x: string) => `[${x}] { length = ${len} }`,
+  Pair: (x: string) => (y: string) => `(${x}, ${y})`,
+  Union: (...xs: string[]) => xs .join (" | "),
+  /** Group with `(...)` */
+  G: (x: string) => `(${x})`,
 })
 
 interface ValidateReceived {

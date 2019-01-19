@@ -176,7 +176,7 @@ export type LevelAwarePrerequisites =
 export interface ActivatableBase {
   id: string
   name: string
-  cost: string | number | List<number>
+  cost: Maybe<number | List<number>>
   input: Maybe<string>
   max: Maybe<number>
   prerequisites: LevelAwarePrerequisites

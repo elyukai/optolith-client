@@ -1,5 +1,5 @@
 import { pipe } from "ramda";
-import { Either, Left, mapM, maybeToEither, second } from "../../../../../Data/Either";
+import { Either, Left, mapM, maybeToEither, Right, second } from "../../../../../Data/Either";
 import { fromArray, isInfixOf, List, splitOn, uncons } from "../../../../../Data/List";
 import { bindF, ensure, fmap, fromJust, fromMaybe, fromNullable, isNothing, Just, Maybe, Nothing } from "../../../../../Data/Maybe";
 import { fromList } from "../../../../../Data/OrderedMap";
@@ -15,6 +15,7 @@ import { AllRequirements, LevelAwarePrerequisites } from "../../../../Models/Wik
 import { ifElse } from "../../../ifElse";
 import { gte } from "../../../mathUtils";
 import { toInt } from "../../../NumberUtils";
+import { lookupKeyValid, mstrToMaybe } from "../../validateValueUtils";
 import { isRawRequiringActivatable } from "../Prerequisites/ActivatableRequirement";
 import { isRawCultureRequirement } from "../Prerequisites/CultureRequirement";
 import { isRawRequiringIncreasable } from "../Prerequisites/IncreasableRequirement";
@@ -186,13 +187,23 @@ const toFlatPrerequisites =
          )
          (xs)
 
+const toLevelAwareOrPlainPrerequisites =
+  ifElse<string, Either<string, LevelAwarePrerequisites>>
+    (isInfixOf ("&&"))
+    (toLevelAwarePrerequisites)
+    (toFlatPrerequisites)
+
 /**
  * Convert a raw string to `Right LevelAwarePrerequisites`. If an error occurs
  * during conversion (scheme incorrect), a `Left` containing the error message
  * will be returned.
  */
 export const toPrerequisites =
-  ifElse<string, Either<string, LevelAwarePrerequisites>>
-    (isInfixOf ("&&"))
-    (toLevelAwarePrerequisites)
-    (toFlatPrerequisites)
+  (lookup_univ: (key: string) => Maybe<string>) =>
+    lookupKeyValid (lookup_univ)
+      (pipe (
+        mstrToMaybe,
+        fmap (toLevelAwareOrPlainPrerequisites),
+        fromMaybe<Either<string, LevelAwarePrerequisites>> (Right (List.empty))
+      ))
+      ("prerequisites")

@@ -11,7 +11,7 @@ export const Advantage =
   fromDefault<Advantage> ({
     id: "",
     name: "",
-    cost: 0,
+    cost: Nothing,
     input: Nothing,
     max: Nothing,
     prerequisites: List.empty,

@@ -14,7 +14,7 @@
 
 import { pipe } from "ramda";
 import { ifElse } from "../App/Utils/ifElse";
-import { cnst, ident } from "./Function";
+import { cnst, ident, thrush } from "./Function";
 import { cons, consF, fromElements, List } from "./List";
 import { fromJust, isJust, Just, Maybe, Nothing, Some } from "./Maybe";
 import { fromBoth, Pair } from "./Pair";
@@ -428,6 +428,19 @@ export const mapM =
                                         (mapM (f) (xs .xs)))
       (f (xs .x))
 
+/**
+ * `liftM2 :: (a1 -> a2 -> r) -> Either e a1 -> Either e a2 -> Either e r`
+ *
+ * Promote a function to a monad, scanning the monadic arguments from left to
+ * right.
+ */
+export const liftM2 =
+  <E, A1 extends Some, A2 extends Some, B extends Some>
+  (f: (a1: A1) => (a2: A2) => B) =>
+  (x1: Either<E, A1>) =>
+  (x2: Either<E, A2>): Either<E, B> =>
+    bind<E, A1, B> (x1) (pipe (f, fmap, thrush (x2)))
+
 
 // FOLDABLE
 
@@ -809,6 +822,7 @@ export const Either = {
   kleisli,
   join,
   mapM,
+  liftM2,
 
   foldr,
   foldl,
