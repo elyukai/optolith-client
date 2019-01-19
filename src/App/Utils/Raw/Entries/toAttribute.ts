@@ -1,9 +1,10 @@
 import { IdPrefixes } from "../../../../constants/IdPrefixes";
-import { fromJust, Nothing } from "../../../../Data/Maybe";
+import { Nothing } from "../../../../Data/Maybe";
 import { Attribute } from "../../../Models/Wiki/Attribute";
 import { prefixId } from "../../IDUtils";
 import { mergeRowsById } from "../mergeTableRows";
-import { allRights, validateRequiredNonEmptyStringProp } from "../validateValueUtils";
+import { validateMapRequiredNonEmptyStringProp } from "../validateMapValueUtils";
+import { allRights } from "../validateValueUtils";
 
 export const toAttribute =
   mergeRowsById
@@ -12,10 +13,10 @@ export const toAttribute =
       // Check fields
 
       const ename =
-        validateRequiredNonEmptyStringProp (lookup_l10n ("name"))
+        validateMapRequiredNonEmptyStringProp (lookup_l10n ("name"))
 
       const eshort =
-        validateRequiredNonEmptyStringProp (lookup_l10n ("short"))
+        validateMapRequiredNonEmptyStringProp (lookup_l10n ("short"))
 
       // Return error or result
 
@@ -26,8 +27,8 @@ export const toAttribute =
         })
         (rs => Attribute ({
           id: prefixId (IdPrefixes.ATTRIBUTES) (id),
-          name: fromJust (rs.ename),
-          short: fromJust (rs.eshort),
+          name: rs.ename,
+          short: rs.eshort,
           category: Nothing,
         }))
     })

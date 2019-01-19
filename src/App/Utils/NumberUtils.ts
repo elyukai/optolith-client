@@ -3,6 +3,7 @@ import { fromElements, subscript } from "../../Data/List";
 import { bindF, ensure, fromMaybe, Just, Maybe, Nothing } from "../../Data/Maybe";
 import { inc } from "./mathUtils";
 import { not } from "./not";
+import { isInteger, isNaturalNumber } from "./RegexUtils";
 
 /**
  * A list of all Roman numbers from 1 to 13.
@@ -96,7 +97,15 @@ export const unsafeToFloat = (string: string) => Number.parseFloat (string)
  */
 export const toInt =
   (e: string): Maybe<number> =>
-    e.length > 0 ? misNotNaN (Just (unsafeToInt (e.replace (/\,/, ".")))) : Nothing
+    e.length > 0 && isInteger (e) ? Just (unsafeToInt (e)) : Nothing
+
+/**
+ * Converts a string to a decimal number. If the string is not a valid natural
+ * number, it returns `Nothing`, otherwise a `Just` of the number.
+ */
+export const toNatural =
+  (e: string): Maybe<number> =>
+    e.length > 0 && isNaturalNumber (e) ? Just (unsafeToInt (e)) : Nothing
 
 /**
  * Converts a string to a floating point number. If the string is not a valid

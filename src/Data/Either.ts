@@ -13,6 +13,7 @@
  */
 
 import { pipe } from "ramda";
+import { ifElse } from "../App/Utils/ifElse";
 import { cnst, ident } from "./Function";
 import { cons, consF, fromElements, List } from "./List";
 import { fromJust, isJust, Just, Maybe, Nothing, Some } from "./Maybe";
@@ -228,6 +229,23 @@ export const maybeToEither =
   (x: Maybe<B>): Either<A, B> =>
     isJust (x) ? Right (fromJust (x)) : Left (left)
 
+/**
+ * `maybeToEither' :: (() -> a) -> Maybe b -> Either a b`
+ *
+ * Given a `Maybe`, convert it to an `Either`, providing a suitable value for
+ * the `Left` should the value be `Nothing`.
+ *
+ * `\a b -> maybeToEither a (Just b) == Right b`
+ * `\a -> maybeToEither a Nothing == Left a`
+ *
+ * Lazy version of `maybeToEither`.
+ */
+export const maybeToEither_ =
+  <A, B>
+  (left: () => A) =>
+  (x: Maybe<B>): Either<A, B> =>
+    isJust (x) ? Right (fromJust (x)) : Left (left ())
+
 
 // EITHER FUNCTIONS (PART 1)
 
@@ -387,6 +405,28 @@ export const kleisli =
 export const join =
   <E, A> (x: Either<E, Either<E, A>>): Either<E, A> =>
     bind<E, Either<E, A>, A> (x) (ident)
+
+/**
+ * `mapM :: (a -> Either e b) -> [a] -> Either e [b]`
+ *
+ * `mapM f xs` takes a function and a list and maps the function over every
+ * element in the list. If the function returns a `Left`, it is immediately
+ * returned by the function. If `f` did not return any `Left`, the list of
+ * unwrapped return values is returned as a `Right`. If `xs` is empty,
+ * `Right []` is returned.
+ */
+export const mapM =
+  <E, A, B>
+  (f: (x: A) => Either<E, B>) =>
+  (xs: List<A>): Either<E, List<B>> =>
+    List.fnull (xs)
+    ? Right (List.empty)
+    : ifElse<Either<E, B>, Left<E>, Either<E, List<B>>>
+      (isLeft)
+      (ident)
+      (y => second<E, List<B>, List<B>> (consF (fromRight_ (y)))
+                                        (mapM (f) (xs .xs)))
+      (f (xs .x))
 
 
 // FOLDABLE
@@ -751,6 +791,7 @@ export const Either = {
   fromRight_,
   eitherToMaybe,
   maybeToEither,
+  maybeToEither_,
 
   fmap,
   mapReplace,
@@ -767,6 +808,7 @@ export const Either = {
   then,
   kleisli,
   join,
+  mapM,
 
   foldr,
   foldl,

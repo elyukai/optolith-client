@@ -1,27 +1,17 @@
 import { pipe } from "ramda";
 import { IdPrefixes } from "../../../../constants/IdPrefixes";
-import { Cons, empty, List, map, splitOn } from "../../../../Data/List";
-import { all, fmap, fromJust, fromMaybe, Nothing } from "../../../../Data/Maybe";
+import { Cons, map, splitOn } from "../../../../Data/List";
+import { all, fmap, Nothing } from "../../../../Data/Maybe";
 import { RaceVariant } from "../../../Models/Wiki/RaceVariant";
 import { Die } from "../../../Models/Wiki/sub/Die";
 import { prefixId } from "../../IDUtils";
 import { unsafeToInt } from "../../NumberUtils";
 import { naturalNumber } from "../../RegexUtils";
-import { listLengthRx, listRx, pairRx } from "../csvRegexUtils";
+import { listRx, pairRx } from "../csvRegexUtils";
 import { mergeRowsById } from "../mergeTableRows";
-import { allRights, lookupKeyValid, validateOptionalIntegerProp, validateRawProp, validateRequiredNonEmptyStringProp } from "../validateValueUtils";
-
-const naturalNumberListWithAndDel =
-  new RegExp (listRx ("&") (naturalNumber.source))
-
-const checkNaturalNumberListWithAndDel =
-  (x: string) => naturalNumberListWithAndDel .test (x)
-
-const naturalNumberListOfLength20WithAndDel =
-  new RegExp (listLengthRx (20) ("&") (naturalNumber.source))
-
-const checkNaturalNumberListOfLength20WithAndDel =
-  (x: string) => naturalNumberListOfLength20WithAndDel .test (x)
+import { maybePrefix } from "../rawConversionUtils";
+import { validateMapOptionalIntegerProp, validateMapOptionalNaturalNumberFixedListProp, validateMapOptionalNaturalNumberListProp, validateMapRequiredNonEmptyStringProp } from "../validateMapValueUtils";
+import { allRights, lookupKeyValid, validateRawProp } from "../validateValueUtils";
 
 const die = pairRx ("D") (naturalNumber.source, naturalNumber.source)
 
@@ -38,10 +28,16 @@ export const toRaceVariant =
       // Shortcuts
 
       const checkL10nNonEmptyString =
-        lookupKeyValid (lookup_l10n) (validateRequiredNonEmptyStringProp)
+        lookupKeyValid (lookup_l10n) (validateMapRequiredNonEmptyStringProp)
+
+      const checkOptionalUnivNaturalNumberList =
+        lookupKeyValid (lookup_univ) (validateMapOptionalNaturalNumberListProp ("&"))
+
+      const checkOptionalUnivNaturalNumberList20 =
+        lookupKeyValid (lookup_univ) (validateMapOptionalNaturalNumberFixedListProp (20) ("&"))
 
       const checkOptionalUnivInteger =
-        lookupKeyValid (lookup_univ) (validateOptionalIntegerProp)
+        lookupKeyValid (lookup_univ) (validateMapOptionalIntegerProp)
 
       // Check fields
 
@@ -49,65 +45,44 @@ export const toRaceVariant =
         checkL10nNonEmptyString ("name")
 
       const ecommonCultures =
-        lookupKeyValid (lookup_univ)
-                       (validateRawProp ("List Natural")
-                                        (all (checkNaturalNumberListWithAndDel)))
-                       ("commonCultures")
+        checkOptionalUnivNaturalNumberList ("commonCultures")
 
       const ecommonAdvantages =
-        lookupKeyValid (lookup_univ)
-                       (validateRawProp ("Maybe (List Natural)")
-                                        (all (checkNaturalNumberListWithAndDel)))
-                       ("commonAdvantages")
+        checkOptionalUnivNaturalNumberList ("commonAdvantages")
 
       const commonAdvantagesText =
         lookup_l10n ("commonAdvantages")
 
       const ecommonDisadvantages =
-        lookupKeyValid (lookup_univ)
-                       (validateRawProp ("Maybe (List Natural)")
-                                        (all (checkNaturalNumberListWithAndDel)))
-                       ("commonDisadvantages")
+        checkOptionalUnivNaturalNumberList ("commonDisadvantages")
 
       const commonDisadvantagesText =
         lookup_l10n ("commonDisadvantages")
 
       const euncommonAdvantages =
-        lookupKeyValid (lookup_univ)
-                       (validateRawProp ("Maybe (List Natural)")
-                                        (all (checkNaturalNumberListWithAndDel)))
-                       ("uncommonAdvantages")
+        checkOptionalUnivNaturalNumberList ("uncommonAdvantages")
 
       const uncommonAdvantagesText =
         lookup_l10n ("uncommonAdvantages")
 
       const euncommonDisadvantages =
-        lookupKeyValid (lookup_univ)
-                       (validateRawProp ("Maybe (List Natural)")
-                                        (all (checkNaturalNumberListWithAndDel)))
-                       ("uncommonDisadvantages")
+        checkOptionalUnivNaturalNumberList ("uncommonDisadvantages")
 
       const uncommonDisadvantagesText =
         lookup_l10n ("uncommonDisadvantages")
 
       const ehairColors =
-        lookupKeyValid (lookup_univ)
-                       (validateRawProp ("Maybe (List Natural { length = 20 })")
-                                        (all (checkNaturalNumberListOfLength20WithAndDel)))
-                       ("hairColors")
+        checkOptionalUnivNaturalNumberList20 ("hairColors")
 
       const eeyeColors =
-        lookupKeyValid (lookup_univ)
-                       (validateRawProp ("Maybe (List Natural { length = 20 })")
-                                        (all (checkNaturalNumberListOfLength20WithAndDel)))
-                       ("eyeColors")
+        checkOptionalUnivNaturalNumberList20 ("eyeColors")
 
       const esizeBase =
         checkOptionalUnivInteger ("sizeBase")
 
       const esizeRandom =
         lookupKeyValid (lookup_univ)
-                       (validateRawProp ("Maybe (List (Natural, Natural))")
+                       (validateRawProp ("Maybe [(Natural, Natural)]")
                                         (all (checkDiceList)))
                        ("sizeRandom")
 
@@ -129,51 +104,36 @@ export const toRaceVariant =
         (rs => RaceVariant ({
           id: prefixId (IdPrefixes.RACE_VARIANTS) (id),
 
-          name: fromJust (rs.ename),
+          name: rs.ename,
 
           commonCultures:
-            fromMaybe<List<string>>
-              (empty)
-              (fmap (pipe (splitOn ("&"), map (prefixId (IdPrefixes.CULTURES))))
-                    (rs.ecommonCultures)),
+            maybePrefix (IdPrefixes.CULTURES) (rs.ecommonCultures),
 
           commonAdvantages:
-            fromMaybe<List<string>>
-              (empty)
-              (fmap (pipe (splitOn ("&"), map (prefixId (IdPrefixes.ADVANTAGES))))
-                    (rs.ecommonAdvantages)),
+            maybePrefix (IdPrefixes.ADVANTAGES) (rs.ecommonAdvantages),
 
           commonAdvantagesText,
 
           commonDisadvantages:
-            fromMaybe<List<string>>
-              (empty)
-              (fmap (pipe (splitOn ("&"), map (prefixId (IdPrefixes.DISADVANTAGES))))
-                    (rs.ecommonDisadvantages)),
+            maybePrefix (IdPrefixes.DISADVANTAGES) (rs.ecommonDisadvantages),
 
           commonDisadvantagesText,
 
           uncommonAdvantages:
-            fromMaybe<List<string>>
-              (empty)
-              (fmap (pipe (splitOn ("&"), map (prefixId (IdPrefixes.ADVANTAGES))))
-                    (rs.euncommonAdvantages)),
+            maybePrefix (IdPrefixes.ADVANTAGES) (rs.euncommonAdvantages),
 
           uncommonAdvantagesText,
 
           uncommonDisadvantages:
-            fromMaybe<List<string>>
-              (empty)
-              (fmap (pipe (splitOn ("&"), map (prefixId (IdPrefixes.DISADVANTAGES))))
-                    (rs.euncommonDisadvantages)),
+            maybePrefix (IdPrefixes.DISADVANTAGES) (rs.euncommonDisadvantages),
 
           uncommonDisadvantagesText,
 
-          hairColors: fmap (pipe (splitOn ("&"), map (unsafeToInt))) (rs.ehairColors),
+          hairColors: rs.ehairColors,
 
-          eyeColors: fmap (pipe (splitOn ("&"), map (unsafeToInt))) (rs.eeyeColors),
+          eyeColors: rs.eeyeColors,
 
-          sizeBase: fmap (unsafeToInt) (rs.esizeBase),
+          sizeBase: rs.esizeBase,
           sizeRandom:
             fmap (pipe (
                    splitOn ("&"),

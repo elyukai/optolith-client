@@ -11,6 +11,8 @@ export const Expect = Object.freeze ({
   Integer: "Int",
   Boolean: "Bool",
   Maybe: (x: string) => `Maybe ${x}`,
+  List: (x: string) => `[${x}]`,
+  ListLength: (len: number) => (x: string) => `[${x}] { length = ${len} }`,
 })
 
 interface ValidateReceived {
@@ -67,6 +69,9 @@ export const validateRequiredNonEmptyStringProp =
 export const validateRequiredNaturalNumberProp =
   validateRawProp (Expect.NaturalNumber) (any (isNaturalNumber))
 
+export const validateOptionalNaturalNumberProp =
+  validateRawProp (Expect.NaturalNumber) (all (isNaturalNumber))
+
 export const validateRequiredIntegerProp =
   validateRawProp (Expect.Integer) (any (isInteger))
 
@@ -77,15 +82,6 @@ export const validateBooleanProp =
   validateRawProp (Expect.Boolean)
                   (all ((x: string) => x === "TRUE" || x === "FALSE"))
 
-interface LookupKeyValid {
-  <A1 extends Maybe<string>>
-  (validate: (received: Maybe<string>) => Either<string, A1>):
-  (key: string) => Either<string, A1>
-
-  (validate: (received: Maybe<string>) => Either<string, Maybe<string>>):
-  (key: string) => Either<string, Maybe<string>>
-}
-
 /**
  * Creates a shortcut for reuse when checking table data. Takes a function that
  * looks up a key, a function that validates the result from the first function
@@ -93,10 +89,10 @@ interface LookupKeyValid {
  * error message is prepended by the name of the key.
  */
 export const lookupKeyValid =
-  (lookup: (key: string) => Maybe<string>): LookupKeyValid =>
-  (validate: (x: Maybe<string>) => Either<string, Maybe<string>>) =>
-  (key: string) =>
-    pipe (lookup, validate, first (appendStr (`"${key}": `))) (key)
+  (lookup: (key: string) => Maybe<string>) =>
+  <A> (validate: (x: Maybe<string>) => Either<string, A>) =>
+  (key: string): Either<string, A> =>
+    pipe (lookup, mstrToMaybe, validate, first (appendStr (`"${key}": `))) (key)
 
 /**
  * Takes a `Maybe String` and returns `Nothing` if the string is empty,

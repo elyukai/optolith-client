@@ -400,10 +400,10 @@ test ('splitAt', () => {
 
 // PREDICATES
 
-test ('isSubsequenceOf', () => {
-  expect (List.isSubsequenceOf ('test') ('das asd  dsad   ad teste f as'))
+test ('isInfixOf', () => {
+  expect (List.isInfixOf ('test') ('das asd  dsad   ad teste f as'))
     .toEqual (true)
-  expect (List.isSubsequenceOf ('test') ('das asd  dsad   ad tese f as'))
+  expect (List.isInfixOf ('test') ('das asd  dsad   ad tese f as'))
     .toEqual (false)
 })
 

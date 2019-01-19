@@ -1,7 +1,7 @@
 import { pipe } from "ramda";
 import { IdPrefixes } from "../../../../constants/IdPrefixes";
 import { Cons, empty, fromArray, List, map, splitOn } from "../../../../Data/List";
-import { all, fmap, fromJust, fromMaybe, fromNullable, maybe, Nothing } from "../../../../Data/Maybe";
+import { all, fmap, fromNullable, maybe, Nothing } from "../../../../Data/Maybe";
 import { Record } from "../../../../Data/Record";
 import { ProfessionRequireActivatable, RequireActivatable } from "../../../Models/Wiki/prerequisites/ActivatableRequirement";
 import { CultureRequirement } from "../../../Models/Wiki/prerequisites/CultureRequirement";
@@ -24,7 +24,9 @@ import { unsafeToInt } from "../../NumberUtils";
 import { naturalNumber } from "../../RegexUtils";
 import { listLengthRx, listRx, qmPairRx } from "../csvRegexUtils";
 import { mergeRowsById } from "../mergeTableRows";
-import { allRights, lookupKeyValid, validateRawProp, validateRequiredNaturalNumberProp, validateRequiredNonEmptyStringProp } from "../validateValueUtils";
+import { maybePrefix } from "../rawConversionUtils";
+import { validateMapOptionalNaturalNumberListProp, validateMapRequiredNaturalNumberProp, validateMapRequiredNonEmptyStringProp } from "../validateMapValueUtils";
+import { allRights, lookupKeyValid, validateRawProp } from "../validateValueUtils";
 import { isRawProfessionRequiringActivatable } from "./Prerequisites/ActivatableRequirement";
 import { isRawCultureRequirement } from "./Prerequisites/CultureRequirement";
 import { isRawProfessionRequiringIncreasable } from "./Prerequisites/IncreasableRequirement";
@@ -122,12 +124,6 @@ const validateSpecialAbilities =
     )
   )
 
-const naturalNumberListWithAndDel =
-  new RegExp (listRx ("&") (naturalNumber.source))
-
-const checkNaturalNumberListWithAndDel =
-  (x: string) => naturalNumberListWithAndDel .test (x)
-
 const skill = qmPairRx (naturalNumber.source, naturalNumber.source)
 
 const skills = new RegExp (listRx ("&") (skill))
@@ -158,10 +154,13 @@ export const toProfession =
       // Shortcuts
 
       const checkL10nNonEmptyString =
-        lookupKeyValid (lookup_l10n) (validateRequiredNonEmptyStringProp)
+        lookupKeyValid (lookup_l10n) (validateMapRequiredNonEmptyStringProp)
+
+      const checkOptionalUnivNaturalNumberList =
+        lookupKeyValid (lookup_univ) (validateMapOptionalNaturalNumberListProp ("&"))
 
       const checkUnivNaturalNumber =
-        lookupKeyValid (lookup_univ) (validateRequiredNaturalNumberProp)
+        lookupKeyValid (lookup_univ) (validateMapRequiredNaturalNumberProp)
 
       // Check fields
 
@@ -181,11 +180,11 @@ export const toProfession =
         lookupKeyValid (lookup_univ)
                        (validateRawProp
                          (
-                           "Maybe (List ("
+                           "Maybe ["
                            + "SexRequirement "
                            + "| RaceRequirement "
                            + "| CultureRequirement"
-                           + "))"
+                           + "]"
                          )
                          (all (validateDependencies)))
                        ("dependencies")
@@ -194,10 +193,10 @@ export const toProfession =
         lookupKeyValid (lookup_univ)
                        (validateRawProp
                          (
-                           "Maybe (List ("
+                           "Maybe ["
                            + "ProfessionRequireActivatable "
                            + "| ProfessionRequireIncreasable"
-                           + "))"
+                           + "]"
                          )
                          (all (validatePrerequisites)))
                        ("prerequisites")
@@ -206,10 +205,10 @@ export const toProfession =
         lookupKeyValid (lookup_l10n)
                        (validateRawProp
                          (
-                           "Maybe (List ("
+                           "Maybe ["
                            + "ProfessionRequireActivatable "
                            + "| ProfessionRequireIncreasable"
-                           + "))"
+                           + "]"
                          )
                          (all (validatePrerequisites)))
                        ("prerequisites")
@@ -222,7 +221,7 @@ export const toProfession =
         lookupKeyValid (lookup_univ)
                        (validateRawProp
                          (
-                           "Maybe (List ("
+                           "Maybe ["
                            + "SpecializationSelection "
                            + "| LanguagesScriptsSelection "
                            + "| CombatTechniquesSelection "
@@ -231,7 +230,7 @@ export const toProfession =
                            + "| CursesSelection "
                            + "| TerrainKnowledgeSelection "
                            + "| SkillsSelection"
-                           + "))"
+                           + "]"
                          )
                          (all (validateSelections)))
                        ("selections")
@@ -239,81 +238,66 @@ export const toProfession =
       const especialAbilities =
         lookupKeyValid (lookup_univ)
                        (validateRawProp
-                         ("Maybe (List ProfessionRequireActivatable)")
+                         ("Maybe [ProfessionRequireActivatable]")
                          (all (validateSpecialAbilities)))
                        ("specialAbilities")
 
       const ecombatTechniques =
         lookupKeyValid (lookup_univ)
-                       (validateRawProp ("Maybe (List (Natural, Natural))")
+                       (validateRawProp ("Maybe [(Natural, Natural)]")
                                         (all (checkCombatTechniques)))
                        ("combatTechniques")
 
       const eskills =
         lookupKeyValid (lookup_univ)
-                       (validateRawProp ("Maybe (List (Natural, Natural))")
+                       (validateRawProp ("Maybe [(Natural, Natural)]")
                                         (all (checkSkills)))
                        ("skills")
 
       const espells =
         lookupKeyValid (lookup_univ)
-                       (validateRawProp ("Maybe (List (Natural, Natural))")
+                       (validateRawProp ("Maybe [(Natural, Natural)]")
                                         (all (checkSkills)))
                        ("spells")
 
       const eliturgicalChants =
         lookupKeyValid (lookup_univ)
-                       (validateRawProp ("Maybe (List (Natural, Natural))")
+                       (validateRawProp ("Maybe [(Natural, Natural)]")
                                         (all (checkSkills)))
                        ("liturgicalChants")
 
       const eblessings =
         lookupKeyValid (lookup_univ)
-                       (validateRawProp ("Maybe (List Natural { length = 9 | 12})")
+                       (validateRawProp ("Maybe [Natural] { length = 9 | 12 }")
                                         (all (checkBlessings)))
                        ("blessings")
 
       const esuggestedAdvantages =
-        lookupKeyValid (lookup_univ)
-                       (validateRawProp ("Maybe (List Natural)")
-                                        (all (checkNaturalNumberListWithAndDel)))
-                       ("suggestedAdvantages")
+        checkOptionalUnivNaturalNumberList ("suggestedAdvantages")
 
       const suggestedAdvantagesText =
         lookup_l10n ("suggestedAdvantages")
 
       const esuggestedDisadvantages =
-        lookupKeyValid (lookup_univ)
-                       (validateRawProp ("Maybe (List Natural)")
-                                        (all (checkNaturalNumberListWithAndDel)))
-                       ("suggestedDisadvantages")
+        checkOptionalUnivNaturalNumberList ("suggestedDisadvantages")
 
       const suggestedDisadvantagesText =
         lookup_l10n ("suggestedDisadvantages")
 
       const eunsuitableAdvantages =
-        lookupKeyValid (lookup_univ)
-                       (validateRawProp ("Maybe (List Natural)")
-                                        (all (checkNaturalNumberListWithAndDel)))
-                       ("unsuitableAdvantages")
+        checkOptionalUnivNaturalNumberList ("unsuitableAdvantages")
 
       const unsuitableAdvantagesText =
         lookup_l10n ("unsuitableAdvantages")
 
       const eunsuitableDisadvantages =
-        lookupKeyValid (lookup_univ)
-                       (validateRawProp ("Maybe (List Natural)")
-                                        (all (checkNaturalNumberListWithAndDel)))
-                       ("unsuitableDisadvantages")
+        checkOptionalUnivNaturalNumberList ("unsuitableDisadvantages")
 
       const unsuitableDisadvantagesText =
         lookup_l10n ("unsuitableDisadvantages")
 
       const evariants =
-        lookupKeyValid (lookup_univ)
-                       (validateRawProp ("Maybe (List Natural)")
-                                        (all (checkNaturalNumberListWithAndDel)))
-                       ("variants")
+        checkOptionalUnivNaturalNumberList ("variants")
 
       const egr =
         checkUnivNaturalNumber ("gr")
@@ -352,20 +336,18 @@ export const toProfession =
           id: prefixId (IdPrefixes.PROFESSIONS) (id),
 
           name:
-            maybe<string, Profession["name"]>
-              (fromJust (rs.ename))
-              (f => NameBySex ({ m: fromJust (rs.ename), f }))
-              (nameFemale),
+            maybe<string, Profession["name"]> (rs.ename)
+                                              (f => NameBySex ({ m: rs.ename, f }))
+                                              (nameFemale),
 
           subname:
-            fmap<string, Profession["name"]>
-              (m => maybe<string, Profession["name"]>
-                (m)
-                (f => NameBySex ({ m, f }))
-                (subnameFemale))
-              (subname),
+            fmap<string, Profession["name"]> (m => maybe<string, Profession["name"]>
+                                               (m)
+                                               (f => NameBySex ({ m, f }))
+                                               (subnameFemale))
+                                             (subname),
 
-          ap: unsafeToInt (fromJust (rs.ecost)),
+          ap: rs.ecost,
 
           dependencies:
             maybe<string, Profession["dependencies"]>
@@ -385,9 +367,9 @@ export const toProfession =
                         value: Array.isArray (x .value) ? fromArray (x .value) : x .value,
                       })
                     : CultureRequirement ({
-                      id: Nothing,
-                      value: Array.isArray (x .value) ? fromArray (x .value) : x .value,
-                    })
+                        id: Nothing,
+                        value: Array.isArray (x .value) ? fromArray (x .value) : x .value,
+                      })
                 ))
               ))
               (rs.edependencies),
@@ -573,47 +555,32 @@ export const toProfession =
               (rs.eblessings),
 
           suggestedAdvantages:
-            fromMaybe<List<string>>
-              (empty)
-              (fmap (pipe (splitOn ("&"), map (prefixId (IdPrefixes.ADVANTAGES))))
-                    (rs.esuggestedAdvantages)),
+            maybePrefix (IdPrefixes.ADVANTAGES) (rs.esuggestedAdvantages),
 
           suggestedAdvantagesText,
 
           suggestedDisadvantages:
-            fromMaybe<List<string>>
-              (empty)
-              (fmap (pipe (splitOn ("&"), map (prefixId (IdPrefixes.DISADVANTAGES))))
-                    (rs.esuggestedDisadvantages)),
+            maybePrefix (IdPrefixes.DISADVANTAGES) (rs.esuggestedDisadvantages),
 
           suggestedDisadvantagesText,
 
           unsuitableAdvantages:
-            fromMaybe<List<string>>
-              (empty)
-              (fmap (pipe (splitOn ("&"), map (prefixId (IdPrefixes.ADVANTAGES))))
-                    (rs.eunsuitableAdvantages)),
+            maybePrefix (IdPrefixes.ADVANTAGES) (rs.eunsuitableAdvantages),
 
           unsuitableAdvantagesText,
 
           unsuitableDisadvantages:
-            fromMaybe<List<string>>
-              (empty)
-              (fmap (pipe (splitOn ("&"), map (prefixId (IdPrefixes.DISADVANTAGES))))
-                    (rs.eunsuitableDisadvantages)),
+            maybePrefix (IdPrefixes.DISADVANTAGES) (rs.eunsuitableDisadvantages),
 
           unsuitableDisadvantagesText,
 
           isVariantRequired: Nothing,
 
           variants:
-            fromMaybe<List<string>>
-              (empty)
-              (fmap (pipe (splitOn ("&"), map (prefixId (IdPrefixes.PROFESSION_VARIANTS))))
-                    (rs.evariants)),
+            maybePrefix (IdPrefixes.PROFESSION_VARIANTS) (rs.evariants),
 
-          gr: unsafeToInt (fromJust (rs.egr)),
-          subgr: unsafeToInt (fromJust (rs.esgr)),
+          gr: rs.egr,
+          subgr: rs.esgr,
 
           src: toSourceLinks (rs.esrc),
 

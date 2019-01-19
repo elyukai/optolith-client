@@ -1,6 +1,6 @@
 import { pipe } from "ramda";
 import { thrush } from "../../Data/Function";
-import { filter, isSubsequenceOf, List, lower } from "../../Data/List";
+import { filter, isInfixOf, List, lower } from "../../Data/List";
 import { Record, RecordBase } from "../../Data/Record";
 import { RecordWithName } from "./sortBy";
 
@@ -31,7 +31,7 @@ export const filterRecordsBy =
 
     return filter<Record<A>>
       (x => filterAccessors
-        .some (pipe (thrush (x), lower, isSubsequenceOf (lower (filterText)))))
+        .some (pipe (thrush (x), lower, isInfixOf (lower (filterText)))))
       (xs)
   }
 

@@ -170,6 +170,26 @@ test ('join', () => {
     .toEqual (Nothing)
 })
 
+test ('mapM', () => {
+  expect (
+    Maybe.mapM (x => x === 2 ? Nothing : Just (x + 1))
+                (List.empty)
+  )
+    .toEqual (Just (List.empty))
+
+  expect (
+    Maybe.mapM (x => x === 2 ? Nothing : Just (x + 1))
+                (List.fromElements (1, 3))
+  )
+    .toEqual (Just (List.fromElements (2, 4)))
+
+  expect (
+    Maybe.mapM (x => x === 2 ? Nothing : Just (x + 1))
+                (List.fromElements (1, 2, 3))
+  )
+    .toEqual (Nothing)
+})
+
 test ('liftM2', () => {
   expect (Maybe.liftM2 (x => y => x + y) (Just (1)) (Just (2))) .toEqual (Just (3))
   expect (Maybe.liftM2 (x => y => x + y) (Nothing) (Just (2))) .toEqual (Nothing)

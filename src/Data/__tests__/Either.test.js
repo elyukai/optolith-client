@@ -70,6 +70,13 @@ test ('maybeToEither', () => {
     .toEqual (Left ('test'))
 })
 
+test ('maybeToEither_', () => {
+  expect (Either.maybeToEither_ (() => 'test') (Just (3)))
+    .toEqual (Right (3))
+  expect (Either.maybeToEither_ (() => 'test') (Nothing))
+    .toEqual (Left ('test'))
+})
+
 // FUNCTOR
 
 test ('fmap', () => {
@@ -185,6 +192,26 @@ test ('join', () => {
     .toEqual (Left ('test'))
   expect (Either.join (Left (Left ('test'))))
     .toEqual (Left (Left ('test')))
+})
+
+test ('mapM', () => {
+  expect (
+    Either.mapM (x => x === 2 ? Left ("test") : Right (x + 1))
+                (List.empty)
+  )
+    .toEqual (Right (List.empty))
+
+  expect (
+    Either.mapM (x => x === 2 ? Left ("test") : Right (x + 1))
+                (List.fromElements (1, 3))
+  )
+    .toEqual (Right (List.fromElements (2, 4)))
+
+  expect (
+    Either.mapM (x => x === 2 ? Left ("test") : Right (x + 1))
+                (List.fromElements (1, 2, 3))
+  )
+    .toEqual (Left ("test"))
 })
 
 // FOLDABLE

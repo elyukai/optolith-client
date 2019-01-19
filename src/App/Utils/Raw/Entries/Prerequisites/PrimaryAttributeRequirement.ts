@@ -6,7 +6,7 @@ export interface RawRequirePrimaryAttribute {
   type: 1 | 2
 }
 
-export const isRawPrimaryAttributeRequirement =
+export const isRawRequiringPrimaryAttribute =
   (req: AllRawRequirementObjects): req is RawRequirePrimaryAttribute =>
     req.id === "ATTR_PRIMARY"
     // @ts-ignore

@@ -843,15 +843,23 @@ export const splitAt =
 // PREDICATES
 
 /**
- * `isSubsequenceOf :: Eq a => [a] -> [a] -> Bool`
+ * `isInfixOf :: Eq a => [a] -> [a] -> Bool`
  *
- * The `isSubsequenceOf` function takes two lists and returns `True` if all the
- * elements of the first list occur, in order, in the second. The elements do
- * not have to occur consecutively.
+ * The `isInfixOf` function takes two lists and returns `True` if the first
+ * list is contained, wholly and intact, anywhere within the second.
  *
- * `isSubsequenceOf x y` is equivalent to `elem x (subsequences y)`.
+ * ```haskell
+ * >>> isInfixOf "Haskell" "I really like Haskell."
+ * True
+ * ```
+ *
+ * ```haskell
+ * >>> isInfixOf "Ial" "I really like Haskell."
+ * False
+ * ```
+ *
  */
-export const isSubsequenceOf =
+export const isInfixOf =
   (x: string) => (y: string): boolean =>
     y .includes (x)
 
@@ -1832,6 +1840,8 @@ export const List = {
   take,
   drop,
   splitAt,
+
+  isInfixOf,
 
   lookup,
 

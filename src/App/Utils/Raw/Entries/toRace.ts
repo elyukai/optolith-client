@@ -8,9 +8,11 @@ import { Die } from "../../../Models/Wiki/sub/Die";
 import { prefixId } from "../../IDUtils";
 import { unsafeToInt } from "../../NumberUtils";
 import { integer, naturalNumber } from "../../RegexUtils";
-import { listLengthRx, listRx, pairRx, qmPairRx } from "../csvRegexUtils";
+import { listRx, pairRx, qmPairRx } from "../csvRegexUtils";
 import { mergeRowsById } from "../mergeTableRows";
-import { allRights, lookupKeyValid, validateOptionalIntegerProp, validateRawProp, validateRequiredIntegerProp, validateRequiredNaturalNumberProp, validateRequiredNonEmptyStringProp } from "../validateValueUtils";
+import { maybePrefix } from "../rawConversionUtils";
+import { validateMapOptionalIntegerProp, validateMapOptionalNaturalNumberFixedListProp, validateMapOptionalNaturalNumberListProp, validateMapRequiredIntegerProp, validateMapRequiredNaturalNumberListProp, validateMapRequiredNaturalNumberProp, validateMapRequiredNonEmptyStringProp } from "../validateMapValueUtils";
+import { allRights, lookupKeyValid, validateRawProp } from "../validateValueUtils";
 import { lookupValidSourceLinks, toSourceLinks } from "./Sub/toSourceLinks";
 
 const attributeAdjustment = qmPairRx (naturalNumber.source, integer.source)
@@ -19,18 +21,6 @@ const attributeAdjustments = new RegExp (listRx ("&") (attributeAdjustment))
 
 const checkAttributeAdjustments =
   (x: string) => attributeAdjustments .test (x)
-
-const naturalNumberListWithAndDel =
-  new RegExp (listRx ("&") (naturalNumber.source))
-
-const checkNaturalNumberListWithAndDel =
-  (x: string) => naturalNumberListWithAndDel .test (x)
-
-const naturalNumberListOfLength20WithAndDel =
-  new RegExp (listLengthRx (20) ("&") (naturalNumber.source))
-
-const checkNaturalNumberListOfLength20WithAndDel =
-  (x: string) => naturalNumberListOfLength20WithAndDel .test (x)
 
 const die = pairRx ("D") (naturalNumber.source, naturalNumber.source)
 
@@ -55,16 +45,25 @@ export const toRace =
       // Shortcuts
 
       const checkL10nNonEmptyString =
-        lookupKeyValid (lookup_l10n) (validateRequiredNonEmptyStringProp)
+        lookupKeyValid (lookup_l10n) (validateMapRequiredNonEmptyStringProp)
 
       const checkUnivNaturalNumber =
-        lookupKeyValid (lookup_univ) (validateRequiredNaturalNumberProp)
+        lookupKeyValid (lookup_univ) (validateMapRequiredNaturalNumberProp)
+
+      const checkUnivNaturalNumberList =
+        lookupKeyValid (lookup_univ) (validateMapRequiredNaturalNumberListProp ("&"))
+
+      const checkOptionalUnivNaturalNumberList =
+        lookupKeyValid (lookup_univ) (validateMapOptionalNaturalNumberListProp ("&"))
+
+      const checkOptionalUnivNaturalNumberList20 =
+        lookupKeyValid (lookup_univ) (validateMapOptionalNaturalNumberFixedListProp (20) ("&"))
 
       const checkUnivInteger =
-        lookupKeyValid (lookup_univ) (validateRequiredIntegerProp)
+        lookupKeyValid (lookup_univ) (validateMapRequiredIntegerProp)
 
       const checkOptionalUnivInteger =
-        lookupKeyValid (lookup_univ) (validateOptionalIntegerProp)
+        lookupKeyValid (lookup_univ) (validateMapOptionalIntegerProp)
 
       // Check fields
 
@@ -88,7 +87,7 @@ export const toRace =
 
       const eattributeAdjustments =
         lookupKeyValid (lookup_univ)
-                       (validateRawProp ("Maybe (List (Natural, Int))")
+                       (validateRawProp ("Maybe [(Natural, Int)]")
                                         (all (checkAttributeAdjustments)))
                        ("attributeAdjustments")
 
@@ -99,98 +98,65 @@ export const toRace =
         checkUnivInteger ("attributeAdjustmentsSelectionValue")
 
       const eattributeAdjustmentsSelectionList =
-        lookupKeyValid (lookup_univ)
-                       (validateRawProp ("List Natural")
-                                        (any (checkNaturalNumberListWithAndDel)))
-                       ("attributeAdjustmentsSelectionList")
+        checkUnivNaturalNumberList ("attributeAdjustmentsSelectionList")
 
       const ecommonCultures =
-        lookupKeyValid (lookup_univ)
-                       (validateRawProp ("List Natural")
-                                        (all (checkNaturalNumberListWithAndDel)))
-                       ("commonCultures")
+        checkUnivNaturalNumberList ("commonCultures")
 
       const eautomaticAdvantages =
-        lookupKeyValid (lookup_univ)
-                       (validateRawProp ("Maybe (List Natural)")
-                                        (all (checkNaturalNumberListWithAndDel)))
-                       ("automaticAdvantages")
+        checkOptionalUnivNaturalNumberList ("automaticAdvantages")
 
       const automaticAdvantagesText =
         lookup_l10n ("automaticAdvantages")
 
       const estronglyRecommendedAdvantages =
-        lookupKeyValid (lookup_univ)
-                       (validateRawProp ("Maybe (List Natural)")
-                                        (all (checkNaturalNumberListWithAndDel)))
-                       ("stronglyRecommendedAdvantages")
+        checkOptionalUnivNaturalNumberList ("stronglyRecommendedAdvantages")
 
       const stronglyRecommendedAdvantagesText =
         lookup_l10n ("stronglyRecommendedAdvantages")
 
       const estronglyRecommendedDisadvantages =
-        lookupKeyValid (lookup_univ)
-                       (validateRawProp ("Maybe (List Natural)")
-                                        (all (checkNaturalNumberListWithAndDel)))
-                       ("stronglyRecommendedDisadvantages")
+        checkOptionalUnivNaturalNumberList ("stronglyRecommendedDisadvantages")
 
       const stronglyRecommendedDisadvantagesText =
         lookup_l10n ("stronglyRecommendedDisadvantages")
 
       const ecommonAdvantages =
-        lookupKeyValid (lookup_univ)
-                       (validateRawProp ("Maybe (List Natural)")
-                                        (all (checkNaturalNumberListWithAndDel)))
-                       ("commonAdvantages")
+        checkOptionalUnivNaturalNumberList ("commonAdvantages")
 
       const commonAdvantagesText =
         lookup_l10n ("commonAdvantages")
 
       const ecommonDisadvantages =
-        lookupKeyValid (lookup_univ)
-                       (validateRawProp ("Maybe (List Natural)")
-                                        (all (checkNaturalNumberListWithAndDel)))
-                       ("commonDisadvantages")
+        checkOptionalUnivNaturalNumberList ("commonDisadvantages")
 
       const commonDisadvantagesText =
         lookup_l10n ("commonDisadvantages")
 
       const euncommonAdvantages =
-        lookupKeyValid (lookup_univ)
-                       (validateRawProp ("Maybe (List Natural)")
-                                        (all (checkNaturalNumberListWithAndDel)))
-                       ("uncommonAdvantages")
+        checkOptionalUnivNaturalNumberList ("uncommonAdvantages")
 
       const uncommonAdvantagesText =
         lookup_l10n ("uncommonAdvantages")
 
       const euncommonDisadvantages =
-        lookupKeyValid (lookup_univ)
-                       (validateRawProp ("Maybe (List Natural)")
-                                        (all (checkNaturalNumberListWithAndDel)))
-                       ("uncommonDisadvantages")
+        checkOptionalUnivNaturalNumberList ("uncommonDisadvantages")
 
       const uncommonDisadvantagesText =
         lookup_l10n ("uncommonDisadvantages")
 
       const ehairColors =
-        lookupKeyValid (lookup_univ)
-                       (validateRawProp ("Maybe (List Natural { length = 20 })")
-                                        (all (checkNaturalNumberListOfLength20WithAndDel)))
-                       ("hairColors")
+        checkOptionalUnivNaturalNumberList20 ("hairColors")
 
       const eeyeColors =
-        lookupKeyValid (lookup_univ)
-                       (validateRawProp ("Maybe (List Natural { length = 20 })")
-                                        (all (checkNaturalNumberListOfLength20WithAndDel)))
-                       ("eyeColors")
+        checkOptionalUnivNaturalNumberList20 ("eyeColors")
 
       const esizeBase =
         checkOptionalUnivInteger ("sizeBase")
 
       const esizeRandom =
         lookupKeyValid (lookup_univ)
-                       (validateRawProp ("Maybe (List (Natural, Natural))")
+                       (validateRawProp ("Maybe [(Natural, Natural)]")
                                         (all (checkDiceList)))
                        ("sizeRandom")
 
@@ -199,15 +165,12 @@ export const toRace =
 
       const eweightRandom =
         lookupKeyValid (lookup_univ)
-                       (validateRawProp ("List (Int, Natural)")
+                       (validateRawProp ("[(Int, Natural)]")
                                         (any (checkNegativeDiceList)))
                        ("weightRandom")
 
       const evariants =
-        lookupKeyValid (lookup_univ)
-                       (validateRawProp ("Maybe (List Natural)")
-                                        (all (checkNaturalNumberListWithAndDel)))
-                       ("variants")
+        checkOptionalUnivNaturalNumberList ("variants")
 
       const esrc = lookupValidSourceLinks (lookup_l10n)
 
@@ -244,12 +207,12 @@ export const toRace =
         })
         (rs => Race ({
           id: prefixId (IdPrefixes.RACES) (id),
-          name: fromJust (rs.ename),
-          lp: unsafeToInt (fromJust (rs.elp)),
-          spi: unsafeToInt (fromJust (rs.espi)),
-          tou: unsafeToInt (fromJust (rs.etou)),
-          mov: unsafeToInt (fromJust (rs.emov)),
-          ap: unsafeToInt (fromJust (rs.ecost)),
+          name: rs.ename,
+          lp: rs.elp,
+          spi: rs.espi,
+          tou: rs.etou,
+          mov: rs.emov,
+          ap: rs.ecost,
 
           attributeAdjustments:
             maybe<string, List<Pair<string, number>>>
@@ -271,23 +234,19 @@ export const toRace =
 
           attributeAdjustmentsSelection:
             fromBinary (
-              unsafeToInt (fromJust (rs.eattributeAdjustmentsSelectionValue)),
-              pipe (splitOn ("&"), map (prefixId (IdPrefixes.ATTRIBUTES)))
-                   (fromJust (rs.eattributeAdjustmentsSelectionList))
+              rs.eattributeAdjustmentsSelectionValue,
+              map (prefixId (IdPrefixes.ATTRIBUTES)) (rs.eattributeAdjustmentsSelectionList)
             ),
 
-          attributeAdjustmentsText: fromJust (rs.eattributeAdjustmentsText),
+          attributeAdjustmentsText: rs.eattributeAdjustmentsText,
 
           commonCultures:
-            fromMaybe<List<string>>
-              (empty)
-              (fmap (pipe (splitOn ("&"), map (prefixId (IdPrefixes.CULTURES))))
-                    (rs.ecommonCultures)),
+            map (prefixId (IdPrefixes.CULTURES)) (rs.ecommonCultures),
 
           automaticAdvantages:
             fromMaybe<List<string>>
               (empty)
-              (fmap (pipe (splitOn ("&"), map (prefixId (IdPrefixes.ADVANTAGES))))
+              (fmap (map (prefixId (IdPrefixes.ADVANTAGES)))
                     (rs.eautomaticAdvantages)),
 
           automaticAdvantagesText,
@@ -295,7 +254,7 @@ export const toRace =
           stronglyRecommendedAdvantages:
             fromMaybe<List<string>>
               (empty)
-              (fmap (pipe (splitOn ("&"), map (prefixId (IdPrefixes.ADVANTAGES))))
+              (fmap (map (prefixId (IdPrefixes.ADVANTAGES)))
                     (rs.estronglyRecommendedAdvantages)),
 
           stronglyRecommendedAdvantagesText,
@@ -303,48 +262,36 @@ export const toRace =
           stronglyRecommendedDisadvantages:
             fromMaybe<List<string>>
               (empty)
-              (fmap (pipe (splitOn ("&"), map (prefixId (IdPrefixes.DISADVANTAGES))))
+              (fmap (map (prefixId (IdPrefixes.DISADVANTAGES)))
                     (rs.estronglyRecommendedDisadvantages)),
 
           stronglyRecommendedDisadvantagesText,
 
           commonAdvantages:
-            fromMaybe<List<string>>
-              (empty)
-              (fmap (pipe (splitOn ("&"), map (prefixId (IdPrefixes.ADVANTAGES))))
-                    (rs.ecommonAdvantages)),
+            maybePrefix (IdPrefixes.ADVANTAGES) (rs.ecommonAdvantages),
 
           commonAdvantagesText,
 
           commonDisadvantages:
-            fromMaybe<List<string>>
-              (empty)
-              (fmap (pipe (splitOn ("&"), map (prefixId (IdPrefixes.DISADVANTAGES))))
-                    (rs.ecommonDisadvantages)),
+            maybePrefix (IdPrefixes.DISADVANTAGES) (rs.ecommonDisadvantages),
 
           commonDisadvantagesText,
 
           uncommonAdvantages:
-            fromMaybe<List<string>>
-              (empty)
-              (fmap (pipe (splitOn ("&"), map (prefixId (IdPrefixes.ADVANTAGES))))
-                    (rs.euncommonAdvantages)),
+            maybePrefix (IdPrefixes.ADVANTAGES) (rs.euncommonAdvantages),
 
           uncommonAdvantagesText,
 
           uncommonDisadvantages:
-            fromMaybe<List<string>>
-              (empty)
-              (fmap (pipe (splitOn ("&"), map (prefixId (IdPrefixes.DISADVANTAGES))))
-                    (rs.euncommonDisadvantages)),
+            maybePrefix (IdPrefixes.DISADVANTAGES) (rs.euncommonDisadvantages),
 
           uncommonDisadvantagesText,
 
-          hairColors: fmap (pipe (splitOn ("&"), map (unsafeToInt))) (rs.ehairColors),
+          hairColors: rs.ehairColors,
 
-          eyeColors: fmap (pipe (splitOn ("&"), map (unsafeToInt))) (rs.eeyeColors),
+          eyeColors: rs.eeyeColors,
 
-          sizeBase: fmap (unsafeToInt) (rs.esizeBase),
+          sizeBase: rs.esizeBase,
           sizeRandom:
             fmap (pipe (
                    splitOn ("&"),
@@ -361,7 +308,7 @@ export const toRace =
                  ))
                  (rs.esizeRandom),
 
-          weightBase: unsafeToInt (fromJust (rs.eweightBase)),
+          weightBase: rs.eweightBase,
           weightRandom:
             pipe (
                    splitOn ("&"),
@@ -379,10 +326,7 @@ export const toRace =
                  (fromJust (rs.eweightRandom)),
 
           variants:
-            fromMaybe<List<string>>
-              (empty)
-              (fmap (pipe (splitOn ("&"), map (prefixId (IdPrefixes.RACE_VARIANTS))))
-                    (rs.evariants)),
+            maybePrefix (IdPrefixes.RACE_VARIANTS) (rs.evariants),
 
           src: toSourceLinks (rs.esrc),
 

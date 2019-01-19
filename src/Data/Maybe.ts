@@ -15,6 +15,7 @@
  */
 
 import { pipe } from "ramda";
+import { ifElse } from "../App/Utils/ifElse";
 import * as Math from "../App/Utils/mathUtils";
 import { cnst, ident, thrush } from "./Function";
 import { cons, consF, head, ifoldr, List } from "./List";
@@ -290,6 +291,28 @@ export const kleisli =
 export const join =
   <A extends Some> (x: Maybe<Maybe<A>>): Maybe<A> =>
     bind<Maybe<A>, A> (x) (ident)
+
+/**
+ * `mapM :: (a -> Maybe b) -> [a] -> Maybe [b]`
+ *
+ * `mapM f xs` takes a function and a list and maps the function over every
+ * element in the list. If the function returns a `Nothing`, it is immediately
+ * returned by the function. If `f` did not return any `Nothing`, the list of
+ * unwrapped return values is returned as a `Just`. If `xs` is empty,
+ * `Just []` is returned.
+ */
+export const mapM =
+  <A, B>
+  (f: (x: A) => Maybe<B>) =>
+  (xs: List<A>): Maybe<List<B>> =>
+    List.fnull (xs)
+    ? Just (List.empty)
+    : ifElse<Maybe<B>, Nothing, Maybe<List<B>>>
+      (isNothing)
+      (cnst (Nothing))
+      (y => fmap<List<B>, List<B>> (consF (fromJust (y)))
+                                   (mapM (f) (xs .xs)))
+      (f (xs .x))
 
 /**
  * `liftM2 :: (a1 -> a2 -> r) -> Maybe a1 -> Maybe a2 -> Maybe r`
@@ -840,6 +863,7 @@ export const Maybe = {
   then,
   kleisli,
   join,
+  mapM,
   liftM2,
   liftM3,
   liftM4,

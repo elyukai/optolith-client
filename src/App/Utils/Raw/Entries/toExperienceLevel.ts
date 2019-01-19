@@ -2,9 +2,9 @@ import { IdPrefixes } from "../../../../constants/IdPrefixes";
 import { fromJust } from "../../../../Data/Maybe";
 import { ExperienceLevel } from "../../../Models/Wiki/ExperienceLevel";
 import { prefixId } from "../../IDUtils";
-import { unsafeToInt } from "../../NumberUtils";
 import { mergeRowsById } from "../mergeTableRows";
-import { allRights, lookupKeyValid, validateRequiredNaturalNumberProp, validateRequiredNonEmptyStringProp } from "../validateValueUtils";
+import { validateMapRequiredNaturalNumberProp } from "../validateMapValueUtils";
+import { allRights, lookupKeyValid, validateRequiredNonEmptyStringProp } from "../validateValueUtils";
 
 export const toExperienceLevel =
   mergeRowsById
@@ -13,7 +13,7 @@ export const toExperienceLevel =
       // Shortcuts
 
       const checkUnivNaturalNumber =
-        lookupKeyValid (lookup_univ) (validateRequiredNaturalNumberProp)
+        lookupKeyValid (lookup_univ) (validateMapRequiredNaturalNumberProp)
 
       // Check fields
 
@@ -56,21 +56,13 @@ export const toExperienceLevel =
         })
         (rs => ExperienceLevel ({
           id: prefixId (IdPrefixes.EXPERIENCE_LEVELS) (id),
-          name:
-            fromJust (rs.ename),
-          ap:
-            unsafeToInt (fromJust (rs.eap)),
-          maxAttributeValue:
-            unsafeToInt (fromJust (rs.emaxAttributeValue)),
-          maxSkillRating:
-            unsafeToInt (fromJust (rs.emaxSkillRating)),
-          maxCombatTechniqueRating:
-            unsafeToInt (fromJust (rs.emaxCombatTechniqueRating)),
-          maxTotalAttributeValues:
-            unsafeToInt (fromJust (rs.emaxTotalAttributeValues)),
-          maxSpellsLiturgicalChants:
-            unsafeToInt (fromJust (rs.emaxSpellsLiturgicalChants)),
-          maxUnfamiliarSpells:
-            unsafeToInt (fromJust (rs.emaxUnfamiliarSpells)),
+          name: fromJust (rs.ename),
+          ap: rs.eap,
+          maxAttributeValue: rs.emaxAttributeValue,
+          maxSkillRating: rs.emaxSkillRating,
+          maxCombatTechniqueRating: rs.emaxCombatTechniqueRating,
+          maxTotalAttributeValues: rs.emaxTotalAttributeValues,
+          maxSpellsLiturgicalChants: rs.emaxSpellsLiturgicalChants,
+          maxUnfamiliarSpells: rs.emaxUnfamiliarSpells,
         }))
     })

@@ -25,7 +25,7 @@ const increasableId =
 
 const isIncreasableId = (x: string) => increasableId .test (x)
 
-export const isRawIncreasableRequirement =
+export const isRawRequiringIncreasable =
   (req: AllRawRequirementObjects): req is RawRequireIncreasable =>
     (
       typeof req.id === "string" && isIncreasableId (req.id)
