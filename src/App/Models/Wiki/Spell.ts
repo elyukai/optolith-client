@@ -1,6 +1,6 @@
 import { Categories } from "../../../constants/Categories";
 import { List } from "../../../Data/List";
-import { Maybe, Nothing } from "../../../Data/Maybe";
+import { OrderedSet } from "../../../Data/OrderedSet";
 import { fromDefault, Record } from "../../../Data/Record";
 import { SourceLink } from "./sub/SourceLink";
 import { AllRequirementObjects, CheckModifier, EntryWithCategory } from "./wikiTypeHelpers";
@@ -10,7 +10,7 @@ export interface Spell {
   name: string
   category: Categories
   check: List<string>
-  checkmod: Maybe<CheckModifier>
+  checkmod: OrderedSet<CheckModifier>
   gr: number
   ic: number
   property: number
@@ -36,7 +36,7 @@ export const Spell =
     name: "",
     category: Categories.SPELLS,
     check: List.empty,
-    checkmod: Nothing,
+    checkmod: OrderedSet.empty,
     gr: 0,
     ic: 0,
     property: 0,

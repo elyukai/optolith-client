@@ -7,7 +7,6 @@ import { EntryWithCategory } from "./wikiTypeHelpers";
 export interface Blessing {
   id: string
   name: string
-  aspects: List<number>
   tradition: List<number>
   category: Categories
   effect: string
@@ -21,7 +20,6 @@ export const Blessing =
   fromDefault<Blessing> ({
     id: "",
     name: "",
-    aspects: List.empty,
     tradition: List.empty,
     category: Categories.BLESSINGS,
     effect: "",

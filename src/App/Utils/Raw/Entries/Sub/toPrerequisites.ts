@@ -11,7 +11,7 @@ import { PactRequirement } from "../../../../Models/Wiki/prerequisites/PactRequi
 import { RequirePrimaryAttribute } from "../../../../Models/Wiki/prerequisites/PrimaryAttributeRequirement";
 import { RaceRequirement } from "../../../../Models/Wiki/prerequisites/RaceRequirement";
 import { SexRequirement } from "../../../../Models/Wiki/prerequisites/SexRequirement";
-import { AllRequirements, LevelAwarePrerequisites } from "../../../../Models/Wiki/wikiTypeHelpers";
+import { AllRequirementObjects, AllRequirements, LevelAwarePrerequisites } from "../../../../Models/Wiki/wikiTypeHelpers";
 import { ifElse } from "../../../ifElse";
 import { gte } from "../../../mathUtils";
 import { toInt } from "../../../NumberUtils";
@@ -187,6 +187,74 @@ const toFlatPrerequisites =
          )
          (xs)
 
+const toFlatSpellPrerequisites =
+  (xs: string) =>
+    pipe (
+           splitOn ("&"),
+           Maybe.mapM<string, AllRequirementObjects>
+             (pipe (
+               (x: string) => JSON.parse (x),
+               ensure (x => typeof x === "object" && x !== null),
+               bindF<any, AllRequirementObjects> (
+                 x => isRawRequiringActivatable (x)
+                   ? Just (RequireActivatable ({
+                       id: Array.isArray (x .id) ? fromArray (x .id) : x .id,
+                       active: x .active,
+                       sid: Array.isArray (x .sid)
+                         ? Just (fromArray (x .sid))
+                         : fromNullable (x .sid),
+                       sid2: fromNullable (x .sid2),
+                       tier: fromNullable (x .tier),
+                     }))
+                   : isRawRequiringIncreasable (x)
+                   ? Just (RequireIncreasable ({
+                       id: Array.isArray (x .id) ? fromArray (x .id) : x .id,
+                       value: x .value,
+                     }))
+                   : isRawRequiringPrimaryAttribute (x)
+                   ? Just (RequirePrimaryAttribute ({
+                       id: Nothing,
+                       value: x .value,
+                       type: x .type,
+                     }))
+                   : isRawSexRequirement (x)
+                   ? Just (SexRequirement ({
+                       id: Nothing,
+                       value: x .value,
+                     }))
+                   : isRawRaceRequirement (x)
+                   ? Just (RaceRequirement ({
+                       id: Nothing,
+                       value: Array.isArray (x .value)
+                         ? fromArray (x .value)
+                         : x .value,
+                     }))
+                   : isRawCultureRequirement (x)
+                   ? Just (CultureRequirement ({
+                       id: Nothing,
+                       value: Array.isArray (x .value)
+                         ? fromArray (x .value)
+                         : x .value,
+                     }))
+                   : isRawPactRequirement (x)
+                   ? Just (PactRequirement ({
+                       id: Nothing,
+                       category: x .category,
+                       domain: Array.isArray (x .domain)
+                         ? Just (fromArray (x .domain))
+                         : fromNullable (x .domain),
+                       level: fromNullable (x .level),
+                     }))
+                   : Nothing
+               )
+             )),
+           maybeToEither<string, List<AllRequirementObjects>>
+             (
+               `Invalid prerequisites. Expected: List Prerequisite, Received: ${xs}`
+             )
+         )
+         (xs)
+
 const toLevelAwareOrPlainPrerequisites =
   ifElse<string, Either<string, LevelAwarePrerequisites>>
     (isInfixOf ("&&"))
@@ -205,5 +273,20 @@ export const toPrerequisites =
         mstrToMaybe,
         fmap (toLevelAwareOrPlainPrerequisites),
         fromMaybe<Either<string, LevelAwarePrerequisites>> (Right (List.empty))
+      ))
+      ("prerequisites")
+
+/**
+ * Convert a raw string to `Right Prerequisites`. If an error occurs during
+ * conversion (scheme incorrect), a `Left` containing the error message will be
+ * returned.
+ */
+export const toSpellPrerequisites =
+  (lookup_univ: (key: string) => Maybe<string>) =>
+    lookupKeyValid (lookup_univ)
+      (pipe (
+        mstrToMaybe,
+        fmap (toFlatSpellPrerequisites),
+        fromMaybe<Either<string, List<AllRequirementObjects>>> (Right (List.empty))
       ))
       ("prerequisites")

@@ -3,6 +3,7 @@ import { Either, maybeToEither_ } from "../../../Data/Either";
 import { equals } from "../../../Data/Eq";
 import { Cons, length, List, notNullStr, splitOn } from "../../../Data/List";
 import { bindF, ensure, fmap, fromJust, fromMaybe, isNothing, Just, liftM2, mapM, Maybe, Nothing } from "../../../Data/Maybe";
+import { fromList, OrderedSet } from "../../../Data/OrderedSet";
 import { fromBoth, Pair } from "../../../Data/Pair";
 import { show } from "../../../Data/Show";
 import { toInt, toNatural } from "../NumberUtils";
@@ -93,6 +94,18 @@ export const mensureMapFixedListOptional =
     mensureMap (Expect.Maybe (Expect.ListLength (len) (type)))
                (bindOptional (mapFixedList (len) (del) (f)))
 
+const mapSet =
+  (del: string) =>
+  <A> (f: (x: string) => Maybe<A>) =>
+    pipe (splitOn (del), mapM (f), fmap (fromList))
+
+export const mensureMapSetOptional =
+  (del: string) =>
+  (type: string) =>
+  <A> (f: (x: string) => Maybe<A>) =>
+    mensureMap (Expect.Maybe (Expect.Set (type)))
+               (bindOptional (mapSet (del) (f)))
+
 export const mensureMapNonEmptyString =
   mensureMap (Expect.NonEmptyString)
              (bindF<string, string> (ensure (notNullStr)))
@@ -103,16 +116,60 @@ export const mensureMapStringPred =
     mensureMap (Expect.Maybe (type))
                (bindF<string, string> (ensure (pred)))
 
-export const mensureMapStringPredOptional =
+interface mensureMapStringPredOptional {
+  <A extends string>
+  (pred: (x: string) => x is A):
+  (type: string) =>
+  (received: Maybe<string>) => Either<string, Maybe<A>>
+
+  (pred: (x: string) => boolean):
+  (type: string) =>
+  (received: Maybe<string>) => Either<string, Maybe<string>>
+}
+
+export const mensureMapStringPredOptional: mensureMapStringPredOptional =
   (pred: (x: string) => boolean) =>
   (type: string) =>
     mensureMap (Expect.Maybe (type))
                (bindOptional (ensure (pred)))
 
-export const mensureMapStringPredListOptional =
-  (pred: (x: string) => boolean) =>
+interface mensureMapStringPredListOptional {
+  <A extends string>
+  (pred: (x: string) => x is A):
+  (type: string) =>
   (del: string) =>
-    mensureMapListOptional (del) (Expect.NonEmptyString) (ensure (pred))
+  (received: Maybe<string>) => Either<string, Maybe<List<A>>>
+
+  (pred: (x: string) => boolean):
+  (type: string) =>
+  (del: string) =>
+  (received: Maybe<string>) => Either<string, Maybe<List<string>>>
+}
+
+export const mensureMapStringPredListOptional: mensureMapStringPredListOptional =
+  (pred: (x: string) => boolean) =>
+  (type: string) =>
+  (del: string) =>
+    mensureMapListOptional (del) (type) (ensure (pred))
+
+interface mensureMapStringPredSetOptional {
+  <A extends string>
+  (pred: (x: string) => x is A):
+  (type: string) =>
+  (del: string) =>
+  (received: Maybe<string>) => Either<string, Maybe<OrderedSet<A>>>
+
+  (pred: (x: string) => boolean):
+  (type: string) =>
+  (del: string) =>
+  (received: Maybe<string>) => Either<string, Maybe<OrderedSet<string>>>
+}
+
+export const mensureMapStringPredSetOptional: mensureMapStringPredSetOptional =
+  (pred: (x: string) => boolean) =>
+  (type: string) =>
+  (del: string) =>
+    mensureMapSetOptional (del) (type) (ensure (pred))
 
 export const mensureMapNatural =
   mensureMap (Expect.NaturalNumber)

@@ -17,6 +17,7 @@ export const Expect = Object.freeze ({
   Union: (...xs: string[]) => xs .join (" | "),
   /** Group with `(...)` */
   G: (x: string) => `(${x})`,
+  Set: (x: string) => `Set ${x}`,
 })
 
 interface ValidateReceived {

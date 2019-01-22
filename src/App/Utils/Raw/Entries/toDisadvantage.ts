@@ -28,7 +28,10 @@ export const toDisadvantage =
         lookupKeyValid (lookup_l10n) (mensureMapNonEmptyString)
 
       const checkOptionalCategoryList =
-        lookupKeyValid (lookup_univ) (mensureMapStringPredListOptional (checkCategory) ("&"))
+        lookupKeyValid (lookup_univ)
+                       (mensureMapStringPredListOptional (checkCategory)
+                                                         ("Category")
+                                                         ("&"))
 
       const checkUnivNaturalNumber =
         lookupKeyValid (lookup_univ) (mensureMapNatural)

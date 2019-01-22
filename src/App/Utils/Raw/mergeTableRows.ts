@@ -60,3 +60,30 @@ export const mergeRowsById =
 
     return Right (Nothing)
   }
+
+type FromRowFunction<A> =
+  (id: string) =>
+  (lookup_l10n: (key: string) => Maybe<string>) => Either<string, Record<A>>
+
+/**
+ * Receives the name of the origin function (how it would be called), a function
+ * that takes the id, the l10n row from the *able and returns the built record
+ * wrapped in `Right (Just)` or a `Left` containing an error message.
+ */
+export const fromRow =
+  (origin: string) =>
+  <A> (f: FromRowFunction<A>) =>
+  (l10n_row: OrderedMap<string, string>): Either<string, Maybe<Record<A>>> => {
+    const either_id = lookupId (origin) (l10n_row)
+
+    if (isLeft (either_id)) {
+      return either_id
+    }
+
+    const id = fromRight_ (either_id)
+
+    return bimap<string, string, Record<A>, Maybe<Record<A>>>
+      (appendStr (`${origin}: `))
+      (Just)
+      (f (id) (lookupF (l10n_row)))
+  }

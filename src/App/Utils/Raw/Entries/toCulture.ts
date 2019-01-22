@@ -36,7 +36,10 @@ export const toCulture =
         lookupKeyValid (lookup_l10n) (mensureMapNonEmptyString)
 
       const checkOptionalExceptionList =
-        lookupKeyValid (lookup_univ) (mensureMapStringPredListOptional (checkException) (","))
+        lookupKeyValid (lookup_univ)
+                       (mensureMapStringPredListOptional (checkException)
+                                                         ("Group | ProfessionId")
+                                                         (","))
 
       const checkUnivNaturalNumber =
         lookupKeyValid (lookup_univ) (mensureMapNatural)
