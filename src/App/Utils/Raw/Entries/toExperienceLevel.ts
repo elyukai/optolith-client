@@ -3,7 +3,7 @@ import { fromJust } from "../../../../Data/Maybe";
 import { ExperienceLevel } from "../../../Models/Wiki/ExperienceLevel";
 import { prefixId } from "../../IDUtils";
 import { mergeRowsById } from "../mergeTableRows";
-import { validateMapRequiredNaturalNumberProp } from "../validateMapValueUtils";
+import { mensureMapNatural } from "../validateMapValueUtils";
 import { allRights, lookupKeyValid, validateRequiredNonEmptyStringProp } from "../validateValueUtils";
 
 export const toExperienceLevel =
@@ -13,7 +13,7 @@ export const toExperienceLevel =
       // Shortcuts
 
       const checkUnivNaturalNumber =
-        lookupKeyValid (lookup_univ) (validateMapRequiredNaturalNumberProp)
+        lookupKeyValid (lookup_univ) (mensureMapNatural)
 
       // Check fields
 

@@ -1275,9 +1275,9 @@ export const updateAt =
     : isNil (xs)
     ? Nil
     : index === 0
-    ? maybe<A, List<A>> (xs .xs)
-                        ((x: A) => Cons (x, xs .xs))
-                        (f (xs .x))
+    ? maybe (xs .xs)
+            ((x: A) => Cons (x, xs .xs))
+            (f (xs .x))
     : Cons (xs .x, updateAt<A> (index - 1) (f) (xs .xs))
 
 /**

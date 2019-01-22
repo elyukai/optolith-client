@@ -410,16 +410,16 @@ export const getSkillsElementAndValidation =
       ProfessionSelections.A[ProfessionSelectionIds.SKILLS],
       fmap (selection => {
             const list =
-              maybe<number, List<Record<Skill>>> (elems (skills (wiki)))
-                                                 (group =>
-                                                   pipe (
-                                                     skills,
-                                                     elems,
-                                                     filter<Record<Skill>>
-                                                       (pipe (Skill.A.gr, equals (group)))
-                                                   )
-                                                   (wiki))
-                                                 (gr (selection))
+              maybe (elems (skills (wiki)))
+                    ((group: number) =>
+                      pipe (
+                        skills,
+                        elems,
+                        filter<Record<Skill>>
+                          (pipe (Skill.A.gr, equals (group)))
+                      )
+                      (wiki))
+                    (gr (selection))
 
             const apLeft = value (selection) - sum (skillsActive)
 

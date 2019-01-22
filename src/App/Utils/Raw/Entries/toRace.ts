@@ -1,42 +1,40 @@
-import { pipe } from "ramda";
 import { IdPrefixes } from "../../../../constants/IdPrefixes";
-import { Cons, empty, List, map, splitOn } from "../../../../Data/List";
-import { all, any, fmap, fromJust, fromMaybe, maybe, Nothing } from "../../../../Data/Maybe";
-import { fromBinary, Pair } from "../../../../Data/Pair";
+import { empty, List, map } from "../../../../Data/List";
+import { fmap, fromMaybe, Nothing } from "../../../../Data/Maybe";
+import { first, fromBinary, fst, Pair, snd } from "../../../../Data/Pair";
 import { Race } from "../../../Models/Wiki/Race";
 import { Die } from "../../../Models/Wiki/sub/Die";
 import { prefixId } from "../../IDUtils";
-import { unsafeToInt } from "../../NumberUtils";
-import { integer, naturalNumber } from "../../RegexUtils";
-import { listRx, pairRx, qmPairRx } from "../csvRegexUtils";
+import { toInt, toNatural } from "../../NumberUtils";
 import { mergeRowsById } from "../mergeTableRows";
 import { maybePrefix } from "../rawConversionUtils";
-import { validateMapOptionalIntegerProp, validateMapOptionalNaturalNumberFixedListProp, validateMapOptionalNaturalNumberListProp, validateMapRequiredIntegerProp, validateMapRequiredNaturalNumberListProp, validateMapRequiredNaturalNumberProp, validateMapRequiredNonEmptyStringProp } from "../validateMapValueUtils";
-import { allRights, lookupKeyValid, validateRawProp } from "../validateValueUtils";
+import { mensureMapInteger, mensureMapIntegerOptional, mensureMapNatural, mensureMapNaturalFixedListOptional, mensureMapNaturalList, mensureMapNaturalListOptional, mensureMapNonEmptyString, mensureMapPairList, mensureMapPairListOptional } from "../validateMapValueUtils";
+import { allRights, Expect, lookupKeyValid } from "../validateValueUtils";
 import { lookupValidSourceLinks, toSourceLinks } from "./Sub/toSourceLinks";
 
-const attributeAdjustment = qmPairRx (naturalNumber.source, integer.source)
+const stringToAttributeAdjustments =
+  mensureMapPairList ("&")
+                     ("?")
+                     (Expect.NaturalNumber)
+                     (Expect.Integer)
+                     (toNatural)
+                     (toInt)
 
-const attributeAdjustments = new RegExp (listRx ("&") (attributeAdjustment))
+const stringToDiceList =
+  mensureMapPairListOptional ("&")
+                             ("D")
+                             (Expect.NaturalNumber)
+                             (Expect.NaturalNumber)
+                             (toNatural)
+                             (toNatural)
 
-const checkAttributeAdjustments =
-  (x: string) => attributeAdjustments .test (x)
-
-const die = pairRx ("D") (naturalNumber.source, naturalNumber.source)
-
-const diceList =
-  new RegExp (listRx ("&") (die))
-
-const checkDiceList =
-  (x: string) => diceList .test (x)
-
-const negativeDie = pairRx ("D") (integer.source, naturalNumber.source)
-
-const negativeDiceList =
-  new RegExp (listRx ("&") (negativeDie))
-
-const checkNegativeDiceList =
-  (x: string) => negativeDiceList .test (x)
+const stringToNegativeDiceList =
+  mensureMapPairList ("&")
+                     ("D")
+                     (Expect.Integer)
+                     (Expect.NaturalNumber)
+                     (toInt)
+                     (toNatural)
 
 export const toRace =
   mergeRowsById
@@ -45,25 +43,25 @@ export const toRace =
       // Shortcuts
 
       const checkL10nNonEmptyString =
-        lookupKeyValid (lookup_l10n) (validateMapRequiredNonEmptyStringProp)
+        lookupKeyValid (lookup_l10n) (mensureMapNonEmptyString)
 
       const checkUnivNaturalNumber =
-        lookupKeyValid (lookup_univ) (validateMapRequiredNaturalNumberProp)
+        lookupKeyValid (lookup_univ) (mensureMapNatural)
 
       const checkUnivNaturalNumberList =
-        lookupKeyValid (lookup_univ) (validateMapRequiredNaturalNumberListProp ("&"))
+        lookupKeyValid (lookup_univ) (mensureMapNaturalList ("&"))
 
       const checkOptionalUnivNaturalNumberList =
-        lookupKeyValid (lookup_univ) (validateMapOptionalNaturalNumberListProp ("&"))
+        lookupKeyValid (lookup_univ) (mensureMapNaturalListOptional ("&"))
 
       const checkOptionalUnivNaturalNumberList20 =
-        lookupKeyValid (lookup_univ) (validateMapOptionalNaturalNumberFixedListProp (20) ("&"))
+        lookupKeyValid (lookup_univ) (mensureMapNaturalFixedListOptional (20) ("&"))
 
       const checkUnivInteger =
-        lookupKeyValid (lookup_univ) (validateMapRequiredIntegerProp)
+        lookupKeyValid (lookup_univ) (mensureMapInteger)
 
       const checkOptionalUnivInteger =
-        lookupKeyValid (lookup_univ) (validateMapOptionalIntegerProp)
+        lookupKeyValid (lookup_univ) (mensureMapIntegerOptional)
 
       // Check fields
 
@@ -87,8 +85,7 @@ export const toRace =
 
       const eattributeAdjustments =
         lookupKeyValid (lookup_univ)
-                       (validateRawProp ("Maybe [(Natural, Int)]")
-                                        (all (checkAttributeAdjustments)))
+                       (stringToAttributeAdjustments)
                        ("attributeAdjustments")
 
       const eattributeAdjustmentsText =
@@ -156,8 +153,7 @@ export const toRace =
 
       const esizeRandom =
         lookupKeyValid (lookup_univ)
-                       (validateRawProp ("Maybe [(Natural, Natural)]")
-                                        (all (checkDiceList)))
+                       (stringToDiceList)
                        ("sizeRandom")
 
       const eweightBase =
@@ -165,8 +161,7 @@ export const toRace =
 
       const eweightRandom =
         lookupKeyValid (lookup_univ)
-                       (validateRawProp ("[(Int, Natural)]")
-                                        (any (checkNegativeDiceList)))
+                       (stringToNegativeDiceList)
                        ("weightRandom")
 
       const evariants =
@@ -215,21 +210,8 @@ export const toRace =
           ap: rs.ecost,
 
           attributeAdjustments:
-            maybe<string, List<Pair<string, number>>>
-              (empty)
-              (pipe (
-                splitOn ("&"),
-                map (x => {
-                  const xs = splitOn ("?") (x) as Cons<string>
-                  const attrId = xs .x
-                  const value = (xs .xs as Cons<string>) .x
-
-                  return fromBinary (
-                    prefixId (IdPrefixes.ATTRIBUTES) (attrId),
-                    unsafeToInt (value)
-                  )
-                })
-              ))
+            map<Pair<number, number>, Pair<string, number>>
+              (first (prefixId (IdPrefixes.ATTRIBUTES)))
               (rs.eattributeAdjustments),
 
           attributeAdjustmentsSelection:
@@ -293,37 +275,21 @@ export const toRace =
 
           sizeBase: rs.esizeBase,
           sizeRandom:
-            fmap (pipe (
-                   splitOn ("&"),
-                   map (x => {
-                     const xs = splitOn ("D") (x) as Cons<string>
-                     const amount = xs .x
-                     const sides = (xs .xs as Cons<string>) .x
-
-                     return Die ({
-                       amount: unsafeToInt (amount),
-                       sides: unsafeToInt (sides),
-                     })
-                   })
-                 ))
+            fmap (map ((p: Pair<number, number>) =>
+                   Die ({
+                     amount: fst (p),
+                     sides: snd (p),
+                   })))
                  (rs.esizeRandom),
 
           weightBase: rs.eweightBase,
           weightRandom:
-            pipe (
-                   splitOn ("&"),
-                   map (x => {
-                     const xs = splitOn ("D") (x) as Cons<string>
-                     const amount = xs .x
-                     const sides = (xs .xs as Cons<string>) .x
-
-                     return Die ({
-                       amount: unsafeToInt (amount),
-                       sides: unsafeToInt (sides),
-                     })
-                   })
-                 )
-                 (fromJust (rs.eweightRandom)),
+            map ((p: Pair<number, number>) =>
+                   Die ({
+                     amount: fst (p),
+                     sides: snd (p),
+                   }))
+                 (rs.eweightRandom),
 
           variants:
             maybePrefix (IdPrefixes.RACE_VARIANTS) (rs.evariants),

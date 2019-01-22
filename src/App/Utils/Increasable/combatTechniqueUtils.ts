@@ -3,7 +3,6 @@ import { cons, elem, foldl, fromElements, maximum } from "../../../Data/List";
 import { fmap, guard, Just, Maybe, maybe, sum, then } from "../../../Data/Maybe";
 import { lookupF } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
-import { AttributeDependent } from "../../Models/ActiveEntries/AttributeDependent";
 import { SkillDependent } from "../../Models/ActiveEntries/SkillDependent";
 import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { CombatTechnique } from "../../Models/Wiki/CombatTechnique";
@@ -23,9 +22,7 @@ const getMaxPrimaryAttributeValueById =
   (state: HeroModelRecord) =>
     foldl<string, number> (currentMax => pipe (
                             lookupF (attributes (state)),
-                            maybe<Record<AttributeDependent>, number>
-                              (currentMax)
-                              (pipe (value, max (currentMax)))
+                            maybe (currentMax) (pipe (value, max (currentMax)))
                           ))
                           (0)
 
@@ -35,7 +32,7 @@ export const getPrimaryAttributeMod =
   (state: HeroModelRecord) =>
     pipe (getMaxPrimaryAttributeValueById (state), calculatePrimaryAttributeMod)
 
-const getCombatTechniqueRating = maybe<Record<SkillDependent>, number> (6) (value)
+const getCombatTechniqueRating = maybe (6) (value)
 
 export const getAttack =
   (state: HeroModelRecord) =>

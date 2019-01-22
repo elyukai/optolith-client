@@ -35,7 +35,7 @@ const { maxSkillRating } = ExperienceLevel.A
  */
 export const getExceptionalSkillBonus =
   (skillId: string) =>
-    maybe<Record<ActivatableDependent>, number>
+    maybe
       (0)
       (pipe (active, countWith (pipe (sid, elem<string | number> (skillId)))))
 

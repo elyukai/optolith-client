@@ -3,6 +3,7 @@ import { List } from "../../../Data/List";
 import { Maybe, Nothing } from "../../../Data/Maybe";
 import { fromDefault, Record } from "../../../Data/Record";
 import { Application } from "./sub/Application";
+import { SourceLink } from "./sub/SourceLink";
 import { EntryWithCategory } from "./wikiTypeHelpers";
 
 export interface Skill {
@@ -13,14 +14,14 @@ export interface Skill {
   encumbrance: string
   gr: number
   ic: number
-  applications: Maybe<List<Record<Application>>>
+  applications: List<Record<Application>>
   applicationsInput: Maybe<string>
   tools: Maybe<string>
   quality: string
   failed: string
   critical: string
   botch: string
-  src: string
+  src: List<Record<SourceLink>>
 }
 
 export const Skill =
@@ -32,14 +33,14 @@ export const Skill =
     encumbrance: "",
     gr: 0,
     ic: 0,
-    applications: Nothing,
+    applications: List.empty,
     applicationsInput: Nothing,
     tools: Nothing,
     quality: "",
     failed: "",
     critical: "",
     botch: "",
-    src: "",
+    src: List.empty,
   })
 
 export const isSkill =

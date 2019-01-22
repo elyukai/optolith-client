@@ -5,4 +5,4 @@ import { prefixId } from "../IDUtils";
 
 export const maybePrefix =
   (p: IdPrefixes) =>
-    maybe<List<string | number>, List<string>> (empty) (map (prefixId (p)))
+    maybe<List<string>> (empty) (map<string | number, string> (prefixId (p)))

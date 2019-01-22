@@ -655,9 +655,8 @@ export const mappend =
  * and returns the result.
  */
 export const maybe =
-  <A extends Some, B extends Some>
-  (def: B) =>
-  (f: (x: A) => B) =>
+  <B extends Some> (def: B) =>
+  <A extends Some> (f: (x: A) => B) =>
     foldl<A, B> (() => f) (def)
 
 /**
@@ -687,8 +686,8 @@ export const maybeToList = toList
 export const catMaybes =
   <A extends Some>
   (xs: List<Maybe<A>>): List<A> =>
-    List.foldr<Maybe<A>, List<A>> (maybe<A, (x: List<A>) => List<A>> (ident)
-                                                                     (consF))
+    List.foldr<Maybe<A>, List<A>> (maybe<(xs: List<A>) => List<A>> (ident)
+                                                                   (consF))
                                   (List.empty)
                                   (xs)
 
@@ -705,8 +704,8 @@ export const mapMaybe =
   (f: (x: A) => Maybe<B>) =>
     List.foldr<A, List<B>> (pipe (
                              f,
-                             maybe<B, (x: List<B>) => List<B>> (ident)
-                                                               (consF)
+                             maybe<(xs: List<B>) => List<B>> (ident)
+                                                             (consF)
                            ))
                            (List.empty)
 
@@ -786,9 +785,9 @@ export const imapMaybe =
       (index => x => acc =>
         pipe (
           f (index),
-          maybe<B, List<B>> (acc)
-                            (cons (acc)))
-                            (x))
+          maybe<List<B>> (acc)
+                         (cons (acc)))
+                         (x))
       (List.empty)
 
 /**
@@ -824,9 +823,9 @@ export const maybeToUndefined =
  * This is a lazy variant of `maybe`.
  */
 export const maybe_ =
-  <A extends Some, B extends Some>
+  <B extends Some>
   (def: () => B) =>
-    maybe<A, B> (def ())
+    maybe<B> (def ())
 
 export const INTERNAL_shallowEquals =
   <A extends Some>

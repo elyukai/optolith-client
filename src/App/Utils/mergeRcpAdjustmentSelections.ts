@@ -113,10 +113,7 @@ const putProfessionSelectionsIntoRecord =
   )
 
 const putProfessionVariantSelectionsIntoRecord =
-  maybe<
-    Record<ProfessionVariant>,
-    (x: Record<ProfessionSelections>) => Record<ProfessionSelections>
-  >
+  maybe<(x: Record<ProfessionSelections>) => Record<ProfessionSelections>>
     (ident)
     (pipe (
       ProfessionVariant.A.selections,

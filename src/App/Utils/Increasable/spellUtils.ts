@@ -110,7 +110,7 @@ export const countActiveSpellsPerProperty =
         (acc => pipe (
           id,
           lookupF (wiki),
-          maybe<Record<Spell>, OrderedMap<number, number>>
+          maybe
             (acc)
             (pipe (
               property,

@@ -2,7 +2,7 @@ import { IdPrefixes } from "../../../../constants/IdPrefixes";
 import { map } from "../../../../Data/List";
 import { fmap, Nothing } from "../../../../Data/Maybe";
 import { Record } from "../../../../Data/Record";
-import { Advantage } from "../../../Models/Wiki/Advantage";
+import { Disadvantage } from "../../../Models/Wiki/Disadvantage";
 import { SelectOption } from "../../../Models/Wiki/sub/SelectOption";
 import { prefixId } from "../../IDUtils";
 import { mergeRowsById } from "../mergeTableRows";
@@ -18,9 +18,9 @@ const category = /[A-Z_]+/
 const checkCategory =
   (x: string) => category .test (x)
 
-export const toAdvantage =
+export const toDisadvantage =
   mergeRowsById
-    ("toAdvantage")
+    ("toDisadvantage")
     (id => lookup_l10n => lookup_univ => {
       // Shortcuts
 
@@ -89,8 +89,8 @@ export const toAdvantage =
           egr,
           esrc,
         })
-        (rs => Advantage ({
-          id: prefixId (IdPrefixes.ADVANTAGES) (id),
+        (rs => Disadvantage ({
+          id: prefixId (IdPrefixes.DISADVANTAGES) (id),
           name: rs.ename,
           cost: rs.ecost,
           tiers: rs.etiers,

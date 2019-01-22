@@ -1,7 +1,7 @@
 import { Action } from "redux";
 import { ActionTypes } from "../../constants/ActionTypes";
 import { cons, empty, List, uncons } from "../../Data/List";
-import { maybe, Maybe } from "../../Data/Maybe";
+import { maybe } from "../../Data/Maybe";
 import { fst, Pair, snd } from "../../Data/Pair";
 
 export interface UndoState<S> {
@@ -29,23 +29,25 @@ export function undo<S, A extends Action = Action> (
     const { past, future, present } = state
 
     if (action.type === ActionTypes.UNDO) {
-      return maybe<Pair<S, List<S>>, UndoState<S>> (state) (
-        unconsed => ({
+      return maybe
+        (state)
+        ((unconsed: Pair<S, List<S>>) => ({
           past: snd (unconsed),
           present: fst (unconsed),
           future: cons (future) (present),
-        })
-      ) (uncons (past))
+        }))
+        (uncons (past))
     }
 
     if (action.type === ActionTypes.REDO) {
-      return Maybe.maybe<Pair<S, List<S>>, UndoState<S>> (state) (
-        unconsed => ({
+      return maybe
+        (state)
+        ((unconsed: Pair<S, List<S>>) => ({
           past: cons (past) (present),
           present: fst (unconsed),
           future: snd (unconsed),
-        })
-      ) (uncons (future))
+        }))
+        (uncons (future))
     }
 
     const newPresent = reducer (present, action)
@@ -95,9 +97,9 @@ export function undoExisting<S, A extends Action = Action> (
     const { past, future, present } = state
 
     if (action.type === ActionTypes.UNDO) {
-      return maybe<Pair<S, List<S>>, UndoState<S>>
+      return maybe
         (state)
-        (unconsed => ({
+        ((unconsed: Pair<S, List<S>>) => ({
           past: snd (unconsed),
           present: fst (unconsed),
           future: cons (future) (present),
@@ -106,9 +108,9 @@ export function undoExisting<S, A extends Action = Action> (
     }
 
     if (action.type === ActionTypes.REDO) {
-      return maybe<Pair<S, List<S>>, UndoState<S>>
+      return maybe
         (state)
-        (unconsed => ({
+        ((unconsed: Pair<S, List<S>>) => ({
           past: cons (past) (present),
           present: fst (unconsed),
           future: snd (unconsed),

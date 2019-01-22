@@ -9,27 +9,28 @@ import { EditItem } from "../Models/Hero/EditItem";
 import { EditPrimaryAttributeDamageThreshold } from "../Models/Hero/EditPrimaryAttributeDamageThreshold";
 import { Item } from "../Models/Hero/Item";
 import { PrimaryAttributeDamageThreshold } from "../Models/Wiki/sub/PrimaryAttributeDamageThreshold";
-import { prefixRawId } from "./IDUtils";
+import { prefixId } from "./IDUtils";
 import { ifElse } from "./ifElse";
 import { getLevelElementsWithZero } from "./levelUtils";
 import { gt } from "./mathUtils";
 import { toFloat, toInt } from "./NumberUtils";
 
-const ifNumberOrEmpty = maybe<number, string> ("") (show)
+const showMaybe = maybe ("") (show)
 
 const convertDamageBonusToEdit =
-  maybe<Record<PrimaryAttributeDamageThreshold>, Record<EditPrimaryAttributeDamageThreshold>>
+  maybe
     (EditPrimaryAttributeDamageThreshold ({
       threshold: "",
     }))
-    (damageBonus => EditPrimaryAttributeDamageThreshold ({
-      primary: PrimaryAttributeDamageThreshold.A.primary (damageBonus),
-      threshold: ifElse<number | List<number>, List<number>, string | List<string>>
-        (isList)
-        (map (show))
-        (show)
-        (PrimaryAttributeDamageThreshold.A.threshold (damageBonus)),
-    }))
+    ((damageBonus: Record<PrimaryAttributeDamageThreshold>) =>
+      EditPrimaryAttributeDamageThreshold ({
+        primary: PrimaryAttributeDamageThreshold.A.primary (damageBonus),
+        threshold: ifElse<number | List<number>, List<number>, string | List<string>>
+          (isList)
+          (map (show))
+          (show)
+          (PrimaryAttributeDamageThreshold.A.threshold (damageBonus)),
+      }))
 
 export const convertToEdit =
   (item: Record<Item>): Record<EditItem> =>
@@ -51,25 +52,25 @@ export const convertToEdit =
       forArmorZoneOnly: Item.A.forArmorZoneOnly (item),
       addPenalties: Item.A.addPenalties (item),
       armorType: Item.A.armorType (item),
-      at: ifNumberOrEmpty (Item.A.at (item)),
-      iniMod: ifNumberOrEmpty (Item.A.iniMod (item)),
-      movMod: ifNumberOrEmpty (Item.A.movMod (item)),
+      at: showMaybe (Item.A.at (item)),
+      iniMod: showMaybe (Item.A.iniMod (item)),
+      movMod: showMaybe (Item.A.movMod (item)),
       damageBonus: convertDamageBonusToEdit (Item.A.damageBonus (item)),
-      damageDiceNumber: ifNumberOrEmpty (Item.A.damageDiceNumber (item)),
-      damageFlat: ifNumberOrEmpty (Item.A.damageFlat (item)),
-      enc: ifNumberOrEmpty (Item.A.enc (item)),
-      length: ifNumberOrEmpty (Item.A.length (item)),
+      damageDiceNumber: showMaybe (Item.A.damageDiceNumber (item)),
+      damageFlat: showMaybe (Item.A.damageFlat (item)),
+      enc: showMaybe (Item.A.enc (item)),
+      length: showMaybe (Item.A.length (item)),
       amount: show (Item.A.amount (item)),
-      pa: ifNumberOrEmpty (Item.A.pa (item)),
+      pa: showMaybe (Item.A.pa (item)),
       price: show (Item.A.price (item)),
-      pro: ifNumberOrEmpty (Item.A.pro (item)),
-      range: maybe<List<number>, List<string>> (fromElements ("", "", ""))
-                                              (map (show))
-                                              (Item.A.range (item)),
-      reloadTime: ifNumberOrEmpty (Item.A.reloadTime (item)),
-      stp: ifNumberOrEmpty (Item.A.stp (item)),
+      pro: showMaybe (Item.A.pro (item)),
+      range: maybe (fromElements ("", "", ""))
+                   (map<number, string> (show))
+                   (Item.A.range (item)),
+      reloadTime: showMaybe (Item.A.reloadTime (item)),
+      stp: showMaybe (Item.A.stp (item)),
       weight: show (Item.A.weight (item)),
-      stabilityMod: ifNumberOrEmpty (Item.A.stabilityMod (item)),
+      stabilityMod: showMaybe (Item.A.stabilityMod (item)),
     })
 
 const toMaybeIntGreaterThan =
@@ -140,6 +141,6 @@ export const convertToSave =
 
 export const convertPrimaryAttributeToArray =
   (id: string): List<string> =>
-    fromArray (id .split (/_/) .slice (1) .map (prefixRawId (IdPrefixes.ATTRIBUTES)))
+    fromArray (id .split (/_/) .slice (1) .map (prefixId (IdPrefixes.ATTRIBUTES)))
 
 export const getLossLevelElements = () => getLevelElementsWithZero (4)

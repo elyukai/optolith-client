@@ -10,7 +10,7 @@ import { naturalNumber } from "../../RegexUtils";
 import { listRx, pairRx } from "../csvRegexUtils";
 import { mergeRowsById } from "../mergeTableRows";
 import { maybePrefix } from "../rawConversionUtils";
-import { validateMapOptionalIntegerProp, validateMapOptionalNaturalNumberFixedListProp, validateMapOptionalNaturalNumberListProp, validateMapRequiredNonEmptyStringProp } from "../validateMapValueUtils";
+import { mensureMapIntegerOptional, mensureMapNaturalFixedListOptional, mensureMapNaturalListOptional, mensureMapNonEmptyString } from "../validateMapValueUtils";
 import { allRights, lookupKeyValid, validateRawProp } from "../validateValueUtils";
 
 const die = pairRx ("D") (naturalNumber.source, naturalNumber.source)
@@ -28,16 +28,16 @@ export const toRaceVariant =
       // Shortcuts
 
       const checkL10nNonEmptyString =
-        lookupKeyValid (lookup_l10n) (validateMapRequiredNonEmptyStringProp)
+        lookupKeyValid (lookup_l10n) (mensureMapNonEmptyString)
 
       const checkOptionalUnivNaturalNumberList =
-        lookupKeyValid (lookup_univ) (validateMapOptionalNaturalNumberListProp ("&"))
+        lookupKeyValid (lookup_univ) (mensureMapNaturalListOptional ("&"))
 
       const checkOptionalUnivNaturalNumberList20 =
-        lookupKeyValid (lookup_univ) (validateMapOptionalNaturalNumberFixedListProp (20) ("&"))
+        lookupKeyValid (lookup_univ) (mensureMapNaturalFixedListOptional (20) ("&"))
 
       const checkOptionalUnivInteger =
-        lookupKeyValid (lookup_univ) (validateMapOptionalIntegerProp)
+        lookupKeyValid (lookup_univ) (mensureMapIntegerOptional)
 
       // Check fields
 

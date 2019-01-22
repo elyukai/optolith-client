@@ -25,11 +25,11 @@ export const translateP =
       return message.replace (
         /\{(\d+)\}/g,
         (_, p1) => {
-          return maybe<string | number, string> (`{${p1}}`)
-                                                (param => typeof param === "number"
-                                                  ? param.toString ()
-                                                  : param)
-                                                (subscript (params) (Number.parseInt (p1, 10)))
+          return maybe (`{${p1}}`)
+                       ((param: number | string) => typeof param === "number"
+                         ? param.toString ()
+                         : param)
+                       (subscript (params) (Number.parseInt (p1, 10)))
         }
       ) as ReturnType<T>
     }

@@ -94,8 +94,10 @@ export const bimap =
 * `first :: (a -> b) -> (a, c) -> (b, c)`
 */
 export const first =
-  <A, B, C>
-  (f: (first: A) => B) => (x: Pair<A, C>): Pair<B, C> =>
+  <A, B>
+  (f: (first: A) => B) =>
+  <C>
+  (x: Pair<A, C>): Pair<B, C> =>
     fromBoth<B, C> (f (x .first)) (x .second)
 
 /**

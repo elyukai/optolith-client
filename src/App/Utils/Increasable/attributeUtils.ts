@@ -24,4 +24,4 @@ export const convertId = <T extends string | undefined> (id: T): T => {
   }
 }
 
-export const getAttributeValueWithDefault = maybe<Record<AttributeDependent>, number> (8) (value)
+export const getAttributeValueWithDefault = maybe (8) (value)

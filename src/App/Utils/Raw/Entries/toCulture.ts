@@ -1,19 +1,18 @@
-import { pipe } from "ramda";
 import { IdPrefixes } from "../../../../constants/IdPrefixes";
-import { Cons, empty, List, map, notNull, splitOn } from "../../../../Data/List";
-import { any, fromMaybe, maybe, Nothing } from "../../../../Data/Maybe";
+import { empty, List, map, notNull } from "../../../../Data/List";
+import { fromMaybe, maybe, Nothing } from "../../../../Data/Maybe";
+import { fst, Pair, snd } from "../../../../Data/Pair";
 import { Record } from "../../../../Data/Record";
 import { Culture } from "../../../Models/Wiki/Culture";
 import { CommonProfession } from "../../../Models/Wiki/sub/CommonProfession";
 import { IncreaseSkill } from "../../../Models/Wiki/sub/IncreaseSkill";
 import { prefixId } from "../../IDUtils";
-import { unsafeToInt } from "../../NumberUtils";
+import { toNatural, unsafeToInt } from "../../NumberUtils";
 import { isNaturalNumber, naturalNumber } from "../../RegexUtils";
-import { listRx, qmPairRx } from "../csvRegexUtils";
 import { mergeRowsById } from "../mergeTableRows";
 import { maybePrefix } from "../rawConversionUtils";
-import { validateMapBooleanProp, validateMapOptionalNaturalNumberListProp, validateMapOptionalStringListProp, validateMapRequiredNaturalNumberListProp, validateMapRequiredNaturalNumberProp, validateMapRequiredNonEmptyStringProp } from "../validateMapValueUtils";
-import { allRights, lookupKeyValid, validateRawProp } from "../validateValueUtils";
+import { mensureMapBoolean, mensureMapNatural, mensureMapNaturalList, mensureMapNaturalListOptional, mensureMapNonEmptyString, mensureMapPairList, mensureMapStringPredListOptional } from "../validateMapValueUtils";
+import { allRights, Expect, lookupKeyValid } from "../validateValueUtils";
 import { lookupValidSourceLinks, toSourceLinks } from "./Sub/toSourceLinks";
 
 const exception =
@@ -22,17 +21,10 @@ const exception =
 const checkException =
   (x: string) => exception .test (x)
 
-const culturalPackageSkill = qmPairRx (naturalNumber.source, naturalNumber.source)
-
-const culturalPackageSkills = new RegExp (listRx ("&") (culturalPackageSkill))
-
-const checkCulturalPackageSkills =
-  (x: string) => culturalPackageSkills .test (x)
-
 const toExceptions =
-  maybe<List<string>, List<string | number>>
+  maybe<List<string | number>>
     (empty)
-    (map (x => isNaturalNumber (x) ? unsafeToInt (x) : x))
+    (map ((x: string) => isNaturalNumber (x) ? unsafeToInt (x) : x))
 
 export const toCulture =
   mergeRowsById
@@ -41,22 +33,22 @@ export const toCulture =
       // Shortcuts
 
       const checkL10nNonEmptyString =
-        lookupKeyValid (lookup_l10n) (validateMapRequiredNonEmptyStringProp)
+        lookupKeyValid (lookup_l10n) (mensureMapNonEmptyString)
 
       const checkOptionalExceptionList =
-        lookupKeyValid (lookup_univ) (validateMapOptionalStringListProp (checkException) (","))
+        lookupKeyValid (lookup_univ) (mensureMapStringPredListOptional (checkException) (","))
 
       const checkUnivNaturalNumber =
-        lookupKeyValid (lookup_univ) (validateMapRequiredNaturalNumberProp)
+        lookupKeyValid (lookup_univ) (mensureMapNatural)
 
       const checkUnivNaturalNumberList =
-        lookupKeyValid (lookup_univ) (validateMapRequiredNaturalNumberListProp ("&"))
+        lookupKeyValid (lookup_univ) (mensureMapNaturalList ("&"))
 
       const checkOptionalUnivNaturalNumberList =
-        lookupKeyValid (lookup_univ) (validateMapOptionalNaturalNumberListProp ("&"))
+        lookupKeyValid (lookup_univ) (mensureMapNaturalListOptional ("&"))
 
       const checkUnivBoolean =
-        lookupKeyValid (lookup_univ) (validateMapBooleanProp)
+        lookupKeyValid (lookup_univ) (mensureMapBoolean)
 
       // Check fields
 
@@ -143,8 +135,12 @@ export const toCulture =
 
       const eculturalPackageSkills =
         lookupKeyValid (lookup_univ)
-                       (validateRawProp ("[(Natural, Natural)]")
-                                        (any (checkCulturalPackageSkills)))
+                       (mensureMapPairList ("&")
+                                                        ("?")
+                                                        (Expect.NaturalNumber)
+                                                        (Expect.NaturalNumber)
+                                                        (toNatural)
+                                                        (toNatural))
                        ("culturalPackageSkills")
 
       const esrc = lookupValidSourceLinks (lookup_l10n)
@@ -244,21 +240,11 @@ export const toCulture =
             culturalPackageAdventurePoints: rs.eculturalPackageCost,
 
             culturalPackageSkills:
-              maybe<string, List<Record<IncreaseSkill>>>
-                (empty)
-                (pipe (
-                  splitOn ("&"),
-                  map (x => {
-                    const xs = splitOn ("?") (x) as Cons<string>
-                    const numericId = xs .x
-                    const value = (xs .xs as Cons<string>) .x
-
-                    return IncreaseSkill ({
-                      id: prefixId (IdPrefixes.SKILLS) (numericId),
-                      value: unsafeToInt (value),
-                    })
-                  })
-                ))
+              map<Pair<number, number>, Record<IncreaseSkill>>
+                (p => IncreaseSkill ({
+                  id: prefixId (IdPrefixes.SKILLS) (fst (p)),
+                  value: snd (p),
+                }))
                 (rs.eculturalPackageSkills),
 
             src: toSourceLinks (rs.esrc),

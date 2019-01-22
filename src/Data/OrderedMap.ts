@@ -511,9 +511,9 @@ export const insertWith =
   (value: A) =>
   (mp: OrderedMap<K, A>): OrderedMap<K, A> =>
     insert<K, A> (key)
-                 (maybe<A, A> (value)
-                              (f (value))
-                              (lookup<K, A> (key) (mp)))
+                 (maybe (value)
+                        (f (value))
+                        (lookup<K, A> (key) (mp)))
                  (mp)
 
 /**
@@ -533,9 +533,9 @@ export const insertWithKey =
   (value: A) =>
   (mp: OrderedMap<K, A>): OrderedMap<K, A> =>
     insert<K, A> (key)
-                 (maybe<A, A> (value)
-                              (f (key) (value))
-                              (lookup<K, A> (key) (mp)))
+                 (maybe (value)
+                        (f (key) (value))
+                        (lookup<K, A> (key) (mp)))
                  (mp)
 
 /**
@@ -558,9 +558,9 @@ export const insertLookupWithKey =
     return fromBinary (
       maybe_old_value,
       insert<K, A> (key)
-                   (maybe<A, A> (value)
-                                (f (key) (value))
-                                (maybe_old_value))
+                   (maybe (value)
+                          (f (key) (value))
+                          (maybe_old_value))
                    (mp)
     )
   }
@@ -596,9 +596,9 @@ export const adjust =
   (f: (value: A) => A) =>
   (key: K) =>
   (mp: OrderedMap<K, A>): OrderedMap<K, A> =>
-    maybe<A, OrderedMap<K, A>> (mp)
-                               (x => insert<K, A> (key) (f (x)) (mp))
-                               (lookup<K, A> (key) (mp))
+    maybe (mp)
+          ((x: A) => insert<K, A> (key) (f (x)) (mp))
+          (lookup<K, A> (key) (mp))
 
 /**
  * `adjustWithKey :: Ord k => (k -> a -> a) -> k -> Map k a -> Map k a`
@@ -611,9 +611,9 @@ export const adjustWithKey =
   (f: (key: K) => (value: A) => A) =>
   (key: K) =>
   (mp: OrderedMap<K, A>): OrderedMap<K, A> =>
-    maybe<A, OrderedMap<K, A>> (mp)
-                               (x => insert<K, A> (key) (f (key) (x)) (mp))
-                               (lookup<K, A> (key) (mp))
+    maybe (mp)
+          ((x: A) => insert<K, A> (key) (f (key) (x)) (mp))
+          (lookup<K, A> (key) (mp))
 
 /**
  * `update :: Ord k => (a -> Maybe a) -> k -> Map k a -> Map k a`
@@ -627,12 +627,12 @@ export const update =
   (f: (value: A) => Maybe<A>) =>
   (key: K) =>
   (mp: OrderedMap<K, A>): OrderedMap<K, A> =>
-    maybe<A, OrderedMap<K, A>>
+    maybe
       (mp)
       (pipe (
         f,
-        maybe_<A, OrderedMap<K, A>> (() => removeKey<K, A> (key) (mp))
-                                    (y => insert<K, A> (key) (y) (mp))
+        maybe_ (() => removeKey<K, A> (key) (mp))
+               (y => insert<K, A> (key) (y) (mp))
       ))
       (lookup<K, A> (key) (mp))
 
@@ -648,12 +648,12 @@ export const updateWithKey =
   (f: (key: K) => (value: A) => Maybe<A>) =>
   (key: K) =>
   (mp: OrderedMap<K, A>): OrderedMap<K, A> =>
-    maybe<A, OrderedMap<K, A>>
+    maybe
       (mp)
       (pipe (
         f (key),
-        maybe_<A, OrderedMap<K, A>> (() => removeKey<K, A> (key) (mp))
-                                    (y => insert<K, A> (key) (y) (mp))
+        maybe_ (() => removeKey<K, A> (key) (mp))
+               (y => insert<K, A> (key) (y) (mp))
       ))
       (lookup<K, A> (key) (mp))
 
@@ -672,11 +672,11 @@ export const updateLookupWithKey =
   (mp: OrderedMap<K, A>): Pair<Maybe<A>, OrderedMap<K, A>> => {
     const maybe_old_value = lookup<K, A> (key) (mp)
 
-    return maybe_<A, Pair<Maybe<A>, OrderedMap<K, A>>>
+    return maybe_
       (() => fromBinary (maybe_old_value, mp))
       (pipe (
         f (key),
-        maybe_<A, Pair<Maybe<A>, OrderedMap<K, A>>>
+        maybe_
           (() => fromBinary (maybe_old_value, removeKey<K, A> (key) (mp)))
           (x => fromBinary (Just (x), insert<K, A> (key) (x) (mp)))
       ))
@@ -695,7 +695,7 @@ export const alter =
   (f: (old_value: Maybe<A>) => Maybe<A>) =>
   (key: K) =>
   (mp: OrderedMap<K, A>): OrderedMap<K, A> =>
-    maybe<A, (mp: OrderedMap<K, A>) => OrderedMap<K, A>>
+    maybe
       (sdelete<K, A> (key))
       (insert<K, A> (key))
       (f (lookup<K, A> (key) (mp)))
@@ -951,9 +951,9 @@ export const mapMaybe =
   (mp: OrderedMap<K, A>): OrderedMap<K, B> =>
     fromArray (
       [...mp] .reduce<[K, B][]> (
-        (acc, [key, value]) => maybe<B, [K, B][]> (acc)
-                                                  (x => [...acc, [key, x]])
-                                                  (f (value)),
+        (acc, [key, value]) => maybe (acc)
+                                     ((x: B) => [...acc, [key, x]])
+                                     (f (value)),
         []
       )
     )
@@ -969,9 +969,9 @@ export const mapMaybeWithKey =
   (mp: OrderedMap<K, A>): OrderedMap<K, B> =>
     fromArray (
       [...mp] .reduce<[K, B][]> (
-        (acc, [key, value]) => maybe<B, [K, B][]> (acc)
-                                                  (x => [...acc, [key, x]])
-                                                  (f (key) (value)),
+        (acc, [key, value]) => maybe (acc)
+                                     ((x: B) => [...acc, [key, x]])
+                                     (f (key) (value)),
         []
       )
     )

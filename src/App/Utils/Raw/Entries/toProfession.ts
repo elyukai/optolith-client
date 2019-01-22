@@ -1,7 +1,7 @@
 import { pipe } from "ramda";
 import { IdPrefixes } from "../../../../constants/IdPrefixes";
-import { Cons, empty, fromArray, List, map, splitOn } from "../../../../Data/List";
-import { all, fmap, fromNullable, maybe, Nothing } from "../../../../Data/Maybe";
+import { empty, fromArray, length, map } from "../../../../Data/List";
+import { ensure, fmap, fromMaybe, fromNullable, Just, maybe, Maybe, Nothing } from "../../../../Data/Maybe";
 import { Record } from "../../../../Data/Record";
 import { ProfessionRequireActivatable, RequireActivatable } from "../../../Models/Wiki/prerequisites/ActivatableRequirement";
 import { CultureRequirement } from "../../../Models/Wiki/prerequisites/CultureRequirement";
@@ -17,16 +17,15 @@ import { CombatTechniquesSecondSelection } from "../../../Models/Wiki/profession
 import { SkillsSelection } from "../../../Models/Wiki/professionSelections/SkillsSelection";
 import { SpecializationSelection } from "../../../Models/Wiki/professionSelections/SpecializationSelection";
 import { TerrainKnowledgeSelection } from "../../../Models/Wiki/professionSelections/TerrainKnowledgeSelection";
-import { IncreaseSkill } from "../../../Models/Wiki/sub/IncreaseSkill";
+import { pairToIncreaseSkill } from "../../../Models/Wiki/sub/IncreaseSkill";
 import { NameBySex } from "../../../Models/Wiki/sub/NameBySex";
+import { AnyProfessionSelection, ProfessionDependency, ProfessionPrerequisite } from "../../../Models/Wiki/wikiTypeHelpers";
 import { prefixId } from "../../IDUtils";
-import { unsafeToInt } from "../../NumberUtils";
-import { naturalNumber } from "../../RegexUtils";
-import { listLengthRx, listRx, qmPairRx } from "../csvRegexUtils";
+import { toNatural } from "../../NumberUtils";
 import { mergeRowsById } from "../mergeTableRows";
 import { maybePrefix } from "../rawConversionUtils";
-import { validateMapOptionalNaturalNumberListProp, validateMapRequiredNaturalNumberProp, validateMapRequiredNonEmptyStringProp } from "../validateMapValueUtils";
-import { allRights, lookupKeyValid, validateRawProp } from "../validateValueUtils";
+import { mensureMapListBindAfterOptional, mensureMapListOptional, mensureMapNatural, mensureMapNaturalListOptional, mensureMapNonEmptyString, mensureMapPairListOptional } from "../validateMapValueUtils";
+import { allRights, Expect, lookupKeyValid } from "../validateValueUtils";
 import { isRawProfessionRequiringActivatable } from "./Prerequisites/ActivatableRequirement";
 import { isRawCultureRequirement } from "./Prerequisites/CultureRequirement";
 import { isRawProfessionRequiringIncreasable } from "./Prerequisites/IncreasableRequirement";
@@ -42,110 +41,177 @@ import { isRawSpecializationSelection } from "./ProfessionSelections/Specializat
 import { isRawTerrainKnowledgeSelection } from "./ProfessionSelections/TerrainKnowledgeSelection";
 import { lookupValidSourceLinks, toSourceLinks } from "./Sub/toSourceLinks";
 
-const validateDependencies =
-  pipe (
-    splitOn ("&"),
-    List.all (
-      x => {
-        try {
-          const obj = JSON.parse (x)
+export const stringToDependencies =
+  mensureMapListOptional
+    ("&")
+    ("SexRequirement | RaceRequirement | CultureRequirement")
+    ((x): Maybe<ProfessionDependency> => {
+      try {
+        const obj = JSON.parse (x)
 
-          if (typeof obj !== "object" || obj === null) return false
+        if (typeof obj !== "object" || obj === null) return Nothing
 
-          return isRawSexRequirement (obj)
-            || isRawRaceRequirement (obj)
-            || isRawCultureRequirement (obj)
-        } catch (e) {
-          return false
-        }
+        return isRawSexRequirement (obj)
+          ? Just (SexRequirement ({
+              id: Nothing,
+              value: obj .value,
+            }))
+          :  isRawRaceRequirement (obj)
+          ? Just (RaceRequirement ({
+              id: Nothing,
+              value: Array.isArray (obj .value) ? fromArray (obj .value) : obj .value,
+            }))
+          : isRawCultureRequirement (obj)
+          ? Just (CultureRequirement ({
+              id: Nothing,
+              value: Array.isArray (obj .value) ? fromArray (obj .value) : obj .value,
+            }))
+          : Nothing
       }
-    )
-  )
-
-const validatePrerequisites =
-  pipe (
-    splitOn ("&"),
-    List.all (
-      x => {
-        try {
-          const obj = JSON.parse (x)
-
-          if (typeof obj !== "object" || obj === null) return false
-
-          return isRawProfessionRequiringActivatable (obj)
-            || isRawProfessionRequiringIncreasable (obj)
-        } catch (e) {
-          return false
-        }
+      catch (e) {
+        return Nothing
       }
-    )
-  )
+    })
 
-const validateSelections =
-  pipe (
-    splitOn ("&"),
-    List.all (
-      x => {
-        try {
-          const obj = JSON.parse (x)
+export const stringToPrerequisites =
+  mensureMapListOptional
+    ("&")
+    ("ProfessionRequireActivatable | ProfessionRequireIncreasable")
+    ((x): Maybe<ProfessionPrerequisite> => {
+      try {
+        const obj = JSON.parse (x)
 
-          if (typeof obj !== "object" || obj === null) return false
+        if (typeof obj !== "object" || obj === null) return Nothing
 
-          return isRawSpecializationSelection (obj)
-            || isRawLanguagesScriptsSelection (obj)
-            || isRawCombatTechniquesSelection (obj)
-            || isRawSecondCombatTechniquesSelection (obj)
-            || isRawCantripsSelection (obj)
-            || isRawCursesSelection (obj)
-            || isRawTerrainKnowledgeSelection (obj)
-            || isRawSkillsSelection (obj)
-        } catch (e) {
-          return false
-        }
+        return isRawProfessionRequiringActivatable (obj)
+          ? Just (RequireActivatable ({
+              id: obj .id,
+              active: obj .active,
+              sid: fromNullable (obj .sid),
+              sid2: fromNullable (obj .sid2),
+              tier: fromNullable (obj .tier),
+            }) as Record<ProfessionRequireActivatable>)
+          : isRawProfessionRequiringIncreasable (obj)
+          ? Just (RequireIncreasable ({
+              id: obj .id,
+              value: obj .value,
+            }) as Record<ProfessionRequireIncreasable>)
+          : Nothing
       }
-    )
-  )
-
-const validateSpecialAbilities =
-  pipe (
-    splitOn ("&"),
-    List.all (
-      x => {
-        try {
-          const obj = JSON.parse (x)
-
-          if (typeof obj !== "object" || obj === null) return false
-
-          return isRawProfessionRequiringActivatable (obj)
-        } catch (e) {
-          return false
-        }
+      catch (e) {
+        return Nothing
       }
+    })
+
+const stringToSelections =
+  mensureMapListOptional
+    ("&")
+    (
+      "SpecializationSelection "
+      + "| LanguagesScriptsSelection "
+      + "| CombatTechniquesSelection "
+      + "| CombatTechniquesSecondSelection "
+      + "| CantripsSelection "
+      + "| CursesSelection "
+      + "| TerrainKnowledgeSelection "
+      + "| SkillsSelection"
     )
-  )
+    ((x): Maybe<AnyProfessionSelection> => {
+      try {
+        const obj = JSON.parse (x)
 
-const skill = qmPairRx (naturalNumber.source, naturalNumber.source)
+        if (typeof obj !== "object" || obj === null) return Nothing
 
-const skills = new RegExp (listRx ("&") (skill))
+        return isRawSpecializationSelection (obj)
+          ? Just (SpecializationSelection ({
+              id: Nothing,
+              sid: Array.isArray (obj .sid) ? fromArray (obj .sid) : obj .sid,
+            }))
+          : isRawLanguagesScriptsSelection (obj)
+          ? Just (LanguagesScriptsSelection ({
+              id: Nothing,
+              value: obj .value,
+            }))
+          : isRawCombatTechniquesSelection (obj)
+          ? Just (CombatTechniquesSelection ({
+              id: Nothing,
+              amount: obj .amount,
+              value: obj .value,
+              sid: fromArray (obj .sid),
+            }))
+          : isRawSecondCombatTechniquesSelection (obj)
+          ? Just (CombatTechniquesSecondSelection ({
+              id: Nothing,
+              amount: obj .amount,
+              value: obj .value,
+              sid: fromArray (obj .sid),
+            }))
+          : isRawCantripsSelection (obj)
+          ? Just (CantripsSelection ({
+              id: Nothing,
+              amount: obj .amount,
+              sid: fromArray (obj .sid),
+            }))
+          : isRawCursesSelection (obj)
+          ? Just (CursesSelection ({
+              id: Nothing,
+              value: obj .value,
+            }))
+          : isRawTerrainKnowledgeSelection (obj)
+          ? Just (TerrainKnowledgeSelection ({
+              id: Nothing,
+              sid: fromArray (obj .sid),
+            }))
+          : isRawSkillsSelection (obj)
+          ? Just (SkillsSelection ({
+              id: Nothing,
+              value: obj .value,
+            }))
+          : Nothing
+      }
+      catch (e) {
+        return Nothing
+      }
+    })
 
-const checkSkills =
-  (x: string) => skills .test (x)
+export const stringToSpecialAbilities =
+  mensureMapListOptional
+    ("&")
+    ("ProfessionRequireActivatable")
+    ((x): Maybe<Record<ProfessionRequireActivatable>> => {
+      try {
+        const obj = JSON.parse (x)
 
-const combatTechnique = qmPairRx (naturalNumber.source, "[1-6]")
+        if (typeof obj !== "object" || obj === null) return Nothing
 
-const combatTechniques = new RegExp (listRx ("&") (combatTechnique))
+        return isRawProfessionRequiringActivatable (obj)
+          ? Just (RequireActivatable ({
+              id: obj .id,
+              active: obj .active,
+              sid: fromNullable (obj .sid),
+              sid2: fromNullable (obj .sid2),
+              tier: fromNullable (obj .tier),
+            }) as Record<ProfessionRequireActivatable>)
+          : Nothing
+      }
+      catch (e) {
+        return Nothing
+      }
+    })
 
-const checkCombatTechniques =
-  (x: string) => combatTechniques .test (x)
+const toNaturalNumberPairOptional =
+  mensureMapPairListOptional ("&")
+                             ("?")
+                             (Expect.NaturalNumber)
+                             (Expect.NaturalNumber)
+                             (toNatural)
+                             (toNatural)
 
-const blessings =
-  new RegExp (
-    `(${listLengthRx (9) ("&") (naturalNumber.source)})|`
-    + `(${listLengthRx (12) ("&") (naturalNumber.source)})`
-  )
-
-const checkBlessings =
-  (x: string) => blessings .test (x)
+export const stringToBlessings =
+  mensureMapListBindAfterOptional (ensure (pipe (length, len => len === 9 || len === 12)))
+                                  ("&")
+                                  (`${Expect.List (Expect.NaturalNumber)} { length = 9 | 12 }`)
+                                  (toNatural)
 
 export const toProfession =
   mergeRowsById
@@ -154,13 +220,13 @@ export const toProfession =
       // Shortcuts
 
       const checkL10nNonEmptyString =
-        lookupKeyValid (lookup_l10n) (validateMapRequiredNonEmptyStringProp)
+        lookupKeyValid (lookup_l10n) (mensureMapNonEmptyString)
 
       const checkOptionalUnivNaturalNumberList =
-        lookupKeyValid (lookup_univ) (validateMapOptionalNaturalNumberListProp ("&"))
+        lookupKeyValid (lookup_univ) (mensureMapNaturalListOptional ("&"))
 
       const checkUnivNaturalNumber =
-        lookupKeyValid (lookup_univ) (validateMapRequiredNaturalNumberProp)
+        lookupKeyValid (lookup_univ) (mensureMapNatural)
 
       // Check fields
 
@@ -178,39 +244,17 @@ export const toProfession =
 
       const edependencies =
         lookupKeyValid (lookup_univ)
-                       (validateRawProp
-                         (
-                           "Maybe ["
-                           + "SexRequirement "
-                           + "| RaceRequirement "
-                           + "| CultureRequirement"
-                           + "]"
-                         )
-                         (all (validateDependencies)))
+                       (stringToDependencies)
                        ("dependencies")
 
       const eprerequisites =
         lookupKeyValid (lookup_univ)
-                       (validateRawProp
-                         (
-                           "Maybe ["
-                           + "ProfessionRequireActivatable "
-                           + "| ProfessionRequireIncreasable"
-                           + "]"
-                         )
-                         (all (validatePrerequisites)))
+                       (stringToPrerequisites)
                        ("prerequisites")
 
       const eprerequisitesL10n =
         lookupKeyValid (lookup_l10n)
-                       (validateRawProp
-                         (
-                           "Maybe ["
-                           + "ProfessionRequireActivatable "
-                           + "| ProfessionRequireIncreasable"
-                           + "]"
-                         )
-                         (all (validatePrerequisites)))
+                       (stringToPrerequisites)
                        ("prerequisites")
 
       const prerequisitesStart = lookup_l10n ("prerequisitesStart")
@@ -219,57 +263,37 @@ export const toProfession =
 
       const eselections =
         lookupKeyValid (lookup_univ)
-                       (validateRawProp
-                         (
-                           "Maybe ["
-                           + "SpecializationSelection "
-                           + "| LanguagesScriptsSelection "
-                           + "| CombatTechniquesSelection "
-                           + "| CombatTechniquesSecondSelection "
-                           + "| CantripsSelection "
-                           + "| CursesSelection "
-                           + "| TerrainKnowledgeSelection "
-                           + "| SkillsSelection"
-                           + "]"
-                         )
-                         (all (validateSelections)))
+                       (stringToSelections)
                        ("selections")
 
       const especialAbilities =
         lookupKeyValid (lookup_univ)
-                       (validateRawProp
-                         ("Maybe [ProfessionRequireActivatable]")
-                         (all (validateSpecialAbilities)))
+                       (stringToSpecialAbilities)
                        ("specialAbilities")
 
       const ecombatTechniques =
         lookupKeyValid (lookup_univ)
-                       (validateRawProp ("Maybe [(Natural, Natural)]")
-                                        (all (checkCombatTechniques)))
+                       (toNaturalNumberPairOptional)
                        ("combatTechniques")
 
       const eskills =
         lookupKeyValid (lookup_univ)
-                       (validateRawProp ("Maybe [(Natural, Natural)]")
-                                        (all (checkSkills)))
+                       (toNaturalNumberPairOptional)
                        ("skills")
 
       const espells =
         lookupKeyValid (lookup_univ)
-                       (validateRawProp ("Maybe [(Natural, Natural)]")
-                                        (all (checkSkills)))
+                       (toNaturalNumberPairOptional)
                        ("spells")
 
       const eliturgicalChants =
         lookupKeyValid (lookup_univ)
-                       (validateRawProp ("Maybe [(Natural, Natural)]")
-                                        (all (checkSkills)))
+                       (toNaturalNumberPairOptional)
                        ("liturgicalChants")
 
       const eblessings =
         lookupKeyValid (lookup_univ)
-                       (validateRawProp ("Maybe [Natural] { length = 9 | 12 }")
-                                        (all (checkBlessings)))
+                       (stringToBlessings)
                        ("blessings")
 
       const esuggestedAdvantages =
@@ -336,222 +360,62 @@ export const toProfession =
           id: prefixId (IdPrefixes.PROFESSIONS) (id),
 
           name:
-            maybe<string, Profession["name"]> (rs.ename)
-                                              (f => NameBySex ({ m: rs.ename, f }))
-                                              (nameFemale),
+            maybe<Profession["name"]> (rs.ename)
+                                      ((f: string) => NameBySex ({ m: rs.ename, f }))
+                                      (nameFemale),
 
           subname:
-            fmap<string, Profession["name"]> (m => maybe<string, Profession["name"]>
+            fmap<string, Profession["name"]> (m => maybe<Profession["name"]>
                                                (m)
-                                               (f => NameBySex ({ m, f }))
+                                               ((f: string) => NameBySex ({ m, f }))
                                                (subnameFemale))
                                              (subname),
 
           ap: rs.ecost,
 
           dependencies:
-            maybe<string, Profession["dependencies"]>
-              (empty)
-              (pipe (
-                splitOn ("&"),
-                map (pipe (
-                  (x: string) => JSON.parse (x),
-                  x => isRawSexRequirement (x)
-                    ? SexRequirement ({
-                        id: Nothing,
-                        value: x .value,
-                      })
-                    : isRawRaceRequirement (x)
-                    ? RaceRequirement ({
-                        id: Nothing,
-                        value: Array.isArray (x .value) ? fromArray (x .value) : x .value,
-                      })
-                    : CultureRequirement ({
-                        id: Nothing,
-                        value: Array.isArray (x .value) ? fromArray (x .value) : x .value,
-                      })
-                ))
-              ))
-              (rs.edependencies),
+            fromMaybe<Profession["dependencies"]> (empty) (rs.edependencies),
 
           prerequisites:
-            maybe<string, Profession["prerequisites"]>
-              (empty)
-              (pipe (
-                splitOn ("&"),
-                map (pipe (
-                  (x: string) => JSON.parse (x),
-                  x => isRawProfessionRequiringActivatable (x)
-                    ? RequireActivatable ({
-                        id: x .id,
-                        active: x .active,
-                        sid: fromNullable (x .sid),
-                        sid2: fromNullable (x .sid2),
-                        tier: fromNullable (x .tier),
-                      }) as Record<ProfessionRequireActivatable>
-                    : RequireIncreasable ({
-                        id: x .id,
-                        value: x .value,
-                      }) as Record<ProfessionRequireIncreasable>
-                ))
-              ))
-              (rs.eprerequisites),
+            fromMaybe<Profession["prerequisites"]> (empty) (rs.eprerequisites),
 
           prerequisitesStart,
           prerequisitesEnd,
 
           selections:
-            maybe<string, Profession["selections"]>
-              (empty)
-              (pipe (
-                splitOn ("&"),
-                map (pipe (
-                  (x: string) => JSON.parse (x),
-                  x => isRawSpecializationSelection (x)
-                    ? SpecializationSelection ({
-                        id: Nothing,
-                        sid: Array.isArray (x .sid) ? fromArray (x .sid) : x .sid,
-                      })
-                    : isRawLanguagesScriptsSelection (x)
-                    ? LanguagesScriptsSelection ({
-                        id: Nothing,
-                        value: x .value,
-                      })
-                    : isRawCombatTechniquesSelection (x)
-                    ? CombatTechniquesSelection ({
-                        id: Nothing,
-                        amount: x .amount,
-                        value: x .value,
-                        sid: fromArray (x .sid),
-                      })
-                    : isRawSecondCombatTechniquesSelection (x)
-                    ? CombatTechniquesSecondSelection ({
-                        id: Nothing,
-                        amount: x .amount,
-                        value: x .value,
-                        sid: fromArray (x .sid),
-                      })
-                    : isRawCantripsSelection (x)
-                    ? CantripsSelection ({
-                        id: Nothing,
-                        amount: x .amount,
-                        sid: fromArray (x .sid),
-                      })
-                    : isRawCursesSelection (x)
-                    ? CursesSelection ({
-                        id: Nothing,
-                        value: x .value,
-                      })
-                    : isRawTerrainKnowledgeSelection (x)
-                    ? TerrainKnowledgeSelection ({
-                        id: Nothing,
-                        sid: fromArray (x .sid),
-                      })
-                    : SkillsSelection ({
-                        id: Nothing,
-                        value: x .value,
-                      })
-                ))
-              ))
-              (rs.eselections),
+            fromMaybe<Profession["selections"]> (empty) (rs.eselections),
 
           specialAbilities:
-            maybe<string, Profession["specialAbilities"]>
-              (empty)
-              (pipe (
-                splitOn ("&"),
-                map (pipe (
-                  (x: string) => JSON.parse (x),
-                  x => RequireActivatable ({
-                    id: x .id,
-                    active: x .active,
-                    sid: fromNullable (x .sid),
-                    sid2: fromNullable (x .sid2),
-                    tier: fromNullable (x .tier),
-                  }) as Record<ProfessionRequireActivatable>
-                ))
-              ))
-              (rs.especialAbilities),
+            fromMaybe<Profession["specialAbilities"]> (empty) (rs.especialAbilities),
 
           combatTechniques:
-            maybe<string, Profession["combatTechniques"]>
+            maybe<Profession["combatTechniques"]>
               (empty)
-              (pipe (
-                splitOn ("&"),
-                map (x => {
-                  const xs = splitOn ("?") (x) as Cons<string>
-                  const numericId = xs .x
-                  const value = (xs .xs as Cons<string>) .x
-
-                  return IncreaseSkill ({
-                    id: prefixId (IdPrefixes.COMBAT_TECHNIQUES) (numericId),
-                    value: unsafeToInt (value),
-                  })
-                })
-              ))
+              (map (pairToIncreaseSkill (IdPrefixes.COMBAT_TECHNIQUES)))
               (rs.ecombatTechniques),
 
           skills:
-            maybe<string, Profession["skills"]>
+            maybe<Profession["skills"]>
               (empty)
-              (pipe (
-                splitOn ("&"),
-                map (x => {
-                  const xs = splitOn ("?") (x) as Cons<string>
-                  const numericId = xs .x
-                  const value = (xs .xs as Cons<string>) .x
-
-                  return IncreaseSkill ({
-                    id: prefixId (IdPrefixes.SKILLS) (numericId),
-                    value: unsafeToInt (value),
-                  })
-                })
-              ))
+              (map (pairToIncreaseSkill (IdPrefixes.SKILLS)))
               (rs.eskills),
 
           spells:
-            maybe<string, Profession["spells"]>
+            maybe<Profession["spells"]>
               (empty)
-              (pipe (
-                splitOn ("&"),
-                map (x => {
-                  const xs = splitOn ("?") (x) as Cons<string>
-                  const numericId = xs .x
-                  const value = (xs .xs as Cons<string>) .x
-
-                  return IncreaseSkill ({
-                    id: prefixId (IdPrefixes.SPELLS) (numericId),
-                    value: unsafeToInt (value),
-                  })
-                })
-              ))
+              (map (pairToIncreaseSkill (IdPrefixes.SPELLS)))
               (rs.espells),
 
           liturgicalChants:
-            maybe<string, Profession["liturgicalChants"]>
+            maybe<Profession["liturgicalChants"]>
               (empty)
-              (pipe (
-                splitOn ("&"),
-                map (x => {
-                  const xs = splitOn ("?") (x) as Cons<string>
-                  const numericId = xs .x
-                  const value = (xs .xs as Cons<string>) .x
-
-                  return IncreaseSkill ({
-                    id: prefixId (IdPrefixes.LITURGICAL_CHANTS) (numericId),
-                    value: unsafeToInt (value),
-                  })
-                })
-              ))
+              (map (pairToIncreaseSkill (IdPrefixes.LITURGICAL_CHANTS)))
               (rs.eliturgicalChants),
 
           blessings:
-            maybe<string, Profession["blessings"]>
+            maybe<Profession["blessings"]>
               (empty)
-              (pipe (
-                splitOn ("&"),
-                map (prefixId (IdPrefixes.BLESSINGS))
-              ))
+              (map (prefixId (IdPrefixes.BLESSINGS)))
               (rs.eblessings),
 
           suggestedAdvantages:

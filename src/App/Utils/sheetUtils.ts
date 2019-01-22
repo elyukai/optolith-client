@@ -47,4 +47,4 @@ const getValuesOrShorts =
   (attributeValueVisibility: boolean): ValuesOrShorts =>
     attributeValueVisibility
       ? pipe (fmap (pipe (stateEntry, value)), sum)
-      : maybe<Record<AttributeCombined>, string> ("") (pipe (wikiEntry, short))
+      : maybe ("") (pipe (wikiEntry, short))

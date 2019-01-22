@@ -3,7 +3,7 @@ import { Nothing } from "../../../../Data/Maybe";
 import { Attribute } from "../../../Models/Wiki/Attribute";
 import { prefixId } from "../../IDUtils";
 import { mergeRowsById } from "../mergeTableRows";
-import { validateMapRequiredNonEmptyStringProp } from "../validateMapValueUtils";
+import { mensureMapNonEmptyString } from "../validateMapValueUtils";
 import { allRights } from "../validateValueUtils";
 
 export const toAttribute =
@@ -13,10 +13,10 @@ export const toAttribute =
       // Check fields
 
       const ename =
-        validateMapRequiredNonEmptyStringProp (lookup_l10n ("name"))
+        mensureMapNonEmptyString (lookup_l10n ("name"))
 
       const eshort =
-        validateMapRequiredNonEmptyStringProp (lookup_l10n ("short"))
+        mensureMapNonEmptyString (lookup_l10n ("short"))
 
       // Return error or result
 

@@ -97,7 +97,7 @@ export const countActiveLiturgicalChantsPerAspect =
         (acc => pipe (
           id,
           lookupF (wiki),
-          maybe<Record<LiturgicalChant>, OrderedMap<number, number>>
+          maybe
             (acc)
             (pipe (
               aspects,
