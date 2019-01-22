@@ -10,7 +10,7 @@ import { Application } from "../../../Models/Wiki/sub/Application";
 import { prefixId } from "../../IDUtils";
 import { toInt } from "../../NumberUtils";
 import { mergeRowsById } from "../mergeTableRows";
-import { mensureMapNatural, mensureMapNaturalFixedList, mensureMapNaturalOptional, mensureMapNonEmptyString, mensureMapPairList, mensureMapPairListOptional, mensureMapStringPred } from "../validateMapValueUtils";
+import { mensureMapNatural, mensureMapNaturalFixedList, mensureMapNonEmptyString, mensureMapPairList, mensureMapPairListOptional, mensureMapStringPred } from "../validateMapValueUtils";
 import { allRights, Expect, lookupKeyValid } from "../validateValueUtils";
 import { isRawRequiringActivatable } from "./Prerequisites/ActivatableRequirement";
 import { lookupValidSourceLinks, toSourceLinks } from "./Sub/toSourceLinks";
@@ -80,9 +80,6 @@ export const toSkill =
 
       const checkUnivNaturalNumber =
         lookupKeyValid (lookup_univ) (mensureMapNatural)
-
-      const checkOptionalUnivNaturalNumber =
-        lookupKeyValid (lookup_univ) (mensureMapNaturalOptional)
 
       // Check and convert fields
 

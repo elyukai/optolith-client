@@ -11,7 +11,7 @@ export interface CombatTechnique {
   category: Categories
   gr: number
   ic: number
-  bf: number
+  bpr: number
   primary: List<string>
   special: Maybe<string>
   src: List<Record<SourceLink>>
@@ -24,7 +24,7 @@ export const CombatTechnique =
     category: Categories.COMBAT_TECHNIQUES,
     gr: 0,
     ic: 0,
-    bf: 0,
+    bpr: 0,
     primary: List.empty,
     special: Nothing,
     src: List.empty,
