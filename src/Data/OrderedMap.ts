@@ -9,6 +9,7 @@
 
 import { not, pipe } from "ramda";
 import { add, multiply } from "../App/Utils/mathUtils";
+import { Either, fromRight_, isLeft, Right } from "./Either";
 import { equals } from "./Eq";
 import { cnst, ident } from "./Function";
 import { append, List } from "./List";
@@ -387,6 +388,42 @@ export const find: Find =
     fromNullable ([...xs .value .values ()] .find (pred))
 
 
+// TRAVERSABLE
+
+/**
+ * `mapMEither :: (a -> Either e b) -> OrderedMap k a -> Either e (OrderedMap k b)`
+ *
+ * `mapMEither f map` takes a function and a map and maps the function over
+ * every element in the list. If the function returns a `Left`, it is
+ * immediately returned by the function. If `f` did not return any `Left`, the
+ * map of unwrapped return values is returned as a `Right`. If `map` is empty,
+ * `Right empty` is returned.
+ */
+export const mapMEither =
+  <E, A, B>
+  (f: (x: A) => Either<E, B>) =>
+  <K>
+  (m: OrderedMap<K, A>): Either<E, OrderedMap<K, B>> => {
+    if (fnull (m)) {
+      return Right (empty)
+    }
+
+    const arr: [K, B][] = []
+
+    for (const [key, value] of m .value) {
+      const res = f (value)
+
+      if (isLeft (res)) {
+        return res
+      }
+
+      arr .push ([key, fromRight_ (res)])
+    }
+
+    return Right (fromArray (arr))
+  }
+
+
 // QUERY
 
 /**
@@ -592,8 +629,9 @@ export const sdelete =
  * When the key is not a member of the map, the original map is returned.
  */
 export const adjust =
-  <K, A>
+  <A>
   (f: (value: A) => A) =>
+  <K>
   (key: K) =>
   (mp: OrderedMap<K, A>): OrderedMap<K, A> =>
     maybe (mp)

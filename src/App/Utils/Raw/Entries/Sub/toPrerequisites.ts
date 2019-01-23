@@ -102,7 +102,7 @@ const toLevelAwarePrerequisites =
               ))
               (snd (p))
 
-          return maybeToEither<string, Pair<number, List<AllRequirements>>>
+          return maybeToEither
             (
               `Invalid level-aware prerequisites. `
               + `Expected: List Prerequisite, Received: ${snd (p)}`
@@ -180,7 +180,7 @@ const toFlatPrerequisites =
                    : Nothing
                )
              )),
-           maybeToEither<string, List<AllRequirements>>
+           maybeToEither
              (
                `Invalid level-aware prerequisites. `
                + `Expected: List Prerequisite, Received: ${xs}`
@@ -249,7 +249,7 @@ const toFlatSpellPrerequisites =
                    : Nothing
                )
              )),
-           maybeToEither<string, List<AllRequirementObjects>>
+           maybeToEither
              (
                `Invalid prerequisites. Expected: List Prerequisite, Received: ${xs}`
              )

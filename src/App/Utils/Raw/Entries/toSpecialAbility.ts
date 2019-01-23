@@ -77,11 +77,7 @@ export const toSpecialAbility =
 
       const eextended = checkExtendedSpecialAbilitiesList ("extended")
 
-      const erules = checkL10nNonEmptyString ("rules")
-
-      const range = lookup_l10n ("range")
-
-      const actions = lookup_l10n ("actions")
+      const rules = lookup_l10n ("rules")
 
       const effect = lookup_l10n ("effect")
 
@@ -133,7 +129,6 @@ export const toSpecialAbility =
           egr,
           etype,
           eextended,
-          erules,
           eproperty,
           easpect,
           eprerequisites,
@@ -155,22 +150,21 @@ export const toSpecialAbility =
                                                       cost: Nothing,
                                                       prerequisites: Nothing,
                                                       target: Nothing,
-                                                      tier: Nothing,
+                                                      level: Nothing,
                                                       specializations: Nothing,
-                                                      specializationsInput: Nothing,
+                                                      specializationInput: Nothing,
                                                       applications: Nothing,
-                                                      applicationsInput: Nothing,
+                                                      applicationInput: Nothing,
                                                       gr: Nothing,
+                                                      src: Nothing,
                                                     })))
                                                     (rs.eselect),
 
           input,
           gr: rs.egr,
           type: rs.etype,
-          extended: rs.eextended,
-          rules: rs.erules,
-          range,
-          actions,
+          extended: fmap (map (prefixId (IdPrefixes.SPECIAL_ABILITIES))) (rs.eextended),
+          rules,
           effect,
           penalty,
           combatTechniques,

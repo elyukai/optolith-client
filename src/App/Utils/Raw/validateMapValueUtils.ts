@@ -16,7 +16,7 @@ export const mensureMap =
   (received: Maybe<string>): Either<string, A> => {
     const res = f (received)
 
-    return maybeToEither_<string, A>
+    return maybeToEither_
       (() => `Expected: ${expected}, Received: ${show (received)}`)
       (res)
   }

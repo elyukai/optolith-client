@@ -30,7 +30,8 @@
     "remark-breaks": "1.0.0",
     "reselect": "3.0.1",
     "semver": "5.4.1",
-    "tslib": "1.9.3"
+    "tslib": "1.9.3",
+    "xlsx": "0.10.9"
   },
   "devDependencies": {
     "@types/classnames": "0.0.32",
@@ -60,8 +61,7 @@
     "tslint-eslint-rules": "5.4.0",
     "typescript": "^3.2.4",
     "typescript-eslint-parser": "16.0.0",
-    "typescript-tslint-plugin": "0.2.1",
-    "xlsx": "0.10.9"
+    "typescript-tslint-plugin": "0.2.1"
   },
   "scripts": {
     "build": "electron-builder --config -lw",

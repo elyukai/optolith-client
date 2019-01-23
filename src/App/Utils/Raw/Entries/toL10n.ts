@@ -1,7 +1,8 @@
-import { fromRight_, isLeft, Left, mapM, Right } from "../../../../Data/Either";
-import { length, List, unsafeIndex } from "../../../../Data/List";
-import { fromList, lookupF } from "../../../../Data/OrderedMap";
-import { fromBinary, Pair } from "../../../../Data/Pair";
+import { fromRight_, isLeft, mapM, maybeToEither } from "../../../../Data/Either";
+import { List } from "../../../../Data/List";
+import { liftM2 } from "../../../../Data/Maybe";
+import { fromList, lookupF, OrderedMap } from "../../../../Data/OrderedMap";
+import { fromBoth, Pair } from "../../../../Data/Pair";
 import { L10n } from "../../../Models/Wiki/L10n";
 import { mensureMapNonEmptyString, mensureMapNonEmptyStringList, mensureMapStringPred } from "../validateMapValueUtils";
 import { lookupKeyValid, mapMNamed } from "../validateValueUtils";
@@ -12,15 +13,17 @@ const isLocale =
   (x: string) => localeRx .test (x)
 
 export const toL10n =
-  ((l10n_table: List<List<string>>) => {
+  ((l10n_table: List<OrderedMap<string, string>>) => {
       // Shortcuts
 
       const l10n_rows =
-        mapM<string, List<string>, Pair<string, string>>
-          ((row: List<string>) =>
-            length (row) >= 2
-              ? Right (fromBinary (unsafeIndex (row) (0), unsafeIndex (row) (1)))
-              : Left ("Cell missing."))
+        mapM<string, OrderedMap<string, string>, Pair<string, string>>
+          ((row: OrderedMap<string, string>) =>
+            maybeToEither
+              ("Cell missing.")
+              (liftM2<string, string, Pair<string, string>> (fromBoth)
+                                                            (lookupF (row) ("key"))
+                                                            (lookupF (row) ("value"))))
           (l10n_table)
 
       if (isLeft (l10n_rows)) {

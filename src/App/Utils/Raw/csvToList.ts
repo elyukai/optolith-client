@@ -21,42 +21,38 @@ export const CsvColumnDelimiter = ";;"
  * contained in the returned `Either`.
  */
 export const csvToList =
-  (check: boolean):
-  (csv: string) => Either<string, Data> =>
-    pipe (
-      lines,
+  pipe (
+    lines,
 
-      // Split lines into columns
-      map (splitOn (CsvColumnDelimiter)),
+    // Split lines into columns
+    map (splitOn (CsvColumnDelimiter)),
 
-      // Ignore lines that are accidentially contained in CSV
-      // => array of length 1, containing empty string
-      filter<List<string>> (e => notNull (e) && head (e) .length > 0),
+    // Ignore lines that are accidentially contained in CSV
+    // => array of length 1, containing empty string
+    filter<List<string>> (e => notNull (e) && head (e) .length > 0),
 
-      // header and body
-      uncons,
+    // header and body
+    uncons,
 
-      maybeToEither ("csvToList: Empty file"),
+    maybeToEither ("csvToList: Empty file"),
 
-      bindF (headerAndBody => {
-             const header = fst (headerAndBody)
-             const body = snd (headerAndBody)
+    bindF (headerAndBody => {
+            const header = fst (headerAndBody)
+            const body = snd (headerAndBody)
 
-             const header_length = length (header)
+            const header_length = length (header)
 
-             return check
-               ? ifoldr<List<string>, Either<string, Data>>
-                 (i => l =>
-                   bindF (
-                     acc => length (l) !== header_length
-                       ? Left (
-                         `csvToList: Line ${i + 1} has different length than header.`
-                         + ` Source: ${show (l)}`
-                       )
-                       : Right (cons (acc) (fromList (zip<string, string> (header) (l))))
-                   ))
-                 (Right (empty))
-                 (body)
-               : Right (map (pipe (zip<string, string> (header), fromList)) (body))
-           })
-    )
+            return ifoldr<List<string>, Either<string, Data>>
+              (i => l =>
+                bindF (
+                  acc => length (l) !== header_length
+                    ? Left (
+                      `csvToList: Line ${i + 1} has different length than header.`
+                      + ` Source: ${show (l)}`
+                    )
+                    : Right (cons (acc) (fromList (zip<string, string> (header) (l))))
+                ))
+              (Right (empty))
+              (body)
+          })
+  )

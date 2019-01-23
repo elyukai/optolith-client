@@ -1,7 +1,7 @@
 import { pipe } from "ramda";
-import { bimap, Either, fromRight_, isLeft, maybeToEither, Right } from "../../../Data/Either";
-import { appendStr } from "../../../Data/List";
-import { bindF, fromJust, isJust, Just, Maybe, Nothing } from "../../../Data/Maybe";
+import { bimap, Either, first, fromRight_, isLeft, maybeToEither, Right } from "../../../Data/Either";
+import { appendStr, find, List, notNullStr } from "../../../Data/List";
+import { bindF, elem, ensure, fromJust, isJust, Just, Maybe, Nothing } from "../../../Data/Maybe";
 import { lookup, lookupF, OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { show } from "../../../Data/Show";
@@ -14,11 +14,13 @@ import { toInt } from "../NumberUtils";
  */
 const lookupId =
   (origin: string) =>
+  <A extends string | number>
+  (ensure_f: (x: string) => Maybe<A>) =>
   (key: string) =>
-  (univ_row: OrderedMap<string, string>) =>
+  (univ_row: OrderedMap<string, string>): Either<string, A> =>
     pipe (
            lookup<string, string> (key),
-           bindF<string, number> (toInt),
+           bindF (ensure_f),
            maybeToEither (`${origin}: key ${show (key)} is missing in ${show (univ_row)}`)
          )
          (univ_row)
@@ -38,9 +40,9 @@ type MergeRowsByIdFunction<A> =
 export const mergeRowsById =
   (origin: string) =>
   <A> (f: MergeRowsByIdFunction<A>) =>
-  (l10n: OrderedMap<string, OrderedMap<string, string>>) =>
+  (l10n: List<OrderedMap<string, string>>) =>
   (univ_row: OrderedMap<string, string>): Either<string, Maybe<A>> => {
-    const either_id = lookupId (origin) ("id") (univ_row)
+    const either_id = lookupId (origin) (toInt) ("id") (univ_row)
 
     if (isLeft (either_id)) {
       return either_id
@@ -48,7 +50,9 @@ export const mergeRowsById =
 
     const id = fromRight_ (either_id)
 
-    const ml10n_row = lookupF (l10n) (show (id))
+    const ml10n_row =
+      find<OrderedMap<string, string>> (pipe (lookup ("id"), elem (show (id))))
+                                       (l10n)
 
     if (isJust (ml10n_row)) {
       const l10n_row = fromJust (ml10n_row)
@@ -78,10 +82,10 @@ type MergeRowsByIdAndMainIdFunction<A> =
 export const mergeRowsByIdAndMainId =
   (origin: string) =>
   <A> (f: MergeRowsByIdAndMainIdFunction<A>) =>
-  (l10n: OrderedMap<string, OrderedMap<string, OrderedMap<string, string>>>) =>
+  (l10n: List<OrderedMap<string, string>>) =>
   (univ_row: OrderedMap<string, string>): Either<string, Maybe<A>> => {
-    const either_main_id = lookupId (origin) ("mainId") (univ_row)
-    const either_id = lookupId (origin) ("id") (univ_row)
+    const either_main_id = lookupId (origin) (toInt) ("mainId") (univ_row)
+    const either_id = lookupId (origin) (toInt) ("id") (univ_row)
 
     if (isLeft (either_main_id)) {
       return either_main_id
@@ -94,8 +98,12 @@ export const mergeRowsByIdAndMainId =
     const mainId = fromRight_ (either_main_id)
     const id = fromRight_ (either_id)
 
-    const ml10n_row = pipe (lookupF (l10n), bindF (lookup (show (id))))
-                           (show (mainId))
+    const sameMainId = pipe (lookup<string, string> ("mainId"), elem (show (mainId)))
+    const sameId = pipe (lookup<string, string> ("id"), elem (show (id)))
+
+    const ml10n_row =
+      find<OrderedMap<string, string>> (e => sameMainId (e) && sameId (e))
+                                       (l10n)
 
     if (isJust (ml10n_row)) {
       const l10n_row = fromJust (ml10n_row)
@@ -110,7 +118,7 @@ export const mergeRowsByIdAndMainId =
   }
 
 type FromRowFunction<A> =
-  (id: number) =>
+  (id: string) =>
   (lookup_l10n: (key: string) => Maybe<string>) => Either<string, Record<A>>
 
 /**
@@ -121,8 +129,8 @@ type FromRowFunction<A> =
 export const fromRow =
   (origin: string) =>
   <A> (f: FromRowFunction<A>) =>
-  (l10n_row: OrderedMap<string, string>): Either<string, Maybe<Record<A>>> => {
-    const either_id = lookupId (origin) ("id") (l10n_row)
+  (l10n_row: OrderedMap<string, string>): Either<string, Record<A>> => {
+    const either_id = lookupId (origin) (ensure (notNullStr)) ("id") (l10n_row)
 
     if (isLeft (either_id)) {
       return either_id
@@ -130,8 +138,7 @@ export const fromRow =
 
     const id = fromRight_ (either_id)
 
-    return bimap<string, string, Record<A>, Maybe<Record<A>>>
+    return first<string, string, Record<A>>
       (appendStr (`${origin}: `))
-      (Just)
       (f (id) (lookupF (l10n_row)))
   }

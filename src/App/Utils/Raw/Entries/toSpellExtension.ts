@@ -1,5 +1,5 @@
 import { IdPrefixes } from "../../../../constants/IdPrefixes";
 import { toExtension } from "./toExtension";
 
-export const toLiturgicalChantExtension =
+export const toSpellExtension =
   toExtension (IdPrefixes.SPELLS)

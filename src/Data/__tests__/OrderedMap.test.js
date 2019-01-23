@@ -236,6 +236,28 @@ test ('find', () => {
     .toEqual (Nothing)
 })
 
+// TRAVERSABLE
+
+test ('mapMEither', () => {
+  expect (
+    OrderedMap.mapMEither (x => x === 2 ? Left ("test") : Right (x + 1))
+                          (OrderedMap.empty)
+  )
+    .toEqual (Right (OrderedMap.empty))
+
+  expect (
+    OrderedMap.mapMEither (x => x === 2 ? Left ("test") : Right (x + 1))
+                          (OrderedMap.fromArray ([[1, 1], [2, 3]]))
+  )
+    .toEqual (Right (OrderedMap.fromArray ([[1, 2], [2, 4]])))
+
+  expect (
+    OrderedMap.mapMEither (x => x === 2 ? Left ("test") : Right (x + 1))
+                          (OrderedMap.fromArray ([[1, 1], [2, 3], [3, 2]]))
+  )
+    .toEqual (Left ("test"))
+})
+
 // QUERY
 
 test ('size', () => {

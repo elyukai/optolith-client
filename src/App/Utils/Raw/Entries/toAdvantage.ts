@@ -106,12 +106,13 @@ export const toAdvantage =
                                                       cost: Nothing,
                                                       prerequisites: Nothing,
                                                       target: Nothing,
-                                                      tier: Nothing,
+                                                      level: Nothing,
                                                       specializations: Nothing,
-                                                      specializationsInput: Nothing,
+                                                      specializationInput: Nothing,
                                                       applications: Nothing,
-                                                      applicationsInput: Nothing,
+                                                      applicationInput: Nothing,
                                                       gr: Nothing,
+                                                      src: Nothing,
                                                     })))
                                                     (rs.eselect),
 

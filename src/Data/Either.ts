@@ -224,9 +224,9 @@ export const eitherToMaybe =
  * `\a -> maybeToEither a Nothing == Left a`
  */
 export const maybeToEither =
-  <A, B>
+  <A>
   (left: A) =>
-  (x: Maybe<B>): Either<A, B> =>
+  <B> (x: Maybe<B>): Either<A, B> =>
     isJust (x) ? Right (fromJust (x)) : Left (left)
 
 /**
@@ -241,8 +241,9 @@ export const maybeToEither =
  * Lazy version of `maybeToEither`.
  */
 export const maybeToEither_ =
-  <A, B>
+  <A>
   (left: () => A) =>
+  <B>
   (x: Maybe<B>): Either<A, B> =>
     isJust (x) ? Right (fromJust (x)) : Left (left ())
 

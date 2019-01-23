@@ -10,6 +10,7 @@ export interface SpecialAbility extends ActivatableBase {
   nameInWiki: Maybe<string>
   subgr: Maybe<number>
   combatTechniques: Maybe<string>
+  type: Maybe<string>
   rules: Maybe<string>
   effect: Maybe<string>
   volume: Maybe<string>
@@ -28,7 +29,7 @@ export const SpecialAbility =
   fromDefault<SpecialAbility> ({
     id: "",
     name: "",
-    cost: 0,
+    cost: Nothing,
     input: Nothing,
     max: Nothing,
     prerequisites: List.empty,
@@ -44,6 +45,7 @@ export const SpecialAbility =
     nameInWiki: Nothing,
     subgr: Nothing,
     combatTechniques: Nothing,
+    type: Nothing,
     rules: Nothing,
     effect: Nothing,
     volume: Nothing,

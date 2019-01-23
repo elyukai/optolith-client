@@ -46,7 +46,7 @@ export const toLiturgicalChant =
       const ename = checkL10nNonEmptyString ("name")
 
       const echeck =
-        Either.fmap<string, List<string | number>, List<string>>
+        Either.fmap<List<string | number>, List<string>>
           (map (prefixId (IdPrefixes.ATTRIBUTES)))
           (checkSkillCheck ("check"))
 
