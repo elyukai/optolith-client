@@ -12,8 +12,8 @@ import { isNaturalNumber, naturalNumber } from "../../RegexUtils";
 import { mergeRowsById } from "../mergeTableRows";
 import { maybePrefix } from "../rawConversionUtils";
 import { mensureMapBoolean, mensureMapNatural, mensureMapNaturalList, mensureMapNaturalListOptional, mensureMapNonEmptyString, mensureMapPairList, mensureMapStringPredListOptional } from "../validateMapValueUtils";
-import { allRights, Expect, lookupKeyValid } from "../validateValueUtils";
-import { lookupValidSourceLinks, toSourceLinks } from "./Sub/toSourceLinks";
+import { Expect, lookupKeyValid, mapMNamed } from "../validateValueUtils";
+import { toSourceLinks } from "./Sub/toSourceLinks";
 
 const exception =
   new RegExp (`${naturalNumber.source}|(${IdPrefixes.PROFESSIONS}_${naturalNumber.source})`)
@@ -33,25 +33,25 @@ export const toCulture =
       // Shortcuts
 
       const checkL10nNonEmptyString =
-        lookupKeyValid (lookup_l10n) (mensureMapNonEmptyString)
+        lookupKeyValid (mensureMapNonEmptyString) (lookup_l10n)
 
       const checkOptionalExceptionList =
-        lookupKeyValid (lookup_univ)
-                       (mensureMapStringPredListOptional (checkException)
+        lookupKeyValid (mensureMapStringPredListOptional (checkException)
                                                          ("Group | ProfessionId")
                                                          (","))
+                       (lookup_univ)
 
       const checkUnivNaturalNumber =
-        lookupKeyValid (lookup_univ) (mensureMapNatural)
+        lookupKeyValid (mensureMapNatural) (lookup_univ)
 
       const checkUnivNaturalNumberList =
-        lookupKeyValid (lookup_univ) (mensureMapNaturalList ("&"))
+        lookupKeyValid (mensureMapNaturalList ("&")) (lookup_univ)
 
       const checkOptionalUnivNaturalNumberList =
-        lookupKeyValid (lookup_univ) (mensureMapNaturalListOptional ("&"))
+        lookupKeyValid (mensureMapNaturalListOptional ("&")) (lookup_univ)
 
       const checkUnivBoolean =
-        lookupKeyValid (lookup_univ) (mensureMapBoolean)
+        lookupKeyValid (mensureMapBoolean) (lookup_univ)
 
       // Check fields
 
@@ -137,20 +137,20 @@ export const toCulture =
         checkUnivNaturalNumber ("culturalPackageCost")
 
       const eculturalPackageSkills =
-        lookupKeyValid (lookup_univ)
-                       (mensureMapPairList ("&")
+        lookupKeyValid (mensureMapPairList ("&")
                                                         ("?")
                                                         (Expect.NaturalNumber)
                                                         (Expect.NaturalNumber)
                                                         (toNatural)
                                                         (toNatural))
+                       (lookup_univ)
                        ("culturalPackageSkills")
 
-      const esrc = lookupValidSourceLinks (lookup_l10n)
+      const esrc = toSourceLinks (lookup_l10n)
 
       // Return error or result
 
-      return allRights
+      return mapMNamed
         ({
           ename,
           eareaKnowledge,
@@ -250,7 +250,7 @@ export const toCulture =
                 }))
                 (rs.eculturalPackageSkills),
 
-            src: toSourceLinks (rs.esrc),
+            src: rs.esrc,
 
             category: Nothing,
           })

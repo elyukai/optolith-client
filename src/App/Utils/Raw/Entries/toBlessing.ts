@@ -4,8 +4,8 @@ import { Blessing } from "../../../Models/Wiki/Blessing";
 import { prefixId } from "../../IDUtils";
 import { mergeRowsById } from "../mergeTableRows";
 import { mensureMapNaturalList, mensureMapNonEmptyString } from "../validateMapValueUtils";
-import { allRights, lookupKeyValid } from "../validateValueUtils";
-import { lookupValidSourceLinks, toSourceLinks } from "./Sub/toSourceLinks";
+import { lookupKeyValid, mapMNamed } from "../validateValueUtils";
+import { toSourceLinks } from "./Sub/toSourceLinks";
 
 export const toBlessing =
   mergeRowsById
@@ -14,10 +14,10 @@ export const toBlessing =
       // Shortcuts
 
       const checkL10nNonEmptyString =
-        lookupKeyValid (lookup_l10n) (mensureMapNonEmptyString)
+        lookupKeyValid (mensureMapNonEmptyString) (lookup_l10n)
 
       const checkUnivNaturalNumberList =
-        lookupKeyValid (lookup_univ) (mensureMapNaturalList ("&"))
+        lookupKeyValid (mensureMapNaturalList ("&")) (lookup_univ)
 
       // Check and convert fields
 
@@ -33,11 +33,11 @@ export const toBlessing =
 
       const etarget = checkL10nNonEmptyString ("target")
 
-      const esrc = lookupValidSourceLinks (lookup_l10n)
+      const esrc = toSourceLinks (lookup_l10n)
 
       // Return error or result
 
-      return allRights
+      return mapMNamed
         ({
           ename,
           etraditions,
@@ -55,7 +55,7 @@ export const toBlessing =
           range: rs.erange,
           duration: rs.eduration,
           target: rs.etarget,
-          src: toSourceLinks (rs.esrc),
+          src: rs.esrc,
           category: Nothing,
         }))
     })

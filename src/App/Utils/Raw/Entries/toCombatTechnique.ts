@@ -5,8 +5,8 @@ import { CombatTechnique } from "../../../Models/Wiki/CombatTechnique";
 import { prefixId } from "../../IDUtils";
 import { mergeRowsById } from "../mergeTableRows";
 import { mensureMapNatural, mensureMapNaturalList, mensureMapNonEmptyString } from "../validateMapValueUtils";
-import { allRights, lookupKeyValid } from "../validateValueUtils";
-import { lookupValidSourceLinks, toSourceLinks } from "./Sub/toSourceLinks";
+import { lookupKeyValid, mapMNamed } from "../validateValueUtils";
+import { toSourceLinks } from "./Sub/toSourceLinks";
 
 export const toCombatTechnique =
   mergeRowsById
@@ -15,13 +15,13 @@ export const toCombatTechnique =
       // Shortcuts
 
       const checkL10nNonEmptyString =
-        lookupKeyValid (lookup_l10n) (mensureMapNonEmptyString)
+        lookupKeyValid (mensureMapNonEmptyString) (lookup_l10n)
 
       const checkUnivNaturalNumberList =
-        lookupKeyValid (lookup_univ) (mensureMapNaturalList ("&"))
+        lookupKeyValid (mensureMapNaturalList ("&")) (lookup_univ)
 
       const checkUnivNaturalNumber =
-        lookupKeyValid (lookup_univ) (mensureMapNatural)
+        lookupKeyValid (mensureMapNatural) (lookup_univ)
 
       // Check and convert fields
 
@@ -37,11 +37,11 @@ export const toCombatTechnique =
 
       const egr = checkUnivNaturalNumber ("gr")
 
-      const esrc = lookupValidSourceLinks (lookup_l10n)
+      const esrc = toSourceLinks (lookup_l10n)
 
       // Return error or result
 
-      return allRights
+      return mapMNamed
         ({
           ename,
           eic,
@@ -57,7 +57,7 @@ export const toCombatTechnique =
           primary: map (prefixId (IdPrefixes.ATTRIBUTES)) (rs.eprimary),
           bpr: rs.ebpr,
           special,
-          src: toSourceLinks (rs.esrc),
+          src: rs.esrc,
           gr: rs.egr,
           category: Nothing,
         }))

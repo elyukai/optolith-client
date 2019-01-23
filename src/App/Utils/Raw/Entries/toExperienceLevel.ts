@@ -1,10 +1,8 @@
 import { IdPrefixes } from "../../../../constants/IdPrefixes";
-import { fromJust } from "../../../../Data/Maybe";
 import { ExperienceLevel } from "../../../Models/Wiki/ExperienceLevel";
 import { prefixId } from "../../IDUtils";
 import { mergeRowsById } from "../mergeTableRows";
-import { mensureMapNatural } from "../validateMapValueUtils";
-import { allRights, lookupKeyValid, validateRequiredNonEmptyStringProp } from "../validateValueUtils";
+import { lookupKeyMapValidNatural, lookupKeyMapValidNonEmptyString, mapMNamed } from "../validateValueUtils";
 
 export const toExperienceLevel =
   mergeRowsById
@@ -12,13 +10,16 @@ export const toExperienceLevel =
     (id => lookup_l10n => lookup_univ => {
       // Shortcuts
 
-      const checkUnivNaturalNumber =
-        lookupKeyValid (lookup_univ) (mensureMapNatural)
+      const checkL10nNonEmptyString =
+        lookupKeyMapValidNonEmptyString (lookup_l10n)
 
-      // Check fields
+      const checkUnivNaturalNumber =
+        lookupKeyMapValidNatural (lookup_univ)
+
+      // Check and convert fields
 
       const ename =
-        validateRequiredNonEmptyStringProp (lookup_l10n ("name"))
+        checkL10nNonEmptyString ("name")
 
       const eap =
         checkUnivNaturalNumber ("ap")
@@ -43,7 +44,7 @@ export const toExperienceLevel =
 
       // Return error or result
 
-      return allRights
+      return mapMNamed
         ({
           ename,
           eap,
@@ -56,7 +57,7 @@ export const toExperienceLevel =
         })
         (rs => ExperienceLevel ({
           id: prefixId (IdPrefixes.EXPERIENCE_LEVELS) (id),
-          name: fromJust (rs.ename),
+          name: rs.ename,
           ap: rs.eap,
           maxAttributeValue: rs.emaxAttributeValue,
           maxSkillRating: rs.emaxSkillRating,

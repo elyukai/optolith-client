@@ -4,7 +4,7 @@ import { Attribute } from "../../../Models/Wiki/Attribute";
 import { prefixId } from "../../IDUtils";
 import { mergeRowsById } from "../mergeTableRows";
 import { mensureMapNonEmptyString } from "../validateMapValueUtils";
-import { allRights } from "../validateValueUtils";
+import { mapMNamed } from "../validateValueUtils";
 
 export const toAttribute =
   mergeRowsById
@@ -20,7 +20,7 @@ export const toAttribute =
 
       // Return error or result
 
-      return allRights
+      return mapMNamed
         ({
           ename,
           eshort,

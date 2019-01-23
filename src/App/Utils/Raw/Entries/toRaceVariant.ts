@@ -1,25 +1,15 @@
-import { pipe } from "ramda";
 import { IdPrefixes } from "../../../../constants/IdPrefixes";
-import { Cons, map, splitOn } from "../../../../Data/List";
-import { all, fmap, Nothing } from "../../../../Data/Maybe";
+import { map } from "../../../../Data/List";
+import { fmap, Nothing } from "../../../../Data/Maybe";
+import { fst, Pair, snd } from "../../../../Data/Pair";
 import { RaceVariant } from "../../../Models/Wiki/RaceVariant";
 import { Die } from "../../../Models/Wiki/sub/Die";
 import { prefixId } from "../../IDUtils";
-import { unsafeToInt } from "../../NumberUtils";
-import { naturalNumber } from "../../RegexUtils";
-import { listRx, pairRx } from "../csvRegexUtils";
 import { mergeRowsById } from "../mergeTableRows";
 import { maybePrefix } from "../rawConversionUtils";
 import { mensureMapIntegerOptional, mensureMapNaturalFixedListOptional, mensureMapNaturalListOptional, mensureMapNonEmptyString } from "../validateMapValueUtils";
-import { allRights, lookupKeyValid, validateRawProp } from "../validateValueUtils";
-
-const die = pairRx ("D") (naturalNumber.source, naturalNumber.source)
-
-const diceList =
-  new RegExp (listRx ("&") (die))
-
-const checkDiceList =
-  (x: string) => diceList .test (x)
+import { lookupKeyValid, mapMNamed } from "../validateValueUtils";
+import { stringToDiceList } from "./toRace";
 
 export const toRaceVariant =
   mergeRowsById
@@ -28,16 +18,16 @@ export const toRaceVariant =
       // Shortcuts
 
       const checkL10nNonEmptyString =
-        lookupKeyValid (lookup_l10n) (mensureMapNonEmptyString)
+        lookupKeyValid (mensureMapNonEmptyString) (lookup_l10n)
 
       const checkOptionalUnivNaturalNumberList =
-        lookupKeyValid (lookup_univ) (mensureMapNaturalListOptional ("&"))
+        lookupKeyValid (mensureMapNaturalListOptional ("&")) (lookup_univ)
 
       const checkOptionalUnivNaturalNumberList20 =
-        lookupKeyValid (lookup_univ) (mensureMapNaturalFixedListOptional (20) ("&"))
+        lookupKeyValid (mensureMapNaturalFixedListOptional (20) ("&")) (lookup_univ)
 
       const checkOptionalUnivInteger =
-        lookupKeyValid (lookup_univ) (mensureMapIntegerOptional)
+        lookupKeyValid (mensureMapIntegerOptional) (lookup_univ)
 
       // Check fields
 
@@ -81,14 +71,13 @@ export const toRaceVariant =
         checkOptionalUnivInteger ("sizeBase")
 
       const esizeRandom =
-        lookupKeyValid (lookup_univ)
-                       (validateRawProp ("Maybe [(Natural, Natural)]")
-                                        (all (checkDiceList)))
+        lookupKeyValid (stringToDiceList)
+                       (lookup_univ)
                        ("sizeRandom")
 
       // Return error or result
 
-      return allRights
+      return mapMNamed
         ({
           ename,
           ecommonCultures,
@@ -135,20 +124,12 @@ export const toRaceVariant =
 
           sizeBase: rs.esizeBase,
           sizeRandom:
-            fmap (pipe (
-                   splitOn ("&"),
-                   map (x => {
-                     const xs = splitOn ("D") (x) as Cons<string>
-                     const amount = xs .x
-                     const sides = (xs .xs as Cons<string>) .x
-
-                     return Die ({
-                       amount: unsafeToInt (amount),
-                       sides: unsafeToInt (sides),
-                     })
-                   })
-                 ))
-                 (rs.esizeRandom),
+             fmap (map ((p: Pair<number, number>) =>
+                    Die ({
+                      amount: fst (p),
+                      sides: snd (p),
+                    })))
+                  (rs.esizeRandom),
 
           category: Nothing,
         }))

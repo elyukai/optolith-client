@@ -11,9 +11,9 @@ import { prefixId } from "../../IDUtils";
 import { toInt } from "../../NumberUtils";
 import { mergeRowsById } from "../mergeTableRows";
 import { mensureMapNatural, mensureMapNaturalFixedList, mensureMapNonEmptyString, mensureMapPairList, mensureMapPairListOptional, mensureMapStringPred } from "../validateMapValueUtils";
-import { allRights, Expect, lookupKeyValid } from "../validateValueUtils";
+import { Expect, lookupKeyValid, mapMNamed } from "../validateValueUtils";
 import { isRawRequiringActivatable } from "./Prerequisites/ActivatableRequirement";
-import { lookupValidSourceLinks, toSourceLinks } from "./Sub/toSourceLinks";
+import { toSourceLinks } from "./Sub/toSourceLinks";
 
 const encumbrance = /true|false|maybe/
 
@@ -49,37 +49,38 @@ export const toSkill =
       // Shortcuts
 
       const checkL10nNonEmptyString =
-        lookupKeyValid (lookup_l10n) (mensureMapNonEmptyString)
+        lookupKeyValid (mensureMapNonEmptyString) (lookup_l10n)
 
       const checkApplicationsL10n =
-        lookupKeyValid (lookup_l10n)
-                       (mensureMapPairList ("&&")
+        lookupKeyValid (mensureMapPairList ("&&")
                                            ("?")
                                            (Expect.Integer)
                                            (Expect.NonEmptyString)
                                            (toInt)
                                            (ensure (notNullStr)))
+                       (lookup_l10n)
 
       const checkApplicationsUniv =
-        lookupKeyValid (lookup_univ)
-                       (mensureMapPairListOptional ("&")
+        lookupKeyValid (mensureMapPairListOptional ("&")
                                                    ("?")
                                                    (Expect.Integer)
                                                    ("RequireActivatable")
                                                    (toInt)
                                                    (stringToPrerequisite))
+                       (lookup_univ)
 
       const checkSkillCheck =
-        lookupKeyValid (lookup_univ)
-                       (mensureMapNaturalFixedList (3) ("&"))
+        lookupKeyValid (mensureMapNaturalFixedList (3) ("&"))
+                       (lookup_univ)
 
       const checkEncumbranceInfluence =
-        lookupKeyValid (lookup_univ)
-                       (mensureMapStringPred (checkEncumbrance)
+        lookupKeyValid (mensureMapStringPred (checkEncumbrance)
                                              (`"true" | "false" | "maybe"`))
+                       (lookup_univ)
 
       const checkUnivNaturalNumber =
-        lookupKeyValid (lookup_univ) (mensureMapNatural)
+        lookupKeyValid (mensureMapNatural)
+                       (lookup_univ)
 
       // Check and convert fields
 
@@ -137,11 +138,11 @@ export const toSkill =
 
       const egr = checkUnivNaturalNumber ("gr")
 
-      const esrc = lookupValidSourceLinks (lookup_l10n)
+      const esrc = toSourceLinks (lookup_l10n)
 
       // Return error or result
 
-      return allRights
+      return mapMNamed
         ({
           ename,
           eapplications,
@@ -169,7 +170,7 @@ export const toSkill =
           critical: rs.ecritical,
           botch: rs.ebotch,
           gr: rs.egr,
-          src: toSourceLinks (rs.esrc),
+          src: rs.esrc,
           category: Nothing,
         }))
     })

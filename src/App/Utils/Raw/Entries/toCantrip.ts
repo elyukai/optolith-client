@@ -4,8 +4,8 @@ import { Cantrip } from "../../../Models/Wiki/Cantrip";
 import { prefixId } from "../../IDUtils";
 import { mergeRowsById } from "../mergeTableRows";
 import { mensureMapNatural, mensureMapNaturalList, mensureMapNonEmptyString } from "../validateMapValueUtils";
-import { allRights, lookupKeyValid } from "../validateValueUtils";
-import { lookupValidSourceLinks, toSourceLinks } from "./Sub/toSourceLinks";
+import { lookupKeyValid, mapMNamed } from "../validateValueUtils";
+import { toSourceLinks } from "./Sub/toSourceLinks";
 
 export const toCantrip =
   mergeRowsById
@@ -14,13 +14,13 @@ export const toCantrip =
       // Shortcuts
 
       const checkL10nNonEmptyString =
-        lookupKeyValid (lookup_l10n) (mensureMapNonEmptyString)
+        lookupKeyValid (mensureMapNonEmptyString) (lookup_l10n)
 
       const checkUnivNaturalNumber =
-        lookupKeyValid (lookup_univ) (mensureMapNatural)
+        lookupKeyValid (mensureMapNatural) (lookup_univ)
 
       const checkUnivNaturalNumberList =
-        lookupKeyValid (lookup_univ) (mensureMapNaturalList ("&"))
+        lookupKeyValid (mensureMapNaturalList ("&")) (lookup_univ)
 
       // Check and convert fields
 
@@ -42,11 +42,11 @@ export const toCantrip =
 
       const note = lookup_l10n ("note")
 
-      const esrc = lookupValidSourceLinks (lookup_l10n)
+      const esrc = toSourceLinks (lookup_l10n)
 
       // Return error or result
 
-      return allRights
+      return mapMNamed
         ({
           ename,
           eic,
@@ -68,7 +68,7 @@ export const toCantrip =
           duration: rs.eduration,
           target: rs.etarget,
           note,
-          src: toSourceLinks (rs.esrc),
+          src: rs.esrc,
           category: Nothing,
         }))
     })

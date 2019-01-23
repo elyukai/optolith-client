@@ -1,5 +1,6 @@
 import { pipe } from "ramda";
 import { Either, Left, mapM, maybeToEither, Right, second } from "../../../../../Data/Either";
+import { flip } from "../../../../../Data/Function";
 import { fromArray, isInfixOf, List, splitOn, uncons } from "../../../../../Data/List";
 import { bindF, ensure, fmap, fromJust, fromMaybe, fromNullable, isNothing, Just, Maybe, Nothing } from "../../../../../Data/Maybe";
 import { fromList } from "../../../../../Data/OrderedMap";
@@ -267,14 +268,16 @@ const toLevelAwareOrPlainPrerequisites =
  * will be returned.
  */
 export const toPrerequisites =
-  (lookup_univ: (key: string) => Maybe<string>) =>
-    lookupKeyValid (lookup_univ)
-      (pipe (
-        mstrToMaybe,
-        fmap (toLevelAwareOrPlainPrerequisites),
-        fromMaybe<Either<string, LevelAwarePrerequisites>> (Right (List.empty))
-      ))
-      ("prerequisites")
+  flip (
+         lookupKeyValid (pipe (
+                          mstrToMaybe,
+                          fmap (toLevelAwareOrPlainPrerequisites),
+                          fromMaybe<Either<string, LevelAwarePrerequisites>> (Right (List.empty))
+                        ))
+       )
+       ("prerequisites") as
+         (lookup_univ: (key: string) => Maybe<string>) =>
+           Either<string, LevelAwarePrerequisites>
 
 /**
  * Convert a raw string to `Right Prerequisites`. If an error occurs during
@@ -282,11 +285,14 @@ export const toPrerequisites =
  * returned.
  */
 export const toSpellPrerequisites =
-  (lookup_univ: (key: string) => Maybe<string>) =>
-    lookupKeyValid (lookup_univ)
-      (pipe (
-        mstrToMaybe,
-        fmap (toFlatSpellPrerequisites),
-        fromMaybe<Either<string, List<AllRequirementObjects>>> (Right (List.empty))
-      ))
-      ("prerequisites")
+  flip (
+         lookupKeyValid (pipe (
+                          mstrToMaybe,
+                          fmap (toFlatSpellPrerequisites),
+                          fromMaybe<Either<string, List<AllRequirementObjects>>>
+                            (Right (List.empty))
+                        ))
+       )
+       ("prerequisites") as
+         (lookup_univ: (key: string) => Maybe<string>) =>
+           Either<string, List<AllRequirementObjects>>

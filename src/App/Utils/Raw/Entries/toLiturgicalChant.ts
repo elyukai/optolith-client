@@ -8,8 +8,8 @@ import { CheckModifier } from "../../../Models/Wiki/wikiTypeHelpers";
 import { prefixId } from "../../IDUtils";
 import { mergeRowsById } from "../mergeTableRows";
 import { mensureMapNatural, mensureMapNaturalFixedList, mensureMapNaturalList, mensureMapNonEmptyString, mensureMapStringPredSetOptional } from "../validateMapValueUtils";
-import { allRights, lookupKeyValid } from "../validateValueUtils";
-import { lookupValidSourceLinks, toSourceLinks } from "./Sub/toSourceLinks";
+import { lookupKeyValid, mapMNamed } from "../validateValueUtils";
+import { toSourceLinks } from "./Sub/toSourceLinks";
 
 const checkMod = /SPI|TOU/
 
@@ -23,23 +23,23 @@ export const toLiturgicalChant =
       // Shortcuts
 
       const checkL10nNonEmptyString =
-        lookupKeyValid (lookup_l10n) (mensureMapNonEmptyString)
+        lookupKeyValid (mensureMapNonEmptyString) (lookup_l10n)
 
       const checkSkillCheck =
-        lookupKeyValid (lookup_univ)
-                       (mensureMapNaturalFixedList (3) ("&"))
+        lookupKeyValid (mensureMapNaturalFixedList (3) ("&"))
+                       (lookup_univ)
 
       const checkCheckModifier =
-        lookupKeyValid (lookup_univ)
-                       (mensureMapStringPredSetOptional (checkCheckMod)
+        lookupKeyValid (mensureMapStringPredSetOptional (checkCheckMod)
                                                         (`"SPI" | "TOU"`)
                                                         (","))
+                       (lookup_univ)
 
       const checkUnivNaturalNumber =
-        lookupKeyValid (lookup_univ) (mensureMapNatural)
+        lookupKeyValid (mensureMapNatural) (lookup_univ)
 
       const checkUnivNaturalNumberList =
-        lookupKeyValid (lookup_univ) (mensureMapNaturalList ("&"))
+        lookupKeyValid (mensureMapNaturalList ("&")) (lookup_univ)
 
       // Check and convert fields
 
@@ -80,11 +80,11 @@ export const toLiturgicalChant =
 
       const egr = checkUnivNaturalNumber ("gr")
 
-      const esrc = lookupValidSourceLinks (lookup_l10n)
+      const esrc = toSourceLinks (lookup_l10n)
 
       // Return error or result
 
-      return allRights
+      return mapMNamed
         ({
           ename,
           echeck,
@@ -120,7 +120,7 @@ export const toLiturgicalChant =
           durationShort: fromMaybe ("") (durationShort),
           target: fromMaybe ("") (target),
           gr: rs.egr,
-          src: toSourceLinks (rs.esrc),
+          src: rs.esrc,
           category: Nothing,
         }))
     })

@@ -8,9 +8,9 @@ import { prefixId } from "../../IDUtils";
 import { toInt, toNatural } from "../../NumberUtils";
 import { mergeRowsById } from "../mergeTableRows";
 import { maybePrefix } from "../rawConversionUtils";
-import { mensureMapInteger, mensureMapIntegerOptional, mensureMapNatural, mensureMapNaturalFixedListOptional, mensureMapNaturalList, mensureMapNaturalListOptional, mensureMapNonEmptyString, mensureMapPairList, mensureMapPairListOptional } from "../validateMapValueUtils";
-import { allRights, Expect, lookupKeyValid } from "../validateValueUtils";
-import { lookupValidSourceLinks, toSourceLinks } from "./Sub/toSourceLinks";
+import { mensureMapInteger, mensureMapIntegerOptional, mensureMapNaturalFixedListOptional, mensureMapNaturalList, mensureMapNaturalListOptional, mensureMapPairList, mensureMapPairListOptional } from "../validateMapValueUtils";
+import { Expect, lookupKeyMapValidNatural, lookupKeyMapValidNonEmptyString, lookupKeyValid, mapMNamed } from "../validateValueUtils";
+import { toSourceLinks } from "./Sub/toSourceLinks";
 
 const stringToAttributeAdjustments =
   mensureMapPairList ("&")
@@ -20,7 +20,7 @@ const stringToAttributeAdjustments =
                      (toNatural)
                      (toInt)
 
-const stringToDiceList =
+export const stringToDiceList =
   mensureMapPairListOptional ("&")
                              ("D")
                              (Expect.NaturalNumber)
@@ -43,25 +43,25 @@ export const toRace =
       // Shortcuts
 
       const checkL10nNonEmptyString =
-        lookupKeyValid (lookup_l10n) (mensureMapNonEmptyString)
+        lookupKeyMapValidNonEmptyString (lookup_l10n)
 
       const checkUnivNaturalNumber =
-        lookupKeyValid (lookup_univ) (mensureMapNatural)
+        lookupKeyMapValidNatural (lookup_univ)
 
       const checkUnivNaturalNumberList =
-        lookupKeyValid (lookup_univ) (mensureMapNaturalList ("&"))
+        lookupKeyValid (mensureMapNaturalList ("&")) (lookup_univ)
 
       const checkOptionalUnivNaturalNumberList =
-        lookupKeyValid (lookup_univ) (mensureMapNaturalListOptional ("&"))
+        lookupKeyValid (mensureMapNaturalListOptional ("&")) (lookup_univ)
 
       const checkOptionalUnivNaturalNumberList20 =
-        lookupKeyValid (lookup_univ) (mensureMapNaturalFixedListOptional (20) ("&"))
+        lookupKeyValid (mensureMapNaturalFixedListOptional (20) ("&")) (lookup_univ)
 
       const checkUnivInteger =
-        lookupKeyValid (lookup_univ) (mensureMapInteger)
+        lookupKeyValid (mensureMapInteger) (lookup_univ)
 
       const checkOptionalUnivInteger =
-        lookupKeyValid (lookup_univ) (mensureMapIntegerOptional)
+        lookupKeyValid (mensureMapIntegerOptional) (lookup_univ)
 
       // Check fields
 
@@ -84,8 +84,8 @@ export const toRace =
         checkUnivNaturalNumber ("mov")
 
       const eattributeAdjustments =
-        lookupKeyValid (lookup_univ)
-                       (stringToAttributeAdjustments)
+        lookupKeyValid (stringToAttributeAdjustments)
+                       (lookup_univ)
                        ("attributeAdjustments")
 
       const eattributeAdjustmentsText =
@@ -152,26 +152,26 @@ export const toRace =
         checkOptionalUnivInteger ("sizeBase")
 
       const esizeRandom =
-        lookupKeyValid (lookup_univ)
-                       (stringToDiceList)
+        lookupKeyValid (stringToDiceList)
+                       (lookup_univ)
                        ("sizeRandom")
 
       const eweightBase =
         checkUnivInteger ("weightBase")
 
       const eweightRandom =
-        lookupKeyValid (lookup_univ)
-                       (stringToNegativeDiceList)
+        lookupKeyValid (stringToNegativeDiceList)
+                       (lookup_univ)
                        ("weightRandom")
 
       const evariants =
         checkOptionalUnivNaturalNumberList ("variants")
 
-      const esrc = lookupValidSourceLinks (lookup_l10n)
+      const esrc = toSourceLinks (lookup_l10n)
 
       // Return error or result
 
-      return allRights
+      return mapMNamed
         ({
           ename,
           ecost,
@@ -294,7 +294,7 @@ export const toRace =
           variants:
             maybePrefix (IdPrefixes.RACE_VARIANTS) (rs.evariants),
 
-          src: toSourceLinks (rs.esrc),
+          src: rs.esrc,
 
           category: Nothing,
         }))

@@ -7,7 +7,7 @@ import { SourceLink } from "./sub/SourceLink";
 export interface ItemTemplate {
   id: string
   name: string
-  addPenalties: Maybe<boolean>
+  addPenalties: boolean
   ammunition: Maybe<string>
   amount: number
   armorType: Maybe<number>
@@ -22,9 +22,9 @@ export interface ItemTemplate {
   gr: number
   improvisedWeaponGroup: Maybe<number>
   iniMod: Maybe<number>
-  isParryingWeapon: Maybe<boolean>
+  isParryingWeapon: boolean
   isTemplateLocked: boolean
-  isTwoHandedWeapon: Maybe<boolean>
+  isTwoHandedWeapon: boolean
   length: Maybe<number>
   loss: Maybe<number>
   movMod: Maybe<number>
@@ -49,7 +49,7 @@ export const ItemTemplate =
   fromDefault<ItemTemplate> ({
     id: "",
     name: "",
-    addPenalties: Nothing,
+    addPenalties: false,
     ammunition: Nothing,
     amount: 1,
     armorType: Nothing,
@@ -64,9 +64,9 @@ export const ItemTemplate =
     gr: 0,
     improvisedWeaponGroup: Nothing,
     iniMod: Nothing,
-    isParryingWeapon: Nothing,
+    isParryingWeapon: false,
     isTemplateLocked: true,
-    isTwoHandedWeapon: Nothing,
+    isTwoHandedWeapon: false,
     length: Nothing,
     loss: Nothing,
     movMod: Nothing,

@@ -20,7 +20,7 @@ import { prefixId } from "../../IDUtils";
 import { toInt, toNatural } from "../../NumberUtils";
 import { mergeRowsById } from "../mergeTableRows";
 import { mensureMapInteger, mensureMapListOptional, mensureMapNonEmptyString, mensureMapPairListOptional } from "../validateMapValueUtils";
-import { allRights, Expect, lookupKeyValid } from "../validateValueUtils";
+import { Expect, lookupKeyValid, mapMNamed } from "../validateValueUtils";
 import { isRawCantripsSelection } from "./ProfessionSelections/CantripsSelection";
 import { isRawCombatTechniquesSelection } from "./ProfessionSelections/CombatTechniquesSelection";
 import { isRawCursesSelection } from "./ProfessionSelections/CursesSelection";
@@ -125,10 +125,10 @@ export const toProfessionVariant =
       // Shortcuts
 
       const checkL10nNonEmptyString =
-        lookupKeyValid (lookup_l10n) (mensureMapNonEmptyString)
+        lookupKeyValid (mensureMapNonEmptyString) (lookup_l10n)
 
       const checkUnivInteger =
-        lookupKeyValid (lookup_univ) (mensureMapInteger)
+        lookupKeyValid (mensureMapInteger) (lookup_univ)
 
       // Check fields
 
@@ -141,48 +141,48 @@ export const toProfessionVariant =
         checkUnivInteger ("cost")
 
       const edependencies =
-        lookupKeyValid (lookup_univ)
-                       (stringToDependencies)
+        lookupKeyValid (stringToDependencies)
+                       (lookup_univ)
                        ("dependencies")
 
       const eprerequisites =
-        lookupKeyValid (lookup_univ)
-                       (stringToPrerequisites)
+        lookupKeyValid (stringToPrerequisites)
+                       (lookup_univ)
                        ("prerequisites")
 
       const eselections =
-        lookupKeyValid (lookup_univ)
-                       (stringToVariantSelections)
+        lookupKeyValid (stringToVariantSelections)
+                       (lookup_univ)
                        ("selections")
 
       const especialAbilities =
-        lookupKeyValid (lookup_univ)
-                       (stringToSpecialAbilities)
+        lookupKeyValid (stringToSpecialAbilities)
+                       (lookup_univ)
                        ("specialAbilities")
 
       const ecombatTechniques =
-        lookupKeyValid (lookup_univ)
-                       (toNaturalNumberIntPairOptional)
+        lookupKeyValid (toNaturalNumberIntPairOptional)
+                       (lookup_univ)
                        ("combatTechniques")
 
       const eskills =
-        lookupKeyValid (lookup_univ)
-                       (toNaturalNumberIntPairOptional)
+        lookupKeyValid (toNaturalNumberIntPairOptional)
+                       (lookup_univ)
                        ("skills")
 
       const espells =
-        lookupKeyValid (lookup_univ)
-                       (toNaturalNumberIntPairOptional)
+        lookupKeyValid (toNaturalNumberIntPairOptional)
+                       (lookup_univ)
                        ("spells")
 
       const eliturgicalChants =
-        lookupKeyValid (lookup_univ)
-                       (toNaturalNumberIntPairOptional)
+        lookupKeyValid (toNaturalNumberIntPairOptional)
+                       (lookup_univ)
                        ("liturgicalChants")
 
       const eblessings =
-        lookupKeyValid (lookup_univ)
-                       (stringToBlessings)
+        lookupKeyValid (stringToBlessings)
+                       (lookup_univ)
                        ("blessings")
 
       const precedingText =
@@ -196,7 +196,7 @@ export const toProfessionVariant =
 
       // Return error or result
 
-      return allRights
+      return mapMNamed
         ({
           ename,
           ecost,

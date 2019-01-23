@@ -1,45 +1,52 @@
-import { pipe } from "ramda";
-import { Cons, fnull, map, splitOn } from "../../../../../Data/List";
-import { any, fromJust, Just, Maybe } from "../../../../../Data/Maybe";
-import { fromBinary } from "../../../../../Data/Pair";
+import { Either } from "../../../../../Data/Either";
+import { flip } from "../../../../../Data/Function";
+import { Cons, length, List, splitOn } from "../../../../../Data/List";
+import { bindF, ensure, liftM2, listToMaybe, Maybe, maybe, Nothing } from "../../../../../Data/Maybe";
+import { fromBoth, Pair } from "../../../../../Data/Pair";
+import { Record } from "../../../../../Data/Record";
 import { SourceLink } from "../../../../Models/Wiki/sub/SourceLink";
-import { unsafeToInt } from "../../../NumberUtils";
-import { naturalNumber } from "../../../RegexUtils";
-import { listRx } from "../../csvRegexUtils";
-import { lookupKeyValid, validateRawProp } from "../../validateValueUtils";
+import { toNatural } from "../../../NumberUtils";
+import { mensureMapListOptional } from "../../validateMapValueUtils";
+import { Expect, lookupKeyValid } from "../../validateValueUtils";
 
-const srcDel = ","
+const bookIdRx = /[A-Za-z0-9]+/
 
-const src = `(?:[A-Za-z0-9]+)${srcDel}${naturalNumber.source}(?:${srcDel}${naturalNumber.source})?`
-
-const srcListDel = "&"
-
-const srcList = new RegExp (listRx (srcListDel) (src))
-
-const checkSourceLinks =
-  (x: string) => srcList .test (x)
-
-export const lookupValidSourceLinks =
-  (lookup_l10n: (key: string) => Maybe<string>) =>
-    lookupKeyValid (lookup_l10n)
-                   (validateRawProp ("List Natural")
-                                    (any (checkSourceLinks)))
-                   ("variants")
+const isBookIdString = (x: string) => bookIdRx .test (x)
 
 export const toSourceLinks =
-  pipe (
-    fromJust as (m: Just<string>) => string,
-    splitOn (srcListDel),
-    map (x => {
-      const xs = splitOn (srcDel) (x) as Cons<string>
-      const id = xs .x
-      const pages = xs .xs as Cons<string>
+  flip (
+         lookupKeyValid (
+           mensureMapListOptional ("&")
+                                  (
+                                    `BookId, `
+                                    + `${Expect.NaturalNumber}, `
+                                    + `${Expect.NaturalNumber}?`
+                                  )
+                                  (x => {
+                                    const xs = splitOn (",") (x) as Cons<string>
 
-      return SourceLink ({
-        id,
-        page: fnull (pages .xs)
-          ? unsafeToInt (pages .x)
-          : fromBinary (unsafeToInt (pages .x), unsafeToInt (pages .xs .x)),
-      })
-    })
-  )
+                                    if (![2, 3] .includes (length (xs))) {
+                                      return Nothing
+                                    }
+
+                                    const mid = ensure (isBookIdString) (xs .x)
+                                    const pages = xs .xs as Cons<string>
+                                    const mfirstPage = toNatural (pages .x)
+                                    const mlastPage = bindF (toNatural)
+                                                            (listToMaybe (pages .xs))
+
+                                    return liftM2
+                                      ((id: string) => (firstPage: number) =>
+                                        SourceLink ({
+                                          id,
+                                          page: maybe<number | Pair<number, number>> (firstPage)
+                                                      <number> (fromBoth (firstPage))
+                                                      (mlastPage),
+                                        }))
+                                      (mid)
+                                      (mfirstPage)
+                                  })
+         )
+       )
+       ("variants") as
+         (lookup_l10n: (key: string) => Maybe<string>) => Either<string, List<Record<SourceLink>>>

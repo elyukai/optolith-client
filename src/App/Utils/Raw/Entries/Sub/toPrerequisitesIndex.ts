@@ -12,19 +12,19 @@ export const toPrerequisitesIndex =
   (lookup_l10n: (key: string) => Maybe<string>) =>
   (lookup_univ: (key: string) => Maybe<string>) =>{
     const checkOptionalUnivNaturalNumberList =
-      lookupKeyValid (lookup_univ) (mensureMapNaturalListOptional ("&"))
+      lookupKeyValid (mensureMapNaturalListOptional ("&")) (lookup_univ)
 
     const eprerequisitesIndexUniv =
       checkOptionalUnivNaturalNumberList ("prerequisitesIndex")
 
     const eprerequisitesIndexL10n =
-      lookupKeyValid (lookup_l10n)
-                     (mensureMapPairListOptional ("&")
+      lookupKeyValid (mensureMapPairListOptional ("&")
                                                       ("?")
                                                       (Expect.NaturalNumber)
                                                       (Expect.NonEmptyString)
                                                       (toNatural)
                                                       (ensure (notNullStr)))
+                     (lookup_l10n)
                      ("prerequisitesIndex")
 
     return Either.liftM2<

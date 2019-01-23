@@ -7,11 +7,11 @@ import { SelectOption } from "../../../Models/Wiki/sub/SelectOption";
 import { prefixId } from "../../IDUtils";
 import { mergeRowsById } from "../mergeTableRows";
 import { mensureMapNatural, mensureMapNaturalOptional, mensureMapNonEmptyString, mensureMapStringPredListOptional } from "../validateMapValueUtils";
-import { allRights, lookupKeyValid } from "../validateValueUtils";
+import { lookupKeyValid, mapMNamed } from "../validateValueUtils";
 import { toActivatableCost } from "./Sub/toActivatableCost";
 import { toPrerequisites } from "./Sub/toPrerequisites";
 import { toPrerequisitesIndex } from "./Sub/toPrerequisitesIndex";
-import { lookupValidSourceLinks, toSourceLinks } from "./Sub/toSourceLinks";
+import { toSourceLinks } from "./Sub/toSourceLinks";
 
 const category = /[A-Z_]+/
 
@@ -25,19 +25,19 @@ export const toDisadvantage =
       // Shortcuts
 
       const checkL10nNonEmptyString =
-        lookupKeyValid (lookup_l10n) (mensureMapNonEmptyString)
+        lookupKeyValid (mensureMapNonEmptyString) (lookup_l10n)
 
       const checkOptionalCategoryList =
-        lookupKeyValid (lookup_univ)
-                       (mensureMapStringPredListOptional (checkCategory)
+        lookupKeyValid (mensureMapStringPredListOptional (checkCategory)
                                                          ("Category")
                                                          ("&"))
+                       (lookup_univ)
 
       const checkUnivNaturalNumber =
-        lookupKeyValid (lookup_univ) (mensureMapNatural)
+        lookupKeyValid (mensureMapNatural) (lookup_univ)
 
       const checkOptionalUnivNaturalNumber =
-        lookupKeyValid (lookup_univ) (mensureMapNaturalOptional)
+        lookupKeyValid (mensureMapNaturalOptional) (lookup_univ)
 
       // Check and convert fields
 
@@ -75,11 +75,11 @@ export const toDisadvantage =
 
       const egr = checkUnivNaturalNumber ("gr")
 
-      const esrc = lookupValidSourceLinks (lookup_l10n)
+      const esrc = toSourceLinks (lookup_l10n)
 
       // Return error or result
 
-      return allRights
+      return mapMNamed
         ({
           ename,
           ecost,
@@ -129,7 +129,7 @@ export const toDisadvantage =
 
           gr: rs.egr,
 
-          src: toSourceLinks (rs.esrc),
+          src: rs.esrc,
 
           category: Nothing,
         }))

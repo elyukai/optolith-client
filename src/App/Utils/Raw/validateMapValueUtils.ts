@@ -1,10 +1,11 @@
 import { pipe } from "ramda";
 import { Either, maybeToEither_ } from "../../../Data/Either";
 import { equals } from "../../../Data/Eq";
+import { inRange } from "../../../Data/Ix";
 import { Cons, length, List, notNullStr, splitOn } from "../../../Data/List";
 import { bindF, ensure, fmap, fromJust, fromMaybe, isNothing, Just, liftM2, mapM, Maybe, Nothing } from "../../../Data/Maybe";
 import { fromList, OrderedSet } from "../../../Data/OrderedSet";
-import { fromBoth, Pair } from "../../../Data/Pair";
+import { fromBinary, fromBoth, Pair } from "../../../Data/Pair";
 import { show } from "../../../Data/Show";
 import { toInt, toNatural } from "../NumberUtils";
 import { Expect } from "./validateValueUtils";
@@ -62,6 +63,14 @@ const mapFixedListBindAfter =
       mapM (f),
       bindF<List<A>, List<A>> (pred)
     )
+
+export const mensureMapListBindAfter =
+  <A> (pred: (x: List<A>) => Maybe<List<A>>) =>
+  (del: string) =>
+  (type: string) =>
+  (f: (x: string) => Maybe<A>) =>
+    mensureMap (Expect.Maybe (type))
+               (bindF (mapFixedListBindAfter (pred) (del) (f)))
 
 export const mensureMapListBindAfterOptional =
   <A> (pred: (x: List<A>) => Maybe<List<A>>) =>
@@ -178,6 +187,32 @@ export const mensureMapNatural =
 export const mensureMapNaturalOptional =
   mensureMap (Expect.Maybe (Expect.NaturalNumber))
              (bindOptional (toNatural))
+
+export const mensureMapNaturalPred =
+  (pred: (x: number) => boolean) =>
+    mensureMap (Expect.Maybe (Expect.NaturalNumber))
+               (bindF (pipe (
+                 toNatural,
+                 bindF<number, number> (ensure (pred))
+               )))
+
+export const mensureMapNaturalInRange =
+  (l: number) =>
+  (u: number) =>
+    mensureMapNaturalPred (inRange (fromBinary (l, u)))
+
+export const mensureMapNaturalPredOptional =
+  (pred: (x: number) => boolean) =>
+    mensureMap (Expect.Maybe (Expect.NaturalNumber))
+               (bindOptional (pipe (
+                 toNatural,
+                 bindF<number, number> (ensure (pred))
+               )))
+
+export const mensureMapNaturalInRangeOptional =
+  (l: number) =>
+  (u: number) =>
+    mensureMapNaturalPredOptional (inRange (fromBinary (l, u)))
 
 export const mensureMapNaturalList =
   (del: string) =>
