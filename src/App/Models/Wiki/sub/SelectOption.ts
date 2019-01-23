@@ -9,13 +9,18 @@ export interface SelectOption {
   name: string
   cost: Maybe<number>
   prerequisites: Maybe<List<AllRequirementObjects>>
-  target: Maybe<string>
-  tier: Maybe<number>
+  description: Maybe<string>
+  isSecret: Maybe<boolean>
+  languages: Maybe<List<number>>
+  continent: Maybe<number>
+  isExtinct: Maybe<boolean>
   specializations: Maybe<List<string>>
-  specializationsInput: Maybe<string>
-  applications: Maybe<List<Record<Application>>>
-  applicationsInput: Maybe<string>
+  specializationInput: Maybe<string>
   gr: Maybe<number>
+  level: Maybe<number>
+  target: Maybe<string>
+  applications: Maybe<List<Record<Application>>>
+  applicationInput: Maybe<string>
 }
 
 export const SelectOption =
@@ -24,13 +29,18 @@ export const SelectOption =
     name: "",
     cost: Nothing,
     prerequisites: Nothing,
-    target: Nothing,
-    tier: Nothing,
+    description: Nothing,
+    isSecret: Nothing,
+    languages: Nothing,
+    continent: Nothing,
+    isExtinct: Nothing,
     specializations: Nothing,
-    specializationsInput: Nothing,
-    applications: Nothing,
-    applicationsInput: Nothing,
+    specializationInput: Nothing,
     gr: Nothing,
+    level: Nothing,
+    target: Nothing,
+    applications: Nothing,
+    applicationInput: Nothing,
   })
 
 export const SelectOptionL = makeLenses (SelectOption)
