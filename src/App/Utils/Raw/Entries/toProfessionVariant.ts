@@ -21,16 +21,16 @@ import { toInt, toNatural } from "../../NumberUtils";
 import { mergeRowsById } from "../mergeTableRows";
 import { mensureMapInteger, mensureMapListOptional, mensureMapNonEmptyString, mensureMapPairListOptional } from "../validateMapValueUtils";
 import { Expect, lookupKeyValid, mapMNamed } from "../validateValueUtils";
-import { isRawCantripsSelection } from "./ProfessionSelections/CantripsSelection";
-import { isRawCombatTechniquesSelection } from "./ProfessionSelections/CombatTechniquesSelection";
-import { isRawCursesSelection } from "./ProfessionSelections/CursesSelection";
-import { isRawLanguagesScriptsSelection } from "./ProfessionSelections/LanguagesScriptsSelection";
-import { isRemoveRawCombatTechniquesSelection } from "./ProfessionSelections/RemoveCombatTechniquesSelection";
-import { isRemoveRawSpecializationSelection } from "./ProfessionSelections/RemoveSpecializationSelection";
-import { isRawSecondCombatTechniquesSelection } from "./ProfessionSelections/SecondCombatTechniquesSelection";
-import { isRawSkillsSelection } from "./ProfessionSelections/SkillsSelection";
-import { isRawSpecializationSelection } from "./ProfessionSelections/SpecializationSelection";
-import { isRawTerrainKnowledgeSelection } from "./ProfessionSelections/TerrainKnowledgeSelection";
+import { isRawCantripsSelection } from "./ProfessionSelections/RawCantripsSelection";
+import { isRawCombatTechniquesSelection } from "./ProfessionSelections/RawCombatTechniquesSelection";
+import { isRawCursesSelection } from "./ProfessionSelections/RawCursesSelection";
+import { isRawLanguagesScriptsSelection } from "./ProfessionSelections/RawLanguagesScriptsSelection";
+import { isRawSecondCombatTechniquesSelection } from "./ProfessionSelections/RawSecondCombatTechniquesSelection";
+import { isRawSkillsSelection } from "./ProfessionSelections/RawSkillsSelection";
+import { isRawSpecializationSelection } from "./ProfessionSelections/RawSpecializationSelection";
+import { isRawTerrainKnowledgeSelection } from "./ProfessionSelections/RawTerrainKnowledgeSelection";
+import { isRemoveRawCombatTechniquesSelection } from "./ProfessionSelections/RemoveRawCombatTechniquesSelection";
+import { isRemoveRawSpecializationSelection } from "./ProfessionSelections/RemoveRawSpecializationSelection";
 import { stringToBlessings, stringToDependencies, stringToPrerequisites, stringToSpecialAbilities } from "./toProfession";
 
 const stringToVariantSelections =

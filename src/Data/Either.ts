@@ -274,8 +274,9 @@ export const isRight =
  * `fmap :: (a -> b) -> Either a a -> Either a b`
  */
 export const fmap =
-  <A, A0, B>
+  <A0, B>
   (f: (x: A0) => B) =>
+  <A>
   (x: Either<A, A0>): Either<A, B> =>
     isRight (x) ? Right (f (x .value)) : x
 
@@ -287,9 +288,9 @@ export const fmap =
  * efficient version.
  */
 export const mapReplace =
-  <A, A0>
+  <A0>
   (x: A0) =>
-    fmap<A, Some, A0> (cnst (x))
+    fmap<Some, A0> (cnst (x))
 
 
 // BIFUNCTOR
@@ -346,7 +347,7 @@ export const pure = Right
 export const ap =
   <E, A, B>
   (f: Either<E, (x: A) => B>) => (x: Either<E, A>): Either<E, B> =>
-    isRight (f) ? fmap<E, A, B> (f .value) (x) : f
+    isRight (f) ? fmap (f .value) (x) : f
 
 
 // MONAD

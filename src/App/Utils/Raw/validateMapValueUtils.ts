@@ -125,6 +125,12 @@ export const mensureMapStringPred =
     mensureMap (Expect.Maybe (type))
                (bindF<string, string> (ensure (pred)))
 
+export const mensureMapNonEmptyStringList =
+  (del: string) =>
+    mensureMapList (del)
+                   (Expect.NonEmptyString)
+                   (ensure (notNullStr))
+
 interface mensureMapStringPredOptional {
   <A extends string>
   (pred: (x: string) => x is A):

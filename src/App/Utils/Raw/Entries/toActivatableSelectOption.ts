@@ -5,7 +5,7 @@ import { fromBinary } from "../../../../Data/Pair";
 import { SelectOption } from "../../../Models/Wiki/sub/SelectOption";
 import { prefixId } from "../../IDUtils";
 import { mergeRowsByIdAndMainId } from "../mergeTableRows";
-import { mensureMapBoolean, mensureMapNatural, mensureMapNaturalInRangeOptional, mensureMapNaturalListOptional, mensureMapNaturalOptional, mensureMapNonEmptyString, mensureMapStringPredListOptional } from "../validateMapValueUtils";
+import { mensureMapBoolean, mensureMapNaturalInRangeOptional, mensureMapNaturalListOptional, mensureMapNaturalOptional, mensureMapNonEmptyString, mensureMapStringPredListOptional } from "../validateMapValueUtils";
 import { Expect, lookupKeyValid, mapMNamed } from "../validateValueUtils";
 import { toSpellPrerequisites } from "./Sub/toPrerequisites";
 import { toSourceLinks } from "./Sub/toSourceLinks";
@@ -25,9 +25,6 @@ export const toActivatableSelectOption =
                                                            (Expect.NonEmptyString)
                                                            ("&"))
                          (lookup_l10n)
-
-        const checkUnivNaturalNumber =
-          lookupKeyValid (mensureMapNatural) (lookup_univ)
 
         const checkUnivNaturalNumberListOptional =
           lookupKeyValid (mensureMapNaturalListOptional ("&")) (lookup_univ)
@@ -101,6 +98,7 @@ export const toActivatableSelectOption =
               specializationInput,
               gr: rs.egr,
               level: rs.elevel,
+              src: rs.esrc,
             })
           ))
       })

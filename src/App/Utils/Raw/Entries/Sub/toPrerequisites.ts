@@ -17,13 +17,13 @@ import { ifElse } from "../../../ifElse";
 import { gte } from "../../../mathUtils";
 import { toInt } from "../../../NumberUtils";
 import { lookupKeyValid, mstrToMaybe } from "../../validateValueUtils";
-import { isRawRequiringActivatable } from "../Prerequisites/ActivatableRequirement";
-import { isRawCultureRequirement } from "../Prerequisites/CultureRequirement";
-import { isRawRequiringIncreasable } from "../Prerequisites/IncreasableRequirement";
-import { isRawPactRequirement } from "../Prerequisites/PactRequirement";
-import { isRawRequiringPrimaryAttribute } from "../Prerequisites/PrimaryAttributeRequirement";
-import { isRawRaceRequirement } from "../Prerequisites/RaceRequirement";
-import { isRawSexRequirement } from "../Prerequisites/SexRequirement";
+import { isRawRequiringActivatable } from "../Prerequisites/RawActivatableRequirement";
+import { isRawCultureRequirement } from "../Prerequisites/RawCultureRequirement";
+import { isRawRequiringIncreasable } from "../Prerequisites/RawIncreasableRequirement";
+import { isRawPactRequirement } from "../Prerequisites/RawPactRequirement";
+import { isRawRequiringPrimaryAttribute } from "../Prerequisites/RawPrimaryAttributeRequirement";
+import { isRawRaceRequirement } from "../Prerequisites/RawRaceRequirement";
+import { isRawSexRequirement } from "../Prerequisites/RawSexRequirement";
 
 const toLevelAwarePrerequisites =
   pipe (

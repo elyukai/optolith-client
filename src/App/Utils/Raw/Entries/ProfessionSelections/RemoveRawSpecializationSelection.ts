@@ -1,6 +1,6 @@
 import { ProfessionSelectionIds } from "../../../../Models/Wiki/wikiTypeHelpers";
 import { AnyRawProfessionVariantSelection } from "../rawTypeHelpers";
-import { RawSpecializationSelection } from "./SpecializationSelection";
+import { RawSpecializationSelection } from "./RawSpecializationSelection";
 
 export interface RemoveRawSpecializationSelection {
   id: ProfessionSelectionIds

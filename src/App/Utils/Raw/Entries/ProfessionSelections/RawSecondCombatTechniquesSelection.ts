@@ -1,6 +1,6 @@
 import { ProfessionSelectionIds } from "../../../../Models/Wiki/wikiTypeHelpers";
 import { AnyRawProfessionSelection } from "../rawTypeHelpers";
-import { isCombatTechniqueId } from "./CombatTechniquesSelection";
+import { isCombatTechniqueId } from "./RawCombatTechniquesSelection";
 
 export interface RawCombatTechniquesSecondSelection {
   id: ProfessionSelectionIds

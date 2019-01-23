@@ -1,21 +1,21 @@
-import { RawProfessionRequireActivatable, RawRequireActivatable } from './Prerequisites/ActivatableRequirement';
-import { RawCultureRequirement } from './Prerequisites/CultureRequirement';
-import { RawProfessionRequireIncreasable, RawRequireIncreasable } from './Prerequisites/IncreasableRequirement';
-import { RawPactRequirement } from './Prerequisites/PactRequirement';
-import { RawRequirePrimaryAttribute } from './Prerequisites/PrimaryAttributeRequirement';
-import { RawRaceRequirement } from './Prerequisites/RaceRequirement';
-import { RawSexRequirement } from './Prerequisites/SexRequirement';
-import { RawCantripsSelection } from "./ProfessionSelections/CantripsSelection";
-import { RawCombatTechniquesSelection } from "./ProfessionSelections/CombatTechniquesSelection";
-import { RawCursesSelection } from "./ProfessionSelections/CursesSelection";
-import { RawLanguagesScriptsSelection } from "./ProfessionSelections/LanguagesScriptsSelection";
-import { RawVariantCombatTechniquesSelection } from "./ProfessionSelections/RemoveCombatTechniquesSelection";
-import { RawVariantCombatTechniquesSecondSelection } from "./ProfessionSelections/RemoveSecondCombatTechniquesSelection";
-import { RawVariantSpecializationSelection } from "./ProfessionSelections/RemoveSpecializationSelection";
-import { RawCombatTechniquesSecondSelection } from "./ProfessionSelections/SecondCombatTechniquesSelection";
-import { RawSkillsSelection } from "./ProfessionSelections/SkillsSelection";
-import { RawSpecializationSelection } from "./ProfessionSelections/SpecializationSelection";
-import { RawTerrainKnowledgeSelection } from "./ProfessionSelections/TerrainKnowledgeSelection";
+import { RawProfessionRequireActivatable, RawRequireActivatable } from "./Prerequisites/RawActivatableRequirement";
+import { RawCultureRequirement } from "./Prerequisites/RawCultureRequirement";
+import { RawProfessionRequireIncreasable, RawRequireIncreasable } from "./Prerequisites/RawIncreasableRequirement";
+import { RawPactRequirement } from "./Prerequisites/RawPactRequirement";
+import { RawRequirePrimaryAttribute } from "./Prerequisites/RawPrimaryAttributeRequirement";
+import { RawRaceRequirement } from "./Prerequisites/RawRaceRequirement";
+import { RawSexRequirement } from "./Prerequisites/RawSexRequirement";
+import { RawCantripsSelection } from "./ProfessionSelections/RawCantripsSelection";
+import { RawCombatTechniquesSelection } from "./ProfessionSelections/RawCombatTechniquesSelection";
+import { RawCursesSelection } from "./ProfessionSelections/RawCursesSelection";
+import { RawLanguagesScriptsSelection } from "./ProfessionSelections/RawLanguagesScriptsSelection";
+import { RawCombatTechniquesSecondSelection } from "./ProfessionSelections/RawSecondCombatTechniquesSelection";
+import { RawSkillsSelection } from "./ProfessionSelections/RawSkillsSelection";
+import { RawSpecializationSelection } from "./ProfessionSelections/RawSpecializationSelection";
+import { RawTerrainKnowledgeSelection } from "./ProfessionSelections/RawTerrainKnowledgeSelection";
+import { RawVariantCombatTechniquesSelection } from "./ProfessionSelections/RemoveRawCombatTechniquesSelection";
+import { RawVariantCombatTechniquesSecondSelection } from "./ProfessionSelections/RemoveRawSecondCombatTechniquesSelection";
+import { RawVariantSpecializationSelection } from "./ProfessionSelections/RemoveRawSpecializationSelection";
 
 export type AnyRawProfessionSelection = RawSpecializationSelection
                                       | RawLanguagesScriptsSelection
@@ -50,4 +50,4 @@ export type AllRawRequirementObjects = RawProfessionDependency
                                      | RawRequirePrimaryAttribute
                                      | RawPactRequirement
 
-export type AllRawRequirements = 'RCP' | AllRawRequirementObjects
+export type AllRawRequirements = "RCP" | AllRawRequirementObjects

@@ -12,7 +12,7 @@ import { toInt } from "../../NumberUtils";
 import { mergeRowsById } from "../mergeTableRows";
 import { mensureMapNatural, mensureMapNaturalFixedList, mensureMapNonEmptyString, mensureMapPairList, mensureMapPairListOptional, mensureMapStringPred } from "../validateMapValueUtils";
 import { Expect, lookupKeyValid, mapMNamed } from "../validateValueUtils";
-import { isRawRequiringActivatable } from "./Prerequisites/ActivatableRequirement";
+import { isRawRequiringActivatable } from "./Prerequisites/RawActivatableRequirement";
 import { toSourceLinks } from "./Sub/toSourceLinks";
 
 const encumbrance = /true|false|maybe/
@@ -117,10 +117,8 @@ export const toSkill =
 
       const applicationsInput = lookup_l10n ("input")
 
-      const echeck =
-        Either.fmap<string, List<string | number>, List<string>>
-          (map (prefixId (IdPrefixes.ATTRIBUTES)))
-          (checkSkillCheck ("check"))
+      const echeck = Either.fmap (map (prefixId (IdPrefixes.ATTRIBUTES)))
+                                 (checkSkillCheck ("check"))
 
       const eic = checkUnivNaturalNumber ("ic")
 

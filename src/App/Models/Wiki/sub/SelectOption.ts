@@ -3,6 +3,7 @@ import { Maybe, Nothing } from "../../../../Data/Maybe";
 import { fromDefault, makeLenses, Record } from "../../../../Data/Record";
 import { AllRequirementObjects } from "../wikiTypeHelpers";
 import { Application } from "./Application";
+import { SourceLink } from "./SourceLink";
 
 export interface SelectOption {
   id: string | number
@@ -21,6 +22,7 @@ export interface SelectOption {
   target: Maybe<string>
   applications: Maybe<List<Record<Application>>>
   applicationInput: Maybe<string>
+  src: List<Record<SourceLink>>
 }
 
 export const SelectOption =
@@ -41,6 +43,7 @@ export const SelectOption =
     target: Nothing,
     applications: Nothing,
     applicationInput: Nothing,
+    src: List.empty,
   })
 
 export const SelectOptionL = makeLenses (SelectOption)
