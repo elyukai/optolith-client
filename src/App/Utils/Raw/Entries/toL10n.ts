@@ -1,5 +1,8 @@
+import { fromRight_, isLeft, Left, mapM, Right } from "../../../../Data/Either";
+import { length, List, unsafeIndex } from "../../../../Data/List";
+import { fromList, lookupF } from "../../../../Data/OrderedMap";
+import { fromBinary, Pair } from "../../../../Data/Pair";
 import { L10n } from "../../../Models/Wiki/L10n";
-import { mergeRowsById } from "../mergeTableRows";
 import { mensureMapNonEmptyString, mensureMapNonEmptyStringList, mensureMapStringPred } from "../validateMapValueUtils";
 import { lookupKeyValid, mapMNamed } from "../validateValueUtils";
 
@@ -9,10 +12,24 @@ const isLocale =
   (x: string) => localeRx .test (x)
 
 export const toL10n =
-  mergeRowsById
-    ("toL10n")
-    (id => lookup_l10n => lookup_univ => {
+  ((l10n_table: List<List<string>>) => {
       // Shortcuts
+
+      const l10n_rows =
+        mapM<string, List<string>, Pair<string, string>>
+          ((row: List<string>) =>
+            length (row) >= 2
+              ? Right (fromBinary (unsafeIndex (row) (0), unsafeIndex (row) (1)))
+              : Left ("Cell missing."))
+          (l10n_table)
+
+      if (isLeft (l10n_rows)) {
+        return l10n_rows
+      }
+
+      const l10n_map = fromList (fromRight_ (l10n_rows))
+
+      const lookup_l10n = lookupF (l10n_map)
 
       const checkL10nNonEmptyString =
         lookupKeyValid (mensureMapNonEmptyString) (lookup_l10n)
@@ -508,7 +525,9 @@ export const toL10n =
           "charactersheet.combat.combattechniques.headers.name":
             checkL10nNonEmptyString ("charactersheet.combat.combattechniques.headers.name"),
           "charactersheet.combat.combattechniques.headers.primaryattribute":
-            checkL10nNonEmptyString ("charactersheet.combat.combattechniques.headers.primaryattribute"),
+            checkL10nNonEmptyString (
+              "charactersheet.combat.combattechniques.headers.primaryattribute"
+            ),
           "charactersheet.combat.combattechniques.headers.ic":
             checkL10nNonEmptyString ("charactersheet.combat.combattechniques.headers.ic"),
           "charactersheet.combat.combattechniques.headers.ctr":
@@ -614,9 +633,13 @@ export const toL10n =
           "charactersheet.combat.conditionsstates.conditions.animosity":
             checkL10nNonEmptyString ("charactersheet.combat.conditionsstates.conditions.animosity"),
           "charactersheet.combat.conditionsstates.conditions.encumbrance":
-            checkL10nNonEmptyString ("charactersheet.combat.conditionsstates.conditions.encumbrance"),
+            checkL10nNonEmptyString (
+              "charactersheet.combat.conditionsstates.conditions.encumbrance"
+            ),
           "charactersheet.combat.conditionsstates.conditions.intoxicated":
-            checkL10nNonEmptyString ("charactersheet.combat.conditionsstates.conditions.intoxicated"),
+            checkL10nNonEmptyString (
+              "charactersheet.combat.conditionsstates.conditions.intoxicated"
+            ),
           "charactersheet.combat.conditionsstates.conditions.stupor":
             checkL10nNonEmptyString ("charactersheet.combat.conditionsstates.conditions.stupor"),
           "charactersheet.combat.conditionsstates.conditions.rapture":
@@ -740,9 +763,13 @@ export const toL10n =
           "charactersheet.spells.spellslist.headers.page":
             checkL10nNonEmptyString ("charactersheet.spells.spellslist.headers.page"),
           "charactersheet.spells.traditionsproperties.labels.primaryattribute":
-            checkL10nNonEmptyString ("charactersheet.spells.traditionsproperties.labels.primaryattribute"),
+            checkL10nNonEmptyString (
+              "charactersheet.spells.traditionsproperties.labels.primaryattribute"
+            ),
           "charactersheet.spells.traditionsproperties.labels.properties":
-            checkL10nNonEmptyString ("charactersheet.spells.traditionsproperties.labels.properties"),
+            checkL10nNonEmptyString (
+              "charactersheet.spells.traditionsproperties.labels.properties"
+            ),
           "charactersheet.spells.traditionsproperties.labels.tradition":
             checkL10nNonEmptyString ("charactersheet.spells.traditionsproperties.labels.tradition"),
           "charactersheet.spells.magicalspecialabilities.title":
@@ -780,7 +807,9 @@ export const toL10n =
           "charactersheet.chants.chantslist.headers.page":
             checkL10nNonEmptyString ("charactersheet.chants.chantslist.headers.page"),
           "charactersheet.chants.traditionsaspects.labels.primaryattribute":
-            checkL10nNonEmptyString ("charactersheet.chants.traditionsaspects.labels.primaryattribute"),
+            checkL10nNonEmptyString (
+              "charactersheet.chants.traditionsaspects.labels.primaryattribute"
+            ),
           "charactersheet.chants.traditionsaspects.labels.aspects":
             checkL10nNonEmptyString ("charactersheet.chants.traditionsaspects.labels.aspects"),
           "charactersheet.chants.traditionsaspects.labels.tradition":
