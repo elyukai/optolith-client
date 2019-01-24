@@ -133,7 +133,7 @@ export const parseTables =
 
       return mapMNamed
         ({
-          l10n: bindF (toL10n) (lookup_l10n ("UI")),
+          l10n: bindF (toL10n (locale)) (lookup_l10n ("UI")),
 
           books:
             fmap<List<Record<Book>>, OrderedMap<string, Record<Book>>>
