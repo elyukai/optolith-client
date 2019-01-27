@@ -18,30 +18,40 @@ export enum Categories {
   TALENTS = "TALENTS",
 }
 
-export type ActivatableCategory =
-  Categories.ADVANTAGES |
-  Categories.DISADVANTAGES |
-  Categories.SPECIAL_ABILITIES
+export type ActivatableCategory = Categories.ADVANTAGES
+                                | Categories.DISADVANTAGES
+                                | Categories.SPECIAL_ABILITIES
+
+export type CategoryWithGroups = Categories.COMBAT_TECHNIQUES
+                               | Categories.LITURGIES
+                               | Categories.SPECIAL_ABILITIES
+                               | Categories.SPELLS
+                               | Categories.TALENTS
+
+export type IncreasableCategory = Categories.ATTRIBUTES
+                                | Categories.COMBAT_TECHNIQUES
+                                | Categories.LITURGIES
+                                | Categories.SPELLS
+                                | Categories.TALENTS
+
+export type SkillishCategory = Categories.COMBAT_TECHNIQUES
+                             | Categories.LITURGIES
+                             | Categories.SPELLS
+                             | Categories.TALENTS
+
+export type ActivatableLikeCategory = Categories.ADVANTAGES
+                                    | Categories.DISADVANTAGES
+                                    | Categories.SPECIAL_ABILITIES
+                                    | Categories.LITURGIES
+                                    | Categories.SPELLS
+
+export type ActivatableSkillCategory = Categories.LITURGIES | Categories.SPELLS
 
 export const ActivatableCategories = fromElements<ActivatableCategory> (
   Categories.ADVANTAGES,
   Categories.DISADVANTAGES,
   Categories.SPECIAL_ABILITIES
 )
-
-export type CategoryWithGroups =
-  Categories.COMBAT_TECHNIQUES |
-  Categories.LITURGIES |
-  Categories.SPECIAL_ABILITIES |
-  Categories.SPELLS |
-  Categories.TALENTS
-
-export type IncreasableCategory =
-  Categories.ATTRIBUTES |
-  Categories.COMBAT_TECHNIQUES |
-  Categories.LITURGIES |
-  Categories.SPELLS |
-  Categories.TALENTS
 
 export const IncreasableCategories = fromElements (
   Categories.ATTRIBUTES,
@@ -51,12 +61,12 @@ export const IncreasableCategories = fromElements (
   Categories.TALENTS
 )
 
-export type ActivatableLikeCategory =
-  Categories.ADVANTAGES |
-  Categories.DISADVANTAGES |
-  Categories.SPECIAL_ABILITIES |
-  Categories.LITURGIES |
-  Categories.SPELLS
+export const SkillishCategories = fromElements (
+  Categories.COMBAT_TECHNIQUES,
+  Categories.LITURGIES,
+  Categories.SPELLS,
+  Categories.TALENTS
+)
 
 export const ActivatableLikeCategories = fromElements<ActivatableLikeCategory> (
   Categories.ADVANTAGES,
@@ -65,10 +75,6 @@ export const ActivatableLikeCategories = fromElements<ActivatableLikeCategory> (
   Categories.LITURGIES,
   Categories.SPELLS
 )
-
-export type ActivatableSkillCategory =
-  Categories.LITURGIES |
-  Categories.SPELLS
 
 export const ActivatableSkillCategories = fromElements<ActivatableSkillCategory> (
   Categories.LITURGIES,

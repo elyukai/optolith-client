@@ -7,6 +7,8 @@
  */
 export const ident = <A> (x: A): A => x
 
+export type ident<A> = (x: A) => A
+
 /**
  * `const :: a -> b -> a`
  *

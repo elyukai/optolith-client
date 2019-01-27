@@ -99,6 +99,17 @@ test ('alt', () => {
     .toEqual (Nothing)
 })
 
+test ('alt_', () => {
+  expect (Maybe.alt_ (Just (3)) (() => Just (2)))
+    .toEqual (Just (3))
+  expect (Maybe.alt_ (Just (3)) (() => Nothing))
+    .toEqual (Just (3))
+  expect (Maybe.alt_ (Nothing) (() => Just (2)))
+    .toEqual (Just (2))
+  expect (Maybe.alt_ (Nothing) (() => Nothing))
+    .toEqual (Nothing)
+})
+
 test ('altF', () => {
   expect (Maybe.altF (Just (2)) (Just (3)))
     .toEqual (Just (3))
@@ -107,6 +118,17 @@ test ('altF', () => {
   expect (Maybe.altF (Just (2)) (Nothing))
     .toEqual (Just (2))
   expect (Maybe.altF (Nothing) (Nothing))
+    .toEqual (Nothing)
+})
+
+test ('altF_', () => {
+  expect (Maybe.altF_ (() => Just (2)) (Just (3)))
+    .toEqual (Just (3))
+  expect (Maybe.altF_ (() => Nothing) (Just (3)))
+    .toEqual (Just (3))
+  expect (Maybe.altF_ (() => Just (2)) (Nothing))
+    .toEqual (Just (2))
+  expect (Maybe.altF_ (() => Nothing) (Nothing))
     .toEqual (Nothing)
 })
 

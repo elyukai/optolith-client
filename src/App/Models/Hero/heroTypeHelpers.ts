@@ -14,7 +14,7 @@ import { ActiveObjectWithId } from "../ActiveEntries/ActiveObjectWithId";
 import { AttributeDependent } from "../ActiveEntries/AttributeDependent";
 import { DependencyObject } from "../ActiveEntries/DependencyObject";
 import { SkillDependent } from "../ActiveEntries/SkillDependent";
-import { SelectOption } from "../Wiki/sub/SelectOption";
+import { ActivatableCombinedName } from "../View/ActivatableCombinedName";
 import * as Wiki from "../Wiki/wikiTypeHelpers";
 import { EditPrimaryAttributeDamageThreshold } from "./EditPrimaryAttributeDamageThreshold";
 import { HitZoneArmorBase } from "./HitZoneArmor";
@@ -73,12 +73,6 @@ export interface ActiveObjectName extends ActiveObject {
   name: string
 }
 
-export interface ActivatableCombinedName {
-  name: string
-  baseName: string
-  addName: Maybe<string>
-}
-
 export interface ActivatableNameCost
   extends Omit<ActiveObjectWithId, "cost">, ActivatableCombinedName {
   finalCost: number | List<number>
@@ -108,20 +102,6 @@ export interface ActivatableActivationMeta<
   stateEntry: Record<ActivatableDependent>
   wikiEntry: Record<T>
   customCost: Maybe<boolean>
-}
-
-export interface DeactiveViewObject<
-  T extends RecordI<Wiki.Activatable> = RecordI<Wiki.Activatable>
-> {
-  id: string
-  name: string
-  cost: Maybe<string | number | List<number>>
-  minTier: Maybe<number>
-  maxTier: Maybe<number>
-  sel: Maybe<List<Record<SelectOption>>>
-  stateEntry: Maybe<Record<ActivatableDependent>>
-  wikiEntry: Record<T>
-  customCostDisabled: Maybe<boolean>
 }
 
 export type SetTierObject = ActiveObject

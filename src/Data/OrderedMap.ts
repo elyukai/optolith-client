@@ -941,28 +941,9 @@ export const filterWithKey: FilterWithKey =
   (xs: OrderedMap<K, A>): OrderedMap<K, A> =>
     fromArray ([...xs .value] .filter (([key, value]) => pred (key) (value)))
 
-interface FilterWithKeyF {
-  /**
-   * `filterWithKeyF :: Map k a -> (k -> a -> Bool) -> Map k a`
-   *
-   * Filter all keys/values that satisfy the predicate.
-   *
-   * Same as `filterWithKey` but with arguments flipped.
-   */
-  <K, A, A1 extends A>
-  (list: OrderedMap<K, A>):
-  (pred: (key: K) => (x: A) => x is A1) => OrderedMap<K, A1>
-
-  /**
-   * `filterWithKeyF :: Map k a -> (k -> a -> Bool) -> Map k a`
-   *
-   * Filter all keys/values that satisfy the predicate.
-   *
-   * Same as `filterWithKey` but with arguments flipped.
-   */
-  <K, A>
-  (list: OrderedMap<K, A>):
-  (pred: (key: K) => (x: A) => boolean) => OrderedMap<K, A>
+interface FilterWithKeyFPred<K, A> {
+  <A1 extends A> (pred: (key: K) => (x: A) => x is A1): OrderedMap<K, A1>
+  (pred: (key: K) => (x: A) => boolean): OrderedMap<K, A>
 }
 
 /**
@@ -972,9 +953,9 @@ interface FilterWithKeyF {
  *
  * Same as `filterWithKey` but with arguments flipped.
  */
-export const filterWithKeyF: FilterWithKeyF =
+export const filterWithKeyF =
   <K, A>
-  (xs: OrderedMap<K, A>) =>
+  (xs: OrderedMap<K, A>): FilterWithKeyFPred<K, A> =>
   (pred: (key: K) => (x: A) => boolean): OrderedMap<K, A> =>
     fromArray ([...xs .value] .filter (([key, value]) => pred (key) (value)))
 

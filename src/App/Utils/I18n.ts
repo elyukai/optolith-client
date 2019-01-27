@@ -15,11 +15,11 @@ import { L10n, L10nRecord } from "../Models/Wiki/L10n";
  * index.
  */
 export const translateP =
-  <T extends typeof L10n.A[keyof typeof L10n.A]>
   (messages: L10nRecord) =>
-  (getter: T) =>
-  (params: List<string | number>): ReturnType<T> => {
-    const message = (getter as unknown as (messages: L10nRecord) => ReturnType<T>) (messages)
+  <K extends keyof typeof L10n.A>
+  (key: K) =>
+  (params: List<string | number>): L10n [K] => {
+    const message = L10n.A [key] (messages)
 
     if (!fnull (params) && typeof message === "string") {
       return message.replace (
@@ -31,7 +31,7 @@ export const translateP =
                          : param)
                        (subscript (params) (Number.parseInt (p1, 10)))
         }
-      ) as ReturnType<T>
+      ) as L10n [K]
     }
 
     return message
@@ -44,9 +44,9 @@ export const translateP =
  */
 export const translate =
   (messages: L10nRecord) =>
-  <T extends typeof L10n.A[keyof typeof L10n.A]>
-  (getter: T): ReturnType<T> =>
-    translateP (messages) (getter) (List.empty) as ReturnType<T>
+  <K extends keyof typeof L10n.A>
+  (key: K): L10n [K] =>
+    translateP (messages) (key) (List.empty)
 
 /**
  * Displays a localized message and inserts values if necessary.
@@ -57,13 +57,13 @@ export const translate =
  * index.
  */
 export const translateMP =
-  <A extends typeof L10n.A[keyof typeof L10n.A]>
   (messages: Maybe<L10nRecord>) =>
-  (getter: A) =>
-  (params: List<string | number>): Maybe<ReturnType<A>> =>
-    fmap<L10nRecord, string | List<string>>
-      (pipe (translateP, thrush (getter), (thrush (params))))
-      (messages) as Maybe<ReturnType<A>>
+  <K extends keyof typeof L10n.A>
+  (key: K) =>
+  (params: List<string | number>): Maybe<L10n [K]> =>
+    fmap<L10nRecord, L10n [K]>
+      (pipe (translateP, thrush (key), (thrush (params))))
+      (messages)
 
 /**
  * Displays a localized message.
@@ -71,10 +71,10 @@ export const translateMP =
  * @param key The key in messages containing the string you want to display.
  */
 export const translateM =
-  <A extends typeof L10n.A[keyof typeof L10n.A]>
   (messages: Maybe<L10nRecord>) =>
-  (getter: A): Maybe<ReturnType<A>> =>
-    translateMP (messages) (getter) (List.empty) as Maybe<ReturnType<A>>
+  <K extends keyof typeof L10n.A>
+  (key: K): Maybe<L10n [K]> =>
+    translateMP (messages) (key) (List.empty)
 
 export const localizeNumber = (localeId: string) => (num: number) => num .toLocaleString (localeId);
 

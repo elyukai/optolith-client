@@ -9,10 +9,12 @@
 import { pipe } from "ramda";
 import { add, inc, max, min, multiply } from "../App/Utils/mathUtils";
 import { not } from "../App/Utils/not";
+import { escapeRegExp } from "../App/Utils/RegexUtils";
 import { equals } from "./Eq";
 import { cnst, ident } from "./Function";
 import { fromJust, imapMaybe, isJust, Just, Maybe, maybe, Nothing } from "./Maybe";
 import { isLTorEQ, Ordering } from "./Ord";
+import { fromMap, OrderedMap } from "./OrderedMap";
 import { first, fromBinary, fromBoth, fst, Pair, second, snd } from "./Pair";
 import { show } from "./Show";
 
@@ -1714,6 +1716,16 @@ export const firstJust =
     return firstJust (pred) (xs .xs)
   }
 
+/**
+ * `replace :: (Partial, Eq a) => [a] -> [a] -> [a] -> [a]`
+ *
+ * Replace a subsequence everywhere it occurs. The first argument must not be
+ * the empty list.
+ */
+export const replaceStr =
+  (old_subseq: string) => (new_subseq: string) => (x: string): string =>
+    x .replace (new RegExp (escapeRegExp (old_subseq), "g"), new_subseq)
+
 
 // OWN METHODS
 
@@ -1771,6 +1783,35 @@ export const countWith =
  * `0`.
  */
 export const maximumNonNegative = pipe (consF (0), maximum)
+
+/**
+ * `groupByKey :: (a -> b) -> [a] -> Map b [a]`
+ *
+ * `groupByKey f xs` groups the elements of the list `xs` by the key returned by
+ * passing the respective element to `f` in a map.
+ */
+export const groupByKey =
+  <A, B>
+  (f: (x: A) => B) =>
+  (xs: List<A>): OrderedMap<B, List<A>> => {
+    // this implementation is only for perf reasons
+    // once OrderedMap has it's own performant implementation, the
+    // implementationof `groupByKey` can be changed
+
+    let m = new Map<B, List<A>> ()
+
+    const arr = toArray (xs) .reverse ()
+
+    for (const e of arr) {
+      const key = f (e)
+
+      const current = m .get (key)
+
+      m .set (key, cons (current === undefined ? empty : current) (e))
+    }
+
+    return fromMap (m)
+  }
 
 
 // NAMESPACED FUNCTIONS
@@ -1893,6 +1934,7 @@ export const List = {
   maximumOn,
   minimumOn,
   firstJust,
+  replaceStr,
 
   unsafeIndex,
   toArray,

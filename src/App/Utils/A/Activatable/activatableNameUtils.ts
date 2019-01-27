@@ -8,332 +8,402 @@
  * @since 1.1.0
  */
 
-import { isNumber, isString } from 'util';
-import * as Wiki from '../../App/Models/Wiki/wikiTypeHelpers';
-import * as Data from '../../types/data';
-import { List, Maybe, OrderedMap, Record } from '../dataUtils';
-import { sortStrings } from '../FilterSortUtils';
-import { translate } from '../I18n';
-import { match } from '../match';
-import { getRoman } from '../NumberUtils';
-import { getWikiEntry } from '../WikiUtils';
-import { findSelectOption, getSelectOptionName } from './selectionUtils';
+import { pipe } from "ramda";
+import { thrush } from "../../../../Data/Function";
+import { appendStr, elem, find, fromElements, groupByKey, intercalate, length, List, map, replaceStr, subscript, subscriptF } from "../../../../Data/List";
+import { altF_, any, bind, bindF, elemF, ensure, fmap, fromMaybe, isJust, Just, liftM2, listToMaybe, maybe, Maybe, Nothing } from "../../../../Data/Maybe";
+import { elems, lookup, lookupF } from "../../../../Data/OrderedMap";
+import { Record } from "../../../../Data/Record";
+import { ActiveObjectWithId } from "../../../Models/ActiveEntries/ActiveObjectWithId";
+import { ActivatableCombinedName } from "../../../Models/View/ActivatableCombinedName";
+import { ActiveActivatable } from "../../../Models/View/ActiveActivatable";
+import { Advantage } from "../../../Models/Wiki/Advantage";
+import { L10nRecord } from "../../../Models/Wiki/L10n";
+import { Skill } from "../../../Models/Wiki/Skill";
+import { Application } from "../../../Models/Wiki/sub/Application";
+import { SelectOption } from "../../../Models/Wiki/sub/SelectOption";
+import { WikiModel, WikiModelRecord } from "../../../Models/Wiki/WikiModel";
+import { Activatable, ActivatableSkillEntry, EntryWithCategory, SID, SkillishEntry } from "../../../Models/Wiki/wikiTypeHelpers";
+import { translate } from "../../I18n";
+import { ifElse } from "../../ifElse";
+import { dec } from "../../mathUtils";
+import { toRoman } from "../../NumberUtils";
+import { sortStrings } from "../../sortBy";
+import { isNumber, isString } from "../../typeCheckUtils";
+import { getWikiEntry, isActivatableWikiEntry, isSkillishWikiEntry } from "../../WikiUtils";
+import { findSelectOption, getSelectOptionName } from "./selectionUtils";
+
+const { skills, spells, liturgicalChants, specialAbilities } = WikiModel.A
+const { id, sid, sid2, tier } = ActiveObjectWithId.A
+const { name, tier: aatier, tierName, addName, baseName } = ActiveActivatable.A
+const { input, select } = Advantage.A
+const { applications } = Skill.A
+const { target, specializations } = SelectOption.A
 
 /**
  * Returns the name of the given object. If the object is a string, it returns
  * the string.
- * @param obj
  */
 export const getFullName =
-  (obj: string | Record<Data.ActiveViewObject>): string => {
-    if (typeof obj === 'string') {
-      return obj;
+  (obj: string | Record<ActiveActivatable>): string => {
+    if (typeof obj === "string") {
+      return obj
     }
 
-    const name = obj.get ('name');
-
-    return Maybe.maybe (name) (tierName => name + tierName) (obj.lookup ('tierName'));
+    return maybe (name (obj))
+                 ((level_name: string) => name (obj) + level_name)
+                 (tierName (obj))
   }
 
 /**
  * Accepts the full special ability name and returns only the text between
- * parentheses. If no parentheses have been found, returns an empty string.
- * @param name
+ * parentheses. If no parentheses were found, returns an empty string.
  */
-export const getBracketedNameFromFullName = (name: string): string => {
-  const result = /\((.+)\)/.exec (name);
+export const getBracketedNameFromFullName =
+  (full_name: string): string => {
+    const result = /\((.+)\)/ .exec (full_name)
 
-  if (result === null) {
-    return '';
+    if (result === null) {
+      return ""
+    }
+
+    return result [1]
   }
 
-  return result[1];
-};
-
-const getEntrySpecificNameAddition = (
-  wikiEntry: Wiki.Activatable,
-  instance: Record<Data.ActiveObjectWithId>,
-  wiki: Record<Wiki.WikiAll>
-): Maybe<string> => {
-  return match<string, Maybe<string>> (instance.get ('id'))
-    .on (
-      List.elem_ (List.of (
-        'ADV_4',
-        'ADV_47',
-        'ADV_16',
-        'ADV_17',
-        'DISADV_48',
-        'SA_231',
-        'SA_250',
-        'SA_472',
-        'SA_473',
-        'SA_531',
-        'SA_533',
-        'SA_569'
-      )),
-      () =>
-        (instance.lookup ('sid') as Maybe<string>)
-          .bind (getWikiEntry<Wiki.Skillish> (wiki))
-          .fmap (entry => entry.get ('name'))
-    )
-    .on ('ADV_68', () =>
-      findSelectOption (wikiEntry, instance.lookup ('sid'))
-        .bind (item =>
-          instance.lookup ('sid2')
-            .fmap (sid2 => `${sid2} (${item.get ('name')})`)
-        )
-    )
-    .on ('DISADV_33', () =>
-      getSelectOptionName (wikiEntry, instance.lookup ('sid'))
-        .fmap (name => {
-          return Maybe.fromMaybe (name) (
-            instance.lookup ('sid')
-              .bind (Maybe.ensure (x => isNumber (x) && List.of (7, 8).elem (x)))
-              .bind (() => instance.lookup ('sid2'))
-              .fmap (sid2 => `${name}: ${sid2}`)
-          );
-        })
-    )
-    .on ('SA_9', () =>
-      (instance.lookup ('sid') as Maybe<string>)
-        .bind (id => OrderedMap.lookup<string, Record<Wiki.Skill>> (id) (wiki.get ('skills')))
-        .fmap (skill => {
-          return Maybe.maybe (skill.get ('name')) (name => `${skill.get ('name')}: ${name}`) (
-            instance.lookup ('sid2').bind (sid2 =>
-              Maybe.ensure (isString) (sid2)
-                .alt (
-                  skill.lookup ('applications')
-                    .bind (apps => apps.find (e => e.get ('id') === sid2))
-                    .fmap (app => app.get ('name'))
-                )
-            )
-          );
-        })
-    )
-    .on (
-      List.elem_ (List.of ('SA_414', 'SA_663')),
-      () =>
-        findSelectOption (wikiEntry, instance.lookup ('sid'))
-          .bind (item =>
-            item.lookup ('target')
-              .bind<Record<Wiki.Spell> | Record<Wiki.LiturgicalChant>> (target => {
-                if (instance.get ('id') === 'SA_414') {
-                  return wiki.get ('spells').lookup (target);
-                }
-                else {
-                  return wiki.get ('liturgicalChants').lookup (target);
-                }
-              })
-              .fmap (target => `${target.get ('name')}: ${item.get ('name')}`)
-          )
-    )
-    .on ('SA_680', () =>
-      (instance.lookup ('sid') as Maybe<string>)
-        .bind (id => OrderedMap.lookup<string, Record<Wiki.Skill>> (id) (wiki.get ('skills')))
-        .fmap (entry => `: ${entry.get ('name')}`)
-    )
-    .on ('SA_699', () =>
-      wiki.get ('specialAbilities').lookup ('SA_29')
-        .bind (languages =>
-          findSelectOption (languages, instance.lookup ('sid'))
-            .fmap (item => {
-              return `${item.get ('name')}: ${
-                Maybe.fromMaybe ('') (instance.lookup ('sid2').bind (sid2 =>
-                  Maybe.ensure (isString) (sid2)
-                    .alt (
-                      item.lookup ('spec')
-                        .bind (spec => spec.subscript ((sid2 as number) - 1))
+/**
+ * A lot of entries have customization options: Text input, select option or
+ * both. This function creates a string that can be appended to the `name`
+ * property of the respective record to create the full active name.
+ */
+const getEntrySpecificNameAddition =
+  (l10n: L10nRecord) =>
+  (wiki: WikiModelRecord) =>
+  (wiki_entry: Activatable) =>
+  (hero_entry: Record<ActiveObjectWithId>): Maybe<string> => {
+    switch (id (hero_entry)) {
+      // Entry with Skill selection
+      case "ADV_4":
+      case "ADV_47":
+      case "ADV_16":
+      case "ADV_17":
+      case "DISADV_48":
+      case "SA_231":
+      case "SA_250":
+      case "SA_472":
+      case "SA_473":
+      case "SA_531":
+      case "SA_533":
+      case "SA_569":
+        return pipe (
+                      sid,
+                      bindF (ensure (isString)),
+                      bindF (getWikiEntry (wiki)),
+                      bindF<EntryWithCategory, SkillishEntry> (ensure (isSkillishWikiEntry)),
+                      fmap (name)
                     )
-                ))
-              }`;
-            })
-        )
-    )
-    .otherwise (() => {
-      const sid = instance.lookup ('sid');
-      const stringSid = sid.bind (Maybe.ensure (isString));
+                    (hero_entry)
 
-      if (
-        Maybe.isJust (wikiEntry.lookup ('input'))
-        && Maybe.isJust (stringSid)
-      ) {
-        return stringSid;
-      }
-      else if (Maybe.isJust (wikiEntry.lookup ('select'))) {
-        return getSelectOptionName (wikiEntry, sid);
-      }
-      else {
-        return Maybe.empty ();
-      }
-    });
-};
+      // Hatred of
+      case "ADV_68":
+        return pipe (
+                      sid,
+                      findSelectOption (wiki_entry),
+                      liftM2 ((type: string | number) => (frequency: Record<SelectOption>) =>
+                               `${type} (${name (frequency)})`)
+                             (sid2 (hero_entry))
+                    )
+                    (hero_entry)
 
-const getEntrySpecificNameReplacements = (
-  wikiEntry: Wiki.Activatable,
-  instance: Record<Data.ActiveObjectWithId>,
-  maybeNameAddition: Maybe<string>,
-  locale: Maybe<Record<Data.UIMessages>>
-): string => {
-  return Maybe.fromMaybe (wikiEntry.get ('name')) (
-    match<string, Maybe<string>> (wikiEntry.get ('id'))
-      .on (List.elem_ (List.of ('ADV_28', 'ADV_29')), () =>
-        translate (locale, 'activatable.view.immunityto')
-          .bind (name =>
-            maybeNameAddition.fmap (nameAddition => `${name} ${nameAddition}`)
-          )
-      )
-      .on ('ADV_68', () =>
-        translate (locale, 'activatable.view.hatredof')
-          .bind (name =>
-            maybeNameAddition.fmap (nameAddition => `${name} ${nameAddition}`)
-          )
-      )
-      .on ('DISADV_1', () =>
-        translate (locale, 'activatable.view.afraidof')
-          .bind (name =>
-            maybeNameAddition.fmap (nameAddition => `${name} ${nameAddition}`)
-          )
-      )
-      .on (List.elem_ (List.of ('DISADV_34', 'DISADV_50')), () =>
-        instance.lookup ('tier')
-          .bind (tier =>
-            maybeNameAddition.fmap (nameAddition =>
-              `${wikiEntry.get ('name')} ${getRoman (tier)} (${nameAddition})`
-            )
-          )
-      )
-      .on ('SA_639', () =>
-        maybeNameAddition.fmap (nameAddition =>
-          `${wikiEntry.get ('name')} ${nameAddition}`
-        )
-      )
-      .on (List.elem_ (List.of ('SA_677', 'SA_678')), () => {
-        const part = getBracketedNameFromFullName (wikiEntry.get ('name'));
-        const maybeMusicTraditionLabels = translate (locale, 'musictraditions');
+      // Personality Flaw
+      case "DISADV_33":
+        return pipe (
+                      sid,
+                      getSelectOptionName (wiki_entry),
+                      fmap (option_name => maybe (option_name)
 
-        return instance.lookup ('sid2')
-          .bind (Maybe.ensure (isNumber))
-          .bind (sid2 =>
-            maybeMusicTraditionLabels
-              .bind (musicTraditionLabels => musicTraditionLabels.subscript (sid2 - 1))
-              .fmap (musicTradition =>
-                wikiEntry.get ('name').replace (part, `${part}: ${musicTradition}`)
-              )
-          );
-      })
-      .otherwise (() =>
-        maybeNameAddition.fmap (nameAddition => `${wikiEntry.get ('name')} (${nameAddition})`)
-      )
-  );
-}
+                                                 // if there is additional input, add to name
+                                                 ((specialInput: string | number) =>
+                                                   `${option_name}: ${specialInput}`)
+                                                 (pipe (
+                                                         sid,
+
+                                                         // Check if the select option allows
+                                                         // additional input
+                                                         bindF<SID, number> (
+                                                           ensure (
+                                                             (x): x is number => isNumber (x)
+                                                               && elem (x) (fromElements (7, 8))
+                                                           )
+                                                         ),
+                                                         bindF (() => sid2 (hero_entry))
+                                                       )
+                                                       (hero_entry)))
+                    )
+                    (hero_entry)
+
+      // Skill Specialization
+      case "SA_9":
+        return pipe (
+                      sid,
+                      bindF (ensure (isString)),
+                      bindF (lookupF (skills (wiki))),
+                      bindF (skill => pipe (
+                                        sid2,
+
+                                        // If input string use input
+                                        bindF (ensure (isString)),
+
+                                        // Otherwise lookup application name
+                                        altF_ (() => pipe (
+                                                            applications,
+                                                            find<Record<Application>> (pipe (
+                                                              Application.A.id,
+                                                              elemF (sid2 (hero_entry))
+                                                            )),
+                                                            fmap (name)
+                                                          )
+                                                          (skill)),
+
+                                        // Merge skill name and application name
+                                        fmap (appl => `${name (skill)}: ${appl}`)
+                                      )
+                                      (hero_entry))
+                    )
+                    (hero_entry)
+
+      // Spell/Liturgical Chant Extension
+      case "SA_414":
+      case "SA_663":
+        return pipe (
+                      sid,
+                      findSelectOption (wiki_entry),
+                      bindF (ext => pipe (
+                                           bindF ((target_id: string) => {
+                                             const acc =
+                                               id (hero_entry) === "SA_414"
+                                                 ? spells
+                                                 : liturgicalChants
+
+                                             return lookupF<string, ActivatableSkillEntry>
+                                               (acc (wiki))
+                                               (target_id)
+                                           }),
+                                           fmap (
+                                             target_entry =>
+                                               `${name (target_entry)}: ${name (ext)}`
+                                           )
+                                         )
+                                         (target (ext))
+                      )
+                    )
+                    (hero_entry)
+
+      // Tradition (Zauberbarde)
+      case "SA_677":
+      // Tradition (Zaubertänzer)
+      case "SA_678": {
+        return pipe (
+                      sid2,
+                      bindF (ensure (isNumber)),
+                      bindF (pipe (dec, subscript (translate (l10n) ("musictraditions"))))
+                    )
+                    (hero_entry)
+      }
+
+      // Tradition (Meistertalentierte)
+      case "SA_680":
+        return pipe (
+                      sid,
+                      bindF (ensure (isString)),
+                      bindF (lookupF (skills (wiki))),
+                      fmap (skill => `: ${name (skill)}`)
+                    )
+                    (hero_entry)
+
+      // Language Specialization
+      case "SA_699":
+        return pipe (
+                      specialAbilities,
+                      lookup ("SA_29"),
+                      bindF (pipe (
+                        findSelectOption,
+                        thrush<Maybe<string | number>, Maybe<Record<SelectOption>>>
+                          (sid (hero_entry))
+                      )),
+                      bindF (lang => pipe (
+                                            sid2,
+                                            bindF (
+                                              ifElse<string | number, string, Maybe<string>>
+                                                (isString)
+                                                (Just)
+                                                (spec_id => bind (specializations (lang))
+                                                                 (subscriptF (spec_id - 1)))
+                                            ),
+                                            fmap (spec => `${name (lang)}: ${spec}`)
+                                          )
+                                          (hero_entry))
+                    )
+                    (wiki)
+
+      default: {
+        const current_sid = sid (hero_entry)
+
+        // Text input
+        if (isJust (input (wiki_entry)) && any (isString) (current_sid)) {
+          return current_sid
+        }
+
+        // Plain select option
+        if (isJust (select (wiki_entry))) {
+          return getSelectOptionName (wiki_entry) (current_sid)
+        }
+
+        return Nothing
+      }
+    }
+  }
+
+/**
+ * Some entries cannot use the default `name` property from wiki entries. The
+ * value returned by may not use the default `name` property. For all entries
+ * that do not need to handle a specific display format, the default `name`
+ * property is used.
+ */
+const getEntrySpecificNameReplacements =
+  (l10n: L10nRecord) =>
+  (wiki_entry: Activatable) =>
+  (hero_entry: Record<ActiveObjectWithId>) =>
+  (mname_add: Maybe<string>): string => {
+    const def = fromMaybe (name (wiki_entry))
+
+    const maybeMap = (f: (x: string) => string) => maybe (name (wiki_entry))
+                                                         (f)
+                                                         (mname_add)
+
+    switch (id (wiki_entry)) {
+      // Immunity to Poison
+      case "ADV_28":
+      // Immunity to Disease
+      case "ADV_29":
+        return maybeMap (name_add => `${translate (l10n) ("immunityto")} ${name_add}`)
+
+      // Hatred of
+      case "ADV_68":
+        return maybeMap (name_add => `${translate (l10n) ("hatredof")} ${name_add}`)
+
+      // Afraid of
+      case "DISADV_1":
+        return maybeMap (name_add => `${translate (l10n) ("afraidof")} ${name_add}`)
+
+      // Principles
+      case "DISADV_34":
+      // Obligations
+      case "DISADV_50":
+        return def (liftM2 ((level: number) => (name_add: string) =>
+                             `${name (wiki_entry)} ${toRoman (level)} (${name_add})`)
+                           (tier (hero_entry))
+                           (mname_add))
+
+      // Gebieter des [Aspekts]
+      case "SA_639":
+        return maybeMap (name_add => `${name (wiki_entry)} ${name_add}`)
+
+      // Tradition (Zauberbarde)
+      case "SA_677":
+      // Tradition (Zaubertänzer)
+      case "SA_678": {
+        const part = getBracketedNameFromFullName (name (wiki_entry))
+
+        return maybeMap (pipe (
+          name_add => replaceStr (part)
+                                 (`${part}: ${name_add}`)
+                                 (name (wiki_entry))
+        ))
+      }
+
+      default:
+        return maybeMap (name_add => `${name (wiki_entry)} (${name_add})`)
+    }
+  }
 
 /**
  * Returns name, splitted and combined, of advantage/disadvantage/special
  * ability as a Maybe (in case the wiki entry does not exist).
  * @param instance The ActiveObject with origin id.
  * @param wiki The current hero's state.
- * @param locale The locale-dependent messages.
+ * @param l10n The locale-dependent messages.
  */
-export const getName = (
-  instance: Record<Data.ActiveObjectWithId>,
-  wiki: Record<Wiki.WikiAll>,
-  locale: Maybe<Record<Data.UIMessages>>
-): Maybe<Record<Data.ActivatableCombinedName>> => {
-  return getWikiEntry<Wiki.Activatable> (wiki) (instance.get ('id'))
-    .fmap (wikiEntry => {
-      const maybeAddName = getEntrySpecificNameAddition (
-        wikiEntry,
-        instance,
-        wiki
-      );
+export const getName =
+  (l10n: L10nRecord) =>
+  (wiki: WikiModelRecord) =>
+  (hero_entry: Record<ActiveObjectWithId>): Maybe<Record<ActivatableCombinedName>> =>
+    pipe (
+           id,
+           getWikiEntry (wiki),
+           bindF<EntryWithCategory, Activatable> (ensure (isActivatableWikiEntry)),
+           fmap (wiki_entry => {
+             const maddName = getEntrySpecificNameAddition (l10n)
+                                                           (wiki)
+                                                           (wiki_entry)
+                                                           (hero_entry)
 
-      const name = getEntrySpecificNameReplacements (
-        wikiEntry,
-        instance,
-        maybeAddName,
-        locale
-      );
+             const fullName = getEntrySpecificNameReplacements (l10n)
+                                                               (wiki_entry)
+                                                               (hero_entry)
+                                                               (maddName)
 
-      return Maybe.maybe<string, Record<Data.ActivatableCombinedName>> (
-        Record.of ({
-          name,
-          baseName: wikiEntry.get ('name'),
-        })
-      ) (
-        addName => Record.of<Data.ActivatableCombinedName> ({
-          name,
-          baseName: wikiEntry.get ('name'),
-          addName,
-        })
-      ) (
-        maybeAddName
-      );
-    });
-};
+             return ActivatableCombinedName ({
+               name: fullName,
+               baseName: name (wiki_entry),
+               addName: maddName,
+             })
+           })
+         )
+         (hero_entry)
 
-interface EnhancedReduce {
-  final: List<string>;
-  previousLowerTier: boolean;
-}
+/**
+ * `compressList :: L10n -> [ActiveActivatable] -> String`
+ *
+ * Takes a list of active Activatables and merges them together. Used to display
+ * lists of Activatables on character sheet.
+ */
+export const compressList =
+  (l10n: L10nRecord) =>
+  (xs: List<Record<ActiveActivatable>>): string => {
+    const grouped_xs =
+      elems (groupByKey<Record<ActiveActivatable>, string> (id) (xs))
 
-export const compressList = (
-  list: List<Record<Data.ActiveViewObject> | string>,
-  locale: Record<Data.UIMessages>
-): string => {
-  const listToString =
-    sortStrings
-      (locale.get ('id'))
-      (
-        list.foldl<List<string>> (
-                                  acc => obj => {
-                                    if (isString (obj)) {
-                                      return acc.append (obj);
-                                    }
-                                    else if (!['SA_27', 'SA_29'].includes (obj.get ('id'))) {
-                                      return acc.append (obj.get ('name'));
-                                    }
+    return pipe (
+                  map (
+                    ifElse<List<Record<ActiveActivatable>>, string>
+                      (xs_group => length (xs_group) === 1)
+                      (pipe (listToMaybe, maybe ("") (name)))
+                      (xs_group => pipe (
+                                          map ((x: Record<ActiveActivatable>) => {
+                                            const levelPart =
+                                              pipe (
+                                                     fmap (pipe (toRoman, appendStr (" "))),
+                                                     fromMaybe ("")
+                                                   )
+                                                   (aatier (x))
 
-                                    return acc;
-                                  })
-                                (List.of ())
-      );
+                                            const selectOptionPart =
+                                              fromMaybe ("") (addName (x))
 
-  const levelAfterParenthesis = /\(.+\)(?: [IVX]+)?$/;
-  const insertLevelBeforeParenthesis = /\)((?: [IVX]+)?)$/;
-
-  const initial: EnhancedReduce = {
-    final: List.of (),
-    previousLowerTier: false,
-  };
-
-  const finalList = listToString.foldl<EnhancedReduce> (
-    previous => current =>
-      Maybe.fromMaybe ({
-        final: previous.final.append (current),
-        previousLowerTier: false,
-      }) (
-        List.last_ (previous.final)
-          .bind (Maybe.ensure (x =>
-            x.split (' (')[0] === current.split (' (')[0]
-            && levelAfterParenthesis.test (x)
-          ))
-          .bind (prevElement => {
-            const prevElementSplitted = prevElement.split (/\)/);
-            const optionalTier = prevElementSplitted.pop () || '';
-            const beginning = `${prevElementSplitted.join (')')}${optionalTier}`;
-            const currentSplitted = current.split (/\(/);
-            const continuing = currentSplitted.slice (1).join ('(')
-              .replace (insertLevelBeforeParenthesis, '$1)');
-
-            return Maybe.fmap<List<string>, EnhancedReduce> (
-              init => ({
-                ...previous,
-                final: init.append (`${beginning}, ${continuing}`),
-              })
-            ) (List.init_ (previous.final));
-          })
-      )
-  ) (initial).final.intercalate (', ');
-
-  return finalList;
-};
+                                            return selectOptionPart + levelPart
+                                          }),
+                                          sortStrings (id (l10n)),
+                                          intercalate (", "),
+                                          x => ` (${x})`,
+                                          x => maybe ("")
+                                                     ((r: Record<ActiveActivatable>) =>
+                                                       baseName (r) + x)
+                                                     (listToMaybe (xs_group))
+                                        )
+                                        (xs_group))
+                  ),
+                  sortStrings (id (l10n)),
+                  intercalate (", ")
+                )
+                (grouped_xs)
+  }

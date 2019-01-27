@@ -76,60 +76,43 @@ export interface WikiEntryRecordByCategory {
   "TALENTS": Record<Skill>
 }
 
-export type EntryWithGroup =
-  Record<CombatTechnique> |
-  Record<LiturgicalChant> |
-  Record<SpecialAbility> |
-  Record<Spell> |
-  Record<Skill>
+export type EntryWithGroup = Record<CombatTechnique>
+                           | Record<LiturgicalChant>
+                           | Record<SpecialAbility>
+                           | Record<Spell>
+                           | Record<Skill>
 
-export type IncreasableEntry =
-  Record<Attribute> |
-  Record<Spell> |
-  Record<LiturgicalChant> |
-  Record<Skill> |
-  Record<CombatTechnique>
+export type IncreasableEntry = Record<Attribute>
+                             | Record<Spell>
+                             | Record<LiturgicalChant>
+                             | Record<Skill>
+                             | Record<CombatTechnique>
 
-export type SkillishEntry =
-  Record<Spell> |
-  Record<LiturgicalChant> |
-  Record<Skill> |
-  Record<CombatTechnique>
+export type SkillishEntry = Record<Spell>
+                          | Record<LiturgicalChant>
+                          | Record<Skill>
+                          | Record<CombatTechnique>
 
-export type Entry =
-  Record<Race> |
-  Record<RaceVariant> |
-  Record<Culture> |
-  Record<Profession> |
-  Record<ProfessionVariant> |
-  Record<Attribute> |
-  Record<Advantage> |
-  Record<Disadvantage> |
-  Record<Skill> |
-  Record<CombatTechnique> |
-  Record<SpecialAbility> |
-  Record<Spell> |
-  Record<Cantrip> |
-  Record<LiturgicalChant> |
-  Record<Blessing> |
-  Record<ItemTemplate>
+export type ActivatableSkillEntry = Record<Spell>
+                                  | Record<LiturgicalChant>
 
-export type EntryWithCategory =
-  Record<Race> |
-  Record<RaceVariant> |
-  Record<Culture> |
-  Record<Profession> |
-  Record<ProfessionVariant> |
-  Record<Attribute> |
-  Record<Advantage> |
-  Record<Disadvantage> |
-  Record<Skill> |
-  Record<CombatTechnique> |
-  Record<SpecialAbility> |
-  Record<Spell> |
-  Record<Cantrip> |
-  Record<LiturgicalChant> |
-  Record<Blessing>
+export type Entry = EntryWithCategory | Record<ItemTemplate>
+
+export type EntryWithCategory = Record<Race>
+                              | Record<RaceVariant>
+                              | Record<Culture>
+                              | Record<Profession>
+                              | Record<ProfessionVariant>
+                              | Record<Attribute>
+                              | Record<Advantage>
+                              | Record<Disadvantage>
+                              | Record<Skill>
+                              | Record<CombatTechnique>
+                              | Record<SpecialAbility>
+                              | Record<Spell>
+                              | Record<Cantrip>
+                              | Record<LiturgicalChant>
+                              | Record<Blessing>
 
 export enum ProfessionSelectionIds {
   SPECIALIZATION = "SPECIALISATION",

@@ -1,7 +1,7 @@
 import { pipe } from "ramda";
-import { ActivatableCategories, Categories } from "../../constants/Categories";
+import { ActivatableCategories, Categories, SkillishCategories } from "../../constants/Categories";
 import { thrush } from "../../Data/Function";
-import { elemF, filter, fromArray, List } from "../../Data/List";
+import { elem, elemF, filter, fromArray, List } from "../../Data/List";
 import { bindF, fmap, Maybe } from "../../Data/Maybe";
 import { elems, lookupF, OrderedMap, OrderedMapValueElement } from "../../Data/OrderedMap";
 import { member, Record } from "../../Data/Record";
@@ -20,7 +20,7 @@ import { Skill } from "../Models/Wiki/Skill";
 import { SpecialAbility } from "../Models/Wiki/SpecialAbility";
 import { Spell } from "../Models/Wiki/Spell";
 import { WikiModel, WikiModelRecord } from "../Models/Wiki/WikiModel";
-import { Activatable, Entry, EntryWithGroup } from "../Models/Wiki/wikiTypeHelpers";
+import { Activatable, Entry, EntryWithCategory, EntryWithGroup, SkillishEntry } from "../Models/Wiki/wikiTypeHelpers";
 import { getCategoryById } from "./IDUtils";
 
 interface WikiKeyByCategory {
@@ -42,8 +42,8 @@ interface WikiKeyByCategory {
 }
 
 export const getWikiSliceGetterByCategory =
-  <T extends Categories> (category: T): typeof WikiModel.A[WikiKeyByCategory[T]] => {
-    switch (category) {
+  <T extends Categories> (x: T): typeof WikiModel.A[WikiKeyByCategory[T]] => {
+    switch (x) {
       case Categories.ADVANTAGES: return WikiModel.A.advantages
       case Categories.ATTRIBUTES: return WikiModel.A.attributes
       case Categories.BLESSINGS: return WikiModel.A.blessings
@@ -61,7 +61,7 @@ export const getWikiSliceGetterByCategory =
       case Categories.TALENTS: return WikiModel.A.skills
     }
 
-    throw new TypeError (`${show (category)} is no valid wiki category!`)
+    throw new TypeError (`${show (x)} is no valid wiki category!`)
   }
 
 export const getWikiEntryWithGetter =
@@ -71,20 +71,18 @@ export const getWikiEntryWithGetter =
       (id: string) => Maybe<OrderedMapValueElement<ReturnType<G>>>
 
 export const getWikiEntry =
-  (wiki: WikiModelRecord) => (id: string): Maybe<Entry> =>
+  (wiki: WikiModelRecord) => (id: string): Maybe<EntryWithCategory> =>
     pipe (
            getCategoryById,
-           fmap<Categories, (wiki: WikiModelRecord) => OrderedMap<string, Entry>>
-             (getWikiSliceGetterByCategory as
-               (category: Categories) => (wiki: WikiModelRecord) =>
-                 OrderedMap<string, Entry>),
-           bindF<(wiki: WikiModelRecord) => OrderedMap<string, Entry>, Entry>
-             (pipe (
-               getWikiEntryWithGetter (wiki) as
-                 (g: (wiki: WikiModelRecord) => OrderedMap<string, Entry>) =>
-                   (id: string) => Maybe<Entry>,
-               thrush (id)
-             ))
+           fmap (getWikiSliceGetterByCategory as
+                  (category: Categories) => (wiki: WikiModelRecord) =>
+                    OrderedMap<string, EntryWithCategory>),
+           bindF (pipe (
+                   getWikiEntryWithGetter (wiki) as
+                     (g: (wiki: WikiModelRecord) => OrderedMap<string, EntryWithCategory>) =>
+                       (id: string) => Maybe<EntryWithCategory>,
+                   thrush<string, Maybe<EntryWithCategory>> (id)
+                 ))
          )
          (id)
 
@@ -134,3 +132,13 @@ export const isActivatableWikiObj =
     !isItemTemplate (obj)
     && elemF<Categories> (ActivatableCategories)
                          (SpecialAbility.A.category (obj as Record<SpecialAbility>))
+
+const { category } = Skill.A
+
+export const isSkillishWikiEntry =
+  (x: EntryWithCategory): x is SkillishEntry =>
+    elem (category (x)) (SkillishCategories)
+
+export const isActivatableWikiEntry =
+  (x: EntryWithCategory): x is Activatable =>
+    elem (category (x)) (ActivatableCategories)

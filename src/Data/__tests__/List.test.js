@@ -2,6 +2,7 @@ const List = require('../List')
 const { Just, Nothing } = require('../Maybe')
 const { Pair } = require('../Pair')
 const { Int } = require('../Int')
+const { OrderedMap } = require('../OrderedMap')
 
 // CONSTRUCTORS
 
@@ -798,6 +799,11 @@ test ('firstJust', () => {
     .toEqual (Nothing)
 })
 
+test ('replaceStr', () => {
+  expect (List.replaceStr ("{}") ("nice") ("Hello, this is a {} test! It's {}, huh?"))
+    .toEqual ("Hello, this is a nice test! It's nice, huh?")
+})
+
 // OWN METHODS
 
 test ('unsafeIndex', () => {
@@ -836,4 +842,16 @@ test ('maximumNonNegative', () => {
 
   expect (List.maximumNonNegative (List.empty))
     .toEqual (0)
+})
+
+test ('groupByKey', () => {
+  expect (List.groupByKey (x => x % 2) (List.fromElements (1, 2, 3, 4, 5)))
+    .toEqual (
+      OrderedMap.fromArray (
+        [
+          [0, List.fromElements (2, 4)],
+          [1, List.fromElements (1, 3, 5)]
+        ]
+      )
+    )
 })

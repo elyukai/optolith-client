@@ -202,6 +202,17 @@ export const alt =
     isJust (x) ? x : y
 
 /**
+ * `alt' :: Maybe a -> Maybe a -> Maybe a`
+ *
+ * Returns the first `Maybe` if it is `Just`, otherwise the second.
+ *
+ * Lazy version of `alt`.
+ */
+export const alt_ =
+  <A extends Some> (x: Maybe<A>) => (g: () => Maybe<A>): Maybe<A> =>
+    isJust (x) ? x : g ()
+
+/**
  * `altF :: Maybe a -> Maybe a -> Maybe a`
  *
  * Returns the second `Maybe` if it is `Just`, otherwise the first.
@@ -211,6 +222,17 @@ export const alt =
 export const altF =
   <A extends Some> (y: Maybe<A>) => (x: Maybe<A>): Maybe<A> =>
     alt (x) (y)
+
+/**
+ * `altF' :: Maybe a -> Maybe a -> Maybe a`
+ *
+ * Returns the second `Maybe` if it is `Just`, otherwise the first.
+ *
+ * Flipped version of `alt'`.
+ */
+export const altF_ =
+  <A extends Some> (g: () => Maybe<A>) => (x: Maybe<A>): Maybe<A> =>
+    alt_ (x) (g)
 
 /**
  * `empty :: Maybe a`
@@ -242,8 +264,9 @@ export const guard =
  * `(>>=) :: Maybe a -> (a -> Maybe b) -> Maybe b`
  */
 export const bind =
-  <A extends Some, B extends Some>
+  <A extends Some>
   (x: Maybe<A>) =>
+  <B extends Some>
   (f: (x: A) => Maybe<B>): Maybe<B> =>
     isJust (x) ? f (x .value) : x
 
@@ -254,7 +277,7 @@ export const bindF =
   <A extends Some, B extends Some>
   (f: (x: A) => Maybe<B>) =>
   (x: Maybe<A>): Maybe<B> =>
-    bind<A, B> (x) (f)
+    bind<A> (x) (f)
 
 
 /**
@@ -268,7 +291,7 @@ export const bindF =
  */
 export const then =
   <A extends Some> (x: Maybe<any>) => (y: Maybe<A>): Maybe<A> =>
-    bind<any, A> (x) (_ => y)
+    bind<any> (x) (_ => y)
 
 /**
  * `(>=>) :: (a -> Maybe b) -> (b -> Maybe c) -> a -> Maybe c`
@@ -290,7 +313,7 @@ export const kleisli =
  */
 export const join =
   <A extends Some> (x: Maybe<Maybe<A>>): Maybe<A> =>
-    bind<Maybe<A>, A> (x) (ident)
+    bind<Maybe<A>> (x) (ident)
 
 /**
  * `mapM :: (a -> Maybe b) -> [a] -> Maybe [b]`
@@ -325,7 +348,7 @@ export const liftM2 =
   (f: (a1: A1) => (a2: A2) => B) =>
   (x1: Maybe<A1>) =>
   (x2: Maybe<A2>): Maybe<B> =>
-    bind<A1, B> (x1) (pipe (f, fmap, thrush (x2)))
+    bind<A1> (x1) (pipe (f, fmap, thrush (x2)))
 
 /**
  * `liftM3 :: (a1 -> a2 -> a3 -> r) -> Maybe a1 -> Maybe a2 -> Maybe a3 -> Maybe r`
@@ -339,7 +362,7 @@ export const liftM3 =
   (x1: Maybe<A1>) =>
   (x2: Maybe<A2>) =>
   (x3: Maybe<A3>): Maybe<B> =>
-    bind<A1, B> (x1) (a1 => liftM2 (f (a1)) (x2) (x3))
+    bind<A1> (x1) (a1 => liftM2 (f (a1)) (x2) (x3))
 
 /**
  * `liftM4 :: Maybe m => (a1 -> a2 -> a3 -> a4 -> r) -> m a1 -> m a2 -> m a3 ->
@@ -355,7 +378,7 @@ export const liftM4 =
   (x2: Maybe<A2>) =>
   (x3: Maybe<A3>) =>
   (x4: Maybe<A4>): Maybe<B> =>
-    bind<A1, B> (x1) (a1 => liftM3 (f (a1)) (x2) (x3) (x4))
+    bind<A1> (x1) (a1 => liftM3 (f (a1)) (x2) (x3) (x4))
 
 /**
  * `liftM5 :: Maybe m => (a1 -> a2 -> a3 -> a4 -> a5 -> r) -> m a1 -> m a2 -> m
@@ -379,7 +402,7 @@ export const liftM5 =
   (x3: Maybe<A3>) =>
   (x4: Maybe<A4>) =>
   (x5: Maybe<A5>): Maybe<B> =>
-    bind<A1, B> (x1) (a1 => liftM4 (f (a1)) (x2) (x3) (x4) (x5))
+    bind<A1> (x1) (a1 => liftM4 (f (a1)) (x2) (x3) (x4) (x5))
 
 
 // FOLDABLE
@@ -514,12 +537,22 @@ export const and = fromMaybe (true)
  */
 export const or = fromMaybe (false)
 
+interface Any {
+  <A extends Some, A1 extends A>
+  (f: (x: A) => x is A1):
+  (x: Maybe<A>) => x is Just<A1>
+
+  <A extends Some>
+  (f: (x: A) => boolean):
+  (x: Maybe<A>) => x is Just<A>
+}
+
 /**
  * `any :: (a -> Bool) -> Maybe a -> Bool`
  *
  * Determines whether any element of the structure satisfies the predicate.
  */
-export const any =
+export const any: Any =
   <A extends Some>
   (f: (x: A) => boolean) =>
   (x: Maybe<A>): x is Just<A> =>
@@ -767,8 +800,8 @@ export const ensure: Ensure =
   <A extends Some>
   (pred: (x: A) => boolean) =>
   (x: A | Nullable): Maybe<A> =>
-    bind<A, A> (fromNullable (x))
-               (a => pred (a) ? Just (a) : Nothing)
+    bind<A> (fromNullable (x))
+            (a => pred (a) ? Just (a) : Nothing)
 
 /**
  * `imapMaybe :: (Int -> a -> Maybe b) -> [a] -> [b]`

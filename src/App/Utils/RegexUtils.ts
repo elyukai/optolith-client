@@ -38,3 +38,11 @@ export const isEmptyOr =
  * @param string The string to test.
  */
 export const isBase64Image = (test: string) => base64Image.test (test)
+
+/**
+ * Escape a string that may contain `RegExp`-specific notation for use in
+ * regular expressions.
+ */
+export const escapeRegExp =
+  // $& means the whole matched string
+  (x: string) => x .replace (/[.*+?^${}()|[\]\\]/g, "\\$&")

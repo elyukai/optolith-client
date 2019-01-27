@@ -1,21 +1,23 @@
 import { pipe } from "ramda";
-import { ActivatablePrerequisites, AllRequirements, LevelAwarePrerequisites } from "../../Models/Wiki/wikiTypeHelpers";
-import { cnst } from "../../../Data/Function";
-import { List } from "../../../Data/List";
-import { fmap, fromMaybe, Just, Maybe, maybe, Nothing } from "../../../Data/Maybe";
-import { filterWithKey_, isOrderedMap, OrderedMap } from "../../../Data/OrderedMap";
-import { lte, max, min } from "../mathUtils";
+import { cnst } from "../../../../Data/Function";
+import { List } from "../../../../Data/List";
+import { fmap, fromMaybe, Just, Maybe, maybe, Nothing } from "../../../../Data/Maybe";
+import { filterWithKeyF, isOrderedMap, OrderedMap } from "../../../../Data/OrderedMap";
+import { ActivatablePrerequisites, LevelAwarePrerequisites } from "../../../Models/Wiki/wikiTypeHelpers";
+import { lte, max, min } from "../../mathUtils";
 
 type LevelFilter = (key: number) => (value: ActivatablePrerequisites) => boolean
 
-const createLowerFilter = (oldTier: number): LevelFilter => pipe (lte (oldTier), cnst)
+const createLowerFilter =
+  (oldTier: number): LevelFilter => pipe (lte (oldTier), cnst)
 
-const createInBetweenFilter = (oldTier: number) => (newTier: number): LevelFilter => {
-  const lower = min (oldTier) (newTier)
-  const higher = max (oldTier) (newTier)
+const createInBetweenFilter =
+  (oldTier: number) => (newTier: number): LevelFilter => {
+    const lower = min (oldTier) (newTier)
+    const higher = max (oldTier) (newTier)
 
-  return (key: number) => cnst (key <= higher && key > lower)
-}
+    return (key: number) => cnst (key <= higher && key > lower)
+  }
 
 /**
  * `createFilter newLevel oldLevel` creates a new filter function for filtering
@@ -24,17 +26,17 @@ const createInBetweenFilter = (oldTier: number) => (newTier: number): LevelFilte
 const createFilter = (newTier: Maybe<number>) =>
   pipe (
     fmap<number, LevelFilter> (
-      oldTier => maybe<number, LevelFilter> (createLowerFilter (oldTier))
-                                            (createInBetweenFilter (oldTier))
-                                            (newTier)
+      oldTier => maybe (createLowerFilter (oldTier))
+                       (createInBetweenFilter (oldTier))
+                       (newTier)
     ),
-    fromMaybe<LevelFilter> (() => () => true)
+    fromMaybe<LevelFilter> (cnst (cnst (true)))
   )
 
 const createFlattenFiltered = (
   (prerequisites: OrderedMap<number, ActivatablePrerequisites>) =>
     pipe (
-      filterWithKey_<number, List<AllRequirements>> (prerequisites),
+      filterWithKeyF (prerequisites),
       OrderedMap.elems,
       List.concat
     )

@@ -8,12 +8,13 @@
 import { pipe } from "ramda";
 import { equals } from "../../../../Data/Eq";
 import { thrush } from "../../../../Data/Function";
-import { any, countWith, filter, length, List } from "../../../../Data/List";
-import { bindF, fmap, isJust, liftM2, Maybe, or } from "../../../../Data/Maybe";
+import { any, countWith, elem, filter, find, isList, length, List } from "../../../../Data/List";
+import { alt, bindF, ensure, fmap, fromJust, isJust, Just, liftM2, Maybe, Nothing, or } from "../../../../Data/Maybe";
 import { elems, lookupF } from "../../../../Data/OrderedMap";
 import { size } from "../../../../Data/OrderedSet";
 import { Record } from "../../../../Data/Record";
 import { ActivatableDependent } from "../../../Models/ActiveEntries/ActivatableDependent";
+import { ActivatableSkillDependent } from "../../../Models/ActiveEntries/ActivatableSkillDependent";
 import { ActiveObject } from "../../../Models/ActiveEntries/ActiveObject";
 import { ActiveObjectWithId } from "../../../Models/ActiveEntries/ActiveObjectWithId";
 import { DependencyObject } from "../../../Models/ActiveEntries/DependencyObject";
@@ -21,9 +22,10 @@ import { SkillDependent } from "../../../Models/ActiveEntries/SkillDependent";
 import { HeroModel, HeroModelRecord } from "../../../Models/Hero/HeroModel";
 import { ActivatableActivationValidationObject, ActivatableDependency } from "../../../Models/Hero/heroTypeHelpers";
 import { ExperienceLevel } from "../../../Models/Wiki/ExperienceLevel";
-import { isSpecialAbility } from "../../../Models/Wiki/SpecialAbility";
+import { RequireActivatable } from "../../../Models/Wiki/prerequisites/ActivatableRequirement";
+import { isSpecialAbility, SpecialAbility } from "../../../Models/Wiki/SpecialAbility";
 import { WikiModel, WikiModelRecord } from "../../../Models/Wiki/WikiModel";
-import { Activatable, LevelAwarePrerequisites } from "../../../Models/Wiki/wikiTypeHelpers";
+import { Activatable, AllRequirementObjects, EntryWithCategory, LevelAwarePrerequisites } from "../../../Models/Wiki/wikiTypeHelpers";
 import { countActiveGroupEntries } from "../../entryGroupUtils";
 import { getAllEntriesByGroup, getHeroStateItem, mapListByIdKeyMap } from "../../heroStateUtils";
 import { ifElse } from "../../ifElse";
@@ -31,23 +33,26 @@ import { isOwnTradition } from "../../Increasable/liturgicalChantUtils";
 import { match } from "../../match";
 import { add, gte, inc } from "../../mathUtils";
 import { notP } from "../../not";
-import { validateLevel } from "../../Prerequisites/validatePrerequisitesUtils";
+import { flattenPrerequisites } from "../../P/Prerequisites/flattenPrerequisites";
+import { validateLevel, validateObject } from "../../P/Prerequisites/validatePrerequisitesUtils";
 import { isBoolean, isObject } from "../../typeCheckUtils";
-import { getWikiEntry } from "../../WikiUtils";
+import { getWikiEntry, isActivatableWikiEntry } from "../../WikiUtils";
 import { countActiveSkillEntries } from "./activatableSkillUtils";
 import { isStyleValidToRemove } from "./ExtendedStyleUtils";
 import { isActive } from "./isActive";
 import { getBlessedTraditionFromWiki, getMagicalTraditions } from "./traditionUtils";
 
 const hasRequiredMinimumLevel =
-  (minTier: Maybe<number>) => (tiers: Maybe<number>): boolean =>
-    isJust (tiers) && isJust (minTier)
+  (min_level: Maybe<number>) => (max_level: Maybe<number>): boolean =>
+    isJust (max_level) && isJust (min_level)
 
 const { blessings, cantrips, liturgicalChants, specialAbilities } = HeroModel.A
 const { maxCombatTechniqueRating, maxSkillRating } = ExperienceLevel.A
 const { id, dependencies: addependencies, active: adactive } = ActivatableDependent.A
 const { active: asdactive } = ActivatableSkillDependent.A
-const { active: doactive, sid, sid2, tier } = DependencyObject.A
+const { active: doactive, sid, sid2, tier, origin } = DependencyObject.A
+const { prerequisites, tiers } = SpecialAbility.A
+const { id: ra_id } = RequireActivatable.A
 
 const isRequiredByOthers =
   (current_active: Record<ActiveObject>) =>
@@ -222,7 +227,7 @@ const isRemovalDisabledEntrySpecific =
           pipe (
                  liturgicalChants,
                  elems,
-                 filter (asdactive),
+                 filter<Record<ActivatableSkillDependent>> (asdactive),
                  mapListByIdKeyMap (WikiModel.A.liturgicalChants (wiki))
                )
                (hero)
@@ -235,99 +240,151 @@ const isRemovalDisabledEntrySpecific =
         return or (mactive_unfamiliar_chants)
       }
 
-      default:
+      default: {
+        if (isSpecialAbility (wiki_entry) && isStyleValidToRemove (hero) (Just (wiki_entry))) {
+          return true
+        }
+
+        return any ((dep: ActivatableDependency) => {
+                     // If there is a top-level dependency for the whole entry,
+                     // it must be `true` because `false` would have prevented
+                     // the entry from being added.
+                     if (isBoolean (dep)) {
+                       return true
+                     }
+
+                     const current_origin = origin (dep)
+
+                     if (isJust (current_origin)) {
+                       return or (
+                         pipe (
+                                getWikiEntry (wiki),
+                                bindF<EntryWithCategory, Activatable>
+                                  (ensure (isActivatableWikiEntry)),
+
+                                // Get flat prerequisites for origin entry
+                                fmap (origin_entry =>
+                                  flattenPrerequisites (prerequisites (origin_entry))
+                                                       (alt (tiers (origin_entry)) (Just (1)))
+                                                       (Nothing)),
+
+                                // Get the prerequisite that matches this entry
+                                // to get all other options from list
+                                bindF (find ((req): req is AllRequirementObjects => {
+                                              if (typeof req === "string") {
+                                                return false
+                                              }
+
+                                              const current_id = ra_id (req)
+
+                                              return isList (current_id)
+                                                && elem (fromJust (current_origin))
+                                                        (current_id)
+                                            })),
+
+
+                                // Check if there are other entries that would
+                                // match the prerequisite so that this entry
+                                // could be removed
+                                fmap (req => countWith (x => validateObject (
+                                                          wiki,
+                                                          state,
+                                                          req.merge (Record.of ({
+                                                            id: e,
+                                                          })) as AllRequirementObjects,
+                                                          wiki_entry.get ("id")
+                                                        ))
+                                                       (ra_id (req) as List<string>)
+                                      (req.get ("id") as List<string>)
+                                        .foldl<number> (
+                                          acc => e =>  ? acc + 1 : acc
+                                        ) (0) > 1)
+
+                              )
+                              (fromJust (current_origin))
+                       )
+                     }
+                   })
+                   (addependencies (hero_entry))
+
         return false
+      }
     }
 
-  //     .on (
-  //       both (
-  //         () => Maybe.fromJust<ActivatableCategory> (
-  //           wiki_entry.lookup ('category')
-  //         ) === Categories.SPECIAL_ABILITIES,
-  //         () => equals (
-  //           isStyleValidToRemove (
-  //             state,
-  //             Maybe.pure (wiki_entry as Record<SpecialAbility>)
-  //           ),
-  //           false
-  //         )
-  //       ),
-  //       T
-  //     )
-  //     .otherwise (
-  //       () => state_entry .get ('dependencies')
-  //         .any (dep => {
-  //           if (typeof dep === 'object' && Maybe.isJust (dep .lookup ('origin'))) {
-  //             return Maybe.fromMaybe (true) (
-  //               getWikiEntry<Activatable>
-  //                 (wiki)
-  //                 (Maybe.fromJust (dep.lookup ('origin') as Just<string>))
-  //                 .bind (
-  //                   originEntry => flattenPrerequisites (originEntry.get ('prerequisites'))
-  //                                                       (originEntry.lookup ('tiers')
-  //                                                         .alt (Just (1)))
-  //                                                       (Nothing ())
-  //                     .find ((r): r is AllRequirementObjects => {
-  //                       if (typeof r === 'string') {
-  //                         return false
-  //                       }
-  //                       else {
-  //                         const id = r.get ('id')
-  //                         const origin = dep.lookup ('origin')
+    .otherwise (
+      () => state_entry .get ("dependencies")
+        .any (dep => {
+          if (typeof dep === "object" && Maybe.isJust (dep .lookup ("origin"))) {
+            return Maybe.fromMaybe (true) (
+              getWikiEntry<Activatable>
+                (wiki)
+                (Maybe.fromJust (dep.lookup ("origin") as Just<string>))
+                .bind (
+                  originEntry => flattenPrerequisites (originEntry.get ("prerequisites"))
+                                                      (originEntry.lookup ("tiers")
+                                                        .alt (Just (1)))
+                                                      (Nothing ())
+                    .find ((r): r is AllRequirementObjects => {
+                      if (typeof r === "string") {
+                        return false
+                      }
+                      else {
+                        const id = r.get ("id")
+                        const origin = dep.lookup ("origin")
 
-  //                         return id instanceof List
-  //                           && Maybe.isJust (origin)
-  //                           && id.elem (Maybe.fromJust (origin))
-  //                       }
-  //                     })
-  //                     .fmap (
-  //                       (req: AllRequirementObjects) =>
-  //                         (req.get ('id') as List<string>)
-  //                           .foldl<number> (
-  //                             acc => e => validateObject (
-  //                               wiki,
-  //                               state,
-  //                               req.merge (Record.of ({
-  //                                 id: e,
-  //                               })) as AllRequirementObjects,
-  //                               wiki_entry.get ('id')
-  //                             ) ? acc + 1 : acc
-  //                           ) (0) > 1
-  //                     )
-  //                 )
-  //             )
-  //           }
-  //           else if (typeof dep === 'object') {
-  //             const eSid = dep.lookup ('sid')
+                        return id instanceof List
+                          && Maybe.isJust (origin)
+                          && id.elem (Maybe.fromJust (origin))
+                      }
+                    })
+                    .fmap (
+                      (req: AllRequirementObjects) =>
+                        (req.get ("id") as List<string>)
+                          .foldl<number> (
+                            acc => e => validateObject (
+                              wiki,
+                              state,
+                              req.merge (Record.of ({
+                                id: e,
+                              })) as AllRequirementObjects,
+                              wiki_entry.get ("id")
+                            ) ? acc + 1 : acc
+                          ) (0) > 1
+                    )
+                )
+            )
+          }
+          else if (typeof dep === "object") {
+            const eSid = dep.lookup ("sid")
 
-  //             if (Maybe.isJust (eSid) && Maybe.fromJust (eSid) instanceof List) {
-  //               const list = Maybe.fromJust (eSid) as List<number>
+            if (Maybe.isJust (eSid) && Maybe.fromJust (eSid) instanceof List) {
+              const list = Maybe.fromJust (eSid) as List<number>
 
-  //               const maybeSid = active.lookup ('sid')
-  //                 .bind<boolean> (sid => {
-  //                   if (list.elem (sid as number)) {
-  //                     return getActiveSelections (Maybe.pure (state_entry))
-  //                       .fmap (
-  //                         activeSelections => !activeSelections.any (
-  //                           n => n !== sid && activeSelections.elem (n as number)
-  //                         )
-  //                       )
-  //                   }
-  //                   else {
-  //                     return Maybe.empty ()
-  //                   }
-  //                 })
+              const maybeSid = active.lookup ("sid")
+                .bind<boolean> (sid => {
+                  if (list.elem (sid as number)) {
+                    return getActiveSelections (Maybe.pure (state_entry))
+                      .fmap (
+                        activeSelections => !activeSelections.any (
+                          n => n !== sid && activeSelections.elem (n as number)
+                        )
+                      )
+                  }
+                  else {
+                    return Maybe.empty ()
+                  }
+                })
 
-  //               if (Maybe.isJust (maybeSid)) {
-  //                 return Maybe.fromJust (maybeSid)
-  //               }
-  //             }
-  //           }
+              if (Maybe.isJust (maybeSid)) {
+                return Maybe.fromJust (maybeSid)
+              }
+            }
+          }
 
-  //           return false
-  //         })
-  //     )
-  // )
+          return false
+        })
+    )
+  )
   }
 
 const isStyleSpecialAbilityRemovalDisabled =
@@ -345,8 +402,8 @@ const getSermonsAndVisionsMinTier =
   (gr: number): Maybe<number> =>
   Maybe.ensure (more ? lt (3) : gt (3)) (
     getAllEntriesByGroup (
-      wiki.get ('specialAbilities'),
-      state.get ('specialAbilities'),
+      wiki.get ("specialAbilities"),
+      state.get ("specialAbilities"),
       gr
     )
       .filter (isActive)
@@ -371,43 +428,43 @@ export const getMinTier =
             isObject as (e: ActivatableDependency) => e is Record<DependencyObject>
           ) (dependency)
             .bind (
-              e => e.lookup ('tier')
+              e => e.lookup ("tier")
                 .bind (Maybe.ensure (
                   tier => min.alt (Maybe.pure (0))
                     .lt (Maybe.pure (tier))
-                    && Maybe.isJust (e.lookup ('sid'))
-                    && e.lookup ('sid')
+                    && Maybe.isJust (e.lookup ("sid"))
+                    && e.lookup ("sid")
                       .equals (sid)
                 ))
             )
             .alt (min)
       )
     ) (
-      match<string, Maybe<number>> (obj.get ('id'))
+      match<string, Maybe<number>> (obj.get ("id"))
         .on (
-          'ADV_58',
-          () => Maybe.ensure (lt (3)) (countActiveSkillEntries (state, 'spells'))
+          "ADV_58",
+          () => Maybe.ensure (lt (3)) (countActiveSkillEntries (state, "spells"))
             .fmap (add (-3))
         )
-        .on ('ADV_79', () => getSermonsAndVisionsMinTier (
+        .on ("ADV_79", () => getSermonsAndVisionsMinTier (
           wiki,
           state,
           true,
           24
         ))
-        .on ('ADV_80', () => getSermonsAndVisionsMinTier (
+        .on ("ADV_80", () => getSermonsAndVisionsMinTier (
           wiki,
           state,
           true,
           27
         ))
-        .on ('DISADV_72', () => getSermonsAndVisionsMinTier (
+        .on ("DISADV_72", () => getSermonsAndVisionsMinTier (
           wiki,
           state,
           false,
           24
         ))
-        .on ('DISADV_73', () => getSermonsAndVisionsMinTier (
+        .on ("DISADV_73", () => getSermonsAndVisionsMinTier (
           wiki,
           state,
           false,
@@ -428,11 +485,11 @@ export const getMaxTier =
     match<string, Maybe<number>> (id)
       .on (
         both (
-          equals ('SA_667'),
-          always (Maybe.isJust (state.lookup ('pact')))
+          equals ("SA_667"),
+          always (Maybe.isJust (state.lookup ("pact")))
         ),
-        () => state.lookup ('pact')
-          .bind (pact => pact.lookup ('level'))
+        () => state.lookup ("pact")
+          .bind (pact => pact.lookup ("level"))
       )
       .otherwise (() => !(prerequisites instanceof List) ? validateLevel (
         wiki,
@@ -451,22 +508,22 @@ export const getIsRemovalOrChangeDisabled =
   (obj: Record<ActiveObjectWithId>) =>
   (wiki: WikiModelRecord) =>
   (state: HeroModelRecord): Maybe<Record<ActivatableActivationValidationObject>> =>
-    getWikiEntry<Activatable> (wiki) (obj.get ('id'))
+    getWikiEntry<Activatable> (wiki) (obj.get ("id"))
       .bind (
         wikiEntry => getHeroStateItem<Record<ActivatableDependent>> (
-          obj.get ('id')
+          obj.get ("id")
         ) (state)
           .fmap (instance => {
             const minTier = getMinTier (
               wiki,
               state,
               obj,
-              instance.get ('dependencies'),
-              obj.lookup ('sid')
+              instance.get ("dependencies"),
+              obj.lookup ("sid")
             )
 
             return obj.mergeMaybe (Record.of ({
-              disabled: isSuperRemoveDisabled (entry.lookup ('tiers')) (minTier) (instance) (active) (isRemovalDisabledEntrySpecific (
+              disabled: isSuperRemoveDisabled (entry.lookup ("tiers")) (minTier) (instance) (active) (isRemovalDisabledEntrySpecific (
                 wiki,
                 state,
                 wikiEntry,
@@ -478,9 +535,9 @@ export const getIsRemovalOrChangeDisabled =
               maxTier: getMaxTier (
                 wiki,
                 state,
-                wikiEntry.get ('prerequisites'),
-                instance.get ('dependencies'),
-                obj.get ('id')
+                wikiEntry.get ("prerequisites"),
+                instance.get ("dependencies"),
+                obj.get ("id")
               ),
             })) as Record<ActivatableActivationValidationObject>
           })
