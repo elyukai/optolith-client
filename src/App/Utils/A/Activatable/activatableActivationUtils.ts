@@ -8,18 +8,27 @@
  */
 
 import { pipe } from "ramda";
-import { List } from "../../../../Data/List";
-import { Just, Maybe, Nothing } from "../../../../Data/Maybe";
+import { ident } from "../../../../Data/Function";
+import { over } from "../../../../Data/Lens";
+import { append, empty, List } from "../../../../Data/List";
+import { alt, fromMaybe, fromMaybe_, Just, Maybe, Nothing } from "../../../../Data/Maybe";
 import { OrderedMap } from "../../../../Data/OrderedMap";
 import { Record } from "../../../../Data/Record";
-import { ActivatableDependent, createActivatableDependent } from "../../../Models/ActiveEntries/ActivatableDependent";
+import { ActivatableDependent, ActivatableDependentL, createPlainActivatableDependent } from "../../../Models/ActiveEntries/ActivatableDependent";
 import { ActiveObject } from "../../../Models/ActiveEntries/ActiveObject";
-import { Activatable, AllRequirements, LevelAwarePrerequisites } from "../../../Models/Wiki/wikiTypeHelpers";
-import { removeHeroStateItem, setHeroStateItem } from "../../heroStateUtils";
-import { flattenPrerequisites } from "../../prerequisites/flattenPrerequisites";
-import { getGeneratedPrerequisites } from "../../Prerequisites/prerequisitesUtils";
+import { HeroModelRecord } from "../../../Models/Hero/HeroModel";
+import { Advantage } from "../../../Models/Wiki/Advantage";
+import { Activatable, AllRequirementObjects, AllRequirements, LevelAwarePrerequisites } from "../../../Models/Wiki/wikiTypeHelpers";
+import { addDependencies } from "../../Dependencies/dependencyUtils";
+import { adjustEntryDef, setHeroStateItem } from "../../heroStateUtils";
+import { flattenPrerequisites } from "../../P/Prerequisites/flattenPrerequisites";
+import { getGeneratedPrerequisites } from "../../P/Prerequisites/prerequisitesUtils";
 import { ActivatableReducer, OptionalActivatableReducer } from "../../reducerUtils";
 import { convertUIStateToActiveObject } from "./activatableConvertUtils";
+
+const { tier } = ActiveObject.A
+const { id, prerequisites } = Advantage.A
+const { active } = ActivatableDependent.A
 
 export interface ActivatableActivatePayload extends ActivatableActivateOptions {
   wiki: Activatable
@@ -36,54 +45,28 @@ export interface ActivatableActivateOptions {
   customCost?: number
 }
 
-type ChangeActive =
-  (activeArr: List<Record<ActiveObject>>) => List<Record<ActiveObject>>
-
 const getStaticPrerequisites =
-  (active: Record<ActiveObject>) =>
-  (prerequisites: LevelAwarePrerequisites): List<AllRequirements> =>
-    flattenPrerequisites (prerequisites) (active.lookup ("tier").alt (Just (1))) (Nothing ())
+  (entry: Record<ActiveObject>) =>
+  (entry_prerequisites: LevelAwarePrerequisites): List<AllRequirements> =>
+    flattenPrerequisites (entry_prerequisites)
+                         (alt (tier (entry)) (Just (1)))
+                         (Nothing)
 
 /**
  * Get matching flattened final static and dynamic prerequisites.
- * @param wikiEntry
- * @param instance
- * @param active
  */
-export const getCombinedPrerequisites = (
-  wikiEntry: Activatable,
-  instance: Maybe<Record<ActivatableDependent>>,
-  active: Record<ActiveObject>,
-  add: boolean
-): List<AllRequirements> =>
-  Maybe.fromJust (
-    Maybe.pure (
-      getStaticPrerequisites (active) (wikiEntry.get ("prerequisites"))
-    )
-      .mappend (
-        getGeneratedPrerequisites (wikiEntry, instance, active, add)
-      )
-  )
-
-/**
- * Calculates changed instance.
- * @param instance
- * @param changeActive
- */
-const getChangedInstance = (
-  instance: Record<ActivatableDependent>,
-  changeActive: ChangeActive
-) => (state: Record<HeroDependent>): Record<HeroDependent> => {
-  const changeInstance = pipe (
-    Record.modify<ActivatableDependent, "active"> (changeActive) ("active"),
-    current =>
-      isActivatableDependentUnused (current)
-      ? removeHeroStateItem (instance.get ("id"))
-      : setHeroStateItem (instance.get ("id")) (current)
-  )
-
-  return Maybe.fromMaybe (state) (changeInstance (instance) (state))
-}
+export const getCombinedPrerequisites =
+  (add: boolean) =>
+  (wiki_entry: Activatable) =>
+  (hero_entry: Maybe<Record<ActivatableDependent>>) =>
+  (entry: Record<ActiveObject>): List<AllRequirements> =>
+    append (getStaticPrerequisites (entry)
+                                   (prerequisites (wiki_entry)))
+           (fromMaybe<List<AllRequirementObjects>> (empty)
+                                                   (getGeneratedPrerequisites (add)
+                                                                              (wiki_entry)
+                                                                              (hero_entry)
+                                                                              (entry)))
 
 /**
  * Adds or removes active instance and related prerequisites based on passed
@@ -93,27 +76,36 @@ const getChangedInstance = (
  * @param changeActive
  * @param add If an entry should be added or removed.
  */
-const changeActiveLength = (
-  getActive: (instance: Record<ActivatableDependent>) => Record<ActiveObject>,
-  changeDependencies: typeof DependencyUtils.addDependencies,
-  changeActive: ChangeActive,
-  add: boolean
-) => (
-  state: Record<HeroDependent>,
-  wikiEntry: Activatable,
-  instance: Maybe<Record<ActivatableDependent>>
-) => {
-  const justInstance = Maybe.fromMaybe (createActivatableDependent (wikiEntry.get ("id")))
-    (instance)
+const changeActiveLength =
+  (getActive: (hero_entry: Record<ActivatableDependent>) => Record<ActiveObject>) =>
+  (changeDependencies: typeof addDependencies) =>
+  (changeActive: ident<List<Record<ActiveObject>>>) =>
+  (add: boolean) =>
+  (hero: HeroModelRecord) =>
+  (wiki_entry: Activatable) =>
+  (hero_entry: Maybe<Record<ActivatableDependent>>) =>
+                       // Source id
+    changeDependencies (id (wiki_entry))
 
-  const active = getActive (justInstance)
+                       // get the prerequisites that need to be applied as
+                       // dependencies to all objects the activation or
+                       // deactivation depends on
+                       (getCombinedPrerequisites (add)
+                                                 (wiki_entry)
+                                                 (hero_entry)
+                                                 (getActive (
+                                                   fromMaybe_<Record<ActivatableDependent>>
+                                                     (() => createPlainActivatableDependent
+                                                       (id (wiki_entry)))
+                                                     (hero_entry)
+                                                 )))
 
-  return changeDependencies (
-    getChangedInstance (justInstance, changeActive) (state),
-    getCombinedPrerequisites (wikiEntry, instance, active, add),
-    wikiEntry.get ("id")
-  )
-}
+                       // modify the list of `ActiveObjects` and pass the hero
+                       // to `changeDependencies` so that it can apply all the
+                       // dependencies to the updated hero
+                       (adjustEntryDef (over (ActivatableDependentL.active) (changeActive))
+                                       (id (wiki_entry))
+                                       (hero))
 
 /**
  * Activates the entry with the given parameters and adds all needed

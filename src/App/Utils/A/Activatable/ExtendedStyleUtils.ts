@@ -320,13 +320,13 @@ export const getAllAvailableExtendedSpecialAbilities =
  */
 export const isStyleValidToRemove =
   (hero: HeroModelRecord):
-  (mhero_entry: Maybe<Record<SpecialAbility>>) => boolean =>
+  (mwiki_entry: Maybe<Record<SpecialAbility>>) => boolean =>
     pipe (
       fmap (
-        hero_entry =>
+        wiki_entry =>
           and (fmap ((l: Lens<HeroModelRecord, List<Record<StyleDependency>>>) => {
                       const splitted =
-                        getSplittedRemainingAndToRemove (id (hero_entry))
+                        getSplittedRemainingAndToRemove (id (wiki_entry))
                                                         (view (l) (hero))
 
                       const itemsToRemove = fst (splitted)
@@ -338,7 +338,7 @@ export const isStyleValidToRemove =
                              )
                              (itemsToRemove)
                     })
-                    (lensByStyle (hero_entry)))
+                    (lensByStyle (wiki_entry)))
       ),
       or
     )

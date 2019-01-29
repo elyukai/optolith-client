@@ -8,7 +8,7 @@ import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { CombatTechnique } from "../../Models/Wiki/CombatTechnique";
 import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel";
 import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import { getActiveSelections } from "../A/Activatable/selectionUtils";
+import { getActiveSelectionsMaybe } from "../A/Activatable/selectionUtils";
 import { flattenDependencies } from "../Dependencies/flattenDependencies";
 import { add, divideBy, max } from "../mathUtils";
 
@@ -70,7 +70,7 @@ export const isIncreaseDisabled =
     const exceptionalSkill = lookupF (advantages (state)) ("ADV_17")
 
     const bonus = pipe (
-                         getActiveSelections,
+                         getActiveSelectionsMaybe,
                          fmap (elem<string | number> (id (instance))),
                          Maybe.elem (true),
                          x => x ? 1 : 0

@@ -23,7 +23,7 @@ export const RequireIncreasable =
 
 export const RequireIncreasableL = makeLenses (RequireIncreasable)
 
-export const isIncreasableRequirement =
+export const isRequiringIncreasable =
   (req: AllRequirementObjects): req is Record<RequireIncreasable> => {
     const id = RequireIncreasable.A.id (req)
 

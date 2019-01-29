@@ -15,7 +15,7 @@ import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel";
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
 import { Spell } from "../../Models/Wiki/Spell";
 import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import { getActiveSelections } from "../A/Activatable/selectionUtils";
+import { getActiveSelectionsMaybe } from "../A/Activatable/selectionUtils";
 import { filterAndMaximumNonNegative, flattenDependencies } from "../Dependencies/flattenDependencies";
 import { getNumericMagicalTraditionIdByInstanceId } from "../IDUtils";
 import { ifElse } from "../ifElse";
@@ -68,7 +68,7 @@ const putPropertyKnowledgeRestrictionMaximum =
     ifElse<List<number>, List<number>>
       (cnst (
         or (fmap (notElem<string | number> (property (wikiEntry (entry))))
-                 (getActiveSelections (propertyKnowledge)))
+                 (getActiveSelectionsMaybe (propertyKnowledge)))
       ))
       (consF (14))
       (ident)
@@ -148,7 +148,7 @@ const isSpellDecreasableByPropertyKnowledges =
   (entry: Record<SpellCombined>) =>
     or (
       pipe (
-        getActiveSelections,
+        getActiveSelectionsMaybe,
 
         // Check if spell is part of dependencies of active Property Knowledge
         bindF<List<string | number>, List<string | number>>

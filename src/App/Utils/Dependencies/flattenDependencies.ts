@@ -12,7 +12,7 @@ import { WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { AbilityRequirement, Activatable } from "../../Models/Wiki/wikiTypeHelpers";
 import { getHeroStateItem } from "../heroStateUtils";
 import { gt, gte, inc } from "../mathUtils";
-import { flattenPrerequisites } from "../prerequisites/flattenPrerequisites";
+import { flattenPrerequisites } from "../P/Prerequisites/flattenPrerequisites";
 import { isNumber } from "../typeCheckUtils";
 import { getWikiEntry } from "../WikiUtils";
 
@@ -52,9 +52,7 @@ export const flattenDependencies =
                    id as (r: AbilityRequirement) => List<string>,
                    foldl<string, number>
                      (acc => pipe (
-                       getHeroStateItem as (id: string) =>
-                         (state: HeroModelRecord) => Maybe<ValueBasedDependent>,
-                       thrush (state),
+                       getHeroStateItem (state) as (id: string) => Maybe<ValueBasedDependent>,
                        fmap (pipe (value, gte (value (e)))),
                        or,
                        x => x ? inc (acc) : acc

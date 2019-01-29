@@ -11,7 +11,7 @@ import { ActivatableDependency, ExtendedSkillDependency, SkillDependency } from 
 import { SkillOptionalDependency } from "../../Models/Hero/SkillOptionalDependency";
 import { isRequiringActivatable, RequireActivatable } from "../../Models/Wiki/prerequisites/ActivatableRequirement";
 import { isDependentPrerequisite } from "../../Models/Wiki/prerequisites/DependentRequirement";
-import { isIncreasableRequirement, RequireIncreasable } from "../../Models/Wiki/prerequisites/IncreasableRequirement";
+import { isRequiringIncreasable, RequireIncreasable } from "../../Models/Wiki/prerequisites/IncreasableRequirement";
 import { isPrimaryAttributeRequirement, RequirePrimaryAttribute } from "../../Models/Wiki/prerequisites/PrimaryAttributeRequirement";
 import { AllRequirements } from "../../Models/Wiki/wikiTypeHelpers";
 import { getCategoryById } from "../IDUtils";
@@ -158,7 +158,7 @@ const modifyDependencies =
                                                            (x)
                     }
 
-                    if (isIncreasableRequirement (x)) {
+                    if (isRequiringIncreasable (x)) {
                       return putIncreasableDependency (modifyAttributeDependency)
                                                       (modifySkillDependency)
                                                       (modifyActivatableSkillDependency)

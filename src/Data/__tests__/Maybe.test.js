@@ -53,6 +53,13 @@ test ('fromMaybe', () => {
     .toEqual (0)
 })
 
+test ('fromMaybe_', () => {
+  expect (Maybe.fromMaybe_ (() => 0) (Maybe.fromNullable (3)))
+    .toEqual (3)
+  expect (Maybe.fromMaybe_ (() => 0) (Maybe.fromNullable (null)))
+    .toEqual (0)
+})
+
 // FUNCTOR
 
 test ('fmap', () => {

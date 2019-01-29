@@ -1,9 +1,10 @@
 import { Nothing } from "../../../Data/Maybe";
 import { fromDefault, RecordI } from "../../../Data/Record";
 import { ActivatableDependent } from "../ActiveEntries/ActivatableDependent";
-import { ActivatableActivationMeta, ActivatableActivationValidationObject, ActivatableNameAdjustedCostEvalTier } from "../Hero/heroTypeHelpers";
+import { ActivatableActivationMeta, ActivatableNameAdjustedCostEvalTier } from "../Hero/heroTypeHelpers";
 import { Advantage } from "../Wiki/Advantage";
 import { Activatable } from "../Wiki/wikiTypeHelpers";
+import { ActivatableActivationValidationObject } from "./ActivatableActivationValidationObject";
 
 export interface ActiveActivatable<T extends RecordI<Activatable> = RecordI<Activatable>>
   extends ActivatableNameAdjustedCostEvalTier,

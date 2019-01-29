@@ -1129,6 +1129,32 @@ export const sdelete =
     ? xs .xs
     : Cons (xs .x, sdelete (x) (xs .xs))
 
+/**
+ * `intersect :: Eq a => [a] -> [a] -> [a]`
+ *
+ * The `intersect` function takes the list intersection of two lists. For
+ * example,
+ *
+ * ```haskell
+ * >>> [1,2,3,4] `intersect` [2,4,6,8]
+ * [2,4]
+ * ```
+ *
+ * If the first list contains duplicates, so will the result.
+ *
+ * ```haskell
+ * >>> [1,2,2,3,4] `intersect` [6,4,4,2]
+ * [2,2,4]
+ * ```
+ *
+ * It is a special case of `intersectBy`, which allows the programmer to supply
+ * their own equality test. If the element is found in both the first and the
+ * second list, the element from the first list will be used.
+ */
+export const intersect =
+  <A> (xs: List<A>) => (ys: List<A>): List<A> =>
+    filter (elemF (ys)) (xs)
+
 
 // ORDERED LISTS
 
@@ -1902,6 +1928,7 @@ export const List = {
   lines,
 
   sdelete,
+  intersect,
 
   sortBy,
 

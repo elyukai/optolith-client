@@ -191,10 +191,10 @@ export const getEntryCreatorById =
   }
 
 export const getHeroStateItem =
+  (hero: HeroModelRecord) =>
   (id: string) =>
-  (state: HeroModelRecord) =>
     pipe (
-           fmap ((lens: HeroStateMapLens) => view (lens) (state)),
+           fmap ((lens: HeroStateMapLens) => view (lens) (hero)),
            bindF (lookup (id) as (m: OrderedMap<string, Dependent>) => Maybe<Dependent>)
          )
          (getHeroStateMapLensById (id))
@@ -306,8 +306,8 @@ export const updateSliceEntry =
  * Filters the passed `list` by the specified groups.
  */
 export const getAllEntriesByGroup =
-  <I extends Dependent = Dependent, T extends EntryWithGroup = EntryWithGroup>
-  (wiki: OrderedMap<string, T>) =>
+  (wiki: OrderedMap<string, EntryWithGroup>) =>
+  <I extends Dependent = Dependent>
   (list: OrderedMap<string, I>) =>
   (...groups: number[]): List<I> =>
     filter<I> (pipe (

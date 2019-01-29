@@ -90,12 +90,6 @@ export interface ActivatableNameAdjustedCostEvalTier extends ActivatableNameCost
   finalCost: number
 }
 
-export interface ActivatableActivationValidationObject extends ActiveObjectWithId {
-  disabled: boolean
-  maxLevel: Maybe<number>
-  minLevel: Maybe<number>
-}
-
 export interface ActivatableActivationMeta<
   T extends RecordI<Wiki.Activatable> = RecordI<Wiki.Activatable>
 > {

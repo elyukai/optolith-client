@@ -7,52 +7,57 @@
 
 import { pipe } from "ramda";
 import { equals } from "../../../../Data/Eq";
-import { thrush } from "../../../../Data/Function";
-import { any, countWith, elem, filter, find, isList, length, List } from "../../../../Data/List";
-import { alt, bindF, ensure, fmap, fromJust, isJust, Just, liftM2, Maybe, Nothing, or } from "../../../../Data/Maybe";
-import { elems, lookupF } from "../../../../Data/OrderedMap";
+import { flip, thrush } from "../../../../Data/Function";
+import { any, countWith, elem, filter, find, foldl, intersect, isList, length, List, sdelete } from "../../../../Data/List";
+import { alt, altF, bindF, ensure, fmap, fromJust, isJust, Just, liftM2, Maybe, Nothing, or, sum } from "../../../../Data/Maybe";
+import { elems, isOrderedMap, lookupF } from "../../../../Data/OrderedMap";
 import { size } from "../../../../Data/OrderedSet";
 import { Record } from "../../../../Data/Record";
-import { ActivatableDependent } from "../../../Models/ActiveEntries/ActivatableDependent";
+import { ActivatableDependent, isActivatableDependent } from "../../../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent } from "../../../Models/ActiveEntries/ActivatableSkillDependent";
 import { ActiveObject } from "../../../Models/ActiveEntries/ActiveObject";
 import { ActiveObjectWithId } from "../../../Models/ActiveEntries/ActiveObjectWithId";
 import { DependencyObject } from "../../../Models/ActiveEntries/DependencyObject";
 import { SkillDependent } from "../../../Models/ActiveEntries/SkillDependent";
 import { HeroModel, HeroModelRecord } from "../../../Models/Hero/HeroModel";
-import { ActivatableActivationValidationObject, ActivatableDependency } from "../../../Models/Hero/heroTypeHelpers";
+import { ActivatableDependency, Dependent } from "../../../Models/Hero/heroTypeHelpers";
+import { Pact } from "../../../Models/Hero/Pact";
+import { ActivatableActivationValidationObject } from "../../../Models/View/ActivatableActivationValidationObject";
 import { ExperienceLevel } from "../../../Models/Wiki/ExperienceLevel";
 import { RequireActivatable } from "../../../Models/Wiki/prerequisites/ActivatableRequirement";
 import { isSpecialAbility, SpecialAbility } from "../../../Models/Wiki/SpecialAbility";
 import { WikiModel, WikiModelRecord } from "../../../Models/Wiki/WikiModel";
-import { Activatable, AllRequirementObjects, EntryWithCategory, LevelAwarePrerequisites } from "../../../Models/Wiki/wikiTypeHelpers";
+import { Activatable, AllRequirementObjects, EntryWithCategory, LevelAwarePrerequisites, SID } from "../../../Models/Wiki/wikiTypeHelpers";
 import { countActiveGroupEntries } from "../../entryGroupUtils";
 import { getAllEntriesByGroup, getHeroStateItem, mapListByIdKeyMap } from "../../heroStateUtils";
 import { ifElse } from "../../ifElse";
 import { isOwnTradition } from "../../Increasable/liturgicalChantUtils";
-import { match } from "../../match";
-import { add, gte, inc } from "../../mathUtils";
+import { add, gt, gte, inc, lt, subtract, subtractBy } from "../../mathUtils";
 import { notP } from "../../not";
 import { flattenPrerequisites } from "../../P/Prerequisites/flattenPrerequisites";
+import { setPrerequisiteId } from "../../P/Prerequisites/setPrerequisiteId";
 import { validateLevel, validateObject } from "../../P/Prerequisites/validatePrerequisitesUtils";
 import { isBoolean, isObject } from "../../typeCheckUtils";
 import { getWikiEntry, isActivatableWikiEntry } from "../../WikiUtils";
 import { countActiveSkillEntries } from "./activatableSkillUtils";
 import { isStyleValidToRemove } from "./ExtendedStyleUtils";
 import { isActive } from "./isActive";
+import { getActiveSelections } from "./selectionUtils";
 import { getBlessedTraditionFromWiki, getMagicalTraditions } from "./traditionUtils";
 
 const hasRequiredMinimumLevel =
   (min_level: Maybe<number>) => (max_level: Maybe<number>): boolean =>
     isJust (max_level) && isJust (min_level)
 
-const { blessings, cantrips, liturgicalChants, specialAbilities } = HeroModel.A
+const { blessings, cantrips, liturgicalChants, specialAbilities, pact } = HeroModel.A
+const { specialAbilities: wiki_specialAbilities } = WikiModel.A
 const { maxCombatTechniqueRating, maxSkillRating } = ExperienceLevel.A
 const { id, dependencies: addependencies, active: adactive } = ActivatableDependent.A
 const { active: asdactive } = ActivatableSkillDependent.A
 const { active: doactive, sid, sid2, tier, origin } = DependencyObject.A
 const { prerequisites, tiers } = SpecialAbility.A
 const { id: ra_id } = RequireActivatable.A
+const { level } = Pact.A
 
 const isRequiredByOthers =
   (current_active: Record<ActiveObject>) =>
@@ -74,21 +79,6 @@ const isRequiredByOthers =
            )
          )
          (state_entry)
-
-/**
- * Even if the entry itself is valid, it might be that there is a minimum level
- * required or that other entries depend on this entry.
- */
-const isSuperRemoveDisabled =
-  (levels: Maybe<number>) =>
-  (minimum_level: Maybe<number>) =>
-  (hero_entry: Record<ActivatableDependent>) =>
-  (active: Record<ActiveObject>) =>
-    // Disable if a minimum level is required
-    hasRequiredMinimumLevel (minimum_level) (levels)
-
-    // Disable if other entries depend on this entry
-    || isRequiredByOthers (active) (hero_entry)
 
 /**
  * Checks if you can somehow remove an ActiveObject from the given entry.
@@ -240,11 +230,9 @@ const isRemovalDisabledEntrySpecific =
         return or (mactive_unfamiliar_chants)
       }
 
-      default: {
-        if (isSpecialAbility (wiki_entry) && isStyleValidToRemove (hero) (Just (wiki_entry))) {
-          return true
-        }
-
+      default:
+        // if there is any dependency that disables the possibility to remove
+        // the entry
         return any ((dep: ActivatableDependency) => {
                      // If there is a top-level dependency for the whole entry,
                      // it must be `true` because `false` would have prevented
@@ -253,6 +241,9 @@ const isRemovalDisabledEntrySpecific =
                        return true
                      }
 
+                     // A Just if the depedency exists because of a list of ids
+                     // in a prerequiste. Contains the source id of the object
+                     // where the prerequisite is from.
                      const current_origin = origin (dep)
 
                      if (isJust (current_origin)) {
@@ -277,8 +268,15 @@ const isRemovalDisabledEntrySpecific =
 
                                               const current_id = ra_id (req)
 
+                                              // the id must be a list of ids
+                                              // because otherwise no options in
+                                              // terms of fulfilling the
+                                              // prerequisite would be possible
                                               return isList (current_id)
-                                                && elem (fromJust (current_origin))
+                                                // check if the current entry's
+                                                // id is actually a member of
+                                                // the prerequisite
+                                                && elem (id (wiki_entry))
                                                         (current_id)
                                             })),
 
@@ -286,218 +284,161 @@ const isRemovalDisabledEntrySpecific =
                                 // Check if there are other entries that would
                                 // match the prerequisite so that this entry
                                 // could be removed
-                                fmap (req => countWith (x => validateObject (
-                                                          wiki,
-                                                          state,
-                                                          req.merge (Record.of ({
-                                                            id: e,
-                                                          })) as AllRequirementObjects,
-                                                          wiki_entry.get ("id")
-                                                        ))
-                                                       (ra_id (req) as List<string>)
-                                      (req.get ("id") as List<string>)
-                                        .foldl<number> (
-                                          acc => e =>  ? acc + 1 : acc
-                                        ) (0) > 1)
+                                fmap (req =>
+                                  any ((x: string) =>
+                                        validateObject (wiki)
+                                                        (hero)
+                                                        (setPrerequisiteId (x) (req))
+                                                        (id (wiki_entry)))
+                                      (sdelete (id (wiki_entry)) (ra_id (req) as List<string>))
+                                )
 
                               )
                               (fromJust (current_origin))
                        )
                      }
+
+                     // sid of the current dependency
+                     const current_dep_sid = sid (dep)
+
+                     if (Maybe.any (isList) (current_dep_sid)) {
+                       // list of possible sids to fulfill the prerequisite
+                       // and thus to fulfill the dependency
+                       const xs = fromJust (current_dep_sid) as List<number>
+
+                       const current_active_selections = getActiveSelections (hero_entry)
+
+                       // there must be at least two active sids being contained
+                       // in the list of possible sids so that one of them can
+                       // be removed
+                       const multiple_valid_for_dependency =
+                         length (intersect (current_active_selections) (xs)) > 1
+
+                       // must be negated because it must return `false` if
+                       // the dependency says it can be removed
+                       return !multiple_valid_for_dependency
+                     }
+
+                     return false
                    })
                    (addependencies (hero_entry))
-
-        return false
-      }
     }
-
-    .otherwise (
-      () => state_entry .get ("dependencies")
-        .any (dep => {
-          if (typeof dep === "object" && Maybe.isJust (dep .lookup ("origin"))) {
-            return Maybe.fromMaybe (true) (
-              getWikiEntry<Activatable>
-                (wiki)
-                (Maybe.fromJust (dep.lookup ("origin") as Just<string>))
-                .bind (
-                  originEntry => flattenPrerequisites (originEntry.get ("prerequisites"))
-                                                      (originEntry.lookup ("tiers")
-                                                        .alt (Just (1)))
-                                                      (Nothing ())
-                    .find ((r): r is AllRequirementObjects => {
-                      if (typeof r === "string") {
-                        return false
-                      }
-                      else {
-                        const id = r.get ("id")
-                        const origin = dep.lookup ("origin")
-
-                        return id instanceof List
-                          && Maybe.isJust (origin)
-                          && id.elem (Maybe.fromJust (origin))
-                      }
-                    })
-                    .fmap (
-                      (req: AllRequirementObjects) =>
-                        (req.get ("id") as List<string>)
-                          .foldl<number> (
-                            acc => e => validateObject (
-                              wiki,
-                              state,
-                              req.merge (Record.of ({
-                                id: e,
-                              })) as AllRequirementObjects,
-                              wiki_entry.get ("id")
-                            ) ? acc + 1 : acc
-                          ) (0) > 1
-                    )
-                )
-            )
-          }
-          else if (typeof dep === "object") {
-            const eSid = dep.lookup ("sid")
-
-            if (Maybe.isJust (eSid) && Maybe.fromJust (eSid) instanceof List) {
-              const list = Maybe.fromJust (eSid) as List<number>
-
-              const maybeSid = active.lookup ("sid")
-                .bind<boolean> (sid => {
-                  if (list.elem (sid as number)) {
-                    return getActiveSelections (Maybe.pure (state_entry))
-                      .fmap (
-                        activeSelections => !activeSelections.any (
-                          n => n !== sid && activeSelections.elem (n as number)
-                        )
-                      )
-                  }
-                  else {
-                    return Maybe.empty ()
-                  }
-                })
-
-              if (Maybe.isJust (maybeSid)) {
-                return Maybe.fromJust (maybeSid)
-              }
-            }
-          }
-
-          return false
-        })
-    )
-  )
   }
 
 const isStyleSpecialAbilityRemovalDisabled =
-  (wiki: WikiModelRecord) =>
   (hero: HeroModelRecord) =>
-  (wiki_entry: Activatable) =>
-  (hero_entry: Record<ActivatableDependent>) =>
-  (active: Record<ActiveObject>): boolean =>
-    isSpecialAbility (wiki_entry) && !isStyleValidToRemove ()
+  (wiki_entry: Activatable): boolean =>
+    isSpecialAbility (wiki_entry)
+    && !isStyleValidToRemove (hero)
+                             (Just (wiki_entry))
 
 const getSermonsAndVisionsMinTier =
   (wiki: WikiModelRecord) =>
   (state: HeroModelRecord) =>
   (more: boolean) =>
   (gr: number): Maybe<number> =>
-  Maybe.ensure (more ? lt (3) : gt (3)) (
-    getAllEntriesByGroup (
-      wiki.get ("specialAbilities"),
-      state.get ("specialAbilities"),
-      gr
-    )
-      .filter (isActive)
-      .length ()
-  )
-    .fmap (more ? add (-3) : subtract (3))
+    fmap (more ? subtractBy (3) : subtract (3))
+         (ensure (more ? gt (3) : lt (3))
+                 (countWith (isActive)
+                            (getAllEntriesByGroup (wiki_specialAbilities (wiki))
+                                                  (specialAbilities (state))
+                                                  (gr))))
+
+const getEntrySpecificMinimumLevel =
+  (wiki: WikiModelRecord) =>
+  (hero: HeroModelRecord) =>
+  (x: Record<ActiveObjectWithId>): Maybe<number> => {
+    switch (id (x)) {
+      // Große Zauberauswahl
+      case "ADV_58":
+        return fmap (subtractBy (3))
+                    (ensure (gt (3))
+                            (countActiveSkillEntries ("spells")
+                                                     (hero)))
+
+      // Zahlreiche Predigten
+      case "ADV_79":
+        return getSermonsAndVisionsMinTier (wiki) (hero) (true) (24)
+
+      // Zahlreiche Visionen
+      case "ADV_80":
+        return getSermonsAndVisionsMinTier (wiki) (hero) (true) (27)
+
+      // Wenige Predigten
+      case "DISADV_72":
+        return getSermonsAndVisionsMinTier (wiki) (hero) (false) (24)
+
+      // Wenige Visionen
+      case "DISADV_73":
+        return getSermonsAndVisionsMinTier (wiki) (hero) (false) (27)
+
+      default:
+        return Nothing
+    }
+  }
+
+type isDependencyObject = (x: ActivatableDependency) => x is Record<DependencyObject>
+
+const adjustMinimumLevelByDependencies =
+  (entry: Record<ActiveObjectWithId>) =>
+    flip (foldl ((min: Maybe<number>): (dep: ActivatableDependency) => Maybe<number> =>
+                  pipe (
+                    // dependency must include a minimum level, which only occurs
+                    // in a DependencyObject
+                    ensure (isObject as isDependencyObject),
+                    // get the level dependency from the object and ensure it's
+                    // greater than the current mininumu level and that
+                    bindF (dep => bindF<number, number>
+                                    (ensure (dep_level => sum (min) < dep_level
+                                                          && or (liftM2<SID, SID, boolean>
+                                                                  (equals)
+                                                                  (sid (dep))
+                                                                  (sid (entry)))))
+                                    (tier (dep))),
+                    // if the current dependency's level is not valid, return
+                    // the current minimum
+                    altF (min)
+                  )))
 
 /**
  * Get minimum valid tier.
- * @param dependencies The current instance dependencies.
  */
 export const getMinTier =
   (wiki: WikiModelRecord) =>
-  (state: HeroModelRecord) =>
-  (obj: Record<ActiveObjectWithId>) =>
-  (dependencies: List<ActivatableDependency>) =>
-  (sid: Maybe<string | number>): Maybe<number> =>
-    pipe (
-      dependencies.foldl<Maybe<number>> (
-        min => dependency =>
-          Maybe.ensure (
-            isObject as (e: ActivatableDependency) => e is Record<DependencyObject>
-          ) (dependency)
-            .bind (
-              e => e.lookup ("tier")
-                .bind (Maybe.ensure (
-                  tier => min.alt (Maybe.pure (0))
-                    .lt (Maybe.pure (tier))
-                    && Maybe.isJust (e.lookup ("sid"))
-                    && e.lookup ("sid")
-                      .equals (sid)
-                ))
-            )
-            .alt (min)
-      )
-    ) (
-      match<string, Maybe<number>> (obj.get ("id"))
-        .on (
-          "ADV_58",
-          () => Maybe.ensure (lt (3)) (countActiveSkillEntries (state, "spells"))
-            .fmap (add (-3))
-        )
-        .on ("ADV_79", () => getSermonsAndVisionsMinTier (
-          wiki,
-          state,
-          true,
-          24
-        ))
-        .on ("ADV_80", () => getSermonsAndVisionsMinTier (
-          wiki,
-          state,
-          true,
-          27
-        ))
-        .on ("DISADV_72", () => getSermonsAndVisionsMinTier (
-          wiki,
-          state,
-          false,
-          24
-        ))
-        .on ("DISADV_73", () => getSermonsAndVisionsMinTier (
-          wiki,
-          state,
-          false,
-          27
-        ))
-        .otherwise (Maybe.empty)
-    )
+  (hero: HeroModelRecord) =>
+  (entry: Record<ActiveObjectWithId>) =>
+  (entry_dependencies: List<ActivatableDependency>): Maybe<number> =>
+    pipe (adjustMinimumLevelByDependencies (entry)
+                                           (entry_dependencies))
+         (getEntrySpecificMinimumLevel (wiki)
+                                       (hero)
+                                       (entry))
 
 /**
  * Get maximum valid tier.
  */
 export const getMaxTier =
   (wiki: WikiModelRecord) =>
-  (state: HeroModelRecord) =>
-  (prerequisites: LevelAwarePrerequisites) =>
-  (dependencies: List<ActivatableDependency>) =>
-  (id: string): Maybe<number> =>
-    match<string, Maybe<number>> (id)
-      .on (
-        both (
-          equals ("SA_667"),
-          always (Maybe.isJust (state.lookup ("pact")))
-        ),
-        () => state.lookup ("pact")
-          .bind (pact => pact.lookup ("level"))
-      )
-      .otherwise (() => !(prerequisites instanceof List) ? validateLevel (
-        wiki,
-        state,
-        prerequisites,
-        dependencies,
-        id
-      ) : Maybe.empty ())
+  (hero: HeroModelRecord) =>
+  (entry_prerequisites: LevelAwarePrerequisites) =>
+  (entry_dependencies: List<ActivatableDependency>) =>
+  (entry_id: string): Maybe<number> => {
+    const current_pact = pact (hero)
+
+    if (entry_id === "SA_667" && isJust (current_pact)) {
+      return Just (level (fromJust (current_pact)))
+    }
+
+    if (isOrderedMap (entry_prerequisites)) {
+      return validateLevel (wiki)
+                           (hero)
+                           (entry_prerequisites)
+                           (entry_dependencies)
+                           (entry_id)
+    }
+
+    return Nothing
+  }
 
 /**
  * Checks if the given ActiveObject can be removed or changed in tier.
@@ -505,40 +446,63 @@ export const getMaxTier =
  * @param state The current hero's state.
  */
 export const getIsRemovalOrChangeDisabled =
-  (obj: Record<ActiveObjectWithId>) =>
   (wiki: WikiModelRecord) =>
-  (state: HeroModelRecord): Maybe<Record<ActivatableActivationValidationObject>> =>
-    getWikiEntry<Activatable> (wiki) (obj.get ("id"))
-      .bind (
-        wikiEntry => getHeroStateItem<Record<ActivatableDependent>> (
-          obj.get ("id")
-        ) (state)
-          .fmap (instance => {
-            const minTier = getMinTier (
-              wiki,
-              state,
-              obj,
-              instance.get ("dependencies"),
-              obj.lookup ("sid")
-            )
+  (hero: HeroModelRecord) =>
+  (entry: Record<ActiveObjectWithId>): Maybe<Record<ActivatableActivationValidationObject>> =>
+    pipe (
+           getWikiEntry (wiki),
+           bindF<EntryWithCategory, Activatable> (ensure (isActivatableWikiEntry)),
+           bindF (
+             wiki_entry =>
+               pipe (
+                      id,
+                      getHeroStateItem (hero),
+                      bindF<Dependent, Record<ActivatableDependent>>
+                        (ensure (isActivatableDependent)),
+                      fmap (hero_entry => {
+                        const minimum_level = getMinTier (wiki)
+                                                         (hero)
+                                                         (entry)
+                                                         (addependencies (hero_entry))
 
-            return obj.mergeMaybe (Record.of ({
-              disabled: isSuperRemoveDisabled (entry.lookup ("tiers")) (minTier) (instance) (active) (isRemovalDisabledEntrySpecific (
-                wiki,
-                state,
-                wikiEntry,
-                instance,
-                obj as Record<any>,
-                minTier
-              )),
-              minTier,
-              maxTier: getMaxTier (
-                wiki,
-                state,
-                wikiEntry.get ("prerequisites"),
-                instance.get ("dependencies"),
-                obj.get ("id")
-              ),
-            })) as Record<ActivatableActivationValidationObject>
-          })
-      )
+                        return ActivatableActivationValidationObject ({
+                          id: id (entry),
+                          index: ActiveObjectWithId.A.index (entry),
+                          cost: ActiveObjectWithId.A.cost (entry),
+                          sid: ActiveObjectWithId.A.sid (entry),
+                          sid2: sid2 (entry),
+                          tier: tier (entry),
+                          disabled:
+                            // Disable if a minimum level is required
+                            hasRequiredMinimumLevel (minimum_level)
+                                                    (tiers (wiki_entry))
+
+                            // Disable if other entries depend on this entry
+                            || isRequiredByOthers (entry)
+                                                  (hero_entry)
+
+                            // Disable if style special ability is required for
+                            // extended special abilities
+                            || isStyleSpecialAbilityRemovalDisabled (hero)
+                                                                    (wiki_entry)
+
+                            // Disable if specific entry conditions disallow
+                            // remove
+                            || isRemovalDisabledEntrySpecific (wiki)
+                                                              (hero)
+                                                              (wiki_entry)
+                                                              (hero_entry)
+                                                              (entry),
+                          minLevel: minimum_level,
+                          maxLevel: getMaxTier (wiki)
+                                               (hero)
+                                               (prerequisites (wiki_entry))
+                                               (addependencies (hero_entry))
+                                               (id (entry)),
+                        })
+                      })
+                    )
+                    (entry)
+           )
+         )
+         (id (entry))

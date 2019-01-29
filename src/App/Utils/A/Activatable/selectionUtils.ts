@@ -24,7 +24,7 @@ const { sid, sid2 } = ActiveObject.A
 export const findSelectOption =
   (obj: Activatable) =>
   (id: Maybe<string | number>): Maybe<Record<SelectOption>> =>
-    bind<List<Record<SelectOption>>, Record<SelectOption>>
+    bind<List<Record<SelectOption>>>
       (select (obj))
       (find<Record<SelectOption>> (pipe (getId, elemF (id))))
 
@@ -46,7 +46,13 @@ export const getSelectOptionCost = (obj: Activatable) => pipe (findSelectOption 
  * Get all `ActiveObject.sid` values from the given instance.
  * @param obj The entry.
  */
-export const getActiveSelections = fmap (pipe (active, mapMaybe (sid)))
+export const getActiveSelections = pipe (active, mapMaybe (sid))
+
+/**
+ * Get all `ActiveObject.sid` values from the given instance.
+ * @param obj The entry.
+ */
+export const getActiveSelectionsMaybe = fmap (getActiveSelections)
 
 type SecondarySelections = OrderedMap<number | string, List<string | number>>
 

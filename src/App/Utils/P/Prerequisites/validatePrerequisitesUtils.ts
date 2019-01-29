@@ -1,46 +1,46 @@
 import { pipe } from "ramda";
-import { IdPrefixes } from "../../../constants/IdPrefixes";
-import { equals } from "../../../Data/Eq";
-import { flip, join, on, thrush } from "../../../Data/Function";
-import { compare } from "../../../Data/Int";
-import { set } from "../../../Data/Lens";
-import { all, any, concat, elem, elemF, foldl, fromElements, ifoldl, isList, List, map, sortBy, subscript } from "../../../Data/List";
-import { and, bindF, catMaybes, ensure, fmap, fromJust, isJust, isNothing, Just, Maybe, maybe, maybeToList, Nothing, or } from "../../../Data/Maybe";
-import { Ordering } from "../../../Data/Ord";
-import { lookupF, OrderedMap, toList } from "../../../Data/OrderedMap";
-import { fst, Pair, snd } from "../../../Data/Pair";
-import { Record } from "../../../Data/Record";
-import { ActivatableDependent, isActivatableDependent, isMaybeActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
-import { ActivatableSkillDependent, isMaybeActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
-import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
-import { AttributeDependent } from "../../Models/ActiveEntries/AttributeDependent";
-import { DependencyObject } from "../../Models/ActiveEntries/DependencyObject";
-import { isExtendedSkillDependent, SkillDependent } from "../../Models/ActiveEntries/SkillDependent";
-import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
-import * as Data from "../../Models/Hero/heroTypeHelpers";
-import { Pact } from "../../Models/Hero/Pact";
-import { Culture } from "../../Models/Wiki/Culture";
-import { RequireActivatable, RequireActivatableL } from "../../Models/Wiki/prerequisites/ActivatableRequirement";
-import { CultureRequirement, isCultureRequirement } from "../../Models/Wiki/prerequisites/CultureRequirement";
-import { isIncreasableRequirement, RequireIncreasable, RequireIncreasableL } from "../../Models/Wiki/prerequisites/IncreasableRequirement";
-import { isPactRequirement, PactRequirement } from "../../Models/Wiki/prerequisites/PactRequirement";
-import { isPrimaryAttributeRequirement, RequirePrimaryAttribute } from "../../Models/Wiki/prerequisites/PrimaryAttributeRequirement";
-import { isRaceRequirement, RaceRequirement } from "../../Models/Wiki/prerequisites/RaceRequirement";
-import { isSexRequirement, SexRequirement } from "../../Models/Wiki/prerequisites/SexRequirement";
-import { Profession } from "../../Models/Wiki/Profession";
-import { Race } from "../../Models/Wiki/Race";
-import { Skill } from "../../Models/Wiki/Skill";
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import * as Wiki from "../../Models/Wiki/wikiTypeHelpers";
-import { isActive } from "../A/Activatable/isActive";
-import { isPactFromStateValid } from "../A/Activatable/pactUtils";
-import { getActiveSelections } from "../A/Activatable/selectionUtils";
-import { getHeroStateItem } from "../heroStateUtils";
-import { prefixId } from "../IDUtils";
-import { dec, gte, lt, lte, min } from "../mathUtils";
-import { not } from "../not";
-import { getPrimaryAttributeId } from "../primaryAttributeUtils";
-import { getAllWikiEntriesByGroup } from "../WikiUtils";
+import { IdPrefixes } from "../../../../constants/IdPrefixes";
+import { equals } from "../../../../Data/Eq";
+import { flip, join, on, thrush } from "../../../../Data/Function";
+import { compare } from "../../../../Data/Int";
+import { set } from "../../../../Data/Lens";
+import { all, any, concat, elem, elemF, foldl, fromElements, ifoldl, isList, List, map, sortBy, subscript } from "../../../../Data/List";
+import { and, bindF, catMaybes, ensure, fmap, fromJust, isJust, isNothing, Just, Maybe, maybe, maybeToList, Nothing, or } from "../../../../Data/Maybe";
+import { Ordering } from "../../../../Data/Ord";
+import { lookupF, OrderedMap, toList } from "../../../../Data/OrderedMap";
+import { fst, Pair, snd } from "../../../../Data/Pair";
+import { Record } from "../../../../Data/Record";
+import { ActivatableDependent, isActivatableDependent, isMaybeActivatableDependent } from "../../../Models/ActiveEntries/ActivatableDependent";
+import { ActivatableSkillDependent, isMaybeActivatableSkillDependent } from "../../../Models/ActiveEntries/ActivatableSkillDependent";
+import { ActiveObject } from "../../../Models/ActiveEntries/ActiveObject";
+import { AttributeDependent } from "../../../Models/ActiveEntries/AttributeDependent";
+import { DependencyObject } from "../../../Models/ActiveEntries/DependencyObject";
+import { isExtendedSkillDependent, SkillDependent } from "../../../Models/ActiveEntries/SkillDependent";
+import { HeroModel, HeroModelRecord } from "../../../Models/Hero/HeroModel";
+import * as Data from "../../../Models/Hero/heroTypeHelpers";
+import { Pact } from "../../../Models/Hero/Pact";
+import { Culture } from "../../../Models/Wiki/Culture";
+import { RequireActivatable, RequireActivatableL } from "../../../Models/Wiki/prerequisites/ActivatableRequirement";
+import { CultureRequirement, isCultureRequirement } from "../../../Models/Wiki/prerequisites/CultureRequirement";
+import { isRequiringIncreasable, RequireIncreasable, RequireIncreasableL } from "../../../Models/Wiki/prerequisites/IncreasableRequirement";
+import { isPactRequirement, PactRequirement } from "../../../Models/Wiki/prerequisites/PactRequirement";
+import { isPrimaryAttributeRequirement, RequirePrimaryAttribute } from "../../../Models/Wiki/prerequisites/PrimaryAttributeRequirement";
+import { isRaceRequirement, RaceRequirement } from "../../../Models/Wiki/prerequisites/RaceRequirement";
+import { isSexRequirement, SexRequirement } from "../../../Models/Wiki/prerequisites/SexRequirement";
+import { Profession } from "../../../Models/Wiki/Profession";
+import { Race } from "../../../Models/Wiki/Race";
+import { Skill } from "../../../Models/Wiki/Skill";
+import { WikiModel, WikiModelRecord } from "../../../Models/Wiki/WikiModel";
+import * as Wiki from "../../../Models/Wiki/wikiTypeHelpers";
+import { isActive } from "../../A/Activatable/isActive";
+import { isPactFromStateValid } from "../../A/Activatable/pactUtils";
+import { getActiveSelectionsMaybe } from "../../A/Activatable/selectionUtils";
+import { getHeroStateItem } from "../../heroStateUtils";
+import { prefixId } from "../../IDUtils";
+import { dec, gte, lt, lte, min } from "../../mathUtils";
+import { not } from "../../not";
+import { getPrimaryAttributeId } from "../../primaryAttributeUtils";
+import { getAllWikiEntriesByGroup } from "../../WikiUtils";
 
 type Validator = (wiki: WikiModelRecord) =>
                  (state: HeroModelRecord) =>
@@ -235,7 +235,7 @@ const isIncreasableValid =
                       isExtendedSkillDependent (obj)
                       && gte (RequireIncreasable.A.value (req))
                              (SkillDependent.A.value (obj)))
-                    (getHeroStateItem (id) (state)))
+                    (getHeroStateItem (state) (id)))
   }
 
 /**
@@ -318,18 +318,18 @@ const isActivatableValid =
                                        )))
 
                                return fmap (all (pipe (elemF<string | number> (arr), not)))
-                                           (getActiveSelections (Just (target)))
+                                           (getActiveSelectionsMaybe (Just (target)))
                              })
                          )
-                         (getHeroStateItem (id) (state)))
+                         (getHeroStateItem (state) (id)))
       }
 
       const maybeInstance =
-        getHeroStateItem (id) (state) as Maybe<Data.ExtendedActivatableDependent>
+        getHeroStateItem (state) (id) as Maybe<Data.ExtendedActivatableDependent>
 
       if (isMaybeActivatableDependent (maybeInstance)) {
         const instance = Maybe.fromJust (maybeInstance)
-        const activeSelections = getActiveSelections (maybeInstance)
+        const activeSelections = getActiveSelectionsMaybe (maybeInstance)
 
         const maybeSid = RequireActivatable.A.sid (req)
         const maybeLevel = RequireActivatable.A.tier (req)
@@ -377,7 +377,7 @@ export const validateObject =
       ? isPactValid (pact (state)) (req)
       : isPrimaryAttributeRequirement (req)
       ? isPrimaryAttributeValid (state) (req)
-      : isIncreasableRequirement (req)
+      : isRequiringIncreasable (req)
       ? isIncreasableValid (wiki) (state) (sourceId) (req) (validateObject)
       : isActivatableValid (wiki) (state) (sourceId) (req) (validateObject)
 
@@ -424,9 +424,9 @@ export const validateLevel =
           // If `dep` prohibits higher level
           typeof dep === "object"
           && Maybe.elem (false) (DependencyObject.A.active (dep))
-          ? maybe<number, Maybe<number>>
+          ? maybe<Maybe<number>>
             (max)
-            (pipe (dec, level => Just (maybe<number, number> (level) (min (level)) (max))))
+            (pipe (dec, level => Just (maybe<number> (level) (min (level)) (max))))
             (DependencyObject.A.tier (dep))
           : max)
       (pipe (

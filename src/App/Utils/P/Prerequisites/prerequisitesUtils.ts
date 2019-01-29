@@ -1,22 +1,22 @@
 import { pipe } from "ramda";
-import { equals } from "../../../Data/Eq";
-import { append, consF, filter, find, fromElements, length, List } from "../../../Data/List";
-import { altF, ap, bindF, elemF, fmap, fromMaybe, Just, liftM2, Maybe, Nothing } from "../../../Data/Maybe";
-import { Record } from "../../../Data/Record";
-import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
-import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
-import { Advantage } from "../../Models/Wiki/Advantage";
-import { RequireActivatable } from "../../Models/Wiki/prerequisites/ActivatableRequirement";
-import { RequireIncreasable } from "../../Models/Wiki/prerequisites/IncreasableRequirement";
-import { Application } from "../../Models/Wiki/sub/Application";
-import { SelectOption } from "../../Models/Wiki/sub/SelectOption";
-import * as Wiki from "../../Models/Wiki/wikiTypeHelpers";
-import { findSelectOption } from "../A/Activatable/selectionUtils";
+import { equals } from "../../../../Data/Eq";
+import { append, consF, filter, find, fromElements, length, List } from "../../../../Data/List";
+import { altF, ap, bindF, elemF, fmap, fromMaybe, Just, liftM2, Maybe, Nothing } from "../../../../Data/Maybe";
+import { Record } from "../../../../Data/Record";
+import { ActivatableDependent } from "../../../Models/ActiveEntries/ActivatableDependent";
+import { ActiveObject } from "../../../Models/ActiveEntries/ActiveObject";
+import { Advantage } from "../../../Models/Wiki/Advantage";
+import { RequireActivatable } from "../../../Models/Wiki/prerequisites/ActivatableRequirement";
+import { RequireIncreasable } from "../../../Models/Wiki/prerequisites/IncreasableRequirement";
+import { Application } from "../../../Models/Wiki/sub/Application";
+import { SelectOption } from "../../../Models/Wiki/sub/SelectOption";
+import { Activatable, AllRequirementObjects, AllRequirements } from "../../../Models/Wiki/wikiTypeHelpers";
+import { findSelectOption } from "../../A/Activatable/selectionUtils";
 
 const { id } = Advantage.A
 const { sid, sid2 } = ActiveObject.A
 const { active } = ActivatableDependent.A
-const { applications, target, tier, prerequisites } = SelectOption.A
+const { applications, target, level, prerequisites } = SelectOption.A
 
 /**
  * Some advantages, disadvantages and special abilities need more prerequisites
@@ -29,14 +29,14 @@ const { applications, target, tier, prerequisites } = SelectOption.A
  * prerequisites must be calculated based on that).
  */
 export const getGeneratedPrerequisites =
-  (wikiEntry: Wiki.Activatable) =>
-  (instance: Maybe<Record<ActivatableDependent>>) =>
-  (current: Record<ActiveObject>) =>
-  (add: boolean): Maybe<List<Wiki.AllRequirementObjects>> => {
-    switch (id (wikiEntry)) {
+  (add: boolean) =>
+  (wiki_entry: Activatable) =>
+  (hero_entry: Maybe<Record<ActivatableDependent>>) =>
+  (current: Record<ActiveObject>): Maybe<List<AllRequirementObjects>> => {
+    switch (id (wiki_entry)) {
       case "SA_3":
         return bindF (SelectOption.A.prerequisites)
-                     (findSelectOption (wikiEntry) (sid (current)))
+                     (findSelectOption (wiki_entry) (sid (current)))
 
       case "SA_9": {
         const sameSkill = pipe (
@@ -47,7 +47,7 @@ export const getGeneratedPrerequisites =
                                  )),
                                  fromMaybe (0)
                                )
-                               (instance)
+                               (hero_entry)
 
         const sameSkillDependency =
           fmap ((justSid: string | number) => RequireIncreasable ({
@@ -67,18 +67,18 @@ export const getGeneratedPrerequisites =
                       bindF (Application.A.prerequisites),
                       ap (
                         fmap<
-                          Wiki.AllRequirementObjects,
-                          (xs: List<Wiki.AllRequirementObjects>) => List<Wiki.AllRequirementObjects>
+                          AllRequirementObjects,
+                          (xs: List<AllRequirementObjects>) => List<AllRequirementObjects>
                         > (consF)
                           (sameSkillDependency)
                       ),
                       altF (
-                        fmap<Wiki.AllRequirementObjects, List<Wiki.AllRequirementObjects>>
+                        fmap<AllRequirementObjects, List<AllRequirementObjects>>
                           (fromElements)
                           (sameSkillDependency)
                       )
                     )
-                    (findSelectOption (wikiEntry) (sid (current)))
+                    (findSelectOption (wiki_entry) (sid (current)))
       }
 
       case "SA_81":
@@ -101,11 +101,11 @@ export const getGeneratedPrerequisites =
                                   }))
                                 )
                               (target (option))
-                              (tier (option)))
-                     (findSelectOption (wikiEntry) (sid (current)))
+                              (level (option)))
+                     (findSelectOption (wiki_entry) (sid (current)))
 
       case "SA_639":
-        return bindF (prerequisites) (findSelectOption (wikiEntry) (sid (current)))
+        return bindF (prerequisites) (findSelectOption (wiki_entry) (sid (current)))
 
       case "SA_699": {
         return Just (fromElements (
@@ -123,11 +123,11 @@ export const getGeneratedPrerequisites =
   }
 
 export const addDynamicPrerequisites =
-  (wikiEntry: Wiki.Activatable) =>
-  (instance: Maybe<Record<ActivatableDependent>>) =>
-  (current: Record<ActiveObject>) =>
   (add: boolean) =>
-  (staticPrerequisites: List<Wiki.AllRequirements>): List<Wiki.AllRequirements> =>
-    fromMaybe (staticPrerequisites)
-              (fmap (append (staticPrerequisites))
-                    (getGeneratedPrerequisites (wikiEntry) (instance) (current) (add)))
+  (wiki_entry: Activatable) =>
+  (hero_entry: Maybe<Record<ActivatableDependent>>) =>
+  (static_prerequisites: List<AllRequirements>) =>
+  (current: Record<ActiveObject>): List<AllRequirements> =>
+    fromMaybe (static_prerequisites)
+              (fmap (append (static_prerequisites))
+                    (getGeneratedPrerequisites (add) (wiki_entry) (hero_entry) (current)))

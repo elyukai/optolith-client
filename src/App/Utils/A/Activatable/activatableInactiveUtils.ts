@@ -25,12 +25,12 @@ import { isAdditionDisabled } from './activatableInactiveValidationUtils';
 import { getModifierByActiveLevel } from './activatableModifierUtils';
 import { countActiveSkillEntries } from './activatableSkillUtils';
 import { isActive } from './isActive';
-import { findSelectOption, getActiveSecondarySelections, getActiveSelections, getRequiredSelections } from './selectionUtils';
+import { findSelectOption, getActiveSecondarySelections, getActiveSelectionsMaybe, getRequiredSelections } from './selectionUtils';
 import { getBlessedTradition, getMagicalTraditions } from './traditionUtils';
 
 const getIsNoActiveSelection =
   R.pipe (
-    getActiveSelections,
+    getActiveSelectionsMaybe,
     Maybe.fromMaybe (List.empty ()),
     activeSelections => R.pipe (
       Record.get<Wiki.SelectionObject, 'id'> ('id'),
@@ -40,7 +40,7 @@ const getIsNoActiveSelection =
 
 const getLessThanTwoSameIdActiveSelections =
   R.pipe (
-    getActiveSelections,
+    getActiveSelectionsMaybe,
     Maybe.fromMaybe (List.empty ()),
     activeSelections => R.pipe (
       Record.get<Wiki.SelectionObject, 'id'> ('id'),
@@ -463,7 +463,7 @@ const getEntrySpecificSelections = (
       'SA_338',
       () => entry.lookup ('select')
         .fmap (select => {
-          const activeSelections = getActiveSelections (instance);
+          const activeSelections = getActiveSelectionsMaybe (instance);
 
           if (isActive (instance)) {
             const selectedPath = instance

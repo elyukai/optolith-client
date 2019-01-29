@@ -145,6 +145,19 @@ export const fromMaybe =
   <A extends Some> (def: A) => (x: Maybe<A>): A =>
     isJust (x) ? x .value : def
 
+/**
+ * `fromMaybe' :: (() -> a) -> Maybe a -> a`
+ *
+ * The `fromMaybe'` function takes a default value and and `Maybe` value. If
+ * the `Maybe` is `Nothing`, it returns the default values otherwise, it
+ * returns the value contained in the `Maybe`.
+ *
+ * Lazy version of `fromMaybe`.
+ */
+export const fromMaybe_ =
+  <A extends Some> (def: () => A) => (x: Maybe<A>): A =>
+    isJust (x) ? x .value : def ()
+
 
 // FUNCTOR
 
@@ -525,6 +538,11 @@ export const concatMap =
  * `and` returns the conjunction of a container of Bools. For the result to be
  * `True`, the container must be finite `False`, however, results from a
  * `False` value finitely far from the left end.
+ *
+ * ```haskell
+ * and Nothing = true
+ * and Just x  = x
+ * ```
  */
 export const and = fromMaybe (true)
 
@@ -534,6 +552,11 @@ export const and = fromMaybe (true)
  * `or` returns the disjunction of a container of Bools. For the result to be
  * `False`, the container must be finite `True`, however, results from a
  * `True` value finitely far from the left end.
+ *
+ * ```haskell
+ * or Nothing = false
+ * or Just x  = x
+ * ```
  */
 export const or = fromMaybe (false)
 

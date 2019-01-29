@@ -580,6 +580,16 @@ test ('sdelete', () => {
     .toEqual (List.fromElements (1, 2, 3, 4, 5))
 })
 
+test ('intersect', () => {
+  expect (List.intersect (List.fromElements (1, 2, 3, 4))
+                         (List.fromElements (2, 4, 6, 8)))
+    .toEqual (List.fromElements (2, 4))
+
+  expect (List.intersect (List.fromElements (1, 2, 2, 3, 4))
+                         (List.fromElements (6, 4, 4, 2)))
+    .toEqual (List.fromElements (2, 2, 4))
+})
+
 // ORDERED LISTS
 
 test ('sortBy', () => {

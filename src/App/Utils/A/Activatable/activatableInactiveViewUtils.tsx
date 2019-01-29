@@ -13,7 +13,7 @@ import { translate, UIMessagesObject } from '../I18n';
 import { match } from '../match';
 import { getRoman, unsafeToInt } from '../NumberUtils';
 import { isInteger } from '../RegexUtils';
-import { getActiveSelections, getSelectOptionCost } from './selectionUtils';
+import { getActiveSelectionsMaybe, getSelectOptionCost } from './selectionUtils';
 
 interface PropertiesAffectedByState {
   currentCost?: number | string;
@@ -175,7 +175,7 @@ export const getIdSpecificAffectedAndDispatchProps =
                 () => {
                   const activeSelections = Maybe.fromMaybe<List<string | number>>
                     (List.empty ())
-                    (getActiveSelections (entry .lookup ('stateEntry')));
+                    (getActiveSelectionsMaybe (entry .lookup ('stateEntry')));
 
                   const filteredSelectOptions = entry
                     .lookup ('sel')

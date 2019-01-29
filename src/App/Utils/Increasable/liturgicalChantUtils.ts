@@ -13,7 +13,7 @@ import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel";
 import { LiturgicalChant } from "../../Models/Wiki/LiturgicalChant";
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
 import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import { getActiveSelections } from "../A/Activatable/selectionUtils";
+import { getActiveSelectionsMaybe } from "../A/Activatable/selectionUtils";
 import { filterAndMaximumNonNegative, flattenDependencies } from "../Dependencies/flattenDependencies";
 import { getNumericBlessedTraditionIdByInstanceId } from "../IDUtils";
 import { ifElse } from "../ifElse";
@@ -53,7 +53,7 @@ const putAspectKnowledgeRestrictionMaximum =
 
         // no aspect knowledge active for the current chant
         && or (fmap (all (notElemF<string | number> (aspects (wikiEntry))))
-                    (getActiveSelections (aspectKnowledge)))
+                    (getActiveSelectionsMaybe (aspectKnowledge)))
       ))
       (consF (14))
       (ident)
@@ -136,7 +136,7 @@ const isLiturgicalChantDecreasableByAspectKnowledges =
   (stateEntry: Record<ActivatableSkillDependent>) =>
     or (
       pipe (
-        getActiveSelections,
+        getActiveSelectionsMaybe,
 
         // Check if liturgical chant is part of dependencies of active Aspect Knowledge
         bindF<List<string | number>, List<string | number>>
