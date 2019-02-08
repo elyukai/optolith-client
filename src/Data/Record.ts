@@ -8,9 +8,10 @@
  */
 
 import { not, pipe } from "ramda";
+import { foldl } from "./Foldable";
 import { Lens, lens } from "./Lens";
 import { isJust, isMaybe, isNothing, Maybe, Nothing } from "./Maybe";
-import { foldl, fromArray, OrderedSet } from "./OrderedSet";
+import { fromArray, OrderedSet } from "./OrderedSet";
 import { show } from "./Show";
 
 

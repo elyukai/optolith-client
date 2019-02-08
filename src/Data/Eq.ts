@@ -5,7 +5,8 @@
  */
 
 import { isEither, isRight } from "./Either";
-import { fnull, isList, notNull } from "./List";
+import { all, fnull } from "./Foldable";
+import { isList, notNull } from "./List";
 import { isJust, isMaybe, isNothing, Maybe, Some } from "./Maybe";
 import { isOrderedMap, OrderedMap } from "./OrderedMap";
 import { isOrderedSet, member, OrderedSet } from "./OrderedSet";
@@ -91,7 +92,7 @@ export const equals =
     if (isRecord (x1)) {
       if (isRecord (x2)) {
         return OrderedSet.size (x1 .keys) === OrderedSet.size (x2 .keys)
-          && OrderedSet.all
+          && all<string>
             (key => OrderedSet.member (key) (x2 .keys)
               && equals (getRecordField<typeof x1["defaultValues"]>
                           (key as string)

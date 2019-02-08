@@ -7,11 +7,14 @@
  */
 
 import { pipe } from "ramda";
-import { add, inc, max, min, multiply } from "../App/Utils/mathUtils";
+import { inc } from "../App/Utils/mathUtils";
 import { not } from "../App/Utils/not";
 import { escapeRegExp } from "../App/Utils/RegexUtils";
+import { empty, pure } from "../Control/Applicative";
 import { equals } from "./Eq";
-import { cnst, ident } from "./Function";
+import { elemF, find, fnull, foldl, foldr, length, maximum } from "./Foldable";
+import { ident } from "./Function";
+import { fmap } from "./Functor";
 import { fromJust, imapMaybe, isJust, Just, Maybe, maybe, Nothing } from "./Maybe";
 import { isLTorEQ, Ordering } from "./Ord";
 import { fromMap, OrderedMap } from "./OrderedMap";
@@ -96,417 +99,6 @@ const fromArrayCons =
  * Creates a new `List` instance from the passed arguments.
  */
 export const fromElements = <A> (...values: A[]): List<A> => fromArray (values)
-
-
-// FUNCTOR
-
-/**
- * `fmap :: (a -> b) -> [a] -> [b]`
- */
-export const fmap =
-  <A, B> (f: (x: A) => B) => (xs: List<A>): List<B> =>
-    isNil (xs) ? Nil : Cons (f (xs .x), fmap (f) (xs .xs))
-
-/**
- * `(<$) :: Functor f => a -> f b -> f a`
- *
- * Replace all locations in the input with the same value. The default
- * definition is `fmap . const`, but this may be overridden with a more
- * efficient version.
- */
-export const mapReplace = <A, B> (x: A) => fmap<B, A> (cnst (x))
-
-
-// APPLICATIVE
-
-/**
- * `pure :: a -> [a]`
- *
- * Lift a value.
- */
-export const pure = <A> (x: A) => Cons (x, Nil)
-
-/**
- * `(<*>) :: [a -> b] -> [a] -> [b]`
- *
- * Sequential application.
- */
-export const ap =
-  <A, B> (fs: List<(x: A) => B>) => (xs: List<A>): List<B> =>
-    isNil (fs) || isNil (xs)
-    ? Nil
-    : mapAp<A, B> (head (fs)) (ap (fs .xs) (xs)) (xs)
-
-const mapAp =
-  <A, B>
-  (f: (x: A) => B) =>
-  (xs: List<B>) =>
-  (x: List<A>): List<B> =>
-    isNil (x)
-    ? xs
-    : Cons (f (x .x), mapAp (f) (xs) (x .xs))
-
-
-// ALTERNATIVE
-
-/**
- * `alt :: [a] -> [a] -> [a]`
- *
- * The `alt` function takes a list of the same type. If the first list
- * is empty, it returns the second list, otherwise it returns the
- * first.
- */
-export const alt =
-  <A> (xs1: List<A>) => (xs2: List<A>): List<A> =>
-    isNil (xs1) ? xs2 : xs1
-
-/**
- * `altF :: [a] -> [a] -> [a]`
- *
- * The `altF` function takes a `Maybe` of the same type. If the second `Maybe`
- * is `Nothing`, it returns the first `Maybe`, otherwise it returns the
- * second.
- *
- * Flipped version of `alt`.
- */
-export const altF =
-  <A> (xs1: List<A>) => (xs2: List<A>): List<A> =>
-    alt (xs2) (xs1)
-
-/**
- * `empty :: [a]`
- *
- * The empty list.
- */
-export const empty = Nil
-
-/**
- * `guard :: Bool -> [()]`
- *
- * Conditional failure of Alternative computations. Defined by
-```hs
-guard True  = pure ()
-guard False = empty
-```
-  * In TypeScript, this is not possible, so instead it's
-```ts
-guard (true)  = pure (true)
-guard (false) = empty
-```
-  */
-export const guard =
-  (pred: boolean): List<true> =>
-    pred ? pure<true> (true) : empty
-
-
-// MONAD
-
-/**
- * `(>>=) :: [a] -> (a -> [b]) -> [b]`
- */
-export const bind =
-  <A, B> (xs: List<A>) => (f: (x: A) => List<B>): List<B> =>
-    isNil (xs) ? Nil : append (f (xs .x))
-                              (bind<A, B> (xs .xs) (f))
-
-/**
- * `(=<<) :: (a -> [b]) -> [a] -> [b]`
- */
-export const bindF =
-  <A, B> (f: (x: A) => List<B>) => (xs: List<A>): List<B> =>
-    bind<A, B> (xs) (f)
-
-/**
- * `(>>) :: [a] -> [b] -> [b]`
- *
- * Sequentially compose two actions, discarding any value produced by the
- * first, like sequencing operators (such as the semicolon) in imperative
- * languages.
- *
- * ```a >> b = a >>= \ _ -> b```
- */
-export const then =
-  <A> (xs1: List<any>) => (xs2: List<A>): List<A> =>
-    bind<any, A> (xs1) (_ => xs2)
-
-/**
- * `(>=>) :: (a -> [b]) -> (b -> [c]) -> a -> [c]`
- *
- * Left-to-right Kleisli composition of monads.
- */
-export const kleisli =
-  <A, B, C> (f1: (x: A) => List<B>) => (f2: (x: B) => List<C>) =>
-    pipe (f1, bindF (f2))
-
-/**
- * `join :: [[a]] -> [a]`
- *
- * The `join` function is the conventional monad join operator. It is used to
- * remove one level of monadic structure, projecting its bound argument into the
- * outer level.
- */
-export const join =
-  <A> (xss: List<List<A>>): List<A> =>
-    bind<List<A>, A> (xss) (ident)
-
-
-// FOLDABLE
-
-/**
- * `foldr :: (a -> b -> b) -> b -> [a] -> b`
- *
- * Right-associative fold of a structure.
- *
- * In the case of lists, `foldr`, when applied to a binary operator, a
- * starting value (typically the right-identity of the operator), and a list,
- * reduces the list using the binary operator, from right to left:
- *
- * ```foldr f z [x1, x2, ..., xn] == x1 `f` (x2 `f` ... (xn `f` z)...)```
- */
-export const foldr =
-  <A, B> (f: (x: A) => (acc: B) => B) => (initial: B) => (xs: List<A>): B =>
-    isNil (xs) ? initial : f (xs .x) (foldr (f) (initial) (xs .xs))
-
-/**
- * `foldl :: (b -> a -> b) -> b -> [a] -> b`
- *
- * Left-associative fold of a structure.
- *
- * In the case of lists, foldl, when applied to a binary operator, a starting
- * value (typically the left-identity of the operator), and a list, reduces
- * the list using the binary operator, from left to right:
- *
- * ```foldl f z [x1, x2, ..., xn] == (...((z `f` x1) `f` x2) `f`...) `f` xn```
- */
-export const foldl =
-  <A, B> (f: (acc: B) => (x: A) => B) => (initial: B) => (xs: List<A>): B =>
-    isNil (xs) ? initial : foldl (f) (f (initial) (xs .x)) (xs .xs)
-
-/**
- * `foldr1 :: (a -> a -> a) -> [a] -> a`
- *
- * A variant of `foldr` that has no base case, and thus may only be applied to
- * non-empty structures.
- *
- * `foldr1 f = foldr1 f . toList`
- */
-export const foldr1 =
-  <A> (f: (x: A) => (acc: A) => A) => (xs: List<A>): A => {
-    if (!isNil (xs)) {
-      return foldr1Safe (f) (xs)
-    }
-
-    throw new TypeError ("Cannot apply foldr1 to an empty list.")
-  }
-
-const foldr1Safe =
-  <A> (f: (x: A) => (acc: A) => A) => (xs: Cons<A>): A =>
-    isNil (xs .xs)
-    ? xs .x
-    : f (xs .x) (foldr1Safe (f) (xs .xs))
-
-/**
- * `foldl1 :: (a -> a -> a) -> [a] -> a`
- *
- * A variant of `foldl` that has no base case, and thus may only be applied to
- * non-empty structures.
- *
- * `foldl1 f = foldl1 f . toList`
- */
-export const foldl1 =
-  <A> (f: (acc: A) => (x: A) => A) => (xs: List<A>): A => {
-    if (!isNil (xs)) {
-      return foldl1Safe (f) (xs .xs) (xs .x)
-    }
-
-    throw new TypeError ("Cannot apply foldl1 to an empty list.")
-  }
-
-const foldl1Safe =
-  <A>
-  (f: (acc: A) => (x: A) => A) =>
-  (xs: List<A>) =>
-  (acc: A): A =>
-    isNil (xs) ? acc : foldl1Safe (f) (xs .xs) (f (acc) (xs .x))
-
-/**
- * `toList :: [a] -> [a]`
- *
- * List of elements of a structure, from left to right.
- */
-export const toList = <A> (xs: List<A>): List<A> => xs
-
-/**
- * `null :: [a] -> Bool`
- *
- * Test whether the structure is empty. The default implementation is optimized
- * for structures that are similar to cons-lists, because there is no general
- * way to do better.
- */
-export const fnull = isNil
-
-/**
- * `length :: [a] -> Int`
- *
- * Returns the size/length of a finite structure as an `Int`. The default
- * implementation is optimized for structures that are similar to cons-lists,
- * because there is no general way to do better.
- */
-export const length =
-  (xs: List<any>): number =>
-    foldr<any, number> (() => inc) (0) (xs)
-
-/**
- * `elem :: Eq a => a -> [a] -> Bool`
- *
- * Does the element occur in the structure?
- */
-export const elem =
-  <A> (x: A) => (xs: List<A>): boolean =>
-    isNil (xs) ? false : equals (x) (xs .x) || elem (x) (xs .xs)
-
-/**
- * `elemF :: Eq a => [a] -> a -> Bool`
- *
- * Does the element occur in the structure?
- *
- * Flipped version of `elem`.
- */
-export const elemF = <A> (xs: List<A>) => (x: A): boolean => elem (x) (xs)
-
-/**
- * `sum :: Num a => [a] -> a`
- *
- * The `sum` function computes the sum of the numbers of a structure.
- */
-export const sum = foldr (add) (0)
-
-/**
- * `product :: Num a => [a] -> a`
- *
- * The `product` function computes the product of the numbers of a structure.
- */
-export const product = foldr (multiply) (1)
-
-/**
- * `maximum :: Ord a => [a] -> a`
- *
- * The largest element of a non-empty structure.
- */
-export const maximum = foldr (max) (-Infinity)
-
-/**
- * `minimum :: Ord a => [a] -> a`
- *
- * The least element of a non-empty structure.
- */
-export const minimum = foldr (min) (Infinity)
-
-// Specialized folds
-
-/**
- * `concat :: [[a]] -> [a]`
- *
- * The concatenation of all the elements of a container of lists.
- */
-export const concat = join
-
-/**
- * `concatMap :: (a -> [b]) -> [a] -> [b]`
- *
- * Map a function over all the elements of a container and concatenate the
- * resulting lists.
- */
-export const concatMap = bindF
-
-/**
- * `and :: [Bool] -> Bool`
- *
- * `and` returns the conjunction of a container of Bools. For the result to be
- * `True`, the container must be finite. `False`, however, results from a
- * `False` value finitely far from the left end.
- */
-export const and =
-  (xs: List<boolean>): boolean =>
-    isNil (xs) ? true : xs .x && and (xs .xs)
-
-/**
- * `or :: [Bool] -> Bool`
- *
- * `or` returns the disjunction of a container of Bools. For the result to be
- * `False`, the container must be finite. `True`, however, results from a
- * `True` value finitely far from the left end.
- */
-export const or =
-  (xs: List<boolean>): boolean =>
-    isNil (xs) ? false : xs .x || or (xs .xs)
-
-/**
- * `any :: (a -> Bool) -> [a] -> Bool`
- *
- * Determines whether any element of the structure satisfies the predicate.
- */
-export const any =
-  <A> (f: (x: A) => boolean) => (xs: List<A>): boolean =>
-    isNil (xs) ? false : f (xs .x) || any (f) (xs .xs)
-
-/**
- * `all :: (a -> Bool) -> [a] -> Bool`
- *
- * Determines whether all elements of the structure satisfy the predicate.
- */
-export const all =
-  <A> (f: (x: A) => boolean) => (xs: List<A>): boolean =>
-    isNil (xs) ? true : f (xs .x) && all (f) (xs .xs)
-
-// Searches
-
-/**
- * `notElem :: Eq a => a -> [a] -> Bool`
- *
- * `notElem` is the negation of `elem`.
- */
-export const notElem = <A> (x: A) => pipe (elem (x), not)
-
-/**
- * `notElemF :: Eq a => a -> [a] -> Bool`
- *
- * `notElemF` is the negation of `elem_`.
- *
- * `notElemF` is the same as `notElem` but with arguments flipped.
- */
-export const notElemF = <A> (xs: List<A>) => (x: A) => notElem (x) (xs)
-
-interface Find {
-  /**
-   * `find :: (a -> Bool) -> [a] -> Maybe a`
-   *
-   * The `find` function takes a predicate and a structure and returns the
-   * leftmost element of the structure matching the predicate, or `Nothing` if
-   * there is no such element.
-   */
-  <A, A1 extends A> (pred: (x: A) => x is A1): (xs: List<A>) => Maybe<A1>
-
-  /**
-   * `find :: (a -> Bool) -> [a] -> Maybe a`
-   *
-   * The `find` function takes a predicate and a structure and returns the
-   * leftmost element of the structure matching the predicate, or `Nothing` if
-   * there is no such element.
-   */
-  <A> (pred: (x: A) => boolean): (xs: List<A>) => Maybe<A>
-}
-
-/**
- * `find :: (a -> Bool) -> [a] -> Maybe a`
- *
- * The `find` function takes a predicate and a structure and returns the
- * leftmost element of the structure matching the predicate, or `Nothing` if
- * there is no such element.
- */
-export const find: Find =
-  <A> (pred: (x: A) => boolean) => (xs: List<A>): Maybe<A> =>
-    isNil (xs) ? Nothing : pred (xs .x) ? Just (xs .x) : find (pred) (xs .xs)
 
 
 // BASIC FUNCTIONS
@@ -654,7 +246,9 @@ export const uncons =
  *
  * `map f xs` is the list obtained by applying `f` to each element of `xs`.
  */
-export const map = fmap
+export const map =
+  <A, B> (f: (x: A) => B) => (xs: List<A>): List<B> =>
+    isNil (xs) ? Nil : Cons (f (xs .x), map (f) (xs .xs))
 
 /**
  * `reverse :: [a] -> [a]`
@@ -664,7 +258,7 @@ export const map = fmap
  */
 export const reverse =
   <A> (xs: List<A>): List<A> =>
-    foldl<A, List<A>> (cons) (empty) (xs)
+    foldl<A, List<A>> (cons) (empty ("List")) (xs)
 
 /**
  * `intercalate :: [a] -> [[a]] -> [a]`
@@ -874,9 +468,9 @@ export const isInfixOf =
  * `lookup key assocs` looks up a key in an association list.
  */
 export const lookup = <K, V> (key: K) => (assocs: List<Pair<K, V>>): Maybe<V> =>
-  Maybe.fmap<Pair<K, V>, V> (snd)
-                            (find<Pair<K, V>> (pipe (fst, equals (key)))
-                                              (assocs))
+  fmap<Pair<K, V>, V> (snd)
+                      (find<Pair<K, V>> (pipe (fst, equals (key)))
+                                        (assocs))
 
 
 // SEARCHING WITH A PREDICATE
@@ -971,7 +565,7 @@ export const elemIndex =
     ? Nothing
     : equals (x) (xs .x)
     ? Just (0)
-    : Maybe.fmap (inc) (elemIndex (x) (xs .xs))
+    : fmap (inc) (elemIndex (x) (xs .xs))
 
 /**
  * `elemIndices :: Eq a => a -> [a] -> [Int]`
@@ -1004,7 +598,7 @@ export const findIndex =
     ? Nothing
     : pred (xs .x)
     ? Just (0)
-    : Maybe.fmap (inc) (findIndex (pred) (xs .xs))
+    : fmap (inc) (findIndex (pred) (xs .xs))
 
 /**
  * `findIndices :: (a -> Bool) -> [a] -> [Int]`
@@ -1052,7 +646,7 @@ export const zipWith =
   (f: (x1: A) => (x2: B) => C) =>
   (xs1: List<A>) =>
   (xs2: List<B>): List<C> =>
-    imapMaybe<A, C> (index => e => Maybe.fmap (f (e)) (subscript (xs2) (index)))
+    imapMaybe<A, C> (index => e => fmap (f (e)) (subscript (xs2) (index)))
                     (xs1)
 
 
@@ -1110,7 +704,7 @@ export const zipWith =
 export const lines =
   (x: string): List<string> =>
     x .length === 0
-    ? empty
+    ? empty ("List")
     : fromArray (x .replace (/\n$/, "") .split (/\n/))
 
 
@@ -1640,7 +1234,7 @@ export const splitOn =
  * A composition of `not` and `null`.
  */
 export const notNull =
-  pipe (fnull, not) as <A> (xs: List<A>) => xs is NonEmptyList<A>
+  pipe (fnull as (xs: List<any>) => xs is Nil, not) as <A> (xs: List<A>) => xs is NonEmptyList<A>
 
 /**
  * `notNull :: String -> Bool`
@@ -1680,12 +1274,12 @@ export const consF = <A> (x: A) => (xs: List<A>): List<A> => cons (xs) (x)
  */
 export const snoc =
   <A> (xs: List<A>) => (x: A): List<A> =>
-    isNil (xs) ? pure (x) : snocSafe (xs) (x)
+    isNil (xs) ? pure ("List") (x) : snocSafe (xs) (x)
 
 const snocSafe =
   <A> (xs: Cons<A>) => (x: A): Cons<A> =>
     isNil (xs .xs)
-    ? Cons (xs .x, pure (x))
+    ? Cons (xs .x, pure ("List") (x))
     : Cons (xs .x, snocSafe (xs .xs) (x))
 
 
@@ -1850,7 +1444,7 @@ export const groupByKey =
 
       const current = m .get (key)
 
-      m .set (key, cons (current === undefined ? empty : current) (e))
+      m .set (key, cons (current === undefined ? empty ("List") : current) (e))
     }
 
     return fromMap (m)
@@ -1862,42 +1456,6 @@ export const groupByKey =
 export const List = {
   fromElements,
   fromArray,
-
-  fmap,
-  mapReplace,
-
-  pure,
-  ap,
-
-  alt,
-  altF,
-  empty,
-  guard,
-
-  bind,
-  bindF,
-  then,
-  kleisli,
-  join,
-
-  foldr,
-  foldl,
-  toList,
-  fnull,
-  length,
-  elem,
-  elemF,
-  sum,
-  product,
-  concat,
-  concatMap,
-  and,
-  or,
-  any,
-  all,
-  notElem,
-  notElemF,
-  find,
 
   append,
   appendStr,

@@ -12,9 +12,6 @@
  * @author Lukas Obermann
  */
 
-import { cnst } from "../../Data/Function";
-
-
 // PROTOTYPE
 
 interface IdentityPrototype {
@@ -55,31 +52,6 @@ export const Identity =
 export const runIdentity = <A> (x: Identity<A>): A => x .value
 
 Identity.runIdentity = runIdentity
-
-
-// FUNCTOR
-
-/**
- * `fmap :: (a -> b) -> Identity a -> Identity b`
- */
-export const fmap =
-  <A, B>
-  (f: (x: A) => B) =>
-  (x: Identity<A>): Identity<B> =>
-    Identity (f (runIdentity (x)))
-
-Identity.fmap = fmap
-
-/**
- * `(<$) :: a -> Identity b -> Identity a`
- *
- * Replace all locations in the input with the same value. The default
- * definition is `fmap . const`, but this may be overridden with a more
- * efficient version.
- */
-export const mapReplace = <A> (x: A) => fmap<any, A> (cnst (x))
-
-Identity.mapReplace = mapReplace
 
 
 // APPLICATIVE

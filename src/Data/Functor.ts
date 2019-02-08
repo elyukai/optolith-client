@@ -14,7 +14,7 @@ import { Const, isConst } from "./Functor/Const";
 import { Cons, isList, isNil, List, Nil } from "./List";
 import { isJust, isMaybe, Just, Maybe } from "./Maybe";
 import { isOrderedMap, OrderedMap } from "./OrderedMap";
-import { show } from "./Show";
+import { showP } from "./Show";
 
 export type Functor<A> = Const<A>
                        | Either<any, A>
@@ -22,6 +22,15 @@ export type Functor<A> = Const<A>
                        | List<A>
                        | Maybe<A>
                        | OrderedMap<any, A>
+
+interface FunctorMap<A, B> {
+  <A0> (x: Const<A0>): Const<A0>
+  <E> (x: Either<E, A>): Either<E, B>
+  (x: Identity<A>): Identity<B>
+  (xs: List<A>): List<B>
+  (x: Maybe<A>): Maybe<B>
+  <K> (x: OrderedMap<K, A>): OrderedMap<K, B>
+}
 
 /**
  * `fmap :: (a -> b) -> f a -> f b`
@@ -32,6 +41,12 @@ export const fmap =
   (x: any): any => {
     if (isList (x)) {
       return isNil (x) ? Nil : Cons (f (x .x), fmap (f) (x .xs))
+    }
+
+    if (isOrderedMap (x)) {
+      return OrderedMap.fromArray (
+        [...x .value] .map (([k, a]) => [k, f (a)] as [any, B])
+      )
     }
 
     if (isConst (x)) {
@@ -50,23 +65,8 @@ export const fmap =
       return isJust (x) ? Just (f (x .value)) : x
     }
 
-    if (isOrderedMap (x)) {
-      return OrderedMap.fromArray (
-        [...x .value] .map (([k, a]) => [k, f (a)] as [any, B])
-      )
-    }
-
-    throw new TypeError (`fmap: ${show (x)} is not a Functor!`)
+    throw new TypeError (instanceErrorMsg ("fmap") (x))
   }
-
-interface FunctorMap<A, B> {
-  <A0> (x: Const<A0>): Const<A0>
-  <E> (x: Either<E, A>): Either<E, B>
-  (x: Identity<A>): Identity<B>
-  (xs: List<A>): List<B>
-  (x: Maybe<A>): Maybe<B>
-  <K> (x: OrderedMap<K, A>): OrderedMap<K, B>
-}
 
 /**
  * `(<$) :: a -> f b -> f a`
@@ -76,3 +76,8 @@ interface FunctorMap<A, B> {
  * efficient version.
  */
 export const mapReplace = <A> (x: A) => fmap<any, A> (cnst (x))
+
+const instanceErrorMsg =
+  (fname: string) =>
+  (x: any) =>
+    `${fname}: missing instance of Functor\n${showP (x)}`

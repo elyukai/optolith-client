@@ -9,9 +9,11 @@
 
 import { pipe } from "ramda";
 import { equals } from "../../../../Data/Eq";
+import { foldr, notElemF } from "../../../../Data/Foldable";
 import { ident, thrush } from "../../../../Data/Function";
-import { consF, countWith, filter, foldr, fromElements, List, notElemF } from "../../../../Data/List";
-import { fmap, fromMaybe, Just, Maybe, maybe } from "../../../../Data/Maybe";
+import { fmap } from "../../../../Data/Functor";
+import { consF, countWith, filter, fromElements, List, Nil } from "../../../../Data/List";
+import { fromMaybe, Just, Maybe, maybe } from "../../../../Data/Maybe";
 import { alter, elems, foldrWithKey, lookup, OrderedMap } from "../../../../Data/OrderedMap";
 import { Record } from "../../../../Data/Record";
 import { AdventurePointsObject } from "../../../../selectors/adventurePointsSelectors";
@@ -62,7 +64,7 @@ const { id } = SelectOption.A
 const isNotActive =
   pipe (
     getActiveSelectionsMaybe,
-    fromMaybe<List<string | number>> (List.empty),
+    fromMaybe<List<string | number>> (Nil),
     activeSelections => pipe (
       id,
       notElemF (activeSelections)
@@ -78,7 +80,7 @@ const isNotActive =
 const areNoSameActive =
   pipe (
     getActiveSelectionsMaybe,
-    fromMaybe<List<string | number>> (List.empty),
+    fromMaybe<List<string | number>> (Nil),
     activeSelections => pipe (
       id,
       current_id => countWith (equals (current_id)) (activeSelections) < 2
@@ -94,7 +96,7 @@ const areNoSameActive =
 const isNotRequired =
   pipe (
     getRequiredSelections,
-    fromMaybe<List<string | number | List<number>>> (List.empty),
+    fromMaybe<List<string | number | List<number>>> (Nil),
     requiredSelections => pipe (
       id,
       notElemF (requiredSelections)
@@ -136,7 +138,7 @@ const filterSkills = filter<Record<ActivatableSkillDependent>> (pipe (value, gte
 
 const foldCounter =
   foldrWithKey<number, number, List<number>> (k => x => x >= 3 ? consF (k) : ident)
-                                             (List.empty)
+                                             (Nil)
 
 /**
  * `getPropsWith3Gte10 :: Wiki -> Hero -> [Int]`
@@ -951,7 +953,7 @@ export const getInactiveView = (
       Maybe.maybe<
         Record<Data.ActivatableDependent>,
         Data.ActivatableDependent["dependencies"]
-      > (List.empty ()) (e => e.get ("dependencies")) (instance),
+      > (Nil ()) (e => e.get ("dependencies")) (instance),
       id
     )
     : Maybe.empty ()
