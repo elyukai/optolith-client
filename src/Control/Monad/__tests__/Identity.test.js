@@ -21,3 +21,16 @@ test ('fmap', () => {
 test ('mapReplace', () => {
   expect (Identity.mapReplace (4) (Identity.Identity (3))) .toEqual (Identity.Identity (4))
 })
+
+// APPLICATIVE
+
+test ('pure', () => {
+  expect (Identity.pure (4)) .toEqual (Identity.Identity (4))
+})
+
+// CUSTOM IDENTITY FUNCTIONS
+
+test ('isIdentity', () => {
+  expect (Identity.isIdentity (Identity.Identity (4))) .toEqual (true)
+  expect (Identity.isIdentity (4)) .toEqual (false)
+})

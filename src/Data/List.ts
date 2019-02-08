@@ -44,9 +44,9 @@ const ListPrototype =
 
 export interface Nil extends ListPrototype { }
 
-const Nil: Nil = Object.create (ListPrototype)
+export const Nil: Nil = Object.create (ListPrototype)
 
-const isNil = (xs: List<any>): xs is Nil => xs === Nil
+export const isNil = (xs: List<any>): xs is Nil => xs === Nil
 
 // Cons
 
@@ -55,7 +55,7 @@ export interface Cons<A> {
   readonly xs: List<A>
 }
 
-const Cons =
+export const Cons =
   <A> (x: A, xs: List<A>): Cons<A> =>
     Object.create (
       ListPrototype,
@@ -1274,14 +1274,17 @@ export const setAt =
  * returned.
  */
 export const modifyAt =
-  <A> (index: number) => (f: (old_value: A) => A) => (xs: List<A>): List<A> =>
+  (index: number) =>
+  <A>
+  (f: (old_value: A) => A) =>
+  (xs: List<A>): List<A> =>
     index < 0
     ? xs
     : isNil (xs)
     ? Nil
     : index === 0
     ? Cons (f (xs .x), xs .xs)
-    : Cons (xs .x, modifyAt<A> (index - 1) (f) (xs .xs))
+    : Cons (xs .x, modifyAt (index - 1) (f) (xs .xs))
 
 /**
  * `updateAt :: Int -> (a -> Maybe a) -> [a] -> [a]`
@@ -1600,6 +1603,20 @@ const ifindIndicesNode =
  */
 export const lower = (str: string) => str .toLowerCase ()
 
+/**
+ * `trimStart :: String -> String`
+ *
+ * Remove spaces from the start of a string, see `trim`.
+ */
+export const trimStart = (str: string) => str .replace (/^\s+/, "")
+
+/**
+ * `trimEnd :: String -> String`
+ *
+ * Remove spaces from the end of a string, see `trim`.
+ */
+export const trimEnd = (str: string) => str .replace (/\s+$/, "")
+
 
 // Splitting
 
@@ -1795,7 +1812,7 @@ export const toArray = <A> (xs: List<A>): A[] =>
  */
 export const isList =
   (x: any): x is List<any> =>
-    Object.getPrototypeOf (x) === ListPrototype
+    typeof x === "object" && x !== null && Object.getPrototypeOf (x) === ListPrototype
 
 /**
  * Returns the sum of all elements of the list that match the provided
@@ -1954,6 +1971,8 @@ export const List = {
   ifindIndices,
 
   lower,
+  trimStart,
+  trimEnd,
   splitOn,
   consF,
   snoc,

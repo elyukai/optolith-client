@@ -532,7 +532,7 @@ export const toggle =
  */
 export const isOrderedSet =
   (x: any): x is OrderedSet<any> =>
-    Object.getPrototypeOf (x) === OrderedSetPrototype
+    typeof x === "object" && x !== null && Object.getPrototypeOf (x) === OrderedSetPrototype
 
 
 // NAMESPACED FUNCTIONS

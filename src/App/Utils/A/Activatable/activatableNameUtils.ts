@@ -14,6 +14,7 @@ import { appendStr, elem, find, fromElements, groupByKey, intercalate, length, L
 import { altF_, any, bind, bindF, elemF, ensure, fmap, fromMaybe, isJust, Just, liftM2, listToMaybe, maybe, Maybe, Nothing } from "../../../../Data/Maybe";
 import { elems, lookup, lookupF } from "../../../../Data/OrderedMap";
 import { Record } from "../../../../Data/Record";
+import { showP } from "../../../../Data/Show";
 import { ActiveObjectWithId } from "../../../Models/ActiveEntries/ActiveObjectWithId";
 import { ActivatableCombinedName } from "../../../Models/View/ActivatableCombinedName";
 import { ActiveActivatable } from "../../../Models/View/ActiveActivatable";
@@ -372,6 +373,9 @@ export const compressList =
   (xs: List<Record<ActiveActivatable>>): string => {
     const grouped_xs =
       elems (groupByKey<Record<ActiveActivatable>, string> (id) (xs))
+
+    console.log (grouped_xs)
+    console.log (showP (grouped_xs))
 
     return pipe (
                   map (

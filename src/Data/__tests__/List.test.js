@@ -740,6 +740,14 @@ test ('lower', () => {
   expect (List.lower ('TEst')) .toEqual ('test')
 })
 
+test ('trimStart', () => {
+  expect (List.trimStart ("    test\ntest2  ")) .toEqual ("test\ntest2  ")
+})
+
+test ('trimEnd', () => {
+  expect (List.trimStart ("    test\ntest2  ")) .toEqual ("    test\ntest2")
+})
+
 // Splitting
 
 test ('splitOn', () => {
@@ -859,8 +867,8 @@ test ('groupByKey', () => {
     .toEqual (
       OrderedMap.fromArray (
         [
+          [1, List.fromElements (1, 3, 5)],
           [0, List.fromElements (2, 4)],
-          [1, List.fromElements (1, 3, 5)]
         ]
       )
     )

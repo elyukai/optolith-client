@@ -1,5 +1,6 @@
 const { pipe } = require('ramda');
 const { id } = require('../Function');
+const { Left, Right } = require('../Either');
 const List = require('../List');
 const { fromElements } = require('../List');
 const { fromBoth, Pair } = require('../Pair');

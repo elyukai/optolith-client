@@ -28,22 +28,11 @@ export interface Const<A> extends ConstPrototype {
   readonly value: A
 }
 
-interface ConstConstructor {
-  <A> (x: A): Const<A>
-
-  getConst: typeof getConst
-
-  fmap: typeof fmap
-  mapReplace: typeof mapReplace
-
-  pure: typeof pure
-}
-
 
 /**
  * `Const :: a -> Const a`
  */
-export const Const: ConstConstructor =
+export const Const =
   <A>
   (x: A): Const<A> =>
     Object.create (
@@ -93,3 +82,17 @@ Const.mapReplace = mapReplace
 export const pure: <A> (x: A) => Const<A> = Const
 
 Const.pure = pure
+
+
+// CUSTOM CONST FUNCTIONS
+
+/**
+ * `isConst :: a -> Bool`
+ *
+ * The `isConst` function returns `True` if its argument is a `Const`.
+ */
+export const isConst =
+  (x: any): x is Const<any> =>
+    typeof x === "object" && x !== null && Object.getPrototypeOf (x) === ConstPrototype
+
+Const.isConst = isConst

@@ -70,7 +70,7 @@ export const getActiveSecondarySelections =
           fromMaybe
             (map)
             (liftM2<string | number, string | number, SecondarySelections>
-              (id => id2 => alter<string | number, List<string | number>>
+              (id => id2 => alter<List<string | number>>
                 (pipe (
                   fmap (consF (id2)),
                   altF (Just (List.fromElements (id2)))

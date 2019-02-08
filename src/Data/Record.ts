@@ -98,14 +98,22 @@ export const fromDefault =
         (foldl<string, PartialMaybeOrNothing<A>>
           (
             acc => key => {
-              const value = (x as Required<A>) [key]
+              // Maybe undefined!
+              const value =
+                (x as Required<A>) [key] as MaybeOrPartialMaybe<A[string]> === undefined
+                  ? Nothing
+                  : (x as Required<A>) [key] as MaybeOrPartialMaybe<A[string]>
+
+              const defaultValue = defaultValues [key]
 
               return OrderedSet.member (key) (keys)
                 && (
-                  isMaybe (defaultValues [key]) && isJust (value)
+                  isMaybe (defaultValue) && isJust (value)
                   || (
-                    !isMaybe (defaultValues [key])
-                    && value !== null && value !== undefined && !isNothing (value)
+                    !isMaybe (defaultValue)
+                    && value !== null
+                    && value !== undefined
+                    && !isNothing (value)
                   )
                 )
                 ? { ...acc, [key]: value } as PartialMaybeOrNothing<A>
@@ -281,7 +289,7 @@ export const toObject = <A extends RecordBase> (r: Record<A>): A =>
  */
 export const isRecord =
   (x: any): x is Record<any> =>
-    Object.getPrototypeOf (x) === RecordPrototype
+    typeof x === "object" && x !== null && Object.getPrototypeOf (x) === RecordPrototype
 
 
 // NAMESPACED FUNCTIONS
@@ -351,6 +359,8 @@ type PartialMaybeRequiredKeys<A> = {
 type PartialMaybePartialKeys<A> = {
   [K in keyof A]: A[K] extends Maybe<any> ? K : never
 } [keyof A]
+
+type MaybeOrPartialMaybe<A> = A extends Maybe<any> ? A : A | Nothing
 
 /**
  * All `Maybe` properties will be optional and all others required.

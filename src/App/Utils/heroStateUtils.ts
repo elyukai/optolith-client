@@ -242,8 +242,8 @@ export const updateEntryDef =
       (state)
       (liftM2 ((creator: (id: string) => D) => (lens: HeroStateMapLens) =>
                 over (lens)
-                  (alter<string, D> (pipe (fromMaybe (creator (id)), f))
-                                    (id) as unknown as
+                  (alter<D> (pipe (fromMaybe (creator (id)), f))
+                            (id) as unknown as
                     (m: HeroModel[HeroStateMapKey]) => HeroModel[HeroStateMapKey])
                   (state))
               (getEntryCreatorById (id) as Maybe<(id: string) => D>)

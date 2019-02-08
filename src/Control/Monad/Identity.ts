@@ -33,21 +33,10 @@ export interface Identity<A> extends IdentityPrototype {
   readonly value: A
 }
 
-interface IdentityConstructor {
-  <A> (x: A): Identity<A>
-
-  runIdentity: typeof runIdentity
-
-  fmap: typeof fmap
-  mapReplace: typeof mapReplace
-
-  pure: typeof pure
-}
-
 /**
  * `Identity :: a -> Identity a`
  */
-export const Identity: IdentityConstructor =
+export const Identity =
   <A>
   (x: A): Identity<A> =>
     Object.create (
@@ -101,3 +90,17 @@ Identity.mapReplace = mapReplace
 export const pure: <A> (x: A) => Identity<A> = Identity
 
 Identity.pure = pure
+
+
+// CUSTOM IDENTITY FUNCTIONS
+
+/**
+ * `isIdentity :: a -> Bool`
+ *
+ * The `isIdentity` function returns `True` if its argument is an `Identity`.
+ */
+export const isIdentity =
+  (x: any): x is Identity<any> =>
+    typeof x === "object" && x !== null && Object.getPrototypeOf (x) === IdentityPrototype
+
+Identity.isIdentity = isIdentity

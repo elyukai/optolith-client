@@ -8,22 +8,22 @@
  */
 
 import { pipe } from "ramda";
+import { equals } from "../../../../Data/Eq";
 import { ident } from "../../../../Data/Function";
-import { over } from "../../../../Data/Lens";
-import { append, empty, List } from "../../../../Data/List";
-import { alt, fromMaybe, fromMaybe_, Just, Maybe, Nothing } from "../../../../Data/Maybe";
-import { OrderedMap } from "../../../../Data/OrderedMap";
+import { over, set } from "../../../../Data/Lens";
+import { append, consF, deleteAt, empty, List, modifyAt, subscriptF } from "../../../../Data/List";
+import { alt, any, bindF, fromMaybe, Just, Maybe, maybe, Nothing } from "../../../../Data/Maybe";
+import { isOrderedMap } from "../../../../Data/OrderedMap";
 import { Record } from "../../../../Data/Record";
-import { ActivatableDependent, ActivatableDependentL, createPlainActivatableDependent } from "../../../Models/ActiveEntries/ActivatableDependent";
-import { ActiveObject } from "../../../Models/ActiveEntries/ActiveObject";
+import { ActivatableDependent, ActivatableDependentL } from "../../../Models/ActiveEntries/ActivatableDependent";
+import { ActiveObject, ActiveObjectL } from "../../../Models/ActiveEntries/ActiveObject";
 import { HeroModelRecord } from "../../../Models/Hero/HeroModel";
 import { Advantage } from "../../../Models/Wiki/Advantage";
 import { Activatable, AllRequirementObjects, AllRequirements, LevelAwarePrerequisites } from "../../../Models/Wiki/wikiTypeHelpers";
-import { addDependencies } from "../../Dependencies/dependencyUtils";
-import { adjustEntryDef, setHeroStateItem } from "../../heroStateUtils";
+import { addDependencies, removeDependencies } from "../../Dependencies/dependencyUtils";
+import { adjustEntryDef } from "../../heroStateUtils";
 import { flattenPrerequisites } from "../../P/Prerequisites/flattenPrerequisites";
 import { getGeneratedPrerequisites } from "../../P/Prerequisites/prerequisitesUtils";
-import { ActivatableReducer, OptionalActivatableReducer } from "../../reducerUtils";
 import { convertUIStateToActiveObject } from "./activatableConvertUtils";
 
 const { tier } = ActiveObject.A
@@ -77,15 +77,15 @@ export const getCombinedPrerequisites =
  * @param add If an entry should be added or removed.
  */
 const changeActiveLength =
-  (getActive: (hero_entry: Record<ActivatableDependent>) => Record<ActiveObject>) =>
-  (changeDependencies: typeof addDependencies) =>
-  (changeActive: ident<List<Record<ActiveObject>>>) =>
+  (modifyDependencies: typeof addDependencies) =>
+  (modifyActiveObjects: ident<List<Record<ActiveObject>>>) =>
   (add: boolean) =>
-  (hero: HeroModelRecord) =>
+  (entry: Record<ActiveObject>) =>
   (wiki_entry: Activatable) =>
   (hero_entry: Maybe<Record<ActivatableDependent>>) =>
+  (hero: HeroModelRecord) =>
                        // Source id
-    changeDependencies (id (wiki_entry))
+    modifyDependencies (id (wiki_entry))
 
                        // get the prerequisites that need to be applied as
                        // dependencies to all objects the activation or
@@ -93,33 +93,26 @@ const changeActiveLength =
                        (getCombinedPrerequisites (add)
                                                  (wiki_entry)
                                                  (hero_entry)
-                                                 (getActive (
-                                                   fromMaybe_<Record<ActivatableDependent>>
-                                                     (() => createPlainActivatableDependent
-                                                       (id (wiki_entry)))
-                                                     (hero_entry)
-                                                 )))
+                                                 (entry))
 
                        // modify the list of `ActiveObjects` and pass the hero
                        // to `changeDependencies` so that it can apply all the
                        // dependencies to the updated hero
-                       (adjustEntryDef (over (ActivatableDependentL.active) (changeActive))
+                       (adjustEntryDef (over (ActivatableDependentL.active) (modifyActiveObjects))
                                        (id (wiki_entry))
                                        (hero))
 
 /**
  * Activates the entry with the given parameters and adds all needed
  * dependencies.
- * @param active The `ActiveObject`.
+ * @param entry The `ActiveObject`.
  */
 export const activateByObject =
-  (active: Record<ActiveObject>): OptionalActivatableReducer =>
-    changeActiveLength (
-      () => active,
-      DependencyUtils.addDependencies,
-      arr => arappend (active),
-      true
-    )
+  (entry: Record<ActiveObject>) =>
+    changeActiveLength (addDependencies)
+                       (consF (entry))
+                       (true)
+                       (entry)
 
 /**
  * Activates the entry with the given parameters and adds all needed
@@ -137,82 +130,65 @@ export const activate = pipe (
  * @param index The index of the `ActiveObject` in `obj.active`.
  */
 export const deactivate =
-  (index: number): ActivatableReducer => (state, wikiEntry, instance) =>
-    Maybe.fromMaybe (state) (
-      instance.get ("active") .subscript (index)
-        .fmap (head =>
-          changeActiveLength (
-            () => head,
-            DependencyUtils.removeDependencies,
-            arr => ardeleteAt (index),
-            false
-          ) (state, wikiEntry, Just (instance))
-        )
-    )
+  (index: number) =>
+  (wiki_entry: Activatable) =>
+  (hero_entry: Record<ActivatableDependent>) =>
+  (hero: HeroModelRecord) =>
+    maybe (hero)
+          ((active_entry: Record<ActiveObject>) =>
+            changeActiveLength (removeDependencies)
+                               (deleteAt (index))
+                               (false)
+                               (active_entry)
+                               (wiki_entry)
+                               (Just (hero_entry))
+                               (hero))
+          (pipe (active, subscriptF (index)) (hero_entry))
 
 /**
- * Changes the tier of a specific active entry and adds or removes dependencies
+ * Changes the level of a specific active entry and adds or removes dependencies
  * if needed.
  * @param index The index of the `ActiveObject` in `instance.active`.
- * @param tier The final tie
+ * @param new_level The new level.
  */
-export function setTier (index: number, tier: number): ActivatableReducer {
-  return (state, wikiEntry, instance) => {
-    const previousActive = instance.get ("active")
-    const previousTier = previousActive
-      .subscript (index)
-      .bind (target => target.lookup ("tier"))
+export const setLevel =
+  (index: number) =>
+  (new_level: number) =>
+  (wiki_entry: Activatable) =>
+  (hero_entry: Record<ActivatableDependent>) =>
+  (hero: HeroModelRecord) => {
+    const prev_active = active (hero_entry)
 
-    const active = previousActive.modifyAt (
-      index,
-      prev => prev.insert ("tier") (tier)
-    )
+    const prev_level = bindF (tier) (subscriptF (index) (prev_active))
 
-    const firstState = setHeroStateItem (
-      instance.get ("id"),
-      instance.insert ("active") (active),
-      state
-    )
+    const hero_modified = adjustEntryDef (over (ActivatableDependentL.active)
+                                               (modifyAt (index)
+                                                         (set (ActiveObjectL.tier)
+                                                              (Just (new_level)))))
+                                         (id (hero_entry))
+                                         (hero)
 
-    const prerequisites = wikiEntry.get ("prerequisites")
+    const current_prerequisites = prerequisites (wiki_entry)
 
-    console.log (
-      index,
-      tier,
-      previousTier,
-      active,
-      instance.insert ("active") (active),
-      firstState
-    )
+    if (any (equals (new_level)) (prev_level)) {
+      if (isOrderedMap (current_prerequisites)) {
+        const flatPrerequisites = flattenPrerequisites (current_prerequisites)
+                                                       (prev_level)
+                                                       (Just (new_level))
 
-    if (
-      Maybe.isJust (firstState)
-      && Maybe.isJust (previousTier)
-      && Maybe.fromJust (previousTier) !== tier
-    ) {
-      if (prerequisites instanceof OrderedMap) {
-        const flatPrerequisites = flattenPrerequisites (prerequisites)
-                                                       (previousTier)
-                                                       (Just (tier))
-
-        if (Maybe.fromJust (previousTier) > tier) {
-          return DependencyUtils.removeDependencies (
-            Maybe.fromJust (firstState),
-            flatPrerequisites,
-            instance.get ("id")
-          )
+        if (Maybe.fromJust (prev_level) > new_level) {
+          return removeDependencies (id (wiki_entry))
+                                    (flatPrerequisites)
+                                    (hero_modified)
         }
 
-        return DependencyUtils.addDependencies (
-          Maybe.fromJust (firstState),
-          flatPrerequisites,
-          instance.get ("id")
-        )
+        return addDependencies (id (wiki_entry))
+                               (flatPrerequisites)
+                               (hero_modified)
       }
 
-      return Maybe.fromJust (firstState)
+      return hero_modified
     }
 
-    return state
+    return hero
   }
-}

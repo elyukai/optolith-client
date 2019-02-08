@@ -468,8 +468,10 @@ export const notMember = <K> (key: K) => pipe (member (key), not)
  * map.
  */
 export const lookup =
-  <K, A>
-  (key: K) => (m: OrderedMap<K, A>): Maybe<A> =>
+  <K>
+  (key: K) =>
+  <A>
+  (m: OrderedMap<K, A>): Maybe<A> =>
     fromNullable (m .value .get (key))
 
 /**
@@ -484,7 +486,7 @@ export const lookup =
 export const lookupF =
   <K, A>
   (m: OrderedMap<K, A>) => (key: K): Maybe<A> =>
-    lookup<K, A> (key) (m)
+    lookup (key) (m)
 
 /**
  * `findWithDefault :: Ord k => a -> k -> Map k a -> a`
@@ -495,7 +497,7 @@ export const lookupF =
 export const findWithDefault =
   <K, A>
   (def: A) => (key: K) => (m: OrderedMap<K, A>): A =>
-    fromMaybe (def) (lookup<K, A> (key) (m))
+    fromMaybe (def) (lookup (key) (m))
 
 
 // CONSTRUCTION
@@ -550,7 +552,7 @@ export const insertWith =
     insert<K, A> (key)
                  (maybe (value)
                         (f (value))
-                        (lookup<K, A> (key) (mp)))
+                        (lookup (key) (mp)))
                  (mp)
 
 /**
@@ -572,7 +574,7 @@ export const insertWithKey =
     insert<K, A> (key)
                  (maybe (value)
                         (f (key) (value))
-                        (lookup<K, A> (key) (mp)))
+                        (lookup (key) (mp)))
                  (mp)
 
 /**
@@ -590,7 +592,7 @@ export const insertLookupWithKey =
   (key: K) =>
   (value: A) =>
   (mp: OrderedMap<K, A>): Pair<Maybe<A>, OrderedMap<K, A>> => {
-    const maybe_old_value = lookup<K, A> (key) (mp)
+    const maybe_old_value = lookup (key) (mp)
 
     return fromBinary (
       maybe_old_value,
@@ -636,7 +638,7 @@ export const adjust =
   (mp: OrderedMap<K, A>): OrderedMap<K, A> =>
     maybe (mp)
           ((x: A) => insert<K, A> (key) (f (x)) (mp))
-          (lookup<K, A> (key) (mp))
+          (lookup (key) (mp))
 
 /**
  * `adjustWithKey :: Ord k => (k -> a -> a) -> k -> Map k a -> Map k a`
@@ -651,7 +653,7 @@ export const adjustWithKey =
   (mp: OrderedMap<K, A>): OrderedMap<K, A> =>
     maybe (mp)
           ((x: A) => insert<K, A> (key) (f (key) (x)) (mp))
-          (lookup<K, A> (key) (mp))
+          (lookup (key) (mp))
 
 /**
  * `update :: Ord k => (a -> Maybe a) -> k -> Map k a -> Map k a`
@@ -672,7 +674,7 @@ export const update =
         maybe_ (() => removeKey<K, A> (key) (mp))
                (y => insert<K, A> (key) (y) (mp))
       ))
-      (lookup<K, A> (key) (mp))
+      (lookup (key) (mp))
 
 /**
  * `updateWithKey :: Ord k => (k -> a -> Maybe a) -> k -> Map k a -> Map k a`
@@ -693,7 +695,7 @@ export const updateWithKey =
         maybe_ (() => removeKey<K, A> (key) (mp))
                (y => insert<K, A> (key) (y) (mp))
       ))
-      (lookup<K, A> (key) (mp))
+      (lookup (key) (mp))
 
 /**
  * `updateLookupWithKey :: Ord k => (k -> a -> Maybe a) -> k -> Map k a ->
@@ -708,7 +710,7 @@ export const updateLookupWithKey =
   (f: (key: K) => (value: A) => Maybe<A>) =>
   (key: K) =>
   (mp: OrderedMap<K, A>): Pair<Maybe<A>, OrderedMap<K, A>> => {
-    const maybe_old_value = lookup<K, A> (key) (mp)
+    const maybe_old_value = lookup (key) (mp)
 
     return maybe_
       (() => fromBinary (maybe_old_value, mp))
@@ -729,14 +731,15 @@ export const updateLookupWithKey =
  * `Map`. In short : `lookup k (alter f k m) = f (lookup k m)`.
  */
 export const alter =
-  <K, A>
+  <A>
   (f: (old_value: Maybe<A>) => Maybe<A>) =>
+  <K>
   (key: K) =>
   (mp: OrderedMap<K, A>): OrderedMap<K, A> =>
     maybe
       (sdelete<K, A> (key))
       (insert<K, A> (key))
-      (f (lookup<K, A> (key) (mp)))
+      (f (lookup (key) (mp)))
       (mp)
 
 
@@ -1027,7 +1030,7 @@ export const toMap = <K, A> (mp: OrderedMap<K, A>): ReadonlyMap<K, A> =>
  */
 export const isOrderedMap =
   (x: any): x is OrderedMap<any, any> =>
-    Object.getPrototypeOf (x) === OrderedMapPrototype
+    typeof x === "object" && x !== null && Object.getPrototypeOf (x) === OrderedMapPrototype
 
 
 // NAMESPACED FUNCTIONS
@@ -1061,6 +1064,8 @@ export const OrderedMap = {
   all,
   notElem,
   find,
+
+  mapMEither,
 
   size,
   member,

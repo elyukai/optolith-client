@@ -176,7 +176,7 @@ export const fromArray = <A, B> (x: [A, B]): Pair<A, B> => fromBinary (...x)
  */
 export const isPair =
   (x: any): x is Pair<any, any> =>
-    Object.getPrototypeOf (x) === PairPrototype
+    typeof x === "object" && x !== null && Object.getPrototypeOf (x) === PairPrototype
 
 
 // NAMESPACED FUNCTIONS

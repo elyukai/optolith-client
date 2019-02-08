@@ -775,7 +775,7 @@ export const mapMaybe =
  */
 export const isMaybe =
   (x: any): x is Maybe<any> =>
-    typeof x === "object" && x !== null && isJust (x) || isNothing (x)
+    typeof x === "object" && x !== null && (isJust (x) || isNothing (x))
 
 /**
  * `normalize :: (a | Maybe a) -> Maybe a`

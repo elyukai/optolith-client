@@ -29,13 +29,16 @@
 		"icon": "app",
 		"target": [
 			{
-				"target": "tar.gz",
+				"target": "AppImage",
 				"arch": [
 					"x64"
 				]
 			}
 		],
 		"artifactName": "OptolithInsider_${version}_${arch}.${ext}"
+	},
+	"appImage": {
+		"license": "LICENSE"
 	},
 	"publish": {
 		"provider": "generic",

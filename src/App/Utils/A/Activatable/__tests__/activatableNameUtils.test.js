@@ -2,7 +2,7 @@ const { L10n } = require ("../../../../Models/Wiki/L10n")
 const { ActiveActivatable } = require ("../../../../Models/View/ActiveActivatable")
 const { makeLenses } = require ("../../../../../Data/Record")
 const { set } = require ("../../../../../Data/Lens")
-const { Nothing } = require ("../../../../../Data/Maybe")
+const { Just, Nothing } = require ("../../../../../Data/Maybe")
 const { fromElements } = require ("../../../../../Data/List")
 const { compressList } = require ("../activatableNameUtils")
 
@@ -18,7 +18,7 @@ test ('compressList', () => {
                                          index: Nothing,
                                          name: "Persönlichkeitsschwäche (Arroganz)",
                                          baseName: "Persönlichkeitsschwäche",
-                                         addName: "Arroganz",
+                                         addName: Just ("Arroganz"),
                                          tierName: Nothing,
                                          finalCost: Nothing,
                                          disabled: Nothing,
@@ -31,7 +31,7 @@ test ('compressList', () => {
                                          index: Nothing,
                                          name: "Persönlichkeitsschwäche (Weltfremd)",
                                          baseName: "Persönlichkeitsschwäche",
-                                         addName: "Weltfremd",
+                                         addName: Just ("Weltfremd"),
                                          tierName: Nothing,
                                          finalCost: Nothing,
                                          disabled: Nothing,

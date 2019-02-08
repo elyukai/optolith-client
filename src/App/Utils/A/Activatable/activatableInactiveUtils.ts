@@ -7,601 +7,685 @@
  * @since 1.1.0
  */
 
-import * as R from 'ramda';
-import * as Wiki from '../../App/Models/Wiki/wikiTypeHelpers';
-import { getTraditionOfAspect } from '../../App/Utils/Increasable/liturgicalChantUtils';
-import { AdventurePointsObject } from '../../selectors/adventurePointsSelectors';
-import * as Data from '../../types/data';
-import { Just, List, Maybe, OrderedMap, Record, RecordInterface, Tuple } from '../dataUtils';
-import { countActiveGroupEntries } from '../entryGroupUtils';
-import { sortObjects } from '../FilterSortUtils';
-import { getAllEntriesByGroup } from '../heroStateUtils';
-import { getBlessedTraditionInstanceIdByNumericId } from '../IDUtils';
-import { match } from '../match';
-import { validateLevel, validatePrerequisites } from '../prerequisites/validatePrerequisitesUtils';
-import { isString } from '../typeCheckUtils';
-import { getWikiEntryFromSlice } from '../WikiUtils';
-import { isAdditionDisabled } from './activatableInactiveValidationUtils';
-import { getModifierByActiveLevel } from './activatableModifierUtils';
-import { countActiveSkillEntries } from './activatableSkillUtils';
-import { isActive } from './isActive';
-import { findSelectOption, getActiveSecondarySelections, getActiveSelectionsMaybe, getRequiredSelections } from './selectionUtils';
-import { getBlessedTradition, getMagicalTraditions } from './traditionUtils';
+import { pipe } from "ramda";
+import { equals } from "../../../../Data/Eq";
+import { ident, thrush } from "../../../../Data/Function";
+import { consF, countWith, filter, foldr, fromElements, List, notElemF } from "../../../../Data/List";
+import { fmap, fromMaybe, Just, Maybe, maybe } from "../../../../Data/Maybe";
+import { alter, elems, foldrWithKey, lookup, OrderedMap } from "../../../../Data/OrderedMap";
+import { Record } from "../../../../Data/Record";
+import { AdventurePointsObject } from "../../../../selectors/adventurePointsSelectors";
+import { ActivatableDependent } from "../../../Models/ActiveEntries/ActivatableDependent";
+import { ActivatableSkillDependent } from "../../../Models/ActiveEntries/ActivatableSkillDependent";
+import { HeroModel, HeroModelRecord } from "../../../Models/Hero/HeroModel";
+import { Advantage } from "../../../Models/Wiki/Advantage";
+import { LiturgicalChant } from "../../../Models/Wiki/LiturgicalChant";
+import { Spell } from "../../../Models/Wiki/Spell";
+import { SelectOption } from "../../../Models/Wiki/sub/SelectOption";
+import { WikiModel, WikiModelRecord } from "../../../Models/Wiki/WikiModel";
+import { Activatable } from "../../../Models/Wiki/wikiTypeHelpers";
+import { countActiveGroupEntries } from "../../entryGroupUtils";
+import { getAllEntriesByGroup, mapListByIdKeyMap } from "../../heroStateUtils";
+import { getBlessedTraditionInstanceIdByNumericId } from "../../IDUtils";
+import { getTraditionOfAspect } from "../../Increasable/liturgicalChantUtils";
+import { match } from "../../match";
+import { gte, inc } from "../../mathUtils";
+import { validateLevel, validatePrerequisites } from "../../P/Prerequisites/validatePrerequisitesUtils";
+import { isString } from "../../typeCheckUtils";
+import { isAdditionDisabled } from "./activatableInactiveValidationUtils";
+import { getModifierByActiveLevel } from "./activatableModifierUtils";
+import { countActiveSkillEntries } from "./activatableSkillUtils";
+import { isActive } from "./isActive";
+import { findSelectOption, getActiveSecondarySelections, getActiveSelectionsMaybe, getRequiredSelections } from "./selectionUtils";
+import { getBlessedTradition, getMagicalTraditions } from "./traditionUtils";
 
-const getIsNoActiveSelection =
-  R.pipe (
+const { liturgicalChants, spells } = WikiModel.A
+
+const {
+  disadvantages: hero_disadvantages,
+  liturgicalChants: hero_liturgicalChants,
+  spells: hero_spells,
+} = HeroModel.A
+
+const { select } = Advantage.A
+const { aspects } = LiturgicalChant.A
+const { property } = Spell.A
+const { value } = ActivatableSkillDependent.A
+const { id } = SelectOption.A
+
+/**
+ * `isNotActive :: Maybe ActivatableDependent -> SelectOption -> Bool`
+ *
+ * Test if the id of the passed select option is activated for the passed
+ * `ActivatableDependent`.
+ */
+const isNotActive =
+  pipe (
     getActiveSelectionsMaybe,
-    Maybe.fromMaybe (List.empty ()),
-    activeSelections => R.pipe (
-      Record.get<Wiki.SelectionObject, 'id'> ('id'),
-      List.notElem_ (activeSelections)
+    fromMaybe<List<string | number>> (List.empty),
+    activeSelections => pipe (
+      id,
+      notElemF (activeSelections)
     )
-  );
+  )
 
-const getLessThanTwoSameIdActiveSelections =
-  R.pipe (
+/**
+ * `areNoSameActive :: Maybe ActivatableDependent -> SelectOption -> Bool`
+ *
+ * Test if a select option is not activated more than once for the passed
+ * `ActivatableDependent`.
+ */
+const areNoSameActive =
+  pipe (
     getActiveSelectionsMaybe,
-    Maybe.fromMaybe (List.empty ()),
-    activeSelections => R.pipe (
-      Record.get<Wiki.SelectionObject, 'id'> ('id'),
-      id => List.lengthL (activeSelections.filter (R.equals (id))) < 2
+    fromMaybe<List<string | number>> (List.empty),
+    activeSelections => pipe (
+      id,
+      current_id => countWith (equals (current_id)) (activeSelections) < 2
     )
-  );
+  )
 
-const getIsNoRequiredSelection =
-  R.pipe (
+/**
+ * `isNotRequired :: Maybe ActivatableDependent -> SelectOption -> Bool`
+ *
+ * Test if the id of the passed select option is required for the passed
+ * `ActivatableDependent`.
+ */
+const isNotRequired =
+  pipe (
     getRequiredSelections,
-    Maybe.fromMaybe (List.empty ()),
-    requiredSelections => R.pipe (
-      Record.get<Wiki.SelectionObject, 'id'> ('id'),
-      List.notElem_ (requiredSelections)
+    fromMaybe<List<string | number | List<number>>> (List.empty),
+    requiredSelections => pipe (
+      id,
+      notElemF (requiredSelections)
     )
-  );
+  )
 
-const getIsNoRequiredOrActiveSelection =
-  (instance: Maybe<Record<Data.ActivatableDependent>>) => {
-    const isNoActiveSelection = getIsNoActiveSelection (instance);
-    const isNoRequiredSelection = getIsNoRequiredSelection (instance);
 
-    return (e: Record<Wiki.SelectionObject>) =>
-      isNoActiveSelection (e) && isNoRequiredSelection (e);
-  };
+/**
+ * `isNotRequiredNotActive :: Maybe ActivatableDependent -> SelectOption -> Bool`
+ *
+ * Test if the id of the passed select option is neither required nor activated
+ * for the passed `ActivatableDependent`.
+ */
+const isNotRequiredNotActive =
+  (hero_entry: Maybe<Record<ActivatableDependent>>) => {
+    const isNoActiveSelection = isNotActive (hero_entry)
+    const isNoRequiredSelection = isNotRequired (hero_entry)
 
-const addToSkillCategoryCounter = (map: OrderedMap<number, number>) =>
-  map.alter (
-    prop => prop
-      .fmap (count => count + 1)
-      .alt (Maybe.pure (0))
-  );
+    return (e: Record<SelectOption>) =>
+      isNoActiveSelection (e) && isNoRequiredSelection (e)
+  }
 
-const getCategoriesWithSkillsAbove10 = (
-  wiki: Record<Wiki.WikiAll>,
-  state: Record<Data.HeroDependent>,
-  sliceKey: 'liturgicalChants' | 'spells'
-) => {
-  const addToCounterByKey = sliceKey === 'liturgicalChants'
-    ? (map: OrderedMap<number, number>) =>
-        (skill: Record<Wiki.LiturgicalChant | Wiki.Spell>) =>
-          (skill as Record<Wiki.LiturgicalChant>).get ('aspects').foldl (addToSkillCategoryCounter)
-            (map)
-    : (map: OrderedMap<number, number>) =>
-        (skill: Record<Wiki.LiturgicalChant | Wiki.Spell>) =>
-          addToSkillCategoryCounter (map) (
-            (skill as Record<Wiki.Spell>).get ('property')
-          );
+/**
+ * Increment the value at the specified key by `1`. If there is no value at that
+ * key, the value will be set to `0`.
+ */
+const incMapVal = alter (pipe (maybe (0) (inc), Just))
 
-  return OrderedMap.elems (state.get (sliceKey))
-    .filter (e => e.get ('value') >= 10)
-    .foldl<OrderedMap<number, number>> (
-      map => obj =>
-        Maybe.fromMaybe (map) (
-          (wiki.get (sliceKey).lookup (
-            obj.get ('id')
-          ) as Maybe<Record<Wiki.Spell | Wiki.LiturgicalChant>>)
-            .fmap (addToCounterByKey (map))
-        )
-    ) (OrderedMap.empty ())
-    .foldlWithKey<List<number>> (
-      list => key => value => value >= 3 ? list.append (key) : list
-    ) (List.empty ());
-};
+const addChantToCounter =
+  (chant: Record<LiturgicalChant>) =>
+    pipe (
+      foldr<number, OrderedMap<number, number>> (incMapVal),
+      thrush (aspects (chant))
+    )
 
-const getEntrySpecificSelections = (
-  wiki: Record<Wiki.WikiAll>,
-  instance: Maybe<Record<Data.ActivatableDependent>>,
-  state: Record<Data.HeroDependent>,
-  entry: Wiki.Activatable
-) => {
-  return match<string, Maybe<List<Record<Wiki.SelectionObject>>>> (entry.get ('id'))
+const addSpellToCounter = pipe (property, incMapVal)
+
+const filterSkills = filter<Record<ActivatableSkillDependent>> (pipe (value, gte (10)))
+
+const foldCounter =
+  foldrWithKey<number, number, List<number>> (k => x => x >= 3 ? consF (k) : ident)
+                                             (List.empty)
+
+/**
+ * `getPropsWith3Gte10 :: Wiki -> Hero -> [Int]`
+ *
+ * Returns a list containing all properties where at least 3 spells with at
+ * least SR 10 belong to.
+ */
+const getPropsWith3Gte10 =
+  (wiki: WikiModelRecord) =>
+    pipe (
+      hero_spells,
+      elems,
+      filterSkills,
+      mapListByIdKeyMap (spells (wiki)),
+      foldr (addSpellToCounter) (OrderedMap.empty),
+      foldCounter
+    )
+
+/**
+ * `getAspectsWith3Gte10 :: Wiki -> Hero -> [Int]`
+ *
+ * Returns a list containing all aspects where at least 3 chants with at least
+ * SR 10 belong to.
+ */
+const getAspectsWith3Gte10 =
+  (wiki: WikiModelRecord) =>
+    pipe (
+      hero_liturgicalChants,
+      elems,
+      filterSkills,
+      mapListByIdKeyMap (liturgicalChants (wiki)),
+      foldr (addChantToCounter) (OrderedMap.empty),
+      foldCounter
+    )
+
+/**
+ * Modifies the select options of specific entries to match current conditions.
+ */
+const modifySelectOptions =
+  (wiki: WikiModelRecord) =>
+  (hero: HeroModelRecord) =>
+  (wiki_entry: Activatable) =>
+  (hero_entry: Maybe<Record<ActivatableDependent>>) => {
+    const current_id = id (wiki_entry)
+
+    switch (current_id) {
+      // Exceptional Skill
+      case "ADV_16": {
+        const hasLessThanTwoSameIdActiveSelections =
+          areNoSameActive (hero_entry)
+
+        const isNoRequiredSelection =
+          isNotRequired (hero_entry)
+
+        return fmap (filter ((e: Record<SelectOption>) =>
+                              hasLessThanTwoSameIdActiveSelections (e)
+                              && isNoRequiredSelection (e)))
+                    (select (wiki_entry))
+      }
+
+      // Immunity to (Poison)
+      case "ADV_28":
+      // Immunity to (Disease)
+      case "ADV_29":
+      // Afraid of ...
+      case "DISADV_1":
+      // Principles
+      case "DISADV_34":
+      // Obligations
+      case "DISADV_50":
+        return fmap (filter (isNotRequired (hero_entry)))
+                    (select (wiki_entry))
+
+      // Magical Attunement
+      case "ADV_32":
+      // Magical Restriction
+      case "DISADV_24": {
+        const flippedId = current_id === "DISADV_24" ? "ADV_32" : "DISADV_24"
+
+        // Selection must not be active on the other entry, respectively.
+        const isNotActiveOnOther =
+          isNotActive (lookup (flippedId) (hero_disadvantages (hero)))
+
+        const isNoRequiredSelection =
+          isNotRequired (hero_entry)
+
+        return fmap (filter ((e: Record<SelectOption>) =>
+                              isNotActiveOnOther (e)
+                              && isNoRequiredSelection (e)))
+                    (select (wiki_entry))
+      }
+
+      // Personality Flaws
+      case "DISADV_33":
+      // Negative Trait
+      case "DISADV_37":
+      // Maimed/Verstümmelt
+      case "DISADV_51": {
+        const isNoRequiredOrActiveSelection =
+          isNotRequiredNotActive (hero_entry)
+
+        const specialIds = fromElements (7, 8)
+
+        // Selection must not be active on the other entry, respectively.
+        const isNotActiveOnOther =
+          isNotActive (lookup (flippedId) (hero_disadvantages (hero)))
+
+        const isNoRequiredSelection =
+          isNotRequired (hero_entry)
+
+        return fmap (filter ((e: Record<SelectOption>) =>
+                              isNotActiveOnOther (e)
+                              && isNoRequiredSelection (e)))
+                    (select (wiki_entry))
+      }
+
+      default:
+        return fmap (filter (isNotRequiredNotActive (hero_entry)))
+                    (select (wiki_entry))
+    }
+  return match<string, Maybe<List<Record<SelectionObject>>>> (wiki_entry.get ("id"))
     .on (
       List.elem_ (List.of (
-        'ADV_4',
-        'ADV_17',
-        'ADV_47'
+        "DISADV_33",
+        "DISADV_37",
+        "DISADV_51"
       )),
-      () => entry.lookup ('select')
-        .fmap (
-          select => select.filter (getIsNoRequiredOrActiveSelection (instance))
-        )
-    )
-    .on (
-      'ADV_16',
-      () => entry.lookup ('select')
-        .fmap (select => {
-          const hasLessThanTwoSameIdActiveSelections =
-            getLessThanTwoSameIdActiveSelections (instance);
-
-          const isNoRequiredSelection = getIsNoRequiredSelection (instance);
-
-          return select.filter (
-            e =>
-              hasLessThanTwoSameIdActiveSelections (e)
-              && isNoRequiredSelection (e)
-          );
-        })
-    )
-    .on (
-      List.elem_ (List.of ('ADV_28', 'ADV_29')),
-      () => entry.lookup ('select')
-        .fmap (select => select.filter (getIsNoRequiredSelection (instance)))
-    )
-    .on (
-      List.elem_ (List.of ('ADV_32', 'DISADV_24')),
-      id => entry.lookup ('select')
-        .fmap (select => {
-          const flippedId = id === 'DISADV_24' ? 'ADV_32' : id;
-
-          const hasLessThanTwoSameIdActiveSelections =
-            getLessThanTwoSameIdActiveSelections (
-              state.get ('disadvantages').lookup (flippedId)
-            );
-
-          const isNoRequiredSelection = getIsNoRequiredSelection (instance);
-
-          return select.filter (
-            e =>
-              hasLessThanTwoSameIdActiveSelections (e)
-              && isNoRequiredSelection (e)
-          );
-        })
-    )
-    .on (
-      List.elem_ (List.of (
-        'DISADV_1',
-        'DISADV_34',
-        'DISADV_50'
-      )),
-      () => entry.lookup ('select')
-        .fmap (select => select.filter (getIsNoRequiredSelection (instance)))
-    )
-    .on (
-      List.elem_ (List.of (
-        'DISADV_33',
-        'DISADV_37',
-        'DISADV_51'
-      )),
-      id => entry.lookup ('select')
+      id => wiki_entry.lookup ("select")
         .fmap (select => {
           const isNoRequiredOrActiveSelection =
-            getIsNoRequiredOrActiveSelection (instance);
+            isNotRequiredNotActive (hero_entry)
 
-          if (id === 'DISADV_33') {
-            const specialIds = List.of (7, 8);
+          if (id === "DISADV_33") {
+            const specialIds = List.of (7, 8)
 
             return select.filter (
               e =>
-                specialIds.elem (e.get ('id') as number)
+                specialIds.elem (e.get ("id") as number)
                 || isNoRequiredOrActiveSelection (e)
-            );
+            )
           }
           else {
-            return select.filter (isNoRequiredOrActiveSelection);
+            return select.filter (isNoRequiredOrActiveSelection)
           }
         })
     )
     .on (
-      'DISADV_36',
-      () => entry.lookup ('select')
+      "DISADV_36",
+      () => wiki_entry.lookup ("select")
         .fmap (
-          select => select.filter (getIsNoRequiredOrActiveSelection (instance))
+          select => select.filter (isNotRequiredNotActive (hero_entry))
         )
     )
     .on (
-      'DISADV_48',
-      () => entry.lookup ('select')
+      "DISADV_48",
+      () => wiki_entry.lookup ("select")
         .fmap (select => {
           const isNoRequiredOrActiveSelection =
-            getIsNoRequiredOrActiveSelection (instance);
+            isNotRequiredNotActive (hero_entry)
 
           const isAdvantageActive = (id: string) =>
-            isActive (state.get ('advantages').lookup (id));
+            isActive (hero.get ("advantages").lookup (id))
 
-          const isSkillOfIcB = (e: Record<Wiki.SelectionObject>) =>
+          const isSkillOfIcB = (e: Record<SelectionObject>) =>
             Maybe.fromMaybe (false) (
-              wiki.get ('skills').lookup (e.get ('id') as string)
-                .fmap (skill => skill.get ('ic') === 2)
-            );
+              get ("skills").lookup (e.get ("id") as string)
+                .fmap (skill => skill.get ("ic") === 2)
+            )
 
           return select.filter (
             e =>
               (
-                (isAdvantageActive ('ADV_40') || isAdvantageActive ('ADV_46'))
+                (isAdvantageActive ("ADV_40") || isAdvantageActive ("ADV_46"))
                 && isSkillOfIcB (e)
               )
               || isNoRequiredOrActiveSelection (e)
-          );
+          )
         })
     )
     .on (
-      'SA_3',
-      () => entry.lookup ('select')
+      "SA_3",
+      () => wiki_entry.lookup ("select")
         .fmap (select => {
           const isNoRequiredOrActiveSelection =
-            getIsNoRequiredOrActiveSelection (instance);
+            isNotRequiredNotActive (hero_entry)
 
           return select.filter (
             e =>
               isNoRequiredOrActiveSelection (e)
-              && Maybe.fromMaybe (false) (e.lookup ('req').fmap (
-                req => validatePrerequisites (wiki, state, req, entry.get ('id'))
+              && Maybe.fromMaybe (false) (e.lookup ("req").fmap (
+                req => validatePrerequisites (wiki, hero, req, wiki_entry.get ("id"))
               ))
-          );
+          )
         })
     )
-    .on ('SA_9', () => {
-      const maybeCounter = getActiveSecondarySelections (instance);
+    .on ("SA_9", () => {
+      const maybeCounter = getActiveSecondarySelections (hero_entry)
 
-      return entry.lookup ('select')
+      return wiki_entry.lookup ("select")
         .fmap (select => {
-          const isNoRequiredSelection = getIsNoRequiredSelection (instance);
+          const isNoRequiredSelection = isNotRequired (hero_entry)
 
           const isValidSelection = Maybe.isJust (maybeCounter)
-            ? (e: Record<Wiki.SelectionObject>) => {
-              const counter = Maybe.fromJust (maybeCounter);
+            ? (e: Record<SelectionObject>) => {
+              const counter = Maybe.fromJust (maybeCounter)
 
               if (isNoRequiredSelection (e)) {
-                return false;
+                return false
               }
-              else if (counter.member (e.get ('id'))) {
+              else if (counter.member (e.get ("id"))) {
                 return Maybe.fromMaybe (false) (
-                  Maybe.ensure (isString) (e.get ('id'))
+                  Maybe.ensure (isString) (e.get ("id"))
                     .bind (
                       id => OrderedMap.lookup<string, Record<Data.SkillDependent>>
                         (id)
-                        (state.get ('skills'))
+                        (hero.get ("skills"))
                     )
                     .bind (
-                      skill => counter.lookup (e.get ('id'))
+                      skill => counter.lookup (e.get ("id"))
                         .fmap (
                           arr =>
                             arr.length () < 3
-                            && skill.get ('value') >= (arr.length () + 1) * 6
+                            && skill.get ("value") >= (arr.length () + 1) * 6
                         )
                     )
-                );
+                )
               }
               else {
                 return Maybe.fromMaybe (false) (
-                  Maybe.ensure (isString) (e.get ('id'))
+                  Maybe.ensure (isString) (e.get ("id"))
                     .bind (
                       id => OrderedMap.lookup<string, Record<Data.SkillDependent>>
                         (id)
-                        (state.get ('skills'))
+                        (hero.get ("skills"))
                     )
-                    .fmap (skill => skill.get ('value') >= 6)
-                );
+                    .fmap (skill => skill.get ("value") >= 6)
+                )
               }
             }
-            : (e: Record<Wiki.SelectionObject>) => {
+            : (e: Record<SelectionObject>) => {
               if (isNoRequiredSelection (e)) {
-                return false;
+                return false
               }
               else {
                 return Maybe.fromMaybe (false) (
-                  Maybe.ensure (isString) (e.get ('id'))
+                  Maybe.ensure (isString) (e.get ("id"))
                     .bind (
                       id => OrderedMap.lookup<string, Record<Data.SkillDependent>>
                         (id)
-                        (state.get ('skills'))
+                        (hero.get ("skills"))
                     )
-                    .fmap (skill => skill.get ('value') >= 6)
-                );
+                    .fmap (skill => skill.get ("value") >= 6)
+                )
               }
-            };
+            }
 
-          return select.filter (isValidSelection);
+          return select.filter (isValidSelection)
         })
         .fmap (select => select.map (e => {
-          const id = e.get ('id') as string;
+          const id = e.get ("id") as string
 
-          const list = maybeCounter.bind (counter => counter.lookup (id));
+          const list = maybeCounter.bind (counter => counter.lookup (id))
 
           return e.mergeMaybe (Record.of ({
             cost: Maybe.isJust (list)
-              ? e.lookup ('cost')
+              ? e.lookup ("cost")
                 .fmap (cost => cost * (Maybe.fromJust (list).length () + 1))
-              : e.lookup ('cost'),
-            applications: e.lookup ('applications').fmap (
+              : e.lookup ("cost"),
+            applications: e.lookup ("applications").fmap (
               apps => apps.filter (n => {
                 const isInactive = !Maybe.isJust (list)
-                  || !Maybe.fromJust (list).elem (n.get ('id'));
+                  || !Maybe.fromJust (list).elem (n.get ("id"))
 
-                const req = n.lookup ('prerequisites');
+                const req = n.lookup ("prerequisites")
 
                 const arePrerequisitesMet =
                   !Maybe.isJust (req) ||
-                  validatePrerequisites (wiki, state, Maybe.fromJust (req), id);
+                  validatePrerequisites (wiki, hero, Maybe.fromJust (req), id)
 
-                return isInactive && arePrerequisitesMet;
+                return isInactive && arePrerequisitesMet
               })
             ),
-          })) as Record<Wiki.SelectionObject>;
-        }));
+          })) as Record<SelectionObject>
+        }))
     })
     .on (
-      'SA_28',
-      () => entry.lookup ('select')
+      "SA_28",
+      () => wiki_entry.lookup ("select")
         .fmap (select => {
-          const isNoActiveSelection = getIsNoActiveSelection (instance);
-          const isNoRequiredSelection = getIsNoRequiredSelection (instance);
+          const isNoActiveSelection = isNotActive (hero_entry)
+          const isNoRequiredSelection = isNotRequired (hero_entry)
 
           return select.filter (e => {
             if (isNoRequiredSelection (e)) {
-              return false;
+              return false
             }
             else {
               return Maybe.fromMaybe (false) (
-                e.lookup ('talent')
+                e.lookup ("talent")
                   .bind (
-                    talent => state.get ('skills').lookup (Tuple.fst (talent))
+                    talent => hero.get ("skills").lookup (Tuple.fst (talent))
                       .fmap (
                         skill =>
                           isNoActiveSelection (e)
-                          && skill.get ('value') >= Tuple.snd (talent)
+                          && skill.get ("value") >= Tuple.snd (talent)
                       )
                   )
-              );
+              )
             }
-          });
+          })
         })
     )
     .on (
-      'SA_29',
-      () => entry.lookup ('select')
+      "SA_29",
+      () => wiki_entry.lookup ("select")
         .fmap (select => {
-          const isNoRequiredSelection = getIsNoRequiredSelection (instance);
+          const isNoRequiredSelection = isNotRequired (hero_entry)
 
           const active = Maybe.fromMaybe<List<Record<Data.ActiveObject>>> (List.of ()) (
-            instance.fmap (e => e.get ('active'))
-          );
+            hero_entry.fmap (e => e.get ("active"))
+          )
 
           return select.filter (
             e =>
               isNoRequiredSelection (e)
-              && active.all (n => !n.lookup ('sid').equals (e.lookup ('id')))
-          );
+              && active.all (n => !n.lookup ("sid").equals (e.lookup ("id")))
+          )
         })
     )
-    .on ('SA_72', () => {
-      return entry.lookup ('select')
+    .on ("SA_72", () => {
+      return wiki_entry.lookup ("select")
         .fmap (select => {
           const propertiesWithValidSpells = getCategoriesWithSkillsAbove10 (
-            wiki, state, 'spells'
-          );
+            wiki, hero, "spells"
+          )
 
           const isNoRequiredOrActiveSelection =
-            getIsNoRequiredOrActiveSelection (instance);
+            isNotRequiredNotActive (hero_entry)
 
           return select.filter (e => {
             return isNoRequiredOrActiveSelection (e)
-              && !propertiesWithValidSpells.elem (e.get ('id') as number);
-          });
-        });
+              && !propertiesWithValidSpells.elem (e.get ("id") as number)
+          })
+        })
     })
     .on (
-      'SA_81',
-      () => entry.lookup ('select')
+      "SA_81",
+      () => wiki_entry.lookup ("select")
         .fmap (select => {
           const isNoActivePropertyKnowledge =
-            getIsNoActiveSelection (
-              state.get ('specialAbilities').lookup ('SA_72')
-            );
+            isNotActive (
+              hero.get ("specialAbilities").lookup ("SA_72")
+            )
 
           const isNoRequiredOrActiveSelection =
-            getIsNoRequiredOrActiveSelection (instance);
+            isNotRequiredNotActive (hero_entry)
 
           return select.filter (
             e =>
               isNoRequiredOrActiveSelection (e)
               && isNoActivePropertyKnowledge (e)
-          );
+          )
         })
     )
     .on (
-      'SA_87',
-      () => entry.lookup ('select')
+      "SA_87",
+      () => wiki_entry.lookup ("select")
         .bind (select => {
           const aspectsWithValidChants = getCategoriesWithSkillsAbove10 (
-            wiki, state, 'liturgicalChants'
-          );
+            wiki, hero, "liturgicalChants"
+          )
 
           const isNoRequiredOrActiveSelection =
-            getIsNoRequiredOrActiveSelection (instance);
+            isNotRequiredNotActive (hero_entry)
 
-          return getBlessedTradition (state.get ('specialAbilities'))
+          return getBlessedTradition (hero.get ("specialAbilities"))
             .fmap (
               tradition => select.filter (
                 e =>
                   getBlessedTraditionInstanceIdByNumericId (
-                    getTraditionOfAspect (e.get ('id') as number)
+                    getTraditionOfAspect (e.get ("id") as number)
                   )
-                    .equals (Maybe.pure (tradition.get ('id')))
+                    .equals (Maybe.pure (tradition.get ("id")))
                   && isNoRequiredOrActiveSelection (e)
-                  && !aspectsWithValidChants.elem (e.get ('id') as number)
+                  && !aspectsWithValidChants.elem (e.get ("id") as number)
               )
             )
         })
     )
     .on (
-      'SA_231',
-      () => entry.lookup ('select')
+      "SA_231",
+      () => wiki_entry.lookup ("select")
         .fmap (select => {
           const isNoRequiredOrActiveSelection =
-            getIsNoRequiredOrActiveSelection (instance);
+            isNotRequiredNotActive (hero_entry)
 
           return select.filter (
             e =>
               isNoRequiredOrActiveSelection (e)
               && Maybe.fromMaybe (false) (
-                state.get ('spells').lookup (e.get ('id') as string)
-                  .fmap (spell => spell.get ('value') >= 10)
+                hero.get ("spells").lookup (e.get ("id") as string)
+                  .fmap (spell => spell.get ("value") >= 10)
               )
-          );
+          )
         })
     )
     .on (
-      'SA_338',
-      () => entry.lookup ('select')
+      "SA_338",
+      () => wiki_entry.lookup ("select")
         .fmap (select => {
-          const activeSelections = getActiveSelectionsMaybe (instance);
+          const activeSelections = getActiveSelectionsMaybe (hero_entry)
 
-          if (isActive (instance)) {
-            const selectedPath = instance
-              .fmap (e => e.get ('active'))
+          if (isActive (hero_entry)) {
+            const selectedPath = hero_entry
+              .fmap (e => e.get ("active"))
               .bind (Maybe.listToMaybe)
-              .bind (e => e.lookup ('sid'))
-              .bind (e => findSelectOption (entry, Maybe.pure (e)))
-              .bind (obj => obj.lookup ('gr'));
+              .bind (e => e.lookup ("sid"))
+              .bind (e => findSelectOption (wiki_entry, Maybe.pure (e)))
+              .bind (obj => obj.lookup ("gr"))
 
             const highestLevel = activeSelections
               .fmap (List.map (
-                selection => findSelectOption (entry, Maybe.pure (selection))
-                  .bind (e => e.lookup ('tier'))
+                selection => findSelectOption (wiki_entry, Maybe.pure (selection))
+                  .bind (e => e.lookup ("tier"))
               ))
               .fmap (Maybe.catMaybes)
               .fmap (List.maximum)
-              .fmap (e => e + 1);
+              .fmap (e => e + 1)
 
             return select.filter (
               e =>
-                selectedPath.equals (e.lookup ('gr'))
-                && e.lookup ('tier').equals (highestLevel)
-            );
+                selectedPath.equals (e.lookup ("gr"))
+                && e.lookup ("tier").equals (highestLevel)
+            )
           }
           else {
-            const just1 = Maybe.pure (1);
+            const just1 = Maybe.pure (1)
 
-            return select.filter (e => e.lookup ('tier').equals (just1));
+            return select.filter (e => e.lookup ("tier").equals (just1))
           }
         })
     )
     .on (
-      List.elem_ (List.of ('SA_414', 'SA_663')),
-      () => entry.lookup ('select')
+      List.elem_ (List.of ("SA_414", "SA_663")),
+      () => wiki_entry.lookup ("select")
         .fmap (select => {
           const isNoRequiredOrActiveSelection =
-            getIsNoRequiredOrActiveSelection (instance);
+            isNotRequiredNotActive (hero_entry)
 
           type GetInstance = (target: Maybe<string>) =>
-            Maybe<Record<Data.ActivatableSkillDependent>>;
+            Maybe<Record<Data.ActivatableSkillDependent>>
 
-          const getInstance: GetInstance = entry.get ('id') === 'SA_414'
+          const getInstance: GetInstance = wiki_entry.get ("id") === "SA_414"
             ? target => target.bind (
               id => OrderedMap.lookup<string, Record<Data.ActivatableSkillDependent>>
                 (id)
-                (state.get ('spells'))
+                (hero.get ("spells"))
             )
             : target => target.bind (
               id => OrderedMap.lookup<string, Record<Data.ActivatableSkillDependent>>
                 (id)
-                (state.get ('liturgicalChants'))
-            );
+                (hero.get ("liturgicalChants"))
+            )
 
           type GetWikiEntry = (target: Maybe<string>) =>
-          Maybe<Record<Wiki.Spell> | Record<Wiki.LiturgicalChant>>;
+          Maybe<Record<Spell> | Record<LiturgicalChant>>
 
-          const createGetWikiEntry: GetWikiEntry = entry.get ('id') === 'SA_414'
+          const createGetWikiEntry: GetWikiEntry = wiki_entry.get ("id") === "SA_414"
             ? target => target.bind (
-              id => OrderedMap.lookup<string, Record<Wiki.Spell>>
+              id => OrderedMap.lookup<string, Record<Spell>>
                 (id)
-                (wiki.get ('spells'))
+                (get ("spells"))
             )
             : target => target.bind (
-              id => OrderedMap.lookup<string, Record<Wiki.LiturgicalChant>>
+              id => OrderedMap.lookup<string, Record<LiturgicalChant>>
                 (id)
-                (wiki.get ('liturgicalChants'))
-            );
+                (get ("liturgicalChants"))
+            )
 
-          return select.foldl<List<Record<Wiki.SelectionObject>>> (
+          return select.foldl<List<Record<SelectionObject>>> (
             arr => e => {
-              const targetInstance = getInstance (e.lookup ('target'));
-              const targetWikiEntry = createGetWikiEntry (e.lookup ('target'));
+              const targetInstance = getInstance (e.lookup ("target"))
+              const targetWikiEntry = createGetWikiEntry (e.lookup ("target"))
 
               if (
                 isNoRequiredOrActiveSelection (e)
                 && validatePrerequisites (
                   wiki,
-                  state,
-                  Maybe.fromMaybe<List<Wiki.AllRequirements>> (List.of ()) (e.lookup ('req')),
-                  entry.get ('id')
+                  hero,
+                  Maybe.fromMaybe<List<AllRequirements>> (List.of ()) (e.lookup ("req")),
+                  wiki_entry.get ("id")
                 )
                 && Maybe.isJust (targetWikiEntry)
                 && Maybe.isJust (targetInstance)
-                && targetInstance.fmap (target => target.get ('value'))
-                  .gte (e.lookup ('tier').fmap (tier => tier * 4 + 4))
+                && targetInstance.fmap (target => target.get ("value"))
+                  .gte (e.lookup ("tier").fmap (tier => tier * 4 + 4))
               ) {
-                const target = Maybe.fromJust (targetWikiEntry);
+                const target = Maybe.fromJust (targetWikiEntry)
 
                 return arr.append (
-                  e.insert ('name') (`${target.get ('name')}: ${e.get ('name')}`)
-                );
+                  e.insert ("name") (`${target.get ("name")}: ${e.get ("name")}`)
+                )
               }
 
-              return arr;
+              return arr
             }
-          ) (List.of ());
+          ) (List.of ())
         })
     )
     .on (
-      'SA_639',
-      () => entry.lookup ('select')
+      "SA_639",
+      () => wiki_entry.lookup ("select")
         .fmap (select => {
           const isNoRequiredOrActiveSelection =
-            getIsNoRequiredOrActiveSelection (instance);
+            isNotRequiredNotActive (hero_entry)
 
           return select.filter (
             e =>
               isNoRequiredOrActiveSelection (e)
               && validatePrerequisites (
                 wiki,
-                state,
-                Maybe.fromMaybe<List<Wiki.AllRequirements>> (List.of ()) (e.lookup ('req')),
-                entry.get ('id')
+                hero,
+                Maybe.fromMaybe<List<AllRequirements>> (List.of ()) (e.lookup ("req")),
+                wiki_entry.get ("id")
               )
-          );
+          )
         })
     )
     .on (
-      'SA_699',
-      () => getWikiEntryFromSlice (wiki) ('specialAbilities') ('SA_29')
+      "SA_699",
+      () => getWikiEntryFromSlice (wiki) ("specialAbilities") ("SA_29")
         .bind (
-          languagesWikiEntry => languagesWikiEntry.lookup ('select')
+          languagesWikiEntry => languagesWikiEntry.lookup ("select")
             .fmap (select => {
               interface AvailableLanguage {
-                id: number;
-                tier: number;
+                id: number
+                tier: number
               }
 
               const availableLanguages =
                 Maybe.fromMaybe<List<Record<AvailableLanguage>>> (List.of ()) (
-                  state.get ('specialAbilities').lookup ('SA_29')
+                  hero.get ("specialAbilities").lookup ("SA_29")
                     .fmap (
-                      lang => lang.get ('active')
+                      lang => lang.get ("active")
                         .foldl<List<Record<AvailableLanguage>>> (
                           arr => obj =>
                             Maybe.fromMaybe (arr) (
-                              obj.lookup ('tier').bind (
-                                tier => obj.lookup ('sid')
+                              obj.lookup ("tier").bind (
+                                tier => obj.lookup ("sid")
                                   .bind (Maybe.ensure (x => x === 3 || x === 4))
                                   .fmap (sid => arr.append (Record.of ({
                                     id: sid as number,
@@ -611,237 +695,237 @@ const getEntrySpecificSelections = (
                             )
                         ) (List.of ())
                     )
-                );
+                )
 
-              const justTrue = Maybe.pure (true);
-              const just4 = Maybe.pure (4);
+              const justTrue = Maybe.pure (true)
+              const just4 = Maybe.pure (4)
 
-              return select.foldl<List<Record<Wiki.SelectionObject>>> (
+              return select.foldl<List<Record<SelectionObject>>> (
                 acc => e => {
                   const language = availableLanguages.find (
-                    l => l.get ('id') === e.get ('id')
-                  );
+                    l => l.get ("id") === e.get ("id")
+                  )
 
-                  const firstForLanguage = instance
+                  const firstForLanguage = hero_entry
                     .fmap (
-                      just => just.get ('active').all (
-                        a => a.lookup ('sid').equals (just.lookup ('id'))
+                      just => just.get ("active").all (
+                        a => a.lookup ("sid").equals (just.lookup ("id"))
                       )
-                    );
+                    )
 
                   if (
                     Maybe.isJust (language)
                     && firstForLanguage.equals (justTrue)
                   ) {
                     const isMotherTongue = language
-                      .bind (languageRec => languageRec.lookup ('tier'))
-                      .equals (just4);
+                      .bind (languageRec => languageRec.lookup ("tier"))
+                      .equals (just4)
 
                     if (isMotherTongue) {
-                      return acc.append (e.insert ('cost') (0));
+                      return acc.append (e.insert ("cost") (0))
                     }
 
-                    return acc.append (e);
+                    return acc.append (e)
                   }
 
-                  return acc;
+                  return acc
                 }
-              ) (List.of ());
+              ) (List.of ())
             })
         )
     )
     .otherwise (
-      () => entry.lookup ('select')
+      () => wiki_entry.lookup ("select")
         .fmap (
-          select => select.filter (getIsNoRequiredOrActiveSelection (instance))
+          select => select.filter (isNotRequiredNotActive (hero_entry))
         )
-    );
-};
+    )
+}
 
 interface InactiveOptions {
-  cost?: string | number | List<number>;
-  minTier?: number;
-  maxTier?: number;
-  customCostDisabled?: boolean;
+  cost?: string | number | List<number>
+  minTier?: number
+  maxTier?: number
+  customCostDisabled?: boolean
 }
 
 const getOtherOptions = (
-  wiki: Record<Wiki.WikiAll>,
+  wiki: Record<WikiAll>,
   instance: Maybe<Record<Data.ActivatableDependent>>,
   state: Record<Data.HeroDependent>,
   adventurePoints: Record<AdventurePointsObject>,
-  entry: Wiki.Activatable
+  entry: Activatable
 ) => {
-  return match<string, Maybe<Record<InactiveOptions>>> (entry.get ('id'))
+  return match<string, Maybe<Record<InactiveOptions>>> (entry.get ("id"))
     .on (
-      'DISADV_59',
-      () => Maybe.ensure ((n: number) => n < 3) (countActiveSkillEntries (state, 'spells'))
+      "DISADV_59",
+      () => Maybe.ensure ((n: number) => n < 3) (countActiveSkillEntries (state, "spells"))
         .fmap (activeSpells => Record.of<InactiveOptions> ({
           maxTier: -activeSpells + 3,
         }))
     )
     .on (
-      'SA_17',
-      () => state.get ('skills').lookup ('TAL_51')
+      "SA_17",
+      () => state.get ("skills").lookup ("TAL_51")
         .bind (
-          skill51 => state.get ('skills').lookup ('TAL_51')
+          skill51 => state.get ("skills").lookup ("TAL_51")
             .bind (
               skill55 => Maybe.ensure ((x: number) => x >= 12) (
-                skill51.get ('value') + skill55.get ('value')
+                skill51.get ("value") + skill55.get ("value")
               )
                 .fmap (Record.empty)
             )
         )
     )
     .on (
-      'SA_18',
+      "SA_18",
       () => Maybe.ensure ((x: number) => x > 0) (
         getAllEntriesByGroup (
-          wiki.get ('combatTechniques'),
-          state.get ('combatTechniques'),
+          get ("combatTechniques"),
+          state.get ("combatTechniques"),
           2
         )
-          .filter (e => e.get ('value') >= 10)
+          .filter (e => e.get ("value") >= 10)
           .length ()
       )
         .fmap (Record.empty)
     )
     .on (
       List.elem_ (List.of (
-        'SA_70',
-        'SA_255',
-        'SA_345',
-        'SA_346',
-        'SA_676',
-        'SA_681'
+        "SA_70",
+        "SA_255",
+        "SA_345",
+        "SA_346",
+        "SA_676",
+        "SA_681"
       )),
-      () => Maybe.ensure (List.null) (getMagicalTraditions (state.get ('specialAbilities')))
+      () => Maybe.ensure (List.null) (getMagicalTraditions (state.get ("specialAbilities")))
         .fmap (Record.empty)
     )
     .on (
       List.elem_ (List.of (
-        'SA_86',
-        'SA_682',
-        'SA_683',
-        'SA_684',
-        'SA_685',
-        'SA_686',
-        'SA_687',
-        'SA_688',
-        'SA_689',
-        'SA_690',
-        'SA_691',
-        'SA_692',
-        'SA_693',
-        'SA_694',
-        'SA_695',
-        'SA_696',
-        'SA_697',
-        'SA_698'
+        "SA_86",
+        "SA_682",
+        "SA_683",
+        "SA_684",
+        "SA_685",
+        "SA_686",
+        "SA_687",
+        "SA_688",
+        "SA_689",
+        "SA_690",
+        "SA_691",
+        "SA_692",
+        "SA_693",
+        "SA_694",
+        "SA_695",
+        "SA_696",
+        "SA_697",
+        "SA_698"
       )),
       () =>
-        getBlessedTradition (state.get ('specialAbilities'))
+        getBlessedTradition (state.get ("specialAbilities"))
           .fmap (Record.empty)
     )
     .on (
-      List.elem_ (List.of ('SA_72', 'SA_87')),
-      () => Maybe.return (entry.get ('cost'))
+      List.elem_ (List.of ("SA_72", "SA_87")),
+      () => Maybe.return (entry.get ("cost"))
         .bind (Maybe.ensure ((e): e is List<number> => List.isList (e)))
         .bind (
-          costs => instance.fmap (e => e.get ('active').length ())
+          costs => instance.fmap (e => e.get ("active").length ())
             .bind (active => costs.subscript (active))
         )
         .fmap (cost => Record.of<InactiveOptions> ({ cost }))
     )
     .on (
-      'SA_533',
+      "SA_533",
       () =>
-        state.get ('specialAbilities').lookup ('SA_531')
-          .fmap (specialAbility => specialAbility.get ('active'))
+        state.get ("specialAbilities").lookup ("SA_531")
+          .fmap (specialAbility => specialAbility.get ("active"))
           .bind (Maybe.listToMaybe)
-          .bind (active => active.lookup ('sid'))
-          .bind (sid => wiki.get ('skills').lookup (sid as string))
+          .bind (active => active.lookup ("sid"))
+          .bind (sid => get ("skills").lookup (sid as string))
           .fmap (skill => Record.of<InactiveOptions> ({
-            cost: (entry.get ('cost') as List<number>).map (
-              e => e + skill.get ('ic')
+            cost: (entry.get ("cost") as List<number>).map (
+              e => e + skill.get ("ic")
             ),
           }))
     )
     .on (
       List.elem_ (List.of (
-        'SA_544',
-        'SA_545',
-        'SA_546',
-        'SA_547',
-        'SA_548'
+        "SA_544",
+        "SA_545",
+        "SA_546",
+        "SA_547",
+        "SA_548"
       )),
       () => Maybe.ensure<Record<InactiveOptions>> (
         () => {
           const isAdvantageActive = R.pipe (
-            OrderedMap.lookup_ (state .get ('advantages')),
+            OrderedMap.lookup_ (state .get ("advantages")),
             isActive
-          );
+          )
 
           const max = getModifierByActiveLevel
-            (state.get ('advantages').lookup ('ADV_79'))
-            (state.get ('disadvantages').lookup ('DISADV_72'))
-            (Just (3));
+            (state.get ("advantages").lookup ("ADV_79"))
+            (state.get ("disadvantages").lookup ("DISADV_72"))
+            (Just (3))
 
-          const isLessThanMax = () => countActiveGroupEntries (wiki, state, 24) < max;
+          const isLessThanMax = () => countActiveGroupEntries (wiki, state, 24) < max
 
-          return (isAdvantageActive ('ADV_77') && isLessThanMax ())
-            || isAdvantageActive ('ADV_12');
+          return (isAdvantageActive ("ADV_77") && isLessThanMax ())
+            || isAdvantageActive ("ADV_12")
         }
       ) (Record.empty ())
     )
     .on (
       List.elem_ (List.of (
-        'SA_549',
-        'SA_550',
-        'SA_551',
-        'SA_552',
-        'SA_553'
+        "SA_549",
+        "SA_550",
+        "SA_551",
+        "SA_552",
+        "SA_553"
       )),
       () => Maybe.ensure<Record<InactiveOptions>> (
         () => {
           const isAdvantageActive = R.pipe (
-            OrderedMap.lookup_ (state .get ('advantages')),
+            OrderedMap.lookup_ (state .get ("advantages")),
             isActive
-          );
+          )
 
           const max = getModifierByActiveLevel
-            (state.get ('advantages').lookup ('ADV_80'))
-            (state.get ('disadvantages').lookup ('DISADV_73'))
-            (Just (3));
+            (state.get ("advantages").lookup ("ADV_80"))
+            (state.get ("disadvantages").lookup ("DISADV_73"))
+            (Just (3))
 
-          const isLessThanMax = () => countActiveGroupEntries (wiki, state, 27) < max;
+          const isLessThanMax = () => countActiveGroupEntries (wiki, state, 27) < max
 
-          return (isAdvantageActive ('ADV_78') && isLessThanMax ())
-            || isAdvantageActive ('ADV_12');
+          return (isAdvantageActive ("ADV_78") && isLessThanMax ())
+            || isAdvantageActive ("ADV_12")
         }
       ) (Record.empty ())
     )
-    .on ('SA_667', () => state.lookup ('pact').fmap (
+    .on ("SA_667", () => state.lookup ("pact").fmap (
       e => Record.of<InactiveOptions> ({
-        maxTier: e.get ('level'),
+        maxTier: e.get ("level"),
       })
     ))
     .on (
       List.elem_ (List.of (
-        'SA_677',
-        'SA_678',
-        'SA_679',
-        'SA_680'
+        "SA_677",
+        "SA_678",
+        "SA_679",
+        "SA_680"
       )),
       () =>
         Maybe.ensure<Record<InactiveOptions>> (
-          () => adventurePoints.get ('spentOnMagicalAdvantages') <= 25
-            && adventurePoints.get ('spentOnMagicalDisadvantages') <= 25
-            && List.null (getMagicalTraditions (state.get ('specialAbilities')))
+          () => adventurePoints.get ("spentOnMagicalAdvantages") <= 25
+            && adventurePoints.get ("spentOnMagicalDisadvantages") <= 25
+            && List.null (getMagicalTraditions (state.get ("specialAbilities")))
         ) (Record.empty ())
     )
-    .otherwise (() => Maybe.pure (Record.of ({})));
-};
+    .otherwise (() => Maybe.pure (Record.of ({})))
+}
 
 /**
  * Calculates whether an Activatable is valid to add or not and, if valid,
@@ -849,16 +933,16 @@ const getOtherOptions = (
  * Maybe of the result or `undefined` if invalid.
  */
 export const getInactiveView = (
-  wiki: Record<Wiki.WikiAll>,
+  wiki: Record<WikiAll>,
   instance: Maybe<Record<Data.ActivatableDependent>>,
   state: Record<Data.HeroDependent>,
   validExtendedSpecialAbilities: List<string>,
   locale: Record<Data.UIMessages>,
   adventurePoints: Record<AdventurePointsObject>,
-  wikiEntry: Wiki.Activatable
+  wikiEntry: Activatable
 ): Maybe<Record<Data.DeactiveViewObject>> => {
-  const id = wikiEntry .get ('id');
-  const prerequisites = wikiEntry .get ('prerequisites');
+  const id = wikiEntry .get ("id")
+  const prerequisites = wikiEntry .get ("prerequisites")
   const maxTier = prerequisites instanceof OrderedMap
     ? validateLevel (
       wiki,
@@ -866,11 +950,11 @@ export const getInactiveView = (
       prerequisites,
       Maybe.maybe<
         Record<Data.ActivatableDependent>,
-        Data.ActivatableDependent['dependencies']
-      > (List.empty ()) (e => e.get ('dependencies')) (instance),
+        Data.ActivatableDependent["dependencies"]
+      > (List.empty ()) (e => e.get ("dependencies")) (instance),
       id
     )
-    : Maybe.empty ();
+    : Maybe.empty ()
 
   const isNotValid = isAdditionDisabled (
     wiki,
@@ -879,15 +963,15 @@ export const getInactiveView = (
     validExtendedSpecialAbilities,
     wikiEntry,
     maxTier
-  );
+  )
 
   if (!isNotValid) {
-    const specificSelections = getEntrySpecificSelections (
+    const specificSelections = modifySelectOptions (
       wiki,
       instance,
       state,
       wikiEntry
-    );
+    )
 
     const maybeOtherOptions = getOtherOptions (
       wiki,
@@ -895,28 +979,28 @@ export const getInactiveView = (
       state,
       adventurePoints,
       wikiEntry
-    );
+    )
 
     return maybeOtherOptions.bind (
       otherOptions =>
-        Maybe.ensure<Maybe<List<Record<Wiki.SelectionObject>>>> (
+        Maybe.ensure<Maybe<List<Record<SelectionObject>>>> (
           select => !Maybe.isJust (select) || !List.null (Maybe.fromJust (select))
         ) (specificSelections)
           .fmap (
             select =>
               Record.ofMaybe<Data.DeactiveViewObject> ({
                 id,
-                name: wikiEntry.get ('name'),
-                cost: wikiEntry.get ('cost'),
+                name: wikiEntry.get ("name"),
+                cost: wikiEntry.get ("cost"),
                 maxTier,
                 stateEntry: instance,
-                wikiEntry: wikiEntry as Record<RecordInterface<Wiki.Activatable>>,
-                sel: select.fmap (sel => sortObjects (sel, locale.get ('id'))),
+                wikiEntry: wikiEntry as Record<RecordInterface<Activatable>>,
+                sel: select.fmap (sel => sortObjects (sel, locale.get ("id"))),
               })
                 .merge (otherOptions)
           )
-    );
+    )
   }
 
-  return Maybe.empty ();
-};
+  return Maybe.empty ()
+}
