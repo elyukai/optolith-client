@@ -75,30 +75,20 @@ export const Cons =
     )
 
 /**
- * `fromArray :: Array a -> [a]`
- *
- * Creates a new `List` instance from the passed native `Array`.
- */
-export const fromArray = <A> (xs: ReadonlyArray<A>): List<A> => {
-  if (Array.isArray (xs)) {
-    return fromArrayCons<A> (xs) (xs .length - 1) (Nil)
-  }
-
-  throw new TypeError (
-    `fromArray requires an array but instead it received ${show (xs)}`
-  )
-}
-
-const fromArrayCons =
-  <A> (arr: ReadonlyArray<A>) => (index: number) => (h: List<A>): List<A> =>
-    index < 0 ? h : fromArrayCons (arr) (index - 1) (Cons (arr[index], h))
-
-/**
- * `fromElements :: (...a) -> [a]`
+ * `List :: (...a) -> [a]`
  *
  * Creates a new `List` instance from the passed arguments.
  */
-export const fromElements = <A> (...values: A[]): List<A> => fromArray (values)
+export const List =
+  <A> (...values: A[]): List<A> => {
+    if (values .length === 0) {
+      return Nil
+    }
+
+    const [current_head, ...current_tail] = values
+
+    return Cons (current_head, List (...current_tail))
+  }
 
 
 // BASIC FUNCTIONS
@@ -1395,6 +1385,19 @@ export const unsafeIndex =
   }
 
 /**
+ * Builds a new `List` from a native Array.
+ */
+export const fromArray = <A> (xs: ReadonlyArray<A>): List<A> => {
+  if (Array.isArray (xs)) {
+    return List (...xs)
+  }
+
+  throw new TypeError (
+    `fromArray requires an array but instead it received ${show (xs)}`
+  )
+}
+
+/**
  * Converts a `List` to a native Array.
  */
 export const toArray = <A> (xs: List<A>): A[] =>
@@ -1453,99 +1456,101 @@ export const groupByKey =
 
 // NAMESPACED FUNCTIONS
 
-export const List = {
-  fromElements,
-  fromArray,
+List.append = append
+List.appendStr = appendStr
+List.cons = cons
+List.head = head
+List.last = last
+List.lastS = lastS
+List.tail = tail
+List.tailS = tailS
+List.init = init
+List.initS = initS
+List.uncons = uncons
 
-  append,
-  appendStr,
-  cons,
-  head,
-  last,
-  lastS,
-  tail,
-  tailS,
-  init,
-  initS,
-  uncons,
+List.map = map
+List.reverse = reverse
+List.intercalate = intercalate
 
-  map,
-  reverse,
-  intercalate,
+List.scanl = scanl
 
-  scanl,
+List.mapAccumL = mapAccumL
 
-  mapAccumL,
+List.unfoldr = unfoldr
 
-  unfoldr,
+List.take = take
+List.drop = drop
+List.splitAt = splitAt
 
-  take,
-  drop,
-  splitAt,
+List.isInfixOf = isInfixOf
 
-  isInfixOf,
+List.lookup = lookup
 
-  lookup,
+List.filter = filter
+List.partition = partition
 
-  filter,
-  partition,
+List.subscript = subscript
+List.subscriptF = subscriptF
+List.elemIndex = elemIndex
+List.elemIndices = elemIndices
+List.findIndex = findIndex
+List.findIndices = findIndices
 
-  subscript,
-  subscriptF,
-  elemIndex,
-  elemIndices,
-  findIndex,
-  findIndices,
+List.zip = zip
+List.zipWith = zipWith
 
-  zip,
-  zipWith,
+List.lines = lines
 
-  lines,
+List.sdelete = sdelete
+List.intersect = intersect
 
-  sdelete,
-  intersect,
+List.sortBy = sortBy
 
-  sortBy,
+List.indexed = indexed
+List.deleteAt = deleteAt
+List.setAt = setAt
+List.modifyAt = modifyAt
+List.updateAt = updateAt
+List.insertAt = insertAt
 
-  indexed,
-  deleteAt,
-  setAt,
-  modifyAt,
-  updateAt,
-  insertAt,
+List.imap = imap
 
-  imap,
+List.ifoldr = ifoldr
+List.ifoldl = ifoldl
+List.iall = iall
+List.iany = iany
+List.iconcatMap = iconcatMap
 
-  ifoldr,
-  ifoldl,
-  iall,
-  iany,
-  iconcatMap,
+List.ifilter = ifilter
+List.ipartition = ipartition
+List.ifind = ifind
+List.ifindIndex = ifindIndex
+List.ifindIndices = ifindIndices
 
-  ifilter,
-  ipartition,
-  ifind,
-  ifindIndex,
-  ifindIndices,
+List.lower = lower
+List.trimStart = trimStart
+List.trimEnd = trimEnd
 
-  lower,
-  trimStart,
-  trimEnd,
-  splitOn,
-  consF,
-  snoc,
+List.splitOn = splitOn
 
-  maximumOn,
-  minimumOn,
-  firstJust,
-  replaceStr,
+List.notNull = notNull
+List.notNullStr = notNullStr
+List.list = list
+List.consF = consF
+List.snoc = snoc
 
-  unsafeIndex,
-  toArray,
-  isList,
-  countWith,
-  maximumNonNegative,
-}
+List.maximumOn = maximumOn
+List.minimumOn = minimumOn
+List.firstJust = firstJust
+List.replaceStr = replaceStr
+
+List.unsafeIndex = unsafeIndex
+List.fromArray = fromArray
+List.toArray = toArray
+List.isList = isList
+List.countWith = countWith
+List.maximumNonNegative = maximumNonNegative
+List.groupByKey = groupByKey
 
 
 // TYPE HELPERS

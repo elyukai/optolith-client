@@ -11,7 +11,7 @@ import { not, pipe } from "ramda";
 import { Either, fromRight_, isLeft, Right } from "./Either";
 import { fnull, length } from "./Foldable";
 import { List } from "./List";
-import { fromMaybe, fromNullable, Just, Maybe, maybe, maybe_ } from "./Maybe";
+import { fromMaybe, Just, Maybe, maybe, maybe_ } from "./Maybe";
 import { fromUniqueElements, OrderedSet } from "./OrderedSet";
 import { fromBinary, fromBoth, Pair } from "./Pair";
 import { StringKeyObject } from "./Record";
@@ -175,7 +175,7 @@ export const lookup =
   (key: K) =>
   <A>
   (m: OrderedMap<K, A>): Maybe<A> =>
-    fromNullable (m .value .get (key))
+    Maybe (m .value .get (key))
 
 /**
  * `lookupF :: Ord k => Map k a -> k -> Maybe a`
@@ -533,7 +533,7 @@ export const foldlWithKey =
  */
 export const elems =
   <A> (mp: OrderedMap<any, A>): List<A> =>
-    List.fromElements (...mp .value .values ())
+    List (...mp .value .values ())
 
 /**
  * `keys :: Map k a -> [k]`
@@ -542,7 +542,7 @@ export const elems =
  */
 export const keys =
   <K> (mp: OrderedMap<K, any>): List<K> =>
-    List.fromElements (...mp .value .keys ())
+    List (...mp .value .keys ())
 
 /**
  * `assocs :: Map k a -> [(k, a)]`

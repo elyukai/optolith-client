@@ -25,7 +25,6 @@ export interface Const<A> extends ConstPrototype {
   readonly value: A
 }
 
-
 /**
  * `Const :: a -> Const a`
  */
@@ -47,18 +46,6 @@ export const Const =
  */
 export const getConst = <A> (x: Const<A>): A => x .value
 
-Const.getConst = getConst
-
-
-// APPLICATIVE
-
-/**
- * `pure :: a -> Const a`
- */
-export const pure: <A> (x: A) => Const<A> = Const
-
-Const.pure = pure
-
 
 // CUSTOM CONST FUNCTIONS
 
@@ -70,5 +57,3 @@ Const.pure = pure
 export const isConst =
   (x: any): x is Const<any> =>
     typeof x === "object" && x !== null && Object.getPrototypeOf (x) === ConstPrototype
-
-Const.isConst = isConst

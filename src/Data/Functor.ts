@@ -14,6 +14,7 @@ import { Const, isConst } from "./Functor/Const";
 import { Cons, isList, isNil, List, Nil } from "./List";
 import { isJust, isMaybe, Just, Maybe } from "./Maybe";
 import { isOrderedMap, OrderedMap } from "./OrderedMap";
+import { fromBinary, isPair, Pair } from "./Pair";
 import { showP } from "./Show";
 
 export type Functor<A> = Const<A>
@@ -22,15 +23,19 @@ export type Functor<A> = Const<A>
                        | List<A>
                        | Maybe<A>
                        | OrderedMap<any, A>
+                       | Pair<any, A>
 
-interface FunctorMap<A, B> {
-  <A0> (x: Const<A0>): Const<A0>
-  <E> (x: Either<E, A>): Either<E, B>
-  (x: Identity<A>): Identity<B>
-  (xs: List<A>): List<B>
-  (x: Maybe<A>): Maybe<B>
-  <K> (x: OrderedMap<K, A>): OrderedMap<K, B>
-}
+export type FunctorMap<A, B> =
+  <F extends Functor<A>>
+  (x: F) =>
+    F extends Const<infer A0> ? Const<A0> :
+    F extends Either<any, A> ? Exclude<F, Right<any>> | Right<B> :
+    F extends Identity<A> ? Identity<B> :
+    F extends List<A> ? List<B> :
+    F extends Maybe<A> ? Maybe<B> :
+    F extends OrderedMap<infer K, A> ? OrderedMap<K, B> :
+    F extends Pair<infer A1, A> ? Pair<A1, B> :
+    never
 
 /**
  * `fmap :: (a -> b) -> f a -> f b`
@@ -63,6 +68,10 @@ export const fmap =
 
     if (isMaybe (x)) {
       return isJust (x) ? Just (f (x .value)) : x
+    }
+
+    if (isPair (x)) {
+      return fromBinary (x .first, f (x .second))
     }
 
     throw new TypeError (instanceErrorMsg ("fmap") (x))

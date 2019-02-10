@@ -1,7 +1,9 @@
 import { pipe } from "ramda";
 import { IdPrefixes } from "../../../../constants/IdPrefixes";
-import { empty, fromArray, length, map } from "../../../../Data/List";
-import { ensure, fmap, fromMaybe, fromNullable, Just, maybe, Maybe, Nothing } from "../../../../Data/Maybe";
+import { length } from "../../../../Data/Foldable";
+import { fmap } from "../../../../Data/Functor";
+import { fromArray, List, map, Nil } from "../../../../Data/List";
+import { ensure, fromMaybe, Just, Maybe, maybe, Nothing } from "../../../../Data/Maybe";
 import { Record } from "../../../../Data/Record";
 import { ProfessionRequireActivatable, RequireActivatable } from "../../../Models/Wiki/prerequisites/ActivatableRequirement";
 import { CultureRequirement } from "../../../Models/Wiki/prerequisites/CultureRequirement";
@@ -87,9 +89,9 @@ export const stringToPrerequisites =
           ? Just (RequireActivatable ({
               id: obj .id,
               active: obj .active,
-              sid: fromNullable (obj .sid),
-              sid2: fromNullable (obj .sid2),
-              tier: fromNullable (obj .tier),
+              sid: Maybe (obj .sid),
+              sid2: Maybe (obj .sid2),
+              tier: Maybe (obj .tier),
             }) as Record<ProfessionRequireActivatable>)
           : isRawProfessionRequiringIncreasable (obj)
           ? Just (RequireIncreasable ({
@@ -188,9 +190,9 @@ export const stringToSpecialAbilities =
           ? Just (RequireActivatable ({
               id: obj .id,
               active: obj .active,
-              sid: fromNullable (obj .sid),
-              sid2: fromNullable (obj .sid2),
-              tier: fromNullable (obj .tier),
+              sid: Maybe (obj .sid),
+              sid2: Maybe (obj .sid2),
+              tier: Maybe (obj .tier),
             }) as Record<ProfessionRequireActivatable>)
           : Nothing
       }
@@ -209,7 +211,7 @@ const toNaturalNumberPairOptional =
 
 export const stringToBlessings =
   mensureMapListBindAfterOptional<number>
-    (ensure (pipe (length, len => len === 9 || len === 12)))
+    (ensure<List<number>> (pipe (length, len => len === 9 || len === 12)))
     ("&")
     (`${Expect.List (Expect.NaturalNumber)} { length = 9 | 12 }`)
     (toNatural)
@@ -375,47 +377,47 @@ export const toProfession =
           ap: rs.ecost,
 
           dependencies:
-            fromMaybe<Profession["dependencies"]> (empty) (rs.edependencies),
+            fromMaybe<Profession["dependencies"]> (Nil) (rs.edependencies),
 
           prerequisites:
-            fromMaybe<Profession["prerequisites"]> (empty) (rs.eprerequisites),
+            fromMaybe<Profession["prerequisites"]> (Nil) (rs.eprerequisites),
 
           prerequisitesStart,
           prerequisitesEnd,
 
           selections:
-            fromMaybe<Profession["selections"]> (empty) (rs.eselections),
+            fromMaybe<Profession["selections"]> (Nil) (rs.eselections),
 
           specialAbilities:
-            fromMaybe<Profession["specialAbilities"]> (empty) (rs.especialAbilities),
+            fromMaybe<Profession["specialAbilities"]> (Nil) (rs.especialAbilities),
 
           combatTechniques:
             maybe<Profession["combatTechniques"]>
-              (empty)
+              (Nil)
               (map (pairToIncreaseSkill (IdPrefixes.COMBAT_TECHNIQUES)))
               (rs.ecombatTechniques),
 
           skills:
             maybe<Profession["skills"]>
-              (empty)
+              (Nil)
               (map (pairToIncreaseSkill (IdPrefixes.SKILLS)))
               (rs.eskills),
 
           spells:
             maybe<Profession["spells"]>
-              (empty)
+              (Nil)
               (map (pairToIncreaseSkill (IdPrefixes.SPELLS)))
               (rs.espells),
 
           liturgicalChants:
             maybe<Profession["liturgicalChants"]>
-              (empty)
+              (Nil)
               (map (pairToIncreaseSkill (IdPrefixes.LITURGICAL_CHANTS)))
               (rs.eliturgicalChants),
 
           blessings:
             maybe<Profession["blessings"]>
-              (empty)
+              (Nil)
               (map (prefixId (IdPrefixes.BLESSINGS)))
               (rs.eblessings),
 

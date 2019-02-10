@@ -1,4 +1,4 @@
-import { fromElements } from "../Data/List";
+import { List } from "../Data/List";
 
 export enum Categories {
   ADVANTAGES = "ADVANTAGES",
@@ -47,13 +47,13 @@ export type ActivatableLikeCategory = Categories.ADVANTAGES
 
 export type ActivatableSkillCategory = Categories.LITURGIES | Categories.SPELLS
 
-export const ActivatableCategories = fromElements<ActivatableCategory> (
+export const ActivatableCategories = List<ActivatableCategory> (
   Categories.ADVANTAGES,
   Categories.DISADVANTAGES,
   Categories.SPECIAL_ABILITIES
 )
 
-export const IncreasableCategories = fromElements (
+export const IncreasableCategories = List (
   Categories.ATTRIBUTES,
   Categories.COMBAT_TECHNIQUES,
   Categories.LITURGIES,
@@ -61,14 +61,14 @@ export const IncreasableCategories = fromElements (
   Categories.TALENTS
 )
 
-export const SkillishCategories = fromElements (
+export const SkillishCategories = List (
   Categories.COMBAT_TECHNIQUES,
   Categories.LITURGIES,
   Categories.SPELLS,
   Categories.TALENTS
 )
 
-export const ActivatableLikeCategories = fromElements<ActivatableLikeCategory> (
+export const ActivatableLikeCategories = List<ActivatableLikeCategory> (
   Categories.ADVANTAGES,
   Categories.DISADVANTAGES,
   Categories.SPECIAL_ABILITIES,
@@ -76,7 +76,7 @@ export const ActivatableLikeCategories = fromElements<ActivatableLikeCategory> (
   Categories.SPELLS
 )
 
-export const ActivatableSkillCategories = fromElements<ActivatableSkillCategory> (
+export const ActivatableSkillCategories = List<ActivatableSkillCategory> (
   Categories.LITURGIES,
   Categories.SPELLS
 )

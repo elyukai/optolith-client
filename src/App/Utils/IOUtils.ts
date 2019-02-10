@@ -1,7 +1,8 @@
 import { remote } from "electron";
 import * as fs from "fs";
-import { fromElements, length, subscript } from "../../Data/List";
-import { fromMaybe, fromNullable, Maybe } from "../../Data/Maybe";
+import { length } from "../../Data/Foldable";
+import { List, subscript } from "../../Data/List";
+import { fromMaybe, Maybe } from "../../Data/Maybe";
 import { bimap, fromBoth, fst, Pair, snd } from "../../Data/Pair";
 import { divideBy, inc } from "./mathUtils";
 
@@ -64,7 +65,7 @@ export const showSaveDialog =
         remote.dialog.showSaveDialog (
           remote .getCurrentWindow (),
           options,
-          filename => resolve (fromNullable (filename))
+          filename => resolve (Maybe (filename))
         )
     )
 
@@ -77,7 +78,7 @@ export const showOpenDialog =
       resolve => remote.dialog.showOpenDialog (
         remote .getCurrentWindow (),
         options,
-        filenames => resolve (fromNullable (filenames))
+        filenames => resolve (Maybe (filenames))
       )
     )
 
@@ -91,7 +92,7 @@ export const getSystemLocale = () => {
     : "en-US"
 }
 
-const byteTags = fromElements ("", "K", "M", "G", "T")
+const byteTags = List ("", "K", "M", "G", "T")
 
 const foldByteLevels =
   (x: Pair<number, number>): Pair<number, number> =>

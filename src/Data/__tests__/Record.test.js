@@ -1,5 +1,7 @@
+// @ts-check
+const { Nothing } = require('../Maybe');
 const { fromUniqueElements } = require('../OrderedSet');
-const { fromDefault, mergeSafeR2, mergeSafeR3, mergeSafeR4, mergeSafeR5, makeGetters, makeLenses, makeLenses_, member, notMember, toObject, isRecord } = require('../Record');
+const { fromDefault, mergeSafeR2, mergeSafeR3, mergeSafeR4, mergeSafeR5, makeLenses, member, notMember, toObject, isRecord } = require('../Record');
 const { view } = require('../Lens');
 
 // CONSTRUCTOR
@@ -18,39 +20,47 @@ test ('fromDefault', () => {
 test ('mergeSafeR2', () => {
   const testCreator = fromDefault ({ x: 0 })
   const test = testCreator ({ x: 1 })
-  const test2 = fromDefault ({ x: 3, y: 3 }) ({ x: 7 })
+  const test2 = fromDefault ({ x: 3, y: 3 }) ({ x: 7, y: Nothing })
 
+  // @ts-ignore
   expect (mergeSafeR2 (test2) (test)) .toEqual (testCreator ({ x: 7 }))
 })
 
 test ('mergeSafeR3', () => {
   const testCreator = fromDefault ({ x: 0 })
   const test = testCreator ({ x: 1 })
-  const test2 = fromDefault ({ x: 3, y: 3 }) ({ x: 7 })
-  const test3 = testCreator ({ y: 4 })
+  const test2 = fromDefault ({ x: 3, y: 3 }) ({ x: 7, y: Nothing })
+  // @ts-ignore
+  const test3 = testCreator ({ y: 4, x: Nothing })
 
+  // @ts-ignore
   expect (mergeSafeR3 (test3) (test2) (test)) .toEqual (testCreator ({ x: 0, y: 4 }))
 })
 
 test ('mergeSafeR4', () => {
   const testCreator = fromDefault ({ x: 0 })
   const test = testCreator ({ x: 1 })
-  const test2 = fromDefault ({ x: 3, y: 3 }) ({ x: 7 })
-  const test3 = testCreator ({ y: 4 })
+  const test2 = fromDefault ({ x: 3, y: 3 }) ({ x: 7, y: Nothing })
+  // @ts-ignore
+  const test3 = testCreator ({ y: 4, x: Nothing })
   const test4 = testCreator ({ x: 5 })
 
+  // @ts-ignore
   expect (mergeSafeR4 (test4) (test3) (test2) (test)) .toEqual (testCreator ({ x: 5, y: 4 }))
 })
 
 test ('mergeSafeR5', () => {
   const testCreator = fromDefault ({ x: 0 })
   const test = testCreator ({ x: 1 })
-  const test2 = fromDefault ({ x: 3, y: 3 }) ({ x: 7 })
-  const test3 = testCreator ({ y: 4 })
+  const test2 = fromDefault ({ x: 3, y: 3 }) ({ x: 7, y: Nothing })
+  // @ts-ignore
+  const test3 = testCreator ({ y: 4, x: Nothing })
   const test4 = testCreator ({ x: 5 })
-  const test5 = testCreator ({ y: 8 })
+  // @ts-ignore
+  const test5 = testCreator ({ y: 8, x: Nothing })
 
   expect (mergeSafeR5 (test5) (test4) (test3) (test2) (test))
+    // @ts-ignore
     .toEqual (testCreator ({ x: 0, y: 8 }))
 })
 
@@ -66,7 +76,7 @@ test ('makeLenses', () => {
 
 test ('member', () => {
   const testCreator = fromDefault ({ x: 0, y: 0 })
-  const test = testCreator ({ x: 2 })
+  const test = testCreator ({ x: 2, y: Nothing })
 
   expect (member ('x') (test))
     .toBeTruthy ()
@@ -78,7 +88,7 @@ test ('member', () => {
 
 test ('notMember', () => {
   const testCreator = fromDefault ({ x: 0, y: 0 })
-  const test = testCreator ({ x: 2 })
+  const test = testCreator ({ x: 2, y: Nothing })
 
   expect (notMember ('x') (test))
     .toBeFalsy ()
@@ -90,14 +100,14 @@ test ('notMember', () => {
 
 test ('toObject', () => {
   const testCreator = fromDefault ({ x: 0, y: 0 })
-  const test = testCreator ({ x: 2 })
+  const test = testCreator ({ x: 2, y: Nothing })
 
   expect (toObject (test)) .toEqual ({ x: 2, y: 0 })
 })
 
 test ('isRecord', () => {
   const testCreator = fromDefault ({ x: 0, y: 0 })
-  const test = testCreator ({ x: 2 })
+  const test = testCreator ({ x: 2, y: Nothing })
 
   expect (isRecord (test)) .toEqual (true)
   expect (isRecord (3)) .toEqual (false)

@@ -1,6 +1,7 @@
 import { pipe } from "ramda";
-import { fromElements, subscript } from "../../Data/List";
-import { bindF, ensure, fromMaybe, Just, Maybe, Nothing } from "../../Data/Maybe";
+import { bindF } from "../../Control/Monad";
+import { List, subscript } from "../../Data/List";
+import { ensure, fromMaybe, Just, Maybe, Nothing } from "../../Data/Maybe";
 import { inc } from "./mathUtils";
 import { not } from "./not";
 import { isInteger, isNaturalNumber } from "./RegexUtils";
@@ -9,7 +10,7 @@ import { isInteger, isNaturalNumber } from "./RegexUtils";
  * A list of all Roman numbers from 1 to 13.
  */
 const romanNumbers =
-  fromElements (
+  List (
     "I",
     "II",
     "III",

@@ -91,11 +91,11 @@ const NothingPrototype: NothingPrototype =
 export const Nothing: Nothing = Object.create (NothingPrototype)
 
 /**
- * `fromNullable :: a -> Maybe a`
+ * `Maybe :: a -> Maybe a`
  *
  * Creates a new `Maybe` from the given nullable value.
  */
-export const fromNullable =
+export const Maybe =
   <A extends Some> (x: A | Nullable): Maybe<A> =>
     x !== null && x !== undefined ? Just (x) : Nothing
 
@@ -312,7 +312,7 @@ export const isMaybe =
 export const normalize =
   <A extends Some>
   (x: A | Nullable | Maybe<A>): Maybe<A> =>
-    isMaybe (x) ? x : fromNullable (x)
+    isMaybe (x) ? x : Maybe (x)
 
 interface Ensure {
   /**
@@ -349,7 +349,7 @@ export const ensure: Ensure =
   <A extends Some>
   (pred: (x: A) => boolean) =>
   (x: A | Nullable): Maybe<A> =>
-    bind<A> (fromNullable (x))
+    bind<A> (Maybe (x))
             (a => pred (a) ? Just (a) : Nothing)
 
 /**
@@ -419,35 +419,34 @@ export const INTERNAL_shallowEquals =
 
 // NAMESPACED FUNCTIONS
 
-export const Maybe = {
-  Just,
-  Nothing,
-  fromNullable,
+Maybe.Just = Just
+Maybe.Nothing = Nothing
+Maybe.fromNullable = Maybe
 
-  isJust,
-  isNothing,
-  fromJust,
-  fromMaybe,
+Maybe.isJust = isJust
+Maybe.isNothing = isNothing
+Maybe.fromJust = fromJust
+Maybe.fromMaybe = fromMaybe
+Maybe.fromMaybe_ = fromMaybe_
 
-  gt,
-  lt,
-  gte,
-  lte,
+Maybe.gt = gt
+Maybe.lt = lt
+Maybe.gte = gte
+Maybe.lte = lte
 
-  maybe,
-  maybe_,
-  listToMaybe,
-  maybeToList,
-  catMaybes,
-  mapMaybe,
+Maybe.maybe = maybe
+Maybe.maybe_ = maybe_
+Maybe.listToMaybe = listToMaybe
+Maybe.maybeToList = maybeToList
+Maybe.catMaybes = catMaybes
+Maybe.mapMaybe = mapMaybe
 
-  isMaybe,
-  normalize,
-  ensure,
-  imapMaybe,
-  maybeToNullable,
-  maybeToUndefined,
-}
+Maybe.isMaybe = isMaybe
+Maybe.normalize = normalize
+Maybe.ensure = ensure
+Maybe.imapMaybe = imapMaybe
+Maybe.maybeToNullable = maybeToNullable
+Maybe.maybeToUndefined = maybeToUndefined
 
 
 // TYPE HELPERS

@@ -1,3 +1,4 @@
+// @ts-check
 const { cnst, ident, thrush, join, on, flip } = require ('../Function')
 const { fromJust, Just } = require ('../Maybe')
 const { add } = require ('../../App/Utils/mathUtils')
@@ -7,6 +8,7 @@ test ('ident', () => {
 })
 
 test ('cnst', () => {
+  // @ts-ignore
   expect (cnst (5) ('test')) .toEqual (5)
 })
 

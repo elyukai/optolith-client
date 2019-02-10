@@ -6,8 +6,8 @@ import { Either, fromRight, isEither, isLeft, isRight, Left, Right } from "./Eit
 import { equals } from "./Eq";
 import { ident } from "./Function";
 import { fmap } from "./Functor";
-import { append, fromElements, isList, isNil, List, Nil, NonEmptyList } from "./List";
-import { fromMaybe, fromNullable, isJust, isMaybe, isNothing, Just, Maybe, Nothing } from "./Maybe";
+import { append, Cons, isList, isNil, List, Nil, NonEmptyList } from "./List";
+import { fromMaybe, isJust, isMaybe, isNothing, Just, Maybe, Nothing } from "./Maybe";
 import { isOrderedMap, OrderedMap } from "./OrderedMap";
 import { isOrderedSet, OrderedSet } from "./OrderedSet";
 import { fromBinary, Pair } from "./Pair";
@@ -262,7 +262,7 @@ export const toList: FoldableToList =
     }
 
     if (isOrderedSet (x)) {
-      return fromElements (...x)
+      return List (...x)
     }
 
     if (isEither (x)) {
@@ -510,13 +510,31 @@ export const or =
     throw new TypeError (instanceErrorMsg ("or") (x))
   }
 
+interface FoldableAnyPredSpecific<A, A1 extends A> {
+  (x: Either<any, A>): x is Right<A1>
+  (x: Maybe<A>): x is Just<A1>
+  (x: Foldable<A>): x is Foldable<A1>
+}
+
+interface FoldableAnySpecific<A> {
+  (x: Either<any, A>): x is Right<A>
+  (x: List<A>): x is Cons<A>
+  (x: Maybe<A>): x is Just<A>
+  (x: Foldable<A>): boolean
+}
+
+interface FoldableAny {
+  <A, A1 extends A> (f: (x: A) => x is A1): FoldableAnyPredSpecific<A, A1>
+  <A> (f: (x: A) => boolean): FoldableAnySpecific<A>
+}
+
 /**
  * `any :: Foldable t => (a -> Bool) -> t a -> Bool`
  *
  * Determines whether any element of the structure satisfies the predicate.
  */
-export const any =
-  <A> (f: (x: A) => boolean) => (x: Foldable<A>): boolean => {
+export const any: FoldableAny =
+  <A> (f: (x: A) => boolean) => (x: Foldable<A>): x is any => {
     if (isList (x)) {
       return isNil (x) ? false : f (x .x) || any (f) (x .xs)
     }
@@ -622,11 +640,11 @@ export const find: Find =
     }
 
     if (isOrderedMap (x)) {
-      return fromNullable ([...x .value .values ()] .find (pred))
+      return Maybe ([...x .value .values ()] .find (pred))
     }
 
     if (isOrderedSet (x)) {
-      return fromNullable ([...x .value] .find (pred))
+      return Maybe ([...x .value] .find (pred))
     }
 
     if (isEither (x)) {

@@ -1,6 +1,10 @@
 import { pipe } from "ramda";
-import { cons, elem, foldl, fromElements, maximum } from "../../../Data/List";
-import { fmap, guard, Just, Maybe, maybe, sum, then } from "../../../Data/Maybe";
+import { guard } from "../../../Control/Applicative";
+import { then } from "../../../Control/Monad";
+import { elem, foldl, maximum, sum } from "../../../Data/Foldable";
+import { fmap } from "../../../Data/Functor";
+import { cons, List } from "../../../Data/List";
+import { Just, Maybe, maybe } from "../../../Data/Maybe";
 import { lookupF } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { SkillDependent } from "../../Models/ActiveEntries/SkillDependent";
@@ -42,15 +46,16 @@ export const getAttack =
       add (getPrimaryAttributeMod (state)
                                   (gr (wikiEntry) === 2
                                     ? primary (wikiEntry)
-                                    : fromElements ("ATTR_1")))
+                                    : List ("ATTR_1")))
     )
 
 export const getParry =
   (state: HeroModelRecord) =>
   (wikiEntry: Record<CombatTechnique>) =>
   (maybeStateEntry: Maybe<Record<SkillDependent>>): Maybe<number> =>
-    then<number>
-      (guard (gr (wikiEntry) !== 2 && id (wikiEntry) !== "CT_6" && id (wikiEntry) !== "CT_8"))
+    then
+      (guard ("Maybe")
+             (gr (wikiEntry) !== 2 && id (wikiEntry) !== "CT_6" && id (wikiEntry) !== "CT_8"))
       (Just (
         Math.round (getCombatTechniqueRating (maybeStateEntry) / 2)
         + getPrimaryAttributeMod (state) (primary (wikiEntry))
@@ -72,7 +77,7 @@ export const isIncreaseDisabled =
     const bonus = pipe (
                          getActiveSelectionsMaybe,
                          fmap (elem<string | number> (id (instance))),
-                         Maybe.elem (true),
+                         elem (true),
                          x => x ? 1 : 0
                        )
                        (exceptionalSkill)

@@ -1,7 +1,9 @@
 import { pipe } from "ramda";
+import { bindF } from "../../Control/Monad";
+import { elemF } from "../../Data/Foldable";
 import { cnst } from "../../Data/Function";
-import { elemF, fromElements } from "../../Data/List";
-import { bindF, Just, listToMaybe, Maybe, Nothing } from "../../Data/Maybe";
+import { List } from "../../Data/List";
+import { Just, listToMaybe, Maybe, Nothing } from "../../Data/Maybe";
 import { OrderedMap } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
 import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
@@ -14,19 +16,19 @@ const { id } = ActivatableDependent.A
 const getAttributeIdByMagicalNumericId =
   bindF (
     (numericId: number) => match<number, Maybe<string>> (numericId)
-      .on (elemF (fromElements (1, 4, 10)), cnst (Just ("ATTR_2")))
+      .on (elemF (List (1, 4, 10)), cnst (Just ("ATTR_2")))
       .on (3, cnst (Just ("ATTR_3")))
-      .on (elemF (fromElements (2, 5, 6, 7)), cnst (Just ("ATTR_4")))
+      .on (elemF (List (2, 5, 6, 7)), cnst (Just ("ATTR_4")))
       .otherwise (cnst (Nothing))
   )
 
 const getAttributeIdByBlessedNumericId =
   bindF (
     (numericId: number) => match<number, Maybe<string>> (numericId)
-      .on (elemF (fromElements (2, 3, 9, 13, 16, 18)), cnst (Just ("ATTR_1")))
-      .on (elemF (fromElements (1, 4, 8, 17)), cnst (Just ("ATTR_2")))
-      .on (elemF (fromElements (5, 6, 11, 14)), cnst (Just ("ATTR_3")))
-      .on (elemF (fromElements (7, 10, 12, 15)), cnst (Just ("ATTR_4")))
+      .on (elemF (List (2, 3, 9, 13, 16, 18)), cnst (Just ("ATTR_1")))
+      .on (elemF (List (1, 4, 8, 17)), cnst (Just ("ATTR_2")))
+      .on (elemF (List (5, 6, 11, 14)), cnst (Just ("ATTR_3")))
+      .on (elemF (List (7, 10, 12, 15)), cnst (Just ("ATTR_4")))
       .otherwise (cnst (Nothing))
   )
 

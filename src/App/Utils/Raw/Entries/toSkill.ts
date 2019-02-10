@@ -1,7 +1,8 @@
 import { IdPrefixes } from "../../../../constants/IdPrefixes";
-import { Either, liftM2 } from "../../../../Data/Either";
-import { fromArray, List, lookup, map, notNullStr, pure } from "../../../../Data/List";
-import { ensure, fromNullable, Just, Maybe, maybe_, Nothing } from "../../../../Data/Maybe";
+import { liftM2 } from "../../../../Control/Monad";
+import { fmap } from "../../../../Data/Functor";
+import { fromArray, List, lookup, map, notNullStr } from "../../../../Data/List";
+import { ensure, Just, Maybe, maybe_, Nothing } from "../../../../Data/Maybe";
 import { fst, Pair, snd } from "../../../../Data/Pair";
 import { Record } from "../../../../Data/Record";
 import { RequireActivatable } from "../../../Models/Wiki/prerequisites/ActivatableRequirement";
@@ -28,12 +29,12 @@ export const stringToPrerequisite =
       if (typeof obj !== "object" || obj === null) return Nothing
 
       return isRawRequiringActivatable (obj)
-        ? Just (pure (RequireActivatable ({
+        ? Just (List (RequireActivatable ({
             id: Array.isArray (obj .id) ? fromArray (obj .id) : obj .id,
             active: obj .active,
-            sid: Array.isArray (obj .sid) ? Just (fromArray (obj .sid)) : fromNullable (obj .sid),
-            sid2: fromNullable (obj .sid2),
-            tier: fromNullable (obj .tier),
+            sid: Array.isArray (obj .sid) ? Just (fromArray (obj .sid)) : Maybe (obj .sid),
+            sid2: Maybe (obj .sid2),
+            tier: Maybe (obj .tier),
           })))
         : Nothing
     }
@@ -92,7 +93,6 @@ export const toSkill =
 
       const eapplications =
         liftM2<
-          string,
           List<Pair<number, string>>,
           Maybe<List<Pair<number, List<Record<RequireActivatable>>>>>,
           List<Record<Application>>
@@ -117,8 +117,8 @@ export const toSkill =
 
       const applicationsInput = lookup_l10n ("input")
 
-      const echeck = Either.fmap (map (prefixId (IdPrefixes.ATTRIBUTES)))
-                                 (checkSkillCheck ("check"))
+      const echeck = fmap (map (prefixId (IdPrefixes.ATTRIBUTES)))
+                          (checkSkillCheck ("check"))
 
       const eic = checkUnivNaturalNumber ("ic")
 

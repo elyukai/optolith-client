@@ -1,4 +1,5 @@
-import { elemF, fromElements } from "../../Data/List";
+import { elemF } from "../../Data/Foldable";
+import { List } from "../../Data/List";
 
 export type TabId = "herolist"
                   | "grouplist"
@@ -28,7 +29,7 @@ export type TabId = "herolist"
                   | "pets"
 
 export const mainSectionTabs =
-  fromElements<TabId> (
+  List<TabId> (
     "herolist",
     "grouplist",
     "wiki",
@@ -39,7 +40,7 @@ export const mainSectionTabs =
   )
 
 export const heroSectionTabs =
-  fromElements<TabId> (
+  List<TabId> (
     "profile",
     "personalData",
     "characterSheet",

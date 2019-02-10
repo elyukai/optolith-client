@@ -1,4 +1,5 @@
-const { fromBoth, fromBinary, fmap, mapReplace, bimap, first, second, fst, snd, curry, uncurry, swap, toArray, fromArray, isPair } = require('../Pair')
+// @ts-check
+const { fromBoth, fromBinary, bimap, first, second, fst, snd, curry, uncurry, swap, toArray, fromArray, isPair } = require('../Pair')
 
 // CONSTRUCTOR
 
@@ -14,16 +15,6 @@ test ('fromBinary', () => {
   expect (pair .first) .toEqual (3)
   expect (pair .second) .toEqual (1)
   expect (pair .isPair) .toEqual (true)
-})
-
-// FUNCTOR
-
-test ('fmap', () => {
-  expect (fmap (x => x * 2) (fromBoth (3) (1))) .toEqual (fromBoth (3) (2))
-})
-
-test ('mapReplace', () => {
-  expect (mapReplace (4) (fromBoth (3) (1))) .toEqual (fromBoth (3) (4))
 })
 
 // BIFUNCTOR

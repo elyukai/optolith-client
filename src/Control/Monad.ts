@@ -15,9 +15,10 @@ import { Either, isEither, isRight, Right } from "../Data/Either";
 import { fnull } from "../Data/Foldable";
 import { ident } from "../Data/Function";
 import { fmap } from "../Data/Functor";
-import { append, cons, empty, head, isList, isNil, List, map, pure, tail } from "../Data/List";
+import { append, cons, head, isList, isNil, List, tail } from "../Data/List";
 import { isJust, isMaybe, Just, Maybe, Some } from "../Data/Maybe";
 import { showP } from "../Data/Show";
+import { empty, pure } from "./Applicative";
 
 export type Monad<A> = Either<any, A>
                      | List<A>
@@ -37,7 +38,7 @@ interface MonadBind {
 export const bind: MonadBind =
   <A> (x: any) => (f: (x: A) => any): any => {
     if (isList (x)) {
-      return isNil (x) ? empty : append (f (x .x))
+      return isNil (x) ? empty ("List") : append (f (x .x))
                                         (bind<A> (x .xs) (f))
     }
 
@@ -147,15 +148,15 @@ export const mapM: MonadMapM =
   (f: (x: any) => any) =>
   (xs: List<any>): any => {
     if (t === "List") {
-      return sequence ("List") (map (f) (xs))
+      return sequence ("List") (fmap (f) (xs))
     }
 
     if (t === "Either") {
-      return sequence ("Either") (map (f) (xs))
+      return sequence ("Either") (fmap (f) (xs))
     }
 
     if (t === "Maybe") {
-      return sequence ("Maybe") (map (f) (xs))
+      return sequence ("Maybe") (fmap (f) (xs))
     }
 
     throw new TypeError (instanceErrorMsg ("mapM") (t))
@@ -183,7 +184,7 @@ export const sequence: MonadSequence =
   (xs: List<any>): any => {
     if (t === "List") {
       if (fnull (xs)) {
-        return pure (empty)
+        return pure ("List") (empty ("List"))
       }
 
       const m = head (xs)
@@ -191,12 +192,12 @@ export const sequence: MonadSequence =
 
       return bind (m as List<any>)
                   (x => bind (sequence ("List") (ms))
-                             (zs => pure (cons (zs) (x))))
+                             (zs => pure ("List") (cons (zs) (x))))
     }
 
     if (t === "Either") {
       if (fnull (xs)) {
-        return Right (empty)
+        return Right (empty ("List"))
       }
 
       const m = head (xs)
@@ -209,7 +210,7 @@ export const sequence: MonadSequence =
 
     if (t === "Maybe") {
       if (fnull (xs)) {
-        return Just (empty)
+        return Just (empty ("List"))
       }
 
       const m = head (xs)

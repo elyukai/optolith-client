@@ -1,9 +1,12 @@
 import * as classNames from "classnames";
 import { pipe } from "ramda";
 import * as React from "react";
+import { alt } from "../Control/Applicative";
 import { equals } from "../Data/Eq";
-import { find, length, List, map, toArray } from "../Data/List";
-import { alt, fmap, fromMaybe, fromNullable, isNothing, Maybe, normalize, Nothing, or } from "../Data/Maybe";
+import { find, length, or } from "../Data/Foldable";
+import { fmap } from "../Data/Functor";
+import { List, map, toArray } from "../Data/List";
+import { fromMaybe, isNothing, Maybe, normalize, Nothing } from "../Data/Maybe";
 import { fromDefault, Record } from "../Data/Record";
 import { Label } from "./Label";
 import { Scroll } from "./Scroll";
@@ -113,7 +116,7 @@ export class Dropdown extends React.Component<DropdownProps, DropdownState> {
     const maybeCurrent =
       find<Record<DropdownOption>> (pipe (id, equals (normalizedValue))) (options)
 
-    const valueText = alt (fmap (name) (maybeCurrent)) (fromNullable (hint))
+    const valueText = alt (fmap (name) (maybeCurrent)) (Maybe (hint))
 
     const downElement = (
       <div style={{ height: style }} className="down">

@@ -1,5 +1,6 @@
 import { add, pipe } from "ramda";
-import { fnull, fromElements, List } from "../../../Data/List";
+import { fnull } from "../../../Data/Foldable";
+import { List } from "../../../Data/List";
 import { fromJust, isJust, Just, Maybe } from "../../../Data/Maybe";
 import { fromDefault, makeLenses, member, notMember, Omit, Record } from "../../../Data/Record";
 import { Dependent, ExtendedSkillDependent, SkillDependency } from "../Hero/heroTypeHelpers";
@@ -14,7 +15,7 @@ export const SkillDependent =
   fromDefault<SkillDependent> ({
     id: "",
     value: 0,
-    dependencies: fromElements<SkillDependency> (),
+    dependencies: List<SkillDependency> (),
   })
 
 export const SkillDependentL = makeLenses (SkillDependent)
@@ -25,7 +26,7 @@ export const createSkillDependent =
     SkillDependent ({
       id,
       value: 0,
-      dependencies: fromElements<SkillDependency> (),
+      dependencies: List<SkillDependency> (),
       ...options,
     })
 

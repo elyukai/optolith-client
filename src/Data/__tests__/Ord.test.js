@@ -1,3 +1,4 @@
+// @ts-check
 const Int = require ('../Int')
 const Ord = require ('../Ord')
 

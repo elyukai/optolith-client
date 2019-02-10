@@ -51,18 +51,6 @@ export const Identity =
  */
 export const runIdentity = <A> (x: Identity<A>): A => x .value
 
-Identity.runIdentity = runIdentity
-
-
-// APPLICATIVE
-
-/**
- * `pure :: a -> Identity a`
- */
-export const pure: <A> (x: A) => Identity<A> = Identity
-
-Identity.pure = pure
-
 
 // CUSTOM IDENTITY FUNCTIONS
 
@@ -74,5 +62,3 @@ Identity.pure = pure
 export const isIdentity =
   (x: any): x is Identity<any> =>
     typeof x === "object" && x !== null && Object.getPrototypeOf (x) === IdentityPrototype
-
-Identity.isIdentity = isIdentity

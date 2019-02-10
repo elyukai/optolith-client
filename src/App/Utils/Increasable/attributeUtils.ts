@@ -1,6 +1,6 @@
-import { pipe } from "ramda";
-import { fmap, mapMaybe, maybe } from "../../../Data/Maybe";
-import { lookupF, OrderedMap } from "../../../Data/OrderedMap";
+import { fmap } from "../../../Data/Functor";
+import { mapMaybe, maybe } from "../../../Data/Maybe";
+import { lookup, OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { AttributeDependent } from "../../Models/ActiveEntries/AttributeDependent";
 
@@ -8,7 +8,9 @@ const { value } = AttributeDependent.A
 
 export const getSkillCheckValues =
   (attributes: OrderedMap<string, Record<AttributeDependent>>) =>
-    mapMaybe (pipe (lookupF (attributes), fmap (value)))
+    mapMaybe (attr => fmap (value)
+                           (lookup (attr)
+                                   (attributes)))
 
 export const convertId = <T extends string | undefined> (id: T): T => {
   switch (id) {

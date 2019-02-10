@@ -12,7 +12,7 @@ import { equals } from "../../../../Data/Eq";
 import { foldr, notElemF } from "../../../../Data/Foldable";
 import { ident, thrush } from "../../../../Data/Function";
 import { fmap } from "../../../../Data/Functor";
-import { consF, countWith, filter, fromElements, List, Nil } from "../../../../Data/List";
+import { consF, countWith, filter, List, Nil } from "../../../../Data/List";
 import { fromMaybe, Just, Maybe, maybe } from "../../../../Data/Maybe";
 import { alter, elems, foldrWithKey, lookup, OrderedMap } from "../../../../Data/OrderedMap";
 import { Record } from "../../../../Data/Record";
@@ -240,7 +240,7 @@ const modifySelectOptions =
         const isNoRequiredOrActiveSelection =
           isNotRequiredNotActive (hero_entry)
 
-        const specialIds = fromElements (7, 8)
+        const specialIds = List (7, 8)
 
         // Selection must not be active on the other entry, respectively.
         const isNotActiveOnOther =

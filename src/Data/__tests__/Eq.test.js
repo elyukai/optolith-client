@@ -1,6 +1,7 @@
+// @ts-check
 const { equals } = require('../Eq');
 const { Left, Right } = require('../Either');
-const { fromElements } = require('../List');
+const { List } = require('../List');
 const { fromBoth } = require('../Pair');
 const { fromUniqueElements } = require('../OrderedSet');
 const { fromUniquePairs } = require('../OrderedMap');
@@ -10,7 +11,9 @@ const { fromDefault } = require('../Record');
 test ('Maybe', () => {
   expect (equals (Just (2)) (Just (2))) .toEqual (true)
   expect (equals (Just (2)) (Just (3))) .toEqual (false)
+  // @ts-ignore
   expect (equals (Just (2)) (Nothing)) .toEqual (false)
+  // @ts-ignore
   expect (equals (Nothing) (Just (2))) .toEqual (false)
   expect (equals (Nothing) (Nothing)) .toEqual (true)
 })
@@ -18,16 +21,17 @@ test ('Maybe', () => {
 test ('Either', () => {
   expect (equals (Right (2)) (Right (2))) .toEqual (true)
   expect (equals (Left (2)) (Left (2))) .toEqual (true)
+  // @ts-ignore
   expect (equals (Left (2)) (Right (2))) .toEqual (false)
   expect (equals (Right (2)) (Right (3))) .toEqual (false)
   expect (equals (Left (2)) (Left (3))) .toEqual (false)
 })
 
 test ('List', () => {
-  expect (equals (fromElements (2)) (fromElements (2))) .toEqual (true)
-  expect (equals (fromElements (2)) (fromElements (3))) .toEqual (false)
-  expect (equals (fromElements (2)) (fromElements (2, 3))) .toEqual (false)
-  expect (equals (fromElements (2, 3)) (fromElements (2, 3))) .toEqual (true)
+  expect (equals (List (2)) (List (2))) .toEqual (true)
+  expect (equals (List (2)) (List (3))) .toEqual (false)
+  expect (equals (List (2)) (List (2, 3))) .toEqual (false)
+  expect (equals (List (2, 3)) (List (2, 3))) .toEqual (true)
 })
 
 test ('Pair', () => {
@@ -59,8 +63,12 @@ test ('Record', () => {
   const creator2 = fromDefault ({ x: 0, y: 0, z: 0 })
   const creator3 = fromDefault ({ x: 0, y: 1 })
 
+  // @ts-ignore
   expect (equals (creator1 ({ y: 2 })) (creator2 ({ y: 2 }))) .toEqual (false)
+  // @ts-ignore
   expect (equals (creator1 ({})) (creator1 ({}))) .toEqual (true)
+  // @ts-ignore
   expect (equals (creator1 ({})) (creator3 ({ y: 0 }))) .toEqual (true)
+  // @ts-ignore
   expect (equals (creator1 ({})) (creator3 ({}))) .toEqual (false)
 })

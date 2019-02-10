@@ -1,8 +1,11 @@
 import { pipe } from "ramda";
 import { IdPrefixes } from "../../constants/IdPrefixes";
+import { bindF } from "../../Control/Monad";
 import { equals } from "../../Data/Eq";
-import { all, fromArray, fromElements, isList, length, List, map } from "../../Data/List";
-import { bindF, ensure, fmap, Just, mapMaybe, Maybe, maybe, Nothing, product, sum } from "../../Data/Maybe";
+import { all, length, product, sum } from "../../Data/Foldable";
+import { fmap } from "../../Data/Functor";
+import { fromArray, isList, List, map } from "../../Data/List";
+import { ensure, Just, mapMaybe, Maybe, maybe, Nothing } from "../../Data/Maybe";
 import { Record } from "../../Data/Record";
 import { show } from "../../Data/Show";
 import { EditItem } from "../Models/Hero/EditItem";
@@ -64,7 +67,7 @@ export const convertToEdit =
       pa: showMaybe (Item.A.pa (item)),
       price: show (Item.A.price (item)),
       pro: showMaybe (Item.A.pro (item)),
-      range: maybe (fromElements ("", "", ""))
+      range: maybe (List ("", "", ""))
                    (map<number, string> (show))
                    (Item.A.range (item)),
       reloadTime: showMaybe (Item.A.reloadTime (item)),

@@ -1,11 +1,12 @@
+// @ts-check
 const { range, index, inRange, rangeSize } = require('../Ix')
-const { fromElements } = require('../List')
+const { List } = require('../List')
 const { fromBinary } = require('../Pair')
 
 test ('range', () => {
-  expect (range (fromBinary (1, 5))) .toEqual (fromElements (1, 2, 3, 4, 5))
-  expect (range (fromBinary (1, 1))) .toEqual (fromElements (1))
-  expect (range (fromBinary (1, -2))) .toEqual (fromElements ())
+  expect (range (fromBinary (1, 5))) .toEqual (List (1, 2, 3, 4, 5))
+  expect (range (fromBinary (1, 1))) .toEqual (List (1))
+  expect (range (fromBinary (1, -2))) .toEqual (List ())
 })
 
 test ('index', () => {

@@ -1,4 +1,4 @@
-import { fromElements } from "../../../Data/List";
+import { List } from "../../../Data/List";
 import { Nothing } from "../../../Data/Maybe";
 import { fromDefault } from "../../../Data/Record";
 import { EditPrimaryAttributeDamageThreshold } from "./EditPrimaryAttributeDamageThreshold";
@@ -38,7 +38,7 @@ export const EditItem =
     pa: "",
     price: "",
     pro: "",
-    range: fromElements ("", "", ""),
+    range: List ("", "", ""),
     reloadTime: "",
     stp: "",
     weight: "",

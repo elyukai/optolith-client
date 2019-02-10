@@ -7,8 +7,6 @@
  * @author Lukas Obermann
  */
 
-import { cnst } from "./Function";
-
 
 // CONSTRUCTOR
 
@@ -56,26 +54,6 @@ export const fromBoth =
 export const fromBinary =
   <A, B> (firstValue: A, secondValue: B): Pair<A, B> =>
     fromBoth<A, B> (firstValue) (secondValue)
-
-
-// FUNCTOR
-
-/**
- * `fmap :: (a0 -> b) -> (a, a0) -> (a, b)`
- */
-export const fmap =
-  <A, A0, B>
-  (f: (value: A0) => B) => (x: Pair<A, A0>): Pair<A, B> =>
-    fromBoth<A, B> (x .first) (f (x .second))
-
-/**
- * `(<$) :: a0 -> (a, b) -> (a, a0)`
- *
- * Replace all locations in the input with the same value. The default
- * definition is `fmap . const`, but this may be overridden with a more
- * efficient version.
- */
-export const mapReplace = <A, A0> (x: A0) => fmap<A, any, A0> (cnst (x))
 
 
 // BIFUNCTOR
@@ -184,9 +162,6 @@ export const isPair =
 export const Pair = {
   fromBoth,
   fromBinary,
-
-  fmap,
-  mapReplace,
 
   bimap,
   first,

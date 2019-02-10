@@ -1,6 +1,7 @@
+// @ts-check
 const { show } = require('../Show');
 const { Left, Right } = require('../Either');
-const { fromElements } = require('../List');
+const { List } = require('../List');
 const { fromBoth } = require('../Pair');
 const { fromUniqueElements } = require('../OrderedSet');
 const { fromUniquePairs } = require('../OrderedMap');
@@ -20,14 +21,14 @@ test ('Either', () => {
 })
 
 test ('List', () => {
-  expect (show (fromElements (2))) .toEqual ('[2]')
-  expect (show (fromElements (1, 2, 3))) .toEqual ('[1, 2, 3]')
-  expect (show (fromElements ())) .toEqual ('[]')
+  expect (show (List (2))) .toEqual ('[2]')
+  expect (show (List (1, 2, 3))) .toEqual ('[1, 2, 3]')
+  expect (show (List ())) .toEqual ('[]')
 })
 
 test ('Pair', () => {
   expect (show (fromBoth (2) ('text'))) .toEqual ('(2, "text")')
-  expect (show (fromBoth (Just (2)) (fromElements (2)))) .toEqual ('(Just (2), [2])')
+  expect (show (fromBoth (Just (2)) (List (2)))) .toEqual ('(Just (2), [2])')
 })
 
 test ('OrderedSet', () => {
@@ -41,5 +42,5 @@ test ('OrderedMap', () => {
 test ('Record', () => {
   const creator = fromDefault ({ x: 0, y: 0 })
 
-  expect (show (creator ({ y: 2 }))) .toEqual ('{ x = 0, y = 2 }')
+  expect (show (creator ({ y: 2, x: Nothing }))) .toEqual ('{ x = 0, y = 2 }')
 })

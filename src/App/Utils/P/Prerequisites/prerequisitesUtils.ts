@@ -1,7 +1,11 @@
 import { pipe } from "ramda";
+import { altF, ap } from "../../../../Control/Applicative";
+import { bindF, liftM2 } from "../../../../Control/Monad";
 import { equals } from "../../../../Data/Eq";
-import { append, consF, filter, find, fromElements, length, List } from "../../../../Data/List";
-import { altF, ap, bindF, elemF, fmap, fromMaybe, Just, liftM2, Maybe, Nothing } from "../../../../Data/Maybe";
+import { elemF, find, length } from "../../../../Data/Foldable";
+import { fmap } from "../../../../Data/Functor";
+import { append, consF, filter, List } from "../../../../Data/List";
+import { fromMaybe, Just, Maybe, Nothing } from "../../../../Data/Maybe";
 import { Record } from "../../../../Data/Record";
 import { ActivatableDependent } from "../../../Models/ActiveEntries/ActivatableDependent";
 import { ActiveObject } from "../../../Models/ActiveEntries/ActiveObject";
@@ -39,15 +43,13 @@ export const getGeneratedPrerequisites =
                      (findSelectOption (wiki_entry) (sid (current)))
 
       case "SA_9": {
-        const sameSkill = pipe (
-                                 fmap (pipe (
-                                   active,
-                                   filter (pipe (sid, equals (sid (current)))),
-                                   length
-                                 )),
-                                 fromMaybe (0)
-                               )
-                               (hero_entry)
+        const sameSkill = fromMaybe (0)
+                                    (fmap (pipe (
+                                            active,
+                                            filter (pipe (sid, equals (sid (current)))),
+                                            length
+                                          ))
+                                          (hero_entry))
 
         const sameSkillDependency =
           fmap ((justSid: string | number) => RequireIncreasable ({
@@ -74,7 +76,7 @@ export const getGeneratedPrerequisites =
                       ),
                       altF (
                         fmap<AllRequirementObjects, List<AllRequirementObjects>>
-                          (fromElements)
+                          (List)
                           (sameSkillDependency)
                       )
                     )
@@ -82,7 +84,7 @@ export const getGeneratedPrerequisites =
       }
 
       case "SA_81":
-        return Just (fromElements (
+        return Just (List (
           RequireActivatable ({
             id: "SA_72",
             active: true,
@@ -94,7 +96,7 @@ export const getGeneratedPrerequisites =
       case "SA_663":
         return bindF ((option: Record<SelectOption>) =>
                        liftM2 ((optionTarget: string) => (optionTier: number) =>
-                                fromElements (
+                                List (
                                   RequireIncreasable ({
                                     id: optionTarget,
                                     value: optionTier * 4 + 4,
@@ -108,7 +110,7 @@ export const getGeneratedPrerequisites =
         return bindF (prerequisites) (findSelectOption (wiki_entry) (sid (current)))
 
       case "SA_699": {
-        return Just (fromElements (
+        return Just (List (
           RequireActivatable ({
             id: "SA_29",
             active: true,

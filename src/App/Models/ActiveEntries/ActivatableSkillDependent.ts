@@ -1,4 +1,5 @@
-import { fnull, fromElements, List } from "../../../Data/List";
+import { fnull } from "../../../Data/Foldable";
+import { List } from "../../../Data/List";
 import { fromJust, isJust, Just, Maybe } from "../../../Data/Maybe";
 import { fromDefault, makeLenses, member, Omit, Record } from "../../../Data/Record";
 import { Dependent, ExtendedSkillDependency } from "../Hero/heroTypeHelpers";
@@ -15,7 +16,7 @@ export const ActivatableSkillDependent =
     id: "",
     value: 0,
     active: false,
-    dependencies: fromElements<ExtendedSkillDependency> (),
+    dependencies: List<ExtendedSkillDependency> (),
   })
 
 export const ActivatableSkillDependentL = makeLenses (ActivatableSkillDependent)
@@ -27,7 +28,7 @@ const createActivatableSkillDependent =
       id,
       value: 0,
       active: false,
-      dependencies: fromElements<ExtendedSkillDependency> (),
+      dependencies: List<ExtendedSkillDependency> (),
       ...options,
     })
 

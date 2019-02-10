@@ -1,9 +1,12 @@
 import { pipe } from "ramda";
 import { IdPrefixes } from "../../constants/IdPrefixes";
+import { bindF, liftM2 } from "../../Control/Monad";
+import { elemF, or } from "../../Data/Foldable";
 import { cnst } from "../../Data/Function";
+import { fmap } from "../../Data/Functor";
 import { Lens, over, view } from "../../Data/Lens";
-import { elemF, filter, fromArray, List } from "../../Data/List";
-import { bindF, ensure, fmap, fromMaybe, Just, liftM2, mapMaybe, Maybe, Nothing, or } from "../../Data/Maybe";
+import { filter, fromArray, List } from "../../Data/List";
+import { ensure, fromMaybe, Just, mapMaybe, Maybe, Nothing } from "../../Data/Maybe";
 import { alter, elems, insert, lookup, lookupF, OrderedMap, sdelete, update } from "../../Data/OrderedMap";
 import { Record, RecordBase } from "../../Data/Record";
 import { createPlainActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
@@ -194,7 +197,8 @@ export const getHeroStateItem =
   (hero: HeroModelRecord) =>
   (id: string) =>
     pipe (
-           fmap ((lens: HeroStateMapLens) => view (lens) (hero)),
+           fmap ((lens: HeroStateMapLens) => view (lens) (hero)) as
+             fmap<"Maybe", HeroStateMapLens, OrderedMap<string, Dependent>>,
            bindF (lookup (id) as (m: OrderedMap<string, Dependent>) => Maybe<Dependent>)
          )
          (getHeroStateMapLensById (id))
@@ -313,8 +317,10 @@ export const getAllEntriesByGroup =
     filter<I> (pipe (
                 AttributeDependent.A.id,
                 lookupF (wiki),
-                fmap (Skill.A.gr),
-                fmap (elemF (fromArray (groups))),
+                fmap (pipe (
+                  Skill.A.gr,
+                  elemF (fromArray (groups))
+                )) as fmap<"Maybe", EntryWithGroup, boolean>,
                 or
               ))
               (elems (list))

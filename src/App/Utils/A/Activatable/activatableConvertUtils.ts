@@ -7,9 +7,12 @@
  */
 
 import { pipe } from "ramda";
-import { append, elemF, empty, fromElements, imap } from "../../../../Data/List";
-import { alt, fmap, guard, isJust, Nothing, or, then } from "../../../../Data/Maybe";
-import { foldr } from "../../../../Data/OrderedMap";
+import { alt, empty, guard } from "../../../../Control/Applicative";
+import { then } from "../../../../Control/Monad";
+import { elemF, foldr, or } from "../../../../Data/Foldable";
+import { fmap } from "../../../../Data/Functor";
+import { append, imap, List } from "../../../../Data/List";
+import { isJust, Nothing } from "../../../../Data/Maybe";
 import { mergeSafeR2, Record } from "../../../../Data/Record";
 import { ActivatableDependent } from "../../../Models/ActiveEntries/ActivatableDependent";
 import { ActiveObject } from "../../../Models/ActiveEntries/ActiveObject";
@@ -36,7 +39,7 @@ export const convertUIStateToActiveObject =
     : activate .id === "DISADV_33"
     ? ActiveObject ({
         sid: activate .sel,
-        sid2: or (fmap (elemF (fromElements<number | string> (7, 8))) (activate .sel))
+        sid2: or (fmap (elemF (List<number | string> (7, 8))) (activate .sel))
           ? activate .input
           : Nothing,
         cost: activate .customCost,
@@ -49,8 +52,8 @@ export const convertUIStateToActiveObject =
       })
     : ActiveObject ({
         sid: alt<number | string> (activate .input) (activate .sel),
-        sid2: then<number | string> (guard (isJust (activate .input) || isJust (activate .sel)))
-                                    (activate .sel2),
+        sid2: then (guard ("Maybe") (isJust (activate .input) || isJust (activate .sel)))
+                   (activate .sel2),
         tier: activate .tier,
         cost: activate .customCost,
       })
@@ -80,7 +83,7 @@ export const convertActivatableToArray =
  * @param state A state slice.
  */
 export const getActiveFromState =
-  foldr (pipe (convertActivatableToArray, append)) (empty)
+  foldr (pipe (convertActivatableToArray, append)) (empty ("List"))
 
 export interface ActiveObjectAny extends ActiveObject {
   [key: string]: any

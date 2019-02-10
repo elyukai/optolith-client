@@ -1,3 +1,4 @@
+// @ts-check
 const Lens = require ('../Lens')
 const { add } = require ('../../App/Utils/mathUtils')
 

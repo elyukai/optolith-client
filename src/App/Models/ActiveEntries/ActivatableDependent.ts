@@ -1,4 +1,5 @@
-import { fnull, fromElements, List } from "../../../Data/List";
+import { fnull } from "../../../Data/Foldable";
+import { List } from "../../../Data/List";
 import { fromJust, isJust, Just, Maybe } from "../../../Data/Maybe";
 import { fromDefault, makeLenses, member, notMember, Omit, Record } from "../../../Data/Record";
 import { ActivatableDependency, Dependent } from "../Hero/heroTypeHelpers";
@@ -13,8 +14,8 @@ export interface ActivatableDependent {
 export const ActivatableDependent =
   fromDefault<ActivatableDependent> ({
     id: "",
-    active: fromElements<Record<ActiveObject>> (),
-    dependencies: fromElements<ActivatableDependency> (),
+    active: List<Record<ActiveObject>> (),
+    dependencies: List<ActivatableDependency> (),
   })
 
 export const ActivatableDependentL = makeLenses (ActivatableDependent)
@@ -24,8 +25,8 @@ export const createActivatableDependent =
   (id: string): Record<ActivatableDependent> =>
     ActivatableDependent ({
       id,
-      active: fromElements<Record<ActiveObject>> (),
-      dependencies: fromElements<ActivatableDependency> (),
+      active: List<Record<ActiveObject>> (),
+      dependencies: List<ActivatableDependency> (),
       ...options,
     })
 

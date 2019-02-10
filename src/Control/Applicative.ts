@@ -8,21 +8,24 @@
  * @author Lukas Obermann
  */
 
-import { Either, isEither, isRight, Right } from "../Data/Either";
+import { Either, fromRight_, isEither, isRight, Right } from "../Data/Either";
 import { fmap } from "../Data/Functor";
 import { Cons, head, isList, isNil, List, Nil, notNull } from "../Data/List";
-import { isJust, isMaybe, Just, Maybe, Nothing, Some } from "../Data/Maybe";
+import { fromJust, isJust, isMaybe, Just, Maybe, Nothing, Some } from "../Data/Maybe";
 import { showP } from "../Data/Show";
+import { Identity, isIdentity, runIdentity } from "./Monad/Identity";
 
 export type Applicative<A> = Either<any, A>
+                           | Identity<A>
                            | List<A>
                            | Maybe<A>
 
-type ApplicativeStr = "Either" | "List" | "Maybe"
+type ApplicativeStr = "Either" | "Identity" | "List" | "Maybe"
 
 interface ApplicativePure {
-  (t: "List"): <A> (x: A) => Cons<A>
+  (t: "Identity"): <A> (x: A) => Identity<A>
   (t: "Either"): <A> (x: A) => Right<A>
+  (t: "List"): <A> (x: A) => Cons<A>
   (t: "Maybe"): <A extends Some> (x: A) => Just<A>
 }
 
@@ -43,6 +46,10 @@ export const pure: ApplicativePure =
       return Right (x)
     }
 
+    if (t === "Identity") {
+      return Identity (x)
+    }
+
     if (t === "Maybe") {
       return Just (x)
     }
@@ -53,6 +60,7 @@ export const pure: ApplicativePure =
 interface ApplicativeAp {
   <A, B> (fs: List<(x: A) => B>): (xs: List<A>) => List<B>
   <E, A, B> (ff: Either<E, (x: A) => B>): (x: Either<E, A>) => Either<E, B>
+  <A, B> (ff: Identity<(x: A) => B>): (x: Identity<A>) => Identity<B>
   <A extends Some, B extends Some> (ff: Maybe<(x: A) => B>): (x: Maybe<A>) => Maybe<B>
 }
 
@@ -76,7 +84,15 @@ export const ap: ApplicativeAp =
 
     if (isEither (ff)) {
       if (isEither (x)) {
-        return isRight (ff) ? fmap (ff .value) (x) : ff
+        return isRight (ff) ? fmap (fromRight_ (ff)) (x) : ff
+      }
+
+      throw new TypeError (applicativeDifferentInstanceErrorMsg ("<*>") (ff) (x))
+    }
+
+    if (isIdentity (ff)) {
+      if (isIdentity (x)) {
+        return fmap (runIdentity (ff)) (x)
       }
 
       throw new TypeError (applicativeDifferentInstanceErrorMsg ("<*>") (ff) (x))
@@ -84,7 +100,7 @@ export const ap: ApplicativeAp =
 
     if (isMaybe (ff)) {
       if (isMaybe (x)) {
-        return isJust (ff) ? fmap (ff .value) (x) : ff
+        return isJust (ff) ? fmap (fromJust (ff)) (x) : ff
       }
 
       throw new TypeError (applicativeDifferentInstanceErrorMsg ("<*>") (ff) (x))
@@ -101,6 +117,11 @@ const mapAp =
     isNil (x)
     ? xs
     : Cons (f (x .x), mapAp (f) (xs) (x .xs))
+
+export const Applicative = {
+  pure,
+  ap,
+}
 
 
 // ALTERNATIVE
@@ -240,15 +261,24 @@ export const guard: AlternativeGuard =
   (t: AlternativeStr) =>
   (pred: boolean): any =>{
     if (t === "List") {
-      return pred ? pure ("List") <true> (true) : empty
+      return pred ? pure ("List") <true> (true) : empty ("List")
     }
 
     if (t === "Maybe") {
-      return pred ? pure ("Maybe") <true> (true) : empty
+      return pred ? pure ("Maybe") <true> (true) : empty ("Maybe")
     }
 
     throw new TypeError (applicativeInstanceErrorMsg ("empty") (t))
   }
+
+export const Alternative = {
+  alt,
+  alt_,
+  altF,
+  altF_,
+  empty,
+  guard,
+}
 
 const applicativeInstanceErrorMsg =
   (fname: string) =>

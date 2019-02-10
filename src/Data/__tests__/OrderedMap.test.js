@@ -1,8 +1,10 @@
+// @ts-check
 const { pipe } = require('ramda');
-const { id } = require('../Function');
+const { ident } = require('../Function');
 const { Left, Right } = require('../Either');
-const List = require('../List');
-const { fromElements } = require('../List');
+const { fmap } = require('../Functor');
+const { altF } = require('../../Control/Applicative');
+const { List } = require('../List');
 const { fromBoth, Pair } = require('../Pair');
 const OrderedSet = require('../OrderedSet');
 const { fromArray, fromUniquePairs, fromMap, OrderedMap } = require('../OrderedMap');
@@ -41,200 +43,6 @@ test ('fromMap', () => {
 
   expect (fromMap (new Map ()) .value)
     .toEqual (new Map ())
-})
-
-// FUNCTOR
-
-test ('fmap', () => {
-  expect (OrderedMap.fmap (x => x * 2)
-                          (fromUniquePairs (['x', 1], ['y', 2], ['z', 3])))
-    .toEqual (fromUniquePairs (['x', 2], ['y', 4], ['z', 6]))
-})
-
-test ('mapReplace', () => {
-  expect (
-    OrderedMap.mapReplace (2)
-                          (fromUniquePairs (['x', 1], ['y', 2], ['z', 3]))
-  )
-    .toEqual (fromUniquePairs (['x', 2], ['y', 2], ['z', 2]))
-})
-
-// FOLDABLE
-
-test ('foldr', () => {
-  expect (OrderedMap.foldr (e => acc => e + acc)
-                           ('0')
-                           (fromArray ([['x', 3], ['y', 2], ['z', 1]])))
-    .toEqual ('3210')
-})
-
-test ('foldl', () => {
-  expect (OrderedMap.foldl (acc => e => acc + e)
-                           ('0')
-                           (fromArray ([['x', 1], ['y', 2], ['z', 3]])))
-    .toEqual ('0123')
-})
-
-test ('foldr1', () => {
-  expect (OrderedMap.foldr1 (e => acc => e + acc)
-                            (fromArray ([['x', 1], ['y', 2], ['z', 3]])))
-    .toEqual (6)
-})
-
-test ('foldl1', () => {
-  expect (OrderedMap.foldl1 (acc => e => e + acc)
-                            (fromArray ([['x', 1], ['y', 2], ['z', 3]])))
-    .toEqual (6)
-})
-
-test ('toList', () => {
-  expect (OrderedMap.toList (fromArray ([['x', 1], ['y', 2], ['z', 3]])))
-    .toEqual (
-      List.fromElements (
-        fromBoth ('x') (1),
-        fromBoth ('y') (2),
-        fromBoth ('z') (3)
-      )
-    )
-})
-
-test ('fnull', () => {
-  expect (OrderedMap.fnull (fromArray ([['x', 1], ['y', 2], ['z', 3]])))
-    .toBeFalsy ()
-
-  expect (OrderedMap.fnull (fromArray ([]))) .toBeTruthy ()
-})
-
-test ('length', () => {
-  expect (OrderedMap.length (fromArray ([['x', 1], ['y', 2], ['z', 3]])))
-    .toEqual (3)
-
-  expect (OrderedMap.length (fromArray ([]))) .toEqual (0)
-})
-
-test ('elem', () => {
-  expect (OrderedMap.elem (3) (fromArray ([['x', 1], ['y', 2], ['z', 3]])))
-    .toBeTruthy ()
-
-  expect (OrderedMap.elem (6) (fromArray ([['x', 1], ['y', 2], ['z', 3]])))
-    .toBeFalsy ()
-})
-
-test ('elem_', () => {
-  expect (OrderedMap.elemF (fromArray ([['x', 1], ['y', 2], ['z', 3]])) (3))
-    .toBeTruthy ()
-
-  expect (OrderedMap.elemF (fromArray ([['x', 1], ['y', 2], ['z', 3]])) (6))
-    .toBeFalsy ()
-})
-
-test ('sum', () => {
-  expect (OrderedMap.sum (fromArray ([['x', 1], ['y', 2], ['z', 3]])))
-    .toEqual (6)
-})
-
-test ('product', () => {
-  expect (OrderedMap.product (fromArray ([['x', 2], ['y', 2], ['z', 3]])))
-    .toEqual (12)
-})
-
-test ('maximum', () => {
-  expect (OrderedMap.maximum (fromArray ([['x', 1], ['y', 2], ['z', 3]])))
-    .toEqual (3)
-
-  expect (OrderedMap.maximum (fromArray ([]))) .toEqual (-Infinity)
-})
-
-test ('minimum', () => {
-  expect (OrderedMap.minimum (fromArray ([['x', 1], ['y', 2], ['z', 3]])))
-    .toEqual (1)
-
-  expect (OrderedMap.minimum (fromArray ([]))) .toEqual (Infinity)
-})
-
-test ('concat', () => {
-  expect (OrderedMap.concat (
-    fromArray ([
-      ['x', List.fromArray ([1])],
-      ['y', List.fromArray ([2])],
-      ['z', List.fromArray ([3])]
-    ])
-  ))
-    .toEqual (List.fromArray ([1, 2, 3]))
-})
-
-test ('concatMap', () => {
-  expect (OrderedMap.concatMap (e => fromArray ([[e, e]]))
-                               (fromArray ([['x', 1], ['y', 2], ['z', 3]])))
-    .toEqual (fromArray ([[1, 1], [2, 2], [3, 3]]))
-})
-
-test ('and', () => {
-  expect (OrderedMap.and (fromArray ([['x', true], ['y', true], ['z', true]])))
-    .toBeTruthy ()
-
-  expect (OrderedMap.and (fromArray ([['x', true], ['y', true], ['z', false]])))
-    .toBeFalsy ()
-
-  expect (
-    OrderedMap.or (fromArray ([['x', false], ['y', false], ['z', false]]))
-  )
-    .toBeFalsy ()
-})
-
-test ('or', () => {
-  expect (OrderedMap.or (fromArray ([['x', true], ['y', true], ['z', true]])))
-    .toBeTruthy ()
-
-  expect (OrderedMap.or (fromArray ([['x', true], ['y', true], ['z', false]])))
-    .toBeTruthy ()
-
-  expect (
-    OrderedMap.or (fromArray ([['x', false], ['y', false], ['z', false]]))
-  )
-    .toBeFalsy ()
-})
-
-test ('any', () => {
-  expect (OrderedMap.any (x => x > 2)
-                         (fromArray ([['x', 1], ['y', 2], ['z', 3]])))
-    .toBeTruthy ()
-
-  expect (OrderedMap.any (x => x > 3)
-                         (fromArray ([['x', 1], ['y', 2], ['z', 3]])))
-    .toBeFalsy ()
-})
-
-test ('all', () => {
-  expect (OrderedMap.all (x => x >= 1)
-                         (fromArray ([['x', 1], ['y', 2], ['z', 3]])))
-    .toBeTruthy ()
-
-  expect (OrderedMap.all (x => x >= 2)
-                         (fromArray ([['x', 1], ['y', 2], ['z', 3]])))
-    .toBeFalsy ()
-})
-
-test ('notElem', () => {
-  expect (OrderedMap.notElem (3) (fromArray ([['x', 1], ['y', 2], ['z', 3]])))
-    .toBeFalsy ()
-
-  expect (OrderedMap.notElem (6) (fromArray ([['x', 1], ['y', 2], ['z', 3]])))
-    .toBeTruthy ()
-})
-
-test ('find', () => {
-  expect (
-    OrderedMap.find (e => /t/.test (e))
-                    (fromArray ([['x', 'one'], ['y', 'two'], ['z', 'three']]))
-  )
-    .toEqual (Just ('two'))
-
-  expect (
-    OrderedMap.find (e => /tr/.test (e))
-                    (fromArray ([['x', 'one'], ['y', 'two'], ['z', 'three']]))
-  )
-    .toEqual (Nothing)
 })
 
 // TRAVERSABLE
@@ -501,11 +309,11 @@ test ('alter', () => {
   const map = fromArray ([[1, 'a'], [2, 'b'], [3, 'c']])
 
   // Update
-  expect (OrderedMap.alter (Maybe.fmap (x => x + 'd')) (3) (map))
+  expect (OrderedMap.alter (fmap (x => x + 'd')) (3) (map))
     .toEqual (fromArray ([[1, 'a'], [2, 'b'], [3, 'cd']]))
 
   // Insert
-  expect (OrderedMap.alter (pipe (Maybe.fmap (id), Maybe.altF (Just ('d'))))
+  expect (OrderedMap.alter (pipe (fmap (ident), altF (Just ('d'))))
                            (4)
                            (map))
     .toEqual (fromArray ([[1, 'a'], [2, 'b'], [3, 'c'], [4, 'd']]))
@@ -563,21 +371,21 @@ test ('foldlWithKey', () => {
 
 test ('elems', () => {
   const map = fromArray ([[1, 'a'], [3, 'c'], [2, 'b']])
-  const res = fromElements ('a', 'c', 'b')
+  const res = List ('a', 'c', 'b')
 
   expect (OrderedMap.elems (map)) .toEqual (res)
 })
 
 test ('keys', () => {
   const map = fromArray ([[1, 'a'], [3, 'c'], [2, 'b']])
-  const res = fromElements (1, 3, 2)
+  const res = List (1, 3, 2)
 
   expect (OrderedMap.keys (map)) .toEqual (res)
 })
 
 test ('assocs', () => {
   const map = fromArray ([[1, 'a'], [3, 'c'], [2, 'b']])
-  const res = fromElements(
+  const res = List(
     fromBoth (1) ('a'),
     fromBoth (3) ('c'),
     fromBoth (2) ('b')
@@ -603,7 +411,7 @@ test ('fromSet', () => {
 // LISTS
 
 test ('fromList', () => {
-  const map = fromElements (
+  const map = List (
     fromBoth (1) ('a'),
     fromBoth (3) ('c'),
     fromBoth (2) ('b')
@@ -665,8 +473,8 @@ test ('mapMaybeWithKey', () => {
 // CUSTOM FUNCTIONS
 
 test ('toObjectWith', () => {
-  const map = fromArray ([[1, 'a'], [3, 'c'], [2, 'b']])
-  const res = { 1: '<a>', 2: '<b>', 3: '<c>' }
+  const map = fromArray ([["1", 'a'], ["3", 'c'], ["2", 'b']])
+  const res = { "1": '<a>', "2": '<b>', "3": '<c>' }
 
   expect (OrderedMap.toObjectWith (e => `<${e}>`) (map)) .toEqual (res)
 })

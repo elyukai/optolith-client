@@ -1,8 +1,12 @@
 import { pipe } from "ramda";
+import { Alternative } from "../../../Control/Applicative";
+import { bindF } from "../../../Control/Monad";
+import { all, any, elem, elemF, foldl, foldr, minimum, notElem, notElemF, or, sum } from "../../../Data/Foldable";
 import { cnst, ident, thrush } from "../../../Data/Function";
-import { all, any, consF, foldr, fromElements, List, minimum, notElem, notElemF } from "../../../Data/List";
-import { bindF, elem, ensure, fmap, fromJust, isJust, Just, Maybe, maybe, or, sum } from "../../../Data/Maybe";
-import { alter, empty, filter, findWithDefault, foldl, fromArray, lookupF, OrderedMap } from "../../../Data/OrderedMap";
+import { fmap } from "../../../Data/Functor";
+import { consF, List } from "../../../Data/List";
+import { ensure, fromJust, isJust, Just, Maybe, maybe } from "../../../Data/Maybe";
+import { alter, empty, filter, findWithDefault, fromArray, lookupF, OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
@@ -140,7 +144,8 @@ const isLiturgicalChantDecreasableByAspectKnowledges =
 
         // Check if liturgical chant is part of dependencies of active Aspect Knowledge
         bindF<List<string | number>, List<string | number>>
-          (ensure (any (e => isNumber (e) && List.elem (e) (aspects (wikiEntry))))),
+          (ensure<List<string | number>>
+            (any (e => isNumber (e) && elem (e) (aspects (wikiEntry))))),
 
         fmap (
           pipe (
@@ -166,12 +171,12 @@ const getLowestSumForMatchingAspectKnowledges =
   (counter: OrderedMap<number, number>) =>
     pipe (
       aspects,
-      List.foldr<number, number>
+      foldr<number, number>
         (
           aspect => {
             const counted = lookupF (counter) (aspect)
 
-            if (isJust (counted) && List.elemF (activeAspects) (aspect)) {
+            if (isJust (counted) && elemF (activeAspects) (aspect)) {
               return min (fromJust (counted))
             }
 
@@ -251,25 +256,25 @@ export const getTraditionOfAspect =
  * Keys are traditions and their values are their respective aspects
  */
 const aspectsByTradition = fromArray<number, List<number>> ([
-  [1, List.empty],
-  [2, fromElements (2, 3)],
-  [3, fromElements (4, 5)],
-  [4, fromElements (6, 7)],
-  [5, fromElements (8, 9)],
-  [6, fromElements (10, 11)],
-  [7, fromElements (12, 13)],
-  [8, fromElements (14, 15)],
-  [9, fromElements (16, 17)],
-  [10, fromElements (18, 19)],
-  [11, fromElements (20, 21)],
-  [12, fromElements (22, 23)],
-  [13, fromElements (24, 25)],
-  [14, List.empty],
-  [15, fromElements (26, 27)],
-  [16, fromElements (28, 29)],
-  [17, fromElements (30, 31)],
-  [18, fromElements (32, 33)],
-  [19, fromElements (34, 35)],
+  [1, Alternative.empty ("List")],
+  [2, List (2, 3)],
+  [3, List (4, 5)],
+  [4, List (6, 7)],
+  [5, List (8, 9)],
+  [6, List (10, 11)],
+  [7, List (12, 13)],
+  [8, List (14, 15)],
+  [9, List (16, 17)],
+  [10, List (18, 19)],
+  [11, List (20, 21)],
+  [12, List (22, 23)],
+  [13, List (24, 25)],
+  [14, Alternative.empty ("List")],
+  [15, List (26, 27)],
+  [16, List (28, 29)],
+  [17, List (30, 31)],
+  [18, List (32, 33)],
+  [19, List (34, 35)],
 ])
 
 /**
@@ -279,7 +284,7 @@ const aspectsByTradition = fromArray<number, List<number>> ([
  * it.
  */
 export const getAspectsOfTradition = pipe (
-  (key: number) => findWithDefault<number, List<number>> (List.empty)
+  (key: number) => findWithDefault<number, List<number>> (Alternative.empty ("List"))
                                                          (key)
                                                          (aspectsByTradition),
   consF (1)

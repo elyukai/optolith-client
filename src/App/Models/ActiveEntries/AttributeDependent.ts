@@ -1,4 +1,5 @@
-import { fnull, fromElements, List } from "../../../Data/List";
+import { fnull } from "../../../Data/Foldable";
+import { List } from "../../../Data/List";
 import { fromJust, isJust, Just, Maybe } from "../../../Data/Maybe";
 import { fromDefault, makeLenses, member, notMember, Omit, Record } from "../../../Data/Record";
 import { Dependent, SkillDependency } from "../Hero/heroTypeHelpers";
@@ -15,7 +16,7 @@ export const AttributeDependent =
     id: "",
     value: 8,
     mod: 0,
-    dependencies: fromElements<SkillDependency> (),
+    dependencies: List<SkillDependency> (),
   })
 
 export const AttributeDependentL = makeLenses (AttributeDependent)
@@ -27,7 +28,7 @@ export const createAttributeDependent =
       id,
       value: 8,
       mod: 0,
-      dependencies: fromElements<SkillDependency> (),
+      dependencies: List<SkillDependency> (),
       ...options,
     })
 
