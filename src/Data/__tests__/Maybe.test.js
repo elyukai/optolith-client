@@ -1,5 +1,6 @@
 // @ts-check
 const React = require('react');
+const { Foldable } = require('../Foldable');
 const { List } = require('../List');
 const { Maybe } = require('../Maybe');
 const { fmap } = require('../Functor');
@@ -156,6 +157,10 @@ test ('listToMaybe', () => {
 })
 
 test ('maybeToList', () => {
+  expect (typeof Foldable)
+    .toBe ("object")
+  expect (typeof Maybe.maybeToList)
+    .toBe ("function")
   expect (Maybe.maybeToList (Just (3)))
     .toEqual (List (3))
   expect (Maybe.maybeToList (Nothing))

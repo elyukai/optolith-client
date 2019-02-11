@@ -1,13 +1,11 @@
 import { pipe } from "ramda";
 import { add, inc, max, min, multiply } from "../App/Utils/mathUtils";
 import { not } from "../App/Utils/not";
-import { empty, pure } from "../Control/Applicative";
-import { Either, fromRight, isEither, isLeft, isRight, Left, Right } from "./Either";
+import { Either, isEither, isLeft, isRight, Left, Right } from "./Either";
 import { equals } from "./Eq";
 import { ident } from "./Function";
-import { fmap } from "./Functor";
 import { append, Cons, isList, isNil, List, Nil, NonEmptyList } from "./List";
-import { fromMaybe, isJust, isMaybe, isNothing, Just, Maybe, Nothing } from "./Maybe";
+import { isJust, isMaybe, isNothing, Just, Maybe, Nothing } from "./Maybe";
 import { isOrderedMap, OrderedMap } from "./OrderedMap";
 import { isOrderedSet, OrderedSet } from "./OrderedSet";
 import { fromBinary, Pair } from "./Pair";
@@ -266,11 +264,11 @@ export const toList: FoldableToList =
     }
 
     if (isEither (x)) {
-      return isRight (x) ? pure ("List") (x .value) : empty ("List")
+      return isRight (x) ? Cons (x .value, Nil) : Nil
     }
 
     if (isMaybe (x)) {
-      return isJust (x) ? pure ("List") (x .value) : empty ("List")
+      return isJust (x) ? Cons (x .value, Nil) : Nil
     }
 
     throw new TypeError (instanceErrorMsg ("toList") (x))
@@ -424,7 +422,7 @@ export const minimum = foldr (min) (Infinity)
  */
 export const concat =
   <A> (x: Foldable<List<A>>): List<A> =>
-    foldr<List<A>, List<A>> (append) (empty ("List")) (x)
+    foldr<List<A>, List<A>> (append) (Nil) (x)
 
 /**
  * `concatMap :: Foldable t => (a -> [b]) -> t a -> [b]`
@@ -434,7 +432,7 @@ export const concat =
  */
 export const concatMap =
   <A, B> (f: (x: A) => List<B>) =>
-    foldr<A, List<B>> (pipe (f, append)) (empty ("List"))
+    foldr<A, List<B>> (pipe (f, append)) (Nil)
 
 /**
  * `and :: Foldable t => t Bool -> Bool`
@@ -463,11 +461,19 @@ export const and =
     }
 
     if (isEither (x)) {
-      return fromRight (true) (x)
+      if (isLeft (x)) {
+        return true
+      }
+
+      return x .value
     }
 
     if (isMaybe (x)) {
-      return fromMaybe (true) (x)
+      if (isNothing (x)) {
+        return true
+      }
+
+      return x .value
     }
 
     throw new TypeError (instanceErrorMsg ("and") (x))
@@ -500,11 +506,19 @@ export const or =
     }
 
     if (isEither (x)) {
-      return fromRight (false) (x)
+      if (isLeft (x)) {
+        return false
+      }
+
+      return x .value
     }
 
     if (isMaybe (x)) {
-      return fromMaybe (false) (x)
+      if (isNothing (x)) {
+        return false
+      }
+
+      return x .value
     }
 
     throw new TypeError (instanceErrorMsg ("or") (x))
@@ -548,11 +562,19 @@ export const any: FoldableAny =
     }
 
     if (isEither (x)) {
-      return fromRight (false) (fmap (f) (x))
+      if (isLeft (x)) {
+        return false
+      }
+
+      return f (x .value)
     }
 
     if (isMaybe (x)) {
-      return fromMaybe (false) (fmap (f) (x))
+      if (isNothing (x)) {
+        return false
+      }
+
+      return f (x .value)
     }
 
     throw new TypeError (instanceErrorMsg ("any") (x))
@@ -578,11 +600,19 @@ export const all =
     }
 
     if (isEither (x)) {
-      return fromRight (true) (fmap (f) (x))
+      if (isLeft (x)) {
+        return true
+      }
+
+      return f (x .value)
     }
 
     if (isMaybe (x)) {
-      return fromMaybe (true) (fmap (f) (x))
+      if (isNothing (x)) {
+        return true
+      }
+
+      return f (x .value)
     }
 
     throw new TypeError (instanceErrorMsg ("all") (x))
@@ -667,3 +697,31 @@ const emptyErrorMsg =
   (fname: string) =>
   (x: any) =>
     `${fname}: empty structure\n${showP (x)}`
+
+export const Foldable = {
+  foldr,
+  foldl,
+  foldr1,
+  foldl1,
+  toList,
+  fnull,
+  length,
+  elem,
+  elemF,
+
+  sum,
+  product,
+  maximum,
+  minimum,
+
+  concat,
+  concatMap,
+  and,
+  or,
+  any,
+  all,
+
+  notElem,
+  notElemF,
+  find,
+}

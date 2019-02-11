@@ -5,11 +5,11 @@
  */
 
 import { isEither, isRight } from "./Either";
-import { all, fnull } from "./Foldable";
-import { isList, notNull } from "./List";
+import { all, elem, fnull } from "./Foldable";
+import { isList } from "./List";
 import { isJust, isMaybe, isNothing, Maybe, Some } from "./Maybe";
 import { isOrderedMap, OrderedMap } from "./OrderedMap";
-import { isOrderedSet, member, OrderedSet } from "./OrderedSet";
+import { isOrderedSet, OrderedSet } from "./OrderedSet";
 import { isPair } from "./Pair";
 import { isRecord, Record } from "./Record";
 import { show } from "./Show";
@@ -45,8 +45,8 @@ export const equals =
         (xs1: any, xs2: any): boolean =>
           fnull (xs1)
           && fnull (xs2)
-          || notNull (xs1)
-          && notNull (xs2)
+          || !fnull (xs1)
+          && !fnull (xs2)
           && equals (xs1 .x) (xs2 .x)
           && equalsCons (xs1 .xs, xs2 .xs)
 
@@ -153,7 +153,7 @@ export const notEquals =
     !equals (m1) (m2)
 
 const getRecordField = <A> (key: keyof A) => (r: Record<A>) => {
-  if (member (key as string) (r .keys)) {
+  if (elem (key as string) (r .keys)) {
     const specifiedValue = r .values [key]
 
     // tslint:disable-next-line: strict-type-predicates

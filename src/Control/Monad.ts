@@ -12,7 +12,6 @@
 
 import { pipe } from "ramda";
 import { Either, isEither, isRight, Right } from "../Data/Either";
-import { fnull } from "../Data/Foldable";
 import { ident } from "../Data/Function";
 import { fmap } from "../Data/Functor";
 import { append, cons, head, isList, isNil, List, tail } from "../Data/List";
@@ -183,7 +182,7 @@ export const sequence: MonadSequence =
   (t: MonadStr) =>
   (xs: List<any>): any => {
     if (t === "List") {
-      if (fnull (xs)) {
+      if (isNil (xs)) {
         return pure ("List") (empty ("List"))
       }
 
@@ -196,7 +195,7 @@ export const sequence: MonadSequence =
     }
 
     if (t === "Either") {
-      if (fnull (xs)) {
+      if (isNil (xs)) {
         return Right (empty ("List"))
       }
 
@@ -209,7 +208,7 @@ export const sequence: MonadSequence =
     }
 
     if (t === "Maybe") {
-      if (fnull (xs)) {
+      if (isNil (xs)) {
         return Just (empty ("List"))
       }
 

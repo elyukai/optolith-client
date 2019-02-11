@@ -10,7 +10,7 @@
 
 import { Either, fromRight_, isEither, isRight, Right } from "../Data/Either";
 import { fmap } from "../Data/Functor";
-import { Cons, head, isList, isNil, List, Nil, notNull } from "../Data/List";
+import { Cons, head, isList, isNil, List, Nil } from "../Data/List";
 import { fromJust, isJust, isMaybe, Just, Maybe, Nothing, Some } from "../Data/Maybe";
 import { showP } from "../Data/Show";
 import { Identity, isIdentity, runIdentity } from "./Monad/Identity";
@@ -145,7 +145,7 @@ export const alt: AlternativeAlt =
   (x: any) => (y: any): any => {
     if (isList (x)) {
       if (isList (y)) {
-        return notNull (x) ? x : y
+        return isNil (x) ? y : x
       }
 
       throw new TypeError (alternativeDifferentInstanceErrorMsg ("<*>") (x) (y))
@@ -177,7 +177,7 @@ interface AlternativeAlt_ {
 export const alt_: AlternativeAlt_ =
   (x: any) => (g: () => any): any => {
     if (isList (x)) {
-      return notNull (x) ? x : g ()
+      return isNil (x) ? g () : x
     }
 
     if (isMaybe (x)) {
