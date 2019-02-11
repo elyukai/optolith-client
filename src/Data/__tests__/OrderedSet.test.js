@@ -2,6 +2,7 @@
 const { List } = require('../List');
 const { OrderedSet } = require('../OrderedSet');
 const { fromArray, fromUniqueElements, fromSet } = require('../OrderedSet');
+const { Just, Nothing } = require('../Maybe');
 
 // CONSTRUCTOR
 
@@ -35,6 +36,140 @@ test ('fromSet', () => {
 test ('[Symbol.iterator]', () => {
   expect ([...fromArray (['a', 'b', 'c'])])
     .toEqual (['a', 'b', 'c'])
+})
+
+// FOLDABLE
+
+test ('foldr', () => {
+  expect (OrderedSet.foldr (e => acc => e + acc) ('0') (fromArray ([3, 2, 1])))
+    .toEqual ('3210')
+})
+
+test ('foldl', () => {
+  expect (OrderedSet.foldl (acc => e => acc + e) ('0') (fromArray ([1, 2, 3])))
+    .toEqual ('0123')
+})
+
+test ('foldr1', () => {
+  expect (OrderedSet.foldr1 (e => acc => e + acc) (fromArray ([3, 2, 1])))
+    .toEqual (6)
+})
+
+test ('foldl1', () => {
+  expect (OrderedSet.foldl1 (acc => e => e + acc) (fromArray ([3, 2, 1])))
+    .toEqual (6)
+})
+
+test ('toList', () => {
+  expect (OrderedSet.toList (fromArray ([3, 2, 1])))
+    .toEqual (List (3, 2, 1))
+})
+
+test ('fnull', () => {
+  expect (OrderedSet.fnull (fromArray ([3, 2, 1]))) .toBeFalsy ()
+  expect (OrderedSet.fnull (fromArray ([]))) .toBeTruthy ()
+})
+
+test ('length', () => {
+  expect (OrderedSet.length (fromArray ([3, 2, 1]))) .toEqual (3)
+  expect (OrderedSet.length (fromArray ([]))) .toEqual (0)
+})
+
+test ('elem', () => {
+  expect (OrderedSet.elem (3) (fromArray ([1, 2, 3, 4, 5])))
+    .toBeTruthy ()
+  expect (OrderedSet.elem (6) (fromArray ([1, 2, 3, 4, 5])))
+    .toBeFalsy ()
+})
+
+test ('elemF', () => {
+  expect (OrderedSet.elemF (fromArray ([1, 2, 3, 4, 5])) (3))
+    .toBeTruthy ()
+  expect (OrderedSet.elemF (fromArray ([1, 2, 3, 4, 5])) (6))
+    .toBeFalsy ()
+})
+
+test ('sum', () => {
+  expect (OrderedSet.sum (fromArray ([3, 2, 1]))) .toEqual (6)
+})
+
+test ('product', () => {
+  expect (OrderedSet.product (fromArray ([3, 2, 2]))) .toEqual (6)
+})
+
+test ('maximum', () => {
+  expect (OrderedSet.maximum (fromArray ([3, 2, 1]))) .toEqual (3)
+  expect (OrderedSet.maximum (fromArray ([]))) .toEqual (-Infinity)
+})
+
+test ('minimum', () => {
+  expect (OrderedSet.minimum (fromArray ([3, 2, 1]))) .toEqual (1)
+  expect (OrderedSet.minimum (fromArray ([]))) .toEqual (Infinity)
+})
+
+test ('concat', () => {
+  expect (OrderedSet.concat (
+    fromArray ([
+      List.fromArray ([3]),
+      List.fromArray ([2]),
+      List.fromArray ([1])
+    ])
+  ))
+    .toEqual (List.fromArray ([3, 2, 1]))
+})
+
+test ('concatMap', () => {
+  expect (OrderedSet.concatMap (e => fromArray ([e, e]))
+                               (fromArray ([1, 2, 3, 4, 5])))
+    .toEqual (fromArray ([1, 1, 2, 2, 3, 3, 4, 4, 5, 5]))
+})
+
+test ('and', () => {
+  expect (OrderedSet.and (fromArray ([true, true, true])))
+    .toBeTruthy ()
+  expect (OrderedSet.and (fromArray ([true, true, false])))
+    .toBeFalsy ()
+  expect (OrderedSet.and (fromArray ([true, false, true])))
+    .toBeFalsy ()
+})
+
+test ('or', () => {
+  expect (OrderedSet.or (fromArray ([true, true, true])))
+    .toBeTruthy ()
+  expect (OrderedSet.or (fromArray ([true, true, false])))
+    .toBeTruthy ()
+  expect (OrderedSet.or (fromArray ([false, false, false])))
+    .toBeFalsy ()
+})
+
+test ('any', () => {
+  expect (OrderedSet.any (x => x > 2) (fromArray ([3, 2, 1])))
+    .toBeTruthy ()
+  expect (OrderedSet.any (x => x > 3) (fromArray ([3, 2, 1])))
+    .toBeFalsy ()
+})
+
+test ('all', () => {
+  expect (OrderedSet.all (x => x >= 1) (fromArray ([3, 2, 1])))
+    .toBeTruthy ()
+  expect (OrderedSet.all (x => x >= 2) (fromArray ([3, 2, 1])))
+    .toBeFalsy ()
+})
+
+test ('notElem', () => {
+  expect (OrderedSet.notElem (3) (fromArray ([1, 2, 3, 4, 5])))
+    .toBeFalsy ()
+  expect (OrderedSet.notElem (6) (fromArray ([1, 2, 3, 4, 5])))
+    .toBeTruthy ()
+})
+
+test ('find', () => {
+  expect (OrderedSet.find (e => /t/.test(e))
+                          (fromArray (['one', 'two', 'three'])))
+    .toEqual (Just ('two'))
+  expect (OrderedSet.find (e => /tr/.test(e))
+                          (fromArray (['one', 'two', 'three'])))
+    .toEqual (Nothing)
 })
 
 // CONSTRUCTION

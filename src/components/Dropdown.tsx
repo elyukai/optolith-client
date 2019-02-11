@@ -1,12 +1,10 @@
 import * as classNames from "classnames";
 import { pipe } from "ramda";
 import * as React from "react";
-import { alt } from "../Control/Applicative";
 import { equals } from "../Data/Eq";
-import { find, length, or } from "../Data/Foldable";
 import { fmap } from "../Data/Functor";
-import { List, map, toArray } from "../Data/List";
-import { fromMaybe, isNothing, Maybe, normalize, Nothing } from "../Data/Maybe";
+import { find, length, List, map, toArray } from "../Data/List";
+import { alt, fromMaybe, isNothing, Maybe, normalize, Nothing, or } from "../Data/Maybe";
 import { fromDefault, Record } from "../Data/Record";
 import { Label } from "./Label";
 import { Scroll } from "./Scroll";

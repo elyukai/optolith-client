@@ -1,7 +1,6 @@
 import { pipe } from "ramda";
-import { bindF } from "../../Control/Monad";
 import { List, subscript } from "../../Data/List";
-import { ensure, fromMaybe, Just, Maybe, Nothing } from "../../Data/Maybe";
+import { bindF, ensure, fromMaybe, Just, Maybe, Nothing } from "../../Data/Maybe";
 import { inc } from "./mathUtils";
 import { not } from "./not";
 import { isInteger, isNaturalNumber } from "./RegexUtils";

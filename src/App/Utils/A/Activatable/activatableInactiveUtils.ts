@@ -9,10 +9,9 @@
 
 import { pipe } from "ramda";
 import { equals } from "../../../../Data/Eq";
-import { foldr, notElemF } from "../../../../Data/Foldable";
 import { ident, thrush } from "../../../../Data/Function";
 import { fmap } from "../../../../Data/Functor";
-import { consF, countWith, filter, List, Nil } from "../../../../Data/List";
+import { consF, countWith, filter, foldr, List, notElemF } from "../../../../Data/List";
 import { fromMaybe, Just, Maybe, maybe } from "../../../../Data/Maybe";
 import { alter, elems, foldrWithKey, lookup, OrderedMap } from "../../../../Data/OrderedMap";
 import { Record } from "../../../../Data/Record";
@@ -64,7 +63,7 @@ const { id } = SelectOption.A
 const isNotActive =
   pipe (
     getActiveSelectionsMaybe,
-    fromMaybe<List<string | number>> (Nil),
+    fromMaybe<List<string | number>> (List.empty),
     activeSelections => pipe (
       id,
       notElemF (activeSelections)
@@ -80,7 +79,7 @@ const isNotActive =
 const areNoSameActive =
   pipe (
     getActiveSelectionsMaybe,
-    fromMaybe<List<string | number>> (Nil),
+    fromMaybe<List<string | number>> (List.empty),
     activeSelections => pipe (
       id,
       current_id => countWith (equals (current_id)) (activeSelections) < 2
@@ -96,7 +95,7 @@ const areNoSameActive =
 const isNotRequired =
   pipe (
     getRequiredSelections,
-    fromMaybe<List<string | number | List<number>>> (Nil),
+    fromMaybe<List<string | number | List<number>>> (List.empty),
     requiredSelections => pipe (
       id,
       notElemF (requiredSelections)
@@ -138,7 +137,7 @@ const filterSkills = filter<Record<ActivatableSkillDependent>> (pipe (value, gte
 
 const foldCounter =
   foldrWithKey<number, number, List<number>> (k => x => x >= 3 ? consF (k) : ident)
-                                             (Nil)
+                                             (List.empty)
 
 /**
  * `getPropsWith3Gte10 :: Wiki -> Hero -> [Int]`
@@ -953,7 +952,7 @@ export const getInactiveView = (
       Maybe.maybe<
         Record<Data.ActivatableDependent>,
         Data.ActivatableDependent["dependencies"]
-      > (Nil ()) (e => e.get ("dependencies")) (instance),
+      > (List.empty ()) (e => e.get ("dependencies")) (instance),
       id
     )
     : Maybe.empty ()

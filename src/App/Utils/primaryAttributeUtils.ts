@@ -1,9 +1,7 @@
 import { pipe } from "ramda";
-import { bindF } from "../../Control/Monad";
-import { elemF } from "../../Data/Foldable";
 import { cnst } from "../../Data/Function";
-import { List } from "../../Data/List";
-import { Just, listToMaybe, Maybe, Nothing } from "../../Data/Maybe";
+import { elemF, List } from "../../Data/List";
+import { bindF, Just, listToMaybe, Maybe, Nothing } from "../../Data/Maybe";
 import { OrderedMap } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
 import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";

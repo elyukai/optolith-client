@@ -1,11 +1,9 @@
 import { pipe } from "ramda";
 import { IdPrefixes } from "../../constants/IdPrefixes";
-import { bindF } from "../../Control/Monad";
 import { equals } from "../../Data/Eq";
-import { all, length, product, sum } from "../../Data/Foldable";
 import { fmap } from "../../Data/Functor";
-import { fromArray, isList, List, map } from "../../Data/List";
-import { ensure, Just, mapMaybe, Maybe, maybe, Nothing } from "../../Data/Maybe";
+import { all, fromArray, isList, length, List, map } from "../../Data/List";
+import { bindF, ensure, Just, mapMaybe, Maybe, maybe, Nothing, product, sum } from "../../Data/Maybe";
 import { Record } from "../../Data/Record";
 import { show } from "../../Data/Show";
 import { EditItem } from "../Models/Hero/EditItem";

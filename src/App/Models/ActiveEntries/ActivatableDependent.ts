@@ -1,5 +1,4 @@
-import { fnull } from "../../../Data/Foldable";
-import { List } from "../../../Data/List";
+import { fnull, List } from "../../../Data/List";
 import { fromJust, isJust, Just, Maybe } from "../../../Data/Maybe";
 import { fromDefault, makeLenses, member, notMember, Omit, Record } from "../../../Data/Record";
 import { ActivatableDependency, Dependent } from "../Hero/heroTypeHelpers";

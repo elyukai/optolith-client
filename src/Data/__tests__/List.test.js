@@ -1,9 +1,239 @@
 // @ts-check
-const { List, Nil } = require('../List')
+const { List } = require('../List')
 const { Just, Nothing } = require('../Maybe')
 const { Pair } = require('../Pair')
 const { Int } = require('../Int')
 const { OrderedMap } = require('../OrderedMap')
+
+// APPLICATIVE
+
+test ('pure', () => {
+  expect (List.pure (3)) .toEqual (List (3))
+})
+
+test ('ap', () => {
+  expect(List.ap (List (x => x * 3, x => x * 2))
+                 (List (1, 2, 3, 4, 5)))
+    .toEqual (List (3, 6, 9, 12, 15, 2, 4, 6, 8, 10))
+})
+
+// ALTERNATIVE
+
+test ('alt', () => {
+  expect (List.alt (List (3)) (List (2)))
+    .toEqual (List (3))
+  expect (List.alt (List (3)) (List ()))
+    .toEqual (List (3))
+  expect (List.alt (List ()) (List (2)))
+    .toEqual (List (2))
+  expect (List.alt (List ()) (List ()))
+    .toEqual (List ())
+})
+
+test ('altF', () => {
+  expect (List.altF (List (2)) (List (3)))
+    .toEqual (List (3))
+  expect (List.altF (List ()) (List (3)))
+    .toEqual (List (3))
+  expect (List.altF (List (2)) (List ()))
+    .toEqual (List (2))
+  expect (List.altF (List ()) (List ()))
+    .toEqual (List ())
+})
+
+test ('empty', () => {
+  expect (List.empty) .toEqual (List ())
+})
+
+test ('guard', () => {
+  expect (List.guard (true))
+    .toEqual (List (true))
+  expect (List.guard (false))
+    .toEqual (List ())
+})
+
+// MONAD
+
+test ('bind', () => {
+  expect (List.bind (List (1, 2, 3, 4, 5))
+                    (e => List (e, e)))
+    .toEqual (List (1, 1, 2, 2, 3, 3, 4, 4, 5, 5))
+})
+
+test ('bindF', () => {
+  expect (List.bindF (e => List (e, e))
+                     (List (1, 2, 3, 4, 5)))
+    .toEqual (List (1, 1, 2, 2, 3, 3, 4, 4, 5, 5))
+})
+
+test ('then', () => {
+  expect (List.then (List (1, 2, 3, 4, 5))
+                    (List ('a', 'c')))
+    .toEqual (
+      List ('a', 'c', 'a', 'c', 'a', 'c', 'a', 'c', 'a', 'c')
+    )
+  expect (List.then (List ()) (List ('a', 'c')))
+    .toEqual (List ())
+})
+
+test ('kleisli', () => {
+  expect (List.kleisli (e => List (e, e))
+                       (e => List (e, e * 2))
+                       (2))
+    .toEqual (List (2, 4, 2, 4))
+})
+
+test ('join', () => {
+  expect (List.join (
+    List (
+      List (3),
+      List (2),
+      List (1)
+    )
+  ))
+    .toEqual (List (3, 2, 1))
+})
+
+// FOLDABLE
+
+test ('foldr', () => {
+  expect (List.foldr (e => acc => e + acc) ('0') (List (3, 2, 1)))
+    .toEqual ('3210')
+})
+
+test ('foldl', () => {
+  expect (List.foldl (acc => e => acc + e) ('0') (List (1, 2, 3)))
+    .toEqual ('0123')
+})
+
+test ('foldr1', () => {
+  expect (List.foldr1 (e => acc => e + acc) (List (3, 2, 1)))
+    .toEqual (6)
+})
+
+test ('foldl1', () => {
+  expect (List.foldl1 (acc => e => e + acc) (List (3, 2, 1)))
+    .toEqual (6)
+})
+
+test ('toList', () => {
+  expect (List.toList (List (3, 2, 1)))
+    .toEqual (List (3, 2, 1))
+})
+
+test ('fnull', () => {
+  expect (List.fnull (List (3, 2, 1))) .toBeFalsy ()
+  expect (List.fnull (List ())) .toBeTruthy ()
+})
+
+test ('length', () => {
+  expect (List.length (List (3, 2, 1))) .toEqual (3)
+  expect (List.length (List ())) .toEqual (0)
+})
+
+test ('elem', () => {
+  expect (List.elem (3) (List (1, 2, 3, 4, 5)))
+    .toBeTruthy ()
+  expect (List.elem (6) (List (1, 2, 3, 4, 5)))
+    .toBeFalsy ()
+})
+
+test ('elemF', () => {
+  expect (List.elemF (List (1, 2, 3, 4, 5)) (3))
+    .toBeTruthy ()
+  expect (List.elemF (List (1, 2, 3, 4, 5)) (6))
+    .toBeFalsy ()
+})
+
+test ('sum', () => {
+  expect (List.sum (List (3, 2, 1))) .toEqual (6)
+})
+
+test ('product', () => {
+  expect (List.product (List (3, 2, 2))) .toEqual (12)
+})
+
+test ('maximum', () => {
+  expect(List.maximum (List (3, 2, 1))) .toEqual (3)
+  expect(List.maximum (List ())) .toEqual (-Infinity)
+})
+
+test ('minimum', () => {
+  expect (List.minimum (List (3, 2, 1))) .toEqual (1)
+  expect (List.minimum (List ())) .toEqual (Infinity)
+})
+
+test ('concat', () => {
+  expect (List.concat (
+    List (
+      List (3),
+      List (2),
+      List (1)
+    )
+  ))
+    .toEqual (List (3, 2, 1))
+})
+
+test ('concatMap', () => {
+  expect (List.concatMap (e => List (e, e))
+                    (List (1, 2, 3, 4, 5)))
+    .toEqual (List (1, 1, 2, 2, 3, 3, 4, 4, 5, 5))
+})
+
+test ('and', () => {
+  expect (List.and (List (true, true, true)))
+    .toBeTruthy ()
+  expect (List.and (List (true, true, false)))
+    .toBeFalsy ()
+  expect (List.and (List (true, false, true)))
+    .toBeFalsy ()
+})
+
+test ('or', () => {
+  expect (List.or (List (true, true, true)))
+    .toBeTruthy ()
+  expect (List.or (List (true, true, false)))
+    .toBeTruthy ()
+  expect (List.or (List (false, false, false)))
+    .toBeFalsy ()
+})
+
+test ('any', () => {
+  expect (List.any (x => x > 2) (List (3, 2, 1)))
+    .toBeTruthy ()
+  expect (List.any (x => x > 3) (List (3, 2, 1)))
+    .toBeFalsy ()
+})
+
+test ('all', () => {
+  expect (List.all (x => x >= 1) (List (3, 2, 1)))
+    .toBeTruthy ()
+  expect (List.all (x => x >= 2) (List (3, 2, 1)))
+    .toBeFalsy ()
+})
+
+test ('notElem', () => {
+  expect (List.notElem (3) (List (1, 2, 3, 4, 5)))
+    .toBeFalsy ()
+  expect (List.notElem (6) (List (1, 2, 3, 4, 5)))
+    .toBeTruthy ()
+})
+
+test ('notElemF', () => {
+  expect (List.notElemF (List (1, 2, 3, 4, 5)) (3))
+    .toBeFalsy ()
+  expect (List.notElemF (List (1, 2, 3, 4, 5)) (6))
+    .toBeTruthy ()
+})
+
+test ('find', () => {
+  expect (List.find (e => /t/.test (e))
+                    (List ('one', 'two', 'three')))
+    .toEqual (Just ('two'))
+  expect (List.find (e => /tr/.test (e))
+                    (List ('one', 'two', 'three')))
+    .toEqual (Nothing)
+})
 
 // BASIC FUNCTIONS
 
@@ -23,16 +253,12 @@ test ('cons', () => {
 })
 
 test ('head', () => {
-  // @ts-ignore
   expect (List.head (List (3, 2, 1))) .toEqual (3)
-  // @ts-ignore
   expect (() => List.head (List ())) .toThrow ()
 })
 
 test ('last', () => {
-  // @ts-ignore
   expect (List.last (List (3, 2, 1))) .toEqual (1)
-  // @ts-ignore
   expect (() => List.last (List ())) .toThrow ()
 })
 
@@ -42,13 +268,10 @@ test ('lastS', () => {
 })
 
 test ('tail', () => {
-  // @ts-ignore
   expect (List.tail (List (3, 2, 1)))
     .toEqual (List (2, 1))
-  // @ts-ignore
   expect (List.tail (List (1)))
     .toEqual (List ())
-  // @ts-ignore
   expect (() => List.tail (List ())) .toThrow ()
 })
 
@@ -61,13 +284,10 @@ test ('tailS', () => {
 })
 
 test ('init', () => {
-  // @ts-ignore
   expect (List.init (List (3, 2, 1)))
     .toEqual (List (3, 2))
-  // @ts-ignore
   expect (List.init (List (1)))
     .toEqual (List ())
-  // @ts-ignore
   expect (() => List.init (List ())) .toThrow ()
 })
 
@@ -625,7 +845,7 @@ test ('maximumNonNegative', () => {
   expect (List.maximumNonNegative (List (-1, -2, -3, -4, -5)))
     .toEqual (0)
 
-  expect (List.maximumNonNegative (Nil))
+  expect (List.maximumNonNegative (List.empty))
     .toEqual (0)
 })
 

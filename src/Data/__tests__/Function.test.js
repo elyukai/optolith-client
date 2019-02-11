@@ -8,7 +8,6 @@ test ('ident', () => {
 })
 
 test ('cnst', () => {
-  // @ts-ignore
   expect (cnst (5) ('test')) .toEqual (5)
 })
 

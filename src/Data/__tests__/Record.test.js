@@ -22,7 +22,6 @@ test ('mergeSafeR2', () => {
   const test = testCreator ({ x: 1 })
   const test2 = fromDefault ({ x: 3, y: 3 }) ({ x: 7, y: Nothing })
 
-  // @ts-ignore
   expect (mergeSafeR2 (test2) (test)) .toEqual (testCreator ({ x: 7 }))
 })
 
@@ -30,10 +29,8 @@ test ('mergeSafeR3', () => {
   const testCreator = fromDefault ({ x: 0 })
   const test = testCreator ({ x: 1 })
   const test2 = fromDefault ({ x: 3, y: 3 }) ({ x: 7, y: Nothing })
-  // @ts-ignore
   const test3 = testCreator ({ y: 4, x: Nothing })
 
-  // @ts-ignore
   expect (mergeSafeR3 (test3) (test2) (test)) .toEqual (testCreator ({ x: 0, y: 4 }))
 })
 
@@ -41,11 +38,9 @@ test ('mergeSafeR4', () => {
   const testCreator = fromDefault ({ x: 0 })
   const test = testCreator ({ x: 1 })
   const test2 = fromDefault ({ x: 3, y: 3 }) ({ x: 7, y: Nothing })
-  // @ts-ignore
   const test3 = testCreator ({ y: 4, x: Nothing })
   const test4 = testCreator ({ x: 5 })
 
-  // @ts-ignore
   expect (mergeSafeR4 (test4) (test3) (test2) (test)) .toEqual (testCreator ({ x: 5, y: 4 }))
 })
 
@@ -53,14 +48,11 @@ test ('mergeSafeR5', () => {
   const testCreator = fromDefault ({ x: 0 })
   const test = testCreator ({ x: 1 })
   const test2 = fromDefault ({ x: 3, y: 3 }) ({ x: 7, y: Nothing })
-  // @ts-ignore
   const test3 = testCreator ({ y: 4, x: Nothing })
   const test4 = testCreator ({ x: 5 })
-  // @ts-ignore
   const test5 = testCreator ({ y: 8, x: Nothing })
 
   expect (mergeSafeR5 (test5) (test4) (test3) (test2) (test))
-    // @ts-ignore
     .toEqual (testCreator ({ x: 0, y: 8 }))
 })
 

@@ -1,11 +1,8 @@
 import { pipe } from "ramda";
-import { altF, ap } from "../../../../Control/Applicative";
-import { bindF, liftM2 } from "../../../../Control/Monad";
 import { equals } from "../../../../Data/Eq";
-import { elemF, find, length } from "../../../../Data/Foldable";
 import { fmap } from "../../../../Data/Functor";
-import { append, consF, filter, List } from "../../../../Data/List";
-import { fromMaybe, Just, Maybe, Nothing } from "../../../../Data/Maybe";
+import { append, consF, filter, find, length, List } from "../../../../Data/List";
+import { altF, ap, bindF, elemF, fromMaybe, Just, liftM2, Maybe, maybe, Nothing } from "../../../../Data/Maybe";
 import { Record } from "../../../../Data/Record";
 import { ActivatableDependent } from "../../../Models/ActiveEntries/ActivatableDependent";
 import { ActiveObject } from "../../../Models/ActiveEntries/ActiveObject";
@@ -43,13 +40,13 @@ export const getGeneratedPrerequisites =
                      (findSelectOption (wiki_entry) (sid (current)))
 
       case "SA_9": {
-        const sameSkill = fromMaybe (0)
-                                    (fmap (pipe (
-                                            active,
-                                            filter (pipe (sid, equals (sid (current)))),
-                                            length
-                                          ))
-                                          (hero_entry))
+        const sameSkill = maybe (0)
+                                (pipe (
+                                  active,
+                                  filter (pipe (sid, equals (sid (current)))),
+                                  length
+                                ))
+                                (hero_entry)
 
         const sameSkillDependency =
           fmap ((justSid: string | number) => RequireIncreasable ({

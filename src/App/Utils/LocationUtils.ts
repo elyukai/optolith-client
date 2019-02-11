@@ -1,5 +1,4 @@
-import { elemF } from "../../Data/Foldable";
-import { List } from "../../Data/List";
+import { elemF, List } from "../../Data/List";
 
 export type TabId = "herolist"
                   | "grouplist"

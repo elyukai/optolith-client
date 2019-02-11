@@ -1,3 +1,4 @@
+// @ts-check
 const { Const, getConst, isConst } = require ('../Const')
 
 // CONSTRUCTORS

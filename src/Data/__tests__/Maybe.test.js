@@ -1,11 +1,9 @@
 // @ts-check
 const React = require('react');
-const { Foldable } = require('../Foldable');
 const { List } = require('../List');
-const { Maybe } = require('../Maybe');
 const { fmap } = require('../Functor');
 const { add } = require('../../App/Utils/mathUtils');
-const { Just, Nothing } = require('../Maybe');
+const { Just, Maybe, Nothing } = require('../Maybe');
 
 // CONSTRUCTORS
 
@@ -43,10 +41,8 @@ test ('isNothing', () => {
 })
 
 test ('fromJust', () => {
-  // @ts-ignore
   expect (Maybe.fromJust (Maybe (3)))
     .toEqual (3)
-  // @ts-ignore
   expect (() => Maybe.fromJust (Maybe (null)))
     .toThrow ()
 })
@@ -63,6 +59,639 @@ test ('fromMaybe_', () => {
     .toEqual (3)
   expect (Maybe.fromMaybe_ (() => 0) (Maybe (null)))
     .toEqual (0)
+})
+
+// APPLICATIVE
+
+test ('pure', () => {
+  expect (Maybe.pure (2)) .toEqual (Just (2))
+})
+
+test ('ap', () => {
+  expect (Maybe.ap (Just (x => x * 2)) (Just (3)))
+    .toEqual (Just (6))
+  expect (Maybe.ap (Just (x => x * 2)) (Nothing))
+    .toEqual (Nothing)
+  expect (Maybe.ap (Nothing) (Just (3)))
+    .toEqual (Nothing)
+  expect (Maybe.ap (Nothing) (Nothing))
+    .toEqual (Nothing)
+})
+
+// ALTERNATIVE
+
+test ('alt', () => {
+  expect (Maybe.alt (Just (3)) (Just (2)))
+    .toEqual (Just (3))
+  expect (Maybe.alt (Just (3)) (Nothing))
+    .toEqual (Just (3))
+  expect (Maybe.alt (Nothing) (Just (2)))
+    .toEqual (Just (2))
+  expect (Maybe.alt (Nothing) (Nothing))
+    .toEqual (Nothing)
+})
+
+test ('alt_', () => {
+  expect (Maybe.alt_ (Just (3)) (() => Just (2)))
+    .toEqual (Just (3))
+  expect (Maybe.alt_ (Just (3)) (() => Nothing))
+    .toEqual (Just (3))
+  expect (Maybe.alt_ (Nothing) (() => Just (2)))
+    .toEqual (Just (2))
+  expect (Maybe.alt_ (Nothing) (() => Nothing))
+    .toEqual (Nothing)
+})
+
+test ('altF', () => {
+  expect (Maybe.altF (Just (2)) (Just (3)))
+    .toEqual (Just (3))
+  expect (Maybe.altF (Nothing) (Just (3)))
+    .toEqual (Just (3))
+  expect (Maybe.altF (Just (2)) (Nothing))
+    .toEqual (Just (2))
+  expect (Maybe.altF (Nothing) (Nothing))
+    .toEqual (Nothing)
+})
+
+test ('altF_', () => {
+  expect (Maybe.altF_ (() => Just (2)) (Just (3)))
+    .toEqual (Just (3))
+  expect (Maybe.altF_ (() => Nothing) (Just (3)))
+    .toEqual (Just (3))
+  expect (Maybe.altF_ (() => Just (2)) (Nothing))
+    .toEqual (Just (2))
+  expect (Maybe.altF_ (() => Nothing) (Nothing))
+    .toEqual (Nothing)
+})
+
+test ('empty', () => {
+  expect (Maybe.empty) .toEqual (Nothing)
+})
+
+test ('guard', () => {
+  expect (Maybe.guard (true))
+    .toEqual (Just (true))
+  expect (Maybe.guard (false))
+    .toEqual (Nothing)
+})
+
+// MONAD
+
+test ('bind', () => {
+  expect (Maybe.bind (Maybe (3))
+                     (x => Just (x * 2)))
+    .toEqual (Just (6))
+  expect (Maybe.bind (Maybe (null))
+                     (x => Just (x * 2)))
+    .toEqual (Nothing)
+})
+
+test ('bindF', () => {
+  expect (Maybe.bindF (x => Just (x * 2))
+                      (Maybe (3)))
+    .toEqual (Just (6))
+  expect (Maybe.bindF (x => Just (x * 2))
+                      (Maybe (null)))
+    .toEqual (Nothing)
+})
+
+test ('then', () => {
+  expect (Maybe.then (Just (3)) (Just (2)))
+    .toEqual (Just (2))
+  expect (Maybe.then (Nothing) (Maybe.Just (2)))
+    .toEqual (Nothing)
+  expect (Maybe.then (Just (3)) (Nothing))
+    .toEqual (Nothing)
+  expect (Maybe.then (Nothing) (Nothing))
+    .toEqual (Nothing)
+})
+
+test ('kleisli', () => {
+  expect (Maybe.kleisli (x => x > 5 ? Nothing : Just (x)) (x => x < 0 ? Nothing : Just (x)) (2))
+    .toEqual (Just (2))
+  expect (Maybe.kleisli (x => x > 5 ? Nothing : Just (x)) (x => x < 0 ? Nothing : Just (x)) (6))
+    .toEqual (Nothing)
+  expect (Maybe.kleisli (x => x > 5 ? Nothing : Just (x)) (x => x < 0 ? Nothing : Just (x)) (-1))
+    .toEqual (Nothing)
+})
+
+test ('join', () => {
+  expect (Maybe.join (Just (Just (3))))
+    .toEqual (Just (3))
+  expect (Maybe.join (Just (Nothing)))
+    .toEqual (Nothing)
+  expect (Maybe.join (Nothing))
+    .toEqual (Nothing)
+})
+
+test ('mapM', () => {
+  expect (
+    Maybe.mapM (x => x === 2 ? Nothing : Just (x + 1))
+                (List.empty)
+  )
+    .toEqual (Just (List.empty))
+
+  expect (
+    Maybe.mapM (x => x === 2 ? Nothing : Just (x + 1))
+                (List (1, 3))
+  )
+    .toEqual (Just (List (2, 4)))
+
+  expect (
+    Maybe.mapM (x => x === 2 ? Nothing : Just (x + 1))
+                (List (1, 2, 3))
+  )
+    .toEqual (Nothing)
+})
+
+test ('liftM2', () => {
+  expect (Maybe.liftM2 (x => y => x + y) (Just (1)) (Just (2))) .toEqual (Just (3))
+  expect (Maybe.liftM2 (x => y => x + y) (Nothing) (Just (2))) .toEqual (Nothing)
+  expect (Maybe.liftM2 (x => y => x + y) (Just (1)) (Nothing)) .toEqual (Nothing)
+  expect (Maybe.liftM2 (x => y => x + y) (Nothing) (Nothing)) .toEqual (Nothing)
+})
+
+test ('liftM3', () => {
+  expect (
+    Maybe.liftM3 (x => y => z => x + y + z)
+                  (Just (1))
+                  (Just (2))
+                  (Just (3))
+  )
+    .toEqual (Just (6))
+
+  expect (
+    Maybe.liftM3 (x => y => z => x + y + z)
+                  (Nothing)
+                  (Just (2))
+                  (Just (3))
+  )
+    .toEqual (Nothing)
+
+  expect (
+    Maybe.liftM3 (x => y => z => x + y + z)
+                  (Just (1))
+                  (Nothing)
+                  (Just (3))
+  )
+    .toEqual (Nothing)
+
+  expect (
+    Maybe.liftM3 (x => y => z => x + y + z)
+                  (Just (1))
+                  (Just (2))
+                  (Nothing)
+  )
+    .toEqual (Nothing)
+
+  expect (
+    Maybe.liftM3 (x => y => z => x + y + z)
+                  (Just (1))
+                  (Nothing)
+                  (Nothing)
+  )
+    .toEqual (Nothing)
+
+  expect (
+    Maybe.liftM3 (x => y => z => x + y + z)
+                  (Nothing)
+                  (Just (2))
+                  (Nothing)
+  )
+    .toEqual (Nothing)
+
+  expect (
+    Maybe.liftM3 (x => y => z => x + y + z)
+                  (Nothing)
+                  (Nothing)
+                  (Just (3))
+  )
+    .toEqual (Nothing)
+
+  expect (
+    Maybe.liftM3 (x => y => z => x + y + z)
+                  (Nothing)
+                  (Nothing)
+                  (Nothing)
+  )
+    .toEqual (Nothing)
+})
+
+test ('liftM4', () => {
+  expect (
+    Maybe.liftM4 (x => y => z => a => x + y + z + a)
+                 (Just (1)) (Just (2)) (Just (3)) (Just (4))
+  )
+    .toEqual (Just (10))
+
+  expect (
+    Maybe.liftM4 (x => y => z => a => x + y + z + a)
+                 (Nothing) (Just (2)) (Just (3)) (Just (4))
+  )
+    .toEqual (Nothing)
+
+  expect (
+    Maybe.liftM4 (x => y => z => a => x + y + z + a)
+                 (Just (1)) (Nothing) (Just (3)) (Just (4))
+  )
+    .toEqual (Nothing)
+
+  expect (
+    Maybe.liftM4 (x => y => z => a => x + y + z + a)
+                 (Just (1)) (Just (2)) (Nothing) (Just (4))
+  )
+    .toEqual (Nothing)
+
+  expect (
+    Maybe.liftM4 (x => y => z => a => x + y + z + a)
+                 (Just (1)) (Just (2)) (Just (3)) (Nothing)
+  )
+    .toEqual (Nothing)
+
+  expect (
+    Maybe.liftM4 (x => y => z => a => x + y + z + a)
+                 (Just (1)) (Just (2)) (Nothing) (Nothing)
+  )
+    .toEqual (Nothing)
+
+  expect (
+    Maybe.liftM4 (x => y => z => a => x + y + z + a)
+                 (Just (1)) (Nothing) (Just (3)) (Nothing)
+  )
+    .toEqual (Nothing)
+
+  expect (
+    Maybe.liftM4 (x => y => z => a => x + y + z + a)
+                 (Just (1)) (Nothing) (Nothing) (Just (4))
+  )
+    .toEqual (Nothing)
+
+  expect (
+    Maybe.liftM4 (x => y => z => a => x + y + z + a)
+                 (Nothing) (Just (2)) (Just (3)) (Nothing)
+  )
+    .toEqual (Nothing)
+
+  expect (
+    Maybe.liftM4 (x => y => z => a => x + y + z + a)
+                 (Nothing) (Just (2)) (Nothing) (Just (4))
+  )
+    .toEqual (Nothing)
+
+  expect (
+    Maybe.liftM4 (x => y => z => a => x + y + z + a)
+                 (Nothing) (Nothing) (Just (3)) (Just (4))
+  )
+    .toEqual (Nothing)
+
+  expect (
+    Maybe.liftM4 (x => y => z => a => x + y + z + a)
+                 (Just (1)) (Nothing) (Nothing) (Nothing)
+  )
+    .toEqual (Nothing)
+
+  expect (
+    Maybe.liftM4 (x => y => z => a => x + y + z + a)
+                 (Nothing) (Just (2)) (Nothing) (Nothing)
+  )
+    .toEqual (Nothing)
+
+  expect (
+    Maybe.liftM4 (x => y => z => a => x + y + z + a)
+                 (Nothing) (Nothing) (Just (3)) (Nothing)
+  )
+    .toEqual (Nothing)
+
+  expect (
+    Maybe.liftM4 (x => y => z => a => x + y + z + a)
+                 (Nothing) (Nothing) (Nothing) (Just (4))
+  )
+    .toEqual (Nothing)
+
+  expect (
+    Maybe.liftM4 (x => y => z => a => x + y + z + a)
+                 (Nothing) (Nothing) (Nothing) (Nothing)
+  )
+    .toEqual (Nothing)
+})
+
+test ('liftM5', () => {
+  expect (
+    Maybe.liftM5 (x => y => z => a => b => x + y + z + a + b)
+                 (Just (1)) (Just (2)) (Just (3)) (Just (4)) (Just (5))
+  )
+    .toEqual (Just (15))
+
+  expect (
+    Maybe.liftM5 (x => y => z => a => b => x + y + z + a + b)
+                 (Nothing) (Just (2)) (Just (3)) (Just (4)) (Just (5))
+  )
+    .toEqual (Nothing)
+
+  expect (
+    Maybe.liftM5 (x => y => z => a => b => x + y + z + a + b)
+                 (Just (1)) (Nothing) (Just (3)) (Just (4)) (Just (5))
+  )
+    .toEqual (Nothing)
+
+  expect (
+    Maybe.liftM5 (x => y => z => a => b => x + y + z + a + b)
+                 (Just (1)) (Just (2)) (Nothing) (Just (4)) (Just (5))
+  )
+    .toEqual (Nothing)
+
+  expect (
+    Maybe.liftM5 (x => y => z => a => b => x + y + z + a + b)
+                 (Just (1)) (Just (2)) (Just (3)) (Nothing) (Just (5))
+  )
+    .toEqual (Nothing)
+
+  expect (
+    Maybe.liftM5 (x => y => z => a => b => x + y + z + a + b)
+                 (Just (1)) (Just (2)) (Just (3)) (Just (4)) (Nothing)
+  )
+    .toEqual (Nothing)
+
+  expect (
+    Maybe.liftM5 (x => y => z => a => b => x + y + z + a + b)
+                 (Just (1)) (Just (2)) (Just (3)) (Nothing) (Nothing)
+  )
+    .toEqual (Nothing)
+
+  expect (
+    Maybe.liftM5 (x => y => z => a => b => x + y + z + a + b)
+                 (Just (1)) (Just (2)) (Nothing) (Just (4)) (Nothing)
+  )
+    .toEqual (Nothing)
+
+  expect (
+    Maybe.liftM5 (x => y => z => a => b => x + y + z + a + b)
+                  (Just (1)) (Nothing) (Just (3)) (Just (4)) (Nothing)
+  )
+    .toEqual (Nothing)
+
+  expect (
+    Maybe.liftM5 (x => y => z => a => b => x + y + z + a + b)
+                  (Nothing) (Just (2)) (Just (3)) (Just (4)) (Nothing)
+  )
+    .toEqual (Nothing)
+
+  expect (
+    Maybe.liftM5 (x => y => z => a => b => x + y + z + a + b)
+                  (Just (1)) (Just (2)) (Nothing) (Nothing) (Just (5))
+  )
+    .toEqual (Nothing)
+
+  expect (
+    Maybe.liftM5 (x => y => z => a => b => x + y + z + a + b)
+                  (Just (1)) (Nothing) (Just (3)) (Nothing) (Just (5))
+  )
+    .toEqual (Nothing)
+
+  expect (
+    Maybe.liftM5 (x => y => z => a => b => x + y + z + a + b)
+                  (Nothing) (Just (2)) (Just (3)) (Nothing) (Just (5))
+  )
+    .toEqual (Nothing)
+
+  expect (
+    Maybe.liftM5 (x => y => z => a => b => x + y + z + a + b)
+                  (Just (1)) (Nothing) (Nothing) (Just (4)) (Just (5))
+  )
+    .toEqual (Nothing)
+
+  expect (
+    Maybe.liftM5 (x => y => z => a => b => x + y + z + a + b)
+                  (Nothing) (Just (2)) (Nothing) (Just (4)) (Just (5))
+  )
+    .toEqual (Nothing)
+
+  expect (
+    Maybe.liftM5 (x => y => z => a => b => x + y + z + a + b)
+                  (Nothing) (Nothing) (Nothing) (Just (4)) (Just (5))
+  )
+    .toEqual (Nothing)
+
+  expect (
+    Maybe.liftM5 (x => y => z => a => b => x + y + z + a + b)
+                  (Nothing) (Nothing) (Just (3)) (Nothing) (Just (5))
+  )
+    .toEqual (Nothing)
+
+  expect (
+    Maybe.liftM5 (x => y => z => a => b => x + y + z + a + b)
+                  (Nothing) (Nothing) (Just (3)) (Just (4)) (Nothing)
+  )
+    .toEqual (Nothing)
+
+  expect (
+    Maybe.liftM5 (x => y => z => a => b => x + y + z + a + b)
+                  (Just (1)) (Nothing) (Nothing) (Nothing) (Just (5))
+  )
+    .toEqual (Nothing)
+
+  expect (
+    Maybe.liftM5 (x => y => z => a => b => x + y + z + a + b)
+                  (Just (1)) (Nothing) (Nothing) (Just (4)) (Nothing)
+  )
+    .toEqual (Nothing)
+
+  expect (
+    Maybe.liftM5 (x => y => z => a => b => x + y + z + a + b)
+                  (Just (1)) (Just (2)) (Nothing) (Nothing) (Nothing)
+  )
+    .toEqual (Nothing)
+
+  expect (
+    Maybe.liftM5 (x => y => z => a => b => x + y + z + a + b)
+                  (Just (1)) (Nothing) (Just (3)) (Nothing) (Nothing)
+  )
+    .toEqual (Nothing)
+
+  expect (
+    Maybe.liftM5 (x => y => z => a => b => x + y + z + a + b)
+                  (Nothing) (Just (2)) (Just (3)) (Nothing) (Nothing)
+  )
+    .toEqual (Nothing)
+
+  expect (
+    Maybe.liftM5 (x => y => z => a => b => x + y + z + a + b)
+                  (Nothing) (Just (2)) (Nothing) (Nothing) (Just (5))
+  )
+    .toEqual (Nothing)
+
+  expect (
+    Maybe.liftM5 (x => y => z => a => b => x + y + z + a + b)
+                  (Just (1)) (Nothing) (Nothing) (Nothing) (Nothing)
+  )
+    .toEqual (Nothing)
+
+  expect (
+    Maybe.liftM5 (x => y => z => a => b => x + y + z + a + b)
+                  (Nothing) (Just (2)) (Nothing) (Nothing) (Nothing)
+  )
+    .toEqual (Nothing)
+
+  expect (
+    Maybe.liftM5 (x => y => z => a => b => x + y + z + a + b)
+                  (Nothing) (Nothing) (Just (3)) (Nothing) (Nothing)
+  )
+    .toEqual (Nothing)
+
+  expect (
+    Maybe.liftM5 (x => y => z => a => b => x + y + z + a + b)
+                  (Nothing) (Nothing) (Nothing) (Just (4)) (Nothing)
+  )
+    .toEqual (Nothing)
+
+  expect (
+    Maybe.liftM5 (x => y => z => a => b => x + y + z + a + b)
+                  (Nothing) (Nothing) (Nothing) (Nothing) (Just (5))
+  )
+    .toEqual (Nothing)
+
+  expect (
+    Maybe.liftM5 (x => y => z => a => b => x + y + z + a + b)
+                  (Nothing) (Nothing) (Nothing) (Nothing) (Nothing)
+  )
+    .toEqual (Nothing)
+})
+
+// FOLDABLE
+
+test ('foldr', () => {
+  expect (Maybe.foldr (x => acc => x * 2 + acc) (2) (Just (3)))
+    .toEqual (8)
+  expect (Maybe.foldr (x => acc => x * 2 + acc) (2) (Nothing))
+    .toEqual (2)
+})
+
+test ('foldl', () => {
+  expect (Maybe.foldl (acc => x => x * 2 + acc) (2) (Just (3)))
+    .toEqual (8)
+  expect (Maybe.foldl (acc => x => x * 2 + acc) (2) (Nothing))
+    .toEqual (2)
+})
+
+test ('toList', () => {
+  expect (Maybe.toList (Just (3)))
+    .toEqual (List (3))
+  expect (Maybe.toList (Nothing))
+    .toEqual (List ())
+})
+
+test ('fnull', () => {
+  expect (Maybe.fnull (Just (3)))
+    .toEqual (false)
+  expect (Maybe.fnull (Nothing))
+    .toEqual (true)
+})
+
+test ('length', () => {
+  expect (Maybe.length (Just (3)))
+    .toEqual (1)
+  expect (Maybe.length (Nothing))
+    .toEqual (0)
+})
+
+test ('elem', () => {
+  expect (Maybe.elem (3) (Nothing))
+    .toBeFalsy ()
+  expect (Maybe.elem (3) (Just (2)))
+    .toBeFalsy ()
+  expect (Maybe.elem (3) (Just (3)))
+    .toBeTruthy ()
+})
+
+test ('elemF', () => {
+  expect (Maybe.elemF (Nothing) (3))
+    .toBeFalsy ()
+  expect (Maybe.elemF (Just (2)) (3))
+    .toBeFalsy ()
+  expect (Maybe.elemF (Just (3)) (3))
+    .toBeTruthy ()
+})
+
+test ('sum', () => {
+  expect (Maybe.sum (Just (3)))
+    .toEqual (3)
+  expect (Maybe.sum (Nothing))
+    .toEqual (0)
+})
+
+test ('product', () => {
+  expect (Maybe.product (Just (3)))
+    .toEqual (3)
+  expect (Maybe.product (Nothing))
+    .toEqual (1)
+})
+
+test ('concat', () => {
+  expect (Maybe.concat (Just (List (1, 2, 3))))
+    .toEqual (List (1, 2, 3))
+  expect (Maybe.concat (Nothing))
+    .toEqual (List ())
+})
+
+test ('concatMap', () => {
+  expect (Maybe.concatMap (e => List (e, e)) (Just (3)))
+    .toEqual (List (3, 3))
+  expect (Maybe.concatMap (e => List (e, e)) (Nothing))
+    .toEqual (List ())
+})
+
+test ('and', () => {
+  expect (Maybe.and (Just (true)))
+    .toEqual (true)
+  expect (Maybe.and (Just (false)))
+    .toEqual (false)
+  expect (Maybe.and (Nothing))
+    .toEqual (true)
+})
+
+test ('or', () => {
+  expect (Maybe.or (Just (true)))
+    .toEqual (true)
+  expect (Maybe.or (Just (false)))
+    .toEqual (false)
+  expect (Maybe.or (Nothing))
+    .toEqual (false)
+})
+
+test ('any', () => {
+  expect (Maybe.any (e => e > 3) (Just (5)))
+    .toEqual (true)
+  expect (Maybe.any (e => e > 3) (Just (3)))
+    .toEqual (false)
+  expect (Maybe.any (e => e > 3) (Nothing))
+    .toEqual (false)
+})
+
+test ('all', () => {
+  expect (Maybe.all (e => e > 3) (Just (5)))
+    .toEqual (true)
+  expect (Maybe.all (e => e > 3) (Just (3)))
+    .toEqual (false)
+  expect (Maybe.all (e => e > 3) (Nothing))
+    .toEqual (true)
+})
+
+test ('notElem', () => {
+  expect (Maybe.notElem (3) (Nothing))
+    .toBeTruthy ()
+  expect (Maybe.notElem (3) (Just (2)))
+    .toBeTruthy ()
+  expect (Maybe.notElem (3) (Just (3)))
+    .toBeFalsy ()
+})
+
+test ('find', () => {
+  expect (Maybe.find (e => e > 3) (Just (5)))
+    .toEqual (Just (5))
+  expect (Maybe.find (e => e > 3) (Just (3)))
+    .toEqual (Nothing)
+  expect (Maybe.find (e => e > 3) (Nothing))
+    .toEqual (Nothing)
 })
 
 // ORD
@@ -130,11 +759,11 @@ test ('lte', () => {
 // SEMIGROUP
 
 // test('mappend', () => {
-//   expect(Just (List.fromElements(3)).mappend(Just (List.fromElements(2))))
-//     .toEqual(Just (List.fromElements(3, 2)))
-//   expect(Just (List.fromElements(3)).mappend(Nothing))
-//     .toEqual(Just (List.fromElements(3)))
-//   expect(Nothing.mappend(Just (List.fromElements(2))))
+//   expect(Just (List(3)).mappend(Just (List(2))))
+//     .toEqual(Just (List(3, 2)))
+//   expect(Just (List(3)).mappend(Nothing))
+//     .toEqual(Just (List(3)))
+//   expect(Nothing.mappend(Just (List(2))))
 //     .toEqual(Nothing)
 //   expect(Nothing.mappend(Nothing))
 //     .toEqual(Nothing)
@@ -157,10 +786,6 @@ test ('listToMaybe', () => {
 })
 
 test ('maybeToList', () => {
-  expect (typeof Foldable)
-    .toBe ("object")
-  expect (typeof Maybe.maybeToList)
-    .toBe ("function")
   expect (Maybe.maybeToList (Just (3)))
     .toEqual (List (3))
   expect (Maybe.maybeToList (Nothing))
@@ -168,7 +793,6 @@ test ('maybeToList', () => {
 })
 
 test ('catMaybes', () => {
-  // @ts-ignore
   expect (Maybe.catMaybes (List (Just (3), Just (2), Nothing, Just (1))))
     .toEqual (List (3, 2, 1))
 })

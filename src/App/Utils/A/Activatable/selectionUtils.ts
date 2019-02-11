@@ -1,10 +1,7 @@
 import { pipe } from "ramda";
-import { alt } from "../../../../Control/Applicative";
-import { bind, bindF, liftM2 } from "../../../../Control/Monad";
-import { elemF, find, foldl } from "../../../../Data/Foldable";
 import { fmap } from "../../../../Data/Functor";
-import { consF, List } from "../../../../Data/List";
-import { ensure, fromMaybe, Just, mapMaybe, Maybe } from "../../../../Data/Maybe";
+import { consF, find, foldl, List } from "../../../../Data/List";
+import { altF, bind, bindF, elemF, ensure, fromMaybe, Just, liftM2, mapMaybe, Maybe } from "../../../../Data/Maybe";
 import { alter, OrderedMap } from "../../../../Data/OrderedMap";
 import { isRecord, Record } from "../../../../Data/Record";
 import { ActivatableDependent } from "../../../Models/ActiveEntries/ActivatableDependent";
@@ -37,11 +34,7 @@ export const findSelectOption =
  * Returns `Nothing` if not found.
  * @param obj The entry.
  */
-export const getSelectOptionName =
-  (obj: Activatable) =>
-  (id: Maybe<string | number>) =>
-    fmap (name)
-         (findSelectOption (obj) (id))
+export const getSelectOptionName = (obj: Activatable) => pipe (findSelectOption (obj), fmap (name))
 
 /**
  * Get a selection option's cost with the given id from given wiki entry.
@@ -81,9 +74,10 @@ export const getActiveSecondarySelections =
             (map)
             (liftM2<string | number, string | number, SecondarySelections>
               (id => id2 => alter<List<string | number>>
-                (secondaries => alt (fmap (consF (id2))
-                                          (secondaries))
-                                    (Just (List (id2))))
+                (pipe (
+                  fmap (consF (id2)),
+                  altF (Just (List (id2)))
+                ))
                 (id)
                 (map))
               (sid (selection))
@@ -97,7 +91,8 @@ export const getActiveSecondarySelections =
  * Get all `DependencyObject.sid` values from the given instance.
  * @param obj The entry.
  */
-export const getRequiredSelections =
+export const getRequiredSelections:
+  (m: Maybe<Record<ActivatableDependent>>) => Maybe<List<string | number | List<number>>> =
   fmap (
     pipe (
       dependencies,

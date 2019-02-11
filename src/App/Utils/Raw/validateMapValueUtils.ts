@@ -1,12 +1,10 @@
 import { pipe } from "ramda";
-import { bindF, liftM2, mapM } from "../../../Control/Monad";
 import { Either, maybeToEither_ } from "../../../Data/Either";
 import { equals } from "../../../Data/Eq";
-import { length } from "../../../Data/Foldable";
 import { fmap } from "../../../Data/Functor";
 import { inRange } from "../../../Data/Ix";
-import { Cons, List, notNullStr, splitOn } from "../../../Data/List";
-import { ensure, fromJust, fromMaybe, isNothing, Just, Maybe, Nothing } from "../../../Data/Maybe";
+import { Cons, length, List, notNullStr, splitOn } from "../../../Data/List";
+import { bindF, ensure, fromJust, fromMaybe, isNothing, Just, liftM2, mapM, Maybe, Nothing } from "../../../Data/Maybe";
 import { fromList, OrderedSet } from "../../../Data/OrderedSet";
 import { fromBinary, fromBoth, Pair } from "../../../Data/Pair";
 import { show } from "../../../Data/Show";
@@ -41,7 +39,7 @@ export const bindOptional =
 const mapList =
   (del: string) =>
   <A> (f: (x: string) => Maybe<A>) =>
-    pipe (splitOn (del), mapM ("Maybe") (f))
+    pipe (splitOn (del), mapM (f))
 
 export const mensureMapList =
   (del: string) =>
@@ -63,7 +61,7 @@ const mapFixedListBindAfter =
   (f: (x: string) => Maybe<A>) =>
     pipe (
       splitOn (del),
-      mapM ("Maybe") (f),
+      mapM (f),
       bindF<List<A>, List<A>> (pred)
     )
 
@@ -88,7 +86,7 @@ const mapFixedList =
   (del: string) =>
   <A> (f: (x: string) => Maybe<A>) =>
   (x: string) => Maybe<List<A>> =>
-    mapFixedListBindAfter (ensure<List<any>> (pipe (length, equals (len))))
+    mapFixedListBindAfter (ensure (pipe (length, equals (len))))
 
 export const mensureMapFixedList =
   (len: number) =>
@@ -109,7 +107,7 @@ export const mensureMapFixedListOptional =
 const mapSet =
   (del: string) =>
   <A> (f: (x: string) => Maybe<A>) =>
-    pipe (splitOn (del), mapM ("Maybe") (f), fmap (fromList))
+    pipe (splitOn (del), mapM (f), fmap (fromList))
 
 export const mensureMapSetOptional =
   (del: string) =>

@@ -1,11 +1,10 @@
 import { pipe } from "ramda";
-import { pure } from "../../../Control/Applicative";
-import { elem, foldr, maximum, minimum, sum } from "../../../Data/Foldable";
 import { cnst, ident } from "../../../Data/Function";
 import { fmap } from "../../../Data/Functor";
-import { consF, countWith, List, maximumNonNegative } from "../../../Data/List";
-import { Just, maybe, Maybe, Nothing } from "../../../Data/Maybe";
+import { consF, countWith, foldr, List, maximum, maximumNonNegative, minimum } from "../../../Data/List";
+import { elem, Just, maybe, Maybe, Nothing, sum } from "../../../Data/Maybe";
 import { lookupF, OrderedMap } from "../../../Data/OrderedMap";
+import { } from "../../../Data/OrderedSet";
 import { fromBoth, Pair } from "../../../Data/Pair";
 import { Record } from "../../../Data/Record";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
@@ -53,7 +52,7 @@ export const getInitialMaximumList =
       consF (8),
       maximum,
       add (2),
-      pure ("List")
+      List.pure
     )
 
 /**

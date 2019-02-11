@@ -1,16 +1,14 @@
 import { pipe } from "ramda";
 import { IdPrefixes } from "../../../../constants/IdPrefixes";
-import { bindF } from "../../../../Control/Monad";
 import { equals } from "../../../../Data/Eq";
-import { all, and, any, concat, elem, elemF, foldl, or, toList } from "../../../../Data/Foldable";
 import { flip, join, on, thrush } from "../../../../Data/Function";
 import { fmap } from "../../../../Data/Functor";
 import { compare } from "../../../../Data/Int";
 import { set } from "../../../../Data/Lens";
-import { ifoldl, isList, List, map, sortBy, subscript } from "../../../../Data/List";
-import { catMaybes, ensure, fromJust, isJust, isNothing, Just, Maybe, maybe, maybeToList, Nothing } from "../../../../Data/Maybe";
+import { all, any, concat, elem, elemF, foldl, ifoldl, isList, List, map, sortBy, subscript } from "../../../../Data/List";
+import { and, bindF, catMaybes, ensure, fromJust, isJust, isNothing, Just, Maybe, maybe, maybeToList, Nothing, or } from "../../../../Data/Maybe";
 import { Ordering } from "../../../../Data/Ord";
-import { lookupF, OrderedMap } from "../../../../Data/OrderedMap";
+import { lookupF, OrderedMap, toList } from "../../../../Data/OrderedMap";
 import { fst, Pair, snd } from "../../../../Data/Pair";
 import { Record } from "../../../../Data/Record";
 import { ActivatableDependent, isActivatableDependent, isMaybeActivatableDependent } from "../../../Models/ActiveEntries/ActivatableDependent";
@@ -59,7 +57,7 @@ const getAllRaceEntries =
       race,
       bindF (lookupF (races (wiki))),
       fmap (
-        (selectedRace: Record<Race>) => concat (
+        selectedRace => concat (
           List (
             Race.A.stronglyRecommendedAdvantages (selectedRace),
             Race.A.automaticAdvantages (selectedRace),
@@ -78,7 +76,7 @@ const getAllCultureEntries =
       culture,
       bindF (lookupF (cultures (wiki))),
       fmap (
-        (selectedCulture: Record<Culture>) => concat (
+        selectedCulture => concat (
           List (
             Culture.A.commonAdvantages (selectedCulture),
             Culture.A.commonDisadvantages (selectedCulture)
@@ -93,7 +91,7 @@ const getAllProfessionEntries =
       profession,
       bindF (lookupF (professions (wiki))),
       fmap (
-        (selectedProfession: Record<Profession>) => concat (
+        selectedProfession => concat (
           List (
             Profession.A.suggestedAdvantages (selectedProfession),
             Profession.A.suggestedDisadvantages (selectedProfession)
@@ -133,7 +131,7 @@ const isRaceValid =
                                        (maybeCurrentRace))
     }
 
-    return elem (prefixId (IdPrefixes.RACES) (value)) (maybeCurrentRace)
+    return Maybe.elem (prefixId (IdPrefixes.RACES) (value)) (maybeCurrentRace)
   }
 
 const isCultureValid =
@@ -152,7 +150,7 @@ const isCultureValid =
       )
     }
 
-    return elem (prefixId (IdPrefixes.CULTURES) (value)) (maybeCurrentCulture)
+    return Maybe.elem (prefixId (IdPrefixes.CULTURES) (value)) (maybeCurrentCulture)
   }
 
 const hasSamePactCategory =
@@ -200,18 +198,18 @@ const hasNeededPactLevel = (state: Record<Pact>) => (req: Record<PactRequirement
 const isPactValid =
   (maybePact: Maybe<Record<Pact>>) => (req: Record<PactRequirement>): boolean =>
     or (fmap<Record<Pact>, boolean> (currentPact => isPactFromStateValid (currentPact)
-                                                    && hasSamePactCategory (currentPact) (req)
-                                                    && hasNeededPactType (currentPact) (req)
-                                                    && hasNeededPactDomain (currentPact) (req)
-                                                    && hasNeededPactLevel (currentPact) (req))
-                                    (maybePact))
+                                           && hasSamePactCategory (currentPact) (req)
+                                           && hasNeededPactType (currentPact) (req)
+                                           && hasNeededPactDomain (currentPact) (req)
+                                           && hasNeededPactLevel (currentPact) (req))
+                                         (maybePact))
 
 const isPrimaryAttributeValid =
   (state: HeroModelRecord) => (req: Record<RequirePrimaryAttribute>): boolean =>
     or (fmap (pipe (
                lookupF (attributes (state)),
                fmap (AttributeDependent.A.value),
-               elem (RequirePrimaryAttribute.A.value (req))
+               Maybe.elem (RequirePrimaryAttribute.A.value (req))
              ))
              (getPrimaryAttributeId (specialAbilities (state))
                                     (RequirePrimaryAttribute.A.type (req))))
@@ -249,9 +247,9 @@ const isOneOfListActiveSelection =
   (activeSelections: Maybe<List<string | number>>) =>
   (req: Record<RequireActivatable>) =>
   (sid: List<number>): boolean =>
-    elem (RequireActivatable.A.active (req))
-         (fmap<List<string | number>, boolean> (pipe (elemF, any, thrush (sid)))
-                                               (activeSelections))
+    Maybe.elem (RequireActivatable.A.active (req))
+               (fmap<List<string | number>, boolean> (pipe (List.elemF, any, thrush (sid)))
+                                                     (activeSelections))
 
 /**
  * Check if the passed selection id is part of the currently active selections
@@ -261,8 +259,8 @@ const isSingleActiveSelection =
   (activeSelections: Maybe<List<string | number>>) =>
   (req: Record<RequireActivatable>) =>
   (sid: string | number): boolean =>
-    elem (RequireActivatable.A.active (req))
-         (fmap (elem (sid)) (activeSelections))
+    Maybe.elem (RequireActivatable.A.active (req))
+               (fmap (elem (sid)) (activeSelections))
 
 const isActiveSelection =
   (activeSelections: Maybe<List<string | number>>) =>
@@ -302,11 +300,11 @@ const isActivatableValid =
     else {
       const sid = RequireActivatable.A.sid (req)
 
-      if (elem<Wiki.SID> ("sel") (sid)) {
+      if (Maybe.elem<Wiki.SID> ("sel") (sid)) {
         return true
       }
 
-      if (elem<Wiki.SID> ("GR") (sid)) {
+      if (Maybe.elem<Wiki.SID> ("GR") (sid)) {
         return and (pipe (
                            bindF<Data.Dependent, Record<ActivatableDependent>>
                              (ensure (isActivatableDependent)),
@@ -426,7 +424,7 @@ export const validateLevel =
       (max => dep =>
           // If `dep` prohibits higher level
           typeof dep === "object"
-          && elem (false) (DependencyObject.A.active (dep))
+          && Maybe.elem (false) (DependencyObject.A.active (dep))
           ? maybe<Maybe<number>>
             (max)
             (pipe (dec, level => Just (maybe<number> (level) (min (level)) (max))))

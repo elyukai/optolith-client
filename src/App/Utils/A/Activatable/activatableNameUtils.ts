@@ -9,13 +9,10 @@
  */
 
 import { pipe } from "ramda";
-import { altF_ } from "../../../../Control/Applicative";
-import { bind, bindF, liftM2 } from "../../../../Control/Monad";
-import { any, elem, elemF, find, length } from "../../../../Data/Foldable";
 import { thrush } from "../../../../Data/Function";
 import { fmap } from "../../../../Data/Functor";
-import { appendStr, groupByKey, intercalate, List, map, replaceStr, subscript, subscriptF } from "../../../../Data/List";
-import { ensure, fromMaybe, isJust, Just, listToMaybe, maybe, Maybe, Nothing } from "../../../../Data/Maybe";
+import { appendStr, elem, find, groupByKey, intercalate, length, List, map, replaceStr, subscript, subscriptF } from "../../../../Data/List";
+import { altF_, any, bind, bindF, elemF, ensure, fromMaybe, isJust, Just, liftM2, listToMaybe, maybe, Maybe, Nothing } from "../../../../Data/Maybe";
 import { elems, lookup, lookupF } from "../../../../Data/OrderedMap";
 import { Record } from "../../../../Data/Record";
 import { showP } from "../../../../Data/Show";
@@ -152,28 +149,27 @@ const getEntrySpecificNameAddition =
                       sid,
                       bindF (ensure (isString)),
                       bindF (lookupF (skills (wiki))),
-                      bindF ((skill: Record<Skill>) =>
-                              pipe (
-                                     sid2,
+                      bindF (skill => pipe (
+                                        sid2,
 
-                                     // If input string use input
-                                     bindF (ensure (isString)),
+                                        // If input string use input
+                                        bindF (ensure (isString)),
 
-                                     // Otherwise lookup application name
-                                     altF_ (() => pipe (
-                                                         applications,
-                                                         find<Record<Application>> (pipe (
-                                                           Application.A.id,
-                                                           elemF (sid2 (hero_entry))
-                                                         )),
-                                                         fmap (name)
-                                                       )
-                                                       (skill)),
+                                        // Otherwise lookup application name
+                                        altF_ (() => pipe (
+                                                            applications,
+                                                            find<Record<Application>> (pipe (
+                                                              Application.A.id,
+                                                              elemF (sid2 (hero_entry))
+                                                            )),
+                                                            fmap (name)
+                                                          )
+                                                          (skill)),
 
-                                     // Merge skill name and application name
-                                     fmap (appl => `${name (skill)}: ${appl}`)
-                                   )
-                                   (hero_entry))
+                                        // Merge skill name and application name
+                                        fmap (appl => `${name (skill)}: ${appl}`)
+                                      )
+                                      (hero_entry))
                     )
                     (hero_entry)
 
@@ -183,24 +179,23 @@ const getEntrySpecificNameAddition =
         return pipe (
                       sid,
                       findSelectOption (wiki_entry),
-                      bindF ((ext: Record<SelectOption>) =>
-                              pipe (
-                                     bindF ((target_id: string) => {
-                                       const acc =
-                                         id (hero_entry) === "SA_414"
-                                           ? spells
-                                           : liturgicalChants
+                      bindF (ext => pipe (
+                                           bindF ((target_id: string) => {
+                                             const acc =
+                                               id (hero_entry) === "SA_414"
+                                                 ? spells
+                                                 : liturgicalChants
 
-                                       return lookupF<string, ActivatableSkillEntry>
-                                         (acc (wiki))
-                                         (target_id)
-                                     }),
-                                     fmap (
-                                       target_entry =>
-                                         `${name (target_entry)}: ${name (ext)}`
-                                     )
-                                   )
-                                   (target (ext))
+                                             return lookupF<string, ActivatableSkillEntry>
+                                               (acc (wiki))
+                                               (target_id)
+                                           }),
+                                           fmap (
+                                             target_entry =>
+                                               `${name (target_entry)}: ${name (ext)}`
+                                           )
+                                         )
+                                         (target (ext))
                       )
                     )
                     (hero_entry)
@@ -237,19 +232,18 @@ const getEntrySpecificNameAddition =
                         thrush<Maybe<string | number>, Maybe<Record<SelectOption>>>
                           (sid (hero_entry))
                       )),
-                      bindF ((lang: Record<SelectOption>) =>
-                              pipe (
-                                     sid2,
-                                     bindF (
-                                       ifElse<string | number, string, Maybe<string>>
-                                         (isString)
-                                         (Just)
-                                         (spec_id => bind (specializations (lang))
-                                                          (subscriptF (spec_id - 1)))
-                                     ),
-                                     fmap (spec => `${name (lang)}: ${spec}`)
-                                   )
-                                   (hero_entry))
+                      bindF (lang => pipe (
+                                            sid2,
+                                            bindF (
+                                              ifElse<string | number, string, Maybe<string>>
+                                                (isString)
+                                                (Just)
+                                                (spec_id => bind (specializations (lang))
+                                                                 (subscriptF (spec_id - 1)))
+                                            ),
+                                            fmap (spec => `${name (lang)}: ${spec}`)
+                                          )
+                                          (hero_entry))
                     )
                     (wiki)
 

@@ -1,5 +1,5 @@
 import { IdPrefixes } from "../../../../constants/IdPrefixes";
-import { liftM2 } from "../../../../Control/Monad";
+import { liftM2 } from "../../../../Data/Either";
 import { fmap } from "../../../../Data/Functor";
 import { fromArray, List, lookup, map, notNullStr } from "../../../../Data/List";
 import { ensure, Just, Maybe, maybe_, Nothing } from "../../../../Data/Maybe";
@@ -118,7 +118,7 @@ export const toSkill =
       const applicationsInput = lookup_l10n ("input")
 
       const echeck = fmap (map (prefixId (IdPrefixes.ATTRIBUTES)))
-                          (checkSkillCheck ("check"))
+                                 (checkSkillCheck ("check"))
 
       const eic = checkUnivNaturalNumber ("ic")
 

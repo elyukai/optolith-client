@@ -8,7 +8,7 @@
  */
 
 import { inc } from "../App/Utils/mathUtils";
-import { cons, List, Nil } from "./List";
+import { cons, List } from "./List";
 import { fst, Pair, snd } from "./Pair";
 import { show } from "./Show";
 
@@ -22,7 +22,7 @@ import { show } from "./Show";
  */
 export const range =
   (b: Pair<number, number>): List<number> =>
-    buildRangeList (snd (b)) (fst (b)) (Nil)
+    buildRangeList (snd (b)) (fst (b)) (List.empty)
 
 /**
  * `index :: Int a => (a, a) -> a -> Int`

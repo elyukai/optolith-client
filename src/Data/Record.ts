@@ -7,12 +7,10 @@
  * @author Lukas Obermann
  */
 
-import { pipe } from "ramda";
-import { not } from "../App/Utils/not";
-import { elem, foldl } from "./Foldable";
+import { not, pipe } from "ramda";
 import { Lens, lens } from "./Lens";
 import { isJust, isMaybe, isNothing, Maybe, Nothing } from "./Maybe";
-import { fromArray, OrderedSet } from "./OrderedSet";
+import { foldl, fromArray, OrderedSet } from "./OrderedSet";
 import { show } from "./Show";
 
 
@@ -270,7 +268,7 @@ const makeAccessors =
  * Is the key a member of the record?
  */
 export const member =
-  (key: string) => (mp: Record<any>): boolean => elem (key) (mp .keys)
+  (key: string) => (mp: Record<any>): boolean => OrderedSet.member (key) (mp .keys)
 
 /**
  * `notMember :: String -> Record a -> Bool`

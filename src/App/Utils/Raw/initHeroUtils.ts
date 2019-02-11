@@ -1,10 +1,9 @@
 import { pipe } from "ramda";
 import { Categories } from "../../../constants/Categories";
-import { elem } from "../../../Data/Foldable";
 import { ident } from "../../../Data/Function";
 import { fmap } from "../../../Data/Functor";
 import { fromArray, List } from "../../../Data/List";
-import { Maybe, Nothing } from "../../../Data/Maybe";
+import { elem, Maybe } from "../../../Data/Maybe";
 import { foldlWithKey, OrderedMap } from "../../../Data/OrderedMap";
 import { insert, OrderedSet } from "../../../Data/OrderedSet";
 import { Record, StringKeyObject } from "../../../Data/Record";
@@ -244,9 +243,9 @@ const createHeroObject = (hero: Raw.RawHero): HeroModelRecord =>
       : OrderedMap.empty,
 
     isInPetCreation: false,
-    blessedStyleDependencies: Nothing,
-    combatStyleDependencies: Nothing,
-    magicalStyleDependencies: Nothing,
+    blessedStyleDependencies: List.empty,
+    combatStyleDependencies: List.empty,
+    magicalStyleDependencies: List.empty,
   })
 
 const getActivatableDependent =

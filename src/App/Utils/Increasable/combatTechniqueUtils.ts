@@ -1,10 +1,7 @@
 import { pipe } from "ramda";
-import { guard } from "../../../Control/Applicative";
-import { then } from "../../../Control/Monad";
-import { elem, foldl, maximum, sum } from "../../../Data/Foldable";
 import { fmap } from "../../../Data/Functor";
-import { cons, List } from "../../../Data/List";
-import { Just, Maybe, maybe } from "../../../Data/Maybe";
+import { cons, elem, foldl, List, maximum } from "../../../Data/List";
+import { guard, Just, Maybe, maybe, sum, then } from "../../../Data/Maybe";
 import { lookupF } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { SkillDependent } from "../../Models/ActiveEntries/SkillDependent";
@@ -54,8 +51,7 @@ export const getParry =
   (wikiEntry: Record<CombatTechnique>) =>
   (maybeStateEntry: Maybe<Record<SkillDependent>>): Maybe<number> =>
     then
-      (guard ("Maybe")
-             (gr (wikiEntry) !== 2 && id (wikiEntry) !== "CT_6" && id (wikiEntry) !== "CT_8"))
+      (guard (gr (wikiEntry) !== 2 && id (wikiEntry) !== "CT_6" && id (wikiEntry) !== "CT_8"))
       (Just (
         Math.round (getCombatTechniqueRating (maybeStateEntry) / 2)
         + getPrimaryAttributeMod (state) (primary (wikiEntry))
@@ -77,7 +73,7 @@ export const isIncreaseDisabled =
     const bonus = pipe (
                          getActiveSelectionsMaybe,
                          fmap (elem<string | number> (id (instance))),
-                         elem (true),
+                         Maybe.elem (true),
                          x => x ? 1 : 0
                        )
                        (exceptionalSkill)

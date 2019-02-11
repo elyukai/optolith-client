@@ -1,9 +1,8 @@
 import { pipe } from "ramda";
 import { IdPrefixes } from "../../../../constants/IdPrefixes";
-import { length } from "../../../../Data/Foldable";
 import { fmap } from "../../../../Data/Functor";
-import { fromArray, List, map, Nil } from "../../../../Data/List";
-import { ensure, fromMaybe, Just, Maybe, maybe, Nothing } from "../../../../Data/Maybe";
+import { empty, fromArray, length, map } from "../../../../Data/List";
+import { ensure, fromMaybe, Just, maybe, Maybe, Nothing } from "../../../../Data/Maybe";
 import { Record } from "../../../../Data/Record";
 import { ProfessionRequireActivatable, RequireActivatable } from "../../../Models/Wiki/prerequisites/ActivatableRequirement";
 import { CultureRequirement } from "../../../Models/Wiki/prerequisites/CultureRequirement";
@@ -211,7 +210,7 @@ const toNaturalNumberPairOptional =
 
 export const stringToBlessings =
   mensureMapListBindAfterOptional<number>
-    (ensure<List<number>> (pipe (length, len => len === 9 || len === 12)))
+    (ensure (pipe (length, len => len === 9 || len === 12)))
     ("&")
     (`${Expect.List (Expect.NaturalNumber)} { length = 9 | 12 }`)
     (toNatural)
@@ -377,47 +376,47 @@ export const toProfession =
           ap: rs.ecost,
 
           dependencies:
-            fromMaybe<Profession["dependencies"]> (Nil) (rs.edependencies),
+            fromMaybe<Profession["dependencies"]> (empty) (rs.edependencies),
 
           prerequisites:
-            fromMaybe<Profession["prerequisites"]> (Nil) (rs.eprerequisites),
+            fromMaybe<Profession["prerequisites"]> (empty) (rs.eprerequisites),
 
           prerequisitesStart,
           prerequisitesEnd,
 
           selections:
-            fromMaybe<Profession["selections"]> (Nil) (rs.eselections),
+            fromMaybe<Profession["selections"]> (empty) (rs.eselections),
 
           specialAbilities:
-            fromMaybe<Profession["specialAbilities"]> (Nil) (rs.especialAbilities),
+            fromMaybe<Profession["specialAbilities"]> (empty) (rs.especialAbilities),
 
           combatTechniques:
             maybe<Profession["combatTechniques"]>
-              (Nil)
+              (empty)
               (map (pairToIncreaseSkill (IdPrefixes.COMBAT_TECHNIQUES)))
               (rs.ecombatTechniques),
 
           skills:
             maybe<Profession["skills"]>
-              (Nil)
+              (empty)
               (map (pairToIncreaseSkill (IdPrefixes.SKILLS)))
               (rs.eskills),
 
           spells:
             maybe<Profession["spells"]>
-              (Nil)
+              (empty)
               (map (pairToIncreaseSkill (IdPrefixes.SPELLS)))
               (rs.espells),
 
           liturgicalChants:
             maybe<Profession["liturgicalChants"]>
-              (Nil)
+              (empty)
               (map (pairToIncreaseSkill (IdPrefixes.LITURGICAL_CHANTS)))
               (rs.eliturgicalChants),
 
           blessings:
             maybe<Profession["blessings"]>
-              (Nil)
+              (empty)
               (map (prefixId (IdPrefixes.BLESSINGS)))
               (rs.eblessings),
 

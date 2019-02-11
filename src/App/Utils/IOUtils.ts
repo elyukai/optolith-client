@@ -1,7 +1,6 @@
 import { remote } from "electron";
 import * as fs from "fs";
-import { length } from "../../Data/Foldable";
-import { List, subscript } from "../../Data/List";
+import { length, List, subscript } from "../../Data/List";
 import { fromMaybe, Maybe } from "../../Data/Maybe";
 import { bimap, fromBoth, fst, Pair, snd } from "../../Data/Pair";
 import { divideBy, inc } from "./mathUtils";

@@ -8,8 +8,7 @@
 
 import { pipe } from "ramda";
 import { isEither, isRight } from "./Either";
-import { fnull } from "./Foldable";
-import { intercalate, isList, map, toArray, trimStart } from "./List";
+import { fnull, intercalate, isList, map, toArray, trimStart } from "./List";
 import { isJust, isMaybe } from "./Maybe";
 import { isOrderedMap } from "./OrderedMap";
 import { isOrderedSet } from "./OrderedSet";
