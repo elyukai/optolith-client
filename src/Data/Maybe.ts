@@ -448,7 +448,7 @@ export const fnull = isNothing
  * implementation is optimized for structures that are similar to cons-lists,
  * because there is no general way to do better.
  */
-export const length = (x: Maybe<Some>): number => isJust (x) ? 1 : 0
+export const flength = (x: Maybe<Some>): number => isJust (x) ? 1 : 0
 
 /**
  * `elem :: Eq a => a -> Maybe a -> Bool`
@@ -901,7 +901,7 @@ Maybe.foldr = foldr,
 Maybe.foldl = foldl,
 Maybe.toList = toList,
 Maybe.fnull = fnull,
-Maybe.length = length,
+Maybe.flength = flength,
 Maybe.elem = elem,
 Maybe.elemF = elemF,
 Maybe.sum = sum,

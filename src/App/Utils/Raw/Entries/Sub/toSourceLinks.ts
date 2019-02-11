@@ -1,6 +1,6 @@
 import { Either } from "../../../../../Data/Either";
 import { flip } from "../../../../../Data/Function";
-import { Cons, length, List, splitOn } from "../../../../../Data/List";
+import { Cons, flength, List, splitOn } from "../../../../../Data/List";
 import { bindF, ensure, liftM2, listToMaybe, Maybe, maybe, Nothing } from "../../../../../Data/Maybe";
 import { fromBoth, Pair } from "../../../../../Data/Pair";
 import { Record } from "../../../../../Data/Record";
@@ -25,7 +25,7 @@ export const toSourceLinks =
                                   (x => {
                                     const xs = splitOn (",") (x) as Cons<string>
 
-                                    if (![2, 3] .includes (length (xs))) {
+                                    if (![2, 3] .includes (flength (xs))) {
                                       return Nothing
                                     }
 

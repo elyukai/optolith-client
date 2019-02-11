@@ -3,7 +3,7 @@ import { Either, maybeToEither_ } from "../../../Data/Either";
 import { equals } from "../../../Data/Eq";
 import { fmap } from "../../../Data/Functor";
 import { inRange } from "../../../Data/Ix";
-import { Cons, length, List, notNullStr, splitOn } from "../../../Data/List";
+import { Cons, flength, List, notNullStr, splitOn } from "../../../Data/List";
 import { bindF, ensure, fromJust, fromMaybe, isNothing, Just, liftM2, mapM, Maybe, Nothing } from "../../../Data/Maybe";
 import { fromList, OrderedSet } from "../../../Data/OrderedSet";
 import { fromBinary, fromBoth, Pair } from "../../../Data/Pair";
@@ -86,7 +86,7 @@ const mapFixedList =
   (del: string) =>
   <A> (f: (x: string) => Maybe<A>) =>
   (x: string) => Maybe<List<A>> =>
-    mapFixedListBindAfter (ensure (pipe (length, equals (len))))
+    mapFixedListBindAfter (ensure (pipe (flength, equals (len))))
 
 export const mensureMapFixedList =
   (len: number) =>
@@ -261,7 +261,7 @@ const mapPairList =
   <B> (toSnd: (x: string) => Maybe<B>) =>
     pipe (
       splitOn (delPair),
-      ensure<List<string>> (pipe (length, equals (2))),
+      ensure<List<string>> (pipe (flength, equals (2))),
       bindF (
         p =>
         liftM2<A, B, Pair<A, B>>

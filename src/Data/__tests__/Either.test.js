@@ -236,10 +236,10 @@ test ('fnull', () => {
     .toEqual (true)
 })
 
-test ('length', () => {
-  expect (Either.length (Right (3)))
+test ('flength', () => {
+  expect (Either.flength (Right (3)))
     .toEqual (1)
-  expect (Either.length (Left ('a')))
+  expect (Either.flength (Left ('a')))
     .toEqual (0)
 })
 

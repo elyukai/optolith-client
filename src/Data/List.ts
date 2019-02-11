@@ -324,7 +324,7 @@ export const fnull = isNil
  * implementation is optimized for structures that are similar to cons-lists,
  * because there is no general way to do better.
  */
-export const length =
+export const flength =
   (xs: List<any>): number =>
     foldr<any, number> (() => inc) (0) (xs)
 
@@ -1183,7 +1183,7 @@ const sortBySortedMerge =
   }
 
 const sortByGetMiddle = <A> (xs: List<A>): Pair<List<A>, List<A>> =>
-  splitAt<A> (length (xs) / 2) (xs)
+  splitAt<A> (flength (xs) / 2) (xs)
 
 
 // LIST.INDEX
@@ -1806,7 +1806,7 @@ export const isList =
  * predicate.
  */
 export const countWith =
-  <A> (pred: (x: A) => boolean) => pipe (filter (pred), length)
+  <A> (pred: (x: A) => boolean) => pipe (filter (pred), flength)
 
 /**
  * The largest element of a non-empty structure. The minimum value returned is
@@ -1866,7 +1866,7 @@ List.foldr1 = foldr1
 List.foldl1 = foldl1
 List.toList = toList
 List.fnull = fnull
-List.length = length
+List.flength = flength
 List.elem = elem
 List.elemF = elemF
 List.sum = sum

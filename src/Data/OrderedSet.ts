@@ -192,7 +192,7 @@ export const fnull = (xs: OrderedSet<any>): boolean => xs .value .size === 0
  * implementation is optimized for structures that are similar to cons-lists,
  * because there is no general way to do better.
  */
-export const length = (xs: OrderedSet<any>): number => xs .value .size
+export const flength = (xs: OrderedSet<any>): number => xs .value .size
 
 /**
  * `elem :: Eq a => a -> Set a -> Bool`
@@ -430,7 +430,7 @@ export const notMember = notElem
  *
  * The number of elements in the set.
  */
-export const size = length
+export const size = flength
 
 
 // COMBINE
@@ -548,7 +548,7 @@ export const OrderedSet = {
   foldl1,
   toList,
   fnull,
-  length,
+  flength,
   elem,
   elemF,
   sum,

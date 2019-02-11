@@ -1,7 +1,8 @@
 import { pipe } from "ramda";
 import { thrush } from "../../Data/Function";
+import { fmap } from "../../Data/Functor";
 import { fnull, List, subscript } from "../../Data/List";
-import { fmap, maybe, Maybe, normalize, sum } from "../../Data/Maybe";
+import { maybe, Maybe, normalize, sum } from "../../Data/Maybe";
 import { toOrdering } from "../../Data/Ord";
 import { L10n, L10nRecord } from "../Models/Wiki/L10n";
 
@@ -86,7 +87,11 @@ export const localizeNumber = (localeId: string) => (num: number) => num .toLoca
  */
 export const localizeSize =
   (localeId: string) =>
-    pipe (fmap<number, number> (size => localeId === "en-US" ? size * 0.4 : size), sum)
+    pipe (
+      fmap<number, number> (size => localeId === "en-US" ? size * 0.4 : size) as
+        (m: Maybe<number>) => Maybe<number>,
+      sum
+    )
 
 /**
  * If the selected language is English kilograms will be converted to pounds.
@@ -95,7 +100,11 @@ export const localizeSize =
  */
 export const localizeWeight =
   (localeId: string): ((x: number | Maybe<number>) => number) =>
-    pipe (normalize, fmap (weight => localeId === "en-US" ? weight * 2 : weight), sum)
+    pipe (
+      normalize,
+      fmap ((weight: number) => localeId === "en-US" ? weight * 2 : weight),
+      sum
+    )
 
 /**
  * Takes a locale and returns a locale-aware string compare function.

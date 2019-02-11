@@ -1,4 +1,4 @@
-import { any, filter, length, List } from "../../Data/List";
+import { any, filter, flength, List } from "../../Data/List";
 import { Record } from "../../Data/Record";
 import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
 import { HeroModel, HeroModelRecord } from "../Models/Hero/HeroModel";
@@ -29,7 +29,7 @@ export const countActiveGroupEntries =
   (wiki: WikiModelRecord) =>
   (state: HeroModelRecord) =>
   (...groups: number[]): number =>
-    length (getActiveGroupEntries (wiki) (state) (...groups))
+    flength (getActiveGroupEntries (wiki) (state) (...groups))
 
 /**
  * Checks if there is at least one active special ability `ActivatableDependent`

@@ -1,6 +1,6 @@
 import { remote } from "electron";
 import * as fs from "fs";
-import { length, List, subscript } from "../../Data/List";
+import { flength, List, subscript } from "../../Data/List";
 import { fromMaybe, Maybe } from "../../Data/Maybe";
 import { bimap, fromBoth, fst, Pair, snd } from "../../Data/Pair";
 import { divideBy, inc } from "./mathUtils";
@@ -95,7 +95,7 @@ const byteTags = List ("", "K", "M", "G", "T")
 
 const foldByteLevels =
   (x: Pair<number, number>): Pair<number, number> =>
-    fst (x) < length (byteTags)
+    fst (x) < flength (byteTags)
     && snd (x) > 1023
     ? foldByteLevels (bimap<number, number, number, number> (inc) (divideBy (1024)) (x))
     : x

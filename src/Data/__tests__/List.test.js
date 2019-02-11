@@ -126,9 +126,9 @@ test ('fnull', () => {
   expect (List.fnull (List ())) .toBeTruthy ()
 })
 
-test ('length', () => {
-  expect (List.length (List (3, 2, 1))) .toEqual (3)
-  expect (List.length (List ())) .toEqual (0)
+test ('flength', () => {
+  expect (List.flength (List (3, 2, 1))) .toEqual (3)
+  expect (List.flength (List ())) .toEqual (0)
 })
 
 test ('elem', () => {

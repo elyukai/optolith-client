@@ -1,7 +1,7 @@
 import { pipe } from "ramda";
 import { IdPrefixes } from "../../../../constants/IdPrefixes";
 import { fmap } from "../../../../Data/Functor";
-import { empty, fromArray, length, map } from "../../../../Data/List";
+import { empty, flength, fromArray, map } from "../../../../Data/List";
 import { ensure, fromMaybe, Just, maybe, Maybe, Nothing } from "../../../../Data/Maybe";
 import { Record } from "../../../../Data/Record";
 import { ProfessionRequireActivatable, RequireActivatable } from "../../../Models/Wiki/prerequisites/ActivatableRequirement";
@@ -210,7 +210,7 @@ const toNaturalNumberPairOptional =
 
 export const stringToBlessings =
   mensureMapListBindAfterOptional<number>
-    (ensure (pipe (length, len => len === 9 || len === 12)))
+    (ensure (pipe (flength, len => len === 9 || len === 12)))
     ("&")
     (`${Expect.List (Expect.NaturalNumber)} { length = 9 | 12 }`)
     (toNatural)

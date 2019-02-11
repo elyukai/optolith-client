@@ -1,7 +1,7 @@
 import { pipe } from "ramda";
 import { equals } from "../../../../Data/Eq";
 import { fmap } from "../../../../Data/Functor";
-import { append, consF, filter, find, length, List } from "../../../../Data/List";
+import { append, consF, filter, find, flength, List } from "../../../../Data/List";
 import { altF, ap, bindF, elemF, fromMaybe, Just, liftM2, Maybe, maybe, Nothing } from "../../../../Data/Maybe";
 import { Record } from "../../../../Data/Record";
 import { ActivatableDependent } from "../../../Models/ActiveEntries/ActivatableDependent";
@@ -44,7 +44,7 @@ export const getGeneratedPrerequisites =
                                 (pipe (
                                   active,
                                   filter (pipe (sid, equals (sid (current)))),
-                                  length
+                                  flength
                                 ))
                                 (hero_entry)
 

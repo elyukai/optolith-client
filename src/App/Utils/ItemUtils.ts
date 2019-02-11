@@ -2,7 +2,7 @@ import { pipe } from "ramda";
 import { IdPrefixes } from "../../constants/IdPrefixes";
 import { equals } from "../../Data/Eq";
 import { fmap } from "../../Data/Functor";
-import { all, fromArray, isList, length, List, map } from "../../Data/List";
+import { all, flength, fromArray, isList, List, map } from "../../Data/List";
 import { bindF, ensure, Just, mapMaybe, Maybe, maybe, Nothing, product, sum } from "../../Data/Maybe";
 import { Record } from "../../Data/Record";
 import { show } from "../../Data/Show";
@@ -132,7 +132,7 @@ export const convertToSave =
       pa: toInt (EditItem.A.pa (item)),
       price: toFloat (EditItem.A.price (item)),
       pro: toInt (EditItem.A.pro (item)),
-      range: ensure<List<number>> (pipe (length, equals (3)))
+      range: ensure<List<number>> (pipe (flength, equals (3)))
                                   (mapMaybe (toInt) (EditItem.A.range (item))),
       reloadTime: toInt (EditItem.A.reloadTime (item)),
       stp: toInt (EditItem.A.stp (item)),

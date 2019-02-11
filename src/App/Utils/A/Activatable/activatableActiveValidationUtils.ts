@@ -8,8 +8,9 @@
 import { pipe } from "ramda";
 import { equals } from "../../../../Data/Eq";
 import { flip, thrush } from "../../../../Data/Function";
-import { any, countWith, elem, filter, find, foldl, intersect, isList, length, List, sdelete } from "../../../../Data/List";
-import { alt, altF, bindF, ensure, fmap, fromJust, isJust, Just, liftM2, Maybe, Nothing, or, sum } from "../../../../Data/Maybe";
+import { fmap } from "../../../../Data/Functor";
+import { any, countWith, elem, filter, find, flength, foldl, intersect, isList, List, sdelete } from "../../../../Data/List";
+import { alt, altF, bindF, ensure, fromJust, isJust, Just, liftM2, Maybe, Nothing, or, sum } from "../../../../Data/Maybe";
 import { elems, isOrderedMap, lookupF } from "../../../../Data/OrderedMap";
 import { size } from "../../../../Data/OrderedSet";
 import { Record } from "../../../../Data/Record";
@@ -67,7 +68,7 @@ const isRequiredByOthers =
            any (
              ifElse<ActivatableDependency, boolean, boolean>
                (isBoolean)
-               (e => e && length (adactive (state_entry)) === 1)
+               (e => e && flength (adactive (state_entry)) === 1)
                (e => equals (sid (current_active)) (sid (e))
                  && equals (sid2 (current_active)) (sid2 (e))
                  && equals (tier (current_active)) (tier (e))
@@ -147,7 +148,7 @@ const isRemovalDisabledEntrySpecific =
         const traditions =
           getMagicalTraditions (HeroModel.A.specialAbilities (hero))
 
-        const multiple_traditions = length (traditions) > 1
+        const multiple_traditions = flength (traditions) > 1
 
         // multiple traditions are currently not supported and there must be no
         // active spell or cantrip
@@ -312,7 +313,7 @@ const isRemovalDisabledEntrySpecific =
                        // in the list of possible sids so that one of them can
                        // be removed
                        const multiple_valid_for_dependency =
-                         length (intersect (current_active_selections) (xs)) > 1
+                         flength (intersect (current_active_selections) (xs)) > 1
 
                        // must be negated because it must return `false` if
                        // the dependency says it can be removed

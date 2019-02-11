@@ -3,7 +3,7 @@ import { pipe } from "ramda";
 import * as React from "react";
 import { equals } from "../Data/Eq";
 import { fmap } from "../Data/Functor";
-import { find, length, List, map, toArray } from "../Data/List";
+import { find, flength, List, map, toArray } from "../Data/List";
 import { alt, fromMaybe, isNothing, Maybe, normalize, Nothing, or } from "../Data/Maybe";
 import { fromDefault, Record } from "../Data/Record";
 import { Label } from "./Label";
@@ -54,7 +54,7 @@ export class Dropdown extends React.Component<DropdownProps, DropdownState> {
 
   switch = () => {
     if (!this.state.isOpen && this.containerRef !== null) {
-      const height = length (this.props.options) < 6 ? length (this.props.options) * 33 + 1 : 166
+      const height = flength (this.props.options) < 6 ? flength (this.props.options) * 33 + 1 : 166
 
       const containerRect = this.containerRef.getBoundingClientRect ()
 
@@ -109,7 +109,7 @@ export class Dropdown extends React.Component<DropdownProps, DropdownState> {
     const normalizedValue = normalize (value)
     const normalizedDisabled = or (normalize (disabled))
 
-    const style = isOpen ? (length (options) < 6 ? length (options) * 33 + 1 : 166) : 0
+    const style = isOpen ? (flength (options) < 6 ? flength (options) * 33 + 1 : 166) : 0
 
     const maybeCurrent =
       find<Record<DropdownOption>> (pipe (id, equals (normalizedValue))) (options)
@@ -119,7 +119,7 @@ export class Dropdown extends React.Component<DropdownProps, DropdownState> {
     const downElement = (
       <div style={{ height: style }} className="down">
         <div style={{ height: (style - 2) }}>
-          <Scroll noInnerElement className={length (options) > 5 ? "scroll-active" : ""}>
+          <Scroll noInnerElement className={flength (options) > 5 ? "scroll-active" : ""}>
             {
               toArray (
                 map<Record<DropdownOption>, JSX.Element>

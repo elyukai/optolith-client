@@ -197,7 +197,7 @@ export const fnull =
  * implementation is optimized for structures that are similar to cons-lists,
  * because there is no general way to do better.
  */
-export const length = (xs: OrderedMap<any, any>): number => xs .value .size
+export const flength = (xs: OrderedMap<any, any>): number => xs .value .size
 
 /**
  * `elem :: Eq a => a -> Map k a -> Bool`
@@ -408,7 +408,7 @@ export const mapMEither =
  *
  * The number of elements in the map.
  */
-export const size = length
+export const size = flength
 
 /**
  * `member :: Ord k => k -> Map k a -> Bool`
@@ -1027,7 +1027,7 @@ export const OrderedMap = {
   foldl1,
   toList,
   fnull,
-  length,
+  flength,
   elem,
   elemF,
   sum,

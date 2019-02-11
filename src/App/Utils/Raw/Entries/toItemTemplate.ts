@@ -1,7 +1,8 @@
 import { pipe } from "ramda";
 import { IdPrefixes } from "../../../../constants/IdPrefixes";
-import { Cons, head, length, List } from "../../../../Data/List";
-import { ensure, fmap, Nothing } from "../../../../Data/Maybe";
+import { fmap } from "../../../../Data/Functor";
+import { Cons, flength, head, List } from "../../../../Data/List";
+import { ensure, Nothing } from "../../../../Data/Maybe";
 import { ItemTemplate } from "../../../Models/Wiki/ItemTemplate";
 import { PrimaryAttributeDamageThreshold } from "../../../Models/Wiki/sub/PrimaryAttributeDamageThreshold";
 import { prefixId } from "../../IDUtils";
@@ -74,7 +75,7 @@ export const toItemTemplate =
 
       const edamageThreshold =
         lookupKeyValid (mensureMapListBindAfterOptional<number> (ensure (pipe (
-                                                                  length,
+                                                                  flength,
                                                                   len => len === 1 || len === 2
                                                                 )))
                                                                 ("&")
@@ -183,7 +184,7 @@ export const toItemTemplate =
             fmap ((threshold: List<number>) => PrimaryAttributeDamageThreshold ({
                    primary: rs.edamageThresholdAttribute,
                    threshold:
-                    length (threshold) === 1
+                    flength (threshold) === 1
                       ? head (threshold as Cons<number>)
                       : threshold,
                  }))

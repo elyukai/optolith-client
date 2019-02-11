@@ -1,6 +1,6 @@
 import { pipe } from "ramda";
 import { on } from "../../Data/Function";
-import { length, List, sortBy } from "../../Data/List";
+import { flength, List, sortBy } from "../../Data/List";
 import { EQ, Ordering, reverseCompare } from "../../Data/Ord";
 import { fromDefault, Record, RecordBase } from "../../Data/Record";
 import { compareLocale } from "./I18n";
@@ -24,7 +24,7 @@ export const sortRecordsBy =
   <A extends RecordBase>
   (sortOptions: SortOptions<A>) =>
   (xs: List<Record<A>>): List<Record<A>> => {
-    if (length (xs) < 2 || sortOptions .length === 0) {
+    if (flength (xs) < 2 || sortOptions .length === 0) {
       return xs
     }
 

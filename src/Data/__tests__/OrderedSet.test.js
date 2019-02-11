@@ -70,9 +70,9 @@ test ('fnull', () => {
   expect (OrderedSet.fnull (fromArray ([]))) .toBeTruthy ()
 })
 
-test ('length', () => {
-  expect (OrderedSet.length (fromArray ([3, 2, 1]))) .toEqual (3)
-  expect (OrderedSet.length (fromArray ([]))) .toEqual (0)
+test ('flength', () => {
+  expect (OrderedSet.flength (fromArray ([3, 2, 1]))) .toEqual (3)
+  expect (OrderedSet.flength (fromArray ([]))) .toEqual (0)
 })
 
 test ('elem', () => {

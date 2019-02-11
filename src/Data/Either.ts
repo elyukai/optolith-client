@@ -472,7 +472,7 @@ export const fnull = isLeft
  * implementation is optimized for structures that are similar to cons-lists,
  * because there is no general way to do better.
  */
-export const length = (x: Either<any, any>): number => isRight (x) ? 1 : 0
+export const flength = (x: Either<any, any>): number => isRight (x) ? 1 : 0
 
 /**
  * `elem :: Eq a0 => a0 -> Either a a0 -> Bool`
@@ -804,7 +804,7 @@ export const Either = {
   foldl,
   toList,
   fnull,
-  length,
+  flength,
   elem,
   elemF,
   sum,

@@ -11,11 +11,10 @@
 import { pipe } from "ramda";
 import { thrush } from "../../../../Data/Function";
 import { fmap } from "../../../../Data/Functor";
-import { appendStr, elem, find, groupByKey, intercalate, length, List, map, replaceStr, subscript, subscriptF } from "../../../../Data/List";
+import { appendStr, elem, find, flength, groupByKey, intercalate, List, map, replaceStr, subscript, subscriptF } from "../../../../Data/List";
 import { altF_, any, bind, bindF, elemF, ensure, fromMaybe, isJust, Just, liftM2, listToMaybe, maybe, Maybe, Nothing } from "../../../../Data/Maybe";
 import { elems, lookup, lookupF } from "../../../../Data/OrderedMap";
 import { Record } from "../../../../Data/Record";
-import { showP } from "../../../../Data/Show";
 import { ActiveObjectWithId } from "../../../Models/ActiveEntries/ActiveObjectWithId";
 import { ActivatableCombinedName } from "../../../Models/View/ActivatableCombinedName";
 import { ActiveActivatable } from "../../../Models/View/ActiveActivatable";
@@ -375,13 +374,10 @@ export const compressList =
     const grouped_xs =
       elems (groupByKey<Record<ActiveActivatable>, string> (id) (xs))
 
-    console.log (grouped_xs)
-    console.log (showP (grouped_xs))
-
     return pipe (
                   map (
                     ifElse<List<Record<ActiveActivatable>>, string>
-                      (xs_group => length (xs_group) === 1)
+                      (xs_group => flength (xs_group) === 1)
                       (pipe (listToMaybe, maybe ("") (name)))
                       (xs_group => pipe (
                                           map ((x: Record<ActiveActivatable>) => {

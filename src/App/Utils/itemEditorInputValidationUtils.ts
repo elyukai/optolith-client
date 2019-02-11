@@ -1,6 +1,7 @@
 import { pipe } from "ramda";
+import { fmap } from "../../Data/Functor";
 import { all, isList, List, subscriptF, unsafeIndex } from "../../Data/List";
-import { elem, fmap, isJust, Nothing } from "../../Data/Maybe";
+import { elem, isJust, Nothing } from "../../Data/Maybe";
 import { fromDefault, Record } from "../../Data/Record";
 import { EditItem } from "../Models/Hero/EditItem";
 import { EditPrimaryAttributeDamageThreshold } from "../Models/Hero/EditPrimaryAttributeDamageThreshold";
@@ -116,16 +117,16 @@ export const validateItemEditorInput = (item: Record<EditItem>) => {
 
   const validFirstDamageThreshold =
     isList (damageThreshold)
-    && List.length (damageThreshold) === 2
+    && List.flength (damageThreshold) === 2
     && isInteger (unsafeIndex (damageThreshold) (0))
 
   const validSecondDamageThreshold =
     isList (damageThreshold)
-    && List.length (damageThreshold) === 2
+    && List.flength (damageThreshold) === 2
     && isInteger (unsafeIndex (damageThreshold) (1))
 
   const validDamageThreshold = isList (damageThreshold)
-    ? List.length (damageThreshold) === 2 && all (isInteger) (damageThreshold)
+    ? List.flength (damageThreshold) === 2 && all (isInteger) (damageThreshold)
     : isInteger (damageThreshold)
 
   const validPrimaryAttributeDamageThreshold = validPrimaryAttribute && validDamageThreshold

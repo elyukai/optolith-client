@@ -1,6 +1,6 @@
 import { pipe } from "ramda";
 import { bindF, Either, Left, maybeToEither, Right } from "../../../Data/Either";
-import { cons, empty, filter, head, ifoldr, length, lines, List, map, notNull, splitOn, uncons, zip } from "../../../Data/List";
+import { cons, empty, filter, flength, head, ifoldr, lines, List, map, notNull, splitOn, uncons, zip } from "../../../Data/List";
 import { fromList, OrderedMap } from "../../../Data/OrderedMap";
 import { fst, snd } from "../../../Data/Pair";
 import { show } from "../../../Data/Show";
@@ -40,12 +40,12 @@ export const csvToList =
             const header = fst (headerAndBody)
             const body = snd (headerAndBody)
 
-            const header_length = length (header)
+            const header_length = flength (header)
 
             return ifoldr<List<string>, Either<string, Data>>
               (i => l =>
                 bindF (
-                  acc => length (l) !== header_length
+                  acc => flength (l) !== header_length
                     ? Left (
                       `csvToList: Line ${i + 1} has different length than header.`
                       + ` Source: ${show (l)}`

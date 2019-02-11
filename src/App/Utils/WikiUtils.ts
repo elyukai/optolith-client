@@ -1,8 +1,9 @@
 import { pipe } from "ramda";
 import { ActivatableCategories, Categories, SkillishCategories } from "../../constants/Categories";
 import { thrush } from "../../Data/Function";
+import { fmap } from "../../Data/Functor";
 import { elem, elemF, filter, fromArray, List } from "../../Data/List";
-import { bindF, fmap, Maybe } from "../../Data/Maybe";
+import { bindF, Maybe } from "../../Data/Maybe";
 import { elems, lookupF, OrderedMap, OrderedMapValueElement } from "../../Data/OrderedMap";
 import { member, Record } from "../../Data/Record";
 import { show } from "../../Data/Show";

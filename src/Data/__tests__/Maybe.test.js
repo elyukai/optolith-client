@@ -587,10 +587,10 @@ test ('fnull', () => {
     .toEqual (true)
 })
 
-test ('length', () => {
-  expect (Maybe.length (Just (3)))
+test ('flength', () => {
+  expect (Maybe.flength (Just (3)))
     .toEqual (1)
-  expect (Maybe.length (Nothing))
+  expect (Maybe.flength (Nothing))
     .toEqual (0)
 })
 

@@ -1,9 +1,10 @@
 import { pipe } from "ramda";
 import { equals } from "../../../../Data/Eq";
 import { flip, thrush } from "../../../../Data/Function";
+import { fmap } from "../../../../Data/Functor";
 import { Lens, over, set, view } from "../../../../Data/Lens";
-import { all, append, concatMap, elem, empty, filter, findIndex, foldr, isList, length, List, ListI, map, modifyAt, partition, pure } from "../../../../Data/List";
-import { alt, and, any, fmap, fromJust, fromMaybe, isJust, isNothing, Just, liftM2, Maybe, Nothing, or } from "../../../../Data/Maybe";
+import { all, append, concatMap, elem, empty, filter, findIndex, flength, foldr, isList, List, ListI, map, modifyAt, partition, pure } from "../../../../Data/List";
+import { alt, and, any, fromJust, fromMaybe, isJust, isNothing, Just, liftM2, Maybe, Nothing, or } from "../../../../Data/Maybe";
 import { fst, snd } from "../../../../Data/Pair";
 import { Record } from "../../../../Data/Record";
 import { HeroModelL, HeroModelRecord } from "../../../Models/Hero/HeroModel";
@@ -33,7 +34,7 @@ export type StyleDependencyStateKeys =
  */
 const lensByStyle =
   (x: Record<SpecialAbility>): Maybe<StyleDependenciesLens> => {
-    if (any (pipe ((length), equals (3))) (extended (x))) {
+    if (any (pipe ((flength), equals (3))) (extended (x))) {
       return Nothing
     }
 
@@ -97,7 +98,7 @@ export const addStyleExtendedSpecialAbilityDependencies =
                      (liftM2 ((l: StyleDependenciesLens) => (newxs: DependencyList) =>
                                over (l)
                                     (pipe (
-                                      map (x => {
+                                      map ((x: Record<StyleDependency>) => {
                                         const current_id = dpid (x)
                                         const current_active = active (x)
 
@@ -142,7 +143,7 @@ export const addExtendedSpecialAbilityDependency =
       (fmap ((l: Lens<HeroModelRecord, List<Record<StyleDependency>>>) =>
               over (l)
                    (xs =>
-                     modifyAt<ListI<typeof xs>>
+                     modifyAt
                       (fromMaybe
                         (-1)
                         (getIndexForExtendedSpecialAbilityDependency (hero_entry)
@@ -201,7 +202,7 @@ const checkForAlternativeIndex =
   (dependency: Record<StyleDependency>):
   (leftItems: List<Record<StyleDependency>>) => number =>
     pipe (
-      findIndex (e => {
+      findIndex ((e: Record<StyleDependency>) => {
                   const current_id = dpid (e)
                   const current_active = active (dependency)
 
@@ -241,7 +242,7 @@ export const removeStyleExtendedSpecialAbilityDependencies =
                      return pipe (
                                    filter<Record<StyleDependency>> (pipe (active, isJust)),
                                    foldr<Record<StyleDependency>, List<Record<StyleDependency>>>
-                                     (d => modifyAt<ListI<typeof xs>>
+                                     (d => modifyAt
                                        (checkForAlternativeIndex (d) (leftItems))
                                        (set (StyleDependencyL.active) (active (d))))
                                      (leftItems)
@@ -265,7 +266,7 @@ export const removeExtendedSpecialAbilityDependency =
       (hero)
       (fmap ((l: Lens<HeroModelRecord, List<Record<StyleDependency>>>) =>
               over (l)
-                   (xs => modifyAt<ListI<typeof xs>>
+                   (xs => modifyAt
                       (fromMaybe
                         (-1)
                         (getIndexForExtendedSpecialAbilityDependency (hero_entry)
@@ -323,7 +324,7 @@ export const isStyleValidToRemove =
   (mwiki_entry: Maybe<Record<SpecialAbility>>) => boolean =>
     pipe (
       fmap (
-        wiki_entry =>
+        (wiki_entry: Record<SpecialAbility>) =>
           and (fmap ((l: Lens<HeroModelRecord, List<Record<StyleDependency>>>) => {
                       const splitted =
                         getSplittedRemainingAndToRemove (id (wiki_entry))

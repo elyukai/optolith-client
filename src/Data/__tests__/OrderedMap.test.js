@@ -90,11 +90,11 @@ test ('fnull', () => {
   expect (OrderedMap.fnull (fromArray ([]))) .toBeTruthy ()
 })
 
-test ('length', () => {
-  expect (OrderedMap.length (fromArray ([['x', 1], ['y', 2], ['z', 3]])))
+test ('flength', () => {
+  expect (OrderedMap.flength (fromArray ([['x', 1], ['y', 2], ['z', 3]])))
     .toEqual (3)
 
-  expect (OrderedMap.length (fromArray ([]))) .toEqual (0)
+  expect (OrderedMap.flength (fromArray ([]))) .toEqual (0)
 })
 
 test ('elem', () => {
