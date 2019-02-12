@@ -77,6 +77,24 @@ export const fmap =
     throw new TypeError (instanceErrorMsg ("fmap") (x))
   }
 
+interface fmapF {
+  <A0> (x: Const<A0>): <B> (f: (x: A0) => B) => Const<A0>;
+  <E, A> (x: Either<E, A>): <B> (f: (x: A) => B) => Either<E, B>;
+  <A> (x: Identity<A>): <B> (f: (x: A) => B) => Identity<B>;
+  <A> (x: List<A>): <B> (f: (x: A) => B) => List<B>;
+  <A> (x: Maybe<A>): <B> (f: (x: A) => B) => Maybe<B>;
+  <K, A> (x: OrderedMap<K, A>): <B> (f: (x: A) => B) => OrderedMap<K, B>;
+  <A1, A> (x: Pair<A1, A>): <B> (f: (x: A) => B) => Pair<A1, B>;
+}
+
+/**
+ * `fmapF :: f a -> (a -> b) -> f b`
+ */
+export const fmapF: fmapF =
+  (x: any) =>
+  (f: (x: any) => any): any =>
+    fmap (f) (x)
+
 /**
  * `(<$) :: a -> f b -> f a`
  *

@@ -12,7 +12,7 @@ import * as Data from '../../App/Models/Hero/heroTypeHelpers';
 import * as Wiki from '../../App/Models/Wiki/wikiTypeHelpers';
 import { countActiveGroupEntries } from '../../App/Utils/entryGroupUtils';
 import { getAllEntriesByGroup } from '../../App/Utils/heroStateUtils';
-import { getBlessedTraditionInstanceIdByNumericId } from '../../App/Utils/IDUtils';
+import { getBlessedTradStrIdFromNumId } from '../../App/Utils/IDUtils';
 import { getTraditionOfAspect } from '../../App/Utils/Increasable/liturgicalChantUtils';
 import { match } from '../../App/Utils/match';
 import { isString } from '../../App/Utils/typeCheckUtils';
@@ -432,7 +432,7 @@ const getEntrySpecificSelections = (
             .fmap (
               tradition => select.filter (
                 e =>
-                  getBlessedTraditionInstanceIdByNumericId (
+                  getBlessedTradStrIdFromNumId (
                     getTraditionOfAspect (e.get ('id') as number)
                   )
                     .equals (Maybe.pure (tradition.get ('id')))

@@ -1,5 +1,5 @@
 // @ts-check
-const { fmap, mapReplace } = require ('../Functor')
+const { fmap, fmapF, mapReplace } = require ('../Functor')
 const { Const } = require ('../Functor/Const')
 const { Left, Right } = require ('../Either')
 const { Identity } = require ('../../Control/Monad/Identity')
@@ -32,10 +32,40 @@ test ('fmap', () => {
     .toEqual (Nothing)
 
   expect (fmap (x => x * 2)
-                       (fromUniquePairs (['x', 1], ['y', 2], ['z', 3])))
+               (fromUniquePairs (['x', 1], ['y', 2], ['z', 3])))
     .toEqual (fromUniquePairs (['x', 2], ['y', 4], ['z', 6]))
 
   expect (fmap (x => x * 2) (fromBinary (3, 1)))
+    .toEqual (fromBinary (3, 2))
+})
+
+test ('fmapF', () => {
+  expect (fmapF (Const (3)) (add (3)))
+    .toEqual (Const (3))
+
+  expect (fmapF (Right (3)) (x => x * 2))
+    .toEqual (Right (6))
+
+  expect (fmapF (Left ('test')) (x => x * 2))
+    .toEqual (Left ('test'))
+
+  expect (fmapF (Identity (3)) (add (3)))
+    .toEqual (Identity (6))
+
+  expect (fmapF (List (3, 2, 1)) (x => x * 2))
+    .toEqual (List (6, 4, 2))
+
+  expect (fmapF (Just (3)) (x => x * 2))
+    .toEqual (Just (6))
+
+  expect (fmapF (Nothing) (x => x * 2))
+    .toEqual (Nothing)
+
+  expect (fmapF (fromUniquePairs (['x', 1], ['y', 2], ['z', 3]))
+                (x => x * 2))
+    .toEqual (fromUniquePairs (['x', 2], ['y', 4], ['z', 6]))
+
+  expect (fmapF (fromBinary (3, 1)) (x => x * 2))
     .toEqual (fromBinary (3, 2))
 })
 

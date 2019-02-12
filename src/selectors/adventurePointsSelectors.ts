@@ -15,7 +15,7 @@ export const getAdventurePointsSpentForAttributes = createMaybeSelector (
   Maybe.maybe<HeroDependent['attributes'], number> (0) (
     list => list.foldl<number> (sum => e => sum + getAPRange (5) (8) (e.get ('value'))) (0)
   )
-);
+)
 
 export const getAdventurePointsSpentForSkills = createMaybeSelector (
   getSkills,
@@ -30,7 +30,7 @@ export const getAdventurePointsSpentForSkills = createMaybeSelector (
       )
     ) (0)
   ) (maybeList)
-);
+)
 
 export const getAdventurePointsSpentForCombatTechniques = createMaybeSelector (
   getCombatTechniques,
@@ -45,7 +45,7 @@ export const getAdventurePointsSpentForCombatTechniques = createMaybeSelector (
       )
     ) (0)
   ) (maybeList)
-);
+)
 
 export const getAdventurePointsSpentForSpells = createMaybeSelector (
   getSpells,
@@ -62,7 +62,7 @@ export const getAdventurePointsSpentForSpells = createMaybeSelector (
         : sum
       ) (0)
   ) (maybeList)
-);
+)
 
 export const getAdventurePointsSpentForLiturgicalChants = createMaybeSelector (
   getLiturgicalChants,
@@ -79,7 +79,7 @@ export const getAdventurePointsSpentForLiturgicalChants = createMaybeSelector (
         : sum
     ) (0)
   ) (maybeList)
-);
+)
 
 export const getAdventurePointsSpentForCantrips = createMaybeSelector (
   getCantrips,
@@ -87,7 +87,7 @@ export const getAdventurePointsSpentForCantrips = createMaybeSelector (
     Maybe.fmap (OrderedSet.size),
     Maybe.fromMaybe (0)
   )
-);
+)
 
 export const getAdventurePointsSpentForBlessings = createMaybeSelector (
   getBlessings,
@@ -95,7 +95,7 @@ export const getAdventurePointsSpentForBlessings = createMaybeSelector (
     Maybe.fmap (OrderedSet.size),
     Maybe.fromMaybe (0)
   )
-);
+)
 
 export const getAdventurePointsSpentForAdvantages = createMaybeSelector (
   getAdvantagesForEdit,
@@ -107,20 +107,20 @@ export const getAdventurePointsSpentForAdvantages = createMaybeSelector (
         list => {
           const baseAP = list.foldl<number> (
             sum => obj => sum + obj .get ('finalCost')
-          ) (0);
+          ) (0)
 
           const diffAP = getAdventurePointsSpentDifference (
             list as List<Record<ActiveViewObject>>,
             state,
             wiki
-          );
+          )
 
-          return baseAP + diffAP;
+          return baseAP + diffAP
         }
       )
     )
   )
-);
+)
 
 export const getAdventurePointsSpentForMagicalAdvantages = createMaybeSelector (
   getAdvantagesForEdit,
@@ -130,24 +130,24 @@ export const getAdventurePointsSpentForMagicalAdvantages = createMaybeSelector (
     maybeState.bind (
       state => maybeList.fmap (
         list => {
-          const filteredList = list.filter (e => e.get ('wikiEntry').get ('gr') === 2);
+          const filteredList = list.filter (e => e.get ('wikiEntry').get ('gr') === 2)
 
           const baseAP = filteredList.foldl<number> (
             sum => obj => sum + obj .get ('finalCost')
-          ) (0);
+          ) (0)
 
           const diffAP = getAdventurePointsSpentDifference (
             filteredList as List<Record<ActiveViewObject>>,
             state,
             wiki
-          );
+          )
 
-          return baseAP + diffAP;
+          return baseAP + diffAP
         }
       )
     )
   )
-);
+)
 
 export const getAdventurePointsSpentForBlessedAdvantages = createMaybeSelector (
   getAdvantagesForEdit,
@@ -157,24 +157,24 @@ export const getAdventurePointsSpentForBlessedAdvantages = createMaybeSelector (
     maybeState.bind (
       state => maybeList.fmap (
         list => {
-          const filteredList = list.filter (e => e.get ('wikiEntry').get ('gr') === 3);
+          const filteredList = list.filter (e => e.get ('wikiEntry').get ('gr') === 3)
 
           const baseAP = filteredList.foldl<number> (
             sum => obj => sum + obj .get ('finalCost')
-          ) (0);
+          ) (0)
 
           const diffAP = getAdventurePointsSpentDifference (
             filteredList as List<Record<ActiveViewObject>>,
             state,
             wiki
-          );
+          )
 
-          return baseAP + diffAP;
+          return baseAP + diffAP
         }
       )
     )
   )
-);
+)
 
 export const getAdventurePointsSpentForDisadvantages = createMaybeSelector (
   getDisadvantagesForEdit,
@@ -186,20 +186,20 @@ export const getAdventurePointsSpentForDisadvantages = createMaybeSelector (
         list => {
           const baseAP = list.foldl<number> (
             sum => obj => sum + obj .get ('finalCost')
-          ) (0);
+          ) (0)
 
           const diffAP = getAdventurePointsSpentDifference (
             list as List<Record<ActiveViewObject>>,
             state,
             wiki
-          );
+          )
 
-          return baseAP + diffAP;
+          return baseAP + diffAP
         }
       )
     )
   )
-);
+)
 
 export const getAdventurePointsSpentForMagicalDisadvantages = createMaybeSelector (
   getDisadvantagesForEdit,
@@ -209,24 +209,24 @@ export const getAdventurePointsSpentForMagicalDisadvantages = createMaybeSelecto
     maybeState.bind (
       state => maybeList.fmap (
         list => {
-          const filteredList = list.filter (e => e.get ('wikiEntry').get ('gr') === 2);
+          const filteredList = list.filter (e => e.get ('wikiEntry').get ('gr') === 2)
 
           const baseAP = filteredList.foldl<number> (
             sum => obj => sum + obj .get ('finalCost')
-          ) (0);
+          ) (0)
 
           const diffAP = getAdventurePointsSpentDifference (
             filteredList as List<Record<ActiveViewObject>>,
             state,
             wiki
-          );
+          )
 
-          return baseAP + diffAP;
+          return baseAP + diffAP
         }
       )
     )
   )
-);
+)
 
 export const getAdventurePointsSpentForBlessedDisadvantages = createMaybeSelector (
   getDisadvantagesForEdit,
@@ -236,29 +236,29 @@ export const getAdventurePointsSpentForBlessedDisadvantages = createMaybeSelecto
     maybeState.bind (
       state => maybeList.fmap (
         list => {
-          const filteredList = list.filter (e => e.get ('wikiEntry').get ('gr') === 3);
+          const filteredList = list.filter (e => e.get ('wikiEntry').get ('gr') === 3)
 
           const baseAP = filteredList.foldl<number> (
             sum => obj => sum + obj .get ('finalCost')
-          ) (0);
+          ) (0)
 
           const diffAP = getAdventurePointsSpentDifference (
             filteredList as List<Record<ActiveViewObject>>,
             state,
             wiki
-          );
+          )
 
-          return baseAP + diffAP;
+          return baseAP + diffAP
         }
       )
     )
   )
-);
+)
 
 export const getMagicalAdvantagesDisadvantagesAdventurePointsMaximum = createMaybeSelector (
   getCurrentHeroPresent,
   Maybe.fmap (getDisAdvantagesSubtypeMax (true))
-);
+)
 
 export const getAdventurePointsSpentForSpecialAbilities = createMaybeSelector (
   getSpecialAbilitiesForEdit,
@@ -270,37 +270,37 @@ export const getAdventurePointsSpentForSpecialAbilities = createMaybeSelector (
         list => {
           const baseAP = list.foldl<number> (
             sum => obj => sum + obj .get ('finalCost')
-          ) (0);
+          ) (0)
 
           const diffAP = getAdventurePointsSpentDifference (
             list as List<Record<ActiveViewObject>>,
             state,
             wiki
-          );
+          )
 
-          return baseAP + diffAP;
+          return baseAP + diffAP
         }
       )
     )
   )
-);
+)
 
 export const getAdventurePointsSpentForEnergies = createMaybeSelector (
   getEnergies,
   R.pipe (
     Maybe.fmap (
       energies => {
-        const addedArcaneEnergyCost = getAPRange (4) (0) (energies.get ('addedArcaneEnergyPoints'));
-        const addedKarmaPointsCost = getAPRange (4) (0) (energies.get ('addedKarmaPoints'));
-        const addedLifePointsCost = getAPRange (4) (0) (energies.get ('addedLifePoints'));
+        const addedArcaneEnergyCost = getAPRange (4) (0) (energies.get ('addedArcaneEnergyPoints'))
+        const addedKarmaPointsCost = getAPRange (4) (0) (energies.get ('addedKarmaPoints'))
+        const addedLifePointsCost = getAPRange (4) (0) (energies.get ('addedLifePoints'))
 
         const boughtBackArcaneEnergyCost = energies
           .get ('permanentArcaneEnergyPoints')
-          .get ('redeemed') * 2;
+          .get ('redeemed') * 2
 
         const boughtBackKarmaPointsCost = energies
           .get ('permanentKarmaPoints')
-          .get ('redeemed') * 2;
+          .get ('redeemed') * 2
 
         return List.of (
           addedArcaneEnergyCost,
@@ -309,12 +309,12 @@ export const getAdventurePointsSpentForEnergies = createMaybeSelector (
           boughtBackArcaneEnergyCost,
           boughtBackKarmaPointsCost
         )
-          .sum ();
+          .sum ()
       }
     ),
     Maybe.fromMaybe (0)
   )
-);
+)
 
 export const getAdventurePointsSpentForRace = createMaybeSelector (
   getCurrentRace,
@@ -322,7 +322,7 @@ export const getAdventurePointsSpentForRace = createMaybeSelector (
     Maybe.fmap (race => race.get ('ap')),
     Maybe.fromMaybe (0)
   )
-);
+)
 
 export const getAdventurePointsSpentForProfession = createMaybeSelector (
   getCurrentProfession,
@@ -339,7 +339,7 @@ export const getAdventurePointsSpentForProfession = createMaybeSelector (
         )
       )
     )
-);
+)
 
 export const getAdventurePointsSpentPart = createMaybeSelector (
   getAdventurePointsSpentForAttributes,
@@ -350,7 +350,7 @@ export const getAdventurePointsSpentPart = createMaybeSelector (
   getAdventurePointsSpentForCantrips,
   getAdventurePointsSpentForBlessings,
   (...cost: number[]) => List.fromArray (cost).sum ()
-);
+)
 
 export const getAdventurePointsSpent = createMaybeSelector (
   getAdventurePointsSpentPart,
@@ -362,58 +362,58 @@ export const getAdventurePointsSpent = createMaybeSelector (
   getAdventurePointsSpentForRace,
   (part, professionCost, ...cost: number[]) =>
     List.fromArray (cost).sum () + part + Maybe.fromMaybe (0) (professionCost)
-);
+)
 
 export const getAvailableAdventurePoints = createMaybeSelector (
   getTotalAdventurePoints,
   getAdventurePointsSpent,
   (total, spent) => total.fmap (R.add (-spent))
-);
+)
 
 export interface DisAdvAdventurePoints extends Array<number> {
   /**
    * Spent AP for Advantages/Disadvantages in total.
    */
-  0: number;
+  0: number
   /**
    * Spent AP for magical Advantages/Disadvantages.
    */
-  1: number;
+  1: number
   /**
    * Spent AP for blessed Advantages/Disadvantages.
    */
-  2: number;
+  2: number
 }
 
 export interface AdventurePointsObjectPart {
-  spentOnAttributes: number;
-  spentOnSkills: number;
-  spentOnCombatTechniques: number;
-  spentOnSpells: number;
-  spentOnLiturgicalChants: number;
-  spentOnCantrips: number;
-  spentOnBlessings: number;
-  spentOnSpecialAbilities: number;
-  spentOnEnergies: number;
-  spentOnRace: number;
-  spentOnProfession: number | undefined;
+  spentOnAttributes: number
+  spentOnSkills: number
+  spentOnCombatTechniques: number
+  spentOnSpells: number
+  spentOnLiturgicalChants: number
+  spentOnCantrips: number
+  spentOnBlessings: number
+  spentOnSpecialAbilities: number
+  spentOnEnergies: number
+  spentOnRace: number
+  spentOnProfession: number | undefined
 }
 
 export interface AdventurePointsObjectPart2 {
-  total: number;
-  spent: number;
-  available: number;
-  adv: DisAdvAdventurePoints;
-  disadv: DisAdvAdventurePoints;
-  spentOnAdvantages: number;
-  spentOnMagicalAdvantages: number;
-  spentOnBlessedAdvantages: number;
-  spentOnDisadvantages: number;
-  spentOnMagicalDisadvantages: number;
-  spentOnBlessedDisadvantages: number;
+  total: number
+  spent: number
+  available: number
+  adv: DisAdvAdventurePoints
+  disadv: DisAdvAdventurePoints
+  spentOnAdvantages: number
+  spentOnMagicalAdvantages: number
+  spentOnBlessedAdvantages: number
+  spentOnDisadvantages: number
+  spentOnMagicalDisadvantages: number
+  spentOnBlessedDisadvantages: number
 }
 
-export type AdventurePointsObject = AdventurePointsObjectPart & AdventurePointsObjectPart2;
+export type AdventurePointsObject = AdventurePointsObjectPart & AdventurePointsObjectPart2
 
 export const getAdventurePointsObjectPart = createMaybeSelector (
   getAdventurePointsSpentForAttributes,
@@ -452,7 +452,7 @@ export const getAdventurePointsObjectPart = createMaybeSelector (
     spentOnRace,
     spentOnProfession,
   })
-);
+)
 
 export const getAdventurePointsObject = createMaybeSelector (
   getTotalAdventurePoints,
@@ -491,7 +491,7 @@ export const getAdventurePointsObject = createMaybeSelector (
       spentOnBlessedDisadvantages: blessedDisadvantages,
     })
   ) as Record<AdventurePointsObject>
-);
+)
 
 export const getHasCurrentNoAddedAP = createMaybeSelector (
   getTotalAdventurePoints,
@@ -504,4 +504,4 @@ export const getHasCurrentNoAddedAP = createMaybeSelector (
           totalAdventurePoints === experienceLevel .get ('ap'))
         (maybeTotalAdventurePoints)
         (maybeExperienceLevel))
-);
+)

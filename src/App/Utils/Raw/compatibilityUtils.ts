@@ -4,7 +4,7 @@ import * as path from "path";
 import { lt, lte, satisfies } from "semver";
 import { StringKeyObject } from "../../../Data/Record";
 import { RawActiveObject, RawHero } from "../../../types/rawdata";
-import { getBlessedTraditionInstanceIdByNumericId, getMagicalTraditionInstanceIdByNumericId } from "../IDUtils";
+import { getBlessedTradStrIdFromNumId, getMagicalTraditionInstanceIdByNumericId } from "../IDUtils";
 
 export const currentVersion = JSON.parse (fs.readFileSync (
   path.join (remote.app.getAppPath (), "package.json"),
@@ -704,7 +704,7 @@ const convertLowerThanOrEqual0_51_3 = (hero: RawHero): RawHero => {
     entry.activatable = other
     for (const active of arr) {
       const { sid, sid2 } = active
-      const id = getBlessedTraditionInstanceIdByNumericId (sid as number)
+      const id = getBlessedTradStrIdFromNumId (sid as number)
       // @ts-ignore
       entry.activatable[fromMaybe ("SA_86") (id)] = [{ sid: sid2 }]
     }

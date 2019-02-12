@@ -308,18 +308,18 @@ export const updateSliceEntry =
  * Filters the passed `list` by the specified groups.
  */
 export const getAllEntriesByGroup =
-  (wiki: OrderedMap<string, EntryWithGroup>) =>
+  (wiki_slice: OrderedMap<string, EntryWithGroup>) =>
   <I extends Dependent = Dependent>
-  (list: OrderedMap<string, I>) =>
+  (hero_slice: OrderedMap<string, I>) =>
   (...groups: number[]): List<I> =>
     filter<I> (pipe (
                 AttributeDependent.A.id,
-                lookupF (wiki),
+                lookupF (wiki_slice),
                 fmap (Skill.A.gr),
                 fmap (elemF (fromArray (groups))),
                 or
               ))
-              (elems (list))
+              (elems (hero_slice))
 
 interface RecordBaseWithId extends RecordBase {
   id: string

@@ -1,6 +1,6 @@
 import { List } from "../../../Data/List";
 import { Maybe, Nothing } from "../../../Data/Maybe";
-import { fromDefault, Record, RecordI } from "../../../Data/Record";
+import { fromDefault, makeLenses, Record, RecordI } from "../../../Data/Record";
 import { ActivatableDependent } from "../ActiveEntries/ActivatableDependent";
 import { Advantage } from "../Wiki/Advantage";
 import { SelectOption } from "../Wiki/sub/SelectOption";
@@ -13,7 +13,7 @@ export interface InactiveActivatable<T extends RecordI<Activatable> = RecordI<Ac
   minLevel: Maybe<number>
   maxLevel: Maybe<number>
   selectOptions: Maybe<List<Record<SelectOption>>>
-  stateEntry: Maybe<Record<ActivatableDependent>>
+  heroEntry: Maybe<Record<ActivatableDependent>>
   wikiEntry: Record<T>
   customCostDisabled: Maybe<boolean>
 }
@@ -26,7 +26,9 @@ export const InactiveActivatable =
     maxLevel: Nothing,
     minLevel: Nothing,
     selectOptions: Nothing,
-    stateEntry: Nothing,
+    heroEntry: Nothing,
     wikiEntry: Advantage.default,
     customCostDisabled: Nothing,
   })
+
+export const InactiveActivatableL = makeLenses (InactiveActivatable)

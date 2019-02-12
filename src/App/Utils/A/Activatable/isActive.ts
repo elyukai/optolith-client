@@ -1,6 +1,7 @@
 import { pipe } from "ramda";
+import { fmap } from "../../../../Data/Functor";
 import { fnull } from "../../../../Data/List";
-import { fmap, Maybe, or } from "../../../../Data/Maybe";
+import { Just, Maybe, or } from "../../../../Data/Maybe";
 import { Record } from "../../../../Data/Record";
 import { ActivatableDependent } from "../../../Models/ActiveEntries/ActivatableDependent";
 import { not } from "../../not";
@@ -20,5 +21,5 @@ export const isActive: (obj: Record<ActivatableDependent>) => boolean = pipe (ac
  * @param obj The entry.
  */
 export const isMaybeActive =
-  (obj: Maybe<Record<ActivatableDependent>>): boolean =>
+  (obj: Maybe<Record<ActivatableDependent>>): obj is Just<Record<ActivatableDependent>> =>
     or (fmap (isActive) (obj))

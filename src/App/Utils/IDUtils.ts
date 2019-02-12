@@ -125,6 +125,6 @@ const blessedNumericIdByTraditionId = OrderedMap.fromArray ([
 
 export const isBlessedTraditionId = memberF (blessedNumericIdByTraditionId)
 
-export const getBlessedTraditionInstanceIdByNumericId = lookupF (blessedTraditionIdByNumericId)
+export const getBlessedTradStrIdFromNumId = lookupF (blessedTraditionIdByNumericId)
 
 export const getNumericBlessedTraditionIdByInstanceId = lookupF (blessedNumericIdByTraditionId)

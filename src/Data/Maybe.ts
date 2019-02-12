@@ -234,19 +234,42 @@ export const empty = Nothing
  * `guard :: Bool -> Maybe ()`
  *
  * Conditional failure of Alternative computations. Defined by
-```hs
-guard True  = pure ()
-guard False = empty
-```
-  * In TypeScript, this is not possible, so instead it's
-```ts
-guard (true)  = pure (true)
-guard (false) = empty
-```
-  */
+ * ```hs
+ * guard True  = pure ()
+ * guard False = empty
+ * ```
+ * In TypeScript, this is not possible, so instead it's
+ * ```ts
+ * guard (true)  = pure (true)
+ * guard (false) = empty
+ * ```
+ */
 export const guard =
   (pred: boolean): Maybe<true> =>
     pred ? pure<true> (true) : empty
+
+/**
+ * `guard' :: (() -> Bool) -> Maybe ()`
+ *
+ * Conditional failure of Alternative computations. Defined by
+ *
+ * ```haskell
+ * guard True  = pure ()
+ * guard False = empty
+ * ```
+ *
+ * In TypeScript, this is not possible, so instead it's
+ *
+ * ```ts
+ * guard (true)  = pure (true)
+ * guard (false) = empty
+ * ```
+ *
+ * Lazy version of `guard`.
+ */
+export const guard_ =
+  (pred: () => boolean): Maybe<true> =>
+    pred () ? pure<true> (true) : empty
 
 
 // MONAD
@@ -885,6 +908,7 @@ Maybe.altF = altF,
 Maybe.altF_ = altF_,
 Maybe.empty = empty,
 Maybe.guard = guard,
+Maybe.guard_ = guard_,
 
 Maybe.bind = bind,
 Maybe.bindF = bindF,
