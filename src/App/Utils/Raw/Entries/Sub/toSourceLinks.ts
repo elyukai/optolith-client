@@ -2,7 +2,7 @@ import { Either } from "../../../../../Data/Either";
 import { flip } from "../../../../../Data/Function";
 import { Cons, flength, List, splitOn } from "../../../../../Data/List";
 import { bindF, ensure, liftM2, listToMaybe, Maybe, maybe, Nothing } from "../../../../../Data/Maybe";
-import { fromBoth, Pair } from "../../../../../Data/Pair";
+import { Pair } from "../../../../../Data/Pair";
 import { Record } from "../../../../../Data/Record";
 import { SourceLink } from "../../../../Models/Wiki/sub/SourceLink";
 import { toNatural } from "../../../NumberUtils";
@@ -40,7 +40,7 @@ export const toSourceLinks =
                                         SourceLink ({
                                           id,
                                           page: maybe<number | Pair<number, number>> (firstPage)
-                                                      <number> (fromBoth (firstPage))
+                                                      <number> (Pair (firstPage))
                                                       (mlastPage),
                                         }))
                                       (mid)

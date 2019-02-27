@@ -1,7 +1,7 @@
 import { Categories } from "../../../constants/Categories";
 import { List } from "../../../Data/List";
 import { Maybe, Nothing } from "../../../Data/Maybe";
-import { fromBoth, Pair } from "../../../Data/Pair";
+import { Pair } from "../../../Data/Pair";
 import { fromDefault, Record } from "../../../Data/Record";
 import { Die } from "./sub/Die";
 import { SourceLink } from "./sub/SourceLink";
@@ -54,7 +54,7 @@ export const Race =
     tou: 0,
     mov: 0,
     attributeAdjustments: List.empty,
-    attributeAdjustmentsSelection: fromBoth<number, List<string>> (0) (List.empty),
+    attributeAdjustmentsSelection: Pair<number, List<string>> (0, List.empty),
     attributeAdjustmentsText: "",
     commonCultures: List.empty,
     automaticAdvantages: List.empty,

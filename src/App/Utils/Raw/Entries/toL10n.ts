@@ -2,7 +2,7 @@ import { fromRight_, isLeft, mapM, maybeToEither, maybeToEither_ } from "../../.
 import { List } from "../../../../Data/List";
 import { ensure, liftM2 } from "../../../../Data/Maybe";
 import { fromList, lookupF, OrderedMap } from "../../../../Data/OrderedMap";
-import { fromBoth, Pair } from "../../../../Data/Pair";
+import { Pair } from "../../../../Data/Pair";
 import { show } from "../../../../Data/Show";
 import { L10n } from "../../../Models/Wiki/L10n";
 import { mensureMapNonEmptyString, mensureMapNonEmptyStringList } from "../validateMapValueUtils";
@@ -23,7 +23,7 @@ export const toL10n =
           ((row: OrderedMap<string, string>) =>
             maybeToEither
               ("Cell missing.")
-              (liftM2<string, string, Pair<string, string>> (fromBoth)
+              (liftM2<string, string, Pair<string, string>> (Pair)
                                                             (lookupF (row) ("key"))
                                                             (lookupF (row) ("value"))))
           (l10n_table)

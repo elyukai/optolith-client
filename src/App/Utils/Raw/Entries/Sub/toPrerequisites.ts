@@ -5,7 +5,7 @@ import { fmap } from "../../../../../Data/Functor";
 import { fromArray, isInfixOf, List, splitOn, uncons } from "../../../../../Data/List";
 import { bindF, ensure, fromJust, fromMaybe, isNothing, Just, Maybe, Nothing } from "../../../../../Data/Maybe";
 import { fromList } from "../../../../../Data/OrderedMap";
-import { fromBoth, fst, Pair, snd } from "../../../../../Data/Pair";
+import { fst, Pair, snd } from "../../../../../Data/Pair";
 import { RequireActivatable } from "../../../../Models/Wiki/prerequisites/ActivatableRequirement";
 import { CultureRequirement } from "../../../../Models/Wiki/prerequisites/CultureRequirement";
 import { RequireIncreasable } from "../../../../Models/Wiki/prerequisites/IncreasableRequirement";
@@ -108,8 +108,9 @@ const toLevelAwarePrerequisites =
               `Invalid level-aware prerequisites. `
               + `Expected: List Prerequisite, Received: ${snd (p)}`
             )
-            (fmap (fromBoth<number, List<AllRequirements>> (fromJust (level)))
-                  (levelAwarePrerequisites))
+            (fmap<List<AllRequirements>, Pair<number, List<AllRequirements>>>
+              (Pair (fromJust (level)))
+              (levelAwarePrerequisites))
         }
       ),
       fromMaybe<Either<string, Pair<number, List<AllRequirements>>>>

@@ -2,7 +2,7 @@ import { Either } from "../../../../../Data/Either";
 import { append, empty, List, map, notNullStr } from "../../../../../Data/List";
 import { ensure, fromMaybe, Maybe } from "../../../../../Data/Maybe";
 import { fromList } from "../../../../../Data/OrderedMap";
-import { fromBinary, Pair } from "../../../../../Data/Pair";
+import { Pair } from "../../../../../Data/Pair";
 import { Advantage } from "../../../../Models/Wiki/Advantage";
 import { toNatural } from "../../../NumberUtils";
 import { mensureMapNaturalListOptional, mensureMapPairListOptional } from "../../validateMapValueUtils";
@@ -28,7 +28,6 @@ export const toPrerequisitesIndex =
                      ("prerequisitesIndex")
 
     return Either.liftM2<
-        string,
         Maybe<List<number>>,
         Maybe<List<Pair<number, string>>>,
         Advantage["prerequisitesTextIndex"]
@@ -44,7 +43,7 @@ export const toPrerequisitesIndex =
             append<Pair<number, string | false>>
               (l10n)
               (map<number, Pair<number, string | false>>
-                (i => fromBinary<number, false> (i, false))
+                (i => Pair<number, false> (i, false))
                 (univ))
           )
         })

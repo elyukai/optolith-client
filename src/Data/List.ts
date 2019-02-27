@@ -16,7 +16,7 @@ import { fmap } from "./Functor";
 import { fromJust, imapMaybe, isJust, Just, Maybe, maybe, Nothing } from "./Maybe";
 import { isLTorEQ, Ordering } from "./Ord";
 import { fromMap, OrderedMap } from "./OrderedMap";
-import { first, fromBinary, fromBoth, fst, Pair, second, snd } from "./Pair";
+import { first, fst, Pair, second, snd } from "./Pair";
 import { show } from "./Show";
 
 
@@ -616,7 +616,7 @@ export const initS =
  */
 export const uncons =
   <A> (xs: List<A>): Maybe<Pair<A, List<A>>> =>
-    fnull (xs) ? Nothing : Just (fromBinary (xs .x, tail (xs)))
+    fnull (xs) ? Nothing : Just (Pair (xs .x, tail (xs)))
 
 
 // LIST TRANSFORMATIONS
@@ -715,10 +715,10 @@ export const mapAccumL =
 
       const res = mapAccumL<A, B, C> (f) (fst (p)) (xs .xs)
 
-      return fromBinary (fst (res), Cons (snd (p), snd (res)))
+      return Pair (fst (res), Cons (snd (p), snd (res)))
     }
 
-    return fromBinary (initial, Nil)
+    return Pair (initial, Nil)
   }
 
 
@@ -801,18 +801,18 @@ export const drop =
 export const splitAt =
   <A> (n: number) => (xs: List<A>): Pair<List<A>, List<A>> => {
     if (n <= 0) {
-      return fromBinary (Nil, xs)
+      return Pair (Nil, xs)
     }
 
     if (isNil (xs)) {
-      return fromBinary (Nil, Nil)
+      return Pair (Nil, Nil)
     }
 
     const y = xs .x
 
     const p = splitAt<A> (n - 1) (xs .xs)
 
-    return fromBinary (Cons (y, fst (p)), snd (p))
+    return Pair (Cons (y, fst (p)), snd (p))
   }
 
 
@@ -901,7 +901,7 @@ export const partition =
   (pred: (value: A) => boolean) =>
     foldr<A, Pair<List<A>, List<A>>>
       (x => pred (x) ? first (consF (x)) : second (consF (x)))
-      (fromBinary (Nil, Nil))
+      (Pair (Nil, Nil))
 
 
 // INDEXING LISTS
@@ -1012,7 +1012,7 @@ const findIndicesIndex =
  */
 export const zip =
   <A, B> (xs1: List<A>) => (xs2: List<B>): List<Pair<A, B>> =>
-    zipWith<A, B, Pair<A, B>> (fromBoth) (xs1) (xs2)
+    zipWith<A, B, Pair<A, B>> (Pair) (xs1) (xs2)
 
 /**
  * `zipWith :: (a -> b -> c) -> [a] -> [b] -> [c]`
@@ -1201,7 +1201,7 @@ const sortByGetMiddle = <A> (xs: List<A>): Pair<List<A>, List<A>> =>
  * ```
  */
 export const indexed = <A> (xs: List<A>): List<Pair<number, A>> =>
-  imap<A, Pair<number, A>> (fromBoth) (xs)
+  imap<A, Pair<number, A>> (Pair) (xs)
 
 /**
  * `deleteAt :: Int -> [a] -> [a]`
@@ -1470,7 +1470,7 @@ export const ipartition =
   (pred: (index: number) => (value: A) => boolean) =>
     ifoldr<A, Pair<List<A>, List<A>>>
       (i => x => pred (i) (x) ? first (consF (x)) : second (consF (x)))
-      (fromBinary (Nil, Nil))
+      (Pair (Nil, Nil))
 
 // Search
 
@@ -1679,9 +1679,9 @@ export const maximumOn =
         (x => acc => {
           const res = f (x)
 
-          return res > snd (acc) ? Pair.fromBinary (Just (x), res) : acc
+          return res > snd (acc) ? Pair (Just (x), res) : acc
         })
-        (Pair.fromBinary (Nothing, -Infinity)),
+        (Pair (Nothing, -Infinity)),
       fst
     )
 
@@ -1699,9 +1699,9 @@ export const minimumOn =
         (x => acc => {
           const res = f (x)
 
-          return res < snd (acc) ? Pair.fromBinary (Just (x), res) : acc
+          return res < snd (acc) ? Pair (Just (x), res) : acc
         })
-        (Pair.fromBinary (Nothing, Infinity)),
+        (Pair (Nothing, Infinity)),
       fst
     )
 

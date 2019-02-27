@@ -15,7 +15,7 @@ import { ident } from "./Function";
 import { append, List } from "./List";
 import { fromMaybe, Just, Maybe, maybe, maybe_ } from "./Maybe";
 import { fromUniqueElements, OrderedSet } from "./OrderedSet";
-import { fromBinary, fromBoth, Pair } from "./Pair";
+import { Pair } from "./Pair";
 import { StringKeyObject } from "./Record";
 import { show } from "./Show";
 
@@ -177,7 +177,7 @@ export const foldl1 =
 export const toList =
   <K, A>
   (xs: OrderedMap<K, A>): List<Pair<K, A>> =>
-    List.fromArray ([...xs .value] .map (([k, a]) => fromBoth<K, A> (k) (a)))
+    List.fromArray ([...xs .value] .map (([k, a]) => Pair (k, a)))
 
 /**
  * `null :: Map k a -> Bool`
@@ -571,7 +571,7 @@ export const insertLookupWithKey =
   (mp: OrderedMap<K, A>): Pair<Maybe<A>, OrderedMap<K, A>> => {
     const maybe_old_value = lookup (key) (mp)
 
-    return fromBinary (
+    return Pair (
       maybe_old_value,
       insert<K, A> (key)
                    (maybe (value)
@@ -690,12 +690,12 @@ export const updateLookupWithKey =
     const maybe_old_value = lookup (key) (mp)
 
     return maybe_
-      (() => fromBinary (maybe_old_value, mp))
+      (() => Pair (maybe_old_value, mp))
       (pipe (
         f (key),
         maybe_
-          (() => fromBinary (maybe_old_value, removeKey<K, A> (key) (mp)))
-          (x => fromBinary (Just (x), insert<K, A> (key) (x) (mp)))
+          (() => Pair (maybe_old_value, removeKey<K, A> (key) (mp)))
+          (x => Pair (Just (x), insert<K, A> (key) (x) (mp)))
       ))
       (maybe_old_value)
   }
@@ -824,7 +824,7 @@ export const keys =
  * Return all key/value pairs in the map.
  */
 export const assocs = <K, A> (mp: OrderedMap<K, A>): List<Pair<K, A>> =>
-  List.fromArray ([...mp] .map (([key, value]) => fromBoth<K, A> (key) (value)))
+  List.fromArray ([...mp] .map (([key, value]) => Pair (key, value)))
 
 /**
  * `keysSet :: Map k a -> Set k`

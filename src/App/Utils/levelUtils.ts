@@ -1,7 +1,7 @@
 import { DropdownOption } from "../../components/Dropdown";
 import { List } from "../../Data/List";
 import { Just, Nothing } from "../../Data/Maybe";
-import { fromBoth } from "../../Data/Pair";
+import { Pair } from "../../Data/Pair";
 import { Record } from "../../Data/Record";
 import { toRoman } from "./NumberUtils";
 
@@ -11,12 +11,12 @@ const getElements = (max: number) =>
       ? Nothing
       : current === 0
       ? Just (
-        fromBoth<Record<DropdownOption>, number>
+        Pair
           (DropdownOption ({ name: "0" }))
           (current + 1)
       )
       : Just (
-        fromBoth<Record<DropdownOption>, number>
+        Pair
           (DropdownOption ({ id: Just (current), name: toRoman (current) }))
           (current + 1)
       ))

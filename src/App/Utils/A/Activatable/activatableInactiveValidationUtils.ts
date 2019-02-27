@@ -6,209 +6,198 @@
  * @since 1.1.0
  */
 
-import * as Wiki from '../../App/Models/Wiki/wikiTypeHelpers';
-import * as Data from '../../types/data';
-import { Just, List, Maybe, OrderedMap, Record } from '../dataUtils';
-import { countActiveGroupEntries, hasActiveGroupEntry } from '../entryGroupUtils';
-import { getAllEntriesByGroup, getHeroStateItem } from '../heroStateUtils';
-import { getFirstTierPrerequisites } from '../prerequisites/flattenPrerequisites';
-import { validatePrerequisites } from '../prerequisites/validatePrerequisitesUtils';
-import { isSpecialAbility } from '../WikiUtils';
-import * as CheckStyleUtils from './checkStyleUtils';
-import { isActive } from './isActive';
+import { pipe } from "ramda";
+import { ident } from "../../../../Data/Function";
+import { fmap } from "../../../../Data/Functor";
+import { elem, flength, foldr, isList, List, notElem } from "../../../../Data/List";
+import { all, any, bind, bindF, fromMaybe, isJust, isNothing, listToMaybe, Maybe, sum } from "../../../../Data/Maybe";
+import { isOrderedMap, lookup } from "../../../../Data/OrderedMap";
+import { Record } from "../../../../Data/Record";
+import { ActivatableDependent } from "../../../Models/ActiveEntries/ActivatableDependent";
+import { ActiveObject } from "../../../Models/ActiveEntries/ActiveObject";
+import { HeroModel, HeroModelRecord } from "../../../Models/Hero/HeroModel";
+import { ActivatableDependency } from "../../../Models/Hero/heroTypeHelpers";
+import { Pact } from "../../../Models/Hero/Pact";
+import { Rules } from "../../../Models/Hero/Rules";
+import { isSpecialAbility, SpecialAbility } from "../../../Models/Wiki/SpecialAbility";
+import { WikiModel, WikiModelRecord } from "../../../Models/Wiki/WikiModel";
+import { Activatable } from "../../../Models/Wiki/wikiTypeHelpers";
+import { countActiveGroupEntries, hasActiveGroupEntry } from "../../entryGroupUtils";
+import { getAllEntriesByGroup } from "../../heroStateUtils";
+import { add, gte, inc, lte } from "../../mathUtils";
+import { not } from "../../not";
+import { getFirstLevelPrerequisites } from "../../P/Prerequisites/flattenPrerequisites";
+import { validatePrerequisites } from "../../P/Prerequisites/validatePrerequisitesUtils";
+import * as CheckStyleUtils from "./checkStyleUtils";
+import { isActive, isMaybeActive } from "./isActive";
 
-const isAdditionDisabledForCombatStyle = (
-  wiki: Record<Wiki.WikiAll>,
-  state: Record<Data.HeroDependent>,
-  entry: Record<Wiki.SpecialAbility>
-): Maybe<boolean> => {
-  const combinationSA =
-    getHeroStateItem<Record<Data.ActivatableDependent>> ('SA_164') (state);
+const { specialAbilities } = WikiModel.A
+const { specialAbilities: hero_specialAbilities, pact, rules } = HeroModel.A
+const { id, gr, prerequisites, cost, tiers, max } = SpecialAbility.A
+const { active, dependencies } = ActivatableDependent.A
+const { tier } = ActiveObject.A
+const { level } = Pact.A
+const { enableLanguageSpecializations } = Rules.A
 
-  if (Maybe.isNothing (combinationSA)) {
-    if (hasActiveGroupEntry (wiki, state, 9, 10)) {
-      return Maybe.pure (false);
+const isAdditionDisabledForCombatStyle =
+  (wiki: WikiModelRecord) =>
+  (hero: HeroModelRecord) =>
+  (wiki_entry: Record<SpecialAbility>): boolean => {
+    const combination_hero_entry = lookup ("SA_164") (hero_specialAbilities (hero))
+    const combination_wiki_entry = lookup ("SA_164") (specialAbilities (wiki))
+
+    if (isNothing (combination_hero_entry)) {
+      return hasActiveGroupEntry (wiki) (hero) (9, 10)
     }
-  }
-  else {
-    if (isActive (combinationSA)) {
-      const totalActive = countActiveGroupEntries (wiki, state, 9, 10);
+
+    if (isMaybeActive (combination_hero_entry)) {
+      const totalActive = countActiveGroupEntries (wiki) (hero) (9, 10)
+
       const equalTypeStylesActive =
-        countActiveGroupEntries (
-          wiki, state, ...Maybe.maybeToList (entry.lookup ('gr'))
-        );
+        countActiveGroupEntries (wiki) (hero) (gr (wiki_entry))
 
-      if (totalActive >= 3 || equalTypeStylesActive >= 2) {
-        return Maybe.pure (false);
-      }
+      return totalActive >= 3 || equalTypeStylesActive >= 2
     }
-    else {
-      if (hasActiveGroupEntry (
-        wiki, state, ...Maybe.maybeToList (entry.lookup ('gr'))
-      )) {
-        return Maybe.pure (false);
-      }
-    }
+
+    return any (pipe (gr, hasActiveGroupEntry (wiki) (hero)))
+               (combination_wiki_entry)
   }
 
-  return Maybe.empty ();
-}
+const isAdditionDisabledSpecialAbilitySpecific =
+  (wiki: WikiModelRecord) =>
+  (hero: HeroModelRecord) =>
+  (wiki_entry: Record<SpecialAbility>): boolean => {
+    const current_id = id (wiki_entry)
 
-const isAdditionDisabledSpecialAbilitySpecific = (
-  wiki: Record<Wiki.WikiAll>,
-  state: Record<Data.HeroDependent>,
-  entry: Record<Wiki.SpecialAbility>
-): Maybe<boolean> => {
-  if (CheckStyleUtils.isCombatStyleSpecialAbility (entry)) {
-    return isAdditionDisabledForCombatStyle (wiki, state, entry);
-  }
-  else if (entry.lookup ('gr').equals (Maybe.pure (13))) {
-    const combinationSA = state.get ('specialAbilities').lookup ('SA_266');
-    const totalActive = countActiveGroupEntries (wiki, state, 13);
-
-    if (totalActive >= (isActive (combinationSA) ? 2 : 1)) {
-      return Maybe.pure (false);
+    // Combat Styles
+    if (CheckStyleUtils.isCombatStyleSpecialAbility (wiki_entry)) {
+      return isAdditionDisabledForCombatStyle (wiki) (hero) (wiki_entry)
     }
-  }
-  else if (entry.lookup ('gr').equals (Maybe.pure (25))) {
-    if (hasActiveGroupEntry (wiki, state, 25)) {
-      return Maybe.pure (false);
+
+    // Magical Styles
+    if (CheckStyleUtils.isMagicalStyleSpecialAbility (wiki_entry)) {
+      const combination_hero_entry = lookup ("SA_266") (hero_specialAbilities (hero))
+      const total_active = countActiveGroupEntries (wiki) (hero) (13)
+
+      return total_active >= (isMaybeActive (combination_hero_entry) ? 2 : 1)
     }
-  }
-  else if (entry.get ('id') === 'SA_164') {
-    if (!hasActiveGroupEntry (wiki, state, 9, 10)) {
-      return Maybe.pure (false);
+
+    // Blessed Styles
+    if (CheckStyleUtils.isBlessedStyleSpecialAbility (wiki_entry)) {
+      return hasActiveGroupEntry (wiki) (hero) (25)
     }
-  }
-  else if (entry.get ('id') === 'SA_266') {
-    if (!hasActiveGroupEntry (wiki, state, 13)) {
-      return Maybe.pure (false);
+
+    // Combat Style Combination
+    if (current_id === "SA_164") {
+      return !hasActiveGroupEntry (wiki) (hero) (9, 10)
     }
-  }
-  else if (entry.get ('id') === 'SA_667') {
-    if (hasActiveGroupEntry (wiki, state, 30)) {
-      return Maybe.pure (false);
+
+    // Magical Style Combination
+    if (current_id === "SA_266") {
+      return !hasActiveGroupEntry (wiki) (hero) (13)
     }
-  }
-  else if (entry.lookup ('gr').equals (Maybe.pure (30))) {
-    const darkPactSA = state.get ('specialAbilities').lookup ('SA_667');
 
-    const allPactPresents = getAllEntriesByGroup (
-      wiki.get ('specialAbilities'),
-      state.get ('specialAbilities'),
-      30
-    );
-
-    const countPactPresents = allPactPresents.foldl<number> (
-      n => obj => {
-        if (isActive (obj)) {
-          const wikiObj = wiki.get ('specialAbilities')
-            .lookup (obj.get ('id'));
-
-          if (
-            Maybe.isJust (wikiObj)
-            && Maybe.fromJust (wikiObj)
-              .get ('prerequisites') instanceof OrderedMap
-            && Maybe.fromJust (wikiObj).get ('cost') instanceof List
-            && Maybe.isJust (wikiObj.bind (justWikiObj => justWikiObj.lookup ('tiers')))
-          ) {
-            return n + Maybe.fromMaybe (0) (
-              Maybe.listToMaybe (obj.get ('active')).bind (e => e.lookup ('tier'))
-            );
-          }
-
-          return n + 1;
-        }
-
-        return n;
-      }
-    ) (0);
-
-    const pact = state.lookup ('pact');
-
-    if (
-      isActive (darkPactSA)
-      || !Maybe.isJust (pact)
-      || Maybe.fromJust (pact).get ('level') <= countPactPresents
-    ) {
-      return Maybe.pure (false);
+    // Dunkles Abbild der Bündnisgabe
+    if (current_id === "SA_667") {
+      return hasActiveGroupEntry (wiki) (hero) (30)
     }
-  }
-  else if (entry.get ('id') === 'SA_699') {
-    if (state.get ('rules').get ('enableLanguageSpecializations') === false) {
-      return Maybe.pure (false);
-    }
-  }
 
-  return Maybe.empty ();
-};
+    // Pact Gifts
+    if (gr (wiki_entry) === 30) {
+      const dunkles_abbild = lookup ("SA_667") (hero_specialAbilities (hero))
+
+      const allPactPresents = getAllEntriesByGroup (specialAbilities (wiki))
+                                                   (hero_specialAbilities (hero))
+                                                   (30)
+
+      const countPactPresents =
+        foldr ((obj: Record<ActivatableDependent>) => {
+                if (isActive (obj)) {
+                  const wikiObj = lookup (id (obj)) (specialAbilities (wiki))
+
+                  if (
+                    any (pipe (prerequisites, isOrderedMap))
+                        (wikiObj)
+                    && any (pipe (cost, isList))
+                           (wikiObj)
+                    && isJust (bind (wikiObj) (tiers))
+                  ) {
+                    return add (sum (
+                      bindF (tier) (listToMaybe (active (obj)))
+                    ))
+                  }
+
+                  return inc
+                }
+
+                return ident as ident<number>
+              })
+              (0)
+              (allPactPresents)
+
+      return isMaybeActive (dunkles_abbild)
+        || all (pipe (level, lte (countPactPresents))) (pact (hero))
+    }
+
+    if (current_id === "SA_699") {
+      return pipe (rules, enableLanguageSpecializations, not) (hero)
+    }
+
+    return false
+  }
 
 /**
  * Checks if you can somehow add an ActiveObject to the given entry.
  * @param state The present state of the current hero.
  * @param instance The entry.
  */
-const isAdditionDisabledEntrySpecific = (
-  wiki: Record<Wiki.WikiAll>,
-  state: Record<Data.HeroDependent>,
-  entry: Wiki.Activatable
-): boolean =>
-  Maybe.fromJust (
-    Maybe.ensure (isSpecialAbility) (entry)
-      .bind (
-        specialAbility =>
-          isAdditionDisabledSpecialAbilitySpecific (wiki, state, specialAbility)
-      )
-      .alt (Maybe.pure (validatePrerequisites (
-        wiki,
-        state,
-        getFirstTierPrerequisites (entry.get ('prerequisites')),
-        entry.get ('id')
-      ))) as Just<boolean>
-  );
+const isAdditionDisabledEntrySpecific =
+  (wiki: WikiModelRecord) =>
+  (hero: HeroModelRecord) =>
+  (wiki_entry: Activatable): boolean => {
+    if (isSpecialAbility (wiki_entry)) {
+      return isAdditionDisabledSpecialAbilitySpecific (wiki) (hero) (wiki_entry)
+    }
+
+    return validatePrerequisites (wiki)
+                                 (hero)
+                                 (getFirstLevelPrerequisites (prerequisites (wiki_entry)))
+                                 (id (wiki_entry))
+  }
 
 const hasGeneralRestrictionToAdd =
-  (instance: Maybe<Record<Data.ActivatableDependent>>) =>
-    instance
-      .fmap (e => e.get ('dependencies').elem (false))
-      .equals (Maybe.pure (true));
+  any (pipe (dependencies, elem<ActivatableDependency> (false)))
 
-const hasReachedMaximumEntries = (
-  instance: Maybe<Record<Data.ActivatableDependent>>,
-  entry: Wiki.Activatable
-) => {
-  const max = entry.lookup ('max');
+const hasReachedMaximumEntries =
+  (wiki_entry: Activatable) =>
+  (mhero_entry: Maybe<Record<ActivatableDependent>>) =>
+    any (gte (fromMaybe (0)
+                        (fmap (pipe (active, flength))
+                              (mhero_entry))))
+        (max (wiki_entry))
 
-  return Maybe.isJust (max)
-    && Maybe.fromMaybe (0) (instance .fmap (e => e.get ('active') .length ()))
-      >= Maybe.fromJust (max);
-};
+const hasReachedImpossibleMaximumLevel = Maybe.elem (0)
 
-const hasReachedImpossibleMaximumLevel =
-  (maxTier: Maybe<number>) => maxTier.equals (Maybe.pure (0));
-
-const isInvalidExtendedSpecialAbility = (
-  entry: Wiki.Activatable,
-  validExtendedSpecialAbilities: List<string>
-) =>
-  CheckStyleUtils.isExtendedSpecialAbility (entry)
-  && validExtendedSpecialAbilities.elem (entry.get ('id'));
+const isInvalidExtendedSpecialAbility =
+  (wiki_entry: Activatable) =>
+  (validExtendedSpecialAbilities: List<string>) =>
+    CheckStyleUtils.isExtendedSpecialAbility (wiki_entry)
+    && notElem (id (wiki_entry)) (validExtendedSpecialAbilities)
 
 /**
  * Checks if the given entry can be added.
  * @param obj
  * @param state The current hero's state.
  */
-export const isAdditionDisabled = (
-  wiki: Record<Wiki.WikiAll>,
-  instance: Maybe<Record<Data.ActivatableDependent>>,
-  state: Record<Data.HeroDependent>,
-  validExtendedSpecialAbilities: List<string>,
-  entry: Wiki.Activatable,
-  maxTier: Maybe<number>
-) =>
-  isAdditionDisabledEntrySpecific (wiki, state, entry)
-  || hasGeneralRestrictionToAdd (instance)
-  || hasReachedMaximumEntries (instance, entry)
-  || hasReachedImpossibleMaximumLevel (maxTier)
-  || isInvalidExtendedSpecialAbility (entry, validExtendedSpecialAbilities);
+export const isAdditionDisabled =
+  (wiki: WikiModelRecord) =>
+  (hero: HeroModelRecord) =>
+  (validExtendedSpecialAbilities: List<string>) =>
+  (wiki_entry: Activatable) =>
+  (mhero_entry: Maybe<Record<ActivatableDependent>>) =>
+  (max_level: Maybe<number>) =>
+    isAdditionDisabledEntrySpecific (wiki) (hero) (wiki_entry)
+    || hasGeneralRestrictionToAdd (mhero_entry)
+    || hasReachedMaximumEntries (wiki_entry) (mhero_entry)
+    || hasReachedImpossibleMaximumLevel (max_level)
+    || isInvalidExtendedSpecialAbility (wiki_entry) (validExtendedSpecialAbilities)

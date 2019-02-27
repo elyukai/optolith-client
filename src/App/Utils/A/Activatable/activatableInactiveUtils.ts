@@ -15,7 +15,7 @@ import { over, set } from "../../../../Data/Lens";
 import { consF, countWith, elem, filter, find, flength, fnull, foldr, isList, List, map, maximum, notElem, notElemF, subscript } from "../../../../Data/List";
 import { all, bind, bindF, ensure, fromJust, fromMaybe, guard, guard_, isJust, join, Just, liftM2, listToMaybe, mapMaybe, Maybe, maybe, Nothing, or } from "../../../../Data/Maybe";
 import { alter, elems, foldrWithKey, isOrderedMap, lookup, lookupF, member, OrderedMap } from "../../../../Data/OrderedMap";
-import { fromBinary, fst, Pair, snd } from "../../../../Data/Pair";
+import { fst, Pair, snd } from "../../../../Data/Pair";
 import { Record, RecordI } from "../../../../Data/Record";
 import { ActivatableDependent } from "../../../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent } from "../../../Models/ActiveEntries/ActivatableSkillDependent";
@@ -568,7 +568,7 @@ const modifySelectOptions =
                                                                      bindF<string | number, number>
                                                                        (ensure (is3or4)),
                                                                      fmap (current_sid =>
-                                                                            consF (fromBinary (
+                                                                            consF (Pair (
                                                                                     current_sid,
                                                                                     current_level
                                                                                   )))
@@ -900,14 +900,12 @@ export const getInactiveView =
                       (current_id)
       : Nothing
 
-    const isNotValid = isAdditionDisabled (
-      wiki,
-      mhero_entry,
-      hero,
-      validExtendedSpecialAbilities,
-      wiki_entry,
-      max_level
-    )
+    const isNotValid = isAdditionDisabled (wiki)
+                                          (hero)
+                                          (validExtendedSpecialAbilities)
+                                          (wiki_entry)
+                                          (mhero_entry)
+                                          (max_level)
 
     if (!isNotValid) {
       const specificSelections = modifySelectOptions (wiki) (hero) (wiki_entry) (mhero_entry)

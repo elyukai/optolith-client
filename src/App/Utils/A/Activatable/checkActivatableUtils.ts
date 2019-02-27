@@ -5,7 +5,7 @@ import { InactiveActivatable } from "../../../Models/View/InactiveActivatable";
 import { Advantage } from "../../../Models/Wiki/Advantage";
 import { isRequiringActivatable, RequireActivatable } from "../../../Models/Wiki/prerequisites/ActivatableRequirement";
 import { Activatable, AllRequirements } from "../../../Models/Wiki/wikiTypeHelpers";
-import { getFirstTierPrerequisites } from "../../P/Prerequisites/flattenPrerequisites";
+import { getFirstLevelPrerequisites } from "../../P/Prerequisites/flattenPrerequisites";
 
 const { id, active } = RequireActivatable.A
 const { prerequisites } = Advantage.A
@@ -20,7 +20,7 @@ const getMagicalOrBlessedFilter =
 
 export const isMagicalOrBlessed =
   (obj: Activatable) => {
-    const firstTier = getFirstTierPrerequisites (prerequisites (obj))
+    const firstTier = getFirstLevelPrerequisites (prerequisites (obj))
 
     const isBlessed = any (getMagicalOrBlessedFilter ("ADV_12")) (firstTier)
     const isMagical = any (getMagicalOrBlessedFilter ("ADV_50")) (firstTier)

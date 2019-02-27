@@ -18,7 +18,7 @@ import { ident, thrush } from "./Function";
 import { fmap } from "./Functor";
 import { cons, consF, List } from "./List";
 import { fromJust, isJust, Just, Maybe, Nothing, Some } from "./Maybe";
-import { fromBoth, Pair } from "./Pair";
+import { Pair } from "./Pair";
 
 
 // EITHER TYPE DEFINITION
@@ -748,7 +748,7 @@ export const partitionEithers =
       (x => isRight (x)
             ? Pair.second (consF (x .value))
             : Pair.first (consF (x .value)))
-      (fromBoth<List<A>, List<B>> (List.empty) (List.empty))
+      (Pair<List<A>, List<B>> (List.empty, List.empty))
       (xs)
 
 

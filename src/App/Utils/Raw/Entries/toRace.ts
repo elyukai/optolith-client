@@ -1,7 +1,8 @@
 import { IdPrefixes } from "../../../../constants/IdPrefixes";
+import { fmap } from "../../../../Data/Functor";
 import { empty, List, map } from "../../../../Data/List";
-import { fmap, fromMaybe, Nothing } from "../../../../Data/Maybe";
-import { first, fromBinary, fst, Pair, snd } from "../../../../Data/Pair";
+import { fromMaybe, Nothing } from "../../../../Data/Maybe";
+import { first, fst, Pair, snd } from "../../../../Data/Pair";
 import { Race } from "../../../Models/Wiki/Race";
 import { Die } from "../../../Models/Wiki/sub/Die";
 import { prefixId } from "../../IDUtils";
@@ -215,7 +216,7 @@ export const toRace =
               (rs.eattributeAdjustments),
 
           attributeAdjustmentsSelection:
-            fromBinary (
+            Pair (
               rs.eattributeAdjustmentsSelectionValue,
               map (prefixId (IdPrefixes.ATTRIBUTES)) (rs.eattributeAdjustmentsSelectionList)
             ),

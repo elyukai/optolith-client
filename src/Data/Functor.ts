@@ -14,7 +14,7 @@ import { Const, isConst } from "./Functor/Const";
 import { Cons, isList, isNil, List, Nil } from "./List";
 import { isJust, isMaybe, Just, Maybe } from "./Maybe";
 import { isOrderedMap, OrderedMap } from "./OrderedMap";
-import { fromBinary, isPair, Pair } from "./Pair";
+import { isPair, Pair } from "./Pair";
 import { showP } from "./Show";
 
 export type Functor<A> = Const<A>
@@ -71,7 +71,7 @@ export const fmap =
     }
 
     if (isPair (x)) {
-      return fromBinary (x .first, f (x .second))
+      return Pair (x .first, f (x .second))
     }
 
     throw new TypeError (instanceErrorMsg ("fmap") (x))

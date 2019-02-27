@@ -1,7 +1,7 @@
 import { IdPrefixes } from "../../../../constants/IdPrefixes";
 import { notNull, notNullStr } from "../../../../Data/List";
 import { Just, Nothing } from "../../../../Data/Maybe";
-import { fromBinary } from "../../../../Data/Pair";
+import { Pair } from "../../../../Data/Pair";
 import { SelectOption } from "../../../Models/Wiki/sub/SelectOption";
 import { prefixId } from "../../IDUtils";
 import { mergeRowsByIdAndMainId } from "../mergeTableRows";
@@ -82,7 +82,7 @@ export const toActivatableSelectOption =
             egr,
             elevel,
           })
-          (rs => fromBinary (
+          (rs => Pair (
             prefixId (prefix) (mainId),
             SelectOption ({
               id,

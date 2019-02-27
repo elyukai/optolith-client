@@ -2,7 +2,7 @@ import { remote } from "electron";
 import * as fs from "fs";
 import { flength, List, subscript } from "../../Data/List";
 import { fromMaybe, Maybe } from "../../Data/Maybe";
-import { bimap, fromBoth, fst, Pair, snd } from "../../Data/Pair";
+import { bimap, fst, Pair, snd } from "../../Data/Pair";
 import { divideBy, inc } from "./mathUtils";
 
 export const readFile =
@@ -119,7 +119,7 @@ const foldByteLevels =
 export const bytify =
   (localeId: string) =>
   (value: number) => {
-    const levelAndNumber = foldByteLevels (fromBoth<number, number> (0) (value))
+    const levelAndNumber = foldByteLevels (Pair (0, value))
     const rounded = Math.round (snd (levelAndNumber) * 10)
     const localizedNumber = (rounded / 10) .toLocaleString (localeId)
 

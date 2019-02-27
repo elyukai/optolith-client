@@ -5,7 +5,7 @@ import { consF, countWith, foldr, List, maximum, maximumNonNegative, minimum } f
 import { elem, Just, maybe, Maybe, Nothing, sum } from "../../../Data/Maybe";
 import { lookupF, OrderedMap } from "../../../Data/OrderedMap";
 import { } from "../../../Data/OrderedSet";
-import { fromBoth, Pair } from "../../../Data/Pair";
+import { Pair } from "../../../Data/Pair";
 import { Record } from "../../../Data/Record";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
@@ -142,7 +142,7 @@ export const getRoutineValue =
       const dependentCheckMod = checkModThreshold + tooLessAttributePoints
 
       return dependentCheckMod < 4
-        ? Just (fromBoth<number, boolean> (dependentCheckMod) (tooLessAttributePoints > 0))
+        ? Just (Pair (dependentCheckMod, tooLessAttributePoints > 0))
         : Nothing
     }
 

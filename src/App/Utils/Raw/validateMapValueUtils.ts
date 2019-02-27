@@ -6,7 +6,7 @@ import { inRange } from "../../../Data/Ix";
 import { Cons, flength, List, notNullStr, splitOn } from "../../../Data/List";
 import { bindF, ensure, fromJust, fromMaybe, isNothing, Just, liftM2, mapM, Maybe, Nothing } from "../../../Data/Maybe";
 import { fromList, OrderedSet } from "../../../Data/OrderedSet";
-import { fromBinary, fromBoth, Pair } from "../../../Data/Pair";
+import { Pair } from "../../../Data/Pair";
 import { show } from "../../../Data/Show";
 import { toInt, toNatural } from "../NumberUtils";
 import { Expect } from "./validateValueUtils";
@@ -206,7 +206,7 @@ export const mensureMapNaturalPred =
 export const mensureMapNaturalInRange =
   (l: number) =>
   (u: number) =>
-    mensureMapNaturalPred (inRange (fromBinary (l, u)))
+    mensureMapNaturalPred (inRange (Pair (l, u)))
 
 export const mensureMapNaturalPredOptional =
   (pred: (x: number) => boolean) =>
@@ -219,7 +219,7 @@ export const mensureMapNaturalPredOptional =
 export const mensureMapNaturalInRangeOptional =
   (l: number) =>
   (u: number) =>
-    mensureMapNaturalPredOptional (inRange (fromBinary (l, u)))
+    mensureMapNaturalPredOptional (inRange (Pair (l, u)))
 
 export const mensureMapNaturalList =
   (del: string) =>
@@ -265,7 +265,7 @@ const mapPairList =
       bindF (
         p =>
         liftM2<A, B, Pair<A, B>>
-          (fromBoth)
+          (Pair)
           (toFst ((p as Cons<string>) .x))
           (toSnd (((p as Cons<string>) .xs as Cons<string>) .x))
       )

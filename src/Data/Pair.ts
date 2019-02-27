@@ -25,13 +25,8 @@ const PairPrototype =
     isPair: true,
   })
 
-/**
- * `fromBoth :: a -> b -> (a, b)`
- *
- * Creates a new `Pair` instance from the passed arguments.
- */
-export const fromBoth =
-  <A, B> (firstValue: A) => (secondValue: B): Pair<A, B> =>
+const _Pair =
+  <A, B> (firstValue: A, secondValue: B): Pair<A, B> =>
     Object.create (
       PairPrototype,
       {
@@ -46,14 +41,39 @@ export const fromBoth =
       }
     )
 
-/**
- * `fromBinary :: (a, b) -> (a, b)`
- *
- * Creates a new `Pair` instance from the passed arguments.
- */
-export const fromBinary =
-  <A, B> (firstValue: A, secondValue: B): Pair<A, B> =>
-    fromBoth<A, B> (firstValue) (secondValue)
+interface PairConstructor {
+  <A> (first: A): <B> (second: B) => Pair<A, B>
+  <A, B> (first: A, second: B): Pair<A, B>
+
+  bimap:
+  <A, B, C, D>
+  (fFirst: (first: A) => B) =>
+  (fSecond: (second: C) => D) =>
+  (x: Pair<A, C>) =>
+  Pair<B, D>
+
+  first: <A, B> (f: (first: A) => B) => <C> (x: Pair<A, C>) => Pair<B, C>
+  second: <A, B, C>(f: (second: B) => C) => (x: Pair<A, B>) => Pair<A, C>
+
+  fst: <A>(x: Pair<A, any>) => A
+  snd: <B>(x: Pair<any, B>) => B
+  curry: <A, B, C>(f: (x: Pair<A, B>) => C) => (a: A) => (b: B) => C
+  uncurry: <A, B, C>(f: (a: A) => (b: B) => C) => (x: Pair<A, B>) => C
+  swap: <A, B>(x: Pair<A, B>) => Pair<B, A>
+
+  toArray: <A, B>(x: Pair<A, B>) => [A, B]
+  fromArray: <A, B>(x: [A, B]) => Pair<A, B>
+  isPair: (x: any) => x is Pair<any, any>
+}
+
+export const Pair =
+  ((...args: [any] | [any, any]) => {
+    if (args.length === 1) {
+      return (b: any) => _Pair (args [0], b)
+    }
+
+    return _Pair (args [0], args [1])
+  }) as PairConstructor
 
 
 // BIFUNCTOR
@@ -66,7 +86,7 @@ export const bimap =
   (fFirst: (first: A) => B) =>
   (fSecond: (second: C) => D) =>
   (x: Pair<A, C>): Pair<B, D> =>
-    fromBoth<B, D> (fFirst (x .first)) (fSecond (x .second))
+    Pair (fFirst (x .first)) (fSecond (x .second))
 
 /**
 * `first :: (a -> b) -> (a, c) -> (b, c)`
@@ -76,7 +96,7 @@ export const first =
   (f: (first: A) => B) =>
   <C>
   (x: Pair<A, C>): Pair<B, C> =>
-    fromBoth<B, C> (f (x .first)) (x .second)
+    Pair (f (x .first)) (x .second)
 
 /**
 * `second :: (b -> c) -> (a, b) -> (a, c)`
@@ -84,7 +104,7 @@ export const first =
 export const second =
   <A, B, C>
   (f: (second: B) => C) => (x: Pair<A, B>): Pair<A, C> =>
-    fromBoth<A, C> (x .first) (f (x .second))
+    Pair (x .first) (f (x .second))
 
 
 // PAIR FUNCTIONS
@@ -110,7 +130,7 @@ export const snd = <B> (x: Pair<any, B>): B => x .second
  */
 export const curry =
   <A, B, C> (f: (x: Pair<A, B>) => C) => (a: A) => (b: B): C =>
-    f (fromBinary (a, b))
+    f (Pair (a, b))
 
 /**
  * `uncurry :: (a -> b -> c) -> (a, b) -> c`
@@ -128,7 +148,7 @@ export const uncurry =
  */
 export const swap =
   <A, B> (x: Pair<A, B>): Pair<B, A> =>
-    fromBinary (x .second, x .first)
+    Pair (x .second, x .first)
 
 
 // CUSTOM FUNCTIONS
@@ -145,7 +165,7 @@ export const toArray = <A, B> (x: Pair<A, B>): [A, B] => [x .first, x .second]
  *
  * Creates a pair from a native `Array` of length `2`.
  */
-export const fromArray = <A, B> (x: [A, B]): Pair<A, B> => fromBinary (...x)
+export const fromArray = <A, B> (x: [A, B]): Pair<A, B> => Pair (...x)
 
 /**
  * `isPair :: a -> Bool`
@@ -159,21 +179,16 @@ export const isPair =
 
 // NAMESPACED FUNCTIONS
 
-export const Pair = {
-  fromBoth,
-  fromBinary,
+Pair.bimap = bimap
+Pair.first = first
+Pair.second = second
 
-  bimap,
-  first,
-  second,
+Pair.fst = fst
+Pair.snd = snd
+Pair.curry = curry
+Pair.uncurry = uncurry
+Pair.swap = swap
 
-  fst,
-  snd,
-  curry,
-  uncurry,
-  swap,
-
-  toArray,
-  fromArray,
-  isPair,
-}
+Pair.toArray = toArray
+Pair.fromArray = fromArray
+Pair.isPair = isPair

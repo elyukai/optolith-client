@@ -1,5 +1,5 @@
 import { inc, negate, pipe } from "ramda";
-import { bimap, fromBoth, fst, Pair, snd } from "../../../Data/Pair";
+import { bimap, fst, Pair, snd } from "../../../Data/Pair";
 import { add, max, multiply, subtractBy } from "../mathUtils";
 
 /**
@@ -82,11 +82,11 @@ const sumAPValue =
 
 const getIncreaseRangeAP =
   (ic: number) => (fromValue: number) => (toValue: number) =>
-    sumAPValue (fromBoth<number, number> (ic) (toValue)) (fromBoth<number, number> (fromValue) (0))
+    sumAPValue (Pair (ic, toValue)) (Pair (fromValue, 0))
 
 const getDecreaseRangeAP =
   (ic: number) => (fromValue: number) => (toValue: number) =>
-    -sumAPValue (fromBoth<number, number> (ic) (fromValue)) (fromBoth<number, number> (toValue) (0))
+    -sumAPValue (Pair (ic, fromValue)) (Pair (toValue, 0))
 
 /**
  * `getAPRange :: Int -> Int -> Int -> Int`

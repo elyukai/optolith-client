@@ -1,13 +1,13 @@
 import { pipe } from "ramda";
 import xlsx from "xlsx";
-import { bindF, Either, fmap, fromRight_, isLeft, Left, mapM, maybeToEither } from "../../../Data/Either";
-import { join } from "../../../Data/Function";
+import { bindF, Either, fromRight_, isLeft, Left, mapM, maybeToEither } from "../../../Data/Either";
+import { fmap } from "../../../Data/Functor";
 import { Lens, over, set } from "../../../Data/Lens";
 import { consF, empty, foldr, List, map } from "../../../Data/List";
 import { catMaybes, fromMaybe, Just, Maybe } from "../../../Data/Maybe";
 import { adjust, fromList, lookupF, mapMEither, OrderedMap } from "../../../Data/OrderedMap";
 import { OrderedSet } from "../../../Data/OrderedSet";
-import { fromBinary, fromBoth, fst, Pair, snd } from "../../../Data/Pair";
+import { fst, Pair, snd } from "../../../Data/Pair";
 import { makeLenses, Record } from "../../../Data/Record";
 import { Book } from "../../Models/Wiki/Book";
 import { L10nRecord } from "../../Models/Wiki/L10n";
@@ -54,7 +54,7 @@ export const workbookToMap =
 const { id } = Book.A
 
 const listToMap =
-  pipe (map (join (pipe (id, fromBoth))), fromList) as
+  pipe (map ((x: Record<{ id: string }>) => Pair (id (x), x)), fromList) as
     <A extends { id: string }> (x0: List<Record<A>>) => OrderedMap<string, Record<A>>
 
 type Convert<A> =
@@ -190,7 +190,7 @@ export const parseTables =
         (rs => {
 
 
-          return fromBinary (
+          return Pair (
             rs.l10n,
             WikiModel ({
               books: rs.books,
