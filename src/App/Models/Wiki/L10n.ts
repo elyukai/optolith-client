@@ -210,8 +210,8 @@ export interface L10n {
   "reach": string
   "reachlabels": List<string>
   "breakingpointrating.short": string
-  "loss.short": string
-  "atttack.short": string
+  "damaged.short": string
+  "attack.short": string
   "weightunit.short": string
   "rangedcombatweapons": string
   "reloadtime": string
@@ -221,7 +221,8 @@ export interface L10n {
   "armors": string
   "armor": string
   "protection.short": string
-  "stability.short": string
+  "sturdinessrating.short": string
+  "wear.short": string
   "movementinitiative": string
   "carriedwhereexamples": string
   "head.short": string
@@ -291,7 +292,6 @@ export interface L10n {
   "duration.splitted": string
   "effect": string
   "primaryattribute": string
-  "properties.oneormore": string
   "tradition": string
   "magicalspecialabilities": string
   "liturgicalchantsandceremonies": string
@@ -481,7 +481,6 @@ export interface L10n {
   "priceunit": string
   "itemgroups": List<string>
   "armortypes": List<string>
-  "dicelist": List<string>
   "damage": string
   "primaryattributeanddamagethreshold.short": string
   "length": string
@@ -814,8 +813,8 @@ export const L10n =
     "reach": "",
     "reachlabels": List.empty,
     "breakingpointrating.short": "",
-    "loss.short": "",
-    "atttack.short": "",
+    "damaged.short": "",
+    "attack.short": "",
     "weightunit.short": "",
     "rangedcombatweapons": "",
     "reloadtime": "",
@@ -825,7 +824,8 @@ export const L10n =
     "armors": "",
     "armor": "",
     "protection.short": "",
-    "stability.short": "",
+    "sturdinessrating.short": "",
+    "wear.short": "",
     "movementinitiative": "",
     "carriedwhereexamples": "",
     "head.short": "",
@@ -895,7 +895,6 @@ export const L10n =
     "duration.splitted": "",
     "effect": "",
     "primaryattribute": "",
-    "properties.oneormore": "",
     "tradition": "",
     "magicalspecialabilities": "",
     "liturgicalchantsandceremonies": "",
@@ -1085,7 +1084,6 @@ export const L10n =
     "priceunit": "",
     "itemgroups": List.empty,
     "armortypes": List.empty,
-    "dicelist": List.empty,
     "damage": "",
     "primaryattributeanddamagethreshold.short": "",
     "length": "",
