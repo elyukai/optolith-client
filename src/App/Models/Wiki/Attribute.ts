@@ -1,5 +1,5 @@
-import { Categories } from "../../../constants/Categories";
 import { fromDefault } from "../../../Data/Record";
+import { Categories } from "../../Constants/Categories";
 import { EntryWithCategory } from "./wikiTypeHelpers";
 
 export interface Attribute {

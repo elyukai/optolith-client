@@ -4,8 +4,8 @@ import { OrderedMap } from "../../../Data/OrderedMap";
 import { OrderedSet } from "../../../Data/OrderedSet";
 import { Pair } from "../../../Data/Pair";
 import { Omit, Record, RecordI } from "../../../Data/Record";
-import { DCIds } from "../../../selectors/derivedCharacteristicsSelectors";
 import { AllAction } from "../../../types/actions";
+import { DCIds } from "../../Selectors/derivedCharacteristicsSelectors";
 import { TabId } from "../../Utils/LocationUtils";
 import { ActivatableDependent } from "../ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent } from "../ActiveEntries/ActivatableSkillDependent";
@@ -99,16 +99,6 @@ export interface ActivatableActivationMeta<
 }
 
 export type SetTierObject = ActiveObject
-
-export interface ActivateArgs {
-  id: string
-  sel: Maybe<string | number>
-  sel2: Maybe<string | number>
-  input: Maybe<string>
-  tier: Maybe<number>
-  cost: number
-  customCost: Maybe<number>
-}
 
 export interface DeactivateArgs {
   id: string

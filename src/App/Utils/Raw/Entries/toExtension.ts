@@ -1,7 +1,7 @@
-import { IdPrefixes } from "../../../../constants/IdPrefixes";
 import { fmap } from "../../../../Data/Either";
 import { notNull } from "../../../../Data/List";
 import { Just, Nothing } from "../../../../Data/Maybe";
+import { IdPrefixes } from "../../../Constants/IdPrefixes";
 import { SelectOption } from "../../../Models/Wiki/sub/SelectOption";
 import { prefixId } from "../../IDUtils";
 import { mergeRowsById } from "../mergeTableRows";

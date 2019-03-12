@@ -1,6 +1,6 @@
-import { IdPrefixes } from "../../../../constants/IdPrefixes";
 import { empty, fromArray, map } from "../../../../Data/List";
 import { fromMaybe, Just, maybe, Maybe, Nothing } from "../../../../Data/Maybe";
+import { IdPrefixes } from "../../../Constants/IdPrefixes";
 import { CantripsSelection } from "../../../Models/Wiki/professionSelections/CantripsSelection";
 import { CombatTechniquesSelection } from "../../../Models/Wiki/professionSelections/CombatTechniquesSelection";
 import { CursesSelection } from "../../../Models/Wiki/professionSelections/CursesSelection";

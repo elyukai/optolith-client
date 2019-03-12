@@ -1,8 +1,11 @@
 import * as R from 'ramda';
 import * as React from 'react';
+import { Categories } from '../../App/Constants/Categories';
+import { WikiInfoContainer } from '../../App/Containers/WikiInfoContainer';
 import { SecondaryAttribute } from '../../App/Models/Hero/heroTypeHelpers';
 import { AttributeCombined, CantripCombined, SpellIsActive, SpellWithRequirements } from '../../App/Models/View/viewTypeHelpers';
 import { Cantrip, SpecialAbility, Spell } from '../../App/Models/Wiki/wikiTypeHelpers';
+import { DCIds } from '../../App/Selectors/derivedCharacteristicsSelectors';
 import { translate, UIMessagesObject } from '../../App/Utils/I18n';
 import { isOwnTradition } from '../../App/Utils/Increasable/spellUtils';
 import { BorderButton } from '../../components/BorderButton';
@@ -20,9 +23,6 @@ import { Scroll } from '../../components/Scroll';
 import { Slidein } from '../../components/Slidein';
 import { SortNames, SortOptions } from '../../components/SortOptions';
 import { TextField } from '../../components/TextField';
-import { Categories } from '../../constants/Categories';
-import { WikiInfoContainer } from '../../containers/WikiInfoContainer';
-import { DCIds } from '../../selectors/derivedCharacteristicsSelectors';
 import { Just, List, Maybe, Nothing, OrderedMap, Record, Tuple } from '../../utils/dataUtils';
 import { SkillListItem } from '../skills/SkillListItem';
 

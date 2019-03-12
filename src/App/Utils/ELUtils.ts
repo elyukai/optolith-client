@@ -1,8 +1,8 @@
 import { pipe } from "ramda";
-import { IdPrefixes } from "../../constants/IdPrefixes";
 import { and, fmap } from "../../Data/Maybe";
 import { foldlWithKey, lookupF, OrderedMap } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
+import { IdPrefixes } from "../Constants/IdPrefixes";
 import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel";
 import { getNumericId, prefixId } from "./IDUtils";
 import { inc, lt } from "./mathUtils";

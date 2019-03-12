@@ -1,6 +1,6 @@
-import { IdPrefixes } from "../../../../constants/IdPrefixes";
 import { fst, Pair, snd } from "../../../../Data/Pair";
 import { fromDefault } from "../../../../Data/Record";
+import { IdPrefixes } from "../../../Constants/IdPrefixes";
 import { prefixId } from "../../../Utils/IDUtils";
 
 export interface IncreaseSkill {

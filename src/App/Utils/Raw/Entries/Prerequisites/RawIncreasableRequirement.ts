@@ -1,6 +1,6 @@
-import { Categories, IncreasableCategories } from "../../../../../constants/Categories";
-import { IdPrefixes, IdPrefixesByCategory } from "../../../../../constants/IdPrefixes";
 import { intercalate, map } from "../../../../../Data/List";
+import { Categories, IncreasableCategories } from "../../../../Constants/Categories";
+import { IdPrefixes, IdPrefixesByCategory } from "../../../../Constants/IdPrefixes";
 import { prefixId } from "../../../IDUtils";
 import { naturalNumber } from "../../../RegexUtils";
 import { AllRawRequirementObjects, RawProfessionPrerequisite } from "../rawTypeHelpers";

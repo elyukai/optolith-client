@@ -7,10 +7,10 @@
  * @since 1.1.0
  */
 
-import { ActivatableCategory, Categories } from "../../../../constants/Categories";
 import { Maybe } from "../../../../Data/Maybe";
 import { OrderedMap } from "../../../../Data/OrderedMap";
 import { Record } from "../../../../Data/Record";
+import { ActivatableCategory, Categories } from "../../../Constants/Categories";
 import { ActivatableDependent } from "../../../Models/ActiveEntries/ActivatableDependent";
 import { ActiveObjectWithId } from "../../../Models/ActiveEntries/ActiveObjectWithId";
 import { HeroModel, HeroModelRecord } from "../../../Models/Hero/HeroModel";

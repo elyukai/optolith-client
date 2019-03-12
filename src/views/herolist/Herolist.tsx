@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Hero, InputTextEvent, User } from '../../App/Models/Hero/heroTypeHelpers';
 import { Book, ExperienceLevel, WikiAll } from '../../App/Models/Wiki/wikiTypeHelpers';
+import { AdventurePointsObject } from '../../App/Selectors/adventurePointsSelectors';
 import { translate } from '../../App/Utils/I18n';
 import { BorderButton } from '../../components/BorderButton';
 import { Dropdown, DropdownOption } from '../../components/Dropdown';
@@ -10,7 +11,6 @@ import { Page } from '../../components/Page';
 import { Scroll } from '../../components/Scroll';
 import { SortNames, SortOptions } from '../../components/SortOptions';
 import { TextField } from '../../components/TextField';
-import { AdventurePointsObject } from '../../selectors/adventurePointsSelectors';
 import { UIMessagesObject } from '../../types/ui';
 import { Just, List, Maybe, OrderedMap, OrderedSet, Record } from '../../utils/dataUtils';
 import { HeroCreation } from './HeroCreation';

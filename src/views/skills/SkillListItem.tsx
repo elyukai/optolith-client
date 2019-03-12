@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { SecondaryAttribute } from '../../App/Models/Hero/heroTypeHelpers';
 import { AttributeCombined } from '../../App/Models/View/viewTypeHelpers';
+import { DCIds } from '../../App/Selectors/derivedCharacteristicsSelectors';
 import { ListItem } from '../../components/ListItem';
 import { ListItemName } from '../../components/ListItemName';
 import { ListItemSeparator } from '../../components/ListItemSeparator';
 import { ListItemValues } from '../../components/ListItemValues';
-import { DCIds } from '../../selectors/derivedCharacteristicsSelectors';
 import { List, Maybe, OrderedMap, Record } from '../../utils/dataUtils';
 import { AdditionalValue, SkillAdditionalValues } from './SkillAdditionalValues';
 import { SkillButtons } from './SkillButtons';

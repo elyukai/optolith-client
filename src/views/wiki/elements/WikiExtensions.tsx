@@ -1,8 +1,8 @@
 import * as React from 'react';
+import { Categories } from '../../../App/Constants/Categories';
 import { SkillExtension, SpecialAbility } from '../../../App/Models/Wiki/wikiTypeHelpers';
 import { translate, UIMessages } from '../../../App/Utils/I18n';
 import { Markdown } from '../../../components/Markdown';
-import { Categories } from '../../../constants/Categories';
 import { sortObjects } from '../../../utils/FilterSortUtils';
 
 export interface WikiExtensionsProps {

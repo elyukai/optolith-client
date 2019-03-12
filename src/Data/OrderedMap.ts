@@ -824,7 +824,7 @@ export const keys =
  * Return all key/value pairs in the map.
  */
 export const assocs = <K, A> (mp: OrderedMap<K, A>): List<Pair<K, A>> =>
-  List.fromArray ([...mp] .map (([key, value]) => Pair (key, value)))
+  List.fromArray ([...mp] .map (p => Pair (...p)))
 
 /**
  * `keysSet :: Map k a -> Set k`

@@ -1,7 +1,7 @@
-import { IdPrefixes } from "../../../../constants/IdPrefixes";
 import { notNull, notNullStr } from "../../../../Data/List";
 import { Just, Nothing } from "../../../../Data/Maybe";
 import { Pair } from "../../../../Data/Pair";
+import { IdPrefixes } from "../../../Constants/IdPrefixes";
 import { SelectOption } from "../../../Models/Wiki/sub/SelectOption";
 import { prefixId } from "../../IDUtils";
 import { mergeRowsByIdAndMainId } from "../mergeTableRows";

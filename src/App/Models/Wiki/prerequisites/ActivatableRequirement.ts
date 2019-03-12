@@ -1,8 +1,8 @@
 import { pipe } from "ramda";
-import { ActivatableLikeCategories, Categories } from "../../../../constants/Categories";
 import { all, elemF, isList, List } from "../../../../Data/List";
 import { fmap, Maybe, Nothing, or } from "../../../../Data/Maybe";
 import { fromDefault, makeLenses, member, Record } from "../../../../Data/Record";
+import { ActivatableLikeCategories, Categories } from "../../../Constants/Categories";
 import { getCategoryById } from "../../../Utils/IDUtils";
 import { AllRequirementObjects, ProfessionPrerequisite, SID } from "../wikiTypeHelpers";
 

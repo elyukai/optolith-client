@@ -1,8 +1,8 @@
-import { IdPrefixes } from "../../../../constants/IdPrefixes";
 import { fmap } from "../../../../Data/Functor";
 import { empty, List, map } from "../../../../Data/List";
 import { fromMaybe, Nothing } from "../../../../Data/Maybe";
 import { first, fst, Pair, snd } from "../../../../Data/Pair";
+import { IdPrefixes } from "../../../Constants/IdPrefixes";
 import { Race } from "../../../Models/Wiki/Race";
 import { Die } from "../../../Models/Wiki/sub/Die";
 import { prefixId } from "../../IDUtils";

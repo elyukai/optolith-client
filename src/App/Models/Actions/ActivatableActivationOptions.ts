@@ -1,0 +1,25 @@
+import { Maybe, Nothing } from "../../../Data/Maybe";
+import { fromDefault, makeLenses } from "../../../Data/Record";
+
+export interface ActivatableActivationOptions {
+  id: string
+  selectOptionId1: Maybe<string | number>
+  selectOptionId2: Maybe<string | number>
+  input: Maybe<string>
+  level: Maybe<number>
+  cost: number
+  customCost: Maybe<number>
+}
+
+export const ActivatableActivationOptions =
+  fromDefault<ActivatableActivationOptions> ({
+    id: "",
+    selectOptionId1: Nothing,
+    selectOptionId2: Nothing,
+    input: Nothing,
+    level: Nothing,
+    cost: 0,
+    customCost: Nothing,
+  })
+
+export const ActivatableActivationOptionsL = makeLenses (ActivatableActivationOptions)

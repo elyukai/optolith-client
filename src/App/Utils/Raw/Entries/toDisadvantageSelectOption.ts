@@ -1,4 +1,4 @@
-import { IdPrefixes } from "../../../../constants/IdPrefixes";
+import { IdPrefixes } from "../../../Constants/IdPrefixes";
 import { toActivatableSelectOption } from "./toActivatableSelectOption";
 
 export const toDisadvantageSelectOption =

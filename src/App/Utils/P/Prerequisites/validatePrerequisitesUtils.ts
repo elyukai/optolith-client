@@ -1,5 +1,4 @@
 import { pipe } from "ramda";
-import { IdPrefixes } from "../../../../constants/IdPrefixes";
 import { equals } from "../../../../Data/Eq";
 import { flip, join, on, thrush } from "../../../../Data/Function";
 import { fmap } from "../../../../Data/Functor";
@@ -11,6 +10,7 @@ import { Ordering } from "../../../../Data/Ord";
 import { lookupF, OrderedMap, toList } from "../../../../Data/OrderedMap";
 import { fst, Pair, snd } from "../../../../Data/Pair";
 import { Record } from "../../../../Data/Record";
+import { IdPrefixes } from "../../../Constants/IdPrefixes";
 import { ActivatableDependent, isActivatableDependent, isMaybeActivatableDependent } from "../../../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent, isMaybeActivatableSkillDependent } from "../../../Models/ActiveEntries/ActivatableSkillDependent";
 import { ActiveObject } from "../../../Models/ActiveEntries/ActiveObject";

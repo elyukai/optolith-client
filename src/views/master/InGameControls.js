@@ -1,8 +1,8 @@
+import { classNames } from 'classnames';
+import React, { Component, PropTypes } from 'react';
+import { InGameActions } from '../../App/Actions/InGameActions';
 import { Checkbox } from '../../components/Checkbox';
 import { IconButton } from '../../components/IconButton';
-import { InGameActions } from '../../actions/InGameActions';
-import React, { Component, PropTypes } from 'react';
-import { classNames } from 'classnames';
 
 export class InGameControls extends Component {
 

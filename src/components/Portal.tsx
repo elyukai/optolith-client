@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
-import { AppState } from '../reducers/appReducer';
-import { getTheme } from '../selectors/uisettingsSelectors';
+import { AppState } from '../App/Reducers/appReducer';
+import { getTheme } from '../App/Selectors/uisettingsSelectors';
 import { PortalWrapped, PortalWrappedDispatchProps, PortalWrappedOwnProps, PortalWrappedStateProps } from './PortalWrapped';
 
 const mapStateToProps = (state: AppState): PortalWrappedStateProps => ({

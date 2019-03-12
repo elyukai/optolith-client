@@ -1,5 +1,4 @@
 import { pipe } from "ramda";
-import { ActivatableCategories, Categories, SkillishCategories } from "../../constants/Categories";
 import { thrush } from "../../Data/Function";
 import { fmap } from "../../Data/Functor";
 import { elem, elemF, filter, fromArray, List } from "../../Data/List";
@@ -7,6 +6,7 @@ import { bindF, Maybe } from "../../Data/Maybe";
 import { elems, lookupF, OrderedMap, OrderedMapValueElement } from "../../Data/OrderedMap";
 import { member, Record } from "../../Data/Record";
 import { show } from "../../Data/Show";
+import { ActivatableCategories, Categories, SkillishCategories } from "../Constants/Categories";
 import { ProfessionCombined } from "../Models/View/ProfessionCombined";
 import { Advantage } from "../Models/Wiki/Advantage";
 import { Blessing } from "../Models/Wiki/Blessing";

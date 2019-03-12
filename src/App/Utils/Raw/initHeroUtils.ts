@@ -1,5 +1,4 @@
 import { pipe } from "ramda";
-import { Categories } from "../../../constants/Categories";
 import { ident } from "../../../Data/Function";
 import { fmap } from "../../../Data/Functor";
 import { fromArray, List } from "../../../Data/List";
@@ -8,6 +7,7 @@ import { foldlWithKey, OrderedMap } from "../../../Data/OrderedMap";
 import { insert, OrderedSet } from "../../../Data/OrderedSet";
 import { Record, StringKeyObject } from "../../../Data/Record";
 import * as Raw from "../../../types/rawdata";
+import { Categories } from "../../Constants/Categories";
 import { ActivatableDependent, createActivatableDependentWithActive } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent, createActivatableSkillDependentWithValue } from "../../Models/ActiveEntries/ActivatableSkillDependent";
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";

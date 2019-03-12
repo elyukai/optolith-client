@@ -1,6 +1,8 @@
 import { remote } from 'electron';
 import * as React from 'react';
+import { SettingsContainer } from '../../App/Containers/SettingsContainer';
 import { SubTab } from '../../App/Models/Hero/heroTypeHelpers';
+import { AdventurePointsObject } from '../../App/Selectors/adventurePointsSelectors';
 import { translate } from '../../App/Utils/I18n';
 import { TabId } from '../../App/Utils/LocationUtils';
 import { AvatarWrapper } from '../../components/AvatarWrapper';
@@ -8,8 +10,6 @@ import { BorderButton } from '../../components/BorderButton';
 import { IconButton } from '../../components/IconButton';
 import { Text } from '../../components/Text';
 import { TooltipToggle } from '../../components/TooltipToggle';
-import { SettingsContainer } from '../../containers/SettingsContainer';
-import { AdventurePointsObject } from '../../selectors/adventurePointsSelectors';
 import { UIMessagesObject } from '../../types/ui';
 import { List, Maybe, Record } from '../../utils/dataUtils';
 import { ApTooltip } from './ApTooltip';

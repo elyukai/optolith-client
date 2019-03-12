@@ -1,6 +1,6 @@
 import { fromJust, INTERNAL_shallowEquals, isMaybe, isNothing, Just, Maybe, Nothing, Some } from "../../Data/Maybe";
 import { lookup, OrderedMap } from "../../Data/OrderedMap";
-import { AppState } from "../../reducers/appReducer";
+import { AppState } from "../Reducers/appReducer";
 
 // @ts-ignore
 type MappedReturnType<A extends ((...args: any[]) => any)[]> = { [K in keyof A]: ReturnType<A[K]> }

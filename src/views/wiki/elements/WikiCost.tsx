@@ -1,6 +1,6 @@
 import * as React from 'react';
+import { Categories } from '../../../App/Constants/Categories';
 import { UIMessages } from '../../../App/Utils/I18n';
-import { Categories } from '../../../constants/Categories';
 import { WikiProperty } from '../WikiProperty';
 
 export interface WikiCostProps {

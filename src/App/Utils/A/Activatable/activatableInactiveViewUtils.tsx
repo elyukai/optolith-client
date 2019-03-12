@@ -1,12 +1,17 @@
-import * as R from "ramda";
+import { pipe } from "ramda";
 import * as React from "react";
 import { isNumber, isString } from "util";
 import { ActivatableAddListItemState } from "../../../../components/ActivatableAddListItem";
 import { Dropdown, DropdownOption } from "../../../../components/Dropdown";
 import { TextField } from "../../../../components/TextField";
-import { Categories } from "../../../../constants/Categories";
 import { List } from "../../../../Data/List";
-import { Record } from "../../../../Data/Record";
+import { bindF, ensure, Maybe, Nothing } from "../../../../Data/Maybe";
+import { Pair } from "../../../../Data/Pair";
+import { Omit, Record } from "../../../../Data/Record";
+import { Categories } from "../../../Constants/Categories";
+import { ActivatableActivationOptions } from "../../../Models/Actions/ActivatableActivationOptions";
+import { InactiveActivatable } from "../../../Models/View/InactiveActivatable";
+import { L10nRecord } from "../../../Models/Wiki/L10n";
 import { SelectOption } from "../../../Models/Wiki/sub/SelectOption";
 import { Activatable } from "../../../Models/Wiki/wikiTypeHelpers";
 import { getActiveWithNoCustomCost } from "../../AdventurePoints/activatableCostUtils";
@@ -16,55 +21,56 @@ import { toRoman, unsafeToInt } from "../../NumberUtils";
 import { isInteger } from "../../RegexUtils";
 import { getActiveSelectionsMaybe, getSelectOptionCost } from "./selectionUtils";
 
+const { id, cost } = InactiveActivatable.A
+
 interface PropertiesAffectedByState {
-  currentCost?: number | string;
+  currentCost?: number | string
   /**
    * @default false
    */
-  disabled?: boolean;
-  selectElement?: JSX.Element;
-  firstSelectOptions?: List<Record<SelectOption>>;
-  secondSelectOptions?: List<Record<SelectOption>>;
-  inputElement?: JSX.Element;
-  inputDescription?: string;
+  disabled?: boolean
+  selectElement?: JSX.Element
+  firstSelectOptions?: List<Record<SelectOption>>
+  secondSelectOptions?: List<Record<SelectOption>>
+  inputElement?: JSX.Element
+  inputDescription?: string
 }
 
 type SelectedOptions =
-  Partial<Omit<ActivatableAddListItemState, "showCustomCostDialog" | "customCostPreview">>;
+  Partial<Omit<ActivatableAddListItemState, "showCustomCostDialog" | "customCostPreview">>
 
-type DispatchProps = Partial<ActivateArgs>;
-
-type DispatchRecord = Record<DispatchProps>;
-type RecordAffectedByState = Record<PropertiesAffectedByState>;
+type RecordAffectedByState = Record<PropertiesAffectedByState>
 
 /**
- * @default Tuple (Record ({ id, cost: 0 }), Record ())
+ * @default Pair (Record ({ id, cost: 0 }), Record ())
  */
 type IdSpecificAffectedAndDispatchProps =
-  Tuple<Record<Partial<ActivateArgs>>, Record<PropertiesAffectedByState>>;
+  Pair<Record<ActivatableActivationOptions>, Record<PropertiesAffectedByState>>
 
-const getPlainCostFromEntry = (entry: Record<DeactiveViewObject>) =>
-  entry .lookup ("cost") .bind (Maybe.ensure (isNumber));
+const getPlainCostFromEntry = pipe (cost, bindF (ensure (isNumber)))
 
 const getIdSpecificAffectedAndDispatchPropsForMusicTraditions =
-  (locale: UIMessagesObject) =>
-    (entry: Record<DeactiveViewObject>) =>
-      (selected: Maybe<string | number>) =>
-        (musicTraditionIds: List<number>) =>
-            Tuple.of<DispatchRecord, RecordAffectedByState>
-              (Record.ofMaybe<DispatchProps> ({
-                sel: selected,
-              }))
-              (Record.ofMaybe<PropertiesAffectedByState> ({
-                currentCost: getPlainCostFromEntry (entry),
-                firstSelectOptions: Maybe.mapMaybe
-                  ((id: number) => R.pipe (
-                    R.dec,
-                    List.subscript (translate (locale, "musictraditions")),
-                    Maybe.fmap (name => Record.of<SelectOption> ({ id, name }))
-                  ) (id))
-                  (musicTraditionIds),
-              }));
+  (l10n: L10nRecord) =>
+  (inactive_entry: Record<InactiveActivatable>) =>
+  (music_tradition_ids: List<number>) =>
+  (mselect_option_id: Maybe<string | number>) =>
+    Pair (
+      ActivatableActivationOptions ({
+        id: id (inactive_entry),
+        selectOptionId1: mselect_option_id,
+        cost: Nothing,
+      }),
+      Record.ofMaybe<PropertiesAffectedByState> ({
+        currentCost: getPlainCostFromEntry (inactive_entry),
+        firstSelectOptions: Maybe.mapMaybe
+          ((id: number) => R.pipe (
+            R.dec,
+            List.subscript (translate (l10n, "musictraditions")),
+            Maybe.fmap (name => Record.of<SelectOption> ({ id, name }))
+          ) (id))
+          (music_tradition_ids),
+      })
+    )
 
 const getCurrentSelectOption =
   (entry: Record<DeactiveViewObject>) =>
@@ -77,12 +83,12 @@ const getCurrentSelectOption =
                 e => e .get ("id") === currentSelectOptionId
               )
             )
-        );
+        )
 
 interface IdSpecificAffectedAndDispatchPropsInputHandlers {
-  handleSelect (option: Maybe<string | number>): void;
-  handleInput (text: string): void;
-  selectElementDisabled: boolean;
+  handleSelect (option: Maybe<string | number>): void
+  handleInput (text: string): void
+  selectElementDisabled: boolean
 }
 
 export const getIdSpecificAffectedAndDispatchProps =
@@ -91,10 +97,10 @@ export const getIdSpecificAffectedAndDispatchProps =
       (wiki: Record<WikiAll>) =>
         (entry: Record<DeactiveViewObject>) =>
           (selectedOptions: SelectedOptions) => {
-            const selected = Maybe.fromNullable (selectedOptions.selected);
-            const selected2 = Maybe.fromNullable (selectedOptions.selected2);
-            const inputText = Maybe.fromNullable (selectedOptions.input);
-            const maybeSelectedLevel = Maybe.fromNullable (selectedOptions.selectedTier);
+            const selected = Maybe.fromNullable (selectedOptions.selected)
+            const selected2 = Maybe.fromNullable (selectedOptions.selected2)
+            const inputText = Maybe.fromNullable (selectedOptions.input)
+            const maybeSelectedLevel = Maybe.fromNullable (selectedOptions.selectedTier)
 
             return match<string, IdSpecificAffectedAndDispatchProps>
               (entry .get ("id"))
@@ -113,7 +119,7 @@ export const getIdSpecificAffectedAndDispatchProps =
                   "SA_531",
                   "SA_533"
                 )),
-                () => Tuple.of<DispatchRecord, RecordAffectedByState>
+                () => Pair.of<DispatchRecord, RecordAffectedByState>
                   (Record.ofMaybe<DispatchProps> ({
                     sel: selected,
                   }))
@@ -140,7 +146,7 @@ export const getIdSpecificAffectedAndDispatchProps =
                   "ADV_28",
                   "ADV_29"
                 )),
-                () => Tuple.of<DispatchRecord, RecordAffectedByState>
+                () => Pair.of<DispatchRecord, RecordAffectedByState>
                   (Record.ofMaybe<DispatchProps> ({
                     sel: selected,
                   }))
@@ -152,7 +158,7 @@ export const getIdSpecificAffectedAndDispatchProps =
               )
               .on (
                 "DISADV_1",
-                () => Tuple.of<DispatchRecord, RecordAffectedByState>
+                () => Pair.of<DispatchRecord, RecordAffectedByState>
                   (Record.ofMaybe<DispatchProps> ({
                     sel: selected,
                     input: inputText,
@@ -176,13 +182,13 @@ export const getIdSpecificAffectedAndDispatchProps =
                 () => {
                   const activeSelections = Maybe.fromMaybe<List<string | number>>
                     (List.empty ())
-                    (getActiveSelectionsMaybe (entry .lookup ("stateEntry")));
+                    (getActiveSelectionsMaybe (entry .lookup ("stateEntry")))
 
                   const filteredSelectOptions = entry
                     .lookup ("sel")
-                    .fmap (List.filter (e => activeSelections .notElem (e .get ("id"))));
+                    .fmap (List.filter (e => activeSelections .notElem (e .get ("id"))))
 
-                  return Tuple.of<DispatchRecord, RecordAffectedByState>
+                  return Pair.of<DispatchRecord, RecordAffectedByState>
                     (Record.ofMaybe<DispatchProps> ({
                       sel: filteredSelectOptions .then (selected),
                       input: filteredSelectOptions .then (inputText),
@@ -208,11 +214,11 @@ export const getIdSpecificAffectedAndDispatchProps =
                                               Maybe.fromMaybe (b) (m .fmap (a => Math.max (a, b)))
                                           ))
                                           (0)
-                                      ));
+                                      ))
 
                                 return maxCurrentLevel >= level
                                   ? 0
-                                  : cost * (level - maxCurrentLevel);
+                                  : cost * (level - maxCurrentLevel)
                               }
                             )
                         ),
@@ -237,7 +243,7 @@ export const getIdSpecificAffectedAndDispatchProps =
                   "ADV_32",
                   "DISADV_24"
                 )),
-                () => Tuple.of<DispatchRecord, RecordAffectedByState>
+                () => Pair.of<DispatchRecord, RecordAffectedByState>
                   (Record.ofMaybe<DispatchProps> ({
                     sel: selected,
                     input: inputText,
@@ -249,7 +255,7 @@ export const getIdSpecificAffectedAndDispatchProps =
               )
               .on (
                 "ADV_68",
-                () => Tuple.of<DispatchRecord, RecordAffectedByState>
+                () => Pair.of<DispatchRecord, RecordAffectedByState>
                   (Record.ofMaybe<DispatchProps> ({
                     sel: selected,
                     input: inputText,
@@ -272,7 +278,7 @@ export const getIdSpecificAffectedAndDispatchProps =
                       Maybe.ensure (
                         option => typeof option === "number" && List.of (7, 8) .elem (option)
                       )
-                    );
+                    )
 
                   const isMaxActiveSelections = (sid: number) => (max: number) =>
                     Maybe.elem<string | number> (sid) (selected)
@@ -287,9 +293,9 @@ export const getIdSpecificAffectedAndDispatchProps =
                               Maybe.elem<string | number> (sid)
                             ))
                             .length () >= max
-                        ));
+                        ))
 
-                  return Tuple.of<DispatchRecord, RecordAffectedByState>
+                  return Pair.of<DispatchRecord, RecordAffectedByState>
                     (Record.ofMaybe<DispatchProps> ({
                       sel: selected,
                       input: id === "DISADV_33"
@@ -312,7 +318,7 @@ export const getIdSpecificAffectedAndDispatchProps =
                               disabled={Maybe.isNothing (optionWithTextInput)} />
                           )
                           : Nothing (),
-                    }));
+                    }))
                 }
               )
               .on (
@@ -320,7 +326,7 @@ export const getIdSpecificAffectedAndDispatchProps =
                   "DISADV_36",
                   "DISADV_45"
                 )),
-                id => Tuple.of<DispatchRecord, RecordAffectedByState>
+                id => Pair.of<DispatchRecord, RecordAffectedByState>
                   (Record.ofMaybe<DispatchProps> ({
                     sel: selected,
                     input: inputText,
@@ -349,9 +355,9 @@ export const getIdSpecificAffectedAndDispatchProps =
               .on (
                 "SA_9",
                 () => {
-                  const currentSelectOption = getCurrentSelectOption (entry) (selected);
+                  const currentSelectOption = getCurrentSelectOption (entry) (selected)
 
-                  return Tuple.of<DispatchRecord, RecordAffectedByState>
+                  return Pair.of<DispatchRecord, RecordAffectedByState>
                     (Record.ofMaybe<DispatchProps> ({
                       sel: selected,
                       sel2: selected2,
@@ -371,12 +377,12 @@ export const getIdSpecificAffectedAndDispatchProps =
                         currentSelectOption .bind (
                           Record.lookup<SelectOption, "applicationsInput"> ("applicationsInput")
                         ),
-                    }));
+                    }))
                 }
               )
               .on (
                 "SA_29",
-                () => Tuple.of<DispatchRecord, RecordAffectedByState>
+                () => Pair.of<DispatchRecord, RecordAffectedByState>
                   (Record.ofMaybe<DispatchProps> ({
                     sel: selected,
                     tier: maybeSelectedLevel,
@@ -414,12 +420,12 @@ export const getIdSpecificAffectedAndDispatchProps =
               .on (
                 "SA_699",
                 () => {
-                  const currentSelectOption = getCurrentSelectOption (entry) (selected);
+                  const currentSelectOption = getCurrentSelectOption (entry) (selected)
 
                   const specInput = currentSelectOption
-                    .bind (Record.lookup<SelectOption, "specInput"> ("specInput"));
+                    .bind (Record.lookup<SelectOption, "specInput"> ("specInput"))
 
-                  return Tuple.of<DispatchRecord, RecordAffectedByState>
+                  return Pair.of<DispatchRecord, RecordAffectedByState>
                     (Record.ofMaybe<DispatchProps> ({
                       sel: selected,
                       sel2: Maybe.isJust (specInput) ? inputText : selected2,
@@ -436,16 +442,16 @@ export const getIdSpecificAffectedAndDispatchProps =
                             index => name => Record.of<SelectOption> ({ id: index + 1, name })
                           )
                         ),
-                    }));
+                    }))
                 }
               )
               .otherwise (() => {
-                const maybeLevels = entry .get ("wikiEntry") .lookup ("tiers");
-                const maybeSelectOptions = entry .lookup ("sel");
+                const maybeLevels = entry .get ("wikiEntry") .lookup ("tiers")
+                const maybeSelectOptions = entry .lookup ("sel")
 
-                const basePair = Tuple.of<DispatchRecord, RecordAffectedByState>
+                const basePair = Pair.of<DispatchRecord, RecordAffectedByState>
                   (Record.empty<DispatchProps> ())
-                  (Record.empty<PropertiesAffectedByState> ());
+                  (Record.empty<PropertiesAffectedByState> ())
 
                 const fillPairForActiveLevel = (selectedLevel: number) =>
                   R.pipe (
@@ -462,7 +468,7 @@ export const getIdSpecificAffectedAndDispatchProps =
                           )
                           .fmap<IdSpecificAffectedAndDispatchProps> (
                             cost =>
-                              Tuple.second<DispatchRecord, RecordAffectedByState>
+                              Pair.second<DispatchRecord, RecordAffectedByState>
                                 (Record.insert<PropertiesAffectedByState, "currentCost">
                                   ("currentCost")
                                   (cost instanceof List
@@ -470,7 +476,7 @@ export const getIdSpecificAffectedAndDispatchProps =
                                     : cost * selectedLevel))
                                 (pair)
                           )),
-                    Tuple.first (R.pipe (
+                    Pair.first (R.pipe (
                       Record.insert<Partial<ActivateArgs>, "tier"> ("tier") (selectedLevel),
                       Maybe.elem<string | number | List<number>> ("sel") (entry .lookup ("cost"))
                       && Maybe.isJust (maybeSelectOptions)
@@ -479,13 +485,13 @@ export const getIdSpecificAffectedAndDispatchProps =
                         ? Record.insertMaybe<Partial<ActivateArgs>, "input"> ("input") (inputText)
                         : R.identity
                     ))
-                  );
+                  )
 
                 const fillPairForNoLevel =
                   Maybe.elem<string | number | List<number>> ("sel") (entry .lookup ("cost"))
-                    ? Tuple.first<DispatchRecord, RecordAffectedByState>
+                    ? Pair.first<DispatchRecord, RecordAffectedByState>
                       (Record.insertMaybe<Partial<ActivateArgs>, "sel"> ("sel") (selected))
-                    : Tuple.bimap<DispatchRecord, RecordAffectedByState>
+                    : Pair.bimap<DispatchRecord, RecordAffectedByState>
                       (Maybe.isJust (maybeSelectOptions)
                         ? Record.insertMaybe<Partial<ActivateArgs>, "sel"> ("sel") (selected)
                         : Maybe.isJust (entry .get ("wikiEntry") .lookup ("input"))
@@ -493,29 +499,29 @@ export const getIdSpecificAffectedAndDispatchProps =
                         : R.identity)
                       (Record.insertMaybe <PropertiesAffectedByState, "currentCost">
                         ("currentCost")
-                        (getPlainCostFromEntry (entry)));
+                        (getPlainCostFromEntry (entry)))
 
                 return Maybe.fromMaybe
                   (fillPairForNoLevel)
                   (maybeLevels .then (maybeSelectedLevel .fmap (fillPairForActiveLevel)))
-                  (basePair);
+                  (basePair)
               })
-          };
+          }
 
 export const insertFinalCurrentCost =
   (entry: Record<DeactiveViewObject>) =>
     (selectedOptions: SelectedOptions) => {
-      const maybeSelected = Maybe.fromNullable (selectedOptions.selected);
+      const maybeSelected = Maybe.fromNullable (selectedOptions.selected)
 
       const maybeCustomCost = Maybe.fromNullable (selectedOptions.customCost)
         .bind (Maybe.ensure (isInteger))
         .fmap (R.pipe (
           unsafeToInt,
           Math.abs
-        ));
+        ))
 
       return R.pipe (
-        Tuple.second<DispatchRecord, RecordAffectedByState>
+        Pair.second<DispatchRecord, RecordAffectedByState>
           (Record.alter<PropertiesAffectedByState, "currentCost">
             (R.pipe (
               Maybe.bind_ (Maybe.ensure (isNumber)),
@@ -541,63 +547,63 @@ export const insertFinalCurrentCost =
                 : R.identity
             ))
             ("currentCost")),
-        pair => Tuple.first<DispatchRecord, RecordAffectedByState>
+        pair => Pair.first<DispatchRecord, RecordAffectedByState>
           (R.pipe (
             Record.insertMaybe<DispatchProps, "cost">
               ("cost")
-              (Tuple.snd (pair) .lookup ("currentCost") .bind (Maybe.ensure (isNumber))),
+              (Pair.snd (pair) .lookup ("currentCost") .bind (Maybe.ensure (isNumber))),
             Record.insertMaybe<DispatchProps, "customCost">
               ("customCost")
-              (Tuple.snd (pair) .lookup ("currentCost") .then (maybeCustomCost))
+              (Pair.snd (pair) .lookup ("currentCost") .then (maybeCustomCost))
           ))
           (pair),
-        Tuple.first<DispatchRecord, RecordAffectedByState, Record<ActivateArgs>>
+        Pair.first<DispatchRecord, RecordAffectedByState, Record<ActivateArgs>>
           (Record.merge<ActivateArgs, Partial<ActivateArgs>> (
             Record.of ({ id: entry .get ("id"), cost: 0 })
           ))
-      );
-    };
+      )
+    }
 
 interface InactiveActivatableControlElements {
-  disabled?: boolean;
-  selectElement?: JSX.Element;
-  secondSelectElement?: JSX.Element;
-  inputElement?: JSX.Element;
-  levelElementBefore?: JSX.Element;
-  levelElementAfter?: JSX.Element;
+  disabled?: boolean
+  selectElement?: JSX.Element
+  secondSelectElement?: JSX.Element
+  inputElement?: JSX.Element
+  levelElementBefore?: JSX.Element
+  levelElementAfter?: JSX.Element
 }
 
 interface InactiveActivatableControlElementsInputHandlers {
-  handleSelect (option: Maybe<string | number>): void;
-  handleSecondSelect (option: Maybe<string | number>): void;
-  handleLevel (option: Maybe<number>): void;
-  handleInput (text: string): void;
-  selectElementDisabled: boolean;
+  handleSelect (option: Maybe<string | number>): void
+  handleSecondSelect (option: Maybe<string | number>): void
+  handleLevel (option: Maybe<number>): void
+  handleInput (text: string): void
+  selectElementDisabled: boolean
 }
 
 export const getInactiveActivatableControlElements =
   (inputHandlers: InactiveActivatableControlElementsInputHandlers) =>
     (entry: Record<DeactiveViewObject>) =>
       (selectedOptions: SelectedOptions) =>
-        (props: Tuple<Record<ActivateArgs>, RecordAffectedByState>) => {
-          const maybeSelected = Maybe.fromNullable (selectedOptions.selected);
-          const maybeSelected2 = Maybe.fromNullable (selectedOptions.selected2);
-          const maybeInputText = Maybe.fromNullable (selectedOptions.input);
-          const maybeSelectedLevel = Maybe.fromNullable (selectedOptions.selectedTier);
+        (props: Pair<Record<ActivateArgs>, RecordAffectedByState>) => {
+          const maybeSelected = Maybe.fromNullable (selectedOptions.selected)
+          const maybeSelected2 = Maybe.fromNullable (selectedOptions.selected2)
+          const maybeInputText = Maybe.fromNullable (selectedOptions.input)
+          const maybeSelectedLevel = Maybe.fromNullable (selectedOptions.selectedTier)
 
           const maybeSel =
-            Tuple.snd (props)
+            Pair.snd (props)
               .lookup ("firstSelectOptions")
-              .alt (entry .lookup ("sel"));
+              .alt (entry .lookup ("sel"))
 
           const maybeSel2 =
-            Tuple.snd (props)
-              .lookup ("secondSelectOptions");
+            Pair.snd (props)
+              .lookup ("secondSelectOptions")
 
           const maybeInputDescription =
-            Tuple.snd (props)
+            Pair.snd (props)
               .lookup ("inputDescription")
-              .alt (entry .get ("wikiEntry") .lookup ("input"));
+              .alt (entry .get ("wikiEntry") .lookup ("input"))
 
           const buildElements = R.pipe (
             (elements: Record<InactiveActivatableControlElements>) =>
@@ -605,18 +611,18 @@ export const getInactiveActivatableControlElements =
                 (elements)
                 (levels => {
                   const min = Maybe.fromMaybe (1)
-                                              (entry .lookup ("minTier") .fmap (R.max<number> (1)));
+                                              (entry .lookup ("minTier") .fmap (R.max<number> (1)))
 
                   const max = Maybe.fromMaybe (levels)
-                                              (entry .lookup ("maxTier") .fmap (R.min (levels)));
+                                              (entry .lookup ("maxTier") .fmap (R.min (levels)))
 
-                  const length = max - min + 1;
+                  const length = max - min + 1
 
                   const levelOptions =
                     List.unfoldr<Record<DropdownOption>, number>
                       (index => index < length
                         ? Just (
-                          Tuple.of<Record<DropdownOption>, number>
+                          Pair.of<Record<DropdownOption>, number>
                             (Record.of<DropdownOption> ({
                               id: index + min,
                               name: toRoman (index + min),
@@ -624,7 +630,7 @@ export const getInactiveActivatableControlElements =
                             (index + 1)
                         )
                         : Nothing ())
-                      (0);
+                      (0)
 
                   return elements
                     .insert
@@ -644,7 +650,7 @@ export const getInactiveActivatableControlElements =
                       (Maybe.isNothing (maybeSelectedLevel)
                         ? () => Just (true)
                         : R.identity)
-                      ("disabled");
+                      ("disabled")
                 })
                 (entry .get ("wikiEntry") .lookup ("tiers")),
             elements => Maybe.fromMaybe
@@ -764,13 +770,13 @@ export const getInactiveActivatableControlElements =
                         ? () => Just (true)
                         : R.identity)
                       ("disabled")
-                ));
+                ))
             }
-          );
+          )
 
           return buildElements (
             Record.ofMaybe<InactiveActivatableControlElements> ({
-              disabled: Tuple.snd (props) .lookup ("disabled"),
+              disabled: Pair.snd (props) .lookup ("disabled"),
             })
-          );
-        };
+          )
+        }

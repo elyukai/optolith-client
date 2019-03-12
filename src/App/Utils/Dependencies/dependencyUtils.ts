@@ -1,10 +1,10 @@
 import { pipe } from "ramda";
-import { Categories } from "../../../constants/Categories";
 import { notEquals } from "../../../Data/Eq";
 import { flip, ident, join, thrush } from "../../../Data/Function";
 import { foldr, isList } from "../../../Data/List";
 import { elemF, fmap, fromMaybe, isNothing, Just, Nothing } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
+import { Categories } from "../../Constants/Categories";
 import { DependencyObject } from "../../Models/ActiveEntries/DependencyObject";
 import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { ActivatableDependency, ExtendedSkillDependency, SkillDependency } from "../../Models/Hero/heroTypeHelpers";

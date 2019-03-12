@@ -1,15 +1,15 @@
 import classNames = require('classnames');
 import * as React from 'react';
+import { Categories } from '../../App/Constants/Categories';
 import { ActivatableBasePrerequisites, ActivatableInstance, ActiveObject, SecondaryAttribute } from '../../App/Models/Hero/heroTypeHelpers';
 import { UIMessages } from '../../App/Models/View/viewTypeHelpers';
 import { Attribute, Book, Race, SpecialAbility } from '../../App/Models/Wiki/wikiTypeHelpers';
+import { WikiState } from '../../App/Reducers/wikiReducer';
 import { translate } from '../../App/Utils/I18n';
 import { getCategoryById } from '../../App/Utils/IDUtils';
 import { getRoman } from '../../App/Utils/NumberUtils';
 import { getWikiEntry } from '../../App/Utils/WikiUtils';
 import { Markdown } from '../../components/Markdown';
-import { Categories } from '../../constants/Categories';
-import { WikiState } from '../../reducers/wikiReducer';
 import { sortObjects, sortStrings } from '../../utils/FilterSortUtils';
 import { isRaceRequirement, isRequiringActivatable, isRequiringIncreasable, isRequiringPrimaryAttribute } from '../../utils/prerequisites/prerequisitesUtils';
 import { WikiSource } from './elements/WikiSource';

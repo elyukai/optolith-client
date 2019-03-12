@@ -1,8 +1,8 @@
-import { Categories } from "../../../constants/Categories";
 import { List } from "../../../Data/List";
 import { Maybe, Nothing } from "../../../Data/Maybe";
 import { OrderedMap } from "../../../Data/OrderedMap";
 import { fromDefault, Record } from "../../../Data/Record";
+import { Categories } from "../../Constants/Categories";
 import { ActivatableBase, EntryWithCategory } from "./wikiTypeHelpers";
 
 export interface SpecialAbility extends ActivatableBase {

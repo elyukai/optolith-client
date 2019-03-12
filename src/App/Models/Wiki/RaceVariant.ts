@@ -1,7 +1,7 @@
-import { Categories } from "../../../constants/Categories";
 import { List } from "../../../Data/List";
 import { Maybe, Nothing } from "../../../Data/Maybe";
 import { fromDefault, Record } from "../../../Data/Record";
+import { Categories } from "../../Constants/Categories";
 import { Die } from "./sub/Die";
 import { EntryWithCategory } from "./wikiTypeHelpers";
 

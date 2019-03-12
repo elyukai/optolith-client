@@ -1,6 +1,8 @@
 import * as React from 'react';
+import { WikiInfoContainer } from '../../App/Containers/WikiInfoContainer';
 import { ActivatableDependent, ActivateArgs, ActiveViewObject, DeactivateArgs, DeactiveViewObject, EntryRating, InputTextEvent } from '../../App/Models/Hero/heroTypeHelpers';
 import { Advantage } from '../../App/Models/Wiki/wikiTypeHelpers';
+import { AdventurePointsObject } from '../../App/Selectors/adventurePointsSelectors';
 import { translate, UIMessagesObject } from '../../App/Utils/I18n';
 import { BorderButton } from '../../components/BorderButton';
 import { Checkbox } from '../../components/Checkbox';
@@ -12,8 +14,6 @@ import { Page } from '../../components/Page';
 import { RecommendedReference } from '../../components/RecommendedReference';
 import { Slidein } from '../../components/Slidein';
 import { TextField } from '../../components/TextField';
-import { WikiInfoContainer } from '../../containers/WikiInfoContainer';
-import { AdventurePointsObject } from '../../selectors/adventurePointsSelectors';
 import { Just, List, Maybe, Nothing, OrderedMap, Record } from '../../utils/dataUtils';
 import { ActiveList } from './ActiveList';
 import { AdvantagesDisadvantagesAdventurePoints } from './AdvantagesDisadvantagesAdventurePoints';

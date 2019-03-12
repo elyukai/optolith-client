@@ -1,10 +1,10 @@
-import { IdPrefixes } from "../../../../constants/IdPrefixes";
 import { liftM2 } from "../../../../Data/Either";
 import { fmap } from "../../../../Data/Functor";
 import { fromArray, List, lookup, map, notNullStr } from "../../../../Data/List";
 import { ensure, Just, Maybe, maybe_, Nothing } from "../../../../Data/Maybe";
 import { fst, Pair, snd } from "../../../../Data/Pair";
 import { Record } from "../../../../Data/Record";
+import { IdPrefixes } from "../../../Constants/IdPrefixes";
 import { RequireActivatable } from "../../../Models/Wiki/prerequisites/ActivatableRequirement";
 import { Skill } from "../../../Models/Wiki/Skill";
 import { Application } from "../../../Models/Wiki/sub/Application";

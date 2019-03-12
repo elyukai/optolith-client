@@ -1,6 +1,6 @@
 import * as React from 'react';
+import { AdventurePointsObject } from '../../App/Selectors/adventurePointsSelectors';
 import { translate, UIMessagesObject } from '../../App/Utils/I18n';
-import { AdventurePointsObject } from '../../selectors/adventurePointsSelectors';
 import { Maybe, Record } from '../../utils/dataUtils';
 
 export interface ApTooltipProps {

@@ -1,11 +1,11 @@
 import { pipe } from "ramda";
-import { IdPrefixes } from "../../constants/IdPrefixes";
 import { equals } from "../../Data/Eq";
 import { fmap } from "../../Data/Functor";
 import { all, flength, fromArray, isList, List, map } from "../../Data/List";
 import { bindF, ensure, Just, mapMaybe, Maybe, maybe, Nothing, product, sum } from "../../Data/Maybe";
 import { Record } from "../../Data/Record";
 import { show } from "../../Data/Show";
+import { IdPrefixes } from "../Constants/IdPrefixes";
 import { EditItem } from "../Models/Hero/EditItem";
 import { EditPrimaryAttributeDamageThreshold } from "../Models/Hero/EditPrimaryAttributeDamageThreshold";
 import { Item } from "../Models/Hero/Item";

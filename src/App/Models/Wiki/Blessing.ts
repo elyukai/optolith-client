@@ -1,6 +1,6 @@
-import { Categories } from "../../../constants/Categories";
 import { List } from "../../../Data/List";
 import { fromDefault, Record } from "../../../Data/Record";
+import { Categories } from "../../Constants/Categories";
 import { SourceLink } from "./sub/SourceLink";
 import { EntryWithCategory } from "./wikiTypeHelpers";
 

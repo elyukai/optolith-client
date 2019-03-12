@@ -1,7 +1,7 @@
-import { Categories } from "../../../constants/Categories";
 import { Lens, over } from "../../../Data/Lens";
 import { fmap, fromMaybe, Maybe } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
+import { Categories } from "../../Constants/Categories";
 import { ActivatableSkillDependentL, isActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
 import { AttributeDependentL, isAttributeDependent } from "../../Models/ActiveEntries/AttributeDependent";
 import { SkillDependent, SkillDependentL } from "../../Models/ActiveEntries/SkillDependent";

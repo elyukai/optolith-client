@@ -1,15 +1,15 @@
 import * as React from 'react';
+import { CombatTechniquesContainer } from '../App/Containers/CombatTechniquesContainer';
+import { HelpContainer } from '../App/Containers/HelpContainer';
 import { TabId } from '../App/Utils/LocationUtils';
 import { MainContent } from '../components/MainContent';
 import { Page } from '../components/Page';
 import { Scroll } from '../components/Scroll';
 import { AdvantagesContainer } from '../containers/AdvantagesContainer';
 import { AttributesContainer } from '../containers/AttributesContainer';
-import { CombatTechniquesContainer } from '../containers/CombatTechniquesContainer';
 import { CulturesContainer } from '../containers/CulturesContainer';
 import { DisadvantagesContainer } from '../containers/DisadvantagesContainer';
 import { EquipmentContainer } from '../containers/EquipmentContainer';
-import { HelpContainer } from '../containers/HelpContainer';
 import { HerolistContainer } from '../containers/HerolistContainer';
 import { HitZoneArmorsContainer } from '../containers/HitZoneArmorsContainer';
 import { LiturgicalChantsContainer } from '../containers/LiturgicalChantsContainer';

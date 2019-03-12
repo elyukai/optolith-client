@@ -1,8 +1,8 @@
 import { pipe } from "ramda";
-import { IdPrefixes } from "../../../../constants/IdPrefixes";
 import { fmap } from "../../../../Data/Functor";
 import { Cons, flength, head, List } from "../../../../Data/List";
 import { ensure, Nothing } from "../../../../Data/Maybe";
+import { IdPrefixes } from "../../../Constants/IdPrefixes";
 import { ItemTemplate } from "../../../Models/Wiki/ItemTemplate";
 import { PrimaryAttributeDamageThreshold } from "../../../Models/Wiki/sub/PrimaryAttributeDamageThreshold";
 import { prefixId } from "../../IDUtils";

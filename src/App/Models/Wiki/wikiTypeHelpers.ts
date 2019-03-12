@@ -1,8 +1,8 @@
-import { Categories } from "../../../constants/Categories";
 import { List } from "../../../Data/List";
 import { Just, Maybe } from "../../../Data/Maybe";
 import { OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
+import { Categories } from "../../Constants/Categories";
 import { Advantage } from "./Advantage";
 import { Attribute } from "./Attribute";
 import { Blessing } from "./Blessing";

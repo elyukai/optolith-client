@@ -1,7 +1,9 @@
 import * as R from 'ramda';
 import * as React from 'react';
+import { WikiInfoContainer } from '../../App/Containers/WikiInfoContainer';
 import { SecondaryAttribute } from '../../App/Models/Hero/heroTypeHelpers';
 import { AttributeCombined, CombatTechniqueWithRequirements } from '../../App/Models/View/viewTypeHelpers';
+import { DCIds } from '../../App/Selectors/derivedCharacteristicsSelectors';
 import { translate, UIMessagesObject } from '../../App/Utils/I18n';
 import { ListView } from '../../components/List';
 import { ListHeader } from '../../components/ListHeader';
@@ -13,8 +15,6 @@ import { Page } from '../../components/Page';
 import { Scroll } from '../../components/Scroll';
 import { SortNames, SortOptions } from '../../components/SortOptions';
 import { TextField } from '../../components/TextField';
-import { WikiInfoContainer } from '../../containers/WikiInfoContainer';
-import { DCIds } from '../../selectors/derivedCharacteristicsSelectors';
 import { Just, List, Maybe, Nothing, OrderedMap, Record } from '../../utils/dataUtils';
 import { SkillListItem } from '../skills/SkillListItem';
 

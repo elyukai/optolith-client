@@ -1,7 +1,7 @@
-import { IdPrefixes } from "../../../../constants/IdPrefixes";
 import { map } from "../../../../Data/List";
 import { fmap, Nothing } from "../../../../Data/Maybe";
 import { Record } from "../../../../Data/Record";
+import { IdPrefixes } from "../../../Constants/IdPrefixes";
 import { Advantage } from "../../../Models/Wiki/Advantage";
 import { SelectOption } from "../../../Models/Wiki/sub/SelectOption";
 import { prefixId } from "../../IDUtils";

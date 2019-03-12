@@ -1,6 +1,6 @@
 import { classNames } from 'classnames';
 import React, { Component } from 'react';
-import { InGameActions } from '../../actions/InGameActions';
+import { InGameActions } from '../../App/Actions/InGameActions';
 import { createOverlay } from '../../App/Utils/createOverlay';
 import { BorderButton } from '../../components/BorderButton';
 import { Dialog } from '../../components/Dialog';

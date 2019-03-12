@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { PersonalData, Sex } from '../../../App/Models/Hero/heroTypeHelpers';
 import { Culture, ExperienceLevel, Race } from '../../../App/Models/Wiki/wikiTypeHelpers';
+import { AdventurePointsObject } from '../../../App/Selectors/adventurePointsSelectors';
 import { translate, UIMessagesObject } from '../../../App/Utils/I18n';
 import { Avatar } from '../../../components/Avatar';
 import { LabelBox } from '../../../components/LabelBox';
 import { Plain } from '../../../components/Plain';
-import { AdventurePointsObject } from '../../../selectors/adventurePointsSelectors';
 import { Just, List, Maybe, Record } from '../../../utils/dataUtils';
 
 export interface MainSheetPersonalDataProps {

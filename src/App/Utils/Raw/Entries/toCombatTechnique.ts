@@ -1,6 +1,6 @@
-import { IdPrefixes } from "../../../../constants/IdPrefixes";
 import { map } from "../../../../Data/List";
 import { Nothing } from "../../../../Data/Maybe";
+import { IdPrefixes } from "../../../Constants/IdPrefixes";
 import { CombatTechnique } from "../../../Models/Wiki/CombatTechnique";
 import { prefixId } from "../../IDUtils";
 import { mergeRowsById } from "../mergeTableRows";

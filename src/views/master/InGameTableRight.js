@@ -1,6 +1,6 @@
-import { InGameActions } from '../../actions/InGameActions';
-import React, { Component } from 'react';
 import { classNames } from 'classnames';
+import React, { Component } from 'react';
+import { InGameActions } from '../../App/Actions/InGameActions';
 
 export class InGameTableRight extends Component {
 

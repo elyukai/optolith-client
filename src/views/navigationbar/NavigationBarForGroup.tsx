@@ -1,11 +1,11 @@
 import { remote } from 'electron';
 import * as React from 'react';
+import { SettingsContainer } from '../../App/Containers/SettingsContainer';
 import { translate } from '../../App/Utils/I18n';
 import { TabId } from '../../App/Utils/LocationUtils';
 import { BorderButton } from '../../components/BorderButton';
 import { IconButton } from '../../components/IconButton';
 import { Text } from '../../components/Text';
-import { SettingsContainer } from '../../containers/SettingsContainer';
 import { UIMessagesObject } from '../../types/ui';
 import { NavigationBarBack } from './NavigationBarBack';
 import { NavigationBarLeft } from './NavigationBarLeft';

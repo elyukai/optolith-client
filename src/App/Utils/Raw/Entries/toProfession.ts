@@ -1,9 +1,9 @@
 import { pipe } from "ramda";
-import { IdPrefixes } from "../../../../constants/IdPrefixes";
 import { fmap } from "../../../../Data/Functor";
 import { empty, flength, fromArray, map } from "../../../../Data/List";
 import { ensure, fromMaybe, Just, maybe, Maybe, Nothing } from "../../../../Data/Maybe";
 import { Record } from "../../../../Data/Record";
+import { IdPrefixes } from "../../../Constants/IdPrefixes";
 import { ProfessionRequireActivatable, RequireActivatable } from "../../../Models/Wiki/prerequisites/ActivatableRequirement";
 import { CultureRequirement } from "../../../Models/Wiki/prerequisites/CultureRequirement";
 import { ProfessionRequireIncreasable, RequireIncreasable } from "../../../Models/Wiki/prerequisites/IncreasableRequirement";

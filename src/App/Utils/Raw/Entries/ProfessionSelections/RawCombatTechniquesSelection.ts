@@ -1,4 +1,4 @@
-import { IdPrefixes } from "../../../../../constants/IdPrefixes";
+import { IdPrefixes } from "../../../../Constants/IdPrefixes";
 import { ProfessionSelectionIds } from "../../../../Models/Wiki/wikiTypeHelpers";
 import { prefixId } from "../../../IDUtils";
 import { naturalNumber } from "../../../RegexUtils";

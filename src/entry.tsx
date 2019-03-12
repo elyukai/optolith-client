@@ -21,15 +21,15 @@ import { render } from 'react-dom';
 import { Provider } from 'react-redux';
 import { Action, applyMiddleware, createStore, Dispatch, Store } from 'redux';
 import ReduxThunk from 'redux-thunk';
-import { backAccelerator, openSettingsAccelerator, quitAccelerator, redoAccelerator, saveHeroAccelerator, undoAccelerator } from './actions/AcceleratorActions';
-import { addErrorAlert } from './actions/AlertActions';
-import { requestClose, requestInitialData, setUpdateDownloadProgress, updateAvailable, updateNotAvailable } from './actions/IOActions';
-import { showAbout } from './actions/LocationActions';
+import { backAccelerator, openSettingsAccelerator, quitAccelerator, redoAccelerator, saveHeroAccelerator, undoAccelerator } from './App/Actions/AcceleratorActions';
+import { addErrorAlert } from './App/Actions/AlertActions';
+import { requestClose, requestInitialData, setUpdateDownloadProgress, updateAvailable, updateNotAvailable } from './App/Actions/IOActions';
+import { showAbout } from './App/Actions/LocationActions';
+import { appReducer, AppState } from './App/Reducers/appReducer';
+import { getLocaleMessages } from './App/Selectors/stateSelectors';
 import { translate } from './App/Utils/I18n';
 import { isDialogOpen } from './App/Utils/SubwindowsUtils';
 import { AppContainer } from './containers/AppContainer';
-import { appReducer, AppState } from './reducers/appReducer';
-import { getLocaleMessages } from './selectors/stateSelectors';
 import { Just, Maybe } from './utils/dataUtils';
 
 const store: Store<AppState, Action<any>> & { dispatch: Dispatch<Action, AppState> } =

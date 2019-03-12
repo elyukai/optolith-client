@@ -1,8 +1,8 @@
-import { IdPrefixes } from "../../../../constants/IdPrefixes";
 import { empty, List, map, notNull } from "../../../../Data/List";
 import { fromMaybe, maybe, Nothing } from "../../../../Data/Maybe";
 import { fst, Pair, snd } from "../../../../Data/Pair";
 import { Record } from "../../../../Data/Record";
+import { IdPrefixes } from "../../../Constants/IdPrefixes";
 import { Culture } from "../../../Models/Wiki/Culture";
 import { CommonProfession } from "../../../Models/Wiki/sub/CommonProfession";
 import { IncreaseSkill } from "../../../Models/Wiki/sub/IncreaseSkill";

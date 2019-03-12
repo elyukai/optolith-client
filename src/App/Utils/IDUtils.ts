@@ -1,10 +1,10 @@
 import { pipe } from "ramda";
-import { Categories } from "../../constants/Categories";
-import { IdPrefixes } from "../../constants/IdPrefixes";
 import { cnst } from "../../Data/Function";
 import { foldl } from "../../Data/List";
 import { Just, Maybe, Nothing } from "../../Data/Maybe";
 import { lookupF, memberF, OrderedMap } from "../../Data/OrderedMap";
+import { Categories } from "../Constants/Categories";
+import { IdPrefixes } from "../Constants/IdPrefixes";
 import { match } from "./match";
 import { inc, max } from "./mathUtils";
 

@@ -1,6 +1,6 @@
-import { IdPrefixes } from "../../../constants/IdPrefixes";
 import { empty, List, map } from "../../../Data/List";
 import { maybe } from "../../../Data/Maybe";
+import { IdPrefixes } from "../../Constants/IdPrefixes";
 import { prefixId } from "../IDUtils";
 
 export const maybePrefix =

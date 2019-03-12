@@ -1,8 +1,8 @@
-import { Categories } from "../../../constants/Categories";
 import { List } from "../../../Data/List";
 import { Nothing } from "../../../Data/Maybe";
 import { OrderedMap } from "../../../Data/OrderedMap";
 import { fromDefault } from "../../../Data/Record";
+import { Categories } from "../../Constants/Categories";
 import { AdvantageDisadvantageBase, EntryWithCategory } from "./wikiTypeHelpers";
 
 export interface Advantage extends AdvantageDisadvantageBase { }

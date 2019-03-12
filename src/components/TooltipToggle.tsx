@@ -1,9 +1,9 @@
 import classNames = require('classnames');
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { AppState } from '../App/Reducers/appReducer';
+import { getTheme } from '../App/Selectors/uisettingsSelectors';
 import { close, createOverlay } from '../App/Utils/createOverlay';
-import { AppState } from '../reducers/appReducer';
-import { getTheme } from '../selectors/uisettingsSelectors';
 import { Overlay } from './Overlay';
 
 export interface TooltipToggleOwnProps {

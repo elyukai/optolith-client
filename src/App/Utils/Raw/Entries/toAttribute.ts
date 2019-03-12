@@ -1,5 +1,5 @@
-import { IdPrefixes } from "../../../../constants/IdPrefixes";
 import { Nothing } from "../../../../Data/Maybe";
+import { IdPrefixes } from "../../../Constants/IdPrefixes";
 import { Attribute } from "../../../Models/Wiki/Attribute";
 import { prefixId } from "../../IDUtils";
 import { mergeRowsById } from "../mergeTableRows";

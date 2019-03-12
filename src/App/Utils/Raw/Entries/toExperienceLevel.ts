@@ -1,4 +1,4 @@
-import { IdPrefixes } from "../../../../constants/IdPrefixes";
+import { IdPrefixes } from "../../../Constants/IdPrefixes";
 import { ExperienceLevel } from "../../../Models/Wiki/ExperienceLevel";
 import { prefixId } from "../../IDUtils";
 import { mergeRowsById } from "../mergeTableRows";

@@ -82,7 +82,7 @@ const changeActiveLength =
   (add: boolean) =>
   (entry: Record<ActiveObject>) =>
   (wiki_entry: Activatable) =>
-  (hero_entry: Maybe<Record<ActivatableDependent>>) =>
+  (mhero_entry: Maybe<Record<ActivatableDependent>>) =>
   (hero: HeroModelRecord) =>
                        // Source id
     modifyDependencies (id (wiki_entry))
@@ -92,7 +92,7 @@ const changeActiveLength =
                        // deactivation depends on
                        (getCombinedPrerequisites (add)
                                                  (wiki_entry)
-                                                 (hero_entry)
+                                                 (mhero_entry)
                                                  (entry))
 
                        // modify the list of `ActiveObjects` and pass the hero

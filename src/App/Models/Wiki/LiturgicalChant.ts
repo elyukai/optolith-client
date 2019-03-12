@@ -1,7 +1,7 @@
-import { Categories } from "../../../constants/Categories";
 import { List } from "../../../Data/List";
 import { OrderedSet } from "../../../Data/OrderedSet";
 import { fromDefault, Record } from "../../../Data/Record";
+import { Categories } from "../../Constants/Categories";
 import { SourceLink } from "./sub/SourceLink";
 import { CheckModifier, EntryWithCategory } from "./wikiTypeHelpers";
 

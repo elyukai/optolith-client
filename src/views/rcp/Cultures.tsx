@@ -1,5 +1,6 @@
 import * as R from 'ramda';
 import * as React from 'react';
+import { WikiInfoContainer } from '../../App/Containers/WikiInfoContainer';
 import { CultureCombined } from '../../App/Models/View/viewTypeHelpers';
 import { translate, UIMessagesObject } from '../../App/Utils/I18n';
 import { Dropdown, DropdownOption } from '../../components/Dropdown';
@@ -13,7 +14,6 @@ import { Page } from '../../components/Page';
 import { Scroll } from '../../components/Scroll';
 import { SortNames, SortOptions } from '../../components/SortOptions';
 import { TextField } from '../../components/TextField';
-import { WikiInfoContainer } from '../../containers/WikiInfoContainer';
 import { Just, List, Maybe, Record } from '../../utils/dataUtils';
 import { CulturesListItem } from './CulturesListItem';
 

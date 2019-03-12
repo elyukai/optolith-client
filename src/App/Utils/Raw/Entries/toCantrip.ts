@@ -1,5 +1,5 @@
-import { IdPrefixes } from "../../../../constants/IdPrefixes";
 import { Nothing } from "../../../../Data/Maybe";
+import { IdPrefixes } from "../../../Constants/IdPrefixes";
 import { Cantrip } from "../../../Models/Wiki/Cantrip";
 import { prefixId } from "../../IDUtils";
 import { mergeRowsById } from "../mergeTableRows";

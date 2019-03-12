@@ -1,5 +1,7 @@
 import { pipe } from "ramda";
-import { bind, bindF, fmap, listToMaybe, Maybe, maybe } from "../../../../Data/Maybe";
+import { fmap } from "../../../../Data/Functor";
+import { List } from "../../../../Data/List";
+import { bind, bindF, listToMaybe, Maybe, maybe } from "../../../../Data/Maybe";
 import { Record } from "../../../../Data/Record";
 import { ActivatableDependent } from "../../../Models/ActiveEntries/ActivatableDependent";
 import { ActiveObject } from "../../../Models/ActiveEntries/ActiveObject";
@@ -8,7 +10,10 @@ import { isMaybeActive } from "./isActive";
 const { active } = ActivatableDependent.A
 const { tier } = ActiveObject.A
 
-const getFirstActive = pipe (fmap (active), bindF (listToMaybe))
+const getFirstActive =
+  pipe (
+    fmap (active) as (m: Maybe<Record<ActivatableDependent>>) => Maybe<List<Record<ActiveObject>>>,
+    bindF (listToMaybe))
 
 export const getModifierByActiveLevel =
   (mincrease: Maybe<Record<ActivatableDependent>>) =>

@@ -1,8 +1,8 @@
-import { IdPrefixes } from "../../../../constants/IdPrefixes";
 import { Either } from "../../../../Data/Either";
 import { List, map } from "../../../../Data/List";
 import { fromMaybe, Nothing } from "../../../../Data/Maybe";
 import { OrderedSet } from "../../../../Data/OrderedSet";
+import { IdPrefixes } from "../../../Constants/IdPrefixes";
 import { LiturgicalChant } from "../../../Models/Wiki/LiturgicalChant";
 import { CheckModifier } from "../../../Models/Wiki/wikiTypeHelpers";
 import { prefixId } from "../../IDUtils";

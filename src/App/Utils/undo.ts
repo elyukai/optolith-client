@@ -1,8 +1,8 @@
 import { Action } from "redux";
-import { ActionTypes } from "../../constants/ActionTypes";
 import { cons, empty, List, uncons } from "../../Data/List";
 import { maybe } from "../../Data/Maybe";
 import { fst, Pair, snd } from "../../Data/Pair";
+import { ActionTypes } from "../Constants/ActionTypes";
 
 export interface UndoState<S> {
   past: List<S>

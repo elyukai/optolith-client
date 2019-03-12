@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { WikiInfoContainer } from '../../App/Containers/WikiInfoContainer';
 import { Advantage, Blessing, Cantrip, CombatTechnique, Culture, Disadvantage, Entry, ItemTemplate, LiturgicalChant, Profession, Race, Skill, SpecialAbility, Spell } from '../../App/Models/Wiki/wikiTypeHelpers';
 import { translate } from '../../App/Utils/I18n';
 import { Dropdown } from '../../components/Dropdown';
@@ -8,7 +9,6 @@ import { Options } from '../../components/Options';
 import { Page } from '../../components/Page';
 import { Scroll } from '../../components/Scroll';
 import { TextField } from '../../components/TextField';
-import { WikiInfoContainer } from '../../containers/WikiInfoContainer';
 import { UIMessagesObject } from '../../types/ui';
 import { Just, List, Maybe, Nothing, Record } from '../../utils/dataUtils';
 import { sortObjects } from '../../utils/FilterSortUtils';

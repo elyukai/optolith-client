@@ -1,5 +1,4 @@
 import { pipe } from "ramda";
-import { IdPrefixes } from "../../constants/IdPrefixes";
 import { cnst } from "../../Data/Function";
 import { fmap } from "../../Data/Functor";
 import { Lens, over, view } from "../../Data/Lens";
@@ -7,6 +6,7 @@ import { elemF, filter, fromArray, List } from "../../Data/List";
 import { bindF, ensure, fromMaybe, Just, liftM2, mapMaybe, Maybe, Nothing, or } from "../../Data/Maybe";
 import { alter, elems, insert, lookup, lookupF, OrderedMap, sdelete, update } from "../../Data/OrderedMap";
 import { Record, RecordBase } from "../../Data/Record";
+import { IdPrefixes } from "../Constants/IdPrefixes";
 import { createPlainActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
 import { createInactiveActivatableSkillDependent } from "../Models/ActiveEntries/ActivatableSkillDependent";
 import { AttributeDependent, createPlainAttributeDependent } from "../Models/ActiveEntries/AttributeDependent";

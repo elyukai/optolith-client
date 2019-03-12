@@ -1,6 +1,6 @@
-import { ActivatableLikeCategories, ActivatableLikeCategory } from "../../../../../constants/Categories";
-import { IdPrefixes, IdPrefixesByCategory } from "../../../../../constants/IdPrefixes";
 import { intercalate, map } from "../../../../../Data/List";
+import { ActivatableLikeCategories, ActivatableLikeCategory } from "../../../../Constants/Categories";
+import { IdPrefixes, IdPrefixesByCategory } from "../../../../Constants/IdPrefixes";
 import { prefixId } from "../../../IDUtils";
 import { naturalNumber } from "../../../RegexUtils";
 import { isNumber } from "../../../typeCheckUtils";
