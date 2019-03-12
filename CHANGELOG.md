@@ -1,3 +1,12 @@
+# 1.0.3
+
+- Renamed Optolyth to Optolith to be in line with all other locations where the name occurs.
+
+## Linux
+
+- Fixed glibc-related issue.
+- Moved from tar.gz to AppImage to provide auto-update support.
+
 # 1.0.2
 
 - Fixed issue with rendering list items of advantages/disadvantages/special abilities.
