@@ -20,8 +20,7 @@ export function Imprint(props: ImprintProps) {
 					Ballastbrücke 29<br/>
 					24937 Flensburg<br/>
 					Germany<br/>
-					<a href="mailto:lukas.obermann@outlook.de">lukas.obermann@outlook.de</a><br/>
-					<i>{_translate(locale, 'imprint.emailhint')}</i>
+					<a href="mailto:support@optolith.app">support@optolith.app</a>
 				</p>
 
 				<h3>Thore Schuchardt</h3>
