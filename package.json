@@ -21,7 +21,7 @@
     "ramda": "0.26.1",
     "react": "16.2.0",
     "react-custom-scrollbars": "4.2.1",
-    "react-dom": "16.2.0",
+    "react-dom": "16.2.1",
     "react-markdown": "3.1.1",
     "react-portal": "3.2.0",
     "react-progress-arc": "1.0.7",
