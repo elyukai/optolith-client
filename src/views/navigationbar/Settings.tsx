@@ -77,13 +77,11 @@ export function Settings(props: SettingsProps) {
 				label={_translate(locale, 'settings.options.showanimations')}
 				onClick={switchEnableAnimations}
 				/>
-			{(platform === 'win32' || platform === 'darwin') && (
-				<BorderButton
-					label={_translate(locale, 'checkforupdates')}
-					onClick={checkForUpdates}
-					autoWidth
-					/>
-			)}
+			<BorderButton
+				label={_translate(locale, 'checkforupdates')}
+				onClick={checkForUpdates}
+				autoWidth
+				/>
 		</Dialog>
 	);
 }
