@@ -30,21 +30,6 @@ const { tier } = ActiveObject.A
 const { id, prerequisites } = Advantage.A
 const { active } = ActivatableDependent.A
 
-export interface ActivatableActivatePayload extends ActivatableActivateOptions {
-  wiki: Activatable
-  instance?: Record<ActivatableDependent>
-}
-
-export interface ActivatableActivateOptions {
-  id: string
-  sel?: string | number
-  sel2?: string | number
-  input?: string
-  tier?: number
-  cost: number
-  customCost?: number
-}
-
 const getStaticPrerequisites =
   (entry: Record<ActiveObject>) =>
   (entry_prerequisites: LevelAwarePrerequisites): List<AllRequirements> =>

@@ -1,9 +1,9 @@
 import { remote } from "electron";
 import { Just, Nothing } from "../../Data/Maybe";
-import { AsyncAction } from "../../types/actions";
 import { L10nRecord } from "../Models/Wiki/L10n";
 import { getIsHeroSection } from "../Selectors/uilocationSelectors";
 import { isDialogOpen } from "../Utils/SubwindowsUtils";
+import { AsyncAction } from "./Actions";
 import { saveHero } from "./HerolistActions";
 import { redo, undo } from "./HistoryActions";
 import { requestClose } from "./IOActions";
@@ -22,10 +22,10 @@ export const redoAccelerator = (): AsyncAction => (dispatch, getState) => {
   }
 }
 
-export const saveHeroAccelerator = (locale: L10nRecord): AsyncAction =>
+export const saveHeroAccelerator = (l10n: L10nRecord): AsyncAction =>
   (dispatch, getState) => {
     if (!isDialogOpen () && getIsHeroSection (getState ())) {
-      dispatch (saveHero (locale) (Nothing))
+      dispatch (saveHero (l10n) (Nothing))
     }
   }
 

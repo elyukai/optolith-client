@@ -11,6 +11,11 @@ export interface ActivatableActivationOptions {
   customCost: Maybe<number>
 }
 
+// export interface ActivatableActivatePayload extends ActivatableActivateOptions {
+//   wiki: Activatable
+//   instance?: Record<ActivatableDependent>
+// }
+
 export const ActivatableActivationOptions =
   fromDefault<ActivatableActivationOptions> ({
     id: "",

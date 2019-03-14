@@ -1,25 +1,33 @@
-import { Action, combineReducers } from 'redux';
-import { WikiAll } from '../Models/Wiki/wikiTypeHelpers';
-import { Record } from '../utils/dataUtils';
-import { reduceReducers } from '../Utils/reduceReducers';
-import { appPostReducer } from './appPostReducer';
-import { herolistReducer as herolist, HerolistState } from './herolistReducer';
-import { localeReducer as locale, LocaleState } from './localeReducer';
-import { uiReducer as ui, UIState } from './uiReducer';
-import { wikiReducer as wiki } from './wikiReducer';
+import { Action } from "redux";
+import { Record } from "../../Data/Record";
+import { L10nRecord } from "../Models/Wiki/L10n";
+import { WikiModelRecord } from "../Models/Wiki/WikiModel";
+import { combineReducerRecord } from "../Utils/combineReducerRecord";
+import { reduceReducers } from "../Utils/reduceReducers";
+import { appPostReducer } from "./appPostReducer";
+import { herolistReducer as herolist, HerolistState } from "./herolistReducer";
+import { uiReducer as ui, UIState } from "./uiReducer";
+import { wikiReducer as wiki } from "./wikiReducer";
 
 export interface AppState {
-  herolist: HerolistState;
-  locale: LocaleState;
-  ui: UIState;
-  wiki: Record<WikiAll>;
+  herolist: Record<HerolistState>
+  l10n: L10nRecord
+  ui: Record<UIState>
+  wiki: WikiModelRecord
 }
 
-const appSlices = combineReducers<AppState> ({
-  herolist,
-  locale,
-  ui,
-  wiki,
-});
+const appSlices =
+  combineReducerRecord<AppState> ({
+                                   herolist,
+                                   l10n,
+                                   ui,
+                                   wiki,
+                                 })
+                                 ({
+                                   herolist,
+                                   l10n,
+                                   ui,
+                                   wiki,
+                                 })
 
-export const appReducer = reduceReducers<AppState, Action> (appSlices, appPostReducer);
+export const appReducer = reduceReducers<AppState, Action> (appSlices, appPostReducer)
