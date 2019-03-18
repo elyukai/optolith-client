@@ -15,8 +15,8 @@
  */
 
 import { pipe } from "ramda";
-import { ifElse } from "../App/Utils/ifElse";
-import * as Math from "../App/Utils/mathUtils";
+import { ifElse } from "../App/Utilities/ifElse";
+import * as Math from "../App/Utilities/mathUtils";
 import { cnst, ident, thrush } from "./Function";
 import { fmap } from "./Functor";
 import { cons, consF, head, ifoldr, List } from "./List";
@@ -293,7 +293,6 @@ export const bindF =
   (x: Maybe<A>): Maybe<B> =>
     bind<A> (x) (f)
 
-
 /**
  * `(>>) :: Maybe a -> Maybe b -> Maybe b`
  *
@@ -306,6 +305,16 @@ export const bindF =
 export const then =
   (x: Maybe<any>) => <A extends Some> (y: Maybe<A>): Maybe<A> =>
     bind<any> (x) (_ => y)
+
+/**
+ * `(<<) :: Maybe a -> Maybe b -> Maybe a`
+ *
+ * Sequentially compose two actions, discarding any value produced by the
+ * second.s
+ */
+export const thenF =
+  <A extends Some> (x: Maybe<A>) => (y: Maybe<any>): Maybe<A> =>
+    bind<any> (y) (_ => x)
 
 /**
  * `(>=>) :: (a -> Maybe b) -> (b -> Maybe c) -> a -> Maybe c`

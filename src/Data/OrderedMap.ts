@@ -8,7 +8,7 @@
  */
 
 import { not, pipe } from "ramda";
-import { add, multiply } from "../App/Utils/mathUtils";
+import { add, multiply } from "../App/Utilities/mathUtils";
 import { Either, fromRight_, isLeft, Right } from "./Either";
 import { equals } from "./Eq";
 import { ident } from "./Function";
@@ -506,8 +506,9 @@ export const singleton =
  * equivalent to `insertWith const`.
  */
 export const insert =
-  <K, A>
+  <K>
   (key: K) =>
+  <A>
   (value: A) =>
   (mp: OrderedMap<K, A>): OrderedMap<K, A> =>
     fromArray ([...mp .value, [key, value]])
@@ -526,11 +527,11 @@ export const insertWith =
   (key: K) =>
   (value: A) =>
   (mp: OrderedMap<K, A>): OrderedMap<K, A> =>
-    insert<K, A> (key)
-                 (maybe (value)
-                        (f (value))
-                        (lookup (key) (mp)))
-                 (mp)
+    insert (key)
+           (maybe (value)
+                  (f (value))
+                  (lookup (key) (mp)))
+           (mp)
 
 /**
  * `insertWithKey :: Ord k => (k -> a -> a -> a) -> k -> a -> Map k a ->
@@ -548,11 +549,11 @@ export const insertWithKey =
   (key: K) =>
   (value: A) =>
   (mp: OrderedMap<K, A>): OrderedMap<K, A> =>
-    insert<K, A> (key)
-                 (maybe (value)
-                        (f (key) (value))
-                        (lookup (key) (mp)))
-                 (mp)
+    insert (key)
+           (maybe (value)
+                  (f (key) (value))
+                  (lookup (key) (mp)))
+           (mp)
 
 /**
  * `insertLookupWithKey :: Ord k => (k -> a -> a -> a) -> k -> a -> Map k a ->
@@ -573,11 +574,11 @@ export const insertLookupWithKey =
 
     return Pair (
       maybe_old_value,
-      insert<K, A> (key)
-                   (maybe (value)
-                          (f (key) (value))
-                          (maybe_old_value))
-                   (mp)
+      insert (key)
+             (maybe (value)
+                    (f (key) (value))
+                    (maybe_old_value))
+             (mp)
     )
   }
 
@@ -588,7 +589,7 @@ export const insertLookupWithKey =
  * Removes a key without checking its existence before. For internal use only.
  */
 const removeKey =
-  <K, A> (key: K) => (mp: OrderedMap<K, A>): OrderedMap<K, A> =>
+  <K> (key: K) => <A> (mp: OrderedMap<K, A>): OrderedMap<K, A> =>
     fromArray ([...mp .value] .filter (([k]) => k !== key))
 
 /**
@@ -598,8 +599,8 @@ const removeKey =
  * the map, the original map is returned.
  */
 export const sdelete =
-  <K, A> (key: K) => (mp: OrderedMap<K, A>): OrderedMap<K, A> =>
-    member (key) (mp) ? removeKey<K, A> (key) (mp) : mp
+  <K> (key: K) => <A> (mp: OrderedMap<K, A>): OrderedMap<K, A> =>
+    member (key) (mp) ? removeKey (key) (mp) : mp
 
 /**
  * `adjust :: Ord k => (a -> a) -> k -> Map k a -> Map k a`
@@ -614,7 +615,11 @@ export const adjust =
   (key: K) =>
   (mp: OrderedMap<K, A>): OrderedMap<K, A> =>
     maybe (mp)
-          ((x: A) => insert<K, A> (key) (f (x)) (mp))
+          ((x: A) => {
+            const x1 = f (x)
+
+            return x === x1 ? mp : insert (key) (x1) (mp)
+          })
           (lookup (key) (mp))
 
 /**
@@ -629,7 +634,7 @@ export const adjustWithKey =
   (key: K) =>
   (mp: OrderedMap<K, A>): OrderedMap<K, A> =>
     maybe (mp)
-          ((x: A) => insert<K, A> (key) (f (key) (x)) (mp))
+          ((x: A) => insert (key) (f (key) (x)) (mp))
           (lookup (key) (mp))
 
 /**
@@ -640,16 +645,17 @@ export const adjustWithKey =
  * `(Just y)`, the key `k` is bound to the new value `y`.
  */
 export const update =
-  <K, A>
+  <A>
   (f: (value: A) => Maybe<A>) =>
+  <K>
   (key: K) =>
   (mp: OrderedMap<K, A>): OrderedMap<K, A> =>
     maybe
       (mp)
       (pipe (
         f,
-        maybe_ (() => removeKey<K, A> (key) (mp))
-               (y => insert<K, A> (key) (y) (mp))
+        maybe_ (() => removeKey (key) (mp))
+               (y => insert (key) (y) (mp))
       ))
       (lookup (key) (mp))
 
@@ -669,8 +675,8 @@ export const updateWithKey =
       (mp)
       (pipe (
         f (key),
-        maybe_ (() => removeKey<K, A> (key) (mp))
-               (y => insert<K, A> (key) (y) (mp))
+        maybe_ (() => removeKey (key) (mp))
+               (y => insert (key) (y) (mp))
       ))
       (lookup (key) (mp))
 
@@ -694,8 +700,8 @@ export const updateLookupWithKey =
       (pipe (
         f (key),
         maybe_
-          (() => Pair (maybe_old_value, removeKey<K, A> (key) (mp)))
-          (x => Pair (Just (x), insert<K, A> (key) (x) (mp)))
+          (() => Pair (maybe_old_value, removeKey (key) (mp)))
+          (x => Pair (Just (x), insert (key) (x) (mp)))
       ))
       (maybe_old_value)
   }
@@ -713,9 +719,9 @@ export const alter =
   <K>
   (key: K) =>
   (mp: OrderedMap<K, A>): OrderedMap<K, A> =>
-    maybe
-      (sdelete<K, A> (key))
-      (insert<K, A> (key))
+    maybe<(mp: OrderedMap<K, A>) => OrderedMap<K, A>>
+      (sdelete (key))
+      <A> (insert (key))
       (f (lookup (key) (mp)))
       (mp)
 
@@ -1013,6 +1019,19 @@ export const isOrderedMap =
   (x: any): x is OrderedMap<any, any> =>
     typeof x === "object" && x !== null && Object.getPrototypeOf (x) === OrderedMapPrototype
 
+/**
+ * `deleteLookupWithKey :: Ord k => k -> Map k a -> (Maybe a, Map k a)`
+ *
+ * Lookup and delete. The function returns the deleted value, if there was any
+ * to delete. Returns the map without the deleted key as well.
+ */
+export const deleteLookupWithKey =
+  <K>
+  (key: K) =>
+  <A>
+  (mp: OrderedMap<K, A>): Pair<Maybe<A>, OrderedMap<K, A>> =>
+    Pair (lookup (key) (mp), removeKey (key) (mp))
+
 
 // NAMESPACED FUNCTIONS
 
@@ -1094,6 +1113,7 @@ export const OrderedMap = {
   toObjectWith,
   toMap,
   isOrderedMap,
+  deleteLookupWithKey,
 }
 
 

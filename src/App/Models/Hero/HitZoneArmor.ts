@@ -1,5 +1,5 @@
 import { Maybe, Nothing } from "../../../Data/Maybe";
-import { fromDefault } from "../../../Data/Record";
+import { fromDefault, makeLenses } from "../../../Data/Record";
 
 export interface HitZoneArmorBase {
   name: string
@@ -38,3 +38,5 @@ export const HitZoneArmor =
     rightLeg: Nothing,
     rightLegLoss: Nothing,
   })
+
+export const HitZoneArmorL = makeLenses (HitZoneArmor)

@@ -1,50 +1,38 @@
-import { SwitchEnableEditingHeroAfterCreationPhaseAction } from '../Actions/ConfigActions';
-import { CreateHeroAction, LoadHeroAction } from '../Actions/HerolistActions';
-import { SetTabAction } from '../Actions/LocationActions';
-import { SetSelectionsAction } from '../Actions/ProfessionActions';
-import { ActionTypes } from '../Constants/ActionTypes';
-import { TabId } from '../Utils/LocationUtils';
+import { cnst, ident } from "../../Data/Function";
+import { SwitchEnableEditingHeroAfterCreationPhaseAction } from "../Actions/ConfigActions";
+import { CreateHeroAction, LoadHeroAction } from "../Actions/HerolistActions";
+import { SetTabAction } from "../Actions/LocationActions";
+import { SetSelectionsAction } from "../Actions/ProfessionActions";
+import { ActionTypes } from "../Constants/ActionTypes";
+import { TabId } from "../Utilities/LocationUtils";
 
-type Action =
-  SetTabAction |
-  CreateHeroAction |
-  LoadHeroAction |
-  SetSelectionsAction |
-  SwitchEnableEditingHeroAfterCreationPhaseAction;
+type Action = SetTabAction
+            | CreateHeroAction
+            | LoadHeroAction
+            | SetSelectionsAction
+            | SwitchEnableEditingHeroAfterCreationPhaseAction
 
-export interface UILocationState {
-  tab: TabId;
-}
+export const initialTab: TabId = "herolist"
 
-const initialState: UILocationState = {
-  tab: 'herolist'
-};
-
-export function routeReducer (
-  state: UILocationState = initialState,
-  action: Action
-): UILocationState {
+export const routeReducer =
+(action: Action): ident<TabId> => {
   switch (action.type) {
     case ActionTypes.SET_TAB:
-      return { tab: action.payload.tab };
+      return cnst (action.payload.tab)
 
     case ActionTypes.CREATE_HERO:
-      return { tab: 'races' };
+      return cnst ("races")
 
     case ActionTypes.LOAD_HERO:
-      return { tab: 'profile' };
+      return cnst ("profile")
 
     case ActionTypes.ASSIGN_RCP_OPTIONS:
-      return { tab: 'attributes' };
+      return cnst ("attributes")
 
     case ActionTypes.SWITCH_ENABLE_EDITING_HERO_AFTER_CREATION_PHASE:
-      if (state.tab === 'advantages' || state.tab === 'disadvantages') {
-        return { tab: 'profile' };
-      }
-
-      return state;
+      return x => x === "advantages" || x === "disadvantages" ? "profile" : x
 
     default:
-      return state;
+      return ident
   }
 }

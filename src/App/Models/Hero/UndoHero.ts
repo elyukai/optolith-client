@@ -1,6 +1,6 @@
 import { List } from "../../../Data/List";
 import { fromDefault, makeLenses, Record } from "../../../Data/Record";
-import { UndoState } from "../../Utils/undo";
+import { UndoState } from "../../Utilities/undo";
 import { HeroModel, HeroModelRecord } from "./HeroModel";
 
 export type UndoableHeroModelRecord = Record<UndoableHeroModel>

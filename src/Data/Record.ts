@@ -8,7 +8,7 @@
  */
 
 import { not, pipe } from "ramda";
-import { Lens, lens } from "./Lens";
+import { lens, Lens_ } from "./Lens";
 import { isJust, isMaybe, isNothing, Maybe, Nothing } from "./Maybe";
 import { foldl, fromArray, OrderedSet } from "./OrderedSet";
 import { show } from "./Show";
@@ -320,7 +320,7 @@ export type Accessors<A extends RecordBase> = {
 }
 
 export type Lenses<A extends RecordBase> = {
-  [K in keyof A]: Lens<Record<A>, A[K]>
+  [K in keyof A]: Lens_<Record<A>, A[K]>
 }
 
 export interface UnsafeStringKeyObject<V> {
@@ -366,7 +366,7 @@ type MaybeOrPartialMaybe<A> = A extends Maybe<any> ? A : A | Nothing
  * All `Maybe` properties will be optional and all others required.
  */
 export type PartialMaybeOrNothing<A> = {
-  [K in PartialMaybeRequiredKeys<A>]-?: A[K] extends Maybe<any> ? never : A[K] | Nothing
+  [K in PartialMaybeRequiredKeys<A>]-?: A[K] extends Maybe<any> ? never : (A[K] | Nothing)
 } & {
   [K in PartialMaybePartialKeys<A>]?: A[K] extends Maybe<any> ? A[K] : never
 }

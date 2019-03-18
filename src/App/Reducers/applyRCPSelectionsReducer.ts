@@ -1,22 +1,23 @@
-import * as R from 'ramda';
-import { SetSelectionsAction } from '../Actions/ProfessionActions';
-import { ActionTypes } from '../Constants/ActionTypes';
-import { Categories } from '../Constants/Categories';
-import * as Data from '../Models/Hero/heroTypeHelpers';
-import * as Wiki from '../Models/Wiki/wikiTypeHelpers';
-import { getCombinedPrerequisites } from '../utils/activatable/activatableActivationUtils';
-import { getActiveObjectCore } from '../utils/activatable/activatableConvertUtils';
-import { addAllStyleRelatedDependencies } from '../utils/activatable/ExtendedStyleUtils';
-import { createActivatableDependent, createActivatableDependentSkill } from '../utils/createEntryUtils';
-import { Just, List, Maybe, OrderedMap, OrderedSet, Record, Tuple } from '../utils/dataUtils';
-import { addDependencies } from '../utils/dependencies/dependencyUtils';
-import { flip } from '../utils/flip';
-import { getHeroStateItem, updateEntryDef, updateHeroListStateItemOr } from '../Utils/heroStateUtils';
-import { ifElse } from '../Utils/ifElse';
-import { isProfessionRequiringIncreasable } from '../utils/wikiData/prerequisites/DependentRequirement';
-import { getWikiEntry } from '../Utils/WikiUtils';
+import * as R from "ramda";
+import { SetSelectionsAction } from "../Actions/ProfessionActions";
+import { ActionTypes } from "../Constants/ActionTypes";
+import { Categories } from "../Constants/Categories";
+import { HeroModelRecord } from "../Models/Hero/HeroModel";
+import * as Data from "../Models/Hero/heroTypeHelpers";
+import * as Wiki from "../Models/Wiki/wikiTypeHelpers";
+import { getHeroStateItem, updateEntryDef, updateHeroListStateItemOr } from "../Utilities/heroStateUtils";
+import { ifElse } from "../Utilities/ifElse";
+import { getWikiEntry } from "../Utilities/WikiUtils";
+import { getCombinedPrerequisites } from "../utils/activatable/activatableActivationUtils";
+import { getActiveObjectCore } from "../utils/activatable/activatableConvertUtils";
+import { addAllStyleRelatedDependencies } from "../utils/activatable/ExtendedStyleUtils";
+import { createActivatableDependent, createActivatableDependentSkill } from "../utils/createEntryUtils";
+import { Just, List, Maybe, OrderedMap, OrderedSet, Record, Tuple } from "../utils/dataUtils";
+import { addDependencies } from "../utils/dependencies/dependencyUtils";
+import { flip } from "../utils/flip";
+import { isProfessionRequiringIncreasable } from "../utils/wikiData/prerequisites/DependentRequirement";
 
-type Action = SetSelectionsAction;
+type Action = SetSelectionsAction
 
 const addToSkillRatingList = (
   id: string,
@@ -29,19 +30,19 @@ const addToSkillRatingList = (
       R.add (value),
       Maybe.ensure (R.lt (0))
     )
-  ) (id);
+  ) (id)
 
 interface ConcatenatedModifications {
-  state: Record<Data.HeroDependent>;
-  skillRatingList: OrderedMap<string, number>;
-  skillActivateList: OrderedSet<string>;
-  activatable: List<Record<Wiki.ProfessionRequiresActivatableObject>>;
-  languages: OrderedMap<number, number>;
-  scripts: OrderedSet<number>;
-  professionPrerequisites: List<Wiki.ProfessionPrerequisite>;
+  state: Record<Data.HeroDependent>
+  skillRatingList: OrderedMap<string, number>
+  skillActivateList: OrderedSet<string>
+  activatable: List<Record<Wiki.ProfessionRequiresActivatableObject>>
+  languages: OrderedMap<number, number>
+  scripts: OrderedSet<number>
+  professionPrerequisites: List<Wiki.ProfessionPrerequisite>
 }
 
-const modIdentityFn = (acc: ConcatenatedModifications) => acc;
+const modIdentityFn = (acc: ConcatenatedModifications) => acc
 
 const concatBaseModifications = (action: SetSelectionsAction) => {
   const {
@@ -49,19 +50,19 @@ const concatBaseModifications = (action: SetSelectionsAction) => {
     culture,
     profession,
     professionVariant: maybeProfessionVariant,
-  } = action.payload;
+  } = action.payload
 
   return R.pipe (
     // Race selections:
     (acc: ConcatenatedModifications) => ({
       ...acc,
-      activatable: race.get ('automaticAdvantages')
-        .foldl<ConcatenatedModifications['activatable']> (
+      activatable: race.get ("automaticAdvantages")
+        .foldl<ConcatenatedModifications["activatable"]> (
           accActivatable => advantage => accActivatable.cons (
             Record.of<Wiki.ProfessionRequiresActivatableObject> ({ id: advantage, active: true })
           )
         ) (acc.activatable),
-      state: acc .state .insert ('attributeAdjustmentSelected')
+      state: acc .state .insert ("attributeAdjustmentSelected")
                                 (action .payload .attributeAdjustment),
     }),
 
@@ -69,17 +70,17 @@ const concatBaseModifications = (action: SetSelectionsAction) => {
     (acc: ConcatenatedModifications) => ({
       ...acc,
       skillRatingList: action.payload.useCulturePackage
-        ? culture.get ('culturalPackageSkills')
-          .foldl<ConcatenatedModifications['skillRatingList']> (
+        ? culture.get ("culturalPackageSkills")
+          .foldl<ConcatenatedModifications["skillRatingList"]> (
             skillRatingList => skill =>
-              skillRatingList.insert (skill.get ('id')) (skill.get ('value'))
+              skillRatingList.insert (skill.get ("id")) (skill.get ("value"))
           ) (acc.skillRatingList)
         : acc.skillRatingList,
       languages: Maybe.fromMaybe (acc.languages) (
         ifElse<List<number>, Maybe<number>> (R.pipe (List.lengthL, R.lt (1)))
                                             (() => Just (action .payload .motherTongue))
                                             (Maybe.listToMaybe)
-                                            (culture.get ('languages'))
+                                            (culture.get ("languages"))
           .fmap (motherTongueId => acc.languages.insert (motherTongueId) (4))
       ),
       scripts: action .payload .isBuyingMainScriptEnabled
@@ -87,7 +88,7 @@ const concatBaseModifications = (action: SetSelectionsAction) => {
           ifElse<List<number>, Maybe<number>> (R.pipe (List.lengthL, R.lt (1)))
                                               (() => Just (action .payload .mainScript))
                                               (Maybe.listToMaybe)
-                                              (culture.get ('scripts'))
+                                              (culture.get ("scripts"))
             .fmap (motherTongueScriptId => acc.scripts.insert (motherTongueScriptId))
         )
         : acc.scripts,
@@ -96,35 +97,35 @@ const concatBaseModifications = (action: SetSelectionsAction) => {
     // Profession selections:
     (acc: ConcatenatedModifications) => ({
       ...acc,
-      skillRatingList: profession.get ('skills')
-        .mappend (profession.get ('combatTechniques'))
-        .foldl<ConcatenatedModifications['skillRatingList']> (
+      skillRatingList: profession.get ("skills")
+        .mappend (profession.get ("combatTechniques"))
+        .foldl<ConcatenatedModifications["skillRatingList"]> (
           skillRatingList => skill => addToSkillRatingList (
-            skill.get ('id'),
-            skill.get ('value'),
+            skill.get ("id"),
+            skill.get ("value"),
             skillRatingList
           )
         ) (acc.skillRatingList),
-      state: profession.get ('blessings')
-        .foldl<ConcatenatedModifications['state']> (
-          accState => blessing => accState.modify<'blessings'> (
+      state: profession.get ("blessings")
+        .foldl<ConcatenatedModifications["state"]> (
+          accState => blessing => accState.modify<"blessings"> (
             blessings => blessings.insert (blessing)
-          ) ('blessings')
+          ) ("blessings")
         ) (acc.state),
-      activatable: profession.get ('specialAbilities')
-        .foldl<ConcatenatedModifications['activatable']> (List.cons) (acc.activatable),
-      professionPrerequisites: profession.get ('prerequisites'),
+      activatable: profession.get ("specialAbilities")
+        .foldl<ConcatenatedModifications["activatable"]> (List.cons) (acc.activatable),
+      professionPrerequisites: profession.get ("prerequisites"),
     }),
     (acc: ConcatenatedModifications) =>
-      profession.get ('spells')
-        .mappend (profession.get ('liturgicalChants'))
+      profession.get ("spells")
+        .mappend (profession.get ("liturgicalChants"))
         .foldl<ConcatenatedModifications> (
           accAll => skill => ({
             ...accAll,
-            skillActivateList: accAll.skillActivateList.insert (skill.get ('id')),
+            skillActivateList: accAll.skillActivateList.insert (skill.get ("id")),
             skillRatingList: addToSkillRatingList (
-              skill.get ('id'),
-              skill.get ('value'),
+              skill.get ("id"),
+              skill.get ("value"),
               accAll.skillRatingList
             ),
           })
@@ -137,39 +138,39 @@ const concatBaseModifications = (action: SetSelectionsAction) => {
           professionVariant => R.pipe (
             (acc: ConcatenatedModifications) => ({
               ...acc,
-              skillRatingList: professionVariant.get ('skills')
-                .mappend (professionVariant.get ('combatTechniques'))
-                .foldl<ConcatenatedModifications['skillRatingList']> (
+              skillRatingList: professionVariant.get ("skills")
+                .mappend (professionVariant.get ("combatTechniques"))
+                .foldl<ConcatenatedModifications["skillRatingList"]> (
                   skillRatingList => skill => addToSkillRatingList (
-                    skill.get ('id'),
-                    skill.get ('value'),
+                    skill.get ("id"),
+                    skill.get ("value"),
                     skillRatingList
                   )
                 ) (acc.skillRatingList),
-              state: professionVariant.get ('blessings')
-                .foldl<ConcatenatedModifications['state']> (
-                  accState => blessing => accState.modify<'blessings'> (
+              state: professionVariant.get ("blessings")
+                .foldl<ConcatenatedModifications["state"]> (
+                  accState => blessing => accState.modify<"blessings"> (
                     blessings => blessings.insert (blessing)
-                  ) ('blessings')
+                  ) ("blessings")
                 ) (acc.state),
-              activatable: professionVariant.get ('specialAbilities')
-                .foldl<ConcatenatedModifications['activatable']> (
+              activatable: professionVariant.get ("specialAbilities")
+                .foldl<ConcatenatedModifications["activatable"]> (
                   accActivatable => specialAbility => {
-                    if (!specialAbility.get ('active')) {
+                    if (!specialAbility.get ("active")) {
                       return accActivatable.filter (
-                        e => e.get ('id') !== specialAbility.get ('id')
-                      );
+                        e => e.get ("id") !== specialAbility.get ("id")
+                      )
                     }
                     else {
-                      return accActivatable.cons (specialAbility);
+                      return accActivatable.cons (specialAbility)
                     }
                   }
                 ) (acc.activatable),
-              professionPrerequisites: professionVariant.get ('prerequisites')
-                .foldl<ConcatenatedModifications['professionPrerequisites']> (
+              professionPrerequisites: professionVariant.get ("prerequisites")
+                .foldl<ConcatenatedModifications["professionPrerequisites"]> (
                   professionPrerequisites => req => {
-                    if (isProfessionRequiringIncreasable (req) || req.get ('active') !== false) {
-                      return professionPrerequisites.cons (req);
+                    if (isProfessionRequiringIncreasable (req) || req.get ("active") !== false) {
+                      return professionPrerequisites.cons (req)
                     }
                     else {
                       return Maybe.fromMaybe (professionPrerequisites) (
@@ -177,52 +178,52 @@ const concatBaseModifications = (action: SetSelectionsAction) => {
                           R.equals<Wiki.ProfessionPrerequisite> (req)
                         )
                           .fmap (professionPrerequisites.deleteAt)
-                      );
+                      )
                     }
                   }
                 ) (acc.professionPrerequisites),
             }),
             (acc: ConcatenatedModifications) =>
-              professionVariant.get ('spells')
-                .mappend (professionVariant.get ('liturgicalChants'))
+              professionVariant.get ("spells")
+                .mappend (professionVariant.get ("liturgicalChants"))
                 .foldl<ConcatenatedModifications> (
                   accAll => skill => {
                     const intermediateState: ConcatenatedModifications = {
                       ...accAll,
-                      skillActivateList: accAll.skillActivateList.insert (skill.get ('id')),
+                      skillActivateList: accAll.skillActivateList.insert (skill.get ("id")),
                       skillRatingList: addToSkillRatingList (
-                        skill.get ('id'),
-                        skill.get ('value'),
+                        skill.get ("id"),
+                        skill.get ("value"),
                         accAll.skillRatingList
                       ),
-                    };
+                    }
 
-                    if (intermediateState.skillRatingList.notMember (skill.get ('id'))) {
+                    if (intermediateState.skillRatingList.notMember (skill.get ("id"))) {
                       return {
                         ...intermediateState,
                         skillActivateList: intermediateState.skillActivateList
-                          .delete (skill.get ('id')),
-                      };
+                          .delete (skill.get ("id")),
+                      }
                     }
 
-                    return intermediateState;
+                    return intermediateState
                   }
                 ) (acc)
           )
         )
     )
-  );
-};
+  )
+}
 
 const concatSpecificModifications = (action: SetSelectionsAction) => {
-  const { wiki } = action.payload;
+  const { wiki } = action.payload
 
   return R.pipe (
     // - Skill Specialization
     Maybe.maybe (modIdentityFn) (
       specialization => (acc: ConcatenatedModifications) => {
-        const { specialization: specializationSelection, specializationSkillId } = action.payload;
-        const talentId = (specialization as Record<Wiki.SpecializationSelection>) .get ('sid');
+        const { specialization: specializationSelection, specializationSkillId } = action.payload
+        const talentId = (specialization as Record<Wiki.SpecializationSelection>) .get ("sid")
 
         if (
           talentId instanceof List
@@ -233,52 +234,52 @@ const concatSpecificModifications = (action: SetSelectionsAction) => {
             ...acc,
             activatable: acc.activatable.cons (
               Record.of<Wiki.ProfessionRequiresActivatableObject> ({
-                id: 'SA_9',
+                id: "SA_9",
                 active: true,
                 sid: Maybe.fromJust (specializationSkillId),
                 sid2: Maybe.fromJust (specializationSelection),
               })
             ),
-          };
+          }
         }
 
-        if (typeof talentId === 'string' && Maybe.isJust (specializationSelection)) {
+        if (typeof talentId === "string" && Maybe.isJust (specializationSelection)) {
           return {
             ...acc,
             activatable: acc.activatable.cons (
               Record.of<Wiki.ProfessionRequiresActivatableObject> ({
-                id: 'SA_9',
+                id: "SA_9",
                 active: true,
                 sid: talentId,
                 sid2: Maybe.fromJust (specializationSelection),
               })
             ),
-          };
+          }
         }
 
-        return acc;
+        return acc
       }
     ) (action.payload.map.lookup (Wiki.ProfessionSelectionIds.SPECIALIZATION)),
 
     // - Terrain Knowledge
     Maybe.maybe (modIdentityFn) (
       () => (acc: ConcatenatedModifications) => {
-        const { terrainKnowledge } = action.payload;
+        const { terrainKnowledge } = action.payload
 
         if (Maybe.isJust (terrainKnowledge)) {
           return {
             ...acc,
             activatable: acc.activatable.cons (
               Record.of<Wiki.ProfessionRequiresActivatableObject> ({
-                id: 'SA_9',
+                id: "SA_9",
                 active: true,
                 sid: Maybe.fromJust (terrainKnowledge),
               })
             ),
-          };
+          }
         }
 
-        return acc;
+        return acc
       }
     ) (action.payload.map.lookup (Wiki.ProfessionSelectionIds.TERRAIN_KNOWLEDGE)),
 
@@ -311,10 +312,10 @@ const concatSpecificModifications = (action: SetSelectionsAction) => {
             obj => ({
               ...acc,
               skillRatingList: action .payload .combatTechniques
-                .foldl<ConcatenatedModifications['skillRatingList']> (
+                .foldl<ConcatenatedModifications["skillRatingList"]> (
                   accSkillRatingList => e => addToSkillRatingList (
                     e,
-                    obj.get ('value'),
+                    obj.get ("value"),
                     accSkillRatingList
                   )
                 ) (acc.skillRatingList),
@@ -332,10 +333,10 @@ const concatSpecificModifications = (action: SetSelectionsAction) => {
             obj => ({
               ...acc,
               skillRatingList: action .payload .combatTechniquesSecond
-                .foldl<ConcatenatedModifications['skillRatingList']> (
+                .foldl<ConcatenatedModifications["skillRatingList"]> (
                   accSkillRatingList => e => addToSkillRatingList (
                     e,
-                    obj.get ('value'),
+                    obj.get ("value"),
                     accSkillRatingList
                   )
                 ) (acc.skillRatingList),
@@ -347,8 +348,8 @@ const concatSpecificModifications = (action: SetSelectionsAction) => {
     (acc: ConcatenatedModifications) =>
       ({
         ...acc,
-        state: action.payload.cantrips.foldl<ConcatenatedModifications['state']> (
-          accState => e => accState.modify<'cantrips'> (OrderedSet.insert (e)) ('cantrips')
+        state: action.payload.cantrips.foldl<ConcatenatedModifications["state"]> (
+          accState => e => accState.modify<"cantrips"> (OrderedSet.insert (e)) ("cantrips")
         ) (acc.state),
       }),
 
@@ -366,21 +367,21 @@ const concatSpecificModifications = (action: SetSelectionsAction) => {
       ({
         ...acc,
         skillRatingList: action.payload.skills
-          .foldlWithKey<ConcatenatedModifications['skillRatingList']> (
+          .foldlWithKey<ConcatenatedModifications["skillRatingList"]> (
             skillRatingList => id => value => Maybe.fromMaybe (skillRatingList) (
-              wiki.get ('skills').lookup (id)
+              wiki.get ("skills").lookup (id)
                 .fmap (
                   skill => addToSkillRatingList (
                     id,
-                    value / skill.get ('ic'),
+                    value / skill.get ("ic"),
                     skillRatingList
                   )
                 )
             )
           ) (acc.skillRatingList),
       })
-  );
-};
+  )
+}
 
 const concatModifications = (
   state: Record<Data.HeroDependent>,
@@ -394,24 +395,24 @@ const concatModifications = (
     languages: OrderedMap.empty (),
     scripts: OrderedSet.empty (),
     professionPrerequisites: List.of (),
-  };
+  }
 
   const pipeModifications = R.pipe (
     concatBaseModifications (action),
     concatSpecificModifications (action)
-  );
+  )
 
-  return pipeModifications (concatenatedModifications);
-};
+  return pipeModifications (concatenatedModifications)
+}
 
 const applyModifications = (action: SetSelectionsAction) => R.pipe (
   // - Skill activations
   (acc: ConcatenatedModifications) => ({
     ...acc,
-    state: acc.skillActivateList.foldl<ConcatenatedModifications['state']> (
+    state: acc.skillActivateList.foldl<ConcatenatedModifications["state"]> (
       state => id => updateHeroListStateItemOr (
         createActivatableDependentSkill,
-        e => Just (e.insert ('active') (true)),
+        e => Just (e.insert ("active") (true)),
         id
       ) (state)
     ) (acc.state),
@@ -420,11 +421,11 @@ const applyModifications = (action: SetSelectionsAction) => R.pipe (
   // - Skill rating increases
   (acc: ConcatenatedModifications) => ({
     ...acc,
-    state: acc.skillRatingList.foldlWithKey<ConcatenatedModifications['state']> (
+    state: acc.skillRatingList.foldlWithKey<ConcatenatedModifications["state"]> (
       state => id => value => updateEntryDef (
         e => Just (
-          (e as any as Record<{ value: number; [key: string]: any }>)
-            .modify<'value'> (R.add (value)) ('value')
+          (e as any as Record<{ value: number [key: string]: any }>)
+            .modify<"value"> (R.add (value)) ("value")
         ) as any as Just<Data.Dependent>,
         id
       ) (state)
@@ -434,22 +435,22 @@ const applyModifications = (action: SetSelectionsAction) => R.pipe (
   // - Activatable additions
   (acc: ConcatenatedModifications) => ({
     ...acc,
-    state: acc.activatable.foldl<ConcatenatedModifications['state']> (
+    state: acc.activatable.foldl<ConcatenatedModifications["state"]> (
       state => req => Maybe.maybe<Wiki.Activatable, Data.Hero> (state) (
         wikiEntry => {
-          const entry = getHeroStateItem (req.get ('id')) (state) as
-            Maybe<Record<Data.ActivatableDependent>>;
+          const entry = getHeroStateItem (req.get ("id")) (state) as
+            Maybe<Record<Data.ActivatableDependent>>
 
-          const activeObject = getActiveObjectCore (req as any);
+          const activeObject = getActiveObjectCore (req as any)
 
           return updateListToContainNewEntry (
             state,
             wikiEntry,
             entry,
             activeObject
-          );
+          )
         }
-      ) (getWikiEntry (action.payload.wiki) (req.get ('id')) as Maybe<Wiki.Activatable>)
+      ) (getWikiEntry (action.payload.wiki) (req.get ("id")) as Maybe<Wiki.Activatable>)
     ) (acc.state),
   }),
 
@@ -459,15 +460,15 @@ const applyModifications = (action: SetSelectionsAction) => R.pipe (
     state: updateHeroListStateItemOr (
       createActivatableDependent,
       scripts => Just (
-        scripts.modify<'active'> (
+        scripts.modify<"active"> (
           active => active.mappend (
             acc.scripts.elems ().map (
               script => Record.of<Data.ActiveObject> ({ sid: script })
             )
           )
-        ) ('active')
+        ) ("active")
       ),
-      'SA_27'
+      "SA_27"
     ) (acc.state),
   }),
 
@@ -477,7 +478,7 @@ const applyModifications = (action: SetSelectionsAction) => R.pipe (
     state: updateHeroListStateItemOr (
       createActivatableDependent,
       languages => Just (
-        languages.modify<'active'> (
+        languages.modify<"active"> (
           active => active.mappend (
             acc.languages.assocs ().map (
               language => Record.of<Data.ActiveObject> ({
@@ -486,42 +487,42 @@ const applyModifications = (action: SetSelectionsAction) => R.pipe (
               })
             )
           )
-        ) ('active')
+        ) ("active")
       ),
-      'SA_29'
+      "SA_29"
     ) (acc.state),
   }),
 
   // - Profession prerequisites
   (acc: ConcatenatedModifications) => ({
     ...acc,
-    state: acc.professionPrerequisites.foldl<ConcatenatedModifications['state']> (
+    state: acc.professionPrerequisites.foldl<ConcatenatedModifications["state"]> (
       state => req => {
         if (isProfessionRequiringIncreasable (req)) {
           return updateEntryDef (
             e => Just (
-              (e as any as Record<{ value: number; [key: string]: any }>)
-                .insert ('value') (req.get ('value'))
+              (e as any as Record<{ value: number [key: string]: any }>)
+                .insert ("value") (req.get ("value"))
             ) as any as Just<Data.Dependent>,
-            req.get ('id')
-          ) (state);
+            req.get ("id")
+          ) (state)
         }
         else {
           return Maybe.maybe<Wiki.Activatable, Data.Hero> (state) (
             wikiEntry => {
-              const entry = getHeroStateItem (req.get ('id')) (state) as
-                Maybe<Record<Data.ActivatableDependent>>;
+              const entry = getHeroStateItem (req.get ("id")) (state) as
+                Maybe<Record<Data.ActivatableDependent>>
 
-              const activeObject = getActiveObjectCore (req as any);
+              const activeObject = getActiveObjectCore (req as any)
 
-              const checkIfActive = R.equals (activeObject);
+              const checkIfActive = R.equals (activeObject)
 
               if (
                 Maybe.fromMaybe (false) (
-                  entry.fmap (justEntry => justEntry.get ('active').any (checkIfActive))
+                  entry.fmap (justEntry => justEntry.get ("active").any (checkIfActive))
                 )
               ) {
-                return state;
+                return state
               }
 
               return updateListToContainNewEntry (
@@ -529,9 +530,9 @@ const applyModifications = (action: SetSelectionsAction) => R.pipe (
                 wikiEntry,
                 entry,
                 activeObject
-              );
+              )
             }
-          ) (getWikiEntry (action.payload.wiki) (req.get ('id')) as Maybe<Wiki.Activatable>);
+          ) (getWikiEntry (action.payload.wiki) (req.get ("id")) as Maybe<Wiki.Activatable>)
         }
       }
     ) (acc.state),
@@ -540,22 +541,22 @@ const applyModifications = (action: SetSelectionsAction) => R.pipe (
   // - Lower Combat Techniques with too high CTR
   acc => ({
     ...acc,
-    state: acc.state.modify<'combatTechniques'> (
+    state: acc.state.modify<"combatTechniques"> (
       combatTechniques => {
-        const maybeMaxCombatTechniqueRating = action.payload.wiki.get ('experienceLevels')
-          .lookup (acc.state.get ('experienceLevel'))
-          .fmap (el => el.get ('maxCombatTechniqueRating'));
+        const maybeMaxCombatTechniqueRating = action.payload.wiki.get ("experienceLevels")
+          .lookup (acc.state.get ("experienceLevel"))
+          .fmap (el => el.get ("maxCombatTechniqueRating"))
 
         return Maybe.fromMaybe (combatTechniques) (
           maybeMaxCombatTechniqueRating.fmap (
             maxCombatTechniqueRating => combatTechniques.map (
-              combatTechnique => combatTechnique.modify<'value'> (R.min (maxCombatTechniqueRating))
-                                                                 ('value')
+              combatTechnique => combatTechnique.modify<"value"> (R.min (maxCombatTechniqueRating))
+                                                                 ("value")
             )
           )
-        );
+        )
       }
-    ) ('combatTechniques'),
+    ) ("combatTechniques"),
   }),
 
   /**
@@ -563,28 +564,27 @@ const applyModifications = (action: SetSelectionsAction) => R.pipe (
    * automatically handle pAE.
    *
    * if (isActive(acc.state.specialAbilities.get('SA_76'))) {
-   *    permanentArcaneEnergyLoss += 2;
+   *    permanentArcaneEnergyLoss += 2
    * }
    */
 
   acc => acc.state
-);
+)
 
-export function applyRCPSelectionsReducer (
-  state: Record<Data.HeroDependent>,
-  action: Action
-): Record<Data.HeroDependent> {
-  switch (action.type) {
-    case ActionTypes.ASSIGN_RCP_OPTIONS: {
-      const concatenatedModifications = concatModifications (state, action);
+export const applyRCPSelectionsReducer =
+  (action: Action) =>
+  (state: HeroModelRecord): HeroModelRecord => {
+    switch (action.type) {
+      case ActionTypes.ASSIGN_RCP_OPTIONS: {
+        const concatenatedModifications = concatModifications (state, action)
 
-      return applyModifications (action) (concatenatedModifications);
+        return applyModifications (action) (concatenatedModifications)
+      }
+
+      default:
+        return state
     }
-
-    default:
-      return state;
   }
-}
 
 function updateListToContainNewEntry (
   state: Record<Data.HeroDependent>,
@@ -592,17 +592,17 @@ function updateListToContainNewEntry (
   entry: Maybe<Record<Data.ActivatableDependent>>,
   activeObject: Record<Data.ActiveObject>
 ): Record<Data.HeroDependent> {
-  type Actives = Data.ActivatableDependent['active'];
-  type Active = Record<Data.ActiveObject>;
+  type Actives = Data.ActivatableDependent["active"]
+  type Active = Record<Data.ActiveObject>
 
   const intermediateState = addDependencies (
     updateHeroListStateItemOr (
       createActivatableDependent,
       currentEntry => Just (
-        currentEntry.modify<'active'> (flip<Actives, Active, Actives> (List.cons) (activeObject))
-                                      ('active')
+        currentEntry.modify<"active"> (flip<Actives, Active, Actives> (List.cons) (activeObject))
+                                      ("active")
       ),
-      wikiEntry.get ('id')
+      wikiEntry.get ("id")
     ) (state),
     getCombinedPrerequisites (
       wikiEntry,
@@ -610,15 +610,15 @@ function updateListToContainNewEntry (
       activeObject,
       true
     ),
-    wikiEntry.get ('id')
-  );
+    wikiEntry.get ("id")
+  )
 
   if (wikiEntry.toObject ().category === Categories.SPECIAL_ABILITIES) {
     return addAllStyleRelatedDependencies (
       intermediateState,
       wikiEntry as Record<Wiki.SpecialAbility>
-    );
+    )
   }
 
-  return intermediateState;
+  return intermediateState
 }

@@ -1,9 +1,7 @@
 import { AsyncAction } from '../../types/actions';
 import { ActionTypes } from '../Constants/ActionTypes';
-import { PetInstance } from '../Models/Hero/heroTypeHelpers';
 import { getPets } from '../Selectors/stateSelectors';
-import { Record } from '../utils/dataUtils';
-import { getNewId } from '../Utils/IDUtils';
+import { getNewId } from '../Utilities/IDUtils';
 
 export interface AddPetAction {
   type: ActionTypes.ADD_PET;
@@ -54,7 +52,7 @@ export const savePet = (): SavePetAction => ({
 export interface EditPetAction {
   type: ActionTypes.EDIT_PET;
   payload: {
-    pet: Record<PetInstance>;
+    id: string;
   };
 }
 

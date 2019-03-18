@@ -1,10 +1,15 @@
-import * as R from 'ramda';
-import * as AttributesActions from '../Actions/AttributesActions';
-import * as ProfessionActions from '../Actions/ProfessionActions';
-import { ActionTypes } from '../Constants/ActionTypes';
-import * as Data from '../Models/Hero/heroTypeHelpers';
-import { Record } from '../utils/dataUtils';
-import { ifElse } from '../Utils/ifElse';
+import { ident } from "../../Data/Function";
+import { over, view } from "../../Data/Lens";
+import * as AttributesActions from "../Actions/AttributesActions";
+import * as ProfessionActions from "../Actions/ProfessionActions";
+import { ActionTypes } from "../Constants/ActionTypes";
+import { EnergiesL } from "../Models/Hero/Energies";
+import { HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel";
+import { PermanentEnergyLossL } from "../Models/Hero/PermanentEnergyLoss";
+import { PermanentEnergyLossAndBoughtBackL } from "../Models/Hero/PermanentEnergyLossAndBoughtBack";
+import { composeL } from "../Utilities/compose";
+import { add, dec, inc } from "../Utilities/mathUtils";
+import { pipe } from "../Utilities/pipe";
 
 type AddedEnergyAction =
   AttributesActions.AddArcaneEnergyPointAction |
@@ -12,7 +17,7 @@ type AddedEnergyAction =
   AttributesActions.AddLifePointAction |
   AttributesActions.RemoveArcaneEnergyPointAction |
   AttributesActions.RemoveKarmaPointAction |
-  AttributesActions.RemoveLifePointAction;
+  AttributesActions.RemoveLifePointAction
 
 type Action =
   AddedEnergyAction |
@@ -29,159 +34,128 @@ type Action =
   AttributesActions.RemoveLostKPPointAction |
   AttributesActions.AddLostLPPointAction |
   AttributesActions.AddLostLPPointsAction |
-  AttributesActions.RemoveLostLPPointAction;
+  AttributesActions.RemoveLostLPPointAction
 
-function addedEnergiesReducer (
-  state: Record<Data.HeroDependent>,
-  action: AddedEnergyAction
-): Record<Data.HeroDependent> {
-  switch (action.type) {
-    case ActionTypes.ADD_LIFE_POINT:
-      return state.modify<'energies'> (
-        energies => energies.modify<'addedLifePoints'> (R.inc) ('addedLifePoints')
-      ) ('energies');
+const { energies } = HeroModelL
 
-    case ActionTypes.ADD_ARCANE_ENERGY_POINT:
-      return state.modify<'energies'> (
-        energies => energies.modify<'addedArcaneEnergyPoints'> (R.inc) ('addedArcaneEnergyPoints')
-      ) ('energies');
+const {
+  addedArcaneEnergyPoints,
+  addedKarmaPoints,
+  addedLifePoints,
+  permanentArcaneEnergyPoints,
+  permanentKarmaPoints,
+  permanentLifePoints,
+} = EnergiesL
 
-    case ActionTypes.ADD_KARMA_POINT:
-      return state.modify<'energies'> (
-        energies => energies.modify<'addedKarmaPoints'> (R.inc) ('addedKarmaPoints')
-      ) ('energies');
+const { lost } = PermanentEnergyLossL
+const { lost: lost_, redeemed } = PermanentEnergyLossAndBoughtBackL
 
-    case ActionTypes.REMOVE_LIFE_POINT:
-      return state.modify<'energies'> (
-        energies => energies.modify<'addedLifePoints'> (R.dec) ('addedLifePoints')
-      ) ('energies');
+const addedEnergiesReducer =
+  (action: Action): ident<HeroModelRecord> => {
+    switch (action.type) {
+      case ActionTypes.ADD_LIFE_POINT:
+        return over (composeL (energies, addedLifePoints))
+                    (inc)
 
-    case ActionTypes.REMOVE_ARCANE_ENERGY_POINT:
-      return state.modify<'energies'> (
-        energies => energies.modify<'addedArcaneEnergyPoints'> (R.dec) ('addedArcaneEnergyPoints')
-      ) ('energies');
+      case ActionTypes.ADD_ARCANE_ENERGY_POINT:
+        return over (composeL (energies, addedArcaneEnergyPoints))
+                    (inc)
 
-    case ActionTypes.REMOVE_KARMA_POINT:
-      return state.modify<'energies'> (
-        energies => energies.modify<'addedKarmaPoints'> (R.dec) ('addedKarmaPoints')
-      ) ('energies');
+      case ActionTypes.ADD_KARMA_POINT:
+        return over (composeL (energies, addedKarmaPoints))
+                    (inc)
 
-    default:
-      return state;
+      case ActionTypes.REMOVE_LIFE_POINT:
+        return over (composeL (energies, addedLifePoints))
+                    (dec)
+
+      case ActionTypes.REMOVE_ARCANE_ENERGY_POINT:
+        return over (composeL (energies, addedArcaneEnergyPoints))
+                    (dec)
+
+      case ActionTypes.REMOVE_KARMA_POINT:
+        return over (composeL (energies, addedKarmaPoints))
+                    (dec)
+
+      default:
+        return ident
+    }
   }
-}
 
-export function energiesReducer (
-  state: Record<Data.HeroDependent>,
-  action: Action
-): Record<Data.HeroDependent> {
-  switch (action.type) {
-    case ActionTypes.ADD_LIFE_POINT:
-    case ActionTypes.ADD_ARCANE_ENERGY_POINT:
-    case ActionTypes.ADD_KARMA_POINT:
-    case ActionTypes.REMOVE_LIFE_POINT:
-    case ActionTypes.REMOVE_ARCANE_ENERGY_POINT:
-    case ActionTypes.REMOVE_KARMA_POINT:
-      return addedEnergiesReducer (state, action);
+export const energiesReducer =
+  (action: Action): ident<HeroModelRecord> => {
+    switch (action.type) {
+      case ActionTypes.ADD_LIFE_POINT:
+      case ActionTypes.ADD_ARCANE_ENERGY_POINT:
+      case ActionTypes.ADD_KARMA_POINT:
+      case ActionTypes.REMOVE_LIFE_POINT:
+      case ActionTypes.REMOVE_ARCANE_ENERGY_POINT:
+      case ActionTypes.REMOVE_KARMA_POINT:
+        return addedEnergiesReducer (action)
 
-    case ActionTypes.ADD_BOUGHT_BACK_AE_POINT:
-      return state.modify<'energies'> (
-        energies => energies.modify<'permanentArcaneEnergyPoints'> (
-          obj => obj.modify<'redeemed'> (R.inc) ('redeemed')
-        ) ('permanentArcaneEnergyPoints')
-      ) ('energies');
+      case ActionTypes.ADD_BOUGHT_BACK_AE_POINT:
+        return over (composeL (energies, permanentArcaneEnergyPoints, redeemed))
+                    (inc)
 
-    case ActionTypes.ADD_BOUGHT_BACK_KP_POINT:
-      return state.modify<'energies'> (
-        energies => energies.modify<'permanentKarmaPoints'> (
-          obj => obj.modify<'redeemed'> (R.inc) ('redeemed')
-        ) ('permanentKarmaPoints')
-      ) ('energies');
+      case ActionTypes.ADD_BOUGHT_BACK_KP_POINT:
+        return over (composeL (energies, permanentKarmaPoints, redeemed))
+                    (inc)
 
-    case ActionTypes.REMOVE_BOUGHT_BACK_AE_POINT:
-      return state.modify<'energies'> (
-        energies => energies.modify<'permanentArcaneEnergyPoints'> (
-          obj => obj.modify<'redeemed'> (R.dec) ('redeemed')
-        ) ('permanentArcaneEnergyPoints')
-      ) ('energies');
+      case ActionTypes.REMOVE_BOUGHT_BACK_AE_POINT:
+        return over (composeL (energies, permanentArcaneEnergyPoints, redeemed))
+                    (dec)
 
-    case ActionTypes.REMOVE_BOUGHT_BACK_KP_POINT:
-      return state.modify<'energies'> (
-        energies => energies.modify<'permanentKarmaPoints'> (
-          obj => obj.modify<'redeemed'> (R.dec) ('redeemed')
-        ) ('permanentKarmaPoints')
-      ) ('energies');
+      case ActionTypes.REMOVE_BOUGHT_BACK_KP_POINT:
+        return over (composeL (energies, permanentKarmaPoints, redeemed))
+                    (dec)
 
-    case ActionTypes.ADD_LOST_LP_POINT:
-      return state.modify<'energies'> (
-        energies => energies.modify<'permanentLifePoints'> (
-          obj => obj.modify<'lost'> (R.inc) ('lost')
-        ) ('permanentLifePoints')
-      ) ('energies');
+      case ActionTypes.ADD_LOST_LP_POINT:
+        return over (composeL (energies, permanentLifePoints, lost))
+                    (inc)
 
-    case ActionTypes.ADD_LOST_AE_POINT:
-      return state.modify<'energies'> (
-        energies => energies.modify<'permanentArcaneEnergyPoints'> (
-          obj => obj.modify<'lost'> (R.inc) ('lost')
-        ) ('permanentArcaneEnergyPoints')
-      ) ('energies');
+      case ActionTypes.ADD_LOST_AE_POINT:
+        return over (composeL (energies, permanentArcaneEnergyPoints, lost_))
+                    (inc)
 
-    case ActionTypes.ADD_LOST_KP_POINT:
-      return state.modify<'energies'> (
-        energies => energies.modify<'permanentKarmaPoints'> (
-          obj => obj.modify<'lost'> (R.inc) ('lost')
-        ) ('permanentKarmaPoints')
-      ) ('energies');
+      case ActionTypes.ADD_LOST_KP_POINT:
+        return over (composeL (energies, permanentKarmaPoints, lost_))
+                    (inc)
 
-    case ActionTypes.REMOVE_LOST_LP_POINT:
-      return state.modify<'energies'> (
-        energies => energies.modify<'permanentLifePoints'> (
-          obj => obj.modify<'lost'> (R.dec) ('lost')
-        ) ('permanentLifePoints')
-      ) ('energies');
+      case ActionTypes.REMOVE_LOST_LP_POINT:
+        return over (composeL (energies, permanentLifePoints, lost))
+                    (inc)
 
-    case ActionTypes.REMOVE_LOST_AE_POINT:
-      return state.modify<'energies'> (
-        energies => energies.modify<'permanentArcaneEnergyPoints'> (
-          obj => obj
-            .modify<'redeemed'> (x => obj.get ('lost') === x ? x - 1 : x) ('redeemed')
-            .modify<'lost'> (R.dec) ('lost')
-        ) ('permanentArcaneEnergyPoints')
-      ) ('energies');
+      case ActionTypes.REMOVE_LOST_AE_POINT:
+        return over (composeL (energies, permanentArcaneEnergyPoints))
+                    (x => pipe (
+                                 over (redeemed)
+                                      (red => view (lost_) (x) === red ? dec (red) : red),
+                                 over (lost_) (dec)
+                               )
+                               (x))
 
-    case ActionTypes.REMOVE_LOST_KP_POINT:
-      return state.modify<'energies'> (
-        energies => energies.modify<'permanentKarmaPoints'> (
-          obj => obj
-            .modify<'redeemed'> (
-              ifElse<number, number> (R.equals (obj.get ('lost'))) (R.dec) (R.identity)
-            ) ('redeemed')
-            .modify<'lost'> (R.dec) ('lost')
-        ) ('permanentKarmaPoints')
-      ) ('energies');
+      case ActionTypes.REMOVE_LOST_KP_POINT:
+        return over (composeL (energies, permanentKarmaPoints))
+                    (x => pipe (
+                                 over (redeemed)
+                                      (red => view (lost_) (x) === red ? dec (red) : red),
+                                 over (lost_) (dec)
+                               )
+                               (x))
 
-    case ActionTypes.ADD_LOST_LP_POINTS:
-      return state.modify<'energies'> (
-        energies => energies.modify<'permanentLifePoints'> (
-          obj => obj.modify<'lost'> (R.add (action.payload.value)) ('lost')
-        ) ('permanentLifePoints')
-      ) ('energies');
+      case ActionTypes.ADD_LOST_LP_POINTS:
+        return over (composeL (energies, permanentLifePoints, lost))
+                    (add (action.payload.value))
 
-    case ActionTypes.ADD_LOST_AE_POINTS:
-      return state.modify<'energies'> (
-        energies => energies.modify<'permanentArcaneEnergyPoints'> (
-          obj => obj.modify<'lost'> (R.add (action.payload.value)) ('lost')
-        ) ('permanentArcaneEnergyPoints')
-      ) ('energies');
+      case ActionTypes.ADD_LOST_AE_POINTS:
+        return over (composeL (energies, permanentArcaneEnergyPoints, lost_))
+                    (add (action.payload.value))
 
-    case ActionTypes.ADD_LOST_KP_POINTS:
-      return state.modify<'energies'> (
-        energies => energies.modify<'permanentKarmaPoints'> (
-          obj => obj.modify<'lost'> (R.add (action.payload.value)) ('lost')
-        ) ('permanentKarmaPoints')
-      ) ('energies');
+      case ActionTypes.ADD_LOST_KP_POINTS:
+        return over (composeL (energies, permanentKarmaPoints, lost_))
+                    (add (action.payload.value))
 
-    default:
-      return state;
+      default:
+        return ident
+    }
   }
-}

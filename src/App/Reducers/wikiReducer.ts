@@ -82,7 +82,7 @@ type RawLocales = RawAdvantageLocale
 
 export const wikiReducer =
   (action: Action) =>
-  (state: WikiModelRecord = WikiModel.default): WikiModelRecord => {
+  (state: WikiModelRecord): WikiModelRecord => {
     switch (action.type) {
       case ActionTypes.RECEIVE_INITIAL_DATA: {
         const { config, defaultLocale, locales, tables } = action.payload

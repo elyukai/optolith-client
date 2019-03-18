@@ -1,46 +1,46 @@
-import { AsyncAction } from '../../types/actions';
-import { ActionTypes } from '../Constants/ActionTypes';
-import { ItemInstance } from '../Models/Hero/heroTypeHelpers';
-import { ItemTemplate } from '../Models/Wiki/wikiTypeHelpers';
-import { getFullItem } from '../Selectors/equipmentSelectors';
-import { getArmorZonesState, getItemEditorInstance, getItemsState, getWikiItemTemplates } from '../Selectors/stateSelectors';
-import { Maybe, Record } from '../utils/dataUtils';
-import { getNewId } from '../Utils/IDUtils';
+import { Maybe } from "../../Data/Maybe";
+import { Record } from "../../Data/Record";
+import { ActionTypes } from "../Constants/ActionTypes";
+import { ItemTemplate } from "../Models/Wiki/ItemTemplate";
+import { getFullItem } from "../Selectors/equipmentSelectors";
+import { getArmorZonesState, getItemEditorInstance, getItemsState, getWikiItemTemplates } from "../Selectors/stateSelectors";
+import { getNewId } from "../Utilities/IDUtils";
+import { AsyncAction } from "./Actions";
 
 export interface AddItemAction {
-  type: ActionTypes.ADD_ITEM;
+  type: ActionTypes.ADD_ITEM
   payload: {
     newId: string;
-  };
+  }
 }
 
 export const addItem = (): AsyncAction => (dispatch, getState) => {
   getItemsState (getState ()) .fmap (
     items => {
-      const newId = `ITEM_${getNewId (items.keys ())}`;
+      const newId = `ITEM_${getNewId (items.keys ())}`
 
       return dispatch<AddItemAction> ({
         type: ActionTypes.ADD_ITEM,
         payload: {
           newId,
         },
-      });
+      })
     }
-  );
-};
+  )
+}
 
 export interface AddItemTemplateAction {
-  type: ActionTypes.ADD_ITEM_TEMPLATE;
+  type: ActionTypes.ADD_ITEM_TEMPLATE
   payload: {
     template: Record<ItemTemplate>;
     newId: string;
-  };
+  }
 }
 
 export const addTemplateToList = (id: string): AsyncAction => (dispatch, getState) => {
   getItemsState (getState ()).bind (
     items => {
-      const newId = `ITEM_${getNewId (items.keys ())}`;
+      const newId = `ITEM_${getNewId (items.keys ())}`
 
       return getWikiItemTemplates (getState ())
         .lookup (id)
@@ -52,40 +52,40 @@ export const addTemplateToList = (id: string): AsyncAction => (dispatch, getStat
               template,
             },
           })
-        );
+        )
     }
-  );
-};
+  )
+}
 
 export interface CreateItemAction {
-  type: ActionTypes.CREATE_ITEM;
+  type: ActionTypes.CREATE_ITEM
 }
 
 export const createItem = (): CreateItemAction => ({
   type: ActionTypes.CREATE_ITEM,
-});
+})
 
 export interface CloseItemEditorAction {
-  type: ActionTypes.CLOSE_ITEM_EDITOR;
+  type: ActionTypes.CLOSE_ITEM_EDITOR
 }
 
 export const closeItemEditor = (): CloseItemEditorAction => ({
   type: ActionTypes.CLOSE_ITEM_EDITOR,
-});
+})
 
 export interface SaveItemAction {
-  type: ActionTypes.SAVE_ITEM;
+  type: ActionTypes.SAVE_ITEM
 }
 
 export const saveItem = (): SaveItemAction => ({
   type: ActionTypes.SAVE_ITEM,
-});
+})
 
 export interface EditItemAction {
-  type: ActionTypes.EDIT_ITEM;
+  type: ActionTypes.EDIT_ITEM
   payload: {
-    item: Record<ItemInstance>;
-  };
+    id: string;
+  }
 }
 
 export const editItem = (id: string): AsyncAction => (dispatch, getState) => {
@@ -98,14 +98,14 @@ export const editItem = (id: string): AsyncAction => (dispatch, getState) => {
         },
       })
     )
-  );
-};
+  )
+}
 
 export interface RemoveItemAction {
-  type: ActionTypes.REMOVE_ITEM;
+  type: ActionTypes.REMOVE_ITEM
   payload: {
     id: string;
-  };
+  }
 }
 
 export const removeItem = (id: string): RemoveItemAction => ({
@@ -113,13 +113,13 @@ export const removeItem = (id: string): RemoveItemAction => ({
   payload: {
     id,
   },
-});
+})
 
 export interface SetItemsSortOrderAction {
-  type: ActionTypes.SET_ITEMS_SORT_ORDER;
+  type: ActionTypes.SET_ITEMS_SORT_ORDER
   payload: {
     sortOrder: string;
-  };
+  }
 }
 
 export const setItemsSortOrder = (sortOrder: string): SetItemsSortOrderAction => ({
@@ -127,13 +127,13 @@ export const setItemsSortOrder = (sortOrder: string): SetItemsSortOrderAction =>
   payload: {
     sortOrder,
   },
-});
+})
 
 export interface SetDucatesAction {
-  type: ActionTypes.SET_DUCATES;
+  type: ActionTypes.SET_DUCATES
   payload: {
     value: string;
-  };
+  }
 }
 
 export const setDucates = (value: string): SetDucatesAction => ({
@@ -141,13 +141,13 @@ export const setDucates = (value: string): SetDucatesAction => ({
   payload: {
     value,
   },
-});
+})
 
 export interface SetSilverthalersAction {
-  type: ActionTypes.SET_SILVERTHALERS;
+  type: ActionTypes.SET_SILVERTHALERS
   payload: {
     value: string;
-  };
+  }
 }
 
 export const setSilverthalers = (value: string): SetSilverthalersAction => ({
@@ -155,13 +155,13 @@ export const setSilverthalers = (value: string): SetSilverthalersAction => ({
   payload: {
     value,
   },
-});
+})
 
 export interface SetHellersAction {
-  type: ActionTypes.SET_HELLERS;
+  type: ActionTypes.SET_HELLERS
   payload: {
     value: string;
-  };
+  }
 }
 
 export const setHellers = (value: string): SetHellersAction => ({
@@ -169,13 +169,13 @@ export const setHellers = (value: string): SetHellersAction => ({
   payload: {
     value,
   },
-});
+})
 
 export interface SetKreutzersAction {
-  type: ActionTypes.SET_KREUTZERS;
+  type: ActionTypes.SET_KREUTZERS
   payload: {
     value: string;
-  };
+  }
 }
 
 export const setKreutzers = (value: string): SetKreutzersAction => ({
@@ -183,13 +183,13 @@ export const setKreutzers = (value: string): SetKreutzersAction => ({
   payload: {
     value,
   },
-});
+})
 
 export interface SetNameAction {
-  type: ActionTypes.SET_ITEM_NAME;
+  type: ActionTypes.SET_ITEM_NAME
   payload: {
     value: string;
-  };
+  }
 }
 
 export const setName = (value: string): SetNameAction => ({
@@ -197,13 +197,13 @@ export const setName = (value: string): SetNameAction => ({
   payload: {
     value,
   },
-});
+})
 
 export interface SetPriceAction {
-  type: ActionTypes.SET_ITEM_PRICE;
+  type: ActionTypes.SET_ITEM_PRICE
   payload: {
     value: string;
-  };
+  }
 }
 
 export const setPrice = (value: string): SetPriceAction => ({
@@ -211,13 +211,13 @@ export const setPrice = (value: string): SetPriceAction => ({
   payload: {
     value,
   },
-});
+})
 
 export interface SetWeightAction {
-  type: ActionTypes.SET_ITEM_WEIGHT;
+  type: ActionTypes.SET_ITEM_WEIGHT
   payload: {
     value: string;
-  };
+  }
 }
 
 export const setWeight = (value: string): SetWeightAction => ({
@@ -225,13 +225,13 @@ export const setWeight = (value: string): SetWeightAction => ({
   payload: {
     value,
   },
-});
+})
 
 export interface SetAmountAction {
-  type: ActionTypes.SET_ITEM_AMOUNT;
+  type: ActionTypes.SET_ITEM_AMOUNT
   payload: {
     value: string;
-  };
+  }
 }
 
 export const setAmount = (value: string): SetAmountAction => ({
@@ -239,13 +239,13 @@ export const setAmount = (value: string): SetAmountAction => ({
   payload: {
     value,
   },
-});
+})
 
 export interface SetWhereAction {
-  type: ActionTypes.SET_ITEM_WHERE;
+  type: ActionTypes.SET_ITEM_WHERE
   payload: {
     value: string;
-  };
+  }
 }
 
 export const setWhere = (value: string): SetWhereAction => ({
@@ -253,13 +253,13 @@ export const setWhere = (value: string): SetWhereAction => ({
   payload: {
     value,
   },
-});
+})
 
 export interface SetGroupAction {
-  type: ActionTypes.SET_ITEM_GROUP;
+  type: ActionTypes.SET_ITEM_GROUP
   payload: {
     gr: number;
-  };
+  }
 }
 
 export const setGroup = (gr: number): SetGroupAction => ({
@@ -267,13 +267,13 @@ export const setGroup = (gr: number): SetGroupAction => ({
   payload: {
     gr,
   },
-});
+})
 
 export interface SetTemplateAction {
-  type: ActionTypes.SET_ITEM_TEMPLATE;
+  type: ActionTypes.SET_ITEM_TEMPLATE
   payload: {
     template: string;
-  };
+  }
 }
 
 export const setTemplate = (template: string): SetTemplateAction => ({
@@ -281,13 +281,13 @@ export const setTemplate = (template: string): SetTemplateAction => ({
   payload: {
     template,
   },
-});
+})
 
 export interface SetCombatTechniqueAction {
-  type: ActionTypes.SET_ITEM_COMBAT_TECHNIQUE;
+  type: ActionTypes.SET_ITEM_COMBAT_TECHNIQUE
   payload: {
     id: string;
-  };
+  }
 }
 
 export const setCombatTechnique = (id: string): SetCombatTechniqueAction => ({
@@ -295,13 +295,13 @@ export const setCombatTechnique = (id: string): SetCombatTechniqueAction => ({
   payload: {
     id,
   },
-});
+})
 
 export interface SetDamageDiceNumberAction {
-  type: ActionTypes.SET_ITEM_DAMAGE_DICE_NUMBER;
+  type: ActionTypes.SET_ITEM_DAMAGE_DICE_NUMBER
   payload: {
     value: string;
-  };
+  }
 }
 
 export const setDamageDiceNumber = (value: string): SetDamageDiceNumberAction => ({
@@ -309,13 +309,13 @@ export const setDamageDiceNumber = (value: string): SetDamageDiceNumberAction =>
   payload: {
     value,
   },
-});
+})
 
 export interface SetDamageDiceSidesAction {
-  type: ActionTypes.SET_ITEM_DAMAGE_DICE_SIDES;
+  type: ActionTypes.SET_ITEM_DAMAGE_DICE_SIDES
   payload: {
     value: number;
-  };
+  }
 }
 
 export const setDamageDiceSides = (value: number): SetDamageDiceSidesAction => ({
@@ -323,13 +323,13 @@ export const setDamageDiceSides = (value: number): SetDamageDiceSidesAction => (
   payload: {
     value,
   },
-});
+})
 
 export interface SetDamageFlatAction {
-  type: ActionTypes.SET_ITEM_DAMAGE_FLAT;
+  type: ActionTypes.SET_ITEM_DAMAGE_FLAT
   payload: {
     value: string;
-  };
+  }
 }
 
 export const setDamageFlat = (value: string): SetDamageFlatAction => ({
@@ -337,13 +337,13 @@ export const setDamageFlat = (value: string): SetDamageFlatAction => ({
   payload: {
     value,
   },
-});
+})
 
 export interface SetPrimaryAttributeAction {
-  type: ActionTypes.SET_ITEM_PRIMARY_ATTRIBUTE;
+  type: ActionTypes.SET_ITEM_PRIMARY_ATTRIBUTE
   payload: {
     primary: Maybe<string>;
-  };
+  }
 }
 
 export const setPrimaryAttribute = (primary: Maybe<string>): SetPrimaryAttributeAction => ({
@@ -351,13 +351,13 @@ export const setPrimaryAttribute = (primary: Maybe<string>): SetPrimaryAttribute
   payload: {
     primary,
   },
-});
+})
 
 export interface SetDamageThresholdAction {
-  type: ActionTypes.SET_ITEM_DAMAGE_THRESHOLD;
+  type: ActionTypes.SET_ITEM_DAMAGE_THRESHOLD
   payload: {
     value: string;
-  };
+  }
 }
 
 export const setDamageThreshold = (value: string): SetDamageThresholdAction => ({
@@ -365,13 +365,13 @@ export const setDamageThreshold = (value: string): SetDamageThresholdAction => (
   payload: {
     value,
   },
-});
+})
 
 export interface SetFirstDamageThresholdAction {
-  type: ActionTypes.SET_ITEM_FIRST_DAMAGE_THRESHOLD;
+  type: ActionTypes.SET_ITEM_FIRST_DAMAGE_THRESHOLD
   payload: {
     value: string;
-  };
+  }
 }
 
 export const setFirstDamageThreshold = (value: string): SetFirstDamageThresholdAction => ({
@@ -379,13 +379,13 @@ export const setFirstDamageThreshold = (value: string): SetFirstDamageThresholdA
   payload: {
     value,
   },
-});
+})
 
 export interface SetSecondDamageThresholdAction {
-  type: ActionTypes.SET_ITEM_SECOND_DAMAGE_THRESHOLD;
+  type: ActionTypes.SET_ITEM_SECOND_DAMAGE_THRESHOLD
   payload: {
     value: string;
-  };
+  }
 }
 
 export const setSecondDamageThreshold = (value: string): SetSecondDamageThresholdAction => ({
@@ -393,21 +393,21 @@ export const setSecondDamageThreshold = (value: string): SetSecondDamageThreshol
   payload: {
     value,
   },
-});
+})
 
 export interface SwitchIsDamageThresholdSeparatedAction {
-  type: ActionTypes.SWITCH_IS_ITEM_DAMAGE_THRESHOLD_SEPARATED;
+  type: ActionTypes.SWITCH_IS_ITEM_DAMAGE_THRESHOLD_SEPARATED
 }
 
 export const switchIsDamageThresholdSeparated = (): SwitchIsDamageThresholdSeparatedAction => ({
   type: ActionTypes.SWITCH_IS_ITEM_DAMAGE_THRESHOLD_SEPARATED,
-});
+})
 
 export interface SetAttackAction {
-  type: ActionTypes.SET_ITEM_ATTACK;
+  type: ActionTypes.SET_ITEM_ATTACK
   payload: {
     value: string;
-  };
+  }
 }
 
 export const setAttack = (value: string): SetAttackAction => ({
@@ -415,13 +415,13 @@ export const setAttack = (value: string): SetAttackAction => ({
   payload: {
     value,
   },
-});
+})
 
 export interface SetParryAction {
-  type: ActionTypes.SET_ITEM_PARRY;
+  type: ActionTypes.SET_ITEM_PARRY
   payload: {
     value: string;
-  };
+  }
 }
 
 export const setParry = (value: string): SetParryAction => ({
@@ -429,13 +429,13 @@ export const setParry = (value: string): SetParryAction => ({
   payload: {
     value,
   },
-});
+})
 
 export interface SetReachAction {
-  type: ActionTypes.SET_ITEM_REACH;
+  type: ActionTypes.SET_ITEM_REACH
   payload: {
     id: number;
-  };
+  }
 }
 
 export const setReach = (id: number): SetReachAction => ({
@@ -443,13 +443,13 @@ export const setReach = (id: number): SetReachAction => ({
   payload: {
     id,
   },
-});
+})
 
 export interface SetLengthAction {
-  type: ActionTypes.SET_ITEM_LENGTH;
+  type: ActionTypes.SET_ITEM_LENGTH
   payload: {
     value: string;
-  };
+  }
 }
 
 export const setLength = (value: string): SetLengthAction => ({
@@ -457,13 +457,13 @@ export const setLength = (value: string): SetLengthAction => ({
   payload: {
     value,
   },
-});
+})
 
 export interface SetStructurePointsAction {
-  type: ActionTypes.SET_ITEM_STRUCTURE_POINTS;
+  type: ActionTypes.SET_ITEM_STRUCTURE_POINTS
   payload: {
     value: string;
-  };
+  }
 }
 
 export const setStructurePoints = (value: string): SetStructurePointsAction => ({
@@ -471,14 +471,14 @@ export const setStructurePoints = (value: string): SetStructurePointsAction => (
   payload: {
     value,
   },
-});
+})
 
 export interface SetRangeAction {
-  type: ActionTypes.SET_ITEM_RANGE;
+  type: ActionTypes.SET_ITEM_RANGE
   payload: {
     value: string;
     index: number;
-  };
+  }
 }
 
 export const setRange = (value: string, index: number): SetRangeAction => ({
@@ -487,13 +487,13 @@ export const setRange = (value: string, index: number): SetRangeAction => ({
     value,
     index,
   },
-});
+})
 
 export interface SetReloadTimeAction {
-  type: ActionTypes.SET_ITEM_RELOAD_TIME;
+  type: ActionTypes.SET_ITEM_RELOAD_TIME
   payload: {
     value: string;
-  };
+  }
 }
 
 export const setReloadTime = (value: string): SetReloadTimeAction => ({
@@ -501,13 +501,13 @@ export const setReloadTime = (value: string): SetReloadTimeAction => ({
   payload: {
     value,
   },
-});
+})
 
 export interface SetAmmunitionAction {
-  type: ActionTypes.SET_ITEM_AMMUNITION;
+  type: ActionTypes.SET_ITEM_AMMUNITION
   payload: {
     id: string;
-  };
+  }
 }
 
 export const setAmmunition = (id: string): SetAmmunitionAction => ({
@@ -515,13 +515,13 @@ export const setAmmunition = (id: string): SetAmmunitionAction => ({
   payload: {
     id,
   },
-});
+})
 
 export interface SetProtectionAction {
-  type: ActionTypes.SET_ITEM_PROTECTION;
+  type: ActionTypes.SET_ITEM_PROTECTION
   payload: {
     value: string;
-  };
+  }
 }
 
 export const setProtection = (value: string): SetProtectionAction => ({
@@ -529,13 +529,13 @@ export const setProtection = (value: string): SetProtectionAction => ({
   payload: {
     value,
   },
-});
+})
 
 export interface SetEncumbranceAction {
-  type: ActionTypes.SET_ITEM_ENCUMBRANCE;
+  type: ActionTypes.SET_ITEM_ENCUMBRANCE
   payload: {
     value: string;
-  };
+  }
 }
 
 export const setEncumbrance = (value: string): SetEncumbranceAction => ({
@@ -543,13 +543,13 @@ export const setEncumbrance = (value: string): SetEncumbranceAction => ({
   payload: {
     value,
   },
-});
+})
 
 export interface SetMovementModifierAction {
-  type: ActionTypes.SET_ITEM_MOVEMENT_MODIFIER;
+  type: ActionTypes.SET_ITEM_MOVEMENT_MODIFIER
   payload: {
     value: string;
-  };
+  }
 }
 
 export const setMovementModifier = (value: string): SetMovementModifierAction => ({
@@ -557,13 +557,13 @@ export const setMovementModifier = (value: string): SetMovementModifierAction =>
   payload: {
     value,
   },
-});
+})
 
 export interface SetInitiativeModifierAction {
-  type: ActionTypes.SET_ITEM_INITIATIVE_MODIFIER;
+  type: ActionTypes.SET_ITEM_INITIATIVE_MODIFIER
   payload: {
     value: string;
-  };
+  }
 }
 
 export const setInitiativeModifier = (value: string): SetInitiativeModifierAction => ({
@@ -571,13 +571,13 @@ export const setInitiativeModifier = (value: string): SetInitiativeModifierActio
   payload: {
     value,
   },
-});
+})
 
 export interface SetStabilityModifierAction {
-  type: ActionTypes.SET_ITEM_STABILITY_MODIFIER;
+  type: ActionTypes.SET_ITEM_STABILITY_MODIFIER
   payload: {
     value: string;
-  };
+  }
 }
 
 export const setStabilityModifier = (value: string): SetStabilityModifierAction => ({
@@ -585,37 +585,37 @@ export const setStabilityModifier = (value: string): SetStabilityModifierAction 
   payload: {
     value,
   },
-});
+})
 
 export interface SwitchIsParryingWeaponAction {
-  type: ActionTypes.SWITCH_IS_ITEM_PARRYING_WEAPON;
+  type: ActionTypes.SWITCH_IS_ITEM_PARRYING_WEAPON
 }
 
 export const switchIsParryingWeapon = (): SwitchIsParryingWeaponAction => ({
   type: ActionTypes.SWITCH_IS_ITEM_PARRYING_WEAPON,
-});
+})
 
 export interface SwitchIsTwoHandedWeaponAction {
-  type: ActionTypes.SWITCH_IS_ITEM_TWO_HANDED_WEAPON;
+  type: ActionTypes.SWITCH_IS_ITEM_TWO_HANDED_WEAPON
 }
 
 export const switchIsTwoHandedWeapon = (): SwitchIsTwoHandedWeaponAction => ({
   type: ActionTypes.SWITCH_IS_ITEM_TWO_HANDED_WEAPON,
-});
+})
 
 export interface SwitchIsImprovisedWeaponAction {
-  type: ActionTypes.SWITCH_IS_ITEM_IMPROVISED_WEAPON;
+  type: ActionTypes.SWITCH_IS_ITEM_IMPROVISED_WEAPON
 }
 
 export const switchIsImprovisedWeapon = (): SwitchIsImprovisedWeaponAction => ({
   type: ActionTypes.SWITCH_IS_ITEM_IMPROVISED_WEAPON,
-});
+})
 
 export interface SetImprovisedWeaponGroupAction {
-  type: ActionTypes.SET_ITEM_IMPROVISED_WEAPON_GROUP;
+  type: ActionTypes.SET_ITEM_IMPROVISED_WEAPON_GROUP
   payload: {
     gr: number;
-  };
+  }
 }
 
 export const setImprovisedWeaponGroup = (gr: number): SetImprovisedWeaponGroupAction => ({
@@ -623,13 +623,13 @@ export const setImprovisedWeaponGroup = (gr: number): SetImprovisedWeaponGroupAc
   payload: {
     gr,
   },
-});
+})
 
 export interface SetLossAction {
-  type: ActionTypes.SET_ITEM_LOSS;
+  type: ActionTypes.SET_ITEM_LOSS
   payload: {
     id: Maybe<number>;
-  };
+  }
 }
 
 export const setLoss = (id: Maybe<number>): SetLossAction => ({
@@ -637,29 +637,29 @@ export const setLoss = (id: Maybe<number>): SetLossAction => ({
   payload: {
     id,
   },
-});
+})
 
 export interface SwitchIsForArmorZonesOnlyAction {
-  type: ActionTypes.SWITCH_IS_ITEM_FOR_ARMOR_ZONES_ONLY;
+  type: ActionTypes.SWITCH_IS_ITEM_FOR_ARMOR_ZONES_ONLY
 }
 
 export const switchIsForArmorZonesOnly = (): SwitchIsForArmorZonesOnlyAction => ({
   type: ActionTypes.SWITCH_IS_ITEM_FOR_ARMOR_ZONES_ONLY,
-});
+})
 
 export interface SwitchHasAdditionalPenaltiesAction {
-  type: ActionTypes.SWITCH_ITEM_HAS_ADDITIONAL_PENALTIES;
+  type: ActionTypes.SWITCH_ITEM_HAS_ADDITIONAL_PENALTIES
 }
 
 export const setHasAdditionalPenalties = (): SwitchHasAdditionalPenaltiesAction => ({
   type: ActionTypes.SWITCH_ITEM_HAS_ADDITIONAL_PENALTIES,
-});
+})
 
 export interface SetArmorTypeAction {
-  type: ActionTypes.SET_ITEM_ARMOR_TYPE;
+  type: ActionTypes.SET_ITEM_ARMOR_TYPE
   payload: {
     id: number;
-  };
+  }
 }
 
 export const setArmorType = (id: number): SetArmorTypeAction => ({
@@ -667,18 +667,18 @@ export const setArmorType = (id: number): SetArmorTypeAction => ({
   payload: {
     id,
   },
-});
+})
 
 export interface ApplyItemTemplateAction {
-  type: ActionTypes.APPLY_ITEM_TEMPLATE;
+  type: ActionTypes.APPLY_ITEM_TEMPLATE
   payload: {
     template: Record<ItemTemplate>;
-  };
+  }
 }
 
 export const applyItemTemplate: AsyncAction = (dispatch, getState) => {
   getItemEditorInstance (getState ())
-    .bind (editor => editor .lookup ('template'))
+    .bind (editor => editor .lookup ("template"))
     .bind (
       templateId => getWikiItemTemplates (getState ())
         .lookup (templateId)
@@ -690,19 +690,19 @@ export const applyItemTemplate: AsyncAction = (dispatch, getState) => {
             },
           })
         )
-    );
-};
+    )
+}
 
 export interface LockItemTemplateAction {
-  type: ActionTypes.LOCK_ITEM_TEMPLATE;
+  type: ActionTypes.LOCK_ITEM_TEMPLATE
   payload: {
     template: Record<ItemTemplate>;
-  };
+  }
 }
 
 export const lockItemTemplate: AsyncAction = (dispatch, getState) => {
   getItemEditorInstance (getState ())
-    .bind (editor => editor .lookup ('template'))
+    .bind (editor => editor .lookup ("template"))
     .bind (
       templateId => getWikiItemTemplates (getState ())
         .lookup (templateId)
@@ -714,68 +714,68 @@ export const lockItemTemplate: AsyncAction = (dispatch, getState) => {
             },
           })
         )
-    );
-};
+    )
+}
 
 export interface UnlockItemTemplateAction {
-  type: ActionTypes.UNLOCK_ITEM_TEMPLATE;
+  type: ActionTypes.UNLOCK_ITEM_TEMPLATE
 }
 
 export const unlockItemTemplate = (): UnlockItemTemplateAction => ({
   type: ActionTypes.UNLOCK_ITEM_TEMPLATE,
-});
+})
 
 export interface AddArmorZonesAction {
-  type: ActionTypes.ADD_ARMOR_ZONES;
+  type: ActionTypes.ADD_ARMOR_ZONES
   payload: {
     newId: string;
-  };
+  }
 }
 
 export const addArmorZonesToList = (): AsyncAction => (dispatch, getState) => {
   getArmorZonesState (getState ()).fmap (
     zoneArmors => {
-      const newId = `ARMORZONES_${getNewId (zoneArmors.keys ())}`;
+      const newId = `ARMORZONES_${getNewId (zoneArmors.keys ())}`
 
       return dispatch<AddArmorZonesAction> ({
         type: ActionTypes.ADD_ARMOR_ZONES,
         payload: {
           newId,
         },
-      });
+      })
     }
-  );
-};
+  )
+}
 
 export interface CreateArmorZonesAction {
-  type: ActionTypes.CREATE_ARMOR_ZONES;
+  type: ActionTypes.CREATE_ARMOR_ZONES
 }
 
 export const createArmorZones = (): CreateArmorZonesAction => ({
   type: ActionTypes.CREATE_ARMOR_ZONES,
-});
+})
 
 export interface CloseArmorZonesEditorAction {
-  type: ActionTypes.CLOSE_ARMOR_ZONES_EDITOR;
+  type: ActionTypes.CLOSE_ARMOR_ZONES_EDITOR
 }
 
 export const closeArmorZonesEditor = (): CloseArmorZonesEditorAction => ({
   type: ActionTypes.CLOSE_ARMOR_ZONES_EDITOR,
-});
+})
 
 export interface SaveArmorZonesAction {
-  type: ActionTypes.SAVE_ARMOR_ZONES;
+  type: ActionTypes.SAVE_ARMOR_ZONES
 }
 
 export const saveArmorZones = (): SaveArmorZonesAction => ({
   type: ActionTypes.SAVE_ARMOR_ZONES,
-});
+})
 
 export interface EditArmorZonesAction {
-  type: ActionTypes.EDIT_ARMOR_ZONES;
+  type: ActionTypes.EDIT_ARMOR_ZONES
   payload: {
     id: string;
-  };
+  }
 }
 
 export const editArmorZones = (id: string): EditArmorZonesAction => ({
@@ -783,13 +783,13 @@ export const editArmorZones = (id: string): EditArmorZonesAction => ({
   payload: {
     id,
   },
-});
+})
 
 export interface RemoveArmorZonesAction {
-  type: ActionTypes.REMOVE_ARMOR_ZONES;
+  type: ActionTypes.REMOVE_ARMOR_ZONES
   payload: {
     id: string;
-  };
+  }
 }
 
 export const removeArmorZonesFromList = (id: string): RemoveArmorZonesAction => ({
@@ -797,13 +797,13 @@ export const removeArmorZonesFromList = (id: string): RemoveArmorZonesAction => 
   payload: {
     id,
   },
-});
+})
 
 export interface SetArmorZonesNameAction {
-  type: ActionTypes.SET_ARMOR_ZONES_NAME;
+  type: ActionTypes.SET_ARMOR_ZONES_NAME
   payload: {
     value: string;
-  };
+  }
 }
 
 export const setArmorZonesName = (value: string): SetArmorZonesNameAction => ({
@@ -811,13 +811,13 @@ export const setArmorZonesName = (value: string): SetArmorZonesNameAction => ({
   payload: {
     value,
   },
-});
+})
 
 export interface SetArmorZonesHeadAction {
-  type: ActionTypes.SET_ARMOR_ZONES_HEAD;
+  type: ActionTypes.SET_ARMOR_ZONES_HEAD
   payload: {
     id: Maybe<string>;
-  };
+  }
 }
 
 export const setArmorZonesHead = (id: Maybe<string>): SetArmorZonesHeadAction => ({
@@ -825,13 +825,13 @@ export const setArmorZonesHead = (id: Maybe<string>): SetArmorZonesHeadAction =>
   payload: {
     id,
   },
-});
+})
 
 export interface SetArmorZonesHeadLossAction {
-  type: ActionTypes.SET_ARMOR_ZONES_HEAD_LOSS;
+  type: ActionTypes.SET_ARMOR_ZONES_HEAD_LOSS
   payload: {
     id: Maybe<number>;
-  };
+  }
 }
 
 export const setArmorZonesHeadLoss = (id: Maybe<number>): SetArmorZonesHeadLossAction => ({
@@ -839,13 +839,13 @@ export const setArmorZonesHeadLoss = (id: Maybe<number>): SetArmorZonesHeadLossA
   payload: {
     id,
   },
-});
+})
 
 export interface SetArmorZonesLeftArmAction {
-  type: ActionTypes.SET_ARMOR_ZONES_LEFT_ARM;
+  type: ActionTypes.SET_ARMOR_ZONES_LEFT_ARM
   payload: {
     id: Maybe<string>;
-  };
+  }
 }
 
 export const setArmorZonesLeftArm = (id: Maybe<string>): SetArmorZonesLeftArmAction => ({
@@ -853,13 +853,13 @@ export const setArmorZonesLeftArm = (id: Maybe<string>): SetArmorZonesLeftArmAct
   payload: {
     id,
   },
-});
+})
 
 export interface SetArmorZonesLeftArmLossAction {
-  type: ActionTypes.SET_ARMOR_ZONES_LEFT_ARM_LOSS;
+  type: ActionTypes.SET_ARMOR_ZONES_LEFT_ARM_LOSS
   payload: {
     id: Maybe<number>;
-  };
+  }
 }
 
 export const setArmorZonesLeftArmLoss = (id: Maybe<number>): SetArmorZonesLeftArmLossAction => ({
@@ -867,13 +867,13 @@ export const setArmorZonesLeftArmLoss = (id: Maybe<number>): SetArmorZonesLeftAr
   payload: {
     id,
   },
-});
+})
 
 export interface SetArmorZonesLeftLegAction {
-  type: ActionTypes.SET_ARMOR_ZONES_LEFT_LEG;
+  type: ActionTypes.SET_ARMOR_ZONES_LEFT_LEG
   payload: {
     id: Maybe<string>;
-  };
+  }
 }
 
 export const setArmorZonesLeftLeg = (id: Maybe<string>): SetArmorZonesLeftLegAction => ({
@@ -881,13 +881,13 @@ export const setArmorZonesLeftLeg = (id: Maybe<string>): SetArmorZonesLeftLegAct
   payload: {
     id,
   },
-});
+})
 
 export interface SetArmorZonesLeftLegLossAction {
-  type: ActionTypes.SET_ARMOR_ZONES_LEFT_LEG_LOSS;
+  type: ActionTypes.SET_ARMOR_ZONES_LEFT_LEG_LOSS
   payload: {
     id: Maybe<number>;
-  };
+  }
 }
 
 export const setArmorZonesLeftLegLoss =
@@ -896,13 +896,13 @@ export const setArmorZonesLeftLegLoss =
     payload: {
       id,
     },
-  });
+  })
 
 export interface SetArmorZonesTorsoAction {
-  type: ActionTypes.SET_ARMOR_ZONES_TORSO;
+  type: ActionTypes.SET_ARMOR_ZONES_TORSO
   payload: {
     id: Maybe<string>;
-  };
+  }
 }
 
 export const setArmorZonesTorso = (id: Maybe<string>): SetArmorZonesTorsoAction => ({
@@ -910,13 +910,13 @@ export const setArmorZonesTorso = (id: Maybe<string>): SetArmorZonesTorsoAction 
   payload: {
     id,
   },
-});
+})
 
 export interface SetArmorZonesTorsoLossAction {
-  type: ActionTypes.SET_ARMOR_ZONES_TORSO_LOSS;
+  type: ActionTypes.SET_ARMOR_ZONES_TORSO_LOSS
   payload: {
     id: Maybe<number>;
-  };
+  }
 }
 
 export const setArmorZonesTorsoLoss = (id: Maybe<number>): SetArmorZonesTorsoLossAction => ({
@@ -924,13 +924,13 @@ export const setArmorZonesTorsoLoss = (id: Maybe<number>): SetArmorZonesTorsoLos
   payload: {
     id,
   },
-});
+})
 
 export interface SetArmorZonesRightArmAction {
-  type: ActionTypes.SET_ARMOR_ZONES_RIGHT_ARM;
+  type: ActionTypes.SET_ARMOR_ZONES_RIGHT_ARM
   payload: {
     id: Maybe<string>;
-  };
+  }
 }
 
 export const setArmorZonesRightArm = (id: Maybe<string>): SetArmorZonesRightArmAction => ({
@@ -938,13 +938,13 @@ export const setArmorZonesRightArm = (id: Maybe<string>): SetArmorZonesRightArmA
   payload: {
     id,
   },
-});
+})
 
 export interface SetArmorZonesRightArmLossAction {
-  type: ActionTypes.SET_ARMOR_ZONES_RIGHT_ARM_LOSS;
+  type: ActionTypes.SET_ARMOR_ZONES_RIGHT_ARM_LOSS
   payload: {
     id: Maybe<number>;
-  };
+  }
 }
 
 export const setArmorZonesRightArmLoss = (id: Maybe<number>): SetArmorZonesRightArmLossAction => ({
@@ -952,13 +952,13 @@ export const setArmorZonesRightArmLoss = (id: Maybe<number>): SetArmorZonesRight
   payload: {
     id,
   },
-});
+})
 
 export interface SetArmorZonesRightLegAction {
-  type: ActionTypes.SET_ARMOR_ZONES_RIGHT_LEG;
+  type: ActionTypes.SET_ARMOR_ZONES_RIGHT_LEG
   payload: {
     id: Maybe<string>;
-  };
+  }
 }
 
 export const setArmorZonesRightLeg = (id: Maybe<string>): SetArmorZonesRightLegAction => ({
@@ -966,13 +966,13 @@ export const setArmorZonesRightLeg = (id: Maybe<string>): SetArmorZonesRightLegA
   payload: {
     id,
   },
-});
+})
 
 export interface SetArmorZonesRightLegLossAction {
-  type: ActionTypes.SET_ARMOR_ZONES_RIGHT_LEG_LOSS;
+  type: ActionTypes.SET_ARMOR_ZONES_RIGHT_LEG_LOSS
   payload: {
     id: Maybe<number>;
-  };
+  }
 }
 
 export const setArmorZonesRightLegLoss = (id: Maybe<number>): SetArmorZonesRightLegLossAction => ({
@@ -980,13 +980,13 @@ export const setArmorZonesRightLegLoss = (id: Maybe<number>): SetArmorZonesRight
   payload: {
     id,
   },
-});
+})
 
 export interface SetMeleeItemTemplatesCombatTechniqueFilterAction {
-  type: ActionTypes.SET_MELEE_ITEM_TEMPLATES_COMBAT_TECHNIQUE_FILTER;
+  type: ActionTypes.SET_MELEE_ITEM_TEMPLATES_COMBAT_TECHNIQUE_FILTER
   payload: {
     filterOption: Maybe<string>;
-  };
+  }
 }
 
 export const setMeleeItemTemplatesCombatTechniqueFilter =
@@ -995,13 +995,13 @@ export const setMeleeItemTemplatesCombatTechniqueFilter =
     payload: {
       filterOption,
     },
-  });
+  })
 
 export interface SetRangedItemTemplatesCombatTechniqueFilterAction {
-  type: ActionTypes.SET_RANGED_ITEM_TEMPLATES_COMBAT_TECHNIQUE_FILTER;
+  type: ActionTypes.SET_RANGED_ITEM_TEMPLATES_COMBAT_TECHNIQUE_FILTER
   payload: {
     filterOption: Maybe<string>;
-  };
+  }
 }
 
 export const setRangedItemTemplatesCombatTechniqueFilter =
@@ -1010,13 +1010,13 @@ export const setRangedItemTemplatesCombatTechniqueFilter =
     payload: {
       filterOption,
     },
-  });
+  })
 
 export interface SetEquipmentFilterTextAction {
-  type: ActionTypes.SET_EQUIPMENT_FILTER_TEXT;
+  type: ActionTypes.SET_EQUIPMENT_FILTER_TEXT
   payload: {
     filterText: string;
-  };
+  }
 }
 
 export const setEquipmentFilterText = (filterText: string): SetEquipmentFilterTextAction => ({
@@ -1024,13 +1024,13 @@ export const setEquipmentFilterText = (filterText: string): SetEquipmentFilterTe
   payload: {
     filterText,
   },
-});
+})
 
 export interface SetItemTemplatesFilterTextAction {
-  type: ActionTypes.SET_ITEM_TEMPLATES_FILTER_TEXT;
+  type: ActionTypes.SET_ITEM_TEMPLATES_FILTER_TEXT
   payload: {
     filterText: string;
-  };
+  }
 }
 
 export const setItemTemplatesFilterText =
@@ -1039,13 +1039,13 @@ export const setItemTemplatesFilterText =
     payload: {
       filterText,
     },
-  });
+  })
 
 export interface SetZoneArmorFilterTextAction {
-  type: ActionTypes.SET_ZONE_ARMOR_FILTER_TEXT;
+  type: ActionTypes.SET_ZONE_ARMOR_FILTER_TEXT
   payload: {
     filterText: string;
-  };
+  }
 }
 
 export const setZoneArmorFilterText = (filterText: string): SetZoneArmorFilterTextAction => ({
@@ -1053,4 +1053,4 @@ export const setZoneArmorFilterText = (filterText: string): SetZoneArmorFilterTe
   payload: {
     filterText,
   },
-});
+})

@@ -8,11 +8,11 @@
  */
 
 import { Identity, isIdentity, runIdentity } from "../Control/Monad/Identity";
-import { Either, isEither, isRight, Right } from "./Either";
+import { Either, isEither, isLeft, Right } from "./Either";
 import { cnst } from "./Function";
 import { Const, isConst } from "./Functor/Const";
 import { Cons, isList, isNil, List, Nil } from "./List";
-import { isJust, isMaybe, Just, Maybe } from "./Maybe";
+import { isMaybe, isNothing, Just, Maybe } from "./Maybe";
 import { isOrderedMap, OrderedMap } from "./OrderedMap";
 import { isPair, Pair } from "./Pair";
 import { showP } from "./Show";
@@ -45,7 +45,18 @@ export const fmap =
   (f: (x: A) => B): FunctorMap<A, B> =>
   (x: any): any => {
     if (isList (x)) {
-      return isNil (x) ? Nil : Cons (f (x .x), fmap (f) (x .xs))
+      if (isNil (x)) {
+        return Nil
+      }
+
+      const nextElement = fmap (f) (x .xs)
+      const nextValue = f (x .x)
+
+      if (nextValue === x .x && nextElement === x .xs) {
+        return x
+      }
+
+      return Cons (nextValue, nextElement)
     }
 
     if (isOrderedMap (x)) {
@@ -59,18 +70,50 @@ export const fmap =
     }
 
     if (isEither (x)) {
-      return isRight (x) ? Right (f (x .value)) : x
+      if (isLeft (x)) {
+        return x
+      }
+
+      const nextValue = f (x .value)
+
+      if (nextValue === x .value) {
+        return x
+      }
+
+      return Right (nextValue)
     }
 
     if (isIdentity (x)) {
-      return Identity (f (runIdentity (x)))
+      const nextValue = f (runIdentity (x))
+
+      if (nextValue === runIdentity (x)) {
+        return x
+      }
+
+      return Identity (nextValue)
     }
 
     if (isMaybe (x)) {
-      return isJust (x) ? Just (f (x .value)) : x
+      if (isNothing (x)) {
+        return x
+      }
+
+      const nextValue = f (x .value)
+
+      if (nextValue === x .value) {
+        return x
+      }
+
+      return Just (nextValue)
     }
 
     if (isPair (x)) {
+      const nextValue = f (x .second)
+
+      if (nextValue === x .second) {
+        return x
+      }
+
       return Pair (x .first, f (x .second))
     }
 

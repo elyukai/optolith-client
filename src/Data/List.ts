@@ -7,9 +7,9 @@
  */
 
 import { pipe } from "ramda";
-import { add, inc, max, min, multiply } from "../App/Utils/mathUtils";
-import { not } from "../App/Utils/not";
-import { escapeRegExp } from "../App/Utils/RegexUtils";
+import { add, inc, max, min, multiply } from "../App/Utilities/mathUtils";
+import { not } from "../App/Utilities/not";
+import { escapeRegExp } from "../App/Utilities/RegexUtils";
 import { equals } from "./Eq";
 import { ident } from "./Function";
 import { fmap } from "./Functor";
@@ -1297,14 +1297,14 @@ export const updateAt =
  * carried out.)
  */
 export const insertAt =
-  <A> (index: number) => (x: A) => (xs: List<A>): List<A> =>
+  (index: number) => <A> (x: A) => (xs: List<A>): List<A> =>
     index < 0
     ? xs
     : isNil (xs)
     ? Nil
     : index === 0
     ? Cons (x, xs)
-    : Cons (xs .x, insertAt<A> (index - 1) (x) (xs .xs))
+    : Cons (xs .x, insertAt (index - 1) (x) (xs .xs))
 
 // Maps
 

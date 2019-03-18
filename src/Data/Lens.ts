@@ -10,53 +10,74 @@ import { pipe } from "ramda";
 import { Identity, runIdentity } from "../Control/Monad/Identity";
 import { fmap } from "./Functor";
 import { Const, getConst } from "./Functor/Const";
+import { fst, Pair, snd } from "./Pair";
 
 /**
- * `Lens a b = Functor f => (b -> f b) -> a -> f a`
+ * `Lens s t a b = Functor f => (a -> f b) -> s -> f t`
  *
  * A getter and setter combined. Can be used by `Lens` functions.
- *
- * `Lens a b = Functor f => ((b -> a) -> f b -> f a) -> (b -> f b) -> a -> f a`
  */
-export interface Lens<A, B> {
-  (lift: (x: B) => Const<B>): (m: A) => Const<B>
-  (lift: (x: B) => Identity<B>): (m: A) => Identity<A>
+export interface Lens<S, T, A, B> {
+  (lift: (x: A) => Const<A>): (m: S) => Const<A>
+  (lift: (x: A) => Identity<B>): (m: S) => Identity<T>
 }
 
 /**
- * `lens :: (a -> b) -> (a -> b -> a) -> Lens a b`
+ * `Lens' s a = Lens s s a a`
+ *
+ * A `Simple Lens`.
+ */
+export type Lens_<S, A> = Lens<S, S, A, A>
+
+/**
+ * `lens :: (s -> a) -> (s -> a -> s) -> Lens s a`
  *
  * Create a new `Lens` with the given getter and setter functions.
  */
 export const lens =
-  <A, B>
-  (getter: (m: A) => B) =>
-  (setter: (m: A) => (x: B) => A): Lens<A, B> =>
-    (lift: any) => (m: any) => fmap (setter (m)) (lift (getter (m))) as any
+  <S, A>
+  (getter: (m: S) => A) =>
+  (setter: (m: S) => (x: A) => S): Lens_<S, A> =>
+    (lift: (x: A) => any) => (m: S) => fmap (setter (m)) (lift (getter (m))) as any
 
 /**
- * `view :: Lens a b -> a -> b`
+ * `lens' :: (s -> (a, a -> s)) -> Lens s a`
  */
-export const view = <A, B> (l: Lens<A, B>) => (m: A): B =>
+export const lens_ =
+  <S, A>
+  (f: (m: S) => Pair<A, (x: A) => S>) =>
+    lens (pipe (f, fst)) (pipe (f, snd))
+
+/**
+ * `view :: Lens s a -> s -> a`
+ */
+export const view = <S, A> (l: Lens_<S, A>) => (m: S): A =>
   getConst (l (Const) (m))
 
 /**
- * `over :: Lens a b -> (b -> b) -> a -> a`
+ * `over :: Lens s a -> (a -> a) -> s -> s`
  */
-export const over = <A, B> (l: Lens<A, B>) => (f: (x: B) => B) => (m: A): A =>
+export const over = <S, A> (l: Lens_<S, A>) => (f: (x: A) => A) => (m: S): S =>
   runIdentity (l (pipe (f, Identity)) (m))
 
 /**
- * `set :: Lens a b -> b -> a -> a`
+ * `set :: Lens s a -> a -> s -> s`
  */
-export const set = <A, B> (l: Lens<A, B>) => (x: B) => over (l) (_ => x)
+export const set = <S, A> (l: Lens_<S, A>) => (x: A) => over (l) (_ => x)
 
 
-// NAMESPACED FUNCTIONS
+// /**
+//  * `type Prism' s a = forall p f. (Choice p, Applicative f) => p a (f a) -> p s (f s)`
+//  */
+// export type Prism_ =
 
-export const Lens = {
-  lens,
-  view,
-  over,
-  set,
-}
+// /**
+//  * `prism' :: (b -> s) -> (s -> Maybe a) -> Prism s s a b`
+//  */
+// export const prism_ =
+
+
+// // Special lenses
+
+// export const _Just = lens (fromJust as <A> (m: Maybe<A>) => A)
+//                           ((m: ) => x => mapReplace (x) (m))

@@ -6,7 +6,7 @@ import { Pair } from "../../../Data/Pair";
 import { Omit, Record, RecordI } from "../../../Data/Record";
 import { AllAction } from "../../../types/actions";
 import { DCIds } from "../../Selectors/derivedCharacteristicsSelectors";
-import { TabId } from "../../Utils/LocationUtils";
+import { TabId } from "../../Utilities/LocationUtils";
 import { ActivatableDependent } from "../ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent } from "../ActiveEntries/ActivatableSkillDependent";
 import { ActiveObject } from "../ActiveEntries/ActiveObject";

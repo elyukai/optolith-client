@@ -1,6 +1,6 @@
 import { ActionTypes } from '../Constants/ActionTypes';
+import { getSystemLocale } from '../Utilities/IOUtils';
 import { Maybe } from '../utils/dataUtils';
-import { getSystemLocale } from '../Utils/IOUtils';
 
 export interface SetLocaleAction {
   type: ActionTypes.SET_LOCALE;

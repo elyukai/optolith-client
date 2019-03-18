@@ -1,46 +1,57 @@
-import { ReceiveInitialDataAction } from '../Actions/IOActions';
-import { SetLocaleAction } from '../Actions/LocaleActions';
-import { ActionTypes } from '../Constants/ActionTypes';
-import { UIMessages } from '../types/ui';
-import { List, OrderedMap } from '../utils/dataUtils';
+import { ident } from "../../Data/Function";
+import { set } from "../../Data/Lens";
+import { Just, Maybe, Nothing } from "../../Data/Maybe";
+import { fromDefault, makeLenses, Record } from "../../Data/Record";
+import { ReceiveInitialDataAction } from "../Actions/IOActions";
+import { SetLocaleAction } from "../Actions/LocaleActions";
+import { ActionTypes } from "../Constants/ActionTypes";
+import { L10nRecord } from "../Models/Wiki/L10n";
+import { pipe } from "../Utilities/pipe";
 
-type Action = ReceiveInitialDataAction | SetLocaleAction;
+type Action = ReceiveInitialDataAction | SetLocaleAction
 
 export interface LocaleState {
-  id?: string;
-  type: 'default' | 'set';
-  messages?: UIMessages;
+  id: Maybe<string>
+  type: "default" | "set"
+  messages: Maybe<L10nRecord>
 }
 
-const initialState: LocaleState = {
-  type: 'default'
-};
+export const LocaleState =
+  fromDefault<LocaleState> ({
+    id: Nothing,
+    type: "default",
+    messages: Nothing,
+  })
 
-export function localeReducer (state: LocaleState = initialState, action: Action): LocaleState {
-  switch (action.type) {
-    case ActionTypes.RECEIVE_INITIAL_DATA: {
-      const id =
-        action.payload.config
-        && (action.payload.config.locale || action.payload.defaultLocale);
+export const LocaleStateL = makeLenses (LocaleState)
 
-      return {
-        type: action.payload.config && action.payload.config.locale ? 'set' : 'default',
-        id,
-        messages: typeof id === 'string'
-          ? OrderedMap.of (Object.entries (action.payload.locales[id].ui))
-            .toKeyValueObjectWith (e => Array.isArray (e) ? List.fromArray (e) : e) as UIMessages
-          : undefined
-      };
+export const localeReducer =
+  (action: Action): ident<Record<LocaleState>> => {
+    switch (action.type) {
+      case ActionTypes.RECEIVE_INITIAL_DATA: {
+        const id =
+          action.payload.config
+          && (action.payload.config.locale || action.payload.defaultLocale)
+
+        return {
+          type: action.payload.config && action.payload.config.locale ? "set" : "default",
+          id,
+          messages: typeof id === "string"
+            ? OrderedMap.of (Object.entries (action.payload.locales[id].ui))
+              .toKeyValueObjectWith (e => Array.isArray (e) ? List.fromArray (e) : e) as UIMessages
+            : undefined
+        }
+      }
+
+      case ActionTypes.SET_LOCALE:
+        return pipe (
+          set (LocaleStateL.type)
+              (action.payload.localeType),
+          set (LocaleStateL.id)
+              (action.payload.localeType === "set" ? Just (action.payload.locale) : Nothing)
+        )
+
+      default:
+        return ident
     }
-
-    case ActionTypes.SET_LOCALE:
-      return {
-        ...state,
-        type: action.payload.localeType,
-        id: action.payload.localeType === 'set' ? action.payload.locale : undefined
-      };
-
-    default:
-      return state;
   }
-}

@@ -7,8 +7,8 @@
  */
 
 import { pipe } from "ramda";
-import { add, multiply } from "../App/Utils/mathUtils";
-import { not } from "../App/Utils/not";
+import { add, multiply } from "../App/Utilities/mathUtils";
+import { not } from "../App/Utilities/not";
 import { equals, notEquals } from "./Eq";
 import { ident } from "./Function";
 import { append, isList, List } from "./List";

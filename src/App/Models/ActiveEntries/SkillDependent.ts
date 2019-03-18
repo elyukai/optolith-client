@@ -61,3 +61,8 @@ export const isSkillDependentUnused =
   (entry: Record<SkillDependent>): boolean =>
     value (entry) === 0
     && fnull (dependencies (entry))
+
+export const isCombatTechniqueSkillDependentUnused =
+  (entry: Record<SkillDependent>): boolean =>
+    value (entry) === 6
+    && fnull (dependencies (entry))

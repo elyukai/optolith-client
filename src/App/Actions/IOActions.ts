@@ -12,12 +12,12 @@ import { User } from "../Models/Hero/heroTypeHelpers";
 import { AppState } from "../Reducers/appReducer";
 import { getCurrentHeroId, getHeroes, getUsers, getWiki } from "../Selectors/stateSelectors";
 import { getUISettingsState } from "../Selectors/uisettingsSelectors";
-import { getNewIdByDate } from "../Utils/IDUtils";
-import { bytify, getSystemLocale, readDir, readFile, showOpenDialog, showSaveDialog, windowPrintToPDF, writeFile } from "../Utils/IOUtils";
+import { getNewIdByDate } from "../Utilities/IDUtils";
+import { bytify, getSystemLocale, readDir, readFile, showOpenDialog, showSaveDialog, windowPrintToPDF, writeFile } from "../Utilities/IOUtils";
+import { isBase64Image } from "../Utilities/RegexUtils";
+import { UndoState } from "../Utilities/undo";
 import { convertHeroesForSave, convertHeroForSave } from "../utils/raw/convertHeroForSave";
 import { Raw, RawConfig, RawHerolist, RawLocale, RawTables } from "../Utils/Raw/RawData";
-import { isBase64Image } from "../Utils/RegexUtils";
-import { UndoState } from "../Utils/undo";
 import { AsyncAction } from "./Actions";
 import { addAlert } from "./AlertActions";
 

@@ -1,21 +1,21 @@
-import * as R from 'ramda';
-import { AddAdventurePointsAction } from '../Actions/ProfileActions';
-import { ActionTypes } from '../Constants/ActionTypes';
-import * as Data from '../Models/Hero/heroTypeHelpers';
-import { Record } from '../utils/dataUtils';
+import { ident } from "../../Data/Function";
+import { over } from "../../Data/Lens";
+import { AddAdventurePointsAction } from "../Actions/ProfileActions";
+import { ActionTypes } from "../Constants/ActionTypes";
+import { HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel";
+import { add } from "../Utilities/mathUtils";
 
-type Action = AddAdventurePointsAction;
+type Action = AddAdventurePointsAction
 
-export function adventurePointsReducer (
-  state: Record<Data.HeroDependent>,
-  action: Action
-): Record<Data.HeroDependent> {
-  switch (action.type) {
-    case ActionTypes.ADD_ADVENTURE_POINTS:
-      return state .modify<'adventurePointsTotal'> (R.add (action.payload.amount))
-                                                   ('adventurePointsTotal');
+const { adventurePointsTotal } = HeroModelL
 
-    default:
-      return state;
+export const adventurePointsReducer =
+  (action: Action): ident<HeroModelRecord> => {
+    switch (action.type) {
+      case ActionTypes.ADD_ADVENTURE_POINTS:
+        return over (adventurePointsTotal) (add (action.payload.amount))
+
+      default:
+        return ident
+    }
   }
-}

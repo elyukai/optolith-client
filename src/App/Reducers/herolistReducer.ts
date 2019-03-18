@@ -1,141 +1,141 @@
-import { Action } from 'redux';
-import * as HerolistActions from '../Actions/HerolistActions';
-import * as IOActions from '../Actions/IOActions';
-import { ActionTypes } from '../Constants/ActionTypes';
-import { HeroDependent, User } from '../Models/Hero/heroTypeHelpers';
-import { List, Maybe, OrderedMap, Record } from '../utils/dataUtils';
-import { getInitialHeroObject } from '../utils/raw/initHeroUtils';
-import { reduceReducers } from '../Utils/reduceReducers';
-import { UndoState, wrapWithHistoryObject } from '../Utils/undo';
-import { heroReducer } from './heroReducer';
+import { equals } from "../../Data/Eq";
+import { ident } from "../../Data/Function";
+import { over, set } from "../../Data/Lens";
+import { bind, fromJust, isJust, Just, Maybe, maybe, Nothing } from "../../Data/Maybe";
+import { adjust, any, deleteLookupWithKey, insert, lookup, OrderedMap, sdelete } from "../../Data/OrderedMap";
+import { fst, snd } from "../../Data/Pair";
+import { fromDefault, makeLenses, Record } from "../../Data/Record";
+import * as HerolistActions from "../Actions/HerolistActions";
+import * as IOActions from "../Actions/IOActions";
+import { ActionTypes } from "../Constants/ActionTypes";
+import { getInitialHeroObject, HeroModel, HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel";
+import { User } from "../Models/Hero/heroTypeHelpers";
+import { pipe } from "../Utilities/pipe";
+import { reduceReducersC } from "../Utilities/reduceReducers";
+import { UndoState } from "../Utilities/undo";
+import { heroReducer, toHeroWithHistory } from "./heroReducer";
 
-type PrecedingHerolistReducerAction =
-  IOActions.ReceiveInitialDataAction |
-  IOActions.ReceiveImportedHeroAction |
-  HerolistActions.CreateHeroAction |
-  HerolistActions.LoadHeroAction |
-  HerolistActions.SaveHeroAction |
-  HerolistActions.DeleteHeroAction |
-  HerolistActions.DuplicateHeroAction;
+type Action = IOActions.ReceiveInitialDataAction
+            | IOActions.ReceiveImportedHeroAction
+            | HerolistActions.CreateHeroAction
+            | HerolistActions.LoadHeroAction
+            | HerolistActions.SaveHeroAction
+            | HerolistActions.DeleteHeroAction
+            | HerolistActions.DuplicateHeroAction
 
-interface HerolistStateObject {
-  heroes: OrderedMap<string, UndoState<Record<HeroDependent>>>;
-  users: OrderedMap<string, User>;
-  currentId?: string;
+export interface HeroesState {
+  heroes: OrderedMap<string, Record<UndoState<HeroModelRecord>>>
+  users: OrderedMap<string, User>
+  currentId: Maybe<string>
 }
 
-export type HerolistState = Record<HerolistStateObject>;
+export const HeroesState = fromDefault<HeroesState> ({
+  heroes: OrderedMap.empty,
+  users: OrderedMap.empty,
+  currentId: Nothing,
+})
 
-const initialState: HerolistState = Record.of<HerolistStateObject> ({
-  heroes: OrderedMap.empty (),
-  users: OrderedMap.empty (),
-});
+export const HeroesStateL = makeLenses (HeroesState)
 
-export function precedingHerolistReducer (
-  state: HerolistState = initialState,
-  action: PrecedingHerolistReducerAction
-): HerolistState {
-  switch (action.type) {
-    case ActionTypes.CREATE_HERO: {
-      const {
-        el,
-        enableAllRuleBooks,
-        enabledRuleBooks,
-        id,
-        name,
-        sex,
-        totalAp,
-      } = action.payload;
+export const precedingHerolistReducer =
+  (action: Action): ident<Record<HeroesState>> => {
+    switch (action.type) {
+      case ActionTypes.CREATE_HERO: {
+        const {
+          el,
+          enableAllRuleBooks,
+          enabledRuleBooks,
+          id,
+          name,
+          sex,
+          totalAp,
+        } = action.payload
 
-      const hero = getInitialHeroObject (
-        id,
-        name,
-        sex,
-        el,
-        totalAp,
-        enableAllRuleBooks,
-        enabledRuleBooks
-      );
+        const hero = getInitialHeroObject (id)
+                                          (name)
+                                          (sex)
+                                          (el)
+                                          (totalAp)
+                                          (enableAllRuleBooks)
+                                          (enabledRuleBooks)
 
-      return state
-        .insert ('currentId') (id)
-        .modify<'heroes'> (heroes => heroes.insert (id) (wrapWithHistoryObject (hero)))
-                          ('heroes');
-    }
-
-    case ActionTypes.LOAD_HERO:
-      return state.insert ('currentId') (action.payload.id);
-
-    case ActionTypes.SAVE_HERO:
-      return state.modify<'heroes'> (
-        heroes => heroes.adjust (
-          undoState => ({
-            ...undoState,
-            past: List.of (),
-          })
-        ) (action.payload.id)
-      ) ('heroes');
-
-    case ActionTypes.DELETE_HERO: {
-      const { id } = action.payload;
-
-      const hero = state.get ('heroes').lookup (id);
-      const heroes = state.get ('heroes').delete (id);
-
-      const playerId = hero.bind<string> (
-        justHero => justHero.present.lookup ('player')
-      );
-
-      const hasUserMultipleHeroes = heroes.elems ().any (
-        e => e.present.lookup ('player').equals (playerId)
-      );
-
-      if (Maybe.isJust (playerId) && !hasUserMultipleHeroes) {
-        return state
-          .modify<'users'> (users => users.delete (Maybe.fromJust (playerId))) ('users')
-          .insert ('heroes') (heroes);
+        return pipe (
+          set (HeroesStateL.currentId) (Just (id)),
+          over (HeroesStateL.heroes)
+               (insert (id)
+                       (toHeroWithHistory (hero)))
+        )
       }
-      else {
-        return state.insert ('heroes') (heroes);
+
+      case ActionTypes.LOAD_HERO:
+        return set (HeroesStateL.currentId) (Just (action.payload.id))
+
+      case ActionTypes.DELETE_HERO: {
+        const { id } = action.payload
+
+        return state => {
+          const heroes = HeroesState.A.heroes (state)
+          const delAndRemaining = deleteLookupWithKey (id) (heroes)
+
+          const playerIdFromHero = pipe (heroReducer.A.present, HeroModel.A.player)
+
+          const playerId = bind (fst (delAndRemaining)) (playerIdFromHero)
+
+          const hasUserMultipleHeroes = any (pipe (playerIdFromHero, equals (playerId)))
+                                            (snd (delAndRemaining))
+
+
+          if (isJust (playerId) && !hasUserMultipleHeroes) {
+            return pipe (
+                          over (HeroesStateL.users)
+                               (sdelete (fromJust (playerId))),
+                          set (HeroesStateL.heroes)
+                              (snd (delAndRemaining))
+                        )
+                        (state)
+          }
+
+          return set (HeroesStateL.heroes)
+                     (snd (delAndRemaining))
+                     (state)
+        }
       }
+
+      case ActionTypes.DUPLICATE_HERO: {
+        const { id, newId } = action.payload
+
+        return state =>
+          maybe
+            (state)
+            ((hero: Record<UndoState<Record<HeroModel>>>) =>
+              over (HeroesStateL.heroes)
+                   (insert (newId)
+                           (toHeroWithHistory (pipe (
+                                                      set (HeroModelL.id) (newId),
+                                                      over (HeroModelL.name)
+                                                           (name => `${name} (2)`)
+                                                    )
+                                                    (heroReducer.A.present (hero)))))
+                   (state))
+            (lookup (id) (HeroesState.A.heroes (state)))
+      }
+
+      default:
+        return ident
     }
-
-    case ActionTypes.DUPLICATE_HERO: {
-      const { id, newId } = action.payload;
-
-      return Maybe.fromMaybe (state) (
-        state.get ('heroes').lookup (id)
-          .fmap (
-            hero => state.modify<'heroes'> (
-              heroes => heroes.insert (newId) (
-                wrapWithHistoryObject (
-                  hero.present
-                    .insert ('id') (newId)
-                    .modify (name => `${name} (2)`) ('name')
-                )
-              )
-            ) ('heroes')
-          )
-      );
-    }
-
-    default:
-      return state;
   }
-}
 
-function prepareHeroReducer (state: HerolistState, action: Action): HerolistState {
-  return Maybe.fromMaybe (state) (
-    state.lookup ('currentId')
-      .fmap (
-        currentId => state.modify<'heroes'> (
-          heroes => heroes.adjust (heroState => heroReducer (heroState, action)) (currentId)
-        ) ('heroes')
-      )
-  );
-}
+const prepareHeroReducer =
+  (action: Action) =>
+  (state: Record<HeroesState>): Record<HeroesState> =>
+    maybe (state)
+          ((current_id: string) => over (HeroesStateL.heroes)
+                                        (adjust (heroReducer (action))
+                                                (current_id))
+                                        (state))
+          (HeroesState.A.currentId (state))
 
-export const herolistReducer = reduceReducers (
+export const herolistReducer = reduceReducersC (
   precedingHerolistReducer,
   prepareHeroReducer
-);
+)

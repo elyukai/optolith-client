@@ -1,6 +1,7 @@
 import { List } from "../../../Data/List";
-import { Maybe, Nothing } from "../../../Data/Maybe";
-import { fromDefault, Record } from "../../../Data/Record";
+import { Just, Maybe, Nothing } from "../../../Data/Maybe";
+import { fromDefault, makeLenses, Record } from "../../../Data/Record";
+import { ItemTemplate } from "../Wiki/ItemTemplate";
 import { PrimaryAttributeDamageThreshold } from "../Wiki/sub/PrimaryAttributeDamageThreshold";
 import { SourceLink } from "../Wiki/sub/SourceLink";
 
@@ -10,16 +11,16 @@ export interface ItemBase {
   combatTechnique: Maybe<string>
   damageDiceSides: Maybe<number>
   gr: number
-  isParryingWeapon: Maybe<boolean>
+  isParryingWeapon: boolean
   isTemplateLocked: boolean
   reach: Maybe<number>
   template: Maybe<string>
   where: Maybe<string>
-  isTwoHandedWeapon: Maybe<boolean>
+  isTwoHandedWeapon: boolean
   improvisedWeaponGroup: Maybe<number>
   loss: Maybe<number>
-  forArmorZoneOnly: Maybe<boolean>
-  addPenalties: Maybe<boolean>
+  forArmorZoneOnly: boolean
+  addPenalties: boolean
   armorType: Maybe<number>
 }
 
@@ -40,7 +41,7 @@ export interface Item extends ItemBase {
   range: Maybe<List<number>>
   reloadTime: Maybe<number>
   stp: Maybe<number>
-  weight: number
+  weight: Maybe<number>
   stabilityMod: Maybe<number>
   note: Maybe<string>
   rules: Maybe<string>
@@ -57,16 +58,16 @@ export const Item =
     combatTechnique: Nothing,
     damageDiceSides: Nothing,
     gr: 0,
-    isParryingWeapon: Nothing,
+    isParryingWeapon: false,
     isTemplateLocked: false,
     reach: Nothing,
     template: Nothing,
     where: Nothing,
-    isTwoHandedWeapon: Nothing,
+    isTwoHandedWeapon: false,
     improvisedWeaponGroup: Nothing,
     loss: Nothing,
-    forArmorZoneOnly: Nothing,
-    addPenalties: Nothing,
+    forArmorZoneOnly: false,
+    addPenalties: false,
     armorType: Nothing,
     at: Nothing,
     iniMod: Nothing,
@@ -83,7 +84,7 @@ export const Item =
     range: Nothing,
     reloadTime: Nothing,
     stp: Nothing,
-    weight: 0,
+    weight: Nothing,
     stabilityMod: Nothing,
     note: Nothing,
     rules: Nothing,
@@ -91,3 +92,50 @@ export const Item =
     disadvantage: Nothing,
     src: Nothing,
   })
+
+export const ItemL = makeLenses (Item)
+
+export const fromItemTemplate =
+  (new_id: string) =>
+  (x: Record<ItemTemplate>): Record<Item> =>
+    Item ({
+      id: new_id,
+      name: ItemTemplate.A.name (x),
+      ammunition: ItemTemplate.A.ammunition (x),
+      combatTechnique: ItemTemplate.A.combatTechnique (x),
+      damageDiceSides: ItemTemplate.A.damageDiceSides (x),
+      gr: ItemTemplate.A.gr (x),
+      isParryingWeapon: ItemTemplate.A.isParryingWeapon (x),
+      isTemplateLocked: ItemTemplate.A.isTemplateLocked (x),
+      reach: ItemTemplate.A.reach (x),
+      template: Just (ItemTemplate.A.template (x)),
+      where: Nothing,
+      isTwoHandedWeapon: ItemTemplate.A.isTwoHandedWeapon (x),
+      improvisedWeaponGroup: ItemTemplate.A.improvisedWeaponGroup (x),
+      loss: ItemTemplate.A.loss (x),
+      forArmorZoneOnly: ItemTemplate.A.forArmorZoneOnly (x),
+      addPenalties: ItemTemplate.A.addPenalties (x),
+      armorType: ItemTemplate.A.armorType (x),
+      at: ItemTemplate.A.at (x),
+      iniMod: ItemTemplate.A.iniMod (x),
+      movMod: ItemTemplate.A.movMod (x),
+      damageBonus: ItemTemplate.A.damageBonus (x),
+      damageDiceNumber: ItemTemplate.A.damageDiceNumber (x),
+      damageFlat: ItemTemplate.A.damageFlat (x),
+      enc: ItemTemplate.A.enc (x),
+      length: ItemTemplate.A.length (x),
+      amount: ItemTemplate.A.amount (x),
+      pa: ItemTemplate.A.pa (x),
+      price: ItemTemplate.A.price (x),
+      pro: ItemTemplate.A.pro (x),
+      range: ItemTemplate.A.range (x),
+      reloadTime: ItemTemplate.A.reloadTime (x),
+      stp: ItemTemplate.A.stp (x),
+      weight: ItemTemplate.A.weight (x),
+      stabilityMod: ItemTemplate.A.stabilityMod (x),
+      note: ItemTemplate.A.note (x),
+      rules: ItemTemplate.A.rules (x),
+      advantage: ItemTemplate.A.advantage (x),
+      disadvantage: ItemTemplate.A.disadvantage (x),
+      src: Just (ItemTemplate.A.src (x)),
+    })

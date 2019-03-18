@@ -2,9 +2,9 @@ import { AsyncAction } from '../../types/actions';
 import { ActionTypes } from '../Constants/ActionTypes';
 import { getHeroes, getWikiExperienceLevels } from '../Selectors/stateSelectors';
 import { UIMessagesObject } from '../types/ui';
+import { getNewIdByDate } from '../Utilities/IDUtils';
 import { Maybe, OrderedSet } from '../utils/dataUtils';
 import { translate } from '../Utils/I18n';
-import { getNewIdByDate } from '../Utils/IDUtils';
 import { addAlert } from './AlertActions';
 import { requestAllHeroesSave, requestHeroDeletion, requestHeroExport, requestHeroSave } from './IOActions';
 

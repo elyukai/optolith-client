@@ -4,7 +4,7 @@ const { ident } = require('../Function');
 const { Left, Right } = require('../Either');
 const { fmap } = require('../Functor');
 const { List } = require('../List');
-const { fromBoth, Pair } = require('../Pair');
+const { Pair } = require('../Pair');
 const { OrderedSet } = require('../OrderedSet');
 const { fromArray, fromUniquePairs, fromMap, OrderedMap } = require('../OrderedMap');
 const { Just, Nothing, Maybe } = require('../Maybe');
@@ -76,9 +76,9 @@ test ('toList', () => {
   expect (OrderedMap.toList (fromArray ([['x', 1], ['y', 2], ['z', 3]])))
     .toEqual (
       List (
-        fromBoth ('x') (1),
-        fromBoth ('y') (2),
-        fromBoth ('z') (3)
+        Pair ('x') (1),
+        Pair ('y') (2),
+        Pair ('z') (3)
       )
     )
 })
@@ -380,7 +380,7 @@ test ('insertLookupWithKey', () => {
                                    (fromArray ([[1, 'a'], [2, 'b'], [3, 'c']]))
   )
     .toEqual (
-      fromBoth (Nothing) (fromArray ([[1, 'a'], [2, 'b'], [3, 'c'], [4, 'd']]))
+      Pair (Nothing) (fromArray ([[1, 'a'], [2, 'b'], [3, 'c'], [4, 'd']]))
     )
 
   expect (
@@ -390,7 +390,7 @@ test ('insertLookupWithKey', () => {
                                    (fromArray ([[1, 'a'], [2, 'b'], [3, 'c']]))
   )
     .toEqual (
-      fromBoth (Just ('c')) (fromArray ([[1, 'a'], [2, 'b'], [3, 'cd3']]))
+      Pair (Just ('c')) (fromArray ([[1, 'a'], [2, 'b'], [3, 'cd3']]))
     )
 })
 
@@ -464,11 +464,11 @@ test ('updateLookupWithKey', () => {
   const map = fromArray ([[1, 'a'], [2, 'b'], [3, 'c']])
 
   expect (OrderedMap.updateLookupWithKey (key => x => Just (x + key)) (3) (map))
-    .toEqual (fromBoth (Just ('c3'))
+    .toEqual (Pair (Just ('c3'))
                        (fromArray ([[1, 'a'], [2, 'b'], [3, 'c3']])))
 
   expect (OrderedMap.updateLookupWithKey (key => x => Nothing) (3) (map))
-    .toEqual (fromBoth (Just ('c'))
+    .toEqual (Pair (Just ('c'))
                        (fromArray ([[1, 'a'], [2, 'b']])))
 
   expect (Pair.snd (OrderedMap.updateLookupWithKey (key => x => Just (x + key))
@@ -563,9 +563,9 @@ test ('keys', () => {
 test ('assocs', () => {
   const map = fromArray ([[1, 'a'], [3, 'c'], [2, 'b']])
   const res = List(
-    fromBoth (1) ('a'),
-    fromBoth (3) ('c'),
-    fromBoth (2) ('b')
+    Pair (1) ('a'),
+    Pair (3) ('c'),
+    Pair (2) ('b')
   )
 
   expect (OrderedMap.assocs (map)) .toEqual (res)
@@ -589,9 +589,9 @@ test ('fromSet', () => {
 
 test ('fromList', () => {
   const map = List (
-    fromBoth (1) ('a'),
-    fromBoth (3) ('c'),
-    fromBoth (2) ('b')
+    Pair (1) ('a'),
+    Pair (3) ('c'),
+    Pair (2) ('b')
   )
   const res = fromArray ([[1, 'a'], [3, 'c'], [2, 'b']])
 
@@ -666,4 +666,12 @@ test ('toMap', () => {
 test ('isOrderedMap', () => {
   expect (OrderedMap.isOrderedMap (fromArray ([['x', 1]]))) .toEqual (true)
   expect (OrderedMap.isOrderedMap (3)) .toEqual (false)
+})
+
+test ('deleteLookupWithKey', () => {
+  const map = fromArray ([[1, 'a'], [2, 'b'], [3, 'c']])
+
+  expect (OrderedMap.deleteLookupWithKey (3) (map))
+    .toEqual (Pair (Just ('c'))
+                       (fromArray ([[1, 'a'], [2, 'b']])))
 })

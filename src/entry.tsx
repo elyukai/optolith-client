@@ -27,8 +27,8 @@ import { requestClose, requestInitialData, setUpdateDownloadProgress, updateAvai
 import { showAbout } from './App/Actions/LocationActions';
 import { appReducer, AppState } from './App/Reducers/appReducer';
 import { getLocaleMessages } from './App/Selectors/stateSelectors';
+import { isDialogOpen } from './App/Utilities/SubwindowsUtils';
 import { translate } from './App/Utils/I18n';
-import { isDialogOpen } from './App/Utils/SubwindowsUtils';
 import { AppContainer } from './containers/AppContainer';
 import { Just, Maybe } from './utils/dataUtils';
 

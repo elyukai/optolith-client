@@ -7,13 +7,13 @@ import { getAvailableAdventurePoints } from '../Selectors/adventurePointsSelecto
 import { getIsInCharacterCreation } from '../Selectors/phaseSelectors';
 import { getCurrentHeroPresent, getWiki } from '../Selectors/stateSelectors';
 import { UIMessagesObject } from '../types/ui';
+import { getHeroStateItem } from '../Utilities/heroStateUtils';
+import { getWikiEntry } from '../Utilities/WikiUtils';
 import { getNameCost } from '../utils/activatable/activatableActiveUtils';
 import { convertPerTierCostToFinalCost } from '../utils/adventurePoints/activatableCostUtils';
 import { getAreSufficientAPAvailable } from '../utils/adventurePoints/adventurePointsUtils';
 import { Just, Maybe, Record } from '../utils/dataUtils';
-import { getHeroStateItem } from '../Utils/heroStateUtils';
 import { translate } from '../Utils/I18n';
-import { getWikiEntry } from '../Utils/WikiUtils';
 import { addAlert } from './AlertActions';
 
 interface SpecialAbilityActivateArgs extends ActivateArgs {

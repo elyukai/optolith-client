@@ -1,4 +1,4 @@
-import { fromDefault } from "../../../Data/Record";
+import { fromDefault, makeLenses } from "../../../Data/Record";
 
 export interface Pact {
   category: number
@@ -16,3 +16,5 @@ export const Pact =
     type: 0,
     level: 0,
   })
+
+export const PactL = makeLenses (Pact)

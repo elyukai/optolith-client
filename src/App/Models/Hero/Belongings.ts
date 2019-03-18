@@ -1,8 +1,8 @@
 import { Maybe, Nothing } from "../../../Data/Maybe";
 import { OrderedMap } from "../../../Data/OrderedMap";
 import { fromDefault, makeLenses, Record } from "../../../Data/Record";
+import { EditHitZoneArmor } from "./EditHitZoneArmor";
 import { EditItem } from "./EditItem";
-import { ArmorZonesEditorInstance } from "./heroTypeHelpers";
 import { HitZoneArmor } from "./HitZoneArmor";
 import { Item } from "./Item";
 import { Purse } from "./Purse";
@@ -11,9 +11,9 @@ export interface Belongings {
   items: OrderedMap<string, Record<Item>>
   itemInEditor: Maybe<Record<EditItem>>
   isInItemCreation: boolean
-  armorZones: OrderedMap<string, Record<HitZoneArmor>>
-  zoneArmorInEditor: Maybe<Record<ArmorZonesEditorInstance>>
-  isInZoneArmorCreation: boolean
+  hitZoneArmors: OrderedMap<string, Record<HitZoneArmor>>
+  hitZoneArmorInEditor: Maybe<Record<EditHitZoneArmor>>
+  isInHitZoneArmorCreation: boolean
   purse: Record<Purse>
 }
 
@@ -25,9 +25,9 @@ export const Belongings =
     items: OrderedMap.empty,
     itemInEditor: Nothing,
     isInItemCreation: false,
-    armorZones: OrderedMap.empty,
-    zoneArmorInEditor: Nothing,
-    isInZoneArmorCreation: false,
+    hitZoneArmors: OrderedMap.empty,
+    hitZoneArmorInEditor: Nothing,
+    isInHitZoneArmorCreation: false,
     purse: Purse .default,
   })
 

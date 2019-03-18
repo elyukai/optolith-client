@@ -13,7 +13,7 @@
  */
 
 import { pipe } from "ramda";
-import { ifElse } from "../App/Utils/ifElse";
+import { ifElse } from "../App/Utilities/ifElse";
 import { ident, thrush } from "./Function";
 import { fmap } from "./Functor";
 import { cons, consF, List } from "./List";

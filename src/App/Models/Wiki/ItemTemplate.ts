@@ -18,7 +18,7 @@ export interface ItemTemplate {
   damageDiceSides: Maybe<number>
   damageFlat: Maybe<number>
   enc: Maybe<number>
-  forArmorZoneOnly: Maybe<boolean>
+  forArmorZoneOnly: boolean
   gr: number
   improvisedWeaponGroup: Maybe<number>
   iniMod: Maybe<number>
@@ -60,7 +60,7 @@ export const ItemTemplate =
     damageDiceSides: Nothing,
     damageFlat: Nothing,
     enc: Nothing,
-    forArmorZoneOnly: Nothing,
+    forArmorZoneOnly: false,
     gr: 0,
     improvisedWeaponGroup: Nothing,
     iniMod: Nothing,

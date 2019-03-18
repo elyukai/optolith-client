@@ -1,27 +1,27 @@
 import { Action } from "redux";
 import { Record } from "../../Data/Record";
-import { L10nRecord } from "../Models/Wiki/L10n";
-import { WikiModelRecord } from "../Models/Wiki/WikiModel";
-import { combineReducerRecord } from "../Utils/combineReducerRecord";
-import { reduceReducers } from "../Utils/reduceReducers";
+import { WikiModel, WikiModelRecord } from "../Models/Wiki/WikiModel";
+import { combineReducerRecord } from "../Utilities/combineReducerRecord";
+import { reduceReducers } from "../Utilities/reduceReducers";
 import { appPostReducer } from "./appPostReducer";
-import { herolistReducer as herolist, HerolistState } from "./herolistReducer";
+import { HeroesState, herolistReducer as herolist } from "./herolistReducer";
+import { localeReducer as l10n, LocaleState } from "./localeReducer";
 import { uiReducer as ui, UIState } from "./uiReducer";
 import { wikiReducer as wiki } from "./wikiReducer";
 
 export interface AppState {
-  herolist: Record<HerolistState>
-  l10n: L10nRecord
+  herolist: Record<HeroesState>
+  l10n: Record<LocaleState>
   ui: Record<UIState>
   wiki: WikiModelRecord
 }
 
 const appSlices =
   combineReducerRecord<AppState> ({
-                                   herolist,
-                                   l10n,
+                                   herolist: HeroesState.default,
+                                   l10n: LocaleState.default,
                                    ui,
-                                   wiki,
+                                   wiki: WikiModel.default,
                                  })
                                  ({
                                    herolist,

@@ -1,5 +1,5 @@
-import { Maybe, Nothing } from "../../../Data/Maybe";
-import { fromDefault } from "../../../Data/Record";
+import { Just, Maybe, Nothing } from "../../../Data/Maybe";
+import { fromDefault, makeLenses } from "../../../Data/Record";
 import { PetBase } from "./Pet";
 
 export interface EditPet extends PetBase {
@@ -32,6 +32,10 @@ export interface EditPet extends PetBase {
   mov: string;
   at: string;
   pa: string;
+}
+
+export interface EditPetSafe extends EditPet {
+  id: Just<string>
 }
 
 export const EditPet =
@@ -68,3 +72,5 @@ export const EditPet =
     at: "",
     pa: "",
   })
+
+export const EditPetL = makeLenses (EditPet)

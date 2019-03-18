@@ -2,7 +2,7 @@ import { remote } from "electron";
 import { Just, Nothing } from "../../Data/Maybe";
 import { L10nRecord } from "../Models/Wiki/L10n";
 import { getIsHeroSection } from "../Selectors/uilocationSelectors";
-import { isDialogOpen } from "../Utils/SubwindowsUtils";
+import { isDialogOpen } from "../Utilities/SubwindowsUtils";
 import { AsyncAction } from "./Actions";
 import { saveHero } from "./HerolistActions";
 import { redo, undo } from "./HistoryActions";

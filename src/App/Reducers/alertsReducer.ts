@@ -1,24 +1,27 @@
-import { AddAlertAction, RemoveAlertAction } from '../Actions/AlertActions';
-import { ActionTypes } from '../Constants/ActionTypes';
-import { Alert } from '../Models/Hero/heroTypeHelpers';
-import { List, Maybe } from '../utils/dataUtils';
+import { pipe } from "ramda";
+import { ident } from "../../Data/Function";
+import { consF, List, tailS } from "../../Data/List";
+import { fromMaybe } from "../../Data/Maybe";
+import { AddAlertAction, RemoveAlertAction } from "../Actions/AlertActions";
+import { ActionTypes } from "../Constants/ActionTypes";
+import { Alert } from "../Models/Hero/heroTypeHelpers";
 
-type Action = AddAlertAction | RemoveAlertAction;
+type Action = AddAlertAction | RemoveAlertAction
 
-export type AlertsState = List<Alert>;
+export type AlertsState = List<Alert>
 
-export function alertsReducer (
-  state: AlertsState = List.of (),
-  action: Action
-): AlertsState {
-  switch (action.type) {
-    case ActionTypes.ADD_ALERT:
-      return state.cons (action.payload);
+export const AlertsStateDefault: AlertsState = List.empty
 
-    case ActionTypes.REMOVE_ALERT:
-      return Maybe.fromMaybe (state) (List.tail_ (state));
+export const alertsReducer =
+  (action: Action): ident<AlertsState> => {
+    switch (action.type) {
+      case ActionTypes.ADD_ALERT:
+        return consF (action.payload)
 
-    default:
-      return state;
+      case ActionTypes.REMOVE_ALERT:
+        return pipe (tailS, fromMaybe<AlertsState> (List.empty))
+
+      default:
+        return ident
+    }
   }
-}
