@@ -1,21 +1,38 @@
 import * as R from "ramda";
-import { List } from "../../Data/List";
-import { Pair } from "../../Data/Pair";
+import { fmap, fmapF } from "../../Data/Functor";
+import { over } from "../../Data/Lens";
+import { List, subscriptF, uncons } from "../../Data/List";
+import { altF_, bind, bindF, elem, ensure, fromJust, isJust, Just, liftM2, Maybe, Nothing } from "../../Data/Maybe";
+import { lookup } from "../../Data/OrderedMap";
+import { fst, Pair, PairP1_, snd } from "../../Data/Pair";
 import { Record } from "../../Data/Record";
 import { ActionTypes } from "../Constants/ActionTypes";
 import { ActivatableCategory, Categories } from "../Constants/Categories";
 import { ActivatableActivationOptions } from "../Models/Actions/ActivatableActivationOptions";
-import { HeroModelRecord } from "../Models/Hero/HeroModel";
-import { DeactivateArgs } from "../Models/Hero/heroTypeHelpers";
+import { ActivatableDeactivationOptions, ActivatableDeactivationOptionsL } from "../Models/Actions/ActivatableDeactivationOptions";
+import { ActivatableEntryType } from "../Models/Actions/ActivatableEntryType";
+import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
+import { ActiveObject } from "../Models/ActiveEntries/ActiveObject";
+import { toActiveObjectWithId } from "../Models/ActiveEntries/ActiveObjectWithId";
+import { HeroModel, HeroModelRecord } from "../Models/Hero/HeroModel";
+import { Advantage, isAdvantage } from "../Models/Wiki/Advantage";
+import { Disadvantage, isDisadvantage } from "../Models/Wiki/Disadvantage";
 import { L10nRecord } from "../Models/Wiki/L10n";
-import { AppState } from "../Reducers/appReducer";
+import { Race } from "../Models/Wiki/Race";
+import { RaceVariant } from "../Models/Wiki/RaceVariant";
+import { getAdventurePointsObject } from "../selectors/adventurePointsSelectors";
 import { getIsInCharacterCreation } from "../Selectors/phaseSelectors";
 import { getCurrentRace, getCurrentRaceVariant } from "../Selectors/rcpSelectors";
 import { getCurrentHeroPresent, getWiki } from "../Selectors/stateSelectors";
-import { convertPerTierCostToFinalCost } from "../utils/adventurePoints/activatableCostUtils";
-import { getDisAdvantagesSubtypeMax, SufficientAPAvailableForDisAdvantage } from "../utils/AdventurePoints/adventurePointsUtils";
-import { translate, translateP } from "../utils/I18n";
-import { AsyncAction, ReduxDispatch } from "./Actions";
+import { getNameCost } from "../Utilities/Activatable/activatableActiveUtils";
+import { isBlessedOrMagical } from "../Utilities/Activatable/checkActivatableUtils";
+import { getDisAdvantagesSubtypeMax, getMissingAPForDisAdvantage, MissingAPForDisAdvantage } from "../Utilities/AdventurePoints/adventurePointsUtils";
+import { translate, translateP } from "../Utilities/I18n";
+import { negate } from "../Utilities/mathUtils";
+import { pipe } from "../Utilities/pipe";
+import { isNumber } from "../Utilities/typeCheckUtils";
+import { getWikiEntry } from "../Utilities/WikiUtils";
+import { ReduxAction, ReduxDispatch } from "./Actions";
 import { addAlert } from "./AlertActions";
 
 /**
@@ -27,245 +44,376 @@ import { addAlert } from "./AlertActions";
  *
  * If the addition or removal is valid, the passed `successFn` will be called.
  */
-const handleAreSufficientAPAvailableForDisAdvantage =
+const handleMissingAPForDisAdvantage =
   (l10n: L10nRecord) =>
-  (successFn: () => void) =>
+  (success: () => void) =>
   (hero: HeroModelRecord) =>
-  (areSufficientAPAvailableForDisAdvantage: Record<SufficientAPAvailableForDisAdvantage>) =>
-  (entryType: { isBlessed: boolean; isMagical: boolean }) =>
-  (isDisadvantage: boolean) =>
-  (dispatch: ReduxDispatch<AppState>) => {
-    if (!areSufficientAPAvailableForDisAdvantage.get ("totalValid")) {
+  (missing_ap: Record<MissingAPForDisAdvantage>) =>
+  (is_blessed_or_magical: Pair<boolean, boolean>) =>
+  (is_disadvantage: boolean) =>
+  (dispatch: ReduxDispatch) => {
+    const totalMissing = MissingAPForDisAdvantage.A.totalMissing (missing_ap)
+    const mainMissing = MissingAPForDisAdvantage.A.mainMissing (missing_ap)
+    const subMissing = MissingAPForDisAdvantage.A.subMissing (missing_ap)
+
+    if (isJust (totalMissing)) {
       dispatch (addAlert ({
         title: translate (l10n) ("notenoughap"),
-        message: translate (l10n) ("notenoughap.text"),
+        message: translateP (l10n) ("notenoughap.text") (List (fromJust (totalMissing))),
       }))
     }
-    else if (!areSufficientAPAvailableForDisAdvantage.get ("mainValid")) {
-      const type = isDisadvantage
+    else if (isJust (mainMissing)) {
+      const type = is_disadvantage
         ? translate (l10n) ("disadvantages")
         : translate (l10n) ("advantages")
 
       dispatch (addAlert ({
-        title: translateP (l10n) ("reachedaplimit") (List (type)),
-        message: translateP (l10n) ("reachedaplimit.") (List (type)),
+        title: translateP (l10n) ("reachedlimit") (List (type)),
+        message: translateP (l10n)
+                            ("reachedaplimit")
+                            (List<string | number> (fromJust (mainMissing), 80, type)),
       }))
     }
-    else if (!areSufficientAPAvailableForDisAdvantage.get ("subValid")) {
-      const type = isDisadvantage
-        ? entryType.isBlessed
-          ? translateP (l10n) ("reachedaplimit") (List (translate (l10n) ("blesseddisadvantages")))
-          : translateP (l10n) ("reachedaplimit") (List (translate (l10n) ("magicaldisadvantages")))
-        : entryType.isBlessed
-          ? translateP (l10n) ("reachedaplimit") (List (translate (l10n) ("blessedadvantages")))
-          : translateP (l10n) ("reachedaplimit") (List (translate (l10n) ("magicaladvantages")))
+    else if (isJust (subMissing)) {
+      const ap = getDisAdvantagesSubtypeMax (snd (is_blessed_or_magical)) (hero)
 
-      const ap = getDisAdvantagesSubtypeMax (entryType.isMagical) (hero)
+      const type = is_disadvantage
+        ? fst (is_blessed_or_magical)
+          ? translate (l10n) ("blesseddisadvantages")
+          : translate (l10n) ("magicaldisadvantages")
+        : fst (is_blessed_or_magical)
+          ? translate (l10n) ("blessedadvantages")
+          : translate (l10n) ("magicaladvantages")
 
       dispatch (addAlert ({
-        title: translate (l10n) ("reachedcategoryaplimit.title") (type),
-        message: translate (l10n) ("reachedcategoryaplimit.content") (ap) (type),
+        title: translateP (l10n) ("reachedlimit") (List (type)),
+        message: translateP (l10n)
+                            ("reachedaplimit")
+                            (List<string | number> (fromJust (subMissing), ap, type)),
       }))
     }
     else {
-      successFn ()
+      success ()
     }
   }
 
-interface ActivateArgsWithEntryType extends ActivateArgs {
-  isBlessed: boolean
-  isMagical: boolean
-  isDisadvantage: boolean
-  hairColor?: number
-  eyeColor?: number
-  wikiEntry: Record<Advantage> | Record<Disadvantage>
-}
-
-interface AlbinoChangedColor {
-  hairColor?: number
-  eyeColor?: number
-}
-
 export interface ActivateDisAdvAction {
   type: ActionTypes.ACTIVATE_DISADV
-  payload: Pair<ActivatableActivationOptions, Record<Advantage> | Record<Disadvantage>>
+  payload: Pair<Record<ActivatableActivationOptions>, Record<ActivatableEntryType>>
 }
 
 /**
  * Add an advantage or disadvantage with the provided activation properties
  * (`args`).
  */
-export const addDisAdvantage = (locale: UIMessagesObject) => (args: ActivateArgs): AsyncAction =>
+export const addDisAdvantage =
+  (l10n: L10nRecord) =>
+  (args: Record<ActivatableActivationOptions>): ReduxAction =>
   (dispatch, getState) => {
     const state = getState ()
 
-    const maybeHero = getCurrentHeroPresent (state)
+    const mhero = getCurrentHeroPresent (state)
 
-    if (Maybe.isJust (maybeHero)) {
-      const hero = Maybe.fromJust (maybeHero)
+    if (isJust (mhero)) {
+      const hero = fromJust (mhero)
 
-      const { id, cost, ...other } = args
+      const current_id = ActivatableActivationOptions.A.id (args)
+      const current_cost = ActivatableActivationOptions.A.cost (args)
 
-      const maybeWikiEntry =
-        getWikiEntry<Record<Advantage> | Record<Disadvantage>> (getWiki (state)) (id)
+      const mwiki_entry =
+        bind (getWikiEntry (getWiki (state)) (current_id))
+             (ensure ((x): x is Record<Advantage> | Record<Disadvantage> =>
+                       isAdvantage (x) || isDisadvantage (x)))
 
-      if (Maybe.isJust (maybeWikiEntry)) {
-        const wikiEntry = Maybe.fromJust (maybeWikiEntry)
+      if (isJust (mwiki_entry)) {
+        const wiki_entry = fromJust (mwiki_entry)
 
-        const isDisadvantage =
-          (wikiEntry.get ("category") as ActivatableCategory) === Categories.DISADVANTAGES
+        const is_disadvantage = isDisadvantage (wiki_entry)
 
-        const entryType = isMagicalOrBlessed (wikiEntry)
+        const entryType = isBlessedOrMagical (wiki_entry)
 
-        const areSufficientAPAvailableForDisAdvantage =
-          getAreSufficientAPAvailableForDisAdvantage (getIsInCharacterCreation (state))
-                                                     (isDisadvantage)
-                                                     (entryType)
-                                                     (hero)
-                                                     (getAdventurePointsObject (
-                                                       state,
-                                                       { locale }
-                                                     ))
-                                                     (cost)
+        const missingAPForDisAdvantage =
+          getMissingAPForDisAdvantage (getIsInCharacterCreation (state))
+                                      (entryType)
+                                      (is_disadvantage)
+                                      (hero)
+                                      (getAdventurePointsObject (
+                                        state,
+                                        { locale: l10n }
+                                      ))
+                                      (current_cost)
 
         const successFn = () => {
-          const color: Record<AlbinoChangedColor> = id === "DISADV_45" && args.sel === 1
-            ? Record.of<AlbinoChangedColor> ({
-              hairColor: 24,
-              eyeColor: 19,
-            })
-            : Record.empty ()
+          const color: Maybe<Pair<number, number>> =
+            current_id === "DISADV_45"
+            && elem<string | number> (1) (ActivatableActivationOptions.A.selectOptionId1 (args))
+              ? Just (Pair (19, 24)) // (eyeColor, hairColor)
+              : Nothing
 
           dispatch<ActivateDisAdvAction> ({
             type: ActionTypes.ACTIVATE_DISADV,
-            payload: {
-              id,
-              cost,
-              ...other,
-              ...entryType,
-              isDisadvantage,
-              hairColor: color.toObject ().hairColor,
-              eyeColor: color.toObject ().eyeColor,
-              wikiEntry,
-            },
+            payload:
+              Pair (
+                args,
+                ActivatableEntryType ({
+                  eyeColor: fmapF (color) (fst),
+                  hairColor: fmapF (color) (snd),
+                  isBlessed: fst (entryType),
+                  isDisadvantage: is_disadvantage,
+                  isMagical: snd (entryType),
+                  wikiEntry: wiki_entry,
+                })
+              ),
           })
         }
 
-        handleAreSufficientAPAvailableForDisAdvantage (locale)
-                                                      (successFn)
-                                                      (hero)
-                                                      (areSufficientAPAvailableForDisAdvantage)
-                                                      (entryType)
-                                                      (isDisadvantage)
-                                                      (dispatch)
+        handleMissingAPForDisAdvantage (l10n)
+                                       (successFn)
+                                       (hero)
+                                       (missingAPForDisAdvantage)
+                                       (entryType)
+                                       (is_disadvantage)
+                                       (dispatch)
       }
     }
   }
 
-interface DeactivateArgsWithEntryType extends DeactivateArgs {
-  isBlessed: boolean
-  isMagical: boolean
-  isDisadvantage: boolean
-  hairColor?: number
-  eyeColor?: number
-  wikiEntry: Record<Advantage> | Record<Disadvantage>
-}
-
 export interface DeactivateDisAdvAction {
   type: ActionTypes.DEACTIVATE_DISADV
-  payload: DeactivateArgsWithEntryType
+  payload: Pair<Record<ActivatableDeactivationOptions>, Record<ActivatableEntryType>>
 }
 
 /**
  * Remove an advantage or disadvantage with the provided activation properties
  * (`args`).
  */
-export const removeDisAdvantage = (locale: UIMessagesObject) =>
-  (args: DeactivateArgs): AsyncAction =>
-    (dispatch, getState) => {
-      const state = getState ()
+export const removeDisAdvantage =
+  (l10n: L10nRecord) =>
+  (args: Record<ActivatableDeactivationOptions>): ReduxAction =>
+  (dispatch, getState) => {
+    const state = getState ()
 
-      const maybeHero = getCurrentHeroPresent (state)
+    const mhero = getCurrentHeroPresent (state)
 
-      if (Maybe.isJust (maybeHero)) {
-        const hero = Maybe.fromJust (maybeHero)
+    if (isJust (mhero)) {
+      const hero = fromJust (mhero)
 
-        const negativeCost = args.cost * -1 // the entry should be removed
+      const current_id = ActivatableDeactivationOptions.A.id (args)
+      const current_index = ActivatableDeactivationOptions.A.index (args)
+      const current_cost = ActivatableDeactivationOptions.A.cost (args)
 
-        const maybeWikiEntry =
-          getWikiEntry<Record<Advantage> | Record<Disadvantage>> (getWiki (state)) (args.id)
+      const negativeCost = current_cost * -1 // the entry should be removed
 
-        const maybeStateEntry =
-          getHeroStateItem<Record<ActivatableDependent>> (args.id) (hero)
+      const mwiki_entry =
+        bind (getWikiEntry (getWiki (state)) (current_id))
+             (ensure ((x): x is Record<Advantage> | Record<Disadvantage> =>
+                       isAdvantage (x) || isDisadvantage (x)))
 
-        if (Maybe.isJust (maybeWikiEntry) && Maybe.isJust (maybeStateEntry)) {
-          const wikiEntry = Maybe.fromJust (maybeWikiEntry)
-          const stateEntry = Maybe.fromJust (maybeStateEntry)
+      const mhero_entry =
+        bind (mwiki_entry)
+             (x => lookup (current_id)
+                          (isAdvantage (x)
+                            ? HeroModel.A.advantages (hero)
+                            : HeroModel.A.disadvantages (hero)))
+
+      if (isJust (mwiki_entry) && isJust (mhero_entry)) {
+        const wiki_entry = fromJust (mwiki_entry)
+        const hero_entry = fromJust (mhero_entry)
+
+        const is_disadvantage = isDisadvantage (wiki_entry)
+
+        const entryType = isBlessedOrMagical (wiki_entry)
+
+        const missingAPForDisAdvantage =
+          getMissingAPForDisAdvantage (getIsInCharacterCreation (state))
+                                      (entryType)
+                                      (is_disadvantage)
+                                      (hero)
+                                      (getAdventurePointsObject (
+                                        state,
+                                        { locale: l10n }
+                                      ))
+                                      (negativeCost)
+
+        const successFn = () => {
+          const color: Maybe<Pair<number, number>> =
+            current_id === "DISADV_45"
+            && elem (1)
+                    (pipe (
+                            ActivatableDependent.A.active,
+                            subscriptF (current_index),
+                            bindF (ActiveObject.A.sid),
+                            bindF (ensure (isNumber))
+                          )
+                          (hero_entry))
+              ? bind (getCurrentRace (state))
+                     (race => {
+                       const mrace_var = getCurrentRaceVariant (state)
+
+                       const p = Pair (
+                         pipe (
+                                Race.A.eyeColors,
+                                altF_ (() => bind (mrace_var) (RaceVariant.A.eyeColors)),
+                                bindF (uncons),
+                                fmap (fst)
+                              )
+                              (race),
+                         pipe (
+                                Race.A.hairColors,
+                                altF_ (() => bind (mrace_var) (RaceVariant.A.hairColors)),
+                                bindF (uncons),
+                                fmap (fst)
+                              )
+                              (race)
+                       )
+
+                       return liftM2 (Pair as PairP1_) <number, number> (fst (p)) (snd (p))
+                     })
+              : Nothing
+
+          dispatch<DeactivateDisAdvAction> ({
+            type: ActionTypes.DEACTIVATE_DISADV,
+            payload:
+              Pair (
+                over (ActivatableDeactivationOptionsL.cost) (negate) (args),
+                ActivatableEntryType ({
+                  eyeColor: fmapF (color) (fst),
+                  hairColor: fmapF (color) (snd),
+                  isBlessed: fst (entryType),
+                  isDisadvantage: is_disadvantage,
+                  isMagical: snd (entryType),
+                  wikiEntry: wiki_entry,
+                })
+              ),
+          })
+        }
+
+        handleMissingAPForDisAdvantage (l10n)
+                                       (successFn)
+                                       (hero)
+                                       (missingAPForDisAdvantage)
+                                       (entryType)
+                                       (is_disadvantage)
+                                       (dispatch)
+      }
+    }
+  }
+
+export interface SetDisAdvTierAction {
+  type: ActionTypes.SET_DISADV_TIER
+  payload: {
+    id: string;
+    index: number;
+    tier: number;
+    isBlessed: boolean;
+    isMagical: boolean;
+    isDisadvantage: boolean;
+    wikiEntry: Record<Advantage> | Record<Disadvantage>;
+  }
+}
+
+/**
+ * Change the current level of an advantage or disadvantage.
+ */
+export const setDisAdvantageLevel =
+  (l10n: L10nRecord) =>
+  (current_id: string) =>
+  (current_index: number) =>
+  (next_level: number): ReduxAction =>
+  (dispatch, getState) => {
+    const state = getState ()
+
+    const mhero = getCurrentHeroPresent (state)
+
+    if (isJust (mhero)) {
+      const hero = fromJust (mhero)
+
+      const mwiki_entry =
+        bind (getWikiEntry (getWiki (state)) (current_id))
+             (ensure ((x): x is Record<Advantage> | Record<Disadvantage> =>
+                       isAdvantage (x) || isDisadvantage (x)))
+
+      const mhero_entry =
+        bind (mwiki_entry)
+             (x => lookup (current_id)
+                          (isAdvantage (x)
+                            ? HeroModel.A.advantages (hero)
+                            : HeroModel.A.disadvantages (hero)))
+
+      const mactive_entry =
+        pipe (
+               bindF (pipe (
+                             ActivatableDependent.A_.active,
+                             subscriptF (current_index)
+                           )),
+               fmap (toActiveObjectWithId (current_index) (current_id))
+             )
+             (mhero_entry)
+
+      if (isJust (mwiki_entry) && isJust (mactive_entry)) {
+        const wiki_entry = fromJust (mwiki_entry)
+        const active_entry = fromJust (mactive_entry)
+
+        const wiki = getWiki (state)
+
+        const previousCost = getNameCost (
+          activeObjectWithId,
+          wiki,
+          hero,
+          false,
+          Just (l10n)
+        )
+          .fmap (convertPerTierCostToFinalCost (Just (l10n)))
+          .fmap (obj => obj.get ("finalCost"))
+
+        const nextCost = getNameCost (
+          activeObjectWithId.insert ("tier") (next_level),
+          wiki,
+          hero,
+          true,
+          Just (l10n)
+        )
+          .fmap (convertPerTierCostToFinalCost (Just (l10n)))
+          .fmap (obj => obj.get ("finalCost"))
+
+        const maybeCost = Maybe.liftM2 (R.subtract) (nextCost) (previousCost)
+
+        console.log (previousCost, nextCost, maybeCost)
+
+        if (Maybe.isJust (maybeCost)) {
+          const cost = Maybe.fromJust (maybeCost)
 
           const isDisadvantage =
             (wikiEntry.get ("category") as ActivatableCategory) === Categories.DISADVANTAGES
 
-          const entryType = isMagicalOrBlessed (wikiEntry)
+          const entryType = isBlessedOrMagical (wikiEntry)
 
           const areSufficientAPAvailableForDisAdvantage =
-            getAreSufficientAPAvailableForDisAdvantage (getIsInCharacterCreation (state))
-                                                       (isDisadvantage)
-                                                       (entryType)
-                                                       (hero)
-                                                       (getAdventurePointsObject (
-                                                         state,
-                                                         { locale })
-                                                       )
-                                                       (negativeCost)
+            getMissingAPForDisAdvantage (getIsInCharacterCreation (state))
+                                                        (isDisadvantage)
+                                                        (entryType)
+                                                        (hero)
+                                                        (getAdventurePointsObject (
+                                                          state,
+                                                          { locale: l10n })
+                                                        )
+                                                        (cost)
 
           const successFn = () => {
-            const color: Record<AlbinoChangedColor> =
-              args.id === "DISADV_45"
-              && Maybe.elem (1)
-                            (stateEntry.get ("active")
-                              .subscript (args.index)
-                              .bind (active => active.lookup ("sid"))
-                              .bind (Maybe.ensure (isNumber)))
-              ? Maybe.fromMaybe<Record<AlbinoChangedColor>> (Record.empty ()) (
-                getCurrentRace (state)
-                  .fmap (
-                    race => {
-                      const maybeRaceVariant = getCurrentRaceVariant (state)
-
-                      return Record.ofMaybe<AlbinoChangedColor> ({
-                        hairColor: race.lookup ("hairColors")
-                          .alt (
-                            maybeRaceVariant.bind (raceVariant => raceVariant.lookup ("hairColors"))
-                          )
-                          .bind (List.uncons)
-                          .fmap (Tuple.fst),
-                        eyeColor: race.lookup ("eyeColors")
-                          .alt (
-                            maybeRaceVariant.bind (raceVariant => raceVariant.lookup ("eyeColors"))
-                          )
-                          .bind (List.uncons)
-                          .fmap (Tuple.fst),
-                      })
-                    }
-                  )
-              )
-              : Record.empty ()
-
-            dispatch<DeactivateDisAdvAction> ({
-              type: ActionTypes.DEACTIVATE_DISADV,
+            dispatch<SetDisAdvTierAction> ({
+              type: ActionTypes.SET_DISADV_TIER,
               payload: {
-                ...args,
-                cost: negativeCost,
+                id: current_id,
+                tier: next_level,
+                index: current_index,
                 ...entryType,
                 isDisadvantage,
-                hairColor: color.toObject ().hairColor,
-                eyeColor: color.toObject ().eyeColor,
                 wikiEntry,
               },
             })
           }
 
-          handleAreSufficientAPAvailableForDisAdvantage (locale)
+          handleMissingAPForDisAdvantage (l10n)
                                                         (successFn)
                                                         (hero)
                                                         (areSufficientAPAvailableForDisAdvantage)
@@ -275,129 +423,7 @@ export const removeDisAdvantage = (locale: UIMessagesObject) =>
         }
       }
     }
-
-export interface SetDisAdvTierAction {
-  type: ActionTypes.SET_DISADV_TIER
-  payload: {
-    id: string
-    index: number
-    tier: number
-    isBlessed: boolean
-    isMagical: boolean
-    isDisadvantage: boolean
-    wikiEntry: Record<Advantage> | Record<Disadvantage>
   }
-}
-
-/**
- * Change the current level of an advantage or disadvantage.
- */
-export const setDisAdvantageLevel = (locale: UIMessagesObject) =>
-  (id: string) => (index: number) => (level: number): AsyncAction =>
-    (dispatch, getState) => {
-      const state = getState ()
-
-      const maybeHero = getCurrentHeroPresent (state)
-
-      console.log (id, index, level)
-
-      if (Maybe.isJust (maybeHero)) {
-        const hero = Maybe.fromJust (maybeHero)
-
-        const maybeWikiEntry =
-          getWikiEntry<Record<Advantage> | Record<Disadvantage>> (getWiki (state)) (id)
-
-        const maybeStateEntry =
-          getHeroStateItem<Record<ActivatableDependent>> (id) (hero)
-
-        const maybeActiveObjectWithId = maybeStateEntry
-          .fmap (stateEntry => stateEntry.get ("active"))
-          .bind (active => active.subscript (index))
-          .fmap<Record<ActiveObjectWithId>> (
-            activeObject => activeObject.merge (
-              Record.of ({
-                id,
-                index,
-              })
-            )
-          )
-
-        console.log (hero, maybeWikiEntry, maybeStateEntry, maybeActiveObjectWithId)
-
-        if (Maybe.isJust (maybeWikiEntry) && Maybe.isJust (maybeActiveObjectWithId)) {
-          const wikiEntry = Maybe.fromJust (maybeWikiEntry)
-          const activeObjectWithId = Maybe.fromJust (maybeActiveObjectWithId)
-
-          const wiki = getWiki (state)
-
-          const previousCost = getNameCost (
-            activeObjectWithId,
-            wiki,
-            hero,
-            false,
-            Just (locale)
-          )
-            .fmap (convertPerTierCostToFinalCost (Just (locale)))
-            .fmap (obj => obj.get ("finalCost"))
-
-          const nextCost = getNameCost (
-            activeObjectWithId.insert ("tier") (level),
-            wiki,
-            hero,
-            true,
-            Just (locale)
-          )
-            .fmap (convertPerTierCostToFinalCost (Just (locale)))
-            .fmap (obj => obj.get ("finalCost"))
-
-          const maybeCost = Maybe.liftM2 (R.subtract) (nextCost) (previousCost)
-
-          console.log (previousCost, nextCost, maybeCost)
-
-          if (Maybe.isJust (maybeCost)) {
-            const cost = Maybe.fromJust (maybeCost)
-
-            const isDisadvantage =
-              (wikiEntry.get ("category") as ActivatableCategory) === Categories.DISADVANTAGES
-
-            const entryType = isMagicalOrBlessed (wikiEntry)
-
-            const areSufficientAPAvailableForDisAdvantage =
-              getAreSufficientAPAvailableForDisAdvantage (getIsInCharacterCreation (state))
-                                                         (isDisadvantage)
-                                                         (entryType)
-                                                         (hero)
-                                                         (getAdventurePointsObject (
-                                                           state,
-                                                           { locale })
-                                                         )
-                                                         (cost)
-
-            const successFn = () => {
-              dispatch<SetDisAdvTierAction> ({
-                type: ActionTypes.SET_DISADV_TIER,
-                payload: {
-                  id,
-                  tier: level,
-                  index,
-                  ...entryType,
-                  isDisadvantage,
-                  wikiEntry,
-                },
-              })
-            }
-
-            handleAreSufficientAPAvailableForDisAdvantage (locale)
-                                                          (successFn)
-                                                          (hero)
-                                                          (areSufficientAPAvailableForDisAdvantage)
-                                                          (entryType)
-                                                          (isDisadvantage)
-                                                          (dispatch)
-          }
-        }
-      }
-    }
 
 export interface SwitchDisAdvRatingVisibilityAction {
   type: ActionTypes.SWITCH_DISADV_RATING_VISIBILITY
@@ -410,7 +436,7 @@ export const switchRatingVisibility = (): SwitchDisAdvRatingVisibilityAction => 
 export interface SetActiveAdvantagesFilterTextAction {
   type: ActionTypes.SET_ADVANTAGES_FILTER_TEXT
   payload: {
-    filterText: string
+    filterText: string;
   }
 }
 
@@ -425,7 +451,7 @@ export const setActiveAdvantagesFilterText =
 export interface SetInactiveAdvantagesFilterTextAction {
   type: ActionTypes.SET_INACTIVE_ADVANTAGES_FILTER_TEXT
   payload: {
-    filterText: string
+    filterText: string;
   }
 }
 
@@ -440,7 +466,7 @@ export const setInactiveAdvantagesFilterText =
 export interface SetActiveDisadvantagesFilterTextAction {
   type: ActionTypes.SET_DISADVANTAGES_FILTER_TEXT
   payload: {
-    filterText: string
+    filterText: string;
   }
 }
 
@@ -455,7 +481,7 @@ export const setActiveDisadvantagesFilterText =
 export interface SetInactiveDisadvantagesFilterTextAction {
   type: ActionTypes.SET_INACTIVE_DISADVANTAGES_FILTER_TEXT
   payload: {
-    filterText: string
+    filterText: string;
   }
 }
 

@@ -113,6 +113,7 @@ export const undo =
 
     undoHandler.default = L.default
     undoHandler.A = L.A
+    undoHandler.A_ = L.A_
     undoHandler.L = makeLenses (L)
 
     return undoHandler

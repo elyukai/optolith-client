@@ -3,44 +3,44 @@ import { Just, Nothing } from "../../Data/Maybe";
 import { L10nRecord } from "../Models/Wiki/L10n";
 import { getIsHeroSection } from "../Selectors/uilocationSelectors";
 import { isDialogOpen } from "../Utilities/SubwindowsUtils";
-import { AsyncAction } from "./Actions";
+import { ReduxAction } from "./Actions";
 import { saveHero } from "./HerolistActions";
 import { redo, undo } from "./HistoryActions";
 import { requestClose } from "./IOActions";
 import { setTab } from "./LocationActions";
 import { openSettings } from "./SubwindowsActions";
 
-export const undoAccelerator = (): AsyncAction => (dispatch, getState) => {
+export const undoAccelerator = (): ReduxAction => (dispatch, getState) => {
   if (!isDialogOpen () && getIsHeroSection (getState ())) {
     dispatch (undo ())
   }
 }
 
-export const redoAccelerator = (): AsyncAction => (dispatch, getState) => {
+export const redoAccelerator = (): ReduxAction => (dispatch, getState) => {
   if (!isDialogOpen () && getIsHeroSection (getState ())) {
     dispatch (redo ())
   }
 }
 
-export const saveHeroAccelerator = (l10n: L10nRecord): AsyncAction =>
+export const saveHeroAccelerator = (l10n: L10nRecord): ReduxAction =>
   (dispatch, getState) => {
     if (!isDialogOpen () && getIsHeroSection (getState ())) {
       dispatch (saveHero (l10n) (Nothing))
     }
   }
 
-export const backAccelerator = (): AsyncAction => (dispatch, getState) => {
+export const backAccelerator = (): ReduxAction => (dispatch, getState) => {
   if (!isDialogOpen () && getIsHeroSection (getState ())) {
     dispatch (setTab ("herolist"))
   }
 }
 
-export const openSettingsAccelerator = (): AsyncAction => dispatch => {
+export const openSettingsAccelerator = (): ReduxAction => dispatch => {
   if (!isDialogOpen ()) {
     dispatch (openSettings ())
   }
 }
 
-export const quitAccelerator: AsyncAction = dispatch => {
+export const quitAccelerator: ReduxAction = dispatch => {
   dispatch (requestClose (Just (remote.app.quit)))
 }

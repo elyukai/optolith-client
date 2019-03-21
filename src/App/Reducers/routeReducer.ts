@@ -12,27 +12,27 @@ type Action = SetTabAction
             | SetSelectionsAction
             | SwitchEnableEditingHeroAfterCreationPhaseAction
 
-export const initialTab: TabId = "herolist"
+export const RouteDefault: TabId = "herolist"
 
 export const routeReducer =
-(action: Action): ident<TabId> => {
-  switch (action.type) {
-    case ActionTypes.SET_TAB:
-      return cnst (action.payload.tab)
+  (action: Action): ident<TabId> => {
+    switch (action.type) {
+      case ActionTypes.SET_TAB:
+        return cnst (action.payload.tab)
 
-    case ActionTypes.CREATE_HERO:
-      return cnst ("races")
+      case ActionTypes.CREATE_HERO:
+        return cnst ("races")
 
-    case ActionTypes.LOAD_HERO:
-      return cnst ("profile")
+      case ActionTypes.LOAD_HERO:
+        return cnst ("profile")
 
-    case ActionTypes.ASSIGN_RCP_OPTIONS:
-      return cnst ("attributes")
+      case ActionTypes.ASSIGN_RCP_OPTIONS:
+        return cnst ("attributes")
 
-    case ActionTypes.SWITCH_ENABLE_EDITING_HERO_AFTER_CREATION_PHASE:
-      return x => x === "advantages" || x === "disadvantages" ? "profile" : x
+      case ActionTypes.SWITCH_ENABLE_EDITING_HERO_AFTER_CREATION_PHASE:
+        return x => x === "advantages" || x === "disadvantages" ? "profile" : x
 
-    default:
-      return ident
+      default:
+        return ident
+    }
   }
-}

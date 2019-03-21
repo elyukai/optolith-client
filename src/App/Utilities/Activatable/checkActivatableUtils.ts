@@ -1,4 +1,5 @@
 import { any } from "../../../Data/List";
+import { Pair } from "../../../Data/Pair";
 import { member, Record } from "../../../Data/Record";
 import { ActiveActivatable } from "../../Models/View/ActiveActivatable";
 import { InactiveActivatable } from "../../Models/View/InactiveActivatable";
@@ -18,17 +19,18 @@ const getMagicalOrBlessedFilter =
         && id (e) === advantageId
         && active (e)
 
-export const isMagicalOrBlessed =
+/**
+ * Checks if the entry is blessed (`fst`; prerequisites contain `Spellcaster`)
+ * or magical (`snd`; prerequisites contain `Blessed`).
+ */
+export const isBlessedOrMagical =
   (obj: Activatable) => {
     const firstTier = getFirstLevelPrerequisites (prerequisites (obj))
 
     const isBlessed = any (getMagicalOrBlessedFilter ("ADV_12")) (firstTier)
     const isMagical = any (getMagicalOrBlessedFilter ("ADV_50")) (firstTier)
 
-    return {
-      isBlessed,
-      isMagical,
-    }
+    return Pair (isBlessed, isMagical)
   }
 
 type ViewActivatable = Record<ActiveActivatable> | Record<InactiveActivatable>

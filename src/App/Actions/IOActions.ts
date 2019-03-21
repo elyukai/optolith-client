@@ -18,14 +18,14 @@ import { isBase64Image } from "../Utilities/RegexUtils";
 import { UndoState } from "../Utilities/undo";
 import { convertHeroesForSave, convertHeroForSave } from "../utils/raw/convertHeroForSave";
 import { Raw, RawConfig, RawHerolist, RawLocale, RawTables } from "../Utils/Raw/RawData";
-import { AsyncAction } from "./Actions";
+import { ReduxAction } from "./Actions";
 import { addAlert } from "./AlertActions";
 
 const getSaveDataPath = (): string => remote.app.getPath ("userData")
 
 const getInstalledResourcesPath = (): string => remote.app.getAppPath ()
 
-const loadDataTables = (): AsyncAction<Promise<Maybe<RawTables>>> =>
+const loadDataTables = (): ReduxAction<Promise<Maybe<RawTables>>> =>
   async dispatch => {
     const root = getInstalledResourcesPath ()
     try {
@@ -69,7 +69,7 @@ const loadHeroes = async (): Promise<Maybe<RawHerolist>> => {
   }
 }
 
-const loadLocales = (): AsyncAction<Promise<Maybe<StringKeyObject<RawLocale>>>> =>
+const loadLocales = (): ReduxAction<Promise<Maybe<StringKeyObject<RawLocale>>>> =>
   async dispatch => {
     const root = getInstalledResourcesPath ()
     try {
@@ -105,7 +105,7 @@ export interface ReceiveInitialDataAction {
   payload: ReceiveInitialDataActionPayload
 }
 
-export const requestInitialData = (): AsyncAction<Promise<void>> => async dispatch => {
+export const requestInitialData = (): ReduxAction<Promise<void>> => async dispatch => {
   const data = await dispatch (getInitialData ())
 
   if (data) {
@@ -115,7 +115,7 @@ export const requestInitialData = (): AsyncAction<Promise<void>> => async dispat
   return
 }
 
-export const getInitialData = (): AsyncAction<Promise<Maybe<Raw>>> => async dispatch => {
+export const getInitialData = (): ReduxAction<Promise<Maybe<Raw>>> => async dispatch => {
   const tables = await dispatch (loadDataTables ())
   const config = await loadConfig ()
   const heroes = await loadHeroes ()
@@ -141,7 +141,7 @@ export const receiveInitialData = (data: Raw): ReceiveInitialDataAction => ({
   },
 })
 
-export const requestConfigSave = (locale: UIMessagesObject): AsyncAction<Promise<boolean>> =>
+export const requestConfigSave = (locale: UIMessagesObject): ReduxAction<Promise<boolean>> =>
   async (dispatch, getState) => {
     const state = getState ()
 
@@ -184,7 +184,7 @@ export const requestConfigSave = (locale: UIMessagesObject): AsyncAction<Promise
     }
   }
 
-export const requestAllHeroesSave = (locale: UIMessagesObject): AsyncAction<Promise<boolean>> =>
+export const requestAllHeroesSave = (locale: UIMessagesObject): ReduxAction<Promise<boolean>> =>
   async (dispatch, getState) => {
     const state = getState ()
 
@@ -218,7 +218,7 @@ export const requestAllHeroesSave = (locale: UIMessagesObject): AsyncAction<Prom
     }
   }
 
-export const requestSaveAll = (locale: UIMessagesObject): AsyncAction<Promise<boolean>> =>
+export const requestSaveAll = (locale: UIMessagesObject): ReduxAction<Promise<boolean>> =>
   async dispatch => {
     const configSavedDone = await dispatch (requestConfigSave (locale))
     const heroesSavedDone = await dispatch (requestAllHeroesSave (locale))
@@ -227,7 +227,7 @@ export const requestSaveAll = (locale: UIMessagesObject): AsyncAction<Promise<bo
   }
 
 export const requestHeroSave = (locale: UIMessagesObject) =>
-  (maybeId: Maybe<string>): AsyncAction<Promise<string | undefined>> =>
+  (maybeId: Maybe<string>): ReduxAction<Promise<string | undefined>> =>
     async (dispatch, getState) => {
       const state = getState ()
 
@@ -279,7 +279,7 @@ export const requestHeroSave = (locale: UIMessagesObject) =>
     }
 
 export const requestHeroDeletion = (locale: UIMessagesObject) =>
-  (id: string): AsyncAction<Promise<boolean>> =>
+  (id: string): ReduxAction<Promise<boolean>> =>
     async dispatch => {
       const dataPath = getSaveDataPath ()
       const path = join (dataPath, "heroes.json")
@@ -320,7 +320,7 @@ export const requestHeroDeletion = (locale: UIMessagesObject) =>
       }
     }
 
-export const requestHeroExport = (locale: UIMessagesObject) => (id: string): AsyncAction =>
+export const requestHeroExport = (locale: UIMessagesObject) => (id: string): ReduxAction =>
   async (dispatch, getState) => {
     const state = getState ()
 
@@ -404,7 +404,7 @@ export interface ReceiveImportedHeroAction {
 }
 
 export const loadImportedHero =
-  (locale: UIMessagesObject): AsyncAction<Promise<RawHero | undefined>> =>
+  (locale: UIMessagesObject): ReduxAction<Promise<RawHero | undefined>> =>
     async dispatch => {
       try {
         const fileNames = await showOpenDialog ({
@@ -439,7 +439,7 @@ export const loadImportedHero =
       return
     }
 
-export const requestHeroImport = (locale: UIMessagesObject): AsyncAction => async dispatch => {
+export const requestHeroImport = (locale: UIMessagesObject): ReduxAction => async dispatch => {
   const data = await dispatch (loadImportedHero (locale))
 
   if (data) {
@@ -476,7 +476,7 @@ const isAnyHeroUnsaved = (state: AppState) => state.herolist.get ("heroes")
   )
 
 const close = (locale: UIMessagesObject) => (unsaved: boolean) =>
-  (f: Maybe<() => void>): AsyncAction =>
+  (f: Maybe<() => void>): ReduxAction =>
     async dispatch => {
       const allSaved = await dispatch (requestSaveAll (locale))
 
@@ -494,7 +494,7 @@ const close = (locale: UIMessagesObject) => (unsaved: boolean) =>
       }
     }
 
-export const requestClose = (optionalCall: Maybe<() => void>): AsyncAction =>
+export const requestClose = (optionalCall: Maybe<() => void>): ReduxAction =>
   (dispatch, getState) => {
     const state = getState ()
     const safeToExit = isAnyHeroUnsaved (state)
@@ -523,7 +523,7 @@ export const requestClose = (optionalCall: Maybe<() => void>): AsyncAction =>
     }
   }
 
-export const requestPrintHeroToPDF = (locale: UIMessagesObject): AsyncAction => async dispatch => {
+export const requestPrintHeroToPDF = (locale: UIMessagesObject): ReduxAction => async dispatch => {
   try {
     const data = await windowPrintToPDF ({
       marginsType: 1,
@@ -574,9 +574,9 @@ export const setUpdateDownloadProgress =
     payload: info,
   })
 
-export const updateAvailable = (locale: UIMessagesObject) => (info: UpdateInfo): AsyncAction =>
+export const updateAvailable = (locale: UIMessagesObject) => (info: UpdateInfo): ReduxAction =>
   async dispatch => {
-    const startDownloadingUpdate: AsyncAction = futureDispatch => {
+    const startDownloadingUpdate: ReduxAction = futureDispatch => {
       futureDispatch (setUpdateDownloadProgress ({
         total: 0,
         delta: 0,
@@ -587,14 +587,16 @@ export const updateAvailable = (locale: UIMessagesObject) => (info: UpdateInfo):
       ipcRenderer.send ("download-update")
     }
 
+    const size = info.files.reduce ((sum, { size: fileSize = 0 }) => sum + fileSize, 0)
+
     // @ts-ignore
     dispatch (addAlert ({
-      message: info.files[0] && info.files[0].size
+      message: size > 0
         ? translate (
           locale,
           "newversionavailable.messagewithsize",
           info.version,
-          bytify (info.files[0].size!, locale.get ("id"))
+          bytify (size, locale.get ("id"))
         )
         : translate (locale, "newversionavailable.message", info.version),
       title: translate (locale, "newversionavailable.title"),
@@ -610,7 +612,7 @@ export const updateAvailable = (locale: UIMessagesObject) => (info: UpdateInfo):
     }))
   }
 
-export const updateNotAvailable = (locale: UIMessagesObject): AsyncAction => async dispatch => {
+export const updateNotAvailable = (locale: UIMessagesObject): ReduxAction => async dispatch => {
   dispatch (addAlert ({
     message: translate (locale, "nonewversionavailable.message"),
     title: translate (locale, "nonewversionavailable.title"),

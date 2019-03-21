@@ -32,6 +32,7 @@ export interface RecordCreator<A extends RecordBase> {
   readonly keys: OrderedSet<string>
   readonly default: Record<A>
   readonly A: Accessors<A>
+  readonly A_: StrictAccessors<A>
 }
 
 const RecordPrototype =
@@ -128,6 +129,7 @@ export const fromDefault =
     creator.default = creator (defaultValues)
 
     creator.A = makeAccessors<A> (keys)
+    creator.A_ = creator.A as StrictAccessors<A>
 
     return Object.freeze (creator)
   }
@@ -317,6 +319,13 @@ export type Accessor<A extends RecordBase, K extends keyof A> =
 
 export type Accessors<A extends RecordBase> = {
   [K in keyof A]: Accessor<A, K>
+}
+
+export type StrictAccessor<A extends RecordBase, K extends keyof A> =
+  (r: Record<A>) => A[K]
+
+export type StrictAccessors<A extends RecordBase> = {
+  [K in keyof A]: StrictAccessor<A, K>
 }
 
 export type Lenses<A extends RecordBase> = {

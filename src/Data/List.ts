@@ -1798,7 +1798,7 @@ export const toArray = <A> (xs: List<A>): A[] =>
  * @param x The value to test.
  */
 export const isList =
-  (x: any): x is List<any> =>
+  <A, A1> (x: A | List<A1>): x is List<A1> =>
     typeof x === "object" && x !== null && Object.getPrototypeOf (x) === ListPrototype
 
 /**

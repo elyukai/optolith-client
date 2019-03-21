@@ -41,6 +41,10 @@ const _Pair =
       }
     )
 
+export type PairP1 = <A> (first: A) => <B> (second: B) => Pair<A, B>
+export type PairP1_ = <A, B> (first: A) => (second: B) => Pair<A, B>
+export type PairP2 = <A, B> (first: A, second: B) => Pair<A, B>
+
 interface PairConstructor {
   <A> (first: A): <B> (second: B) => Pair<A, B>
   <A, B> (first: A, second: B): Pair<A, B>

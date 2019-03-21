@@ -1,314 +1,406 @@
-import { Alert, Hero } from '../App/Models/Hero/heroTypeHelpers';
-import { AppState } from '../App/Reducers/appReducer';
-import { createMaybeSelector } from '../App/Utils/createMaybeSelector';
-import { UIMessages } from '../App/Utils/I18n';
-import { UndoState } from '../App/Utils/undo';
-import { Maybe, OrderedMap, Record } from '../utils/dataUtils';
+import { fmap } from "../../Data/Functor";
+import { bind, bindF, listToMaybe } from "../../Data/Maybe";
+import { lookupF } from "../../Data/OrderedMap";
+import { Record } from "../../Data/Record";
+import { Belongings } from "../Models/Hero/Belongings";
+import { Energies } from "../Models/Hero/Energies";
+import { HeroModel } from "../Models/Hero/HeroModel";
+import { PersonalData } from "../Models/Hero/PersonalData";
+import { Rules } from "../Models/Hero/Rules";
+import { L10nRecord } from "../Models/Wiki/L10n";
+import { WikiModel } from "../Models/Wiki/WikiModel";
+import { AppState } from "../Reducers/appReducer";
+import { FiltersState } from "../Reducers/filtersReducer";
+import { HeroesState } from "../Reducers/herolistReducer";
+import { heroReducer } from "../Reducers/heroReducer";
+import { LocaleState } from "../Reducers/localeReducer";
+import { SubWindowsState } from "../Reducers/subwindowsReducer";
+import { uiReducer } from "../Reducers/uiReducer";
+import { UIWikiState } from "../Reducers/wikiUIReducer";
+import { createMaybeSelector } from "../Utilities/createMaybeSelector";
+import { pipe } from "../Utilities/pipe";
 
-export const getCurrentTab = (state: AppState) => state.ui.location.tab;
+const App = AppState.A_
+
+const UI = uiReducer.A_
+
+export const getCurrentTab = pipe (App.ui, UI.location)
 
 
-export const getLocaleMessages = createMaybeSelector (
-  (state: AppState) => state.locale.messages,
-  messages => Maybe.fromNullable (messages).fmap (Record.of)
-);
+export const getLocaleMessages = pipe (App.l10n, LocaleState.A.messages)
+export const getLocaleId = pipe (App.l10n, LocaleState.A.id)
+export const getLocaleType = pipe (App.l10n, LocaleState.A.type)
 
-export const getLocaleAsProp = (_: AppState, props: { locale: Record<UIMessages> }) => props.locale;
-export const getLocaleId = createMaybeSelector ((state: AppState) => state.locale.id, Maybe.fromNullable);
-export const getLocaleType = (state: AppState) => state.locale.type;
+export const getLocaleAsProp =
+  (_: Record<AppState>, props: { l10n: L10nRecord }) => props.l10n
 
-
-export const getCurrentHeroId = (state: AppState) => state.herolist.lookup ('currentId');
-export const getHeroes = (state: AppState) => state.herolist.get ('heroes');
-export const getUsers = (state: AppState) => state.herolist.get ('users');
+export const getCurrentHeroId = pipe (App.herolist, HeroesState.A.currentId)
+export const getHeroes = pipe (App.herolist, HeroesState.A.heroes)
+export const getUsers = pipe (App.herolist, HeroesState.A.users)
 
 
 export const getCurrentHero = createMaybeSelector (
   getCurrentHeroId,
   getHeroes,
-  (maybeId, heroes) => maybeId.bind (id => OrderedMap.lookup<string, UndoState<Hero>> (id) (heroes))
-);
+  (mid, heroes) => bind (mid) (lookupF (heroes))
+)
 
-export const getCurrentHeroPresent = createMaybeSelector (
-  getCurrentHero,
-  currentHero => currentHero.fmap (just => just.present)
-);
 
-export const getCurrentHeroPast = createMaybeSelector (
-  getCurrentHero,
-  currentHero => currentHero.fmap (just => just.past)
-);
+export const getCurrentHeroPresent =
+  createMaybeSelector (getCurrentHero, fmap (heroReducer.A.present))
 
-export const getCurrentHeroFuture = createMaybeSelector (
-  getCurrentHero,
-  currentHero => currentHero.fmap (just => just.future)
-);
+export const getCurrentHeroPast =
+  createMaybeSelector (getCurrentHero, fmap (heroReducer.A.past))
 
+export const getCurrentHeroFuture =
+  createMaybeSelector (getCurrentHero, fmap (heroReducer.A.future))
 
-export const getTotalAdventurePoints = (state: AppState) =>
-  getCurrentHero (state).fmap (just => just.present.get ('adventurePointsTotal'));
 
+const Hero = HeroModel.A_
 
-export const getAdvantages = (state: AppState) =>
-  getCurrentHero (state).fmap (just => just.present.get ('advantages'));
+export const getTotalAdventurePoints =
+  pipe (getCurrentHeroPresent, fmap (Hero.adventurePointsTotal))
 
-export const getAttributes = (state: AppState) =>
-  getCurrentHero (state).fmap (just => just.present.get ('attributes'));
 
-export const getCurrentAttributeAdjustmentId = (state: AppState) =>
-  getCurrentHero (state).fmap (just => just.present.get ('attributeAdjustmentSelected'));
+export const getAdvantages =
+  pipe (getCurrentHeroPresent, fmap (Hero.advantages))
 
-export const getBlessings = (state: AppState) =>
-  getCurrentHero (state).fmap (just => just.present.get ('blessings'));
+export const getAttributes =
+  pipe (getCurrentHeroPresent, fmap (Hero.attributes))
 
-export const getCantrips = (state: AppState) =>
-  getCurrentHero (state).fmap (just => just.present.get ('cantrips'));
+export const getCurrentAttributeAdjustmentId =
+  pipe (getCurrentHeroPresent, fmap (Hero.attributeAdjustmentSelected))
 
-export const getCombatTechniques = (state: AppState) =>
-  getCurrentHero (state).fmap (just => just.present.get ('combatTechniques'));
+export const getBlessings =
+  pipe (getCurrentHeroPresent, fmap (Hero.blessings))
 
-export const getDisadvantages = (state: AppState) =>
-  getCurrentHero (state).fmap (just => just.present.get ('disadvantages'));
+export const getCantrips =
+  pipe (getCurrentHeroPresent, fmap (Hero.cantrips))
 
-export const getLiturgicalChants = (state: AppState) =>
-  getCurrentHero (state).fmap (just => just.present.get ('liturgicalChants'));
+export const getCombatTechniques =
+  pipe (getCurrentHeroPresent, fmap (Hero.combatTechniques))
 
-export const getSkills = (state: AppState) =>
-  getCurrentHero (state).fmap (just => just.present.get ('skills'));
+export const getDisadvantages =
+  pipe (getCurrentHeroPresent, fmap (Hero.disadvantages))
 
-export const getSpecialAbilities = (state: AppState) =>
-  getCurrentHero (state).fmap (just => just.present.get ('specialAbilities'));
+export const getLiturgicalChants =
+  pipe (getCurrentHeroPresent, fmap (Hero.liturgicalChants))
 
-export const getSpells = (state: AppState) =>
-  getCurrentHero (state).fmap (just => just.present.get ('spells'));
+export const getSkills =
+  pipe (getCurrentHeroPresent, fmap (Hero.skills))
 
+export const getSpecialAbilities =
+  pipe (getCurrentHeroPresent, fmap (Hero.specialAbilities))
 
-export const getBlessedStyleDependencies = (state: AppState) =>
-  getCurrentHero (state).fmap (just => just.present.get ('blessedStyleDependencies'));
+export const getSpells =
+  pipe (getCurrentHeroPresent, fmap (Hero.spells))
 
-export const getCombatStyleDependencies = (state: AppState) =>
-  getCurrentHero (state).fmap (just => just.present.get ('combatStyleDependencies'));
 
-export const getMagicalStyleDependencies = (state: AppState) =>
-  getCurrentHero (state).fmap (just => just.present.get ('magicalStyleDependencies'));
+export const getBlessedStyleDependencies =
+  pipe (getCurrentHeroPresent, fmap (Hero.blessedStyleDependencies))
 
+export const getCombatStyleDependencies =
+  pipe (getCurrentHeroPresent, fmap (Hero.combatStyleDependencies))
 
-export const getCurrentHeroName = (state: AppState) =>
-  getCurrentHero (state).fmap (just => just.present.get ('name'));
+export const getMagicalStyleDependencies =
+  pipe (getCurrentHeroPresent, fmap (Hero.magicalStyleDependencies))
 
 
-export const getProfile = (state: AppState) =>
-  getCurrentHero (state).fmap (just => just.present.get ('personalData'));
+export const getCurrentHeroName =
+  pipe (getCurrentHeroPresent, fmap (Hero.name))
 
-export const getCultureAreaKnowledge = (state: AppState) =>
-  getCurrentHero (state)
-    .bind (just => just.present.get ('personalData').lookup ('cultureAreaKnowledge'));
 
-export const getSex = (state: AppState) =>
-  getCurrentHero (state).fmap (just => just.present.get ('sex'));
+export const getProfile =
+  pipe (getCurrentHeroPresent, fmap (Hero.personalData))
 
-export const getSize = (state: AppState) =>
-  getCurrentHero (state).bind (just => just.present.get ('personalData').lookup ('size'));
+const Pers = PersonalData.A_
 
-export const getWeight = (state: AppState) =>
-  getCurrentHero (state).bind (just => just.present.get ('personalData').lookup ('weight'));
+export const getCultureAreaKnowledge =
+  pipe (getCurrentHeroPresent, bindF (pipe (Hero.personalData, Pers.cultureAreaKnowledge)))
 
-export const getAvatar = (state: AppState) =>
-  getCurrentHero (state).bind (just => just.present.lookup ('avatar'));
+export const getSex =
+  pipe (getCurrentHeroPresent, fmap (Hero.sex))
 
+export const getSize =
+  pipe (getCurrentHeroPresent, bindF (pipe (Hero.personalData, Pers.size)))
 
-export const getPact = (state: AppState) =>
-  getCurrentHero (state).bind (just => just.present.lookup ('pact'));
+export const getWeight =
+  pipe (getCurrentHeroPresent, bindF (pipe (Hero.personalData, Pers.weight)))
 
+export const getAvatar =
+  pipe (getCurrentHeroPresent, bindF (Hero.avatar))
 
-export const getRules = (state: AppState) =>
-  getCurrentHero (state).fmap (just => just.present.get ('rules'));
 
-export const getAttributeValueLimit = (state: AppState) =>
-  getCurrentHero (state).fmap (just => just.present.get ('rules').get ('attributeValueLimit'));
+export const getPact =
+  pipe (getCurrentHeroPresent, bindF (Hero.pact))
 
-export const getHigherParadeValues = (state: AppState) =>
-  getCurrentHero (state).fmap (just => just.present.get ('rules').get ('higherParadeValues'));
 
-export const getAreAllRuleBooksEnabled = (state: AppState) =>
-  getCurrentHero (state).fmap (just => just.present.get ('rules').get ('enableAllRuleBooks'));
+export const getRules =
+  pipe (getCurrentHeroPresent, fmap (Hero.rules))
 
-export const getEnabledRuleBooks = (state: AppState) =>
-  getCurrentHero (state).fmap (just => just.present.get ('rules').get ('enabledRuleBooks'));
+const Rul = Rules.A_
 
+export const getAttributeValueLimit =
+  pipe (getCurrentHeroPresent, fmap (pipe (Hero.rules, Rul.attributeValueLimit)))
 
-export const getCurrentRaceId = (state: AppState) =>
-  getCurrentHero (state).bind (just => just.present.lookup ('race'));
+export const getHigherParadeValues =
+  pipe (getCurrentHeroPresent, fmap (pipe (Hero.rules, Rul.higherParadeValues)))
 
-export const getCurrentRaceVariantId = (state: AppState) =>
-  getCurrentHero (state).bind (just => just.present.lookup ('raceVariant'));
+export const getAreAllRuleBooksEnabled =
+  pipe (getCurrentHeroPresent, fmap (pipe (Hero.rules, Rul.enableAllRuleBooks)))
 
-export const getCurrentCultureId = (state: AppState) =>
-  getCurrentHero (state).bind (just => just.present.lookup ('culture'));
+export const getEnabledRuleBooks =
+  pipe (getCurrentHeroPresent, fmap (pipe (Hero.rules, Rul.enabledRuleBooks)))
 
-export const getCurrentProfessionId = (state: AppState) =>
-  getCurrentHero (state).bind (just => just.present.lookup ('profession'));
 
-export const getCustomProfessionName = (state: AppState) =>
-  getCurrentHero (state).bind (just => just.present.lookup ('professionName'));
+export const getCurrentRaceId =
+  pipe (getCurrentHeroPresent, bindF (Hero.race))
 
-export const getCurrentProfessionVariantId = (state: AppState) =>
-  getCurrentHero (state).bind (just => just.present.lookup ('professionVariant'));
+export const getCurrentRaceVariantId =
+  pipe (getCurrentHeroPresent, bindF (Hero.raceVariant))
 
+export const getCurrentCultureId =
+  pipe (getCurrentHeroPresent, bindF (Hero.culture))
 
-export const getEnergies = (state: AppState) =>
-  getCurrentHero (state).fmap (just => just.present.get ('energies'));
+export const getCurrentProfessionId =
+  pipe (getCurrentHeroPresent, bindF (Hero.profession))
 
-export const getAddedLifePoints = (state: AppState) =>
-  getCurrentHero (state).fmap (just => just.present.get ('energies').get ('addedLifePoints'));
+export const getCustomProfessionName =
+  pipe (getCurrentHeroPresent, bindF (Hero.professionName))
 
-export const getAddedArcaneEnergyPoints = (state: AppState) =>
-  getCurrentHero (state)
-    .fmap (just => just.present.get ('energies').get ('addedArcaneEnergyPoints'));
+export const getCurrentProfessionVariantId =
+  pipe (getCurrentHeroPresent, bindF (Hero.professionVariant))
 
-export const getAddedKarmaPoints = (state: AppState) =>
-  getCurrentHero (state).fmap (just => just.present.get ('energies').get ('addedKarmaPoints'));
 
-export const getPermanentLifePoints = (state: AppState) =>
-  getCurrentHero (state).fmap (just => just.present.get ('energies').get ('permanentLifePoints'));
+export const getEnergies =
+  pipe (getCurrentHeroPresent, fmap (Hero.energies))
 
-export const getPermanentArcaneEnergyPoints = (state: AppState) =>
-  getCurrentHero (state)
-    .fmap (just => just.present.get ('energies').get ('permanentArcaneEnergyPoints'));
+const Ener = Energies.A_
 
-export const getPermanentKarmaPoints = (state: AppState) =>
-  getCurrentHero (state).fmap (just => just.present.get ('energies').get ('permanentKarmaPoints'));
+export const getAddedLifePoints =
+  pipe (getCurrentHeroPresent, fmap (pipe (Hero.energies, Ener.addedLifePoints)))
 
+export const getAddedArcaneEnergyPoints =
+  pipe (getCurrentHeroPresent, fmap (pipe (Hero.energies, Ener.addedArcaneEnergyPoints)))
 
-export const getPhase = (state: AppState) =>
-  getCurrentHero (state).fmap (just => just.present.get ('phase'));
+export const getAddedKarmaPoints =
+  pipe (getCurrentHeroPresent, fmap (pipe (Hero.energies, Ener.addedKarmaPoints)))
 
+export const getPermanentLifePoints =
+  pipe (getCurrentHeroPresent, fmap (pipe (Hero.energies, Ener.permanentLifePoints)))
 
-export const getExperienceLevelStartId = (state: AppState) =>
-  getCurrentHero (state).fmap (just => just.present.get ('experienceLevel'));
+export const getPermanentArcaneEnergyPoints =
+  pipe (getCurrentHeroPresent, fmap (pipe (Hero.energies, Ener.permanentArcaneEnergyPoints)))
 
-
-export const getEquipmentState = (state: AppState) =>
-  getCurrentHero (state).fmap (just => just.present.get ('belongings'));
-
-export const getItemsState = (state: AppState) =>
-  getCurrentHero (state).bind (just => just.present.get ('belongings').lookup ('items'));
+export const getPermanentKarmaPoints =
+  pipe (getCurrentHeroPresent, fmap (pipe (Hero.energies, Ener.permanentKarmaPoints)))
 
-export const getArmorZonesState = (state: AppState) =>
-  getCurrentHero (state).bind (just => just.present.get ('belongings').lookup ('armorZones'));
-
-export const getPurse = (state: AppState) =>
-  getCurrentHero (state).bind (just => just.present.get ('belongings').lookup ('purse'));
-
-export const getItemEditorInstance = (state: AppState) =>
-  getCurrentHero (state).bind (just => just.present.get ('belongings').lookup ('itemInEditor'));
-
-export const getIsItemCreation = (state: AppState) =>
-  getCurrentHero (state).fmap (just => just.present.get ('belongings').get ('isInItemCreation'));
-
-export const getArmorZonesEditorInstance = (state: AppState) =>
-  getCurrentHero (state)
-    .bind (just => just.present.get ('belongings').lookup ('zoneArmorInEditor'));
-
-export const getIsInHitZoneArmorCreation = (state: AppState) =>
-  getCurrentHero (state)
-    .fmap (just => just.present.get ('belongings').get ('isInZoneArmorCreation'));
-
-export const getPets = (state: AppState) =>
-  getCurrentHero (state) .fmap (just => just .present .get ('pets'));
-
-export const getPetEditorInstance = (state: AppState) =>
-  getCurrentHero (state) .bind (just => just .present .lookup ('petInEditor'));
-
-export const getIsInPetCreation = (state: AppState) =>
-  getCurrentHero (state) .fmap (just => just .present .get ('isInPetCreation'));
-
-
-export const getAlerts = (state: AppState) => state.ui.alerts;
-export const getCurrentAlert = (state: AppState): Maybe<Alert> =>
-  Maybe.listToMaybe (state.ui.alerts);
-export const getUpdateDownloadProgress = (state: AppState) =>
-  Maybe.fromNullable (state.ui.subwindows.updateDownloadProgress);
-export const getAddPermanentEnergy = (state: AppState) =>
-  Maybe.fromNullable (state.ui.subwindows.addPermanentEnergy);
-export const getEditPermanentEnergy = (state: AppState) =>
-  Maybe.fromNullable (state.ui.subwindows.editPermanentEnergy);
-export const getIsAddAdventurePointsOpen = (state: AppState) =>
-  state.ui.subwindows.isAddAdventurePointsOpen;
-export const getIsCharacterCreatorOpen = (state: AppState) =>
-  state.ui.subwindows.isCharacterCreatorOpen;
-export const getIsSettingsOpen = (state: AppState) => state.ui.subwindows.isSettingsOpen;
-export const getIsEditCharacterAvatarOpen = (state: AppState) =>
-  state.ui.subwindows.isEditCharacterAvatarOpen;
-export const getIsEditPetAvatarOpen = (state: AppState) => state.ui.subwindows.isEditPetAvatarOpen;
-
-
-export const getAdvantagesFilterText = (state: AppState) => state.ui.filters.advantagesFilterText;
-export const getCombatTechniquesFilterText = (state: AppState) =>
-  state.ui.filters.combatTechniquesFilterText;
-export const getCulturesFilterText = (state: AppState) => state.ui.filters.culturesFilterText;
-export const getDisadvantagesFilterText = (state: AppState) =>
-  state.ui.filters.disadvantagesFilterText;
-export const getEquipmentFilterText = (state: AppState) => state.ui.filters.equipmentFilterText;
-export const getHerolistFilterText = (state: AppState) => state.ui.filters.herolistFilterText;
-export const getInactiveAdvantagesFilterText = (state: AppState) =>
-  state.ui.filters.inactiveAdvantagesFilterText;
-export const getInactiveDisadvantagesFilterText = (state: AppState) =>
-  state.ui.filters.inactiveDisadvantagesFilterText;
-export const getInactiveLiturgicalChantsFilterText = (state: AppState) =>
-  state.ui.filters.inactiveLiturgicalChantsFilterText;
-export const getInactiveSpecialAbilitiesFilterText = (state: AppState) =>
-  state.ui.filters.inactiveSpecialAbilitiesFilterText;
-export const getInactiveSpellsFilterText = (state: AppState) =>
-  state.ui.filters.inactiveSpellsFilterText;
-export const getItemTemplatesFilterText = (state: AppState) =>
-  state.ui.filters.itemTemplatesFilterText;
-export const getLiturgicalChantsFilterText = (state: AppState) =>
-  state.ui.filters.liturgicalChantsFilterText;
-export const getProfessionsFilterText = (state: AppState) => state.ui.filters.professionsFilterText;
-export const getRacesFilterText = (state: AppState) => state.ui.filters.racesFilterText;
-export const getSkillsFilterText = (state: AppState) => state.ui.filters.skillsFilterText;
-export const getSpecialAbilitiesFilterText = (state: AppState) =>
-  state.ui.filters.specialAbilitiesFilterText;
-export const getSpellsFilterText = (state: AppState) => state.ui.filters.spellsFilterText;
-export const getZoneArmorFilterText = (state: AppState) => state.ui.filters.zoneArmorFilterText;
-
-
-export const getWikiFilterText = (state: AppState) => state.ui.wiki.get ('filter');
-export const getWikiFilterAll = (state: AppState) => state.ui.wiki.get ('filterAll');
-export const getWikiMainCategory = (state: AppState) => state.ui.wiki.lookup ('category1');
-export const getWikiCombatTechniquesGroup = (state: AppState) =>
-  state.ui.wiki.lookup ('combatTechniquesGroup');
-export const getWikiItemTemplatesGroup = (state: AppState) =>
-  state.ui.wiki.lookup ('itemTemplatesGroup');
-export const getWikiLiturgicalChantsGroup =(state: AppState) =>
-  state.ui.wiki.lookup ('liturgicalChantsGroup');
-export const getWikiProfessionsGroup = (state: AppState) =>
-  state.ui.wiki.lookup ('professionsGroup');
-export const getWikiSkillsGroup = (state: AppState) =>
-  state.ui.wiki.lookup ('skillsGroup');
-export const getWikiSpecialAbilitiesGroup = (state: AppState) =>
-  state.ui.wiki.lookup ('specialAbilitiesGroup');
-export const getWikiSpellsGroup = (state: AppState) =>
-  state.ui.wiki.lookup ('spellsGroup');
-
-
-export const getWiki = (state: AppState) => state.wiki;
-export const getWikiAdvantages = (state: AppState) => state.wiki.get ('advantages');
-export const getWikiAttributes = (state: AppState) => state.wiki.get ('attributes');
-export const getWikiBlessings = (state: AppState) => state.wiki.get ('blessings');
-export const getWikiBooks = (state: AppState) => state.wiki.get ('books');
-export const getWikiCantrips = (state: AppState) => state.wiki.get ('cantrips');
-export const getWikiCombatTechniques = (state: AppState) => state.wiki.get ('combatTechniques');
-export const getWikiCultures = (state: AppState) => state.wiki.get ('cultures');
-export const getWikiDisadvantages = (state: AppState) => state.wiki.get ('disadvantages');
-export const getWikiExperienceLevels = (state: AppState) => state.wiki.get ('experienceLevels');
-export const getWikiItemTemplates = (state: AppState) => state.wiki.get ('itemTemplates');
-export const getWikiLiturgicalChants = (state: AppState) => state.wiki.get ('liturgicalChants');
-export const getWikiProfessions = (state: AppState) => state.wiki.get ('professions');
-export const getWikiProfessionVariants = (state: AppState) => state.wiki.get ('professionVariants');
-export const getWikiRaces = (state: AppState) => state.wiki.get ('races');
-export const getWikiRaceVariants = (state: AppState) => state.wiki.get ('raceVariants');
-export const getWikiSkills = (state: AppState) => state.wiki.get ('skills');
-export const getWikiSpecialAbilities = (state: AppState) => state.wiki.get ('specialAbilities');
-export const getWikiSpells = (state: AppState) => state.wiki.get ('spells');
+
+export const getPhase =
+  pipe (getCurrentHeroPresent, fmap (Hero.phase))
+
+
+export const getExperienceLevelStartId =
+  pipe (getCurrentHeroPresent, fmap (Hero.experienceLevel))
+
+
+export const getEquipmentState =
+  pipe (getCurrentHeroPresent, fmap (Hero.belongings))
+
+const Belo = Belongings.A_
+
+export const getItemsState =
+  pipe (getCurrentHeroPresent, fmap (pipe (Hero.belongings, Belo.items)))
+
+export const getArmorZonesState =
+  pipe (getCurrentHeroPresent, fmap (pipe (Hero.belongings, Belo.hitZoneArmors)))
+
+export const getPurse =
+  pipe (getCurrentHeroPresent, fmap (pipe (Hero.belongings, Belo.purse)))
+
+export const getItemEditorInstance =
+  pipe (getCurrentHeroPresent, bindF (pipe (Hero.belongings, Belo.itemInEditor)))
+
+export const getIsItemCreation =
+  pipe (getCurrentHeroPresent, fmap (pipe (Hero.belongings, Belo.isInItemCreation)))
+
+export const getArmorZonesEditorInstance =
+  pipe (getCurrentHeroPresent, bindF (pipe (Hero.belongings, Belo.hitZoneArmorInEditor)))
+
+export const getIsInHitZoneArmorCreation =
+  pipe (getCurrentHeroPresent, fmap (pipe (Hero.belongings, Belo.isInHitZoneArmorCreation)))
+
+export const getPets =
+  pipe (getCurrentHeroPresent, fmap (Hero.pets))
+
+export const getPetEditorInstance =
+  pipe (getCurrentHeroPresent, bindF (Hero.petInEditor))
+
+export const getIsInPetCreation =
+  pipe (getCurrentHeroPresent, fmap (Hero.isInPetCreation))
+
+
+export const getAlerts = pipe (App.ui, UI.alerts)
+
+export const getCurrentAlert = pipe (App.ui, UI.alerts, listToMaybe)
+
+
+const SubW = SubWindowsState.A_
+
+export const getUpdateDownloadProgress =
+  pipe (App.ui, UI.subwindows, SubW.updateDownloadProgress)
+
+export const getAddPermanentEnergy =
+  pipe (App.ui, UI.subwindows, SubW.addPermanentEnergy)
+
+export const getEditPermanentEnergy =
+  pipe (App.ui, UI.subwindows, SubW.editPermanentEnergy)
+
+export const getIsAddAdventurePointsOpen =
+  pipe (App.ui, UI.subwindows, SubW.isAddAdventurePointsOpen)
+
+export const getIsCharacterCreatorOpen =
+  pipe (App.ui, UI.subwindows, SubW.isCharacterCreatorOpen)
+
+export const getIsSettingsOpen =
+  pipe (App.ui, UI.subwindows, SubW.isSettingsOpen)
+
+export const getIsEditCharacterAvatarOpen =
+  pipe (App.ui, UI.subwindows, SubW.isEditCharacterAvatarOpen)
+
+export const getIsEditPetAvatarOpen =
+  pipe (App.ui, UI.subwindows, SubW.isEditPetAvatarOpen)
+
+
+const Filt = FiltersState.A_
+
+export const getAdvantagesFilterText =
+  pipe (App.ui, UI.filters, Filt.advantagesFilterText)
+
+export const getCombatTechniquesFilterText =
+  pipe (App.ui, UI.filters, Filt.combatTechniquesFilterText)
+
+export const getCulturesFilterText =
+  pipe (App.ui, UI.filters, Filt.culturesFilterText)
+
+export const getDisadvantagesFilterText =
+  pipe (App.ui, UI.filters, Filt.disadvantagesFilterText)
+
+export const getEquipmentFilterText =
+  pipe (App.ui, UI.filters, Filt.equipmentFilterText)
+
+export const getHerolistFilterText =
+  pipe (App.ui, UI.filters, Filt.herolistFilterText)
+
+export const getInactiveAdvantagesFilterText =
+  pipe (App.ui, UI.filters, Filt.inactiveAdvantagesFilterText)
+
+export const getInactiveDisadvantagesFilterText =
+  pipe (App.ui, UI.filters, Filt.inactiveDisadvantagesFilterText)
+
+export const getInactiveLiturgicalChantsFilterText =
+  pipe (App.ui, UI.filters, Filt.inactiveLiturgicalChantsFilterText)
+
+export const getInactiveSpecialAbilitiesFilterText =
+  pipe (App.ui, UI.filters, Filt.inactiveSpecialAbilitiesFilterText)
+
+export const getInactiveSpellsFilterText =
+  pipe (App.ui, UI.filters, Filt.inactiveSpellsFilterText)
+
+export const getItemTemplatesFilterText =
+  pipe (App.ui, UI.filters, Filt.itemTemplatesFilterText)
+
+export const getLiturgicalChantsFilterText =
+  pipe (App.ui, UI.filters, Filt.liturgicalChantsFilterText)
+
+export const getProfessionsFilterText =
+  pipe (App.ui, UI.filters, Filt.professionsFilterText)
+
+export const getRacesFilterText =
+  pipe (App.ui, UI.filters, Filt.racesFilterText)
+
+export const getSkillsFilterText =
+  pipe (App.ui, UI.filters, Filt.skillsFilterText)
+
+export const getSpecialAbilitiesFilterText =
+  pipe (App.ui, UI.filters, Filt.specialAbilitiesFilterText)
+
+export const getSpellsFilterText =
+  pipe (App.ui, UI.filters, Filt.spellsFilterText)
+
+export const getZoneArmorFilterText =
+  pipe (App.ui, UI.filters, Filt.hitZoneArmorFilterText)
+
+
+const WikiUI = UIWikiState.A_
+
+export const getWikiFilterText =
+  pipe (App.ui, UI.wiki, WikiUI.filter)
+
+export const getWikiFilterAll =
+  pipe (App.ui, UI.wiki, WikiUI.filterAll)
+
+export const getWikiMainCategory =
+  pipe (App.ui, UI.wiki, WikiUI.category1)
+
+export const getWikiCombatTechniquesGroup =
+  pipe (App.ui, UI.wiki, WikiUI.combatTechniquesGroup)
+
+export const getWikiItemTemplatesGroup =
+  pipe (App.ui, UI.wiki, WikiUI.itemTemplatesGroup)
+
+export const getWikiLiturgicalChantsGroup =
+  pipe (App.ui, UI.wiki, WikiUI.liturgicalChantsGroup)
+
+export const getWikiProfessionsGroup =
+  pipe (App.ui, UI.wiki, WikiUI.professionsGroup)
+
+export const getWikiSkillsGroup =
+  pipe (App.ui, UI.wiki, WikiUI.skillsGroup)
+
+export const getWikiSpecialAbilitiesGroup =
+  pipe (App.ui, UI.wiki, WikiUI.specialAbilitiesGroup)
+
+export const getWikiSpellsGroup =
+  pipe (App.ui, UI.wiki, WikiUI.spellsGroup)
+
+
+export const getWiki = App.wiki
+
+const Wiki = WikiModel.A_
+
+export const getWikiAdvantages = pipe (App.wiki, Wiki.advantages)
+
+export const getWikiAttributes = pipe (App.wiki, Wiki.attributes)
+
+export const getWikiBlessings = pipe (App.wiki, Wiki.blessings)
+
+export const getWikiBooks = pipe (App.wiki, Wiki.books)
+
+export const getWikiCantrips = pipe (App.wiki, Wiki.cantrips)
+
+export const getWikiCombatTechniques = pipe (App.wiki, Wiki.combatTechniques)
+
+export const getWikiCultures = pipe (App.wiki, Wiki.cultures)
+
+export const getWikiDisadvantages = pipe (App.wiki, Wiki.disadvantages)
+
+export const getWikiExperienceLevels = pipe (App.wiki, Wiki.experienceLevels)
+
+export const getWikiItemTemplates = pipe (App.wiki, Wiki.itemTemplates)
+
+export const getWikiLiturgicalChants = pipe (App.wiki, Wiki.liturgicalChants)
+
+export const getWikiProfessions = pipe (App.wiki, Wiki.professions)
+
+export const getWikiProfessionVariants = pipe (App.wiki, Wiki.professionVariants)
+
+export const getWikiRaces = pipe (App.wiki, Wiki.races)
+
+export const getWikiRaceVariants = pipe (App.wiki, Wiki.raceVariants)
+
+export const getWikiSkills = pipe (App.wiki, Wiki.skills)
+
+export const getWikiSpecialAbilities = pipe (App.wiki, Wiki.specialAbilities)
+
+export const getWikiSpells = pipe (App.wiki, Wiki.spells)

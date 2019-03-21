@@ -1,9 +1,31 @@
-export const isString = (arg: any): arg is string => typeof arg === "string"
+import { bindF, ensure, Maybe } from "../../Data/Maybe";
 
-export const isNumber = (arg: any): arg is number => typeof arg === "number"
+export const isString =
+  <A> (arg: A | string): arg is string =>
+    typeof arg === "string"
 
-export const isObject = (arg: any): arg is object => typeof arg === "object"
+export const isStringM = ensure (isString)
 
-export const isBoolean = (arg: any): arg is boolean => typeof arg === "boolean"
+export const misStringM: <A> (x: Maybe<A | string>) => Maybe<string> =
+  bindF<any, string> (ensure (isString))
 
-export const isFunction = (arg: any): arg is (() => any) => typeof arg === "function"
+export const isNumber =
+  <A> (arg: A | number): arg is number =>
+    typeof arg === "number"
+
+export const isNumberM = ensure (isNumber)
+
+export const misNumberM: <A> (x: Maybe<A | number>) => Maybe<number> =
+  bindF<any, number> (ensure (isNumber))
+
+export const isObject =
+  <A, A1 extends object> (arg: A | A1): arg is A1 =>
+    typeof arg === "object"
+
+export const isBoolean =
+  <A> (arg: A | boolean): arg is boolean =>
+    typeof arg === "boolean"
+
+export const isFunction =
+  <A, A1 extends (() => any)> (arg: A | A1): arg is A1 =>
+    typeof arg === "function"

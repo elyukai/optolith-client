@@ -2,7 +2,7 @@ import { clipboard } from "electron";
 import { ActionTypes } from "../Constants/ActionTypes";
 import { Alert } from "../Models/Hero/heroTypeHelpers";
 import { L10nRecord } from "../Models/Wiki/L10n";
-import { translate } from "../utils/I18n";
+import { translate } from "../Utilities/I18n";
 
 export interface AddAlertAction {
   type: ActionTypes.ADD_ALERT
@@ -15,8 +15,6 @@ export const addAlert = (options: Alert): AddAlertAction => ({
 })
 
 export const addErrorAlert = (l10n: L10nRecord) => (options: Alert): AddAlertAction => {
-  // @ts-ignore
-  // FIXME: Remove @ts-ignore when TS/redux-thunk fixed problem with extending `Action`.
   const buttons: Alert["buttons"] = [
     {
       label: translate (l10n) ("copy"),

@@ -1,3 +1,4 @@
+import { ident } from "../../Data/Function";
 import { List } from "../../Data/List";
 import { Maybe } from "../../Data/Maybe";
 import { OrderedMap } from "../../Data/OrderedMap";
@@ -23,7 +24,7 @@ import { RaceVariant } from "../Models/Wiki/RaceVariant";
 import { Skill } from "../Models/Wiki/Skill";
 import { SpecialAbility } from "../Models/Wiki/SpecialAbility";
 import { Spell } from "../Models/Wiki/Spell";
-import { WikiModel, WikiModelRecord } from "../Models/Wiki/WikiModel";
+import { WikiModelRecord } from "../Models/Wiki/WikiModel";
 import { RawAdvantage, RawAdvantageLocale, RawAttribute, RawAttributeLocale, RawBlessing, RawBlessingLocale, RawCantrip, RawCantripLocale, RawCombatTechnique, RawCombatTechniqueLocale, RawCulture, RawCultureLocale, RawDisadvantage, RawDisadvantageLocale, RawItemLocale, RawLiturgy, RawLiturgyLocale, RawProfession, RawProfessionLocale, RawProfessionVariant, RawProfessionVariantLocale, RawRace, RawRaceLocale, RawRaceVariant, RawRaceVariantLocale, RawSkill, RawSkillLocale, RawSpecialAbility, RawSpecialAbilityLocale, RawSpell, RawSpellLocale } from "../Utils/Raw/RawData";
 
 type Action = ReceiveInitialDataAction
@@ -81,8 +82,7 @@ type RawLocales = RawAdvantageLocale
                 | RawItemLocale
 
 export const wikiReducer =
-  (action: Action) =>
-  (state: WikiModelRecord): WikiModelRecord => {
+  (action: Action): ident<WikiModelRecord> => {
     switch (action.type) {
       case ActionTypes.RECEIVE_INITIAL_DATA: {
         const { config, defaultLocale, locales, tables } = action.payload
@@ -364,6 +364,6 @@ export const wikiReducer =
       }
 
       default:
-        return state
+        return ident
     }
   }

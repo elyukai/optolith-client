@@ -1,10 +1,12 @@
 import { Action, AnyAction } from "redux";
 import { ThunkAction, ThunkDispatch } from "redux-thunk";
+import { Record } from "../../Data/Record";
 import { AppState } from "../Reducers/appReducer";
 
-export type AsyncAction<R = void, D extends Action = AnyAction> =
-  ThunkAction<R, AppState, undefined, D>
+export type ReduxAction<R = void, D extends Action = AnyAction> =
+  ThunkAction<R, Record<AppState>, undefined, D>
 
-export type AllAction<R = void, D extends Action = AnyAction> = AsyncAction<R, D> | D
+export type ReduxActions<R = void, D extends Action = AnyAction> = ReduxAction<R, D> | D
 
-export type ReduxDispatch<S, A extends Action = AnyAction> = ThunkDispatch<S, undefined, A>
+export type ReduxDispatch<A extends Action = AnyAction> =
+  ThunkDispatch<Record<AppState>, undefined, A>

@@ -10,7 +10,7 @@ import { ValueBasedDependent } from "../../Models/Hero/heroTypeHelpers";
 import { isAttribute } from "../../Models/Wiki/Attribute";
 import { Skill } from "../../Models/Wiki/Skill";
 import { IncreasableEntry } from "../../Models/Wiki/wikiTypeHelpers";
-import { getAreSufficientAPAvailable } from "../AdventurePoints/adventurePointsUtils";
+import { getMissingAP } from "../AdventurePoints/adventurePointsUtils";
 import { getIncreaseAP } from "../AdventurePoints/improvementCostUtils";
 import { dec, inc } from "../mathUtils";
 
@@ -62,12 +62,10 @@ const getValueFromHeroStateEntry =
               (fmap (value) (maybeEntry))
 
 export const getAreSufficientAPAvailableForIncrease =
+  (negativeApValid: boolean) =>
   <T extends ValueBasedDependent>
-  (wikiEntry: IncreasableEntry) =>
   (instance: Maybe<T>) =>
-  (availableAP: number) =>
-  (negativeApValid: boolean): boolean =>
-    getAreSufficientAPAvailable (negativeApValid)
-                                (availableAP)
-                                (getIncreaseAP (isAttribute (wikiEntry) ? 5 : ic (wikiEntry))
-                                               (getValueFromHeroStateEntry (wikiEntry) (instance)))
+  (wikiEntry: IncreasableEntry) =>
+    getMissingAP (negativeApValid)
+                 (getIncreaseAP (isAttribute (wikiEntry) ? 5 : ic (wikiEntry))
+                                (getValueFromHeroStateEntry (wikiEntry) (instance)))

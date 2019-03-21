@@ -5,7 +5,7 @@ import { ItemTemplate } from "../Models/Wiki/ItemTemplate";
 import { getFullItem } from "../Selectors/equipmentSelectors";
 import { getArmorZonesState, getItemEditorInstance, getItemsState, getWikiItemTemplates } from "../Selectors/stateSelectors";
 import { getNewId } from "../Utilities/IDUtils";
-import { AsyncAction } from "./Actions";
+import { ReduxAction } from "./Actions";
 
 export interface AddItemAction {
   type: ActionTypes.ADD_ITEM
@@ -14,7 +14,7 @@ export interface AddItemAction {
   }
 }
 
-export const addItem = (): AsyncAction => (dispatch, getState) => {
+export const addItem = (): ReduxAction => (dispatch, getState) => {
   getItemsState (getState ()) .fmap (
     items => {
       const newId = `ITEM_${getNewId (items.keys ())}`
@@ -37,7 +37,7 @@ export interface AddItemTemplateAction {
   }
 }
 
-export const addTemplateToList = (id: string): AsyncAction => (dispatch, getState) => {
+export const addTemplateToList = (id: string): ReduxAction => (dispatch, getState) => {
   getItemsState (getState ()).bind (
     items => {
       const newId = `ITEM_${getNewId (items.keys ())}`
@@ -88,7 +88,7 @@ export interface EditItemAction {
   }
 }
 
-export const editItem = (id: string): AsyncAction => (dispatch, getState) => {
+export const editItem = (id: string): ReduxAction => (dispatch, getState) => {
   getItemsState (getState ()).bind (
     items => getFullItem (items) (getWikiItemTemplates (getState ())) (id).fmap (
       item => dispatch<EditItemAction> ({
@@ -676,7 +676,7 @@ export interface ApplyItemTemplateAction {
   }
 }
 
-export const applyItemTemplate: AsyncAction = (dispatch, getState) => {
+export const applyItemTemplate: ReduxAction = (dispatch, getState) => {
   getItemEditorInstance (getState ())
     .bind (editor => editor .lookup ("template"))
     .bind (
@@ -700,7 +700,7 @@ export interface LockItemTemplateAction {
   }
 }
 
-export const lockItemTemplate: AsyncAction = (dispatch, getState) => {
+export const lockItemTemplate: ReduxAction = (dispatch, getState) => {
   getItemEditorInstance (getState ())
     .bind (editor => editor .lookup ("template"))
     .bind (
@@ -732,7 +732,7 @@ export interface AddArmorZonesAction {
   }
 }
 
-export const addArmorZonesToList = (): AsyncAction => (dispatch, getState) => {
+export const addArmorZonesToList = (): ReduxAction => (dispatch, getState) => {
   getArmorZonesState (getState ()).fmap (
     zoneArmors => {
       const newId = `ARMORZONES_${getNewId (zoneArmors.keys ())}`

@@ -103,3 +103,10 @@ export const inc = (x: number) => x + 1
  * Decrements the given number by 1.
  */
 export const dec = (x: number) => x - 1
+
+/**
+ * `negate :: Num a => a -> a`
+ *
+ * Negates the given number.
+ */
+export const negate = (x: number) => -x

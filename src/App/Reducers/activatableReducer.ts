@@ -2,17 +2,13 @@ import * as DisAdvActions from "../Actions/DisAdvActions";
 import * as SpecialAbilitiesActions from "../Actions/SpecialAbilitiesActions";
 import { ActionTypes } from "../Constants/ActionTypes";
 import { HeroModelRecord } from "../Models/Hero/HeroModel";
-import * as Data from "../Models/Hero/heroTypeHelpers";
-import { activate } from "../utils/A/Activatable/activatableActivationUtils";
-import * as IncreasableUtils from "../Utils/Increasable/increasableUtils";
 
-type Action =
-  DisAdvActions.ActivateDisAdvAction |
-  DisAdvActions.DeactivateDisAdvAction |
-  DisAdvActions.SetDisAdvTierAction |
-  SpecialAbilitiesActions.ActivateSpecialAbilityAction |
-  SpecialAbilitiesActions.DeactivateSpecialAbilityAction |
-  SpecialAbilitiesActions.SetSpecialAbilityTierAction
+type Action = DisAdvActions.ActivateDisAdvAction
+            | DisAdvActions.DeactivateDisAdvAction
+            | DisAdvActions.SetDisAdvTierAction
+            | SpecialAbilitiesActions.ActivateSpecialAbilityAction
+            | SpecialAbilitiesActions.DeactivateSpecialAbilityAction
+            | SpecialAbilitiesActions.SetSpecialAbilityTierAction
 
 export const activatableReducer =
   (action: Action) =>
