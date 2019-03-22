@@ -7,6 +7,7 @@
  */
 
 import { pipe } from "ramda";
+import { isIO } from "../System/IO";
 import { isEither, isRight } from "./Either";
 import { fnull, intercalate, isList, map, toArray, trimStart } from "./List";
 import { isJust, isMaybe } from "./Maybe";
@@ -20,6 +21,7 @@ import { isRecord } from "./Record";
  *
  * Convert a value to a readable `String`.
  */
+// tslint:disable-next-line: cyclomatic-complexity
 export const show = (x: any): string => {
   if (isMaybe (x)) {
     if (isJust (x)) {
@@ -69,6 +71,10 @@ export const show = (x: any): string => {
         )
         .join (", ")
     } }`
+  }
+
+  if (isIO (x)) {
+    return `IO`
   }
 
   // tslint:disable-next-line: strict-type-predicates
@@ -182,6 +188,10 @@ const showPDepth = (depth: number) => (x: any): string => {
         )
         .join (`\n${dws}, `)
     } }`
+  }
+
+  if (isIO (x)) {
+    return `${dws}IO`
   }
 
   // tslint:disable-next-line: strict-type-predicates

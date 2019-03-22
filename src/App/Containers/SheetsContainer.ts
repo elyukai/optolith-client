@@ -5,7 +5,7 @@ import * as IOActions from '../App/Actions/IOActions';
 import * as SheetActions from '../App/Actions/SheetActions';
 import { mapGetToMaybeSlice } from '../App/Utils/SelectorsUtils';
 import { AppState } from '../reducers/appReducer';
-import { getAdvantagesForSheet, getAspectKnowledgesForSheet, getBlessedSpecialAbilitiesForSheet, getBlessedTraditionForSheet, getCombatSpecialAbilitiesForSheet, getDisadvantagesForSheet, getFatePointsModifier, getGeneralSpecialAbilitiesForSheet, getMagicalSpecialAbilitiesForSheet, getMagicalTraditionForSheet, getPropertyKnowledgesForSheet } from '../selectors/activatableSelectors';
+import { getAdvantagesForSheet, getAspectKnowledgesForSheet, getBlessedSpecialAbilitiesForSheet, getBlessedTraditionForSheet, getCombatSpecialAbilitiesForSheet, getDisadvantagesForSheet, getFatePointsModifier, getGeneralSpecialAbilitiesForSheet, getMagicalSpecialAbilitiesForSheet, getMagicalTraditionForSheet, getPropertyKnowledgesForSheet } from '../Selectors/activatableSelectors';
 import { getAdventurePointsObject } from '../selectors/adventurePointsSelectors';
 import { getAttributesForSheet, getPrimaryBlessedAttributeForSheet, getPrimaryMagicalAttributeForSheet } from '../selectors/attributeSelectors';
 import { getCombatTechniquesForSheet } from '../selectors/combatTechniquesSelectors';

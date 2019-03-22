@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 import { Action, Dispatch } from 'redux';
 import * as EquipmentActions from '../App/Actions/EquipmentActions';
 import { AppState } from '../reducers/appReducer';
-import { getInitialStartingWealth } from '../selectors/activatableSelectors';
+import { getInitialStartingWealth } from '../Selectors/activatableSelectors';
 import { getHasCurrentNoAddedAP } from '../selectors/adventurePointsSelectors';
 import { getCarryingCapacity } from '../selectors/attributeSelectors';
 import { getFilteredCombatTechniques } from '../selectors/combatTechniquesSelectors';

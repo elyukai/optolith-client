@@ -472,8 +472,7 @@ export const lookupF =
  * or returns default value `def` when the key is not in the map.
  */
 export const findWithDefault =
-  <K, A>
-  (def: A) => (key: K) => (m: OrderedMap<K, A>): A =>
+  <A> (def: A) => <K> (key: K) => (m: OrderedMap<K, A>): A =>
     fromMaybe (def) (lookup (key) (m))
 
 

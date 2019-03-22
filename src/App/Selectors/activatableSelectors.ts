@@ -1,161 +1,165 @@
-import * as R from 'ramda';
-import { ActivatableCategory, Categories } from '../Constants/Categories';
-import * as Data from '../Models/Hero/heroTypeHelpers';
-import * as Wiki from '../Models/Wiki/wikiTypeHelpers';
-import { getAllActiveByCategory } from '../utils/activatable/activatableActiveUtils';
-import { getModifierByActiveLevel, getModifierByIsActive } from '../utils/activatable/activatableModifierUtils';
-import { getBracketedNameFromFullName } from '../utils/activatable/activatableNameUtils';
-import { getActiveSelections, getSelectOptionName } from '../utils/Activatable/selectionUtils';
-import { getDisAdvantagesSubtypeMax } from '../utils/adventurePoints/adventurePointsUtils';
-import { createMaybeSelector } from '../Utils/createMaybeSelector';
-import { Just, List, Maybe, Nothing, OrderedMap, Record } from '../utils/dataUtils';
-import { AllSortOptions, filterAndSortObjects } from '../utils/FilterSortUtils';
-import { flip } from '../utils/flip';
-import { translate } from '../Utils/I18n';
-import { mapGetToMaybeSlice } from '../Utils/SelectorsUtils';
-import { getBlessedTraditionFromWikiState } from './liturgicalChantsSelectors';
-import { getCurrentCulture, getCurrentProfession, getCurrentRace } from './rcpSelectors';
-import { getSpecialAbilitiesSortOptions } from './sortOptionsSelectors';
-import { getMagicalTraditionsFromWikiState } from './spellsSelectors';
-import { getAdvantages, getAdvantagesFilterText, getCultureAreaKnowledge, getCurrentHeroPresent, getDisadvantages, getDisadvantagesFilterText, getLocaleAsProp, getSpecialAbilities, getSpecialAbilitiesFilterText, getWiki, getWikiSpecialAbilities } from './stateSelectors';
+import { flip, ident } from "../../Data/Function";
+import { fmap, fmapF } from "../../Data/Functor";
+import { elem, foldr } from "../../Data/List";
+import { Just, liftM3 } from "../../Data/Maybe";
+import { insert, OrderedMap } from "../../Data/OrderedMap";
+import { Record } from "../../Data/Record";
+import { ActivatableCategory, Categories } from "../Constants/Categories";
+import { EntryRating } from "../Models/Hero/heroTypeHelpers";
+import { Culture } from "../Models/Wiki/Culture";
+import { L10n } from "../Models/Wiki/L10n";
+import { Profession } from "../Models/Wiki/Profession";
+import { Race } from "../Models/Wiki/Race";
+import { getAllActiveByCategory } from "../Utilities/Activatable/activatableActiveUtils";
+import { getModifierByActiveLevel } from "../Utilities/Activatable/activatableModifierUtils";
+import { getActiveSelections } from "../Utilities/Activatable/selectionUtils";
+import { createMaybeSelector } from "../Utilities/createMaybeSelector";
+import { filterAndSortRecordsByName } from "../Utilities/filterAndSortBy";
+import { pipe, pipe_ } from "../Utilities/pipe";
+import { mapGetToMaybeSlice } from "../Utilities/SelectorsUtils";
+import { getBlessedTraditionFromWikiState } from "./liturgicalChantsSelectors";
+import { getCurrentCulture, getCurrentProfession, getCurrentRace } from "./rcpSelectors";
+import { getSpecialAbilitiesSortOptions } from "./sortOptionsSelectors";
+import { getMagicalTraditionsFromWikiState } from "./spellsSelectors";
+import { getAdvantages, getAdvantagesFilterText, getCultureAreaKnowledge, getCurrentHeroPresent, getDisadvantages, getDisadvantagesFilterText, getLocaleAsProp, getSpecialAbilities, getSpecialAbilitiesFilterText, getWiki, getWikiSpecialAbilities } from "./stateSelectors";
 
-export const getActive = <T extends ActivatableCategory>(category: T, addTierToName: boolean) =>
+export const getActive = <T extends ActivatableCategory>(category: T, addLevelToName: boolean) =>
   createMaybeSelector (
-    getCurrentHeroPresent,
     getLocaleAsProp,
     getWiki,
-    (maybeHero, locale, wiki) => getAllActiveByCategory (category)
-                                                        (addTierToName)
-                                                        (maybeHero)
-                                                        (locale)
-                                                        (wiki)
-  );
+    getCurrentHeroPresent,
+    (l10n, wiki, mhero) => fmapF (mhero) (getAllActiveByCategory (category)
+                                                                 (addLevelToName)
+                                                                 (l10n)
+                                                                 (wiki))
+  )
 
 export const getActiveForView = <T extends ActivatableCategory>(category: T) =>
-  getActive (category, false);
+  getActive (category, false)
 
 export const getActiveForEditView = <T extends ActivatableCategory>(category: T) =>
-  getActive (category, true);
+  getActive (category, true)
+
+type RatingMap = OrderedMap<string, EntryRating>
+
+const insertRating =
+  flip (insert) as (value: EntryRating) => (key: string) => ident<OrderedMap<string, EntryRating>>
 
 export const getAdvantagesRating = createMaybeSelector (
   getCurrentRace,
   getCurrentCulture,
   getCurrentProfession,
-  (maybeRace, maybeCulture, maybeProfession) =>
-    maybeRace.bind (
-      race => maybeCulture.bind (
-        culture => maybeProfession.fmap (
-          profession => R.pipe (
-            race.get ('commonAdvantages').foldl<OrderedMap<string, Data.EntryRating>> (
-              map => e => map.insert (e) (Data.EntryRating.Common)
-            ),
-            race.get ('uncommonAdvantages').foldl (
-              map => e => map.insert (e) (Data.EntryRating.Uncommon)
-            ),
-            culture.get ('commonAdvantages').foldl (
-              map => e => map.insert (e) (Data.EntryRating.Common)
-            ),
-            culture.get ('uncommonAdvantages').foldl (
-              map => e => map.insert (e) (Data.EntryRating.Uncommon)
-            ),
-            profession.get ('suggestedAdvantages').foldl (
-              map => e => map.insert (e) (Data.EntryRating.Common)
-            ),
-            profession.get ('unsuitableAdvantages').foldl (
-              map => e => map.insert (e) (Data.EntryRating.Uncommon)
-            ),
-            race.get ('stronglyRecommendedAdvantages').foldl (
-              map => e => map.insert (e) (Data.EntryRating.Essential)
-            )
-          ) (OrderedMap.empty ())
-        )
-      )
-    )
-);
+  (mrace, mculture, mprofession) =>
+    liftM3 ((r: Record<Race>) => (c: Record<Culture>) => (p: Record<Profession>) =>
+             pipe_ (
+               OrderedMap.empty as RatingMap,
+
+               flip (foldr (insertRating (EntryRating.Common)))
+                    (Race.A_.commonAdvantages (r)),
+
+               flip (foldr (insertRating (EntryRating.Uncommon)))
+                    (Race.A_.uncommonAdvantages (r)),
+
+               flip (foldr (insertRating (EntryRating.Common)))
+                    (Culture.A_.commonAdvantages (c)),
+
+               flip (foldr (insertRating (EntryRating.Uncommon)))
+                    (Culture.A_.uncommonAdvantages (c)),
+
+               flip (foldr (insertRating (EntryRating.Common)))
+                    (Profession.A_.suggestedAdvantages (p)),
+
+               flip (foldr (insertRating (EntryRating.Uncommon)))
+                    (Profession.A_.unsuitableAdvantages (p)),
+
+               flip (foldr (insertRating (EntryRating.Essential)))
+                    (Race.A_.stronglyRecommendedAdvantages (r))
+             ))
+           (mrace)
+           (mculture)
+           (mprofession)
+)
 
 export const getDisadvantagesRating = createMaybeSelector (
   getCurrentRace,
   getCurrentCulture,
   getCurrentProfession,
-  (maybeRace, maybeCulture, maybeProfession) =>
-    maybeRace.bind (
-      race => maybeCulture.bind (
-        culture => maybeProfession.fmap (
-          profession => R.pipe (
-            race.get ('commonDisadvantages').foldl<OrderedMap<string, Data.EntryRating>> (
-              map => e => map.insert (e) (Data.EntryRating.Common)
-            ),
-            race.get ('uncommonDisadvantages').foldl (
-              map => e => map.insert (e) (Data.EntryRating.Uncommon)
-            ),
-            culture.get ('commonDisadvantages').foldl (
-              map => e => map.insert (e) (Data.EntryRating.Common)
-            ),
-            culture.get ('uncommonDisadvantages').foldl (
-              map => e => map.insert (e) (Data.EntryRating.Uncommon)
-            ),
-            profession.get ('suggestedDisadvantages').foldl (
-              map => e => map.insert (e) (Data.EntryRating.Common)
-            ),
-            profession.get ('unsuitableDisadvantages').foldl (
-              map => e => map.insert (e) (Data.EntryRating.Uncommon)
-            ),
-            race.get ('stronglyRecommendedDisadvantages').foldl (
-              map => e => map.insert (e) (Data.EntryRating.Essential)
-            )
-          ) (OrderedMap.empty ())
-        )
-      )
-    )
-);
+  (mrace, mculture, mprofession) =>
+    liftM3 ((r: Record<Race>) => (c: Record<Culture>) => (p: Record<Profession>) =>
+             pipe_ (
+               OrderedMap.empty as RatingMap,
+
+               flip (foldr (insertRating (EntryRating.Common)))
+                    (Race.A_.commonDisadvantages (r)),
+
+               flip (foldr (insertRating (EntryRating.Uncommon)))
+                    (Race.A_.uncommonDisadvantages (r)),
+
+               flip (foldr (insertRating (EntryRating.Common)))
+                    (Culture.A_.commonDisadvantages (c)),
+
+               flip (foldr (insertRating (EntryRating.Uncommon)))
+                    (Culture.A_.uncommonDisadvantages (c)),
+
+               flip (foldr (insertRating (EntryRating.Common)))
+                    (Profession.A_.suggestedDisadvantages (p)),
+
+               flip (foldr (insertRating (EntryRating.Uncommon)))
+                    (Profession.A_.unsuitableDisadvantages (p)),
+
+               flip (foldr (insertRating (EntryRating.Essential)))
+                    (Race.A_.stronglyRecommendedDisadvantages (r))
+             ))
+           (mrace)
+           (mculture)
+           (mprofession)
+)
 
 export const getAdvantagesForSheet = createMaybeSelector (
   getActiveForView (Categories.ADVANTAGES),
-  R.identity
-);
+  ident
+)
 
 export const getAdvantagesForEdit = createMaybeSelector (
   getActiveForEditView (Categories.ADVANTAGES),
-  R.identity
-);
+  ident
+)
 
 export const getFilteredActiveAdvantages = createMaybeSelector (
   getAdvantagesForEdit,
   getAdvantagesFilterText,
   getLocaleAsProp,
-  (maybeAdvantages, filterText, locale) => maybeAdvantages.fmap (
-    advantages => filterAndSortObjects (advantages, locale.get ('id'), filterText)
-  )
-);
+  (madvantages, filterText, l10n) =>
+    fmapF (madvantages) (filterAndSortRecordsByName (L10n.A_.id (l10n)) (filterText))
+)
 
 export const getDisadvantagesForSheet = createMaybeSelector (
   getActiveForView (Categories.DISADVANTAGES),
-  R.identity
-);
+  ident
+)
 
 export const getDisadvantagesForEdit = createMaybeSelector (
   getActiveForEditView (Categories.DISADVANTAGES),
-  R.identity
-);
+  ident
+)
 
 export const getFilteredActiveDisadvantages = createMaybeSelector (
   getDisadvantagesForEdit,
   getDisadvantagesFilterText,
   getLocaleAsProp,
-  (maybeDisadvantages, filterText, locale) => maybeDisadvantages.fmap (
-    disadvantages => filterAndSortObjects (disadvantages, locale.get ('id'), filterText)
-  )
-);
+  (mdisadvantages, filterText, l10n) =>
+    fmapF (mdisadvantages) (filterAndSortRecordsByName (L10n.A_.id (l10n)) (filterText))
+)
 
 export const getSpecialAbilitiesForSheet = createMaybeSelector (
   getActiveForView (Categories.SPECIAL_ABILITIES),
-  R.identity
-);
+  ident
+)
 
 export const getSpecialAbilitiesForEdit = createMaybeSelector (
   getActiveForEditView (Categories.SPECIAL_ABILITIES),
-  R.identity
-);
+  ident
+)
 
 export const getFilteredActiveSpecialAbilities = createMaybeSelector (
   getSpecialAbilitiesForEdit,
@@ -165,14 +169,14 @@ export const getFilteredActiveSpecialAbilities = createMaybeSelector (
   (maybeSpecialAbilities, sortOptions, filterText, locale) => maybeSpecialAbilities.fmap (
     specialAbilities => filterAndSortObjects (
       specialAbilities,
-      locale.get ('id'),
+      locale.get ("id"),
       filterText,
       sortOptions as AllSortOptions<Data.ActiveViewObject<Wiki.SpecialAbility>>
     )
   )
-);
+)
 
-type ActiveSpecialAbilityView = Data.ActiveViewObject<Wiki.SpecialAbility>;
+type ActiveSpecialAbilityView = Data.ActiveViewObject<Wiki.SpecialAbility>
 
 export const getGeneralSpecialAbilitiesForSheet = createMaybeSelector (
   getSpecialAbilitiesForSheet,
@@ -182,81 +186,81 @@ export const getGeneralSpecialAbilitiesForSheet = createMaybeSelector (
     specialAbilities => (
       specialAbilities
         .filter (R.pipe (
-          Record.get<ActiveSpecialAbilityView, 'wikiEntry'> ('wikiEntry'),
-          Record.get<Wiki.SpecialAbility, 'gr'> ('gr'),
+          Record.get<ActiveSpecialAbilityView, "wikiEntry"> ("wikiEntry"),
+          Record.get<Wiki.SpecialAbility, "gr"> ("gr"),
           flip<number, List<number>, boolean> (List.elem) (List.return (1, 2, 22, 30))
         )) as List<Record<ActiveSpecialAbilityView> | string>
     )
       .cons (translate (
         locale,
-        'charactersheet.main.generalspecialabilites.areaknowledge',
-        Maybe.fromMaybe ('') (cultureAreaKnowledge)
+        "charactersheet.main.generalspecialabilites.areaknowledge",
+        Maybe.fromMaybe ("") (cultureAreaKnowledge)
       ))
   )
-);
+)
 
 export const getCombatSpecialAbilitiesForSheet = createMaybeSelector (
   getSpecialAbilitiesForSheet,
   maybeSpecialAbilities => maybeSpecialAbilities.fmap (
     specialAbilities => specialAbilities
       .filter (R.pipe (
-        Record.get<ActiveSpecialAbilityView, 'wikiEntry'> ('wikiEntry'),
-        Record.get<Wiki.SpecialAbility, 'gr'> ('gr'),
+        Record.get<ActiveSpecialAbilityView, "wikiEntry"> ("wikiEntry"),
+        Record.get<Wiki.SpecialAbility, "gr"> ("gr"),
         flip<number, List<number>, boolean> (List.elem) (List.return (3, 9, 10, 11, 12, 21))
       ))
   )
-);
+)
 
 export const getMagicalSpecialAbilitiesForSheet = createMaybeSelector (
   getSpecialAbilitiesForSheet,
   maybeSpecialAbilities => maybeSpecialAbilities.fmap (
     specialAbilities => specialAbilities
       .filter (R.pipe (
-        Record.get<ActiveSpecialAbilityView, 'wikiEntry'> ('wikiEntry'),
-        Record.get<Wiki.SpecialAbility, 'gr'> ('gr'),
+        Record.get<ActiveSpecialAbilityView, "wikiEntry"> ("wikiEntry"),
+        Record.get<Wiki.SpecialAbility, "gr"> ("gr"),
         flip<number, List<number>, boolean> (List.elem)
           (List.return (4, 5, 6, 13, 14, 15, 16, 17, 18, 19, 20, 28))
       ))
   )
-);
+)
 
 export const getBlessedSpecialAbilitiesForSheet = createMaybeSelector (
   getSpecialAbilitiesForSheet,
   maybeSpecialAbilities => maybeSpecialAbilities.fmap (
     specialAbilities => specialAbilities
       .filter (R.pipe (
-        Record.get<ActiveSpecialAbilityView, 'wikiEntry'> ('wikiEntry'),
-        Record.get<Wiki.SpecialAbility, 'gr'> ('gr'),
+        Record.get<ActiveSpecialAbilityView, "wikiEntry"> ("wikiEntry"),
+        Record.get<Wiki.SpecialAbility, "gr"> ("gr"),
         flip<number, List<number>, boolean> (List.elem) (List.return (7, 8, 23, 24, 25, 26, 27, 29))
       ))
   )
-);
+)
 
 export const getFatePointsModifier = createMaybeSelector (
-  mapGetToMaybeSlice (getAdvantages, 'ADV_14'),
-  mapGetToMaybeSlice (getDisadvantages, 'DISADV_31'),
+  mapGetToMaybeSlice (getAdvantages, "ADV_14"),
+  mapGetToMaybeSlice (getDisadvantages, "DISADV_31"),
   (maybeIncrease, maybeDecrease) => getModifierByIsActive (maybeIncrease)
                                                           (maybeDecrease)
                                                           (Nothing ())
-);
+)
 
 export const getMagicalTraditionForSheet = createMaybeSelector (
   getMagicalTraditionsFromWikiState,
   maybeSpecialAbilities => maybeSpecialAbilities.fmap (
     specialAbilities => specialAbilities
       .map (R.pipe (
-        Record.get<Wiki.SpecialAbility, 'name'> ('name'),
+        Record.get<Wiki.SpecialAbility, "name"> ("name"),
         getBracketedNameFromFullName
       ))
-      .intercalate (', ')
+      .intercalate (", ")
   )
-);
+)
 
 export const getPropertyKnowledgesForSheet = createMaybeSelector (
-  mapGetToMaybeSlice (getSpecialAbilities, 'SA_72'),
+  mapGetToMaybeSlice (getSpecialAbilities, "SA_72"),
   getWikiSpecialAbilities,
   (propertyKnowledge, wikiSpecialAbilities) =>
-    wikiSpecialAbilities.lookup ('SA_72').bind (
+    wikiSpecialAbilities.lookup ("SA_72").bind (
       wikiPropertyKnowledge => getActiveSelections (propertyKnowledge).fmap (
         Maybe.mapMaybe (R.pipe (
           Maybe.return,
@@ -264,21 +268,21 @@ export const getPropertyKnowledgesForSheet = createMaybeSelector (
         ))
       )
     )
-);
+)
 
 export const getBlessedTraditionForSheet = createMaybeSelector (
   getBlessedTraditionFromWikiState,
   maybeTradition => maybeTradition.fmap (R.pipe (
-    Record.get<Wiki.SpecialAbility, 'name'> ('name'),
+    Record.get<Wiki.SpecialAbility, "name"> ("name"),
     getBracketedNameFromFullName
   ))
-);
+)
 
 export const getAspectKnowledgesForSheet = createMaybeSelector (
-  mapGetToMaybeSlice (getSpecialAbilities, 'SA_87'),
+  mapGetToMaybeSlice (getSpecialAbilities, "SA_87"),
   getWikiSpecialAbilities,
   (aspectKnowledge, wikiSpecialAbilities) =>
-    wikiSpecialAbilities.lookup ('SA_87').bind (
+    wikiSpecialAbilities.lookup ("SA_87").bind (
       wikiAspectKnowledge => getActiveSelections (aspectKnowledge).fmap (
         Maybe.mapMaybe (R.pipe (
           Maybe.return,
@@ -286,23 +290,18 @@ export const getAspectKnowledgesForSheet = createMaybeSelector (
         ))
       )
     )
-);
+)
 
 export const getInitialStartingWealth = createMaybeSelector (
-  mapGetToMaybeSlice (getAdvantages, 'ADV_36'),
-  mapGetToMaybeSlice (getDisadvantages, 'DISADV_2'),
+  mapGetToMaybeSlice (getAdvantages) ("ADV_36"),
+  mapGetToMaybeSlice (getDisadvantages) ("DISADV_2"),
   (rich, poor) => getModifierByActiveLevel (rich) (poor) (Just (0)) * 250 + 750
-);
+)
 
 export const isAlbino = createMaybeSelector (
-  mapGetToMaybeSlice (getDisadvantages, 'DISADV_45'),
-  R.pipe (
+  mapGetToMaybeSlice (getDisadvantages) ("DISADV_45"),
+  fmap (pipe (
     getActiveSelections,
-    Maybe.fmap (List.elem<string | number> (1))
-  )
-);
-
-export const getCurrentDisAdvantagesSubtypeMax = createMaybeSelector (
-  getCurrentHeroPresent,
-  Maybe.fmap (getDisAdvantagesSubtypeMax (true))
-);
+    elem<string | number> (1)
+  ))
+)

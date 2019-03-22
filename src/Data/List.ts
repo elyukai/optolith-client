@@ -779,8 +779,8 @@ export const unfoldr =
  * or `xs` itself if `n > length xs`.
  */
 export const take =
-  <A> (n: number) => (xs: List<A>): List<A> =>
-    n <= 0 || isNil (xs) ? Nil : Cons (xs .x, take<A> (n - 1) (xs .xs))
+  (n: number) => <A> (xs: List<A>): List<A> =>
+    n <= 0 || isNil (xs) ? Nil : Cons (xs .x, take (n - 1) (xs .xs))
 
 /**
  * `drop :: Int -> [a] -> [a]`
@@ -789,8 +789,8 @@ export const take =
  * `[]` if `n > length x`.
  */
 export const drop =
-  <A> (n: number) => (xs: List<A>): List<A> =>
-    n <= 0 ? xs : isNil (xs) ? Nil : drop<A> (n - 1) (xs .xs)
+  (n: number) => <A> (xs: List<A>): List<A> =>
+    n <= 0 ? xs : isNil (xs) ? Nil : drop (n - 1) (xs .xs)
 
 /**
  * `splitAt :: Int -> [a] -> ([a], [a])`
@@ -799,7 +799,7 @@ export const drop =
  * `n` and second element is the remainder of the list.
  */
 export const splitAt =
-  <A> (n: number) => (xs: List<A>): Pair<List<A>, List<A>> => {
+  (n: number) => <A> (xs: List<A>): Pair<List<A>, List<A>> => {
     if (n <= 0) {
       return Pair (Nil, xs)
     }
@@ -810,7 +810,7 @@ export const splitAt =
 
     const y = xs .x
 
-    const p = splitAt<A> (n - 1) (xs .xs)
+    const p = splitAt (n - 1) (xs .xs)
 
     return Pair (Cons (y, fst (p)), snd (p))
   }
@@ -1183,7 +1183,7 @@ const sortBySortedMerge =
   }
 
 const sortByGetMiddle = <A> (xs: List<A>): Pair<List<A>, List<A>> =>
-  splitAt<A> (flength (xs) / 2) (xs)
+  splitAt (flength (xs) / 2) (xs)
 
 
 // LIST.INDEX
@@ -1809,6 +1809,70 @@ export const countWith =
   <A> (pred: (x: A) => boolean) => pipe (filter (pred), flength)
 
 /**
+ * `countWithByKey :: (a -> k) -> [a] -> Map k Int`
+ *
+ * Maps a function over a list that returns a key. The returned map contains the
+ * returned keys and the value at the keys represent how often this key has been
+ * returned from the passed function for this list.
+ */
+export const countWithByKey =
+  <A, B>
+  (f: (x: A) => B) =>
+  (xs: List<A>): OrderedMap<B, number> => {
+    // this implementation is only for perf reasons
+    // once OrderedMap has it's own performant implementation, the
+    // implementationof `groupByKey` can be changed
+
+    let m = new Map<B, number> ()
+
+    const arr = toArray (xs)
+
+    for (const e of arr) {
+      const key = f (e)
+
+      const current = m .get (key)
+
+      m .set (key, current === undefined ? 1 : current + 1)
+    }
+
+    return fromMap (m)
+  }
+
+/**
+ * `countWithByKeyMaybe :: (a -> Maybe k) -> [a] -> Map k Int`
+ *
+ * Maps a function over a list that returns a key. The returned map contains the
+ * returned `Just` keys and the value at the keys represent how often this key
+ * has been returned as a `Just` from the passed function for this list.
+ */
+export const countWithByKeyMaybe =
+  <A, B>
+  (f: (x: A) => Maybe<B>) =>
+  (xs: List<A>): OrderedMap<B, number> => {
+    // this implementation is only for perf reasons
+    // once OrderedMap has it's own performant implementation, the
+    // implementationof `groupByKey` can be changed
+
+    let m = new Map<B, number> ()
+
+    const arr = toArray (xs)
+
+    for (const e of arr) {
+      const mkey = f (e)
+
+      if (isJust (mkey)) {
+        const key = fromJust (mkey)
+
+        const current = m .get (key)
+
+        m .set (key, current === undefined ? 1 : current + 1)
+      }
+    }
+
+    return fromMap (m)
+  }
+
+/**
  * The largest element of a non-empty structure. The minimum value returned is
  * `0`.
  */
@@ -1976,6 +2040,8 @@ List.fromArray = fromArray
 List.toArray = toArray
 List.isList = isList
 List.countWith = countWith
+List.countWithByKey = countWithByKey
+List.countWithByKeyMaybe = countWithByKeyMaybe
 List.maximumNonNegative = maximumNonNegative
 List.groupByKey = groupByKey
 

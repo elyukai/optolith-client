@@ -1,16 +1,16 @@
-import { createMaybeSelector } from '../App/Utils/createMaybeSelector';
-import { Maybe } from '../utils/dataUtils';
-import { getPhase } from './stateSelectors';
-import { getIsEditingHeroAfterCreationPhaseEnabled } from './uisettingsSelectors';
+import { elem } from "../../Data/Maybe";
+import { createMaybeSelector } from "../Utilities/createMaybeSelector";
+import { getPhase } from "./stateSelectors";
+import { getIsEditingHeroAfterCreationPhaseEnabled } from "./uisettingsSelectors";
 
 export const getIsInCharacterCreation = createMaybeSelector (
   getPhase,
-  Maybe.elem (2)
-);
+  elem (2)
+)
 
 export const getIsRemovingEnabled = createMaybeSelector (
   getIsInCharacterCreation,
   getIsEditingHeroAfterCreationPhaseEnabled,
   (isInCharacterCreation, isEditingHeroAfterCreationPhaseEnabled) =>
     isInCharacterCreation || isEditingHeroAfterCreationPhaseEnabled
-);
+)

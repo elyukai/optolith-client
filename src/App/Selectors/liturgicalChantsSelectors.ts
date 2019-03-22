@@ -8,7 +8,7 @@ import { getAspectsOfTradition, isDecreasable, isIncreasable, isOwnTradition } f
 import { filterByAvailability } from '../App/Utils/RulesUtils';
 import { mapGetToMaybeSlice } from '../App/Utils/SelectorsUtils';
 import { isActive } from '../utils/activatable/isActive';
-import { getBlessedTradition } from '../utils/activatable/traditionUtils';
+import { getBlessedTradition } from '../utils/Activatable/traditionUtils';
 import { List, Maybe, OrderedMap, OrderedSet, Record, Tuple } from '../utils/dataUtils';
 import { AllSortOptions, filterAndSortObjects, sortObjects } from '../utils/FilterSortUtils';
 import { getStartEl } from './elSelectors';

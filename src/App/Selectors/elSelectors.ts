@@ -1,26 +1,26 @@
-import { ExperienceLevel } from '../App/Models/Wiki/wikiTypeHelpers';
-import { createMaybeSelector } from '../App/Utils/createMaybeSelector';
-import { getExperienceLevelIdByAp } from '../App/Utils/ELUtils';
-import { Maybe, OrderedMap, Record } from '../utils/dataUtils';
-import { getExperienceLevelStartId, getTotalAdventurePoints, getWikiExperienceLevels } from './stateSelectors';
+import { fmap } from "../../Data/Functor";
+import { bind } from "../../Data/Maybe";
+import { lookupF } from "../../Data/OrderedMap";
+import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel";
+import { createMaybeSelector } from "../Utilities/createMaybeSelector";
+import { getExperienceLevelIdByAp } from "../Utilities/ELUtils";
+import { pipe } from "../Utilities/pipe";
+import { getExperienceLevelStartId, getTotalAdventurePoints, getWikiExperienceLevels } from "./stateSelectors";
 
 export const getCurrentEl = createMaybeSelector (
   getWikiExperienceLevels,
   getTotalAdventurePoints,
-  (allEls, maybeTotalAp) => maybeTotalAp.bind (
-    totalAp => allEls.lookup (getExperienceLevelIdByAp (allEls, totalAp))
-  )
-);
+  (all_els, mtotal_ap) => bind (mtotal_ap)
+                               (pipe (getExperienceLevelIdByAp (all_els), lookupF (all_els)))
+)
 
 export const getStartEl = createMaybeSelector (
   getWikiExperienceLevels,
   getExperienceLevelStartId,
-  (allEls, maybeId) => maybeId.bind (
-    id => OrderedMap.lookup<string, Record<ExperienceLevel>> (id) (allEls)
-  )
-);
+  (all_els, mid) => bind (mid) (lookupF (all_els))
+)
 
 export const getMaxTotalAttributeValues = createMaybeSelector (
   getStartEl,
-  Maybe.fmap (Record.get<ExperienceLevel, 'maxTotalAttributeValues'> ('maxTotalAttributeValues'))
-);
+  fmap (ExperienceLevel.A_.maxTotalAttributeValues)
+)

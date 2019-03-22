@@ -14,7 +14,7 @@ import { Activatable } from "../../Models/Wiki/wikiTypeHelpers";
 
 const { select } = Advantage.A
 const { id: getId, name, cost } = SelectOption.A
-const { active, dependencies } = ActivatableDependent.A
+const { active, dependencies } = ActivatableDependent.A_
 const { sid, sid2 } = ActiveObject.A
 
 /**

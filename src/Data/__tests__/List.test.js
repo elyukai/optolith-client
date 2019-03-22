@@ -835,6 +835,30 @@ test ('countWith', () => {
     .toEqual (3)
 })
 
+test ('countWithByKey', () => {
+  expect (List.countWithByKey (x => x % 2) (List (1, 2, 3, 4, 5)))
+    .toEqual (
+      OrderedMap.fromArray (
+        [
+          [1, 3],
+          [0, 2],
+        ]
+      )
+    )
+})
+
+test ('countWithByKeyMaybe', () => {
+  expect (List.countWithByKeyMaybe (x => x > 3 ? Nothing : Just (x % 2)) (List (1, 2, 3, 4, 5)))
+    .toEqual (
+      OrderedMap.fromArray (
+        [
+          [1, 2],
+          [0, 1],
+        ]
+      )
+    )
+})
+
 test ('maximumNonNegative', () => {
   expect (List.maximumNonNegative (List (1, 2, 3, 4, 5)))
     .toEqual (5)

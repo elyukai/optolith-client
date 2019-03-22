@@ -4,7 +4,7 @@ import * as ProfileActions from '../App/Actions/ProfileActions';
 import * as SubwindowsActions from '../App/Actions/SubwindowsActions';
 import { InputTextEvent } from '../App/Models/Hero/heroTypeHelpers';
 import { AppState } from '../reducers/appReducer';
-import { getAdvantagesForSheet, getDisadvantagesForSheet, isAlbino } from '../selectors/activatableSelectors';
+import { getAdvantagesForSheet, getDisadvantagesForSheet, isAlbino } from '../Selectors/activatableSelectors';
 import { getAvailableAdventurePoints } from '../selectors/adventurePointsSelectors';
 import { getStartEl } from '../selectors/elSelectors';
 import { getIsRemovingEnabled } from '../selectors/phaseSelectors';

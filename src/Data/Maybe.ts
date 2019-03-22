@@ -17,8 +17,8 @@
 import { pipe } from "ramda";
 import { ifElse } from "../App/Utilities/ifElse";
 import * as Math from "../App/Utilities/mathUtils";
-import { cnst, ident, thrush } from "./Function";
-import { fmap } from "./Functor";
+import { cnst, ident } from "./Function";
+import { fmap, fmapF } from "./Functor";
 import { cons, consF, head, ifoldr, List } from "./List";
 
 
@@ -372,7 +372,7 @@ export const liftM2 =
   (f: (a1: A1) => (a2: A2) => B) =>
   (x1: Maybe<A1>) =>
   (x2: Maybe<A2>): Maybe<B> =>
-    bind<A1> (x1) (pipe (f, fmap, thrush (x2)))
+    bind<A1> (x1) (pipe (f, fmapF (x2)))
 
 /**
  * `liftM3 :: (a1 -> a2 -> a3 -> r) -> Maybe a1 -> Maybe a2 -> Maybe a3 -> Maybe r`
@@ -585,6 +585,11 @@ interface Any {
  * `any :: (a -> Bool) -> Maybe a -> Bool`
  *
  * Determines whether any element of the structure satisfies the predicate.
+ *
+ * ```haskell
+ * any _ Nothing  = False
+ * any f (Just x) = f x
+ * ```
  */
 export const any: Any =
   <A extends Some>
@@ -596,6 +601,11 @@ export const any: Any =
  * `all :: (a -> Bool) -> Maybe a -> Bool`
  *
  * Determines whether all elements of the structure satisfy the predicate.
+ *
+ * ```haskell
+ * any _ Nothing  = True
+ * any f (Just x) = f x
+ * ```
  */
 export const all =
   <A extends Some>

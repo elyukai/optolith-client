@@ -27,8 +27,7 @@ export interface AddItemAction {
   }
 }
 
-export const addItem =
-  (): ReduxAction =>
+export const addItem: ReduxAction =
   (dispatch, getState) => {
     const mitems = getItemsState (getState ())
 

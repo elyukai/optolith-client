@@ -8,6 +8,7 @@
  */
 
 import { Identity, isIdentity, runIdentity } from "../Control/Monad/Identity";
+import { IO, isIO } from "../System/IO";
 import { Either, isEither, isLeft, Right } from "./Either";
 import { cnst } from "./Function";
 import { Const, isConst } from "./Functor/Const";
@@ -20,6 +21,7 @@ import { showP } from "./Show";
 export type Functor<A> = Const<A>
                        | Either<any, A>
                        | Identity<A>
+                       | IO<A>
                        | List<A>
                        | Maybe<A>
                        | OrderedMap<any, A>
@@ -31,6 +33,7 @@ export type FunctorMap<A, B> =
     F extends Const<infer A0> ? Const<A0> :
     F extends Either<any, A> ? Exclude<F, Right<any>> | Right<B> :
     F extends Identity<A> ? Identity<B> :
+    F extends IO<A> ? IO<B> :
     F extends List<A> ? List<B> :
     F extends Maybe<A> ? Maybe<B> :
     F extends OrderedMap<infer K, A> ? OrderedMap<K, B> :
@@ -49,8 +52,8 @@ export const fmap =
         return Nil
       }
 
-      const nextElement = fmap (f) (x .xs)
-      const nextValue = f (x .x)
+      const nextElement = fmap (f) ((x as Cons<A>) .xs)
+      const nextValue = f ((x as Cons<A>) .x)
 
       if (nextValue === x .x && nextElement === x .xs) {
         return x
@@ -93,6 +96,19 @@ export const fmap =
       return Identity (nextValue)
     }
 
+    if (isIO (x)) {
+      let nextValue
+
+      x
+        .f ()
+        .then (a => {
+          nextValue = f (a)
+        })
+        .catch (err => { throw new Error (err) })
+
+      return IO (cnst (Promise.resolve (nextValue)))
+    }
+
     if (isMaybe (x)) {
       if (isNothing (x)) {
         return x
@@ -124,6 +140,7 @@ interface fmapF {
   <A0> (x: Const<A0>): <B> (f: (x: A0) => B) => Const<A0>;
   <E, A> (x: Either<E, A>): <B> (f: (x: A) => B) => Either<E, B>;
   <A> (x: Identity<A>): <B> (f: (x: A) => B) => Identity<B>;
+  <A> (x: IO<A>): <B> (f: (x: A) => B) => IO<B>;
   <A> (x: List<A>): <B> (f: (x: A) => B) => List<B>;
   <A> (x: Maybe<A>): <B> (f: (x: A) => B) => Maybe<B>;
   <K, A> (x: OrderedMap<K, A>): <B> (f: (x: A) => B) => OrderedMap<K, B>;

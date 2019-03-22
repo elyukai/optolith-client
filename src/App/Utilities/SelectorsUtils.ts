@@ -1,10 +1,11 @@
 import { pipe } from "ramda";
 import { bindF, Maybe } from "../../Data/Maybe";
 import { lookup, OrderedMap } from "../../Data/OrderedMap";
+import { Record } from "../../Data/Record";
 import { AppState } from "../Reducers/appReducer";
 
-export type MaybeSliceSelector<A> = (state: AppState) => Maybe<OrderedMap<string, A>>
-export type SliceSelector<A> = (state: AppState) => OrderedMap<string, A>
+export type MaybeSliceSelector<A> = (state: Record<AppState>) => Maybe<OrderedMap<string, A>>
+export type SliceSelector<A> = (state: Record<AppState>) => OrderedMap<string, A>
 
 /**
  * Takes a selector for the app's state, an `id` and the app's state and returns

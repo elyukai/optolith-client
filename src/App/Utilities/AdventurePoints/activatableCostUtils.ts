@@ -132,50 +132,6 @@ const getEntrySpecificCost =
       case "DISADV_34":
       // Obligations
       case "DISADV_50": {
-        /**
-         * A folding function over a list of `ActiveObject`s returning the
-         * highest level. Ignores entries with custom cost.
-         */
-        const compareMaxLevel =
-          (previous_max: number) =>
-          (active: Record<ActiveObject>) => {
-            const mactive_level = ActiveObject.A.tier (active)
-
-            if (isJust (mactive_level)) {
-              const active_level = fromJust (mactive_level)
-
-              return active_level > previous_max
-                && isNothing (ActiveObject.A.cost (active))
-                  ? active_level
-                  : previous_max
-            }
-
-            return previous_max
-          }
-
-        /**
-         * A folding function over a list of `ActiveObject`s returning the
-         * second-highest level. Ignores entries with custom cost.
-         */
-        const compareSubMaxLevel =
-          (max: number) =>
-          (previous_max: number) =>
-          (active: Record<ActiveObject>) => {
-            const mactive_level = ActiveObject.A.tier (active)
-
-            if (isJust (mactive_level)) {
-              const active_level = fromJust (mactive_level)
-
-              return active_level > previous_max
-                && active_level < max
-                && isNothing (ActiveObject.A.cost (active))
-                  ? active_level
-                  : previous_max
-            }
-
-            return previous_max
-          }
-
         const current_max_level = foldl (compareMaxLevel)
                                         (0)
                                         (all_active)
@@ -365,6 +321,54 @@ const getEntrySpecificCost =
         return mcurrent_cost
       }
     }
+  }
+
+/**
+ * A function for folding over a list of `ActiveObject`s to get the highest
+ * level. Ignores entries with custom cost.
+ *
+ * `foldl compareMaxLevel 0 all_entries`
+ */
+export const compareMaxLevel =
+  (previous_max: number) =>
+  (active: Record<ActiveObject>) => {
+    const mactive_level = ActiveObject.A.tier (active)
+
+    if (isJust (mactive_level)) {
+      const active_level = fromJust (mactive_level)
+
+      return active_level > previous_max
+        && isNothing (ActiveObject.A.cost (active))
+          ? active_level
+          : previous_max
+    }
+
+    return previous_max
+  }
+
+/**
+ * A function for folding over a list of `ActiveObject`s to get the
+ * second-highest level. Ignores entries with custom cost.
+ *
+ * `foldl (compareSubMaxLevel max_level) 0 all_entries`
+ */
+export const compareSubMaxLevel =
+  (max: number) =>
+  (previous_max: number) =>
+  (active: Record<ActiveObject>) => {
+    const mactive_level = ActiveObject.A.tier (active)
+
+    if (isJust (mactive_level)) {
+      const active_level = fromJust (mactive_level)
+
+      return active_level > previous_max
+        && active_level < max
+        && isNothing (ActiveObject.A.cost (active))
+          ? active_level
+          : previous_max
+    }
+
+    return previous_max
   }
 
 const getTotalCost =

@@ -1,15 +1,25 @@
-import { fmap } from "../../../Data/Functor";
-import { elemF, List } from "../../../Data/List";
-import { bind, ensure, Just, listToMaybe, Maybe, Nothing, or } from "../../../Data/Maybe";
+import { equals } from "../../../Data/Eq";
+import { ident } from "../../../Data/Function";
+import { fmap, fmapF } from "../../../Data/Functor";
+import { any, countWith, countWithByKeyMaybe, elemF, find, flength, foldl, foldr, isList, lastS, List, take } from "../../../Data/List";
+import { all, altF, bind, bindF, elem, ensure, fromJust, fromMaybe, isJust, isNothing, Just, liftM2, listToMaybe, Maybe, Nothing, or, sum } from "../../../Data/Maybe";
+import { alter, empty, findWithDefault, lookup, OrderedMap } from "../../../Data/OrderedMap";
 import { fst, Pair, snd } from "../../../Data/Pair";
 import { fromDefault, Record } from "../../../Data/Record";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
+import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
 import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
+import { ActiveActivatable } from "../../Models/View/ActiveActivatable";
 import { AdventurePointsCategories } from "../../Models/View/AdventurePointsCategories";
-import { getMagicalTraditions } from "../activatable/traditionUtils";
-import { add, gt, subtractBy } from "../mathUtils";
-import { pipe } from "../pipe";
-import { getActiveWithNoCustomCost } from "./activatableCostUtils";
+import { Disadvantage } from "../../Models/Wiki/Disadvantage";
+import { Skill } from "../../Models/Wiki/Skill";
+import { SelectOption } from "../../Models/Wiki/sub/SelectOption";
+import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
+import { getMagicalTraditions } from "../Activatable/traditionUtils";
+import { add, gt, inc, lt, multiply, negate, subtractBy } from "../mathUtils";
+import { pipe, pipe_ } from "../pipe";
+import { misNumberM, misStringM } from "../typeCheckUtils";
+import { compareMaxLevel, compareSubMaxLevel, getActiveWithNoCustomCost } from "./activatableCostUtils";
 
 const AP = AdventurePointsCategories.A
 
@@ -154,281 +164,251 @@ export const getMissingAPForDisAdvantage =
     return MissingAPForDisAdvantage ({ totalMissing, mainMissing, subMissing })
   }
 
-const getPrinciplesObligationsDiff = (
-  entries: List<Record<Data.ActiveViewObject>>,
-  state: OrderedMap<string, Record<Data.ActivatableDependent>>,
-  wiki: Record<WikiAll>,
-  sourceId: string
-): number => {
-  if (entries.any (e => e.get ("id") === sourceId)) {
-    return Maybe.fromMaybe (0) (
-      state.lookup (sourceId)
-        .bind (
-          entry => {
-            const active = entry.get ("active")
+const getPrinciplesObligationsDiff =
+  (id: string) =>
+  (wiki: WikiModelRecord) =>
+  (hero_slice: OrderedMap<string, Record<ActivatableDependent>>) =>
+  (entries: List<Record<ActiveActivatable>>): number => {
+    if (any (pipe (ActiveActivatable.A_.id, equals (id))) (entries)) {
+      return sum (pipe_ (
+        hero_slice,
+        lookup (id),
+        bindF (entry => {
+          const current_active = ActivatableDependent.A_.active (entry)
 
-            const maxCurrentTier = active.foldl<number> (
-              a => b => {
-                const tier = b.lookup ("tier")
+          const current_max_level = foldl (compareMaxLevel)
+                                          (0)
+                                          (current_active)
 
-                return Maybe.isJust (tier)
-                  && Maybe.fromJust (tier) > a
-                  && Maybe.isNothing (b.lookup ("cost"))
-                    ? Maybe.fromJust (tier)
-                    : a
-              }
-            ) (0)
+          const current_second_max_level = foldl (compareSubMaxLevel (current_max_level))
+                                                 (0)
+                                                 (current_active)
 
-            // Next lower tier
-            const subMaxCurrentTier = active.foldl<number> (
-              a => b => {
-                const tier = b.lookup ("tier")
+          const at_max_level =
+            countWith (pipe (ActiveObject.A_.tier, elem (current_max_level)))
+                      (current_active)
 
-                return Maybe.isJust (tier)
-                  && Maybe.fromJust (tier) > a
-                  && Maybe.fromJust (tier) < maxCurrentTier
-                  && Maybe.isNothing (b.lookup ("cost"))
-                    ? Maybe.fromJust (tier)
-                    : a
-              }
-            ) (0)
+          const mbase_cost =
+            pipe_ (
+              wiki,
+              WikiModel.A_.disadvantages,
+              lookup (id),
+              bindF (Disadvantage.A_.cost),
+              misNumberM
+            )
 
-            const justMaxCurrentTier = Maybe.pure (maxCurrentTier)
+          const amount_diff = at_max_level > 1
+            ? fmapF (mbase_cost) (base => current_max_level * -base)
+            : Just (0)
 
-            const amountMaxTiers = active.foldl<number> (
-              a => b => b.lookup ("tier").equals (justMaxCurrentTier) ? a + 1 : a
-            ) (0)
+          const level_diff = fmapF (mbase_cost) (base => current_second_max_level * -base)
 
-            const baseCost = wiki.get ("disadvantages")
-              .lookup (sourceId)
-              .fmap (e => e.get ("cost") as number)
+          return liftM2 (add) (amount_diff) (level_diff)
+        })
+      ))
+    }
 
-            const amountDiff = amountMaxTiers > 1
-              ? baseCost.fmap (base => maxCurrentTier * -base)
-              : Maybe.pure (0)
+    return 0
+  }
 
-            const levelDiff = baseCost.fmap (base => subMaxCurrentTier * -base)
+const getPropertyOrAspectKnowledgeDiff =
+  (id: string) =>
+    pipe (
+      find (pipe (ActiveActivatable.A_.id, equals (id))),
+      fmap (entry => {
+        const current_active_length =
+          pipe_ (entry, ActiveActivatable.A_.stateEntry, ActivatableDependent.A_.active, flength)
 
-            return amountDiff.bind (
-              amount => levelDiff.fmap (level => amount + level)
+        const mcost = pipe_ (entry, ActiveActivatable.A_.wikiEntry, Disadvantage.A.cost)
+
+        if (isJust (mcost)) {
+          const cost = fromJust (mcost)
+
+          if (isList (cost)) {
+            const actualAPSum = pipe_ (cost, take (current_active_length), List.sum)
+
+            // Sum of displayed AP values for entries (not actual sum)
+            const displayedAPSumForAll = sum (lastS (cost)) * (current_active_length - 1)
+
+            return actualAPSum - displayedAPSumForAll
+          }
+        }
+
+        return 0
+      }),
+      sum
+    )
+
+const getPersonalityFlawsDiff =
+  (wiki: WikiModelRecord) =>
+  (hero_slice: OrderedMap<string, Record<ActivatableDependent>>) =>
+  (entries: List<Record<ActiveActivatable>>): number => {
+    const id = "DISADV_33"
+
+    if (any (pipe (ActiveActivatable.A_.id, equals (id))) (entries)) {
+      return sum (pipe_ (
+        hero_slice,
+        lookup (id),
+        fmap (entry => {
+          const current_active = ActivatableDependent.A_.active (entry)
+
+          const numberOfEntriesWithMultiplePossible =
+            countWith ((e: Record<ActiveObject>) =>
+                        elem<string | number> (7) (ActiveObject.A_.sid (e))
+                        && isNothing (ActiveObject.A_.cost (e)))
+                      (current_active)
+
+          if (numberOfEntriesWithMultiplePossible > 1) {
+            return pipe_ (
+              wiki,
+              WikiModel.A_.disadvantages,
+              lookup (id),
+              bindF (Disadvantage.A_.select),
+              bindF (find (pipe (SelectOption.A_.id, equals (7)))),
+              bindF (SelectOption.A_.cost),
+              fmap (negate),
+              sum
             )
           }
-        )
-    )
-  }
-  else {
+
+          return 0
+        })
+      ))
+    }
+
     return 0
   }
-}
 
-const getPropertyOrAspectKnowledgeDiff = (entry: Record<Data.ActiveViewObject>) => {
-  const active = entry.get ("stateEntry").get ("active")
-  const cost = entry.get ("wikiEntry").get ("cost")
+const getBadHabitsDiff =
+  (wiki: WikiModelRecord) =>
+  (hero_slice: OrderedMap<string, Record<ActivatableDependent>>) =>
+  (entries: List<Record<ActiveActivatable>>): number => {
+    const id = "DISADV_36"
 
-  if (cost instanceof List) {
-    const actualAPSum = cost.ifoldl<number> (
-      a => i => b => i + 1 < active.length () ? a + b : a
-    ) (0)
+    if (any (pipe (ActiveActivatable.A_.id, equals (id))) (entries)) {
+      return sum (pipe_ (
+        hero_slice,
+        lookup (id),
+        fmap (entry => {
+          const current_active = ActivatableDependent.A_.active (entry)
 
-    // Sum of displayed AP values for entries (not actual sum)
-    const displayedAPSumForAll = (
-      Maybe.fromMaybe (0) (List.last_ (cost)) * (active.length () - 1)
-    )
-
-    return actualAPSum - displayedAPSumForAll
-  }
-
-  return 0
-}
-
-const getPersonalityFlawsDiff = (
-  entries: List<Record<Data.ActiveViewObject>>,
-  state: OrderedMap<string, Record<Data.ActivatableDependent>>,
-  wiki: Record<WikiAll>
-): number => {
-  if (entries.any (e => e.get ("id") === "DISADV_33")) {
-    return Maybe.fromMaybe (0) (
-      state.lookup ("DISADV_33")
-        .fmap (
-          entry => {
-            const active = entry.get ("active")
-
-            const numberOfEntriesWithMultiplePossible =
-              active.filter (
-                e => e.lookup ("sid").equals (Maybe.pure (7))
-                  && Maybe.isNothing (e.lookup ("cost"))
-              )
-                .length ()
-
-            if (numberOfEntriesWithMultiplePossible > 1) {
-              return Maybe.fromMaybe (0) (
-                wiki.get ("disadvantages").lookup ("DISADV_33")
-                  .bind (wikiEntry => wikiEntry.lookup ("select"))
-                  .bind (select => select.find (e => e.get ("id") === 7))
-                  .bind (selection => selection.lookup ("cost"))
-                  .fmap (R.negate)
-              )
-            }
-
-            return 0
+          if (flength (getActiveWithNoCustomCost (current_active)) > 3) {
+            return pipe_ (
+              wiki,
+              WikiModel.A_.disadvantages,
+              lookup (id),
+              bindF (Disadvantage.A_.cost),
+              misNumberM,
+              fmap (multiply (-3)),
+              sum
+            )
           }
-        )
-    )
-  }
-  else {
+
+          return 0
+        })
+      ))
+    }
+
     return 0
   }
-}
 
-const getBadHabitsDiff = (
-  entries: List<Record<Data.ActiveViewObject>>,
-  state: OrderedMap<string, Record<Data.ActivatableDependent>>,
-  wiki: Record<WikiAll>
-): number => {
-  const id = "DISADV_36"
+const getSkillSpecializationsDiff =
+  (wiki: WikiModelRecord) =>
+  (hero_slice: OrderedMap<string, Record<ActivatableDependent>>) =>
+  (entries: List<Record<ActiveActivatable>>): number => {
+    const id = "SA_9"
 
-  if (entries.any (e => e.get ("id") === id)) {
-    return Maybe.fromMaybe (0) (
-      state.lookup (id)
-        .fmap (
-          entry => {
-            const active = entry.get ("active")
+    if (any (pipe (ActiveActivatable.A_.id, equals (id))) (entries)) {
+      return sum (pipe_ (
+        hero_slice,
+        lookup (id),
+        fmap (entry => {
+          const current_active = ActivatableDependent.A_.active (entry)
 
-            if (getActiveWithNoCustomCost (active).length () > 3) {
-              return R.pipe (
-                getWikiEntryFromSlice (wiki) ("disadvantages"),
-                Maybe.fmap (Record.get<Disadvantage, "cost"> ("cost")),
-                Maybe.bind_ (Maybe.ensure (isNumber)),
-                Maybe.fmap (R.multiply (-3)),
-                Maybe.fromMaybe (0)
-              ) (id)
-            }
+          // Count how many specializations are for the same skill
+          const sameSkill =
+            countWithByKeyMaybe (pipe (ActiveObject.A_.sid, misStringM))
+                                (current_active)
 
-            return 0
-          }
-        )
-    )
-  }
-  else {
+          // Return the accumulated value, otherwise 0.
+          const getFlatSkillDone = findWithDefault (0)
+
+          // Calculates the diff for a single skill specialization
+          const getSingleDiff =
+            (accMap: OrderedMap<string, number>) =>
+            (sid: string) =>
+            (counter: number) =>
+            (skill: Record<Skill>) =>
+              Skill.A_.ic (skill) * (getFlatSkillDone (sid) (accMap) + 1 - counter)
+
+          type TrackingPair = Pair<number, OrderedMap<string, number>>
+
+          // Iterates through the counter and sums up all cost differences for
+          // each specialization.
+          //
+          // It keeps track of how many specializations have been already
+          // taken into account.
+          const skillDone =
+            foldr (pipe (
+                    ActiveObject.A_.sid,
+                    misStringM,
+                    bindF (current_sid =>
+                            fmapF (lookup (current_sid) (sameSkill))
+                                  (count => (p: TrackingPair) => {
+                                    const m = snd (p)
+
+                                    // Check if the value in the map is either
+                                    // Nothing or a Just of a lower number than
+                                    // the complete counter
+                                    // => which means there are still actions to
+                                    // be done
+                                    if (all (lt (count)) (lookup (current_sid) (m))) {
+                                      const mskill =
+                                        pipe_ (wiki, WikiModel.A_.skills, lookup (current_sid))
+
+                                      return Pair (
+                                        fst (p) + sum (fmap (getSingleDiff (m)
+                                                                           (current_sid)
+                                                                           (count))
+                                                            (mskill)),
+                                        alter (pipe (altF (Just (0)), fmap (inc)))
+                                              (current_sid)
+                                              (m)
+                                      )
+                                    }
+
+                                    return p
+                                  })),
+                    fromMaybe (ident)
+                  ))
+                  (Pair (0, empty))
+                  (current_active)
+
+          return fst (skillDone)
+        })
+      ))
+    }
+
     return 0
   }
-}
 
-const getSkillSpecializationsDiff = (
-  entries: List<Record<Data.ActiveViewObject>>,
-  state: OrderedMap<string, Record<Data.ActivatableDependent>>,
-  wiki: Record<WikiAll>
-): number => {
-  if (entries.any (e => e.get ("id") === "SA_9")) {
-    return Maybe.fromMaybe (0) (
-      state.lookup ("SA_9")
-        .fmap (
-          entry => {
-            const active = entry.get ("active")
+const getPropertyKnowledgeDiff = getPropertyOrAspectKnowledgeDiff ("SA_72")
 
-            // Count how many specializations are for the same skill
-            const sameSkill = active.foldl<OrderedMap<string, number>> (
-              acc => current => {
-                const altered = current.lookup ("sid")
-                  .bind (Maybe.ensure (isString))
-                  .fmap (acc.alter (sum => sum.fmap (R.inc).alt (Maybe.pure (1))))
+const getAspectKnowledgeDiff = getPropertyOrAspectKnowledgeDiff ("SA_87")
 
-                return Maybe.isJust (altered) ? Maybe.fromJust (altered) : acc
-              }
-            ) (OrderedMap.empty ())
-
-            // Return the accumulated value, otherwise 0.
-            const getFlatSkillDone =
-              (accMap: OrderedMap<string, number>, sid: string) =>
-                Maybe.fromMaybe (0) (accMap.lookup (sid))
-
-            // Calculates the diff for a single skill specialization
-            const getSingleDiff = (
-              skill: Record<Skill>,
-              accMap: OrderedMap<string, number>,
-              sid: string,
-              counter: number
-            ) =>
-              skill.get ("ic") * (getFlatSkillDone (accMap, sid) + 1 - counter)
-
-            /*
-             * Iterates through the counter and sums up all cost differences for
-             * each specialization.
-             *
-             * It keeps track of how many specializations have been already
-             * taken into account.
-             */
-            const skillDone =
-              active.foldl<Tuple<number, OrderedMap<string, number>>> (
-                acc => current => {
-                  const altered = current.lookup ("sid")
-                    .bind (Maybe.ensure (isString))
-                    .bind (
-                      sid => sameSkill.lookup (sid)
-                        .fmap (counter => {
-                          const accMap = Tuple.snd (acc)
-                          if (
-                            !accMap.member (sid)
-                            || accMap.lookup (sid).lt (Maybe.pure (counter))
-                          ) {
-                            const maybeSkill = wiki.get ("skills").lookup (sid)
-
-                            return Tuple.of<number, OrderedMap<string, number>> (
-                              Maybe.fromMaybe (Tuple.fst (acc)) (
-                                maybeSkill.fmap (skill =>
-                                  Tuple.fst (acc)
-                                  + getSingleDiff (skill, accMap, sid, counter)
-                                )
-                              )
-                            ) (
-                              accMap.alter (sum => sum.fmap (R.inc).alt (Maybe.pure (1))) (sid)
-                            )
-                          }
-
-                          return acc
-                        })
-                    )
-
-                  return Maybe.isJust (altered) ? Maybe.fromJust (altered) : acc
-                }
-              ) (Tuple.of<number, OrderedMap<string, number>> (0) (OrderedMap.empty ()))
-
-            return Tuple.fst (skillDone)
-          }
-        )
+export const getAdventurePointsSpentDifference =
+  (wiki: WikiModelRecord) =>
+  (hero_slice: OrderedMap<string, Record<ActivatableDependent>>) =>
+  (entries: List<Record<ActiveActivatable>>): number => {
+    const adventurePointsSpentDifferences = List (
+      getPrinciplesObligationsDiff ("DISADV_34") (wiki) (hero_slice) (entries),
+      getPrinciplesObligationsDiff ("DISADV_50") (wiki) (hero_slice) (entries),
+      getPersonalityFlawsDiff (wiki) (hero_slice) (entries),
+      getBadHabitsDiff (wiki) (hero_slice) (entries),
+      getSkillSpecializationsDiff (wiki) (hero_slice) (entries),
+      getPropertyKnowledgeDiff (entries),
+      getAspectKnowledgeDiff (entries)
     )
+
+    return List.sum (adventurePointsSpentDifferences)
   }
-  else {
-    return 0
-  }
-}
-
-const getPropertyKnowledgeDiff = R.pipe (
-  List.find<Record<Data.ActiveViewObject>> (e => e.get ("id") === "SA_72"),
-  Maybe.fmap (getPropertyOrAspectKnowledgeDiff),
-  Maybe.fromMaybe (0)
-)
-
-const getAspectKnowledgeDiff = R.pipe (
-  List.find<Record<Data.ActiveViewObject>> (e => e.get ("id") === "SA_87"),
-  Maybe.fmap (getPropertyOrAspectKnowledgeDiff),
-  Maybe.fromMaybe (0)
-)
-
-export function getAdventurePointsSpentDifference (
-  entries: List<Record<Data.ActiveViewObject>>,
-  state: OrderedMap<string, Record<Data.ActivatableDependent>>,
-  wiki: Record<WikiAll>
-): number {
-  const adventurePointsSpentDifferences = List.of (
-    getPrinciplesObligationsDiff (entries, state, wiki, "DISADV_34"),
-    getPrinciplesObligationsDiff (entries, state, wiki, "DISADV_50"),
-    getPersonalityFlawsDiff (entries, state, wiki),
-    getBadHabitsDiff (entries, state, wiki),
-    getSkillSpecializationsDiff (entries, state, wiki),
-    getPropertyKnowledgeDiff (entries),
-    getAspectKnowledgeDiff (entries)
-  )
-
-  return List.sum (adventurePointsSpentDifferences)
-}

@@ -1,16 +1,16 @@
-import { AsyncAction } from '../../types/actions';
-import { ActionTypes } from '../Constants/ActionTypes';
-import { isAlbino } from '../Selectors/activatableSelectors';
-import { getCurrentRace, getCurrentRaceVariant } from '../Selectors/rcpSelectors';
-import { getSize, getWeight } from '../Selectors/stateSelectors';
-import * as RCPUtils from '../Utilities/rcpUtils';
-import { Just, Maybe, Nothing } from '../utils/dataUtils';
+import { fromJust, fromMaybe, isJust, Just, Maybe, Nothing } from "../../Data/Maybe";
+import { ActionTypes } from "../Constants/ActionTypes";
+import { isAlbino } from "../Selectors/activatableSelectors";
+import { getCurrentRace, getCurrentRaceVariant } from "../Selectors/rcpSelectors";
+import { getSize, getWeight } from "../Selectors/stateSelectors";
+import * as RCPUtils from "../Utilities/rcpUtils";
+import { ReduxAction } from "./Actions";
 
 export interface SetHeroNameAction {
-  type: ActionTypes.SET_HERO_NAME;
+  type: ActionTypes.SET_HERO_NAME
   payload: {
     name: string;
-  };
+  }
 }
 
 export const setHeroName = (name: string): SetHeroNameAction => ({
@@ -18,13 +18,13 @@ export const setHeroName = (name: string): SetHeroNameAction => ({
   payload: {
     name,
   },
-});
+})
 
 export interface SetCustomProfessionNameAction {
-  type: ActionTypes.SET_CUSTOM_PROFESSION_NAME;
+  type: ActionTypes.SET_CUSTOM_PROFESSION_NAME
   payload: {
     name: string;
-  };
+  }
 }
 
 export const setCustomProfessionName = (name: string): SetCustomProfessionNameAction => ({
@@ -32,13 +32,13 @@ export const setCustomProfessionName = (name: string): SetCustomProfessionNameAc
   payload: {
     name,
   },
-});
+})
 
 export interface SetHeroAvatarAction {
-  type: ActionTypes.SET_HERO_AVATAR;
+  type: ActionTypes.SET_HERO_AVATAR
   payload: {
     url: string;
-  };
+  }
 }
 
 export const setHeroAvatar = (path: string): SetHeroAvatarAction => ({
@@ -46,13 +46,13 @@ export const setHeroAvatar = (path: string): SetHeroAvatarAction => ({
   payload: {
     url: path,
   },
-});
+})
 
 export interface SetFamilyAction {
-  type: ActionTypes.SET_FAMILY;
+  type: ActionTypes.SET_FAMILY
   payload: {
     family: string;
-  };
+  }
 }
 
 export const setFamily = (family: string): SetFamilyAction => ({
@@ -60,13 +60,13 @@ export const setFamily = (family: string): SetFamilyAction => ({
   payload: {
     family,
   },
-});
+})
 
 export interface SetPlaceOfBirthAction {
-  type: ActionTypes.SET_PLACEOFBIRTH;
+  type: ActionTypes.SET_PLACEOFBIRTH
   payload: {
     placeofbirth: string;
-  };
+  }
 }
 
 export const setPlaceOfBirth = (placeofbirth: string): SetPlaceOfBirthAction => ({
@@ -74,13 +74,13 @@ export const setPlaceOfBirth = (placeofbirth: string): SetPlaceOfBirthAction => 
   payload: {
     placeofbirth,
   },
-});
+})
 
 export interface SetDateOfBirthAction {
-  type: ActionTypes.SET_DATEOFBIRTH;
+  type: ActionTypes.SET_DATEOFBIRTH
   payload: {
     dateofbirth: string;
-  };
+  }
 }
 
 export const setDateOfBirth = (dateofbirth: string): SetDateOfBirthAction => ({
@@ -88,13 +88,13 @@ export const setDateOfBirth = (dateofbirth: string): SetDateOfBirthAction => ({
   payload: {
     dateofbirth,
   },
-});
+})
 
 export interface SetAgeAction {
-  type: ActionTypes.SET_AGE;
+  type: ActionTypes.SET_AGE
   payload: {
     age: string;
-  };
+  }
 }
 
 export const setAge = (age: string): SetAgeAction => ({
@@ -102,13 +102,13 @@ export const setAge = (age: string): SetAgeAction => ({
   payload: {
     age,
   },
-});
+})
 
 export interface SetHairColorAction {
-  type: ActionTypes.SET_HAIRCOLOR;
+  type: ActionTypes.SET_HAIRCOLOR
   payload: {
     haircolor: number;
-  };
+  }
 }
 
 export const setHairColor = (haircolor: number): SetHairColorAction => ({
@@ -116,13 +116,13 @@ export const setHairColor = (haircolor: number): SetHairColorAction => ({
   payload: {
     haircolor,
   },
-});
+})
 
 export interface SetEyeColorAction {
-  type: ActionTypes.SET_EYECOLOR;
+  type: ActionTypes.SET_EYECOLOR
   payload: {
     eyecolor: number;
-  };
+  }
 }
 
 export const setEyeColor = (eyecolor: number): SetEyeColorAction => ({
@@ -130,14 +130,14 @@ export const setEyeColor = (eyecolor: number): SetEyeColorAction => ({
   payload: {
     eyecolor,
   },
-});
+})
 
 export interface SetSizeAction {
-  type: ActionTypes.SET_SIZE;
+  type: ActionTypes.SET_SIZE
   payload: {
     size: string;
     weight: Maybe<string>;
-  };
+  }
 }
 
 export const setSize = (size: string) => (weight: Maybe<string>): SetSizeAction => ({
@@ -146,14 +146,14 @@ export const setSize = (size: string) => (weight: Maybe<string>): SetSizeAction 
     size,
     weight,
   },
-});
+})
 
 export interface SetWeightAction {
-  type: ActionTypes.SET_WEIGHT;
+  type: ActionTypes.SET_WEIGHT
   payload: {
     size: Maybe<string>;
     weight: string;
-  };
+  }
 }
 
 export const setWeight = (weight: string) => (size: Maybe<string>): SetWeightAction => ({
@@ -162,76 +162,76 @@ export const setWeight = (weight: string) => (size: Maybe<string>): SetWeightAct
     size,
     weight,
   },
-});
+})
 
-export const rerollHairColor = (): AsyncAction => (dispatch, getState) => {
-  const state = getState ();
-  const race = getCurrentRace (state);
-  const raceVariant = getCurrentRaceVariant (state);
+export const rerollHairColor: ReduxAction =
+  (dispatch, getState) => {
+    const state = getState ()
+    const race = getCurrentRace (state)
+    const raceVariant = getCurrentRaceVariant (state)
 
-  const maybeHairColor = RCPUtils.rerollHairColor (race, raceVariant);
+    const mhair_color = RCPUtils.rerollHairColor (race) (raceVariant)
 
-  if (Maybe.isJust (maybeHairColor)) {
-    dispatch (setHairColor (Maybe.fromJust (maybeHairColor)));
-  }
-};
-
-export const rerollEyeColor = (): AsyncAction => (dispatch, getState) => {
-  const state = getState ();
-  const race = getCurrentRace (state);
-  const raceVariant = getCurrentRaceVariant (state);
-  const isAlbinoVar = Maybe.fromMaybe (false) (isAlbino (state));
-
-  const maybeEyeColor = RCPUtils.rerollEyeColor (race, raceVariant, isAlbinoVar);
-
-  if (Maybe.isJust (maybeEyeColor)) {
-    dispatch (setEyeColor (Maybe.fromJust (maybeEyeColor)));
-  }
-};
-
-export const rerollSize = (): AsyncAction => (dispatch, getState) => {
-  const state = getState ();
-  const race = getCurrentRace (state);
-  const raceVariant = getCurrentRaceVariant (state);
-
-  const maybePrevSize = getSize (state);
-  const maybeWeight = getWeight (state);
-  const maybeNewSize = RCPUtils.rerollSize (race, raceVariant);
-
-  if (Maybe.isJust (maybeNewSize)) {
-    if (Maybe.isJust (maybePrevSize) && Maybe.isJust (maybeWeight)) {
-      const newWeight = RCPUtils.getWeightForRerolledSize (
-        Maybe.fromJust (maybeWeight),
-        Maybe.fromJust (maybePrevSize),
-        Maybe.fromJust (maybeNewSize)
-      );
-
-      dispatch (setSize (Maybe.fromJust (maybeNewSize)) (Just (newWeight)));
-    }
-    else {
-      dispatch (setSize (Maybe.fromJust (maybeNewSize)) (Nothing ()));
+    if (isJust (mhair_color)) {
+      dispatch (setHairColor (fromJust (mhair_color)))
     }
   }
-};
 
-export const rerollWeight = (): AsyncAction => (dispatch, getState) => {
-  const state = getState ();
-  const race = getCurrentRace (state);
-  const raceVariant = getCurrentRaceVariant (state);
-  const prevSize = getSize (state);
+export const rerollEyeColor: ReduxAction = (dispatch, getState) => {
+  const state = getState ()
+  const race = getCurrentRace (state)
+  const raceVariant = getCurrentRaceVariant (state)
+  const isAlbinoVar = fromMaybe (false) (isAlbino (state))
 
-  const { weight, size } = RCPUtils.rerollWeight (race, raceVariant, prevSize);
+  const meye_color = RCPUtils.rerollEyeColor (isAlbinoVar) (race) (raceVariant)
 
-  if (Maybe.isJust (weight)) {
-    dispatch (setWeight (Maybe.fromJust (weight)) (size));
+  if (isJust (meye_color)) {
+    dispatch (setEyeColor (fromJust (meye_color)))
   }
-};
+}
+
+export const rerollSize: ReduxAction =
+  (dispatch, getState) => {
+    const state = getState ()
+    const race = getCurrentRace (state)
+    const raceVariant = getCurrentRaceVariant (state)
+
+    const mprev_size = getSize (state)
+    const mweight = getWeight (state)
+    const mnew_size = RCPUtils.rerollSize (race) (raceVariant)
+
+    if (isJust (mnew_size)) {
+      if (isJust (mprev_size) && isJust (mweight)) {
+        const new_weight = RCPUtils.getWeightForRerolledSize (fromJust (mweight))
+                                                             (fromJust (mprev_size))
+                                                             (fromJust (mnew_size))
+
+        dispatch (setSize (fromJust (mnew_size)) (Just (new_weight)))
+      }
+      else {
+        dispatch (setSize (fromJust (mnew_size)) (Nothing))
+      }
+    }
+  }
+
+export const rerollWeight: ReduxAction =
+  (dispatch, getState) => {
+    const state = getState ()
+    const race = getCurrentRace (state)
+    const prevSize = getSize (state)
+
+    const { weight, size } = RCPUtils.rerollWeight (prevSize) (race)
+
+    if (isJust (weight)) {
+      dispatch (setWeight (fromJust (weight)) (size))
+    }
+  }
 
 export interface SetTitleAction {
-  type: ActionTypes.SET_TITLE;
+  type: ActionTypes.SET_TITLE
   payload: {
     title: string;
-  };
+  }
 }
 
 export const setTitle = (title: string): SetTitleAction => ({
@@ -239,13 +239,13 @@ export const setTitle = (title: string): SetTitleAction => ({
   payload: {
     title,
   },
-});
+})
 
 export interface SetSocialStatusAction {
-  type: ActionTypes.SET_SOCIALSTATUS;
+  type: ActionTypes.SET_SOCIALSTATUS
   payload: {
     socialstatus: number;
-  };
+  }
 }
 
 export const setSocialStatus = (socialstatus: number): SetSocialStatusAction => ({
@@ -253,13 +253,13 @@ export const setSocialStatus = (socialstatus: number): SetSocialStatusAction => 
   payload: {
     socialstatus,
   },
-});
+})
 
 export interface SetCharacteristicsAction {
-  type: ActionTypes.SET_CHARACTERISTICS;
+  type: ActionTypes.SET_CHARACTERISTICS
   payload: {
     characteristics: string;
-  };
+  }
 }
 
 export const setCharacteristics = (characteristics: string): SetCharacteristicsAction => ({
@@ -267,13 +267,13 @@ export const setCharacteristics = (characteristics: string): SetCharacteristicsA
   payload: {
     characteristics,
   },
-});
+})
 
 export interface SetOtherInfoAction {
-  type: ActionTypes.SET_OTHERINFO;
+  type: ActionTypes.SET_OTHERINFO
   payload: {
     otherinfo: string;
-  };
+  }
 }
 
 export const setOtherInfo = (otherinfo: string): SetOtherInfoAction => ({
@@ -281,13 +281,13 @@ export const setOtherInfo = (otherinfo: string): SetOtherInfoAction => ({
   payload: {
     otherinfo,
   },
-});
+})
 
 export interface SetCultureAreaKnowledge {
-  type: ActionTypes.SET_CULTURE_AREA_KNOWLEDGE;
+  type: ActionTypes.SET_CULTURE_AREA_KNOWLEDGE
   payload: {
     cultureAreaKnowledge: string;
-  };
+  }
 }
 
 export const setCultureAreaKnowledge = (cultureAreaKnowledge: string): SetCultureAreaKnowledge => ({
@@ -295,21 +295,21 @@ export const setCultureAreaKnowledge = (cultureAreaKnowledge: string): SetCultur
   payload: {
     cultureAreaKnowledge,
   },
-});
+})
 
 export interface EndHeroCreationAction {
-  type: ActionTypes.END_HERO_CREATION;
+  type: ActionTypes.END_HERO_CREATION
 }
 
 export const endHeroCreation = (): EndHeroCreationAction => ({
   type: ActionTypes.END_HERO_CREATION,
-});
+})
 
 export interface AddAdventurePointsAction {
-  type: ActionTypes.ADD_ADVENTURE_POINTS;
+  type: ActionTypes.ADD_ADVENTURE_POINTS
   payload: {
     amount: number;
-  };
+  }
 }
 
 export const addAdventurePoints = (amount: number): AddAdventurePointsAction => ({
@@ -317,4 +317,4 @@ export const addAdventurePoints = (amount: number): AddAdventurePointsAction => 
   payload: {
     amount,
   },
-});
+})

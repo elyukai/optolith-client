@@ -7,7 +7,7 @@ import { isDecreasable, isIncreasable, isOwnTradition } from '../App/Utils/Incre
 import { filterByAvailability } from '../App/Utils/RulesUtils';
 import { mapGetToMaybeSlice } from '../App/Utils/SelectorsUtils';
 import { getModifierByActiveLevel } from '../utils/activatable/activatableModifierUtils';
-import { getMagicalTraditions } from '../utils/activatable/traditionUtils';
+import { getMagicalTraditions } from '../utils/Activatable/traditionUtils';
 import { Just, List, Maybe, OrderedMap, Record, Tuple } from '../utils/dataUtils';
 import { AllSortOptions, filterAndSortObjects, sortObjects } from '../utils/FilterSortUtils';
 import { validatePrerequisites } from '../utils/prerequisites/validatePrerequisitesUtils';

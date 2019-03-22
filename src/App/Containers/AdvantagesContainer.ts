@@ -4,7 +4,7 @@ import * as ConfigActions from '../App/Actions/ConfigActions';
 import * as DisAdvActions from '../App/Actions/DisAdvActions';
 import { ActivateArgs, DeactivateArgs } from '../App/Models/Hero/heroTypeHelpers';
 import { AppState } from '../reducers/appReducer';
-import { getAdvantagesRating, getCurrentDisAdvantagesSubtypeMax, getFilteredActiveAdvantages } from '../selectors/activatableSelectors';
+import { getAdvantagesRating, getCurrentDisAdvantagesSubtypeMax, getFilteredActiveAdvantages } from '../Selectors/activatableSelectors';
 import { getAdventurePointsObject } from '../selectors/adventurePointsSelectors';
 import { getFilteredInactiveAdvantages } from '../selectors/combinedActivatablesSelectors';
 import { getIsRemovingEnabled } from '../selectors/phaseSelectors';

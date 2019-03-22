@@ -1,42 +1,8 @@
 import { remote } from "electron";
-import * as fs from "fs";
 import { flength, List, subscript } from "../../Data/List";
 import { fromMaybe, Maybe } from "../../Data/Maybe";
 import { bimap, fst, Pair, snd } from "../../Data/Pair";
 import { divideBy, inc } from "./mathUtils";
-
-export const readFile =
-  async (path: string) =>
-    new Promise<string | Buffer> (
-      (resolve, reject) =>
-        fs.readFile (
-          path,
-          "utf8",
-          (error, data) => error !== null ? reject (error) : resolve (data)
-        )
-    )
-
-export const readDir =
-  async (path: string) =>
-    new Promise<string[]> (
-      (resolve, reject) =>
-        fs.readdir (
-          path, (error, data) =>
-            error !== null ? reject (error) : resolve (data)
-        )
-    )
-
-export const writeFile =
-  (path: string) =>
-  async (data: any) =>
-    new Promise<void> (
-      (resolve, reject) =>
-        fs.writeFile (
-          path,
-          data,
-          error => error !== null ? reject (error) : resolve ()
-        )
-    )
 
 /**
  * Prints windows' web page as PDF with Chromium's preview printing custom settings.

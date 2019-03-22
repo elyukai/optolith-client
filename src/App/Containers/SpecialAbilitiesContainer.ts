@@ -4,7 +4,7 @@ import * as ConfigActions from '../App/Actions/ConfigActions';
 import * as SpecialAbilitiesActions from '../App/Actions/SpecialAbilitiesActions';
 import { ActivateArgs, DeactivateArgs } from '../App/Models/Hero/heroTypeHelpers';
 import { AppState } from '../reducers/appReducer';
-import { getFilteredActiveSpecialAbilities } from '../selectors/activatableSelectors';
+import { getFilteredActiveSpecialAbilities } from '../Selectors/activatableSelectors';
 import { getFilteredInactiveSpecialAbilities } from '../selectors/combinedActivatablesSelectors';
 import { getIsRemovingEnabled } from '../selectors/phaseSelectors';
 import { getInactiveSpecialAbilitiesFilterText, getSpecialAbilities, getSpecialAbilitiesFilterText, getWikiSpecialAbilities } from '../selectors/stateSelectors';

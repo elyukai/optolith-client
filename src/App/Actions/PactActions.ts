@@ -1,11 +1,11 @@
-import { ActionTypes } from '../Constants/ActionTypes';
-import { Maybe } from '../utils/dataUtils';
+import { Maybe } from "../../Data/Maybe";
+import { ActionTypes } from "../Constants/ActionTypes";
 
 export interface SetPactCategoryAction {
-  type: ActionTypes.SET_PACT_CATEGORY;
+  type: ActionTypes.SET_PACT_CATEGORY
   payload: {
     category: Maybe<number>;
-  };
+  }
 }
 
 export const setPactCategory = (category: Maybe<number>): SetPactCategoryAction => ({
@@ -13,13 +13,13 @@ export const setPactCategory = (category: Maybe<number>): SetPactCategoryAction 
   payload: {
     category,
   },
-});
+})
 
 export interface SetPactLevelAction {
-  type: ActionTypes.SET_PACT_LEVEL;
+  type: ActionTypes.SET_PACT_LEVEL
   payload: {
     level: number;
-  };
+  }
 }
 
 export const setPactLevel = (level: number): SetPactLevelAction => ({
@@ -27,13 +27,13 @@ export const setPactLevel = (level: number): SetPactLevelAction => ({
   payload: {
     level,
   },
-});
+})
 
 export interface SetTargetTypeAction {
-  type: ActionTypes.SET_TARGET_TYPE;
+  type: ActionTypes.SET_TARGET_TYPE
   payload: {
     type: number;
-  };
+  }
 }
 
 export const setPactTargetType = (type: number): SetTargetTypeAction => ({
@@ -41,13 +41,13 @@ export const setPactTargetType = (type: number): SetTargetTypeAction => ({
   payload: {
     type,
   },
-});
+})
 
 export interface SetTargetDomainAction {
-  type: ActionTypes.SET_TARGET_DOMAIN;
+  type: ActionTypes.SET_TARGET_DOMAIN
   payload: {
     domain: number | string;
-  };
+  }
 }
 
 export const setPactTargetDomain = (domain: number | string): SetTargetDomainAction => ({
@@ -55,13 +55,13 @@ export const setPactTargetDomain = (domain: number | string): SetTargetDomainAct
   payload: {
     domain,
   },
-});
+})
 
 export interface SetTargetNameAction {
-  type: ActionTypes.SET_TARGET_NAME;
+  type: ActionTypes.SET_TARGET_NAME
   payload: {
     name: string;
-  };
+  }
 }
 
 export const setPactTargetName = (name: string): SetTargetNameAction => ({
@@ -69,4 +69,4 @@ export const setPactTargetName = (name: string): SetTargetNameAction => ({
   payload: {
     name,
   },
-});
+})
