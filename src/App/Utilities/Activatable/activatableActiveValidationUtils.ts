@@ -23,7 +23,7 @@ import { SkillDependent } from "../../Models/ActiveEntries/SkillDependent";
 import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { ActivatableDependency, Dependent } from "../../Models/Hero/heroTypeHelpers";
 import { Pact } from "../../Models/Hero/Pact";
-import { ActivatableActivationValidationObject } from "../../Models/View/ActivatableActivationValidationObject";
+import { ActivatableActivationValidation } from "../../Models/View/ActivatableActivationValidationObject";
 import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel";
 import { RequireActivatable } from "../../Models/Wiki/prerequisites/ActivatableRequirement";
 import { isSpecialAbility, SpecialAbility } from "../../Models/Wiki/SpecialAbility";
@@ -449,7 +449,7 @@ export const getMaxTier =
 export const getIsRemovalOrChangeDisabled =
   (wiki: WikiModelRecord) =>
   (hero: HeroModelRecord) =>
-  (entry: Record<ActiveObjectWithId>): Maybe<Record<ActivatableActivationValidationObject>> =>
+  (entry: Record<ActiveObjectWithId>): Maybe<Record<ActivatableActivationValidation>> =>
     pipe (
            getWikiEntry (wiki),
            bindF<EntryWithCategory, Activatable> (ensure (isActivatableWikiEntry)),
@@ -466,7 +466,7 @@ export const getIsRemovalOrChangeDisabled =
                                                          (entry)
                                                          (addependencies (hero_entry))
 
-                        return ActivatableActivationValidationObject ({
+                        return ActivatableActivationValidation ({
                           id: id (entry),
                           index: ActiveObjectWithId.A.index (entry),
                           cost: ActiveObjectWithId.A.cost (entry),

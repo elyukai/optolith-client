@@ -37,7 +37,7 @@ type Action =
   SkillActions.RemoveSkillPointAction |
   DisAdvActions.ActivateDisAdvAction |
   DisAdvActions.DeactivateDisAdvAction |
-  DisAdvActions.SetDisAdvTierAction |
+  DisAdvActions.SetDisAdvLevelAction |
   SpecialAbilitiesActions.ActivateSpecialAbilityAction |
   SpecialAbilitiesActions.DeactivateSpecialAbilityAction |
   SpecialAbilitiesActions.SetSpecialAbilityTierAction

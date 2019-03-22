@@ -3,8 +3,8 @@ import * as fs from "fs";
 import * as path from "path";
 import { lt, lte, satisfies } from "semver";
 import { StringKeyObject } from "../../../Data/Record";
-import { RawActiveObject, RawHero } from "../../../types/rawdata";
 import { getBlessedTradStrIdFromNumId, getMagicalTraditionInstanceIdByNumericId } from "../IDUtils";
+import { RawActiveObject, RawHero } from "./RawData";
 
 export const currentVersion = JSON.parse (fs.readFileSync (
   path.join (remote.app.getAppPath (), "package.json"),

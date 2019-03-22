@@ -9,7 +9,7 @@ import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { CombatTechnique } from "../../Models/Wiki/CombatTechnique";
 import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel";
 import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import { getActiveSelectionsMaybe } from "../A/Activatable/selectionUtils";
+import { getActiveSelectionsMaybe } from "../Activatable/selectionUtils";
 import { flattenDependencies } from "../Dependencies/flattenDependencies";
 import { add, divideBy, max } from "../mathUtils";
 

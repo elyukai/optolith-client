@@ -14,7 +14,7 @@ export const Expect = Object.freeze ({
   ListLength: (len: number) => (x: string) => `[${x}] { length = ${len} }`,
   Pair: (x: string) => (y: string) => `(${x}, ${y})`,
   Union: (...xs: string[]) => xs .join (" | "),
-  /** Group with `(...)` */
+  /** Group with `(` ...` )` */
   G: (x: string) => `(${x})`,
   Set: (x: string) => `Set ${x}`,
 })

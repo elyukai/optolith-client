@@ -85,7 +85,7 @@ export interface L10n {
   "unsavedactions": string
   "unsavedactions.text": string
   "deletehero": string
-  "deletehero .text": string
+  "deletehero.text": string
   "herocreation": string
   "start": string
   "nameofhero": string
@@ -688,7 +688,7 @@ export const L10n =
     "unsavedactions": "",
     "unsavedactions.text": "",
     "deletehero": "",
-    "deletehero .text": "",
+    "deletehero.text": "",
     "herocreation": "",
     "start": "",
     "nameofhero": "",

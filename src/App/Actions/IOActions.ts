@@ -5,48 +5,53 @@ import { ipcRenderer, remote } from "electron";
 import { UpdateInfo } from "electron-updater";
 import * as fs from "fs";
 import { extname, join } from "path";
-import { isJust, Just, Maybe, Nothing } from "../../Data/Maybe";
-import { StringKeyObject, UnsafeStringKeyObject } from "../../Data/Record";
+import { Either, fromLeft_, fromRight_, isLeft, isRight } from "../../Data/Either";
+import { fmap } from "../../Data/Functor";
+import { List, notNull } from "../../Data/List";
+import { altF_, bind, bindF, fromJust, fromMaybe, isJust, Just, Maybe, maybe, Nothing } from "../../Data/Maybe";
+import { any, lookup, lookupF } from "../../Data/OrderedMap";
+import { Pair } from "../../Data/Pair";
+import { Record } from "../../Data/Record";
 import { ActionTypes } from "../Constants/ActionTypes";
 import { User } from "../Models/Hero/heroTypeHelpers";
-import { AppState } from "../Reducers/appReducer";
-import { getCurrentHeroId, getHeroes, getUsers, getWiki } from "../Selectors/stateSelectors";
+import { L10n, L10nRecord } from "../Models/Wiki/L10n";
+import { WikiModel } from "../Models/Wiki/WikiModel";
+import { heroReducer } from "../Reducers/heroReducer";
+import { getCurrentHeroId, getHeroes, getLocaleMessages, getLocaleType, getUsers, getWiki } from "../Selectors/stateSelectors";
 import { getUISettingsState } from "../Selectors/uisettingsSelectors";
+import { translate, translateP } from "../Utilities/I18n";
 import { getNewIdByDate } from "../Utilities/IDUtils";
-import { bytify, getSystemLocale, readDir, readFile, showOpenDialog, showSaveDialog, windowPrintToPDF, writeFile } from "../Utilities/IOUtils";
+import { bytify, getSystemLocale, readFile, showOpenDialog, showSaveDialog, windowPrintToPDF, writeFile } from "../Utilities/IOUtils";
+import { pipe, pipe_ } from "../Utilities/pipe";
+import { convertHeroesForSave, convertHeroForSave } from "../Utilities/Raw/convertHeroForSave";
+import { parseTables } from "../Utilities/Raw/parseTable";
+import { RawConfig, RawHero, RawHerolist } from "../Utilities/Raw/RawData";
 import { isBase64Image } from "../Utilities/RegexUtils";
-import { UndoState } from "../Utilities/undo";
-import { convertHeroesForSave, convertHeroForSave } from "../utils/raw/convertHeroForSave";
-import { Raw, RawConfig, RawHerolist, RawLocale, RawTables } from "../Utils/Raw/RawData";
 import { ReduxAction } from "./Actions";
 import { addAlert } from "./AlertActions";
 
 const getSaveDataPath = (): string => remote.app.getPath ("userData")
 
-const getInstalledResourcesPath = (): string => remote.app.getAppPath ()
+// const getInstalledResourcesPath = (): string => remote.app.getAppPath ()
 
-const loadDataTables = (): ReduxAction<Promise<Maybe<RawTables>>> =>
-  async dispatch => {
-    const root = getInstalledResourcesPath ()
-    try {
-      const result = await readFile (join (root, "app", "data.json"))
+const loadDatabase =
+  (locale: string): ReduxAction<Either<string, Pair<Record<L10n>, Record<WikiModel>>>> =>
+    dispatch => {
+      const res = parseTables (locale)
 
-      return Just (JSON.parse (result as string) as RawTables)
+      if (isLeft (res)) {
+        dispatch (addAlert ({
+          message: fromLeft_ (res),
+          title: "Error",
+        }))
+      }
+
+      return res
     }
-    catch (error) {
-      dispatch (addAlert ({
-        message:
-          `The rule tables could not be loaded. Please report `
-          + `this issue! (Error Code: ${JSON.stringify (error)})`,
-        title: "Error",
-      }))
-
-      return Nothing
-    }
-  }
 
 const loadConfig = async (): Promise<Maybe<RawConfig>> => {
   const appPath = getSaveDataPath ()
+
   try {
     const result = await readFile (join (appPath, "config.json"))
 
@@ -59,6 +64,7 @@ const loadConfig = async (): Promise<Maybe<RawConfig>> => {
 
 const loadHeroes = async (): Promise<Maybe<RawHerolist>> => {
   const appPath = getSaveDataPath ()
+
   try {
     const result = await readFile (join (appPath, "heroes.json"))
 
@@ -69,79 +75,55 @@ const loadHeroes = async (): Promise<Maybe<RawHerolist>> => {
   }
 }
 
-const loadLocales = (): ReduxAction<Promise<Maybe<StringKeyObject<RawLocale>>>> =>
-  async dispatch => {
-    const root = getInstalledResourcesPath ()
-    try {
-      const result = await readDir (join (root, "app", "locales"))
-
-      const locales: UnsafeStringKeyObject<RawLocale> = {}
-
-      for (const file of result) {
-        const locale = await readFile (join (root, "app", "locales", file))
-        locales[file.split (".")[0]] = JSON.parse (locale as string) as RawLocale
-      }
-
-      return Just (locales)
-    }
-    catch (error) {
-      dispatch (addAlert ({
-        message:
-          `The localizations could not be loaded. Please report `
-          + `this issue! (Error Code: ${JSON.stringify (error)})`,
-        title: "Error",
-      }))
-
-      return Nothing
-    }
-  }
-
-interface ReceiveInitialDataActionPayload extends Raw {
+interface InitialData {
+  tables: Pair<Record<L10n>, Record<WikiModel>>
+  heroes: Maybe<RawHerolist>
   defaultLocale: string
+  config: Maybe<RawConfig>
 }
 
 export interface ReceiveInitialDataAction {
   type: ActionTypes.RECEIVE_INITIAL_DATA
-  payload: ReceiveInitialDataActionPayload
+  payload: InitialData
 }
 
 export const requestInitialData = (): ReduxAction<Promise<void>> => async dispatch => {
-  const data = await dispatch (getInitialData ())
+  const data = await dispatch (getInitialData)
 
-  if (data) {
-    dispatch (receiveInitialData (data))
+  if (isJust (data)) {
+    dispatch (receiveInitialData (fromJust (data)))
   }
 
   return
 }
 
-export const getInitialData = (): ReduxAction<Promise<Maybe<Raw>>> => async dispatch => {
-  const tables = await dispatch (loadDataTables ())
-  const config = await loadConfig ()
-  const heroes = await loadHeroes ()
-  const locales = await dispatch (loadLocales ())
+export const getInitialData: ReduxAction<Promise<Maybe<InitialData>>> =
+  async dispatch => {
+    const config = await loadConfig ()
+    const heroes = await loadHeroes ()
+    const defaultLocale = getSystemLocale ()
+    const tables = dispatch (loadDatabase (fromMaybe (defaultLocale)
+                            (bind (config) (c => Maybe (c.locale)))))
 
-  if (isJust (tables) && isJust (locales)) {
-    return Just ({
-      tables,
-      heroes,
-      locales,
-      config,
-    })
+    if (isRight (tables)) {
+      return Just ({
+        tables: fromRight_ (tables),
+        heroes,
+        defaultLocale,
+        config,
+      })
+    }
+
+    return Nothing
   }
 
-  return Nothing
-}
-
-export const receiveInitialData = (data: Raw): ReceiveInitialDataAction => ({
+export const receiveInitialData = (data: InitialData): ReceiveInitialDataAction => ({
   type: ActionTypes.RECEIVE_INITIAL_DATA,
-  payload: {
-    ...data,
-    defaultLocale: getSystemLocale (),
-  },
+  payload: data,
 })
 
-export const requestConfigSave = (locale: UIMessagesObject): ReduxAction<Promise<boolean>> =>
+export const requestConfigSave =
+  (l10n: L10nRecord): ReduxAction<Promise<boolean>> =>
   async (dispatch, getState) => {
     const state = getState ()
 
@@ -150,41 +132,42 @@ export const requestConfigSave = (locale: UIMessagesObject): ReduxAction<Promise
     const data: RawConfig = {
       ...uiSettingsState,
       meleeItemTemplatesCombatTechniqueFilter:
-        Maybe.isJust (uiSettingsState.meleeItemTemplatesCombatTechniqueFilter)
-          ? Maybe.fromJust (uiSettingsState.meleeItemTemplatesCombatTechniqueFilter)
+        isJust (uiSettingsState.meleeItemTemplatesCombatTechniqueFilter)
+          ? fromJust (uiSettingsState.meleeItemTemplatesCombatTechniqueFilter)
           : undefined,
       rangedItemTemplatesCombatTechniqueFilter:
-        Maybe.isJust (uiSettingsState.rangedItemTemplatesCombatTechniqueFilter)
-          ? Maybe.fromJust (uiSettingsState.rangedItemTemplatesCombatTechniqueFilter)
+        isJust (uiSettingsState.rangedItemTemplatesCombatTechniqueFilter)
+          ? fromJust (uiSettingsState.rangedItemTemplatesCombatTechniqueFilter)
           : undefined,
-      locale: state .locale .type === "default" ? undefined : locale .get ("id"),
+      locale: getLocaleType (state) === "default" ? undefined : L10n.A_.id (l10n),
     }
 
     const dataPath = getSaveDataPath ()
     const path = join (dataPath, "config.json")
 
     try {
-      await writeFile (path, JSON.stringify (data))
+      await writeFile (path) (JSON.stringify (data))
 
       return true
     }
     catch (error) {
       dispatch (addAlert ({
         message: `${
-          translate (locale, "fileapi.error.message.saveconfig")
+          translate (l10n) ("saveconfigerror")
         } (${
-          translate (locale, "fileapi.error.message.code")
+          translate (l10n) ("errorcode")
         }: ${
           JSON.stringify (error)
         })`,
-        title: translate (locale, "fileapi.error.title"),
+        title: translate (l10n) ("error"),
       }))
 
       return false
     }
   }
 
-export const requestAllHeroesSave = (locale: UIMessagesObject): ReduxAction<Promise<boolean>> =>
+export const requestAllHeroesSave =
+  (l10n: L10nRecord): ReduxAction<Promise<boolean>> =>
   async (dispatch, getState) => {
     const state = getState ()
 
@@ -192,114 +175,118 @@ export const requestAllHeroesSave = (locale: UIMessagesObject): ReduxAction<Prom
     const heroes = getHeroes (state)
     const users = getUsers (state)
 
-    const data = convertHeroesForSave (wiki) (locale) (users) (heroes)
+    const data = convertHeroesForSave (wiki) (l10n) (users) (heroes)
 
     const dataPath = getSaveDataPath ()
     const path = join (dataPath, "heroes.json")
 
     try {
-      await writeFile (path, JSON.stringify (data))
+      await writeFile (path) (JSON.stringify (data))
 
       return true
     }
     catch (error) {
       dispatch (addAlert ({
         message: `${
-          translate (locale, "fileapi.error.message.saveconfig")
+          translate (l10n) ("saveheroeserror")
         } (${
-          translate (locale, "fileapi.error.message.code")
+          translate (l10n) ("errorcode")
         }: ${
           JSON.stringify (error)
         })`,
-        title: translate (locale, "fileapi.error.title"),
+        title: translate (l10n) ("error"),
       }))
 
       return false
     }
   }
 
-export const requestSaveAll = (locale: UIMessagesObject): ReduxAction<Promise<boolean>> =>
+export const requestSaveAll = (l10n: L10nRecord): ReduxAction<Promise<boolean>> =>
   async dispatch => {
-    const configSavedDone = await dispatch (requestConfigSave (locale))
-    const heroesSavedDone = await dispatch (requestAllHeroesSave (locale))
+    const configSavedDone = await dispatch (requestConfigSave (l10n))
+    const heroesSavedDone = await dispatch (requestAllHeroesSave (l10n))
 
     return configSavedDone && heroesSavedDone
   }
 
-export const requestHeroSave = (locale: UIMessagesObject) =>
-  (maybeId: Maybe<string>): ReduxAction<Promise<string | undefined>> =>
-    async (dispatch, getState) => {
-      const state = getState ()
+export const requestHeroSave =
+  (l10n: L10nRecord) =>
+  (mcurrent_id: Maybe<string>): ReduxAction<Promise<string | undefined>> =>
+  async (dispatch, getState) => {
+    const state = getState ()
 
-      const wiki = getWiki (state)
-      const heroes = getHeroes (state)
-      const users = getUsers (state)
+    const wiki = getWiki (state)
+    const heroes = getHeroes (state)
+    const users = getUsers (state)
 
-      const maybeHero = maybeId
-        .alt (getCurrentHeroId (state))
-        .bind (id => OrderedMap.lookup<string, UndoState<Hero>> (id) (heroes))
-        .fmap (undoState => undoState.present)
-        .fmap (convertHeroForSave (wiki) (locale) (users))
+    const mhero =
+      pipe_ (
+        mcurrent_id,
+        altF_ (() => getCurrentHeroId (state)),
+        bindF (lookupF (heroes)),
+        fmap (pipe (heroReducer.A_.present, convertHeroForSave (wiki) (l10n) (users)))
+      )
 
-      const dataPath = getSaveDataPath ()
-      const path = join (dataPath, "heroes.json")
+    const dataPath = getSaveDataPath ()
+    const path = join (dataPath, "heroes.json")
 
-      const maybeSavedHeroes = Maybe.fromNullable (await loadHeroes ())
+    const msaved_heroes = await loadHeroes ()
 
-      if (Maybe.isJust (maybeHero)) {
-        const hero = Maybe.fromJust (maybeHero)
+    if (isJust (mhero)) {
+      const hero = fromJust (mhero)
 
-        try {
-          await writeFile (path, JSON.stringify (Maybe.maybe ({ [hero.id]: hero })
-                                                             (savedHeroes => ({
-                                                               ...savedHeroes,
-                                                               [hero.id]: hero,
-                                                             }))
-                                                             (maybeSavedHeroes)))
+      try {
+        await writeFile (path) (JSON.stringify (maybe ({ [hero.id]: hero })
+                                                      ((savedHeroes: RawHerolist) => ({
+                                                        ...savedHeroes,
+                                                        [hero.id]: hero,
+                                                      }))
+                                                      (msaved_heroes)))
 
-          return hero.id
-        }
-        catch (error) {
-          dispatch (addAlert ({
-            message: `${
-              translate (locale, "fileapi.error.message.saveconfig")
-            } (${
-              translate (locale, "fileapi.error.message.code")
-            }: ${
-              JSON.stringify (error)
-            })`,
-            title: translate (locale, "fileapi.error.title"),
-          }))
-
-          return
-        }
+        return hero.id
       }
+      catch (error) {
+        dispatch (addAlert ({
+          message: `${
+            translate (l10n) ("saveheroeserror")
+          } (${
+            translate (l10n) ("errorcode")
+          }: ${
+            JSON.stringify (error)
+          })`,
+          title: translate (l10n) ("error"),
+        }))
 
-      return
+        return undefined
+      }
     }
 
-export const requestHeroDeletion = (locale: UIMessagesObject) =>
+    return undefined
+  }
+
+export const requestHeroDeletion =
+  (l10n: L10nRecord) =>
   (id: string): ReduxAction<Promise<boolean>> =>
     async dispatch => {
       const dataPath = getSaveDataPath ()
       const path = join (dataPath, "heroes.json")
 
-      const maybeSavedHeroes = Maybe.fromNullable (await loadHeroes ())
+      const msaved_heroes = await loadHeroes ()
 
       try {
         await writeFile (
-          path,
+          path) (
           JSON.stringify (
-            Maybe.maybe<RawHerolist, RawHerolist> ({})
-                                                  (savedHeroes => {
-                                                    const {
-                                                      [id]: _,
-                                                      ...other
-                                                    } = savedHeroes
+            maybe<RawHerolist> ({})
+                               ((savedHeroes: RawHerolist) => {
+                                 const {
+                                   [id]: _,
+                                   ...other
+                                 } = savedHeroes
 
-                                                    return other
-                                                  })
-                                                  (maybeSavedHeroes))
+                                 return other
+                               })
+                               (msaved_heroes))
         )
 
         return true
@@ -307,20 +294,22 @@ export const requestHeroDeletion = (locale: UIMessagesObject) =>
       catch (error) {
         dispatch (addAlert ({
           message: `${
-            translate (locale, "fileapi.error.message.saveconfig")
+            translate (l10n) ("saveheroeserror")
           } (${
-            translate (locale, "fileapi.error.message.code")
+            translate (l10n) ("errorcode")
           }: ${
             JSON.stringify (error)
           })`,
-          title: translate (locale, "fileapi.error.title"),
+          title: translate (l10n) ("error"),
         }))
 
         return false
       }
     }
 
-export const requestHeroExport = (locale: UIMessagesObject) => (id: string): ReduxAction =>
+export const requestHeroExport =
+  (l10n: L10nRecord) =>
+  (id: string): ReduxAction =>
   async (dispatch, getState) => {
     const state = getState ()
 
@@ -328,67 +317,70 @@ export const requestHeroExport = (locale: UIMessagesObject) => (id: string): Red
     const heroes = getHeroes (state)
     const users = getUsers (state)
 
-    const maybeHero = heroes.lookup (id)
-      .fmap (undoState => undoState.present)
-      .fmap (convertHeroForSave (wiki) (locale) (users))
-      .fmap (
-        hero => {
-          if (
-            typeof hero.avatar === "string"
-            && hero.avatar.length > 0
-            && !isBase64Image (hero.avatar)
-          ) {
-            const preparedUrl = hero.avatar.replace (/file:[\\\/]+/, "")
+    const mhero =
+      pipe_ (
+        heroes,
+        lookup (id),
+        fmap (pipe (
+          heroReducer.A_.present,
+          convertHeroForSave (wiki) (l10n) (users),
+          hero => {
+            // Embed the avatar image file
+            if (
+              typeof hero.avatar === "string"
+              && hero.avatar.length > 0
+              && !isBase64Image (hero.avatar)
+            ) {
+              const preparedUrl = hero.avatar.replace (/file:[\\\/]+/, "")
 
-            if (fs.existsSync (preparedUrl)) {
-              const prefix = `data:image/${extname (hero.avatar).slice (1)}base64,`
-              const file = fs.readFileSync (preparedUrl)
-              const fileString = file.toString ("base64")
+              if (fs.existsSync (preparedUrl)) {
+                const prefix = `data:image/${extname (hero.avatar).slice (1)}base64,`
+                const file = fs.readFileSync (preparedUrl)
+                const fileString = file.toString ("base64")
 
-              return {
-                ...hero,
-                avatar: prefix + fileString,
+                return {
+                  ...hero,
+                  avatar: prefix + fileString,
+                }
               }
             }
+
+            return hero
           }
-
-          return hero
-        }
+        ))
       )
 
-    if (Maybe.isJust (maybeHero)) {
-      const hero = Maybe.fromJust (maybeHero)
+    if (isJust (mhero)) {
+      const hero = fromJust (mhero)
 
-      const maybeFilename = Maybe.fromNullable (
-        await showSaveDialog ({
-          title: translate (locale, "fileapi.exporthero.title"),
-          filters: [
-            { name: "JSON", extensions: ["json"] },
-          ],
-          defaultPath: hero.name.replace (/\//, "\/"),
-        })
-      )
+      const mfilename = await showSaveDialog ({
+                              title: translate (l10n) ("exportheroasjson"),
+                              filters: [
+                                { name: "JSON", extensions: ["json"] },
+                              ],
+                              defaultPath: hero.name.replace (/\//, "\/"),
+                            })
 
-      if (Maybe.isJust (maybeFilename)) {
-        const filename = Maybe.fromJust (maybeFilename)
+      if (isJust (mfilename)) {
+        const filename = fromJust (mfilename)
 
         try {
-          await writeFile (filename, JSON.stringify (hero))
+          await writeFile (filename) (JSON.stringify (hero))
 
           dispatch (addAlert ({
-            message: translate (locale, "fileapi.exporthero.success"),
+            message: translate (l10n) ("herosaved"),
           }))
         }
         catch (error) {
           dispatch (addAlert ({
             message: `${
-              translate (locale, "fileapi.error.message.exporthero")
+              translate (l10n) ("exportheroerror")
             } (${
-              translate (locale, "fileapi.error.message.code")
+              translate (l10n) ("errorcode")
             }: ${
               JSON.stringify (error)
             })`,
-            title: translate (locale, "fileapi.error.title"),
+            title: translate (l10n) ("error"),
           }))
         }
       }
@@ -398,54 +390,56 @@ export const requestHeroExport = (locale: UIMessagesObject) => (id: string): Red
 export interface ReceiveImportedHeroAction {
   type: ActionTypes.RECEIVE_IMPORTED_HERO
   payload: {
-    data: RawHero
-    player?: User
+    data: RawHero;
+    player?: User;
   }
 }
 
 export const loadImportedHero =
-  (locale: UIMessagesObject): ReduxAction<Promise<RawHero | undefined>> =>
-    async dispatch => {
-      try {
-        const fileNames = await showOpenDialog ({
-          filters: [{ name: "JSON", extensions: ["json"] }],
-        })
+  (l10n: L10nRecord): ReduxAction<Promise<RawHero | undefined>> =>
+  async dispatch => {
+    try {
+      const fileNames = await showOpenDialog ({
+        filters: [{ name: "JSON", extensions: ["json"] }],
+      })
 
-        if (fileNames) {
-          const fileName = fileNames[0]
+      if (fileNames) {
+        const fileName = fileNames[0]
 
-          if (extname (fileName) === ".json") {
-            const fileContent = await readFile (fileName)
+        if (extname (fileName) === ".json") {
+          const fileContent = await readFile (fileName)
 
-            if (typeof fileContent === "string") {
-              return JSON.parse (fileContent) as RawHero
-            }
+          if (typeof fileContent === "string") {
+            return JSON.parse (fileContent) as RawHero
           }
         }
       }
-      catch (error) {
-        dispatch (addAlert ({
-          message: `${
-            translate (locale, "fileapi.error.message.importhero")
-          } (${
-            translate (locale, "fileapi.error.message.code")
-          }: ${
-            JSON.stringify (error)
-          })`,
-          title: translate (locale, "fileapi.error.title"),
-        }))
-      }
-
-      return
+    }
+    catch (error) {
+      dispatch (addAlert ({
+        message: `${
+          translate (l10n) ("importheroerror")
+        } (${
+          translate (l10n) ("errorcode")
+        }: ${
+          JSON.stringify (error)
+        })`,
+        title: translate (l10n) ("error"),
+      }))
     }
 
-export const requestHeroImport = (locale: UIMessagesObject): ReduxAction => async dispatch => {
-  const data = await dispatch (loadImportedHero (locale))
-
-  if (data) {
-    dispatch (receiveHeroImport (data))
+    return undefined
   }
-}
+
+export const requestHeroImport =
+  (l10n: L10nRecord): ReduxAction =>
+  async dispatch => {
+    const data = await dispatch (loadImportedHero (l10n))
+
+    if (data) {
+      dispatch (receiveHeroImport (data))
+    }
+  }
 
 export const receiveHeroImport = (raw: RawHero): ReceiveImportedHeroAction => {
   const newId = `H_${getNewIdByDate ()}`
@@ -454,7 +448,7 @@ export const receiveHeroImport = (raw: RawHero): ReceiveImportedHeroAction => {
   const data: RawHero = {
     ...other,
     id: newId,
-    avatar: !!avatar
+    avatar: avatar.length > 0
       && (isBase64Image (avatar) || fs.existsSync (avatar.replace (/file:[\\\/]+/, "")))
       ? avatar
       : undefined,
@@ -469,52 +463,54 @@ export const receiveHeroImport = (raw: RawHero): ReceiveImportedHeroAction => {
   }
 }
 
-const isAnyHeroUnsaved = (state: AppState) => state.herolist.get ("heroes")
-  .elems ()
-  .any (
-    hero => !hero.past.null ()
-  )
+const isAnyHeroUnsaved = pipe (
+                                getHeroes,
+                                any (pipe (heroReducer.A_.past, notNull))
+                              )
 
-const close = (locale: UIMessagesObject) => (unsaved: boolean) =>
+const close =
+  (l10n: L10nRecord) =>
+  (unsaved: boolean) =>
   (f: Maybe<() => void>): ReduxAction =>
-    async dispatch => {
-      const allSaved = await dispatch (requestSaveAll (locale))
+  async dispatch => {
+    const allSaved = await dispatch (requestSaveAll (l10n))
 
-      if (allSaved) {
-        dispatch (addAlert ({
-          message: translate (locale, unsaved ? "fileapi.everythingelsesaved" : "fileapi.allsaved"),
-          onClose () {
-            if (Maybe.isJust (f)) {
-              Maybe.fromJust (f) ()
-            }
+    if (allSaved) {
+      dispatch (addAlert ({
+        message: translate (l10n) (unsaved ? "everythingelsesaved" : "allsaved"),
+        onClose () {
+          if (isJust (f)) {
+            fromJust (f) ()
+          }
 
-            remote.getCurrentWindow ().close ()
-          },
-        }))
-      }
+          remote.getCurrentWindow ().close ()
+        },
+      }))
     }
+  }
 
-export const requestClose = (optionalCall: Maybe<() => void>): ReduxAction =>
+export const requestClose =
+  (optionalCall: Maybe<() => void>): ReduxAction =>
   (dispatch, getState) => {
     const state = getState ()
     const safeToExit = isAnyHeroUnsaved (state)
 
     const currentWindow = remote.getCurrentWindow ()
 
-    const maybeLocale = Maybe.fromNullable (state .locale .messages) .fmap (Record.of)
+    const ml10n = getLocaleMessages (state)
 
-    if (Maybe.isJust (maybeLocale)) {
-      const locale = Maybe.fromJust (maybeLocale)
+    if (isJust (ml10n)) {
+      const l10n = fromJust (ml10n)
 
       if (safeToExit) {
         currentWindow .close ()
       }
       else {
         dispatch (addAlert ({
-          title: translate (locale, "heroes.warnings.unsavedactions.title"),
-          message: translate (locale, "heroes.warnings.unsavedactions.text"),
+          title: translate (l10n) ("unsavedactions"),
+          message: translate (l10n) ("unsavedactions.text"),
           confirm: {
-            resolve: close (locale) (true) (optionalCall),
+            resolve: close (l10n) (true) (optionalCall),
             reject: currentWindow .close,
           },
           confirmYesNo: true,
@@ -523,45 +519,51 @@ export const requestClose = (optionalCall: Maybe<() => void>): ReduxAction =>
     }
   }
 
-export const requestPrintHeroToPDF = (locale: UIMessagesObject): ReduxAction => async dispatch => {
-  try {
-    const data = await windowPrintToPDF ({
-      marginsType: 1,
-      pageSize: "A4",
-      printBackground: true,
-    })
+export const requestPrintHeroToPDF =
+  (l10n: L10nRecord): ReduxAction =>
+  async dispatch => {
+    try {
+      const data = await windowPrintToPDF ({
+        marginsType: 1,
+        pageSize: "A4",
+        printBackground: true,
+      })
 
-    const filename = await showSaveDialog ({
-      title: translate (locale, "fileapi.printcharactersheettopdf.title"),
-      filters: [
-        { name: "PDF", extensions: ["pdf"] },
-      ],
-    })
+      const filename = await showSaveDialog ({
+        title: translate (l10n) ("printcharactersheettopdf"),
+        filters: [
+          { name: "PDF", extensions: ["pdf"] },
+        ],
+      })
 
-    if (filename) {
-      try {
-        await writeFile (filename, data)
-        dispatch (addAlert ({
-          message: translate (locale, "fileapi.printcharactersheettopdf.success"),
-        }))
-      }
-      catch (error) {
-        dispatch (addAlert ({
-          message:
-            `${translate (locale, "fileapi.error.message.printcharactersheettopdf")} (${translate (locale, "fileapi.error.message.code")}: ${JSON.stringify (error)})`,
-          title: translate (locale, "fileapi.error.title"),
-        }))
+      if (isJust (filename)) {
+        try {
+          await writeFile (fromJust (filename)) (data)
+          dispatch (addAlert ({
+            message: translate (l10n) ("pdfsaved"),
+          }))
+        }
+        catch (error) {
+          dispatch (addAlert ({
+            message:
+              `${translate (l10n) ("printcharactersheettopdf")}`
+              + ` (${translate (l10n) ("errorcode")}: `
+              + `${JSON.stringify (error)})`,
+            title: translate (l10n) ("error"),
+          }))
+        }
       }
     }
+    catch (error) {
+      dispatch (addAlert ({
+        message:
+          `${translate (l10n) ("pdfcreationerror")}`
+          + ` (${translate (l10n) ("errorcode")}: `
+          + `${JSON.stringify (error)})`,
+        title: translate (l10n) ("error"),
+      }))
+    }
   }
-  catch (error) {
-    dispatch (addAlert ({
-      message:
-        `${translate (locale, "fileapi.error.message.printcharactersheettopdfpreparation")} (${translate (locale, "fileapi.error.message.code")}: ${JSON.stringify (error)})`,
-      title: translate (locale, "fileapi.error.title"),
-    }))
-  }
-}
 
 export interface SetUpdateDownloadProgressAction {
   type: ActionTypes.SET_UPDATE_DOWNLOAD_PROGRESS
@@ -574,7 +576,9 @@ export const setUpdateDownloadProgress =
     payload: info,
   })
 
-export const updateAvailable = (locale: UIMessagesObject) => (info: UpdateInfo): ReduxAction =>
+export const updateAvailable =
+  (l10n: L10nRecord) =>
+  (info: UpdateInfo): ReduxAction =>
   async dispatch => {
     const startDownloadingUpdate: ReduxAction = futureDispatch => {
       futureDispatch (setUpdateDownloadProgress ({
@@ -592,29 +596,26 @@ export const updateAvailable = (locale: UIMessagesObject) => (info: UpdateInfo):
     // @ts-ignore
     dispatch (addAlert ({
       message: size > 0
-        ? translate (
-          locale,
-          "newversionavailable.messagewithsize",
-          info.version,
-          bytify (size, locale.get ("id"))
-        )
-        : translate (locale, "newversionavailable.message", info.version),
-      title: translate (locale, "newversionavailable.title"),
+        ? translateP (l10n)
+                     ("newversionavailable.textwithsize")
+                     (List (info.version, bytify (L10n.A_.id (l10n)) (size)))
+        : translateP (l10n) ("newversionavailable.text") (List (info.version)),
+      title: translate (l10n) ("newversionavailable"),
       buttons: [
         {
-          label: translate (locale, "newversionavailable.update"),
+          label: translate (l10n) ("update"),
           dispatchOnClick: startDownloadingUpdate,
         },
         {
-          label: translate (locale, "cancel"),
+          label: translate (l10n) ("cancel"),
         },
       ],
     }))
   }
 
-export const updateNotAvailable = (locale: UIMessagesObject): ReduxAction => async dispatch => {
+export const updateNotAvailable = (l10n: L10nRecord): ReduxAction => async dispatch => {
   dispatch (addAlert ({
-    message: translate (locale, "nonewversionavailable.message"),
-    title: translate (locale, "nonewversionavailable.title"),
+    message: translate (l10n) ("nonewversionavailable.text"),
+    title: translate (l10n) ("nonewversionavailable"),
   }))
 }

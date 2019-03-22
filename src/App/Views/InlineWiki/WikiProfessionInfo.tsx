@@ -7,7 +7,7 @@ import { translate } from '../../App/Utils/I18n';
 import { getNumericId } from '../../App/Utils/IDUtils';
 import { isRemoveCombatTechniquesSelection, isRemoveSpecializationSelection } from '../../App/Utils/WikiUtils';
 import { UIKey } from '../../types/ui';
-import { getSelectOptionName } from '../../utils/activatable/selectionUtils';
+import { getSelectOptionName } from '../../utils/Activatable/selectionUtils';
 import { sortObjects, sortStrings } from '../../utils/FilterSortUtils';
 import { isRaceRequirement, isRequiringIncreasable, isSexRequirement } from '../../utils/prerequisites/prerequisitesUtils';
 import { WikiSource } from './elements/WikiSource';

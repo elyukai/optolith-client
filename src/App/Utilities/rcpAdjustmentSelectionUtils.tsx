@@ -32,7 +32,7 @@ import { SpecialAbility } from "../Models/Wiki/SpecialAbility";
 import { SelectOption } from "../Models/Wiki/sub/SelectOption";
 import { WikiModel, WikiModelRecord } from "../Models/Wiki/WikiModel";
 import { ProfessionSelectionIds } from "../Models/Wiki/wikiTypeHelpers";
-import { findSelectOption } from "./A/Activatable/selectionUtils";
+import { findSelectOption } from "./Activatable/selectionUtils";
 import { translate } from "./I18n";
 import { sortRecordsByName } from "./sortBy";
 import { getAllWikiEntriesByGroup } from "./WikiUtils";

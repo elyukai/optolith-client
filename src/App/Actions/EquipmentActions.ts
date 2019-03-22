@@ -1,11 +1,24 @@
-import { Maybe } from "../../Data/Maybe";
+import { fmap } from "../../Data/Functor";
+import { bindF, fromJust, isJust, Maybe } from "../../Data/Maybe";
+import { keys, lookup, lookupF, OrderedMap } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
 import { ActionTypes } from "../Constants/ActionTypes";
+import { IdPrefixes } from "../Constants/IdPrefixes";
+import { EditItem } from "../Models/Hero/EditItem";
+import { HitZoneArmor } from "../Models/Hero/HitZoneArmor";
+import { Item } from "../Models/Hero/Item";
 import { ItemTemplate } from "../Models/Wiki/ItemTemplate";
-import { getFullItem } from "../Selectors/equipmentSelectors";
 import { getArmorZonesState, getItemEditorInstance, getItemsState, getWikiItemTemplates } from "../Selectors/stateSelectors";
-import { getNewId } from "../Utilities/IDUtils";
+import { getNewId, prefixId } from "../Utilities/IDUtils";
+import { pipe, pipe_ } from "../Utilities/pipe";
 import { ReduxAction } from "./Actions";
+
+const getNewIdFromCurrentItems: (x: Maybe<OrderedMap<string, Record<Item>>>) => string =
+  pipe (fromJust, keys, getNewId, prefixId (IdPrefixes.ITEM))
+
+const getNewIdFromCurrentHitZoneArmors:
+  (x: Maybe<OrderedMap<string, Record<HitZoneArmor>>>) => string =
+  pipe (fromJust, keys, getNewId, prefixId (IdPrefixes.HIT_ZONE_ARMOR))
 
 export interface AddItemAction {
   type: ActionTypes.ADD_ITEM
@@ -14,10 +27,13 @@ export interface AddItemAction {
   }
 }
 
-export const addItem = (): ReduxAction => (dispatch, getState) => {
-  getItemsState (getState ()) .fmap (
-    items => {
-      const newId = `ITEM_${getNewId (items.keys ())}`
+export const addItem =
+  (): ReduxAction =>
+  (dispatch, getState) => {
+    const mitems = getItemsState (getState ())
+
+    if (isJust (mitems)) {
+      const newId = getNewIdFromCurrentItems (mitems)
 
       return dispatch<AddItemAction> ({
         type: ActionTypes.ADD_ITEM,
@@ -26,8 +42,9 @@ export const addItem = (): ReduxAction => (dispatch, getState) => {
         },
       })
     }
-  )
-}
+
+    return undefined
+  }
 
 export interface AddItemTemplateAction {
   type: ActionTypes.ADD_ITEM_TEMPLATE
@@ -37,25 +54,26 @@ export interface AddItemTemplateAction {
   }
 }
 
-export const addTemplateToList = (id: string): ReduxAction => (dispatch, getState) => {
-  getItemsState (getState ()).bind (
-    items => {
-      const newId = `ITEM_${getNewId (items.keys ())}`
+export const addTemplateToList =
+  (id: string): ReduxAction =>
+  (dispatch, getState) => {
+    const mitems = getItemsState (getState ())
+    const mtemplate = lookup (id) (getWikiItemTemplates (getState ()))
 
-      return getWikiItemTemplates (getState ())
-        .lookup (id)
-        .fmap (
-          template => dispatch<AddItemTemplateAction> ({
-            type: ActionTypes.ADD_ITEM_TEMPLATE,
-            payload: {
-              newId,
-              template,
-            },
-          })
-        )
+    if (isJust (mitems) && isJust (mtemplate)) {
+      const newId = getNewIdFromCurrentItems (mitems)
+
+      return dispatch<AddItemTemplateAction> ({
+        type: ActionTypes.ADD_ITEM_TEMPLATE,
+        payload: {
+          newId,
+          template: fromJust (mtemplate),
+        },
+      })
     }
-  )
-}
+
+    return undefined
+  }
 
 export interface CreateItemAction {
   type: ActionTypes.CREATE_ITEM
@@ -88,18 +106,12 @@ export interface EditItemAction {
   }
 }
 
-export const editItem = (id: string): ReduxAction => (dispatch, getState) => {
-  getItemsState (getState ()).bind (
-    items => getFullItem (items) (getWikiItemTemplates (getState ())) (id).fmap (
-      item => dispatch<EditItemAction> ({
-        type: ActionTypes.EDIT_ITEM,
-        payload: {
-          item,
-        },
-      })
-    )
-  )
-}
+export const editItem = (id: string): EditItemAction => ({
+  type: ActionTypes.EDIT_ITEM,
+  payload: {
+    id,
+  },
+})
 
 export interface RemoveItemAction {
   type: ActionTypes.REMOVE_ITEM
@@ -676,20 +688,19 @@ export interface ApplyItemTemplateAction {
   }
 }
 
-export const applyItemTemplate: ReduxAction = (dispatch, getState) => {
-  getItemEditorInstance (getState ())
-    .bind (editor => editor .lookup ("template"))
-    .bind (
-      templateId => getWikiItemTemplates (getState ())
-        .lookup (templateId)
-        .fmap (
-          template => dispatch<ApplyItemTemplateAction> ({
-            type: ActionTypes.APPLY_ITEM_TEMPLATE,
-            payload: {
-              template,
-            },
-          })
-        )
+export const applyItemTemplate: ReduxAction =
+  (dispatch, getState) => {
+    pipe_ (
+      getState (),
+      getItemEditorInstance,
+      bindF (EditItem.A_.template),
+      bindF (lookupF (getWikiItemTemplates (getState ()))),
+      fmap (template => dispatch<ApplyItemTemplateAction> ({
+                          type: ActionTypes.APPLY_ITEM_TEMPLATE,
+                          payload: {
+                            template,
+                          },
+                        }))
     )
 }
 
@@ -700,22 +711,21 @@ export interface LockItemTemplateAction {
   }
 }
 
-export const lockItemTemplate: ReduxAction = (dispatch, getState) => {
-  getItemEditorInstance (getState ())
-    .bind (editor => editor .lookup ("template"))
-    .bind (
-      templateId => getWikiItemTemplates (getState ())
-        .lookup (templateId)
-        .fmap (
-          template => dispatch<LockItemTemplateAction> ({
-            type: ActionTypes.LOCK_ITEM_TEMPLATE,
-            payload: {
-              template,
-            },
-          })
-        )
+export const lockItemTemplate: ReduxAction =
+  (dispatch, getState) => {
+    pipe_ (
+      getState (),
+      getItemEditorInstance,
+      bindF (EditItem.A_.template),
+      bindF (lookupF (getWikiItemTemplates (getState ()))),
+      fmap (template => dispatch<LockItemTemplateAction> ({
+                          type: ActionTypes.LOCK_ITEM_TEMPLATE,
+                          payload: {
+                            template,
+                          },
+                        }))
     )
-}
+  }
 
 export interface UnlockItemTemplateAction {
   type: ActionTypes.UNLOCK_ITEM_TEMPLATE
@@ -733,18 +743,20 @@ export interface AddArmorZonesAction {
 }
 
 export const addArmorZonesToList = (): ReduxAction => (dispatch, getState) => {
-  getArmorZonesState (getState ()).fmap (
-    zoneArmors => {
-      const newId = `ARMORZONES_${getNewId (zoneArmors.keys ())}`
+  const mhit_zone_armors = getArmorZonesState (getState ())
 
-      return dispatch<AddArmorZonesAction> ({
-        type: ActionTypes.ADD_ARMOR_ZONES,
-        payload: {
-          newId,
-        },
-      })
-    }
-  )
+  if (isJust (mhit_zone_armors)) {
+    const newId = getNewIdFromCurrentHitZoneArmors (mhit_zone_armors)
+
+    return dispatch<AddArmorZonesAction> ({
+      type: ActionTypes.ADD_ARMOR_ZONES,
+      payload: {
+        newId,
+      },
+    })
+  }
+
+  return undefined
 }
 
 export interface CreateArmorZonesAction {

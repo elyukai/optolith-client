@@ -5,7 +5,7 @@ import { HeroModelRecord } from "../Models/Hero/HeroModel";
 
 type Action = DisAdvActions.ActivateDisAdvAction
             | DisAdvActions.DeactivateDisAdvAction
-            | DisAdvActions.SetDisAdvTierAction
+            | DisAdvActions.SetDisAdvLevelAction
             | SpecialAbilitiesActions.ActivateSpecialAbilityAction
             | SpecialAbilitiesActions.DeactivateSpecialAbilityAction
             | SpecialAbilitiesActions.SetSpecialAbilityTierAction

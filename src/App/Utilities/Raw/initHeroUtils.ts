@@ -6,7 +6,6 @@ import { elem, Maybe } from "../../../Data/Maybe";
 import { foldlWithKey, OrderedMap } from "../../../Data/OrderedMap";
 import { insert, OrderedSet } from "../../../Data/OrderedSet";
 import { Record, StringKeyObject } from "../../../Data/Record";
-import * as Raw from "../../../types/rawdata";
 import { Categories } from "../../Constants/Categories";
 import { ActivatableDependent, createActivatableDependentWithActive } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent, createActivatableSkillDependentWithValue } from "../../Models/ActiveEntries/ActivatableSkillDependent";
@@ -27,11 +26,12 @@ import { Purse } from "../../Models/Hero/Purse";
 import { Rules } from "../../Models/Hero/Rules";
 import { PrimaryAttributeDamageThreshold } from "../../Models/Wiki/sub/PrimaryAttributeDamageThreshold";
 import { WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import { getCombinedPrerequisites } from "../A/Activatable/activatableActivationUtils";
-import { getActiveFromState } from "../A/Activatable/activatableConvertUtils";
-import { addAllStyleRelatedDependencies } from "../A/Activatable/ExtendedStyleUtils";
+import { getCombinedPrerequisites } from "../Activatable/activatableActivationUtils";
+import { getActiveFromState } from "../Activatable/activatableConvertUtils";
+import { addAllStyleRelatedDependencies } from "../Activatable/ExtendedStyleUtils";
 import { addDependencies } from "../Dependencies/dependencyUtils";
 import { getCategoryById } from "../IDUtils";
+import * as Raw from "./RawData";
 
 const createHeroObject = (hero: Raw.RawHero): HeroModelRecord =>
   HeroModel ({
@@ -116,15 +116,15 @@ const createHeroObject = (hero: Raw.RawHero): HeroModelRecord =>
                 combatTechnique: Maybe (obj .combatTechnique),
                 damageDiceSides: Maybe (obj .damageDiceSides),
                 gr: obj .gr,
-                isParryingWeapon: Maybe (obj .isParryingWeapon),
+                isParryingWeapon: obj .isParryingWeapon || false,
                 isTemplateLocked: obj .isTemplateLocked,
                 reach: Maybe (obj .reach),
                 template: Maybe (obj .template),
-                isTwoHandedWeapon: Maybe (obj .isTwoHandedWeapon),
+                isTwoHandedWeapon: obj .isTwoHandedWeapon || false,
                 improvisedWeaponGroup: Maybe (obj .imp),
                 loss: Maybe (obj .loss),
-                forArmorZoneOnly: Maybe (obj .forArmorZoneOnly),
-                addPenalties: Maybe (obj .addPenalties),
+                forArmorZoneOnly: obj .forArmorZoneOnly || false,
+                addPenalties: obj .addPenalties || false,
                 armorType: Maybe (obj .armorType),
                 at: Maybe (obj .at),
                 iniMod: Maybe (obj .iniMod),
@@ -153,7 +153,7 @@ const createHeroObject = (hero: Raw.RawHero): HeroModelRecord =>
                                                     (Maybe (obj .range)),
                 reloadTime: Maybe (obj .reloadTime),
                 stp: Maybe (obj .stp),
-                weight: obj .weight,
+                weight: Maybe (obj .weight),
                 stabilityMod: Maybe (obj .stabilityMod),
               }),
             ];
@@ -161,7 +161,7 @@ const createHeroObject = (hero: Raw.RawHero): HeroModelRecord =>
         )
       ),
 
-      armorZones: hero .belongings .armorZones
+      hitZoneArmors: hero .belongings .armorZones
         ? OrderedMap.fromArray (
           Object.entries (hero .belongings .armorZones)
             .map<[string, Record<HitZoneArmor>]> (
@@ -191,7 +191,7 @@ const createHeroObject = (hero: Raw.RawHero): HeroModelRecord =>
       purse: Purse (hero .belongings .purse),
 
       isInItemCreation: false,
-      isInZoneArmorCreation: false,
+      isInHitZoneArmorCreation: false,
     }),
 
     rules: Rules ({
@@ -287,7 +287,7 @@ const getActivatables = (hero: Raw.RawHero): ActivatableMaps => {
 
       return {
         ...acc,
-        [key]: OrderedMap.insert<string, Record<ActivatableDependent>> (id) (obj) (acc [key]),
+        [key]: OrderedMap.insert (id) (obj) (acc [key]),
       }
     })
     ({

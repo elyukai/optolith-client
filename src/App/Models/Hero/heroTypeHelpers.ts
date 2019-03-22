@@ -3,21 +3,19 @@ import { Maybe } from "../../../Data/Maybe";
 import { OrderedMap } from "../../../Data/OrderedMap";
 import { OrderedSet } from "../../../Data/OrderedSet";
 import { Pair } from "../../../Data/Pair";
-import { Omit, Record, RecordI } from "../../../Data/Record";
-import { AllAction } from "../../../types/actions";
+import { Record, RecordI } from "../../../Data/Record";
+import { ReduxActions } from "../../Actions/Actions";
 import { DCIds } from "../../Selectors/derivedCharacteristicsSelectors";
 import { TabId } from "../../Utilities/LocationUtils";
 import { ActivatableDependent } from "../ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent } from "../ActiveEntries/ActivatableSkillDependent";
 import { ActiveObject } from "../ActiveEntries/ActiveObject";
-import { ActiveObjectWithId } from "../ActiveEntries/ActiveObjectWithId";
 import { AttributeDependent } from "../ActiveEntries/AttributeDependent";
 import { DependencyObject } from "../ActiveEntries/DependencyObject";
 import { SkillDependent } from "../ActiveEntries/SkillDependent";
-import { ActivatableCombinedName } from "../View/ActivatableCombinedName";
+import { ActivatableNameCost } from "../View/ActivatableNameCost";
 import * as Wiki from "../Wiki/wikiTypeHelpers";
 import { EditPrimaryAttributeDamageThreshold } from "./EditPrimaryAttributeDamageThreshold";
-import { HitZoneArmorBase } from "./HitZoneArmor";
 import { SkillOptionalDependency } from "./SkillOptionalDependency";
 
 export type ExtendedSkillDependent =
@@ -73,11 +71,6 @@ export interface ActiveObjectName extends ActiveObject {
   name: string
 }
 
-export interface ActivatableNameCost
-  extends Omit<ActiveObjectWithId, "cost">, ActivatableCombinedName {
-  finalCost: number | List<number>
-}
-
 export interface ActivatableNameCostActive extends ActivatableNameCost {
   active: boolean
 }
@@ -95,7 +88,6 @@ export interface ActivatableActivationMeta<
 > {
   stateEntry: Record<ActivatableDependent>
   wikiEntry: Record<T>
-  customCost: Maybe<boolean>
 }
 
 export type SetTierObject = ActiveObject
@@ -156,10 +148,6 @@ export interface ItemEditorSpecific {
   stp: string
   weight: string
   stabilityMod: string
-}
-
-export interface ArmorZonesEditorInstance extends HitZoneArmorBase {
-  id: Maybe<string>
 }
 
 interface DerivedCharacteristicBase<I extends DCIds = DCIds> {
@@ -240,7 +228,7 @@ export interface AlertButtonCore {
 }
 
 export interface AlertButton extends AlertButtonCore {
-  dispatchOnClick?: AllAction
+  dispatchOnClick?: ReduxActions
 }
 
 export interface ViewAlertButton extends AlertButtonCore {
@@ -248,8 +236,8 @@ export interface ViewAlertButton extends AlertButtonCore {
 }
 
 interface AlertConfirm {
-  resolve?: AllAction
-  reject?: AllAction
+  resolve?: ReduxActions
+  reject?: ReduxActions
 }
 
 export interface Alert {

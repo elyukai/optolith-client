@@ -4,7 +4,7 @@ import { ExperienceLevel, WikiRecord } from '../App/Models/Wiki/wikiTypeHelpers'
 import { createMaybeSelector } from '../App/Utils/createMaybeSelector';
 import { filterByAvailability } from '../App/Utils/RulesUtils';
 import { isActive } from '../utils/activatable/isActive';
-import { getActiveSelections } from '../utils/activatable/selectionUtils';
+import { getActiveSelections } from '../utils/Activatable/selectionUtils';
 import { createDependentSkillWithValue6 } from '../utils/createEntryUtils';
 import { Just, List, Maybe, Nothing, Record } from '../utils/dataUtils';
 import { flattenDependencies } from '../utils/dependencies/flattenDependencies';

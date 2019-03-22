@@ -1,9 +1,9 @@
 import { pipe } from "ramda";
 import { ident } from "../../../Data/Function";
 import { fmap } from "../../../Data/Functor";
-import { List, map } from "../../../Data/List";
+import { List } from "../../../Data/List";
 import { bind, elem, maybeToUndefined } from "../../../Data/Maybe";
-import { elems, foldl, foldlWithKey, OrderedMap, OrderedMapValueElement, toObjectWith, union } from "../../../Data/OrderedMap";
+import { foldl, foldlWithKey, OrderedMap, OrderedMapValueElement, toObjectWith, union } from "../../../Data/OrderedMap";
 import { toArray } from "../../../Data/OrderedSet";
 import { Record, StringKeyObject, toObject } from "../../../Data/Record";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
@@ -372,5 +372,5 @@ export const convertHeroesForSave =
   (locale: L10nRecord) =>
   (users: OrderedMap<string, Data.User>) =>
   (heroes: OrderedMap<string, UndoableHeroModelRecord>) =>
-    map (pipe (present, convertHeroForSave (wiki) (locale) (users)))
-        (elems (heroes))
+    toObjectWith (pipe (present, convertHeroForSave (wiki) (locale) (users)))
+                 (heroes)

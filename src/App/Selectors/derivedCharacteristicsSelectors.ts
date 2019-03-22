@@ -6,7 +6,7 @@ import { getAttributeValueWithDefault } from '../App/Utils/Increasable/attribute
 import { isBookEnabled } from '../App/Utils/RulesUtils';
 import { mapGetToMaybeSlice } from '../App/Utils/SelectorsUtils';
 import { getModifierByActiveLevel, getModifierByIsActive } from '../utils/activatable/activatableModifierUtils';
-import { getActiveSelections } from '../utils/activatable/selectionUtils';
+import { getActiveSelections } from '../utils/Activatable/selectionUtils';
 import { Just, List, Maybe, OrderedMap, OrderedSet, Record, Tuple } from '../utils/dataUtils';
 import { getPrimaryBlessedAttribute, getPrimaryMagicalAttribute } from './attributeSelectors';
 import { getCurrentRace } from './rcpSelectors';

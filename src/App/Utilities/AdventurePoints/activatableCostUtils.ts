@@ -8,29 +8,33 @@
  * @since 1.1.0
  */
 
+import { cnst, flip, ident } from "../../../Data/Function";
 import { fmap, fmapF } from "../../../Data/Functor";
-import { countWith, find, foldl, isList, List, map, notNull, subscript, subscriptF } from "../../../Data/List";
-import { any, bind, bindF, elem, elemF, ensure, fromJust, fromMaybe, isJust, isNothing, liftM2, listToMaybe, Maybe, Nothing } from "../../../Data/Maybe";
+import { over, set } from "../../../Data/Lens";
+import { appendStr, countWith, filter, find, foldl, ifoldr, isList, List, map, notElem, notNull, subscript, subscriptF } from "../../../Data/List";
+import { any, bind, bindF, elem, elemF, ensure, fromJust, fromMaybe, isJust, isNothing, Just, liftM2, listToMaybe, Maybe, maybe, Nothing } from "../../../Data/Maybe";
 import { lookup, lookupF } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
+import { Categories } from "../../Constants/Categories";
 import { ActivatableDependent, isActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
 import { ActiveObjectWithId } from "../../Models/ActiveEntries/ActiveObjectWithId";
 import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
+import { ActivatableNameCost, ActivatableNameCostL, ActivatableNameCostSafeCost } from "../../Models/View/ActivatableNameCost";
 import { Advantage } from "../../Models/Wiki/Advantage";
 import { isDisadvantage } from "../../Models/Wiki/Disadvantage";
+import { L10nRecord } from "../../Models/Wiki/L10n";
 import { Skill } from "../../Models/Wiki/Skill";
 import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { Activatable, EntryWithCategory, SkillishEntry } from "../../Models/Wiki/wikiTypeHelpers";
 import { isMaybeActive } from "../activatable/isActive";
-import { getSelectOptionCost } from "../activatable/selectionUtils";
+import { getSelectOptionCost } from "../Activatable/selectionUtils";
 import { getHeroStateItem } from "../heroStateUtils";
 import { translate } from "../I18n";
 import { getCategoryById } from "../IDUtils";
-import { match } from "../match";
 import { add, dec, multiply, negate } from "../mathUtils";
 import { toRoman } from "../NumberUtils";
-import { pipe } from "../pipe";
+import { pipe, pipe_ } from "../pipe";
 import { isNumber, isNumberM, misNumberM, misStringM } from "../typeCheckUtils";
 import { getWikiEntry, isActivatableWikiEntry, isSkillishWikiEntry } from "../WikiUtils";
 
@@ -415,81 +419,128 @@ export const getCost =
                         (ensure (isActivatableDependent)))
   }
 
-const adjustCurrentCost =
-  (obj: Record<Data.ActivatableNameCostEvalTier>):
-    Record<Data.ActivatableNameAdjustedCostEvalTier> =>
-    obj.merge (Record.of ({
-      finalCost: match<number | List<number>, number> (obj.get ("finalCost"))
-        .on ((e): e is List<number> => e instanceof List, currentCost => {
-          const tier = obj.lookupWithDefault<"tier"> (1) ("tier")
+/**
+ * Uses the results from `getCost` saved in `ActivatableNameCost` to calculate
+ * the final cost value (and no list).
+ */
+const putCurrentCost =
+  (entry: Record<ActivatableNameCost>): Record<ActivatableNameCostSafeCost> =>
+    over (ActivatableNameCostL.finalCost)
+         ((current_cost): number => {
+           const current_id = ActivatableNameCost.A_.id (entry)
+           const mcurrent_level = ActivatableNameCost.A_.tier (entry)
 
-          return currentCost.ifoldl<number> (
-            sum => index => current =>
-              index <= (tier - 1) ? sum + current : sum) (0)
-        })
-        .on (
-          () => Maybe.isJust (obj.lookup ("tier"))
-            && obj.get ("id") !== "DISADV_34"
-            && obj.get ("id") !== "DISADV_50",
-          currentCost => Maybe.fromMaybe (0) (
-            obj.lookup ("tier").fmap (tier => currentCost * tier)
-          )
-        )
-        .otherwise (() => obj.get ("finalCost") as number),
-    }))
+           // If the AP cost is still a List, it must be a list that represents
+           // the cost for each level separate, thus all relevant values must
+           // be summed up.
+           if (isList (current_cost)) {
+             const current_level = fromMaybe (1) (mcurrent_level)
 
+             return ifoldr (i => i <= (current_level - 1) ? add : cnst (ident as ident<number>))
+                           (0)
+                           (current_cost)
+           }
+
+           // Usually, a single AP value represents the value has to be
+           // multiplied by the level to result in the final cost. There are two
+           // disadvantages where this is not valid.
+           if (
+             isJust (mcurrent_level)
+             && current_id !== "DISADV_34"
+             && current_id !== "DISADV_50"
+           ) {
+             return maybe (0) (multiply (current_cost)) (mcurrent_level)
+           }
+
+           return current_cost
+         })
+         (entry) as Record<ActivatableNameCostSafeCost>
+
+/**
+ * Gets the level string that has to be appended to the name.
+ */
 const getLevel = (level: number) => ` ${toRoman (level)}`
 
+/**
+ * Gets the level string that has to be appended to the name. For special
+ * abilities, where levels are bought separately, this means it has to display a
+ * range when multiple levels have been bought.
+ */
 const getSpecialAbilityLevel =
   (level: number) => level > 1 ? ` I-${toRoman (level)}` : getLevel (level)
 
-const getAdjustedLevelName =
-  (locale: Maybe<Record<Data.UIMessages>>) =>
-  (obj: Record<Data.ActivatableNameCost>) =>
-  (level: number) => {
-    if (obj.get ("id") === "SA_29" && level === 4) {
-      return ` ${translate (locale, "mothertongue.short")}`
+/**
+ * Id-based check if the entry is a special ability.
+ */
+const isSpecialAbilityById =
+  pipe (getCategoryById, elem<Categories> (Categories.SPECIAL_ABILITIES))
+
+/**
+ * Gets the level string that hast to be appended to the name. This string is
+ * aware of differences between dis/advantages and special abilties as well as
+ * it handles the Native Tongue level for languages.
+ */
+const getFinalLevelName =
+  (l10n: L10nRecord) =>
+  (entry: Record<ActivatableNameCost>) =>
+  /**
+   * @param current_level This is the same value from param `entry`, but this is
+   * ensured to be a number.
+   */
+  (current_level: number) => {
+    const current_id = ActivatableNameCost.A_.id (entry)
+    const current_cost = ActivatableNameCost.A_.finalCost (entry)
+
+    if (current_id === "SA_29" && current_level === 4) {
+      return ` ${translate (l10n) ("nativetongue.short")}`
     }
-    else if (
-      obj .get ("finalCost") instanceof List
-      || getCategoryById (obj.get ("id")).equals (Maybe.pure (Categories.SPECIAL_ABILITIES))
-    ) {
-      return getSpecialAbilityLevel (level)
+
+    if (isList (current_cost) || isSpecialAbilityById (current_id)) {
+      return getSpecialAbilityLevel (current_level)
     }
-    else {
-      return getLevel (level)
-    }
+
+    return getLevel (current_level)
   }
 
-const hasLevelName =
-  (locale: Maybe<Record<Data.UIMessages>>) =>
-  (obj: Record<Data.ActivatableNameCost>) =>
-  (mlevel: Maybe<number>): Maybe<string> => {
-    if (Maybe.isJust (mlevel) && List.of ("DISADV_34", "DISADV_50") .notElem (obj.get ("id"))) {
-      const tier = Maybe.fromJust (mlevel)
+/**
+ * Returns a `Just` of the level string, if no level string available, returns
+ * `Nothing`.
+ */
+const getLevelNameIfValid =
+  (l10n: L10nRecord) =>
+  (entry: Record<ActivatableNameCost>): Maybe<string> => {
+    const current_id = ActivatableNameCost.A_.id (entry)
+    const mcurrent_level = ActivatableNameCost.A_.tier (entry)
 
-      return Maybe.pure (getAdjustedLevelName (locale, obj, tier))
+    if (isJust (mcurrent_level) && notElem (current_id) (List ("DISADV_34", "DISADV_50"))) {
+      return Just (getFinalLevelName (l10n)
+                                        (entry)
+                                        (fromJust (mcurrent_level)))
     }
-    else {
-      return Maybe.empty ()
-    }
+
+    return Nothing
   }
 
-const adjustTierName =
-  (locale: Maybe<Record<Data.UIMessages>>) =>
-  (addTierToCombinedTier?: boolean) =>
-  (obj: Record<Data.ActivatableNameCost>): Record<Data.ActivatableNameCostEvalTier> => {
-    const mlevel = obj.lookup ("tier")
-
-    return Maybe.fromMaybe<Record<Data.ActivatableNameCostEvalTier>> (obj) (
-      hasLevelName (locale, obj, mlevel)
-        .bind (Maybe.ensure (() => !addTierToCombinedTier))
-        .fmap (tierName => obj .merge (Record.of<{ name: string tierName?: string }> ({
-          name: obj.get ("name") + tierName,
-          tierName,
-        })))
+const putLevelName =
+  (addLevelToName: boolean) =>
+  (l10n: L10nRecord) =>
+  (entry: Record<ActivatableNameCost>): Record<ActivatableNameCost> =>
+    pipe_ (
+      entry,
+      getLevelNameIfValid (l10n),
+      fmap (levelName => addLevelToName
+                           ? pipe_ (
+                               entry,
+                               over (ActivatableNameCostL.name)
+                                    (flip (appendStr) (levelName)),
+                               set (ActivatableNameCostL.levelName)
+                                   (Just (levelName))
+                             )
+                           : set (ActivatableNameCostL.levelName)
+                                 (Just (levelName))
+                                 (entry)),
+      fromMaybe (entry)
     )
-  }
 
 /**
  * Calculates level name and level-based cost and (optionally) updates `name`.
@@ -497,45 +548,12 @@ const adjustTierName =
  * @param addTierToCombinedTier If true, does not add `tierName` to `name`.
  */
 export const convertPerTierCostToFinalCost =
-  (locale: Maybe<Record<Data.UIMessages>>) =>
-  (addTierToCombinedTier?: boolean):
-    ((obj: Record<Data.ActivatableNameCost>) => Record<Data.ActivatableNameAdjustedCostEvalTier>) =>
+  (addLevelToName: boolean) =>
+  (l10n: L10nRecord) =>
     pipe (
-      adjustTierName (locale, addTierToCombinedTier),
-      adjustCurrentCost
+      putLevelName (addLevelToName) (l10n),
+      putCurrentCost
     )
-
-interface SplittedActiveObjectsByCustomCost {
-  defaultCostList: Record<Data.ActiveObject>[]
-  customCostList: Record<Data.ActiveObject>[]
-}
-
-const getSplittedActiveObjectsByCustomCost =
-  (entries: List<Record<Data.ActiveObject>>) =>
-    entries.foldl<SplittedActiveObjectsByCustomCost> (
-      res => obj => {
-        if (Maybe.isJust (obj.lookup ("cost"))) {
-          return {
-            ...res,
-            customCostList: [
-              ...res.customCostList,
-              obj,
-            ],
-          }
-        }
-
-        return {
-          ...res,
-          defaultCostList: [
-            ...res.defaultCostList,
-            obj,
-          ],
-        }
-      }
-    ) ({ defaultCostList: [], customCostList: [] })
 
 export const getActiveWithNoCustomCost =
-  (entries: List<Record<Data.ActiveObject>>) =>
-    List.of (
-      ...getSplittedActiveObjectsByCustomCost (entries).defaultCostList
-    )
+  filter (pipe (ActiveObject.A_.cost, isNothing))

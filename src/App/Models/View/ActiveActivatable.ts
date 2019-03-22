@@ -1,14 +1,15 @@
 import { Nothing } from "../../../Data/Maybe";
 import { fromDefault, RecordI } from "../../../Data/Record";
 import { ActivatableDependent } from "../ActiveEntries/ActivatableDependent";
-import { ActivatableActivationMeta, ActivatableNameAdjustedCostEvalTier } from "../Hero/heroTypeHelpers";
+import { ActivatableActivationMeta } from "../Hero/heroTypeHelpers";
 import { Advantage } from "../Wiki/Advantage";
 import { Activatable } from "../Wiki/wikiTypeHelpers";
-import { ActivatableActivationValidationObject } from "./ActivatableActivationValidationObject";
+import { ActivatableActivationValidation } from "./ActivatableActivationValidationObject";
+import { ActivatableNameCostSafeCost } from "./ActivatableNameCost";
 
 export interface ActiveActivatable<T extends RecordI<Activatable> = RecordI<Activatable>>
-  extends ActivatableNameAdjustedCostEvalTier,
-          ActivatableActivationValidationObject,
+  extends ActivatableNameCostSafeCost,
+          ActivatableActivationValidation,
           ActivatableActivationMeta<T> { }
 
 export const ActiveActivatable =
@@ -26,7 +27,7 @@ export const ActiveActivatable =
     baseName: "",
     addName: Nothing,
 
-    tierName: Nothing,
+    levelName: Nothing,
 
     finalCost: 0,
 
@@ -36,5 +37,4 @@ export const ActiveActivatable =
 
     stateEntry: ActivatableDependent.default,
     wikiEntry: Advantage.default,
-    customCost: Nothing,
   })

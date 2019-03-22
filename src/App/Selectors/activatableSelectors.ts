@@ -5,7 +5,7 @@ import * as Wiki from '../Models/Wiki/wikiTypeHelpers';
 import { getAllActiveByCategory } from '../utils/activatable/activatableActiveUtils';
 import { getModifierByActiveLevel, getModifierByIsActive } from '../utils/activatable/activatableModifierUtils';
 import { getBracketedNameFromFullName } from '../utils/activatable/activatableNameUtils';
-import { getActiveSelections, getSelectOptionName } from '../utils/activatable/selectionUtils';
+import { getActiveSelections, getSelectOptionName } from '../utils/Activatable/selectionUtils';
 import { getDisAdvantagesSubtypeMax } from '../utils/adventurePoints/adventurePointsUtils';
 import { createMaybeSelector } from '../Utils/createMaybeSelector';
 import { Just, List, Maybe, Nothing, OrderedMap, Record } from '../utils/dataUtils';

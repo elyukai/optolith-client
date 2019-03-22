@@ -2,14 +2,14 @@ import { Maybe, Nothing } from "../../../Data/Maybe";
 import { fromDefault } from "../../../Data/Record";
 import { ActiveObjectWithId } from "../ActiveEntries/ActiveObjectWithId";
 
-export interface ActivatableActivationValidationObject extends ActiveObjectWithId {
+export interface ActivatableActivationValidation extends ActiveObjectWithId {
   disabled: boolean
   maxLevel: Maybe<number>
   minLevel: Maybe<number>
 }
 
-export const ActivatableActivationValidationObject =
-  fromDefault<ActivatableActivationValidationObject> ({
+export const ActivatableActivationValidation =
+  fromDefault<ActivatableActivationValidation> ({
     id: "",
     index: -1,
     cost: Nothing,

@@ -7,36 +7,53 @@
  * @since 1.1.0
  */
 
-import { Maybe } from "../../../Data/Maybe";
-import { OrderedMap } from "../../../Data/OrderedMap";
+import { fmap } from "../../../Data/Functor";
+import { List } from "../../../Data/List";
+import { liftM2, liftM4, mapMaybe, Maybe, Nothing } from "../../../Data/Maybe";
+import { lookup, OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { ActivatableCategory, Categories } from "../../Constants/Categories";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActiveObjectWithId } from "../../Models/ActiveEntries/ActiveObjectWithId";
 import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
-import { ActivatableNameCost } from "../../Models/Hero/heroTypeHelpers";
+import { ActivatableActivationValidation } from "../../Models/View/ActivatableActivationValidationObject";
+import { ActivatableCombinedName } from "../../Models/View/ActivatableCombinedName";
+import { ActivatableNameCost, ActivatableNameCostSafeCost } from "../../Models/View/ActivatableNameCost";
+import { ActiveActivatable } from "../../Models/View/ActiveActivatable";
 import { L10nRecord } from "../../Models/Wiki/L10n";
-import { WikiModelRecord } from "../../Models/Wiki/WikiModel";
+import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
+import { Activatable, WikiEntryByCategory, WikiEntryRecordByCategory } from "../../Models/Wiki/wikiTypeHelpers";
 import { convertPerTierCostToFinalCost, getCost } from "../AdventurePoints/activatableCostUtils";
-import { getWikiEntry } from "../WikiUtils";
+import { pipe_ } from "../pipe";
 import { getIsRemovalOrChangeDisabled } from "./activatableActiveValidationUtils";
 import { getActiveFromState } from "./activatableConvertUtils";
 import { getName } from "./activatableNameUtils";
-
-const { advantages, disadvantages, specialAbilities } = HeroModel.A
 
 /**
  * Takes an Activatable category and a hero and returns the state slice matching
  * the passed category.
  */
-export const getActivatableStateSliceByCategory =
+export const getActivatableHeroSliceByCategory =
   (category: ActivatableCategory) =>
   (hero: HeroModelRecord): OrderedMap<string, Record<ActivatableDependent>> =>
     category === Categories.ADVANTAGES
-    ? advantages (hero)
+    ? HeroModel.A_.advantages (hero)
     : category === Categories.DISADVANTAGES
-    ? disadvantages (hero)
-    : specialAbilities (hero)
+    ? HeroModel.A_.disadvantages (hero)
+    : HeroModel.A_.specialAbilities (hero)
+
+/**
+ * Takes an Activatable category and a hero and returns the state slice matching
+ * the passed category.
+ */
+export const getActivatableWikiSliceByCategory =
+  (category: ActivatableCategory) =>
+  (wiki: WikiModelRecord): OrderedMap<string, Activatable> =>
+    category === Categories.ADVANTAGES
+    ? WikiModel.A_.advantages (wiki)
+    : category === Categories.DISADVANTAGES
+    ? WikiModel.A_.disadvantages (wiki)
+    : WikiModel.A_.specialAbilities (wiki)
 
 /**
  * Returns name, splitted and combined, as well as the AP you get when removing
@@ -44,26 +61,32 @@ export const getActivatableStateSliceByCategory =
  * @param obj The ActiveObject with origin id.
  * @param wiki The wiki state.
  * @param state The current hero's state.
- * @param costToAdd If the cost are going to be added or removed from AP left.
+ * @param isEntryToAdd If the cost are going to be added or removed from AP left.
  * @param locale The locale-dependent messages.
  */
 export const getNameCost =
-  (costToAdd: boolean) =>
+  (isEntryToAdd: boolean) =>
   (l10n: L10nRecord) =>
   (wiki: WikiModelRecord) =>
   (hero: HeroModelRecord) =>
   (entry: Record<ActiveObjectWithId>): Maybe<Record<ActivatableNameCost>> =>
-  getCost (entry, wiki, hero, costToAdd)
-    .bind (
-      finalCost => getName (l10n) (wiki) (entry)
-        .fmap (
-          names => names
-            .merge (entry)
-            .merge (Record.of ({
+    liftM2 ((finalCost: number | List<number>) => (name: Record<ActivatableCombinedName>) =>
+             ActivatableNameCost ({
+              name: ActivatableCombinedName.A_.name (name),
+              baseName: ActivatableCombinedName.A_.baseName (name),
+              addName: ActivatableCombinedName.A_.addName (name),
+              levelName: Nothing,
+
+              id: ActiveObjectWithId.A_.id (entry),
+              index: ActiveObjectWithId.A_.index (entry),
+              sid: ActiveObjectWithId.A_.sid (entry),
+              sid2: ActiveObjectWithId.A_.sid2 (entry),
+              tier: ActiveObjectWithId.A_.tier (entry),
+
               finalCost,
-            }))
-        )
-    )
+             }))
+           (getCost (isEntryToAdd) (wiki) (hero) (entry))
+           (getName (l10n) (wiki) (entry))
 
 /**
  * Returns name, splitted and combined, as well as the AP you get when removing
@@ -76,61 +99,78 @@ export const getNameCostForWiki =
   (l10n: L10nRecord) =>
   (wiki: WikiModelRecord) =>
   (entry: Record<ActiveObjectWithId>): Maybe<Record<ActivatableNameCost>> =>
-  getCost (obj, wiki)
-    .bind (
-      finalCost => getName (l10n) (wiki) (entry)
-        .fmap (
-          names => names
-            .merge (obj)
-            .merge (Record.of ({
+    liftM2 ((finalCost: number | List<number>) => (name: Record<ActivatableCombinedName>) =>
+             ActivatableNameCost ({
+              name: ActivatableCombinedName.A_.name (name),
+              baseName: ActivatableCombinedName.A_.baseName (name),
+              addName: ActivatableCombinedName.A_.addName (name),
+              levelName: Nothing,
+
+              id: ActiveObjectWithId.A_.id (entry),
+              index: ActiveObjectWithId.A_.index (entry),
+              sid: ActiveObjectWithId.A_.sid (entry),
+              sid2: ActiveObjectWithId.A_.sid2 (entry),
+              tier: ActiveObjectWithId.A_.tier (entry),
+
               finalCost,
-            }))
-        )
-    )
+             }))
+           (getCost (false) (wiki) (HeroModel.default) (entry))
+           (getName (l10n) (wiki) (entry))
 
 export const getAllActiveByCategory =
   <T extends ActivatableCategory>
   (category: T) =>
-  (addTierToName: boolean) =>
-  (maybeHero: Maybe<Hero>) =>
-  (locale: Record<UIMessages>) =>
-  (wiki: Record<Wiki.WikiAll>) => {
-    type GenericWikiEntry = Wiki.WikiEntryRecordByCategory[T]
-    type GenericWikiEntryInterface = RecordInterface<GenericWikiEntry>
+  (addLevelToName: boolean) =>
+  (l10n: L10nRecord) =>
+  (wiki: WikiModelRecord) =>
+  (hero: HeroModelRecord): List<Record<ActiveActivatable<WikiEntryByCategory[T]>>> => {
+    type GenericWikiEntry = WikiEntryRecordByCategory[T]
 
-    const convertCost = convertPerTierCostToFinalCost (Just (locale), addTierToName)
+    const convertCost = convertPerTierCostToFinalCost (addLevelToName) (l10n)
 
-    return maybeHero.fmap (
-      hero => {
-        const stateSlice = getActivatableStateSliceByCategory (category) (hero)
+    const wiki_slice = getActivatableWikiSliceByCategory (category) (wiki)
+    const hero_slice = getActivatableHeroSliceByCategory (category) (hero)
 
-        return Maybe.mapMaybe (
-          (activeObject: Record<ActiveObjectWithId>) =>
-            getNameCost (activeObject, wiki, hero, false, Just (locale))
-              .fmap (convertCost)
-              .bind (
-                nameAndCost => stateSlice.lookup (activeObject.get ("id")).bind (
-                  stateEntry => getIsRemovalOrChangeDisabled (activeObject, wiki, hero).bind (
-                    isRemovalOrChangeDisabled =>
-                      getWikiEntry<GenericWikiEntry> (wiki) (activeObject.get ("id"))
-                        .fmap<Record<ActiveViewObject<GenericWikiEntryInterface>>> (
-                          wikiEntry => nameAndCost
-                            .merge (isRemovalOrChangeDisabled)
-                            .merge (
-                              Record.of<
-                                ActivatableActivationMeta<GenericWikiEntryInterface>
-                              > ({
-                                stateEntry,
-                                wikiEntry:
-                                  wikiEntry as any as Record<GenericWikiEntryInterface>,
-                                customCost: Maybe.isJust (activeObject.lookup ("cost")),
-                              })
-                            )
-                        )
-                  )
-                )
-              )
-        ) (getActiveFromState (stateSlice))
-      }
+    return pipe_ (
+      hero_slice,
+      getActiveFromState,
+      mapMaybe ((active: Record<ActiveObjectWithId>) => {
+                 const current_id = ActiveObjectWithId.A_.id (active)
+
+                 return liftM4 ((nameCost: Record<ActivatableNameCostSafeCost>) =>
+                                (wiki_entry: GenericWikiEntry) =>
+                                (hero_entry: Record<ActivatableDependent>) =>
+                                (remove: Record<ActivatableActivationValidation>) =>
+                                 ActiveActivatable ({
+                                  id: current_id,
+
+                                  sid: ActiveObjectWithId.A_.sid (active),
+                                  sid2: ActiveObjectWithId.A_.sid2 (active),
+                                  tier: ActiveObjectWithId.A_.tier (active),
+                                  cost: ActiveObjectWithId.A_.cost (active),
+
+                                  index: ActiveObjectWithId.A_.index (active),
+
+                                  name: ActivatableNameCost.A_.name (nameCost),
+                                  baseName: ActivatableNameCost.A_.baseName (nameCost),
+                                  addName: ActivatableNameCost.A_.addName (nameCost),
+
+                                  levelName: Nothing,
+
+                                  finalCost: ActivatableNameCost.A_.finalCost (nameCost) as number,
+
+                                  disabled: ActivatableActivationValidation.A_.disabled (remove),
+                                  maxLevel: ActivatableActivationValidation.A_.maxLevel (remove),
+                                  minLevel: ActivatableActivationValidation.A_.minLevel (remove),
+
+                                  stateEntry: hero_entry,
+                                  wikiEntry: wiki_entry,
+                                 }))
+                               (fmap (convertCost)
+                                     (getNameCost (false) (l10n) (wiki) (hero) (active)))
+                               (lookup (current_id) (wiki_slice) as Maybe<GenericWikiEntry>)
+                               (lookup (current_id) (hero_slice))
+                               (getIsRemovalOrChangeDisabled (wiki) (hero) (active))
+               })
     )
   }

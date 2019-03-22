@@ -6,6 +6,7 @@ import { lookup, lookupF, OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { show } from "../../../Data/Show";
 import { toInt } from "../NumberUtils";
+import { pipe_ } from "../pipe";
 
 /**
  * Lookup property `"id"` in passed line from universal table and returns an
@@ -18,12 +19,12 @@ const lookupId =
   (ensure_f: (x: string) => Maybe<A>) =>
   (key: string) =>
   (univ_row: OrderedMap<string, string>): Either<string, A> =>
-    pipe (
-           lookup<string, string> (key),
-           bindF (ensure_f),
-           maybeToEither (`${origin}: key ${show (key)} is missing in ${show (univ_row)}`)
-         )
-         (univ_row)
+    pipe_ (
+            univ_row,
+            lookup (key),
+            bindF (ensure_f),
+            maybeToEither (`${origin}: key ${show (key)} is missing in ${show (univ_row)}`)
+          )
 
 type MergeRowsByIdFunction<A> =
   (id: number) =>
@@ -98,8 +99,8 @@ export const mergeRowsByIdAndMainId =
     const mainId = fromRight_ (either_main_id)
     const id = fromRight_ (either_id)
 
-    const sameMainId = pipe (lookup<string, string> ("mainId"), elem (show (mainId)))
-    const sameId = pipe (lookup<string, string> ("id"), elem (show (id)))
+    const sameMainId = pipe (lookup ("mainId"), elem (show (mainId)))
+    const sameId = pipe (lookup ("id"), elem (show (id)))
 
     const ml10n_row =
       find<OrderedMap<string, string>> (e => sameMainId (e) && sameId (e))

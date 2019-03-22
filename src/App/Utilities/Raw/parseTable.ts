@@ -2,7 +2,7 @@ import { pipe } from "ramda";
 import xlsx from "xlsx";
 import { bindF, Either, fromRight_, isLeft, Left, mapM, maybeToEither } from "../../../Data/Either";
 import { fmap } from "../../../Data/Functor";
-import { Lens, over, set } from "../../../Data/Lens";
+import { Lens_, over, set } from "../../../Data/Lens";
 import { consF, empty, foldr, List, map } from "../../../Data/List";
 import { catMaybes, fromMaybe, Just, Maybe } from "../../../Data/Maybe";
 import { adjust, fromList, lookupF, mapMEither, OrderedMap } from "../../../Data/OrderedMap";
@@ -89,7 +89,7 @@ const { select } = makeLenses (SpecialAbility)
 
 const matchSelectOptionsToBaseRecords =
   foldr ((p: Pair<string, Record<SelectOption>>) =>
-          adjust (over (select as unknown as Lens<Activatable, Maybe<List<Record<SelectOption>>>>)
+          adjust (over (select as unknown as Lens_<Activatable, Maybe<List<Record<SelectOption>>>>)
                        (pipe (
                          fromMaybe<List<Record<SelectOption>>> (empty),
                          consF (snd (p)),
@@ -188,8 +188,6 @@ export const parseTables =
           itemTemplates: lookupBindM2MapMToMap (toItemTemplate) ("EQUIPMENT"),
         })
         (rs => {
-
-
           return Pair (
             rs.l10n,
             WikiModel ({

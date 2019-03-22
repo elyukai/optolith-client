@@ -1,18 +1,25 @@
-import { AsyncAction } from '../../types/actions';
-import { ActionTypes } from '../Constants/ActionTypes';
-import { getHeroes, getWikiExperienceLevels } from '../Selectors/stateSelectors';
-import { UIMessagesObject } from '../types/ui';
-import { getNewIdByDate } from '../Utilities/IDUtils';
-import { Maybe, OrderedSet } from '../utils/dataUtils';
-import { translate } from '../Utils/I18n';
-import { addAlert } from './AlertActions';
-import { requestAllHeroesSave, requestHeroDeletion, requestHeroExport, requestHeroSave } from './IOActions';
+import { List } from "../../Data/List";
+import { fromJust, isJust, Maybe } from "../../Data/Maybe";
+import { lookup } from "../../Data/OrderedMap";
+import { OrderedSet } from "../../Data/OrderedSet";
+import { ActionTypes } from "../Constants/ActionTypes";
+import { HeroModel } from "../Models/Hero/HeroModel";
+import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel";
+import { L10nRecord } from "../Models/Wiki/L10n";
+import { heroReducer } from "../Reducers/heroReducer";
+import { getHeroes, getWikiExperienceLevels } from "../Selectors/stateSelectors";
+import { translate, translateP } from "../Utilities/I18n";
+import { getNewIdByDate } from "../Utilities/IDUtils";
+import { pipe_ } from "../Utilities/pipe";
+import { ReduxAction } from "./Actions";
+import { addAlert } from "./AlertActions";
+import { requestAllHeroesSave, requestHeroDeletion, requestHeroExport, requestHeroSave } from "./IOActions";
 
 export interface SetHerolistSortOrderAction {
-  type: ActionTypes.SET_HEROLIST_SORT_ORDER;
+  type: ActionTypes.SET_HEROLIST_SORT_ORDER
   payload: {
     sortOrder: string;
-  };
+  }
 }
 
 export const setHerolistSortOrder = (sortOrder: string): SetHerolistSortOrderAction => ({
@@ -20,13 +27,13 @@ export const setHerolistSortOrder = (sortOrder: string): SetHerolistSortOrderAct
   payload: {
     sortOrder,
   },
-});
+})
 
 export interface SetHerolistFilterTextAction {
-  type: ActionTypes.SET_HEROLIST_FILTER_TEXT;
+  type: ActionTypes.SET_HEROLIST_FILTER_TEXT
   payload: {
     filterText: string;
-  };
+  }
 }
 
 export const setHerolistFilterText = (filterText: string): SetHerolistFilterTextAction => ({
@@ -34,13 +41,13 @@ export const setHerolistFilterText = (filterText: string): SetHerolistFilterText
   payload: {
     filterText,
   },
-});
+})
 
 export interface SetHerolistVisibilityFilterAction {
-  type: ActionTypes.SET_HEROLIST_VISIBILITY_FILTER;
+  type: ActionTypes.SET_HEROLIST_VISIBILITY_FILTER
   payload: {
     filterOption: string;
-  };
+  }
 }
 
 export const setHerolistVisibilityFilter =
@@ -49,56 +56,56 @@ export const setHerolistVisibilityFilter =
     payload: {
       filterOption,
     },
-  });
+  })
 
 export interface CreateHeroAction {
-  type: ActionTypes.CREATE_HERO;
+  type: ActionTypes.CREATE_HERO
   payload: {
     id: string;
     name: string;
-    sex: 'm' | 'f';
+    sex: "m" | "f";
     el: string;
     enableAllRuleBooks: boolean;
     enabledRuleBooks: OrderedSet<string>;
     totalAp: number;
-  };
+  }
 }
 
-export const createHero = (
-  name: string,
-  sex: 'm' | 'f',
-  el: string,
-  enableAllRuleBooks: boolean,
-  enabledRuleBooks: OrderedSet<string>
-): AsyncAction => (dispatch, getState) => {
-  const state = getState ();
+export const createHero =
+  (name: string) =>
+  (sex: "m" | "f") =>
+  (el: string) =>
+  (enableAllRuleBooks: boolean) =>
+  (enabledRuleBooks: OrderedSet<string>): ReduxAction =>
+  (dispatch, getState) => {
+    const state = getState ()
 
-  const maybeSelectedExperienceLevel = getWikiExperienceLevels (state).lookup (el);
+    const maybeSelectedExperienceLevel = lookup (el) (getWikiExperienceLevels (state))
 
-  if (Maybe.isJust (maybeSelectedExperienceLevel)) {
-    const selectedExperienceLevel = Maybe.fromJust (maybeSelectedExperienceLevel);
-    const totalAp = selectedExperienceLevel.get ('ap');
+    if (isJust (maybeSelectedExperienceLevel)) {
+      const selectedExperienceLevel = fromJust (maybeSelectedExperienceLevel)
+      const totalAp = ExperienceLevel.A_.ap (selectedExperienceLevel)
 
-    dispatch<CreateHeroAction> ({
-      type: ActionTypes.CREATE_HERO,
-      payload: {
-        id: `H_${getNewIdByDate ()}`,
-        name,
-        sex,
-        el,
-        enableAllRuleBooks,
-        enabledRuleBooks,
-        totalAp,
-      },
-    });
+      dispatch<CreateHeroAction> ({
+        type: ActionTypes.CREATE_HERO,
+        payload: {
+          id: `H_${getNewIdByDate ()}`,
+          name,
+          sex,
+          el,
+          enableAllRuleBooks,
+          enabledRuleBooks,
+          totalAp,
+        },
+      })
+    }
   }
-};
 
 export interface LoadHeroAction {
-  type: ActionTypes.LOAD_HERO;
+  type: ActionTypes.LOAD_HERO
   payload: {
     id: string;
-  };
+  }
 }
 
 export const loadHero = (id: string): LoadHeroAction => ({
@@ -106,47 +113,54 @@ export const loadHero = (id: string): LoadHeroAction => ({
   payload: {
     id,
   },
-});
+})
 
-export const saveHeroes = (locale: UIMessagesObject): AsyncAction => dispatch => {
-  dispatch (requestAllHeroesSave (locale));
-  dispatch (addAlert ({
-    message: translate (locale, 'fileapi.allsaved'),
-  }));
-};
+export const saveHeroes =
+  (l10n: L10nRecord): ReduxAction =>
+  dispatch => {
+    dispatch (requestAllHeroesSave (l10n))
+      .then (
+        () => dispatch (addAlert ({
+          message: translate (l10n) ("allsaved"),
+        }))
+      )
+      .catch ()
+  }
 
 export interface SaveHeroAction {
-  type: ActionTypes.SAVE_HERO;
+  type: ActionTypes.SAVE_HERO
   payload: {
     id: string;
-  };
+  }
 }
 
-export const saveHero = (locale: UIMessagesObject) =>
-  (id: Maybe<string>): AsyncAction =>
+export const saveHero =
+  (l10n: L10nRecord) =>
+  (id: Maybe<string>): ReduxAction =>
     dispatch => {
-      dispatch (requestHeroSave (locale) (id))
+      dispatch (requestHeroSave (l10n) (id))
         .then (
-          maybeId => Maybe.fromNullable (maybeId)
-            .fmap (
-              actualId => dispatch<SaveHeroAction> ({
-                type: ActionTypes.SAVE_HERO,
-                payload: {
-                  id: actualId, // specified by param or currently open
-                },
-              })
-            )
-        );
-    };
+          save_id => dispatch<SaveHeroAction> ({
+                  type: ActionTypes.SAVE_HERO,
+                  payload: {
+                    id: save_id, // specified by param or currently open
+                  },
+                })
+        )
+        .catch ()
+    }
 
-export const exportHeroValidate = (locale: UIMessagesObject) => (id: string): AsyncAction =>
-  dispatch => dispatch (requestHeroExport (locale) (id));
+export const exportHeroValidate =
+  (l10n: L10nRecord) =>
+  (id: string): ReduxAction =>
+  dispatch =>
+    dispatch (requestHeroExport (l10n) (id))
 
 export interface DeleteHeroAction {
-  type: ActionTypes.DELETE_HERO;
+  type: ActionTypes.DELETE_HERO
   payload: {
     id: string;
-  };
+  }
 }
 
 export const deleteHero = (id: string): DeleteHeroAction => ({
@@ -154,45 +168,48 @@ export const deleteHero = (id: string): DeleteHeroAction => ({
   payload: {
     id,
   },
-});
+})
 
-export const deleteHeroValidate = (locale: UIMessagesObject) =>
-  (id: string): AsyncAction =>
-    (dispatch, getState) => {
-      const state = getState ();
-      const heroes = getHeroes (state);
-      const maybeHero = heroes.lookup (id);
+export const deleteHeroValidate =
+  (l10n: L10nRecord) =>
+  (id: string): ReduxAction =>
+  (dispatch, getState) => {
+    const state = getState ()
+    const heroes = getHeroes (state)
+    const mhero = lookup (id) (heroes)
 
-      if (Maybe.isJust (maybeHero)) {
-        const hero = Maybe.fromJust (maybeHero);
+    if (isJust (mhero)) {
+      const hero = fromJust (mhero)
 
-        const resolve: AsyncAction = futureDispatch => {
-          futureDispatch (deleteHero (id));
-          futureDispatch (requestHeroDeletion (locale) (id));
-        };
-
-        // @ts-ignore
-        dispatch (addAlert ({
-          title: translate (locale, 'heroes.warnings.delete.title', hero.present.get ('name')),
-          message: translate (locale, 'heroes.warnings.delete.message'),
-          confirm: {
-            resolve,
-          },
-          confirmYesNo: true,
-        }));
+      const resolve: ReduxAction = futureDispatch => {
+        futureDispatch (deleteHero (id))
+        futureDispatch (requestHeroDeletion (l10n) (id)) .catch ()
       }
-    };
+
+      // @ts-ignore
+      dispatch (addAlert ({
+        title: translateP (l10n)
+                          ("deletehero")
+                          (List (pipe_ (hero, heroReducer.A_.present, HeroModel.A_.name))),
+        message: translate (l10n) ("deletehero.text"),
+        confirm: {
+          resolve,
+        },
+        confirmYesNo: true,
+      }))
+    }
+  }
 
 export interface DuplicateHeroAction {
-  type: ActionTypes.DUPLICATE_HERO;
+  type: ActionTypes.DUPLICATE_HERO
   payload: {
     id: string;
     newId: string;
-  };
+  }
 }
 
 export const duplicateHero = (id: string): DuplicateHeroAction => {
-  const newId = `H_${getNewIdByDate ()}`;
+  const newId = `H_${getNewIdByDate ()}`
 
   return {
     type: ActionTypes.DUPLICATE_HERO,
@@ -200,5 +217,5 @@ export const duplicateHero = (id: string): DuplicateHeroAction => {
       id,
       newId,
     },
-  };
-};
+  }
+}
