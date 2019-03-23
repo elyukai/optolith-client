@@ -1,127 +1,132 @@
-import { AsyncAction } from '../../types/actions';
-import { ActionTypes } from '../Constants/ActionTypes';
-import * as Wiki from '../Models/Wiki/wikiTypeHelpers';
-import { getAvailableAdventurePoints } from '../Selectors/adventurePointsSelectors';
-import { getIsInCharacterCreation } from '../Selectors/phaseSelectors';
-import { getSpells, getWikiSpells } from '../Selectors/stateSelectors';
-import { UIMessagesObject } from '../types/ui';
-import { getAreSufficientAPAvailable } from '../utils/adventurePoints/adventurePointsUtils';
-import { getIncreaseAP } from '../utils/adventurePoints/improvementCostUtils';
-import { Maybe, Nothing, Record } from '../utils/dataUtils';
-import { translate } from '../Utils/I18n';
-import { getAreSufficientAPAvailableForIncrease } from '../Utils/Increasable/increasableUtils';
-import { addAlert } from './AlertActions';
+import { List } from "../../Data/List";
+import { bind, bindF, fromJust, isJust, isNothing, join, liftM2 } from "../../Data/Maybe";
+import { lookup } from "../../Data/OrderedMap";
+import { Record } from "../../Data/Record";
+import { ActionTypes } from "../Constants/ActionTypes";
+import { L10nRecord } from "../Models/Wiki/L10n";
+import { Spell } from "../Models/Wiki/Spell";
+import { getAvailableAdventurePoints } from "../selectors/adventurePointsSelectors";
+import { getIsInCharacterCreation } from "../Selectors/phaseSelectors";
+import { getSpells, getWikiSpells } from "../Selectors/stateSelectors";
+import { getMissingAP } from "../Utilities/AdventurePoints/adventurePointsUtils";
+import { getICMultiplier } from "../Utilities/AdventurePoints/improvementCostUtils";
+import { translate, translateP } from "../Utilities/I18n";
+import { getAreSufficientAPAvailableForIncrease } from "../Utilities/Increasable/increasableUtils";
+import { pipe_ } from "../Utilities/pipe";
+import { ReduxAction } from "./Actions";
+import { addAlert } from "./AlertActions";
 
 export interface ActivateSpellAction {
-  type: ActionTypes.ACTIVATE_SPELL;
+  type: ActionTypes.ACTIVATE_SPELL
   payload: {
     id: string;
-    wikiEntry: Record<Wiki.Spell>;
-  };
+    wikiEntry: Record<Spell>;
+  }
 }
 
-export const addSpell = (locale: UIMessagesObject) => (id: string): AsyncAction =>
+export const addSpell =
+  (l10n: L10nRecord) =>
+  (id: string): ReduxAction =>
   (dispatch, getState) => {
-    const state = getState ();
-    const wikiSpells = getWikiSpells (state);
+    const state = getState ()
+    const wiki_spells = getWikiSpells (state)
 
-    const maybeWikiSpell = wikiSpells.lookup (id);
+    const mwiki_spell = lookup (id) (wiki_spells)
 
-    if (Maybe.isJust (maybeWikiSpell)) {
-      const wikiEntry = Maybe.fromJust (maybeWikiSpell);
+    if (isJust (mwiki_spell)) {
+      const wiki_entry = fromJust (mwiki_spell)
 
-      const areSufficientAPAvailableForIncrease = getAvailableAdventurePoints (state, { locale })
-        .fmap (
-          availableAP => getAreSufficientAPAvailable (getIsInCharacterCreation (state))
-                                                     (availableAP)
-                                                     (getIncreaseAP (wikiEntry.get ('ic'))
-                                                                    (Nothing ()))
-        );
+      const missingAPForInc =
+        bindF (getMissingAP (getIsInCharacterCreation (state))
+                            (pipe_ (wiki_entry, Spell.A_.ic, getICMultiplier)))
+              (getAvailableAdventurePoints (state, { l10n }))
 
-      if (Maybe.elem (true) (areSufficientAPAvailableForIncrease)) {
+      if (isNothing (missingAPForInc)) {
         dispatch<ActivateSpellAction> ({
           type: ActionTypes.ACTIVATE_SPELL,
           payload: {
             id,
-            wikiEntry,
+            wikiEntry: wiki_entry,
           },
-        });
+        })
       }
       else {
         dispatch (addAlert ({
-          title: translate (locale, 'notenoughap.title'),
-          message: translate (locale, 'notenoughap.content'),
-        }));
+          title: translate (l10n) ("notenoughap"),
+          message: translateP (l10n) ("notenoughap.text") (List (fromJust (missingAPForInc))),
+        }))
       }
     }
-  };
+  }
 
 export interface ActivateCantripAction {
-  type: ActionTypes.ACTIVATE_CANTRIP;
+  type: ActionTypes.ACTIVATE_CANTRIP
   payload: {
     id: string;
-  };
+  }
 }
 
-export const addCantrip = (locale: UIMessagesObject) => (id: string): AsyncAction =>
+export const addCantrip =
+  (l10n: L10nRecord) =>
+  (id: string): ReduxAction =>
   (dispatch, getState) => {
-    const state = getState ();
+    const state = getState ()
 
-    const areSufficientAPAvailableForIncrease = getAvailableAdventurePoints (state, { locale })
-      .fmap (
-        availableAP => getAreSufficientAPAvailable (getIsInCharacterCreation (state))
-                                                   (availableAP)
-                                                   (1)
-      );
+    const missingAP =
+      bindF (getMissingAP (getIsInCharacterCreation (state))
+                          (1))
+            (getAvailableAdventurePoints (state, { l10n }))
 
-    if (Maybe.elem (true) (areSufficientAPAvailableForIncrease)) {
+    if (isNothing (missingAP)) {
       dispatch<ActivateCantripAction> ({
         type: ActionTypes.ACTIVATE_CANTRIP,
         payload: {
           id,
         },
-      });
+      })
     }
     else {
       dispatch (addAlert ({
-        title: translate (locale, 'notenoughap.title'),
-        message: translate (locale, 'notenoughap.content'),
-      }));
+        title: translate (l10n) ("notenoughap"),
+        message: translateP (l10n) ("notenoughap.text") (List (fromJust (missingAP))),
+      }))
     }
-  };
+  }
 
 export interface DeactivateSpellAction {
-  type: ActionTypes.DEACTIVATE_SPELL;
+  type: ActionTypes.DEACTIVATE_SPELL
   payload: {
     id: string;
-    wikiEntry: Record<Wiki.Spell>;
-  };
+    wikiEntry: Record<Spell>;
+  }
 }
 
-export const removeSpell = (id: string): AsyncAction => (dispatch, getState) => {
-  const state = getState ();
-  const wikiSpells = getWikiSpells (state);
+export const removeSpell =
+  (id: string): ReduxAction =>
+  (dispatch, getState) => {
+    const state = getState ()
+    const wiki_spells = getWikiSpells (state)
 
-  const maybeWikiSpell = wikiSpells.lookup (id);
+    const mwiki_spell = lookup (id) (wiki_spells)
 
-  if (Maybe.isJust (maybeWikiSpell)) {
-    const wikiEntry = Maybe.fromJust (maybeWikiSpell);
+    if (isJust (mwiki_spell)) {
+      const wiki_entry = fromJust (mwiki_spell)
 
-    dispatch<DeactivateSpellAction> ({
-      type: ActionTypes.DEACTIVATE_SPELL,
-      payload: {
-        id,
-        wikiEntry,
-      },
-    });
+      dispatch<DeactivateSpellAction> ({
+        type: ActionTypes.DEACTIVATE_SPELL,
+        payload: {
+          id,
+          wikiEntry: wiki_entry,
+        },
+      })
+    }
   }
-};
 
 export interface DeactivateCantripAction {
-  type: ActionTypes.DEACTIVATE_CANTRIP;
+  type: ActionTypes.DEACTIVATE_CANTRIP
   payload: {
     id: string;
-  };
+  }
 }
 
 export const removeCantrip = (id: string): DeactivateCantripAction => ({
@@ -129,53 +134,51 @@ export const removeCantrip = (id: string): DeactivateCantripAction => ({
   payload: {
     id,
   },
-});
+})
 
 export interface AddSpellPointAction {
-  type: ActionTypes.ADD_SPELL_POINT;
+  type: ActionTypes.ADD_SPELL_POINT
   payload: {
     id: string;
-  };
+  }
 }
 
-export const addSpellPoint = (locale: UIMessagesObject) => (id: string): AsyncAction =>
+export const addSpellPoint =
+  (l10n: L10nRecord) =>
+  (id: string): ReduxAction =>
   (dispatch, getState) => {
-    const state = getState ();
-    const maybeHeroSpells = getSpells (state);
-    const wikiSpells = getWikiSpells (state);
+    const state = getState ()
+    const mhero_spells = getSpells (state)
+    const wiki_spells = getWikiSpells (state)
 
-    const areSufficientAPAvailableForIncrease = wikiSpells.lookup (id).bind (
-      wikiSpell => getAvailableAdventurePoints (state, { locale }).fmap (
-        availableAP => getAreSufficientAPAvailableForIncrease (
-          wikiSpell,
-          maybeHeroSpells.bind (spells => spells.lookup (id)),
-          availableAP,
-          getIsInCharacterCreation (state)
-        )
-      )
-    );
+    const missingAPForInc =
+      join (liftM2 (getAreSufficientAPAvailableForIncrease (getIsInCharacterCreation (state))
+                                                           (bind (mhero_spells)
+                                                                 (lookup (id))))
+                   (lookup (id) (wiki_spells))
+                   (getAvailableAdventurePoints (state, { l10n })))
 
-    if (Maybe.elem (true) (areSufficientAPAvailableForIncrease)) {
+    if (isNothing (missingAPForInc)) {
       dispatch<AddSpellPointAction> ({
         type: ActionTypes.ADD_SPELL_POINT,
         payload: {
           id,
         },
-      });
+      })
     }
     else {
       dispatch (addAlert ({
-        title: translate (locale, 'notenoughap.title'),
-        message: translate (locale, 'notenoughap.content'),
-      }));
+        title: translate (l10n) ("notenoughap"),
+        message: translateP (l10n) ("notenoughap.text") (List (fromJust (missingAPForInc))),
+      }))
     }
-  };
+  }
 
 export interface RemoveSpellPointAction {
-  type: ActionTypes.REMOVE_SPELL_POINT;
+  type: ActionTypes.REMOVE_SPELL_POINT
   payload: {
     id: string;
-  };
+  }
 }
 
 export const removeSpellPoint = (id: string): RemoveSpellPointAction => ({
@@ -183,13 +186,13 @@ export const removeSpellPoint = (id: string): RemoveSpellPointAction => ({
   payload: {
     id,
   },
-});
+})
 
 export interface SetSpellsSortOrderAction {
-  type: ActionTypes.SET_SPELLS_SORT_ORDER;
+  type: ActionTypes.SET_SPELLS_SORT_ORDER
   payload: {
     sortOrder: string;
-  };
+  }
 }
 
 export const setSpellsSortOrder = (sortOrder: string): SetSpellsSortOrderAction => ({
@@ -197,13 +200,13 @@ export const setSpellsSortOrder = (sortOrder: string): SetSpellsSortOrderAction 
   payload: {
     sortOrder,
   },
-});
+})
 
 export interface SetActiveSpellsFilterTextAction {
-  type: ActionTypes.SET_SPELLS_FILTER_TEXT;
+  type: ActionTypes.SET_SPELLS_FILTER_TEXT
   payload: {
     filterText: string;
-  };
+  }
 }
 
 export const setActiveSpellsFilterText = (filterText: string): SetActiveSpellsFilterTextAction => ({
@@ -211,13 +214,13 @@ export const setActiveSpellsFilterText = (filterText: string): SetActiveSpellsFi
   payload: {
     filterText,
   },
-});
+})
 
 export interface SetInactiveSpellsFilterTextAction {
-  type: ActionTypes.SET_INACTIVE_SPELLS_FILTER_TEXT;
+  type: ActionTypes.SET_INACTIVE_SPELLS_FILTER_TEXT
   payload: {
     filterText: string;
-  };
+  }
 }
 
 export const setInactiveSpellsFilterText =
@@ -226,4 +229,4 @@ export const setInactiveSpellsFilterText =
     payload: {
       filterText,
     },
-  });
+  })

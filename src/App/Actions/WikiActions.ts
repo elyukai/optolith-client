@@ -1,11 +1,11 @@
-import { ActionTypes } from '../Constants/ActionTypes';
-import { Maybe } from '../utils/dataUtils';
+import { Maybe } from "../../Data/Maybe";
+import { ActionTypes } from "../Constants/ActionTypes";
 
 export interface SetWikiFilterAction {
-  type: ActionTypes.SET_WIKI_FILTER;
+  type: ActionTypes.SET_WIKI_FILTER
   payload: {
     filterText: string;
-  };
+  }
 }
 
 export const setWikiFilter = (filterText: string): SetWikiFilterAction => ({
@@ -13,13 +13,13 @@ export const setWikiFilter = (filterText: string): SetWikiFilterAction => ({
   payload: {
     filterText,
   },
-});
+})
 
 export interface SetWikiFilterAllAction {
-  type: ActionTypes.SET_WIKI_FILTER_ALL;
+  type: ActionTypes.SET_WIKI_FILTER_ALL
   payload: {
     filterText: string;
-  };
+  }
 }
 
 export const setWikiFilterAll = (filterText: string): SetWikiFilterAllAction => ({
@@ -27,13 +27,13 @@ export const setWikiFilterAll = (filterText: string): SetWikiFilterAllAction => 
   payload: {
     filterText,
   },
-});
+})
 
 export interface SetWikiCategory1Action {
-  type: ActionTypes.SET_WIKI_CATEGORY_1;
+  type: ActionTypes.SET_WIKI_CATEGORY_1
   payload: {
     category: string;
-  };
+  }
 }
 
 export const setWikiCategory1 = (category: string): SetWikiCategory1Action => ({
@@ -41,13 +41,13 @@ export const setWikiCategory1 = (category: string): SetWikiCategory1Action => ({
   payload: {
     category,
   },
-});
+})
 
 export interface SetWikiCategory2Action {
-  type: ActionTypes.SET_WIKI_CATEGORY_2;
+  type: ActionTypes.SET_WIKI_CATEGORY_2
   payload: {
     category: string;
-  };
+  }
 }
 
 export const setWikiCategory2 = (category: string): SetWikiCategory2Action => ({
@@ -55,13 +55,13 @@ export const setWikiCategory2 = (category: string): SetWikiCategory2Action => ({
   payload: {
     category,
   },
-});
+})
 
 export interface SetWikiProfessionsGroupAction {
-  type: ActionTypes.SET_WIKI_PROFESSIONS_GROUP;
+  type: ActionTypes.SET_WIKI_PROFESSIONS_GROUP
   payload: {
     group: Maybe<number>;
-  };
+  }
 }
 
 export const setWikiProfessionsGroup =
@@ -70,13 +70,13 @@ export const setWikiProfessionsGroup =
     payload: {
       group,
     },
-  });
+  })
 
 export interface SetWikiSkillsGroupAction {
-  type: ActionTypes.SET_WIKI_SKILLS_GROUP;
+  type: ActionTypes.SET_WIKI_SKILLS_GROUP
   payload: {
     group: Maybe<number>;
-  };
+  }
 }
 
 export const setWikiSkillsGroup = (group: Maybe<number>): SetWikiSkillsGroupAction => ({
@@ -84,13 +84,13 @@ export const setWikiSkillsGroup = (group: Maybe<number>): SetWikiSkillsGroupActi
   payload: {
     group,
   },
-});
+})
 
 export interface SetWikiCombatTechniquesGroupAction {
-  type: ActionTypes.SET_WIKI_COMBAT_TECHNIQUES_GROUP;
+  type: ActionTypes.SET_WIKI_COMBAT_TECHNIQUES_GROUP
   payload: {
     group: Maybe<number>;
-  };
+  }
 }
 
 export const setWikiCombatTechniquesGroup =
@@ -99,13 +99,13 @@ export const setWikiCombatTechniquesGroup =
     payload: {
       group,
     },
-  });
+  })
 
 export interface SetWikiSpecialAbilitiesGroupAction {
-  type: ActionTypes.SET_WIKI_SPECIAL_ABILITIES_GROUP;
+  type: ActionTypes.SET_WIKI_SPECIAL_ABILITIES_GROUP
   payload: {
     group: Maybe<number>;
-  };
+  }
 }
 
 export const setWikiSpecialAbilitiesGroup =
@@ -114,13 +114,13 @@ export const setWikiSpecialAbilitiesGroup =
     payload: {
       group,
     },
-  });
+  })
 
 export interface SetWikiSpellsGroupAction {
-  type: ActionTypes.SET_WIKI_SPELLS_GROUP;
+  type: ActionTypes.SET_WIKI_SPELLS_GROUP
   payload: {
     group: Maybe<number>;
-  };
+  }
 }
 
 export const setWikiSpellsGroup = (group: Maybe<number>): SetWikiSpellsGroupAction => ({
@@ -128,13 +128,13 @@ export const setWikiSpellsGroup = (group: Maybe<number>): SetWikiSpellsGroupActi
   payload: {
     group,
   },
-});
+})
 
 export interface SetWikiLiturgicalChantsGroupAction {
-  type: ActionTypes.SET_WIKI_LITURGICAL_CHANTS_GROUP;
+  type: ActionTypes.SET_WIKI_LITURGICAL_CHANTS_GROUP
   payload: {
     group: Maybe<number>;
-  };
+  }
 }
 
 export const setWikiLiturgicalChantsGroup =
@@ -143,13 +143,13 @@ export const setWikiLiturgicalChantsGroup =
     payload: {
       group,
     },
-  });
+  })
 
 export interface SetWikiItemTemplatesGroupAction {
-  type: ActionTypes.SET_WIKI_ITEM_TEMPLATES_GROUP;
+  type: ActionTypes.SET_WIKI_ITEM_TEMPLATES_GROUP
   payload: {
     group: Maybe<number>;
-  };
+  }
 }
 
 export const setWikiItemTemplatesGroup =
@@ -158,4 +158,4 @@ export const setWikiItemTemplatesGroup =
     payload: {
       group,
     },
-  });
+  })

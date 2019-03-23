@@ -132,16 +132,17 @@ export const addDisAdvantage =
 
         const entryType = isBlessedOrMagical (wiki_entry)
 
-        const missingAPForDisAdvantage =
-          getMissingAPForDisAdvantage (getIsInCharacterCreation (state))
-                                      (entryType)
-                                      (is_disadvantage)
-                                      (hero)
-                                      (getAdventurePointsObject (
-                                        state,
-                                        { locale: l10n }
-                                      ))
-                                      (current_cost)
+        const mmissingAPForDisAdvantage =
+          fmapF (getAdventurePointsObject (
+                  state,
+                  { l10n }
+                ))
+                (ap => getMissingAPForDisAdvantage (getIsInCharacterCreation (state))
+                                                   (entryType)
+                                                   (is_disadvantage)
+                                                   (hero)
+                                                   (ap)
+                                                   (current_cost))
 
         const successFn = () => {
           const color: Maybe<Pair<number, number>> =
@@ -167,13 +168,16 @@ export const addDisAdvantage =
           })
         }
 
-        handleMissingAPForDisAdvantage (l10n)
-                                       (successFn)
-                                       (hero)
-                                       (missingAPForDisAdvantage)
-                                       (entryType)
-                                       (is_disadvantage)
-                                       (dispatch)
+        fmapF (mmissingAPForDisAdvantage)
+              (missing_ap => handleMissingAPForDisAdvantage (l10n)
+                                                            (successFn)
+                                                            (hero)
+                                                            (missing_ap)
+                                                            (entryType)
+                                                            (is_disadvantage)
+                                                            (dispatch))
+
+
       }
     }
   }
@@ -224,16 +228,17 @@ export const removeDisAdvantage =
 
         const entryType = isBlessedOrMagical (wiki_entry)
 
-        const missingAPForDisAdvantage =
-          getMissingAPForDisAdvantage (getIsInCharacterCreation (state))
-                                      (entryType)
-                                      (is_disadvantage)
-                                      (hero)
-                                      (getAdventurePointsObject (
-                                        state,
-                                        { locale: l10n }
-                                      ))
-                                      (negativeCost)
+        const mmissingAPForDisAdvantage =
+          fmapF (getAdventurePointsObject (
+                  state,
+                  { l10n }
+                ))
+                (ap => getMissingAPForDisAdvantage (getIsInCharacterCreation (state))
+                                                   (entryType)
+                                                   (is_disadvantage)
+                                                   (hero)
+                                                   (ap)
+                                                   (negativeCost))
 
         const successFn = () => {
           const color: Maybe<Pair<number, number>> =
@@ -288,13 +293,14 @@ export const removeDisAdvantage =
           })
         }
 
-        handleMissingAPForDisAdvantage (l10n)
-                                       (successFn)
-                                       (hero)
-                                       (missingAPForDisAdvantage)
-                                       (entryType)
-                                       (is_disadvantage)
-                                       (dispatch)
+        fmapF (mmissingAPForDisAdvantage)
+              (missing_ap => handleMissingAPForDisAdvantage (l10n)
+                                                            (successFn)
+                                                            (hero)
+                                                            (missing_ap)
+                                                            (entryType)
+                                                            (is_disadvantage)
+                                                            (dispatch))
       }
     }
   }
@@ -379,16 +385,17 @@ export const setDisAdvantageLevel =
 
           const entryType = isBlessedOrMagical (wiki_entry)
 
-          const missingAPForDisAdvantage =
-            getMissingAPForDisAdvantage (getIsInCharacterCreation (state))
-                                        (entryType)
-                                        (is_disadvantage)
-                                        (hero)
-                                        (getAdventurePointsObject (
-                                          state,
-                                          { locale: l10n })
-                                        )
-                                        (diff_cost)
+          const mmissingAPForDisAdvantage =
+            fmapF (getAdventurePointsObject (
+                    state,
+                    { l10n }
+                  ))
+                  (ap => getMissingAPForDisAdvantage (getIsInCharacterCreation (state))
+                                                     (entryType)
+                                                     (is_disadvantage)
+                                                     (hero)
+                                                     (ap)
+                                                     (diff_cost))
 
           const successFn = () => {
             dispatch<SetDisAdvLevelAction> ({
@@ -412,13 +419,14 @@ export const setDisAdvantageLevel =
             })
           }
 
-          handleMissingAPForDisAdvantage (l10n)
-                                         (successFn)
-                                         (hero)
-                                         (missingAPForDisAdvantage)
-                                         (entryType)
-                                         (is_disadvantage)
-                                         (dispatch)
+          fmapF (mmissingAPForDisAdvantage)
+                (missing_ap => handleMissingAPForDisAdvantage (l10n)
+                                                              (successFn)
+                                                              (hero)
+                                                              (missing_ap)
+                                                              (entryType)
+                                                              (is_disadvantage)
+                                                              (dispatch))
         }
       }
     }

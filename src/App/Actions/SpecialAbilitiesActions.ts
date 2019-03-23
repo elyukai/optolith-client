@@ -1,222 +1,235 @@
-import * as R from 'ramda';
-import { AsyncAction } from '../../types/actions';
-import { ActionTypes } from '../Constants/ActionTypes';
-import { ActivatableDependent, ActivateArgs, ActiveObjectWithId, DeactivateArgs } from '../Models/Hero/heroTypeHelpers';
-import { SpecialAbility } from '../Models/Wiki/wikiTypeHelpers';
-import { getAvailableAdventurePoints } from '../Selectors/adventurePointsSelectors';
-import { getIsInCharacterCreation } from '../Selectors/phaseSelectors';
-import { getCurrentHeroPresent, getWiki } from '../Selectors/stateSelectors';
-import { UIMessagesObject } from '../types/ui';
-import { getHeroStateItem } from '../Utilities/heroStateUtils';
-import { getWikiEntry } from '../Utilities/WikiUtils';
-import { getNameCost } from '../utils/activatable/activatableActiveUtils';
-import { convertPerTierCostToFinalCost } from '../utils/adventurePoints/activatableCostUtils';
-import { getAreSufficientAPAvailable } from '../utils/adventurePoints/adventurePointsUtils';
-import { Just, Maybe, Record } from '../utils/dataUtils';
-import { translate } from '../Utils/I18n';
-import { addAlert } from './AlertActions';
-
-interface SpecialAbilityActivateArgs extends ActivateArgs {
-  wikiEntry: Record<SpecialAbility>;
-}
+import { fmap } from "../../Data/Functor";
+import { set } from "../../Data/Lens";
+import { List, subscriptF } from "../../Data/List";
+import { bind, bindF, ensure, fromJust, isJust, isNothing, Just, liftM2 } from "../../Data/Maybe";
+import { lookup } from "../../Data/OrderedMap";
+import { Pair } from "../../Data/Pair";
+import { Record } from "../../Data/Record";
+import { ActionTypes } from "../Constants/ActionTypes";
+import { ActivatableActivationOptions } from "../Models/Actions/ActivatableActivationOptions";
+import { ActivatableDeactivationOptions } from "../Models/Actions/ActivatableDeactivationOptions";
+import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
+import { ActiveObjectWithIdL, toActiveObjectWithId } from "../Models/ActiveEntries/ActiveObjectWithId";
+import { HeroModel } from "../Models/Hero/HeroModel";
+import { ActivatableNameCost, ActivatableNameCostSafeCost } from "../Models/View/ActivatableNameCost";
+import { L10nRecord } from "../Models/Wiki/L10n";
+import { isSpecialAbility, SpecialAbility } from "../Models/Wiki/SpecialAbility";
+import { getAvailableAdventurePoints } from "../selectors/adventurePointsSelectors";
+import { getIsInCharacterCreation } from "../Selectors/phaseSelectors";
+import { getCurrentHeroPresent, getWiki } from "../Selectors/stateSelectors";
+import { getNameCost } from "../Utilities/Activatable/activatableActiveUtils";
+import { convertPerTierCostToFinalCost } from "../Utilities/AdventurePoints/activatableCostUtils";
+import { getMissingAP } from "../Utilities/AdventurePoints/adventurePointsUtils";
+import { translate, translateP } from "../Utilities/I18n";
+import { subtract } from "../Utilities/mathUtils";
+import { pipe } from "../Utilities/pipe";
+import { getWikiEntry } from "../Utilities/WikiUtils";
+import { ReduxAction } from "./Actions";
+import { addAlert } from "./AlertActions";
 
 export interface ActivateSpecialAbilityAction {
-  type: ActionTypes.ACTIVATE_SPECIALABILITY;
-  payload: SpecialAbilityActivateArgs;
+  type: ActionTypes.ACTIVATE_SPECIALABILITY
+  payload: Pair<Record<ActivatableActivationOptions>, Record<SpecialAbility>>
 }
 
 /**
  * Add a special ability with the provided activation properties (`args`).
  */
-export const addSpecialAbility = (locale: UIMessagesObject) => (args: ActivateArgs): AsyncAction =>
+export const addSpecialAbility =
+  (l10n: L10nRecord) =>
+  (args: Record<ActivatableActivationOptions>): ReduxAction =>
   (dispatch, getState) => {
-    const state = getState ();
+    const state = getState ()
 
-    const maybeHero = getCurrentHeroPresent (state);
+    const mhero = getCurrentHeroPresent (state)
 
-    if (Maybe.isJust (maybeHero)) {
-      const { id, cost } = args;
+    if (isJust (mhero)) {
+      const current_id = ActivatableActivationOptions.A.id (args)
+      const current_cost = ActivatableActivationOptions.A.cost (args)
 
-      const maybeWikiEntry = getWikiEntry<Record<SpecialAbility>> (getWiki (state)) (id);
+      const mwiki_entry =
+        bind (getWikiEntry (getWiki (state)) (current_id))
+             (ensure (isSpecialAbility))
 
-      if (Maybe.isJust (maybeWikiEntry)) {
-        const wikiEntry = Maybe.fromJust (maybeWikiEntry);
+      if (isJust (mwiki_entry)) {
+        const wiki_entry = fromJust (mwiki_entry)
 
-        const areSufficientAPAvailable = getAvailableAdventurePoints (state, { locale })
-          .fmap (
-            availableAP => getAreSufficientAPAvailable (getIsInCharacterCreation (state))
-                                                       (availableAP)
-                                                       (cost)
-          );
+        const mmissingAP =
+          bind (getAvailableAdventurePoints (
+                  state,
+                  { l10n }
+                ))
+                (ap => getMissingAP (getIsInCharacterCreation (state))
+                                    (current_cost)
+                                    (ap))
 
-        if (Maybe.elem (true) (areSufficientAPAvailable)) {
+        if (isNothing (mmissingAP)) {
           dispatch<ActivateSpecialAbilityAction> ({
             type: ActionTypes.ACTIVATE_SPECIALABILITY,
-            payload: {
-              ...args,
-              wikiEntry,
-            },
-          });
+            payload: Pair (args, wiki_entry),
+          })
         }
         else {
           dispatch (addAlert ({
-            title: translate (locale, 'notenoughap.title'),
-            message: translate (locale, 'notenoughap.content'),
-          }));
+            title: translate (l10n) ("notenoughap"),
+            message: translateP (l10n) ("notenoughap.text") (List (fromJust (mmissingAP))),
+          }))
         }
       }
     }
-  };
-
-interface SpecialAbilityDeactivateArgs extends DeactivateArgs {
-  wikiEntry: Record<SpecialAbility>;
-}
+  }
 
 export interface DeactivateSpecialAbilityAction {
-  type: ActionTypes.DEACTIVATE_SPECIALABILITY;
-  payload: SpecialAbilityDeactivateArgs;
+  type: ActionTypes.DEACTIVATE_SPECIALABILITY
+  payload: Pair<Record<ActivatableDeactivationOptions>, Record<SpecialAbility>>
 }
 
 /**
  * Remove a special ability with the provided activation properties
  * (`args`).
  */
-export const removeSpecialAbility = (args: DeactivateArgs): AsyncAction =>
-    (dispatch, getState) => {
-      const state = getState ();
+export const removeSpecialAbility =
+  (args: Record<ActivatableDeactivationOptions>): ReduxAction =>
+  (dispatch, getState) => {
+    const state = getState ()
 
-      const maybeHero = getCurrentHeroPresent (state);
+    const mhero = getCurrentHeroPresent (state)
 
-      if (Maybe.isJust (maybeHero)) {
-        const hero = Maybe.fromJust (maybeHero);
+    if (isJust (mhero)) {
+      const hero = fromJust (mhero)
 
-        const maybeWikiEntry =
-          getWikiEntry<Record<SpecialAbility>> (getWiki (state)) (args.id);
+      const current_id = ActivatableDeactivationOptions.A.id (args)
 
-        const maybeStateEntry =
-          getHeroStateItem<Record<ActivatableDependent>> (args.id) (hero);
+      const mwiki_entry =
+        bind (getWikiEntry (getWiki (state)) (current_id))
+             (ensure (isSpecialAbility))
 
-        if (Maybe.isJust (maybeWikiEntry) && Maybe.isJust (maybeStateEntry)) {
-          const wikiEntry = Maybe.fromJust (maybeWikiEntry);
+      const mhero_entry =
+        lookup (current_id)
+               (HeroModel.A.specialAbilities (hero))
 
-          dispatch<DeactivateSpecialAbilityAction> ({
-            type: ActionTypes.DEACTIVATE_SPECIALABILITY,
-            payload: {
-              ...args,
-              wikiEntry,
-            },
-          });
-        }
+      if (isJust (mwiki_entry) && isJust (mhero_entry)) {
+        const wiki_entry = fromJust (mwiki_entry)
+
+        dispatch<DeactivateSpecialAbilityAction> ({
+          type: ActionTypes.DEACTIVATE_SPECIALABILITY,
+          payload: Pair (args, wiki_entry),
+        })
       }
-    };
+    }
+  }
 
 export interface SetSpecialAbilityTierAction {
-  type: ActionTypes.SET_SPECIALABILITY_TIER;
-  payload: {
-    id: string;
-    index: number;
-    tier: number;
-    wikiEntry: Record<SpecialAbility>;
-  };
+  type: ActionTypes.SET_SPECIALABILITY_TIER
+  payload: Pair<{ id: string; index: number; tier: number }, Record<SpecialAbility>>
 }
 
 /**
  * Change the current level of a special ability.
  */
-export const setSpecialAbilityLevel = (locale: UIMessagesObject) =>
-  (id: string) => (index: number) => (level: number): AsyncAction =>
-    (dispatch, getState) => {
-      const state = getState ();
+export const setSpecialAbilityLevel =
+  (l10n: L10nRecord) =>
+  (current_id: string) =>
+  (current_index: number) =>
+  (next_level: number): ReduxAction =>
+  (dispatch, getState) => {
+    const state = getState ()
 
-      const maybeHero = getCurrentHeroPresent (state);
+    const mhero = getCurrentHeroPresent (state)
 
-      if (Maybe.isJust (maybeHero)) {
-        const hero = Maybe.fromJust (maybeHero);
+    if (isJust (mhero)) {
+      const hero = fromJust (mhero)
 
-        const maybeWikiEntry =
-          getWikiEntry<Record<SpecialAbility>> (getWiki (state)) (id);
+      const mwiki_entry =
+        bind (getWikiEntry (getWiki (state)) (current_id))
+             (ensure (isSpecialAbility))
 
-        const maybeStateEntry =
-          getHeroStateItem<Record<ActivatableDependent>> (id) (hero);
+      const mhero_entry =
+        lookup (current_id)
+               (HeroModel.A.specialAbilities (hero))
 
-        const maybeActiveObjectWithId = maybeStateEntry
-          .fmap (stateEntry => stateEntry.get ('active'))
-          .bind (active => active.subscript (index))
-          .fmap<Record<ActiveObjectWithId>> (
-            activeObject => activeObject.merge (
-              Record.of ({
-                id,
-                index,
-              })
+      const mactive_entry =
+        pipe (
+               bindF (pipe (
+                             ActivatableDependent.A_.active,
+                             subscriptF (current_index)
+                           )),
+               fmap (toActiveObjectWithId (current_index) (current_id))
+             )
+             (mhero_entry)
+
+      if (isJust (mwiki_entry) && isJust (mactive_entry)) {
+        const wiki_entry = fromJust (mwiki_entry)
+        const active_entry = fromJust (mactive_entry)
+
+        const wiki = getWiki (state)
+
+        const getCostBorder =
+          (isEntryToAdd: boolean) =>
+            pipe (
+              getNameCost (isEntryToAdd)
+                          (l10n)
+                          (wiki)
+                          (hero),
+              fmap (pipe (
+                convertPerTierCostToFinalCost (false) (l10n),
+                ActivatableNameCost.A_.finalCost as
+                  (x: Record<ActivatableNameCostSafeCost>) => number
+              ))
             )
-          );
 
-        if (Maybe.isJust (maybeWikiEntry) && Maybe.isJust (maybeActiveObjectWithId)) {
-          const wikiEntry = Maybe.fromJust (maybeWikiEntry);
-          const activeObjectWithId = Maybe.fromJust (maybeActiveObjectWithId);
+        const previousCost =
+          getCostBorder (false) (active_entry)
 
-          const wiki = getWiki (state);
+        const nextCost =
+          getCostBorder (true) (set (ActiveObjectWithIdL.tier)
+                                    (Just (next_level))
+                                    (active_entry))
 
-          const previousCost = getNameCost (
-            activeObjectWithId,
-            wiki,
-            hero,
-            false,
-            Just (locale)
-          )
-            .fmap (convertPerTierCostToFinalCost (Just (locale)))
-            .fmap (obj => obj.get ('finalCost'));
+        const mdiff_cost = liftM2 (subtract) (nextCost) (previousCost)
 
-          const nextCost = getNameCost (
-            activeObjectWithId.insert ('tier') (level),
-            wiki,
-            hero,
-            true,
-            Just (locale)
-          )
-            .fmap (convertPerTierCostToFinalCost (Just (locale)))
-            .fmap (obj => obj.get ('finalCost'));
+        if (isJust (mdiff_cost)) {
+          const diff_cost = fromJust (mdiff_cost)
 
-          const maybeCost = Maybe.liftM2 (R.subtract) (nextCost) (previousCost);
+          const mmissingAP =
+            bind (getAvailableAdventurePoints (
+                    state,
+                    { l10n }
+                  ))
+                  (ap => getMissingAP (getIsInCharacterCreation (state))
+                                      (diff_cost)
+                                      (ap))
 
-          if (Maybe.isJust (maybeCost)) {
-            const cost = Maybe.fromJust (maybeCost);
 
-            const areSufficientAPAvailable =
-              getAvailableAdventurePoints (state, { locale })
-                .fmap (
-                  availableAP => getAreSufficientAPAvailable (getIsInCharacterCreation (state))
-                                                             (availableAP)
-                                                             (cost)
-                );
-
-            if (Maybe.elem (true) (areSufficientAPAvailable)) {
-              dispatch<SetSpecialAbilityTierAction> ({
-                type: ActionTypes.SET_SPECIALABILITY_TIER,
-                payload: {
-                  id,
-                  tier: level,
-                  index,
-                  wikiEntry,
+          if (isNothing (mmissingAP)) {
+            dispatch<SetSpecialAbilityTierAction> ({
+              type: ActionTypes.SET_SPECIALABILITY_TIER,
+              payload: Pair (
+                {
+                  id: current_id,
+                  tier: next_level,
+                  index: current_index,
                 },
-              });
-            }
-            else {
-              dispatch (addAlert ({
-                title: translate (locale, 'notenoughap.title'),
-                message: translate (locale, 'notenoughap.content'),
-              }));
-            }
+                wiki_entry
+              ),
+            })
+          }
+          else {
+            dispatch (addAlert ({
+              title: translate (l10n) ("notenoughap"),
+              message: translateP (l10n) ("notenoughap.text") (List (fromJust (mmissingAP))),
+            }))
           }
         }
       }
-    };
+    }
+  }
 
 export interface SetSpecialAbilitiesSortOrderAction {
-  type: ActionTypes.SET_SPECIALABILITIES_SORT_ORDER;
+  type: ActionTypes.SET_SPECIALABILITIES_SORT_ORDER
   payload: {
     sortOrder: string;
-  };
+  }
 }
 
 export const setSpecialAbilitiesSortOrder =
@@ -225,13 +238,13 @@ export const setSpecialAbilitiesSortOrder =
     payload: {
       sortOrder,
     },
-  });
+  })
 
 export interface SetActiveSpecialAbilitiesFilterTextAction {
-  type: ActionTypes.SET_SPECIAL_ABILITIES_FILTER_TEXT;
+  type: ActionTypes.SET_SPECIAL_ABILITIES_FILTER_TEXT
   payload: {
     filterText: string;
-  };
+  }
 }
 
 export const setActiveSpecialAbilitiesFilterText =
@@ -240,13 +253,13 @@ export const setActiveSpecialAbilitiesFilterText =
     payload: {
       filterText,
     },
-  });
+  })
 
 export interface SetInactiveSpecialAbilitiesFilterTextAction {
-  type: ActionTypes.SET_INACTIVE_SPECIAL_ABILITIES_FILTER_TEXT;
+  type: ActionTypes.SET_INACTIVE_SPECIAL_ABILITIES_FILTER_TEXT
   payload: {
     filterText: string;
-  };
+  }
 }
 
 export const setInactiveSpecialAbilitiesFilterText =
@@ -255,4 +268,4 @@ export const setInactiveSpecialAbilitiesFilterText =
     payload: {
       filterText,
     },
-  });
+  })

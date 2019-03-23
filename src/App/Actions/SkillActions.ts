@@ -1,59 +1,59 @@
-import { AsyncAction } from '../../types/actions';
-import { ActionTypes } from '../Constants/ActionTypes';
-import { getAvailableAdventurePoints } from '../Selectors/adventurePointsSelectors';
-import { getIsInCharacterCreation } from '../Selectors/phaseSelectors';
-import { getSkills, getWikiSkills } from '../Selectors/stateSelectors';
-import { UIMessagesObject } from '../types/ui';
-import { Maybe } from '../utils/dataUtils';
-import { translate } from '../Utils/I18n';
-import { getAreSufficientAPAvailableForIncrease } from '../Utils/Increasable/increasableUtils';
-import { addAlert } from './AlertActions';
+import { List } from "../../Data/List";
+import { bind, fromJust, isNothing, join, liftM2 } from "../../Data/Maybe";
+import { lookup } from "../../Data/OrderedMap";
+import { ActionTypes } from "../Constants/ActionTypes";
+import { L10nRecord } from "../Models/Wiki/L10n";
+import { getAvailableAdventurePoints } from "../selectors/adventurePointsSelectors";
+import { getIsInCharacterCreation } from "../Selectors/phaseSelectors";
+import { getSkills, getWikiSkills } from "../Selectors/stateSelectors";
+import { translate, translateP } from "../Utilities/I18n";
+import { getAreSufficientAPAvailableForIncrease } from "../Utilities/Increasable/increasableUtils";
+import { ReduxAction } from "./Actions";
+import { addAlert } from "./AlertActions";
 
 export interface AddSkillPointAction {
-  type: ActionTypes.ADD_TALENT_POINT;
+  type: ActionTypes.ADD_TALENT_POINT
   payload: {
     id: string;
-  };
+  }
 }
 
-export const addSkillPoint = (locale: UIMessagesObject) => (id: string): AsyncAction =>
+export const addSkillPoint =
+  (l10n: L10nRecord) =>
+  (id: string): ReduxAction =>
   (dispatch, getState) => {
-    const state = getState ();
-    const maybeHeroSkills = getSkills (state);
-    const wikiSkills = getWikiSkills (state);
+    const state = getState ()
+    const mhero_skills = getSkills (state)
+    const wiki_skills = getWikiSkills (state)
 
-    const areSufficientAPAvailableForIncrease = wikiSkills.lookup (id).bind (
-      wikiSkill => getAvailableAdventurePoints (state, { locale }).fmap (
-        availableAP => getAreSufficientAPAvailableForIncrease (
-          wikiSkill,
-          maybeHeroSkills.bind (skills => skills.lookup (id)),
-          availableAP,
-          getIsInCharacterCreation (state)
-        )
-      )
-    );
+    const missingAPForInc =
+      join (liftM2 (getAreSufficientAPAvailableForIncrease (getIsInCharacterCreation (state))
+                                                           (bind (mhero_skills)
+                                                                 (lookup (id))))
+                   (lookup (id) (wiki_skills))
+                   (getAvailableAdventurePoints (state, { l10n })))
 
-    if (Maybe.elem (true) (areSufficientAPAvailableForIncrease)) {
+    if (isNothing (missingAPForInc)) {
       dispatch<AddSkillPointAction> ({
         type: ActionTypes.ADD_TALENT_POINT,
         payload: {
           id,
         },
-      });
+      })
     }
     else {
       dispatch (addAlert ({
-        title: translate (locale, 'notenoughap.title'),
-        message: translate (locale, 'notenoughap.content'),
-      }));
+        title: translate (l10n) ("notenoughap"),
+        message: translateP (l10n) ("notenoughap.text") (List (fromJust (missingAPForInc))),
+      }))
     }
-  };
+  }
 
 export interface RemoveSkillPointAction {
-  type: ActionTypes.REMOVE_TALENT_POINT;
+  type: ActionTypes.REMOVE_TALENT_POINT
   payload: {
     id: string;
-  };
+  }
 }
 
 export const removeSkillPoint = (id: string): RemoveSkillPointAction => ({
@@ -61,13 +61,13 @@ export const removeSkillPoint = (id: string): RemoveSkillPointAction => ({
   payload: {
     id,
   },
-});
+})
 
 export interface SetSkillsSortOrderAction {
-  type: ActionTypes.SET_TALENTS_SORT_ORDER;
+  type: ActionTypes.SET_TALENTS_SORT_ORDER
   payload: {
     sortOrder: string;
-  };
+  }
 }
 
 export const setSkillsSortOrder = (sortOrder: string): SetSkillsSortOrderAction => ({
@@ -75,21 +75,21 @@ export const setSkillsSortOrder = (sortOrder: string): SetSkillsSortOrderAction 
   payload: {
     sortOrder,
   },
-});
+})
 
 export interface SwitchSkillRatingVisibilityAction {
-  type: ActionTypes.SWITCH_TALENT_RATING_VISIBILITY;
+  type: ActionTypes.SWITCH_TALENT_RATING_VISIBILITY
 }
 
 export const switchSkillRatingVisibility = (): SwitchSkillRatingVisibilityAction => ({
   type: ActionTypes.SWITCH_TALENT_RATING_VISIBILITY,
-});
+})
 
 export interface SetSkillsFilterTextAction {
-  type: ActionTypes.SET_SKILLS_FILTER_TEXT;
+  type: ActionTypes.SET_SKILLS_FILTER_TEXT
   payload: {
     filterText: string;
-  };
+  }
 }
 
 export const setSkillsFilterText = (filterText: string): SetSkillsFilterTextAction => ({
@@ -97,4 +97,4 @@ export const setSkillsFilterText = (filterText: string): SetSkillsFilterTextActi
   payload: {
     filterText,
   },
-});
+})

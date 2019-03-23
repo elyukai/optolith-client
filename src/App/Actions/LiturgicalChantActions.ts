@@ -65,12 +65,12 @@ export const addBlessing =
   (dispatch, getState) => {
     const state = getState ()
 
-    const missingAPForInc =
+    const missingAP =
       bindF (getMissingAP (getIsInCharacterCreation (state))
                           (1))
             (getAvailableAdventurePoints (state, { l10n }))
 
-    if (isNothing (missingAPForInc)) {
+    if (isNothing (missingAP)) {
       dispatch<ActivateBlessingAction> ({
         type: ActionTypes.ACTIVATE_BLESSING,
         payload: {
@@ -81,7 +81,7 @@ export const addBlessing =
     else {
       dispatch (addAlert ({
         title: translate (l10n) ("notenoughap"),
-        message: translateP (l10n) ("notenoughap.text") (List (fromJust (missingAPForInc))),
+        message: translateP (l10n) ("notenoughap.text") (List (fromJust (missingAP))),
       }))
     }
   }
