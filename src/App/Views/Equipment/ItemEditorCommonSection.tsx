@@ -8,7 +8,7 @@ import { Dropdown, DropdownOption } from '../../components/Dropdown';
 import { Hr } from '../../components/Hr';
 import { IconButton } from '../../components/IconButton';
 import { TextField } from '../../components/TextField';
-import { Just, List, Maybe, Record } from '../../utils/dataUtils';
+import { Just, List, Maybe, Record } from '../../Utilities/dataUtils';
 
 export interface ItemEditorCommonSectionProps {
   isInCreation: Maybe<boolean>;

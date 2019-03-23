@@ -6,7 +6,7 @@ import { Alert as AlertOptions, ViewAlertButton } from '../App/Models/Hero/heroT
 import { AppState } from '../App/Reducers/appReducer';
 import { translate } from '../App/Utils/I18n';
 import { UIMessagesObject } from '../types/ui';
-import { Maybe } from '../utils/dataUtils';
+import { Maybe } from '../Utilities/dataUtils';
 import { Dialog } from './DialogNew';
 
 export interface AlertProps {

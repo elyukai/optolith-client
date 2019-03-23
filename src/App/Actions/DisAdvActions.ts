@@ -19,7 +19,7 @@ import { Disadvantage, isDisadvantage } from "../Models/Wiki/Disadvantage";
 import { L10nRecord } from "../Models/Wiki/L10n";
 import { Race } from "../Models/Wiki/Race";
 import { RaceVariant } from "../Models/Wiki/RaceVariant";
-import { getAdventurePointsObject } from "../selectors/adventurePointsSelectors";
+import { getAdventurePointsObject } from "../Selectors/adventurePointsSelectors";
 import { getIsInCharacterCreation } from "../Selectors/phaseSelectors";
 import { getCurrentRace, getCurrentRaceVariant } from "../Selectors/rcpSelectors";
 import { getCurrentHeroPresent, getWiki } from "../Selectors/stateSelectors";

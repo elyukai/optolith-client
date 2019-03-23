@@ -2,8 +2,8 @@ import * as React from 'react';
 import { Book, Culture, Skill, SpecialAbility } from '../../App/Models/Wiki/wikiTypeHelpers';
 import { translate, UIMessages } from '../../App/Utils/I18n';
 import { Markdown } from '../../components/Markdown';
-import { sortObjects, sortStrings } from '../../utils/FilterSortUtils';
-import { WikiSource } from './elements/WikiSource';
+import { sortObjects, sortStrings } from '../../Utilities/FilterSortUtils';
+import { WikiSource } from './Elements/WikiSource';
 import { WikiBoxTemplate } from './WikiBoxTemplate';
 import { WikiProperty } from './WikiProperty';
 

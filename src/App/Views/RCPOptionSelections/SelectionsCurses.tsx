@@ -3,7 +3,7 @@ import { Spell } from '../../App/Models/Wiki/wikiTypeHelpers';
 import { translate, UIMessagesObject } from '../../App/Utils/I18n';
 import { BorderButton } from '../../components/BorderButton';
 import { Checkbox } from '../../components/Checkbox';
-import { Just, List, Maybe, Nothing, OrderedMap, Record } from '../../utils/dataUtils';
+import { Just, List, Maybe, Nothing, OrderedMap, Record } from '../../Utilities/dataUtils';
 
 interface SelectionsCursesProps {
   active: OrderedMap<string, number>;

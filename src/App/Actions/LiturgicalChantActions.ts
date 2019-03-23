@@ -5,7 +5,7 @@ import { lookup } from "../../Data/OrderedMap";
 import { ActionTypes } from "../Constants/ActionTypes";
 import { L10nRecord } from "../Models/Wiki/L10n";
 import { LiturgicalChant } from "../Models/Wiki/LiturgicalChant";
-import { getAvailableAdventurePoints } from "../selectors/adventurePointsSelectors";
+import { getAvailableAdventurePoints } from "../Selectors/adventurePointsSelectors";
 import { getIsInCharacterCreation } from "../Selectors/phaseSelectors";
 import { getLiturgicalChants, getWikiLiturgicalChants } from "../Selectors/stateSelectors";
 import { getMissingAP } from "../Utilities/AdventurePoints/adventurePointsUtils";

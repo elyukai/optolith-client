@@ -16,8 +16,8 @@ import { Page } from '../../components/Page';
 import { Scroll } from '../../components/Scroll';
 import { SortNames, SortOptions } from '../../components/SortOptions';
 import { TextField } from '../../components/TextField';
-import { SelectionsContainer } from '../../containers/RCPSelectionsContainer';
-import { Just, List, Maybe, Record } from '../../utils/dataUtils';
+import { SelectionsContainer } from '../../Containers/RCPSelectionsContainer';
+import { Just, List, Maybe, Record } from '../../Utilities/dataUtils';
 import { ProfessionsListItem } from './ProfessionsListItem';
 import { ProfessionVariants } from './ProfessionVariants';
 

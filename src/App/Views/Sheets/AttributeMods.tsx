@@ -2,7 +2,7 @@ import * as React from 'react';
 import { AttributeCombined } from '../../App/Models/View/viewTypeHelpers';
 import { translate, UIMessagesObject } from '../../App/Utils/I18n';
 import { TextBox } from '../../components/TextBox';
-import { List, Record } from '../../utils/dataUtils';
+import { List, Record } from '../../Utilities/dataUtils';
 import { AttributeModsListItem } from './AttributeModsListItem';
 
 export interface AttributeModsProps {

@@ -3,8 +3,8 @@ import { ActiveViewObject } from '../../../App/Models/Hero/heroTypeHelpers';
 import { SpecialAbility } from '../../../App/Models/Wiki/wikiTypeHelpers';
 import { translate, UIMessagesObject } from '../../../App/Utils/I18n';
 import { TextBox } from '../../../components/TextBox';
-import { compressList } from '../../../utils/activatable/activatableNameUtils';
-import { List, Maybe, Record } from '../../../utils/dataUtils';
+import { compressList } from '../../../Utilities/Activatable/activatableNameUtils';
+import { List, Maybe, Record } from '../../../Utilities/dataUtils';
 
 export interface LiturgicalChantsSheetSpecialAbilitiesProps {
   blessedSpecialAbilities: Maybe<List<Record<ActiveViewObject<SpecialAbility>>>>;

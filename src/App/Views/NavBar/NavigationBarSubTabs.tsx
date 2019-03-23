@@ -2,7 +2,7 @@ import * as React from 'react';
 import { SubTab } from '../../App/Models/Hero/heroTypeHelpers';
 import { TabId } from '../../App/Utils/LocationUtils';
 import { Tab } from '../../components/Tab';
-import { List } from '../../utils/dataUtils';
+import { List } from '../../Utilities/dataUtils';
 
 export interface NavigationBarSubTabsProps {
   currentTab: string;

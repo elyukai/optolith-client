@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Purse } from '../../App/Models/Hero/heroTypeHelpers';
 import { localizeNumber, localizeWeight, translate, UIMessagesObject } from '../../App/Utils/I18n';
 import { TextField } from '../../components/TextField';
-import { Maybe, Record } from '../../utils/dataUtils';
+import { Maybe, Record } from '../../Utilities/dataUtils';
 
 export interface PurseAndTotalsProps {
   carryingCapacity: Maybe<number>;

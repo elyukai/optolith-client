@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ActivateArgs, ActiveViewObject, DeactiveViewObject, EntryRating, UIMessagesObject } from '../../App/Models/Hero/heroTypeHelpers';
 import { ActivatableAddList } from '../../components/ActivatableAddList';
-import { List, Maybe, OrderedMap, Record } from '../../utils/dataUtils';
+import { List, Maybe, OrderedMap, Record } from '../../Utilities/dataUtils';
 
 export interface InactiveListProps {
   inactiveList: Maybe<List<

@@ -3,8 +3,8 @@ import * as React from 'react';
 import { RaceCombined } from '../../App/Models/View/viewTypeHelpers';
 import { Option, RadioButtonGroup } from '../../components/RadioButtonGroup';
 import { UIMessagesObject } from '../../types/ui';
-import { List, Maybe, Record } from '../../utils/dataUtils';
-import { sortObjects } from '../../utils/FilterSortUtils';
+import { List, Maybe, Record } from '../../Utilities/dataUtils';
+import { sortObjects } from '../../Utilities/FilterSortUtils';
 
 export interface RaceVariantsProps {
   currentId: Maybe<string>;

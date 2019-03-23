@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ActiveViewObject, DeactivateArgs, EntryRating, UIMessagesObject } from '../../App/Models/Hero/heroTypeHelpers';
 import { ActivatableRemoveList } from '../../components/ActivatableRemoveList';
-import { List, Maybe, OrderedMap, Record } from '../../utils/dataUtils';
+import { List, Maybe, OrderedMap, Record } from '../../Utilities/dataUtils';
 
 export interface ActiveListProps {
   filterText: string;

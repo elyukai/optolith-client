@@ -97,16 +97,7 @@ export const fmap =
     }
 
     if (isIO (x)) {
-      let nextValue
-
-      x
-        .f ()
-        .then (a => {
-          nextValue = f (a)
-        })
-        .catch (err => { throw new Error (err) })
-
-      return IO (cnst (Promise.resolve (nextValue)))
+      return IO (cnst (f (x .f ())))
     }
 
     if (isMaybe (x)) {

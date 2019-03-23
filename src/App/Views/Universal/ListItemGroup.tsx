@@ -1,6 +1,6 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
-import { Just, List, Maybe, Nothing } from '../utils/dataUtils';
+import { Just, List, Maybe, Nothing } from '../Utilities/dataUtils';
 
 export interface ListItemGroupProps {
   children?: React.ReactNode;

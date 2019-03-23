@@ -5,12 +5,12 @@ import * as DisAdvActions from '../App/Actions/DisAdvActions';
 import { ActivateArgs, DeactivateArgs } from '../App/Models/Hero/heroTypeHelpers';
 import { AppState } from '../reducers/appReducer';
 import { getAdvantagesRating, getCurrentDisAdvantagesSubtypeMax, getFilteredActiveAdvantages } from '../Selectors/activatableSelectors';
-import { getAdventurePointsObject } from '../selectors/adventurePointsSelectors';
-import { getFilteredInactiveAdvantages } from '../selectors/combinedActivatablesSelectors';
-import { getIsRemovingEnabled } from '../selectors/phaseSelectors';
-import { getAdvantages, getAdvantagesFilterText, getInactiveAdvantagesFilterText, getWikiAdvantages } from '../selectors/stateSelectors';
-import { getAdvantagesDisadvantagesCultureRatingVisibility, getEnableActiveItemHints } from '../selectors/uisettingsSelectors';
-import { Advantages, AdvantagesDispatchProps, AdvantagesOwnProps, AdvantagesStateProps } from '../views/disadv/Advantages';
+import { getAdventurePointsObject } from '../Selectors/adventurePointsSelectors';
+import { getFilteredInactiveAdvantages } from '../Selectors/combinedActivatablesSelectors';
+import { getIsRemovingEnabled } from '../Selectors/phaseSelectors';
+import { getAdvantages, getAdvantagesFilterText, getInactiveAdvantagesFilterText, getWikiAdvantages } from '../Selectors/stateSelectors';
+import { getAdvantagesDisadvantagesCultureRatingVisibility, getEnableActiveItemHints } from '../Selectors/uisettingsSelectors';
+import { Advantages, AdvantagesDispatchProps, AdvantagesOwnProps, AdvantagesStateProps } from '../Views/disadv/Advantages';
 
 const mapStateToProps = (state: AppState, ownProps: AdvantagesOwnProps): AdvantagesStateProps => ({
   activeList: getFilteredActiveAdvantages (state, ownProps),

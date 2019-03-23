@@ -2,7 +2,7 @@
 const React = require('react');
 const { List } = require('../List');
 const { fmap } = require('../Functor');
-const { add } = require('../../App/Utils/mathUtils');
+const { add } = require('../../App/Utilities/mathUtils');
 const { Just, Maybe, Nothing } = require('../Maybe');
 
 // CONSTRUCTORS

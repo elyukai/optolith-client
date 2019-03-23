@@ -11,7 +11,7 @@ import { IconButton } from '../../components/IconButton';
 import { Text } from '../../components/Text';
 import { TooltipToggle } from '../../components/TooltipToggle';
 import { UIMessagesObject } from '../../types/ui';
-import { List, Maybe, Record } from '../../utils/dataUtils';
+import { List, Maybe, Record } from '../../Utilities/dataUtils';
 import { ApTooltip } from './ApTooltip';
 import { NavigationBarBack } from './NavigationBarBack';
 import { NavigationBarLeft } from './NavigationBarLeft';

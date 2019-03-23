@@ -10,7 +10,7 @@ import { Scroll } from '../../components/Scroll';
 import { Option, SegmentedControls } from '../../components/SegmentedControls';
 import { TextField } from '../../components/TextField';
 import { UIMessagesObject } from '../../types/ui';
-import { List, Maybe, Nothing, OrderedMap, OrderedSet, Record } from '../../utils/dataUtils';
+import { List, Maybe, Nothing, OrderedMap, OrderedSet, Record } from '../../Utilities/dataUtils';
 
 export interface HeroCreationProps extends DialogProps {
   locale: UIMessagesObject;

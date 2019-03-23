@@ -2,7 +2,7 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
 import { findDOMNode } from 'react-dom';
-import { Just, Maybe, Nothing } from '../utils/dataUtils';
+import { Just, Maybe, Nothing } from '../Utilities/dataUtils';
 import { Label } from './Label';
 
 export interface TextFieldProps {

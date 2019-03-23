@@ -5,7 +5,7 @@ import { translate, UIMessagesObject } from '../../App/Utils/I18n';
 import { bytify } from '../../App/Utils/IOUtils';
 import { Dialog } from '../../components/DialogNew';
 import { ProgressBar } from '../../components/ProgressBar';
-import { Maybe } from '../../utils/dataUtils';
+import { Maybe } from '../../Utilities/dataUtils';
 
 export interface DownloaderOwnProps {
   locale: UIMessagesObject;

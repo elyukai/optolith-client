@@ -18,8 +18,8 @@ import { RecommendedReference } from '../../components/RecommendedReference';
 import { Scroll } from '../../components/Scroll';
 import { SortNames, SortOptions } from '../../components/SortOptions';
 import { TextField } from '../../components/TextField';
-import { Just, List, Maybe, Nothing, OrderedMap, Record, Tuple } from '../../utils/dataUtils';
-import { isCommon, isUncommon } from '../../utils/skillUtils';
+import { Just, List, Maybe, Nothing, OrderedMap, Record, Tuple } from '../../Utilities/dataUtils';
+import { isCommon, isUncommon } from '../../Utilities/skillUtils';
 import { SkillListItem } from './SkillListItem';
 
 export interface SkillsOwnProps {

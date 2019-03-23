@@ -6,7 +6,7 @@ import { ListItem } from '../../components/ListItem';
 import { ListItemButtons } from '../../components/ListItemButtons';
 import { ListItemName } from '../../components/ListItemName';
 import { ListItemSeparator } from '../../components/ListItemSeparator';
-import { Maybe, Record } from '../../utils/dataUtils';
+import { Maybe, Record } from '../../Utilities/dataUtils';
 
 export interface CulturesListItemProps {
   culture: Record<CultureCombined>;

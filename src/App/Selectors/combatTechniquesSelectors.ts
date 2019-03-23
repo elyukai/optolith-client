@@ -3,12 +3,12 @@ import { CombatTechniqueCombined, CombatTechniqueWithAttackParryBase, CombatTech
 import { ExperienceLevel, WikiRecord } from '../App/Models/Wiki/wikiTypeHelpers';
 import { createMaybeSelector } from '../App/Utils/createMaybeSelector';
 import { filterByAvailability } from '../App/Utils/RulesUtils';
-import { isActive } from '../utils/activatable/isActive';
-import { getActiveSelections } from '../utils/Activatable/selectionUtils';
-import { createDependentSkillWithValue6 } from '../utils/createEntryUtils';
-import { Just, List, Maybe, Nothing, Record } from '../utils/dataUtils';
-import { flattenDependencies } from '../utils/dependencies/flattenDependencies';
-import { AllSortOptions, filterAndSortObjects } from '../utils/FilterSortUtils';
+import { isActive } from '../Utilities/Activatable/isActive';
+import { getActiveSelections } from '../Utilities/Activatable/selectionUtils';
+import { createDependentSkillWithValue6 } from '../Utilities/createEntryUtils';
+import { Just, List, Maybe, Nothing, Record } from '../Utilities/dataUtils';
+import { flattenDependencies } from '../Utilities/dependencies/flattenDependencies';
+import { AllSortOptions, filterAndSortObjects } from '../Utilities/FilterSortUtils';
 import { getMaxAttributeValueByID } from './attributeSelectors';
 import { getStartEl } from './elSelectors';
 import { getRuleBooksEnabled } from './rulesSelectors';

@@ -4,7 +4,7 @@ import { AttributeWithRequirements } from '../../App/Models/View/viewTypeHelpers
 import { translate, UIMessagesObject } from '../../App/Utils/I18n';
 import { Page } from '../../components/Page';
 import { Scroll } from '../../components/Scroll';
-import { List, Maybe, Record } from '../../utils/dataUtils';
+import { List, Maybe, Record } from '../../Utilities/dataUtils';
 import { AttributeCalc } from './AttributeCalc';
 import { AttributeList } from './AttributeList';
 import { AttributesAdjustment } from './AttributesAdjustment';

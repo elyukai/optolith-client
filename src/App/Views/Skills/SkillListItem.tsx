@@ -6,7 +6,7 @@ import { ListItem } from '../../components/ListItem';
 import { ListItemName } from '../../components/ListItemName';
 import { ListItemSeparator } from '../../components/ListItemSeparator';
 import { ListItemValues } from '../../components/ListItemValues';
-import { List, Maybe, OrderedMap, Record } from '../../utils/dataUtils';
+import { List, Maybe, OrderedMap, Record } from '../../Utilities/dataUtils';
 import { AdditionalValue, SkillAdditionalValues } from './SkillAdditionalValues';
 import { SkillButtons } from './SkillButtons';
 import { SkillCheck } from './SkillCheck';

@@ -1,5 +1,5 @@
 import { createMaybeSelector } from '../App/Utils/createMaybeSelector';
-import { sortObjects } from '../utils/FilterSortUtils';
+import { sortObjects } from '../Utilities/FilterSortUtils';
 import { getLocaleAsProp, getWikiBooks } from './stateSelectors';
 
 export const getSortedBooks = createMaybeSelector (

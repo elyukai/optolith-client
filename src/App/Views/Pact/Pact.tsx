@@ -7,7 +7,7 @@ import { getRoman } from '../../App/Utils/NumberUtils';
 import { Dropdown, DropdownOption } from '../../components/Dropdown';
 import { Page } from '../../components/Page';
 import { TextField } from '../../components/TextField';
-import { Just, List, Maybe, Nothing, Record, Tuple } from '../../utils/dataUtils';
+import { Just, List, Maybe, Nothing, Record, Tuple } from '../../Utilities/dataUtils';
 
 export interface PactSettingsOwnProps {
   locale: UIMessagesObject;

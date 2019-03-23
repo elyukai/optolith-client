@@ -6,13 +6,13 @@ import * as LocationActions from '../App/Actions/LocationActions';
 import * as SubwindowsActions from '../App/Actions/SubwindowsActions';
 import { InputTextEvent } from '../App/Models/Hero/heroTypeHelpers';
 import { AppState } from '../reducers/appReducer';
-import { getAdventurePointsObject } from '../selectors/adventurePointsSelectors';
-import { getSortedBooks } from '../selectors/bookSelectors';
-import { getSortedHerolist, getUnsavedHeroesById } from '../selectors/herolistSelectors';
-import { getCurrentHeroPresent, getHerolistFilterText, getIsCharacterCreatorOpen, getUsers, getWiki, getWikiExperienceLevels } from '../selectors/stateSelectors';
-import { getHerolistSortOrder, getHerolistVisibilityFilter } from '../selectors/uisettingsSelectors';
-import { Just, Maybe, OrderedSet } from '../utils/dataUtils';
-import { Herolist, HerolistDispatchProps, HerolistOwnProps, HerolistStateProps } from '../views/herolist/Herolist';
+import { getAdventurePointsObject } from '../Selectors/adventurePointsSelectors';
+import { getSortedBooks } from '../Selectors/bookSelectors';
+import { getSortedHerolist, getUnsavedHeroesById } from '../Selectors/herolistSelectors';
+import { getCurrentHeroPresent, getHerolistFilterText, getIsCharacterCreatorOpen, getUsers, getWiki, getWikiExperienceLevels } from '../Selectors/stateSelectors';
+import { getHerolistSortOrder, getHerolistVisibilityFilter } from '../Selectors/uisettingsSelectors';
+import { Just, Maybe, OrderedSet } from '../Utilities/dataUtils';
+import { Herolist, HerolistDispatchProps, HerolistOwnProps, HerolistStateProps } from '../Views/herolist/Herolist';
 
 const mapStateToProps = (state: AppState, props: HerolistOwnProps) => ({
   currentHero: getCurrentHeroPresent (state),

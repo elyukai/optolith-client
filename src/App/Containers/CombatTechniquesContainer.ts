@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import { Action, Dispatch } from 'redux';
-import { CombatTechniques, CombatTechniquesDispatchProps, CombatTechniquesOwnProps, CombatTechniquesStateProps } from '../../views/combatTechniques/CombatTechniques';
+import { CombatTechniques, CombatTechniquesDispatchProps, CombatTechniquesOwnProps, CombatTechniquesStateProps } from '../../Views/combatTechniques/CombatTechniques';
 import * as CombatTechniquesActions from '../Actions/CombatTechniquesActions';
 import { AppState } from '../Reducers/appReducer';
 import { getAttributesForSheet } from '../Selectors/attributeSelectors';

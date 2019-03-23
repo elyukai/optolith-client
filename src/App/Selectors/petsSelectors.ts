@@ -1,6 +1,6 @@
 import * as R from 'ramda';
 import { createMaybeSelector } from '../App/Utils/createMaybeSelector';
-import { Maybe, OrderedMap } from '../utils/dataUtils';
+import { Maybe, OrderedMap } from '../Utilities/dataUtils';
 import { getPets } from './stateSelectors';
 
 export const getPet = createMaybeSelector (

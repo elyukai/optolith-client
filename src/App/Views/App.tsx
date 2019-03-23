@@ -4,10 +4,10 @@ import { DownloaderContainer } from '../App/Containers/DownloaderContainer';
 import { TabId } from '../App/Utils/LocationUtils';
 import { Scroll } from '../components/Scroll';
 import { TitleBar } from '../components/TitleBar';
-import { AlertsContainer } from '../containers/AlertsContainer';
-import { NavigationBarContainer } from '../containers/NavigationBarContainer';
+import { AlertsContainer } from '../Containers/AlertsContainer';
+import { NavigationBarContainer } from '../Containers/NavigationBarContainer';
 import { UIMessagesObject } from '../types/ui';
-import { Maybe } from '../utils/dataUtils';
+import { Maybe } from '../Utilities/dataUtils';
 import { Route } from './Route';
 
 export interface AppOwnProps {}

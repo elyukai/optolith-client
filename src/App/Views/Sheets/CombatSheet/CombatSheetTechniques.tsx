@@ -3,9 +3,9 @@ import * as React from 'react';
 import { AttributeCombined, CombatTechniqueWithAttackParryBase } from '../../../App/Models/View/viewTypeHelpers';
 import { translate, UIMessagesObject } from '../../../App/Utils/I18n';
 import { TextBox } from '../../../components/TextBox';
-import { getICName } from '../../../utils/adventurePoints/improvementCostUtils';
-import { List, Maybe, Record } from '../../../utils/dataUtils';
-import { sortObjects } from '../../../utils/FilterSortUtils';
+import { getICName } from '../../../Utilities/adventurePoints/improvementCostUtils';
+import { List, Maybe, Record } from '../../../Utilities/dataUtils';
+import { sortObjects } from '../../../Utilities/FilterSortUtils';
 
 export interface CombatSheetTechniquesProps {
   attributes: List<Record<AttributeCombined>>;

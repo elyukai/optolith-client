@@ -10,8 +10,8 @@ import { Page } from '../../components/Page';
 import { Scroll } from '../../components/Scroll';
 import { TextField } from '../../components/TextField';
 import { UIMessagesObject } from '../../types/ui';
-import { Just, List, Maybe, Nothing, Record } from '../../utils/dataUtils';
-import { sortObjects } from '../../utils/FilterSortUtils';
+import { Just, List, Maybe, Nothing, Record } from '../../Utilities/dataUtils';
+import { sortObjects } from '../../Utilities/FilterSortUtils';
 import { WikiList } from './WikiList';
 
 export interface WikiOwnProps {

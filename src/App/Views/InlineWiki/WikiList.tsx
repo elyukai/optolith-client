@@ -4,7 +4,7 @@ import { Entry, NameBySex } from '../../App/Models/Wiki/wikiTypeHelpers';
 import { getRoman } from '../../App/Utils/NumberUtils';
 import { isActivatableWikiObj, isProfession, isSpecialAbility } from '../../App/Utils/WikiUtils';
 import { ListView } from '../../components/List';
-import { List, Maybe, Record } from '../../utils/dataUtils';
+import { List, Maybe, Record } from '../../Utilities/dataUtils';
 import { WikiListItem } from './WikiListItem';
 
 export interface WikiListProps {

@@ -3,7 +3,7 @@ import { bind, bindF, fromJust, isNothing, join, liftM2 } from "../../Data/Maybe
 import { lookup } from "../../Data/OrderedMap";
 import { ActionTypes } from "../Constants/ActionTypes";
 import { L10nRecord } from "../Models/Wiki/L10n";
-import { getAvailableAdventurePoints } from "../selectors/adventurePointsSelectors";
+import { getAvailableAdventurePoints } from "../Selectors/adventurePointsSelectors";
 import { getIsInCharacterCreation } from "../Selectors/phaseSelectors";
 import { getAddedArcaneEnergyPoints, getAddedKarmaPoints, getAddedLifePoints, getAttributes, getWikiAttributes } from "../Selectors/stateSelectors";
 import { getMissingAP } from "../Utilities/AdventurePoints/adventurePointsUtils";

@@ -4,7 +4,7 @@ import { Attribute, CombatTechnique, ItemTemplate } from '../../App/Models/Wiki/
 import { translate, UIMessagesObject } from '../../App/Utils/I18n';
 import { validateItemEditorInput } from '../../App/Utils/ItemUtils';
 import { Dialog } from '../../components/DialogNew';
-import { List, Maybe, OrderedMap, Record } from '../../utils/dataUtils';
+import { List, Maybe, OrderedMap, Record } from '../../Utilities/dataUtils';
 import { ItemEditorArmorSection } from './ItemEditorArmorSection';
 import { ItemEditorCommonSection } from './ItemEditorCommonSection';
 import { ItemEditorMeleeSection } from './ItemEditorMeleeSection';

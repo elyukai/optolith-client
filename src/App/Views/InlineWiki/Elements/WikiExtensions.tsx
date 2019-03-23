@@ -3,7 +3,7 @@ import { Categories } from '../../../App/Constants/Categories';
 import { SkillExtension, SpecialAbility } from '../../../App/Models/Wiki/wikiTypeHelpers';
 import { translate, UIMessages } from '../../../App/Utils/I18n';
 import { Markdown } from '../../../components/Markdown';
-import { sortObjects } from '../../../utils/FilterSortUtils';
+import { sortObjects } from '../../../Utilities/FilterSortUtils';
 
 export interface WikiExtensionsProps {
   currentObject: {

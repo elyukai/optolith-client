@@ -4,8 +4,8 @@ import { ActivateArgs, DeactiveViewObject, HeroDependent, InputTextEvent } from 
 import { WikiAll } from '../App/Models/Wiki/wikiTypeHelpers';
 import { translate, UIMessagesObject } from '../App/Utils/I18n';
 import { isInteger } from '../App/Utils/RegexUtils';
-import { getIdSpecificAffectedAndDispatchProps, getInactiveActivatableControlElements, insertFinalCurrentCost } from '../utils/activatable/activatableInactiveViewUtils';
-import { Maybe, Record, Tuple } from '../utils/dataUtils';
+import { getIdSpecificAffectedAndDispatchProps, getInactiveActivatableControlElements, insertFinalCurrentCost } from '../Utilities/Activatable/activatableInactiveViewUtils';
+import { Maybe, Record, Tuple } from '../Utilities/dataUtils';
 import { Dialog } from './DialogNew';
 import { IconButton } from './IconButton';
 import { ListItem } from './ListItem';

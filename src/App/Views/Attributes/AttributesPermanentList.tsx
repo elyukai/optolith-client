@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { EnergyWithLoss, SecondaryAttribute } from '../../App/Models/Hero/heroTypeHelpers';
 import { translate, UIMessagesObject } from '../../App/Utils/I18n';
-import { List, Maybe, Record } from '../../utils/dataUtils';
+import { List, Maybe, Record } from '../../Utilities/dataUtils';
 import { AttributesPermanentListItem } from './AttributesPermanentListItem';
 
 export interface AttributesPermanentListProps {

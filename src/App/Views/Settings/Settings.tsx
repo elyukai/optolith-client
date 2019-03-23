@@ -6,7 +6,7 @@ import { Dialog } from '../../components/DialogNew';
 import { Dropdown, DropdownOption } from '../../components/Dropdown';
 import { Option, SegmentedControls } from '../../components/SegmentedControls';
 import { UIMessagesObject } from '../../types/ui';
-import { Just, List, Maybe, Nothing, Record } from '../../utils/dataUtils';
+import { Just, List, Maybe, Nothing, Record } from '../../Utilities/dataUtils';
 
 export interface SettingsOwnProps {
   locale: UIMessagesObject;

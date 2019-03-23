@@ -3,7 +3,7 @@
  * functions for compressing `Activatable` name lists and combining or
  * extracting parts of the name.
  *
- * @file src/utils/activatableNameUtils.ts
+ * @file src/Utilities/activatableNameUtils.ts
  * @author Lukas Obermann
  * @since 1.1.0
  */

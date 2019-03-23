@@ -1,26 +1,36 @@
-import { CultureCombined, ProfessionCombined, RaceCombined } from '../App/Models/View/viewTypeHelpers';
-import { Advantage, Blessing, Cantrip, CombatTechnique, Disadvantage, ItemTemplate, LiturgicalChant, Profession, Skill, SourceLink, SpecialAbility, Spell } from '../App/Models/Wiki/wikiTypeHelpers';
-import { createMaybeSelector } from '../App/Utils/createMaybeSelector';
-import { translate } from '../App/Utils/I18n';
-import { getLocaleAsProp, getWikiAdvantages, getWikiBlessings, getWikiCantrips, getWikiCombatTechniques, getWikiCombatTechniquesGroup, getWikiCultures, getWikiDisadvantages, getWikiFilterText, getWikiItemTemplates, getWikiItemTemplatesGroup, getWikiLiturgicalChants, getWikiLiturgicalChantsGroup, getWikiProfessions, getWikiProfessionsGroup, getWikiRaces, getWikiSkills, getWikiSkillsGroup, getWikiSpecialAbilities, getWikiSpecialAbilitiesGroup, getWikiSpells, getWikiSpellsGroup } from '../selectors/stateSelectors';
-import { List, Maybe, Record, Tuple } from '../utils/dataUtils';
-import { filterObjects, sortObjects } from '../utils/FilterSortUtils';
+import { List } from "../../Data/List";
+import { elems } from "../../Data/OrderedMap";
+import { Record } from "../../Data/Record";
+import { CultureCombined } from "../Models/View/CultureCombined";
+import { ProfessionCombined } from "../Models/View/ProfessionCombined";
+import { RaceCombined } from "../Models/View/RaceCombined";
+import { Advantage } from "../Models/Wiki/Advantage";
+import { Blessing } from "../Models/Wiki/Blessing";
+import { Cantrip } from "../Models/Wiki/Cantrip";
+import { CombatTechnique } from "../Models/Wiki/CombatTechnique";
+import { Disadvantage } from "../Models/Wiki/Disadvantage";
+import { ItemTemplate } from "../Models/Wiki/ItemTemplate";
+import { LiturgicalChant } from "../Models/Wiki/LiturgicalChant";
+import { Skill } from "../Models/Wiki/Skill";
+import { SpecialAbility } from "../Models/Wiki/SpecialAbility";
+import { Spell } from "../Models/Wiki/Spell";
+import { createMaybeSelector } from "../Utilities/createMaybeSelector";
 import { getAllCultures, getAllProfessions, getAllRaces } from './rcpSelectors';
+import { getWikiAdvantages, getWikiBlessings, getWikiCantrips, getWikiCombatTechniques, getWikiDisadvantages, getWikiItemTemplates, getWikiSpecialAbilities } from "./stateSelectors";
 
-export type WikiSectionEntry =
-  Record<Blessing>
-  | Record<Cantrip>
-  | Record<CombatTechnique>
-  | Record<ItemTemplate>
-  | Record<Advantage>
-  | Record<Disadvantage>
-  | Record<SpecialAbility>
-  | Record<LiturgicalChant>
-  | Record<Spell>
-  | Record<Skill>
-  | Record<RaceCombined>
-  | Record<CultureCombined>
-  | Record<ProfessionCombined>;
+export type WikiSectionEntry = Record<Blessing>
+                             | Record<Cantrip>
+                             | Record<CombatTechnique>
+                             | Record<ItemTemplate>
+                             | Record<Advantage>
+                             | Record<Disadvantage>
+                             | Record<SpecialAbility>
+                             | Record<LiturgicalChant>
+                             | Record<Spell>
+                             | Record<Skill>
+                             | Record<RaceCombined>
+                             | Record<CultureCombined>
+                             | Record<ProfessionCombined>
 
 const getFirstPartWikiEntries = createMaybeSelector (
   getWikiBlessings,
@@ -40,17 +50,17 @@ const getFirstPartWikiEntries = createMaybeSelector (
     advantages,
     disadvantages,
     specialAbilties
-  ) => List.of<WikiSectionEntry> (
-    ...blessings.elems (),
-    ...cantrips.elems (),
-    ...combatTechniques.elems (),
+  ) => List<WikiSectionEntry> (
+    ...elems (blessings),
+    ...elems (cantrips),
+    ...elems (combatTechniques),
     ...cultures,
-    ...itemTemplates.elems (),
-    ...advantages.elems (),
-    ...disadvantages.elems (),
-    ...specialAbilties.elems ()
+    ...elems (itemTemplates),
+    ...elems (advantages),
+    ...elems (disadvantages),
+    ...elems (specialAbilties)
   )
-);
+)
 
 export const getAllWikiEntries = createMaybeSelector (
   getFirstPartWikiEntries,
@@ -68,31 +78,31 @@ export const getAllWikiEntries = createMaybeSelector (
       ...spells.elems ()
     )
   )
-);
+)
 
 export const getRacesSortedByName = createMaybeSelector (
   getWikiRaces,
   getLocaleAsProp,
   (list, locale) => sortObjects (list.elems (), locale.get ('id'))
-);
+)
 
 export const getPreparedRaces = createMaybeSelector (
   getRacesSortedByName,
   getWikiFilterText,
   filterObjects
-);
+)
 
 export const getCulturesSortedByName = createMaybeSelector (
   getWikiCultures,
   getLocaleAsProp,
   (list, locale) => sortObjects (list.elems (), locale.get ('id'))
-);
+)
 
 export const getPreparedCultures = createMaybeSelector (
   getCulturesSortedByName,
   getWikiFilterText,
   filterObjects
-);
+)
 
 export const getProfessionsSortedByName = createMaybeSelector (
   getWikiProfessions,
@@ -101,7 +111,7 @@ export const getProfessionsSortedByName = createMaybeSelector (
     const key = (e: Record<Profession>) =>
       Maybe.maybe<Record<SourceLink>, string> ('US25000')
                                               (source => source.get ('id'))
-                                              (List.uncons (e.get ('src')) .fmap (Tuple.fst));
+                                              (List.uncons (e.get ('src')) .fmap (Tuple.fst))
 
     return sortObjects (
       list.elems (),
@@ -111,183 +121,183 @@ export const getProfessionsSortedByName = createMaybeSelector (
         { key: 'subname', keyOfProperty: 'm' },
         { key },
       ]
-    );
+    )
   }
-);
+)
 
 export const getProfessionsFilteredByOptions = createMaybeSelector (
   getProfessionsSortedByName,
   getWikiProfessionsGroup,
   (list, group) => group === undefined ? list : list.filter (e => e.lookup ('gr').equals (group))
-);
+)
 
 export const getPreparedProfessions = createMaybeSelector (
   getProfessionsFilteredByOptions,
   getWikiFilterText,
   (list, filterText) => filterObjects (list, filterText, { addProperty: 'subname', keyOfName: 'm' })
-);
+)
 
 export const getAdvantagesSortedByName = createMaybeSelector (
   getWikiAdvantages,
   getLocaleAsProp,
   (list, locale) => sortObjects (list.elems (), locale.get ('id'))
-);
+)
 
 export const getPreparedAdvantages = createMaybeSelector (
   getAdvantagesSortedByName,
   getWikiFilterText,
   filterObjects
-);
+)
 
 export const getDisadvantagesSortedByName = createMaybeSelector (
   getWikiDisadvantages,
   getLocaleAsProp,
   (list, locale) => sortObjects (list.elems (), locale.get ('id'))
-);
+)
 
 export const getPreparedDisadvantages = createMaybeSelector (
   getDisadvantagesSortedByName,
   getWikiFilterText,
   filterObjects
-);
+)
 
 export const getSkillsSortedByName = createMaybeSelector (
   getWikiSkills,
   getLocaleAsProp,
   (list, locale) => sortObjects (list.elems (), locale.get ('id'))
-);
+)
 
 export const getSkillsFilteredByOptions = createMaybeSelector (
   getSkillsSortedByName,
   getWikiSkillsGroup,
   (list, group) => group === undefined ? list : list.filter (e => e.lookup ('gr').equals (group))
-);
+)
 
 export const getPreparedSkills = createMaybeSelector (
   getSkillsFilteredByOptions,
   getWikiFilterText,
   filterObjects
-);
+)
 
 export const getCombatTechniquesSortedByName = createMaybeSelector (
   getWikiCombatTechniques,
   getLocaleAsProp,
   (list, locale) => sortObjects (list.elems (), locale.get ('id'))
-);
+)
 
 export const getCombatTechniquesFilteredByOptions = createMaybeSelector (
   getCombatTechniquesSortedByName,
   getWikiCombatTechniquesGroup,
   (list, group) => group === undefined ? list : list.filter (e => e.lookup ('gr').equals (group))
-);
+)
 
 export const getPreparedCombatTechniques = createMaybeSelector (
   getCombatTechniquesFilteredByOptions,
   getWikiFilterText,
   filterObjects
-);
+)
 
 export const getSpecialAbilitiesSortedByName = createMaybeSelector (
   getWikiSpecialAbilities,
   getLocaleAsProp,
   (list, locale) => sortObjects (list.elems (), locale.get ('id'))
-);
+)
 
 export const getSpecialAbilitiesFilteredByOptions = createMaybeSelector (
   getSpecialAbilitiesSortedByName,
   getWikiSpecialAbilitiesGroup,
   (list, group) => group === undefined ? list : list.filter (e => e.lookup ('gr').equals (group))
-);
+)
 
 export const getPreparedSpecialAbilities = createMaybeSelector (
   getSpecialAbilitiesFilteredByOptions,
   getWikiFilterText,
   filterObjects
-);
+)
 
 export const getSpellsSortedByName = createMaybeSelector (
   getWikiSpells,
   getLocaleAsProp,
   (list, locale) => sortObjects (list.elems (), locale.get ('id'))
-);
+)
 
 export const getSpellsFilteredByOptions = createMaybeSelector (
   getSpellsSortedByName,
   getWikiSpellsGroup,
   (list, group) => group === undefined ? list : list.filter (e => e.lookup ('gr').equals (group))
-);
+)
 
 export const getPreparedSpells = createMaybeSelector (
   getSpellsFilteredByOptions,
   getWikiFilterText,
   filterObjects
-);
+)
 
 export const getCantripsSortedByName = createMaybeSelector (
   getWikiCantrips,
   getLocaleAsProp,
   (list, locale) => sortObjects (list.elems (), locale.get ('id'))
-);
+)
 
 export const getPreparedCantrips = createMaybeSelector (
   getCantripsSortedByName,
   getWikiFilterText,
   filterObjects
-);
+)
 
 export const getLiturgicalChantsSortedByName = createMaybeSelector (
   getWikiLiturgicalChants,
   getLocaleAsProp,
   (list, locale) => sortObjects (list.elems (), locale.get ('id'))
-);
+)
 
 export const getLiturgicalChantsFilteredByOptions = createMaybeSelector (
   getLiturgicalChantsSortedByName,
   getWikiLiturgicalChantsGroup,
   (list, group) => group === undefined ? list : list.filter (e => e.lookup ('gr').equals (group))
-);
+)
 
 export const getPreparedLiturgicalChants = createMaybeSelector (
   getLiturgicalChantsFilteredByOptions,
   getWikiFilterText,
   filterObjects
-);
+)
 
 export const getBlessingsSortedByName = createMaybeSelector (
   getWikiBlessings,
   getLocaleAsProp,
   (list, locale) => sortObjects (list.elems (), locale.get ('id'))
-);
+)
 
 export const getPreparedBlessings = createMaybeSelector (
   getBlessingsSortedByName,
   getWikiFilterText,
   filterObjects
-);
+)
 
 export const getItemTemplatesSortedByName = createMaybeSelector (
   getWikiItemTemplates,
   getLocaleAsProp,
   (list, locale) => sortObjects (list.elems (), locale.get ('id'))
-);
+)
 
 export const getItemTemplatesFilteredByOptions = createMaybeSelector (
   getItemTemplatesSortedByName,
   getWikiItemTemplatesGroup,
   (list, group) => group === undefined ? list : list.filter (e => e.lookup ('gr').equals (group))
-);
+)
 
 export const getPreparedItemTemplates = createMaybeSelector (
   getItemTemplatesFilteredByOptions,
   getWikiFilterText,
   filterObjects
-);
+)
 
 export const getSpecialAbilityGroups = createMaybeSelector (
   getWikiSpecialAbilities,
   getLocaleAsProp,
   (wikiSpecialAbilities, locale) => {
-    const specialAbilities = wikiSpecialAbilities.elems ();
+    const specialAbilities = wikiSpecialAbilities.elems ()
 
     return sortObjects (
       translate (locale, 'specialabilities.view.groups')
@@ -297,6 +307,6 @@ export const getSpecialAbilityGroups = createMaybeSelector (
         }))
         .filter (r => specialAbilities.any (e => e.get ('gr') === r.get ('id'))),
       locale.get ('id')
-    );
+    )
   }
-);
+)

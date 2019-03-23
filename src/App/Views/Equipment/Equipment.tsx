@@ -19,9 +19,9 @@ import { Scroll } from '../../components/Scroll';
 import { Slidein } from '../../components/Slidein';
 import { SortNames, SortOptions } from '../../components/SortOptions';
 import { TextField } from '../../components/TextField';
-import { ItemEditorContainer } from '../../containers/ItemEditorContainer';
-import { Just, List, Maybe, Nothing, Record } from '../../utils/dataUtils';
-import { sortObjects } from '../../utils/FilterSortUtils';
+import { ItemEditorContainer } from '../../Containers/ItemEditorContainer';
+import { Just, List, Maybe, Nothing, Record } from '../../Utilities/dataUtils';
+import { sortObjects } from '../../Utilities/FilterSortUtils';
 import { EquipmentListItem } from './EquipmentListItem';
 import { PurseAndTotals } from './PurseAndTotals';
 

@@ -3,7 +3,7 @@
  * be the actual cost. In those cases the AP difference needs to be calculated
  * for AP spent total.
  *
- * @file src/utils/activatableCostUtils.ts
+ * @file src/Utilities/activatableCostUtils.ts
  * @author Lukas Obermann
  * @since 1.1.0
  */
@@ -27,7 +27,7 @@ import { L10nRecord } from "../../Models/Wiki/L10n";
 import { Skill } from "../../Models/Wiki/Skill";
 import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { Activatable, EntryWithCategory, SkillishEntry } from "../../Models/Wiki/wikiTypeHelpers";
-import { isMaybeActive } from "../activatable/isActive";
+import { isMaybeActive } from "../Activatable/isActive";
 import { getSelectOptionCost } from "../Activatable/selectionUtils";
 import { getHeroStateItem } from "../heroStateUtils";
 import { translate } from "../I18n";

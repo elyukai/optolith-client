@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { getICName } from '../../utils/adventurePoints/improvementCostUtils';
+import { getICName } from '../../Utilities/adventurePoints/improvementCostUtils';
 
 export interface SkillImprovementCostProps {
   ic?: number;

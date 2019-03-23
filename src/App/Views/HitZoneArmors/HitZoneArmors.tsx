@@ -14,8 +14,8 @@ import { Options } from '../../components/Options';
 import { Page } from '../../components/Page';
 import { Scroll } from '../../components/Scroll';
 import { TextField } from '../../components/TextField';
-import { List, Maybe, Record } from '../../utils/dataUtils';
-import { PurseAndTotals } from '../equipment/PurseAndTotals';
+import { List, Maybe, Record } from '../../Utilities/dataUtils';
+import { PurseAndTotals } from '../Equipment/PurseAndTotals';
 import { HitZoneArmorEditor } from './HitZoneArmorEditor';
 import { HitZoneArmorsListItem } from './HitZoneArmorsListItem';
 

@@ -6,7 +6,7 @@ import { translate, UIMessagesObject } from '../../../App/Utils/I18n';
 import { Avatar } from '../../../components/Avatar';
 import { LabelBox } from '../../../components/LabelBox';
 import { Plain } from '../../../components/Plain';
-import { Just, List, Maybe, Record } from '../../../utils/dataUtils';
+import { Just, List, Maybe, Record } from '../../../Utilities/dataUtils';
 
 export interface MainSheetPersonalDataProps {
   ap: Record<AdventurePointsObject>;

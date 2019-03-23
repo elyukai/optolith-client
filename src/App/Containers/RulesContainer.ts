@@ -2,11 +2,11 @@ import { connect } from 'react-redux';
 import { Action, Dispatch } from 'redux';
 import * as RulesActions from '../App/Actions/RulesActions';
 import { AppState } from '../reducers/appReducer';
-import { getSortedBooks } from '../selectors/bookSelectors';
-import { getRuleBooksEnabled, isEnableLanguageSpecializationsDeactivatable } from '../selectors/rulesSelectors';
-import { getRules } from '../selectors/stateSelectors';
-import { Maybe } from '../utils/dataUtils';
-import { Rules, RulesDispatchProps, RulesOwnProps, RulesStateProps } from '../views/rules/Rules';
+import { getSortedBooks } from '../Selectors/bookSelectors';
+import { getRuleBooksEnabled, isEnableLanguageSpecializationsDeactivatable } from '../Selectors/rulesSelectors';
+import { getRules } from '../Selectors/stateSelectors';
+import { Maybe } from '../Utilities/dataUtils';
+import { Rules, RulesDispatchProps, RulesOwnProps, RulesStateProps } from '../Views/Rules/Rules';
 
 const mapStateToProps =
   (state: AppState, ownProps: RulesOwnProps): RulesStateProps => ({

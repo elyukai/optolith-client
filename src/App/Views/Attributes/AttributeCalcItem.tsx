@@ -4,7 +4,7 @@ import { translate, UIMessagesObject } from '../../App/Utils/I18n';
 import { sign } from '../../App/Utils/NumberUtils';
 import { IconButton } from '../../components/IconButton';
 import { NumberBox } from '../../components/NumberBox';
-import { Maybe, Record } from '../../utils/dataUtils';
+import { Maybe, Record } from '../../Utilities/dataUtils';
 import { AttributeBorder } from './AttributeBorder';
 
 export interface AttributeCalcItemProps {

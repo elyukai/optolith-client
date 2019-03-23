@@ -1,7 +1,7 @@
 import * as classNames from 'classnames';
 import * as R from 'ramda';
 import * as React from 'react';
-import { Maybe } from '../utils/dataUtils';
+import { Maybe } from '../Utilities/dataUtils';
 import { Activate } from './Activate';
 import { Icon } from './Icon';
 import { Text } from './Text';

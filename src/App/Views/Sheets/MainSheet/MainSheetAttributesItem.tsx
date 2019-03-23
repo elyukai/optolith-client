@@ -1,6 +1,6 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
-import { List, Maybe } from '../../../utils/dataUtils';
+import { List, Maybe } from '../../../Utilities/dataUtils';
 
 export interface MainSheetAttributesItemProps {
   add: Maybe<number>;

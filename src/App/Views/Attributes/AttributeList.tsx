@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { AttributeWithRequirements } from '../../App/Models/View/viewTypeHelpers';
-import { List, Maybe, Record } from '../../utils/dataUtils';
+import { List, Maybe, Record } from '../../Utilities/dataUtils';
 import { AttributeListItem } from './AttributeListItem';
 
 export interface AttributeListProps {

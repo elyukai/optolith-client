@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ActiveViewObject, UIMessagesObject } from '../App/Models/Hero/heroTypeHelpers';
-import { compressList } from '../utils/activatable/activatableNameUtils';
-import { List, Record } from '../utils/dataUtils';
+import { compressList } from '../Utilities/Activatable/activatableNameUtils';
+import { List, Record } from '../Utilities/dataUtils';
 
 interface ActivatableTextListProps {
   list: List<Record<ActiveViewObject> | string>;

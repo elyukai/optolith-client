@@ -7,10 +7,10 @@ import { translate } from '../../App/Utils/I18n';
 import { getNumericId } from '../../App/Utils/IDUtils';
 import { isRemoveCombatTechniquesSelection, isRemoveSpecializationSelection } from '../../App/Utils/WikiUtils';
 import { UIKey } from '../../types/ui';
-import { getSelectOptionName } from '../../utils/Activatable/selectionUtils';
-import { sortObjects, sortStrings } from '../../utils/FilterSortUtils';
-import { isRaceRequirement, isRequiringIncreasable, isSexRequirement } from '../../utils/prerequisites/prerequisitesUtils';
-import { WikiSource } from './elements/WikiSource';
+import { getSelectOptionName } from '../../Utilities/Activatable/selectionUtils';
+import { sortObjects, sortStrings } from '../../Utilities/FilterSortUtils';
+import { isRaceRequirement, isRequiringIncreasable, isSexRequirement } from '../../Utilities/prerequisites/prerequisitesUtils';
+import { WikiSource } from './Elements/WikiSource';
 import { WikiBoxTemplate } from './WikiBoxTemplate';
 import { WikiProperty } from './WikiProperty';
 

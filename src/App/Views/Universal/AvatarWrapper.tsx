@@ -2,7 +2,7 @@ import * as classNames from 'classnames';
 import { existsSync } from 'fs';
 import * as React from 'react';
 import { isBase64Image } from '../App/Utils/RegexUtils';
-import { Maybe } from '../utils/dataUtils';
+import { Maybe } from '../Utilities/dataUtils';
 import { Avatar } from './Avatar';
 
 export interface AvatarWrapperProps {

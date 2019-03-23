@@ -3,13 +3,13 @@ import { Action, Dispatch } from 'redux';
 import * as AttributesActions from '../App/Actions/AttributesActions';
 import * as SubwindowsActions from '../App/Actions/SubwindowsActions';
 import { AppState } from '../reducers/appReducer';
-import { getAdjustmentValue, getAttributesForView, getAttributeSum, getAvailableAdjustmentIds } from '../selectors/attributeSelectors';
-import { getDerivedCharacteristics } from '../selectors/derivedCharacteristicsSelectors';
-import { getMaxTotalAttributeValues } from '../selectors/elSelectors';
-import { getIsInCharacterCreation, getIsRemovingEnabled } from '../selectors/phaseSelectors';
-import { getAddPermanentEnergy, getCurrentAttributeAdjustmentId, getEditPermanentEnergy } from '../selectors/stateSelectors';
-import { Maybe } from '../utils/dataUtils';
-import { Attributes, AttributesDispatchProps, AttributesOwnProps, AttributesStateProps } from '../views/attributes/Attributes';
+import { getAdjustmentValue, getAttributesForView, getAttributeSum, getAvailableAdjustmentIds } from '../Selectors/attributeSelectors';
+import { getDerivedCharacteristics } from '../Selectors/derivedCharacteristicsSelectors';
+import { getMaxTotalAttributeValues } from '../Selectors/elSelectors';
+import { getIsInCharacterCreation, getIsRemovingEnabled } from '../Selectors/phaseSelectors';
+import { getAddPermanentEnergy, getCurrentAttributeAdjustmentId, getEditPermanentEnergy } from '../Selectors/stateSelectors';
+import { Maybe } from '../Utilities/dataUtils';
+import { Attributes, AttributesDispatchProps, AttributesOwnProps, AttributesStateProps } from '../Views/Attributes/Attributes';
 
 const mapStateToProps = (state: AppState, ownProps: AttributesOwnProps): AttributesStateProps => ({
   adjustmentValue: getAdjustmentValue (state),

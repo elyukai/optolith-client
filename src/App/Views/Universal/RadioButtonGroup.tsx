@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { List, Maybe, Record } from '../utils/dataUtils';
+import { List, Maybe, Record } from '../Utilities/dataUtils';
 import { RadioButton } from './RadioButton';
 
 export type OptionValue = string | number;

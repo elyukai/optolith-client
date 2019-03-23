@@ -2,7 +2,7 @@
  * This file provides combining functions for displaying `Activatable`
  * entries.
  *
- * @file src/utils/activatableActiveUtils.ts
+ * @file src/Utilities/activatableActiveUtils.ts
  * @author Lukas Obermann
  * @since 1.1.0
  */

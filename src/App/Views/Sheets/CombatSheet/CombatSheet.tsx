@@ -4,7 +4,7 @@ import { Armor, AttributeCombined, CombatTechniqueWithAttackParryBase, MeleeWeap
 import { SpecialAbility } from '../../../App/Models/Wiki/wikiTypeHelpers';
 import { translate, UIMessagesObject } from '../../../App/Utils/I18n';
 import { Options } from '../../../components/Options';
-import { List, Maybe, Record } from '../../../utils/dataUtils';
+import { List, Maybe, Record } from '../../../Utilities/dataUtils';
 import { Sheet } from '../Sheet';
 import { HeaderValue } from '../SheetHeader';
 import { SheetWrapper } from '../SheetWrapper';

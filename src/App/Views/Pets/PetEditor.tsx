@@ -6,7 +6,7 @@ import { AvatarWrapper } from '../../components/AvatarWrapper';
 import { BorderButton } from '../../components/BorderButton';
 import { Slidein } from '../../components/Slidein';
 import { TextField } from '../../components/TextField';
-import { Maybe, Record } from '../../utils/dataUtils';
+import { Maybe, Record } from '../../Utilities/dataUtils';
 
 export interface PetEditorProps {
   petInEditor: Maybe<Record<PetEditorInstance>>;

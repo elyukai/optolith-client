@@ -10,9 +10,9 @@ import { getCategoryById } from '../../App/Utils/IDUtils';
 import { getRoman } from '../../App/Utils/NumberUtils';
 import { getWikiEntry } from '../../App/Utils/WikiUtils';
 import { Markdown } from '../../components/Markdown';
-import { sortObjects, sortStrings } from '../../utils/FilterSortUtils';
-import { isRaceRequirement, isRequiringActivatable, isRequiringIncreasable, isRequiringPrimaryAttribute } from '../../utils/prerequisites/prerequisitesUtils';
-import { WikiSource } from './elements/WikiSource';
+import { sortObjects, sortStrings } from '../../Utilities/FilterSortUtils';
+import { isRaceRequirement, isRequiringActivatable, isRequiringIncreasable, isRequiringPrimaryAttribute } from '../../Utilities/prerequisites/prerequisitesUtils';
+import { WikiSource } from './Elements/WikiSource';
 import { WikiBoxTemplate } from './WikiBoxTemplate';
 import { WikiProperty } from './WikiProperty';
 

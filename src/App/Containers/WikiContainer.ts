@@ -2,10 +2,10 @@ import { connect } from 'react-redux';
 import { Action, Dispatch } from 'redux';
 import { setWikiCategory1, setWikiCategory2, setWikiCombatTechniquesGroup, setWikiFilter, setWikiFilterAll, setWikiItemTemplatesGroup, setWikiLiturgicalChantsGroup, setWikiProfessionsGroup, setWikiSkillsGroup, setWikiSpecialAbilitiesGroup, setWikiSpellsGroup } from '../App/Actions/WikiActions';
 import { AppState } from '../reducers/appReducer';
-import { getSex, getWikiCombatTechniquesGroup, getWikiFilterAll, getWikiFilterText, getWikiItemTemplatesGroup, getWikiLiturgicalChantsGroup, getWikiMainCategory, getWikiProfessionsGroup, getWikiSkillsGroup, getWikiSpecialAbilitiesGroup, getWikiSpellsGroup } from '../selectors/stateSelectors';
-import { getPreparedAdvantages, getPreparedBlessings, getPreparedCantrips, getPreparedCombatTechniques, getPreparedCultures, getPreparedDisadvantages, getPreparedItemTemplates, getPreparedLiturgicalChants, getPreparedProfessions, getPreparedRaces, getPreparedSkills, getPreparedSpecialAbilities, getPreparedSpells, getSpecialAbilityGroups } from '../selectors/wikiSelectors';
-import { Maybe } from '../utils/dataUtils';
-import { Wiki, WikiDispatchProps, WikiOwnProps, WikiStateProps } from '../views/wiki/Wiki';
+import { getSex, getWikiCombatTechniquesGroup, getWikiFilterAll, getWikiFilterText, getWikiItemTemplatesGroup, getWikiLiturgicalChantsGroup, getWikiMainCategory, getWikiProfessionsGroup, getWikiSkillsGroup, getWikiSpecialAbilitiesGroup, getWikiSpellsGroup } from '../Selectors/stateSelectors';
+import { getPreparedAdvantages, getPreparedBlessings, getPreparedCantrips, getPreparedCombatTechniques, getPreparedCultures, getPreparedDisadvantages, getPreparedItemTemplates, getPreparedLiturgicalChants, getPreparedProfessions, getPreparedRaces, getPreparedSkills, getPreparedSpecialAbilities, getPreparedSpells, getSpecialAbilityGroups } from '../Selectors/wikiSelectors';
+import { Maybe } from '../Utilities/dataUtils';
+import { Wiki, WikiDispatchProps, WikiOwnProps, WikiStateProps } from '../Views/Wiki/Wiki';
 
 const mapStateToProps = (state: AppState, props: WikiOwnProps) => ({
   filterText: getWikiFilterText (state),

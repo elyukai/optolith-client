@@ -3,9 +3,9 @@ import { ActivatableDependent, ActiveObject } from '../../../App/Models/Hero/her
 import { SpecialAbility } from '../../../App/Models/Wiki/wikiTypeHelpers';
 import { translate, UIMessagesObject } from '../../../App/Utils/I18n';
 import { TextBox } from '../../../components/TextBox';
-import { getSelectOptionName } from '../../../utils/Activatable/selectionUtils';
-import { List, Maybe, Record } from '../../../utils/dataUtils';
-import { sortStrings } from '../../../utils/FilterSortUtils';
+import { getSelectOptionName } from '../../../Utilities/Activatable/selectionUtils';
+import { List, Maybe, Record } from '../../../Utilities/dataUtils';
+import { sortStrings } from '../../../Utilities/FilterSortUtils';
 
 export interface SkillsSheetScriptsProps {
   locale: UIMessagesObject;

@@ -11,8 +11,8 @@ import { ListItemButtons } from '../../components/ListItemButtons';
 import { ListItemName } from '../../components/ListItemName';
 import { ListItemSeparator } from '../../components/ListItemSeparator';
 import { VerticalList } from '../../components/VerticalList';
-import { getAPObject } from '../../utils/adventurePoints/adventurePointsSumUtils';
-import { Maybe, OrderedMap, OrderedSet, Record } from '../../utils/dataUtils';
+import { getAPObject } from '../../Utilities/adventurePoints/adventurePointsSumUtils';
+import { Maybe, OrderedMap, OrderedSet, Record } from '../../Utilities/dataUtils';
 
 export interface HerolistItemProps {
   hero: Hero;

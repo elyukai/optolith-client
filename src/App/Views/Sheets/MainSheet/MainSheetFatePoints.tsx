@@ -2,7 +2,7 @@ import * as React from 'react';
 import { translate, UIMessagesObject } from '../../../App/Utils/I18n';
 import { LabelBox } from '../../../components/LabelBox';
 import { TextBox } from '../../../components/TextBox';
-import { Just, Nothing } from '../../../utils/dataUtils';
+import { Just, Nothing } from '../../../Utilities/dataUtils';
 
 export interface SkillsSheetLanguagesProps {
   fatePointsModifier: number;

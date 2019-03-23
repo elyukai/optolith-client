@@ -3,10 +3,10 @@ import * as React from 'react';
 import { AttributeCombined, SkillCombined } from '../../../App/Models/View/viewTypeHelpers';
 import { translate, UIMessagesObject } from '../../../App/Utils/I18n';
 import { sign } from '../../../App/Utils/NumberUtils';
-import { getICName } from '../../../utils/adventurePoints/improvementCostUtils';
-import { List, Maybe, Record, Tuple } from '../../../utils/dataUtils';
-import { sortObjects } from '../../../utils/FilterSortUtils';
-import { getRoutineValue } from '../../../utils/skillUtils';
+import { getICName } from '../../../Utilities/adventurePoints/improvementCostUtils';
+import { List, Maybe, Record, Tuple } from '../../../Utilities/dataUtils';
+import { sortObjects } from '../../../Utilities/FilterSortUtils';
+import { getRoutineValue } from '../../../Utilities/skillUtils';
 
 export const iterateList = (locale: UIMessagesObject) =>
   (checkValueVisibility: boolean) =>

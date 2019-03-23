@@ -6,21 +6,21 @@ import * as SheetActions from '../App/Actions/SheetActions';
 import { mapGetToMaybeSlice } from '../App/Utils/SelectorsUtils';
 import { AppState } from '../reducers/appReducer';
 import { getAdvantagesForSheet, getAspectKnowledgesForSheet, getBlessedSpecialAbilitiesForSheet, getBlessedTraditionForSheet, getCombatSpecialAbilitiesForSheet, getDisadvantagesForSheet, getFatePointsModifier, getGeneralSpecialAbilitiesForSheet, getMagicalSpecialAbilitiesForSheet, getMagicalTraditionForSheet, getPropertyKnowledgesForSheet } from '../Selectors/activatableSelectors';
-import { getAdventurePointsObject } from '../selectors/adventurePointsSelectors';
-import { getAttributesForSheet, getPrimaryBlessedAttributeForSheet, getPrimaryMagicalAttributeForSheet } from '../selectors/attributeSelectors';
-import { getCombatTechniquesForSheet } from '../selectors/combatTechniquesSelectors';
-import { getDerivedCharacteristics } from '../selectors/derivedCharacteristicsSelectors';
-import { getStartEl } from '../selectors/elSelectors';
-import { getAllItems, getArmors, getArmorZones, getMeleeWeapons, getRangedWeapons, getShieldsAndParryingWeapons, getTotalPrice, getTotalWeight } from '../selectors/equipmentSelectors';
-import { getBlessingsForSheet, getLiturgicalChantsForSheet } from '../selectors/liturgicalChantsSelectors';
-import { getPet } from '../selectors/petsSelectors';
-import { getCurrentCulture, getCurrentFullProfessionName, getCurrentRace } from '../selectors/rcpSelectors';
-import { getAllSkills } from '../selectors/skillsSelectors';
-import { getCantripsForSheet, getSpellsForSheet } from '../selectors/spellsSelectors';
-import { getAvatar, getCurrentHeroName, getProfile, getPurse, getSex, getSpecialAbilities, getWikiSpecialAbilities } from '../selectors/stateSelectors';
-import { getSheetCheckAttributeValueVisibility } from '../selectors/uisettingsSelectors';
-import { Just } from '../utils/dataUtils';
-import { Sheets, SheetsDispatchProps, SheetsOwnProps, SheetsStateProps } from '../views/sheets/Sheets';
+import { getAdventurePointsObject } from '../Selectors/adventurePointsSelectors';
+import { getAttributesForSheet, getPrimaryBlessedAttributeForSheet, getPrimaryMagicalAttributeForSheet } from '../Selectors/attributeSelectors';
+import { getCombatTechniquesForSheet } from '../Selectors/combatTechniquesSelectors';
+import { getDerivedCharacteristics } from '../Selectors/derivedCharacteristicsSelectors';
+import { getStartEl } from '../Selectors/elSelectors';
+import { getAllItems, getArmors, getArmorZones, getMeleeWeapons, getRangedWeapons, getShieldsAndParryingWeapons, getTotalPrice, getTotalWeight } from '../Selectors/equipmentSelectors';
+import { getBlessingsForSheet, getLiturgicalChantsForSheet } from '../Selectors/liturgicalChantsSelectors';
+import { getPet } from '../Selectors/petsSelectors';
+import { getCurrentCulture, getCurrentFullProfessionName, getCurrentRace } from '../Selectors/rcpSelectors';
+import { getAllSkills } from '../Selectors/skillsSelectors';
+import { getCantripsForSheet, getSpellsForSheet } from '../Selectors/spellsSelectors';
+import { getAvatar, getCurrentHeroName, getProfile, getPurse, getSex, getSpecialAbilities, getWikiSpecialAbilities } from '../Selectors/stateSelectors';
+import { getSheetCheckAttributeValueVisibility } from '../Selectors/uisettingsSelectors';
+import { Just } from '../Utilities/dataUtils';
+import { Sheets, SheetsDispatchProps, SheetsOwnProps, SheetsStateProps } from '../Views/Sheets/Sheets';
 
 const mapStateToProps = (state: AppState, ownProps: SheetsOwnProps): SheetsStateProps => ({
   advantagesActive: getAdvantagesForSheet (state, ownProps),

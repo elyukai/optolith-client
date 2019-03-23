@@ -12,7 +12,7 @@ import { Page } from '../../components/Page';
 import { Scroll } from '../../components/Scroll';
 import { VerticalList } from '../../components/VerticalList';
 import { UIMessagesObject } from '../../types/ui';
-import { Just, List, Maybe, Record } from '../../utils/dataUtils';
+import { Just, List, Maybe, Record } from '../../Utilities/dataUtils';
 import { OverviewAddAP } from './OverviewAddAP';
 import { OverviewPersonalData, OverviewPersonalDataDispatchProps } from './OverviewPersonalData';
 

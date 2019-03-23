@@ -30,8 +30,8 @@ import { appReducer, AppState } from "./App/Reducers/appReducer";
 import { getLocaleMessages } from "./App/Selectors/stateSelectors";
 import { isDialogOpen } from "./App/Utilities/SubwindowsUtils";
 import { translate } from "./App/Utils/I18n";
-import { AppContainer } from "./containers/AppContainer";
-import { Just, Maybe } from "./utils/dataUtils";
+import { AppContainer } from "./Containers/AppContainer";
+import { Just, Maybe } from "./Utilities/dataUtils";
 
 const store: Store<AppState, Action<any>> & { dispatch: Dispatch<Action, AppState> } =
   createStore (appReducer, applyMiddleware (ReduxThunk))

@@ -6,8 +6,8 @@ import { getLossLevelElements } from '../../App/Utils/ItemUtils';
 import { Dialog } from '../../components/DialogNew';
 import { DropdownOption } from '../../components/Dropdown';
 import { TextField } from '../../components/TextField';
-import { Just, List, Maybe, Record } from '../../utils/dataUtils';
-import { sortObjects } from '../../utils/FilterSortUtils';
+import { Just, List, Maybe, Record } from '../../Utilities/dataUtils';
+import { sortObjects } from '../../Utilities/FilterSortUtils';
 import { HitZoneArmorEditorRow } from './HitZoneArmorEditorRow';
 
 export interface HitZoneArmorEditorProps {

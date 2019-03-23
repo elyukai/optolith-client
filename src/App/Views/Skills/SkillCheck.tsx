@@ -2,7 +2,7 @@ import * as React from 'react';
 import { SecondaryAttribute } from '../../App/Models/Hero/heroTypeHelpers';
 import { AttributeCombined } from '../../App/Models/View/viewTypeHelpers';
 import { DCIds } from '../../App/Selectors/derivedCharacteristicsSelectors';
-import { List, Maybe, OrderedMap, Record } from '../../utils/dataUtils';
+import { List, Maybe, OrderedMap, Record } from '../../Utilities/dataUtils';
 
 export interface SkillCheckProps {
   attributes: List<Record<AttributeCombined>>;

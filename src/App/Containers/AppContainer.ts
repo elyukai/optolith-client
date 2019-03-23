@@ -3,10 +3,10 @@ import { connect } from 'react-redux';
 import { Action, Dispatch } from 'redux';
 import * as IOActions from '../App/Actions/IOActions';
 import { AppState } from '../reducers/appReducer';
-import { getCurrentTab, getLocaleMessages } from '../selectors/stateSelectors';
-import { areAnimationsEnabled, getTheme } from '../selectors/uisettingsSelectors';
-import { Nothing } from '../utils/dataUtils';
-import { App, AppDispatchProps, AppOwnProps, AppStateProps } from '../views/App';
+import { getCurrentTab, getLocaleMessages } from '../Selectors/stateSelectors';
+import { areAnimationsEnabled, getTheme } from '../Selectors/uisettingsSelectors';
+import { Nothing } from '../Utilities/dataUtils';
+import { App, AppDispatchProps, AppOwnProps, AppStateProps } from '../Views/App';
 
 const mapStateToProps = (state: AppState) => ({
   currentTab: getCurrentTab (state),

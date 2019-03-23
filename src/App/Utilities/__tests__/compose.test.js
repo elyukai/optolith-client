@@ -1,10 +1,7 @@
+// @ts-check
 const { composeL } = require ('../compose')
 const { view } = require ('../../../Data/Lens')
 const { fromDefault, makeLenses } = require ('../../../Data/Record')
-
-test ('pipe', () => {
-  expect (pipe (x => x + 2, x => x * 3) (3)) .toEqual (15)
-})
 
 test ('composeL', () => {
   const b = fromDefault ({ x: 1, y: "test" })
@@ -13,5 +10,5 @@ test ('composeL', () => {
   const bL = makeLenses (b)
   const aL = makeLenses (a)
 
-  expect (view (composeL (aL.q, bL.y))) .toEqual ("test")
+  expect (view (composeL (aL.q, bL.y)) (a .default)) .toEqual ("test")
 })

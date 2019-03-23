@@ -3,8 +3,8 @@ import * as View from '../App/Models/View/viewTypeHelpers';
 import * as Wiki from '../App/Models/Wiki/wikiTypeHelpers';
 import { createMaybeSelector } from '../App/Utils/createMaybeSelector';
 import { translate } from '../App/Utils/I18n';
-import { Maybe, Record } from '../utils/dataUtils';
-import { AllSortOptions } from '../utils/FilterSortUtils';
+import { Maybe, Record } from '../Utilities/dataUtils';
+import { AllSortOptions } from '../Utilities/FilterSortUtils';
 import { getLocaleAsProp, getSex } from './stateSelectors';
 import * as uiSettingsSelectors from './uisettingsSelectors';
 

@@ -3,8 +3,8 @@ import { Action, Dispatch } from 'redux';
 import * as PetActions from '../App/Actions/PetActions';
 import * as SubwindowsActions from '../App/Actions/SubwindowsActions';
 import { AppState } from '../reducers/appReducer';
-import { getIsEditPetAvatarOpen, getIsInPetCreation, getPetEditorInstance, getPets } from '../selectors/stateSelectors';
-import { Pets, PetsDispatchProps, PetsOwnProps, PetsStateProps } from '../views/pets/Pets';
+import { getIsEditPetAvatarOpen, getIsInPetCreation, getPetEditorInstance, getPets } from '../Selectors/stateSelectors';
+import { Pets, PetsDispatchProps, PetsOwnProps, PetsStateProps } from '../Views/Pets/Pets';
 
 const mapStateToProps = (state: AppState): PetsStateProps => ({
   pets: getPets (state),

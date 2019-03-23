@@ -4,7 +4,7 @@ import { localizeNumber, localizeSize, localizeWeight, translate, UIMessages } f
 import { convertPrimaryAttributeToArray } from '../../App/Utils/ItemUtils';
 import { sign, signNull } from '../../App/Utils/NumberUtils';
 import { Markdown } from '../../components/Markdown';
-import { WikiSource } from './elements/WikiSource';
+import { WikiSource } from './Elements/WikiSource';
 import { WikiBoxTemplate } from './WikiBoxTemplate';
 
 export interface WikiEquipmentInfoProps {

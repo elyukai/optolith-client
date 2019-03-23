@@ -4,11 +4,11 @@ import { ActionTypes } from '../Constants/ActionTypes';
 import { Hero, HeroDependent, User } from '../Models/Hero/heroTypeHelpers';
 import { getRuleBooksEnabled } from '../Selectors/rulesSelectors';
 import { getCurrentCultureId, getCurrentRaceId, getCurrentTab, getPhase } from '../Selectors/stateSelectors';
+import { Maybe, OrderedMap, OrderedSet, Record } from '../Utilities/dataUtils';
+import { convertHero } from '../Utilities/Raw/compatibilityUtils';
+import { getHeroInstance } from '../Utilities/Raw/initHeroUtils';
 import { isBookEnabled } from '../Utilities/RulesUtils';
 import { UndoState, wrapWithHistoryObject } from '../Utilities/undo';
-import { Maybe, OrderedMap, OrderedSet, Record } from '../utils/dataUtils';
-import { convertHero } from '../utils/raw/compatibilityUtils';
-import { getHeroInstance } from '../utils/raw/initHeroUtils';
 import { AppState } from './appReducer';
 
 type Action =

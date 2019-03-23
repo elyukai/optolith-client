@@ -10,7 +10,7 @@ import { Checkbox } from '../../components/Checkbox';
 import { Dropdown, DropdownOption } from '../../components/Dropdown';
 import { Scroll } from '../../components/Scroll';
 import { Slidein } from '../../components/Slidein';
-import { Just, Maybe, Nothing, OrderedMap, OrderedSet, Record, Tuple } from '../../utils/dataUtils';
+import { Just, Maybe, Nothing, OrderedMap, OrderedSet, Record, Tuple } from '../../Utilities/dataUtils';
 
 export interface SelectionsOwnProps {
   locale: UIMessagesObject;

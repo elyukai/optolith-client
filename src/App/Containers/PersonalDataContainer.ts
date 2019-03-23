@@ -5,14 +5,14 @@ import * as SubwindowsActions from '../App/Actions/SubwindowsActions';
 import { InputTextEvent } from '../App/Models/Hero/heroTypeHelpers';
 import { AppState } from '../reducers/appReducer';
 import { getAdvantagesForSheet, getDisadvantagesForSheet, isAlbino } from '../Selectors/activatableSelectors';
-import { getAvailableAdventurePoints } from '../selectors/adventurePointsSelectors';
-import { getStartEl } from '../selectors/elSelectors';
-import { getIsRemovingEnabled } from '../selectors/phaseSelectors';
-import { getCurrentCulture, getCurrentFullProfessionName, getCurrentProfession, getCurrentProfessionVariant, getCurrentRace, getCurrentRaceVariant } from '../selectors/rcpSelectors';
-import { getAvatar, getCurrentHeroName, getCustomProfessionName, getIsAddAdventurePointsOpen, getIsEditCharacterAvatarOpen, getPhase, getProfile, getSex, getTotalAdventurePoints } from '../selectors/stateSelectors';
-import { getIsEditingHeroAfterCreationPhaseEnabled } from '../selectors/uisettingsSelectors';
-import { Maybe, Nothing } from '../utils/dataUtils';
-import { PersonalData, PersonalDataDispatchProps, PersonalDataOwnProps, PersonalDataStateProps } from '../views/profile/PersonalData';
+import { getAvailableAdventurePoints } from '../Selectors/adventurePointsSelectors';
+import { getStartEl } from '../Selectors/elSelectors';
+import { getIsRemovingEnabled } from '../Selectors/phaseSelectors';
+import { getCurrentCulture, getCurrentFullProfessionName, getCurrentProfession, getCurrentProfessionVariant, getCurrentRace, getCurrentRaceVariant } from '../Selectors/rcpSelectors';
+import { getAvatar, getCurrentHeroName, getCustomProfessionName, getIsAddAdventurePointsOpen, getIsEditCharacterAvatarOpen, getPhase, getProfile, getSex, getTotalAdventurePoints } from '../Selectors/stateSelectors';
+import { getIsEditingHeroAfterCreationPhaseEnabled } from '../Selectors/uisettingsSelectors';
+import { Maybe, Nothing } from '../Utilities/dataUtils';
+import { PersonalData, PersonalDataDispatchProps, PersonalDataOwnProps, PersonalDataStateProps } from '../Views/Profile/PersonalData';
 
 const mapStateToProps = (state: AppState, ownProps: PersonalDataOwnProps) => ({
   advantages: getAdvantagesForSheet (state, ownProps),

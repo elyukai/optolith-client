@@ -1,7 +1,7 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
 import { Textfit } from 'react-textfit';
-import { Maybe } from '../utils/dataUtils';
+import { Maybe } from '../Utilities/dataUtils';
 
 export interface PlainProps {
   className: string;

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Maybe } from '../utils/dataUtils';
+import { Maybe } from '../Utilities/dataUtils';
 
 export interface NumberBoxProps {
   current?: Maybe<number> | number;

@@ -5,7 +5,7 @@ import { RangedWeapon } from '../../../App/Models/View/viewTypeHelpers';
 import { localizeNumber, localizeWeight, translate, UIMessagesObject } from '../../../App/Utils/I18n';
 import { getRoman, signNull } from '../../../App/Utils/NumberUtils';
 import { TextBox } from '../../../components/TextBox';
-import { Just, List, Maybe, Nothing, Record, Tuple } from '../../../utils/dataUtils';
+import { Just, List, Maybe, Nothing, Record, Tuple } from '../../../Utilities/dataUtils';
 
 export interface CombatSheetRangedWeaponProps {
   locale: UIMessagesObject;

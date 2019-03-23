@@ -6,9 +6,9 @@ import { AttributeCombined, LiturgicalChantWithRequirements } from '../../../App
 import { translate, UIMessagesObject } from '../../../App/Utils/I18n';
 import { getAttributeStringByIdList } from '../../../App/Utils/sheetUtils';
 import { TextBox } from '../../../components/TextBox';
-import { getICName } from '../../../utils/adventurePoints/improvementCostUtils';
-import { Just, List, Maybe, Nothing, Record, Tuple } from '../../../utils/dataUtils';
-import { sortStrings } from '../../../utils/FilterSortUtils';
+import { getICName } from '../../../Utilities/adventurePoints/improvementCostUtils';
+import { Just, List, Maybe, Nothing, Record, Tuple } from '../../../Utilities/dataUtils';
+import { sortStrings } from '../../../Utilities/FilterSortUtils';
 
 export interface LiturgicalChantsSheetLiturgicalChantsProps {
   attributes: List<Record<AttributeCombined>>;

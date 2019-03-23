@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { translate, UIMessagesObject } from '../../App/Utils/I18n';
 import { Dropdown, DropdownOption } from '../../components/Dropdown';
-import { List, Maybe, Record } from '../../utils/dataUtils';
+import { List, Maybe, Record } from '../../Utilities/dataUtils';
 
 export type HitZoneNames =
   'zonearmoreditor.options.head'

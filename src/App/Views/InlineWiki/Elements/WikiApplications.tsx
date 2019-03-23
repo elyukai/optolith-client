@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Advantage, Application, SpecialAbility } from '../../../App/Models/Wiki/wikiTypeHelpers';
 import { UIMessages } from '../../../App/Utils/I18n';
-import { sortStrings } from '../../../utils/FilterSortUtils';
+import { sortStrings } from '../../../Utilities/FilterSortUtils';
 import { WikiProperty } from '../WikiProperty';
 
 export interface WikiApplicationsProps {

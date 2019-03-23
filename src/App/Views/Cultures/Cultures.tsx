@@ -14,7 +14,7 @@ import { Page } from '../../components/Page';
 import { Scroll } from '../../components/Scroll';
 import { SortNames, SortOptions } from '../../components/SortOptions';
 import { TextField } from '../../components/TextField';
-import { Just, List, Maybe, Record } from '../../utils/dataUtils';
+import { Just, List, Maybe, Record } from '../../Utilities/dataUtils';
 import { CulturesListItem } from './CulturesListItem';
 
 export interface CulturesOwnProps {

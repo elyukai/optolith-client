@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { translate, UIMessagesObject } from '../App/Utils/I18n';
-import { Just, List, Maybe, Record } from '../utils/dataUtils';
-import { sortObjects } from '../utils/FilterSortUtils';
+import { Just, List, Maybe, Record } from '../Utilities/dataUtils';
+import { sortObjects } from '../Utilities/FilterSortUtils';
 import { Option, RadioButtonGroup } from './RadioButtonGroup';
 
 export type SortNames =

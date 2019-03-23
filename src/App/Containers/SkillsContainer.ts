@@ -2,13 +2,13 @@ import { connect } from 'react-redux';
 import { Action, Dispatch } from 'redux';
 import * as SkillActions from '../App/Actions/SkillActions';
 import { AppState } from '../reducers/appReducer';
-import { getAttributesForSheet } from '../selectors/attributeSelectors';
-import { getDerivedCharacteristicsMap } from '../selectors/derivedCharacteristicsSelectors';
-import { getIsRemovingEnabled } from '../selectors/phaseSelectors';
-import { getFilteredSkills, getSkillRating } from '../selectors/skillsSelectors';
-import { getSkillsFilterText } from '../selectors/stateSelectors';
-import { getSkillsCultureRatingVisibility, getSkillsSortOrder } from '../selectors/uisettingsSelectors';
-import { Skills, SkillsDispatchProps, SkillsOwnProps, SkillsStateProps } from '../views/skills/Skills';
+import { getAttributesForSheet } from '../Selectors/attributeSelectors';
+import { getDerivedCharacteristicsMap } from '../Selectors/derivedCharacteristicsSelectors';
+import { getIsRemovingEnabled } from '../Selectors/phaseSelectors';
+import { getFilteredSkills, getSkillRating } from '../Selectors/skillsSelectors';
+import { getSkillsFilterText } from '../Selectors/stateSelectors';
+import { getSkillsCultureRatingVisibility, getSkillsSortOrder } from '../Selectors/uisettingsSelectors';
+import { Skills, SkillsDispatchProps, SkillsOwnProps, SkillsStateProps } from '../Views/Skills/Skills';
 
 const mapStateToProps = (state: AppState, ownProps: SkillsOwnProps): SkillsStateProps => ({
   attributes: getAttributesForSheet (state),

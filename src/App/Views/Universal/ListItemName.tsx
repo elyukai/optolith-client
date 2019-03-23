@@ -1,6 +1,6 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
-import { Maybe, Nothing } from '../utils/dataUtils';
+import { Maybe, Nothing } from '../Utilities/dataUtils';
 
 export interface ListItemNameProps {
   addName?: Maybe<string>;

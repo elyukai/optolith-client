@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { UIMessages } from '../../../App/Utils/I18n';
-import { getICName } from '../../../utils/adventurePoints/improvementCostUtils';
+import { getICName } from '../../../Utilities/adventurePoints/improvementCostUtils';
 import { WikiProperty } from '../WikiProperty';
 
 export interface WikiImprovementCostProps {

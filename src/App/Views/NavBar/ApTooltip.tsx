@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { AdventurePointsObject } from '../../App/Selectors/adventurePointsSelectors';
 import { translate, UIMessagesObject } from '../../App/Utils/I18n';
-import { Maybe, Record } from '../../utils/dataUtils';
+import { Maybe, Record } from '../../Utilities/dataUtils';
 
 export interface ApTooltipProps {
   locale: UIMessagesObject;

@@ -3,10 +3,10 @@ import { Action, Dispatch } from 'redux';
 import * as CultureActions from '../App/Actions/CultureActions';
 import { setTab } from '../App/Actions/LocationActions';
 import { AppState } from '../reducers/appReducer';
-import { getFilteredCultures } from '../selectors/rcpSelectors';
-import { getCulturesFilterText, getCurrentCultureId } from '../selectors/stateSelectors';
-import { getCulturesSortOrder, getCulturesVisibilityFilter } from '../selectors/uisettingsSelectors';
-import { Cultures, CulturesDispatchProps, CulturesOwnProps, CulturesStateProps } from '../views/rcp/Cultures';
+import { getFilteredCultures } from '../Selectors/rcpSelectors';
+import { getCulturesFilterText, getCurrentCultureId } from '../Selectors/stateSelectors';
+import { getCulturesSortOrder, getCulturesVisibilityFilter } from '../Selectors/uisettingsSelectors';
+import { Cultures, CulturesDispatchProps, CulturesOwnProps, CulturesStateProps } from '../Views/rcp/Cultures';
 
 const mapStateToProps = (state: AppState, ownProps: CulturesOwnProps): CulturesStateProps => ({
   cultures: getFilteredCultures (state, ownProps),

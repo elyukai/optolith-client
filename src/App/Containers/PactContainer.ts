@@ -2,10 +2,10 @@ import { connect } from 'react-redux';
 import { Action, Dispatch } from 'redux';
 import * as PactActions from '../App/Actions/PactActions';
 import { AppState } from '../reducers/appReducer';
-import { getIsPactValid, isPactEditable } from '../selectors/pactSelectors';
-import { getPact } from '../selectors/stateSelectors';
-import { Maybe } from '../utils/dataUtils';
-import { PactSettings, PactSettingsDispatchProps, PactSettingsOwnProps, PactSettingsStateProps } from '../views/pact/Pact';
+import { getIsPactValid, isPactEditable } from '../Selectors/pactSelectors';
+import { getPact } from '../Selectors/stateSelectors';
+import { Maybe } from '../Utilities/dataUtils';
+import { PactSettings, PactSettingsDispatchProps, PactSettingsOwnProps, PactSettingsStateProps } from '../Views/Pact/Pact';
 
 const mapStateToProps = (state: AppState): PactSettingsStateProps => ({
   pact: getPact (state),

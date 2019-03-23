@@ -10,7 +10,7 @@ import { Dropdown, DropdownOption } from '../../components/Dropdown';
 import { Hr } from '../../components/Hr';
 import { Label } from '../../components/Label';
 import { TextField } from '../../components/TextField';
-import { List, Maybe, OrderedMap, Record } from '../../utils/dataUtils';
+import { List, Maybe, OrderedMap, Record } from '../../Utilities/dataUtils';
 
 export interface ItemEditorMeleeSectionProps {
   attributes: OrderedMap<string, Record<Attribute>>;

@@ -1,6 +1,6 @@
 import * as classNames from 'classnames';
 import * as React from 'react';
-import { Maybe } from '../../utils/dataUtils';
+import { Maybe } from '../../Utilities/dataUtils';
 
 export interface SheetHeaderAttributeProps {
   id: string;

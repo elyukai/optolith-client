@@ -3,7 +3,7 @@ import { Dispatch } from 'redux';
 import { Alert as AlertOptions } from '../../App/Models/Hero/heroTypeHelpers';
 import { Alert } from '../../components/Alert';
 import { UIMessagesObject } from '../../types/ui';
-import { Maybe } from '../../utils/dataUtils';
+import { Maybe } from '../../Utilities/dataUtils';
 
 export interface AlertsOwnProps {
   locale: UIMessagesObject;

@@ -1,17 +1,17 @@
 // @ts-check
-const { fromBoth, fromBinary, bimap, first, second, fst, snd, curry, uncurry, swap, toArray, fromArray, isPair } = require('../Pair')
+const { Pair, bimap, first, second, fst, snd, curry, uncurry, swap, toArray, fromArray, isPair } = require('../Pair')
 
 // CONSTRUCTOR
 
-test ('fromBoth', () => {
-  const pair = fromBoth (3) (1)
+test ('Pair (x) (y)', () => {
+  const pair = Pair (3) (1)
   expect (pair .first) .toEqual (3)
   expect (pair .second) .toEqual (1)
   expect (pair .isPair) .toEqual (true)
 })
 
-test ('fromBinary', () => {
-  const pair = fromBinary (3, 1)
+test ('Pair (x, y)', () => {
+  const pair = Pair (3, 1)
   expect (pair .first) .toEqual (3)
   expect (pair .second) .toEqual (1)
   expect (pair .isPair) .toEqual (true)
@@ -20,26 +20,26 @@ test ('fromBinary', () => {
 // BIFUNCTOR
 
 test ('bimap', () => {
-  expect (bimap (a => a + 2) (b => b + 3) (fromBoth (3) (1)))
-    .toEqual (fromBoth (5) (4))
+  expect (bimap (a => a + 2) (b => b + 3) (Pair (3) (1)))
+    .toEqual (Pair (5) (4))
 })
 
 test ('first', () => {
-  expect (first (a => a + 2) (fromBoth (3) (1))) .toEqual (fromBoth (5) (1))
+  expect (first (a => a + 2) (Pair (3) (1))) .toEqual (Pair (5) (1))
 })
 
 test ('second', () => {
-  expect (second (b => b + 3) (fromBoth (3) (1))) .toEqual (fromBoth (3) (4))
+  expect (second (b => b + 3) (Pair (3) (1))) .toEqual (Pair (3) (4))
 })
 
 // PAIR FUNCTIONS
 
 test ('fst', () => {
-  expect (fst (fromBoth (3) (1))) .toEqual (3)
+  expect (fst (Pair (3) (1))) .toEqual (3)
 })
 
 test ('snd', () => {
-  expect (snd (fromBoth (3) (1))) .toEqual (1)
+  expect (snd (Pair (3) (1))) .toEqual (1)
 })
 
 test ('curry', () => {
@@ -47,24 +47,24 @@ test ('curry', () => {
 })
 
 test ('uncurry', () => {
-  expect (uncurry (a => b => a + b) (fromBinary (2, 3))) .toEqual (5)
+  expect (uncurry (a => b => a + b) (Pair (2, 3))) .toEqual (5)
 })
 
 test ('swap', () => {
-  expect (swap (fromBoth (3) (1))) .toEqual (fromBoth (1) (3))
+  expect (swap (Pair (3) (1))) .toEqual (Pair (1) (3))
 })
 
 // CUSTOM FUNCTIONS
 
 test ('toArray', () => {
-  expect (toArray (fromBoth (3) (1))) .toEqual ([3, 1])
+  expect (toArray (Pair (3) (1))) .toEqual ([3, 1])
 })
 
 test ('fromArray', () => {
-  expect (fromArray ([3, 1])) .toEqual (fromBoth (3) (1))
+  expect (fromArray ([3, 1])) .toEqual (Pair (3) (1))
 })
 
 test ('isPair', () => {
-  expect (isPair (fromBoth (3) (1))) .toEqual (true)
+  expect (isPair (Pair (3) (1))) .toEqual (true)
   expect (isPair (2)) .toEqual (false)
 })

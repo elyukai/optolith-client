@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { translate, UIMessagesObject } from '../../../App/Utils/I18n';
-import { List, Record, Tuple } from '../../../utils/dataUtils';
-import { sortObjects } from '../../../utils/FilterSortUtils';
+import { List, Record, Tuple } from '../../../Utilities/dataUtils';
+import { sortObjects } from '../../../Utilities/FilterSortUtils';
 
 export interface CombatSheetStatesProps {
   locale: UIMessagesObject;

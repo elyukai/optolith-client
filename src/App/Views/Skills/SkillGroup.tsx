@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ListItemGroup } from '../../components/ListItemGroup';
-import { List } from '../../utils/dataUtils';
+import { List } from '../../Utilities/dataUtils';
 
 export interface SkillListItemProps {
   addText?: string;

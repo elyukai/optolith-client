@@ -4,10 +4,10 @@ import * as ConfigActions from '../App/Actions/ConfigActions';
 import * as IOActions from '../App/Actions/IOActions';
 import * as LocaleActions from '../App/Actions/LocaleActions';
 import { AppState } from '../reducers/appReducer';
-import { getLocaleId, getLocaleType } from '../selectors/stateSelectors';
-import { areAnimationsEnabled, getIsEditingHeroAfterCreationPhaseEnabled, getTheme } from '../selectors/uisettingsSelectors';
-import { Maybe } from '../utils/dataUtils';
-import { Settings, SettingsDispatchProps, SettingsOwnProps, SettingsStateProps } from '../views/navigationbar/Settings';
+import { getLocaleId, getLocaleType } from '../Selectors/stateSelectors';
+import { areAnimationsEnabled, getIsEditingHeroAfterCreationPhaseEnabled, getTheme } from '../Selectors/uisettingsSelectors';
+import { Maybe } from '../Utilities/dataUtils';
+import { Settings, SettingsDispatchProps, SettingsOwnProps, SettingsStateProps } from '../Views/navigationbar/Settings';
 
 const mapStateToProps = (state: AppState): SettingsStateProps => ({
   localeString: getLocaleId (state),

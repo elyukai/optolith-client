@@ -22,9 +22,9 @@ import { Scroll } from '../../components/Scroll';
 import { Slidein } from '../../components/Slidein';
 import { SortNames, SortOptions } from '../../components/SortOptions';
 import { TextField } from '../../components/TextField';
-import { Just, List, Maybe, Nothing, OrderedMap, Record, Tuple } from '../../utils/dataUtils';
-import { sortStrings } from '../../utils/FilterSortUtils';
-import { SkillListItem } from '../skills/SkillListItem';
+import { Just, List, Maybe, Nothing, OrderedMap, Record, Tuple } from '../../Utilities/dataUtils';
+import { sortStrings } from '../../Utilities/FilterSortUtils';
+import { SkillListItem } from '../Skills/SkillListItem';
 
 export interface LiturgicalChantsOwnProps {
   locale: UIMessagesObject;

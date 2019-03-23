@@ -5,17 +5,17 @@ import { Categories } from "../Constants/Categories";
 import { HeroModelRecord } from "../Models/Hero/HeroModel";
 import * as Data from "../Models/Hero/heroTypeHelpers";
 import * as Wiki from "../Models/Wiki/wikiTypeHelpers";
+import { getCombinedPrerequisites } from "../Utilities/Activatable/activatableActivationUtils";
+import { getActiveObjectCore } from "../Utilities/Activatable/activatableConvertUtils";
+import { addAllStyleRelatedDependencies } from "../Utilities/Activatable/ExtendedStyleUtils";
+import { createActivatableDependent, createActivatableDependentSkill } from "../Utilities/createEntryUtils";
+import { Just, List, Maybe, OrderedMap, OrderedSet, Record, Tuple } from "../Utilities/dataUtils";
+import { addDependencies } from "../Utilities/dependencies/dependencyUtils";
+import { flip } from "../Utilities/flip";
 import { getHeroStateItem, updateEntryDef, updateHeroListStateItemOr } from "../Utilities/heroStateUtils";
 import { ifElse } from "../Utilities/ifElse";
+import { isProfessionRequiringIncreasable } from "../Utilities/wikiData/prerequisites/DependentRequirement";
 import { getWikiEntry } from "../Utilities/WikiUtils";
-import { getCombinedPrerequisites } from "../utils/activatable/activatableActivationUtils";
-import { getActiveObjectCore } from "../utils/activatable/activatableConvertUtils";
-import { addAllStyleRelatedDependencies } from "../utils/activatable/ExtendedStyleUtils";
-import { createActivatableDependent, createActivatableDependentSkill } from "../utils/createEntryUtils";
-import { Just, List, Maybe, OrderedMap, OrderedSet, Record, Tuple } from "../utils/dataUtils";
-import { addDependencies } from "../utils/dependencies/dependencyUtils";
-import { flip } from "../utils/flip";
-import { isProfessionRequiringIncreasable } from "../utils/wikiData/prerequisites/DependentRequirement";
 
 type Action = SetSelectionsAction
 

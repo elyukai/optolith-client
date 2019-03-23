@@ -29,13 +29,23 @@ export type NonEmptyList<A> = Cons<A>
 
 // PROTOTYPE
 
-interface ListPrototype {
+interface ListPrototype<A> {
   readonly isList: true
+  [Symbol.iterator] (): IterableIterator<A>
 }
 
 const ListPrototype =
-  Object.freeze<ListPrototype> ({
+  Object.freeze<ListPrototype<any>> ({
     isList: true,
+    *[Symbol.iterator] () {
+      // tslint:disable-next-line: no-this-assignment
+      let current = this as List<any>
+
+      while (!isNil (current)) {
+        yield current .x
+        current = current .xs
+      }
+    },
   })
 
 
@@ -43,7 +53,7 @@ const ListPrototype =
 
 // Nil
 
-export interface Nil extends ListPrototype { }
+export interface Nil extends ListPrototype<never> { }
 
 export const Nil: Nil = Object.create (ListPrototype)
 
@@ -51,7 +61,7 @@ export const isNil = (xs: List<any>): xs is Nil => xs === Nil
 
 // Cons
 
-export interface Cons<A> {
+export interface Cons<A> extends ListPrototype<A> {
   readonly x: A
   readonly xs: List<A>
 }

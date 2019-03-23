@@ -6,8 +6,8 @@ const { Identity } = require ('../../Control/Monad/Identity')
 const { List } = require ('../List')
 const { Just, Nothing } = require ('../Maybe')
 const { fromUniquePairs } = require ('../OrderedMap')
-const { fromBinary } = require ('../Pair')
-const { add } = require ('../../App/Utils/mathUtils')
+const { Pair } = require ('../Pair')
+const { add } = require ('../../App/Utilities/mathUtils')
 
 test ('fmap', () => {
   expect (fmap (add (3)) (Const (3)))
@@ -35,8 +35,8 @@ test ('fmap', () => {
                (fromUniquePairs (['x', 1], ['y', 2], ['z', 3])))
     .toEqual (fromUniquePairs (['x', 2], ['y', 4], ['z', 6]))
 
-  expect (fmap (x => x * 2) (fromBinary (3, 1)))
-    .toEqual (fromBinary (3, 2))
+  expect (fmap (x => x * 2) (Pair (3, 1)))
+    .toEqual (Pair (3, 2))
 })
 
 test ('fmapF', () => {
@@ -65,8 +65,8 @@ test ('fmapF', () => {
                 (x => x * 2))
     .toEqual (fromUniquePairs (['x', 2], ['y', 4], ['z', 6]))
 
-  expect (fmapF (fromBinary (3, 1)) (x => x * 2))
-    .toEqual (fromBinary (3, 2))
+  expect (fmapF (Pair (3, 1)) (x => x * 2))
+    .toEqual (Pair (3, 2))
 })
 
 test ('mapReplace', () => {
@@ -95,6 +95,6 @@ test ('mapReplace', () => {
                              (fromUniquePairs (['x', 1], ['y', 2], ['z', 3])))
     .toEqual (fromUniquePairs (['x', 2], ['y', 2], ['z', 2]))
 
-  expect (mapReplace (4) (fromBinary (3, 1)))
-    .toEqual (fromBinary (3, 4))
+  expect (mapReplace (4) (Pair (3, 1)))
+    .toEqual (Pair (3, 4))
 })

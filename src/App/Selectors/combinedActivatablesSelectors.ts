@@ -1,8 +1,8 @@
 import { ActiveViewObject, DeactiveViewObject } from '../App/Models/Hero/heroTypeHelpers';
 import { Advantage, Disadvantage, SpecialAbility } from '../App/Models/Wiki/wikiTypeHelpers';
 import { createMaybeSelector } from '../App/Utils/createMaybeSelector';
-import { List, Maybe, Record, RecordInterface } from '../utils/dataUtils';
-import { AllSortOptions, filterAndSortObjects } from '../utils/FilterSortUtils';
+import { List, Maybe, Record, RecordInterface } from '../Utilities/dataUtils';
+import { AllSortOptions, filterAndSortObjects } from '../Utilities/FilterSortUtils';
 import { getAdvantagesForEdit, getDisadvantagesForEdit, getSpecialAbilitiesForEdit } from './activatableSelectors';
 import { getDeactiveAdvantages, getDeactiveDisadvantages, getDeactiveSpecialAbilities } from './inactiveActivatablesSelectors';
 import { getSpecialAbilitiesSortOptions } from './sortOptionsSelectors';

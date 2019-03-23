@@ -7,7 +7,7 @@ import { ListItemButtons } from '../../components/ListItemButtons';
 import { ListItemName } from '../../components/ListItemName';
 import { ListItemSeparator } from '../../components/ListItemSeparator';
 import { TooltipToggle } from '../../components/TooltipToggle';
-import { List, Maybe, Record } from '../../utils/dataUtils';
+import { List, Maybe, Record } from '../../Utilities/dataUtils';
 
 export interface HitZoneArmorsListItemProps {
   data: Record<ArmorZonesInstance>;

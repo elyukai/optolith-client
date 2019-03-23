@@ -4,9 +4,9 @@ import { SpecialAbility } from '../../../App/Models/Wiki/wikiTypeHelpers';
 import { translate, UIMessagesObject } from '../../../App/Utils/I18n';
 import { getRoman } from '../../../App/Utils/NumberUtils';
 import { TextBox } from '../../../components/TextBox';
-import { findSelectOption } from '../../../utils/Activatable/selectionUtils';
-import { List, Maybe, Record } from '../../../utils/dataUtils';
-import { sortObjects } from '../../../utils/FilterSortUtils';
+import { findSelectOption } from '../../../Utilities/Activatable/selectionUtils';
+import { List, Maybe, Record } from '../../../Utilities/dataUtils';
+import { sortObjects } from '../../../Utilities/FilterSortUtils';
 
 export interface SkillsSheetLanguagesProps {
   languagesStateEntry: Maybe<Record<ActivatableDependent>>;

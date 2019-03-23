@@ -14,7 +14,7 @@ import { Page } from '../../components/Page';
 import { RecommendedReference } from '../../components/RecommendedReference';
 import { Slidein } from '../../components/Slidein';
 import { TextField } from '../../components/TextField';
-import { Just, List, Maybe, Nothing, OrderedMap, Record } from '../../utils/dataUtils';
+import { Just, List, Maybe, Nothing, OrderedMap, Record } from '../../Utilities/dataUtils';
 import { ActiveList } from './ActiveList';
 import { AdvantagesDisadvantagesAdventurePoints } from './AdvantagesDisadvantagesAdventurePoints';
 import { InactiveList } from './DeactiveList';

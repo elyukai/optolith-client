@@ -15,8 +15,8 @@ import { Page } from '../../components/Page';
 import { Scroll } from '../../components/Scroll';
 import { SortNames, SortOptions } from '../../components/SortOptions';
 import { TextField } from '../../components/TextField';
-import { Just, List, Maybe, Nothing, OrderedMap, Record } from '../../utils/dataUtils';
-import { SkillListItem } from '../skills/SkillListItem';
+import { Just, List, Maybe, Nothing, OrderedMap, Record } from '../../Utilities/dataUtils';
+import { SkillListItem } from '../Skills/SkillListItem';
 
 export interface CombatTechniquesOwnProps {
   locale: UIMessagesObject;

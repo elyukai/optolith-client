@@ -3,9 +3,9 @@ import { Action, Dispatch } from 'redux';
 import * as ProfessionActions from '../App/Actions/ProfessionActions';
 import { Selections as SelectionsInterface } from '../App/Models/Hero/heroTypeHelpers';
 import { AppState } from '../reducers/appReducer';
-import { getCurrentCulture, getCurrentProfession, getCurrentProfessionVariant, getCurrentRace } from '../selectors/rcpSelectors';
-import { getWiki } from '../selectors/stateSelectors';
-import { Selections, SelectionsDispatchProps, SelectionsOwnProps, SelectionsStateProps } from '../views/rcp/Selections';
+import { getCurrentCulture, getCurrentProfession, getCurrentProfessionVariant, getCurrentRace } from '../Selectors/rcpSelectors';
+import { getWiki } from '../Selectors/stateSelectors';
+import { Selections, SelectionsDispatchProps, SelectionsOwnProps, SelectionsStateProps } from '../Views/rcp/Selections';
 
 const mapStateToProps = (state: AppState): SelectionsStateProps => ({
   currentRace: getCurrentRace (state),

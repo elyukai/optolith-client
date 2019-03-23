@@ -5,7 +5,7 @@ import { translate, UIMessagesObject } from '../../App/Utils/I18n';
 import { Checkbox } from '../../components/Checkbox';
 import { Dropdown, DropdownOption } from '../../components/Dropdown';
 import { Scroll } from '../../components/Scroll';
-import { Just, List, Maybe, OrderedSet, Record } from '../../utils/dataUtils';
+import { Just, List, Maybe, OrderedSet, Record } from '../../Utilities/dataUtils';
 
 export interface RulesOwnProps {
   locale: UIMessagesObject;

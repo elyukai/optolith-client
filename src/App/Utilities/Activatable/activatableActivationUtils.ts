@@ -2,7 +2,7 @@
  * Handles activation, deactivation and level change of active `Activatable`
  * entries.
  *
- * @file src/utils/activatableActivationUtils.ts
+ * @file src/Utilities/activatableActivationUtils.ts
  * @author Lukas Obermann
  * @since 1.1.0
  */

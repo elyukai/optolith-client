@@ -3,13 +3,13 @@ import { Action, Dispatch } from 'redux';
 import * as ConfigActions from '../App/Actions/ConfigActions';
 import * as SpellsActions from '../App/Actions/SpellsActions';
 import { AppState } from '../reducers/appReducer';
-import { getAttributesForSheet } from '../selectors/attributeSelectors';
-import { getDerivedCharacteristicsMap } from '../selectors/derivedCharacteristicsSelectors';
-import { getIsRemovingEnabled } from '../selectors/phaseSelectors';
-import { getFilteredActiveSpellsAndCantrips, getFilteredInactiveSpellsAndCantrips, getMagicalTraditionsFromWikiState, isActivationDisabled } from '../selectors/spellsSelectors';
-import { getInactiveSpellsFilterText, getSpellsFilterText } from '../selectors/stateSelectors';
-import { getEnableActiveItemHints, getSpellsSortOrder } from '../selectors/uisettingsSelectors';
-import { Spells, SpellsDispatchProps, SpellsOwnProps, SpellsStateProps } from '../views/spells/Spells';
+import { getAttributesForSheet } from '../Selectors/attributeSelectors';
+import { getDerivedCharacteristicsMap } from '../Selectors/derivedCharacteristicsSelectors';
+import { getIsRemovingEnabled } from '../Selectors/phaseSelectors';
+import { getFilteredActiveSpellsAndCantrips, getFilteredInactiveSpellsAndCantrips, getMagicalTraditionsFromWikiState, isActivationDisabled } from '../Selectors/spellsSelectors';
+import { getInactiveSpellsFilterText, getSpellsFilterText } from '../Selectors/stateSelectors';
+import { getEnableActiveItemHints, getSpellsSortOrder } from '../Selectors/uisettingsSelectors';
+import { Spells, SpellsDispatchProps, SpellsOwnProps, SpellsStateProps } from '../Views/Spells/Spells';
 
 const mapStateToProps = (state: AppState, ownProps: SpellsOwnProps): SpellsStateProps => ({
   activeList: getFilteredActiveSpellsAndCantrips (state, ownProps),

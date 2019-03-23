@@ -6,7 +6,7 @@ import { localizeNumber, localizeWeight, translate, UIMessagesObject } from '../
 import { LabelBox } from '../../../components/LabelBox';
 import { Options } from '../../../components/Options';
 import { TextBox } from '../../../components/TextBox';
-import { Just, List, Maybe, Nothing, Record, Tuple } from '../../../utils/dataUtils';
+import { Just, List, Maybe, Nothing, Record, Tuple } from '../../../Utilities/dataUtils';
 import { Sheet } from '../Sheet';
 import { SheetWrapper } from '../SheetWrapper';
 import { BelongingsSheetItemsColumn } from './BelongingsSheetItemsColumn';

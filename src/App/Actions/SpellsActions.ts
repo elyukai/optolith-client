@@ -5,7 +5,7 @@ import { Record } from "../../Data/Record";
 import { ActionTypes } from "../Constants/ActionTypes";
 import { L10nRecord } from "../Models/Wiki/L10n";
 import { Spell } from "../Models/Wiki/Spell";
-import { getAvailableAdventurePoints } from "../selectors/adventurePointsSelectors";
+import { getAvailableAdventurePoints } from "../Selectors/adventurePointsSelectors";
 import { getIsInCharacterCreation } from "../Selectors/phaseSelectors";
 import { getSpells, getWikiSpells } from "../Selectors/stateSelectors";
 import { getMissingAP } from "../Utilities/AdventurePoints/adventurePointsUtils";

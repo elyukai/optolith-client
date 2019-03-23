@@ -3,8 +3,8 @@ import * as React from 'react';
 import { CantripCombined } from '../../../App/Models/View/viewTypeHelpers';
 import { translate, UIMessagesObject } from '../../../App/Utils/I18n';
 import { TextBox } from '../../../components/TextBox';
-import { List, Maybe, Record } from '../../../utils/dataUtils';
-import { sortStrings } from '../../../utils/FilterSortUtils';
+import { List, Maybe, Record } from '../../../Utilities/dataUtils';
+import { sortStrings } from '../../../Utilities/FilterSortUtils';
 
 export interface SpellsSheetCantripsProps {
   cantrips: Maybe<List<Record<CantripCombined>>>;

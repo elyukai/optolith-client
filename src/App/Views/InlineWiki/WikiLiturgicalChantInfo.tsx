@@ -2,17 +2,17 @@ import * as React from 'react';
 import { SecondaryAttribute } from '../../App/Models/Hero/heroTypeHelpers';
 import { UIMessages } from '../../App/Models/View/viewTypeHelpers';
 import { Attribute, Book, LiturgicalChant, SpecialAbility } from '../../App/Models/Wiki/wikiTypeHelpers';
-import { WikiCastingTime } from './elements/WikiCastingTime';
-import { WikiCost } from './elements/WikiCost';
-import { WikiDuration } from './elements/WikiDuration';
-import { WikiEffect } from './elements/WikiEffect';
-import { WikiExtensions } from './elements/WikiExtensions';
-import { WikiImprovementCost } from './elements/WikiImprovementCost';
-import { WikiLiturgicalChantTraditions } from './elements/WikiLiturgicalChantTraditions';
-import { WikiRange } from './elements/WikiRange';
-import { WikiSkillCheck } from './elements/WikiSkillCheck';
-import { WikiSource } from './elements/WikiSource';
-import { WikiTargetCategory } from './elements/WikiTargetCategory';
+import { WikiCastingTime } from './Elements/WikiCastingTime';
+import { WikiCost } from './Elements/WikiCost';
+import { WikiDuration } from './Elements/WikiDuration';
+import { WikiEffect } from './Elements/WikiEffect';
+import { WikiExtensions } from './Elements/WikiExtensions';
+import { WikiImprovementCost } from './Elements/WikiImprovementCost';
+import { WikiLiturgicalChantTraditions } from './Elements/WikiLiturgicalChantTraditions';
+import { WikiRange } from './Elements/WikiRange';
+import { WikiSkillCheck } from './Elements/WikiSkillCheck';
+import { WikiSource } from './Elements/WikiSource';
+import { WikiTargetCategory } from './Elements/WikiTargetCategory';
 import { WikiBoxTemplate } from './WikiBoxTemplate';
 
 export interface WikiLiturgicalChantInfoProps {

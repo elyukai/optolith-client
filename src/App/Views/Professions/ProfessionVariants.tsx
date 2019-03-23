@@ -3,8 +3,8 @@ import { Sex } from '../../App/Models/Hero/heroTypeHelpers';
 import { ProfessionCombined } from '../../App/Models/View/viewTypeHelpers';
 import { translate, UIMessagesObject } from '../../App/Utils/I18n';
 import { Option, RadioButtonGroup } from '../../components/RadioButtonGroup';
-import { List, Maybe, Record } from '../../utils/dataUtils';
-import { sortObjects } from '../../utils/FilterSortUtils';
+import { List, Maybe, Record } from '../../Utilities/dataUtils';
+import { sortObjects } from '../../Utilities/FilterSortUtils';
 
 export interface ProfessionVariantsProps {
   currentProfessionId: Maybe<string>;

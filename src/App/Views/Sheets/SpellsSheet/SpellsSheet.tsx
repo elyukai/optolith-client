@@ -5,7 +5,7 @@ import { SpecialAbility } from '../../../App/Models/Wiki/wikiTypeHelpers';
 import { translate, UIMessagesObject } from '../../../App/Utils/I18n';
 import { Checkbox } from '../../../components/Checkbox';
 import { Options } from '../../../components/Options';
-import { List, Maybe, Record } from '../../../utils/dataUtils';
+import { List, Maybe, Record } from '../../../Utilities/dataUtils';
 import { AttributeMods } from '../AttributeMods';
 import { Sheet } from '../Sheet';
 import { HeaderValue } from '../SheetHeader';

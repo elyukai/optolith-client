@@ -3,7 +3,7 @@ const { List } = require('../List')
 const { Pair } = require('../Pair')
 const { Either } = require('../Either')
 const { Just, Nothing } = require('../Maybe')
-const { add } = require('../../App/Utils/mathUtils')
+const { add } = require('../../App/Utilities/mathUtils')
 const { Left, Right } = require('../Either')
 
 // CONSTRUCTORS
@@ -509,7 +509,7 @@ test ('rights', () => {
 
 test ('partitionEithers', () => {
   expect (Either.partitionEithers (List (Left (3), Left (2), Right (2), Right (3), Left (4), Right (4))))
-    .toEqual (Pair.fromBinary (List (3, 2, 4), List (2, 3, 4)))
+    .toEqual (Pair (List (3, 2, 4), List (2, 3, 4)))
 })
 
 // CUSTOM EITHER FUNCTIONS

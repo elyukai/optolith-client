@@ -3,7 +3,7 @@ import { Skill } from '../../App/Models/Wiki/wikiTypeHelpers';
 import { translate, UIMessagesObject } from '../../App/Utils/I18n';
 import { divideBy } from '../../App/Utils/mathUtils';
 import { BorderButton } from '../../components/BorderButton';
-import { List, Maybe, OrderedMap, Record } from '../../utils/dataUtils';
+import { List, Maybe, OrderedMap, Record } from '../../Utilities/dataUtils';
 
 export interface SelectionsSkillsProps {
   active: OrderedMap<string, number>;

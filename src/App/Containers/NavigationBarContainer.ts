@@ -7,16 +7,16 @@ import * as LocationActions from '../App/Actions/LocationActions';
 import * as SubwindowsActions from '../App/Actions/SubwindowsActions';
 import { TabId } from '../App/Utils/LocationUtils';
 import { AppState } from '../reducers/appReducer';
-import { getAdventurePointsObject, getMagicalAdvantagesDisadvantagesAdventurePointsMaximum } from '../selectors/adventurePointsSelectors';
-import { getRedoAvailability, getUndoAvailability } from '../selectors/currentHeroSelectors';
-import { getIsLiturgicalChantsTabAvailable } from '../selectors/liturgicalChantsSelectors';
-import { getIsRemovingEnabled } from '../selectors/phaseSelectors';
-import { getIsSpellsTabAvailable } from '../selectors/spellsSelectors';
-import { getAvatar, getCurrentTab, getIsSettingsOpen } from '../selectors/stateSelectors';
-import { getIsHeroSection, getSubtabs, getTabs } from '../selectors/uilocationSelectors';
+import { getAdventurePointsObject, getMagicalAdvantagesDisadvantagesAdventurePointsMaximum } from '../Selectors/adventurePointsSelectors';
+import { getRedoAvailability, getUndoAvailability } from '../Selectors/currentHeroSelectors';
+import { getIsLiturgicalChantsTabAvailable } from '../Selectors/liturgicalChantsSelectors';
+import { getIsRemovingEnabled } from '../Selectors/phaseSelectors';
+import { getIsSpellsTabAvailable } from '../Selectors/spellsSelectors';
+import { getAvatar, getCurrentTab, getIsSettingsOpen } from '../Selectors/stateSelectors';
+import { getIsHeroSection, getSubtabs, getTabs } from '../Selectors/uilocationSelectors';
 import { UIMessagesObject } from '../types/ui';
-import { Nothing } from '../utils/dataUtils';
-import { NavigationBar, NavigationBarDispatchProps, NavigationBarOwnProps, NavigationBarStateProps } from '../views/navigationbar/NavigationBar';
+import { Nothing } from '../Utilities/dataUtils';
+import { NavigationBar, NavigationBarDispatchProps, NavigationBarOwnProps, NavigationBarStateProps } from '../Views/navigationbar/NavigationBar';
 
 const mapStateToProps = (state: AppState, ownProps: { locale: UIMessagesObject }) => ({
   currentTab: getCurrentTab (state),

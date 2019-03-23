@@ -15,7 +15,7 @@ import { Page } from '../../components/Page';
 import { Slidein } from '../../components/Slidein';
 import { SortNames, SortOptions } from '../../components/SortOptions';
 import { TextField } from '../../components/TextField';
-import { Just, List, Maybe, Nothing, OrderedMap, Record } from '../../utils/dataUtils';
+import { Just, List, Maybe, Nothing, OrderedMap, Record } from '../../Utilities/dataUtils';
 
 export interface SpecialAbilitiesOwnProps {
   locale: UIMessagesObject;

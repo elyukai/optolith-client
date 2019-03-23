@@ -4,7 +4,7 @@ import { Textfit } from 'react-textfit';
 import { ArmorZone } from '../../../App/Models/View/viewTypeHelpers';
 import { localizeNumber, localizeWeight, translate, UIMessagesObject } from '../../../App/Utils/I18n';
 import { TextBox } from '../../../components/TextBox';
-import { Just, List, Maybe, Nothing, Record, Tuple } from '../../../utils/dataUtils';
+import { Just, List, Maybe, Nothing, Record, Tuple } from '../../../Utilities/dataUtils';
 
 export interface CombatSheetArmorZonesProps {
   armorZones: Maybe<List<Record<ArmorZone>>>;

@@ -6,14 +6,14 @@ import { AdventurePointsObject } from '../../App/Selectors/adventurePointsSelect
 import { Page } from '../../components/Page';
 import { Scroll } from '../../components/Scroll';
 import { UIMessagesObject } from '../../types/ui';
-import { Just, List, Maybe, Record } from '../../utils/dataUtils';
-import { BelongingsSheet } from './belongingsSheet/BelongingsSheet';
-import { CombatSheet } from './combatSheet/CombatSheet';
-import { CombatSheetZones } from './combatSheet/CombatSheetZones';
-import { LiturgicalChantsSheet } from './liturgicalChantsSheet/LiturgicalChantsSheet';
-import { MainSheet } from './mainSheet/MainSheet';
-import { SkillsSheet } from './skillsSheet/SkillsSheet';
-import { SpellsSheet } from './spellsSheet/SpellsSheet';
+import { Just, List, Maybe, Record } from '../../Utilities/dataUtils';
+import { BelongingsSheet } from './BelongingsSheet/BelongingsSheet';
+import { CombatSheet } from './CombatSheet/CombatSheet';
+import { CombatSheetZones } from './CombatSheet/CombatSheetZones';
+import { LiturgicalChantsSheet } from './LiturgicalChantsSheet/LiturgicalChantsSheet';
+import { MainSheet } from './MainSheet/MainSheet';
+import { SkillsSheet } from './SkillsSheet/SkillsSheet';
+import { SpellsSheet } from './SpellsSheet/SpellsSheet';
 
 export interface SheetsOwnProps {
   locale: UIMessagesObject;

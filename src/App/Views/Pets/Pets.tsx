@@ -7,7 +7,7 @@ import { ListView } from '../../components/List';
 import { Options } from '../../components/Options';
 import { Page } from '../../components/Page';
 import { Scroll } from '../../components/Scroll';
-import { List, Maybe, OrderedMap, Record } from '../../utils/dataUtils';
+import { List, Maybe, OrderedMap, Record } from '../../Utilities/dataUtils';
 import { PetEditor } from './PetEditor';
 import { PetsListItem } from './PetsListItem';
 

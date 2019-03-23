@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
-import { WikiInfo, WikiInfoDispatchProps, WikiInfoOwnProps } from '../../views/wiki/WikiInfo';
-import { WikiInfoContentStateProps } from '../../views/wiki/WikiInfoContent';
+import { WikiInfo, WikiInfoDispatchProps, WikiInfoOwnProps } from '../../Views/Wiki/WikiInfo';
+import { WikiInfoContentStateProps } from '../../Views/Wiki/WikiInfoContent';
 import { AppState } from '../Reducers/appReducer';
 import { getDerivedCharacteristicsMap } from '../Selectors/derivedCharacteristicsSelectors';
 import * as stateSelectors from '../Selectors/stateSelectors';

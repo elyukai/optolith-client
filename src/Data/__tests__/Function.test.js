@@ -1,7 +1,7 @@
 // @ts-check
 const { cnst, ident, thrush, join, on, flip } = require ('../Function')
 const { fromJust, Just } = require ('../Maybe')
-const { add } = require ('../../App/Utils/mathUtils')
+const { add } = require ('../../App/Utilities/mathUtils')
 
 test ('ident', () => {
   expect (ident (5)) .toEqual (5)

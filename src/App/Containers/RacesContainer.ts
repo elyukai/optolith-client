@@ -3,11 +3,11 @@ import { Action, Dispatch } from 'redux';
 import { setTab } from '../App/Actions/LocationActions';
 import * as RaceActions from '../App/Actions/RaceActions';
 import { AppState } from '../reducers/appReducer';
-import { getFilteredRaces } from '../selectors/rcpSelectors';
-import { getCurrentRaceId, getCurrentRaceVariantId, getRacesFilterText } from '../selectors/stateSelectors';
-import { getRacesSortOrder } from '../selectors/uisettingsSelectors';
-import { Maybe } from '../utils/dataUtils';
-import { Races, RacesDispatchProps, RacesOwnProps, RacesStateProps } from '../views/rcp/Races';
+import { getFilteredRaces } from '../Selectors/rcpSelectors';
+import { getCurrentRaceId, getCurrentRaceVariantId, getRacesFilterText } from '../Selectors/stateSelectors';
+import { getRacesSortOrder } from '../Selectors/uisettingsSelectors';
+import { Maybe } from '../Utilities/dataUtils';
+import { Races, RacesDispatchProps, RacesOwnProps, RacesStateProps } from '../Views/rcp/Races';
 
 const mapStateToProps = (state: AppState, ownProps: RacesOwnProps): RacesStateProps => {
   return {

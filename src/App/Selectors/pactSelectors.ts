@@ -1,9 +1,9 @@
 import { Pact } from '../App/Models/Hero/heroTypeHelpers';
 import { AllRequirements } from '../App/Models/Wiki/wikiTypeHelpers';
 import { createMaybeSelector } from '../App/Utils/createMaybeSelector';
-import { isPactValid } from '../utils/activatable/pactUtils';
-import { Just, List, Maybe, Record } from '../utils/dataUtils';
-import { isPactRequirement } from '../utils/wikiData/prerequisites/DependentRequirement';
+import { isPactValid } from '../Utilities/Activatable/pactUtils';
+import { Just, List, Maybe, Record } from '../Utilities/dataUtils';
+import { isPactRequirement } from '../Utilities/wikiData/prerequisites/DependentRequirement';
 import { getPact, getSpecialAbilities, getWikiSpecialAbilities } from './stateSelectors';
 
 export const getIsPactValid = createMaybeSelector (

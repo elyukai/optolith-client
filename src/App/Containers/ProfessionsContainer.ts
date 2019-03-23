@@ -3,11 +3,11 @@ import { Action, Dispatch } from 'redux';
 import * as ProfessionActions from '../App/Actions/ProfessionActions';
 import * as ProfessionVariantActions from '../App/Actions/ProfessionVariantActions';
 import { AppState } from '../reducers/appReducer';
-import { getFilteredProfessions } from '../selectors/rcpSelectors';
-import { getCurrentProfessionId, getCurrentProfessionVariantId, getProfessionsFilterText, getSex, getWiki } from '../selectors/stateSelectors';
-import { getProfessionsGroupVisibilityFilter, getProfessionsSortOrder, getProfessionsVisibilityFilter } from '../selectors/uisettingsSelectors';
-import { Maybe } from '../utils/dataUtils';
-import { Professions, ProfessionsDispatchProps, ProfessionsOwnProps, ProfessionsStateProps } from '../views/rcp/Professions';
+import { getFilteredProfessions } from '../Selectors/rcpSelectors';
+import { getCurrentProfessionId, getCurrentProfessionVariantId, getProfessionsFilterText, getSex, getWiki } from '../Selectors/stateSelectors';
+import { getProfessionsGroupVisibilityFilter, getProfessionsSortOrder, getProfessionsVisibilityFilter } from '../Selectors/uisettingsSelectors';
+import { Maybe } from '../Utilities/dataUtils';
+import { Professions, ProfessionsDispatchProps, ProfessionsOwnProps, ProfessionsStateProps } from '../Views/rcp/Professions';
 
 const mapStateToProps = (
   state: AppState,

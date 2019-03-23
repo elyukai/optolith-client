@@ -1,7 +1,7 @@
 /**
  * Checks if an `Activatable` entry is available to be activated.
  *
- * @file src/utils/activatableInactiveValidationUtils.ts
+ * @file src/Utilities/activatableInactiveValidationUtils.ts
  * @author Lukas Obermann
  * @since 1.1.0
  */

@@ -12,7 +12,7 @@ import { Scroll } from '../../components/Scroll';
 import { SortNames, SortOptions } from '../../components/SortOptions';
 import { TextField } from '../../components/TextField';
 import { UIMessagesObject } from '../../types/ui';
-import { Just, List, Maybe, OrderedMap, OrderedSet, Record } from '../../utils/dataUtils';
+import { Just, List, Maybe, OrderedMap, OrderedSet, Record } from '../../Utilities/dataUtils';
 import { HeroCreation } from './HeroCreation';
 import { HerolistItem } from './HerolistItem';
 

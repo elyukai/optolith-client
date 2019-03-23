@@ -7,7 +7,7 @@ import { ListItemButtons } from '../../components/ListItemButtons';
 import { ListItemName } from '../../components/ListItemName';
 import { ListItemSeparator } from '../../components/ListItemSeparator';
 import { VerticalList } from '../../components/VerticalList';
-import { Record } from '../../utils/dataUtils';
+import { Record } from '../../Utilities/dataUtils';
 
 export interface PetsListItemProps {
   pet: Record<PetInstance>;

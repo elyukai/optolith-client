@@ -4,10 +4,10 @@ import { Advantage, Disadvantage, SpecialAbility, WikiEntryRecordByCategory } fr
 import { createMaybeSelector } from '../App/Utils/createMaybeSelector';
 import { filterByInstancePropertyAvailability, ObjectWithStateEntry } from '../App/Utils/RulesUtils';
 import { getWikiStateKeyByCategory } from '../App/Utils/WikiUtils';
-import { getActivatableStateSliceByCategory } from '../utils/activatable/activatableActiveUtils';
-import { getInactiveView } from '../utils/activatable/activatableInactiveUtils';
-import { getAllAvailableExtendedSpecialAbilities } from '../utils/activatable/ExtendedStyleUtils';
-import { List, Maybe, MaybeContent, Record } from '../utils/dataUtils';
+import { getActivatableStateSliceByCategory } from '../Utilities/Activatable/activatableActiveUtils';
+import { getInactiveView } from '../Utilities/Activatable/activatableInactiveUtils';
+import { getAllAvailableExtendedSpecialAbilities } from '../Utilities/Activatable/ExtendedStyleUtils';
+import { List, Maybe, MaybeContent, Record } from '../Utilities/dataUtils';
 import { getAdventurePointsObject } from './adventurePointsSelectors';
 import { getRuleBooksEnabled } from './rulesSelectors';
 import * as stateSelectors from './stateSelectors';

@@ -5,6 +5,12 @@ const { Pair } = require('../Pair')
 const { Int } = require('../Int')
 const { OrderedMap } = require('../OrderedMap')
 
+// [Symbol.iterator]
+
+test ('[Symbol.iterator]', () => {
+  expect ([...List (1, 2, 3)]) .toEqual ([1, 2, 3])
+})
+
 // APPLICATIVE
 
 test ('pure', () => {
@@ -301,9 +307,9 @@ test ('initS', () => {
 
 test ('uncons', () => {
   expect (List.uncons (List (3, 2, 1)))
-    .toEqual (Just (Pair.fromBinary (3, List (2, 1))))
+    .toEqual (Just (Pair (3, List (2, 1))))
   expect (List.uncons (List (1)))
-    .toEqual (Just (Pair.fromBinary (1, List ())))
+    .toEqual (Just (Pair (1, List ())))
   expect (List.uncons (List ())) .toEqual (Nothing)
 })
 
@@ -341,17 +347,17 @@ test ('scanl', () => {
 
 test ('mapAccumL', () => {
   expect (
-    List.mapAccumL (acc => current => Pair.fromBoth (acc + current) (current * 2))
+    List.mapAccumL (acc => current => Pair (acc + current) (current * 2))
                    (0)
                    (List (1, 2, 3))
   )
-    .toEqual (Pair.fromBinary (6, List (2, 4, 6)))
+    .toEqual (Pair (6, List (2, 4, 6)))
 })
 
 // UNFOLDING
 
 test ('unfoldr', () => {
-  expect (List.unfoldr (x => x < 11 ? Just (Pair.fromBoth (x) (x + 1)) : Nothing)
+  expect (List.unfoldr (x => x < 11 ? Just (Pair (x) (x + 1)) : Nothing)
                        (1))
     .toEqual (List (1, 2, 3, 4, 5, 6, 7, 8, 9, 10))
 })
@@ -374,10 +380,10 @@ test ('drop', () => {
 
 test ('splitAt', () => {
   expect (List.splitAt (3) (List (1, 2, 3, 4, 5)))
-    .toEqual (Pair.fromBoth (List (1, 2, 3))
+    .toEqual (Pair (List (1, 2, 3))
                        (List (4, 5)))
   expect (List.splitAt (6) (List (1, 2, 3, 4, 5)))
-    .toEqual (Pair.fromBoth (List (1, 2, 3, 4, 5))
+    .toEqual (Pair (List (1, 2, 3, 4, 5))
                        (List ()))
 })
 
@@ -394,12 +400,12 @@ test ('isInfixOf', () => {
 
 test ('lookup', () => {
   expect (List.lookup (1)
-                      (List (Pair.fromBoth (1) ('a')
-                                         ,Pair.fromBoth (2) ('b'))))
+                      (List (Pair (1) ('a')
+                                         ,Pair (2) ('b'))))
     .toEqual (Just ('a'))
   expect (List.lookup (3)
-                      (List (Pair.fromBoth (1) ('a')
-                                         ,Pair.fromBoth (2) ('b'))))
+                      (List (Pair (1) ('a')
+                                         ,Pair (2) ('b'))))
     .toEqual (Nothing)
 })
 
@@ -412,7 +418,7 @@ test ('filter', () => {
 
 test ('partition', () => {
   expect (List.partition (x => x > 2) (List (1, 2, 3, 4, 5)))
-    .toEqual (Pair.fromBoth (List (3, 4, 5))
+    .toEqual (Pair (List (3, 4, 5))
                        (List (1, 2)))
 })
 
@@ -475,54 +481,54 @@ test ('zip', () => {
   expect (List.zip (List ('A', 'B', 'C'))
                    (List (1, 2, 3)))
     .toEqual (List (
-      Pair.fromBoth ('A') (1),
-      Pair.fromBoth ('B') (2),
-      Pair.fromBoth ('C') (3)
+      Pair ('A') (1),
+      Pair ('B') (2),
+      Pair ('C') (3)
     ))
 
   expect (List.zip (List ('A', 'B', 'C', 'D'))
                    (List (1, 2, 3)))
     .toEqual (List (
-      Pair.fromBoth ('A') (1),
-      Pair.fromBoth ('B') (2),
-      Pair.fromBoth ('C') (3)
+      Pair ('A') (1),
+      Pair ('B') (2),
+      Pair ('C') (3)
     ))
 
   expect (List.zip (List ('A', 'B', 'C'))
                    (List (1, 2, 3, 4)))
     .toEqual (List (
-      Pair.fromBoth ('A') (1),
-      Pair.fromBoth ('B') (2),
-      Pair.fromBoth ('C') (3)
+      Pair ('A') (1),
+      Pair ('B') (2),
+      Pair ('C') (3)
     ))
 })
 
 test ('zipWith', () => {
-  expect (List.zipWith (Pair.fromBoth)
+  expect (List.zipWith (Pair)
                        (List ('A', 'B', 'C'))
                        (List (1, 2, 3)))
     .toEqual (List (
-      Pair.fromBoth ('A') (1),
-      Pair.fromBoth ('B') (2),
-      Pair.fromBoth ('C') (3)
+      Pair ('A') (1),
+      Pair ('B') (2),
+      Pair ('C') (3)
     ))
 
-  expect (List.zipWith (Pair.fromBoth)
+  expect (List.zipWith (Pair)
                        (List ('A', 'B', 'C', 'D'))
                        (List (1, 2, 3)))
     .toEqual (List (
-      Pair.fromBoth ('A') (1),
-      Pair.fromBoth ('B') (2),
-      Pair.fromBoth ('C') (3)
+      Pair ('A') (1),
+      Pair ('B') (2),
+      Pair ('C') (3)
     ))
 
-  expect (List.zipWith (Pair.fromBoth)
+  expect (List.zipWith (Pair)
                        (List ('A', 'B', 'C'))
                        (List (1, 2, 3, 4)))
     .toEqual (List (
-      Pair.fromBoth ('A') (1),
-      Pair.fromBoth ('B') (2),
-      Pair.fromBoth ('C') (3)
+      Pair ('A') (1),
+      Pair ('B') (2),
+      Pair ('C') (3)
     ))
 })
 
@@ -586,8 +592,8 @@ test ('sortBy', () => {
 test ('indexed', () => {
   expect (List.indexed (List ('a', 'b')))
     .toEqual (List (
-      Pair.fromBoth (0) ('a'),
-      Pair.fromBoth (1) ('b')
+      Pair (0) ('a'),
+      Pair (1) ('b')
     ))
 })
 
@@ -674,7 +680,7 @@ test ('ifilter', () => {
 test ('ipartition', () => {
   expect (List.ipartition (i => x => x > 2 || i === 0)
                           (List (1, 2, 3, 4, 5)))
-    .toEqual (Pair.fromBoth (List (1, 3, 4, 5))
+    .toEqual (Pair (List (1, 3, 4, 5))
                        (List (2)))
 })
 

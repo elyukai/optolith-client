@@ -5,7 +5,7 @@ import { isString } from 'util';
 import { ActiveViewObject, DeactivateArgs, UIMessagesObject } from '../App/Models/Hero/heroTypeHelpers';
 import { translate } from '../App/Utils/I18n';
 import { getRoman } from '../App/Utils/NumberUtils';
-import { Just, List, Maybe, Nothing, Record, Tuple } from '../utils/dataUtils';
+import { Just, List, Maybe, Nothing, Record, Tuple } from '../Utilities/dataUtils';
 import { Dropdown, DropdownOption } from './Dropdown';
 import { IconButton } from './IconButton';
 import { ListItem } from './ListItem';

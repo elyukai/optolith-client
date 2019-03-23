@@ -3,12 +3,12 @@ import { Action, Dispatch } from 'redux';
 import * as EquipmentActions from '../App/Actions/EquipmentActions';
 import { AppState } from '../reducers/appReducer';
 import { getInitialStartingWealth } from '../Selectors/activatableSelectors';
-import { getHasCurrentNoAddedAP } from '../selectors/adventurePointsSelectors';
-import { getCarryingCapacity } from '../selectors/attributeSelectors';
-import { getFilteredZoneArmors, getItems, getTemplates, getTotalPrice, getTotalWeight } from '../selectors/equipmentSelectors';
-import { getArmorZonesEditorInstance, getIsInHitZoneArmorCreation, getPurse, getZoneArmorFilterText } from '../selectors/stateSelectors';
-import { Maybe } from '../utils/dataUtils';
-import { HitZoneArmors, HitZoneArmorsDispatchProps, HitZoneArmorsOwnProps, HitZoneArmorsStateProps } from '../views/hitZoneArmors/HitZoneArmors';
+import { getHasCurrentNoAddedAP } from '../Selectors/adventurePointsSelectors';
+import { getCarryingCapacity } from '../Selectors/attributeSelectors';
+import { getFilteredZoneArmors, getItems, getTemplates, getTotalPrice, getTotalWeight } from '../Selectors/equipmentSelectors';
+import { getArmorZonesEditorInstance, getIsInHitZoneArmorCreation, getPurse, getZoneArmorFilterText } from '../Selectors/stateSelectors';
+import { Maybe } from '../Utilities/dataUtils';
+import { HitZoneArmors, HitZoneArmorsDispatchProps, HitZoneArmorsOwnProps, HitZoneArmorsStateProps } from '../Views/HitZoneArmors/HitZoneArmors';
 
 const mapStateToProps = (
   state: AppState,

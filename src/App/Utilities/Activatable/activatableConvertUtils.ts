@@ -1,7 +1,7 @@
 /**
  * This file provides several helper functions for working with `Activatable`s.
  *
- * @file src/utils/activatableConvertUtils.ts
+ * @file src/Utilities/activatableConvertUtils.ts
  * @author Lukas Obermann
  * @since 1.1.0
  */

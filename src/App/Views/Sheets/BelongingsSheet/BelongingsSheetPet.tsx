@@ -5,7 +5,7 @@ import { AttributeCombined } from '../../../App/Models/View/viewTypeHelpers';
 import { translate, UIMessagesObject } from '../../../App/Utils/I18n';
 import { AvatarWrapper } from '../../../components/AvatarWrapper';
 import { TextBox } from '../../../components/TextBox';
-import { List, Maybe, Record } from '../../../utils/dataUtils';
+import { List, Maybe, Record } from '../../../Utilities/dataUtils';
 
 export interface BelongingsSheetPetProps {
   attributes: List<Record<AttributeCombined>>;

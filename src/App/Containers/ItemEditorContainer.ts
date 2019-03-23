@@ -2,10 +2,10 @@ import { connect } from 'react-redux';
 import { Action, Dispatch } from 'redux';
 import * as EquipmentActions from '../App/Actions/EquipmentActions';
 import { AppState } from '../reducers/appReducer';
-import { getSortedTemplates } from '../selectors/equipmentSelectors';
-import { getIsItemCreation, getItemEditorInstance, getWikiAttributes, getWikiCombatTechniques } from '../selectors/stateSelectors';
-import { Maybe } from '../utils/dataUtils';
-import { ItemEditor, ItemEditorDispatchProps, ItemEditorOwnProps, ItemEditorStateProps } from '../views/equipment/ItemEditor';
+import { getSortedTemplates } from '../Selectors/equipmentSelectors';
+import { getIsItemCreation, getItemEditorInstance, getWikiAttributes, getWikiCombatTechniques } from '../Selectors/stateSelectors';
+import { Maybe } from '../Utilities/dataUtils';
+import { ItemEditor, ItemEditorDispatchProps, ItemEditorOwnProps, ItemEditorStateProps } from '../Views/Equipment/ItemEditor';
 
 const mapStateToProps = (state: AppState, ownProps: ItemEditorOwnProps): ItemEditorStateProps => ({
   attributes: getWikiAttributes (state),

@@ -2,7 +2,7 @@
 const { equals } = require('../Eq');
 const { Left, Right } = require('../Either');
 const { List } = require('../List');
-const { fromBoth } = require('../Pair');
+const { Pair } = require('../Pair');
 const { fromUniqueElements } = require('../OrderedSet');
 const { fromUniquePairs } = require('../OrderedMap');
 const { Just, Nothing } = require('../Maybe');
@@ -32,8 +32,8 @@ test ('List', () => {
 })
 
 test ('Pair', () => {
-  expect (equals (fromBoth (2) ('text')) (fromBoth (2) ('text'))) .toEqual (true)
-  expect (equals (fromBoth (2) ('text')) (fromBoth (3) ('text'))) .toEqual (false)
+  expect (equals (Pair (2) ('text')) (Pair (2) ('text'))) .toEqual (true)
+  expect (equals (Pair (2) ('text')) (Pair (3) ('text'))) .toEqual (false)
 })
 
 test ('OrderedSet', () => {

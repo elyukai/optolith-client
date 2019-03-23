@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { SecondaryAttribute } from '../../App/Models/Hero/heroTypeHelpers';
 import { UIMessagesObject } from '../../types/ui';
-import { List, Record } from '../../utils/dataUtils';
+import { List, Record } from '../../Utilities/dataUtils';
 import { AttributeCalcItem } from './AttributeCalcItem';
 
 export interface AttributesCalcProps {

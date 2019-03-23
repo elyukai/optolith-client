@@ -1,10 +1,10 @@
 // @ts-check
-const { L10n } = require ("../../../../Models/Wiki/L10n")
-const { ActiveActivatable } = require ("../../../../Models/View/ActiveActivatable")
-const { makeLenses } = require ("../../../../../Data/Record")
-const { set } = require ("../../../../../Data/Lens")
-const { Just, Nothing } = require ("../../../../../Data/Maybe")
-const { List } = require ("../../../../../Data/List")
+const { L10n } = require ("../../../Models/Wiki/L10n")
+const { ActiveActivatable } = require ("../../../Models/View/ActiveActivatable")
+const { makeLenses } = require ("../../../../Data/Record")
+const { set } = require ("../../../../Data/Lens")
+const { Just, Nothing } = require ("../../../../Data/Maybe")
+const { List } = require ("../../../../Data/List")
 const { compressList } = require ("../activatableNameUtils")
 
 const L10nL = makeLenses (L10n)
@@ -20,7 +20,7 @@ test ('compressList', () => {
                                  name: "Persönlichkeitsschwäche (Arroganz)",
                                  baseName: "Persönlichkeitsschwäche",
                                  addName: Just ("Arroganz"),
-                                 tierName: Nothing,
+                                 levelName: Nothing,
                                  finalCost: Nothing,
                                  disabled: Nothing,
                                  stateEntry: Nothing,
@@ -33,7 +33,7 @@ test ('compressList', () => {
                                  name: "Persönlichkeitsschwäche (Weltfremd)",
                                  baseName: "Persönlichkeitsschwäche",
                                  addName: Just ("Weltfremd"),
-                                 tierName: Nothing,
+                                 levelName: Nothing,
                                  finalCost: Nothing,
                                  disabled: Nothing,
                                  stateEntry: Nothing,

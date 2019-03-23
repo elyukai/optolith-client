@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { Help, HelpDispatchProps, HelpOwnProps, HelpStateProps } from '../../views/help/Help';
+import { Help, HelpDispatchProps, HelpOwnProps, HelpStateProps } from '../../Views/help/Help';
 import { AppState } from '../Reducers/appReducer';
 
 const mapStateToProps = () => ({});

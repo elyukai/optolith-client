@@ -4,7 +4,7 @@ import { Skill, VariantSpecializationSelection } from '../../App/Models/Wiki/wik
 import { translate, UIMessagesObject } from '../../App/Utils/I18n';
 import { Dropdown, DropdownOption } from '../../components/Dropdown';
 import { TextField } from '../../components/TextField';
-import { Just, List, Maybe, OrderedMap, Record, Tuple } from '../../utils/dataUtils';
+import { Just, List, Maybe, OrderedMap, Record, Tuple } from '../../Utilities/dataUtils';
 
 export interface SelectionsSkillSpecializationProps {
   active: Tuple<Maybe<number>, string>;

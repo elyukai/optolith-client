@@ -4,7 +4,7 @@ import { translate, UIMessagesObject } from '../../../App/Utils/I18n';
 import { Box } from '../../../components/Box';
 import { LabelBox } from '../../../components/LabelBox';
 import { TextBox } from '../../../components/TextBox';
-import { Just, List, Maybe, Nothing, Record } from '../../../utils/dataUtils';
+import { Just, List, Maybe, Nothing, Record } from '../../../Utilities/dataUtils';
 
 export interface CombatSheetLifePointsProps {
   derivedCharacteristics: List<Record<SecondaryAttribute>>;

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { translate, UIMessagesObject } from '../../App/Utils/I18n';
 import { IconButton } from '../../components/IconButton';
-import { Maybe } from '../../utils/dataUtils';
+import { Maybe } from '../../Utilities/dataUtils';
 import { AttributeBorder } from './AttributeBorder';
 import { AttributesRemovePermanent } from './AttributesRemovePermanent';
 import { PermanentPoints } from './PermanentPoints';

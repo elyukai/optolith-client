@@ -2,7 +2,7 @@
  * Get the needed options for `Activatable` entries that are available to
  * activate.
  *
- * @file src/utils/activatableInactiveUtils.ts
+ * @file src/Utilities/activatableInactiveUtils.ts
  * @author Lukas Obermann
  * @since 1.1.0
  */

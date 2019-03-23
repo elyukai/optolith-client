@@ -14,7 +14,7 @@ import { HeroModel } from "../Models/Hero/HeroModel";
 import { ActivatableNameCost, ActivatableNameCostSafeCost } from "../Models/View/ActivatableNameCost";
 import { L10nRecord } from "../Models/Wiki/L10n";
 import { isSpecialAbility, SpecialAbility } from "../Models/Wiki/SpecialAbility";
-import { getAvailableAdventurePoints } from "../selectors/adventurePointsSelectors";
+import { getAvailableAdventurePoints } from "../Selectors/adventurePointsSelectors";
 import { getIsInCharacterCreation } from "../Selectors/phaseSelectors";
 import { getCurrentHeroPresent, getWiki } from "../Selectors/stateSelectors";
 import { getNameCost } from "../Utilities/Activatable/activatableActiveUtils";

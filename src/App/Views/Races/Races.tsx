@@ -14,7 +14,7 @@ import { Page } from '../../components/Page';
 import { Scroll } from '../../components/Scroll';
 import { SortNames, SortOptions } from '../../components/SortOptions';
 import { TextField } from '../../components/TextField';
-import { List, Maybe, Record } from '../../utils/dataUtils';
+import { List, Maybe, Record } from '../../Utilities/dataUtils';
 import { RacesListItem } from './RacesListItem';
 import { RaceVariants } from './RaceVariants';
 

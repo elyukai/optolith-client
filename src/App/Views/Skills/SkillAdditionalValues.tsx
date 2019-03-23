@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { List } from '../../utils/dataUtils';
+import { List } from '../../Utilities/dataUtils';
 
 export interface AdditionalValue {
   className: string;

@@ -3,13 +3,13 @@ import { Action, Dispatch } from 'redux';
 import * as ConfigActions from '../App/Actions/ConfigActions';
 import * as LiturgicalChantActions from '../App/Actions/LiturgicalChantActions';
 import { AppState } from '../reducers/appReducer';
-import { getAttributesForSheet } from '../selectors/attributeSelectors';
-import { getDerivedCharacteristicsMap } from '../selectors/derivedCharacteristicsSelectors';
-import { getBlessedTraditionNumericId, getFilteredActiveLiturgicalChantsAndBlessings, getFilteredInactiveLiturgicalChantsAndBlessings, isActivationDisabled } from '../selectors/liturgicalChantsSelectors';
-import { getIsRemovingEnabled } from '../selectors/phaseSelectors';
-import { getInactiveLiturgicalChantsFilterText, getLiturgicalChantsFilterText } from '../selectors/stateSelectors';
-import { getEnableActiveItemHints, getLiturgiesSortOrder } from '../selectors/uisettingsSelectors';
-import { LiturgicalChants, LiturgicalChantsDispatchProps, LiturgicalChantsOwnProps, LiturgicalChantsStateProps } from '../views/liturgicalChants/LiturgicalChants';
+import { getAttributesForSheet } from '../Selectors/attributeSelectors';
+import { getDerivedCharacteristicsMap } from '../Selectors/derivedCharacteristicsSelectors';
+import { getBlessedTraditionNumericId, getFilteredActiveLiturgicalChantsAndBlessings, getFilteredInactiveLiturgicalChantsAndBlessings, isActivationDisabled } from '../Selectors/liturgicalChantsSelectors';
+import { getIsRemovingEnabled } from '../Selectors/phaseSelectors';
+import { getInactiveLiturgicalChantsFilterText, getLiturgicalChantsFilterText } from '../Selectors/stateSelectors';
+import { getEnableActiveItemHints, getLiturgiesSortOrder } from '../Selectors/uisettingsSelectors';
+import { LiturgicalChants, LiturgicalChantsDispatchProps, LiturgicalChantsOwnProps, LiturgicalChantsStateProps } from '../Views/LiturgicalChants/LiturgicalChants';
 
 const mapStateToProps = (
   state: AppState,

@@ -6,8 +6,8 @@ import { Checkbox } from '../../components/Checkbox';
 import { Dropdown, DropdownOption } from '../../components/Dropdown';
 import { Hr } from '../../components/Hr';
 import { TextField } from '../../components/TextField';
-import { Maybe, Record } from '../../utils/dataUtils';
-import { sortObjects } from '../../utils/FilterSortUtils';
+import { Maybe, Record } from '../../Utilities/dataUtils';
+import { sortObjects } from '../../Utilities/FilterSortUtils';
 
 export interface ItemEditorArmorSectionProps {
   item: Record<ItemEditorInstance>;

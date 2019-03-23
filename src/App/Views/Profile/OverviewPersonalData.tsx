@@ -10,8 +10,8 @@ import { IconButton } from '../../components/IconButton';
 import { InputButtonGroup } from '../../components/InputButtonGroup';
 import { TextField } from '../../components/TextField';
 import { UIMessagesObject } from '../../types/ui';
-import { List, Maybe, Record } from '../../utils/dataUtils';
-import { sortObjects } from '../../utils/FilterSortUtils';
+import { List, Maybe, Record } from '../../Utilities/dataUtils';
+import { sortObjects } from '../../Utilities/FilterSortUtils';
 
 export interface OverviewPersonalDataOwnProps {
   culture: Maybe<Record<Culture>>;

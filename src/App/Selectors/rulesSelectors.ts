@@ -1,7 +1,7 @@
 import { createMaybeSelector } from '../App/Utils/createMaybeSelector';
 import { mapGetToMaybeSlice } from '../App/Utils/SelectorsUtils';
-import { isActive } from '../utils/activatable/isActive';
-import { Just, OrderedSet } from '../utils/dataUtils';
+import { isActive } from '../Utilities/Activatable/isActive';
+import { Just, OrderedSet } from '../Utilities/dataUtils';
 import { getAreAllRuleBooksEnabled, getEnabledRuleBooks, getSpecialAbilities } from './stateSelectors';
 
 export const getRuleBooksEnabled = createMaybeSelector (

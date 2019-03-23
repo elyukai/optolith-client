@@ -6,7 +6,7 @@ import { Advantage, Attribute, Blessing, Book, Cantrip, CombatTechnique, Culture
 import { WikiState } from '../../App/Reducers/wikiReducer';
 import { isItemTemplateFromMixed } from '../../App/Utils/WikiUtils';
 import { Aside } from '../../components/Aside';
-import { Maybe } from '../../utils/dataUtils';
+import { Maybe } from '../../Utilities/dataUtils';
 import { WikiActivatableInfo } from './WikiActivatableInfo';
 import { WikiBlessingInfo } from './WikiBlessingInfo';
 import { WikiCantripInfo } from './WikiCantripInfo';

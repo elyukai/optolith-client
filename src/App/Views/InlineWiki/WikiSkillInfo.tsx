@@ -1,16 +1,16 @@
 import * as React from 'react';
 import { Advantage, Attribute, Book, Skill, SpecialAbility } from '../../App/Models/Wiki/wikiTypeHelpers';
 import { UIMessages } from '../../types/data.d';
-import { WikiApplications } from './elements/WikiApplications';
-import { WikiBotch } from './elements/WikiBotch';
-import { WikiCriticalSuccess } from './elements/WikiCriticalSuccess';
-import { WikiEncumbrance } from './elements/WikiEncumbrance';
-import { WikiFailedCheck } from './elements/WikiFailedCheck';
-import { WikiImprovementCost } from './elements/WikiImprovementCost';
-import { WikiQuality } from './elements/WikiQuality';
-import { WikiSkillCheck } from './elements/WikiSkillCheck';
-import { WikiSource } from './elements/WikiSource';
-import { WikiTools } from './elements/WikiTools';
+import { WikiApplications } from './Elements/WikiApplications';
+import { WikiBotch } from './Elements/WikiBotch';
+import { WikiCriticalSuccess } from './Elements/WikiCriticalSuccess';
+import { WikiEncumbrance } from './Elements/WikiEncumbrance';
+import { WikiFailedCheck } from './Elements/WikiFailedCheck';
+import { WikiImprovementCost } from './Elements/WikiImprovementCost';
+import { WikiQuality } from './Elements/WikiQuality';
+import { WikiSkillCheck } from './Elements/WikiSkillCheck';
+import { WikiSource } from './Elements/WikiSource';
+import { WikiTools } from './Elements/WikiTools';
 import { WikiBoxTemplate } from './WikiBoxTemplate';
 
 export interface WikiSkillInfoProps {

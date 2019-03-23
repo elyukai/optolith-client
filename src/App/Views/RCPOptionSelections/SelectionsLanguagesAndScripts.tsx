@@ -6,7 +6,7 @@ import { getLevelElements } from '../../App/Utils/levelUtils';
 import { isNumber } from '../../App/Utils/typeCheckUtils';
 import { Checkbox } from '../../components/Checkbox';
 import { Dropdown, DropdownOption } from '../../components/Dropdown';
-import { Just, List, Maybe, Nothing, OrderedMap, Record } from '../../utils/dataUtils';
+import { Just, List, Maybe, Nothing, OrderedMap, Record } from '../../Utilities/dataUtils';
 
 export interface SelectionsLanguagesAndScriptsProps {
   scriptsActive: OrderedMap<number, number>;
