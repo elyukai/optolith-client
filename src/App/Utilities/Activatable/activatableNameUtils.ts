@@ -30,13 +30,14 @@ import { dec } from "../mathUtils";
 import { toRoman } from "../NumberUtils";
 import { pipe } from "../pipe";
 import { sortStrings } from "../sortBy";
-import { isNumber, isString } from "../typeCheckUtils";
+import { isNumber, isString, misNumberM, misStringM } from "../typeCheckUtils";
 import { getWikiEntry, isActivatableWikiEntry, isSkillishWikiEntry } from "../WikiUtils";
 import { findSelectOption, getSelectOptionName } from "./selectionUtils";
 
 const { skills, spells, liturgicalChants, specialAbilities } = WikiModel.A
 const { id, sid, sid2, tier } = ActiveObjectWithId.A
-const { name, tier: aatier, tierName, addName, baseName } = ActiveActivatable.A
+const AA = ActiveActivatable.A_
+const name = ActiveActivatable.A.name
 const { input, select } = Advantage.A
 const { applications } = Skill.A
 const { target, specializations } = SelectOption.A
@@ -51,9 +52,9 @@ export const getFullName =
       return obj
     }
 
-    return maybe (name (obj))
-                 ((level_name: string) => name (obj) + level_name)
-                 (tierName (obj))
+    return maybe (AA.name (obj))
+                 ((level_name: string) => AA.name (obj) + level_name)
+                 (AA.levelName (obj))
   }
 
 /**
@@ -97,7 +98,7 @@ const getEntrySpecificNameAddition =
       case "SA_569":
         return pipe (
                       sid,
-                      bindF (ensure (isString)),
+                      misStringM,
                       bindF (getWikiEntry (wiki)),
                       bindF<EntryWithCategory, SkillishEntry> (ensure (isSkillishWikiEntry)),
                       fmap (name)
@@ -146,13 +147,13 @@ const getEntrySpecificNameAddition =
       case "SA_9":
         return pipe (
                       sid,
-                      bindF (ensure (isString)),
+                      misStringM,
                       bindF (lookupF (skills (wiki))),
                       bindF (skill => pipe (
                                         sid2,
 
                                         // If input string use input
-                                        bindF (ensure (isString)),
+                                        misStringM,
 
                                         // Otherwise lookup application name
                                         altF_ (() => pipe (
@@ -205,7 +206,7 @@ const getEntrySpecificNameAddition =
       case "SA_678": {
         return pipe (
                       sid2,
-                      bindF (ensure (isNumber)),
+                      misNumberM,
                       bindF (pipe (dec, subscript (translate (l10n) ("musictraditions"))))
                     )
                     (hero_entry)
@@ -215,7 +216,7 @@ const getEntrySpecificNameAddition =
       case "SA_680":
         return pipe (
                       sid,
-                      bindF (ensure (isString)),
+                      misStringM,
                       bindF (lookupF (skills (wiki))),
                       fmap (skill => `: ${name (skill)}`)
                     )
@@ -342,7 +343,7 @@ export const getName =
            id,
            getWikiEntry (wiki),
            bindF<EntryWithCategory, Activatable> (ensure (isActivatableWikiEntry)),
-           fmap (wiki_entry => {
+           fmap ((wiki_entry: Activatable) => {
              const maddName = getEntrySpecificNameAddition (l10n)
                                                            (wiki)
                                                            (wiki_entry)
@@ -383,14 +384,14 @@ export const compressList =
                                           map ((x: Record<ActiveActivatable>) => {
                                             const levelPart =
                                               pipe (
-                                                     aatier,
+                                                     AA.tier,
                                                      fmap (pipe (toRoman, appendStr (" "))),
                                                      fromMaybe ("")
                                                    )
                                                    (x)
 
                                             const selectOptionPart =
-                                              fromMaybe ("") (addName (x))
+                                              fromMaybe ("") (AA.addName (x))
 
                                             return selectOptionPart + levelPart
                                           }),
@@ -399,7 +400,7 @@ export const compressList =
                                           x => ` (${x})`,
                                           x => maybe ("")
                                                      ((r: Record<ActiveActivatable>) =>
-                                                       baseName (r) + x)
+                                                       AA.baseName (r) + x)
                                                      (listToMaybe (xs_group))
                                         )
                                         (xs_group))

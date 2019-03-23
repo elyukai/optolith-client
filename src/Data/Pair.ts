@@ -137,6 +137,15 @@ export const curry =
     f (Pair (a, b))
 
 /**
+ * `curryN :: ((a, b) -> c) -> a -> b -> c`
+ *
+ * `curryN` converts an uncurried function to a curried function.
+ */
+export const curryN =
+  <A, B, C> (f: (x: A, y: B) => C) => (a: A) => (b: B): C =>
+    f (a, b)
+
+/**
  * `uncurry :: (a -> b -> c) -> (a, b) -> c`
  *
  * `uncurry` converts a curried function to a function on pairs.
@@ -144,6 +153,15 @@ export const curry =
 export const uncurry =
   <A, B, C> (f: (a: A) => (b: B) => C) => (x: Pair<A, B>): C =>
     f (x .first) (x .second)
+
+/**
+ * `uncurryN :: (a -> b -> c) -> (a, b) -> c`
+ *
+ * `uncurryN` converts a curried function to a function on pairs.
+ */
+export const uncurryN =
+  <A, B, C> (f: (a: A) => (b: B) => C) => (x: A, y: B): C =>
+    f (x) (y)
 
 /**
  * `swap :: (a, b) -> (b, a)`

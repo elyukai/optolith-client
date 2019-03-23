@@ -512,6 +512,8 @@ export const insert =
   (mp: OrderedMap<K, A>): OrderedMap<K, A> =>
     fromArray ([...mp .value, [key, value]])
 
+export type insert<K, A> = (key: K) => (value: A) => (mp: OrderedMap<K, A>) => OrderedMap<K, A>
+
 /**
  * `insertWith :: Ord k => (a -> a -> a) -> k -> a -> Map k a -> Map k a`
  *

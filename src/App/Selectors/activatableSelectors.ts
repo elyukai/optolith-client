@@ -1,22 +1,29 @@
 import { flip, ident } from "../../Data/Function";
 import { fmap, fmapF } from "../../Data/Functor";
-import { elem, foldr } from "../../Data/List";
-import { Just, liftM3 } from "../../Data/Maybe";
-import { insert, OrderedMap } from "../../Data/OrderedMap";
+import { consF, elem, elemF, filter, foldr, intercalate, List, map } from "../../Data/List";
+import { fromMaybe, Just, liftM2, liftM3, mapMaybe, Nothing } from "../../Data/Maybe";
+import { insert, lookup, OrderedMap } from "../../Data/OrderedMap";
+import { uncurryN } from "../../Data/Pair";
 import { Record } from "../../Data/Record";
 import { ActivatableCategory, Categories } from "../Constants/Categories";
+import { IdPrefixes } from "../Constants/IdPrefixes";
+import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
 import { EntryRating } from "../Models/Hero/heroTypeHelpers";
+import { ActiveActivatable } from "../Models/View/ActiveActivatable";
 import { Culture } from "../Models/Wiki/Culture";
 import { L10n } from "../Models/Wiki/L10n";
 import { Profession } from "../Models/Wiki/Profession";
 import { Race } from "../Models/Wiki/Race";
+import { SpecialAbility } from "../Models/Wiki/SpecialAbility";
 import { getAllActiveByCategory } from "../Utilities/Activatable/activatableActiveUtils";
-import { getModifierByActiveLevel } from "../Utilities/Activatable/activatableModifierUtils";
-import { getActiveSelections } from "../Utilities/Activatable/selectionUtils";
+import { getModifierByActiveLevel, getModifierByIsActive } from "../Utilities/Activatable/activatableModifierUtils";
+import { getBracketedNameFromFullName } from "../Utilities/Activatable/activatableNameUtils";
+import { getActiveSelections, getSelectOptionName } from "../Utilities/Activatable/selectionUtils";
 import { createMaybeSelector } from "../Utilities/createMaybeSelector";
-import { filterAndSortRecordsByName } from "../Utilities/filterAndSortBy";
+import { filterAndSortRecordsBy, filterAndSortRecordsByName } from "../Utilities/filterAndSortBy";
+import { prefixId } from "../Utilities/IDUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
-import { mapGetToMaybeSlice } from "../Utilities/SelectorsUtils";
+import { mapGetToMaybeSlice, mapGetToSlice } from "../Utilities/SelectorsUtils";
 import { getBlessedTraditionFromWikiState } from "./liturgicalChantsSelectors";
 import { getCurrentCulture, getCurrentProfession, getCurrentRace } from "./rcpSelectors";
 import { getSpecialAbilitiesSortOptions } from "./sortOptionsSelectors";
@@ -42,8 +49,7 @@ export const getActiveForEditView = <T extends ActivatableCategory>(category: T)
 
 type RatingMap = OrderedMap<string, EntryRating>
 
-const insertRating =
-  flip (insert) as (value: EntryRating) => (key: string) => ident<OrderedMap<string, EntryRating>>
+const insertRating = flip (insert as insert<string, EntryRating>)
 
 export const getAdvantagesRating = createMaybeSelector (
   getCurrentRace,
@@ -161,135 +167,126 @@ export const getSpecialAbilitiesForEdit = createMaybeSelector (
   ident
 )
 
+type ActiveSpecialAbility = Record<ActiveActivatable<SpecialAbility>>
+
 export const getFilteredActiveSpecialAbilities = createMaybeSelector (
   getSpecialAbilitiesForEdit,
   getSpecialAbilitiesSortOptions,
   getSpecialAbilitiesFilterText,
   getLocaleAsProp,
-  (maybeSpecialAbilities, sortOptions, filterText, locale) => maybeSpecialAbilities.fmap (
-    specialAbilities => filterAndSortObjects (
-      specialAbilities,
-      locale.get ("id"),
-      filterText,
-      sortOptions as AllSortOptions<Data.ActiveViewObject<Wiki.SpecialAbility>>
-    )
-  )
+  (mspecial_abilities, sortOptions, filterText) =>
+    fmapF (mspecial_abilities)
+          (filterAndSortRecordsBy (0)
+                                  ([
+                                    ActiveActivatable.A.name as (x: ActiveSpecialAbility) => string,
+                                  ])
+                                  (sortOptions)
+                                  (filterText))
 )
-
-type ActiveSpecialAbilityView = Data.ActiveViewObject<Wiki.SpecialAbility>
 
 export const getGeneralSpecialAbilitiesForSheet = createMaybeSelector (
+  getWikiSpecialAbilities,
   getSpecialAbilitiesForSheet,
-  getLocaleAsProp,
   getCultureAreaKnowledge,
-  (maybeSpecialAbilities, locale, cultureAreaKnowledge) => maybeSpecialAbilities.fmap (
-    specialAbilities => (
-      specialAbilities
-        .filter (R.pipe (
-          Record.get<ActiveSpecialAbilityView, "wikiEntry"> ("wikiEntry"),
-          Record.get<Wiki.SpecialAbility, "gr"> ("gr"),
-          flip<number, List<number>, boolean> (List.elem) (List.return (1, 2, 22, 30))
-        )) as List<Record<ActiveSpecialAbilityView> | string>
-    )
-      .cons (translate (
-        locale,
-        "charactersheet.main.generalspecialabilites.areaknowledge",
-        Maybe.fromMaybe ("") (cultureAreaKnowledge)
-      ))
-  )
+  (wiki_special_abilities, mspecial_abilities, culture_area_knowledge_text) =>
+    liftM2 ((culture_area_knowledge: Record<SpecialAbility>) =>
+             pipe (
+                    filter (pipe (
+                             ActiveActivatable.A_.wikiEntry,
+                             SpecialAbility.A.gr,
+                             elemF (List (1, 2, 22, 30))
+                           )),
+                    consF (ActiveActivatable ({
+                            id: SpecialAbility.A_.id (culture_area_knowledge),
+
+                            sid: Nothing,
+                            sid2: Nothing,
+                            tier: Nothing,
+                            cost: Nothing,
+
+                            index: -1,
+
+                            name:
+                              `${SpecialAbility.A_.name (culture_area_knowledge)}`
+                              + ` (${fromMaybe ("") (culture_area_knowledge_text)})`,
+                            baseName: SpecialAbility.A_.name (culture_area_knowledge),
+                            addName: culture_area_knowledge_text,
+
+                            levelName: Nothing,
+
+                            finalCost: 0,
+
+                            disabled: true,
+                            maxLevel: Nothing,
+                            minLevel: Nothing,
+
+                            stateEntry: ActivatableDependent.default,
+                            wikiEntry: SpecialAbility.default,
+                          }))))
+           (lookup (prefixId (IdPrefixes.SPECIAL_ABILITIES) (22))
+                   (wiki_special_abilities))
+           (mspecial_abilities)
 )
+
+const getSpecialAbilitiesByGroups =
+  (grs: List<number>) =>
+    fmap (filter (pipe (
+      ActiveActivatable.A_.wikiEntry,
+      SpecialAbility.A.gr,
+      elemF (grs)
+    )))
 
 export const getCombatSpecialAbilitiesForSheet = createMaybeSelector (
   getSpecialAbilitiesForSheet,
-  maybeSpecialAbilities => maybeSpecialAbilities.fmap (
-    specialAbilities => specialAbilities
-      .filter (R.pipe (
-        Record.get<ActiveSpecialAbilityView, "wikiEntry"> ("wikiEntry"),
-        Record.get<Wiki.SpecialAbility, "gr"> ("gr"),
-        flip<number, List<number>, boolean> (List.elem) (List.return (3, 9, 10, 11, 12, 21))
-      ))
-  )
+  getSpecialAbilitiesByGroups (List (4, 5, 6, 13, 14, 15, 16, 17, 18, 19, 20, 28))
 )
 
 export const getMagicalSpecialAbilitiesForSheet = createMaybeSelector (
   getSpecialAbilitiesForSheet,
-  maybeSpecialAbilities => maybeSpecialAbilities.fmap (
-    specialAbilities => specialAbilities
-      .filter (R.pipe (
-        Record.get<ActiveSpecialAbilityView, "wikiEntry"> ("wikiEntry"),
-        Record.get<Wiki.SpecialAbility, "gr"> ("gr"),
-        flip<number, List<number>, boolean> (List.elem)
-          (List.return (4, 5, 6, 13, 14, 15, 16, 17, 18, 19, 20, 28))
-      ))
-  )
+  getSpecialAbilitiesByGroups (List (3, 9, 10, 11, 12, 21))
 )
 
 export const getBlessedSpecialAbilitiesForSheet = createMaybeSelector (
   getSpecialAbilitiesForSheet,
-  maybeSpecialAbilities => maybeSpecialAbilities.fmap (
-    specialAbilities => specialAbilities
-      .filter (R.pipe (
-        Record.get<ActiveSpecialAbilityView, "wikiEntry"> ("wikiEntry"),
-        Record.get<Wiki.SpecialAbility, "gr"> ("gr"),
-        flip<number, List<number>, boolean> (List.elem) (List.return (7, 8, 23, 24, 25, 26, 27, 29))
-      ))
-  )
+  getSpecialAbilitiesByGroups (List (7, 8, 23, 24, 25, 26, 27, 29))
 )
 
 export const getFatePointsModifier = createMaybeSelector (
-  mapGetToMaybeSlice (getAdvantages, "ADV_14"),
-  mapGetToMaybeSlice (getDisadvantages, "DISADV_31"),
-  (maybeIncrease, maybeDecrease) => getModifierByIsActive (maybeIncrease)
-                                                          (maybeDecrease)
-                                                          (Nothing ())
+  mapGetToMaybeSlice (getAdvantages) ("ADV_14"),
+  mapGetToMaybeSlice (getDisadvantages) ("DISADV_31"),
+  uncurryN (getModifierByIsActive (Nothing))
 )
 
 export const getMagicalTraditionForSheet = createMaybeSelector (
   getMagicalTraditionsFromWikiState,
-  maybeSpecialAbilities => maybeSpecialAbilities.fmap (
-    specialAbilities => specialAbilities
-      .map (R.pipe (
-        Record.get<Wiki.SpecialAbility, "name"> ("name"),
-        getBracketedNameFromFullName
-      ))
-      .intercalate (", ")
-  )
-)
-
-export const getPropertyKnowledgesForSheet = createMaybeSelector (
-  mapGetToMaybeSlice (getSpecialAbilities, "SA_72"),
-  getWikiSpecialAbilities,
-  (propertyKnowledge, wikiSpecialAbilities) =>
-    wikiSpecialAbilities.lookup ("SA_72").bind (
-      wikiPropertyKnowledge => getActiveSelections (propertyKnowledge).fmap (
-        Maybe.mapMaybe (R.pipe (
-          Maybe.return,
-          e => getSelectOptionName (wikiPropertyKnowledge, e)
-        ))
-      )
-    )
+  fmap (pipe (
+    map (pipe (SpecialAbility.A_.name, getBracketedNameFromFullName)),
+    intercalate (", ")
+  ))
 )
 
 export const getBlessedTraditionForSheet = createMaybeSelector (
   getBlessedTraditionFromWikiState,
-  maybeTradition => maybeTradition.fmap (R.pipe (
-    Record.get<Wiki.SpecialAbility, "name"> ("name"),
-    getBracketedNameFromFullName
-  ))
+  fmap (pipe (SpecialAbility.A_.name, getBracketedNameFromFullName))
+)
+
+const getPropertyOrAspectKnowledgesForSheet =
+  uncurryN (
+    liftM2 ((hero_entry: Record<ActivatableDependent>) => (wiki_entry: Record<SpecialAbility>) =>
+             mapMaybe ((x: string | number) =>
+                         pipe_ (x, Just, getSelectOptionName (wiki_entry)))
+                       (getActiveSelections (hero_entry))))
+
+export const getPropertyKnowledgesForSheet = createMaybeSelector (
+  mapGetToMaybeSlice (getSpecialAbilities) ("SA_72"),
+  mapGetToSlice (getWikiSpecialAbilities) ("SA_72"),
+  getPropertyOrAspectKnowledgesForSheet
 )
 
 export const getAspectKnowledgesForSheet = createMaybeSelector (
-  mapGetToMaybeSlice (getSpecialAbilities, "SA_87"),
-  getWikiSpecialAbilities,
-  (aspectKnowledge, wikiSpecialAbilities) =>
-    wikiSpecialAbilities.lookup ("SA_87").bind (
-      wikiAspectKnowledge => getActiveSelections (aspectKnowledge).fmap (
-        Maybe.mapMaybe (R.pipe (
-          Maybe.return,
-          e => getSelectOptionName (wikiAspectKnowledge, e)
-        ))
-      )
-    )
+  mapGetToMaybeSlice (getSpecialAbilities) ("SA_87"),
+  mapGetToSlice (getWikiSpecialAbilities) ("SA_87"),
+  getPropertyOrAspectKnowledgesForSheet
 )
 
 export const getInitialStartingWealth = createMaybeSelector (

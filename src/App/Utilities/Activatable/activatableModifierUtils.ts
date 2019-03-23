@@ -42,9 +42,9 @@ export const getModifierByActiveLevel =
   }
 
 export const getModifierByIsActive =
+  (mbase_mod: Maybe<number>) =>
   (mincrease: Maybe<Record<ActivatableDependent>>) =>
-  (mdecrease: Maybe<Record<ActivatableDependent>>) =>
-  (mbase_mod: Maybe<number>) => {
+  (mdecrease: Maybe<Record<ActivatableDependent>>) =>{
     const hasIncrease = isMaybeActive (mincrease)
     const hasDecrease = isMaybeActive (mdecrease)
 

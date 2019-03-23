@@ -1,4 +1,5 @@
 import { List } from "../../../Data/List";
+import { elem, OrderedSet } from "../../../Data/OrderedSet";
 import { fromDefault, Record } from "../../../Data/Record";
 import { ActivatableNameCostActive } from "../Hero/heroTypeHelpers";
 import { ProfessionRequireIncreasable } from "../Wiki/prerequisites/IncreasableRequirement";
@@ -41,3 +42,7 @@ export const ProfessionCombined =
     mappedLiturgicalChants: List.empty,
     mappedVariants: List.empty,
   })
+
+export const isProfessionCombined =
+  (x: Record<Profession> | Record<ProfessionCombined>): x is Record<ProfessionCombined> =>
+    elem<keyof ProfessionCombined> ("wikiEntry") (x .keys as OrderedSet<keyof ProfessionCombined>)

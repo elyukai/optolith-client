@@ -1,5 +1,6 @@
 import { List } from "../../../Data/List";
 import { Just, Maybe, Nothing } from "../../../Data/Maybe";
+import { elem, OrderedSet } from "../../../Data/OrderedSet";
 import { fromDefault, makeLenses, Record } from "../../../Data/Record";
 import { ItemTemplate } from "../Wiki/ItemTemplate";
 import { PrimaryAttributeDamageThreshold } from "../Wiki/sub/PrimaryAttributeDamageThreshold";
@@ -94,6 +95,10 @@ export const Item =
   })
 
 export const ItemL = makeLenses (Item)
+
+export const isItem =
+  (x: Record<Item> | Record<ItemTemplate>): x is Record<Item> =>
+    elem<keyof Item> ("where") (x .keys as OrderedSet<keyof Item>)
 
 export const fromItemTemplate =
   (new_id: string) =>
