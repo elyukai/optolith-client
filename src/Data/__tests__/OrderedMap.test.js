@@ -8,6 +8,7 @@ const { Pair } = require('../Pair');
 const { OrderedSet } = require('../OrderedSet');
 const { fromArray, fromUniquePairs, fromMap, OrderedMap } = require('../OrderedMap');
 const { Just, Nothing, Maybe } = require('../Maybe');
+const { add } = require('../../App/Utilities/mathUtils');
 
 // CONSTRUCTOR
 
@@ -674,4 +675,22 @@ test ('deleteLookupWithKey', () => {
   expect (OrderedMap.deleteLookupWithKey (3) (map))
     .toEqual (Pair (Just ('c'))
                        (fromArray ([[1, 'a'], [2, 'b']])))
+})
+
+test ('lookup2', () => {
+  const map = fromArray ([["t", 1], ["te", 2], ["tes", 3], ["test", 4], ["tests", 5]])
+  const map2 = fromArray ([["t", 6], ["te", 7], ["tes", 8], ["test", 9], ["testss", 0]])
+
+  expect (OrderedMap.lookup2 (add) ("test") (map) (map2)) .toEqual (Just (13))
+  expect (OrderedMap.lookup2 (add) ("tests") (map) (map2)) .toEqual (Nothing)
+  expect (OrderedMap.lookup2 (add) ("testsss") (map) (map2)) .toEqual (Nothing)
+})
+
+test ('lookup2F', () => {
+  const map = fromArray ([["t", 1], ["te", 2], ["tes", 3], ["test", 4], ["tests", 5]])
+  const map2 = fromArray ([["t", 6], ["te", 7], ["tes", 8], ["test", 9], ["testss", 0]])
+
+  expect (OrderedMap.lookup2F ("test") (map) (map2) (add)) .toEqual (Just (13))
+  expect (OrderedMap.lookup2F ("tests") (map) (map2) (add)) .toEqual (Nothing)
+  expect (OrderedMap.lookup2F ("testsss") (map) (map2) (add)) .toEqual (Nothing)
 })

@@ -6,7 +6,7 @@
  * @author Lukas Obermann
  */
 
-import { pipe } from "ramda";
+import { pipe } from "../App/Utilities/pipe";
 
 export type Ordering = LT | EQ | GT
 

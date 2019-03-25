@@ -6,7 +6,7 @@
  * @author Lukas Obermann
  */
 
-import { pipe } from "ramda";
+import { pipe } from "../App/Utilities/pipe";
 import { Identity, runIdentity } from "../Control/Monad/Identity";
 import { fmap } from "./Functor";
 import { Const, getConst } from "./Functor/Const";

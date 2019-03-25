@@ -1,94 +1,103 @@
-import * as R from 'ramda';
-import * as Data from '../App/Models/Hero/heroTypeHelpers';
-import * as View from '../App/Models/View/viewTypeHelpers';
-import * as Wiki from '../App/Models/Wiki/wikiTypeHelpers';
-import { createMaybeSelector } from '../App/Utils/createMaybeSelector';
-import { getNumericBlessedTraditionIdByInstanceId, getNumericMagicalTraditionIdByInstanceId } from '../App/Utils/IDUtils';
-import { createAttributeDependent } from '../Utilities/createEntryUtils';
-import { Just, List, Maybe, Nothing, OrderedMap, Record, Tuple } from '../Utilities/dataUtils';
-import { flattenDependencies } from '../Utilities/dependencies/flattenDependencies';
-import { flip } from '../Utilities/flip';
-import { getCurrentEl, getStartEl } from './elSelectors';
-import { getBlessedTraditionFromState } from './liturgicalChantsSelectors';
-import { getCurrentRace } from './rcpSelectors';
-import { getMagicalTraditionsFromState } from './spellsSelectors';
-import { getAttributes, getAttributeValueLimit, getCurrentAttributeAdjustmentId, getCurrentHeroPresent, getPhase, getWiki, getWikiAttributes } from './stateSelectors';
+import { equals } from "../../Data/Eq";
+import { blackbirdF, flip } from "../../Data/Function";
+import { fmap, fmapF, mapReplace } from "../../Data/Functor";
+import { cons, consF, elem, filter, find, List, maximum } from "../../Data/List";
+import { and, any, bind, bindF, ensure, fromJust, fromMaybe, isJust, isNothing, join, Just, liftM2, mapMaybe, maybe, Maybe, Nothing, or } from "../../Data/Maybe";
+import { foldr, keys, lookup, lookup2, lookupF, OrderedMap } from "../../Data/OrderedMap";
+import { fst, snd, uncurryN } from "../../Data/Pair";
+import { Record } from "../../Data/Record";
+import { IdPrefixes } from "../Constants/IdPrefixes";
+import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
+import { AttributeDependent, createPlainAttributeDependent } from "../Models/ActiveEntries/AttributeDependent";
+import { HeroModel, HeroModelRecord } from "../Models/Hero/HeroModel";
+import { AttributeCombined, newAttributeCombined } from "../Models/View/AttributeCombined";
+import { AttributeWithRequirements } from "../Models/View/AttributeWithRequirements";
+import { Attribute } from "../Models/Wiki/Attribute";
+import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel";
+import { Race } from "../Models/Wiki/Race";
+import { WikiModel, WikiModelRecord } from "../Models/Wiki/WikiModel";
+import { createMaybeSelector } from "../Utilities/createMaybeSelector";
+import { flattenDependencies } from "../Utilities/Dependencies/flattenDependencies";
+import { getNumericMagicalTraditionIdByInstanceId, prefixId } from "../Utilities/IDUtils";
+import { add, gte, lt, multiply, subtractBy } from "../Utilities/mathUtils";
+import { pipe, pipe_ } from "../Utilities/pipe";
+import { getCurrentEl, getStartEl } from "./elSelectors";
+import { getBlessedTraditionFromState } from "./liturgicalChantsSelectors";
+import { getCurrentRace } from "./rcpSelectors";
+import { getMagicalTraditionsFromState } from "./spellsSelectors";
+import { getAttributes, getAttributeValueLimit, getCurrentAttributeAdjustmentId, getCurrentHeroPresent, getPhase, getWiki, getWikiAttributes } from "./stateSelectors";
+
+const ACA = AttributeCombined.A_
+const AA = Attribute.A_
+const ADA = AttributeDependent.A_
+const AWRA = AttributeWithRequirements.A_
 
 export const getAttributeSum = createMaybeSelector (
   getAttributes,
-  R.pipe (
-    Maybe.fmap (
-      OrderedMap.foldl<Record<Data.AttributeDependent>, number> (sum => e =>
-                                                                  sum + e.get ('value') - 8)
-                                                                (64)
-    ),
-    Maybe.fromMaybe (0)
-  )
-);
+  maybe (0) (foldr (pipe (ADA.value, add)) (0))
+)
 
-const justTrue = Just (true);
-const lastPhase = Just (3);
+/**
+ * Returns the modifier if the attribute specified by `id` is a member of the
+ * race `race`
+ */
+const getModIfSelectedAdjustment =
+  (id: string) =>
+  (race: Record<Race>) =>
+    pipe_ (
+      race,
+      Race.A_.attributeAdjustmentsSelection,
+      snd,
+      ensure (elem (id)),
+      mapReplace (fst (Race.A_.attributeAdjustmentsSelection (race))),
+      Maybe.sum
+    )
 
-const getModIfSelectedAdjustment = (id: string) =>
-  (race: Record<Wiki.Race>) =>
-    R.pipe
-      (
-        Record.get<Wiki.Race, 'attributeAdjustmentsSelection'> ('attributeAdjustmentsSelection'),
-        Tuple.snd,
-        Maybe.ensure (List.elem (id)),
-        Maybe.mapReplace (Tuple.fst (race .get ('attributeAdjustmentsSelection'))),
-        Maybe.fromMaybe (0)
-      )
-      (race);
+const getModIfStaticAdjustment =
+  (id: string) =>
+    pipe (
+      Race.A_.attributeAdjustments,
+      List.lookup (id),
+      Maybe.sum
+    )
 
-const getModIfStaticAdjustment = (id: string) => R.pipe (
-  Record.get<Wiki.Race, 'attributeAdjustments'> ('attributeAdjustments'),
-  List.lookup (id),
-  Maybe.fromMaybe (0)
-);
+const getAttributeMaximum =
+  (id: string) =>
+  (mrace: Maybe<Record<Race>>) =>
+  (adjustmentId: string) =>
+  (startEl: Maybe<Record<ExperienceLevel>>) =>
+  (currentEl: Maybe<Record<ExperienceLevel>>) =>
+  (phase: Maybe<number>) =>
+  (attributeValueLimit: Maybe<boolean>): Maybe<number> => {
+    if (any (lt (3)) (phase)) {
+      if (isJust (mrace)) {
+        const race = fromJust (mrace)
+        const selectedAdjustment = adjustmentId === id ? getModIfSelectedAdjustment (id) (race) : 0
+        const staticAdjustment = getModIfStaticAdjustment (id) (race)
 
-const getAttributeMaximum = (
-  id: string,
-  maybeRace: Maybe<Record<Wiki.Race>>,
-  adjustmentId: string,
-  startEl: Maybe<Record<Wiki.ExperienceLevel>>,
-  currentEl: Maybe<Record<Wiki.ExperienceLevel>>,
-  phase: Maybe<number>,
-  attributeValueLimit: Maybe<boolean>
-): Maybe<number> => {
-  if (phase .lt (lastPhase)) {
-    if (Maybe.isJust (maybeRace)) {
-      const race = Maybe.fromJust (maybeRace);
-      const selectedAdjustment = adjustmentId === id ? getModIfSelectedAdjustment (id) (race) : 0;
-      const staticAdjustment = getModIfStaticAdjustment (id) (race);
+        return fmapF (startEl)
+                     (pipe (
+                       ExperienceLevel.A_.maxAttributeValue,
+                       add (selectedAdjustment + staticAdjustment)
+                     ))
+      }
 
-      return startEl
-        .fmap (
-          el => el.get ('maxAttributeValue') + selectedAdjustment + staticAdjustment
-        );
+      return Just (0)
     }
 
-    return Just (0);
-  }
-  else if (attributeValueLimit .equals (justTrue)) {
-    return currentEl .fmap (el => el.get ('maxAttributeValue') + 2);
+    if (or (attributeValueLimit)) {
+      return fmapF (currentEl) (pipe (ExperienceLevel.A_.maxAttributeValue, add (2)))
+    }
+
+    return Nothing
   }
 
-  return Nothing ();
-};
-
-const getAttributeMinimum = (
-  wiki: Wiki.WikiRecord,
-  state: Data.Hero,
-  dependencies: Data.AttributeDependent['dependencies']
-): number =>
-  flattenDependencies (
-    wiki,
-    state,
-    dependencies
-  )
-    .cons (8)
-    .maximum ();
+const getAttributeMinimum =
+  (wiki: WikiModelRecord) =>
+  (hero: HeroModelRecord) =>
+  (dependencies: AttributeDependent["dependencies"]): number =>
+    maximum (cons (flattenDependencies (wiki) (hero) (dependencies))
+                  (8))
 
 /**
  * Returns a `List` of attributes including state, full wiki infos and a
@@ -101,54 +110,43 @@ export const getAttributesForView = createMaybeSelector (
   getPhase,
   getAttributeValueLimit,
   getWiki,
-  (
-    maybeHero,
-    startEl,
-    currentEl,
-    phase,
-    attributeValueLimit,
-    wiki
-  ) =>
-    Maybe.fromMaybe<List<Record<View.AttributeWithRequirements>>> (List.of ()) (
-      maybeHero.fmap (
-        hero => wiki .get ('attributes').foldr<List<Record<View.AttributeWithRequirements>>> (
-          list => wikiEntry => {
-            const stateEntry =
-              Maybe.fromMaybe
-                (createAttributeDependent (wikiEntry .get ('id')))
-                (hero .get ('attributes') .lookup (wikiEntry .get ('id')));
+  getCurrentRace,
+  (mhero, startEl, currentEl, mphase, attributeValueLimit, wiki, mrace) =>
+    fmapF (mhero)
+          (hero => foldr ((wiki_entry: Record<Attribute>) => {
+                           const current_id = AA.id (wiki_entry)
 
-            const max = getAttributeMaximum (
-              wikiEntry .get ('id'),
-              hero .lookup ('race') .bind (OrderedMap.lookup_ (wiki .get ('races'))),
-              hero .get ('attributeAdjustmentSelected'),
-              startEl,
-              currentEl,
-              phase,
-              attributeValueLimit
-            );
+                           const hero_entry = fromMaybe (createPlainAttributeDependent (current_id))
+                                                        (pipe_ (
+                                                          hero,
+                                                          HeroModel.A_.attributes,
+                                                          lookup (current_id)
+                                                        ))
 
-            const min = getAttributeMinimum (
-              wiki,
-              hero,
-              stateEntry .get ('dependencies')
-            );
+                           const max =
+                            getAttributeMaximum (current_id)
+                                                (mrace)
+                                                (HeroModel.A_.attributeAdjustmentSelected (hero))
+                                                (startEl)
+                                                (currentEl)
+                                                (mphase)
+                                                (attributeValueLimit)
 
-            return list.cons (
-              stateEntry
-                .merge (wikiEntry)
-                .merge (
-                  Record.ofMaybe<{ max?: number; min: number }> ({
-                    max,
-                    min,
-                  })
-                )
-            );
-          }
-        ) (List.of ())
-      )
-    )
-);
+                           const min =
+                             getAttributeMinimum (wiki)
+                                                 (hero)
+                                                 (ADA.dependencies (hero_entry))
+
+                           return consF (AttributeWithRequirements ({
+                                          max,
+                                          min,
+                                          stateEntry: hero_entry,
+                                          wikiEntry: wiki_entry,
+                                        }))
+                         })
+                         (List.empty)
+                         (WikiModel.A_.attributes (wiki)))
+)
 
 /**
  * Returns a `List` of attributes containing the current state and full wiki
@@ -157,119 +155,108 @@ export const getAttributesForView = createMaybeSelector (
 export const getAttributesForSheet = createMaybeSelector (
   getAttributes,
   getWikiAttributes,
-  (maybeAttributes, wiki) =>
-    Maybe.fromMaybe<List<Record<View.AttributeCombined>>> (List.of ()) (
-      maybeAttributes.fmap (
-        stateAttributes =>
-          wiki
-            .elems ()
-            .map (
-              wikiEntry => wikiEntry
-                .merge (
-                  Maybe.fromMaybe
-                    (createAttributeDependent (wikiEntry .get ('id')))
-                    (stateAttributes .lookup (wikiEntry .get ('id')))
-                )
-            )
-        )
-      )
-);
+  (mhero_attributes, wiki_attributes) =>
+    fmapF (mhero_attributes)
+          (hero_attributes =>
+            mapMaybe (flip (flip (lookup2 (newAttributeCombined))
+                                          (wiki_attributes))
+                           (hero_attributes))
+                     (keys (wiki_attributes)))
+)
 
 /**
  * Returns the maximum attribute value of the list of given attribute ids.
  */
-export const getMaxAttributeValueByID = (attributes: Data.HeroDependent['attributes']) => R.pipe (
-  Maybe.mapMaybe<string, number> (
-    id => attributes .lookup (id) .fmap (attribute => attribute.get ('value'))
-  ),
-  flip<List<number>, number, List<number>> (List.cons) (8),
-  List.maximum
-);
+export const getMaxAttributeValueByID =
+  (attributes: HeroModel["attributes"]) =>
+    pipe (
+      mapMaybe (pipe (lookupF (attributes), fmap (ADA.value))),
+      consF (8),
+      maximum
+    )
 
-const getPrimaryMagicalAttributeInstance = (
-  tradition: Record<Data.ActivatableDependent>,
-  maybeAttributes: Maybe<Data.HeroDependent['attributes']>,
-  wikiAttributes: Wiki.WikiAll['attributes']
-): Maybe<Record<View.AttributeCombined>> =>
-  getNumericMagicalTraditionIdByInstanceId (tradition.get ('id'))
-    .bind (
-      numericId => {
+const getAttributeCombined =
+  (wiki_attributes: OrderedMap<string, Record<Attribute>>) =>
+  (mhero_attributes: Maybe<OrderedMap<string, Record<AttributeDependent>>>) =>
+  (id: string) =>
+    bind (mhero_attributes)
+         (lookup2 (newAttributeCombined)
+                  (id)
+                  (wiki_attributes))
+
+const getPrimaryMagicalAttributeByTrad =
+  (wiki_attributes: WikiModel["attributes"]) =>
+  (mhero_attributes: Maybe<HeroModel["attributes"]>) =>
+  (tradition: Record<ActivatableDependent>): Maybe<Record<AttributeCombined>> =>
+    pipe_ (
+      tradition,
+      ActivatableDependent.A_.id,
+      getNumericMagicalTraditionIdByInstanceId,
+      bindF (numericId => {
         switch (numericId) {
           case 1:
           case 4:
           case 10:
-            return maybeAttributes
-              .bind (attributes => attributes.lookup ('ATTR_2'))
-              .bind (
-                attribute => wikiAttributes.lookup ('ATTR_2')
-                  .fmap (
-                    wikiAttribute => wikiAttribute.merge (attribute)
-                  )
-              );
+            return getAttributeCombined (wiki_attributes)
+                                        (mhero_attributes)
+                                        (prefixId (IdPrefixes.ATTRIBUTES) (2))
+
           case 3:
-            return maybeAttributes
-              .bind (attributes => attributes.lookup ('ATTR_3'))
-              .bind (
-                attribute => wikiAttributes.lookup ('ATTR_3')
-                  .fmap (
-                    wikiAttribute => wikiAttribute.merge (attribute)
-                  )
-              );
+            return getAttributeCombined (wiki_attributes)
+                                        (mhero_attributes)
+                                        (prefixId (IdPrefixes.ATTRIBUTES) (3))
+
           case 2:
           case 5:
           case 6:
           case 7:
-            return maybeAttributes
-              .bind (attributes => attributes.lookup ('ATTR_4'))
-              .bind (
-                attribute => wikiAttributes.lookup ('ATTR_4')
-                  .fmap (
-                    wikiAttribute => wikiAttribute.merge (attribute)
-                  )
-              );
+            return getAttributeCombined (wiki_attributes)
+                                        (mhero_attributes)
+                                        (prefixId (IdPrefixes.ATTRIBUTES) (4))
 
           default:
-            return Nothing ();
+            return Nothing
         }
-      }
-    );
+      })
+    )
+
+const mgetValueFromAttrCombined = fmap (pipe (ACA.stateEntry, ADA.value))
 
 export const getPrimaryMagicalAttribute = createMaybeSelector (
   getMagicalTraditionsFromState,
   getAttributes,
   getWikiAttributes,
-  (maybeTraditions, maybeAttributes, wikiAttributes) =>
-    maybeTraditions.bind (
-      traditions => traditions.foldl<(Maybe<Record<View.AttributeCombined>>)> (
-        highestAttribute => tradition => {
-          const attribute = getPrimaryMagicalAttributeInstance (
-            tradition,
-            maybeAttributes,
-            wikiAttributes
-          );
+  (mtraditions, mhero_attributes, wiki_attributes) =>
+    bind (mtraditions)
+         (List.foldr ((trad: Record<ActivatableDependent>) =>
+                       (mhighest: Maybe<Record<AttributeCombined>>) => {
+                         const mattr = getPrimaryMagicalAttributeByTrad (wiki_attributes)
+                                                                        (mhero_attributes)
+                                                                        (trad)
 
-          return highestAttribute.fmap (x => x.get ('value'))
-            .lt (attribute.fmap (x => x.get ('value')))
-              ? attribute
-              : highestAttribute;
-        }
-      ) (Nothing ())
-    )
-);
+                         const attrVal = mgetValueFromAttrCombined (mattr)
+
+                         return and (liftM2 (lt) (attrVal) (mgetValueFromAttrCombined (mhighest)))
+                           ? mattr
+                           : mhighest
+                       })
+                     (Nothing))
+)
 
 export const getPrimaryMagicalAttributeForSheet = createMaybeSelector (
   getPrimaryMagicalAttribute,
-  Maybe.fmap (Record.get<View.AttributeCombined, 'short'> ('short'))
-);
+  fmap (pipe (ACA.wikiEntry, AA.short))
+)
 
-const getPrimaryBlessedAttributeInstance = (
-  tradition: Record<Data.ActivatableDependent>,
-  maybeAttributes: Maybe<Data.HeroDependent['attributes']>,
-  wikiAttributes: Wiki.WikiAll['attributes']
-): Maybe<Record<View.AttributeCombined>> =>
-  getNumericBlessedTraditionIdByInstanceId (tradition.get ('id'))
-    .bind (
-      numericId => {
+const getPrimaryBlessedAttributeByTrad =
+  (wiki_attributes: WikiModel["attributes"]) =>
+  (mhero_attributes: Maybe<HeroModel["attributes"]>) =>
+  (tradition: Record<ActivatableDependent>): Maybe<Record<AttributeCombined>> =>
+    pipe_ (
+      tradition,
+      ActivatableDependent.A_.id,
+      getNumericMagicalTraditionIdByInstanceId,
+      bindF (numericId => {
         switch (numericId) {
           case 2:
           case 3:
@@ -277,147 +264,128 @@ const getPrimaryBlessedAttributeInstance = (
           case 13:
           case 16:
           case 18:
-            return maybeAttributes
-              .bind (attributes => attributes.lookup ('ATTR_1'))
-              .bind (
-                attribute => wikiAttributes.lookup ('ATTR_1')
-                  .fmap (
-                    wikiAttribute => wikiAttribute.merge (attribute)
-                  )
-              );
+            return getAttributeCombined (wiki_attributes)
+                                        (mhero_attributes)
+                                        (prefixId (IdPrefixes.ATTRIBUTES) (1))
+
           case 1:
           case 4:
           case 8:
           case 17:
-            return maybeAttributes
-              .bind (attributes => attributes.lookup ('ATTR_2'))
-              .bind (
-                attribute => wikiAttributes.lookup ('ATTR_2')
-                  .fmap (
-                    wikiAttribute => wikiAttribute.merge (attribute)
-                  )
-              );
+            return getAttributeCombined (wiki_attributes)
+                                        (mhero_attributes)
+                                        (prefixId (IdPrefixes.ATTRIBUTES) (2))
+
           case 5:
           case 6:
           case 11:
           case 14:
-            return maybeAttributes
-              .bind (attributes => attributes.lookup ('ATTR_3'))
-              .bind (
-                attribute => wikiAttributes.lookup ('ATTR_3')
-                  .fmap (
-                    wikiAttribute => wikiAttribute.merge (attribute)
-                  )
-              );
+            return getAttributeCombined (wiki_attributes)
+                                        (mhero_attributes)
+                                        (prefixId (IdPrefixes.ATTRIBUTES) (3))
+
           case 7:
           case 10:
           case 12:
           case 15:
-            return maybeAttributes
-              .bind (attributes => attributes.lookup ('ATTR_4'))
-              .bind (
-                attribute => wikiAttributes.lookup ('ATTR_4')
-                  .fmap (
-                    wikiAttribute => wikiAttribute.merge (attribute)
-                  )
-              );
+            return getAttributeCombined (wiki_attributes)
+                                        (mhero_attributes)
+                                        (prefixId (IdPrefixes.ATTRIBUTES) (4))
 
           default:
-            return Nothing ();
+            return Nothing
         }
-      }
-    );
+      })
+    )
 
 export const getPrimaryBlessedAttribute = createMaybeSelector (
   getBlessedTraditionFromState,
   getAttributes,
   getWikiAttributes,
-  (maybeTradition, maybeAttributes, wikiAttributes) =>
-    maybeTradition.bind (
-      tradition => getPrimaryBlessedAttributeInstance (
-        tradition,
-        maybeAttributes,
-        wikiAttributes
-      )
-    )
-);
+  (mtradition, mhero_attributes, wiki_attributes) =>
+    bind (mtradition)
+        (getPrimaryBlessedAttributeByTrad (wiki_attributes)
+                                          (mhero_attributes))
+)
 
 export const getPrimaryBlessedAttributeForSheet = createMaybeSelector (
   getPrimaryBlessedAttribute,
-  Maybe.fmap (Record.get<View.AttributeCombined, 'short'> ('short'))
-);
+  fmap (pipe (ACA.wikiEntry, AA.short))
+)
 
 export const getCarryingCapacity = createMaybeSelector (
   getAttributes,
-  maybeAttributes => maybeAttributes
-    .bind (attributes => attributes.lookup ('ATTR_8'))
-    .fmap (strength => strength.get ('value') * 2)
-);
+  pipe (bindF (lookup ("ATTR_8")), fmap (pipe (ADA.value, multiply (2))))
+)
 
 export const getAdjustmentValue = createMaybeSelector (
   getCurrentRace,
-  Maybe.fmap (race => Tuple.fst (race.get ('attributeAdjustmentsSelection')))
-);
+  fmap (pipe (Race.A_.attributeAdjustmentsSelection, fst))
+)
 
 export const getCurrentAttributeAdjustment = createMaybeSelector (
-  getAttributesForView,
   getCurrentAttributeAdjustmentId,
-  (attributes, maybeId) => maybeId .bind (id => attributes .find (e => e .get ('id') === id))
-);
+  getAttributesForView,
+  uncurryN (blackbirdF (liftM2 ((id: string) => find (pipe (AWRA.wikiEntry, AA.id, equals (id)))))
+                       (join as join<Record<AttributeWithRequirements>>))
+)
 
 export const getAvailableAdjustmentIds = createMaybeSelector (
   getCurrentRace,
   getAdjustmentValue,
   getAttributesForView,
   getCurrentAttributeAdjustment,
-  (maybeRace, maybeAdjustmentValue, attributesCalculated, maybeCurrentAttribute) =>
-    maybeRace.fmap (race => Tuple.snd (race.get ('attributeAdjustmentsSelection')))
-      .fmap<List<string>> (
-        adjustmentIds => {
-          if (Maybe.isJust (maybeCurrentAttribute)) {
-            const currentAttribute = Maybe.fromJust (maybeCurrentAttribute);
+  (mrace, madjustmentValue, mattrsCalculated, mcurr_attr) =>
+    fmapF (mrace)
+          (pipe (
+            Race.A_.attributeAdjustmentsSelection,
+            snd,
+            adjustmentIds => {
+              if (isJust (mcurr_attr)) {
+                const curr_attr = fromJust (mcurr_attr)
 
-            if (
-              Maybe.fromMaybe (false) (
-                currentAttribute
-                  .lookup ('max')
-                  .bind (
-                    max => maybeAdjustmentValue.fmap (
-                      adjustmentValue => currentAttribute.get ('value') > max - adjustmentValue
-                    )
-                  )
-              )
-            ) {
-              return List.of (currentAttribute.get ('id'));
-            }
-          }
+                const curr_attr_val = pipe_ (curr_attr, AWRA.stateEntry, ADA.value)
 
-          return adjustmentIds.filter (id => {
-            const maybeAttribute = attributesCalculated
-              .find (e => e.get ('id') === id);
+                if (or (pipe_ (curr_attr, AWRA.max, liftM2 (blackbirdF (subtractBy)
+                                                                       (lt (curr_attr_val)))
+                                                           (madjustmentValue)))) {
+                  const curr_attr_id = pipe_ (curr_attr, AWRA.stateEntry, ADA.id)
 
-            if (Maybe.isJust (maybeAttribute)) {
-              const attribute = Maybe.fromJust (maybeAttribute);
-
-              if (
-                Maybe.isNothing (attribute .lookup ('max')) ||
-                maybeCurrentAttribute.fmap (x => x.get ('id')).equals (Just (id))
-              ) {
-                return true;
+                  return List (curr_attr_id)
+                }
               }
-              else if (Maybe.isJust (maybeAdjustmentValue)) {
-                return Maybe.fromMaybe (true) (
-                  attribute
-                    .lookup ('max')
-                    .fmap (
-                      max => max + Maybe.fromJust (maybeAdjustmentValue) >= attribute.get ('value')
-                    )
-                );
-              }
-            }
 
-            return false;
-          });
-        }
-      )
-);
+              return filter ((id: string) => {
+                              const mattr = bind (mattrsCalculated)
+                                                 (find (pipe (AWRA.wikiEntry, AA.id, equals (id))))
+
+                              if (isJust (mattr)) {
+                                const attr = fromJust (mattr)
+
+                                const mmax = AWRA.max (attr)
+
+                                const mcurr_attr_id = fmapF (mcurr_attr)
+                                                            (pipe (AWRA.stateEntry, ADA.id))
+
+                                if (isNothing (mmax) || Maybe.elem (id) (mcurr_attr_id)) {
+                                  return true
+                                }
+
+                                if (isJust (madjustmentValue)) {
+                                  const attr_val = pipe_ (attr, AWRA.stateEntry, ADA.value)
+
+                                  return maybe (true)
+                                               (pipe (
+                                                 add (fromJust (madjustmentValue)),
+                                                 gte (attr_val)
+                                               ))
+                                               (mmax)
+                                }
+                              }
+
+                              return false
+                            })
+                            (adjustmentIds)
+            }
+          ))
+)

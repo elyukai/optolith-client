@@ -6,9 +6,9 @@
  * @author Lukas Obermann
  */
 
-import { pipe } from "ramda";
 import { add, multiply } from "../App/Utilities/mathUtils";
 import { not } from "../App/Utilities/not";
+import { pipe } from "../App/Utilities/pipe";
 import { equals, notEquals } from "./Eq";
 import { ident } from "./Function";
 import { append, isList, List } from "./List";
@@ -316,10 +316,7 @@ export const all =
  *
  * `notElem` is the negation of `elem`.
  */
-export const notElem = <A> (e: A) => pipe (
-  elem<A> (e),
-  not
-)
+export const notElem = <A> (e: A) => pipe (elem<A> (e), not)
 
 interface Find {
   /**

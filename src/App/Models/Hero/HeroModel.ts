@@ -3,7 +3,7 @@ import { Maybe, Nothing } from "../../../Data/Maybe";
 import { OrderedMap } from "../../../Data/OrderedMap";
 import { OrderedSet } from "../../../Data/OrderedSet";
 import { fromDefault, makeLenses, Record } from "../../../Data/Record";
-import { currentVersion } from "../../Utils/Raw/compatibilityUtils";
+import { currentVersion } from "../../Utilities/Raw/compatibilityUtils";
 import { ActivatableDependent } from "../ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent } from "../ActiveEntries/ActivatableSkillDependent";
 import { AttributeDependent } from "../ActiveEntries/AttributeDependent";
@@ -11,11 +11,12 @@ import { SkillDependent } from "../ActiveEntries/SkillDependent";
 import { Belongings } from "./Belongings";
 import { EditPet } from "./EditPet";
 import { Energies } from "./Energies";
-import { Sex, StyleDependency } from "./heroTypeHelpers";
+import { Sex } from "./heroTypeHelpers";
 import { Pact } from "./Pact";
 import { PersonalData } from "./PersonalData";
 import { Pet } from "./Pet";
 import { Rules } from "./Rules";
+import { StyleDependency } from "./StyleDependency";
 
 export type HeroModelRecord = Record<HeroModel>
 

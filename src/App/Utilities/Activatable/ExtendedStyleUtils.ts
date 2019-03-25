@@ -1,4 +1,3 @@
-import { pipe } from "ramda";
 import { equals } from "../../../Data/Eq";
 import { flip, thrush } from "../../../Data/Function";
 import { fmap } from "../../../Data/Functor";
@@ -11,6 +10,7 @@ import { HeroModelL, HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { StyleDependency, StyleDependencyL } from "../../Models/Hero/StyleDependency";
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
 import { gt } from "../mathUtils";
+import { pipe } from "../pipe";
 
 const {
   combatStyleDependencies,

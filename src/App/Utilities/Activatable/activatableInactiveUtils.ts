@@ -7,12 +7,11 @@
  * @since 1.1.0
  */
 
-import { pipe } from "ramda";
 import { equals } from "../../../Data/Eq";
 import { ident, thrush } from "../../../Data/Function";
 import { fmap, fmapF, mapReplace } from "../../../Data/Functor";
 import { over, set } from "../../../Data/Lens";
-import { consF, countWith, elem, filter, find, flength, fnull, foldr, isList, List, map, maximum, notElem, notElemF, subscript } from "../../../Data/List";
+import { consF, countWith, elem, filter, find, flength, fnull, foldr, isList, List, map, mapByIdKeyMap, maximum, notElem, notElemF, subscript } from "../../../Data/List";
 import { all, bind, bindF, ensure, fromJust, fromMaybe, guard, guard_, isJust, join, Just, liftM2, listToMaybe, mapMaybe, Maybe, maybe, Nothing, or } from "../../../Data/Maybe";
 import { alter, elems, foldrWithKey, isOrderedMap, lookup, lookupF, member, OrderedMap } from "../../../Data/OrderedMap";
 import { fst, Pair, snd } from "../../../Data/Pair";
@@ -33,13 +32,14 @@ import { SelectOption, SelectOptionL } from "../../Models/Wiki/sub/SelectOption"
 import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { Activatable } from "../../Models/Wiki/wikiTypeHelpers";
 import { countActiveGroupEntries } from "../entryGroupUtils";
-import { getAllEntriesByGroup, mapListByIdKeyMap } from "../heroStateUtils";
+import { getAllEntriesByGroup } from "../heroStateUtils";
 import { getBlessedTradStrIdFromNumId } from "../IDUtils";
 import { getTraditionOfAspect } from "../Increasable/liturgicalChantUtils";
 import { add, gt, gte, inc, lt, lte, multiply, subtract } from "../mathUtils";
+import { pipe } from "../pipe";
 import { validateLevel, validatePrerequisites } from "../Prerequisites/validatePrerequisitesUtils";
 import { sortRecordsByName } from "../sortBy";
-import { isNumber, isString } from "../typeCheckUtils";
+import { isNumber, isString, misStringM } from "../typeCheckUtils";
 import { isAdditionDisabled } from "./activatableInactiveValidationUtils";
 import { getModifierByActiveLevel } from "./activatableModifierUtils";
 import { countActiveSkillEntries } from "./activatableSkillUtils";
@@ -184,7 +184,7 @@ const getPropsWith3Gte10 =
       hero_spells,
       elems,
       filterSkills,
-      mapListByIdKeyMap (spells (wiki)),
+      mapByIdKeyMap (spells (wiki)),
       foldr (addSpellToCounter) (OrderedMap.empty),
       foldCounter
     )
@@ -201,7 +201,7 @@ const getAspectsWith3Gte10 =
       hero_liturgicalChants,
       elems,
       filterSkills,
-      mapListByIdKeyMap (liturgicalChants (wiki)),
+      mapByIdKeyMap (liturgicalChants (wiki)),
       foldr (addChantToCounter) (OrderedMap.empty),
       foldCounter
     )
@@ -772,7 +772,7 @@ const modifyOtherOptions =
                       fmap (active),
                       bindF (listToMaybe),
                       bindF (sid),
-                      bindF (ensure (isString)),
+                      misStringM,
                       bindF (lookupF (skills (wiki))),
                       bindF (skill => pipe (
                                              bindF<number | List<number>, List<number>>
@@ -805,9 +805,9 @@ const modifyOtherOptions =
 
                                     const max =
                                       getModifierByActiveLevel
+                                        (Just (3))
                                         (lookup ("ADV_79") (hero_advantages (hero)))
                                         (lookup ("DISADV_72") (hero_disadvantages (hero)))
-                                        (Just (3))
 
                                     const isLessThanMax =
                                       countActiveGroupEntries (wiki) (hero) (24) < max
@@ -834,9 +834,9 @@ const modifyOtherOptions =
 
                                     const max =
                                       getModifierByActiveLevel
+                                        (Just (3))
                                         (lookup ("ADV_80") (hero_advantages (hero)))
                                         (lookup ("DISADV_73") (hero_disadvantages (hero)))
-                                        (Just (3))
 
                                     const isLessThanMax =
                                       countActiveGroupEntries (wiki) (hero) (27) < max

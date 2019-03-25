@@ -6,17 +6,18 @@
  * @author Lukas Obermann
  */
 
-import { pipe } from "ramda";
 import { add, inc, max, min, multiply } from "../App/Utilities/mathUtils";
 import { not } from "../App/Utilities/not";
+import { pipe } from "../App/Utilities/pipe";
 import { escapeRegExp } from "../App/Utilities/RegexUtils";
 import { equals } from "./Eq";
 import { ident } from "./Function";
 import { fmap } from "./Functor";
-import { fromJust, imapMaybe, isJust, Just, Maybe, maybe, Nothing } from "./Maybe";
+import { fromJust, imapMaybe, isJust, Just, mapMaybe, Maybe, maybe, Nothing } from "./Maybe";
 import { isLTorEQ, Ordering } from "./Ord";
-import { fromMap, OrderedMap } from "./OrderedMap";
+import { fromMap, lookupF, OrderedMap } from "./OrderedMap";
 import { first, fst, Pair, second, snd } from "./Pair";
+import { fromDefault, RecordBase } from "./Record";
 import { show } from "./Show";
 
 
@@ -1916,6 +1917,23 @@ export const groupByKey =
 
     return fromMap (m)
   }
+
+interface RecordBaseWithId extends RecordBase {
+  id: string
+}
+
+const RecordBaseWithId = fromDefault<RecordBaseWithId> ({ id: "" })
+
+/**
+ * `mapByIdKeyMap map xs` takes a map and a list containing records with an `id`
+ * property and maps the records from the list by the `id` property to the keys
+ * in the map, placing the element at that key at the respective position.
+ */
+export const mapByIdKeyMap =
+  <A> (m: OrderedMap<string, A>) =>
+    mapMaybe (pipe (RecordBaseWithId.A.id, lookupF (m)))
+
+List.mapByIdKeyMap = mapByIdKeyMap
 
 
 // NAMESPACED FUNCTIONS

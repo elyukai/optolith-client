@@ -1,11 +1,9 @@
-import { pipe } from "ramda";
 import { cnst } from "../../Data/Function";
 import { fmap } from "../../Data/Functor";
 import { Lens_, over, view } from "../../Data/Lens";
 import { elemF, filter, fromArray, List } from "../../Data/List";
-import { bindF, ensure, fromMaybe, Just, liftM2, mapMaybe, Maybe, Nothing, or } from "../../Data/Maybe";
+import { bindF, ensure, fromMaybe, Just, liftM2, Maybe, Nothing, or } from "../../Data/Maybe";
 import { alter, elems, insert, lookup, lookupF, OrderedMap, sdelete, update } from "../../Data/OrderedMap";
-import { Record, RecordBase } from "../../Data/Record";
 import { IdPrefixes } from "../Constants/IdPrefixes";
 import { createPlainActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
 import { createInactiveActivatableSkillDependent } from "../Models/ActiveEntries/ActivatableSkillDependent";
@@ -17,6 +15,7 @@ import { Skill } from "../Models/Wiki/Skill";
 import { EntryWithGroup } from "../Models/Wiki/wikiTypeHelpers";
 import { getIdPrefix } from "./IDUtils";
 import { not } from "./not";
+import { pipe } from "./pipe";
 
 export type HeroStateMapKey = "advantages"
                             | "attributes"
@@ -320,18 +319,3 @@ export const getAllEntriesByGroup =
                 or
               ))
               (elems (hero_slice))
-
-interface RecordBaseWithId extends RecordBase {
-  id: string
-}
-
-/**
- * `mapListByIdKeyMap map xs` takes a map of records with an `id` property that
- * is identical to its key and a list containing records with an `id` property
- * and maps the records from the list by the `id` property to the records with
- * matching keys in the map.
- */
-export const mapListByIdKeyMap =
-  <A extends RecordBaseWithId>
-  (map: OrderedMap<string, Record<A>>) =>
-    mapMaybe<Record<RecordBaseWithId>, Record<A>> (pipe (Skill.A.id, lookupF (map)))

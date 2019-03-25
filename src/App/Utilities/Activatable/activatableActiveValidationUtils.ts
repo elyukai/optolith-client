@@ -5,11 +5,10 @@
  * @author Lukas Obermann
  */
 
-import { pipe } from "ramda";
 import { equals } from "../../../Data/Eq";
 import { flip, thrush } from "../../../Data/Function";
 import { fmap } from "../../../Data/Functor";
-import { any, countWith, elem, filter, find, flength, foldl, intersect, isList, List, sdelete } from "../../../Data/List";
+import { any, countWith, elem, filter, find, flength, foldl, intersect, isList, List, mapByIdKeyMap, sdelete } from "../../../Data/List";
 import { alt, altF, bindF, ensure, fromJust, isJust, Just, liftM2, Maybe, Nothing, or, sum } from "../../../Data/Maybe";
 import { elems, isOrderedMap, lookupF } from "../../../Data/OrderedMap";
 import { size } from "../../../Data/OrderedSet";
@@ -30,11 +29,12 @@ import { isSpecialAbility, SpecialAbility } from "../../Models/Wiki/SpecialAbili
 import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { Activatable, AllRequirementObjects, EntryWithCategory, LevelAwarePrerequisites, SID } from "../../Models/Wiki/wikiTypeHelpers";
 import { countActiveGroupEntries } from "../entryGroupUtils";
-import { getAllEntriesByGroup, getHeroStateItem, mapListByIdKeyMap } from "../heroStateUtils";
+import { getAllEntriesByGroup, getHeroStateItem } from "../heroStateUtils";
 import { ifElse } from "../ifElse";
 import { isOwnTradition } from "../Increasable/liturgicalChantUtils";
 import { add, gt, gte, inc, lt, subtract, subtractBy } from "../mathUtils";
 import { notP } from "../not";
+import { pipe } from "../pipe";
 import { flattenPrerequisites } from "../Prerequisites/flattenPrerequisites";
 import { setPrerequisiteId } from "../Prerequisites/setPrerequisiteId";
 import { validateLevel, validateObject } from "../Prerequisites/validatePrerequisitesUtils";
@@ -219,7 +219,7 @@ const isRemovalDisabledEntrySpecific =
                  liturgicalChants,
                  elems,
                  filter<Record<ActivatableSkillDependent>> (asdactive),
-                 mapListByIdKeyMap (WikiModel.A.liturgicalChants (wiki))
+                 mapByIdKeyMap (WikiModel.A.liturgicalChants (wiki))
                )
                (hero)
 
@@ -409,11 +409,11 @@ export const getMinTier =
   (hero: HeroModelRecord) =>
   (entry: Record<ActiveObjectWithId>) =>
   (entry_dependencies: List<ActivatableDependency>): Maybe<number> =>
-    pipe (adjustMinimumLevelByDependencies (entry)
-                                           (entry_dependencies))
-         (getEntrySpecificMinimumLevel (wiki)
-                                       (hero)
-                                       (entry))
+    adjustMinimumLevelByDependencies (entry)
+                                     (entry_dependencies)
+                                     (getEntrySpecificMinimumLevel (wiki)
+                                                                   (hero)
+                                                                   (entry))
 
 /**
  * Get maximum valid tier.

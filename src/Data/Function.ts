@@ -74,6 +74,34 @@ export const flip =
   (p2: A): C =>
     f (p2) (p1)
 
+/**
+ * `blackbird :: (c -> d) -> (a -> b -> c) -> a -> b -> d`
+ *
+ * `blackbird f g x y` passes `x` and `y` (in this order) to `g`, the result is
+ * then passed to `f`. The result of `f` is returned.
+ *
+ * B1 combinator
+ */
+export const blackbird =
+  <C, D> (f: (z: C) => D) =>
+  <A, B> (g: (x: A) => (y: B) => C) =>
+  (x: A) =>
+  (y: B): D =>
+    f (g (x) (y))
+
+/**
+ * `blackbirdF :: (a -> b -> c) -> (c -> d) -> a -> b -> d`
+ *
+ * `blackbirdF g f x y` passes `x` and `y` (in this order) to `g`, the result is
+ * then passed to `f`. The result of `f` is returned.
+ *
+ * B1 combinator, flipped version
+ */
+export const blackbirdF =
+  <A, B, C> (g: (x: A) => (y: B) => C) =>
+  <D> (f: (z: C) => D) =>
+    blackbird (f) (g)
+
 
 // NAMESPACED FUNCTIONS
 
@@ -84,4 +112,6 @@ export const Functn = {
   join,
   on,
   flip,
+  blackbird,
+  blackbirdF,
 }

@@ -1,9 +1,10 @@
-import { pipe } from "ramda";
+import { fmap } from "../../../../Data/Functor";
 import { all, elemF, isList, List } from "../../../../Data/List";
-import { fmap, or } from "../../../../Data/Maybe";
+import { or } from "../../../../Data/Maybe";
 import { fromDefault, makeLenses, member, Record } from "../../../../Data/Record";
 import { Categories, IncreasableCategories } from "../../../Constants/Categories";
 import { getCategoryById } from "../../../Utilities/IDUtils";
+import { pipe } from "../../../Utilities/pipe";
 import { AllRequirementObjects, ProfessionPrerequisite } from "../wikiTypeHelpers";
 
 export interface RequireIncreasable {

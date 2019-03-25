@@ -7,13 +7,15 @@
  * @author Lukas Obermann
  */
 
-import { not, pipe } from "ramda";
 import { add, multiply } from "../App/Utilities/mathUtils";
+import { not } from "../App/Utilities/not";
+import { pipe } from "../App/Utilities/pipe";
 import { Either, fromRight_, isLeft, Right } from "./Either";
 import { equals } from "./Eq";
 import { ident } from "./Function";
+import { fmapF } from "./Functor";
 import { append, List } from "./List";
-import { fromMaybe, Just, Maybe, maybe, maybe_ } from "./Maybe";
+import { bind, fromMaybe, Just, Maybe, maybe, maybe_ } from "./Maybe";
 import { fromUniqueElements, OrderedSet } from "./OrderedSet";
 import { Pair } from "./Pair";
 import { StringKeyObject } from "./Record";
@@ -1033,6 +1035,37 @@ export const deleteLookupWithKey =
   (mp: OrderedMap<K, A>): Pair<Maybe<A>, OrderedMap<K, A>> =>
     Pair (lookup (key) (mp), removeKey (key) (mp))
 
+/**
+ * `lookup2 :: (a -> b -> c) -> k -> Map k a -> Map k b -> Maybe c`
+ *
+ * `lookup2 f key map1 map2` looks up the key `key` both in the maps `map1` and
+ * `map2`. If both keys are found, the values are passed to `f`. The result is
+ * returned wrapped in a `Just`, or, if at least one of the maps does not
+ * contain the key, `Nothing` is returned.
+ */
+export const lookup2 =
+  <A, B, C> (f: (x: A) => (y: B) => C) =>
+  <K> (key: K) =>
+  (m1: OrderedMap<K, A>) =>
+  (m2: OrderedMap<K, B>): Maybe<C> =>
+    lookup2F (key) (m1) (m2) (f)
+
+/**
+ * `lookup2F :: k -> Map k a -> Map k b -> (a -> b -> c) -> Maybe c`
+ *
+ * `lookup2F key map1 map2 f` looks up the key `key` both in the maps `map1` and
+ * `map2`. If both keys are found, the values are passed to `f`. The result is
+ * returned wrapped in a `Just`, or, if at least one of the maps does not
+ * contain the key, `Nothing` is returned.
+ */
+export const lookup2F =
+  <K> (key: K) =>
+  <A> (m1: OrderedMap<K, A>) =>
+  <B> (m2: OrderedMap<K, B>) =>
+  <C> (f: (x: A) => (y: B) => C): Maybe<C> =>
+    bind (lookup (key) (m1))
+         (x => fmapF (lookup (key) (m2))
+                     (f (x)))
 
 // NAMESPACED FUNCTIONS
 
@@ -1115,6 +1148,8 @@ export const OrderedMap = {
   toMap,
   isOrderedMap,
   deleteLookupWithKey,
+  lookup2,
+  lookup2F,
 }
 
 

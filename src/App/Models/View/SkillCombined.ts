@@ -1,5 +1,5 @@
-import { pipe } from "ramda";
 import { fromDefault, Record } from "../../../Data/Record";
+import { pipe } from "../../Utilities/pipe";
 import { SkillDependent } from "../ActiveEntries/SkillDependent";
 import { Skill } from "../Wiki/Skill";
 

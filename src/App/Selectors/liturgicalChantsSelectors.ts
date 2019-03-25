@@ -1,4 +1,4 @@
-import { bindF } from "../../Data/Maybe";
+import { bindF, isJust } from "../../Data/Maybe";
 import { lookupF } from "../../Data/OrderedMap";
 import { uncurryN } from "../../Data/Pair";
 import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
@@ -31,7 +31,7 @@ export const getBlessedTraditionFromWikiState = createMaybeSelector (
 
 export const getIsLiturgicalChantsTabAvailable = createMaybeSelector (
   getBlessedTraditionFromState,
-  Maybe.isJust
+  isJust
 )
 
 export const getBlessedTraditionNumericId = createMaybeSelector (

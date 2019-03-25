@@ -1,190 +1,203 @@
-import { ActivatableDependent, Hero, HeroDependent } from '../App/Models/Hero/heroTypeHelpers';
-import { CombatTechniqueCombined, CombatTechniqueWithAttackParryBase, CombatTechniqueWithRequirements } from '../App/Models/View/viewTypeHelpers';
-import { ExperienceLevel, WikiRecord } from '../App/Models/Wiki/wikiTypeHelpers';
-import { createMaybeSelector } from '../App/Utils/createMaybeSelector';
-import { filterByAvailability } from '../App/Utils/RulesUtils';
-import { isActive } from '../Utilities/Activatable/isActive';
-import { getActiveSelections } from '../Utilities/Activatable/selectionUtils';
-import { createDependentSkillWithValue6 } from '../Utilities/createEntryUtils';
-import { Just, List, Maybe, Nothing, Record } from '../Utilities/dataUtils';
-import { flattenDependencies } from '../Utilities/dependencies/flattenDependencies';
-import { AllSortOptions, filterAndSortObjects } from '../Utilities/FilterSortUtils';
-import { getMaxAttributeValueByID } from './attributeSelectors';
-import { getStartEl } from './elSelectors';
-import { getRuleBooksEnabled } from './rulesSelectors';
-import { getCombatTechniquesSortOptions } from './sortOptionsSelectors';
-import { getAttributes, getCombatTechniques, getCombatTechniquesFilterText, getCurrentHeroPresent, getLocaleAsProp, getWiki, getWikiCombatTechniques } from './stateSelectors';
+import { fmapF } from "../../Data/Functor";
+import { cons, consF, elem, List, map, maximum } from "../../Data/List";
+import { fromJust, isJust, Just, liftM2, Maybe, Nothing, or } from "../../Data/Maybe";
+import { findWithDefault, foldrWithKey, lookup } from "../../Data/OrderedMap";
+import { uncurryN, uncurryN3 } from "../../Data/Pair";
+import { Record } from "../../Data/Record";
+import { IdPrefixes } from "../Constants/IdPrefixes";
+import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
+import { createSkillDependentWithValue6, SkillDependent } from "../Models/ActiveEntries/SkillDependent";
+import { HeroModel, HeroModelRecord } from "../Models/Hero/HeroModel";
+import { CombatTechniqueWithAttackParryBase } from "../Models/View/CombatTechniqueWithAttackParryBase";
+import { CombatTechniqueWithRequirements } from "../Models/View/CombatTechniqueWithRequirements";
+import { CombatTechnique } from "../Models/Wiki/CombatTechnique";
+import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel";
+import { WikiModelRecord } from "../Models/Wiki/WikiModel";
+import { isMaybeActive } from "../Utilities/Activatable/isActive";
+import { getActiveSelections } from "../Utilities/Activatable/selectionUtils";
+import { createMaybeSelector } from "../Utilities/createMaybeSelector";
+import { flattenDependencies } from "../Utilities/Dependencies/flattenDependencies";
+import { filterAndSortRecordsBy } from "../Utilities/filterAndSortBy";
+import { prefixAdv, prefixId, prefixSA } from "../Utilities/IDUtils";
+import { add, divideBy, gt, max, subtractBy } from "../Utilities/mathUtils";
+import { pipe, pipe_ } from "../Utilities/pipe";
+import { filterByWikiEntryPropertyAvailabilityAndPred } from "../Utilities/RulesUtils";
+import { getMaxAttributeValueByID } from "./attributeSelectors";
+import { getStartEl } from "./elSelectors";
+import { getRuleBooksEnabled } from "./rulesSelectors";
+import { getCombatTechniquesWithRequirementsSortOptions } from "./sortOptionsSelectors";
+import { getAttributes, getCombatTechniques, getCombatTechniquesFilterText, getCurrentHeroPresent, getWiki, getWikiCombatTechniques } from "./stateSelectors";
 
-const getPrimaryAttributeMod = (
-  attributes: HeroDependent['attributes'],
-  ids: List<string>
-) => Math.max (Math.floor ((getMaxAttributeValueByID (attributes) (ids) - 8) / 3), 0);
+const CTA = CombatTechnique.A_
+const SDA = SkillDependent.A_
+const CTWAPBA = CombatTechniqueWithAttackParryBase.A_
+const CTWRA = CombatTechniqueWithRequirements.A_
 
-const getAttackBase = (
-  attributes: HeroDependent['attributes'],
-  obj: Record<CombatTechniqueCombined>
-): number => {
-  const modAttributeList = obj.get ('gr') === 2 ? obj.get ('primary') : List.of ('ATTR_1');
-  const mod = getPrimaryAttributeMod (attributes, modAttributeList);
+/**
+ * Calculate the AT or PA mod by passing the current attributes' state as well
+ * as the relevant ids.
+ */
+const getPrimaryAttrMod =
+  (attributes: HeroModel["attributes"]) =>
+    pipe (
+      getMaxAttributeValueByID (attributes),
+      subtractBy (8),
+      divideBy (3),
+      Math.floor,
+      max (0)
+    )
 
-  return obj.get ('value') + mod;
-};
+const getAttackBase =
+  (attributes: HeroModel["attributes"]) =>
+  (wiki_entry: Record<CombatTechnique>) =>
+  (hero_entry: Record<SkillDependent>): number =>
+    pipe_ (
+      CTA.gr (wiki_entry) === 2
+        ? CTA.primary (wiki_entry)
+        : List (prefixId (IdPrefixes.ATTRIBUTES) (1)),
+      getPrimaryAttrMod (attributes),
+      add (SDA.value (hero_entry))
+    )
 
-const getParryBase = (
-  attributes: HeroDependent['attributes'],
-  obj: Record<CombatTechniqueCombined>
-): Maybe<number> => {
-  const mod = getPrimaryAttributeMod (attributes, obj.get ('primary'));
+const getParryBase =
+  (attributes: HeroModel["attributes"]) =>
+  (wiki_entry: Record<CombatTechnique>) =>
+  (hero_entry: Record<SkillDependent>): Maybe<number> => {
+    const curr_id = CTA.id (wiki_entry)
+    const curr_gr = CTA.gr (wiki_entry)
 
-  return obj.get ('gr') === 2 || obj.get ('id') === 'CT_6' || obj.get ('id') === 'CT_8'
-    ? Nothing ()
-    : Just (Math.round (obj.get ('value') / 2) + mod);
-};
-
-type CombatTechniquesForSheet = List<Record<CombatTechniqueWithAttackParryBase>>;
+    return curr_gr === 2
+      || curr_id === prefixId (IdPrefixes.COMBAT_TECHNIQUES) (6)
+      || curr_id === prefixId (IdPrefixes.COMBAT_TECHNIQUES) (8)
+        ? Nothing
+        : Just (Math.round (SDA.value (hero_entry) / 2)
+                 + getPrimaryAttrMod (attributes) (CTA.primary (wiki_entry)))
+  }
 
 export const getCombatTechniquesForSheet = createMaybeSelector (
-  getCombatTechniques,
-  getAttributes,
   getWikiCombatTechniques,
-  (maybeCombatTechniques, maybeAttributes, wikiCombatTechniques) =>
-    maybeAttributes.bind (
-      attributes => maybeCombatTechniques.fmap (
-        combatTechniques => wikiCombatTechniques.foldlWithKey<CombatTechniquesForSheet> (
-          list => id => wikiEntry => {
-            const entry =
-              combatTechniques .findWithDefault
-                (createDependentSkillWithValue6 (id))
-                (id);
+  getAttributes,
+  getCombatTechniques,
+  uncurryN3 (wiki_combat_techniques =>
+              liftM2 (attributes => combatTechniques =>
+                       foldrWithKey ((id: string) => (wiki_entry: Record<CombatTechnique>) => {
+                                      const hero_entry =
+                                        findWithDefault (createSkillDependentWithValue6 (id))
+                                                        (id)
+                                                        (combatTechniques)
 
-            const combined = wikiEntry.merge (entry);
+                                      return consF (CombatTechniqueWithAttackParryBase ({
+                                        at: getAttackBase (attributes) (wiki_entry) (hero_entry),
+                                        pa: getParryBase (attributes) (wiki_entry) (hero_entry),
+                                        stateEntry: hero_entry,
+                                        wikiEntry: wiki_entry,
+                                      }))
+                                    })
+                                    (List.empty)
+                                    (wiki_combat_techniques)))
+)
 
-            const at = getAttackBase (attributes, combined);
-            const pa = getParryBase (attributes, combined);
+const getMaximum =
+  (exceptionalCombatTechnique: Maybe<Record<ActivatableDependent>>) =>
+  (startEl: Maybe<Record<ExperienceLevel>>) =>
+  (attributes: HeroModel["attributes"]) =>
+  (phase: number) =>
+  (ct: Record<CombatTechniqueWithAttackParryBase>): number => {
+    const curr_id = pipe_ (ct, CTWAPBA.wikiEntry, CTA.id)
 
-            return list.append (
-              combined.mergeMaybe (Record.of ({ at, pa })) as
-                Record<CombatTechniqueWithAttackParryBase>
-            );
-          }
-        ) (List.of ())
-      )
-    )
-);
+    const isBonusValid = or (fmapF (exceptionalCombatTechnique)
+                                   (pipe (getActiveSelections, elem<string | number> (curr_id))))
 
-const getMaximum = (
-  exceptionalCombatTechnique: Maybe<Record<ActivatableDependent>>,
-  startEl: Maybe<Record<ExperienceLevel>>,
-  attributes: HeroDependent['attributes'],
-  phase: number,
-  obj: Record<CombatTechniqueWithAttackParryBase>
-): number => {
-  const isBonusValid = Maybe.fromMaybe (false) (
-    getActiveSelections (exceptionalCombatTechnique)
-      .fmap (active => active.elem (obj.get ('id')))
-  );
+    const bonus = isBonusValid ? 1 : 0
 
-  const bonus = isBonusValid ? 1 : 0;
+    if (phase < 3 && isJust (startEl)) {
+      return ExperienceLevel.A_.maxCombatTechniqueRating (fromJust (startEl)) + bonus
+    }
 
-  if (phase < 3 && Maybe.isJust (startEl)) {
-    return Maybe.fromJust (startEl).get ('maxCombatTechniqueRating') + bonus;
+    const curr_primary = pipe_ (ct, CTWAPBA.wikiEntry, CTA.primary)
+
+    return getMaxAttributeValueByID (attributes) (curr_primary) + 2 + bonus
   }
 
-  return getMaxAttributeValueByID (attributes) (obj.get ('primary')) + 2 + bonus;
-};
+const getMinimum =
+  (hunterRequiresMinimum: boolean) =>
+  (wiki: WikiModelRecord) =>
+  (hero: HeroModelRecord) =>
+  (ct: Record<CombatTechniqueWithAttackParryBase>): number => {
+    const curr_dependencies = pipe_ (ct, CTWAPBA.stateEntry, SDA.dependencies)
+    const curr_gr = pipe_ (ct, CTWAPBA.wikiEntry, CTA.gr)
 
-const getMinimum = (
-  hunterRequiresMinimum: boolean,
-  wiki: WikiRecord,
-  state: Hero,
-  obj: Record<CombatTechniqueWithAttackParryBase>
-): number => {
-  const maxList = flattenDependencies (
-    wiki,
-    state,
-    obj.get ('dependencies')
-  )
-    .cons (6);
+    const maxList = cons (flattenDependencies (wiki) (hero) (curr_dependencies))
+                         (6)
 
-  if (hunterRequiresMinimum && obj.get ('gr') === 2) {
-    return maxList .cons (10) .maximum ();
+    if (hunterRequiresMinimum && curr_gr === 2) {
+      return maximum (cons (maxList) (10))
+    }
+
+    return maximum (maxList)
   }
 
-  return maxList .maximum ();
-};
+const getGr = pipe (CTWAPBA.wikiEntry, CTA.gr)
+const getValue = pipe (CTWAPBA.stateEntry, SDA.value)
+type CTWAPB = CombatTechniqueWithAttackParryBase
 
 export const getAllCombatTechniques = createMaybeSelector (
   getCombatTechniquesForSheet,
   getCurrentHeroPresent,
   getStartEl,
   getWiki,
-  (
-    maybeCombatTechniques,
-    maybeHero,
-    maybeStartEl,
-    wiki
-  ) =>
-    maybeCombatTechniques.bind (
-      combatTechniques => maybeHero.fmap (
-        hero => {
-          const exceptionalCombatTechnique = hero.get ('advantages').lookup ('ADV_17');
+  (mcombat_techniques, mhero, mstartEl, wiki) =>
+    liftM2 ((combatTechniques: List<Record<CTWAPB>>) => (hero: HeroModelRecord) => {
+             const exceptionalCombatTechnique = lookup (prefixAdv (17))
+                                                       (HeroModel.A_.advantages (hero))
 
-          const hunter = hero.get ('specialAbilities').lookup ('SA_18');
-          const hunterRequiresMinimum =
-            isActive (hunter)
-            && Maybe.isJust (
-              combatTechniques.find (e => e.get ('gr') === 2 && e.get ('value') >= 10)
-            );
+             const hunter = lookup (prefixSA (18))
+                                   (HeroModel.A_.specialAbilities (hero))
 
-          return combatTechniques.map (
-            entry => entry.mergeMaybe (Record.of ({
-              min: getMinimum (
-                hunterRequiresMinimum,
-                wiki,
-                hero,
-                entry
-              ),
-              max: getMaximum (
-                exceptionalCombatTechnique,
-                maybeStartEl,
-                hero.get ('attributes'),
-                hero.get ('phase'),
-                entry
-              ),
-            })) as Record<CombatTechniqueWithRequirements>
-          );
-        }
-      )
-    )
-);
+             const hunterRequiresMinimum =
+               isMaybeActive (hunter)
+               && pipe_ (combatTechniques, List.any (x => getGr (x) === 2 && getValue (x) >= 10))
+
+             return pipe_ (
+               combatTechniques,
+               map (x =>
+                 CombatTechniqueWithRequirements ({
+                   at: CTWAPBA.at (x),
+                   pa: CTWAPBA.pa (x),
+                   max: getMinimum (hunterRequiresMinimum)
+                                   (wiki)
+                                   (hero)
+                                   (x),
+                   min: getMaximum (exceptionalCombatTechnique)
+                                   (mstartEl)
+                                   (HeroModel.A_.attributes (hero))
+                                   (HeroModel.A_.phase (hero))
+                                   (x),
+                   stateEntry: CTWAPBA.stateEntry (x),
+                   wikiEntry: CTWAPBA.wikiEntry (x),
+                 }))
+             )
+           })
+           (mcombat_techniques)
+           (mhero)
+)
 
 export const getAvailableCombatTechniques = createMaybeSelector (
-  getAllCombatTechniques,
   getRuleBooksEnabled,
-  (maybeList, maybeAvailablility) =>
-    maybeList.bind (
-      list => maybeAvailablility.fmap (
-        availablility => filterByAvailability<CombatTechniqueWithRequirements> (
-          list,
-          availablility,
-          obj => obj.get ('value') > 6
-        )
-      )
-    )
-);
+  getAllCombatTechniques,
+  uncurryN (liftM2 (filterByWikiEntryPropertyAvailabilityAndPred (pipe (CTWRA.stateEntry,
+                                                                        SDA.value,
+                                                                        gt (6)))))
+)
 
 export const getFilteredCombatTechniques = createMaybeSelector (
   getAvailableCombatTechniques,
-  getCombatTechniquesSortOptions,
+  getCombatTechniquesWithRequirementsSortOptions,
   getCombatTechniquesFilterText,
-  getLocaleAsProp,
-  (maybeCombatTechniques, sortOptions, filterText, locale) =>
-    maybeCombatTechniques.fmap (
-      combatTechniques => filterAndSortObjects<CombatTechniqueWithRequirements> (
-        combatTechniques,
-        locale.get ('id'),
-        filterText,
-        sortOptions as AllSortOptions<CombatTechniqueWithRequirements>
-      )
-    )
-);
+  (mcombat_techniques, sortOptions, filterText) =>
+    fmapF (mcombat_techniques)
+          (filterAndSortRecordsBy (0)
+                                  ([pipe (CTWRA.wikiEntry, CTA.name)])
+                                  (sortOptions)
+                                  (filterText))
+)

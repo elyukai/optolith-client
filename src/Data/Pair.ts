@@ -164,6 +164,15 @@ export const uncurryN =
     f (x) (y)
 
 /**
+ * `uncurryN3 :: (a -> b -> c -> d) -> (a, b, c) -> d`
+ *
+ * `uncurryN3` converts a curried function to a function on pairs.
+ */
+export const uncurryN3 =
+  <A, B, C, D> (f: (a: A) => (b: B) => (c: C) => D) => (x: A, y: B, z: C): D =>
+    f (x) (y) (z)
+
+/**
  * `swap :: (a, b) -> (b, a)`
  *
  * Swap the components of a pair.

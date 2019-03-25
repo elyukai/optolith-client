@@ -1,7 +1,8 @@
-import { equals, pipe } from "ramda";
+import { equals } from "../../../../Data/Eq";
 import { List } from "../../../../Data/List";
 import { Maybe, Nothing } from "../../../../Data/Maybe";
 import { fromDefault, Record } from "../../../../Data/Record";
+import { pipe } from "../../../Utilities/pipe";
 import { AllRequirementObjects } from "../wikiTypeHelpers";
 import { RequireActivatable } from "./ActivatableRequirement";
 

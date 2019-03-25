@@ -1,19 +1,22 @@
-import { createMaybeSelector } from '../App/Utils/createMaybeSelector';
-import { mapGetToMaybeSlice } from '../App/Utils/SelectorsUtils';
-import { isActive } from '../Utilities/Activatable/isActive';
-import { Just, OrderedSet } from '../Utilities/dataUtils';
-import { getAreAllRuleBooksEnabled, getEnabledRuleBooks, getSpecialAbilities } from './stateSelectors';
+import { bindF, Just, Maybe } from "../../Data/Maybe";
+import { OrderedSet } from "../../Data/OrderedSet";
+import { uncurryN } from "../../Data/Pair";
+import { isMaybeActive } from "../Utilities/Activatable/isActive";
+import { createMaybeSelector } from "../Utilities/createMaybeSelector";
+import { prefixSA } from "../Utilities/IDUtils";
+import { mapGetToMaybeSlice } from "../Utilities/SelectorsUtils";
+import { getAreAllRuleBooksEnabled, getEnabledRuleBooks, getSpecialAbilities } from "./stateSelectors";
 
 export const getRuleBooksEnabled = createMaybeSelector (
-  getAreAllRuleBooksEnabled,
   getEnabledRuleBooks,
-  (maybeAreAllRuleBooksEnabled, maybeEnabledRuleBooks) =>
-    maybeAreAllRuleBooksEnabled.bind<true | OrderedSet<string>> (
-      areAllRuleBooksEnabled => areAllRuleBooksEnabled ? Just<true> (true) : maybeEnabledRuleBooks
-    )
-);
+  getAreAllRuleBooksEnabled,
+  uncurryN (menabledBooks =>
+             bindF ((areAllEnabled): Maybe<true | OrderedSet<string>> => areAllEnabled
+                                                                           ? Just<true> (true)
+                                                                           : menabledBooks))
+)
 
 export const isEnableLanguageSpecializationsDeactivatable = createMaybeSelector (
-  mapGetToMaybeSlice (getSpecialAbilities, 'SA_699'),
-  isActive
-);
+  mapGetToMaybeSlice (getSpecialAbilities) (prefixSA (699)),
+  isMaybeActive
+)

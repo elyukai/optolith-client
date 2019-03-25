@@ -14,9 +14,9 @@
  * @see Either
  */
 
-import { pipe } from "ramda";
 import { ifElse } from "../App/Utilities/ifElse";
 import * as Math from "../App/Utilities/mathUtils";
+import { pipe } from "../App/Utilities/pipe";
 import { cnst, ident } from "./Function";
 import { fmap, fmapF } from "./Functor";
 import { cons, consF, head, ifoldr, List } from "./List";
@@ -338,6 +338,8 @@ export const kleisli =
 export const join =
   <A extends Some> (x: Maybe<Maybe<A>>): Maybe<A> =>
     bind<Maybe<A>> (x) (ident)
+
+export type join<A> = (x: Maybe<Maybe<A>>) => Maybe<A>
 
 /**
  * `mapM :: (a -> Maybe b) -> [a] -> Maybe [b]`
@@ -986,7 +988,7 @@ Maybe.maybeToUndefined = maybeToUndefined
 
 // TYPE HELPERS
 
-export type MaybeContent<A> = A extends Maybe<infer AI> ? AI : never
+export type MaybeI<A> = A extends Maybe<infer AI> ? AI : never
 
 // tslint:disable-next-line:interface-over-type-literal
 export type Some = {}

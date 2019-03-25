@@ -292,7 +292,7 @@ export const getAspectKnowledgesForSheet = createMaybeSelector (
 export const getInitialStartingWealth = createMaybeSelector (
   mapGetToMaybeSlice (getAdvantages) ("ADV_36"),
   mapGetToMaybeSlice (getDisadvantages) ("DISADV_2"),
-  (rich, poor) => getModifierByActiveLevel (rich) (poor) (Just (0)) * 250 + 750
+  (rich, poor) => getModifierByActiveLevel (Just (0)) (rich) (poor) * 250 + 750
 )
 
 export const isAlbino = createMaybeSelector (

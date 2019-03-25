@@ -1,4 +1,3 @@
-import * as R from "ramda";
 import { SetSelectionsAction } from "../Actions/ProfessionActions";
 import { ActionTypes } from "../Constants/ActionTypes";
 import { Categories } from "../Constants/Categories";
@@ -8,13 +7,8 @@ import * as Wiki from "../Models/Wiki/wikiTypeHelpers";
 import { getCombinedPrerequisites } from "../Utilities/Activatable/activatableActivationUtils";
 import { getActiveObjectCore } from "../Utilities/Activatable/activatableConvertUtils";
 import { addAllStyleRelatedDependencies } from "../Utilities/Activatable/ExtendedStyleUtils";
-import { createActivatableDependent, createActivatableDependentSkill } from "../Utilities/createEntryUtils";
-import { Just, List, Maybe, OrderedMap, OrderedSet, Record, Tuple } from "../Utilities/dataUtils";
-import { addDependencies } from "../Utilities/dependencies/dependencyUtils";
-import { flip } from "../Utilities/flip";
-import { getHeroStateItem, updateEntryDef, updateHeroListStateItemOr } from "../Utilities/heroStateUtils";
+import { getHeroStateItem, updateEntryDef } from "../Utilities/heroStateUtils";
 import { ifElse } from "../Utilities/ifElse";
-import { isProfessionRequiringIncreasable } from "../Utilities/wikiData/prerequisites/DependentRequirement";
 import { getWikiEntry } from "../Utilities/WikiUtils";
 
 type Action = SetSelectionsAction

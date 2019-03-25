@@ -1,7 +1,7 @@
-import { pipe } from "ramda";
 import { List } from "../../Data/List";
 import { Record, RecordBase } from "../../Data/Record";
 import { filterRecordsBy, filterRecordsByE, filterRecordsByName } from "./filterBy";
+import { pipe } from "./pipe";
 import { RecordWithName, SortOptions, sortRecordsBy, sortRecordsByName } from "./sortBy";
 
 /**

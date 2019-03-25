@@ -1,4 +1,3 @@
-import { pipe } from "ramda";
 import { filter, List } from "../../../Data/List";
 import { bindF, mapMaybe } from "../../../Data/Maybe";
 import { elems, find, lookupF, OrderedMap } from "../../../Data/OrderedMap";
@@ -6,6 +5,7 @@ import { Record } from "../../../Data/Record";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
 import { isBlessedTraditionId, isMagicalTraditionId } from "../IDUtils";
+import { pipe } from "../pipe";
 import { isActive } from "./isActive";
 
 const { id } = ActivatableDependent.A

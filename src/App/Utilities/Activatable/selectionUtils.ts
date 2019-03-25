@@ -1,4 +1,3 @@
-import { pipe } from "ramda";
 import { fmap } from "../../../Data/Functor";
 import { consF, find, foldl, List } from "../../../Data/List";
 import { altF, bind, bindF, elemF, ensure, fromMaybe, Just, liftM2, mapMaybe, Maybe } from "../../../Data/Maybe";
@@ -11,6 +10,7 @@ import { ActivatableDependency } from "../../Models/Hero/heroTypeHelpers";
 import { Advantage } from "../../Models/Wiki/Advantage";
 import { SelectOption } from "../../Models/Wiki/sub/SelectOption";
 import { Activatable } from "../../Models/Wiki/wikiTypeHelpers";
+import { pipe } from "../pipe";
 
 const { select } = Advantage.A
 const { id: getId, name, cost } = SelectOption.A

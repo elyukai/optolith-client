@@ -7,7 +7,8 @@
  * @author Lukas Obermann
  */
 
-import { not, pipe } from "ramda";
+import { not } from "../App/Utilities/not";
+import { pipe } from "../App/Utilities/pipe";
 import { lens, Lens_ } from "./Lens";
 import { isJust, isMaybe, isNothing, Maybe, Nothing } from "./Maybe";
 import { foldl, fromArray, OrderedSet } from "./OrderedSet";

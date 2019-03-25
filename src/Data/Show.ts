@@ -6,7 +6,7 @@
  * @author Lukas Obermann
  */
 
-import { pipe } from "ramda";
+import { pipe } from "../App/Utilities/pipe";
 import { isIO } from "../System/IO";
 import { isEither, isRight } from "./Either";
 import { fnull, intercalate, isList, map, toArray, trimStart } from "./List";

@@ -4,10 +4,12 @@ const { Just, Nothing } = require('../Maybe')
 const { Pair } = require('../Pair')
 const { Int } = require('../Int')
 const { OrderedMap } = require('../OrderedMap')
+const { fromDefault } = require('../Record')
 
 // [Symbol.iterator]
 
 test ('[Symbol.iterator]', () => {
+  expect ([...List ()]) .toEqual ([])
   expect ([...List (1, 2, 3)]) .toEqual ([1, 2, 3])
 })
 
@@ -889,4 +891,14 @@ test ('groupByKey', () => {
         ]
       )
     )
+})
+
+test ('mapByIdKeyMap', () => {
+  const R = fromDefault ({ id: "" })
+
+  const m = OrderedMap.fromArray ([["a", 1], ["b", 2], ["c", 3], ["d", 4], ["e", 5]])
+
+  expect (List.mapByIdKeyMap (m)
+                             (List (R ({ id: "d" }), R ({ id: "b" }), R ({ id: "a" }))))
+    .toEqual (List (4, 2, 1))
 })

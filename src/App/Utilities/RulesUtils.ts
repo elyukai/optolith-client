@@ -1,4 +1,3 @@
-import { pipe } from "ramda";
 import { any, elemF, filter, fnull, List } from "../../Data/List";
 import { member, OrderedMap } from "../../Data/OrderedMap";
 import { OrderedSet } from "../../Data/OrderedSet";
@@ -7,6 +6,7 @@ import { ActiveActivatable } from "../Models/View/ActiveActivatable";
 import { Advantage } from "../Models/Wiki/Advantage";
 import { Book } from "../Models/Wiki/Book";
 import { SourceLink } from "../Models/Wiki/sub/SourceLink";
+import { pipe } from "./pipe";
 
 
 // TYPES
@@ -35,8 +35,7 @@ const wikiEntry = ActiveActivatable.A.wikiEntry as GenericWikiEntryAccessor
 const { src } = Advantage.A
 const { id } = SourceLink.A
 
-const CoreBooks =
-  List.fromElements ("US25001", "US25002", "US25001EN", "US25002EN")
+const CoreBooks = List ("US25001", "US25002", "US25001EN", "US25002EN")
 
 /**
  * Check if the passed `SourceLink` links to a core book.

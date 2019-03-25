@@ -1,4 +1,3 @@
-import { pipe } from "ramda";
 import { cnst } from "../../Data/Function";
 import { foldl } from "../../Data/List";
 import { Just, Maybe, Nothing } from "../../Data/Maybe";
@@ -7,12 +6,23 @@ import { Categories } from "../Constants/Categories";
 import { IdPrefixes } from "../Constants/IdPrefixes";
 import { match } from "./match";
 import { inc, max } from "./mathUtils";
+import { pipe } from "./pipe";
 
 export const getIdPrefix = (id: string) => id.split (/_/)[0] as IdPrefixes
 
 export const getNumericId = (id: string) => Number.parseInt (id.split (/_/)[1], 10)
 
 export const prefixId = (prefix: IdPrefixes) => (id: number | string) => `${prefix}_${id}`
+
+/**
+ * Create an advantage id.
+ */
+export const prefixAdv = prefixId (IdPrefixes.ADVANTAGES)
+
+/**
+ * Create a special ability id.
+ */
+export const prefixSA = prefixId (IdPrefixes.SPECIAL_ABILITIES)
 
 /**
  * Gets a list of ids and returns an unused numeric id.

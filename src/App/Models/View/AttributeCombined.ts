@@ -12,3 +12,10 @@ export const AttributeCombined =
     wikiEntry: Attribute .default,
     stateEntry: AttributeDependent .default,
   })
+
+export const newAttributeCombined =
+  (wiki_entry: Record<Attribute>) => (hero_entry: Record<AttributeDependent>) =>
+    AttributeCombined ({
+      wikiEntry: wiki_entry,
+      stateEntry: hero_entry,
+    })

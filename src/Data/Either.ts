@@ -12,8 +12,8 @@
  * @author Lukas Obermann
  */
 
-import { pipe } from "ramda";
 import { ifElse } from "../App/Utilities/ifElse";
+import { pipe } from "../App/Utilities/pipe";
 import { ident, thrush } from "./Function";
 import { fmap } from "./Functor";
 import { cons, consF, List } from "./List";

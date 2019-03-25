@@ -5,7 +5,6 @@ import { OrderedSet } from "../../../Data/OrderedSet";
 import { Pair } from "../../../Data/Pair";
 import { Record, RecordI } from "../../../Data/Record";
 import { ReduxActions } from "../../Actions/Actions";
-import { DCIds } from "../../Selectors/derivedCharacteristicsSelectors";
 import { TabId } from "../../Utilities/LocationUtils";
 import { ActivatableDependent } from "../ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent } from "../ActiveEntries/ActivatableSkillDependent";
@@ -148,43 +147,6 @@ export interface ItemEditorSpecific {
   stp: string
   weight: string
   stabilityMod: string
-}
-
-interface DerivedCharacteristicBase<I extends DCIds = DCIds> {
-  id: I
-  short: string
-  name: string
-  calc: string
-  base: Maybe<number>
-  value: Maybe<number>
-}
-
-export interface DerivedCharacteristic<I extends DCIds = DCIds>
-  extends DerivedCharacteristicBase<I> {
-    add: Maybe<number>
-    mod: Maybe<number>
-    maxAdd: Maybe<number>
-    currentAdd: Maybe<number>
-    permanentLost: Maybe<number>
-    permanentRedeemed: Maybe<number>
-  }
-
-export interface Energy<I extends DCIds = DCIds> extends DerivedCharacteristicBase<I> {
-  add: number
-  mod: number
-  maxAdd: number
-  currentAdd: number
-  permanentLost: number
-  permanentRedeemed: Maybe<number>
-}
-
-export interface EnergyWithLoss<I extends DCIds = DCIds> extends DerivedCharacteristicBase<I> {
-  add: number
-  mod: number
-  maxAdd: number
-  currentAdd: number
-  permanentLost: number
-  permanentRedeemed: number
 }
 
 export interface HistoryPayload {

@@ -1,9 +1,10 @@
-import { pipe } from "ramda";
+import { fmap } from "../../../../Data/Functor";
 import { all, elemF, isList, List } from "../../../../Data/List";
-import { fmap, Maybe, Nothing, or } from "../../../../Data/Maybe";
+import { Maybe, Nothing, or } from "../../../../Data/Maybe";
 import { fromDefault, makeLenses, member, Record } from "../../../../Data/Record";
 import { ActivatableLikeCategories, Categories } from "../../../Constants/Categories";
 import { getCategoryById } from "../../../Utilities/IDUtils";
+import { pipe } from "../../../Utilities/pipe";
 import { AllRequirementObjects, ProfessionPrerequisite, SID } from "../wikiTypeHelpers";
 
 export interface RequireActivatable {
