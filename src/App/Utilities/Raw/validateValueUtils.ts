@@ -1,7 +1,7 @@
-import { pipe } from "ramda";
 import { Either, first, fromRight_, isEither, isLeft, Left, Right, RightI } from "../../../Data/Either";
 import { appendStr, notNullStr } from "../../../Data/List";
 import { bindF, ensure, Maybe } from "../../../Data/Maybe";
+import { pipe } from "../pipe";
 import { mensureMapNatural, mensureMapNaturalOptional, mensureMapNonEmptyString } from "./validateMapValueUtils";
 
 export const Expect = Object.freeze ({

@@ -1,4 +1,3 @@
-import { pipe } from "ramda";
 import { fmap } from "../../../Data/Functor";
 import { cons, elem, foldl, List, maximum } from "../../../Data/List";
 import { guard, Just, Maybe, maybe, sum, then } from "../../../Data/Maybe";
@@ -12,6 +11,7 @@ import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { getActiveSelectionsMaybe } from "../Activatable/selectionUtils";
 import { flattenDependencies } from "../Dependencies/flattenDependencies";
 import { add, divideBy, max } from "../mathUtils";
+import { pipe } from "../pipe";
 
 const { value, dependencies } = SkillDependent.A
 const { gr, primary, id } = CombatTechnique.A
@@ -74,7 +74,7 @@ export const isIncreaseDisabled =
                          getActiveSelectionsMaybe,
                          fmap (elem<string | number> (id (instance))),
                          Maybe.elem (true),
-                         x => x ? 1 : 0
+                         (x): number => x ? 1 : 0
                        )
                        (exceptionalSkill)
 

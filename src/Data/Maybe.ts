@@ -310,7 +310,7 @@ export const then =
  * `(<<) :: Maybe a -> Maybe b -> Maybe a`
  *
  * Sequentially compose two actions, discarding any value produced by the
- * second.s
+ * second.
  */
 export const thenF =
   <A extends Some> (x: Maybe<A>) => (y: Maybe<any>): Maybe<A> =>
@@ -821,7 +821,7 @@ interface Ensure {
    */
   <A extends Some, A1 extends A>
   (pred: (x: A) => x is A1):
-  (x: A | Nullable) => Maybe<A1>
+  (x: A) => Maybe<A1>
 
   /**
    * `ensure :: (a -> Bool) -> a -> Maybe a`
@@ -832,22 +832,20 @@ interface Ensure {
    */
   <A extends Some>
   (pred: (x: A) => boolean):
-  (x: A | Nullable) => Maybe<A>
+  (x: A) => Maybe<A>
 }
 
 /**
  * `ensure :: (a -> Bool) -> a -> Maybe a`
  *
  * Creates a new `Just a` from the given value if the given predicate
- * evaluates to `True` and the given value is not nullable. Otherwise returns
- * `Nothing`.
+ * evaluates to `True`. Otherwise returns `Nothing`.
  */
 export const ensure: Ensure =
   <A extends Some>
   (pred: (x: A) => boolean) =>
-  (x: A | Nullable): Maybe<A> =>
-    bind<A> (Maybe (x))
-            (a => pred (a) ? Just (a) : Nothing)
+  (x: A): Maybe<A> =>
+    pred (x) ? Just (x) : Nothing
 
 /**
  * `imapMaybe :: (Int -> a -> Maybe b) -> [a] -> [b]`

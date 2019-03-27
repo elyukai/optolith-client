@@ -15,9 +15,19 @@ export const getNumericId = (id: string) => Number.parseInt (id.split (/_/)[1], 
 export const prefixId = (prefix: IdPrefixes) => (id: number | string) => `${prefix}_${id}`
 
 /**
+ * Create an attribute id.
+ */
+export const prefixAttr = prefixId (IdPrefixes.ATTRIBUTES)
+
+/**
  * Create an advantage id.
  */
 export const prefixAdv = prefixId (IdPrefixes.ADVANTAGES)
+
+/**
+ * Create a disadvantage id.
+ */
+export const prefixDis = prefixId (IdPrefixes.DISADVANTAGES)
 
 /**
  * Create a special ability id.

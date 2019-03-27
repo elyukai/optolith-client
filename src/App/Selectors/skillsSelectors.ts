@@ -1,4 +1,3 @@
-import * as R from 'ramda';
 import { EntryRating, Hero } from '../App/Models/Hero/heroTypeHelpers';
 import { SkillCombined, SkillWithRequirements } from '../App/Models/View/viewTypeHelpers';
 import { ExperienceLevel } from '../App/Models/Wiki/wikiTypeHelpers';

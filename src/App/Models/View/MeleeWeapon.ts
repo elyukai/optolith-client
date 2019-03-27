@@ -23,7 +23,7 @@ export interface MeleeWeapon {
   isTwoHandedWeapon: boolean
 }
 
-const MeleeWeapon =
+export const MeleeWeapon =
   fromDefault<MeleeWeapon> ({
     id: "",
     name: "",

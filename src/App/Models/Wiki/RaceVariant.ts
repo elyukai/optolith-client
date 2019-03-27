@@ -1,6 +1,6 @@
 import { List } from "../../../Data/List";
 import { Maybe, Nothing } from "../../../Data/Maybe";
-import { fromDefault, Record } from "../../../Data/Record";
+import { fromDefault, makeLenses, Record } from "../../../Data/Record";
 import { Categories } from "../../Constants/Categories";
 import { Die } from "./sub/Die";
 import { EntryWithCategory } from "./wikiTypeHelpers";
@@ -43,6 +43,8 @@ export const RaceVariant =
     sizeRandom: Nothing,
     category: Categories.RACE_VARIANTS,
   })
+
+export const RaceVariantL = makeLenses (RaceVariant)
 
 export const isRaceVariant =
   (r: EntryWithCategory) => RaceVariant.A.category (r) === Categories.RACE_VARIANTS

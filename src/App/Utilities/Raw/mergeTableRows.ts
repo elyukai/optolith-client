@@ -1,4 +1,3 @@
-import { pipe } from "ramda";
 import { bimap, Either, first, fromRight_, isLeft, maybeToEither, Right } from "../../../Data/Either";
 import { appendStr, find, List, notNullStr } from "../../../Data/List";
 import { bindF, elem, ensure, fromJust, isJust, Just, Maybe, Nothing } from "../../../Data/Maybe";
@@ -6,7 +5,7 @@ import { lookup, lookupF, OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { show } from "../../../Data/Show";
 import { toInt } from "../NumberUtils";
-import { pipe_ } from "../pipe";
+import { pipe, pipe_ } from "../pipe";
 
 /**
  * Lookup property `"id"` in passed line from universal table and returns an

@@ -1,4 +1,4 @@
-import { fromDefault } from "../../../Data/Record";
+import { fromDefault, makeLenses } from "../../../Data/Record";
 import { ActivatableSkillDependent } from "../ActiveEntries/ActivatableSkillDependent";
 import { LiturgicalChant } from "../Wiki/LiturgicalChant";
 import { LiturgicalChantCombined } from "./LiturgicalChantCombined";
@@ -14,3 +14,5 @@ export const LiturgicalChantWithRequirements =
     isIncreasable: false,
     isDecreasable: false,
   })
+
+export const LiturgicalChantWithRequirementsL = makeLenses (LiturgicalChantWithRequirements)

@@ -1,20 +1,52 @@
-import { bindF, isJust } from "../../Data/Maybe";
-import { lookupF } from "../../Data/OrderedMap";
-import { uncurryN } from "../../Data/Pair";
+import { equals } from "../../Data/Eq";
+import { flip, ident, thrush } from "../../Data/Function";
+import { fmap, fmapF, mapReplace } from "../../Data/Functor";
+import { over } from "../../Data/Lens";
+import { any, append, consF, elem, filter, flength, foldr, List, map, notElem, notNull, partition } from "../../Data/List";
+import { all, bind, bindF, ensure, fromMaybe_, guard, isJust, liftM2, liftM4, mapMaybe, maybe, Maybe, Nothing, or } from "../../Data/Maybe";
+import { elems, lookup, lookupF, OrderedMap } from "../../Data/OrderedMap";
+import { insert, member, OrderedSet } from "../../Data/OrderedSet";
+import { fst, snd, uncurryN, uncurryN3, uncurryN4, uncurryN5, uncurryN6 } from "../../Data/Pair";
+import { Record } from "../../Data/Record";
 import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
-import { isActive } from "../Utilities/Activatable/isActive";
+import { ActivatableSkillDependent, createInactiveActivatableSkillDependent } from "../Models/ActiveEntries/ActivatableSkillDependent";
+import { HeroModel, HeroModelRecord } from "../Models/Hero/HeroModel";
+import { BlessingCombined } from "../Models/View/BlessingCombined";
+import { LiturgicalChantWithRequirements, LiturgicalChantWithRequirementsL } from "../Models/View/LiturgicalChantWithRequirements";
+import { Blessing } from "../Models/Wiki/Blessing";
+import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel";
+import { LiturgicalChant, LiturgicalChantL } from "../Models/Wiki/LiturgicalChant";
+import { SpecialAbility } from "../Models/Wiki/SpecialAbility";
+import { WikiModel } from "../Models/Wiki/WikiModel";
+import { isMaybeActive } from "../Utilities/Activatable/isActive";
 import { getBlessedTradition } from "../Utilities/Activatable/traditionUtils";
+import { composeL } from "../Utilities/compose";
 import { createMaybeSelector } from "../Utilities/createMaybeSelector";
-import { getNumericBlessedTraditionIdByInstanceId } from "../Utilities/IDUtils";
-import { getAspectsOfTradition, isOwnTradition } from "../Utilities/Increasable/liturgicalChantUtils";
-import { pipe } from "../Utilities/pipe";
+import { filterAndSortRecordsBy } from "../Utilities/filterAndSortBy";
+import { getNumericBlessedTraditionIdByInstanceId, prefixAdv, prefixSA } from "../Utilities/IDUtils";
+import { getAspectsOfTradition, isLiturgicalChantDecreasable, isLiturgicalChantIncreasable, isOwnTradition } from "../Utilities/Increasable/liturgicalChantUtils";
+import { inc, lt, lte } from "../Utilities/mathUtils";
+import { notP } from "../Utilities/not";
+import { pipe, pipe_ } from "../Utilities/pipe";
 import { filterByAvailability } from "../Utilities/RulesUtils";
 import { mapGetToMaybeSlice } from "../Utilities/SelectorsUtils";
+import { sortRecordsBy } from "../Utilities/sortBy";
 import { getStartEl } from "./elSelectors";
 import { getRuleBooksEnabled } from "./rulesSelectors";
-import { getLiturgicalChantsSortOptions } from "./sortOptionsSelectors";
-import { getAdvantages, getBlessings, getCurrentHeroPresent, getInactiveLiturgicalChantsFilterText, getLiturgicalChants, getLiturgicalChantsFilterText, getLocaleAsProp, getPhase, getSpecialAbilities, getWiki, getWikiBlessings, getWikiLiturgicalChants, getWikiSpecialAbilities } from "./stateSelectors";
+import { getBlessingsSortOptions, getLiturgicalChantsCombinedSortOptions, getLiturgicalChantsSortOptions } from "./sortOptionsSelectors";
+import { getAdvantages, getBlessings, getCurrentHeroPresent, getInactiveLiturgicalChantsFilterText, getLiturgicalChants, getLiturgicalChantsFilterText, getPhase, getSpecialAbilities, getWiki, getWikiBlessings, getWikiLiturgicalChants, getWikiSpecialAbilities } from "./stateSelectors";
 import { getEnableActiveItemHints } from "./uisettingsSelectors";
+
+const HA = HeroModel.A_
+const WA = WikiModel.A_
+const ADA = ActivatableDependent.A_
+const ASDA = ActivatableSkillDependent.A_
+const BA = Blessing.A_
+const BCA = BlessingCombined.A_
+const LCWRA = LiturgicalChantWithRequirements.A_
+const LCWRL = LiturgicalChantWithRequirementsL
+const LCA = LiturgicalChant.A_
+const LCL = LiturgicalChantL
 
 export const getBlessedTraditionFromState = createMaybeSelector (
   getSpecialAbilities,
@@ -36,353 +68,316 @@ export const getIsLiturgicalChantsTabAvailable = createMaybeSelector (
 
 export const getBlessedTraditionNumericId = createMaybeSelector (
   getBlessedTraditionFromState,
-  Maybe.bind_ (x => getNumericBlessedTraditionIdByInstanceId (x.get ("id")))
+  bindF (pipe (ADA.id, getNumericBlessedTraditionIdByInstanceId))
 )
 
 export const getActiveLiturgicalChants = createMaybeSelector (
   getBlessedTraditionFromWikiState,
   getStartEl,
-  mapGetToMaybeSlice (getAdvantages, "ADV_16"),
-  mapGetToMaybeSlice (getSpecialAbilities, "SA_87"),
+  mapGetToMaybeSlice (getAdvantages) (prefixAdv (16)),
+  mapGetToMaybeSlice (getSpecialAbilities) (prefixSA (87)),
   getWiki,
   getCurrentHeroPresent,
-  (
-    maybeBlessedTradition,
-    maybeStartEl,
-    exceptionalSkill,
-    aspectKnowledge,
-    wiki,
-    maybeHero
-  ) =>
-    maybeBlessedTradition
-      .bind (
-        blessedTradition => maybeHero.bind (
-          hero => maybeStartEl.fmap (
-            startEl => Maybe.mapMaybe<
-              Record<ActivatableSkillDependent>,
-              Record<LiturgicalChantWithRequirements>
-            >(
-              R.pipe (
-                Maybe.ensure (x => x.get ("active")),
-                Maybe.bind_ (
-                  liturgicalChant => wiki.get ("liturgicalChants")
-                    .lookup (liturgicalChant.get ("id"))
-                    .fmap (
-                      wikiLiturgicalChant => wikiLiturgicalChant
-                        .merge (liturgicalChant)
-                        .merge (Record.of ({
-                          isIncreasable: isIncreasable (
-                            blessedTradition,
-                            wikiLiturgicalChant,
-                            liturgicalChant,
-                            startEl,
-                            hero.get ("phase"),
-                            hero.get ("attributes"),
-                            exceptionalSkill,
-                            aspectKnowledge
-                          ),
-                          isDecreasable: isDecreasable (
-                            wiki,
-                            hero,
-                            wikiLiturgicalChant,
-                            liturgicalChant,
-                            hero.get ("liturgicalChants"),
-                            aspectKnowledge
-                          ),
-                        }))
-                    )
-                )
-              )
-            ) (hero.get ("liturgicalChants").elems ())
-          )
-        )
-      )
+  (mblessed_trad, mstart_el, mexceptionalSkill, maspectKnowledge, wiki, mhero) =>
+    bind (mblessed_trad)
+         (blessed_trad =>
+           liftM2 ((hero: HeroModelRecord) => (start_el: Record<ExperienceLevel>) =>
+                    thrush (elems (HA.liturgicalChants (hero)))
+                           (mapMaybe (pipe (
+                             ensure (ASDA.active),
+                             bindF (hero_entry =>
+                                     pipe_ (
+                                       wiki,
+                                       WA.liturgicalChants,
+                                       lookup (ASDA.id (hero_entry)),
+                                       fmap (wiki_entry =>
+                                         LiturgicalChantWithRequirements ({
+                                           isIncreasable:
+                                             isLiturgicalChantIncreasable (blessed_trad)
+                                                                          (wiki_entry)
+                                                                          (hero_entry)
+                                                                          (start_el)
+                                                                          (HA.phase (hero))
+                                                                          (HA.attributes (hero))
+                                                                          (mexceptionalSkill)
+                                                                          (maspectKnowledge),
+                                           isDecreasable:
+                                             isLiturgicalChantDecreasable (wiki)
+                                                                          (hero)
+                                                                          (maspectKnowledge)
+                                                                          (wiki_entry)
+                                                                          (hero_entry),
+                                           stateEntry: hero_entry,
+                                           wikiEntry: wiki_entry,
+                                         })
+                                       )
+                                     ))
+                           ))))
+                  (mhero)
+                  (mstart_el))
 )
 
 export const getActiveAndInactiveBlessings = createMaybeSelector (
-  getBlessings,
   getWikiBlessings,
-  (maybeBlessings, wikiBlessings) => maybeBlessings .fmap (
-    blessings => wikiBlessings
-      .elems ()
-      .map<Record<BlessingCombined>> (
-        e => e .merge (Record.of ({ active: blessings .member (e .get ("id")) }))
-      )
-      .partition (Record.get<BlessingCombined, "active"> ("active"))
-  )
+  getBlessings,
+  uncurryN (wiki_blessings => fmap (hero_blessings => pipe_ (
+                                                              wiki_blessings,
+                                                              elems,
+                                                              map (wiki_entry => BlessingCombined ({
+                                                                wikiEntry: wiki_entry,
+                                                                active: member (BA.id (wiki_entry))
+                                                                               (hero_blessings),
+                                                              })),
+                                                              partition (BCA.active)
+                                                            )))
 )
 
 export const getActiveBlessings = createMaybeSelector (
   getActiveAndInactiveBlessings,
-  Maybe.fmap (Tuple.fst)
+  fmap (fst)
 )
 
 export const getInactiveBlessings = createMaybeSelector (
   getActiveAndInactiveBlessings,
-  Maybe.fmap (Tuple.snd)
+  fmap (snd)
 )
 
 export const getInactiveLiturgicalChants = createMaybeSelector (
-  getLiturgicalChants,
   getWikiLiturgicalChants,
-  (maybeLiturgicalChants, wikiLiturgicalChants) => maybeLiturgicalChants
-    .fmap (R.pipe (
-      OrderedMap.elems,
-      liturgicalChants => OrderedMap.mapMaybe<
-        string,
-        Record<LiturgicalChant>,
-        Record<LiturgicalChantIsActive>
-      >
-        (R.pipe (
-          Maybe.ensure (
-            wikiLiturgicalChant => liturgicalChants.all (
-              liturgicalChant => liturgicalChant.get ("id") !== wikiLiturgicalChant.get ("id")
-            )
-          ),
-          Maybe.fmap (Record.merge (Record.of ({ active: false })))
-        ))
-        (wikiLiturgicalChants)
-    ))
+  getLiturgicalChants,
+  uncurryN (wiki_chants =>
+    fmap (hero_chants =>
+      OrderedMap.foldrWithKey ((k: string) => (wiki_entry: Record<LiturgicalChant>) => {
+                                const mhero_entry = lookup (k) (hero_chants)
+
+                                if (all (notP (ASDA.active)) (mhero_entry)) {
+                                  return consF (LiturgicalChantWithRequirements ({
+                                    wikiEntry: wiki_entry,
+                                    stateEntry:
+                                     fromMaybe_ (() =>
+                                                  createInactiveActivatableSkillDependent (k))
+                                                (mhero_entry),
+                                    isDecreasable: Nothing,
+                                    isIncreasable: Nothing,
+                                  }))
+                                }
+
+                                return ident as ident<List<Record<LiturgicalChantWithRequirements>>>
+                              })
+                              (List ())
+                              (wiki_chants)))
 )
 
-const additionalInactiveListFilter = (
-  inactiveList: OrderedMap<string, Record<LiturgicalChantIsActive>>,
-  activeList: List<Record<LiturgicalChantWithRequirements>>,
-  validate: (
-    e: Record<LiturgicalChantWithRequirements> | Record<LiturgicalChantIsActive>
-  ) => boolean
-): List<string> => {
-  if (!activeList.any (validate)) {
-    return inactiveList
-      .filter (
-        e => {
-          const isTraditionValid = !e.get ("tradition").elem (1) && validate (e)
-          const isICValid = e.get ("ic") <= 3
+const additionalInactiveListFilter =
+  (check: (e: Record<LiturgicalChantWithRequirements>) => boolean) =>
+  (inactives: List<Record<LiturgicalChantWithRequirements>>) =>
+  (actives: List<Record<LiturgicalChantWithRequirements>>): List<string> => {
+    if (!any (check) (actives)) {
+      return mapMaybe ((chant: Record<LiturgicalChantWithRequirements>) => {
+                        const wiki_entry = LCWRA.wikiEntry (chant)
 
-          return isTraditionValid && isICValid
-        }
-      )
-      .elems ()
-      .map (x => x.get ("id"))
+                        const isTraditionValid = notElem (1) (LCA.tradition (wiki_entry))
+                          && check (chant)
+
+                        const isICValid = LCA.ic (wiki_entry) <= 3
+
+                        return mapReplace (LCA.id (wiki_entry))
+                                          (guard (isTraditionValid && isICValid))
+                      })
+                      (inactives)
+    }
+
+    return List ()
   }
 
-  return List.of ()
-}
+const isTrad =
+  (trad_id: number) => pipe (LCWRA.wikiEntry, LCA.tradition, elem (trad_id))
+
+const isGr =
+  (gr_id: number) => pipe (LCWRA.wikiEntry, LCA.gr, equals (gr_id))
 
 export const getAdditionalValidLiturgicalChants = createMaybeSelector (
+  getBlessedTraditionFromWikiState,
+  mapGetToMaybeSlice (getSpecialAbilities) (prefixSA (623)),
+  mapGetToMaybeSlice (getSpecialAbilities) (prefixSA (625)),
+  mapGetToMaybeSlice (getSpecialAbilities) (prefixSA (632)),
   getInactiveLiturgicalChants,
   getActiveLiturgicalChants,
-  getBlessedTraditionFromWikiState,
-  mapGetToMaybeSlice (getSpecialAbilities, "SA_623"),
-  mapGetToMaybeSlice (getSpecialAbilities, "SA_625"),
-  mapGetToMaybeSlice (getSpecialAbilities, "SA_632"),
-  (
-    maybeInactiveList,
-    maybeActiveList,
-    tradition,
-    zugvoegel,
-    jaegerinnenDerWeissenMaid,
-    anhaengerDesGueldenen
-  ): Maybe<List<string>> => Maybe.liftM2<
-      OrderedMap<string, Record<LiturgicalChantIsActive>>,
-      List<Record<LiturgicalChantWithRequirements>>,
-      List<string>
-    >
-    (inactiveList => activeList => {
-      if (isActive (zugvoegel)) {
-        // Phex
-        return additionalInactiveListFilter (
-          inactiveList,
-          activeList,
-          e => e.get ("tradition").elem (6)
-        )
-          // Travia
-          .mappend (additionalInactiveListFilter (
-            inactiveList,
-            activeList,
-            e => e.get ("tradition").elem (9)
-          ))
-      }
-
-      if (isActive (jaegerinnenDerWeissenMaid)) {
-        // Firun Liturgical Chant
-        return additionalInactiveListFilter (
-          inactiveList,
-          activeList,
-          e => e.get ("tradition").elem (10) && e.get ("gr") === 1
-        )
-          // Firun Ceremony
-          .mappend (additionalInactiveListFilter (
-            inactiveList,
-            activeList,
-            e => e.get ("tradition").elem (10) && e.get ("gr") === 2
-          ))
-      }
-
-      if (isActive (anhaengerDesGueldenen)) {
-        const unfamiliarChants = Maybe.fromMaybe (activeList) (
-          tradition.fmap (
-            traditionFromWiki => activeList.filter (
-              e => !isOwnTradition (
-                traditionFromWiki,
-                e as any as Record<LiturgicalChant>
-              )
-            )
-          )
-        )
-
-        const inactiveWithValidIC = inactiveList.filter (e => e.get ("ic") <= 2)
-
-        if (!unfamiliarChants.null ()) {
-          const otherTraditions = unfamiliarChants.foldl<OrderedSet<number>> (
-            acc => obj => obj.get ("tradition").foldl<OrderedSet<number>> (
-              acc1 => acc1.insert
-            ) (acc)
-          ) (OrderedSet.empty ())
-
-          return inactiveWithValidIC
-            .filter (e => e.get ("tradition").any (otherTraditions.member))
-            .elems ()
-            .map (e => e.get ("id"))
+  uncurryN6 (
+    mcurrent_trad =>
+    zugvoegel =>
+    jaegerinnen_der_weissen_maid =>
+    anhaenger_des_gueldenen =>
+    liftM2 (
+      inactives =>
+      actives => {
+        if (isMaybeActive (zugvoegel)) {
+                        // Phex
+          return append (additionalInactiveListFilter (isTrad (6))
+                                                      (inactives)
+                                                      (actives))
+                        // Travia
+                        (additionalInactiveListFilter (isTrad (9))
+                                                      (inactives)
+                                                      (actives))
         }
 
-        return inactiveWithValidIC.elems ().map (e => e.get ("id"))
-      }
+        if (isMaybeActive (jaegerinnen_der_weissen_maid)) {
+                        // Firun Liturgical Chant
+          return append (additionalInactiveListFilter (e => isTrad (10) (e) && isGr (1) (e))
+                                                      (inactives)
+                                                      (actives))
+                        // Firun Ceremony
+                        (additionalInactiveListFilter (e => isTrad (10) (e) && isGr (2) (e))
+                                                      (inactives)
+                                                      (actives))
+        }
 
-      return List.of ()
-    })
-    (maybeInactiveList)
-    (maybeActiveList)
+        if (isMaybeActive (anhaenger_des_gueldenen)) {
+          const unfamiliar_chants =
+            maybe (actives)
+                  ((current_trad: Record<SpecialAbility>) =>
+                    filter ((active: Record<LiturgicalChantWithRequirements>) =>
+                             !isOwnTradition (current_trad)
+                                             (LCWRA.wikiEntry (active)))
+                           (actives))
+                  (mcurrent_trad)
+
+          const inactive_with_valid_IC = filter (pipe (LCWRA.wikiEntry, LCA.ic, lte (3)))
+                                                (inactives)
+
+          if (notNull (unfamiliar_chants)) {
+            const other_trads =
+              foldr (pipe (LCWRA.wikiEntry, LCA.tradition, flip (foldr (insert))))
+                    (OrderedSet.empty)
+                    (unfamiliar_chants)
+
+            return pipe_ (
+              inactive_with_valid_IC,
+              filter (pipe (LCWRA.wikiEntry, LCA.tradition, any (flip (member) (other_trads)))),
+              map (pipe (LCWRA.wikiEntry, LCA.id))
+            )
+          }
+
+          return map (pipe (LCWRA.wikiEntry, LCA.id))
+                     (inactive_with_valid_IC)
+        }
+
+        return List.empty
+      }))
 )
 
 export const getAvailableInactiveLiturgicalChants = createMaybeSelector (
-  getInactiveLiturgicalChants,
   getAdditionalValidLiturgicalChants,
   getBlessedTraditionFromWikiState,
+  getInactiveLiturgicalChants,
   getRuleBooksEnabled,
-  getWikiSpecialAbilities,
-  (
-    maybeInactiveList,
-    maybeAdditionalValidLiturgicalChants,
-    maybeTradition,
-    maybeAvailablility
-  ) =>
-    maybeInactiveList.bind (
-      inactiveList => maybeAdditionalValidLiturgicalChants.bind (
-        additionalValidLiturgicalChants => maybeAvailablility.bind (
-          availablility => maybeTradition.fmap (
-            tradition => filterByAvailability (
-              inactiveList
-                .elems ()
-                .filter (e => {
-                  const ownTradition = isOwnTradition (
-                    tradition,
-                    e as any as Record<LiturgicalChant>
-                  )
+  uncurryN4 (liftM4 (add_valid_chants =>
+                     current_trad =>
+                       pipe (
+                         filter (e => {
+                           const is_own_trad = isOwnTradition (current_trad)
+                                                              (LCWRA.wikiEntry (e))
 
-                  return ownTradition || additionalValidLiturgicalChants.elem (e.get ("id"))
-                }),
-              availablility
-            )
-          )
-        )
-      )
-    )
+                           return is_own_trad || elem (pipe_ (e, LCWRA.wikiEntry, LCA.id))
+                                                      (add_valid_chants)
+                         }),
+                         flip (filterByAvailability (pipe (LCWRA.wikiEntry, LCA.src)))
+                       )))
 )
 
-type ActiveListCombined = List<Record<LiturgicalChantWithRequirements> | Record<BlessingCombined>>
-type InactiveListCombined = List<Record<LiturgicalChantIsActive> | Record<BlessingCombined>>
+type ListCombined = List<Record<LiturgicalChantWithRequirements> | Record<BlessingCombined>>
 
 export const getActiveLiturgicalChantsAndBlessings = createMaybeSelector (
   getActiveLiturgicalChants,
   getActiveBlessings,
-  (liturgicalChants: Maybe<ActiveListCombined>, blessings) =>
-    liturgicalChants .mappend (blessings)
+  (liturgicalChants: Maybe<ListCombined>, blessings) =>
+    liftM2 (append) (liturgicalChants) (blessings)
 )
 
 export const getAvailableInactiveLiturgicalChantsAndBlessings = createMaybeSelector (
   getAvailableInactiveLiturgicalChants,
   getInactiveBlessings,
-  (liturgicalChants: Maybe<InactiveListCombined>, blessings) =>
-    liturgicalChants .mappend (blessings)
+  (liturgicalChants: Maybe<ListCombined>, blessings) =>
+    liftM2 (append) (liturgicalChants) (blessings)
 )
+
+type getNameFromCombinedOrBlessing =
+  (x: Record<LiturgicalChantWithRequirements | BlessingCombined>) => string
+
+const getNameFromCombinedOrBlessing =
+  (x: Record<LiturgicalChantWithRequirements> | Record<BlessingCombined>) =>
+    LiturgicalChantWithRequirements.is (x)
+      ? pipe_ (x, LCWRA.wikiEntry, LCA.name)
+      : pipe_ (x, BCA.wikiEntry, BA.name)
 
 export const getFilteredActiveLiturgicalChantsAndBlessings = createMaybeSelector (
   getActiveLiturgicalChantsAndBlessings,
-  getLiturgicalChantsSortOptions,
+  getLiturgicalChantsCombinedSortOptions,
   getLiturgicalChantsFilterText,
-  getLocaleAsProp,
-  (maybeLiturgicalChants, sortOptions, filterText, locale) => maybeLiturgicalChants .fmap (
-    liturgicalChants => filterAndSortObjects (
-      liturgicalChants as List<Record<BlessingCombined | LiturgicalChantWithRequirements>>,
-      locale.get ("id"),
-      filterText,
-      sortOptions as AllSortOptions<BlessingCombined | LiturgicalChantWithRequirements>
-    ) as ActiveListCombined
-  )
+  (mcombineds, sort_options, filter_text) =>
+    fmapF (mcombineds)
+          (filterAndSortRecordsBy (0)
+                                  <LiturgicalChantWithRequirements | BlessingCombined>
+                                  ([getNameFromCombinedOrBlessing as getNameFromCombinedOrBlessing])
+                                  (sort_options)
+                                  (filter_text))
 )
 
 export const getFilteredInactiveLiturgicalChantsAndBlessings = createMaybeSelector (
+  getLiturgicalChantsCombinedSortOptions,
+  getInactiveLiturgicalChantsFilterText,
+  getEnableActiveItemHints,
   getAvailableInactiveLiturgicalChantsAndBlessings,
   getActiveLiturgicalChantsAndBlessings,
-  getLiturgicalChantsSortOptions,
-  getInactiveLiturgicalChantsFilterText,
-  getLocaleAsProp,
-  getEnableActiveItemHints,
-  (maybeInactive, maybeActive, sortOptions, filterText, locale, areActiveItemHintsEnabled) =>
-    Maybe.liftM2<InactiveListCombined, InactiveListCombined, InactiveListCombined>
-      (active => inactive => areActiveItemHintsEnabled
-        ? filterAndSortObjects (
-          List.mappend (inactive) (active) as List<Record<BlessingCombined | LiturgicalChant>>,
-          locale.get ("id"),
-          filterText,
-          sortOptions as AllSortOptions<BlessingCombined | LiturgicalChant>
-        ) as InactiveListCombined
-        : filterAndSortObjects (
-          inactive as List<Record<BlessingCombined | LiturgicalChant>>,
-          locale.get ("id"),
-          filterText,
-          sortOptions as AllSortOptions<BlessingCombined | LiturgicalChant>
-        ) as InactiveListCombined)
-      (maybeActive as Maybe<InactiveListCombined>)
-      (maybeInactive)
+  uncurryN5 (sort_options =>
+             filter_text =>
+             areActiveItemHintsEnabled =>
+             liftM2 (inactive =>
+                     active =>
+                       filterAndSortRecordsBy (0)
+                                              <LiturgicalChantWithRequirements | BlessingCombined>
+                                              ([getNameFromCombinedOrBlessing as
+                                                getNameFromCombinedOrBlessing])
+                                              (sort_options)
+                                              (filter_text)
+                                              (areActiveItemHintsEnabled
+                                                ? append (active) (inactive)
+                                                : inactive)))
 )
 
 export const isActivationDisabled = createMaybeSelector (
   getStartEl,
   getPhase,
   getActiveLiturgicalChants,
-  (maybeStartEl, maybePhase, maybeLiturgicalChants) =>
-    Maybe.elem (true) (maybePhase.fmap (R.gt (3)))
-    && Maybe.elem
-      (true)
-      (Maybe.liftM2<List<Record<LiturgicalChantWithRequirements>>, Record<ExperienceLevel>, boolean>
-        (liturgicalChants => startEl =>
-          liturgicalChants.length () >= startEl.get ("maxSpellsLiturgies"))
-        (maybeLiturgicalChants)
-        (maybeStartEl))
+  (mstart_el, mphase, mchants) =>
+    or (fmap (lt (3)) (mphase))
+    && or (liftM2 ((liturgicalChants: List<Record<LiturgicalChantWithRequirements>>) =>
+                   (startEl: Record<ExperienceLevel>) =>
+                     flength (liturgicalChants) >=
+                       ExperienceLevel.A_.maxSpellsLiturgicalChants (startEl))
+                  (mchants)
+                  (mstart_el))
 )
 
 export const getBlessingsForSheet = createMaybeSelector (
+  getBlessingsSortOptions,
   getActiveBlessings,
-  R.identity
+  uncurryN (sort_options => fmap (sortRecordsBy (sort_options)))
 )
 
 export const getLiturgicalChantsForSheet = createMaybeSelector (
+  getLiturgicalChantsSortOptions,
   getActiveLiturgicalChants,
   getBlessedTraditionFromState,
-  getLocaleAsProp,
-  (maybeLiturgicalChants, maybeTradition, locale) => maybeTradition.bind (
-    tradition => getNumericBlessedTraditionIdByInstanceId (tradition.get ("id"))
-      .fmap (R.inc)
-      .fmap (getAspectsOfTradition)
-      .bind (
-        availableAspects => maybeLiturgicalChants .fmap (
-          List.map (
-            chant => chant.modify<"aspects"> (List.filter (availableAspects.elem)) ("aspects")
-          )
-        )
-      )
-      .fmap (list => sortObjects (list, locale .get ("id")))
-  )
+  uncurryN3 (sort_options =>
+             mchants => pipe (
+                         bindF (pipe (ADA.id, getNumericBlessedTraditionIdByInstanceId)),
+                         fmap (pipe (inc, getAspectsOfTradition)),
+                         liftM2 (flip ((available_aspects: List<number>) =>
+                                        map (over (composeL (LCWRL.wikiEntry, LCL.aspects))
+                                                  (filter (flip (elem) (available_aspects))))))
+                                (mchants),
+                         fmap (sortRecordsBy (sort_options))
+                       ))
 )

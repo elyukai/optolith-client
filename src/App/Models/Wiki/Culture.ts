@@ -1,6 +1,6 @@
 import { List } from "../../../Data/List";
 import { Maybe, Nothing } from "../../../Data/Maybe";
-import { fromDefault, Record } from "../../../Data/Record";
+import { fromDefault, makeLenses, Record } from "../../../Data/Record";
 import { Categories } from "../../Constants/Categories";
 import { CommonProfession } from "./sub/CommonProfession";
 import { IncreaseSkill } from "./sub/IncreaseSkill";
@@ -68,6 +68,8 @@ export const Culture =
     category: Categories.CULTURES,
     src: List.empty,
   })
+
+export const CultureL = makeLenses (Culture)
 
 export const isCulture =
   (r: EntryWithCategory) => Culture.A.category (r) === Categories.CULTURES

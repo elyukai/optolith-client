@@ -1,34 +1,41 @@
-import * as R from 'ramda';
-import { Hero } from '../App/Models/Hero/heroTypeHelpers';
-import { createMaybeSelector } from '../App/Utils/createMaybeSelector';
-import { UndoState } from '../App/Utils/undo';
-import { List, OrderedMap, OrderedSet } from '../Utilities/dataUtils';
-import { filterAndSortObjects } from '../Utilities/FilterSortUtils';
-import { getHerolistSortOptions } from './sortOptionsSelectors';
-import { getHeroes, getHerolistFilterText, getLocaleAsProp } from './stateSelectors';
+import { ident } from "../../Data/Function";
+import { map, notNull } from "../../Data/List";
+import { elems, foldr } from "../../Data/OrderedMap";
+import { insert, OrderedSet } from "../../Data/OrderedSet";
+import { uncurryN3 } from "../../Data/Pair";
+import { HeroModel } from "../Models/Hero/HeroModel";
+import { heroReducer } from "../Reducers/heroReducer";
+import { createMaybeSelector } from "../Utilities/createMaybeSelector";
+import { filterAndSortRecordsBy } from "../Utilities/filterAndSortBy";
+import { pipe, pipe_ } from "../Utilities/pipe";
+import { getHerolistSortOptions } from "./sortOptionsSelectors";
+import { getHeroes, getHerolistFilterText } from "./stateSelectors";
 
 export const getHeroesArray = createMaybeSelector (
   getHeroes,
-  R.pipe (
-    OrderedMap.elems,
-    List.map (e => e.present)
-  )
-);
+  pipe (elems, map (heroReducer.A_.present))
+)
+
+type HeroWithUndo = typeof heroReducer.default
+const HRA = heroReducer.A_
+const HA = HeroModel.A_
 
 export const getUnsavedHeroesById = createMaybeSelector (
   getHeroes,
-  OrderedMap.foldl<UndoState<Hero>, OrderedSet<string>>
-    (acc => undoState => !undoState.past .null ()
-      ? acc.insert (undoState.present .get ('id'))
-      : acc)
-    (OrderedSet.empty ())
-);
+  foldr ((hero: HeroWithUndo) => pipe_ (
+                                         hero,
+                                         HRA.past,
+                                         notNull,
+                                         b => b
+                                           ? insert (HA.id (HRA.present (hero)))
+                                           : ident as ident<OrderedSet<string>>
+                                       ))
+        (OrderedSet.empty)
+)
 
 export const getSortedHerolist = createMaybeSelector (
-  getHeroesArray,
   getHerolistSortOptions,
   getHerolistFilterText,
-  getLocaleAsProp,
-  (list, sortOptions, filterText, locale) =>
-    filterAndSortObjects (list, locale.get ('id'), filterText, sortOptions)
-);
+  getHeroesArray,
+  uncurryN3 (filterAndSortRecordsBy (0) ([HA.name]))
+)

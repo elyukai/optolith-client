@@ -1,4 +1,3 @@
-import { pipe } from "ramda";
 import { join } from "../../../Data/Function";
 import { over, view } from "../../../Data/Lens";
 import { deleteAt, elemIndex } from "../../../Data/List";
@@ -9,6 +8,7 @@ import { AttributeDependentL, isAttributeDependentUnused } from "../../Models/Ac
 import { isSkillDependentUnused, SkillDependentL } from "../../Models/ActiveEntries/SkillDependent";
 import { ActivatableDependency, ExtendedSkillDependency, SkillDependency } from "../../Models/Hero/heroTypeHelpers";
 import { adjustRemoveEntryDef } from "../heroStateUtils";
+import { pipe } from "../pipe";
 
 export const removeAttributeDependency =
   (d: SkillDependency) =>

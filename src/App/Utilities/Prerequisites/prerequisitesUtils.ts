@@ -1,4 +1,3 @@
-import { pipe } from "ramda";
 import { equals } from "../../../Data/Eq";
 import { fmap } from "../../../Data/Functor";
 import { append, consF, filter, find, flength, List } from "../../../Data/List";
@@ -13,6 +12,7 @@ import { Application } from "../../Models/Wiki/sub/Application";
 import { SelectOption } from "../../Models/Wiki/sub/SelectOption";
 import { Activatable, AllRequirementObjects, AllRequirements } from "../../Models/Wiki/wikiTypeHelpers";
 import { findSelectOption } from "../Activatable/selectionUtils";
+import { pipe } from "../pipe";
 
 const { id } = Advantage.A
 const { sid, sid2 } = ActiveObject.A

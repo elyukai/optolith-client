@@ -18,7 +18,7 @@ export interface RangedWeapon {
   ammunition: Maybe<string>
 }
 
-const RangedWeapon =
+export const RangedWeapon =
   fromDefault<RangedWeapon> ({
     id: "",
     name: "",

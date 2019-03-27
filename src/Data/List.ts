@@ -1673,6 +1673,17 @@ const snocSafe =
     ? Cons (xs .x, pure (x))
     : Cons (xs .x, snocSafe (xs .xs) (x))
 
+/**
+ * `snocF :: a -> [a] -> [a]`
+ *
+ * Append an element to the end of a list, takes *O(n)* time.
+ *
+ * Flipped version of `snoc`.
+ */
+export const snocF =
+  <A> (x: A) => (xs: List<A>): List<A> =>
+    snoc (xs) (x)
+
 
 // List operations
 
@@ -2057,6 +2068,7 @@ List.notNullStr = notNullStr
 List.list = list
 List.consF = consF
 List.snoc = snoc
+List.snocF = snocF
 
 List.maximumOn = maximumOn
 List.minimumOn = minimumOn

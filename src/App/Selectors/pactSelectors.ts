@@ -1,47 +1,68 @@
-import { Pact } from '../App/Models/Hero/heroTypeHelpers';
-import { AllRequirements } from '../App/Models/Wiki/wikiTypeHelpers';
-import { createMaybeSelector } from '../App/Utils/createMaybeSelector';
-import { isPactValid } from '../Utilities/Activatable/pactUtils';
-import { Just, List, Maybe, Record } from '../Utilities/dataUtils';
-import { isPactRequirement } from '../Utilities/wikiData/prerequisites/DependentRequirement';
-import { getPact, getSpecialAbilities, getWikiSpecialAbilities } from './stateSelectors';
+import { cnst } from "../../Data/Function";
+import { fmap } from "../../Data/Functor";
+import { any, fnull, isList } from "../../Data/List";
+import { bindF, ensure, fromJust, isJust, maybe } from "../../Data/Maybe";
+import { elems, lookup } from "../../Data/OrderedMap";
+import { uncurryN } from "../../Data/Pair";
+import { Record } from "../../Data/Record";
+import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
+import { Pact } from "../Models/Hero/Pact";
+import { isPactRequirement } from "../Models/Wiki/prerequisites/PactRequirement";
+import { SpecialAbility } from "../Models/Wiki/SpecialAbility";
+import { AllRequirements } from "../Models/Wiki/wikiTypeHelpers";
+import { isPactFromStateValid } from "../Utilities/Activatable/pactUtils";
+import { createMaybeSelector } from "../Utilities/createMaybeSelector";
+import { not } from "../Utilities/not";
+import { pipe } from "../Utilities/pipe";
+import { getPact, getSpecialAbilities, getWikiSpecialAbilities } from "./stateSelectors";
 
 export const getIsPactValid = createMaybeSelector (
   getPact,
-  Maybe.maybe<Record<Pact>, boolean> (false) (isPactValid)
-);
+  maybe (false) (isPactFromStateValid)
+)
 
 export const getValidPact = createMaybeSelector (
-  getPact,
   getIsPactValid,
-  (pact, isValid) => pact.bind (Maybe.ensure (() => isValid))
-);
+  getPact,
+  uncurryN (isValid => bindF<Record<Pact>, Record<Pact>> (ensure (cnst (isValid))))
+)
 
 export const isPactEditable = createMaybeSelector (
-  getSpecialAbilities,
   getWikiSpecialAbilities,
-  (maybeSpecialAbilities, wiki) =>
-    maybeSpecialAbilities.fmap (
-      specialAbilities => !specialAbilities.elems ().any (e => {
-        if (e.get ('active').null ()) {
-          return false;
-        }
+  getSpecialAbilities,
+  uncurryN (wiki_special_abilities =>
+             fmap (pipe (
+               elems,
+               any (e => {
+                 const curr_active = ActivatableDependent.A_.active (e)
 
-        const wikiEntry = wiki.lookup (e.get ('id'));
+                 if (fnull (curr_active)) {
+                   return false
+                 }
 
-        if (Maybe.isJust (wikiEntry)) {
-          const prerequisites = Maybe.fromJust (wikiEntry).get ('prerequisites');
+                 const curr_id = ActivatableDependent.A_.id (e)
 
-          if (prerequisites instanceof List) {
-            return prerequisites.any (req => req !== 'RCP' && isPactRequirement (req));
-          }
-          else if (prerequisites.member (1)) {
-            return Maybe.fromJust (prerequisites.lookup (1) as Just<List<AllRequirements>>)
-              .any (req => req !== 'RCP' && isPactRequirement (req));
-          }
-        }
+                 const mwiki_entry = lookup (curr_id) (wiki_special_abilities)
 
-        return false;
-      })
-    )
-);
+                 if (isJust (mwiki_entry)) {
+                   const wiki_entry = fromJust (mwiki_entry)
+                   const prerequisites = SpecialAbility.A_.prerequisites (wiki_entry)
+
+                   if (isList (prerequisites)) {
+                     return any ((req: AllRequirements) => req !== "RCP" && isPactRequirement (req))
+                                (prerequisites)
+                   }
+
+                   const level1 = lookup (1) (prerequisites)
+
+                   if (isJust (level1)) {
+                     return any ((req: AllRequirements) => req !== "RCP" && isPactRequirement (req))
+                                (fromJust (level1))
+                   }
+                 }
+
+                 return false
+               }),
+               not
+             )))
+)

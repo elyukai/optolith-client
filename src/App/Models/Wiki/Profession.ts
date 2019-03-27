@@ -1,6 +1,6 @@
 import { List } from "../../../Data/List";
 import { Maybe, Nothing } from "../../../Data/Maybe";
-import { fromDefault, Record } from "../../../Data/Record";
+import { fromDefault, makeLenses, Record } from "../../../Data/Record";
 import { Categories } from "../../Constants/Categories";
 import { ProfessionRequireActivatable } from "./prerequisites/ActivatableRequirement";
 import { IncreaseSkill } from "./sub/IncreaseSkill";
@@ -76,6 +76,8 @@ export const Profession =
     subgr: 0,
     src: List.empty,
   })
+
+export const ProfessionL = makeLenses (Profession)
 
 export const isProfession =
   (r: EntryWithCategory) => Profession.A.category (r) === Categories.PROFESSIONS

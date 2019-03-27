@@ -1,4 +1,3 @@
-import { pipe } from "ramda";
 import { equals } from "../../../Data/Eq";
 import { cnst, ident, thrush } from "../../../Data/Function";
 import { fmap } from "../../../Data/Functor";
@@ -21,6 +20,7 @@ import { filterAndMaximumNonNegative, flattenDependencies } from "../Dependencie
 import { getNumericMagicalTraditionIdByInstanceId } from "../IDUtils";
 import { ifElse } from "../ifElse";
 import { gte, inc } from "../mathUtils";
+import { pipe } from "../pipe";
 import { isNumber } from "../typeCheckUtils";
 import { getExceptionalSkillBonus, getInitialMaximumList, putMaximumSkillRatingFromExperienceLevel } from "./skillUtils";
 
@@ -130,7 +130,7 @@ const isSpellDecreasableByDependencies =
   (state: HeroModelRecord) =>
   (entry: Record<SpellCombined>) => {
     const flattenedDependencies =
-      flattenDependencies<number | boolean> (wiki) (state) (dependencies (stateEntry (entry)))
+      flattenDependencies (wiki) (state) (dependencies (stateEntry (entry)))
 
     return value (stateEntry (entry)) < 1
       ? notElem<number | boolean> (true) (flattenedDependencies)

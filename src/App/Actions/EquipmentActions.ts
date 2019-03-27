@@ -1,5 +1,5 @@
 import { fmap } from "../../Data/Functor";
-import { bindF, fromJust, isJust, Maybe } from "../../Data/Maybe";
+import { bindF, fromJust, isJust, Just, Maybe } from "../../Data/Maybe";
 import { keys, lookup, lookupF, OrderedMap } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
 import { ActionTypes } from "../Constants/ActionTypes";
@@ -8,16 +8,16 @@ import { EditItem } from "../Models/Hero/EditItem";
 import { HitZoneArmor } from "../Models/Hero/HitZoneArmor";
 import { Item } from "../Models/Hero/Item";
 import { ItemTemplate } from "../Models/Wiki/ItemTemplate";
-import { getArmorZonesState, getItemEditorInstance, getItemsState, getWikiItemTemplates } from "../Selectors/stateSelectors";
+import { getHitZoneArmorsState, getItemEditorInstance, getItemsState, getWikiItemTemplates } from "../Selectors/stateSelectors";
 import { getNewId, prefixId } from "../Utilities/IDUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
 import { ReduxAction } from "./Actions";
 
-const getNewIdFromCurrentItems: (x: Maybe<OrderedMap<string, Record<Item>>>) => string =
+const getNewIdFromCurrentItems: (x: Just<OrderedMap<string, Record<Item>>>) => string =
   pipe (fromJust, keys, getNewId, prefixId (IdPrefixes.ITEM))
 
 const getNewIdFromCurrentHitZoneArmors:
-  (x: Maybe<OrderedMap<string, Record<HitZoneArmor>>>) => string =
+  (x: Just<OrderedMap<string, Record<HitZoneArmor>>>) => string =
   pipe (fromJust, keys, getNewId, prefixId (IdPrefixes.HIT_ZONE_ARMOR))
 
 export interface AddItemAction {
@@ -742,7 +742,7 @@ export interface AddArmorZonesAction {
 }
 
 export const addArmorZonesToList = (): ReduxAction => (dispatch, getState) => {
-  const mhit_zone_armors = getArmorZonesState (getState ())
+  const mhit_zone_armors = getHitZoneArmorsState (getState ())
 
   if (isJust (mhit_zone_armors)) {
     const newId = getNewIdFromCurrentHitZoneArmors (mhit_zone_armors)

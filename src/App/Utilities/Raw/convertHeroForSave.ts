@@ -1,4 +1,3 @@
-import { pipe } from "ramda";
 import { ident } from "../../../Data/Function";
 import { fmap } from "../../../Data/Functor";
 import { List } from "../../../Data/List";
@@ -19,6 +18,7 @@ import { Item } from "../../Models/Hero/Item";
 import { PersonalData } from "../../Models/Hero/PersonalData";
 import { Rules } from "../../Models/Hero/Rules";
 import { UndoableHero, UndoableHeroModelRecord } from "../../Models/Hero/UndoHero";
+import { AdventurePointsCategories } from "../../Models/View/AdventurePointsCategories";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { PrimaryAttributeDamageThreshold } from "../../Models/Wiki/sub/PrimaryAttributeDamageThreshold";
 import { WikiModelRecord } from "../../Models/Wiki/WikiModel";
@@ -26,6 +26,7 @@ import { getAPObject } from "../AdventurePoints/adventurePointsSumUtils";
 import { HeroStateMapKey } from "../heroStateUtils";
 import { ifElse } from "../ifElse";
 import { gt } from "../mathUtils";
+import { pipe } from "../pipe";
 import { currentVersion } from "./compatibilityUtils";
 import { RawActiveObject, RawArmorZone, RawCustomItem, RawHero, RawPet, RawPrimaryAttributeDamageThreshold } from "./RawData";
 
@@ -304,7 +305,7 @@ export const convertHeroForSave =
       rules,
     } = toObject (hero)
 
-    const adventurePoints = getAPObject (wiki) (locale) (hero)
+    const adventurePoints = getAPObject (locale) (wiki) (hero)
 
     const maybeUser = bind (player (hero))
                                               (OrderedMap.lookupF<string, Data.User> (users))
@@ -319,8 +320,8 @@ export const convertHeroForSave =
       name,
       avatar: maybeToUndefined (avatar),
       ap: {
-        total: adventurePoints.get ("total"),
-        spent: adventurePoints.get ("spent"),
+        total: AdventurePointsCategories.A_.total (adventurePoints),
+        spent: AdventurePointsCategories.A_.spent (adventurePoints),
       },
       el: experienceLevel,
       r: maybeToUndefined (race),

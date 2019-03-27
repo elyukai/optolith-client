@@ -1,4 +1,3 @@
-import { pipe } from "ramda";
 import { cnst, ident, thrush } from "../../../Data/Function";
 import { fmap } from "../../../Data/Functor";
 import { all, any, consF, foldr, List, minimum, notElem, notElemF } from "../../../Data/List";
@@ -8,7 +7,7 @@ import { Record } from "../../../Data/Record";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
 import { AttributeDependent } from "../../Models/ActiveEntries/AttributeDependent";
-import { HeroModelRecord } from "../../Models/Hero/HeroModel";
+import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { Blessing } from "../../Models/Wiki/Blessing";
 import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel";
 import { LiturgicalChant } from "../../Models/Wiki/LiturgicalChant";
@@ -19,6 +18,7 @@ import { filterAndMaximumNonNegative, flattenDependencies } from "../Dependencie
 import { getNumericBlessedTraditionIdByInstanceId } from "../IDUtils";
 import { ifElse } from "../ifElse";
 import { gte, inc, min } from "../mathUtils";
+import { pipe } from "../pipe";
 import { isNumber } from "../typeCheckUtils";
 import { getExceptionalSkillBonus, getInitialMaximumList, putMaximumSkillRatingFromExperienceLevel } from "./skillUtils";
 
@@ -117,7 +117,7 @@ const isLiturgicalChantDecreasableByDependencies =
   (state: HeroModelRecord) =>
   (stateEntry: Record<ActivatableSkillDependent>) => {
     const flattenedDependencies =
-      flattenDependencies<number | boolean> (wiki) (state) (dependencies (stateEntry))
+      flattenDependencies (wiki) (state) (dependencies (stateEntry))
 
     return value (stateEntry) < 1
       ? notElem<number | boolean> (true) (flattenedDependencies)
@@ -187,14 +187,13 @@ const getLowestSumForMatchingAspectKnowledges =
  */
 export const isLiturgicalChantDecreasable =
   (wiki: WikiModelRecord) =>
-  (state: HeroModelRecord) =>
-  (liturgicalChantsStateEntries: OrderedMap<string, Record<ActivatableSkillDependent>>) =>
+  (hero: HeroModelRecord) =>
   (aspectKnowledge: Maybe<Record<ActivatableDependent>>) =>
   (wikiEntry: Record<LiturgicalChant>) =>
   (stateEntry: Record<ActivatableSkillDependent>): boolean =>
-    isLiturgicalChantDecreasableByDependencies (wiki) (state) (stateEntry)
+    isLiturgicalChantDecreasableByDependencies (wiki) (hero) (stateEntry)
     && isLiturgicalChantDecreasableByAspectKnowledges (wiki)
-                                                      (liturgicalChantsStateEntries)
+                                                      (HeroModel.A_.liturgicalChants (hero))
                                                       (aspectKnowledge)
                                                       (wikiEntry)
                                                       (stateEntry)
@@ -246,7 +245,7 @@ const traditionsByAspect = fromArray ([
  * @param aspectId The id used for chants or Aspect Knowledge.
  */
 export const getTraditionOfAspect =
-  (key: number) => findWithDefault<number, number> (1) (key) (traditionsByAspect)
+  (key: number) => findWithDefault (1) (key) (traditionsByAspect)
 
 /**
  * Keys are traditions and their values are their respective aspects
@@ -280,8 +279,6 @@ const aspectsByTradition = fromArray<number, List<number>> ([
  * it.
  */
 export const getAspectsOfTradition = pipe (
-  (key: number) => findWithDefault<number, List<number>> (List.empty)
-                                                         (key)
-                                                         (aspectsByTradition),
+  (key: number) => findWithDefault<List<number>> (List.empty) (key) (aspectsByTradition),
   consF (1)
 )

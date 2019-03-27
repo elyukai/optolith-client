@@ -1,4 +1,3 @@
-import { pipe } from "ramda";
 import { flip, ident } from "../../Data/Function";
 import { set } from "../../Data/Lens";
 import { foldl } from "../../Data/List";
@@ -18,6 +17,7 @@ import { isSkillsSelection } from "../Models/Wiki/professionSelections/SkillsSel
 import { isSpecializationSelection } from "../Models/Wiki/professionSelections/SpecializationSelection";
 import { ProfessionVariant } from "../Models/Wiki/ProfessionVariant";
 import { AnyProfessionSelection, AnyProfessionVariantSelection, ProfessionSelectionIds } from "../Models/Wiki/wikiTypeHelpers";
+import { pipe } from "./pipe";
 
 /**
  * Collects all available RCP adjustment selections in one record

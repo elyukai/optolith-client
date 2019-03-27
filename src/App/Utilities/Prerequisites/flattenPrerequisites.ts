@@ -1,10 +1,10 @@
-import { pipe } from "ramda";
 import { cnst } from "../../../Data/Function";
 import { List } from "../../../Data/List";
 import { Just, Maybe, maybe, Nothing } from "../../../Data/Maybe";
 import { filterWithKeyF, isOrderedMap, OrderedMap } from "../../../Data/OrderedMap";
 import { ActivatablePrerequisites, LevelAwarePrerequisites } from "../../Models/Wiki/wikiTypeHelpers";
 import { lte, max, min } from "../mathUtils";
+import { pipe } from "../pipe";
 
 type LevelFilter = (key: number) => (value: ActivatablePrerequisites) => boolean
 

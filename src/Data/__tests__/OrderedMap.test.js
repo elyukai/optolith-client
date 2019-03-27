@@ -1,5 +1,4 @@
 // @ts-check
-const { pipe } = require('ramda');
 const { ident } = require('../Function');
 const { Left, Right } = require('../Either');
 const { fmap } = require('../Functor');
@@ -9,6 +8,7 @@ const { OrderedSet } = require('../OrderedSet');
 const { fromArray, fromUniquePairs, fromMap, OrderedMap } = require('../OrderedMap');
 const { Just, Nothing, Maybe } = require('../Maybe');
 const { add } = require('../../App/Utilities/mathUtils');
+const { pipe } = require('../../App/Utilities/pipe');
 
 // CONSTRUCTOR
 

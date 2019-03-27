@@ -1,4 +1,3 @@
-import { pipe } from "ramda";
 import { ident } from "../../../Data/Function";
 import { fmap } from "../../../Data/Functor";
 import { fromArray, List } from "../../../Data/List";
@@ -31,6 +30,7 @@ import { getActiveFromState } from "../Activatable/activatableConvertUtils";
 import { addAllStyleRelatedDependencies } from "../Activatable/ExtendedStyleUtils";
 import { addDependencies } from "../Dependencies/dependencyUtils";
 import { getCategoryById } from "../IDUtils";
+import { pipe } from "../pipe";
 import * as Raw from "./RawData";
 
 const createHeroObject = (hero: Raw.RawHero): HeroModelRecord =>

@@ -1,4 +1,3 @@
-import { pipe } from "ramda";
 import { fmap } from "../../../../Data/Functor";
 import { Cons, flength, head, List } from "../../../../Data/List";
 import { ensure, Nothing } from "../../../../Data/Maybe";
@@ -7,6 +6,7 @@ import { ItemTemplate } from "../../../Models/Wiki/ItemTemplate";
 import { PrimaryAttributeDamageThreshold } from "../../../Models/Wiki/sub/PrimaryAttributeDamageThreshold";
 import { prefixId } from "../../IDUtils";
 import { toNatural } from "../../NumberUtils";
+import { pipe } from "../../pipe";
 import { naturalNumber } from "../../RegexUtils";
 import { mergeRowsById } from "../mergeTableRows";
 import { mensureMapBoolean, mensureMapListBindAfterOptional, mensureMapNaturalFixedListOptional, mensureMapNaturalInRange, mensureMapNaturalInRangeOptional, mensureMapNaturalOptional, mensureMapNonEmptyString, mensureMapStringPredOptional } from "../validateMapValueUtils";

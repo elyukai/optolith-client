@@ -4,11 +4,11 @@
  * @author Lukas Obermann
  */
 
-import { pipe } from "ramda";
 import { filter, OrderedMap, size } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
 import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
+import { pipe } from "../pipe";
 
 type ActivatableSkillEntriesAccessor =
   (hero: HeroModelRecord) => OrderedMap<string, Record<ActivatableSkillDependent>>

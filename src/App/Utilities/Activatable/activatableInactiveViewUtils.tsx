@@ -1,4 +1,3 @@
-import { pipe } from "ramda";
 import * as React from "react";
 import { isNumber, isString } from "util";
 import { List } from "../../../Data/List";
@@ -18,6 +17,7 @@ import { getActiveWithNoCustomCost } from "../AdventurePoints/activatableCostUti
 import { translate } from "../I18n";
 import { match } from "../match";
 import { toRoman, unsafeToInt } from "../NumberUtils";
+import { pipe } from "../pipe";
 import { isInteger } from "../RegexUtils";
 import { getActiveSelectionsMaybe, getSelectOptionCost } from "./selectionUtils";
 

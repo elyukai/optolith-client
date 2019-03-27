@@ -6,7 +6,6 @@
  * @since 1.1.0
  */
 
-import { pipe } from "ramda";
 import { fmap } from "../../../Data/Functor";
 import { append, elemF, empty, imap, List } from "../../../Data/List";
 import { alt, guard, isJust, Nothing, or, then } from "../../../Data/Maybe";
@@ -16,6 +15,7 @@ import { ActivatableActivationOptions } from "../../Models/Actions/ActivatableAc
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
 import { ActiveObjectWithId } from "../../Models/ActiveEntries/ActiveObjectWithId";
+import { pipe } from "../pipe";
 
 const { id, active } = ActivatableDependent.A
 const { sid, sid2, tier, cost } = ActiveObject.A

@@ -1,17 +1,19 @@
-import * as R from 'ramda';
-import { createMaybeSelector } from '../App/Utils/createMaybeSelector';
-import { Maybe, OrderedMap } from '../Utilities/dataUtils';
-import { getPets } from './stateSelectors';
+import { fmap } from "../../Data/Functor";
+import { bindF, listToMaybe } from "../../Data/Maybe";
+import { elems } from "../../Data/OrderedMap";
+import { createMaybeSelector } from "../Utilities/createMaybeSelector";
+import { pipe } from "../Utilities/pipe";
+import { getPets } from "./stateSelectors";
 
 export const getPet = createMaybeSelector (
   getPets,
-  R.pipe (
-    Maybe.fmap (OrderedMap.elems),
-    Maybe.bind_ (Maybe.listToMaybe)
+  pipe (
+    fmap (elems),
+    bindF (listToMaybe)
   )
-);
+)
 
 export const getAllPets = createMaybeSelector (
   getPets,
-  maybePets => maybePets.fmap (pets => pets.elems ())
-);
+  fmap (elems)
+)

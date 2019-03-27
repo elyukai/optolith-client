@@ -1,5 +1,5 @@
 import { isJust, Just, Maybe, Nothing } from "../../../Data/Maybe";
-import { fromDefault, Record, RecordCreator } from "../../../Data/Record";
+import { fromDefault, PartialMaybeOrNothing, Record, RecordCreator } from "../../../Data/Record";
 import { DCIds } from "../../Selectors/derivedCharacteristicsSelectors";
 
 export interface DerivedCharacteristic<I extends DCIds = DCIds> {
@@ -37,7 +37,7 @@ interface DerivedCharacteristicCreator extends RecordCreator<DerivedCharacterist
   (x: Energy<I>): Record<Energy<I>>
 
   <I extends DCIds = DCIds>
-  (x: DerivedCharacteristic<I>): Record<DerivedCharacteristic<I>>
+  (x: PartialMaybeOrNothing<DerivedCharacteristic<I>>): Record<DerivedCharacteristic<I>>
 }
 
 export const DerivedCharacteristic =

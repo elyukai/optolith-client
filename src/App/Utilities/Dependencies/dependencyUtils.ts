@@ -1,4 +1,3 @@
-import { pipe } from "ramda";
 import { notEquals } from "../../../Data/Eq";
 import { flip, ident, join, thrush } from "../../../Data/Function";
 import { fmap } from "../../../Data/Functor";
@@ -16,6 +15,7 @@ import { isRequiringIncreasable, RequireIncreasable } from "../../Models/Wiki/pr
 import { isPrimaryAttributeRequirement, RequirePrimaryAttribute } from "../../Models/Wiki/prerequisites/PrimaryAttributeRequirement";
 import { AllRequirements } from "../../Models/Wiki/wikiTypeHelpers";
 import { getCategoryById } from "../IDUtils";
+import { pipe } from "../pipe";
 import { getPrimaryAttributeId } from "../primaryAttributeUtils";
 import { addActivatableDependency, addActivatableSkillDependency, addAttributeDependency, addSkillDependency } from "./addDependencyUtils";
 import { removeActivatableDependency, removeActivatableSkillDependency, removeAttributeDependency, removeSkillDependency } from "./removeDependencyUtils";

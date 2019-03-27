@@ -1,4 +1,3 @@
-import { pipe } from "ramda";
 import { cnst, ident } from "../../../Data/Function";
 import { fmap } from "../../../Data/Functor";
 import { consF, countWith, foldr, List, maximum, maximumNonNegative, minimum } from "../../../Data/List";
@@ -21,6 +20,7 @@ import { isMaybeActive } from "../Activatable/isActive";
 import { flattenDependencies } from "../Dependencies/flattenDependencies";
 import { ifElse } from "../ifElse";
 import { add } from "../mathUtils";
+import { pipe } from "../pipe";
 import { getSkillCheckValues } from "./attributeUtils";
 
 const { specialAbilities, skills } = HeroModel.A
@@ -116,7 +116,7 @@ export const isSkillDecreasable =
     }
 
     const flattenedDependencies =
-      flattenDependencies<number> (wiki) (state) (dependencies (skill))
+      flattenDependencies (wiki) (state) (dependencies (skill))
 
     // Basic validation
     return value (skill) > maximumNonNegative (flattenedDependencies)

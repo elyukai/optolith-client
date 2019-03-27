@@ -1,9 +1,9 @@
-import { pipe } from "ramda";
 import { bindF, Either, Left, maybeToEither, Right } from "../../../Data/Either";
 import { cons, empty, filter, flength, head, ifoldr, lines, List, map, notNull, splitOn, uncons, zip } from "../../../Data/List";
 import { fromList, OrderedMap } from "../../../Data/OrderedMap";
 import { fst, snd } from "../../../Data/Pair";
 import { show } from "../../../Data/Show";
+import { pipe } from "../pipe";
 
 // const file = xlsx.readFile(`${dataSrcPath}TDE5.xlsx`);
 // const allWorksheets = file.SheetNames.reduce((m, name) => {

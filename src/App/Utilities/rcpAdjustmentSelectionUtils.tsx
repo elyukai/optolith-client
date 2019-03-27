@@ -1,4 +1,3 @@
-import { pipe } from "ramda";
 import * as React from "react";
 import { Checkbox } from "../../components/Checkbox";
 import { Dropdown, DropdownOption } from "../../components/Dropdown";
@@ -34,6 +33,7 @@ import { WikiModel, WikiModelRecord } from "../Models/Wiki/WikiModel";
 import { ProfessionSelectionIds } from "../Models/Wiki/wikiTypeHelpers";
 import { findSelectOption } from "./Activatable/selectionUtils";
 import { translate } from "./I18n";
+import { pipe } from "./pipe";
 import { sortRecordsByName } from "./sortBy";
 import { getAllWikiEntriesByGroup } from "./WikiUtils";
 

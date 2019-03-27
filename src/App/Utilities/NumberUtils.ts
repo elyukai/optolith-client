@@ -1,8 +1,8 @@
-import { pipe } from "ramda";
 import { List, subscript } from "../../Data/List";
 import { bindF, ensure, fromMaybe, Just, Maybe, Nothing } from "../../Data/Maybe";
 import { inc } from "./mathUtils";
 import { not } from "./not";
+import { pipe } from "./pipe";
 import { isInteger, isNaturalNumber } from "./RegexUtils";
 
 /**

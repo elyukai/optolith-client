@@ -15,7 +15,7 @@ export interface HitZoneArmorForView {
   weight: number
 }
 
-const HitZoneArmorForView =
+export const HitZoneArmorForView =
   fromDefault<HitZoneArmorForView> ({
     id: "",
     name: "",

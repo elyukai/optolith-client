@@ -1,7 +1,7 @@
-import { pipe } from "ramda";
 import { thrush } from "../../Data/Function";
 import { filter, isInfixOf, List, lower } from "../../Data/List";
 import { Record, RecordBase } from "../../Data/Record";
+import { pipe } from "./pipe";
 import { RecordWithName } from "./sortBy";
 
 /**

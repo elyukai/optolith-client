@@ -1,4 +1,3 @@
-import { pipe } from "ramda";
 import { Either, maybeToEither_ } from "../../../Data/Either";
 import { equals } from "../../../Data/Eq";
 import { fmap } from "../../../Data/Functor";
@@ -9,6 +8,7 @@ import { fromList, OrderedSet } from "../../../Data/OrderedSet";
 import { Pair } from "../../../Data/Pair";
 import { show } from "../../../Data/Show";
 import { toInt, toNatural } from "../NumberUtils";
+import { pipe } from "../pipe";
 import { Expect } from "./validateValueUtils";
 
 export const mensureMap =

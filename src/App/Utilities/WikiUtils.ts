@@ -1,4 +1,3 @@
-import { pipe } from "ramda";
 import { thrush } from "../../Data/Function";
 import { fmap } from "../../Data/Functor";
 import { elem, elemF, filter, fromArray, List } from "../../Data/List";
@@ -23,6 +22,7 @@ import { Spell } from "../Models/Wiki/Spell";
 import { WikiModel, WikiModelRecord } from "../Models/Wiki/WikiModel";
 import { Activatable, Entry, EntryWithCategory, EntryWithGroup, SkillishEntry } from "../Models/Wiki/wikiTypeHelpers";
 import { getCategoryById } from "./IDUtils";
+import { pipe } from "./pipe";
 
 interface WikiKeyByCategory {
   [Categories.ADVANTAGES]: "advantages"
@@ -82,7 +82,7 @@ export const getWikiEntry =
                    getWikiEntryWithGetter (wiki) as
                      (g: (wiki: WikiModelRecord) => OrderedMap<string, EntryWithCategory>) =>
                        (id: string) => Maybe<EntryWithCategory>,
-                   thrush<string, Maybe<EntryWithCategory>> (id)
+                   thrush (id)
                  ))
          )
          (id)

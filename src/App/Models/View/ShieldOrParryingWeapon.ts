@@ -12,7 +12,7 @@ export interface ShieldOrParryingWeapon {
   weight: Maybe<number>
 }
 
-const ShieldOrParryingWeapon =
+export const ShieldOrParryingWeapon =
   fromDefault<ShieldOrParryingWeapon> ({
     id: "",
     name: "",

@@ -1,5 +1,4 @@
 import classNames = require('classnames');
-import * as R from 'ramda';
 import * as React from 'react';
 import { isString } from 'util';
 import { ActiveViewObject, DeactivateArgs, UIMessagesObject } from '../App/Models/Hero/heroTypeHelpers';

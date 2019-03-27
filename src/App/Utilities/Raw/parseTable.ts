@@ -1,4 +1,3 @@
-import { pipe } from "ramda";
 import xlsx from "xlsx";
 import { bindF, Either, fromRight_, isLeft, Left, mapM, maybeToEither } from "../../../Data/Either";
 import { fmap } from "../../../Data/Functor";
@@ -15,6 +14,7 @@ import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
 import { SelectOption } from "../../Models/Wiki/sub/SelectOption";
 import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { Activatable } from "../../Models/Wiki/wikiTypeHelpers";
+import { pipe } from "../pipe";
 import { CsvColumnDelimiter, csvToList } from "./csvToList";
 import { toAdvantage } from "./Entries/toAdvantage";
 import { toAdvantageSelectOption } from "./Entries/toAdvantageSelectOption";

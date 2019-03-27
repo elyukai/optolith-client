@@ -5,7 +5,7 @@ import { AppState } from '../reducers/appReducer';
 import { getInitialStartingWealth } from '../Selectors/activatableSelectors';
 import { getHasCurrentNoAddedAP } from '../Selectors/adventurePointsSelectors';
 import { getCarryingCapacity } from '../Selectors/attributeSelectors';
-import { getFilteredZoneArmors, getItems, getTemplates, getTotalPrice, getTotalWeight } from '../Selectors/equipmentSelectors';
+import { getFilteredHitZoneArmors, getItems, getTemplates, getTotalPrice, getTotalWeight } from '../Selectors/equipmentSelectors';
 import { getArmorZonesEditorInstance, getIsInHitZoneArmorCreation, getPurse, getZoneArmorFilterText } from '../Selectors/stateSelectors';
 import { Maybe } from '../Utilities/dataUtils';
 import { HitZoneArmors, HitZoneArmorsDispatchProps, HitZoneArmorsOwnProps, HitZoneArmorsStateProps } from '../Views/HitZoneArmors/HitZoneArmors';
@@ -14,7 +14,7 @@ const mapStateToProps = (
   state: AppState,
   ownProps: HitZoneArmorsOwnProps
 ): HitZoneArmorsStateProps => ({
-  armorZones: getFilteredZoneArmors (state, ownProps),
+  armorZones: getFilteredHitZoneArmors (state, ownProps),
   carryingCapacity: getCarryingCapacity (state),
   initialStartingWealth: getInitialStartingWealth (state),
   items: getItems (state),

@@ -7,10 +7,11 @@ import { HeroModel } from "../Models/Hero/HeroModel";
 import { Sex } from "../Models/Hero/heroTypeHelpers";
 import { isItem, Item } from "../Models/Hero/Item";
 import { ActiveActivatable } from "../Models/View/ActiveActivatable";
+import { BlessingCombined } from "../Models/View/BlessingCombined";
 import { CombatTechniqueWithRequirements } from "../Models/View/CombatTechniqueWithRequirements";
 import { CultureCombined } from "../Models/View/CultureCombined";
 import { InactiveActivatable } from "../Models/View/InactiveActivatable";
-import { isLiturgicalChantCombined, LiturgicalChantCombined } from "../Models/View/LiturgicalChantCombined";
+import { LiturgicalChantWithRequirements } from "../Models/View/LiturgicalChantWithRequirements";
 import { isProfessionCombined, ProfessionCombined } from "../Models/View/ProfessionCombined";
 import { RaceCombined } from "../Models/View/RaceCombined";
 import { SkillCombined } from "../Models/View/SkillCombined";
@@ -68,6 +69,23 @@ export const getRacesSortOptions = createMaybeSelector (
         ]
       : [
           compareName (l10n),
+        ]
+)
+
+export const getRacesCombinedSortOptions = createMaybeSelector (
+  getLocaleAsProp,
+  uiSettingsSelectors.getRacesSortOrder,
+  (l10n, sortOrder): SortOptions<RaceCombined> =>
+    sortOrder === "cost"
+      ? [
+          comparingR (pipe (RaceCombined.A_.wikiEntry, Race.A_.ap))
+                     (compare),
+          comparingR (pipe (RaceCombined.A_.wikiEntry, Race.A_.name))
+                     (compareLocale (L10n.A_.id (l10n))),
+        ]
+      : [
+          comparingR (pipe (RaceCombined.A_.wikiEntry, Race.A_.name))
+                     (compareLocale (L10n.A_.id (l10n))),
         ]
 )
 
@@ -406,53 +424,55 @@ type ensureChant = (x: Record<LiturgicalChant | Blessing>) => Maybe<Record<Litur
 export const getLiturgicalChantsSortOptions = createMaybeSelector (
   getLocaleAsProp,
   uiSettingsSelectors.getLiturgiesSortOrder,
-  (l10n, sortOrder): SortOptions<LiturgicalChant | Blessing> => {
+  (l10n, sortOrder): SortOptions<LiturgicalChantWithRequirements> => {
     if (sortOrder === "ic") {
       return [
-        comparingR (pipe (
-                     ensure (isLiturgicalChant) as ensureChant,
-                     maybe (0) (LiturgicalChant.A_.ic)
-                   ))
+        comparingR (pipe (LiturgicalChantWithRequirements.A_.wikiEntry, LiturgicalChant.A_.ic))
                    (compare),
-        compareName (l10n),
+        comparingR (pipe (LiturgicalChantWithRequirements.A_.wikiEntry, LiturgicalChant.A_.name))
+                   (compareLocale (L10n.A_.id (l10n))),
       ]
     }
     else if (sortOrder === "group") {
       return [
-        comparingR (pipe (
-                     ensure (isLiturgicalChant) as ensureChant,
-                     maybe (100) (LiturgicalChant.A_.gr)
-                   ))
+        comparingR (pipe (LiturgicalChantWithRequirements.A_.wikiEntry, LiturgicalChant.A_.gr))
                    (compare),
-        compareName (l10n),
+        comparingR (pipe (LiturgicalChantWithRequirements.A_.wikiEntry, LiturgicalChant.A_.name))
+                   (compareLocale (L10n.A_.id (l10n))),
       ]
     }
 
-    return [ compareName (l10n) ]
+    return [
+      comparingR (pipe (LiturgicalChantWithRequirements.A_.wikiEntry, LiturgicalChant.A_.name))
+                 (compareLocale (L10n.A_.id (l10n))),
+    ]
   }
 )
 
-type getChantFromCombinedOrBlessing =
-  (x: Record<LiturgicalChantCombined | Blessing>) => Record<LiturgicalChant> | Record<Blessing>
+type getChantOrBlessingFromCombined =
+  (x: Record<LiturgicalChantWithRequirements | BlessingCombined>) =>
+    Record<LiturgicalChant> | Record<Blessing>
 
-const getChantFromCombinedOrBlessing =
-  (x: Record<LiturgicalChantCombined> | Record<Blessing>) =>
-    isLiturgicalChantCombined (x) ? LiturgicalChantCombined.A_.wikiEntry (x) : ident (x)
+const getChantOrBlessingFromCombined =
+  (x: Record<LiturgicalChantWithRequirements> | Record<BlessingCombined>) =>
+    LiturgicalChantWithRequirements.is (x)
+    ? LiturgicalChantWithRequirements.A_.wikiEntry (x)
+    : BlessingCombined.A_.wikiEntry (x)
 
 export const getLiturgicalChantsCombinedSortOptions = createMaybeSelector (
   getLocaleAsProp,
   uiSettingsSelectors.getLiturgiesSortOrder,
-  (l10n, sortOrder): SortOptions<LiturgicalChantCombined | Blessing> => {
+  (l10n, sortOrder): SortOptions<LiturgicalChantWithRequirements | BlessingCombined> => {
     if (sortOrder === "ic") {
       return [
         comparingR (pipe (
-                     getChantFromCombinedOrBlessing as getChantFromCombinedOrBlessing,
+                     getChantOrBlessingFromCombined as getChantOrBlessingFromCombined,
                      ensure (isLiturgicalChant) as ensureChant,
                      maybe (0) (LiturgicalChant.A_.ic)
                    ))
                    (compare),
         comparingR (pipe (
-                     getChantFromCombinedOrBlessing as getChantFromCombinedOrBlessing,
+                     getChantOrBlessingFromCombined as getChantOrBlessingFromCombined,
                      LiturgicalChant.A.name
                    ))
                    (compareLocale (L10n.A_.id (l10n))),
@@ -461,13 +481,13 @@ export const getLiturgicalChantsCombinedSortOptions = createMaybeSelector (
     else if (sortOrder === "group") {
       return [
         comparingR (pipe (
-                     getChantFromCombinedOrBlessing as getChantFromCombinedOrBlessing,
+                     getChantOrBlessingFromCombined as getChantOrBlessingFromCombined,
                      ensure (isLiturgicalChant) as ensureChant,
                      maybe (100) (LiturgicalChant.A_.gr)
                    ))
                    (compare),
         comparingR (pipe (
-                     getChantFromCombinedOrBlessing as getChantFromCombinedOrBlessing,
+                     getChantOrBlessingFromCombined as getChantOrBlessingFromCombined,
                      LiturgicalChant.A.name
                    ))
                    (compareLocale (L10n.A_.id (l10n))),
@@ -476,12 +496,19 @@ export const getLiturgicalChantsCombinedSortOptions = createMaybeSelector (
 
     return [
       comparingR (pipe (
-                   getChantFromCombinedOrBlessing as getChantFromCombinedOrBlessing,
+                   getChantOrBlessingFromCombined as getChantOrBlessingFromCombined,
                    LiturgicalChant.A.name
                  ))
                  (compareLocale (L10n.A_.id (l10n))),
     ]
   }
+)
+
+export const getBlessingsSortOptions = createMaybeSelector (
+  getLocaleAsProp,
+  (l10n): SortOptions<BlessingCombined> =>
+    [ comparingR (pipe (BlessingCombined.A_.wikiEntry, Blessing.A_.name))
+                 (compareLocale (L10n.A_.id (l10n))) ]
 )
 
 type ensureItem = (x: Record<Item | ItemTemplate>) => Maybe<Record<Item>>

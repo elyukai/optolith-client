@@ -16,7 +16,8 @@ import { getActivatableHeroSliceByCategory } from "../Utilities/Activatable/acti
 import { getInactiveView } from "../Utilities/Activatable/activatableInactiveUtils";
 import { getAllAvailableExtendedSpecialAbilities } from "../Utilities/Activatable/ExtendedStyleUtils";
 import { createMaybeSelector } from "../Utilities/createMaybeSelector";
-import { filterByWikiEntryPropertyAvailability } from "../Utilities/RulesUtils";
+import { pipe } from "../Utilities/pipe";
+import { filterByAvailability } from "../Utilities/RulesUtils";
 import { getWikiSliceGetterByCategory } from "../Utilities/WikiUtils";
 import { getAdventurePointsObject } from "./adventurePointsSelectors";
 import { getRuleBooksEnabled } from "./rulesSelectors";
@@ -32,8 +33,9 @@ export const getExtendedSpecialAbilitiesToAdd = createMaybeSelector (
 
 const getId = Advantage.A.id
 
-type Inactives<T extends ActivatableCategory> =
-  Maybe<List<Record<InactiveActivatable<WikiEntryByCategory[T]>>>>
+type Inactive<T extends ActivatableCategory> = Record<InactiveActivatable<WikiEntryByCategory[T]>>
+
+type Inactives<T extends ActivatableCategory> = Maybe<List<Inactive<T>>>
 
 export const getInactiveForView =
   <T extends ActivatableCategory>
@@ -70,20 +72,25 @@ type listAdv = List<Record<InactiveActivatable<Advantage>>>
 type listDis = List<Record<InactiveActivatable<Disadvantage>>>
 type listSA = List<Record<InactiveActivatable<SpecialAbility>>>
 
+const getWikiEntry = InactiveActivatable.A_.wikiEntry as
+  <T extends ActivatableCategory> (x: Inactive<T>) => WikiEntryRecordByCategory[T]
+
+const getSrc = Advantage.A.src
+
 export const getDeactiveAdvantages = createMaybeSelector (
   getRuleBooksEnabled,
   getInactiveForView (Categories.ADVANTAGES),
-  uncurryN (liftM2<avai, listAdv, listAdv> (filterByWikiEntryPropertyAvailability))
+  uncurryN (liftM2<avai, listAdv, listAdv> (filterByAvailability (pipe (getWikiEntry, getSrc))))
 )
 
 export const getDeactiveDisadvantages = createMaybeSelector (
   getRuleBooksEnabled,
   getInactiveForView (Categories.DISADVANTAGES),
-  uncurryN (liftM2<avai, listDis, listDis> (filterByWikiEntryPropertyAvailability))
+  uncurryN (liftM2<avai, listDis, listDis> (filterByAvailability (pipe (getWikiEntry, getSrc))))
 )
 
 export const getDeactiveSpecialAbilities = createMaybeSelector (
   getRuleBooksEnabled,
   getInactiveForView (Categories.SPECIAL_ABILITIES),
-  uncurryN (liftM2<avai, listSA, listSA> (filterByWikiEntryPropertyAvailability))
+  uncurryN (liftM2<avai, listSA, listSA> (filterByAvailability (pipe (getWikiEntry, getSrc))))
 )

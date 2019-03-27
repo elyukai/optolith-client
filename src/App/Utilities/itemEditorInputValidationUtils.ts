@@ -1,10 +1,10 @@
-import { pipe } from "ramda";
 import { fmap } from "../../Data/Functor";
 import { all, isList, List, subscriptF, unsafeIndex } from "../../Data/List";
 import { elem, isJust, Nothing } from "../../Data/Maybe";
 import { fromDefault, Record } from "../../Data/Record";
 import { EditItem } from "../Models/Hero/EditItem";
 import { EditPrimaryAttributeDamageThreshold } from "../Models/Hero/EditPrimaryAttributeDamageThreshold";
+import { pipe } from "./pipe";
 import { isEmptyOr, isFloat, isInteger, isNaturalNumber } from "./RegexUtils";
 
 export interface ItemEditorInputValidation {
@@ -95,7 +95,7 @@ const validateRange = (index: 0 | 1 | 2) => pipe (
   range,
   subscriptF (index),
   fmap (isEmptyOr (isNaturalNumber)),
-  elem (true)
+  elem<boolean> (true)
 )
 
 /**

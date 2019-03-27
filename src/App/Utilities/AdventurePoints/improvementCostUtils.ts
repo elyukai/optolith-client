@@ -1,6 +1,6 @@
-import { inc, negate, pipe } from "ramda";
 import { bimap, fst, Pair, snd } from "../../../Data/Pair";
-import { add, max, multiply, subtractBy } from "../mathUtils";
+import { add, inc, max, multiply, negate, subtractBy } from "../mathUtils";
+import { pipe } from "../pipe";
 
 /**
  * `getICMultiplier :: Int -> Int`

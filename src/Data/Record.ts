@@ -25,6 +25,7 @@ export interface Record<A extends RecordBase> extends RecordPrototype {
   readonly values: Readonly<Required<A>>
   readonly defaultValues: Readonly<A>
   readonly keys: OrderedSet<string>
+  readonly unique: symbol
   readonly prototype: RecordPrototype
 }
 
@@ -34,6 +35,7 @@ export interface RecordCreator<A extends RecordBase> {
   readonly default: Record<A>
   readonly A: Accessors<A>
   readonly A_: StrictAccessors<A>
+  readonly is: <B> (x: B | Record<A>) => x is Record<A>
 }
 
 const RecordPrototype =
@@ -43,6 +45,7 @@ const RecordPrototype =
 
 const _Record =
   <A extends RecordBase>
+  (unique: symbol) =>
   (keys: OrderedSet<string>) =>
   (def: A) =>
   (specified: PartialMaybeOrNothing<A>): Record<A> =>
@@ -51,15 +54,15 @@ const _Record =
       {
         values: {
           value: Object.freeze (specified),
-          enumerable: true,
         },
         defaultValues: {
           value: def,
-          enumerable: true,
         },
         keys: {
           value: keys,
-          enumerable: true,
+        },
+        unique: {
+          value: unique,
         },
       }
     )
@@ -93,8 +96,11 @@ export const fromDefault =
 
     const keys = fromArray (Object.keys (def))
 
+    const unique = Symbol ("Record")
+
     const creator = (x: PartialMaybeOrNothing<A>) =>
       _Record<A>
+        (unique)
         (keys)
         (defaultValues)
         (foldl<string, PartialMaybeOrNothing<A>>
@@ -132,6 +138,8 @@ export const fromDefault =
     creator.A = makeAccessors<A> (keys)
     creator.A_ = creator.A as StrictAccessors<A>
 
+    creator.is = <B> (x: B | Record<A>): x is Record<A> => isRecord (x) && x.unique === unique
+
     return Object.freeze (creator)
   }
 
@@ -158,7 +166,8 @@ export const makeLenses =
 // MERGING RECORDS
 
 const mergeSafe = <A extends RecordBase> (x: Partial<A>) => (r: Record<A>): Record<A> =>
-  _Record<A> (r .keys)
+  _Record<A> (r .unique)
+             (r .keys)
              (r .defaultValues)
              (foldl<string, Required<A>> (acc => key => ({
                                            ...acc,
@@ -246,7 +255,8 @@ const accessor = <A extends RecordBase> (key: keyof A) => (r: Record<A>) => {
 const setter = <A extends RecordBase> (key: keyof A) => (r: Record<A>) => (x: A[typeof key]) =>
   r .values [key] === x
   ? r
-  : _Record<A> (r .keys)
+  : _Record<A> (r .unique)
+               (r .keys)
                (r .defaultValues)
                ({
                  ...r .values,

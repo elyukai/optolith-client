@@ -775,6 +775,11 @@ test ('snoc', () => {
     .toEqual (List (3, 2, 1, 4))
 })
 
+test ('snocF', () => {
+  expect (List.snocF (4) (List (3, 2, 1)))
+    .toEqual (List (3, 2, 1, 4))
+})
+
 // List operations
 
 test ('maximumOn', () => {

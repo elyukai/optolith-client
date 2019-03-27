@@ -1,11 +1,38 @@
-import { bind } from "../../Data/Maybe";
-import { lookupF } from "../../Data/OrderedMap";
+import { flip } from "../../Data/Function";
+import { fmap } from "../../Data/Functor";
+import { over } from "../../Data/Lens";
+import { map } from "../../Data/List";
+import { bind, mapMaybe } from "../../Data/Maybe";
+import { elems, lookupF } from "../../Data/OrderedMap";
+import { uncurryN, uncurryN3 } from "../../Data/Pair";
+import { CultureCombined } from "../Models/View/CultureCombined";
+import { ProfessionCombined } from "../Models/View/ProfessionCombined";
+import { RaceCombined } from "../Models/View/RaceCombined";
+import { Culture } from "../Models/Wiki/Culture";
+import { Profession } from "../Models/Wiki/Profession";
+import { ProfessionVariant } from "../Models/Wiki/ProfessionVariant";
+import { Race, RaceL } from "../Models/Wiki/Race";
+import { RaceVariant, RaceVariantL } from "../Models/Wiki/RaceVariant";
 import { createMaybeSelector } from "../Utilities/createMaybeSelector";
+import { filterAndSortRecordsBy } from "../Utilities/filterAndSortBy";
+import { pipe } from "../Utilities/pipe";
+import { filterByAvailability } from "../Utilities/RulesUtils";
 import { getStartEl } from "./elSelectors";
 import { getRuleBooksEnabled } from "./rulesSelectors";
-import { getCulturesSortOptions, getProfessionsSortOptions, getRacesSortOptions } from "./sortOptionsSelectors";
+import { getCulturesSortOptions, getProfessionsSortOptions, getRacesCombinedSortOptions } from "./sortOptionsSelectors";
 import { getCulturesFilterText, getCurrentCultureId, getCurrentProfessionId, getCurrentProfessionVariantId, getCurrentRaceId, getCurrentRaceVariantId, getCustomProfessionName, getLocaleAsProp, getLocaleMessages, getProfessionsFilterText, getRacesFilterText, getSex, getWiki, getWikiCultures, getWikiProfessions, getWikiProfessionVariants, getWikiRaces, getWikiRaceVariants, getWikiSkills } from "./stateSelectors";
 import { getCulturesVisibilityFilter, getProfessionsGroupVisibilityFilter, getProfessionsVisibilityFilter } from "./uisettingsSelectors";
+
+const RA = Race.A_
+const RL = RaceL
+const RVA = RaceVariant.A_
+const RVL = RaceVariantL
+const RCA = RaceCombined.A_
+const CA = Culture.A_
+const CCA = CultureCombined.A_
+const PA = Profession.A_
+const PVA = ProfessionVariant.A_
+const PCA = ProfessionCombined.A_
 
 export const getCurrentRace = createMaybeSelector (
   getWikiRaces,
@@ -43,52 +70,50 @@ export const getCurrentProfessionVariant = createMaybeSelector (
 )
 
 export const getAllRaces = createMaybeSelector (
-  getWikiRaces,
-  getWikiRaceVariants,
   getWikiCultures,
-  (races, raceVariants, cultures) => {
-    const filterCultures = Maybe.mapMaybe<string, string> (
-      id => cultures.lookup (id).fmap (culture => culture.get ("name"))
-    )
+  getWikiRaceVariants,
+  getWikiRaces,
+  uncurryN3 (cultures =>
+             race_variants => {
+               const getAvailableCulturesNames =
+                 mapMaybe (pipe (lookupF (cultures), fmap (CA.name)))
 
-    return races.elems ().map<Record<RaceCombined>> (
-      race => race
-        .modify<"commonCultures"> (filterCultures)
-                                  ("commonCultures")
-        .merge (Record.of ({
-          mappedVariants: Maybe.mapMaybe<string, Record<RaceVariant>>
-            (id => OrderedMap.lookup<string, Record<RaceVariant>> (id) (raceVariants))
-            (race.get ("variants"))
-            .map (
-              raceVariant => raceVariant.modify<"commonCultures"> (filterCultures)
-                                                                  ("commonCultures")
-            ),
-        }))
-    )
-  }
+               return pipe (
+                 elems,
+                 map (race =>
+                       RaceCombined ({
+                         mappedVariants:
+                           mapMaybe (pipe (
+                                      lookupF (race_variants),
+                                      fmap (over (RVL.commonCultures)
+                                                 (getAvailableCulturesNames))
+                                    ))
+                                    (RA.variants (race)),
+                         wikiEntry: over (RL.commonCultures)
+                                         (getAvailableCulturesNames)
+                                         (race),
+                       }))
+               )
+             })
 )
 
 export const getAvailableRaces = createMaybeSelector (
   getAllRaces,
   getRuleBooksEnabled,
-  (list, maybeAvailablility) => maybeAvailablility.fmap (
-    availablility => filterByAvailability (list, availablility)
-  )
+  uncurryN (races => fmap (flip (filterByAvailability (pipe (RCA.wikiEntry, RA.src)))
+                                (races)))
 )
 
 export const getFilteredRaces = createMaybeSelector (
-  getAvailableRaces,
+  getRacesCombinedSortOptions,
   getRacesFilterText,
-  getRacesSortOptions,
-  getLocaleAsProp,
-  (maybeList, filterText, sortOptions, locale) => maybeList.fmap (
-    list => filterAndSortObjects (
-      list,
-      locale.get ("id"),
-      filterText,
-      sortOptions as AllSortOptions<RaceCombined>
-    )
-  )
+  getAvailableRaces,
+  uncurryN3 (sort_options =>
+             filter_text =>
+               fmap (filterAndSortRecordsBy (0)
+                                            ([pipe (RCA.wikiEntry, RA.name)])
+                                            (sort_options)
+                                            (filter_text)))
 )
 
 export const getAllCultures = createMaybeSelector (

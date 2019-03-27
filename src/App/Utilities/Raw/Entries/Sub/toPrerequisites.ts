@@ -1,4 +1,3 @@
-import { pipe } from "ramda";
 import { Either, Left, mapM, maybeToEither, Right, second } from "../../../../../Data/Either";
 import { flip } from "../../../../../Data/Function";
 import { fmap } from "../../../../../Data/Functor";
@@ -17,6 +16,7 @@ import { AllRequirementObjects, AllRequirements, LevelAwarePrerequisites } from 
 import { ifElse } from "../../../ifElse";
 import { gte } from "../../../mathUtils";
 import { toInt } from "../../../NumberUtils";
+import { pipe } from "../../../pipe";
 import { lookupKeyValid, mstrToMaybe } from "../../validateValueUtils";
 import { isRawRequiringActivatable } from "../Prerequisites/RawActivatableRequirement";
 import { isRawCultureRequirement } from "../Prerequisites/RawCultureRequirement";

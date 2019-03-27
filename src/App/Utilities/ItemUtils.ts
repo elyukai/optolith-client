@@ -1,4 +1,3 @@
-import { pipe } from "ramda";
 import { equals } from "../../Data/Eq";
 import { fmap } from "../../Data/Functor";
 import { all, flength, fromArray, isList, List, map } from "../../Data/List";
@@ -17,6 +16,7 @@ import { ifElse } from "./ifElse";
 import { getLevelElementsWithZero } from "./levelUtils";
 import { gt } from "./mathUtils";
 import { toFloat, toInt } from "./NumberUtils";
+import { pipe } from "./pipe";
 
 const showMaybe = maybe ("") (show)
 

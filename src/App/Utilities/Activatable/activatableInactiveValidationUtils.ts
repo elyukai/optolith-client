@@ -6,7 +6,6 @@
  * @since 1.1.0
  */
 
-import { pipe } from "ramda";
 import { ident } from "../../../Data/Function";
 import { fmap } from "../../../Data/Functor";
 import { elem, flength, foldr, isList, List, notElem } from "../../../Data/List";
@@ -26,6 +25,7 @@ import { countActiveGroupEntries, hasActiveGroupEntry } from "../entryGroupUtils
 import { getAllEntriesByGroup } from "../heroStateUtils";
 import { add, gte, inc, lte } from "../mathUtils";
 import { not } from "../not";
+import { pipe } from "../pipe";
 import { getFirstLevelPrerequisites } from "../Prerequisites/flattenPrerequisites";
 import { validatePrerequisites } from "../Prerequisites/validatePrerequisitesUtils";
 import * as CheckStyleUtils from "./checkStyleUtils";

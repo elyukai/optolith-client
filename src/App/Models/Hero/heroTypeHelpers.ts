@@ -174,7 +174,7 @@ export type InputKeyEvent = React.KeyboardEvent<HTMLInputElement>
 export interface SubTab {
   id: TabId
   label: string
-  disabled: Maybe<boolean>
+  disabled: boolean
   // element: JSX.Element
 }
 

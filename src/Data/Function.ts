@@ -28,7 +28,7 @@ export const cnst = <A> (x: A) => (): A => x
  *
  * The T combinator.
  */
-export const thrush = <A, B> (x: A) => (f: (x: A) => B): B => f (x)
+export const thrush = <A> (x: A) => <B> (f: (x: A) => B): B => f (x)
 
 /**
  * `join :: (a -> a -> b) -> (a -> b)`

@@ -1,10 +1,10 @@
-import { pipe } from "ramda";
 import { thrush } from "../../Data/Function";
 import { fmap } from "../../Data/Functor";
 import { fnull, List, subscript } from "../../Data/List";
 import { maybe, Maybe, normalize, sum } from "../../Data/Maybe";
 import { toOrdering } from "../../Data/Ord";
 import { L10n, L10nRecord } from "../Models/Wiki/L10n";
+import { pipe } from "./pipe";
 
 /**
  * Displays a localized message and inserts values into placeholders if

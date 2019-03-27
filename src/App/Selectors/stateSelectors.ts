@@ -212,7 +212,7 @@ const Belo = Belongings.A_
 export const getItemsState =
   pipe (getCurrentHeroPresent, fmap (pipe (Hero.belongings, Belo.items)))
 
-export const getArmorZonesState =
+export const getHitZoneArmorsState =
   pipe (getCurrentHeroPresent, fmap (pipe (Hero.belongings, Belo.hitZoneArmors)))
 
 export const getPurse =

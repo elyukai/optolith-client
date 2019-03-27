@@ -1,11 +1,12 @@
-import { pipe } from "ramda";
 import { equals } from "../../Data/Eq";
+import { fmap } from "../../Data/Functor";
 import { find, List, map } from "../../Data/List";
-import { fmap, Maybe, maybe, sum } from "../../Data/Maybe";
+import { Maybe, maybe, sum } from "../../Data/Maybe";
 import { Record } from "../../Data/Record";
 import { AttributeDependent } from "../Models/ActiveEntries/AttributeDependent";
 import { AttributeCombined } from "../Models/View/AttributeCombined";
 import { Attribute } from "../Models/Wiki/Attribute";
+import { pipe } from "./pipe";
 
 const { stateEntry, wikiEntry } = AttributeCombined.A
 const { id, short } = Attribute.A

@@ -1,4 +1,3 @@
-import { pipe } from "ramda";
 import { fmap } from "../../../../Data/Functor";
 import { empty, flength, fromArray, map } from "../../../../Data/List";
 import { ensure, fromMaybe, Just, maybe, Maybe, Nothing } from "../../../../Data/Maybe";
@@ -23,6 +22,7 @@ import { NameBySex } from "../../../Models/Wiki/sub/NameBySex";
 import { AnyProfessionSelection, ProfessionDependency, ProfessionPrerequisite } from "../../../Models/Wiki/wikiTypeHelpers";
 import { prefixId } from "../../IDUtils";
 import { toNatural } from "../../NumberUtils";
+import { pipe } from "../../pipe";
 import { mergeRowsById } from "../mergeTableRows";
 import { maybePrefix } from "../rawConversionUtils";
 import { mensureMapListBindAfterOptional, mensureMapListOptional, mensureMapNatural, mensureMapNaturalListOptional, mensureMapNonEmptyString, mensureMapPairListOptional } from "../validateMapValueUtils";

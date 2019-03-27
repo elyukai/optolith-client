@@ -1,3 +1,4 @@
+import { thrush } from "../../Data/Function";
 import { fmapF } from "../../Data/Functor";
 import { cons, consF, elem, List, map, maximum } from "../../Data/List";
 import { fromJust, isJust, Just, liftM2, Maybe, Nothing, or } from "../../Data/Maybe";
@@ -21,7 +22,7 @@ import { filterAndSortRecordsBy } from "../Utilities/filterAndSortBy";
 import { prefixAdv, prefixId, prefixSA } from "../Utilities/IDUtils";
 import { add, divideBy, gt, max, subtractBy } from "../Utilities/mathUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
-import { filterByWikiEntryPropertyAvailabilityAndPred } from "../Utilities/RulesUtils";
+import { filterByAvailabilityAndPred } from "../Utilities/RulesUtils";
 import { getMaxAttributeValueByID } from "./attributeSelectors";
 import { getStartEl } from "./elSelectors";
 import { getRuleBooksEnabled } from "./rulesSelectors";
@@ -156,27 +157,25 @@ export const getAllCombatTechniques = createMaybeSelector (
 
              const hunterRequiresMinimum =
                isMaybeActive (hunter)
-               && pipe_ (combatTechniques, List.any (x => getGr (x) === 2 && getValue (x) >= 10))
+               && thrush (combatTechniques) (List.any (x => getGr (x) === 2 && getValue (x) >= 10))
 
-             return pipe_ (
-               combatTechniques,
-               map (x =>
-                 CombatTechniqueWithRequirements ({
-                   at: CTWAPBA.at (x),
-                   pa: CTWAPBA.pa (x),
-                   max: getMinimum (hunterRequiresMinimum)
-                                   (wiki)
-                                   (hero)
-                                   (x),
-                   min: getMaximum (exceptionalCombatTechnique)
-                                   (mstartEl)
-                                   (HeroModel.A_.attributes (hero))
-                                   (HeroModel.A_.phase (hero))
-                                   (x),
-                   stateEntry: CTWAPBA.stateEntry (x),
-                   wikiEntry: CTWAPBA.wikiEntry (x),
-                 }))
-             )
+             return thrush (combatTechniques)
+                           (map (x =>
+                             CombatTechniqueWithRequirements ({
+                               at: CTWAPBA.at (x),
+                               pa: CTWAPBA.pa (x),
+                               max: getMinimum (hunterRequiresMinimum)
+                                               (wiki)
+                                               (hero)
+                                               (x),
+                               min: getMaximum (exceptionalCombatTechnique)
+                                               (mstartEl)
+                                               (HeroModel.A_.attributes (hero))
+                                               (HeroModel.A_.phase (hero))
+                                               (x),
+                               stateEntry: CTWAPBA.stateEntry (x),
+                               wikiEntry: CTWAPBA.wikiEntry (x),
+                             })))
            })
            (mcombat_techniques)
            (mhero)
@@ -185,9 +184,8 @@ export const getAllCombatTechniques = createMaybeSelector (
 export const getAvailableCombatTechniques = createMaybeSelector (
   getRuleBooksEnabled,
   getAllCombatTechniques,
-  uncurryN (liftM2 (filterByWikiEntryPropertyAvailabilityAndPred (pipe (CTWRA.stateEntry,
-                                                                        SDA.value,
-                                                                        gt (6)))))
+  uncurryN (liftM2 (filterByAvailabilityAndPred (pipe (CTWRA.wikiEntry, CTA.src))
+                                                (pipe (CTWRA.stateEntry, SDA.value, gt (6)))))
 )
 
 export const getFilteredCombatTechniques = createMaybeSelector (

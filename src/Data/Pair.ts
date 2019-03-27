@@ -173,6 +173,39 @@ export const uncurryN3 =
     f (x) (y) (z)
 
 /**
+ * `uncurryN4 :: (a -> b -> c -> d -> e) -> (a, b, c, d) -> e`
+ *
+ * `uncurryN4` converts a curried function to a function on pairs.
+ */
+export const uncurryN4 =
+  <A, B, C, D, E>
+  (f: (a: A) => (b: B) => (c: C) => (c: D) => E) =>
+  (x: A, y: B, z: C, a: D): E =>
+    f (x) (y) (z) (a)
+
+/**
+ * `uncurryN5 :: (a -> b -> c -> d -> e -> f) -> (a, b, c, d, e) -> f`
+ *
+ * `uncurryN5` converts a curried function to a function on pairs.
+ */
+export const uncurryN5 =
+  <A, B, C, D, E, F>
+  (f: (a: A) => (b: B) => (c: C) => (d: D) => (e: E) => F) =>
+  (x: A, y: B, z: C, a: D, b: E): F =>
+    f (x) (y) (z) (a) (b)
+
+/**
+ * `uncurryN6 :: (a -> b -> c -> d -> e -> f -> g) -> (a, b, c, d, e, f) -> g`
+ *
+ * `uncurryN6` converts a curried function to a function on pairs.
+ */
+export const uncurryN6 =
+  <A, B, C, D, E, F, G>
+  (f: (a: A) => (b: B) => (c: C) => (d: D) => (e: E) => (f: F) => G) =>
+  (x: A, y: B, z: C, a: D, b: E, c: F): G =>
+    f (x) (y) (z) (a) (b) (c)
+
+/**
  * `swap :: (a, b) -> (b, a)`
  *
  * Swap the components of a pair.

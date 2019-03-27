@@ -958,8 +958,9 @@ export const filterWithKeyF =
  * Map values and collect the `Just` results.
  */
 export const mapMaybe =
-  <K, A, B>
+  <A, B>
   (f: (value: A) => Maybe<B>) =>
+  <K>
   (mp: OrderedMap<K, A>): OrderedMap<K, B> =>
     fromArray (
       [...mp] .reduce<[K, B][]> (

@@ -1,9 +1,9 @@
-import { pipe } from "ramda";
 import { on } from "../../Data/Function";
 import { flength, List, sortBy } from "../../Data/List";
 import { EQ, Ordering, reverseCompare } from "../../Data/Ord";
 import { fromDefault, Record, RecordBase } from "../../Data/Record";
 import { compareLocale } from "./I18n";
+import { pipe } from "./pipe";
 
 export type CompareR<A> = (x: Record<A>) => (y: Record<A>) => Ordering
 

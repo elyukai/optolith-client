@@ -1,11 +1,11 @@
-import { pipe } from "ramda";
+import { fmap } from "../../Data/Functor";
 import { foldr, subscriptF } from "../../Data/List";
-import { altF, bindF, elem, fmap, fromMaybe, Just, liftM2, Maybe, sum } from "../../Data/Maybe";
+import { altF, bindF, elem, fromMaybe, Just, liftM2, Maybe, sum } from "../../Data/Maybe";
 import { lookupF, OrderedMap } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
 import { show } from "../../Data/Show";
 import { Sex } from "../Models/Hero/heroTypeHelpers";
-import { L10n, L10nRecord } from "../Models/Wiki/L10n";
+import { L10nRecord } from "../Models/Wiki/L10n";
 import { Profession } from "../Models/Wiki/Profession";
 import { ProfessionVariant } from "../Models/Wiki/ProfessionVariant";
 import { Race } from "../Models/Wiki/Race";
@@ -17,6 +17,7 @@ import { translate } from "./I18n";
 import { ifElse } from "./ifElse";
 import { add, lt, odd, subtract, subtractBy } from "./mathUtils";
 import { multiplyString, toInt } from "./NumberUtils";
+import { pipe, pipe_ } from "./pipe";
 
 const { id, hairColors, eyeColors, sizeBase, sizeRandom, weightBase, weightRandom } = Race.A
 const { amount, sides } = Die.A
@@ -159,7 +160,7 @@ export const getFullProfessionName =
   (professionVariantId: Maybe<string>) =>
   (customProfessionName: Maybe<string>) => {
     if (elem ("P_0") (professionId)) {
-      return fromMaybe (translate (l10n) (L10n.A["professions.ownprofession"]))
+      return fromMaybe (translate (l10n) ("ownprofession"))
                        (customProfessionName)
     }
 
@@ -178,14 +179,14 @@ export const getFullProfessionName =
     const professionVariantName = fmap (pipe (name, nameBySexDef (sex)))
                                        (maybeProfessionVariant)
 
-    return pipe (
-                  fmap ((n: string) => fromMaybe (n)
-                                                 (pipe (
-                                                         altF (professionVariantName),
-                                                         fmap (addName => `${n} (${addName})`)
-                                                       )
-                                                       (professionSubName))),
-                  fromMaybe ("")
-                )
-                (professionName)
+    return pipe_ (
+      professionName,
+      fmap ((n: string) => fromMaybe (n)
+                                     (pipe (
+                                             altF (professionVariantName),
+                                             fmap (addName => `${n} (${addName})`)
+                                           )
+                                           (professionSubName))),
+      fromMaybe ("")
+    )
   }

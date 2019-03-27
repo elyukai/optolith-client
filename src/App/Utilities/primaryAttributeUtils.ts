@@ -1,4 +1,3 @@
-import { pipe } from "ramda";
 import { cnst } from "../../Data/Function";
 import { elemF, List } from "../../Data/List";
 import { bindF, Just, listToMaybe, Maybe, Nothing } from "../../Data/Maybe";
@@ -8,6 +7,7 @@ import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDepende
 import { getBlessedTradition, getMagicalTraditions } from "./Activatable/traditionUtils";
 import * as IDUtils from "./IDUtils";
 import { match } from "./match";
+import { pipe } from "./pipe";
 
 const { id } = ActivatableDependent.A
 

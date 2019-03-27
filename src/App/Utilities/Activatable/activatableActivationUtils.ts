@@ -7,7 +7,6 @@
  * @since 1.1.0
  */
 
-import { pipe } from "ramda";
 import { equals } from "../../../Data/Eq";
 import { ident } from "../../../Data/Function";
 import { over, set } from "../../../Data/Lens";
@@ -22,6 +21,7 @@ import { Advantage } from "../../Models/Wiki/Advantage";
 import { Activatable, AllRequirementObjects, AllRequirements, LevelAwarePrerequisites } from "../../Models/Wiki/wikiTypeHelpers";
 import { addDependencies, removeDependencies } from "../Dependencies/dependencyUtils";
 import { adjustEntryDef } from "../heroStateUtils";
+import { pipe } from "../pipe";
 import { flattenPrerequisites } from "../Prerequisites/flattenPrerequisites";
 import { getGeneratedPrerequisites } from "../Prerequisites/prerequisitesUtils";
 import { convertUIStateToActiveObject } from "./activatableConvertUtils";

@@ -1,6 +1,6 @@
 import { List } from "../../../Data/List";
 import { OrderedSet } from "../../../Data/OrderedSet";
-import { fromDefault, Record } from "../../../Data/Record";
+import { fromDefault, makeLenses, Record } from "../../../Data/Record";
 import { Categories } from "../../Constants/Categories";
 import { SourceLink } from "./sub/SourceLink";
 import { CheckModifier, EntryWithCategory } from "./wikiTypeHelpers";
@@ -51,6 +51,8 @@ export const LiturgicalChant =
     target: "",
     src: List.empty,
   })
+
+export const LiturgicalChantL = makeLenses (LiturgicalChant)
 
 export const isLiturgicalChant =
   (r: EntryWithCategory) => LiturgicalChant.A.category (r) === Categories.LITURGIES
