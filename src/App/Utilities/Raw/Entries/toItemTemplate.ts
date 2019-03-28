@@ -206,5 +206,6 @@ export const toItemTemplate =
           armorType: rs.earmorType,
           isTemplateLocked: Nothing,
           src: rs.esrc,
+          forArmorZoneOnly: Nothing,
         }))
     })

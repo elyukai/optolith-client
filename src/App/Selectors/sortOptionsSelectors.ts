@@ -61,7 +61,7 @@ export const getHerolistSortOptions = createMaybeSelector (
 export const getRacesSortOptions = createMaybeSelector (
   getLocaleAsProp,
   uiSettingsSelectors.getRacesSortOrder,
-  (l10n, sortOrder): SortOptions<Race> | SortOptions<RaceCombined> =>
+  (l10n, sortOrder): SortOptions<Race> =>
     sortOrder === "cost"
       ? [
           comparingR (Race.A.ap) (compare),
@@ -92,7 +92,7 @@ export const getRacesCombinedSortOptions = createMaybeSelector (
 export const getCulturesSortOptions = createMaybeSelector (
   getLocaleAsProp,
   uiSettingsSelectors.getCulturesSortOrder,
-  (l10n, sortOrder): SortOptions<Culture> | SortOptions<CultureCombined> =>
+  (l10n, sortOrder): SortOptions<Culture> =>
     sortOrder === "cost"
       ? [
           comparingR (Culture.A.culturalPackageAdventurePoints) (compare),
@@ -100,6 +100,26 @@ export const getCulturesSortOptions = createMaybeSelector (
         ]
       : [
           compareName (l10n),
+        ]
+)
+
+export const getCulturesCombinedSortOptions = createMaybeSelector (
+  getLocaleAsProp,
+  uiSettingsSelectors.getCulturesSortOrder,
+  (l10n, sortOrder): SortOptions<CultureCombined> =>
+    sortOrder === "cost"
+      ? [
+          comparingR (pipe (
+                       CultureCombined.A_.wikiEntry,
+                       Culture.A_.culturalPackageAdventurePoints
+                     ))
+                     (compare),
+          comparingR (pipe (CultureCombined.A_.wikiEntry, Culture.A_.name))
+                     (compareLocale (L10n.A_.id (l10n))),
+        ]
+      : [
+          comparingR (pipe (CultureCombined.A_.wikiEntry, Culture.A_.name))
+                     (compareLocale (L10n.A_.id (l10n))),
         ]
 )
 

@@ -1,7 +1,7 @@
 import { fmap } from "../../../../Data/Functor";
 import { all, elemF, isList, List } from "../../../../Data/List";
 import { Maybe, Nothing, or } from "../../../../Data/Maybe";
-import { fromDefault, makeLenses, member, Record } from "../../../../Data/Record";
+import { fromDefault, makeLenses, member, Record, RecordCreator } from "../../../../Data/Record";
 import { ActivatableLikeCategories, Categories } from "../../../Constants/Categories";
 import { getCategoryById } from "../../../Utilities/IDUtils";
 import { pipe } from "../../../Utilities/pipe";
@@ -30,6 +30,9 @@ export const RequireActivatable =
   })
 
 export const RequireActivatableL = makeLenses (RequireActivatable)
+
+export const ProfessionRequireActivatable =
+  RequireActivatable as RecordCreator<ProfessionRequireActivatable>
 
 export const isRequiringActivatable =
   (req: AllRequirementObjects): req is Record<RequireActivatable> => {

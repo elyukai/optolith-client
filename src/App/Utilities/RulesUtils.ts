@@ -1,23 +1,47 @@
-import { any, elemF, filter, fnull, List } from "../../Data/List";
-import { member, OrderedMap } from "../../Data/OrderedMap";
-import { OrderedSet } from "../../Data/OrderedSet";
+import { any, filter, fnull, List } from "../../Data/List";
+import { fromJust, isJust, Maybe } from "../../Data/Maybe";
+import { lookup, lookupF } from "../../Data/OrderedMap";
+import { member } from "../../Data/OrderedSet";
+import { fst, snd } from "../../Data/Pair";
 import { Record } from "../../Data/Record";
+import { Rules } from "../Models/Hero/Rules";
 import { Book } from "../Models/Wiki/Book";
 import { SourceLink } from "../Models/Wiki/sub/SourceLink";
+import { WikiModel } from "../Models/Wiki/WikiModel";
+import { EnabledSourceBooks } from "../Selectors/rulesSelectors";
 import { pipe, pipe_ } from "./pipe";
 
 
-// LOGIC
-
-const { id } = SourceLink.A
-
-const CoreBooks = List ("US25001", "US25002", "US25001EN", "US25002EN")
+const RA = Rules.A_
+const BA = Book.A_
+const SLA = SourceLink.A_
 
 /**
- * Check if the passed `SourceLink` links to a core book.
+ * Returns if a book is currently enabled.
  */
-export const isCoreBook =
-  (sourceLink: Record<SourceLink>) => pipe (id, elemF (CoreBooks)) (sourceLink)
+export const isBookEnabled =
+  (availability: EnabledSourceBooks) =>
+  (id: string): boolean => {
+    const mb = lookup (id) (fst (availability))
+
+    if (isJust (mb)) {
+      const b = fromJust (mb)
+
+      if (BA.isCore (b)) {
+        return true
+      }
+
+      if (RA.enableAllRuleBooks (snd (availability))) {
+        if (BA.isAdultContent (b)) {
+          return member (id) (RA.enabledRuleBooks (snd (availability)))
+        }
+
+        return true
+      }
+    }
+
+    return false
+  }
 
 /**
  * Returns if the given entry is available.
@@ -26,7 +50,7 @@ export const isCoreBook =
 export const isAvailable =
   <A>
   (f: (x: A) => List<Record<SourceLink>>) =>
-  (availablility: boolean | OrderedSet<string>) =>
+  (availablility: EnabledSourceBooks) =>
   (x: A): boolean => {
     if (typeof availablility === "boolean") {
       return availablility
@@ -35,7 +59,7 @@ export const isAvailable =
     return pipe_ (
       x,
       f,
-      any (s => OrderedSet.elemF (availablility) (id (s)) || isCoreBook (s))
+      any (pipe (SLA.id, isBookEnabled (availablility)))
     )
   }
 
@@ -44,7 +68,11 @@ export const isAvailable =
  * @param a The entry.
  */
 export const isEntryFromCoreBook =
-  <A> (f: (x: A) => List<Record<SourceLink>>) => pipe (f, any (isCoreBook))
+  <A>
+  (f: (x: A) => List<Record<SourceLink>>) =>
+  (bs: WikiModel["books"]):
+  (x: A) => boolean =>
+    pipe (f, any (pipe (SLA.id, lookupF (bs), Maybe.any (BA.isCore))))
 
 /**
  * Filters a list of `SourceLink`s by availability.
@@ -52,7 +80,7 @@ export const isEntryFromCoreBook =
 export const filterByAvailability =
   <A>
   (f: (x: A) => List<Record<SourceLink>>) =>
-  (availablility: boolean | OrderedSet<string>) =>
+  (availablility: EnabledSourceBooks) =>
     filter<A> (e => fnull (f (e)) || isAvailable (f) (availablility) (e))
 
 /**
@@ -63,18 +91,7 @@ export const filterByAvailabilityAndPred =
   <A>
   (f: (x: A) => List<Record<SourceLink>>) =>
   (pred: (obj: A) => boolean) =>
-  (availablility: boolean | OrderedSet<string>) =>
+  (availablility: EnabledSourceBooks) =>
     filter<A> (e => fnull (f (e))
                     || isAvailable (f) (availablility) (e)
                     || pred (e))
-
-/**
- * Returns if a book is currently enabled.
- */
-export const isBookEnabled =
-  (books: OrderedMap<string, Record<Book>>) =>
-  (availableBooks: true | OrderedSet<string>) =>
-  (x: string) =>
-    availableBooks === true
-    ? member (x) (books)
-    : OrderedSet.member (x) (availableBooks)

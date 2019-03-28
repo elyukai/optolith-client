@@ -5,6 +5,7 @@ export interface ActivatableCombinedName {
   name: string
   baseName: string
   addName: Maybe<string>
+  levelName: Maybe<string>
 }
 
 export const ActivatableCombinedName =
@@ -12,4 +13,5 @@ export const ActivatableCombinedName =
     name: "",
     baseName: "",
     addName: Nothing,
+    levelName: Nothing,
   })

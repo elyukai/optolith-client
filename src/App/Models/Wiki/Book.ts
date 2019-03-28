@@ -4,6 +4,8 @@ export interface Book {
   id: string
   short: string
   name: string
+  isCore: boolean
+  isAdultContent: boolean
 }
 
 export const Book =
@@ -11,4 +13,6 @@ export const Book =
     id: "",
     name: "",
     short: "",
+    isCore: false,
+    isAdultContent: false,
   })
