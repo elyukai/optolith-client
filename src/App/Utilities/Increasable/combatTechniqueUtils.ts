@@ -13,11 +13,11 @@ import { flattenDependencies } from "../Dependencies/flattenDependencies";
 import { add, divideBy, max } from "../mathUtils";
 import { pipe } from "../pipe";
 
-const { value, dependencies } = SkillDependent.A
-const { gr, primary, id } = CombatTechnique.A
-const { attributes, experienceLevel, advantages, phase } = HeroModel.A
-const { experienceLevels } = WikiModel.A
-const { maxCombatTechniqueRating } = ExperienceLevel.A
+const { value, dependencies } = SkillDependent.AL
+const { gr, primary, id } = CombatTechnique.AL
+const { attributes, experienceLevel, advantages, phase } = HeroModel.AL
+const { experienceLevels } = WikiModel.AL
+const { maxCombatTechniqueRating } = ExperienceLevel.AL
 
 const getMaxPrimaryAttributeValueById =
   (state: HeroModelRecord) =>

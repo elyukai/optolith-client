@@ -19,4 +19,4 @@ export const Attribute =
 
 export const isAttribute =
   (r: EntryWithCategory): r is Record<Attribute> =>
-    Attribute.A.category (r) === Categories.ATTRIBUTES
+    Attribute.AL.category (r) === Categories.ATTRIBUTES

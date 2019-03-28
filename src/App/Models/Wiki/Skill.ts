@@ -44,4 +44,4 @@ export const Skill =
   })
 
 export const isSkill =
-  (r: EntryWithCategory) => Skill.A.category (r) === Categories.TALENTS
+  (r: EntryWithCategory) => Skill.AL.category (r) === Categories.TALENTS

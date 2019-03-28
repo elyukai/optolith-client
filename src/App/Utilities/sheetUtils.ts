@@ -8,9 +8,9 @@ import { AttributeCombined } from "../Models/View/AttributeCombined";
 import { Attribute } from "../Models/Wiki/Attribute";
 import { pipe } from "./pipe";
 
-const { stateEntry, wikiEntry } = AttributeCombined.A
-const { id, short } = Attribute.A
-const { value } = AttributeDependent.A
+const { stateEntry, wikiEntry } = AttributeCombined.AL
+const { id, short } = Attribute.AL
+const { value } = AttributeDependent.AL
 
 /**
  * If `attributeValueVisibility` is `True`, this function returns a string of

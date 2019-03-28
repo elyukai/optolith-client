@@ -8,8 +8,8 @@ import { isRequiringActivatable, RequireActivatable } from "../../Models/Wiki/pr
 import { Activatable, AllRequirements } from "../../Models/Wiki/wikiTypeHelpers";
 import { getFirstLevelPrerequisites } from "../Prerequisites/flattenPrerequisites";
 
-const { id, active } = RequireActivatable.A
-const { prerequisites } = Advantage.A
+const { id, active } = RequireActivatable.AL
+const { prerequisites } = Advantage.AL
 
 const getMagicalOrBlessedFilter =
   (advantageId: "ADV_12" | "ADV_50") =>

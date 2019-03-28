@@ -138,7 +138,7 @@ export const requestConfigSave =
         isJust (uiSettingsState.rangedItemTemplatesCombatTechniqueFilter)
           ? fromJust (uiSettingsState.rangedItemTemplatesCombatTechniqueFilter)
           : undefined,
-      locale: getLocaleType (state) === "default" ? undefined : L10n.A_.id (l10n),
+      locale: getLocaleType (state) === "default" ? undefined : L10n.A.id (l10n),
     }
 
     const dataPath = getSaveDataPath ()
@@ -631,7 +631,7 @@ export const updateAvailable =
       message: size > 0
         ? translateP (l10n)
                      ("newversionavailable.textwithsize")
-                     (List (info.version, bytify (L10n.A_.id (l10n)) (size)))
+                     (List (info.version, bytify (L10n.A.id (l10n)) (size)))
         : translateP (l10n) ("newversionavailable.text") (List (info.version)),
       title: translate (l10n) ("newversionavailable"),
       buttons: [

@@ -35,4 +35,4 @@ export const Cantrip =
   })
 
 export const isCantrip =
-  (r: EntryWithCategory) => Cantrip.A.category (r) === Categories.CANTRIPS
+  (r: EntryWithCategory) => Cantrip.AL.category (r) === Categories.CANTRIPS

@@ -15,4 +15,4 @@ export const SpecializationSelection =
 
 export const isSpecializationSelection =
   (obj: AnyProfessionSelection): obj is Record<SpecializationSelection> =>
-    SpecializationSelection.A.id (obj) === ProfessionSelectionIds.SPECIALIZATION
+    SpecializationSelection.AL.id (obj) === ProfessionSelectionIds.SPECIALIZATION

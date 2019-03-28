@@ -6,8 +6,8 @@ import { WikiModel, WikiModelRecord } from "../Models/Wiki/WikiModel";
 import { isActive } from "./A/Activatable/isActive";
 import { getAllEntriesByGroup } from "./heroStateUtils";
 
-const { specialAbilities: wikiSpecialAbilities } = WikiModel.A
-const { specialAbilities } = HeroModel.A
+const { specialAbilities: wikiSpecialAbilities } = WikiModel.AL
+const { specialAbilities } = HeroModel.AL
 
 /**
  * Return all active special ability `ActivatableDependent` entries of the

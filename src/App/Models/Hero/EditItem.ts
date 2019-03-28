@@ -55,7 +55,7 @@ export const EditItem =
 export const EditItemL = makeLenses (EditItem)
 
 export const ensureEditId =
-  (x: Record<EditItem>): x is Record<EditItemSafe> => isJust (EditItem.A.id (x))
+  (x: Record<EditItem>): x is Record<EditItemSafe> => isJust (EditItem.AL.id (x))
 
 export const fromItemTemplateEdit =
   (new_id: Maybe<string>) =>

@@ -36,7 +36,7 @@ export const ProfessionRequireActivatable =
 
 export const isRequiringActivatable =
   (req: AllRequirementObjects): req is Record<RequireActivatable> => {
-    const id = RequireActivatable.A.id (req)
+    const id = RequireActivatable.AL.id (req)
 
     if (isList (id)) {
       return member ("value") (req)
@@ -55,7 +55,7 @@ export const isRequiringActivatable =
 
 export const isProfessionRequiringActivatable =
   (req: ProfessionPrerequisite): req is Record<ProfessionRequireActivatable> => {
-    const id = RequireActivatable.A.id (req) as string
+    const id = RequireActivatable.AL.id (req) as string
 
     return member ("value") (req)
       && or (fmap (elemF<Categories> (ActivatableLikeCategories))

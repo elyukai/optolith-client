@@ -27,23 +27,23 @@ export const ItemForView =
 export const itemToItemForView =
   (x: Record<Item>) =>
     ItemForView ({
-      id: Item.A_.id (x),
-      name: Item.A_.name (x),
-      amount: Item.A_.amount (x),
-      price: Item.A_.price (x),
-      weight: Item.A_.weight (x),
-      where: Item.A_.where (x),
-      gr: Item.A_.gr (x),
+      id: Item.A.id (x),
+      name: Item.A.name (x),
+      amount: Item.A.amount (x),
+      price: Item.A.price (x),
+      weight: Item.A.weight (x),
+      where: Item.A.where (x),
+      gr: Item.A.gr (x),
     })
 
 export const itemTemplateToItemForView =
   (x: Record<ItemTemplate>) =>
     ItemForView ({
-      id: ItemTemplate.A_.id (x),
-      name: ItemTemplate.A_.name (x),
+      id: ItemTemplate.A.id (x),
+      name: ItemTemplate.A.name (x),
       amount: 1,
-      price: ItemTemplate.A_.price (x),
-      weight: ItemTemplate.A_.weight (x),
+      price: ItemTemplate.A.price (x),
+      weight: ItemTemplate.A.weight (x),
       where: Nothing,
-      gr: ItemTemplate.A_.gr (x),
+      gr: ItemTemplate.A.gr (x),
     })

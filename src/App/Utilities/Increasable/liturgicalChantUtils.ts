@@ -22,9 +22,9 @@ import { pipe } from "../pipe";
 import { isNumber } from "../typeCheckUtils";
 import { getExceptionalSkillBonus, getInitialMaximumList, putMaximumSkillRatingFromExperienceLevel } from "./skillUtils";
 
-const { liturgicalChants } = WikiModel.A
-const { id, tradition, aspects } = LiturgicalChant.A
-const { value, dependencies } = ActivatableSkillDependent.A
+const { liturgicalChants } = WikiModel.AL
+const { id, tradition, aspects } = LiturgicalChant.AL
+const { value, dependencies } = ActivatableSkillDependent.AL
 
 /**
  * Checks if the passed liturgical chant or blessing is valid for the current
@@ -193,7 +193,7 @@ export const isLiturgicalChantDecreasable =
   (stateEntry: Record<ActivatableSkillDependent>): boolean =>
     isLiturgicalChantDecreasableByDependencies (wiki) (hero) (stateEntry)
     && isLiturgicalChantDecreasableByAspectKnowledges (wiki)
-                                                      (HeroModel.A_.liturgicalChants (hero))
+                                                      (HeroModel.A.liturgicalChants (hero))
                                                       (aspectKnowledge)
                                                       (wikiEntry)
                                                       (stateEntry)

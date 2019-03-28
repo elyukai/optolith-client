@@ -22,5 +22,5 @@ export const PactRequirement =
   })
 
 export const isPactRequirement =
-  pipe (RequireActivatable.A.id, equals<string | List<string>> ("PACT")) as unknown as
+  pipe (RequireActivatable.AL.id, equals<string | List<string>> ("PACT")) as unknown as
     (req: AllRequirementObjects) => req is Record<PactRequirement>

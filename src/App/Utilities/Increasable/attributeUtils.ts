@@ -5,7 +5,7 @@ import { Record } from "../../../Data/Record";
 import { AttributeDependent } from "../../Models/ActiveEntries/AttributeDependent";
 import { pipe } from "../pipe";
 
-const ADA = AttributeDependent.A_
+const ADA = AttributeDependent.A
 
 export const getSkillCheckValues =
   (attributes: OrderedMap<string, Record<AttributeDependent>>) =>

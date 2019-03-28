@@ -208,7 +208,7 @@ export const petsReducer =
                          set (HeroModelL.petInEditor) (Nothing)
                        )
                        (hero))
-                (HeroModel.A.petInEditor (hero))
+                (HeroModel.AL.petInEditor (hero))
       }
 
       case ActionTypes.CREATE_PET: {
@@ -224,12 +224,12 @@ export const petsReducer =
                 ((edit_pet: Record<EditPetSafe>) =>
                   pipe (
                          over (HeroModelL.pets)
-                              (insert (fromJust (EditPet.A.id (edit_pet) as Just<string>))
+                              (insert (fromJust (EditPet.AL.id (edit_pet) as Just<string>))
                                       (fromEditPet (edit_pet))),
                          set (HeroModelL.petInEditor) (Nothing)
                        )
                        (hero))
-                (bind (HeroModel.A.petInEditor (hero))
+                (bind (HeroModel.AL.petInEditor (hero))
                       (ensure (ensureEditPetId)))
       }
 
@@ -245,7 +245,7 @@ export const petsReducer =
                        )
                        (hero))
                 (lookup (action.payload.id)
-                        (HeroModel.A.pets (hero)))
+                        (HeroModel.AL.pets (hero)))
       }
 
       case ActionTypes.CLOSE_PET_EDITOR: {

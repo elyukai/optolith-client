@@ -56,7 +56,7 @@ export const isExtendedSkillDependent =
     member ("value") (entry)
     && notMember ("mod") (entry)
 
-const { value, dependencies } = SkillDependent.A
+const { value, dependencies } = SkillDependent.AL
 
 export const isSkillDependentUnused =
   (entry: Record<SkillDependent>): boolean =>

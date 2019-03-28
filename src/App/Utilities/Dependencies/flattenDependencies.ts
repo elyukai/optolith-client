@@ -17,9 +17,9 @@ import { flattenPrerequisites } from "../Prerequisites/flattenPrerequisites";
 import { isNumber } from "../typeCheckUtils";
 import { getWikiEntry } from "../WikiUtils";
 
-const { prerequisites } = Advantage.A
-const { origin, value } = SkillOptionalDependency.A
-const { id } = RequireActivatable.A
+const { prerequisites } = Advantage.AL
+const { origin, value } = SkillOptionalDependency.AL
+const { id } = RequireActivatable.AL
 
 /**
  * `flattenDependencies` flattens the list of dependencies to usable values.

@@ -15,4 +15,4 @@ export const TerrainKnowledgeSelection =
 
 export const isTerrainKnowledgeSelection =
   (obj: AnyProfessionSelection): obj is Record<TerrainKnowledgeSelection> =>
-    TerrainKnowledgeSelection.A.id (obj) === ProfessionSelectionIds.TERRAIN_KNOWLEDGE
+    TerrainKnowledgeSelection.AL.id (obj) === ProfessionSelectionIds.TERRAIN_KNOWLEDGE

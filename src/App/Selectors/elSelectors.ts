@@ -22,5 +22,5 @@ export const getStartEl = createMaybeSelector (
 
 export const getMaxTotalAttributeValues = createMaybeSelector (
   getStartEl,
-  fmap (ExperienceLevel.A_.maxTotalAttributeValues)
+  fmap (ExperienceLevel.A.maxTotalAttributeValues)
 )

@@ -28,8 +28,8 @@ import { getRuleBooksEnabled } from "./rulesSelectors";
 import { getMagicalTraditionsFromState } from "./spellsSelectors";
 import { getAddedArcaneEnergyPoints, getAddedKarmaPoints, getAddedLifePoints, getAdvantages, getAttributes, getDisadvantages, getLocaleAsProp, getPermanentArcaneEnergyPoints, getPermanentKarmaPoints, getPermanentLifePoints, getSpecialAbilities, getWikiBooks } from "./stateSelectors";
 
-const ACA = AttributeCombined.A_
-const ADA = AttributeDependent.A_
+const ACA = AttributeCombined.A
+const ADA = AttributeDependent.A
 
 export type DCIds = "LP" | "AE" | "KP" | "SPI" | "TOU" | "DO" | "INI" | "MOV" | "WT"
 export type DCIdsWithoutWT = "LP" | "AE" | "KP" | "SPI" | "TOU" | "DO" | "INI" | "MOV"
@@ -40,8 +40,8 @@ const divideBy6AndRound = divideByXAndRound (6)
 
 const getFirstLevel =
   pipe (
-    bindF (pipe (ActivatableDependent.A_.active, listToMaybe)),
-    bindF (ActiveObject.A_.tier)
+    bindF (pipe (ActivatableDependent.A.active, listToMaybe)),
+    bindF (ActiveObject.A.tier)
   )
 
 export const getLP = createMaybeSelector (
@@ -54,10 +54,10 @@ export const getLP = createMaybeSelector (
   getLocaleAsProp,
   (mrace, mcon, plp, minc, mdec, added, l10n) => {
     const base = maybe (0)
-                       (pipe (Race.A_.lp, add (getAttributeValueWithDefault (mcon) * 2)))
+                       (pipe (Race.A.lp, add (getAttributeValueWithDefault (mcon) * 2)))
                        (mrace)
 
-    const lost = fmap (PermanentEnergyLoss.A_.lost) (plp)
+    const lost = fmap (PermanentEnergyLoss.A.lost) (plp)
     const mod = getModifierByActiveLevel (fmap (negate) (lost)) (minc) (mdec)
 
     const value = Just (base + mod + Maybe.sum (added))
@@ -68,7 +68,7 @@ export const getLP = createMaybeSelector (
       calc: translate (l10n) ("lifepointscalc"),
       currentAdd: Just (Maybe.sum (added)),
       id: "LP",
-      maxAdd: Just (Maybe.sum (fmap (AttributeDependent.A_.value) (mcon))),
+      maxAdd: Just (Maybe.sum (fmap (AttributeDependent.A.value) (mcon))),
       mod: Just (mod),
       name: translate (l10n) ("lifepoints"),
       permanentLost: Just (Maybe.sum (lost)),
@@ -90,9 +90,9 @@ export const getAE = createMaybeSelector (
   (mtrads, mprimary, paep, minc, mdec, added, l10n) => {
     const mlast_trad = bind (mtrads) (listToMaybe)
 
-    const mredeemed = fmap (PermanentEnergyLossAndBoughtBack.A_.redeemed) (paep)
+    const mredeemed = fmap (PermanentEnergyLossAndBoughtBack.A.redeemed) (paep)
 
-    const mlost = fmap (PermanentEnergyLossAndBoughtBack.A_.lost) (paep)
+    const mlost = fmap (PermanentEnergyLossAndBoughtBack.A.lost) (paep)
 
     const mod = getModifierByActiveLevel (liftM2 (subtract) (mredeemed) (mlost))
                                          (minc)
@@ -107,7 +107,7 @@ export const getAE = createMaybeSelector (
                                     (fmapF (mprimary)
                                            (primary => {
                                             const hasTraditionHalfAE =
-                                              elem (ActivatableDependent.A_.id (last_trad))
+                                              elem (ActivatableDependent.A.id (last_trad))
                                                    (List (prefixSA (677), prefixSA (678)))
 
                                             const maxAdd = hasTraditionHalfAE
@@ -148,9 +148,9 @@ export const getKP = createMaybeSelector (
   getLocaleAsProp,
   mapGetToMaybeSlice (getSpecialAbilities) (prefixSA (563)),
   (mprimary, pkp, minc, mdec, added, l10n, mhigh_consecration) => {
-    const mredeemed = fmap (PermanentEnergyLossAndBoughtBack.A_.redeemed) (pkp)
+    const mredeemed = fmap (PermanentEnergyLossAndBoughtBack.A.redeemed) (pkp)
 
-    const mlost = fmap (PermanentEnergyLossAndBoughtBack.A_.lost) (pkp)
+    const mlost = fmap (PermanentEnergyLossAndBoughtBack.A.lost) (pkp)
 
     const highConsecrationLevel = getFirstLevel (mhigh_consecration)
 
@@ -193,7 +193,7 @@ export const getSPI = createMaybeSelector (
   (mrace, mcou, msgc, mint, minc, mdec, l10n) => {
     const mbase = fmapF (mrace)
                         (pipe (
-                          Race.A_.spi,
+                          Race.A.spi,
                           add (divideBy6AndRound (foldr (pipe (getAttributeValueWithDefault, add))
                                                         (0)
                                                         (List (mcou, msgc, mint))))
@@ -225,7 +225,7 @@ export const getTOU = createMaybeSelector (
   (mrace, mcon, mstr, minc, mdec, l10n) => {
     const mbase = fmapF (mrace)
                         (pipe (
-                          Race.A_.tou,
+                          Race.A.tou,
                           add (divideBy6AndRound (getAttributeValueWithDefault (mcon) * 2
                                                   + getAttributeValueWithDefault (mstr)))
                         ))
@@ -304,7 +304,7 @@ export const getMOV = createMaybeSelector (
   (mrace, mnimble, mmaimed, mslow, l10n) => {
     const mbase = fmapF (mrace)
                         (pipe (
-                          Race.A_.mov,
+                          Race.A.mov,
                           base => Maybe.elem (true)
                                              (fmapF (mmaimed)
                                                     (pipe (
@@ -371,14 +371,14 @@ export const getDerivedCharacteristicsMap = createMaybeSelector (
     type BaseDerived = Record<DerivedCharacteristic>
 
     const xs = List<(Pair<DCIds, BaseDerived>)> (
-      Pair<DCIds, BaseDerived> (DerivedCharacteristic.A_.id (LP), LP),
-      Pair<DCIds, BaseDerived> (DerivedCharacteristic.A_.id (AE), AE),
-      Pair<DCIds, BaseDerived> (DerivedCharacteristic.A_.id (KP), KP),
-      Pair<DCIds, BaseDerived> (DerivedCharacteristic.A_.id (SPI), SPI),
-      Pair<DCIds, BaseDerived> (DerivedCharacteristic.A_.id (TOU), TOU),
-      Pair<DCIds, BaseDerived> (DerivedCharacteristic.A_.id (DO), DO),
-      Pair<DCIds, BaseDerived> (DerivedCharacteristic.A_.id (INI), INI),
-      Pair<DCIds, BaseDerived> (DerivedCharacteristic.A_.id (MOV), MOV)
+      Pair<DCIds, BaseDerived> (DerivedCharacteristic.A.id (LP), LP),
+      Pair<DCIds, BaseDerived> (DerivedCharacteristic.A.id (AE), AE),
+      Pair<DCIds, BaseDerived> (DerivedCharacteristic.A.id (KP), KP),
+      Pair<DCIds, BaseDerived> (DerivedCharacteristic.A.id (SPI), SPI),
+      Pair<DCIds, BaseDerived> (DerivedCharacteristic.A.id (TOU), TOU),
+      Pair<DCIds, BaseDerived> (DerivedCharacteristic.A.id (DO), DO),
+      Pair<DCIds, BaseDerived> (DerivedCharacteristic.A.id (INI), INI),
+      Pair<DCIds, BaseDerived> (DerivedCharacteristic.A.id (MOV), MOV)
     )
 
     const isWoundThresholdEnabled =
@@ -386,7 +386,7 @@ export const getDerivedCharacteristicsMap = createMaybeSelector (
                 (ruleBooksEnabled => isBookEnabled (books) (ruleBooksEnabled) ("US25003")))
 
     if (isWoundThresholdEnabled) {
-      return fromList (snoc (xs) (Pair<DCIds, BaseDerived> (DerivedCharacteristic.A_.id (WT), WT)))
+      return fromList (snoc (xs) (Pair<DCIds, BaseDerived> (DerivedCharacteristic.A.id (WT), WT)))
     }
 
     return fromList (xs)

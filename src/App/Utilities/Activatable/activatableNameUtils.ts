@@ -34,13 +34,13 @@ import { isNumber, isString, misNumberM, misStringM } from "../typeCheckUtils";
 import { getWikiEntry, isActivatableWikiEntry, isSkillishWikiEntry } from "../WikiUtils";
 import { findSelectOption, getSelectOptionName } from "./selectionUtils";
 
-const { skills, spells, liturgicalChants, specialAbilities } = WikiModel.A
-const { id, sid, sid2, tier } = ActiveObjectWithId.A
-const AA = ActiveActivatable.A_
-const name = ActiveActivatable.A.name
-const { input, select } = Advantage.A
-const { applications } = Skill.A
-const { target, specializations } = SelectOption.A
+const { skills, spells, liturgicalChants, specialAbilities } = WikiModel.AL
+const { id, sid, sid2, tier } = ActiveObjectWithId.AL
+const AA = ActiveActivatable.A
+const name = ActiveActivatable.AL.name
+const { input, select } = Advantage.AL
+const { applications } = Skill.AL
+const { target, specializations } = SelectOption.AL
 
 /**
  * Returns the name of the given object. If the object is a string, it returns
@@ -159,7 +159,7 @@ const getEntrySpecificNameAddition =
                                         altF_ (() => pipe (
                                                             applications,
                                                             find<Record<Application>> (pipe (
-                                                              Application.A.id,
+                                                              Application.AL.id,
                                                               elemF (sid2 (hero_entry))
                                                             )),
                                                             fmap (name)

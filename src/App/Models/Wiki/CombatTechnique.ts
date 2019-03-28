@@ -31,4 +31,4 @@ export const CombatTechnique =
   })
 
 export const isCombatTechnique =
-  (r: EntryWithCategory) => CombatTechnique.A.category (r) === Categories.COMBAT_TECHNIQUES
+  (r: EntryWithCategory) => CombatTechnique.AL.category (r) === Categories.COMBAT_TECHNIQUES

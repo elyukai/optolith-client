@@ -20,7 +20,7 @@ import { getPrimaryAttributeId } from "../primaryAttributeUtils";
 import { addActivatableDependency, addActivatableSkillDependency, addAttributeDependency, addSkillDependency } from "./addDependencyUtils";
 import { removeActivatableDependency, removeActivatableSkillDependency, removeAttributeDependency, removeSkillDependency } from "./removeDependencyUtils";
 
-const { specialAbilities } = HeroModel.A
+const { specialAbilities } = HeroModel.AL
 
 type ModifyAttributeDependency =
   (d: SkillDependency) => (id: string) => (state: HeroModelRecord) => HeroModelRecord
@@ -38,7 +38,7 @@ const putActivatableDependency =
   (f: ModifyActivatableDependency) =>
   (sourceId: string) =>
   (req: Record<RequireActivatable>) => {
-    const { id, active, sid, sid2, tier } = RequireActivatable.A
+    const { id, active, sid, sid2, tier } = RequireActivatable.AL
 
     const current_id = id (req)
 
@@ -86,7 +86,7 @@ const putPrimaryAttributeDependency =
   (f: ModifyAttributeDependency) =>
   (req: Record<RequirePrimaryAttribute>) =>
   (state: HeroModelRecord): HeroModelRecord => {
-    const { type, value } = RequirePrimaryAttribute.A
+    const { type, value } = RequirePrimaryAttribute.AL
 
     return fromMaybe (state)
                      (fmap ((x: string) => f (value (req)) (x) (state))
@@ -119,7 +119,7 @@ const putIncreasableDependency =
   (sourceId: string) =>
   (req: Record<RequireIncreasable>) =>
   (state: HeroModelRecord): HeroModelRecord => {
-    const { id, value } = RequireIncreasable.A
+    const { id, value } = RequireIncreasable.AL
 
     const current_id = id (req)
 
@@ -169,7 +169,7 @@ const modifyDependencies =
 
                     if (
                       isRequiringActivatable (x)
-                      && notEquals (RequireActivatable.A.sid (x)) (Just ("GR"))
+                      && notEquals (RequireActivatable.AL.sid (x)) (Just ("GR"))
                     ) {
                       return putActivatableDependency (modifyActivatableDependency)
                                                       (sourceId)

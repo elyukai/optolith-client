@@ -33,7 +33,7 @@ export const addLiturgicalChant =
     const missingAPForInc =
       join (liftM2 (getMissingAP (getIsInCharacterCreation (state)))
                    (fmapF (lookup (id) (wiki_liturgical_chants))
-                          (pipe (LiturgicalChant.A_.ic, getICMultiplier)))
+                          (pipe (LiturgicalChant.A.ic, getICMultiplier)))
                    (getAvailableAdventurePoints (state, { l10n })))
 
     if (isNothing (missingAPForInc)) {

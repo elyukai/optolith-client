@@ -74,10 +74,10 @@ export const precedingHerolistReducer =
         const { id } = action.payload
 
         return state => {
-          const heroes = HeroesState.A.heroes (state)
+          const heroes = HeroesState.AL.heroes (state)
           const delAndRemaining = deleteLookupWithKey (id) (heroes)
 
-          const playerIdFromHero = pipe (heroReducer.A.present, HeroModel.A.player)
+          const playerIdFromHero = pipe (heroReducer.A.present, HeroModel.AL.player)
 
           const playerId = bind (fst (delAndRemaining)) (playerIdFromHero)
 
@@ -117,7 +117,7 @@ export const precedingHerolistReducer =
                                                     )
                                                     (heroReducer.A.present (hero)))))
                    (state))
-            (lookup (id) (HeroesState.A.heroes (state)))
+            (lookup (id) (HeroesState.AL.heroes (state)))
       }
 
       default:
@@ -133,7 +133,7 @@ const prepareHeroReducer =
                                         (adjust (heroReducer (action))
                                                 (current_id))
                                         (state))
-          (HeroesState.A.currentId (state))
+          (HeroesState.AL.currentId (state))
 
 export const herolistReducer = reduceReducersC (
   precedingHerolistReducer,

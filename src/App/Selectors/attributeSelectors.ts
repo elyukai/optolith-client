@@ -27,10 +27,10 @@ import { getCurrentRace } from "./rcpSelectors";
 import { getMagicalTraditionsFromState } from "./spellsSelectors";
 import { getAttributes, getAttributeValueLimit, getCurrentAttributeAdjustmentId, getCurrentHeroPresent, getPhase, getWiki, getWikiAttributes } from "./stateSelectors";
 
-const ACA = AttributeCombined.A_
-const AA = Attribute.A_
-const ADA = AttributeDependent.A_
-const AWRA = AttributeWithRequirements.A_
+const ACA = AttributeCombined.A
+const AA = Attribute.A
+const ADA = AttributeDependent.A
+const AWRA = AttributeWithRequirements.A
 
 export const getAttributeSum = createMaybeSelector (
   getAttributes,
@@ -46,17 +46,17 @@ const getModIfSelectedAdjustment =
   (race: Record<Race>) =>
     pipe_ (
       race,
-      Race.A_.attributeAdjustmentsSelection,
+      Race.A.attributeAdjustmentsSelection,
       snd,
       ensure (elem (id)),
-      mapReplace (fst (Race.A_.attributeAdjustmentsSelection (race))),
+      mapReplace (fst (Race.A.attributeAdjustmentsSelection (race))),
       Maybe.sum
     )
 
 const getModIfStaticAdjustment =
   (id: string) =>
     pipe (
-      Race.A_.attributeAdjustments,
+      Race.A.attributeAdjustments,
       List.lookup (id),
       Maybe.sum
     )
@@ -77,7 +77,7 @@ const getAttributeMaximum =
 
         return fmapF (startEl)
                      (pipe (
-                       ExperienceLevel.A_.maxAttributeValue,
+                       ExperienceLevel.A.maxAttributeValue,
                        add (selectedAdjustment + staticAdjustment)
                      ))
       }
@@ -86,7 +86,7 @@ const getAttributeMaximum =
     }
 
     if (or (attributeValueLimit)) {
-      return fmapF (currentEl) (pipe (ExperienceLevel.A_.maxAttributeValue, add (2)))
+      return fmapF (currentEl) (pipe (ExperienceLevel.A.maxAttributeValue, add (2)))
     }
 
     return Nothing
@@ -119,14 +119,14 @@ export const getAttributesForView = createMaybeSelector (
                            const hero_entry = fromMaybe (createPlainAttributeDependent (current_id))
                                                         (pipe_ (
                                                           hero,
-                                                          HeroModel.A_.attributes,
+                                                          HeroModel.A.attributes,
                                                           lookup (current_id)
                                                         ))
 
                            const max =
                             getAttributeMaximum (current_id)
                                                 (mrace)
-                                                (HeroModel.A_.attributeAdjustmentSelected (hero))
+                                                (HeroModel.A.attributeAdjustmentSelected (hero))
                                                 (startEl)
                                                 (currentEl)
                                                 (mphase)
@@ -145,7 +145,7 @@ export const getAttributesForView = createMaybeSelector (
                                         }))
                          })
                          (List.empty)
-                         (WikiModel.A_.attributes (wiki)))
+                         (WikiModel.A.attributes (wiki)))
 )
 
 /**
@@ -190,7 +190,7 @@ const getPrimaryMagicalAttributeByTrad =
   (tradition: Record<ActivatableDependent>): Maybe<Record<AttributeCombined>> =>
     pipe_ (
       tradition,
-      ActivatableDependent.A_.id,
+      ActivatableDependent.A.id,
       getNumericMagicalTraditionIdByInstanceId,
       bindF (numericId => {
         switch (numericId) {
@@ -254,7 +254,7 @@ const getPrimaryBlessedAttributeByTrad =
   (tradition: Record<ActivatableDependent>): Maybe<Record<AttributeCombined>> =>
     pipe_ (
       tradition,
-      ActivatableDependent.A_.id,
+      ActivatableDependent.A.id,
       getNumericMagicalTraditionIdByInstanceId,
       bindF (numericId => {
         switch (numericId) {
@@ -320,7 +320,7 @@ export const getCarryingCapacity = createMaybeSelector (
 
 export const getAdjustmentValue = createMaybeSelector (
   getCurrentRace,
-  fmap (pipe (Race.A_.attributeAdjustmentsSelection, fst))
+  fmap (pipe (Race.A.attributeAdjustmentsSelection, fst))
 )
 
 export const getCurrentAttributeAdjustment = createMaybeSelector (
@@ -338,7 +338,7 @@ export const getAvailableAdjustmentIds = createMaybeSelector (
   (mrace, madjustmentValue, mattrsCalculated, mcurr_attr) =>
     fmapF (mrace)
           (pipe (
-            Race.A_.attributeAdjustmentsSelection,
+            Race.A.attributeAdjustmentsSelection,
             snd,
             adjustmentIds => {
               if (isJust (mcurr_attr)) {

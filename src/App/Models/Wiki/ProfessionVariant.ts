@@ -49,4 +49,4 @@ export const ProfessionVariant =
 export const ProfessionVariantL = makeLenses (ProfessionVariant)
 
 export const isProfessionVariant =
-  (r: EntryWithCategory) => ProfessionVariant.A.category (r) === Categories.PROFESSION_VARIANTS
+  (r: EntryWithCategory) => ProfessionVariant.AL.category (r) === Categories.PROFESSION_VARIANTS

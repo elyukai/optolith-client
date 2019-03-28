@@ -37,18 +37,18 @@ import { getRuleBooksEnabled } from "./rulesSelectors";
 import { getEquipmentSortOptions } from "./sortOptionsSelectors";
 import { getCurrentHeroPresent, getEquipmentFilterText, getEquipmentState, getHigherParadeValues, getHitZoneArmorsState, getItemsState, getItemTemplatesFilterText, getLocaleAsProp, getWiki, getWikiItemTemplates, getZoneArmorFilterText } from "./stateSelectors";
 
-const HA = HeroModel.A_
-const WA = WikiModel.A_
-const BA = Belongings.A_
-const IA = Item.A_
-const ITA = ItemTemplate.A_
-const HZAA = HitZoneArmor.A_
-const IFVA = ItemForView.A_
+const HA = HeroModel.A
+const WA = WikiModel.A
+const BA = Belongings.A
+const IA = Item.A
+const ITA = ItemTemplate.A
+const HZAA = HitZoneArmor.A
+const IFVA = ItemForView.A
 const IL = ItemL
-const CTA = CombatTechnique.A_
-const PADTA = PrimaryAttributeDamageThreshold.A_
-const ADA = AttributeDependent.A_
-const AA = Attribute.A_
+const CTA = CombatTechnique.A
+const PADTA = PrimaryAttributeDamageThreshold.A
+const ADA = AttributeDependent.A
+const AA = Attribute.A
 
 export const getFullItem =
   (items: Belongings["items"]) =>
@@ -90,7 +90,7 @@ export const getTemplates = createMaybeSelector (
 export const getSortedTemplates = createMaybeSelector (
   getLocaleAsProp,
   getTemplates,
-  uncurryN (l10n => sortRecordsByName (L10n.A_.id (l10n)))
+  uncurryN (l10n => sortRecordsByName (L10n.A.id (l10n)))
 )
 
 export const getAvailableItemTemplates = createMaybeSelector (
@@ -140,7 +140,7 @@ export const getFilteredHitZoneArmors = createMaybeSelector (
   getLocaleAsProp,
   (mhitZoneArmors, filterText, l10n) =>
     fmapF (mhitZoneArmors)
-          (filterAndSortRecordsByName (L10n.A_.id (l10n))
+          (filterAndSortRecordsByName (L10n.A.id (l10n))
                                       (filterText))
 )
 
@@ -161,7 +161,7 @@ const getFullHitZoneItem =
   (items: Belongings["items"]) =>
   (templates: WikiModel["itemTemplates"]) =>
   (hitZone: HitZoneKeys) =>
-    pipe (HitZoneArmor.A_[hitZone], bindF (getFullItem (items) (templates)))
+    pipe (HitZoneArmor.A[hitZone], bindF (getFullItem (items) (templates)))
 
 export const getAllItems = createMaybeSelector (
   getItemsState,
@@ -236,7 +236,7 @@ export const getAllItems = createMaybeSelector (
                         })
                       }))
 
-             return sortRecordsByName (L10n.A_.id (l10n))
+             return sortRecordsByName (L10n.A.id (l10n))
                                       (append (mappedArmorZones) (mappedItems))
            })
            (mitems)

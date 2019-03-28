@@ -58,17 +58,17 @@ export const DerivedCharacteristic =
 
 export const isDerivedCharacteristicEnergy =
   <I extends DCIds = DCIds> (x: Record<DerivedCharacteristic<I>>): x is Record<Energy<I>> =>
-    isJust (DerivedCharacteristic.A_.add (x))
-    && isJust (DerivedCharacteristic.A_.mod (x))
-    && isJust (DerivedCharacteristic.A_.maxAdd (x))
-    && isJust (DerivedCharacteristic.A_.currentAdd (x))
-    && isJust (DerivedCharacteristic.A_.permanentLost (x))
+    isJust (DerivedCharacteristic.A.add (x))
+    && isJust (DerivedCharacteristic.A.mod (x))
+    && isJust (DerivedCharacteristic.A.maxAdd (x))
+    && isJust (DerivedCharacteristic.A.currentAdd (x))
+    && isJust (DerivedCharacteristic.A.permanentLost (x))
 
 export const isDerivedCharacteristicEnergyWithLoss =
   <I extends DCIds = DCIds> (x: Record<DerivedCharacteristic<I>>): x is Record<EnergyWithLoss<I>> =>
-    isJust (DerivedCharacteristic.A_.add (x))
-    && isJust (DerivedCharacteristic.A_.mod (x))
-    && isJust (DerivedCharacteristic.A_.maxAdd (x))
-    && isJust (DerivedCharacteristic.A_.currentAdd (x))
-    && isJust (DerivedCharacteristic.A_.permanentLost (x))
-    && isJust (DerivedCharacteristic.A_.permanentRedeemed (x))
+    isJust (DerivedCharacteristic.A.add (x))
+    && isJust (DerivedCharacteristic.A.mod (x))
+    && isJust (DerivedCharacteristic.A.maxAdd (x))
+    && isJust (DerivedCharacteristic.A.currentAdd (x))
+    && isJust (DerivedCharacteristic.A.permanentLost (x))
+    && isJust (DerivedCharacteristic.A.permanentRedeemed (x))

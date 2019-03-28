@@ -18,7 +18,7 @@ export const getHeroesArray = createMaybeSelector (
 
 type HeroWithUndo = typeof heroReducer.default
 const HRA = heroReducer.A_
-const HA = HeroModel.A_
+const HA = HeroModel.A
 
 export const getUnsavedHeroesById = createMaybeSelector (
   getHeroes,

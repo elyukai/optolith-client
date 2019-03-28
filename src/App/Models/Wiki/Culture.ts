@@ -72,4 +72,4 @@ export const Culture =
 export const CultureL = makeLenses (Culture)
 
 export const isCulture =
-  (r: EntryWithCategory) => Culture.A.category (r) === Categories.CULTURES
+  (r: EntryWithCategory) => Culture.AL.category (r) === Categories.CULTURES

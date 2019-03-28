@@ -31,7 +31,7 @@ export const getExtendedSpecialAbilitiesToAdd = createMaybeSelector (
     getAllAvailableExtendedSpecialAbilities (catMaybes (fromArray (styleDependencles)))
 )
 
-const getId = Advantage.A.id
+const getId = Advantage.AL.id
 
 type Inactive<T extends ActivatableCategory> = Record<InactiveActivatable<WikiEntryByCategory[T]>>
 
@@ -72,10 +72,10 @@ type listAdv = List<Record<InactiveActivatable<Advantage>>>
 type listDis = List<Record<InactiveActivatable<Disadvantage>>>
 type listSA = List<Record<InactiveActivatable<SpecialAbility>>>
 
-const getWikiEntry = InactiveActivatable.A_.wikiEntry as
+const getWikiEntry = InactiveActivatable.A.wikiEntry as
   <T extends ActivatableCategory> (x: Inactive<T>) => WikiEntryRecordByCategory[T]
 
-const getSrc = Advantage.A.src
+const getSrc = Advantage.AL.src
 
 export const getDeactiveAdvantages = createMaybeSelector (
   getRuleBooksEnabled,

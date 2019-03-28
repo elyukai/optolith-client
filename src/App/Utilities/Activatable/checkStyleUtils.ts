@@ -1,7 +1,7 @@
 import { isSpecialAbility, SpecialAbility } from "../../Models/Wiki/SpecialAbility";
 import * as Wiki from "../../Models/Wiki/wikiTypeHelpers";
 
-const { gr } = SpecialAbility.A
+const { gr } = SpecialAbility.AL
 
 export const isCombatStyleSpecialAbility =
   (e: Wiki.EntryWithCategory) =>

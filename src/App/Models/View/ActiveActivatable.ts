@@ -1,40 +1,26 @@
-import { Nothing } from "../../../Data/Maybe";
-import { fromDefault, RecordI } from "../../../Data/Record";
+import { fromDefault, Record, RecordI } from "../../../Data/Record";
+import { pipe } from "../../Utilities/pipe";
 import { ActivatableDependent } from "../ActiveEntries/ActivatableDependent";
-import { ActivatableActivationMeta } from "../Hero/heroTypeHelpers";
 import { Advantage } from "../Wiki/Advantage";
 import { Activatable } from "../Wiki/wikiTypeHelpers";
 import { ActivatableActivationValidation } from "./ActivatableActivationValidationObject";
-import { ActivatableNameCostSafeCost } from "./ActivatableNameCost";
+import { ActivatableNameCost, ActivatableNameCostSafeCost } from "./ActivatableNameCost";
 
-export interface ActiveActivatable<T extends RecordI<Activatable> = RecordI<Activatable>>
-  extends ActivatableNameCostSafeCost,
-          ActivatableActivationValidation,
-          ActivatableActivationMeta<T> { }
+export interface ActiveActivatable<A extends RecordI<Activatable> = RecordI<Activatable>> {
+  nameAndCost: Record<ActivatableNameCostSafeCost>
+  validation: Record<ActivatableActivationValidation>
+  wikiEntry: Record<A>
+  heroEntry: Record<ActivatableDependent>
+}
 
 export const ActiveActivatable =
   fromDefault<ActiveActivatable> ({
-    id: "",
-
-    sid: Nothing,
-    sid2: Nothing,
-    tier: Nothing,
-    cost: Nothing,
-
-    index: -1,
-
-    name: "",
-    baseName: "",
-    addName: Nothing,
-
-    levelName: Nothing,
-
-    finalCost: 0,
-
-    disabled: true,
-    maxLevel: Nothing,
-    minLevel: Nothing,
-
-    stateEntry: ActivatableDependent.default,
+    nameAndCost: ActivatableNameCost.default as Record<ActivatableNameCostSafeCost>,
+    validation: ActivatableActivationValidation.default,
+    heroEntry: ActivatableDependent.default,
     wikiEntry: Advantage.default,
   })
+
+export const ActiveActivatableAL_ = {
+  id: pipe (ActiveActivatable.AL.wikiEntry, Advantage.AL.id),
+}

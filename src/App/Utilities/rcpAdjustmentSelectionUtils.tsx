@@ -37,13 +37,13 @@ import { pipe } from "./pipe";
 import { sortRecordsByName } from "./sortBy";
 import { getAllWikiEntriesByGroup } from "./WikiUtils";
 
-const { specialAbilities, spells, combatTechniques, cantrips, skills } = WikiModel.A
-const { select } = SpecialAbility.A
-const { scripts, languages } = Culture.A
-const { id, name, cost } = SelectOption.A
-const { value } = LanguagesScriptsSelection.A
-const { amount, sid } = CombatTechniquesSelection.A
-const { gr } = SkillsSelection.A
+const { specialAbilities, spells, combatTechniques, cantrips, skills } = WikiModel.AL
+const { select } = SpecialAbility.AL
+const { scripts, languages } = Culture.AL
+const { id, name, cost } = SelectOption.AL
+const { value } = LanguagesScriptsSelection.AL
+const { amount, sid } = CombatTechniquesSelection.AL
+const { gr } = SkillsSelection.AL
 
 export const getBuyScriptElement =
   (l10n: L10nRecord) =>
@@ -61,7 +61,7 @@ export const getBuyScriptElement =
                      specialAbilities,
                      lookup ("SA_27"),
                      bindF (flip (findSelectOption)
-                                 (listToMaybe (Culture.A.scripts (culture))))
+                                 (listToMaybe (Culture.AL.scripts (culture))))
                    )
                    (wiki)
 
@@ -77,7 +77,7 @@ export const getBuyScriptElement =
                 onClick={switchIsBuyingMainScriptEnabled}
                 disabled={isAnyLanguageOrScriptSelected}
                 >
-                {translate (l10n) (L10n.A["rcpselections.labels.buyscript"])}
+                {translate (l10n) (L10n.AL["rcpselections.labels.buyscript"])}
                 {
                   !snd (isScriptSelectionNeeded)
                   && Maybe.isJust (selectionItem)
@@ -132,7 +132,7 @@ const getScripts =
                      })
              )
            ),
-           sortRecordsByName (L10n.A.id (l10n))
+           sortRecordsByName (L10n.AL.id (l10n))
          ))
          (select (wikiEntryScripts))
 
@@ -173,7 +173,7 @@ const getLanguages =
                      })
              )
            ),
-           sortRecordsByName (L10n.A.id (l10n))
+           sortRecordsByName (L10n.AL.id (l10n))
          ))
          (select (wikiEntryLanguages))
 
@@ -241,7 +241,7 @@ export const getLanguagesAndScriptsElementAndValidation =
             (maybeScriptsList)
             (maybeLanguagesList)
         })
-        (ProfessionSelections.A[ProfessionSelectionIds.LANGUAGES_SCRIPTS] (professionSelections))
+        (ProfessionSelections.AL[ProfessionSelectionIds.LANGUAGES_SCRIPTS] (professionSelections))
         (lookupF (specialAbilities (wiki)) ("SA_27"))
         (lookupF (specialAbilities (wiki)) ("SA_29"))
     )
@@ -252,10 +252,10 @@ export const getCursesElementAndValidation =
   (cursesActive: OrderedMap<string, number>) =>
   (adjustCurse: (id: string) => (maybeOption: Maybe<"add" | "remove">) => void) =>
     pipe (
-      ProfessionSelections.A[ProfessionSelectionIds.CURSES],
+      ProfessionSelections.AL[ProfessionSelectionIds.CURSES],
       fmap (selection => {
              const list =
-               sortRecordsByName (L10n.A.id (l10n))
+               sortRecordsByName (L10n.AL.id (l10n))
                                  (getAllWikiEntriesByGroup (spells (wiki)) (pure (3)))
 
              const apLeft = value (selection) - size (cursesActive) - sum (cursesActive) * 2
@@ -283,13 +283,13 @@ export const getCombatTechniquesElementAndValidation =
   (combatTechniquesSecondActive: OrderedSet<string>) =>
   (switchCombatTechnique: (id: string) => void) =>
     pipe (
-      ProfessionSelections.A[ProfessionSelectionIds.COMBAT_TECHNIQUES],
+      ProfessionSelections.AL[ProfessionSelectionIds.COMBAT_TECHNIQUES],
       fmap (selection => {
              const list =
                pipe (
                       combatTechniques,
                       elems,
-                      filter (pipe (CombatTechnique.A.id, elemF (sid (selection))))
+                      filter (pipe (CombatTechnique.AL.id, elemF (sid (selection))))
                     )
                     (wiki)
 
@@ -318,13 +318,13 @@ export const getCombatTechniquesSecondElementAndValidation =
   (combatTechniquesSecondActive: OrderedSet<string>) =>
   (switchSecondCombatTechnique: (id: string) => void) =>
     pipe (
-      ProfessionSelections.A[ProfessionSelectionIds.COMBAT_TECHNIQUES_SECOND],
+      ProfessionSelections.AL[ProfessionSelectionIds.COMBAT_TECHNIQUES_SECOND],
       fmap (selection => {
             const list =
               pipe (
                      combatTechniques,
                      elems,
-                     filter (pipe (CombatTechnique.A.id, elemF (sid (selection))))
+                     filter (pipe (CombatTechnique.AL.id, elemF (sid (selection))))
                    )
                    (wiki)
 
@@ -352,13 +352,13 @@ export const getCantripsElementAndValidation =
   (cantripsActive: OrderedSet<string>) =>
   (switchCantrip: (id: string) => void) =>
     pipe (
-      ProfessionSelections.A[ProfessionSelectionIds.CANTRIPS],
+      ProfessionSelections.AL[ProfessionSelectionIds.CANTRIPS],
       fmap (selection => {
             const list =
               pipe (
                     cantrips,
                     elems,
-                    filter (pipe (CombatTechnique.A.id, elemF (sid (selection))))
+                    filter (pipe (CombatTechnique.AL.id, elemF (sid (selection))))
                   )
                   (wiki)
 
@@ -386,7 +386,7 @@ export const getSkillSpecializationElement =
   (setSpecialization: (value: string | number) => void) =>
   (setSpecializationSkill: (id: string) => void) =>
     pipe (
-      ProfessionSelections.A[ProfessionSelectionIds.SPECIALIZATION],
+      ProfessionSelections.AL[ProfessionSelectionIds.SPECIALIZATION],
       fmap (selection => (
              <SelectionsSkillSpecialization
                options={selection}
@@ -407,7 +407,7 @@ export const getSkillsElementAndValidation =
   (addSkillPoint: (id: string) => void) =>
   (removeSkillPoint: (id: string) => void) =>
     pipe (
-      ProfessionSelections.A[ProfessionSelectionIds.SKILLS],
+      ProfessionSelections.AL[ProfessionSelectionIds.SKILLS],
       fmap (selection => {
             const list =
               maybe (elems (skills (wiki)))
@@ -416,7 +416,7 @@ export const getSkillsElementAndValidation =
                         skills,
                         elems,
                         filter<Record<Skill>>
-                          (pipe (Skill.A.gr, equals (group)))
+                          (pipe (Skill.AL.gr, equals (group)))
                       )
                       (wiki))
                     (gr (selection))
@@ -446,11 +446,11 @@ export const getTerrainKnowledgeElement =
   (terrainKnowledgeActive: Maybe<number>) =>
   (setTerrainKnowledge: (terrainKnowledge: number) => void) =>
     pipe (
-      ProfessionSelections.A[ProfessionSelectionIds.TERRAIN_KNOWLEDGE],
+      ProfessionSelections.AL[ProfessionSelectionIds.TERRAIN_KNOWLEDGE],
       Maybe.liftM2<Record<SpecialAbility>, Record<TerrainKnowledgeSelection>, JSX.Element>
         (wikiEntry => selection => (
           <TerrainKnowledge
-            available={TerrainKnowledgeSelection.A.sid (selection)}
+            available={TerrainKnowledgeSelection.AL.sid (selection)}
             terrainKnowledge={wikiEntry}
             set={setTerrainKnowledge}
             active={terrainKnowledgeActive}
@@ -471,7 +471,7 @@ export const getMotherTongueSelectionElement =
            bindF (() => lookupF (specialAbilities (wiki)) ("SA_29")),
            fmap ((wikiEntry: Record<SpecialAbility>) => (
                   <Dropdown
-                    hint={translate (locale) (L10n.A["rcpselections.labels.selectnativetongue"])}
+                    hint={translate (locale) (L10n.AL["rcpselections.labels.selectnativetongue"])}
                     value={motherTongue}
                     onChangeJust={setMotherTongue}
                     options={
@@ -506,7 +506,7 @@ export const getMainScriptSelectionElement =
            bindF (() => lookupF (specialAbilities (wiki)) ("SA_27")),
            fmap ((wikiEntry: Record<SpecialAbility>) => (
                   <Dropdown
-                    hint={translate (l10n) (L10n.A["rcpselections.labels.selectscript"])}
+                    hint={translate (l10n) (L10n.AL["rcpselections.labels.selectscript"])}
                     value={mainScript}
                     onChangeJust={setMainCulturalLiteracy}
                     options={

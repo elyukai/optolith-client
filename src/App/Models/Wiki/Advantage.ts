@@ -32,4 +32,4 @@ export const Advantage =
   })
 
 export const isAdvantage =
-  (r: EntryWithCategory) => Advantage.A.category (r) === Categories.ADVANTAGES
+  (r: EntryWithCategory) => Advantage.AL.category (r) === Categories.ADVANTAGES

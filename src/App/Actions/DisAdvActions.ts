@@ -52,9 +52,9 @@ const handleMissingAPForDisAdvantage =
   (is_blessed_or_magical: Pair<boolean, boolean>) =>
   (is_disadvantage: boolean) =>
   (dispatch: ReduxDispatch) => {
-    const totalMissing = MissingAPForDisAdvantage.A.totalMissing (missing_ap)
-    const mainMissing = MissingAPForDisAdvantage.A.mainMissing (missing_ap)
-    const subMissing = MissingAPForDisAdvantage.A.subMissing (missing_ap)
+    const totalMissing = MissingAPForDisAdvantage.AL.totalMissing (missing_ap)
+    const mainMissing = MissingAPForDisAdvantage.AL.mainMissing (missing_ap)
+    const subMissing = MissingAPForDisAdvantage.AL.subMissing (missing_ap)
 
     if (isJust (totalMissing)) {
       dispatch (addAlert ({
@@ -117,8 +117,8 @@ export const addDisAdvantage =
     if (isJust (mhero)) {
       const hero = fromJust (mhero)
 
-      const current_id = ActivatableActivationOptions.A.id (args)
-      const current_cost = ActivatableActivationOptions.A.cost (args)
+      const current_id = ActivatableActivationOptions.AL.id (args)
+      const current_cost = ActivatableActivationOptions.AL.cost (args)
 
       const mwiki_entry =
         bind (getWikiEntry (getWiki (state)) (current_id))
@@ -147,7 +147,7 @@ export const addDisAdvantage =
         const successFn = () => {
           const color: Maybe<Pair<number, number>> =
             current_id === "DISADV_45"
-            && elem<string | number> (1) (ActivatableActivationOptions.A.selectOptionId1 (args))
+            && elem<string | number> (1) (ActivatableActivationOptions.AL.selectOptionId1 (args))
               ? Just (Pair (19, 24)) // (eyeColor, hairColor)
               : Nothing
 
@@ -202,9 +202,9 @@ export const removeDisAdvantage =
     if (isJust (mhero)) {
       const hero = fromJust (mhero)
 
-      const current_id = ActivatableDeactivationOptions.A.id (args)
-      const current_index = ActivatableDeactivationOptions.A.index (args)
-      const current_cost = ActivatableDeactivationOptions.A.cost (args)
+      const current_id = ActivatableDeactivationOptions.AL.id (args)
+      const current_index = ActivatableDeactivationOptions.AL.index (args)
+      const current_cost = ActivatableDeactivationOptions.AL.cost (args)
 
       const negativeCost = current_cost * -1 // the entry should be removed
 
@@ -217,8 +217,8 @@ export const removeDisAdvantage =
         bind (mwiki_entry)
              (x => lookup (current_id)
                           (isAdvantage (x)
-                            ? HeroModel.A.advantages (hero)
-                            : HeroModel.A.disadvantages (hero)))
+                            ? HeroModel.AL.advantages (hero)
+                            : HeroModel.AL.disadvantages (hero)))
 
       if (isJust (mwiki_entry) && isJust (mhero_entry)) {
         const wiki_entry = fromJust (mwiki_entry)
@@ -246,9 +246,9 @@ export const removeDisAdvantage =
             && elem (1)
                     (pipe_ (
                       hero_entry,
-                      ActivatableDependent.A_.active,
+                      ActivatableDependent.A.active,
                       subscriptF (current_index),
-                      bindF (ActiveObject.A_.sid),
+                      bindF (ActiveObject.A.sid),
                       misNumberM
                     ))
               ? bind (getCurrentRace (state))
@@ -257,15 +257,15 @@ export const removeDisAdvantage =
 
                        const p = Pair (
                          pipe (
-                                Race.A.eyeColors,
-                                altF_ (() => bind (mrace_var) (RaceVariant.A.eyeColors)),
+                                Race.AL.eyeColors,
+                                altF_ (() => bind (mrace_var) (RaceVariant.AL.eyeColors)),
                                 bindF (uncons),
                                 fmap (fst)
                               )
                               (race),
                          pipe (
-                                Race.A.hairColors,
-                                altF_ (() => bind (mrace_var) (RaceVariant.A.hairColors)),
+                                Race.AL.hairColors,
+                                altF_ (() => bind (mrace_var) (RaceVariant.AL.hairColors)),
                                 bindF (uncons),
                                 fmap (fst)
                               )
@@ -335,13 +335,13 @@ export const setDisAdvantageLevel =
         bind (mwiki_entry)
              (x => lookup (current_id)
                           (isAdvantage (x)
-                            ? HeroModel.A.advantages (hero)
-                            : HeroModel.A.disadvantages (hero)))
+                            ? HeroModel.AL.advantages (hero)
+                            : HeroModel.AL.disadvantages (hero)))
 
       const mactive_entry =
         pipe (
                bindF (pipe (
-                             ActivatableDependent.A_.active,
+                             ActivatableDependent.A.active,
                              subscriptF (current_index)
                            )),
                fmap (toActiveObjectWithId (current_index) (current_id))
@@ -363,7 +363,7 @@ export const setDisAdvantageLevel =
                           (hero),
               fmap (pipe (
                 convertPerTierCostToFinalCost (false) (l10n),
-                ActivatableNameCost.A_.finalCost as
+                ActivatableNameCost.A.finalCost as
                   (x: Record<ActivatableNameCostSafeCost>) => number
               ))
             )

@@ -33,19 +33,19 @@ import { getCulturesCombinedSortOptions, getProfessionsSortOptions, getRacesComb
 import { getCulturesFilterText, getCurrentCultureId, getCurrentProfessionId, getCurrentProfessionVariantId, getCurrentRaceId, getCurrentRaceVariantId, getCustomProfessionName, getLocaleAsProp, getProfessionsFilterText, getRacesFilterText, getSex, getWiki, getWikiCultures, getWikiProfessions, getWikiProfessionVariants, getWikiRaces, getWikiRaceVariants, getWikiSkills } from "./stateSelectors";
 import { getCulturesVisibilityFilter, getProfessionsGroupVisibilityFilter, getProfessionsVisibilityFilter } from "./uisettingsSelectors";
 
-const WA = WikiModel.A_
-const RA = Race.A_
+const WA = WikiModel.A
+const RA = Race.A
 const RL = RaceL
-const RVA = RaceVariant.A_
+const RVA = RaceVariant.A
 const RVL = RaceVariantL
-const RCA = RaceCombined.A_
-const CA = Culture.A_
-const CCA = CultureCombined.A_
-const PA = Profession.A_
-const PVA = ProfessionVariant.A_
-const PCA = ProfessionCombined.A_
-const ISA = IncreaseSkill.A_
-const SA = Skill.A_
+const RCA = RaceCombined.A
+const CA = Culture.A
+const CCA = CultureCombined.A
+const PA = Profession.A
+const PVA = ProfessionVariant.A
+const PCA = ProfessionCombined.A
+const ISA = IncreaseSkill.A
+const SA = Skill.A
 
 export const getCurrentRace = createMaybeSelector (
   getWikiRaces,
@@ -282,11 +282,11 @@ export const getAllProfessions = createMaybeSelector (
                                   if (isProfessionRequiringActivatable (e)) {
                                       pipe_ (
                                         ActiveObjectWithId ({
-                                          id: ProfessionRequireActivatable.A_.id (e),
+                                          id: ProfessionRequireActivatable.A.id (e),
                                           index,
-                                          sid2: ProfessionRequireActivatable.A_.sid2 (e),
-                                          sid: ProfessionRequireActivatable.A_.sid (e),
-                                          tier: ProfessionRequireActivatable.A_.tier (e),
+                                          sid2: ProfessionRequireActivatable.A.sid2 (e),
+                                          sid: ProfessionRequireActivatable.A.sid (e),
+                                          tier: ProfessionRequireActivatable.A.tier (e),
                                         }),
                                         getNameCostForWiki (l10n)
                                                            (wiki),

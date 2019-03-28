@@ -23,11 +23,11 @@ import { add } from "../mathUtils";
 import { pipe } from "../pipe";
 import { getSkillCheckValues } from "./attributeUtils";
 
-const { specialAbilities, skills } = HeroModel.A
-const { active } = ActivatableDependent.A
-const { sid } = ActiveObject.A
+const { specialAbilities, skills } = HeroModel.AL
+const { active } = ActivatableDependent.AL
+const { sid } = ActiveObject.AL
 const { id, value, dependencies, wikiEntry } = SkillCombinedAccessors
-const { maxSkillRating } = ExperienceLevel.A
+const { maxSkillRating } = ExperienceLevel.AL
 
 /**
  * `getExceptionalSkillBonus skillId exceptionalSkillStateEntry`
@@ -47,7 +47,7 @@ export const getExceptionalSkillBonus =
 export const getInitialMaximumList =
   (attributes: OrderedMap<string, Record<AttributeDependent>>) =>
     pipe (
-      Skill.A.check,
+      Skill.AL.check,
       getSkillCheckValues (attributes),
       consF (8),
       maximum,
@@ -105,10 +105,10 @@ export const isSkillDecreasable =
       && isMaybeActive (lookupF (specialAbilities (state)) ("SA_17"))
     ) {
       const woodworkingRating =
-        sum (fmap (SkillDependent.A.value) (lookupF (skills (state)) ("TAL_51")))
+        sum (fmap (SkillDependent.AL.value) (lookupF (skills (state)) ("TAL_51")))
 
       const metalworkingRating =
-        sum (fmap (SkillDependent.A.value) (lookupF (skills (state)) ("TAL_55")))
+        sum (fmap (SkillDependent.AL.value) (lookupF (skills (state)) ("TAL_55")))
 
       if (woodworkingRating + metalworkingRating < 12) {
         return false
@@ -124,11 +124,11 @@ export const isSkillDecreasable =
 
 export const isCommon =
   (rating: OrderedMap<string, EntryRating>) =>
-    pipe (Skill.A.id, lookupF (rating), elem<EntryRating> (EntryRating.Common))
+    pipe (Skill.AL.id, lookupF (rating), elem<EntryRating> (EntryRating.Common))
 
 export const isUncommon =
   (rating: OrderedMap<string, EntryRating>) =>
-    pipe (Skill.A.id, lookupF (rating), elem<EntryRating> (EntryRating.Uncommon))
+    pipe (Skill.AL.id, lookupF (rating), elem<EntryRating> (EntryRating.Uncommon))
 
 export const getRoutineValue =
   (checkAttributeValues: List<number>) =>

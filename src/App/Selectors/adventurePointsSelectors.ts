@@ -275,7 +275,7 @@ export const getHasCurrentNoAddedAP = createMaybeSelector (
     elem (true)
          (liftM2<number, Record<ExperienceLevel>, boolean>
            (totalAdventurePoints => experienceLevel =>
-             totalAdventurePoints === ExperienceLevel.A_.ap (experienceLevel))
+             totalAdventurePoints === ExperienceLevel.A.ap (experienceLevel))
            (mtotal_ap)
            (mel))
 )

@@ -43,23 +43,23 @@ interface WikiKeyByCategory {
 }
 
 export const getWikiSliceGetterByCategory =
-  <T extends Categories> (x: T): typeof WikiModel.A[WikiKeyByCategory[T]] => {
+  <T extends Categories> (x: T): typeof WikiModel.AL[WikiKeyByCategory[T]] => {
     switch (x) {
-      case Categories.ADVANTAGES: return WikiModel.A.advantages
-      case Categories.ATTRIBUTES: return WikiModel.A.attributes
-      case Categories.BLESSINGS: return WikiModel.A.blessings
-      case Categories.CANTRIPS: return WikiModel.A.cantrips
-      case Categories.COMBAT_TECHNIQUES: return WikiModel.A.combatTechniques
-      case Categories.CULTURES: return WikiModel.A.cultures
-      case Categories.DISADVANTAGES: return WikiModel.A.disadvantages
-      case Categories.LITURGIES: return WikiModel.A.liturgicalChants
-      case Categories.PROFESSIONS: return WikiModel.A.professions
-      case Categories.PROFESSION_VARIANTS: return WikiModel.A.professionVariants
-      case Categories.RACES: return WikiModel.A.races
-      case Categories.RACE_VARIANTS: return WikiModel.A.raceVariants
-      case Categories.SPECIAL_ABILITIES: return WikiModel.A.specialAbilities
-      case Categories.SPELLS: return WikiModel.A.spells
-      case Categories.TALENTS: return WikiModel.A.skills
+      case Categories.ADVANTAGES: return WikiModel.AL.advantages
+      case Categories.ATTRIBUTES: return WikiModel.AL.attributes
+      case Categories.BLESSINGS: return WikiModel.AL.blessings
+      case Categories.CANTRIPS: return WikiModel.AL.cantrips
+      case Categories.COMBAT_TECHNIQUES: return WikiModel.AL.combatTechniques
+      case Categories.CULTURES: return WikiModel.AL.cultures
+      case Categories.DISADVANTAGES: return WikiModel.AL.disadvantages
+      case Categories.LITURGIES: return WikiModel.AL.liturgicalChants
+      case Categories.PROFESSIONS: return WikiModel.AL.professions
+      case Categories.PROFESSION_VARIANTS: return WikiModel.AL.professionVariants
+      case Categories.RACES: return WikiModel.AL.races
+      case Categories.RACE_VARIANTS: return WikiModel.AL.raceVariants
+      case Categories.SPECIAL_ABILITIES: return WikiModel.AL.specialAbilities
+      case Categories.SPELLS: return WikiModel.AL.spells
+      case Categories.TALENTS: return WikiModel.AL.skills
     }
 
     throw new TypeError (`${show (x)} is no valid wiki category!`)
@@ -67,7 +67,7 @@ export const getWikiSliceGetterByCategory =
 
 export const getWikiEntryWithGetter =
   (wiki: WikiModelRecord) =>
-  <G extends typeof WikiModel.A[WikiKeyByCategory[Categories]]> (getter: G) =>
+  <G extends typeof WikiModel.AL[WikiKeyByCategory[Categories]]> (getter: G) =>
     lookupF ((getter as (wiki: WikiModelRecord) => OrderedMap<string, Entry>) (wiki)) as
       (id: string) => Maybe<OrderedMapValueElement<ReturnType<G>>>
 
@@ -91,13 +91,13 @@ export const getAllWikiEntriesByGroup =
   <T extends EntryWithGroup = EntryWithGroup>
   (wiki: OrderedMap<string, T>) =>
   (groups: List<number>): List<T> =>
-    filter<T> (pipe (Skill.A.gr, elemF (groups)))
+    filter<T> (pipe (Skill.AL.gr, elemF (groups)))
               (elems (wiki))
 
 export const getAllWikiEntriesByVariadicGroups =
   <T extends EntryWithGroup = EntryWithGroup>
   (wiki: OrderedMap<string, T>, ...groups: number[]): List<T> =>
-    filter<T> (pipe (Skill.A.gr, elemF (fromArray (groups))))
+    filter<T> (pipe (Skill.AL.gr, elemF (fromArray (groups))))
               (elems (wiki))
 
 type ElementMixed =
@@ -132,9 +132,9 @@ export const isActivatableWikiObj =
   (obj: Entry): obj is Activatable =>
     !isItemTemplate (obj)
     && elemF<Categories> (ActivatableCategories)
-                         (SpecialAbility.A.category (obj as Record<SpecialAbility>))
+                         (SpecialAbility.AL.category (obj as Record<SpecialAbility>))
 
-const { category } = Skill.A
+const { category } = Skill.AL
 
 export const isSkillishWikiEntry =
   (x: EntryWithCategory): x is SkillishEntry =>

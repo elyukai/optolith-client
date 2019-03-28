@@ -40,8 +40,8 @@ export const combineReducerRecord =
               (x .keys)
 
     reducer.default = x.default
-    reducer.A = x.A
-    reducer.A_ = x.A_
+    reducer.A = x.AL
+    reducer.A_ = x.A
     reducer.L = xL
 
     return reducer

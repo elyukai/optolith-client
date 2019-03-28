@@ -50,15 +50,15 @@ const hasRequiredMinimumLevel =
   (min_level: Maybe<number>) => (max_level: Maybe<number>): boolean =>
     isJust (max_level) && isJust (min_level)
 
-const { blessings, cantrips, liturgicalChants, specialAbilities, pact } = HeroModel.A
-const { specialAbilities: wiki_specialAbilities } = WikiModel.A
-const { maxCombatTechniqueRating, maxSkillRating } = ExperienceLevel.A
-const { id, dependencies: addependencies, active: adactive } = ActivatableDependent.A
-const { active: asdactive } = ActivatableSkillDependent.A
-const { active: doactive, sid, sid2, tier, origin } = DependencyObject.A
-const { prerequisites, tiers } = SpecialAbility.A
-const { id: ra_id } = RequireActivatable.A
-const { level } = Pact.A
+const { blessings, cantrips, liturgicalChants, specialAbilities, pact } = HeroModel.AL
+const { specialAbilities: wiki_specialAbilities } = WikiModel.AL
+const { maxCombatTechniqueRating, maxSkillRating } = ExperienceLevel.AL
+const { id, dependencies: addependencies, active: adactive } = ActivatableDependent.AL
+const { active: asdactive } = ActivatableSkillDependent.AL
+const { active: doactive, sid, sid2, tier, origin } = DependencyObject.AL
+const { prerequisites, tiers } = SpecialAbility.AL
+const { id: ra_id } = RequireActivatable.AL
+const { level } = Pact.AL
 
 const isRequiredByOthers =
   (current_active: Record<ActiveObject>) =>
@@ -91,8 +91,8 @@ const isRemovalDisabledEntrySpecific =
   (hero_entry: Record<ActivatableDependent>) =>
   (active: Record<ActiveObject>): boolean => {
     const mstart_el =
-      lookupF (WikiModel.A.experienceLevels (wiki))
-              (HeroModel.A.experienceLevel (hero))
+      lookupF (WikiModel.AL.experienceLevels (wiki))
+              (HeroModel.AL.experienceLevel (hero))
 
     switch (id (wiki_entry)) {
       // Exceptional Skill
@@ -100,8 +100,8 @@ const isRemovalDisabledEntrySpecific =
         // value of target skill
         const mvalue =
           pipe (
-                 bindF (lookupF (HeroModel.A.skills (hero))),
-                 fmap (SkillDependent.A.value)
+                 bindF (lookupF (HeroModel.AL.skills (hero))),
+                 fmap (SkillDependent.AL.value)
                )
                (sid (active) as Maybe<string>)
 
@@ -121,8 +121,8 @@ const isRemovalDisabledEntrySpecific =
         // value of target combat technique
         const mvalue =
           pipe (
-                 bindF (lookupF (HeroModel.A.combatTechniques (hero))),
-                 fmap (SkillDependent.A.value)
+                 bindF (lookupF (HeroModel.AL.combatTechniques (hero))),
+                 fmap (SkillDependent.AL.value)
                )
                (sid (active) as Maybe<string>)
 
@@ -146,7 +146,7 @@ const isRemovalDisabledEntrySpecific =
       case "SA_681": {
         // All active tradition entries
         const traditions =
-          getMagicalTraditions (HeroModel.A.specialAbilities (hero))
+          getMagicalTraditions (HeroModel.AL.specialAbilities (hero))
 
         const multiple_traditions = flength (traditions) > 1
 
@@ -210,7 +210,7 @@ const isRemovalDisabledEntrySpecific =
       case "SA_625":
       case "SA_632": {
         const mblessed_tradition =
-          getBlessedTraditionFromWiki (WikiModel.A.specialAbilities (wiki))
+          getBlessedTraditionFromWiki (WikiModel.AL.specialAbilities (wiki))
                                       (specialAbilities (hero))
 
         // Wiki entries for all active liturgical chants
@@ -219,7 +219,7 @@ const isRemovalDisabledEntrySpecific =
                  liturgicalChants,
                  elems,
                  filter<Record<ActivatableSkillDependent>> (asdactive),
-                 mapByIdKeyMap (WikiModel.A.liturgicalChants (wiki))
+                 mapByIdKeyMap (WikiModel.AL.liturgicalChants (wiki))
                )
                (hero)
 
@@ -468,9 +468,9 @@ export const getIsRemovalOrChangeDisabled =
 
                         return ActivatableActivationValidation ({
                           id: id (entry),
-                          index: ActiveObjectWithId.A.index (entry),
-                          cost: ActiveObjectWithId.A.cost (entry),
-                          sid: ActiveObjectWithId.A.sid (entry),
+                          index: ActiveObjectWithId.AL.index (entry),
+                          cost: ActiveObjectWithId.AL.cost (entry),
+                          sid: ActiveObjectWithId.AL.sid (entry),
                           sid2: sid2 (entry),
                           tier: tier (entry),
                           disabled:

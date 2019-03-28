@@ -45,7 +45,7 @@ export const filterRecordsByE = filterRecordsBy (PERF_MIN)
  */
 export const filterRecordsByA = filterRecordsBy (0) // A => always
 
-const { name } = RecordWithName.A
+const { name } = RecordWithName.AL
 
 /**
  * Filters a list of records by their `name` property.

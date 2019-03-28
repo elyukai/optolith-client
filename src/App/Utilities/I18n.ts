@@ -17,10 +17,10 @@ import { pipe } from "./pipe";
  */
 export const translateP =
   (messages: L10nRecord) =>
-  <K extends keyof typeof L10n.A>
+  <K extends keyof typeof L10n.AL>
   (key: K) =>
   (params: List<string | number>): L10n [K] => {
-    const message = L10n.A [key] (messages)
+    const message = L10n.AL [key] (messages)
 
     if (!fnull (params) && typeof message === "string") {
       return message.replace (
@@ -45,7 +45,7 @@ export const translateP =
  */
 export const translate =
   (messages: L10nRecord) =>
-  <K extends keyof typeof L10n.A>
+  <K extends keyof typeof L10n.AL>
   (key: K): L10n [K] =>
     translateP (messages) (key) (List.empty)
 
@@ -59,7 +59,7 @@ export const translate =
  */
 export const translateMP =
   (messages: Maybe<L10nRecord>) =>
-  <K extends keyof typeof L10n.A>
+  <K extends keyof typeof L10n.AL>
   (key: K) =>
   (params: List<string | number>): Maybe<L10n [K]> =>
     fmap<L10nRecord, L10n [K]>
@@ -73,7 +73,7 @@ export const translateMP =
  */
 export const translateM =
   (messages: Maybe<L10nRecord>) =>
-  <K extends keyof typeof L10n.A>
+  <K extends keyof typeof L10n.AL>
   (key: K): Maybe<L10n [K]> =>
     translateMP (messages) (key) (List.empty)
 

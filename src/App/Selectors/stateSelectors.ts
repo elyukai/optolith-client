@@ -27,16 +27,16 @@ const UI = uiReducer.A_
 export const getCurrentTab = pipe (App.ui, UI.location)
 
 
-export const getLocaleMessages = pipe (App.l10n, LocaleState.A.messages)
-export const getLocaleId = pipe (App.l10n, LocaleState.A.id)
-export const getLocaleType = pipe (App.l10n, LocaleState.A.type)
+export const getLocaleMessages = pipe (App.l10n, LocaleState.AL.messages)
+export const getLocaleId = pipe (App.l10n, LocaleState.AL.id)
+export const getLocaleType = pipe (App.l10n, LocaleState.AL.type)
 
 export const getLocaleAsProp =
   (_: Record<AppState>, props: { l10n: L10nRecord }) => props.l10n
 
-export const getCurrentHeroId = pipe (App.herolist, HeroesState.A.currentId)
-export const getHeroes = pipe (App.herolist, HeroesState.A.heroes)
-export const getUsers = pipe (App.herolist, HeroesState.A.users)
+export const getCurrentHeroId = pipe (App.herolist, HeroesState.AL.currentId)
+export const getHeroes = pipe (App.herolist, HeroesState.AL.heroes)
+export const getUsers = pipe (App.herolist, HeroesState.AL.users)
 
 
 export const getCurrentHero = createMaybeSelector (
@@ -56,7 +56,7 @@ export const getCurrentHeroFuture =
   createMaybeSelector (getCurrentHero, fmap (heroReducer.A.future))
 
 
-const Hero = HeroModel.A_
+const Hero = HeroModel.A
 
 export const getTotalAdventurePoints =
   pipe (getCurrentHeroPresent, fmap (Hero.adventurePointsTotal))
@@ -113,7 +113,7 @@ export const getCurrentHeroName =
 export const getProfile =
   pipe (getCurrentHeroPresent, fmap (Hero.personalData))
 
-const Pers = PersonalData.A_
+const Pers = PersonalData.A
 
 export const getCultureAreaKnowledge =
   pipe (getCurrentHeroPresent, bindF (pipe (Hero.personalData, Pers.cultureAreaKnowledge)))
@@ -138,7 +138,7 @@ export const getPact =
 export const getRules =
   pipe (getCurrentHeroPresent, fmap (Hero.rules))
 
-const Rul = Rules.A_
+const Rul = Rules.A
 
 export const getAttributeValueLimit =
   pipe (getCurrentHeroPresent, fmap (pipe (Hero.rules, Rul.attributeValueLimit)))
@@ -175,7 +175,7 @@ export const getCurrentProfessionVariantId =
 export const getEnergies =
   pipe (getCurrentHeroPresent, fmap (Hero.energies))
 
-const Ener = Energies.A_
+const Ener = Energies.A
 
 export const getAddedLifePoints =
   pipe (getCurrentHeroPresent, fmap (pipe (Hero.energies, Ener.addedLifePoints)))
@@ -207,7 +207,7 @@ export const getExperienceLevelStartId =
 export const getEquipmentState =
   pipe (getCurrentHeroPresent, fmap (Hero.belongings))
 
-const Belo = Belongings.A_
+const Belo = Belongings.A
 
 export const getItemsState =
   pipe (getCurrentHeroPresent, fmap (pipe (Hero.belongings, Belo.items)))
@@ -245,7 +245,7 @@ export const getAlerts = pipe (App.ui, UI.alerts)
 export const getCurrentAlert = pipe (App.ui, UI.alerts, listToMaybe)
 
 
-const SubW = SubWindowsState.A_
+const SubW = SubWindowsState.A
 
 export const getUpdateDownloadProgress =
   pipe (App.ui, UI.subwindows, SubW.updateDownloadProgress)
@@ -272,7 +272,7 @@ export const getIsEditPetAvatarOpen =
   pipe (App.ui, UI.subwindows, SubW.isEditPetAvatarOpen)
 
 
-const Filt = FiltersState.A_
+const Filt = FiltersState.A
 
 export const getAdvantagesFilterText =
   pipe (App.ui, UI.filters, Filt.advantagesFilterText)
@@ -332,7 +332,7 @@ export const getZoneArmorFilterText =
   pipe (App.ui, UI.filters, Filt.hitZoneArmorFilterText)
 
 
-const WikiUI = UIWikiState.A_
+const WikiUI = UIWikiState.A
 
 export const getWikiFilterText =
   pipe (App.ui, UI.wiki, WikiUI.filter)
@@ -367,7 +367,7 @@ export const getWikiSpellsGroup =
 
 export const getWiki = App.wiki
 
-const Wiki = WikiModel.A_
+const Wiki = WikiModel.A
 
 export const getWikiAdvantages = pipe (App.wiki, Wiki.advantages)
 

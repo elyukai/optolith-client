@@ -18,8 +18,8 @@ const {
   blessedStyleDependencies,
 } = HeroModelL
 
-const { id, gr, extended } = SpecialAbility.A
-const { id: dpid, active, origin } = StyleDependency.A
+const { id, gr, extended } = SpecialAbility.AL
+const { id: dpid, active, origin } = StyleDependency.AL
 
 type StyleDependenciesLens = Lens_<HeroModelRecord, List<Record<StyleDependency>>>
 

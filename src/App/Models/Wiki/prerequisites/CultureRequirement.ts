@@ -17,5 +17,5 @@ export const CultureRequirement =
   })
 
 export const isCultureRequirement =
-  pipe (RequireActivatable.A.id, equals<string | List<string>> ("CULTURE")) as unknown as
+  pipe (RequireActivatable.AL.id, equals<string | List<string>> ("CULTURE")) as unknown as
     (req: AllRequirementObjects) => req is Record<CultureRequirement>

@@ -19,5 +19,5 @@ export const RequirePrimaryAttribute =
   })
 
 export const isPrimaryAttributeRequirement =
-  pipe (RequireActivatable.A.id, equals<string | List<string>> ("ATTR_PRIMARY")) as unknown as
+  pipe (RequireActivatable.AL.id, equals<string | List<string>> ("ATTR_PRIMARY")) as unknown as
     (req: AllRequirementObjects) => req is Record<RequirePrimaryAttribute>

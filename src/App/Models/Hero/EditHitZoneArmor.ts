@@ -32,4 +32,4 @@ export const EditHitZoneArmorL = makeLenses (EditHitZoneArmor)
 
 export const ensureHitZoneArmorId =
   (x: Record<EditHitZoneArmor>): x is Record<EditHitZoneArmorSafe> =>
-    isJust (EditHitZoneArmor.A.id (x))
+    isJust (EditHitZoneArmor.AL.id (x))

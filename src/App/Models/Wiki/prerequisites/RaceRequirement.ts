@@ -17,5 +17,5 @@ export const RaceRequirement =
   })
 
 export const isRaceRequirement =
-  pipe (RequireActivatable.A.id, equals<string | List<string>> ("RACE")) as unknown as
+  pipe (RequireActivatable.AL.id, equals<string | List<string>> ("RACE")) as unknown as
     (req: AllRequirementObjects) => req is Record<RaceRequirement>

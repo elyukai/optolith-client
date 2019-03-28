@@ -18,7 +18,7 @@ import { getSpecialAbilitiesSortOptions } from "./sortOptionsSelectors";
 import { getInactiveAdvantagesFilterText, getInactiveDisadvantagesFilterText, getInactiveSpecialAbilitiesFilterText, getLocaleAsProp } from "./stateSelectors";
 import { getEnableActiveItemHints } from "./uisettingsSelectors";
 
-const getName = pipe (InactiveActivatable.A.wikiEntry, Advantage.A.name)
+const getName = pipe (InactiveActivatable.AL.wikiEntry, Advantage.AL.name)
 
 type InactiveOrActive<A extends RecordI<Activatable>> =
   Record<ActiveActivatable<A>>
@@ -49,12 +49,12 @@ const getFilteredInactives =
                                      <InactiveActivatable<A>>
                                      ([getName])
                                      ([comparingR (getName)
-                                                   (compareLocale (L10n.A_.id (l10n)))])
+                                                   (compareLocale (L10n.A.id (l10n)))])
                                      (filterText)
                                      (inactive))
 
 const sortByName = (l10n: L10nRecord) => [comparingR (getName)
-                                                     (compareLocale (L10n.A_.id (l10n)))]
+                                                     (compareLocale (L10n.A.id (l10n)))]
 
 export const getFilteredInactiveAdvantages = createMaybeSelector (
   getDeactiveAdvantages,

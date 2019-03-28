@@ -58,30 +58,30 @@ export const undo =
               past: snd (unconsed),
               // @ts-ignore
               present: fst (unconsed),
-              future: cons (L.A.future (state)) (L.A.present (state)),
+              future: cons (L.AL.future (state)) (L.AL.present (state)),
             }))
-            (uncons (L.A.past (state)))
+            (uncons (L.AL.past (state)))
         }
 
         if (action.type === ActionTypes.REDO) {
           return maybe
             (state)
             ((unconsed: Pair<S, List<S>>) => L ({
-              past: cons (L.A.past (state)) (L.A.present (state)),
+              past: cons (L.AL.past (state)) (L.AL.present (state)),
               // @ts-ignore
               present: fst (unconsed),
               future: snd (unconsed),
             }))
-            (uncons (L.A.future (state)))
+            (uncons (L.AL.future (state)))
         }
 
-        const newPresent = reducer (action) (L.A.present (state))
+        const newPresent = reducer (action) (L.AL.present (state))
 
-        if (L.A.present (state) === newPresent) {
+        if (L.AL.present (state) === newPresent) {
           if (elem (action.type) (resetActionTypes)) {
             return L ({
               // @ts-ignore
-              present: L.A.present (state),
+              present: L.AL.present (state),
               past: empty,
               future: empty,
             })
@@ -104,7 +104,7 @@ export const undo =
         }
 
         return L ({
-          past: cons (L.A.past (state)) (L.A.present (state)),
+          past: cons (L.AL.past (state)) (L.AL.present (state)),
           // @ts-ignore
           present: newPresent,
           future: empty,
@@ -112,8 +112,8 @@ export const undo =
       }
 
     undoHandler.default = L.default
-    undoHandler.A = L.A
-    undoHandler.A_ = L.A_
+    undoHandler.A = L.AL
+    undoHandler.A_ = L.A
     undoHandler.L = makeLenses (L)
 
     return undoHandler

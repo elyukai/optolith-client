@@ -47,4 +47,4 @@ export const RaceVariant =
 export const RaceVariantL = makeLenses (RaceVariant)
 
 export const isRaceVariant =
-  (r: EntryWithCategory) => RaceVariant.A.category (r) === Categories.RACE_VARIANTS
+  (r: EntryWithCategory) => RaceVariant.AL.category (r) === Categories.RACE_VARIANTS

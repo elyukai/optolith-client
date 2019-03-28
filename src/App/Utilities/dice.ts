@@ -22,7 +22,7 @@ export const rollDice =
  * parameter (included).
  */
 export const rollDiceR =
-  (dice: Record<Die>) => rollDice (Die.A.sides (dice)) (Die.A.amount (dice))
+  (dice: Record<Die>) => rollDice (Die.AL.sides (dice)) (Die.AL.amount (dice))
 
 /**
  * Returns the sum of random integers between 1 (included) and the passed

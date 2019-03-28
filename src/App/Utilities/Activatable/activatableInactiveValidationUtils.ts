@@ -31,13 +31,13 @@ import { validatePrerequisites } from "../Prerequisites/validatePrerequisitesUti
 import * as CheckStyleUtils from "./checkStyleUtils";
 import { isActive, isMaybeActive } from "./isActive";
 
-const { specialAbilities } = WikiModel.A
-const { specialAbilities: hero_specialAbilities, pact, rules } = HeroModel.A
-const { id, gr, prerequisites, cost, tiers, max } = SpecialAbility.A
-const { active, dependencies } = ActivatableDependent.A
-const { tier } = ActiveObject.A
-const { level } = Pact.A
-const { enableLanguageSpecializations } = Rules.A
+const { specialAbilities } = WikiModel.AL
+const { specialAbilities: hero_specialAbilities, pact, rules } = HeroModel.AL
+const { id, gr, prerequisites, cost, tiers, max } = SpecialAbility.AL
+const { active, dependencies } = ActivatableDependent.AL
+const { tier } = ActiveObject.AL
+const { level } = Pact.AL
+const { enableLanguageSpecializations } = Rules.AL
 
 const isAdditionDisabledForCombatStyle =
   (wiki: WikiModelRecord) =>

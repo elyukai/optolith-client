@@ -57,4 +57,4 @@ export const Spell =
   })
 
 export const isSpell =
-  (r: EntryWithCategory) => Spell.A.category (r) === Categories.SPELLS
+  (r: EntryWithCategory) => Spell.AL.category (r) === Categories.SPELLS

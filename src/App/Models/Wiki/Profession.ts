@@ -80,4 +80,4 @@ export const Profession =
 export const ProfessionL = makeLenses (Profession)
 
 export const isProfession =
-  (r: EntryWithCategory) => Profession.A.category (r) === Categories.PROFESSIONS
+  (r: EntryWithCategory) => Profession.AL.category (r) === Categories.PROFESSIONS

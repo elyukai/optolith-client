@@ -21,7 +21,7 @@ import { pipe, pipe_ } from "../pipe";
 import { misNumberM, misStringM } from "../typeCheckUtils";
 import { compareMaxLevel, compareSubMaxLevel, getActiveWithNoCustomCost } from "./activatableCostUtils";
 
-const AP = AdventurePointsCategories.A
+const AP = AdventurePointsCategories.AL
 
 /**
  * Checks if there are enough AP available. If there are, returns `Nothing`.
@@ -50,12 +50,12 @@ export const getMissingAP =
 export const getDisAdvantagesSubtypeMax =
   (isMagical: boolean) => (state: HeroModelRecord): number => {
     if (isMagical) {
-      const mtradition = listToMaybe (getMagicalTraditions (HeroModel.A.specialAbilities (state)))
+      const mtradition = listToMaybe (getMagicalTraditions (HeroModel.AL.specialAbilities (state)))
 
       const semiTraditionIds = List ("SA_677", "SA_678", "SA_679", "SA_680")
 
       const misSemiTradition =
-        fmap (pipe (ActivatableDependent.A.id, elemF (semiTraditionIds)))
+        fmap (pipe (ActivatableDependent.AL.id, elemF (semiTraditionIds)))
              (mtradition)
 
       if (or (misSemiTradition)) {
@@ -169,12 +169,12 @@ const getPrinciplesObligationsDiff =
   (wiki: WikiModelRecord) =>
   (hero_slice: OrderedMap<string, Record<ActivatableDependent>>) =>
   (entries: List<Record<ActiveActivatable>>): number => {
-    if (any (pipe (ActiveActivatable.A_.id, equals (id))) (entries)) {
+    if (any (pipe (ActiveActivatable.A.id, equals (id))) (entries)) {
       return sum (pipe_ (
         hero_slice,
         lookup (id),
         bindF (entry => {
-          const current_active = ActivatableDependent.A_.active (entry)
+          const current_active = ActivatableDependent.A.active (entry)
 
           const current_max_level = foldl (compareMaxLevel)
                                           (0)
@@ -185,15 +185,15 @@ const getPrinciplesObligationsDiff =
                                                  (current_active)
 
           const at_max_level =
-            countWith (pipe (ActiveObject.A_.tier, elem (current_max_level)))
+            countWith (pipe (ActiveObject.A.tier, elem (current_max_level)))
                       (current_active)
 
           const mbase_cost =
             pipe_ (
               wiki,
-              WikiModel.A_.disadvantages,
+              WikiModel.A.disadvantages,
               lookup (id),
-              bindF (Disadvantage.A_.cost),
+              bindF (Disadvantage.A.cost),
               misNumberM
             )
 
@@ -214,12 +214,12 @@ const getPrinciplesObligationsDiff =
 const getPropertyOrAspectKnowledgeDiff =
   (id: string) =>
     pipe (
-      find (pipe (ActiveActivatable.A_.id, equals (id))),
+      find (pipe (ActiveActivatable.A.id, equals (id))),
       fmap (entry => {
         const current_active_length =
-          pipe_ (entry, ActiveActivatable.A_.stateEntry, ActivatableDependent.A_.active, flength)
+          pipe_ (entry, ActiveActivatable.A.stateEntry, ActivatableDependent.A.active, flength)
 
-        const mcost = pipe_ (entry, ActiveActivatable.A_.wikiEntry, Disadvantage.A.cost)
+        const mcost = pipe_ (entry, ActiveActivatable.A.wikiEntry, Disadvantage.AL.cost)
 
         if (isJust (mcost)) {
           const cost = fromJust (mcost)
@@ -245,27 +245,27 @@ const getPersonalityFlawsDiff =
   (entries: List<Record<ActiveActivatable>>): number => {
     const id = "DISADV_33"
 
-    if (any (pipe (ActiveActivatable.A_.id, equals (id))) (entries)) {
+    if (any (pipe (ActiveActivatable.A.id, equals (id))) (entries)) {
       return sum (pipe_ (
         hero_slice,
         lookup (id),
         fmap (entry => {
-          const current_active = ActivatableDependent.A_.active (entry)
+          const current_active = ActivatableDependent.A.active (entry)
 
           const numberOfEntriesWithMultiplePossible =
             countWith ((e: Record<ActiveObject>) =>
-                        elem<string | number> (7) (ActiveObject.A_.sid (e))
-                        && isNothing (ActiveObject.A_.cost (e)))
+                        elem<string | number> (7) (ActiveObject.A.sid (e))
+                        && isNothing (ActiveObject.A.cost (e)))
                       (current_active)
 
           if (numberOfEntriesWithMultiplePossible > 1) {
             return pipe_ (
               wiki,
-              WikiModel.A_.disadvantages,
+              WikiModel.A.disadvantages,
               lookup (id),
-              bindF (Disadvantage.A_.select),
-              bindF (find (pipe (SelectOption.A_.id, equals (7)))),
-              bindF (SelectOption.A_.cost),
+              bindF (Disadvantage.A.select),
+              bindF (find (pipe (SelectOption.A.id, equals (7)))),
+              bindF (SelectOption.A.cost),
               fmap (negate),
               sum
             )
@@ -285,19 +285,19 @@ const getBadHabitsDiff =
   (entries: List<Record<ActiveActivatable>>): number => {
     const id = "DISADV_36"
 
-    if (any (pipe (ActiveActivatable.A_.id, equals (id))) (entries)) {
+    if (any (pipe (ActiveActivatable.A.id, equals (id))) (entries)) {
       return sum (pipe_ (
         hero_slice,
         lookup (id),
         fmap (entry => {
-          const current_active = ActivatableDependent.A_.active (entry)
+          const current_active = ActivatableDependent.A.active (entry)
 
           if (flength (getActiveWithNoCustomCost (current_active)) > 3) {
             return pipe_ (
               wiki,
-              WikiModel.A_.disadvantages,
+              WikiModel.A.disadvantages,
               lookup (id),
-              bindF (Disadvantage.A_.cost),
+              bindF (Disadvantage.A.cost),
               misNumberM,
               fmap (multiply (-3)),
               sum
@@ -318,16 +318,16 @@ const getSkillSpecializationsDiff =
   (entries: List<Record<ActiveActivatable>>): number => {
     const id = "SA_9"
 
-    if (any (pipe (ActiveActivatable.A_.id, equals (id))) (entries)) {
+    if (any (pipe (ActiveActivatable.A.id, equals (id))) (entries)) {
       return sum (pipe_ (
         hero_slice,
         lookup (id),
         fmap (entry => {
-          const current_active = ActivatableDependent.A_.active (entry)
+          const current_active = ActivatableDependent.A.active (entry)
 
           // Count how many specializations are for the same skill
           const sameSkill =
-            countWithByKeyMaybe (pipe (ActiveObject.A_.sid, misStringM))
+            countWithByKeyMaybe (pipe (ActiveObject.A.sid, misStringM))
                                 (current_active)
 
           // Return the accumulated value, otherwise 0.
@@ -339,7 +339,7 @@ const getSkillSpecializationsDiff =
             (sid: string) =>
             (counter: number) =>
             (skill: Record<Skill>) =>
-              Skill.A_.ic (skill) * (getFlatSkillDone (sid) (accMap) + 1 - counter)
+              Skill.A.ic (skill) * (getFlatSkillDone (sid) (accMap) + 1 - counter)
 
           type TrackingPair = Pair<number, OrderedMap<string, number>>
 
@@ -350,7 +350,7 @@ const getSkillSpecializationsDiff =
           // taken into account.
           const skillDone =
             foldr (pipe (
-                    ActiveObject.A_.sid,
+                    ActiveObject.A.sid,
                     misStringM,
                     bindF (current_sid =>
                             fmapF (lookup (current_sid) (sameSkill))
@@ -364,7 +364,7 @@ const getSkillSpecializationsDiff =
                                     // be done
                                     if (all (lt (count)) (lookup (current_sid) (m))) {
                                       const mskill =
-                                        pipe_ (wiki, WikiModel.A_.skills, lookup (current_sid))
+                                        pipe_ (wiki, WikiModel.A.skills, lookup (current_sid))
 
                                       return Pair (
                                         fst (p) + sum (fmap (getSingleDiff (m)

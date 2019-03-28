@@ -34,19 +34,19 @@ export const isPactEditable = createMaybeSelector (
              fmap (pipe (
                elems,
                any (e => {
-                 const curr_active = ActivatableDependent.A_.active (e)
+                 const curr_active = ActivatableDependent.A.active (e)
 
                  if (fnull (curr_active)) {
                    return false
                  }
 
-                 const curr_id = ActivatableDependent.A_.id (e)
+                 const curr_id = ActivatableDependent.A.id (e)
 
                  const mwiki_entry = lookup (curr_id) (wiki_special_abilities)
 
                  if (isJust (mwiki_entry)) {
                    const wiki_entry = fromJust (mwiki_entry)
-                   const prerequisites = SpecialAbility.A_.prerequisites (wiki_entry)
+                   const prerequisites = SpecialAbility.A.prerequisites (wiki_entry)
 
                    if (isList (prerequisites)) {
                      return any ((req: AllRequirements) => req !== "RCP" && isPactRequirement (req))

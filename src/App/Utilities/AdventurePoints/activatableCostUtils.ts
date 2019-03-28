@@ -41,7 +41,7 @@ import { getWikiEntry, isActivatableWikiEntry, isSkillishWikiEntry } from "../Wi
 const isDisadvantageActive =
   (id: string) =>
     pipe (
-      HeroModel.A_.disadvantages,
+      HeroModel.A.disadvantages,
       lookup (id),
       isMaybeActive
     )
@@ -61,13 +61,13 @@ const getEntrySpecificCost =
   (hero_entry: Record<ActivatableDependent>) =>
   // tslint:disable-next-line: cyclomatic-complexity
   (entry: Record<ActiveObjectWithId>): Maybe<number | List<number>> => {
-    const current_id = ActiveObjectWithId.A_.id (entry)
-    const mcurrent_sid = ActiveObjectWithId.A_.sid (entry)
-    const mcurrent_level = ActiveObject.A.tier (entry)
+    const current_id = ActiveObjectWithId.A.id (entry)
+    const mcurrent_sid = ActiveObjectWithId.A.sid (entry)
+    const mcurrent_level = ActiveObject.AL.tier (entry)
 
-    const mcurrent_cost = Advantage.A.cost (entry)
+    const mcurrent_cost = Advantage.AL.cost (entry)
 
-    const all_active = ActivatableDependent.A.active (hero_entry)
+    const all_active = ActivatableDependent.AL.active (hero_entry)
 
     switch (current_id) {
       // Aptitude
@@ -103,7 +103,7 @@ const getEntrySpecificCost =
 
                                         // Use the IC as an index for the list
                                         // of AP
-                                        bindF (subscriptF (Skill.A.ic (skill) - 1))
+                                        bindF (subscriptF (Skill.AL.ic (skill) - 1))
                                       )
                                       (mcurrent_cost))
                     )
@@ -117,9 +117,9 @@ const getEntrySpecificCost =
           elemF (mcurrent_sid) (7)
           // more than one entry of Prejudice does contribute to AP spent
           && countWith ((e: Record<ActiveObject>) =>
-                         pipe (ActiveObject.A.sid, elem<string | number> (7)) (e)
+                         pipe (ActiveObject.AL.sid, elem<string | number> (7)) (e)
                          // Entries with custom cost are ignored for the rule
-                         && isNothing (ActiveObject.A.cost (e)))
+                         && isNothing (ActiveObject.AL.cost (e)))
                        (all_active) > (isEntryToAdd ? 0 : 1)
         ) {
           return Nothing
@@ -155,7 +155,7 @@ const getEntrySpecificCost =
           // active, it won't affect AP spent at all. Thus, if the entry is to
           // be added, there must be at least one (> 0) entry for this rule to
           // take effect.
-          || countWith (pipe (ActiveObject.A.tier, elem (current_level)))
+          || countWith (pipe (ActiveObject.AL.tier, elem (current_level)))
                        (all_active) > (isEntryToAdd ? 0 : 1)
         ) {
           return Nothing
@@ -171,7 +171,7 @@ const getEntrySpecificCost =
         if (
           // more than three entries cannot contribute to AP spent; entries with
           // custom cost are ignored for the rule's effect
-          countWith (pipe (ActiveObject.A.cost, isNothing))
+          countWith (pipe (ActiveObject.AL.cost, isNothing))
                     (all_active) > (isEntryToAdd ? 2 : 3)
         ) {
           return Nothing
@@ -187,23 +187,23 @@ const getEntrySpecificCost =
                       bindF (
                         current_sid =>
                           fmapF (lookup (current_sid)
-                                        (WikiModel.A_.skills (wiki)))
+                                        (WikiModel.A.skills (wiki)))
                                 (skill =>
                                   // Multiply number of final occurences of the
                                   // same skill...
                                   (countWith ((e: Record<ActiveObject>) =>
                                               pipe (
-                                                     ActiveObject.A.sid,
+                                                     ActiveObject.AL.sid,
                                                      elem<string | number> (current_sid)
                                                    )
                                                    (e)
 
                                               // Entries with custom cost are ignored for the rule
-                                              && isNothing (ActiveObject.A.cost (e)))
+                                              && isNothing (ActiveObject.AL.cost (e)))
                                             (all_active) + (isEntryToAdd ? 1 : 0))
 
                                   // ...with the skill's IC
-                                  * Skill.A.ic (skill)))
+                                  * Skill.AL.ic (skill)))
 
                     )
                     (mcurrent_sid)
@@ -220,7 +220,7 @@ const getEntrySpecificCost =
       // Aspect Knowledge
       case "SA_87": {
         // Does not include custom cost activations in terms of calculated cost
-        const amount = countWith (pipe (ActiveObject.A.cost, isNothing))
+        const amount = countWith (pipe (ActiveObject.AL.cost, isNothing))
                                  (all_active)
 
         const index = amount + (isEntryToAdd ? 0 : -1)
@@ -255,7 +255,7 @@ const getEntrySpecificCost =
         // on the IC of the side subject selected in this SA.
 
         const mhero_entry_SA_531 = lookup ("SA_531")
-                                          (HeroModel.A_.specialAbilities (hero))
+                                          (HeroModel.A.specialAbilities (hero))
 
         if (isNothing (mhero_entry_SA_531)) {
           return Nothing
@@ -275,12 +275,12 @@ const getEntrySpecificCost =
 
         const getCostFromHeroEntry =
           pipe (
-            ActivatableDependent.A_.active,
+            ActivatableDependent.A.active,
             listToMaybe,
-            bindF (ActiveObject.A_.sid),
+            bindF (ActiveObject.A.sid),
             misStringM,
-            bindF (lookupF (WikiModel.A_.skills (wiki))),
-            bindF (pipe (Skill.A_.ic, dec, subscript (current_cost)))
+            bindF (lookupF (WikiModel.A.skills (wiki))),
+            bindF (pipe (Skill.A.ic, dec, subscript (current_cost)))
           )
 
         return liftM2 (add)
@@ -298,14 +298,14 @@ const getEntrySpecificCost =
         const current_sid = fromJust (mcurrent_sid)
 
         return pipe (
-                      HeroModel.A_.specialAbilities,
+                      HeroModel.A.specialAbilities,
                       lookup ("SA_29"),
                       bindF (pipe (
-                        ActivatableDependent.A_.active,
+                        ActivatableDependent.A.active,
                         // Get the `ActiveObject` for the corresponding language
-                        find (pipe (ActiveObject.A_.sid, elem (current_sid)))
+                        find (pipe (ActiveObject.A.sid, elem (current_sid)))
                       )),
-                      bindF (ActiveObject.A_.tier),
+                      bindF (ActiveObject.A.tier),
                       // If it's a native language, it costs nothing, otherwise
                       // the default SA's AP
                       bindF (level => level === 4 ? Nothing : misNumberM (mcurrent_cost))
@@ -314,7 +314,7 @@ const getEntrySpecificCost =
       }
 
       default: {
-        if (any (notNull) (Advantage.A.select (wiki_entry)) && isNothing (mcurrent_cost)) {
+        if (any (notNull) (Advantage.AL.select (wiki_entry)) && isNothing (mcurrent_cost)) {
           return getSelectOptionCost (wiki_entry) (mcurrent_sid)
         }
 
@@ -332,13 +332,13 @@ const getEntrySpecificCost =
 export const compareMaxLevel =
   (previous_max: number) =>
   (active: Record<ActiveObject>) => {
-    const mactive_level = ActiveObject.A.tier (active)
+    const mactive_level = ActiveObject.AL.tier (active)
 
     if (isJust (mactive_level)) {
       const active_level = fromJust (mactive_level)
 
       return active_level > previous_max
-        && isNothing (ActiveObject.A.cost (active))
+        && isNothing (ActiveObject.AL.cost (active))
           ? active_level
           : previous_max
     }
@@ -356,14 +356,14 @@ export const compareSubMaxLevel =
   (max: number) =>
   (previous_max: number) =>
   (active: Record<ActiveObject>) => {
-    const mactive_level = ActiveObject.A.tier (active)
+    const mactive_level = ActiveObject.AL.tier (active)
 
     if (isJust (mactive_level)) {
       const active_level = fromJust (mactive_level)
 
       return active_level > previous_max
         && active_level < max
-        && isNothing (ActiveObject.A.cost (active))
+        && isNothing (ActiveObject.AL.cost (active))
           ? active_level
           : previous_max
     }
@@ -378,7 +378,7 @@ const getTotalCost =
   (entry: Record<ActiveObjectWithId>) =>
   (wiki_entry: Activatable) =>
   (hero_entry: Record<ActivatableDependent>): number | List<number> => {
-    const custom_cost = ActiveObjectWithId.A_.cost (entry)
+    const custom_cost = ActiveObjectWithId.A.cost (entry)
 
     if (isJust (custom_cost)) {
       return fromJust (custom_cost)
@@ -411,7 +411,7 @@ export const getCost =
   (wiki: WikiModelRecord) =>
   (hero: HeroModelRecord) =>
   (entry: Record<ActiveObjectWithId>): Maybe<number | List<number>> => {
-    const current_id = ActiveObjectWithId.A_.id (entry)
+    const current_id = ActiveObjectWithId.A.id (entry)
 
     return liftM2 (getTotalCost (isEntryToAdd)
                                 (wiki)
@@ -431,8 +431,8 @@ const putCurrentCost =
   (entry: Record<ActivatableNameCost>): Record<ActivatableNameCostSafeCost> =>
     over (ActivatableNameCostL.finalCost)
          ((current_cost): number => {
-           const current_id = ActivatableNameCost.A_.id (entry)
-           const mcurrent_level = ActivatableNameCost.A_.tier (entry)
+           const current_id = ActivatableNameCost.A.id (entry)
+           const mcurrent_level = ActivatableNameCost.A.tier (entry)
 
            // If the AP cost is still a List, it must be a list that represents
            // the cost for each level separate, thus all relevant values must
@@ -492,8 +492,8 @@ const getFinalLevelName =
    * ensured to be a number.
    */
   (current_level: number) => {
-    const current_id = ActivatableNameCost.A_.id (entry)
-    const current_cost = ActivatableNameCost.A_.finalCost (entry)
+    const current_id = ActivatableNameCost.A.id (entry)
+    const current_cost = ActivatableNameCost.A.finalCost (entry)
 
     if (current_id === "SA_29" && current_level === 4) {
       return ` ${translate (l10n) ("nativetongue.short")}`
@@ -513,8 +513,8 @@ const getFinalLevelName =
 const getLevelNameIfValid =
   (l10n: L10nRecord) =>
   (entry: Record<ActivatableNameCost>): Maybe<string> => {
-    const current_id = ActivatableNameCost.A_.id (entry)
-    const mcurrent_level = ActivatableNameCost.A_.tier (entry)
+    const current_id = ActivatableNameCost.A.id (entry)
+    const mcurrent_level = ActivatableNameCost.A.tier (entry)
 
     if (isJust (mcurrent_level) && notElem (current_id) (List ("DISADV_34", "DISADV_50"))) {
       return Just (getFinalLevelName (l10n)
@@ -560,4 +560,4 @@ export const convertPerTierCostToFinalCost =
     )
 
 export const getActiveWithNoCustomCost =
-  filter (pipe (ActiveObject.A_.cost, isNothing))
+  filter (pipe (ActiveObject.A.cost, isNothing))

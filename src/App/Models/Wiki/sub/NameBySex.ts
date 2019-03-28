@@ -13,7 +13,7 @@ export const NameBySex =
   })
 
 export const nameBySex =
-  (sex: Sex) => NameBySex.A[sex] as unknown as (name: Record<NameBySex>) => string
+  (sex: Sex) => NameBySex.AL[sex] as unknown as (name: Record<NameBySex>) => string
 
 export const nameBySexDef =
   (sex: Sex) => (name: string | Record<NameBySex>) =>

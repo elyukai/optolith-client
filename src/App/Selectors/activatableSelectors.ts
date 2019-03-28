@@ -61,25 +61,25 @@ export const getAdvantagesRating = createMaybeSelector (
                OrderedMap.empty as RatingMap,
 
                flip (foldr (insertRating (EntryRating.Common)))
-                    (Race.A_.commonAdvantages (r)),
+                    (Race.A.commonAdvantages (r)),
 
                flip (foldr (insertRating (EntryRating.Uncommon)))
-                    (Race.A_.uncommonAdvantages (r)),
+                    (Race.A.uncommonAdvantages (r)),
 
                flip (foldr (insertRating (EntryRating.Common)))
-                    (Culture.A_.commonAdvantages (c)),
+                    (Culture.A.commonAdvantages (c)),
 
                flip (foldr (insertRating (EntryRating.Uncommon)))
-                    (Culture.A_.uncommonAdvantages (c)),
+                    (Culture.A.uncommonAdvantages (c)),
 
                flip (foldr (insertRating (EntryRating.Common)))
-                    (Profession.A_.suggestedAdvantages (p)),
+                    (Profession.A.suggestedAdvantages (p)),
 
                flip (foldr (insertRating (EntryRating.Uncommon)))
-                    (Profession.A_.unsuitableAdvantages (p)),
+                    (Profession.A.unsuitableAdvantages (p)),
 
                flip (foldr (insertRating (EntryRating.Essential)))
-                    (Race.A_.stronglyRecommendedAdvantages (r))
+                    (Race.A.stronglyRecommendedAdvantages (r))
              ))
            (mrace)
            (mculture)
@@ -96,25 +96,25 @@ export const getDisadvantagesRating = createMaybeSelector (
                OrderedMap.empty as RatingMap,
 
                flip (foldr (insertRating (EntryRating.Common)))
-                    (Race.A_.commonDisadvantages (r)),
+                    (Race.A.commonDisadvantages (r)),
 
                flip (foldr (insertRating (EntryRating.Uncommon)))
-                    (Race.A_.uncommonDisadvantages (r)),
+                    (Race.A.uncommonDisadvantages (r)),
 
                flip (foldr (insertRating (EntryRating.Common)))
-                    (Culture.A_.commonDisadvantages (c)),
+                    (Culture.A.commonDisadvantages (c)),
 
                flip (foldr (insertRating (EntryRating.Uncommon)))
-                    (Culture.A_.uncommonDisadvantages (c)),
+                    (Culture.A.uncommonDisadvantages (c)),
 
                flip (foldr (insertRating (EntryRating.Common)))
-                    (Profession.A_.suggestedDisadvantages (p)),
+                    (Profession.A.suggestedDisadvantages (p)),
 
                flip (foldr (insertRating (EntryRating.Uncommon)))
-                    (Profession.A_.unsuitableDisadvantages (p)),
+                    (Profession.A.unsuitableDisadvantages (p)),
 
                flip (foldr (insertRating (EntryRating.Essential)))
-                    (Race.A_.stronglyRecommendedDisadvantages (r))
+                    (Race.A.stronglyRecommendedDisadvantages (r))
              ))
            (mrace)
            (mculture)
@@ -136,7 +136,7 @@ export const getFilteredActiveAdvantages = createMaybeSelector (
   getAdvantagesFilterText,
   getLocaleAsProp,
   (madvantages, filterText, l10n) =>
-    fmapF (madvantages) (filterAndSortRecordsByName (L10n.A_.id (l10n)) (filterText))
+    fmapF (madvantages) (filterAndSortRecordsByName (L10n.A.id (l10n)) (filterText))
 )
 
 export const getDisadvantagesForSheet = createMaybeSelector (
@@ -154,7 +154,7 @@ export const getFilteredActiveDisadvantages = createMaybeSelector (
   getDisadvantagesFilterText,
   getLocaleAsProp,
   (mdisadvantages, filterText, l10n) =>
-    fmapF (mdisadvantages) (filterAndSortRecordsByName (L10n.A_.id (l10n)) (filterText))
+    fmapF (mdisadvantages) (filterAndSortRecordsByName (L10n.A.id (l10n)) (filterText))
 )
 
 export const getSpecialAbilitiesForSheet = createMaybeSelector (
@@ -178,7 +178,7 @@ export const getFilteredActiveSpecialAbilities = createMaybeSelector (
     fmapF (mspecial_abilities)
           (filterAndSortRecordsBy (0)
                                   ([
-                                    ActiveActivatable.A.name as (x: ActiveSpecialAbility) => string,
+                                    ActiveActivatable.AL.name as (x: ActiveSpecialAbility) => string,
                                   ])
                                   (sortOptions)
                                   (filterText))
@@ -192,12 +192,12 @@ export const getGeneralSpecialAbilitiesForSheet = createMaybeSelector (
     liftM2 ((culture_area_knowledge: Record<SpecialAbility>) =>
              pipe (
                     filter (pipe (
-                             ActiveActivatable.A_.wikiEntry,
-                             SpecialAbility.A.gr,
+                             ActiveActivatable.A.wikiEntry,
+                             SpecialAbility.AL.gr,
                              elemF (List (1, 2, 22, 30))
                            )),
                     consF (ActiveActivatable ({
-                            id: SpecialAbility.A_.id (culture_area_knowledge),
+                            id: SpecialAbility.A.id (culture_area_knowledge),
 
                             sid: Nothing,
                             sid2: Nothing,
@@ -207,9 +207,9 @@ export const getGeneralSpecialAbilitiesForSheet = createMaybeSelector (
                             index: -1,
 
                             name:
-                              `${SpecialAbility.A_.name (culture_area_knowledge)}`
+                              `${SpecialAbility.A.name (culture_area_knowledge)}`
                               + ` (${fromMaybe ("") (culture_area_knowledge_text)})`,
-                            baseName: SpecialAbility.A_.name (culture_area_knowledge),
+                            baseName: SpecialAbility.A.name (culture_area_knowledge),
                             addName: culture_area_knowledge_text,
 
                             levelName: Nothing,
@@ -231,8 +231,8 @@ export const getGeneralSpecialAbilitiesForSheet = createMaybeSelector (
 const getSpecialAbilitiesByGroups =
   (grs: List<number>) =>
     fmap (filter (pipe (
-      ActiveActivatable.A_.wikiEntry,
-      SpecialAbility.A.gr,
+      ActiveActivatable.A.wikiEntry,
+      SpecialAbility.AL.gr,
       elemF (grs)
     )))
 
@@ -260,14 +260,14 @@ export const getFatePointsModifier = createMaybeSelector (
 export const getMagicalTraditionForSheet = createMaybeSelector (
   getMagicalTraditionsFromWikiState,
   fmap (pipe (
-    map (pipe (SpecialAbility.A_.name, getBracketedNameFromFullName)),
+    map (pipe (SpecialAbility.A.name, getBracketedNameFromFullName)),
     intercalate (", ")
   ))
 )
 
 export const getBlessedTraditionForSheet = createMaybeSelector (
   getBlessedTraditionFromWikiState,
-  fmap (pipe (SpecialAbility.A_.name, getBracketedNameFromFullName))
+  fmap (pipe (SpecialAbility.A.name, getBracketedNameFromFullName))
 )
 
 const getPropertyOrAspectKnowledgesForSheet =

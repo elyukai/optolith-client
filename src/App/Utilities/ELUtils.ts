@@ -8,7 +8,7 @@ import { getNumericId, prefixId } from "./IDUtils";
 import { inc, lt } from "./mathUtils";
 import { pipe } from "./pipe";
 
-const { ap } = ExperienceLevel.A
+const { ap } = ExperienceLevel.AL
 
 /**
  * Returns the experience level that fits the given AP value.

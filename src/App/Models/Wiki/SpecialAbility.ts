@@ -63,4 +63,4 @@ export const SpecialAbility =
 
 export const isSpecialAbility =
   (r: EntryWithCategory): r is Record<SpecialAbility> =>
-    SpecialAbility.A.category (r) === Categories.SPECIAL_ABILITIES
+    SpecialAbility.AL.category (r) === Categories.SPECIAL_ABILITIES

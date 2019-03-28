@@ -44,7 +44,7 @@ export const increasableReducer =
           adjustEntryDef (set (ActivatableSkillDependentL.active) (true))
                          (action.payload.id),
           addDependencies (action.payload.id)
-                          (Spell.A.prerequisites (action.payload.wikiEntry))
+                          (Spell.AL.prerequisites (action.payload.wikiEntry))
         )
       }
 
@@ -67,7 +67,7 @@ export const increasableReducer =
                                (set (ActivatableSkillDependentL.active) (false))
                                (action.payload.id),
           removeDependencies (action.payload.id)
-                             (Spell.A.prerequisites (action.payload.wikiEntry))
+                             (Spell.AL.prerequisites (action.payload.wikiEntry))
         )
       }
 

@@ -1,7 +1,7 @@
 import { Record } from "../../../Data/Record";
 import { Pact } from "../../Models/Hero/Pact";
 
-const { domain, name } = Pact.A
+const { domain, name } = Pact.AL
 
 export const isPactFromStateValid =
   (pact: Record<Pact>) => {

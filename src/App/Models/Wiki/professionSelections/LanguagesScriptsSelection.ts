@@ -14,4 +14,4 @@ export const LanguagesScriptsSelection =
 
 export const isLanguagesScriptsSelection =
   (obj: AnyProfessionSelection): obj is Record<LanguagesScriptsSelection> =>
-    LanguagesScriptsSelection.A.id (obj) === ProfessionSelectionIds.LANGUAGES_SCRIPTS
+    LanguagesScriptsSelection.AL.id (obj) === ProfessionSelectionIds.LANGUAGES_SCRIPTS

@@ -37,15 +37,15 @@ import { getBlessingsSortOptions, getLiturgicalChantsCombinedSortOptions, getLit
 import { getAdvantages, getBlessings, getCurrentHeroPresent, getInactiveLiturgicalChantsFilterText, getLiturgicalChants, getLiturgicalChantsFilterText, getPhase, getSpecialAbilities, getWiki, getWikiBlessings, getWikiLiturgicalChants, getWikiSpecialAbilities } from "./stateSelectors";
 import { getEnableActiveItemHints } from "./uisettingsSelectors";
 
-const HA = HeroModel.A_
-const WA = WikiModel.A_
-const ADA = ActivatableDependent.A_
-const ASDA = ActivatableSkillDependent.A_
-const BA = Blessing.A_
-const BCA = BlessingCombined.A_
-const LCWRA = LiturgicalChantWithRequirements.A_
+const HA = HeroModel.A
+const WA = WikiModel.A
+const ADA = ActivatableDependent.A
+const ASDA = ActivatableSkillDependent.A
+const BA = Blessing.A
+const BCA = BlessingCombined.A
+const LCWRA = LiturgicalChantWithRequirements.A
 const LCWRL = LiturgicalChantWithRequirementsL
-const LCA = LiturgicalChant.A_
+const LCA = LiturgicalChant.A
 const LCL = LiturgicalChantL
 
 export const getBlessedTraditionFromState = createMaybeSelector (
@@ -58,7 +58,7 @@ export const getBlessedTraditionFromWikiState = createMaybeSelector (
   getBlessedTraditionFromState,
   uncurryN (
     wiki_special_abilities =>
-      bindF (pipe (ActivatableDependent.A_.id, lookupF (wiki_special_abilities))))
+      bindF (pipe (ActivatableDependent.A.id, lookupF (wiki_special_abilities))))
 )
 
 export const getIsLiturgicalChantsTabAvailable = createMaybeSelector (
@@ -355,7 +355,7 @@ export const isActivationDisabled = createMaybeSelector (
     && or (liftM2 ((liturgicalChants: List<Record<LiturgicalChantWithRequirements>>) =>
                    (startEl: Record<ExperienceLevel>) =>
                      flength (liturgicalChants) >=
-                       ExperienceLevel.A_.maxSpellsLiturgicalChants (startEl))
+                       ExperienceLevel.A.maxSpellsLiturgicalChants (startEl))
                   (mchants)
                   (mstart_el))
 )

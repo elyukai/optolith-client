@@ -37,10 +37,10 @@ export const getActivatableHeroSliceByCategory =
   (category: ActivatableCategory) =>
   (hero: HeroModelRecord): OrderedMap<string, Record<ActivatableDependent>> =>
     category === Categories.ADVANTAGES
-    ? HeroModel.A_.advantages (hero)
+    ? HeroModel.A.advantages (hero)
     : category === Categories.DISADVANTAGES
-    ? HeroModel.A_.disadvantages (hero)
-    : HeroModel.A_.specialAbilities (hero)
+    ? HeroModel.A.disadvantages (hero)
+    : HeroModel.A.specialAbilities (hero)
 
 /**
  * Takes an Activatable category and a hero and returns the state slice matching
@@ -50,10 +50,10 @@ export const getActivatableWikiSliceByCategory =
   (category: ActivatableCategory) =>
   (wiki: WikiModelRecord): OrderedMap<string, Activatable> =>
     category === Categories.ADVANTAGES
-    ? WikiModel.A_.advantages (wiki)
+    ? WikiModel.A.advantages (wiki)
     : category === Categories.DISADVANTAGES
-    ? WikiModel.A_.disadvantages (wiki)
-    : WikiModel.A_.specialAbilities (wiki)
+    ? WikiModel.A.disadvantages (wiki)
+    : WikiModel.A.specialAbilities (wiki)
 
 /**
  * Returns name, splitted and combined, as well as the AP you get when removing
@@ -70,20 +70,11 @@ export const getNameCost =
   (wiki: WikiModelRecord) =>
   (hero: HeroModelRecord) =>
   (entry: Record<ActiveObjectWithId>): Maybe<Record<ActivatableNameCost>> =>
-    liftM2 ((finalCost: number | List<number>) => (name: Record<ActivatableCombinedName>) =>
+    liftM2 ((finalCost: number | List<number>) => (naming: Record<ActivatableCombinedName>) =>
              ActivatableNameCost ({
-              name: ActivatableCombinedName.A_.name (name),
-              baseName: ActivatableCombinedName.A_.baseName (name),
-              addName: ActivatableCombinedName.A_.addName (name),
-              levelName: Nothing,
-
-              id: ActiveObjectWithId.A_.id (entry),
-              index: ActiveObjectWithId.A_.index (entry),
-              sid: ActiveObjectWithId.A_.sid (entry),
-              sid2: ActiveObjectWithId.A_.sid2 (entry),
-              tier: ActiveObjectWithId.A_.tier (entry),
-
-              finalCost,
+               naming,
+               active: entry,
+               finalCost,
              }))
            (getCost (isEntryToAdd) (wiki) (hero) (entry))
            (getName (l10n) (wiki) (entry))
@@ -101,16 +92,16 @@ export const getNameCostForWiki =
   (entry: Record<ActiveObjectWithId>): Maybe<Record<ActivatableNameCost>> =>
     liftM2 ((finalCost: number | List<number>) => (name: Record<ActivatableCombinedName>) =>
              ActivatableNameCost ({
-              name: ActivatableCombinedName.A_.name (name),
-              baseName: ActivatableCombinedName.A_.baseName (name),
-              addName: ActivatableCombinedName.A_.addName (name),
+              name: ActivatableCombinedName.A.name (name),
+              baseName: ActivatableCombinedName.A.baseName (name),
+              addName: ActivatableCombinedName.A.addName (name),
               levelName: Nothing,
 
-              id: ActiveObjectWithId.A_.id (entry),
-              index: ActiveObjectWithId.A_.index (entry),
-              sid: ActiveObjectWithId.A_.sid (entry),
-              sid2: ActiveObjectWithId.A_.sid2 (entry),
-              tier: ActiveObjectWithId.A_.tier (entry),
+              id: ActiveObjectWithId.A.id (entry),
+              index: ActiveObjectWithId.A.index (entry),
+              sid: ActiveObjectWithId.A.sid (entry),
+              sid2: ActiveObjectWithId.A.sid2 (entry),
+              tier: ActiveObjectWithId.A.tier (entry),
 
               finalCost,
              }))
@@ -135,7 +126,7 @@ export const getAllActiveByCategory =
       hero_slice,
       getActiveFromState,
       mapMaybe ((active: Record<ActiveObjectWithId>) => {
-                 const current_id = ActiveObjectWithId.A_.id (active)
+                 const current_id = ActiveObjectWithId.A.id (active)
 
                  return liftM4 ((nameCost: Record<ActivatableNameCostSafeCost>) =>
                                 (wiki_entry: GenericWikiEntry) =>
@@ -144,24 +135,24 @@ export const getAllActiveByCategory =
                                  ActiveActivatable ({
                                   id: current_id,
 
-                                  sid: ActiveObjectWithId.A_.sid (active),
-                                  sid2: ActiveObjectWithId.A_.sid2 (active),
-                                  tier: ActiveObjectWithId.A_.tier (active),
-                                  cost: ActiveObjectWithId.A_.cost (active),
+                                  sid: ActiveObjectWithId.A.sid (active),
+                                  sid2: ActiveObjectWithId.A.sid2 (active),
+                                  tier: ActiveObjectWithId.A.tier (active),
+                                  cost: ActiveObjectWithId.A.cost (active),
 
-                                  index: ActiveObjectWithId.A_.index (active),
+                                  index: ActiveObjectWithId.A.index (active),
 
-                                  name: ActivatableNameCost.A_.name (nameCost),
-                                  baseName: ActivatableNameCost.A_.baseName (nameCost),
-                                  addName: ActivatableNameCost.A_.addName (nameCost),
+                                  name: ActivatableNameCost.A.name (nameCost),
+                                  baseName: ActivatableNameCost.A.baseName (nameCost),
+                                  addName: ActivatableNameCost.A.addName (nameCost),
 
                                   levelName: Nothing,
 
-                                  finalCost: ActivatableNameCost.A_.finalCost (nameCost) as number,
+                                  finalCost: ActivatableNameCost.A.finalCost (nameCost) as number,
 
-                                  disabled: ActivatableActivationValidation.A_.disabled (remove),
-                                  maxLevel: ActivatableActivationValidation.A_.maxLevel (remove),
-                                  minLevel: ActivatableActivationValidation.A_.minLevel (remove),
+                                  disabled: ActivatableActivationValidation.A.disabled (remove),
+                                  maxLevel: ActivatableActivationValidation.A.maxLevel (remove),
+                                  minLevel: ActivatableActivationValidation.A.minLevel (remove),
 
                                   stateEntry: hero_entry,
                                   wikiEntry: wiki_entry,

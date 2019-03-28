@@ -24,10 +24,10 @@ import { pipe } from "../pipe";
 import { isNumber } from "../typeCheckUtils";
 import { getExceptionalSkillBonus, getInitialMaximumList, putMaximumSkillRatingFromExperienceLevel } from "./skillUtils";
 
-const { spells } = WikiModel.A
-const { stateEntry, wikiEntry } = SpellCombined.A
-const { id, tradition, property } = Spell.A
-const { value, dependencies } = ActivatableSkillDependent.A
+const { spells } = WikiModel.AL
+const { stateEntry, wikiEntry } = SpellCombined.AL
+const { id, tradition, property } = Spell.AL
+const { value, dependencies } = ActivatableSkillDependent.AL
 
 /**
  * `isActiveTradition id xs` checks if `id` is a tradition contained in the list
@@ -178,6 +178,6 @@ export const isSpellDecreasable =
   (entry: Record<SpellCombined>): boolean =>
     isSpellDecreasableByDependencies (wiki) (state) (entry)
     && isSpellDecreasableByPropertyKnowledges (wiki)
-                                              (HeroModel.A.spells (state))
+                                              (HeroModel.AL.spells (state))
                                               (propertyKnowledge)
                                               (entry)

@@ -26,8 +26,8 @@ export const toActiveObjectWithId =
     ActiveObjectWithId ({
       id,
       index,
-      cost: ActiveObject.A_.cost (active),
-      sid: ActiveObject.A_.sid (active),
-      sid2: ActiveObject.A_.sid2 (active),
-      tier: ActiveObject.A_.tier (active),
+      cost: ActiveObject.A.cost (active),
+      sid: ActiveObject.A.sid (active),
+      sid2: ActiveObject.A.sid2 (active),
+      tier: ActiveObject.A.tier (active),
     })

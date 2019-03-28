@@ -13,7 +13,7 @@ import { pipe } from "../pipe";
 type ActivatableSkillEntriesAccessor =
   (hero: HeroModelRecord) => OrderedMap<string, Record<ActivatableSkillDependent>>
 
-const { active } = ActivatableSkillDependent.A
+const { active } = ActivatableSkillDependent.AL
 
 /**
  * Get all active `ActivatableSkillDependent` entries from the specified domain.
@@ -21,7 +21,7 @@ const { active } = ActivatableSkillDependent.A
 export const getActiveSkillEntries =
   (domain: "spells" | "liturgicalChants") =>
     pipe (
-      HeroModel.A[domain] as ActivatableSkillEntriesAccessor,
+      HeroModel.AL[domain] as ActivatableSkillEntriesAccessor,
       filter (active)
     )
 

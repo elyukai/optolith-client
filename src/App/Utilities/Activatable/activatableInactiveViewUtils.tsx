@@ -21,7 +21,7 @@ import { pipe } from "../pipe";
 import { isInteger } from "../RegexUtils";
 import { getActiveSelectionsMaybe, getSelectOptionCost } from "./selectionUtils";
 
-const { id, cost } = InactiveActivatable.A
+const { id, cost } = InactiveActivatable.AL
 
 interface PropertiesAffectedByState {
   currentCost?: number | string

@@ -14,7 +14,7 @@ export const getSortedBooks = createMaybeSelector (
   uncurryN (l10n => pipe (
                            elems,
                            sortRecordsBy ([
-                                           comparingR (Book.A_.id)
-                                                      (compareLocale (L10n.A_.id (l10n))),
+                                           comparingR (Book.A.id)
+                                                      (compareLocale (L10n.A.id (l10n))),
                                           ])))
 )

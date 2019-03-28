@@ -44,8 +44,8 @@ export const addSpecialAbility =
     const mhero = getCurrentHeroPresent (state)
 
     if (isJust (mhero)) {
-      const current_id = ActivatableActivationOptions.A.id (args)
-      const current_cost = ActivatableActivationOptions.A.cost (args)
+      const current_id = ActivatableActivationOptions.AL.id (args)
+      const current_cost = ActivatableActivationOptions.AL.cost (args)
 
       const mwiki_entry =
         bind (getWikiEntry (getWiki (state)) (current_id))
@@ -98,7 +98,7 @@ export const removeSpecialAbility =
     if (isJust (mhero)) {
       const hero = fromJust (mhero)
 
-      const current_id = ActivatableDeactivationOptions.A.id (args)
+      const current_id = ActivatableDeactivationOptions.AL.id (args)
 
       const mwiki_entry =
         bind (getWikiEntry (getWiki (state)) (current_id))
@@ -106,7 +106,7 @@ export const removeSpecialAbility =
 
       const mhero_entry =
         lookup (current_id)
-               (HeroModel.A.specialAbilities (hero))
+               (HeroModel.AL.specialAbilities (hero))
 
       if (isJust (mwiki_entry) && isJust (mhero_entry)) {
         const wiki_entry = fromJust (mwiki_entry)
@@ -146,12 +146,12 @@ export const setSpecialAbilityLevel =
 
       const mhero_entry =
         lookup (current_id)
-               (HeroModel.A.specialAbilities (hero))
+               (HeroModel.AL.specialAbilities (hero))
 
       const mactive_entry =
         pipe (
                bindF (pipe (
-                             ActivatableDependent.A_.active,
+                             ActivatableDependent.A.active,
                              subscriptF (current_index)
                            )),
                fmap (toActiveObjectWithId (current_index) (current_id))
@@ -173,7 +173,7 @@ export const setSpecialAbilityLevel =
                           (hero),
               fmap (pipe (
                 convertPerTierCostToFinalCost (false) (l10n),
-                ActivatableNameCost.A_.finalCost as
+                ActivatableNameCost.A.finalCost as
                   (x: Record<ActivatableNameCostSafeCost>) => number
               ))
             )

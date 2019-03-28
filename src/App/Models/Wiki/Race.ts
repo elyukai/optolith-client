@@ -85,4 +85,4 @@ export const Race =
 export const RaceL = makeLenses (Race)
 
 export const isRace =
-  (r: EntryWithCategory) => Race.A.category (r) === Categories.RACES
+  (r: EntryWithCategory) => Race.AL.category (r) === Categories.RACES

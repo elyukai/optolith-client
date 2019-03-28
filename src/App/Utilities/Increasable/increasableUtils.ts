@@ -52,8 +52,8 @@ export const getBaseValueByCategory =
     }
   }
 
-const { category, ic } = Skill.A
-const { value } = SkillDependent.A
+const { category, ic } = Skill.AL
+const { value } = SkillDependent.AL
 
 const getValueFromHeroStateEntry =
   (wikiEntry: IncreasableEntry) =>

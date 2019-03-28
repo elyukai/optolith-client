@@ -6,7 +6,7 @@ import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDepe
 import { not } from "../not";
 import { pipe } from "../pipe";
 
-const { active } = ActivatableDependent.A
+const { active } = ActivatableDependent.AL
 
 /**
  * Checks if the entry is active. This will be the case if there is at least one

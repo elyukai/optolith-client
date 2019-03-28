@@ -27,7 +27,7 @@ export const getMagicalTraditionsFromWikiState = createMaybeSelector (
   getMagicalTraditionsFromState,
   uncurryN (
     wiki_special_abilities =>
-      fmap (mapMaybe (pipe (ActivatableDependent.A_.id, lookupF (wiki_special_abilities))))
+      fmap (mapMaybe (pipe (ActivatableDependent.A.id, lookupF (wiki_special_abilities))))
   )
 )
 

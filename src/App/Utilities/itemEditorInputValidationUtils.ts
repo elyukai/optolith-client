@@ -87,9 +87,9 @@ const {
   stp,
   weight,
   stabilityMod,
-} = EditItem.A
+} = EditItem.AL
 
-const { primary, threshold } = EditPrimaryAttributeDamageThreshold.A
+const { primary, threshold } = EditPrimaryAttributeDamageThreshold.AL
 
 const validateRange = (index: 0 | 1 | 2) => pipe (
   range,
@@ -225,56 +225,56 @@ const validateMeleeWeaponInput =
   (validSingle: Record<ItemEditorInputValidation>) =>
     elem ("CT_7") (combatTechnique (item))
     ? validateNoParryingWeapons (validSingle)
-    : ItemEditorInputValidation.A.at (validSingle)
-      && ItemEditorInputValidation.A.damageDiceNumber (validSingle)
-      && ItemEditorInputValidation.A.damageFlat (validSingle)
-      && ItemEditorInputValidation.A.damageThreshold (validSingle)
-      && ItemEditorInputValidation.A.length (validSingle)
-      && ItemEditorInputValidation.A.amount (validSingle)
-      && ItemEditorInputValidation.A.pa (validSingle)
-      && ItemEditorInputValidation.A.price (validSingle)
-      && ItemEditorInputValidation.A.stabilityMod (validSingle)
-      && ItemEditorInputValidation.A.structurePoints (validSingle)
-      && ItemEditorInputValidation.A.weight (validSingle)
+    : ItemEditorInputValidation.AL.at (validSingle)
+      && ItemEditorInputValidation.AL.damageDiceNumber (validSingle)
+      && ItemEditorInputValidation.AL.damageFlat (validSingle)
+      && ItemEditorInputValidation.AL.damageThreshold (validSingle)
+      && ItemEditorInputValidation.AL.length (validSingle)
+      && ItemEditorInputValidation.AL.amount (validSingle)
+      && ItemEditorInputValidation.AL.pa (validSingle)
+      && ItemEditorInputValidation.AL.price (validSingle)
+      && ItemEditorInputValidation.AL.stabilityMod (validSingle)
+      && ItemEditorInputValidation.AL.structurePoints (validSingle)
+      && ItemEditorInputValidation.AL.weight (validSingle)
       && isJust (combatTechnique (item))
       && isJust (reach (item))
 
 // Lances
 const validateNoParryingWeapons =
   (validSingle: Record<ItemEditorInputValidation>) =>
-    ItemEditorInputValidation.A.damageDiceNumber (validSingle)
-    && ItemEditorInputValidation.A.damageFlat (validSingle)
-    && ItemEditorInputValidation.A.length (validSingle)
-    && ItemEditorInputValidation.A.amount (validSingle)
-    && ItemEditorInputValidation.A.price (validSingle)
-    && ItemEditorInputValidation.A.stabilityMod (validSingle)
-    && ItemEditorInputValidation.A.structurePoints (validSingle)
-    && ItemEditorInputValidation.A.weight (validSingle)
+    ItemEditorInputValidation.AL.damageDiceNumber (validSingle)
+    && ItemEditorInputValidation.AL.damageFlat (validSingle)
+    && ItemEditorInputValidation.AL.length (validSingle)
+    && ItemEditorInputValidation.AL.amount (validSingle)
+    && ItemEditorInputValidation.AL.price (validSingle)
+    && ItemEditorInputValidation.AL.stabilityMod (validSingle)
+    && ItemEditorInputValidation.AL.structurePoints (validSingle)
+    && ItemEditorInputValidation.AL.weight (validSingle)
 
 const validateRangedWeaponInput =
   (item: Record<EditItem>) =>
   (validSingle: Record<ItemEditorInputValidation>) =>
-    ItemEditorInputValidation.A.damageDiceNumber (validSingle)
-    && ItemEditorInputValidation.A.damageFlat (validSingle)
-    && ItemEditorInputValidation.A.length (validSingle)
-    && ItemEditorInputValidation.A.amount (validSingle)
-    && ItemEditorInputValidation.A.price (validSingle)
-    && ItemEditorInputValidation.A.range1 (validSingle)
-    && ItemEditorInputValidation.A.range2 (validSingle)
-    && ItemEditorInputValidation.A.range3 (validSingle)
-    && ItemEditorInputValidation.A.stabilityMod (validSingle)
-    && ItemEditorInputValidation.A.weight (validSingle)
+    ItemEditorInputValidation.AL.damageDiceNumber (validSingle)
+    && ItemEditorInputValidation.AL.damageFlat (validSingle)
+    && ItemEditorInputValidation.AL.length (validSingle)
+    && ItemEditorInputValidation.AL.amount (validSingle)
+    && ItemEditorInputValidation.AL.price (validSingle)
+    && ItemEditorInputValidation.AL.range1 (validSingle)
+    && ItemEditorInputValidation.AL.range2 (validSingle)
+    && ItemEditorInputValidation.AL.range3 (validSingle)
+    && ItemEditorInputValidation.AL.stabilityMod (validSingle)
+    && ItemEditorInputValidation.AL.weight (validSingle)
     && isJust (combatTechnique (item))
 
 const validateArmorInput =
   (item: Record<EditItem>) =>
   (validSingle: Record<ItemEditorInputValidation>) =>
-    ItemEditorInputValidation.A.enc (validSingle)
-    && ItemEditorInputValidation.A.ini (validSingle)
-    && ItemEditorInputValidation.A.mov (validSingle)
-    && ItemEditorInputValidation.A.amount (validSingle)
-    && ItemEditorInputValidation.A.price (validSingle)
-    && ItemEditorInputValidation.A.pro (validSingle)
-    && ItemEditorInputValidation.A.stabilityMod (validSingle)
-    && ItemEditorInputValidation.A.weight (validSingle)
+    ItemEditorInputValidation.AL.enc (validSingle)
+    && ItemEditorInputValidation.AL.ini (validSingle)
+    && ItemEditorInputValidation.AL.mov (validSingle)
+    && ItemEditorInputValidation.AL.amount (validSingle)
+    && ItemEditorInputValidation.AL.price (validSingle)
+    && ItemEditorInputValidation.AL.pro (validSingle)
+    && ItemEditorInputValidation.AL.stabilityMod (validSingle)
+    && ItemEditorInputValidation.AL.weight (validSingle)
     && isJust (armorType (item))

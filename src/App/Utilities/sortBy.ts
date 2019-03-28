@@ -58,7 +58,7 @@ export interface RecordWithName extends RecordBase {
 
 export const RecordWithName = fromDefault<RecordWithName> ({ name: "" })
 
-const { name } = RecordWithName.A
+const { name } = RecordWithName.AL
 
 /**
  * Sort the list of passed records by their `name` property in ascending order.

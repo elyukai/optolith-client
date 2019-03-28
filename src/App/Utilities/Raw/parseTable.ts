@@ -51,7 +51,7 @@ export const workbookToMap =
                          ))
                        (OrderedSet.fromArray (wb.SheetNames))
 
-const { id } = Book.A
+const { id } = Book.AL
 
 const listToMap =
   pipe (map ((x: Record<{ id: string }>) => Pair (id (x), x)), fromList) as

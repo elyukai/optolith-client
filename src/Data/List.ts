@@ -1942,7 +1942,7 @@ const RecordBaseWithId = fromDefault<RecordBaseWithId> ({ id: "" })
  */
 export const mapByIdKeyMap =
   <A> (m: OrderedMap<string, A>) =>
-    mapMaybe (pipe (RecordBaseWithId.A.id, lookupF (m)))
+    mapMaybe (pipe (RecordBaseWithId.AL.id, lookupF (m)))
 
 List.mapByIdKeyMap = mapByIdKeyMap
 

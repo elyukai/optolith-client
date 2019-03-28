@@ -53,7 +53,7 @@ const {
   skills,
   spells,
   specialAbilities,
-} = WikiModel.A
+} = WikiModel.AL
 
 const {
   advantages: hero_advantages,
@@ -64,13 +64,13 @@ const {
   spells: hero_spells,
   specialAbilities: hero_specialAbilities,
   pact,
-} = HeroModel.A
+} = HeroModel.AL
 
-const { select, id, cost, prerequisites } = Advantage.A
-const { aspects, ic } = LiturgicalChant.A
-const { property } = Spell.A
-const { active, dependencies } = ActivatableDependent.A
-const { value } = ActivatableSkillDependent.A
+const { select, id, cost, prerequisites } = Advantage.AL
+const { aspects, ic } = LiturgicalChant.AL
+const { property } = Spell.AL
+const { active, dependencies } = ActivatableDependent.AL
+const { value } = ActivatableSkillDependent.AL
 
 const {
   id: select_id,
@@ -79,13 +79,13 @@ const {
   level,
   target,
   name,
-} = SelectOption.A
+} = SelectOption.AL
 
 const { cost: select_costL, applications, name: nameL } = SelectOptionL
-const { sid, tier } = ActiveObject.A
+const { sid, tier } = ActiveObject.AL
 const { maxLevel, cost: costL } = InactiveActivatableL
-const { level: pact_level } = Pact.A
-const { spentOnMagicalAdvantages, spentOnMagicalDisadvantages } = AdventurePointsCategories.A
+const { level: pact_level } = Pact.AL
+const { spentOnMagicalAdvantages, spentOnMagicalDisadvantages } = AdventurePointsCategories.AL
 
 /**
  * `isNotActive :: Maybe ActivatableDependent -> SelectOption -> Bool`

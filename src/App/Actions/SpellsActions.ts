@@ -38,7 +38,7 @@ export const addSpell =
 
       const missingAPForInc =
         bindF (getMissingAP (getIsInCharacterCreation (state))
-                            (pipe_ (wiki_entry, Spell.A_.ic, getICMultiplier)))
+                            (pipe_ (wiki_entry, Spell.A.ic, getICMultiplier)))
               (getAvailableAdventurePoints (state, { l10n }))
 
       if (isNothing (missingAPForInc)) {

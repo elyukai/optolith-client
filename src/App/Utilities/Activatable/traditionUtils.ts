@@ -8,7 +8,7 @@ import { isBlessedTraditionId, isMagicalTraditionId } from "../IDUtils";
 import { pipe } from "../pipe";
 import { isActive } from "./isActive";
 
-const { id } = ActivatableDependent.A
+const { id } = ActivatableDependent.AL
 
 const isActiveMagicalTradition =
   (e: Record<ActivatableDependent>) => isMagicalTraditionId (id (e)) && isActive (e)

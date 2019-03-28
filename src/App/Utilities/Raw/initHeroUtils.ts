@@ -314,7 +314,7 @@ const getActivatableDependentSkills =
       )
     )
 
-const { advantages, disadvantages, specialAbilities, spells } = HeroModel.A
+const { advantages, disadvantages, specialAbilities, spells } = HeroModel.AL
 
 export const convertFromRawHero =
   (wiki: WikiModelRecord) => (hero: Raw.RawHero): HeroModelRecord => {
@@ -324,7 +324,7 @@ export const convertFromRawHero =
     const activeDisadvantages = getActiveFromState (disadvantages (intermediateState))
     const activeSpecialAbilities = getActiveFromState (specialAbilities (intermediateState))
 
-    const { active, id } = ActivatableSkillDependent.A
+    const { active, id } = ActivatableSkillDependent.AL
 
     const activeSpells =
       OrderedMap.foldr<Record<ActivatableSkillDependent>, OrderedSet<string>>

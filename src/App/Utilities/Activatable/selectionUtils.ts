@@ -12,10 +12,10 @@ import { SelectOption } from "../../Models/Wiki/sub/SelectOption";
 import { Activatable } from "../../Models/Wiki/wikiTypeHelpers";
 import { pipe } from "../pipe";
 
-const { select } = Advantage.A
-const { id: getId, name, cost } = SelectOption.A
-const { active, dependencies } = ActivatableDependent.A_
-const { sid, sid2 } = ActiveObject.A
+const { select } = Advantage.AL
+const { id: getId, name, cost } = SelectOption.AL
+const { active, dependencies } = ActivatableDependent.A
+const { sid, sid2 } = ActiveObject.AL
 
 /**
  * Get a selection option with the given id from given wiki entry. Returns
@@ -99,7 +99,7 @@ export const getRequiredSelections:
       mapMaybe<ActivatableDependency, string | number | List<number>> (
         pipe (
           ensure<ActivatableDependency, Record<DependencyObject>> (isRecord),
-          bindF (DependencyObject.A.sid)
+          bindF (DependencyObject.AL.sid)
         )
       )
     )

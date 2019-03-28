@@ -17,4 +17,4 @@ export const CantripsSelection =
 
 export const isCantripsSelection =
   (obj: AnyProfessionSelection): obj is Record<CantripsSelection> =>
-    CantripsSelection.A.id (obj) === ProfessionSelectionIds.CANTRIPS
+    CantripsSelection.AL.id (obj) === ProfessionSelectionIds.CANTRIPS

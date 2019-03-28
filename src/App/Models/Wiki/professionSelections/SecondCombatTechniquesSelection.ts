@@ -19,4 +19,4 @@ export const CombatTechniquesSecondSelection =
 
 export const isSecondCombatTechniquesSelection =
   (obj: AnyProfessionSelection): obj is Record<CombatTechniquesSecondSelection> =>
-    CombatTechniquesSecondSelection.A.id (obj) === ProfessionSelectionIds.COMBAT_TECHNIQUES_SECOND
+    CombatTechniquesSecondSelection.AL.id (obj) === ProfessionSelectionIds.COMBAT_TECHNIQUES_SECOND

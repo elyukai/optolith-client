@@ -29,10 +29,10 @@ import { getRuleBooksEnabled } from "./rulesSelectors";
 import { getCombatTechniquesWithRequirementsSortOptions } from "./sortOptionsSelectors";
 import { getAttributes, getCombatTechniques, getCombatTechniquesFilterText, getCurrentHeroPresent, getWiki, getWikiCombatTechniques } from "./stateSelectors";
 
-const CTA = CombatTechnique.A_
-const SDA = SkillDependent.A_
-const CTWAPBA = CombatTechniqueWithAttackParryBase.A_
-const CTWRA = CombatTechniqueWithRequirements.A_
+const CTA = CombatTechnique.A
+const SDA = SkillDependent.A
+const CTWAPBA = CombatTechniqueWithAttackParryBase.A
+const CTWRA = CombatTechniqueWithRequirements.A
 
 /**
  * Calculate the AT or PA mod by passing the current attributes' state as well
@@ -112,7 +112,7 @@ const getMaximum =
     const bonus = isBonusValid ? 1 : 0
 
     if (phase < 3 && isJust (startEl)) {
-      return ExperienceLevel.A_.maxCombatTechniqueRating (fromJust (startEl)) + bonus
+      return ExperienceLevel.A.maxCombatTechniqueRating (fromJust (startEl)) + bonus
     }
 
     const curr_primary = pipe_ (ct, CTWAPBA.wikiEntry, CTA.primary)
@@ -150,10 +150,10 @@ export const getAllCombatTechniques = createMaybeSelector (
   (mcombat_techniques, mhero, mstartEl, wiki) =>
     liftM2 ((combatTechniques: List<Record<CTWAPB>>) => (hero: HeroModelRecord) => {
              const exceptionalCombatTechnique = lookup (prefixAdv (17))
-                                                       (HeroModel.A_.advantages (hero))
+                                                       (HeroModel.A.advantages (hero))
 
              const hunter = lookup (prefixSA (18))
-                                   (HeroModel.A_.specialAbilities (hero))
+                                   (HeroModel.A.specialAbilities (hero))
 
              const hunterRequiresMinimum =
                isMaybeActive (hunter)
@@ -170,8 +170,8 @@ export const getAllCombatTechniques = createMaybeSelector (
                                                (x),
                                min: getMaximum (exceptionalCombatTechnique)
                                                (mstartEl)
-                                               (HeroModel.A_.attributes (hero))
-                                               (HeroModel.A_.phase (hero))
+                                               (HeroModel.A.attributes (hero))
+                                               (HeroModel.A.phase (hero))
                                                (x),
                                stateEntry: CTWAPBA.stateEntry (x),
                                wikiEntry: CTWAPBA.wikiEntry (x),

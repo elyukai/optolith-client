@@ -26,9 +26,9 @@ import { flattenPrerequisites } from "../Prerequisites/flattenPrerequisites";
 import { getGeneratedPrerequisites } from "../Prerequisites/prerequisitesUtils";
 import { convertUIStateToActiveObject } from "./activatableConvertUtils";
 
-const { tier } = ActiveObject.A
-const { id, prerequisites } = Advantage.A
-const { active } = ActivatableDependent.A
+const { tier } = ActiveObject.AL
+const { id, prerequisites } = Advantage.AL
+const { active } = ActivatableDependent.AL
 
 const getStaticPrerequisites =
   (entry: Record<ActiveObject>) =>

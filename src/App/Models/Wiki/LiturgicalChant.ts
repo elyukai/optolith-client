@@ -55,4 +55,4 @@ export const LiturgicalChant =
 export const LiturgicalChantL = makeLenses (LiturgicalChant)
 
 export const isLiturgicalChant =
-  (r: EntryWithCategory) => LiturgicalChant.A.category (r) === Categories.LITURGIES
+  (r: EntryWithCategory) => LiturgicalChant.AL.category (r) === Categories.LITURGIES

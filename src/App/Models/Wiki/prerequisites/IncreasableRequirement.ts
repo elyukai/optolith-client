@@ -26,7 +26,7 @@ export const RequireIncreasableL = makeLenses (RequireIncreasable)
 
 export const isRequiringIncreasable =
   (req: AllRequirementObjects): req is Record<RequireIncreasable> => {
-    const id = RequireIncreasable.A.id (req)
+    const id = RequireIncreasable.AL.id (req)
 
     if (isList (id)) {
       return member ("value") (req)
@@ -45,7 +45,7 @@ export const isRequiringIncreasable =
 
 export const isProfessionRequiringIncreasable =
   (req: ProfessionPrerequisite): req is Record<ProfessionRequireIncreasable> => {
-    const id = RequireIncreasable.A.id (req) as string
+    const id = RequireIncreasable.AL.id (req) as string
 
     return member ("value") (req)
       && or (fmap (elemF<Categories> (IncreasableCategories))

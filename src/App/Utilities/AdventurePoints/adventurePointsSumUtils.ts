@@ -36,7 +36,7 @@ import { getAPRange } from "./improvementCostUtils";
 
 // Attributes
 
-const getAPForAttribute = pipe (AttributeDependent.A_.value, getAPRange (5) (8))
+const getAPForAttribute = pipe (AttributeDependent.A.value, getAPRange (5) (8))
 
 export const getAPSpentForAttributes = foldr (pipe (getAPForAttribute, add)) (0)
 
@@ -44,14 +44,14 @@ export const getAPSpentForAttributes = foldr (pipe (getAPForAttribute, add)) (0)
 
 const getAPForSkill =
   (x: Record<Skill>) =>
-    pipe (SkillDependent.A_.value, getAPRange (Skill.A_.ic (x)) (0))
+    pipe (SkillDependent.A.value, getAPRange (Skill.A.ic (x)) (0))
 
 type skillsFold = (x: Record<SkillDependent>) => (s: number) => number
 
 export const getAPSpentForSkills =
   (xmap: WikiModel["skills"]) =>
     foldr (join (pipe (
-                        SkillDependent.A_.id,
+                        SkillDependent.A.id,
                         lookupF (xmap),
                         maybe<skillsFold> (cnst (ident))
                                           (x => pipe (getAPForSkill (x), add)))))
@@ -61,12 +61,12 @@ export const getAPSpentForSkills =
 
 const getAPForCombatTechnique =
   (x: Record<CombatTechnique>) =>
-    pipe (SkillDependent.A_.value, getAPRange (CombatTechnique.A_.ic (x)) (6))
+    pipe (SkillDependent.A.value, getAPRange (CombatTechnique.A.ic (x)) (6))
 
 export const getAPSpentForCombatTechniques =
   (xmap: WikiModel["combatTechniques"]) =>
     foldr (join (pipe (
-                        SkillDependent.A_.id,
+                        SkillDependent.A.id,
                         lookupF (xmap),
                         maybe<skillsFold> (cnst (ident))
                                           (x => pipe (getAPForCombatTechnique (x), add)))))
@@ -76,14 +76,14 @@ export const getAPSpentForCombatTechniques =
 
 const getAPForSpellOrChant =
   (x: Record<Spell> | Record<LiturgicalChant>) =>
-    pipe (ActivatableSkillDependent.A_.value, getAPRange (Spell.A.ic (x)) (0))
+    pipe (ActivatableSkillDependent.A.value, getAPRange (Spell.AL.ic (x)) (0))
 
 type actSkillsFold = (x: Record<ActivatableSkillDependent>) => (s: number) => number
 
 export const getAPSpentForSpells =
   (xmap: WikiModel["spells"]) =>
     foldr (join (pipe (
-                        ActivatableSkillDependent.A_.id,
+                        ActivatableSkillDependent.A.id,
                         lookupF (xmap),
                         maybe<actSkillsFold> (cnst (ident))
                                              (x => pipe (getAPForSpellOrChant (x), add)))))
@@ -92,7 +92,7 @@ export const getAPSpentForSpells =
 export const getAPSpentForLiturgicalChants =
   (xmap: WikiModel["liturgicalChants"]) =>
     foldr (join (pipe (
-                        ActivatableSkillDependent.A_.id,
+                        ActivatableSkillDependent.A.id,
                         lookupF (xmap),
                         maybe<actSkillsFold> (cnst (ident))
                                              (x => pipe (getAPForSpellOrChant (x), add)))))
@@ -115,7 +115,7 @@ export const getAPSpentForAdvantages =
   (active: List<ActiveAdvantage>) =>
     pipe_ (
       active,
-      List.foldr (pipe (ActiveActivatable.A_.finalCost, add)) (0),
+      List.foldr (pipe (ActiveActivatable.A.finalCost, add)) (0),
       add (getAdventurePointsSpentDifference (wiki)
                                              (xmap)
                                              (active))
@@ -126,8 +126,8 @@ export const getAPSpentForMagicalAdvantages =
   (xmap: HeroModel["advantages"]) =>
     pipe (
       filter<ActiveAdvantage> (pipe (
-                                ActiveActivatable.A_.wikiEntry,
-                                Advantage.A.gr,
+                                ActiveActivatable.A.wikiEntry,
+                                Advantage.AL.gr,
                                 equals (2))) as ident<List<ActiveAdvantage>>,
       getAPSpentForAdvantages (wiki) (xmap)
     )
@@ -137,8 +137,8 @@ export const getAPSpentForBlessedAdvantages =
   (xmap: HeroModel["advantages"]) =>
     pipe (
       filter<ActiveAdvantage> (pipe (
-                                ActiveActivatable.A_.wikiEntry,
-                                Advantage.A.gr,
+                                ActiveActivatable.A.wikiEntry,
+                                Advantage.AL.gr,
                                 equals (3))) as ident<List<ActiveAdvantage>>,
       getAPSpentForAdvantages (wiki) (xmap)
     )
@@ -149,7 +149,7 @@ export const getAPSpentForDisadvantages =
   (active: List<ActiveDisadvantage>) =>
     pipe_ (
       active,
-      List.foldr (pipe (ActiveActivatable.A_.finalCost, add)) (0),
+      List.foldr (pipe (ActiveActivatable.A.finalCost, add)) (0),
       add (getAdventurePointsSpentDifference (wiki)
                                              (xmap)
                                              (active))
@@ -160,8 +160,8 @@ export const getAPSpentForMagicalDisadvantages =
   (xmap: HeroModel["disadvantages"]) =>
     pipe (
       filter<ActiveDisadvantage> (pipe (
-                                   ActiveActivatable.A_.wikiEntry,
-                                   Disadvantage.A.gr,
+                                   ActiveActivatable.A.wikiEntry,
+                                   Disadvantage.AL.gr,
                                    equals (2))) as ident<List<ActiveDisadvantage>>,
       getAPSpentForDisadvantages (wiki) (xmap)
     )
@@ -171,8 +171,8 @@ export const getAPSpentForBlessedDisadvantages =
   (xmap: HeroModel["disadvantages"]) =>
     pipe (
       filter<ActiveDisadvantage> (pipe (
-                                   ActiveActivatable.A_.wikiEntry,
-                                   Disadvantage.A.gr,
+                                   ActiveActivatable.A.wikiEntry,
+                                   Disadvantage.AL.gr,
                                    equals (3))) as ident<List<ActiveDisadvantage>>,
       getAPSpentForDisadvantages (wiki) (xmap)
     )
@@ -183,7 +183,7 @@ export const getAPSpentForSpecialAbilities =
   (active: List<ActiveSpecialAbility>) =>
     pipe_ (
       active,
-      List.foldr (pipe (ActiveActivatable.A_.finalCost, add)) (0),
+      List.foldr (pipe (ActiveActivatable.A.finalCost, add)) (0),
       add (getAdventurePointsSpentDifference (wiki)
                                              (xmap)
                                              (active))
@@ -192,27 +192,27 @@ export const getAPSpentForSpecialAbilities =
 export const getAPSpentForEnergies =
   (energies: Record<Energies>) => {
     const addedArcaneEnergyCost =
-      pipe_ (energies, Energies.A_.addedArcaneEnergyPoints, getAPRange (4) (0))
+      pipe_ (energies, Energies.A.addedArcaneEnergyPoints, getAPRange (4) (0))
 
     const addedKarmaPointsCost =
-      pipe_ (energies, Energies.A_.addedKarmaPoints, getAPRange (4) (0))
+      pipe_ (energies, Energies.A.addedKarmaPoints, getAPRange (4) (0))
 
     const addedLifePointsCost =
-      pipe_ (energies, Energies.A_.addedLifePoints, getAPRange (4) (0))
+      pipe_ (energies, Energies.A.addedLifePoints, getAPRange (4) (0))
 
     const boughtBackArcaneEnergyCost =
       pipe_ (
         energies,
-        Energies.A_.permanentArcaneEnergyPoints,
-        PermanentEnergyLossAndBoughtBack.A_.redeemed,
+        Energies.A.permanentArcaneEnergyPoints,
+        PermanentEnergyLossAndBoughtBack.A.redeemed,
         multiply (2)
       )
 
     const boughtBackKarmaPointsCost =
       pipe_ (
         energies,
-        Energies.A_.permanentKarmaPoints,
-        PermanentEnergyLossAndBoughtBack.A_.redeemed,
+        Energies.A.permanentKarmaPoints,
+        PermanentEnergyLossAndBoughtBack.A.redeemed,
         multiply (2)
       )
 
@@ -228,8 +228,8 @@ export const getAPSpentForEnergies =
 export const getAPSpentForRace =
   (wiki: WikiModelRecord) =>
     pipe (
-      bindF (lookupF (WikiModel.A_.races (wiki))),
-      maybe (0) (Race.A_.ap)
+      bindF (lookupF (WikiModel.A.races (wiki))),
+      maybe (0) (Race.A.ap)
     )
 
 /**
@@ -243,13 +243,13 @@ export const getAPSpentForProfession =
     pipe (
       ensure (equals (1)),
       thenF (mprofId),
-      bindF (lookupF (WikiModel.A_.professions (wiki))),
+      bindF (lookupF (WikiModel.A.professions (wiki))),
       fmap (pipe (
-        Profession.A_.ap,
+        Profession.A.ap,
         add (pipe_ (
           mprofVarId,
-          bindF (lookupF (WikiModel.A_.professionVariants (wiki))),
-          fmap (ProfessionVariant.A_.ap),
+          bindF (lookupF (WikiModel.A.professionVariants (wiki))),
+          fmap (ProfessionVariant.A.ap),
           Maybe.sum
         ))
       ))
@@ -260,29 +260,29 @@ export const getAPObjectAreas =
   (wiki: WikiModelRecord) =>
   (hero: HeroModelRecord) =>
     AdventurePointsCategories ({
-      total: HeroModel.A_.adventurePointsTotal (hero),
+      total: HeroModel.A.adventurePointsTotal (hero),
       spent: 0,
       available: 0,
-      spentOnAttributes: getAPSpentForAttributes (HeroModel.A_.attributes (hero)),
-      spentOnSkills: getAPSpentForSkills (WikiModel.A_.skills (wiki))
-                                         (HeroModel.A_.skills (hero)),
-      spentOnCombatTechniques: getAPSpentForCombatTechniques (WikiModel.A_.combatTechniques (wiki))
-                                                             (HeroModel.A_.combatTechniques (hero)),
-      spentOnSpells: getAPSpentForSpells (WikiModel.A_.spells (wiki))
-                                         (HeroModel.A_.spells (hero)),
-      spentOnLiturgicalChants: getAPSpentForLiturgicalChants (WikiModel.A_.liturgicalChants (wiki))
-                                                             (HeroModel.A_.liturgicalChants (hero)),
-      spentOnCantrips: getAPSpentForCantrips (HeroModel.A_.cantrips (hero)),
-      spentOnBlessings: getAPSpentForBlessings (HeroModel.A_.blessings (hero)),
-      spentOnEnergies: getAPSpentForEnergies (HeroModel.A_.energies (hero)),
-      spentOnRace: getAPSpentForRace (wiki) (HeroModel.A_.race (hero)),
+      spentOnAttributes: getAPSpentForAttributes (HeroModel.A.attributes (hero)),
+      spentOnSkills: getAPSpentForSkills (WikiModel.A.skills (wiki))
+                                         (HeroModel.A.skills (hero)),
+      spentOnCombatTechniques: getAPSpentForCombatTechniques (WikiModel.A.combatTechniques (wiki))
+                                                             (HeroModel.A.combatTechniques (hero)),
+      spentOnSpells: getAPSpentForSpells (WikiModel.A.spells (wiki))
+                                         (HeroModel.A.spells (hero)),
+      spentOnLiturgicalChants: getAPSpentForLiturgicalChants (WikiModel.A.liturgicalChants (wiki))
+                                                             (HeroModel.A.liturgicalChants (hero)),
+      spentOnCantrips: getAPSpentForCantrips (HeroModel.A.cantrips (hero)),
+      spentOnBlessings: getAPSpentForBlessings (HeroModel.A.blessings (hero)),
+      spentOnEnergies: getAPSpentForEnergies (HeroModel.A.energies (hero)),
+      spentOnRace: getAPSpentForRace (wiki) (HeroModel.A.race (hero)),
       spentOnProfession: getAPSpentForProfession (wiki)
-                                                 (HeroModel.A_.profession (hero))
-                                                 (HeroModel.A_.professionVariant (hero))
-                                                 (HeroModel.A_.phase (hero)),
+                                                 (HeroModel.A.profession (hero))
+                                                 (HeroModel.A.professionVariant (hero))
+                                                 (HeroModel.A.phase (hero)),
       spentOnSpecialAbilities:
         getAPSpentForSpecialAbilities (wiki)
-                                      (HeroModel.A_.specialAbilities (hero))
+                                      (HeroModel.A.specialAbilities (hero))
                                       (getAllActiveByCategory (Categories.SPECIAL_ABILITIES)
                                                               (false)
                                                               (l10n)
@@ -290,7 +290,7 @@ export const getAPObjectAreas =
                                                               (hero)),
       spentOnAdvantages:
         getAPSpentForAdvantages (wiki)
-                                (HeroModel.A_.advantages (hero))
+                                (HeroModel.A.advantages (hero))
                                 (getAllActiveByCategory (Categories.ADVANTAGES)
                                                         (false)
                                                         (l10n)
@@ -298,7 +298,7 @@ export const getAPObjectAreas =
                                                         (hero)),
       spentOnMagicalAdvantages:
         getAPSpentForMagicalAdvantages (wiki)
-                                        (HeroModel.A_.advantages (hero))
+                                        (HeroModel.A.advantages (hero))
                                         (getAllActiveByCategory (Categories.ADVANTAGES)
                                                                 (false)
                                                                 (l10n)
@@ -306,7 +306,7 @@ export const getAPObjectAreas =
                                                                 (hero)),
       spentOnBlessedAdvantages:
         getAPSpentForBlessedAdvantages (wiki)
-                                        (HeroModel.A_.advantages (hero))
+                                        (HeroModel.A.advantages (hero))
                                         (getAllActiveByCategory (Categories.ADVANTAGES)
                                                                 (false)
                                                                 (l10n)
@@ -314,7 +314,7 @@ export const getAPObjectAreas =
                                                                 (hero)),
       spentOnDisadvantages:
         getAPSpentForDisadvantages (wiki)
-                                    (HeroModel.A_.disadvantages (hero))
+                                    (HeroModel.A.disadvantages (hero))
                                     (getAllActiveByCategory (Categories.DISADVANTAGES)
                                                             (false)
                                                             (l10n)
@@ -322,7 +322,7 @@ export const getAPObjectAreas =
                                                             (hero)),
       spentOnMagicalDisadvantages:
         getAPSpentForMagicalDisadvantages (wiki)
-                                          (HeroModel.A_.disadvantages (hero))
+                                          (HeroModel.A.disadvantages (hero))
                                           (getAllActiveByCategory (Categories.DISADVANTAGES)
                                                                   (false)
                                                                   (l10n)
@@ -330,7 +330,7 @@ export const getAPObjectAreas =
                                                                   (hero)),
       spentOnBlessedDisadvantages:
         getAPSpentForBlessedDisadvantages (wiki)
-                                          (HeroModel.A_.disadvantages (hero))
+                                          (HeroModel.A.disadvantages (hero))
                                           (getAllActiveByCategory (Categories.DISADVANTAGES)
                                                                   (false)
                                                                   (l10n)
@@ -340,29 +340,29 @@ export const getAPObjectAreas =
 
 const getAPSpent = (ap: Record<AdventurePointsCategories>) =>
   sum (List (
-    AdventurePointsCategories.A_.spentOnAttributes (ap),
-    AdventurePointsCategories.A_.spentOnSkills (ap),
-    AdventurePointsCategories.A_.spentOnCombatTechniques (ap),
-    AdventurePointsCategories.A_.spentOnSpells (ap),
-    AdventurePointsCategories.A_.spentOnLiturgicalChants (ap),
-    AdventurePointsCategories.A_.spentOnCantrips (ap),
-    AdventurePointsCategories.A_.spentOnBlessings (ap),
-    AdventurePointsCategories.A_.spentOnSpecialAbilities (ap),
-    AdventurePointsCategories.A_.spentOnEnergies (ap),
-    AdventurePointsCategories.A_.spentOnRace (ap),
-    Maybe.sum (AdventurePointsCategories.A_.spentOnProfession (ap)),
-    AdventurePointsCategories.A_.spentOnAdvantages (ap),
-    AdventurePointsCategories.A_.spentOnMagicalAdvantages (ap),
-    AdventurePointsCategories.A_.spentOnBlessedAdvantages (ap),
-    AdventurePointsCategories.A_.spentOnDisadvantages (ap),
-    AdventurePointsCategories.A_.spentOnMagicalDisadvantages (ap),
-    AdventurePointsCategories.A_.spentOnBlessedDisadvantages (ap)
+    AdventurePointsCategories.A.spentOnAttributes (ap),
+    AdventurePointsCategories.A.spentOnSkills (ap),
+    AdventurePointsCategories.A.spentOnCombatTechniques (ap),
+    AdventurePointsCategories.A.spentOnSpells (ap),
+    AdventurePointsCategories.A.spentOnLiturgicalChants (ap),
+    AdventurePointsCategories.A.spentOnCantrips (ap),
+    AdventurePointsCategories.A.spentOnBlessings (ap),
+    AdventurePointsCategories.A.spentOnSpecialAbilities (ap),
+    AdventurePointsCategories.A.spentOnEnergies (ap),
+    AdventurePointsCategories.A.spentOnRace (ap),
+    Maybe.sum (AdventurePointsCategories.A.spentOnProfession (ap)),
+    AdventurePointsCategories.A.spentOnAdvantages (ap),
+    AdventurePointsCategories.A.spentOnMagicalAdvantages (ap),
+    AdventurePointsCategories.A.spentOnBlessedAdvantages (ap),
+    AdventurePointsCategories.A.spentOnDisadvantages (ap),
+    AdventurePointsCategories.A.spentOnMagicalDisadvantages (ap),
+    AdventurePointsCategories.A.spentOnBlessedDisadvantages (ap)
   ))
 
 const getAPAvailable =
   (ap: Record<AdventurePointsCategories>) =>
   (spent: number) =>
-    AdventurePointsCategories.A_.total (ap) - spent
+    AdventurePointsCategories.A.total (ap) - spent
 
 export const getAPObject =
   (l10n: L10nRecord) =>

@@ -9,7 +9,7 @@ import * as IDUtils from "./IDUtils";
 import { match } from "./match";
 import { pipe } from "./pipe";
 
-const { id } = ActivatableDependent.A
+const { id } = ActivatableDependent.AL
 
 const getAttributeIdByMagicalNumericId =
   bindF (

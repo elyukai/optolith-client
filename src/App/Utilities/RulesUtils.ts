@@ -12,9 +12,9 @@ import { EnabledSourceBooks } from "../Selectors/rulesSelectors";
 import { pipe, pipe_ } from "./pipe";
 
 
-const RA = Rules.A_
-const BA = Book.A_
-const SLA = SourceLink.A_
+const RA = Rules.A
+const BA = Book.A
+const SLA = SourceLink.A
 
 /**
  * Returns if a book is currently enabled.

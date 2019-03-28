@@ -18,5 +18,5 @@ export const SexRequirement =
   })
 
 export const isSexRequirement =
-  pipe (RequireActivatable.A.id, equals<string | List<string>> ("SEX")) as unknown as
+  pipe (RequireActivatable.AL.id, equals<string | List<string>> ("SEX")) as unknown as
     (req: AllRequirementObjects) => req is Record<SexRequirement>

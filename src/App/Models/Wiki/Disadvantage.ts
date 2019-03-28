@@ -33,4 +33,4 @@ export const Disadvantage =
 
 export const isDisadvantage =
   (r: EntryWithCategory): r is Record<Disadvantage> =>
-    Disadvantage.A.category (r) === Categories.DISADVANTAGES
+    Disadvantage.AL.category (r) === Categories.DISADVANTAGES

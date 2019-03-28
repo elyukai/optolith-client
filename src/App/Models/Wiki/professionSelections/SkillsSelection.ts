@@ -25,4 +25,4 @@ export const SkillsSelection =
 
 export const isSkillsSelection =
   (obj: AnyProfessionSelection): obj is Record<SkillsSelection> =>
-    SkillsSelection.A.id (obj) === ProfessionSelectionIds.SKILLS
+    SkillsSelection.AL.id (obj) === ProfessionSelectionIds.SKILLS

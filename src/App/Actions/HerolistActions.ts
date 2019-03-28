@@ -84,7 +84,7 @@ export const createHero =
 
     if (isJust (maybeSelectedExperienceLevel)) {
       const selectedExperienceLevel = fromJust (maybeSelectedExperienceLevel)
-      const totalAp = ExperienceLevel.A_.ap (selectedExperienceLevel)
+      const totalAp = ExperienceLevel.A.ap (selectedExperienceLevel)
 
       dispatch<CreateHeroAction> ({
         type: ActionTypes.CREATE_HERO,
@@ -190,7 +190,7 @@ export const deleteHeroValidate =
       dispatch (addAlert ({
         title: translateP (l10n)
                           ("deletehero")
-                          (List (pipe_ (hero, heroReducer.A_.present, HeroModel.A_.name))),
+                          (List (pipe_ (hero, heroReducer.A_.present, HeroModel.A.name))),
         message: translate (l10n) ("deletehero.text"),
         confirm: {
           resolve,

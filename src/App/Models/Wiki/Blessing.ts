@@ -30,4 +30,4 @@ export const Blessing =
   })
 
 export const isBlessing =
-  (r: EntryWithCategory) => Blessing.A.category (r) === Categories.BLESSINGS
+  (r: EntryWithCategory) => Blessing.AL.category (r) === Categories.BLESSINGS

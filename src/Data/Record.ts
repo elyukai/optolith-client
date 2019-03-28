@@ -33,8 +33,8 @@ export interface RecordCreator<A extends RecordBase> {
   (x: PartialMaybeOrNothing<A>): Record<A>
   readonly keys: OrderedSet<string>
   readonly default: Record<A>
-  readonly A: Accessors<A>
-  readonly A_: StrictAccessors<A>
+  readonly AL: Accessors<A>
+  readonly A: StrictAccessors<A>
   readonly is: <B> (x: B | Record<A>) => x is Record<A>
 }
 
@@ -135,8 +135,8 @@ export const fromDefault =
 
     creator.default = creator (defaultValues)
 
-    creator.A = makeAccessors<A> (keys)
-    creator.A_ = creator.A as StrictAccessors<A>
+    creator.AL = makeAccessors<A> (keys)
+    creator.A = creator.AL as StrictAccessors<A>
 
     creator.is = <B> (x: B | Record<A>): x is Record<A> => isRecord (x) && x.unique === unique
 
@@ -155,7 +155,7 @@ export const makeLenses =
     Object.freeze (
       foldl<string, Lenses<A>> (acc => key => ({
                                  ...acc,
-                                 [key]: lens<Record<A>, A[typeof key]> (record.A [key])
+                                 [key]: lens<Record<A>, A[typeof key]> (record.AL [key])
                                                                        (setter (key)),
                                }))
                                ({} as Lenses<A>)

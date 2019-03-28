@@ -46,7 +46,7 @@ export const isActivatableDependent =
     member ("active") (entry)
     && notMember ("value") (entry)
 
-const { active, dependencies } = ActivatableDependent.A
+const { active, dependencies } = ActivatableDependent.AL
 
 export const isActivatableDependentUnused =
   (entry: Record<ActivatableDependent>): boolean =>

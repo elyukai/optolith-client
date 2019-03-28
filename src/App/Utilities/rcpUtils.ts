@@ -19,9 +19,9 @@ import { add, lt, odd, subtract, subtractBy } from "./mathUtils";
 import { multiplyString, toInt } from "./NumberUtils";
 import { pipe, pipe_ } from "./pipe";
 
-const { id, hairColors, eyeColors, sizeBase, sizeRandom, weightBase, weightRandom } = Race.A
-const { amount, sides } = Die.A
-const { name, subname } = Profession.A
+const { id, hairColors, eyeColors, sizeBase, sizeRandom, weightBase, weightRandom } = Race.AL
+const { amount, sides } = Die.AL
+const { name, subname } = Profession.AL
 
 /**
  * Reroll the hair color based on the current race and race variant.

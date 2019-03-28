@@ -4,112 +4,112 @@ import { UISettingsState } from "../Reducers/uiSettingsReducer";
 import { pipe } from "../Utilities/pipe";
 
 export const getHerolistSortOrder =
-  pipe (AppState.A_.ui, uiReducer.A_.settings, UISettingsState.A_.herolistSortOrder)
+  pipe (AppState.A_.ui, uiReducer.A_.settings, UISettingsState.A.herolistSortOrder)
 
 export const getUISettingsState =
   pipe (AppState.A_.ui, uiReducer.A_.settings)
 
 export const getHerolistVisibilityFilter =
-  pipe (AppState.A_.ui, uiReducer.A_.settings, UISettingsState.A_.herolistVisibilityFilter)
+  pipe (AppState.A_.ui, uiReducer.A_.settings, UISettingsState.A.herolistVisibilityFilter)
 
 export const getRacesSortOrder =
-  pipe (AppState.A_.ui, uiReducer.A_.settings, UISettingsState.A_.racesSortOrder)
+  pipe (AppState.A_.ui, uiReducer.A_.settings, UISettingsState.A.racesSortOrder)
 
 export const getRacesValueVisibility =
-  pipe (AppState.A_.ui, uiReducer.A_.settings, UISettingsState.A_.racesValueVisibility)
+  pipe (AppState.A_.ui, uiReducer.A_.settings, UISettingsState.A.racesValueVisibility)
 
 export const getCulturesSortOrder =
-  pipe (AppState.A_.ui, uiReducer.A_.settings, UISettingsState.A_.culturesSortOrder)
+  pipe (AppState.A_.ui, uiReducer.A_.settings, UISettingsState.A.culturesSortOrder)
 
 export const getCulturesVisibilityFilter =
-  pipe (AppState.A_.ui, uiReducer.A_.settings, UISettingsState.A_.culturesVisibilityFilter)
+  pipe (AppState.A_.ui, uiReducer.A_.settings, UISettingsState.A.culturesVisibilityFilter)
 
 export const getCulturesValueVisibility =
-  pipe (AppState.A_.ui, uiReducer.A_.settings, UISettingsState.A_.culturesValueVisibility)
+  pipe (AppState.A_.ui, uiReducer.A_.settings, UISettingsState.A.culturesValueVisibility)
 
 export const getProfessionsSortOrder =
-  pipe (AppState.A_.ui, uiReducer.A_.settings, UISettingsState.A_.professionsSortOrder)
+  pipe (AppState.A_.ui, uiReducer.A_.settings, UISettingsState.A.professionsSortOrder)
 
 export const getProfessionsVisibilityFilter =
-  pipe (AppState.A_.ui, uiReducer.A_.settings, UISettingsState.A_.professionsVisibilityFilter)
+  pipe (AppState.A_.ui, uiReducer.A_.settings, UISettingsState.A.professionsVisibilityFilter)
 
 export const getProfessionsGroupVisibilityFilter =
-  pipe (AppState.A_.ui, uiReducer.A_.settings, UISettingsState.A_.professionsGroupVisibilityFilter)
+  pipe (AppState.A_.ui, uiReducer.A_.settings, UISettingsState.A.professionsGroupVisibilityFilter)
 
 export const getProfessionsFromExpansionsVisibility =
   pipe (
     AppState.A_.ui,
     uiReducer.A_.settings,
-    UISettingsState.A_.professionsFromExpansionsVisibility
+    UISettingsState.A.professionsFromExpansionsVisibility
   )
 
 export const getAdvantagesDisadvantagesCultureRatingVisibility =
   pipe (
     AppState.A_.ui,
     uiReducer.A_.settings,
-    UISettingsState.A_.advantagesDisadvantagesCultureRatingVisibility
+    UISettingsState.A.advantagesDisadvantagesCultureRatingVisibility
   )
 
 export const getSkillsSortOrder =
-  pipe (AppState.A_.ui, uiReducer.A_.settings, UISettingsState.A_.talentsSortOrder)
+  pipe (AppState.A_.ui, uiReducer.A_.settings, UISettingsState.A.talentsSortOrder)
 
 export const getSkillsCultureRatingVisibility =
-  pipe (AppState.A_.ui, uiReducer.A_.settings, UISettingsState.A_.talentsCultureRatingVisibility)
+  pipe (AppState.A_.ui, uiReducer.A_.settings, UISettingsState.A.talentsCultureRatingVisibility)
 
 export const getCombatTechniquesSortOrder =
-  pipe (AppState.A_.ui, uiReducer.A_.settings, UISettingsState.A_.combatTechniquesSortOrder)
+  pipe (AppState.A_.ui, uiReducer.A_.settings, UISettingsState.A.combatTechniquesSortOrder)
 
 export const getSpecialAbilitiesSortOrder =
-  pipe (AppState.A_.ui, uiReducer.A_.settings, UISettingsState.A_.specialAbilitiesSortOrder)
+  pipe (AppState.A_.ui, uiReducer.A_.settings, UISettingsState.A.specialAbilitiesSortOrder)
 
 export const getSpellsSortOrder =
-  pipe (AppState.A_.ui, uiReducer.A_.settings, UISettingsState.A_.spellsSortOrder)
+  pipe (AppState.A_.ui, uiReducer.A_.settings, UISettingsState.A.spellsSortOrder)
 
 export const getSpellsUnfamiliarVisibility =
-  pipe (AppState.A_.ui, uiReducer.A_.settings, UISettingsState.A_.spellsUnfamiliarVisibility)
+  pipe (AppState.A_.ui, uiReducer.A_.settings, UISettingsState.A.spellsUnfamiliarVisibility)
 
 export const getLiturgiesSortOrder =
-  pipe (AppState.A_.ui, uiReducer.A_.settings, UISettingsState.A_.liturgiesSortOrder)
+  pipe (AppState.A_.ui, uiReducer.A_.settings, UISettingsState.A.liturgiesSortOrder)
 
 export const getEquipmentSortOrder =
-  pipe (AppState.A_.ui, uiReducer.A_.settings, UISettingsState.A_.equipmentSortOrder)
+  pipe (AppState.A_.ui, uiReducer.A_.settings, UISettingsState.A.equipmentSortOrder)
 
 export const getEquipmentGroupVisibilityFilter =
-  pipe (AppState.A_.ui, uiReducer.A_.settings, UISettingsState.A_.equipmentGroupVisibilityFilter)
+  pipe (AppState.A_.ui, uiReducer.A_.settings, UISettingsState.A.equipmentGroupVisibilityFilter)
 
 export const getEnableActiveItemHints =
-  pipe (AppState.A_.ui, uiReducer.A_.settings, UISettingsState.A_.enableActiveItemHints)
+  pipe (AppState.A_.ui, uiReducer.A_.settings, UISettingsState.A.enableActiveItemHints)
 
 export const getSheetCheckAttributeValueVisibility =
   pipe (
     AppState.A_.ui,
     uiReducer.A_.settings,
-    UISettingsState.A_.sheetCheckAttributeValueVisibility
+    UISettingsState.A.sheetCheckAttributeValueVisibility
   )
 
 export const getTheme =
-  pipe (AppState.A_.ui, uiReducer.A_.settings, UISettingsState.A_.theme)
+  pipe (AppState.A_.ui, uiReducer.A_.settings, UISettingsState.A.theme)
 
 export const getIsEditingHeroAfterCreationPhaseEnabled =
   pipe (
     AppState.A_.ui,
     uiReducer.A_.settings,
-    UISettingsState.A_.enableEditingHeroAfterCreationPhase
+    UISettingsState.A.enableEditingHeroAfterCreationPhase
   )
 
 export const getMeleeItemTemplateCombatTechniqueFilter =
   pipe (
     AppState.A_.ui,
     uiReducer.A_.settings,
-    UISettingsState.A_.meleeItemTemplatesCombatTechniqueFilter
+    UISettingsState.A.meleeItemTemplatesCombatTechniqueFilter
   )
 
 export const getRangedItemTemplateCombatTechniqueFilter =
   pipe (
     AppState.A_.ui,
     uiReducer.A_.settings,
-    UISettingsState.A_.rangedItemTemplatesCombatTechniqueFilter
+    UISettingsState.A.rangedItemTemplatesCombatTechniqueFilter
   )
 
 export const areAnimationsEnabled =
-  pipe (AppState.A_.ui, uiReducer.A_.settings, UISettingsState.A_.enableAnimations)
+  pipe (AppState.A_.ui, uiReducer.A_.settings, UISettingsState.A.enableAnimations)

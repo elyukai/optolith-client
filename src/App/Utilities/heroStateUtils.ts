@@ -126,34 +126,34 @@ export const getHeroStateListGetterById =
   (id: string): Maybe<HeroStateListGetter> => {
     switch (getIdPrefix (id)) {
       case IdPrefixes.ADVANTAGES:
-        return Just<HeroStateListGetter> (HeroModel.A.advantages)
+        return Just<HeroStateListGetter> (HeroModel.AL.advantages)
 
       case IdPrefixes.ATTRIBUTES:
-        return Just<HeroStateListGetter> (HeroModel.A.attributes)
+        return Just<HeroStateListGetter> (HeroModel.AL.attributes)
 
       case IdPrefixes.BLESSINGS:
-        return Just<HeroStateListGetter> (HeroModel.A.blessings)
+        return Just<HeroStateListGetter> (HeroModel.AL.blessings)
 
       case IdPrefixes.CANTRIPS:
-        return Just<HeroStateListGetter> (HeroModel.A.cantrips)
+        return Just<HeroStateListGetter> (HeroModel.AL.cantrips)
 
       case IdPrefixes.COMBAT_TECHNIQUES:
-        return Just<HeroStateListGetter> (HeroModel.A.combatTechniques)
+        return Just<HeroStateListGetter> (HeroModel.AL.combatTechniques)
 
       case IdPrefixes.DISADVANTAGES:
-        return Just<HeroStateListGetter> (HeroModel.A.disadvantages)
+        return Just<HeroStateListGetter> (HeroModel.AL.disadvantages)
 
       case IdPrefixes.LITURGICAL_CHANTS:
-        return Just<HeroStateListGetter> (HeroModel.A.liturgicalChants)
+        return Just<HeroStateListGetter> (HeroModel.AL.liturgicalChants)
 
       case IdPrefixes.SPECIAL_ABILITIES:
-        return Just<HeroStateListGetter> (HeroModel.A.specialAbilities)
+        return Just<HeroStateListGetter> (HeroModel.AL.specialAbilities)
 
       case IdPrefixes.SPELLS:
-        return Just<HeroStateListGetter> (HeroModel.A.spells)
+        return Just<HeroStateListGetter> (HeroModel.AL.spells)
 
       case IdPrefixes.SKILLS:
-        return Just<HeroStateListGetter> (HeroModel.A.skills)
+        return Just<HeroStateListGetter> (HeroModel.AL.skills)
 
       default:
         return Nothing
@@ -312,9 +312,9 @@ export const getAllEntriesByGroup =
   (hero_slice: OrderedMap<string, I>) =>
   (...groups: number[]): List<I> =>
     filter<I> (pipe (
-                AttributeDependent.A.id,
+                AttributeDependent.AL.id,
                 lookupF (wiki_slice),
-                fmap (Skill.A.gr),
+                fmap (Skill.AL.gr),
                 fmap (elemF (fromArray (groups))),
                 or
               ))

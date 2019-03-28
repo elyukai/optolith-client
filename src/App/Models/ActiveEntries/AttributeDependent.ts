@@ -49,7 +49,7 @@ export const isAttributeDependent =
     && member ("mod") (entry)
     && notMember ("active") (entry)
 
-const { mod, value, dependencies } = AttributeDependent.A
+const { mod, value, dependencies } = AttributeDependent.AL
 
 export const isAttributeDependentUnused =
   (entry: Record<AttributeDependent>): boolean =>

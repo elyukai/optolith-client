@@ -7,8 +7,8 @@ import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
 import { pipe } from "../pipe";
 import { isMaybeActive } from "./isActive";
 
-const { active } = ActivatableDependent.A_
-const { tier } = ActiveObject.A_
+const { active } = ActivatableDependent.A
+const { tier } = ActiveObject.A
 
 const getFirstActive =
   pipe (

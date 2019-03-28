@@ -14,10 +14,10 @@ import { Activatable, AllRequirementObjects, AllRequirements } from "../../Model
 import { findSelectOption } from "../Activatable/selectionUtils";
 import { pipe } from "../pipe";
 
-const { id } = Advantage.A
-const { sid, sid2 } = ActiveObject.A
-const { active } = ActivatableDependent.A
-const { applications, target, level, prerequisites } = SelectOption.A
+const { id } = Advantage.AL
+const { sid, sid2 } = ActiveObject.AL
+const { active } = ActivatableDependent.AL
+const { applications, target, level, prerequisites } = SelectOption.AL
 
 /**
  * Some advantages, disadvantages and special abilities need more prerequisites
@@ -36,7 +36,7 @@ export const getGeneratedPrerequisites =
   (current: Record<ActiveObject>): Maybe<List<AllRequirementObjects>> => {
     switch (id (wiki_entry)) {
       case "SA_3":
-        return bindF (SelectOption.A.prerequisites)
+        return bindF (SelectOption.AL.prerequisites)
                      (findSelectOption (wiki_entry) (sid (current)))
 
       case "SA_9": {
@@ -59,11 +59,11 @@ export const getGeneratedPrerequisites =
                       bindF (applications),
                       bindF (
                         find<Record<Application>> (pipe (
-                                                               Application.A.id,
+                                                               Application.AL.id,
                                                                elemF (sid2 (current))
                                                              ))
                       ),
-                      bindF (Application.A.prerequisites),
+                      bindF (Application.AL.prerequisites),
                       ap (
                         fmap<
                           AllRequirementObjects,

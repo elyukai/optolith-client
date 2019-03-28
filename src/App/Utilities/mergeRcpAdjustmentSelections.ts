@@ -107,7 +107,7 @@ const putProfessionVariantSelectionIntoRecord =
 
 const putProfessionSelectionsIntoRecord =
   pipe (
-    Profession.A.selections,
+    Profession.AL.selections,
     foldl<AnyProfessionSelection, Record<ProfessionSelections>> (putProfessionSelectionIntoRecord)
                                                               (ProfessionSelections ({ }))
   )
@@ -116,7 +116,7 @@ const putProfessionVariantSelectionsIntoRecord =
   maybe<(x: Record<ProfessionSelections>) => Record<ProfessionSelections>>
     (ident)
     (pipe (
-      ProfessionVariant.A.selections,
+      ProfessionVariant.AL.selections,
       flip (
         foldl<AnyProfessionVariantSelection, Record<ProfessionSelections>>
           (putProfessionVariantSelectionIntoRecord)

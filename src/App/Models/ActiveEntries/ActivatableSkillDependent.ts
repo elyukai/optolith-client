@@ -50,7 +50,7 @@ export const isActivatableSkillDependent =
     member ("value") (entry)
     && member ("active") (entry)
 
-const { active, value, dependencies } = ActivatableSkillDependent.A
+const { active, value, dependencies } = ActivatableSkillDependent.AL
 
 export const isActivatableSkillDependentUnused =
   (entry: Record<ActivatableSkillDependent>): boolean =>
