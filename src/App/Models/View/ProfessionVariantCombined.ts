@@ -1,17 +1,17 @@
 import { List } from "../../../Data/List";
 import { fromDefault, Record } from "../../../Data/Record";
-import { ActivatableNameCostActive } from "../Hero/heroTypeHelpers";
 import { ProfessionRequireIncreasable } from "../Wiki/prerequisites/IncreasableRequirement";
 import { ProfessionVariant } from "../Wiki/ProfessionVariant";
+import { ActivatableNameCostIsActive } from "./ActivatableNameCostIsActive";
 import { IncreasableForView } from "./IncreasableForView";
 
 export interface ProfessionVariantCombined {
   wikiEntry: Record<ProfessionVariant>
   mappedPrerequisites: List<
-    Record<ActivatableNameCostActive> |
+    Record<ActivatableNameCostIsActive> |
     Record<ProfessionRequireIncreasable>
   >
-  mappedSpecialAbilities: List<Record<ActivatableNameCostActive>>
+  mappedSpecialAbilities: List<Record<ActivatableNameCostIsActive>>
   selections: ProfessionVariant["selections"]
   mappedCombatTechniques: List<Record<IncreasableForView>>
   mappedSkills: List<Record<IncreasableForView>>

@@ -1,5 +1,5 @@
 import { List } from "../../../../Data/List";
-import { fromDefault, member, Record } from "../../../../Data/Record";
+import { fromDefault, makeLenses, member, Record } from "../../../../Data/Record";
 import { AnyProfessionVariantSelection, ProfessionSelectionIds } from "../wikiTypeHelpers";
 
 export interface CombatTechniquesSelection {
@@ -16,6 +16,8 @@ export const CombatTechniquesSelection =
     value: 0,
     sid: List.empty,
   })
+
+export const CombatTechniquesSelectionL = makeLenses (CombatTechniquesSelection)
 
 export const isCombatTechniquesSelection =
   (obj: AnyProfessionVariantSelection): obj is Record<CombatTechniquesSelection> =>

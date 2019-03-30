@@ -1,6 +1,6 @@
 import { equals } from "../../../Data/Eq";
 import { flip, join, on, thrush } from "../../../Data/Function";
-import { fmap } from "../../../Data/Functor";
+import { fmap, fmapF } from "../../../Data/Functor";
 import { compare } from "../../../Data/Int";
 import { set } from "../../../Data/Lens";
 import { all, any, concat, elem, elemF, foldl, ifoldl, isList, List, map, sortBy, subscript } from "../../../Data/List";
@@ -118,39 +118,35 @@ const isSexValid =
     equals (currentSex) (SexRequirement.AL.value (req))
 
 const isRaceValid =
-  (maybeCurrentRace: Maybe<string>) =>
+  (current_race_id: string) =>
   (req: Record<RaceRequirement>): boolean => {
     const value = RaceRequirement.AL.value (req)
 
     if (isList (value)) {
-      return or (fmap<string, boolean> (currentRace => any (pipe (
-                                                                   prefixId (IdPrefixes.RACES),
-                                                                   equals (currentRace)
-                                                                 ))
-                                                           (value))
-                                       (maybeCurrentRace))
+      return any (pipe (
+                         prefixId (IdPrefixes.RACES),
+                         equals (current_race_id)
+                       ))
+                 (value)
     }
 
-    return Maybe.elem (prefixId (IdPrefixes.RACES) (value)) (maybeCurrentRace)
+    return prefixId (IdPrefixes.RACES) (value) === current_race_id
   }
 
 const isCultureValid =
-  (maybeCurrentCulture: Maybe<string>) =>
+  (current_culture_id: string) =>
   (req: Record<CultureRequirement>): boolean => {
     const value = CultureRequirement.AL.value (req)
 
     if (isList (value)) {
-      return or (
-        fmap<string, boolean> (currentCulture => any (pipe (
-                                                             prefixId (IdPrefixes.CULTURES),
-                                                             equals (currentCulture)
-                                                           ))
-                                                     (value))
-                              (maybeCurrentCulture)
-      )
+      return any (pipe (
+                         prefixId (IdPrefixes.CULTURES),
+                         equals (current_culture_id)
+                       ))
+                 (value)
     }
 
-    return Maybe.elem (prefixId (IdPrefixes.CULTURES) (value)) (maybeCurrentCulture)
+    return prefixId (IdPrefixes.CULTURES) (value) === current_culture_id
   }
 
 const hasSamePactCategory =
@@ -363,24 +359,24 @@ const isActivatableValid =
  */
 export const validateObject =
   (wiki: WikiModelRecord) =>
-  (state: HeroModelRecord) =>
+  (hero: HeroModelRecord) =>
   (req: Wiki.AllRequirements) =>
   (sourceId: string): boolean =>
     req === "RCP"
-      ? isRCPValid (wiki) (state) (sourceId)
+      ? isRCPValid (wiki) (hero) (sourceId)
       : isSexRequirement (req)
-      ? isSexValid (sex (state)) (req)
+      ? isSexValid (sex (hero)) (req)
       : isRaceRequirement (req)
-      ? isRaceValid (race (state)) (req)
+      ? or (fmapF (race (hero)) (flip (isRaceValid) (req)))
       : isCultureRequirement (req)
-      ? isCultureValid (culture (state)) (req)
+      ? or (fmapF (culture (hero)) (flip (isCultureValid) (req)))
       : isPactRequirement (req)
-      ? isPactValid (pact (state)) (req)
+      ? isPactValid (pact (hero)) (req)
       : isPrimaryAttributeRequirement (req)
-      ? isPrimaryAttributeValid (state) (req)
+      ? isPrimaryAttributeValid (hero) (req)
       : isRequiringIncreasable (req)
-      ? isIncreasableValid (wiki) (state) (sourceId) (req) (validateObject)
-      : isActivatableValid (wiki) (state) (sourceId) (req) (validateObject)
+      ? isIncreasableValid (wiki) (hero) (sourceId) (req) (validateObject)
+      : isActivatableValid (wiki) (hero) (sourceId) (req) (validateObject)
 
 /**
  * Checks if all requirements are fulfilled.
@@ -455,16 +451,16 @@ export const validateLevel =
  */
 export const validateProfession =
   (prerequisites: List<Wiki.ProfessionDependency>) =>
-  (currentSex: Data.Sex) =>
-  (currentRace: Maybe<string>) =>
-  (currentCulture: Maybe<string>): boolean =>
+  (current_sex: Data.Sex) =>
+  (current_race_id: string) =>
+  (current_culture_id: string): boolean =>
     all<Wiki.ProfessionDependency> (req =>
                                      isSexRequirement (req)
-                                     ? isSexValid (currentSex) (req)
+                                     ? isSexValid (current_sex) (req)
                                      : isRaceRequirement (req)
-                                     ? isRaceValid (currentRace) (req)
+                                     ? isRaceValid (current_race_id) (req)
                                      : isCultureRequirement (req)
-                                     ? isCultureValid (currentCulture) (req)
+                                     ? isCultureValid (current_culture_id) (req)
                                      : false
                                    )
                                    (prerequisites)

@@ -1,19 +1,20 @@
 import { List } from "../../../Data/List";
 import { elem, OrderedSet } from "../../../Data/OrderedSet";
-import { fromDefault, Record } from "../../../Data/Record";
-import { ActivatableNameCostActive } from "../Hero/heroTypeHelpers";
+import { fromDefault, makeLenses, Record } from "../../../Data/Record";
+import { pipe } from "../../Utilities/pipe";
 import { ProfessionRequireIncreasable } from "../Wiki/prerequisites/IncreasableRequirement";
 import { Profession } from "../Wiki/Profession";
+import { ActivatableNameCostIsActive } from "./ActivatableNameCostIsActive";
 import { IncreasableForView } from "./IncreasableForView";
 import { ProfessionVariantCombined } from "./ProfessionVariantCombined";
 
 export interface ProfessionCombined {
   wikiEntry: Record<Profession>
   mappedPrerequisites: List<
-    Record<ActivatableNameCostActive> |
+    Record<ActivatableNameCostIsActive> |
     Record<ProfessionRequireIncreasable>
   >
-  mappedSpecialAbilities: List<Record<ActivatableNameCostActive>>
+  mappedSpecialAbilities: List<Record<ActivatableNameCostIsActive>>
   selections: Profession["selections"]
   mappedCombatTechniques: List<Record<IncreasableForView>>
   mappedPhysicalSkills: List<Record<IncreasableForView>>
@@ -42,6 +43,15 @@ export const ProfessionCombined =
     mappedLiturgicalChants: List.empty,
     mappedVariants: List.empty,
   })
+
+export const ProfessionCombinedL = makeLenses (ProfessionCombined)
+
+export const ProfessionCombinedA_ = {
+  id: pipe (ProfessionCombined.A.wikiEntry, Profession.A.id),
+  gr: pipe (ProfessionCombined.A.wikiEntry, Profession.A.gr),
+  subgr: pipe (ProfessionCombined.A.wikiEntry, Profession.A.subgr),
+  src: pipe (ProfessionCombined.A.wikiEntry, Profession.A.src),
+}
 
 export const isProfessionCombined =
   (x: Record<Profession> | Record<ProfessionCombined>): x is Record<ProfessionCombined> =>

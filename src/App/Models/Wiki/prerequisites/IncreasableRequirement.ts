@@ -1,7 +1,7 @@
 import { fmap } from "../../../../Data/Functor";
 import { all, elemF, isList, List } from "../../../../Data/List";
 import { or } from "../../../../Data/Maybe";
-import { fromDefault, makeLenses, member, Record } from "../../../../Data/Record";
+import { fromDefault, makeLenses, member, Record, RecordCreator } from "../../../../Data/Record";
 import { Categories, IncreasableCategories } from "../../../Constants/Categories";
 import { getCategoryById } from "../../../Utilities/IDUtils";
 import { pipe } from "../../../Utilities/pipe";
@@ -21,6 +21,9 @@ export const RequireIncreasable =
     id: "",
     value: 0,
   })
+
+export const ProfessionRequireIncreasable =
+  RequireIncreasable as RecordCreator<ProfessionRequireIncreasable>
 
 export const RequireIncreasableL = makeLenses (RequireIncreasable)
 
