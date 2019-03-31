@@ -200,27 +200,6 @@ export const getProfessionsCombinedSortOptions = createMaybeSelector (
       (msex)
 )
 
-export const getSkillsSortOptions = createMaybeSelector (
-  getLocaleAsProp,
-  uiSettingsSelectors.getSkillsSortOrder,
-  (l10n, sortOrder): SortOptions<Skill> => {
-    if (sortOrder === "ic") {
-      return [
-        comparingR (Skill.A.ic) (compare),
-        compareName (l10n),
-      ]
-    }
-    else if (sortOrder === "group") {
-      return [
-        comparingR (Skill.A.gr) (compare),
-        compareName (l10n),
-      ]
-    }
-
-    return [ compareName (l10n) ]
-  }
-)
-
 export const getSkillsCombinedSortOptions = createMaybeSelector (
   getLocaleAsProp,
   uiSettingsSelectors.getSkillsSortOrder,

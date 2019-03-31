@@ -1,88 +1,93 @@
-import { EntryRating, Hero } from '../App/Models/Hero/heroTypeHelpers';
-import { SkillCombined, SkillWithRequirements } from '../App/Models/View/viewTypeHelpers';
-import { ExperienceLevel } from '../App/Models/Wiki/wikiTypeHelpers';
-import { createMaybeSelector } from '../App/Utils/createMaybeSelector';
-import { createDependentSkillWithValue0 } from '../Utilities/createEntryUtils';
-import { List, Maybe, OrderedMap, Record } from '../Utilities/dataUtils';
-import { AllSortOptions, filterAndSortObjects } from '../Utilities/FilterSortUtils';
-import { isDecreasable, isIncreasable } from '../Utilities/skillUtils';
-import { getStartEl } from './elSelectors';
-import { getCurrentCulture } from './rcpSelectors';
-import { getSkillsSortOptions } from './sortOptionsSelectors';
-import { getCurrentHeroPresent, getLocaleAsProp, getSkills, getSkillsFilterText, getWiki, getWikiSkills } from './stateSelectors';
+import { flip } from "../../Data/Function";
+import { fmap } from "../../Data/Functor";
+import { foldr, map } from "../../Data/List";
+import { fromMaybe, liftM3, maybe } from "../../Data/Maybe";
+import { elems, insertF, lookup, OrderedMap } from "../../Data/OrderedMap";
+import { uncurryN, uncurryN3, uncurryN4 } from "../../Data/Pair";
+import { createPlainSkillDependent } from "../Models/ActiveEntries/SkillDependent";
+import { HeroModel } from "../Models/Hero/HeroModel";
+import { EntryRating } from "../Models/Hero/heroTypeHelpers";
+import { SkillCombined } from "../Models/View/SkillCombined";
+import { SkillWithRequirements } from "../Models/View/SkillWithRequirements";
+import { Culture } from "../Models/Wiki/Culture";
+import { Skill } from "../Models/Wiki/Skill";
+import { createMaybeSelector } from "../Utilities/createMaybeSelector";
+import { filterAndSortRecordsBy } from "../Utilities/filterAndSortBy";
+import { prefixAdv } from "../Utilities/IDUtils";
+import { isSkillDecreasable, isSkillIncreasable } from "../Utilities/Increasable/skillUtils";
+import { pipe, pipe_ } from "../Utilities/pipe";
+import { getStartEl } from "./elSelectors";
+import { getCurrentCulture } from "./rcpSelectors";
+import { getSkillsCombinedSortOptions } from "./sortOptionsSelectors";
+import { getCurrentHeroPresent, getSkills, getSkillsFilterText, getWiki, getWikiSkills } from "./stateSelectors";
+
+const HA = HeroModel.A
+const SA = Skill.A
+const SCA = SkillCombined.A
+const CA = Culture.A
 
 export const getAllSkills = createMaybeSelector (
-  getSkills,
   getWikiSkills,
-  (maybeSkills, wikiSkills) =>
-    Maybe.fromMaybe<List<Record<SkillCombined>>> (List.of ()) (
-      maybeSkills.fmap (
-        skills => wikiSkills
-          .map (
-            wikiSkill => wikiSkill .merge (
-              Maybe.fromMaybe
-                (createDependentSkillWithValue0 (wikiSkill .get ('id')))
-                (skills .lookup (wikiSkill .get ('id')))
-            )
-          )
-          .elems ()
-      )
-    )
-);
+  getSkills,
+  uncurryN (wiki_skills =>
+              fmap (hero_skills => pipe_ (
+                     wiki_skills,
+                     elems,
+                     map (wiki_entry =>
+                            SkillCombined ({
+                              stateEntry:
+                                fromMaybe (createPlainSkillDependent (SA.id (wiki_entry)))
+                                          (lookup (SA.id (wiki_entry))
+                                                  (hero_skills)),
+                              wikiEntry: wiki_entry,
+                            }))
+                   )))
+)
 
 export const getSkillsWithRequirements = createMaybeSelector (
-  getAllSkills,
   getWiki,
   getCurrentHeroPresent,
   getStartEl,
-  (skills, wiki, maybeHero, maybeStartEl) =>
-    Maybe.liftM2<Hero, Record<ExperienceLevel>, List<Record<SkillWithRequirements>>>
-      (hero => startEl => skills .map<Record<SkillWithRequirements>> (
-        skill => skill .merge (
-          Record.of ({
-            isIncreasable: isIncreasable (
-              skill,
-              startEl,
-              hero .get ('phase'),
-              hero .get ('attributes'),
-              hero .get ('advantages') .lookup ('ADV_16')
-            ),
-            isDecreasable: isDecreasable (wiki, hero, skill),
-          })
-        )
-      ))
-      (maybeHero)
-      (maybeStartEl)
-);
+  getAllSkills,
+  uncurryN4 (wiki =>
+              liftM3 (hero =>
+                      start_el =>
+                        map (x =>
+                              SkillWithRequirements ({
+                                isDecreasable: isSkillDecreasable (wiki)
+                                                                  (hero)
+                                                                  (x),
+                                isIncreasable: isSkillIncreasable (start_el)
+                                                                  (HA.phase (hero))
+                                                                  (HA.attributes (hero))
+                                                                  (lookup (prefixAdv (16))
+                                                                          (HA.advantages (hero)))
+                                                                  (x),
+                                stateEntry: SCA.stateEntry (x),
+                                wikiEntry: SCA.wikiEntry (x),
+                              }))))
+)
 
 export const getFilteredSkills = createMaybeSelector (
-  getSkillsWithRequirements,
-  getSkillsSortOptions,
+  getSkillsCombinedSortOptions,
   getSkillsFilterText,
-  getLocaleAsProp,
-  (maybeSkills, sortOptions, filterText, locale) => maybeSkills .fmap (
-    skills => filterAndSortObjects (
-      skills,
-      locale.get ('id'),
-      filterText,
-      sortOptions as AllSortOptions<SkillWithRequirements>
-    )
-  )
-);
+  getSkillsWithRequirements,
+  uncurryN3 (sort_options =>
+             filter_text =>
+               fmap (filterAndSortRecordsBy (0)
+                                            ([pipe (SCA.wikiEntry, SA.name)])
+                                            (sort_options)
+                                            (filter_text)))
+)
 
 export const getSkillRating = createMaybeSelector (
   getCurrentCulture,
-  maybeCulture =>
-    Maybe.fromMaybe<OrderedMap<string, EntryRating>> (OrderedMap.empty ()) (
-      maybeCulture.fmap (
-        culture => R.pipe (
-          culture.get ('commonSkills').foldl<OrderedMap<string, EntryRating>> (
-            acc => id => acc.insert (id) (EntryRating.Common)
-          ),
-          culture.get ('uncommonSkills').foldl (
-            acc => id => acc.insert (id) (EntryRating.Uncommon)
-          )
-        ) (OrderedMap.empty ())
-      )
-    )
-);
+  maybe (OrderedMap.empty as OrderedMap<string, EntryRating>)
+        (c => pipe_ (
+          OrderedMap.empty as OrderedMap<string, EntryRating>,
+          flip (foldr (insertF<EntryRating> (EntryRating.Common)))
+               (CA.commonSkills (c)),
+          flip (foldr (insertF<EntryRating> (EntryRating.Uncommon)))
+               (CA.uncommonSkills (c))
+        ))
+)

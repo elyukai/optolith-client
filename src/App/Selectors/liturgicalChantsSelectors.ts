@@ -78,7 +78,7 @@ export const getActiveLiturgicalChants = createMaybeSelector (
   mapGetToMaybeSlice (getSpecialAbilities) (prefixSA (87)),
   getWiki,
   getCurrentHeroPresent,
-  (mblessed_trad, mstart_el, mexceptionalSkill, maspectKnowledge, wiki, mhero) =>
+  (mblessed_trad, mstart_el, mexceptional_skill, maspect_knowledge, wiki, mhero) =>
     bind (mblessed_trad)
          (blessed_trad =>
            liftM2 ((hero: HeroModelRecord) => (start_el: Record<ExperienceLevel>) =>
@@ -99,12 +99,12 @@ export const getActiveLiturgicalChants = createMaybeSelector (
                                                                           (start_el)
                                                                           (HA.phase (hero))
                                                                           (HA.attributes (hero))
-                                                                          (mexceptionalSkill)
-                                                                          (maspectKnowledge),
+                                                                          (mexceptional_skill)
+                                                                          (maspect_knowledge),
                                            isDecreasable:
                                              isLiturgicalChantDecreasable (wiki)
                                                                           (hero)
-                                                                          (maspectKnowledge)
+                                                                          (maspect_knowledge)
                                                                           (wiki_entry)
                                                                           (hero_entry),
                                            stateEntry: hero_entry,

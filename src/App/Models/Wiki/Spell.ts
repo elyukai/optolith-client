@@ -1,6 +1,6 @@
 import { List } from "../../../Data/List";
 import { OrderedSet } from "../../../Data/OrderedSet";
-import { fromDefault, Record } from "../../../Data/Record";
+import { fromDefault, makeLenses, Record } from "../../../Data/Record";
 import { Categories } from "../../Constants/Categories";
 import { SourceLink } from "./sub/SourceLink";
 import { AllRequirementObjects, CheckModifier, EntryWithCategory } from "./wikiTypeHelpers";
@@ -55,6 +55,8 @@ export const Spell =
     target: "",
     src: List.empty,
   })
+
+export const SpellL = makeLenses (Spell)
 
 export const isSpell =
   (r: EntryWithCategory) => Spell.AL.category (r) === Categories.SPELLS

@@ -339,6 +339,18 @@ test ('insert', () => {
     .toEqual(fromArray ([[1, 'a'], [2, 'b'], [3, 'd']]))
 })
 
+test ('insertF', () => {
+  expect (OrderedMap.insertF ('d')
+                             (4)
+                             (fromArray ([[1, 'a'], [2, 'b'], [3, 'c']])))
+    .toEqual(fromArray ([[1, 'a'], [2, 'b'], [3, 'c'], [4, 'd']]))
+
+  expect (OrderedMap.insertF ('d')
+                             (3)
+                             (fromArray ([[1, 'a'], [2, 'b'], [3, 'c']])))
+    .toEqual(fromArray ([[1, 'a'], [2, 'b'], [3, 'd']]))
+})
+
 test ('insertWith', () => {
   expect (OrderedMap.insertWith (x => old => old + x)
                                 (4)

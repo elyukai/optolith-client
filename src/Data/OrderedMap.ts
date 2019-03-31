@@ -517,6 +517,23 @@ export const insert =
 export type insert<K, A> = (key: K) => (value: A) => (mp: OrderedMap<K, A>) => OrderedMap<K, A>
 
 /**
+ * `insertF :: Ord k => a -> k -> Map k a -> Map k a`
+ *
+ * Insert a new key and value in the map. If the key is already present in the
+ * map, the associated value is replaced with the supplied value. `insertF` is
+ * equivalent to `flip (insertWith const)`.
+ *
+ * Flipped version of `insert`.
+ */
+export const insertF =
+  <A>
+  (value: A) =>
+  <K>
+  (key: K) =>
+  (mp: OrderedMap<K, A>): OrderedMap<K, A> =>
+    fromArray ([...mp .value, [key, value]])
+
+/**
  * `insertWith :: Ord k => (a -> a -> a) -> k -> a -> Map k a -> Map k a`
  *
  * Insert with a function, combining new value and old value.
@@ -1111,6 +1128,7 @@ export const OrderedMap = {
   singleton,
 
   insert,
+  insertF,
   insertWith,
   insertWithKey,
   insertLookupWithKey,
