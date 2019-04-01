@@ -27,5 +27,5 @@ export const isBoolean =
     typeof arg === "boolean"
 
 export const isFunction =
-  <A, A1 extends (() => any)> (arg: A | A1): arg is A1 =>
+  <A, A1 extends ((x?: any) => any)> (arg: A | A1): arg is A1 =>
     typeof arg === "function"

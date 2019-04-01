@@ -7,12 +7,15 @@
  * @author Lukas Obermann
  */
 
+import { pipe } from "../App/Utilities/pipe";
+import { isFunction } from "../App/Utilities/typeCheckUtils";
 import { Identity, isIdentity, runIdentity } from "../Control/Monad/Identity";
 import { IO, isIO } from "../System/IO";
-import { Either, isEither, isLeft, Right } from "./Either";
+import { Either, first, isEither, isLeft, Right } from "./Either";
 import { cnst } from "./Function";
 import { Const, isConst } from "./Functor/Const";
 import { Cons, isList, isNil, List, Nil } from "./List";
+import { isMarket, Market } from "./Market";
 import { isMaybe, isNothing, Just, Maybe } from "./Maybe";
 import { isOrderedMap, OrderedMap } from "./OrderedMap";
 import { isPair, Pair } from "./Pair";
@@ -26,6 +29,8 @@ export type Functor<A> = Const<A>
                        | Maybe<A>
                        | OrderedMap<any, A>
                        | Pair<any, A>
+                       | ((x: any) => A)
+                       | Market<any, any, any, A>
 
 export type FunctorMap<A, B> =
   <F extends Functor<A>>
@@ -38,6 +43,8 @@ export type FunctorMap<A, B> =
     F extends Maybe<A> ? Maybe<B> :
     F extends OrderedMap<infer K, A> ? OrderedMap<K, B> :
     F extends Pair<infer A1, A> ? Pair<A1, B> :
+    F extends ((x: infer I) => A) ? (x: I) => B :
+    F extends Market<infer A_, infer B_, infer S_, A> ? Market<A_, B_, S_, B> :
     never
 
 /**
@@ -46,7 +53,7 @@ export type FunctorMap<A, B> =
 export const fmap =
   <A, B>
   (f: (x: A) => B): FunctorMap<A, B> =>
-  (x: any): any => {
+  (x: Functor<any>): any => {
     if (isList (x)) {
       if (isNil (x)) {
         return Nil
@@ -124,18 +131,28 @@ export const fmap =
       return Pair (x .first, f (x .second))
     }
 
+    if (isFunction (x)) {
+      return pipe (x, f)
+    }
+
+    if (isMarket (x)) {
+      return Market (pipe (x.to, f)) (pipe (x.fro, first (f)))
+    }
+
     throw new TypeError (instanceErrorMsg ("fmap") (x))
   }
 
 interface fmapF {
-  <A0> (x: Const<A0>): <B> (f: (x: A0) => B) => Const<A0>;
-  <E, A> (x: Either<E, A>): <B> (f: (x: A) => B) => Either<E, B>;
-  <A> (x: Identity<A>): <B> (f: (x: A) => B) => Identity<B>;
-  <A> (x: IO<A>): <B> (f: (x: A) => B) => IO<B>;
-  <A> (x: List<A>): <B> (f: (x: A) => B) => List<B>;
-  <A> (x: Maybe<A>): <B> (f: (x: A) => B) => Maybe<B>;
-  <K, A> (x: OrderedMap<K, A>): <B> (f: (x: A) => B) => OrderedMap<K, B>;
-  <A1, A> (x: Pair<A1, A>): <B> (f: (x: A) => B) => Pair<A1, B>;
+  <A0> (x: Const<A0>): <B> (f: (x: A0) => B) => Const<A0>
+  <E, A> (x: Either<E, A>): <B> (f: (x: A) => B) => Either<E, B>
+  <A> (x: Identity<A>): <B> (f: (x: A) => B) => Identity<B>
+  <A> (x: IO<A>): <B> (f: (x: A) => B) => IO<B>
+  <A> (x: List<A>): <B> (f: (x: A) => B) => List<B>
+  <A> (x: Maybe<A>): <B> (f: (x: A) => B) => Maybe<B>
+  <K, A> (x: OrderedMap<K, A>): <B> (f: (x: A) => B) => OrderedMap<K, B>
+  <A1, A> (x: Pair<A1, A>): <B> (f: (x: A) => B) => Pair<A1, B>
+  <A, R> (f: (x: A) => R): <S> (f: (x: A) => S) => (x: A) => S
+  <A, B, S, A0> (x: Market<A, B, S, A0>): <B0> (f: (x: A0) => B0) => Market<A, B, S, B0>
 }
 
 /**
