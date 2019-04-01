@@ -1,13 +1,14 @@
 import { ident, thrush } from "../../Data/Function";
-import { fmap } from "../../Data/Functor";
+import { fmap, fmapF } from "../../Data/Functor";
 import { consF, countWith, elemF, List, map, notNull, partition } from "../../Data/List";
 import { all, bindF, elem, ensure, fromMaybe_, liftM2, liftM4, liftM5, listToMaybe, mapMaybe, Maybe, Nothing } from "../../Data/Maybe";
 import { elems, lookup, lookupF, OrderedMap } from "../../Data/OrderedMap";
 import { member } from "../../Data/OrderedSet";
-import { fst, snd, uncurryN, uncurryN3, uncurryN4, uncurryN7 } from "../../Data/Pair";
+import { fst, snd, uncurryN, uncurryN3, uncurryN4, uncurryN8 } from "../../Data/Pair";
 import { Record } from "../../Data/Record";
 import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent, createInactiveActivatableSkillDependent } from "../Models/ActiveEntries/ActivatableSkillDependent";
+import { ActiveObject } from "../Models/ActiveEntries/ActiveObject";
 import { HeroModel, HeroModelRecord } from "../Models/Hero/HeroModel";
 import { CantripCombined } from "../Models/View/CantripCombined";
 import { SpellWithRequirements, SpellWithRequirementsL } from "../Models/View/SpellWithRequirements";
@@ -26,6 +27,7 @@ import { pipe, pipe_ } from "../Utilities/pipe";
 import { validatePrerequisites } from "../Utilities/Prerequisites/validatePrerequisitesUtils";
 import { filterByAvailability } from "../Utilities/RulesUtils";
 import { mapGetToMaybeSlice } from "../Utilities/SelectorsUtils";
+import { misNumberM } from "../Utilities/typeCheckUtils";
 import { getStartEl } from "./elSelectors";
 import { getRuleBooksEnabled } from "./rulesSelectors";
 import { getSpellsSortOptions } from "./sortOptionsSelectors";
@@ -36,6 +38,7 @@ const HA = HeroModel.A
 const WA = WikiModel.A
 const ELA = ExperienceLevel.A
 const ADA = ActivatableDependent.A
+const AOA = ActiveObject.A
 const ASDA = ActivatableSkillDependent.A
 const CA = Cantrip.A
 const CCA = CantripCombined.A
@@ -191,7 +194,7 @@ export const getInactiveSpells = createMaybeSelector (
   getIsMaximumOfSpellsReached,
   getAreMaxUnfamiliar,
   getSpells,
-  uncurryN7 (
+  uncurryN8 (
     wiki =>
     mtrads_hero =>
     wiki_spells =>
@@ -200,10 +203,6 @@ export const getInactiveSpells = createMaybeSelector (
               is_max =>
               is_max_unfamiliar =>
               hero_spells => {
-        if (is_max) {
-          return List<Combined> ()
-        }
-
         const isLastTrad = pipe_ (trads_wiki, listToMaybe, fmap (SAA.id), Maybe.elemF)
 
         const isSpellPrereqsValid =
@@ -214,11 +213,16 @@ export const getInactiveSpells = createMaybeSelector (
                                   (SA.id (entry))
 
         if (isLastTrad (prefixSA (679))) {
+          if (is_max) {
+            return List<Combined> ()
+          }
+
           const f = (k: string) => (wiki_entry: Record<Spell>) => {
             const mhero_entry = lookup (k) (hero_spells)
 
             if (isSpellPrereqsValid (wiki_entry)
-                && (isOwnTradition (trads_wiki) (wiki_entry) || is_max_unfamiliar)
+                && SA.gr (wiki_entry) < 3
+                && (isOwnTradition (trads_wiki) (wiki_entry) || !is_max_unfamiliar)
                 && all (notP (ASDA.active)) (mhero_entry)) {
               return consF (SpellWithRequirements ({
                 wikiEntry: wiki_entry,
@@ -238,12 +242,25 @@ export const getInactiveSpells = createMaybeSelector (
         }
 
         if (isLastTrad (prefixSA (677)) || isLastTrad (prefixSA (678))) {
-          // TODO
+          if (is_max) {
+            return List<Combined> ()
+          }
+
+          const msub_trad =
+            pipe_ (
+              mtrads_hero,
+              bindF (listToMaybe),
+              bindF (pipe (ADA.active, listToMaybe)),
+              bindF (AOA.sid),
+              misNumberM
+            )
+
           const g = (k: string) => (wiki_entry: Record<Spell>) => {
             const mhero_entry = lookup (k) (hero_spells)
 
             if (isSpellPrereqsValid (wiki_entry)
-                && (isOwnTradition (trads_wiki) (wiki_entry) || is_max_unfamiliar)
+                && isOwnTradition (trads_wiki) (wiki_entry)
+                && Maybe.or (fmapF (msub_trad) (elemF (SA.subtradition (wiki_entry))))
                 && all (notP (ASDA.active)) (mhero_entry)) {
               return consF (SpellWithRequirements ({
                 wikiEntry: wiki_entry,
@@ -265,7 +282,11 @@ export const getInactiveSpells = createMaybeSelector (
         const h = (k: string) => (wiki_entry: Record<Spell>) => {
           const mhero_entry = lookup (k) (hero_spells)
 
-          if (all (notP (ASDA.active)) (mhero_entry)) {
+          if ((!is_max || SA.gr (wiki_entry) > 2)
+              && isSpellPrereqsValid (wiki_entry)
+              && (isOwnTradition (trads_wiki) (wiki_entry)
+                  || (SA.gr (wiki_entry) < 3 && !is_max_unfamiliar))
+              && all (notP (ASDA.active)) (mhero_entry)) {
             return consF (SpellWithRequirements ({
               wikiEntry: wiki_entry,
               stateEntry:
@@ -285,87 +306,6 @@ export const getInactiveSpells = createMaybeSelector (
       }))
 )
 
-type ListCombined = List<Record<SpellWithRequirements> | Record<CantripCombined>>
-
-export const getInactiveSpells_ = createMaybeSelector (
-  getUnfilteredInactiveSpells,
-  getAreMaxUnfamiliar,
-  getIsMaximumOfSpellsReached,
-  getCurrentHeroPresent,
-  getMagicalTraditionsFromHero,
-  getMagicalTraditionsFromWiki,
-  getWiki,
-  (
-    maybeUnfilteredInactiveSpells,
-    areMaxUnfamiliar,
-    isMaximumOfSpellsReached,
-    maybeHero,
-    maybeStateTraditions,
-    maybeTraditions,
-    wiki
-  ) => maybeHero.bind (
-    hero => maybeTraditions.bind (
-      traditions => maybeStateTraditions.bind (
-        stateTraditions =>
-          maybeUnfilteredInactiveSpells.fmap<InactiveSpells> (
-            unfilteredInactiveSpells => {
-              if (traditions.null ()) {
-                return emptyInactiveSpells
-              }
-
-              const lastTraditionId = Maybe.listToMaybe (traditions)
-                .fmap (tradition => tradition.get ("id"))
-
-              const validateSpellPrerequisites = (entry: Record<SpellIsActive>) =>
-                validatePrerequisites (wiki, hero, entry.get ("prerequisites"), entry.get ("id"))
-
-              if (Maybe.elem ("SA_679") (lastTraditionId)) {
-                return unfilteredInactiveSpells.elems ()
-                  .partition (
-                    entry => entry.get ("gr") < 3
-                      && !isMaximumOfSpellsReached
-                      && validateSpellPrerequisites (entry)
-                      && (
-                        isOwnTradition (traditions, entry as unknown as Record<Spell>)
-                        || !areMaxUnfamiliar
-                      )
-                  )
-              }
-
-              if (
-                Maybe.elem ("SA_677") (lastTraditionId)
-                || Maybe.elem ("SA_678") (lastTraditionId)
-              ) {
-                return Maybe.fromMaybe (emptyInactiveSpells) (
-                  Maybe.listToMaybe (stateTraditions)
-                    .fmap (tradition => tradition.get ("active"))
-                    .bind (Maybe.listToMaybe)
-                    .bind (active => active.lookup ("sid"))
-                    .fmap (
-                      subTradition => unfilteredInactiveSpells.elems ()
-                        .partition (
-                          entry => entry.get ("subtradition").elem (subTradition as number)
-                        )
-                    )
-                )
-              }
-
-              return unfilteredInactiveSpells.elems ()
-                .partition (
-                  entry => (!isMaximumOfSpellsReached || entry.get ("gr") > 2)
-                    && validateSpellPrerequisites (entry)
-                    && (
-                      isOwnTradition (traditions, entry as unknown as Record<Spell>)
-                      || (entry.get ("gr") < 3 && !areMaxUnfamiliar)
-                    )
-                )
-            }
-          )
-      )
-    )
-  )
-)
-
 export const getAvailableInactiveSpells = createMaybeSelector (
   getInactiveSpells,
   getRuleBooksEnabled,
@@ -375,6 +315,8 @@ export const getAvailableInactiveSpells = createMaybeSelector (
     )
   )
 )
+
+type ListCombined = List<Record<SpellWithRequirements> | Record<CantripCombined>>
 
 type ActiveListCombined = List<Record<SpellWithRequirements> | Record<CantripCombined>>
 type InactiveListCombined = List<Record<SpellIsActive> | Record<CantripCombined>>
