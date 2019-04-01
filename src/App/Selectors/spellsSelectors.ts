@@ -1,10 +1,10 @@
 import { ident, thrush } from "../../Data/Function";
 import { fmap } from "../../Data/Functor";
 import { consF, countWith, elemF, List, map, notNull, partition } from "../../Data/List";
-import { all, bindF, elem, ensure, fromMaybe_, liftM2, liftM4, mapMaybe, Maybe, Nothing } from "../../Data/Maybe";
+import { all, bindF, elem, ensure, fromMaybe_, liftM2, liftM4, liftM5, listToMaybe, mapMaybe, Maybe, Nothing } from "../../Data/Maybe";
 import { elems, lookup, lookupF, OrderedMap } from "../../Data/OrderedMap";
 import { member } from "../../Data/OrderedSet";
-import { fst, snd, uncurryN, uncurryN3, uncurryN4 } from "../../Data/Pair";
+import { fst, snd, uncurryN, uncurryN3, uncurryN4, uncurryN7 } from "../../Data/Pair";
 import { Record } from "../../Data/Record";
 import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent, createInactiveActivatableSkillDependent } from "../Models/ActiveEntries/ActivatableSkillDependent";
@@ -13,15 +13,17 @@ import { CantripCombined } from "../Models/View/CantripCombined";
 import { SpellWithRequirements, SpellWithRequirementsL } from "../Models/View/SpellWithRequirements";
 import { Cantrip } from "../Models/Wiki/Cantrip";
 import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel";
+import { SpecialAbility } from "../Models/Wiki/SpecialAbility";
 import { Spell, SpellL } from "../Models/Wiki/Spell";
 import { WikiModel } from "../Models/Wiki/WikiModel";
 import { getModifierByActiveLevel } from "../Utilities/Activatable/activatableModifierUtils";
-import { getMagicalTraditions } from "../Utilities/Activatable/traditionUtils";
+import { getMagicalTraditionsHeroEntries } from "../Utilities/Activatable/traditionUtils";
 import { createMaybeSelector } from "../Utilities/createMaybeSelector";
 import { prefixAdv, prefixSA } from "../Utilities/IDUtils";
 import { isOwnTradition, isSpellDecreasable, isSpellIncreasable } from "../Utilities/Increasable/spellUtils";
 import { notP } from "../Utilities/not";
 import { pipe, pipe_ } from "../Utilities/pipe";
+import { validatePrerequisites } from "../Utilities/Prerequisites/validatePrerequisitesUtils";
 import { filterByAvailability } from "../Utilities/RulesUtils";
 import { mapGetToMaybeSlice } from "../Utilities/SelectorsUtils";
 import { getStartEl } from "./elSelectors";
@@ -41,15 +43,16 @@ const SWRA = SpellWithRequirements.A
 const SWRL = SpellWithRequirementsL
 const SA = Spell.A
 const SL = SpellL
+const SAA = SpecialAbility.A
 
-export const getMagicalTraditionsFromState = createMaybeSelector (
+export const getMagicalTraditionsFromHero = createMaybeSelector (
   getSpecialAbilities,
-  fmap (getMagicalTraditions)
+  fmap (getMagicalTraditionsHeroEntries)
 )
 
-export const getMagicalTraditionsFromWikiState = createMaybeSelector (
+export const getMagicalTraditionsFromWiki = createMaybeSelector (
   getWikiSpecialAbilities,
-  getMagicalTraditionsFromState,
+  getMagicalTraditionsFromHero,
   uncurryN (
     wiki_special_abilities =>
       fmap (mapMaybe (pipe (ActivatableDependent.A.id, lookupF (wiki_special_abilities))))
@@ -57,7 +60,7 @@ export const getMagicalTraditionsFromWikiState = createMaybeSelector (
 )
 
 export const getIsSpellsTabAvailable = createMaybeSelector (
-  getMagicalTraditionsFromState,
+  getMagicalTraditionsFromHero,
   pipe (fmap (notNull), elem<boolean> (true))
 )
 
@@ -129,7 +132,7 @@ export const getInactiveCantrips = createMaybeSelector (
 )
 
 export const getAreMaxUnfamiliar = createMaybeSelector (
-  getMagicalTraditionsFromWikiState,
+  getMagicalTraditionsFromWiki,
   getPhase,
   getStartEl,
   getActiveSpells,
@@ -177,49 +180,120 @@ export const getIsMaximumOfSpellsReached = createMaybeSelector (
                      }))
 )
 
-export const getInactiveLiturgicalChants = createMaybeSelector (
-  getWikiSpells,
-  getSpells,
-  uncurryN (wiki_spells =>
-    fmap (hero_spells =>
-      OrderedMap.foldrWithKey ((k: string) => (wiki_entry: Record<Spell>) => {
-                                const mhero_entry = lookup (k) (hero_spells)
-
-                                if (all (notP (ASDA.active)) (mhero_entry)) {
-                                  return consF (SpellWithRequirements ({
-                                    wikiEntry: wiki_entry,
-                                    stateEntry:
-                                     fromMaybe_ (() =>
-                                                  createInactiveActivatableSkillDependent (k))
-                                                (mhero_entry),
-                                    isDecreasable: Nothing,
-                                    isIncreasable: Nothing,
-                                  }))
-                                }
-
-                                return ident as ident<List<Record<SpellWithRequirements>>>
-                              })
-                              (List ())
-                              (wiki_spells)))
-)
-
-/**
- * `Tuple.fst InactiveSpells` are valid spells, `Tuple.snd InactiveSpells` are
- * invalid spells concerning the current tradition(s) and general state.
- */
-export type InactiveSpells = Tuple<List<Record<SpellIsActive>>, List<Record<SpellIsActive>>>
-
-const emptyInactiveSpells: InactiveSpells = (
-  Tuple.of<List<Record<SpellIsActive>>, List<Record<SpellIsActive>>> (List.of ()) (List.of ())
-)
+type Combined = Record<SpellWithRequirements>
 
 export const getInactiveSpells = createMaybeSelector (
+  getWiki,
+  getMagicalTraditionsFromHero,
+  getWikiSpells,
+  getCurrentHeroPresent,
+  getMagicalTraditionsFromWiki,
+  getIsMaximumOfSpellsReached,
+  getAreMaxUnfamiliar,
+  getSpells,
+  uncurryN7 (
+    wiki =>
+    mtrads_hero =>
+    wiki_spells =>
+      liftM5 (hero =>
+              trads_wiki =>
+              is_max =>
+              is_max_unfamiliar =>
+              hero_spells => {
+        if (is_max) {
+          return List<Combined> ()
+        }
+
+        const isLastTrad = pipe_ (trads_wiki, listToMaybe, fmap (SAA.id), Maybe.elemF)
+
+        const isSpellPrereqsValid =
+          (entry: Record<Spell>) =>
+            validatePrerequisites (wiki)
+                                  (hero)
+                                  (SA.prerequisites (entry))
+                                  (SA.id (entry))
+
+        if (isLastTrad (prefixSA (679))) {
+          const f = (k: string) => (wiki_entry: Record<Spell>) => {
+            const mhero_entry = lookup (k) (hero_spells)
+
+            if (isSpellPrereqsValid (wiki_entry)
+                && (isOwnTradition (trads_wiki) (wiki_entry) || is_max_unfamiliar)
+                && all (notP (ASDA.active)) (mhero_entry)) {
+              return consF (SpellWithRequirements ({
+                wikiEntry: wiki_entry,
+                stateEntry: fromMaybe_ (() => createInactiveActivatableSkillDependent (k))
+                                       (mhero_entry),
+                isDecreasable: Nothing,
+                isIncreasable: Nothing,
+              }))
+            }
+
+            return ident as ident<List<Record<SpellWithRequirements>>>
+          }
+
+          return OrderedMap.foldrWithKey (f)
+                                         (List ())
+                                         (wiki_spells)
+        }
+
+        if (isLastTrad (prefixSA (677)) || isLastTrad (prefixSA (678))) {
+          // TODO
+          const g = (k: string) => (wiki_entry: Record<Spell>) => {
+            const mhero_entry = lookup (k) (hero_spells)
+
+            if (isSpellPrereqsValid (wiki_entry)
+                && (isOwnTradition (trads_wiki) (wiki_entry) || is_max_unfamiliar)
+                && all (notP (ASDA.active)) (mhero_entry)) {
+              return consF (SpellWithRequirements ({
+                wikiEntry: wiki_entry,
+                stateEntry: fromMaybe_ (() => createInactiveActivatableSkillDependent (k))
+                                       (mhero_entry),
+                isDecreasable: Nothing,
+                isIncreasable: Nothing,
+              }))
+            }
+
+            return ident as ident<List<Record<SpellWithRequirements>>>
+          }
+
+          return OrderedMap.foldrWithKey (g)
+                                         (List ())
+                                         (wiki_spells)
+        }
+
+        const h = (k: string) => (wiki_entry: Record<Spell>) => {
+          const mhero_entry = lookup (k) (hero_spells)
+
+          if (all (notP (ASDA.active)) (mhero_entry)) {
+            return consF (SpellWithRequirements ({
+              wikiEntry: wiki_entry,
+              stateEntry:
+                fromMaybe_ (() => createInactiveActivatableSkillDependent (k))
+                           (mhero_entry),
+              isDecreasable: Nothing,
+              isIncreasable: Nothing,
+            }))
+          }
+
+          return ident as ident<List<Record<SpellWithRequirements>>>
+        }
+
+        return OrderedMap.foldrWithKey (h)
+                                       (List ())
+                                       (wiki_spells)
+      }))
+)
+
+type ListCombined = List<Record<SpellWithRequirements> | Record<CantripCombined>>
+
+export const getInactiveSpells_ = createMaybeSelector (
   getUnfilteredInactiveSpells,
   getAreMaxUnfamiliar,
   getIsMaximumOfSpellsReached,
   getCurrentHeroPresent,
-  getMagicalTraditionsFromState,
-  getMagicalTraditionsFromWikiState,
+  getMagicalTraditionsFromHero,
+  getMagicalTraditionsFromWiki,
   getWiki,
   (
     maybeUnfilteredInactiveSpells,
@@ -367,7 +441,7 @@ export const isActivationDisabled = createMaybeSelector (
   getStartEl,
   getPhase,
   getActiveSpellsCounter,
-  getMagicalTraditionsFromState,
+  getMagicalTraditionsFromHero,
   mapGetToMaybeSlice (getAdvantages, "ADV_58"),
   mapGetToMaybeSlice (getDisadvantages, "DISADV_59"),
   (
@@ -420,7 +494,7 @@ export const getCantripsForSheet = createMaybeSelector (
 
 export const getSpellsForSheet = createMaybeSelector (
   getActiveSpellsCombined,
-  getMagicalTraditionsFromWikiState,
+  getMagicalTraditionsFromWiki,
   getLocaleAsProp,
   (maybeSpells, maybeTraditions, locale) =>
     maybeSpells

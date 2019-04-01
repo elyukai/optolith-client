@@ -4,7 +4,7 @@ import { bindF, Just, listToMaybe, Maybe, Nothing } from "../../Data/Maybe";
 import { OrderedMap } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
 import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
-import { getBlessedTradition, getMagicalTraditions } from "./Activatable/traditionUtils";
+import { getBlessedTradition, getMagicalTraditionsHeroEntries } from "./Activatable/traditionUtils";
 import * as IDUtils from "./IDUtils";
 import { match } from "./match";
 import { pipe } from "./pipe";
@@ -45,7 +45,7 @@ export const getPrimaryAttributeId =
                       IDUtils.getNumericMagicalTraditionIdByInstanceId,
                       getAttributeIdByMagicalNumericId
                     ))
-                    (listToMaybe (getMagicalTraditions (state)))
+                    (listToMaybe (getMagicalTraditionsHeroEntries (state)))
       )
       .on (
         2,

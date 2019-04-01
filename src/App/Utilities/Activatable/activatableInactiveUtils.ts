@@ -36,7 +36,7 @@ import { getAllEntriesByGroup } from "../heroStateUtils";
 import { getBlessedTradStrIdFromNumId } from "../IDUtils";
 import { getTraditionOfAspect } from "../Increasable/liturgicalChantUtils";
 import { add, gt, gte, inc, lt, lte, multiply, subtract } from "../mathUtils";
-import { pipe } from "../pipe";
+import { pipe, pipe_ } from "../pipe";
 import { validateLevel, validatePrerequisites } from "../Prerequisites/validatePrerequisitesUtils";
 import { sortRecordsByName } from "../sortBy";
 import { isNumber, isString, misStringM } from "../typeCheckUtils";
@@ -45,7 +45,7 @@ import { getModifierByActiveLevel } from "./activatableModifierUtils";
 import { countActiveSkillEntries } from "./activatableSkillUtils";
 import { isMaybeActive } from "./isActive";
 import { findSelectOption, getActiveSecondarySelections, getActiveSelectionsMaybe, getRequiredSelections } from "./selectionUtils";
-import { getBlessedTradition, getMagicalTraditions } from "./traditionUtils";
+import { getBlessedTradition, getMagicalTraditionsHeroEntries } from "./traditionUtils";
 
 const {
   combatTechniques,
@@ -716,7 +716,7 @@ const modifyOtherOptions =
       case "SA_681": {
         return pipe (
                       hero_specialAbilities,
-                      getMagicalTraditions,
+                      getMagicalTraditionsHeroEntries,
                       ensure (List.fnull),
                       mapReplace (ident)
                     )
@@ -866,7 +866,12 @@ const modifyOtherOptions =
         return mapReplace (ident)
                           (guard (spentOnMagicalAdvantages (ap) <= 25
                                   && spentOnMagicalDisadvantages (ap) <= 25
-                                  && fnull (getMagicalTraditions (hero_specialAbilities (hero)))))
+                                  && pipe_ (
+                                      hero,
+                                      hero_specialAbilities,
+                                      getMagicalTraditionsHeroEntries,
+                                      fnull
+                                    )))
       }
 
       default:

@@ -25,8 +25,8 @@ import { mapGetToMaybeSlice } from "../Utilities/SelectorsUtils";
 import { getPrimaryBlessedAttribute, getPrimaryMagicalAttribute } from "./attributeSelectors";
 import { getCurrentRace } from "./rcpSelectors";
 import { getRuleBooksEnabled } from "./rulesSelectors";
-import { getMagicalTraditionsFromState } from "./spellsSelectors";
-import { getAddedArcaneEnergyPoints, getAddedKarmaPoints, getAddedLifePoints, getAdvantages, getAttributes, getDisadvantages, getLocaleAsProp, getPermanentArcaneEnergyPoints, getPermanentKarmaPoints, getPermanentLifePoints, getSpecialAbilities, getWikiBooks } from "./stateSelectors";
+import { getMagicalTraditionsFromHero } from "./spellsSelectors";
+import { getAddedArcaneEnergyPoints, getAddedKarmaPoints, getAddedLifePoints, getAdvantages, getAttributes, getDisadvantages, getLocaleAsProp, getPermanentArcaneEnergyPoints, getPermanentKarmaPoints, getPermanentLifePoints, getSpecialAbilities } from "./stateSelectors";
 
 const ACA = AttributeCombined.A
 const ADA = AttributeDependent.A
@@ -80,7 +80,7 @@ export const getLP = createMaybeSelector (
 )
 
 export const getAE = createMaybeSelector (
-  getMagicalTraditionsFromState,
+  getMagicalTraditionsFromHero,
   getPrimaryMagicalAttribute,
   getPermanentArcaneEnergyPoints,
   mapGetToMaybeSlice (getAdvantages) (prefixAdv (23)),
@@ -365,9 +365,8 @@ export const getDerivedCharacteristicsMap = createMaybeSelector (
   getINI,
   getMOV,
   getWT,
-  getWikiBooks,
   getRuleBooksEnabled,
-  (LP, AE, KP, SPI, TOU, DO, INI, MOV, WT, books, mrule_books_enabled) => {
+  (LP, AE, KP, SPI, TOU, DO, INI, MOV, WT, mrule_books_enabled) => {
     type BaseDerived = Record<DerivedCharacteristic>
 
     const xs = List<(Pair<DCIds, BaseDerived>)> (
@@ -383,7 +382,7 @@ export const getDerivedCharacteristicsMap = createMaybeSelector (
 
     const isWoundThresholdEnabled =
       or (fmapF (mrule_books_enabled)
-                (ruleBooksEnabled => isBookEnabled (books) (ruleBooksEnabled) ("US25003")))
+                (rule_books_enabled => isBookEnabled (rule_books_enabled) ("US25003")))
 
     if (isWoundThresholdEnabled) {
       return fromList (snoc (xs) (Pair<DCIds, BaseDerived> (DerivedCharacteristic.A.id (WT), WT)))

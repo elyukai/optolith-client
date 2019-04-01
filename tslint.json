@@ -121,7 +121,7 @@
 		"object-literal-shorthand": true,
 		// "one-line": [true, "check-open-brace", "check-whitespace"],
 		"one-variable-per-declaration": [true, "ignore-for-loop"],
-    "ordered-imports": true,
+    // "ordered-imports": true,
     "prefer-function-over-method": true,
     // "prefer-method-signature": true,
     "prefer-template": true,

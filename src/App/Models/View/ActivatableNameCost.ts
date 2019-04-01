@@ -1,5 +1,5 @@
 import { List } from "../../../Data/List";
-import { fromDefault, makeLenses, Record } from "../../../Data/Record";
+import { fromDefault, makeLenses, PartialMaybeOrNothing, Record, RecordCreator } from "../../../Data/Record";
 import { pipe } from "../../Utilities/pipe";
 import { ActiveObjectWithId } from "../ActiveEntries/ActiveObjectWithId";
 import { ActivatableCombinedName } from "./ActivatableCombinedName";
@@ -14,12 +14,16 @@ export interface ActivatableNameCostSafeCost extends ActivatableNameCost {
   finalCost: number
 }
 
+interface ActivatableNameCostConstructor extends RecordCreator<ActivatableNameCost> {
+  (x: PartialMaybeOrNothing<ActivatableNameCostSafeCost>): Record<ActivatableNameCostSafeCost>
+}
+
 export const ActivatableNameCost =
   fromDefault<ActivatableNameCost> ({
     naming: ActivatableCombinedName.default,
     active: ActiveObjectWithId.default,
     finalCost: 0,
-  })
+  }) as ActivatableNameCostConstructor
 
 export const ActivatableNameCostA_ = {
   id: pipe (ActivatableNameCost.A.active, ActiveObjectWithId.A.id),

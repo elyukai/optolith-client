@@ -9,13 +9,13 @@ import { fromDefault, Record } from "../../../Data/Record";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
 import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
-import { ActiveActivatable } from "../../Models/View/ActiveActivatable";
+import { ActiveActivatable, ActiveActivatableAL_, ActiveActivatableA_ } from "../../Models/View/ActiveActivatable";
 import { AdventurePointsCategories } from "../../Models/View/AdventurePointsCategories";
 import { Disadvantage } from "../../Models/Wiki/Disadvantage";
 import { Skill } from "../../Models/Wiki/Skill";
 import { SelectOption } from "../../Models/Wiki/sub/SelectOption";
 import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import { getMagicalTraditions } from "../Activatable/traditionUtils";
+import { getMagicalTraditionsHeroEntries } from "../Activatable/traditionUtils";
 import { add, gt, inc, lt, multiply, negate, subtractBy } from "../mathUtils";
 import { pipe, pipe_ } from "../pipe";
 import { misNumberM, misStringM } from "../typeCheckUtils";
@@ -50,7 +50,8 @@ export const getMissingAP =
 export const getDisAdvantagesSubtypeMax =
   (isMagical: boolean) => (state: HeroModelRecord): number => {
     if (isMagical) {
-      const mtradition = listToMaybe (getMagicalTraditions (HeroModel.AL.specialAbilities (state)))
+      const mtradition =
+        listToMaybe (getMagicalTraditionsHeroEntries (HeroModel.AL.specialAbilities (state)))
 
       const semiTraditionIds = List ("SA_677", "SA_678", "SA_679", "SA_680")
 
@@ -169,7 +170,7 @@ const getPrinciplesObligationsDiff =
   (wiki: WikiModelRecord) =>
   (hero_slice: OrderedMap<string, Record<ActivatableDependent>>) =>
   (entries: List<Record<ActiveActivatable>>): number => {
-    if (any (pipe (ActiveActivatable.A.id, equals (id))) (entries)) {
+    if (any (pipe (ActiveActivatableAL_.id, equals (id))) (entries)) {
       return sum (pipe_ (
         hero_slice,
         lookup (id),
@@ -214,12 +215,12 @@ const getPrinciplesObligationsDiff =
 const getPropertyOrAspectKnowledgeDiff =
   (id: string) =>
     pipe (
-      find (pipe (ActiveActivatable.A.id, equals (id))),
+      find (pipe (ActiveActivatableA_.id, equals (id))),
       fmap (entry => {
         const current_active_length =
-          pipe_ (entry, ActiveActivatable.A.stateEntry, ActivatableDependent.A.active, flength)
+          pipe_ (entry, ActiveActivatable.AL.heroEntry, ActivatableDependent.A.active, flength)
 
-        const mcost = pipe_ (entry, ActiveActivatable.A.wikiEntry, Disadvantage.AL.cost)
+        const mcost = pipe_ (entry, ActiveActivatable.AL.wikiEntry, Disadvantage.AL.cost)
 
         if (isJust (mcost)) {
           const cost = fromJust (mcost)
@@ -245,7 +246,7 @@ const getPersonalityFlawsDiff =
   (entries: List<Record<ActiveActivatable>>): number => {
     const id = "DISADV_33"
 
-    if (any (pipe (ActiveActivatable.A.id, equals (id))) (entries)) {
+    if (any (pipe (ActiveActivatableAL_.id, equals (id))) (entries)) {
       return sum (pipe_ (
         hero_slice,
         lookup (id),
@@ -264,7 +265,7 @@ const getPersonalityFlawsDiff =
               WikiModel.A.disadvantages,
               lookup (id),
               bindF (Disadvantage.A.select),
-              bindF (find (pipe (SelectOption.A.id, equals (7)))),
+              bindF (find (pipe (SelectOption.A.id, equals<string | number> (7)))),
               bindF (SelectOption.A.cost),
               fmap (negate),
               sum
@@ -285,7 +286,7 @@ const getBadHabitsDiff =
   (entries: List<Record<ActiveActivatable>>): number => {
     const id = "DISADV_36"
 
-    if (any (pipe (ActiveActivatable.A.id, equals (id))) (entries)) {
+    if (any (pipe (ActiveActivatableAL_.id, equals (id))) (entries)) {
       return sum (pipe_ (
         hero_slice,
         lookup (id),
@@ -318,7 +319,7 @@ const getSkillSpecializationsDiff =
   (entries: List<Record<ActiveActivatable>>): number => {
     const id = "SA_9"
 
-    if (any (pipe (ActiveActivatable.A.id, equals (id))) (entries)) {
+    if (any (pipe (ActiveActivatableAL_.id, equals (id))) (entries)) {
       return sum (pipe_ (
         hero_slice,
         lookup (id),

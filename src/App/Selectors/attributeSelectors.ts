@@ -24,7 +24,7 @@ import { pipe, pipe_ } from "../Utilities/pipe";
 import { getCurrentEl, getStartEl } from "./elSelectors";
 import { getBlessedTraditionFromState } from "./liturgicalChantsSelectors";
 import { getCurrentRace } from "./rcpSelectors";
-import { getMagicalTraditionsFromState } from "./spellsSelectors";
+import { getMagicalTraditionsFromHero } from "./spellsSelectors";
 import { getAttributes, getAttributeValueLimit, getCurrentAttributeAdjustmentId, getCurrentHeroPresent, getPhase, getWiki, getWikiAttributes } from "./stateSelectors";
 
 const ACA = AttributeCombined.A
@@ -223,7 +223,7 @@ const getPrimaryMagicalAttributeByTrad =
 const mgetValueFromAttrCombined = fmap (pipe (ACA.stateEntry, ADA.value))
 
 export const getPrimaryMagicalAttribute = createMaybeSelector (
-  getMagicalTraditionsFromState,
+  getMagicalTraditionsFromHero,
   getAttributes,
   getWikiAttributes,
   (mtraditions, mhero_attributes, wiki_attributes) =>

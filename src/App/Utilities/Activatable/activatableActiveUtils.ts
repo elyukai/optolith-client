@@ -9,7 +9,7 @@
 
 import { fmap } from "../../../Data/Functor";
 import { List } from "../../../Data/List";
-import { liftM2, liftM4, mapMaybe, Maybe, Nothing } from "../../../Data/Maybe";
+import { liftM2, liftM4, mapMaybe, Maybe } from "../../../Data/Maybe";
 import { lookup, OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { ActivatableCategory, Categories } from "../../Constants/Categories";
@@ -89,24 +89,15 @@ export const getNameCost =
 export const getNameCostForWiki =
   (l10n: L10nRecord) =>
   (wiki: WikiModelRecord) =>
-  (entry: Record<ActiveObjectWithId>): Maybe<Record<ActivatableNameCost>> =>
-    liftM2 ((finalCost: number | List<number>) => (name: Record<ActivatableCombinedName>) =>
+  (active: Record<ActiveObjectWithId>): Maybe<Record<ActivatableNameCost>> =>
+    liftM2 ((finalCost: number | List<number>) => (naming: Record<ActivatableCombinedName>) =>
              ActivatableNameCost ({
-              name: ActivatableCombinedName.A.name (name),
-              baseName: ActivatableCombinedName.A.baseName (name),
-              addName: ActivatableCombinedName.A.addName (name),
-              levelName: Nothing,
-
-              id: ActiveObjectWithId.A.id (entry),
-              index: ActiveObjectWithId.A.index (entry),
-              sid: ActiveObjectWithId.A.sid (entry),
-              sid2: ActiveObjectWithId.A.sid2 (entry),
-              tier: ActiveObjectWithId.A.tier (entry),
-
-              finalCost,
+               active,
+               naming,
+               finalCost,
              }))
-           (getCost (false) (wiki) (HeroModel.default) (entry))
-           (getName (l10n) (wiki) (entry))
+           (getCost (false) (wiki) (HeroModel.default) (active))
+           (getName (l10n) (wiki) (active))
 
 export const getAllActiveByCategory =
   <T extends ActivatableCategory>
@@ -128,33 +119,14 @@ export const getAllActiveByCategory =
       mapMaybe ((active: Record<ActiveObjectWithId>) => {
                  const current_id = ActiveObjectWithId.A.id (active)
 
-                 return liftM4 ((nameCost: Record<ActivatableNameCostSafeCost>) =>
+                 return liftM4 ((nameAndCost: Record<ActivatableNameCostSafeCost>) =>
                                 (wiki_entry: GenericWikiEntry) =>
                                 (hero_entry: Record<ActivatableDependent>) =>
-                                (remove: Record<ActivatableActivationValidation>) =>
+                                (validation: Record<ActivatableActivationValidation>) =>
                                  ActiveActivatable ({
-                                  id: current_id,
-
-                                  sid: ActiveObjectWithId.A.sid (active),
-                                  sid2: ActiveObjectWithId.A.sid2 (active),
-                                  tier: ActiveObjectWithId.A.tier (active),
-                                  cost: ActiveObjectWithId.A.cost (active),
-
-                                  index: ActiveObjectWithId.A.index (active),
-
-                                  name: ActivatableNameCost.A.name (nameCost),
-                                  baseName: ActivatableNameCost.A.baseName (nameCost),
-                                  addName: ActivatableNameCost.A.addName (nameCost),
-
-                                  levelName: Nothing,
-
-                                  finalCost: ActivatableNameCost.A.finalCost (nameCost) as number,
-
-                                  disabled: ActivatableActivationValidation.A.disabled (remove),
-                                  maxLevel: ActivatableActivationValidation.A.maxLevel (remove),
-                                  minLevel: ActivatableActivationValidation.A.minLevel (remove),
-
-                                  stateEntry: hero_entry,
+                                  nameAndCost,
+                                  validation,
+                                  heroEntry: hero_entry,
                                   wikiEntry: wiki_entry,
                                  }))
                                (fmap (convertCost)

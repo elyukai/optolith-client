@@ -20,7 +20,7 @@ const isActiveBlessedTradition =
  * Get magical traditions' dependent entries.
  * @param list
  */
-export const getMagicalTraditions =
+export const getMagicalTraditionsHeroEntries =
   pipe (
     elems as
       (list: OrderedMap<any, Record<ActivatableDependent>>) => List<Record<ActivatableDependent>>,
@@ -34,7 +34,7 @@ export const getMagicalTraditions =
  */
 export const getMagicalTraditionsFromWiki =
   (wiki: OrderedMap<string, Record<SpecialAbility>>) =>
-    pipe (getMagicalTraditions, mapMaybe (pipe (id, lookupF (wiki))))
+    pipe (getMagicalTraditionsHeroEntries, mapMaybe (pipe (id, lookupF (wiki))))
 
 /**
  * Get blessed traditions' dependent entry.

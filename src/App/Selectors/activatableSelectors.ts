@@ -8,8 +8,12 @@ import { Record } from "../../Data/Record";
 import { ActivatableCategory, Categories } from "../Constants/Categories";
 import { IdPrefixes } from "../Constants/IdPrefixes";
 import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
+import { ActiveObjectWithId } from "../Models/ActiveEntries/ActiveObjectWithId";
 import { EntryRating } from "../Models/Hero/heroTypeHelpers";
-import { ActiveActivatable } from "../Models/View/ActiveActivatable";
+import { ActivatableActivationValidation } from "../Models/View/ActivatableActivationValidationObject";
+import { ActivatableCombinedName } from "../Models/View/ActivatableCombinedName";
+import { ActivatableNameCost } from "../Models/View/ActivatableNameCost";
+import { ActiveActivatable, ActiveActivatableA_ } from "../Models/View/ActiveActivatable";
 import { Culture } from "../Models/Wiki/Culture";
 import { L10n } from "../Models/Wiki/L10n";
 import { Profession } from "../Models/Wiki/Profession";
@@ -20,14 +24,16 @@ import { getModifierByActiveLevel, getModifierByIsActive } from "../Utilities/Ac
 import { getBracketedNameFromFullName } from "../Utilities/Activatable/activatableNameUtils";
 import { getActiveSelections, getSelectOptionName } from "../Utilities/Activatable/selectionUtils";
 import { createMaybeSelector } from "../Utilities/createMaybeSelector";
-import { filterAndSortRecordsBy, filterAndSortRecordsByName } from "../Utilities/filterAndSortBy";
+import { filterAndSortRecordsBy } from "../Utilities/filterAndSortBy";
+import { compareLocale } from "../Utilities/I18n";
 import { prefixId } from "../Utilities/IDUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
 import { mapGetToMaybeSlice, mapGetToSlice } from "../Utilities/SelectorsUtils";
+import { comparingR } from "../Utilities/sortBy";
 import { getBlessedTraditionFromWikiState } from "./liturgicalChantsSelectors";
 import { getCurrentCulture, getCurrentProfession, getCurrentRace } from "./rcpSelectors";
 import { getSpecialAbilitiesSortOptions } from "./sortOptionsSelectors";
-import { getMagicalTraditionsFromWikiState } from "./spellsSelectors";
+import { getMagicalTraditionsFromWiki } from "./spellsSelectors";
 import { getAdvantages, getAdvantagesFilterText, getCultureAreaKnowledge, getCurrentHeroPresent, getDisadvantages, getDisadvantagesFilterText, getLocaleAsProp, getSpecialAbilities, getSpecialAbilitiesFilterText, getWiki, getWikiSpecialAbilities } from "./stateSelectors";
 
 export const getActive = <T extends ActivatableCategory>(category: T, addLevelToName: boolean) =>
@@ -136,7 +142,12 @@ export const getFilteredActiveAdvantages = createMaybeSelector (
   getAdvantagesFilterText,
   getLocaleAsProp,
   (madvantages, filterText, l10n) =>
-    fmapF (madvantages) (filterAndSortRecordsByName (L10n.A.id (l10n)) (filterText))
+    fmapF (madvantages)
+          (filterAndSortRecordsBy (0)
+                                  ([ActiveActivatableA_.name])
+                                  ([comparingR (ActiveActivatableA_.name)
+                                               (compareLocale (L10n.A.id (l10n)))])
+                                  (filterText))
 )
 
 export const getDisadvantagesForSheet = createMaybeSelector (
@@ -154,7 +165,12 @@ export const getFilteredActiveDisadvantages = createMaybeSelector (
   getDisadvantagesFilterText,
   getLocaleAsProp,
   (mdisadvantages, filterText, l10n) =>
-    fmapF (mdisadvantages) (filterAndSortRecordsByName (L10n.A.id (l10n)) (filterText))
+    fmapF (mdisadvantages)
+          (filterAndSortRecordsBy (0)
+                                  ([ActiveActivatableA_.name])
+                                  ([comparingR (ActiveActivatableA_.name)
+                                               (compareLocale (L10n.A.id (l10n)))])
+                                  (filterText))
 )
 
 export const getSpecialAbilitiesForSheet = createMaybeSelector (
@@ -167,8 +183,6 @@ export const getSpecialAbilitiesForEdit = createMaybeSelector (
   ident
 )
 
-type ActiveSpecialAbility = Record<ActiveActivatable<SpecialAbility>>
-
 export const getFilteredActiveSpecialAbilities = createMaybeSelector (
   getSpecialAbilitiesForEdit,
   getSpecialAbilitiesSortOptions,
@@ -177,9 +191,7 @@ export const getFilteredActiveSpecialAbilities = createMaybeSelector (
   (mspecial_abilities, sortOptions, filterText) =>
     fmapF (mspecial_abilities)
           (filterAndSortRecordsBy (0)
-                                  ([
-                                    ActiveActivatable.AL.name as (x: ActiveSpecialAbility) => string,
-                                  ])
+                                  ([ActiveActivatableA_.name])
                                   (sortOptions)
                                   (filterText))
 )
@@ -197,30 +209,30 @@ export const getGeneralSpecialAbilitiesForSheet = createMaybeSelector (
                              elemF (List (1, 2, 22, 30))
                            )),
                     consF (ActiveActivatable ({
-                            id: SpecialAbility.A.id (culture_area_knowledge),
-
-                            sid: Nothing,
-                            sid2: Nothing,
-                            tier: Nothing,
-                            cost: Nothing,
-
-                            index: -1,
-
-                            name:
-                              `${SpecialAbility.A.name (culture_area_knowledge)}`
-                              + ` (${fromMaybe ("") (culture_area_knowledge_text)})`,
-                            baseName: SpecialAbility.A.name (culture_area_knowledge),
-                            addName: culture_area_knowledge_text,
-
-                            levelName: Nothing,
-
-                            finalCost: 0,
-
-                            disabled: true,
-                            maxLevel: Nothing,
-                            minLevel: Nothing,
-
-                            stateEntry: ActivatableDependent.default,
+                            nameAndCost: ActivatableNameCost ({
+                              active: ActiveObjectWithId ({
+                                id: SpecialAbility.A.id (culture_area_knowledge),
+                                sid: Nothing,
+                                sid2: Nothing,
+                                tier: Nothing,
+                                cost: Nothing,
+                                index: Nothing,
+                              }),
+                              finalCost: 0,
+                              naming: ActivatableCombinedName ({
+                                name:
+                                  `${SpecialAbility.A.name (culture_area_knowledge)}`
+                                  + ` (${fromMaybe ("") (culture_area_knowledge_text)})`,
+                                baseName: SpecialAbility.A.name (culture_area_knowledge),
+                                addName: culture_area_knowledge_text,
+                              }),
+                            }),
+                            validation: ActivatableActivationValidation ({
+                              disabled: true,
+                              maxLevel: Nothing,
+                              minLevel: Nothing,
+                            }),
+                            heroEntry: ActivatableDependent.default,
                             wikiEntry: SpecialAbility.default,
                           }))))
            (lookup (prefixId (IdPrefixes.SPECIAL_ABILITIES) (22))
@@ -258,7 +270,7 @@ export const getFatePointsModifier = createMaybeSelector (
 )
 
 export const getMagicalTraditionForSheet = createMaybeSelector (
-  getMagicalTraditionsFromWikiState,
+  getMagicalTraditionsFromWiki,
   fmap (pipe (
     map (pipe (SpecialAbility.A.name, getBracketedNameFromFullName)),
     intercalate (", ")

@@ -44,7 +44,7 @@ import { countActiveSkillEntries } from "./activatableSkillUtils";
 import { isStyleValidToRemove } from "./ExtendedStyleUtils";
 import { isActive } from "./isActive";
 import { getActiveSelections } from "./selectionUtils";
-import { getBlessedTraditionFromWiki, getMagicalTraditions } from "./traditionUtils";
+import { getBlessedTraditionFromWiki, getMagicalTraditionsHeroEntries } from "./traditionUtils";
 
 const hasRequiredMinimumLevel =
   (min_level: Maybe<number>) => (max_level: Maybe<number>): boolean =>
@@ -146,7 +146,7 @@ const isRemovalDisabledEntrySpecific =
       case "SA_681": {
         // All active tradition entries
         const traditions =
-          getMagicalTraditions (HeroModel.AL.specialAbilities (hero))
+          getMagicalTraditionsHeroEntries (HeroModel.AL.specialAbilities (hero))
 
         const multiple_traditions = flength (traditions) > 1
 
@@ -467,12 +467,6 @@ export const getIsRemovalOrChangeDisabled =
                                                          (addependencies (hero_entry))
 
                         return ActivatableActivationValidation ({
-                          id: id (entry),
-                          index: ActiveObjectWithId.AL.index (entry),
-                          cost: ActiveObjectWithId.AL.cost (entry),
-                          sid: ActiveObjectWithId.AL.sid (entry),
-                          sid2: sid2 (entry),
-                          tier: tier (entry),
                           disabled:
                             // Disable if a minimum level is required
                             hasRequiredMinimumLevel (minimum_level)

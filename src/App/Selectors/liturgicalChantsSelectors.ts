@@ -3,7 +3,7 @@ import { flip, ident, thrush } from "../../Data/Function";
 import { fmap, fmapF, mapReplace } from "../../Data/Functor";
 import { over } from "../../Data/Lens";
 import { any, append, consF, elem, filter, flength, foldr, List, map, notElem, notNull, partition } from "../../Data/List";
-import { all, bind, bindF, ensure, fromMaybe_, guard, isJust, liftM2, liftM4, mapMaybe, maybe, Maybe, Nothing, or } from "../../Data/Maybe";
+import { all, and, bind, bindF, ensure, fromMaybe_, guard, isJust, liftM2, liftM4, mapMaybe, maybe, Maybe, Nothing, or } from "../../Data/Maybe";
 import { elems, lookup, lookupF, OrderedMap } from "../../Data/OrderedMap";
 import { insert, member, OrderedSet } from "../../Data/OrderedSet";
 import { fst, snd, uncurryN, uncurryN3, uncurryN4, uncurryN5, uncurryN6 } from "../../Data/Pair";
@@ -39,6 +39,7 @@ import { getEnableActiveItemHints } from "./uisettingsSelectors";
 
 const HA = HeroModel.A
 const WA = WikiModel.A
+const ELA = ExperienceLevel.A
 const ADA = ActivatableDependent.A
 const ASDA = ActivatableSkillDependent.A
 const BA = Blessing.A
@@ -142,30 +143,60 @@ export const getInactiveBlessings = createMaybeSelector (
   fmap (snd)
 )
 
+export const getActiveLiturgicalChantsCounter = createMaybeSelector (
+  getActiveLiturgicalChants,
+  pipe (
+    fmap (flength),
+    Maybe.sum
+  )
+)
+
+export const getIsMaximumOfLiturgicalChantsReached = createMaybeSelector (
+  getActiveLiturgicalChantsCounter,
+  getPhase,
+  getStartEl,
+  uncurryN3 (active =>
+             liftM2 (phase =>
+                     start_el => {
+                       if (phase > 2) {
+                         return false
+                       }
+
+                       return active >= ELA.maxSpellsLiturgicalChants (start_el)
+                     }))
+)
+
+type Combined = Record<LiturgicalChantWithRequirements>
+
 export const getInactiveLiturgicalChants = createMaybeSelector (
+  getIsMaximumOfLiturgicalChantsReached,
   getWikiLiturgicalChants,
   getLiturgicalChants,
-  uncurryN (wiki_chants =>
-    fmap (hero_chants =>
-      OrderedMap.foldrWithKey ((k: string) => (wiki_entry: Record<LiturgicalChant>) => {
-                                const mhero_entry = lookup (k) (hero_chants)
+  uncurryN3 (
+    is_max =>
+    wiki_chants =>
+      fmap (hero_chants =>
+        and (is_max)
+        ? List<Combined> ()
+        : OrderedMap.foldrWithKey ((k: string) => (wiki_entry: Record<LiturgicalChant>) => {
+                                    const mhero_entry = lookup (k) (hero_chants)
 
-                                if (all (notP (ASDA.active)) (mhero_entry)) {
-                                  return consF (LiturgicalChantWithRequirements ({
-                                    wikiEntry: wiki_entry,
-                                    stateEntry:
-                                     fromMaybe_ (() =>
-                                                  createInactiveActivatableSkillDependent (k))
-                                                (mhero_entry),
-                                    isDecreasable: Nothing,
-                                    isIncreasable: Nothing,
-                                  }))
-                                }
+                                    if (all (notP (ASDA.active)) (mhero_entry)) {
+                                      return consF (LiturgicalChantWithRequirements ({
+                                        wikiEntry: wiki_entry,
+                                        stateEntry:
+                                         fromMaybe_ (() =>
+                                                      createInactiveActivatableSkillDependent (k))
+                                                    (mhero_entry),
+                                        isDecreasable: Nothing,
+                                        isIncreasable: Nothing,
+                                      }))
+                                    }
 
-                                return ident as ident<List<Record<LiturgicalChantWithRequirements>>>
-                              })
-                              (List ())
-                              (wiki_chants)))
+                                    return ident as ident<List<Combined>>
+                                  })
+                                  (List ())
+                                  (wiki_chants)))
 )
 
 const additionalInactiveListFilter =
