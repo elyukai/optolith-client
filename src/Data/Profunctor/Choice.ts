@@ -26,6 +26,8 @@ export type ChoiceLeft_ =
 
 /**
  * `left' :: p a b -> p (Either a c) (Either b c)`
+ *
+ * Wrap both sides of the `Profunctor` in a `Left`.
  */
 export const left_: ChoiceLeft_ =
   (x: Choice<any, any>): any => {
@@ -57,6 +59,8 @@ export type ChoiceRight_ =
 
 /**
  * `right' :: p a b -> p (Either c a) (Either c b)`
+ *
+ * Wrap both sides of the `Profunctor` in a `Right`.
  */
 export const right_: ChoiceRight_ =
   (x: Choice<any, any>): any => {
