@@ -322,21 +322,19 @@ type ListCombined = List<Record<LiturgicalChantWithRequirements> | Record<Blessi
 export const getActiveLiturgicalChantsAndBlessings = createMaybeSelector (
   getActiveLiturgicalChants,
   getActiveBlessings,
-  (liturgicalChants: Maybe<ListCombined>, blessings) =>
-    liftM2 (append) (liturgicalChants) (blessings)
+  uncurryN (liftM2<ListCombined, ListCombined, ListCombined> (append))
 )
 
 export const getAvailableInactiveLiturgicalChantsAndBlessings = createMaybeSelector (
   getAvailableInactiveLiturgicalChants,
   getInactiveBlessings,
-  (liturgicalChants: Maybe<ListCombined>, blessings) =>
-    liftM2 (append) (liturgicalChants) (blessings)
+  uncurryN (liftM2<ListCombined, ListCombined, ListCombined> (append))
 )
 
-type getNameFromCombinedOrBlessing =
+type getNameFromChantOrBlessing =
   (x: Record<LiturgicalChantWithRequirements | BlessingCombined>) => string
 
-const getNameFromCombinedOrBlessing =
+const getNameFromChantOrBlessing =
   (x: Record<LiturgicalChantWithRequirements> | Record<BlessingCombined>) =>
     LiturgicalChantWithRequirements.is (x)
       ? pipe_ (x, LCWRA.wikiEntry, LCA.name)
@@ -349,8 +347,7 @@ export const getFilteredActiveLiturgicalChantsAndBlessings = createMaybeSelector
   (mcombineds, sort_options, filter_text) =>
     fmapF (mcombineds)
           (filterAndSortRecordsBy (0)
-                                  <LiturgicalChantWithRequirements | BlessingCombined>
-                                  ([getNameFromCombinedOrBlessing as getNameFromCombinedOrBlessing])
+                                  ([getNameFromChantOrBlessing as getNameFromChantOrBlessing])
                                   (sort_options)
                                   (filter_text))
 )
@@ -367,9 +364,8 @@ export const getFilteredInactiveLiturgicalChantsAndBlessings = createMaybeSelect
              liftM2 (inactive =>
                      active =>
                        filterAndSortRecordsBy (0)
-                                              <LiturgicalChantWithRequirements | BlessingCombined>
-                                              ([getNameFromCombinedOrBlessing as
-                                                getNameFromCombinedOrBlessing])
+                                              ([getNameFromChantOrBlessing as
+                                                getNameFromChantOrBlessing])
                                               (sort_options)
                                               (filter_text)
                                               (areActiveItemHintsEnabled
@@ -380,15 +376,12 @@ export const getFilteredInactiveLiturgicalChantsAndBlessings = createMaybeSelect
 export const isActivationDisabled = createMaybeSelector (
   getStartEl,
   getPhase,
-  getActiveLiturgicalChants,
-  (mstart_el, mphase, mchants) =>
+  getActiveLiturgicalChantsCounter,
+  (mstart_el, mphase, active_chants) =>
     or (fmap (lt (3)) (mphase))
-    && or (liftM2 ((liturgicalChants: List<Record<LiturgicalChantWithRequirements>>) =>
-                   (startEl: Record<ExperienceLevel>) =>
-                     flength (liturgicalChants) >=
-                       ExperienceLevel.A.maxSpellsLiturgicalChants (startEl))
-                  (mchants)
-                  (mstart_el))
+    && or (fmap ((startEl: Record<ExperienceLevel>) =>
+                   active_chants >= ExperienceLevel.A.maxSpellsLiturgicalChants (startEl))
+                (mstart_el))
 )
 
 export const getBlessingsForSheet = createMaybeSelector (

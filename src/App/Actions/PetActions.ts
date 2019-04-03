@@ -1,4 +1,4 @@
-import { fromJust, isJust, Maybe } from "../../Data/Maybe";
+import { fromJust, isJust, Just } from "../../Data/Maybe";
 import { keys, OrderedMap } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
 import { ActionTypes } from "../Constants/ActionTypes";
@@ -9,7 +9,7 @@ import { getNewId, prefixId } from "../Utilities/IDUtils";
 import { pipe } from "../Utilities/pipe";
 import { ReduxAction } from "./Actions";
 
-const getNewIdFromCurrentPets: (x: Maybe<OrderedMap<string, Record<Pet>>>) => string =
+const getNewIdFromCurrentPets: (x: Just<OrderedMap<string, Record<Pet>>>) => string =
   pipe (fromJust, keys, getNewId, prefixId (IdPrefixes.PET))
 
 export interface AddPetAction {

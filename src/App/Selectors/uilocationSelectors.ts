@@ -13,7 +13,7 @@ import { getIsLiturgicalChantsTabAvailable } from "./liturgicalChantsSelectors";
 import { getIsRemovingEnabled } from "./phaseSelectors";
 import { getRuleBooksEnabled } from "./rulesSelectors";
 import { getIsSpellsTabAvailable } from "./spellsSelectors";
-import { getCurrentCultureId, getCurrentRaceId, getCurrentTab, getLocaleAsProp, getPhase, getWikiBooks } from "./stateSelectors";
+import { getCurrentCultureId, getCurrentRaceId, getCurrentTab, getLocaleAsProp, getPhase } from "./stateSelectors";
 
 export const getIsMainSection = createMaybeSelector (
   getCurrentTab,
@@ -154,7 +154,6 @@ export const getSubtabs = createMaybeSelector (
   getIsSpellsTabAvailable,
   getIsLiturgicalChantsTabAvailable,
   getRuleBooksEnabled,
-  getWikiBooks,
   (
     tab,
     isMainSection,
@@ -165,8 +164,7 @@ export const getSubtabs = createMaybeSelector (
     cultureId,
     isSpellsTabAvailable,
     isLiturgicalChantsTabAvailable,
-    mruleBooksEnabled,
-    books
+    mruleBooksEnabled
   ): Maybe<List<SubTab>> => {
     if (isMainSection) {
       const aboutSubTabs = List<TabId> ("imprint", "thirdPartyLicenses", "lastChanges")
@@ -213,11 +211,9 @@ export const getSubtabs = createMaybeSelector (
               label: translate (locale) ("pact"),
               disabled: Maybe.elem (true)
                                    (fmapF (mruleBooksEnabled)
-                                          (ruleBooksEnabled => isBookEnabled (books)
-                                                                             (ruleBooksEnabled)
+                                          (ruleBooksEnabled => isBookEnabled (ruleBooksEnabled)
                                                                              ("US25102")
-                                                               || isBookEnabled (books)
-                                                                                (ruleBooksEnabled)
+                                                               || isBookEnabled (ruleBooksEnabled)
                                                                                 ("US25008"))),
             },
             {
@@ -295,11 +291,9 @@ export const getSubtabs = createMaybeSelector (
               label: translate (locale) ("pact"),
               disabled: Maybe.elem (true)
                                    (fmapF (mruleBooksEnabled)
-                                          (ruleBooksEnabled => isBookEnabled (books)
-                                                                             (ruleBooksEnabled)
+                                          (ruleBooksEnabled => isBookEnabled (ruleBooksEnabled)
                                                                              ("US25102")
-                                                               || isBookEnabled (books)
-                                                                                (ruleBooksEnabled)
+                                                               || isBookEnabled (ruleBooksEnabled)
                                                                                 ("US25008"))),
             },
             {
@@ -391,8 +385,7 @@ export const getSubtabs = createMaybeSelector (
 
           if (Maybe.elem (true)
                          (fmapF (mruleBooksEnabled)
-                                (ruleBooksEnabled => isBookEnabled (books)
-                                                                   (ruleBooksEnabled)
+                                (ruleBooksEnabled => isBookEnabled (ruleBooksEnabled)
                                                                    ("US25208")))) {
             return Just (insertAt (1)
                                   <SubTab> ({

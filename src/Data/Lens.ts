@@ -211,8 +211,6 @@ export const _Just =
                                                          (Right)) as
     <A, B> (t: ApplicativeName) => Prism<Maybe<A>, Maybe<B>, A, B>
 
-const test = review (_Just) (3)
-
 export const isPrism =
   (x: any): x is ((t: ApplicativeName) => Prism<any, any, any, any>) =>
     typeof x === "function" && x !== null && x.isPrism === true

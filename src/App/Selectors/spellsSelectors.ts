@@ -1,10 +1,11 @@
 import { ident, thrush } from "../../Data/Function";
 import { fmap, fmapF } from "../../Data/Functor";
-import { consF, countWith, elemF, List, map, notNull, partition } from "../../Data/List";
-import { all, bindF, elem, ensure, fromMaybe_, liftM2, liftM4, liftM5, listToMaybe, mapMaybe, Maybe, Nothing } from "../../Data/Maybe";
+import { set } from "../../Data/Lens";
+import { append, consF, countWith, elemF, List, map, notNull, partition } from "../../Data/List";
+import { all, bindF, elem, ensure, fromMaybe_, Just, liftM2, liftM3, liftM4, liftM5, listToMaybe, mapMaybe, Maybe, maybe, Nothing } from "../../Data/Maybe";
 import { elems, lookup, lookupF, OrderedMap } from "../../Data/OrderedMap";
 import { member } from "../../Data/OrderedSet";
-import { fst, snd, uncurryN, uncurryN3, uncurryN4, uncurryN8 } from "../../Data/Pair";
+import { fst, snd, uncurryN, uncurryN3, uncurryN4, uncurryN5, uncurryN6, uncurryN8 } from "../../Data/Pair";
 import { Record } from "../../Data/Record";
 import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent, createInactiveActivatableSkillDependent } from "../Models/ActiveEntries/ActivatableSkillDependent";
@@ -19,18 +20,21 @@ import { Spell, SpellL } from "../Models/Wiki/Spell";
 import { WikiModel } from "../Models/Wiki/WikiModel";
 import { getModifierByActiveLevel } from "../Utilities/Activatable/activatableModifierUtils";
 import { getMagicalTraditionsHeroEntries } from "../Utilities/Activatable/traditionUtils";
+import { composeL } from "../Utilities/compose";
 import { createMaybeSelector } from "../Utilities/createMaybeSelector";
-import { prefixAdv, prefixSA } from "../Utilities/IDUtils";
+import { filterAndSortRecordsBy } from "../Utilities/filterAndSortBy";
+import { prefixAdv, prefixDis, prefixSA } from "../Utilities/IDUtils";
 import { isOwnTradition, isSpellDecreasable, isSpellIncreasable } from "../Utilities/Increasable/spellUtils";
 import { notP } from "../Utilities/not";
 import { pipe, pipe_ } from "../Utilities/pipe";
 import { validatePrerequisites } from "../Utilities/Prerequisites/validatePrerequisitesUtils";
 import { filterByAvailability } from "../Utilities/RulesUtils";
 import { mapGetToMaybeSlice } from "../Utilities/SelectorsUtils";
+import { sortRecordsBy } from "../Utilities/sortBy";
 import { misNumberM } from "../Utilities/typeCheckUtils";
 import { getStartEl } from "./elSelectors";
 import { getRuleBooksEnabled } from "./rulesSelectors";
-import { getSpellsSortOptions } from "./sortOptionsSelectors";
+import { getCantripsSortOptions, getSpellsCombinedSortOptions, getSpellsSortOptions } from "./sortOptionsSelectors";
 import { getAdvantages, getCantrips, getCurrentHeroPresent, getDisadvantages, getInactiveSpellsFilterText, getLocaleAsProp, getPhase, getSpecialAbilities, getSpells, getSpellsFilterText, getWiki, getWikiCantrips, getWikiSpecialAbilities, getWikiSpells } from "./stateSelectors";
 import { getEnableActiveItemHints } from "./uisettingsSelectors";
 
@@ -307,147 +311,125 @@ export const getInactiveSpells = createMaybeSelector (
 )
 
 export const getAvailableInactiveSpells = createMaybeSelector (
-  getInactiveSpells,
   getRuleBooksEnabled,
-  (maybeList, maybeAvailablility) => maybeList.bind (
-    list => maybeAvailablility.fmap (
-      availablility => filterByAvailability (Tuple.fst (list), availablility)
-    )
-  )
+  getInactiveSpells,
+  uncurryN (liftM2 (filterByAvailability (pipe (SWRA.wikiEntry, SA.src))))
 )
 
 type ListCombined = List<Record<SpellWithRequirements> | Record<CantripCombined>>
 
-type ActiveListCombined = List<Record<SpellWithRequirements> | Record<CantripCombined>>
-type InactiveListCombined = List<Record<SpellIsActive> | Record<CantripCombined>>
-
 export const getActiveSpellsAndCantrips = createMaybeSelector (
   getActiveSpells,
   getActiveCantrips,
-  (spells: Maybe<ActiveListCombined>, cantrips) => spells .mappend (cantrips)
+  uncurryN (liftM2<ListCombined, ListCombined, ListCombined> (append))
 )
 
 export const getAvailableInactiveSpellsAndCantrips = createMaybeSelector (
   getAvailableInactiveSpells,
   getInactiveCantrips,
-  (spells: Maybe<InactiveListCombined>, cantrips) => spells .mappend (cantrips)
+  uncurryN (liftM2<ListCombined, ListCombined, ListCombined> (append))
 )
+
+type getNameFromSpellOrCantrip =
+  (x: Record<SpellWithRequirements | CantripCombined>) => string
+
+const getNameFromSpellOrCantrip =
+  (x: Record<SpellWithRequirements> | Record<CantripCombined>) =>
+    SpellWithRequirements.is (x)
+      ? pipe_ (x, SWRA.wikiEntry, SA.name)
+      : pipe_ (x, CCA.wikiEntry, CA.name)
 
 export const getFilteredActiveSpellsAndCantrips = createMaybeSelector (
   getActiveSpellsAndCantrips,
-  getSpellsSortOptions,
+  getSpellsCombinedSortOptions,
   getSpellsFilterText,
   getLocaleAsProp,
-  (maybeSpells, sortOptions, filterText, locale) => maybeSpells.fmap (
-    spells => filterAndSortObjects (
-      spells as List<Record<CantripCombined | SpellWithRequirements>>,
-      locale.get ("id"),
-      filterText,
-      sortOptions as AllSortOptions<CantripCombined | SpellWithRequirements>
-    ) as ActiveListCombined
-  )
+  (mcombineds, sort_options, filter_text) =>
+    fmapF (mcombineds)
+          (filterAndSortRecordsBy (0)
+                                  ([getNameFromSpellOrCantrip as getNameFromSpellOrCantrip])
+                                  (sort_options)
+                                  (filter_text))
 )
 
 export const getFilteredInactiveSpellsAndCantrips = createMaybeSelector (
+  getSpellsCombinedSortOptions,
+  getInactiveSpellsFilterText,
+  getEnableActiveItemHints,
   getAvailableInactiveSpellsAndCantrips,
   getActiveSpellsAndCantrips,
-  getSpellsSortOptions,
-  getInactiveSpellsFilterText,
-  getLocaleAsProp,
-  getEnableActiveItemHints,
-  (maybeInactive, maybeActive, sortOptions, filterText, locale, areActiveItemHintsEnabled) =>
-    Maybe.liftM2<InactiveListCombined, InactiveListCombined, InactiveListCombined>
-      (active => inactive => areActiveItemHintsEnabled
-        ? filterAndSortObjects (
-          List.mappend (inactive) (active) as List<Record<CantripCombined | Spell>>,
-          locale.get ("id"),
-          filterText,
-          sortOptions as AllSortOptions<CantripCombined | Spell>
-        ) as InactiveListCombined
-        : filterAndSortObjects (
-          inactive as List<Record<CantripCombined | Spell>>,
-          locale.get ("id"),
-          filterText,
-          sortOptions as AllSortOptions<CantripCombined | Spell>
-        ) as InactiveListCombined)
-      (maybeActive as Maybe<InactiveListCombined>)
-      (maybeInactive)
+  uncurryN5 (sort_options =>
+             filter_text =>
+             areActiveItemHintsEnabled =>
+             liftM2 (inactive =>
+                     active =>
+                       filterAndSortRecordsBy (0)
+                                              ([getNameFromSpellOrCantrip as
+                                                getNameFromSpellOrCantrip])
+                                              (sort_options)
+                                              (filter_text)
+                                              (areActiveItemHintsEnabled
+                                                ? append (active) (inactive)
+                                                : inactive)))
 )
 
-const getMaxSpellsModifier = (
-  maybeIncrease: Maybe<Record<ActivatableDependent>>,
-  maybeDecrease: Maybe<Record<ActivatableDependent>>
-) => getModifierByActiveLevel (maybeIncrease) (maybeDecrease) (Just (3))
-
 export const isActivationDisabled = createMaybeSelector (
+  getActiveSpellsCounter,
+  mapGetToMaybeSlice (getAdvantages) (prefixAdv (58)),
+  mapGetToMaybeSlice (getDisadvantages) (prefixDis (59)),
   getStartEl,
   getPhase,
-  getActiveSpellsCounter,
   getMagicalTraditionsFromHero,
-  mapGetToMaybeSlice (getAdvantages, "ADV_58"),
-  mapGetToMaybeSlice (getDisadvantages, "DISADV_59"),
-  (
-    maybeStartEl,
-    maybePhase,
-    maybeActiveSpellsCounter,
-    maybeTraditions,
-    maybeBonus,
-    maybePenalty
-  ) =>
-    Maybe.fromMaybe (true) (
-      Maybe.liftM4 ((traditions: List<Record<ActivatableDependent>>) =>
-                      (startEl: Record<ExperienceLevel>) =>
-                        (phase: number) =>
-                          (activeSpellsCounter: number) =>
-                            Maybe.fromMaybe (true) (
-                              List.uncons (traditions).fmap (
-                                unconsTraditions => {
-                                  const lastTraditionId = Tuple.fst (unconsTraditions).get ("id")
+  uncurryN6 (active_spells =>
+             mbonus =>
+             mmalus =>
+               liftM3 (start_el =>
+                       phase =>
+                       hero_trads =>
+                         pipe_ (
+                           hero_trads,
+                           listToMaybe,
+                           maybe (true)
+                                 (trad => {
+                                   const trad_id = ADA.id (trad)
 
-                                  if (lastTraditionId === "SA_679") {
-                                    const maxSpells = getMaxSpellsModifier (
-                                      maybeBonus,
-                                      maybePenalty
-                                    )
+                                   if (trad_id === prefixSA (679)) {
+                                     const max_spells =
+                                       getModifierByActiveLevel (Just (3))
+                                                                (mbonus)
+                                                                (mmalus)
 
-                                    if (activeSpellsCounter >= maxSpells) {
-                                      return true
-                                    }
-                                  }
+                                     if (active_spells >= max_spells) {
+                                       return true
+                                     }
+                                   }
 
-                                  const maxSpellsLiturgies = startEl.get ("maxSpellsLiturgies")
+                                   const maxSpellsLiturgicalChants =
+                                     ExperienceLevel.A.maxSpellsLiturgicalChants (start_el)
 
-                                  return phase < 3 && activeSpellsCounter >= maxSpellsLiturgies
-                                }
-                              )
-                            )
-                   )
-                   (maybeTraditions)
-                   (maybeStartEl)
-                   (maybePhase)
-                   (maybeActiveSpellsCounter)
-    )
+                                   return phase < 3 && active_spells >= maxSpellsLiturgicalChants
+                                 })
+                         )))
 )
 
 export const getCantripsForSheet = createMaybeSelector (
+  getCantripsSortOptions,
   getActiveCantrips,
-  R.identity
+  uncurryN (sort_options => fmap (sortRecordsBy (sort_options)))
 )
 
 export const getSpellsForSheet = createMaybeSelector (
-  getActiveSpellsCombined,
+  getSpellsSortOptions,
   getMagicalTraditionsFromWiki,
-  getLocaleAsProp,
-  (maybeSpells, maybeTraditions, locale) =>
-    maybeSpells
-      .bind (
-        spells => maybeTraditions.fmap (
-          traditions => spells.map (
-            spell => spell.modify<"tradition"> (
-              x => isOwnTradition (traditions, spell as any as Record<Spell>) ? List.of () : x
-            ) ("tradition")
-          )
-        )
-      )
-      .fmap (list => sortObjects (list, locale .get ("id")))
+  getActiveSpells,
+  uncurryN3 (sort_options =>
+              liftM2 (wiki_trads => pipe (
+                                      map (s => isOwnTradition (wiki_trads)
+                                                               (SWRA.wikiEntry (s))
+                                                  ? set (composeL (SWRL.wikiEntry, SL.tradition))
+                                                        (List ())
+                                                        (s)
+                                                  : s),
+                                      sortRecordsBy (sort_options)
+                                    )))
 )

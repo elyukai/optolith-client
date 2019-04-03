@@ -143,16 +143,46 @@ export const fmap =
   }
 
 interface fmapF {
+  /**
+   * `fmap :: Const a a0 -> (a -> b) -> Const b a0`
+   */
   <A0> (x: Const<A0>): <B> (f: (x: A0) => B) => Const<A0>
+  /**
+   * `fmap :: Either e a -> (a -> b) -> Either e b`
+   */
   <E, A> (x: Either<E, A>): <B> (f: (x: A) => B) => Either<E, B>
+  /**
+   * `fmap :: Identity a -> (a -> b) -> Identity b`
+   */
   <A> (x: Identity<A>): <B> (f: (x: A) => B) => Identity<B>
+  /**
+   * `fmap :: IO a -> (a -> b) -> IO b`
+   */
   <A> (x: IO<A>): <B> (f: (x: A) => B) => IO<B>
+  /**
+   * `fmap :: [a] -> (a -> b) -> [b]`
+   */
   <A> (x: List<A>): <B> (f: (x: A) => B) => List<B>
+  /**
+   * `fmap :: Maybe a -> (a -> b) -> Maybe b`
+   */
   <A> (x: Maybe<A>): <B> (f: (x: A) => B) => Maybe<B>
+  /**
+   * `fmap :: Map k a -> (a -> b) -> Map k b`
+   */
   <K, A> (x: OrderedMap<K, A>): <B> (f: (x: A) => B) => OrderedMap<K, B>
+  /**
+   * `fmap :: (a0, a) -> (a -> b) -> (a0, b)`
+   */
   <A1, A> (x: Pair<A1, A>): <B> (f: (x: A) => B) => Pair<A1, B>
-  <A, R> (f: (x: A) => R): <S> (f: (x: A) => S) => (x: A) => S
-  <A, B, S, A0> (x: Market<A, B, S, A0>): <B0> (f: (x: A0) => B0) => Market<A, B, S, B0>
+  /**
+   * `fmap :: (a0 -> a) -> (a -> b) -> a0 -> b`
+   */
+  <A0, A> (f: (x: A0) => A): <B> (f: (x: A) => B) => (x: A0) => B
+  /**
+   * `fmap :: Market a b s t -> (t -> u) -> Market a b s u`
+   */
+  <A, B, S, T> (x: Market<A, B, S, T>): <U> (f: (x: T) => U) => Market<A, B, S, U>
 }
 
 /**

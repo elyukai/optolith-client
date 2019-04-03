@@ -8,6 +8,7 @@ import { Sex } from "../Models/Hero/heroTypeHelpers";
 import { isItem, Item } from "../Models/Hero/Item";
 import { ActiveActivatable } from "../Models/View/ActiveActivatable";
 import { BlessingCombined } from "../Models/View/BlessingCombined";
+import { CantripCombined } from "../Models/View/CantripCombined";
 import { CombatTechniqueWithRequirements } from "../Models/View/CombatTechniqueWithRequirements";
 import { CultureCombined } from "../Models/View/CultureCombined";
 import { InactiveActivatable } from "../Models/View/InactiveActivatable";
@@ -15,7 +16,7 @@ import { LiturgicalChantWithRequirements } from "../Models/View/LiturgicalChantW
 import { isProfessionCombined, ProfessionCombined } from "../Models/View/ProfessionCombined";
 import { RaceCombined } from "../Models/View/RaceCombined";
 import { SkillCombined } from "../Models/View/SkillCombined";
-import { isSpellCombined, SpellCombined } from "../Models/View/SpellCombined";
+import { SpellWithRequirements } from "../Models/View/SpellWithRequirements";
 import { Blessing } from "../Models/Wiki/Blessing";
 import { Cantrip } from "../Models/Wiki/Cantrip";
 import { CombatTechnique } from "../Models/Wiki/CombatTechnique";
@@ -310,68 +311,70 @@ type ensureSpell = (x: Record<Spell | Cantrip>) => Maybe<Record<Spell>>
 export const getSpellsSortOptions = createMaybeSelector (
   getLocaleAsProp,
   uiSettingsSelectors.getSpellsSortOrder,
-  getLocaleAsProp,
-  (l10n, sortOrder): SortOptions<Spell | Cantrip> => {
-
+  (l10n, sortOrder): SortOptions<SpellWithRequirements> => {
     if (sortOrder === "property") {
       return [
         comparingR (pipe (
-                     Spell.AL.property,
+                     SpellWithRequirements.A.wikiEntry,
+                     Spell.A.property,
                      subscript (translate (l10n) ("propertylist")),
                      fromMaybe ("")
                    ))
                    (compareLocale (L10n.A.id (l10n))),
-        compareName (l10n),
+        comparingR (pipe (SpellWithRequirements.A.wikiEntry, Spell.A.name))
+                   (compareLocale (L10n.A.id (l10n))),
       ]
     }
     else if (sortOrder === "ic") {
       return [
-        comparingR (pipe (
-                     ensure (isSpell) as ensureSpell,
-                     maybe (0) (Spell.A.ic)
-                   ))
+        comparingR (pipe (SpellWithRequirements.A.wikiEntry, Spell.A.ic))
                    (compare),
-        compareName (l10n),
+        comparingR (pipe (SpellWithRequirements.A.wikiEntry, Spell.A.name))
+                   (compareLocale (L10n.A.id (l10n))),
       ]
     }
     else if (sortOrder === "group") {
       return [
-        comparingR (pipe (
-                     ensure (isSpell) as ensureSpell,
-                     maybe (100) (Spell.A.gr)
-                   ))
+        comparingR (pipe (SpellWithRequirements.A.wikiEntry, Spell.A.gr))
                    (compare),
-        compareName (l10n),
+        comparingR (pipe (SpellWithRequirements.A.wikiEntry, Spell.A.name))
+                   (compareLocale (L10n.A.id (l10n))),
       ]
     }
 
-    return [ compareName (l10n) ]
+    return [
+      comparingR (pipe (SpellWithRequirements.A.wikiEntry, Spell.A.name))
+                 (compareLocale (L10n.A.id (l10n))),
+    ]
   }
 )
 
-type getSpellFromCombinedOrCantrip =
-  (x: Record<SpellCombined | Cantrip>) => Record<Spell> | Record<Cantrip>
+type getSpellOrCantripFromCombined =
+  (x: Record<SpellWithRequirements | CantripCombined>) =>
+    Record<Spell> | Record<Cantrip>
 
-const getSpellFromCombinedOrCantrip =
-  (x: Record<SpellCombined> | Record<Cantrip>) =>
-    isSpellCombined (x) ? SpellCombined.A.wikiEntry (x) : ident (x)
+const getSpellOrCantripFromCombined =
+  (x: Record<SpellWithRequirements> | Record<CantripCombined>) =>
+    SpellWithRequirements.is (x)
+    ? SpellWithRequirements.A.wikiEntry (x)
+    : CantripCombined.A.wikiEntry (x)
 
 export const getSpellsCombinedSortOptions = createMaybeSelector (
   getLocaleAsProp,
   uiSettingsSelectors.getSpellsSortOrder,
   getLocaleAsProp,
-  (l10n, sortOrder): SortOptions<SpellCombined | Cantrip> => {
+  (l10n, sortOrder): SortOptions<SpellWithRequirements | CantripCombined> => {
     if (sortOrder === "property") {
       return [
         comparingR (pipe (
-                     getSpellFromCombinedOrCantrip as getSpellFromCombinedOrCantrip,
+                     getSpellOrCantripFromCombined as getSpellOrCantripFromCombined,
                      Spell.AL.property,
                      subscript (translate (l10n) ("propertylist")),
                      fromMaybe ("")
                    ))
                    (compareLocale (L10n.A.id (l10n))),
         comparingR (pipe (
-                     getSpellFromCombinedOrCantrip as getSpellFromCombinedOrCantrip,
+                     getSpellOrCantripFromCombined as getSpellOrCantripFromCombined,
                      Spell.AL.name
                    ))
                    (compareLocale (L10n.A.id (l10n))),
@@ -380,13 +383,13 @@ export const getSpellsCombinedSortOptions = createMaybeSelector (
     else if (sortOrder === "ic") {
       return [
         comparingR (pipe (
-                     getSpellFromCombinedOrCantrip as getSpellFromCombinedOrCantrip,
+                     getSpellOrCantripFromCombined as getSpellOrCantripFromCombined,
                      ensure (isSpell) as ensureSpell,
                      maybe (0) (Spell.A.ic)
                    ))
                    (compare),
         comparingR (pipe (
-                     getSpellFromCombinedOrCantrip as getSpellFromCombinedOrCantrip,
+                     getSpellOrCantripFromCombined as getSpellOrCantripFromCombined,
                      Spell.AL.name
                    ))
                    (compareLocale (L10n.A.id (l10n))),
@@ -395,13 +398,13 @@ export const getSpellsCombinedSortOptions = createMaybeSelector (
     else if (sortOrder === "group") {
       return [
         comparingR (pipe (
-                     getSpellFromCombinedOrCantrip as getSpellFromCombinedOrCantrip,
+                     getSpellOrCantripFromCombined as getSpellOrCantripFromCombined,
                      ensure (isSpell) as ensureSpell,
                      maybe (100) (Spell.A.gr)
                    ))
                    (compare),
         comparingR (pipe (
-                     getSpellFromCombinedOrCantrip as getSpellFromCombinedOrCantrip,
+                     getSpellOrCantripFromCombined as getSpellOrCantripFromCombined,
                      Spell.AL.name
                    ))
                    (compareLocale (L10n.A.id (l10n))),
@@ -410,12 +413,19 @@ export const getSpellsCombinedSortOptions = createMaybeSelector (
 
     return [
       comparingR (pipe (
-                   getSpellFromCombinedOrCantrip as getSpellFromCombinedOrCantrip,
+                   getSpellOrCantripFromCombined as getSpellOrCantripFromCombined,
                    Spell.AL.name
                  ))
                  (compareLocale (L10n.A.id (l10n))),
     ]
   }
+)
+
+export const getCantripsSortOptions = createMaybeSelector (
+  getLocaleAsProp,
+  (l10n): SortOptions<CantripCombined> =>
+    [ comparingR (pipe (CantripCombined.A.wikiEntry, Cantrip.A.name))
+                 (compareLocale (L10n.A.id (l10n))) ]
 )
 
 type ensureChant = (x: Record<LiturgicalChant | Blessing>) => Maybe<Record<LiturgicalChant>>

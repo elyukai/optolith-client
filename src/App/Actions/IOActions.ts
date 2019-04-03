@@ -10,16 +10,17 @@ import { Either, eitherToMaybe, fromLeft_, fromRight_, isLeft, isRight } from ".
 import { flip } from "../../Data/Function";
 import { fmap } from "../../Data/Functor";
 import { List, notNull } from "../../Data/List";
-import { altF_, bind, bindF, fromJust, fromMaybe, isJust, Just, Maybe, maybe, Nothing } from "../../Data/Maybe";
+import { altF_, bind, bindF, fromJust, fromMaybe, isJust, Just, Maybe, maybe, maybeToUndefined, Nothing } from "../../Data/Maybe";
 import { any, lookup, lookupF } from "../../Data/OrderedMap";
 import { Pair } from "../../Data/Pair";
-import { Record } from "../../Data/Record";
+import { Record, toObject } from "../../Data/Record";
 import { fromIO, readFile, writeFile } from "../../System/IO";
 import { ActionTypes } from "../Constants/ActionTypes";
 import { User } from "../Models/Hero/heroTypeHelpers";
 import { L10n, L10nRecord } from "../Models/Wiki/L10n";
 import { WikiModel } from "../Models/Wiki/WikiModel";
 import { heroReducer } from "../Reducers/heroReducer";
+import { UISettingsState } from "../Reducers/uiSettingsReducer";
 import { getCurrentHeroId, getHeroes, getLocaleMessages, getLocaleType, getUsers, getWiki } from "../Selectors/stateSelectors";
 import { getUISettingsState } from "../Selectors/uisettingsSelectors";
 import { translate, translateP } from "../Utilities/I18n";
@@ -121,6 +122,8 @@ export const receiveInitialData = (data: InitialData): ReceiveInitialDataAction 
   payload: data,
 })
 
+const UISSA = UISettingsState.A
+
 export const requestConfigSave =
   (l10n: L10nRecord): ReduxAction<Promise<boolean>> =>
   async (dispatch, getState) => {
@@ -129,15 +132,11 @@ export const requestConfigSave =
     const uiSettingsState = getUISettingsState (state)
 
     const data: RawConfig = {
-      ...uiSettingsState,
+      ...toObject (uiSettingsState),
       meleeItemTemplatesCombatTechniqueFilter:
-        isJust (uiSettingsState.meleeItemTemplatesCombatTechniqueFilter)
-          ? fromJust (uiSettingsState.meleeItemTemplatesCombatTechniqueFilter)
-          : undefined,
+        maybeToUndefined (UISSA.meleeItemTemplatesCombatTechniqueFilter (uiSettingsState)),
       rangedItemTemplatesCombatTechniqueFilter:
-        isJust (uiSettingsState.rangedItemTemplatesCombatTechniqueFilter)
-          ? fromJust (uiSettingsState.rangedItemTemplatesCombatTechniqueFilter)
-          : undefined,
+        maybeToUndefined (UISSA.rangedItemTemplatesCombatTechniqueFilter (uiSettingsState)),
       locale: getLocaleType (state) === "default" ? undefined : L10n.A.id (l10n),
     }
 
@@ -410,16 +409,16 @@ export const loadImportedHero =
   (l10n: L10nRecord): ReduxAction<Promise<Maybe<RawHero>>> =>
   async dispatch => {
     try {
-      const fileNames = await showOpenDialog ({
+      const mfile_names = await showOpenDialog ({
         filters: [{ name: "JSON", extensions: ["json"] }],
       })
 
-      if (fileNames) {
-        const fileName = fileNames[0]
+      if (isJust (mfile_names)) {
+        const file_name = fromJust (mfile_names) [0]
 
-        if (extname (fileName) === ".json") {
+        if (extname (file_name) === ".json") {
           const res = pipe_ (
-            fileNames[0],
+            file_name,
             readFile,
             tryy,
             fromIO
@@ -475,7 +474,8 @@ export const receiveHeroImport = (raw: RawHero): ReceiveImportedHeroAction => {
   const data: RawHero = {
     ...other,
     id: newId,
-    avatar: avatar.length > 0
+    avatar: avatar !== undefined
+      && avatar.length > 0
       && (isBase64Image (avatar) || fs.existsSync (avatar.replace (/file:[\\\/]+/, "")))
       ? avatar
       : undefined,
