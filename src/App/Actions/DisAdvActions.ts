@@ -6,9 +6,10 @@ import { lookup } from "../../Data/OrderedMap";
 import { fst, Pair, PairP1_, snd } from "../../Data/Pair";
 import { Record } from "../../Data/Record";
 import { ActionTypes } from "../Constants/ActionTypes";
+import { ActivatableActivationEntryType } from "../Models/Actions/ActivatableActivationEntryType";
 import { ActivatableActivationOptions } from "../Models/Actions/ActivatableActivationOptions";
+import { ActivatableDeactivationEntryType } from "../Models/Actions/ActivatableDeactivationEntryType";
 import { ActivatableDeactivationOptions, ActivatableDeactivationOptionsL } from "../Models/Actions/ActivatableDeactivationOptions";
-import { ActivatableEntryType } from "../Models/Actions/ActivatableEntryType";
 import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
 import { ActiveObject } from "../Models/ActiveEntries/ActiveObject";
 import { ActiveObjectWithIdL, toActiveObjectWithId } from "../Models/ActiveEntries/ActiveObjectWithId";
@@ -99,7 +100,7 @@ const handleMissingAPForDisAdvantage =
 
 export interface ActivateDisAdvAction {
   type: ActionTypes.ACTIVATE_DISADV
-  payload: Pair<Record<ActivatableActivationOptions>, Record<ActivatableEntryType>>
+  payload: Pair<Record<ActivatableActivationOptions>, Record<ActivatableActivationEntryType>>
 }
 
 /**
@@ -124,6 +125,13 @@ export const addDisAdvantage =
         bind (getWikiEntry (getWiki (state)) (current_id))
              (ensure ((x): x is Record<Advantage> | Record<Disadvantage> =>
                        isAdvantage (x) || isDisadvantage (x)))
+
+      const mhero_entry =
+        bind (mwiki_entry)
+             (x => lookup (current_id)
+                          (isAdvantage (x)
+                            ? HeroModel.AL.advantages (hero)
+                            : HeroModel.AL.disadvantages (hero)))
 
       if (isJust (mwiki_entry)) {
         const wiki_entry = fromJust (mwiki_entry)
@@ -156,12 +164,13 @@ export const addDisAdvantage =
             payload:
               Pair (
                 args,
-                ActivatableEntryType ({
+                ActivatableActivationEntryType ({
                   eyeColor: fmapF (color) (fst),
                   hairColor: fmapF (color) (snd),
                   isBlessed: fst (entryType),
                   isDisadvantage: is_disadvantage,
                   isMagical: snd (entryType),
+                  heroEntry: mhero_entry,
                   wikiEntry: wiki_entry,
                 })
               ),
@@ -184,7 +193,7 @@ export const addDisAdvantage =
 
 export interface DeactivateDisAdvAction {
   type: ActionTypes.DEACTIVATE_DISADV
-  payload: Pair<Record<ActivatableDeactivationOptions>, Record<ActivatableEntryType>>
+  payload: Pair<Record<ActivatableDeactivationOptions>, Record<ActivatableDeactivationEntryType>>
 }
 
 /**
@@ -281,12 +290,13 @@ export const removeDisAdvantage =
             payload:
               Pair (
                 over (ActivatableDeactivationOptionsL.cost) (negate) (args),
-                ActivatableEntryType ({
+                ActivatableDeactivationEntryType ({
                   eyeColor: fmapF (color) (fst),
                   hairColor: fmapF (color) (snd),
                   isBlessed: fst (entryType),
                   isDisadvantage: is_disadvantage,
                   isMagical: snd (entryType),
+                  heroEntry: hero_entry,
                   wikiEntry: wiki_entry,
                 })
               ),
@@ -307,7 +317,10 @@ export const removeDisAdvantage =
 
 export interface SetDisAdvLevelAction {
   type: ActionTypes.SET_DISADV_TIER
-  payload: Pair<{ id: string; index: number; tier: number }, Record<ActivatableEntryType>>
+  payload: Pair<
+    { id: string; index: number; tier: number },
+    Record<ActivatableDeactivationEntryType>
+  >
 }
 
 /**
@@ -348,7 +361,7 @@ export const setDisAdvantageLevel =
              )
              (mhero_entry)
 
-      if (isJust (mwiki_entry) && isJust (mactive_entry)) {
+      if (isJust (mwiki_entry) && isJust (mhero_entry) && isJust (mactive_entry)) {
         const wiki_entry = fromJust (mwiki_entry)
         const active_entry = fromJust (mactive_entry)
 
@@ -407,12 +420,13 @@ export const setDisAdvantageLevel =
                     tier: next_level,
                     index: current_index,
                   },
-                  ActivatableEntryType ({
+                  ActivatableDeactivationEntryType ({
                     eyeColor: Nothing,
                     hairColor: Nothing,
                     isBlessed: fst (entryType),
                     isDisadvantage: is_disadvantage,
                     isMagical: snd (entryType),
+                    heroEntry: fromJust (mhero_entry),
                     wikiEntry: wiki_entry,
                   })
                 ),

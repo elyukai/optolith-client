@@ -35,6 +35,11 @@ export const prefixDis = prefixId (IdPrefixes.DISADVANTAGES)
 export const prefixSA = prefixId (IdPrefixes.SPECIAL_ABILITIES)
 
 /**
+ * Create a combat technique id.
+ */
+export const prefixCT = prefixId (IdPrefixes.COMBAT_TECHNIQUES)
+
+/**
  * Gets a list of ids and returns an unused numeric id.
  */
 export const getNewId = pipe (foldl<string, number> (n => pipe (getNumericId, max (n))) (0), inc)

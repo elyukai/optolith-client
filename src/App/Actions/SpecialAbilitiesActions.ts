@@ -1,7 +1,7 @@
 import { fmap } from "../../Data/Functor";
 import { set } from "../../Data/Lens";
 import { List, subscriptF } from "../../Data/List";
-import { bind, bindF, ensure, fromJust, isJust, isNothing, Just, liftM2 } from "../../Data/Maybe";
+import { bind, bindF, ensure, fromJust, isJust, isNothing, Just, liftM2, Maybe } from "../../Data/Maybe";
 import { lookup } from "../../Data/OrderedMap";
 import { Pair } from "../../Data/Pair";
 import { Record } from "../../Data/Record";
@@ -29,7 +29,10 @@ import { addAlert } from "./AlertActions";
 
 export interface ActivateSpecialAbilityAction {
   type: ActionTypes.ACTIVATE_SPECIALABILITY
-  payload: Pair<Record<ActivatableActivationOptions>, Record<SpecialAbility>>
+  payload: Pair<
+    Record<ActivatableActivationOptions>,
+    Pair<Record<SpecialAbility>, Maybe<Record<ActivatableDependent>>>
+  >
 }
 
 /**
@@ -51,6 +54,10 @@ export const addSpecialAbility =
         bind (getWikiEntry (getWiki (state)) (current_id))
              (ensure (isSpecialAbility))
 
+      const mhero_entry =
+        lookup (current_id)
+               (HeroModel.AL.specialAbilities (fromJust (mhero)))
+
       if (isJust (mwiki_entry)) {
         const wiki_entry = fromJust (mwiki_entry)
 
@@ -66,7 +73,7 @@ export const addSpecialAbility =
         if (isNothing (mmissingAP)) {
           dispatch<ActivateSpecialAbilityAction> ({
             type: ActionTypes.ACTIVATE_SPECIALABILITY,
-            payload: Pair (args, wiki_entry),
+            payload: Pair (args, Pair (wiki_entry, mhero_entry)),
           })
         }
         else {
@@ -81,7 +88,10 @@ export const addSpecialAbility =
 
 export interface DeactivateSpecialAbilityAction {
   type: ActionTypes.DEACTIVATE_SPECIALABILITY
-  payload: Pair<Record<ActivatableDeactivationOptions>, Record<SpecialAbility>>
+  payload: Pair<
+    Record<ActivatableDeactivationOptions>,
+    Pair<Record<SpecialAbility>, Record<ActivatableDependent>>
+  >
 }
 
 /**
@@ -110,10 +120,11 @@ export const removeSpecialAbility =
 
       if (isJust (mwiki_entry) && isJust (mhero_entry)) {
         const wiki_entry = fromJust (mwiki_entry)
+        const hero_entry = fromJust (mhero_entry)
 
         dispatch<DeactivateSpecialAbilityAction> ({
           type: ActionTypes.DEACTIVATE_SPECIALABILITY,
-          payload: Pair (args, wiki_entry),
+          payload: Pair (args, Pair (wiki_entry, hero_entry)),
         })
       }
     }
@@ -121,7 +132,10 @@ export const removeSpecialAbility =
 
 export interface SetSpecialAbilityTierAction {
   type: ActionTypes.SET_SPECIALABILITY_TIER
-  payload: Pair<{ id: string; index: number; tier: number }, Record<SpecialAbility>>
+  payload: Pair<
+    { id: string; index: number; tier: number },
+    Pair<Record<SpecialAbility>, Record<ActivatableDependent>>
+  >
 }
 
 /**
@@ -158,7 +172,7 @@ export const setSpecialAbilityLevel =
              )
              (mhero_entry)
 
-      if (isJust (mwiki_entry) && isJust (mactive_entry)) {
+      if (isJust (mwiki_entry) && isJust (mhero_entry) && isJust (mactive_entry)) {
         const wiki_entry = fromJust (mwiki_entry)
         const active_entry = fromJust (mactive_entry)
 
@@ -210,7 +224,7 @@ export const setSpecialAbilityLevel =
                   tier: next_level,
                   index: current_index,
                 },
-                wiki_entry
+                Pair (wiki_entry, fromJust (mhero_entry))
               ),
             })
           }
