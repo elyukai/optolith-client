@@ -70,14 +70,17 @@ const concatBaseModifications = (action: SetSelectionsAction) => {
   return pipe (
 
     // Race selections:
+
     over (CML.activatable)
          (flip (foldr ((current_id: string) =>
                         consF (ProfessionRequireActivatable ({ id: current_id, active: true }))))
                (RA.automaticAdvantages (race))),
+
     set (composeL (CML.hero, HL.attributeAdjustmentSelected))
         (action.payload.attributeAdjustment),
 
     // Culture selections:
+
     action.payload.useCulturePackage
       ? over (CML.skillRatingList)
              (flip (foldr ((skill: Record<IncreaseSkill>) =>
@@ -85,6 +88,8 @@ const concatBaseModifications = (action: SetSelectionsAction) => {
                                                  (ISA.id (skill))))
                    (CA.culturalPackageSkills (culture)))
       : ident,
+
+
 
     (acc: Record<ConcatenatedModifications>) => ({
       ...acc,
