@@ -1,8 +1,8 @@
-import { flip, ident } from "../../Data/Function";
+import { cnst, flip, ident } from "../../Data/Function";
 import { over, set } from "../../Data/Lens";
-import { consF, foldr, List } from "../../Data/List";
-import { ensure, maybe } from "../../Data/Maybe";
-import { alter, OrderedMap } from "../../Data/OrderedMap";
+import { consF, flength, foldr, List } from "../../Data/List";
+import { ensure, Just, listToMaybe, maybe, Maybe } from "../../Data/Maybe";
+import { alter, insertF, OrderedMap } from "../../Data/OrderedMap";
 import { OrderedSet } from "../../Data/OrderedSet";
 import { fromDefault, makeLenses, Record } from "../../Data/Record";
 import { SetSelectionsAction } from "../Actions/ProfessionActions";
@@ -89,17 +89,15 @@ const concatBaseModifications = (action: SetSelectionsAction) => {
                    (CA.culturalPackageSkills (culture)))
       : ident,
 
-
+    maybe (ident as ident<Record<ConcatenatedModifications>>)
+          <number> (pipe (insertF (4), over (CML.languages)))
+          (ifElse<List<number>, Maybe<number>> (pipe (flength, gt (1)))
+                                               (cnst (Just (action .payload .motherTongue)))
+                                               (listToMaybe)
+                                               (CA.languages (culture))),
 
     (acc: Record<ConcatenatedModifications>) => ({
       ...acc,
-      languages: Maybe.fromMaybe (acc.languages) (
-        ifElse<List<number>, Maybe<number>> (R.pipe (List.lengthL, R.lt (1)))
-                                            (() => Just (action .payload .motherTongue))
-                                            (Maybe.listToMaybe)
-                                            (culture.get ("languages"))
-          .fmap (motherTongueId => acc.languages.insert (motherTongueId) (4))
-      ),
       scripts: action .payload .isBuyingMainScriptEnabled
         ? Maybe.fromMaybe (acc.scripts) (
           ifElse<List<number>, Maybe<number>> (R.pipe (List.lengthL, R.lt (1)))
