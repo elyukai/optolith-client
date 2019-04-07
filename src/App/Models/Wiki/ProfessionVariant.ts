@@ -3,9 +3,10 @@ import { Maybe, Nothing } from "../../../Data/Maybe";
 import { fromDefault, makeLenses, Record } from "../../../Data/Record";
 import { Categories } from "../../Constants/Categories";
 import { ProfessionRequireActivatable } from "./prerequisites/ActivatableRequirement";
+import { ProfessionVariantSelections } from "./professionSelections/ProfessionVariantAdjustmentSelections";
 import { IncreaseSkill } from "./sub/IncreaseSkill";
 import { NameBySex } from "./sub/NameBySex";
-import { EntryWithCategory, ProfessionDependency, ProfessionPrerequisite, ProfessionVariantSelectionList } from "./wikiTypeHelpers";
+import { EntryWithCategory, ProfessionDependency, ProfessionPrerequisite } from "./wikiTypeHelpers";
 
 export interface ProfessionVariant {
   id: string
@@ -13,7 +14,7 @@ export interface ProfessionVariant {
   ap: number
   dependencies: List<ProfessionDependency>
   prerequisites: List<ProfessionPrerequisite>
-  selections: ProfessionVariantSelectionList
+  selections: Record<ProfessionVariantSelections>
   specialAbilities: List<Record<ProfessionRequireActivatable>>
   combatTechniques: List<Record<IncreaseSkill>>
   skills: List<Record<IncreaseSkill>>
@@ -33,7 +34,7 @@ export const ProfessionVariant =
     ap: 0,
     dependencies: List.empty,
     prerequisites: List.empty,
-    selections: List.empty,
+    selections: ProfessionVariantSelections.default,
     specialAbilities: List.empty,
     combatTechniques: List.empty,
     skills: List.empty,

@@ -12,7 +12,7 @@ import { ActiveObject } from "../ActiveEntries/ActiveObject";
 import { AttributeDependent } from "../ActiveEntries/AttributeDependent";
 import { DependencyObject } from "../ActiveEntries/DependencyObject";
 import { SkillDependent } from "../ActiveEntries/SkillDependent";
-import { ActivatableNameCost } from "../View/ActivatableNameCost";
+import { ProfessionSelections } from "../Wiki/professionSelections/ProfessionAdjustmentSelections";
 import * as Wiki from "../Wiki/wikiTypeHelpers";
 import { EditPrimaryAttributeDamageThreshold } from "./EditPrimaryAttributeDamageThreshold";
 import { SkillOptionalDependency } from "./SkillOptionalDependency";
@@ -63,23 +63,11 @@ export interface Selections {
   specialization: Maybe<number | string>
   specializationSkillId: Maybe<string>
   terrainKnowledge: Maybe<number>
-  map: OrderedMap<Wiki.ProfessionSelectionIds, Wiki.AnyProfessionSelection>
+  map: Record<ProfessionSelections>
 }
 
 export interface ActiveObjectName extends ActiveObject {
   name: string
-}
-
-export interface ActivatableNameCostActive extends ActivatableNameCost {
-  active: boolean
-}
-
-export interface ActivatableNameCostEvalTier extends ActivatableNameCost {
-  tierName: Maybe<string>
-}
-
-export interface ActivatableNameAdjustedCostEvalTier extends ActivatableNameCostEvalTier {
-  finalCost: number
 }
 
 export interface ActivatableActivationMeta<

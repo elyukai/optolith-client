@@ -145,10 +145,6 @@ export type AnyProfessionVariantSelection =
   Record<SkillsSelection> |
   Record<TerrainKnowledgeSelection>
 
-export type ProfessionSelectionList = List<AnyProfessionSelection>
-
-export type ProfessionVariantSelectionList = List<AnyProfessionVariantSelection>
-
 export type AllRequirements = "RCP" | AllRequirementObjects
 export type ActivatablePrerequisites = List<AllRequirements>
 

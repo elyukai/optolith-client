@@ -3,10 +3,11 @@ import { Maybe, Nothing } from "../../../Data/Maybe";
 import { fromDefault, makeLenses, Record } from "../../../Data/Record";
 import { Categories } from "../../Constants/Categories";
 import { ProfessionRequireActivatable } from "./prerequisites/ActivatableRequirement";
+import { ProfessionSelections } from "./professionSelections/ProfessionAdjustmentSelections";
 import { IncreaseSkill } from "./sub/IncreaseSkill";
 import { NameBySex } from "./sub/NameBySex";
 import { SourceLink } from "./sub/SourceLink";
-import { EntryWithCategory, ProfessionDependency, ProfessionPrerequisite, ProfessionSelectionList } from "./wikiTypeHelpers";
+import { EntryWithCategory, ProfessionDependency, ProfessionPrerequisite } from "./wikiTypeHelpers";
 
 export interface Profession {
   id: string
@@ -17,7 +18,7 @@ export interface Profession {
   prerequisites: List<ProfessionPrerequisite>
   prerequisitesStart: Maybe<string>
   prerequisitesEnd: Maybe<string>
-  selections: ProfessionSelectionList
+  selections: Record<ProfessionSelections>
   specialAbilities: List<Record<ProfessionRequireActivatable>>
   combatTechniques: List<Record<IncreaseSkill>>
   skills: List<Record<IncreaseSkill>>
@@ -54,7 +55,7 @@ export const Profession =
     prerequisites: List.empty,
     prerequisitesStart: Nothing,
     prerequisitesEnd: Nothing,
-    selections: List.empty,
+    selections: ProfessionSelections.default,
     specialAbilities: List.empty,
     combatTechniques: List.empty,
     skills: List.empty,

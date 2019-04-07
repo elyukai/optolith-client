@@ -393,6 +393,8 @@ export const insert =
   <A> (x: A) => (xs: OrderedSet<A>): OrderedSet<A> =>
     fromArray ([...xs .value, x])
 
+export type insert<A> = (x: A) => (s: OrderedSet<A>) => OrderedSet<A>
+
 
 // DELETION
 

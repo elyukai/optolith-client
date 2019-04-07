@@ -1,32 +1,36 @@
+import { notEquals } from "../../Data/Eq";
 import { cnst, flip, ident } from "../../Data/Function";
 import { over, set } from "../../Data/Lens";
-import { consF, flength, foldr, List } from "../../Data/List";
-import { ensure, Just, listToMaybe, maybe, Maybe } from "../../Data/Maybe";
-import { alter, insertF, OrderedMap } from "../../Data/OrderedMap";
-import { OrderedSet } from "../../Data/OrderedSet";
+import { append, consF, filter, flength, foldr, isList, List } from "../../Data/List";
+import { ensure, isJust, Just, listToMaybe, maybe, Maybe } from "../../Data/Maybe";
+import { alter, foldrWithKey, insertF, keys, member, OrderedMap } from "../../Data/OrderedMap";
+import { insert, OrderedSet, union } from "../../Data/OrderedSet";
 import { fromDefault, makeLenses, Record } from "../../Data/Record";
 import { SetSelectionsAction } from "../Actions/ProfessionActions";
 import { ActionTypes } from "../Constants/ActionTypes";
 import { Categories } from "../Constants/Categories";
 import { HeroModel, HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel";
-import * as Data from "../Models/Hero/heroTypeHelpers";
 import { Culture } from "../Models/Wiki/Culture";
 import { ProfessionRequireActivatable } from "../Models/Wiki/prerequisites/ActivatableRequirement";
+import { ProfessionRequireIncreasable } from "../Models/Wiki/prerequisites/IncreasableRequirement";
+import { Profession } from "../Models/Wiki/Profession";
+import { CombatTechniquesSelection } from "../Models/Wiki/professionSelections/CombatTechniquesSelection";
+import { ProfessionSelections } from "../Models/Wiki/professionSelections/ProfessionAdjustmentSelections";
+import { CombatTechniquesSecondSelection } from "../Models/Wiki/professionSelections/SecondCombatTechniquesSelection";
+import { SpecializationSelection } from "../Models/Wiki/professionSelections/SpecializationSelection";
+import { ProfessionVariant } from "../Models/Wiki/ProfessionVariant";
 import { Race } from "../Models/Wiki/Race";
 import { IncreaseSkill } from "../Models/Wiki/sub/IncreaseSkill";
-import * as Wiki from "../Models/Wiki/wikiTypeHelpers";
+import { ProfessionPrerequisite, ProfessionSelectionIds } from "../Models/Wiki/wikiTypeHelpers";
 import { getCombinedPrerequisites } from "../Utilities/Activatable/activatableActivationUtils";
 import { addAllStyleRelatedDependencies } from "../Utilities/Activatable/ExtendedStyleUtils";
 import { composeL } from "../Utilities/compose";
 import { updateEntryDef } from "../Utilities/heroStateUtils";
+import { prefixSA } from "../Utilities/IDUtils";
 import { ifElse } from "../Utilities/ifElse";
 import { add, gt } from "../Utilities/mathUtils";
-import { pipe } from "../Utilities/pipe";
-
-type Action = SetSelectionsAction
-
-const addToSkillRatingList = (value: number) =>
-                               alter (pipe (maybe (value) (add (value)), ensure (gt (0))))
+import { pipe, pipe_ } from "../Utilities/pipe";
+import { isString } from "../Utilities/typeCheckUtils";
 
 interface ConcatenatedModifications {
   hero: HeroModelRecord
@@ -35,7 +39,7 @@ interface ConcatenatedModifications {
   activatable: List<Record<ProfessionRequireActivatable>>
   languages: OrderedMap<number, number>
   scripts: OrderedSet<number>
-  professionPrerequisites: List<Wiki.ProfessionPrerequisite>
+  professionPrerequisites: List<ProfessionPrerequisite>
 }
 
 const ConcatenatedModifications =
@@ -55,7 +59,27 @@ const HA = HeroModel.A
 const HL = HeroModelL
 const RA = Race.A
 const CA = Culture.A
+const PA = Profession.A
+const PVA = ProfessionVariant.A
+const PRAA = ProfessionRequireActivatable.A
+const PRIA = ProfessionRequireIncreasable.A
+const PSA = ProfessionSelections.A
 const ISA = IncreaseSkill.A
+
+type Action = SetSelectionsAction
+
+const addToSRs = (value: number) => alter (pipe (maybe (value) (add (value)), ensure (gt (0))))
+
+const foldIntoSRsFrom =
+  <a> (id: (x: a) => string) =>
+  (value: (x: a) => number) =>
+  (xs: List<a>) =>
+    over (CML.skillRatingList)
+         (flip (foldr ((x: a) =>
+                        addToSRs (value (x)) (id (x))))
+               (xs))
+
+const foldIncSkillsIntoSRs = foldIntoSRsFrom (ISA.id) (ISA.value)
 
 // const modIdentityFn = ident (acc: ConcatenatedModifications) => acc
 
@@ -64,311 +88,222 @@ const concatBaseModifications = (action: SetSelectionsAction) => {
     race,
     culture,
     profession,
-    professionVariant: maybeProfessionVariant,
+    professionVariant: mprofession_variant,
   } = action.payload
+
+  const prof_skills_cts = append (PA.skills (profession)) (PA.combatTechniques (profession))
+  const prof_spells_chants = append (PA.spells (profession)) (PA.liturgicalChants (profession))
 
   return pipe (
 
     // Race selections:
 
-    over (CML.activatable)
-         (flip (foldr ((current_id: string) =>
-                        consF (ProfessionRequireActivatable ({ id: current_id, active: true }))))
-               (RA.automaticAdvantages (race))),
+    pipe (
+      over (CML.activatable)
+           (flip (foldr ((current_id: string) =>
+                          consF (ProfessionRequireActivatable ({ id: current_id, active: true }))))
+                 (RA.automaticAdvantages (race))),
 
-    set (composeL (CML.hero, HL.attributeAdjustmentSelected))
-        (action.payload.attributeAdjustment),
+      set (composeL (CML.hero, HL.attributeAdjustmentSelected))
+          (action.payload.attributeAdjustment)
+    ),
 
     // Culture selections:
 
-    action.payload.useCulturePackage
-      ? over (CML.skillRatingList)
-             (flip (foldr ((skill: Record<IncreaseSkill>) =>
-                            addToSkillRatingList (ISA.value (skill))
-                                                 (ISA.id (skill))))
-                   (CA.culturalPackageSkills (culture)))
-      : ident,
+    pipe (
+      action.payload.useCulturePackage
+        ? foldIncSkillsIntoSRs (CA.culturalPackageSkills (culture))
+        : ident,
+
+      maybe (ident as ident<Record<ConcatenatedModifications>>)
+            <number> (pipe (insertF (4), over (CML.languages)))
+            (ifElse<List<number>, Maybe<number>> (pipe (flength, gt (1)))
+                                                 (cnst (Just (action .payload .motherTongue)))
+                                                 (listToMaybe)
+                                                 (CA.languages (culture))),
+
+      maybe (ident as ident<Record<ConcatenatedModifications>>)
+            <number> (pipe (insert, over (CML.scripts)))
+            (ifElse<List<number>, Maybe<number>> (pipe (flength, gt (1)))
+                                                 (cnst (Just (action .payload .mainScript)))
+                                                 (listToMaybe)
+                                                 (CA.scripts (culture)))
+    ),
+
+    // Profession selections:
+
+    pipe (
+      foldIncSkillsIntoSRs (prof_skills_cts),
+
+      over (CML.hero)
+           (flip (foldr (pipe (insert as insert<string>, over (HL.blessings))))
+                 (PA.blessings (profession))),
+
+      over (CML.activatable)
+           (flip (foldr (consF)) (PA.specialAbilities (profession))),
+
+      set (CML.professionPrerequisites)
+          (PA.prerequisites (profession)),
+
+      foldIncSkillsIntoSRs (prof_spells_chants),
+
+      over (CML.skillActivateList)
+           (flip (foldr (pipe (ISA.id, insert)))
+                 (prof_spells_chants))
+    ),
+
+    // Profession variant selections:
 
     maybe (ident as ident<Record<ConcatenatedModifications>>)
-          <number> (pipe (insertF (4), over (CML.languages)))
-          (ifElse<List<number>, Maybe<number>> (pipe (flength, gt (1)))
-                                               (cnst (Just (action .payload .motherTongue)))
-                                               (listToMaybe)
-                                               (CA.languages (culture))),
+          ((profession_variant: Record<ProfessionVariant>) => {
+            const prof_var_skills_cts = append (PVA.skills (profession_variant))
+                                               (PVA.combatTechniques (profession_variant))
 
-    (acc: Record<ConcatenatedModifications>) => ({
-      ...acc,
-      scripts: action .payload .isBuyingMainScriptEnabled
-        ? Maybe.fromMaybe (acc.scripts) (
-          ifElse<List<number>, Maybe<number>> (R.pipe (List.lengthL, R.lt (1)))
-                                              (() => Just (action .payload .mainScript))
-                                              (Maybe.listToMaybe)
-                                              (culture.get ("scripts"))
-            .fmap (motherTongueScriptId => acc.scripts.insert (motherTongueScriptId))
-        )
-        : acc.scripts,
-    }),
+            const prof_var_spells_chants = append (PVA.spells (profession_variant))
+                                                  (PVA.liturgicalChants (profession_variant))
 
-    // // Profession selections:
-    // (acc: ConcatenatedModifications) => ({
-    //   ...acc,
-    //   skillRatingList: profession.get ("skills")
-    //     .mappend (profession.get ("combatTechniques"))
-    //     .foldl<ConcatenatedModifications["skillRatingList"]> (
-    //       skillRatingList => skill => addToSkillRatingList (
-    //         skill.get ("id"),
-    //         skill.get ("value"),
-    //         skillRatingList
-    //       )
-    //     ) (acc.skillRatingList),
-    //   state: profession.get ("blessings")
-    //     .foldl<ConcatenatedModifications["hero"]> (
-    //       accState => blessing => accState.modify<"blessings"> (
-    //         blessings => blessings.insert (blessing)
-    //       ) ("blessings")
-    //     ) (acc.hero),
-    //   activatable: profession.get ("specialAbilities")
-    //     .foldl<ConcatenatedModifications["activatable"]> (List.cons) (acc.activatable),
-    //   professionPrerequisites: profession.get ("prerequisites"),
-    // }),
-    // (acc: ConcatenatedModifications) =>
-    //   profession.get ("spells")
-    //     .mappend (profession.get ("liturgicalChants"))
-    //     .foldl<ConcatenatedModifications> (
-    //       accAll => skill => ({
-    //         ...accAll,
-    //         skillActivateList: accAll.skillActivateList.insert (skill.get ("id")),
-    //         skillRatingList: addToSkillRatingList (
-    //           skill.get ("id"),
-    //           skill.get ("value"),
-    //           accAll.skillRatingList
-    //         ),
-    //       })
-    //     ) (acc),
+            return pipe (
+              foldIncSkillsIntoSRs (prof_var_skills_cts),
 
-    // // Profession variant selections:
-    // Maybe.fromMaybe (modIdentityFn) (
-    //   maybeProfessionVariant
-    //     .fmap (
-    //       professionVariant => R.pipe (
-    //         (acc: ConcatenatedModifications) => ({
-    //           ...acc,
-    //           skillRatingList: professionVariant.get ("skills")
-    //             .mappend (professionVariant.get ("combatTechniques"))
-    //             .foldl<ConcatenatedModifications["skillRatingList"]> (
-    //               skillRatingList => skill => addToSkillRatingList (
-    //                 skill.get ("id"),
-    //                 skill.get ("value"),
-    //                 skillRatingList
-    //               )
-    //             ) (acc.skillRatingList),
-    //           state: professionVariant.get ("blessings")
-    //             .foldl<ConcatenatedModifications["hero"]> (
-    //               accState => blessing => accState.modify<"blessings"> (
-    //                 blessings => blessings.insert (blessing)
-    //               ) ("blessings")
-    //             ) (acc.hero),
-    //           activatable: professionVariant.get ("specialAbilities")
-    //             .foldl<ConcatenatedModifications["activatable"]> (
-    //               accActivatable => specialAbility => {
-    //                 if (!specialAbility.get ("active")) {
-    //                   return accActivatable.filter (
-    //                     e => e.get ("id") !== specialAbility.get ("id")
-    //                   )
-    //                 }
-    //                 else {
-    //                   return accActivatable.cons (specialAbility)
-    //                 }
-    //               }
-    //             ) (acc.activatable),
-    //           professionPrerequisites: professionVariant.get ("prerequisites")
-    //             .foldl<ConcatenatedModifications["professionPrerequisites"]> (
-    //               professionPrerequisites => req => {
-    //                 if (isProfessionRequiringIncreasable (req) || req.get ("active") !== false) {
-    //                   return professionPrerequisites.cons (req)
-    //                 }
-    //                 else {
-    //                   return Maybe.fromMaybe (professionPrerequisites) (
-    //                     professionPrerequisites.findIndex (
-    //                       R.equals<Wiki.ProfessionPrerequisite> (req)
-    //                     )
-    //                       .fmap (professionPrerequisites.deleteAt)
-    //                   )
-    //                 }
-    //               }
-    //             ) (acc.professionPrerequisites),
-    //         }),
-    //         (acc: ConcatenatedModifications) =>
-    //           professionVariant.get ("spells")
-    //             .mappend (professionVariant.get ("liturgicalChants"))
-    //             .foldl<ConcatenatedModifications> (
-    //               accAll => skill => {
-    //                 const intermediateState: ConcatenatedModifications = {
-    //                   ...accAll,
-    //                   skillActivateList: accAll.skillActivateList.insert (skill.get ("id")),
-    //                   skillRatingList: addToSkillRatingList (
-    //                     skill.get ("id"),
-    //                     skill.get ("value"),
-    //                     accAll.skillRatingList
-    //                   ),
-    //                 }
+              over (CML.hero)
+                   (flip (foldr (pipe (insert as insert<string>, over (HL.blessings))))
+                         (PVA.blessings (profession_variant))),
 
-    //                 if (intermediateState.skillRatingList.notMember (skill.get ("id"))) {
-    //                   return {
-    //                     ...intermediateState,
-    //                     skillActivateList: intermediateState.skillActivateList
-    //                       .delete (skill.get ("id")),
-    //                   }
-    //                 }
+              over (CML.activatable)
+                   (flip (foldr ((sa: Record<ProfessionRequireActivatable>) => {
+                                  // Having an `active = True` on a special
+                                  // ability entry of a profession variant
+                                  // should remove the entry of the SA added by
+                                  // the profession
+                                  if (!PRAA.active (sa)) {
+                                    return filter (pipe (PRAA.id, notEquals (PRAA.id (sa))))
+                                  }
 
-    //                 return intermediateState
-    //               }
-    //             ) (acc)
-    //       )
-    //     )
-    // )
+                                  // otherwise just add the entry
+                                  return consF (sa)
+                                }))
+                         (PVA.specialAbilities (profession_variant))),
+
+              over (CML.professionPrerequisites)
+                   (flip (foldr ((r: ProfessionPrerequisite):
+                           ident<List<ProfessionPrerequisite>> => {
+                           if (ProfessionRequireIncreasable.is (r) || PRAA.active (r)) {
+                             return consF (r)
+                           }
+
+                           return filter (notEquals<ProfessionPrerequisite> (r))
+                         }))
+                         (PVA.prerequisites (profession_variant))),
+
+              foldIncSkillsIntoSRs (prof_var_spells_chants),
+
+              cm =>
+                over (CML.skillActivateList)
+                     (flip (foldr (pipe (ISA.id, x => member (x) (CMA.skillRatingList (cm))
+                                                        ? insert (x)
+                                                        : ident as ident<OrderedSet<string>>)))
+                           (prof_var_spells_chants))
+                     (cm)
+            )})
+          (mprofession_variant)
   )
 }
 
 const concatSpecificModifications = (action: SetSelectionsAction) => {
-  const { wiki } = action.payload
+  const P = action .payload
 
-  return R.pipe (
+  return pipe (
+
     // - Skill Specialization
-    Maybe.maybe (modIdentityFn) (
-      specialization => (acc: ConcatenatedModifications) => {
-        const { specialization: specializationSelection, specializationSkillId } = action.payload
-        const talentId = (specialization as Record<Wiki.SpecializationSelection>) .get ("sid")
+    pipe_ (
+      P.map,
+      PSA [ProfessionSelectionIds.SPECIALIZATION],
+      maybe (ident as ident<Record<ConcatenatedModifications>>)
+            (x => {
+              const mselected_app = P.specialization
+              const mselected_skill = P.specializationSkillId
+              const possible_skills = SpecializationSelection.A.sid (x)
 
-        if (
-          talentId instanceof List
-          && Maybe.isJust (specializationSkillId)
-          && Maybe.isJust (specializationSelection)
-        ) {
-          return {
-            ...acc,
-            activatable: acc.activatable.cons (
-              Record.of<Wiki.ProfessionRequiresActivatableObject> ({
-                id: "SA_9",
-                active: true,
-                sid: Maybe.fromJust (specializationSkillId),
-                sid2: Maybe.fromJust (specializationSelection),
-              })
-            ),
-          }
-        }
+              if (isList (possible_skills) && isJust (mselected_app) && isJust (mselected_skill)) {
+                return over (CML.activatable)
+                            (consF (ProfessionRequireActivatable ({
+                              id: prefixSA (9),
+                              active: true,
+                              sid: mselected_skill,
+                              sid2: mselected_app,
+                            })))
+              }
 
-        if (typeof talentId === "string" && Maybe.isJust (specializationSelection)) {
-          return {
-            ...acc,
-            activatable: acc.activatable.cons (
-              Record.of<Wiki.ProfessionRequiresActivatableObject> ({
-                id: "SA_9",
-                active: true,
-                sid: talentId,
-                sid2: Maybe.fromJust (specializationSelection),
-              })
-            ),
-          }
-        }
+              if (isString (possible_skills) && isJust (mselected_app)) {
+                return over (CML.activatable)
+                            (consF (ProfessionRequireActivatable ({
+                              id: prefixSA (9),
+                              active: true,
+                              sid: Just (possible_skills),
+                              sid2: mselected_app,
+                            })))
+              }
 
-        return acc
-      }
-    ) (action.payload.map.lookup (Wiki.ProfessionSelectionIds.SPECIALIZATION)),
+              return ident
+            })
+    ),
 
-    // // - Terrain Knowledge
-    // Maybe.maybe (modIdentityFn) (
-    //   () => (acc: ConcatenatedModifications) => {
-    //     const { terrainKnowledge } = action.payload
+    // - Terrain Knowledge
+    pipe_ (
+      P.map,
+      PSA [ProfessionSelectionIds.TERRAIN_KNOWLEDGE],
+      maybe (ident as ident<Record<ConcatenatedModifications>>)
+            (() => {
+              const mselected_terrain = P.terrainKnowledge
 
-    //     if (Maybe.isJust (terrainKnowledge)) {
-    //       return {
-    //         ...acc,
-    //         activatable: acc.activatable.cons (
-    //           Record.of<Wiki.ProfessionRequiresActivatableObject> ({
-    //             id: "SA_9",
-    //             active: true,
-    //             sid: Maybe.fromJust (terrainKnowledge),
-    //           })
-    //         ),
-    //       }
-    //     }
+              if (isJust (mselected_terrain)) {
+                return over (CML.activatable)
+                            (consF (ProfessionRequireActivatable ({
+                              id: prefixSA (12),
+                              active: true,
+                              sid: mselected_terrain,
+                            })))
+              }
 
-    //     return acc
-    //   }
-    // ) (action.payload.map.lookup (Wiki.ProfessionSelectionIds.TERRAIN_KNOWLEDGE)),
+              return ident
+            })
+    ),
 
-    // // - Language and Scripts
-    // action.payload.languages
-    //   .foldlWithKey<ConcatenatedModifications> (
-    //     accAll => id => value => ({
-    //       ...accAll,
-    //       languages: accAll .languages .insert (id) (value),
-    //     })
-    //   ),
+    // - Language and Scripts
+    over (CML.languages)
+         (flip (foldrWithKey<number, number, OrderedMap<number, number>> (OrderedMap.insert))
+               (P.languages)),
 
-    // action.payload.scripts
-    //   .foldlWithKey<ConcatenatedModifications> (
-    //     accAll => id => _ => ({
-    //       ...accAll,
-    //       scripts: accAll .scripts .insert (id),
-    //     })
-    //   ),
+    over (CML.scripts)
+         (flip (foldr<number, OrderedSet<number>> (insert))
+               (keys (P.scripts))),
 
-    // // - Combat Techniques
-    // (acc: ConcatenatedModifications) =>
-    //   Maybe.fromMaybe (acc) (
-    //     (
-    //       action.payload.map
-    //         .lookup (Wiki.ProfessionSelectionIds.COMBAT_TECHNIQUES) as
-    //           Maybe<Record<Wiki.CombatTechniquesSelection>>
-    //     )
-    //       .fmap (
-    //         obj => ({
-    //           ...acc,
-    //           skillRatingList: action .payload .combatTechniques
-    //             .foldl<ConcatenatedModifications["skillRatingList"]> (
-    //               accSkillRatingList => e => addToSkillRatingList (
-    //                 e,
-    //                 obj.get ("value"),
-    //                 accSkillRatingList
-    //               )
-    //             ) (acc.skillRatingList),
-    //         })
-    //       )
-    //   ),
+    // - Combat Techniques
+    pipe_ (
+      P.map,
+      PSA [ProfessionSelectionIds.COMBAT_TECHNIQUES],
+      maybe (ident as ident<Record<ConcatenatedModifications>>)
+            (x => foldIntoSRsFrom (ident as ident<string>)
+                                  (cnst (CombatTechniquesSelection.A.value (x)))
+                                  (OrderedSet.toList (P.combatTechniques)))
+    ),
 
-    // // - Second Combat Techniques
-    // (acc: ConcatenatedModifications) =>
-    //   Maybe.fromMaybe (acc) (
-    //     (action.payload.map
-    //       .lookup (Wiki.ProfessionSelectionIds.COMBAT_TECHNIQUES_SECOND) as
-    //         Maybe<Record<Wiki.CombatTechniquesSecondSelection>>)
-    //       .fmap (
-    //         obj => ({
-    //           ...acc,
-    //           skillRatingList: action .payload .combatTechniquesSecond
-    //             .foldl<ConcatenatedModifications["skillRatingList"]> (
-    //               accSkillRatingList => e => addToSkillRatingList (
-    //                 e,
-    //                 obj.get ("value"),
-    //                 accSkillRatingList
-    //               )
-    //             ) (acc.skillRatingList),
-    //         })
-    //       )
-    //   ),
+    // - Second Combat Techniques
+    pipe_ (
+      P.map,
+      PSA [ProfessionSelectionIds.COMBAT_TECHNIQUES_SECOND],
+      maybe (ident as ident<Record<ConcatenatedModifications>>)
+            (x => foldIntoSRsFrom (ident as ident<string>)
+                                  (cnst (CombatTechniquesSecondSelection.A.value (x)))
+                                  (OrderedSet.toList (P.combatTechniquesSecond)))
+    ),
 
-    // // - Cantrips
-    // (acc: ConcatenatedModifications) =>
-    //   ({
-    //     ...acc,
-    //     state: action.payload.cantrips.foldl<ConcatenatedModifications["hero"]> (
-    //       accState => e => accState.modify<"cantrips"> (OrderedSet.insert (e)) ("cantrips")
-    //     ) (acc.hero),
-    //   }),
+    // - Cantrips
+    over (composeL (CML.hero, HL.cantrips))
+         (union (P.cantrips)),
 
-    // // - Curses
+    // - Curses
+
     // action.payload.curses.foldlWithKey<ConcatenatedModifications> (
     //   accAll => id => value => ({
     //     ...accAll,
@@ -377,7 +312,7 @@ const concatSpecificModifications = (action: SetSelectionsAction) => {
     //   })
     // ),
 
-    // // - Skills
+    // - Skills
     // (acc: ConcatenatedModifications) =>
     //   ({
     //     ...acc,
