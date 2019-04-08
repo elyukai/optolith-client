@@ -76,21 +76,21 @@ const lensByExtended =
  * Adds extended special ability dependencies if the passed entry is a style
  * special ability.
  * @param hero Dependent instances state slice.
- * @param hero_entry The special ability you want to add extended entry
+ * @param wiki_entry The special ability you want to add extended entry
  * dependencies for.
  * @returns Changed state slice.
  */
 export const addStyleExtendedSpecialAbilityDependencies =
-  (hero_entry: Record<SpecialAbility>) =>
+  (wiki_entry: Record<SpecialAbility>) =>
   (hero: HeroModelRecord): HeroModelRecord => {
-    const ml = lensByStyle (hero_entry)
+    const ml = lensByStyle (wiki_entry)
 
     const mnewxs =
       pipe (
              extended,
-             fmap (map (x => StyleDependency ({ id: x, origin: id (hero_entry) })))
+             fmap (map (x => StyleDependency ({ id: x, origin: id (wiki_entry) })))
            )
-           (hero_entry)
+           (wiki_entry)
 
     type DependencyList = List<Record<StyleDependency>>
 
@@ -132,11 +132,11 @@ export const addStyleExtendedSpecialAbilityDependencies =
  * Modifies a `StyleDependency` object to show a extended special ability has
  * been added.
  * @param hero Dependent instances state slice.
- * @param hero_entry The special ability you want to modify a dependency for.
+ * @param wiki_entry The special ability you want to modify a dependency for.
  * @returns Changed state slice.
  */
 export const addExtendedSpecialAbilityDependency =
-  (hero_entry: Record<SpecialAbility>) =>
+  (wiki_entry: Record<SpecialAbility>) =>
   (hero: HeroModelRecord): HeroModelRecord =>
     fromMaybe
       (hero)
@@ -146,21 +146,21 @@ export const addExtendedSpecialAbilityDependency =
                      modifyAt
                       (fromMaybe
                         (-1)
-                        (getIndexForExtendedSpecialAbilityDependency (hero_entry)
+                        (getIndexForExtendedSpecialAbilityDependency (wiki_entry)
                                                                      (xs)))
-                      (set (StyleDependencyL.active) (Just (id (hero_entry))))
+                      (set (StyleDependencyL.active) (Just (id (wiki_entry))))
                       (xs))
                    (hero))
-            (lensByExtended (hero_entry))
+            (lensByExtended (wiki_entry))
   )
 
 const getIndexForExtendedSpecialAbilityDependency =
-  (hero_entry: Record<SpecialAbility>) =>
+  (wiki_entry: Record<SpecialAbility>) =>
   (xs: List<Record<StyleDependency>>) =>
         /**
          * Checks if requested entry is plain dependency.
          */
-    alt (findIndex (pipe (dpid, equals, thrush (id (hero_entry))))
+    alt (findIndex (pipe (dpid, equals, thrush (id (wiki_entry))))
                    (xs))
 
         /**
@@ -171,7 +171,7 @@ const getIndexForExtendedSpecialAbilityDependency =
                      const e_id = dpid (e)
 
                      return isList (e_id)
-                       && elem (id (hero_entry)) (e_id)
+                       && elem (id (wiki_entry)) (e_id)
                    })
                    (xs))
 
@@ -180,10 +180,10 @@ const getIndexForExtendedSpecialAbilityDependency =
  * `addExtendedSpecialAbilityDependency`.
  */
 export const addAllStyleRelatedDependencies =
-  (hero_entry: Record<SpecialAbility>) =>
+  (wiki_entry: Record<SpecialAbility>) =>
     pipe (
-      addStyleExtendedSpecialAbilityDependencies (hero_entry),
-      addExtendedSpecialAbilityDependency (hero_entry)
+      addStyleExtendedSpecialAbilityDependencies (wiki_entry),
+      addExtendedSpecialAbilityDependency (wiki_entry)
     )
 
 /**
@@ -228,14 +228,14 @@ const checkForAlternativeIndex =
  * @returns Changed state slice.
  */
 export const removeStyleExtendedSpecialAbilityDependencies =
-  (hero_entry: Record<SpecialAbility>) =>
+  (wiki_entry: Record<SpecialAbility>) =>
   (hero: HeroModelRecord): HeroModelRecord =>
     fromMaybe
       (hero)
       (fmap ((l: Lens_<HeroModelRecord, List<Record<StyleDependency>>>) =>
               over (l)
                    (xs => {
-                     const splitted = getSplittedRemainingAndToRemove (id (hero_entry)) (xs)
+                     const splitted = getSplittedRemainingAndToRemove (id (wiki_entry)) (xs)
                      const itemsToRemove = fst (splitted)
                      const leftItems = snd (splitted)
 
@@ -250,17 +250,17 @@ export const removeStyleExtendedSpecialAbilityDependencies =
                                  (itemsToRemove)
                    })
                    (hero))
-            (lensByStyle (hero_entry)))
+            (lensByStyle (wiki_entry)))
 
 /**
  * Modifies a `StyleDependency` object to show a extended special ability has
  * been removed.
  * @param hero Dependent instances state slice.
- * @param hero_entry The special ability you want to modify a dependency for.
+ * @param wiki_entry The special ability you want to modify a dependency for.
  * @returns Changed state slice.
  */
 export const removeExtendedSpecialAbilityDependency =
-  (hero_entry: Record<SpecialAbility>) =>
+  (wiki_entry: Record<SpecialAbility>) =>
   (hero: HeroModelRecord): HeroModelRecord =>
     fromMaybe
       (hero)
@@ -269,22 +269,22 @@ export const removeExtendedSpecialAbilityDependency =
                    (xs => modifyAt
                       (fromMaybe
                         (-1)
-                        (getIndexForExtendedSpecialAbilityDependency (hero_entry)
+                        (getIndexForExtendedSpecialAbilityDependency (wiki_entry)
                                                                      (xs)))
                       (set (StyleDependencyL.active) (Nothing))
                       (xs))
                    (hero))
-            (lensByStyle (hero_entry)))
+            (lensByStyle (wiki_entry)))
 
 /**
  * A combination of `removeStyleExtendedSpecialAbilityDependencies` and
  * `removeExtendedSpecialAbilityDependency`.
  */
 export const removeAllStyleRelatedDependencies =
-  (hero_entry: Record<SpecialAbility>) =>
+  (wiki_entry: Record<SpecialAbility>) =>
     pipe (
-      removeStyleExtendedSpecialAbilityDependencies (hero_entry),
-      removeExtendedSpecialAbilityDependency (hero_entry)
+      removeStyleExtendedSpecialAbilityDependencies (wiki_entry),
+      removeExtendedSpecialAbilityDependency (wiki_entry)
     )
 
 /**

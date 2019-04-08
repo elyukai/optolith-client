@@ -1,17 +1,23 @@
 import { notEquals } from "../../Data/Eq";
-import { cnst, flip, ident } from "../../Data/Function";
+import { cnst, flip, ident, join } from "../../Data/Function";
+import { fmap, fmapF } from "../../Data/Functor";
 import { over, set } from "../../Data/Lens";
-import { append, consF, filter, flength, foldr, isList, List } from "../../Data/List";
-import { ensure, isJust, Just, listToMaybe, maybe, Maybe } from "../../Data/Maybe";
-import { alter, foldrWithKey, insertF, keys, member, OrderedMap } from "../../Data/OrderedMap";
-import { insert, OrderedSet, union } from "../../Data/OrderedSet";
+import { append, consF, elem, filter, flength, foldr, isList, List, map } from "../../Data/List";
+import { bind, ensure, fromMaybe, isJust, Just, listToMaybe, maybe, Maybe, Nothing, or } from "../../Data/Maybe";
+import { alter, foldrWithKey, insertF, keys, lookup, member, OrderedMap } from "../../Data/OrderedMap";
+import { insert, OrderedSet, toList, union } from "../../Data/OrderedSet";
 import { fromDefault, makeLenses, Record } from "../../Data/Record";
 import { SetSelectionsAction } from "../Actions/ProfessionActions";
 import { ActionTypes } from "../Constants/ActionTypes";
-import { Categories } from "../Constants/Categories";
+import { ActivatableDependent, ActivatableDependentL } from "../Models/ActiveEntries/ActivatableDependent";
+import { ActivatableSkillDependent, ActivatableSkillDependentL } from "../Models/ActiveEntries/ActivatableSkillDependent";
+import { ActiveObject } from "../Models/ActiveEntries/ActiveObject";
+import { SkillDependent, SkillDependentL } from "../Models/ActiveEntries/SkillDependent";
 import { HeroModel, HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel";
+import { Advantage } from "../Models/Wiki/Advantage";
 import { Culture } from "../Models/Wiki/Culture";
-import { ProfessionRequireActivatable } from "../Models/Wiki/prerequisites/ActivatableRequirement";
+import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel";
+import { ProfessionRequireActivatable, reqToActive } from "../Models/Wiki/prerequisites/ActivatableRequirement";
 import { ProfessionRequireIncreasable } from "../Models/Wiki/prerequisites/IncreasableRequirement";
 import { Profession } from "../Models/Wiki/Profession";
 import { CombatTechniquesSelection } from "../Models/Wiki/professionSelections/CombatTechniquesSelection";
@@ -20,17 +26,22 @@ import { CombatTechniquesSecondSelection } from "../Models/Wiki/professionSelect
 import { SpecializationSelection } from "../Models/Wiki/professionSelections/SpecializationSelection";
 import { ProfessionVariant } from "../Models/Wiki/ProfessionVariant";
 import { Race } from "../Models/Wiki/Race";
+import { Skill } from "../Models/Wiki/Skill";
+import { SpecialAbility } from "../Models/Wiki/SpecialAbility";
 import { IncreaseSkill } from "../Models/Wiki/sub/IncreaseSkill";
-import { ProfessionPrerequisite, ProfessionSelectionIds } from "../Models/Wiki/wikiTypeHelpers";
+import { WikiModel } from "../Models/Wiki/WikiModel";
+import { Activatable, ProfessionPrerequisite, ProfessionSelectionIds } from "../Models/Wiki/wikiTypeHelpers";
 import { getCombinedPrerequisites } from "../Utilities/Activatable/activatableActivationUtils";
 import { addAllStyleRelatedDependencies } from "../Utilities/Activatable/ExtendedStyleUtils";
 import { composeL } from "../Utilities/compose";
-import { updateEntryDef } from "../Utilities/heroStateUtils";
+import { addDependencies } from "../Utilities/Dependencies/dependencyUtils";
+import { getHeroStateItem, updateEntryDef } from "../Utilities/heroStateUtils";
 import { prefixSA } from "../Utilities/IDUtils";
 import { ifElse } from "../Utilities/ifElse";
-import { add, gt } from "../Utilities/mathUtils";
+import { add, gt, max, min } from "../Utilities/mathUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
 import { isString } from "../Utilities/typeCheckUtils";
+import { getWikiEntry, isActivatableWikiEntry } from "../Utilities/WikiUtils";
 
 interface ConcatenatedModifications {
   hero: HeroModelRecord
@@ -55,8 +66,10 @@ const ConcatenatedModifications =
 
 const CMA = ConcatenatedModifications.A
 const CML = makeLenses (ConcatenatedModifications)
+const WA = WikiModel.A
 const HA = HeroModel.A
 const HL = HeroModelL
+const ELA = ExperienceLevel.A
 const RA = Race.A
 const CA = Culture.A
 const PA = Profession.A
@@ -65,6 +78,9 @@ const PRAA = ProfessionRequireActivatable.A
 const PRIA = ProfessionRequireIncreasable.A
 const PSA = ProfessionSelections.A
 const ISA = IncreaseSkill.A
+const SA = Skill.A
+const ADA = ActivatableDependent.A
+const SDL = SkillDependentL
 
 type Action = SetSelectionsAction
 
@@ -303,271 +319,253 @@ const concatSpecificModifications = (action: SetSelectionsAction) => {
          (union (P.cantrips)),
 
     // - Curses
+    over (CML.skillRatingList)
+         (flip (foldrWithKey (flip<number, string, ident<OrderedMap<string, number>>> (addToSRs)))
+               (P.curses)),
 
-    // action.payload.curses.foldlWithKey<ConcatenatedModifications> (
-    //   accAll => id => value => ({
-    //     ...accAll,
-    //     skillActivateList: accAll.skillActivateList.insert (id),
-    //     skillRatingList: addToSkillRatingList (id, value, accAll.skillRatingList),
-    //   })
-    // ),
+    over (CML.skillActivateList)
+         (flip (foldr (insert))
+               (keys (P.curses))),
 
     // - Skills
-    // (acc: ConcatenatedModifications) =>
-    //   ({
-    //     ...acc,
-    //     skillRatingList: action.payload.skills
-    //       .foldlWithKey<ConcatenatedModifications["skillRatingList"]> (
-    //         skillRatingList => id => value => Maybe.fromMaybe (skillRatingList) (
-    //           wiki.get ("skills").lookup (id)
-    //             .fmap (
-    //               skill => addToSkillRatingList (
-    //                 id,
-    //                 value / skill.get ("ic"),
-    //                 skillRatingList
-    //               )
-    //             )
-    //         )
-    //       ) (acc.skillRatingList),
-    //   })
+    over (CML.skillRatingList)
+         (flip (foldrWithKey ((id: string) => (value: number) =>
+                               maybe (ident as ident<OrderedMap<string, number>>)
+                                     ((r: Record<Skill>) => addToSRs (value / SA.ic (r)) (id))
+                                     (lookup (id) (WA.skills (P.wiki)))))
+                             (P.skills))
   )
 }
 
-const concatModifications = (
-  state: Record<Data.HeroDependent>,
-  action: SetSelectionsAction
-): ConcatenatedModifications => {
-  const concatenatedModifications: ConcatenatedModifications = {
-    hero: state,
-    skillRatingList: OrderedMap.empty (),
-    skillActivateList: OrderedSet.empty (),
-    activatable: List.of (),
-    languages: OrderedMap.empty (),
-    scripts: OrderedSet.empty (),
-    professionPrerequisites: List.of (),
+const concatModifications =
+  (action: SetSelectionsAction) =>
+  (state: HeroModelRecord): Record<ConcatenatedModifications> => {
+    const base =
+      ConcatenatedModifications ({
+        hero: state,
+        skillRatingList: Nothing,
+        skillActivateList: Nothing,
+        activatable: Nothing,
+        languages: Nothing,
+        scripts: Nothing,
+        professionPrerequisites: Nothing,
+      })
+
+    return pipe_ (
+      base,
+      concatBaseModifications (action),
+      concatSpecificModifications (action)
+    )
   }
 
-  const pipeModifications = R.pipe (
-    concatBaseModifications (action),
-    concatSpecificModifications (action)
-  )
+const applyModifications =
+  (action: SetSelectionsAction) =>
+    pipe (
+      // - Skill activations
+      join (pipe (
+        CMA.skillActivateList,
+        flip (OrderedSet.foldr (updateEntryDef (pipe (
+                                                       ensure (ActivatableSkillDependent.is),
+                                                       fmap (set (ActivatableSkillDependentL.active)
+                                                                 (true))
+                                                     )))),
+        over (CML.hero)
+      )),
 
-  return pipeModifications (concatenatedModifications)
-}
+      // - Skill rating increases
+      join (pipe (
+        CMA.skillRatingList,
+        flip (OrderedMap.foldrWithKey (
+               (k: string) =>
+               (v: number) =>
+                 updateEntryDef (x => {
+                                  if (SkillDependent.is (x)) {
+                                    return pipe_ (
+                                      x,
+                                      over (SkillDependentL.value)
+                                           (add (v)),
+                                      Just
+                                    )
+                                  }
 
-const applyModifications = (action: SetSelectionsAction) => pipe (
-  // - Skill activations
-  (acc: ConcatenatedModifications) => ({
-    ...acc,
-    state: acc.skillActivateList.foldl<ConcatenatedModifications["hero"]> (
-      state => id => updateHeroListStateItemOr (
-        createActivatableDependentSkill,
-        e => Just (e.insert ("active") (true)),
-        id
-      ) (state)
-    ) (acc.hero),
-  }),
+                                  if (ActivatableSkillDependent.is (x)) {
+                                    return pipe_ (
+                                      x,
+                                      over (ActivatableSkillDependentL.value)
+                                           (add (v)),
+                                      Just
+                                    )
+                                  }
 
-  // - Skill rating increases
-  (acc: ConcatenatedModifications) => ({
-    ...acc,
-    state: acc.skillRatingList.foldlWithKey<ConcatenatedModifications["hero"]> (
-      state => id => value => updateEntryDef (
-        e => Just (
-          (e as any as Record<{ value: number [key: string]: any }>)
-            .modify<"value"> (R.add (value)) ("value")
-        ) as any as Just<Data.Dependent>,
-        id
-      ) (state)
-    ) (acc.state),
-  }),
+                                  return Nothing
+                                })
+                                (k))),
+        over (CML.hero)
+      )),
 
-  // // - Activatable additions
-  // (acc: ConcatenatedModifications) => ({
-  //   ...acc,
-  //   state: acc.activatable.foldl<ConcatenatedModifications["hero"]> (
-  //     state => req => Maybe.maybe<Wiki.Activatable, Data.Hero> (state) (
-  //       wikiEntry => {
-  //         const entry = getHeroStateItem (req.get ("id")) (state) as
-  //           Maybe<Record<Data.ActivatableDependent>>
+      // - Activatable additions
+      join (pipe (
+        CMA.activatable,
+        flip (foldr ((r: Record<ProfessionRequireActivatable>) =>
+                      maybe (ident as ident<HeroModelRecord>)
+                            ((wiki_entry: Activatable) => join ((hero: HeroModelRecord) => {
+                              const mhero_entry =
+                                bind (getHeroStateItem (hero) (PRAA.id (r)))
+                                     (ensure (ActivatableDependent.is))
 
-  //         const activeObject = getActiveObjectCore (req as any)
+                              const active = reqToActive (r)
 
-  //         return updateListToContainNewEntry (
-  //           state,
-  //           wikiEntry,
-  //           entry,
-  //           activeObject
-  //         )
-  //       }
-  //     ) (getWikiEntry (action.payload.wiki) (req.get ("id")) as Maybe<Wiki.Activatable>)
-  //   ) (acc.hero),
-  // }),
+                              return updateListToContainNewEntry (wiki_entry)
+                                                                 (mhero_entry)
+                                                                 (active)
+                            }))
+                            (bind (getWikiEntry (action.payload.wiki) (PRAA.id (r)))
+                                  (ensure (isActivatableWikiEntry))))),
+        over (CML.hero)
+      )),
 
-  // // - Scripts additions
-  // (acc: ConcatenatedModifications) => ({
-  //   ...acc,
-  //   state: updateHeroListStateItemOr (
-  //     createActivatableDependent,
-  //     scripts => Just (
-  //       scripts.modify<"active"> (
-  //         active => active.mappend (
-  //           acc.scripts.elems ().map (
-  //             script => Record.of<Data.ActiveObject> ({ sid: script })
-  //           )
-  //         )
-  //       ) ("active")
-  //     ),
-  //     "SA_27"
-  //   ) (acc.hero),
-  // }),
+      // - Scripts additions
+      join (acc => over (composeL (CML.hero, HL.specialAbilities))
+                        (alter (pipe (
+                                 fromMaybe (ActivatableDependent.default),
+                                 over (ActivatableDependentL.active)
+                                      (append (pipe_ (
+                                        acc,
+                                        CMA.scripts,
+                                        toList,
+                                        map (s => ActiveObject ({ sid: Just (s) }))
+                                      ))),
+                                 Just
+                               ))
+                               (prefixSA (27)))),
 
-  // // - Languages additions
-  // (acc: ConcatenatedModifications) => ({
-  //   ...acc,
-  //   state: updateHeroListStateItemOr (
-  //     createActivatableDependent,
-  //     languages => Just (
-  //       languages.modify<"active"> (
-  //         active => active.mappend (
-  //           acc.languages.assocs ().map (
-  //             language => Record.of<Data.ActiveObject> ({
-  //               sid: Tuple.fst (language),
-  //               tier: Tuple.snd (language),
-  //             })
-  //           )
-  //         )
-  //       ) ("active")
-  //     ),
-  //     "SA_29"
-  //   ) (acc.hero),
-  // }),
+      // - Languages additions
+      join (acc => over (composeL (CML.hero, HL.specialAbilities))
+                        (alter (pipe (
+                                 fromMaybe (ActivatableDependent.default),
+                                 over (ActivatableDependentL.active)
+                                      (append (pipe_ (
+                                        acc,
+                                        CMA.languages,
+                                        foldrWithKey ((k: number) =>
+                                                      (v: number) =>
+                                                        consF (ActiveObject ({
+                                                                          sid: Just (k),
+                                                                          tier: Just (v),
+                                                                        })))
+                                                     (List ())
+                                      ))),
+                                 Just
+                               ))
+                               (prefixSA (29)))),
 
-  // // - Profession prerequisites
-  // (acc: ConcatenatedModifications) => ({
-  //   ...acc,
-  //   state: acc.professionPrerequisites.foldl<ConcatenatedModifications["hero"]> (
-  //     state => req => {
-  //       if (isProfessionRequiringIncreasable (req)) {
-  //         return updateEntryDef (
-  //           e => Just (
-  //             (e as any as Record<{ value: number [key: string]: any }>)
-  //               .insert ("value") (req.get ("value"))
-  //           ) as any as Just<Data.Dependent>,
-  //           req.get ("id")
-  //         ) (state)
-  //       }
-  //       else {
-  //         return Maybe.maybe<Wiki.Activatable, Data.Hero> (state) (
-  //           wikiEntry => {
-  //             const entry = getHeroStateItem (req.get ("id")) (state) as
-  //               Maybe<Record<Data.ActivatableDependent>>
+      // - Profession prerequisites
+      join (pipe (
+        CMA.professionPrerequisites,
+        flip (foldr ((r: ProfessionPrerequisite) =>
+                      ProfessionRequireIncreasable.is (r)
+                        ? updateEntryDef (x => {
+                                           const v = PRIA.value (r)
 
-  //             const activeObject = getActiveObjectCore (req as any)
+                                           if (SkillDependent.is (x)) {
+                                             return pipe_ (
+                                               x,
+                                               over (SkillDependentL.value)
+                                                    // If the value is already valid for the
+                                                    // prerequisite, do not change it
+                                                    (max (v)),
+                                               Just
+                                             )
+                                           }
 
-  //             const checkIfActive = R.equals (activeObject)
+                                           if (ActivatableSkillDependent.is (x)) {
+                                             return pipe_ (
+                                               x,
+                                               over (ActivatableSkillDependentL.value)
+                                                    // If the value is already valid for the
+                                                    // prerequisite, do not change it
+                                                    (max (v)),
+                                               Just
+                                             )
+                                           }
 
-  //             if (
-  //               Maybe.fromMaybe (false) (
-  //                 entry.fmap (justEntry => justEntry.get ("active").any (checkIfActive))
-  //               )
-  //             ) {
-  //               return state
-  //             }
+                                           return Nothing
+                                         })
+                                         (PRIA.id (r))
+                        : maybe (ident as ident<HeroModelRecord>)
+                                ((wiki_entry: Activatable) => join ((hero: HeroModelRecord) => {
+                                  const mhero_entry =
+                                    bind (getHeroStateItem (hero) (PRAA.id (r)))
+                                         (ensure (ActivatableDependent.is))
 
-  //             return updateListToContainNewEntry (
-  //               state,
-  //               wikiEntry,
-  //               entry,
-  //               activeObject
-  //             )
-  //           }
-  //         ) (getWikiEntry (action.payload.wiki) (req.get ("id")) as Maybe<Wiki.Activatable>)
-  //       }
-  //     }
-  //   ) (acc.state),
-  // }),
+                                  const active = reqToActive (r)
 
-  // // - Lower Combat Techniques with too high CTR
-  // acc => ({
-  //   ...acc,
-  //   state: acc.state.modify<"combatTechniques"> (
-  //     combatTechniques => {
-  //       const maybeMaxCombatTechniqueRating = action.payload.wiki.get ("experienceLevels")
-  //         .lookup (acc.state.get ("experienceLevel"))
-  //         .fmap (el => el.get ("maxCombatTechniqueRating"))
+                                  if (or (fmapF (mhero_entry)
+                                                (pipe (ADA.active, elem (active))))) {
+                                    return ident
+                                  }
 
-  //       return Maybe.fromMaybe (combatTechniques) (
-  //         maybeMaxCombatTechniqueRating.fmap (
-  //           maxCombatTechniqueRating => combatTechniques.map (
-  //             combatTechnique => combatTechnique.modify<"value"> (R.min (maxCombatTechniqueRating))
-  //                                                                ("value")
-  //           )
-  //         )
-  //       )
-  //     }
-  //   ) ("combatTechniques"),
-  // }),
+                                  return updateListToContainNewEntry (wiki_entry)
+                                                                     (mhero_entry)
+                                                                     (active)
+                                }))
+                                (bind (getWikiEntry (action.payload.wiki) (PRAA.id (r)))
+                                      (ensure (isActivatableWikiEntry))))),
+        over (CML.hero)
+      )),
 
-  /**
-   * Deleted because of consistency, but may be reused when having a new way to
-   * automatically handle pAE.
-   *
-   * if (isActive(acc.state.specialAbilities.get('SA_76'))) {
-   *    permanentArcaneEnergyLoss += 2
-   * }
-   */
+      // - Lower Combat Techniques with too high CTR
+      join (acc => over (composeL (CML.hero, HL.combatTechniques))
+                        (maybe (ident as ident<HeroModel["combatTechniques"]>)
+                               (pipe (min, over (SDL.value), OrderedMap.map))
+                               (pipe_ (
+                                 action .payload .wiki,
+                                 WA.experienceLevels,
+                                 lookup (HA.experienceLevel (CMA.hero (acc))),
+                                 fmap (ELA.maxCombatTechniqueRating)
+                               )))),
 
-  acc => acc.state
-)
+      /**
+       * Deleted because of consistency, but may be reused when having a new way to
+       * automatically handle pAE.
+       *
+       * if (isActive(acc.state.specialAbilities.get('SA_76'))) {
+       *    permanentArcaneEnergyLoss += 2
+       * }
+       */
+
+      CMA.hero
+    )
 
 export const applyRCPSelectionsReducer =
   (action: Action): ident<HeroModelRecord> => {
     switch (action.type) {
       case ActionTypes.ASSIGN_RCP_OPTIONS: {
-        const concatenatedModifications = concatModifications (state, action)
-
-        return applyModifications (action) (concatenatedModifications)
+        return pipe (concatModifications (action), applyModifications (action))
       }
 
       default:
-        return state
+        return ident
     }
   }
 
-function updateListToContainNewEntry (
-  state: Record<Data.HeroDependent>,
-  wikiEntry: Wiki.Activatable,
-  entry: Maybe<Record<Data.ActivatableDependent>>,
-  activeObject: Record<Data.ActiveObject>
-): Record<Data.HeroDependent> {
-  type Actives = Data.ActivatableDependent["active"]
-  type Active = Record<Data.ActiveObject>
-
-  const intermediateState = addDependencies (
-    updateHeroListStateItemOr (
-      createActivatableDependent,
-      currentEntry => Just (
-        currentEntry.modify<"active"> (flip<Actives, Active, Actives> (List.cons) (activeObject))
-                                      ("active")
-      ),
-      wikiEntry.get ("id")
-    ) (state),
-    getCombinedPrerequisites (
-      wikiEntry,
-      entry,
-      activeObject,
-      true
-    ),
-    wikiEntry.get ("id")
-  )
-
-  if (wikiEntry.toObject ().category === Categories.SPECIAL_ABILITIES) {
-    return addAllStyleRelatedDependencies (
-      intermediateState,
-      wikiEntry as Record<Wiki.SpecialAbility>
+const updateListToContainNewEntry =
+  (wiki_entry: Activatable) =>
+  (mhero_entry: Maybe<Record<ActivatableDependent>>) =>
+  (active: Record<ActiveObject>): ident<HeroModelRecord> =>
+    pipe (
+      updateEntryDef (pipe (
+                             ensure (ActivatableDependent.is),
+                             fmap (over (ActivatableDependentL.active)
+                                        (consF (active)))
+                           ))
+                     (Advantage.AL.id (wiki_entry)),
+      addDependencies (Advantage.AL.id (wiki_entry))
+                      (getCombinedPrerequisites (true)
+                                                (wiki_entry)
+                                                (mhero_entry)
+                                                (active)),
+      SpecialAbility.is (wiki_entry)
+        ? addAllStyleRelatedDependencies (wiki_entry)
+        : ident
     )
-  }
-
-  return intermediateState
-}

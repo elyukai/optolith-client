@@ -6,7 +6,7 @@ import { UpdateInfo } from "electron-updater";
 import * as fs from "fs";
 import { extname, join } from "path";
 import { tryy } from "../../Control/Exception";
-import { Either, eitherToMaybe, fromLeft_, fromRight_, isLeft, isRight } from "../../Data/Either";
+import { Either, eitherToMaybe, fromLeft, fromLeft_, fromRight_, isLeft, isRight, Right } from "../../Data/Either";
 import { flip } from "../../Data/Function";
 import { fmap } from "../../Data/Functor";
 import { List, notNull } from "../../Data/List";
@@ -90,14 +90,20 @@ export interface ReceiveInitialDataAction {
 export const requestInitialData = (): ReduxAction => dispatch => {
   const data = dispatch (getInitialData)
 
-  if (isJust (data)) {
-    dispatch (receiveInitialData (fromJust (data)))
+  if (isRight (data)) {
+    dispatch (receiveInitialData (fromRight_ (data)))
+  }
+  else {
+    dispatch (addAlert ({
+      title: "Error loading database",
+      message: fromLeft ("") (data),
+    }))
   }
 
   return
 }
 
-export const getInitialData: ReduxAction<Maybe<InitialData>> =
+export const getInitialData: ReduxAction<Either<string, InitialData>> =
   dispatch => {
     const config = fromIO (loadConfig ())
     const heroes = fromIO (loadHeroes ())
@@ -106,7 +112,7 @@ export const getInitialData: ReduxAction<Maybe<InitialData>> =
                             (bind (config) (c => Maybe (c.locale)))))
 
     if (isRight (tables)) {
-      return Just ({
+      return Right ({
         tables: fromRight_ (tables),
         heroes,
         defaultLocale,
@@ -114,7 +120,7 @@ export const getInitialData: ReduxAction<Maybe<InitialData>> =
       })
     }
 
-    return Nothing
+    return tables
   }
 
 export const receiveInitialData = (data: InitialData): ReceiveInitialDataAction => ({

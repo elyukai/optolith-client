@@ -5,6 +5,7 @@ import { fromDefault, makeLenses, member, Record, RecordCreator } from "../../..
 import { ActivatableLikeCategories, Categories } from "../../../Constants/Categories";
 import { getCategoryById } from "../../../Utilities/IDUtils";
 import { pipe } from "../../../Utilities/pipe";
+import { ActiveObject } from "../../ActiveEntries/ActiveObject";
 import { AllRequirementObjects, ProfessionPrerequisite, SID } from "../wikiTypeHelpers";
 
 export interface RequireActivatable {
@@ -61,3 +62,11 @@ export const isProfessionRequiringActivatable =
       && or (fmap (elemF<Categories> (ActivatableLikeCategories))
                   (getCategoryById (id)))
   }
+
+export const reqToActive =
+  (x: Record<ProfessionRequireActivatable>) =>
+    ActiveObject ({
+      sid: ProfessionRequireActivatable.A.sid (x),
+      sid2: ProfessionRequireActivatable.A.sid2 (x),
+      tier: ProfessionRequireActivatable.A.tier (x),
+    })

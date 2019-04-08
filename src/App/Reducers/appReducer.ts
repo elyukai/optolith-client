@@ -16,6 +16,8 @@ export interface AppState {
   wiki: WikiModelRecord
 }
 
+export type AppStateRecord = Record<AppState>
+
 const appSlices =
   combineReducerRecord<AppState> ({
                                    herolist: HeroesState.default,
