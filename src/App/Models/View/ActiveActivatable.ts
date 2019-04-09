@@ -1,4 +1,5 @@
-import { fromDefault, Record, RecordI } from "../../../Data/Record";
+import { Maybe } from "../../../Data/Maybe";
+import { fromDefault, Record, RecordI, StrictAccessor } from "../../../Data/Record";
 import { pipe } from "../../Utilities/pipe";
 import { ActivatableDependent } from "../ActiveEntries/ActivatableDependent";
 import { Advantage } from "../Wiki/Advantage";
@@ -6,7 +7,7 @@ import { Disadvantage } from "../Wiki/Disadvantage";
 import { SpecialAbility } from "../Wiki/SpecialAbility";
 import { Activatable } from "../Wiki/wikiTypeHelpers";
 import { ActivatableActivationValidation } from "./ActivatableActivationValidationObject";
-import { ActivatableNameCost, ActivatableNameCostSafeCost } from "./ActivatableNameCost";
+import { ActivatableNameCost, ActivatableNameCostA_, ActivatableNameCostSafeCost } from "./ActivatableNameCost";
 
 export interface ActiveActivatable<A extends RecordI<Activatable> = RecordI<Activatable>> {
   nameAndCost: Record<ActivatableNameCostSafeCost>
@@ -23,13 +24,25 @@ export const ActiveActivatable =
     wikiEntry: Advantage.default,
   })
 
-type GenericA<B> =
+type GenA<B> =
   <A extends Advantage | Disadvantage | SpecialAbility>
   (x: Record<ActiveActivatable<A>>) => B
 
 export const ActiveActivatableA_ = {
-  id: pipe (ActiveActivatable.A.wikiEntry, Advantage.AL.id) as GenericA<string>,
-  name: pipe (ActiveActivatable.A.wikiEntry, Advantage.AL.name) as GenericA<string>,
+  id: pipe (ActiveActivatable.A.wikiEntry, Advantage.AL.id) as GenA<string>,
+  name: pipe (ActiveActivatable.A.wikiEntry, Advantage.AL.name) as GenA<string>,
+  tier: pipe (ActiveActivatable.A.nameAndCost, ActivatableNameCostA_.tier) as GenA<Maybe<number>>,
+  finalCost:
+    pipe (
+      ActiveActivatable.A.nameAndCost,
+      ActivatableNameCost.A.finalCost as StrictAccessor<ActivatableNameCostSafeCost, "finalCost">
+    ) as GenA<number>,
+  baseName:
+    pipe (ActiveActivatable.A.nameAndCost, ActivatableNameCostA_.baseName) as GenA<string>,
+  addName:
+    pipe (ActiveActivatable.A.nameAndCost, ActivatableNameCostA_.addName) as GenA<Maybe<string>>,
+  levelName:
+    pipe (ActiveActivatable.A.nameAndCost, ActivatableNameCostA_.levelName) as GenA<Maybe<string>>,
 }
 
 export const ActiveActivatableAL_ = {

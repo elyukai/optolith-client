@@ -1,4 +1,4 @@
-import { fmap } from "../../../../Data/Either";
+import { fmap } from "../../../../Data/Functor";
 import { notNull } from "../../../../Data/List";
 import { Just, Nothing } from "../../../../Data/Maybe";
 import { IdPrefixes } from "../../../Constants/IdPrefixes";

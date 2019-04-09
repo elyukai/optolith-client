@@ -3,7 +3,7 @@ import { set } from "../../Data/Lens";
 import { List } from "../../Data/List";
 import { ActionTypes } from "../Constants/ActionTypes";
 import { HeroModel, HeroModelRecord } from "../Models/Hero/HeroModel";
-import { reduceReducers } from "../Utilities/reduceReducers";
+import { reduceReducersC } from "../Utilities/reduceReducers";
 import { undo } from "../Utilities/undo";
 import { adventurePointsReducer } from "./adventurePointsReducer";
 import { applyRCPSelectionsReducer } from "./applyRCPSelectionsReducer";
@@ -84,7 +84,7 @@ export const heroReducer =
          ActionTypes.SET_ARMOR_ZONES_RIGHT_LEG_LOSS
        ))
        (HeroModel.default)
-       (reduceReducers<HeroModelRecord, any> (
+       (reduceReducersC<HeroModelRecord, any> (
          adventurePointsReducer,
          dependentReducer,
          energiesReducer,

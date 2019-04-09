@@ -1,9 +1,13 @@
 import { ident } from "../../Data/Function";
 import { over, set } from "../../Data/Lens";
-import { Just } from "../../Data/Maybe";
+import { isJust, Just } from "../../Data/Maybe";
+import { snd } from "../../Data/Pair";
+import { Record } from "../../Data/Record";
 import * as DisAdvActions from "../Actions/DisAdvActions";
 import * as ProfileActions from "../Actions/ProfileActions";
 import { ActionTypes } from "../Constants/ActionTypes";
+import { ActivatableActivationEntryType } from "../Models/Actions/ActivatableActivationEntryType";
+import { ActivatableDeactivationEntryType } from "../Models/Actions/ActivatableDeactivationEntryType";
 import { HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel";
 import { PersonalDataL } from "../Models/Hero/PersonalData";
 import { composeL } from "../Utilities/compose";
@@ -103,15 +107,20 @@ const personalDataReducer =
 
       case ActionTypes.ACTIVATE_DISADV:
       case ActionTypes.DEACTIVATE_DISADV: {
-        const { eyeColor, hairColor } = action.payload
+        type EntryTypes = Record<ActivatableActivationEntryType>
+                        | Record<ActivatableDeactivationEntryType>
 
-        if (typeof eyeColor === "number" && typeof hairColor === "number") {
+        const eyeColor =
+          ActivatableActivationEntryType.AL.eyeColor (snd<EntryTypes> (action.payload))
+
+        const hairColor =
+          ActivatableActivationEntryType.AL.hairColor (snd<EntryTypes> (action.payload))
+
+        if (isJust (eyeColor) && isJust (hairColor)) {
           return over (HeroModelL.personalData)
                       (pipe (
-                        set (PersonalDataL.eyeColor)
-                            (Just (eyeColor)),
-                        set (PersonalDataL.hairColor)
-                            (Just (hairColor))
+                        set (PersonalDataL.eyeColor) (eyeColor),
+                        set (PersonalDataL.hairColor) (hairColor)
                       ))
         }
 

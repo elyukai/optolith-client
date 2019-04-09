@@ -1,8 +1,9 @@
 import { List } from "../../../Data/List";
 import { fromDefault, makeLenses, PartialMaybeOrNothing, Record, RecordCreator } from "../../../Data/Record";
+import { composeL } from "../../Utilities/compose";
 import { pipe } from "../../Utilities/pipe";
 import { ActiveObjectWithId } from "../ActiveEntries/ActiveObjectWithId";
-import { ActivatableCombinedName } from "./ActivatableCombinedName";
+import { ActivatableCombinedName, ActivatableCombinedNameL } from "./ActivatableCombinedName";
 
 export interface ActivatableNameCost {
   naming: Record<ActivatableCombinedName>
@@ -27,7 +28,18 @@ export const ActivatableNameCost =
 
 export const ActivatableNameCostA_ = {
   id: pipe (ActivatableNameCost.A.active, ActiveObjectWithId.A.id),
+  tier: pipe (ActivatableNameCost.A.active, ActiveObjectWithId.A.tier),
   name: pipe (ActivatableNameCost.A.naming, ActivatableCombinedName.A.name),
+  addName: pipe (ActivatableNameCost.A.naming, ActivatableCombinedName.A.addName),
+  baseName: pipe (ActivatableNameCost.A.naming, ActivatableCombinedName.A.baseName),
+  levelName: pipe (ActivatableNameCost.A.naming, ActivatableCombinedName.A.levelName),
 }
 
 export const ActivatableNameCostL = makeLenses (ActivatableNameCost)
+
+export const ActivatableNameCostL_ = {
+  name: composeL (ActivatableNameCostL.naming, ActivatableCombinedNameL.name),
+  addName: composeL (ActivatableNameCostL.naming, ActivatableCombinedNameL.addName),
+  baseName: composeL (ActivatableNameCostL.naming, ActivatableCombinedNameL.baseName),
+  levelName: composeL (ActivatableNameCostL.naming, ActivatableCombinedNameL.levelName),
+}

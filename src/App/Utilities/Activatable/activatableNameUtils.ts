@@ -16,7 +16,7 @@ import { elems, lookup, lookupF } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { ActiveObjectWithId } from "../../Models/ActiveEntries/ActiveObjectWithId";
 import { ActivatableCombinedName } from "../../Models/View/ActivatableCombinedName";
-import { ActiveActivatable } from "../../Models/View/ActiveActivatable";
+import { ActiveActivatable, ActiveActivatableA_ } from "../../Models/View/ActiveActivatable";
 import { Advantage } from "../../Models/Wiki/Advantage";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { Skill } from "../../Models/Wiki/Skill";
@@ -36,10 +36,9 @@ import { findSelectOption, getSelectOptionName } from "./selectionUtils";
 
 const { skills, spells, liturgicalChants, specialAbilities } = WikiModel.AL
 const { id, sid, sid2, tier } = ActiveObjectWithId.AL
-const AA = ActiveActivatable.A
-const name = ActiveActivatable.AL.name
+const AAA_ = ActiveActivatableA_
 const { input, select } = Advantage.AL
-const { applications } = Skill.AL
+const { applications, name } = Skill.AL
 const { target, specializations } = SelectOption.AL
 
 /**
@@ -52,9 +51,9 @@ export const getFullName =
       return obj
     }
 
-    return maybe (AA.name (obj))
-                 ((level_name: string) => AA.name (obj) + level_name)
-                 (AA.levelName (obj))
+    return maybe (AAA_.name (obj))
+                 ((level_name: string) => AAA_.name (obj) + level_name)
+                 (AAA_.levelName (obj))
   }
 
 /**
@@ -229,8 +228,7 @@ const getEntrySpecificNameAddition =
                       lookup ("SA_29"),
                       bindF (pipe (
                         findSelectOption,
-                        thrush<Maybe<string | number>, Maybe<Record<SelectOption>>>
-                          (sid (hero_entry))
+                        thrush (sid (hero_entry))
                       )),
                       bindF (lang => pipe (
                                             sid2,
@@ -373,25 +371,25 @@ export const compressList =
   (l10n: L10nRecord) =>
   (xs: List<Record<ActiveActivatable>>): string => {
     const grouped_xs =
-      elems (groupByKey<Record<ActiveActivatable>, string> (id) (xs))
+      elems (groupByKey<Record<ActiveActivatable>, string> (AAA_.id) (xs))
 
     return pipe (
                   map (
                     ifElse<List<Record<ActiveActivatable>>, string>
                       (xs_group => flength (xs_group) === 1)
-                      (pipe (listToMaybe, maybe ("") (name)))
+                      (pipe (listToMaybe, maybe ("") (AAA_.name)))
                       (xs_group => pipe (
                                           map ((x: Record<ActiveActivatable>) => {
                                             const levelPart =
                                               pipe (
-                                                     AA.tier,
+                                                     AAA_.tier,
                                                      fmap (pipe (toRoman, appendStr (" "))),
                                                      fromMaybe ("")
                                                    )
                                                    (x)
 
                                             const selectOptionPart =
-                                              fromMaybe ("") (AA.addName (x))
+                                              fromMaybe ("") (AAA_.addName (x))
 
                                             return selectOptionPart + levelPart
                                           }),
@@ -400,7 +398,7 @@ export const compressList =
                                           x => ` (${x})`,
                                           x => maybe ("")
                                                      ((r: Record<ActiveActivatable>) =>
-                                                       AA.baseName (r) + x)
+                                                       AAA_.baseName (r) + x)
                                                      (listToMaybe (xs_group))
                                         )
                                         (xs_group))

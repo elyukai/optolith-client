@@ -1,5 +1,5 @@
 import xlsx from "xlsx";
-import { bindF, Either, fromRight_, isLeft, Left, mapM, maybeToEither } from "../../../Data/Either";
+import { bind, bindF, Either, fromRight_, isLeft, Left, mapM, maybeToEither } from "../../../Data/Either";
 import { fmap } from "../../../Data/Functor";
 import { Lens_, over, set } from "../../../Data/Lens";
 import { consF, empty, foldr, List, map } from "../../../Data/List";
@@ -133,7 +133,8 @@ export const parseTables =
 
       return mapMNamed
         ({
-          l10n: bindF (toL10n (locale)) (lookup_l10n ("UI")),
+          l10n: bind<string, List<OrderedMap<string, string>>, L10nRecord> (lookup_l10n ("UI"))
+                                                                           (toL10n (locale)),
 
           books:
             fmap<List<Record<Book>>, OrderedMap<string, Record<Book>>>

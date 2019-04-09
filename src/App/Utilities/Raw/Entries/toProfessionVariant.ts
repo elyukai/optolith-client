@@ -1,10 +1,15 @@
-import { empty, fromArray, map } from "../../../../Data/List";
+import { ident } from "../../../../Data/Function";
+import { fmap } from "../../../../Data/Functor";
+import { set } from "../../../../Data/Lens";
+import { empty, foldr, fromArray, map } from "../../../../Data/List";
 import { fromMaybe, Just, maybe, Maybe, Nothing } from "../../../../Data/Maybe";
+import { Record } from "../../../../Data/Record";
 import { IdPrefixes } from "../../../Constants/IdPrefixes";
 import { CantripsSelection } from "../../../Models/Wiki/professionSelections/CantripsSelection";
 import { CombatTechniquesSelection } from "../../../Models/Wiki/professionSelections/CombatTechniquesSelection";
 import { CursesSelection } from "../../../Models/Wiki/professionSelections/CursesSelection";
 import { LanguagesScriptsSelection } from "../../../Models/Wiki/professionSelections/LanguagesScriptsSelection";
+import { ProfessionVariantSelections, ProfessionVariantSelectionsL } from "../../../Models/Wiki/professionSelections/ProfessionVariantAdjustmentSelections";
 import { RemoveCombatTechniquesSelection } from "../../../Models/Wiki/professionSelections/RemoveCombatTechniquesSelection";
 import { isRemoveCombatTechniquesSecondSelection, RemoveCombatTechniquesSecondSelection } from "../../../Models/Wiki/professionSelections/RemoveSecondCombatTechniquesSelection";
 import { RemoveSpecializationSelection } from "../../../Models/Wiki/professionSelections/RemoveSpecializationSelection";
@@ -15,9 +20,10 @@ import { TerrainKnowledgeSelection } from "../../../Models/Wiki/professionSelect
 import { ProfessionVariant } from "../../../Models/Wiki/ProfessionVariant";
 import { pairToIncreaseSkill } from "../../../Models/Wiki/sub/IncreaseSkill";
 import { NameBySex } from "../../../Models/Wiki/sub/NameBySex";
-import { AnyProfessionVariantSelection } from "../../../Models/Wiki/wikiTypeHelpers";
+import { AnyProfessionVariantSelection, ProfessionSelectionIds } from "../../../Models/Wiki/wikiTypeHelpers";
 import { prefixId } from "../../IDUtils";
 import { toInt, toNatural } from "../../NumberUtils";
+import { pipe } from "../../pipe";
 import { mergeRowsById } from "../mergeTableRows";
 import { mensureMapInteger, mensureMapListOptional, mensureMapNonEmptyString, mensureMapPairListOptional } from "../validateMapValueUtils";
 import { Expect, lookupKeyValid, mapMNamed } from "../validateValueUtils";
@@ -33,82 +39,130 @@ import { isRemoveRawCombatTechniquesSelection } from "./ProfessionSelections/Rem
 import { isRemoveRawSpecializationSelection } from "./ProfessionSelections/RemoveRawSpecializationSelection";
 import { stringToBlessings, stringToDependencies, stringToPrerequisites, stringToSpecialAbilities } from "./toProfession";
 
+const PVSL = ProfessionVariantSelectionsL
+
 const stringToVariantSelections =
-  mensureMapListOptional
-    ("&")
-    (
-      "SpecializationSelection "
-      + "| LanguagesScriptsSelection "
-      + "| CombatTechniquesSelection "
-      + "| CombatTechniquesSecondSelection "
-      + "| CantripsSelection "
-      + "| CursesSelection "
-      + "| TerrainKnowledgeSelection "
-      + "| SkillsSelection"
-    )
-    ((x): Maybe<AnyProfessionVariantSelection> => {
-      try {
-        const obj = JSON.parse (x)
+  pipe (
+    mensureMapListOptional
+      ("&")
+      (
+        "SpecializationSelection "
+        + "| LanguagesScriptsSelection "
+        + "| CombatTechniquesSelection "
+        + "| CombatTechniquesSecondSelection "
+        + "| CantripsSelection "
+        + "| CursesSelection "
+        + "| TerrainKnowledgeSelection "
+        + "| SkillsSelection"
+      )
+      ((x): Maybe<AnyProfessionVariantSelection> => {
+        try {
+          const obj = JSON.parse (x)
 
-        if (typeof obj !== "object" || obj === null) return Nothing
+          if (typeof obj !== "object" || obj === null) return Nothing
 
-        return isRawSpecializationSelection (obj)
-          ? Just (SpecializationSelection ({
-              id: Nothing,
-              sid: Array.isArray (obj .sid) ? fromArray (obj .sid) : obj .sid,
-            }))
-          : isRemoveRawSpecializationSelection (obj)
-          ? Just (RemoveSpecializationSelection)
-          : isRawLanguagesScriptsSelection (obj)
-          ? Just (LanguagesScriptsSelection ({
-              id: Nothing,
-              value: obj .value,
-            }))
-          : isRawCombatTechniquesSelection (obj)
-          ? Just (CombatTechniquesSelection ({
-              id: Nothing,
-              amount: obj .amount,
-              value: obj .value,
-              sid: fromArray (obj .sid),
-            }))
-          : isRemoveRawCombatTechniquesSelection (obj)
-          ? Just (RemoveCombatTechniquesSelection)
-          : isRawSecondCombatTechniquesSelection (obj)
-          ? Just (CombatTechniquesSecondSelection ({
-              id: Nothing,
-              amount: obj .amount,
-              value: obj .value,
-              sid: fromArray (obj .sid),
-            }))
-          : isRemoveCombatTechniquesSecondSelection (obj)
-          ? Just (RemoveCombatTechniquesSecondSelection)
-          : isRawCantripsSelection (obj)
-          ? Just (CantripsSelection ({
-              id: Nothing,
-              amount: obj .amount,
-              sid: fromArray (obj .sid),
-            }))
-          : isRawCursesSelection (obj)
-          ? Just (CursesSelection ({
-              id: Nothing,
-              value: obj .value,
-            }))
-          : isRawTerrainKnowledgeSelection (obj)
-          ? Just (TerrainKnowledgeSelection ({
-              id: Nothing,
-              sid: fromArray (obj .sid),
-            }))
-          : isRawSkillsSelection (obj)
-          ? Just (SkillsSelection ({
-              id: Nothing,
-              value: obj .value,
-            }))
-          : Nothing
-      }
-      catch (e) {
-        return Nothing
-      }
-    })
+          return isRawSpecializationSelection (obj)
+            ? Just (SpecializationSelection ({
+                id: Nothing,
+                sid: Array.isArray (obj .sid) ? fromArray (obj .sid) : obj .sid,
+              }))
+            : isRemoveRawSpecializationSelection (obj)
+            ? Just (RemoveSpecializationSelection)
+            : isRawLanguagesScriptsSelection (obj)
+            ? Just (LanguagesScriptsSelection ({
+                id: Nothing,
+                value: obj .value,
+              }))
+            : isRawCombatTechniquesSelection (obj)
+            ? Just (CombatTechniquesSelection ({
+                id: Nothing,
+                amount: obj .amount,
+                value: obj .value,
+                sid: fromArray (obj .sid),
+              }))
+            : isRemoveRawCombatTechniquesSelection (obj)
+            ? Just (RemoveCombatTechniquesSelection)
+            : isRawSecondCombatTechniquesSelection (obj)
+            ? Just (CombatTechniquesSecondSelection ({
+                id: Nothing,
+                amount: obj .amount,
+                value: obj .value,
+                sid: fromArray (obj .sid),
+              }))
+            : isRemoveCombatTechniquesSecondSelection (obj)
+            ? Just (RemoveCombatTechniquesSecondSelection)
+            : isRawCantripsSelection (obj)
+            ? Just (CantripsSelection ({
+                id: Nothing,
+                amount: obj .amount,
+                sid: fromArray (obj .sid),
+              }))
+            : isRawCursesSelection (obj)
+            ? Just (CursesSelection ({
+                id: Nothing,
+                value: obj .value,
+              }))
+            : isRawTerrainKnowledgeSelection (obj)
+            ? Just (TerrainKnowledgeSelection ({
+                id: Nothing,
+                sid: fromArray (obj .sid),
+              }))
+            : isRawSkillsSelection (obj)
+            ? Just (SkillsSelection ({
+                id: Nothing,
+                value: obj .value,
+              }))
+            : Nothing
+        }
+        catch (e) {
+          return Nothing
+        }
+      }),
+    fmap (fmap (foldr (s => {
+                        if (SpecializationSelection.is (s)) {
+                          return set (PVSL [ProfessionSelectionIds.SPECIALIZATION])
+                                     (Just (s))
+                        }
+
+                        if (LanguagesScriptsSelection.is (s)) {
+                          return set (PVSL [ProfessionSelectionIds.LANGUAGES_SCRIPTS])
+                                     (Just (s))
+                        }
+
+                        if (CombatTechniquesSelection.is (s)) {
+                          return set (PVSL [ProfessionSelectionIds.COMBAT_TECHNIQUES])
+                                     (Just (s))
+                        }
+
+                        if (CombatTechniquesSecondSelection.is (s)) {
+                          return set (PVSL [ProfessionSelectionIds.COMBAT_TECHNIQUES_SECOND])
+                                     (Just (s))
+                        }
+
+                        if (CantripsSelection.is (s)) {
+                          return set (PVSL [ProfessionSelectionIds.CANTRIPS])
+                                     (Just (s))
+                        }
+
+                        if (CursesSelection.is (s)) {
+                          return set (PVSL [ProfessionSelectionIds.CURSES])
+                                     (Just (s))
+                        }
+
+                        if (TerrainKnowledgeSelection.is (s)) {
+                          return set (PVSL [ProfessionSelectionIds.TERRAIN_KNOWLEDGE])
+                                     (Just (s))
+                        }
+
+                        if (SkillsSelection.is (s)) {
+                          return set (PVSL [ProfessionSelectionIds.SKILLS])
+                                     (Just (s))
+                        }
+
+                        return ident as ident<Record<ProfessionVariantSelections>>
+                      })
+                      (ProfessionVariantSelections.default)))
+  )
 
 const toNaturalNumberIntPairOptional =
   mensureMapPairListOptional ("&")
@@ -227,7 +281,8 @@ export const toProfessionVariant =
             fromMaybe<ProfessionVariant["prerequisites"]> (empty) (rs.eprerequisites),
 
           selections:
-            fromMaybe<ProfessionVariant["selections"]> (empty) (rs.eselections),
+            fromMaybe<ProfessionVariant["selections"]> (ProfessionVariantSelections.default)
+                                                       (rs.eselections),
 
           specialAbilities:
             fromMaybe<ProfessionVariant["specialAbilities"]> (empty) (rs.especialAbilities),

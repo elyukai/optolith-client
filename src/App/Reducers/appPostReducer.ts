@@ -1,19 +1,30 @@
-import { ident } from "../../Data/Function";
-import { over } from "../../Data/Lens";
-import { isJust } from "../../Data/Maybe";
-import { OrderedMap } from "../../Data/OrderedMap";
+import { flip, ident, join } from "../../Data/Function";
+import { fmapF } from "../../Data/Functor";
+import { over, set } from "../../Data/Lens";
+import { List } from "../../Data/List";
+import { and, elem, isJust, isNothing, Just, or } from "../../Data/Maybe";
+import { insert, OrderedMap } from "../../Data/OrderedMap";
+import { snd } from "../../Data/Pair";
 import { Record } from "../../Data/Record";
 import { RedoAction, UndoAction } from "../Actions/HistoryActions";
 import { ReceiveImportedHeroAction, ReceiveInitialDataAction } from "../Actions/IOActions";
 import { ActionTypes } from "../Constants/ActionTypes";
-import { HeroModelRecord } from "../Models/Hero/HeroModel";
+import { HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel";
 import { User } from "../Models/Hero/heroTypeHelpers";
 import { getRuleBooksEnabled } from "../Selectors/rulesSelectors";
 import { getCurrentCultureId, getCurrentRaceId, getCurrentTab, getPhase } from "../Selectors/stateSelectors";
+import { composeL } from "../Utilities/compose";
+import { TabId } from "../Utilities/LocationUtils";
+import { notP } from "../Utilities/not";
+import { pipe } from "../Utilities/pipe";
 import { convertHero } from "../Utilities/Raw/compatibilityUtils";
+import { convertFromRawHero } from "../Utilities/Raw/initHeroUtils";
 import { isBookEnabled } from "../Utilities/RulesUtils";
 import { UndoState } from "../Utilities/undo";
 import { AppState, AppStateRecord } from "./appReducer";
+import { HeroesStateL } from "./herolistReducer";
+import { toHeroWithHistory } from "./heroReducer";
+import { uiReducer } from "./uiReducer";
 
 type Action = ReceiveInitialDataAction
             | ReceiveImportedHeroAction
@@ -25,175 +36,130 @@ const prepareHerolist =
     const { heroes: rawHeroes } = action.payload
 
     interface Reduced {
-      heroes: OrderedMap<string, UndoState<HeroModelRecord>>
+      heroes: OrderedMap<string, Record<UndoState<HeroModelRecord>>>
       users: OrderedMap<string, User>
     }
 
     if (isJust (rawHeroes)) {
+      const hs = Object.entries (rawHeroes).reduce<Reduced> (
+        ({ heroes, users }, [key, hero]) => {
+          const updatedHero = convertHero (hero)
+          const heroInstance = convertFromRawHero (snd (action.payload.tables))
+                                                  (updatedHero)
+
+          if (hero.name === "ReworkTest#1") {
+            console.log (hero, updatedHero, heroInstance)
+          }
+
+          const undoState = toHeroWithHistory (heroInstance)
+
+          if (updatedHero.player) {
+            return {
+              users: insert (updatedHero.player.id) (updatedHero.player) (users),
+              heroes: insert (key) (undoState) (heroes),
+            }
+          }
+          else {
+            return {
+              users,
+              heroes: insert (key) (undoState) (heroes),
+            }
+          }
+        },
+        {
+          heroes: OrderedMap.empty,
+          users: OrderedMap.empty,
+        }
+      )
+
       return over (AppState.L.herolist)
-                  ()
-      return {
-        ...state,
-        herolist: state.herolist
-          .merge (Record.of (
-            Object.entries (rawHeroes).reduce<Reduced> (
-              ({ heroes, users }, [key, hero]) => {
-                const updatedHero = convertHero (hero)
-                const heroInstance = getHeroInstance (state.wiki, key, updatedHero)
-
-                if (hero.name === "ReworkTest#1") {
-                  console.log (hero, updatedHero, heroInstance)
-                }
-
-                const undoState = wrapWithHistoryObject (heroInstance)
-
-                if (updatedHero.player) {
-                  return {
-                    users: users.insert (updatedHero.player.id) (updatedHero.player),
-                    heroes: heroes.insert (key) (undoState),
-                  }
-                }
-                else {
-                  return {
-                    users,
-                    heroes: heroes.insert (key) (undoState),
-                  }
-                }
-              },
-              {
-                heroes: OrderedMap.empty (),
-                users: OrderedMap.empty (),
-              }
-            )
-          )),
-      }
+                  (pipe (
+                    set (HeroesStateL.heroes) (hs.heroes),
+                    set (HeroesStateL.users) (hs.users)
+                  ))
     }
 
-    return state
+    return ident
   }
 
-const prepareImportedHero = (state: AppState, action: ReceiveImportedHeroAction) => {
-  const { data, player } = action.payload
+const prepareImportedHero =
+  (action: ReceiveImportedHeroAction) =>
+  (state: AppStateRecord): AppStateRecord => {
+    const { data, player } = action.payload
 
-  const updatedHero = convertHero (data)
-  const heroInstance = getHeroInstance (state.wiki, data.id, updatedHero)
+    const updatedHero = convertHero (data)
+    const heroInstance = convertFromRawHero (AppState.A.wiki (state)) (updatedHero)
 
 
-  if (player) {
-    const undoState = wrapWithHistoryObject (
-      heroInstance.insert ("player") (player.id)
-    )
+    if (player) {
+      const undoStateWithPlayer = toHeroWithHistory (set (HeroModelL.player)
+                                                    (Just (player.id))
+                                                    (heroInstance))
 
-    return {
-      ...state,
-      herolist: state.herolist
-        .modify<"users"> (OrderedMap.insert<string, User> (player.id) (player))
-                         ("users")
-        .modify<"heroes"> (OrderedMap.insert<string, UndoState<Hero>> (data.id) (undoState))
-                          ("heroes"),
+      return over (AppState.L.herolist)
+                  (pipe (
+                    over (HeroesStateL.heroes) (insert (data.id) (undoStateWithPlayer)),
+                    over (HeroesStateL.users) (insert (player.id) (player))
+                  ))
+                  (state)
+    }
+
+    const undoState = toHeroWithHistory (heroInstance)
+
+    return over (composeL (AppState.L.herolist, HeroesStateL.heroes))
+                (insert (data.id) (undoState))
+                (state)
+  }
+
+export const appPostReducer =
+  (previousState: AppStateRecord) => (action: Action): ident<AppStateRecord> => {
+    switch (action.type) {
+      case ActionTypes.RECEIVE_INITIAL_DATA:
+        return prepareHerolist (action)
+
+      case ActionTypes.RECEIVE_IMPORTED_HERO:
+        return prepareImportedHero (action)
+
+      case ActionTypes.UNDO: {
+        return join (state => {
+          if (isNothing (getCurrentCultureId (state))
+              && getCurrentTab (state) === TabId.Professions) {
+            return set (composeL (AppState.L.ui, uiReducer.L.location))
+                       (TabId.Cultures)
+          }
+
+          if (isNothing (getCurrentRaceId (state)) && getCurrentTab (state) === TabId.Cultures) {
+            return set (composeL (AppState.L.ui, uiReducer.L.location))
+                       (TabId.Races)
+          }
+
+          const rule_books_enabled = getRuleBooksEnabled (previousState)
+
+          if (or (fmapF (rule_books_enabled) (flip (isBookEnabled) ("US25208")))
+              && and (fmapF (rule_books_enabled) (notP (flip (isBookEnabled) ("US25208"))))
+              && getCurrentTab (state) === TabId.ZoneArmor) {
+            return set (composeL (AppState.L.ui, uiReducer.L.location))
+                       (TabId.Equipment)
+          }
+
+          return ident
+        })
+      }
+
+      case ActionTypes.REDO: {
+        return join (state => {
+          if (elem (2) (getPhase (previousState))
+              && elem (3) (getPhase (state))
+              && List.elem (getCurrentTab (state)) (List (TabId.Advantages, TabId.Disadvantages))) {
+            return set (composeL (AppState.L.ui, uiReducer.L.location))
+                       (TabId.Profile)
+          }
+
+          return ident
+        })
+      }
+
+      default:
+        return ident
     }
   }
-  else {
-    const undoState = wrapWithHistoryObject (heroInstance)
-
-    return {
-      ...state,
-      herolist: state.herolist
-        .modify<"heroes"> (OrderedMap.insert<string, UndoState<Hero>> (data.id) (undoState))
-                          ("heroes"),
-    }
-  }
-}
-
-export function appPostReducer (
-  state: AppState,
-  action: Action,
-  previousState: AppState | undefined
-): AppState {
-  switch (action.type) {
-    case ActionTypes.RECEIVE_INITIAL_DATA:
-      return prepareHerolist (state, action)
-
-    case ActionTypes.RECEIVE_IMPORTED_HERO:
-      return prepareImportedHero (state, action)
-
-    case ActionTypes.UNDO: {
-      if (getCurrentCultureId (state) === undefined && getCurrentTab (state) === "professions") {
-        return {
-          ...state,
-          ui: {
-            ...state.ui,
-            location: {
-              ...state.ui.location,
-              tab: "cultures",
-            },
-          },
-        }
-      }
-
-      if (getCurrentRaceId (state) === undefined && getCurrentTab (state) === "cultures") {
-        return {
-          ...state,
-          ui: {
-            ...state.ui,
-            location: {
-              ...state.ui.location,
-              tab: "races",
-            },
-          },
-        }
-      }
-
-      if (
-        previousState
-        && isBookEnabled (action.payload.books) (
-            Maybe.fromMaybe<true | OrderedSet<string>> (OrderedSet.empty ())
-                                                       (getRuleBooksEnabled (previousState))
-          ) ("US25208")
-        && !isBookEnabled (action.payload.books) (
-            Maybe.fromMaybe<true | OrderedSet<string>> (OrderedSet.empty ())
-                                                       (getRuleBooksEnabled (previousState))
-          ) ("US25208")
-        && getCurrentTab (state) === "zoneArmor"
-      ) {
-        return {
-          ...state,
-          ui: {
-            ...state.ui,
-            location: {
-              ...state.ui.location,
-              tab: "equipment",
-            },
-          },
-        }
-      }
-
-      return state
-    }
-
-    case ActionTypes.REDO: {
-      if (
-        previousState
-        && Maybe.elem (2) (getPhase (previousState))
-        && Maybe.elem (3) (getPhase (state))
-        && ["advantages", "disadvantages"].includes (getCurrentTab (state))
-      ) {
-        return {
-          ...state,
-          ui: {
-            ...state.ui,
-            location: {
-              ...state.ui.location,
-              tab: "profile",
-            },
-          },
-        }
-      }
-
-      return state
-    }
-
-    default:
-      return state
-  }
-}

@@ -1,5 +1,6 @@
+import { fmap } from "../../../../Data/Functor";
 import { map } from "../../../../Data/List";
-import { fmap, Nothing } from "../../../../Data/Maybe";
+import { Nothing } from "../../../../Data/Maybe";
 import { Record } from "../../../../Data/Record";
 import { IdPrefixes } from "../../../Constants/IdPrefixes";
 import { Advantage } from "../../../Models/Wiki/Advantage";

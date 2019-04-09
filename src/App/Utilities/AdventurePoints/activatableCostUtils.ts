@@ -20,7 +20,7 @@ import { ActivatableDependent, isActivatableDependent } from "../../Models/Activ
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
 import { ActiveObjectWithId } from "../../Models/ActiveEntries/ActiveObjectWithId";
 import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
-import { ActivatableNameCost, ActivatableNameCostL, ActivatableNameCostSafeCost } from "../../Models/View/ActivatableNameCost";
+import { ActivatableNameCost, ActivatableNameCostA_, ActivatableNameCostL, ActivatableNameCostL_, ActivatableNameCostSafeCost } from "../../Models/View/ActivatableNameCost";
 import { Advantage } from "../../Models/Wiki/Advantage";
 import { isDisadvantage } from "../../Models/Wiki/Disadvantage";
 import { L10nRecord } from "../../Models/Wiki/L10n";
@@ -431,8 +431,8 @@ const putCurrentCost =
   (entry: Record<ActivatableNameCost>): Record<ActivatableNameCostSafeCost> =>
     over (ActivatableNameCostL.finalCost)
          ((current_cost): number => {
-           const current_id = ActivatableNameCost.A.id (entry)
-           const mcurrent_level = ActivatableNameCost.A.tier (entry)
+           const current_id = ActivatableNameCostA_.id (entry)
+           const mcurrent_level = ActivatableNameCostA_.tier (entry)
 
            // If the AP cost is still a List, it must be a list that represents
            // the cost for each level separate, thus all relevant values must
@@ -492,7 +492,7 @@ const getFinalLevelName =
    * ensured to be a number.
    */
   (current_level: number) => {
-    const current_id = ActivatableNameCost.A.id (entry)
+    const current_id = ActivatableNameCostA_.id (entry)
     const current_cost = ActivatableNameCost.A.finalCost (entry)
 
     if (current_id === "SA_29" && current_level === 4) {
@@ -513,8 +513,8 @@ const getFinalLevelName =
 const getLevelNameIfValid =
   (l10n: L10nRecord) =>
   (entry: Record<ActivatableNameCost>): Maybe<string> => {
-    const current_id = ActivatableNameCost.A.id (entry)
-    const mcurrent_level = ActivatableNameCost.A.tier (entry)
+    const current_id = ActivatableNameCostA_.id (entry)
+    const mcurrent_level = ActivatableNameCostA_.tier (entry)
 
     if (isJust (mcurrent_level) && notElem (current_id) (List ("DISADV_34", "DISADV_50"))) {
       return Just (getFinalLevelName (l10n)
@@ -535,12 +535,12 @@ const putLevelName =
       fmap (levelName => addLevelToName
                            ? pipe_ (
                                entry,
-                               over (ActivatableNameCostL.name)
+                               over (ActivatableNameCostL_.name)
                                     (flip (appendStr) (levelName)),
-                               set (ActivatableNameCostL.levelName)
+                               set (ActivatableNameCostL_.levelName)
                                    (Just (levelName))
                              )
-                           : set (ActivatableNameCostL.levelName)
+                           : set (ActivatableNameCostL_.levelName)
                                  (Just (levelName))
                                  (entry)),
       fromMaybe (entry)

@@ -1,6 +1,7 @@
-import { ident } from "../../Data/Function";
+import { cnst, ident } from "../../Data/Function";
 import { set } from "../../Data/Lens";
-import { Just, Maybe, Nothing } from "../../Data/Maybe";
+import { bind, fromMaybe, isJust, Just, Maybe, Nothing } from "../../Data/Maybe";
+import { fst } from "../../Data/Pair";
 import { fromDefault, makeLenses, Record } from "../../Data/Record";
 import { ReceiveInitialDataAction } from "../Actions/IOActions";
 import { SetLocaleAction } from "../Actions/LocaleActions";
@@ -29,18 +30,15 @@ export const localeReducer =
   (action: Action): ident<Record<LocaleState>> => {
     switch (action.type) {
       case ActionTypes.RECEIVE_INITIAL_DATA: {
-        const id =
-          action.payload.config
-          && (action.payload.config.locale || action.payload.defaultLocale)
+        const mset_locale = bind (action.payload.config) (x => Maybe (x.locale))
 
-        return {
-          type: action.payload.config && action.payload.config.locale ? "set" : "default",
-          id,
-          messages: typeof id === "string"
-            ? OrderedMap.of (Object.entries (action.payload.locales[id].ui))
-              .toKeyValueObjectWith (e => Array.isArray (e) ? List.fromArray (e) : e) as UIMessages
-            : undefined
-        }
+        const id = fromMaybe (action.payload.defaultLocale) (mset_locale)
+
+        return cnst (LocaleState ({
+          id: Just (id),
+          type: isJust (mset_locale) ? "set" : "default",
+          messages: Just (fst (action.payload.tables)),
+        }))
       }
 
       case ActionTypes.SET_LOCALE:

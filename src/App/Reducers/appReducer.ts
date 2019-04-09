@@ -2,7 +2,7 @@ import { AnyAction } from "redux";
 import { Record } from "../../Data/Record";
 import { WikiModel, WikiModelRecord } from "../Models/Wiki/WikiModel";
 import { combineReducerRecord } from "../Utilities/combineReducerRecord";
-import { reduceReducersC } from "../Utilities/reduceReducers";
+import { reduceReducersCWithInter } from "../Utilities/reduceReducers";
 import { appPostReducer } from "./appPostReducer";
 import { HeroesState, herolistReducer as herolist } from "./herolistReducer";
 import { localeReducer as l10n, LocaleState } from "./localeReducer";
@@ -39,4 +39,5 @@ export const AppState = {
   L: appSlices.L,
 }
 
-export const appReducer = reduceReducersC<Record<AppState>, AnyAction> (appSlices, appPostReducer)
+export const appReducer =
+  reduceReducersCWithInter<Record<AppState>, AnyAction> (appSlices, appPostReducer)

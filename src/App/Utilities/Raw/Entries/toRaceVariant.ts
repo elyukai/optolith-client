@@ -1,5 +1,6 @@
+import { fmap } from "../../../../Data/Functor";
 import { map } from "../../../../Data/List";
-import { fmap, Nothing } from "../../../../Data/Maybe";
+import { Nothing } from "../../../../Data/Maybe";
 import { fst, Pair, snd } from "../../../../Data/Pair";
 import { IdPrefixes } from "../../../Constants/IdPrefixes";
 import { RaceVariant } from "../../../Models/Wiki/RaceVariant";

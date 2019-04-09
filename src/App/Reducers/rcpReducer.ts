@@ -49,7 +49,7 @@ export const rcpReducer =
         )
 
       case ActionTypes.SELECT_PROFESSION_VARIANT:
-        return set (HeroModelL.professionVariant) (Just (action.payload.id))
+        return set (HeroModelL.professionVariant) (action.payload.id)
 
       default:
         return ident

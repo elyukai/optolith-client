@@ -14,7 +14,7 @@ import { SkillDependent } from "../../Models/ActiveEntries/SkillDependent";
 import { Energies } from "../../Models/Hero/Energies";
 import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { PermanentEnergyLossAndBoughtBack } from "../../Models/Hero/PermanentEnergyLossAndBoughtBack";
-import { ActiveActivatable } from "../../Models/View/ActiveActivatable";
+import { ActiveActivatable, ActiveActivatableA_ } from "../../Models/View/ActiveActivatable";
 import { AdventurePointsCategories, AdventurePointsCategoriesL } from "../../Models/View/AdventurePointsCategories";
 import { Advantage } from "../../Models/Wiki/Advantage";
 import { CombatTechnique } from "../../Models/Wiki/CombatTechnique";
@@ -115,7 +115,9 @@ export const getAPSpentForAdvantages =
   (active: List<ActiveAdvantage>) =>
     pipe_ (
       active,
-      List.foldr (pipe (ActiveActivatable.A.finalCost, add)) (0),
+      List.foldr<Record<ActiveActivatable<Advantage>>, number>
+        (pipe (ActiveActivatableA_.finalCost, add))
+        (0),
       add (getAdventurePointsSpentDifference (wiki)
                                              (xmap)
                                              (active))
@@ -149,7 +151,9 @@ export const getAPSpentForDisadvantages =
   (active: List<ActiveDisadvantage>) =>
     pipe_ (
       active,
-      List.foldr (pipe (ActiveActivatable.A.finalCost, add)) (0),
+      List.foldr<Record<ActiveActivatable<Disadvantage>>, number>
+        (pipe (ActiveActivatableA_.finalCost, add))
+        (0),
       add (getAdventurePointsSpentDifference (wiki)
                                              (xmap)
                                              (active))
@@ -183,7 +187,9 @@ export const getAPSpentForSpecialAbilities =
   (active: List<ActiveSpecialAbility>) =>
     pipe_ (
       active,
-      List.foldr (pipe (ActiveActivatable.A.finalCost, add)) (0),
+      List.foldr<Record<ActiveActivatable<SpecialAbility>>, number>
+        (pipe (ActiveActivatableA_.finalCost, add))
+        (0),
       add (getAdventurePointsSpentDifference (wiki)
                                              (xmap)
                                              (active))

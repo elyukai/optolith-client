@@ -1,20 +1,20 @@
-import { ident } from "../../../Data/Function";
+import { cnst, flip, ident, join } from "../../../Data/Function";
 import { fmap } from "../../../Data/Functor";
-import { fromArray, List } from "../../../Data/List";
-import { elem, Maybe } from "../../../Data/Maybe";
-import { foldlWithKey, OrderedMap } from "../../../Data/OrderedMap";
+import { foldr, fromArray, List } from "../../../Data/List";
+import { elem, Maybe, maybe } from "../../../Data/Maybe";
+import { foldlWithKey, lookup, lookupF, OrderedMap } from "../../../Data/OrderedMap";
 import { insert, OrderedSet } from "../../../Data/OrderedSet";
 import { Record, StringKeyObject } from "../../../Data/Record";
 import { Categories } from "../../Constants/Categories";
 import { ActivatableDependent, createActivatableDependentWithActive } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent, createActivatableSkillDependentWithValue } from "../../Models/ActiveEntries/ActivatableSkillDependent";
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
+import { ActiveObjectWithId, fromActiveObjectWithId } from "../../Models/ActiveEntries/ActiveObjectWithId";
 import { AttributeDependent, createAttributeDependentWithValue } from "../../Models/ActiveEntries/AttributeDependent";
 import { createSkillDependentWithValue, SkillDependent } from "../../Models/ActiveEntries/SkillDependent";
 import { Belongings } from "../../Models/Hero/Belongings";
 import { Energies } from "../../Models/Hero/Energies";
 import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
-import * as Data from "../../Models/Hero/heroTypeHelpers";
 import { HitZoneArmor } from "../../Models/Hero/HitZoneArmor";
 import { Item } from "../../Models/Hero/Item";
 import { PermanentEnergyLoss } from "../../Models/Hero/PermanentEnergyLoss";
@@ -23,14 +23,16 @@ import { PersonalData } from "../../Models/Hero/PersonalData";
 import { Pet } from "../../Models/Hero/Pet";
 import { Purse } from "../../Models/Hero/Purse";
 import { Rules } from "../../Models/Hero/Rules";
+import { Spell } from "../../Models/Wiki/Spell";
 import { PrimaryAttributeDamageThreshold } from "../../Models/Wiki/sub/PrimaryAttributeDamageThreshold";
-import { WikiModelRecord } from "../../Models/Wiki/WikiModel";
+import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
+import { Activatable } from "../../Models/Wiki/wikiTypeHelpers";
 import { getCombinedPrerequisites } from "../Activatable/activatableActivationUtils";
 import { getActiveFromState } from "../Activatable/activatableConvertUtils";
 import { addAllStyleRelatedDependencies } from "../Activatable/ExtendedStyleUtils";
 import { addDependencies } from "../Dependencies/dependencyUtils";
 import { getCategoryById } from "../IDUtils";
-import { pipe } from "../pipe";
+import { pipe, pipe_ } from "../pipe";
 import * as Raw from "./RawData";
 
 const createHeroObject = (hero: Raw.RawHero): HeroModelRecord =>
@@ -116,15 +118,19 @@ const createHeroObject = (hero: Raw.RawHero): HeroModelRecord =>
                 combatTechnique: Maybe (obj .combatTechnique),
                 damageDiceSides: Maybe (obj .damageDiceSides),
                 gr: obj .gr,
-                isParryingWeapon: obj .isParryingWeapon || false,
+                isParryingWeapon:
+                  typeof obj .isParryingWeapon === "boolean" ? obj .isParryingWeapon : false,
                 isTemplateLocked: obj .isTemplateLocked,
                 reach: Maybe (obj .reach),
                 template: Maybe (obj .template),
-                isTwoHandedWeapon: obj .isTwoHandedWeapon || false,
+                isTwoHandedWeapon:
+                  typeof obj .isTwoHandedWeapon === "boolean" ? obj .isTwoHandedWeapon : false,
                 improvisedWeaponGroup: Maybe (obj .imp),
                 loss: Maybe (obj .loss),
-                forArmorZoneOnly: obj .forArmorZoneOnly || false,
-                addPenalties: obj .addPenalties || false,
+                forArmorZoneOnly:
+                  typeof obj .forArmorZoneOnly === "boolean" ? obj .forArmorZoneOnly : false,
+                addPenalties:
+                  typeof obj .addPenalties === "boolean" ? obj .addPenalties : false,
                 armorType: Maybe (obj .armorType),
                 at: Maybe (obj .at),
                 iniMod: Maybe (obj .iniMod),
@@ -316,6 +322,36 @@ const getActivatableDependentSkills =
 
 const { advantages, disadvantages, specialAbilities, spells } = HeroModel.AL
 
+const addDependenciesForReq =
+  (hero_slice: OrderedMap<string, Record<ActivatableDependent>>) =>
+  (active: Record<ActiveObjectWithId>) =>
+  (id: string) =>
+  (wiki_entry: Activatable) =>
+    addDependencies (id)
+                    (getCombinedPrerequisites (true)
+                                              (wiki_entry)
+                                              (lookup (id) (hero_slice))
+                                              (fromActiveObjectWithId (active)))
+
+const addDependenciesForSlice =
+  <A extends Activatable>
+  (add_entry_mod: (x: A) => ident<HeroModelRecord>) =>
+  (hero_slice: OrderedMap<string, Record<ActivatableDependent>>) =>
+  (wiki_slice: OrderedMap<string, A>) => {
+    const lookupWiki = lookupF (wiki_slice)
+
+    return flip (foldr ((x: Record<ActiveObjectWithId>) => {
+                         const id = ActiveObjectWithId.A.id (x)
+
+                         return maybe (ident as ident<HeroModelRecord>)
+                                      ((y: A) => pipe (
+                                        addDependenciesForReq (hero_slice) (x) (id) (y),
+                                        add_entry_mod (y)
+                                      ))
+                                      (lookupWiki (id))
+                       }))
+  }
+
 export const convertFromRawHero =
   (wiki: WikiModelRecord) => (hero: Raw.RawHero): HeroModelRecord => {
     const intermediateState = createHeroObject (hero)
@@ -324,82 +360,36 @@ export const convertFromRawHero =
     const activeDisadvantages = getActiveFromState (disadvantages (intermediateState))
     const activeSpecialAbilities = getActiveFromState (specialAbilities (intermediateState))
 
-    const { active, id } = ActivatableSkillDependent.AL
+    const ASDA = ActivatableSkillDependent.A
 
     const activeSpells =
       OrderedMap.foldr<Record<ActivatableSkillDependent>, OrderedSet<string>>
-        (spell => active (spell) ? insert (id (spell)) : ident)
+        (spell => ASDA.active (spell) ? insert (ASDA.id (spell)) : ident)
         (OrderedSet.empty)
         (spells (intermediateState))
 
-    const addAllDependencies = pipe (
-      advantages.foldl<HeroModelRecord> (
-        state => entry => Maybe.fromMaybe (state) (
-          wiki.get ("advantages").lookup (entry.get ("id"))
-            .fmap (
-              wikiEntry => addDependencies (
-                state,
-                getCombinedPrerequisites (
-                  wikiEntry,
-                  intermediateState.get ("advantages").lookup (entry.get ("id")),
-                  entry as any as Record<Data.ActiveObject>,
-                  true
-                ),
-                entry.get ("id")
-              )
-            )
-        )
-      ),
-      disadvantages.foldl<HeroModelRecord> (
-        state => entry => Maybe.fromMaybe (state) (
-          wiki.get ("disadvantages").lookup (entry.get ("id"))
-            .fmap (
-              wikiEntry => addDependencies (
-                state,
-                getCombinedPrerequisites (
-                  wikiEntry,
-                  intermediateState.get ("disadvantages").lookup (entry.get ("id")),
-                  entry as any as Record<Data.ActiveObject>,
-                  true
-                ),
-                entry.get ("id")
-              )
-            )
-        )
-      ),
-      specialAbilities.foldl<HeroModelRecord> (
-        state => entry => Maybe.fromMaybe (state) (
-          wiki.get ("specialAbilities").lookup (entry.get ("id"))
-            .fmap (
-              wikiEntry => addAllStyleRelatedDependencies (
-                addDependencies (
-                  state,
-                  getCombinedPrerequisites (
-                    wikiEntry,
-                    intermediateState.get ("specialAbilities").lookup (entry.get ("id")),
-                    entry as any as Record<Data.ActiveObject>,
-                    true
-                  ),
-                  entry.get ("id")
-                ),
-                wikiEntry
-              )
-            )
-        )
-      ),
-      spells.foldl<HeroModelRecord> (
-        state => spellId => Maybe.fromMaybe (state) (
-          wiki.get ("spells").lookup (spellId)
-            .fmap (
-              wikiEntry => addDependencies (
-                state,
-                wikiEntry.get ("prerequisites"),
-                spellId
-              )
-            )
-        )
-      )
-    );
+    return pipe_ (
+      intermediateState,
 
-    return addAllDependencies (intermediateState);
+      join (s => addDependenciesForSlice (cnst (ident))
+                                         (HeroModel.A.advantages (s))
+                                         (WikiModel.A.advantages (wiki))
+                                         (activeAdvantages)),
+
+      join (s => addDependenciesForSlice (cnst (ident))
+                                         (HeroModel.A.disadvantages (s))
+                                         (WikiModel.A.disadvantages (wiki))
+                                         (activeDisadvantages)),
+
+      join (s => addDependenciesForSlice (addAllStyleRelatedDependencies)
+                                         (HeroModel.A.specialAbilities (s))
+                                         (WikiModel.A.specialAbilities (wiki))
+                                         (activeSpecialAbilities)),
+
+      flip (OrderedSet.foldr ((id: string) =>
+                               maybe (ident as ident<HeroModelRecord>)
+                                     (pipe (Spell.A.prerequisites, addDependencies (id)))
+                                     (lookup (id) (WikiModel.A.spells (wiki)))))
+           (activeSpells)
+    )
   }

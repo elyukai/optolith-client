@@ -9,6 +9,7 @@ export enum IdPrefixes {
   CULTURES = "C",
   DISADVANTAGES = "DISADV",
   EXPERIENCE_LEVELS = "EL",
+  HERO = "H",
   HIT_ZONE_ARMOR = "ARMORZONES",
   ITEM = "ITEM",
   ITEM_TEMPLATE = "ITEMTPL",

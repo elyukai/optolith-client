@@ -1,10 +1,10 @@
-import { fromRight_, isLeft, mapM, maybeToEither, maybeToEither_ } from "../../../../Data/Either";
+import { Either, fromRight_, isLeft, mapM, maybeToEither, maybeToEither_ } from "../../../../Data/Either";
 import { List } from "../../../../Data/List";
 import { ensure, liftM2 } from "../../../../Data/Maybe";
 import { fromList, lookupF, OrderedMap } from "../../../../Data/OrderedMap";
 import { Pair } from "../../../../Data/Pair";
 import { show } from "../../../../Data/Show";
-import { L10n } from "../../../Models/Wiki/L10n";
+import { L10n, L10nRecord } from "../../../Models/Wiki/L10n";
 import { mensureMapNonEmptyString, mensureMapNonEmptyStringList } from "../validateMapValueUtils";
 import { lookupKeyValid, mapMNamed } from "../validateValueUtils";
 
@@ -15,7 +15,7 @@ const isLocale =
 
 export const toL10n =
   (id: string) =>
-  (l10n_table: List<OrderedMap<string, string>>) => {
+  (l10n_table: List<OrderedMap<string, string>>): Either<string, L10nRecord> => {
       // Shortcuts
 
       const l10n_rows =
@@ -131,7 +131,7 @@ export const toL10n =
           "unsavedactions": checkL10nNonEmptyString ("unsavedactions"),
           "unsavedactions.text": checkL10nNonEmptyString ("unsavedactions.text"),
           "deletehero": checkL10nNonEmptyString ("deletehero"),
-          "deletehero .text": checkL10nNonEmptyString ("deletehero .text"),
+          "deletehero.text": checkL10nNonEmptyString ("deletehero.text"),
           "herocreation": checkL10nNonEmptyString ("herocreation"),
           "start": checkL10nNonEmptyString ("start"),
           "nameofhero": checkL10nNonEmptyString ("nameofhero"),
@@ -257,7 +257,7 @@ export const toL10n =
           "reachlabels": checkL10nNonEmptyStringList ("reachlabels"),
           "breakingpointrating.short": checkL10nNonEmptyString ("breakingpointrating.short"),
           "loss.short": checkL10nNonEmptyString ("loss.short"),
-          "atttack.short": checkL10nNonEmptyString ("atttack.short"),
+          "attack.short": checkL10nNonEmptyString ("attack.short"),
           "weightunit.short": checkL10nNonEmptyString ("weightunit.short"),
           "rangedcombatweapons": checkL10nNonEmptyString ("rangedcombatweapons"),
           "reloadtime": checkL10nNonEmptyString ("reloadtime"),
@@ -570,6 +570,7 @@ export const toL10n =
           "breakingpointratingmodifier.short":
             checkL10nNonEmptyString ("breakingpointratingmodifier.short"),
           "damaged": checkL10nNonEmptyString ("damaged"),
+          "damaged.short": checkL10nNonEmptyString ("damaged.short"),
           "lengthwithunit": checkL10nNonEmptyString ("lengthwithunit"),
           "parryingweapon": checkL10nNonEmptyString ("parryingweapon"),
           "twohandedweapon": checkL10nNonEmptyString ("twohandedweapon"),
@@ -577,8 +578,10 @@ export const toL10n =
           "rangemedium": checkL10nNonEmptyString ("rangemedium"),
           "rangefar": checkL10nNonEmptyString ("rangefar"),
           "armortype": checkL10nNonEmptyString ("armortype"),
+          "sturdinessrating.short": checkL10nNonEmptyString ("sturdinessrating.short"),
           "sturdinessmodifier.short": checkL10nNonEmptyString ("sturdinessmodifier.short"),
           "wear": checkL10nNonEmptyString ("wear"),
+          "wear.short": checkL10nNonEmptyString ("wear.short"),
           "hitzonearmoronly": checkL10nNonEmptyString ("hitzonearmoronly"),
           "movementmodifier.short": checkL10nNonEmptyString ("movementmodifier.short"),
           "initiativemodifier.short": checkL10nNonEmptyString ("initiativemodifier.short"),

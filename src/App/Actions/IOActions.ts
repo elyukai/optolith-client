@@ -16,6 +16,7 @@ import { Pair } from "../../Data/Pair";
 import { Record, toObject } from "../../Data/Record";
 import { fromIO, readFile, writeFile } from "../../System/IO";
 import { ActionTypes } from "../Constants/ActionTypes";
+import { IdPrefixes } from "../Constants/IdPrefixes";
 import { User } from "../Models/Hero/heroTypeHelpers";
 import { L10n, L10nRecord } from "../Models/Wiki/L10n";
 import { WikiModel } from "../Models/Wiki/WikiModel";
@@ -24,7 +25,7 @@ import { UISettingsState } from "../Reducers/uiSettingsReducer";
 import { getCurrentHeroId, getHeroes, getLocaleMessages, getLocaleType, getUsers, getWiki } from "../Selectors/stateSelectors";
 import { getUISettingsState } from "../Selectors/uisettingsSelectors";
 import { translate, translateP } from "../Utilities/I18n";
-import { getNewIdByDate } from "../Utilities/IDUtils";
+import { getNewIdByDate, prefixId } from "../Utilities/IDUtils";
 import { bytify, getSystemLocale, showOpenDialog, showSaveDialog, windowPrintToPDF } from "../Utilities/IOUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
 import { convertHeroesForSave, convertHeroForSave } from "../Utilities/Raw/convertHeroForSave";
@@ -474,7 +475,7 @@ export const requestHeroImport =
   }
 
 export const receiveHeroImport = (raw: RawHero): ReceiveImportedHeroAction => {
-  const newId = `H_${getNewIdByDate ()}`
+  const newId = prefixId (IdPrefixes.HERO) (getNewIdByDate ())
   const { player, avatar, ...other } = raw
 
   const data: RawHero = {

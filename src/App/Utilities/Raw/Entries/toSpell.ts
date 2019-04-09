@@ -1,4 +1,4 @@
-import { Either } from "../../../../Data/Either";
+import { fmap } from "../../../../Data/Functor";
 import { empty, List, map } from "../../../../Data/List";
 import { fromMaybe, Nothing } from "../../../../Data/Maybe";
 import { OrderedSet } from "../../../../Data/OrderedSet";
@@ -50,7 +50,7 @@ export const toSpell =
       const ename = checkL10nNonEmptyString ("name")
 
       const echeck =
-        Either.fmap<List<string | number>, List<string>>
+        fmap<List<string | number>, List<string>>
           (map (prefixId (IdPrefixes.ATTRIBUTES)))
           (checkSkillCheck ("check"))
 

@@ -194,7 +194,7 @@ export const toCulture =
 
             socialStatus: rs.esocial,
 
-            commonProfessions: List.fromElements (
+            commonProfessions: List (
               notNull (mundaneExceptions)
               ? CommonProfession ({ list: mundaneExceptions, reverse: mundaneAll })
               : mundaneAll,

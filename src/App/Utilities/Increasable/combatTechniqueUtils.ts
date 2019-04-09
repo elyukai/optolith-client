@@ -73,8 +73,8 @@ export const isIncreaseDisabled =
     const bonus = pipe (
                          getActiveSelectionsMaybe,
                          fmap (elem<string | number> (id (instance))),
-                         Maybe.elem (true),
-                         (x): number => x ? 1 : 0
+                         Maybe.elem<boolean> (true),
+                         x => x ? 1 : 0
                        )
                        (exceptionalSkill)
 
@@ -93,8 +93,8 @@ export const isDecreaseDisabled =
       && value (instance) === 10
 
     return disabledByHunter
-      || value (instance) <= maximum (cons (flattenDependencies<number> (wiki)
-                                                                        (state)
-                                                                        (dependencies (instance)))
+      || value (instance) <= maximum (cons (flattenDependencies (wiki)
+                                                                (state)
+                                                                (dependencies (instance)))
                                            (6))
   }

@@ -98,8 +98,17 @@ export const mergeRowsByIdAndMainId =
     const mainId = fromRight_ (either_main_id)
     const id = fromRight_ (either_id)
 
-    const sameMainId = pipe (lookup ("mainId"), elem (show (mainId)))
-    const sameId = pipe (lookup ("id"), elem (show (id)))
+    const sameMainId =
+      pipe (
+        lookup ("mainId") as (x: OrderedMap<string, string>) => Maybe<string>,
+        elem (show (mainId))
+      )
+
+    const sameId =
+      pipe (
+        lookup ("id") as (x: OrderedMap<string, string>) => Maybe<string>,
+        elem (show (id))
+      )
 
     const ml10n_row =
       find<OrderedMap<string, string>> (e => sameMainId (e) && sameId (e))

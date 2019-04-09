@@ -1,5 +1,5 @@
 import { Maybe, Nothing } from "../../../Data/Maybe";
-import { fromDefault } from "../../../Data/Record";
+import { fromDefault, makeLenses } from "../../../Data/Record";
 
 export interface ActivatableCombinedName {
   name: string
@@ -15,3 +15,5 @@ export const ActivatableCombinedName =
     addName: Nothing,
     levelName: Nothing,
   })
+
+export const ActivatableCombinedNameL = makeLenses (ActivatableCombinedName)

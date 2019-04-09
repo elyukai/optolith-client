@@ -31,3 +31,12 @@ export const toActiveObjectWithId =
       sid2: ActiveObject.A.sid2 (active),
       tier: ActiveObject.A.tier (active),
     })
+
+export const fromActiveObjectWithId =
+  (active: Record<ActiveObjectWithId>) =>
+    ActiveObject ({
+      cost: ActiveObject.A.cost (active),
+      sid: ActiveObject.A.sid (active),
+      sid2: ActiveObject.A.sid2 (active),
+      tier: ActiveObject.A.tier (active),
+    })

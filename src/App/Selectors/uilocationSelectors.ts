@@ -35,26 +35,26 @@ export const getTabs = createMaybeSelector (
     if (isMainSection) {
       return List<NavigationBarTabProps> (
         {
-          id: "herolist",
+          id: TabId.Herolist,
           label: translate (l10n) ("heroes"),
         },
         {
-          id: "grouplist",
+          id: TabId.Grouplist,
           label: translate (l10n) ("groups"),
           disabled: true,
         },
         {
-          id: "wiki",
+          id: TabId.Wiki,
           label: translate (l10n) ("wiki"),
         },
         {
-          id: "faq",
+          id: TabId.Faq,
           label: translate (l10n) ("faq"),
         },
         {
-          id: "imprint",
+          id: TabId.Imprint,
           label: translate (l10n) ("about"),
-          subTabs: List<TabId> ("imprint", "thirdPartyLicenses", "lastChanges"),
+          subTabs: List (TabId.Imprint, TabId.ThirdPartyLicenses, TabId.LastChanges),
         }
       )
     }
@@ -63,14 +63,14 @@ export const getTabs = createMaybeSelector (
       if (Maybe.elem (1) (phase)) {
         return List<NavigationBarTabProps> (
           {
-            id: "profile",
+            id: TabId.Profile,
             label: translate (l10n) ("profile"),
-            subTabs: List<TabId> ("profile", "personalData", "pact", "rules"),
+            subTabs: List (TabId.Profile, TabId.PersonalData, TabId.Pact, TabId.Rules),
           },
           {
-            id: "races",
+            id: TabId.Races,
             label: translate (l10n) ("racecultureandprofession"),
-            subTabs: List<TabId> ("races", "cultures", "professions"),
+            subTabs: List (TabId.Races, TabId.Cultures, TabId.Professions),
           }
         )
       }
@@ -78,63 +78,75 @@ export const getTabs = createMaybeSelector (
       if (isRemovingEnabled) {
         return List<NavigationBarTabProps> (
           {
-            id: "profile",
+            id: TabId.Profile,
             label: translate (l10n) ("profile"),
-            subTabs: List<TabId> ("profile", "personalData", "characterSheet", "pact", "rules"),
-          },
-          {
-            id: "attributes",
-            label: translate (l10n) ("attributes"),
-          },
-          {
-            id: "advantages",
-            label: translate (l10n) ("advantagesanddisadvantages"),
-            subTabs: List<TabId> ("advantages", "disadvantages"),
-          },
-          {
-            id: "skills",
-            label: translate (l10n) ("skills"),
-            subTabs: List<TabId> (
-              "skills",
-              "combatTechniques",
-              "specialAbilities",
-              "spells",
-              "liturgicalChants"
+            subTabs: List (
+              TabId.Profile,
+              TabId.PersonalData,
+              TabId.CharacterSheet,
+              TabId.Pact,
+              TabId.Rules
             ),
           },
           {
-            id: "equipment",
+            id: TabId.Attributes,
+            label: translate (l10n) ("attributes"),
+          },
+          {
+            id: TabId.Advantages,
+            label: translate (l10n) ("advantagesanddisadvantages"),
+            subTabs: List (TabId.Advantages, TabId.Disadvantages),
+          },
+          {
+            id: TabId.Skills,
+            label: translate (l10n) ("skills"),
+            subTabs: List (
+              TabId.Skills,
+              TabId.CombatTechniques,
+              TabId.SpecialAbilities,
+              TabId.Spells,
+              TabId.LiturgicalChants
+            ),
+          },
+          {
+            id: TabId.Equipment,
             label: translate (l10n) ("belongings"),
-            subTabs: List<TabId> ("equipment", "zoneArmor", "pets"),
+            subTabs: List (TabId.Equipment, TabId.ZoneArmor, TabId.Pets),
           }
         )
       }
 
       return List<NavigationBarTabProps> (
         {
-          id: "profile",
+          id: TabId.Profile,
           label: translate (l10n) ("profile"),
-          subTabs: List<TabId> ("profile", "personalData", "characterSheet", "pact", "rules"),
-        },
-        {
-          id: "attributes",
-          label: translate (l10n) ("attributes"),
-        },
-        {
-          id: "skills",
-          label: translate (l10n) ("skills"),
-          subTabs: List<TabId> (
-            "skills",
-            "combatTechniques",
-            "specialAbilities",
-            "spells",
-            "liturgicalChants"
+          subTabs: List (
+            TabId.Profile,
+            TabId.PersonalData,
+            TabId.CharacterSheet,
+            TabId.Pact,
+            TabId.Rules
           ),
         },
         {
-          id: "equipment",
+          id: TabId.Attributes,
+          label: translate (l10n) ("attributes"),
+        },
+        {
+          id: TabId.Skills,
+          label: translate (l10n) ("skills"),
+          subTabs: List (
+            TabId.Skills,
+            TabId.CombatTechniques,
+            TabId.SpecialAbilities,
+            TabId.Spells,
+            TabId.LiturgicalChants
+          ),
+        },
+        {
+          id: TabId.Equipment,
           label: translate (l10n) ("belongings"),
-          subTabs: List<TabId> ("equipment", "zoneArmor", "pets"),
+          subTabs: List (TabId.Equipment, TabId.ZoneArmor, TabId.Pets),
         }
       )
     }
@@ -167,22 +179,22 @@ export const getSubtabs = createMaybeSelector (
     mruleBooksEnabled
   ): Maybe<List<SubTab>> => {
     if (isMainSection) {
-      const aboutSubTabs = List<TabId> ("imprint", "thirdPartyLicenses", "lastChanges")
+      const aboutSubTabs = List (TabId.Imprint, TabId.ThirdPartyLicenses, TabId.LastChanges)
 
       if (elem (tab) (aboutSubTabs)) {
         return Just (List<SubTab> (
           {
-            id: "imprint",
+            id: TabId.Imprint,
             label: translate (locale) ("imprint"),
             disabled: false,
           },
           {
-            id: "thirdPartyLicenses",
+            id: TabId.ThirdPartyLicenses,
             label: translate (locale) ("thirdpartylicenses"),
             disabled: false,
           },
           {
-            id: "lastChanges",
+            id: TabId.LastChanges,
             label: translate (locale) ("lastchanges"),
             disabled: false,
           }
@@ -191,23 +203,23 @@ export const getSubtabs = createMaybeSelector (
     }
     else if (isHeroSection) {
       if (Maybe.elem (1) (phase)) {
-        const profileSubTabs = List<TabId> ("profile", "personalData", "pact", "rules")
-        const rcpSubTabs = List<TabId> ("races", "cultures", "professions")
+        const profileSubTabs = List (TabId.Profile, TabId.PersonalData, TabId.Pact, TabId.Rules)
+        const rcpSubTabs = List (TabId.Races, TabId.Cultures, TabId.Professions)
 
         if (elem (tab) (profileSubTabs)) {
           return Just (List<SubTab> (
             {
-              id: "profile",
+              id: TabId.Profile,
               label: translate (locale) ("overview"),
               disabled: false,
             },
             {
-              id: "personalData",
+              id: TabId.PersonalData,
               label: translate (locale) ("personaldata"),
               disabled: true,
             },
             {
-              id: "pact",
+              id: TabId.Pact,
               label: translate (locale) ("pact"),
               disabled: Maybe.elem (true)
                                    (fmapF (mruleBooksEnabled)
@@ -217,7 +229,7 @@ export const getSubtabs = createMaybeSelector (
                                                                                 ("US25008"))),
             },
             {
-              id: "rules",
+              id: TabId.Rules,
               label: translate (locale) ("rules"),
               disabled: false,
             }
@@ -225,19 +237,19 @@ export const getSubtabs = createMaybeSelector (
         }
         if (elem (tab) (rcpSubTabs)) {
           const racesTab: SubTab = {
-            id: "races",
+            id: TabId.Races,
             label: translate (locale) ("race"),
             disabled: false,
           }
 
           const culturesTab: SubTab = {
-            id: "cultures",
+            id: TabId.Cultures,
             label: translate (locale) ("culture"),
             disabled: false,
           }
 
           const professionsTab: SubTab = {
-            id: "professions",
+            id: TabId.Professions,
             label: translate (locale) ("profession"),
             disabled: false,
           }
@@ -263,31 +275,39 @@ export const getSubtabs = createMaybeSelector (
         }
       }
       else {
-        const profileSubTabs = List<TabId> (
-          "profile", "personalData", "characterSheet", "pact", "rules"
+        const profileSubTabs = List (
+          TabId.Profile,
+          TabId.PersonalData,
+          TabId.CharacterSheet,
+          TabId.Pact,
+          TabId.Rules
         )
 
-        const abilitiesSubTabs = List<TabId> (
-          "skills", "combatTechniques", "specialAbilities", "spells", "liturgicalChants"
+        const abilitiesSubTabs = List (
+          TabId.Skills,
+          TabId.CombatTechniques,
+          TabId.SpecialAbilities,
+          TabId.Spells,
+          TabId.LiturgicalChants
         )
 
-        const disadvSubTabs = List<TabId> ("advantages", "disadvantages")
-        const belongingsSubTabs = List<TabId> ("equipment", "zoneArmor", "pets")
+        const disadvSubTabs = List (TabId.Advantages, TabId.Disadvantages)
+        const belongingsSubTabs = List (TabId.Equipment, TabId.ZoneArmor, TabId.Pets)
 
         if (elem (tab) (profileSubTabs)) {
           const baseTabs = List<SubTab> (
             {
-              id: "profile",
+              id: TabId.Profile,
               label: translate (locale) ("overview"),
               disabled: false,
             },
             {
-              id: "personalData",
+              id: TabId.PersonalData,
               label: translate (locale) ("personaldata"),
               disabled: true,
             },
             {
-              id: "pact",
+              id: TabId.Pact,
               label: translate (locale) ("pact"),
               disabled: Maybe.elem (true)
                                    (fmapF (mruleBooksEnabled)
@@ -297,7 +317,7 @@ export const getSubtabs = createMaybeSelector (
                                                                                 ("US25008"))),
             },
             {
-              id: "rules",
+              id: TabId.Rules,
               label: translate (locale) ("rules"),
               disabled: false,
             }
@@ -306,7 +326,7 @@ export const getSubtabs = createMaybeSelector (
           if (Maybe.elem (3) (phase)) {
             return Just (insertAt (2)
                                   <SubTab> ({
-                                    id: "characterSheet",
+                                    id: TabId.CharacterSheet,
                                     label: translate (locale) ("charactersheet"),
                                     disabled: false,
                                   })
@@ -319,12 +339,12 @@ export const getSubtabs = createMaybeSelector (
         if (elem (tab) (disadvSubTabs)) {
           return Just (List<SubTab> (
             {
-              id: "advantages",
+              id: TabId.Advantages,
               label: translate (locale) ("advantages"),
               disabled: false,
             },
             {
-              id: "disadvantages",
+              id: TabId.Disadvantages,
               label: translate (locale) ("disadvantages"),
               disabled: false,
             }
@@ -336,31 +356,31 @@ export const getSubtabs = createMaybeSelector (
             pipe_ (
               List<SubTab> (
                 {
-                  id: "skills",
+                  id: TabId.Skills,
                   label: translate (locale) ("skills"),
                   disabled: false,
                 },
                 {
-                  id: "combatTechniques",
+                  id: TabId.CombatTechniques,
                   label: translate (locale) ("combattechniques"),
                   disabled: false,
                 },
                 {
-                  id: "specialAbilities",
+                  id: TabId.SpecialAbilities,
                   label: translate (locale) ("specialabilities"),
                   disabled: false,
                 }
               ),
               isSpellsTabAvailable
                 ? snocF<SubTab> ({
-                    id: "spells",
+                    id: TabId.Spells,
                     label: translate (locale) ("spells"),
                     disabled: false,
                   })
                 : ident,
               isLiturgicalChantsTabAvailable
                 ? snocF<SubTab> ({
-                    id: "liturgicalChants",
+                    id: TabId.LiturgicalChants,
                     label: translate (locale) ("liturgicalchants"),
                     disabled: false,
                   })
@@ -372,12 +392,12 @@ export const getSubtabs = createMaybeSelector (
         if (elem (tab) (belongingsSubTabs)) {
           const baseTabs = List<SubTab> (
             {
-              id: "equipment",
+              id: TabId.Equipment,
               label: translate (locale) ("equipment"),
               disabled: false,
             },
             {
-              id: "pets",
+              id: TabId.Pets,
               label: translate (locale) ("pets"),
               disabled: false,
             }
@@ -389,7 +409,7 @@ export const getSubtabs = createMaybeSelector (
                                                                    ("US25208")))) {
             return Just (insertAt (1)
                                   <SubTab> ({
-                                    id: "zoneArmor",
+                                    id: TabId.ZoneArmor,
                                     label: translate (locale) ("hitzonearmor"),
                                     disabled: false,
                                   })

@@ -1,6 +1,6 @@
-import { ident } from "../../Data/Function";
+import { cnst, ident } from "../../Data/Function";
 import { over, set } from "../../Data/Lens";
-import { Maybe, Nothing } from "../../Data/Maybe";
+import { fromJust, fromMaybe, isJust, Maybe, Nothing } from "../../Data/Maybe";
 import { fromDefault, makeLenses, Record } from "../../Data/Record";
 import { SetCombatTechniquesSortOrderAction } from "../Actions/CombatTechniquesActions";
 import { SetThemeAction, SwitchEnableActiveItemHintsAction, SwitchEnableAnimationsAction, SwitchEnableEditingHeroAfterCreationPhaseAction } from "../Actions/ConfigActions";
@@ -154,23 +154,30 @@ export const uiSettingsReducer =
   (action: Action): ident<Record<UISettingsState>> => {
     switch (action.type) {
       case ActionTypes.RECEIVE_INITIAL_DATA: {
-        if (action.payload.config) {
+        if (isJust (action.payload.config)) {
           const {
             locale: _,
             ...config
-          } = action.payload.config
+          } = fromJust (action.payload.config)
 
-          return {
-            ...state,
+          return cnst (UISettingsState ({
             ...config,
+            enableAnimations:
+              fromMaybe (true) (Maybe (config.enableAnimations)),
+            enableEditingHeroAfterCreationPhase:
+              fromMaybe (false) (Maybe (config.enableEditingHeroAfterCreationPhase)),
+            theme:
+              fromMaybe ("dark") (Maybe (config.theme)),
+            sheetCheckAttributeValueVisibility:
+              fromMaybe (false) (Maybe (config.sheetCheckAttributeValueVisibility)),
             meleeItemTemplatesCombatTechniqueFilter:
               Maybe.normalize (config.meleeItemTemplatesCombatTechniqueFilter),
             rangedItemTemplatesCombatTechniqueFilter:
               Maybe.normalize (config.rangedItemTemplatesCombatTechniqueFilter),
-          }
+          }))
         }
 
-        return state
+        return ident
       }
 
       case ActionTypes.SWITCH_SHEET_ATTRIBUTE_VALUE_VISIBILITY:
