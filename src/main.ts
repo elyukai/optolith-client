@@ -14,7 +14,7 @@ app.setAppUserModelId ("lukasobermann.optolith")
 
 const userDataPath = app.getPath ("userData")
 
-const accessPromise = async (pathToFile: string) => new Promise<boolean> (
+const access = async (pathToFile: string) => new Promise<boolean> (
   resolve => {
     fs.access (pathToFile, err => {
       if (err !== null) {
@@ -32,7 +32,7 @@ const copyFile = (origin: string) => (dest: string) => async (fileName: string) 
   let hasNewJSON
 
   try {
-    hasNewJSON = await accessPromise (newJSONPath)
+    hasNewJSON = await access (newJSONPath)
   }
   catch (err) {
     log.error (`Could not load or read ${fileName}.json (${err})`)
@@ -45,7 +45,7 @@ const copyFile = (origin: string) => (dest: string) => async (fileName: string) 
   let hasOldJSON
 
   try {
-    hasOldJSON = await accessPromise (oldJSONPath)
+    hasOldJSON = await access (oldJSONPath)
   }
   catch (err) {
     log.error (`Could not load or read ${fileName}.json (${err})`)

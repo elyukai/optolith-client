@@ -1,3 +1,4 @@
+import { notP } from "../../Data/Bool";
 import { flip, ident, join } from "../../Data/Function";
 import { fmapF } from "../../Data/Functor";
 import { over, set } from "../../Data/Lens";
@@ -15,7 +16,6 @@ import { getRuleBooksEnabled } from "../Selectors/rulesSelectors";
 import { getCurrentCultureId, getCurrentRaceId, getCurrentTab, getPhase } from "../Selectors/stateSelectors";
 import { composeL } from "../Utilities/compose";
 import { TabId } from "../Utilities/LocationUtils";
-import { notP } from "../Utilities/not";
 import { pipe } from "../Utilities/pipe";
 import { convertHero } from "../Utilities/Raw/compatibilityUtils";
 import { convertFromRawHero } from "../Utilities/Raw/initHeroUtils";

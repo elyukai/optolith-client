@@ -14,8 +14,8 @@
 
 import { ifElse } from "../App/Utilities/ifElse";
 import { pipe } from "../App/Utilities/pipe";
-import { ident, thrush } from "./Function";
-import { fmap } from "./Functor";
+import { ident } from "./Function";
+import { fmap, fmapF } from "./Functor";
 import { cons, consF, List } from "./List";
 import { fromJust, isJust, Just, Maybe, Nothing, Some } from "./Maybe";
 import { Pair } from "./Pair";
@@ -299,8 +299,9 @@ export const first =
  * `second :: (b -> c) -> Either a b -> Either a c`
  */
 export const second =
-  <A, B, C>
+  <B, C>
   (f: (r: B) => C) =>
+  <A>
   (x: Either<A, B>): Either<A, C> =>
     isRight (x)
       ? Right (f (x .value))
@@ -402,8 +403,8 @@ export const mapM =
     : ifElse<Either<E, B>, Left<E>, Either<E, List<B>>>
       (isLeft)
       (ident)
-      (y => second<E, List<B>, List<B>> (consF (fromRight_ (y)))
-                                        (mapM (f) (xs .xs)))
+      (y => second (consF (fromRight_ (y)))
+                   (mapM (f) (xs .xs)))
       (f (xs .x))
 
 /**
@@ -418,7 +419,7 @@ export const liftM2 =
   <E>
   (x1: Either<E, A1>) =>
   (x2: Either<E, A2>): Either<E, B> =>
-    bind<E, A1, B> (x1) (pipe (f, fmap, thrush (x2)))
+    bind<E, A1, B> (x1) (pipe (f, fmapF (x2)))
 
 
 // FOLDABLE

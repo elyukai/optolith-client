@@ -8,7 +8,7 @@
  */
 
 import * as fs from "fs";
-import { fromArray } from "../Data/List";
+import { fromArray, List } from "../Data/List";
 import { IO } from "./IO";
 
 
@@ -19,4 +19,12 @@ import { IO } from "./IO";
  */
 export const getDirectoryContents =
   (path: string) =>
-    IO (() => fromArray (fs.readdirSync (path)))
+    IO (async () => new Promise<List<String>> ((res, rej) =>
+                                                fs.readdir (path, (err, files) => {
+                                                  if (err !== null) {
+                                                    rej (err)
+                                                  }
+                                                  else {
+                                                    res (fromArray (files))
+                                                  }
+                                                })))

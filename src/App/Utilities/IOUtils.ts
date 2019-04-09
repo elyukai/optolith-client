@@ -2,6 +2,7 @@ import { remote } from "electron";
 import { flength, List, subscript } from "../../Data/List";
 import { fromMaybe, Maybe } from "../../Data/Maybe";
 import { bimap, fst, Pair, snd } from "../../Data/Pair";
+import { IO } from "../../System/IO";
 import { divideBy, inc } from "./mathUtils";
 
 /**
@@ -24,15 +25,12 @@ export const windowPrintToPDF =
  * Shows a native save dialog.
  */
 export const showSaveDialog =
-  async (options: Electron.SaveDialogOptions) =>
-    new Promise<Maybe<string>> (
-      resolve =>
-        remote.dialog.showSaveDialog (
-          remote .getCurrentWindow (),
-          options,
-          filename => resolve (Maybe (filename))
-        )
-    )
+  (options: Electron.SaveDialogOptions) =>
+    IO (async () => new Promise<Maybe<string>> (res => remote.dialog.showSaveDialog (
+                                                 remote .getCurrentWindow (),
+                                                 options,
+                                                 filename => res (Maybe (filename))
+                                               )))
 
 /**
  * Shows a native open dialog.

@@ -6,15 +6,16 @@ import { UpdateInfo } from "electron-updater";
 import * as fs from "fs";
 import { extname, join } from "path";
 import { tryy } from "../../Control/Exception";
-import { Either, eitherToMaybe, fromLeft, fromLeft_, fromRight_, isLeft, isRight, Right } from "../../Data/Either";
-import { flip } from "../../Data/Function";
-import { fmap } from "../../Data/Functor";
+import { and } from "../../Data/Bool";
+import { Either, eitherToMaybe, fromLeft, fromLeft_, fromRight_, isLeft, isRight, second } from "../../Data/Either";
+import { cnst, flip } from "../../Data/Function";
+import { fmap, fmapF } from "../../Data/Functor";
 import { List, notNull } from "../../Data/List";
 import { altF_, bind, bindF, fromJust, fromMaybe, isJust, Just, Maybe, maybe, maybeToUndefined, Nothing } from "../../Data/Maybe";
 import { any, lookup, lookupF } from "../../Data/OrderedMap";
 import { Pair } from "../../Data/Pair";
 import { Record, toObject } from "../../Data/Record";
-import { fromIO, readFile, writeFile } from "../../System/IO";
+import { fromIO, IO, readFile, writeFile } from "../../System/IO";
 import { ActionTypes } from "../Constants/ActionTypes";
 import { IdPrefixes } from "../Constants/IdPrefixes";
 import { User } from "../Models/Hero/heroTypeHelpers";
@@ -88,40 +89,38 @@ export interface ReceiveInitialDataAction {
   payload: InitialData
 }
 
-export const requestInitialData = (): ReduxAction => dispatch => {
-  const data = dispatch (getInitialData)
+export const requestInitialData = (): ReduxAction => dispatch =>
+  fmapF (dispatch (getInitialData))
+        (data => {
+          if (isRight (data)) {
+            dispatch (receiveInitialData (fromRight_ (data)))
+          }
+          else {
+            dispatch (addAlert ({
+              title: "Error loading database",
+              message: fromLeft ("") (data),
+            }))
+          }
+        })
 
-  if (isRight (data)) {
-    dispatch (receiveInitialData (fromRight_ (data)))
-  }
-  else {
-    dispatch (addAlert ({
-      title: "Error loading database",
-      message: fromLeft ("") (data),
-    }))
-  }
-
-  return
-}
-
-export const getInitialData: ReduxAction<Either<string, InitialData>> =
+export const getInitialData: ReduxAction<IO<Either<string, InitialData>>> =
   dispatch => {
-    const config = fromIO (loadConfig ())
-    const heroes = fromIO (loadHeroes ())
     const defaultLocale = getSystemLocale ()
-    const tables = dispatch (loadDatabase (fromMaybe (defaultLocale)
-                            (bind (config) (c => Maybe (c.locale)))))
 
-    if (isRight (tables)) {
-      return Right ({
-        tables: fromRight_ (tables),
-        heroes,
-        defaultLocale,
-        config,
-      })
-    }
-
-    return tables
+    return IO.bind (loadConfig ())
+                   (mconfig =>
+                     fmapF (loadHeroes ())
+                           (mheroes =>
+                             second ((tables: Pair<Record<L10n>, Record<WikiModel>>): InitialData =>
+                                      ({
+                                        tables,
+                                        heroes: mheroes,
+                                        defaultLocale,
+                                        config: mconfig,
+                                      }))
+                                    (dispatch (loadDatabase (fromMaybe (defaultLocale)
+                                                                       (bind (mconfig)
+                                                                       (c => Maybe (c.locale))))))))
   }
 
 export const receiveInitialData = (data: InitialData): ReceiveInitialDataAction => ({
@@ -132,8 +131,8 @@ export const receiveInitialData = (data: InitialData): ReceiveInitialDataAction 
 const UISSA = UISettingsState.A
 
 export const requestConfigSave =
-  (l10n: L10nRecord): ReduxAction<Promise<boolean>> =>
-  async (dispatch, getState) => {
+  (l10n: L10nRecord): ReduxAction<IO<boolean>> =>
+  (dispatch, getState) => {
     const state = getState ()
 
     const uiSettingsState = getUISettingsState (state)
@@ -149,34 +148,34 @@ export const requestConfigSave =
 
     const dataPath = getSaveDataPath ()
 
-    const res = pipe_ (
+    return pipe_ (
       join (dataPath, "config.json"),
       flip (writeFile) (JSON.stringify (data)),
       tryy,
-      fromIO
+      fmap (res => {
+        if (isLeft (res)) {
+          dispatch (addAlert ({
+            message: `${
+              translate (l10n) ("saveconfigerror")
+            } (${
+              translate (l10n) ("errorcode")
+            }: ${
+              JSON.stringify (fromLeft_ (res))
+            })`,
+            title: translate (l10n) ("error"),
+          }))
+
+          return false
+        }
+
+        return true
+      })
     )
-
-    if (isLeft (res)) {
-      dispatch (addAlert ({
-        message: `${
-          translate (l10n) ("saveconfigerror")
-        } (${
-          translate (l10n) ("errorcode")
-        }: ${
-          JSON.stringify (fromLeft_ (res))
-        })`,
-        title: translate (l10n) ("error"),
-      }))
-
-      return false
-    }
-
-    return true
   }
 
 export const requestAllHeroesSave =
-  (l10n: L10nRecord): ReduxAction<Promise<boolean>> =>
-  async (dispatch, getState) => {
+  (l10n: L10nRecord): ReduxAction<IO<boolean>> =>
+  (dispatch, getState) => {
     const state = getState ()
 
     const wiki = getWiki (state)
@@ -187,42 +186,42 @@ export const requestAllHeroesSave =
 
     const dataPath = getSaveDataPath ()
 
-    const res = pipe_ (
+    return pipe_ (
       join (dataPath, "heroes.json"),
       flip (writeFile) (JSON.stringify (data)),
       tryy,
-      fromIO
+      fmap (res => {
+        if (isLeft (res)) {
+          dispatch (addAlert ({
+            message: `${
+              translate (l10n) ("saveheroeserror")
+            } (${
+              translate (l10n) ("errorcode")
+            }: ${
+              JSON.stringify (fromLeft_ (res))
+            })`,
+            title: translate (l10n) ("error"),
+          }))
+
+          return false
+        }
+
+        return true
+      })
     )
-
-    if (isLeft (res)) {
-      dispatch (addAlert ({
-        message: `${
-          translate (l10n) ("saveheroeserror")
-        } (${
-          translate (l10n) ("errorcode")
-        }: ${
-          JSON.stringify (fromLeft_ (res))
-        })`,
-        title: translate (l10n) ("error"),
-      }))
-
-      return false
-    }
-
-    return true
   }
 
-export const requestSaveAll = (l10n: L10nRecord): ReduxAction<Promise<boolean>> =>
-  async dispatch => {
-    const configSavedDone = await dispatch (requestConfigSave (l10n))
-    const heroesSavedDone = await dispatch (requestAllHeroesSave (l10n))
+export const requestSaveAll = (l10n: L10nRecord): ReduxAction<IO<boolean>> =>
+  dispatch => {
+    const configSavedDone = dispatch (requestConfigSave (l10n))
+    const heroesSavedDone = dispatch (requestAllHeroesSave (l10n))
 
-    return configSavedDone && heroesSavedDone
+    return IO.liftM2 (and) (configSavedDone) (heroesSavedDone)
   }
 
 export const requestHeroSave =
   (l10n: L10nRecord) =>
-  (mcurrent_id: Maybe<string>): ReduxAction<Maybe<string>> =>
+  (mcurrent_id: Maybe<string>): ReduxAction<IO<Maybe<string>>> =>
   (dispatch, getState) => {
     const state = getState ()
 
@@ -243,88 +242,89 @@ export const requestHeroSave =
     if (isJust (mhero)) {
       const hero = fromJust (mhero)
 
-      const msaved_heroes = fromIO (loadHeroes ())
+      return IO.bind (loadHeroes ())
+                     (msaved_heroes =>
+                       pipe_ (
+                         join (dataPath, "heroes.json"),
+                         flip (writeFile) (JSON.stringify (maybe ({ [hero.id]: hero })
+                                                                 ((savedHeroes: RawHerolist) => ({
+                                                                   ...savedHeroes,
+                                                                   [hero.id]: hero,
+                                                                 }))
+                                                                 (msaved_heroes))),
+                         tryy,
+                         fmap (res => {
+                           if (isLeft (res)) {
+                             dispatch (addAlert ({
+                               message: `${
+                                 translate (l10n) ("saveheroeserror")
+                               } (${
+                                 translate (l10n) ("errorcode")
+                               }: ${
+                                 JSON.stringify (fromLeft_ (res))
+                               })`,
+                               title: translate (l10n) ("error"),
+                             }))
 
-      const res = pipe_ (
-        join (dataPath, "heroes.json"),
-        flip (writeFile) (JSON.stringify (maybe ({ [hero.id]: hero })
-                                                ((savedHeroes: RawHerolist) => ({
-                                                  ...savedHeroes,
-                                                  [hero.id]: hero,
-                                                }))
-                                                (msaved_heroes))),
-        tryy,
-        fromIO
-      )
+                             return Nothing
+                           }
 
-      if (isLeft (res)) {
-        dispatch (addAlert ({
-          message: `${
-            translate (l10n) ("saveheroeserror")
-          } (${
-            translate (l10n) ("errorcode")
-          }: ${
-            JSON.stringify (fromLeft_ (res))
-          })`,
-          title: translate (l10n) ("error"),
-        }))
-
-        return Nothing
-      }
-
-      return Just (hero .id)
+                           return Just (hero .id)
+                         })
+                       ))
     }
 
-    return Nothing
+    return IO (cnst (Promise.resolve (Nothing)))
   }
 
 export const requestHeroDeletion =
   (l10n: L10nRecord) =>
-  (id: string): ReduxAction<Promise<boolean>> =>
-    async dispatch => {
+  (id: string): ReduxAction<IO<boolean>> =>
+    dispatch => {
       const dataPath = getSaveDataPath ()
 
-      const msaved_heroes = fromIO (loadHeroes ())
+      return IO.bind (loadHeroes ())
+                     (msaved_heroes =>
+                       pipe_ (
+                         join (dataPath, "heroes.json"),
+                         flip (writeFile) (JSON.stringify (
+                                             maybe<RawHerolist> ({})
+                                                                ((savedHeroes: RawHerolist) => {
+                                                                  const {
+                                                                    [id]: _,
+                                                                    ...other
+                                                                  } = savedHeroes
 
-      const res = pipe_ (
-        join (dataPath, "heroes.json"),
-        flip (writeFile) (JSON.stringify (
-                            maybe<RawHerolist> ({})
-                                               ((savedHeroes: RawHerolist) => {
-                                                 const {
-                                                   [id]: _,
-                                                   ...other
-                                                 } = savedHeroes
+                                                                  return other
+                                                                })
+                                                                (msaved_heroes))),
+                         tryy,
+                         fmap (res => {
+                           if (isLeft (res)) {
+                             dispatch (addAlert ({
+                               message: `${
+                                 translate (l10n) ("saveheroeserror")
+                               } (${
+                                 translate (l10n) ("errorcode")
+                               }: ${
+                                 JSON.stringify (fromLeft_ (res))
+                               })`,
+                               title: translate (l10n) ("error"),
+                             }))
 
-                                                 return other
-                                               })
-                                               (msaved_heroes))),
-        tryy,
-        fromIO
-      )
+                             return false
+                           }
 
-      if (isLeft (res)) {
-        dispatch (addAlert ({
-          message: `${
-            translate (l10n) ("saveheroeserror")
-          } (${
-            translate (l10n) ("errorcode")
-          }: ${
-            JSON.stringify (fromLeft_ (res))
-          })`,
-          title: translate (l10n) ("error"),
-        }))
+                           return true
+                         })
+                       ))
 
-        return false
-      }
-
-      return true
     }
 
 export const requestHeroExport =
   (l10n: L10nRecord) =>
   (id: string): ReduxAction =>
-  async (dispatch, getState) => {
+  (dispatch, getState) => {
     const state = getState ()
 
     const wiki = getWiki (state)
@@ -367,40 +367,37 @@ export const requestHeroExport =
     if (isJust (mhero)) {
       const hero = fromJust (mhero)
 
-      const mfilename = await showSaveDialog ({
-                              title: translate (l10n) ("exportheroasjson"),
-                              filters: [
-                                { name: "JSON", extensions: ["json"] },
-                              ],
-                              defaultPath: hero.name.replace (/\//, "\/"),
-                            })
-
-      if (isJust (mfilename)) {
-        const res = pipe_ (
-          fromJust (mfilename),
-          flip (writeFile) (JSON.stringify (hero)),
-          tryy,
-          fromIO
-        )
-
-        if (isRight (res)) {
-          dispatch (addAlert ({
-            message: translate (l10n) ("herosaved"),
-          }))
-        }
-        else {
-          dispatch (addAlert ({
-            message: `${
-              translate (l10n) ("exportheroerror")
-            } (${
-              translate (l10n) ("errorcode")
-            }: ${
-              JSON.stringify (fromLeft_ (res))
-            })`,
-            title: translate (l10n) ("error"),
-          }))
-        }
-      }
+      pipe_ (
+        showSaveDialog ({
+          title: translate (l10n) ("exportheroasjson"),
+          filters: [
+            { name: "JSON", extensions: ["json"] },
+          ],
+          defaultPath: hero.name.replace (/\//, "\/"),
+        }),
+        IO.bindF ()
+        flip (writeFile) (JSON.stringify (hero)),
+        tryy,
+        fmap (res => {
+          if (isRight (res)) {
+            dispatch (addAlert ({
+              message: translate (l10n) ("herosaved"),
+            }))
+          }
+          else {
+            dispatch (addAlert ({
+              message: `${
+                translate (l10n) ("exportheroerror")
+              } (${
+                translate (l10n) ("errorcode")
+              }: ${
+                JSON.stringify (fromLeft_ (res))
+              })`,
+              title: translate (l10n) ("error"),
+            }))
+          }
+        })
+      )
     }
   }
 

@@ -8,7 +8,6 @@
  */
 
 import { Either, Left, Right } from "../Data/Either";
-import { cnst } from "../Data/Function";
 import { fmapF } from "../Data/Functor";
 import { IO } from "../System/IO";
 
@@ -26,6 +25,6 @@ export const tryy =
       return fmapF (x) (Right)
     }
     catch (ex) {
-      return IO (cnst (Left (ex)))
+      return IO (() => Promise.resolve (Left (ex)))
     }
   }

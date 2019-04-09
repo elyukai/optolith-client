@@ -11,8 +11,6 @@
  */
 
 import * as fs from "fs";
-import { pipe } from "../App/Utilities/pipe";
-import { fmapF } from "../Data/Functor";
 import { showP } from "../Data/Show";
 
 
@@ -23,7 +21,8 @@ interface IOPrototype {
 }
 
 export interface IO<A> extends IOPrototype {
-  readonly f: () => Promise<A>
+  // readonly f: () => Promise<A>
+  readonly f: () => A
 }
 
 const IOPrototype =
@@ -31,7 +30,8 @@ const IOPrototype =
     isIO: true,
   })
 
-export const IO = <A> (f: () => Promise<A>): IO<A> => {
+// export const IO = <A> (f: () => Promise<A>): IO<A> => {
+export const IO = <A> (f: () => A): IO<A> => {
   if (typeof f === "function") {
     return Object.create (
       IOPrototype,
@@ -57,10 +57,15 @@ export const bind =
   (x: IO<A>) =>
   <B>
   (f: (x: A) => IO<B>): IO<B> => {
-    const p = x .f ()
+    return f (x .f ())
+    // let y
 
-    return IO (() => p .then (pipe (f, y => y.f ()))
-                       .catch (err => { throw err }))
+    // x
+    //   .f ()
+    //   .then (x1 => { y = f (x1)})
+    //   .catch (err => { throw new Error (err) })
+
+    // return y
   }
 
 IO.bind = bind
@@ -103,21 +108,6 @@ export const thenF =
 
 IO.thenF = thenF
 
-/**
- * `liftM2 :: (a1 -> a2 -> r) -> IO a1 -> IO a2 -> IO r`
- *
- * Promote a function to a monad, scanning the monadic arguments from left to
- * right.
- */
-export const liftM2 =
-  <A1, A2, B>
-  (f: (a1: A1) => (a2: A2) => B) =>
-  (x1: IO<A1>) =>
-  (x2: IO<A2>): IO<B> =>
-    bind<A1> (x1) (pipe (f, fmapF (x2)))
-
-IO.liftM2 = liftM2
-
 
 // OPENING AND CLOSING FILES
 
@@ -129,15 +119,7 @@ IO.liftM2 = liftM2
  */
 export const readFile =
   (path: string) =>
-    IO (async () => new Promise<string> ((res, rej) =>
-                                          fs.readFile (path, "utf8", (err, data) => {
-                                            if (err !== null) {
-                                              rej (err)
-                                            }
-                                            else {
-                                              res (data)
-                                            }
-                                          })))
+    IO (() => fs.readFileSync (path, "utf8"))
 
 IO.readFile = readFile
 
@@ -150,15 +132,7 @@ IO.readFile = readFile
 export const writeFile =
   (path: string) =>
   (data: string | Buffer) =>
-    IO (async () => new Promise<void> ((res, rej) =>
-                                        fs.writeFile (path, data, "utf8", err => {
-                                          if (err !== null) {
-                                            rej (err)
-                                          }
-                                          else {
-                                            res ()
-                                          }
-                                        })))
+    IO (() => fs.writeFileSync (path, data, "utf8"))
 
 IO.writeFile = writeFile
 
@@ -175,7 +149,7 @@ IO.writeFile = writeFile
  */
 export const print =
   (x: any) =>
-    IO (() => Promise.resolve (console.log (showP (x))))
+    IO (() => console.log (showP (x)))
 
 IO.print = print
 
@@ -194,11 +168,25 @@ export const isIO =
 IO.isIO = isIO
 
 /**
- * `fromIO :: IO a -> Promise a`
+ * `fromIO :: IO a -> a`
  *
- * Runs the `IO` and unwraps the `Promise` contained within the `IO`.
+ * Runs the `IO` and unwraps the value contained within the `IO`. Only use this
+ * function if you can ensure the `IO` action will not fail! Throws if it *does*
+ * fail.
+ *
+ * @throws
  */
 export const fromIO =
-  <A> (x: IO<A>): Promise<A> => x .f ()
+  <A> (x: IO<A>): A => x .f ()
 
 IO.fromIO = fromIO
+  // {
+  //   let res: A
+
+  //   x
+  //     .f ()
+  //     .then (x1 => { res = x1 })
+  //     .catch (ex => { throw new Error (ex) })
+
+  //   return res
+  // }
