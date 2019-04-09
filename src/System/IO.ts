@@ -47,6 +47,18 @@ export const IO = <A> (f: () => Promise<A>): IO<A> => {
 }
 
 
+// APPLICATIVE
+
+/**
+ * `pure :: a -> IO a`
+ *
+ * Lift a value.
+ */
+export const pure = <A> (x: A) => IO (() => Promise.resolve (x))
+
+IO.pure = pure
+
+
 // MONAD
 
 /**
@@ -56,12 +68,10 @@ export const bind =
   <A>
   (x: IO<A>) =>
   <B>
-  (f: (x: A) => IO<B>): IO<B> => {
-    const p = x .f ()
-
-    return IO (() => p .then (pipe (f, y => y.f ()))
-                       .catch (err => { throw err }))
-  }
+  (f: (x: A) => IO<B>): IO<B> =>
+    IO (() => x .f ()
+                .then (pipe (f, y => y.f ()))
+                .catch (err => { throw err }))
 
 IO.bind = bind
 
@@ -95,7 +105,7 @@ IO.then = then
  * `(<<) :: IO a -> IO b -> IO a`
  *
  * Sequentially compose two actions, discarding any value produced by the
- * second.s
+ * second.
  */
 export const thenF =
   <A> (x: IO<A>) => (y: IO<any>): IO<A> =>
@@ -121,6 +131,8 @@ IO.liftM2 = liftM2
 
 // OPENING AND CLOSING FILES
 
+type FilePath = string
+
 /**
  * `readFile :: FilePath -> IO String`
  *
@@ -128,7 +140,7 @@ IO.liftM2 = liftM2
  * a string.
  */
 export const readFile =
-  (path: string) =>
+  (path: FilePath) =>
     IO (async () => new Promise<string> ((res, rej) =>
                                           fs.readFile (path, "utf8", (err, data) => {
                                             if (err !== null) {
@@ -148,7 +160,7 @@ IO.readFile = readFile
  * file `file`.
  */
 export const writeFile =
-  (path: string) =>
+  (path: FilePath) =>
   (data: string | Buffer) =>
     IO (async () => new Promise<void> ((res, rej) =>
                                         fs.writeFile (path, data, "utf8", err => {

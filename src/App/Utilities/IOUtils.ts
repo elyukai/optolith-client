@@ -1,49 +1,77 @@
 import { remote } from "electron";
-import { flength, List, subscript } from "../../Data/List";
-import { fromMaybe, Maybe } from "../../Data/Maybe";
+import { tryIO } from "../../Control/Exception";
+import { Either, fromLeft_, fromRight_, isLeft, Left, Right } from "../../Data/Either";
+import { fmapF } from "../../Data/Functor";
+import { flength, fromArray, List, subscript } from "../../Data/List";
+import { fromMaybe, Nothing } from "../../Data/Maybe";
 import { bimap, fst, Pair, snd } from "../../Data/Pair";
 import { IO } from "../../System/IO";
 import { divideBy, inc } from "./mathUtils";
+import { pipe } from "./pipe";
 
 /**
  * Prints windows' web page as PDF with Chromium's preview printing custom settings.
  */
 export const windowPrintToPDF =
-  async (options: Electron.PrintToPDFOptions) =>
-    new Promise<Buffer> (
-      (resolve, reject) =>
-        remote
-          .getCurrentWindow ()
-          .webContents
-          .printToPDF (
-            options,
-            (error, data) => error !== null ? reject (error) : resolve (data)
-          )
-    )
+  (options: Electron.PrintToPDFOptions) =>
+  IO (async () => new Promise<Buffer> ((res, rej) => remote
+                                                       .getCurrentWindow ()
+                                                       .webContents
+                                                       .printToPDF (
+                                                         options,
+                                                         (error, data) => error !== null
+                                                                            ? rej (error)
+                                                                            : res (data)
+                                                       )))
 
 /**
  * Shows a native save dialog.
  */
 export const showSaveDialog =
   (options: Electron.SaveDialogOptions) =>
-    IO (async () => new Promise<Maybe<string>> (res => remote.dialog.showSaveDialog (
+    IO (async () => new Promise<string> (res => remote.dialog.showSaveDialog (
                                                  remote .getCurrentWindow (),
                                                  options,
-                                                 filename => res (Maybe (filename))
+                                                 res
                                                )))
 
 /**
  * Shows a native open dialog.
  */
 export const showOpenDialog =
-  async (options: Electron.OpenDialogOptions) =>
-    new Promise<Maybe<string[]>> (
-      resolve => remote.dialog.showOpenDialog (
-        remote .getCurrentWindow (),
-        options,
-        filenames => resolve (Maybe (filenames))
-      )
-    )
+  (options: Electron.OpenDialogOptions) =>
+    IO (async () => new Promise<List<string>> (res => remote.dialog.showOpenDialog (
+                                                       remote .getCurrentWindow (),
+                                                       options,
+                                                       pipe (fromArray, res)
+                                                     )))
+
+export const NothingIO = IO.pure (Nothing)
+
+export const LeftIO = pipe (Left, IO.pure)
+
+/**
+ * `catchIOEither :: (a -> IO b) -> IO a -> IO (Either Error b)`
+ *
+ * `catchIOEither f x` executes `x` and maps `f` over the result, if no error
+ * occured. The resulting `IO` will either return an error raised by the first
+ * function or the result of the generated `IO`, when executed.
+ */
+export const catchIOEither =
+  <A, B>
+  (f: (x: A) => IO<B>) =>
+  (x: IO<A>) =>
+    bindIOEither (f) (tryIO (x))
+
+export const bindIOEither =
+  <A, B>
+  (f: (x: A) => IO<B>) =>
+  <E>
+  (x: IO<Either<E, A>>) =>
+    IO.bind (x)
+            ((e): IO<Either<E, B>> => isLeft (e)
+                    ? LeftIO (fromLeft_ (e))
+                    : fmapF (f (fromRight_ (e))) (Right))
 
 export const getSystemLocale = () => {
   const systemLocale = remote.app.getLocale ()

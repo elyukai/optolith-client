@@ -5,17 +5,17 @@ import { ipcRenderer, remote } from "electron";
 import { UpdateInfo } from "electron-updater";
 import * as fs from "fs";
 import { extname, join } from "path";
-import { tryy } from "../../Control/Exception";
+import { tryIO } from "../../Control/Exception";
 import { and } from "../../Data/Bool";
 import { Either, eitherToMaybe, fromLeft, fromLeft_, fromRight_, isLeft, isRight, second } from "../../Data/Either";
 import { cnst, flip } from "../../Data/Function";
 import { fmap, fmapF } from "../../Data/Functor";
 import { List, notNull } from "../../Data/List";
-import { altF_, bind, bindF, fromJust, fromMaybe, isJust, Just, Maybe, maybe, maybeToUndefined, Nothing } from "../../Data/Maybe";
+import { altF_, bind, bindF, ensure, fromJust, fromMaybe, isJust, Just, listToMaybe, Maybe, maybe, maybeToUndefined, Nothing } from "../../Data/Maybe";
 import { any, lookup, lookupF } from "../../Data/OrderedMap";
 import { Pair } from "../../Data/Pair";
 import { Record, toObject } from "../../Data/Record";
-import { fromIO, IO, readFile, writeFile } from "../../System/IO";
+import { IO, readFile, writeFile } from "../../System/IO";
 import { ActionTypes } from "../Constants/ActionTypes";
 import { IdPrefixes } from "../Constants/IdPrefixes";
 import { User } from "../Models/Hero/heroTypeHelpers";
@@ -27,7 +27,7 @@ import { getCurrentHeroId, getHeroes, getLocaleMessages, getLocaleType, getUsers
 import { getUISettingsState } from "../Selectors/uisettingsSelectors";
 import { translate, translateP } from "../Utilities/I18n";
 import { getNewIdByDate, prefixId } from "../Utilities/IDUtils";
-import { bytify, getSystemLocale, showOpenDialog, showSaveDialog, windowPrintToPDF } from "../Utilities/IOUtils";
+import { bytify, getSystemLocale, NothingIO, showOpenDialog, showSaveDialog, windowPrintToPDF } from "../Utilities/IOUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
 import { convertHeroesForSave, convertHeroForSave } from "../Utilities/Raw/convertHeroForSave";
 import { parseTables } from "../Utilities/Raw/parseTable";
@@ -61,7 +61,7 @@ const loadConfig = () => {
   return pipe_ (
     join (appPath, "config.json"),
     readFile,
-    tryy,
+    tryIO,
     fmap (pipe (eitherToMaybe, fmap (JSON.parse as (x: string) => RawConfig)))
   )
 }
@@ -72,7 +72,7 @@ const loadHeroes = () => {
   return pipe_ (
     join (appPath, "heroes.json"),
     readFile,
-    tryy,
+    tryIO,
     fmap (pipe (eitherToMaybe, fmap (JSON.parse as (x: string) => RawHerolist)))
   )
 }
@@ -151,7 +151,7 @@ export const requestConfigSave =
     return pipe_ (
       join (dataPath, "config.json"),
       flip (writeFile) (JSON.stringify (data)),
-      tryy,
+      tryIO,
       fmap (res => {
         if (isLeft (res)) {
           dispatch (addAlert ({
@@ -189,7 +189,7 @@ export const requestAllHeroesSave =
     return pipe_ (
       join (dataPath, "heroes.json"),
       flip (writeFile) (JSON.stringify (data)),
-      tryy,
+      tryIO,
       fmap (res => {
         if (isLeft (res)) {
           dispatch (addAlert ({
@@ -252,7 +252,7 @@ export const requestHeroSave =
                                                                    [hero.id]: hero,
                                                                  }))
                                                                  (msaved_heroes))),
-                         tryy,
+                         tryIO,
                          fmap (res => {
                            if (isLeft (res)) {
                              dispatch (addAlert ({
@@ -298,7 +298,7 @@ export const requestHeroDeletion =
                                                                   return other
                                                                 })
                                                                 (msaved_heroes))),
-                         tryy,
+                         tryIO,
                          fmap (res => {
                            if (isLeft (res)) {
                              dispatch (addAlert ({
@@ -375,9 +375,8 @@ export const requestHeroExport =
           ],
           defaultPath: hero.name.replace (/\//, "\/"),
         }),
-        IO.bindF ()
-        flip (writeFile) (JSON.stringify (hero)),
-        tryy,
+        IO.bindF (flip (writeFile) (JSON.stringify (hero))),
+        tryIO,
         fmap (res => {
           if (isRight (res)) {
             dispatch (addAlert ({
@@ -410,66 +409,41 @@ export interface ReceiveImportedHeroAction {
 }
 
 export const loadImportedHero =
-  (l10n: L10nRecord): ReduxAction<Promise<Maybe<RawHero>>> =>
-  async dispatch => {
-    try {
-      const mfile_names = await showOpenDialog ({
-        filters: [{ name: "JSON", extensions: ["json"] }],
-      })
-
-      if (isJust (mfile_names)) {
-        const file_name = fromJust (mfile_names) [0]
-
-        if (extname (file_name) === ".json") {
-          const res = pipe_ (
-            file_name,
-            readFile,
-            tryy,
-            fromIO
-          )
-
-          if (isRight (res)) {
-            return Just ((JSON.parse as (x: string) => RawHero) (fromRight_ (res)))
-          }
-
-          dispatch (addAlert ({
-            message: `${
-              translate (l10n) ("importheroerror")
-            } (${
-              translate (l10n) ("errorcode")
-            }: ${
-              JSON.stringify (fromLeft_ (res))
-            })`,
-            title: translate (l10n) ("error"),
-          }))
+  (l10n: L10nRecord): ReduxAction<IO<Maybe<RawHero>>> =>
+  dispatch => {
+    return pipe_ (
+      showOpenDialog ({ filters: [{ name: "JSON", extensions: ["json"] }] }),
+      IO.bindF (pipe (
+        listToMaybe,
+        bindF (ensure (x => extname (x) === ".json")),
+        maybe<IO<Maybe<Either<Error, string>>>> (NothingIO)
+                                                (pipe (readFile, tryIO, fmap (Just)))
+      )),
+      fmap (bindF (res => {
+        if (isRight (res)) {
+          return Just ((JSON.parse as (x: string) => RawHero) (fromRight_ (res)))
         }
-      }
-    }
-    catch (error) {
-      dispatch (addAlert ({
-        message: `${
-          translate (l10n) ("importheroerror")
-        } (${
-          translate (l10n) ("errorcode")
-        }: ${
-          JSON.stringify (error)
-        })`,
-        title: translate (l10n) ("error"),
-      }))
-    }
 
-    return Nothing
+        dispatch (addAlert ({
+          message: `${
+            translate (l10n) ("importheroerror")
+          } (${
+            translate (l10n) ("errorcode")
+          }: ${
+            JSON.stringify (fromLeft_ (res))
+          })`,
+          title: translate (l10n) ("error"),
+        }))
+
+        return Nothing
+      }))
+    )
   }
 
 export const requestHeroImport =
   (l10n: L10nRecord): ReduxAction =>
-  async dispatch => {
-    const data = await dispatch (loadImportedHero (l10n))
-
-    if (isJust (data)) {
-      dispatch (receiveHeroImport (fromJust (data)))
-    }
-  }
+  dispatch => fmapF (dispatch (loadImportedHero (l10n)))
+                    (fmap (x => dispatch (receiveHeroImport (x))))
 
 export const receiveHeroImport = (raw: RawHero): ReceiveImportedHeroAction => {
   const newId = prefixId (IdPrefixes.HERO) (getNewIdByDate ())
@@ -503,22 +477,21 @@ const close =
   (l10n: L10nRecord) =>
   (unsaved: boolean) =>
   (f: Maybe<() => void>): ReduxAction =>
-  async dispatch => {
-    const allSaved = await dispatch (requestSaveAll (l10n))
+  dispatch => fmapF (dispatch (requestSaveAll (l10n)))
+                    (all_saved => {
+                      if (all_saved) {
+                        dispatch (addAlert ({
+                          message: translate (l10n) (unsaved ? "everythingelsesaved" : "allsaved"),
+                          onClose () {
+                            if (isJust (f)) {
+                              fromJust (f) ()
+                            }
 
-    if (allSaved) {
-      dispatch (addAlert ({
-        message: translate (l10n) (unsaved ? "everythingelsesaved" : "allsaved"),
-        onClose () {
-          if (isJust (f)) {
-            fromJust (f) ()
-          }
-
-          remote.getCurrentWindow ().close ()
-        },
-      }))
-    }
-  }
+                            remote.getCurrentWindow ().close ()
+                          },
+                        }))
+                      }
+                    })
 
 export const requestClose =
   (optionalCall: Maybe<() => void>): ReduxAction =>
@@ -552,29 +525,22 @@ export const requestClose =
 
 export const requestPrintHeroToPDF =
   (l10n: L10nRecord): ReduxAction =>
-  async dispatch => {
-    try {
-      const data = await windowPrintToPDF ({
+  dispatch =>
+    pipe_ (
+      windowPrintToPDF ({
         marginsType: 1,
         pageSize: "A4",
         printBackground: true,
-      })
-
-      const mfilename = await showSaveDialog ({
-        title: translate (l10n) ("printcharactersheettopdf"),
-        filters: [
-          { name: "PDF", extensions: ["pdf"] },
-        ],
-      })
-
-      if (isJust (mfilename)) {
-        const res = pipe_ (
-          fromJust (mfilename),
-          flip (writeFile) (data),
-          tryy,
-          fromIO
-        )
-
+      }),
+      fmap (flip (writeFile)),
+      IO.bindF (IO.bind (showSaveDialog ({
+                          title: translate (l10n) ("printcharactersheettopdf"),
+                          filters: [
+                            { name: "PDF", extensions: ["pdf"] },
+                          ],
+                        }))),
+      tryIO,
+      fmap (res => {
         if (isRight (res)) {
           dispatch (addAlert ({
             message: translate (l10n) ("pdfsaved"),
@@ -589,18 +555,8 @@ export const requestPrintHeroToPDF =
             title: translate (l10n) ("error"),
           }))
         }
-      }
-    }
-    catch (error) {
-      dispatch (addAlert ({
-        message:
-          `${translate (l10n) ("pdfcreationerror")}`
-          + ` (${translate (l10n) ("errorcode")}: `
-          + `${JSON.stringify (error)})`,
-        title: translate (l10n) ("error"),
-      }))
-    }
-  }
+      })
+    )
 
 export interface SetUpdateDownloadProgressAction {
   type: ActionTypes.SET_UPDATE_DOWNLOAD_PROGRESS

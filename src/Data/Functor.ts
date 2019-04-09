@@ -104,9 +104,7 @@ export const fmap =
     }
 
     if (isIO (x)) {
-      const p = x .f ()
-
-      return IO (() => p .then (f))
+      return IO (() => x .f () .then (f))
     }
 
     if (isMaybe (x)) {
