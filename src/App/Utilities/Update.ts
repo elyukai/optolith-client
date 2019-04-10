@@ -1,17 +1,15 @@
-import { remote } from "electron";
 import { join } from "path";
 import { tryIO } from "../../Control/Exception";
 import { eitherToMaybe } from "../../Data/Either";
 import { fmap } from "../../Data/Functor";
 import { and } from "../../Data/Maybe";
 import { readFile, writeFile } from "../../System/IO";
+import { user_data_path } from "../Selectors/envSelectors";
 import { pipe, pipe_ } from "./pipe";
-
-const app_data_path = remote.app.getPath ("userData")
 
 const property_name = "update"
 
-const file_path = join (app_data_path, "update.json")
+const file_path = join (user_data_path, "update.json")
 
 /**
  * Check for the update file. If the `update` property in the JSON is set to

@@ -23,6 +23,7 @@ import { L10n, L10nRecord } from "../Models/Wiki/L10n";
 import { WikiModel } from "../Models/Wiki/WikiModel";
 import { heroReducer } from "../Reducers/heroReducer";
 import { UISettingsState } from "../Reducers/uiSettingsReducer";
+import { user_data_path } from "../Selectors/envSelectors";
 import { getCurrentHeroId, getHeroes, getLocaleMessages, getLocaleType, getUsers, getWiki } from "../Selectors/stateSelectors";
 import { getUISettingsState } from "../Selectors/uisettingsSelectors";
 import { translate, translateP } from "../Utilities/I18n";
@@ -35,8 +36,6 @@ import { RawConfig, RawHero, RawHerolist } from "../Utilities/Raw/RawData";
 import { isBase64Image } from "../Utilities/RegexUtils";
 import { ReduxAction } from "./Actions";
 import { addAlert } from "./AlertActions";
-
-const getSaveDataPath = (): string => remote.app.getPath ("userData")
 
 // const getInstalledResourcesPath = (): string => remote.app.getAppPath ()
 
@@ -55,27 +54,21 @@ const loadDatabase =
       return res
     }
 
-const loadConfig = () => {
-  const appPath = getSaveDataPath ()
-
-  return pipe_ (
-    join (appPath, "config.json"),
+const loadConfig = () =>
+  pipe_ (
+    join (user_data_path, "config.json"),
     readFile,
     tryIO,
     fmap (pipe (eitherToMaybe, fmap (JSON.parse as (x: string) => RawConfig)))
   )
-}
 
-const loadHeroes = () => {
-  const appPath = getSaveDataPath ()
-
-  return pipe_ (
-    join (appPath, "heroes.json"),
+const loadHeroes = () =>
+  pipe_ (
+    join (user_data_path, "heroes.json"),
     readFile,
     tryIO,
     fmap (pipe (eitherToMaybe, fmap (JSON.parse as (x: string) => RawHerolist)))
   )
-}
 
 interface InitialData {
   tables: Pair<Record<L10n>, Record<WikiModel>>
@@ -146,10 +139,8 @@ export const requestConfigSave =
       locale: getLocaleType (state) === "default" ? undefined : L10n.A.id (l10n),
     }
 
-    const dataPath = getSaveDataPath ()
-
     return pipe_ (
-      join (dataPath, "config.json"),
+      join (user_data_path, "config.json"),
       flip (writeFile) (JSON.stringify (data)),
       tryIO,
       fmap (res => {
@@ -184,10 +175,8 @@ export const requestAllHeroesSave =
 
     const data = convertHeroesForSave (wiki) (l10n) (users) (heroes)
 
-    const dataPath = getSaveDataPath ()
-
     return pipe_ (
-      join (dataPath, "heroes.json"),
+      join (user_data_path, "heroes.json"),
       flip (writeFile) (JSON.stringify (data)),
       tryIO,
       fmap (res => {
@@ -237,15 +226,13 @@ export const requestHeroSave =
         fmap (pipe (heroReducer.A_.present, convertHeroForSave (wiki) (l10n) (users)))
       )
 
-    const dataPath = getSaveDataPath ()
-
     if (isJust (mhero)) {
       const hero = fromJust (mhero)
 
       return IO.bind (loadHeroes ())
                      (msaved_heroes =>
                        pipe_ (
-                         join (dataPath, "heroes.json"),
+                         join (user_data_path, "heroes.json"),
                          flip (writeFile) (JSON.stringify (maybe ({ [hero.id]: hero })
                                                                  ((savedHeroes: RawHerolist) => ({
                                                                    ...savedHeroes,
@@ -281,12 +268,10 @@ export const requestHeroDeletion =
   (l10n: L10nRecord) =>
   (id: string): ReduxAction<IO<boolean>> =>
     dispatch => {
-      const dataPath = getSaveDataPath ()
-
       return IO.bind (loadHeroes ())
                      (msaved_heroes =>
                        pipe_ (
-                         join (dataPath, "heroes.json"),
+                         join (user_data_path, "heroes.json"),
                          flip (writeFile) (JSON.stringify (
                                              maybe<RawHerolist> ({})
                                                                 ((savedHeroes: RawHerolist) => {

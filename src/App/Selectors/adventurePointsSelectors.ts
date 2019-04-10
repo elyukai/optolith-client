@@ -1,56 +1,90 @@
+import { cnst } from "../../Data/Function";
 import { fmap, fmapF } from "../../Data/Functor";
 import { foldr, List } from "../../Data/List";
 import { bind, elem, fromJust, isJust, Just, liftM2, Maybe, Nothing } from "../../Data/Maybe";
 import { Record } from "../../Data/Record";
+import { HeroModel } from "../Models/Hero/HeroModel";
 import { AdventurePointsCategories } from "../Models/View/AdventurePointsCategories";
 import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel";
+import { heroReducer } from "../Reducers/heroReducer";
 import { getAPSpentForAdvantages, getAPSpentForAttributes, getAPSpentForBlessedAdvantages, getAPSpentForBlessedDisadvantages, getAPSpentForBlessings, getAPSpentForCantrips, getAPSpentForCombatTechniques, getAPSpentForDisadvantages, getAPSpentForEnergies, getAPSpentForLiturgicalChants, getAPSpentForMagicalAdvantages, getAPSpentForMagicalDisadvantages, getAPSpentForProfession, getAPSpentForRace, getAPSpentForSkills, getAPSpentForSpecialAbilities, getAPSpentForSpells } from "../Utilities/AdventurePoints/adventurePointsSumUtils";
 import { getDisAdvantagesSubtypeMax } from "../Utilities/AdventurePoints/adventurePointsUtils";
+import { createMapSelector } from "../Utilities/createMapSelector";
 import { createMaybeSelector } from "../Utilities/createMaybeSelector";
 import { add, subtractBy } from "../Utilities/mathUtils";
 import { pipe } from "../Utilities/pipe";
 import { getAdvantagesForEdit, getDisadvantagesForEdit, getSpecialAbilitiesForEdit } from "./activatableSelectors";
 import { getStartEl } from "./elSelectors";
-import { getAdvantages, getAttributes, getBlessings, getCantrips, getCombatTechniques, getCurrentHeroPresent, getCurrentProfessionId, getCurrentProfessionVariantId, getCurrentRaceId, getDisadvantages, getEnergies, getLiturgicalChants, getPhase, getSkills, getSpecialAbilities, getSpells, getTotalAdventurePoints, getWiki, getWikiCombatTechniques, getWikiLiturgicalChants, getWikiSkills, getWikiSpells } from "./stateSelectors";
+import { getAdvantages, getCurrentHeroPresent, getCurrentProfessionId, getCurrentProfessionVariantId, getCurrentRaceId, getDisadvantages, getEnergies, getHeroes, getPhase, getSpecialAbilities, getTotalAdventurePoints, getWiki, getWikiCombatTechniques, getWikiLiturgicalChants, getWikiSkills, getWikiSpells } from "./stateSelectors";
 
-export const getAdventurePointsSpentForAttributes = createMaybeSelector (
-  getAttributes,
-  fmap (getAPSpentForAttributes)
-)
+const UA = heroReducer.A
+const HA = HeroModel.A
 
-export const getAdventurePointsSpentForSkills = createMaybeSelector (
-  getWikiSkills,
-  getSkills,
-  (wiki, mhero) => fmapF (mhero) (getAPSpentForSkills (wiki))
-)
+export const getAPSpentForAttributesMap =
+  createMapSelector ({
+                      map: getHeroes,
+                      global: [],
+                      value: [pipe (UA.present, HA.attributes)],
+                      fold: cnst (getAPSpentForAttributes),
+                    })
 
-export const getAdventurePointsSpentForCombatTechniques = createMaybeSelector (
-  getWikiCombatTechniques,
-  getCombatTechniques,
-  (wiki, mhero) => fmapF (mhero) (getAPSpentForCombatTechniques (wiki))
-)
+export const getAPSpentForSkillsMap =
+  createMapSelector ({
+                      map: getHeroes,
+                      global: [getWikiSkills],
+                      value: [pipe (UA.present, HA.skills)],
+                      fold: getAPSpentForSkills,
+                    })
 
-export const getAdventurePointsSpentForSpells = createMaybeSelector (
-  getWikiSpells,
-  getSpells,
-  (wiki, mhero) => fmapF (mhero) (getAPSpentForSpells (wiki))
-)
+export const getAPSpentForCombatTechniquesMap =
+  createMapSelector ({
+                      map: getHeroes,
+                      global: [getWikiCombatTechniques],
+                      value: [pipe (UA.present, HA.combatTechniques)],
+                      fold: getAPSpentForCombatTechniques,
+                    })
 
-export const getAdventurePointsSpentForLiturgicalChants = createMaybeSelector (
-  getWikiLiturgicalChants,
-  getLiturgicalChants,
-  (wiki, mhero) => fmapF (mhero) (getAPSpentForLiturgicalChants (wiki))
-)
+export const getAPSpentForSpellsMap =
+  createMapSelector ({
+                      map: getHeroes,
+                      global: [getWikiSpells],
+                      value: [pipe (UA.present, HA.spells)],
+                      fold: getAPSpentForSpells,
+                    })
 
-export const getAdventurePointsSpentForCantrips = createMaybeSelector (
-  getCantrips,
-  fmap (getAPSpentForCantrips)
-)
+export const getAPSpentForLiturgicalChantsMap =
+  createMapSelector ({
+                      map: getHeroes,
+                      global: [getWikiLiturgicalChants],
+                      value: [pipe (UA.present, HA.liturgicalChants)],
+                      fold: getAPSpentForLiturgicalChants,
+                    })
 
-export const getAdventurePointsSpentForBlessings = createMaybeSelector (
-  getBlessings,
-  fmap (getAPSpentForBlessings)
-)
+export const getAPSpentForCantripsMap =
+  createMapSelector ({
+                      map: getHeroes,
+                      global: [],
+                      value: [pipe (UA.present, HA.cantrips)],
+                      fold: cnst (getAPSpentForCantrips),
+                    })
+
+export const getAPSpentForBlessingsMap =
+  createMapSelector ({
+                      map: getHeroes,
+                      global: [],
+                      value: [pipe (UA.present, HA.blessings)],
+                      fold: cnst (getAPSpentForBlessings),
+                    })
+
+type test = typeof getAdvantagesForEdit
+
+export const getAPSpentForAdvantagesMap =
+  createMapSelector ({
+                      map: getHeroes,
+                      global: [getAdvantages, getAdvantagesForEdit],
+                      value: [],
+                      fold: getAPSpentForSkills,
+                    })
 
 export const getAdventurePointsSpentForAdvantages = createMaybeSelector (
   getWiki,
