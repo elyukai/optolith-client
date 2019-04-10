@@ -14,7 +14,10 @@ const TaggedPrototype =
 
 export interface Tagged<S, B> extends TaggedPrototype {
   readonly x: B
-  readonly phantom: S // no actual field
+  /**
+   * No actual field!
+   */
+  readonly phantom: S
 }
 
 /**

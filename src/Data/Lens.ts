@@ -19,8 +19,8 @@ import { dimap } from "./Profunctor";
 import { Choice, right_ } from "./Profunctor/Choice";
 import { Tagged, unTagged } from "./Tagged";
 
-interface Getter <S, _T, A, _B> {
-  (lift: (x: A) => Const<A>): (m: S) => Const<A>
+interface Getter <S, T, A, B> {
+  (lift: (x: A) => Const<A, B>): (m: S) => Const<A, T>
 }
 
 type Getter_ <S, A> = Getter<S, S, A, A>
@@ -42,7 +42,7 @@ interface AReview <T, B> {
  */
 export interface Lens <S, T, A, B>
   extends Setter<S, T, A, B>, Getter<S, T, A, B>, Traversal<S, T, A, B> {
-  (lift: (x: A) => Const<A>): (m: S) => Const<A>
+  (lift: (x: A) => Const<A, B>): (m: S) => Const<A, T>
   (lift: (x: A) => Identity<B>): (m: S) => Identity<T>
 }
 
@@ -59,7 +59,7 @@ export type Lens_ <S, A> = Lens<S, S, A, A>
  * A getter and setter combined. Can be used by `Traversal` functions.
  */
 export interface Traversal<S, T, A, B> extends Setter<S, T, A, B> {
-  (lift: (x: A) => Const<List<A>>): (m: S) => Const<List<A>>
+  (lift: (x: A) => Const<List<A>, B>): (m: S) => Const<List<A>, T>
   (lift: (x: A) => Identity<B>): (m: S) => Identity<T>
 }
 

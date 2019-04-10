@@ -21,16 +21,20 @@ const ConstPrototype =
 
 // CONSTRUCTOR
 
-export interface Const<A> extends ConstPrototype {
+export interface Const<A, B> extends ConstPrototype {
   readonly value: A
+  /**
+   * No actual field!
+   */
+  readonly phantom: B
 }
 
 /**
- * `Const :: a -> Const a`
+ * `Const :: a -> Const a b`
  */
 export const Const =
-  <A>
-  (x: A): Const<A> =>
+  <A, B>
+  (x: A): Const<A, B> =>
     Object.create (
       ConstPrototype,
       {
@@ -42,9 +46,9 @@ export const Const =
     )
 
 /**
- * `getConst :: Const a -> a`
+ * `getConst :: Const a b -> a`
  */
-export const getConst = <A> (x: Const<A>): A => x .value
+export const getConst = <A, B> (x: Const<A, B>): A => x .value
 
 
 // CUSTOM CONST FUNCTIONS
@@ -55,5 +59,5 @@ export const getConst = <A> (x: Const<A>): A => x .value
  * The `isConst` function returns `True` if its argument is a `Const`.
  */
 export const isConst =
-  (x: any): x is Const<any> =>
+  (x: any): x is Const<any, any> =>
     typeof x === "object" && x !== null && Object.getPrototypeOf (x) === ConstPrototype

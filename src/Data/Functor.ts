@@ -21,7 +21,7 @@ import { isOrderedMap, OrderedMap } from "./OrderedMap";
 import { isPair, Pair } from "./Pair";
 import { showP } from "./Show";
 
-export type Functor<A> = Const<A>
+export type Functor<A> = Const<A, any>
                        | Either<any, A>
                        | Identity<A>
                        | IO<A>
@@ -35,7 +35,7 @@ export type Functor<A> = Const<A>
 export type FunctorMap<A, B> =
   <F extends Functor<A>>
   (x: F) =>
-    F extends Const<infer A0> ? Const<A0> :
+    F extends Const<infer A0, A> ? Const<A0, B> :
     F extends Either<any, A> ? Exclude<F, Right<any>> | Right<B> :
     F extends Identity<A> ? Identity<B> :
     F extends IO<A> ? IO<B> :
@@ -144,9 +144,9 @@ export const fmap =
 
 interface fmapF {
   /**
-   * `fmap :: Const a a0 -> (a -> b) -> Const b a0`
+   * `fmap :: Const m a -> (a -> b) -> Const m b`
    */
-  <A0> (x: Const<A0>): <B> (f: (x: A0) => B) => Const<A0>
+  <M, A> (x: Const<M, A>): <B> (f: (x: A) => B) => Const<M, B>
   /**
    * `fmap :: Either e a -> (a -> b) -> Either e b`
    */
