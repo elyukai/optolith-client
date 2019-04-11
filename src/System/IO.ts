@@ -174,6 +174,25 @@ export const writeFile =
 
 IO.writeFile = writeFile
 
+/**
+ * `deleteFile :: FilePath -> IO ()`
+ *
+ * The computation `deleteFile file` function deletes the file `file`.
+ */
+export const deleteFile =
+  (path: FilePath) =>
+    IO (async () => new Promise<void> ((res, rej) =>
+                                        fs.unlink (path, err => {
+                                          if (err !== null) {
+                                            rej (err)
+                                          }
+                                          else {
+                                            res ()
+                                          }
+                                        })))
+
+IO.writeFile = writeFile
+
 
 // TEXT OUTPUT
 

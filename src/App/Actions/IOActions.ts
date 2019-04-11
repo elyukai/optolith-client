@@ -26,6 +26,7 @@ import { UISettingsState } from "../Reducers/uiSettingsReducer";
 import { user_data_path } from "../Selectors/envSelectors";
 import { getCurrentHeroId, getHeroes, getLocaleMessages, getLocaleType, getUsers, getWiki } from "../Selectors/stateSelectors";
 import { getUISettingsState } from "../Selectors/uisettingsSelectors";
+import { deleteCache } from "../Utilities/Cache";
 import { translate, translateP } from "../Utilities/I18n";
 import { getNewIdByDate, prefixId } from "../Utilities/IDUtils";
 import { bytify, getSystemLocale, NothingIO, showOpenDialog, showSaveDialog, windowPrintToPDF } from "../Utilities/IOUtils";
@@ -34,6 +35,7 @@ import { convertHeroesForSave, convertHeroForSave } from "../Utilities/Raw/conve
 import { parseTables } from "../Utilities/Raw/parseTable";
 import { RawConfig, RawHero, RawHerolist } from "../Utilities/Raw/RawData";
 import { isBase64Image } from "../Utilities/RegexUtils";
+import { readUpdate, writeUpdate } from "../Utilities/Update";
 import { ReduxAction } from "./Actions";
 import { addAlert } from "./AlertActions";
 
@@ -100,20 +102,31 @@ export const getInitialData: ReduxAction<IO<Either<string, InitialData>>> =
   dispatch => {
     const defaultLocale = getSystemLocale ()
 
-    return IO.bind (loadConfig ())
-                   (mconfig =>
-                     fmapF (loadHeroes ())
-                           (mheroes =>
-                             second ((tables: Pair<Record<L10n>, Record<WikiModel>>): InitialData =>
-                                      ({
-                                        tables,
-                                        heroes: mheroes,
-                                        defaultLocale,
-                                        config: mconfig,
-                                      }))
-                                    (dispatch (loadDatabase (fromMaybe (defaultLocale)
-                                                                       (bind (mconfig)
-                                                                       (c => Maybe (c.locale))))))))
+    return pipe_ (
+      readUpdate,
+      IO.bindF (did_update =>
+                  did_update
+                    ? IO.then (deleteCache ()) (writeUpdate (false))
+                    : writeUpdate (false)),
+      IO.thenF (IO.bind (loadConfig ())
+                        (mconfig =>
+                          fmapF (loadHeroes ())
+                                (mheroes =>
+                                  second ((tables: Pair<Record<L10n>, Record<WikiModel>>):
+                                          InitialData =>
+                                            ({
+                                              tables,
+                                              heroes: mheroes,
+                                              defaultLocale,
+                                              config: mconfig,
+                                            }))
+                                         (dispatch (
+                                           loadDatabase (
+                                             fromMaybe (defaultLocale)
+                                                       (bind (mconfig) (c => Maybe (c.locale)))
+                                           )
+                                         )))))
+    )
   }
 
 export const receiveInitialData = (data: InitialData): ReceiveInitialDataAction => ({

@@ -7,7 +7,7 @@ import { all, fromArray, List } from "../../Data/List";
 import { bindF, ensure, mapM, Maybe } from "../../Data/Maybe";
 import { fromList, toObjectWith } from "../../Data/OrderedMap";
 import { Pair } from "../../Data/Pair";
-import { readFile, writeFile } from "../../System/IO";
+import { deleteFile, readFile, writeFile } from "../../System/IO";
 import { current_version, user_data_path } from "../Selectors/envSelectors";
 import { pipe, pipe_ } from "./pipe";
 import { isObject } from "./typeCheckUtils";
@@ -96,3 +96,5 @@ export const writeCache =
     writeFile (file_path),
     tryIO
   )
+
+export const deleteCache = () => tryIO (deleteFile (file_path))
