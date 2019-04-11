@@ -8,8 +8,8 @@
  */
 
 import { add, multiply } from "../App/Utilities/mathUtils";
-import { not } from "../App/Utilities/not";
 import { pipe } from "../App/Utilities/pipe";
+import { not } from "./Bool";
 import { Either, fromRight_, isLeft, Right } from "./Either";
 import { equals } from "./Eq";
 import { ident } from "./Function";
@@ -327,10 +327,7 @@ export const all =
  *
  * `notElem` is the negation of `elem`.
  */
-export const notElem = <A> (e: A) => pipe (
-  elem<A> (e),
-  not
-)
+export const notElem = <A> (e: A) => pipe (elem<A> (e), not)
 
 interface Find {
   /**

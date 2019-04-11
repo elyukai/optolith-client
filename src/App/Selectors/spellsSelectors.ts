@@ -1,3 +1,4 @@
+import { notP } from "../../Data/Bool";
 import { ident, thrush } from "../../Data/Function";
 import { fmap, fmapF } from "../../Data/Functor";
 import { set } from "../../Data/Lens";
@@ -25,7 +26,6 @@ import { createMaybeSelector } from "../Utilities/createMaybeSelector";
 import { filterAndSortRecordsBy } from "../Utilities/filterAndSortBy";
 import { prefixAdv, prefixDis, prefixSA } from "../Utilities/IDUtils";
 import { isOwnTradition, isSpellDecreasable, isSpellIncreasable } from "../Utilities/Increasable/spellUtils";
-import { notP } from "../Utilities/not";
 import { pipe, pipe_ } from "../Utilities/pipe";
 import { validatePrerequisites } from "../Utilities/Prerequisites/validatePrerequisitesUtils";
 import { filterByAvailability } from "../Utilities/RulesUtils";

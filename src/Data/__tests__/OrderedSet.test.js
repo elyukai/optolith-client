@@ -236,6 +236,18 @@ test ('union', () => {
     .toEqual (fromArray (['a', 'b', 'c', 'd', 'e']))
 })
 
+test ('difference', () => {
+  expect (OrderedSet.difference (fromArray ([1, 2, 3, 4]))
+                                (fromArray ([2, 4, 6, 8])))
+    .toEqual (fromArray ([1, 3]))
+})
+
+test ('differenceF', () => {
+  expect (OrderedSet.differenceF (fromArray ([2, 4, 6, 8]))
+                                 (fromArray ([1, 2, 3, 4])))
+    .toEqual (fromArray ([1, 3]))
+})
+
 // FILTER
 
 test ('filter', () => {

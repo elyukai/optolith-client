@@ -1,9 +1,9 @@
+import { not } from "../../../Data/Bool";
 import { fmap } from "../../../Data/Functor";
 import { fnull } from "../../../Data/List";
 import { Just, Maybe, or } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
-import { not } from "../not";
 import { pipe } from "../pipe";
 
 const { active } = ActivatableDependent.AL

@@ -1,106 +1,99 @@
-import * as React from 'react';
-import { Hero, InputTextEvent, User } from '../../App/Models/Hero/heroTypeHelpers';
-import { Book, ExperienceLevel, WikiAll } from '../../App/Models/Wiki/wikiTypeHelpers';
-import { AdventurePointsObject } from '../../App/Selectors/adventurePointsSelectors';
-import { translate } from '../../App/Utils/I18n';
-import { BorderButton } from '../../components/BorderButton';
-import { Dropdown, DropdownOption } from '../../components/Dropdown';
-import { ListView } from '../../components/List';
-import { Options } from '../../components/Options';
-import { Page } from '../../components/Page';
-import { Scroll } from '../../components/Scroll';
-import { SortNames, SortOptions } from '../../components/SortOptions';
-import { TextField } from '../../components/TextField';
-import { UIMessagesObject } from '../../types/ui';
-import { Just, List, Maybe, OrderedMap, OrderedSet, Record } from '../../Utilities/dataUtils';
-import { HeroCreation } from './HeroCreation';
-import { HerolistItem } from './HerolistItem';
+import * as React from "react";
+import { List, map, toArray } from "../../../Data/List";
+import { Just, Maybe } from "../../../Data/Maybe";
+import { OrderedMap } from "../../../Data/OrderedMap";
+import { OrderedSet } from "../../../Data/OrderedSet";
+import { Record } from "../../../Data/Record";
+import { HerolistItemContainer } from "../../Containers/HerolistItemContainer";
+import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
+import { InputTextEvent } from "../../Models/Hero/heroTypeHelpers";
+import { Book } from "../../Models/Wiki/Book";
+import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel";
+import { L10nRecord } from "../../Models/Wiki/L10n";
+import { translate } from "../../Utilities/I18n";
+import { pipe_ } from "../../Utilities/pipe";
+import { BorderButton } from "../Universal/BorderButton";
+import { Dropdown, DropdownOption } from "../Universal/Dropdown";
+import { ListView } from "../Universal/List";
+import { Options } from "../Universal/Options";
+import { Page } from "../Universal/Page";
+import { Scroll } from "../Universal/Scroll";
+import { SortNames, SortOptions } from "../Universal/SortOptions";
+import { TextField } from "../Universal/TextField";
+import { HeroCreation } from "./HeroCreation";
 
 export interface HerolistOwnProps {
-  locale: UIMessagesObject;
+  l10n: L10nRecord
 }
 
 export interface HerolistStateProps {
-  currentHero: Maybe<Hero>;
-  currentHeroAdventurePoints: Record<AdventurePointsObject>;
-  experienceLevels: OrderedMap<string, Record<ExperienceLevel>>;
-  filterText: string;
-  list: List<Hero>;
-  users: OrderedMap<string, User>;
-  unsavedHeroesById: OrderedSet<string>;
-  visibilityFilter: string;
-  sortOrder: string;
-  isCharacterCreatorOpen: boolean;
-  sortedBooks: List<Record<Book>>;
-  wiki: Record<WikiAll>;
+  experienceLevels: OrderedMap<string, Record<ExperienceLevel>>
+  filterText: string
+  list: List<HeroModelRecord>
+  visibilityFilter: string
+  sortOrder: string
+  isCharacterCreatorOpen: boolean
+  sortedBooks: List<Record<Book>>
 }
 
 export interface HerolistDispatchProps {
-  loadHero (id: string): void;
-  showHero (): void;
-  saveHero (id: string): void;
-  saveHeroAsJSON (id: string): void;
-  deleteHero (id: string): void;
-  duplicateHero (id: string): void;
   createHero (
     name: string,
-    sex: 'm' | 'f',
+    sex: "m" | "f",
     el: string,
     enableAllRuleBooks: boolean,
     enabledRuleBooks: OrderedSet<string>
-  ): void;
-  importHero (): void;
-  setFilterText (event: InputTextEvent): void;
-  setSortOrder (id: string): void;
-  setVisibilityFilter (id: Maybe<string>): void;
-  openCharacterCreator (): void;
-  closeCharacterCreator (): void;
+  ): void
+  importHero (): void
+  setFilterText (event: InputTextEvent): void
+  setSortOrder (id: string): void
+  setVisibilityFilter (id: Maybe<string>): void
+  openCharacterCreator (): void
+  closeCharacterCreator (): void
 }
 
-export type HerolistProps = HerolistStateProps & HerolistDispatchProps & HerolistOwnProps;
+export type HerolistProps = HerolistStateProps & HerolistDispatchProps & HerolistOwnProps
 
 export interface HerolistState {
-  showHeroCreation: boolean;
+  showHeroCreation: boolean
 }
 
 export class Herolist extends React.Component<HerolistProps, HerolistState> {
-  state = { showHeroCreation: false };
+  state = { showHeroCreation: false }
 
   render () {
     const {
-      currentHero,
-      currentHeroAdventurePoints,
       importHero,
       list: rawList,
-      locale,
+      l10n,
       setFilterText,
       setSortOrder,
       setVisibilityFilter,
       sortOrder,
-      users,
       visibilityFilter,
       isCharacterCreatorOpen,
       openCharacterCreator,
       closeCharacterCreator,
       filterText,
-      ...other
-    } = this.props;
+    } = this.props
 
-    const list = rawList.map (hero => (
-      <HerolistItem
-        {...other}
-        key={hero.get ('id')}
-        hero={hero}
-        users={users}
-        locale={locale}
-        />
-    ));
+    const xs = pipe_ (
+      rawList,
+      map (hero => (
+        <HerolistItemContainer
+          key={HeroModel.A.id (hero)}
+          hero={hero}
+          l10n={l10n}
+          />
+      )),
+      toArray
+    )
 
     return (
       <Page id="herolist">
         <Options>
           <TextField
-            hint={translate (locale, 'options.filtertext')}
+            hint={translate (l10n) ("search")}
             value={filterText}
             onChange={setFilterText}
             fullWidth
@@ -108,42 +101,42 @@ export class Herolist extends React.Component<HerolistProps, HerolistState> {
           <Dropdown
             value={Just (visibilityFilter)}
             onChange={setVisibilityFilter}
-            options={List.of (
-              Record.of<DropdownOption> ({
-                id: 'all',
-                name: translate (locale, 'heroes.options.filter.all'),
+            options={List (
+              DropdownOption ({
+                id: "all",
+                name: translate (l10n) ("allheroes"),
               }),
-              Record.of<DropdownOption> ({
-                id: 'own',
-                name: translate (locale, 'heroes.options.filter.own'),
+              DropdownOption ({
+                id: "own",
+                name: translate (l10n) ("ownheroes"),
               }),
-              Record.of<DropdownOption> ({
-                id: 'shared',
-                name: translate (locale, 'heroes.options.filter.shared'),
+              DropdownOption ({
+                id: "shared",
+                name: translate (l10n) ("sharedheroes"),
               })
             )}
             fullWidth
             disabled
             />
           <SortOptions
-            locale={locale}
-            options={List.of<SortNames> ('name', 'dateModified')}
+            locale={l10n}
+            options={List<SortNames> ("name", "dateModified")}
             sort={setSortOrder}
             sortOrder={sortOrder}
             />
           <BorderButton
-            label={translate (locale, 'heroes.actions.create')}
+            label={translate (l10n) ("create")}
             onClick={openCharacterCreator}
             primary
             />
           <BorderButton
-            label={translate (locale, 'heroes.actions.import')}
+            label={translate (l10n) ("import")}
             onClick={importHero}
             />
         </Options>
         <Scroll>
           <ListView>
-            {list}
+            {xs}
           </ListView>
         </Scroll>
         <HeroCreation
@@ -152,6 +145,6 @@ export class Herolist extends React.Component<HerolistProps, HerolistState> {
           isOpened={isCharacterCreatorOpen}
           />
       </Page>
-    );
+    )
   }
 }

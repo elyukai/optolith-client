@@ -1,3 +1,4 @@
+import { not } from "../../Data/Bool";
 import { ident } from "../../Data/Function";
 import { fmap } from "../../Data/Functor";
 import { over, set, view } from "../../Data/Lens";
@@ -17,7 +18,6 @@ import { fromItemTemplate, Item } from "../Models/Hero/Item";
 import { PurseL } from "../Models/Hero/Purse";
 import { composeL } from "../Utilities/compose";
 import { editableToHitZoneArmor, editableToItem, hitZoneArmorToEditable, itemToEditable } from "../Utilities/ItemUtils";
-import { not } from "../Utilities/not";
 import { pipe } from "../Utilities/pipe";
 
 type Action = EquipmentActions.AddItemAction

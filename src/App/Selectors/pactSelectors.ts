@@ -1,3 +1,4 @@
+import { not } from "../../Data/Bool";
 import { cnst } from "../../Data/Function";
 import { fmap } from "../../Data/Functor";
 import { any, fnull, isList } from "../../Data/List";
@@ -12,7 +13,6 @@ import { SpecialAbility } from "../Models/Wiki/SpecialAbility";
 import { AllRequirements } from "../Models/Wiki/wikiTypeHelpers";
 import { isPactFromStateValid } from "../Utilities/Activatable/pactUtils";
 import { createMaybeSelector } from "../Utilities/createMaybeSelector";
-import { not } from "../Utilities/not";
 import { pipe } from "../Utilities/pipe";
 import { getPact, getSpecialAbilities, getWikiSpecialAbilities } from "./stateSelectors";
 

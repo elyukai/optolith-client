@@ -6,18 +6,14 @@
  * @author Lukas Obermann
  */
 
-import { pipe, pipe_ } from "../App/Utilities/pipe";
-import { Applicative, ApplicativeMap, ApplicativeName, pure } from "../Control/Applicative";
+import { pipe } from "../App/Utilities/pipe";
+import { ApplicativeName } from "../Control/Applicative";
 import { Identity, runIdentity } from "../Control/Monad/Identity";
-import { Either, either, Left, Right } from "./Either";
 import { fmap } from "./Functor";
 import { Const, getConst } from "./Functor/Const";
 import { List } from "./List";
-import { Just, maybe, Maybe, Nothing } from "./Maybe";
 import { fst, Pair, snd } from "./Pair";
-import { dimap } from "./Profunctor";
-import { Choice, right_ } from "./Profunctor/Choice";
-import { Tagged, unTagged } from "./Tagged";
+import { Tagged } from "./Tagged";
 
 interface Getter <S, T, A, B> {
   (lift: (x: A) => Const<A, B>): (m: S) => Const<A, T>
@@ -108,52 +104,52 @@ export const lens_ =
   (f: (m: S) => Pair<A, (x: A) => S>) =>
     lens (pipe (f, fst)) (pipe (f, snd))
 
-/**
- * `prism :: (b -> t) -> (s -> Either t a) -> Prism s t a b`
- *
- * Build a `Prism`.
- *
- * `Either t a` is used instead of `Maybe a` to permit the types of `s` and `t`
- * to differ.
- *
- * ```haskell
- * prism bt seta = dimap seta (either pure (fmap bt)) . right'
- * ```
- */
-export const prism =
-  <B, T>
-  (bt: (x: B) => T) =>
-  <S, A>
-  (seta: (x: S) => Either<T, A>): ExplA<Prism<S, T, A, B>> => {
-    const f =
-      <N extends ApplicativeName>
-      (t: N) =>
-      <F extends Choice<A, ApplicativeMap<B>[N]>>
-      (pab: F) => {
-          const cee: Choice<Either<any, A>, Either<any, Applicative<B>>> =
-            right_<A, Applicative<B>, any, F> (pab)
+// /**
+//  * `prism :: (b -> t) -> (s -> Either t a) -> Prism s t a b`
+//  *
+//  * Build a `Prism`.
+//  *
+//  * `Either t a` is used instead of `Maybe a` to permit the types of `s` and `t`
+//  * to differ.
+//  *
+//  * ```haskell
+//  * prism bt seta = dimap seta (either pure (fmap bt)) . right'
+//  * ```
+//  */
+// export const prism =
+//   <B, T>
+//   (bt: (x: B) => T) =>
+//   <S, A>
+//   (seta: (x: S) => Either<T, A>): ExplA<Prism<S, T, A, B>> => {
+//     const f =
+//       <N extends ApplicativeName>
+//       (t: N) =>
+//       <F extends Choice<A, ApplicativeMap<B>[N]>>
+//       (pab: F) => {
+//           const cee: Choice<Either<any, A>, Either<any, Applicative<B>>> =
+//             right_<A, Applicative<B>, any, F> (pab)
 
-          const fcontrav = seta
-          // @ts-ignore
-          const fcov = either (pure (t)) (fmap (bt))
+//           const fcontrav = seta
+//           // @ts-ignore
+//           const fcov = either (pure (t)) (fmap (bt))
 
-          return dimap (fcontrav) (fcov) (cee) as Choice<S, ApplicativeMap<T>[N]>
-      }
+//           return dimap (fcontrav) (fcov) (cee) as Choice<S, ApplicativeMap<T>[N]>
+//       }
 
-    f.isPrism = true
+//     f.isPrism = true
 
-    // @ts-ignore
-    return f
-  }
+//     // @ts-ignore
+//     return f
+//   }
 
-export const prism_ =
-  <B, S>
-  (bs: (x: B) => S) =>
-  <A>
-  (sma: (x: S) => Maybe<A>): ExplA<Prism<S, S, A, B>> =>
-    prism (bs) (s => maybe<Either<S, A>> (Left (s))
-                                         (Right as (x: A) => Right<A>)
-                                         (sma (s)))
+// export const prism_ =
+//   <B, S>
+//   (bs: (x: B) => S) =>
+//   <A>
+//   (sma: (x: S) => Maybe<A>): ExplA<Prism<S, S, A, B>> =>
+//     prism (bs) (s => maybe<Either<S, A>> (Left (s))
+//                                          (Right as (x: A) => Right<A>)
+//                                          (sma (s)))
 
 /**
  * `view :: Lens' s a -> s -> a`
@@ -167,50 +163,51 @@ export const view = <S, A> (l: Getter_<S, A>) => (m: S): A =>
 export const over = <S, A> (l: Setter_<S, A>) => (f: (x: A) => A) => (m: S): S =>
   runIdentity (l (pipe (f, Identity)) (m))
 
-/**
- * `overP :: Prism s t a b -> (a -> b) -> s -> t`
- */
-export const overP = <S, T, A, B> (l: ExplA<Prism<S, T, A, B>>) => (f: (x: A) => B) => (m: S): T =>
-  runIdentity (l ("Identity") (pipe (f, Identity)) (m))
+// /**
+//  * `overP :: Prism s t a b -> (a -> b) -> s -> t`
+//  */
+// tslint:disable-next-line: max-line-length
+// export const overP = <S, T, A, B> (l: ExplA<Prism<S, T, A, B>>) => (f: (x: A) => B) => (m: S): T =>
+//   runIdentity (l ("Identity") (pipe (f, Identity)) (m))
 
 /**
  * `set :: Lens' s a -> a -> s -> s`
  */
 export const set = <S, A> (l: Setter_<S, A>) => (x: A) => over (l) (_ => x)
 
-/**
- * `setP :: Prism s t a b -> a -> s -> s`
- */
-export const setP = <S, T, A, B> (l: ExplA<Prism<S, T, A, B>>) => (x: B) => overP (l) (_ => x)
+// /**
+//  * `setP :: Prism s t a b -> a -> s -> s`
+//  */
+// export const setP = <S, T, A, B> (l: ExplA<Prism<S, T, A, B>>) => (x: B) => overP (l) (_ => x)
 
-/**
- * `toListOf :: Traversal' s a -> s -> [a]`
- */
-export const toListOf = <S, A> (l: Traversal_<S, A>) => (m: S): List<A> =>
-  getConst (l (x => Const (List (x))) (m))
+// /**
+//  * `toListOf :: Traversal' s a -> s -> [a]`
+//  */
+// export const toListOf = <S, A> (l: Traversal_<S, A>) => (m: S): List<A> =>
+//   getConst (l (x => Const (List (x))) (m))
 
-/**
- * `review :: AReview t b -> b -> t`
- *
- * ```haskell
- * review r = runIdentity . unTagged . r . Tagged . Identity
- * ```
- */
-export const review =
-  <T, B> (r: ExplA<AReview<T, B>>) =>
-  (x: B): T =>
-    pipe_ (x, Identity, Tagged, r ("Identity"), unTagged, runIdentity)
+// /**
+//  * `review :: AReview t b -> b -> t`
+//  *
+//  * ```haskell
+//  * review r = runIdentity . unTagged . r . Tagged . Identity
+//  * ```
+//  */
+// export const review =
+//   <T, B> (r: ExplA<AReview<T, B>>) =>
+//   (x: B): T =>
+//     pipe_ (x, Identity, Tagged, r ("Identity"), unTagged, runIdentity)
 
-export interface _Just extends Prism<Maybe<any>, Maybe<any>, any, any> {
-  (lift: (x: any) => Identity<any>): (m: Maybe<any>) => Identity<Maybe<any>>
-}
+// export interface _Just extends Prism<Maybe<any>, Maybe<any>, any, any> {
+//   (lift: (x: any) => Identity<any>): (m: Maybe<any>) => Identity<Maybe<any>>
+// }
 
-export const _Just =
-  prism<any, Maybe<any>> (Just)
-                         (maybe<Either<Maybe<any>, any>> (Left (Nothing))
-                                                         (Right)) as
-    <A, B> (t: ApplicativeName) => Prism<Maybe<A>, Maybe<B>, A, B>
+// export const _Just =
+//   prism<any, Maybe<any>> (Just)
+//                          (maybe<Either<Maybe<any>, any>> (Left (Nothing))
+//                                                          (Right)) as
+//     <A, B> (t: ApplicativeName) => Prism<Maybe<A>, Maybe<B>, A, B>
 
-export const isPrism =
-  (x: any): x is ((t: ApplicativeName) => Prism<any, any, any, any>) =>
-    typeof x === "function" && x !== null && x.isPrism === true
+// export const isPrism =
+//   (x: any): x is ((t: ApplicativeName) => Prism<any, any, any, any>) =>
+//     typeof x === "function" && x !== null && x.isPrism === true

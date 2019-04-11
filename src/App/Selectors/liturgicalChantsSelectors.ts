@@ -1,3 +1,4 @@
+import { notP } from "../../Data/Bool";
 import { equals } from "../../Data/Eq";
 import { flip, ident, thrush } from "../../Data/Function";
 import { fmap, fmapF, mapReplace } from "../../Data/Functor";
@@ -26,7 +27,6 @@ import { filterAndSortRecordsBy } from "../Utilities/filterAndSortBy";
 import { getNumericBlessedTraditionIdByInstanceId, prefixAdv, prefixSA } from "../Utilities/IDUtils";
 import { getAspectsOfTradition, isLiturgicalChantDecreasable, isLiturgicalChantIncreasable, isOwnTradition } from "../Utilities/Increasable/liturgicalChantUtils";
 import { inc, lt, lte } from "../Utilities/mathUtils";
-import { notP } from "../Utilities/not";
 import { pipe, pipe_ } from "../Utilities/pipe";
 import { filterByAvailability } from "../Utilities/RulesUtils";
 import { mapGetToMaybeSlice } from "../Utilities/SelectorsUtils";

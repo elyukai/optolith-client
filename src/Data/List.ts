@@ -7,9 +7,9 @@
  */
 
 import { add, inc, max, min, multiply } from "../App/Utilities/mathUtils";
-import { not } from "../App/Utilities/not";
 import { pipe } from "../App/Utilities/pipe";
 import { escapeRegExp } from "../App/Utilities/RegexUtils";
+import { not } from "./Bool";
 import { equals } from "./Eq";
 import { ident } from "./Function";
 import { fmap } from "./Functor";

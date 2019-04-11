@@ -69,6 +69,7 @@
     "buildDir": "electron-builder --config electron-builder.test.json --dir",
     "buildMac": "build --config electron-builder.json -m",
     "buildMacTest": "build --config electron-builder.test.json -m",
+    "compile": "tsc",
     "watch": "tsc --watch",
     "bundle": "node --max-old-space-size=2048 ./node_modules/typescript/lib/tsc.js",
     "start": "electron .",

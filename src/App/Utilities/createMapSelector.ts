@@ -1,7 +1,7 @@
 import { ParametricSelector, Selector } from "reselect";
 import { cnst } from "../../Data/Function";
 import { fromJust, INTERNAL_shallowEquals, isMaybe, isNothing, Just, Maybe, Nothing, Some } from "../../Data/Maybe";
-import { lookup, OrderedMap } from "../../Data/OrderedMap";
+import { fromMap, lookup, OrderedMap, toMap } from "../../Data/OrderedMap";
 
 /**
  * ```haskell
@@ -35,7 +35,7 @@ export const createMapSelector =
   <M extends PSelector<V, any, any>[]>
   (...valueSelectors: M) =>
   <R extends Some, P extends CombineProps<P1, K, G, M> = CombineProps<P1, K, G, M>>
-  (fold: Callback<S, V, K, G, M, R>): CreatedParametricSelector<S, P, R> => {
+  (fold: Callback<S, V, K, G, M, R>): CreatedParametricSelector<S, P, V, R> => {
     let prevState: S | undefined
 
     let prevMap: OrderedMap<string, V> | undefined
@@ -44,9 +44,11 @@ export const createMapSelector =
 
     const keyMap: Map<string, [MappedReturnType<G>, MappedReturnType<M>]> = new Map ()
 
-    let res: R | undefined
+    let resMap: Map<string, R> = new Map ()
 
     const g = (key_str: string) => (state: S, props: P): Maybe<R> => {
+      let res = resMap .get (key_str)
+
       if (state === prevState && res !== undefined) {
         return Just (res)
       }
@@ -89,6 +91,8 @@ export const createMapSelector =
                    (...newGlobalValues as any)
                    (...prevMapValueValues as any)
 
+        resMap .set (key_str, res)
+
         return Just (res)
       }
 
@@ -103,11 +107,17 @@ export const createMapSelector =
                  (...newGlobalValues as any)
                  (...newMapValueValues as any)
 
+      resMap .set (key_str, res)
+
       return Just (res)
     }
 
-    g.getCache = () => Maybe (res)
-    g.setCache = (x: R) => { res = x }
+    g.getCacheAt = (key_str: string) => Maybe (resMap .get (key_str))
+    g.setCacheAt = (key_str: string) => (x: R) => { resMap .set (key_str, x) }
+    g.getCache = () => fromMap (resMap)
+    g.setCache = (m: OrderedMap<string, R>) => { resMap = toMap (m) as Map<string, R> }
+    g.setBaseMap = (m: OrderedMap<string, V>) => { prevMap = m }
+    g.setState = (s: S) => { prevState = s }
 
     return g
   }
@@ -141,12 +151,12 @@ export const createMapSelectorS =
   <M extends Selector<V, any>[]>
   (...valueSelectors: M) =>
   <R extends Some>
-  (fold: CallbackWithoutKeys<S, V, G, M, R>): CreatedSelector<S, R> =>
+  (fold: CallbackWithoutKeys<S, V, G, M, R>): CreatedSelector<S, V, R> =>
     createMapSelector (mapSelector)
                       ()
                       (...globalSelectors)
                       (...valueSelectors)
-                      (cnst (fold)) as CreatedSelector<S, R>
+                      (cnst (fold)) as CreatedSelector<S, V, R>
 
 /**
  * ```haskell
@@ -177,12 +187,12 @@ export const createMapSelectorP =
   <M extends PSelector<V, any, any>[]>
   (...valueSelectors: M) =>
   <R extends Some, P extends P1 & Props<G> & Props<M> = P1 & Props<G> & Props<M>>
-  (fold: CallbackWithoutKeys<S, V, G, M, R>): CreatedParametricSelector<S, P, R> =>
+  (fold: CallbackWithoutKeys<S, V, G, M, R>): CreatedParametricSelector<S, P, V, R> =>
     createMapSelector (mapSelector)
                       ()
                       (...globalSelectors)
                       (...valueSelectors)
-                      (cnst (fold)) as CreatedSelector<S, R>
+                      (cnst (fold))
 
 const maybeEquals =
   (x: any, y: any) =>
@@ -233,16 +243,21 @@ type CallbackWithoutKeys
     (...globalValues: MappedReturnType<G>) =>
     (...mapValueValues: MappedReturnType<M>) => R
 
-interface CreatedSelector<S, R> {
-  (key_str: string): (state: S) => Maybe<R>;
-  getCache (): Maybe<R>;
-  setCache (x: R): void;
+interface Cache<S, V, R> {
+  getCacheAt (key_str: string): Maybe<R>
+  setCacheAt (key_str: string): (x: R) => void
+  getCache (): OrderedMap<string, R>
+  setCache (m: OrderedMap<string, R>): void
+  setBaseMap (m: OrderedMap<string, V>): void
+  setState (s: S): void
 }
 
-interface CreatedParametricSelector<S, P, R> {
+interface CreatedSelector<S, V, R> extends Cache<S, V, R> {
+  (key_str: string): (state: S) => Maybe<R>;
+}
+
+interface CreatedParametricSelector<S, P, V, R> extends Cache<S, V, R> {
   (key_str: string): (state: S, props: P) => Maybe<R>;
-  getCache (): Maybe<R>;
-  setCache (x: R): void;
 }
 
 type PSelector<S, P, R> = ParametricSelector<S, P, R>

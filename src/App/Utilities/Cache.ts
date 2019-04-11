@@ -5,9 +5,13 @@ import { ident } from "../../Data/Function";
 import { fmap } from "../../Data/Functor";
 import { all, fromArray, List } from "../../Data/List";
 import { bindF, ensure, mapM, Maybe } from "../../Data/Maybe";
-import { fromList, toObjectWith } from "../../Data/OrderedMap";
+import { fromList, OrderedMap, toObjectWith } from "../../Data/OrderedMap";
 import { Pair } from "../../Data/Pair";
 import { deleteFile, readFile, writeFile } from "../../System/IO";
+import { L10nRecord } from "../Models/Wiki/L10n";
+import { AppStateRecord } from "../Reducers/appReducer";
+import { HeroesState } from "../Reducers/herolistReducer";
+import { getAPSpentMap, getAPSpentOnAdvantagesMap, getAPSpentOnAttributesMap, getAPSpentOnBlessedAdvantagesMap, getAPSpentOnBlessedDisadvantagesMap, getAPSpentOnBlessingsMap, getAPSpentOnCantripsMap, getAPSpentOnCombatTechniquesMap, getAPSpentOnDisadvantagesMap, getAPSpentOnEnergiesMap, getAPSpentOnLiturgicalChantsMap, getAPSpentOnMagicalAdvantagesMap, getAPSpentOnMagicalDisadvantagesMap, getAPSpentOnSkillsMap, getAPSpentOnSpecialAbilitiesMap, getAPSpentOnSpellsMap, getAvailableAPMap } from "../Selectors/adventurePointsSelectors";
 import { current_version, user_data_path } from "../Selectors/envSelectors";
 import { pipe, pipe_ } from "./pipe";
 import { isObject } from "./typeCheckUtils";
@@ -21,15 +25,16 @@ export const AP_KEY = "ap"
 
 const APP_VERSION_KEY = "appVersion"
 
-interface APCache {
+export interface APCache {
   spent: number
-  available: number
-  spentOnAdvantages: number
-  spentOnMagicalAdvantages: number
-  spentOnBlessedAdvantages: number
-  spentOnDisadvantages: number
-  spentOnMagicalDisadvantages: number
-  spentOnBlessedDisadvantages: number
+  available?: number
+  spentOnAdvantages?: number
+  spentOnMagicalAdvantages?: number
+  spentOnBlessedAdvantages?: number
+  spentOnDisadvantages?: number
+  spentOnMagicalDisadvantages?: number
+  spentOnBlessedDisadvantages?: number
+  spentOnSpecialAbilities?: number
   spentOnAttributes: number
   spentOnSkills: number
   spentOnCombatTechniques: number
@@ -37,20 +42,12 @@ interface APCache {
   spentOnLiturgicalChants: number
   spentOnCantrips: number
   spentOnBlessings: number
-  spentOnSpecialAbilities: number
   spentOnEnergies: number
 }
 
 const ap_cache_keys: List<keyof APCache> =
   List (
     "spent",
-    "available",
-    "spentOnAdvantages",
-    "spentOnMagicalAdvantages",
-    "spentOnBlessedAdvantages",
-    "spentOnDisadvantages",
-    "spentOnMagicalDisadvantages",
-    "spentOnBlessedDisadvantages",
     "spentOnAttributes",
     "spentOnSkills",
     "spentOnCombatTechniques",
@@ -58,8 +55,19 @@ const ap_cache_keys: List<keyof APCache> =
     "spentOnLiturgicalChants",
     "spentOnCantrips",
     "spentOnBlessings",
-    "spentOnSpecialAbilities",
     "spentOnEnergies"
+  )
+
+const ap_optional_cache_keys: List<keyof APCache> =
+  List (
+    "available",
+    "spentOnAdvantages",
+    "spentOnMagicalAdvantages",
+    "spentOnBlessedAdvantages",
+    "spentOnDisadvantages",
+    "spentOnMagicalDisadvantages",
+    "spentOnBlessedDisadvantages",
+    "spentOnSpecialAbilities"
   )
 
 export const readCache =
@@ -77,7 +85,10 @@ export const readCache =
         mapM (pipe (
           ensure ((e): e is [string, APCache] =>
                    all ((k: keyof APCache) => typeof e [1] [k] === "number")
-                       (ap_cache_keys)),
+                       (ap_cache_keys)
+                   && all ((k: keyof APCache) => typeof e [1] [k] === "number"
+                                                 || e [1] [k] === undefined)
+                          (ap_optional_cache_keys)),
           fmap (Pair.fromArray)
         ))
       )),
@@ -98,3 +109,112 @@ export const writeCache =
   )
 
 export const deleteCache = () => tryIO (deleteFile (file_path))
+
+export const insertCacheMap =
+  (map: OrderedMap<string, APCache>) => {
+    OrderedMap.mapWithKey<string, APCache, void> (insertCacheAt) (map)
+  }
+
+export const insertCacheAt =
+  (key_str: string) =>
+  (cache: APCache) => {
+    getAPSpentMap .setCacheAt (key_str)
+                              (cache.spent)
+    getAvailableAPMap .setCacheAt (key_str)
+                                  (Maybe (cache.available))
+    getAPSpentOnAttributesMap .setCacheAt (key_str)
+                                          (cache.spentOnAttributes)
+    getAPSpentOnSkillsMap .setCacheAt (key_str)
+                                      (cache.spentOnSkills)
+    getAPSpentOnCombatTechniquesMap .setCacheAt (key_str)
+                                                (cache.spentOnCombatTechniques)
+    getAPSpentOnSpellsMap .setCacheAt (key_str)
+                                      (cache.spentOnSpells)
+    getAPSpentOnLiturgicalChantsMap .setCacheAt (key_str)
+                                                (cache.spentOnLiturgicalChants)
+    getAPSpentOnCantripsMap .setCacheAt (key_str)
+                                        (cache.spentOnCantrips)
+    getAPSpentOnBlessingsMap .setCacheAt (key_str)
+                                         (cache.spentOnBlessings)
+    getAPSpentOnEnergiesMap .setCacheAt (key_str)
+                                        (cache.spentOnEnergies)
+    getAPSpentOnAdvantagesMap .setCacheAt (key_str)
+                                          (Maybe (cache.spentOnAdvantages))
+    getAPSpentOnBlessedAdvantagesMap .setCacheAt (key_str)
+                                                 (Maybe (cache.spentOnBlessedAdvantages))
+    getAPSpentOnMagicalAdvantagesMap .setCacheAt (key_str)
+                                                 (Maybe (cache.spentOnMagicalAdvantages))
+    getAPSpentOnDisadvantagesMap .setCacheAt (key_str)
+                                             (Maybe (cache.spentOnDisadvantages))
+    getAPSpentOnBlessedDisadvantagesMap .setCacheAt (key_str)
+                                                    (Maybe (cache.spentOnBlessedDisadvantages))
+    getAPSpentOnMagicalDisadvantagesMap .setCacheAt (key_str)
+                                                    (Maybe (cache.spentOnMagicalDisadvantages))
+    getAPSpentOnSpecialAbilitiesMap .setCacheAt (key_str)
+                                                (Maybe (cache.spentOnSpecialAbilities))
+  }
+
+export const insertHeroesCache =
+  (hs: HeroesState["heroes"]) => {
+    getAPSpentMap .setBaseMap (hs)
+    getAvailableAPMap .setBaseMap (hs)
+    getAPSpentOnAttributesMap .setBaseMap (hs)
+    getAPSpentOnSkillsMap .setBaseMap (hs)
+    getAPSpentOnCombatTechniquesMap .setBaseMap (hs)
+    getAPSpentOnSpellsMap .setBaseMap (hs)
+    getAPSpentOnLiturgicalChantsMap .setBaseMap (hs)
+    getAPSpentOnCantripsMap .setBaseMap (hs)
+    getAPSpentOnBlessingsMap .setBaseMap (hs)
+    getAPSpentOnEnergiesMap .setBaseMap (hs)
+    getAPSpentOnAdvantagesMap .setBaseMap (hs)
+    getAPSpentOnBlessedAdvantagesMap .setBaseMap (hs)
+    getAPSpentOnMagicalAdvantagesMap .setBaseMap (hs)
+    getAPSpentOnDisadvantagesMap .setBaseMap (hs)
+    getAPSpentOnBlessedDisadvantagesMap .setBaseMap (hs)
+    getAPSpentOnMagicalDisadvantagesMap .setBaseMap (hs)
+    getAPSpentOnSpecialAbilitiesMap .setBaseMap (hs)
+  }
+
+export const forceCacheIsAvailable =
+  (id: string) =>
+  (state: AppStateRecord) =>
+  (props: { l10n: L10nRecord }) => {
+    getAPSpentMap (id) (state, props)
+    getAvailableAPMap (id) (state, props)
+    getAPSpentOnAttributesMap (id) (state)
+    getAPSpentOnSkillsMap (id) (state)
+    getAPSpentOnCombatTechniquesMap (id) (state)
+    getAPSpentOnSpellsMap (id) (state)
+    getAPSpentOnLiturgicalChantsMap (id) (state)
+    getAPSpentOnCantripsMap (id) (state)
+    getAPSpentOnBlessingsMap (id) (state)
+    getAPSpentOnEnergiesMap (id) (state)
+    getAPSpentOnAdvantagesMap (id) (state, props)
+    getAPSpentOnBlessedAdvantagesMap (id) (state, props)
+    getAPSpentOnMagicalAdvantagesMap (id) (state, props)
+    getAPSpentOnDisadvantagesMap (id) (state, props)
+    getAPSpentOnBlessedDisadvantagesMap (id) (state, props)
+    getAPSpentOnMagicalDisadvantagesMap (id) (state, props)
+    getAPSpentOnSpecialAbilitiesMap (id) (state, props)
+  }
+
+export const insertAppStateCache =
+  (s: AppStateRecord) => {
+    getAPSpentMap .setState (s)
+    getAvailableAPMap .setState (s)
+    getAPSpentOnAttributesMap .setState (s)
+    getAPSpentOnSkillsMap .setState (s)
+    getAPSpentOnCombatTechniquesMap .setState (s)
+    getAPSpentOnSpellsMap .setState (s)
+    getAPSpentOnLiturgicalChantsMap .setState (s)
+    getAPSpentOnCantripsMap .setState (s)
+    getAPSpentOnBlessingsMap .setState (s)
+    getAPSpentOnEnergiesMap .setState (s)
+    getAPSpentOnAdvantagesMap .setState (s)
+    getAPSpentOnBlessedAdvantagesMap .setState (s)
+    getAPSpentOnMagicalAdvantagesMap .setState (s)
+    getAPSpentOnDisadvantagesMap .setState (s)
+    getAPSpentOnBlessedDisadvantagesMap .setState (s)
+    getAPSpentOnMagicalDisadvantagesMap .setState (s)
+    getAPSpentOnSpecialAbilitiesMap .setState (s)
+  }

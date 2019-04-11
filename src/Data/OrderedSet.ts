@@ -7,8 +7,8 @@
  */
 
 import { add, multiply } from "../App/Utilities/mathUtils";
-import { not } from "../App/Utilities/not";
 import { pipe } from "../App/Utilities/pipe";
+import { not } from "./Bool";
 import { equals, notEquals } from "./Eq";
 import { ident } from "./Function";
 import { append, isList, List } from "./List";
@@ -444,6 +444,34 @@ export const union =
   <A> (xs1: OrderedSet<A>) => (xs2: OrderedSet<A>): OrderedSet<A> =>
     fromArray ([...xs1, ...xs2])
 
+/**
+ * `difference :: Ord a => Set a -> Set a -> Set a`
+ *
+ * Difference of two sets.
+ *
+ * ```haskell
+ * difference (Set (1, 2, 3, 4)) (Set (2, 4, 6, 8)) == Set (1, 3)
+ * ```
+ */
+export const difference =
+  <A> (xs: OrderedSet<A>) => (excludes: OrderedSet<A>): OrderedSet<A> =>
+    filter (pipe (elemF (excludes), not)) (xs)
+
+/**
+ * `differenceF :: Ord a => Set a -> Set a -> Set a`
+ *
+ * Difference of two sets.
+ *
+ * ```haskell
+ * difference (Set (1, 2, 3, 4)) (Set (2, 4, 6, 8)) == Set (1, 3)
+ * ```
+ *
+ * Flipped version of `difference`.
+ */
+export const differenceF =
+  <A> (excludes: OrderedSet<A>) => (xs: OrderedSet<A>): OrderedSet<A> =>
+    difference (xs) (excludes)
+
 
 // FILTER
 
@@ -576,6 +604,8 @@ export const OrderedSet = {
   size,
 
   union,
+  difference,
+  differenceF,
 
   filter,
 

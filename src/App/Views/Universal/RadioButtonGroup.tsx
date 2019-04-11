@@ -1,56 +1,72 @@
-import * as React from 'react';
-import { List, Maybe, Record } from '../Utilities/dataUtils';
-import { RadioButton } from './RadioButton';
+import * as React from "react";
+import { equals } from "../../../Data/Eq";
+import { List, map, toArray } from "../../../Data/List";
+import { elem, fromJust, fromMaybe, isJust, Maybe, normalize, Nothing } from "../../../Data/Maybe";
+import { fromDefault, PartialMaybeOrNothing, Record, RecordCreator } from "../../../Data/Record";
+import { pipe_ } from "../../Utilities/pipe";
+import { RadioButton } from "./RadioButton";
 
-export type OptionValue = string | number;
+export type OptionValue = string | number
 
-export interface Option<T extends OptionValue = OptionValue> {
-  className?: string;
-  disabled?: boolean;
-  name: string;
-  value?: T;
+export interface Option<A extends OptionValue = OptionValue> {
+  className: Maybe<string>
+  disabled: Maybe<boolean>
+  name: string
+  value: Maybe<A>
 }
 
+export interface OptionCreator extends RecordCreator<Option<any>> {
+  <O extends OptionValue = OptionValue> (x: PartialMaybeOrNothing<Option<O>>): Record<Option<O>>
+}
+
+export const Option: OptionCreator =
+  fromDefault<Option<any>> ({
+    className: Nothing,
+    disabled: Nothing,
+    name: "",
+    value: Nothing,
+  })
+
 export interface RadioButtonGroupProps<T extends OptionValue = OptionValue> {
-  active: Maybe<T> | T;
-  array: List<Record<Option<T>>>;
-  disabled?: boolean;
-  onClick? (option: Maybe<T>): void;
-  onClickJust? (option: T): void;
+  active: Maybe<T> | T
+  array: List<Record<Option<T>>>
+  disabled?: boolean
+  onClick? (option: Maybe<T>): void
+  onClickJust? (option: T): void
 }
 
 export function RadioButtonGroup (props: RadioButtonGroupProps<OptionValue>) {
-  const { active, array, disabled } = props;
+  const { active, array: xs, disabled } = props
 
-  const normalizedActive = Maybe.normalize (active);
+  const normalizedActive = normalize (active)
 
   const onClickCombined = (optionValue: Maybe<OptionValue>) => () => {
     if (props.onClick) {
-      props.onClick (optionValue);
+      props.onClick (optionValue)
     }
 
-    if (props.onClickJust && Maybe.isJust (optionValue)) {
-      props.onClickJust (Maybe.fromJust (optionValue));
+    if (props.onClickJust && isJust (optionValue)) {
+      props.onClickJust (fromJust (optionValue))
     }
-  };
+  }
 
   return (
     <div className="radiobutton-group">
-      {
-        array
-          .map (option => (
-            <RadioButton
-              key={Maybe.fromMaybe<React.Key> ('__default__') (option .lookup ('value'))}
-              value={option .lookup ('value')}
-              active={normalizedActive .equals (option .lookup ('value'))}
-              onClick={onClickCombined (option .lookup ('value'))}
-              disabled={Maybe.elem (true) (option .lookup ('disabled')) || disabled}
-            >
-              {option .get ('name')}
-            </RadioButton>
-          ))
-          .toArray ()
-      }
+      {pipe_ (
+        xs,
+        map (e => (
+          <RadioButton
+            key={fromMaybe<React.Key> ("__default__") (Option.A.value (e))}
+            value={Option.A.value (e)}
+            active={equals (normalizedActive) (Option.A.value (e))}
+            onClick={onClickCombined (Option.A.value (e))}
+            disabled={elem (true) (Option.A.disabled (e)) || elem (true) (normalize (disabled))}
+          >
+            {Option.A.name (e)}
+          </RadioButton>
+        )),
+        toArray
+      )}
     </div>
-  );
+  )
 }

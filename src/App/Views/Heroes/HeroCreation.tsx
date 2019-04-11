@@ -1,124 +1,125 @@
-import * as React from 'react';
-import { Sex } from '../../App/Models/Hero/heroTypeHelpers';
-import { Book, ExperienceLevel } from '../../App/Models/Wiki/wikiTypeHelpers';
-import { translate } from '../../App/Utils/I18n';
-import { Checkbox } from '../../components/Checkbox';
-import { Dialog, DialogProps } from '../../components/DialogNew';
-import { Dropdown, DropdownOption } from '../../components/Dropdown';
-import { Hr } from '../../components/Hr';
-import { Scroll } from '../../components/Scroll';
-import { Option, SegmentedControls } from '../../components/SegmentedControls';
-import { TextField } from '../../components/TextField';
-import { UIMessagesObject } from '../../types/ui';
-import { List, Maybe, Nothing, OrderedMap, OrderedSet, Record } from '../../Utilities/dataUtils';
+import * as React from "react";
+import { List, map, toArray } from "../../../Data/List";
+import { fromJust, isJust, isNothing, Just, Maybe, Nothing } from "../../../Data/Maybe";
+import { elems, OrderedMap } from "../../../Data/OrderedMap";
+import { member, OrderedSet, toggle } from "../../../Data/OrderedSet";
+import { Record } from "../../../Data/Record";
+import { Sex } from "../../Models/Hero/heroTypeHelpers";
+import { Book } from "../../Models/Wiki/Book";
+import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel";
+import { L10nRecord } from "../../Models/Wiki/L10n";
+import { translate } from "../../Utilities/I18n";
+import { pipe_ } from "../../Utilities/pipe";
+import { Checkbox } from "../Universal/Checkbox";
+import { Dialog, DialogProps } from "../Universal/DialogNew";
+import { Dropdown, DropdownOption } from "../Universal/Dropdown";
+import { Hr } from "../Universal/Hr";
+import { Scroll } from "../Universal/Scroll";
+import { Option, SegmentedControls } from "../Universal/SegmentedControls";
+import { TextField } from "../Universal/TextField";
 
 export interface HeroCreationProps extends DialogProps {
-  locale: UIMessagesObject;
-  experienceLevels: OrderedMap<string, Record<ExperienceLevel>>;
-  sortedBooks: List<Record<Book>>;
-  close (): void;
+  l10n: L10nRecord
+  experienceLevels: OrderedMap<string, Record<ExperienceLevel>>
+  sortedBooks: List<Record<Book>>
+  close (): void
   createHero (
     name: string,
-    sex: 'm' | 'f',
+    sex: "m" | "f",
     el: string,
     enableAllRuleBooks: boolean,
     enabledRuleBooks: OrderedSet<string>
-  ): void;
+  ): void
 }
 
 export interface HeroCreationState {
-  name: string;
-  sex: Maybe<'m' | 'f'>;
-  el: Maybe<string>;
-  enableAllRuleBooks: boolean;
-  enabledRuleBooks: OrderedSet<string>;
+  name: string
+  sex: Maybe<"m" | "f">
+  el: Maybe<string>
+  enableAllRuleBooks: boolean
+  enabledRuleBooks: OrderedSet<string>
 }
 
 export class HeroCreation extends React.Component<HeroCreationProps, HeroCreationState> {
   state: HeroCreationState = {
-    name: '',
+    name: "",
     enableAllRuleBooks: false,
-    enabledRuleBooks: OrderedSet.empty (),
-    sex: Nothing (),
-    el: Nothing (),
-  };
+    enabledRuleBooks: OrderedSet.empty,
+    sex: Nothing,
+    el: Nothing,
+  }
 
-  changeName = (name: string) => this.setState (() => ({ name }));
-  changeGender = (sex: Maybe<'m' | 'f'>) => this.setState (() => ({ sex }));
-  changeEL = (el: Maybe<string>) => this.setState (() => ({ el }));
+  changeName = (name: string) => this.setState (() => ({ name }))
+  changeGender = (sex: Maybe<"m" | "f">) => this.setState (() => ({ sex }))
+  changeEL = (el: Maybe<string>) => this.setState (() => ({ el }))
   create = () => {
-    const { name, sex, el, enableAllRuleBooks, enabledRuleBooks } = this.state;
+    const { name, sex, el, enableAllRuleBooks, enabledRuleBooks } = this.state
 
-    if (name.length > 0 && Maybe.isJust (sex) && Maybe.isJust (el)) {
+    if (name.length > 0 && isJust (sex) && isJust (el)) {
       this.props.createHero (
         name,
-        Maybe.fromJust (sex),
-        Maybe.fromJust (el),
+        fromJust (sex),
+        fromJust (el),
         enableAllRuleBooks,
         enabledRuleBooks
-      );
+      )
     }
   }
 
-  clear = () => this.setState (() => ({ name: '', gender: Nothing (), el: Nothing () }));
+  clear = () => this.setState (() => ({ name: "", sex: Nothing, el: Nothing }))
 
   close = () => {
-    this.props.close ();
-    this.clear ();
+    this.props.close ()
+    this.clear ()
   }
 
   switchEnableAllRuleBooks = (): void => {
-    this.setState (prevState => ({ enableAllRuleBooks: !prevState.enableAllRuleBooks }));
+    this.setState (({ enableAllRuleBooks }) => ({ enableAllRuleBooks: !enableAllRuleBooks }))
   }
 
   switchEnableRuleBook = (id: string): void => {
-    const { enabledRuleBooks } = this.state;
-
-    this.setState (
-      () => ({
-        enabledRuleBooks: enabledRuleBooks .member (id)
-          ? enabledRuleBooks .delete (id)
-          : enabledRuleBooks .insert (id),
-      })
-    );
+    this.setState (({ enabledRuleBooks }) => ({ enabledRuleBooks: toggle (id) (enabledRuleBooks) }))
   }
 
   componentWillReceiveProps (nextProps: HeroCreationProps) {
     if (nextProps.isOpened === false && this.props.isOpened === true) {
-      this.clear ();
+      this.clear ()
     }
   }
 
   render () {
-    const { experienceLevels: experienceLevelsMap, locale, sortedBooks, ...other } = this.props;
-    const { enableAllRuleBooks, enabledRuleBooks } = this.state;
+    const { experienceLevels: experienceLevelsMap, l10n, sortedBooks, ...other } = this.props
+    const { enableAllRuleBooks, enabledRuleBooks } = this.state
 
-    const experienceLevels = experienceLevelsMap
-      .elems ()
-      .map (
-        e => Record.ofMaybe<DropdownOption> ({
-          id: e.lookup ('id'),
-          name: `${e.get ('name')} (${e.get ('ap')} AP)`,
-        })
-      );
+    const experienceLevels =
+      pipe_ (
+        experienceLevelsMap,
+        elems,
+        map (e => DropdownOption ({
+                    id: ExperienceLevel.A.id (e),
+                    name: `${ExperienceLevel.A.name (e)} (${ExperienceLevel.A.ap (e)} AP)`,
+                  }))
+      )
 
     return (
       <Dialog
         {...other}
         id="herocreation"
-        title={translate (locale, 'herocreation.title')}
+        title={translate (l10n) ("herocreation")}
         close={this.close}
         buttons={[
           {
-            disabled: this.state.name === '' || !this.state.sex || !this.state.el,
-            label: translate (locale, 'herocreation.actions.start'),
+            disabled: this.state.name === ""
+                      || isNothing (this.state.sex)
+                      || isNothing (this.state.el),
+            label: translate (l10n) ("start"),
             onClick: this.create,
             primary: true,
           },
         ]}
         >
         <TextField
-          hint={translate (locale, 'herocreation.options.nameofhero')}
+          hint={translate (l10n) ("nameofhero")}
           value={this.state.name}
           onChangeString={this.changeName}
           fullWidth
@@ -127,14 +128,14 @@ export class HeroCreation extends React.Component<HeroCreationProps, HeroCreatio
         <SegmentedControls
           active={this.state.sex}
           onClick={this.changeGender}
-          options={List.of (
-            Record.of<Option<Sex>> ({
-              value: 'm',
-              name: translate (locale, 'herocreation.options.selectsex.male'),
+          options={List (
+            Option<Sex> ({
+              value: Just<Sex> ("m"),
+              name: translate (l10n) ("male"),
             }),
-            Record.of<Option<Sex>> ({
-              value: 'f',
-              name: translate (locale, 'herocreation.options.selectsex.female'),
+            Option<Sex> ({
+              value: Just<Sex> ("f"),
+              name: translate (l10n) ("female"),
             })
           )}
           />
@@ -142,31 +143,35 @@ export class HeroCreation extends React.Component<HeroCreationProps, HeroCreatio
           value={this.state.el}
           onChange={this.changeEL}
           options={experienceLevels}
-          hint={translate (locale, 'herocreation.options.selectexperiencelevel')}
+          hint={translate (l10n) ("selectexperiencelevel")}
           fullWidth
           />
         <Hr/>
         <Scroll>
           <Checkbox
-            checked={enableAllRuleBooks === true}
+            checked={enableAllRuleBooks}
             onClick={this.switchEnableAllRuleBooks}
-            label={translate (locale, 'rules.enableallrulebooks')}
+            label={translate (l10n) ("enableallrulebooks")}
             />
-          {sortedBooks.map (e => {
-            const isCore = ['US25001', 'US25002'].includes (e .get ('id'));
-
-            return (
-              <Checkbox
-                key={e.get ('id')}
-                checked={enableAllRuleBooks || enabledRuleBooks.member (e .get ('id')) || isCore}
-                onClick={() => this.switchEnableRuleBook (e .get ('id'))}
-                label={e .get ('name')}
-                disabled={enableAllRuleBooks === true || isCore}
-                />
-            );
-          })}
+          {pipe_ (
+            sortedBooks,
+            map (e => {
+              return (
+                <Checkbox
+                  key={Book.A.id (e)}
+                  checked={enableAllRuleBooks
+                           || member (Book.A.id (e)) (enabledRuleBooks)
+                           || Book.A.isCore (e)}
+                  onClick={() => this.switchEnableRuleBook (Book.A.id (e))}
+                  label={Book.A.name (e)}
+                  disabled={enableAllRuleBooks || Book.A.isCore (e)}
+                  />
+              )
+            }),
+            toArray
+          )}
         </Scroll>
       </Dialog>
-    );
+    )
   }
 }

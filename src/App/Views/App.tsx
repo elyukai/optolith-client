@@ -1,61 +1,62 @@
-import * as classNames from 'classnames';
-import * as React from 'react';
-import { DownloaderContainer } from '../App/Containers/DownloaderContainer';
-import { TabId } from '../App/Utils/LocationUtils';
-import { Scroll } from '../components/Scroll';
-import { TitleBar } from '../components/TitleBar';
-import { AlertsContainer } from '../Containers/AlertsContainer';
-import { NavigationBarContainer } from '../Containers/NavigationBarContainer';
-import { UIMessagesObject } from '../types/ui';
-import { Maybe } from '../Utilities/dataUtils';
-import { Route } from './Route';
+import * as classNames from "classnames";
+import * as React from "react";
+import { splitOn } from "../../Data/List";
+import { fromMaybe, listToMaybe, Maybe, maybe } from "../../Data/Maybe";
+import { AlertsContainer } from "../Containers/AlertsContainer";
+import { DownloaderContainer } from "../Containers/DownloaderContainer";
+import { NavigationBarContainer } from "../Containers/NavigationBarContainer";
+import { L10n, L10nRecord } from "../Models/Wiki/L10n";
+import { TabId } from "../Utilities/LocationUtils";
+import { Router } from "./Router/Router";
+import { Scroll } from "./Universal/Scroll";
+import { TitleBar } from "./Universal/TitleBar";
 
 export interface AppOwnProps {}
 
 export interface AppStateProps {
-  currentTab: TabId;
-  locale: Maybe<UIMessagesObject>;
-  platform: string;
-  theme: string;
-  areAnimationsEnabled: boolean;
+  currentTab: TabId
+  l10n: Maybe<L10nRecord>
+  platform: string
+  theme: string
+  areAnimationsEnabled: boolean
 }
 
 export interface AppDispatchProps {
-  minimize (): void;
-  maximize (): void;
-  restore (): void;
-  close (): void;
-  enterFullscreen (): void;
-  leaveFullscreen (): void;
-  checkForUpdates (): void;
+  minimize (): void
+  maximize (): void
+  restore (): void
+  close (): void
+  enterFullscreen (): void
+  leaveFullscreen (): void
+  checkForUpdates (): void
 }
 
-export type AppProps = AppStateProps & AppDispatchProps & AppOwnProps;
+export type AppProps = AppStateProps & AppDispatchProps & AppOwnProps
 
 export interface AppState {
   hasError?: {
     error: Error;
     info: any;
-  };
+  }
 }
 
 export class App extends React.Component<AppProps, AppState> {
-  state: AppState = {};
+  state: AppState = {}
 
   componentDidCatch (error: any, info: any) {
-    this.setState (() => ({ hasError: { error, info }}));
+    this.setState (() => ({ hasError: { error, info }}))
   }
 
   render () {
     const {
-      locale: maybeLocale,
+      l10n: ml10n,
       currentTab,
       platform,
       theme,
       areAnimationsEnabled,
-    } = this.props;
+    } = this.props
 
-    const { hasError } = this.state;
+    const { hasError } = this.state
 
     if (hasError) {
       return <div id="body" className={`theme-${theme}`}>
@@ -65,35 +66,35 @@ export class App extends React.Component<AppProps, AppState> {
           <h4>Component Stack</h4>
           <p>{hasError.info.componentStack}</p>
         </Scroll>
-      </div>;
+      </div>
     }
 
-    return Maybe.maybe<UIMessagesObject, JSX.Element>
+    return maybe
       (<div id="body" className={`theme-${theme}`}></div>)
-      (locale => (
+      ((l10n: L10nRecord) => (
         <div
           id="body"
           className={classNames (
             `theme-${theme}`,
             `platform-${platform}`,
-            { 'show-animations': areAnimationsEnabled }
+            { "show-animations": areAnimationsEnabled }
           )}
-          lang={locale.get ('id') .split ('-')[0]}
+          lang={fromMaybe ("") (listToMaybe (splitOn ("-") (L10n.A.id (l10n))))}
           >
           <div className="background-image">
             <img src="images/background.svg" alt=""/>
           </div>
 
-          <AlertsContainer locale={locale} />
-          <DownloaderContainer locale={locale} />
+          <AlertsContainer locale={l10n} />
+          <DownloaderContainer locale={l10n} />
           <TitleBar {...this.props} />
 
           <section id="content">
-            <NavigationBarContainer {...this.props} locale={locale} />
-            <Route id={currentTab} locale={locale} />
+            <NavigationBarContainer {...this.props} locale={l10n} />
+            <Router id={currentTab} locale={l10n} />
           </section>
         </div>
       ))
-      (maybeLocale);
+      (ml10n)
   }
 }

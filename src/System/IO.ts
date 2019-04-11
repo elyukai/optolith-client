@@ -128,6 +128,22 @@ export const liftM2 =
 
 IO.liftM2 = liftM2
 
+/**
+ * `liftM3 :: (a1 -> a2 -> a3 -> r) -> IO a1 -> IO a2 -> IO a3 -> IO r`
+ *
+ * Promote a function to a monad, scanning the monadic arguments from left to
+ * right.
+ */
+export const liftM3 =
+  <A1, A2, A3, B>
+  (f: (x1: A1) => (x2: A2) => (x3: A3) => B) =>
+  (x1: IO<A1>) =>
+  (x2: IO<A2>) =>
+  (x3: IO<A3>): IO<B> =>
+    bind<A1> (x1) (a1 => liftM2 (f (a1)) (x2) (x3))
+
+IO.liftM3 = liftM3
+
 
 // OPENING AND CLOSING FILES
 

@@ -1,63 +1,63 @@
-import * as React from 'react';
-import { CombatTechniquesContainer } from '../App/Containers/CombatTechniquesContainer';
-import { HelpContainer } from '../App/Containers/HelpContainer';
-import { TabId } from '../App/Utils/LocationUtils';
-import { MainContent } from '../components/MainContent';
-import { Page } from '../components/Page';
-import { Scroll } from '../components/Scroll';
-import { AdvantagesContainer } from '../Containers/AdvantagesContainer';
-import { AttributesContainer } from '../Containers/AttributesContainer';
-import { CulturesContainer } from '../Containers/CulturesContainer';
-import { DisadvantagesContainer } from '../Containers/DisadvantagesContainer';
-import { EquipmentContainer } from '../Containers/EquipmentContainer';
-import { HerolistContainer } from '../Containers/HerolistContainer';
-import { HitZoneArmorsContainer } from '../Containers/HitZoneArmorsContainer';
-import { LiturgicalChantsContainer } from '../Containers/LiturgicalChantsContainer';
-import { PactContainer } from '../Containers/PactContainer';
-import { PersonalDataContainer } from '../Containers/PersonalDataContainer';
-import { PetsContainer } from '../Containers/PetsContainer';
-import { ProfessionsContainer } from '../Containers/ProfessionsContainer';
-import { RacesContainer } from '../Containers/RacesContainer';
-import { RulesContainer } from '../Containers/RulesContainer';
-import { SheetsContainer } from '../Containers/SheetsContainer';
-import { SkillsContainer } from '../Containers/SkillsContainer';
-import { SpecialAbilitiesContainer } from '../Containers/SpecialAbilitiesContainer';
-import { SpellsContainer } from '../Containers/SpellsContainer';
-import { WikiContainer } from '../Containers/WikiContainer';
-import { UIMessagesObject } from '../types/ui';
-import { Imprint } from './about/Imprint';
-import { LastChanges } from './about/LastChanges';
-import { ThirdPartyLicenses } from './about/ThirdPartyLicenses';
-import { Grouplist } from './grouplist/Grouplist';
+import * as React from "react";
+import { AdvantagesContainer } from "../../Containers/AdvantagesContainer";
+import { AttributesContainer } from "../../Containers/AttributesContainer";
+import { CombatTechniquesContainer } from "../../Containers/CombatTechniquesContainer";
+import { CulturesContainer } from "../../Containers/CulturesContainer";
+import { DisadvantagesContainer } from "../../Containers/DisadvantagesContainer";
+import { EquipmentContainer } from "../../Containers/EquipmentContainer";
+import { HelpContainer } from "../../Containers/HelpContainer";
+import { HerolistContainer } from "../../Containers/HerolistContainer";
+import { HitZoneArmorsContainer } from "../../Containers/HitZoneArmorsContainer";
+import { LiturgicalChantsContainer } from "../../Containers/LiturgicalChantsContainer";
+import { PactContainer } from "../../Containers/PactContainer";
+import { PersonalDataContainer } from "../../Containers/PersonalDataContainer";
+import { PetsContainer } from "../../Containers/PetsContainer";
+import { ProfessionsContainer } from "../../Containers/ProfessionsContainer";
+import { RacesContainer } from "../../Containers/RacesContainer";
+import { RulesContainer } from "../../Containers/RulesContainer";
+import { SheetsContainer } from "../../Containers/SheetsContainer";
+import { SkillsContainer } from "../../Containers/SkillsContainer";
+import { SpecialAbilitiesContainer } from "../../Containers/SpecialAbilitiesContainer";
+import { SpellsContainer } from "../../Containers/SpellsContainer";
+import { WikiContainer } from "../../Containers/WikiContainer";
+import { L10nRecord } from "../../Models/Wiki/L10n";
+import { TabId } from "../../Utilities/LocationUtils";
+import { Imprint } from "../About/Imprint";
+import { LastChanges } from "../About/LastChanges";
+import { ThirdPartyLicenses } from "../About/ThirdPartyLicenses";
+import { Grouplist } from "../Groups/Grouplist";
+import { MainContent } from "../Universal/MainContent";
+import { Page } from "../Universal/Page";
+import { Scroll } from "../Universal/Scroll";
 
-export interface RouteProps {
-  id: TabId;
-  locale: UIMessagesObject;
+export interface RouterProps {
+  id: TabId
+  locale: L10nRecord
 }
 
-export interface RouteState {
+export interface RouterState {
   hasError?: {
     error: Error;
     info: any;
-  };
+  }
 }
 
-export class Route extends React.Component<RouteProps> {
-  state: RouteState = {};
+export class Router extends React.Component<RouterProps> {
+  state: RouterState = {}
 
   componentDidCatch (error: any, info: any) {
-    this.setState (() => ({ hasError: { error, info }}));
+    this.setState (() => ({ hasError: { error, info }}))
   }
 
-  componentWillReceiveProps (nextProps: RouteProps) {
-    if (nextProps.id !== this.props.id && typeof this.state.hasError === 'object') {
-      this.setState (() => ({ hasError: undefined }));
+  componentWillReceiveProps (nextProps: RouterProps) {
+    if (nextProps.id !== this.props.id && typeof this.state.hasError === "object") {
+      this.setState (() => ({ hasError: undefined }))
     }
   }
 
   render (): React.ReactNode {
-    const { id, locale } = this.props;
-    const { hasError } = this.state;
+    const { id, locale } = this.props
+    const { hasError } = this.state
 
     if (hasError) {
       return <Page>
@@ -69,46 +69,46 @@ export class Route extends React.Component<RouteProps> {
             <p>{hasError.info.componentStack}</p>
           </Scroll>
         </MainContent>
-      </Page>;
+      </Page>
     }
 
-    const VIEWS = {
-      herolist: <HerolistContainer locale={locale} />,
-      grouplist: <Grouplist />,
-      wiki: <WikiContainer locale={locale} />,
-      faq: <HelpContainer locale={locale} />,
-      imprint: <Imprint locale={locale} />,
-      thirdPartyLicenses: <ThirdPartyLicenses />,
-      lastChanges: <LastChanges />,
+    const VIEWS: { [K in TabId]: JSX.Element } = {
+      [TabId.Herolist]: <HerolistContainer l10n={locale} />,
+      [TabId.Grouplist]: <Grouplist />,
+      [TabId.Wiki]: <WikiContainer locale={locale} />,
+      [TabId.Faq]: <HelpContainer locale={locale} />,
+      [TabId.Imprint]: <Imprint locale={locale} />,
+      [TabId.ThirdPartyLicenses]: <ThirdPartyLicenses />,
+      [TabId.LastChanges]: <LastChanges />,
 
-      profile: <PersonalDataContainer locale={locale} />,
-      personalData: <PersonalDataContainer locale={locale} />,
-      characterSheet: <SheetsContainer locale={locale} />,
-      pact: <PactContainer locale={locale} />,
-      rules: <RulesContainer locale={locale} />,
+      [TabId.Profile]: <PersonalDataContainer locale={locale} />,
+      [TabId.PersonalData]: <PersonalDataContainer locale={locale} />,
+      [TabId.CharacterSheet]: <SheetsContainer locale={locale} />,
+      [TabId.Pact]: <PactContainer locale={locale} />,
+      [TabId.Rules]: <RulesContainer locale={locale} />,
 
-      races: <RacesContainer locale={locale} />,
-      cultures: <CulturesContainer locale={locale} />,
-      professions: <ProfessionsContainer locale={locale} />,
+      [TabId.Races]: <RacesContainer locale={locale} />,
+      [TabId.Cultures]: <CulturesContainer locale={locale} />,
+      [TabId.Professions]: <ProfessionsContainer locale={locale} />,
 
-      attributes: <AttributesContainer locale={locale} />,
+      [TabId.Attributes]: <AttributesContainer locale={locale} />,
 
-      advantages: <AdvantagesContainer locale={locale} />,
-      disadvantages: <DisadvantagesContainer locale={locale} />,
+      [TabId.Advantages]: <AdvantagesContainer locale={locale} />,
+      [TabId.Disadvantages]: <DisadvantagesContainer locale={locale} />,
 
-      skills: <SkillsContainer locale={locale} />,
-      combatTechniques: <CombatTechniquesContainer locale={locale} />,
-      specialAbilities: <SpecialAbilitiesContainer locale={locale} />,
-      spells: <SpellsContainer locale={locale} />,
-      liturgicalChants: <LiturgicalChantsContainer locale={locale} />,
+      [TabId.Skills]: <SkillsContainer locale={locale} />,
+      [TabId.CombatTechniques]: <CombatTechniquesContainer locale={locale} />,
+      [TabId.SpecialAbilities]: <SpecialAbilitiesContainer locale={locale} />,
+      [TabId.Spells]: <SpellsContainer locale={locale} />,
+      [TabId.LiturgicalChants]: <LiturgicalChantsContainer locale={locale} />,
 
-      equipment: <EquipmentContainer locale={locale} />,
-      zoneArmor: <HitZoneArmorsContainer locale={locale} />,
-      pets: <PetsContainer locale={locale} />,
+      [TabId.Equipment]: <EquipmentContainer locale={locale} />,
+      [TabId.ZoneArmor]: <HitZoneArmorsContainer locale={locale} />,
+      [TabId.Pets]: <PetsContainer locale={locale} />,
 
       // master: <Master />
-    };
+    }
 
-    return VIEWS[id] || undefined;
+    return VIEWS [id] !== null ? VIEWS [id] : undefined
   }
 }

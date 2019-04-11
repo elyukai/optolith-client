@@ -7,8 +7,8 @@
  * @author Lukas Obermann
  */
 
-import { not } from "../App/Utilities/not";
 import { pipe } from "../App/Utilities/pipe";
+import { not } from "./Bool";
 import { lens, Lens_ } from "./Lens";
 import { isJust, isMaybe, isNothing, Maybe, Nothing } from "./Maybe";
 import { foldl, fromArray, OrderedSet } from "./OrderedSet";

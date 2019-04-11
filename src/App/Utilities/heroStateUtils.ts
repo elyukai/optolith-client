@@ -1,3 +1,4 @@
+import { not } from "../../Data/Bool";
 import { cnst } from "../../Data/Function";
 import { fmap } from "../../Data/Functor";
 import { Lens_, over, view } from "../../Data/Lens";
@@ -14,7 +15,6 @@ import { Dependent } from "../Models/Hero/heroTypeHelpers";
 import { Skill } from "../Models/Wiki/Skill";
 import { EntryWithGroup } from "../Models/Wiki/wikiTypeHelpers";
 import { getIdPrefix } from "./IDUtils";
-import { not } from "./not";
 import { pipe } from "./pipe";
 
 export type HeroStateMapKey = "advantages"

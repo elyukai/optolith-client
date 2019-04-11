@@ -5,7 +5,6 @@
  */
 
 import { pipe } from "../App/Utilities/pipe";
-import { isFunction } from "../App/Utilities/typeCheckUtils";
 import { contramap } from "./Contravariant";
 import { first } from "./Either";
 import { fmap } from "./Functor";
@@ -44,7 +43,7 @@ export const dimap =
       return Tagged ((c2d) (x.x))
     }
 
-    if (isFunction (x)) {
+    if (typeof x === "function") {
       return pipe (a2b, x, c2d)
     }
 
@@ -76,7 +75,7 @@ export const rmap =
       return Tagged (b2c (x.x))
     }
 
-    if (isFunction (x)) {
+    if (typeof x === "function") {
       return pipe (x, b2c)
     }
 

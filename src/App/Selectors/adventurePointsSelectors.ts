@@ -138,7 +138,7 @@ export const getAPSpentOnProfessionMap =
                      )
                      (wiki => uncurryN3 (getAPSpentForProfession (wiki)))
 
-const getAPSpentMap =
+export const getAPSpentMap =
   createMapSelector (getHeroes)
                     (
                       getAPSpentOnAttributesMap,

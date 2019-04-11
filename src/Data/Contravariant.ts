@@ -5,7 +5,6 @@
  */
 
 import { pipe } from "../App/Utilities/pipe";
-import { isFunction } from "../App/Utilities/typeCheckUtils";
 import { showP } from "./Show";
 
 export type Contravariant<A> = ((x: A) => any)
@@ -23,7 +22,7 @@ export const contramap =
   <A, B>
   (f: (x: A) => B): ContravariantMap<A, B> =>
   (x: Contravariant<any>): any => {
-    if (isFunction (x)) {
+    if (typeof x === "function") {
       return pipe (x, f)
     }
 

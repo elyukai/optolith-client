@@ -8,7 +8,6 @@
  */
 
 import { pipe } from "../App/Utilities/pipe";
-import { isFunction } from "../App/Utilities/typeCheckUtils";
 import { Identity, isIdentity, runIdentity } from "../Control/Monad/Identity";
 import { IO, isIO } from "../System/IO";
 import { Either, first, isEither, isLeft, Right } from "./Either";
@@ -131,7 +130,7 @@ export const fmap =
       return Pair (x .first, f (x .second))
     }
 
-    if (isFunction (x)) {
+    if (typeof x === "function") {
       return pipe (x, f)
     }
 

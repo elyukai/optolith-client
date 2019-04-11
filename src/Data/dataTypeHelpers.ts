@@ -6,7 +6,7 @@ import { Maybe } from "./Maybe";
 import { OrderedMap } from "./OrderedMap";
 import { OrderedSet } from "./OrderedSet";
 
-export type Data<A> = Const<A>
+export type Data<A> = Const<A, any>
                     | Either<any, A>
                     | Identity<A>
                     | List<A>
@@ -15,8 +15,8 @@ export type Data<A> = Const<A>
                     | OrderedSet<A>
 
 export type SameData<D extends Data<any>, A> =
-  D extends Const<any>
-  ? Const<A>
+  D extends Const<any, any>
+  ? Const<A, any>
   : D extends Either<any, any>
   ? Either<any, A>
   : D extends Identity<any>

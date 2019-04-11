@@ -5,6 +5,7 @@
  * @author Lukas Obermann
  */
 
+import { notP } from "../../../Data/Bool";
 import { equals } from "../../../Data/Eq";
 import { flip, thrush } from "../../../Data/Function";
 import { fmap } from "../../../Data/Functor";
@@ -33,7 +34,6 @@ import { getAllEntriesByGroup, getHeroStateItem } from "../heroStateUtils";
 import { ifElse } from "../ifElse";
 import { isOwnTradition } from "../Increasable/liturgicalChantUtils";
 import { add, gt, gte, inc, lt, subtract, subtractBy } from "../mathUtils";
-import { notP } from "../not";
 import { pipe } from "../pipe";
 import { flattenPrerequisites } from "../Prerequisites/flattenPrerequisites";
 import { setPrerequisiteId } from "../Prerequisites/setPrerequisiteId";

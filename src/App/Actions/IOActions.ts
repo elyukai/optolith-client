@@ -12,9 +12,10 @@ import { cnst, flip } from "../../Data/Function";
 import { fmap, fmapF } from "../../Data/Functor";
 import { List, notNull } from "../../Data/List";
 import { altF_, bind, bindF, ensure, fromJust, fromMaybe, isJust, Just, listToMaybe, Maybe, maybe, maybeToUndefined, Nothing } from "../../Data/Maybe";
-import { any, lookup, lookupF } from "../../Data/OrderedMap";
-import { Pair } from "../../Data/Pair";
-import { Record, toObject } from "../../Data/Record";
+import { any, keysSet, lookup, lookupF, OrderedMap } from "../../Data/OrderedMap";
+import { differenceF, map } from "../../Data/OrderedSet";
+import { fst, Pair } from "../../Data/Pair";
+import { Record, StringKeyObject, toObject } from "../../Data/Record";
 import { IO, readFile, writeFile } from "../../System/IO";
 import { ActionTypes } from "../Constants/ActionTypes";
 import { IdPrefixes } from "../Constants/IdPrefixes";
@@ -26,7 +27,7 @@ import { UISettingsState } from "../Reducers/uiSettingsReducer";
 import { user_data_path } from "../Selectors/envSelectors";
 import { getCurrentHeroId, getHeroes, getLocaleMessages, getLocaleType, getUsers, getWiki } from "../Selectors/stateSelectors";
 import { getUISettingsState } from "../Selectors/uisettingsSelectors";
-import { deleteCache } from "../Utilities/Cache";
+import { APCache, deleteCache, forceCacheIsAvailable, insertAppStateCache, insertCacheMap, insertHeroesCache, readCache } from "../Utilities/Cache";
 import { translate, translateP } from "../Utilities/I18n";
 import { getNewIdByDate, prefixId } from "../Utilities/IDUtils";
 import { bytify, getSystemLocale, NothingIO, showOpenDialog, showSaveDialog, windowPrintToPDF } from "../Utilities/IOUtils";
@@ -77,6 +78,7 @@ interface InitialData {
   heroes: Maybe<RawHerolist>
   defaultLocale: string
   config: Maybe<RawConfig>
+  cache: Maybe<OrderedMap<string, APCache>>
 }
 
 export interface ReceiveInitialDataAction {
@@ -84,11 +86,30 @@ export interface ReceiveInitialDataAction {
   payload: InitialData
 }
 
-export const requestInitialData = (): ReduxAction => dispatch =>
+export const requestInitialData: ReduxAction<IO<void>> = dispatch =>
   fmapF (dispatch (getInitialData))
         (data => {
           if (isRight (data)) {
             dispatch (receiveInitialData (fromRight_ (data)))
+            dispatch ((dispatch2, getState) => {
+              insertAppStateCache (getState ())
+              insertHeroesCache (getHeroes (getState ()))
+              fmapF (fromRight_ (data) .cache) (insertCacheMap)
+              fmapF (fromRight_ (data) .cache)
+                    (pipe (
+                      keysSet,
+                      differenceF (keysSet (getHeroes (getState ()))),
+                      map (id => {
+                        forceCacheIsAvailable (id)
+                                              (getState ())
+                                              ({ l10n: fst (fromRight_ (data) .tables) })
+
+                        return id
+                      })
+                    ))
+
+              dispatch2 (endLoadingState ())
+            })
           }
           else {
             dispatch (addAlert ({
@@ -97,6 +118,14 @@ export const requestInitialData = (): ReduxAction => dispatch =>
             }))
           }
         })
+
+export interface EndLoadingState {
+  type: ActionTypes.END_LOADING_STATE
+}
+
+export const endLoadingState = () => ({
+  type: ActionTypes.END_LOADING_STATE,
+})
 
 export const getInitialData: ReduxAction<IO<Either<string, InitialData>>> =
   dispatch => {
@@ -108,24 +137,27 @@ export const getInitialData: ReduxAction<IO<Either<string, InitialData>>> =
                   did_update
                     ? IO.then (deleteCache ()) (writeUpdate (false))
                     : writeUpdate (false)),
-      IO.thenF (IO.bind (loadConfig ())
-                        (mconfig =>
-                          fmapF (loadHeroes ())
-                                (mheroes =>
-                                  second ((tables: Pair<Record<L10n>, Record<WikiModel>>):
-                                          InitialData =>
-                                            ({
-                                              tables,
-                                              heroes: mheroes,
-                                              defaultLocale,
-                                              config: mconfig,
-                                            }))
-                                         (dispatch (
-                                           loadDatabase (
-                                             fromMaybe (defaultLocale)
-                                                       (bind (mconfig) (c => Maybe (c.locale)))
-                                           )
-                                         )))))
+      IO.thenF (IO.liftM3 ((mconfig: Maybe<RawConfig>) =>
+                           (mheroes: Maybe<StringKeyObject<RawHero>>) =>
+                           (mcache: Maybe<OrderedMap<string, APCache>>) =>
+                            second ((tables: Pair<Record<L10n>, Record<WikiModel>>):
+                                    InitialData =>
+                                      ({
+                                        tables,
+                                        heroes: mheroes,
+                                        defaultLocale,
+                                        config: mconfig,
+                                        cache: mcache,
+                                      }))
+                                   (dispatch (
+                                     loadDatabase (
+                                       fromMaybe (defaultLocale)
+                                                 (bind (mconfig) (c => Maybe (c.locale)))
+                                     )
+                                   )))
+                          (loadConfig ())
+                          (loadHeroes ())
+                          (readCache))
     )
   }
 

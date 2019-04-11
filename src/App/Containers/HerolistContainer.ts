@@ -1,22 +1,23 @@
-import { connect } from 'react-redux';
-import { Action, Dispatch } from 'redux';
-import * as HerolistActions from '../App/Actions/HerolistActions';
-import * as IOActions from '../App/Actions/IOActions';
-import * as LocationActions from '../App/Actions/LocationActions';
-import * as SubwindowsActions from '../App/Actions/SubwindowsActions';
-import { InputTextEvent } from '../App/Models/Hero/heroTypeHelpers';
-import { AppState } from '../reducers/appReducer';
-import { getAdventurePointsObject } from '../Selectors/adventurePointsSelectors';
-import { getSortedBooks } from '../Selectors/bookSelectors';
-import { getSortedHerolist, getUnsavedHeroesById } from '../Selectors/herolistSelectors';
-import { getCurrentHeroPresent, getHerolistFilterText, getIsCharacterCreatorOpen, getUsers, getWiki, getWikiExperienceLevels } from '../Selectors/stateSelectors';
-import { getHerolistSortOrder, getHerolistVisibilityFilter } from '../Selectors/uisettingsSelectors';
-import { Just, Maybe, OrderedSet } from '../Utilities/dataUtils';
-import { Herolist, HerolistDispatchProps, HerolistOwnProps, HerolistStateProps } from '../Views/herolist/Herolist';
+import { connect } from "react-redux";
+import { Action } from "redux";
+import { fromJust, isJust, Just, Maybe } from "../../Data/Maybe";
+import { OrderedSet } from "../../Data/OrderedSet";
+import { ReduxDispatch } from "../Actions/Actions";
+import * as HerolistActions from "../Actions/HerolistActions";
+import * as IOActions from "../Actions/IOActions";
+import * as LocationActions from "../Actions/LocationActions";
+import * as SubwindowsActions from "../Actions/SubwindowsActions";
+import { InputTextEvent } from "../Models/Hero/heroTypeHelpers";
+import { AppStateRecord } from "../Reducers/appReducer";
+import { getSortedBooks } from "../Selectors/bookSelectors";
+import { getSortedHerolist, getUnsavedHeroesById } from "../Selectors/herolistSelectors";
+import { getCurrentHeroPresent, getHerolistFilterText, getIsCharacterCreatorOpen, getUsers, getWiki, getWikiExperienceLevels } from "../Selectors/stateSelectors";
+import { getHerolistSortOrder, getHerolistVisibilityFilter } from "../Selectors/uisettingsSelectors";
+import { TabId } from "../Utilities/LocationUtils";
+import { Herolist, HerolistDispatchProps, HerolistOwnProps, HerolistStateProps } from "../Views/Heroes/Herolist";
 
-const mapStateToProps = (state: AppState, props: HerolistOwnProps) => ({
+const mapStateToProps = (state: AppStateRecord, props: HerolistOwnProps) => ({
   currentHero: getCurrentHeroPresent (state),
-  currentHeroAdventurePoints: getAdventurePointsObject (state, props),
   experienceLevels: getWikiExperienceLevels (state),
   filterText: getHerolistFilterText (state),
   list: getSortedHerolist (state, props),
@@ -27,67 +28,65 @@ const mapStateToProps = (state: AppState, props: HerolistOwnProps) => ({
   isCharacterCreatorOpen: getIsCharacterCreatorOpen (state),
   sortedBooks: getSortedBooks (state, props),
   wiki: getWiki (state),
-});
+})
 
 const mapDispatchToProps = (
-  dispatch: Dispatch<Action>,
-  { locale }: HerolistOwnProps
+  dispatch: ReduxDispatch<Action>,
+  { l10n }: HerolistOwnProps
 ) => ({
   loadHero (id: string) {
-    dispatch (HerolistActions.loadHero (id));
+    dispatch (HerolistActions.loadHero (id))
   },
   showHero () {
-    dispatch (LocationActions.setTab ('profile'));
+    dispatch (LocationActions.setTab (TabId.Profile))
   },
   saveHero (id: string) {
-    (dispatch as Dispatch<Action, AppState>) (HerolistActions.saveHero (locale) (Just (id)));
+    dispatch (HerolistActions.saveHero (l10n) (Just (id)))
   },
   saveHeroAsJSON (id: string) {
-    (dispatch as Dispatch<Action, AppState>) (HerolistActions.exportHeroValidate (locale) (id));
+    dispatch (HerolistActions.exportHeroValidate (l10n) (id))
   },
   deleteHero (id: string) {
-    (dispatch as Dispatch<Action, AppState>) (HerolistActions.deleteHeroValidate (locale) (id));
+    dispatch (HerolistActions.deleteHeroValidate (l10n) (id))
   },
   duplicateHero (id: string) {
-    dispatch (HerolistActions.duplicateHero (id));
+    dispatch (HerolistActions.duplicateHero (id))
   },
   createHero (
     name: string,
-    sex: 'm' | 'f',
+    sex: "m" | "f",
     el: string,
     enableAllRuleBooks: boolean,
     enabledRuleBooks: OrderedSet<string>
   ) {
-    (dispatch as Dispatch<Action, AppState>) (
-      HerolistActions.createHero (name, sex, el, enableAllRuleBooks, enabledRuleBooks)
-    );
+    dispatch (HerolistActions.createHero (name) (sex) (el) (enableAllRuleBooks) (enabledRuleBooks))
   },
   importHero () {
-    (dispatch as Dispatch<Action, AppState>) (IOActions.requestHeroImport (locale));
+    dispatch (IOActions.requestHeroImport (l10n))
   },
   setSortOrder (id: string) {
-    dispatch (HerolistActions.setHerolistSortOrder (id));
+    dispatch (HerolistActions.setHerolistSortOrder (id))
   },
   setFilterText (event: InputTextEvent) {
-    dispatch (HerolistActions.setHerolistFilterText (event.target.value));
+    dispatch (HerolistActions.setHerolistFilterText (event.target.value))
   },
   setVisibilityFilter (id: Maybe<string>) {
-    if (Maybe.isJust (id)) {
-      dispatch (HerolistActions.setHerolistVisibilityFilter (Maybe.fromJust (id)));
+    if (isJust (id)) {
+      dispatch (HerolistActions.setHerolistVisibilityFilter (fromJust (id)))
     }
   },
   openCharacterCreator () {
-    dispatch (SubwindowsActions.openCharacterCreator ());
+    dispatch (SubwindowsActions.openCharacterCreator ())
   },
   closeCharacterCreator () {
-    dispatch (SubwindowsActions.closeCharacterCreator ());
+    dispatch (SubwindowsActions.closeCharacterCreator ())
   },
-});
+})
 
 const connectHerolist =
-  connect<HerolistStateProps, HerolistDispatchProps, HerolistOwnProps, AppState> (
+  connect<HerolistStateProps, HerolistDispatchProps, HerolistOwnProps, AppStateRecord> (
     mapStateToProps,
     mapDispatchToProps
-  );
+  )
 
-export const HerolistContainer = connectHerolist (Herolist);
+export const HerolistContainer = connectHerolist (Herolist)

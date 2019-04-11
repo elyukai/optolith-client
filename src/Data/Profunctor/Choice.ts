@@ -5,7 +5,6 @@
  */
 
 import { pipe } from "../../App/Utilities/pipe";
-import { isFunction } from "../../App/Utilities/typeCheckUtils";
 import { bimap, Either, either, first, Left, Right, second } from "../Either";
 import { ident } from "../Function";
 import { isMarket, Market } from "../Market";
@@ -42,7 +41,7 @@ export const left_: ChoiceLeft_ =
       return Tagged (Left (x.x))
     }
 
-    if (isFunction (x)) {
+    if (typeof x === "function") {
       return first (x)
     }
 
@@ -75,7 +74,7 @@ export const right_: ChoiceRight_ =
       return Tagged (Right (x.x))
     }
 
-    if (isFunction (x)) {
+    if (typeof x === "function") {
       return second (x)
     }
 

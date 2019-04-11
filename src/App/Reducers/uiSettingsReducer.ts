@@ -1,3 +1,4 @@
+import { not } from "../../Data/Bool";
 import { cnst, ident } from "../../Data/Function";
 import { over, set } from "../../Data/Lens";
 import { fromJust, fromMaybe, isJust, Maybe, Nothing } from "../../Data/Maybe";
@@ -17,7 +18,6 @@ import { SetSkillsSortOrderAction, SwitchSkillRatingVisibilityAction } from "../
 import { SetSpecialAbilitiesSortOrderAction } from "../Actions/SpecialAbilitiesActions";
 import { SetSpellsSortOrderAction } from "../Actions/SpellsActions";
 import { ActionTypes } from "../Constants/ActionTypes";
-import { not } from "../Utilities/not";
 
 type Action = ReceiveInitialDataAction
             | SetCombatTechniquesSortOrderAction

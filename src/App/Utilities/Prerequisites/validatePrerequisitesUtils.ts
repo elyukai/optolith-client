@@ -1,3 +1,4 @@
+import { not } from "../../../Data/Bool";
 import { equals } from "../../../Data/Eq";
 import { flip, join, on, thrush } from "../../../Data/Function";
 import { fmap, fmapF } from "../../../Data/Functor";
@@ -38,7 +39,6 @@ import { getActiveSelectionsMaybe } from "../Activatable/selectionUtils";
 import { getHeroStateItem } from "../heroStateUtils";
 import { prefixId } from "../IDUtils";
 import { dec, gte, lt, lte, min } from "../mathUtils";
-import { not } from "../not";
 import { pipe } from "../pipe";
 import { getPrimaryAttributeId } from "../primaryAttributeUtils";
 import { getAllWikiEntriesByGroup } from "../WikiUtils";
