@@ -7,7 +7,9 @@ import { all, fromArray, List } from "../../Data/List";
 import { bindF, ensure, mapM, Maybe } from "../../Data/Maybe";
 import { fromList, OrderedMap, toObjectWith } from "../../Data/OrderedMap";
 import { Pair } from "../../Data/Pair";
+import { Record } from "../../Data/Record";
 import { deleteFile, readFile, writeFile } from "../../System/IO";
+import { AdventurePointsCategories } from "../Models/View/AdventurePointsCategories";
 import { L10nRecord } from "../Models/Wiki/L10n";
 import { AppStateRecord } from "../Reducers/appReducer";
 import { HeroesState } from "../Reducers/herolistReducer";
@@ -218,3 +220,24 @@ export const insertAppStateCache =
     getAPSpentOnMagicalDisadvantagesMap .setState (s)
     getAPSpentOnSpecialAbilitiesMap .setState (s)
   }
+
+export const toAPCache =
+  (s: Record<AdventurePointsCategories>): APCache => ({
+    spent: AdventurePointsCategories.A.spent (s),
+    available: AdventurePointsCategories.A.available (s),
+    spentOnAttributes: AdventurePointsCategories.A.spentOnAttributes (s),
+    spentOnSkills: AdventurePointsCategories.A.spentOnSkills (s),
+    spentOnCombatTechniques: AdventurePointsCategories.A.spentOnCombatTechniques (s),
+    spentOnSpells: AdventurePointsCategories.A.spentOnSpells (s),
+    spentOnLiturgicalChants: AdventurePointsCategories.A.spentOnLiturgicalChants (s),
+    spentOnCantrips: AdventurePointsCategories.A.spentOnCantrips (s),
+    spentOnBlessings: AdventurePointsCategories.A.spentOnBlessings (s),
+    spentOnEnergies: AdventurePointsCategories.A.spentOnEnergies (s),
+    spentOnAdvantages: AdventurePointsCategories.A.spentOnAdvantages (s),
+    spentOnBlessedAdvantages: AdventurePointsCategories.A.spentOnBlessedAdvantages (s),
+    spentOnMagicalAdvantages: AdventurePointsCategories.A.spentOnMagicalAdvantages (s),
+    spentOnDisadvantages: AdventurePointsCategories.A.spentOnDisadvantages (s),
+    spentOnBlessedDisadvantages: AdventurePointsCategories.A.spentOnBlessedDisadvantages (s),
+    spentOnMagicalDisadvantages: AdventurePointsCategories.A.spentOnMagicalDisadvantages (s),
+    spentOnSpecialAbilities: AdventurePointsCategories.A.spentOnSpecialAbilities (s),
+  })

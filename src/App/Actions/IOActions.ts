@@ -12,22 +12,24 @@ import { cnst, flip } from "../../Data/Function";
 import { fmap, fmapF } from "../../Data/Functor";
 import { List, notNull } from "../../Data/List";
 import { altF_, bind, bindF, ensure, fromJust, fromMaybe, isJust, Just, listToMaybe, Maybe, maybe, maybeToUndefined, Nothing } from "../../Data/Maybe";
-import { any, keysSet, lookup, lookupF, OrderedMap } from "../../Data/OrderedMap";
+import { any, keysSet, lookup, lookupF, mapMaybe, OrderedMap } from "../../Data/OrderedMap";
 import { differenceF, map } from "../../Data/OrderedSet";
 import { fst, Pair } from "../../Data/Pair";
 import { Record, StringKeyObject, toObject } from "../../Data/Record";
 import { IO, readFile, writeFile } from "../../System/IO";
 import { ActionTypes } from "../Constants/ActionTypes";
 import { IdPrefixes } from "../Constants/IdPrefixes";
+import { HeroModel } from "../Models/Hero/HeroModel";
 import { User } from "../Models/Hero/heroTypeHelpers";
 import { L10n, L10nRecord } from "../Models/Wiki/L10n";
 import { WikiModel } from "../Models/Wiki/WikiModel";
 import { heroReducer } from "../Reducers/heroReducer";
 import { UISettingsState } from "../Reducers/uiSettingsReducer";
+import { getAPObjectMap } from "../Selectors/adventurePointsSelectors";
 import { user_data_path } from "../Selectors/envSelectors";
 import { getCurrentHeroId, getHeroes, getLocaleMessages, getLocaleType, getUsers, getWiki } from "../Selectors/stateSelectors";
 import { getUISettingsState } from "../Selectors/uisettingsSelectors";
-import { APCache, deleteCache, forceCacheIsAvailable, insertAppStateCache, insertCacheMap, insertHeroesCache, readCache } from "../Utilities/Cache";
+import { APCache, deleteCache, forceCacheIsAvailable, insertAppStateCache, insertCacheMap, insertHeroesCache, readCache, toAPCache, writeCache } from "../Utilities/Cache";
 import { translate, translateP } from "../Utilities/I18n";
 import { getNewIdByDate, prefixId } from "../Utilities/IDUtils";
 import { bytify, getSystemLocale, NothingIO, showOpenDialog, showSaveDialog, windowPrintToPDF } from "../Utilities/IOUtils";
@@ -252,6 +254,22 @@ export const requestSaveAll = (l10n: L10nRecord): ReduxAction<IO<boolean>> =>
 
     return IO.liftM2 (and) (configSavedDone) (heroesSavedDone)
   }
+
+export const requestSaveCache =
+  (l10n: L10nRecord): ReduxAction<IO<Either<Error, void>>> =>
+  (_, getState) =>
+    pipe_ (
+      getState (),
+      getHeroes,
+      mapMaybe (pipe (
+        heroReducer.A.present,
+        HeroModel.A.id,
+        id => getAPObjectMap (id) (getState (), { l10n }),
+        Maybe.join,
+        fmap (toAPCache)
+      )),
+      writeCache
+    )
 
 export const requestHeroSave =
   (l10n: L10nRecord) =>
@@ -507,21 +525,25 @@ const close =
   (l10n: L10nRecord) =>
   (unsaved: boolean) =>
   (f: Maybe<() => void>): ReduxAction =>
-  dispatch => fmapF (dispatch (requestSaveAll (l10n)))
-                    (all_saved => {
-                      if (all_saved) {
-                        dispatch (addAlert ({
-                          message: translate (l10n) (unsaved ? "everythingelsesaved" : "allsaved"),
-                          onClose () {
-                            if (isJust (f)) {
-                              fromJust (f) ()
-                            }
+  dispatch => pipe_ (
+    dispatch (requestSaveCache (l10n)),
+    IO.thenF (dispatch (requestSaveAll (l10n))),
+    fmap (all_saved => {
+           if (all_saved) {
+             dispatch (addAlert ({
+               message: translate (l10n) (unsaved ? "everythingelsesaved" : "allsaved"),
+               onClose () {
+                 if (isJust (f)) {
+                   fromJust (f) ()
+                 }
 
-                            remote.getCurrentWindow ().close ()
-                          },
-                        }))
-                      }
-                    })
+                 remote.getCurrentWindow ().close ()
+               },
+             }))
+           }
+         })
+  )
+
 
 export const requestClose =
   (optionalCall: Maybe<() => void>): ReduxAction =>
