@@ -94,7 +94,9 @@ export const lens =
   <S, A>
   (getter: (m: S) => A) =>
   (setter: (m: S) => (x: A) => S): Lens_<S, A> =>
-    (lift: (x: A) => any) => (m: S) => fmap (setter (m)) (lift (getter (m))) as any
+  (lift: (x: A) => any) =>
+  (m: S) =>
+    fmap (setter (m)) (lift (getter (m))) as any
 
 /**
  * `lens' :: (s -> (a, a -> s)) -> Lens s a`
