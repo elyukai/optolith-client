@@ -1,4 +1,6 @@
-import { Either } from "./Either";
+import { Internals } from "./Internals";
+
+import Either = Internals.Either
 
 
 // PROTOTYPE

@@ -1,8 +1,10 @@
 // @ts-check
-const { Nothing } = require('../Maybe');
+const { Internals } = require('../Internals');
 const { fromUniqueElements } = require('../OrderedSet');
 const { fromDefault, mergeSafeR2, mergeSafeR3, mergeSafeR4, mergeSafeR5, makeLenses, member, notMember, toObject, isRecord } = require('../Record');
 const { view } = require('../Lens');
+
+const Nothing = Internals.Nothing
 
 // CONSTRUCTOR
 

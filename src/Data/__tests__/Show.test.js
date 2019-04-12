@@ -1,12 +1,16 @@
 // @ts-check
+const { Internals } = require('../Internals');
 const { show } = require('../Show');
-const { Left, Right } = require('../Either');
 const { List } = require('../List');
 const { Pair } = require('../Pair');
 const { fromUniqueElements } = require('../OrderedSet');
 const { fromUniquePairs } = require('../OrderedMap');
-const { Just, Nothing } = require('../Maybe');
 const { fromDefault } = require('../Record');
+
+const Just = Internals.Just
+const Nothing = Internals.Nothing
+const Left = Internals.Left
+const Right = Internals.Right
 
 test ('Maybe', () => {
   expect (show (Just (2))) .toEqual ('Just (2)')

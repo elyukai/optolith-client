@@ -1,14 +1,19 @@
 // @ts-check
+const { Internals } = require('../Internals');
 const { ident } = require('../Function');
-const { Left, Right } = require('../Either');
 const { fmap } = require('../Functor');
 const { List } = require('../List');
 const { Pair } = require('../Pair');
 const { OrderedSet } = require('../OrderedSet');
 const { fromArray, fromUniquePairs, fromMap, OrderedMap } = require('../OrderedMap');
-const { Just, Nothing, Maybe } = require('../Maybe');
+const { Maybe } = require('../Maybe');
 const { add } = require('../../App/Utilities/mathUtils');
 const { pipe } = require('../../App/Utilities/pipe');
+
+const Just = Internals.Just
+const Nothing = Internals.Nothing
+const Left = Internals.Left
+const Right = Internals.Right
 
 // CONSTRUCTOR
 

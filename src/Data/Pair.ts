@@ -7,39 +7,16 @@
  * @author Lukas Obermann
  */
 
+import { Internals } from "./Internals";
+
 
 // CONSTRUCTOR
 
-interface PairPrototype<A> {
-  readonly isPair: true
-}
-
-export interface Pair<A, B> extends PairPrototype<A> {
+export interface Pair<A, B> extends Internals.PairPrototype {
   readonly first: A
   readonly second: B
-  readonly prototype: PairPrototype<A>
+  readonly prototype: Internals.PairPrototype
 }
-
-const PairPrototype =
-  Object.freeze<PairPrototype<any>> ({
-    isPair: true,
-  })
-
-const _Pair =
-  <A, B> (firstValue: A, secondValue: B): Pair<A, B> =>
-    Object.create (
-      PairPrototype,
-      {
-        first: {
-          value: firstValue,
-          enumerable: true,
-        },
-        second: {
-          value: secondValue,
-          enumerable: true,
-        },
-      }
-    )
 
 export type PairP1 = <A> (first: A) => <B> (second: B) => Pair<A, B>
 export type PairP1_ = <A, B> (first: A) => (second: B) => Pair<A, B>
@@ -73,10 +50,10 @@ interface PairConstructor {
 export const Pair =
   ((...args: [any] | [any, any]) => {
     if (args.length === 1) {
-      return (b: any) => _Pair (args [0], b)
+      return (b: any) => Internals._Pair (args [0], b)
     }
 
-    return _Pair (args [0], args [1])
+    return Internals._Pair (args [0], args [1])
   }) as PairConstructor
 
 
@@ -253,14 +230,7 @@ export const toArray = <A, B> (x: Pair<A, B>): [A, B] => [x .first, x .second]
  */
 export const fromArray = <A, B> (x: [A, B]): Pair<A, B> => Pair (...x)
 
-/**
- * `isPair :: a -> Bool`
- *
- * Return `True` if the given value is an pair.
- */
-export const isPair =
-  (x: any): x is Pair<any, any> =>
-    typeof x === "object" && x !== null && Object.getPrototypeOf (x) === PairPrototype
+export import isPair = Internals.isPair
 
 
 // NAMESPACED FUNCTIONS

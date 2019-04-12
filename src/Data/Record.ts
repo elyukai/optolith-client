@@ -9,17 +9,28 @@
 
 import { pipe } from "../App/Utilities/pipe";
 import { not } from "./Bool";
+import { equals } from "./Eq";
+import { Internals } from "./Internals";
 import { lens, Lens_ } from "./Lens";
-import { isJust, isMaybe, isNothing, Maybe, Nothing } from "./Maybe";
-import { foldl, fromArray, OrderedSet } from "./OrderedSet";
 import { show } from "./Show";
+
+import RecordPrototype = Internals.RecordPrototype
+import OrderedSet = Internals.OrderedSet
+import Maybe = Internals.Maybe
+
+const elem =
+  <A> (e: A) => (xs: OrderedSet<A>): boolean =>
+    [...xs .value] .some (equals (e))
+
+const foldl =
+  <A, B>
+  (f: (acc: B) => (current: A) => B) =>
+  (initial: B) =>
+  (xs: OrderedSet<A>): B =>
+    [...xs .value] .reduce<B> ((acc, e) => f (acc) (e), initial)
 
 
 // CONSTRUCTOR
-
-interface RecordPrototype {
-  readonly isRecord: true
-}
 
 export interface Record<A extends RecordBase> extends RecordPrototype {
   readonly values: Readonly<Required<A>>
@@ -37,11 +48,6 @@ export interface RecordCreator<A extends RecordBase> {
   readonly A: StrictAccessors<A>
   readonly is: <B> (x: B | Record<A>) => x is Record<A>
 }
-
-const RecordPrototype =
-  Object.freeze<RecordPrototype> ({
-    isRecord: true,
-  })
 
 const _Record =
   <A extends RecordBase>
@@ -94,7 +100,7 @@ export const fromDefault =
       {} as Required<A>
     ))
 
-    const keys = fromArray (Object.keys (def))
+    const keys = Internals.setFromArray (show) (Object.keys (def))
 
     const unique = Symbol ("Record")
 
@@ -109,19 +115,19 @@ export const fromDefault =
               // Maybe undefined!
               const value =
                 (x as Required<A>) [key] as MaybeOrPartialMaybe<A[string]> === undefined
-                  ? Nothing
+                  ? Internals.Nothing
                   : (x as Required<A>) [key] as MaybeOrPartialMaybe<A[string]>
 
               const defaultValue = defaultValues [key]
 
-              return OrderedSet.member (key) (keys)
+              return elem (key) (keys)
                 && (
-                  isMaybe (defaultValue) && isJust (value)
+                  Internals.isMaybe (defaultValue) && Internals.isJust (value)
                   || (
-                    !isMaybe (defaultValue)
+                    !Internals.isMaybe (defaultValue)
                     && value !== null
                     && value !== undefined
-                    && !isNothing (value)
+                    && !Internals.isNothing (value)
                   )
                 )
                 ? { ...acc, [key]: value } as PartialMaybeOrNothing<A>
@@ -243,10 +249,10 @@ export const mergeSafeR5 =
 // CUSTOM FUNCTIONS
 
 const accessor = <A extends RecordBase> (key: keyof A) => (r: Record<A>) => {
-  if (OrderedSet.member<keyof A> (key) (r .keys)) {
+  if (elem<keyof A> (key) (r .keys)) {
     const x = r .values [key]
 
-    return isMaybe (x) && isNothing (x) ? r .defaultValues [key] : x
+    return Internals.isMaybe (x) && Internals.isNothing (x) ? r .defaultValues [key] : x
   }
 
   throw new TypeError (`Key ${show (key)} is not in Record ${show (r)}!`)
@@ -281,7 +287,7 @@ const makeAccessors =
  * Is the key a member of the record?
  */
 export const member =
-  (key: string) => (mp: Record<any>): boolean => OrderedSet.member (key) (mp .keys)
+  (key: string) => (mp: Record<any>): boolean => elem (key) (mp .keys)
 
 /**
  * `notMember :: String -> Record a -> Bool`
@@ -296,13 +302,7 @@ export const notMember = (key: string) => pipe (member (key), not)
 export const toObject = <A extends RecordBase> (r: Record<A>): A =>
   ({ ...r .defaultValues, ...r .values })
 
-/**
- * Checks if the given value is a `Record`.
- * @param x The value to test.
- */
-export const isRecord =
-  (x: any): x is Record<any> =>
-    typeof x === "object" && x !== null && Object.getPrototypeOf (x) === RecordPrototype
+export import isRecord = Internals.isRecord
 
 
 // NAMESPACED FUNCTIONS
@@ -380,13 +380,13 @@ type PartialMaybePartialKeys<A> = {
   [K in keyof A]: A[K] extends Maybe<any> ? K : never
 } [keyof A]
 
-type MaybeOrPartialMaybe<A> = A extends Maybe<any> ? A : A | Nothing
+type MaybeOrPartialMaybe<A> = A extends Maybe<any> ? A : A | Internals.Nothing
 
 /**
  * All `Maybe` properties will be optional and all others required.
  */
 export type PartialMaybeOrNothing<A> = {
-  [K in PartialMaybeRequiredKeys<A>]-?: A[K] extends Maybe<any> ? never : (A[K] | Nothing)
+  [K in PartialMaybeRequiredKeys<A>]-?: A[K] extends Maybe<any> ? never : (A[K] | Internals.Nothing)
 } & {
   [K in PartialMaybePartialKeys<A>]?: A[K] extends Maybe<any> ? A[K] : never
 }

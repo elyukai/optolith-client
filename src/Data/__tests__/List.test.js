@@ -1,10 +1,13 @@
 // @ts-check
+const { Internals } = require('../Internals');
 const { List } = require('../List')
-const { Just, Nothing } = require('../Maybe')
 const { Pair } = require('../Pair')
 const { Int } = require('../Int')
 const { OrderedMap } = require('../OrderedMap')
 const { fromDefault } = require('../Record')
+
+const Just = Internals.Just
+const Nothing = Internals.Nothing
 
 // [Symbol.iterator]
 

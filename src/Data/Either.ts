@@ -16,96 +16,17 @@ import { ifElse } from "../App/Utilities/ifElse";
 import { pipe } from "../App/Utilities/pipe";
 import { ident } from "./Function";
 import { fmap, fmapF } from "./Functor";
+import { Internals } from "./Internals";
 import { cons, consF, List } from "./List";
 import { fromJust, isJust, Just, Maybe, Nothing, Some } from "./Maybe";
 import { Pair } from "./Pair";
 
-
-// EITHER TYPE DEFINITION
+export import Left = Internals.Left
+export import Right = Internals.Right
+export import isLeft = Internals.isLeft
+export import isRight = Internals.isRight
 
 export type Either<A, B> = Left<A> | Right<B>
-
-
-// PROTOTYPES
-
-// Left
-
-interface LeftPrototype {
-  readonly isLeft: true
-  readonly isRight: false
-}
-
-const LeftPrototype =
-  Object.freeze<LeftPrototype> ({
-    isLeft: true,
-    isRight: false,
-  })
-
-// Right
-
-interface RightPrototype {
-  readonly isLeft: false
-  readonly isRight: true
-}
-
-const RightPrototype: RightPrototype =
-  Object.freeze<RightPrototype> ({
-    isLeft: false,
-    isRight: true,
-  })
-
-
-// CONSTRUCTORS
-
-// Left
-
-export interface Left<A> extends LeftPrototype {
-  readonly value: A
-}
-
-/**
- * `Left :: a -> Either a b`
- *
- * Creates a new `Left` from the passed value.
- */
-export const Left =
-  <A>
-  (x: A): Left<A> =>
-    Object.create (
-      LeftPrototype,
-      {
-        value: {
-          value: x,
-          enumerable: true,
-        },
-      }
-    )
-
-// Right
-
-export interface Right<B> extends RightPrototype {
-  readonly value: B
-  readonly prototype: RightPrototype
-}
-
-/**
- * `Right :: b -> Either a b`
- *
- * Creates a new `Right` from the passed value.
- */
-export const Right =
-  <B>
-  (x: B): Right<B> =>
-    Object.create (
-      RightPrototype,
-      {
-        value: {
-          value: x,
-          enumerable: true,
-        },
-      }
-    )
-
 
 // @module Data.Either.Extra
 //
@@ -247,27 +168,6 @@ export const maybeToEither_ =
   <B>
   (x: Maybe<B>): Either<A, B> =>
     isJust (x) ? Right (fromJust (x)) : Left (left ())
-
-
-// EITHER FUNCTIONS (PART 1)
-
-/**
- * `isLeft :: Either a b -> Bool`
- *
- * Return `True` if the given value is a `Left`-value, `False` otherwise.
- */
-export const isLeft =
-  <A, B> (x: Either<A, B>): x is Left<A> =>
-    Object.getPrototypeOf (x) === LeftPrototype
-
-/**
-* `isRight :: Either a b -> Bool`
-*
-* Return `True` if the given value is a `Right`-value, `False` otherwise.
-*/
-export const isRight =
-  <A, B> (x: Either<A, B>): x is Right<B> =>
-    Object.getPrototypeOf (x) === RightPrototype
 
 
 // BIFUNCTOR
@@ -753,16 +653,9 @@ export const partitionEithers =
       (xs)
 
 
-// CUSTOM EITHER FUNCTIONS
+// CUSTOM FUNCTIONS
 
-/**
- * `isEither :: a -> Bool`
- *
- * Return `True` if the given value is an `Either`.
- */
-export const isEither =
-  (x: any): x is Either<any, any> =>
-    typeof x === "object" && x !== null && (isLeft (x) || isRight (x))
+export import isEither = Internals.isEither
 
 
 // TYPE HELPERS

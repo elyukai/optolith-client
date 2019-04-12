@@ -11,41 +11,21 @@ import { pipe } from "../App/Utilities/pipe";
 import { not } from "./Bool";
 import { equals, notEquals } from "./Eq";
 import { ident } from "./Function";
-import { append, isList, List } from "./List";
+import { Internals } from "./Internals";
+import { append, List } from "./List";
 import { Maybe } from "./Maybe";
 import { show } from "./Show";
+
+import isList = Internals.isList
+import _OrderedSet = Internals._OrderedSet
+import setFromArray = Internals.setFromArray
 
 
 // CONSTRUCTOR
 
-interface OrderedSetPrototype<A> {
-  [Symbol.iterator] (): IterableIterator<A>
-  readonly isOrderedSet: true
-}
-
-export interface OrderedSet<A> extends OrderedSetPrototype<A> {
+export interface OrderedSet<A> extends Internals.OrderedSetPrototype<A> {
   readonly value: ReadonlySet<A>
 }
-
-const OrderedSetPrototype =
-  Object.freeze<OrderedSetPrototype<any>> ({
-    [Symbol.iterator] (this: OrderedSet<any>) {
-      return this .value [Symbol.iterator] ()
-    },
-    isOrderedSet: true,
-  })
-
-const _OrderedSet =
-  <A> (x: ReadonlySet<A>): OrderedSet<A> =>
-    Object.create (
-      OrderedSetPrototype,
-      {
-        value: {
-          value: x,
-          enumerable: true,
-        },
-      }
-    )
 
 /**
  * `fromUniqueElements :: ...a -> Set a`
@@ -55,21 +35,6 @@ const _OrderedSet =
 export const fromUniqueElements =
   <A> (...xs: A[]): OrderedSet<A> =>
     _OrderedSet (new Set (xs))
-
-/**
- * `fromArray :: Array a -> Set a`
- *
- * Creates a new `Set` instance from the passed native `Array`.
- */
-export const fromArray = <A> (xs: ReadonlyArray<A>): OrderedSet<A> => {
-  if (Array.isArray (xs)) {
-    return _OrderedSet (new Set (xs))
-  }
-
-  throw new TypeError (
-    `fromArray requires an array but instead it received ${show (xs)}`
-  )
-}
 
 /**
  * `fromSet :: NSet a -> Set a`
@@ -356,7 +321,7 @@ export const find: Find =
  *
  * The empty `Set`.
  */
-export const empty = fromArray ([])
+export const empty = _OrderedSet (new Set ())
 
 /**
  * `singleton :: a -> Set a`
@@ -553,13 +518,14 @@ export const toggle =
   <A> (x: A) => (xs: OrderedSet<A>): OrderedSet<A> =>
     member (x) (xs) ? sdelete (x) (xs) : insert (x) (xs)
 
+export import isOrderedSet = Internals.isOrderedSet
+
 /**
- * Checks if the given value is a `OrderedSet`.
- * @param x The value to test.
+ * `fromArray :: Array a -> Set a`
+ *
+ * Creates a new `Set` instance from the passed native `Array`.
  */
-export const isOrderedSet =
-  (x: any): x is OrderedSet<any> =>
-    typeof x === "object" && x !== null && Object.getPrototypeOf (x) === OrderedSetPrototype
+export const fromArray = setFromArray (show)
 
 
 // NAMESPACED FUNCTIONS

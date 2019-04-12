@@ -13,37 +13,20 @@
 import * as fs from "fs";
 import { pipe } from "../App/Utilities/pipe";
 import { fmapF } from "../Data/Functor";
+import { Internals } from "../Data/Internals";
 import { showP } from "../Data/Show";
 
 
 // CONSTRUCTOR
 
-interface IOPrototype {
-  readonly isIO: true
-}
-
-export interface IO<A> extends IOPrototype {
+export interface IO<A> extends Internals.IOPrototype {
   readonly f: () => Promise<A>
 }
 
-const IOPrototype =
-  Object.freeze<IOPrototype> ({
-    isIO: true,
-  })
+type IONamespace = typeof IONamespace
 
-export const IO = <A> (f: () => Promise<A>): IO<A> => {
-  if (typeof f === "function") {
-    return Object.create (
-      IOPrototype,
-      {
-        f: {
-          value: f,
-        },
-      }
-    )
-  }
-
-  throw new TypeError ("Cannot create an IO action from a value that is not a function.")
+interface IOConstructor extends IONamespace {
+  <A>(f: () => Promise<A>): IO<A>
 }
 
 
@@ -55,8 +38,6 @@ export const IO = <A> (f: () => Promise<A>): IO<A> => {
  * Lift a value.
  */
 export const pure = <A> (x: A) => IO (() => Promise.resolve (x))
-
-IO.pure = pure
 
 
 // MONAD
@@ -73,8 +54,6 @@ export const bind =
                 .then (pipe (f, y => y.f ()))
                 .catch (err => { throw err }))
 
-IO.bind = bind
-
 /**
  * `(=<<) :: Monad m => (a -> m b) -> m a -> m b`
  */
@@ -83,8 +62,6 @@ export const bindF =
   (f: (x: A) => IO<B>) =>
   (x: IO<A>): IO<B> =>
     bind<A> (x) (f)
-
-IO.bindF = bindF
 
 /**
  * `(>>) :: IO a -> IO b -> IO b`
@@ -99,8 +76,6 @@ export const then =
   (x: IO<any>) => <A> (y: IO<A>): IO<A> =>
     bind<any> (x) (_ => y)
 
-IO.then = then
-
 /**
  * `(<<) :: IO a -> IO b -> IO a`
  *
@@ -110,8 +85,6 @@ IO.then = then
 export const thenF =
   <A> (x: IO<A>) => (y: IO<any>): IO<A> =>
     bind<any> (y) (_ => x)
-
-IO.thenF = thenF
 
 /**
  * `liftM2 :: (a1 -> a2 -> r) -> IO a1 -> IO a2 -> IO r`
@@ -126,8 +99,6 @@ export const liftM2 =
   (x2: IO<A2>): IO<B> =>
     bind<A1> (x1) (pipe (f, fmapF (x2)))
 
-IO.liftM2 = liftM2
-
 /**
  * `liftM3 :: (a1 -> a2 -> a3 -> r) -> IO a1 -> IO a2 -> IO a3 -> IO r`
  *
@@ -141,8 +112,6 @@ export const liftM3 =
   (x2: IO<A2>) =>
   (x3: IO<A3>): IO<B> =>
     bind<A1> (x1) (a1 => liftM2 (f (a1)) (x2) (x3))
-
-IO.liftM3 = liftM3
 
 
 // OPENING AND CLOSING FILES
@@ -167,8 +136,6 @@ export const readFile =
                                             }
                                           })))
 
-IO.readFile = readFile
-
 /**
  * `writeFile :: FilePath -> String -> IO ()`
  *
@@ -188,8 +155,6 @@ export const writeFile =
                                           }
                                         })))
 
-IO.writeFile = writeFile
-
 /**
  * `deleteFile :: FilePath -> IO ()`
  *
@@ -207,8 +172,6 @@ export const deleteFile =
                                           }
                                         })))
 
-IO.writeFile = writeFile
-
 
 // TEXT OUTPUT
 
@@ -224,21 +187,10 @@ export const print =
   (x: any) =>
     IO (() => Promise.resolve (console.log (showP (x))))
 
-IO.print = print
-
 
 // CUSTOM FUNCTIONS
 
-/**
- * `isIO :: a -> Bool`
- *
- * The `isIO` function returns `True` if its argument is an `IO`.
- */
-export const isIO =
-  (x: any): x is IO<any> =>
-    typeof x === "object" && x !== null && Object.getPrototypeOf (x) === IOPrototype
-
-IO.isIO = isIO
+export import isIO = Internals.isIO
 
 /**
  * `fromIO :: IO a -> Promise a`
@@ -248,4 +200,26 @@ IO.isIO = isIO
 export const fromIO =
   <A> (x: IO<A>): Promise<A> => x .f ()
 
-IO.fromIO = fromIO
+const IONamespace = {
+  pure,
+  bind,
+  bindF,
+  then,
+  thenF,
+  liftM2,
+  liftM3,
+  readFile,
+  writeFile,
+  deleteFile,
+  print,
+  isIO,
+  fromIO,
+}
+
+export const IO: IOConstructor =
+  // tslint:disable-next-line: prefer-object-spread
+  Object.assign (
+    {},
+    Internals.IO,
+    IONamespace
+  )

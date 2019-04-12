@@ -12,76 +12,87 @@ import { escapeRegExp } from "../App/Utilities/RegexUtils";
 import { not } from "./Bool";
 import { equals } from "./Eq";
 import { ident } from "./Function";
-import { fmap } from "./Functor";
-import { fromJust, imapMaybe, isJust, Just, mapMaybe, Maybe, maybe, Nothing } from "./Maybe";
+import { fmap, fmapF } from "./Functor";
+import { Internals } from "./Internals";
 import { isLTorEQ, Ordering } from "./Ord";
-import { fromMap, lookupF, OrderedMap } from "./OrderedMap";
 import { first, fst, Pair, second, snd } from "./Pair";
 import { fromDefault, RecordBase } from "./Record";
 import { show } from "./Show";
 
+export import NonEmptyList = Internals.NonEmptyList
+export import Cons = Internals.Cons
+import Nil = Internals.Nil
+import isNil = Internals.isNil
+import Maybe = Internals.Maybe
+import Just = Internals.Just
+import Nothing = Internals.Nothing
+import isJust = Internals.isJust
+import OrderedMap = Internals.OrderedMap
+import _OrderedMap = Internals._OrderedMap
+import Some = Internals.Some
+import Nullable = Internals.Nullable
 
-// LIST TYPE DEFINITIONS
+const fromJust =
+  <A extends Some> (x: Just<A>): A => {
+    if (isJust (x)) {
+      return x.value
+    }
+
+    throw new TypeError (`Cannot extract a value out of type Nothing.`)
+  }
+
+const imapMaybe =
+  <A extends Some, B extends Some>
+  (f: (index: number) => (x: A) => Maybe<B>) =>
+    ifoldr<A, List<B>>
+      (index => x => acc =>
+        pipe (
+          f (index),
+          maybe<List<B>> (acc)
+                         (cons (acc)))
+                         (x))
+      (List.empty)
+
+const mapMaybe =
+  <A extends Some, B extends Some>
+  (f: (x: A) => Maybe<B>) =>
+    List.foldr<A, List<B>> (pipe (
+                             f,
+                             maybe<(xs: List<B>) => List<B>> (ident)
+                                                             (consF)
+                           ))
+                           (List.empty)
+
+const maybe =
+  <B extends Some> (def: B) =>
+  <A extends Some> (f: (x: A) => B) =>
+  (x: Maybe<A>) =>
+    isJust (x) ? f (x .value) : def
+
+const fromMap =
+  <K, A> (xs: ReadonlyMap<K, A>): OrderedMap<K, A> => {
+    if (xs instanceof Map) {
+      return _OrderedMap (xs)
+    }
+
+    throw new TypeError (
+      `fromArray requires a native Map but instead it received ${show (xs)}`
+    )
+  }
+
+const Maybe =
+  <A extends Some> (x: A | Nullable): Maybe<A> =>
+    x !== null && x !== undefined ? Just (x) : Nothing
+
+const lookupF =
+  <K, A>
+  (m: OrderedMap<K, A>) =>
+  (key: K): Maybe<A> =>
+    Maybe (m .value .get (key))
+
+// CONSTRUCTOR
 
 export type List<A> = Nil | Cons<A>
-
-export type NonEmptyList<A> = Cons<A>
-
-
-// PROTOTYPE
-
-interface ListPrototype<A> {
-  readonly isList: true
-  [Symbol.iterator] (): IterableIterator<A>
-}
-
-const ListPrototype =
-  Object.freeze<ListPrototype<any>> ({
-    isList: true,
-    *[Symbol.iterator] () {
-      // tslint:disable-next-line: no-this-assignment
-      let current = this as List<any>
-
-      while (!isNil (current)) {
-        yield current .x
-        current = current .xs
-      }
-    },
-  })
-
-
-// CONSTRUCTORS
-
-// Nil
-
-export interface Nil extends ListPrototype<never> { }
-
-export const Nil: Nil = Object.create (ListPrototype)
-
-export const isNil = (xs: List<any>): xs is Nil => xs === Nil
-
-// Cons
-
-export interface Cons<A> extends ListPrototype<A> {
-  readonly x: A
-  readonly xs: List<A>
-}
-
-export const Cons =
-  <A> (x: A, xs: List<A>): Cons<A> =>
-    Object.create (
-      ListPrototype,
-      {
-        x: {
-          value: x,
-          enumerable: true,
-        },
-        xs: {
-          value: xs,
-          enumerable: true,
-        },
-      }
-    )
 
 /**
  * `List :: (...a) -> [a]`
@@ -859,9 +870,9 @@ export const isInfixOf =
  * `lookup key assocs` looks up a key in an association list.
  */
 export const lookup = <K, V> (key: K) => (assocs: List<Pair<K, V>>): Maybe<V> =>
-  fmap<Pair<K, V>, V> (snd)
-                            (find<Pair<K, V>> (pipe (fst, equals (key)))
-                                              (assocs))
+  fmapF (find<Pair<K, V>> (pipe (fst, equals (key)))
+                          (assocs))
+        (snd)
 
 
 // SEARCHING WITH A PREDICATE
@@ -1816,14 +1827,6 @@ export const toArray = <A> (xs: List<A>): A[] =>
   foldl<A, A[]> (arr => x => [...arr, x]) ([]) (xs)
 
 /**
- * Checks if the given value is a `List`.
- * @param x The value to test.
- */
-export const isList =
-  <A, A1> (x: A | List<A1>): x is List<A1> =>
-    typeof x === "object" && x !== null && Object.getPrototypeOf (x) === ListPrototype
-
-/**
  * Returns the sum of all elements of the list that match the provided
  * predicate.
  */
@@ -1945,6 +1948,8 @@ export const mapByIdKeyMap =
     mapMaybe (pipe (RecordBaseWithId.AL.id, lookupF (m)))
 
 List.mapByIdKeyMap = mapByIdKeyMap
+
+export import isList = Internals.isList
 
 
 // NAMESPACED FUNCTIONS

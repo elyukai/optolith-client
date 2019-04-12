@@ -1,7 +1,10 @@
 // @ts-check
+const { Internals } = require('../Internals');
 const { cnst, ident, thrush, join, on, flip, blackbird, blackbirdF } = require ('../Function')
-const { fromJust, Just } = require ('../Maybe')
+const { fromJust } = require ('../Maybe')
 const { add, multiply } = require ('../../App/Utilities/mathUtils')
+
+const Just = Internals.Just
 
 test ('ident', () => {
   expect (ident (5)) .toEqual (5)

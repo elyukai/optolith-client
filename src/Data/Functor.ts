@@ -8,17 +8,22 @@
  */
 
 import { pipe } from "../App/Utilities/pipe";
-import { Identity, isIdentity, runIdentity } from "../Control/Monad/Identity";
-import { IO, isIO } from "../System/IO";
-import { Either, first, isEither, isLeft, Right } from "./Either";
+import { Identity, runIdentity } from "../Control/Monad/Identity";
 import { cnst } from "./Function";
-import { Const, isConst } from "./Functor/Const";
-import { Cons, isList, isNil, List, Nil } from "./List";
+import { Const } from "./Functor/Const";
+import { Internals } from "./Internals";
 import { isMarket, Market } from "./Market";
-import { isMaybe, isNothing, Just, Maybe } from "./Maybe";
-import { isOrderedMap, OrderedMap } from "./OrderedMap";
-import { isPair, Pair } from "./Pair";
-import { showP } from "./Show";
+import { Pair } from "./Pair";
+import { show, showP } from "./Show";
+
+import Just = Internals.Just
+import Maybe = Internals.Maybe
+import Either = Internals.Either
+import Right = Internals.Right
+import List = Internals.List
+import IO = Internals.IO
+import OrderedMap = Internals.OrderedMap
+import mapFromArray = Internals.mapFromArray
 
 export type Functor<A> = Const<A, any>
                        | Either<any, A>
@@ -53,33 +58,31 @@ export const fmap =
   <A, B>
   (f: (x: A) => B): FunctorMap<A, B> =>
   (x: Functor<any>): any => {
-    if (isList (x)) {
-      if (isNil (x)) {
-        return Nil
+    if (Internals.isList (x)) {
+      if (Internals.isNil (x)) {
+        return Internals.Nil
       }
 
-      const nextElement = fmap (f) ((x as Cons<A>) .xs)
-      const nextValue = f ((x as Cons<A>) .x)
+      const nextElement = fmap (f) ((x as Internals.Cons<A>) .xs)
+      const nextValue = f ((x as Internals.Cons<A>) .x)
 
       if (nextValue === x .x && nextElement === x .xs) {
         return x
       }
 
-      return Cons (nextValue, nextElement)
+      return Internals.Cons (nextValue, nextElement)
     }
 
-    if (isOrderedMap (x)) {
-      return OrderedMap.fromArray (
-        [...x .value] .map (([k, a]) => [k, f (a)] as [any, B])
-      )
+    if (Internals.isOrderedMap (x)) {
+      return mapFromArray (show) ([...x .value] .map (([k, a]) => [k, f (a)] as [any, B]))
     }
 
-    if (isConst (x)) {
+    if (Internals.isConst (x)) {
       return x
     }
 
-    if (isEither (x)) {
-      if (isLeft (x)) {
+    if (Internals.isEither (x)) {
+      if (Internals.isLeft (x)) {
         return x
       }
 
@@ -92,7 +95,7 @@ export const fmap =
       return Right (nextValue)
     }
 
-    if (isIdentity (x)) {
+    if (Internals.isIdentity (x)) {
       const nextValue = f (runIdentity (x))
 
       if (nextValue === runIdentity (x)) {
@@ -102,12 +105,12 @@ export const fmap =
       return Identity (nextValue)
     }
 
-    if (isIO (x)) {
+    if (Internals.isIO (x)) {
       return IO (() => x .f () .then (f))
     }
 
-    if (isMaybe (x)) {
-      if (isNothing (x)) {
+    if (Internals.isMaybe (x)) {
+      if (Internals.isNothing (x)) {
         return x
       }
 
@@ -120,7 +123,7 @@ export const fmap =
       return Just (nextValue)
     }
 
-    if (isPair (x)) {
+    if (Internals.isPair (x)) {
       const nextValue = f (x .second)
 
       if (nextValue === x .second) {
@@ -135,7 +138,8 @@ export const fmap =
     }
 
     if (isMarket (x)) {
-      return Market (pipe (x.to, f)) (pipe (x.fro, first (f)))
+      return Market (pipe (x.to, f))
+                    (pipe (x.fro, e => Internals.isLeft (e) ? Internals.Left (f (e .value)) : e))
     }
 
     throw new TypeError (instanceErrorMsg ("fmap") (x))

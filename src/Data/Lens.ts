@@ -7,13 +7,10 @@
  */
 
 import { pipe } from "../App/Utilities/pipe";
-import { ApplicativeName } from "../Control/Applicative";
 import { Identity, runIdentity } from "../Control/Monad/Identity";
 import { fmap } from "./Functor";
 import { Const, getConst } from "./Functor/Const";
-import { List } from "./List";
 import { fst, Pair, snd } from "./Pair";
-import { Tagged } from "./Tagged";
 
 interface Getter <S, T, A, B> {
   (lift: (x: A) => Const<A, B>): (m: S) => Const<A, T>
@@ -27,9 +24,9 @@ interface Setter <S, T, A, B> {
 
 type Setter_ <S, A> = Setter<S, S, A, A>
 
-interface AReview <T, B> {
-  (x: Tagged<B, Identity<B>>): Tagged<T, Identity<T>>
-}
+// interface AReview <T, B> {
+//   (x: Tagged<B, Identity<B>>): Tagged<T, Identity<T>>
+// }
 
 /**
  * `Lens s t a b = Functor f => (a -> f b) -> s -> f t`
@@ -37,7 +34,8 @@ interface AReview <T, B> {
  * A getter and setter combined. Can be used by `Lens` functions.
  */
 export interface Lens <S, T, A, B>
-  extends Setter<S, T, A, B>, Getter<S, T, A, B>, Traversal<S, T, A, B> {
+  extends Setter<S, T, A, B>, Getter<S, T, A, B> {
+  // extends Setter<S, T, A, B>, Getter<S, T, A, B>, Traversal<S, T, A, B> {
   (lift: (x: A) => Const<A, B>): (m: S) => Const<A, T>
   (lift: (x: A) => Identity<B>): (m: S) => Identity<T>
 }
@@ -49,41 +47,41 @@ export interface Lens <S, T, A, B>
  */
 export type Lens_ <S, A> = Lens<S, S, A, A>
 
-/**
- * `Traversal s t a b = Applicative f => (a -> f b) -> s -> f t`
- *
- * A getter and setter combined. Can be used by `Traversal` functions.
- */
-export interface Traversal<S, T, A, B> extends Setter<S, T, A, B> {
-  (lift: (x: A) => Const<List<A>, B>): (m: S) => Const<List<A>, T>
-  (lift: (x: A) => Identity<B>): (m: S) => Identity<T>
-}
+// /**
+//  * `Traversal s t a b = Applicative f => (a -> f b) -> s -> f t`
+//  *
+//  * A getter and setter combined. Can be used by `Traversal` functions.
+//  */
+// export interface Traversal<S, T, A, B> extends Setter<S, T, A, B> {
+//   (lift: (x: A) => Const<List<A>, B>): (m: S) => Const<List<A>, T>
+//   (lift: (x: A) => Identity<B>): (m: S) => Identity<T>
+// }
 
-/**
- * `Traversal' s a = Traversal s s a a`
- *
- * A `Simple Traversal`.
- */
-export type Traversal_<S, A> = Traversal<S, S, A, A>
+// /**
+//  * `Traversal' s a = Traversal s s a a`
+//  *
+//  * A `Simple Traversal`.
+//  */
+// export type Traversal_<S, A> = Traversal<S, S, A, A>
 
 
-/**
- * `type Prism s t a b = forall p f. (Choice p, Applicative f) => p a (f b) -> p s (f t)`
- */
-export interface Prism<S, T, A, B>
-  extends Setter<S, T, A, B>, Traversal<S, T, A, B>, AReview<T, B> {
-  (lift: Tagged<A, Identity<B>>): Tagged<S, Identity<T>>
-  (lift: (x: A) => Identity<B>): (m: S) => Identity<T>
-}
+// /**
+//  * `type Prism s t a b = forall p f. (Choice p, Applicative f) => p a (f b) -> p s (f t)`
+//  */
+// export interface Prism<S, T, A, B>
+//   extends Setter<S, T, A, B>, Traversal<S, T, A, B>, AReview<T, B> {
+//   (lift: Tagged<A, Identity<B>>): Tagged<S, Identity<T>>
+//   (lift: (x: A) => Identity<B>): (m: S) => Identity<T>
+// }
 
-export type ExplA<P> = (t: ApplicativeName) => P
+// export type ExplA<P> = (t: ApplicativeName) => P
 
-/**
- * `Prism' s a = Prism s s a a`
- *
- * A `Simple Prism`.
- */
-export type Prism_<S, A> = Prism<S, S, A, A>
+// /**
+//  * `Prism' s a = Prism s s a a`
+//  *
+//  * A `Simple Prism`.
+//  */
+// export type Prism_<S, A> = Prism<S, S, A, A>
 
 /**
  * `lens :: (s -> a) -> (s -> a -> s) -> Lens s a`

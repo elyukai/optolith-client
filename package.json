@@ -47,14 +47,14 @@
     "@types/react-redux": "7.0.3",
     "@types/semver": "5.5.0",
     "electron": "4.0.8",
-    "electron-builder": "^20.40.2",
+    "electron-builder": "20.40.2",
     "eslint": "4.19.1",
     "eslint-plugin-tslint": "2.1.0",
     "eslint-plugin-typescript": "0.12.0",
-    "jest": "^24.7.1",
-    "jsdoc": "3.5.5",
+    "jest": "24.7.1",
+    "madge": "3.4.4",
     "node-sass": "4.11.0",
-    "ts-jest": "23.10.5",
+    "ts-jest": "24.0.2",
     "tslint": "5.14.0",
     "tslint-eslint-rules": "5.4.0",
     "typescript": "3.4.3",
@@ -75,7 +75,8 @@
     "bundle_l10ns": "node -r @std/esm src/data/buildAllLocales.mjs",
     "bundle_data": "node -r @std/esm src/data/buildData.mjs",
     "bundle_css": "node --experimental-modules bundleSass.mjs",
-    "test": "jest"
+    "test": "jest",
+    "circ": "madge -c ./src"
   },
   "repository": {},
   "jest": {

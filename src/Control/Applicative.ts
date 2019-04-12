@@ -1,9 +1,10 @@
 import { Either, isEither, Right } from "../Data/Either";
+import { Internals } from "../Data/Internals";
 import { isList, List, NonEmptyList } from "../Data/List";
 import { isMaybe, Just, Maybe } from "../Data/Maybe";
 import { showP } from "../Data/Show";
 import { isTagged, Tagged } from "../Data/Tagged";
-import { Identity, isIdentity } from "./Monad/Identity";
+import { Identity } from "./Monad/Identity";
 
 export type Applicative<A> = Maybe<A>
                            | List<A>
@@ -70,7 +71,7 @@ export const typeFromApplicative =
       return "Either"
     }
 
-    if (isIdentity (x)) {
+    if (Internals.isIdentity (x)) {
       return "Identity"
     }
 

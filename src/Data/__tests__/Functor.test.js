@@ -1,13 +1,17 @@
 // @ts-check
+const { Internals } = require('../Internals');
 const { fmap, fmapF, mapReplace } = require ('../Functor')
 const { Const } = require ('../Functor/Const')
-const { Left, Right } = require ('../Either')
 const { Identity } = require ('../../Control/Monad/Identity')
 const { List } = require ('../List')
-const { Just, Nothing } = require ('../Maybe')
 const { fromUniquePairs } = require ('../OrderedMap')
 const { Pair } = require ('../Pair')
 const { add } = require ('../../App/Utilities/mathUtils')
+
+const Just = Internals.Just
+const Nothing = Internals.Nothing
+const Left = Internals.Left
+const Right = Internals.Right
 
 test ('fmap', () => {
   expect (fmap (add (3)) (Const (3)))

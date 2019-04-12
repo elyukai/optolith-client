@@ -1,8 +1,11 @@
 // @ts-check
+const { Internals } = require('../Internals');
 const { List } = require('../List');
 const { OrderedSet } = require('../OrderedSet');
 const { fromArray, fromUniqueElements, fromSet } = require('../OrderedSet');
-const { Just, Nothing } = require('../Maybe');
+
+const Just = Internals.Just
+const Nothing = Internals.Nothing
 
 // CONSTRUCTOR
 

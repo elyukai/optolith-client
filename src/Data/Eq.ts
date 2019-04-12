@@ -4,14 +4,26 @@
  * @author Lukas Obermann
  */
 
-import { isEither, isRight } from "./Either";
-import { fnull, isList, notNull } from "./List";
-import { isJust, isMaybe, isNothing, Maybe, Some } from "./Maybe";
-import { isOrderedMap, OrderedMap } from "./OrderedMap";
-import { isOrderedSet, member, OrderedSet } from "./OrderedSet";
-import { isPair } from "./Pair";
-import { isRecord, Record } from "./Record";
+import { Internals } from "./Internals";
 import { show } from "./Show";
+
+import Some = Internals.Some
+import Maybe = Internals.Maybe
+import Record = Internals.Record
+import OrderedMap = Internals.OrderedMap
+import OrderedSet = Internals.OrderedSet
+
+const flengthMap = (xs: OrderedMap<any, any>): number => xs .value .size
+
+const flength = (xs: OrderedSet<any>): number => xs .value .size
+
+export const elem =
+  <A> (e: A) => (xs: OrderedSet<A>): boolean =>
+    [...xs .value] .some (equals (e))
+
+export const all =
+  <A> (f: (x: A) => boolean) => (xs: OrderedSet<A>): boolean =>
+    [...xs .value] .every (f)
 
 /**
  * `(==) :: a -> a -> Bool`
@@ -25,57 +37,57 @@ export const equals =
       return false
     }
 
-    if (isMaybe (x1)) {
-      return isMaybe (x2)
+    if (Internals.isMaybe (x1)) {
+      return Internals.isMaybe (x2)
         && (
-          isNothing (x1) && isNothing (x2 as unknown as Maybe<any>)
-          || isJust (x1) && isJust (x2) && equals (x1 .value) (x2 .value)
+          Internals.isNothing (x1) && Internals.isNothing (x2 as unknown as Maybe<any>)
+          || Internals.isJust (x1) && Internals.isJust (x2) && equals (x1 .value) (x2 .value)
         )
     }
 
-    if (isEither (x1)) {
-      return isEither (x2)
-        && isRight (x1) === isRight (x2)
+    if (Internals.isEither (x1)) {
+      return Internals.isEither (x2)
+        && Internals.isRight (x1) === Internals.isRight (x2)
         && equals (x1 .value) (x2 .value)
     }
 
-    if (isList (x1)) {
+    if (Internals.isList (x1)) {
       const equalsCons =
         (xs1: any, xs2: any): boolean =>
-          fnull (xs1)
-          && fnull (xs2)
-          || notNull (xs1)
-          && notNull (xs2)
+          Internals.isNil (xs1)
+          && Internals.isNil (xs2)
+          || !Internals.isNil (xs1)
+          && !Internals.isNil (xs2)
           && equals (xs1 .x) (xs2 .x)
           && equalsCons (xs1 .xs, xs2 .xs)
 
-      return isList (x2) && equalsCons (x1, x2)
+      return Internals.isList (x2) && equalsCons (x1, x2)
     }
 
-    if (isPair (x1)) {
-      return isPair (x2)
+    if (Internals.isPair (x1)) {
+      return Internals.isPair (x2)
         && equals (x1 .first) (x2 .first)
         && equals (x1 .second) (x2 .second)
     }
 
-    if (isOrderedSet (x1)) {
-      if (isOrderedSet (x2)) {
+    if (Internals.isOrderedSet (x1)) {
+      if (Internals.isOrderedSet (x2)) {
         const firstValues = [...x1]
         const secondValues = [...x2]
 
-        return OrderedSet.size (x1) === OrderedSet.size (x2)
+        return flength (x1) === flength (x2)
           && firstValues .every ((e, i) => equals (e) (secondValues [i]))
       }
 
       return false
     }
 
-    if (isOrderedMap (x1)) {
-      if (isOrderedMap (x2)) {
+    if (Internals.isOrderedMap (x1)) {
+      if (Internals.isOrderedMap (x2)) {
         const firstValues = [...x1]
         const secondValues = [...x2]
 
-        return OrderedMap.size (x1) === OrderedMap.size (x2)
+        return flengthMap (x1) === flengthMap (x2)
           && firstValues .every (
             ([k, v], i) => {
               const second = secondValues [i]
@@ -88,11 +100,11 @@ export const equals =
       return false
     }
 
-    if (isRecord (x1)) {
-      if (isRecord (x2)) {
-        return OrderedSet.size (x1 .keys) === OrderedSet.size (x2 .keys)
-          && OrderedSet.all
-            (key => OrderedSet.member (key) (x2 .keys)
+    if (Internals.isRecord (x1)) {
+      if (Internals.isRecord (x2)) {
+        return flength (x1 .keys) === flength (x2 .keys)
+          && all
+            (key => elem (key) (x2 .keys)
               && equals (getRecordField<typeof x1["defaultValues"]>
                           (key as string)
                           (x1))
@@ -152,7 +164,7 @@ export const notEquals =
     !equals (m1) (m2)
 
 const getRecordField = <A> (key: keyof A) => (r: Record<A>) => {
-  if (member (key as string) (r .keys)) {
+  if (elem (key as string) (r .keys)) {
     const specifiedValue = r .values [key]
 
     // tslint:disable-next-line: strict-type-predicates

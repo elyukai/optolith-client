@@ -1,10 +1,14 @@
 // @ts-check
+const { Internals } = require('../Internals');
 const { List } = require('../List')
 const { Pair } = require('../Pair')
 const { Either } = require('../Either')
-const { Just, Nothing } = require('../Maybe')
 const { add } = require('../../App/Utilities/mathUtils')
-const { Left, Right } = require('../Either')
+
+const Just = Internals.Just
+const Nothing = Internals.Nothing
+const Left = Internals.Left
+const Right = Internals.Right
 
 // CONSTRUCTORS
 

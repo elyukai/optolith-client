@@ -12,39 +12,11 @@
  * @author Lukas Obermann
  */
 
-// PROTOTYPE
-
-interface IdentityPrototype {
-  readonly isIdentity: true
-}
-
-const IdentityPrototype =
-  Object.freeze<IdentityPrototype> ({
-    isIdentity: true,
-  })
-
+import { Internals } from "../../Data/Internals";
 
 // CONSTRUCTOR
 
-export interface Identity<A> extends IdentityPrototype {
-  readonly value: A
-}
-
-/**
- * `Identity :: a -> Identity a`
- */
-export const Identity =
-  <A>
-  (x: A): Identity<A> =>
-    Object.create (
-      IdentityPrototype,
-      {
-        value: {
-          value: x,
-          enumerable: true,
-        },
-      }
-    )
+export import Identity = Internals.Identity
 
 /**
  * `runIdentity :: Identity a -> a`
@@ -54,11 +26,4 @@ export const runIdentity = <A> (x: Identity<A>): A => x .value
 
 // CUSTOM IDENTITY FUNCTIONS
 
-/**
- * `isIdentity :: a -> Bool`
- *
- * The `isIdentity` function returns `True` if its argument is an `Identity`.
- */
-export const isIdentity =
-  (x: any): x is Identity<any> =>
-    typeof x === "object" && x !== null && Object.getPrototypeOf (x) === IdentityPrototype
+export import isIdentity = Internals.isIdentity

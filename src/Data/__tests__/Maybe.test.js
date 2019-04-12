@@ -1,9 +1,13 @@
 // @ts-check
 const React = require('react');
+const { Internals } = require('../Internals');
 const { List } = require('../List');
 const { fmap } = require('../Functor');
 const { add } = require('../../App/Utilities/mathUtils');
-const { Just, Maybe, Nothing } = require('../Maybe');
+const { Maybe } = require('../Maybe');
+
+const Just = Internals.Just
+const Nothing = Internals.Nothing
 
 // CONSTRUCTORS
 

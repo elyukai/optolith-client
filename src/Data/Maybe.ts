@@ -19,75 +19,18 @@ import * as Math from "../App/Utilities/mathUtils";
 import { pipe } from "../App/Utilities/pipe";
 import { cnst, ident } from "./Function";
 import { fmap, fmapF } from "./Functor";
+import { Internals } from "./Internals";
 import { cons, consF, head, ifoldr, List } from "./List";
 
-
-// MAYBE TYPE DEFINITION
-
-export type Maybe<A extends Some> = Just<A> | Nothing
+export import Just = Internals.Just
+export import Nothing = Internals.Nothing
+export import isJust = Internals.isJust
+export import isNothing = Internals.isNothing
 
 
 // CONSTRUCTORS
 
-// Just
-
-interface JustPrototype {
-  readonly isJust: true
-  readonly isNothing: false
-}
-
-export interface Just<A extends Some> extends JustPrototype {
-  readonly value: A
-}
-
-const JustPrototype =
-  Object.freeze<JustPrototype> ({
-    isJust: true,
-    isNothing: false,
-  })
-
-/**
- * `Just :: a -> Maybe a`
- *
- * Creates a new `Just` from the passed value.
- */
-export const Just = <A extends Some> (x: A): Just<A> => {
-  if (x !== null && x !== undefined) {
-    return Object.create (
-      JustPrototype,
-      {
-        value: {
-          value: x,
-          enumerable: true,
-        },
-      }
-    )
-  }
-
-  throw new TypeError ("Cannot create a Just from a nullable value.")
-}
-
-// Nothing
-
-interface NothingPrototype extends Object {
-  readonly isJust: false
-  readonly isNothing: true
-}
-
-export interface Nothing extends NothingPrototype { }
-
-const NothingPrototype: NothingPrototype =
-  Object.freeze<NothingPrototype> ({
-    isJust: false,
-    isNothing: true,
-  })
-
-/**
- * `Nothing :: Maybe a`
- *
- * The empty `Maybe`.
- */
-export const Nothing: Nothing = Object.create (NothingPrototype)
+export type Maybe<A extends Some> = Just<A> | Nothing
 
 /**
  * `Maybe :: a -> Maybe a`
@@ -100,23 +43,6 @@ export const Maybe =
 
 
 // MAYBE FUNCTIONS (PART 1)
-
-/**
- * `isJust :: Maybe a -> Bool`
- *
- * The `isJust` function returns `true` if its argument is of the form
- * `Just _`.
- */
-export const isJust =
-  <A extends Some> (x: Maybe<A>): x is Just<A> =>
-    Object.getPrototypeOf (x) === JustPrototype
-
-/**
- * `isNothing :: Maybe a -> Bool`
- *
- * The `isNothing` function returns `true` if its argument is `Nothing`.
- */
-export const isNothing = (x: Maybe<Some>): x is Nothing => x === Nothing
 
 /**
  * `fromJust :: Maybe a -> a`
@@ -791,16 +717,7 @@ export const mapMaybe =
 
 // CUSTOM MAYBE FUNCTIONS
 
-/**
- * `isMaybe :: a -> Bool`
- *
- * The `isMaybe` function returns `True` if its argument is a `Maybe`.
- */
-export const isMaybe =
-  <A, A0>(x: A | Maybe<A0>): x is Maybe<A0> =>
-    typeof x === "object"
-    && x !== null
-    && (x === Nothing || Object.getPrototypeOf (x) === JustPrototype)
+export import isMaybe = Internals.isMaybe
 
 /**
  * `normalize :: (a | Maybe a) -> Maybe a`

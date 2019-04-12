@@ -7,14 +7,21 @@
  */
 
 import { pipe } from "../App/Utilities/pipe";
-import { isIO } from "../System/IO";
-import { isEither, isRight } from "./Either";
-import { fnull, intercalate, isList, map, toArray, trimStart } from "./List";
-import { isJust, isMaybe } from "./Maybe";
-import { isOrderedMap } from "./OrderedMap";
-import { isOrderedSet } from "./OrderedSet";
-import { isPair } from "./Pair";
-import { isRecord } from "./Record";
+import { Internals } from "./Internals";
+
+const intercalate =
+  (separator: string) => (xs: Internals.List<number | string>): string =>
+  Internals.isNil (xs)
+    ? ""
+    : Internals.isNil (xs .xs)
+    ? xs .x .toString ()
+    : xs .x .toString () + separator + intercalate (separator) (xs .xs)
+
+const map =
+  <A, B> (f: (x: A) => B) => (xs: Internals.List<A>): Internals.List<B> =>
+  Internals.isNil (xs) ? Internals.Nil : Internals.Cons (f (xs .x), map (f) (xs .xs))
+
+const trimStart = (str: string) => str .replace (/^\s+/, "")
 
 /**
  * `show :: a -> String`
@@ -23,41 +30,41 @@ import { isRecord } from "./Record";
  */
 // tslint:disable-next-line: cyclomatic-complexity
 export const show = (x: any): string => {
-  if (isMaybe (x)) {
-    if (isJust (x)) {
+  if (Internals.isMaybe (x)) {
+    if (Internals.isJust (x)) {
       return `Just (${show (x.value)})`
     }
 
     return `Nothing`
   }
 
-  if (isEither (x)) {
-    if (isRight (x)) {
+  if (Internals.isEither (x)) {
+    if (Internals.isRight (x)) {
       return `Right (${show (x .value)})`
     }
 
     return `Left (${show (x .value)})`
   }
 
-  if (isList (x)) {
+  if (Internals.isList (x)) {
     return `[${intercalate (", ") (map (show) (x))}]`
   }
 
-  if (isPair (x)) {
+  if (Internals.isPair (x)) {
     return `(${show (x .first)}, ${show (x .second)})`
   }
 
-  if (isOrderedSet (x)) {
+  if (Internals.isOrderedSet (x)) {
     return `Set (${[...x] .map (show) .join (", ")})`
   }
 
-  if (isOrderedMap (x)) {
+  if (Internals.isOrderedMap (x)) {
     return `Map (${
       [...x] .map (([k, v]) => `${show (k)} = ${show (v)}`) .join (", ")
     })`
   }
 
-  if (isRecord (x)) {
+  if (Internals.isRecord (x)) {
     return `{ ${
       [...x .keys .value]
         .sort ()
@@ -73,7 +80,7 @@ export const show = (x: any): string => {
     } }`
   }
 
-  if (isIO (x)) {
+  if (Internals.isIO (x)) {
     return `IO`
   }
 
@@ -117,8 +124,8 @@ export const show = (x: any): string => {
 const showPDepth = (depth: number) => (x: any): string => {
   const dws = " " .repeat (depth * 2) // depth whitespace
 
-  if (isMaybe (x)) {
-    if (isJust (x)) {
+  if (Internals.isMaybe (x)) {
+    if (Internals.isJust (x)) {
       const str = trimNextDepth (depth) (x.value)
 
       if (/\n/ .test (str)) {
@@ -131,10 +138,10 @@ const showPDepth = (depth: number) => (x: any): string => {
     return `${dws}Nothing`
   }
 
-  if (isEither (x)) {
+  if (Internals.isEither (x)) {
     const str = trimNextDepth (depth) (x.value)
 
-    if (isRight (x)) {
+    if (Internals.isRight (x)) {
       if (/\n/ .test (str)) {
         return `${dws}Right (\n${dws}  ${str}${dws}\n)`
       }
@@ -149,31 +156,31 @@ const showPDepth = (depth: number) => (x: any): string => {
     return `${dws}Left ${wrapParens (str)}`
   }
 
-  if (isList (x)) {
-    if (fnull (x)) {
+  if (Internals.isList (x)) {
+    if (Internals.isNil (x)) {
       return `${dws}[]`
     }
 
-    return `${dws}[ ${toArray (x) .map (trimNextDepth (depth)) .join (`\n${dws}, `)} ]`
+    return `${dws}[ ${[...x] .map (trimNextDepth (depth)) .join (`\n${dws}, `)} ]`
   }
 
-  if (isPair (x)) {
+  if (Internals.isPair (x)) {
     return `${dws}( `
       + `${trimNextDepth (depth) (x .first)}`
       + `\n${dws}, ${trimNextDepth (depth) (x .second)}\n${dws})`
   }
 
-  if (isOrderedSet (x)) {
+  if (Internals.isOrderedSet (x)) {
     return `${dws}Set (${[...x] .map (trimNextDepth (depth + 2)) .join (`\n${dws}    , `)})`
   }
 
-  if (isOrderedMap (x)) {
+  if (Internals.isOrderedMap (x)) {
     return `${dws}Map (${
       [...x] .map (([k, v]) => `${show (k)} = ${show (v)}`) .join (`\n${dws}    , `)
     })`
   }
 
-  if (isRecord (x)) {
+  if (Internals.isRecord (x)) {
     return `${dws}{ ${
       [...x .keys .value]
         .sort ()
@@ -190,7 +197,7 @@ const showPDepth = (depth: number) => (x: any): string => {
     } }`
   }
 
-  if (isIO (x)) {
+  if (Internals.isIO (x)) {
     return `${dws}IO`
   }
 
