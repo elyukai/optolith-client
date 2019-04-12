@@ -15,7 +15,8 @@ export type EnabledSourceBooks = Pair<OrderedMap<string, Record<Book>>, Record<R
 export const getRuleBooksEnabled = createMaybeSelector (
   getWikiBooks,
   getRules,
-  uncurryN (bs => fmap ((r): EnabledSourceBooks => Pair (bs, r))))
+  uncurryN (bs => fmap ((r): EnabledSourceBooks => Pair (bs, r)))
+)
 
 export const isEnableLanguageSpecializationsDeactivatable = createMaybeSelector (
   mapGetToMaybeSlice (getSpecialAbilities) (prefixSA (699)),

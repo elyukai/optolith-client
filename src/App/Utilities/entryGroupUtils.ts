@@ -3,7 +3,7 @@ import { Record } from "../../Data/Record";
 import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
 import { HeroModel, HeroModelRecord } from "../Models/Hero/HeroModel";
 import { WikiModel, WikiModelRecord } from "../Models/Wiki/WikiModel";
-import { isActive } from "./A/Activatable/isActive";
+import { isActive } from "./Activatable/isActive";
 import { getAllEntriesByGroup } from "./heroStateUtils";
 
 const { specialAbilities: wikiSpecialAbilities } = WikiModel.AL

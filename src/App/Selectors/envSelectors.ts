@@ -1,6 +1,6 @@
 import { remote } from "electron";
-import fs from "fs";
-import path from "path";
+import * as fs from "fs";
+import * as path from "path";
 
 /**
  * Path to directory where all of the cached and saved files are located.

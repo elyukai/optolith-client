@@ -37,7 +37,7 @@ interface IOConstructor extends IONamespace {
  *
  * Lift a value.
  */
-export const pure = <A> (x: A) => IO (() => Promise.resolve (x))
+export const pure = <A> (x: A) => Internals.IO (() => Promise.resolve (x))
 
 
 // MONAD
@@ -50,9 +50,9 @@ export const bind =
   (x: IO<A>) =>
   <B>
   (f: (x: A) => IO<B>): IO<B> =>
-    IO (() => x .f ()
-                .then (pipe (f, y => y.f ()))
-                .catch (err => { throw err }))
+    Internals.IO (() => x .f ()
+                          .then (pipe (f, y => y.f ()))
+                          .catch (err => { throw err }))
 
 /**
  * `(=<<) :: Monad m => (a -> m b) -> m a -> m b`
@@ -126,15 +126,15 @@ type FilePath = string
  */
 export const readFile =
   (path: FilePath) =>
-    IO (async () => new Promise<string> ((res, rej) =>
-                                          fs.readFile (path, "utf8", (err, data) => {
-                                            if (err !== null) {
-                                              rej (err)
-                                            }
-                                            else {
-                                              res (data)
-                                            }
-                                          })))
+  Internals.IO (async () => new Promise<string> ((res, rej) =>
+                                                  fs.readFile (path, "utf8", (err, data) => {
+                                                    if (err !== null) {
+                                                      rej (err)
+                                                    }
+                                                    else {
+                                                      res (data)
+                                                    }
+                                                  })))
 
 /**
  * `writeFile :: FilePath -> String -> IO ()`
@@ -145,15 +145,15 @@ export const readFile =
 export const writeFile =
   (path: FilePath) =>
   (data: string | Buffer) =>
-    IO (async () => new Promise<void> ((res, rej) =>
-                                        fs.writeFile (path, data, "utf8", err => {
-                                          if (err !== null) {
-                                            rej (err)
-                                          }
-                                          else {
-                                            res ()
-                                          }
-                                        })))
+  Internals.IO (async () => new Promise<void> ((res, rej) =>
+                                                fs.writeFile (path, data, "utf8", err => {
+                                                  if (err !== null) {
+                                                    rej (err)
+                                                  }
+                                                  else {
+                                                    res ()
+                                                  }
+                                                })))
 
 /**
  * `deleteFile :: FilePath -> IO ()`
@@ -162,15 +162,15 @@ export const writeFile =
  */
 export const deleteFile =
   (path: FilePath) =>
-    IO (async () => new Promise<void> ((res, rej) =>
-                                        fs.unlink (path, err => {
-                                          if (err !== null) {
-                                            rej (err)
-                                          }
-                                          else {
-                                            res ()
-                                          }
-                                        })))
+  Internals.IO (async () => new Promise<void> ((res, rej) =>
+                                                fs.unlink (path, err => {
+                                                  if (err !== null) {
+                                                    rej (err)
+                                                  }
+                                                  else {
+                                                    res ()
+                                                  }
+                                                })))
 
 
 // TEXT OUTPUT
@@ -185,7 +185,7 @@ export const deleteFile =
  */
 export const print =
   (x: any) =>
-    IO (() => Promise.resolve (console.log (showP (x))))
+    Internals.IO (() => Promise.resolve (console.log (showP (x))))
 
 
 // CUSTOM FUNCTIONS

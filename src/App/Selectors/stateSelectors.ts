@@ -1,7 +1,6 @@
 import { fmap } from "../../Data/Functor";
 import { bind, bindF, listToMaybe } from "../../Data/Maybe";
 import { lookupF } from "../../Data/OrderedMap";
-import { Record } from "../../Data/Record";
 import { Belongings } from "../Models/Hero/Belongings";
 import { Energies } from "../Models/Hero/Energies";
 import { HeroModel } from "../Models/Hero/HeroModel";
@@ -9,7 +8,8 @@ import { PersonalData } from "../Models/Hero/PersonalData";
 import { Rules } from "../Models/Hero/Rules";
 import { L10nRecord } from "../Models/Wiki/L10n";
 import { WikiModel } from "../Models/Wiki/WikiModel";
-import { AppState } from "../Reducers/appReducer";
+import { AppStateRecord } from "../Reducers/appReducer";
+import { appSlicesReducer } from "../Reducers/appSlicesReducer";
 import { FiltersState } from "../Reducers/filtersReducer";
 import { HeroesState } from "../Reducers/herolistReducer";
 import { heroReducer } from "../Reducers/heroReducer";
@@ -20,7 +20,7 @@ import { UIWikiState } from "../Reducers/wikiUIReducer";
 import { createMaybeSelector } from "../Utilities/createMaybeSelector";
 import { pipe } from "../Utilities/pipe";
 
-const App = AppState.A_
+const App = appSlicesReducer.A_
 
 const UI = uiReducer.A_
 
@@ -32,7 +32,7 @@ export const getLocaleId = pipe (App.l10n, LocaleState.AL.id)
 export const getLocaleType = pipe (App.l10n, LocaleState.AL.type)
 
 export const getLocaleAsProp =
-  (_: Record<AppState>, props: { l10n: L10nRecord }) => props.l10n
+  (_: AppStateRecord, props: { l10n: L10nRecord }) => props.l10n
 
 export const getCurrentHeroId = pipe (App.herolist, HeroesState.AL.currentId)
 export const getHeroes = pipe (App.herolist, HeroesState.AL.heroes)

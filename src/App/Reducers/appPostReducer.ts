@@ -21,7 +21,8 @@ import { convertHero } from "../Utilities/Raw/compatibilityUtils";
 import { convertFromRawHero } from "../Utilities/Raw/initHeroUtils";
 import { isBookEnabled } from "../Utilities/RulesUtils";
 import { UndoState } from "../Utilities/undo";
-import { AppState, AppStateRecord } from "./appReducer";
+import { AppStateRecord } from "./appReducer";
+import { appSlicesReducer } from "./appSlicesReducer";
 import { HeroesStateL } from "./herolistReducer";
 import { toHeroWithHistory } from "./heroReducer";
 import { uiReducer } from "./uiReducer";
@@ -72,7 +73,7 @@ const prepareHerolist =
         }
       )
 
-      return over (AppState.L.herolist)
+      return over (appSlicesReducer.L.herolist)
                   (pipe (
                     set (HeroesStateL.heroes) (hs.heroes),
                     set (HeroesStateL.users) (hs.users)
@@ -88,7 +89,7 @@ const prepareImportedHero =
     const { data, player } = action.payload
 
     const updatedHero = convertHero (data)
-    const heroInstance = convertFromRawHero (AppState.A.wiki (state)) (updatedHero)
+    const heroInstance = convertFromRawHero (appSlicesReducer.A.wiki (state)) (updatedHero)
 
 
     if (player) {
@@ -96,7 +97,7 @@ const prepareImportedHero =
                                                     (Just (player.id))
                                                     (heroInstance))
 
-      return over (AppState.L.herolist)
+      return over (appSlicesReducer.L.herolist)
                   (pipe (
                     over (HeroesStateL.heroes) (insert (data.id) (undoStateWithPlayer)),
                     over (HeroesStateL.users) (insert (player.id) (player))
@@ -106,7 +107,7 @@ const prepareImportedHero =
 
     const undoState = toHeroWithHistory (heroInstance)
 
-    return over (composeL (AppState.L.herolist, HeroesStateL.heroes))
+    return over (composeL (appSlicesReducer.L.herolist, HeroesStateL.heroes))
                 (insert (data.id) (undoState))
                 (state)
   }
@@ -124,12 +125,12 @@ export const appPostReducer =
         return join (state => {
           if (isNothing (getCurrentCultureId (state))
               && getCurrentTab (state) === TabId.Professions) {
-            return set (composeL (AppState.L.ui, uiReducer.L.location))
+            return set (composeL (appSlicesReducer.L.ui, uiReducer.L.location))
                        (TabId.Cultures)
           }
 
           if (isNothing (getCurrentRaceId (state)) && getCurrentTab (state) === TabId.Cultures) {
-            return set (composeL (AppState.L.ui, uiReducer.L.location))
+            return set (composeL (appSlicesReducer.L.ui, uiReducer.L.location))
                        (TabId.Races)
           }
 
@@ -138,7 +139,7 @@ export const appPostReducer =
           if (or (fmapF (rule_books_enabled) (flip (isBookEnabled) ("US25208")))
               && and (fmapF (rule_books_enabled) (notP (flip (isBookEnabled) ("US25208"))))
               && getCurrentTab (state) === TabId.ZoneArmor) {
-            return set (composeL (AppState.L.ui, uiReducer.L.location))
+            return set (composeL (appSlicesReducer.L.ui, uiReducer.L.location))
                        (TabId.Equipment)
           }
 
@@ -151,7 +152,7 @@ export const appPostReducer =
           if (elem (2) (getPhase (previousState))
               && elem (3) (getPhase (state))
               && List.elem (getCurrentTab (state)) (List (TabId.Advantages, TabId.Disadvantages))) {
-            return set (composeL (AppState.L.ui, uiReducer.L.location))
+            return set (composeL (appSlicesReducer.L.ui, uiReducer.L.location))
                        (TabId.Profile)
           }
 

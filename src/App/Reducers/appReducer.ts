@@ -1,14 +1,12 @@
 import { AnyAction } from "redux";
 import { Record } from "../../Data/Record";
-import { WikiModel, WikiModelRecord } from "../Models/Wiki/WikiModel";
-import { combineReducerRecord } from "../Utilities/combineReducerRecord";
+import { WikiModelRecord } from "../Models/Wiki/WikiModel";
 import { reduceReducersCWithInter } from "../Utilities/reduceReducers";
 import { appPostReducer } from "./appPostReducer";
-import { HeroesState, herolistReducer as herolist } from "./herolistReducer";
-import { isReadyReducer } from "./isReadyReducer";
-import { localeReducer as l10n, LocaleState } from "./localeReducer";
-import { uiReducer as ui, UIState } from "./uiReducer";
-import { wikiReducer as wiki } from "./wikiReducer";
+import { appSlicesReducer } from "./appSlicesReducer";
+import { HeroesState } from "./herolistReducer";
+import { LocaleState } from "./localeReducer";
+import { UIState } from "./uiReducer";
 
 export interface AppState {
   herolist: Record<HeroesState>
@@ -20,28 +18,12 @@ export interface AppState {
 
 export type AppStateRecord = Record<AppState>
 
-const appSlices =
-  combineReducerRecord<AppState> ({
-                                   herolist: HeroesState.default,
-                                   l10n: LocaleState.default,
-                                   ui: ui.default,
-                                   wiki: WikiModel.default,
-                                   isReady: false,
-                                 })
-                                 ({
-                                   herolist,
-                                   l10n,
-                                   ui,
-                                   wiki,
-                                   isReady: isReadyReducer,
-                                 })
-
 export const AppState = {
-  default: appSlices.default,
-  A: appSlices.A,
-  A_: appSlices.A_,
-  L: appSlices.L,
+  default: appSlicesReducer.default,
+  A: appSlicesReducer.A,
+  A_: appSlicesReducer.A_,
+  L: appSlicesReducer.L,
 }
 
 export const appReducer =
-  reduceReducersCWithInter<Record<AppState>, AnyAction> (appSlices, appPostReducer)
+  reduceReducersCWithInter<Record<AppState>, AnyAction> (appSlicesReducer, appPostReducer)

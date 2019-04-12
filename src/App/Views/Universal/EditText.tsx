@@ -1,8 +1,8 @@
-import * as classNames from 'classnames';
-import * as React from 'react';
-import { InputKeyEvent, InputTextEvent } from '../App/Models/Hero/heroTypeHelpers';
-import { IconButton } from './IconButton';
-import { TextField } from './TextField';
+import * as classNames from "classnames";
+import * as React from "react";
+import { InputKeyEvent, InputTextEvent } from "../App/Models/Hero/heroTypeHelpers";
+import { IconButton } from "./IconButton";
+import { TextField } from "./TextField";
 
 export interface EditTextProps {
   autoFocus?: boolean;
@@ -18,7 +18,7 @@ export interface EditTextState {
 
 export class EditText extends React.Component<EditTextProps, EditTextState> {
   state = {
-    text: this.props.text || '',
+    text: this.props.text || "",
   };
 
   submit = () => this.state.text && this.props.submit(this.state.text);
@@ -33,7 +33,7 @@ export class EditText extends React.Component<EditTextProps, EditTextState> {
 
   render() {
     return (
-      <div className={classNames('confirm-edit', this.props.className)}>
+      <div className={classNames("confirm-edit", this.props.className)}>
         <TextField
           value={this.state.text}
           onChange={this.handleInput}

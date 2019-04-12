@@ -351,6 +351,17 @@ export const flength =
     foldr<any, number> (() => inc) (0) (xs)
 
 /**
+ * `length :: [a] -> Int`
+ *
+ * Returns the size/length of a finite structure as an `Int`. The default
+ * implementation is optimized for structures that are similar to cons-lists,
+ * because there is no general way to do better.
+ */
+export const flengthStr =
+  (xs: string): number =>
+    xs .length
+
+/**
  * `elem :: Eq a => a -> [a] -> Bool`
  *
  * Does the element occur in the structure?
@@ -1950,6 +1961,16 @@ export const mapByIdKeyMap =
 List.mapByIdKeyMap = mapByIdKeyMap
 
 export import isList = Internals.isList
+
+/**
+ * Returns `True` if the passed value is a non-empty string, `False` if the
+ * passed value is either an empty string or `undefined`.
+ */
+export const notNullStrUndef =
+  (str: string | undefined): str is string =>
+    str !== undefined && str .length > 0
+
+List.notNullStrUndef = notNullStrUndef
 
 
 // NAMESPACED FUNCTIONS

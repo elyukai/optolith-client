@@ -1,45 +1,36 @@
-import * as classNames from 'classnames';
-import { existsSync } from 'fs';
-import * as React from 'react';
-import { isBase64Image } from '../App/Utils/RegexUtils';
-import { Maybe } from '../Utilities/dataUtils';
+import * as classNames from "classnames";
+import * as React from "react";
+import { guard, Maybe, then } from "../../../Data/Maybe";
+import { isPathValidM } from "../../Utilities/RegexUtils";
 
 export interface AvatarProps {
-  className?: string;
-  hasWrapper?: boolean;
-  img?: boolean;
-  src: Maybe<string>;
-  validPath?: boolean;
-  onClick? (): void;
+  className?: string
+  hasWrapper?: boolean
+  img?: boolean
+  src: Maybe<string>
+  validPath?: boolean
+  onClick? (): void
 }
 
 export function Avatar (props: AvatarProps) {
-  const { className: inheritedClassName, hasWrapper, img, onClick, src: maybeSrc } = props;
+  const { className: inheritedClassName, hasWrapper, img, onClick, src: msrc } = props
 
   const {
-    validPath = Maybe.elem (true)
-                           (maybeSrc
-                            .fmap (
-                              src => src.length > 0
-                                && (
-                                  isBase64Image (src)
-                                  || existsSync (src.replace (/file:[\\\/]+/, ''))
-                                )
-                            )),
-  } = props;
+    validPath = isPathValidM (msrc),
+  } = props
 
   const className = classNames (
-    !hasWrapper ? inheritedClassName : undefined,
+    hasWrapper !== true ? inheritedClassName : undefined,
     {
-      'avatar': true,
-      'no-avatar': !hasWrapper && !validPath,
+      "avatar": true,
+      "no-avatar": hasWrapper !== true && !validPath,
     }
-  );
+  )
 
-  return img ? (
+  return img === true ? (
     <img
       className={className}
-      src={Maybe.fromMaybe ('') (maybeSrc.bind (Maybe.ensure (() => validPath)))}
+      src={Maybe.fromMaybe ("") (then (guard (validPath)) (msrc))}
       onClick={onClick}
       alt=""
       />
@@ -48,10 +39,10 @@ export function Avatar (props: AvatarProps) {
       className={className}
       style={
         validPath
-          ? { backgroundImage: `url("${Maybe.fromMaybe ('') (maybeSrc)}")` }
+          ? { backgroundImage: `url("${Maybe.fromMaybe ("") (msrc)}")` }
           : undefined
       }
       onClick={onClick}
       />
-  );
+  )
 }

@@ -1,17 +1,22 @@
-import { connect } from 'react-redux';
-import { AppState } from '../App/Reducers/appReducer';
-import { getTheme } from '../App/Selectors/uisettingsSelectors';
-import { PortalWrapped, PortalWrappedDispatchProps, PortalWrappedOwnProps, PortalWrappedStateProps } from './PortalWrapped';
+import { connect } from "react-redux";
+import { AppStateRecord } from "../../Reducers/appReducer";
+import { getTheme } from "../../Selectors/uisettingsSelectors";
+import { PortalWrapped, PortalWrappedDispatchProps, PortalWrappedOwnProps, PortalWrappedStateProps } from "./PortalWrapped";
 
-const mapStateToProps = (state: AppState): PortalWrappedStateProps => ({
+const mapStateToProps = (state: AppStateRecord): PortalWrappedStateProps => ({
   theme: getTheme (state),
-});
+})
 
 export { PortalWrappedOwnProps };
 
 const connectPortal =
-  connect<PortalWrappedStateProps, PortalWrappedDispatchProps, PortalWrappedOwnProps, AppState> (
+  connect<
+    PortalWrappedStateProps,
+    PortalWrappedDispatchProps,
+    PortalWrappedOwnProps,
+    AppStateRecord
+  > (
     mapStateToProps
-  );
+  )
 
-export const Portal = connectPortal (PortalWrapped);
+export const Portal = connectPortal (PortalWrapped)

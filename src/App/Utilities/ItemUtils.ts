@@ -1,15 +1,16 @@
 import { equals } from "../../Data/Eq";
 import { fmap } from "../../Data/Functor";
+import { set } from "../../Data/Lens";
 import { all, flength, fromArray, isList, List, map } from "../../Data/List";
 import { bindF, ensure, fromJust, Just, mapMaybe, Maybe, maybe, Nothing, product } from "../../Data/Maybe";
 import { Record } from "../../Data/Record";
 import { show } from "../../Data/Show";
 import { IdPrefixes } from "../Constants/IdPrefixes";
 import { EditHitZoneArmor, EditHitZoneArmorSafe } from "../Models/Hero/EditHitZoneArmor";
-import { EditItem, EditItemSafe } from "../Models/Hero/EditItem";
+import { EditItem, EditItemL, EditItemSafe } from "../Models/Hero/EditItem";
 import { EditPrimaryAttributeDamageThreshold } from "../Models/Hero/EditPrimaryAttributeDamageThreshold";
 import { HitZoneArmor } from "../Models/Hero/HitZoneArmor";
-import { Item } from "../Models/Hero/Item";
+import { fromItemTemplate, Item } from "../Models/Hero/Item";
 import { PrimaryAttributeDamageThreshold } from "../Models/Wiki/sub/PrimaryAttributeDamageThreshold";
 import { prefixId } from "./IDUtils";
 import { ifElse } from "./ifElse";
@@ -184,3 +185,11 @@ export const editableToHitZoneArmor =
       torso: HitZoneArmor.AL.torso (x),
       torsoLoss: HitZoneArmor.AL.torsoLoss (x),
     })
+
+export const fromItemTemplateEdit =
+  (new_id: Maybe<string>) =>
+    pipe (
+      fromItemTemplate (""),
+      itemToEditable,
+      set (EditItemL.id) (new_id)
+    )
