@@ -1,15 +1,15 @@
-import * as classNames from 'classnames';
-import * as React from 'react';
+import * as classNames from "classnames";
+import * as React from "react";
 
 export interface IconProps {
-  className?: string;
-  [id: string]: any;
+  className?: string
+  [id: string]: any
 }
 
-export function Icon(props: IconProps) {
-  const { className, ...other } = props;
+export function Icon (props: IconProps) {
+  const { className, ...other } = props
 
   return (
-    <div className={classNames('icon', className)} {...other} />
-  );
+    <div className={classNames ("icon", className)} {...other} />
+  )
 }

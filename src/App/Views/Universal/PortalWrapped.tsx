@@ -1,30 +1,30 @@
-import classNames = require('classnames');
-import * as React from 'react';
-import * as Portal from 'react-portal';
+import classNames = require("classnames")
+import * as React from "react";
+import { Portal } from "react-portal";
 
 interface CallBackProps extends React.Props<any> {
-  closePortal (): void;
+  closePortal (): void
 }
 
 interface ReactPortalProps {
-  isOpened?: boolean;
-  openByClickOn?: React.ReactElement<CallBackProps>;
-  closeOnEsc?: boolean;
-  closeOnOutsideClick?: boolean;
-  onOpen? (node: HTMLDivElement): void;
-  beforeClose? (node: HTMLDivElement, resetPortalState: () => void): void;
-  onClose? (): void;
-  onUpdate? (): void;
+  isOpened?: boolean
+  openByClickOn?: React.ReactElement<CallBackProps>
+  closeOnEsc?: boolean
+  closeOnOutsideClick?: boolean
+  onOpen? (node: HTMLDivElement): void
+  beforeClose? (node: HTMLDivElement, resetPortalState: () => void): void
+  onClose? (): void
+  onUpdate? (): void
 }
 
 export interface PortalWrappedOwnProps extends ReactPortalProps {
-  children?: React.ReactNode;
-  className?: string;
-  id?: string;
+  children?: React.ReactNode
+  className?: string
+  id?: string
 }
 
 export interface PortalWrappedStateProps {
-  theme: string;
+  theme: string
 }
 
 export interface PortalWrappedDispatchProps {}
@@ -32,10 +32,10 @@ export interface PortalWrappedDispatchProps {}
 export type PortalWrappedProps =
   PortalWrappedStateProps
   & PortalWrappedDispatchProps
-  & PortalWrappedOwnProps;
+  & PortalWrappedOwnProps
 
 export function PortalWrapped (props: PortalWrappedProps) {
-  const { children, className, theme, id, ...other } = props;
+  const { children, className, theme, id, ...other } = props
 
   return (
     <Portal {...other}>
@@ -43,5 +43,5 @@ export function PortalWrapped (props: PortalWrappedProps) {
         {children}
       </div>
     </Portal>
-  );
+  )
 }

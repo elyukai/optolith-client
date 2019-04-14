@@ -1,22 +1,22 @@
-import * as classNames from 'classnames';
-import * as React from 'react';
-import { Maybe, Nothing } from '../Utilities/dataUtils';
-import { Box } from './Box';
+import * as classNames from "classnames";
+import * as React from "react";
+import { fromMaybeR, Maybe, Nothing } from "../../../Data/Maybe";
+import { Box } from "./Box";
 
 export interface LabelBoxProps {
-  children?: React.ReactNode;
-  className?: string;
-  label: string;
-  value?: Maybe<string | number>;
+  children?: React.ReactNode
+  className?: string
+  label: string
+  value?: Maybe<string | number>
 }
 
 export function LabelBox (props: LabelBoxProps) {
-  const { className, children, label, value = Nothing () } = props;
+  const { className, children, label, value = Nothing } = props
 
   return (
-    <div className={classNames ('labelbox', className)}>
-      <Box>{Maybe.isJust (value) ? Maybe.fromJust (value) : children}</Box>
+    <div className={classNames ("labelbox", className)}>
+      <Box>{fromMaybeR (children) (value)}</Box>
       <label>{label}</label>
     </div>
-  );
+  )
 }

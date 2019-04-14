@@ -830,6 +830,20 @@ export const INTERNAL_shallowEquals =
     isNothing (x) && isNothing (y)
     || isJust (x) && isJust (y) && x .value === y .value
 
+/**
+ * `fromMaybeR :: a -> Maybe a -> a`
+ *
+ * The `fromMaybeR` function takes a default value and and `Maybe` value. If
+ * the `Maybe` is `Nothing`, it returns the default values otherwise, it
+ * returns the value contained in the `Maybe`.
+ *
+ * A variant of `fromMaybe` specialized to the React library and thus allowing
+ * a React node, which can be nullable, as the default value.
+ */
+export const fromMaybeR =
+  <A> (def: A) => (x: Maybe<NonNullable<A>>): A =>
+    isJust (x) ? x .value : def
+
 
 // NAMESPACED FUNCTIONS
 

@@ -340,6 +340,15 @@ export const toList = <A> (xs: List<A>): List<A> => xs
 export const fnull = isNil
 
 /**
+ * `null :: [a] -> Bool`
+ *
+ * Test whether the structure is empty. The default implementation is optimized
+ * for structures that are similar to cons-lists, because there is no general
+ * way to do better.
+ */
+export const fnullStr = (xs: string): boolean => xs .length === 0
+
+/**
  * `length :: [a] -> Int`
  *
  * Returns the size/length of a finite structure as an `Int`. The default
@@ -1995,7 +2004,9 @@ List.foldr1 = foldr1
 List.foldl1 = foldl1
 List.toList = toList
 List.fnull = fnull
+List.fnullStr = fnullStr
 List.flength = flength
+List.flengthStr = flengthStr
 List.elem = elem
 List.elemF = elemF
 List.sum = sum

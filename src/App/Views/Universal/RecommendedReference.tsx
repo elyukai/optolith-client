@@ -1,8 +1,9 @@
-import * as React from 'react';
-import { translate, UIMessagesObject } from '../App/Utils/I18n';
+import * as React from "react";
+import { L10nRecord } from "../../Models/Wiki/L10n";
+import { translate } from "../../Utilities/I18n";
 
 export interface RecommendedReferenceProps {
-  locale: UIMessagesObject;
+  l10n: L10nRecord;
 }
 
 export function RecommendedReference (props: RecommendedReferenceProps) {
@@ -10,11 +11,11 @@ export function RecommendedReference (props: RecommendedReferenceProps) {
     <div className="recommended-ref">
       <div className="rec">
         <div className="icon"></div>
-        <div className="name">{translate (props.locale, 'view.commoninculture')}</div>
+        <div className="name">{translate (props.l10n) ("common")}</div>
       </div>
       <div className="unrec">
         <div className="icon"></div>
-        <div className="name">{translate (props.locale, 'view.uncommoninculture')}</div>
+        <div className="name">{translate (props.l10n) ("uncommon")}</div>
       </div>
     </div>
   );

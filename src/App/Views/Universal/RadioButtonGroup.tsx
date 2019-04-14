@@ -35,38 +35,39 @@ export interface RadioButtonGroupProps<T extends OptionValue = OptionValue> {
   onClickJust? (option: T): void
 }
 
-export function RadioButtonGroup (props: RadioButtonGroupProps<OptionValue>) {
-  const { active, array: xs, disabled } = props
+export function RadioButtonGroup<T extends OptionValue = OptionValue>
+  (props: RadioButtonGroupProps<T>) {
+    const { active, array: xs, disabled } = props
 
-  const normalizedActive = normalize (active)
+    const normalizedActive = normalize (active)
 
-  const onClickCombined = (optionValue: Maybe<OptionValue>) => () => {
-    if (props.onClick) {
-      props.onClick (optionValue)
+    const onClickCombined = (optionValue: Maybe<T>) => () => {
+      if (props.onClick) {
+        props.onClick (optionValue)
+      }
+
+      if (props.onClickJust && isJust (optionValue)) {
+        props.onClickJust (fromJust (optionValue))
+      }
     }
 
-    if (props.onClickJust && isJust (optionValue)) {
-      props.onClickJust (fromJust (optionValue))
-    }
+    return (
+      <div className="radiobutton-group">
+        {pipe_ (
+          xs,
+          map (e => (
+            <RadioButton
+              key={fromMaybe<React.Key> ("__default__") (Option.A.value (e))}
+              value={Option.A.value (e)}
+              active={equals (normalizedActive) (Option.A.value (e))}
+              onClick={onClickCombined (Option.A.value (e))}
+              disabled={elem (true) (Option.A.disabled (e)) || elem (true) (normalize (disabled))}
+            >
+              {Option.A.name (e)}
+            </RadioButton>
+          )),
+          toArray
+        )}
+      </div>
+    )
   }
-
-  return (
-    <div className="radiobutton-group">
-      {pipe_ (
-        xs,
-        map (e => (
-          <RadioButton
-            key={fromMaybe<React.Key> ("__default__") (Option.A.value (e))}
-            value={Option.A.value (e)}
-            active={equals (normalizedActive) (Option.A.value (e))}
-            onClick={onClickCombined (Option.A.value (e))}
-            disabled={elem (true) (Option.A.disabled (e)) || elem (true) (normalize (disabled))}
-          >
-            {Option.A.name (e)}
-          </RadioButton>
-        )),
-        toArray
-      )}
-    </div>
-  )
-}

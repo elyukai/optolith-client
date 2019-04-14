@@ -1,20 +1,20 @@
-import classNames = require('classnames');
-import * as React from 'react';
-import { connect } from 'react-redux';
-import { AppState } from '../App/Reducers/appReducer';
-import { getTheme } from '../App/Selectors/uisettingsSelectors';
-import { close, createOverlay } from '../App/Utils/createOverlay';
-import { Overlay } from './Overlay';
+import classNames = require("classnames")
+import * as React from "react";
+import { connect } from "react-redux";
+import { AppStateRecord } from "../../Reducers/appReducer";
+import { getTheme } from "../../Selectors/uisettingsSelectors";
+import { close, createOverlay } from "../../Utilities/createOverlay";
+import { Overlay } from "./Overlay";
 
 export interface TooltipToggleOwnProps {
-  content: React.ReactNode;
-  margin?: number;
-  small?: boolean;
-  position?: 'top' | 'bottom' | 'left' | 'right';
+  content: React.ReactNode
+  margin?: number
+  small?: boolean
+  position?: "top" | "bottom" | "left" | "right"
 }
 
 export interface TooltipToggleStateProps {
-  theme: string;
+  theme: string
 }
 
 export interface TooltipToggleDispatchProps {
@@ -23,56 +23,70 @@ export interface TooltipToggleDispatchProps {
 export type TooltipToggleProps =
   TooltipToggleStateProps
   & TooltipToggleDispatchProps
-  & TooltipToggleOwnProps;
+  & TooltipToggleOwnProps
 
 export class TooltipToggleWrapped extends React.Component<TooltipToggleProps, {}> {
-  node?: HTMLElement;
+  node?: HTMLElement
 
   componentWillUnmount () {
     if (this.node) {
-      close (this.node);
+      close (this.node)
     }
   }
 
   open = (event: React.MouseEvent<HTMLElement>) => {
-    const { content, margin, position = 'top', small, theme } = this.props;
+    const { content, margin, position = "top", small, theme } = this.props
 
     this.node = createOverlay (
       <Overlay
-        className={classNames ('tooltip', `theme-${theme}`, small && 'tooltip-small')}
+        className={
+          classNames (
+            "tooltip",
+            `theme-${theme}`,
+            small === true ? "tooltip-small" : undefined
+          )
+        }
         position={position}
         trigger={event.currentTarget}
         margin={margin}
         >
         {content}
       </Overlay>
-    );
+    )
   }
 
   close = () => {
     if (this.node) {
-      close (this.node);
-      this.node = undefined;
+      close (this.node)
+      this.node = undefined
     }
   }
 
   render () {
-    const { children } = this.props;
+    const { children } = this.props
 
-    return React.cloneElement (React.Children.only (children), {
-      onMouseOver: this.open,
-      onMouseOut: this.close,
-    });
+    return React.cloneElement (
+      React.Children.only (children) as any,
+      {
+        onMouseOver: this.open,
+        onMouseOut: this.close,
+      }
+    )
   }
 }
 
-const mapStateToProps = (state: AppState): TooltipToggleStateProps => ({
+const mapStateToProps = (state: AppStateRecord): TooltipToggleStateProps => ({
   theme: getTheme (state),
-});
+})
 
 const connectTooltipToggle =
-  connect<TooltipToggleStateProps, TooltipToggleDispatchProps, TooltipToggleOwnProps, AppState> (
+  connect<
+    TooltipToggleStateProps,
+    TooltipToggleDispatchProps,
+    TooltipToggleOwnProps,
+    AppStateRecord
+  > (
     mapStateToProps
-  );
+  )
 
-export const TooltipToggle = connectTooltipToggle (TooltipToggleWrapped);
+export const TooltipToggle = connectTooltipToggle (TooltipToggleWrapped)

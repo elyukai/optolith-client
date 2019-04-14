@@ -137,9 +137,19 @@ test ('fnull', () => {
   expect (List.fnull (List ())) .toBeTruthy ()
 })
 
+test ('fnullStr', () => {
+  expect (List.fnullStr ("List (3, 2, 1)")) .toBeFalsy ()
+  expect (List.fnullStr ("")) .toBeTruthy ()
+})
+
 test ('flength', () => {
   expect (List.flength (List (3, 2, 1))) .toEqual (3)
   expect (List.flength (List ())) .toEqual (0)
+})
+
+test ('flengthStr', () => {
+  expect (List.flengthStr ("List (3, 2, 1)")) .toEqual (14)
+  expect (List.flengthStr ("List ()")) .toEqual (7)
 })
 
 test ('elem', () => {

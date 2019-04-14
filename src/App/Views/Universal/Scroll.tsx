@@ -1,29 +1,42 @@
-import * as classNames from 'classnames';
-import * as React from 'react';
-import Scrollbars from 'react-custom-scrollbars';
+import * as classNames from "classnames";
+import * as React from "react";
+import Scrollbars from "react-custom-scrollbars";
 
 export interface ScrollProps {
-  children?: React.ReactNode;
-  className?: string;
-  noInnerElement?: boolean;
+  children?: React.ReactNode
+  className?: string
+  noInnerElement?: boolean
 }
 
-export class Scroll extends React.Component<ScrollProps> {
-  render() {
-    const { className, children, noInnerElement, ...other } = this.props;
-    return (
-      <Scrollbars
-        className={classNames(className, 'scroll')}
-        renderThumbHorizontal={props => <div {...props} className="thumb thumb-horizontal"><div></div></div>}
-        renderThumbVertical={props => <div {...props} className="thumb thumb-vertical"><div></div></div>}
-        renderTrackHorizontal={props => <div {...props} style={{ ...props.style, height: 11 }} className="track track-horizontal"></div>}
-        renderTrackVertical={props => <div {...props} style={{ ...props.style, width: 11 }} className="track track-vertical"></div>}
-        renderView={props => <div {...props} className="scroll-view"></div>}
-        >
-        {!noInnerElement ? <div {...other} className="scroll-inner">
-          {children}
-        </div> : children}
-      </Scrollbars>
-    );
-  }
+export function Scroll (props: ScrollProps) {
+  const { className, children, noInnerElement, ...other } = props
+
+  return (
+    <Scrollbars
+      className={classNames (className, "scroll")}
+      renderThumbHorizontal={
+        p => <div {...p} className="thumb thumb-horizontal"><div/></div>
+      }
+      renderThumbVertical={
+        p => <div {...p} className="thumb thumb-vertical"><div/></div>
+      }
+      renderTrackHorizontal={
+        p => <div {...p} style={{ ...p.style, height: 11 }} className="track track-horizontal" />
+      }
+      renderTrackVertical={
+        p => <div {...p} style={{ ...p.style, width: 11 }} className="track track-vertical" />
+      }
+      renderView={
+        p => <div {...p} className="scroll-view"></div>
+      }
+      >
+      {noInnerElement !== true
+        ? (
+          <div {...other} className="scroll-inner">
+            {children}
+          </div>
+        )
+        : children}
+    </Scrollbars>
+  )
 }

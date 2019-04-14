@@ -103,15 +103,15 @@ export class Herolist extends React.Component<HerolistProps, HerolistState> {
             onChange={setVisibilityFilter}
             options={List (
               DropdownOption ({
-                id: "all",
+                id: Just ("all"),
                 name: translate (l10n) ("allheroes"),
               }),
               DropdownOption ({
-                id: "own",
+                id: Just ("own"),
                 name: translate (l10n) ("ownheroes"),
               }),
               DropdownOption ({
-                id: "shared",
+                id: Just ("shared"),
                 name: translate (l10n) ("sharedheroes"),
               })
             )}
@@ -119,7 +119,7 @@ export class Herolist extends React.Component<HerolistProps, HerolistState> {
             disabled
             />
           <SortOptions
-            locale={l10n}
+            l10n={l10n}
             options={List<SortNames> ("name", "dateModified")}
             sort={setSortOrder}
             sortOrder={sortOrder}

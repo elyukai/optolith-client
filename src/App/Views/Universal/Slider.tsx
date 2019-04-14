@@ -1,19 +1,20 @@
-import * as classNames from 'classnames';
-import * as React from 'react';
+import * as classNames from "classnames";
+import * as React from "react";
 
 export interface SliderProps {
-  className?: string;
-  label: string;
-  max: number;
-  min: number;
-  onChange: () => void;
-  value: number;
+  className?: string
+  label: string
+  max: number
+  min: number
+  onChange: () => void
+  value: number
 }
 
-export function Slider(props: SliderProps) {
-  const { className, label, max, min, onChange, value } = props;
+export function Slider (props: SliderProps) {
+  const { className, label, max, min, onChange, value } = props
+
   return (
-    <div className={classNames('slider', className)}>
+    <div className={classNames ("slider", className)}>
       <label>
         <span>{label}</span>
         <span>{value}</span>
@@ -27,5 +28,5 @@ export function Slider(props: SliderProps) {
         step={1}
       />
     </div>
-  );
+  )
 }

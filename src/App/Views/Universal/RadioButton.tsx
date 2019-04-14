@@ -1,7 +1,8 @@
-import * as React from 'react';
-import { Activate, ActivateProps } from './Activate';
-import { Icon } from './Icon';
-import { Text } from './Text';
+import * as React from "react";
+import { notNullStrUndef } from "../../../Data/List";
+import { Activate, ActivateProps } from "./Activate";
+import { Icon } from "./Icon";
+import { Text } from "./Text";
 
 export interface RadioButtonProps extends ActivateProps {
   label?: string;
@@ -17,7 +18,7 @@ export function RadioButton (props: RadioButtonProps) {
         <div className="dot"></div>
       </Icon>
       <Text>
-        {label || children}
+        {notNullStrUndef (label) ? label : children}
       </Text>
     </Activate>
   );

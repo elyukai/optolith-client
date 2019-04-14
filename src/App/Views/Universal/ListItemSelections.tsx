@@ -1,15 +1,15 @@
-import * as React from 'react';
+import * as React from "react";
 
 export interface ListItemSelectionsProps {
-  children?: React.ReactNode;
+  children?: React.ReactNode
 }
 
 export function ListItemSelections (props: ListItemSelectionsProps) {
-  const { children } = props;
+  const { children } = props
 
   return (
     <div className="selections">
       {children}
     </div>
-  );
+  )
 }

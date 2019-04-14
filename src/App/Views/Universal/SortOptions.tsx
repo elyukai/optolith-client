@@ -1,63 +1,60 @@
-import * as React from 'react';
-import { translate, UIMessagesObject } from '../App/Utils/I18n';
-import { Just, List, Maybe, Record } from '../Utilities/dataUtils';
-import { sortObjects } from '../Utilities/FilterSortUtils';
-import { Option, RadioButtonGroup } from './RadioButtonGroup';
+import * as React from "react";
+import { List, map } from "../../../Data/List";
+import { fromJust, isJust, Just } from "../../../Data/Maybe";
+import { L10n, L10nRecord } from "../../Models/Wiki/L10n";
+import { translate } from "../../Utilities/I18n";
+import { sortRecordsByName } from "../../Utilities/sortBy";
+import { Option, RadioButtonGroup } from "./RadioButtonGroup";
 
-export type SortNames =
-  'name'
-  | 'dateModified'
-  | 'group'
-  | 'groupname'
-  | 'where'
-  | 'cost'
-  | 'ap'
-  | 'ic'
-  | 'property'
-  | 'aspect'
-  | 'weight';
+export type SortNames = "name"
+                      | "dateModified"
+                      | "group"
+                      | "groupname"
+                      | "where"
+                      | "cost"
+                      | "ic"
+                      | "property"
+                      | "weight"
 
 export interface SortOptionsProps {
-  locale: UIMessagesObject;
-  options: List<SortNames>;
-  sortOrder: string;
-  sort (option: string): void;
+  l10n: L10nRecord
+  options: List<SortNames>
+  sortOrder: string
+  sort (option: string): void
 }
 
 export function SortOptions (props: SortOptionsProps) {
-  const { locale, options, sort, sortOrder, ...other } = props;
+  const { l10n, options, sort, sortOrder, ...other } = props
 
   const SORT_NAMES = {
-    name: translate (locale, 'options.sortorder.alphabetically'),
-    dateModified: translate (locale, 'options.sortorder.datemodified'),
-    group: translate (locale, 'options.sortorder.group'),
-    groupname: translate (locale, 'options.sortorder.group'),
-    where: translate (locale, 'options.sortorder.location'),
-    cost: translate (locale, 'options.sortorder.cost'),
-    ap: translate (locale, 'options.sortorder.ap'),
-    ic: translate (locale, 'options.sortorder.improvementcost'),
-    property: translate (locale, 'options.sortorder.property'),
-    aspect: translate (locale, 'options.sortorder.aspect'),
-    weight: translate (locale, 'options.sortorder.weight'),
-  };
+    name: translate (l10n) ("sortalphabetically"),
+    dateModified: translate (l10n) ("sortbydatemodified"),
+    group: translate (l10n) ("sortbygroup"),
+    groupname: translate (l10n) ("sortbygroup"),
+    where: translate (l10n) ("sortbylocation"),
+    cost: translate (l10n) ("sortbycost"),
+    ic: translate (l10n) ("sortbyimprovementcost"),
+    property: translate (l10n) ("sortbyproperty"),
+    weight: translate (l10n) ("sortbyweight"),
+  }
 
   return (
-    <RadioButtonGroup
+    <RadioButtonGroup<string>
       {...other}
       active={sortOrder}
       onClick={
         option => {
-          if (Maybe.isJust (option)) {
-            sort (Maybe.fromJust (option as Just<string>));
+          if (isJust (option)) {
+            sort (fromJust (option as Just<string>))
           }
         }
       }
       array={
-        sortObjects (
-          options .map (e => Record.of<Option> ({ name: SORT_NAMES[e], value: e })),
-          locale .get ('id')
-        )
+        sortRecordsByName (L10n.A.id (l10n))
+                          (map ((e: SortNames) =>
+                                 Option ({ name: SORT_NAMES [e], value: Just (e) }))
+                               (options))
       }
       />
-  );
+  )
 }

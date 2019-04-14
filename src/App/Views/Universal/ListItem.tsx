@@ -1,17 +1,17 @@
-import * as classNames from 'classnames';
-import * as React from 'react';
+import * as classNames from "classnames";
+import * as React from "react";
 
 export interface ListItemProps {
-  active?: boolean;
-  children?: React.ReactNode;
-  className?: string;
-  disabled?: boolean;
-  important?: boolean;
-  insertTopMargin?: boolean;
-  noIncrease?: boolean;
-  recommended?: boolean;
-  unrecommended?: boolean;
-  onClick? (): void;
+  active?: boolean
+  children?: React.ReactNode
+  className?: string
+  disabled?: boolean
+  important?: boolean
+  insertTopMargin?: boolean
+  noIncrease?: boolean
+  recommended?: boolean
+  unrecommended?: boolean
+  onClick? (): void
 }
 
 export function ListItem (props: ListItemProps) {
@@ -26,23 +26,23 @@ export function ListItem (props: ListItemProps) {
     recommended,
     unrecommended,
     ...other
-  } = props;
+  } = props
 
   return (
     <li
       {...other}
       className={classNames (className, {
-        'active': active,
-        'imp': important,
-        'typ': recommended,
-        'untyp': unrecommended,
-        'no-increase': noIncrease,
-        'top-margin': insertTopMargin,
+        "active": active,
+        "imp": important,
+        "typ": recommended,
+        "untyp": unrecommended,
+        "no-increase": noIncrease,
+        "top-margin": insertTopMargin,
         disabled,
       })}
       >
-      {insertTopMargin && <div className="separator"></div>}
+      {insertTopMargin === true ? <div className="separator"></div> : null}
       {children}
     </li>
-  );
+  )
 }

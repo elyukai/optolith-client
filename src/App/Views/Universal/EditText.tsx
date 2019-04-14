@@ -1,39 +1,41 @@
 import * as classNames from "classnames";
 import * as React from "react";
-import { InputKeyEvent, InputTextEvent } from "../App/Models/Hero/heroTypeHelpers";
+import { fnullStr, notNullStr } from "../../../Data/List";
+import { fromMaybe, Maybe } from "../../../Data/Maybe";
+import { InputKeyEvent, InputTextEvent } from "../../Models/Hero/heroTypeHelpers";
 import { IconButton } from "./IconButton";
 import { TextField } from "./TextField";
 
 export interface EditTextProps {
-  autoFocus?: boolean;
-  className?: string;
-  text: string | undefined;
-  cancel(): void;
-  submit(text: string): void;
+  autoFocus?: boolean
+  className?: string
+  text: string | undefined
+  cancel (): void
+  submit (text: string): void
 }
 
 export interface EditTextState {
-  text: string;
+  text: string
 }
 
 export class EditText extends React.Component<EditTextProps, EditTextState> {
   state = {
-    text: this.props.text || "",
-  };
+    text: fromMaybe ("") (Maybe (this.props.text)),
+  }
 
-  submit = () => this.state.text && this.props.submit(this.state.text);
+  submit = () => notNullStr (this.state.text) ? this.props.submit (this.state.text) : undefined
 
   handleEnter = (event: InputKeyEvent) => {
-    if (event.charCode === 13 && this.state.text) {
-      this.submit();
+    if (event.charCode === 13 && notNullStr (this.state.text)) {
+      this.submit ()
     }
   }
 
-  handleInput = (event: InputTextEvent) => this.setState({ text: event.target.value } as EditTextState);
+  handleInput = (event: InputTextEvent) => this.setState ({ text: event.target.value })
 
-  render() {
+  render () {
     return (
-      <div className={classNames("confirm-edit", this.props.className)}>
+      <div className={classNames ("confirm-edit", this.props.className)}>
         <TextField
           value={this.state.text}
           onChange={this.handleInput}
@@ -41,15 +43,15 @@ export class EditText extends React.Component<EditTextProps, EditTextState> {
           autoFocus={this.props.autoFocus}
           />
         <IconButton
-          icon="&#xE90a;"
+          icon="&#xE90a"
           onClick={this.submit}
-          disabled={!this.state.text}
+          disabled={fnullStr (this.state.text)}
           />
         <IconButton
-          icon="&#xE915;"
+          icon="&#xE915"
           onClick={this.props.cancel}
           />
       </div>
-    );
+    )
   }
 }

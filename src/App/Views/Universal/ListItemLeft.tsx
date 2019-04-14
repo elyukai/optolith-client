@@ -1,15 +1,15 @@
-import * as React from 'react';
+import * as React from "react";
 
 export interface ListItemLeftProps {
-  children?: React.ReactNode;
+  children?: React.ReactNode
 }
 
 export function ListItemLeft (props: ListItemLeftProps) {
-  const { children } = props;
+  const { children } = props
 
   return (
     <div className="left">
       {children}
     </div>
-  );
+  )
 }
