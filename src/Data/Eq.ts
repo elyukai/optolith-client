@@ -155,7 +155,7 @@ export const equals =
   }
 
 /**
- * `(!=) :: Maybe a -> Maybe a -> Bool`
+ * `(!=) :: a -> a -> Bool`
  *
  * Returns if both given values are not equal.
  */

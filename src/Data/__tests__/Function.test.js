@@ -1,6 +1,6 @@
 // @ts-check
 const { Internals } = require('../Internals');
-const { cnst, ident, thrush, join, on, flip, blackbird, blackbirdF } = require ('../Function')
+const { cnst, ident, thrush, join, on, onF, flip, blackbird, blackbirdF } = require ('../Function')
 const { fromJust } = require ('../Maybe')
 const { add, multiply } = require ('../../App/Utilities/mathUtils')
 
@@ -26,6 +26,10 @@ test ('join', () => {
 
 test ('on', () => {
   expect (on (add) (fromJust) (Just (1)) (Just (2))) .toEqual (3)
+})
+
+test ('onF', () => {
+  expect (onF (fromJust) (add) (Just (1)) (Just (2))) .toEqual (3)
 })
 
 test ('flip', () => {

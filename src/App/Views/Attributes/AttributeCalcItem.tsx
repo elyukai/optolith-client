@@ -1,162 +1,176 @@
-import * as React from 'react';
-import { SecondaryAttribute } from '../../App/Models/Hero/heroTypeHelpers';
-import { translate, UIMessagesObject } from '../../App/Utils/I18n';
-import { sign } from '../../App/Utils/NumberUtils';
-import { IconButton } from '../../components/IconButton';
-import { NumberBox } from '../../components/NumberBox';
-import { Maybe, Record } from '../../Utilities/dataUtils';
-import { AttributeBorder } from './AttributeBorder';
+import * as React from "react";
+import { fmapF } from "../../../Data/Functor";
+import { bindF, ensure, fromJust, fromMaybe, isJust, liftM2, maybe, Maybe, or } from "../../../Data/Maybe";
+import { Record } from "../../../Data/Record";
+import { DerivedCharacteristic } from "../../Models/View/DerivedCharacteristic";
+import { L10nRecord } from "../../Models/Wiki/L10n";
+import { translate } from "../../Utilities/I18n";
+import { gt, subtractBy } from "../../Utilities/mathUtils";
+import { sign } from "../../Utilities/NumberUtils";
+import { pipe, pipe_ } from "../../Utilities/pipe";
+import { IconButton } from "../Universal/IconButton";
+import { NumberBox } from "../Universal/NumberBox";
+import { AttributeBorder } from "./AttributeBorder";
 
 export interface AttributeCalcItemProps {
-  attribute: Record<SecondaryAttribute>;
-  locale: UIMessagesObject;
-  isInCharacterCreation: boolean;
-  isRemovingEnabled: boolean;
-  addLifePoint (): void;
-  addArcaneEnergyPoint (): void;
-  addKarmaPoint (): void;
-  removeLifePoint (): void;
-  removeArcaneEnergyPoint (): void;
-  removeKarmaPoint (): void;
+  attribute: Record<DerivedCharacteristic>
+  l10n: L10nRecord
+  isInCharacterCreation: boolean
+  isRemovingEnabled: boolean
+  addLifePoint (): void
+  addArcaneEnergyPoint (): void
+  addKarmaPoint (): void
+  removeLifePoint (): void
+  removeArcaneEnergyPoint (): void
+  removeKarmaPoint (): void
 }
+
+const DCA = DerivedCharacteristic.A
 
 export class AttributeCalcItem extends React.Component<AttributeCalcItemProps, {}> {
   addMaxEnergyPoint = () => {
-    if (this.props.attribute .get ('id') === 'LP') {
-      this.props.addLifePoint ();
-    }
-    else if (this.props.attribute .get ('id') === 'AE') {
-      this.props.addArcaneEnergyPoint ();
-    }
-    else if (this.props.attribute .get ('id') === 'KP') {
-      this.props.addKarmaPoint ();
+    switch (DCA.id (this.props.attribute)) {
+      case "LP":
+        this.props.addLifePoint ()
+        break
+
+      case "AE":
+        this.props.addArcaneEnergyPoint ()
+        break
+
+      case "KP":
+        this.props.addKarmaPoint ()
+        break
     }
   }
   removeMaxEnergyPoint = () => {
-    if (this.props.attribute .get ('id') === 'LP') {
-      this.props.removeLifePoint ();
-    }
-    else if (this.props.attribute .get ('id') === 'AE') {
-      this.props.removeArcaneEnergyPoint ();
-    }
-    else if (this.props.attribute .get ('id') === 'KP') {
-      this.props.removeKarmaPoint ();
+    switch (DCA.id (this.props.attribute)) {
+      case "LP":
+        this.props.removeLifePoint ()
+        break
+
+      case "AE":
+        this.props.removeArcaneEnergyPoint ()
+        break
+
+      case "KP":
+        this.props.removeKarmaPoint ()
+        break
     }
   }
 
   // tslint:disable-next-line:cyclomatic-complexity
   render () {
     const {
-      attribute,
-      locale,
+      attribute: dc,
+      l10n: locale,
       isInCharacterCreation,
       isRemovingEnabled,
-    } = this.props;
+    } = this.props
 
-    const base = attribute .lookup ('base');
-    const mod = attribute .lookup ('mod');
-    const maybeCurrentAdd = attribute .lookup ('currentAdd');
-    const maybeMaxAdd = attribute .lookup ('maxAdd');
-    const value = Maybe.fromMaybe<string | number> ('\u2013') (attribute .lookup ('value'));
-    const maybePermanentLost = attribute .lookup ('permanentLost');
-    const maybePermanentRedeemed = attribute .lookup ('permanentRedeemed');
+    const base = DCA.base (dc)
+    const mod = DCA.mod (dc)
+    const mcurrent_add = DCA.currentAdd (dc)
+    const mmax_add = DCA.maxAdd (dc)
+    const value = fromMaybe<string | number> ("\u2013") (DCA.value (dc))
+    const mpermanent_lost = DCA.permanentLost (dc)
+    const mpermanent_redeemed = DCA.permanentRedeemed (dc)
 
     return (
       <AttributeBorder
-        label={attribute .get ('short')}
+        label={DCA.short (dc)}
         value={value}
         tooltip={(
           <div className="calc-attr-overlay">
-            <h4><span>{attribute .get ('name')}</span><span>{value}</span></h4>
+            <h4><span>{DCA.name (dc)}</span><span>{value}</span></h4>
             <p className="calc-text">
-              {attribute .get ('calc')}
-              {' = '}
-              {Maybe.fromMaybe<string | number> ('\u2013') (base)}
+              {DCA.calc (dc)}
+              {" = "}
+              {fromMaybe<string | number> ("\u2013") (base)}
             </p>
-            {(Maybe.isJust (mod) || (Maybe.isJust (maybeCurrentAdd) && !isInCharacterCreation)) && (
-              <p>
-                {Maybe.isJust (mod) && (
-                  <span className="mod">
-                    {translate (locale, 'attributes.tooltips.modifier')}
-                    {': '}
-                    {sign (Maybe.fromJust (mod))}
-                    <br/>
-                  </span>
-                )}
-                {Maybe.isJust (maybeCurrentAdd) && !isInCharacterCreation && (
-                  <span className="add">
-                    {translate (locale, 'attributes.tooltips.bought')}
-                    {': '}
-                    {Maybe.fromJust (maybeCurrentAdd)}
-                    {' / '}
-                    {Maybe.fromMaybe<string | number> ('\u2013') (maybeMaxAdd)}
-                  </span>
-                )}
-              </p>
-            )}
+            {isJust (mod) || isJust (mcurrent_add) && !isInCharacterCreation
+              ? (
+                <p>
+                  {isJust (mod)
+                    ? (
+                      <span className="mod">
+                        {translate (locale) ("modifier")}
+                        {": "}
+                        {sign (fromJust (mod))}
+                        <br/>
+                      </span>
+                    )
+                  : null}
+                  {isJust (mcurrent_add) && !isInCharacterCreation
+                    ? (
+                      <span className="add">
+                        {translate (locale) ("bought")}
+                        {": "}
+                        {fromJust (mcurrent_add)}
+                        {" / "}
+                        {fromMaybe<string | number> ("\u2013") (mmax_add)}
+                      </span>
+                    )
+                  : null}
+                </p>
+              )
+            : null}
           </div>
         )}
         tooltipMargin={7}>
+        {pipe_ (
+          mmax_add,
+          bindF (ensure (maxAdd => !isInCharacterCreation && maxAdd > 0)),
+          maybe (<></>) (maxAdd => (<NumberBox current={mcurrent_add} max={maxAdd} />))
+        )}
         {
-          Maybe.fromMaybe
-            (<></>)
-            (maybeMaxAdd
-              .bind (Maybe.ensure (maxAdd => !isInCharacterCreation && maxAdd > 0))
-              .fmap (maxAdd => (<NumberBox current={maybeCurrentAdd} max={maxAdd} />)))
-        }
-        {
-          typeof value === 'number'
+          typeof value === "number"
           && !isInCharacterCreation
-          && Maybe.fromMaybe
-            (<></>)
-            (Maybe.liftM2<number, number, JSX.Element>
-              (currentAdd => maxAdd => (
-                <IconButton
-                  className="add"
-                  icon="&#xE908;"
-                  onClick={this.addMaxEnergyPoint}
-                  disabled={
-                    currentAdd >= maxAdd
-                    || Maybe.elem
-                      (true)
-                      (maybePermanentLost
-                        .fmap (
-                          permanentLost =>
-                            permanentLost - Maybe.fromMaybe (0) (maybePermanentRedeemed) > 0
-                        ))
-                  }
-                  />
-              ))
-              (maybeCurrentAdd)
-              (maybeMaxAdd))
+            ? fromMaybe (<></>)
+                        (liftM2 ((current_add: number) => (max_add: number) => (
+                                  <IconButton
+                                    className="add"
+                                    icon="&#xE908"
+                                    onClick={this.addMaxEnergyPoint}
+                                    disabled={
+                                      current_add >= max_add
+                                      || or (fmapF (mpermanent_lost)
+                                                   (pipe (
+                                                     subtractBy (Maybe.sum (mpermanent_redeemed)),
+                                                     gt (0)
+                                                   )))
+                                    }
+                                    />
+                                ))
+                                (mcurrent_add)
+                                (mmax_add))
+            : null
         }
         {
-          typeof value === 'number'
+          typeof value === "number"
           && !isInCharacterCreation
           && isRemovingEnabled
-          && Maybe.isJust (maybeMaxAdd)
-          && Maybe.fromMaybe
-            (<></>)
-            (maybeCurrentAdd
-              .fmap (currentAdd => (
-                <IconButton
-                  className="remove"
-                  icon="&#xE909;"
-                  onClick={this.removeMaxEnergyPoint}
-                  disabled={
-                    currentAdd <= 0
-                    || Maybe.elem
-                      (true)
-                      (maybePermanentLost
-                        .fmap (
-                          permanentLost =>
-                            permanentLost - Maybe.fromMaybe (0) (maybePermanentRedeemed) > 0
-                        ))
-                  }
-                  />
-              )))
+          && isJust (mmax_add)
+            ? maybe (<></>)
+                    ((current_add: number) => (
+                      <IconButton
+                        className="remove"
+                        icon="&#xE909"
+                        onClick={this.removeMaxEnergyPoint}
+                        disabled={
+                          current_add <= 0
+                          || or (fmapF (mpermanent_lost)
+                                       (pipe (
+                                         subtractBy (Maybe.sum (mpermanent_redeemed)),
+                                         gt (0)
+                                       )))
+                        }
+                        />
+                    ))
+                    (mcurrent_add)
+            : null
         }
       </AttributeBorder>
-    );
+    )
   }
 }

@@ -525,6 +525,11 @@ export const any: Any =
   (x: Maybe<A>): x is Just<A> =>
     fromMaybe (false) (fmap (f) (x))
 
+interface All {
+  <A extends Some, A1 extends A> (f: (x: A) => x is A1): (x: Maybe<A>) => x is Maybe<A1>
+  <A extends Some> (f: (x: A) => boolean): (x: Maybe<A>) => boolean
+}
+
 /**
  * `all :: (a -> Bool) -> Maybe a -> Bool`
  *
@@ -535,11 +540,12 @@ export const any: Any =
  * any f (Just x) = f x
  * ```
  */
-export const all =
+export const all = (
   <A extends Some>
   (f: (x: A) => boolean) =>
   (x: Maybe<A>): boolean =>
     fromMaybe (true) (fmap (f) (x))
+) as All
 
 // Searches
 

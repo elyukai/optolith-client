@@ -1,60 +1,76 @@
-import * as React from 'react';
-import { ActiveViewObject, DeactivateArgs, EntryRating, UIMessagesObject } from '../App/Models/Hero/heroTypeHelpers';
-import { isRated } from '../App/Utils/ratingUtils';
-import { List, Maybe, OrderedMap, Record } from '../Utilities/dataUtils';
-import { ActivatableRemoveListItem } from './ActivatableRemoveListItem';
-import { ListView } from './List';
-import { ListPlaceholder } from './ListPlaceholder';
-import { Scroll } from './Scroll';
+import * as React from "react";
+import { flip, thrush } from "../../../Data/Function";
+import { fmapF } from "../../../Data/Functor";
+import { fnull, List, map, toArray } from "../../../Data/List";
+import { all, fromJust, Maybe, normalize, or } from "../../../Data/Maybe";
+import { OrderedMap } from "../../../Data/OrderedMap";
+import { Record } from "../../../Data/Record";
+import { ActivatableDeactivationOptions } from "../../Models/Actions/ActivatableDeactivationOptions";
+import { EntryRating } from "../../Models/Hero/heroTypeHelpers";
+import { ActiveActivatable, ActiveActivatableA_ } from "../../Models/View/ActiveActivatable";
+import { L10nRecord } from "../../Models/Wiki/L10n";
+import { pipe_ } from "../../Utilities/pipe";
+import { isActiveRated } from "../../Utilities/ratingUtils";
+import { ListView } from "../Universal/List";
+import { ListPlaceholder } from "../Universal/ListPlaceholder";
+import { Scroll } from "../Universal/Scroll";
+import { ActivatableRemoveListItem } from "./ActivatableRemoveListItem";
 
 export interface ActivatableRemoveListProps {
-  filterText: string;
-  hideGroup?: boolean;
-  list: Maybe<List<Record<ActiveViewObject>>>;
-  locale: UIMessagesObject;
-  isRemovingEnabled: boolean;
-  rating?: Maybe<OrderedMap<string, EntryRating>>;
-  showRating?: boolean;
-  setLevel (id: string, index: number, level: number): void;
-  removeFromList (args: DeactivateArgs): void;
-  selectForInfo (id: string): void;
+  filterText: string
+  hideGroup?: boolean
+  list: Maybe<List<Record<ActiveActivatable>>>
+  l10n: L10nRecord
+  isRemovingEnabled: boolean
+  rating?: Maybe<OrderedMap<string, EntryRating>>
+  showRating?: boolean
+  setLevel (id: string, index: number, level: number): void
+  removeFromList (args: Record<ActivatableDeactivationOptions>): void
+  selectForInfo (id: string): void
 }
 
-export function ActivatableRemoveList (props: ActivatableRemoveListProps) {
-  const { filterText, list, locale, rating, showRating } = props;
+const AAA_ = ActiveActivatableA_
 
-  if (!Maybe.isJust (list) || Maybe.elem (true) (list .fmap (List.null))) {
+export function ActivatableRemoveList (props: ActivatableRemoveListProps) {
+  const { filterText, list: mactives, l10n, rating, showRating: mshow_rating } = props
+
+  if (all (fnull) (mactives)) {
     return (
       <ListPlaceholder
-        locale={locale}
+        l10n={l10n}
         noResults={filterText.length > 0}
         type="specialAbilities"
         />
-    );
+    )
   }
 
-  const normalizedRating = Maybe.normalize (rating);
+  const normalizedRating = normalize (rating)
 
-  const isRatedWithRating = isRated (showRating) (normalizedRating);
+  const isRatedWithRating = fmapF (Maybe (mshow_rating)) (flip (isActiveRated) (normalizedRating))
 
   return (
     <Scroll>
       <ListView>
-        {
-          Maybe.fromJust (list)
-            .map (item => (
+        {pipe_ (
+          mactives,
+          fromJust,
+          map (item => {
+            const isRatedForItem = fmapF (isRatedWithRating) (thrush (item))
+
+            return (
               <ActivatableRemoveListItem
                 {...props}
-                key={`${item .get ('id')}_${item .get ('index')}`}
+                key={`${AAA_.id (item)}_${AAA_.index (item)}`}
                 item={item}
-                isImportant={isRatedWithRating (item) (EntryRating.Essential)}
-                isTypical={isRatedWithRating (item) (EntryRating.Common)}
-                isUntypical={isRatedWithRating (item) (EntryRating.Uncommon)}
+                isImportant={or (fmapF (isRatedForItem) (thrush (EntryRating.Essential)))}
+                isTypical={or (fmapF (isRatedForItem) (thrush (EntryRating.Common)))}
+                isUntypical={or (fmapF (isRatedForItem) (thrush (EntryRating.Uncommon)))}
                 />
-            ))
-            .toArray ()
-        }
+            )
+          }),
+          toArray
+        )}
       </ListView>
     </Scroll>
-  );
+  )
 }

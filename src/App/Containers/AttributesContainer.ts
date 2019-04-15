@@ -1,120 +1,121 @@
-import { connect } from 'react-redux';
-import { Action, Dispatch } from 'redux';
-import * as AttributesActions from '../App/Actions/AttributesActions';
-import * as SubwindowsActions from '../App/Actions/SubwindowsActions';
-import { AppState } from '../reducers/appReducer';
-import { getAdjustmentValue, getAttributesForView, getAttributeSum, getAvailableAdjustmentIds } from '../Selectors/attributeSelectors';
-import { getDerivedCharacteristics } from '../Selectors/derivedCharacteristicsSelectors';
-import { getMaxTotalAttributeValues } from '../Selectors/elSelectors';
-import { getIsInCharacterCreation, getIsRemovingEnabled } from '../Selectors/phaseSelectors';
-import { getAddPermanentEnergy, getCurrentAttributeAdjustmentId, getEditPermanentEnergy } from '../Selectors/stateSelectors';
-import { Maybe } from '../Utilities/dataUtils';
-import { Attributes, AttributesDispatchProps, AttributesOwnProps, AttributesStateProps } from '../Views/Attributes/Attributes';
+import { connect } from "react-redux";
+import { fromJust, isJust, Maybe } from "../../Data/Maybe";
+import { ReduxDispatch } from "../Actions/Actions";
+import * as AttributesActions from "../Actions/AttributesActions";
+import * as SubwindowsActions from "../Actions/SubwindowsActions";
+import { AppStateRecord } from "../Reducers/appReducer";
+import { getAdjustmentValue, getAttributesForView, getAttributeSum, getAvailableAdjustmentIds } from "../Selectors/attributeSelectors";
+import { getDerivedCharacteristics } from "../Selectors/derivedCharacteristicsSelectors";
+import { getMaxTotalAttributeValues } from "../Selectors/elSelectors";
+import { getIsInCharacterCreation, getIsRemovingEnabled } from "../Selectors/phaseSelectors";
+import { getAddPermanentEnergy, getCurrentAttributeAdjustmentId, getEditPermanentEnergy } from "../Selectors/stateSelectors";
+import { Attributes, AttributesDispatchProps, AttributesOwnProps, AttributesStateProps } from "../Views/Attributes/Attributes";
 
-const mapStateToProps = (state: AppState, ownProps: AttributesOwnProps): AttributesStateProps => ({
-  adjustmentValue: getAdjustmentValue (state),
-  attributes: getAttributesForView (state),
-  availableAttributeIds: getAvailableAdjustmentIds (state),
-  currentAttributeId: getCurrentAttributeAdjustmentId (state),
-  isInCharacterCreation: getIsInCharacterCreation (state),
-  isRemovingEnabled: getIsRemovingEnabled (state),
-  derived: getDerivedCharacteristics (state, ownProps),
-  maxTotalAttributeValues: getMaxTotalAttributeValues (state),
-  sum: getAttributeSum (state),
-  getEditPermanentEnergy: getEditPermanentEnergy (state),
-  getAddPermanentEnergy: getAddPermanentEnergy (state),
-});
+const mapStateToProps =
+  (state: AppStateRecord, ownProps: AttributesOwnProps): AttributesStateProps => ({
+    adjustmentValue: getAdjustmentValue (state),
+    attributes: getAttributesForView (state),
+    availableAttributeIds: getAvailableAdjustmentIds (state),
+    currentAttributeId: getCurrentAttributeAdjustmentId (state),
+    isInCharacterCreation: getIsInCharacterCreation (state),
+    isRemovingEnabled: getIsRemovingEnabled (state),
+    derived: getDerivedCharacteristics (state, ownProps),
+    maxTotalAttributeValues: getMaxTotalAttributeValues (state),
+    sum: getAttributeSum (state),
+    getEditPermanentEnergy: getEditPermanentEnergy (state),
+    getAddPermanentEnergy: getAddPermanentEnergy (state),
+  })
 
 const mapDispatchToProps = (
-  dispatch: Dispatch<Action, AppState>,
-  { locale }: AttributesOwnProps
+  dispatch: ReduxDispatch,
+  { l10n }: AttributesOwnProps
 ): AttributesDispatchProps => ({
   addPoint: (id: string) => {
-    dispatch (AttributesActions.addAttributePoint (id) (locale));
+    dispatch (AttributesActions.addAttributePoint (l10n) (id))
   },
   removePoint: (id: string) => {
-    dispatch (AttributesActions.removeAttributePoint (id));
+    dispatch (AttributesActions.removeAttributePoint (id))
   },
   addLifePoint: () => {
-    dispatch (AttributesActions.addLifePoint (locale));
+    dispatch (AttributesActions.addLifePoint (l10n))
   },
   addArcaneEnergyPoint: () => {
-    dispatch (AttributesActions.addArcaneEnergyPoint (locale));
+    dispatch (AttributesActions.addArcaneEnergyPoint (l10n))
   },
   addKarmaPoint: () => {
-    dispatch (AttributesActions.addKarmaPoint (locale));
+    dispatch (AttributesActions.addKarmaPoint (l10n))
   },
   removeLifePoint: () => {
-    dispatch (AttributesActions.removeLifePoint ());
+    dispatch (AttributesActions.removeLifePoint ())
   },
   removeArcaneEnergyPoint: () => {
-    dispatch (AttributesActions.removeArcaneEnergyPoint ());
+    dispatch (AttributesActions.removeArcaneEnergyPoint ())
   },
   removeKarmaPoint: () => {
-    dispatch (AttributesActions.removeKarmaPoint ());
+    dispatch (AttributesActions.removeKarmaPoint ())
   },
   addLostLPPoint: () => {
-    dispatch (AttributesActions.addLostLPPoint ());
+    dispatch (AttributesActions.addLostLPPoint ())
   },
   removeLostLPPoint: () => {
-    dispatch (AttributesActions.removeLostLPPoint ());
+    dispatch (AttributesActions.removeLostLPPoint ())
   },
   addLostLPPoints: (value: number) => {
-    dispatch (AttributesActions.addLostLPPoints (value));
+    dispatch (AttributesActions.addLostLPPoints (value))
   },
   addBoughtBackAEPoint: () => {
-    dispatch (AttributesActions.addBoughtBackAEPoint (locale));
+    dispatch (AttributesActions.addBoughtBackAEPoint (l10n))
   },
   removeBoughtBackAEPoint: () => {
-    dispatch (AttributesActions.removeBoughtBackAEPoint ());
+    dispatch (AttributesActions.removeBoughtBackAEPoint ())
   },
   addLostAEPoint: () => {
-    dispatch (AttributesActions.addLostAEPoint ());
+    dispatch (AttributesActions.addLostAEPoint ())
   },
   removeLostAEPoint: () => {
-    dispatch (AttributesActions.removeLostAEPoint ());
+    dispatch (AttributesActions.removeLostAEPoint ())
   },
   addLostAEPoints: (value: number) => {
-    dispatch (AttributesActions.addLostAEPoints (value));
+    dispatch (AttributesActions.addLostAEPoints (value))
   },
   addBoughtBackKPPoint: () => {
-    dispatch (AttributesActions.addBoughtBackKPPoint (locale));
+    dispatch (AttributesActions.addBoughtBackKPPoint (l10n))
   },
   removeBoughtBackKPPoint: () => {
-    dispatch (AttributesActions.removeBoughtBackKPPoint ());
+    dispatch (AttributesActions.removeBoughtBackKPPoint ())
   },
   addLostKPPoint: () => {
-    dispatch (AttributesActions.addLostKPPoint ());
+    dispatch (AttributesActions.addLostKPPoint ())
   },
   removeLostKPPoint: () => {
-    dispatch (AttributesActions.removeLostKPPoint ());
+    dispatch (AttributesActions.removeLostKPPoint ())
   },
   addLostKPPoints: (value: number) => {
-    dispatch (AttributesActions.addLostKPPoints (value));
+    dispatch (AttributesActions.addLostKPPoints (value))
   },
-  openAddPermanentEnergyLoss: (energy: 'LP' | 'AE' | 'KP') => {
-    dispatch (SubwindowsActions.openAddPermanentEnergyLoss (energy));
+  openAddPermanentEnergyLoss: (energy: "LP" | "AE" | "KP") => {
+    dispatch (SubwindowsActions.openAddPermanentEnergyLoss (energy))
   },
   closeAddPermanentEnergyLoss: () => {
-    dispatch (SubwindowsActions.closeAddPermanentEnergyLoss ());
+    dispatch (SubwindowsActions.closeAddPermanentEnergyLoss ())
   },
-  openEditPermanentEnergy: (energy: 'LP' | 'AE' | 'KP') => {
-    dispatch (SubwindowsActions.openEditPermanentEnergy (energy));
+  openEditPermanentEnergy: (energy: "LP" | "AE" | "KP") => {
+    dispatch (SubwindowsActions.openEditPermanentEnergy (energy))
   },
   closeEditPermanentEnergy: () => {
-    dispatch (SubwindowsActions.closeEditPermanentEnergy ());
+    dispatch (SubwindowsActions.closeEditPermanentEnergy ())
   },
   setAdjustmentId: (id: Maybe<string>) => {
-    if (Maybe.isJust (id)) {
-      dispatch (AttributesActions.setAdjustmentId (Maybe.fromJust (id)));
+    if (isJust (id)) {
+      dispatch (AttributesActions.setAdjustmentId (fromJust (id)))
     }
   },
-});
+})
 
 export const connectAttributes =
-  connect<AttributesStateProps, AttributesDispatchProps, AttributesOwnProps, AppState> (
+  connect<AttributesStateProps, AttributesDispatchProps, AttributesOwnProps, AppStateRecord> (
     mapStateToProps,
     mapDispatchToProps
-  );
+  )
 
-export const AttributesContainer = connectAttributes (Attributes);
+export const AttributesContainer = connectAttributes (Attributes)

@@ -91,7 +91,7 @@ export class Router extends React.Component<RouterProps> {
       [TabId.Cultures]: <CulturesContainer locale={l10n} />,
       [TabId.Professions]: <ProfessionsContainer locale={l10n} />,
 
-      [TabId.Attributes]: <AttributesContainer locale={l10n} />,
+      [TabId.Attributes]: <AttributesContainer l10n={l10n} />,
 
       [TabId.Advantages]: <AdvantagesContainer locale={l10n} />,
       [TabId.Disadvantages]: <DisadvantagesContainer locale={l10n} />,

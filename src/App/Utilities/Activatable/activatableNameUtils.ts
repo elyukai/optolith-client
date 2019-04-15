@@ -382,7 +382,7 @@ export const compressList =
                                           map ((x: Record<ActiveActivatable>) => {
                                             const levelPart =
                                               pipe (
-                                                     AAA_.tier,
+                                                     AAA_.level,
                                                      fmap (pipe (toRoman, appendStr (" "))),
                                                      fromMaybe ("")
                                                    )

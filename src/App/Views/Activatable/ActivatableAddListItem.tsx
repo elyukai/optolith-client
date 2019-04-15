@@ -2,7 +2,7 @@ import classNames = require("classnames")
 import * as React from "react";
 import { notNullStrUndef } from "../../../Data/List";
 import { fromJust, fromMaybe, isJust, Maybe, maybeToUndefined } from "../../../Data/Maybe";
-import { snd } from "../../../Data/Pair";
+import { fst, snd } from "../../../Data/Pair";
 import { Record } from "../../../Data/Record";
 import { ActivatableActivationOptions } from "../../Models/Actions/ActivatableActivationOptions";
 import { HeroModel } from "../../Models/Hero/HeroModel";
@@ -11,7 +11,7 @@ import { InactiveActivatable } from "../../Models/View/InactiveActivatable";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
 import { WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import { getIdSpecificAffectedAndDispatchProps, getInactiveActivatableControlElements, insertFinalCurrentCost } from "../../Utilities/Activatable/activatableInactiveViewUtils";
+import { getIdSpecificAffectedAndDispatchProps, getInactiveActivatableControlElements, InactiveActivatableControlElements, insertFinalCurrentCost, PropertiesAffectedByState } from "../../Utilities/Activatable/activatableInactiveViewUtils";
 import { translate } from "../../Utilities/I18n";
 import { pipe_ } from "../../Utilities/pipe";
 import { isInteger } from "../../Utilities/RegexUtils";
@@ -61,6 +61,8 @@ export interface ActivatableAddListItemState {
 }
 
 const IAA = InactiveActivatable.A
+const IACEA = InactiveActivatableControlElements.A
+const PABSA = PropertiesAffectedByState.A
 
 export class ActivatableAddListItem extends
   React.Component<ActivatableAddListItemProps, ActivatableAddListItemState> {
@@ -202,11 +204,11 @@ export class ActivatableAddListItem extends
       <ListItem important={isImportant} recommended={isTypical} unrecommended={isUntypical}>
         <ListItemLeft>
           <ListItemName name={IAA.name (item)} />
-          {fromMaybe (<></>) (controlElements .lookup ("levelElementBefore"))}
-          {fromMaybe (<></>) (controlElements .lookup ("selectElement"))}
-          {fromMaybe (<></>) (controlElements .lookup ("secondSelectElement"))}
-          {fromMaybe (<></>) (controlElements .lookup ("inputElement"))}
-          {fromMaybe (<></>) (controlElements .lookup ("levelElementAfter"))}
+          {fromMaybe (<></>) (IACEA.levelElementBefore (controlElements))}
+          {fromMaybe (<></>) (IACEA.selectElement (controlElements))}
+          {fromMaybe (<></>) (IACEA.secondSelectElement (controlElements))}
+          {fromMaybe (<></>) (IACEA.inputElement (controlElements))}
+          {fromMaybe (<></>) (IACEA.levelElementAfter (controlElements))}
         </ListItemLeft>
         <ListItemSeparator/>
         {hideGroup !== true
@@ -228,29 +230,29 @@ export class ActivatableAddListItem extends
             }
             onClick={this.showCustomCostDialog}
             >
-            {fromMaybe<string | number> ("") (snd (finalProps) .lookup ("currentCost"))}
+            {fromMaybe<string | number> ("") (PABSA.currentCost (snd (finalProps)))}
           </div>
           <Dialog
             id="custom-cost-dialog"
             close={this.closeCustomCostDialog}
             isOpened={showCustomCostDialog}
-            title={translate (l10n, "customcost.title")}
+            title={translate (l10n) ("customcost")}
             buttons={[
               {
                 autoWidth: true,
-                label: translate (l10n, "actions.done"),
+                label: translate (l10n) ("done"),
                 disabled: typeof customCostPreview === "string" && !isInteger (customCostPreview),
                 onClick: this.setCustomCost,
               },
               {
                 autoWidth: true,
-                label: translate (l10n, "actions.delete"),
+                label: translate (l10n) ("delete"),
                 disabled: customCost === undefined,
                 onClick: this.deleteCustomCost,
               },
             ]}
             >
-            {translate (l10n, "customcost.message")}{item .get ("name")}
+            {translate (l10n) ("customcostfor")}{IAA.name (item)}
             <TextField
               value={customCostPreview}
               onChange={this.setCustomCostPreview}
@@ -263,13 +265,12 @@ export class ActivatableAddListItem extends
           <IconButton
             icon="&#xE916"
             disabled={disabled}
-            onClick={this.addToList.bind (null, Tuple.fst (finalProps) .toObject ())}
+            onClick={this.addToList.bind (null, fst (finalProps))}
             flat
             />
           <IconButton
             icon="&#xE912"
-            disabled={!selectForInfo}
-            onClick={() => selectForInfo (item .get ("id"))}
+            onClick={() => selectForInfo (IAA.id (item))}
             flat
             />
         </ListItemButtons>

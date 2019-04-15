@@ -1,52 +1,66 @@
-import classNames = require('classnames');
-import * as React from 'react';
-import { isString } from 'util';
-import { ActiveViewObject, DeactivateArgs, UIMessagesObject } from '../App/Models/Hero/heroTypeHelpers';
-import { translate } from '../App/Utils/I18n';
-import { getRoman } from '../App/Utils/NumberUtils';
-import { Just, List, Maybe, Nothing, Record, Tuple } from '../Utilities/dataUtils';
-import { Dropdown, DropdownOption } from './Dropdown';
-import { IconButton } from './IconButton';
-import { ListItem } from './ListItem';
-import { ListItemButtons } from './ListItemButtons';
-import { ListItemGroup } from './ListItemGroup';
-import { ListItemName } from './ListItemName';
-import { ListItemSelections } from './ListItemSelections';
-import { ListItemSeparator } from './ListItemSeparator';
-import { ListItemValues } from './ListItemValues';
+import classNames = require("classnames")
+import * as React from "react";
+import { isString } from "util";
+import { notEquals } from "../../../Data/Eq";
+import { onF } from "../../../Data/Function";
+import { fmap, fmapF } from "../../../Data/Functor";
+import { cons, flength } from "../../../Data/List";
+import { bindF, ensure, fromJust, fromMaybe, isJust, Just, liftM2, listToMaybe, Maybe, maybe, or } from "../../../Data/Maybe";
+import { Record } from "../../../Data/Record";
+import { ActivatableDeactivationOptions } from "../../Models/Actions/ActivatableDeactivationOptions";
+import { ActiveActivatable, ActiveActivatableA_ } from "../../Models/View/ActiveActivatable";
+import { L10nRecord } from "../../Models/Wiki/L10n";
+import { translate } from "../../Utilities/I18n";
+import { getLevelElementsWithMin } from "../../Utilities/levelUtils";
+import { max, min } from "../../Utilities/mathUtils";
+import { pipe_ } from "../../Utilities/pipe";
+import { misStringM } from "../../Utilities/typeCheckUtils";
+import { Dropdown, DropdownOption } from "../Universal/Dropdown";
+import { IconButton } from "../Universal/IconButton";
+import { ListItem } from "../Universal/ListItem";
+import { ListItemButtons } from "../Universal/ListItemButtons";
+import { ListItemGroup } from "../Universal/ListItemGroup";
+import { ListItemName } from "../Universal/ListItemName";
+import { ListItemSelections } from "../Universal/ListItemSelections";
+import { ListItemSeparator } from "../Universal/ListItemSeparator";
+import { ListItemValues } from "../Universal/ListItemValues";
 
 export interface ActivatableRemoveListItemProps {
-  item: Record<ActiveViewObject>;
-  locale: UIMessagesObject;
-  isRemovingEnabled: boolean;
-  hideGroup?: boolean;
-  isImportant?: boolean;
-  isTypical?: boolean;
-  isUntypical?: boolean;
-  setLevel (id: string, index: number, level: number): void;
-  removeFromList (args: DeactivateArgs): void;
-  selectForInfo (id: string): void;
+  item: Record<ActiveActivatable>
+  l10n: L10nRecord
+  isRemovingEnabled: boolean
+  hideGroup?: boolean
+  isImportant?: boolean
+  isTypical?: boolean
+  isUntypical?: boolean
+  setLevel (id: string, index: number, level: number): void
+  removeFromList (args: Record<ActivatableDeactivationOptions>): void
+  selectForInfo (id: string): void
 }
+
+const AAA_ = ActiveActivatableA_
+const DOA = DropdownOption.A
 
 export class ActivatableRemoveListItem extends React.Component<ActivatableRemoveListItemProps> {
   handleSelectTier = (maybeLevel: Maybe<number>) => {
-    if (Maybe.isJust (maybeLevel)) {
-      const level = Maybe.fromJust (maybeLevel);
+    if (isJust (maybeLevel)) {
+      const level = fromJust (maybeLevel)
 
-      this.props.setLevel (this.props.item .get ('id'), this.props.item .get ('index'), level);
+      this.props.setLevel (AAA_.id (this.props.item), AAA_.index (this.props.item), level)
     }
   }
 
-  removeFromList = (args: DeactivateArgs) => this.props.removeFromList (args);
-
   shouldComponentUpdate (nextProps: ActivatableRemoveListItemProps) {
-    return this.props.item .lookup ('tier') .notEquals (nextProps.item .lookup ('tier'))
-      || this.props.item .lookup ('cost') .notEquals (nextProps.item .lookup ('cost'))
+    const curr_item = this.props.item
+    const next_item = nextProps.item
+
+    return onF (AAA_.level) (notEquals) (curr_item) (next_item)
+      || onF (AAA_.finalCost) (notEquals) (curr_item) (next_item)
       || this.props.isRemovingEnabled === !nextProps.isRemovingEnabled
-      || this.props.item .lookup ('minTier') .notEquals (nextProps.item .lookup ('minTier'))
-      || this.props.item .lookup ('maxTier') .notEquals (nextProps.item .lookup ('maxTier'))
-      || this.props.item .get ('name') !== nextProps.item .get ('name')
-      || this.props.item .get ('disabled') !== nextProps.item .get ('disabled');
+      || onF (AAA_.minLevel) (notEquals) (curr_item) (next_item)
+      || onF (AAA_.maxLevel) (notEquals) (curr_item) (next_item)
+      || onF (AAA_.name) (notEquals) (curr_item) (next_item)
+      || onF (AAA_.disabled) (notEquals) (curr_item) (next_item)
   }
 
   render () {
@@ -57,46 +71,34 @@ export class ActivatableRemoveListItem extends React.Component<ActivatableRemove
       isImportant,
       isTypical,
       isUntypical,
-      locale,
+      l10n: locale,
       selectForInfo,
-    } = this.props;
+      removeFromList,
+    } = this.props
 
-    const maybeLevelElement =
-      Maybe.liftM2<number, number, JSX.Element | string>
+    const mlevel_element =
+      liftM2<number, number, JSX.Element | string>
         (levels => level => {
-          const min = !isRemovingEnabled
-            ? level
-            : Maybe.fromMaybe (1)
-                              (item .lookup ('minTier') .fmap (R.max<number> (1)));
+          const curr_min =
+            !isRemovingEnabled
+              ? level
+              : pipe_ (item, AAA_.minLevel, maybe (1) (max (1)))
 
-          const max = Maybe.fromMaybe (levels)
-                                      (item .lookup ('maxTier') .fmap (R.min (levels)));
+          const curr_max = pipe_ (item, AAA_.maxLevel, maybe (levels) (min (levels)))
 
-          const length = max - min + 1;
-
-          const levelOptions =
-            List.unfoldr<Record<DropdownOption>, number>
-              (index => index < length
-                ? Just (
-                  Tuple.of<Record<DropdownOption>, number>
-                    (Record.of<DropdownOption> ({
-                      id: index + min,
-                      name: getRoman (index + min),
-                    }))
-                    (index + 1)
-                )
-                : Nothing ())
-              (0);
+          const levelOptions = getLevelElementsWithMin (curr_min) (curr_max)
 
           const levelOptionsWithMotherTongue =
-            item .get ('id') === 'SA_29' && (level === 4 || isRemovingEnabled)
-              ? levelOptions .append (Record.of<DropdownOption> ({
-                id: 4,
-                name: translate (locale, 'mothertongue.short'),
-              }))
-              : levelOptions;
+            AAA_.id (item) === "SA_29"
+            && (level === 4 || isRemovingEnabled)
+              ? cons (levelOptions)
+                     (DropdownOption ({
+                       id: Just (4),
+                       name: translate (locale) ("nativetongue.short"),
+                     }))
+              : levelOptions
 
-          return levelOptions .length () > 1
+          return flength (levelOptions) > 1
             ? (
               <Dropdown
                 className="tiers"
@@ -105,80 +107,70 @@ export class ActivatableRemoveListItem extends React.Component<ActivatableRemove
                 options={levelOptionsWithMotherTongue}
                 />
             )
-            : Maybe.fromMaybe ('')
-                              (Maybe.listToMaybe (levelOptions)
-                                .fmap (option => ` ${option .get ('name')}`))
+            : pipe_ (levelOptions, listToMaybe, fmap (o => ` ${DOA.name (o)}`), fromMaybe (""))
         })
-        (item .get ('wikiEntry') .lookup ('tiers'))
-        (item .lookup ('tier'));
+        (AAA_.levels (item))
+        (AAA_.level (item))
 
-    const maybeArgs = item .lookup ('finalCost')
-      .fmap (
-        cost => Record.of<DeactivateArgs> ({
-          id: item .get ('id'),
-          index: item .get ('index'),
-          cost,
-        })
-      );
+    const options =
+      pipe_ (
+        item,
+        AAA_.finalCost,
+        cost => ActivatableDeactivationOptions ({
+                  id: AAA_.id (item),
+                  index: AAA_.index (item),
+                  cost,
+                })
+      )
 
     return (
       <ListItem important={isImportant} recommended={isTypical} unrecommended={isUntypical}>
         <ListItemName
-          name={
-            Maybe.fromMaybe
-              (item .get ('name'))
-              (maybeLevelElement
-                .bind (Maybe.ensure (isString))
-                .fmap (level => item .get ('name') + level))
-          }
+          name={pipe_ (mlevel_element, misStringM, maybe (AAA_.name (item))
+                                                         (l => `${AAA_.name (item)}${l}`))}
           />
         <ListItemSelections>
-          {
-            Maybe.fromMaybe
-              (<></>)
-              (maybeLevelElement
-                .bind (
-                  Maybe.ensure (
-                    (levelElement): levelElement is JSX.Element => typeof levelElement !== 'string')
-                  )
-                )
-          }
+          {pipe_ (
+            mlevel_element,
+            bindF (ensure ((l): l is JSX.Element => !isString (l))),
+            fromMaybe (<></>)
+          )}
         </ListItemSelections>
         <ListItemSeparator/>
-        {!hideGroup && (
-          <ListItemGroup
-            list={translate (locale, 'specialabilities.view.groups')}
-            index={item .get ('wikiEntry') .lookup ('gr') as Maybe<number>}
-            />
-        )}
+        {hideGroup !== true
+          ? (
+            <ListItemGroup
+              list={translate (locale) ("specialabilitygroups")}
+              index={AAA_.gr (item)}
+              />
+          )
+        : null}
         <ListItemValues>
           <div
             className={
               classNames (
-                'cost',
-                Maybe.elem (true) (item .lookup ('customCost')) && 'custom-cost'
+                "cost",
+                or (fmapF (AAA_.customCost (item)) (notEquals (0))) ? "custom-cost" : undefined
               )
             }
             >
-            {Maybe.fromMaybe<string | number> ('') (item .lookup ('finalCost'))}
+            {AAA_.finalCost (item)}
           </div>
         </ListItemValues>
         <ListItemButtons>
-          {isRemovingEnabled && Maybe.fromMaybe
-            (<></>)
-            (maybeArgs .fmap (
-              args => (
+          {isRemovingEnabled
+            ? (
                 <IconButton
-                  icon="&#xE90b;"
-                  onClick={() => this.removeFromList (args .toObject ())}
-                  disabled={item .get ('disabled')}
+                  icon="&#xE90b"
+                  onClick={() => removeFromList (options)}
+                  disabled={AAA_.disabled (item)}
                   flat
                   />
               )
-            ))}
-          <IconButton icon="&#xE912;" onClick={() => selectForInfo (item .get ('id'))} flat />
+            : null}
+          <IconButton icon="&#xE912" onClick={() => selectForInfo (AAA_.id (item))} flat />
         </ListItemButtons>
       </ListItem>
-    );
+    )
   }
 }

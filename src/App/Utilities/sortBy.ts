@@ -82,7 +82,7 @@ export const comparingR =
   <A extends RecordBase, B>
   (accessor: (x: Record<A>) => B) =>
   (compare: (x: B) => (y: B) => Ordering) =>
-    on<Record<A>, B, Ordering> (compare) (accessor)
+    on (compare) (accessor)
 
 /**
  * `sortStrings locale xs` sorts a list of strings with respect to the passed

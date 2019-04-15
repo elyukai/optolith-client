@@ -28,6 +28,7 @@ export const ActivatableNameCost =
 
 export const ActivatableNameCostA_ = {
   id: pipe (ActivatableNameCost.A.active, ActiveObjectWithId.A.id),
+  index: pipe (ActivatableNameCost.A.active, ActiveObjectWithId.A.index),
   tier: pipe (ActivatableNameCost.A.active, ActiveObjectWithId.A.tier),
   name: pipe (ActivatableNameCost.A.naming, ActivatableCombinedName.A.name),
   addName: pipe (ActivatableNameCost.A.naming, ActivatableCombinedName.A.addName),

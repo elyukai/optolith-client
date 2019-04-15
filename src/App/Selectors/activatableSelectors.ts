@@ -191,6 +191,7 @@ export const getFilteredActiveSpecialAbilities = createMaybeSelector (
   (mspecial_abilities, sortOptions, filterText) =>
     fmapF (mspecial_abilities)
           (filterAndSortRecordsBy (0)
+                                  <ActiveActivatable<SpecialAbility>>
                                   ([ActiveActivatableA_.name])
                                   (sortOptions)
                                   (filterText))

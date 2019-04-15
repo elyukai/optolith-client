@@ -55,9 +55,28 @@ export const join =
  * Typical usage: ```sortBy (compare `on` fst)```.
  */
 export const on =
-  <A, B, C>
+  <B, C>
   (b: (x: B) => (y: B) => C) =>
+  <A>
   (u: (x: A) => B) =>
+  (x: A) =>
+  (y: A): C =>
+    b (u (x)) (u (y))
+
+/**
+ * `onF :: (a -> b) -> (b -> b -> c) -> a -> a -> c`
+ *
+ * `onF u b x y` runs the binary function `b` on the results of applying unary
+ * function `u` to two arguments `x` and `y`. From the opposite perspective, it
+ * transforms two inputs and combines the outputs.
+ *
+ * Flipped version of `on`.
+ */
+export const onF =
+  <A, B>
+  (u: (x: A) => B) =>
+  <C>
+  (b: (x: B) => (y: B) => C) =>
   (x: A) =>
   (y: A): C =>
     b (u (x)) (u (y))
@@ -111,6 +130,7 @@ export const Functn = {
   thrush,
   join,
   on,
+  onF,
   flip,
   blackbird,
   blackbirdF,
