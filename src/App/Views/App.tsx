@@ -85,13 +85,13 @@ export class App extends React.Component<AppProps, AppState> {
             <img src="images/background.svg" alt=""/>
           </div>
 
-          <AlertsContainer locale={l10n} />
+          <AlertsContainer l10n={l10n} />
           <DownloaderContainer locale={l10n} />
           <TitleBar {...this.props} />
 
           <section id="content">
             <NavigationBarContainer {...this.props} locale={l10n} />
-            <Router id={currentTab} locale={l10n} />
+            <Router id={currentTab} l10n={l10n} />
           </section>
         </div>
       ))

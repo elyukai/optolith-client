@@ -32,7 +32,7 @@ import { Scroll } from "../Universal/Scroll";
 
 export interface RouterProps {
   id: TabId
-  locale: L10nRecord
+  l10n: L10nRecord
 }
 
 export interface RouterState {
@@ -56,7 +56,7 @@ export class Router extends React.Component<RouterProps> {
   }
 
   render (): React.ReactNode {
-    const { id, locale } = this.props
+    const { id, l10n } = this.props
     const { hasError } = this.state
 
     if (hasError) {
@@ -73,38 +73,38 @@ export class Router extends React.Component<RouterProps> {
     }
 
     const VIEWS: { [K in TabId]: JSX.Element } = {
-      [TabId.Herolist]: <HerolistContainer l10n={locale} />,
+      [TabId.Herolist]: <HerolistContainer l10n={l10n} />,
       [TabId.Grouplist]: <Grouplist />,
-      [TabId.Wiki]: <WikiContainer locale={locale} />,
-      [TabId.Faq]: <HelpContainer locale={locale} />,
-      [TabId.Imprint]: <Imprint locale={locale} />,
+      [TabId.Wiki]: <WikiContainer locale={l10n} />,
+      [TabId.Faq]: <HelpContainer locale={l10n} />,
+      [TabId.Imprint]: <Imprint l10n={l10n} />,
       [TabId.ThirdPartyLicenses]: <ThirdPartyLicenses />,
       [TabId.LastChanges]: <LastChanges />,
 
-      [TabId.Profile]: <PersonalDataContainer locale={locale} />,
-      [TabId.PersonalData]: <PersonalDataContainer locale={locale} />,
-      [TabId.CharacterSheet]: <SheetsContainer locale={locale} />,
-      [TabId.Pact]: <PactContainer locale={locale} />,
-      [TabId.Rules]: <RulesContainer locale={locale} />,
+      [TabId.Profile]: <PersonalDataContainer locale={l10n} />,
+      [TabId.PersonalData]: <PersonalDataContainer locale={l10n} />,
+      [TabId.CharacterSheet]: <SheetsContainer locale={l10n} />,
+      [TabId.Pact]: <PactContainer locale={l10n} />,
+      [TabId.Rules]: <RulesContainer locale={l10n} />,
 
-      [TabId.Races]: <RacesContainer locale={locale} />,
-      [TabId.Cultures]: <CulturesContainer locale={locale} />,
-      [TabId.Professions]: <ProfessionsContainer locale={locale} />,
+      [TabId.Races]: <RacesContainer locale={l10n} />,
+      [TabId.Cultures]: <CulturesContainer locale={l10n} />,
+      [TabId.Professions]: <ProfessionsContainer locale={l10n} />,
 
-      [TabId.Attributes]: <AttributesContainer locale={locale} />,
+      [TabId.Attributes]: <AttributesContainer locale={l10n} />,
 
-      [TabId.Advantages]: <AdvantagesContainer locale={locale} />,
-      [TabId.Disadvantages]: <DisadvantagesContainer locale={locale} />,
+      [TabId.Advantages]: <AdvantagesContainer locale={l10n} />,
+      [TabId.Disadvantages]: <DisadvantagesContainer locale={l10n} />,
 
-      [TabId.Skills]: <SkillsContainer locale={locale} />,
-      [TabId.CombatTechniques]: <CombatTechniquesContainer locale={locale} />,
-      [TabId.SpecialAbilities]: <SpecialAbilitiesContainer locale={locale} />,
-      [TabId.Spells]: <SpellsContainer locale={locale} />,
-      [TabId.LiturgicalChants]: <LiturgicalChantsContainer locale={locale} />,
+      [TabId.Skills]: <SkillsContainer locale={l10n} />,
+      [TabId.CombatTechniques]: <CombatTechniquesContainer locale={l10n} />,
+      [TabId.SpecialAbilities]: <SpecialAbilitiesContainer locale={l10n} />,
+      [TabId.Spells]: <SpellsContainer locale={l10n} />,
+      [TabId.LiturgicalChants]: <LiturgicalChantsContainer locale={l10n} />,
 
-      [TabId.Equipment]: <EquipmentContainer locale={locale} />,
-      [TabId.ZoneArmor]: <HitZoneArmorsContainer locale={locale} />,
-      [TabId.Pets]: <PetsContainer locale={locale} />,
+      [TabId.Equipment]: <EquipmentContainer locale={l10n} />,
+      [TabId.ZoneArmor]: <HitZoneArmorsContainer locale={l10n} />,
+      [TabId.Pets]: <PetsContainer locale={l10n} />,
 
       // master: <Master />
     }

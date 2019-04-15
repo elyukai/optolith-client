@@ -1,45 +1,99 @@
 import * as React from "react";
-import { isNumber, isString } from "util";
-import { List } from "../../../Data/List";
-import { bindF, ensure, Maybe, Nothing } from "../../../Data/Maybe";
-import { Pair } from "../../../Data/Pair";
-import { Omit, Record } from "../../../Data/Record";
-import { Categories } from "../../Constants/Categories";
-import { ActivatableActivationOptions } from "../../Models/Actions/ActivatableActivationOptions";
+import { equals } from "../../../Data/Eq";
+import { cnst, Functn, ident } from "../../../Data/Function";
+import { fmap, fmapF } from "../../../Data/Functor";
+import { over, set } from "../../../Data/Lens";
+import { countWith, elemF, filter, find, flength, foldr, imap, isList, List, map, notElem, notElemF, subscript, subscriptF, sum, take } from "../../../Data/List";
+import { alt, altF, altF_, any, bind, bindF, ensure, fromMaybe, guard, isJust, isNothing, join, Just, liftM2, mapMaybe, Maybe, maybe, maybe_, Nothing, or, then, thenF } from "../../../Data/Maybe";
+import { lookupF } from "../../../Data/OrderedMap";
+import { bimap, first, Pair, second, snd } from "../../../Data/Pair";
+import { fromDefault, makeLenses, Omit, Record } from "../../../Data/Record";
+import { ActivatableActivationOptions, ActivatableActivationOptionsL } from "../../Models/Actions/ActivatableActivationOptions";
+import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
+import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
 import { InactiveActivatable } from "../../Models/View/InactiveActivatable";
+import { Disadvantage } from "../../Models/Wiki/Disadvantage";
 import { L10nRecord } from "../../Models/Wiki/L10n";
+import { Skill } from "../../Models/Wiki/Skill";
+import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
+import { Application } from "../../Models/Wiki/sub/Application";
 import { SelectOption } from "../../Models/Wiki/sub/SelectOption";
+import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { Activatable } from "../../Models/Wiki/wikiTypeHelpers";
 import { ActivatableAddListItemState } from "../../Views/Activatable/ActivatableAddListItem";
 import { Dropdown, DropdownOption } from "../../Views/Universal/Dropdown";
 import { TextField } from "../../Views/Universal/TextField";
 import { getActiveWithNoCustomCost } from "../AdventurePoints/activatableCostUtils";
 import { translate } from "../I18n";
-import { match } from "../match";
-import { toRoman, unsafeToInt } from "../NumberUtils";
-import { pipe } from "../pipe";
-import { isInteger } from "../RegexUtils";
+import { getLevelElementsWithMin } from "../levelUtils";
+import { dec, gte, lt, max, min, multiply, negate } from "../mathUtils";
+import { toInt } from "../NumberUtils";
+import { pipe, pipe_ } from "../pipe";
+import { isNumber, misNumberM, misStringM } from "../typeCheckUtils";
 import { getActiveSelectionsMaybe, getSelectOptionCost } from "./selectionUtils";
 
-const { id, cost } = InactiveActivatable.AL
-
 interface PropertiesAffectedByState {
-  currentCost?: number | string
+  currentCost: Maybe<number | string>
   /**
    * @default false
    */
-  disabled?: boolean
-  selectElement?: JSX.Element
-  firstSelectOptions?: List<Record<SelectOption>>
-  secondSelectOptions?: List<Record<SelectOption>>
-  inputElement?: JSX.Element
-  inputDescription?: string
+  disabled: Maybe<boolean>
+  selectElement: Maybe<JSX.Element>
+  firstSelectOptions: Maybe<List<Record<SelectOption>>>
+  secondSelectOptions: Maybe<List<Record<SelectOption>>>
+  inputElement: Maybe<JSX.Element>
+  inputDescription: Maybe<string>
 }
+
+export const PropertiesAffectedByState =
+  fromDefault<PropertiesAffectedByState> ({
+    currentCost: Nothing,
+    disabled: Nothing,
+    selectElement: Nothing,
+    firstSelectOptions: Nothing,
+    secondSelectOptions: Nothing,
+    inputElement: Nothing,
+    inputDescription: Nothing,
+  })
+
+const PropertiesAffectedByStateL = makeLenses (PropertiesAffectedByState)
+
+interface InactiveActivatableControlElements {
+  disabled: Maybe<boolean>
+  selectElement: Maybe<JSX.Element>
+  secondSelectElement: Maybe<JSX.Element>
+  inputElement: Maybe<JSX.Element>
+  levelElementBefore: Maybe<JSX.Element>
+  levelElementAfter: Maybe<JSX.Element>
+}
+
+export const InactiveActivatableControlElements =
+  fromDefault<InactiveActivatableControlElements> ({
+    disabled: Nothing,
+    selectElement: Nothing,
+    secondSelectElement: Nothing,
+    inputElement: Nothing,
+    levelElementBefore: Nothing,
+    levelElementAfter: Nothing,
+  })
+
+const InactiveActivatableControlElementsL = makeLenses (InactiveActivatableControlElements)
+
+const WA = WikiModel.A
+const IAA = InactiveActivatable.A
+const SAAL = SpecialAbility.AL
+const ADA = ActivatableDependent.A
+const SOA = SelectOption.A
+const SkA = Skill.A
+const AOA = ActiveObject.A
+const AA = Application.A
+const AAOL = ActivatableActivationOptionsL
+const PABYA = PropertiesAffectedByState.A
+const PABYL = PropertiesAffectedByStateL
+const IACEL = InactiveActivatableControlElementsL
 
 type SelectedOptions =
   Partial<Omit<ActivatableAddListItemState, "showCustomCostDialog" | "customCostPreview">>
-
-type RecordAffectedByState = Record<PropertiesAffectedByState>
 
 /**
  * @default Pair (Record ({ id, cost: 0 }), Record ())
@@ -47,7 +101,7 @@ type RecordAffectedByState = Record<PropertiesAffectedByState>
 type IdSpecificAffectedAndDispatchProps =
   Pair<Record<ActivatableActivationOptions>, Record<PropertiesAffectedByState>>
 
-const getPlainCostFromEntry = pipe (cost, bindF (ensure (isNumber)))
+const getPlainCostFromEntry = pipe (IAA.cost, bindF (ensure (isNumber)))
 
 const getIdSpecificAffectedAndDispatchPropsForMusicTraditions =
   (l10n: L10nRecord) =>
@@ -56,34 +110,44 @@ const getIdSpecificAffectedAndDispatchPropsForMusicTraditions =
   (mselect_option_id: Maybe<string | number>) =>
     Pair (
       ActivatableActivationOptions ({
-        id: id (inactive_entry),
+        id: IAA.id (inactive_entry),
         selectOptionId1: mselect_option_id,
         cost: Nothing,
       }),
-      Record.ofMaybe<PropertiesAffectedByState> ({
+      PropertiesAffectedByState ({
         currentCost: getPlainCostFromEntry (inactive_entry),
-        firstSelectOptions: Maybe.mapMaybe
-          ((id: number) => R.pipe (
-            R.dec,
-            List.subscript (translate (l10n, "musictraditions")),
-            Maybe.fmap (name => Record.of<SelectOption> ({ id, name }))
-          ) (id))
-          (music_tradition_ids),
+        firstSelectOptions:
+          Just (mapMaybe ((id: number) => pipe_ (
+                           id,
+                           dec,
+                           subscript (translate (l10n) ("musictraditions")),
+                           fmap (name =>
+                                  SelectOption ({
+                                    id,
+                                    name,
+                                    src: pipe_ (inactive_entry, IAA.wikiEntry, SAAL.src),
+                                  }))
+                         ))
+                         (music_tradition_ids)),
       })
     )
 
 const getCurrentSelectOption =
-  (entry: Record<DeactiveViewObject>) =>
-    (selected: Maybe<number | string>) =>
-      selected
-        .bind (
-          currentSelectOptionId => entry .lookup ("sel")
-            .bind (
-              selectOptions => selectOptions .find (
-                e => e .get ("id") === currentSelectOptionId
-              )
-            )
-        )
+  (entry: Record<InactiveActivatable>) =>
+  (mselected: Maybe<number | string>) =>
+    pipe_ (
+      IAA.selectOptions (entry),
+      liftM2 ((selected_id: string | number) => find (pipe (SOA.id, equals (selected_id))))
+             (mselected),
+      join
+    )
+
+const selectToDropdownOption =
+  (x: Record<SelectOption>) =>
+    DropdownOption ({
+      id: Just (SOA.id (x)),
+      name: SOA.name (x),
+    })
 
 interface IdSpecificAffectedAndDispatchPropsInputHandlers {
   handleSelect (option: Maybe<string | number>): void
@@ -93,485 +157,470 @@ interface IdSpecificAffectedAndDispatchPropsInputHandlers {
 
 export const getIdSpecificAffectedAndDispatchProps =
   (inputHandlers: IdSpecificAffectedAndDispatchPropsInputHandlers) =>
-    (locale: UIMessagesObject) =>
-      (wiki: Record<WikiAll>) =>
-        (entry: Record<DeactiveViewObject>) =>
-          (selectedOptions: SelectedOptions) => {
-            const selected = Maybe.fromNullable (selectedOptions.selected)
-            const selected2 = Maybe.fromNullable (selectedOptions.selected2)
-            const inputText = Maybe.fromNullable (selectedOptions.input)
-            const maybeSelectedLevel = Maybe.fromNullable (selectedOptions.selectedTier)
+  (l10n: L10nRecord) =>
+  (wiki: WikiModelRecord) =>
+  (entry: Record<InactiveActivatable>) =>
+  // tslint:disable-next-line: cyclomatic-complexity
+  (selectedOptions: SelectedOptions): IdSpecificAffectedAndDispatchProps => {
+    const id = IAA.id (entry)
+    const mselected = Maybe (selectedOptions.selected)
+    const mselected2 = Maybe (selectedOptions.selected2)
+    const minput_text = Maybe (selectedOptions.input)
+    const mselected_level = Maybe (selectedOptions.selectedTier)
 
-            return match<string, IdSpecificAffectedAndDispatchProps>
-              (entry .get ("id"))
-              .on (
-                List.elem_ (List.of (
-                  "ADV_4",
-                  "ADV_16",
-                  "ADV_17",
-                  "ADV_47",
-                  "DISADV_48",
-                  "SA_231",
-                  "SA_250",
-                  "SA_569",
-                  "SA_472",
-                  "SA_473",
-                  "SA_531",
-                  "SA_533"
-                )),
-                () => Pair.of<DispatchRecord, RecordAffectedByState>
-                  (Record.ofMaybe<DispatchProps> ({
-                    sel: selected,
-                  }))
-                  (Record.ofMaybe<PropertiesAffectedByState> ({
-                    currentCost: selected
-                      .bind (Maybe.ensure (isString))
-                      .bind (id => OrderedMap.lookup<string, Record<Skill>> (id)
-                                                                            (wiki .get ("skills")))
-                      .fmap (R.pipe (
-                        Record.get<Skill, "ic"> ("ic"),
-                        R.dec
-                      ))
-                      .bind (
-                        index => entry .lookup ("cost")
-                          .bind (
-                            Maybe.ensure ((cost): cost is List<number> => cost instanceof List)
-                          )
-                          .bind (List.subscript_ (index))
-                      ),
-                  }))
-              )
-              .on (
-                List.elem_ (List.of (
-                  "ADV_28",
-                  "ADV_29"
-                )),
-                () => Pair.of<DispatchRecord, RecordAffectedByState>
-                  (Record.ofMaybe<DispatchProps> ({
-                    sel: selected,
-                  }))
-                  (Record.ofMaybe<PropertiesAffectedByState> ({
-                    currentCost:
-                      getSelectOptionCost (entry .get ("wikiEntry") as Activatable)
-                                          (selected),
-                  }))
-              )
-              .on (
-                "DISADV_1",
-                () => Pair.of<DispatchRecord, RecordAffectedByState>
-                  (Record.ofMaybe<DispatchProps> ({
-                    sel: selected,
-                    input: inputText,
-                    tier: maybeSelectedLevel,
-                  }))
-                  (Record.ofMaybe<PropertiesAffectedByState> ({
-                    currentCost: maybeSelectedLevel
-                      .bind (
-                        level => entry .lookup ("cost")
-                          .bind (Maybe.ensure (isNumber))
-                          .fmap (R.multiply (level))
-                      ),
-                    disabled: Maybe.isNothing (selected) && Maybe.isNothing (inputText),
-                  }))
-              )
-              .on (
-                List.elem_ (List.of (
-                  "DISADV_34",
-                  "DISADV_50"
-                )),
-                () => {
-                  const activeSelections = Maybe.fromMaybe<List<string | number>>
-                    (List.empty ())
-                    (getActiveSelectionsMaybe (entry .lookup ("stateEntry")))
+    switch (id) {
+      // Entry with Skill selection
+      case "ADV_4":
+      case "ADV_16":
+      case "ADV_17":
+      case "ADV_47":
+      case "DISADV_48":
+      case "SA_231":
+      case "SA_250":
+      case "SA_569":
+      case "SA_472":
+      case "SA_473":
+      case "SA_531":
+      case "SA_533": {
+        return Pair (
+          ActivatableActivationOptions ({
+            id,
+            selectOptionId1: mselected,
+            cost: Nothing,
+          }),
+          PropertiesAffectedByState ({
+            currentCost:
+              pipe_ (
+                mselected,
+                misStringM,
+                bindF (lookupF (WA.skills (wiki))),
+                bindF (pipe (
+                  SkA.ic,
+                  dec,
+                  i => pipe_ (entry, IAA.cost, bindF (ensure (isList)), bindF (subscriptF (i)))
+                ))
+              ),
+          })
+        )
+      }
 
-                  const filteredSelectOptions = entry
-                    .lookup ("sel")
-                    .fmap (List.filter (e => activeSelections .notElem (e .get ("id"))))
+      // Immunity to (Poison)
+      case "ADV_28":
+      // Immunity to (Disease)
+      case "ADV_29":
+      // Negative Trait
+      case "DISADV_37":
+      // Maimed
+      case "DISADV_51": {
+        return Pair (
+          ActivatableActivationOptions ({
+            id,
+            selectOptionId1: mselected,
+            cost: Nothing,
+          }),
+          PropertiesAffectedByState ({
+            currentCost: getSelectOptionCost (IAA.wikiEntry (entry) as Activatable)
+                                             (mselected),
+          })
+        )
+      }
 
-                  return Pair.of<DispatchRecord, RecordAffectedByState>
-                    (Record.ofMaybe<DispatchProps> ({
-                      sel: filteredSelectOptions .then (selected),
-                      input: filteredSelectOptions .then (inputText),
-                      tier: filteredSelectOptions .then (maybeSelectedLevel),
-                    }))
-                    (Record.ofMaybe<PropertiesAffectedByState> ({
-                      currentCost: maybeSelectedLevel
-                        .bind (
-                          level => entry .lookup ("cost")
-                            .bind (Maybe.ensure (isNumber))
-                            .fmap (
-                              cost => {
-                                const maxCurrentLevel =
-                                  Maybe.fromMaybe
-                                    (0)
-                                    (entry .lookup ("stateEntry")
-                                      .fmap (Record.get<ActivatableDependent, "active"> ("active"))
-                                      .fmap (
-                                        List.foldr<Record<ActiveObject>, number>
-                                          (R.pipe (
-                                            Record.lookup<ActiveObject, "tier"> ("tier"),
-                                            m => (b: number) =>
-                                              Maybe.fromMaybe (b) (m .fmap (a => Math.max (a, b)))
-                                          ))
-                                          (0)
+      // Afraid of ...
+      case "DISADV_1": {
+        return Pair (
+          ActivatableActivationOptions ({
+            id,
+            selectOptionId1: mselected,
+            input: minput_text,
+            level: mselected_level,
+            cost: Nothing,
+          }),
+          PropertiesAffectedByState ({
+            currentCost: liftM2 (multiply)
+                                (mselected_level)
+                                (pipe_ (entry, IAA.cost, misNumberM)),
+            disabled: Just (isNothing (mselected) && isNothing (minput_text)),
+          })
+        )
+      }
+
+      // Principles
+      case "DISADV_34":
+      // Obligations
+      case "DISADV_50": {
+        const active_selections =
+          fromMaybe<List<string | number>> (List ())
+                                           (getActiveSelectionsMaybe (IAA.heroEntry (entry)))
+
+        const mfiltered_select_options =
+          pipe_ (
+            entry,
+            IAA.selectOptions,
+            fmap (filter (pipe (SOA.id, notElemF (active_selections))))
+          )
+
+        return Pair (
+          ActivatableActivationOptions ({
+            id,
+            selectOptionId1: then (mfiltered_select_options) (mselected),
+            input: then (mfiltered_select_options) (minput_text),
+            level: then (mfiltered_select_options) (mselected_level),
+            cost: Nothing,
+          }),
+          PropertiesAffectedByState ({
+            currentCost: liftM2 ((l: number) => (c: number) => {
+                                  const max_l =
+                                    Maybe.sum (pipe_ (
+                                      entry,
+                                      IAA.heroEntry,
+                                      fmap (pipe (
+                                        ADA.active,
+                                        foldr (pipe (AOA.tier, maybe<ident<number>> (ident) (max)))
+                                              (0)
                                       ))
+                                    ))
 
-                                return maxCurrentLevel >= level
-                                  ? 0
-                                  : cost * (level - maxCurrentLevel)
-                              }
-                            )
-                        ),
-                      disabled: filteredSelectOptions
-                        .then (Just (Maybe.isNothing (selected) && Maybe.isNothing (inputText))),
-                      selectElement: filteredSelectOptions
-                        .fmap (
-                          selectOptions => (
-                            <Dropdown
-                              value={selected}
-                              onChange={inputHandlers.handleSelect}
-                              options={selectOptions as List<Record<DropdownOption>>}
-                              disabled={inputHandlers.selectElementDisabled}
-                              />
-                          )
-                        ),
-                    }))
-                }
-              )
-              .on (
-                List.elem_ (List.of (
-                  "ADV_32",
-                  "DISADV_24"
-                )),
-                () => Pair.of<DispatchRecord, RecordAffectedByState>
-                  (Record.ofMaybe<DispatchProps> ({
-                    sel: selected,
-                    input: inputText,
-                  }))
-                  (Record.ofMaybe<PropertiesAffectedByState> ({
-                    currentCost: getPlainCostFromEntry (entry),
-                    disabled: Maybe.isNothing (selected) && Maybe.isNothing (inputText),
-                  }))
-              )
-              .on (
-                "ADV_68",
-                () => Pair.of<DispatchRecord, RecordAffectedByState>
-                  (Record.ofMaybe<DispatchProps> ({
-                    sel: selected,
-                    input: inputText,
-                  }))
-                  (Record.ofMaybe<PropertiesAffectedByState> ({
-                    currentCost:
-                      getSelectOptionCost (entry .get ("wikiEntry") as Activatable)
-                                          (selected),
-                  }))
-              )
-              .on (
-                List.elem_ (List.of (
-                  "DISADV_33",
-                  "DISADV_37",
-                  "DISADV_51"
-                )),
-                id => {
-                  const optionWithTextInput = selected
-                    .bind (
-                      Maybe.ensure (
-                        option => typeof option === "number" && List.of (7, 8) .elem (option)
+                                  return max_l >= l
+                                    ? 0
+                                    : c * (l - max_l)
+                                })
+                                (mselected_level)
+                                (pipe_ (entry, IAA.cost, misNumberM)),
+            disabled: then (mfiltered_select_options)
+                           (Just (isNothing (mselected) && isNothing (minput_text))),
+            selectElement:
+              fmapF (mfiltered_select_options)
+                    (pipe (
+                      map (selectToDropdownOption),
+                      options => (
+                        <Dropdown
+                          value={mselected}
+                          onChange={inputHandlers.handleSelect}
+                          options={options}
+                          disabled={inputHandlers.selectElementDisabled}
+                          />
                       )
-                    )
+                    )),
+          })
+        )
+      }
 
-                  const isMaxActiveSelections = (sid: number) => (max: number) =>
-                    Maybe.elem<string | number> (sid) (selected)
-                    && Maybe.elem
-                      (true)
-                      (entry .lookup ("stateEntry")
-                        .fmap (
-                          stateEntry => stateEntry
-                            .get ("active")
-                            .findIndices (R.pipe (
-                              Record.lookup<ActiveObject, "sid"> ("sid"),
-                              Maybe.elem<string | number> (sid)
-                            ))
-                            .length () >= max
-                        ))
+      // Magical Attunement
+      case "ADV_32":
+      // Magical Restriction
+      case "DISADV_24": {
+        return Pair (
+          ActivatableActivationOptions ({
+            id,
+            selectOptionId1: mselected,
+            input: minput_text,
+            cost: Nothing,
+          }),
+          PropertiesAffectedByState ({
+            currentCost: getPlainCostFromEntry (entry),
+            disabled: Just (isNothing (mselected) && isNothing (minput_text)),
+          })
+        )
+      }
 
-                  return Pair.of<DispatchRecord, RecordAffectedByState>
-                    (Record.ofMaybe<DispatchProps> ({
-                      sel: selected,
-                      input: id === "DISADV_33"
-                        ? optionWithTextInput .then (inputText)
-                        : Nothing (),
-                    }))
-                    (Record.ofMaybe<PropertiesAffectedByState> ({
-                      currentCost:
-                        id === "DISADV_33"
-                        && (isMaxActiveSelections (7) (1) || isMaxActiveSelections (8) (2))
-                          ? 0
-                          : getSelectOptionCost (entry .get ("wikiEntry") as Activatable)
-                                                (selected),
-                      inputElement:
-                        id === "DISADV_33"
-                          ? Just (
-                            <TextField
-                              value={inputText}
-                              onChangeString={inputHandlers.handleInput}
-                              disabled={Maybe.isNothing (optionWithTextInput)} />
-                          )
-                          : Nothing (),
-                    }))
-                }
-              )
-              .on (
-                List.elem_ (List.of (
-                  "DISADV_36",
-                  "DISADV_45"
-                )),
-                id => Pair.of<DispatchRecord, RecordAffectedByState>
-                  (Record.ofMaybe<DispatchProps> ({
-                    sel: selected,
-                    input: inputText,
-                  }))
-                  (Record.ofMaybe<PropertiesAffectedByState> ({
-                    currentCost:
-                      id === "DISADV_36"
-                        ? entry
-                          .lookup ("stateEntry")
-                          .bind (Record.lookup<ActivatableDependent, "active"> ("active"))
-                          .bind (
-                            Maybe.ensure (
-                              R.pipe (
-                                getActiveWithNoCustomCost,
-                                List.lengthL,
-                                R.gt (2)
-                              )
-                            )
-                          )
-                          .then (Just (0))
-                          .alt (getPlainCostFromEntry (entry))
-                        : getPlainCostFromEntry (entry),
-                    disabled: Maybe.isNothing (selected) && Maybe.isNothing (inputText),
-                  }))
-              )
-              .on (
-                "SA_9",
-                () => {
-                  const currentSelectOption = getCurrentSelectOption (entry) (selected)
+      // Hatred of ...
+      case "ADV_68": {
+        return Pair (
+          ActivatableActivationOptions ({
+            id,
+            selectOptionId1: mselected,
+            input: minput_text,
+            cost: Nothing,
+          }),
+          PropertiesAffectedByState ({
+            currentCost: getSelectOptionCost (IAA.wikiEntry (entry) as Activatable)
+                                             (mselected),
+          })
+        )
+      }
 
-                  return Pair.of<DispatchRecord, RecordAffectedByState>
-                    (Record.ofMaybe<DispatchProps> ({
-                      sel: selected,
-                      sel2: selected2,
-                      input: inputText,
-                    }))
-                    (Record.ofMaybe<PropertiesAffectedByState> ({
-                      currentCost:
-                        currentSelectOption .bind (
-                          Record.lookup<SelectOption, "cost"> ("cost")
-                        ),
-                      secondSelectOptions:
-                        currentSelectOption .bind (
-                          Record.lookup<SelectOption, "applications"> ("applications") as
-                            (x: Record<SelectOption>) => Maybe<List<Record<SelectOption>>>
-                        ),
-                      inputDescription:
-                        currentSelectOption .bind (
-                          Record.lookup<SelectOption, "applicationsInput"> ("applicationsInput")
-                        ),
-                    }))
-                }
-              )
-              .on (
-                "SA_29",
-                () => Pair.of<DispatchRecord, RecordAffectedByState>
-                  (Record.ofMaybe<DispatchProps> ({
-                    sel: selected,
-                    tier: maybeSelectedLevel,
-                  }))
-                  (Record.ofMaybe<PropertiesAffectedByState> ({
-                    currentCost:
-                      selected
-                        .bind (Maybe.ensure (isNumber))
-                        .then (
-                          Maybe.liftM2<number, number, number>
-                            (currentSelectedLevel => currentCost =>
-                              currentSelectedLevel === 4 ? 0 : currentCost * currentSelectedLevel)
-                            (maybeSelectedLevel)
-                            (getPlainCostFromEntry (entry))
-                        )
-                      ,
-                  }))
-              )
-              .on (
-                "SA_677",
-                () => getIdSpecificAffectedAndDispatchPropsForMusicTraditions
-                  (locale)
-                  (entry)
-                  (selected)
-                  (List.of (1, 2, 3))
-              )
-              .on (
-                "SA_678",
-                () => getIdSpecificAffectedAndDispatchPropsForMusicTraditions
-                  (locale)
-                  (entry)
-                  (selected)
-                  (List.of (4, 5, 6, 7))
-              )
-              .on (
-                "SA_699",
-                () => {
-                  const currentSelectOption = getCurrentSelectOption (entry) (selected)
+      // Personality Flaw
+      case "DISADV_33": {
+        const is_text_input_required = any (elemF (List<string | number> (7, 8))) (mselected)
 
-                  const specInput = currentSelectOption
-                    .bind (Record.lookup<SelectOption, "specInput"> ("specInput"))
+        const isMaxActiveSelections =
+          (sid: number) => (max_count: number) =>
+            Maybe.elem<string | number> (sid) (mselected)
+            && or (fmapF (IAA.heroEntry (entry))
+                          (pipe (
+                            ADA.active,
+                            countWith (pipe (AOA.sid, Maybe.elem<string | number> (sid))),
+                            gte (max_count)
+                          )))
 
-                  return Pair.of<DispatchRecord, RecordAffectedByState>
-                    (Record.ofMaybe<DispatchProps> ({
-                      sel: selected,
-                      sel2: Maybe.isJust (specInput) ? inputText : selected2,
-                    }))
-                    (Record.ofMaybe<PropertiesAffectedByState> ({
-                      currentCost: currentSelectOption
-                        .bind (Record.lookup<SelectOption, "cost"> ("cost"))
-                        .alt (getPlainCostFromEntry (entry)),
-                      inputDescription: specInput,
-                      secondSelectOptions: currentSelectOption
-                        .bind (Record.lookup<SelectOption, "spec"> ("spec"))
-                        .fmap (
-                          List.imap (
-                            index => name => Record.of<SelectOption> ({ id: index + 1, name })
-                          )
-                        ),
-                    }))
-                }
-              )
-              .otherwise (() => {
-                const maybeLevels = entry .get ("wikiEntry") .lookup ("tiers")
-                const maybeSelectOptions = entry .lookup ("sel")
+        return Pair (
+          ActivatableActivationOptions ({
+            id,
+            selectOptionId1: mselected,
+            input: is_text_input_required ? minput_text : Nothing,
+            cost: Nothing,
+          }),
+          PropertiesAffectedByState ({
+            currentCost:
+              isMaxActiveSelections (7) (1)
+              || isMaxActiveSelections (8) (2)
+                ? Just (0)
+                : getSelectOptionCost (IAA.wikiEntry (entry) as Activatable)
+                                      (mselected),
+            inputElement:
+              Just (
+                <TextField
+                  value={minput_text}
+                  onChangeString={inputHandlers.handleInput}
+                  disabled={!is_text_input_required} />
+              ),
+          })
+        )
+      }
 
-                const basePair = Pair.of<DispatchRecord, RecordAffectedByState>
-                  (Record.empty<DispatchProps> ())
-                  (Record.empty<PropertiesAffectedByState> ())
-
-                const fillPairForActiveLevel = (selectedLevel: number) =>
-                  R.pipe (
-                    (pair: IdSpecificAffectedAndDispatchProps) =>
-                      Maybe.fromMaybe
-                        (pair)
-                        (entry .lookup ("cost")
-                          .bind (
-                            Maybe.ensure (
-                              (cost): cost is number | List<number> =>
-                               selectedLevel > 0
-                               && (typeof cost === "number" || cost instanceof List)
-                            )
-                          )
-                          .fmap<IdSpecificAffectedAndDispatchProps> (
-                            cost =>
-                              Pair.second<DispatchRecord, RecordAffectedByState>
-                                (Record.insert<PropertiesAffectedByState, "currentCost">
-                                  ("currentCost")
-                                  (cost instanceof List
-                                    ? cost .take (selectedLevel) .sum ()
-                                    : cost * selectedLevel))
-                                (pair)
-                          )),
-                    Pair.first (R.pipe (
-                      Record.insert<Partial<ActivateArgs>, "tier"> ("tier") (selectedLevel),
-                      Maybe.elem<string | number | List<number>> ("sel") (entry .lookup ("cost"))
-                      && Maybe.isJust (maybeSelectOptions)
-                        ? Record.insertMaybe<Partial<ActivateArgs>, "sel"> ("sel") (selected)
-                        : Maybe.isJust (entry .get ("wikiEntry") .lookup ("input"))
-                        ? Record.insertMaybe<Partial<ActivateArgs>, "input"> ("input") (inputText)
-                        : R.identity
-                    ))
+      // Bad Habit
+      case "DISADV_36":
+      // Stigma
+      case "DISADV_45": {
+        return Pair (
+          ActivatableActivationOptions ({
+            id,
+            selectOptionId1: mselected,
+            input: minput_text,
+            cost: Nothing,
+          }),
+          PropertiesAffectedByState ({
+            currentCost:
+              id === "DISADV_36"
+                ? pipe_ (
+                    entry,
+                    IAA.heroEntry,
+                    bindF (pipe (
+                      ADA.active,
+                      ensure (pipe (
+                        getActiveWithNoCustomCost,
+                        flength,
+                        lt (2)
+                      ))
+                    )),
+                    maybe_ (() => getPlainCostFromEntry (entry))
+                           (cnst (Just (0)))
                   )
+                : getPlainCostFromEntry (entry),
+            disabled: Just (isNothing (mselected) && isNothing (minput_text)),
+          })
+        )
+      }
 
-                const fillPairForNoLevel =
-                  Maybe.elem<string | number | List<number>> ("sel") (entry .lookup ("cost"))
-                    ? Pair.first<DispatchRecord, RecordAffectedByState>
-                      (Record.insertMaybe<Partial<ActivateArgs>, "sel"> ("sel") (selected))
-                    : Pair.bimap<DispatchRecord, RecordAffectedByState>
-                      (Maybe.isJust (maybeSelectOptions)
-                        ? Record.insertMaybe<Partial<ActivateArgs>, "sel"> ("sel") (selected)
-                        : Maybe.isJust (entry .get ("wikiEntry") .lookup ("input"))
-                        ? Record.insertMaybe<Partial<ActivateArgs>, "input"> ("input") (inputText)
-                        : R.identity)
-                      (Record.insertMaybe <PropertiesAffectedByState, "currentCost">
-                        ("currentCost")
-                        (getPlainCostFromEntry (entry)))
+      // Skill Specialization
+      case "SA_9": {
+        const x = getCurrentSelectOption (entry) (mselected)
 
-                return Maybe.fromMaybe
-                  (fillPairForNoLevel)
-                  (maybeLevels .then (maybeSelectedLevel .fmap (fillPairForActiveLevel)))
-                  (basePair)
-              })
-          }
+        return Pair (
+          ActivatableActivationOptions ({
+            id,
+            selectOptionId1: mselected,
+            selectOptionId2: mselected2,
+            input: minput_text,
+            cost: Nothing,
+          }),
+          PropertiesAffectedByState ({
+            currentCost: bind (x) (SOA.cost),
+            secondSelectOptions:
+              pipe_ (
+                x,
+                bindF (SOA.applications),
+                fmap (map (a => SelectOption ({
+                                  id: AA.id (a),
+                                  name: AA.name (a),
+                                  src: pipe_ (entry, IAA.wikiEntry, SAAL.src),
+                                })))
+              ),
+            inputDescription: bind (x) (SOA.applicationInput),
+          })
+        )
+      }
+
+      // Languages
+      case "SA_29": {
+        return Pair (
+          ActivatableActivationOptions ({
+            id,
+            selectOptionId1: mselected,
+            level: mselected_level,
+            cost: Nothing,
+          }),
+          PropertiesAffectedByState ({
+            currentCost:
+              pipe_ (
+                mselected,
+                misNumberM,
+                thenF (liftM2 ((l: number) => (c: number) => l === 4 ? 0 : c * l)
+                              (mselected_level)
+                              (getPlainCostFromEntry (entry)))),
+          })
+        )
+      }
+
+      // Tradition (Zauberbarde)
+      case "SA_677": {
+        return getIdSpecificAffectedAndDispatchPropsForMusicTraditions (l10n)
+                                                                       (entry)
+                                                                       (List (1, 2, 3))
+                                                                       (mselected)
+      }
+
+      // Tradition (Zaubertänzer)
+      case "SA_678": {
+        return getIdSpecificAffectedAndDispatchPropsForMusicTraditions (l10n)
+                                                                       (entry)
+                                                                       (List (4, 5, 6, 7))
+                                                                       (mselected)
+      }
+
+      // Language Specializations
+      case "SA_699": {
+        const currentSelectOption = getCurrentSelectOption (entry) (mselected)
+
+        const spec_input = bind (currentSelectOption) (SOA.specializationInput)
+
+        return Pair (
+          ActivatableActivationOptions ({
+            id,
+            selectOptionId1: mselected,
+            selectOptionId2: isJust (spec_input) ? minput_text : mselected2,
+            cost: Nothing,
+          }),
+          PropertiesAffectedByState ({
+            currentCost:
+              pipe_ (
+                currentSelectOption,
+                bindF (SOA.cost),
+                altF_ (() => getPlainCostFromEntry (entry))
+              ),
+            inputDescription: spec_input,
+            secondSelectOptions:
+              pipe_ (
+                currentSelectOption,
+                bindF (SOA.specializations),
+                fmap (imap (i => name => SelectOption ({
+                                           id: i + 1,
+                                           name,
+                                           src: pipe_ (entry, IAA.wikiEntry, SAAL.src),
+                                         })))
+              ),
+          })
+        )
+      }
+
+      default: {
+        const mlevels = pipe_ (entry, IAA.wikiEntry, SAAL.tiers)
+        const mselect_options = IAA.selectOptions (entry)
+
+        const base_pair =
+          Pair (
+            ActivatableActivationOptions ({ id, cost: Nothing }),
+            PropertiesAffectedByState ({ })
+          )
+
+        const fillPairForActiveLevel =
+          (selectedLevel: number) =>
+            pipe (
+              (pair: IdSpecificAffectedAndDispatchProps) =>
+                fromMaybe (pair)
+                          (pipe_ (
+                            entry,
+                            IAA.cost,
+                            bindF (ensure ((c): c is number | List<number> =>
+                                            selectedLevel > 0
+                                            && (isNumber (c) || isList (c)))),
+                            fmap (cost => second (set (PABYL.currentCost)
+                                                      (Just (isList (cost)
+                                                        ? pipe_ (cost, take (selectedLevel), sum)
+                                                        : cost * selectedLevel)))
+                                                 (pair))
+                          )),
+              first (pipe (
+                set (AAOL.level) (Just (selectedLevel)),
+                Maybe.elem<string | number | List<number>> ("sel") (IAA.cost (entry))
+                && isJust (mselect_options)
+                  ? set (AAOL.selectOptionId1) (mselected)
+                  : isJust (pipe_ (entry, IAA.wikiEntry, SAAL.input))
+                  ? set (AAOL.input) (minput_text)
+                  : ident
+              ))
+            )
+
+        const fillPairForNoLevel =
+          Maybe.elem<string | number | List<number>> ("sel") (IAA.cost (entry))
+            ? first (set (AAOL.selectOptionId1) (mselected))
+            : bimap (isJust (mselect_options)
+                      ? set (AAOL.selectOptionId1) (mselected)
+                      : isJust (pipe_ (entry, IAA.wikiEntry, SAAL.input))
+                      ? set (AAOL.input) (minput_text)
+                      : ident as ident<Record<ActivatableActivationOptions>>)
+                    (set (PABYL.currentCost) (getPlainCostFromEntry (entry)))
+
+        return Maybe.fromMaybe
+          (fillPairForNoLevel)
+          (pipe_ (mlevels, thenF (mselected_level), fmap (fillPairForActiveLevel)))
+          (base_pair)
+      }
+    }
+  }
 
 export const insertFinalCurrentCost =
-  (entry: Record<DeactiveViewObject>) =>
-    (selectedOptions: SelectedOptions) => {
-      const maybeSelected = Maybe.fromNullable (selectedOptions.selected)
+  (entry: Record<InactiveActivatable>) =>
+    (selectedOptions: SelectedOptions): ident<IdSpecificAffectedAndDispatchProps> => {
+      const mselected = Maybe (selectedOptions.selected)
 
-      const maybeCustomCost = Maybe.fromNullable (selectedOptions.customCost)
-        .bind (Maybe.ensure (isInteger))
-        .fmap (R.pipe (
-          unsafeToInt,
-          Math.abs
-        ))
+      const mcustom_cost =
+        pipe_ (
+          Maybe (selectedOptions.customCost),
+          bindF (toInt),
+          fmap (Math.abs)
+        )
 
-      return R.pipe (
-        Pair.second<DispatchRecord, RecordAffectedByState>
-          (Record.alter<PropertiesAffectedByState, "currentCost">
-            (R.pipe (
-              Maybe.bind_ (Maybe.ensure (isNumber)),
-              currentCost => currentCost .alt (
-                getSelectOptionCost
-                  (entry .get ("wikiEntry") as Activatable)
-                  (maybeSelected
-                    .bind (
-                      Maybe.ensure (
-                        () => Maybe.elem<string | number | List<number>> ("sel")
-                                                                        (entry .lookup ("cost"))
-                      )
-                    )
-                    .fmap (
-                      selected => typeof selected === "string"
-                        ? unsafeToInt (selected)
-                        : selected
-                    ))
-              ),
-              Maybe.alt (maybeCustomCost),
-              entry .get ("wikiEntry") .get ("category") === Categories.DISADVANTAGES
-                ? Maybe.fmap (R.negate)
-                : R.identity
-            ))
-            ("currentCost")),
-        pair => Pair.first<DispatchRecord, RecordAffectedByState>
-          (R.pipe (
-            Record.insertMaybe<DispatchProps, "cost">
-              ("cost")
-              (Pair.snd (pair) .lookup ("currentCost") .bind (Maybe.ensure (isNumber))),
-            Record.insertMaybe<DispatchProps, "customCost">
-              ("customCost")
-              (Pair.snd (pair) .lookup ("currentCost") .then (maybeCustomCost))
-          ))
-          (pair),
-        Pair.first<DispatchRecord, RecordAffectedByState, Record<ActivateArgs>>
-          (Record.merge<ActivateArgs, Partial<ActivateArgs>> (
-            Record.of ({ id: entry .get ("id"), cost: 0 })
-          ))
+      type Cost = string | number | List<number>
+
+      return pipe (
+        second (over (PABYL.currentCost)
+                     (pipe (
+                       misNumberM,
+                       alt (mcustom_cost),
+                       altF_ (() => getSelectOptionCost (IAA.wikiEntry (entry) as Activatable)
+                                                        (pipe_ (
+                                                          guard (
+                                                            Maybe.elem<Cost> ("sel")
+                                                                             (IAA.cost (entry))),
+                                                          thenF (mselected),
+                                                          fmap (sel =>
+                                                            isNumber (sel)
+                                                              ? sel
+                                                              : Maybe.sum (toInt (sel)))
+                                                        ))),
+                       Disadvantage.is (IAA.wikiEntry (entry)) ? fmap (negate) : ident
+                     ))),
+        Functn.join (pair => first (pipe (
+                                     pipe_ (
+                                       pair,
+                                       snd,
+                                       PABYA.currentCost,
+                                       misNumberM,
+                                       maybe<ident<Record<ActivatableActivationOptions>>>
+                                         (ident)
+                                         (set (AAOL.cost))
+                                     ),
+                                     set (AAOL.customCost)
+                                         (pipe_ (
+                                           pair,
+                                           snd,
+                                           PABYA.currentCost,
+                                           thenF (mcustom_cost)
+                                         ))
+                                   )))
       )
     }
-
-interface InactiveActivatableControlElements {
-  disabled?: boolean
-  selectElement?: JSX.Element
-  secondSelectElement?: JSX.Element
-  inputElement?: JSX.Element
-  levelElementBefore?: JSX.Element
-  levelElementAfter?: JSX.Element
-}
 
 interface InactiveActivatableControlElementsInputHandlers {
   handleSelect (option: Maybe<string | number>): void
@@ -583,200 +632,156 @@ interface InactiveActivatableControlElementsInputHandlers {
 
 export const getInactiveActivatableControlElements =
   (inputHandlers: InactiveActivatableControlElementsInputHandlers) =>
-    (entry: Record<DeactiveViewObject>) =>
-      (selectedOptions: SelectedOptions) =>
-        (props: Pair<Record<ActivateArgs>, RecordAffectedByState>) => {
-          const maybeSelected = Maybe.fromNullable (selectedOptions.selected)
-          const maybeSelected2 = Maybe.fromNullable (selectedOptions.selected2)
-          const maybeInputText = Maybe.fromNullable (selectedOptions.input)
-          const maybeSelectedLevel = Maybe.fromNullable (selectedOptions.selectedTier)
+  (entry: Record<InactiveActivatable>) =>
+  (selectedOptions: SelectedOptions) =>
+  (props: IdSpecificAffectedAndDispatchProps): Record<InactiveActivatableControlElements> => {
+    const mselected = Maybe (selectedOptions.selected)
+    const mselected2 = Maybe (selectedOptions.selected2)
+    const minput_text = Maybe (selectedOptions.input)
+    const mselected_level = Maybe (selectedOptions.selectedTier)
 
-          const maybeSel =
-            Pair.snd (props)
-              .lookup ("firstSelectOptions")
-              .alt (entry .lookup ("sel"))
+    const msels = pipe_ (props, snd, PABYA.firstSelectOptions, altF (IAA.selectOptions (entry)))
 
-          const maybeSel2 =
-            Pair.snd (props)
-              .lookup ("secondSelectOptions")
+    const msels2 = pipe_ (props, snd, PABYA.secondSelectOptions)
 
-          const maybeInputDescription =
-            Pair.snd (props)
-              .lookup ("inputDescription")
-              .alt (entry .get ("wikiEntry") .lookup ("input"))
+    const minput_desc =
+      pipe_ (
+        props,
+        snd,
+        PABYA.inputDescription,
+        altF_ (() => pipe_ (entry, IAA.wikiEntry, SAAL.input))
+      )
 
-          const buildElements = R.pipe (
-            (elements: Record<InactiveActivatableControlElements>) =>
-              Maybe.maybe<number, Record<InactiveActivatableControlElements>>
-                (elements)
-                (levels => {
-                  const min = Maybe.fromMaybe (1)
-                                              (entry .lookup ("minTier") .fmap (R.max<number> (1)))
+    return pipe_ (
+      InactiveActivatableControlElements ({
+        disabled: pipe_ (props, snd, PABYA.disabled),
+      }),
+      (elements: Record<InactiveActivatableControlElements>) =>
+        maybe (elements)
+              ((levels: number) => {
+                const min_level =
+                  fromMaybe (1) (pipe_ (entry, IAA.minLevel, fmap (max (1))))
 
-                  const max = Maybe.fromMaybe (levels)
-                                              (entry .lookup ("maxTier") .fmap (R.min (levels)))
+                const max_level =
+                  fromMaybe (levels) (pipe_ (entry, IAA.maxLevel, fmap (min (levels))))
 
-                  const length = max - min + 1
+                const levelOptions = getLevelElementsWithMin (min_level) (max_level)
 
-                  const levelOptions =
-                    List.unfoldr<Record<DropdownOption>, number>
-                      (index => index < length
-                        ? Just (
-                          Pair.of<Record<DropdownOption>, number>
-                            (Record.of<DropdownOption> ({
-                              id: index + min,
-                              name: toRoman (index + min),
-                            }))
-                            (index + 1)
+                return pipe_ (
+                  elements,
+                  set (["DISADV_34", "DISADV_50"].includes (IAA.id (entry))
+                        ? IACEL.levelElementBefore
+                        : IACEL.levelElementAfter)
+                      (
+                        Just (
+                          <Dropdown
+                            className="tiers"
+                            value={mselected_level}
+                            onChange={inputHandlers.handleLevel}
+                            options={levelOptions}
+                            />
                         )
-                        : Nothing ())
-                      (0)
-
-                  return elements
-                    .insert
-                      (
-                        ["DISADV_34", "DISADV_50"].includes (entry .get ("id"))
-                          ? "levelElementBefore"
-                          : "levelElementAfter"
-                      )
-                      (
-                        <Dropdown
-                          className="tiers"
-                          value={maybeSelectedLevel}
-                          onChange={inputHandlers.handleLevel}
-                          options={levelOptions} />
-                      )
-                    .alter<"disabled">
-                      (Maybe.isNothing (maybeSelectedLevel)
-                        ? () => Just (true)
-                        : R.identity)
-                      ("disabled")
-                })
-                (entry .get ("wikiEntry") .lookup ("tiers")),
-            elements => Maybe.fromMaybe
-              (elements)
-              (maybeSel
-                .bind (
-                  Maybe.ensure (
-                    () => List.of ("DISADV_34", "DISADV_50") .notElem (entry .get ("id"))
-                  )
+                      ),
+                  isNothing (mselected_level)
+                    ? set (IACEL.disabled) (Just (true))
+                    : ident as ident<Record<InactiveActivatableControlElements>>
                 )
-                .fmap (
-                  sel => elements .insert
-                    ("selectElement")
-                    (
+              })
+              (pipe_ (entry, IAA.wikiEntry, SAAL.tiers)),
+      fromMaybe
+        (ident as ident<Record<InactiveActivatableControlElements>>)
+        (pipe_ (
+          guard (notElem (IAA.id (entry)) (List ("DISADV_34", "DISADV_50"))),
+          thenF (msels),
+          fmap (pipe (
+            map (selectToDropdownOption),
+            sel =>
+              set (IACEL.selectElement)
+                  (
+                    Just (
                       <Dropdown
-                        value={maybeSelected}
+                        value={mselected}
                         onChange={inputHandlers.handleSelect}
                         options={sel as List<Record<DropdownOption>>}
                         disabled={inputHandlers.selectElementDisabled} />
                     )
-                )),
-            Record.alter<InactiveActivatableControlElements, "disabled">
-              (
-                Maybe.isJust (maybeSel)
-                && Maybe.isNothing (maybeSelected)
-                && List.of (
-                  "ADV_32",
-                  "DISADV_1",
-                  "DISADV_24",
-                  "DISADV_34",
-                  "DISADV_36",
-                  "DISADV_45",
-                  "DISADV_50"
-                ) .notElem (entry .get ("id"))
-                  ? () => Just (true)
-                  : R.identity)
-              ("disabled"),
-            elements => Maybe.fromMaybe
-              (elements)
-              (maybeInputDescription
-                .bind (
-                  Maybe.ensure (
-                    () => List.of ("ADV_28", "ADV_29") .notElem (entry .get ("id"))
                   )
-                )
-                .fmap (
-                  input => elements .insert
-                    ("inputElement")
-                    (
+          ))
+        )),
+      (isJust (msels) || isJust (minput_text))
+      && isNothing (mselected)
+      && notElem (IAA.id (entry))
+                 (List ("ADV_32",
+                        "DISADV_1",
+                        "DISADV_24",
+                        "DISADV_34",
+                        "DISADV_36",
+                        "DISADV_45",
+                        "DISADV_50"))
+        ? set (IACEL.disabled) (Just (true))
+        : ident as ident<Record<InactiveActivatableControlElements>>,
+      fromMaybe
+        (ident as ident<Record<InactiveActivatableControlElements>>)
+        (pipe_ (
+          guard (notElem (IAA.id (entry)) (List ("ADV_28", "ADV_29"))),
+          thenF (minput_desc),
+          fmap (
+            input =>
+              set (IACEL.inputElement)
+                  (
+                    Just (
                       <TextField
                         hint={input}
-                        value={maybeInputText}
+                        value={minput_text}
                         onChangeString={inputHandlers.handleInput} />
                     )
+                  )
+          ))),
+      IAA.id (entry) === "SA_9"
+        ? pipe (
+            set (IACEL.inputElement)
+                (Just (
+                  <TextField
+                    hint={fromMaybe ("") (minput_desc)}
+                    value={minput_text}
+                    onChangeString={inputHandlers.handleInput}
+                    disabled={isNothing (minput_desc)}
+                    />
                 )),
-            Record.alter<InactiveActivatableControlElements, "disabled">
-              (
-                Maybe.isJust (maybeInputText)
-                && Maybe.isNothing (maybeSelected)
-                && List.of (
-                  "ADV_32",
-                  "DISADV_1",
-                  "DISADV_24",
-                  "DISADV_34",
-                  "DISADV_36",
-                  "DISADV_45",
-                  "DISADV_50"
-                ) .notElem (entry .get ("id"))
-                  ? () => Just (true)
-                  : R.identity)
-              ("disabled"),
-            elements => {
-              if (entry .get ("id") === "SA_9") {
-                return elements
-                  .insert
-                    ("inputElement")
-                    (
-                      <TextField
-                        hint={Maybe.fromMaybe ("") (maybeInputDescription)}
-                        value={maybeInputText}
-                        onChangeString={inputHandlers.handleInput}
-                        disabled={Maybe.isNothing (maybeInputDescription)} />
-                    )
-                  .insertMaybe
-                    ("secondSelectElement")
-                    (maybeSel2 .fmap (
-                      secondSelectOptions => (
-                        <Dropdown
-                          value={maybeSelected2}
-                          onChange={inputHandlers.handleSecondSelect}
-                          options={secondSelectOptions as List<Record<DropdownOption>>}
-                          disabled={Maybe.isJust (maybeInputText) || Maybe.isJust (maybeSelected)}
-                          />
-                      )
-                    ))
-                  .insert
-                    ("disabled")
-                    (Maybe.isNothing (maybeSelected2) && Maybe.isNothing (maybeInputText))
-              }
-
-              return Maybe.fromMaybe
-                (elements)
-                (maybeSel2 .fmap (
-                  secondSelectOptions => elements
-                    .insert
-                      ("secondSelectElement")
-                      (
-                        <Dropdown
-                          value={maybeSelected2}
-                          onChange={inputHandlers.handleSecondSelect}
-                          options={secondSelectOptions as List<Record<DropdownOption>>}
-                          disabled={Maybe.isNothing (maybeSelected)}
-                          />
-                      )
-                    .alter<"disabled">
-                      (Maybe.isNothing (maybeSelected2)
-                        ? () => Just (true)
-                        : R.identity)
-                      ("disabled")
-                ))
-            }
+            set (IACEL.secondSelectElement)
+                (fmapF (msels2)
+                       (pipe (
+                         map (selectToDropdownOption),
+                         sels2 => (
+                           <Dropdown
+                             value={mselected2}
+                             onChange={inputHandlers.handleSecondSelect}
+                             options={sels2}
+                             disabled={isJust (minput_text) || isJust (mselected)}
+                             />
+                         )
+                       ))),
+            set (IACEL.disabled) (Just (isNothing (mselected2) && isNothing (minput_text)))
           )
-
-          return buildElements (
-            Record.ofMaybe<InactiveActivatableControlElements> ({
-              disabled: Pair.snd (props) .lookup ("disabled"),
-            })
+        : pipe (
+            maybe (ident as ident<Record<InactiveActivatableControlElements>>)
+                  (pipe (
+                    map (selectToDropdownOption),
+                    sels2 =>
+                      set (IACEL.secondSelectElement)
+                          (Just (
+                            <Dropdown
+                              value={mselected2}
+                              onChange={inputHandlers.handleSecondSelect}
+                              options={sels2}
+                              disabled={isNothing (mselected)}
+                              />
+                          ))
+                  ))
+                  (msels2),
+            isNothing (mselected2)
+              ? set (IACEL.disabled) (Just (true))
+              : ident as ident<Record<InactiveActivatableControlElements>>
           )
-        }
+    )
+  }

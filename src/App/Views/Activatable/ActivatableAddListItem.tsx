@@ -1,36 +1,45 @@
-import classNames = require('classnames');
-import * as React from 'react';
-import { ActivateArgs, DeactiveViewObject, HeroDependent, InputTextEvent } from '../App/Models/Hero/heroTypeHelpers';
-import { WikiAll } from '../App/Models/Wiki/wikiTypeHelpers';
-import { translate, UIMessagesObject } from '../App/Utils/I18n';
-import { isInteger } from '../App/Utils/RegexUtils';
-import { getIdSpecificAffectedAndDispatchProps, getInactiveActivatableControlElements, insertFinalCurrentCost } from '../Utilities/Activatable/activatableInactiveViewUtils';
-import { Maybe, Record, Tuple } from '../Utilities/dataUtils';
-import { Dialog } from './DialogNew';
-import { IconButton } from './IconButton';
-import { ListItem } from './ListItem';
-import { ListItemButtons } from './ListItemButtons';
-import { ListItemGroup } from './ListItemGroup';
-import { ListItemLeft } from './ListItemLeft';
-import { ListItemName } from './ListItemName';
-import { ListItemSeparator } from './ListItemSeparator';
-import { ListItemValues } from './ListItemValues';
-import { TextField } from './TextField';
+import classNames = require("classnames")
+import * as React from "react";
+import { notNullStrUndef } from "../../../Data/List";
+import { fromJust, fromMaybe, isJust, Maybe, maybeToUndefined } from "../../../Data/Maybe";
+import { snd } from "../../../Data/Pair";
+import { Record } from "../../../Data/Record";
+import { ActivatableActivationOptions } from "../../Models/Actions/ActivatableActivationOptions";
+import { HeroModel } from "../../Models/Hero/HeroModel";
+import { InputTextEvent } from "../../Models/Hero/heroTypeHelpers";
+import { InactiveActivatable } from "../../Models/View/InactiveActivatable";
+import { L10nRecord } from "../../Models/Wiki/L10n";
+import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
+import { WikiModelRecord } from "../../Models/Wiki/WikiModel";
+import { getIdSpecificAffectedAndDispatchProps, getInactiveActivatableControlElements, insertFinalCurrentCost } from "../../Utilities/Activatable/activatableInactiveViewUtils";
+import { translate } from "../../Utilities/I18n";
+import { pipe_ } from "../../Utilities/pipe";
+import { isInteger } from "../../Utilities/RegexUtils";
+import { Dialog } from "../Universal/DialogNew";
+import { IconButton } from "../Universal/IconButton";
+import { ListItem } from "../Universal/ListItem";
+import { ListItemButtons } from "../Universal/ListItemButtons";
+import { ListItemGroup } from "../Universal/ListItemGroup";
+import { ListItemLeft } from "../Universal/ListItemLeft";
+import { ListItemName } from "../Universal/ListItemName";
+import { ListItemSeparator } from "../Universal/ListItemSeparator";
+import { ListItemValues } from "../Universal/ListItemValues";
+import { TextField } from "../Universal/TextField";
 
 export interface ActivatableAddListItemOwnProps {
-  item: Record<DeactiveViewObject>;
-  isImportant?: boolean;
-  isTypical?: boolean;
-  isUntypical?: boolean;
-  hideGroup?: boolean;
-  locale: UIMessagesObject;
-  addToList (args: ActivateArgs): void;
-  selectForInfo (id: string): void;
+  item: Record<InactiveActivatable>
+  isImportant?: boolean
+  isTypical?: boolean
+  isUntypical?: boolean
+  hideGroup?: boolean
+  l10n: L10nRecord
+  addToList (args: Record<ActivatableActivationOptions>): void
+  selectForInfo (id: string): void
 }
 
 export interface ActivatableAddListItemStateProps {
-  skills: Maybe<HeroDependent['skills']>;
-  wiki: Record<WikiAll>;
+  skills: Maybe<HeroModel["skills"]>
+  wiki: WikiModelRecord
 }
 
 export interface ActivatableAddListItemDispatchProps { }
@@ -38,73 +47,79 @@ export interface ActivatableAddListItemDispatchProps { }
 export type ActivatableAddListItemProps =
   ActivatableAddListItemStateProps
   & ActivatableAddListItemDispatchProps
-  & ActivatableAddListItemOwnProps;
+  & ActivatableAddListItemOwnProps
 
 export interface ActivatableAddListItemState {
-  selected?: string | number;
-  selected2?: string | number;
-  selectedTier?: number;
-  input?: string;
-  input2?: string;
-  customCost?: string;
-  customCostPreview?: string;
-  showCustomCostDialog: boolean;
+  selected?: string | number
+  selected2?: string | number
+  selectedTier?: number
+  input?: string
+  input2?: string
+  customCost?: string
+  customCostPreview?: string
+  showCustomCostDialog: boolean
 }
+
+const IAA = InactiveActivatable.A
 
 export class ActivatableAddListItem extends
   React.Component<ActivatableAddListItemProps, ActivatableAddListItemState> {
   state: ActivatableAddListItemState = {
     showCustomCostDialog: false,
-  };
+  }
 
   handleSelect = (selected: Maybe<string | number>) => {
     this.setState (() => ({
-      selected: Maybe.isJust (selected) ? Maybe.fromJust (selected) : undefined,
+      selected: maybeToUndefined (selected),
       selected2: undefined,
-    }));
+    }))
   }
 
   handleSelect2 = (selected2: Maybe<string | number>) => {
     this.setState ({
-      selected2: Maybe.isJust (selected2) ? Maybe.fromJust (selected2) : undefined,
-    });
-  };
+      selected2: maybeToUndefined (selected2),
+    })
+  }
 
   handleLevel = (maybeLevel: Maybe<number>) => {
-    if (Maybe.isJust (maybeLevel)) {
-      const level = Maybe.fromJust (maybeLevel);
+    if (isJust (maybeLevel)) {
+      const level = fromJust (maybeLevel)
 
-      if (['DISADV_34', 'DISADV_50'].includes (this.props.item .get ('id'))) {
-        this.setState ({ selectedTier: level, selected: undefined });
+      if (["DISADV_34", "DISADV_50"].includes (IAA.id (this.props.item))) {
+        this.setState ({ selectedTier: level, selected: undefined })
       }
       else {
-        this.setState ({ selectedTier: level });
+        this.setState ({ selectedTier: level })
       }
     }
   }
 
   handleInput = (input: string) =>
-    this.setState ({ input: input || undefined });
+    this.setState ({ input: notNullStrUndef (input) ? input :  undefined })
 
-  handleSecondInput = (event: InputTextEvent) =>
-    this.setState ({ input2: event.target.value || undefined });
+  handleSecondInput = (event: InputTextEvent) => {
+    const input2 = event.target.value
+    this.setState ({ input2: notNullStrUndef (input2) ? input2 : undefined })
+  }
 
   showCustomCostDialog = () => this.setState ({
-    showCustomCostDialog: !!this.props.hideGroup,
+    showCustomCostDialog: this.props.hideGroup === true,
     customCostPreview: this.state.customCost,
-  });
+  })
 
-  closeCustomCostDialog = () => this.setState ({ showCustomCostDialog: false });
+  closeCustomCostDialog = () => this.setState ({ showCustomCostDialog: false })
 
-  setCustomCost = () => this.setState ({ customCost: this.state.customCostPreview });
+  setCustomCost = () => this.setState ({ customCost: this.state.customCostPreview })
 
-  setCustomCostPreview = (event: InputTextEvent) =>
-    this.setState ({ customCostPreview: event.target.value || undefined });
+  setCustomCostPreview = (event: InputTextEvent) => {
+    const custom_cost = event.target.value
+    this.setState ({ customCostPreview: notNullStrUndef (custom_cost) ? custom_cost : undefined })
+  }
 
-  deleteCustomCost = () => this.setState ({ customCost: undefined });
+  deleteCustomCost = () => this.setState ({ customCost: undefined })
 
-  addToList = (args: ActivateArgs) => {
-    this.props.addToList (args);
+  addToList = (args: Record<ActivatableActivationOptions>) => {
+    this.props.addToList (args)
 
     if (
       this.state.selected !== undefined
@@ -118,7 +133,7 @@ export class ActivatableAddListItem extends
         selected2: undefined,
         selectedTier: undefined,
         customCost: undefined,
-      });
+      })
     }
   }
 
@@ -130,32 +145,31 @@ export class ActivatableAddListItem extends
       isTypical,
       isUntypical,
       hideGroup,
-      locale,
+      l10n,
       selectForInfo,
       wiki,
-    } = this.props;
+    } = this.props
 
     const {
       customCost,
       customCostPreview,
       input: inputText,
       showCustomCostDialog,
-    } = this.state;
+    } = this.state
 
-    let disabled = false;
+    let disabled = false
 
     const selectElementDisabled =
       [
-        'ADV_32',
-        'DISADV_1',
-        'DISADV_24',
-        'DISADV_34',
-        'DISADV_36',
-        'DISADV_45',
-        'DISADV_50',
-      ].includes (item .get ('id'))
-      && typeof inputText === 'string'
-      && inputText.length > 0;
+        "ADV_32",
+        "DISADV_1",
+        "DISADV_24",
+        "DISADV_34",
+        "DISADV_36",
+        "DISADV_45",
+        "DISADV_50",
+      ].includes (IAA.id (item))
+      && notNullStrUndef (inputText)
 
     const propsAndActivationArgs =
       getIdSpecificAffectedAndDispatchProps
@@ -164,12 +178,12 @@ export class ActivatableAddListItem extends
           handleSelect: this.handleSelect,
           selectElementDisabled,
         })
-        (locale)
+        (l10n)
         (wiki)
         (item)
-        (this.state);
+        (this.state)
 
-    const finalProps = insertFinalCurrentCost (item) (this.state) (propsAndActivationArgs);
+    const finalProps = insertFinalCurrentCost (item) (this.state) (propsAndActivationArgs)
 
     const controlElements =
       getInactiveActivatableControlElements
@@ -182,59 +196,61 @@ export class ActivatableAddListItem extends
         })
         (item)
         (this.state)
-        (finalProps);
+        (finalProps)
 
     return (
       <ListItem important={isImportant} recommended={isTypical} unrecommended={isUntypical}>
         <ListItemLeft>
-          <ListItemName name={item .get ('name')} />
-          {Maybe.fromMaybe (<></>) (controlElements .lookup ('levelElementBefore'))}
-          {Maybe.fromMaybe (<></>) (controlElements .lookup ('selectElement'))}
-          {Maybe.fromMaybe (<></>) (controlElements .lookup ('secondSelectElement'))}
-          {Maybe.fromMaybe (<></>) (controlElements .lookup ('inputElement'))}
-          {Maybe.fromMaybe (<></>) (controlElements .lookup ('levelElementAfter'))}
+          <ListItemName name={IAA.name (item)} />
+          {fromMaybe (<></>) (controlElements .lookup ("levelElementBefore"))}
+          {fromMaybe (<></>) (controlElements .lookup ("selectElement"))}
+          {fromMaybe (<></>) (controlElements .lookup ("secondSelectElement"))}
+          {fromMaybe (<></>) (controlElements .lookup ("inputElement"))}
+          {fromMaybe (<></>) (controlElements .lookup ("levelElementAfter"))}
         </ListItemLeft>
         <ListItemSeparator/>
-        {!hideGroup && (
-          <ListItemGroup
-            list={translate (locale, 'specialabilities.view.groups')}
-            index={item .get ('wikiEntry') .lookup ('gr') as Maybe<number>}
-            />
-        )}
+        {hideGroup !== true
+          ? (
+            <ListItemGroup
+              list={translate (l10n) ("specialabilitygroups")}
+              index={pipe_ (item, IAA.wikiEntry, SpecialAbility.AL.gr)}
+              />
+          )
+        : null}
         <ListItemValues>
           <div
             className={
               classNames (
-                'cost',
-                hideGroup && 'value-btn',
-                typeof customCost === 'string' && 'custom-cost'
+                "cost",
+                hideGroup === true ? "value-btn" : undefined,
+                typeof customCost === "string" ? "custom-cost" : undefined
               )
             }
             onClick={this.showCustomCostDialog}
             >
-            {Maybe.fromMaybe<string | number> ('') (Tuple.snd (finalProps) .lookup ('currentCost'))}
+            {fromMaybe<string | number> ("") (snd (finalProps) .lookup ("currentCost"))}
           </div>
           <Dialog
             id="custom-cost-dialog"
             close={this.closeCustomCostDialog}
             isOpened={showCustomCostDialog}
-            title={translate (locale, 'customcost.title')}
+            title={translate (l10n, "customcost.title")}
             buttons={[
               {
                 autoWidth: true,
-                label: translate (locale, 'actions.done'),
-                disabled: typeof customCostPreview === 'string' && !isInteger (customCostPreview),
+                label: translate (l10n, "actions.done"),
+                disabled: typeof customCostPreview === "string" && !isInteger (customCostPreview),
                 onClick: this.setCustomCost,
               },
               {
                 autoWidth: true,
-                label: translate (locale, 'actions.delete'),
+                label: translate (l10n, "actions.delete"),
                 disabled: customCost === undefined,
                 onClick: this.deleteCustomCost,
               },
             ]}
             >
-            {translate (locale, 'customcost.message')}{item .get ('name')}
+            {translate (l10n, "customcost.message")}{item .get ("name")}
             <TextField
               value={customCostPreview}
               onChange={this.setCustomCostPreview}
@@ -245,19 +261,19 @@ export class ActivatableAddListItem extends
         </ListItemValues>
         <ListItemButtons>
           <IconButton
-            icon="&#xE916;"
+            icon="&#xE916"
             disabled={disabled}
             onClick={this.addToList.bind (null, Tuple.fst (finalProps) .toObject ())}
             flat
             />
           <IconButton
-            icon="&#xE912;"
+            icon="&#xE912"
             disabled={!selectForInfo}
-            onClick={() => selectForInfo (item .get ('id'))}
+            onClick={() => selectForInfo (item .get ("id"))}
             flat
             />
         </ListItemButtons>
       </ListItem>
-    );
+    )
   }
 }

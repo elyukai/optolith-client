@@ -63,8 +63,9 @@ export const Pair =
  * `bimap :: (a -> b) -> (c -> d) -> (a, c) -> (b, d)`
  */
 export const bimap =
-  <A, B, C, D>
+  <A, B>
   (fFirst: (first: A) => B) =>
+  <C, D>
   (fSecond: (second: C) => D) =>
   (x: Pair<A, C>): Pair<B, D> =>
     Pair (fFirst (x .first)) (fSecond (x .second))
@@ -83,8 +84,10 @@ export const first =
 * `second :: (b -> c) -> (a, b) -> (a, c)`
 */
 export const second =
-  <A, B, C>
-  (f: (second: B) => C) => (x: Pair<A, B>): Pair<A, C> =>
+  <B, C>
+  (f: (second: B) => C) =>
+  <A>
+  (x: Pair<A, B>): Pair<A, C> =>
     Pair (x .first) (f (x .second))
 
 

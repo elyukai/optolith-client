@@ -1,20 +1,20 @@
-import * as React from 'react';
-import { translate } from '../../App/Utils/I18n';
-import { Page } from '../../components/Page';
-import { Scroll } from '../../components/Scroll';
-import { UIMessagesObject } from '../../types/ui';
+import * as React from "react";
+import { L10nRecord } from "../../Models/Wiki/L10n";
+import { translate } from "../../Utilities/I18n";
+import { Page } from "../Universal/Page";
+import { Scroll } from "../Universal/Scroll";
 
 export interface ImprintProps {
-  locale: UIMessagesObject;
+  l10n: L10nRecord
 }
 
 export const Imprint = (props: ImprintProps) => {
-  const { locale } = props;
+  const { l10n } = props
 
   return (
     <Page id="imprint">
       <Scroll className="text">
-        <h2>{translate (locale, 'imprint.title')}</h2>
+        <h2>{translate (l10n) ("imprint")}</h2>
 
         <h3>Lukas Obermann</h3>
         <p>
@@ -32,5 +32,5 @@ export const Imprint = (props: ImprintProps) => {
         </p>
       </Scroll>
     </Page>
-  );
-};
+  )
+}
