@@ -5,6 +5,7 @@ import { Record } from "../../../Data/Record";
 import { AttributeWithRequirements } from "../../Models/View/AttributeWithRequirements";
 import { DerivedCharacteristic } from "../../Models/View/DerivedCharacteristic";
 import { L10nRecord } from "../../Models/Wiki/L10n";
+import { EnergyIds } from "../../Selectors/derivedCharacteristicsSelectors";
 import { translate } from "../../Utilities/I18n";
 import { Page } from "../Universal/Page";
 import { Scroll } from "../Universal/Scroll";
@@ -27,8 +28,8 @@ export interface AttributesStateProps {
   adjustmentValue: Maybe<number>
   availableAttributeIds: Maybe<List<string>>
   currentAttributeId: Maybe<string>
-  getEditPermanentEnergy: Maybe<"LP" | "AE" | "KP">
-  getAddPermanentEnergy: Maybe<"LP" | "AE" | "KP">
+  getEditPermanentEnergy: Maybe<EnergyIds>
+  getAddPermanentEnergy: Maybe<EnergyIds>
 }
 
 export interface AttributesDispatchProps {
@@ -76,9 +77,9 @@ export function Attributes (props: AttributesProps) {
         </div>
         <AttributeList {...props} />
         <div className="secondary">
-          {isInCharacterCreation && <AttributesAdjustment {...props} />}
+          {isInCharacterCreation ? <AttributesAdjustment {...props} /> : null}
           <AttributeCalc {...props} l10n={l10n} />
-          <AttributesPermanentList {...props} locale={l10n} />
+          <AttributesPermanentList {...props} l10n={l10n} />
         </div>
       </Scroll>
     </Page>

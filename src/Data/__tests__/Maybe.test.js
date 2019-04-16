@@ -852,3 +852,10 @@ test ('maybe_', () => {
   expect (Maybe.maybe_ (() => 0) (x => x * 2) (Nothing))
     .toEqual (0)
 })
+
+test ('fromMaybeNil', () => {
+  expect (Maybe.fromMaybeNil (Just (List (1, 2, 3))))
+    .toEqual (List (1, 2, 3))
+  expect (Maybe.fromMaybeNil (Nothing))
+    .toEqual (List ())
+})

@@ -1,55 +1,58 @@
-import * as React from 'react';
-import { InputTextEvent } from '../../App/Models/Hero/heroTypeHelpers';
-import { translate, UIMessagesObject } from '../../App/Utils/I18n';
-import { isNaturalNumber } from '../../App/Utils/RegexUtils';
-import { Dialog, DialogProps } from '../../components/DialogNew';
-import { TextField } from '../../components/TextField';
+import * as React from "react";
+import { fmapF } from "../../../Data/Functor";
+import { InputTextEvent } from "../../Models/Hero/heroTypeHelpers";
+import { L10nRecord } from "../../Models/Wiki/L10n";
+import { translate } from "../../Utilities/I18n";
+import { toInt } from "../../Utilities/NumberUtils";
+import { isNaturalNumber } from "../../Utilities/RegexUtils";
+import { Dialog, DialogProps } from "../Universal/DialogNew";
+import { TextField } from "../Universal/TextField";
 
 export interface AttributesRemovePermanentProps extends DialogProps {
-  locale: UIMessagesObject;
-  remove (value: number): void;
+  l10n: L10nRecord
+  remove (value: number): void
 }
 
 export interface AttributesRemovePermanentState {
-  value: string;
+  value: string
 }
 
 export class AttributesRemovePermanent
   extends React.Component<AttributesRemovePermanentProps, AttributesRemovePermanentState> {
   state = {
-    value: '',
-  };
+    value: "",
+  }
 
-  onChange = (event: InputTextEvent) => this.setState ({ value: event.target.value });
-  remove = () => this.props.remove (Number.parseInt (this.state.value));
+  onChange = (event: InputTextEvent) => this.setState ({ value: event.target.value })
+  remove = () => fmapF (toInt (this.state.value)) (this.props.remove)
 
   render () {
-    const { locale, ...other } = this.props;
-    const { value } = this.state;
+    const { l10n, ...other } = this.props
+    const { value } = this.state
 
     return (
       <Dialog
         {...other}
         id="overview-add-ap"
-        title={translate (locale, 'removepermanentenergypoints.title')}
+        title={translate (l10n) ("removeenergypointslostpermanently")}
         buttons={[
           {
             disabled: !isNaturalNumber (this.state.value),
-            label: translate (locale, 'modal.actions.remove'),
+            label: translate (l10n) ("remove"),
             onClick: this.remove,
           },
           {
-            label: translate (locale, 'modal.actions.cancel'),
+            label: translate (l10n) ("cancel"),
           },
         ]}>
         <TextField
-          hint={translate (locale, 'removepermanentenergypoints.inputhint')}
+          hint={translate (l10n) ("removeenergypointslostpermanentlyinputhint")}
           value={value}
           onChange={this.onChange}
           fullWidth
           autoFocus
           />
       </Dialog>
-    );
+    )
   }
 }

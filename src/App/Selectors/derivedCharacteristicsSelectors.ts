@@ -33,6 +33,7 @@ const ADA = AttributeDependent.A
 
 export type DCIds = "LP" | "AE" | "KP" | "SPI" | "TOU" | "DO" | "INI" | "MOV" | "WT"
 export type DCIdsWithoutWT = "LP" | "AE" | "KP" | "SPI" | "TOU" | "DO" | "INI" | "MOV"
+export type EnergyIds = "LP" | "AE" | "KP"
 
 const divideByXAndRound = (x: number) => (a: number) => Math.round (a / x)
 const divideBy2AndRound = divideByXAndRound (2)

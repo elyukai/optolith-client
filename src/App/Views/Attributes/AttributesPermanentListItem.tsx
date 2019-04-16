@@ -1,106 +1,112 @@
-import * as React from 'react';
-import { translate, UIMessagesObject } from '../../App/Utils/I18n';
-import { IconButton } from '../../components/IconButton';
-import { Maybe } from '../../Utilities/dataUtils';
-import { AttributeBorder } from './AttributeBorder';
-import { AttributesRemovePermanent } from './AttributesRemovePermanent';
-import { PermanentPoints } from './PermanentPoints';
+import * as React from "react";
+import { Maybe } from "../../../Data/Maybe";
+import { L10nRecord } from "../../Models/Wiki/L10n";
+import { EnergyIds } from "../../Selectors/derivedCharacteristicsSelectors";
+import { translate } from "../../Utilities/I18n";
+import { isFunction } from "../../Utilities/typeCheckUtils";
+import { IconButton } from "../Universal/IconButton";
+import { AttributeBorder } from "./AttributeBorder";
+import { AttributesRemovePermanent } from "./AttributesRemovePermanent";
+import { PermanentPoints } from "./PermanentPoints";
 
 export interface AttributesPermanentListItemProps {
-  locale: UIMessagesObject;
-  id: 'LP' | 'AE' | 'KP';
-  label: string;
-  name: string;
-  boughtBack?: number;
-  lost: number;
-  isRemovingEnabled: boolean;
-  getEditPermanentEnergy: Maybe<'LP' | 'AE' | 'KP'>;
-  getAddPermanentEnergy: Maybe<'LP' | 'AE' | 'KP'>;
-  addBoughtBackPoint? (): void;
-  addLostPoint (): void;
-  addLostPoints (value: number): void;
-  removeBoughtBackPoint? (): void;
-  removeLostPoint (): void;
-  openAddPermanentEnergyLoss (energy: 'LP' | 'AE' | 'KP'): void;
-  closeAddPermanentEnergyLoss (): void;
-  openEditPermanentEnergy (energy: 'LP' | 'AE' | 'KP'): void;
-  closeEditPermanentEnergy (): void;
+  l10n: L10nRecord
+  id: EnergyIds
+  label: string
+  name: string
+  boughtBack?: number
+  lost: number
+  isRemovingEnabled: boolean
+  getEditPermanentEnergy: Maybe<EnergyIds>
+  getAddPermanentEnergy: Maybe<EnergyIds>
+  addBoughtBackPoint? (): void
+  addLostPoint (): void
+  addLostPoints (value: number): void
+  removeBoughtBackPoint? (): void
+  removeLostPoint (): void
+  openAddPermanentEnergyLoss (energy: EnergyIds): void
+  closeAddPermanentEnergyLoss (): void
+  openEditPermanentEnergy (energy: EnergyIds): void
+  closeEditPermanentEnergy (): void
 }
 
-export class AttributesPermanentListItem extends React.Component<AttributesPermanentListItemProps> {
-  openEditPermanentEnergy = () => this.props.openEditPermanentEnergy (this.props.id);
-  openAddPermanentEnergyLoss = () => this.props.openAddPermanentEnergyLoss (this.props.id);
+export function AttributesPermanentListItem (props: AttributesPermanentListItemProps) {
+  const {
+    id,
+    label,
+    l10n,
+    name,
+    isRemovingEnabled,
+    addBoughtBackPoint,
+    addLostPoints,
+    boughtBack,
+    lost,
+    getEditPermanentEnergy,
+    getAddPermanentEnergy,
+    openEditPermanentEnergy,
+    openAddPermanentEnergyLoss,
+    closeAddPermanentEnergyLoss,
+    closeEditPermanentEnergy,
+  } = props
 
-  render () {
-    const {
-      id,
-      label,
-      locale,
-      name,
-      isRemovingEnabled,
-      addBoughtBackPoint,
-      addLostPoints,
-      boughtBack,
-      lost,
-      getEditPermanentEnergy,
-      getAddPermanentEnergy,
-      closeAddPermanentEnergyLoss,
-      closeEditPermanentEnergy,
-    } = this.props;
+  const available = typeof boughtBack === "number" ? lost - boughtBack : lost
 
-    const available = typeof boughtBack === 'number' ? lost - boughtBack : lost;
-
-    return (
-      <AttributeBorder
-        label={label}
-        value={available}
-        tooltip={<div className="calc-attr-overlay">
-          <h4><span>{name}</span><span>{available}</span></h4>
-          {typeof boughtBack === 'number' ? <p>
-            {translate (locale, 'attributes.tooltips.losttotal')}: {lost}<br/>
-            {translate (locale, 'attributes.tooltips.boughtback')}: {boughtBack}
-          </p> : <p>
-            {translate (locale, 'attributes.tooltips.losttotal')}: {lost}
-          </p>}
-        </div>}
-        tooltipMargin={7}
-        >
-        {isRemovingEnabled && (
+  return (
+    <AttributeBorder
+      label={label}
+      value={available}
+      tooltip={<div className="calc-attr-overlay">
+        <h4><span>{name}</span><span>{available}</span></h4>
+        {typeof boughtBack === "number" ? <p>
+          {translate (l10n) ("losttotal")}: {lost}<br/>
+          {translate (l10n) ("boughtback")}: {boughtBack}
+        </p> : <p>
+          {translate (l10n) ("losttotal")}: {lost}
+        </p>}
+      </div>}
+      tooltipMargin={7}
+      >
+      {isRemovingEnabled
+        ? (
           <IconButton
             className="edit"
-            icon="&#xE90c;"
-            onClick={this.openEditPermanentEnergy}
+            icon="&#xE90c"
+            onClick={openEditPermanentEnergy .bind (null, id)}
             />
-        )}
-        <PermanentPoints
-          {...this.props}
-          isOpened={Maybe.elem (id) (getEditPermanentEnergy)}
-          close={closeEditPermanentEnergy}
-          permanentBoughtBack={boughtBack}
-          permanentSpent={lost}
-          />
-        {!isRemovingEnabled && (
+        )
+      : null}
+      <PermanentPoints
+        {...props}
+        isOpened={Maybe.elem (id) (getEditPermanentEnergy)}
+        close={closeEditPermanentEnergy}
+        permanentBoughtBack={Maybe (boughtBack)}
+        permanentSpent={lost}
+        />
+      {!isRemovingEnabled
+        ? (
           <IconButton
             className="add"
-            icon="&#xE908;"
-            onClick={this.openAddPermanentEnergyLoss}
+            icon="&#xE908"
+            onClick={openAddPermanentEnergyLoss .bind (null, id)}
             />
-        )}
-        <AttributesRemovePermanent
-          remove={addLostPoints}
-          locale={locale}
-          isOpened={Maybe.elem (id) (getAddPermanentEnergy)}
-          close={closeAddPermanentEnergyLoss}
-          />
-        {!isRemovingEnabled && addBoughtBackPoint && (
+        )
+        : null}
+      <AttributesRemovePermanent
+        remove={addLostPoints}
+        l10n={l10n}
+        isOpened={Maybe.elem (id) (getAddPermanentEnergy)}
+        close={closeAddPermanentEnergyLoss}
+        />
+      {!isRemovingEnabled && isFunction (addBoughtBackPoint)
+        ? (
           <IconButton
             className="remove"
-            icon="&#xE909;"
+            icon="&#xE909"
             onClick={addBoughtBackPoint}
             disabled={available <= 0}
             />
-        )}
-      </AttributeBorder>
-    );
-  }
+        )
+        : null}
+    </AttributeBorder>
+  )
 }

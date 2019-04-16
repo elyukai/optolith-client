@@ -282,8 +282,9 @@ export const mapM =
   (xs: List<A>): Maybe<List<B>> =>
     List.fnull (xs)
     ? Just (List.empty)
-    : ifElse<Maybe<B>, Nothing, Maybe<List<B>>>
+    : ifElse<Maybe<B>, Nothing>
       (isNothing)
+      <Maybe<List<B>>>
       (cnst (Nothing))
       (y => fmap<List<B>, List<B>> (consF (fromJust (y)))
                                    (mapM (f) (xs .xs)))
@@ -850,6 +851,13 @@ export const fromMaybeR =
   <A> (def: A) => (x: Maybe<NonNullable<A>>): A =>
     isJust (x) ? x .value : def
 
+/**
+ * `fromMaybeNil :: Maybe [a] -> [a]`
+ *
+ * Returns an empty list on `Nothing`, otherwise the contained list.
+ */
+export const fromMaybeNil = <A> (x: Maybe<List<A>>): List<A> => fromMaybe (List<A> ()) (x)
+
 
 // NAMESPACED FUNCTIONS
 
@@ -921,6 +929,7 @@ Maybe.ensure = ensure
 Maybe.imapMaybe = imapMaybe
 Maybe.maybeToNullable = maybeToNullable
 Maybe.maybeToUndefined = maybeToUndefined
+Maybe.fromMaybeNil = fromMaybeNil
 
 
 // TYPE HELPERS

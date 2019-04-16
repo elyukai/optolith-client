@@ -1,80 +1,89 @@
-import * as React from 'react';
-import { translate, UIMessagesObject } from '../../App/Utils/I18n';
-import { Dialog, DialogProps } from '../../components/DialogNew';
-import { IconButton } from '../../components/IconButton';
+import * as React from "react";
+import { fromJust, isJust, Maybe } from "../../../Data/Maybe";
+import { L10nRecord } from "../../Models/Wiki/L10n";
+import { EnergyIds } from "../../Selectors/derivedCharacteristicsSelectors";
+import { translate } from "../../Utilities/I18n";
+import { isFunction } from "../../Utilities/typeCheckUtils";
+import { Dialog, DialogProps } from "../Universal/DialogNew";
+import { IconButton } from "../Universal/IconButton";
 
 export interface PermanentPointsProps extends DialogProps {
-  id: 'LP' | 'AE' | 'KP';
-  locale: UIMessagesObject;
-  permanentBoughtBack?: number;
-  permanentSpent: number;
-  addBoughtBackPoint? (): void;
-  addLostPoint (): void;
-  removeBoughtBackPoint? (): void;
-  removeLostPoint (): void;
+  id: EnergyIds
+  l10n: L10nRecord
+  permanentBoughtBack: Maybe<number>
+  permanentSpent: number
+  addBoughtBackPoint? (): void
+  addLostPoint (): void
+  removeBoughtBackPoint? (): void
+  removeLostPoint (): void
 }
 
 export function PermanentPoints (props: PermanentPointsProps) {
   const {
     id,
-    locale,
+    l10n,
     addBoughtBackPoint,
     addLostPoint,
     permanentBoughtBack,
     permanentSpent,
     removeBoughtBackPoint,
     removeLostPoint,
-  } = props;
+  } = props
 
   return (
     <Dialog
       {...props}
       className="permanent-points-editor"
       title={
-        id === 'AE'
-          ? translate (locale, 'attributes.pae.name')
-          : id === 'KP'
-          ? translate (locale, 'attributes.pkp.name')
-          : translate (locale, 'plp.long')
+        id === "AE"
+          ? translate (l10n) ("arcaneenergylostpermanently")
+          : id === "KP"
+          ? translate (l10n) ("karmapointslostpermanently")
+          : translate (l10n) ("lifepointslostpermanently")
       }
       buttons={[
         {
           autoWidth: true,
-          label: translate (locale, 'actions.done'),
+          label: translate (l10n) ("done"),
         },
       ]}
       >
       <div className="main">
-        {addBoughtBackPoint && removeBoughtBackPoint && typeof permanentBoughtBack === 'number' && (
-          <div className="column boughtback">
-            <div className="value">{permanentBoughtBack}</div>
-            <div className="description smallcaps">
-              {translate (locale, 'permanentpoints.boughtback')}
-            </div>
-            <div className="buttons">
-              <IconButton
-                className="add"
-                icon="&#xE908;"
-                onClick={addBoughtBackPoint}
-                disabled={permanentBoughtBack >= permanentSpent}
-                />
-              <IconButton
-                className="remove"
-                icon="&#xE909;"
-                onClick={removeBoughtBackPoint}
-                disabled={permanentBoughtBack <= 0}
-                />
-            </div>
-          </div>
-        )}
+        {
+          isFunction (addBoughtBackPoint)
+          && isFunction (removeBoughtBackPoint)
+          && isJust (permanentBoughtBack)
+            ? (
+              <div className="column boughtback">
+                <div className="value">{permanentBoughtBack}</div>
+                <div className="description smallcaps">
+                  {translate (l10n) ("boughtback")}
+                </div>
+                <div className="buttons">
+                  <IconButton
+                    className="add"
+                    icon="&#xE908"
+                    onClick={addBoughtBackPoint}
+                    disabled={fromJust (permanentBoughtBack) >= permanentSpent}
+                    />
+                  <IconButton
+                    className="remove"
+                    icon="&#xE909"
+                    onClick={removeBoughtBackPoint}
+                    disabled={fromJust (permanentBoughtBack) <= 0}
+                    />
+                </div>
+              </div>
+            )
+            : null}
         <div className="column lost">
           <div className="value">{permanentSpent}</div>
-          <div className="description smallcaps">{translate (locale, 'permanentpoints.spent')}</div>
+          <div className="description smallcaps">{translate (l10n) ("spent")}</div>
           <div className="buttons">
-            <IconButton className="add" icon="&#xE908;" onClick={addLostPoint} />
+            <IconButton className="add" icon="&#xE908" onClick={addLostPoint} />
             <IconButton
               className="remove"
-              icon="&#xE909;"
+              icon="&#xE909"
               onClick={removeLostPoint}
               disabled={permanentSpent <= 0}
               />
@@ -82,5 +91,5 @@ export function PermanentPoints (props: PermanentPointsProps) {
         </div>
       </div>
     </Dialog>
-  );
+  )
 }
