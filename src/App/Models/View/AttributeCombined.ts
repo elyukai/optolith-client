@@ -1,4 +1,5 @@
 import { fromDefault, Record } from "../../../Data/Record";
+import { pipe } from "../../Utilities/pipe";
 import { AttributeDependent } from "../ActiveEntries/AttributeDependent";
 import { Attribute } from "../Wiki/Attribute";
 
@@ -12,6 +13,11 @@ export const AttributeCombined =
     wikiEntry: Attribute .default,
     stateEntry: AttributeDependent .default,
   })
+
+export const AttributeCombinedA_ = {
+  id: pipe (AttributeCombined.A.wikiEntry, Attribute.A.id),
+  short: pipe (AttributeCombined.A.wikiEntry, Attribute.A.short),
+}
 
 export const newAttributeCombined =
   (wiki_entry: Record<Attribute>) => (hero_entry: Record<AttributeDependent>) =>
