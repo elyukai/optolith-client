@@ -79,16 +79,6 @@ export interface ActivatableActivationMeta<
 
 export type SetTierObject = ActiveObject
 
-export interface DeactivateArgs {
-  id: string
-  index: number
-  cost: number
-}
-
-export interface UndoExtendedDeactivateArgs extends DeactivateArgs {
-  activeObject: Maybe<Record<ActiveObject>>
-}
-
 export interface ActivateObject {
   sel: Maybe<string | number>
   sel2: Maybe<string | number>

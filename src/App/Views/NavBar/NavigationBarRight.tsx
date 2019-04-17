@@ -1,7 +1,7 @@
-import * as React from 'react';
+import * as React from "react";
 
 export interface NavigationBarRightProps {
-  children?: React.ReactNode;
+  children?: React.ReactNode
 }
 
 export function NavigationBarRight (props: NavigationBarRightProps) {
@@ -9,5 +9,5 @@ export function NavigationBarRight (props: NavigationBarRightProps) {
     <div className="navigationbar-right">
       {props.children}
     </div>
-  );
+  )
 }

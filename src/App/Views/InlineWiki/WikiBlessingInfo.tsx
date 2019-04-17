@@ -1,42 +1,41 @@
-import * as React from 'react';
-import { Blessing, Book } from '../../App/Models/Wiki/wikiTypeHelpers';
-import { translate, UIMessages } from '../../App/Utils/I18n';
-import { getAspectsOfTradition, getTraditionOfAspect } from '../../App/Utils/Increasable/liturgicalChantUtils';
-import { Markdown } from '../../components/Markdown';
-import { sortStrings } from '../../Utilities/FilterSortUtils';
-import { WikiSource } from './Elements/WikiSource';
-import { WikiBoxTemplate } from './WikiBoxTemplate';
-import { WikiProperty } from './WikiProperty';
+import * as React from "react";
+import { Blessing, Book } from "../../Models/Wiki/wikiTypeHelpers";
+import { translate, UIMessages } from "../../Utilities/I18n";
+import { getAspectsOfTradition, getTraditionOfAspect } from "../../Utilities/Increasable/liturgicalChantUtils";
+import { Markdown } from "../Universal/Markdown";
+import { WikiSource } from "./Elements/WikiSource";
+import { WikiBoxTemplate } from "./WikiBoxTemplate";
+import { WikiProperty } from "./WikiProperty";
 
 export interface WikiBlessingInfoProps {
-  books: Map<string, Book>;
-  currentObject: Blessing;
-  locale: UIMessages;
+  books: Map<string, Book>
+  currentObject: Blessing
+  locale: UIMessages
 }
 
 export function WikiBlessingInfo(props: WikiBlessingInfoProps) {
-  const { currentObject, locale } = props;
+  const { currentObject, locale } = props
 
-  const traditionsMap = new Map<number, number[]>();
+  const traditionsMap = new Map<number, number[]>()
 
   for (const aspectId of currentObject.aspects) {
-    const tradition = getTraditionOfAspect(aspectId);
-    traditionsMap.set(tradition, [...(traditionsMap.get(tradition) || []), aspectId]);
+    const tradition = getTraditionOfAspect(aspectId)
+    traditionsMap.set(tradition, [...(traditionsMap.get(tradition) || []), aspectId])
   }
 
   const traditions = sortStrings([...traditionsMap].map(e => {
     if (getAspectsOfTradition(e[0]).length < 2) {
-      return translate(locale, 'liturgies.view.traditions')[e[0] - 1];
+      return translate(locale, "liturgies.view.traditions")[e[0] - 1]
     }
-    return `${translate(locale, 'liturgies.view.traditions')[e[0] - 1]} (${sortStrings(e[1].map(a => translate(locale, 'liturgies.view.aspects')[a - 1]), locale.id).intercalate(', ')})`;
-  }), locale.id).intercalate(', ');
+    return `${translate(locale, "liturgies.view.traditions")[e[0] - 1]} (${sortStrings(e[1].map(a => translate(locale, "liturgies.view.aspects")[a - 1]), locale.id).intercalate(", ")})`
+  }), locale.id).intercalate(", ")
 
-  if (['nl-BE'].includes(locale.id)) {
+  if (["nl-BE"].includes(locale.id)) {
     return (
       <WikiBoxTemplate className="blessing" title={currentObject.name}>
         <WikiProperty locale={locale} title="info.aspect">{traditions}</WikiProperty>
       </WikiBoxTemplate>
-    );
+    )
   }
 
   return (
@@ -48,5 +47,5 @@ export function WikiBlessingInfo(props: WikiBlessingInfoProps) {
       <WikiProperty locale={locale} title="info.aspect">{traditions}</WikiProperty>
       <WikiSource {...props} />
     </WikiBoxTemplate>
-  );
+  )
 }

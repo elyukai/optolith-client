@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Maybe, maybeR } from "../../../Data/Maybe";
 import { AdvantagesContainer } from "../../Containers/AdvantagesContainer";
 import { AttributesContainer } from "../../Containers/AttributesContainer";
 import { CombatTechniquesContainer } from "../../Containers/CombatTechniquesContainer";
@@ -20,6 +21,7 @@ import { SkillsContainer } from "../../Containers/SkillsContainer";
 import { SpecialAbilitiesContainer } from "../../Containers/SpecialAbilitiesContainer";
 import { SpellsContainer } from "../../Containers/SpellsContainer";
 import { WikiContainer } from "../../Containers/WikiContainer";
+import { HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { TabId } from "../../Utilities/LocationUtils";
 import { Imprint } from "../About/Imprint";
@@ -33,6 +35,7 @@ import { Scroll } from "../Universal/Scroll";
 export interface RouterProps {
   id: TabId
   l10n: L10nRecord
+  mhero: Maybe<HeroModelRecord>
 }
 
 export interface RouterState {
@@ -56,7 +59,7 @@ export class Router extends React.Component<RouterProps> {
   }
 
   render (): React.ReactNode {
-    const { id, l10n } = this.props
+    const { id, l10n, mhero } = this.props
     const { hasError } = this.state
 
     if (hasError) {
@@ -72,39 +75,45 @@ export class Router extends React.Component<RouterProps> {
       </Page>
     }
 
-    const VIEWS: { [K in TabId]: JSX.Element } = {
-      [TabId.Herolist]: <HerolistContainer l10n={l10n} />,
-      [TabId.Grouplist]: <Grouplist />,
-      [TabId.Wiki]: <WikiContainer locale={l10n} />,
-      [TabId.Faq]: <HelpContainer locale={l10n} />,
-      [TabId.Imprint]: <Imprint l10n={l10n} />,
-      [TabId.ThirdPartyLicenses]: <ThirdPartyLicenses />,
-      [TabId.LastChanges]: <LastChanges />,
+    const unwrapWithHero =
+      (f: (hero: HeroModelRecord) => JSX.Element) =>
+        maybeR (null) (f) (mhero)
 
-      [TabId.Profile]: <PersonalDataContainer locale={l10n} />,
-      [TabId.PersonalData]: <PersonalDataContainer locale={l10n} />,
-      [TabId.CharacterSheet]: <SheetsContainer locale={l10n} />,
-      [TabId.Pact]: <PactContainer locale={l10n} />,
-      [TabId.Rules]: <RulesContainer locale={l10n} />,
+    const VIEWS: { [K in TabId]: () => React.ReactNode } = {
+      [TabId.Herolist]: () => <HerolistContainer l10n={l10n} />,
+      [TabId.Grouplist]: () => <Grouplist />,
+      [TabId.Wiki]: () => <WikiContainer locale={l10n} />,
+      [TabId.Faq]: () => <HelpContainer locale={l10n} />,
+      [TabId.Imprint]: () => <Imprint l10n={l10n} />,
+      [TabId.ThirdPartyLicenses]: () => <ThirdPartyLicenses />,
+      [TabId.LastChanges]: () => <LastChanges />,
 
-      [TabId.Races]: <RacesContainer locale={l10n} />,
-      [TabId.Cultures]: <CulturesContainer locale={l10n} />,
-      [TabId.Professions]: <ProfessionsContainer locale={l10n} />,
+      [TabId.Profile]: () => <PersonalDataContainer locale={l10n} />,
+      [TabId.PersonalData]: () => <PersonalDataContainer locale={l10n} />,
+      [TabId.CharacterSheet]: () => <SheetsContainer locale={l10n} />,
+      [TabId.Pact]: () => <PactContainer locale={l10n} />,
+      [TabId.Rules]: () => <RulesContainer locale={l10n} />,
 
-      [TabId.Attributes]: <AttributesContainer l10n={l10n} />,
+      [TabId.Races]: () => <RacesContainer locale={l10n} />,
+      [TabId.Cultures]: () => <CulturesContainer l10n={l10n} />,
+      [TabId.Professions]: () => <ProfessionsContainer locale={l10n} />,
 
-      [TabId.Advantages]: <AdvantagesContainer locale={l10n} />,
-      [TabId.Disadvantages]: <DisadvantagesContainer locale={l10n} />,
+      [TabId.Attributes]: () => <AttributesContainer l10n={l10n} />,
 
-      [TabId.Skills]: <SkillsContainer locale={l10n} />,
-      [TabId.CombatTechniques]: <CombatTechniquesContainer locale={l10n} />,
-      [TabId.SpecialAbilities]: <SpecialAbilitiesContainer locale={l10n} />,
-      [TabId.Spells]: <SpellsContainer locale={l10n} />,
-      [TabId.LiturgicalChants]: <LiturgicalChantsContainer locale={l10n} />,
+      [TabId.Advantages]:
+        () => unwrapWithHero (hero => <AdvantagesContainer l10n={l10n} hero={hero} />),
+      [TabId.Disadvantages]:
+        () => unwrapWithHero (hero => <DisadvantagesContainer l10n={l10n} hero={hero} />),
 
-      [TabId.Equipment]: <EquipmentContainer locale={l10n} />,
-      [TabId.ZoneArmor]: <HitZoneArmorsContainer locale={l10n} />,
-      [TabId.Pets]: <PetsContainer locale={l10n} />,
+      [TabId.Skills]: () => <SkillsContainer locale={l10n} />,
+      [TabId.CombatTechniques]: () => <CombatTechniquesContainer l10n={l10n} />,
+      [TabId.SpecialAbilities]: () => <SpecialAbilitiesContainer locale={l10n} />,
+      [TabId.Spells]: () => <SpellsContainer locale={l10n} />,
+      [TabId.LiturgicalChants]: () => <LiturgicalChantsContainer locale={l10n} />,
+
+      [TabId.Equipment]: () => <EquipmentContainer l10n={l10n} />,
+      [TabId.ZoneArmor]: () => <HitZoneArmorsContainer locale={l10n} />,
+      [TabId.Pets]: () => <PetsContainer locale={l10n} />,
 
       // master: <Master />
     }

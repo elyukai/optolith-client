@@ -1,12 +1,12 @@
-import * as React from 'react';
-import { translate, UIMessages } from '../../../App/Utils/I18n';
-import { Markdown } from '../../../components/Markdown';
+import * as React from "react";
+import { translate, UIMessages } from "../../../Utilities/I18n";
+import { Markdown } from "../../Universal/Markdown";
 
 export interface WikiCriticalSuccessProps {
   currentObject: {
     critical: string;
-  };
-  locale: UIMessages;
+  }
+  locale: UIMessages
 }
 
 export function WikiCriticalSuccess(props: WikiCriticalSuccessProps) {
@@ -15,9 +15,9 @@ export function WikiCriticalSuccess(props: WikiCriticalSuccessProps) {
       critical
     },
     locale
-  } = props;
+  } = props
 
   return (
-    <Markdown source={`**${translate(locale, 'info.criticalsuccess')}:** ${critical}`} />
-  );
+    <Markdown source={`**${translate(locale, "info.criticalsuccess")}:** ${critical}`} />
+  )
 }

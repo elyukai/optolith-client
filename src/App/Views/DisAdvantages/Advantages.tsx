@@ -1,106 +1,120 @@
-import * as React from 'react';
-import { WikiInfoContainer } from '../../App/Containers/WikiInfoContainer';
-import { ActivatableDependent, ActivateArgs, ActiveViewObject, DeactivateArgs, DeactiveViewObject, EntryRating, InputTextEvent } from '../../App/Models/Hero/heroTypeHelpers';
-import { Advantage } from '../../App/Models/Wiki/wikiTypeHelpers';
-import { AdventurePointsObject } from '../../App/Selectors/adventurePointsSelectors';
-import { translate, UIMessagesObject } from '../../App/Utils/I18n';
-import { BorderButton } from '../../components/BorderButton';
-import { Checkbox } from '../../components/Checkbox';
-import { ListHeader } from '../../components/ListHeader';
-import { ListHeaderTag } from '../../components/ListHeaderTag';
-import { MainContent } from '../../components/MainContent';
-import { Options } from '../../components/Options';
-import { Page } from '../../components/Page';
-import { RecommendedReference } from '../../components/RecommendedReference';
-import { Slidein } from '../../components/Slidein';
-import { TextField } from '../../components/TextField';
-import { Just, List, Maybe, Nothing, OrderedMap, Record } from '../../Utilities/dataUtils';
-import { ActiveList } from './ActiveList';
-import { AdvantagesDisadvantagesAdventurePoints } from './AdvantagesDisadvantagesAdventurePoints';
-import { InactiveList } from './DeactiveList';
+import * as React from "react";
+import { fmapF } from "../../../Data/Functor";
+import { List } from "../../../Data/List";
+import { fromMaybeR, Just, Maybe, Nothing } from "../../../Data/Maybe";
+import { OrderedMap } from "../../../Data/OrderedMap";
+import { Record } from "../../../Data/Record";
+import { WikiInfoContainer } from "../../Containers/WikiInfoContainer";
+import { ActivatableActivationOptions } from "../../Models/Actions/ActivatableActivationOptions";
+import { ActivatableDeactivationOptions } from "../../Models/Actions/ActivatableDeactivationOptions";
+import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
+import { HeroModelRecord } from "../../Models/Hero/HeroModel";
+import { EntryRating, InputTextEvent } from "../../Models/Hero/heroTypeHelpers";
+import { ActiveActivatable } from "../../Models/View/ActiveActivatable";
+import { AdventurePointsCategories } from "../../Models/View/AdventurePointsCategories";
+import { InactiveActivatable } from "../../Models/View/InactiveActivatable";
+import { Advantage } from "../../Models/Wiki/Advantage";
+import { L10nRecord } from "../../Models/Wiki/L10n";
+import { translate } from "../../Utilities/I18n";
+import { BorderButton } from "../Universal/BorderButton";
+import { Checkbox } from "../Universal/Checkbox";
+import { ListHeader } from "../Universal/ListHeader";
+import { ListHeaderTag } from "../Universal/ListHeaderTag";
+import { MainContent } from "../Universal/MainContent";
+import { Options } from "../Universal/Options";
+import { Page } from "../Universal/Page";
+import { RecommendedReference } from "../Universal/RecommendedReference";
+import { Slidein } from "../Universal/Slidein";
+import { TextField } from "../Universal/TextField";
+import { ActiveList } from "./ActiveList";
+import { AdvantagesDisadvantagesAdventurePoints } from "./AdvantagesDisadvantagesAdventurePoints";
+import { InactiveList } from "./DeactiveList";
 
 export interface AdvantagesOwnProps {
-  locale: UIMessagesObject;
+  hero: HeroModelRecord
+  l10n: L10nRecord
 }
 
 export interface AdvantagesStateProps {
-  activeList: Maybe<List<Record<ActiveViewObject<Advantage>>>>;
-  ap: Record<AdventurePointsObject>;
+  activeList: Maybe<List<Record<ActiveActivatable<Advantage>>>>
+  ap: Maybe<Record<AdventurePointsCategories>>
   deactiveList: Maybe<List<
-    Record<ActiveViewObject<Advantage>>
-    | Record<DeactiveViewObject<Advantage>>
-  >>;
-  enableActiveItemHints: boolean;
-  stateEntries: Maybe<OrderedMap<string, Record<ActivatableDependent>>>;
-  wikiEntries: OrderedMap<string, Record<Advantage>>;
-  magicalMax: Maybe<number>;
-  rating: Maybe<OrderedMap<string, EntryRating>>;
-  showRating: boolean;
-  isRemovingEnabled: boolean;
-  filterText: string;
-  inactiveFilterText: string;
+    Record<ActiveActivatable<Advantage>>
+    | Record<InactiveActivatable<Advantage>>
+  >>
+  enableActiveItemHints: boolean
+  stateEntries: Maybe<OrderedMap<string, Record<ActivatableDependent>>>
+  wikiEntries: OrderedMap<string, Record<Advantage>>
+  magicalMax: Maybe<number>
+  rating: Maybe<OrderedMap<string, EntryRating>>
+  showRating: boolean
+  isRemovingEnabled: boolean
+  filterText: string
+  inactiveFilterText: string
 }
 
 export interface AdvantagesDispatchProps {
-  switchActiveItemHints (): void;
-  switchRatingVisibility (): void;
-  addToList (args: ActivateArgs): void;
-  removeFromList (args: DeactivateArgs): void;
-  setLevel (id: string, index: number, level: number): void;
-  setFilterText (filterText: string): void;
-  setInactiveFilterText (filterText: string): void;
+  switchActiveItemHints (): void
+  switchRatingVisibility (): void
+  addToList (args: Record<ActivatableActivationOptions>): void
+  removeFromList (args: Record<ActivatableDeactivationOptions>): void
+  setLevel (id: string, index: number, level: number): void
+  setFilterText (filterText: string): void
+  setInactiveFilterText (filterText: string): void
 }
 
-export type AdvantagesProps = AdvantagesStateProps & AdvantagesDispatchProps & AdvantagesOwnProps;
+export type AdvantagesProps = AdvantagesStateProps & AdvantagesDispatchProps & AdvantagesOwnProps
 
 export interface AdvantagesState {
-  showAddSlidein: boolean;
-  currentId: Maybe<string>;
-  currentSlideinId: Maybe<string>;
+  showAddSlidein: boolean
+  currentId: Maybe<string>
+  currentSlideinId: Maybe<string>
 }
+
+const APCA = AdventurePointsCategories.A
 
 export class Advantages extends React.Component<AdvantagesProps, AdvantagesState> {
   state: AdvantagesState = {
     showAddSlidein: false,
-    currentId: Nothing (),
-    currentSlideinId: Nothing (),
-  };
+    currentId: Nothing,
+    currentSlideinId: Nothing,
+  }
 
-  filter = (event: InputTextEvent) => this.props.setFilterText (event.target.value);
-  filterSlidein = (event: InputTextEvent) => this.props.setInactiveFilterText (event.target.value);
-  showAddSlidein = () => this.setState ({ showAddSlidein: true });
+  filter = (event: InputTextEvent) => this.props.setFilterText (event.target.value)
+  filterSlidein = (event: InputTextEvent) => this.props.setInactiveFilterText (event.target.value)
+  showAddSlidein = () => this.setState ({ showAddSlidein: true })
 
   hideAddSlidein = () => {
-    this.props.setInactiveFilterText ('');
-    this.setState ({ showAddSlidein: false });
-  };
+    this.props.setInactiveFilterText ("")
+    this.setState ({ showAddSlidein: false })
+  }
 
-  showInfo = (id: string) => this.setState ({ currentId: Just (id) });
-  showSlideinInfo = (id: string) => this.setState ({ currentSlideinId: Just (id) });
+  showInfo = (id: string) => this.setState ({ currentId: Just (id) })
+  showSlideinInfo = (id: string) => this.setState ({ currentSlideinId: Just (id) })
 
   render () {
     const {
       activeList,
       addToList,
-      ap,
+      ap: m_ap,
       deactiveList,
       enableActiveItemHints,
       magicalMax,
-      locale,
+      l10n,
       rating,
       showRating,
       switchActiveItemHints,
       switchRatingVisibility,
       filterText,
       inactiveFilterText,
-    } = this.props;
+    } = this.props
 
     return (
       <Page id="advantages">
         <Slidein isOpened={this.state.showAddSlidein} close={this.hideAddSlidein}>
           <Options>
             <TextField
-              hint={translate (locale, 'options.filtertext')}
+              hint={translate (l10n) ("search")}
               value={inactiveFilterText}
               onChange={this.filterSlidein}
               fullWidth
@@ -109,29 +123,33 @@ export class Advantages extends React.Component<AdvantagesProps, AdvantagesState
               checked={showRating}
               onClick={switchRatingVisibility}
               >
-              {translate (locale, 'advantages.options.common')}
+              {translate (l10n) ("commonadvantages")}
             </Checkbox>
             <Checkbox
               checked={enableActiveItemHints}
               onClick={switchActiveItemHints}>
-              {translate (locale, 'options.showactivated')}
+              {translate (l10n) ("showactivated")}
             </Checkbox>
-            <AdvantagesDisadvantagesAdventurePoints
-              total={ap .get ('spentOnAdvantages')}
-              blessed={ap .get ('spentOnBlessedAdvantages')}
-              magical={ap .get ('spentOnMagicalAdvantages')}
-              magicalMax={magicalMax}
-              locale={locale}
-              />
-            {showRating && <RecommendedReference locale={locale} />}
+            {fromMaybeR (null)
+                        (fmapF (m_ap)
+                               (ap => (
+                                 <AdvantagesDisadvantagesAdventurePoints
+                                   total={APCA.spentOnAdvantages (ap)}
+                                   blessed={APCA.spentOnBlessedAdvantages (ap)}
+                                   magical={APCA.spentOnMagicalAdvantages (ap)}
+                                   magicalMax={magicalMax}
+                                   l10n={l10n}
+                                   />
+                               )))}
+            {showRating ? <RecommendedReference l10n={l10n} /> : null}
           </Options>
           <MainContent>
             <ListHeader>
               <ListHeaderTag className="name">
-                {translate (locale, 'name')}
+                {translate (l10n) ("name")}
               </ListHeaderTag>
-              <ListHeaderTag className="cost" hint={translate (locale, 'aptext')}>
-                {translate (locale, 'apshort')}
+              <ListHeaderTag className="cost" hint={translate (l10n) ("adventurepoints")}>
+                {translate (l10n) ("adventurepoints.short")}
               </ListHeaderTag>
               <ListHeaderTag className="btn-placeholder" />
               <ListHeaderTag className="btn-placeholder" />
@@ -139,9 +157,9 @@ export class Advantages extends React.Component<AdvantagesProps, AdvantagesState
             <InactiveList
               inactiveList={
                 deactiveList as
-                  Maybe<List<Record<ActiveViewObject> | Record<DeactiveViewObject>>>
+                  Maybe<List<Record<ActiveActivatable> | Record<InactiveActivatable>>>
               }
-              locale={locale}
+              l10n={l10n}
               rating={rating}
               showRating={showRating}
               addToList={addToList}
@@ -152,7 +170,7 @@ export class Advantages extends React.Component<AdvantagesProps, AdvantagesState
         </Slidein>
         <Options>
           <TextField
-            hint={translate (locale, 'options.filtertext')}
+            hint={translate (l10n) ("search")}
             value={filterText}
             onChange={this.filter}
             fullWidth
@@ -161,21 +179,21 @@ export class Advantages extends React.Component<AdvantagesProps, AdvantagesState
             checked={showRating}
             onClick={switchRatingVisibility}
             >
-            {translate (locale, 'advantages.options.common')}
+            {translate (l10n) ("commonadvantages")}
           </Checkbox>
           <BorderButton
-            label={translate (locale, 'actions.addtolist')}
+            label={translate (l10n) ("add")}
             onClick={this.showAddSlidein}
             />
-          {showRating && <RecommendedReference locale={locale} />}
+          {showRating ? <RecommendedReference l10n={l10n} /> : null}
         </Options>
         <MainContent>
           <ListHeader>
             <ListHeaderTag className="name">
-              {translate (locale, 'name')}
+              {translate (l10n) ("name")}
             </ListHeaderTag>
-            <ListHeaderTag className="cost" hint={translate (locale, 'aptext')}>
-              {translate (locale, 'apshort')}
+            <ListHeaderTag className="cost" hint={translate (l10n) ("adventurepoints")}>
+              {translate (l10n) ("adventurepoints.short")}
             </ListHeaderTag>
             <ListHeaderTag className="btn-placeholder" />
             <ListHeaderTag className="btn-placeholder" />
@@ -183,12 +201,12 @@ export class Advantages extends React.Component<AdvantagesProps, AdvantagesState
           <ActiveList
             {...this.props}
             filterText={filterText}
-            list={activeList as Maybe<List<Record<ActiveViewObject>>>}
+            list={activeList as Maybe<List<Record<ActiveActivatable>>>}
             selectForInfo={this.showInfo}
             />
         </MainContent>
         <WikiInfoContainer {...this.props} {...this.state} />
       </Page>
-    );
+    )
   }
 }

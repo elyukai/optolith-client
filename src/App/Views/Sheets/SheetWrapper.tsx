@@ -1,15 +1,15 @@
-import * as React from 'react';
+import * as React from "react";
 
 export interface SheetWrapperProps {
-  children?: React.ReactNode;
+  children?: React.ReactNode
 }
 
 export function SheetWrapper (props: SheetWrapperProps) {
-  const { children } = props;
+  const { children } = props
 
   return (
     <div className="sheet-wrapper">
       {children}
     </div>
-  );
+  )
 }

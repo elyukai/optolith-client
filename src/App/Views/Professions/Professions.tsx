@@ -1,69 +1,68 @@
-import * as React from 'react';
-import { WikiInfoContainer } from '../../App/Containers/WikiInfoContainer';
-import { InputTextEvent, Sex } from '../../App/Models/Hero/heroTypeHelpers';
-import { ProfessionCombined } from '../../App/Models/View/viewTypeHelpers';
-import { WikiAll } from '../../App/Models/Wiki/wikiTypeHelpers';
-import { translate, UIMessagesObject } from '../../App/Utils/I18n';
-import { Aside } from '../../components/Aside';
-import { Dropdown, DropdownOption } from '../../components/Dropdown';
-import { ListView } from '../../components/List';
-import { ListHeader } from '../../components/ListHeader';
-import { ListHeaderTag } from '../../components/ListHeaderTag';
-import { ListPlaceholder } from '../../components/ListPlaceholder';
-import { MainContent } from '../../components/MainContent';
-import { Options } from '../../components/Options';
-import { Page } from '../../components/Page';
-import { Scroll } from '../../components/Scroll';
-import { SortNames, SortOptions } from '../../components/SortOptions';
-import { TextField } from '../../components/TextField';
-import { SelectionsContainer } from '../../Containers/RCPSelectionsContainer';
-import { Just, List, Maybe, Record } from '../../Utilities/dataUtils';
-import { ProfessionsListItem } from './ProfessionsListItem';
-import { ProfessionVariants } from './ProfessionVariants';
+import * as React from "react";
+import { SelectionsContainer } from "../../Containers/RCPSelectionsContainer";
+import { WikiInfoContainer } from "../../Containers/WikiInfoContainer";
+import { InputTextEvent, Sex } from "../../Models/Hero/heroTypeHelpers";
+import { ProfessionCombined } from "../../Models/View/viewTypeHelpers";
+import { WikiAll } from "../../Models/Wiki/wikiTypeHelpers";
+import { translate, UIMessagesObject } from "../../Utilities/I18n";
+import { Aside } from "../Universal/Aside";
+import { Dropdown, DropdownOption } from "../Universal/Dropdown";
+import { ListView } from "../Universal/List";
+import { ListHeader } from "../Universal/ListHeader";
+import { ListHeaderTag } from "../Universal/ListHeaderTag";
+import { ListPlaceholder } from "../Universal/ListPlaceholder";
+import { MainContent } from "../Universal/MainContent";
+import { Options } from "../Universal/Options";
+import { Page } from "../Universal/Page";
+import { Scroll } from "../Universal/Scroll";
+import { SortNames, SortOptions } from "../Universal/SortOptions";
+import { TextField } from "../Universal/TextField";
+import { ProfessionsListItem } from "./ProfessionsListItem";
+import { ProfessionVariants } from "./ProfessionVariants";
 
 export interface ProfessionsOwnProps {
-  locale: UIMessagesObject;
+  locale: UIMessagesObject
 }
 
 export interface ProfessionsStateProps {
-  wiki: Record<WikiAll>;
-  currentProfessionId: Maybe<string>;
-  currentProfessionVariantId: Maybe<string>;
-  groupVisibilityFilter: number;
-  professions: List<Record<ProfessionCombined>>;
-  sortOrder: string;
-  sex: Maybe<Sex>;
-  visibilityFilter: string;
-  filterText: string;
+  wiki: Record<WikiAll>
+  currentProfessionId: Maybe<string>
+  currentProfessionVariantId: Maybe<string>
+  groupVisibilityFilter: number
+  professions: List<Record<ProfessionCombined>>
+  sortOrder: string
+  sex: Maybe<Sex>
+  visibilityFilter: string
+  filterText: string
 }
 
 export interface ProfessionsDispatchProps {
-  selectProfession (id: string): void;
-  selectProfessionVariant (id: Maybe<string>): void;
-  setGroupVisibilityFilter (filter: number): void;
-  setSortOrder (sortOrder: string): void;
-  setVisibilityFilter (filter: string): void;
-  switchExpansionVisibilityFilter (): void;
-  setFilterText (filterText: string): void;
+  selectProfession (id: string): void
+  selectProfessionVariant (id: Maybe<string>): void
+  setGroupVisibilityFilter (filter: number): void
+  setSortOrder (sortOrder: string): void
+  setVisibilityFilter (filter: string): void
+  switchExpansionVisibilityFilter (): void
+  setFilterText (filterText: string): void
 }
 
 export type ProfessionsProps =
   ProfessionsStateProps
   & ProfessionsDispatchProps
-  & ProfessionsOwnProps;
+  & ProfessionsOwnProps
 
 export interface ProfessionsState {
-  showAddSlidein: boolean;
+  showAddSlidein: boolean
 }
 
 export class Professions extends React.Component<ProfessionsProps, ProfessionsState> {
   state = {
     showAddSlidein: false,
-  };
+  }
 
-  filter = (event: InputTextEvent) => this.props.setFilterText (event.target.value);
-  showAddSlidein = () => this.setState ({ showAddSlidein: true });
-  hideAddSlidein = () => this.setState ({ showAddSlidein: false });
+  filter = (event: InputTextEvent) => this.props.setFilterText (event.target.value)
+  showAddSlidein = () => this.setState ({ showAddSlidein: true })
+  hideAddSlidein = () => this.setState ({ showAddSlidein: false })
 
   render () {
     const {
@@ -77,9 +76,9 @@ export class Professions extends React.Component<ProfessionsProps, ProfessionsSt
       sortOrder,
       visibilityFilter,
       filterText,
-    } = this.props;
+    } = this.props
 
-    const { showAddSlidein } = this.state;
+    const { showAddSlidein } = this.state
 
     return (
       <Page id="professions">
@@ -88,7 +87,7 @@ export class Professions extends React.Component<ProfessionsProps, ProfessionsSt
         }
         <Options>
           <TextField
-            hint={translate (locale, 'options.filtertext')}
+            hint={translate (locale, "options.filtertext")}
             value={filterText}
             onChangeString={this.props.setFilterText}
             fullWidth
@@ -98,12 +97,12 @@ export class Professions extends React.Component<ProfessionsProps, ProfessionsSt
             onChangeJust={setVisibilityFilter}
             options={List.of (
               Record.of<DropdownOption> ({
-                id: 'all',
-                name: translate (locale, 'professions.options.allprofessions'),
+                id: "all",
+                name: translate (locale, "professions.options.allprofessions"),
               }),
               Record.of<DropdownOption> ({
-                id: 'common',
-                name: translate (locale, 'professions.options.commonprofessions'),
+                id: "common",
+                name: translate (locale, "professions.options.commonprofessions"),
               })
             )}
             fullWidth
@@ -114,19 +113,19 @@ export class Professions extends React.Component<ProfessionsProps, ProfessionsSt
             options={List.of (
               Record.of<DropdownOption> ({
                 id: 0,
-                name: translate (locale, 'professions.options.allprofessiongroups'),
+                name: translate (locale, "professions.options.allprofessiongroups"),
               }),
               Record.of<DropdownOption> ({
                 id: 1,
-                name: translate (locale, 'professions.options.mundaneprofessions'),
+                name: translate (locale, "professions.options.mundaneprofessions"),
               }),
               Record.of<DropdownOption> ({
                 id: 2,
-                name: translate (locale, 'professions.options.magicalprofessions'),
+                name: translate (locale, "professions.options.magicalprofessions"),
               }),
               Record.of<DropdownOption> ({
                 id: 3,
-                name: translate (locale, 'professions.options.blessedprofessions'),
+                name: translate (locale, "professions.options.blessedprofessions"),
               })
             )}
             fullWidth
@@ -134,17 +133,17 @@ export class Professions extends React.Component<ProfessionsProps, ProfessionsSt
           <SortOptions
             sortOrder={sortOrder}
             sort={setSortOrder}
-            options={List.of<SortNames> ('name', 'cost')}
+            options={List.of<SortNames> ("name", "cost")}
             locale={locale}
             />
         </Options>
         <MainContent>
           <ListHeader>
             <ListHeaderTag className="name">
-              {translate (locale, 'name')}
+              {translate (locale, "name")}
             </ListHeaderTag>
-            <ListHeaderTag className="cost" hint={translate (locale, 'aptext')}>
-              {translate (locale, 'apshort')}
+            <ListHeaderTag className="cost" hint={translate (locale, "aptext")}>
+              {translate (locale, "apshort")}
             </ListHeaderTag>
             <ListHeaderTag className="btn-placeholder" />
             <ListHeaderTag className="btn-placeholder has-border" />
@@ -159,7 +158,7 @@ export class Professions extends React.Component<ProfessionsProps, ProfessionsSt
                       profession => (
                         <ProfessionsListItem
                           {...this.props}
-                          key={profession .get ('id')}
+                          key={profession .get ("id")}
                           showAddSlidein={this.showAddSlidein}
                           profession={profession}
                           />
@@ -175,6 +174,6 @@ export class Professions extends React.Component<ProfessionsProps, ProfessionsSt
           <WikiInfoContainer {...this.props} currentId={currentProfessionId} noWrapper />
         </Aside>
       </Page>
-    );
+    )
   }
 }

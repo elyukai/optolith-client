@@ -112,7 +112,7 @@ const mapDispatchToProps = (
   },
 })
 
-export const connectAttributes =
+const connectAttributes =
   connect<AttributesStateProps, AttributesDispatchProps, AttributesOwnProps, AppStateRecord> (
     mapStateToProps,
     mapDispatchToProps

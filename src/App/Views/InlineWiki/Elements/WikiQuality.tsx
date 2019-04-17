@@ -1,12 +1,12 @@
-import * as React from 'react';
-import { translate, UIMessages } from '../../../App/Utils/I18n';
-import { Markdown } from '../../../components/Markdown';
+import * as React from "react";
+import { translate, UIMessages } from "../../../Utilities/I18n";
+import { Markdown } from "../../Universal/Markdown";
 
 export interface WikiQualityProps {
   currentObject: {
     quality: string;
-  };
-  locale: UIMessages;
+  }
+  locale: UIMessages
 }
 
 export function WikiQuality(props: WikiQualityProps) {
@@ -15,9 +15,9 @@ export function WikiQuality(props: WikiQualityProps) {
       quality
     },
     locale
-  } = props;
+  } = props
 
   return (
-    <Markdown source={`**${translate(locale, 'info.quality')}:** ${quality}`} />
-  );
+    <Markdown source={`**${translate(locale, "info.quality")}:** ${quality}`} />
+  )
 }

@@ -1,23 +1,22 @@
-import * as React from 'react';
-import { SpecialAbility } from '../../App/Models/Wiki/wikiTypeHelpers';
-import { Dropdown, DropdownOption } from '../../components/Dropdown';
-import { List, Maybe, Record } from '../../Utilities/dataUtils';
+import * as React from "react";
+import { SpecialAbility } from "../../Models/Wiki/wikiTypeHelpers";
+import { Dropdown, DropdownOption } from "../Universal/Dropdown";
 
 export interface TerrainKnowledgeProps {
-  active: Maybe<number>;
-  available: List<number>;
-  terrainKnowledge: Record<SpecialAbility>;
-  set (id: number): void;
+  active: Maybe<number>
+  available: List<number>
+  terrainKnowledge: Record<SpecialAbility>
+  set (id: number): void
 }
 
 export function TerrainKnowledge (props: TerrainKnowledgeProps) {
-  const { active, available, terrainKnowledge, set } = props;
+  const { active, available, terrainKnowledge, set } = props
 
   return (
     <div className="terrain-knowledge">
-      <h4>{terrainKnowledge .get ('name')}</h4>
+      <h4>{terrainKnowledge .get ("name")}</h4>
       {Maybe.maybeToReactNode (
-        terrainKnowledge .lookup ('select')
+        terrainKnowledge .lookup ("select")
           .fmap (
             select => (
               <Dropdown
@@ -25,9 +24,9 @@ export function TerrainKnowledge (props: TerrainKnowledgeProps) {
                 options={
                   select .filter (
                     e => {
-                      const id = e .get ('id');
+                      const id = e .get ("id")
 
-                      return typeof id === 'number' && available .elem (id);
+                      return typeof id === "number" && available .elem (id)
                     }
                   ) as List<Record<DropdownOption>>
                 }
@@ -37,5 +36,5 @@ export function TerrainKnowledge (props: TerrainKnowledgeProps) {
           )
       )}
     </div>
-  );
+  )
 }

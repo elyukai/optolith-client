@@ -40,7 +40,7 @@ const mapDispatchToProps = (
   },
 })
 
-export const connectCombatTechniques =
+const connectCombatTechniques =
   connect<
     CombatTechniquesStateProps,
     CombatTechniquesDispatchProps,

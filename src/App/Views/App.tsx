@@ -5,6 +5,7 @@ import { fromMaybe, listToMaybe, Maybe, maybe } from "../../Data/Maybe";
 import { AlertsContainer } from "../Containers/AlertsContainer";
 import { DownloaderContainer } from "../Containers/DownloaderContainer";
 import { NavigationBarContainer } from "../Containers/NavigationBarContainer";
+import { HeroModelRecord } from "../Models/Hero/HeroModel";
 import { L10n, L10nRecord } from "../Models/Wiki/L10n";
 import { TabId } from "../Utilities/LocationUtils";
 import { Router } from "./Router/Router";
@@ -16,6 +17,7 @@ export interface AppOwnProps {}
 export interface AppStateProps {
   currentTab: TabId
   l10n: Maybe<L10nRecord>
+  mhero: Maybe<HeroModelRecord>
   platform: string
   theme: string
   areAnimationsEnabled: boolean
@@ -54,6 +56,7 @@ export class App extends React.Component<AppProps, AppState> {
       platform,
       theme,
       areAnimationsEnabled,
+      mhero,
     } = this.props
 
     const { hasError } = this.state
@@ -91,7 +94,7 @@ export class App extends React.Component<AppProps, AppState> {
 
           <section id="content">
             <NavigationBarContainer {...this.props} locale={l10n} />
-            <Router id={currentTab} l10n={l10n} />
+            <Router id={currentTab} l10n={l10n} mhero={mhero} />
           </section>
         </div>
       ))

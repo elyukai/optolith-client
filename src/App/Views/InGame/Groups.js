@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { GroupsActions } from '../../Actions/GroupsActions';
-import { BorderButton } from '../../components/BorderButton';
-import { Scroll } from '../../components/Scroll';
-import { Slidein } from '../../components/Slidein';
 import { GroupsStore } from '../../stores/GroupsStore';
+import { BorderButton } from '../Universal/BorderButton';
+import { Scroll } from '../Universal/Scroll';
+import { Slidein } from '../Universal/Slidein';
 
 export class Groups extends Component {
 

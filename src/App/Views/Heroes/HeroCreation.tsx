@@ -96,7 +96,7 @@ export class HeroCreation extends React.Component<HeroCreationProps, HeroCreatio
         experienceLevelsMap,
         elems,
         map (e => DropdownOption ({
-                    id: ExperienceLevel.A.id (e),
+                    id: Just (ExperienceLevel.A.id (e)),
                     name: `${ExperienceLevel.A.name (e)} (${ExperienceLevel.A.ap (e)} AP)`,
                   }))
       )

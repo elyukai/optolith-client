@@ -1,17 +1,15 @@
-import * as React from 'react';
-import { Categories } from '../../../App/Constants/Categories';
-import { SkillExtension, SpecialAbility } from '../../../App/Models/Wiki/wikiTypeHelpers';
-import { translate, UIMessages } from '../../../App/Utils/I18n';
-import { Markdown } from '../../../components/Markdown';
-import { sortObjects } from '../../../Utilities/FilterSortUtils';
+import * as React from "react";
+import { Categories } from "../../../Constants/Categories";
+import { translate, UIMessages } from "../../../Utilities/I18n";
+import { Markdown } from "../../Universal/Markdown";
 
 export interface WikiExtensionsProps {
   currentObject: {
     id: string;
     category: Categories;
-  };
-  extensions: SpecialAbility | undefined;
-  locale: UIMessages;
+  }
+  extensions: SpecialAbility | undefined
+  locale: UIMessages
 }
 
 export function WikiExtensions(props: WikiExtensionsProps) {
@@ -22,18 +20,18 @@ export function WikiExtensions(props: WikiExtensionsProps) {
     },
     extensions,
     locale
-  } = props;
+  } = props
 
-  let key: keyof UIMessages = 'spellextensions';
-  let extensionsList = extensions && (extensions.select as SkillExtension[]);
+  let key: keyof UIMessages = "spellextensions"
+  let extensionsList = extensions && (extensions.select as SkillExtension[])
 
   if (category === Categories.LITURGIES) {
-    key = 'liturgicalchantextensions';
+    key = "liturgicalchantextensions"
   }
 
-  if (typeof extensionsList === 'object') {
-    extensionsList = extensionsList.filter(e => e.target === id);
-    extensionsList = sortObjects(extensionsList, locale.id, 'tier');
+  if (typeof extensionsList === "object") {
+    extensionsList = extensionsList.filter(e => e.target === id)
+    extensionsList = sortObjects(extensionsList, locale.id, "tier")
   }
 
   if (extensionsList && extensionsList.length === 3) {
@@ -44,20 +42,20 @@ export function WikiExtensions(props: WikiExtensionsProps) {
         </p>
         <ul className="extensions">
           {extensionsList.map(({ cost, effect, id, name, tier }) => {
-            const srText = `${translate(locale, 'sr.short')} ${tier * 4 + 4}`;
-            const apText = `${cost} ${translate(locale, 'apshort')}`;
+            const srText = `${translate(locale, "sr.short")} ${tier * 4 + 4}`
+            const apText = `${cost} ${translate(locale, "apshort")}`
             return (
               <Markdown
                 key={id}
                 source={`*${name}* (${srText}, ${apText}): ${effect}`}
                 isListElement
                 />
-            );
+            )
           })}
         </ul>
       </>
-    );
+    )
   }
 
-  return null;
+  return null
 }

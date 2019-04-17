@@ -1,12 +1,12 @@
-import * as React from 'react';
-import { translate, UIMessages } from '../../../App/Utils/I18n';
-import { Markdown } from '../../../components/Markdown';
+import * as React from "react";
+import { translate, UIMessages } from "../../../Utilities/I18n";
+import { Markdown } from "../../Universal/Markdown";
 
 export interface WikiBotchProps {
   currentObject: {
-    botch: string;
-  };
-  locale: UIMessages;
+    botch: string
+  }
+  locale: UIMessages
 }
 
 export function WikiBotch(props: WikiBotchProps) {
@@ -15,9 +15,9 @@ export function WikiBotch(props: WikiBotchProps) {
       botch
     },
     locale
-  } = props;
+  } = props
 
   return (
-    <Markdown source={`**${translate(locale, 'info.botch')}:** ${botch}`} />
-  );
+    <Markdown source={`**${translate(locale, "info.botch")}:** ${botch}`} />
+  )
 }

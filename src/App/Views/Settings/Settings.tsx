@@ -1,44 +1,45 @@
-import * as React from 'react';
-import { translate } from '../../App/Utils/I18n';
-import { BorderButton } from '../../components/BorderButton';
-import { Checkbox } from '../../components/Checkbox';
-import { Dialog } from '../../components/DialogNew';
-import { Dropdown, DropdownOption } from '../../components/Dropdown';
-import { Option, SegmentedControls } from '../../components/SegmentedControls';
-import { UIMessagesObject } from '../../types/ui';
-import { Just, List, Maybe, Nothing, Record } from '../../Utilities/dataUtils';
+import * as React from "react";
+import { List } from "../../../Data/List";
+import { Just, Maybe, Nothing } from "../../../Data/Maybe";
+import { L10nRecord } from "../../Models/Wiki/L10n";
+import { translate } from "../../Utilities/I18n";
+import { BorderButton } from "../Universal/BorderButton";
+import { Checkbox } from "../Universal/Checkbox";
+import { Dialog } from "../Universal/DialogNew";
+import { Dropdown, DropdownOption } from "../Universal/Dropdown";
+import { Option, SegmentedControls } from "../Universal/SegmentedControls";
 
 export interface SettingsOwnProps {
-  locale: UIMessagesObject;
-  isSettingsOpen: boolean;
-  platform: string;
-  close (): void;
-  checkForUpdates (): void;
+  l10n: L10nRecord
+  isSettingsOpen: boolean
+  platform: string
+  close (): void
+  checkForUpdates (): void
 }
 
 export interface SettingsStateProps {
-  localeString: Maybe<string>;
-  localeType: 'default' | 'set';
-  theme: string;
-  isEditingHeroAfterCreationPhaseEnabled: boolean;
-  areAnimationsEnabled: boolean;
+  localeString: Maybe<string>
+  localeType: "default" | "set"
+  theme: string
+  isEditingHeroAfterCreationPhaseEnabled: boolean
+  areAnimationsEnabled: boolean
 }
 
 export interface SettingsDispatchProps {
-  saveConfig (): void;
-  setLocale (id: Maybe<string>): void;
-  setTheme (id: Maybe<string>): void;
-  switchEnableEditingHeroAfterCreationPhase (): void;
-  switchEnableAnimations (): void;
+  saveConfig (): void
+  setLocale (id: Maybe<string>): void
+  setTheme (id: Maybe<string>): void
+  switchEnableEditingHeroAfterCreationPhase (): void
+  switchEnableAnimations (): void
 }
 
-export type SettingsProps = SettingsStateProps & SettingsDispatchProps & SettingsOwnProps;
+export type SettingsProps = SettingsStateProps & SettingsDispatchProps & SettingsOwnProps
 
 export function Settings (props: SettingsProps) {
   const {
     close,
     isEditingHeroAfterCreationPhaseEnabled,
-    locale,
+    l10n,
     localeString,
     localeType,
     setLocale,
@@ -51,15 +52,15 @@ export function Settings (props: SettingsProps) {
     areAnimationsEnabled,
     platform,
     checkForUpdates,
-  } = props;
+  } = props
 
   return (
     <Dialog
       id="settings"
-      title={translate (locale, 'settings.title')}
+      title={translate (l10n) ("settings")}
       buttons={[
         {
-          label: translate (locale, 'settings.actions.close'),
+          label: translate (l10n) ("close"),
           onClick: saveConfig,
         },
       ]}
@@ -67,68 +68,69 @@ export function Settings (props: SettingsProps) {
       isOpened={isSettingsOpen}
       >
       <Dropdown
-        options={List.of (
-          Record.of<DropdownOption> ({
-            name: translate (locale, 'settings.options.defaultlanguage'),
+        options={List (
+          DropdownOption ({
+            name: translate (l10n) ("systemlanguage"),
           }),
-          Record.of<DropdownOption> ({
-            id: 'de-DE',
-            name: 'Deutsch (Deutschland)',
+          DropdownOption ({
+            id: Just ("de-DE"),
+            name: "Deutsch (Deutschland)",
           }),
-          Record.of<DropdownOption> ({
-            id: 'en-US',
-            name: 'English (United States)',
+          DropdownOption ({
+            id: Just ("en-US"),
+            name: "English (United States)",
           }),
-          Record.of<DropdownOption> ({
-            id: 'nl-BE',
-            name: 'Nederlands (België)',
-            disabled: true,
+          DropdownOption ({
+            id: Just ("nl-BE"),
+            name: "Nederlands (België)",
+            disabled: Just (true),
           }),
-          Record.of<DropdownOption> ({
-            id: 'fr-FR',
-            name: 'Français (France)',
-            disabled: true,
+          DropdownOption ({
+            id: Just ("fr-FR"),
+            name: "Français (France)",
           })
         )}
-        value={localeType === 'default' ? Nothing () : localeString}
-        label={translate (locale, 'settings.options.language')}
+        value={localeType === "default" ? Nothing : localeString}
+        label={translate (l10n) ("language")}
         onChange={setLocale}
         />
-      <p>{translate (locale, 'settings.options.languagehint')}</p>
+      <p>{translate (l10n) ("languagehint")}</p>
       <SegmentedControls
-        options={List.of (
-          Record.of<Option> ({
-            name: translate (locale, 'settings.options.themedark'),
-            value: 'dark',
+        options={List (
+          Option ({
+            name: translate (l10n) ("dark"),
+            value: Just ("dark"),
           }),
-          Record.of<Option> ({
-            name: translate (locale, 'settings.options.themelight'),
-            value: 'light',
+          Option ({
+            name: translate (l10n) ("light"),
+            value: Just ("light"),
           })
         )}
         active={Just (theme)}
         onClick={setTheme}
-        label={translate (locale, 'settings.options.theme')}
+        label={translate (l10n) ("theme")}
         />
       <Checkbox
         checked={isEditingHeroAfterCreationPhaseEnabled}
         className="editor-switch"
-        label={translate (locale, 'enableeditingheroaftercreationphase')}
+        label={translate (l10n) ("enableeditingheroaftercreationphase")}
         onClick={switchEnableEditingHeroAfterCreationPhase}
         />
       <Checkbox
         checked={areAnimationsEnabled}
         className="animations"
-        label={translate (locale, 'settings.options.showanimations')}
+        label={translate (l10n) ("showanimations")}
         onClick={switchEnableAnimations}
         />
-      {(platform === 'win32' || platform === 'darwin') && (
-        <BorderButton
-          label={translate (locale, 'checkforupdates')}
-          onClick={checkForUpdates}
-          autoWidth
-          />
-      )}
+      {(platform === "win32" || platform === "darwin")
+        ? (
+          <BorderButton
+            label={translate (l10n) ("checkforupdates")}
+            onClick={checkForUpdates}
+            autoWidth
+            />
+        )
+        : null}
     </Dialog>
-  );
+  )
 }

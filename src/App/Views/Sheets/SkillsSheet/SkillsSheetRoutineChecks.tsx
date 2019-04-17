@@ -1,48 +1,48 @@
-import * as React from 'react';
-import { translate, UIMessagesObject } from '../../../App/Utils/I18n';
-import { TextBox } from '../../../components/TextBox';
+import * as React from "react";
+import { translate, UIMessagesObject } from "../../../Utilities/I18n";
+import { TextBox } from "../../Universal/TextBox";
 
 export interface SkillsSheetRoutineChecksProps {
-  locale: UIMessagesObject;
+  locale: UIMessagesObject
 }
 
 export const SkillsSheetRoutineChecks = ({ locale }: SkillsSheetRoutineChecksProps) => (
   <TextBox
     className="routine-checks"
-    label={translate (locale, 'charactersheet.gamestats.routinechecks.title')}
+    label={translate (locale, "charactersheet.gamestats.routinechecks.title")}
     >
-    <p>{translate (locale, 'charactersheet.gamestats.routinechecks.texts.first')}</p>
-    <p>{translate (locale, 'charactersheet.gamestats.routinechecks.texts.second')}</p>
-    <p>{translate (locale, 'charactersheet.gamestats.routinechecks.texts.third')}</p>
-    <p>{translate (locale, 'charactersheet.gamestats.routinechecks.texts.fourth')}</p>
+    <p>{translate (locale, "charactersheet.gamestats.routinechecks.texts.first")}</p>
+    <p>{translate (locale, "charactersheet.gamestats.routinechecks.texts.second")}</p>
+    <p>{translate (locale, "charactersheet.gamestats.routinechecks.texts.third")}</p>
+    <p>{translate (locale, "charactersheet.gamestats.routinechecks.texts.fourth")}</p>
     <table>
       <thead>
         <tr>
           <th>
             <div>
-              {translate (locale, 'charactersheet.gamestats.routinechecks.headers.checkmod')}
+              {translate (locale, "charactersheet.gamestats.routinechecks.headers.checkmod")}
             </div>
           </th>
           <th>
             <div>
-              {translate (locale, 'charactersheet.gamestats.routinechecks.headers.neededsr')}
+              {translate (locale, "charactersheet.gamestats.routinechecks.headers.neededsr")}
             </div>
           </th>
           <th>
             <div>
-              {translate (locale, 'charactersheet.gamestats.routinechecks.headers.checkmod')}
+              {translate (locale, "charactersheet.gamestats.routinechecks.headers.checkmod")}
             </div>
           </th>
           <th>
             <div>
-              {translate (locale, 'charactersheet.gamestats.routinechecks.headers.neededsr')}
+              {translate (locale, "charactersheet.gamestats.routinechecks.headers.neededsr")}
             </div>
           </th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td>{translate (locale, 'charactersheet.gamestats.routinechecks.from')} +3</td>
+          <td>{translate (locale, "charactersheet.gamestats.routinechecks.from")} +3</td>
           <td>1</td>
           <td>-1</td>
           <td>13</td>

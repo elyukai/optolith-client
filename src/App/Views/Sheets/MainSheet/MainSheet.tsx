@@ -1,38 +1,36 @@
-import * as React from 'react';
-import * as Data from '../../../App/Models/Hero/heroTypeHelpers';
-import * as View from '../../../App/Models/View/viewTypeHelpers';
-import * as Wiki from '../../../App/Models/Wiki/wikiTypeHelpers';
-import { AdventurePointsObject } from '../../../App/Selectors/adventurePointsSelectors';
-import { translate } from '../../../App/Utils/I18n';
-import { BorderButton } from '../../../components/BorderButton';
-import { Options } from '../../../components/Options';
-import { TextBox } from '../../../components/TextBox';
-import { UIMessagesObject } from '../../../types/ui';
-import { compressList } from '../../../Utilities/Activatable/activatableNameUtils';
-import { List, Maybe, Record } from '../../../Utilities/dataUtils';
-import { Sheet } from '../Sheet';
-import { SheetWrapper } from '../SheetWrapper';
-import { MainSheetAttributes } from './MainSheetAttributes';
-import { MainSheetPersonalData } from './MainSheetPersonalData';
+import * as React from "react";
+import * as Data from "../../../Models/Hero/heroTypeHelpers";
+import * as View from "../../../Models/View/viewTypeHelpers";
+import * as Wiki from "../../../Models/Wiki/wikiTypeHelpers";
+import { AdventurePointsObject } from "../../../Selectors/adventurePointsSelectors";
+import { compressList } from "../../../Utilities/Activatable/activatableNameUtils";
+import { translate } from "../../../Utilities/I18n";
+import { BorderButton } from "../../Universal/BorderButton";
+import { Options } from "../../Universal/Options";
+import { TextBox } from "../../Universal/TextBox";
+import { Sheet } from "../Sheet";
+import { SheetWrapper } from "../SheetWrapper";
+import { MainSheetAttributes } from "./MainSheetAttributes";
+import { MainSheetPersonalData } from "./MainSheetPersonalData";
 
 export interface MainSheetProps {
-  advantagesActive: Maybe<List<Record<Data.ActiveViewObject<Wiki.Advantage>>>>;
-  ap: Record<AdventurePointsObject>;
-  attributes: List<Record<View.AttributeCombined>>;
-  avatar: Maybe<string>;
-  culture: Maybe<Record<Wiki.Culture>>;
-  derivedCharacteristics: List<Record<Data.SecondaryAttribute>>;
-  disadvantagesActive: Maybe<List<Record<Data.ActiveViewObject<Wiki.Disadvantage>>>>;
-  el: Maybe<Record<Wiki.ExperienceLevel>>;
-  fatePointsModifier: number;
-  generalsaActive: Maybe<List<string | Record<Data.ActiveViewObject<Wiki.SpecialAbility>>>>;
-  locale: UIMessagesObject;
-  name: Maybe<string>;
-  professionName: Maybe<string>;
-  profile: Maybe<Record<Data.PersonalData>>;
-  race: Maybe<Record<Wiki.Race>>;
-  sex: Maybe<Data.Sex>;
-  printToPDF (): void;
+  advantagesActive: Maybe<List<Record<Data.ActiveViewObject<Wiki.Advantage>>>>
+  ap: Record<AdventurePointsObject>
+  attributes: List<Record<View.AttributeCombined>>
+  avatar: Maybe<string>
+  culture: Maybe<Record<Wiki.Culture>>
+  derivedCharacteristics: List<Record<Data.SecondaryAttribute>>
+  disadvantagesActive: Maybe<List<Record<Data.ActiveViewObject<Wiki.Disadvantage>>>>
+  el: Maybe<Record<Wiki.ExperienceLevel>>
+  fatePointsModifier: number
+  generalsaActive: Maybe<List<string | Record<Data.ActiveViewObject<Wiki.SpecialAbility>>>>
+  locale: UIMessagesObject
+  name: Maybe<string>
+  professionName: Maybe<string>
+  profile: Maybe<Record<Data.PersonalData>>
+  race: Maybe<Record<Wiki.Race>>
+  sex: Maybe<Data.Sex>
+  printToPDF (): void
 }
 
 export function MainSheet (props: MainSheetProps) {
@@ -54,20 +52,20 @@ export function MainSheet (props: MainSheetProps) {
     printToPDF,
     race,
     sex,
-  } = props;
+  } = props
 
   return (
     <SheetWrapper>
       <Options>
         <BorderButton
           className="print-document"
-          label={translate (locale, 'charactersheet.actions.printtopdf')}
+          label={translate (locale, "charactersheet.actions.printtopdf")}
           onClick={printToPDF}
           />
       </Options>
       <Sheet
         id="main-sheet"
-        title={translate (locale, 'charactersheet.main.title')}
+        title={translate (locale, "charactersheet.main.title")}
         attributes={attributes}
         locale={locale}
         >
@@ -76,15 +74,15 @@ export function MainSheet (props: MainSheetProps) {
           avatar={avatar}
           culture={culture}
           el={el}
-          eyeColorTags={translate (locale, 'eyecolors')}
-          hairColorTags={translate (locale, 'haircolors')}
+          eyeColorTags={translate (locale, "eyecolors")}
+          hairColorTags={translate (locale, "haircolors")}
           locale={locale}
           name={name}
           professionName={professionName}
           profile={profile}
           race={race}
           sex={sex}
-          socialstatusTags={translate (locale, 'socialstatus')}
+          socialstatusTags={translate (locale, "socialstatus")}
           />
         <div className="lower">
           <div className="lists">
@@ -94,7 +92,7 @@ export function MainSheet (props: MainSheetProps) {
                 advantagesActive => (
                   <TextBox
                     className="activatable-list"
-                    label={translate (locale, 'charactersheet.main.advantages')}
+                    label={translate (locale, "charactersheet.main.advantages")}
                     value={
                       compressList (
                         advantagesActive as List<Record<Data.ActiveViewObject>>,
@@ -110,7 +108,7 @@ export function MainSheet (props: MainSheetProps) {
                   disadvantagesActive => (
                     <TextBox
                       className="activatable-list"
-                      label={translate (locale, 'charactersheet.main.disadvantages')}
+                      label={translate (locale, "charactersheet.main.disadvantages")}
                       value={
                         compressList (
                           disadvantagesActive as List<Record<Data.ActiveViewObject>>,
@@ -126,7 +124,7 @@ export function MainSheet (props: MainSheetProps) {
                   generalsaActive => (
                     <TextBox
                       className="activatable-list"
-                      label={translate (locale, 'charactersheet.main.generalspecialabilites')}
+                      label={translate (locale, "charactersheet.main.generalspecialabilites")}
                       value={
                         compressList (
                           generalsaActive as List<Record<Data.ActiveViewObject>>,
@@ -146,5 +144,5 @@ export function MainSheet (props: MainSheetProps) {
         </div>
       </Sheet>
     </SheetWrapper>
-  );
+  )
 }

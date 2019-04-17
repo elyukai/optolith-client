@@ -1,32 +1,31 @@
-import * as React from 'react';
-import { Rules as RulesState } from '../../App/Models/Hero/heroTypeHelpers';
-import { Book } from '../../App/Models/Wiki/wikiTypeHelpers';
-import { translate, UIMessagesObject } from '../../App/Utils/I18n';
-import { Checkbox } from '../../components/Checkbox';
-import { Dropdown, DropdownOption } from '../../components/Dropdown';
-import { Scroll } from '../../components/Scroll';
-import { Just, List, Maybe, OrderedSet, Record } from '../../Utilities/dataUtils';
+import * as React from "react";
+import { Rules as RulesState } from "../../Models/Hero/heroTypeHelpers";
+import { Book } from "../../Models/Wiki/wikiTypeHelpers";
+import { translate, UIMessagesObject } from "../../Utilities/I18n";
+import { Checkbox } from "../Universal/Checkbox";
+import { Dropdown, DropdownOption } from "../Universal/Dropdown";
+import { Scroll } from "../Universal/Scroll";
 
 export interface RulesOwnProps {
-  locale: UIMessagesObject;
+  locale: UIMessagesObject
 }
 
 export interface RulesStateProps {
-  rules: Maybe<Record<RulesState>>;
-  sortedBooks: List<Record<Book>>;
-  ruleBooksEnabled: Maybe<true | OrderedSet<string>>;
-  isEnableLanguageSpecializationsDeactivatable: boolean;
+  rules: Maybe<Record<RulesState>>
+  sortedBooks: List<Record<Book>>
+  ruleBooksEnabled: Maybe<true | OrderedSet<string>>
+  isEnableLanguageSpecializationsDeactivatable: boolean
 }
 
 export interface RulesDispatchProps {
-  changeAttributeValueLimit (): void;
-  changeHigherParadeValues (id: Maybe<number>): void;
-  switchEnableAllRuleBooks (): void;
-  switchEnableRuleBook (id: string): void;
-  switchEnableLanguageSpecializations (): void;
+  changeAttributeValueLimit (): void
+  changeHigherParadeValues (id: Maybe<number>): void
+  switchEnableAllRuleBooks (): void
+  switchEnableRuleBook (id: string): void
+  switchEnableLanguageSpecializations (): void
 }
 
-export type RulesProps = RulesStateProps & RulesDispatchProps & RulesOwnProps;
+export type RulesProps = RulesStateProps & RulesDispatchProps & RulesOwnProps
 
 export function Rules (props: RulesProps) {
   const {
@@ -40,67 +39,67 @@ export function Rules (props: RulesProps) {
     switchEnableRuleBook,
     isEnableLanguageSpecializationsDeactivatable,
     switchEnableLanguageSpecializations,
-  } = props;
+  } = props
 
-  const coreBooks = List.of ('US25001', 'US25002');
+  const coreBooks = List.of ("US25001", "US25002")
 
-  const allRuleBooksEnabled = Maybe.elem<true | OrderedSet<string>> (true) (maybeRuleBooksEnabled);
+  const allRuleBooksEnabled = Maybe.elem<true | OrderedSet<string>> (true) (maybeRuleBooksEnabled)
 
   const higherParadeValues = maybeRules
-    .fmap (Record.get<RulesState, 'higherParadeValues'> ('higherParadeValues'));
+    .fmap (Record.get<RulesState, "higherParadeValues"> ("higherParadeValues"))
 
-  const areHigherParadeValuesEnabled = higherParadeValues .gt (Just (0));
+  const areHigherParadeValuesEnabled = higherParadeValues .gt (Just (0))
 
   const attributeValueLimit = maybeRules
-    .fmap (Record.get<RulesState, 'attributeValueLimit'> ('attributeValueLimit'));
+    .fmap (Record.get<RulesState, "attributeValueLimit"> ("attributeValueLimit"))
 
   const enableLanguageSpecializations = maybeRules
     .fmap (
-      Record.get<RulesState, 'enableLanguageSpecializations'> ('enableLanguageSpecializations')
-    );
+      Record.get<RulesState, "enableLanguageSpecializations"> ("enableLanguageSpecializations")
+    )
 
   return (
     <div className="page" id="optional-rules">
       <Scroll>
-        <h3>{translate (locale, 'rules.rulebase')}</h3>
+        <h3>{translate (locale, "rules.rulebase")}</h3>
         <Checkbox
           checked={allRuleBooksEnabled}
           onClick={switchEnableAllRuleBooks}
-          label={translate (locale, 'rules.enableallrulebooks')}
+          label={translate (locale, "rules.enableallrulebooks")}
           />
         {sortedBooks.map (e => {
-          const isCore = coreBooks .elem (e .get ('id'));
+          const isCore = coreBooks .elem (e .get ("id"))
 
           return (
             <Checkbox
-              key={e .get ('id')}
+              key={e .get ("id")}
               checked={
                 isCore
                 || Maybe.fromMaybe
                   (false)
                   (maybeRuleBooksEnabled .fmap (
-                    ruleBooksEnabled => typeof ruleBooksEnabled === 'boolean'
+                    ruleBooksEnabled => typeof ruleBooksEnabled === "boolean"
                       ? ruleBooksEnabled
-                      : ruleBooksEnabled .member (e .get ('id'))
+                      : ruleBooksEnabled .member (e .get ("id"))
                   ))
               }
-              onClick={() => switchEnableRuleBook (e .get ('id'))}
-              label={e .get ('name')}
+              onClick={() => switchEnableRuleBook (e .get ("id"))}
+              label={e .get ("name")}
               disabled={allRuleBooksEnabled || isCore}
               />
-          );
+          )
         })}
-        <h3>{translate (locale, 'rules.optionalrules')}</h3>
+        <h3>{translate (locale, "rules.optionalrules")}</h3>
         <div className="extended">
           <Checkbox
             checked={areHigherParadeValuesEnabled}
             onClick={() => changeHigherParadeValues (Just (areHigherParadeValuesEnabled ? 0 : 2))}
-            label={translate (locale, 'rules.optionalrules.higherdefensestats')}
+            label={translate (locale, "rules.optionalrules.higherdefensestats")}
             />
           <Dropdown
             options={List.of (
-              Record.of<DropdownOption> ({ id: 2, name: '+2' }),
-              Record.of<DropdownOption> ({ id: 4, name: '+4' })
+              Record.of<DropdownOption> ({ id: 2, name: "+2" }),
+              Record.of<DropdownOption> ({ id: 4, name: "+4" })
             )}
             value={higherParadeValues}
             onChange={changeHigherParadeValues}
@@ -110,15 +109,15 @@ export function Rules (props: RulesProps) {
         <Checkbox
           checked={Maybe.elem (true) (attributeValueLimit)}
           onClick={changeAttributeValueLimit}
-          label={translate (locale, 'rules.optionalrules.maximumattributescores')}
+          label={translate (locale, "rules.optionalrules.maximumattributescores")}
           />
         <Checkbox
           checked={Maybe.elem (true) (enableLanguageSpecializations)}
           onClick={switchEnableLanguageSpecializations}
-          label={translate (locale, 'rules.optionalrules.languagespecializations')}
+          label={translate (locale, "rules.optionalrules.languagespecializations")}
           disabled={isEnableLanguageSpecializationsDeactivatable}
           />
       </Scroll>
     </div>
-  );
+  )
 }

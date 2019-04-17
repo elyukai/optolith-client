@@ -1,87 +1,94 @@
-import * as React from 'react';
-import { Purse } from '../../App/Models/Hero/heroTypeHelpers';
-import { localizeNumber, localizeWeight, translate, UIMessagesObject } from '../../App/Utils/I18n';
-import { TextField } from '../../components/TextField';
-import { Maybe, Record } from '../../Utilities/dataUtils';
+import * as React from "react";
+import { fmapF } from "../../../Data/Functor";
+import { fromJust, isJust, Maybe } from "../../../Data/Maybe";
+import { Record } from "../../../Data/Record";
+import { Purse } from "../../Models/Hero/Purse";
+import { L10n, L10nRecord } from "../../Models/Wiki/L10n";
+import { localizeNumber, localizeWeight, translate } from "../../Utilities/I18n";
+import { TextField } from "../Universal/TextField";
 
 export interface PurseAndTotalsProps {
-  carryingCapacity: Maybe<number>;
-  hasNoAddedAP: boolean;
-  initialStartingWealth: number;
-  locale: UIMessagesObject;
-  purse: Maybe<Record<Purse>>;
-  totalPrice: Maybe<number>;
-  totalWeight: Maybe<number>;
-  setDucates (value: string): void;
-  setSilverthalers (value: string): void;
-  setHellers (value: string): void;
-  setKreutzers (value: string): void;
+  carryingCapacity: Maybe<number>
+  hasNoAddedAP: boolean
+  initialStartingWealth: number
+  l10n: L10nRecord
+  purse: Maybe<Record<Purse>>
+  totalPrice: Maybe<number>
+  totalWeight: Maybe<number>
+  setDucates (value: string): void
+  setSilverthalers (value: string): void
+  setHellers (value: string): void
+  setKreutzers (value: string): void
 }
+
+const PA = Purse.A
 
 export function PurseAndTotals (props: PurseAndTotalsProps) {
   const {
     carryingCapacity,
     hasNoAddedAP,
     initialStartingWealth,
-    locale,
+    l10n,
     purse,
     totalPrice,
     totalWeight,
-  } = props;
+  } = props
+
+  const l10n_id = L10n.A.id (l10n)
 
   return (
     <>
       <div className="purse">
-        <h4>{translate (locale, 'equipment.view.purse')}</h4>
+        <h4>{translate (l10n) ("purse")}</h4>
         <div className="fields">
           <TextField
-            label={translate (locale, 'equipment.view.ducates')}
-            value={purse .fmap (Record.get<Purse, 'd'> ('d'))}
+            label={translate (l10n) ("ducats")}
+            value={fmapF (purse) (PA.d)}
             onChangeString={props.setDucates}
             />
           <TextField
-            label={translate (locale, 'equipment.view.silverthalers')}
-            value={purse .fmap (Record.get<Purse, 's'> ('s'))}
+            label={translate (l10n) ("silverthalers")}
+            value={fmapF (purse) (PA.s)}
             onChangeString={props.setSilverthalers}
             />
           <TextField
-            label={translate (locale, 'equipment.view.hellers')}
-            value={purse .fmap (Record.get<Purse, 'h'> ('h'))}
+            label={translate (l10n) ("halers")}
+            value={fmapF (purse) (PA.h)}
             onChangeString={props.setHellers}
             />
           <TextField
-            label={translate (locale, 'equipment.view.kreutzers')}
-            value={purse .fmap (Record.get<Purse, 'k'> ('k'))}
+            label={translate (l10n) ("kreutzers")}
+            value={fmapF (purse) (PA.k)}
             onChangeString={props.setKreutzers}
             />
         </div>
       </div>
       <div className="total-points">
         <h4>
-          {hasNoAddedAP && `${translate (locale, 'equipment.view.initialstartingwealth')} & `}
-          {translate (locale, 'equipment.view.carringandliftingcapactity')}
+          {hasNoAddedAP ? `${translate (l10n) ("initialstartingwealth")} & ` : ""}
+          {translate (l10n) ("carryingcapacity")}
         </h4>
         <div className="fields">
-          {hasNoAddedAP && Maybe.isJust (totalPrice) && (
-            <div>
-              {localizeNumber (locale .get ('id')) (Maybe.fromJust (totalPrice))}
-              {' / '}
-              {localizeNumber (locale .get ('id')) (initialStartingWealth)}
-              {' '}
-              {translate (locale, 'equipment.view.price')}
-            </div>
-          )}
+          {hasNoAddedAP && isJust (totalPrice)
+            ? (
+              <div>
+                {localizeNumber (l10n_id) (fromJust (totalPrice))}
+                {" / "}
+                {localizeNumber (l10n_id) (initialStartingWealth)}
+                {" "}
+                {translate (l10n) ("price")}
+              </div>
+            )
+            : null}
           <div>
-            {localizeNumber (locale .get ('id'))
-                            (localizeWeight (locale .get ('id')) (totalWeight))}
-            {' / '}
-            {localizeNumber (locale .get ('id'))
-                            (localizeWeight (locale .get ('id')) (carryingCapacity))}
-            {' '}
-            {translate (locale, 'equipment.view.weight')}
+            {localizeNumber (l10n_id) (localizeWeight (l10n_id) (totalWeight))}
+            {" / "}
+            {localizeNumber (l10n_id) (localizeWeight (l10n_id) (carryingCapacity))}
+            {" "}
+            {translate (l10n) ("weight")}
           </div>
         </div>
       </div>
     </>
-  );
+  )
 }

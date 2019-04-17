@@ -1,46 +1,48 @@
-import { connect } from 'react-redux';
-import { Action, Dispatch } from 'redux';
-import * as CultureActions from '../App/Actions/CultureActions';
-import { setTab } from '../App/Actions/LocationActions';
-import { AppState } from '../reducers/appReducer';
-import { getFilteredCultures } from '../Selectors/rcpSelectors';
-import { getCulturesFilterText, getCurrentCultureId } from '../Selectors/stateSelectors';
-import { getCulturesSortOrder, getCulturesVisibilityFilter } from '../Selectors/uisettingsSelectors';
-import { Cultures, CulturesDispatchProps, CulturesOwnProps, CulturesStateProps } from '../Views/rcp/Cultures';
+import { connect } from "react-redux";
+import { ReduxDispatch } from "../Actions/Actions";
+import * as CultureActions from "../Actions/CultureActions";
+import { setTab } from "../Actions/LocationActions";
+import { AppStateRecord } from "../Reducers/appReducer";
+import { getFilteredCultures } from "../Selectors/rcpSelectors";
+import { getCulturesFilterText, getCurrentCultureId } from "../Selectors/stateSelectors";
+import { getCulturesSortOrder, getCulturesVisibilityFilter } from "../Selectors/uisettingsSelectors";
+import { TabId } from "../Utilities/LocationUtils";
+import { Cultures, CulturesDispatchProps, CulturesOwnProps, CulturesStateProps } from "../Views/Cultures/Cultures";
 
-const mapStateToProps = (state: AppState, ownProps: CulturesOwnProps): CulturesStateProps => ({
-  cultures: getFilteredCultures (state, ownProps),
-  currentId: getCurrentCultureId (state),
-  sortOrder: getCulturesSortOrder (state),
-  visibilityFilter: getCulturesVisibilityFilter (state),
-  filterText: getCulturesFilterText (state),
-});
+const mapStateToProps =
+  (state: AppStateRecord, ownProps: CulturesOwnProps): CulturesStateProps => ({
+    cultures: getFilteredCultures (state, ownProps),
+    currentId: getCurrentCultureId (state),
+    sortOrder: getCulturesSortOrder (state),
+    visibilityFilter: getCulturesVisibilityFilter (state),
+    filterText: getCulturesFilterText (state),
+  })
 
-const mapDispatchToProps = (dispatch: Dispatch<Action, AppState>): CulturesDispatchProps => ({
+const mapDispatchToProps = (dispatch: ReduxDispatch): CulturesDispatchProps => ({
   selectCulture (id: string) {
-    dispatch (CultureActions.selectCulture (id));
+    dispatch (CultureActions.selectCulture (id))
   },
   setSortOrder (sortOrder: string) {
-    dispatch (CultureActions.setSortOrder (sortOrder));
+    dispatch (CultureActions.setSortOrder (sortOrder))
   },
   setVisibilityFilter (sortOrder: string) {
-    dispatch (CultureActions.setVisibilityFilter (sortOrder));
+    dispatch (CultureActions.setVisibilityFilter (sortOrder))
   },
   switchValueVisibilityFilter () {
-    dispatch (CultureActions.switchValueVisibilityFilter ());
+    dispatch (CultureActions.switchValueVisibilityFilter ())
   },
   setFilterText (filterText: string) {
-    dispatch (CultureActions.setFilterText (filterText));
+    dispatch (CultureActions.setFilterText (filterText))
   },
   switchToProfessions () {
-    dispatch (setTab ('professions'));
+    dispatch (setTab (TabId.Professions))
   },
-});
+})
 
-export const connectCultures =
-  connect<CulturesStateProps, CulturesDispatchProps, CulturesOwnProps, AppState> (
+const connectCultures =
+  connect<CulturesStateProps, CulturesDispatchProps, CulturesOwnProps, AppStateRecord> (
     mapStateToProps,
     mapDispatchToProps
-  );
+  )
 
-export const CulturesContainer = connectCultures (Cultures);
+export const CulturesContainer = connectCultures (Cultures)

@@ -1,7 +1,7 @@
-import * as React from 'react';
+import * as React from "react";
 
 export interface NavigationBarBackProps {
-  setTab (): void;
+  setTab (): void
 }
 
 export function NavigationBarBack (props: NavigationBarBackProps) {
@@ -11,5 +11,5 @@ export function NavigationBarBack (props: NavigationBarBackProps) {
         &#xE905;
       </div>
     </div>
-  );
+  )
 }

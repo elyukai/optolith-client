@@ -1,15 +1,15 @@
-import * as React from 'react';
+import * as React from "react";
 
 export interface SheetOptionsProps {
-  children?: React.ReactNode;
+  children?: React.ReactNode
 }
 
 export function SheetOptions (props: SheetOptionsProps) {
-  const { children } = props;
+  const { children } = props
 
   return (
     <div className="sheet-options">
       {children}
     </div>
-  );
+  )
 }

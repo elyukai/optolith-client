@@ -1,39 +1,37 @@
-import * as R from 'ramda';
-import * as React from 'react';
-import { Textfit } from 'react-textfit';
-import { ArmorZone } from '../../../App/Models/View/viewTypeHelpers';
-import { localizeNumber, localizeWeight, translate, UIMessagesObject } from '../../../App/Utils/I18n';
-import { TextBox } from '../../../components/TextBox';
-import { Just, List, Maybe, Nothing, Record, Tuple } from '../../../Utilities/dataUtils';
+import * as React from "react";
+import { Textfit } from "react-textfit";
+import { ArmorZone } from "../../../Models/View/viewTypeHelpers";
+import { localizeNumber, localizeWeight, translate, UIMessagesObject } from "../../../Utilities/I18n";
+import { TextBox } from "../../Universal/TextBox";
 
 export interface CombatSheetArmorZonesProps {
-  armorZones: Maybe<List<Record<ArmorZone>>>;
-  locale: UIMessagesObject;
+  armorZones: Maybe<List<Record<ArmorZone>>>
+  locale: UIMessagesObject
 }
 
 export function CombatSheetArmorZones (props: CombatSheetArmorZonesProps) {
-  const { locale, armorZones: maybeZoneArmors } = props;
+  const { locale, armorZones: maybeZoneArmors } = props
 
   return (
     <TextBox
-      label={translate (locale, 'charactersheet.combat.armor.title')}
+      label={translate (locale, "charactersheet.combat.armor.title")}
       className="armor armor-zones"
       >
       <table>
         <thead>
           <tr>
-            <th className="name">{translate (locale, 'charactersheet.combat.headers.armor')}</th>
-            <th className="zone">{translate (locale, 'charactersheet.combat.headers.head')}</th>
-            <th className="zone">{translate (locale, 'charactersheet.combat.headers.torso')}</th>
-            <th className="zone">{translate (locale, 'charactersheet.combat.headers.leftarm')}</th>
-            <th className="zone">{translate (locale, 'charactersheet.combat.headers.rightarm')}</th>
-            <th className="zone">{translate (locale, 'charactersheet.combat.headers.leftleg')}</th>
-            <th className="zone">{translate (locale, 'charactersheet.combat.headers.rightleg')}</th>
-            <th className="enc">{translate (locale, 'charactersheet.combat.headers.enc')}</th>
+            <th className="name">{translate (locale, "charactersheet.combat.headers.armor")}</th>
+            <th className="zone">{translate (locale, "charactersheet.combat.headers.head")}</th>
+            <th className="zone">{translate (locale, "charactersheet.combat.headers.torso")}</th>
+            <th className="zone">{translate (locale, "charactersheet.combat.headers.leftarm")}</th>
+            <th className="zone">{translate (locale, "charactersheet.combat.headers.rightarm")}</th>
+            <th className="zone">{translate (locale, "charactersheet.combat.headers.leftleg")}</th>
+            <th className="zone">{translate (locale, "charactersheet.combat.headers.rightleg")}</th>
+            <th className="enc">{translate (locale, "charactersheet.combat.headers.enc")}</th>
             <th className="add-penalties">
-              {translate (locale, 'charactersheet.combat.headers.addpenalties')}
+              {translate (locale, "charactersheet.combat.headers.addpenalties")}
             </th>
-            <th className="weight">{translate (locale, 'charactersheet.combat.headers.weight')}</th>
+            <th className="weight">{translate (locale, "charactersheet.combat.headers.weight")}</th>
           </tr>
         </thead>
         <tbody>
@@ -42,27 +40,27 @@ export function CombatSheetArmorZones (props: CombatSheetArmorZonesProps) {
             (maybeZoneArmors .fmap (
               zoneArmors => zoneArmors
                 .map (e => (
-                  <tr key={e .get ('id')}>
+                  <tr key={e .get ("id")}>
                     <td className="name">
-                      <Textfit max={11} min={7} mode="single">{e .get ('name')}</Textfit>
+                      <Textfit max={11} min={7} mode="single">{e .get ("name")}</Textfit>
                     </td>
-                    <td className="zone">{e .lookupWithDefault<'head'> (0) ('head')}</td>
-                    <td className="zone">{e .lookupWithDefault<'torso'> (0) ('torso')}</td>
-                    <td className="zone">{e .lookupWithDefault<'leftArm'> (0) ('leftArm')}</td>
-                    <td className="zone">{e .lookupWithDefault<'rightArm'> (0) ('rightArm')}</td>
-                    <td className="zone">{e .lookupWithDefault<'leftLeg'> (0) ('leftLeg')}</td>
-                    <td className="zone">{e .lookupWithDefault<'rightLeg'> (0) ('rightLeg')}</td>
-                    <td className="enc">{e .lookupWithDefault<'enc'> (0) ('enc')}</td>
-                    <td className="add-penalties">{e .get ('addPenalties') ? '-1/-1' : '-'}</td>
+                    <td className="zone">{e .lookupWithDefault<"head"> (0) ("head")}</td>
+                    <td className="zone">{e .lookupWithDefault<"torso"> (0) ("torso")}</td>
+                    <td className="zone">{e .lookupWithDefault<"leftArm"> (0) ("leftArm")}</td>
+                    <td className="zone">{e .lookupWithDefault<"rightArm"> (0) ("rightArm")}</td>
+                    <td className="zone">{e .lookupWithDefault<"leftLeg"> (0) ("leftLeg")}</td>
+                    <td className="zone">{e .lookupWithDefault<"rightLeg"> (0) ("rightLeg")}</td>
+                    <td className="enc">{e .lookupWithDefault<"enc"> (0) ("enc")}</td>
+                    <td className="add-penalties">{e .get ("addPenalties") ? "-1/-1" : "-"}</td>
                     <td className="weight">
                       {Maybe.fromMaybe<string | number>
-                        ('')
-                        (e .lookup ('weight') .fmap (
-                          weight => localizeNumber (locale .get ('id'))
-                                                   (localizeWeight (locale .get ('id')) (weight))
+                        ("")
+                        (e .lookup ("weight") .fmap (
+                          weight => localizeNumber (locale .get ("id"))
+                                                   (localizeWeight (locale .get ("id")) (weight))
                         ))}
-                      {' '}
-                      {translate (locale, 'charactersheet.combat.headers.weightunit')}
+                      {" "}
+                      {translate (locale, "charactersheet.combat.headers.weightunit")}
                     </td>
                   </tr>
                 ))
@@ -92,5 +90,5 @@ export function CombatSheetArmorZones (props: CombatSheetArmorZonesProps) {
         </tbody>
       </table>
     </TextBox>
-  );
+  )
 }

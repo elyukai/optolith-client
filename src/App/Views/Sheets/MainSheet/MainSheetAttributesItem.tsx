@@ -1,17 +1,16 @@
-import * as classNames from 'classnames';
-import * as React from 'react';
-import { List, Maybe } from '../../../Utilities/dataUtils';
+import * as classNames from "classnames";
+import * as React from "react";
 
 export interface MainSheetAttributesItemProps {
-  add: Maybe<number>;
-  calc: string;
-  empty: Maybe<boolean>;
-  label: string;
-  base: Maybe<number>;
-  max: Maybe<number>;
-  purchased: Maybe<number>;
-  subArray: Maybe<List<number>>;
-  subLabel: Maybe<string>;
+  add: Maybe<number>
+  calc: string
+  empty: Maybe<boolean>
+  label: string
+  base: Maybe<number>
+  max: Maybe<number>
+  purchased: Maybe<number>
+  subArray: Maybe<List<number>>
+  subLabel: Maybe<string>
 }
 
 export function MainSheetAttributesItem (props: MainSheetAttributesItemProps) {
@@ -25,7 +24,7 @@ export function MainSheetAttributesItem (props: MainSheetAttributesItemProps) {
     max,
     subArray: maybeSubList,
     subLabel,
-  } = props;
+  } = props
 
   return (
     <div>
@@ -43,26 +42,26 @@ export function MainSheetAttributesItem (props: MainSheetAttributesItemProps) {
       <div className="values">
         <div className="base">
           {Maybe.elem (true) (empty)
-            ? '\u2013'
-            : Maybe.fromMaybe<string | number> ('\u2013') (base)}
+            ? "\u2013"
+            : Maybe.fromMaybe<string | number> ("\u2013") (base)}
         </div>
         <div className="add">
-          {Maybe.elem (true) (empty) ? '\u2013' : Maybe.fromMaybe (0) (add)}+
+          {Maybe.elem (true) (empty) ? "\u2013" : Maybe.fromMaybe (0) (add)}+
         </div>
         <div
           className={classNames ({
-            'blocked': purchased === undefined,
-            'purchased': true,
+            "blocked": purchased === undefined,
+            "purchased": true,
           })}
           >
           {
             Maybe.isJust (purchased)
-              ? Maybe.elem (true) (empty) ? '\u2013' : Maybe.fromJust (purchased)
-              : '\uE14B'
+              ? Maybe.elem (true) (empty) ? "\u2013" : Maybe.fromJust (purchased)
+              : "\uE14B"
           }
         </div>
         <div className="max">
-          {Maybe.elem (true) (empty) ? '\u2013' : Maybe.fromMaybe (0) (max)}
+          {Maybe.elem (true) (empty) ? "\u2013" : Maybe.fromMaybe (0) (max)}
         </div>
         {
           Maybe.fromMaybe<NonNullable<React.ReactNode>>
@@ -71,7 +70,7 @@ export function MainSheetAttributesItem (props: MainSheetAttributesItemProps) {
               subList => subList
                 .imap (
                   index => value => (
-                    <div key={label + index} className="sub">{empty ? '\u2013' : value}</div>
+                    <div key={label + index} className="sub">{empty ? "\u2013" : value}</div>
                   )
                 )
                 .toArray ()
@@ -79,5 +78,5 @@ export function MainSheetAttributesItem (props: MainSheetAttributesItemProps) {
         }
       </div>
     </div>
-  );
+  )
 }

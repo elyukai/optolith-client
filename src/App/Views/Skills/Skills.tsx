@@ -1,62 +1,59 @@
-import * as R from 'ramda';
-import * as React from 'react';
-import { WikiInfoContainer } from '../../App/Containers/WikiInfoContainer';
-import { EntryRating, SecondaryAttribute } from '../../App/Models/Hero/heroTypeHelpers';
-import { AttributeCombined, SkillWithRequirements } from '../../App/Models/View/viewTypeHelpers';
-import { Skill } from '../../App/Models/Wiki/wikiTypeHelpers';
-import { DCIds } from '../../App/Selectors/derivedCharacteristicsSelectors';
-import { translate, UIMessagesObject } from '../../App/Utils/I18n';
-import { Checkbox } from '../../components/Checkbox';
-import { ListView } from '../../components/List';
-import { ListHeader } from '../../components/ListHeader';
-import { ListHeaderTag } from '../../components/ListHeaderTag';
-import { ListPlaceholder } from '../../components/ListPlaceholder';
-import { MainContent } from '../../components/MainContent';
-import { Options } from '../../components/Options';
-import { Page } from '../../components/Page';
-import { RecommendedReference } from '../../components/RecommendedReference';
-import { Scroll } from '../../components/Scroll';
-import { SortNames, SortOptions } from '../../components/SortOptions';
-import { TextField } from '../../components/TextField';
-import { Just, List, Maybe, Nothing, OrderedMap, Record, Tuple } from '../../Utilities/dataUtils';
-import { isCommon, isUncommon } from '../../Utilities/skillUtils';
-import { SkillListItem } from './SkillListItem';
+import * as React from "react";
+import { WikiInfoContainer } from "../../Containers/WikiInfoContainer";
+import { EntryRating, SecondaryAttribute } from "../../Models/Hero/heroTypeHelpers";
+import { AttributeCombined, SkillWithRequirements } from "../../Models/View/viewTypeHelpers";
+import { Skill } from "../../Models/Wiki/wikiTypeHelpers";
+import { DCIds } from "../../Selectors/derivedCharacteristicsSelectors";
+import { translate, UIMessagesObject } from "../../Utilities/I18n";
+import { Checkbox } from "../Universal/Checkbox";
+import { ListView } from "../Universal/List";
+import { ListHeader } from "../Universal/ListHeader";
+import { ListHeaderTag } from "../Universal/ListHeaderTag";
+import { ListPlaceholder } from "../Universal/ListPlaceholder";
+import { MainContent } from "../Universal/MainContent";
+import { Options } from "../Universal/Options";
+import { Page } from "../Universal/Page";
+import { RecommendedReference } from "../Universal/RecommendedReference";
+import { Scroll } from "../Universal/Scroll";
+import { SortNames, SortOptions } from "../Universal/SortOptions";
+import { TextField } from "../Universal/TextField";
+import { SkillListItem } from "./SkillListItem";
 
 export interface SkillsOwnProps {
-  locale: UIMessagesObject;
+  locale: UIMessagesObject
 }
 
 export interface SkillsStateProps {
-  attributes: List<Record<AttributeCombined>>;
-  derivedCharacteristics: OrderedMap<DCIds, Record<SecondaryAttribute>>;
-  list: Maybe<List<Record<SkillWithRequirements>>>;
-  isRemovingEnabled: boolean;
-  sortOrder: string;
-  filterText: string;
-  ratingVisibility: boolean;
-  skillRating: OrderedMap<string, EntryRating>;
+  attributes: List<Record<AttributeCombined>>
+  derivedCharacteristics: OrderedMap<DCIds, Record<SecondaryAttribute>>
+  list: Maybe<List<Record<SkillWithRequirements>>>
+  isRemovingEnabled: boolean
+  sortOrder: string
+  filterText: string
+  ratingVisibility: boolean
+  skillRating: OrderedMap<string, EntryRating>
 }
 
 export interface SkillsDispatchProps {
-  setSortOrder (sortOrder: string): void;
-  setFilterText (filterText: string): void;
-  switchRatingVisibility (): void;
-  addPoint (id: string): void;
-  removePoint (id: string): void;
+  setSortOrder (sortOrder: string): void
+  setFilterText (filterText: string): void
+  switchRatingVisibility (): void
+  addPoint (id: string): void
+  removePoint (id: string): void
 }
 
-export type SkillsProps = SkillsStateProps & SkillsDispatchProps & SkillsOwnProps;
+export type SkillsProps = SkillsStateProps & SkillsDispatchProps & SkillsOwnProps
 
 export interface SkillsState {
-  infoId: Maybe<string>;
+  infoId: Maybe<string>
 }
 
 export class Skills extends React.Component<SkillsProps, SkillsState> {
   state: SkillsState = {
     infoId: Nothing (),
-  };
+  }
 
-  showInfo = (id: string) => this.setState ({ infoId: Just (id) });
+  showInfo = (id: string) => this.setState ({ infoId: Just (id) })
 
   render () {
     const {
@@ -73,15 +70,15 @@ export class Skills extends React.Component<SkillsProps, SkillsState> {
       skillRating,
       list,
       filterText,
-    } = this.props;
+    } = this.props
 
-    const { infoId } = this.state;
+    const { infoId } = this.state
 
     return (
       <Page id="talents">
         <Options>
           <TextField
-            hint={translate (locale, 'options.filtertext')}
+            hint={translate (locale, "options.filtertext")}
             value={filterText}
             onChangeString={this.props.setFilterText}
             fullWidth
@@ -90,32 +87,32 @@ export class Skills extends React.Component<SkillsProps, SkillsState> {
             sortOrder={sortOrder}
             sort={setSortOrder}
             locale={locale}
-            options={List.of<SortNames> ('name', 'group', 'ic')}
+            options={List.of<SortNames> ("name", "group", "ic")}
             />
           <Checkbox
             checked={ratingVisibility}
             onClick={switchRatingVisibility}
             >
-            {translate (locale, 'skills.options.commoninculture')}
+            {translate (locale, "skills.options.commoninculture")}
           </Checkbox>
           {ratingVisibility && <RecommendedReference locale={locale} />}
         </Options>
         <MainContent>
           <ListHeader>
             <ListHeaderTag className="name">
-              {translate (locale, 'name')}
+              {translate (locale, "name")}
             </ListHeaderTag>
             <ListHeaderTag className="group">
-              {translate (locale, 'group')}
+              {translate (locale, "group")}
             </ListHeaderTag>
-            <ListHeaderTag className="value" hint={translate (locale, 'sr.long')}>
-              {translate (locale, 'sr.short')}
+            <ListHeaderTag className="value" hint={translate (locale, "sr.long")}>
+              {translate (locale, "sr.short")}
             </ListHeaderTag>
             <ListHeaderTag className="check">
-              {translate (locale, 'check')}
+              {translate (locale, "check")}
             </ListHeaderTag>
-            <ListHeaderTag className="ic" hint={translate (locale, 'ic.long')}>
-              {translate (locale, 'ic.short')}
+            <ListHeaderTag className="ic" hint={translate (locale, "ic.long")}>
+              {translate (locale, "ic.short")}
             </ListHeaderTag>
             {isRemovingEnabled && <ListHeaderTag className="btn-placeholder" />}
             <ListHeaderTag className="btn-placeholder" />
@@ -139,8 +136,8 @@ export class Skills extends React.Component<SkillsProps, SkillsState> {
                             (Just (current))
                             (
                               <SkillListItem
-                                key={current .get ('id')}
-                                id={current .get ('id')}
+                                key={current .get ("id")}
+                                id={current .get ("id")}
                                 typ={
                                   ratingVisibility
                                   && isCommon (skillRating) (current as any as Record<Skill>)
@@ -149,28 +146,28 @@ export class Skills extends React.Component<SkillsProps, SkillsState> {
                                   ratingVisibility
                                   && isUncommon (skillRating) (current as any as Record<Skill>)
                                 }
-                                name={current .get ('name')}
-                                sr={current .get ('value')}
-                                check={current .get ('check')}
-                                ic={current .get ('ic')}
-                                addPoint={addPoint.bind (null, current .get ('id'))}
-                                addDisabled={!current .get ('isIncreasable')}
+                                name={current .get ("name")}
+                                sr={current .get ("value")}
+                                check={current .get ("check")}
+                                ic={current .get ("ic")}
+                                addPoint={addPoint.bind (null, current .get ("id"))}
+                                addDisabled={!current .get ("isIncreasable")}
                                 removePoint={
                                   isRemovingEnabled
-                                    ? removePoint.bind (null, current .get ('id'))
+                                    ? removePoint.bind (null, current .get ("id"))
                                     : undefined
                                 }
-                                removeDisabled={!current .get ('isDecreasable')}
+                                removeDisabled={!current .get ("isDecreasable")}
                                 insertTopMargin={
-                                  sortOrder === 'group'
+                                  sortOrder === "group"
                                   && Maybe.isJust (previous)
-                                  && Maybe.fromJust (previous) .get ('gr') !== current .get ('gr')
+                                  && Maybe.fromJust (previous) .get ("gr") !== current .get ("gr")
                                 }
                                 selectForInfo={this.showInfo}
                                 attributes={attributes}
                                 derivedCharacteristics={derivedCharacteristics}
-                                groupIndex={current .get ('gr')}
-                                groupList={translate (locale, 'skills.view.groups')}
+                                groupIndex={current .get ("gr")}
+                                groupList={translate (locale, "skills.view.groups")}
                                 />
                             ))
                         (Nothing ()),
@@ -183,6 +180,6 @@ export class Skills extends React.Component<SkillsProps, SkillsState> {
         </MainContent>
         <WikiInfoContainer {...this.props} currentId={infoId}/>
       </Page>
-    );
+    )
   }
 }

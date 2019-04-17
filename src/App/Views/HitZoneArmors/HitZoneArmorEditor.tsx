@@ -1,37 +1,33 @@
-import * as React from 'react';
-import { ArmorZonesEditorInstance, ItemInstance } from '../../App/Models/Hero/heroTypeHelpers';
-import { ItemTemplate } from '../../App/Models/Wiki/wikiTypeHelpers';
-import { translate, UIMessagesObject } from '../../App/Utils/I18n';
-import { getLossLevelElements } from '../../App/Utils/ItemUtils';
-import { Dialog } from '../../components/DialogNew';
-import { DropdownOption } from '../../components/Dropdown';
-import { TextField } from '../../components/TextField';
-import { Just, List, Maybe, Record } from '../../Utilities/dataUtils';
-import { sortObjects } from '../../Utilities/FilterSortUtils';
-import { HitZoneArmorEditorRow } from './HitZoneArmorEditorRow';
+import * as React from "react";
+import { translate } from "../../Utilities/I18n";
+import { getLossLevelElements } from "../../Utilities/ItemUtils";
+import { Dialog } from "../Universal/DialogNew";
+import { DropdownOption } from "../Universal/Dropdown";
+import { TextField } from "../Universal/TextField";
+import { HitZoneArmorEditorRow } from "./HitZoneArmorEditorRow";
 
 export interface HitZoneArmorEditorProps {
-  armorZonesEditor: Record<ArmorZonesEditorInstance>;
-  isInHitZoneArmorCreation: Maybe<boolean>;
-  locale: UIMessagesObject;
-  items: Maybe<List<Record<ItemInstance>>>;
-  templates: List<Record<ItemTemplate>>;
-  addToList (): void;
-  closeEditor (): void;
-  saveItem (): void;
-  setName (value: string): void;
-  setHead (id: Maybe<string>): void;
-  setHeadLoss (id: Maybe<number>): void;
-  setLeftArm (id: Maybe<string>): void;
-  setLeftArmLoss (id: Maybe<number>): void;
-  setLeftLeg (id: Maybe<string>): void;
-  setLeftLegLoss (id: Maybe<number>): void;
-  setTorso (id: Maybe<string>): void;
-  setTorsoLoss (id: Maybe<number>): void;
-  setRightArm (id: Maybe<string>): void;
-  setRightArmLoss (id: Maybe<number>): void;
-  setRightLeg (id: Maybe<string>): void;
-  setRightLegLoss (id: Maybe<number>): void;
+  armorZonesEditor: Record<ArmorZonesEditorInstance>
+  isInHitZoneArmorCreation: Maybe<boolean>
+  locale: UIMessagesObject
+  items: Maybe<List<Record<ItemInstance>>>
+  templates: List<Record<ItemTemplate>>
+  addToList (): void
+  closeEditor (): void
+  saveItem (): void
+  setName (value: string): void
+  setHead (id: Maybe<string>): void
+  setHeadLoss (id: Maybe<number>): void
+  setLeftArm (id: Maybe<string>): void
+  setLeftArmLoss (id: Maybe<number>): void
+  setLeftLeg (id: Maybe<string>): void
+  setLeftLegLoss (id: Maybe<number>): void
+  setTorso (id: Maybe<string>): void
+  setTorsoLoss (id: Maybe<number>): void
+  setRightArm (id: Maybe<string>): void
+  setRightArmLoss (id: Maybe<number>): void
+  setRightLeg (id: Maybe<string>): void
+  setRightLegLoss (id: Maybe<number>): void
 }
 
 export function HitZoneArmorEditor (props: HitZoneArmorEditorProps) {
@@ -42,41 +38,41 @@ export function HitZoneArmorEditor (props: HitZoneArmorEditorProps) {
     items,
     locale,
     templates,
-  } = props;
+  } = props
 
   const armorList =
     sortObjects<DropdownOption> (
       Maybe.fromJust (
         Just (
-          templates .filter (e => e.get ('gr') === 4) as unknown as List<Record<DropdownOption>>
+          templates .filter (e => e.get ("gr") === 4) as unknown as List<Record<DropdownOption>>
         )
           .mappend (
             items .fmap (
-              List.filter (e => e .get ('gr') === 4 && !e .get ('isTemplateLocked'))
+              List.filter (e => e .get ("gr") === 4 && !e .get ("isTemplateLocked"))
             ) as unknown as Maybe<List<Record<DropdownOption>>>
           )
       ),
-      locale .get ('id')
+      locale .get ("id")
     )
-      .cons (Record.of<DropdownOption> ({ name: translate (locale, 'options.none') }));
+      .cons (Record.of<DropdownOption> ({ name: translate (locale, "options.none") }))
 
-  const lossLevels = getLossLevelElements ();
+  const lossLevels = getLossLevelElements ()
 
   return (
     <Dialog
       id="armor-zones-editor"
       title={
         Maybe.elem (true) (isInHitZoneArmorCreation)
-          ? translate (locale, 'zonearmoreditor.titlecreate')
-          : translate (locale, 'zonearmoreditor.titleedit')
+          ? translate (locale, "zonearmoreditor.titlecreate")
+          : translate (locale, "zonearmoreditor.titleedit")
       }
       isOpened
       close={closeEditor}
       buttons={[
         {
           autoWidth: true,
-          disabled: armorZonesEditor .get ('name') === '',
-          label: translate (locale, 'actions.save'),
+          disabled: armorZonesEditor .get ("name") === "",
+          label: translate (locale, "actions.save"),
           onClick: Maybe.elem (true) (isInHitZoneArmorCreation) ? props.addToList : props.saveItem,
         },
       ]}
@@ -85,16 +81,16 @@ export function HitZoneArmorEditor (props: HitZoneArmorEditorProps) {
         <div className="row">
           <TextField
             className="name"
-            label={translate (locale, 'zonearmoreditor.options.name')}
-            value={armorZonesEditor .get ('name')}
+            label={translate (locale, "zonearmoreditor.options.name")}
+            value={armorZonesEditor .get ("name")}
             onChangeString={props.setName}
             autoFocus={Maybe.elem (true) (isInHitZoneArmorCreation)}
             />
         </div>
         <HitZoneArmorEditorRow
           armorList={armorList}
-          component={armorZonesEditor .lookup ('head')}
-          componentLoss={armorZonesEditor .lookup ('headLoss')}
+          component={armorZonesEditor .lookup ("head")}
+          componentLoss={armorZonesEditor .lookup ("headLoss")}
           locale={locale}
           lossLevels={lossLevels}
           name="zonearmoreditor.options.head"
@@ -103,8 +99,8 @@ export function HitZoneArmorEditor (props: HitZoneArmorEditorProps) {
           />
         <HitZoneArmorEditorRow
           armorList={armorList}
-          component={armorZonesEditor .lookup ('torso')}
-          componentLoss={armorZonesEditor .lookup ('torsoLoss')}
+          component={armorZonesEditor .lookup ("torso")}
+          componentLoss={armorZonesEditor .lookup ("torsoLoss")}
           locale={locale}
           lossLevels={lossLevels}
           name="zonearmoreditor.options.torso"
@@ -113,8 +109,8 @@ export function HitZoneArmorEditor (props: HitZoneArmorEditorProps) {
           />
         <HitZoneArmorEditorRow
           armorList={armorList}
-          component={armorZonesEditor .lookup ('leftArm')}
-          componentLoss={armorZonesEditor .lookup ('leftArmLoss')}
+          component={armorZonesEditor .lookup ("leftArm")}
+          componentLoss={armorZonesEditor .lookup ("leftArmLoss")}
           locale={locale}
           lossLevels={lossLevels}
           name="zonearmoreditor.options.leftarm"
@@ -123,8 +119,8 @@ export function HitZoneArmorEditor (props: HitZoneArmorEditorProps) {
           />
         <HitZoneArmorEditorRow
           armorList={armorList}
-          component={armorZonesEditor .lookup ('rightArm')}
-          componentLoss={armorZonesEditor .lookup ('rightArmLoss')}
+          component={armorZonesEditor .lookup ("rightArm")}
+          componentLoss={armorZonesEditor .lookup ("rightArmLoss")}
           locale={locale}
           lossLevels={lossLevels}
           name="zonearmoreditor.options.rightarm"
@@ -133,8 +129,8 @@ export function HitZoneArmorEditor (props: HitZoneArmorEditorProps) {
           />
         <HitZoneArmorEditorRow
           armorList={armorList}
-          component={armorZonesEditor .lookup ('leftLeg')}
-          componentLoss={armorZonesEditor .lookup ('leftLegLoss')}
+          component={armorZonesEditor .lookup ("leftLeg")}
+          componentLoss={armorZonesEditor .lookup ("leftLegLoss")}
           locale={locale}
           lossLevels={lossLevels}
           name="zonearmoreditor.options.leftleg"
@@ -143,8 +139,8 @@ export function HitZoneArmorEditor (props: HitZoneArmorEditorProps) {
           />
         <HitZoneArmorEditorRow
           armorList={armorList}
-          component={armorZonesEditor .lookup ('rightLeg')}
-          componentLoss={armorZonesEditor .lookup ('rightLegLoss')}
+          component={armorZonesEditor .lookup ("rightLeg")}
+          componentLoss={armorZonesEditor .lookup ("rightLegLoss")}
           locale={locale}
           lossLevels={lossLevels}
           name="zonearmoreditor.options.rightleg"
@@ -153,5 +149,5 @@ export function HitZoneArmorEditor (props: HitZoneArmorEditorProps) {
           />
       </div>
     </Dialog>
-  );
+  )
 }

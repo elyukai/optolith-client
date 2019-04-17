@@ -1,12 +1,11 @@
-import * as React from 'react';
-import { UIMessages } from '../../../App/Utils/I18n';
-import { WikiProperty } from '../WikiProperty';
+import * as React from "react";
+import { WikiProperty } from "../WikiProperty";
 
 export interface WikiRangeProps {
   currentObject: {
     range: string;
-  };
-  locale: UIMessages;
+  }
+  locale: UIMessages
 }
 
 export function WikiRange(props: WikiRangeProps) {
@@ -15,11 +14,11 @@ export function WikiRange(props: WikiRangeProps) {
       range
     },
     locale
-  } = props;
+  } = props
 
   return (
     <WikiProperty locale={locale} title="info.range">
       {range}
     </WikiProperty>
-  );
+  )
 }

@@ -1,43 +1,43 @@
-import { remote } from 'electron';
-import * as React from 'react';
-import { SettingsContainer } from '../../App/Containers/SettingsContainer';
-import { translate } from '../../App/Utils/I18n';
-import { TabId } from '../../App/Utils/LocationUtils';
-import { BorderButton } from '../../components/BorderButton';
-import { IconButton } from '../../components/IconButton';
-import { Text } from '../../components/Text';
-import { UIMessagesObject } from '../../types/ui';
-import { NavigationBarBack } from './NavigationBarBack';
-import { NavigationBarLeft } from './NavigationBarLeft';
-import { NavigationBarRight } from './NavigationBarRight';
-import { NavigationBarWrapper } from './NavigationBarWrapper';
+import { remote } from "electron";
+import * as React from "react";
+import { SettingsContainer } from "../../Containers/SettingsContainer";
+import { L10nRecord } from "../../Models/Wiki/L10n";
+import { translate } from "../../Utilities/I18n";
+import { TabId } from "../../Utilities/LocationUtils";
+import { BorderButton } from "../Universal/BorderButton";
+import { IconButton } from "../Universal/IconButton";
+import { Text } from "../Universal/Text";
+import { NavigationBarBack } from "./NavigationBarBack";
+import { NavigationBarLeft } from "./NavigationBarLeft";
+import { NavigationBarRight } from "./NavigationBarRight";
+import { NavigationBarWrapper } from "./NavigationBarWrapper";
 
 export interface NavigationBarForGroupProps {
-  locale: UIMessagesObject;
-  groupName: string;
-  platform: string;
-  isSettingsOpen: boolean;
-  closeSettings (): void;
-  openSettings (): void;
-  saveGroup (): void;
-  setTab (id: TabId): void;
-  checkForUpdates (): void;
+  l10n: L10nRecord
+  groupName: string
+  platform: string
+  isSettingsOpen: boolean
+  closeSettings (): void
+  openSettings (): void
+  saveGroup (): void
+  setTab (id: TabId): void
+  checkForUpdates (): void
 }
 
-const toggleDevtools = remote.getCurrentWindow ().webContents.toggleDevTools;
+const toggleDevtools = remote.getCurrentWindow ().webContents.toggleDevTools
 
 export function NavigationBarForGroup (props: NavigationBarForGroupProps) {
-  const { closeSettings, groupName, locale, openSettings, saveGroup, setTab } = props;
+  const { closeSettings, groupName, l10n, openSettings, saveGroup, setTab } = props
 
   return (
     <NavigationBarWrapper>
       <NavigationBarLeft>
-        <NavigationBarBack setTab={() => setTab ('grouplist')} />
+        <NavigationBarBack setTab={() => setTab (TabId.Grouplist)} />
         <Text>{groupName}</Text>
       </NavigationBarLeft>
       <NavigationBarRight>
         <BorderButton
-          label={translate (locale, 'actions.save')}
+          label={translate (l10n) ("save")}
           onClick={saveGroup}
           />
         <IconButton
@@ -51,5 +51,5 @@ export function NavigationBarForGroup (props: NavigationBarForGroupProps) {
           />
       </NavigationBarRight>
     </NavigationBarWrapper>
-  );
+  )
 }

@@ -1,32 +1,31 @@
-import * as React from 'react';
-import { ActiveViewObject, SecondaryAttribute } from '../../../App/Models/Hero/heroTypeHelpers';
-import { AttributeCombined, BlessingCombined, LiturgicalChantWithRequirements } from '../../../App/Models/View/viewTypeHelpers';
-import { SpecialAbility } from '../../../App/Models/Wiki/wikiTypeHelpers';
-import { translate, UIMessagesObject } from '../../../App/Utils/I18n';
-import { Checkbox } from '../../../components/Checkbox';
-import { Options } from '../../../components/Options';
-import { List, Maybe, Record } from '../../../Utilities/dataUtils';
-import { AttributeMods } from '../AttributeMods';
-import { Sheet } from '../Sheet';
-import { HeaderValue } from '../SheetHeader';
-import { SheetWrapper } from '../SheetWrapper';
-import { LiturgicalChantsSheetBlessings } from './LiturgicalChantsSheetBlessings';
-import { LiturgicalChantsSheetLiturgicalChants } from './LiturgicalChantsSheetLiturgicalChants';
-import { LiturgicalChantsSheetSpecialAbilities } from './LiturgicalChantsSheetSpecialAbilities';
-import { LiturgicalChantsSheetTraditionsAspects } from './LiturgicalChantsSheetTraditionsAspects';
+import * as React from "react";
+import { ActiveViewObject, SecondaryAttribute } from "../../../Models/Hero/heroTypeHelpers";
+import { AttributeCombined, BlessingCombined, LiturgicalChantWithRequirements } from "../../../Models/View/viewTypeHelpers";
+import { SpecialAbility } from "../../../Models/Wiki/wikiTypeHelpers";
+import { translate, UIMessagesObject } from "../../../Utilities/I18n";
+import { Checkbox } from "../../Universal/Checkbox";
+import { Options } from "../../Universal/Options";
+import { AttributeMods } from "../AttributeMods";
+import { Sheet } from "../Sheet";
+import { HeaderValue } from "../SheetHeader";
+import { SheetWrapper } from "../SheetWrapper";
+import { LiturgicalChantsSheetBlessings } from "./LiturgicalChantsSheetBlessings";
+import { LiturgicalChantsSheetLiturgicalChants } from "./LiturgicalChantsSheetLiturgicalChants";
+import { LiturgicalChantsSheetSpecialAbilities } from "./LiturgicalChantsSheetSpecialAbilities";
+import { LiturgicalChantsSheetTraditionsAspects } from "./LiturgicalChantsSheetTraditionsAspects";
 
 export interface LiturgicalChantsSheetProps {
-  aspects: Maybe<List<string>>;
-  attributes: List<Record<AttributeCombined>>;
-  blessedPrimary: Maybe<string>;
-  blessedSpecialAbilities: Maybe<List<Record<ActiveViewObject<SpecialAbility>>>>;
-  blessedTradition: Maybe<string>;
-  blessings: Maybe<List<Record<BlessingCombined>>>;
-  checkAttributeValueVisibility: boolean;
-  derivedCharacteristics: List<Record<SecondaryAttribute>>;
-  liturgicalChants: Maybe<List<Record<LiturgicalChantWithRequirements>>>;
-  locale: UIMessagesObject;
-  switchAttributeValueVisibility (): void;
+  aspects: Maybe<List<string>>
+  attributes: List<Record<AttributeCombined>>
+  blessedPrimary: Maybe<string>
+  blessedSpecialAbilities: Maybe<List<Record<ActiveViewObject<SpecialAbility>>>>
+  blessedTradition: Maybe<string>
+  blessings: Maybe<List<Record<BlessingCombined>>>
+  checkAttributeValueVisibility: boolean
+  derivedCharacteristics: List<Record<SecondaryAttribute>>
+  liturgicalChants: Maybe<List<Record<LiturgicalChantWithRequirements>>>
+  locale: UIMessagesObject
+  switchAttributeValueVisibility (): void
 }
 
 export function LiturgicalChantsSheet (props: LiturgicalChantsSheetProps) {
@@ -35,21 +34,21 @@ export function LiturgicalChantsSheet (props: LiturgicalChantsSheetProps) {
     derivedCharacteristics,
     locale,
     switchAttributeValueVisibility,
-  } = props;
+  } = props
 
   const addHeader = List.of<Record<HeaderValue>> (
     Record.ofMaybe<HeaderValue> ({
-      id: 'KP_MAX',
-      short: translate (locale, 'charactersheet.chants.headers.kpmax'),
+      id: "KP_MAX",
+      short: translate (locale, "charactersheet.chants.headers.kpmax"),
       value: derivedCharacteristics
-        .find (e => e .get ('id') === 'KP')
-        .bind (Record.lookup<SecondaryAttribute, 'value'> ('value')),
+        .find (e => e .get ("id") === "KP")
+        .bind (Record.lookup<SecondaryAttribute, "value"> ("value")),
     }),
     Record.of<HeaderValue> ({
-      id: 'KP_CURRENT',
-      short: translate (locale, 'charactersheet.chants.headers.kpcurrent'),
+      id: "KP_CURRENT",
+      short: translate (locale, "charactersheet.chants.headers.kpcurrent"),
     })
-  );
+  )
 
   return (
     <SheetWrapper>
@@ -58,13 +57,13 @@ export function LiturgicalChantsSheet (props: LiturgicalChantsSheetProps) {
           checked={checkAttributeValueVisibility}
           onClick={switchAttributeValueVisibility}
           >
-          {translate (locale, 'charactersheet.options.showattributevalues')}
+          {translate (locale, "charactersheet.options.showattributevalues")}
         </Checkbox>
       </Options>
       <Sheet
         {...props}
         id="liturgies-sheet"
-        title={translate (locale, 'charactersheet.chants.title')}
+        title={translate (locale, "charactersheet.chants.title")}
         addHeaderInfo={addHeader}
         >
         <div className="all">
@@ -76,5 +75,5 @@ export function LiturgicalChantsSheet (props: LiturgicalChantsSheetProps) {
         </div>
       </Sheet>
     </SheetWrapper>
-  );
+  )
 }

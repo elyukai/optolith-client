@@ -1,13 +1,13 @@
-import * as React from 'react';
-import { UIMessages } from '../../../App/Utils/I18n';
-import { getICName } from '../../../Utilities/adventurePoints/improvementCostUtils';
-import { WikiProperty } from '../WikiProperty';
+import * as React from "react";
+import { getICName } from "../../../Utilities/AdventurePoints/improvementCostUtils";
+import { UIMessages } from "../../../Utilities/I18n";
+import { WikiProperty } from "../WikiProperty";
 
 export interface WikiImprovementCostProps {
   currentObject: {
     ic: number;
-  };
-  locale: UIMessages;
+  }
+  locale: UIMessages
 }
 
 export function WikiImprovementCost(props: WikiImprovementCostProps) {
@@ -16,11 +16,11 @@ export function WikiImprovementCost(props: WikiImprovementCostProps) {
       ic
     },
     locale
-  } = props;
+  } = props
 
   return (
     <WikiProperty locale={locale} title="info.improvementcost">
       {getICName(ic)}
     </WikiProperty>
-  );
+  )
 }

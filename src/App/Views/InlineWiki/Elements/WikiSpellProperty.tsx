@@ -1,12 +1,12 @@
-import * as React from 'react';
-import { translate, UIMessages } from '../../../App/Utils/I18n';
-import { WikiProperty } from '../WikiProperty';
+import * as React from "react";
+import { translate, UIMessages } from "../../../Utilities/I18n";
+import { WikiProperty } from "../WikiProperty";
 
 export interface WikiSpellPropertyProps {
   currentObject: {
     property: number;
-  };
-  locale: UIMessages;
+  }
+  locale: UIMessages
 }
 
 export function WikiSpellProperty(props: WikiSpellPropertyProps) {
@@ -15,11 +15,11 @@ export function WikiSpellProperty(props: WikiSpellPropertyProps) {
       property
     },
     locale
-  } = props;
+  } = props
 
   return (
     <WikiProperty locale={locale} title="info.property">
-      {translate(locale, 'spells.view.properties')[property - 1]}
+      {translate(locale, "spells.view.properties")[property - 1]}
     </WikiProperty>
-  );
+  )
 }

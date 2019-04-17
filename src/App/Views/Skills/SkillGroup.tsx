@@ -1,11 +1,10 @@
-import * as React from 'react';
-import { ListItemGroup } from '../../components/ListItemGroup';
-import { List } from '../../Utilities/dataUtils';
+import * as React from "react";
+import { ListItemGroup } from "../Universal/ListItemGroup";
 
 export interface SkillListItemProps {
-  addText?: string;
-  groupList?: List<string>;
-  groupIndex?: number;
+  addText?: string
+  groupList?: List<string>
+  groupIndex?: number
 }
 
 export function SkillGroup (props: SkillListItemProps) {
@@ -13,13 +12,13 @@ export function SkillGroup (props: SkillListItemProps) {
     addText,
     groupIndex,
     groupList,
-  } = props;
+  } = props
 
   if (addText || groupIndex && groupList) {
     return (
       <ListItemGroup index={groupIndex} list={groupList} text={addText}/>
-    );
+    )
   }
 
-  return null;
+  return null
 }

@@ -1,35 +1,34 @@
-import * as React from 'react';
-import { translate, UIMessagesObject } from '../../../App/Utils/I18n';
-import { LabelBox } from '../../../components/LabelBox';
-import { TextBox } from '../../../components/TextBox';
-import { Just, Nothing } from '../../../Utilities/dataUtils';
+import * as React from "react";
+import { translate, UIMessagesObject } from "../../../Utilities/I18n";
+import { LabelBox } from "../../Universal/LabelBox";
+import { TextBox } from "../../Universal/TextBox";
 
 export interface SkillsSheetLanguagesProps {
-  fatePointsModifier: number;
-  locale: UIMessagesObject;
+  fatePointsModifier: number
+  locale: UIMessagesObject
 }
 
 export function MainSheetFatePoints (props: SkillsSheetLanguagesProps) {
-  const { fatePointsModifier, locale } = props;
+  const { fatePointsModifier, locale } = props
 
   return (
-    <TextBox className="fate-points" label={translate (locale, 'charactersheet.main.fatepoints')}>
+    <TextBox className="fate-points" label={translate (locale, "charactersheet.main.fatepoints")}>
       <LabelBox
-        label={translate (locale, 'charactersheet.main.headers.value')}
+        label={translate (locale, "charactersheet.main.headers.value")}
         value={Just (3)}
         />
       <LabelBox
-        label={translate (locale, 'charactersheet.main.headers.bonus')}
+        label={translate (locale, "charactersheet.main.headers.bonus")}
         value={Just (fatePointsModifier)}
         />
       <LabelBox
-        label={translate (locale, 'charactersheet.main.headers.max')}
+        label={translate (locale, "charactersheet.main.headers.max")}
         value={Just (fatePointsModifier + 3)}
         />
       <LabelBox
-        label={translate (locale, 'charactersheet.main.headers.current')}
+        label={translate (locale, "charactersheet.main.headers.current")}
         value={Nothing ()}
         />
     </TextBox>
-  );
+  )
 }

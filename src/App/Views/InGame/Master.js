@@ -1,7 +1,7 @@
+import React, { Component } from 'react';
+import { SubTabs } from '../Universal/SubTabs';
 import { Groups } from './Groups';
 import { InGame } from './InGame';
-import React, { Component } from 'react';
-import { SubTabs } from '../../components/SubTabs';
 
 export class Master extends Component {
 

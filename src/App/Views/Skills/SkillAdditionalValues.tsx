@@ -1,19 +1,18 @@
-import * as React from 'react';
-import { List } from '../../Utilities/dataUtils';
+import * as React from "react";
 
 export interface AdditionalValue {
-  className: string;
-  value?: string | number;
+  className: string
+  value?: string | number
 }
 
 export interface SkillAdditionalValuesProps {
-  addValues?: List<AdditionalValue>;
+  addValues?: List<AdditionalValue>
 }
 
 export function SkillAdditionalValues (props: SkillAdditionalValuesProps) {
-  const { addValues } = props;
+  const { addValues } = props
 
-  if (typeof addValues === 'object') {
+  if (typeof addValues === "object") {
     return (
       <>
         {
@@ -26,8 +25,8 @@ export function SkillAdditionalValues (props: SkillAdditionalValuesProps) {
             .toArray () as JSX.Element[]
         }
       </>
-    );
+    )
   }
 
-  return null;
+  return null
 }

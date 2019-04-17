@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { InGameActions } from '../../App/Actions/InGameActions';
-import { BorderButton } from '../../components/BorderButton';
-import { Dropdown } from '../../components/Dropdown';
-import { Slidein } from '../../components/Slidein';
-import { TextField } from '../../components/TextField';
+import { BorderButton } from '../Universal/BorderButton';
+import { Dropdown } from '../Universal/Dropdown';
+import { Slidein } from '../Universal/Slidein';
+import { TextField } from '../Universal/TextField';
 
 export class InGameEdit extends Component {
 

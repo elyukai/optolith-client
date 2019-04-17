@@ -1,20 +1,19 @@
-import * as React from 'react';
-import { AttributeCombined } from '../../App/Models/View/viewTypeHelpers';
-import { translate, UIMessagesObject } from '../../App/Utils/I18n';
-import { TextBox } from '../../components/TextBox';
-import { List, Record } from '../../Utilities/dataUtils';
-import { AttributeModsListItem } from './AttributeModsListItem';
+import * as React from "react";
+import { AttributeCombined } from "../../Models/View/viewTypeHelpers";
+import { translate, UIMessagesObject } from "../../Utilities/I18n";
+import { TextBox } from "../Universal/TextBox";
+import { AttributeModsListItem } from "./AttributeModsListItem";
 
 export interface AttributeModsProps {
-  attributes: List<Record<AttributeCombined>>;
-  locale: UIMessagesObject;
+  attributes: List<Record<AttributeCombined>>
+  locale: UIMessagesObject
 }
 
 export function AttributeMods (props: AttributeModsProps) {
   return (
     <TextBox
       className="attribute-mods"
-      label={translate (props.locale, 'charactersheet.attributemodifiers.title')}
+      label={translate (props.locale, "charactersheet.attributemodifiers.title")}
       >
       <table>
         <thead>
@@ -32,11 +31,11 @@ export function AttributeMods (props: AttributeModsProps) {
         <tbody>
           {props.attributes
             .map (obj => (
-              <AttributeModsListItem attribute={obj} key={obj .get ('id')} />
+              <AttributeModsListItem attribute={obj} key={obj .get ("id")} />
             ))
             .toArray ()}
         </tbody>
       </table>
     </TextBox>
-  );
+  )
 }

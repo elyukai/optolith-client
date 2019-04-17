@@ -14,7 +14,9 @@ import { ActivatableActivationValidation } from "../Models/View/ActivatableActiv
 import { ActivatableCombinedName } from "../Models/View/ActivatableCombinedName";
 import { ActivatableNameCost } from "../Models/View/ActivatableNameCost";
 import { ActiveActivatable, ActiveActivatableA_ } from "../Models/View/ActiveActivatable";
+import { Advantage } from "../Models/Wiki/Advantage";
 import { Culture } from "../Models/Wiki/Culture";
+import { Disadvantage } from "../Models/Wiki/Disadvantage";
 import { L10n } from "../Models/Wiki/L10n";
 import { Profession } from "../Models/Wiki/Profession";
 import { Race } from "../Models/Wiki/Race";
@@ -144,6 +146,7 @@ export const getFilteredActiveAdvantages = createMaybeSelector (
   (madvantages, filterText, l10n) =>
     fmapF (madvantages)
           (filterAndSortRecordsBy (0)
+                                  <ActiveActivatable<Advantage>>
                                   ([ActiveActivatableA_.name])
                                   ([comparingR (ActiveActivatableA_.name)
                                                (compareLocale (L10n.A.id (l10n)))])
@@ -167,6 +170,7 @@ export const getFilteredActiveDisadvantages = createMaybeSelector (
   (mdisadvantages, filterText, l10n) =>
     fmapF (mdisadvantages)
           (filterAndSortRecordsBy (0)
+                                  <ActiveActivatable<Disadvantage>>
                                   ([ActiveActivatableA_.name])
                                   ([comparingR (ActiveActivatableA_.name)
                                                (compareLocale (L10n.A.id (l10n)))])

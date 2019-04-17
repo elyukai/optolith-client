@@ -1,35 +1,34 @@
-import * as React from 'react';
-import { Skill } from '../../App/Models/Wiki/wikiTypeHelpers';
-import { translate, UIMessagesObject } from '../../App/Utils/I18n';
-import { divideBy } from '../../App/Utils/mathUtils';
-import { BorderButton } from '../../components/BorderButton';
-import { List, Maybe, OrderedMap, Record } from '../../Utilities/dataUtils';
+import * as React from "react";
+import { Skill } from "../../Models/Wiki/wikiTypeHelpers";
+import { translate, UIMessagesObject } from "../../Utilities/I18n";
+import { divideBy } from "../../Utilities/mathUtils";
+import { BorderButton } from "../Universal/BorderButton";
 
 export interface SelectionsSkillsProps {
-  active: OrderedMap<string, number>;
-  gr: Maybe<number>;
-  left: number;
-  list: List<Record<Skill>>;
-  locale: UIMessagesObject;
-  value: number;
-  add (id: string): void;
-  remove (id: string): void;
+  active: OrderedMap<string, number>
+  gr: Maybe<number>
+  left: number
+  list: List<Record<Skill>>
+  locale: UIMessagesObject
+  value: number
+  add (id: string): void
+  remove (id: string): void
 }
 
 export function SelectionsSkills (props: SelectionsSkillsProps) {
-  const { active, add, gr, left, list, locale, remove, value } = props;
+  const { active, add, gr, left, list, locale, remove, value } = props
 
   return (
     <div className="skills list">
       <h4>
         {
-          Maybe.fromMaybe ('')
-                          (translate (locale, 'rcpselections.labels.skillgroups')
+          Maybe.fromMaybe ("")
+                          (translate (locale, "rcpselections.labels.skillgroups")
                             .subscript (Maybe.fromMaybe (0) (gr))
                             .fmap (
                               group => translate (
                                 locale,
-                                'rcpselections.labels.skills',
+                                "rcpselections.labels.skills",
                                 group,
                                 value,
                                 left
@@ -40,11 +39,11 @@ export function SelectionsSkills (props: SelectionsSkillsProps) {
       {
         list
           .map (obj => {
-            const id = obj .get ('id');
-            const name = obj .get ('name');
-            const ic = obj .get ('ic');
+            const id = obj .get ("id")
+            const name = obj .get ("name")
+            const ic = obj .get ("ic")
 
-            const maybeSR = active .lookup (id);
+            const maybeSR = active .lookup (id)
 
             return (
               <div key={id}>
@@ -61,10 +60,10 @@ export function SelectionsSkills (props: SelectionsSkillsProps) {
                   onClick={remove.bind (null, id)}
                   />
               </div>
-            );
+            )
           })
           .toArray ()
       }
     </div>
-  );
+  )
 }

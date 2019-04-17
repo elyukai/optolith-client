@@ -1,27 +1,27 @@
-import * as React from 'react';
-import { translate, UIMessagesObject } from '../../../App/Utils/I18n';
-import { TextBox } from '../../../components/TextBox';
+import * as React from "react";
+import { translate, UIMessagesObject } from "../../../Utilities/I18n";
+import { TextBox } from "../../Universal/TextBox";
 
 export interface SkillsSheetQualityLevelsProps {
-  locale: UIMessagesObject;
+  locale: UIMessagesObject
 }
 
 export const SkillsSheetQualityLevels = ({ locale }: SkillsSheetQualityLevelsProps) => (
   <TextBox
     className="quality-levels"
-    label={translate (locale, 'charactersheet.gamestats.qualitylevels.title')}
+    label={translate (locale, "charactersheet.gamestats.qualitylevels.title")}
     >
     <table>
       <thead>
         <tr>
           <th>
             <div>
-              {translate (locale, 'charactersheet.gamestats.qualitylevels.headers.skillpoints')}
+              {translate (locale, "charactersheet.gamestats.qualitylevels.headers.skillpoints")}
             </div>
           </th>
           <th>
             <div>
-              {translate (locale, 'charactersheet.gamestats.qualitylevels.headers.qualitylevel')}
+              {translate (locale, "charactersheet.gamestats.qualitylevels.headers.qualitylevel")}
             </div>
           </th>
         </tr>

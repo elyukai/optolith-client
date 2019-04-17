@@ -1,43 +1,40 @@
-import * as R from 'ramda';
-import * as React from 'react';
-import { ItemInstance } from '../../App/Models/Hero/heroTypeHelpers';
-import { translate, UIMessagesObject } from '../../App/Utils/I18n';
-import { IconButton } from '../../components/IconButton';
-import { ListItem } from '../../components/ListItem';
-import { ListItemButtons } from '../../components/ListItemButtons';
-import { ListItemGroup } from '../../components/ListItemGroup';
-import { ListItemName } from '../../components/ListItemName';
-import { ListItemSeparator } from '../../components/ListItemSeparator';
-import { Maybe, Record } from '../../Utilities/dataUtils';
+import * as React from "react";
+import { translate } from "../../Utilities/I18n";
+import { IconButton } from "../Universal/IconButton";
+import { ListItem } from "../Universal/ListItem";
+import { ListItemButtons } from "../Universal/ListItemButtons";
+import { ListItemGroup } from "../Universal/ListItemGroup";
+import { ListItemName } from "../Universal/ListItemName";
+import { ListItemSeparator } from "../Universal/ListItemSeparator";
 
 export interface EquipmentListItemProps {
-  add?: boolean;
-  data: Record<ItemInstance>;
-  locale: UIMessagesObject;
-  addTemplateToList (id: string): void;
-  deleteItem (id: string): void;
-  editItem (id: string): void;
-  selectForInfo? (id: string): void;
+  add?: boolean
+  data: Record<ItemInstance>
+  locale: UIMessagesObject
+  addTemplateToList (id: string): void
+  deleteItem (id: string): void
+  editItem (id: string): void
+  selectForInfo? (id: string): void
 }
 
 export function EquipmentListItem (props: EquipmentListItemProps) {
-  const { add, addTemplateToList, data, deleteItem, editItem, locale, selectForInfo } = props;
+  const { add, addTemplateToList, data, deleteItem, editItem, locale, selectForInfo } = props
 
-  const numberValue = Maybe.ensure<number> (R.lt (1)) (data .get ('amount'));
+  const numberValue = Maybe.ensure<number> (R.lt (1)) (data .get ("amount"))
 
   return add ? (
     <ListItem>
-      <ListItemName name={data .get ('name')} />
+      <ListItemName name={data .get ("name")} />
       <ListItemSeparator />
       <ListItemButtons>
         <IconButton
-          icon="&#xE916;"
-          onClick={() => addTemplateToList (data .get ('id'))}
+          icon="&#xE916"
+          onClick={() => addTemplateToList (data .get ("id"))}
           flat
           />
         <IconButton
-          icon="&#xE912;"
-          onClick={selectForInfo && (() => selectForInfo (data .get ('id')))}
+          icon="&#xE912"
+          onClick={selectForInfo && (() => selectForInfo (data .get ("id")))}
           disabled={!selectForInfo}
           flat
           />
@@ -47,29 +44,29 @@ export function EquipmentListItem (props: EquipmentListItemProps) {
     <ListItem>
       <ListItemName
         name={
-          `${Maybe.maybe<number, string> ('') (value => `${value}x `) (numberValue)}${data .get ('name')}`
+          `${Maybe.maybe<number, string> ("") (value => `${value}x `) (numberValue)}${data .get ("name")}`
         }
         />
       <ListItemSeparator />
-      <ListItemGroup list={translate (locale, 'equipment.view.groups')} index={data .get ('gr')} />
+      <ListItemGroup list={translate (locale, "equipment.view.groups")} index={data .get ("gr")} />
       <ListItemButtons>
         <IconButton
-          icon="&#xE90c;"
-          onClick={() => editItem (data .get ('id'))}
+          icon="&#xE90c"
+          onClick={() => editItem (data .get ("id"))}
           flat
           />
         <IconButton
-          icon="&#xE90b;"
-          onClick={() => deleteItem (data .get ('id'))}
+          icon="&#xE90b"
+          onClick={() => deleteItem (data .get ("id"))}
           flat
           />
         <IconButton
-          icon="&#xE912;"
-          onClick={selectForInfo && (() => selectForInfo (data .get ('id')))}
+          icon="&#xE912"
+          onClick={selectForInfo && (() => selectForInfo (data .get ("id")))}
           disabled={!selectForInfo}
           flat
           />
       </ListItemButtons>
     </ListItem>
-  );
+  )
 }

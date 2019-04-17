@@ -1,14 +1,14 @@
-import { remote } from 'electron';
-import * as fs from 'fs';
-import * as path from 'path';
-import * as React from 'react';
-import { UIMessagesObject } from '../../App/Utils/I18n';
-import { Markdown } from '../../components/Markdown';
-import { Page } from '../../components/Page';
-import { Scroll } from '../../components/Scroll';
+import { remote } from "electron";
+import * as fs from "fs";
+import * as path from "path";
+import * as React from "react";
+import { L10n, L10nRecord } from "../../Models/Wiki/L10n";
+import { Markdown } from "../Universal/Markdown";
+import { Page } from "../Universal/Page";
+import { Scroll } from "../Universal/Scroll";
 
 export interface HelpOwnProps {
-  locale: UIMessagesObject;
+  l10n: L10nRecord
 }
 
 export interface HelpStateProps {
@@ -17,14 +17,14 @@ export interface HelpStateProps {
 export interface HelpDispatchProps {
 }
 
-export type HelpProps = HelpStateProps & HelpDispatchProps & HelpOwnProps;
+export type HelpProps = HelpStateProps & HelpDispatchProps & HelpOwnProps
 
 export const Help = (props: HelpProps) => {
-  const { locale } = props;
+  const { l10n } = props
   const text = fs.readFileSync (
-    path.join (remote.app.getAppPath (), 'app', 'docs', `FAQ.${locale.get ('id')}.md`),
-    'UTF-8'
-  );
+    path.join (remote.app.getAppPath (), "app", "docs", `FAQ.${L10n.A.id (l10n)}.md`),
+    "UTF-8"
+  )
 
   return (
     <Page id="help">
@@ -32,5 +32,5 @@ export const Help = (props: HelpProps) => {
         <Markdown source={text} />
       </Scroll>
     </Page>
-  );
-};
+  )
+}

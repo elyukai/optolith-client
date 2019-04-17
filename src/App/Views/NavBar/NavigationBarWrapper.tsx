@@ -1,7 +1,7 @@
-import * as React from 'react';
+import * as React from "react";
 
 export interface NavigationBarWrapperProps {
-  children?: React.ReactNode;
+  children?: React.ReactNode
 }
 
 export function NavigationBarWrapper (props: NavigationBarWrapperProps) {
@@ -11,5 +11,5 @@ export function NavigationBarWrapper (props: NavigationBarWrapperProps) {
         {props.children}
       </div>
     </div>
-  );
+  )
 }

@@ -1,54 +1,52 @@
-import * as R from 'ramda';
-import * as React from 'react';
-import { WikiInfoContainer } from '../../App/Containers/WikiInfoContainer';
-import { RaceCombined } from '../../App/Models/View/viewTypeHelpers';
-import { translate, UIMessagesObject } from '../../App/Utils/I18n';
-import { Aside } from '../../components/Aside';
-import { ListView } from '../../components/List';
-import { ListHeader } from '../../components/ListHeader';
-import { ListHeaderTag } from '../../components/ListHeaderTag';
-import { ListPlaceholder } from '../../components/ListPlaceholder';
-import { MainContent } from '../../components/MainContent';
-import { Options } from '../../components/Options';
-import { Page } from '../../components/Page';
-import { Scroll } from '../../components/Scroll';
-import { SortNames, SortOptions } from '../../components/SortOptions';
-import { TextField } from '../../components/TextField';
-import { List, Maybe, Record } from '../../Utilities/dataUtils';
-import { RacesListItem } from './RacesListItem';
-import { RaceVariants } from './RaceVariants';
+import * as React from "react";
+import { WikiInfoContainer } from "../../Containers/WikiInfoContainer";
+import { RaceCombined } from "../../Models/View/viewTypeHelpers";
+import { translate, UIMessagesObject } from "../../Utilities/I18n";
+import { Aside } from "../Universal/Aside";
+import { ListView } from "../Universal/List";
+import { ListHeader } from "../Universal/ListHeader";
+import { ListHeaderTag } from "../Universal/ListHeaderTag";
+import { ListPlaceholder } from "../Universal/ListPlaceholder";
+import { MainContent } from "../Universal/MainContent";
+import { Options } from "../Universal/Options";
+import { Page } from "../Universal/Page";
+import { Scroll } from "../Universal/Scroll";
+import { SortNames, SortOptions } from "../Universal/SortOptions";
+import { TextField } from "../Universal/TextField";
+import { RacesListItem } from "./RacesListItem";
+import { RaceVariants } from "./RaceVariants";
 
 export interface RacesOwnProps {
-  locale: UIMessagesObject;
+  locale: UIMessagesObject
 }
 
 export interface RacesStateProps {
-  currentId: Maybe<string>;
-  currentVariantId: Maybe<string>;
-  races: Maybe<List<Record<RaceCombined>>>;
-  sortOrder: string;
-  filterText: string;
+  currentId: Maybe<string>
+  currentVariantId: Maybe<string>
+  races: Maybe<List<Record<RaceCombined>>>
+  sortOrder: string
+  filterText: string
 }
 
 export interface RacesDispatchProps {
-  selectRace (id: string): (variantId: Maybe<string>) => void;
-  selectRaceVariant (id: string): void;
-  setSortOrder (sortOrder: string): void;
-  switchValueVisibilityFilter (): void;
-  setFilterText (filterText: string): void;
-  switchToCultures (): void;
+  selectRace (id: string): (variantId: Maybe<string>) => void
+  selectRaceVariant (id: string): void
+  setSortOrder (sortOrder: string): void
+  switchValueVisibilityFilter (): void
+  setFilterText (filterText: string): void
+  switchToCultures (): void
 }
 
-export type RacesProps = RacesStateProps & RacesDispatchProps & RacesOwnProps;
+export type RacesProps = RacesStateProps & RacesDispatchProps & RacesOwnProps
 
 export function Races (props: RacesProps) {
-  const { filterText, locale, races: list, sortOrder } = props;
+  const { filterText, locale, races: list, sortOrder } = props
 
   return (
     <Page id="races">
       <Options>
         <TextField
-          hint={translate (locale, 'options.filtertext')}
+          hint={translate (locale, "options.filtertext")}
           value={filterText}
           onChangeString={props.setFilterText}
           fullWidth
@@ -56,17 +54,17 @@ export function Races (props: RacesProps) {
         <SortOptions
           sortOrder={sortOrder}
           sort={props.setSortOrder}
-          options={List.of<SortNames> ('name', 'cost')}
+          options={List.of<SortNames> ("name", "cost")}
           locale={locale}
           />
       </Options>
       <MainContent>
         <ListHeader>
           <ListHeaderTag className="name">
-            {translate (locale, 'name')}
+            {translate (locale, "name")}
           </ListHeaderTag>
-          <ListHeaderTag className="cost" hint={translate (locale, 'aptext')}>
-            {translate (locale, 'apshort')}
+          <ListHeaderTag className="cost" hint={translate (locale, "aptext")}>
+            {translate (locale, "apshort")}
           </ListHeaderTag>
           <ListHeaderTag className="btn-placeholder" />
           <ListHeaderTag className="btn-placeholder has-border" />
@@ -86,7 +84,7 @@ export function Races (props: RacesProps) {
                   .bind (Maybe.ensure (R.pipe (List.null, R.not)))
                   .fmap (R.pipe (
                     List.map (
-                      race => (<RacesListItem {...props} key={race .get ('id')} race={race} />)
+                      race => (<RacesListItem {...props} key={race .get ("id")} race={race} />)
                     ),
                     List.toArray
                   )))
@@ -99,5 +97,5 @@ export function Races (props: RacesProps) {
         <WikiInfoContainer {...props} noWrapper />
       </Aside>
     </Page>
-  );
+  )
 }

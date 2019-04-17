@@ -1,32 +1,31 @@
-import * as React from 'react';
-import { Spell } from '../../App/Models/Wiki/wikiTypeHelpers';
-import { translate, UIMessagesObject } from '../../App/Utils/I18n';
-import { BorderButton } from '../../components/BorderButton';
-import { Checkbox } from '../../components/Checkbox';
-import { Just, List, Maybe, Nothing, OrderedMap, Record } from '../../Utilities/dataUtils';
+import * as React from "react";
+import { Spell } from "../../Models/Wiki/wikiTypeHelpers";
+import { translate, UIMessagesObject } from "../../Utilities/I18n";
+import { BorderButton } from "../Universal/BorderButton";
+import { Checkbox } from "../Universal/Checkbox";
 
 interface SelectionsCursesProps {
-  active: OrderedMap<string, number>;
-  apLeft: number;
-  apTotal: number;
-  change (id: string): (maybeOption: Maybe<'add' | 'remove'>) => void;
-  list: List<Record<Spell>>;
-  locale: UIMessagesObject;
+  active: OrderedMap<string, number>
+  apLeft: number
+  apTotal: number
+  change (id: string): (maybeOption: Maybe<"add" | "remove">) => void
+  list: List<Record<Spell>>
+  locale: UIMessagesObject
 }
 
 export function SelectionsCurses (props: SelectionsCursesProps) {
-  const { active, apTotal, apLeft, change, list, locale } = props;
+  const { active, apTotal, apLeft, change, list, locale } = props
 
   return (
     <div className="curses list">
-      <h4>{translate (locale, 'rcpselections.labels.curses', apTotal, apLeft)}</h4>
+      <h4>{translate (locale, "rcpselections.labels.curses", apTotal, apLeft)}</h4>
       {
         list
           .map (obj => {
-            const id = obj .get ('id');
-            const name = obj .get ('name');
+            const id = obj .get ("id")
+            const name = obj .get ("name")
 
-            const maybeValue = active .lookup (id);
+            const maybeValue = active .lookup (id)
 
             return (
               <div key={id}>
@@ -45,20 +44,20 @@ export function SelectionsCurses (props: SelectionsCursesProps) {
                   disabled={
                     Maybe.isNothing (maybeValue)
                     || apLeft <= 0
-                    || apLeft - obj .get ('ic') < 0
+                    || apLeft - obj .get ("ic") < 0
                   }
-                  onClick={() => change (id) (Just<'add'> ('add'))}
+                  onClick={() => change (id) (Just<"add"> ("add"))}
                   />
                 <BorderButton
                   label="-"
                   disabled={!Maybe.isJust (maybeValue) || Maybe.fromJust (maybeValue) <= 0}
-                  onClick={() => change (id) (Just<'remove'> ('remove'))}
+                  onClick={() => change (id) (Just<"remove"> ("remove"))}
                   />
               </div>
-            );
+            )
           })
           .toArray ()
       }
     </div>
-  );
+  )
 }

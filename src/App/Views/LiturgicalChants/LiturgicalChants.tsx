@@ -1,71 +1,68 @@
-import * as R from 'ramda';
-import * as React from 'react';
-import { Categories } from '../../App/Constants/Categories';
-import { WikiInfoContainer } from '../../App/Containers/WikiInfoContainer';
-import { SecondaryAttribute } from '../../App/Models/Hero/heroTypeHelpers';
-import { AttributeCombined, BlessingCombined, LiturgicalChantIsActive, LiturgicalChantWithRequirements } from '../../App/Models/View/viewTypeHelpers';
-import { DCIds } from '../../App/Selectors/derivedCharacteristicsSelectors';
-import { translate, UIMessagesObject } from '../../App/Utils/I18n';
-import { getAspectsOfTradition } from '../../App/Utils/Increasable/liturgicalChantUtils';
-import { BorderButton } from '../../components/BorderButton';
-import { Checkbox } from '../../components/Checkbox';
-import { ListView } from '../../components/List';
-import { ListHeader } from '../../components/ListHeader';
-import { ListHeaderTag } from '../../components/ListHeaderTag';
-import { ListItem } from '../../components/ListItem';
-import { ListItemName } from '../../components/ListItemName';
-import { ListPlaceholder } from '../../components/ListPlaceholder';
-import { MainContent } from '../../components/MainContent';
-import { Options } from '../../components/Options';
-import { Page } from '../../components/Page';
-import { Scroll } from '../../components/Scroll';
-import { Slidein } from '../../components/Slidein';
-import { SortNames, SortOptions } from '../../components/SortOptions';
-import { TextField } from '../../components/TextField';
-import { Just, List, Maybe, Nothing, OrderedMap, Record, Tuple } from '../../Utilities/dataUtils';
-import { sortStrings } from '../../Utilities/FilterSortUtils';
-import { SkillListItem } from '../Skills/SkillListItem';
+import * as React from "react";
+import { Categories } from "../../Constants/Categories";
+import { WikiInfoContainer } from "../../Containers/WikiInfoContainer";
+import { SecondaryAttribute } from "../../Models/Hero/heroTypeHelpers";
+import { AttributeCombined, BlessingCombined, LiturgicalChantIsActive, LiturgicalChantWithRequirements } from "../../Models/View/viewTypeHelpers";
+import { DCIds } from "../../Selectors/derivedCharacteristicsSelectors";
+import { translate, UIMessagesObject } from "../../Utilities/I18n";
+import { getAspectsOfTradition } from "../../Utilities/Increasable/liturgicalChantUtils";
+import { SkillListItem } from "../Skills/SkillListItem";
+import { BorderButton } from "../Universal/BorderButton";
+import { Checkbox } from "../Universal/Checkbox";
+import { ListView } from "../Universal/List";
+import { ListHeader } from "../Universal/ListHeader";
+import { ListHeaderTag } from "../Universal/ListHeaderTag";
+import { ListItem } from "../Universal/ListItem";
+import { ListItemName } from "../Universal/ListItemName";
+import { ListPlaceholder } from "../Universal/ListPlaceholder";
+import { MainContent } from "../Universal/MainContent";
+import { Options } from "../Universal/Options";
+import { Page } from "../Universal/Page";
+import { Scroll } from "../Universal/Scroll";
+import { Slidein } from "../Universal/Slidein";
+import { SortNames, SortOptions } from "../Universal/SortOptions";
+import { TextField } from "../Universal/TextField";
 
 export interface LiturgicalChantsOwnProps {
-  locale: UIMessagesObject;
+  locale: UIMessagesObject
 }
 
 export interface LiturgicalChantsStateProps {
-  activeList: Maybe<List<Record<BlessingCombined> | Record<LiturgicalChantWithRequirements>>>;
-  addChantsDisabled: boolean;
-  attributes: List<Record<AttributeCombined>>;
-  derivedCharacteristics: OrderedMap<DCIds, Record<SecondaryAttribute>>;
-  enableActiveItemHints: boolean;
-  filterText: string;
-  inactiveFilterText: string;
-  inactiveList: Maybe<List<Record<LiturgicalChantIsActive> | Record<BlessingCombined>>>;
-  isRemovingEnabled: boolean;
-  sortOrder: string;
-  traditionId: Maybe<number>;
+  activeList: Maybe<List<Record<BlessingCombined> | Record<LiturgicalChantWithRequirements>>>
+  addChantsDisabled: boolean
+  attributes: List<Record<AttributeCombined>>
+  derivedCharacteristics: OrderedMap<DCIds, Record<SecondaryAttribute>>
+  enableActiveItemHints: boolean
+  filterText: string
+  inactiveFilterText: string
+  inactiveList: Maybe<List<Record<LiturgicalChantIsActive> | Record<BlessingCombined>>>
+  isRemovingEnabled: boolean
+  sortOrder: string
+  traditionId: Maybe<number>
 }
 
 export interface LiturgicalChantsDispatchProps {
-  setSortOrder (sortOrder: string): void;
-  switchActiveItemHints (): void;
-  addPoint (id: string): void;
-  addToList (id: string): void;
-  addBlessingToList (id: string): void;
-  removePoint (id: string): void;
-  removeFromList (id: string): void;
-  removeBlessingFromList (id: string): void;
-  setFilterText (filterText: string): void;
-  setInactiveFilterText (filterText: string): void;
+  setSortOrder (sortOrder: string): void
+  switchActiveItemHints (): void
+  addPoint (id: string): void
+  addToList (id: string): void
+  addBlessingToList (id: string): void
+  removePoint (id: string): void
+  removeFromList (id: string): void
+  removeBlessingFromList (id: string): void
+  setFilterText (filterText: string): void
+  setInactiveFilterText (filterText: string): void
 }
 
 export type LiturgicalChantsProps =
   LiturgicalChantsStateProps
   & LiturgicalChantsDispatchProps
-  & LiturgicalChantsOwnProps;
+  & LiturgicalChantsOwnProps
 
 export interface LiturgicalChantsState {
-  showAddSlidein: boolean;
-  currentId: Maybe<string>;
-  currentSlideinId: Maybe<string>;
+  showAddSlidein: boolean
+  currentId: Maybe<string>
+  currentSlideinId: Maybe<string>
 }
 
 const isBlessing = (
@@ -73,7 +70,7 @@ const isBlessing = (
     | Record<LiturgicalChantIsActive>
     | Record<BlessingCombined>
 ): entry is Record<BlessingCombined> =>
-  (entry .get ('category') as Categories.BLESSINGS | Categories.LITURGIES) === Categories.BLESSINGS;
+  (entry .get ("category") as Categories.BLESSINGS | Categories.LITURGIES) === Categories.BLESSINGS
 
 export class LiturgicalChants
   extends React.Component<LiturgicalChantsProps, LiturgicalChantsState> {
@@ -81,17 +78,17 @@ export class LiturgicalChants
     showAddSlidein: false,
     currentId: Nothing (),
     currentSlideinId: Nothing (),
-  };
-
-  showAddSlidein = () => this.setState ({ showAddSlidein: true });
-
-  hideAddSlidein = () => {
-    this.props.setInactiveFilterText ('');
-    this.setState ({ showAddSlidein: false });
   }
 
-  showInfo = (id: string) => this.setState ({ currentId: Just (id) });
-  showSlideinInfo = (id: string) => this.setState ({ currentSlideinId: Just (id) });
+  showAddSlidein = () => this.setState ({ showAddSlidein: true })
+
+  hideAddSlidein = () => {
+    this.props.setInactiveFilterText ("")
+    this.setState ({ showAddSlidein: false })
+  }
+
+  showInfo = (id: string) => this.setState ({ currentId: Just (id) })
+  showSlideinInfo = (id: string) => this.setState ({ currentSlideinId: Just (id) })
 
   render () {
     const {
@@ -117,9 +114,9 @@ export class LiturgicalChants
       inactiveFilterText,
       setFilterText,
       setInactiveFilterText,
-    } = this.props;
+    } = this.props
 
-    const { showAddSlidein } = this.state;
+    const { showAddSlidein } = this.state
 
     return (
       <Page id="liturgies">
@@ -130,7 +127,7 @@ export class LiturgicalChants
           >
           <Options>
             <TextField
-              hint={translate (locale, 'options.filtertext')}
+              hint={translate (locale, "options.filtertext")}
               value={inactiveFilterText}
               onChangeString={setInactiveFilterText}
               fullWidth
@@ -138,33 +135,33 @@ export class LiturgicalChants
             <SortOptions
               sortOrder={sortOrder}
               sort={setSortOrder}
-              options={List.of<SortNames> ('name', 'group', 'ic')}
+              options={List.of<SortNames> ("name", "group", "ic")}
               locale={locale}
               />
             <Checkbox
               checked={enableActiveItemHints}
               onClick={switchActiveItemHints}
               >
-              {translate (locale, 'options.showactivated')}
+              {translate (locale, "options.showactivated")}
             </Checkbox>
           </Options>
           <MainContent>
             <ListHeader>
               <ListHeaderTag className="name">
-                {translate (locale, 'name')}
+                {translate (locale, "name")}
               </ListHeaderTag>
               <ListHeaderTag className="group">
-                {translate (locale, 'aspect')}
-                {sortOrder === 'group' && ` / ${translate (locale, 'group')}`}
+                {translate (locale, "aspect")}
+                {sortOrder === "group" && ` / ${translate (locale, "group")}`}
               </ListHeaderTag>
               <ListHeaderTag className="check">
-                {translate (locale, 'check')}
+                {translate (locale, "check")}
               </ListHeaderTag>
-              <ListHeaderTag className="mod" hint={translate (locale, 'mod.long')}>
-                {translate (locale, 'mod.short')}
+              <ListHeaderTag className="mod" hint={translate (locale, "mod.long")}>
+                {translate (locale, "mod.short")}
               </ListHeaderTag>
-              <ListHeaderTag className="ic" hint={translate (locale, 'ic.long')}>
-                {translate (locale, 'ic.short')}
+              <ListHeaderTag className="ic" hint={translate (locale, "ic.long")}>
+                {translate (locale, "ic.short")}
               </ListHeaderTag>
               {isRemovingEnabled && <ListHeaderTag className="btn-placeholder" />}
               <ListHeaderTag className="btn-placeholder" />
@@ -188,24 +185,24 @@ export class LiturgicalChants
                               (maybePrevious
                                 .bind (
                                   Maybe.ensure (
-                                    () => sortOrder === 'group' && current .get ('active')
+                                    () => sortOrder === "group" && current .get ("active")
                                   )
                                 )
                                 .fmap (
-                                  previous => (current .get ('category') as Categories)
+                                  previous => (current .get ("category") as Categories)
                                     === Categories.BLESSINGS
-                                    ? (previous .get ('category') as Categories)
+                                    ? (previous .get ("category") as Categories)
                                       !== Categories.BLESSINGS
                                     : !isBlessing (previous) && isBlessing (current)
                                       || isBlessing (previous) && !isBlessing (current)
                                       || !isBlessing (previous)
                                         && !isBlessing (current)
-                                        && previous .get ('gr') !== current.get ('gr')
-                                ));
+                                        && previous .get ("gr") !== current.get ("gr")
+                                ))
 
                             const aspects =
                               Maybe.fromMaybe
-                                ('')
+                                ("")
                                 (maybeTraditionId .fmap (
                                   R.pipe (
                                     traditionId => Maybe.mapMaybe<number, string>
@@ -216,48 +213,48 @@ export class LiturgicalChants
                                         Maybe.bind_ (R.pipe (
                                           R.dec,
                                           List.subscript (
-                                            translate (locale, 'liturgies.view.aspects')
+                                            translate (locale, "liturgies.view.aspects")
                                           )
                                         ))
                                       ))
-                                      (current .get ('aspects')),
-                                    sortStrings (locale .get ('id')),
-                                    List.intercalate (', ')
+                                      (current .get ("aspects")),
+                                    sortStrings (locale .get ("id")),
+                                    List.intercalate (", ")
                                   )
-                                ));
+                                ))
 
                             return Tuple.of<
                               Maybe<Record<LiturgicalChantIsActive> | Record<BlessingCombined>>,
                               JSX.Element
                             >
                               (Just (current))
-                              (current .get ('active')
+                              (current .get ("active")
                                 ? (
                                   <ListItem
-                                    key={current .get ('id')}
+                                    key={current .get ("id")}
                                     disabled
                                     insertTopMargin={insertTopMargin}
                                     >
-                                    <ListItemName name={current .get ('name')} />
+                                    <ListItemName name={current .get ("name")} />
                                   </ListItem>
                                 )
                                 : isBlessing (current)
                                 ? (
                                   <SkillListItem
-                                    key={current .get ('id')}
-                                    id={current .get ('id')}
-                                    name={current .get ('name')}
+                                    key={current .get ("id")}
+                                    id={current .get ("id")}
+                                    name={current .get ("name")}
                                     isNotActive
-                                    activate={addBlessingToList .bind (null, current .get ('id'))}
+                                    activate={addBlessingToList .bind (null, current .get ("id"))}
                                     addFillElement
                                     insertTopMargin={insertTopMargin}
                                     attributes={attributes}
                                     derivedCharacteristics={derivedCharacteristics}
                                     selectForInfo={this.showSlideinInfo}
                                     addText={
-                                      sortOrder === 'group'
+                                      sortOrder === "group"
                                         ? `${aspects} / ${
-                                          translate (locale, 'liturgies.view.blessing')
+                                          translate (locale, "liturgies.view.blessing")
                                         }`
                                         : aspects
                                     }
@@ -265,33 +262,33 @@ export class LiturgicalChants
                                 )
                                 : (
                                   <SkillListItem
-                                    key={current .get ('id')}
-                                    id={current .get ('id')}
-                                    name={current .get ('name')}
+                                    key={current .get ("id")}
+                                    id={current .get ("id")}
+                                    name={current .get ("name")}
                                     isNotActive
-                                    activate={addToList .bind (null, current .get ('id'))}
+                                    activate={addToList .bind (null, current .get ("id"))}
                                     activateDisabled={addChantsDisabled}
                                     addFillElement
-                                    check={current .get ('check')}
-                                    checkmod={current .lookup ('checkmod')}
-                                    ic={current .get ('ic')}
+                                    check={current .get ("check")}
+                                    checkmod={current .lookup ("checkmod")}
+                                    ic={current .get ("ic")}
                                     insertTopMargin={insertTopMargin}
                                     attributes={attributes}
                                     derivedCharacteristics={derivedCharacteristics}
                                     selectForInfo={this.showSlideinInfo}
                                     addText={
-                                      sortOrder === 'group'
+                                      sortOrder === "group"
                                       ? `${aspects} / ${
                                         Maybe.fromMaybe
-                                          ('')
-                                          (translate (locale, 'liturgies.view.groups')
-                                            .subscript (current .get ('gr') - 1))
+                                          ("")
+                                          (translate (locale, "liturgies.view.groups")
+                                            .subscript (current .get ("gr") - 1))
                                       }`
                                       : aspects
                                     }
                                     />
                                 )
-                              );
+                              )
                           })
                           (Nothing ()),
                         Tuple.snd,
@@ -305,7 +302,7 @@ export class LiturgicalChants
         </Slidein>
         <Options>
           <TextField
-            hint={translate (locale, 'options.filtertext')}
+            hint={translate (locale, "options.filtertext")}
             value={filterText}
             onChangeString={setFilterText}
             fullWidth
@@ -313,34 +310,34 @@ export class LiturgicalChants
           <SortOptions
             sortOrder={sortOrder}
             sort={setSortOrder}
-            options={List.of<SortNames> ('name', 'group', 'ic')}
+            options={List.of<SortNames> ("name", "group", "ic")}
             locale={locale}
             />
           <BorderButton
-            label={translate (locale, 'actions.addtolist')}
+            label={translate (locale, "actions.addtolist")}
             onClick={this.showAddSlidein}
             />
         </Options>
         <MainContent>
           <ListHeader>
             <ListHeaderTag className="name">
-              {translate (locale, 'name')}
+              {translate (locale, "name")}
             </ListHeaderTag>
             <ListHeaderTag className="group">
-              {translate (locale, 'aspect')}
-              {sortOrder === 'group' && ` / ${translate (locale, 'group')}`}
+              {translate (locale, "aspect")}
+              {sortOrder === "group" && ` / ${translate (locale, "group")}`}
             </ListHeaderTag>
-            <ListHeaderTag className="value" hint={translate (locale, 'sr.long')}>
-              {translate (locale, 'sr.short')}
+            <ListHeaderTag className="value" hint={translate (locale, "sr.long")}>
+              {translate (locale, "sr.short")}
             </ListHeaderTag>
             <ListHeaderTag className="check">
-              {translate (locale, 'check')}
+              {translate (locale, "check")}
             </ListHeaderTag>
-            <ListHeaderTag className="mod" hint={translate (locale, 'mod.long')}>
-              {translate (locale, 'mod.short')}
+            <ListHeaderTag className="mod" hint={translate (locale, "mod.long")}>
+              {translate (locale, "mod.short")}
             </ListHeaderTag>
-            <ListHeaderTag className="ic" hint={translate (locale, 'ic.long')}>
-              {translate (locale, 'ic.short')}
+            <ListHeaderTag className="ic" hint={translate (locale, "ic.long")}>
+              {translate (locale, "ic.short")}
             </ListHeaderTag>
             {isRemovingEnabled && <ListHeaderTag className="btn-placeholder" />}
             <ListHeaderTag className="btn-placeholder" />
@@ -369,22 +366,22 @@ export class LiturgicalChants
                           const insertTopMargin = Maybe.elem
                             (true)
                             (maybePrevious
-                              .bind (Maybe.ensure (() => sortOrder === 'group'))
+                              .bind (Maybe.ensure (() => sortOrder === "group"))
                               .fmap (
-                                previous => (current .get ('category') as Categories)
+                                previous => (current .get ("category") as Categories)
                                   === Categories.BLESSINGS
-                                  ? (previous .get ('category') as Categories)
+                                  ? (previous .get ("category") as Categories)
                                     !== Categories.BLESSINGS
                                   : !isBlessing (previous) && isBlessing (current)
                                     || isBlessing (previous) && !isBlessing (current)
                                     || !isBlessing (previous)
                                       && !isBlessing (current)
-                                      && previous .get ('gr') !== current.get ('gr')
-                              ));
+                                      && previous .get ("gr") !== current.get ("gr")
+                              ))
 
                           const aspects =
                             Maybe.fromMaybe
-                              ('')
+                              ("")
                               (maybeTraditionId .fmap (
                                 R.pipe (
                                   traditionId => Maybe.mapMaybe<number, string>
@@ -395,15 +392,15 @@ export class LiturgicalChants
                                       Maybe.bind_ (R.pipe (
                                         R.dec,
                                         List.subscript (
-                                          translate (locale, 'liturgies.view.aspects')
+                                          translate (locale, "liturgies.view.aspects")
                                         )
                                       ))
                                     ))
-                                    (current .get ('aspects')),
-                                  sortStrings (locale .get ('id')),
-                                  List.intercalate (', ')
+                                    (current .get ("aspects")),
+                                  sortStrings (locale .get ("id")),
+                                  List.intercalate (", ")
                                 )
-                              ));
+                              ))
 
                           return Tuple.of<
                             Maybe<
@@ -415,12 +412,12 @@ export class LiturgicalChants
                             (isBlessing (current)
                               ? (
                                 <SkillListItem
-                                  key={current .get ('id')}
-                                  id={current .get ('id')}
-                                  name={current .get ('name')}
+                                  key={current .get ("id")}
+                                  id={current .get ("id")}
+                                  name={current .get ("name")}
                                   removePoint={
                                     isRemovingEnabled
-                                      ? removeBlessingFromList.bind (null, current .get ('id'))
+                                      ? removeBlessingFromList.bind (null, current .get ("id"))
                                       : undefined}
                                   addFillElement
                                   noIncrease
@@ -429,9 +426,9 @@ export class LiturgicalChants
                                   derivedCharacteristics={derivedCharacteristics}
                                   selectForInfo={this.showSlideinInfo}
                                   addText={
-                                    sortOrder === 'group'
+                                    sortOrder === "group"
                                       ? `${aspects} / ${
-                                        translate (locale, 'liturgies.view.blessing')
+                                        translate (locale, "liturgies.view.blessing")
                                       }`
                                       : aspects
                                   }
@@ -439,41 +436,41 @@ export class LiturgicalChants
                               )
                               : (
                                 <SkillListItem
-                                  key={current .get ('id')}
-                                  id={current .get ('id')}
-                                  name={current .get ('name')}
-                                  addDisabled={!current .get ('isIncreasable')}
-                                  addPoint={addPoint.bind (null, current .get ('id'))}
-                                  removeDisabled={!current .get ('isDecreasable')}
+                                  key={current .get ("id")}
+                                  id={current .get ("id")}
+                                  name={current .get ("name")}
+                                  addDisabled={!current .get ("isIncreasable")}
+                                  addPoint={addPoint.bind (null, current .get ("id"))}
+                                  removeDisabled={!current .get ("isDecreasable")}
                                   removePoint={
                                     isRemovingEnabled
-                                      ? current .get ('value') === 0
-                                        ? removeFromList.bind (null, current .get ('id'))
-                                        : removePoint.bind (null, current .get ('id'))
+                                      ? current .get ("value") === 0
+                                        ? removeFromList.bind (null, current .get ("id"))
+                                        : removePoint.bind (null, current .get ("id"))
                                       : undefined
                                   }
                                   addFillElement
-                                  check={current .get ('check')}
-                                  checkmod={current .lookup ('checkmod')}
-                                  ic={current .get ('ic')}
-                                  sr={current .get ('value')}
+                                  check={current .get ("check")}
+                                  checkmod={current .lookup ("checkmod")}
+                                  ic={current .get ("ic")}
+                                  sr={current .get ("value")}
                                   insertTopMargin={insertTopMargin}
                                   attributes={attributes}
                                   derivedCharacteristics={derivedCharacteristics}
                                   selectForInfo={this.showSlideinInfo}
                                   addText={
-                                    sortOrder === 'group'
+                                    sortOrder === "group"
                                     ? `${aspects} / ${
                                       Maybe.fromMaybe
-                                        ('')
-                                        (translate (locale, 'liturgies.view.groups')
-                                          .subscript (current .get ('gr') - 1))
+                                        ("")
+                                        (translate (locale, "liturgies.view.groups")
+                                          .subscript (current .get ("gr") - 1))
                                     }`
                                     : aspects
                                   }
                                   />
                               )
-                            );
+                            )
                         })
                         (Nothing ()),
                       Tuple.snd,
@@ -485,6 +482,6 @@ export class LiturgicalChants
         </MainContent>
         <WikiInfoContainer {...this.props} {...this.state} />
       </Page>
-    );
+    )
   }
 }

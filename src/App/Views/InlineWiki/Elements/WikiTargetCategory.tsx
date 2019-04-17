@@ -1,12 +1,12 @@
-import * as React from 'react';
-import { UIMessages } from '../../../App/Utils/I18n';
-import { WikiProperty } from '../WikiProperty';
+import * as React from "react";
+import { UIMessages } from "../../../Utilities/I18n";
+import { WikiProperty } from "../WikiProperty";
 
 export interface WikiTargetCategoryProps {
   currentObject: {
     target: string;
-  };
-  locale: UIMessages;
+  }
+  locale: UIMessages
 }
 
 export function WikiTargetCategory(props: WikiTargetCategoryProps) {
@@ -15,11 +15,11 @@ export function WikiTargetCategory(props: WikiTargetCategoryProps) {
       target
     },
     locale
-  } = props;
+  } = props
 
   return (
     <WikiProperty locale={locale} title="info.targetcategory">
       {target}
     </WikiProperty>
-  );
+  )
 }

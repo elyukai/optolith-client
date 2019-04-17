@@ -1,136 +1,151 @@
-import * as React from 'react';
-import { AdventurePointsObject } from '../../App/Selectors/adventurePointsSelectors';
-import { translate, UIMessagesObject } from '../../App/Utils/I18n';
-import { Maybe, Record } from '../../Utilities/dataUtils';
+import * as React from "react";
+import { List } from "../../../Data/List";
+import { Maybe, fromMaybeR } from "../../../Data/Maybe";
+import { Record } from "../../../Data/Record";
+import { AdventurePointsCategories } from "../../Models/View/AdventurePointsCategories";
+import { L10nRecord } from "../../Models/Wiki/L10n";
+import { translate, translateP } from "../../Utilities/I18n";
 
 export interface ApTooltipProps {
-  locale: UIMessagesObject;
-  adventurePoints: Record<AdventurePointsObject>;
-  maximumForMagicalAdvantagesDisadvantages: Maybe<number>;
-  isSpellcaster: boolean;
-  isBlessedOne: boolean;
+  l10n: L10nRecord
+  adventurePoints: Record<AdventurePointsCategories>
+  maximumForMagicalAdvantagesDisadvantages: Maybe<number>
+  isSpellcaster: boolean
+  isBlessedOne: boolean
 }
 
+const APCA = AdventurePointsCategories.A
+
 export function ApTooltip (props: ApTooltipProps) {
-  const { locale, adventurePoints: ap } = props;
+  const { l10n, adventurePoints: ap } = props
 
   return (
     <div className="ap-details">
-      <h4>{translate (locale, 'titlebar.adventurepoints.title')}</h4>
+      <h4>{translate (l10n) ("adventurepoints")}</h4>
       <p className="general">
-        <span>{translate (locale, 'titlebar.adventurepoints.total', ap.get ('total'))}</span>
-        <span>{translate (locale, 'titlebar.adventurepoints.spent', ap.get ('spent'))}</span>
+        <span>{translateP (l10n) ("totalap") (List (APCA.total (ap)))}</span>
+        <span>{translateP (l10n) ("apspent") (List (APCA.spent (ap)))}</span>
       </p>
       <hr />
       <p>
         <span>
-          {translate (
-            locale,
-            'titlebar.adventurepoints.advantages',
-            ap.get ('spentOnAdvantages'),
-            80
-          )}
+          {translateP (l10n)
+                      ("apspentonadvantages")
+                      (List (APCA.spentOnAdvantages (ap), 80))}
         </span>
         <span>
-          {ap.get ('spentOnMagicalAdvantages') > 0 && translate (
-            locale,
-            'titlebar.adventurepoints.advantagesmagic',
-            ap.get ('spentOnMagicalAdvantages'),
-            Maybe.fromMaybe (0) (props.maximumForMagicalAdvantagesDisadvantages)
-          )}
+          {APCA.spentOnMagicalAdvantages (ap) > 0
+            ? translateP (l10n)
+                         ("apspentonmagicadvantages")
+                         (List (
+                           APCA.spentOnMagicalAdvantages (ap),
+                           Maybe.sum (props.maximumForMagicalAdvantagesDisadvantages)
+                         ))
+            : null}
         </span>
         <span>
-          {ap.get ('spentOnBlessedAdvantages') > 0 && translate (
-            locale,
-            'titlebar.adventurepoints.advantagesblessed',
-            ap.get ('spentOnBlessedAdvantages'),
-            50
-          )}</span>
-        <span>
-          {translate (
-            locale,
-            'titlebar.adventurepoints.disadvantages',
-            ap.get ('spentOnDisadvantages'),
-            80
-          )}
+          {APCA.spentOnBlessedAdvantages (ap) > 0
+            ? translateP (l10n)
+                         ("apspentonblessedadvantages")
+                         (List (APCA.spentOnBlessedAdvantages (ap), 50))
+            : null}
         </span>
         <span>
-          {ap.get ('spentOnMagicalDisadvantages') > 0 && translate (
-            locale,
-            'titlebar.adventurepoints.disadvantagesmagic',
-            ap.get ('spentOnMagicalDisadvantages'),
-            Maybe.fromMaybe (0) (props.maximumForMagicalAdvantagesDisadvantages)
-          )}
+          {translateP (l10n) ("apspentondisadvantages") (List (APCA.spentOnDisadvantages (ap), 80))}
         </span>
         <span>
-          {ap.get ('spentOnBlessedDisadvantages') > 0 && translate (
-            locale,
-            'titlebar.adventurepoints.disadvantagesblessed',
-            ap.get ('spentOnBlessedDisadvantages'),
-            50
-          )}
+          {APCA.spentOnMagicalDisadvantages (ap) > 0
+            ? translateP (l10n)
+                         ("apspentonmagicdisadvantages")
+                         (List (
+                           APCA.spentOnMagicalDisadvantages (ap),
+                           Maybe.sum (props.maximumForMagicalAdvantagesDisadvantages)
+                         ))
+            : null}
+        </span>
+        <span>
+          {APCA.spentOnBlessedDisadvantages (ap) > 0
+            ? translateP (l10n)
+                         ("apspentonblesseddisadvantages")
+                         (List (APCA.spentOnBlessedDisadvantages (ap), 50))
+            : null}
         </span>
       </p>
       <hr />
       <p>
         <span>
-          {translate (locale, 'titlebar.adventurepoints.race', ap.get ('spentOnRace'), 80)}
+          {translateP (l10n) ("apspentonrace") (List (APCA.spentOnRace (ap), 80))}
         </span>
-        {Maybe.fromMaybe
-          (<></>)
-          (ap.lookup ('spentOnProfession')
-            .fmap (
-              spentOnProfession => (
-                <span>
-                  {translate (
-                    locale,
-                    'titlebar.adventurepoints.profession',
-                    spentOnProfession,
-                    80
-                  )}
-                </span>
-              )
-            ))}
+        {maybeR (<></>)
+                ((spentOnProfession: number) => (
+                    <span>
+                      {translateP (l10n) ("apspentonprofession") (List (spentOnProfession, 80))}
+                    </span>
+                  )
+                )
+                (APCA.spentOnProfession (ap))}
         <span>
-          {translate (locale, 'titlebar.adventurepoints.attributes', ap.get ('spentOnAttributes'))}
+          {translateP (l10n)
+                      ("apspentonattributes")
+                      (List (APCA.spentOnAttributes (ap)))}
         </span>
         <span>
-          {translate (locale, 'titlebar.adventurepoints.skills', ap.get ('spentOnSkills'))}
+          {translateP (l10n)
+                      ("apspentonskills")
+                      (List (APCA.spentOnSkills (ap)))}
         </span>
         <span>
-          {translate (
-            locale,
-            'titlebar.adventurepoints.combattechniques',
-            ap.get ('spentOnCombatTechniques')
-          )}
+          {translateP (l10n)
+                      ("apspentoncombattechniques")
+                      (List (APCA.spentOnCombatTechniques (ap)))}
         </span>
-        {props.isSpellcaster && <span>
-          {translate (locale, 'titlebar.adventurepoints.spells', ap.get ('spentOnSpells'))}
-        </span>}
-        {props.isSpellcaster && <span>
-          {translate (locale, 'titlebar.adventurepoints.cantrips', ap.get ('spentOnCantrips'))}
-        </span>}
-        {props.isBlessedOne && <span>
-          {translate (
-            locale,
-            'titlebar.adventurepoints.liturgicalchants',
-            ap.get ('spentOnLiturgicalChants')
-          )}
-        </span>}
-        {props.isBlessedOne && <span>
-          {translate (locale, 'titlebar.adventurepoints.blessings', ap.get ('spentOnBlessings'))}
-        </span>}
+        {props.isSpellcaster
+          ? (
+            <span>
+                {translateP (l10n)
+                            ("apspentonspells")
+                            (List (APCA.spentOnSpells (ap)))}
+              </span>
+            )
+          : null}
+        {props.isSpellcaster
+          ? (
+              <span>
+                {translateP (l10n)
+                            ("apspentoncantrips")
+                            (List (APCA.spentOnCantrips (ap)))}
+              </span>
+            )
+          : null}
+        {props.isBlessedOne
+          ? (
+              <span>
+                {translateP (l10n)
+                            ("apspentonliturgicalchants")
+                            (List (APCA.spentOnLiturgicalChants (ap)))}
+              </span>
+            )
+          : null}
+        {props.isBlessedOne
+          ? (
+              <span>
+                {translateP (l10n)
+                            ("apspentonblessings")
+                            (List (APCA.spentOnBlessings (ap)))}
+              </span>
+            )
+          : null}
         <span>
-          {translate (
-            locale,
-            'titlebar.adventurepoints.specialabilities',
-            ap.get ('spentOnSpecialAbilities')
-          )}
+          {translateP (l10n)
+                      ("apspentonspecialabilities")
+                      (List (APCA.spentOnSpecialAbilities (ap)))}
         </span>
         <span>
-          {translate (locale, 'titlebar.adventurepoints.energies', ap.get ('spentOnEnergies'))}
+          {translateP (l10n)
+                      ("apspentonenergies")
+                      (List (APCA.spentOnEnergies (ap)))}
         </span>
       </p>
     </div>
-  );
+  )
 }

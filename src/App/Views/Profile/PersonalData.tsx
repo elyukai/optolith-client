@@ -1,72 +1,69 @@
-import * as React from 'react';
-import { ActiveViewObject, PersonalData as PersonalDataInterface } from '../../App/Models/Hero/heroTypeHelpers';
-import { Advantage, Culture, Disadvantage, ExperienceLevel, Profession, ProfessionVariant, Race, RaceVariant } from '../../App/Models/Wiki/wikiTypeHelpers';
-import { translate } from '../../App/Utils/I18n';
-import { ActivatableTextList } from '../../components/ActivatableTextList';
-import { AvatarChange } from '../../components/AvatarChange';
-import { AvatarWrapper } from '../../components/AvatarWrapper';
-import { BorderButton } from '../../components/BorderButton';
-import { EditText } from '../../components/EditText';
-import { IconButton } from '../../components/IconButton';
-import { Page } from '../../components/Page';
-import { Scroll } from '../../components/Scroll';
-import { VerticalList } from '../../components/VerticalList';
-import { UIMessagesObject } from '../../types/ui';
-import { Just, List, Maybe, Record } from '../../Utilities/dataUtils';
-import { OverviewAddAP } from './OverviewAddAP';
-import { OverviewPersonalData, OverviewPersonalDataDispatchProps } from './OverviewPersonalData';
+import * as React from "react";
+import { ActiveViewObject, PersonalData as PersonalDataInterface } from "../../Models/Hero/heroTypeHelpers";
+import { translate } from "../../Utilities/I18n";
+import { ActivatableTextList } from "../Activatable/ActivatableTextList";
+import { AvatarChange } from "../Universal/AvatarChange";
+import { AvatarWrapper } from "../Universal/AvatarWrapper";
+import { BorderButton } from "../Universal/BorderButton";
+import { EditText } from "../Universal/EditText";
+import { IconButton } from "../Universal/IconButton";
+import { Page } from "../Universal/Page";
+import { Scroll } from "../Universal/Scroll";
+import { VerticalList } from "../Universal/VerticalList";
+import { OverviewAddAP } from "./OverviewAddAP";
+import { OverviewPersonalData, OverviewPersonalDataDispatchProps } from "./OverviewPersonalData";
 
 export interface PersonalDataOwnProps {
-  locale: UIMessagesObject;
+  locale: UIMessagesObject
 }
 
 export interface PersonalDataStateProps {
-  apLeft: Maybe<number>;
-  apTotal: Maybe<number>;
-  advantages: Maybe<List<Record<ActiveViewObject<Advantage>>>>;
-  avatar: Maybe<string>;
-  culture: Maybe<Record<Culture>>;
-  currentEl: Maybe<Record<ExperienceLevel>>;
-  disadvantages: Maybe<List<Record<ActiveViewObject<Disadvantage>>>>;
-  name: Maybe<string>;
-  phase: Maybe<number>;
-  profession: Maybe<Record<Profession>>;
-  professionName: Maybe<string>;
-  fullProfessionName: Maybe<string>;
-  professionVariant: Maybe<Record<ProfessionVariant>>;
-  profile: Maybe<Record<PersonalDataInterface>>;
-  race: Maybe<Record<Race>>;
-  raceVariant: Maybe<Record<RaceVariant>>;
-  sex: Maybe<'m' | 'f'>;
-  isRemovingEnabled: boolean;
-  isEditingHeroAfterCreationPhaseEnabled: boolean;
-  isAddAdventurePointsOpen: boolean;
-  isEditCharacterAvatarOpen: boolean;
-  isAlbino: Maybe<boolean>;
+  apLeft: Maybe<number>
+  apTotal: Maybe<number>
+  advantages: Maybe<List<Record<ActiveViewObject<Advantage>>>>
+  avatar: Maybe<string>
+  culture: Maybe<Record<Culture>>
+  currentEl: Maybe<Record<ExperienceLevel>>
+  disadvantages: Maybe<List<Record<ActiveViewObject<Disadvantage>>>>
+  name: Maybe<string>
+  phase: Maybe<number>
+  profession: Maybe<Record<Profession>>
+  professionName: Maybe<string>
+  fullProfessionName: Maybe<string>
+  professionVariant: Maybe<Record<ProfessionVariant>>
+  profile: Maybe<Record<PersonalDataInterface>>
+  race: Maybe<Record<Race>>
+  raceVariant: Maybe<Record<RaceVariant>>
+  sex: Maybe<"m" | "f">
+  isRemovingEnabled: boolean
+  isEditingHeroAfterCreationPhaseEnabled: boolean
+  isAddAdventurePointsOpen: boolean
+  isEditCharacterAvatarOpen: boolean
+  isAlbino: Maybe<boolean>
 }
 
 export interface PersonalDataDispatchProps extends OverviewPersonalDataDispatchProps {
-  setAvatar (path: string): void;
-  setHeroName (name: string): void;
-  setCustomProfessionName (name: string): void;
-  endCharacterCreation (): void;
-  addAdventurePoints (ap: number): void;
-  openAddAdventurePoints (): void;
-  closeAddAdventurePoints (): void;
-  openEditCharacterAvatar (): void;
-  closeEditCharacterAvatar (): void;
+  setAvatar (path: string): void
+  setHeroName (name: string): void
+  setCustomProfessionName (name: string): void
+  endCharacterCreation (): void
+  addAdventurePoints (ap: number): void
+  openAddAdventurePoints (): void
+  closeAddAdventurePoints (): void
+  openEditCharacterAvatar (): void
+  closeEditCharacterAvatar (): void
 }
 
 export type PersonalDataProps =
   PersonalDataStateProps
   & PersonalDataDispatchProps
-  & PersonalDataOwnProps;
+  & PersonalDataOwnProps
 
 export interface PersonalDataState {
-  editName: boolean;
-  editProfessionName: boolean;
-  isAvatarChangeOpened: boolean;
-  isAddAPOpened: boolean;
+  editName: boolean
+  editProfessionName: boolean
+  isAvatarChangeOpened: boolean
+  isAddAPOpened: boolean
 }
 
 export class PersonalData extends React.Component<PersonalDataProps, PersonalDataState> {
@@ -75,27 +72,27 @@ export class PersonalData extends React.Component<PersonalDataProps, PersonalDat
     editProfessionName: false,
     isAvatarChangeOpened: false,
     isAddAPOpened: false,
-  };
+  }
 
-  openAvatarChange = () => this.setState (() => ({ isAvatarChangeOpened: true }));
-  closeAvatarChange = () => this.setState (() => ({ isAvatarChangeOpened: false }));
-  openAddAP = () => this.setState (() => ({ isAddAPOpened: true }));
-  closeAddAP = () => this.setState (() => ({ isAddAPOpened: false }));
+  openAvatarChange = () => this.setState (() => ({ isAvatarChangeOpened: true }))
+  closeAvatarChange = () => this.setState (() => ({ isAvatarChangeOpened: false }))
+  openAddAP = () => this.setState (() => ({ isAddAPOpened: true }))
+  closeAddAP = () => this.setState (() => ({ isAddAPOpened: false }))
 
   changeName = (name: string) => {
-    this.props.setHeroName (name);
-    this.setState ({ editName: false });
+    this.props.setHeroName (name)
+    this.setState ({ editName: false })
   }
 
   changeProfessionName = (name: string) => {
-    this.props.setCustomProfessionName (name);
-    this.setState ({ editProfessionName: false });
+    this.props.setCustomProfessionName (name)
+    this.setState ({ editProfessionName: false })
   }
 
-  editName = () => this.setState ({ editName: true });
-  editNameCancel = () => this.setState ({ editName: false });
-  editProfessionName = () => this.setState ({ editProfessionName: true });
-  editProfessionNameCancel = () => this.setState ({ editProfessionName: false });
+  editName = () => this.setState ({ editName: true })
+  editNameCancel = () => this.setState ({ editName: false })
+  editProfessionName = () => this.setState ({ editProfessionName: true })
+  editProfessionNameCancel = () => this.setState ({ editProfessionName: false })
 
   render () {
     const {
@@ -127,46 +124,46 @@ export class PersonalData extends React.Component<PersonalDataProps, PersonalDat
       closeEditCharacterAvatar,
       setAvatar,
       ...other
-    } = this.props;
+    } = this.props
 
     const {
       editName,
       editProfessionName,
-    } = this.state;
+    } = this.state
 
     const isOwnProfession =
-      Maybe.elem ('P_0') (profession.fmap (Record.get<Profession, 'id'> ('id')));
+      Maybe.elem ("P_0") (profession.fmap (Record.get<Profession, "id"> ("id")))
 
-    const isProfessionUndefined = Maybe.isNothing (profession);
+    const isProfessionUndefined = Maybe.isNothing (profession)
 
     const nameElement = editName ? (
       <EditText
         className="change-name"
         cancel={this.editNameCancel}
         submit={this.changeName}
-        text={Maybe.fromMaybe ('') (name)}
+        text={Maybe.fromMaybe ("") (name)}
         autoFocus
         />
     ) : (
       <h1 className="confirm-edit">
-        {Maybe.fromMaybe ('') (name)}
-        <IconButton icon="&#xE90c;" onClick={this.editName} />
+        {Maybe.fromMaybe ("") (name)}
+        <IconButton icon="&#xE90c" onClick={this.editName} />
       </h1>
-    );
+    )
 
     const professionNameElement = phase.gt (Just (1)) && isOwnProfession && (editProfessionName ? (
       <EditText
         cancel={this.editProfessionNameCancel}
         submit={this.changeProfessionName}
-        text={Maybe.fromMaybe ('') (professionName)}
+        text={Maybe.fromMaybe ("") (professionName)}
         />
     ) : (
       <BorderButton
         className="edit-profession-name-btn"
-        label={translate (locale, 'profileoverview.view.editprofessionname')}
+        label={translate (locale, "profileoverview.view.editprofessionname")}
         onClick={this.editProfessionName}
         />
-    ));
+    ))
 
     return Maybe.fromMaybe
       (<></>)
@@ -190,9 +187,9 @@ export class PersonalData extends React.Component<PersonalDataProps, PersonalDat
                                   {
                                     translate (
                                       locale,
-                                      sex === 'm'
-                                        ? 'profileoverview.view.male'
-                                        : 'profileoverview.view.female'
+                                      sex === "m"
+                                        ? "profileoverview.view.male"
+                                        : "profileoverview.view.female"
                                     )
                                   }
                                 </span>
@@ -200,20 +197,20 @@ export class PersonalData extends React.Component<PersonalDataProps, PersonalDat
                             ))
                         }
                         <span className="race">
-                          {Maybe.fromMaybe ('') (race.fmap (Record.get<Race, 'name'> ('name')))}
+                          {Maybe.fromMaybe ("") (race.fmap (Record.get<Race, "name"> ("name")))}
                           {Maybe.fromMaybe
-                            ('')
+                            ("")
                             (raceVariant
-                              .fmap (Record.get<RaceVariant, 'name'> ('name'))
+                              .fmap (Record.get<RaceVariant, "name"> ("name"))
                               .fmap (raceVariantName => ` (${raceVariantName})`))}
                         </span>
                         <span className="culture">
                           {Maybe.fromMaybe
-                            ('')
-                            (culture.fmap (Record.get<Culture, 'name'> ('name')))}
+                            ("")
+                            (culture.fmap (Record.get<Culture, "name"> ("name")))}
                         </span>
                         <span className="profession">
-                          {Maybe.fromMaybe ('') (fullProfessionName)}
+                          {Maybe.fromMaybe ("") (fullProfessionName)}
                         </span>
                       </VerticalList>
                     )
@@ -221,8 +218,8 @@ export class PersonalData extends React.Component<PersonalDataProps, PersonalDat
                   <VerticalList className="el">
                     <span>
                       {Maybe.fromMaybe
-                        ('')
-                        (currentEl.fmap (Record.get<ExperienceLevel, 'name'> ('name')))}
+                        ("")
+                        (currentEl.fmap (Record.get<ExperienceLevel, "name"> ("name")))}
                     </span>
                     <span>
                       {Maybe.fromMaybe (0) (apTotal)} AP
@@ -235,7 +232,7 @@ export class PersonalData extends React.Component<PersonalDataProps, PersonalDat
                   Maybe.elem (3) (phase) && (
                     <BorderButton
                       className="add-ap"
-                      label={translate (locale, 'profileoverview.actions.addadventurepoints')}
+                      label={translate (locale, "profileoverview.actions.addadventurepoints")}
                       onClick={openAddAdventurePoints}
                       />
                   )
@@ -245,16 +242,16 @@ export class PersonalData extends React.Component<PersonalDataProps, PersonalDat
               {
                 !isProfessionUndefined && (
                   <>
-                    <h3>{translate (locale, 'profileoverview.view.personaldata')}</h3>
+                    <h3>{translate (locale, "profileoverview.view.personaldata")}</h3>
                     <OverviewPersonalData
                       {...other}
                       profile={profile}
                       culture={culture}
-                      eyecolorTags={translate (locale, 'eyecolors')}
-                      haircolorTags={translate (locale, 'haircolors')}
+                      eyecolorTags={translate (locale, "eyecolors")}
+                      haircolorTags={translate (locale, "haircolors")}
                       race={race}
                       raceVariant={raceVariant}
-                      socialstatusTags={translate (locale, 'socialstatus')}
+                      socialstatusTags={translate (locale, "socialstatus")}
                       locale={locale}
                       />
                   </>
@@ -265,7 +262,7 @@ export class PersonalData extends React.Component<PersonalDataProps, PersonalDat
                   <div>
                     <BorderButton
                       className="end-char-creation"
-                      label={translate (locale, 'profileoverview.actions.endherocreation')}
+                      label={translate (locale, "profileoverview.actions.endherocreation")}
                       onClick={endCharacterCreation}
                       primary
                       disabled={
@@ -279,7 +276,7 @@ export class PersonalData extends React.Component<PersonalDataProps, PersonalDat
               {
                 Maybe.elem (3) (phase) && (
                   <div>
-                    <h3>{translate (locale, 'profileoverview.view.advantages')}</h3>
+                    <h3>{translate (locale, "profileoverview.view.advantages")}</h3>
                     {
                       Maybe.fromMaybe
                         (<></>)
@@ -292,7 +289,7 @@ export class PersonalData extends React.Component<PersonalDataProps, PersonalDat
                           )
                         ))
                     }
-                    <h3>{translate (locale, 'profileoverview.view.disadvantages')}</h3>
+                    <h3>{translate (locale, "profileoverview.view.disadvantages")}</h3>
                     {
                       Maybe.fromMaybe
                         (<></>)
@@ -322,6 +319,6 @@ export class PersonalData extends React.Component<PersonalDataProps, PersonalDat
               />
           </Page>
         )
-      ));
+      ))
   }
 }

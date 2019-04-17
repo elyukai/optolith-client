@@ -1,47 +1,46 @@
-import * as React from 'react';
-import { SecondaryAttribute } from '../../App/Models/Hero/heroTypeHelpers';
-import { AttributeCombined } from '../../App/Models/View/viewTypeHelpers';
-import { DCIds } from '../../App/Selectors/derivedCharacteristicsSelectors';
-import { ListItem } from '../../components/ListItem';
-import { ListItemName } from '../../components/ListItemName';
-import { ListItemSeparator } from '../../components/ListItemSeparator';
-import { ListItemValues } from '../../components/ListItemValues';
-import { List, Maybe, OrderedMap, Record } from '../../Utilities/dataUtils';
-import { AdditionalValue, SkillAdditionalValues } from './SkillAdditionalValues';
-import { SkillButtons } from './SkillButtons';
-import { SkillCheck } from './SkillCheck';
-import { SkillFill } from './SkillFill';
-import { SkillGroup } from './SkillGroup';
-import { SkillImprovementCost } from './SkillImprovementCost';
-import { SkillRating } from './SkillRating';
+import * as React from "react";
+import { SecondaryAttribute } from "../../Models/Hero/heroTypeHelpers";
+import { AttributeCombined } from "../../Models/View/viewTypeHelpers";
+import { DCIds } from "../../Selectors/derivedCharacteristicsSelectors";
+import { ListItem } from "../Universal/ListItem";
+import { ListItemName } from "../Universal/ListItemName";
+import { ListItemSeparator } from "../Universal/ListItemSeparator";
+import { ListItemValues } from "../Universal/ListItemValues";
+import { AdditionalValue, SkillAdditionalValues } from "./SkillAdditionalValues";
+import { SkillButtons } from "./SkillButtons";
+import { SkillCheck } from "./SkillCheck";
+import { SkillFill } from "./SkillFill";
+import { SkillGroup } from "./SkillGroup";
+import { SkillImprovementCost } from "./SkillImprovementCost";
+import { SkillRating } from "./SkillRating";
 
 export interface SkillListItemProps {
-  attributes: List<Record<AttributeCombined>>;
-  activateDisabled?: boolean;
-  addDisabled?: boolean;
-  addFillElement?: boolean;
-  addValues?: List<AdditionalValue>;
-  addText?: string;
-  check?: List<string>;
-  checkDisabled?: boolean;
-  checkmod?: Maybe<'SPI' | 'TOU'>;
-  derivedCharacteristics?: OrderedMap<DCIds, Record<SecondaryAttribute>>;
-  groupList?: List<string>;
-  groupIndex?: number;
-  ic?: number;
-  id: string;
-  insertTopMargin?: boolean;
-  isNotActive?: boolean;
-  name: string;
-  noIncrease?: boolean;
-  removeDisabled?: boolean;
-  sr?: number;
-  typ?: boolean;
-  untyp?: boolean;
-  activate? (): void;
-  addPoint? (): void;
-  removePoint? (): void;
-  selectForInfo (id: string): void;
+  attributes: List<Record<AttributeCombined>>
+  activateDisabled?: boolean
+  addDisabled?: boolean
+  addFillElement?: boolean
+  addValues?: List<AdditionalValue>
+  addText?: string
+  check?: List<string>
+  checkDisabled?: boolean
+  checkmod?: Maybe<"SPI" | "TOU">
+  derivedCharacteristics?: OrderedMap<DCIds, Record<SecondaryAttribute>>
+  groupList?: List<string>
+  groupIndex?: number
+  ic?: number
+  id: string
+  insertTopMargin?: boolean
+  isNotActive?: boolean
+  name: string
+  noIncrease?: boolean
+  removeDisabled?: boolean
+  sr?: number
+  typ?: boolean
+  untyp?: boolean
+  activate? (): void
+  addPoint? (): void
+  removePoint? (): void
+  selectForInfo (id: string): void
 }
 
 export class SkillListItem extends React.Component<SkillListItemProps> {
@@ -53,7 +52,7 @@ export class SkillListItem extends React.Component<SkillListItemProps> {
       this.props.derivedCharacteristics !== nextProps.derivedCharacteristics ||
       this.props.insertTopMargin !== nextProps.insertTopMargin ||
       this.props.typ !== nextProps.typ ||
-      this.props.untyp !== nextProps.untyp;
+      this.props.untyp !== nextProps.untyp
   }
 
   render () {
@@ -63,7 +62,7 @@ export class SkillListItem extends React.Component<SkillListItemProps> {
       noIncrease,
       typ,
       untyp,
-    } = this.props;
+    } = this.props
 
     return (
       <ListItem
@@ -84,6 +83,6 @@ export class SkillListItem extends React.Component<SkillListItemProps> {
         </ListItemValues>
         <SkillButtons {...this.props}  />
       </ListItem>
-    );
+    )
   }
 }

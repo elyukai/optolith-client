@@ -1,36 +1,34 @@
-import * as R from 'ramda';
-import * as React from 'react';
-import { isNumber, isString } from 'util';
-import { InputTextEvent, Pact } from '../../App/Models/Hero/heroTypeHelpers';
-import { translate, UIMessagesObject } from '../../App/Utils/I18n';
-import { getRoman } from '../../App/Utils/NumberUtils';
-import { Dropdown, DropdownOption } from '../../components/Dropdown';
-import { Page } from '../../components/Page';
-import { TextField } from '../../components/TextField';
-import { Just, List, Maybe, Nothing, Record, Tuple } from '../../Utilities/dataUtils';
+import * as React from "react";
+import { isNumber, isString } from "util";
+import { InputTextEvent, Pact } from "../../Models/Hero/heroTypeHelpers";
+import { translate, UIMessagesObject } from "../../Utilities/I18n";
+import { getRoman } from "../../Utilities/NumberUtils";
+import { Dropdown, DropdownOption } from "../Universal/Dropdown";
+import { Page } from "../Universal/Page";
+import { TextField } from "../Universal/TextField";
 
 export interface PactSettingsOwnProps {
-  locale: UIMessagesObject;
+  locale: UIMessagesObject
 }
 
 export interface PactSettingsStateProps {
-  pact: Maybe<Record<Pact>>;
-  isPactValid: boolean;
-  isPactEditable: Maybe<boolean>;
+  pact: Maybe<Record<Pact>>
+  isPactValid: boolean
+  isPactEditable: Maybe<boolean>
 }
 
 export interface PactSettingsDispatchProps {
-  setPactCategory (category: Maybe<number>): void;
-  setPactLevel (level: Maybe<number>): void;
-  setTargetType (level: Maybe<number>): void;
-  setTargetDomain (domain: Maybe<number | string>): void;
-  setTargetName (name: string): void;
+  setPactCategory (category: Maybe<number>): void
+  setPactLevel (level: Maybe<number>): void
+  setTargetType (level: Maybe<number>): void
+  setTargetDomain (domain: Maybe<number | string>): void
+  setTargetName (name: string): void
 }
 
 export type PactSettingsProps =
   PactSettingsStateProps
   & PactSettingsDispatchProps
-  & PactSettingsOwnProps;
+  & PactSettingsOwnProps
 
 export function PactSettings (props: PactSettingsProps) {
   const {
@@ -42,31 +40,31 @@ export function PactSettings (props: PactSettingsProps) {
     setTargetName,
     setTargetType,
     locale,
-  } = props;
+  } = props
 
-  const isPactNotEditable = Maybe.elem (false) (isPactEditable);
+  const isPactNotEditable = Maybe.elem (false) (isPactEditable)
 
   return (
     <Page id="pact">
       <div className="pact-content">
         <Dropdown
-          label={translate (locale, 'pact.category')}
+          label={translate (locale, "pact.category")}
           options={
-            translate (locale, 'pact.categories')
+            translate (locale, "pact.categories")
               .imap (index => name => Record.of<DropdownOption> ({
                 id: index + 1,
                 name,
               }))
               .cons (Record.of<DropdownOption> ({
-                name: translate (locale, 'pact.nopact'),
+                name: translate (locale, "pact.nopact"),
               }))
           }
           onChange={setPactCategory}
-          value={maybePact .fmap (Record.get<Pact, 'category'> ('category'))}
+          value={maybePact .fmap (Record.get<Pact, "category"> ("category"))}
           disabled={isPactNotEditable}
           />
         <Dropdown
-          label={translate (locale, 'pact.level')}
+          label={translate (locale, "pact.level")}
           options={List.unfoldr
             ((id: number) => id > 3
               ? Nothing ()
@@ -76,32 +74,32 @@ export function PactSettings (props: PactSettingsProps) {
                     id,
                     name: getRoman (id),
                     disabled: !Maybe.isJust (maybePact)
-                      || isPactNotEditable && id <= Maybe.fromJust (maybePact) .get ('level'),
+                      || isPactNotEditable && id <= Maybe.fromJust (maybePact) .get ("level"),
                   }))
                   (R.inc (id))
               ))
             (1)}
           onChange={setPactLevel}
-          value={maybePact .fmap (Record.get<Pact, 'level'> ('level'))}
+          value={maybePact .fmap (Record.get<Pact, "level"> ("level"))}
           disabled={Maybe.isNothing (maybePact)}
           />
         <Dropdown
-          label={translate (locale, 'pact.fairytype')}
+          label={translate (locale, "pact.fairytype")}
           options={
-            translate (locale, 'pact.fairytypes')
+            translate (locale, "pact.fairytypes")
               .imap (index => name => Record.of<DropdownOption> ({
                 id: index + 1,
                 name,
               }))
           }
           onChange={setTargetType}
-          value={maybePact .fmap (Record.get<Pact, 'type'> ('type'))}
+          value={maybePact .fmap (Record.get<Pact, "type"> ("type"))}
           disabled={isPactNotEditable || Maybe.isNothing (maybePact)}
           />
         <Dropdown
-          label={translate (locale, 'domain')}
+          label={translate (locale, "domain")}
           options={
-            translate (locale, 'pact.fairydomains')
+            translate (locale, "pact.fairydomains")
               .imap (index => name => Record.of<DropdownOption> ({
                 id: index + 1,
                 name,
@@ -110,7 +108,7 @@ export function PactSettings (props: PactSettingsProps) {
           onChange={setTargetDomain}
           value={
             maybePact
-              .fmap (Record.get<Pact, 'domain'> ('domain'))
+              .fmap (Record.get<Pact, "domain"> ("domain"))
               .bind (Maybe.ensure (isNumber))
           }
           disabled={
@@ -119,35 +117,35 @@ export function PactSettings (props: PactSettingsProps) {
             || Maybe.elem
               (true)
               (maybePact
-                .fmap (Record.get<Pact, 'domain'> ('domain'))
-                .fmap (domain => typeof domain === 'string' && domain.length > 0))}
+                .fmap (Record.get<Pact, "domain"> ("domain"))
+                .fmap (domain => typeof domain === "string" && domain.length > 0))}
           />
         <TextField
-          label={`${translate (locale, 'domain')} (${translate (locale, 'userdefined')})`}
+          label={`${translate (locale, "domain")} (${translate (locale, "userdefined")})`}
           hint={
             maybePact
-              .fmap (Record.get<Pact, 'domain'> ('domain'))
+              .fmap (Record.get<Pact, "domain"> ("domain"))
               .bind (Maybe.ensure (isNumber))
               .bind (R.pipe (
                 R.dec,
-                List.subscript (translate (locale, 'pact.fairydomains'))
+                List.subscript (translate (locale, "pact.fairydomains"))
               ))
           }
           onChange={(event: InputTextEvent) => setTargetDomain (Just (event.target.value))}
           value={
             maybePact
-              .fmap (Record.get<Pact, 'domain'> ('domain'))
+              .fmap (Record.get<Pact, "domain"> ("domain"))
               .bind (Maybe.ensure (isString))
           }
           disabled={isPactNotEditable || Maybe.isNothing (maybePact)}
           />
         <TextField
-          label={translate (locale, 'name')}
+          label={translate (locale, "name")}
           onChange={(event: InputTextEvent) => setTargetName (event.target.value)}
-          value={maybePact .fmap (Record.get<Pact, 'name'> ('name'))}
+          value={maybePact .fmap (Record.get<Pact, "name"> ("name"))}
           disabled={isPactNotEditable || Maybe.isNothing (maybePact)}
           />
       </div>
     </Page>
-  );
+  )
 }

@@ -1,20 +1,20 @@
-import * as React from 'react';
-import { Scroll } from '../../components/Scroll';
+import * as React from "react";
+import { Scroll } from "../Universal/Scroll";
 
 export interface WikiBoxTemplateProps {
-  children?: React.ReactNode;
-  className: string;
-  subtitle?: React.ReactNode;
-  title: string;
+  children?: React.ReactNode
+  className: string
+  subtitle?: React.ReactNode
+  title: string
 }
 
-export function WikiBoxTemplate(props: WikiBoxTemplateProps) {
+export function WikiBoxTemplate (props: WikiBoxTemplateProps) {
   const {
     children,
     className,
     subtitle,
     title,
-  } = props;
+  } = props
 
   return (
     <Scroll>
@@ -26,5 +26,5 @@ export function WikiBoxTemplate(props: WikiBoxTemplateProps) {
         {children}
       </div>
     </Scroll>
-  );
+  )
 }

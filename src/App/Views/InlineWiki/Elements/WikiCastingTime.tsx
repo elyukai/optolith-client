@@ -1,15 +1,14 @@
-import * as React from 'react';
-import { Categories, CategoryWithGroups } from '../../../App/Constants/Categories';
-import { UIMessages } from '../../../App/Utils/I18n';
-import { WikiProperty } from '../WikiProperty';
+import * as React from "react";
+import { Categories, CategoryWithGroups } from "../../../Constants/Categories";
+import { WikiProperty } from "../WikiProperty";
 
 export interface WikiCastingTimeProps {
   currentObject: {
     castingTime: string;
     category: CategoryWithGroups;
     gr: number;
-  };
-  locale: UIMessages;
+  }
+  locale: UIMessages
 }
 
 export function WikiCastingTime(props: WikiCastingTimeProps) {
@@ -20,26 +19,26 @@ export function WikiCastingTime(props: WikiCastingTimeProps) {
       gr
     },
     locale
-  } = props;
+  } = props
 
-  let key: keyof UIMessages = 'info.castingtime';
+  let key: keyof UIMessages = "info.castingtime"
 
   if (category === Categories.SPELLS && gr === 2) {
-    key = 'info.ritualtime';
+    key = "info.ritualtime"
   }
   else if (category === Categories.SPELLS && (gr === 5 || gr === 6)) {
-    key = 'info.lengthoftime';
+    key = "info.lengthoftime"
   }
   else if (category === Categories.LITURGIES && gr === 1) {
-    key = 'info.liturgicaltime';
+    key = "info.liturgicaltime"
   }
   else if (category === Categories.LITURGIES && gr === 2) {
-    key = 'info.ceremonialtime';
+    key = "info.ceremonialtime"
   }
 
   return (
     <WikiProperty locale={locale} title={key}>
       {castingTime}
     </WikiProperty>
-  );
+  )
 }

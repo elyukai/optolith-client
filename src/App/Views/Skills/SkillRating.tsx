@@ -1,10 +1,10 @@
-import * as React from 'react';
+import * as React from "react";
 
 export interface SkillRatingProps {
-  isNotActive?: boolean;
-  noIncrease?: boolean;
-  sr?: number;
-  addPoint? (): void;
+  isNotActive?: boolean
+  noIncrease?: boolean
+  sr?: number
+  addPoint? (): void
 }
 
 export function SkillRating (props: SkillRatingProps) {
@@ -13,20 +13,20 @@ export function SkillRating (props: SkillRatingProps) {
     noIncrease,
     sr,
     addPoint,
-  } = props;
+  } = props
 
-  if (typeof sr === 'number') {
+  if (typeof sr === "number") {
     return (
       <div className="sr">
         {sr}
       </div>
-    );
+    )
   }
   else if (!addPoint && !isNotActive && !noIncrease) {
     return (
       <div className="sr empty" />
-    );
+    )
   }
 
-  return null;
+  return null
 }

@@ -1,19 +1,19 @@
-import * as React from 'react';
-import { IconButton } from '../../components/IconButton';
-import { ListItemButtons } from '../../components/ListItemButtons';
+import * as React from "react";
+import { IconButton } from "../Universal/IconButton";
+import { ListItemButtons } from "../Universal/ListItemButtons";
 
 export interface SkillButtonsProps {
-  activateDisabled?: boolean;
-  addDisabled?: boolean;
-  ic?: number;
-  id: string;
-  isNotActive?: boolean;
-  removeDisabled?: boolean;
-  sr?: number;
-  activate? (): void;
-  addPoint? (): void;
-  removePoint? (): void;
-  selectForInfo (id: string): void;
+  activateDisabled?: boolean
+  addDisabled?: boolean
+  ic?: number
+  id: string
+  isNotActive?: boolean
+  removeDisabled?: boolean
+  sr?: number
+  activate? (): void
+  addPoint? (): void
+  removePoint? (): void
+  selectForInfo (id: string): void
 }
 
 export function SkillButtons (props: SkillButtonsProps) {
@@ -29,11 +29,11 @@ export function SkillButtons (props: SkillButtonsProps) {
     addPoint,
     removePoint,
     selectForInfo,
-  } = props;
+  } = props
 
-  const boundSelectForInfo = () => selectForInfo (id);
+  const boundSelectForInfo = () => selectForInfo (id)
 
-  const getRemoveIcon = () => ic && sr === 0 && !removeDisabled || !ic ? '\uE90b' : '\uE909';
+  const getRemoveIcon = () => ic && sr === 0 && !removeDisabled || !ic ? "\uE90b" : "\uE909"
 
   return (
     <ListItemButtons>
@@ -70,5 +70,5 @@ export function SkillButtons (props: SkillButtonsProps) {
         flat
         />
     </ListItemButtons>
-  );
+  )
 }

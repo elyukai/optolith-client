@@ -1,20 +1,20 @@
-import * as React from 'react';
-import { getICName } from '../../Utilities/adventurePoints/improvementCostUtils';
+import * as React from "react";
+import { getICName } from "../../Utilities/AdventurePoints/improvementCostUtils";
 
 export interface SkillImprovementCostProps {
-  ic?: number;
+  ic?: number
 }
 
 export function SkillImprovementCost (props: SkillImprovementCostProps) {
-  const { ic } = props;
+  const { ic } = props
 
-  if (typeof ic === 'number') {
+  if (typeof ic === "number") {
     return (
       <div className="ic">
         {getICName (ic)}
       </div>
-    );
+    )
   }
 
-  return null;
+  return null
 }

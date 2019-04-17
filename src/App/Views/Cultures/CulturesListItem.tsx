@@ -1,40 +1,41 @@
-import * as React from 'react';
-import { CultureCombined } from '../../App/Models/View/viewTypeHelpers';
-import { UIMessagesObject } from '../../App/Utils/I18n';
-import { IconButton } from '../../components/IconButton';
-import { ListItem } from '../../components/ListItem';
-import { ListItemButtons } from '../../components/ListItemButtons';
-import { ListItemName } from '../../components/ListItemName';
-import { ListItemSeparator } from '../../components/ListItemSeparator';
-import { Maybe, Record } from '../../Utilities/dataUtils';
+import * as React from "react";
+import { Maybe } from "../../../Data/Maybe";
+import { Record } from "../../../Data/Record";
+import { CultureCombined, CultureCombinedA_ } from "../../Models/View/CultureCombined";
+import { IconButton } from "../Universal/IconButton";
+import { ListItem } from "../Universal/ListItem";
+import { ListItemButtons } from "../Universal/ListItemButtons";
+import { ListItemName } from "../Universal/ListItemName";
+import { ListItemSeparator } from "../Universal/ListItemSeparator";
 
 export interface CulturesListItemProps {
-  culture: Record<CultureCombined>;
-  currentId: Maybe<string>;
-  locale: UIMessagesObject;
-  selectCulture (id: string): void;
-  switchToProfessions (): void;
+  culture: Record<CultureCombined>
+  currentId: Maybe<string>
+  selectCulture (id: string): void
+  switchToProfessions (): void
 }
 
+const CCA_ = CultureCombinedA_
+
 export function CulturesListItem (props: CulturesListItemProps) {
-  const { currentId, culture, selectCulture, switchToProfessions } = props;
+  const { currentId, culture, selectCulture, switchToProfessions } = props
 
   return (
-    <ListItem active={Maybe.elem (culture .get ('id')) (currentId)}>
-      <ListItemName name={culture .get ('name')} />
+    <ListItem active={Maybe.elem (CCA_.id (culture)) (currentId)}>
+      <ListItemName name={CCA_.name (culture)} />
       <ListItemSeparator />
       <ListItemButtons>
         <IconButton
-          icon="&#xE90a;"
-          onClick={() => selectCulture (culture .get ('id'))}
-          disabled={Maybe.elem (culture .get ('id')) (currentId)}
+          icon="&#xE90a"
+          onClick={selectCulture .bind (null, CCA_.id (culture))}
+          disabled={Maybe.elem (CCA_.id (culture)) (currentId)}
           />
         <IconButton
-          icon="&#xE90e;"
+          icon="&#xE90e"
           onClick={switchToProfessions}
-          disabled={Maybe.notElem (culture .get ('id')) (currentId)}
+          disabled={Maybe.notElem (CCA_.id (culture)) (currentId)}
           />
       </ListItemButtons>
     </ListItem>
-  );
+  )
 }

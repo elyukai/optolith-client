@@ -1,64 +1,73 @@
-import { connect } from 'react-redux';
-import { Action, Dispatch } from 'redux';
-import * as ConfigActions from '../App/Actions/ConfigActions';
-import * as DisAdvActions from '../App/Actions/DisAdvActions';
-import { ActivateArgs, DeactivateArgs } from '../App/Models/Hero/heroTypeHelpers';
-import { AppState } from '../reducers/appReducer';
-import { getCurrentDisAdvantagesSubtypeMax, getDisadvantagesRating, getFilteredActiveDisadvantages } from '../Selectors/activatableSelectors';
-import { getAdventurePointsObject } from '../Selectors/adventurePointsSelectors';
-import { getFilteredInactiveDisadvantages } from '../Selectors/combinedActivatablesSelectors';
-import { getIsRemovingEnabled } from '../Selectors/phaseSelectors';
-import { getDisadvantages, getDisadvantagesFilterText, getInactiveDisadvantagesFilterText, getWikiDisadvantages } from '../Selectors/stateSelectors';
-import { getAdvantagesDisadvantagesCultureRatingVisibility, getEnableActiveItemHints } from '../Selectors/uisettingsSelectors';
-import { Disadvantages, DisadvantagesDispatchProps, DisadvantagesOwnProps, DisadvantagesStateProps } from '../Views/disadv/Disadvantages';
+import { connect } from "react-redux";
+import { join } from "../../Data/Maybe";
+import { Record } from "../../Data/Record";
+import { ReduxDispatch } from "../Actions/Actions";
+import * as ConfigActions from "../Actions/ConfigActions";
+import * as DisAdvActions from "../Actions/DisAdvActions";
+import { ActivatableActivationOptions } from "../Models/Actions/ActivatableActivationOptions";
+import { ActivatableDeactivationOptions } from "../Models/Actions/ActivatableDeactivationOptions";
+import { HeroModel } from "../Models/Hero/HeroModel";
+import { AppStateRecord } from "../Reducers/appReducer";
+import { getDisadvantagesRating, getFilteredActiveDisadvantages } from "../Selectors/activatableSelectors";
+import { getAPObjectMap, getMagicalAdvantagesDisadvantagesAdventurePointsMaximum } from "../Selectors/adventurePointsSelectors";
+import { getFilteredInactiveDisadvantages } from "../Selectors/combinedActivatablesSelectors";
+import { getIsRemovingEnabled } from "../Selectors/phaseSelectors";
+import { getDisadvantages, getDisadvantagesFilterText, getInactiveDisadvantagesFilterText, getWikiDisadvantages } from "../Selectors/stateSelectors";
+import { getAdvantagesDisadvantagesCultureRatingVisibility, getEnableActiveItemHints } from "../Selectors/uisettingsSelectors";
+import { Disadvantages, DisadvantagesDispatchProps, DisadvantagesOwnProps, DisadvantagesStateProps } from "../Views/DisAdvantages/Disadvantages";
 
 const mapStateToProps =
-  (state: AppState, ownProps: DisadvantagesOwnProps): DisadvantagesStateProps => ({
+  (state: AppStateRecord, ownProps: DisadvantagesOwnProps): DisadvantagesStateProps => ({
     activeList: getFilteredActiveDisadvantages (state, ownProps),
-    ap: getAdventurePointsObject (state, ownProps),
+    ap: join (getAPObjectMap (HeroModel.A.id (ownProps.hero)) (state, ownProps)),
     deactiveList: getFilteredInactiveDisadvantages (state, ownProps),
     enableActiveItemHints: getEnableActiveItemHints (state),
     isRemovingEnabled: getIsRemovingEnabled (state),
     stateEntries: getDisadvantages (state),
     wikiEntries: getWikiDisadvantages (state),
-    magicalMax: getCurrentDisAdvantagesSubtypeMax (state),
+    magicalMax: getMagicalAdvantagesDisadvantagesAdventurePointsMaximum (state),
     rating: getDisadvantagesRating (state),
     showRating: getAdvantagesDisadvantagesCultureRatingVisibility (state),
     filterText: getDisadvantagesFilterText (state),
     inactiveFilterText: getInactiveDisadvantagesFilterText (state),
-  });
+  })
 
 const mapDispatchToProps = (
-  dispatch: Dispatch<Action, AppState>,
-  { locale }: DisadvantagesOwnProps
+  dispatch: ReduxDispatch,
+  { l10n }: DisadvantagesOwnProps
 ): DisadvantagesDispatchProps => ({
   switchRatingVisibility () {
-    dispatch (DisAdvActions.switchRatingVisibility ());
+    dispatch (DisAdvActions.switchRatingVisibility ())
   },
   switchActiveItemHints () {
-    dispatch (ConfigActions.switchEnableActiveItemHints ());
+    dispatch (ConfigActions.switchEnableActiveItemHints ())
   },
-  addToList (args: ActivateArgs) {
-    dispatch (DisAdvActions.addDisAdvantage (locale) (args));
+  addToList (args: Record<ActivatableActivationOptions>) {
+    dispatch (DisAdvActions.addDisAdvantage (l10n) (args))
   },
-  removeFromList (args: DeactivateArgs) {
-    dispatch (DisAdvActions.removeDisAdvantage (locale) (args));
+  removeFromList (args: Record<ActivatableDeactivationOptions>) {
+    dispatch (DisAdvActions.removeDisAdvantage (l10n) (args))
   },
   setLevel (id: string, index: number, level: number) {
-    dispatch (DisAdvActions.setDisAdvantageLevel (locale) (id) (index) (level));
+    dispatch (DisAdvActions.setDisAdvantageLevel (l10n) (id) (index) (level))
   },
   setFilterText (filterText: string) {
-    dispatch (DisAdvActions.setActiveDisadvantagesFilterText (filterText));
+    dispatch (DisAdvActions.setActiveDisadvantagesFilterText (filterText))
   },
   setInactiveFilterText (filterText: string) {
-    dispatch (DisAdvActions.setInactiveDisadvantagesFilterText (filterText));
+    dispatch (DisAdvActions.setInactiveDisadvantagesFilterText (filterText))
   },
-});
+})
 
-export const connectDisadvantages =
-  connect<DisadvantagesStateProps, DisadvantagesDispatchProps, DisadvantagesOwnProps, AppState> (
+const connectDisadvantages =
+  connect<
+    DisadvantagesStateProps,
+    DisadvantagesDispatchProps,
+    DisadvantagesOwnProps,
+    AppStateRecord
+  > (
     mapStateToProps,
     mapDispatchToProps
-  );
+  )
 
-export const DisadvantagesContainer = connectDisadvantages (Disadvantages);
+export const DisadvantagesContainer = connectDisadvantages (Disadvantages)

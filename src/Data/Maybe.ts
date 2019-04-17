@@ -837,6 +837,8 @@ export const INTERNAL_shallowEquals =
     isNothing (x) && isNothing (y)
     || isJust (x) && isJust (y) && x .value === y .value
 
+type ReactElement = JSX.Element | null
+
 /**
  * `fromMaybeR :: a -> Maybe a -> a`
  *
@@ -848,8 +850,25 @@ export const INTERNAL_shallowEquals =
  * a React node, which can be nullable, as the default value.
  */
 export const fromMaybeR =
-  <A> (def: A) => (x: Maybe<NonNullable<A>>): A =>
+  (def: ReactElement) => (x: Maybe<NonNullable<ReactElement>>): ReactElement =>
     isJust (x) ? x .value : def
+
+/**
+ * `maybe :: b -> (a -> b) -> Maybe a -> b`
+ *
+ * The `maybe` function takes a default value, a function, and a `Maybe`
+ * value. If the `Maybe` value is `Nothing`, the function returns the default
+ * value. Otherwise, it applies the function to the value inside the `Just`
+ * and returns the result.
+ *
+ * A variant of `maybe` specialized to the React library and thus allowing a
+ * React node, which can be nullable, as the default value.
+ */
+export const maybeR =
+  (def: ReactElement) =>
+  <A extends Some> (f: (x: A) => NonNullable<ReactElement>) =>
+  (x: Maybe<A>): ReactElement =>
+    isJust (x) ? f (x .value) : def
 
 /**
  * `fromMaybeNil :: Maybe [a] -> [a]`

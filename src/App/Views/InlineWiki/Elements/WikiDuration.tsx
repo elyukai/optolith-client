@@ -1,15 +1,15 @@
-import * as React from 'react';
-import { Categories, CategoryWithGroups } from '../../../App/Constants/Categories';
-import { UIMessages } from '../../../App/Utils/I18n';
-import { WikiProperty } from '../WikiProperty';
+import * as React from "react";
+import { Categories, CategoryWithGroups } from "../../../Constants/Categories";
+import { UIMessages } from "../../../Utilities/I18n";
+import { WikiProperty } from "../WikiProperty";
 
 export interface WikiDurationProps {
   currentObject: {
     duration: string;
     category: CategoryWithGroups;
     gr: number;
-  };
-  locale: UIMessages;
+  }
+  locale: UIMessages
 }
 
 export function WikiDuration(props: WikiDurationProps) {
@@ -20,17 +20,17 @@ export function WikiDuration(props: WikiDurationProps) {
       gr
     },
     locale
-  } = props;
+  } = props
 
-  let key: keyof UIMessages = 'info.duration';
+  let key: keyof UIMessages = "info.duration"
 
   if (category === Categories.SPELLS && (gr === 4 || gr === 5)) {
-    key = 'info.skill';
+    key = "info.skill"
   }
 
   return (
     <WikiProperty locale={locale} title={key}>
       {duration}
     </WikiProperty>
-  );
+  )
 }

@@ -1,14 +1,13 @@
-import * as React from 'react';
-import { UIMessages } from '../../../App/Models/Hero/heroTypeHelpers';
-import { Book, SourceLink } from '../../../App/Models/Wiki/wikiTypeHelpers';
-import { sortStrings } from '../../../Utilities/FilterSortUtils';
+import * as React from "react";
+import { UIMessages } from "../../../Models/Hero/heroTypeHelpers";
+import { Book, SourceLink } from "../../../Models/Wiki/wikiTypeHelpers";
 
 export interface WikiSourceProps {
-  books: Map<string, Book>;
+  books: Map<string, Book>
   currentObject: {
     src: SourceLink[] | string;
-  };
-  locale: UIMessages;
+  }
+  locale: UIMessages
 }
 
 export function WikiSource(props: WikiSourceProps) {
@@ -18,29 +17,29 @@ export function WikiSource(props: WikiSourceProps) {
       src
     },
     locale
-  } = props;
+  } = props
 
-  if (typeof src === 'object') {
-    const availableSources = src.filter(e => books.has(e.id));
+  if (typeof src === "object") {
+    const availableSources = src.filter(e => books.has(e.id))
 
     const sourceList = availableSources.map(e => {
-      const book = books.get(e.id)!.name;
-      if (typeof e.page === 'number') {
-        return `${book} ${e.page}`;
+      const book = books.get(e.id)!.name
+      if (typeof e.page === "number") {
+        return `${book} ${e.page}`
       }
-      return book;
-    });
+      return book
+    })
 
     return (
       <p className="source">
-        <span>{sortStrings(sourceList, locale.id).intercalate(', ')}</span>
+        <span>{sortStrings(sourceList, locale.id).intercalate(", ")}</span>
       </p>
-    );
+    )
   }
 
   return (
     <p className="source">
-      <span>{books.get('US25001')!.name} {src}</span>
+      <span>{books.get("US25001")!.name} {src}</span>
     </p>
-  );
+  )
 }

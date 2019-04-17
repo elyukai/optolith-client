@@ -1,12 +1,12 @@
-import * as React from 'react';
-import { translate, UIMessages } from '../../../App/Utils/I18n';
-import { WikiProperty } from '../WikiProperty';
+import * as React from "react";
+import { translate, UIMessages } from "../../../Utilities/I18n";
+import { WikiProperty } from "../WikiProperty";
 
 export interface WikiEncumbranceProps {
   currentObject: {
     encumbrance: string;
-  };
-  locale: UIMessages;
+  }
+  locale: UIMessages
 }
 
 export function WikiEncumbrance(props: WikiEncumbranceProps) {
@@ -15,20 +15,20 @@ export function WikiEncumbrance(props: WikiEncumbranceProps) {
       encumbrance
     },
     locale
-  } = props;
+  } = props
 
-  let string = translate(locale, 'charactersheet.gamestats.skills.enc.maybe');
+  let string = translate(locale, "charactersheet.gamestats.skills.enc.maybe")
 
-  if (encumbrance === 'true') {
-    string = translate(locale, 'charactersheet.gamestats.skills.enc.yes');
+  if (encumbrance === "true") {
+    string = translate(locale, "charactersheet.gamestats.skills.enc.yes")
   }
-  else if (encumbrance === 'false') {
-    string = translate(locale, 'charactersheet.gamestats.skills.enc.no');
+  else if (encumbrance === "false") {
+    string = translate(locale, "charactersheet.gamestats.skills.enc.no")
   }
 
   return (
     <WikiProperty locale={locale} title="info.encumbrance">
       {string}
     </WikiProperty>
-  );
+  )
 }

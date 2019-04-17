@@ -1,50 +1,48 @@
-import * as R from 'ramda';
-import * as React from 'react';
-import { Skill, VariantSpecializationSelection } from '../../App/Models/Wiki/wikiTypeHelpers';
-import { translate, UIMessagesObject } from '../../App/Utils/I18n';
-import { Dropdown, DropdownOption } from '../../components/Dropdown';
-import { TextField } from '../../components/TextField';
-import { Just, List, Maybe, OrderedMap, Record, Tuple } from '../../Utilities/dataUtils';
+import * as React from "react";
+import { Skill, VariantSpecializationSelection } from "../../Models/Wiki/wikiTypeHelpers";
+import { translate, UIMessagesObject } from "../../Utilities/I18n";
+import { Dropdown, DropdownOption } from "../Universal/Dropdown";
+import { TextField } from "../Universal/TextField";
 
 export interface SelectionsSkillSpecializationProps {
-  active: Tuple<Maybe<number>, string>;
-  activeId: Maybe<string>;
-  options: VariantSpecializationSelection;
-  locale: UIMessagesObject;
-  skills: OrderedMap<string, Record<Skill>>;
-  change (value: string | number): void;
-  changeId (id: string): void;
+  active: Tuple<Maybe<number>, string>
+  activeId: Maybe<string>
+  options: VariantSpecializationSelection
+  locale: UIMessagesObject
+  skills: OrderedMap<string, Record<Skill>>
+  change (value: string | number): void
+  changeId (id: string): void
 }
 
 export function SelectionsSkillSpecialization (props: SelectionsSkillSpecializationProps) {
-  const { active, activeId, change, changeId, locale, options, skills } = props;
+  const { active, activeId, change, changeId, locale, options, skills } = props
 
-  const sid = options .get ('sid');
+  const sid = options .get ("sid")
 
   const maybeSkillsList =
     Maybe.ensure<string | List<string>, List<string>> ((e): e is List<string> => e instanceof List)
                                                       (sid)
-      .fmap (Maybe.mapMaybe (OrderedMap.lookup_ (skills)));
+      .fmap (Maybe.mapMaybe (OrderedMap.lookup_ (skills)))
 
-  const activeSkillId = typeof sid === 'string' ? Just (sid) : activeId;
-  const maybeActiveSkill = activeSkillId .bind (OrderedMap.lookup_ (skills));
+  const activeSkillId = typeof sid === "string" ? Just (sid) : activeId
+  const maybeActiveSkill = activeSkillId .bind (OrderedMap.lookup_ (skills))
 
   const maybeApplicationList =
-    maybeActiveSkill .bind (Record.lookup<Skill, 'applications'> ('applications'));
+    maybeActiveSkill .bind (Record.lookup<Skill, "applications"> ("applications"))
 
   const maybeApplicationInput =
-    maybeActiveSkill .bind (Record.lookup<Skill, 'applicationsInput'> ('applicationsInput'));
+    maybeActiveSkill .bind (Record.lookup<Skill, "applicationsInput"> ("applicationsInput"))
 
   const name =
     maybeSkillsList .fmap (
       R.pipe (
-        List.map (e => e .get ('name')),
+        List.map (e => e .get ("name")),
         List.intercalate (
-          ` ${translate (locale, 'rcpselections.labels.applicationforskillspecialization')} `
+          ` ${translate (locale, "rcpselections.labels.applicationforskillspecialization")} `
         )
       )
     )
-      .alt (maybeActiveSkill .fmap (Record.get<Skill, 'name'> ('name')));
+      .alt (maybeActiveSkill .fmap (Record.get<Skill, "name"> ("name")))
 
   const selectSkillElement =
     maybeSkillsList
@@ -59,7 +57,7 @@ export function SelectionsSkillSpecialization (props: SelectionsSkillSpecializat
               />
           </div>
         )
-      );
+      )
 
   const selectionElement =
     Maybe.mapReplace<JSX.Element, Record<Skill>>
@@ -97,18 +95,18 @@ export function SelectionsSkillSpecialization (props: SelectionsSkillSpecializat
           }
         </div>
       )
-      (maybeActiveSkill);
+      (maybeActiveSkill)
 
   return (
     <div className="spec">
       <h4>
-        {translate (locale, 'rcpselections.labels.applicationforskillspecialization')}
-        {' ('}
-        {Maybe.fromMaybe ('') (name)}
-        {')'}
+        {translate (locale, "rcpselections.labels.applicationforskillspecialization")}
+        {" ("}
+        {Maybe.fromMaybe ("") (name)}
+        {")"}
       </h4>
       {Maybe.maybeToReactNode (selectSkillElement)}
       {Maybe.maybeToReactNode (selectionElement)}
     </div>
-  );
+  )
 }

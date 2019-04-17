@@ -1,61 +1,64 @@
-import * as R from 'ramda';
-import * as React from 'react';
-import { WikiInfoContainer } from '../../App/Containers/WikiInfoContainer';
-import { CultureCombined } from '../../App/Models/View/viewTypeHelpers';
-import { translate, UIMessagesObject } from '../../App/Utils/I18n';
-import { Dropdown, DropdownOption } from '../../components/Dropdown';
-import { ListView } from '../../components/List';
-import { ListHeader } from '../../components/ListHeader';
-import { ListHeaderTag } from '../../components/ListHeaderTag';
-import { ListPlaceholder } from '../../components/ListPlaceholder';
-import { MainContent } from '../../components/MainContent';
-import { Options } from '../../components/Options';
-import { Page } from '../../components/Page';
-import { Scroll } from '../../components/Scroll';
-import { SortNames, SortOptions } from '../../components/SortOptions';
-import { TextField } from '../../components/TextField';
-import { Just, List, Maybe, Record } from '../../Utilities/dataUtils';
-import { CulturesListItem } from './CulturesListItem';
+import * as React from "react";
+import { List, map, notNull, toArray } from "../../../Data/List";
+import { bindF, ensure, Just, Maybe, maybe } from "../../../Data/Maybe";
+import { Record } from "../../../Data/Record";
+import { WikiInfoContainer } from "../../Containers/WikiInfoContainer";
+import { CultureCombined, CultureCombinedA_ } from "../../Models/View/CultureCombined";
+import { L10nRecord } from "../../Models/Wiki/L10n";
+import { translate } from "../../Utilities/I18n";
+import { pipe, pipe_ } from "../../Utilities/pipe";
+import { Dropdown, DropdownOption } from "../Universal/Dropdown";
+import { ListView } from "../Universal/List";
+import { ListHeader } from "../Universal/ListHeader";
+import { ListHeaderTag } from "../Universal/ListHeaderTag";
+import { ListPlaceholder } from "../Universal/ListPlaceholder";
+import { MainContent } from "../Universal/MainContent";
+import { Options } from "../Universal/Options";
+import { Page } from "../Universal/Page";
+import { Scroll } from "../Universal/Scroll";
+import { SortNames, SortOptions } from "../Universal/SortOptions";
+import { TextField } from "../Universal/TextField";
+import { CulturesListItem } from "./CulturesListItem";
 
 export interface CulturesOwnProps {
-  locale: UIMessagesObject;
+  l10n: L10nRecord
 }
 
 export interface CulturesStateProps {
-  cultures: Maybe<List<Record<CultureCombined>>>;
-  currentId: Maybe<string>;
-  sortOrder: string;
-  visibilityFilter: string;
-  filterText: string;
+  cultures: Maybe<List<Record<CultureCombined>>>
+  currentId: Maybe<string>
+  sortOrder: string
+  visibilityFilter: string
+  filterText: string
 }
 
 export interface CulturesDispatchProps {
-  selectCulture (id: string): void;
-  setSortOrder (sortOrder: string): void;
-  setVisibilityFilter (option: string): void;
-  switchValueVisibilityFilter (): void;
-  setFilterText (filterText: string): void;
-  switchToProfessions (): void;
+  selectCulture (id: string): void
+  setSortOrder (sortOrder: string): void
+  setVisibilityFilter (option: string): void
+  switchValueVisibilityFilter (): void
+  setFilterText (filterText: string): void
+  switchToProfessions (): void
 }
 
-export type CulturesProps = CulturesStateProps & CulturesDispatchProps & CulturesOwnProps;
+export type CulturesProps = CulturesStateProps & CulturesDispatchProps & CulturesOwnProps
 
 export function Cultures (props: CulturesProps) {
   const {
-    cultures,
-    locale,
+    cultures: mcultures,
+    l10n,
     setSortOrder,
     setVisibilityFilter,
     sortOrder,
     visibilityFilter,
     filterText,
-  } = props;
+  } = props
 
   return (
     <Page id="cultures">
       <Options>
         <TextField
-          hint={translate (locale, 'options.filtertext')}
+          hint={translate (l10n) ("search")}
           value={filterText}
           onChangeString={props.setFilterText}
           fullWidth
@@ -63,14 +66,14 @@ export function Cultures (props: CulturesProps) {
         <Dropdown
           value={Just (visibilityFilter)}
           onChangeJust={setVisibilityFilter}
-          options={List.of (
-            Record.of<DropdownOption> ({
-              id: 'all',
-              name: translate (locale, 'cultures.options.allcultures'),
+          options={List (
+            DropdownOption ({
+              id: Just ("all"),
+              name: translate (l10n) ("allcultures"),
             }),
-            Record.of<DropdownOption> ({
-              id: 'common',
-              name: translate (locale, 'cultures.options.commoncultures'),
+            DropdownOption ({
+              id: Just ("common"),
+              name: translate (l10n) ("commoncultures"),
             })
           )}
           fullWidth
@@ -78,42 +81,40 @@ export function Cultures (props: CulturesProps) {
         <SortOptions
           sortOrder={sortOrder}
           sort={setSortOrder}
-          options={List.of<SortNames> ('name', 'cost')}
-          locale={locale}
+          options={List<SortNames> ("name", "cost")}
+          l10n={l10n}
           />
       </Options>
       <MainContent>
         <ListHeader>
           <ListHeaderTag className="name">
-            {translate (locale, 'name')}
+            {translate (l10n) ("name")}
           </ListHeaderTag>
           <ListHeaderTag className="btn-placeholder" />
           <ListHeaderTag className="btn-placeholder" />
         </ListHeader>
         <Scroll>
           <ListView>
-            {
-              Maybe.fromMaybe<NonNullable<React.ReactNode>>
-                (<ListPlaceholder locale={locale} type="cultures" noResults />)
-                (cultures
-                  .bind<List<Record<CultureCombined>>> (Maybe.ensure (R.pipe (List.null, R.not)))
-                  .fmap (R.pipe (
-                    List.map (
-                      culture => (
-                        <CulturesListItem
-                          {...props}
-                          key={culture .get ('id')}
-                          culture={culture}
-                          />
-                      )
-                    ),
-                    List.toArray
-                  )))
-            }
+            {pipe_ (
+              mcultures,
+              bindF (ensure (notNull)),
+              maybe<NonNullable<React.ReactNode>>
+                (<ListPlaceholder l10n={l10n} type="cultures" noResults />)
+                (pipe (
+                  map (culture => (
+                    <CulturesListItem
+                      {...props}
+                      key={CultureCombinedA_.id (culture)}
+                      culture={culture}
+                      />
+                  )),
+                  toArray
+                ))
+            )}
           </ListView>
         </Scroll>
       </MainContent>
       <WikiInfoContainer {...props} />
     </Page>
-  );
+  )
 }

@@ -1,12 +1,12 @@
-import * as React from 'react';
-import { translate, UIMessages } from '../../../App/Utils/I18n';
-import { Markdown } from '../../../components/Markdown';
+import * as React from "react";
+import { translate, UIMessages } from "../../../Utilities/I18n";
+import { Markdown } from "../../Universal/Markdown";
 
 export interface WikiEffectProps {
   currentObject: {
     effect: string;
-  };
-  locale: UIMessages;
+  }
+  locale: UIMessages
 }
 
 export function WikiEffect(props: WikiEffectProps) {
@@ -15,9 +15,9 @@ export function WikiEffect(props: WikiEffectProps) {
       effect
     },
     locale
-  } = props;
+  } = props
 
   return (
-    <Markdown source={`**${translate(locale, 'info.effect')}:** ${effect}`} />
-  );
+    <Markdown source={`**${translate(locale, "info.effect")}:** ${effect}`} />
+  )
 }

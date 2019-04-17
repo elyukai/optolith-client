@@ -1,30 +1,29 @@
-import * as React from 'react';
-import { ActivatableDependent } from '../../../App/Models/Hero/heroTypeHelpers';
-import { AttributeCombined, SkillCombined } from '../../../App/Models/View/viewTypeHelpers';
-import { SpecialAbility } from '../../../App/Models/Wiki/wikiTypeHelpers';
-import { translate, UIMessagesObject } from '../../../App/Utils/I18n';
-import { Checkbox } from '../../../components/Checkbox';
-import { Options } from '../../../components/Options';
-import { List, Maybe, Record } from '../../../Utilities/dataUtils';
-import { AttributeMods } from '../AttributeMods';
-import { Sheet } from '../Sheet';
-import { SheetWrapper } from '../SheetWrapper';
-import { SkillsSheetLanguages } from './SkillsSheetLanguages';
-import { SkillsSheetQualityLevels } from './SkillsSheetQualityLevels';
-import { SkillsSheetRoutineChecks } from './SkillsSheetRoutineChecks';
-import { SkillsSheetScripts } from './SkillsSheetScripts';
-import { SkillsSheetSkills } from './SkillsSheetSkills';
+import * as React from "react";
+import { ActivatableDependent } from "../../../Models/Hero/heroTypeHelpers";
+import { AttributeCombined, SkillCombined } from "../../../Models/View/viewTypeHelpers";
+import { SpecialAbility } from "../../../Models/Wiki/wikiTypeHelpers";
+import { translate, UIMessagesObject } from "../../../Utilities/I18n";
+import { Checkbox } from "../../Universal/Checkbox";
+import { Options } from "../../Universal/Options";
+import { AttributeMods } from "../AttributeMods";
+import { Sheet } from "../Sheet";
+import { SheetWrapper } from "../SheetWrapper";
+import { SkillsSheetLanguages } from "./SkillsSheetLanguages";
+import { SkillsSheetQualityLevels } from "./SkillsSheetQualityLevels";
+import { SkillsSheetRoutineChecks } from "./SkillsSheetRoutineChecks";
+import { SkillsSheetScripts } from "./SkillsSheetScripts";
+import { SkillsSheetSkills } from "./SkillsSheetSkills";
 
 export interface SkillsSheetProps {
-  attributes: List<Record<AttributeCombined>>;
-  checkAttributeValueVisibility: boolean;
-  languagesStateEntry: Maybe<Record<ActivatableDependent>>;
-  languagesWikiEntry: Maybe<Record<SpecialAbility>>;
-  locale: UIMessagesObject;
-  scriptsStateEntry: Maybe<Record<ActivatableDependent>>;
-  scriptsWikiEntry: Maybe<Record<SpecialAbility>>;
-  skills: List<Record<SkillCombined>>;
-  switchAttributeValueVisibility (): void;
+  attributes: List<Record<AttributeCombined>>
+  checkAttributeValueVisibility: boolean
+  languagesStateEntry: Maybe<Record<ActivatableDependent>>
+  languagesWikiEntry: Maybe<Record<SpecialAbility>>
+  locale: UIMessagesObject
+  scriptsStateEntry: Maybe<Record<ActivatableDependent>>
+  scriptsWikiEntry: Maybe<Record<SpecialAbility>>
+  skills: List<Record<SkillCombined>>
+  switchAttributeValueVisibility (): void
 }
 
 export function SkillsSheet (props: SkillsSheetProps) {
@@ -38,7 +37,7 @@ export function SkillsSheet (props: SkillsSheetProps) {
     scriptsWikiEntry,
     skills,
     switchAttributeValueVisibility,
-  } = props;
+  } = props
 
   return (
     <SheetWrapper>
@@ -47,12 +46,12 @@ export function SkillsSheet (props: SkillsSheetProps) {
           checked={checkAttributeValueVisibility}
           onClick={switchAttributeValueVisibility}
           >
-          {translate (locale, 'charactersheet.options.showattributevalues')}
+          {translate (locale, "charactersheet.options.showattributevalues")}
         </Checkbox>
       </Options>
       <Sheet
         id="skills-sheet"
-        title={translate (locale, 'charactersheet.gamestats.title')}
+        title={translate (locale, "charactersheet.gamestats.title")}
         attributes={attributes}
         locale={locale}
         >
@@ -84,5 +83,5 @@ export function SkillsSheet (props: SkillsSheetProps) {
         </div>
       </Sheet>
     </SheetWrapper>
-  );
+  )
 }
