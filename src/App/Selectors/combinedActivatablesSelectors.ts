@@ -26,14 +26,12 @@ type InactiveOrActive<A extends RecordI<Activatable>> =
 
 const getFilteredInactives =
   <A extends RecordI<Activatable>>
-  (
-    minactive: Maybe<List<Record<InactiveActivatable<A>>>>,
-    mactive: Maybe<List<Record<ActiveActivatable<A>>>>,
-    sortOptions: SortOptions<RecordI<InactiveOrActive<A>>>,
-    filterText: string,
-    l10n: Record<L10n>,
-    areHintsEnabled: boolean
-  ): Maybe<List<InactiveOrActive<A>>> =>
+  (minactive: Maybe<List<Record<InactiveActivatable<A>>>>) =>
+  (mactive: Maybe<List<Record<ActiveActivatable<A>>>>) =>
+  (sortOptions: SortOptions<RecordI<InactiveOrActive<A>>>) =>
+  (filterText: string) =>
+  (l10n: Record<L10n>) =>
+  (areHintsEnabled: boolean): Maybe<List<InactiveOrActive<A>>> =>
     fmapF (minactive)
           (inactive => areHintsEnabled
             ? filterAndSortRecordsBy (0)
@@ -56,32 +54,48 @@ const getFilteredInactives =
 const sortByName = (l10n: L10nRecord) => [comparingR (getName)
                                                      (compareLocale (L10n.A.id (l10n)))]
 
-export const getFilteredInactiveAdvantages = createMaybeSelector (
-  getDeactiveAdvantages,
-  getAdvantagesForEdit,
-  getInactiveAdvantagesFilterText,
-  getLocaleAsProp,
-  getEnableActiveItemHints,
-  (minactive, mactive, filterText, l10n, areHintsEnabled) =>
-    getFilteredInactives (minactive, mactive, sortByName (l10n), filterText, l10n, areHintsEnabled)
-)
+export const getFilteredInactiveAdvantages =
+  (hero_id: string) =>
+    createMaybeSelector (
+      getDeactiveAdvantages (hero_id),
+      getAdvantagesForEdit,
+      getInactiveAdvantagesFilterText,
+      getLocaleAsProp,
+      getEnableActiveItemHints,
+      (minactive, mactive, filterText, l10n, areHintsEnabled) =>
+        getFilteredInactives (minactive)
+                             (mactive)
+                             (sortByName (l10n))
+                             (filterText)
+                             (l10n)
+                             (areHintsEnabled)
+    )
 
-export const getFilteredInactiveDisadvantages = createMaybeSelector (
-  getDeactiveDisadvantages,
-  getDisadvantagesForEdit,
-  getInactiveDisadvantagesFilterText,
-  getLocaleAsProp,
-  getEnableActiveItemHints,
-  (minactive, mactive, filterText, l10n, areHintsEnabled) =>
-    getFilteredInactives (minactive, mactive, sortByName (l10n), filterText, l10n, areHintsEnabled)
-)
+export const getFilteredInactiveDisadvantages =
+  (hero_id: string) =>
+    createMaybeSelector (
+      getDeactiveDisadvantages (hero_id),
+      getDisadvantagesForEdit,
+      getInactiveDisadvantagesFilterText,
+      getLocaleAsProp,
+      getEnableActiveItemHints,
+      (minactive, mactive, filterText, l10n, areHintsEnabled) =>
+        getFilteredInactives (minactive)
+                             (mactive)
+                             (sortByName (l10n))
+                             (filterText)
+                             (l10n)
+                             (areHintsEnabled)
+    )
 
-export const getFilteredInactiveSpecialAbilities = createMaybeSelector (
-  getDeactiveSpecialAbilities,
-  getSpecialAbilitiesForEdit,
-  getSpecialAbilitiesSortOptions,
-  getInactiveSpecialAbilitiesFilterText,
-  getLocaleAsProp,
-  getEnableActiveItemHints,
-  getFilteredInactives
-)
+export const getFilteredInactiveSpecialAbilities =
+  (hero_id: string) =>
+    createMaybeSelector (
+      getDeactiveSpecialAbilities (hero_id),
+      getSpecialAbilitiesForEdit,
+      getSpecialAbilitiesSortOptions,
+      getInactiveSpecialAbilitiesFilterText,
+      getLocaleAsProp,
+      getEnableActiveItemHints,
+      getFilteredInactives
+    )

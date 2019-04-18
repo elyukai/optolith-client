@@ -1,26 +1,28 @@
+import { ident } from "../../Data/Function";
+import { fmapF } from "../../Data/Functor";
 import { fromArray, List } from "../../Data/List";
-import { catMaybes, liftM2, mapMaybe, Maybe } from "../../Data/Maybe";
+import { catMaybes, join, liftM2, mapMaybe, Maybe } from "../../Data/Maybe";
 import { elems, lookup } from "../../Data/OrderedMap";
-import { OrderedSet } from "../../Data/OrderedSet";
 import { uncurryN } from "../../Data/Pair";
 import { Record } from "../../Data/Record";
 import { ActivatableCategory, Categories } from "../Constants/Categories";
-import { HeroModelRecord } from "../Models/Hero/HeroModel";
-import { AdventurePointsCategories } from "../Models/View/AdventurePointsCategories";
 import { InactiveActivatable } from "../Models/View/InactiveActivatable";
 import { Advantage } from "../Models/Wiki/Advantage";
 import { Disadvantage } from "../Models/Wiki/Disadvantage";
 import { SpecialAbility } from "../Models/Wiki/SpecialAbility";
+import { SourceLink } from "../Models/Wiki/sub/SourceLink";
 import { Activatable, WikiEntryByCategory, WikiEntryRecordByCategory } from "../Models/Wiki/wikiTypeHelpers";
+import { heroReducer } from "../Reducers/heroReducer";
 import { getActivatableHeroSliceByCategory } from "../Utilities/Activatable/activatableActiveUtils";
 import { getInactiveView } from "../Utilities/Activatable/activatableInactiveUtils";
 import { getAllAvailableExtendedSpecialAbilities } from "../Utilities/Activatable/ExtendedStyleUtils";
+import { createMapSelector } from "../Utilities/createMapSelector";
 import { createMaybeSelector } from "../Utilities/createMaybeSelector";
 import { pipe } from "../Utilities/pipe";
 import { filterByAvailability } from "../Utilities/RulesUtils";
 import { getWikiSliceGetterByCategory } from "../Utilities/WikiUtils";
-import { getAdventurePointsObject } from "./adventurePointsSelectors";
-import { getRuleBooksEnabled } from "./rulesSelectors";
+import { getAPObjectMap } from "./adventurePointsSelectors";
+import { EnabledSourceBooks, getRuleBooksEnabled } from "./rulesSelectors";
 import * as stateSelectors from "./stateSelectors";
 
 export const getExtendedSpecialAbilitiesToAdd = createMaybeSelector (
@@ -40,34 +42,40 @@ type Inactives<T extends ActivatableCategory> = Maybe<List<Inactive<T>>>
 export const getInactiveForView =
   <T extends ActivatableCategory>
   (category: T) =>
-  createMaybeSelector (
-    stateSelectors.getCurrentHeroPresent,
-    stateSelectors.getLocaleAsProp,
-    getExtendedSpecialAbilitiesToAdd,
-    getAdventurePointsObject,
-    stateSelectors.getWiki,
-    (mhero, l10n, validExtendedSpecialAbilities, madventure_points, wiki): Inactives<T> =>
-      liftM2 ((hero: HeroModelRecord) => (adventure_points: Record<AdventurePointsCategories>) => {
-               const wikiKey = getWikiSliceGetterByCategory (category)
-               const wikiSlice = wikiKey (wiki)
+  createMapSelector (stateSelectors.getHeroes)
+                    (getAPObjectMap)
+                    (
+                      stateSelectors.getLocaleAsProp,
+                      getExtendedSpecialAbilitiesToAdd,
+                      stateSelectors.getWiki
+                    )
+                    (ident)
+                    (madventure_points =>
+                     (l10n, validExtendedSpecialAbilities, wiki) =>
+                     (undo_hero): Inactives<T> =>
+                       fmapF (join (madventure_points))
+                             (adventure_points => {
+                               const hero = heroReducer.A.present (undo_hero)
+                               const wikiKey = getWikiSliceGetterByCategory (category)
+                               const wikiSlice = wikiKey (wiki)
 
-               const stateSlice = getActivatableHeroSliceByCategory (category) (hero)
+                               const stateSlice = getActivatableHeroSliceByCategory (category)
+                                                                                    (hero)
 
-               return mapMaybe ((wiki_entry: WikiEntryRecordByCategory[T]) =>
-                                 getInactiveView (l10n)
-                                                 (wiki)
-                                                 (hero)
-                                                 (adventure_points)
-                                                 (validExtendedSpecialAbilities)
-                                                 (wiki_entry)
-                                                 (lookup (getId (wiki_entry)) (stateSlice)))
-                               (elems<Activatable> (wikiSlice))
-             })
-             (mhero)
-             (madventure_points)
-  )
+                               return mapMaybe ((wiki_entry: WikiEntryRecordByCategory[T]) =>
+                                                 getInactiveView (l10n)
+                                                                 (wiki)
+                                                                 (hero)
+                                                                 (adventure_points)
+                                                                 (validExtendedSpecialAbilities)
+                                                                 (wiki_entry)
+                                                                 (lookup (getId (wiki_entry))
+                                                                         (stateSlice)))
+                                               (elems<Activatable> (wikiSlice))
+                             })
+                  )
 
-type avai = true | OrderedSet<string>
+type avai = EnabledSourceBooks
 type listAdv = List<Record<InactiveActivatable<Advantage>>>
 type listDis = List<Record<InactiveActivatable<Disadvantage>>>
 type listSA = List<Record<InactiveActivatable<SpecialAbility>>>
@@ -75,22 +83,44 @@ type listSA = List<Record<InactiveActivatable<SpecialAbility>>>
 const getWikiEntry = InactiveActivatable.A.wikiEntry as
   <T extends ActivatableCategory> (x: Inactive<T>) => WikiEntryRecordByCategory[T]
 
-const getSrc = Advantage.AL.src
+const getSrc = pipe (getWikiEntry, Advantage.AL.src) as
+  <T extends ActivatableCategory> (x: Inactive<T>) => List<Record<SourceLink>>
 
-export const getDeactiveAdvantages = createMaybeSelector (
-  getRuleBooksEnabled,
-  getInactiveForView (Categories.ADVANTAGES),
-  uncurryN (liftM2<avai, listAdv, listAdv> (filterByAvailability (pipe (getWikiEntry, getSrc))))
-)
+export const getDeactiveAdvantages =
+  (hero_id: string) =>
+    createMaybeSelector (
+      getRuleBooksEnabled,
+      getInactiveForView (Categories.ADVANTAGES) (hero_id),
+      uncurryN (rules =>
+                  pipe (
+                    join,
+                    liftM2<avai, listAdv, listAdv> (filterByAvailability (getSrc))
+                                                   (rules)
+                  ))
+    )
 
-export const getDeactiveDisadvantages = createMaybeSelector (
-  getRuleBooksEnabled,
-  getInactiveForView (Categories.DISADVANTAGES),
-  uncurryN (liftM2<avai, listDis, listDis> (filterByAvailability (pipe (getWikiEntry, getSrc))))
-)
+export const getDeactiveDisadvantages =
+  (hero_id: string) =>
+    createMaybeSelector (
+      getRuleBooksEnabled,
+      getInactiveForView (Categories.DISADVANTAGES) (hero_id),
+      uncurryN (rules =>
+                  pipe (
+                    join,
+                    liftM2<avai, listDis, listDis> (filterByAvailability (getSrc))
+                                                   (rules)
+                  ))
+    )
 
-export const getDeactiveSpecialAbilities = createMaybeSelector (
-  getRuleBooksEnabled,
-  getInactiveForView (Categories.SPECIAL_ABILITIES),
-  uncurryN (liftM2<avai, listSA, listSA> (filterByAvailability (pipe (getWikiEntry, getSrc))))
-)
+export const getDeactiveSpecialAbilities =
+  (hero_id: string) =>
+    createMaybeSelector (
+      getRuleBooksEnabled,
+      getInactiveForView (Categories.SPECIAL_ABILITIES) (hero_id),
+      uncurryN (rules =>
+                  pipe (
+                    join,
+                    liftM2<avai, listSA, listSA> (filterByAvailability (getSrc))
+                                                   (rules)
+                  ))
+    )

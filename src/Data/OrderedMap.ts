@@ -1049,6 +1049,38 @@ export import isOrderedMap = Internals.isOrderedMap
  */
 export const fromArray = mapFromArray (show)
 
+/**
+ * `mapMEitherWithKey :: (k -> a -> Either e b) -> OrderedMap k a -> Either e (OrderedMap k b)`
+ *
+ * `mapMEitherWithKey f map` takes a function and a map and maps the function
+ * over every element in the list. If the function returns a `Left`, it is
+ * immediately returned by the function. If `f` did not return any `Left`, the
+ * map of unwrapped return values is returned as a `Right`. If `map` is empty,
+ * `Right empty` is returned.
+ */
+export const mapMEitherWithKey =
+  <K, E, A, B>
+  (f: (key: K) => (x: A) => Either<E, B>) =>
+  (m: OrderedMap<K, A>): Either<E, OrderedMap<K, B>> => {
+    if (fnull (m)) {
+      return Right (empty)
+    }
+
+    const arr: [K, B][] = []
+
+    for (const [key, value] of m .value) {
+      const res = f (key) (value)
+
+      if (isLeft (res)) {
+        return res
+      }
+
+      arr .push ([key, fromRight_ (res)])
+    }
+
+    return Right (fromArray (arr))
+  }
+
 // NAMESPACED FUNCTIONS
 
 export const OrderedMap = {
@@ -1133,6 +1165,7 @@ export const OrderedMap = {
   deleteLookupWithKey,
   lookup2,
   lookup2F,
+  mapMEitherWithKey,
 }
 
 

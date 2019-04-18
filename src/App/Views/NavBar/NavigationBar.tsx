@@ -4,6 +4,7 @@ import { List } from "../../../Data/List";
 import { Maybe, maybe, maybeR } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
 import { SettingsContainer } from "../../Containers/SettingsContainer";
+import { HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { SubTab } from "../../Models/Hero/heroTypeHelpers";
 import { AdventurePointsCategories } from "../../Models/View/AdventurePointsCategories";
 import { L10nRecord } from "../../Models/Wiki/L10n";
@@ -23,6 +24,7 @@ import { NavigationBarTabProps, NavigationBarTabs } from "./NavigationBarTabs";
 import { NavigationBarWrapper } from "./NavigationBarWrapper";
 
 export interface NavigationBarOwnProps {
+  mhero: Maybe<HeroModelRecord>
   l10n: L10nRecord
   platform: string
   checkForUpdates (): void

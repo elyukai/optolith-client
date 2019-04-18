@@ -38,7 +38,7 @@ export class Dialog extends React.Component<DialogProps, {}> {
         >
         <div className="modal-container">
           {noCloseButton !== true
-            ? <div className="modal-close" onClick={close}><div>&#xE5CD</div></div>
+            ? <div className="modal-close" onClick={close}><div>&#xE5CD;</div></div>
             : null}
           {notNullStrUndef (title)
             ? <div className="modal-header"><div className="modal-header-inner">{title}</div></div>

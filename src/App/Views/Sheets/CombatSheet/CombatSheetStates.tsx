@@ -130,7 +130,7 @@ export function CombatSheetStates ({ locale }: CombatSheetStatesProps) {
     locale .get ("id")
   )
 
-  const statesSplit = List.splitAt<Record<{ id: number name: string }>> (9) (statesSecond)
+  const statesSplit = List.splitAt<Record<{ id: number; name: string }>> (9) (statesSecond)
 
   return (
     <div className="status">

@@ -48,6 +48,7 @@ export const csvToList =
                   acc => flength (l) !== header_length
                     ? Left (
                       `csvToList: Line ${i + 1} has different length than header.`
+                      + ` Check if there are any newline characters ("\\n") on that line.`
                       + ` Source: ${show (l)}`
                     )
                     : Right (cons (acc) (fromList (zip<string, string> (header) (l))))

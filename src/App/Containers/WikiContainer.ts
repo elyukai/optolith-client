@@ -1,11 +1,10 @@
-import { connect } from 'react-redux';
-import { Action, Dispatch } from 'redux';
-import { setWikiCategory1, setWikiCategory2, setWikiCombatTechniquesGroup, setWikiFilter, setWikiFilterAll, setWikiItemTemplatesGroup, setWikiLiturgicalChantsGroup, setWikiProfessionsGroup, setWikiSkillsGroup, setWikiSpecialAbilitiesGroup, setWikiSpellsGroup } from '../App/Actions/WikiActions';
-import { AppState } from '../reducers/appReducer';
-import { getSex, getWikiCombatTechniquesGroup, getWikiFilterAll, getWikiFilterText, getWikiItemTemplatesGroup, getWikiLiturgicalChantsGroup, getWikiMainCategory, getWikiProfessionsGroup, getWikiSkillsGroup, getWikiSpecialAbilitiesGroup, getWikiSpellsGroup } from '../Selectors/stateSelectors';
-import { getPreparedAdvantages, getPreparedBlessings, getPreparedCantrips, getPreparedCombatTechniques, getPreparedCultures, getPreparedDisadvantages, getPreparedItemTemplates, getPreparedLiturgicalChants, getPreparedProfessions, getPreparedRaces, getPreparedSkills, getPreparedSpecialAbilities, getPreparedSpells, getSpecialAbilityGroups } from '../Selectors/wikiSelectors';
-import { Maybe } from '../Utilities/dataUtils';
-import { Wiki, WikiDispatchProps, WikiOwnProps, WikiStateProps } from '../Views/Wiki/Wiki';
+import { connect } from "react-redux";
+import { Action, Dispatch } from "redux";
+import { setWikiCategory1, setWikiCategory2, setWikiCombatTechniquesGroup, setWikiFilter, setWikiFilterAll, setWikiItemTemplatesGroup, setWikiLiturgicalChantsGroup, setWikiProfessionsGroup, setWikiSkillsGroup, setWikiSpecialAbilitiesGroup, setWikiSpellsGroup } from "../Actions/WikiActions";
+import { AppState } from "../Reducers/appReducer";
+import { getSex, getWikiCombatTechniquesGroup, getWikiFilterAll, getWikiFilterText, getWikiItemTemplatesGroup, getWikiLiturgicalChantsGroup, getWikiMainCategory, getWikiProfessionsGroup, getWikiSkillsGroup, getWikiSpecialAbilitiesGroup, getWikiSpellsGroup } from "../Selectors/stateSelectors";
+import { getPreparedAdvantages, getPreparedBlessings, getPreparedCantrips, getPreparedCombatTechniques, getPreparedCultures, getPreparedDisadvantages, getPreparedItemTemplates, getPreparedLiturgicalChants, getPreparedProfessions, getPreparedRaces, getPreparedSkills, getPreparedSpecialAbilities, getPreparedSpells, getSpecialAbilityGroups } from "../Selectors/wikiSelectors";
+import { Wiki, WikiDispatchProps, WikiOwnProps, WikiStateProps } from "../Views/Wiki/Wiki";
 
 const mapStateToProps = (state: AppState, props: WikiOwnProps) => ({
   filterText: getWikiFilterText (state),
@@ -33,51 +32,51 @@ const mapStateToProps = (state: AppState, props: WikiOwnProps) => ({
   liturgicalChantsGroup: getWikiLiturgicalChantsGroup (state),
   itemTemplatesGroup: getWikiItemTemplatesGroup (state),
   specialAbilityGroups: getSpecialAbilityGroups (state, props),
-});
+})
 
 const mapDispatchToProps = (dispatch: Dispatch<Action>) => ({
   setCategory1 (category: Maybe<string>) {
     if (Maybe.isJust (category)) {
-      dispatch (setWikiCategory1 (Maybe.fromJust (category)));
+      dispatch (setWikiCategory1 (Maybe.fromJust (category)))
     }
   },
   setCategory2 (category: Maybe<string>) {
     if (Maybe.isJust (category)) {
-      dispatch (setWikiCategory2 (Maybe.fromJust (category)));
+      dispatch (setWikiCategory2 (Maybe.fromJust (category)))
     }
   },
   setFilter (filterText: string) {
-    dispatch (setWikiFilter (filterText));
+    dispatch (setWikiFilter (filterText))
   },
   setFilterAll (filterText: string) {
-    dispatch (setWikiFilterAll (filterText));
+    dispatch (setWikiFilterAll (filterText))
   },
   setProfessionsGroup (group: Maybe<number>) {
-    dispatch (setWikiProfessionsGroup (group));
+    dispatch (setWikiProfessionsGroup (group))
   },
   setSkillsGroup (group: Maybe<number>) {
-    dispatch (setWikiSkillsGroup (group));
+    dispatch (setWikiSkillsGroup (group))
   },
   setCombatTechniquesGroup (group: Maybe<number>) {
-    dispatch (setWikiCombatTechniquesGroup (group));
+    dispatch (setWikiCombatTechniquesGroup (group))
   },
   setSpecialAbilitiesGroup (group: Maybe<number>) {
-    dispatch (setWikiSpecialAbilitiesGroup (group));
+    dispatch (setWikiSpecialAbilitiesGroup (group))
   },
   setSpellsGroup (group: Maybe<number>) {
-    dispatch (setWikiSpellsGroup (group));
+    dispatch (setWikiSpellsGroup (group))
   },
   setLiturgicalChantsGroup (group: Maybe<number>) {
-    dispatch (setWikiLiturgicalChantsGroup (group));
+    dispatch (setWikiLiturgicalChantsGroup (group))
   },
   setItemTemplatesGroup (group: Maybe<number>) {
-    dispatch (setWikiItemTemplatesGroup (group));
+    dispatch (setWikiItemTemplatesGroup (group))
   },
-});
+})
 
 const connectWiki = connect<WikiStateProps, WikiDispatchProps, WikiOwnProps, AppState> (
   mapStateToProps,
   mapDispatchToProps
-);
+)
 
-export const WikiContainer = connectWiki (Wiki);
+export const WikiContainer = connectWiki (Wiki)

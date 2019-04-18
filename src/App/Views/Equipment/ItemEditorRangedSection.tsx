@@ -1,5 +1,4 @@
 import * as React from "react";
-import { List, Maybe, OrderedMap, Record } from "../../Utilities/dataUtils";
 import { translate } from "../../Utilities/I18n";
 import { getLossLevelElements, ItemEditorInputValidation } from "../../Utilities/ItemUtils";
 import { Dropdown, DropdownOption } from "../Universal/Dropdown";

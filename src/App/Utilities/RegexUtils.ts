@@ -54,11 +54,3 @@ export const isPathValidM =
                             isBase64Image (src)
                             || existsSync (src.replace (/file:[\\\/]+/, ""))
                           ))
-
-/**
- * Escape a string that may contain `RegExp`-specific notation for use in
- * regular expressions.
- */
-export const escapeRegExp =
-  // $& means the whole matched string
-  (x: string) => x .replace (/[.*+?^${}()|[\]\\]/g, "\\$&")

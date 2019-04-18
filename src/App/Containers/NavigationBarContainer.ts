@@ -1,71 +1,75 @@
-import { connect } from 'react-redux';
-import { Action, Dispatch } from 'redux';
-import * as HerolistActions from '../App/Actions/HerolistActions';
-import * as HistoryActions from '../App/Actions/HistoryActions';
-import * as InGameActions from '../App/Actions/InGameActions';
-import * as LocationActions from '../App/Actions/LocationActions';
-import * as SubwindowsActions from '../App/Actions/SubwindowsActions';
-import { TabId } from '../App/Utils/LocationUtils';
-import { AppState } from '../reducers/appReducer';
-import { getAdventurePointsObject, getMagicalAdvantagesDisadvantagesAdventurePointsMaximum } from '../Selectors/adventurePointsSelectors';
-import { getRedoAvailability, getUndoAvailability } from '../Selectors/currentHeroSelectors';
-import { getIsLiturgicalChantsTabAvailable } from '../Selectors/liturgicalChantsSelectors';
-import { getIsRemovingEnabled } from '../Selectors/phaseSelectors';
-import { getIsSpellsTabAvailable } from '../Selectors/spellsSelectors';
-import { getAvatar, getCurrentTab, getIsSettingsOpen } from '../Selectors/stateSelectors';
-import { getIsHeroSection, getSubtabs, getTabs } from '../Selectors/uilocationSelectors';
-import { UIMessagesObject } from '../types/ui';
-import { Nothing } from '../Utilities/dataUtils';
-import { NavigationBar, NavigationBarDispatchProps, NavigationBarOwnProps, NavigationBarStateProps } from '../Views/navigationbar/NavigationBar';
+import { connect } from "react-redux";
+import { bind, join, Nothing } from "../../Data/Maybe";
+import { ReduxDispatch } from "../Actions/Actions";
+import * as HerolistActions from "../Actions/HerolistActions";
+import * as HistoryActions from "../Actions/HistoryActions";
+import * as InGameActions from "../Actions/InGameActions";
+import * as LocationActions from "../Actions/LocationActions";
+import * as SubwindowsActions from "../Actions/SubwindowsActions";
+import { HeroModel } from "../Models/Hero/HeroModel";
+import { AppStateRecord } from "../Reducers/appReducer";
+import { getAPObjectMap, getMagicalAdvantagesDisadvantagesAdventurePointsMaximum } from "../Selectors/adventurePointsSelectors";
+import { getRedoAvailability, getUndoAvailability } from "../Selectors/currentHeroSelectors";
+import { getIsLiturgicalChantsTabAvailable } from "../Selectors/liturgicalChantsSelectors";
+import { getIsRemovingEnabled } from "../Selectors/phaseSelectors";
+import { getIsSpellsTabAvailable } from "../Selectors/spellsSelectors";
+import { getAvatar, getCurrentTab, getIsSettingsOpen } from "../Selectors/stateSelectors";
+import { getIsHeroSection, getSubtabs, getTabs } from "../Selectors/uilocationSelectors";
+import { TabId } from "../Utilities/LocationUtils";
+import { NavigationBar, NavigationBarDispatchProps, NavigationBarOwnProps, NavigationBarStateProps } from "../Views/NavBar/NavigationBar";
 
-const mapStateToProps = (state: AppState, ownProps: { locale: UIMessagesObject }) => ({
-  currentTab: getCurrentTab (state),
-  avatar: getAvatar (state),
-  isRedoAvailable: getRedoAvailability (state),
-  isUndoAvailable: getUndoAvailability (state),
-  isRemovingEnabled: getIsRemovingEnabled (state),
-  isSettingsOpen: getIsSettingsOpen (state),
-  isHeroSection: getIsHeroSection (state),
-  tabs: getTabs (state, ownProps),
-  subtabs: getSubtabs (state, ownProps),
-  adventurePoints: getAdventurePointsObject (state, ownProps),
-  maximumForMagicalAdvantagesDisadvantages:
-    getMagicalAdvantagesDisadvantagesAdventurePointsMaximum (state),
-  isSpellcaster: getIsSpellsTabAvailable (state),
-  isBlessedOne: getIsLiturgicalChantsTabAvailable (state),
-});
+const mapStateToProps =
+  (state: AppStateRecord, ownProps: NavigationBarOwnProps): NavigationBarStateProps => ({
+    currentTab: getCurrentTab (state),
+    avatar: getAvatar (state),
+    isRedoAvailable: getRedoAvailability (state),
+    isUndoAvailable: getUndoAvailability (state),
+    isRemovingEnabled: getIsRemovingEnabled (state),
+    isSettingsOpen: getIsSettingsOpen (state),
+    isHeroSection: getIsHeroSection (state),
+    tabs: getTabs (state, ownProps),
+    subtabs: getSubtabs (state, ownProps),
+    adventurePoints: join (bind (ownProps.mhero)
+                                (hero => getAPObjectMap (HeroModel.A.id (hero)) (state, ownProps))),
+    maximumForMagicalAdvantagesDisadvantages:
+      getMagicalAdvantagesDisadvantagesAdventurePointsMaximum (state),
+    isSpellcaster: getIsSpellsTabAvailable (state),
+    isBlessedOne: getIsLiturgicalChantsTabAvailable (state),
+  })
 
-const mapDispatchToProps = (
-  dispatch: Dispatch<Action, AppState>,
-  ownProps: { locale: UIMessagesObject }
-) => ({
+const mapDispatchToProps = (dispatch: ReduxDispatch, ownProps: NavigationBarOwnProps) => ({
   setTab (id: TabId) {
-    dispatch (LocationActions.setTab (id));
+    dispatch (LocationActions.setTab (id))
   },
   undo () {
-    dispatch (HistoryActions.undo ());
+    dispatch (HistoryActions.undo ())
   },
   redo () {
-    dispatch (HistoryActions.redo ());
+    dispatch (HistoryActions.redo ())
   },
   saveHero () {
-    dispatch (HerolistActions.saveHero (ownProps.locale) (Nothing ()));
+    dispatch (HerolistActions.saveHero (ownProps.l10n) (Nothing))
   },
   openSettings () {
-    dispatch (SubwindowsActions.openSettings ());
+    dispatch (SubwindowsActions.openSettings ())
   },
   closeSettings () {
-    dispatch (SubwindowsActions.closeSettings ());
+    dispatch (SubwindowsActions.closeSettings ())
   },
   saveGroup () {
-    dispatch (InGameActions._save ());
+    dispatch (InGameActions._save ())
   },
-});
+})
 
 const connectNavigationBarContainer =
-  connect<NavigationBarStateProps, NavigationBarDispatchProps, NavigationBarOwnProps, AppState> (
+  connect<
+    NavigationBarStateProps,
+    NavigationBarDispatchProps,
+    NavigationBarOwnProps,
+    AppStateRecord
+  > (
     mapStateToProps,
     mapDispatchToProps
-  );
+  )
 
-export const NavigationBarContainer = connectNavigationBarContainer (NavigationBar);
+export const NavigationBarContainer = connectNavigationBarContainer (NavigationBar)

@@ -1,11 +1,10 @@
-import { connect } from 'react-redux';
-import { Action, Dispatch } from 'redux';
-import * as EquipmentActions from '../App/Actions/EquipmentActions';
-import { AppState } from '../reducers/appReducer';
-import { getSortedTemplates } from '../Selectors/equipmentSelectors';
-import { getIsItemCreation, getItemEditorInstance, getWikiAttributes, getWikiCombatTechniques } from '../Selectors/stateSelectors';
-import { Maybe } from '../Utilities/dataUtils';
-import { ItemEditor, ItemEditorDispatchProps, ItemEditorOwnProps, ItemEditorStateProps } from '../Views/Equipment/ItemEditor';
+import { connect } from "react-redux";
+import { Action, Dispatch } from "redux";
+import * as EquipmentActions from "../Actions/EquipmentActions";
+import { AppState } from "../Reducers/appReducer";
+import { getSortedTemplates } from "../Selectors/equipmentSelectors";
+import { getIsItemCreation, getItemEditorInstance, getWikiAttributes, getWikiCombatTechniques } from "../Selectors/stateSelectors";
+import { ItemEditor, ItemEditorDispatchProps, ItemEditorOwnProps, ItemEditorStateProps } from "../Views/Equipment/ItemEditor";
 
 const mapStateToProps = (state: AppState, ownProps: ItemEditorOwnProps): ItemEditorStateProps => ({
   attributes: getWikiAttributes (state),
@@ -13,144 +12,144 @@ const mapStateToProps = (state: AppState, ownProps: ItemEditorOwnProps): ItemEdi
   isInCreation: getIsItemCreation (state),
   item: getItemEditorInstance (state),
   templates: getSortedTemplates (state, ownProps),
-});
+})
 
 const mapDispatchToProps = (dispatch: Dispatch<Action, AppState>): ItemEditorDispatchProps => ({
   addToList (): void {
-    dispatch (EquipmentActions.addItem ());
+    dispatch (EquipmentActions.addItem ())
   },
   closeEditor (): void {
-    dispatch (EquipmentActions.closeItemEditor ());
+    dispatch (EquipmentActions.closeItemEditor ())
   },
   saveItem (): void {
-    dispatch (EquipmentActions.saveItem ());
+    dispatch (EquipmentActions.saveItem ())
   },
   setName (value: string): void {
-    dispatch (EquipmentActions.setName (value));
+    dispatch (EquipmentActions.setName (value))
   },
   setPrice (value: string): void {
-    dispatch (EquipmentActions.setPrice (value));
+    dispatch (EquipmentActions.setPrice (value))
   },
   setWeight (value: string): void {
-    dispatch (EquipmentActions.setWeight (value));
+    dispatch (EquipmentActions.setWeight (value))
   },
   setAmount (value: string): void {
-    dispatch (EquipmentActions.setAmount (value));
+    dispatch (EquipmentActions.setAmount (value))
   },
   setWhere (value: string): void {
-    dispatch (EquipmentActions.setWhere (value));
+    dispatch (EquipmentActions.setWhere (value))
   },
   setGroup (gr: number): void {
-    dispatch (EquipmentActions.setGroup (gr));
+    dispatch (EquipmentActions.setGroup (gr))
   },
   setTemplate (template: string): void {
-    dispatch (EquipmentActions.setTemplate (template));
+    dispatch (EquipmentActions.setTemplate (template))
   },
   setCombatTechnique (id: string): void {
-    dispatch (EquipmentActions.setCombatTechnique (id));
+    dispatch (EquipmentActions.setCombatTechnique (id))
   },
   setDamageDiceNumber (value: string): void {
-    dispatch (EquipmentActions.setDamageDiceNumber (value));
+    dispatch (EquipmentActions.setDamageDiceNumber (value))
   },
   setDamageDiceSides (value: number): void {
-    dispatch (EquipmentActions.setDamageDiceSides (value));
+    dispatch (EquipmentActions.setDamageDiceSides (value))
   },
   setDamageFlat (value: string): void {
-    dispatch (EquipmentActions.setDamageFlat (value));
+    dispatch (EquipmentActions.setDamageFlat (value))
   },
   setPrimaryAttribute (primary: Maybe<string>): void {
-    dispatch (EquipmentActions.setPrimaryAttribute (primary));
+    dispatch (EquipmentActions.setPrimaryAttribute (primary))
   },
   setDamageThreshold (value: string): void {
-    dispatch (EquipmentActions.setDamageThreshold (value));
+    dispatch (EquipmentActions.setDamageThreshold (value))
   },
   setFirstDamageThreshold (value: string): void {
-    dispatch (EquipmentActions.setFirstDamageThreshold (value));
+    dispatch (EquipmentActions.setFirstDamageThreshold (value))
   },
   setSecondDamageThreshold (value: string): void {
-    dispatch (EquipmentActions.setSecondDamageThreshold (value));
+    dispatch (EquipmentActions.setSecondDamageThreshold (value))
   },
   switchIsDamageThresholdSeparated (): void {
-    dispatch (EquipmentActions.switchIsDamageThresholdSeparated ());
+    dispatch (EquipmentActions.switchIsDamageThresholdSeparated ())
   },
   setAttack (value: string): void {
-    dispatch (EquipmentActions.setAttack (value));
+    dispatch (EquipmentActions.setAttack (value))
   },
   setParry (value: string): void {
-    dispatch (EquipmentActions.setParry (value));
+    dispatch (EquipmentActions.setParry (value))
   },
   setReach (id: number): void {
-    dispatch (EquipmentActions.setReach (id));
+    dispatch (EquipmentActions.setReach (id))
   },
   setLength (value: string): void {
-    dispatch (EquipmentActions.setLength (value));
+    dispatch (EquipmentActions.setLength (value))
   },
   setStructurePoints (value: string): void {
-    dispatch (EquipmentActions.setStructurePoints (value));
+    dispatch (EquipmentActions.setStructurePoints (value))
   },
   setRange (index: 1 | 2 | 3): (value: string) => void {
-    return value => dispatch (EquipmentActions.setRange (value, index));
+    return value => dispatch (EquipmentActions.setRange (value, index))
   },
   setReloadTime (value: string): void {
-    dispatch (EquipmentActions.setReloadTime (value));
+    dispatch (EquipmentActions.setReloadTime (value))
   },
   setAmmunition (id: string): void {
-    dispatch (EquipmentActions.setAmmunition (id));
+    dispatch (EquipmentActions.setAmmunition (id))
   },
   setProtection (value: string): void {
-    dispatch (EquipmentActions.setProtection (value));
+    dispatch (EquipmentActions.setProtection (value))
   },
   setEncumbrance (value: string): void {
-    dispatch (EquipmentActions.setEncumbrance (value));
+    dispatch (EquipmentActions.setEncumbrance (value))
   },
   setMovementModifier (value: string): void {
-    dispatch (EquipmentActions.setMovementModifier (value));
+    dispatch (EquipmentActions.setMovementModifier (value))
   },
   setInitiativeModifier (value: string): void {
-    dispatch (EquipmentActions.setInitiativeModifier (value));
+    dispatch (EquipmentActions.setInitiativeModifier (value))
   },
   setStabilityModifier (value: string): void {
-    dispatch (EquipmentActions.setStabilityModifier (value));
+    dispatch (EquipmentActions.setStabilityModifier (value))
   },
   switchIsParryingWeapon (): void {
-    dispatch (EquipmentActions.switchIsParryingWeapon ());
+    dispatch (EquipmentActions.switchIsParryingWeapon ())
   },
   switchIsTwoHandedWeapon (): void {
-    dispatch (EquipmentActions.switchIsTwoHandedWeapon ());
+    dispatch (EquipmentActions.switchIsTwoHandedWeapon ())
   },
   switchIsImprovisedWeapon (): void {
-    dispatch (EquipmentActions.switchIsImprovisedWeapon ());
+    dispatch (EquipmentActions.switchIsImprovisedWeapon ())
   },
   setImprovisedWeaponGroup (gr: number): void {
-    dispatch (EquipmentActions.setImprovisedWeaponGroup (gr));
+    dispatch (EquipmentActions.setImprovisedWeaponGroup (gr))
   },
   setLoss (id: Maybe<number>): void {
-    dispatch (EquipmentActions.setLoss (id));
+    dispatch (EquipmentActions.setLoss (id))
   },
   switchIsForArmorZonesOnly (): void {
-    dispatch (EquipmentActions.switchIsForArmorZonesOnly ());
+    dispatch (EquipmentActions.switchIsForArmorZonesOnly ())
   },
   setHasAdditionalPenalties (): void {
-    dispatch (EquipmentActions.setHasAdditionalPenalties ());
+    dispatch (EquipmentActions.setHasAdditionalPenalties ())
   },
   setArmorType (id: number): void {
-    dispatch (EquipmentActions.setArmorType (id));
+    dispatch (EquipmentActions.setArmorType (id))
   },
   applyTemplate (): void {
-    dispatch (EquipmentActions.applyItemTemplate);
+    dispatch (EquipmentActions.applyItemTemplate)
   },
   lockTemplate (): void {
-    dispatch (EquipmentActions.lockItemTemplate);
+    dispatch (EquipmentActions.lockItemTemplate)
   },
   unlockTemplate (): void {
-    dispatch (EquipmentActions.unlockItemTemplate ());
+    dispatch (EquipmentActions.unlockItemTemplate ())
   },
-});
+})
 
 export const connectItemEditor =
   connect<ItemEditorStateProps, ItemEditorDispatchProps, ItemEditorOwnProps, AppState> (
     mapStateToProps,
     mapDispatchToProps
-  );
+  )
 
-export const ItemEditorContainer = connectItemEditor (ItemEditor);
+export const ItemEditorContainer = connectItemEditor (ItemEditor)

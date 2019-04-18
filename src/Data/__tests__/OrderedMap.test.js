@@ -711,3 +711,23 @@ test ('lookup2F', () => {
   expect (OrderedMap.lookup2F ("tests") (map) (map2) (add)) .toEqual (Nothing)
   expect (OrderedMap.lookup2F ("testsss") (map) (map2) (add)) .toEqual (Nothing)
 })
+
+test ('mapMEitherWithKey', () => {
+  expect (
+    OrderedMap.mapMEitherWithKey (k => x => x === 2 ? Left (k) : Right (x + 1))
+                                 (OrderedMap.empty)
+  )
+    .toEqual (Right (OrderedMap.empty))
+
+  expect (
+    OrderedMap.mapMEitherWithKey (k => x => x === 2 ? Left (k) : Right (x + 1))
+                                 (OrderedMap.fromArray ([[1, 1], [2, 3]]))
+  )
+    .toEqual (Right (OrderedMap.fromArray ([[1, 2], [2, 4]])))
+
+  expect (
+    OrderedMap.mapMEitherWithKey (k => x => x === 2 ? Left (k) : Right (x + 1))
+                                 (OrderedMap.fromArray ([[1, 1], [2, 3], [4, 2]]))
+  )
+    .toEqual (Left (4))
+})

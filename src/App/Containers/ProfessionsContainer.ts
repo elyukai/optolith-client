@@ -1,13 +1,12 @@
-import { connect } from 'react-redux';
-import { Action, Dispatch } from 'redux';
-import * as ProfessionActions from '../App/Actions/ProfessionActions';
-import * as ProfessionVariantActions from '../App/Actions/ProfessionVariantActions';
-import { AppState } from '../reducers/appReducer';
-import { getFilteredProfessions } from '../Selectors/rcpSelectors';
-import { getCurrentProfessionId, getCurrentProfessionVariantId, getProfessionsFilterText, getSex, getWiki } from '../Selectors/stateSelectors';
-import { getProfessionsGroupVisibilityFilter, getProfessionsSortOrder, getProfessionsVisibilityFilter } from '../Selectors/uisettingsSelectors';
-import { Maybe } from '../Utilities/dataUtils';
-import { Professions, ProfessionsDispatchProps, ProfessionsOwnProps, ProfessionsStateProps } from '../Views/rcp/Professions';
+import { connect } from "react-redux";
+import { Action, Dispatch } from "redux";
+import * as ProfessionActions from "../Actions/ProfessionActions";
+import * as ProfessionVariantActions from "../Actions/ProfessionVariantActions";
+import { AppState } from "../Reducers/appReducer";
+import { getFilteredProfessions } from "../Selectors/rcpSelectors";
+import { getCurrentProfessionId, getCurrentProfessionVariantId, getProfessionsFilterText, getSex, getWiki } from "../Selectors/stateSelectors";
+import { getProfessionsGroupVisibilityFilter, getProfessionsSortOrder, getProfessionsVisibilityFilter } from "../Selectors/uisettingsSelectors";
+import { Professions, ProfessionsDispatchProps, ProfessionsOwnProps, ProfessionsStateProps } from "../Views/Professions/Professions";
 
 const mapStateToProps = (
   state: AppState,
@@ -22,36 +21,36 @@ const mapStateToProps = (
   visibilityFilter: getProfessionsVisibilityFilter (state),
   filterText: getProfessionsFilterText (state),
   wiki: getWiki (state),
-});
+})
 
 const mapDispatchToProps = (dispatch: Dispatch<Action, AppState>): ProfessionsDispatchProps => ({
   selectProfession (id: string) {
-    dispatch (ProfessionActions.selectProfession (id));
+    dispatch (ProfessionActions.selectProfession (id))
   },
   selectProfessionVariant (id: Maybe<string>) {
-    dispatch (ProfessionVariantActions.selectProfessionVariant (id));
+    dispatch (ProfessionVariantActions.selectProfessionVariant (id))
   },
   setSortOrder (sortOrder: string) {
-    dispatch (ProfessionActions.setProfessionsSortOrder (sortOrder));
+    dispatch (ProfessionActions.setProfessionsSortOrder (sortOrder))
   },
   setVisibilityFilter (filter: string) {
-    dispatch (ProfessionActions.setProfessionsVisibilityFilter (filter));
+    dispatch (ProfessionActions.setProfessionsVisibilityFilter (filter))
   },
   setGroupVisibilityFilter (filter: number) {
-    dispatch (ProfessionActions.setProfessionsGroupVisibilityFilter (filter));
+    dispatch (ProfessionActions.setProfessionsGroupVisibilityFilter (filter))
   },
   switchExpansionVisibilityFilter () {
-    dispatch (ProfessionActions.switchProfessionsExpansionVisibilityFilter ());
+    dispatch (ProfessionActions.switchProfessionsExpansionVisibilityFilter ())
   },
   setFilterText (filterText: string) {
-    dispatch (ProfessionActions.setProfessionsFilterText (filterText));
+    dispatch (ProfessionActions.setProfessionsFilterText (filterText))
   },
-});
+})
 
 export const connectProfessions =
   connect<ProfessionsStateProps, ProfessionsDispatchProps, ProfessionsOwnProps, AppState> (
     mapStateToProps,
     mapDispatchToProps
-  );
+  )
 
-export const ProfessionsContainer = connectProfessions (Professions);
+export const ProfessionsContainer = connectProfessions (Professions)

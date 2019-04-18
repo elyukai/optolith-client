@@ -49,10 +49,12 @@ export const bind =
   <A>
   (x: IO<A>) =>
   <B>
-  (f: (x: A) => IO<B>): IO<B> =>
-    Internals.IO (() => x .f ()
-                          .then (pipe (f, y => y.f ()))
-                          .catch (err => { throw err }))
+  (f: (x: A) => IO<B>): IO<B> => {
+    const res = x .f ()
+
+    return Internals.IO (() => res .then (pipe (f, y => y.f ()))
+                                   .catch (err => { throw err }))
+  }
 
 /**
  * `(=<<) :: Monad m => (a -> m b) -> m a -> m b`

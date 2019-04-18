@@ -1,36 +1,36 @@
-import { connect } from 'react-redux';
-import { Action, Dispatch } from 'redux';
-import * as PetActions from '../App/Actions/PetActions';
-import * as SubwindowsActions from '../App/Actions/SubwindowsActions';
-import { AppState } from '../reducers/appReducer';
-import { getIsEditPetAvatarOpen, getIsInPetCreation, getPetEditorInstance, getPets } from '../Selectors/stateSelectors';
-import { Pets, PetsDispatchProps, PetsOwnProps, PetsStateProps } from '../Views/Pets/Pets';
+import { connect } from "react-redux";
+import { Action, Dispatch } from "redux";
+import * as PetActions from "../Actions/PetActions";
+import * as SubwindowsActions from "../Actions/SubwindowsActions";
+import { AppState } from "../Reducers/appReducer";
+import { getIsEditPetAvatarOpen, getIsInPetCreation, getPetEditorInstance, getPets } from "../Selectors/stateSelectors";
+import { Pets, PetsDispatchProps, PetsOwnProps, PetsStateProps } from "../Views/Pets/Pets";
 
 const mapStateToProps = (state: AppState): PetsStateProps => ({
   pets: getPets (state),
   isEditPetAvatarOpen: getIsEditPetAvatarOpen (state),
   petInEditor: getPetEditorInstance (state),
   isInCreation: getIsInPetCreation (state),
-});
+})
 
 const mapDispatchToProps = (dispatch: Dispatch<Action, AppState>): PetsDispatchProps => ({
   addPet (): void {
-    dispatch (PetActions.addPet);
+    dispatch (PetActions.addPet)
   },
   createPet (): void {
-    dispatch (PetActions.createPet ());
+    dispatch (PetActions.createPet ())
   },
   editPet (id: string): void {
-    dispatch (PetActions.editPet (id));
+    dispatch (PetActions.editPet (id))
   },
   closePetEditor () {
-    dispatch (PetActions.closePetEditor ());
+    dispatch (PetActions.closePetEditor ())
   },
   deletePet (id: string) {
-    dispatch (PetActions.removePet (id));
+    dispatch (PetActions.removePet (id))
   },
   savePet () {
-    dispatch (PetActions.savePet ());
+    dispatch (PetActions.savePet ())
   },
   setAvatar (path: string) {
     dispatch (PetActions.setPetAvatar (path))
@@ -123,16 +123,16 @@ const mapDispatchToProps = (dispatch: Dispatch<Action, AppState>): PetsDispatchP
     dispatch (PetActions.setPetNotes (notes))
   },
   openEditPetAvatar () {
-    dispatch (SubwindowsActions.openEditPetAvatar ());
+    dispatch (SubwindowsActions.openEditPetAvatar ())
   },
   closeEditPetAvatar () {
-    dispatch (SubwindowsActions.closeEditPetAvatar ());
+    dispatch (SubwindowsActions.closeEditPetAvatar ())
   },
-});
+})
 
 export const connectPets = connect<PetsStateProps, PetsDispatchProps, PetsOwnProps, AppState> (
   mapStateToProps,
   mapDispatchToProps
-);
+)
 
-export const PetsContainer = connectPets (Pets);
+export const PetsContainer = connectPets (Pets)

@@ -1,13 +1,12 @@
-import { connect } from 'react-redux';
-import { Action, Dispatch } from 'redux';
-import { setTab } from '../App/Actions/LocationActions';
-import * as RaceActions from '../App/Actions/RaceActions';
-import { AppState } from '../reducers/appReducer';
-import { getFilteredRaces } from '../Selectors/rcpSelectors';
-import { getCurrentRaceId, getCurrentRaceVariantId, getRacesFilterText } from '../Selectors/stateSelectors';
-import { getRacesSortOrder } from '../Selectors/uisettingsSelectors';
-import { Maybe } from '../Utilities/dataUtils';
-import { Races, RacesDispatchProps, RacesOwnProps, RacesStateProps } from '../Views/rcp/Races';
+import { connect } from "react-redux";
+import { Action, Dispatch } from "redux";
+import { setTab } from "../Actions/LocationActions";
+import * as RaceActions from "../Actions/RaceActions";
+import { AppState } from "../Reducers/appReducer";
+import { getFilteredRaces } from "../Selectors/rcpSelectors";
+import { getCurrentRaceId, getCurrentRaceVariantId, getRacesFilterText } from "../Selectors/stateSelectors";
+import { getRacesSortOrder } from "../Selectors/uisettingsSelectors";
+import { Races, RacesDispatchProps, RacesOwnProps, RacesStateProps } from "../Views/Races/Races";
 
 const mapStateToProps = (state: AppState, ownProps: RacesOwnProps): RacesStateProps => {
   return {
@@ -16,33 +15,33 @@ const mapStateToProps = (state: AppState, ownProps: RacesOwnProps): RacesStatePr
     races: getFilteredRaces (state, ownProps),
     sortOrder: getRacesSortOrder (state),
     filterText: getRacesFilterText (state),
-  };
+  }
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<Action, AppState>): RacesDispatchProps => ({
   selectRace (id: string): ((variantId: Maybe<string>) => void) {
-    return variantId => dispatch (RaceActions.selectRace (id) (variantId));
+    return variantId => dispatch (RaceActions.selectRace (id) (variantId))
   },
   selectRaceVariant (id: string) {
-    dispatch (RaceActions.setRaceVariant (id));
+    dispatch (RaceActions.setRaceVariant (id))
   },
   setSortOrder (sortOrder: string) {
-    dispatch (RaceActions.setRacesSortOrder (sortOrder));
+    dispatch (RaceActions.setRacesSortOrder (sortOrder))
   },
   switchValueVisibilityFilter () {
-    dispatch (RaceActions.switchRaceValueVisibilityFilter ());
+    dispatch (RaceActions.switchRaceValueVisibilityFilter ())
   },
   setFilterText (filterText: string) {
-    dispatch (RaceActions.setFilterText (filterText));
+    dispatch (RaceActions.setFilterText (filterText))
   },
   switchToCultures () {
-    dispatch (setTab ('cultures'));
+    dispatch (setTab ("cultures"))
   },
-});
+})
 
 export const connectRaces = connect<RacesStateProps, RacesDispatchProps, RacesOwnProps, AppState> (
   mapStateToProps,
   mapDispatchToProps
-);
+)
 
-export const RacesContainer = connectRaces (Races);
+export const RacesContainer = connectRaces (Races)

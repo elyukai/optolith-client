@@ -1,14 +1,14 @@
-import { connect } from 'react-redux';
-import { Help, HelpDispatchProps, HelpOwnProps, HelpStateProps } from '../../Views/help/Help';
-import { AppState } from '../Reducers/appReducer';
+import { connect } from "react-redux";
+import { AppState } from "../Reducers/appReducer";
+import { Help, HelpDispatchProps, HelpOwnProps, HelpStateProps } from "../Views/Help/Help";
 
-const mapStateToProps = () => ({});
+const mapStateToProps = () => ({})
 
-const mapDispatchToProps = () => ({});
+const mapDispatchToProps = () => ({})
 
 const connectHelp = connect<HelpStateProps, HelpDispatchProps, HelpOwnProps, AppState> (
   mapStateToProps,
   mapDispatchToProps
-);
+)
 
-export const HelpContainer = connectHelp (Help);
+export const HelpContainer = connectHelp (Help)

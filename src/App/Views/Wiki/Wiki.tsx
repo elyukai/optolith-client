@@ -41,7 +41,7 @@ export interface WikiStateProps extends Lists {
   spellsGroup: Maybe<number>
   liturgicalChantsGroup: Maybe<number>
   itemTemplatesGroup: Maybe<number>
-  specialAbilityGroups: List<Record<{ id: number name: string }>>
+  specialAbilityGroups: List<Record<{ id: number; name: string }>>
 }
 
 export interface WikiDispatchProps {
@@ -166,7 +166,7 @@ export class Wiki extends React.Component<WikiProps, WikiState> {
                     })),
                   locale.get ("id")
                 )
-                  .map<{ id: Maybe<number> name: string }> (Record.toObject)
+                  .map<{ id: Maybe<number>; name: string }> (Record.toObject)
                   .cons ({
                     id: Nothing (),
                     name: translate (locale, "allskillgroups"),
@@ -188,7 +188,7 @@ export class Wiki extends React.Component<WikiProps, WikiState> {
                     })),
                   locale.get ("id")
                 )
-                  .map<{ id: Maybe<number> name: string }> (Record.toObject)
+                  .map<{ id: Maybe<number>; name: string }> (Record.toObject)
                   .cons ({
                     id: Nothing (),
                     name: translate (locale, "allcombattechniquegroups"),
@@ -203,7 +203,7 @@ export class Wiki extends React.Component<WikiProps, WikiState> {
               onChange={setSpecialAbilitiesGroup}
               options={
                 specialAbilityGroups
-                  .map<{ id: Maybe<number> name: string }> (
+                  .map<{ id: Maybe<number>; name: string }> (
                     obj => ({
                       ...obj.toObject (),
                       id: Just (obj.get ("id")),
@@ -230,7 +230,7 @@ export class Wiki extends React.Component<WikiProps, WikiState> {
                     })),
                   locale.get ("id")
                 )
-                  .map<{ id: Maybe<number> name: string }> (Record.toObject)
+                  .map<{ id: Maybe<number>; name: string }> (Record.toObject)
                   .cons ({
                     id: Nothing (),
                     name: translate (locale, "allspellgroups"),
@@ -252,7 +252,7 @@ export class Wiki extends React.Component<WikiProps, WikiState> {
                     })),
                   locale.get ("id")
                 )
-                  .map<{ id: Maybe<number> name: string }> (Record.toObject)
+                  .map<{ id: Maybe<number>; name: string }> (Record.toObject)
                   .cons ({
                     id: Nothing (),
                     name: translate (locale, "allliturgicalchantgroups"),
@@ -274,7 +274,7 @@ export class Wiki extends React.Component<WikiProps, WikiState> {
                     })),
                   locale.get ("id")
                 )
-                  .map<{ id: Maybe<number> name: string }> (Record.toObject)
+                  .map<{ id: Maybe<number>; name: string }> (Record.toObject)
                   .cons ({
                     id: Nothing (),
                     name: translate (locale, "allitemtemplategroups"),

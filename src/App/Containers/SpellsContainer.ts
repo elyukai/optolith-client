@@ -1,15 +1,15 @@
-import { connect } from 'react-redux';
-import { Action, Dispatch } from 'redux';
-import * as ConfigActions from '../App/Actions/ConfigActions';
-import * as SpellsActions from '../App/Actions/SpellsActions';
-import { AppState } from '../reducers/appReducer';
-import { getAttributesForSheet } from '../Selectors/attributeSelectors';
-import { getDerivedCharacteristicsMap } from '../Selectors/derivedCharacteristicsSelectors';
-import { getIsRemovingEnabled } from '../Selectors/phaseSelectors';
-import { getFilteredActiveSpellsAndCantrips, getFilteredInactiveSpellsAndCantrips, getMagicalTraditionsFromWiki, isActivationDisabled } from '../Selectors/spellsSelectors';
-import { getInactiveSpellsFilterText, getSpellsFilterText } from '../Selectors/stateSelectors';
-import { getEnableActiveItemHints, getSpellsSortOrder } from '../Selectors/uisettingsSelectors';
-import { Spells, SpellsDispatchProps, SpellsOwnProps, SpellsStateProps } from '../Views/Spells/Spells';
+import { connect } from "react-redux";
+import { Action, Dispatch } from "redux";
+import * as ConfigActions from "../Actions/ConfigActions";
+import * as SpellsActions from "../Actions/SpellsActions";
+import { AppState } from "../Reducers/appReducer";
+import { getAttributesForSheet } from "../Selectors/attributeSelectors";
+import { getDerivedCharacteristicsMap } from "../Selectors/derivedCharacteristicsSelectors";
+import { getIsRemovingEnabled } from "../Selectors/phaseSelectors";
+import { getFilteredActiveSpellsAndCantrips, getFilteredInactiveSpellsAndCantrips, getMagicalTraditionsFromWiki, isActivationDisabled } from "../Selectors/spellsSelectors";
+import { getInactiveSpellsFilterText, getSpellsFilterText } from "../Selectors/stateSelectors";
+import { getEnableActiveItemHints, getSpellsSortOrder } from "../Selectors/uisettingsSelectors";
+import { Spells, SpellsDispatchProps, SpellsOwnProps, SpellsStateProps } from "../Views/Spells/Spells";
 
 const mapStateToProps = (state: AppState, ownProps: SpellsOwnProps): SpellsStateProps => ({
   activeList: getFilteredActiveSpellsAndCantrips (state, ownProps),
@@ -23,48 +23,48 @@ const mapStateToProps = (state: AppState, ownProps: SpellsOwnProps): SpellsState
   sortOrder: getSpellsSortOrder (state),
   filterText: getSpellsFilterText (state),
   inactiveFilterText: getInactiveSpellsFilterText (state),
-});
+})
 
 const mapDispatchToProps = (
   dispatch: Dispatch<Action, AppState>,
   { locale }: SpellsOwnProps
 ): SpellsDispatchProps => ({
   addPoint (id: string) {
-    dispatch (SpellsActions.addSpellPoint (locale) (id));
+    dispatch (SpellsActions.addSpellPoint (locale) (id))
   },
   addToList (id: string) {
-    dispatch (SpellsActions.addSpell (locale) (id));
+    dispatch (SpellsActions.addSpell (locale) (id))
   },
   addCantripToList (id: string) {
-    dispatch (SpellsActions.addCantrip (locale) (id));
+    dispatch (SpellsActions.addCantrip (locale) (id))
   },
   removePoint (id: string) {
-    dispatch (SpellsActions.removeSpellPoint (id));
+    dispatch (SpellsActions.removeSpellPoint (id))
   },
   removeFromList (id: string) {
-    dispatch (SpellsActions.removeSpell (id));
+    dispatch (SpellsActions.removeSpell (id))
   },
   removeCantripFromList (id: string) {
-    dispatch (SpellsActions.removeCantrip (id));
+    dispatch (SpellsActions.removeCantrip (id))
   },
   setSortOrder (sortOrder: string) {
-    dispatch (SpellsActions.setSpellsSortOrder (sortOrder));
+    dispatch (SpellsActions.setSpellsSortOrder (sortOrder))
   },
   switchActiveItemHints () {
-    dispatch (ConfigActions.switchEnableActiveItemHints ());
+    dispatch (ConfigActions.switchEnableActiveItemHints ())
   },
   setFilterText (filterText: string) {
-    dispatch (SpellsActions.setActiveSpellsFilterText (filterText));
+    dispatch (SpellsActions.setActiveSpellsFilterText (filterText))
   },
   setInactiveFilterText (filterText: string) {
-    dispatch (SpellsActions.setInactiveSpellsFilterText (filterText));
+    dispatch (SpellsActions.setInactiveSpellsFilterText (filterText))
   },
-});
+})
 
 export const connectSpells =
   connect<SpellsStateProps, SpellsDispatchProps, SpellsOwnProps, AppState> (
     mapStateToProps,
     mapDispatchToProps
-  );
+  )
 
-export const SpellsContainer = connectSpells (Spells);
+export const SpellsContainer = connectSpells (Spells)

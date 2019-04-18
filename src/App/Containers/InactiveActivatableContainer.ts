@@ -1,12 +1,12 @@
-import { connect } from 'react-redux';
-import { ActivatableAddListItem, ActivatableAddListItemDispatchProps, ActivatableAddListItemOwnProps, ActivatableAddListItemStateProps } from '../../components/ActivatableAddListItem';
-import { AppState } from '../Reducers/appReducer';
-import { getSkills, getWiki } from '../Selectors/stateSelectors';
+import { connect } from "react-redux";
+import { AppStateRecord } from "../Reducers/appReducer";
+import { getSkills, getWiki } from "../Selectors/stateSelectors";
+import { ActivatableAddListItem, ActivatableAddListItemDispatchProps, ActivatableAddListItemOwnProps, ActivatableAddListItemStateProps } from "../Views/Activatable/ActivatableAddListItem";
 
-const mapStateToProps = (state: AppState): ActivatableAddListItemStateProps => ({
+const mapStateToProps = (state: AppStateRecord): ActivatableAddListItemStateProps => ({
   skills: getSkills (state),
   wiki: getWiki (state),
-});
+})
 
 
 export const connectActivatableAddListItem =
@@ -14,9 +14,9 @@ export const connectActivatableAddListItem =
     ActivatableAddListItemStateProps,
     ActivatableAddListItemDispatchProps,
     ActivatableAddListItemOwnProps,
-    AppState
+    AppStateRecord
   >
-    (mapStateToProps);
+    (mapStateToProps)
 
 export const ActivatableAddListItemContainer =
-  connectActivatableAddListItem (ActivatableAddListItem);
+  connectActivatableAddListItem (ActivatableAddListItem)

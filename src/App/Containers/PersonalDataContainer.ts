@@ -1,18 +1,17 @@
-import { connect } from 'react-redux';
-import { Action, Dispatch } from 'redux';
-import * as ProfileActions from '../App/Actions/ProfileActions';
-import * as SubwindowsActions from '../App/Actions/SubwindowsActions';
-import { InputTextEvent } from '../App/Models/Hero/heroTypeHelpers';
-import { AppState } from '../reducers/appReducer';
-import { getAdvantagesForSheet, getDisadvantagesForSheet, isAlbino } from '../Selectors/activatableSelectors';
-import { getAvailableAdventurePoints } from '../Selectors/adventurePointsSelectors';
-import { getStartEl } from '../Selectors/elSelectors';
-import { getIsRemovingEnabled } from '../Selectors/phaseSelectors';
-import { getCurrentCulture, getCurrentFullProfessionName, getCurrentProfession, getCurrentProfessionVariant, getCurrentRace, getCurrentRaceVariant } from '../Selectors/rcpSelectors';
-import { getAvatar, getCurrentHeroName, getCustomProfessionName, getIsAddAdventurePointsOpen, getIsEditCharacterAvatarOpen, getPhase, getProfile, getSex, getTotalAdventurePoints } from '../Selectors/stateSelectors';
-import { getIsEditingHeroAfterCreationPhaseEnabled } from '../Selectors/uisettingsSelectors';
-import { Maybe, Nothing } from '../Utilities/dataUtils';
-import { PersonalData, PersonalDataDispatchProps, PersonalDataOwnProps, PersonalDataStateProps } from '../Views/Profile/PersonalData';
+import { connect } from "react-redux";
+import { Action, Dispatch } from "redux";
+import * as ProfileActions from "../Actions/ProfileActions";
+import * as SubwindowsActions from "../Actions/SubwindowsActions";
+import { InputTextEvent } from "../Models/Hero/heroTypeHelpers";
+import { AppState } from "../Reducers/appReducer";
+import { getAdvantagesForSheet, getDisadvantagesForSheet, isAlbino } from "../Selectors/activatableSelectors";
+import { getAvailableAdventurePoints } from "../Selectors/adventurePointsSelectors";
+import { getStartEl } from "../Selectors/elSelectors";
+import { getIsRemovingEnabled } from "../Selectors/phaseSelectors";
+import { getCurrentCulture, getCurrentFullProfessionName, getCurrentProfession, getCurrentProfessionVariant, getCurrentRace, getCurrentRaceVariant } from "../Selectors/rcpSelectors";
+import { getAvatar, getCurrentHeroName, getCustomProfessionName, getIsAddAdventurePointsOpen, getIsEditCharacterAvatarOpen, getPhase, getProfile, getSex, getTotalAdventurePoints } from "../Selectors/stateSelectors";
+import { getIsEditingHeroAfterCreationPhaseEnabled } from "../Selectors/uisettingsSelectors";
+import { PersonalData, PersonalDataDispatchProps, PersonalDataOwnProps, PersonalDataStateProps } from "../Views/Profile/PersonalData";
 
 const mapStateToProps = (state: AppState, ownProps: PersonalDataOwnProps) => ({
   advantages: getAdvantagesForSheet (state, ownProps),
@@ -37,115 +36,115 @@ const mapStateToProps = (state: AppState, ownProps: PersonalDataOwnProps) => ({
   isAddAdventurePointsOpen: getIsAddAdventurePointsOpen (state),
   isEditCharacterAvatarOpen: getIsEditCharacterAvatarOpen (state),
   isAlbino: isAlbino (state),
-});
+})
 
 const mapDispatchToProps = (dispatch: Dispatch<Action>) => ({
   setAvatar (path: string) {
-    dispatch (ProfileActions.setHeroAvatar (path));
+    dispatch (ProfileActions.setHeroAvatar (path))
   },
   setHeroName (name: string) {
-    dispatch (ProfileActions.setHeroName (name));
+    dispatch (ProfileActions.setHeroName (name))
   },
   setCustomProfessionName (name: string) {
-    dispatch (ProfileActions.setCustomProfessionName (name));
+    dispatch (ProfileActions.setCustomProfessionName (name))
   },
   endCharacterCreation () {
-    dispatch (ProfileActions.endHeroCreation ());
+    dispatch (ProfileActions.endHeroCreation ())
   },
   addAdventurePoints (ap: number) {
-    dispatch (ProfileActions.addAdventurePoints (ap));
+    dispatch (ProfileActions.addAdventurePoints (ap))
   },
   openAddAdventurePoints () {
-    dispatch (SubwindowsActions.openAddAdventurePoints ());
+    dispatch (SubwindowsActions.openAddAdventurePoints ())
   },
   closeAddAdventurePoints () {
-    dispatch (SubwindowsActions.closeAddAdventurePoints ());
+    dispatch (SubwindowsActions.closeAddAdventurePoints ())
   },
   openEditCharacterAvatar () {
-    dispatch (SubwindowsActions.openEditCharacterAvatar ());
+    dispatch (SubwindowsActions.openEditCharacterAvatar ())
   },
   closeEditCharacterAvatar () {
-    dispatch (SubwindowsActions.closeEditCharacterAvatar ());
+    dispatch (SubwindowsActions.closeEditCharacterAvatar ())
   },
   changeFamily (e: InputTextEvent) {
-    dispatch (ProfileActions.setFamily (e.target.value as string));
+    dispatch (ProfileActions.setFamily (e.target.value as string))
   },
   changePlaceOfBirth (e: InputTextEvent) {
-    dispatch (ProfileActions.setPlaceOfBirth (e.target.value as string));
+    dispatch (ProfileActions.setPlaceOfBirth (e.target.value as string))
   },
   changeDateOfBirth (e: InputTextEvent) {
-    dispatch (ProfileActions.setDateOfBirth (e.target.value as string));
+    dispatch (ProfileActions.setDateOfBirth (e.target.value as string))
   },
   changeAge (e: InputTextEvent) {
-    dispatch (ProfileActions.setAge (e.target.value as string));
+    dispatch (ProfileActions.setAge (e.target.value as string))
   },
   changeHaircolor (result: Maybe<number>) {
     if (Maybe.isJust (result)) {
-      dispatch (ProfileActions.setHairColor (Maybe.fromJust (result)));
+      dispatch (ProfileActions.setHairColor (Maybe.fromJust (result)))
     }
   },
   changeEyecolor (result: Maybe<number>) {
     if (Maybe.isJust (result)) {
-      dispatch (ProfileActions.setEyeColor (Maybe.fromJust (result)));
+      dispatch (ProfileActions.setEyeColor (Maybe.fromJust (result)))
     }
   },
   changeSize (e: InputTextEvent) {
-    dispatch (ProfileActions.setSize (e.target.value as string) (Nothing ()));
+    dispatch (ProfileActions.setSize (e.target.value as string) (Nothing ()))
   },
   changeWeight (e: InputTextEvent) {
-    dispatch (ProfileActions.setWeight (e.target.value as string) (Nothing ()));
+    dispatch (ProfileActions.setWeight (e.target.value as string) (Nothing ()))
   },
   changeTitle (e: InputTextEvent) {
-    dispatch (ProfileActions.setTitle (e.target.value as string));
+    dispatch (ProfileActions.setTitle (e.target.value as string))
   },
   changeSocialStatus (result: Maybe<number>) {
     if (Maybe.isJust (result)) {
-      dispatch (ProfileActions.setSocialStatus (Maybe.fromJust (result)));
+      dispatch (ProfileActions.setSocialStatus (Maybe.fromJust (result)))
     }
   },
   changeCharacteristics (e: InputTextEvent) {
-    dispatch (ProfileActions.setCharacteristics (e.target.value as string));
+    dispatch (ProfileActions.setCharacteristics (e.target.value as string))
   },
   changeOtherInfo (e: InputTextEvent) {
-    dispatch (ProfileActions.setOtherInfo (e.target.value as string));
+    dispatch (ProfileActions.setOtherInfo (e.target.value as string))
   },
   changeCultureAreaKnowledge (e: InputTextEvent) {
-    dispatch (ProfileActions.setCultureAreaKnowledge (e.target.value as string));
+    dispatch (ProfileActions.setCultureAreaKnowledge (e.target.value as string))
   },
   rerollHair () {
-    const action = ProfileActions.rerollHairColor ();
+    const action = ProfileActions.rerollHairColor ()
 
     if (action) {
-      (dispatch as Dispatch<Action, AppState>) (action);
+      (dispatch as Dispatch<Action, AppState>) (action)
     }
   },
   rerollEyes () {
-    const action = ProfileActions.rerollEyeColor ();
+    const action = ProfileActions.rerollEyeColor ()
 
     if (action) {
-      (dispatch as Dispatch<Action, AppState>) (action);
+      (dispatch as Dispatch<Action, AppState>) (action)
     }
   },
   rerollSize () {
-    const action = ProfileActions.rerollSize ();
+    const action = ProfileActions.rerollSize ()
 
     if (action) {
-      (dispatch as Dispatch<Action, AppState>) (action);
+      (dispatch as Dispatch<Action, AppState>) (action)
     }
   },
   rerollWeight () {
-    const action = ProfileActions.rerollWeight ();
+    const action = ProfileActions.rerollWeight ()
 
     if (action) {
-      (dispatch as Dispatch<Action, AppState>) (action);
+      (dispatch as Dispatch<Action, AppState>) (action)
     }
   },
-});
+})
 
 export const connectPersonalData =
   connect<PersonalDataStateProps, PersonalDataDispatchProps, PersonalDataOwnProps, AppState> (
     mapStateToProps,
     mapDispatchToProps
-  );
+  )
 
-export const PersonalDataContainer = connectPersonalData (PersonalData);
+export const PersonalDataContainer = connectPersonalData (PersonalData)

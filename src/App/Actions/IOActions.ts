@@ -47,14 +47,20 @@ import { addAlert } from "./AlertActions";
 const loadDatabase =
   (locale: string): ReduxAction<Either<string, Pair<Record<L10n>, Record<WikiModel>>>> =>
     dispatch => {
+      console.log ("Parsing tables ...")
+
       const res = parseTables (locale)
 
       if (isLeft (res)) {
+        console.error (`Table parse error: ${fromLeft_ (res)}`)
+
         dispatch (addAlert ({
           message: fromLeft_ (res),
           title: "Error",
         }))
       }
+
+      console.log ("Tables parsed")
 
       return res
     }

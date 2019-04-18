@@ -15,8 +15,9 @@ import { Skill } from "../Models/Wiki/Skill";
 import { SpecialAbility } from "../Models/Wiki/SpecialAbility";
 import { Spell } from "../Models/Wiki/Spell";
 import { createMaybeSelector } from "../Utilities/createMaybeSelector";
+import { filterRecordsByName } from "../Utilities/filterBy";
 import { getAllCultures, getAllProfessions, getAllRaces } from './rcpSelectors';
-import { getWikiAdvantages, getWikiBlessings, getWikiCantrips, getWikiCombatTechniques, getWikiDisadvantages, getWikiItemTemplates, getWikiSpecialAbilities } from "./stateSelectors";
+import { getLocaleAsProp, getWikiAdvantages, getWikiBlessings, getWikiCantrips, getWikiCombatTechniques, getWikiCombatTechniquesGroup, getWikiCultures, getWikiDisadvantages, getWikiFilterText, getWikiItemTemplates, getWikiItemTemplatesGroup, getWikiLiturgicalChants, getWikiLiturgicalChantsGroup, getWikiProfessions, getWikiProfessionsGroup, getWikiRaces, getWikiSkills, getWikiSkillsGroup, getWikiSpecialAbilities, getWikiSpecialAbilitiesGroup, getWikiSpells, getWikiSpellsGroup } from "./stateSelectors";
 
 export type WikiSectionEntry = Record<Blessing>
                              | Record<Cantrip>
@@ -87,9 +88,9 @@ export const getRacesSortedByName = createMaybeSelector (
 )
 
 export const getPreparedRaces = createMaybeSelector (
-  getRacesSortedByName,
   getWikiFilterText,
-  filterObjects
+  getRacesSortedByName,
+  filterRecordsByName
 )
 
 export const getCulturesSortedByName = createMaybeSelector (
@@ -99,9 +100,9 @@ export const getCulturesSortedByName = createMaybeSelector (
 )
 
 export const getPreparedCultures = createMaybeSelector (
-  getCulturesSortedByName,
   getWikiFilterText,
-  filterObjects
+  getCulturesSortedByName,
+  filterRecordsByName
 )
 
 export const getProfessionsSortedByName = createMaybeSelector (
@@ -144,9 +145,9 @@ export const getAdvantagesSortedByName = createMaybeSelector (
 )
 
 export const getPreparedAdvantages = createMaybeSelector (
-  getAdvantagesSortedByName,
   getWikiFilterText,
-  filterObjects
+  getAdvantagesSortedByName,
+  filterRecordsByName
 )
 
 export const getDisadvantagesSortedByName = createMaybeSelector (
@@ -156,9 +157,9 @@ export const getDisadvantagesSortedByName = createMaybeSelector (
 )
 
 export const getPreparedDisadvantages = createMaybeSelector (
-  getDisadvantagesSortedByName,
   getWikiFilterText,
-  filterObjects
+  getDisadvantagesSortedByName,
+  filterRecordsByName
 )
 
 export const getSkillsSortedByName = createMaybeSelector (
@@ -174,9 +175,9 @@ export const getSkillsFilteredByOptions = createMaybeSelector (
 )
 
 export const getPreparedSkills = createMaybeSelector (
-  getSkillsFilteredByOptions,
   getWikiFilterText,
-  filterObjects
+  getSkillsFilteredByOptions,
+  filterRecordsByName
 )
 
 export const getCombatTechniquesSortedByName = createMaybeSelector (
@@ -192,9 +193,9 @@ export const getCombatTechniquesFilteredByOptions = createMaybeSelector (
 )
 
 export const getPreparedCombatTechniques = createMaybeSelector (
-  getCombatTechniquesFilteredByOptions,
   getWikiFilterText,
-  filterObjects
+  getCombatTechniquesFilteredByOptions,
+  filterRecordsByName
 )
 
 export const getSpecialAbilitiesSortedByName = createMaybeSelector (
@@ -210,9 +211,9 @@ export const getSpecialAbilitiesFilteredByOptions = createMaybeSelector (
 )
 
 export const getPreparedSpecialAbilities = createMaybeSelector (
-  getSpecialAbilitiesFilteredByOptions,
   getWikiFilterText,
-  filterObjects
+  getSpecialAbilitiesFilteredByOptions,
+  filterRecordsByName
 )
 
 export const getSpellsSortedByName = createMaybeSelector (
@@ -228,9 +229,9 @@ export const getSpellsFilteredByOptions = createMaybeSelector (
 )
 
 export const getPreparedSpells = createMaybeSelector (
-  getSpellsFilteredByOptions,
   getWikiFilterText,
-  filterObjects
+  getSpellsFilteredByOptions,
+  filterRecordsByName
 )
 
 export const getCantripsSortedByName = createMaybeSelector (
@@ -240,9 +241,9 @@ export const getCantripsSortedByName = createMaybeSelector (
 )
 
 export const getPreparedCantrips = createMaybeSelector (
-  getCantripsSortedByName,
   getWikiFilterText,
-  filterObjects
+  getCantripsSortedByName,
+  filterRecordsByName
 )
 
 export const getLiturgicalChantsSortedByName = createMaybeSelector (
@@ -258,9 +259,9 @@ export const getLiturgicalChantsFilteredByOptions = createMaybeSelector (
 )
 
 export const getPreparedLiturgicalChants = createMaybeSelector (
-  getLiturgicalChantsFilteredByOptions,
   getWikiFilterText,
-  filterObjects
+  getLiturgicalChantsFilteredByOptions,
+  filterRecordsByName
 )
 
 export const getBlessingsSortedByName = createMaybeSelector (
@@ -270,9 +271,9 @@ export const getBlessingsSortedByName = createMaybeSelector (
 )
 
 export const getPreparedBlessings = createMaybeSelector (
-  getBlessingsSortedByName,
   getWikiFilterText,
-  filterObjects
+  getBlessingsSortedByName,
+  filterRecordsByName
 )
 
 export const getItemTemplatesSortedByName = createMaybeSelector (
@@ -288,9 +289,9 @@ export const getItemTemplatesFilteredByOptions = createMaybeSelector (
 )
 
 export const getPreparedItemTemplates = createMaybeSelector (
-  getItemTemplatesFilteredByOptions,
   getWikiFilterText,
-  filterObjects
+  getItemTemplatesFilteredByOptions,
+  filterRecordsByName
 )
 
 export const getSpecialAbilityGroups = createMaybeSelector (

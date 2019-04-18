@@ -106,7 +106,9 @@ export const fmap =
     }
 
     if (Internals.isIO (x)) {
-      return IO (() => x .f () .then (f))
+      const res = x .f ()
+
+      return IO (() => res .then (f))
     }
 
     if (Internals.isMaybe (x)) {

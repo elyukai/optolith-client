@@ -8,7 +8,6 @@
 
 import { add, inc, max, min, multiply } from "../App/Utilities/mathUtils";
 import { pipe } from "../App/Utilities/pipe";
-import { escapeRegExp } from "../App/Utilities/RegexUtils";
 import { not } from "./Bool";
 import { equals } from "./Eq";
 import { ident } from "./Function";
@@ -105,9 +104,19 @@ export const List =
       return Nil
     }
 
-    const [_head, ..._tail] = values
+    let h: List<A> = Nil
 
-    return Cons (_head, List (..._tail))
+    for (let i = 0; i < values.length; i++) {
+      const x = values[values.length - 1 - i]
+
+      h = Cons (x, h)
+    }
+
+    return h
+
+    // const [_head, ..._tail] = values
+
+    // return Cons (_head, List (..._tail))
   }
 
 
@@ -1785,6 +1794,14 @@ export const firstJust =
 
     return firstJust (pred) (xs .xs)
   }
+
+/**
+ * Escape a string that may contain `RegExp`-specific notation for use in
+ * regular expressions.
+ */
+const escapeRegExp =
+  // $& means the whole matched string
+  (x: string) => x .replace (/[.*+?^${}()|[\]\\]/g, "\\$&")
 
 /**
  * `replace :: (Partial, Eq a) => [a] -> [a] -> [a] -> [a]`

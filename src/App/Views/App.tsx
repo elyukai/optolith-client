@@ -73,7 +73,13 @@ export class App extends React.Component<AppProps, AppState> {
     }
 
     return maybe
-      (<div id="body" className={`theme-${theme}`}></div>)
+      (<div id="body" className={`theme-${theme}`}>
+        <div className="background-image">
+          <img src="images/background.svg" alt=""/>
+        </div>
+
+        <AlertsContainer l10n={L10n.default} />
+      </div>)
       ((l10n: L10nRecord) => (
         <div
           id="body"
@@ -89,11 +95,11 @@ export class App extends React.Component<AppProps, AppState> {
           </div>
 
           <AlertsContainer l10n={l10n} />
-          <DownloaderContainer locale={l10n} />
+          <DownloaderContainer l10n={l10n} />
           <TitleBar {...this.props} />
 
           <section id="content">
-            <NavigationBarContainer {...this.props} locale={l10n} />
+            <NavigationBarContainer {...this.props} l10n={l10n} />
             <Router id={currentTab} l10n={l10n} mhero={mhero} />
           </section>
         </div>
