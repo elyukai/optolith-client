@@ -8,7 +8,7 @@ import { SelectOption } from "../../../Models/Wiki/sub/SelectOption";
 import { prefixId } from "../../IDUtils";
 import { mergeRowsById } from "../mergeTableRows";
 import { mensureMapNatural, mensureMapNaturalOptional, mensureMapNonEmptyString, mensureMapStringPredListOptional } from "../validateMapValueUtils";
-import { lookupKeyValid, mapMNamed } from "../validateValueUtils";
+import { lookupKeyValid, mapMNamed, TableType } from "../validateValueUtils";
 import { toActivatableCost } from "./Sub/toActivatableCost";
 import { toPrerequisites } from "./Sub/toPrerequisites";
 import { toPrerequisitesIndex } from "./Sub/toPrerequisitesIndex";
@@ -26,19 +26,20 @@ export const toAdvantage =
       // Shortcuts
 
       const checkL10nNonEmptyString =
-        lookupKeyValid (mensureMapNonEmptyString) (lookup_l10n)
+        lookupKeyValid (mensureMapNonEmptyString) (TableType.L10n) (lookup_l10n)
 
       const checkOptionalCategoryList =
         lookupKeyValid (mensureMapStringPredListOptional (checkCategory)
                                                          ("Category")
                                                          ("&"))
+                       (TableType.Univ)
                        (lookup_univ)
 
       const checkUnivNaturalNumber =
-        lookupKeyValid (mensureMapNatural) (lookup_univ)
+        lookupKeyValid (mensureMapNatural) (TableType.Univ) (lookup_univ)
 
       const checkOptionalUnivNaturalNumber =
-        lookupKeyValid (mensureMapNaturalOptional) (lookup_univ)
+        lookupKeyValid (mensureMapNaturalOptional) (TableType.Univ) (lookup_univ)
 
       // Check and convert fields
 

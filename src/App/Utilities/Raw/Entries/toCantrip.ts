@@ -4,7 +4,7 @@ import { Cantrip } from "../../../Models/Wiki/Cantrip";
 import { prefixId } from "../../IDUtils";
 import { mergeRowsById } from "../mergeTableRows";
 import { mensureMapNatural, mensureMapNaturalList, mensureMapNonEmptyString } from "../validateMapValueUtils";
-import { lookupKeyValid, mapMNamed } from "../validateValueUtils";
+import { lookupKeyValid, mapMNamed, TableType } from "../validateValueUtils";
 import { toSourceLinks } from "./Sub/toSourceLinks";
 
 export const toCantrip =
@@ -14,13 +14,13 @@ export const toCantrip =
       // Shortcuts
 
       const checkL10nNonEmptyString =
-        lookupKeyValid (mensureMapNonEmptyString) (lookup_l10n)
+        lookupKeyValid (mensureMapNonEmptyString) (TableType.L10n) (lookup_l10n)
 
       const checkUnivNaturalNumber =
-        lookupKeyValid (mensureMapNatural) (lookup_univ)
+        lookupKeyValid (mensureMapNatural) (TableType.Univ) (lookup_univ)
 
       const checkUnivNaturalNumberList =
-        lookupKeyValid (mensureMapNaturalList ("&")) (lookup_univ)
+        lookupKeyValid (mensureMapNaturalList ("&")) (TableType.Univ) (lookup_univ)
 
       // Check and convert fields
 

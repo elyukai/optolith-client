@@ -9,7 +9,7 @@ import { Pair } from "../../../Data/Pair";
 import { show } from "../../../Data/Show";
 import { toInt, toNatural } from "../NumberUtils";
 import { pipe } from "../pipe";
-import { Expect } from "./validateValueUtils";
+import { Expect } from "./showExpected";
 
 export const mensureMap =
   (expected: string) =>
@@ -251,8 +251,11 @@ export const mensureMapBoolean =
   mensureMap (Expect.Boolean)
              (pipe (
                fromMaybe ("TRUE"),
-               ensure ((x: string) => x === "TRUE" || x === "FALSE"),
-               fmap (x => x === "TRUE")
+               ensure ((x: string) => x === "TRUE"
+                                      || x === "FALSE"
+                                      || x === "true"
+                                      || x === "false"),
+               fmap (x => x === "TRUE" || x === "true")
              ))
 
 const mapPairList =

@@ -57,10 +57,12 @@ export const mergeRowsById =
     if (isJust (ml10n_row)) {
       const l10n_row = fromJust (ml10n_row)
 
-      return bimap<string, string, A, Maybe<A>>
-        (appendStr (`${origin}: `))
+      const x = bimap<string, string, A, Maybe<A>>
+        (appendStr (`${origin} at id ${id}: `))
         (Just)
         (f (id) (lookupF (l10n_row)) (lookupF (univ_row)))
+
+      return x
     }
 
     return Right (Nothing)
@@ -118,7 +120,7 @@ export const mergeRowsByIdAndMainId =
       const l10n_row = fromJust (ml10n_row)
 
       return bimap<string, string, A, Maybe<A>>
-        (appendStr (`${origin}: `))
+        (appendStr (`${origin} at main_id ${mainId} at id ${id}: `))
         (Just)
         (f (mainId) (id) (lookupF (l10n_row)) (lookupF (univ_row)))
     }

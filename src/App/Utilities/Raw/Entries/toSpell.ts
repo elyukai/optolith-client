@@ -8,7 +8,7 @@ import { CheckModifier } from "../../../Models/Wiki/wikiTypeHelpers";
 import { prefixId } from "../../IDUtils";
 import { mergeRowsById } from "../mergeTableRows";
 import { mensureMapNatural, mensureMapNaturalFixedList, mensureMapNaturalList, mensureMapNaturalListOptional, mensureMapNonEmptyString, mensureMapStringPredSetOptional } from "../validateMapValueUtils";
-import { lookupKeyValid, mapMNamed } from "../validateValueUtils";
+import { lookupKeyValid, mapMNamed, TableType } from "../validateValueUtils";
 import { toSpellPrerequisites } from "./Sub/toPrerequisites";
 import { toSourceLinks } from "./Sub/toSourceLinks";
 
@@ -24,26 +24,28 @@ export const toSpell =
       // Shortcuts
 
       const checkL10nNonEmptyString =
-        lookupKeyValid (mensureMapNonEmptyString) (lookup_l10n)
+        lookupKeyValid (mensureMapNonEmptyString) (TableType.L10n) (lookup_l10n)
 
       const checkSkillCheck =
         lookupKeyValid (mensureMapNaturalFixedList (3) ("&"))
+                       (TableType.Univ)
                        (lookup_univ)
 
       const checkCheckModifier =
         lookupKeyValid (mensureMapStringPredSetOptional (checkCheckMod)
                                                         (`"SPI" | "TOU"`)
                                                         (","))
+                       (TableType.Univ)
                        (lookup_univ)
 
       const checkUnivNaturalNumber =
-        lookupKeyValid (mensureMapNatural) (lookup_univ)
+        lookupKeyValid (mensureMapNatural) (TableType.Univ) (lookup_univ)
 
       const checkUnivNaturalNumberList =
-        lookupKeyValid (mensureMapNaturalList ("&")) (lookup_univ)
+        lookupKeyValid (mensureMapNaturalList ("&")) (TableType.Univ) (lookup_univ)
 
       const checkUnivNaturalNumberListOptional =
-        lookupKeyValid (mensureMapNaturalListOptional ("&")) (lookup_univ)
+        lookupKeyValid (mensureMapNaturalListOptional ("&")) (TableType.Univ) (lookup_univ)
 
       // Check and convert fields
 

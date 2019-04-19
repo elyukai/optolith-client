@@ -234,8 +234,9 @@ export const ap =
  * `(>>=) :: Either e a -> (a -> Either e b) -> Either e b`
  */
 export const bind =
-  <E, A, B>
+  <E, A>
   (x: Either<E, A>) =>
+  <B>
   (f: (x: A) => Either<E, B>): Either<E, B> =>
     isRight (x) ? f (x .value) : x
 
@@ -246,7 +247,7 @@ export const bindF =
   <E, A, B>
   (f: (x: A) => Either<E, B>) =>
   (x: Either<E, A>): Either<E, B> =>
-    bind<E, A, B> (x) (f)
+    bind (x) (f)
 
 /**
  * `(>>) :: Either e a -> Either e b -> Either e b`
@@ -261,7 +262,7 @@ export const then =
   <E, B>
   (x: Either<E, any>) =>
   (y: Either<E, B>): Either<E, B> =>
-    bind<E, any, B> (x) (_ => y)
+    bind (x) (_ => y)
 
 /**
  * `(>=>) :: (a -> Either e b) -> (b -> Either e c) -> a -> Either e c`
@@ -283,7 +284,7 @@ export const kleisli =
  */
 export const join =
   <E, A> (x: Either<E, Either<E, A>>): Either<E, A> =>
-    bind<E, Either<E, A>, A> (x) (ident)
+    bind (x) (ident)
 
 /**
  * `mapM :: (a -> Either e b) -> [a] -> Either e [b]`
@@ -300,8 +301,9 @@ export const mapM =
   (xs: List<A>): Either<E, List<B>> =>
     List.fnull (xs)
     ? Right (List.empty)
-    : ifElse<Either<E, B>, Left<E>, Either<E, List<B>>>
+    : ifElse<Either<E, B>, Left<E>>
       (isLeft)
+      <Either<E, List<B>>>
       (ident)
       (y => second (consF (fromRight_ (y)))
                    (mapM (f) (xs .xs)))
@@ -319,7 +321,7 @@ export const liftM2 =
   <E>
   (x1: Either<E, A1>) =>
   (x2: Either<E, A2>): Either<E, B> =>
-    bind<E, A1, B> (x1) (pipe (f, fmapF (x2)))
+    bind (x1) (pipe (f, fmapF (x2)))
 
 
 // FOLDABLE
@@ -657,6 +659,36 @@ export const partitionEithers =
 
 export import isEither = Internals.isEither
 
+/**
+ * `imapM :: (Int -> a -> Either e b) -> [a] -> Either e [b]`
+ *
+ * `imapM f xs` takes a function and a list and maps the function over every
+ * element in the list. If the function returns a `Left`, it is immediately
+ * returned by the function. If `f` did not return any `Left`, the list of
+ * unwrapped return values is returned as a `Right`. If `xs` is empty,
+ * `Right []` is returned.
+ */
+export const imapM =
+  <E, A, B>
+  (f: (index: number) => (x: A) => Either<E, B>) =>
+  (xs: List<A>): Either<E, List<B>> =>
+    imapMIndex (0) (f) (xs)
+
+const imapMIndex =
+  (i: number) =>
+  <E, A, B>
+  (f: (i: number) => (x: A) => Either<E, B>) =>
+  (xs: List<A>): Either<E, List<B>> =>
+    List.fnull (xs)
+    ? Right (List.empty)
+    : ifElse<Either<E, B>, Left<E>>
+      (isLeft)
+      <Either<E, List<B>>>
+      (ident)
+      (y => second (consF (fromRight_ (y)))
+                   (imapMIndex (i + 1) (f) (xs .xs)))
+      (f (i) (xs .x))
+
 
 // TYPE HELPERS
 
@@ -725,4 +757,5 @@ export const Either = {
   partitionEithers,
 
   isEither,
+  imapM,
 }

@@ -9,17 +9,18 @@ import { prefixId } from "../../IDUtils";
 import { toInt, toNatural } from "../../NumberUtils";
 import { mergeRowsById } from "../mergeTableRows";
 import { maybePrefix } from "../rawConversionUtils";
+import { Expect } from "../showExpected";
 import { mensureMapInteger, mensureMapIntegerOptional, mensureMapNaturalFixedListOptional, mensureMapNaturalList, mensureMapNaturalListOptional, mensureMapPairList, mensureMapPairListOptional } from "../validateMapValueUtils";
-import { Expect, lookupKeyMapValidNatural, lookupKeyMapValidNonEmptyString, lookupKeyValid, mapMNamed } from "../validateValueUtils";
+import { lookupKeyMapValidNatural, lookupKeyMapValidNonEmptyString, lookupKeyValid, mapMNamed, TableType } from "../validateValueUtils";
 import { toSourceLinks } from "./Sub/toSourceLinks";
 
 const stringToAttributeAdjustments =
-  mensureMapPairList ("&")
-                     ("?")
-                     (Expect.NaturalNumber)
-                     (Expect.Integer)
-                     (toNatural)
-                     (toInt)
+  mensureMapPairListOptional ("&")
+                             ("?")
+                             (Expect.NaturalNumber)
+                             (Expect.Integer)
+                             (toNatural)
+                             (toInt)
 
 export const stringToDiceList =
   mensureMapPairListOptional ("&")
@@ -44,25 +45,27 @@ export const toRace =
       // Shortcuts
 
       const checkL10nNonEmptyString =
-        lookupKeyMapValidNonEmptyString (lookup_l10n)
+        lookupKeyMapValidNonEmptyString (TableType.L10n) (lookup_l10n)
 
       const checkUnivNaturalNumber =
-        lookupKeyMapValidNatural (lookup_univ)
+        lookupKeyMapValidNatural (TableType.Univ) (lookup_univ)
 
       const checkUnivNaturalNumberList =
-        lookupKeyValid (mensureMapNaturalList ("&")) (lookup_univ)
+        lookupKeyValid (mensureMapNaturalList ("&")) (TableType.Univ) (lookup_univ)
 
       const checkOptionalUnivNaturalNumberList =
-        lookupKeyValid (mensureMapNaturalListOptional ("&")) (lookup_univ)
+        lookupKeyValid (mensureMapNaturalListOptional ("&")) (TableType.Univ) (lookup_univ)
 
       const checkOptionalUnivNaturalNumberList20 =
-        lookupKeyValid (mensureMapNaturalFixedListOptional (20) ("&")) (lookup_univ)
+        lookupKeyValid (mensureMapNaturalFixedListOptional (20) ("&"))
+                       (TableType.Univ)
+                       (lookup_univ)
 
       const checkUnivInteger =
-        lookupKeyValid (mensureMapInteger) (lookup_univ)
+        lookupKeyValid (mensureMapInteger) (TableType.Univ) (lookup_univ)
 
       const checkOptionalUnivInteger =
-        lookupKeyValid (mensureMapIntegerOptional) (lookup_univ)
+        lookupKeyValid (mensureMapIntegerOptional) (TableType.Univ) (lookup_univ)
 
       // Check fields
 
@@ -86,6 +89,7 @@ export const toRace =
 
       const eattributeAdjustments =
         lookupKeyValid (stringToAttributeAdjustments)
+                       (TableType.Univ)
                        (lookup_univ)
                        ("attributeAdjustments")
 
@@ -99,7 +103,7 @@ export const toRace =
         checkUnivNaturalNumberList ("attributeAdjustmentsSelectionList")
 
       const ecommonCultures =
-        checkUnivNaturalNumberList ("commonCultures")
+        checkOptionalUnivNaturalNumberList ("commonCultures")
 
       const eautomaticAdvantages =
         checkOptionalUnivNaturalNumberList ("automaticAdvantages")
@@ -154,6 +158,7 @@ export const toRace =
 
       const esizeRandom =
         lookupKeyValid (stringToDiceList)
+                       (TableType.Univ)
                        (lookup_univ)
                        ("sizeRandom")
 
@@ -162,6 +167,7 @@ export const toRace =
 
       const eweightRandom =
         lookupKeyValid (stringToNegativeDiceList)
+                       (TableType.Univ)
                        (lookup_univ)
                        ("weightRandom")
 
@@ -213,7 +219,7 @@ export const toRace =
           attributeAdjustments:
             map<Pair<number, number>, Pair<string, number>>
               (first (prefixId (IdPrefixes.ATTRIBUTES)))
-              (rs.eattributeAdjustments),
+              (fromMaybe (List<Pair<number, number>> ()) (rs.eattributeAdjustments)),
 
           attributeAdjustmentsSelection:
             Pair (
@@ -224,7 +230,7 @@ export const toRace =
           attributeAdjustmentsText: rs.eattributeAdjustmentsText,
 
           commonCultures:
-            map (prefixId (IdPrefixes.CULTURES)) (rs.ecommonCultures),
+            map (prefixId (IdPrefixes.CULTURES)) (fromMaybe (List<number> ()) (rs.ecommonCultures)),
 
           automaticAdvantages:
             fromMaybe<List<string>>

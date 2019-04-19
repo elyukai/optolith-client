@@ -4,7 +4,7 @@ import { Blessing } from "../../../Models/Wiki/Blessing";
 import { prefixId } from "../../IDUtils";
 import { mergeRowsById } from "../mergeTableRows";
 import { mensureMapNaturalList, mensureMapNonEmptyString } from "../validateMapValueUtils";
-import { lookupKeyValid, mapMNamed } from "../validateValueUtils";
+import { lookupKeyValid, mapMNamed, TableType } from "../validateValueUtils";
 import { toSourceLinks } from "./Sub/toSourceLinks";
 
 export const toBlessing =
@@ -14,10 +14,10 @@ export const toBlessing =
       // Shortcuts
 
       const checkL10nNonEmptyString =
-        lookupKeyValid (mensureMapNonEmptyString) (lookup_l10n)
+        lookupKeyValid (mensureMapNonEmptyString) (TableType.L10n) (lookup_l10n)
 
       const checkUnivNaturalNumberList =
-        lookupKeyValid (mensureMapNaturalList ("&")) (lookup_univ)
+        lookupKeyValid (mensureMapNaturalList ("&")) (TableType.Univ) (lookup_univ)
 
       // Check and convert fields
 

@@ -2,7 +2,7 @@ import { IdPrefixes } from "../../../Constants/IdPrefixes";
 import { ExperienceLevel } from "../../../Models/Wiki/ExperienceLevel";
 import { prefixId } from "../../IDUtils";
 import { mergeRowsById } from "../mergeTableRows";
-import { lookupKeyMapValidNatural, lookupKeyMapValidNonEmptyString, mapMNamed } from "../validateValueUtils";
+import { lookupKeyMapValidNatural, lookupKeyMapValidNonEmptyString, mapMNamed, TableType } from "../validateValueUtils";
 
 export const toExperienceLevel =
   mergeRowsById
@@ -11,10 +11,10 @@ export const toExperienceLevel =
       // Shortcuts
 
       const checkL10nNonEmptyString =
-        lookupKeyMapValidNonEmptyString (lookup_l10n)
+        lookupKeyMapValidNonEmptyString (TableType.L10n) (lookup_l10n)
 
       const checkUnivNaturalNumber =
-        lookupKeyMapValidNatural (lookup_univ)
+        lookupKeyMapValidNatural (TableType.Univ) (lookup_univ)
 
       // Check and convert fields
 

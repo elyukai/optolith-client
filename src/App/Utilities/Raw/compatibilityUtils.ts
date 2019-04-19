@@ -1,15 +1,7 @@
-import { remote } from "electron";
-import * as fs from "fs";
-import * as path from "path";
 import { lt, lte, satisfies } from "semver";
 import { StringKeyObject } from "../../../Data/Record";
 import { getBlessedTradStrIdFromNumId, getMagicalTraditionInstanceIdByNumericId } from "../IDUtils";
 import { RawActiveObject, RawHero } from "./RawData";
-
-export const currentVersion = JSON.parse (fs.readFileSync (
-  path.join (remote.app.getAppPath (), "package.json"),
-  "utf8"
-)).version as string
 
 // tslint:disable-next-line:variable-name
 const convertLowerThan0_49_5 = (hero: RawHero): RawHero => {

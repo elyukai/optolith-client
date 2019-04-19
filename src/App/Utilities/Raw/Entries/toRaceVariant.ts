@@ -9,7 +9,7 @@ import { prefixId } from "../../IDUtils";
 import { mergeRowsById } from "../mergeTableRows";
 import { maybePrefix } from "../rawConversionUtils";
 import { mensureMapIntegerOptional, mensureMapNaturalFixedListOptional, mensureMapNaturalListOptional, mensureMapNonEmptyString } from "../validateMapValueUtils";
-import { lookupKeyValid, mapMNamed } from "../validateValueUtils";
+import { lookupKeyValid, mapMNamed, TableType } from "../validateValueUtils";
 import { stringToDiceList } from "./toRace";
 
 export const toRaceVariant =
@@ -19,16 +19,18 @@ export const toRaceVariant =
       // Shortcuts
 
       const checkL10nNonEmptyString =
-        lookupKeyValid (mensureMapNonEmptyString) (lookup_l10n)
+        lookupKeyValid (mensureMapNonEmptyString) (TableType.L10n) (lookup_l10n)
 
       const checkOptionalUnivNaturalNumberList =
-        lookupKeyValid (mensureMapNaturalListOptional ("&")) (lookup_univ)
+        lookupKeyValid (mensureMapNaturalListOptional ("&")) (TableType.Univ) (lookup_univ)
 
       const checkOptionalUnivNaturalNumberList20 =
-        lookupKeyValid (mensureMapNaturalFixedListOptional (20) ("&")) (lookup_univ)
+        lookupKeyValid (mensureMapNaturalFixedListOptional (20) ("&"))
+                       (TableType.Univ)
+                       (lookup_univ)
 
       const checkOptionalUnivInteger =
-        lookupKeyValid (mensureMapIntegerOptional) (lookup_univ)
+        lookupKeyValid (mensureMapIntegerOptional) (TableType.Univ) (lookup_univ)
 
       // Check fields
 
@@ -73,6 +75,7 @@ export const toRaceVariant =
 
       const esizeRandom =
         lookupKeyValid (stringToDiceList)
+                       (TableType.Univ)
                        (lookup_univ)
                        ("sizeRandom")
 

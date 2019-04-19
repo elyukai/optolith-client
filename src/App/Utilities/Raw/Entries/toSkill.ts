@@ -1,9 +1,10 @@
 import { liftM2 } from "../../../../Data/Either";
 import { fmap } from "../../../../Data/Functor";
 import { fromArray, List, lookup, map, notNullStr } from "../../../../Data/List";
-import { ensure, Just, Maybe, maybe_, Nothing } from "../../../../Data/Maybe";
+import { any, ensure, fromJust, Just, Maybe, maybe_, Nothing, Some } from "../../../../Data/Maybe";
 import { fst, Pair, snd } from "../../../../Data/Pair";
 import { Record } from "../../../../Data/Record";
+import { parseJSON } from "../../../../Data/String/JSON";
 import { IdPrefixes } from "../../../Constants/IdPrefixes";
 import { RequireActivatable } from "../../../Models/Wiki/prerequisites/ActivatableRequirement";
 import { Skill } from "../../../Models/Wiki/Skill";
@@ -11,8 +12,9 @@ import { Application } from "../../../Models/Wiki/sub/Application";
 import { prefixId } from "../../IDUtils";
 import { toInt } from "../../NumberUtils";
 import { mergeRowsById } from "../mergeTableRows";
+import { Expect } from "../showExpected";
 import { mensureMapNatural, mensureMapNaturalFixedList, mensureMapNonEmptyString, mensureMapPairList, mensureMapPairListOptional, mensureMapStringPred } from "../validateMapValueUtils";
-import { Expect, lookupKeyValid, mapMNamed } from "../validateValueUtils";
+import { lookupKeyValid, mapMNamed, TableType } from "../validateValueUtils";
 import { isRawRequiringActivatable } from "./Prerequisites/RawActivatableRequirement";
 import { toSourceLinks } from "./Sub/toSourceLinks";
 
@@ -24,19 +26,23 @@ const checkEncumbrance =
 export const stringToPrerequisite =
   (x: string): Maybe<List<Record<RequireActivatable>>> => {
     try {
-      const obj = JSON.parse (x)
+      const mobj = parseJSON (x)
 
-      if (typeof obj !== "object" || obj === null) return Nothing
+      if (any ((y: Some): y is object => typeof y === "object" && y === null) (mobj)) {
+        const obj = fromJust<any> (mobj)
 
-      return isRawRequiringActivatable (obj)
-        ? Just (List (RequireActivatable ({
-            id: Array.isArray (obj .id) ? fromArray (obj .id) : obj .id,
-            active: obj .active,
-            sid: Array.isArray (obj .sid) ? Just (fromArray (obj .sid)) : Maybe (obj .sid),
-            sid2: Maybe (obj .sid2),
-            tier: Maybe (obj .tier),
-          })))
-        : Nothing
+        return isRawRequiringActivatable (obj)
+          ? Just (List (RequireActivatable ({
+              id: Array.isArray (obj .id) ? fromArray (obj .id) : obj .id,
+              active: obj .active,
+              sid: Array.isArray (obj .sid) ? Just (fromArray (obj .sid)) : Maybe (obj .sid),
+              sid2: Maybe (obj .sid2),
+              tier: Maybe (obj .tier),
+            })))
+          : Nothing
+      }
+
+      return Nothing
     }
     catch (e) {
       return Nothing
@@ -50,7 +56,7 @@ export const toSkill =
       // Shortcuts
 
       const checkL10nNonEmptyString =
-        lookupKeyValid (mensureMapNonEmptyString) (lookup_l10n)
+        lookupKeyValid (mensureMapNonEmptyString) (TableType.L10n) (lookup_l10n)
 
       const checkApplicationsL10n =
         lookupKeyValid (mensureMapPairList ("&&")
@@ -59,6 +65,7 @@ export const toSkill =
                                            (Expect.NonEmptyString)
                                            (toInt)
                                            (ensure (notNullStr)))
+                       (TableType.L10n)
                        (lookup_l10n)
 
       const checkApplicationsUniv =
@@ -68,19 +75,23 @@ export const toSkill =
                                                    ("RequireActivatable")
                                                    (toInt)
                                                    (stringToPrerequisite))
+                       (TableType.Univ)
                        (lookup_univ)
 
       const checkSkillCheck =
         lookupKeyValid (mensureMapNaturalFixedList (3) ("&"))
+                       (TableType.Univ)
                        (lookup_univ)
 
       const checkEncumbranceInfluence =
         lookupKeyValid (mensureMapStringPred (checkEncumbrance)
                                              (`"true" | "false" | "maybe"`))
+                       (TableType.Univ)
                        (lookup_univ)
 
       const checkUnivNaturalNumber =
         lookupKeyValid (mensureMapNatural)
+                       (TableType.Univ)
                        (lookup_univ)
 
       // Check and convert fields

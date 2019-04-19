@@ -159,10 +159,10 @@ export const parseTables =
     }
 
     const lookup_univ =
-      pipe (lookupF (fromRight_ (euniv_map)), maybeToEither ("Sheet not found."))
+      pipe (lookupF (fromRight_ (euniv_map)), maybeToEither ("univ.xlsx Sheet not found."))
 
     const lookup_l10n =
-      pipe (lookupF (fromRight_ (el10n_map)), maybeToEither ("Sheet not found."))
+      pipe (lookupF (fromRight_ (el10n_map)), maybeToEither ("l10n.xlsx Sheet not found."))
 
     const lookupBindM2MapM = bindM2MapM (lookup_l10n) (lookup_univ)
 
@@ -170,8 +170,7 @@ export const parseTables =
 
     return mapMNamed
       ({
-        l10n: bind<string, List<OrderedMap<string, string>>, L10nRecord> (lookup_l10n ("UI"))
-                                                                         (toL10n (locale)),
+        l10n: bind (lookup_l10n ("UI")) <L10nRecord> (toL10n (locale)),
 
         books:
           fmap<List<Record<Book>>, OrderedMap<string, Record<Book>>>

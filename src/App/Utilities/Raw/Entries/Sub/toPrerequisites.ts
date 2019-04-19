@@ -5,6 +5,7 @@ import { fromArray, isInfixOf, List, splitOn, uncons } from "../../../../../Data
 import { bindF, ensure, fromJust, fromMaybe, isNothing, Just, Maybe, Nothing } from "../../../../../Data/Maybe";
 import { fromList } from "../../../../../Data/OrderedMap";
 import { fst, Pair, snd } from "../../../../../Data/Pair";
+import { parseJSON } from "../../../../../Data/String/JSON";
 import { RequireActivatable } from "../../../../Models/Wiki/prerequisites/ActivatableRequirement";
 import { CultureRequirement } from "../../../../Models/Wiki/prerequisites/CultureRequirement";
 import { RequireIncreasable } from "../../../../Models/Wiki/prerequisites/IncreasableRequirement";
@@ -17,7 +18,7 @@ import { ifElse } from "../../../ifElse";
 import { gte } from "../../../mathUtils";
 import { toInt } from "../../../NumberUtils";
 import { pipe } from "../../../pipe";
-import { lookupKeyValid, mstrToMaybe } from "../../validateValueUtils";
+import { lookupKeyValid, mstrToMaybe, TableType } from "../../validateValueUtils";
 import { isRawRequiringActivatable } from "../Prerequisites/RawActivatableRequirement";
 import { isRawCultureRequirement } from "../Prerequisites/RawCultureRequirement";
 import { isRawRequiringIncreasable } from "../Prerequisites/RawIncreasableRequirement";
@@ -44,8 +45,8 @@ const toLevelAwarePrerequisites =
           const levelAwarePrerequisites =
             Maybe.mapM<string, AllRequirements>
               (pipe (
-                (x: string) => JSON.parse (x),
-                ensure (x => typeof x === "object" && x !== null || x === "RCP"),
+                parseJSON,
+                bindF (ensure (x => typeof x === "object" && x !== null || x === "RCP")),
                 bindF<any, AllRequirements> (
                   x => x === "RCP"
                     ? Just<"RCP"> ("RCP")
@@ -125,8 +126,8 @@ const toFlatPrerequisites =
            splitOn ("&"),
            Maybe.mapM<string, AllRequirements>
              (pipe (
-               (x: string) => JSON.parse (x),
-               ensure (x => typeof x === "object" && x !== null || x === "RCP"),
+               parseJSON,
+               bindF (ensure (x => typeof x === "object" && x !== null || x === "RCP")),
                bindF<any, AllRequirements> (
                  x => x === "RCP"
                    ? Just<"RCP"> ("RCP")
@@ -196,8 +197,8 @@ const toFlatSpellPrerequisites =
            splitOn ("&"),
            Maybe.mapM<string, AllRequirementObjects>
              (pipe (
-               (x: string) => JSON.parse (x),
-               ensure (x => typeof x === "object" && x !== null),
+               parseJSON,
+               bindF (ensure (x => typeof x === "object" && x !== null)),
                bindF<any, AllRequirementObjects> (
                  x => isRawRequiringActivatable (x)
                    ? Just (RequireActivatable ({
@@ -259,8 +260,9 @@ const toFlatSpellPrerequisites =
          (xs)
 
 const toLevelAwareOrPlainPrerequisites =
-  ifElse<string, Either<string, LevelAwarePrerequisites>>
+  ifElse<string>
     (isInfixOf ("&&"))
+    <Either<string, LevelAwarePrerequisites>>
     (toLevelAwarePrerequisites)
     (toFlatPrerequisites)
 
@@ -276,6 +278,7 @@ export const toPrerequisites =
                           fmap (toLevelAwareOrPlainPrerequisites),
                           fromMaybe<Either<string, LevelAwarePrerequisites>> (Right (List.empty))
                         ))
+                        (TableType.Univ)
        )
        ("prerequisites") as
          (lookup_univ: (key: string) => Maybe<string>) =>
@@ -294,6 +297,7 @@ export const toSpellPrerequisites =
                           fromMaybe<Either<string, List<AllRequirementObjects>>>
                             (Right (List.empty))
                         ))
+                        (TableType.Univ)
        )
        ("prerequisites") as
          (lookup_univ: (key: string) => Maybe<string>) =>

@@ -6,7 +6,7 @@ import { SelectOption } from "../../../Models/Wiki/sub/SelectOption";
 import { prefixId } from "../../IDUtils";
 import { mergeRowsById } from "../mergeTableRows";
 import { mensureMapNatural, mensureMapNaturalInRange, mensureMapNonEmptyString } from "../validateMapValueUtils";
-import { lookupKeyValid, mapMNamed } from "../validateValueUtils";
+import { lookupKeyValid, mapMNamed, TableType } from "../validateValueUtils";
 import { toSpellPrerequisites } from "./Sub/toPrerequisites";
 import { toSourceLinks } from "./Sub/toSourceLinks";
 
@@ -18,10 +18,10 @@ export const toExtension =
         // Shortcuts
 
         const checkL10nNonEmptyString =
-          lookupKeyValid (mensureMapNonEmptyString) (lookup_l10n)
+          lookupKeyValid (mensureMapNonEmptyString) (TableType.L10n) (lookup_l10n)
 
         const checkUnivNaturalNumber =
-          lookupKeyValid (mensureMapNatural) (lookup_univ)
+          lookupKeyValid (mensureMapNatural) (TableType.Univ) (lookup_univ)
 
         // Check and convert fields
 
@@ -33,6 +33,7 @@ export const toExtension =
 
         const elevel =
           lookupKeyValid (mensureMapNaturalInRange (1) (3))
+                         (TableType.Univ)
                          (lookup_univ)
                          ("level")
 

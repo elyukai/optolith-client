@@ -1,23 +1,12 @@
 import { Either, first, fromRight_, isEither, isLeft, Left, Right, RightI } from "../../../Data/Either";
 import { appendStr, notNullStr } from "../../../Data/List";
 import { bindF, ensure, Maybe } from "../../../Data/Maybe";
-import { pipe } from "../pipe";
+import { pipe_ } from "../pipe";
 import { mensureMapNatural, mensureMapNaturalOptional, mensureMapNonEmptyString } from "./validateMapValueUtils";
 
-export const Expect = Object.freeze ({
-  NonEmptyString: "String (non-empty)",
-  NaturalNumber: "Natural",
-  Integer: "Int",
-  Boolean: "Bool",
-  Maybe: (x: string) => `Maybe ${x}`,
-  List: (x: string) => `[${x}]`,
-  ListLength: (len: number) => (x: string) => `[${x}] { length = ${len} }`,
-  Pair: (x: string) => (y: string) => `(${x}, ${y})`,
-  Union: (...xs: string[]) => xs .join (" | "),
-  /** Group with `(` ...` )` */
-  G: (x: string) => `(${x})`,
-  Set: (x: string) => `Set ${x}`,
-})
+export enum TableType { Univ, L10n }
+
+const getTableTypeName = (x: TableType) => x === TableType.Univ ? `"univ.xlsx"` : `"l10n.xlsx"`
 
 /**
  * Creates a shortcut for reuse when checking table data. Takes a function that
@@ -27,9 +16,16 @@ export const Expect = Object.freeze ({
  */
 export const lookupKeyValid =
   <A> (validate: (x: Maybe<string>) => Either<string, A>) =>
+  (tableType: TableType) =>
   (lookup: (key: string) => Maybe<string>) =>
   (key: string): Either<string, A> =>
-    pipe (lookup, mstrToMaybe, validate, first (appendStr (`"${key}": `))) (key)
+    pipe_ (
+      key,
+      lookup,
+      mstrToMaybe,
+      validate,
+      first (appendStr (`"${key}" in ${getTableTypeName (tableType)}: `))
+    )
 
 /**
  * Takes a `Maybe String` and returns `Nothing` if the string is empty,

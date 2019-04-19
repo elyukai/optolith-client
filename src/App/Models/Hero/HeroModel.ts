@@ -3,7 +3,7 @@ import { Maybe, Nothing } from "../../../Data/Maybe";
 import { OrderedMap } from "../../../Data/OrderedMap";
 import { OrderedSet } from "../../../Data/OrderedSet";
 import { fromDefault, makeLenses, Record } from "../../../Data/Record";
-import { currentVersion } from "../../Utilities/Raw/compatibilityUtils";
+import { current_version } from "../../Selectors/envSelectors";
 import { ActivatableDependent } from "../ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent } from "../ActiveEntries/ActivatableSkillDependent";
 import { AttributeDependent } from "../ActiveEntries/AttributeDependent";
@@ -69,7 +69,7 @@ export interface HeroModel {
 export const HeroModel =
   fromDefault<HeroModel> ({
     id: "",
-    clientVersion: currentVersion,
+    clientVersion: current_version,
     player: Nothing,
     dateCreated: new Date (),
     dateModified: new Date (),

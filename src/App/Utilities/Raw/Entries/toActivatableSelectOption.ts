@@ -5,8 +5,9 @@ import { IdPrefixes } from "../../../Constants/IdPrefixes";
 import { SelectOption } from "../../../Models/Wiki/sub/SelectOption";
 import { prefixId } from "../../IDUtils";
 import { mergeRowsByIdAndMainId } from "../mergeTableRows";
+import { Expect } from "../showExpected";
 import { mensureMapBoolean, mensureMapNaturalInRangeOptional, mensureMapNaturalListOptional, mensureMapNaturalOptional, mensureMapNonEmptyString, mensureMapStringPredListOptional } from "../validateMapValueUtils";
-import { Expect, lookupKeyValid, mapMNamed } from "../validateValueUtils";
+import { lookupKeyValid, mapMNamed, TableType } from "../validateValueUtils";
 import { toSpellPrerequisites } from "./Sub/toPrerequisites";
 import { toSourceLinks } from "./Sub/toSourceLinks";
 
@@ -18,22 +19,23 @@ export const toActivatableSelectOption =
         // Shortcuts
 
         const checkL10nNonEmptyString =
-          lookupKeyValid (mensureMapNonEmptyString) (lookup_l10n)
+          lookupKeyValid (mensureMapNonEmptyString) (TableType.L10n) (lookup_l10n)
 
         const checkL10nNonEmptyStringList =
           lookupKeyValid (mensureMapStringPredListOptional (notNullStr)
                                                            (Expect.NonEmptyString)
                                                            ("&"))
+                         (TableType.L10n)
                          (lookup_l10n)
 
         const checkUnivNaturalNumberListOptional =
-          lookupKeyValid (mensureMapNaturalListOptional ("&")) (lookup_univ)
+          lookupKeyValid (mensureMapNaturalListOptional ("&")) (TableType.Univ) (lookup_univ)
 
         const checkOptionalUnivNaturalNumber =
-          lookupKeyValid (mensureMapNaturalOptional) (lookup_univ)
+          lookupKeyValid (mensureMapNaturalOptional) (TableType.Univ) (lookup_univ)
 
         const checkUnivBoolean =
-          lookupKeyValid (mensureMapBoolean) (lookup_univ)
+          lookupKeyValid (mensureMapBoolean) (TableType.Univ) (lookup_univ)
 
         // Check and convert fields
 
@@ -53,6 +55,7 @@ export const toActivatableSelectOption =
 
         const econtinent =
           lookupKeyValid (mensureMapNaturalInRangeOptional (1) (3))
+                         (TableType.Univ)
                          (lookup_univ)
                          ("continent")
 

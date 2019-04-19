@@ -9,8 +9,9 @@ import { toNatural } from "../../NumberUtils";
 import { pipe } from "../../pipe";
 import { naturalNumber } from "../../RegexUtils";
 import { mergeRowsById } from "../mergeTableRows";
+import { Expect } from "../showExpected";
 import { mensureMapBoolean, mensureMapListBindAfterOptional, mensureMapNaturalFixedListOptional, mensureMapNaturalInRange, mensureMapNaturalInRangeOptional, mensureMapNaturalOptional, mensureMapNonEmptyString, mensureMapStringPredOptional } from "../validateMapValueUtils";
-import { Expect, lookupKeyValid, mapMNamed } from "../validateValueUtils";
+import { lookupKeyValid, mapMNamed, TableType } from "../validateValueUtils";
 import { toSourceLinks } from "./Sub/toSourceLinks";
 
 const primaryAttributeRx =
@@ -30,13 +31,13 @@ export const toItemTemplate =
       // Shortcuts
 
       const checkL10nNonEmptyString =
-        lookupKeyValid (mensureMapNonEmptyString) (lookup_l10n)
+        lookupKeyValid (mensureMapNonEmptyString) (TableType.L10n) (lookup_l10n)
 
       const checkUnivNaturalNumberOptional =
-        lookupKeyValid (mensureMapNaturalOptional) (lookup_univ)
+        lookupKeyValid (mensureMapNaturalOptional) (TableType.Univ) (lookup_univ)
 
       const checkUnivBoolean =
-        lookupKeyValid (mensureMapBoolean) (lookup_univ)
+        lookupKeyValid (mensureMapBoolean) (TableType.Univ) (lookup_univ)
 
       // Check fields
 
@@ -56,6 +57,7 @@ export const toItemTemplate =
 
       const egr =
         lookupKeyValid (mensureMapNaturalInRange (1) (27))
+                       (TableType.Univ)
                        (lookup_univ)
                        ("improvisedWeaponGroup")
 
@@ -70,6 +72,7 @@ export const toItemTemplate =
       const edamageThresholdAttribute =
         lookupKeyValid (mensureMapStringPredOptional (isPrimaryAttributeString)
                                                      ("PrimaryAttribute"))
+                       (TableType.Univ)
                        (lookup_univ)
                        ("damageThresholdAttribute")
 
@@ -81,6 +84,7 @@ export const toItemTemplate =
                                                                 ("&")
                                                                 (Expect.NaturalNumber)
                                                                 (toNatural))
+                       (TableType.Univ)
                        (lookup_univ)
                        ("damageThreshold")
 
@@ -90,6 +94,7 @@ export const toItemTemplate =
 
       const ereach =
         lookupKeyValid (mensureMapNaturalInRangeOptional (1) (4))
+                       (TableType.Univ)
                        (lookup_univ)
                        ("reach")
 
@@ -103,6 +108,7 @@ export const toItemTemplate =
 
       const erange =
         lookupKeyValid (mensureMapNaturalFixedListOptional (3) ("&"))
+                       (TableType.Univ)
                        (lookup_univ)
                        ("range")
 
@@ -111,11 +117,13 @@ export const toItemTemplate =
       const eammunition =
         lookupKeyValid (mensureMapStringPredOptional (isItemTemplateIdString)
                                                      ("ItemTemplateId"))
+                       (TableType.Univ)
                        (lookup_univ)
                        ("ammunition")
 
       const eimprovisedWeaponGroup =
         lookupKeyValid (mensureMapNaturalInRangeOptional (1) (2))
+                       (TableType.Univ)
                        (lookup_univ)
                        ("improvisedWeaponGroup")
 
@@ -127,6 +135,7 @@ export const toItemTemplate =
 
       const earmorType =
         lookupKeyValid (mensureMapNaturalInRangeOptional (1) (10))
+                       (TableType.Univ)
                        (lookup_univ)
                        ("armorType")
 

@@ -1,7 +1,7 @@
 import { Book } from "../../../Models/Wiki/Book";
 import { fromRow } from "../mergeTableRows";
 import { mensureMapBoolean, mensureMapNonEmptyString } from "../validateMapValueUtils";
-import { lookupKeyValid, mapMNamed } from "../validateValueUtils";
+import { lookupKeyValid, mapMNamed, TableType } from "../validateValueUtils";
 
 export const toBook =
   fromRow
@@ -10,10 +10,10 @@ export const toBook =
       // Shortcuts
 
       const checkL10nNonEmptyString =
-        lookupKeyValid (mensureMapNonEmptyString) (lookup_l10n)
+        lookupKeyValid (mensureMapNonEmptyString) (TableType.L10n) (lookup_l10n)
 
       const checkL10nBoolean =
-        lookupKeyValid (mensureMapBoolean) (lookup_l10n)
+        lookupKeyValid (mensureMapBoolean) (TableType.L10n) (lookup_l10n)
 
       // Check and convert fields
 

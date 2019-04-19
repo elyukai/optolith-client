@@ -59,8 +59,9 @@ const loadDatabase =
           title: "Error",
         }))
       }
-
-      console.log ("Tables parsed")
+      else {
+        console.log ("Tables parsed")
+      }
 
       return res
     }

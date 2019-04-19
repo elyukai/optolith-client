@@ -5,7 +5,6 @@ import { autoUpdater, CancellationToken, UpdateInfo } from "electron-updater";
 import * as fs from "fs";
 import * as path from "path";
 import * as url from "url";
-import { user_data_path } from "./App/Selectors/envSelectors";
 // tslint:disable-next-line:ordered-imports
 import windowStateKeeper = require("electron-window-state")
 
@@ -13,15 +12,36 @@ let mainWindow: Electron.BrowserWindow | null | undefined
 
 app.setAppUserModelId ("lukasobermann.optolith")
 
+/**
+ * Path to directory where all of the cached and saved files are located.
+ *
+ * * `%APPDATA%` on Windows,
+ * * `$XDG_CONFIG_HOME` or `~/.config` on Linux,
+ * * `~/Library/Application Support` on macOS,
+ *
+ * appended with the name of the app.
+ */
+const user_data_path = app.getPath ("userData")
+
+/**
+ * The path to the root directory of the packed ASAR, which is the root
+ * directory of this project.
+ */
+const app_path = app.getAppPath ()
+
 const access = async (pathToFile: string) => new Promise<boolean> (
   resolve => {
-    fs.access (pathToFile, err => {
-      if (err !== null) {
-        resolve (false)
-      }
+    try {
+      fs.access (pathToFile, err => {
+        if (err !== null) {
+          resolve (false)
+        }
 
-      resolve (true)
-    })
+        resolve (true)
+      })
+    } catch (err) {
+      resolve (false)
+    }
   }
 )
 
@@ -75,8 +95,8 @@ const copyFile =
 
 const copyFileToCurrent =
   (origin: string) =>
-    copyFileFromToFolder (user_data_path)
-                         (path.join (user_data_path, "..", origin))
+    copyFileFromToFolder (path.join (user_data_path, "..", origin))
+                         (user_data_path)
 
 function createWindow () {
   const mainWindowState = windowStateKeeper ({
@@ -93,13 +113,16 @@ function createWindow () {
     minHeight: 720,
     minWidth: 1280,
     resizable: true,
-    icon: path.join (app.getAppPath (), "app", "icon.png"),
+    icon: path.join (app_path, "app", "icon.png"),
     frame: false,
     center: true,
     title: "Optolith",
     acceptFirstMouse: true,
     backgroundColor: "#000000",
     show: false,
+    webPreferences: {
+      devTools: true,
+    },
   })
 
   mainWindowState.manage (mainWindow)
@@ -186,13 +209,24 @@ function createWindow () {
 }
 
 async function main () {
-  await copyFile ("TDE5 Heroes") ("Optolyth") ("window")
-  await copyFile ("TDE5 Heroes") ("Optolyth") ("heroes")
-  await copyFile ("TDE5 Heroes") ("Optolyth") ("config")
+  try {
+    await copyFile ("TDE5 Heroes") ("Optolyth") ("window")
+    await copyFile ("TDE5 Heroes") ("Optolyth") ("heroes")
+    await copyFile ("TDE5 Heroes") ("Optolyth") ("config")
+  }
+  catch (e) {
+    console.warn (e)
+  }
 
-  await copyFileToCurrent ("Optolyth") ("window")
-  await copyFileToCurrent ("Optolyth") ("heroes")
-  await copyFileToCurrent ("Optolyth") ("config")
+  try {
+    await copyFileToCurrent ("Optolyth") ("window")
+    await copyFileToCurrent ("Optolyth") ("heroes")
+    await copyFileToCurrent ("Optolyth") ("config")
+  }
+  catch (e) {
+    console.warn (e)
+  }
+
 
   autoUpdater.logger = log
   // @ts-ignore

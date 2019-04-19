@@ -2,8 +2,9 @@ import { ident } from "../../../../Data/Function";
 import { fmap } from "../../../../Data/Functor";
 import { set } from "../../../../Data/Lens";
 import { empty, flength, foldr, fromArray, map } from "../../../../Data/List";
-import { ensure, fromMaybe, Just, maybe, Maybe, Nothing } from "../../../../Data/Maybe";
+import { any, ensure, fromJust, fromMaybe, Just, maybe, Maybe, Nothing, Some } from "../../../../Data/Maybe";
 import { Record } from "../../../../Data/Record";
+import { parseJSON } from "../../../../Data/String/JSON";
 import { IdPrefixes } from "../../../Constants/IdPrefixes";
 import { ProfessionRequireActivatable, RequireActivatable } from "../../../Models/Wiki/prerequisites/ActivatableRequirement";
 import { CultureRequirement } from "../../../Models/Wiki/prerequisites/CultureRequirement";
@@ -28,8 +29,9 @@ import { toNatural } from "../../NumberUtils";
 import { pipe } from "../../pipe";
 import { mergeRowsById } from "../mergeTableRows";
 import { maybePrefix } from "../rawConversionUtils";
+import { Expect } from "../showExpected";
 import { mensureMapListBindAfterOptional, mensureMapListOptional, mensureMapNatural, mensureMapNaturalListOptional, mensureMapNonEmptyString, mensureMapPairListOptional } from "../validateMapValueUtils";
-import { Expect, lookupKeyValid, mapMNamed } from "../validateValueUtils";
+import { lookupKeyValid, mapMNamed, TableType } from "../validateValueUtils";
 import { isRawProfessionRequiringActivatable } from "./Prerequisites/RawActivatableRequirement";
 import { isRawCultureRequirement } from "./Prerequisites/RawCultureRequirement";
 import { isRawProfessionRequiringIncreasable } from "./Prerequisites/RawIncreasableRequirement";
@@ -45,32 +47,38 @@ import { isRawSpecializationSelection } from "./ProfessionSelections/RawSpeciali
 import { isRawTerrainKnowledgeSelection } from "./ProfessionSelections/RawTerrainKnowledgeSelection";
 import { toSourceLinks } from "./Sub/toSourceLinks";
 
+const isNotNullObject = (x: Some): x is object => typeof x === "object" && x === null
+
 export const stringToDependencies =
   mensureMapListOptional
     ("&")
     ("SexRequirement | RaceRequirement | CultureRequirement")
     ((x): Maybe<ProfessionDependency> => {
       try {
-        const obj = JSON.parse (x)
+        const mobj = parseJSON (x)
 
-        if (typeof obj !== "object" || obj === null) return Nothing
+        if (any (isNotNullObject) (mobj)) {
+          const obj = fromJust<any> (mobj)
 
-        return isRawSexRequirement (obj)
-          ? Just (SexRequirement ({
-              id: Nothing,
-              value: obj .value,
-            }))
-          :  isRawRaceRequirement (obj)
-          ? Just (RaceRequirement ({
-              id: Nothing,
-              value: Array.isArray (obj .value) ? fromArray (obj .value) : obj .value,
-            }))
-          : isRawCultureRequirement (obj)
-          ? Just (CultureRequirement ({
-              id: Nothing,
-              value: Array.isArray (obj .value) ? fromArray (obj .value) : obj .value,
-            }))
-          : Nothing
+          return isRawSexRequirement (obj)
+            ? Just (SexRequirement ({
+                id: Nothing,
+                value: obj .value,
+              }))
+            :  isRawRaceRequirement (obj)
+            ? Just (RaceRequirement ({
+                id: Nothing,
+                value: Array.isArray (obj .value) ? fromArray (obj .value) : obj .value,
+              }))
+            : isRawCultureRequirement (obj)
+            ? Just (CultureRequirement ({
+                id: Nothing,
+                value: Array.isArray (obj .value) ? fromArray (obj .value) : obj .value,
+              }))
+            : Nothing
+        }
+
+        return Nothing
       }
       catch (e) {
         return Nothing
@@ -83,24 +91,28 @@ export const stringToPrerequisites =
     ("ProfessionRequireActivatable | ProfessionRequireIncreasable")
     ((x): Maybe<ProfessionPrerequisite> => {
       try {
-        const obj = JSON.parse (x)
+        const mobj = parseJSON (x)
 
-        if (typeof obj !== "object" || obj === null) return Nothing
+        if (any (isNotNullObject) (mobj)) {
+          const obj = fromJust<any> (mobj)
 
-        return isRawProfessionRequiringActivatable (obj)
-          ? Just (RequireActivatable ({
-              id: obj .id,
-              active: obj .active,
-              sid: Maybe (obj .sid),
-              sid2: Maybe (obj .sid2),
-              tier: Maybe (obj .tier),
-            }) as Record<ProfessionRequireActivatable>)
-          : isRawProfessionRequiringIncreasable (obj)
-          ? Just (RequireIncreasable ({
-              id: obj .id,
-              value: obj .value,
-            }) as Record<ProfessionRequireIncreasable>)
-          : Nothing
+          return isRawProfessionRequiringActivatable (obj)
+            ? Just (RequireActivatable ({
+                id: obj .id,
+                active: obj .active,
+                sid: Maybe (obj .sid),
+                sid2: Maybe (obj .sid2),
+                tier: Maybe (obj .tier),
+              }) as Record<ProfessionRequireActivatable>)
+            : isRawProfessionRequiringIncreasable (obj)
+            ? Just (RequireIncreasable ({
+                id: obj .id,
+                value: obj .value,
+              }) as Record<ProfessionRequireIncreasable>)
+            : Nothing
+        }
+
+        return Nothing
       }
       catch (e) {
         return Nothing
@@ -125,56 +137,60 @@ const stringToSelections =
       )
       ((x): Maybe<AnyProfessionSelection> => {
         try {
-          const obj = JSON.parse (x)
+          const mobj = parseJSON (x)
 
-          if (typeof obj !== "object" || obj === null) return Nothing
+          if (any (isNotNullObject) (mobj)) {
+            const obj = fromJust<any> (mobj)
 
-          return isRawSpecializationSelection (obj)
-            ? Just (SpecializationSelection ({
-                id: Nothing,
-                sid: Array.isArray (obj .sid) ? fromArray (obj .sid) : obj .sid,
-              }))
-            : isRawLanguagesScriptsSelection (obj)
-            ? Just (LanguagesScriptsSelection ({
-                id: Nothing,
-                value: obj .value,
-              }))
-            : isRawCombatTechniquesSelection (obj)
-            ? Just (CombatTechniquesSelection ({
-                id: Nothing,
-                amount: obj .amount,
-                value: obj .value,
-                sid: fromArray (obj .sid),
-              }))
-            : isRawSecondCombatTechniquesSelection (obj)
-            ? Just (CombatTechniquesSecondSelection ({
-                id: Nothing,
-                amount: obj .amount,
-                value: obj .value,
-                sid: fromArray (obj .sid),
-              }))
-            : isRawCantripsSelection (obj)
-            ? Just (CantripsSelection ({
-                id: Nothing,
-                amount: obj .amount,
-                sid: fromArray (obj .sid),
-              }))
-            : isRawCursesSelection (obj)
-            ? Just (CursesSelection ({
-                id: Nothing,
-                value: obj .value,
-              }))
-            : isRawTerrainKnowledgeSelection (obj)
-            ? Just (TerrainKnowledgeSelection ({
-                id: Nothing,
-                sid: fromArray (obj .sid),
-              }))
-            : isRawSkillsSelection (obj)
-            ? Just (SkillsSelection ({
-                id: Nothing,
-                value: obj .value,
-              }))
-            : Nothing
+            return isRawSpecializationSelection (obj)
+              ? Just (SpecializationSelection ({
+                  id: Nothing,
+                  sid: Array.isArray (obj .sid) ? fromArray (obj .sid) : obj .sid,
+                }))
+              : isRawLanguagesScriptsSelection (obj)
+              ? Just (LanguagesScriptsSelection ({
+                  id: Nothing,
+                  value: obj .value,
+                }))
+              : isRawCombatTechniquesSelection (obj)
+              ? Just (CombatTechniquesSelection ({
+                  id: Nothing,
+                  amount: obj .amount,
+                  value: obj .value,
+                  sid: fromArray (obj .sid),
+                }))
+              : isRawSecondCombatTechniquesSelection (obj)
+              ? Just (CombatTechniquesSecondSelection ({
+                  id: Nothing,
+                  amount: obj .amount,
+                  value: obj .value,
+                  sid: fromArray (obj .sid),
+                }))
+              : isRawCantripsSelection (obj)
+              ? Just (CantripsSelection ({
+                  id: Nothing,
+                  amount: obj .amount,
+                  sid: fromArray (obj .sid),
+                }))
+              : isRawCursesSelection (obj)
+              ? Just (CursesSelection ({
+                  id: Nothing,
+                  value: obj .value,
+                }))
+              : isRawTerrainKnowledgeSelection (obj)
+              ? Just (TerrainKnowledgeSelection ({
+                  id: Nothing,
+                  sid: fromArray (obj .sid),
+                }))
+              : isRawSkillsSelection (obj)
+              ? Just (SkillsSelection ({
+                  id: Nothing,
+                  value: obj .value,
+                }))
+              : Nothing
+          }
+
+          return Nothing
         }
         catch (e) {
           return Nothing
@@ -232,19 +248,23 @@ export const stringToSpecialAbilities =
     ("ProfessionRequireActivatable")
     ((x): Maybe<Record<ProfessionRequireActivatable>> => {
       try {
-        const obj = JSON.parse (x)
+        const mobj = parseJSON (x)
 
-        if (typeof obj !== "object" || obj === null) return Nothing
+        if (any (isNotNullObject) (mobj)) {
+          const obj = fromJust<any> (mobj)
 
-        return isRawProfessionRequiringActivatable (obj)
-          ? Just (RequireActivatable ({
-              id: obj .id,
-              active: obj .active,
-              sid: Maybe (obj .sid),
-              sid2: Maybe (obj .sid2),
-              tier: Maybe (obj .tier),
-            }) as Record<ProfessionRequireActivatable>)
-          : Nothing
+          return isRawProfessionRequiringActivatable (obj)
+            ? Just (RequireActivatable ({
+                id: obj .id,
+                active: obj .active,
+                sid: Maybe (obj .sid),
+                sid2: Maybe (obj .sid2),
+                tier: Maybe (obj .tier),
+              }) as Record<ProfessionRequireActivatable>)
+            : Nothing
+        }
+
+        return Nothing
       }
       catch (e) {
         return Nothing
@@ -273,13 +293,13 @@ export const toProfession =
       // Shortcuts
 
       const checkL10nNonEmptyString =
-        lookupKeyValid (mensureMapNonEmptyString) (lookup_l10n)
+        lookupKeyValid (mensureMapNonEmptyString) (TableType.L10n) (lookup_l10n)
 
       const checkOptionalUnivNaturalNumberList =
-        lookupKeyValid (mensureMapNaturalListOptional ("&")) (lookup_univ)
+        lookupKeyValid (mensureMapNaturalListOptional ("&")) (TableType.Univ) (lookup_univ)
 
       const checkUnivNaturalNumber =
-        lookupKeyValid (mensureMapNatural) (lookup_univ)
+        lookupKeyValid (mensureMapNatural) (TableType.Univ) (lookup_univ)
 
       // Check fields
 
@@ -297,16 +317,19 @@ export const toProfession =
 
       const edependencies =
         lookupKeyValid (stringToDependencies)
+                       (TableType.Univ)
                        (lookup_univ)
                        ("dependencies")
 
       const eprerequisites =
         lookupKeyValid (stringToPrerequisites)
+                       (TableType.Univ)
                        (lookup_univ)
                        ("prerequisites")
 
       const eprerequisitesL10n =
         lookupKeyValid (stringToPrerequisites)
+                       (TableType.L10n)
                        (lookup_l10n)
                        ("prerequisites")
 
@@ -316,36 +339,43 @@ export const toProfession =
 
       const eselections =
         lookupKeyValid (stringToSelections)
+                       (TableType.Univ)
                        (lookup_univ)
                        ("selections")
 
       const especialAbilities =
         lookupKeyValid (stringToSpecialAbilities)
+                       (TableType.Univ)
                        (lookup_univ)
                        ("specialAbilities")
 
       const ecombatTechniques =
         lookupKeyValid (toNaturalNumberPairOptional)
+                       (TableType.Univ)
                        (lookup_univ)
                        ("combatTechniques")
 
       const eskills =
         lookupKeyValid (toNaturalNumberPairOptional)
+                       (TableType.Univ)
                        (lookup_univ)
                        ("skills")
 
       const espells =
         lookupKeyValid (toNaturalNumberPairOptional)
+                       (TableType.Univ)
                        (lookup_univ)
                        ("spells")
 
       const eliturgicalChants =
         lookupKeyValid (toNaturalNumberPairOptional)
+                       (TableType.Univ)
                        (lookup_univ)
                        ("liturgicalChants")
 
       const eblessings =
         lookupKeyValid (stringToBlessings)
+                       (TableType.Univ)
                        (lookup_univ)
                        ("blessings")
 

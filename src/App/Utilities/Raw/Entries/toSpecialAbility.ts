@@ -8,7 +8,7 @@ import { SelectOption } from "../../../Models/Wiki/sub/SelectOption";
 import { prefixId } from "../../IDUtils";
 import { mergeRowsById } from "../mergeTableRows";
 import { mensureMapNatural, mensureMapNaturalFixedListOptional, mensureMapNaturalOptional, mensureMapNonEmptyString, mensureMapStringPredListOptional, mensureMapStringPredOptional } from "../validateMapValueUtils";
-import { lookupKeyValid, mapMNamed } from "../validateValueUtils";
+import { lookupKeyValid, mapMNamed, TableType } from "../validateValueUtils";
 import { toActivatableCost } from "./Sub/toActivatableCost";
 import { toPrerequisites } from "./Sub/toPrerequisites";
 import { toPrerequisitesIndex } from "./Sub/toPrerequisitesIndex";
@@ -31,29 +31,34 @@ export const toSpecialAbility =
       // Shortcuts
 
       const checkL10nNonEmptyString =
-        lookupKeyValid (mensureMapNonEmptyString) (lookup_l10n)
+        lookupKeyValid (mensureMapNonEmptyString) (TableType.L10n) (lookup_l10n)
 
       const checkOptionalCategoryList =
         lookupKeyValid (mensureMapStringPredListOptional (checkCategory)
                                                          ("Category")
                                                          ("&"))
+                       (TableType.Univ)
                        (lookup_univ)
 
       const checkCombatSpecialAbilityType =
         lookupKeyValid (mensureMapStringPredOptional (checkCSATypeString)
                                                      (`"p" | "b" | "s"`))
+                       (TableType.Univ)
                        (lookup_univ)
 
       const checkExtendedSpecialAbilitiesList =
         lookupKeyValid (mensureMapNaturalFixedListOptional (3) ("&"))
+                       (TableType.Univ)
                        (lookup_univ)
 
       const checkUnivNaturalNumber =
         lookupKeyValid (mensureMapNatural)
+                       (TableType.Univ)
                        (lookup_univ)
 
       const checkOptionalUnivNaturalNumber =
         lookupKeyValid (mensureMapNaturalOptional)
+                       (TableType.Univ)
                        (lookup_univ)
 
       // Check and convert fields

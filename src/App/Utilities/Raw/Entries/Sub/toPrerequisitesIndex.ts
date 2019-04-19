@@ -5,14 +5,15 @@ import { fromList } from "../../../../../Data/OrderedMap";
 import { Pair } from "../../../../../Data/Pair";
 import { Advantage } from "../../../../Models/Wiki/Advantage";
 import { toNatural } from "../../../NumberUtils";
+import { Expect } from "../../showExpected";
 import { mensureMapNaturalListOptional, mensureMapPairListOptional } from "../../validateMapValueUtils";
-import { Expect, lookupKeyValid } from "../../validateValueUtils";
+import { lookupKeyValid, TableType } from "../../validateValueUtils";
 
 export const toPrerequisitesIndex =
   (lookup_l10n: (key: string) => Maybe<string>) =>
   (lookup_univ: (key: string) => Maybe<string>) =>{
     const checkOptionalUnivNaturalNumberList =
-      lookupKeyValid (mensureMapNaturalListOptional ("&")) (lookup_univ)
+      lookupKeyValid (mensureMapNaturalListOptional ("&")) (TableType.Univ) (lookup_univ)
 
     const eprerequisitesIndexUniv =
       checkOptionalUnivNaturalNumberList ("prerequisitesIndex")
@@ -24,6 +25,7 @@ export const toPrerequisitesIndex =
                                                       (Expect.NonEmptyString)
                                                       (toNatural)
                                                       (ensure (notNullStr)))
+                     (TableType.L10n)
                      (lookup_l10n)
                      ("prerequisitesIndex")
 

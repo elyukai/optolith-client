@@ -11,8 +11,9 @@ import { toNatural, unsafeToInt } from "../../NumberUtils";
 import { isNaturalNumber, naturalNumber } from "../../RegexUtils";
 import { mergeRowsById } from "../mergeTableRows";
 import { maybePrefix } from "../rawConversionUtils";
+import { Expect } from "../showExpected";
 import { mensureMapBoolean, mensureMapNatural, mensureMapNaturalList, mensureMapNaturalListOptional, mensureMapNonEmptyString, mensureMapPairList, mensureMapStringPredListOptional } from "../validateMapValueUtils";
-import { Expect, lookupKeyValid, mapMNamed } from "../validateValueUtils";
+import { lookupKeyValid, mapMNamed, TableType } from "../validateValueUtils";
 import { toSourceLinks } from "./Sub/toSourceLinks";
 
 const exception =
@@ -33,25 +34,26 @@ export const toCulture =
       // Shortcuts
 
       const checkL10nNonEmptyString =
-        lookupKeyValid (mensureMapNonEmptyString) (lookup_l10n)
+        lookupKeyValid (mensureMapNonEmptyString) (TableType.L10n) (lookup_l10n)
 
       const checkOptionalExceptionList =
         lookupKeyValid (mensureMapStringPredListOptional (checkException)
                                                          ("Group | ProfessionId")
                                                          (","))
+                       (TableType.Univ)
                        (lookup_univ)
 
       const checkUnivNaturalNumber =
-        lookupKeyValid (mensureMapNatural) (lookup_univ)
+        lookupKeyValid (mensureMapNatural) (TableType.Univ) (lookup_univ)
 
       const checkUnivNaturalNumberList =
-        lookupKeyValid (mensureMapNaturalList ("&")) (lookup_univ)
+        lookupKeyValid (mensureMapNaturalList ("&")) (TableType.Univ) (lookup_univ)
 
       const checkOptionalUnivNaturalNumberList =
-        lookupKeyValid (mensureMapNaturalListOptional ("&")) (lookup_univ)
+        lookupKeyValid (mensureMapNaturalListOptional ("&")) (TableType.Univ) (lookup_univ)
 
       const checkUnivBoolean =
-        lookupKeyValid (mensureMapBoolean) (lookup_univ)
+        lookupKeyValid (mensureMapBoolean) (TableType.Univ) (lookup_univ)
 
       // Check fields
 
@@ -138,11 +140,12 @@ export const toCulture =
 
       const eculturalPackageSkills =
         lookupKeyValid (mensureMapPairList ("&")
-                                                        ("?")
-                                                        (Expect.NaturalNumber)
-                                                        (Expect.NaturalNumber)
-                                                        (toNatural)
-                                                        (toNatural))
+                                           ("?")
+                                           (Expect.NaturalNumber)
+                                           (Expect.NaturalNumber)
+                                           (toNatural)
+                                           (toNatural))
+                       (TableType.Univ)
                        (lookup_univ)
                        ("culturalPackageSkills")
 

@@ -6,8 +6,9 @@ import { Pair } from "../../../../../Data/Pair";
 import { Record } from "../../../../../Data/Record";
 import { SourceLink } from "../../../../Models/Wiki/sub/SourceLink";
 import { toNatural } from "../../../NumberUtils";
+import { Expect } from "../../showExpected";
 import { mensureMapListOptional } from "../../validateMapValueUtils";
-import { Expect, lookupKeyValid } from "../../validateValueUtils";
+import { lookupKeyValid, TableType } from "../../validateValueUtils";
 
 const bookIdRx = /[A-Za-z0-9]+/
 
@@ -47,6 +48,7 @@ export const toSourceLinks =
                                       (mfirstPage)
                                   })
          )
+         (TableType.L10n)
        )
        ("variants") as
          (lookup_l10n: (key: string) => Maybe<string>) => Either<string, List<Record<SourceLink>>>

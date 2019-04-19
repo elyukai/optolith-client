@@ -523,3 +523,29 @@ test ('isEither', () => {
   expect (Either.isEither (Right (4))) .toEqual (true)
   expect (Either.isEither (Left ('test'))) .toEqual (true)
 })
+
+test ('imapM', () => {
+  expect (
+    Either.imapM (i => x => x === 2 ? Left ("test") : Right (x + 1 + i))
+                 (List.empty)
+  )
+    .toEqual (Right (List.empty))
+
+  expect (
+    Either.imapM (i => x => x === 2 ? Left ("test") : Right (x + 1 + i))
+                 (List (1, 3))
+  )
+    .toEqual (Right (List (2, 5)))
+
+  expect (
+    Either.imapM (i => x => x === 2 ? Left ("test") : Right (x + 1 + i))
+                 (List (1, 3, 4, 5))
+  )
+    .toEqual (Right (List (2, 5, 7, 9)))
+
+  expect (
+    Either.imapM (i => x => x === 2 ? Left ("test") : Right (x + 1 + i))
+                 (List (1, 2, 3))
+  )
+    .toEqual (Left ("test"))
+})

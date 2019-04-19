@@ -2,8 +2,9 @@ import { ident } from "../../../../Data/Function";
 import { fmap } from "../../../../Data/Functor";
 import { set } from "../../../../Data/Lens";
 import { empty, foldr, fromArray, map } from "../../../../Data/List";
-import { fromMaybe, Just, maybe, Maybe, Nothing } from "../../../../Data/Maybe";
+import { any, fromJust, fromMaybe, Just, maybe, Maybe, Nothing, Some } from "../../../../Data/Maybe";
 import { Record } from "../../../../Data/Record";
+import { parseJSON } from "../../../../Data/String/JSON";
 import { IdPrefixes } from "../../../Constants/IdPrefixes";
 import { CantripsSelection } from "../../../Models/Wiki/professionSelections/CantripsSelection";
 import { CombatTechniquesSelection } from "../../../Models/Wiki/professionSelections/CombatTechniquesSelection";
@@ -25,8 +26,9 @@ import { prefixId } from "../../IDUtils";
 import { toInt, toNatural } from "../../NumberUtils";
 import { pipe } from "../../pipe";
 import { mergeRowsById } from "../mergeTableRows";
+import { Expect } from "../showExpected";
 import { mensureMapInteger, mensureMapListOptional, mensureMapNonEmptyString, mensureMapPairListOptional } from "../validateMapValueUtils";
-import { Expect, lookupKeyValid, mapMNamed } from "../validateValueUtils";
+import { lookupKeyValid, mapMNamed, TableType } from "../validateValueUtils";
 import { isRawCantripsSelection } from "./ProfessionSelections/RawCantripsSelection";
 import { isRawCombatTechniquesSelection } from "./ProfessionSelections/RawCombatTechniquesSelection";
 import { isRawCursesSelection } from "./ProfessionSelections/RawCursesSelection";
@@ -57,62 +59,66 @@ const stringToVariantSelections =
       )
       ((x): Maybe<AnyProfessionVariantSelection> => {
         try {
-          const obj = JSON.parse (x)
+          const mobj = parseJSON (x)
 
-          if (typeof obj !== "object" || obj === null) return Nothing
+          if (any ((y: Some): y is object => typeof y === "object" && y === null) (mobj)) {
+            const obj = fromJust<any> (mobj)
 
-          return isRawSpecializationSelection (obj)
-            ? Just (SpecializationSelection ({
-                id: Nothing,
-                sid: Array.isArray (obj .sid) ? fromArray (obj .sid) : obj .sid,
-              }))
-            : isRemoveRawSpecializationSelection (obj)
-            ? Just (RemoveSpecializationSelection)
-            : isRawLanguagesScriptsSelection (obj)
-            ? Just (LanguagesScriptsSelection ({
-                id: Nothing,
-                value: obj .value,
-              }))
-            : isRawCombatTechniquesSelection (obj)
-            ? Just (CombatTechniquesSelection ({
-                id: Nothing,
-                amount: obj .amount,
-                value: obj .value,
-                sid: fromArray (obj .sid),
-              }))
-            : isRemoveRawCombatTechniquesSelection (obj)
-            ? Just (RemoveCombatTechniquesSelection)
-            : isRawSecondCombatTechniquesSelection (obj)
-            ? Just (CombatTechniquesSecondSelection ({
-                id: Nothing,
-                amount: obj .amount,
-                value: obj .value,
-                sid: fromArray (obj .sid),
-              }))
-            : isRemoveCombatTechniquesSecondSelection (obj)
-            ? Just (RemoveCombatTechniquesSecondSelection)
-            : isRawCantripsSelection (obj)
-            ? Just (CantripsSelection ({
-                id: Nothing,
-                amount: obj .amount,
-                sid: fromArray (obj .sid),
-              }))
-            : isRawCursesSelection (obj)
-            ? Just (CursesSelection ({
-                id: Nothing,
-                value: obj .value,
-              }))
-            : isRawTerrainKnowledgeSelection (obj)
-            ? Just (TerrainKnowledgeSelection ({
-                id: Nothing,
-                sid: fromArray (obj .sid),
-              }))
-            : isRawSkillsSelection (obj)
-            ? Just (SkillsSelection ({
-                id: Nothing,
-                value: obj .value,
-              }))
-            : Nothing
+            return isRawSpecializationSelection (obj)
+              ? Just (SpecializationSelection ({
+                  id: Nothing,
+                  sid: Array.isArray (obj .sid) ? fromArray (obj .sid) : obj .sid,
+                }))
+              : isRemoveRawSpecializationSelection (obj)
+              ? Just (RemoveSpecializationSelection)
+              : isRawLanguagesScriptsSelection (obj)
+              ? Just (LanguagesScriptsSelection ({
+                  id: Nothing,
+                  value: obj .value,
+                }))
+              : isRawCombatTechniquesSelection (obj)
+              ? Just (CombatTechniquesSelection ({
+                  id: Nothing,
+                  amount: obj .amount,
+                  value: obj .value,
+                  sid: fromArray (obj .sid),
+                }))
+              : isRemoveRawCombatTechniquesSelection (obj)
+              ? Just (RemoveCombatTechniquesSelection)
+              : isRawSecondCombatTechniquesSelection (obj)
+              ? Just (CombatTechniquesSecondSelection ({
+                  id: Nothing,
+                  amount: obj .amount,
+                  value: obj .value,
+                  sid: fromArray (obj .sid),
+                }))
+              : isRemoveCombatTechniquesSecondSelection (obj)
+              ? Just (RemoveCombatTechniquesSecondSelection)
+              : isRawCantripsSelection (obj)
+              ? Just (CantripsSelection ({
+                  id: Nothing,
+                  amount: obj .amount,
+                  sid: fromArray (obj .sid),
+                }))
+              : isRawCursesSelection (obj)
+              ? Just (CursesSelection ({
+                  id: Nothing,
+                  value: obj .value,
+                }))
+              : isRawTerrainKnowledgeSelection (obj)
+              ? Just (TerrainKnowledgeSelection ({
+                  id: Nothing,
+                  sid: fromArray (obj .sid),
+                }))
+              : isRawSkillsSelection (obj)
+              ? Just (SkillsSelection ({
+                  id: Nothing,
+                  value: obj .value,
+                }))
+              : Nothing
+          }
+
+          return Nothing
         }
         catch (e) {
           return Nothing
@@ -179,10 +185,10 @@ export const toProfessionVariant =
       // Shortcuts
 
       const checkL10nNonEmptyString =
-        lookupKeyValid (mensureMapNonEmptyString) (lookup_l10n)
+        lookupKeyValid (mensureMapNonEmptyString) (TableType.L10n) (lookup_l10n)
 
       const checkUnivInteger =
-        lookupKeyValid (mensureMapInteger) (lookup_univ)
+        lookupKeyValid (mensureMapInteger) (TableType.Univ) (lookup_univ)
 
       // Check fields
 
@@ -196,46 +202,55 @@ export const toProfessionVariant =
 
       const edependencies =
         lookupKeyValid (stringToDependencies)
+                       (TableType.Univ)
                        (lookup_univ)
                        ("dependencies")
 
       const eprerequisites =
         lookupKeyValid (stringToPrerequisites)
+                       (TableType.Univ)
                        (lookup_univ)
                        ("prerequisites")
 
       const eselections =
         lookupKeyValid (stringToVariantSelections)
+                       (TableType.Univ)
                        (lookup_univ)
                        ("selections")
 
       const especialAbilities =
         lookupKeyValid (stringToSpecialAbilities)
+                       (TableType.Univ)
                        (lookup_univ)
                        ("specialAbilities")
 
       const ecombatTechniques =
         lookupKeyValid (toNaturalNumberIntPairOptional)
+                       (TableType.Univ)
                        (lookup_univ)
                        ("combatTechniques")
 
       const eskills =
         lookupKeyValid (toNaturalNumberIntPairOptional)
+                       (TableType.Univ)
                        (lookup_univ)
                        ("skills")
 
       const espells =
         lookupKeyValid (toNaturalNumberIntPairOptional)
+                       (TableType.Univ)
                        (lookup_univ)
                        ("spells")
 
       const eliturgicalChants =
         lookupKeyValid (toNaturalNumberIntPairOptional)
+                       (TableType.Univ)
                        (lookup_univ)
                        ("liturgicalChants")
 
       const eblessings =
         lookupKeyValid (stringToBlessings)
+                       (TableType.Univ)
                        (lookup_univ)
                        ("blessings")
 
