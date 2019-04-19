@@ -5,14 +5,13 @@ import { autoUpdater, CancellationToken, UpdateInfo } from "electron-updater";
 import * as fs from "fs";
 import * as path from "path";
 import * as url from "url";
+import { user_data_path } from "./App/Selectors/envSelectors";
 // tslint:disable-next-line:ordered-imports
 import windowStateKeeper = require("electron-window-state")
 
 let mainWindow: Electron.BrowserWindow | null | undefined
 
 app.setAppUserModelId ("lukasobermann.optolith")
-
-const userDataPath = app.getPath ("userData")
 
 const access = async (pathToFile: string) => new Promise<boolean> (
   resolve => {
@@ -26,44 +25,58 @@ const access = async (pathToFile: string) => new Promise<boolean> (
   }
 )
 
-const copyFile = (origin: string) => (dest: string) => async (fileName: string) => {
-  const newJSONPath = path.join (userDataPath, "..", dest, `${fileName}.json`)
+const copyFileFromToFolder =
+  (originFolder: string) =>
+  (destFolder: string) =>
+  async (fileName: string) => {
+    const newJSONPath = path.join (destFolder, `${fileName}.json`)
 
-  let hasNewJSON
+    let hasNewJSON
 
-  try {
-    hasNewJSON = await access (newJSONPath)
-  }
-  catch (err) {
-    log.error (`Could not load or read ${fileName}.json (${err})`)
-
-    return
-  }
-
-  const oldJSONPath = path.join (userDataPath, "..", origin, `${fileName}.json`)
-
-  let hasOldJSON
-
-  try {
-    hasOldJSON = await access (oldJSONPath)
-  }
-  catch (err) {
-    log.error (`Could not load or read ${fileName}.json (${err})`)
-
-    return
-  }
-
-  if (!hasNewJSON && hasOldJSON) {
     try {
-      fs.createReadStream (oldJSONPath).pipe (fs.createWriteStream (newJSONPath))
+      hasNewJSON = await access (newJSONPath)
     }
     catch (err) {
       log.error (`Could not load or read ${fileName}.json (${err})`)
+
+      return
     }
+
+    const oldJSONPath = path.join (originFolder, `${fileName}.json`)
+
+    let hasOldJSON
+
+    try {
+      hasOldJSON = await access (oldJSONPath)
+    }
+    catch (err) {
+      log.error (`Could not load or read ${fileName}.json (${err})`)
+
+      return
+    }
+
+    if (!hasNewJSON && hasOldJSON) {
+      try {
+        fs.createReadStream (oldJSONPath).pipe (fs.createWriteStream (newJSONPath))
+      }
+      catch (err) {
+        log.error (`Could not load or read ${fileName}.json (${err})`)
+      }
+    }
+
+    return
   }
 
-  return
-}
+const copyFile =
+  (origin: string) =>
+  (dest: string) =>
+    copyFileFromToFolder (path.join (user_data_path, "..", dest))
+                         (path.join (user_data_path, "..", origin))
+
+const copyFileToCurrent =
+  (origin: string) =>
+    copyFileFromToFolder (user_data_path)
+                         (path.join (user_data_path, "..", origin))
 
 function createWindow () {
   const mainWindowState = windowStateKeeper ({
@@ -177,9 +190,9 @@ async function main () {
   await copyFile ("TDE5 Heroes") ("Optolyth") ("heroes")
   await copyFile ("TDE5 Heroes") ("Optolyth") ("config")
 
-  await copyFile ("Optolyth") ("Optolith") ("window")
-  await copyFile ("Optolyth") ("Optolith") ("heroes")
-  await copyFile ("Optolyth") ("Optolith") ("config")
+  await copyFileToCurrent ("Optolyth") ("window")
+  await copyFileToCurrent ("Optolyth") ("heroes")
+  await copyFileToCurrent ("Optolyth") ("config")
 
   autoUpdater.logger = log
   // @ts-ignore

@@ -62,12 +62,11 @@
     "typescript-tslint-plugin": "0.3.1"
   },
   "scripts": {
-    "build": "electron-builder --config -lw",
-    "buildTest": "electron-builder --config electron-builder.test.json -lw",
-    "buildTestLinux": "electron-builder --config electron-builder.test.json -l",
-    "buildDir": "electron-builder --config electron-builder.test.json --dir",
-    "buildMac": "build --config electron-builder.json -m",
-    "buildMacTest": "build --config electron-builder.test.json -m",
+    "buildInsiderWin": "node ./buildInsiderWin.js",
+    "buildInsiderLinux": "node ./buildInsiderLinux.js",
+    "buildWin": "node ./buildWin.js",
+    "buildLinux": "node ./buildLinux.js",
+    "buildMac": "node ./buildMac.js",
     "compile": "tsc",
     "watch": "tsc --watch",
     "bundle": "node --max-old-space-size=2048 ./node_modules/typescript/lib/tsc.js",
