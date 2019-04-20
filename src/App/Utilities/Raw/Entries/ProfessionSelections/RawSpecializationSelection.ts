@@ -17,7 +17,10 @@ export const isSkillId = (x: string) => skillId .test (x)
 export const isRawSpecializationSelection =
   (obj: AnyRawProfessionSelection): obj is RawSpecializationSelection =>
     obj.id === ProfessionSelectionIds.SPECIALIZATION
-    // @ts-ignore
-    && typeof obj.sid === "string"
-    // @ts-ignore
-    || Array.isArray (obj) && obj .every (isSkillId)
+    && (
+      // @ts-ignore
+      typeof obj.sid === "string" && isSkillId (obj.sid)
+
+      // @ts-ignore
+      || Array.isArray (obj.sid) && obj.sid .every (isSkillId)
+    )

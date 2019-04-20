@@ -1,5 +1,5 @@
 import { bindF, Either, Left, maybeToEither, Right } from "../../../Data/Either";
-import { cons, empty, filter, flength, head, ifoldr, lines, List, map, notNull, splitOn, uncons, zip } from "../../../Data/List";
+import { cons, empty, filter, flength, head, ifoldr, lines, List, map, notNull, replaceStr, splitOn, uncons, zip } from "../../../Data/List";
 import { fromList, OrderedMap } from "../../../Data/OrderedMap";
 import { fst, snd } from "../../../Data/Pair";
 import { show } from "../../../Data/Show";
@@ -51,9 +51,22 @@ export const csvToList =
                       + ` Check if there are any newline characters ("\\n") on that line.`
                       + ` Source: ${show (l)}`
                     )
-                    : Right (cons (acc) (fromList (zip<string, string> (header) (l))))
+                    : Right (cons (acc)
+                                  (fromList (zip<string, string> (header)
+                                                                 (map (unescapeStr) (l)))))
                 ))
               (Right (empty))
               (body)
           })
   )
+
+const unescapeStr =
+  (x: string) => {
+    const res = /^"(.+)"$/ .exec (x)
+
+    if (res !== null && typeof res [1] === "string") {
+      return replaceStr ("\"\"") ("\"") (res [1])
+    }
+
+    return x
+  }

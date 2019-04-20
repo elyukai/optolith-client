@@ -120,9 +120,9 @@ function createWindow () {
     acceptFirstMouse: true,
     backgroundColor: "#000000",
     show: false,
-    webPreferences: {
-      devTools: true,
-    },
+    // webPreferences: {
+    //   devTools: true,
+    // },
   })
 
   mainWindowState.manage (mainWindow)

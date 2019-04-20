@@ -47,7 +47,7 @@ import { isRawSpecializationSelection } from "./ProfessionSelections/RawSpeciali
 import { isRawTerrainKnowledgeSelection } from "./ProfessionSelections/RawTerrainKnowledgeSelection";
 import { toSourceLinks } from "./Sub/toSourceLinks";
 
-const isNotNullObject = (x: Some): x is object => typeof x === "object" && x === null
+const isNotNullObject = (x: Some): x is object => typeof x === "object" && x !== null
 
 export const stringToDependencies =
   mensureMapListOptional
@@ -99,7 +99,7 @@ export const stringToPrerequisites =
           return isRawProfessionRequiringActivatable (obj)
             ? Just (RequireActivatable ({
                 id: obj .id,
-                active: obj .active,
+                active: fromMaybe (true) (Maybe (obj .active)),
                 sid: Maybe (obj .sid),
                 sid2: Maybe (obj .sid2),
                 tier: Maybe (obj .tier),
@@ -256,7 +256,7 @@ export const stringToSpecialAbilities =
           return isRawProfessionRequiringActivatable (obj)
             ? Just (RequireActivatable ({
                 id: obj .id,
-                active: obj .active,
+                active: fromMaybe (true) (Maybe (obj .active)),
                 sid: Maybe (obj .sid),
                 sid2: Maybe (obj .sid2),
                 tier: Maybe (obj .tier),

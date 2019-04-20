@@ -14,9 +14,12 @@ export interface RawRequireActivatable {
   tier?: number
 }
 
-export interface RawProfessionRequireActivatable extends RawRequireActivatable {
+export interface RawProfessionRequireActivatable {
   id: string
+  active?: boolean
   sid?: string | number
+  sid2?: string | number
+  tier?: number
 }
 
 const availablePrefixes =
@@ -61,9 +64,9 @@ export const isRawRequiringActivatable =
 
 export const isRawProfessionRequiringActivatable =
   (req: RawProfessionPrerequisite): req is RawProfessionRequireActivatable =>
-    typeof req.id === "string" && isActivatableLikeId (req.id)
+    typeof req.id === "string"
     // @ts-ignore
-    && typeof req.active === "boolean"
+    && (typeof req.active === "boolean" || req.active === undefined)
     && (
       // @ts-ignore
       typeof req.sid === "string"

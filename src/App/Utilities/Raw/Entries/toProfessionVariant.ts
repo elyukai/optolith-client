@@ -61,7 +61,7 @@ const stringToVariantSelections =
         try {
           const mobj = parseJSON (x)
 
-          if (any ((y: Some): y is object => typeof y === "object" && y === null) (mobj)) {
+          if (any ((y: Some): y is object => typeof y === "object" && y !== null) (mobj)) {
             const obj = fromJust<any> (mobj)
 
             return isRawSpecializationSelection (obj)
