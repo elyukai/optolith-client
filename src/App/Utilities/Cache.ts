@@ -8,6 +8,7 @@ import { bindF, ensure, mapM, Maybe } from "../../Data/Maybe";
 import { fromList, OrderedMap, toObjectWith } from "../../Data/OrderedMap";
 import { Pair } from "../../Data/Pair";
 import { Record } from "../../Data/Record";
+import { parseJSON } from "../../Data/String/JSON";
 import { deleteFile, readFile, writeFile } from "../../System/IO";
 import { AdventurePointsCategories } from "../Models/View/AdventurePointsCategories";
 import { L10nRecord } from "../Models/Wiki/L10n";
@@ -79,7 +80,8 @@ export const readCache =
     tryIO,
     fmap (pipe (
       eitherToMaybe,
-      bindF (pipe (JSON.parse, x => Maybe (x [AP_KEY]))),
+      bindF (parseJSON),
+      bindF (x => Maybe (x [AP_KEY])),
       bindF (ensure (isObject)),
       bindF (pipe (
         Object.entries,

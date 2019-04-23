@@ -12,6 +12,7 @@
 
 import * as fs from "fs";
 import { pipe } from "../App/Utilities/pipe";
+import { ident } from "../Data/Function";
 import { fmapF } from "../Data/Functor";
 import { Internals } from "../Data/Internals";
 import { showP } from "../Data/Show";
@@ -89,6 +90,17 @@ export const thenF =
     bind<any> (y) (_ => x)
 
 /**
+ * `join :: IO (IO a) -> IO a`
+ *
+ * The `join` function is the conventional monad join operator. It is used to
+ * remove one level of monadic structure, projecting its bound argument into the
+ * outer level.
+ */
+export const join =
+  <A> (x: IO<IO<A>>): IO<A> =>
+    bind (x) (ident)
+
+/**
  * `liftM2 :: (a1 -> a2 -> r) -> IO a1 -> IO a2 -> IO r`
  *
  * Promote a function to a monad, scanning the monadic arguments from left to
@@ -128,15 +140,7 @@ type FilePath = string
  */
 export const readFile =
   (path: FilePath) =>
-  Internals.IO (async () => new Promise<string> ((res, rej) =>
-                                                  fs.readFile (path, "utf8", (err, data) => {
-                                                    if (err !== null) {
-                                                      rej (err)
-                                                    }
-                                                    else {
-                                                      res (data)
-                                                    }
-                                                  })))
+    Internals.IO (async () => fs.promises.readFile (path, "utf8"))
 
 /**
  * `writeFile :: FilePath -> String -> IO ()`
@@ -147,15 +151,7 @@ export const readFile =
 export const writeFile =
   (path: FilePath) =>
   (data: string | Buffer) =>
-  Internals.IO (async () => new Promise<void> ((res, rej) =>
-                                                fs.writeFile (path, data, "utf8", err => {
-                                                  if (err !== null) {
-                                                    rej (err)
-                                                  }
-                                                  else {
-                                                    res ()
-                                                  }
-                                                })))
+    Internals.IO (async () => fs.promises.writeFile (path, data, "utf8"))
 
 /**
  * `deleteFile :: FilePath -> IO ()`
@@ -164,15 +160,29 @@ export const writeFile =
  */
 export const deleteFile =
   (path: FilePath) =>
-  Internals.IO (async () => new Promise<void> ((res, rej) =>
-                                                fs.unlink (path, err => {
-                                                  if (err !== null) {
-                                                    rej (err)
-                                                  }
-                                                  else {
-                                                    res ()
-                                                  }
-                                                })))
+    Internals.IO (async () => fs.promises.unlink (path))
+
+/**
+ * `existsFile :: FilePath -> IO Bool`
+ *
+ * The computation `existsFile file` function checks if the file `file` exists.
+ */
+export const existsFile =
+  (path: FilePath) =>
+    Internals.IO (async () => fs.promises.access (path, fs.constants.F_OK)
+                                .then (() => true)
+                                .catch (() => false))
+
+/**
+ * `copyFile :: FilePath -> FilePath -> IO Bool`
+ *
+ * The computation `copyFile origin dest` function copies the file `origin` to
+ * `dest`.
+ */
+export const copyFile =
+  (origin: FilePath) =>
+  (dest: FilePath) =>
+    Internals.IO (async () => fs.promises.copyFile (origin, dest))
 
 
 // TEXT OUTPUT
@@ -202,20 +212,30 @@ export import isIO = Internals.isIO
 export const fromIO =
   <A> (x: IO<A>): Promise<A> => x .f ()
 
+/**
+ * An `IO` that does nothing. Can be useful for chained `then`s to execute
+ * `IO`s.
+ */
+export const IdentityIO = Internals.IO (() => Promise.resolve ())
+
 const IONamespace = {
   pure,
   bind,
   bindF,
   then,
   thenF,
+  join,
   liftM2,
   liftM3,
   readFile,
   writeFile,
   deleteFile,
+  existsFile,
+  copyFile,
   print,
   isIO,
   fromIO,
+  IdentityIO,
 }
 
 export const IO: IOConstructor =

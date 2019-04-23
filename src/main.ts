@@ -2,9 +2,11 @@ import { app, BrowserWindow, ipcMain } from "electron";
 import * as log from "electron-log";
 // tslint:disable-next-line:no-implicit-dependencies
 import { autoUpdater, CancellationToken, UpdateInfo } from "electron-updater";
-import * as fs from "fs";
 import * as path from "path";
 import * as url from "url";
+import { tryIO } from "./Control/Exception";
+import { Either, fromLeft_, isLeft } from "./Data/Either";
+import { existsFile, IdentityIO, IO, join, liftM2, liftM3, then } from "./System/IO";
 // tslint:disable-next-line:ordered-imports
 import windowStateKeeper = require("electron-window-state")
 
@@ -29,69 +31,20 @@ const user_data_path = app.getPath ("userData")
  */
 const app_path = app.getAppPath ()
 
-const access = async (pathToFile: string) => new Promise<boolean> (
-  resolve => {
-    try {
-      fs.access (pathToFile, err => {
-        if (err !== null) {
-          resolve (false)
-        }
-
-        resolve (true)
-      })
-    } catch (err) {
-      resolve (false)
-    }
-  }
-)
-
 const copyFileFromToFolder =
   (originFolder: string) =>
   (destFolder: string) =>
-  async (fileName: string) => {
-    const newJSONPath = path.join (destFolder, `${fileName}.json`)
+  (fileName: string) => {
+    const originPath = path.join (originFolder, `${fileName}.json`)
+    const destPath = path.join (destFolder, `${fileName}.json`)
 
-    let hasNewJSON
-
-    try {
-      hasNewJSON = await access (newJSONPath)
-    }
-    catch (err) {
-      log.error (`Could not load or read ${fileName}.json (${err})`)
-
-      return
-    }
-
-    const oldJSONPath = path.join (originFolder, `${fileName}.json`)
-
-    let hasOldJSON
-
-    try {
-      hasOldJSON = await access (oldJSONPath)
-    }
-    catch (err) {
-      log.error (`Could not load or read ${fileName}.json (${err})`)
-
-      return
-    }
-
-    if (!hasNewJSON && hasOldJSON) {
-      try {
-        fs.createReadStream (oldJSONPath).pipe (fs.createWriteStream (newJSONPath))
-      }
-      catch (err) {
-        log.error (`Could not load or read ${fileName}.json (${err})`)
-      }
-    }
-
-    return
+    return join (liftM2 ((origin_exists: boolean) => (dest_exists: boolean) =>
+                          !dest_exists && origin_exists
+                            ? IO.copyFile (originPath) (destPath)
+                            : IdentityIO)
+                        (existsFile (originPath))
+                        (existsFile (destPath)))
   }
-
-const copyFile =
-  (origin: string) =>
-  (dest: string) =>
-    copyFileFromToFolder (path.join (user_data_path, "..", dest))
-                         (path.join (user_data_path, "..", origin))
 
 const copyFileToCurrent =
   (origin: string) =>
@@ -208,42 +161,41 @@ function createWindow () {
   })
 }
 
-async function main () {
-  try {
-    await copyFile ("TDE5 Heroes") ("Optolyth") ("window")
-    await copyFile ("TDE5 Heroes") ("Optolyth") ("heroes")
-    await copyFile ("TDE5 Heroes") ("Optolyth") ("config")
-  }
-  catch (e) {
-    console.warn (e)
-  }
+function main () {
+  then (liftM3 ((w: Either<Error, void>) =>
+                (h: Either<Error, void>) =>
+                (c: Either<Error, void>) => {
+                 if (isLeft (w)) {
+                   console.warn (fromLeft_ (w))
+                 }
+                 else if (isLeft (h)) {
+                   console.warn (fromLeft_ (h))
+                 }
+                 else if (isLeft (c)) {
+                   console.warn (fromLeft_ (c))
+                 }
 
-  try {
-    await copyFileToCurrent ("Optolyth") ("window")
-    await copyFileToCurrent ("Optolyth") ("heroes")
-    await copyFileToCurrent ("Optolyth") ("config")
-  }
-  catch (e) {
-    console.warn (e)
-  }
+                 autoUpdater.logger = log
+                 // @ts-ignore
+                 autoUpdater.logger.transports.file.level = "info"
+                 autoUpdater.autoDownload = false
 
+                 createWindow ()
 
-  autoUpdater.logger = log
-  // @ts-ignore
-  autoUpdater.logger.transports.file.level = "info"
-  autoUpdater.autoDownload = false
+                 app.on ("window-all-closed", () => {
+                   app.quit ()
+                 })
 
-  createWindow ()
-
-  app.on ("window-all-closed", () => {
-    app.quit ()
-  })
-
-  app.on ("activate", () => {
-    if (mainWindow === null) {
-      createWindow ()
-    }
-  })
+                 app.on ("activate", () => {
+                   if (mainWindow === null) {
+                     createWindow ()
+                   }
+                 })
+               })
+               (tryIO (copyFileToCurrent ("Optolyth") ("window")))
+               (tryIO (copyFileToCurrent ("Optolyth") ("heroes")))
+               (tryIO (copyFileToCurrent ("Optolyth") ("config"))))
+       (IdentityIO)
 }
 
 app.on ("ready", main)

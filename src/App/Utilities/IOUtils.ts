@@ -89,7 +89,7 @@ const foldByteLevels =
   (x: Pair<number, number>): Pair<number, number> =>
     fst (x) < flength (byteTags)
     && snd (x) > 1023
-    ? foldByteLevels (bimap<number, number, number, number> (inc) (divideBy (1024)) (x))
+    ? foldByteLevels (bimap (inc) (divideBy (1024)) (x))
     : x
 
 /**

@@ -7,8 +7,13 @@
  * @see IO
  */
 
+import { pipe } from "../App/Utilities/pipe";
 import { Either, Left, Right } from "../Data/Either";
-import { fromIO, IO } from "../System/IO";
+import { ident } from "../Data/Function";
+import { Internals } from "../Data/Internals";
+import { fromIO } from "../System/IO";
+
+import IO = Internals.IO
 
 /**
  * `catch :: Exception e => IO a -> (e -> IO a) -> IO a`
@@ -20,14 +25,8 @@ import { fromIO, IO } from "../System/IO";
  */
 export const catchIO =
   <A> (x: IO<A>) =>
-  (f: (err: Error) => IO<A>): IO<A> => {
-    try {
-      return IO (() => fromIO (x))
-    }
-    catch (ex) {
-      return f (ex)
-    }
-  }
+  (f: (err: Error) => IO<A>): IO<A> =>
+    IO (() => fromIO (x) .then (ident, pipe (f, fromIO)))
 
 /**
  * `try :: Exception e => IO a -> IO (Either e a)`
@@ -37,11 +36,5 @@ export const catchIO =
  * is `ex`.
  */
 export const tryIO =
-  <A> (x: IO<A>): IO<Either<Error, A>> => {
-    try {
-      return IO (() => fromIO (x) .then (Right))
-    }
-    catch (ex) {
-      return IO.pure (Left (ex))
-    }
-  }
+  <A> (x: IO<A>): IO<Either<Error, A>> =>
+    IO (() => fromIO (x) .then (Right, Left))

@@ -10,4 +10,4 @@ export const isRawSexRequirement =
   (req: AllRawRequirementObjects): req is RawSexRequirement =>
     req.id === "SEX"
     // @ts-ignore
-    && (typeof req.value === "m" || typeof req.value === "f")
+    && (req.value === "m" || req.value === "f")
