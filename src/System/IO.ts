@@ -11,6 +11,7 @@
  */
 
 import * as fs from "fs";
+import * as util from "util";
 import { pipe } from "../App/Utilities/pipe";
 import { ident } from "../Data/Function";
 import { fmapF } from "../Data/Functor";
@@ -132,6 +133,8 @@ export const liftM3 =
 
 type FilePath = string
 
+const readFileP = util.promisify (fs.readFile)
+
 /**
  * `readFile :: FilePath -> IO String`
  *
@@ -140,7 +143,9 @@ type FilePath = string
  */
 export const readFile =
   (path: FilePath) =>
-    Internals.IO (async () => fs.promises.readFile (path, "utf8"))
+    Internals.IO (async () => readFileP (path, "utf8"))
+
+const writeFileP = util.promisify (fs.writeFile)
 
 /**
  * `writeFile :: FilePath -> String -> IO ()`
@@ -151,7 +156,9 @@ export const readFile =
 export const writeFile =
   (path: FilePath) =>
   (data: string | Buffer) =>
-    Internals.IO (async () => fs.promises.writeFile (path, data, "utf8"))
+    Internals.IO (async () => writeFileP (path, data, "utf8"))
+
+const deleteFileP = util.promisify (fs.unlink)
 
 /**
  * `deleteFile :: FilePath -> IO ()`
@@ -160,7 +167,9 @@ export const writeFile =
  */
 export const deleteFile =
   (path: FilePath) =>
-    Internals.IO (async () => fs.promises.unlink (path))
+    Internals.IO (async () => deleteFileP (path))
+
+const existsFileP = util.promisify (fs.access)
 
 /**
  * `existsFile :: FilePath -> IO Bool`
@@ -169,9 +178,11 @@ export const deleteFile =
  */
 export const existsFile =
   (path: FilePath) =>
-    Internals.IO (async () => fs.promises.access (path, fs.constants.F_OK)
+    Internals.IO (async () => existsFileP (path, fs.constants.F_OK)
                                 .then (() => true)
                                 .catch (() => false))
+
+const copyFileP = util.promisify (fs.copyFile)
 
 /**
  * `copyFile :: FilePath -> FilePath -> IO Bool`
@@ -182,7 +193,7 @@ export const existsFile =
 export const copyFile =
   (origin: FilePath) =>
   (dest: FilePath) =>
-    Internals.IO (async () => fs.promises.copyFile (origin, dest))
+    Internals.IO (async () => copyFileP (origin, dest))
 
 
 // TEXT OUTPUT
