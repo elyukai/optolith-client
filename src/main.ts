@@ -80,11 +80,13 @@ function createWindow () {
 
   mainWindowState.manage (mainWindow)
 
-  mainWindow.loadURL (url.format ({
-    pathname: path.join (__dirname, "index.html"),
-    protocol: "file:",
-    slashes: true,
-  }))
+  mainWindow
+    .loadURL (url.format ({
+      pathname: path.join (__dirname, "index.html"),
+      protocol: "file:",
+      slashes: true,
+    }))
+    .catch (err => { console.error (err); })
 
   mainWindow.webContents.openDevTools ()
 
@@ -165,32 +167,32 @@ function main () {
   then (liftM3 ((w: Either<Error, void>) =>
                 (h: Either<Error, void>) =>
                 (c: Either<Error, void>) => {
-                 if (isLeft (w)) {
-                   console.warn (fromLeft_ (w))
-                 }
-                 else if (isLeft (h)) {
-                   console.warn (fromLeft_ (h))
-                 }
-                 else if (isLeft (c)) {
-                   console.warn (fromLeft_ (c))
-                 }
+                  if (isLeft (w)) {
+                    console.warn (fromLeft_ (w))
+                  }
+                  else if (isLeft (h)) {
+                    console.warn (fromLeft_ (h))
+                  }
+                  else if (isLeft (c)) {
+                    console.warn (fromLeft_ (c))
+                  }
 
-                 autoUpdater.logger = log
-                 // @ts-ignore
-                 autoUpdater.logger.transports.file.level = "info"
-                 autoUpdater.autoDownload = false
+                  autoUpdater.logger = log
+                  // @ts-ignore
+                  autoUpdater.logger.transports.file.level = "info"
+                  autoUpdater.autoDownload = false
 
-                 createWindow ()
+                  createWindow ()
 
-                 app.on ("window-all-closed", () => {
-                   app.quit ()
-                 })
+                  app.on ("window-all-closed", () => {
+                    app.quit ()
+                  })
 
-                 app.on ("activate", () => {
-                   if (mainWindow === null) {
-                     createWindow ()
-                   }
-                 })
+                  app.on ("activate", () => {
+                    if (mainWindow === null) {
+                      createWindow ()
+                    }
+                  })
                })
                (tryIO (copyFileToCurrent ("Optolyth") ("window")))
                (tryIO (copyFileToCurrent ("Optolyth") ("heroes")))
