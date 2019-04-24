@@ -4,8 +4,10 @@ import { fromDefault, makeLenses, Record } from "../../../Data/Record";
 import { pipe } from "../../Utilities/pipe";
 import { ProfessionRequireIncreasable } from "../Wiki/prerequisites/IncreasableRequirement";
 import { Profession } from "../Wiki/Profession";
+import { ProfessionSelections } from "../Wiki/professionSelections/ProfessionAdjustmentSelections";
 import { ActivatableNameCostIsActive } from "./ActivatableNameCostIsActive";
 import { IncreasableForView } from "./IncreasableForView";
+import { IncreasableListForView } from "./IncreasableListForView";
 import { ProfessionVariantCombined } from "./ProfessionVariantCombined";
 
 export interface ProfessionCombined {
@@ -22,7 +24,7 @@ export interface ProfessionCombined {
   mappedNatureSkills: List<Record<IncreasableForView>>
   mappedKnowledgeSkills: List<Record<IncreasableForView>>
   mappedCraftSkills: List<Record<IncreasableForView>>
-  mappedSpells: List<Record<IncreasableForView>>
+  mappedSpells: List<Record<IncreasableForView> | Record<IncreasableListForView>>
   mappedLiturgicalChants: List<Record<IncreasableForView>>
   mappedVariants: List<Record<ProfessionVariantCombined>>
 }
@@ -32,7 +34,7 @@ export const ProfessionCombined =
     wikiEntry: Profession .default,
     mappedPrerequisites: List.empty,
     mappedSpecialAbilities: List.empty,
-    selections: List.empty,
+    selections: ProfessionSelections.default,
     mappedCombatTechniques: List.empty,
     mappedPhysicalSkills: List.empty,
     mappedSocialSkills: List.empty,

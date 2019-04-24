@@ -5,6 +5,7 @@ import { Categories } from "../../Constants/Categories";
 import { ProfessionRequireActivatable } from "./prerequisites/ActivatableRequirement";
 import { ProfessionSelections } from "./professionSelections/ProfessionAdjustmentSelections";
 import { IncreaseSkill } from "./sub/IncreaseSkill";
+import { IncreaseSkillList } from "./sub/IncreaseSkillList";
 import { NameBySex } from "./sub/NameBySex";
 import { SourceLink } from "./sub/SourceLink";
 import { EntryWithCategory, ProfessionDependency, ProfessionPrerequisite } from "./wikiTypeHelpers";
@@ -22,7 +23,7 @@ export interface Profession {
   specialAbilities: List<Record<ProfessionRequireActivatable>>
   combatTechniques: List<Record<IncreaseSkill>>
   skills: List<Record<IncreaseSkill>>
-  spells: List<Record<IncreaseSkill>>
+  spells: List<Record<IncreaseSkill> | Record<IncreaseSkillList>>
   liturgicalChants: List<Record<IncreaseSkill>>
   blessings: List<string>
   suggestedAdvantages: List<string>

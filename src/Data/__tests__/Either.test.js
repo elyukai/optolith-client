@@ -549,3 +549,8 @@ test ('imapM', () => {
   )
     .toEqual (Left ("test"))
 })
+
+test ('invertEither', () => {
+  expect (Either.invertEither (Left ("test"))) .toEqual (Right ("test"))
+  expect (Either.invertEither (Right (4))) .toEqual (Left (4))
+})

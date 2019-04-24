@@ -25,7 +25,7 @@ import { Skill } from "../Models/Wiki/Skill";
 import { SpecialAbility } from "../Models/Wiki/SpecialAbility";
 import { Spell } from "../Models/Wiki/Spell";
 import { WikiModelRecord } from "../Models/Wiki/WikiModel";
-import { RawAdvantage, RawAdvantageLocale, RawAttribute, RawAttributeLocale, RawBlessing, RawBlessingLocale, RawCantrip, RawCantripLocale, RawCombatTechnique, RawCombatTechniqueLocale, RawCulture, RawCultureLocale, RawDisadvantage, RawDisadvantageLocale, RawItemLocale, RawLiturgy, RawLiturgyLocale, RawProfession, RawProfessionLocale, RawProfessionVariant, RawProfessionVariantLocale, RawRace, RawRaceLocale, RawRaceVariant, RawRaceVariantLocale, RawSkill, RawSkillLocale, RawSpecialAbility, RawSpecialAbilityLocale, RawSpell, RawSpellLocale } from "../Utils/Raw/RawData";
+import { RawAdvantage, RawAdvantageLocale, RawAttribute, RawAttributeLocale, RawBlessing, RawBlessingLocale, RawCantrip, RawCantripLocale, RawCombatTechnique, RawCombatTechniqueLocale, RawCulture, RawCultureLocale, RawDisadvantage, RawDisadvantageLocale, RawItemLocale, RawLiturgy, RawLiturgyLocale, RawProfession, RawProfessionLocale, RawProfessionVariant, RawProfessionVariantLocale, RawRace, RawRaceLocale, RawRaceVariant, RawRaceVariantLocale, RawSkill, RawSkillLocale, RawSpecialAbility, RawSpecialAbilityLocale, RawSpell, RawSpellLocale } from "../Utilities/Raw/RawData";
 
 type Action = ReceiveInitialDataAction
 

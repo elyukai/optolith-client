@@ -1,8 +1,8 @@
 import { notEquals } from "../../Data/Eq";
-import { cnst, flip, ident, join } from "../../Data/Function";
+import { cnst, flip, ident, join, thrush } from "../../Data/Function";
 import { fmap, fmapF } from "../../Data/Functor";
 import { over, set } from "../../Data/Lens";
-import { append, consF, elem, filter, flength, foldr, isList, List, map } from "../../Data/List";
+import { append, consF, elem, filter, flength, foldr, isList, List, ListI, map } from "../../Data/List";
 import { bind, ensure, fromMaybe, isJust, Just, listToMaybe, maybe, Maybe, Nothing, or } from "../../Data/Maybe";
 import { alter, foldrWithKey, insertF, keys, lookup, member, OrderedMap } from "../../Data/OrderedMap";
 import { insert, OrderedSet, toList, union } from "../../Data/OrderedSet";
@@ -133,17 +133,19 @@ const concatBaseModifications = (action: SetSelectionsAction) => {
 
       maybe (ident as ident<Record<ConcatenatedModifications>>)
             <number> (pipe (insertF (4), over (CML.languages)))
-            (ifElse<List<number>, Maybe<number>> (pipe (flength, gt (1)))
-                                                 (cnst (Just (action .payload .motherTongue)))
-                                                 (listToMaybe)
-                                                 (CA.languages (culture))),
+            (ifElse<List<number>> (pipe (flength, gt (1)))
+                                  <Maybe<number>>
+                                  (cnst (Just (action .payload .motherTongue)))
+                                  (listToMaybe)
+                                  (CA.languages (culture))),
 
       maybe (ident as ident<Record<ConcatenatedModifications>>)
             <number> (pipe (insert, over (CML.scripts)))
-            (ifElse<List<number>, Maybe<number>> (pipe (flength, gt (1)))
-                                                 (cnst (Just (action .payload .mainScript)))
-                                                 (listToMaybe)
-                                                 (CA.scripts (culture)))
+            (ifElse<List<number>> (pipe (flength, gt (1)))
+                                  <Maybe<number>>
+                                  (cnst (Just (action .payload .mainScript)))
+                                  (listToMaybe)
+                                  (CA.scripts (culture)))
     ),
 
     // Profession selections:
@@ -161,10 +163,13 @@ const concatBaseModifications = (action: SetSelectionsAction) => {
       set (CML.professionPrerequisites)
           (PA.prerequisites (profession)),
 
-      foldIncSkillsIntoSRs (prof_spells_chants),
+      foldIncSkillsIntoSRs (thrush (prof_spells_chants) (filter (IncreaseSkill.is))),
 
       over (CML.skillActivateList)
-           (flip (foldr (pipe (ISA.id, insert)))
+           (flip (foldr (pipe (
+                   ensure<ListI<Profession["spells"]>, Record<IncreaseSkill>> (IncreaseSkill.is),
+                   maybe<ident<OrderedSet<string>>> (ident) (pipe (ISA.id, insert))
+                 )))
                  (prof_spells_chants))
     ),
 

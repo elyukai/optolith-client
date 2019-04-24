@@ -1,8 +1,8 @@
 import { ident } from "../../../../Data/Function";
 import { fmap } from "../../../../Data/Functor";
 import { set } from "../../../../Data/Lens";
-import { empty, flength, foldr, fromArray, map } from "../../../../Data/List";
-import { any, ensure, fromJust, fromMaybe, Just, maybe, Maybe, Nothing, Some } from "../../../../Data/Maybe";
+import { empty, flength, foldr, fromArray, List, map, notNull, splitOn } from "../../../../Data/List";
+import { altF_, any, bindF, ensure, fromJust, fromMaybe, Just, mapM, maybe, Maybe, Nothing, Some } from "../../../../Data/Maybe";
 import { Record } from "../../../../Data/Record";
 import { parseJSON } from "../../../../Data/String/JSON";
 import { IdPrefixes } from "../../../Constants/IdPrefixes";
@@ -22,15 +22,16 @@ import { SkillsSelection } from "../../../Models/Wiki/professionSelections/Skill
 import { SpecializationSelection } from "../../../Models/Wiki/professionSelections/SpecializationSelection";
 import { TerrainKnowledgeSelection } from "../../../Models/Wiki/professionSelections/TerrainKnowledgeSelection";
 import { pairToIncreaseSkill } from "../../../Models/Wiki/sub/IncreaseSkill";
+import { pairToIncreaseSkillOrList } from "../../../Models/Wiki/sub/IncreaseSkillList";
 import { NameBySex } from "../../../Models/Wiki/sub/NameBySex";
 import { AnyProfessionSelection, ProfessionDependency, ProfessionPrerequisite, ProfessionSelectionIds } from "../../../Models/Wiki/wikiTypeHelpers";
 import { prefixId } from "../../IDUtils";
 import { toNatural } from "../../NumberUtils";
-import { pipe } from "../../pipe";
+import { pipe, pipe_ } from "../../pipe";
 import { mergeRowsById } from "../mergeTableRows";
 import { maybePrefix } from "../rawConversionUtils";
 import { Expect } from "../showExpected";
-import { mensureMapListBindAfterOptional, mensureMapListOptional, mensureMapNatural, mensureMapNaturalListOptional, mensureMapNonEmptyString, mensureMapPairListOptional } from "../validateMapValueUtils";
+import { mensureMapBoolean, mensureMapListBindAfterOptional, mensureMapListOptional, mensureMapNatural, mensureMapNaturalListOptional, mensureMapNonEmptyString, mensureMapPairListOptional } from "../validateMapValueUtils";
 import { lookupKeyValid, mapMNamed, TableType } from "../validateValueUtils";
 import { isRawProfessionRequiringActivatable } from "./Prerequisites/RawActivatableRequirement";
 import { isRawCultureRequirement } from "./Prerequisites/RawCultureRequirement";
@@ -279,11 +280,31 @@ const toNaturalNumberPairOptional =
                              (toNatural)
                              (toNatural)
 
+const toNaturalNumberOrNumberListPairOptional =
+  mensureMapPairListOptional ("&")
+                             ("?")
+                             (Expect.Union (
+                               Expect.NaturalNumber,
+                               Expect.NonEmptyList (Expect.NaturalNumber)
+                             ))
+                             (Expect.NaturalNumber)
+                             (x => pipe_ (
+                               x,
+                               toNatural,
+                               altF_<number | List<number>> (() => pipe_ (
+                                                                           x,
+                                                                           splitOn ("|"),
+                                                                           ensure (notNull),
+                                                                           bindF (mapM (toNatural))
+                                                                         ))
+                             ))
+                             (toNatural)
+
 export const stringToBlessings =
   mensureMapListBindAfterOptional<number>
-    (ensure (pipe (flength, len => len === 9 || len === 12)))
+    (ensure (pipe (flength, len => len === 6 || len === 9 || len === 12)))
     ("&")
-    (`${Expect.List (Expect.NaturalNumber)} { length = 9 | 12 }`)
+    (`${Expect.List (Expect.NaturalNumber)} { length = 6 | 9 | 12 }`)
     (toNatural)
 
 export const toProfession =
@@ -300,6 +321,9 @@ export const toProfession =
 
       const checkUnivNaturalNumber =
         lookupKeyValid (mensureMapNatural) (TableType.Univ) (lookup_univ)
+
+      const checkUnivBoolean =
+        lookupKeyValid (mensureMapBoolean) (TableType.Univ) (lookup_univ)
 
       // Check fields
 
@@ -362,7 +386,7 @@ export const toProfession =
                        ("skills")
 
       const espells =
-        lookupKeyValid (toNaturalNumberPairOptional)
+        lookupKeyValid (toNaturalNumberOrNumberListPairOptional)
                        (TableType.Univ)
                        (lookup_univ)
                        ("spells")
@@ -403,6 +427,9 @@ export const toProfession =
       const unsuitableDisadvantagesText =
         lookup_l10n ("unsuitableDisadvantages")
 
+      const eisVariantRequired =
+        checkUnivBoolean ("isVariantRequired")
+
       const evariants =
         checkOptionalUnivNaturalNumberList ("variants")
 
@@ -434,6 +461,7 @@ export const toProfession =
           esuggestedDisadvantages,
           eunsuitableAdvantages,
           eunsuitableDisadvantages,
+          eisVariantRequired,
           evariants,
           egr,
           esgr,
@@ -486,7 +514,7 @@ export const toProfession =
           spells:
             maybe<Profession["spells"]>
               (empty)
-              (map (pairToIncreaseSkill (IdPrefixes.SPELLS)))
+              (map (pairToIncreaseSkillOrList (IdPrefixes.SPELLS)))
               (rs.espells),
 
           liturgicalChants:
@@ -521,7 +549,7 @@ export const toProfession =
 
           unsuitableDisadvantagesText,
 
-          isVariantRequired: Nothing,
+          isVariantRequired: rs.eisVariantRequired,
 
           variants:
             maybePrefix (IdPrefixes.PROFESSION_VARIANTS) (rs.evariants),

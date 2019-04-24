@@ -689,6 +689,15 @@ const imapMIndex =
                    (imapMIndex (i + 1) (f) (xs .xs)))
       (f (i) (xs .x))
 
+/**
+ * `invertEither :: Either l r -> Either r l`
+ *
+ * Converts a `Left` into a `Right` and a `Right` into a `Left`.
+ */
+export const invertEither =
+  <L, R> (x: Either<L, R>): Either<R, L> =>
+    isLeft (x) ? Right (x .value) : Left (x .value)
+
 
 // TYPE HELPERS
 
@@ -758,4 +767,5 @@ export const Either = {
 
   isEither,
   imapM,
+  invertEither,
 }
