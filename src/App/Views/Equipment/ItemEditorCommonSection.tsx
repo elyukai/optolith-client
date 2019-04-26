@@ -3,7 +3,7 @@ import { consF, imap, List, map, take } from "../../../Data/List";
 import { isJust, isNothing, Just, Maybe } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
 import { EditItem } from "../../Models/Hero/EditItem";
-import { ItemTemplate } from "../../Models/Wiki/ItemTemplate";
+import { ItemTemplate, itemTemplateToDropdown } from "../../Models/Wiki/ItemTemplate";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { translate } from "../../Utilities/I18n";
 import { ItemEditorInputValidation } from "../../Utilities/itemEditorInputValidationUtils";
@@ -35,7 +35,6 @@ export interface ItemEditorCommonSectionProps {
 }
 
 const EIA = EditItem.A
-const ITA = ItemTemplate.A
 const IEIVA = ItemEditorInputValidation.A
 
 export function ItemEditorCommonSection (props: ItemEditorCommonSectionProps) {
@@ -55,12 +54,7 @@ export function ItemEditorCommonSection (props: ItemEditorCommonSectionProps) {
   const TEMPLATES =
     pipe_ (
       props.templates,
-      map (
-        e => DropdownOption ({
-          id: Just (ITA.id (e)),
-          name: ITA.name (e),
-        })
-      ),
+      map (itemTemplateToDropdown),
       consF (
         DropdownOption ({ name: translate (l10n) ("none") })
       )

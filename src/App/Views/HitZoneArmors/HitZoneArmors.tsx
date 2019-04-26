@@ -1,5 +1,16 @@
 import * as React from "react";
+import { fmap } from "../../../Data/Functor";
+import { List, map, notNull, toArray } from "../../../Data/List";
+import { bindF, ensure, isJust, Maybe } from "../../../Data/Maybe";
+import { Record } from "../../../Data/Record";
+import { EditHitZoneArmor } from "../../Models/Hero/EditHitZoneArmor";
+import { HitZoneArmor } from "../../Models/Hero/HitZoneArmor";
+import { Item } from "../../Models/Hero/Item";
+import { Purse } from "../../Models/Hero/Purse";
+import { ItemTemplate } from "../../Models/Wiki/ItemTemplate";
+import { L10nRecord } from "../../Models/Wiki/L10n";
 import { translate } from "../../Utilities/I18n";
+import { pipe, pipe_ } from "../../Utilities/pipe";
 import { PurseAndTotals } from "../Equipment/PurseAndTotals";
 import { Aside } from "../Universal/Aside";
 import { BorderButton } from "../Universal/BorderButton";
@@ -16,16 +27,16 @@ import { HitZoneArmorEditor } from "./HitZoneArmorEditor";
 import { HitZoneArmorsListItem } from "./HitZoneArmorsListItem";
 
 export interface HitZoneArmorsOwnProps {
-  locale: UIMessagesObject
+  l10n: L10nRecord
 }
 
 export interface HitZoneArmorsStateProps {
-  armorZones: Maybe<List<Record<ArmorZonesInstance>>>
+  armorZones: Maybe<List<Record<HitZoneArmor>>>
   carryingCapacity: Maybe<number>
   initialStartingWealth: number
-  items: Maybe<List<Record<ItemInstance>>>
+  items: Maybe<List<Record<Item>>>
   isInHitZoneArmorCreation: Maybe<boolean>
-  armorZonesEditor: Maybe<Record<ArmorZonesEditorInstance>>
+  armorZonesEditor: Maybe<Record<EditHitZoneArmor>>
   hasNoAddedAP: boolean
   purse: Maybe<Record<Purse>>
   templates: List<Record<ItemTemplate>>
@@ -66,12 +77,14 @@ export type HitZoneArmorsProps =
   & HitZoneArmorsDispatchProps
   & HitZoneArmorsOwnProps
 
+const HZAA = HitZoneArmor.A
+
 export function HitZoneArmors (props: HitZoneArmorsProps) {
   const {
     armorZonesEditor,
     armorZones,
     isInHitZoneArmorCreation,
-    locale,
+    l10n,
     filterText,
   } = props
 
@@ -79,20 +92,20 @@ export function HitZoneArmors (props: HitZoneArmorsProps) {
     <Page id="armor-zones">
       <Options>
         <TextField
-          hint={translate (locale, "options.filtertext")}
+          hint={translate (l10n) ("search")}
           value={filterText}
           onChangeString={props.setFilterText}
           fullWidth
           />
         <BorderButton
-          label={translate (locale, "zonearmor.actions.create")}
+          label={translate (l10n) ("create")}
           onClick={props.createItem}
           />
       </Options>
       <MainContent>
         <ListHeader>
           <ListHeaderTag className="name">
-            {translate (locale, "name")}
+            {translate (l10n) ("name")}
           </ListHeaderTag>
           <ListHeaderTag className="btn-placeholder" />
           <ListHeaderTag className="btn-placeholder" />
@@ -103,19 +116,19 @@ export function HitZoneArmors (props: HitZoneArmorsProps) {
               Maybe.fromMaybe<NonNullable<React.ReactNode>>
                 (
                   <ListPlaceholder
-                    locale={locale}
+                    l10n={l10n}
                     type="zoneArmor"
                     noResults={filterText.length > 0}
                     />
                 )
-                (armorZones
-                  .bind (Maybe.ensure<List<Record<ArmorZonesInstance>>> (R.pipe (List.null, R.not)))
-                  .fmap (R.pipe (
-                    List.map (
-                      obj => (<HitZoneArmorsListItem {...props} key={obj .get ("id")} data={obj} />)
-                    ),
-                    List.toArray
-                  )))
+                (pipe_ (
+                  armorZones,
+                  bindF (ensure (notNull)),
+                  fmap (pipe (
+                    map (x => <HitZoneArmorsListItem {...props} key={HZAA.id (x)} data={x} />),
+                    toArray
+                  ))
+                ))
             }
           </ListView>
         </Scroll>
@@ -124,14 +137,15 @@ export function HitZoneArmors (props: HitZoneArmorsProps) {
         <PurseAndTotals {...props} />
       </Aside>
       {
-        Maybe.isJust (armorZonesEditor)
-        && (
-          <HitZoneArmorEditor
-            {...props}
-            armorZonesEditor={Maybe.fromJust (armorZonesEditor)}
-            isInHitZoneArmorCreation={isInHitZoneArmorCreation}
-            />
-        )
+        isJust (armorZonesEditor)
+          ? (
+            <HitZoneArmorEditor
+              {...props}
+              armorZonesEditor={Maybe.fromJust (armorZonesEditor)}
+              isInHitZoneArmorCreation={isInHitZoneArmorCreation}
+              />
+          )
+          : null
       }
     </Page>
   )

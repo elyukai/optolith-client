@@ -1,8 +1,8 @@
-import { remote } from "electron";
 import * as fs from "fs";
 import * as path from "path";
 import * as React from "react";
 import { L10n, L10nRecord } from "../../Models/Wiki/L10n";
+import { app_path } from "../../Selectors/envSelectors";
 import { Markdown } from "../Universal/Markdown";
 import { Page } from "../Universal/Page";
 import { Scroll } from "../Universal/Scroll";
@@ -22,7 +22,7 @@ export type HelpProps = HelpStateProps & HelpDispatchProps & HelpOwnProps
 export const Help = (props: HelpProps) => {
   const { l10n } = props
   const text = fs.readFileSync (
-    path.join (remote.app.getAppPath (), "app", "docs", `FAQ.${L10n.A.id (l10n)}.md`),
+    path.join (app_path, "app", "docs", `FAQ.${L10n.A.id (l10n)}.md`),
     "UTF-8"
   )
 

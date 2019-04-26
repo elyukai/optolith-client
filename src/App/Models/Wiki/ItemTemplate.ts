@@ -1,6 +1,7 @@
 import { List } from "../../../Data/List";
-import { Maybe, Nothing } from "../../../Data/Maybe";
+import { Just, Maybe, Nothing } from "../../../Data/Maybe";
 import { fromDefault, Record } from "../../../Data/Record";
+import { DropdownOption } from "../../Views/Universal/Dropdown";
 import { PrimaryAttributeDamageThreshold } from "./sub/PrimaryAttributeDamageThreshold";
 import { SourceLink } from "./sub/SourceLink";
 
@@ -86,3 +87,8 @@ export const ItemTemplate =
     disadvantage: Nothing,
     src: List.empty,
   })
+
+const ITA = ItemTemplate.A
+
+export const itemTemplateToDropdown =
+  (x: Record<ItemTemplate>) => DropdownOption ({ id: Just (ITA.id (x)), name: ITA.name (x) })

@@ -83,7 +83,7 @@ export class Router extends React.Component<RouterProps> {
       [TabId.Herolist]: () => <HerolistContainer l10n={l10n} />,
       [TabId.Grouplist]: () => <Grouplist />,
       [TabId.Wiki]: () => <WikiContainer locale={l10n} />,
-      [TabId.Faq]: () => <HelpContainer locale={l10n} />,
+      [TabId.Faq]: () => <HelpContainer l10n={l10n} />,
       [TabId.Imprint]: () => <Imprint l10n={l10n} />,
       [TabId.ThirdPartyLicenses]: () => <ThirdPartyLicenses />,
       [TabId.LastChanges]: () => <LastChanges />,
@@ -112,7 +112,7 @@ export class Router extends React.Component<RouterProps> {
       [TabId.LiturgicalChants]: () => <LiturgicalChantsContainer locale={l10n} />,
 
       [TabId.Equipment]: () => <EquipmentContainer l10n={l10n} />,
-      [TabId.ZoneArmor]: () => <HitZoneArmorsContainer locale={l10n} />,
+      [TabId.ZoneArmor]: () => <HitZoneArmorsContainer l10n={l10n} />,
       [TabId.Pets]: () => <PetsContainer locale={l10n} />,
 
       // master: <Master />

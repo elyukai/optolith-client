@@ -7,7 +7,7 @@ import { bindF, elem, ensure, fromJust, fromMaybe, fromMaybeR, isJust, Just, map
 import { Record } from "../../../Data/Record";
 import { ItemEditorContainer } from "../../Containers/ItemEditorContainer";
 import { WikiInfoContainer } from "../../Containers/WikiInfoContainer";
-import { Item } from "../../Models/Hero/Item";
+import { fromItemTemplate, Item } from "../../Models/Hero/Item";
 import { Purse } from "../../Models/Hero/Purse";
 import { CombatTechniqueWithRequirements, CombatTechniqueWithRequirementsA_ } from "../../Models/View/CombatTechniqueWithRequirements";
 import { ItemTemplate } from "../../Models/Wiki/ItemTemplate";
@@ -232,7 +232,7 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
                         <EquipmentListItem
                           {...this.props}
                           key={ITA.id (obj)}
-                          data={obj}
+                          data={fromItemTemplate (ITA.id (obj)) (obj)}
                           selectForInfo={this.showSlideinInfo}
                           add
                           />

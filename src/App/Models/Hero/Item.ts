@@ -2,6 +2,7 @@ import { List } from "../../../Data/List";
 import { Just, Maybe, Nothing } from "../../../Data/Maybe";
 import { elem, OrderedSet } from "../../../Data/OrderedSet";
 import { fromDefault, makeLenses, Record } from "../../../Data/Record";
+import { DropdownOption } from "../../Views/Universal/Dropdown";
 import { ItemTemplate } from "../Wiki/ItemTemplate";
 import { PrimaryAttributeDamageThreshold } from "../Wiki/sub/PrimaryAttributeDamageThreshold";
 import { SourceLink } from "../Wiki/sub/SourceLink";
@@ -144,3 +145,6 @@ export const fromItemTemplate =
       disadvantage: ItemTemplate.AL.disadvantage (x),
       src: Just (ItemTemplate.AL.src (x)),
     })
+
+export const itemToDropdown =
+  (x: Record<Item>) => DropdownOption ({ id: Just (Item.A.id (x)), name: Item.A.name (x) })
