@@ -90,6 +90,7 @@ function createWindow () {
       mainWindow!.webContents.openDevTools ()
 
       mainWindow!.show ()
+
       if (mainWindowState.isMaximized) {
         mainWindow!.maximize ()
       }

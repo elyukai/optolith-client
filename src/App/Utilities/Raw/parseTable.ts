@@ -119,6 +119,8 @@ const wrapL10nCsvErr = (locale: string) => wrapCsvErr (`${locale}/l10n`)
 
 export const parseTables =
   (locale: string): Either<string, Pair<L10nRecord, WikiModelRecord>> => {
+    console.log ("prepare parsing...")
+
     let univ_wb
     let l10n_wb
 
@@ -168,61 +170,136 @@ export const parseTables =
 
     const lookupBindM2MapMToMap = bindM2MapMToMap (lookup_l10n) (lookup_univ)
 
+    console.log ("parsing tables ...")
+
+    const l10n = bind (lookup_l10n ("UI")) <L10nRecord> (toL10n (locale))
+
+    console.log ("l10n parse successful.")
+
+    const books =
+      fmap<List<Record<Book>>, OrderedMap<string, Record<Book>>>
+        (listToMap)
+        (bindF (mapM (toBook)) (lookup_l10n ("BOOKS")))
+
+    console.log ("books parse successful.")
+
+    const experienceLevels = lookupBindM2MapMToMap (toExperienceLevel) ("EXPERIENCE_LEVELS")
+
+    console.log ("experienceLevels parse successful.")
+
+    const races = lookupBindM2MapMToMap (toRace) ("RACES")
+
+    console.log ("races parse successful.")
+
+    const raceVariants = lookupBindM2MapMToMap (toRaceVariant) ("RACE_VARIANTS")
+
+    console.log ("raceVariants parse successful.")
+
+    const cultures = lookupBindM2MapMToMap (toCulture) ("CULTURES")
+
+    console.log ("cultures parse successful.")
+
+    const professions = lookupBindM2MapMToMap (toProfession) ("PROFESSIONS")
+
+    console.log ("professions parse successful.")
+
+    const professionVariants = lookupBindM2MapMToMap (toProfessionVariant) ("PROFESSION_VARIANTS")
+
+    console.log ("professionVariants parse successful.")
+
+    const attributes = lookupBindM2MapMToMap (toAttribute) ("ATTRIBUTES")
+
+    console.log ("attributes parse successful.")
+
+    const advantages = lookupBindM2MapMToMap (toAdvantage) ("ADVANTAGES")
+
+    console.log ("advantages parse successful.")
+
+    const advantageSelectOptions =
+      lookupBindM2MapM (toAdvantageSelectOption) ("AdvantagesSelections")
+
+    console.log ("advantageSelectOptions parse successful.")
+
+    const disadvantages = lookupBindM2MapMToMap (toDisadvantage) ("DISADVANTAGES")
+
+    console.log ("disadvantages parse successful.")
+
+    const disadvantageSelectOptions =
+      lookupBindM2MapM (toDisadvantageSelectOption) ("DisadvantagesSelections")
+
+    console.log ("disadvantageSelectOptions parse successful.")
+
+    const skills = lookupBindM2MapMToMap (toSkill) ("SKILLS")
+
+    console.log ("skills parse successful.")
+
+    const combatTechniques = lookupBindM2MapMToMap (toCombatTechnique) ("COMBAT_TECHNIQUES")
+
+    console.log ("combatTechniques parse successful.")
+
+    const spells = lookupBindM2MapMToMap (toSpell) ("SPELLS")
+
+    console.log ("spells parse successful.")
+
+    const spellExtensions = lookupBindM2MapM (toSpellExtension) ("SpellX")
+
+    console.log ("spellExtensions parse successful.")
+
+    const cantrips = lookupBindM2MapMToMap (toCantrip) ("CANTRIPS")
+
+    console.log ("cantrips parse successful.")
+
+    const liturgicalChants = lookupBindM2MapMToMap (toLiturgicalChant) ("CHANTS")
+
+    console.log ("liturgicalChants parse successful.")
+
+    const liturgicalChantExtensions = lookupBindM2MapM (toLiturgicalChantExtension) ("ChantX")
+
+    console.log ("liturgicalChantExtensions parse successful.")
+
+    const blessings = lookupBindM2MapMToMap (toBlessing) ("BLESSINGS")
+
+    console.log ("blessings parse successful.")
+
+    const specialAbilities = lookupBindM2MapMToMap (toSpecialAbility) ("SPECIAL_ABILITIES")
+
+    console.log ("specialAbilities parse successful.")
+
+    const specialAbilitySelectOptions =
+      lookupBindM2MapM (toSpecialAbilitySelectOption) ("SpecialAbilitiesSelections")
+
+    console.log ("specialAbilitySelectOptions parse successful.")
+
+    const itemTemplates = lookupBindM2MapMToMap (toItemTemplate) ("EQUIPMENT")
+
+    console.log ("itemTemplates parse successful.")
+
     return mapMNamed
       ({
-        l10n: bind (lookup_l10n ("UI")) <L10nRecord> (toL10n (locale)),
-
-        books:
-          fmap<List<Record<Book>>, OrderedMap<string, Record<Book>>>
-            (listToMap)
-            (bindF (mapM (toBook)) (lookup_l10n ("BOOKS"))),
-
-        experienceLevels: lookupBindM2MapMToMap (toExperienceLevel) ("EXPERIENCE_LEVELS"),
-
-        races: lookupBindM2MapMToMap (toRace) ("RACES"),
-
-        raceVariants: lookupBindM2MapMToMap (toRaceVariant) ("RACE_VARIANTS"),
-
-        cultures: lookupBindM2MapMToMap (toCulture) ("CULTURES"),
-
-        professions: lookupBindM2MapMToMap (toProfession) ("PROFESSIONS"),
-
-        professionVariants: lookupBindM2MapMToMap (toProfessionVariant) ("PROFESSION_VARIANTS"),
-
-        attributes: lookupBindM2MapMToMap (toAttribute) ("ATTRIBUTES"),
-
-        advantages: lookupBindM2MapMToMap (toAdvantage) ("ADVANTAGES"),
-
-        advantageSelectOptions:
-          lookupBindM2MapM (toAdvantageSelectOption) ("AdvantagesSelections"),
-
-        disadvantages: lookupBindM2MapMToMap (toDisadvantage) ("DISADVANTAGES"),
-
-        disadvantageSelectOptions:
-          lookupBindM2MapM (toDisadvantageSelectOption) ("DisadvantagesSelections"),
-
-        skills: lookupBindM2MapMToMap (toSkill) ("SKILLS"),
-
-        combatTechniques: lookupBindM2MapMToMap (toCombatTechnique) ("COMBAT_TECHNIQUES"),
-
-        spells: lookupBindM2MapMToMap (toSpell) ("SPELLS"),
-
-        spellExtensions: lookupBindM2MapM (toSpellExtension) ("SpellX"),
-
-        cantrips: lookupBindM2MapMToMap (toCantrip) ("CANTRIPS"),
-
-        liturgicalChants: lookupBindM2MapMToMap (toLiturgicalChant) ("CHANTS"),
-
-        liturgicalChantExtensions: lookupBindM2MapM (toLiturgicalChantExtension) ("ChantX"),
-
-        blessings: lookupBindM2MapMToMap (toBlessing) ("BLESSINGS"),
-
-        specialAbilities: lookupBindM2MapMToMap (toSpecialAbility) ("SPECIAL_ABILITIES"),
-
-        specialAbilitySelectOptions:
-          lookupBindM2MapM (toSpecialAbilitySelectOption) ("SpecialAbilitiesSelections"),
-
-        itemTemplates: lookupBindM2MapMToMap (toItemTemplate) ("EQUIPMENT"),
+        l10n,
+        books,
+        experienceLevels,
+        races,
+        raceVariants,
+        cultures,
+        professions,
+        professionVariants,
+        attributes,
+        advantages,
+        advantageSelectOptions,
+        disadvantages,
+        disadvantageSelectOptions,
+        skills,
+        combatTechniques,
+        spells,
+        spellExtensions,
+        cantrips,
+        liturgicalChants,
+        liturgicalChantExtensions,
+        blessings,
+        specialAbilities,
+        specialAbilitySelectOptions,
+        itemTemplates,
       })
       (rs => {
         return Pair (

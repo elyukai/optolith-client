@@ -1,4 +1,4 @@
-declare module 'react-progress-arc' {
+declare module "react-progress-arc" {
   interface Props {
     completed: number;
     diameter?: number;
@@ -10,7 +10,7 @@ declare module 'react-progress-arc' {
   export = ProgressArc;
 }
 
-declare module 'react-textfit' {
+declare module "react-textfit" {
   interface TextfitProps {
     className?: string;
     /**
@@ -18,7 +18,7 @@ declare module 'react-textfit' {
      * paragraphs.
      * @default `multi`
      */
-    mode?: 'single' | 'multi';
+    mode?: "single" | "multi";
     /**
      * When `mode` is `single` and `forceSingleModeWidth` is `true`, the
      * element's height will be ignored.
@@ -49,34 +49,34 @@ declare module 'react-textfit' {
   export class Textfit extends React.Component<TextfitProps> {}
 }
 
-declare module 'react-markdown' {
+declare module "react-markdown" {
   type Renderer<T> = (props: T) => React.ReactElement<T>;
 
   interface Renderers {
-    'root': string | Renderer<object>;
-    'break': string | Renderer<object>;
-    'paragraph': string | Renderer<object>;
-    'emphasis': string | Renderer<object>;
-    'strong': string | Renderer<object>;
-    'thematicBreak': string | Renderer<object>;
-    'blockquote': string | Renderer<object>;
-    'delete': string | Renderer<object>;
-    'link': string | Renderer<object>;
-    'image': string | Renderer<object>;
-    'linkReference': string | Renderer<object>;
-    'imageReference': string | Renderer<object>;
-    'table': string | Renderer<object>;
-    'tableHead': string | Renderer<object>;
-    'tableBody': string | Renderer<object>;
-    'tableRow': string | Renderer<object>;
-    'tableCell': string | Renderer<object>;
-    'list': string | Renderer<object>;
-    'listItem': string | Renderer<object>;
-    'definition': string | Renderer<object>;
-    'heading': string | Renderer<object>;
-    'inlineCode': string | Renderer<object>;
-    'code': string | Renderer<object>;
-    'html': string | Renderer<object>;
+    "root": string | Renderer<object>;
+    "break": string | Renderer<object>;
+    "paragraph": string | Renderer<object>;
+    "emphasis": string | Renderer<object>;
+    "strong": string | Renderer<object>;
+    "thematicBreak": string | Renderer<object>;
+    "blockquote": string | Renderer<object>;
+    "delete": string | Renderer<object>;
+    "link": string | Renderer<object>;
+    "image": string | Renderer<object>;
+    "linkReference": string | Renderer<object>;
+    "imageReference": string | Renderer<object>;
+    "table": string | Renderer<object>;
+    "tableHead": string | Renderer<object>;
+    "tableBody": string | Renderer<object>;
+    "tableRow": string | Renderer<object>;
+    "tableCell": string | Renderer<object>;
+    "list": string | Renderer<object>;
+    "listItem": string | Renderer<object>;
+    "definition": string | Renderer<object>;
+    "heading": string | Renderer<object>;
+    "inlineCode": string | Renderer<object>;
+    "code": string | Renderer<object>;
+    "html": string | Renderer<object>;
   }
 
   type NodeTypes = keyof Renderers;
@@ -172,14 +172,14 @@ declare module 'react-markdown' {
   export = ReactMarkdown;
 }
 
-declare module 'remark-breaks' {
+declare module "remark-breaks" {
   class Ph {}
 
   export = Ph;
 }
 
-declare module 'electron-localshortcut' {
-  import { Accelerator, BrowserWindow } from 'electron';
+declare module "electron-localshortcut" {
+  import { Accelerator, BrowserWindow } from "electron";
 
   namespace LocalShortcut {
 

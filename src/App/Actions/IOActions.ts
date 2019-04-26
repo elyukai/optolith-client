@@ -138,6 +138,8 @@ export const endLoadingState = () => ({
 
 export const getInitialData: ReduxAction<IO<Either<string, InitialData>>> =
   dispatch => {
+    console.log ("getInitialData")
+
     const defaultLocale = getSystemLocale ()
 
     return pipe_ (
