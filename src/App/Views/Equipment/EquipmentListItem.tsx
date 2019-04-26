@@ -1,5 +1,10 @@
 import * as React from "react";
+import { ensure, maybe } from "../../../Data/Maybe";
+import { Record } from "../../../Data/Record";
+import { Item } from "../../Models/Hero/Item";
+import { L10nRecord } from "../../Models/Wiki/L10n";
 import { translate } from "../../Utilities/I18n";
+import { gt } from "../../Utilities/mathUtils";
 import { IconButton } from "../Universal/IconButton";
 import { ListItem } from "../Universal/ListItem";
 import { ListItemButtons } from "../Universal/ListItemButtons";
@@ -9,32 +14,34 @@ import { ListItemSeparator } from "../Universal/ListItemSeparator";
 
 export interface EquipmentListItemProps {
   add?: boolean
-  data: Record<ItemInstance>
-  locale: UIMessagesObject
+  data: Record<Item>
+  l10n: L10nRecord
   addTemplateToList (id: string): void
   deleteItem (id: string): void
   editItem (id: string): void
   selectForInfo? (id: string): void
 }
 
+const IA = Item.A
+
 export function EquipmentListItem (props: EquipmentListItemProps) {
-  const { add, addTemplateToList, data, deleteItem, editItem, locale, selectForInfo } = props
+  const { add, addTemplateToList, data, deleteItem, editItem, l10n: locale, selectForInfo } = props
 
-  const numberValue = Maybe.ensure<number> (R.lt (1)) (data .get ("amount"))
+  const numberValue = ensure<number> (gt (1)) (IA.amount (data))
 
-  return add ? (
+  return add === true ? (
     <ListItem>
-      <ListItemName name={data .get ("name")} />
+      <ListItemName name={IA.name (data)} />
       <ListItemSeparator />
       <ListItemButtons>
         <IconButton
           icon="&#xE916"
-          onClick={() => addTemplateToList (data .get ("id"))}
+          onClick={() => addTemplateToList (IA.id (data))}
           flat
           />
         <IconButton
           icon="&#xE912"
-          onClick={selectForInfo && (() => selectForInfo (data .get ("id")))}
+          onClick={selectForInfo ? (() => selectForInfo (IA.id (data))) : undefined}
           disabled={!selectForInfo}
           flat
           />
@@ -44,25 +51,25 @@ export function EquipmentListItem (props: EquipmentListItemProps) {
     <ListItem>
       <ListItemName
         name={
-          `${Maybe.maybe<number, string> ("") (value => `${value}x `) (numberValue)}${data .get ("name")}`
+          `${maybe ("") ((value: number) => `${value}x `) (numberValue)}${IA.name (data)}`
         }
         />
       <ListItemSeparator />
-      <ListItemGroup list={translate (locale, "equipment.view.groups")} index={data .get ("gr")} />
+      <ListItemGroup list={translate (locale) ("itemgroups")} index={IA.gr (data)} />
       <ListItemButtons>
         <IconButton
           icon="&#xE90c"
-          onClick={() => editItem (data .get ("id"))}
+          onClick={() => editItem (IA.id (data))}
           flat
           />
         <IconButton
           icon="&#xE90b"
-          onClick={() => deleteItem (data .get ("id"))}
+          onClick={() => deleteItem (IA.id (data))}
           flat
           />
         <IconButton
           icon="&#xE912"
-          onClick={selectForInfo && (() => selectForInfo (data .get ("id")))}
+          onClick={selectForInfo ? (() => selectForInfo (IA.id (data))) : undefined}
           disabled={!selectForInfo}
           flat
           />

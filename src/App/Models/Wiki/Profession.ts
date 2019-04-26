@@ -24,7 +24,7 @@ export interface Profession {
   combatTechniques: List<Record<IncreaseSkill>>
   skills: List<Record<IncreaseSkill>>
   spells: List<Record<IncreaseSkill> | Record<IncreaseSkillList>>
-  liturgicalChants: List<Record<IncreaseSkill>>
+  liturgicalChants: List<Record<IncreaseSkill> | Record<IncreaseSkillList>>
   blessings: List<string>
   suggestedAdvantages: List<string>
   suggestedAdvantagesText: Maybe<string>

@@ -1,14 +1,21 @@
 import * as React from "react";
+import { imap } from "../../../Data/List";
+import { Just, Maybe } from "../../../Data/Maybe";
+import { Record } from "../../../Data/Record";
+import { EditItem } from "../../Models/Hero/EditItem";
+import { L10n, L10nRecord } from "../../Models/Wiki/L10n";
 import { translate } from "../../Utilities/I18n";
-import { getLossLevelElements, ItemEditorInputValidation } from "../../Utilities/ItemUtils";
+import { ItemEditorInputValidation } from "../../Utilities/itemEditorInputValidationUtils";
+import { getLossLevelElements } from "../../Utilities/ItemUtils";
+import { sortRecordsByName } from "../../Utilities/sortBy";
 import { Checkbox } from "../Universal/Checkbox";
 import { Dropdown, DropdownOption } from "../Universal/Dropdown";
 import { Hr } from "../Universal/Hr";
 import { TextField } from "../Universal/TextField";
 
 export interface ItemEditorArmorSectionProps {
-  item: Record<ItemEditorInstance>
-  locale: UIMessagesObject
+  item: Record<EditItem>
+  l10n: L10nRecord
   inputValidation: Record<ItemEditorInputValidation>
   setProtection (value: string): void
   setEncumbrance (value: string): void
@@ -21,18 +28,22 @@ export interface ItemEditorArmorSectionProps {
   setArmorType (id: number): void
 }
 
-export function ItemEditorArmorSection (props: ItemEditorArmorSectionProps) {
-  const { inputValidation, item, locale } = props
+const EIA = EditItem.A
+const IEIVA = ItemEditorInputValidation.A
 
-  const gr = item .get ("gr")
-  const locked = item .get ("isTemplateLocked")
+export function ItemEditorArmorSection (props: ItemEditorArmorSectionProps) {
+  const { inputValidation, item, l10n } = props
+
+  const gr = EIA.gr (item)
+  const locked = EIA.isTemplateLocked (item)
 
   const armorTypes =
-    sortObjects (
-      translate (locale, "equipment.view.armortypes")
-        .imap (index => e => Record.of<DropdownOption> ({ id: index + 1, name: e })),
-      locale .get ("id")
-    )
+    sortRecordsByName (L10n.A.id (l10n))
+                      (imap (index => (e: string) => DropdownOption ({
+                                                                       id: Just (index + 1),
+                                                                       name: e,
+                                                                    }))
+                            (translate (l10n) ("armortypes")))
 
   return gr === 4
     ? (
@@ -43,26 +54,26 @@ export function ItemEditorArmorSection (props: ItemEditorArmorSectionProps) {
             <div className="container">
               <TextField
                 className="pro"
-                label={translate (locale, "itemeditor.options.pro")}
-                value={item .get ("pro")}
+                label={translate (l10n) ("protection.short")}
+                value={EIA.pro (item)}
                 onChangeString={props.setProtection}
                 disabled={locked}
-                valid={inputValidation .get ("pro")}
+                valid={IEIVA.pro (inputValidation)}
                 />
               <TextField
                 className="enc"
-                label={translate (locale, "itemeditor.options.enc")}
-                value={item .get ("enc")}
+                label={translate (l10n) ("encumbrance.short")}
+                value={EIA.enc (item)}
                 onChangeString={props.setEncumbrance}
                 disabled={locked}
-                valid={inputValidation .get ("enc")}
+                valid={IEIVA.enc (inputValidation)}
                 />
             </div>
             <Dropdown
               className="armor-type"
-              label={translate (locale, "itemeditor.options.armortype")}
-              hint={translate (locale, "options.none")}
-              value={item .lookup ("armorType")}
+              label={translate (l10n) ("armortype")}
+              hint={translate (l10n) ("none")}
+              value={EIA.armorType (item)}
               options={armorTypes}
               onChangeJust={props.setArmorType}
               disabled={locked}
@@ -73,24 +84,24 @@ export function ItemEditorArmorSection (props: ItemEditorArmorSectionProps) {
             <div className="container armor-loss-container">
               <TextField
                 className="stabilitymod"
-                label={translate (locale, "itemeditor.options.stabilitymod")}
-                value={item .get ("stabilityMod")}
+                label={translate (l10n) ("sturdinessmodifier.short")}
+                value={EIA.stabilityMod (item)}
                 onChangeString={props.setStabilityModifier}
                 disabled={locked}
-                valid={inputValidation .get ("stabilityMod")}
+                valid={IEIVA.stabilityMod (inputValidation)}
                 />
               <Dropdown
                 className="weapon-loss"
-                label={translate (locale, "itemeditor.options.armorloss")}
-                value={item .lookup ("stabilityMod")}
+                label={translate (l10n) ("wear")}
+                value={EIA.stabilityMod (item)}
                 options={getLossLevelElements ()}
                 onChange={props.setLoss}
                 />
             </div>
             <Checkbox
               className="only-zones"
-              label={translate (locale, "itemeditor.options.zonesonly")}
-              checked={item .lookup ("forArmorZoneOnly")}
+              label={translate (l10n) ("hitzonearmoronly")}
+              checked={EIA.forArmorZoneOnly (item)}
               onClick={props.switchIsForArmorZonesOnly}
               disabled={locked}
               />
@@ -99,25 +110,25 @@ export function ItemEditorArmorSection (props: ItemEditorArmorSectionProps) {
             <div className="container">
               <TextField
                 className="mov"
-                label={translate (locale, "itemeditor.options.movmod")}
-                value={item .get ("movMod")}
+                label={translate (l10n) ("movementmodifier.short")}
+                value={EIA.movMod (item)}
                 onChangeString={props.setMovementModifier}
                 disabled={locked}
-                valid={inputValidation .get ("mov")}
+                valid={IEIVA.mov (inputValidation)}
                 />
               <TextField
                 className="ini"
-                label={translate (locale, "itemeditor.options.inimod")}
-                value={item .get ("iniMod")}
+                label={translate (l10n) ("initiativemodifier.short")}
+                value={EIA.iniMod (item)}
                 onChangeString={props.setInitiativeModifier}
                 disabled={locked}
-                valid={inputValidation .get ("ini")}
+                valid={IEIVA.ini (inputValidation)}
                 />
             </div>
             <Checkbox
               className="add-penalties"
-              label={translate (locale, "itemeditor.options.additionalpenalties")}
-              checked={item .lookup ("addPenalties")}
+              label={translate (l10n) ("additionalpenalties")}
+              checked={EIA.addPenalties (item)}
               onClick={props.setHasAdditionalPenalties}
               disabled={locked}
               />

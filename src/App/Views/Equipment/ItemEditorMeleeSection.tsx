@@ -1,7 +1,20 @@
 import * as React from "react";
+import { equals } from "../../../Data/Eq";
+import { fmap } from "../../../Data/Functor";
+import { flength, imap, intercalate, isList, lastS, List, map } from "../../../Data/List";
+import { bindF, elem, ensure, fromJust, isJust, isNothing, Just, listToMaybe, mapMaybe, Maybe, maybe, or } from "../../../Data/Maybe";
+import { elems, lookup, lookupF, OrderedMap } from "../../../Data/OrderedMap";
+import { Record } from "../../../Data/Record";
+import { EditItem } from "../../Models/Hero/EditItem";
+import { EditPrimaryAttributeDamageThreshold } from "../../Models/Hero/EditPrimaryAttributeDamageThreshold";
+import { Attribute } from "../../Models/Wiki/Attribute";
+import { CombatTechnique } from "../../Models/Wiki/CombatTechnique";
+import { L10nRecord } from "../../Models/Wiki/L10n";
 import { translate } from "../../Utilities/I18n";
-import { getAbbreviation } from "../../Utilities/Increasable/attributeUtils";
-import { getLossLevelElements, ItemEditorInputValidation } from "../../Utilities/ItemUtils";
+import { ItemEditorInputValidation } from "../../Utilities/itemEditorInputValidationUtils";
+import { getLossLevelElements } from "../../Utilities/ItemUtils";
+import { pipe, pipe_ } from "../../Utilities/pipe";
+import { isString } from "../../Utilities/typeCheckUtils";
 import { Checkbox } from "../Universal/Checkbox";
 import { Dropdown, DropdownOption } from "../Universal/Dropdown";
 import { Hr } from "../Universal/Hr";
@@ -11,8 +24,8 @@ import { TextField } from "../Universal/TextField";
 export interface ItemEditorMeleeSectionProps {
   attributes: OrderedMap<string, Record<Attribute>>
   combatTechniques: OrderedMap<string, Record<CombatTechnique>>
-  item: Record<ItemEditorInstance>
-  locale: UIMessagesObject
+  item: Record<EditItem>
+  l10n: L10nRecord
   inputValidation: Record<ItemEditorInputValidation>
   setCombatTechnique (id: string): void
   setDamageDiceNumber (value: string): void
@@ -34,26 +47,36 @@ export interface ItemEditorMeleeSectionProps {
   setLoss (id: Maybe<number>): void
 }
 
+const EIA = EditItem.A
+const IEIVA = ItemEditorInputValidation.A
+const EPADTA = EditPrimaryAttributeDamageThreshold.A
+const CTA = CombatTechnique.A
+const AA = Attribute.A
+
+const shortOrEmpty =
+  (attrs: OrderedMap<string, Record<Attribute>>) => pipe (lookupF (attrs), maybe ("") (AA.short))
+
 export function ItemEditorMeleeSection (props: ItemEditorMeleeSectionProps) {
-  const { attributes, combatTechniques, inputValidation, item, locale } = props
+  const { attributes, combatTechniques, inputValidation, item, l10n } = props
 
   const dice =
-    List.zipWith<string, number, Record<DropdownOption>>
-      (name => id => Record.of<DropdownOption> ({ id, name }))
-      (translate (locale, "equipment.view.dice"))
-      (List.of (2, 3, 6))
+    map ((id: number) => DropdownOption ({
+                                           id: Just (id),
+                                           name: `${translate (l10n) ("dice.short")}${id}`,
+                                        }))
+        (List (2, 3, 6))
 
-  const gr = item .get ("gr")
-  const locked = item .get ("isTemplateLocked")
-  const combatTechnique = item .lookup ("combatTechnique")
-  const damageBonusThreshold = item .get ("damageBonus") .get ("threshold")
+  const gr = EIA.gr (item)
+  const locked = EIA.isTemplateLocked (item)
+  const combatTechnique = EIA.combatTechnique (item)
+  const damageBonusThreshold = pipe_ (item, EIA.damageBonus, EPADTA.threshold)
 
   const lockedByNoCombatTechniqueOrLances =
     locked
-    || !Maybe.isJust (combatTechnique)
-    || Maybe.fromJust (combatTechnique) === "CT_7"
+    || !isJust (combatTechnique)
+    || fromJust (combatTechnique) === "CT_7"
 
-  return (gr === 1 || Maybe.elem (1) (item .lookup ("improvisedWeaponGroup")))
+  return (gr === 1 || elem (1) (EIA.improvisedWeaponGroup (item)))
     ? (
       <>
         <Hr className="vertical" />
@@ -61,14 +84,17 @@ export function ItemEditorMeleeSection (props: ItemEditorMeleeSectionProps) {
           <div className="row">
             <Dropdown
               className="combattechnique"
-              label={translate (locale, "itemeditor.options.combattechnique")}
-              hint={translate (locale, "options.none")}
+              label={translate (l10n) ("combattechnique")}
+              hint={translate (l10n) ("none")}
               value={combatTechnique}
-              options={
-                combatTechniques
-                  .elems ()
-                  .filter (e => e .get ("gr") === 1) as unknown as List<Record<DropdownOption>>
-              }
+              options={pipe_ (
+                combatTechniques,
+                elems,
+                mapMaybe (pipe (
+                  ensure (pipe (CTA.gr, equals (1))),
+                  fmap (x => DropdownOption ({ id: Just (CTA.id (x)), name: CTA.name (x) }))
+                ))
+              )}
               onChangeJust={props.setCombatTechnique}
               disabled={locked}
               required
@@ -77,86 +103,81 @@ export function ItemEditorMeleeSection (props: ItemEditorMeleeSectionProps) {
           <div className="row">
             <Dropdown
               className="primary-attribute-selection"
-              label={translate (locale, "itemeditor.options.primaryattribute")}
-              value={item .get ("damageBonus") .lookup ("primary")}
-              options={List.of<Record<DropdownOption>> (
-                Record.of ({
-                  name: `${translate (locale, "itemeditor.options.primaryattributeshort")} (${
-                    Maybe.fromMaybe
-                      ("")
-                      (combatTechnique
-                        .bind (OrderedMap.lookup_ (combatTechniques))
-                        .fmap (R.pipe (
-                          Record.get<CombatTechnique, "primary"> ("primary"),
-                          Maybe.mapMaybe (R.pipe (
-                            OrderedMap.lookup_ (attributes),
-                            Maybe.fmap (getAbbreviation)
-                          )),
-                          List.intercalate ("/")
-                        )))
+              label={translate (l10n) ("primaryattribute")}
+              value={pipe_ (item, EIA.damageBonus, EPADTA.primary)}
+              options={List (
+                DropdownOption ({
+                  name: `${translate (l10n) ("primaryattribute.short")} (${
+                    pipe_ (
+                      combatTechnique,
+                      bindF (lookupF (combatTechniques)),
+                      maybe ("")
+                            (pipe (
+                              CTA.primary,
+                              mapMaybe (pipe (lookupF (attributes), fmap (AA.short))),
+                              intercalate ("/")
+                            ))
+                    )
                   })`,
                 }),
-                Record.of<DropdownOption> ({
-                  id: "ATTR_5",
-                  name: Maybe.fromMaybe ("")
-                                        (attributes .lookup ("ATTR_5") .fmap (getAbbreviation)),
+                DropdownOption ({
+                  id: Just ("ATTR_5"),
+                  name: shortOrEmpty (attributes) ("ATTR_5"),
                 }),
-                Record.of<DropdownOption> ({
-                  id: "ATTR_6",
-                  name: Maybe.fromMaybe ("")
-                                        (attributes .lookup ("ATTR_6") .fmap (getAbbreviation)),
+                DropdownOption ({
+                  id: Just ("ATTR_6"),
+                  name: shortOrEmpty (attributes) ("ATTR_6"),
                 }),
-                Record.of<DropdownOption> ({
-                  id: "ATTR_6_8",
+                DropdownOption ({
+                  id: Just ("ATTR_6_8"),
                   name: `${
-                    Maybe.fromMaybe ("")
-                                        (attributes .lookup ("ATTR_6") .fmap (getAbbreviation))
+                    shortOrEmpty (attributes) ("ATTR_6")
                   }/${
-                    Maybe.fromMaybe ("")
-                                        (attributes .lookup ("ATTR_8") .fmap (getAbbreviation))
+                    shortOrEmpty (attributes) ("ATTR_8")
                   }`,
                 }),
-                Record.of<DropdownOption> ({
-                  id: "ATTR_8",
-                  name: Maybe.fromMaybe ("")
-                                        (attributes .lookup ("ATTR_8") .fmap (getAbbreviation)),
+                DropdownOption ({
+                  id: Just ("ATTR_8"),
+                  name: shortOrEmpty (attributes) ("ATTR_8"),
                 })
               )}
               onChange={props.setPrimaryAttribute}
               disabled={lockedByNoCombatTechniqueOrLances}
               />
             {
-              damageBonusThreshold instanceof List
+              isList (damageBonusThreshold)
                 ? (
                   <div className="container damage-threshold">
                     <Label
-                      text={translate (locale, "itemeditor.options.damagethreshold")}
+                      text={translate (l10n) ("damagethreshold")}
                       disabled={lockedByNoCombatTechniqueOrLances}
                       />
                     <TextField
                       className="damage-threshold-part"
-                      value={Maybe.listToMaybe (damageBonusThreshold)}
+                      value={listToMaybe (damageBonusThreshold)}
                       onChangeString={props.setFirstDamageThreshold}
                       disabled={lockedByNoCombatTechniqueOrLances}
-                      valid={inputValidation .get ("firstDamageThreshold")}
+                      valid={IEIVA.firstDamageThreshold (inputValidation)}
                       />
                     <TextField
                       className="damage-threshold-part"
-                      value={List.last_ (damageBonusThreshold)}
+                      value={isString (damageBonusThreshold)
+                        ? damageBonusThreshold
+                        : lastS (damageBonusThreshold)}
                       onChangeString={props.setSecondDamageThreshold}
                       disabled={lockedByNoCombatTechniqueOrLances}
-                      valid={inputValidation .get ("secondDamageThreshold")}
+                      valid={IEIVA.secondDamageThreshold (inputValidation)}
                       />
                   </div>
                 )
                 : (
                   <TextField
                     className="damage-threshold"
-                    label={translate (locale, "itemeditor.options.damagethreshold")}
+                    label={translate (l10n) ("damagethreshold")}
                     value={damageBonusThreshold}
                     onChangeString={props.setDamageThreshold}
                     disabled={lockedByNoCombatTechniqueOrLances}
-                    valid={inputValidation .get ("damageThreshold")}
+                    valid={IEIVA.damageThreshold (inputValidation)}
                     />
                 )
             }
@@ -164,67 +185,68 @@ export function ItemEditorMeleeSection (props: ItemEditorMeleeSectionProps) {
           <div className="row">
             <Checkbox
               className="damage-threshold-separated"
-              label={translate (locale, "itemeditor.options.damagethresholdseparated")}
-              checked={damageBonusThreshold instanceof List}
+              label={translate (l10n) ("separatedamagethresholds")}
+              checked={isList (damageBonusThreshold)}
               onClick={props.switchIsDamageThresholdSeparated}
               disabled={
                 locked
-                || !Maybe.isJust (combatTechnique)
+                || isNothing (combatTechnique)
                 || !(
-                  typeof damageBonusThreshold === "string"
+                  isString (damageBonusThreshold)
                   && damageBonusThreshold === "ATTR_6_8"
-                  || Maybe.elem
-                    (true)
-                    (combatTechniques
-                      .lookup (Maybe.fromJust (combatTechnique))
-                      .fmap (R.pipe (
-                        Record.get<CombatTechnique, "primary"> ("primary"),
-                        List.lengthL,
-                        R.equals (2)
-                      )))
+                  || pipe_ (
+                      combatTechniques,
+                      lookup (fromJust (combatTechnique)),
+                      fmap (pipe (
+                        CTA.primary,
+                        flength,
+                        equals (2)
+                      )),
+                      or
+                    )
                 )
-                || Maybe.fromJust (combatTechnique) === "CT_7"
+                || fromJust (combatTechnique) === "CT_7"
               }
               />
           </div>
           <div className="row">
             <div className="container">
-              <Label text={translate (locale, "itemeditor.options.damage")} disabled={locked} />
+              <Label text={translate (l10n) ("damage")} disabled={locked} />
               <TextField
                 className="damage-dice-number"
-                value={item .get ("damageDiceNumber")}
+                value={EIA.damageDiceNumber (item)}
                 onChangeString={props.setDamageDiceNumber}
                 disabled={locked}
-                valid={inputValidation .get ("damageDiceNumber")}
+                valid={IEIVA.damageDiceNumber (inputValidation)}
                 />
               <Dropdown
                 className="damage-dice-sides"
-                hint={translate (locale, "itemeditor.options.damagedice")}
-                value={item .lookup ("damageDiceSides")}
+                hint={translate (l10n) ("dice.short")}
+                value={EIA.damageDiceSides (item)}
                 options={dice}
                 onChangeJust={props.setDamageDiceSides}
                 disabled={locked}
                 />
               <TextField
                 className="damage-flat"
-                value={item .get ("damageFlat")}
+                value={EIA.damageFlat (item)}
                 onChangeString={props.setDamageFlat}
                 disabled={locked}
-                valid={inputValidation .get ("damageFlat")}
+                valid={IEIVA.damageFlat (inputValidation)}
                 />
             </div>
             <TextField
               className="stabilitymod"
-              label={translate (locale, "itemeditor.options.bfmod")}
-              value={item .get ("stabilityMod")}
+              label={translate (l10n) ("breakingpointratingmodifier.short")}
+              value={EIA.stabilityMod (item)}
               onChangeString={props.setStabilityModifier}
               disabled={locked}
-              valid={inputValidation .get ("stabilityMod")}
+              valid={IEIVA.stabilityMod (inputValidation)}
               />
             <Dropdown
               className="weapon-loss"
-              label={translate (locale, "itemeditor.options.weaponloss")}
-              value={item .lookup ("stabilityMod")}
+              label={translate (l10n) ("damaged.short")}
+              value={EIA.stabilityMod (item)}
               options={getLossLevelElements ()}
               onChange={props.setLoss}
               />
@@ -232,71 +254,59 @@ export function ItemEditorMeleeSection (props: ItemEditorMeleeSectionProps) {
           <div className="row">
             <Dropdown
               className="reach"
-              label={translate (locale, "itemeditor.options.reach")}
-              hint={translate (locale, "options.none")}
-              value={item .lookup ("reach")}
-              options={List.of<Record<DropdownOption>> (
-                Record.of<DropdownOption> ({
-                  id: 1,
-                  name: translate (locale, "itemeditor.options.reachshort"),
-                }),
-                Record.of<DropdownOption> ({
-                  id: 2,
-                  name: translate (locale, "itemeditor.options.reachmedium"),
-                }),
-                Record.of<DropdownOption> ({
-                  id: 3,
-                  name: translate (locale, "itemeditor.options.reachlong"),
-                })
-              )}
+              label={translate (l10n) ("reach")}
+              hint={translate (l10n) ("none")}
+              value={EIA.reach (item)}
+              options={imap (i => (name: string) => DropdownOption ({ id: Just (i + 1), name }))
+                            (translate (l10n) ("reachlabels"))}
               onChangeJust={props.setReach}
-              disabled={locked || Maybe.elem ("CT_7") (combatTechnique)}
+              disabled={locked || elem ("CT_7") (combatTechnique)}
               required
               />
             <div className="container">
               <Label
-                text={translate (locale, "itemeditor.options.atpamod")}
-                disabled={locked || Maybe.elem ("CT_7") (combatTechnique)}
+                text={translate (l10n) ("attackparrymodifier.short")}
+                disabled={locked || elem ("CT_7") (combatTechnique)}
                 />
               <TextField
                 className="at"
-                value={item .get ("at")}
+                value={EIA.at (item)}
                 onChangeString={props.setAttack}
-                disabled={locked || Maybe.elem ("CT_7") (combatTechnique)}
-                valid={inputValidation .get ("at")}
+                disabled={locked || elem ("CT_7") (combatTechnique)}
+                valid={IEIVA.at (inputValidation)}
               />
             <TextField
               className="pa"
-              value={item .get ("pa")}
+              value={EIA.pa (item)}
               onChangeString={props.setParry}
               disabled={
                 locked
-                || Maybe.elem ("CT_6") (combatTechnique)
-                || Maybe.elem ("CT_7") (combatTechnique)
+                || elem ("CT_6") (combatTechnique)
+                || elem ("CT_7") (combatTechnique)
               }
-              valid={inputValidation .get ("pa")}
+              valid={IEIVA.pa (inputValidation)}
               />
           </div>
           {
-            Maybe.elem ("CT_10") (combatTechnique)
+            elem ("CT_10") (combatTechnique)
               ? (
                 <TextField
                   className="stp"
-                  label={translate (locale, "itemeditor.options.structurepoints")}
-                  value={item .get ("stp")}
+                  label={translate (l10n) ("structurepoints.short")}
+                  value={EIA.stp (item)}
                   onChangeString={props.setStructurePoints}
                   disabled={locked}
-                  valid={inputValidation .get ("structurePoints")}
+                  valid={IEIVA.structurePoints (inputValidation)}
                   />
               )
               : (
                 <TextField
                   className="length"
-                  label={translate (locale, "itemeditor.options.length")}
-                  value={item .get ("length")}
+                  label={translate (l10n) ("length")}
+                  value={EIA.length (item)}
                   onChangeString={props.setLength}
                   disabled={locked}
-                  valid={inputValidation .get ("length")}
+                  valid={IEIVA.length (inputValidation)}
                   />
               )
           }
@@ -304,15 +314,15 @@ export function ItemEditorMeleeSection (props: ItemEditorMeleeSectionProps) {
         <div className="row">
           <Checkbox
             className="parrying-weapon"
-            label={translate (locale, "itemeditor.options.parryingweapon")}
-            checked={item .lookup ("isParryingWeapon")}
+            label={translate (l10n) ("parryingweapon")}
+            checked={EIA.isParryingWeapon (item)}
             onClick={props.switchIsParryingWeapon}
             disabled={locked}
             />
           <Checkbox
             className="twohanded-weapon"
-            label={translate (locale, "itemeditor.options.twohandedweapon")}
-            checked={!item .lookup ("isTwoHandedWeapon")}
+            label={translate (l10n) ("twohandedweapon")}
+            checked={!EIA.isTwoHandedWeapon (item)}
             onClick={props.switchIsTwoHandedWeapon}
             disabled={locked}
             />

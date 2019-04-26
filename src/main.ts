@@ -86,18 +86,15 @@ function createWindow () {
       protocol: "file:",
       slashes: true,
     }))
-    .catch (err => { console.error (err); })
+    .then (() => {
+      mainWindow!.webContents.openDevTools ()
 
-  mainWindow.webContents.openDevTools ()
+      mainWindow!.show ()
+      if (mainWindowState.isMaximized) {
+        mainWindow!.maximize ()
+      }
 
-  mainWindow.once ("ready-to-show", () => {
-    mainWindow!.show ()
-    if (mainWindowState.isMaximized) {
-      mainWindow!.maximize ()
-    }
-
-    ipcMain.addListener ("loading-done", () => {
-      if (process.platform !== "linux") {
+      ipcMain.addListener ("loading-done", () => {
         let cancellationToken: CancellationToken | undefined
 
         autoUpdater
@@ -153,9 +150,9 @@ function createWindow () {
         autoUpdater.signals.updateDownloaded (() => {
           autoUpdater.quitAndInstall ()
         })
-      }
+      })
     })
-  })
+    .catch (err => { console.error (err); })
 
   mainWindow.on ("closed", () => {
     // tslint:disable-next-line:no-null-keyword

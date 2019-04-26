@@ -224,6 +224,17 @@ export const fromIO =
   <A> (x: IO<A>): Promise<A> => x .f ()
 
 /**
+ * `toIO :: (...a -> Promise b) -> ...a -> IO b`
+ *
+ * Runs the `IO` and unwraps the `Promise` contained within the `IO`.
+ */
+export const toIO =
+  <A extends any[], B>
+  (f: (...args: A) => Promise<B>) =>
+  (...args: A): IO<B> =>
+    Internals.IO (() => f (...args))
+
+/**
  * An `IO` that does nothing. Can be useful for chained `then`s to execute
  * `IO`s.
  */

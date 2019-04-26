@@ -331,7 +331,10 @@ export const getAllProfessions = createMaybeSelector (
                              > (mapSpell (wiki))),
                     mappedLiturgicalChants:
                       thrush (PA.liturgicalChants (p))
-                             (mapMaybe (mapLiturgicalChant (wiki))),
+                             (mapMaybe<
+                               ListI<Profession["liturgicalChants"]>,
+                               ListI<ProfessionCombined["mappedLiturgicalChants"]>
+                             > (mapLiturgicalChant (wiki))),
                     mappedVariants:
                       map ((v: Record<ProfessionVariant>) =>
                         ProfessionVariantCombined ({
@@ -361,9 +364,10 @@ export const getAllProfessions = createMaybeSelector (
                                    > (mapSpellPrevious (wiki) (PA.spells (p)))),
                           mappedLiturgicalChants:
                             thrush (PA.liturgicalChants (p))
-                                   (mapMaybe (mapLiturgicalChantPrevious (wiki)
-                                                                         (PA.liturgicalChants (p))
-                                             )),
+                                   (mapMaybe<
+                                     ListI<Profession["liturgicalChants"]>,
+                                     ListI<ProfessionCombined["mappedLiturgicalChants"]>
+                                   > (mapLiturgicalChantPrevious (wiki) (PA.liturgicalChants (p)))),
                           wikiEntry: v,
                         }))
                           (filtered_variants),
@@ -487,7 +491,7 @@ const mapCombatTechnique = mapIncreaseSkill (WA.combatTechniques) (CTA.name)
 
 const mapSpell = mapIncreaseSkillOrList (WA.spells) (SPA.name)
 
-const mapLiturgicalChant = mapIncreaseSkill (WA.liturgicalChants) (LCA.name)
+const mapLiturgicalChant = mapIncreaseSkillOrList (WA.liturgicalChants) (LCA.name)
 
 const mapIncreaseSkillPrevious =
   <a>
@@ -555,7 +559,7 @@ const mapCombatTechniquePrevious = mapIncreaseSkillPrevious (WA.combatTechniques
 
 const mapSpellPrevious = mapIncreaseSkillListPrevious (WA.spells) (SPA.name)
 
-const mapLiturgicalChantPrevious = mapIncreaseSkillPrevious (WA.liturgicalChants) (LCA.name)
+const mapLiturgicalChantPrevious = mapIncreaseSkillListPrevious (WA.liturgicalChants) (LCA.name)
 
 const isCustomProfession = (e: Record<ProfessionCombined>) => ProfessionCombinedA_.id (e) === "P_0"
 

@@ -18,7 +18,7 @@ export interface ProfessionVariantCombined {
   mappedCombatTechniques: List<Record<IncreasableForView>>
   mappedSkills: List<Record<IncreasableForView>>
   mappedSpells: List<Record<IncreasableForView> | Record<IncreasableListForView>>
-  mappedLiturgicalChants: List<Record<IncreasableForView>>
+  mappedLiturgicalChants: List<Record<IncreasableForView> | Record<IncreasableListForView>>
 }
 
 export const ProfessionVariantCombined =

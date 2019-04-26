@@ -314,7 +314,7 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
           <PurseAndTotals {...this.props} />
           <WikiInfoContainer {...this.props} {...this.state} noWrapper />
         </Aside>
-        <ItemEditorContainer locale={l10n} />
+        <ItemEditorContainer l10n={l10n} />
       </Page>
     )
   }

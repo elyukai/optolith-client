@@ -25,7 +25,7 @@ export interface ProfessionCombined {
   mappedKnowledgeSkills: List<Record<IncreasableForView>>
   mappedCraftSkills: List<Record<IncreasableForView>>
   mappedSpells: List<Record<IncreasableForView> | Record<IncreasableListForView>>
-  mappedLiturgicalChants: List<Record<IncreasableForView>>
+  mappedLiturgicalChants: List<Record<IncreasableForView> | Record<IncreasableListForView>>
   mappedVariants: List<Record<ProfessionVariantCombined>>
 }
 

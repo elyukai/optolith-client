@@ -280,7 +280,7 @@ const toNaturalNumberPairOptional =
                              (toNatural)
                              (toNatural)
 
-const toNaturalNumberOrNumberListPairOptional =
+export const toNaturalNumberOrNumberListPairOptional =
   mensureMapPairListOptional ("&")
                              ("?")
                              (Expect.Union (
@@ -392,7 +392,7 @@ export const toProfession =
                        ("spells")
 
       const eliturgicalChants =
-        lookupKeyValid (toNaturalNumberPairOptional)
+        lookupKeyValid (toNaturalNumberOrNumberListPairOptional)
                        (TableType.Univ)
                        (lookup_univ)
                        ("liturgicalChants")
@@ -520,7 +520,7 @@ export const toProfession =
           liturgicalChants:
             maybe<Profession["liturgicalChants"]>
               (empty)
-              (map (pairToIncreaseSkill (IdPrefixes.LITURGICAL_CHANTS)))
+              (map (pairToIncreaseSkillOrList (IdPrefixes.LITURGICAL_CHANTS)))
               (rs.eliturgicalChants),
 
           blessings:

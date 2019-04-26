@@ -216,13 +216,18 @@ const concatBaseModifications = (action: SetSelectionsAction) => {
                          }))
                          (PVA.prerequisites (profession_variant))),
 
-              foldIncSkillsIntoSRs (prof_var_spells_chants),
+              foldIncSkillsIntoSRs (thrush (prof_var_spells_chants) (filter (IncreaseSkill.is))),
 
               cm =>
                 over (CML.skillActivateList)
-                     (flip (foldr (pipe (ISA.id, x => member (x) (CMA.skillRatingList (cm))
-                                                        ? insert (x)
-                                                        : ident as ident<OrderedSet<string>>)))
+                     (flip (foldr (pipe (
+                                    ensure<ListI<Profession["spells"]>, Record<IncreaseSkill>>
+                                      (IncreaseSkill.is),
+                                    maybe (ident as ident<OrderedSet<string>>)
+                                          (pipe (ISA.id, x => member (x) (CMA.skillRatingList (cm))
+                                                                ? insert (x)
+                                                                : ident))
+                                  )))
                            (prof_var_spells_chants))
                      (cm)
             )})

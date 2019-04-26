@@ -12,7 +12,7 @@ import { CursesSelection } from "../../../Models/Wiki/professionSelections/Curse
 import { LanguagesScriptsSelection } from "../../../Models/Wiki/professionSelections/LanguagesScriptsSelection";
 import { ProfessionVariantSelections, ProfessionVariantSelectionsL } from "../../../Models/Wiki/professionSelections/ProfessionVariantAdjustmentSelections";
 import { RemoveCombatTechniquesSelection } from "../../../Models/Wiki/professionSelections/RemoveCombatTechniquesSelection";
-import { isRemoveCombatTechniquesSecondSelection, RemoveCombatTechniquesSecondSelection } from "../../../Models/Wiki/professionSelections/RemoveSecondCombatTechniquesSelection";
+import { RemoveCombatTechniquesSecondSelection } from "../../../Models/Wiki/professionSelections/RemoveSecondCombatTechniquesSelection";
 import { RemoveSpecializationSelection } from "../../../Models/Wiki/professionSelections/RemoveSpecializationSelection";
 import { CombatTechniquesSecondSelection } from "../../../Models/Wiki/professionSelections/SecondCombatTechniquesSelection";
 import { SkillsSelection } from "../../../Models/Wiki/professionSelections/SkillsSelection";
@@ -20,6 +20,7 @@ import { SpecializationSelection } from "../../../Models/Wiki/professionSelectio
 import { TerrainKnowledgeSelection } from "../../../Models/Wiki/professionSelections/TerrainKnowledgeSelection";
 import { ProfessionVariant } from "../../../Models/Wiki/ProfessionVariant";
 import { pairToIncreaseSkill } from "../../../Models/Wiki/sub/IncreaseSkill";
+import { pairToIncreaseSkillOrList } from "../../../Models/Wiki/sub/IncreaseSkillList";
 import { NameBySex } from "../../../Models/Wiki/sub/NameBySex";
 import { AnyProfessionVariantSelection, ProfessionSelectionIds } from "../../../Models/Wiki/wikiTypeHelpers";
 import { prefixId } from "../../IDUtils";
@@ -38,8 +39,9 @@ import { isRawSkillsSelection } from "./ProfessionSelections/RawSkillsSelection"
 import { isRawSpecializationSelection } from "./ProfessionSelections/RawSpecializationSelection";
 import { isRawTerrainKnowledgeSelection } from "./ProfessionSelections/RawTerrainKnowledgeSelection";
 import { isRemoveRawCombatTechniquesSelection } from "./ProfessionSelections/RemoveRawCombatTechniquesSelection";
+import { isRemoveRawCombatTechniquesSecondSelection } from "./ProfessionSelections/RemoveRawSecondCombatTechniquesSelection";
 import { isRemoveRawSpecializationSelection } from "./ProfessionSelections/RemoveRawSpecializationSelection";
-import { stringToBlessings, stringToDependencies, stringToPrerequisites, stringToSpecialAbilities } from "./toProfession";
+import { stringToBlessings, stringToDependencies, stringToPrerequisites, stringToSpecialAbilities, toNaturalNumberOrNumberListPairOptional } from "./toProfession";
 
 const PVSL = ProfessionVariantSelectionsL
 
@@ -57,6 +59,7 @@ const stringToVariantSelections =
         + "| TerrainKnowledgeSelection "
         + "| SkillsSelection"
       )
+// tslint:disable-next-line: cyclomatic-complexity
       ((x): Maybe<AnyProfessionVariantSelection> => {
         try {
           const mobj = parseJSON (x)
@@ -92,7 +95,7 @@ const stringToVariantSelections =
                   value: obj .value,
                   sid: fromArray (obj .sid),
                 }))
-              : isRemoveCombatTechniquesSecondSelection (obj)
+              : isRemoveRawCombatTechniquesSecondSelection (obj)
               ? Just (RemoveCombatTechniquesSecondSelection)
               : isRawCantripsSelection (obj)
               ? Just (CantripsSelection ({
@@ -174,7 +177,7 @@ const toNaturalNumberIntPairOptional =
   mensureMapPairListOptional ("&")
                              ("?")
                              (Expect.NaturalNumber)
-                             (Expect.NaturalNumber)
+                             (Expect.Integer)
                              (toNatural)
                              (toInt)
 
@@ -237,13 +240,13 @@ export const toProfessionVariant =
                        ("skills")
 
       const espells =
-        lookupKeyValid (toNaturalNumberIntPairOptional)
+        lookupKeyValid (toNaturalNumberOrNumberListPairOptional)
                        (TableType.Univ)
                        (lookup_univ)
                        ("spells")
 
       const eliturgicalChants =
-        lookupKeyValid (toNaturalNumberIntPairOptional)
+        lookupKeyValid (toNaturalNumberOrNumberListPairOptional)
                        (TableType.Univ)
                        (lookup_univ)
                        ("liturgicalChants")
@@ -317,13 +320,13 @@ export const toProfessionVariant =
           spells:
             maybe<ProfessionVariant["spells"]>
               (empty)
-              (map (pairToIncreaseSkill (IdPrefixes.SPELLS)))
+              (map (pairToIncreaseSkillOrList (IdPrefixes.SPELLS)))
               (rs.espells),
 
           liturgicalChants:
             maybe<ProfessionVariant["liturgicalChants"]>
               (empty)
-              (map (pairToIncreaseSkill (IdPrefixes.LITURGICAL_CHANTS)))
+              (map (pairToIncreaseSkillOrList (IdPrefixes.LITURGICAL_CHANTS)))
               (rs.eliturgicalChants),
 
           blessings:
