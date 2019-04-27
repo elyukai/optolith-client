@@ -6,8 +6,10 @@ import { IdPrefixes } from "../../../Constants/IdPrefixes";
 import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility";
 import { SelectOption } from "../../../Models/Wiki/sub/SelectOption";
 import { prefixId } from "../../IDUtils";
+import { toNatural } from "../../NumberUtils";
 import { mergeRowsById } from "../mergeTableRows";
-import { mensureMapNatural, mensureMapNaturalFixedListOptional, mensureMapNaturalOptional, mensureMapNonEmptyString, mensureMapStringPredListOptional, mensureMapStringPredOptional } from "../validateMapValueUtils";
+import { Expect } from "../showExpected";
+import { mensureMapListLengthInRangeOptional, mensureMapNatural, mensureMapNaturalOptional, mensureMapNonEmptyString, mensureMapStringPredListOptional, mensureMapStringPredOptional } from "../validateMapValueUtils";
 import { lookupKeyValid, mapMNamed, TableType } from "../validateValueUtils";
 import { toActivatableCost } from "./Sub/toActivatableCost";
 import { toPrerequisites } from "./Sub/toPrerequisites";
@@ -47,7 +49,11 @@ export const toSpecialAbility =
                        (lookup_univ)
 
       const checkExtendedSpecialAbilitiesList =
-        lookupKeyValid (mensureMapNaturalFixedListOptional (3) ("&"))
+        lookupKeyValid (mensureMapListLengthInRangeOptional (1)
+                                                            (3)
+                                                            ("&")
+                                                            (Expect.NaturalNumber)
+                                                            (toNatural))
                        (TableType.Univ)
                        (lookup_univ)
 
@@ -77,7 +83,7 @@ export const toSpecialAbility =
 
       const input = lookup_l10n ("input")
 
-      const egr = checkUnivNaturalNumber ("input")
+      const egr = checkUnivNaturalNumber ("gr")
 
       const etype = checkCombatSpecialAbilityType ("type")
 

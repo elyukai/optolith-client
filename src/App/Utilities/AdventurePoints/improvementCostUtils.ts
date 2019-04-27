@@ -74,11 +74,10 @@ const sumAPValue =
     fst (current) === snd (icAndMax)
       ? snd (current)
       : sumAPValue (icAndMax)
-                   (bimap<number, number, number, number>
-                     (inc)
-                     (add (getImprovementCost (fst (icAndMax))
-                                              (inc (fst (current)))))
-                     (current))
+                   (bimap (inc)
+                          (add (getImprovementCost (fst (icAndMax))
+                                                   (inc (fst (current)))))
+                          (current))
 
 const getIncreaseRangeAP =
   (ic: number) => (fromValue: number) => (toValue: number) =>

@@ -1642,6 +1642,21 @@ export const trimStart = (str: string) => str .replace (/^\s+/, "")
  */
 export const trimEnd = (str: string) => str .replace (/\s+$/, "")
 
+/**
+ * `escapeRegex :: String -> String`
+ *
+ * Escape a string that may contain `Regex`-specific notation for use in
+ * regular expressions.
+ *
+ * ```haskell
+ * escapeRegex "." == "\."
+ * escapeRegex "This (or that)." == "This \(or that\)\."
+ * ```
+ */
+export const escapeRegex =
+  // $& means the whole matched string
+  (x: string) => x .replace (/[.*+?^${}()|[\]\\]/g, "\\$&")
+
 
 // Splitting
 
@@ -1688,6 +1703,23 @@ export const notNullStr = (xs: string) => xs .length > 0
 export const list =
   <A, B> (def: B) => (f: (x: A) => (xs: List<A>) => B) => (xs: List<A>): B =>
     isNil (xs) ? def : f (xs .x) (xs .xs)
+
+/**
+ * `unsnoc :: [a] -> Maybe ([a], a)`
+ *
+ * If the list is empty returns `Nothing`, otherwise returns the `init` and the
+ * `last`.
+ */
+export const unsnoc =
+  <A> (xs: List<A>): Maybe<Pair<List<A>, A>> =>
+    isNil (xs)
+      ? Nothing
+      : Just (unsnocSafe (xs))
+
+
+const unsnocSafe =
+  <A> (xs: Cons<A>): Pair<List<A>, A> =>
+    isNil (xs .xs) ? Pair (Nil, xs .x) : first (consF (xs .x)) (unsnocSafe (xs .xs))
 
 /**
  * `cons :: a -> [a] -> [a]`
@@ -1796,14 +1828,6 @@ export const firstJust =
   }
 
 /**
- * Escape a string that may contain `RegExp`-specific notation for use in
- * regular expressions.
- */
-const escapeRegExp =
-  // $& means the whole matched string
-  (x: string) => x .replace (/[.*+?^${}()|[\]\\]/g, "\\$&")
-
-/**
  * `replace :: (Partial, Eq a) => [a] -> [a] -> [a] -> [a]`
  *
  * Replace a subsequence everywhere it occurs. The first argument must not be
@@ -1811,7 +1835,7 @@ const escapeRegExp =
  */
 export const replaceStr =
   (old_subseq: string) => (new_subseq: string) => (x: string): string =>
-    x .replace (new RegExp (escapeRegExp (old_subseq), "g"), new_subseq)
+    x .replace (new RegExp (escapeRegex (old_subseq), "g"), new_subseq)
 
 
 // OWN METHODS
@@ -2114,12 +2138,14 @@ List.ifindIndices = ifindIndices
 List.lower = lower
 List.trimStart = trimStart
 List.trimEnd = trimEnd
+List.escapeRegex = escapeRegex
 
 List.splitOn = splitOn
 
 List.notNull = notNull
 List.notNullStr = notNullStr
 List.list = list
+List.unsnoc = unsnoc
 List.consF = consF
 List.snoc = snoc
 List.snocF = snocF

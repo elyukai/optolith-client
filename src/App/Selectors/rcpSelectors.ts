@@ -3,7 +3,7 @@ import { flip, thrush } from "../../Data/Function";
 import { fmap, fmapF } from "../../Data/Functor";
 import { over } from "../../Data/Lens";
 import { all, cons, Cons, elem, elemF, filter, find, foldr, head, List, ListI, map, subscriptF } from "../../Data/List";
-import { bind, ensure, fromMaybe, imapMaybe, Just, liftM2, liftM4, mapM, mapMaybe, maybe, Maybe } from "../../Data/Maybe";
+import { bind, ensure, fromMaybe, fromMaybe_, imapMaybe, Just, liftM2, liftM4, mapM, mapMaybe, maybe, Maybe } from "../../Data/Maybe";
 import { elems, lookup, lookupF, OrderedMap } from "../../Data/OrderedMap";
 import { uncurryN, uncurryN3, uncurryN4, uncurryN8 } from "../../Data/Pair";
 import { Record } from "../../Data/Record";
@@ -306,6 +306,9 @@ export const getAllProfessions = createMaybeSelector (
                              (PA.variants (p))
 
                   return ProfessionCombined ({
+                    mappedAP: fromMaybe_<List<number> | number> (() => map (PVA.ap)
+                                                                           (filtered_variants))
+                                                                (PA.ap (p)),
                     mappedPrerequisites:
                       imapMaybe (mapProfessionPrerequisite (l10n) (wiki))
                                 (PA.prerequisites (p)),

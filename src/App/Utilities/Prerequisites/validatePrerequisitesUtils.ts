@@ -6,7 +6,6 @@ import { compare } from "../../../Data/Int";
 import { set } from "../../../Data/Lens";
 import { all, any, concat, elem, elemF, foldl, ifoldl, isList, List, map, sortBy, subscript } from "../../../Data/List";
 import { and, bindF, catMaybes, ensure, fromJust, isJust, isNothing, Just, Maybe, maybe, maybeToList, Nothing, or } from "../../../Data/Maybe";
-import { Ordering } from "../../../Data/Ord";
 import { lookupF, OrderedMap, toList } from "../../../Data/OrderedMap";
 import { fst, Pair, snd } from "../../../Data/Pair";
 import { Record } from "../../../Data/Record";
@@ -429,9 +428,7 @@ export const validateLevel =
       (pipe (
               toList as (m: OrderedMap<number, List<Wiki.AllRequirements>>) =>
                 List<Pair<number, List<Wiki.AllRequirements>>>,
-              sortBy (
-                on<Pair<number, List<Wiki.AllRequirements>>, number, Ordering> (compare) (fst)
-              ),
+              sortBy (on (compare) (fst)),
               join (
                 list => ifoldl<Pair<number, List<Wiki.AllRequirements>>, Maybe<number>>
                   (max => index => entry =>

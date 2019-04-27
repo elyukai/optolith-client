@@ -14,7 +14,7 @@ export interface Profession {
   id: string
   name: string | Record<NameBySex>
   subname: Maybe<string | Record<NameBySex>>
-  ap: number
+  ap: Maybe<number>
   dependencies: List<ProfessionDependency>
   prerequisites: List<ProfessionPrerequisite>
   prerequisitesStart: Maybe<string>
@@ -51,7 +51,7 @@ export const Profession =
     id: "",
     name: "",
     subname: Nothing,
-    ap: 0,
+    ap: Nothing,
     dependencies: List.empty,
     prerequisites: List.empty,
     prerequisitesStart: Nothing,

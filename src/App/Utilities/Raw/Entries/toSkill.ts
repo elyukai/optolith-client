@@ -1,6 +1,6 @@
 import { liftM2 } from "../../../../Data/Either";
 import { fmap } from "../../../../Data/Functor";
-import { fromArray, List, lookup, map, notNullStr } from "../../../../Data/List";
+import { fromArray, List, lookup, map, NonEmptyList, notNullStr } from "../../../../Data/List";
 import { any, ensure, fromJust, Just, Maybe, maybe_, Nothing, Some } from "../../../../Data/Maybe";
 import { fst, Pair, snd } from "../../../../Data/Pair";
 import { Record } from "../../../../Data/Record";
@@ -28,14 +28,18 @@ export const stringToPrerequisite =
     try {
       const mobj = parseJSON (x)
 
-      if (any ((y: Some): y is object => typeof y === "object" && y === null) (mobj)) {
+      if (any ((y: Some): y is object => typeof y === "object" && y !== null) (mobj)) {
         const obj = fromJust<any> (mobj)
 
         return isRawRequiringActivatable (obj)
           ? Just (List (RequireActivatable ({
-              id: Array.isArray (obj .id) ? fromArray (obj .id) : obj .id,
+              id: Array.isArray (obj .id)
+                ? fromArray (obj .id) as NonEmptyList<string>
+                : obj .id,
               active: obj .active,
-              sid: Array.isArray (obj .sid) ? Just (fromArray (obj .sid)) : Maybe (obj .sid),
+              sid: Array.isArray (obj .sid)
+                ? Just (fromArray (obj .sid) as NonEmptyList<number>)
+                : Maybe (obj .sid),
               sid2: Maybe (obj .sid2),
               tier: Maybe (obj .tier),
             })))

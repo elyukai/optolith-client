@@ -1,6 +1,7 @@
-import { Either, first, fromRight_, isEither, isLeft, Left, Right, RightI } from "../../../Data/Either";
-import { appendStr, notNullStr } from "../../../Data/List";
+import { Either, first, fromRight_, isEither, isLeft, isRight, Left, Right, RightI } from "../../../Data/Either";
+import { appendStr, List, notNullStr } from "../../../Data/List";
 import { bindF, ensure, Maybe } from "../../../Data/Maybe";
+import { showP } from "../../../Data/Show";
 import { pipe_ } from "../pipe";
 import { mensureMapNatural, mensureMapNaturalOptional, mensureMapNonEmptyString } from "./validateMapValueUtils";
 
@@ -67,6 +68,46 @@ export const mapMNamed =
 
     return Right (f (rs))
   }
+
+/**
+ * Takes an object containing all values needed in `f` and validates every
+ * value. If there is at least one `Left` value, the first is going to be
+ * returned. Otherwise the result of `f` is passed to `pred`, which result is
+ * returned.
+ */
+export const mapMNamedPred =
+  <B>
+  (pred: (x: B) => Either<string, B>) =>
+  <A extends AllEither>
+  (es: A) =>
+  (f: (rs: MapRight<A>) => B): Either<string, B> =>
+    Either.bind (mapMNamed (es) (f)) (pred)
+
+export const foldEitherPreds =
+  <A>
+  (preds: List<(x: A) => Either<string, A>>) =>
+  (x: A): Either<string, A> => {
+    let res = x
+
+    for (const pred of preds) {
+      const inter = pred (res)
+
+      if (isRight (inter)) {
+        res = fromRight_ (inter)
+      }
+      else {
+        return inter
+      }
+    }
+
+    return Right (res)
+  }
+
+export const mapTotalPred =
+  (expected: string) => <A> (pred: (x: A) => boolean) => (x: A) =>
+    pred (x)
+      ? Right (x)
+      : Left (`Expected: ${expected}, Received: ${showP (x)}`)
 
 export const lookupKeyMapValidNonEmptyString =
   lookupKeyValid (mensureMapNonEmptyString)

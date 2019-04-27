@@ -208,7 +208,20 @@ export const copyFile =
  */
 export const print =
   (x: any) =>
-    Internals.IO (() => Promise.resolve (console.log (showP (x))))
+    Internals.IO (async () => Promise.resolve (console.log (showP (x))))
+
+/**
+ * `trace :: Show a => String -> a -> IO a`
+ *
+ * The `trace` function is a variant of the `print` function. It takes a
+ * `String` and a showable value and returns an `IO`, that prints the String
+ * concatenated with the value (a space in between) to the console and returns
+ * the showable value.
+ */
+export const trace =
+  (msg: string) =>
+  <A> (x: A) =>
+    Internals.IO (async () => (console.log (`${msg} ${showP (x)}`), Promise.resolve (x)))
 
 
 // CUSTOM FUNCTIONS

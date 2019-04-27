@@ -1,8 +1,9 @@
 import { thrush } from "../../Data/Function";
 import { fmap } from "../../Data/Functor";
-import { fnull, List, subscript } from "../../Data/List";
+import { fnull, intercalate, List, subscript, unsnoc } from "../../Data/List";
 import { maybe, Maybe, normalize, sum } from "../../Data/Maybe";
 import { toOrdering } from "../../Data/Ord";
+import { fst, snd } from "../../Data/Pair";
 import { L10n, L10nRecord } from "../Models/Wiki/L10n";
 import { pipe } from "./pipe";
 
@@ -112,3 +113,31 @@ export const localizeWeight =
 export const compareLocale =
   (locale: string) => (a: string) => (b: string) =>
     toOrdering (Intl.Collator (locale, { numeric: true }) .compare (a, b))
+
+export const localizeList =
+  (sepWord: string): (xs: List<string | number>) => string =>
+    pipe (
+      unsnoc,
+      maybe ("")
+            (x => fnull (fst (x))
+                    ? `${snd (x)}`
+                    : `${intercalate (", ") (fst (x))} ${sepWord} ${snd (x)}`)
+    )
+
+/**
+ * `localizeOrList :: L10n -> [String | Int] -> String`
+ *
+ * Properly stringify an "or" list. Two items are going to be separated by
+ * " or ", if there are more than two items, the first items are separated by
+ * ", ".
+ *
+ * ```haskell
+ * localizeOrList l10n [] == ""
+ * localizeOrList l10n [13] == "13"
+ * localizeOrList l10n [13, 24] == "13 or 24"
+ * localizeOrList l10n [13, 14, 24] == "13, 14 or 24"
+ * localizeOrList l10n [13, 14, 15, 24] == "13, 14, 15 or 24"
+ * ```
+ */
+export const localizeOrList =
+  (l10n: L10nRecord) => localizeList (translate (l10n) ("or"))

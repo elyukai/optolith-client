@@ -36,8 +36,8 @@ const isActivatableLikeId = (x: string) => activatableLikeId .test (x)
 export const isRawRequiringActivatable =
   (req: AllRawRequirementObjects): req is RawRequireActivatable =>
     (
-      typeof req.id === "string" && isActivatableLikeId (req.id)
-      || Array.isArray (req.id) && req.id.every (isActivatableLikeId)
+      typeof req.id === "string" && isActivatableLikeId (req .id)
+      || Array.isArray (req .id) && req .id .length > 0 && req .id .every (isActivatableLikeId)
     )
     // @ts-ignore
     && typeof req.active === "boolean"
@@ -47,7 +47,7 @@ export const isRawRequiringActivatable =
       // @ts-ignore
       || typeof req.sid === "number"
       // @ts-ignore
-      || Array.isArray (req.sid) && req.sid.every (isNumber)
+      || Array.isArray (req .sid) && req .sid .length > 0 && req .sid .every (isNumber)
       // @ts-ignore
       || req.sid === undefined
     )

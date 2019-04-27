@@ -7,7 +7,7 @@ import { LiturgicalChant } from "../../../Models/Wiki/LiturgicalChant";
 import { CheckModifier } from "../../../Models/Wiki/wikiTypeHelpers";
 import { prefixId } from "../../IDUtils";
 import { mergeRowsById } from "../mergeTableRows";
-import { mensureMapNatural, mensureMapNaturalFixedList, mensureMapNaturalList, mensureMapNonEmptyString, mensureMapStringPredSetOptional } from "../validateMapValueUtils";
+import { mensureMapNatural, mensureMapNaturalFixedList, mensureMapNaturalList, mensureMapNaturalListOptional, mensureMapNonEmptyString, mensureMapStringPredSetOptional } from "../validateMapValueUtils";
 import { lookupKeyValid, mapMNamed, TableType } from "../validateValueUtils";
 import { toSourceLinks } from "./Sub/toSourceLinks";
 
@@ -43,6 +43,9 @@ export const toLiturgicalChant =
       const checkUnivNaturalNumberList =
         lookupKeyValid (mensureMapNaturalList ("&")) (TableType.Univ) (lookup_univ)
 
+      const checkUnivNaturalNumberListOptional =
+        lookupKeyValid (mensureMapNaturalListOptional ("&")) (TableType.Univ) (lookup_univ)
+
       // Check and convert fields
 
       const ename = checkL10nNonEmptyString ("name")
@@ -58,7 +61,7 @@ export const toLiturgicalChant =
 
       const etraditions = checkUnivNaturalNumberList ("traditions")
 
-      const easpects = checkUnivNaturalNumberList ("easpects")
+      const easpects = checkUnivNaturalNumberListOptional ("aspects")
 
       const eeffect = checkL10nNonEmptyString ("effect")
 
@@ -66,9 +69,9 @@ export const toLiturgicalChant =
 
       const ecastingTimeShort = checkL10nNonEmptyString ("castingTimeShort")
 
-      const eaeCost = checkL10nNonEmptyString ("aeCost")
+      const ekpCost = checkL10nNonEmptyString ("kpCost")
 
-      const eaeCostShort = checkL10nNonEmptyString ("aeCostShort")
+      const ekpCostShort = checkL10nNonEmptyString ("kpCostShort")
 
       const range = lookup_l10n ("range")
 
@@ -97,8 +100,8 @@ export const toLiturgicalChant =
           eeffect,
           ecastingTime,
           ecastingTimeShort,
-          eaeCost,
-          eaeCostShort,
+          ekpCost,
+          ekpCostShort,
           erangeShort,
           egr,
           esrc,
@@ -110,12 +113,12 @@ export const toLiturgicalChant =
           checkmod: fromMaybe<OrderedSet<CheckModifier>> (OrderedSet.empty) (rs.echeckMod),
           ic: rs.eic,
           tradition: rs.etraditions,
-          aspects: rs.easpects,
+          aspects: fromMaybe (List<number> ()) (rs.easpects),
           effect: rs.eeffect,
           castingTime: rs.ecastingTime,
           castingTimeShort: rs.ecastingTimeShort,
-          cost: rs.eaeCost,
-          costShort: rs.eaeCostShort,
+          cost: rs.ekpCost,
+          costShort: rs.ekpCostShort,
           range: fromMaybe ("") (range),
           rangeShort: rs.erangeShort,
           duration: fromMaybe ("") (duration),

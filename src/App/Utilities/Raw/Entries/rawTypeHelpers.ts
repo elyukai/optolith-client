@@ -11,6 +11,7 @@ import { RawCursesSelection } from "./ProfessionSelections/RawCursesSelection";
 import { RawLanguagesScriptsSelection } from "./ProfessionSelections/RawLanguagesScriptsSelection";
 import { RawCombatTechniquesSecondSelection } from "./ProfessionSelections/RawSecondCombatTechniquesSelection";
 import { RawSkillsSelection } from "./ProfessionSelections/RawSkillsSelection";
+import { RawSpecialAbilitySelection } from "./ProfessionSelections/RawSpecialAbilitySelection";
 import { RawSpecializationSelection } from "./ProfessionSelections/RawSpecializationSelection";
 import { RawTerrainKnowledgeSelection } from "./ProfessionSelections/RawTerrainKnowledgeSelection";
 import { RawVariantCombatTechniquesSelection } from "./ProfessionSelections/RemoveRawCombatTechniquesSelection";
@@ -25,6 +26,7 @@ export type AnyRawProfessionSelection = RawSpecializationSelection
                                       | RawCursesSelection
                                       | RawSkillsSelection
                                       | RawTerrainKnowledgeSelection
+                                      | RawSpecialAbilitySelection
 
 export type AnyRawProfessionVariantSelection = RawVariantSpecializationSelection
                                              | RawLanguagesScriptsSelection
@@ -34,6 +36,7 @@ export type AnyRawProfessionVariantSelection = RawVariantSpecializationSelection
                                              | RawCursesSelection
                                              | RawSkillsSelection
                                              | RawTerrainKnowledgeSelection
+                                             | RawSpecialAbilitySelection
 
 export type RawSID = string | number | number[]
 

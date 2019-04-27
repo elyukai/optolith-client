@@ -1,8 +1,16 @@
+import * as classNames from "classnames";
 import * as React from "react";
-import { Maybe } from "../../Data/Maybe";
+import { splitOn } from "../../Data/List";
+import { fromMaybe, listToMaybe, Maybe, maybe } from "../../Data/Maybe";
+import { AlertsContainer } from "../Containers/AlertsContainer";
+import { DownloaderContainer } from "../Containers/DownloaderContainer";
+import { NavigationBarContainer } from "../Containers/NavigationBarContainer";
 import { HeroModelRecord } from "../Models/Hero/HeroModel";
-import { L10nRecord } from "../Models/Wiki/L10n";
+import { L10n, L10nRecord } from "../Models/Wiki/L10n";
 import { TabId } from "../Utilities/LocationUtils";
+import { Router } from "./Router/Router";
+import { Scroll } from "./Universal/Scroll";
+import { TitleBar } from "./Universal/TitleBar";
 
 export interface AppOwnProps {}
 
@@ -53,54 +61,49 @@ export class App extends React.Component<AppProps, AppState> {
 
     const { hasError } = this.state
 
-    // if (hasError) {
-    //   return <div id="body" className={`theme-${theme}`}>
-    //     <Scroll className="error-message">
-    //       <h4>Error</h4>
-    //       <p>{hasError.error.stack}</p>
-    //       <h4>Component Stack</h4>
-    //       <p>{hasError.info.componentStack}</p>
-    //     </Scroll>
-    //   </div>
-    // }
+    if (hasError) {
+      return <div id="body" className={`theme-${theme}`}>
+        <Scroll className="error-message">
+          <h4>Error</h4>
+          <p>{hasError.error.stack}</p>
+          <h4>Component Stack</h4>
+          <p>{hasError.info.componentStack}</p>
+        </Scroll>
+      </div>
+    }
 
-    // return maybe
-    return (<div id="body" className={`theme-${theme}`}>
+    return maybe
+      (<div id="body" className={`theme-${theme}`}>
         <div className="background-image">
           <img src="images/background.svg" alt=""/>
         </div>
+
+        <AlertsContainer l10n={L10n.default} />
       </div>)
-      // (<div id="body" className={`theme-${theme}`}>
-      //   <div className="background-image">
-      //     <img src="images/background.svg" alt=""/>
-      //   </div>
+      ((l10n: L10nRecord) => (
+        <div
+          id="body"
+          className={classNames (
+            `theme-${theme}`,
+            `platform-${platform}`,
+            { "show-animations": areAnimationsEnabled }
+          )}
+          lang={fromMaybe ("") (listToMaybe (splitOn ("-") (L10n.A.id (l10n))))}
+          >
+          <div className="background-image">
+            <img src="images/background.svg" alt=""/>
+          </div>
 
-      //   <AlertsContainer l10n={L10n.default} />
-      // </div>)
-      // ((l10n: L10nRecord) => (
-      //   <div
-      //     id="body"
-      //     className={classNames (
-      //       `theme-${theme}`,
-      //       `platform-${platform}`,
-      //       { "show-animations": areAnimationsEnabled }
-      //     )}
-      //     lang={fromMaybe ("") (listToMaybe (splitOn ("-") (L10n.A.id (l10n))))}
-      //     >
-      //     <div className="background-image">
-      //       <img src="images/background.svg" alt=""/>
-      //     </div>
+          <AlertsContainer l10n={l10n} />
+          <DownloaderContainer l10n={l10n} />
+          <TitleBar {...this.props} />
 
-      //     <AlertsContainer l10n={l10n} />
-      //     <DownloaderContainer l10n={l10n} />
-      //     <TitleBar {...this.props} />
-
-      //     <section id="content">
-      //       <NavigationBarContainer {...this.props} l10n={l10n} />
-      //       <Router id={currentTab} l10n={l10n} mhero={mhero} />
-      //     </section>
-      //   </div>
-      // ))
-      // (ml10n)
+          <section id="content">
+            <NavigationBarContainer {...this.props} l10n={l10n} />
+            <Router id={currentTab} l10n={l10n} mhero={mhero} />
+          </section>
+        </div>
+      ))
+      (ml10n)
   }
 }

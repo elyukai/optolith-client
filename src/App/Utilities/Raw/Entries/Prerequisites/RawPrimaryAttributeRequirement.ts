@@ -12,4 +12,4 @@ export const isRawRequiringPrimaryAttribute =
     // @ts-ignore
     && typeof req.value === "number"
     // @ts-ignore
-    && (typeof req.type === 1 || typeof req.type === 2)
+    && (req.type === 1 || req.type === 2)

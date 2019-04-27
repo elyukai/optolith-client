@@ -1,5 +1,5 @@
 import { fmap } from "../../../../Data/Functor";
-import { all, elemF, isList, List } from "../../../../Data/List";
+import { all, elemF, isList, NonEmptyList } from "../../../../Data/List";
 import { or } from "../../../../Data/Maybe";
 import { fromDefault, makeLenses, member, Record, RecordCreator } from "../../../../Data/Record";
 import { Categories, IncreasableCategories } from "../../../Constants/Categories";
@@ -8,7 +8,7 @@ import { pipe } from "../../../Utilities/pipe";
 import { AllRequirementObjects, ProfessionPrerequisite } from "../wikiTypeHelpers";
 
 export interface RequireIncreasable {
-  id: string | List<string>
+  id: string | NonEmptyList<string>
   value: number
 }
 

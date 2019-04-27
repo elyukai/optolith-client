@@ -28,8 +28,8 @@ const isIncreasableId = (x: string) => increasableId .test (x)
 export const isRawRequiringIncreasable =
   (req: AllRawRequirementObjects): req is RawRequireIncreasable =>
     (
-      typeof req.id === "string" && isIncreasableId (req.id)
-      || Array.isArray (req.id) && req.id.every (isIncreasableId)
+      typeof req.id === "string" && isIncreasableId (req .id)
+      || Array.isArray (req .id) && req .id .length > 0 && req .id .every (isIncreasableId)
     )
     // @ts-ignore
     && typeof req.value === "number"

@@ -778,6 +778,20 @@ test ('list', () => {
     .toEqual (1)
 })
 
+describe ("unsnoc", () => {
+  it ("returns Nothing on empty list", () => {
+    expect (List.unsnoc (List ())) .toEqual (Nothing)
+  })
+
+  it ("returns Just (Nil, x) on singleton list", () => {
+    expect (List.unsnoc (List (1))) .toEqual (Just (Pair (List (), 1)))
+  })
+
+  it ("returns Just (init, last) on list with more than one element", () => {
+    expect (List.unsnoc (List (1, 2, 3, 4))) .toEqual (Just (Pair (List (1, 2, 3), 4)))
+  })
+})
+
 test ('consF', () => {
   expect (List.consF (4) (List (3, 2, 1)))
     .toEqual (List (4, 3, 2, 1))

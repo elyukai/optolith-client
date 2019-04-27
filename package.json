@@ -52,7 +52,7 @@
     "ts-jest": "24.0.2",
     "tslint": "5.14.0",
     "tslint-eslint-rules": "5.4.0",
-    "typescript": "3.4.3",
+    "typescript": "3.4.5",
     "typescript-eslint-parser": "16.0.0",
     "typescript-tslint-plugin": "0.3.1"
   },

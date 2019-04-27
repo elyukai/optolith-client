@@ -68,7 +68,7 @@ export const toSpell =
 
       const eeffect = checkL10nNonEmptyString ("effect")
 
-      const ecastingTime = checkL10nNonEmptyString ("castingTime")
+      const castingTime = lookup_l10n ("castingTime")
 
       const ecastingTimeShort = checkL10nNonEmptyString ("castingTimeShort")
 
@@ -104,7 +104,6 @@ export const toSpell =
           esubtraditions,
           eproperty,
           eeffect,
-          ecastingTime,
           ecastingTimeShort,
           eaeCost,
           eaeCostShort,
@@ -123,7 +122,7 @@ export const toSpell =
           subtradition: fromMaybe<List<number>> (empty) (rs.esubtraditions),
           property: rs.eproperty,
           effect: rs.eeffect,
-          castingTime: rs.ecastingTime,
+          castingTime: fromMaybe ("") (castingTime),
           castingTimeShort: rs.ecastingTimeShort,
           cost: rs.eaeCost,
           costShort: rs.eaeCostShort,

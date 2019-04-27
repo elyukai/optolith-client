@@ -1,10 +1,11 @@
 import { Either, Left, mapM, maybeToEither, Right, second } from "../../../../../Data/Either";
 import { flip } from "../../../../../Data/Function";
 import { fmap } from "../../../../../Data/Functor";
-import { fromArray, isInfixOf, List, splitOn, uncons } from "../../../../../Data/List";
+import { fromArray, isInfixOf, List, NonEmptyList, splitOn, uncons } from "../../../../../Data/List";
 import { bindF, ensure, fromJust, fromMaybe, isNothing, Just, Maybe, Nothing } from "../../../../../Data/Maybe";
 import { fromList } from "../../../../../Data/OrderedMap";
 import { fst, Pair, snd } from "../../../../../Data/Pair";
+import { show } from "../../../../../Data/Show";
 import { parseJSON } from "../../../../../Data/String/JSON";
 import { RequireActivatable } from "../../../../Models/Wiki/prerequisites/ActivatableRequirement";
 import { CultureRequirement } from "../../../../Models/Wiki/prerequisites/CultureRequirement";
@@ -18,6 +19,7 @@ import { ifElse } from "../../../ifElse";
 import { gte } from "../../../mathUtils";
 import { toInt } from "../../../NumberUtils";
 import { pipe } from "../../../pipe";
+import { Expect } from "../../showExpected";
 import { lookupKeyValid, mstrToMaybe, TableType } from "../../validateValueUtils";
 import { isRawRequiringActivatable } from "../Prerequisites/RawActivatableRequirement";
 import { isRawCultureRequirement } from "../Prerequisites/RawCultureRequirement";
@@ -26,6 +28,8 @@ import { isRawPactRequirement } from "../Prerequisites/RawPactRequirement";
 import { isRawRequiringPrimaryAttribute } from "../Prerequisites/RawPrimaryAttributeRequirement";
 import { isRawRaceRequirement } from "../Prerequisites/RawRaceRequirement";
 import { isRawSexRequirement } from "../Prerequisites/RawSexRequirement";
+
+const parseJSONAndRCP = (x: string) => x === "RCP" ? Just (x) : parseJSON (x)
 
 const toLevelAwarePrerequisites =
   pipe (
@@ -45,24 +49,28 @@ const toLevelAwarePrerequisites =
           const levelAwarePrerequisites =
             Maybe.mapM<string, AllRequirements>
               (pipe (
-                parseJSON,
+                parseJSONAndRCP,
                 bindF (ensure (x => typeof x === "object" && x !== null || x === "RCP")),
                 bindF<any, AllRequirements> (
                   x => x === "RCP"
                     ? Just<"RCP"> ("RCP")
                     : isRawRequiringActivatable (x)
                     ? Just (RequireActivatable ({
-                        id: Array.isArray (x .id) ? fromArray (x .id) : x .id,
+                        id: Array.isArray (x .id)
+                          ? fromArray (x .id) as NonEmptyList<string>
+                          : x .id,
                         active: x .active,
                         sid: Array.isArray (x .sid)
-                          ? Just (fromArray (x .sid))
+                          ? Just (fromArray (x .sid)as NonEmptyList<number>)
                           : Maybe (x .sid),
                         sid2: Maybe (x .sid2),
                         tier: Maybe (x .tier),
                       }))
                     : isRawRequiringIncreasable (x)
                     ? Just (RequireIncreasable ({
-                        id: Array.isArray (x .id) ? fromArray (x .id) : x .id,
+                        id: Array.isArray (x .id)
+                          ? fromArray (x .id) as NonEmptyList<string>
+                          : x .id,
                         value: x .value,
                       }))
                     : isRawRequiringPrimaryAttribute (x)
@@ -107,7 +115,8 @@ const toLevelAwarePrerequisites =
           return maybeToEither
             (
               `Invalid level-aware prerequisites. `
-              + `Expected: List Prerequisite, Received: ${snd (p)}`
+              + `Expected: ${Expect.List (Expect.List (`${Expect.Integer}, ...Prerequisite`))}, `
+              + `Received: ${show (snd (p))}`
             )
             (fmap<List<AllRequirements>, Pair<number, List<AllRequirements>>>
               (Pair (fromJust (level)))
@@ -126,24 +135,28 @@ const toFlatPrerequisites =
            splitOn ("&"),
            Maybe.mapM<string, AllRequirements>
              (pipe (
-               parseJSON,
+               parseJSONAndRCP,
                bindF (ensure (x => typeof x === "object" && x !== null || x === "RCP")),
                bindF<any, AllRequirements> (
                  x => x === "RCP"
                    ? Just<"RCP"> ("RCP")
                    : isRawRequiringActivatable (x)
                    ? Just (RequireActivatable ({
-                       id: Array.isArray (x .id) ? fromArray (x .id) : x .id,
+                       id: Array.isArray (x .id)
+                         ? fromArray (x .id) as NonEmptyList<string>
+                         : x .id,
                        active: x .active,
                        sid: Array.isArray (x .sid)
-                         ? Just (fromArray (x .sid))
+                         ? Just (fromArray (x .sid) as NonEmptyList<number>)
                          : Maybe (x .sid),
                        sid2: Maybe (x .sid2),
                        tier: Maybe (x .tier),
                      }))
                    : isRawRequiringIncreasable (x)
                    ? Just (RequireIncreasable ({
-                       id: Array.isArray (x .id) ? fromArray (x .id) : x .id,
+                       id: Array.isArray (x .id)
+                         ? fromArray (x .id) as NonEmptyList<string>
+                         : x .id,
                        value: x .value,
                      }))
                    : isRawRequiringPrimaryAttribute (x)
@@ -184,10 +197,7 @@ const toFlatPrerequisites =
                )
              )),
            maybeToEither
-             (
-               `Invalid level-aware prerequisites. `
-               + `Expected: List Prerequisite, Received: ${xs}`
-             )
+             (`Invalid prerequisites. Expected: ${Expect.List ("Prerequisite")}, Received: ${xs}`)
          )
          (xs)
 
@@ -202,17 +212,21 @@ const toFlatSpellPrerequisites =
                bindF<any, AllRequirementObjects> (
                  x => isRawRequiringActivatable (x)
                    ? Just (RequireActivatable ({
-                       id: Array.isArray (x .id) ? fromArray (x .id) : x .id,
+                       id: Array.isArray (x .id)
+                         ? fromArray (x .id) as NonEmptyList<string>
+                         : x .id,
                        active: x .active,
                        sid: Array.isArray (x .sid)
-                         ? Just (fromArray (x .sid))
+                         ? Just (fromArray (x .sid) as NonEmptyList<number>)
                          : Maybe (x .sid),
                        sid2: Maybe (x .sid2),
                        tier: Maybe (x .tier),
                      }))
                    : isRawRequiringIncreasable (x)
                    ? Just (RequireIncreasable ({
-                       id: Array.isArray (x .id) ? fromArray (x .id) : x .id,
+                       id: Array.isArray (x .id)
+                         ? fromArray (x .id) as NonEmptyList<string>
+                         : x .id,
                        value: x .value,
                      }))
                    : isRawRequiringPrimaryAttribute (x)
@@ -253,18 +267,15 @@ const toFlatSpellPrerequisites =
                )
              )),
            maybeToEither
-             (
-               `Invalid prerequisites. Expected: List Prerequisite, Received: ${xs}`
-             )
+             (`Invalid prerequisites. Expected: ${Expect.List ("Prerequisite")}, Received: ${xs}`)
          )
          (xs)
 
-const toLevelAwareOrPlainPrerequisites =
-  ifElse<string>
-    (isInfixOf ("&&"))
-    <Either<string, LevelAwarePrerequisites>>
-    (toLevelAwarePrerequisites)
-    (toFlatPrerequisites)
+const toLevelAwareOrPlainPrerequisites = ifElse (isInfixOf ("&&"))
+                                                <Either<string, LevelAwarePrerequisites>>
+                                                (toLevelAwarePrerequisites)
+                                                (toFlatPrerequisites)
+
 
 /**
  * Convert a raw string to `Right LevelAwarePrerequisites`. If an error occurs
@@ -272,17 +283,13 @@ const toLevelAwareOrPlainPrerequisites =
  * will be returned.
  */
 export const toPrerequisites =
-  flip (
-         lookupKeyValid (pipe (
-                          mstrToMaybe,
-                          fmap (toLevelAwareOrPlainPrerequisites),
-                          fromMaybe<Either<string, LevelAwarePrerequisites>> (Right (List.empty))
-                        ))
-                        (TableType.Univ)
-       )
-       ("prerequisites") as
-         (lookup_univ: (key: string) => Maybe<string>) =>
-           Either<string, LevelAwarePrerequisites>
+  flip (lookupKeyValid (pipe (
+                         mstrToMaybe,
+                         fmap (toLevelAwareOrPlainPrerequisites),
+                         fromMaybe<Either<string, LevelAwarePrerequisites>> (Right (List.empty))
+                       ))
+                       (TableType.Univ))
+       ("prerequisites")
 
 /**
  * Convert a raw string to `Right Prerequisites`. If an error occurs during
@@ -290,15 +297,11 @@ export const toPrerequisites =
  * returned.
  */
 export const toSpellPrerequisites =
-  flip (
-         lookupKeyValid (pipe (
-                          mstrToMaybe,
-                          fmap (toFlatSpellPrerequisites),
-                          fromMaybe<Either<string, List<AllRequirementObjects>>>
-                            (Right (List.empty))
-                        ))
-                        (TableType.Univ)
-       )
-       ("prerequisites") as
-         (lookup_univ: (key: string) => Maybe<string>) =>
-           Either<string, List<AllRequirementObjects>>
+  flip (lookupKeyValid (pipe (
+                         mstrToMaybe,
+                         fmap (toFlatSpellPrerequisites),
+                         fromMaybe<Either<string, List<AllRequirementObjects>>>
+                           (Right (List.empty))
+                       ))
+                       (TableType.Univ))
+       ("prerequisites")

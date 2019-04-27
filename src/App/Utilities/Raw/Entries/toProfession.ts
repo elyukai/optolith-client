@@ -2,7 +2,7 @@ import { ident } from "../../../../Data/Function";
 import { fmap } from "../../../../Data/Functor";
 import { set } from "../../../../Data/Lens";
 import { empty, flength, foldr, fromArray, List, map, notNull, splitOn } from "../../../../Data/List";
-import { altF_, any, bindF, ensure, fromJust, fromMaybe, Just, mapM, maybe, Maybe, Nothing, Some } from "../../../../Data/Maybe";
+import { altF_, any, bindF, ensure, fromJust, fromMaybe, isJust, Just, mapM, maybe, Maybe, Nothing, Some } from "../../../../Data/Maybe";
 import { Record } from "../../../../Data/Record";
 import { parseJSON } from "../../../../Data/String/JSON";
 import { IdPrefixes } from "../../../Constants/IdPrefixes";
@@ -31,8 +31,8 @@ import { pipe, pipe_ } from "../../pipe";
 import { mergeRowsById } from "../mergeTableRows";
 import { maybePrefix } from "../rawConversionUtils";
 import { Expect } from "../showExpected";
-import { mensureMapBoolean, mensureMapListBindAfterOptional, mensureMapListOptional, mensureMapNatural, mensureMapNaturalListOptional, mensureMapNonEmptyString, mensureMapPairListOptional } from "../validateMapValueUtils";
-import { lookupKeyValid, mapMNamed, TableType } from "../validateValueUtils";
+import { mensureMapBoolean, mensureMapListBindAfterOptional, mensureMapListOptional, mensureMapNatural, mensureMapNaturalListOptional, mensureMapNaturalOptional, mensureMapNonEmptyString, mensureMapPairListOptional } from "../validateMapValueUtils";
+import { lookupKeyValid, mapMNamedPred, mapTotalPred, TableType } from "../validateValueUtils";
 import { isRawProfessionRequiringActivatable } from "./Prerequisites/RawActivatableRequirement";
 import { isRawCultureRequirement } from "./Prerequisites/RawCultureRequirement";
 import { isRawProfessionRequiringIncreasable } from "./Prerequisites/RawIncreasableRequirement";
@@ -307,6 +307,8 @@ export const stringToBlessings =
     (`${Expect.List (Expect.NaturalNumber)} { length = 6 | 9 | 12 }`)
     (toNatural)
 
+const PA = Profession.A
+
 export const toProfession =
   mergeRowsById
     ("toProfession")
@@ -322,6 +324,9 @@ export const toProfession =
       const checkUnivNaturalNumber =
         lookupKeyValid (mensureMapNatural) (TableType.Univ) (lookup_univ)
 
+      const checkOptionalUnivNaturalNumber =
+        lookupKeyValid (mensureMapNaturalOptional) (TableType.Univ) (lookup_univ)
+
       const checkUnivBoolean =
         lookupKeyValid (mensureMapBoolean) (TableType.Univ) (lookup_univ)
 
@@ -336,8 +341,7 @@ export const toProfession =
 
       const subnameFemale = lookup_l10n ("subnameFemale")
 
-      const ecost =
-        checkUnivNaturalNumber ("cost")
+      const ecost = checkOptionalUnivNaturalNumber ("cost")
 
       const edependencies =
         lookupKeyValid (stringToDependencies)
@@ -443,7 +447,11 @@ export const toProfession =
 
       // Return error or result
 
-      return mapMNamed
+      return mapMNamedPred
+        <Record<Profession>>
+        (mapTotalPred ("Either ap must be set or isVariantRequired must be true.")
+                      (x => isJust (PA.ap (x))
+                            || PA.isVariantRequired (x) && notNull (PA.variants (x))))
         ({
           ename,
           ecost,

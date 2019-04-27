@@ -12,6 +12,7 @@ import { ProfessionVariantCombined } from "./ProfessionVariantCombined";
 
 export interface ProfessionCombined {
   wikiEntry: Record<Profession>
+  mappedAP: List<number> | number
   mappedPrerequisites: List<
     Record<ActivatableNameCostIsActive> |
     Record<ProfessionRequireIncreasable>
@@ -32,6 +33,7 @@ export interface ProfessionCombined {
 export const ProfessionCombined =
   fromDefault<ProfessionCombined> ({
     wikiEntry: Profession .default,
+    mappedAP: 0,
     mappedPrerequisites: List.empty,
     mappedSpecialAbilities: List.empty,
     selections: ProfessionSelections.default,

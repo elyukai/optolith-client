@@ -104,6 +104,32 @@ export const mensureMapFixedListOptional =
     mensureMap (Expect.Maybe (Expect.ListLength (len) (type)))
                (bindOptional (mapFixedList (len) (del) (f)))
 
+const mapListLengthInRange =
+  (l: number) =>
+  (u: number):
+  (del: string) =>
+  <A> (f: (x: string) => Maybe<A>) =>
+  (x: string) => Maybe<List<A>> =>
+    mapFixedListBindAfter (ensure (pipe (flength, inRange (Pair (l, u)))))
+
+export const mensureMapListLengthInRange =
+  (l: number) =>
+  (u: number) =>
+  (del: string) =>
+  (type: string) =>
+  <A> (f: (x: string) => Maybe<A>) =>
+    mensureMap (Expect.ListLengthRange (l) (u) (type))
+               (bindF (mapListLengthInRange (l) (u) (del) (f)))
+
+export const mensureMapListLengthInRangeOptional =
+  (l: number) =>
+  (u: number) =>
+  (del: string) =>
+  (type: string) =>
+  <A> (f: (x: string) => Maybe<A>) =>
+    mensureMap (Expect.Maybe (Expect.ListLengthRange (l) (u) (type)))
+              (bindOptional (mapListLengthInRange (l) (u) (del) (f)))
+
 const mapSet =
   (del: string) =>
   <A> (f: (x: string) => Maybe<A>) =>

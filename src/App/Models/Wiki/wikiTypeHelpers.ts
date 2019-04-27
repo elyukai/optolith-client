@@ -1,4 +1,4 @@
-import { List } from "../../../Data/List";
+import { List, NonEmptyList } from "../../../Data/List";
 import { Just, Maybe } from "../../../Data/Maybe";
 import { OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
@@ -123,6 +123,7 @@ export enum ProfessionSelectionIds {
   CURSES = "CURSES",
   SKILLS = "SKILLS",
   TERRAIN_KNOWLEDGE = "TERRAIN_KNOWLEDGE",
+  SPECIAL_ABILITY = "SPECIAL_ABILITY",
 }
 
 export type AnyProfessionSelection =
@@ -200,7 +201,7 @@ export type Skillish =
   Record<Skill> |
   Record<CombatTechnique>
 
-export type SID = string | number | List<number>
+export type SID = string | number | NonEmptyList<number>
 
 export interface ValueOptionalDependency {
   /**

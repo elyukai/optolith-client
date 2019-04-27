@@ -26,8 +26,6 @@ export const toCantrip =
 
       const ename = checkL10nNonEmptyString ("name")
 
-      const eic = checkUnivNaturalNumber ("ic")
-
       const etraditions = checkUnivNaturalNumberList ("traditions")
 
       const eproperty = checkUnivNaturalNumber ("property")
@@ -49,7 +47,6 @@ export const toCantrip =
       return mapMNamed
         ({
           ename,
-          eic,
           etraditions,
           eproperty,
           eeffect,

@@ -233,8 +233,9 @@ const getEntrySpecificNameAddition =
                       bindF (lang => pipe (
                                             sid2,
                                             bindF (
-                                              ifElse<string | number, string, Maybe<string>>
+                                              ifElse<string | number, string>
                                                 (isString)
+                                                <Maybe<string>>
                                                 (Just)
                                                 (spec_id => bind (specializations (lang))
                                                                  (subscriptF (spec_id - 1)))
@@ -375,7 +376,7 @@ export const compressList =
 
     return pipe (
                   map (
-                    ifElse<List<Record<ActiveActivatable>>, string>
+                    ifElse<List<Record<ActiveActivatable>>>
                       (xs_group => flength (xs_group) === 1)
                       (pipe (listToMaybe, maybe ("") (AAA_.name)))
                       (xs_group => pipe (
