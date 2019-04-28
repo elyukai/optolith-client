@@ -223,6 +223,14 @@ export const trace =
   <A> (x: A) =>
     Internals.IO (async () => (console.log (`${msg} ${showP (x)}`), Promise.resolve (x)))
 
+/**
+ * `traceN :: Show a => String -> a -> a`
+ *
+ * The `traceN` function is a variant of the `trace` function that doesn't use
+ * `IO` but only native JS-functions.
+ */
+export const traceN = (msg: string) => <A> (x: A) => (console.log (`${msg} ${showP (x)}`), x)
+
 
 // CUSTOM FUNCTIONS
 
