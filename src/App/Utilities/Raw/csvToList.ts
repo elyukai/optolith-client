@@ -1,5 +1,6 @@
 import { bindF, Either, Left, maybeToEither, Right } from "../../../Data/Either";
-import { cons, empty, filter, flength, head, ifoldr, lines, List, map, notNull, replaceStr, splitOn, uncons, zip } from "../../../Data/List";
+import { cons, empty, filter, find, flength, head, ifoldr, lines, List, map, notNull, replaceStr, splitOn, uncons, zip } from "../../../Data/List";
+import { fromJust, isJust } from "../../../Data/Maybe";
 import { fromList, OrderedMap } from "../../../Data/OrderedMap";
 import { fst, snd } from "../../../Data/Pair";
 import { show } from "../../../Data/Show";
@@ -14,6 +15,8 @@ import { pipe } from "../pipe";
 type Data = List<OrderedMap<string, string>>
 
 export const CsvColumnDelimiter = ";;"
+
+const emptyColRegex = /(?:Spalte|Column)\d+/
 
 /**
  * Converts a CSV string into a list of entries. If `check` is `True`, the line
@@ -38,6 +41,14 @@ export const csvToList =
 
     bindF (headerAndBody => {
             const header = fst (headerAndBody)
+
+            const me_col = find ((x: string) => x .length === 0 || emptyColRegex .test (x))
+                                (header)
+
+            if (isJust (me_col)) {
+              return Left (`csvToList: empty or unspecified column in table: ${fromJust (me_col)}`)
+            }
+
             const body = snd (headerAndBody)
 
             const header_length = flength (header)
