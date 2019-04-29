@@ -46,7 +46,10 @@ export const csvToList =
                                 (header)
 
             if (isJust (me_col)) {
-              return Left (`csvToList: empty or unspecified column in table: ${fromJust (me_col)}`)
+              return Left (
+                `csvToList: empty or unspecified column in table: "${fromJust (me_col)}"`
+                + `Table header: \n${show (header)}`
+              )
             }
 
             const body = snd (headerAndBody)

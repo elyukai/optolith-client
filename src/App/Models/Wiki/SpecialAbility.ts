@@ -1,7 +1,7 @@
 import { List } from "../../../Data/List";
 import { Maybe, Nothing } from "../../../Data/Maybe";
 import { OrderedMap } from "../../../Data/OrderedMap";
-import { fromDefault, Record } from "../../../Data/Record";
+import { fromDefault, makeLenses, Record } from "../../../Data/Record";
 import { Categories } from "../../Constants/Categories";
 import { ActivatableBase, EntryWithCategory } from "./wikiTypeHelpers";
 
@@ -64,3 +64,5 @@ export const SpecialAbility =
 export const isSpecialAbility =
   (r: EntryWithCategory): r is Record<SpecialAbility> =>
     SpecialAbility.AL.category (r) === Categories.SPECIAL_ABILITIES
+
+export const SpecialAbilityL = makeLenses (SpecialAbility)

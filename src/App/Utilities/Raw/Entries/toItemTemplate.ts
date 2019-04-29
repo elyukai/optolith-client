@@ -56,10 +56,10 @@ export const toItemTemplate =
       const eweight = checkUnivNaturalNumberOptional ("weight")
 
       const egr =
-        lookupKeyValid (mensureMapNaturalInRange (1) (27))
+        lookupKeyValid (mensureMapNaturalInRange (1) (30))
                        (TableType.Univ)
                        (lookup_univ)
-                       ("improvisedWeaponGroup")
+                       ("gr")
 
       const ecombatTechniques = checkUnivNaturalNumberOptional ("combatTechniques")
 

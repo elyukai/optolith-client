@@ -3,7 +3,7 @@ import { equals } from "../../../Data/Eq";
 import { fmap } from "../../../Data/Functor";
 import { inRange } from "../../../Data/Ix";
 import { Cons, flength, List, notNullStr, splitOn } from "../../../Data/List";
-import { bindF, ensure, fromJust, fromMaybe, isNothing, Just, liftM2, mapM, Maybe, Nothing } from "../../../Data/Maybe";
+import { bindF, ensure, fromMaybe, Just, liftM2, mapM, Maybe, maybe, Nothing } from "../../../Data/Maybe";
 import { fromList, OrderedSet } from "../../../Data/OrderedSet";
 import { Pair } from "../../../Data/Pair";
 import { show } from "../../../Data/Show";
@@ -31,10 +31,8 @@ export const mensureMap =
 export const bindOptional =
   <A>
   (f: (x: string) => Maybe<A>) =>
-  (x: Maybe<string>): Maybe<Maybe<A>> =>
-    isNothing (x)
-    ? Just (Nothing)
-    : fmap<A, Just<A>> (Just) (f (fromJust (x)))
+    maybe<Maybe<Maybe<A>>> (Just (Nothing))
+                           (pipe (f, fmap (Just)))
 
 const mapList =
   (del: string) =>
@@ -223,7 +221,7 @@ export const mensureMapNaturalOptional =
 
 export const mensureMapNaturalPred =
   (pred: (x: number) => boolean) =>
-    mensureMap (Expect.Maybe (Expect.NaturalNumber))
+    mensureMap (Expect.NaturalNumber)
                (bindF (pipe (
                  toNatural,
                  bindF<number, number> (ensure (pred))

@@ -1,7 +1,7 @@
 import { List } from "../../../Data/List";
 import { Nothing } from "../../../Data/Maybe";
 import { OrderedMap } from "../../../Data/OrderedMap";
-import { fromDefault, Record } from "../../../Data/Record";
+import { fromDefault, makeLenses, Record } from "../../../Data/Record";
 import { Categories } from "../../Constants/Categories";
 import { AdvantageDisadvantageBase, EntryWithCategory } from "./wikiTypeHelpers";
 
@@ -34,3 +34,5 @@ export const Disadvantage =
 export const isDisadvantage =
   (r: EntryWithCategory): r is Record<Disadvantage> =>
     Disadvantage.AL.category (r) === Categories.DISADVANTAGES
+
+export const DisadvantageL = makeLenses (Disadvantage)

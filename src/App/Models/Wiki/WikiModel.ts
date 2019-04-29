@@ -1,5 +1,5 @@
 import { OrderedMap } from "../../../Data/OrderedMap";
-import { fromDefault, Record } from "../../../Data/Record";
+import { fromDefault, makeLenses, Record } from "../../../Data/Record";
 import { Advantage } from "./Advantage";
 import { Attribute } from "./Attribute";
 import { Blessing } from "./Blessing";
@@ -63,3 +63,5 @@ export const WikiModel =
     blessings: OrderedMap.empty,
     itemTemplates: OrderedMap.empty,
   })
+
+export const WikiModelL = makeLenses (WikiModel)

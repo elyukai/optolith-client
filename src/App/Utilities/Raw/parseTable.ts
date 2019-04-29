@@ -1,22 +1,29 @@
 import * as path from "path";
 import * as xlsx from "xlsx";
 import { bind, bindF, Either, first, fromRight_, isLeft, Left, mapM, maybeToEither } from "../../../Data/Either";
+import { equals } from "../../../Data/Eq";
+import { flip, thrush } from "../../../Data/Function";
 import { fmap } from "../../../Data/Functor";
 import { Lens_, over, set } from "../../../Data/Lens";
-import { consF, empty, foldr, List, map } from "../../../Data/List";
-import { catMaybes, fromMaybe, Just, Maybe } from "../../../Data/Maybe";
-import { adjust, fromList, lookupF, mapMEitherWithKey, OrderedMap } from "../../../Data/OrderedMap";
+import { append, consF, empty, foldr, List, map } from "../../../Data/List";
+import { catMaybes, ensure, fromMaybe, Just, mapMaybe, Maybe } from "../../../Data/Maybe";
+import { adjust, elems, fromList, lookupF, mapMEitherWithKey, OrderedMap } from "../../../Data/OrderedMap";
 import { OrderedSet } from "../../../Data/OrderedSet";
 import { fst, Pair, snd } from "../../../Data/Pair";
 import { makeLenses, Record } from "../../../Data/Record";
+import { Categories } from "../../Constants/Categories";
+import { AdvantageL } from "../../Models/Wiki/Advantage";
 import { Book } from "../../Models/Wiki/Book";
+import { DisadvantageL } from "../../Models/Wiki/Disadvantage";
 import { L10nRecord } from "../../Models/Wiki/L10n";
-import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
+import { Skill } from "../../Models/Wiki/Skill";
+import { SpecialAbility, SpecialAbilityL } from "../../Models/Wiki/SpecialAbility";
 import { SelectOption } from "../../Models/Wiki/sub/SelectOption";
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import { Activatable } from "../../Models/Wiki/wikiTypeHelpers";
+import { WikiModel, WikiModelL, WikiModelRecord } from "../../Models/Wiki/WikiModel";
+import { Activatable, Skillish } from "../../Models/Wiki/wikiTypeHelpers";
 import { app_path } from "../../Selectors/envSelectors";
-import { pipe } from "../pipe";
+import { pipe, pipe_ } from "../pipe";
+import { getWikiSliceGetterByCategory } from "../WikiUtils";
 import { CsvColumnDelimiter, csvToList } from "./csvToList";
 import { toAdvantage } from "./Entries/toAdvantage";
 import { toAdvantageSelectOption } from "./Entries/toAdvantageSelectOption";
@@ -90,17 +97,17 @@ const bindM2MapMToMap =
 const { select } = makeLenses (SpecialAbility)
 
 const matchSelectOptionsToBaseRecords =
-  foldr ((p: Pair<string, Record<SelectOption>>) =>
-          adjust (over (select as unknown as Lens_<Activatable, Maybe<List<Record<SelectOption>>>>)
-                       (pipe (
-                         fromMaybe<List<Record<SelectOption>>> (empty),
-                         consF (snd (p)),
-                         Just
-                       )))
-                 (fst (p))) as
+  flip (foldr ((p: Pair<string, Record<SelectOption>>) =>
+                 adjust (over (select as Lens_<Activatable, Maybe<List<Record<SelectOption>>>>)
+                              (pipe (
+                                fromMaybe<List<Record<SelectOption>>> (empty),
+                                consF (snd (p)),
+                                Just
+                              )))
+                        (fst (p)))) as
     <A extends Activatable>
-    (initial: OrderedMap<string, A>) =>
-    (xs: List<Pair<string, Record<SelectOption>>>) => OrderedMap<string, A>
+    (xs: List<Pair<string, Record<SelectOption>>>) =>
+    (initial: OrderedMap<string, A>) => OrderedMap<string, A>
 
 const matchExtensionsToBaseRecord =
   (extensions: List<Record<SelectOption>>) =>
@@ -249,9 +256,9 @@ export const parseTables =
         specialAbilitySelectOptions,
         itemTemplates,
       })
-      (rs => {
-        return Pair (
-          rs.l10n,
+      (rs => Pair (
+        rs.l10n,
+        pipe_ (
           WikiModel ({
             books: rs.books,
             experienceLevels: rs.experienceLevels,
@@ -261,19 +268,9 @@ export const parseTables =
             professions: rs.professions,
             professionVariants: rs.professionVariants,
             attributes: rs.attributes,
-            advantages:
-              matchSelectOptionsToBaseRecords (rs.advantages)
-                                              (rs.advantageSelectOptions),
-            disadvantages:
-              matchSelectOptionsToBaseRecords (rs.disadvantages)
-                                              (rs.disadvantageSelectOptions),
-            specialAbilities:
-              pipe (
-                     matchSelectOptionsToBaseRecords (rs.specialAbilities),
-                     matchExtensionsToBaseRecord (rs.spellExtensions) ("SA_484"),
-                     matchExtensionsToBaseRecord (rs.liturgicalChantExtensions) ("SA_663")
-                   )
-                   (rs.specialAbilitySelectOptions),
+            advantages: rs.advantages,
+            disadvantages: rs.disadvantages,
+            specialAbilities: rs.specialAbilities,
             skills: rs.skills,
             combatTechniques: rs.combatTechniques,
             spells: rs.spells,
@@ -281,7 +278,95 @@ export const parseTables =
             liturgicalChants: rs.liturgicalChants,
             blessings: rs.blessings,
             itemTemplates: rs.itemTemplates,
-          })
+          }),
+          w => over (WikiModelL.advantages)
+                    (pipe (
+                      OrderedMap.map (over (AdvantageL.select)
+                                           (fmap (mapCategoriesToSelectOptions (w)))),
+                      matchSelectOptionsToBaseRecords (rs.advantageSelectOptions)
+                    ))
+                    (w),
+          w => over (WikiModelL.disadvantages)
+                    (pipe (
+                      OrderedMap.map (over (DisadvantageL.select)
+                                           (fmap (mapCategoriesToSelectOptions (w)))),
+                      matchSelectOptionsToBaseRecords (rs.disadvantageSelectOptions)
+                    ))
+                    (w),
+          w => {
+            const knowledge_skills =
+              mapMaybe (pipe (
+                         ensure (pipe (Skill.A.gr, equals (4))),
+                         fmap (x => SelectOption ({
+                                      id: Skill.A.id (x),
+                                      name: Skill.A.name (x),
+                                      cost: Just (Skill.A.ic (x)),
+                                      src: Skill.A.src (x),
+                                    }))
+                       ))
+                       (elems (WikiModel.A.skills (w)))
+
+            const skills_with_apps =
+              map ((x: Record<Skill>) => SelectOption ({
+                                           id: Skill.A.id (x),
+                                           name: Skill.A.name (x),
+                                           cost: Just (Skill.A.ic (x)),
+                                           applications: Just (Skill.A.applications (x)),
+                                           applicationInput: Skill.A.applicationsInput (x),
+                                           src: Skill.A.src (x),
+                                         }))
+                  (elems (WikiModel.A.skills (w)))
+
+            return over (WikiModelL.specialAbilities)
+                        (pipe (
+                          OrderedMap.map (pipe (
+                            over (SpecialAbilityL.select)
+                                 (fmap (mapCategoriesToSelectOptions (w))),
+                            x => {
+                              switch (SpecialAbility.A.id (x)) {
+                                case "SA_472":
+                                case "SA_473":
+                                case "SA_531":
+                                case "SA_533": {
+                                  return set (SpecialAbilityL.select) (Just (knowledge_skills)) (x)
+                                }
+
+                                case "SA_9": {
+                                  return set (SpecialAbilityL.select) (Just (skills_with_apps)) (x)
+                                }
+
+                                default:
+                                  return x
+                              }
+                            }
+                          )),
+                          matchSelectOptionsToBaseRecords (rs.specialAbilitySelectOptions),
+                          matchExtensionsToBaseRecord (rs.spellExtensions) ("SA_484"),
+                          matchExtensionsToBaseRecord (rs.liturgicalChantExtensions) ("SA_663")
+                        ))
+                        (w)
+          }
         )
-      })
+      ))
   }
+
+const mapCategoriesToSelectOptions =
+  (wiki: WikiModelRecord) =>
+    foldr (pipe (
+              SelectOption.A.id as (x: Record<SelectOption>) => Categories,
+              getWikiSliceGetterByCategory as
+                (c: Categories) =>
+                  (x: Record<WikiModel>) => OrderedMap<string, Skillish>,
+              thrush (wiki),
+              elems,
+              map (
+                r => SelectOption ({
+                  id: Skill.AL.id (r),
+                  name: Skill.AL.name (r),
+                  cost: Just (Skill.AL.ic (r)),
+                  src: Skill.AL.src (r),
+                })
+              ),
+              append
+            ))
+            (List ())
