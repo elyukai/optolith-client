@@ -1,30 +1,34 @@
 import * as React from "react";
+import { notNull } from "../../../../Data/List";
+import { OrderedMap } from "../../../../Data/OrderedMap";
+import { Record } from "../../../../Data/Record";
+import { Advantage } from "../../../Models/Wiki/Advantage";
+import { L10nRecord } from "../../../Models/Wiki/L10n";
+import { Skill } from "../../../Models/Wiki/Skill";
+import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility";
 import { WikiProperty } from "../WikiProperty";
 
 export interface WikiApplicationsProps {
-  advantages: Map<string, Advantage>
-  currentObject: {
-    applications?: Application[]
-    applicationsInput?: string
-  }
-  locale: UIMessages
+  advantages: OrderedMap<string, Record<Advantage>>
+  currentObject: Record<Skill>
+  l10n: L10nRecord
   showNewApplications?: boolean
-  specialAbilities: Map<string, SpecialAbility>
+  specialAbilities: OrderedMap<string, Record<SpecialAbility>>
 }
 
-export function WikiApplications(props: WikiApplicationsProps): JSX.Element | null {
+export function WikiApplications (props: WikiApplicationsProps): JSX.Element | null {
   const {
     advantages,
-    currentObject: {
-      applications,
-      applicationsInput
-    },
-    locale,
-    showNewApplications,
+    currentObject,
+    l10n,
+    showNewApplications = false,
     specialAbilities,
   } = props
 
-  if (typeof applications === "object") {
+  const applications = Skill.A.applications (currentObject)
+  const applicationsInput = Skill.A.applicationsInput (currentObject)
+
+  if (notNull (applications)) {
     if (showNewApplications) {
       const newApplications = applications.filter(e => {
         return typeof e.prerequisites === "object" &&
@@ -38,11 +42,11 @@ export function WikiApplications(props: WikiApplicationsProps): JSX.Element | nu
 
       const sortedApplications = sortStrings(
         newApplications.map(e => e.name),
-        locale.id,
+        l10n.id,
       )
 
       return (
-        <WikiProperty locale={locale} title="info.newapplications">
+        <WikiProperty locale={l10n} title="info.newapplications">
           {sortedApplications.intercalate(", ")}
         </WikiProperty>
       )
@@ -54,11 +58,11 @@ export function WikiApplications(props: WikiApplicationsProps): JSX.Element | nu
 
     const sortedApplications = sortStrings(
       defaultApplications.map(e => e.name),
-      locale.id
+      l10n.id
     )
 
     return (
-      <WikiProperty locale={locale} title="info.applications">
+      <WikiProperty locale={l10n} title="info.applications">
         {sortedApplications.intercalate(", ")}
         {applicationsInput && ", "}
         {applicationsInput}
