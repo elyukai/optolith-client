@@ -1,23 +1,27 @@
 import * as React from "react";
-import { translate, UIMessages } from "../../../Utilities/I18n";
+import { Record, RecordBase } from "../../../../Data/Record";
+import { L10nRecord } from "../../../Models/Wiki/L10n";
+import { translate } from "../../../Utilities/I18n";
 import { Markdown } from "../../Universal/Markdown";
 
-export interface WikiCriticalSuccessProps {
-  currentObject: {
-    critical: string;
-  }
-  locale: UIMessages
+interface Accessors<A extends RecordBase> {
+  critical: (r: Record<A>) => string
 }
 
-export function WikiCriticalSuccess(props: WikiCriticalSuccessProps) {
+export interface WikiCriticalSuccessProps<A extends RecordBase> {
+  x: Record<A>
+  acc: Accessors<A>
+  l10n: L10nRecord
+}
+
+export function WikiCriticalSuccess<A extends RecordBase> (props: WikiCriticalSuccessProps<A>) {
   const {
-    currentObject: {
-      critical
-    },
-    locale
+    x,
+    acc,
+    l10n,
   } = props
 
   return (
-    <Markdown source={`**${translate(locale, "info.criticalsuccess")}:** ${critical}`} />
+    <Markdown source={`**${translate (l10n) ("criticalsuccess")}:** ${acc.critical (x)}`} />
   )
 }

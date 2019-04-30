@@ -83,19 +83,19 @@ export function WikiActivatableInfo(props: WikiActivatableInfoProps) {
             subtitle={headerSubName}
             >
             {currentObject.effect && <Markdown source={`**${translate(locale, "info.effect")}:** ${currentObject.effect}`} />}
-            {currentObject.volume && <WikiProperty locale={locale} title="info.volume">
+            {currentObject.volume && <WikiProperty l10n={locale} title="info.volume">
               {currentObject.volume}
             </WikiProperty>}
-            {currentObject.aeCost && <WikiProperty locale={locale} title="info.aecost">
+            {currentObject.aeCost && <WikiProperty l10n={locale} title="info.aecost">
               {currentObject.aeCost}
             </WikiProperty>}
-            {currentObject.aeCost === undefined && currentObject.bindingCost === undefined && <WikiProperty locale={locale} title="info.aecost">
+            {currentObject.aeCost === undefined && currentObject.bindingCost === undefined && <WikiProperty l10n={locale} title="info.aecost">
               {translate(locale, "info.none")}
             </WikiProperty>}
-            {currentObject.bindingCost && <WikiProperty locale={locale} title="info.bindingcost">
+            {currentObject.bindingCost && <WikiProperty l10n={locale} title="info.bindingcost">
               {currentObject.bindingCost}
             </WikiProperty>}
-            {currentObject.property && <WikiProperty locale={locale} title="info.property">
+            {currentObject.property && <WikiProperty l10n={locale} title="info.property">
               {typeof currentObject.property === "number" ? translate(locale, "spells.view.properties")[currentObject.property - 1] : currentObject.property}
             </WikiProperty>}
             <PrerequisitesText {...props} entry={currentObject} />
@@ -112,7 +112,7 @@ export function WikiActivatableInfo(props: WikiActivatableInfoProps) {
             subtitle={headerSubName}
             >
             {currentObject.effect && <Markdown source={`**${translate(locale, "info.effect")}:** ${currentObject.effect}`} />}
-            {currentObject.aspect && <WikiProperty locale={locale} title="info.aspect">
+            {currentObject.aspect && <WikiProperty l10n={locale} title="info.aspect">
               {typeof currentObject.aspect === "number" ? translate(locale, "liturgies.view.aspects")[currentObject.aspect - 1] : currentObject.aspect}
             </WikiProperty>}
             <PrerequisitesText {...props} entry={currentObject} />
@@ -128,13 +128,13 @@ export function WikiActivatableInfo(props: WikiActivatableInfoProps) {
             title={headerName}
             subtitle={headerSubName}
             >
-            <WikiProperty locale={locale} title="info.aecost">
+            <WikiProperty l10n={locale} title="info.aecost">
               {currentObject.aeCost}
             </WikiProperty>
-            <WikiProperty locale={locale} title="info.protectivecircle">
+            <WikiProperty l10n={locale} title="info.protectivecircle">
               {currentObject.protectiveCircle}
             </WikiProperty>
-            <WikiProperty locale={locale} title="info.wardingcircle">
+            <WikiProperty l10n={locale} title="info.wardingcircle">
               {currentObject.wardingCircle}
             </WikiProperty>
             <Markdown source={costText} />
@@ -236,7 +236,7 @@ export function WikiActivatableInfo(props: WikiActivatableInfoProps) {
             {currentObject.effect && <Markdown source={`**${translate(locale, "info.effect")}:** ${currentObject.effect}`} />}
             {currentObject.penalty && <Markdown source={`**${translate(locale, "info.penalty")}:** ${currentObject.penalty}`} />}
             {currentObject.combatTechniques && <Markdown source={`**${translate(locale, "info.combattechniques")}:** ${currentObject.combatTechniques}`} />}
-            {currentObject.aeCost && <WikiProperty locale={locale} title="info.aecost">
+            {currentObject.aeCost && <WikiProperty l10n={locale} title="info.aecost">
               {currentObject.aeCost}
             </WikiProperty>}
             <PrerequisitesText {...props} entry={currentObject} />
@@ -258,10 +258,10 @@ export function WikiActivatableInfo(props: WikiActivatableInfoProps) {
   return (
     <WikiBoxTemplate className="disadv" title={headerName}>
       {currentObject.rules && <Markdown source={`**${translate(locale, "info.rules")}:** ${currentObject.rules}`} />}
-      {currentObject.range && <WikiProperty locale={locale} title="info.range">
+      {currentObject.range && <WikiProperty l10n={locale} title="info.range">
         {currentObject.range}
       </WikiProperty>}
-      {currentObject.actions && <WikiProperty locale={locale} title="info.actions">
+      {currentObject.actions && <WikiProperty l10n={locale} title="info.actions">
         {currentObject.actions}
       </WikiProperty>}
       <PrerequisitesText {...props} entry={currentObject} />

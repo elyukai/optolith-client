@@ -1,36 +1,40 @@
 import * as React from "react";
+import { Record, RecordBase } from "../../../../Data/Record";
 import { Categories, CategoryWithGroups } from "../../../Constants/Categories";
-import { UIMessages } from "../../../Utilities/I18n";
+import { L10n, L10nRecord } from "../../../Models/Wiki/L10n";
 import { WikiProperty } from "../WikiProperty";
 
-export interface WikiDurationProps {
-  currentObject: {
-    duration: string;
-    category: CategoryWithGroups;
-    gr: number;
-  }
-  locale: UIMessages
+interface Accessors<A extends RecordBase> {
+  duration: (r: Record<A>) => string
+  category: (r: Record<A>) => CategoryWithGroups
+  gr: (r: Record<A>) => number
 }
 
-export function WikiDuration(props: WikiDurationProps) {
+export interface WikiDurationProps<A extends RecordBase> {
+  x: Record<A>
+  acc: Accessors<A>
+  l10n: L10nRecord
+}
+
+export function WikiDuration<A extends RecordBase> (props: WikiDurationProps<A>) {
   const {
-    currentObject: {
-      duration,
-      category,
-      gr
-    },
-    locale
+    x,
+    acc,
+    l10n,
   } = props
 
-  let key: keyof UIMessages = "info.duration"
+  let key: keyof L10n = "duration"
+
+  const category = acc.category (x)
+  const gr = acc.gr (x)
 
   if (category === Categories.SPELLS && (gr === 4 || gr === 5)) {
-    key = "info.skill"
+    key = "skill"
   }
 
   return (
-    <WikiProperty locale={locale} title={key}>
-      {duration}
+    <WikiProperty l10n={l10n} title={key}>
+      {acc.duration (x)}
     </WikiProperty>
   )
 }

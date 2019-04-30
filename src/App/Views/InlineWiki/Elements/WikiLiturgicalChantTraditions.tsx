@@ -1,54 +1,79 @@
 import * as React from "react";
-import { translate, UIMessages } from "../../../Utilities/I18n";
+import { ident } from "../../../../Data/Function";
+import { consF, elem, flength, foldr, intercalate, List, subscript } from "../../../../Data/List";
+import { fromJust, fromMaybe, isNothing, Just, mapMaybe } from "../../../../Data/Maybe";
+import { alter, insert, OrderedMap } from "../../../../Data/OrderedMap";
+import { Record, RecordBase } from "../../../../Data/Record";
+import { L10n, L10nRecord } from "../../../Models/Wiki/L10n";
+import { translate } from "../../../Utilities/I18n";
 import { getAspectsOfTradition, getTraditionOfAspect } from "../../../Utilities/Increasable/liturgicalChantUtils";
+import { pipe, pipe_ } from "../../../Utilities/pipe";
+import { sortStrings } from "../../../Utilities/sortBy";
 import { WikiProperty } from "../WikiProperty";
 
-export interface WikiLiturgicalChantTraditionsProps {
-  currentObject: {
-    aspects: number[];
-    tradition: number[];
-  }
-  locale: UIMessages
+interface Accessors<A extends RecordBase> {
+  aspects: (r: Record<A>) => List<number>
+  tradition: (r: Record<A>) => List<number>
 }
 
-export function WikiLiturgicalChantTraditions(props: WikiLiturgicalChantTraditionsProps) {
+export interface WikiLiturgicalChantTraditionsProps<A extends RecordBase> {
+  x: Record<A>
+  acc: Accessors<A>
+  l10n: L10nRecord
+}
+
+export function WikiLiturgicalChantTraditions<A extends RecordBase>
+  (props: WikiLiturgicalChantTraditionsProps<A>) {
   const {
-    currentObject: {
-      aspects,
-      tradition
-    },
-    locale
+    x,
+    acc,
+    l10n,
   } = props
 
-  const traditionsMap = new Map<number, number[]>()
+  const tradition_strings = translate (l10n) ("blessedtraditions")
+  const aspect_strings = translate (l10n) ("aspectlist")
 
-  for (const aspectId of aspects) {
-    const tradition = getTraditionOfAspect(aspectId)
-    if (tradition <= translate(locale, "liturgies.view.traditions").length) {
-      traditionsMap.set(tradition, [...(traditionsMap.get(tradition) || []), aspectId])
-    }
-  }
+  const curr_traditions = acc.tradition (x)
 
-  if (tradition.includes(14)) {
-    traditionsMap.set(14, [])
-  }
+  return pipe_ (
+    x,
+    acc.aspects,
+    foldr ((asp: number) => {
+            const trad = getTraditionOfAspect (asp)
 
-  const traditionsStrings = translate(locale, "liturgies.view.traditions")
-  const aspectsStrings = translate(locale, "liturgies.view.aspects")
+            return trad <= flength (tradition_strings)
+              ? alter (pipe (fromMaybe (List<number> ()), consF (asp), Just)) (trad)
+              : ident as ident<OrderedMap<number, List<number>>>
+          })
+          (OrderedMap.empty),
+    elem (14) (curr_traditions) ? insert (14) (List ()) : ident,
+    OrderedMap.foldrWithKey ((t: number) => (as: List<number>) => {
+                              const mmain_trad = subscript (tradition_strings) (t)
 
-  const traditions = sortStrings([...traditionsMap].map(e => {
-    const mainTradition = traditionsStrings[e[0] - 1]
-    if (getAspectsOfTradition(e[0]).length < 2) {
-      return mainTradition
-    }
-    const mappedAspects = e[1].map(a => aspectsStrings[a - 1])
-    const completeAspects = sortStrings(mappedAspects, locale.id).intercalate(", ")
-    return `${mainTradition} (${completeAspects})`
-  }), locale.id).intercalate(", ")
+                              if (isNothing (mmain_trad)) {
+                                return ident as ident<List<string>>
+                              }
 
-  return (
-    <WikiProperty locale={locale} title="info.traditions">
-      {traditions}
-    </WikiProperty>
+                              const main_trad = fromJust (mmain_trad)
+
+                              if (flength (getAspectsOfTradition (t)) < 2) {
+                                return consF (main_trad)
+                              }
+
+                              const mapped_aspects = mapMaybe (subscript (aspect_strings)) (as)
+
+                              const complete_aspects =
+                                intercalate (", ")
+                                            (sortStrings (L10n.A.id (l10n))
+                                                         (mapped_aspects))
+
+                              return consF (`${main_trad} (${complete_aspects})`)
+                            })
+                            (List ()),
+    traditions => (
+      <WikiProperty l10n={l10n} title="traditions">
+        {traditions}
+      </WikiProperty>
+    )
   )
 }

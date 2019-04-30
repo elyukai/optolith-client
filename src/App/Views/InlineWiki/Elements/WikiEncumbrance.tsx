@@ -1,33 +1,39 @@
 import * as React from "react";
-import { translate, UIMessages } from "../../../Utilities/I18n";
+import { Record, RecordBase } from "../../../../Data/Record";
+import { L10nRecord } from "../../../Models/Wiki/L10n";
+import { translate } from "../../../Utilities/I18n";
 import { WikiProperty } from "../WikiProperty";
 
-export interface WikiEncumbranceProps {
-  currentObject: {
-    encumbrance: string;
-  }
-  locale: UIMessages
+interface Accessors<A extends RecordBase> {
+  encumbrance: (r: Record<A>) => string
 }
 
-export function WikiEncumbrance(props: WikiEncumbranceProps) {
+export interface WikiEncumbranceProps<A extends RecordBase> {
+  x: Record<A>
+  acc: Accessors<A>
+  l10n: L10nRecord
+}
+
+export function WikiEncumbrance<A extends RecordBase> (props: WikiEncumbranceProps<A>) {
   const {
-    currentObject: {
-      encumbrance
-    },
-    locale
+    x,
+    acc,
+    l10n,
   } = props
 
-  let string = translate(locale, "charactersheet.gamestats.skills.enc.maybe")
+  let string = translate (l10n) ("maybe")
+
+  const encumbrance = acc.encumbrance (x)
 
   if (encumbrance === "true") {
-    string = translate(locale, "charactersheet.gamestats.skills.enc.yes")
+    string = translate (l10n) ("yes")
   }
   else if (encumbrance === "false") {
-    string = translate(locale, "charactersheet.gamestats.skills.enc.no")
+    string = translate (l10n) ("no")
   }
 
   return (
-    <WikiProperty locale={locale} title="info.encumbrance">
+    <WikiProperty l10n={l10n} title="encumbrance">
       {string}
     </WikiProperty>
   )

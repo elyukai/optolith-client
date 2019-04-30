@@ -4,15 +4,15 @@ import { translate } from "../../Utilities/I18n";
 
 export interface WikiPropertyProps {
   children?: React.ReactNode
-  locale: L10nRecord
+  l10n: L10nRecord
   title: keyof L10n
 }
 
 export function WikiProperty (props: WikiPropertyProps) {
-  const { children, locale, title } = props
+  const { children, l10n, title } = props
 
   return <p>
-    <span>{translate (locale) (title)}</span>
+    <span>{translate (l10n) (title)}</span>
     {children !== null && children !== undefined ? <span>{children}</span> : null}
   </p>
 }

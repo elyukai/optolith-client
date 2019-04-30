@@ -67,7 +67,7 @@ export function WikiProfessionInfo(props: WikiProfessionInfoProps) {
   if (["nl-BE"].includes(locale.id)) {
     return (
       <WikiBoxTemplate className="profession" title={subname ? `${name} (${subname})` : name}>
-        <WikiProperty locale={locale} title="info.apvalue">
+        <WikiProperty l10n={locale} title="info.apvalue">
           {currentObject.ap} {translate(locale, "aptext")}
         </WikiProperty>
         <CombatTechniques
@@ -75,19 +75,19 @@ export function WikiProfessionInfo(props: WikiProfessionInfoProps) {
           currentObject={currentObject}
           locale={locale}
           />
-        <WikiProperty locale={locale} title="info.skills" />
+        <WikiProperty l10n={locale} title="info.skills" />
         <SkillsList
           profession={currentObject}
           locale={locale}
           skillsSelection={skillsSelectionJoinedObject}
           />
         {typeof spellsString === "string" ? (
-          <WikiProperty locale={locale} title="info.spells">
+          <WikiProperty l10n={locale} title="info.spells">
             {spellsString}
           </WikiProperty>
         ) : null}
         {typeof liturgicalChantsString === "string" ? (
-          <WikiProperty locale={locale} title="info.liturgicalchants">
+          <WikiProperty l10n={locale} title="info.liturgicalchants">
             {liturgicalChantsString}
           </WikiProperty>
         ) : null}
@@ -125,14 +125,14 @@ export function WikiProfessionInfo(props: WikiProfessionInfoProps) {
 
   return (
     <WikiBoxTemplate className="profession" title={subname ? `${name} (${subname})` : name}>
-      <WikiProperty locale={locale} title="info.apvalue">
+      <WikiProperty l10n={locale} title="info.apvalue">
         {currentObject.ap} {translate(locale, "aptext")}
       </WikiProperty>
-      <WikiProperty locale={locale} title="info.prerequisites">
+      <WikiProperty l10n={locale} title="info.prerequisites">
         {prerequisites.length > 0 ? prerequisites.join(", ") : translate(locale, "info.none")}
         {sexRequirement && `${prerequisites.length > 0 ? " " : ""}${translate(locale, "charactersheet.main.sex")}: ${sexRequirement.value === "m" ? translate(locale, "herocreation.options.selectsex.male") : translate(locale, "herocreation.options.selectsex.female")}`}
       </WikiProperty>
-      <WikiProperty locale={locale} title="info.specialabilities">
+      <WikiProperty l10n={locale} title="info.specialabilities">
         {[
           ...(languagesLiteracySelection ? [translate(locale, "info.specialabilitieslanguagesandliteracy", languagesLiteracySelection.value)] : []),
           ...(typeof specializationSelectionString === "string" ? [specializationSelectionString] : []),
@@ -146,32 +146,32 @@ export function WikiProfessionInfo(props: WikiProfessionInfoProps) {
         currentObject={currentObject}
         locale={locale}
         />
-      <WikiProperty locale={locale} title="info.skills" />
+      <WikiProperty l10n={locale} title="info.skills" />
       <SkillsList
         profession={currentObject}
         locale={locale}
         skillsSelection={skillsSelectionJoinedObject}
         />
       {typeof spellsString === "string" ? (
-        <WikiProperty locale={locale} title="info.spells">
+        <WikiProperty l10n={locale} title="info.spells">
           {spellsString}
         </WikiProperty>
       ) : null}
       {typeof liturgicalChantsString === "string" ? (
-        <WikiProperty locale={locale} title="info.liturgicalchants">
+        <WikiProperty l10n={locale} title="info.liturgicalchants">
           {liturgicalChantsString}
         </WikiProperty>
       ) : null}
-      <WikiProperty locale={locale} title="info.suggestedadvantages">
+      <WikiProperty l10n={locale} title="info.suggestedadvantages">
         {currentObject.suggestedAdvantagesText || translate(locale, "info.none")}
       </WikiProperty>
-      <WikiProperty locale={locale} title="info.suggesteddisadvantages">
+      <WikiProperty l10n={locale} title="info.suggesteddisadvantages">
         {currentObject.suggestedDisadvantagesText || translate(locale, "info.none")}
       </WikiProperty>
-      <WikiProperty locale={locale} title="info.unsuitableadvantages">
+      <WikiProperty l10n={locale} title="info.unsuitableadvantages">
         {currentObject.unsuitableAdvantagesText || translate(locale, "info.none")}
       </WikiProperty>
-      <WikiProperty locale={locale} title="info.unsuitabledisadvantages">
+      <WikiProperty l10n={locale} title="info.unsuitabledisadvantages">
         {currentObject.unsuitableDisadvantagesText || translate(locale, "info.none")}
       </WikiProperty>
       <VariantList
@@ -241,7 +241,7 @@ function CombatTechniques(props: CombatTechniquesProps): JSX.Element {
   })
 
   return (
-    <WikiProperty locale={locale} title="info.combattechniques">
+    <WikiProperty l10n={locale} title="info.combattechniques">
       {[
         ...sortStrings(combatTechniquesList, locale.id),
         ...(selectionString ? [selectionString] : [])

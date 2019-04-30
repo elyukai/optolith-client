@@ -1,15 +1,19 @@
 import * as React from "react";
-import { UIMessages } from "../../../Utilities/I18n";
+import { Record, RecordBase } from "../../../../Data/Record";
+import { L10nRecord } from "../../../Models/Wiki/L10n";
 import { WikiProperty } from "../WikiProperty";
 
-export interface WikiTargetCategoryProps {
-  currentObject: {
-    target: string;
-  }
-  locale: UIMessages
+interface Accessors<A extends RecordBase> {
+  target: (r: Record<A>) => string
 }
 
-export function WikiTargetCategory(props: WikiTargetCategoryProps) {
+export interface WikiTargetCategoryProps<A extends RecordBase> {
+  x: Record<A>
+  acc: Accessors<A>
+  l10n: L10nRecord
+}
+
+export function WikiTargetCategory<A extends RecordBase> (props: WikiTargetCategoryProps<A>) {
   const {
     currentObject: {
       target
@@ -18,7 +22,7 @@ export function WikiTargetCategory(props: WikiTargetCategoryProps) {
   } = props
 
   return (
-    <WikiProperty locale={locale} title="info.targetcategory">
+    <WikiProperty l10n={locale} title="info.targetcategory">
       {target}
     </WikiProperty>
   )

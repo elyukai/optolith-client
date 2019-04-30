@@ -1,23 +1,27 @@
 import * as React from "react";
-import { translate, UIMessages } from "../../../Utilities/I18n";
+import { Record, RecordBase } from "../../../../Data/Record";
+import { L10nRecord } from "../../../Models/Wiki/L10n";
+import { translate } from "../../../Utilities/I18n";
 import { Markdown } from "../../Universal/Markdown";
 
-export interface WikiQualityProps {
-  currentObject: {
-    quality: string;
-  }
-  locale: UIMessages
+interface Accessors<A extends RecordBase> {
+  quality: (r: Record<A>) => string
 }
 
-export function WikiQuality(props: WikiQualityProps) {
+export interface WikiQualityProps<A extends RecordBase> {
+  x: Record<A>
+  acc: Accessors<A>
+  l10n: L10nRecord
+}
+
+export function WikiQuality<A extends RecordBase> (props: WikiQualityProps<A>) {
   const {
-    currentObject: {
-      quality
-    },
-    locale
+    x,
+    acc,
+    l10n,
   } = props
 
   return (
-    <Markdown source={`**${translate(locale, "info.quality")}:** ${quality}`} />
+    <Markdown source={`**${translate (l10n) ("quality")}:** ${acc.quality (x)}`} />
   )
 }

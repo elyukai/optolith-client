@@ -1,15 +1,20 @@
 import * as React from "react";
-import { translate, UIMessages } from "../../../Utilities/I18n";
+import { Record, RecordBase } from "../../../../Data/Record";
+import { L10nRecord } from "../../../Models/Wiki/L10n";
+import { translate } from "../../../Utilities/I18n";
 import { WikiProperty } from "../WikiProperty";
 
-export interface WikiSpellPropertyProps {
-  currentObject: {
-    property: number;
-  }
-  locale: UIMessages
+interface Accessors<A extends RecordBase> {
+  property: (r: Record<A>) => number
 }
 
-export function WikiSpellProperty(props: WikiSpellPropertyProps) {
+export interface WikiSpellPropertyProps<A extends RecordBase> {
+  x: Record<A>
+  acc: Accessors<A>
+  l10n: L10nRecord
+}
+
+export function WikiSpellProperty<A extends RecordBase> (props: WikiSpellPropertyProps<A>) {
   const {
     currentObject: {
       property
@@ -18,7 +23,7 @@ export function WikiSpellProperty(props: WikiSpellPropertyProps) {
   } = props
 
   return (
-    <WikiProperty locale={locale} title="info.property">
+    <WikiProperty l10n={locale} title="info.property">
       {translate(locale, "spells.view.properties")[property - 1]}
     </WikiProperty>
   )

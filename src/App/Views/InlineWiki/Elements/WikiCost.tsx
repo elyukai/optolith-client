@@ -1,34 +1,38 @@
 import * as React from "react";
+import { Record, RecordBase } from "../../../../Data/Record";
 import { Categories } from "../../../Constants/Categories";
-import { UIMessages } from "../../../Utilities/I18n";
+import { L10n, L10nRecord } from "../../../Models/Wiki/L10n";
 import { WikiProperty } from "../WikiProperty";
 
-export interface WikiCostProps {
-  currentObject: {
-    cost: string;
-    category: Categories;
-  }
-  locale: UIMessages
+interface Accessors<A extends RecordBase> {
+  cost: (r: Record<A>) => string
+  category: (r: Record<A>) => Categories
 }
 
-export function WikiCost(props: WikiCostProps) {
+export interface WikiCostProps<A extends RecordBase> {
+  x: Record<A>
+  acc: Accessors<A>
+  l10n: L10nRecord
+}
+
+export function WikiCost<A extends RecordBase> (props: WikiCostProps<A>) {
   const {
-    currentObject: {
-      cost,
-      category
-    },
-    locale
+    x,
+    acc,
+    l10n,
   } = props
 
-  let key: keyof UIMessages = "info.aecost"
+  let key: keyof L10n = "aecost"
+
+  const category = acc.category (x)
 
   if (category === Categories.LITURGIES) {
-    key = "info.kpcost"
+    key = "kpcost"
   }
 
   return (
-    <WikiProperty locale={locale} title={key}>
-      {cost}
+    <WikiProperty l10n={l10n} title={key}>
+      {acc.cost (x)}
     </WikiProperty>
   )
 }

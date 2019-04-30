@@ -1,41 +1,48 @@
 import * as React from "react";
-import { UIMessages } from "../../../Models/Hero/heroTypeHelpers";
-import { Book, SourceLink } from "../../../Models/Wiki/wikiTypeHelpers";
+import { filter, List } from "../../../../Data/List";
+import { memberF, OrderedMap } from "../../../../Data/OrderedMap";
+import { Record, RecordBase } from "../../../../Data/Record";
+import { Book } from "../../../Models/Wiki/Book";
+import { L10nRecord } from "../../../Models/Wiki/L10n";
+import { SourceLink } from "../../../Models/Wiki/sub/SourceLink";
+import { pipe } from "../../../Utilities/pipe";
 
-export interface WikiSourceProps {
-  books: Map<string, Book>
-  currentObject: {
-    src: SourceLink[] | string;
-  }
-  locale: UIMessages
+interface Accessors<A extends RecordBase> {
+  src: (r: Record<A>) => List<Record<SourceLink>>
 }
 
-export function WikiSource(props: WikiSourceProps) {
+export interface WikiSourceProps<A extends RecordBase> {
+  books: OrderedMap<string, Record<Book>>
+  x: Record<A>
+  acc: Accessors<A>
+  l10n: L10nRecord
+}
+
+export function WikiSource<A extends RecordBase> (props: WikiSourceProps<A>) {
   const {
     books,
-    currentObject: {
-      src
-    },
-    locale
+    x,
+    acc,
+    l10n,
   } = props
 
-  if (typeof src === "object") {
-    const availableSources = src.filter(e => books.has(e.id))
+  const src = acc.src (x)
 
-    const sourceList = availableSources.map(e => {
-      const book = books.get(e.id)!.name
-      if (typeof e.page === "number") {
-        return `${book} ${e.page}`
-      }
-      return book
-    })
+  const availableSources = filter (pipe (SourceLink.A.id, memberF (books))) (src)
 
-    return (
-      <p className="source">
-        <span>{sortStrings(sourceList, locale.id).intercalate(", ")}</span>
-      </p>
-    )
-  }
+  const sourceList = availableSources.map(e => {
+    const book = books.get(e.id)!.name
+    if (typeof e.page === "number") {
+      return `${book} ${e.page}`
+    }
+    return book
+  })
+
+  return (
+    <p className="source">
+      <span>{sortStrings(sourceList, locale.id).intercalate(", ")}</span>
+    </p>
+  )
 
   return (
     <p className="source">

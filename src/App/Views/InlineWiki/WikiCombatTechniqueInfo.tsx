@@ -21,8 +21,8 @@ export function WikiCombatTechniqueInfo(props: WikiCombatTechniqueInfoProps) {
   if (["nl-BE"].includes(locale.id)) {
     return (
       <WikiBoxTemplate className="combattechnique" title={currentObject.name}>
-        <WikiProperty locale={locale} title="primaryattribute.long">{currentObject.primary.map(e => attributes.has(e) ? attributes.get(e)!.name : "...").intercalate("/")}</WikiProperty>
-        <WikiProperty locale={locale} title="info.improvementcost">{getICName(currentObject.ic)}</WikiProperty>
+        <WikiProperty l10n={locale} title="primaryattribute.long">{currentObject.primary.map(e => attributes.has(e) ? attributes.get(e)!.name : "...").intercalate("/")}</WikiProperty>
+        <WikiProperty l10n={locale} title="info.improvementcost">{getICName(currentObject.ic)}</WikiProperty>
       </WikiBoxTemplate>
     )
   }
@@ -30,8 +30,8 @@ export function WikiCombatTechniqueInfo(props: WikiCombatTechniqueInfoProps) {
   return (
     <WikiBoxTemplate className="combattechnique" title={currentObject.name}>
       {currentObject.special && <Markdown source={`**${translate(locale, "info.special")}:** ${currentObject.special}`} />}
-      <WikiProperty locale={locale} title="primaryattribute.long">{currentObject.primary.map(e => attributes.has(e) ? attributes.get(e)!.name : "...").intercalate("/")}</WikiProperty>
-      <WikiProperty locale={locale} title="info.improvementcost">{getICName(currentObject.ic)}</WikiProperty>
+      <WikiProperty l10n={locale} title="primaryattribute.long">{currentObject.primary.map(e => attributes.has(e) ? attributes.get(e)!.name : "...").intercalate("/")}</WikiProperty>
+      <WikiProperty l10n={locale} title="info.improvementcost">{getICName(currentObject.ic)}</WikiProperty>
       <WikiSource {...props} />
     </WikiBoxTemplate>
   )

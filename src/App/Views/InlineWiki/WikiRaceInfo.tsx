@@ -23,11 +23,11 @@ export function WikiRaceInfo(props: WikiRaceInfoProps) {
   if (["nl-BE"].includes(locale.id)) {
     return (
       <WikiBoxTemplate className="race" title={name}>
-        <WikiProperty locale={locale} title="info.apvalue">{currentObject.ap} {translate(locale, "aptext")}</WikiProperty>
-        <WikiProperty locale={locale} title="info.lifepointbasevalue">{currentObject.lp}</WikiProperty>
-        <WikiProperty locale={locale} title="info.spiritbasevalue">{currentObject.spi}</WikiProperty>
-        <WikiProperty locale={locale} title="info.toughnessbasevalue">{currentObject.tou}</WikiProperty>
-        <WikiProperty locale={locale} title="info.movementbasevalue">{currentObject.mov}</WikiProperty>
+        <WikiProperty l10n={locale} title="info.apvalue">{currentObject.ap} {translate(locale, "aptext")}</WikiProperty>
+        <WikiProperty l10n={locale} title="info.lifepointbasevalue">{currentObject.lp}</WikiProperty>
+        <WikiProperty l10n={locale} title="info.spiritbasevalue">{currentObject.spi}</WikiProperty>
+        <WikiProperty l10n={locale} title="info.toughnessbasevalue">{currentObject.tou}</WikiProperty>
+        <WikiProperty l10n={locale} title="info.movementbasevalue">{currentObject.mov}</WikiProperty>
         <WikiSource {...props} />
       </WikiBoxTemplate>
     )
@@ -43,22 +43,22 @@ export function WikiRaceInfo(props: WikiRaceInfoProps) {
 
   return (
     <WikiBoxTemplate className="race" title={name}>
-      <WikiProperty locale={locale} title="info.apvalue">{currentObject.ap} {translate(locale, "aptext")}</WikiProperty>
-      <WikiProperty locale={locale} title="info.lifepointbasevalue">{currentObject.lp}</WikiProperty>
-      <WikiProperty locale={locale} title="info.spiritbasevalue">{currentObject.spi}</WikiProperty>
-      <WikiProperty locale={locale} title="info.toughnessbasevalue">{currentObject.tou}</WikiProperty>
-      <WikiProperty locale={locale} title="info.movementbasevalue">{currentObject.mov}</WikiProperty>
-      <WikiProperty locale={locale} title="info.attributeadjustments">{currentObject.attributeAdjustmentsText}</WikiProperty>
-      {currentObject.automaticAdvantagesText && <WikiProperty locale={locale} title="info.automaticadvantages">
+      <WikiProperty l10n={locale} title="info.apvalue">{currentObject.ap} {translate(locale, "aptext")}</WikiProperty>
+      <WikiProperty l10n={locale} title="info.lifepointbasevalue">{currentObject.lp}</WikiProperty>
+      <WikiProperty l10n={locale} title="info.spiritbasevalue">{currentObject.spi}</WikiProperty>
+      <WikiProperty l10n={locale} title="info.toughnessbasevalue">{currentObject.tou}</WikiProperty>
+      <WikiProperty l10n={locale} title="info.movementbasevalue">{currentObject.mov}</WikiProperty>
+      <WikiProperty l10n={locale} title="info.attributeadjustments">{currentObject.attributeAdjustmentsText}</WikiProperty>
+      {currentObject.automaticAdvantagesText && <WikiProperty l10n={locale} title="info.automaticadvantages">
         {currentObject.automaticAdvantagesText}
       </WikiProperty>}
-      {currentObject.stronglyRecommendedAdvantagesText && <WikiProperty locale={locale} title="info.stronglyrecommendedadvantages">
+      {currentObject.stronglyRecommendedAdvantagesText && <WikiProperty l10n={locale} title="info.stronglyrecommendedadvantages">
         {currentObject.stronglyRecommendedAdvantagesText}
       </WikiProperty>}
-      {currentObject.stronglyRecommendedDisadvantagesText && <WikiProperty locale={locale} title="info.stronglyrecommendeddisadvantages">
+      {currentObject.stronglyRecommendedDisadvantagesText && <WikiProperty l10n={locale} title="info.stronglyrecommendeddisadvantages">
         {currentObject.stronglyRecommendedDisadvantagesText}
       </WikiProperty>}
-      <WikiProperty locale={locale} title="info.commoncultures">
+      <WikiProperty l10n={locale} title="info.commoncultures">
         {sameCommonCultures && <span>{sortStrings((currentObject.commonCultures.length > 0 ? currentObject.commonCultures.filter(id => cultures.has(id)).map(id => cultures.get(id)!.name) : variants.map(e => e.name)), locale.id).intercalate(", ")}</span>}
       </WikiProperty>
       {!sameCommonCultures && <ul className="race-variant-options">
@@ -70,7 +70,7 @@ export function WikiRaceInfo(props: WikiRaceInfoProps) {
           </li>
         })}
       </ul>}
-      <WikiProperty locale={locale} title="info.commonadvantages">
+      <WikiProperty l10n={locale} title="info.commonadvantages">
         {sameCommonAdvantages && <span>{currentObject.commonAdvantagesText || translate(locale, "info.none")}</span>}
       </WikiProperty>
       {!sameCommonAdvantages && <ul className="race-variant-options">
@@ -81,7 +81,7 @@ export function WikiRaceInfo(props: WikiRaceInfoProps) {
           </li>
         })}
       </ul>}
-      <WikiProperty locale={locale} title="info.commondisadvantages">
+      <WikiProperty l10n={locale} title="info.commondisadvantages">
         {sameCommonDisadvantages && <span>{currentObject.commonDisadvantagesText || translate(locale, "info.none")}</span>}
       </WikiProperty>
       {!sameCommonDisadvantages && <ul className="race-variant-options">
@@ -92,7 +92,7 @@ export function WikiRaceInfo(props: WikiRaceInfoProps) {
           </li>
         })}
       </ul>}
-      <WikiProperty locale={locale} title="info.uncommonadvantages">
+      <WikiProperty l10n={locale} title="info.uncommonadvantages">
         {sameUncommonAdvantages && <span>{currentObject.uncommonAdvantagesText || translate(locale, "info.none")}</span>}
       </WikiProperty>
       {!sameUncommonAdvantages && <ul className="race-variant-options">
@@ -103,7 +103,7 @@ export function WikiRaceInfo(props: WikiRaceInfoProps) {
           </li>
         })}
       </ul>}
-      <WikiProperty locale={locale} title="info.uncommondisadvantages">
+      <WikiProperty l10n={locale} title="info.uncommondisadvantages">
         {sameUncommonDisadvantages && <span>{currentObject.uncommonDisadvantagesText || translate(locale, "info.none")}</span>}
       </WikiProperty>
       {!sameUncommonDisadvantages && <ul className="race-variant-options">

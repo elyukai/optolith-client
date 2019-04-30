@@ -1,71 +1,89 @@
 import * as React from "react";
-import { notNull } from "../../../../Data/List";
-import { OrderedMap } from "../../../../Data/OrderedMap";
-import { Record } from "../../../../Data/Record";
+import { fmap } from "../../../../Data/Functor";
+import { fnull, intercalate, List, notNull } from "../../../../Data/List";
+import { bindF, ensure, isNothing, listToMaybe, mapMaybe, Maybe, maybe } from "../../../../Data/Maybe";
+import { member, OrderedMap } from "../../../../Data/OrderedMap";
+import { Record, RecordBase } from "../../../../Data/Record";
 import { Advantage } from "../../../Models/Wiki/Advantage";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
-import { Skill } from "../../../Models/Wiki/Skill";
+import { L10n, L10nRecord } from "../../../Models/Wiki/L10n";
+import { RequireActivatable } from "../../../Models/Wiki/prerequisites/ActivatableRequirement";
 import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility";
+import { Application } from "../../../Models/Wiki/sub/Application";
+import { pipe } from "../../../Utilities/pipe";
+import { sortStrings } from "../../../Utilities/sortBy";
+import { isString } from "../../../Utilities/typeCheckUtils";
 import { WikiProperty } from "../WikiProperty";
 
-export interface WikiApplicationsProps {
+interface Accessors<A extends RecordBase> {
+  applications: (r: Record<A>) => List<Record<Application>>
+  applicationsInput: (r: Record<A>) => Maybe<string>
+}
+
+export interface WikiApplicationsProps<A extends RecordBase> {
   advantages: OrderedMap<string, Record<Advantage>>
-  currentObject: Record<Skill>
+  x: Record<A>
+  acc: Accessors<A>
   l10n: L10nRecord
   showNewApplications?: boolean
   specialAbilities: OrderedMap<string, Record<SpecialAbility>>
 }
 
-export function WikiApplications (props: WikiApplicationsProps): JSX.Element | null {
+const AA = Application.A
+
+export function WikiApplications <A extends RecordBase> (props: WikiApplicationsProps<A>) {
   const {
     advantages,
-    currentObject,
+    x,
+    acc,
     l10n,
     showNewApplications = false,
     specialAbilities,
   } = props
 
-  const applications = Skill.A.applications (currentObject)
-  const applicationsInput = Skill.A.applicationsInput (currentObject)
+  const applications = acc.applications (x)
+  const applicationsInput = acc.applicationsInput (x)
 
   if (notNull (applications)) {
     if (showNewApplications) {
-      const newApplications = applications.filter(e => {
-        return typeof e.prerequisites === "object" &&
-          (advantages.has(e.prerequisites[0].id as string) ||
-          specialAbilities.has(e.prerequisites[0].id as string))
-      })
+      const new_apps =
+        mapMaybe (pipe (
+                   ensure (pipe (
+                     AA.prerequisites,
+                     bindF (listToMaybe),
+                     bindF (ensure (RequireActivatable.is)),
+                     bindF (pipe (RequireActivatable.A.id, ensure (isString))),
+                     maybe (false)
+                           (id => member (id) (advantages) || member (id) (specialAbilities))
+                   )),
+                   fmap (AA.name)
+                 ))
+                 (applications)
 
-      if (newApplications.length === 0) {
+      if (fnull (new_apps)) {
         return null
       }
 
-      const sortedApplications = sortStrings(
-        newApplications.map(e => e.name),
-        l10n.id,
-      )
+      const sorted_new_apps = sortStrings (L10n.A.id (l10n))
+                                          (new_apps)
 
       return (
-        <WikiProperty locale={l10n} title="info.newapplications">
-          {sortedApplications.intercalate(", ")}
+        <WikiProperty l10n={l10n} title="newapplications">
+          {intercalate (", ") (sorted_new_apps)}
         </WikiProperty>
       )
     }
 
-    const defaultApplications = applications.filter(e => {
-      return e.prerequisites === undefined
-    })
+    const default_apps =
+      mapMaybe (pipe (ensure (pipe (AA.prerequisites, isNothing)), fmap (AA.name)))
+               (applications)
 
-    const sortedApplications = sortStrings(
-      defaultApplications.map(e => e.name),
-      l10n.id
-    )
+    const sorted_default_apps = sortStrings (L10n.A.id (l10n))
+                                            (default_apps)
 
     return (
-      <WikiProperty locale={l10n} title="info.applications">
-        {sortedApplications.intercalate(", ")}
-        {applicationsInput && ", "}
-        {applicationsInput}
+      <WikiProperty l10n={l10n} title="applications">
+        {intercalate (", ") (sorted_default_apps)}
+        {maybe ("") ((input: string) => `, ${input}`) (applicationsInput)}
       </WikiProperty>
     )
   }

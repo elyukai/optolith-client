@@ -1,16 +1,22 @@
 import * as React from "react";
-import { translate, UIMessages } from "../../../Utilities/I18n";
+import { List } from "../../../../Data/List";
+import { Record, RecordBase } from "../../../../Data/Record";
+import { L10nRecord } from "../../../Models/Wiki/L10n";
+import { translate } from "../../../Utilities/I18n";
 import { WikiProperty } from "../WikiProperty";
 
-export interface WikiSpellTraditionsProps {
-  currentObject: {
-    subtradition: number[]
-    tradition: number[]
-  }
-  locale: UIMessages
+interface Accessors<A extends RecordBase> {
+  subtradition: (r: Record<A>) => List<number>
+  tradition: (r: Record<A>) => List<number>
 }
 
-export function WikiSpellTraditions(props: WikiSpellTraditionsProps) {
+export interface WikiSpellTraditionsProps<A extends RecordBase> {
+  x: Record<A>
+  acc: Accessors<A>
+  l10n: L10nRecord
+}
+
+export function WikiSpellTraditions<A extends RecordBase> (props: WikiSpellTraditionsProps<A>) {
   const {
     currentObject: {
       subtradition,
@@ -21,7 +27,7 @@ export function WikiSpellTraditions(props: WikiSpellTraditionsProps) {
 
   if (subtradition.length > 0) {
     return (
-      <WikiProperty locale={locale} title="info.musictradition">
+      <WikiProperty l10n={locale} title="info.musictradition">
         {sortStrings(subtradition.map(e => {
           return translate(locale, "musictraditions")[e - 1]
         }), locale.id).intercalate(", ")}
@@ -30,7 +36,7 @@ export function WikiSpellTraditions(props: WikiSpellTraditionsProps) {
   }
 
   return (
-    <WikiProperty locale={locale} title="info.traditions">
+    <WikiProperty l10n={locale} title="info.traditions">
       {sortStrings(tradition.filter(e => {
         return e <= translate(locale, "spells.view.traditions").length
       }).map(e => {

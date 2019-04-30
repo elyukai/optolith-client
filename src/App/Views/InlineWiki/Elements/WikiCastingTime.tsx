@@ -1,44 +1,49 @@
 import * as React from "react";
+import { Record, RecordBase } from "../../../../Data/Record";
 import { Categories, CategoryWithGroups } from "../../../Constants/Categories";
+import { L10n, L10nRecord } from "../../../Models/Wiki/L10n";
 import { WikiProperty } from "../WikiProperty";
 
-export interface WikiCastingTimeProps {
-  currentObject: {
-    castingTime: string;
-    category: CategoryWithGroups;
-    gr: number;
-  }
-  locale: UIMessages
+interface Accessors<A extends RecordBase> {
+  castingTime: (r: Record<A>) => string
+  category: (r: Record<A>) => CategoryWithGroups
+  gr: (r: Record<A>) => number
 }
 
-export function WikiCastingTime(props: WikiCastingTimeProps) {
+export interface WikiCastingTimeProps<A extends RecordBase> {
+  x: Record<A>
+  acc: Accessors<A>
+  l10n: L10nRecord
+}
+
+export function WikiCastingTime<A extends RecordBase> (props: WikiCastingTimeProps<A>) {
   const {
-    currentObject: {
-      castingTime,
-      category,
-      gr
-    },
-    locale
+    x,
+    acc,
+    l10n,
   } = props
 
-  let key: keyof UIMessages = "info.castingtime"
+  let key: keyof L10n = "castingtime"
+
+  const category = acc.category (x)
+  const gr = acc.gr (x)
 
   if (category === Categories.SPELLS && gr === 2) {
-    key = "info.ritualtime"
+    key = "ritualtime"
   }
   else if (category === Categories.SPELLS && (gr === 5 || gr === 6)) {
-    key = "info.lengthoftime"
+    key = "lengthoftime"
   }
   else if (category === Categories.LITURGIES && gr === 1) {
-    key = "info.liturgicaltime"
+    key = "liturgicaltime"
   }
   else if (category === Categories.LITURGIES && gr === 2) {
-    key = "info.ceremonialtime"
+    key = "ceremonialtime"
   }
 
   return (
-    <WikiProperty locale={locale} title={key}>
-      {castingTime}
+    <WikiProperty l10n={l10n} title={key}>
+      {acc.castingTime (x)}
     </WikiProperty>
   )
 }

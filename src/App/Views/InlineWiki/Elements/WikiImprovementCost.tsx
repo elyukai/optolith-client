@@ -1,26 +1,29 @@
 import * as React from "react";
+import { Record, RecordBase } from "../../../../Data/Record";
+import { L10nRecord } from "../../../Models/Wiki/L10n";
 import { getICName } from "../../../Utilities/AdventurePoints/improvementCostUtils";
-import { UIMessages } from "../../../Utilities/I18n";
 import { WikiProperty } from "../WikiProperty";
 
-export interface WikiImprovementCostProps {
-  currentObject: {
-    ic: number;
-  }
-  locale: UIMessages
+interface Accessors<A extends RecordBase> {
+  ic: (r: Record<A>) => number
 }
 
-export function WikiImprovementCost(props: WikiImprovementCostProps) {
+export interface WikiImprovementCostProps<A extends RecordBase> {
+  x: Record<A>
+  acc: Accessors<A>
+  l10n: L10nRecord
+}
+
+export function WikiImprovementCost<A extends RecordBase> (props: WikiImprovementCostProps<A>) {
   const {
-    currentObject: {
-      ic
-    },
-    locale
+    x,
+    acc,
+    l10n,
   } = props
 
   return (
-    <WikiProperty locale={locale} title="info.improvementcost">
-      {getICName(ic)}
+    <WikiProperty l10n={l10n} title="improvementcost">
+      {getICName (acc.ic (x))}
     </WikiProperty>
   )
 }

@@ -18,7 +18,7 @@ export function WikiCantripInfo(props: WikiCantripInfoProps) {
   if (["nl-BE"].includes(locale.id)) {
     return (
       <WikiBoxTemplate className="cantrip" title={currentObject.name}>
-        <WikiProperty locale={locale} title="info.property">
+        <WikiProperty l10n={locale} title="info.property">
           {translate(locale, "spells.view.properties")[currentObject.property - 1]}
         </WikiProperty>
       </WikiBoxTemplate>
@@ -28,13 +28,13 @@ export function WikiCantripInfo(props: WikiCantripInfoProps) {
   return (
     <WikiBoxTemplate className="cantrip" title={currentObject.name}>
       <Markdown className="no-indent" source={currentObject.effect} />
-      <WikiProperty locale={locale} title="info.range">{currentObject.range}</WikiProperty>
-      <WikiProperty locale={locale} title="info.duration">{currentObject.duration}</WikiProperty>
-      <WikiProperty locale={locale} title="info.targetcategory">{currentObject.target}</WikiProperty>
-      <WikiProperty locale={locale} title="info.property">
+      <WikiProperty l10n={locale} title="info.range">{currentObject.range}</WikiProperty>
+      <WikiProperty l10n={locale} title="info.duration">{currentObject.duration}</WikiProperty>
+      <WikiProperty l10n={locale} title="info.targetcategory">{currentObject.target}</WikiProperty>
+      <WikiProperty l10n={locale} title="info.property">
         {translate(locale, "spells.view.properties")[currentObject.property - 1]}
       </WikiProperty>
-      {currentObject.note && <WikiProperty locale={locale} title="info.note">{currentObject.note}</WikiProperty>}
+      {currentObject.note && <WikiProperty l10n={locale} title="info.note">{currentObject.note}</WikiProperty>}
       <WikiSource {...props} />
     </WikiBoxTemplate>
   )

@@ -1,23 +1,27 @@
 import * as React from "react";
-import { translate, UIMessages } from "../../../Utilities/I18n";
+import { Record, RecordBase } from "../../../../Data/Record";
+import { L10nRecord } from "../../../Models/Wiki/L10n";
+import { translate } from "../../../Utilities/I18n";
 import { Markdown } from "../../Universal/Markdown";
 
-export interface WikiEffectProps {
-  currentObject: {
-    effect: string;
-  }
-  locale: UIMessages
+interface Accessors<A extends RecordBase> {
+  effect: (r: Record<A>) => string
 }
 
-export function WikiEffect(props: WikiEffectProps) {
+export interface WikiEffectProps<A extends RecordBase> {
+  x: Record<A>
+  acc: Accessors<A>
+  l10n: L10nRecord
+}
+
+export function WikiEffect<A extends RecordBase> (props: WikiEffectProps<A>) {
   const {
-    currentObject: {
-      effect
-    },
-    locale
+    x,
+    acc,
+    l10n,
   } = props
 
   return (
-    <Markdown source={`**${translate(locale, "info.effect")}:** ${effect}`} />
+    <Markdown source={`**${translate (l10n) ("effect")}:** ${acc.effect (x)}`} />
   )
 }

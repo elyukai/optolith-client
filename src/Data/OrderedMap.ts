@@ -416,6 +416,8 @@ export const lookup =
   (m: OrderedMap<K, A>): Maybe<A> =>
     Maybe (m .value .get (key))
 
+export type lookup<K, A> = (key: K) => (m: OrderedMap<K, A>) => Maybe<A>
+
 /**
  * `lookupF :: Ord k => Map k a -> k -> Maybe a`
  *
