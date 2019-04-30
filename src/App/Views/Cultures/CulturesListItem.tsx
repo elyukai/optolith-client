@@ -26,12 +26,12 @@ export function CulturesListItem (props: CulturesListItemProps) {
       <ListItemSeparator />
       <ListItemButtons>
         <IconButton
-          icon="&#xE90a"
+          icon="&#xE90a;"
           onClick={selectCulture .bind (null, CCA_.id (culture))}
           disabled={Maybe.elem (CCA_.id (culture)) (currentId)}
           />
         <IconButton
-          icon="&#xE90e"
+          icon="&#xE90e;"
           onClick={switchToProfessions}
           disabled={Maybe.notElem (CCA_.id (culture)) (currentId)}
           />

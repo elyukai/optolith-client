@@ -100,7 +100,7 @@ export function ItemEditor (props: ItemEditorProps) {
         id="item-editor"
         title={or (isInCreation) ? translate (l10n) ("createitem") : translate (l10n) ("edititem")}
         close={closeEditor}
-        isOpened
+        isOpen
         buttons={[
           {
             autoWidth: true,

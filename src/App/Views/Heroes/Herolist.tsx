@@ -142,7 +142,7 @@ export class Herolist extends React.Component<HerolistProps, HerolistState> {
         <HeroCreation
           {...this.props}
           close={closeCharacterCreator}
-          isOpened={isCharacterCreatorOpen}
+          isOpen={isCharacterCreatorOpen}
           />
       </Page>
     )

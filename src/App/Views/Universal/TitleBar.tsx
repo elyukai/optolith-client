@@ -65,12 +65,12 @@ export class TitleBar extends React.Component<TitleBarProps, TitleBarState> {
       return (
         <TitleBarWrapper {...this.state}>
           <div className="macos-hover-area">
-            <TitleBarButton icon="&#xE900" onClick={close} className="close" />
-            <TitleBarButton icon="&#xE903" onClick={minimize} className="minimize" />
+            <TitleBarButton icon="&#xE900;" onClick={close} className="close" />
+            <TitleBarButton icon="&#xE903;" onClick={minimize} className="minimize" />
             {
               isFullScreen
-              ? <TitleBarButton icon="&#xE902" onClick={leaveFullscreen} className="fullscreen" />
-              : <TitleBarButton icon="&#xE901" onClick={enterFullscreen} className="fullscreen" />
+              ? <TitleBarButton icon="&#xE902;" onClick={leaveFullscreen} className="fullscreen" />
+              : <TitleBarButton icon="&#xE901;" onClick={enterFullscreen} className="fullscreen" />
             }
           </div>
         </TitleBarWrapper>
@@ -79,14 +79,14 @@ export class TitleBar extends React.Component<TitleBarProps, TitleBarState> {
 
     return (
       <TitleBarWrapper {...this.state}>
-        <TitleBarButton icon="&#xE903" onClick={minimize} className="minimize" />
+        <TitleBarButton icon="&#xE903;" onClick={minimize} className="minimize" />
         {!isMaximized
-          ? <TitleBarButton icon="&#xE901" onClick={maximize} className="maximize" />
+          ? <TitleBarButton icon="&#xE901;" onClick={maximize} className="maximize" />
           : null}
         {isMaximized
-          ? <TitleBarButton icon="&#xE902" onClick={restore} className="restore" />
+          ? <TitleBarButton icon="&#xE902;" onClick={restore} className="restore" />
           : null}
-        <TitleBarButton icon="&#xE900" onClick={close} className="close" />
+        <TitleBarButton icon="&#xE900;" onClick={close} className="close" />
       </TitleBarWrapper>
     )
   }

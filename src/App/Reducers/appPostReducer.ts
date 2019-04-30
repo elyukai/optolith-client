@@ -3,7 +3,7 @@ import { flip, ident, join } from "../../Data/Function";
 import { fmapF } from "../../Data/Functor";
 import { over, set } from "../../Data/Lens";
 import { List } from "../../Data/List";
-import { and, elem, isJust, isNothing, Just, or } from "../../Data/Maybe";
+import { and, elem, fromJust, isJust, isNothing, Just, or } from "../../Data/Maybe";
 import { insert, OrderedMap } from "../../Data/OrderedMap";
 import { snd } from "../../Data/Pair";
 import { Record } from "../../Data/Record";
@@ -42,7 +42,7 @@ const prepareHerolist =
     }
 
     if (isJust (rawHeroes)) {
-      const hs = Object.entries (rawHeroes).reduce<Reduced> (
+      const hs = Object.entries (fromJust (rawHeroes)).reduce<Reduced> (
         ({ heroes, users }, [key, hero]) => {
           const updatedHero = convertHero (hero)
           const heroInstance = convertFromRawHero (snd (action.payload.tables))

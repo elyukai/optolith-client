@@ -15,15 +15,14 @@ export interface WikiTargetCategoryProps<A extends RecordBase> {
 
 export function WikiTargetCategory<A extends RecordBase> (props: WikiTargetCategoryProps<A>) {
   const {
-    currentObject: {
-      target
-    },
-    locale
+    x,
+    acc,
+    l10n,
   } = props
 
   return (
-    <WikiProperty l10n={locale} title="info.targetcategory">
-      {target}
+    <WikiProperty l10n={l10n} title="targetcategory">
+      {acc.target (x)}
     </WikiProperty>
   )
 }

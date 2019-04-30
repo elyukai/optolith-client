@@ -62,13 +62,13 @@ export function PermanentPoints (props: PermanentPointsProps) {
                 <div className="buttons">
                   <IconButton
                     className="add"
-                    icon="&#xE908"
+                    icon="&#xE908;"
                     onClick={addBoughtBackPoint}
                     disabled={fromJust (permanentBoughtBack) >= permanentSpent}
                     />
                   <IconButton
                     className="remove"
-                    icon="&#xE909"
+                    icon="&#xE909;"
                     onClick={removeBoughtBackPoint}
                     disabled={fromJust (permanentBoughtBack) <= 0}
                     />
@@ -80,10 +80,10 @@ export function PermanentPoints (props: PermanentPointsProps) {
           <div className="value">{permanentSpent}</div>
           <div className="description smallcaps">{translate (l10n) ("spent")}</div>
           <div className="buttons">
-            <IconButton className="add" icon="&#xE908" onClick={addLostPoint} />
+            <IconButton className="add" icon="&#xE908;" onClick={addLostPoint} />
             <IconButton
               className="remove"
-              icon="&#xE909"
+              icon="&#xE909;"
               onClick={removeLostPoint}
               disabled={permanentSpent <= 0}
               />

@@ -82,7 +82,7 @@ export class HeroCreation extends React.Component<HeroCreationProps, HeroCreatio
   }
 
   componentWillReceiveProps (nextProps: HeroCreationProps) {
-    if (nextProps.isOpened === false && this.props.isOpened === true) {
+    if (nextProps.isOpen === false && this.props.isOpen === true) {
       this.clear ()
     }
   }

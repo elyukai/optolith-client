@@ -538,6 +538,11 @@ export const find: Find =
  * `(++) :: [a] -> [a] -> [a]`
  *
  * Append two lists.
+ *
+ * ```haskell
+ * [1, 2, 3] ++ [4, 5, 6] == [1, 2, 3, 4, 5, 6]
+ * (++) [1, 2, 3] [4, 5, 6] == [1, 2, 3, 4, 5, 6]
+ * ```
  */
 export const append =
   <A> (xs1: List<A>) => (xs2: List<A>): List<A> =>
@@ -551,6 +556,11 @@ const appendSafe =
  * `(++) :: String -> String -> String`
  *
  * Append two lists.
+ *
+ * ```haskell
+ * "abc" ++ "def" == "abcdef"
+ * (++) "abc" "def" == "abcdef"
+ * ```
  */
 export const appendStr =
   (xs1: string) => (xs2: string): string =>

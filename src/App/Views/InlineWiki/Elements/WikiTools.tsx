@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Maybe } from "../../../../Data/Maybe";
+import { Maybe, maybeR } from "../../../../Data/Maybe";
 import { Record, RecordBase } from "../../../../Data/Record";
 import { L10nRecord } from "../../../Models/Wiki/L10n";
 import { translate } from "../../../Utilities/I18n";
@@ -17,17 +17,14 @@ export interface WikiToolsProps<A extends RecordBase> {
 
 export function WikiTools<A extends RecordBase> (props: WikiToolsProps<A>) {
   const {
-    currentObject: {
-      tools
-    },
-    locale
+    x,
+    acc,
+    l10n,
   } = props
 
-  if (typeof tools === "string") {
-    return (
-      <Markdown source={`**${translate(locale, "info.tools")}:** ${tools}`} />
-    )
-  }
-
-  return null
+  return maybeR (null)
+                ((tools: string) => (
+                  <Markdown source={`**${translate (l10n) ("tools")}:** ${tools}`} />
+                ))
+                (acc.tools (x))
 }

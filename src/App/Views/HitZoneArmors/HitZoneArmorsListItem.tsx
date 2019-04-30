@@ -36,12 +36,12 @@ export function HitZoneArmorsListItem (props: HitZoneArmorsListItemProps) {
         <ListItemSeparator />
         <ListItemButtons>
           <IconButton
-            icon="&#xE90c"
+            icon="&#xE90c;"
             onClick={() => editItem (HZAA.id (item))}
             flat
             />
           <IconButton
-            icon="&#xE90b"
+            icon="&#xE90b;"
             onClick={() => deleteItem (HZAA.id (item))}
             flat
             />

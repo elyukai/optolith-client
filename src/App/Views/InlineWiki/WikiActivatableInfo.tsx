@@ -1,14 +1,33 @@
 import classNames = require("classnames")
 import * as React from "react";
+import { cnst, flip, ident } from "../../../Data/Function";
+import { set } from "../../../Data/Lens";
+import { appendStr, ifoldr, imap, intercalate, isList, List, map, subscript } from "../../../Data/List";
+import { bind, fromJust, fromMaybe, isJust, isNothing, Just, maybe, Maybe, maybeR, maybeRNullF, Nothing } from "../../../Data/Maybe";
+import { lookup, OrderedMap } from "../../../Data/OrderedMap";
+import { fromDefault, makeLenses, Record, RecordI } from "../../../Data/Record";
 import { Categories } from "../../Constants/Categories";
-import { ActivatableBasePrerequisites, ActivatableInstance, ActiveObject, SecondaryAttribute } from "../../Models/Hero/heroTypeHelpers";
-import { UIMessages } from "../../Models/View/viewTypeHelpers";
-import { Attribute, Book, Race, SpecialAbility } from "../../Models/Wiki/wikiTypeHelpers";
-import { WikiState } from "../../Reducers/wikiReducer";
+import { HeroModelRecord } from "../../Models/Hero/HeroModel";
+import { DerivedCharacteristic } from "../../Models/View/DerivedCharacteristic";
+import { Advantage } from "../../Models/Wiki/Advantage";
+import { Attribute } from "../../Models/Wiki/Attribute";
+import { Book } from "../../Models/Wiki/Book";
+import { Disadvantage } from "../../Models/Wiki/Disadvantage";
+import { L10nRecord } from "../../Models/Wiki/L10n";
+import { RequireActivatable } from "../../Models/Wiki/prerequisites/ActivatableRequirement";
+import { RequireIncreasable } from "../../Models/Wiki/prerequisites/IncreasableRequirement";
+import { RequirePrimaryAttribute } from "../../Models/Wiki/prerequisites/PrimaryAttributeRequirement";
+import { RaceRequirement } from "../../Models/Wiki/prerequisites/RaceRequirement";
+import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
+import { WikiModelRecord } from "../../Models/Wiki/WikiModel";
+import { Activatable, AllRequirements } from "../../Models/Wiki/wikiTypeHelpers";
+import { DCIds } from "../../Selectors/derivedCharacteristicsSelectors";
 import { translate } from "../../Utilities/I18n";
 import { getCategoryById } from "../../Utilities/IDUtils";
-import { getRoman } from "../../Utilities/NumberUtils";
-import { isRaceRequirement, isRequiringActivatable, isRequiringIncreasable, isRequiringPrimaryAttribute } from "../../Utilities/Prerequisites/prerequisitesUtils";
+import { dec, negate } from "../../Utilities/mathUtils";
+import { toRoman, toRomanFromIndex } from "../../Utilities/NumberUtils";
+import { pipe, pipe_ } from "../../Utilities/pipe";
+import { misNumberM, misStringM } from "../../Utilities/typeCheckUtils";
 import { getWikiEntry } from "../../Utilities/WikiUtils";
 import { Markdown } from "../Universal/Markdown";
 import { WikiSource } from "./Elements/WikiSource";
@@ -16,59 +35,60 @@ import { WikiBoxTemplate } from "./WikiBoxTemplate";
 import { WikiProperty } from "./WikiProperty";
 
 export interface WikiActivatableInfoProps {
-  attributes: Map<string, Attribute>
-  books: Map<string, Book>
-  derivedCharacteristics: Map<string, SecondaryAttribute>
-  dependent: DependentInstancesState
-  wiki: WikiState
-  currentObject: ActivatableInstance
-  locale: UIMessages
-  specialAbilities: Map<string, SpecialAbility>
+  attributes: OrderedMap<string, Record<Attribute>>
+  books: OrderedMap<string, Record<Book>>
+  derivedCharacteristics: OrderedMap<DCIds, Record<DerivedCharacteristic>>
+  hero: HeroModelRecord
+  wiki: WikiModelRecord
+  x: Activatable
+  l10n: L10nRecord
+  specialAbilities: OrderedMap<string, Record<SpecialAbility>>
 }
 
-export function WikiActivatableInfo(props: WikiActivatableInfoProps) {
-  const { currentObject, locale, specialAbilities, wiki } = props
-  const { apValue, apValueAppend, cost, tiers } = currentObject
+const AcA = { ...Advantage.AL, ...SpecialAbility.AL }
+const AdA = Advantage.A
+const DA = Disadvantage.A
+const SAA = SpecialAbility.A
 
-  let costText = `**${translate(locale, "info.apvalue")}:** `
+// tslint:disable-next-line: cyclomatic-complexity
+export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
+  const { x, l10n, specialAbilities, wiki } = props
 
-  if (apValue) {
-    costText += apValue
-  }
-  else if (Array.isArray(cost)) {
-    const iteratedCost = currentObject.category === Categories.DISADVANTAGES ? cost.map(e => -e) : cost
-    costText += `${translate(locale, "info.tier")} ${iteratedCost.map((_, i) => getRoman(i, true)).join("/")}: ${iteratedCost.join("/")} ${translate(locale, "aptext")}`
-  }
-  else {
-    costText += `${currentObject.category === Categories.DISADVANTAGES && typeof cost === "number" ? -cost : cost} ${translate(locale, "aptext")}`
+  const cost = getCost (l10n) (x)
 
-    if (typeof tiers === "number") {
-      costText += ` ${translate(locale, "info.pertier")}`
-    }
-  }
-  if (apValueAppend) {
-    costText += ` ${apValueAppend}`
-  }
+  if (SpecialAbility.is (x)) {
+    const header_name_levels =
+      maybe ("")
+            ((levels: number) => levels < 2 ? " I" : ` I-${toRoman (levels)}`)
+            (AcA.tiers (x))
 
-  if (currentObject.category === Categories.SPECIAL_ABILITIES) {
-    const headerName = `${currentObject.nameInWiki || currentObject.name}${typeof tiers === "number" ? tiers < 2 ? " I" : ` I-${getRoman(tiers)}` : ""}`
-    const headerSubName = currentObject.subgr && (
-      <p className="title">
-        {translate(locale, "info.specialabilities.subgroups")[currentObject.subgr - 1]}
-      </p>
-    )
+    const header_full_name = fromMaybe (AcA.name (x)) (AcA.nameInWiki (x))
 
-    if (["nl-BE"].includes(locale.id)) {
-      return (
-        <WikiBoxTemplate
-          className="specialability"
-          title={headerName}
-          subtitle={headerSubName}
-          />
-      )
-    }
+    const header_name = `${header_full_name}${header_name_levels}`
 
-    switch (currentObject.gr) {
+    const header_sub_name =
+      maybeR (null)
+             ((subgr: string) => (
+               <p className="title">
+                 {subgr}
+               </p>
+             ))
+             (bind (AcA.subgr (x))
+                   (pipe (dec, subscript (translate (l10n) ("combatspecialabilitygroups")))))
+
+    // if (["nl-BE"].includes(l10n.id)) {
+    //   return (
+    //     <WikiBoxTemplate
+    //       className="specialability"
+    //       title={headerName}
+    //       subtitle={headerSubName}
+    //       />
+    //   )
+    // }
+
+    const source_elem = <WikiSource<RecordI<Activatable>> {...props} acc={AcA} />
+
+    switch (AcA.gr (x)) {
       case 5:
       case 15:
       case 16:
@@ -79,28 +99,44 @@ export function WikiActivatableInfo(props: WikiActivatableInfoProps) {
         return (
           <WikiBoxTemplate
             className="specialability"
-            title={headerName}
-            subtitle={headerSubName}
+            title={header_name}
+            subtitle={header_sub_name}
             >
-            {currentObject.effect && <Markdown source={`**${translate(locale, "info.effect")}:** ${currentObject.effect}`} />}
-            {currentObject.volume && <WikiProperty l10n={locale} title="info.volume">
-              {currentObject.volume}
-            </WikiProperty>}
-            {currentObject.aeCost && <WikiProperty l10n={locale} title="info.aecost">
-              {currentObject.aeCost}
-            </WikiProperty>}
-            {currentObject.aeCost === undefined && currentObject.bindingCost === undefined && <WikiProperty l10n={locale} title="info.aecost">
-              {translate(locale, "info.none")}
-            </WikiProperty>}
-            {currentObject.bindingCost && <WikiProperty l10n={locale} title="info.bindingcost">
-              {currentObject.bindingCost}
-            </WikiProperty>}
-            {currentObject.property && <WikiProperty l10n={locale} title="info.property">
-              {typeof currentObject.property === "number" ? translate(locale, "spells.view.properties")[currentObject.property - 1] : currentObject.property}
-            </WikiProperty>}
+            {maybeRNullF (AcA.effect (x))
+                         (str => (
+                           <Markdown source={`**${translate (l10n) ("effect")}:** ${str}`} />
+                         ))}
+            {maybeRNullF (AcA.volume (x))
+                         (str => (
+                           <WikiProperty l10n={l10n} title="volume">
+                             {str}
+                           </WikiProperty>
+                         ))}
+            {maybeRNullF (AcA.aeCost (x))
+                         (str => (
+                           <WikiProperty l10n={l10n} title="aecost">
+                             {str}
+                           </WikiProperty>
+                         ))}
+            {isNothing (AcA.aeCost (x)) && isNothing (AcA.bindingCost (x))
+              ? <WikiProperty l10n={l10n} title="aecost">{translate (l10n) ("none")}</WikiProperty>
+              : null}
+            {maybeRNullF (AcA.bindingCost (x))
+                         (str => (
+                           <WikiProperty l10n={l10n} title="bindingcost">
+                             {str}
+                           </WikiProperty>
+                         ))}
+            {maybeRNullF (bind (misNumberM (AcA.property (x)))
+                               (pipe (dec, subscript (translate (l10n) ("propertylist")))))
+                         (str => (
+                           <WikiProperty l10n={l10n} title="bindingcost">
+                             {str}
+                           </WikiProperty>
+                         ))}
             <PrerequisitesText {...props} entry={currentObject} />
             <Markdown source={costText} />
-            <WikiSource {...props} />
+            {source_elem}
           </WikiBoxTemplate>
         )
 
@@ -108,16 +144,16 @@ export function WikiActivatableInfo(props: WikiActivatableInfoProps) {
         return (
           <WikiBoxTemplate
             className="specialability"
-            title={headerName}
-            subtitle={headerSubName}
+            title={header_name}
+            subtitle={header_sub_name}
             >
-            {currentObject.effect && <Markdown source={`**${translate(locale, "info.effect")}:** ${currentObject.effect}`} />}
-            {currentObject.aspect && <WikiProperty l10n={locale} title="info.aspect">
-              {typeof currentObject.aspect === "number" ? translate(locale, "liturgies.view.aspects")[currentObject.aspect - 1] : currentObject.aspect}
+            {currentObject.effect && <Markdown source={`**${translate(l10n, "info.effect")}:** ${currentObject.effect}`} />}
+            {currentObject.aspect && <WikiProperty l10n={l10n} title="aspect">
+              {typeof currentObject.aspect === "number" ? translate(l10n, "liturgies.view.aspects")[currentObject.aspect - 1] : currentObject.aspect}
             </WikiProperty>}
             <PrerequisitesText {...props} entry={currentObject} />
             <Markdown source={costText} />
-            <WikiSource {...props} />
+            {source_elem}
           </WikiBoxTemplate>
         )
 
@@ -125,20 +161,20 @@ export function WikiActivatableInfo(props: WikiActivatableInfoProps) {
         return (
           <WikiBoxTemplate
             className="specialability"
-            title={headerName}
-            subtitle={headerSubName}
+            title={header_name}
+            subtitle={header_sub_name}
             >
-            <WikiProperty l10n={locale} title="info.aecost">
+            <WikiProperty l10n={l10n} title="aecost">
               {currentObject.aeCost}
             </WikiProperty>
-            <WikiProperty l10n={locale} title="info.protectivecircle">
+            <WikiProperty l10n={l10n} title="protectivecircle">
               {currentObject.protectiveCircle}
             </WikiProperty>
-            <WikiProperty l10n={locale} title="info.wardingcircle">
+            <WikiProperty l10n={l10n} title="wardingcircle">
               {currentObject.wardingCircle}
             </WikiProperty>
             <Markdown source={costText} />
-            <WikiSource {...props} />
+            {source_elem}
           </WikiBoxTemplate>
         )
 
@@ -147,13 +183,13 @@ export function WikiActivatableInfo(props: WikiActivatableInfoProps) {
         return (
           <WikiBoxTemplate
             className="specialability"
-            title={headerName}
-            subtitle={headerSubName}
+            title={header_name}
+            subtitle={header_sub_name}
             >
             <Markdown source={`${currentObject.rules}`} />
             <PrerequisitesText {...props} entry={currentObject} />
             <Markdown source={costText} />
-            <WikiSource {...props} />
+            {source_elem}
           </WikiBoxTemplate>
         )
 
@@ -162,16 +198,16 @@ export function WikiActivatableInfo(props: WikiActivatableInfoProps) {
         return (
           <WikiBoxTemplate
             className="specialability"
-            title={headerName}
-            subtitle={headerSubName}
+            title={header_name}
+            subtitle={header_sub_name}
             >
-            {currentObject.rules && <Markdown source={`**${translate(locale, "info.rules")}:** ${currentObject.rules}`} />}
-            {currentObject.extended && <Markdown source={`**${translate(locale, "info.extendedcombatspecialabilities")}:** ${sortStrings(currentObject.extended.map(e => !Array.isArray(e) && specialAbilities.has(e) ? specialAbilities.get(e)!.name : "..."), locale.id).intercalate(", ")}`} />}
-            {currentObject.penalty && <Markdown source={`**${translate(locale, "info.penalty")}:** ${currentObject.penalty}`} />}
-            {currentObject.combatTechniques && <Markdown source={`**${translate(locale, "info.combattechniques")}:** ${currentObject.combatTechniques}`} />}
+            {currentObject.rules && <Markdown source={`**${translate(l10n, "info.rules")}:** ${currentObject.rules}`} />}
+            {currentObject.extended && <Markdown source={`**${translate(l10n, "info.extendedcombatspecialabilities")}:** ${sortStrings(currentObject.extended.map(e => !Array.isArray(e) && specialAbilities.has(e) ? specialAbilities.get(e)!.name : "..."), l10n.id).intercalate(", ")}`} />}
+            {currentObject.penalty && <Markdown source={`**${translate(l10n, "info.penalty")}:** ${currentObject.penalty}`} />}
+            {currentObject.combatTechniques && <Markdown source={`**${translate(l10n, "info.combattechniques")}:** ${currentObject.combatTechniques}`} />}
             <PrerequisitesText {...props} entry={currentObject} />
             <Markdown source={costText} />
-            <WikiSource {...props} />
+            {source_elem}
           </WikiBoxTemplate>
         )
 
@@ -179,14 +215,14 @@ export function WikiActivatableInfo(props: WikiActivatableInfoProps) {
         return (
           <WikiBoxTemplate
             className="specialability"
-            title={headerName}
-            subtitle={headerSubName}
+            title={header_name}
+            subtitle={header_sub_name}
             >
-            {currentObject.rules && <Markdown source={`**${translate(locale, "info.rules")}:** ${currentObject.rules}`} />}
-            {currentObject.extended && <Markdown source={`**${translate(locale, "info.extendedmagicalspecialabilities")}:** ${sortStrings(currentObject.extended.map(e => !Array.isArray(e) && specialAbilities.has(e) ? specialAbilities.get(e)!.name : "..."), locale.id).intercalate(", ")}`} />}
+            {currentObject.rules && <Markdown source={`**${translate(l10n, "info.rules")}:** ${currentObject.rules}`} />}
+            {currentObject.extended && <Markdown source={`**${translate(l10n, "info.extendedmagicalspecialabilities")}:** ${sortStrings(currentObject.extended.map(e => !Array.isArray(e) && specialAbilities.has(e) ? specialAbilities.get(e)!.name : "..."), l10n.id).intercalate(", ")}`} />}
             <PrerequisitesText {...props} entry={currentObject} />
             <Markdown source={costText} />
-            <WikiSource {...props} />
+            {source_elem}
           </WikiBoxTemplate>
         )
 
@@ -208,19 +244,19 @@ export function WikiActivatableInfo(props: WikiActivatableInfoProps) {
         return (
           <WikiBoxTemplate
             className="specialability"
-            title={headerName}
-            subtitle={headerSubName}
+            title={header_name}
+            subtitle={header_sub_name}
             >
-            {currentObject.rules && <Markdown source={`**${translate(locale, "info.rules")}:** ${currentObject.rules}`} />}
-            {currentObject.extended && <Markdown source={`**${translate(locale, "info.extendedblessedtspecialabilities")}:** ${sortStrings([
+            {currentObject.rules && <Markdown source={`**${translate(l10n, "info.rules")}:** ${currentObject.rules}`} />}
+            {currentObject.extended && <Markdown source={`**${translate(l10n, "info.extendedblessedtspecialabilities")}:** ${sortStrings([
               ...currentObject.extended.map(e => !Array.isArray(e) && specialAbilities.has(e) ? specialAbilities.get(e)!.name : "..."),
-              ...(additionalExtended ? additionalExtended.map(e => getNameCostForWiki({ id: "SA_639", index: 0, ...e }, wiki, locale).combinedName) : [])
-            ], locale.id).intercalate(", ")}`} />}
-            {currentObject.penalty && <Markdown source={`**${translate(locale, "info.penalty")}:** ${currentObject.penalty}`} />}
-            {currentObject.combatTechniques && <Markdown source={`**${translate(locale, "info.combattechniques")}:** ${currentObject.combatTechniques}`} />}
+              ...(additionalExtended ? additionalExtended.map(e => getNameCostForWiki({ id: "SA_639", index: 0, ...e }, wiki, l10n).combinedName) : [])
+            ], l10n.id).intercalate(", ")}`} />}
+            {currentObject.penalty && <Markdown source={`**${translate(l10n, "info.penalty")}:** ${currentObject.penalty}`} />}
+            {currentObject.combatTechniques && <Markdown source={`**${translate(l10n, "info.combattechniques")}:** ${currentObject.combatTechniques}`} />}
             <PrerequisitesText {...props} entry={currentObject} />
             <Markdown source={costText} />
-            <WikiSource {...props} />
+            {source_elem}
           </WikiBoxTemplate>
         )
       }
@@ -229,19 +265,19 @@ export function WikiActivatableInfo(props: WikiActivatableInfoProps) {
         return (
           <WikiBoxTemplate
             className="specialability"
-            title={headerName}
-            subtitle={headerSubName}
+            title={header_name}
+            subtitle={header_sub_name}
             >
-            {currentObject.rules && <Markdown source={`**${translate(locale, "info.rules")}:** ${currentObject.rules}`} />}
-            {currentObject.effect && <Markdown source={`**${translate(locale, "info.effect")}:** ${currentObject.effect}`} />}
-            {currentObject.penalty && <Markdown source={`**${translate(locale, "info.penalty")}:** ${currentObject.penalty}`} />}
-            {currentObject.combatTechniques && <Markdown source={`**${translate(locale, "info.combattechniques")}:** ${currentObject.combatTechniques}`} />}
-            {currentObject.aeCost && <WikiProperty l10n={locale} title="info.aecost">
+            {currentObject.rules && <Markdown source={`**${translate(l10n, "info.rules")}:** ${currentObject.rules}`} />}
+            {currentObject.effect && <Markdown source={`**${translate(l10n, "info.effect")}:** ${currentObject.effect}`} />}
+            {currentObject.penalty && <Markdown source={`**${translate(l10n, "info.penalty")}:** ${currentObject.penalty}`} />}
+            {currentObject.combatTechniques && <Markdown source={`**${translate(l10n, "info.combattechniques")}:** ${currentObject.combatTechniques}`} />}
+            {currentObject.aeCost && <WikiProperty l10n={l10n} title="aecost">
               {currentObject.aeCost}
             </WikiProperty>}
             <PrerequisitesText {...props} entry={currentObject} />
             <Markdown source={costText} />
-            <WikiSource {...props} />
+            {source_elem}
           </WikiBoxTemplate>
         )
     }
@@ -249,27 +285,80 @@ export function WikiActivatableInfo(props: WikiActivatableInfoProps) {
 
   const headerName = `${currentObject.name}${typeof tiers === "number" ? tiers < 2 ? " I" : ` I-${getRoman(tiers)}` : ""}${(Array.isArray(currentObject.reqs) ? currentObject.reqs.includes("RCP") : (currentObject.reqs.has(1) && currentObject.reqs.get(1)!.includes("RCP"))) ? " (*)" : ""}`
 
-  if (["en-US", "nl-BE"].includes(locale.id)) {
-    return (
-      <WikiBoxTemplate className="race" title={headerName} />
-    )
-  }
+  // if (["en-US", "nl-BE"].includes(l10n.id)) {
+  //   return (
+  //     <WikiBoxTemplate className="race" title={headerName} />
+  //   )
+  // }
 
   return (
     <WikiBoxTemplate className="disadv" title={headerName}>
-      {currentObject.rules && <Markdown source={`**${translate(locale, "info.rules")}:** ${currentObject.rules}`} />}
-      {currentObject.range && <WikiProperty l10n={locale} title="info.range">
+      {currentObject.rules && <Markdown source={`**${translate(l10n, "info.rules")}:** ${currentObject.rules}`} />}
+      {currentObject.range && <WikiProperty l10n={l10n} title="range">
         {currentObject.range}
       </WikiProperty>}
-      {currentObject.actions && <WikiProperty l10n={locale} title="info.actions">
+      {currentObject.actions && <WikiProperty l10n={l10n} title="actions">
         {currentObject.actions}
       </WikiProperty>}
       <PrerequisitesText {...props} entry={currentObject} />
       <Markdown source={costText} />
-      <WikiSource {...props} />
+            {source_elem}
     </WikiBoxTemplate>
   )
 }
+
+const getCost =
+  (l10n: L10nRecord) =>
+  (x: Activatable) => {
+    const apValue = AcA.apValue (x)
+    const apValueAppend = AcA.apValueAppend (x)
+    const mcost = AcA.cost (x)
+
+    pipe_ (
+      `**${translate (l10n) ("apvalue")}:** `,
+      str => {
+        if (isJust (apValue)) {
+          return `${str}${fromJust (apValue)}`
+        }
+
+        const ap_str = translate (l10n) ("adventurepoints")
+
+        if (isJust (mcost)) {
+          const cost = fromJust (mcost)
+
+          if (isList (cost)) {
+            const abs_cost =
+              AcA.category (x) === Categories.DISADVANTAGES
+                ? map (negate) (cost)
+                : cost
+
+            const level_str = translate (l10n) ("level")
+
+            const level_nums =
+              pipe_ (abs_cost, imap (pipe (toRomanFromIndex, cnst)), intercalate ("/"))
+
+            const level_costs = intercalate ("/") (abs_cost)
+
+            return `${str}${level_str} ${level_nums}: ${level_costs} ${ap_str}`
+          }
+          else {
+            const abs_cost = AcA.category (x) === Categories.DISADVANTAGES ? -cost : cost
+
+            const plain_str = `${str}${abs_cost} ${ap_str}`
+
+            return isJust (AcA.tiers (x))
+              ? `${plain_str} ${translate (l10n) ("perlevel")}`
+              : plain_str
+          }
+        }
+
+        return str
+      },
+      maybe (ident as ident<string>)
+            ((str: string) => flip (appendStr) (` ${str}`))
+            (apValueAppend)
+    )
+  }
 
 export interface PrerequisitesTextProps {
   entry: ActivatableInstance
@@ -278,7 +367,7 @@ export interface PrerequisitesTextProps {
   wiki: WikiState
 }
 
-export function PrerequisitesText(props: PrerequisitesTextProps): JSX.Element {
+export function PrerequisitesText (props: PrerequisitesTextProps): JSX.Element {
   const { entry, locale } = props
 
   if (typeof entry.prerequisitesText === "string") {
@@ -377,11 +466,11 @@ interface ActivatableStringObject {
   value: string
 }
 
-type ReplacedPrerequisite<T = RequiresActivatableObject> = T | string
-type ActivatablePrerequisiteObjects = RequiresActivatableObject | ActivatableStringObject
-type PrimaryAttributePrerequisiteObjects = RequiresPrimaryAttribute | string
-type IncreasablePrerequisiteObjects = RequiresIncreasableObject | string
-type RacePrerequisiteObjects = RaceRequirement | string
+type ReplacedPrerequisite<T = RequireActivatable> = Record<T> | string
+type ActivatablePrerequisiteObjects = Record<RequireActivatable> | ActivatableStringObject
+type PrimaryAttributePrerequisiteObjects = Record<RequirePrimaryAttribute> | string
+type IncreasablePrerequisiteObjects = Record<RequireIncreasable> | string
+type RacePrerequisiteObjects = Record<RaceRequirement> | string
 type RCPPrerequisiteObjects = boolean | string
 
 function isActivatableStringObject(testObj: ActivatablePrerequisiteObjects): testObj is ActivatableStringObject {
@@ -479,128 +568,143 @@ export function getPrerequisitesRaceText(race: RacePrerequisiteObjects, races: M
 
 interface CategorizedItems {
   rcp: RCPPrerequisiteObjects
-  casterBlessedOne: ActivatablePrerequisiteObjects[]
-  traditions: ActivatablePrerequisiteObjects[]
-  attributes: ReplacedPrerequisite<RequiresIncreasableObject>[]
-  primaryAttribute?: ReplacedPrerequisite<RequiresPrimaryAttribute>
-  skills: ReplacedPrerequisite<RequiresIncreasableObject>[]
-  activeSkills: ActivatablePrerequisiteObjects[]
-  otherActiveSpecialAbilities: ActivatablePrerequisiteObjects[]
-  inactiveSpecialAbilities: ActivatablePrerequisiteObjects[]
-  otherActiveAdvantages: ActivatablePrerequisiteObjects[]
-  inactiveAdvantages: ActivatablePrerequisiteObjects[]
-  activeDisadvantages: ActivatablePrerequisiteObjects[]
-  inactiveDisadvantages: ActivatablePrerequisiteObjects[]
-  race?: RacePrerequisiteObjects
+  casterBlessedOne: List<ActivatablePrerequisiteObjects>
+  traditions: List<ActivatablePrerequisiteObjects>
+  attributes: List<ReplacedPrerequisite<RequireIncreasable>>
+  primaryAttribute: Maybe<ReplacedPrerequisite<RequirePrimaryAttribute>>
+  skills: List<ReplacedPrerequisite<RequireIncreasable>>
+  activeSkills: List<ActivatablePrerequisiteObjects>
+  otherActiveSpecialAbilities: List<ActivatablePrerequisiteObjects>
+  inactiveSpecialAbilities: List<ActivatablePrerequisiteObjects>
+  otherActiveAdvantages: List<ActivatablePrerequisiteObjects>
+  inactiveAdvantages: List<ActivatablePrerequisiteObjects>
+  activeDisadvantages: List<ActivatablePrerequisiteObjects>
+  inactiveDisadvantages: List<ActivatablePrerequisiteObjects>
+  race: Maybe<RacePrerequisiteObjects>
 }
 
-export function getCategorizedItems(list: ActivatableBasePrerequisites, prerequisitesTextIndex: Map<number, string | false>) {
-  return list.reduce<CategorizedItems>((obj, item, index) => {
-    const indexSpecial = prerequisitesTextIndex.get(index)
-    if (indexSpecial === false) {
-      return obj
-    }
-    if (item === "RCP") {
-      return {
-        ...obj,
-        rcp: indexSpecial || true
-      }
-    }
-    else if (isRaceRequirement(item)) {
-      return {
-        ...obj,
-        race: indexSpecial || item
-      }
-    }
-    else if (isRequiringPrimaryAttribute(item)) {
-      return {
-        ...obj,
-        primaryAttribute: indexSpecial || item
-      }
-    }
-    else if (isRequiringIncreasable(item)) {
-      const category = Array.isArray(item.id) ? getCategoryById(item.id[0]) : getCategoryById(item.id)
-      if (category === Categories.ATTRIBUTES) {
-        return {
-          ...obj,
-          attributes: [...obj.attributes, indexSpecial || item]
-        }
-      }
-      return {
-        ...obj,
-        skills: [...obj.skills, indexSpecial || item]
-      }
-    }
-    else if (isRequiringActivatable(item)) {
-      const category = Array.isArray(item.id) ? getCategoryById(item.id[0]) : getCategoryById(item.id)
-      if (category === Categories.LITURGIES || category === Categories.SPELLS) {
-        return {
-          ...obj,
-          activeSkills: [...obj.activeSkills, indexSpecial ? { ...item, value: indexSpecial } : item]
-        }
-      }
-      else if (Array.isArray(item.id) ? item.id.includes("ADV_12") || item.id.includes("ADV_50") : ["ADV_12", "ADV_50"].includes(item.id)) {
-        return {
-          ...obj,
-          casterBlessedOne: [...obj.casterBlessedOne, indexSpecial ? { ...item, value: indexSpecial } : item]
-        }
-      }
-      else if (Array.isArray(item.id) ? item.id.includes("SA_78") || item.id.includes("SA_86") : ["SA_78", "SA_86"].includes(item.id)) {
-        return {
-          ...obj,
-          traditions: [...obj.traditions, indexSpecial ? { ...item, value: indexSpecial } : item]
-        }
-      }
-      else if (category === Categories.SPECIAL_ABILITIES) {
-        if (item.active === true) {
-          return {
-            ...obj,
-            otherActiveSpecialAbilities: [...obj.otherActiveSpecialAbilities, indexSpecial ? { ...item, value: indexSpecial } : item]
-          }
-        }
-        return {
-          ...obj,
-          inactiveSpecialAbilities: [...obj.inactiveSpecialAbilities, indexSpecial ? { ...item, value: indexSpecial } : item]
-        }
-      }
-      else if (category === Categories.ADVANTAGES) {
-        if (item.active === true) {
-          return {
-            ...obj,
-            otherActiveAdvantages: [...obj.otherActiveAdvantages, indexSpecial ? { ...item, value: indexSpecial } : item]
-          }
-        }
-        return {
-          ...obj,
-          inactiveAdvantages: [...obj.inactiveAdvantages, indexSpecial ? { ...item, value: indexSpecial } : item]
-        }
-      }
-      else if (category === Categories.DISADVANTAGES) {
-        if (item.active === true) {
-          return {
-            ...obj,
-            activeDisadvantages: [...obj.activeDisadvantages, indexSpecial ? { ...item, value: indexSpecial } : item]
-          }
-        }
-        return {
-          ...obj,
-          inactiveDisadvantages: [...obj.inactiveDisadvantages, indexSpecial ? { ...item, value: indexSpecial } : item]
-        }
-      }
-    }
-    return obj
-  }, {
+const CategorizedItems =
+  fromDefault<CategorizedItems> ({
     rcp: false,
-    casterBlessedOne: [],
-    traditions: [],
-    attributes: [],
-    skills: [],
-    activeSkills: [],
-    otherActiveSpecialAbilities: [],
-    inactiveSpecialAbilities: [],
-    otherActiveAdvantages: [],
-    inactiveAdvantages: [],
-    activeDisadvantages: [],
-    inactiveDisadvantages: [],
+    casterBlessedOne: List (),
+    traditions: List (),
+    attributes: List (),
+    primaryAttribute: Nothing,
+    skills: List (),
+    activeSkills: List (),
+    otherActiveSpecialAbilities: List (),
+    inactiveSpecialAbilities: List (),
+    otherActiveAdvantages: List (),
+    inactiveAdvantages: List (),
+    activeDisadvantages: List (),
+    inactiveDisadvantages: List (),
+    race: Nothing,
   })
-}
+
+const CIA = CategorizedItems.A
+const CIL = makeLenses (CategorizedItems)
+
+export const getCategorizedItems =
+  (req_text_index: OrderedMap<number, string | false>) =>
+  // tslint:disable-next-line: cyclomatic-complexity
+  ifoldr (i => (e: AllRequirements): ident<Record<CategorizedItems>> => {
+           const index_special = lookup (i) (req_text_index)
+
+           if (Maybe.elem<string | false> (false) (index_special)) {
+             return ident
+           }
+
+           if (e === "RCP") {
+             return set (CIL.rcp) (fromMaybe<string | boolean> (true) (index_special))
+           }
+
+           if (RaceRequirement.is (e)) {
+             return set (CIL.race)
+                        (Just (fromMaybe<RacePrerequisiteObjects> (e) (misStringM (index_special))))
+           }
+
+           if (RequirePrimaryAttribute.is (e)) {
+             return set (CIL.primaryAttribute)
+                        (Just (fromMaybe<ReplacedPrerequisite<RequirePrimaryAttribute>>
+                                (e)
+                                (misStringM (index_special))))
+             return {
+               ...obj,
+               primaryAttribute: index_special || e
+             }
+           }
+
+           if (isRequiringIncreasable(e)) {
+             const category = Array.isArray(e.id) ? getCategoryById(e.id[0]) : getCategoryById(e.id)
+             if (category === Categories.ATTRIBUTES) {
+               return {
+                 ...obj,
+                 attributes: [...obj.attributes, index_special || e]
+               }
+             }
+             return {
+               ...obj,
+               skills: [...obj.skills, index_special || e]
+             }
+           }
+
+           if (isRequiringActivatable(e)) {
+             const category = Array.isArray(e.id) ? getCategoryById(e.id[0]) : getCategoryById(e.id)
+             if (category === Categories.LITURGIES || category === Categories.SPELLS) {
+               return {
+                 ...obj,
+                 activeSkills: [...obj.activeSkills, index_special ? { ...e, value: index_special } : e]
+               }
+             }
+             else if (Array.isArray(e.id) ? e.id.includes("ADV_12") || e.id.includes("ADV_50") : ["ADV_12", "ADV_50"].includes(e.id)) {
+               return {
+                 ...obj,
+                 casterBlessedOne: [...obj.casterBlessedOne, index_special ? { ...e, value: index_special } : e]
+               }
+             }
+             else if (Array.isArray(e.id) ? e.id.includes("SA_78") || e.id.includes("SA_86") : ["SA_78", "SA_86"].includes(e.id)) {
+               return {
+                 ...obj,
+                 traditions: [...obj.traditions, index_special ? { ...e, value: index_special } : e]
+               }
+             }
+             else if (category === Categories.SPECIAL_ABILITIES) {
+               if (e.active === true) {
+                 return {
+                   ...obj,
+                   otherActiveSpecialAbilities: [...obj.otherActiveSpecialAbilities, index_special ? { ...e, value: index_special } : e]
+                 }
+               }
+               return {
+                 ...obj,
+                 inactiveSpecialAbilities: [...obj.inactiveSpecialAbilities, index_special ? { ...e, value: index_special } : e]
+               }
+             }
+             else if (category === Categories.ADVANTAGES) {
+               if (e.active === true) {
+                 return {
+                   ...obj,
+                   otherActiveAdvantages: [...obj.otherActiveAdvantages, index_special ? { ...e, value: index_special } : e]
+                 }
+               }
+               return {
+                 ...obj,
+                 inactiveAdvantages: [...obj.inactiveAdvantages, index_special ? { ...e, value: index_special } : e]
+               }
+             }
+             else if (category === Categories.DISADVANTAGES) {
+               if (e.active === true) {
+                 return {
+                   ...obj,
+                   activeDisadvantages: [...obj.activeDisadvantages, index_special ? { ...e, value: index_special } : e]
+                 }
+               }
+               return {
+                 ...obj,
+                 inactiveDisadvantages: [...obj.inactiveDisadvantages, index_special ? { ...e, value: index_special } : e]
+               }
+             }
+           }
+           return obj
+         })
+         (CategorizedItems.default)

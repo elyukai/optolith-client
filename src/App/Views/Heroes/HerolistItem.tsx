@@ -1,6 +1,6 @@
 import * as React from "react";
 import { fmap } from "../../../Data/Functor";
-import { bindF, join, Maybe, maybe } from "../../../Data/Maybe";
+import { bindF, fromMaybe, join, Maybe, maybe } from "../../../Data/Maybe";
 import { lookupF, OrderedMap } from "../../../Data/OrderedMap";
 import { notMember, OrderedSet } from "../../../Data/OrderedSet";
 import { Record } from "../../../Data/Record";
@@ -87,13 +87,15 @@ export function HerolistItem (props: HerolistItemProps) {
               hero,
               HeroModel.A.race,
               bindF (lookupF (WikiModel.A.races (wiki))),
-              fmap (Race.A.name)
+              fmap (Race.A.name),
+              fromMaybe ("")
             )}
             {pipe_ (
               hero,
               HeroModel.A.raceVariant,
               bindF (lookupF (WikiModel.A.raceVariants (wiki))),
-              fmap (pipe (RaceVariant.A.name, x => ` (${x})`))
+              fmap (pipe (RaceVariant.A.name, x => ` (${x})`)),
+              fromMaybe ("")
             )}
           </span>
           <span className="culture">
@@ -101,7 +103,8 @@ export function HerolistItem (props: HerolistItemProps) {
               hero,
               HeroModel.A.culture,
               bindF (lookupF (WikiModel.A.cultures (wiki))),
-              fmap (Culture.A.name)
+              fmap (Culture.A.name),
+              fromMaybe ("")
             )}
           </span>
           <span className="profession">
@@ -130,10 +133,10 @@ export function HerolistItem (props: HerolistItemProps) {
           onClick={saveHero.bind (undefined, id)}
           disabled={notMember (id) (unsavedHeroesById)}
           />
-        <IconButton icon="&#xE907" onClick={duplicateHero.bind (undefined, id)} />
-        <IconButton icon="&#xE914" onClick={saveHeroAsJSON.bind (undefined, id)} />
-        <IconButton icon="&#xE90b" onClick={deleteHero.bind (undefined, id)} />
-        <IconButton icon="&#xE90e" onClick={loadHero.bind (undefined, id)} />
+        <IconButton icon="&#xE907;" onClick={duplicateHero.bind (undefined, id)} />
+        <IconButton icon="&#xE914;" onClick={saveHeroAsJSON.bind (undefined, id)} />
+        <IconButton icon="&#xE90b;" onClick={deleteHero.bind (undefined, id)} />
+        <IconButton icon="&#xE90e;" onClick={loadHero.bind (undefined, id)} />
       </ListItemButtons>
     </ListItem>
   )

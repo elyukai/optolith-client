@@ -35,12 +35,12 @@ export function EquipmentListItem (props: EquipmentListItemProps) {
       <ListItemSeparator />
       <ListItemButtons>
         <IconButton
-          icon="&#xE916"
+          icon="&#xE916;"
           onClick={() => addTemplateToList (IA.id (data))}
           flat
           />
         <IconButton
-          icon="&#xE912"
+          icon="&#xE912;"
           onClick={selectForInfo ? (() => selectForInfo (IA.id (data))) : undefined}
           disabled={!selectForInfo}
           flat
@@ -58,17 +58,17 @@ export function EquipmentListItem (props: EquipmentListItemProps) {
       <ListItemGroup list={translate (locale) ("itemgroups")} index={IA.gr (data)} />
       <ListItemButtons>
         <IconButton
-          icon="&#xE90c"
+          icon="&#xE90c;"
           onClick={() => editItem (IA.id (data))}
           flat
           />
         <IconButton
-          icon="&#xE90b"
+          icon="&#xE90b;"
           onClick={() => deleteItem (IA.id (data))}
           flat
           />
         <IconButton
-          icon="&#xE912"
+          icon="&#xE912;"
           onClick={selectForInfo ? (() => selectForInfo (IA.id (data))) : undefined}
           disabled={!selectForInfo}
           flat

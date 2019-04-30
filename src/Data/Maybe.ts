@@ -17,7 +17,7 @@
 import { ifElse } from "../App/Utilities/ifElse";
 import * as Math from "../App/Utilities/mathUtils";
 import { pipe } from "../App/Utilities/pipe";
-import { cnst, ident } from "./Function";
+import { cnst, flip, ident } from "./Function";
 import { fmap, fmapF } from "./Functor";
 import { Internals } from "./Internals";
 import { cons, consF, head, ifoldr, List } from "./List";
@@ -854,9 +854,9 @@ export const fromMaybeR =
     isJust (x) ? x .value : def
 
 /**
- * `maybe :: b -> (a -> b) -> Maybe a -> b`
+ * `maybeR :: b -> (a -> b) -> Maybe a -> b`
  *
- * The `maybe` function takes a default value, a function, and a `Maybe`
+ * The `maybeR` function takes a default value, a function, and a `Maybe`
  * value. If the `Maybe` value is `Nothing`, the function returns the default
  * value. Otherwise, it applies the function to the value inside the `Just`
  * and returns the result.
@@ -869,6 +869,24 @@ export const maybeR =
   <A extends Some> (f: (x: A) => NonNullable<ReactElement>) =>
   (x: Maybe<A>): ReactElement =>
     isJust (x) ? f (x .value) : def
+
+/**
+ * `maybeRNull :: (a -> b) -> Maybe a -> b`
+ *
+ * ```haskell
+ * maybeRNull == maybeR null
+ * ```
+ */
+export const maybeRNull = maybeR (null)
+
+/**
+ * `maybeRNullF :: Maybe a -> (a -> b) -> b`
+ *
+ * ```haskell
+ * maybeRNull == flip (maybeR null)
+ * ```
+ */
+export const maybeRNullF = flip (maybeR (null))
 
 /**
  * `fromMaybeNil :: Maybe [a] -> [a]`
@@ -949,6 +967,9 @@ Maybe.imapMaybe = imapMaybe
 Maybe.maybeToNullable = maybeToNullable
 Maybe.maybeToUndefined = maybeToUndefined
 Maybe.fromMaybeNil = fromMaybeNil
+Maybe.maybeR = maybeR
+Maybe.maybeRNull = maybeRNull
+Maybe.maybeRNullF = maybeRNullF
 
 
 // TYPE HELPERS

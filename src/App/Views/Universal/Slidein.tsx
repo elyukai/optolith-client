@@ -15,7 +15,7 @@ export function Slidein (props: SlideinProps) {
   return (
     <Portal {...other} className={classNames ("slidein-backdrop", className)}>
       <div className="slidein">
-        <div className="slidein-close" onClick={close}><div>&#xE5CD</div></div>
+        <div className="slidein-close" onClick={close}><div>&#xE5CD;</div></div>
           <div className="slidein-content">
             {children}
           </div>

@@ -240,7 +240,7 @@ export function PetEditor (props: PetEditorProps) {
           locale={locale}
           setPath={props.setAvatar}
           close={props.closeEditPetAvatar}
-          isOpened={props.isEditPetAvatarOpen}
+          isOpen={props.isEditPetAvatarOpen}
           />
       </Slidein>
     )

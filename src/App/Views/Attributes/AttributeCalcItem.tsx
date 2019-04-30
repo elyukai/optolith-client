@@ -130,7 +130,7 @@ export class AttributeCalcItem extends React.Component<AttributeCalcItemProps, {
                         (liftM2 ((current_add: number) => (max_add: number) => (
                                   <IconButton
                                     className="add"
-                                    icon="&#xE908"
+                                    icon="&#xE908;"
                                     onClick={this.addMaxEnergyPoint}
                                     disabled={
                                       current_add >= max_add
@@ -155,7 +155,7 @@ export class AttributeCalcItem extends React.Component<AttributeCalcItemProps, {
                     ((current_add: number) => (
                       <IconButton
                         className="remove"
-                        icon="&#xE909"
+                        icon="&#xE909;"
                         onClick={this.removeMaxEnergyPoint}
                         disabled={
                           current_add <= 0

@@ -150,18 +150,18 @@ export function ItemEditorCommonSection (props: ItemEditorCommonSectionProps) {
               disabled={locked}
               />
             <IconButton
-              icon="&#xE90a"
+              icon="&#xE90a;"
               onClick={props.applyTemplate}
               disabled={isNothing (EIA.template (item)) || locked}
               />
             {locked ? (
               <IconButton
-                icon="&#xE918"
+                icon="&#xE918;"
                 onClick={props.unlockTemplate}
                 />
             ) : (
               <IconButton
-                icon="&#xE917"
+                icon="&#xE917;"
                 onClick={props.lockTemplate}
                 disabled={isNothing (EIA.template (item))}
                 />

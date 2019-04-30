@@ -31,7 +31,7 @@ export function Downloader (props: DownloaderProps) {
                   <Dialog
                     id="downloader"
                     title={translate (l10n) ("downloadupdate")}
-                    isOpened={typeof progress === "object"}
+                    isOpen={typeof progress === "object"}
                     close={() => undefined}
                     noCloseButton
                     >

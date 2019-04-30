@@ -1,8 +1,9 @@
 import { bindF, Either, Left, maybeToEither, Right } from "../../../Data/Either";
-import { cons, empty, filter, find, flength, head, ifoldr, lines, List, map, notNull, replaceStr, splitOn, uncons, zip } from "../../../Data/List";
-import { fromJust, isJust } from "../../../Data/Maybe";
+import { fmap } from "../../../Data/Functor";
+import { cons, empty, filter, find, flength, head, ifoldr, lines, List, map, notNull, notNullStr, replaceStr, splitOn, uncons, zip } from "../../../Data/List";
+import { ensure, fromJust, isJust, mapMaybe } from "../../../Data/Maybe";
 import { fromList, OrderedMap } from "../../../Data/OrderedMap";
-import { fst, snd } from "../../../Data/Pair";
+import { fst, Pair, second, snd } from "../../../Data/Pair";
 import { show } from "../../../Data/Show";
 import { pipe } from "../pipe";
 
@@ -66,8 +67,8 @@ export const csvToList =
                       + ` Source: ${show (l)}`
                     )
                     : Right (cons (acc)
-                                  (fromList (zip<string, string> (header)
-                                                                 (map (unescapeStr) (l)))))
+                                  (fromList (mapMaybe (decode)
+                                                      (zip<string, string> (header) (l)))))
                 ))
               (Right (empty))
               (body)
@@ -84,3 +85,6 @@ const unescapeStr =
 
     return x
   }
+
+const decode =
+  pipe (ensure<Pair<string, string>> (pipe (snd, notNullStr)), fmap (second (unescapeStr)))

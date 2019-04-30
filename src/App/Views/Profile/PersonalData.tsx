@@ -147,7 +147,7 @@ export class PersonalData extends React.Component<PersonalDataProps, PersonalDat
     ) : (
       <h1 className="confirm-edit">
         {Maybe.fromMaybe ("") (name)}
-        <IconButton icon="&#xE90c" onClick={this.editName} />
+        <IconButton icon="&#xE90c;" onClick={this.editName} />
       </h1>
     )
 
@@ -315,7 +315,7 @@ export class PersonalData extends React.Component<PersonalDataProps, PersonalDat
               {...this.props}
               setPath={setAvatar}
               close={closeEditCharacterAvatar}
-              isOpened={isEditCharacterAvatarOpen}
+              isOpen={isEditCharacterAvatarOpen}
               />
           </Page>
         )

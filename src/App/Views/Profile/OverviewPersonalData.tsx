@@ -209,7 +209,7 @@ export function OverviewPersonalData (props: OverviewPersonalDataProps) {
           options={hairAndEyeColorOptions.hairOptions}
           disabled={isAlbino}
           />
-        <IconButton icon="&#xE913" onClick={props.rerollHair} disabled={isAlbino} />
+        <IconButton icon="&#xE913;" onClick={props.rerollHair} disabled={isAlbino} />
       </InputButtonGroup>
       <InputButtonGroup className="reroll">
         <Dropdown
@@ -218,7 +218,7 @@ export function OverviewPersonalData (props: OverviewPersonalDataProps) {
           onChange={props.changeEyecolor}
           options={hairAndEyeColorOptions.eyeOptions}
           />
-        <IconButton icon="&#xE913" onClick={props.rerollEyes} />
+        <IconButton icon="&#xE913;" onClick={props.rerollEyes} />
       </InputButtonGroup>
       <InputButtonGroup className="reroll">
         <TextField
@@ -227,7 +227,7 @@ export function OverviewPersonalData (props: OverviewPersonalDataProps) {
           onChange={props.changeSize}
           valid={!Maybe.isJust (size) || Maybe.elem (true) (size .fmap (isEmptyOr (isFloat)))}
           />
-        <IconButton icon="&#xE913" onClick={props.rerollSize} />
+        <IconButton icon="&#xE913;" onClick={props.rerollSize} />
       </InputButtonGroup>
       <InputButtonGroup className="reroll">
         <TextField
@@ -239,7 +239,7 @@ export function OverviewPersonalData (props: OverviewPersonalDataProps) {
             || Maybe.elem (true) (weight .fmap (isEmptyOr (isNaturalNumber)))
           }
           />
-        <IconButton icon="&#xE913" onClick={props.rerollWeight} />
+        <IconButton icon="&#xE913;" onClick={props.rerollWeight} />
       </InputButtonGroup>
       <div>
         <TextField

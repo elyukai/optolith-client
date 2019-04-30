@@ -103,7 +103,7 @@ const randomWeightRace =
     pipe (
       Math.abs,
       rollDie,
-      ifElse<number, (x: number) => number> (pred) (subtractBy) (add)
+      ifElse (pred) (subtractBy) (add)
     )
 
 interface RerolledWeight {

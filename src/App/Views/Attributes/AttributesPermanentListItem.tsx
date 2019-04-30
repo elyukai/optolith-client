@@ -70,14 +70,14 @@ export function AttributesPermanentListItem (props: AttributesPermanentListItemP
         ? (
           <IconButton
             className="edit"
-            icon="&#xE90c"
+            icon="&#xE90c;"
             onClick={openEditPermanentEnergy .bind (null, id)}
             />
         )
       : null}
       <PermanentPoints
         {...props}
-        isOpened={Maybe.elem (id) (getEditPermanentEnergy)}
+        isOpen={Maybe.elem (id) (getEditPermanentEnergy)}
         close={closeEditPermanentEnergy}
         permanentBoughtBack={Maybe (boughtBack)}
         permanentSpent={lost}
@@ -86,7 +86,7 @@ export function AttributesPermanentListItem (props: AttributesPermanentListItemP
         ? (
           <IconButton
             className="add"
-            icon="&#xE908"
+            icon="&#xE908;"
             onClick={openAddPermanentEnergyLoss .bind (null, id)}
             />
         )
@@ -94,14 +94,14 @@ export function AttributesPermanentListItem (props: AttributesPermanentListItemP
       <AttributesRemovePermanent
         remove={addLostPoints}
         l10n={l10n}
-        isOpened={Maybe.elem (id) (getAddPermanentEnergy)}
+        isOpen={Maybe.elem (id) (getAddPermanentEnergy)}
         close={closeAddPermanentEnergyLoss}
         />
       {!isRemovingEnabled && isFunction (addBoughtBackPoint)
         ? (
           <IconButton
             className="remove"
-            icon="&#xE909"
+            icon="&#xE909;"
             onClick={addBoughtBackPoint}
             disabled={available <= 0}
             />

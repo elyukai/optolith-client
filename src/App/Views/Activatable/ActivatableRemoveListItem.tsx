@@ -161,14 +161,14 @@ export class ActivatableRemoveListItem extends React.Component<ActivatableRemove
           {isRemovingEnabled
             ? (
                 <IconButton
-                  icon="&#xE90b"
+                  icon="&#xE90b;"
                   onClick={() => removeFromList (options)}
                   disabled={AAA_.disabled (item)}
                   flat
                   />
               )
             : null}
-          <IconButton icon="&#xE912" onClick={() => selectForInfo (AAA_.id (item))} flat />
+          <IconButton icon="&#xE912;" onClick={() => selectForInfo (AAA_.id (item))} flat />
         </ListItemButtons>
       </ListItem>
     )

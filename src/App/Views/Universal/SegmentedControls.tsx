@@ -1,7 +1,7 @@
 import * as React from "react";
 import { equals } from "../../../Data/Eq";
 import { List, map, notNullStrUndef, toArray } from "../../../Data/List";
-import { and, fromJust, fromMaybe, isJust, Maybe, normalize } from "../../../Data/Maybe";
+import { fromJust, fromMaybe, isJust, Maybe, normalize, or } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
 import { pipe_ } from "../../Utilities/pipe";
 import { Button } from "./Button";
@@ -50,7 +50,7 @@ export function SegmentedControls<T extends OptionValue> (props: SegmentedContro
                       onClickJust (fromJust (value))
                     }
                   }}
-                  disabled={and (OA.disabled (option)) || disabled === true}
+                  disabled={or (OA.disabled (option)) || disabled === true}
                   autoWidth
                 >
                   <Text>{OA.name (option)}</Text>

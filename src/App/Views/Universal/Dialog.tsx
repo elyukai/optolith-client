@@ -33,7 +33,7 @@ export class Dialog extends React.Component<DialogProps, {}> {
         {...other}
         >
         <div className="modal-container">
-          <div className="modal-close" onClick={this.close}><div>&#xE5CD</div></div>
+          <div className="modal-close" onClick={this.close}><div>&#xE5CD;</div></div>
           {notNullStrUndef (title)
             ? <div className="modal-header"><div className="modal-header-inner">{title}</div></div>
             : null}

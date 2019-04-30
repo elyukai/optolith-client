@@ -26,8 +26,8 @@ export function PetsListItem (props: PetsListItemProps) {
       </ListItemName>
       <ListItemSeparator/>
       <ListItemButtons>
-        <IconButton icon="&#xE90b" onClick={() => deletePet (pet .get ("id"))} />
-        <IconButton icon="&#xE90c" onClick={() => editPet (pet .get ("id"))} />
+        <IconButton icon="&#xE90b;" onClick={() => deletePet (pet .get ("id"))} />
+        <IconButton icon="&#xE90c;" onClick={() => editPet (pet .get ("id"))} />
       </ListItemButtons>
     </ListItem>
   )

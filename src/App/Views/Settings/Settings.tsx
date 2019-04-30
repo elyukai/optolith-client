@@ -65,7 +65,7 @@ export function Settings (props: SettingsProps) {
         },
       ]}
       close={close}
-      isOpened={isSettingsOpen}
+      isOpen={isSettingsOpen}
       >
       <Dropdown
         options={List (

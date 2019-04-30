@@ -32,7 +32,7 @@ export class AvatarChange extends React.Component<AvatarChangeProps, AvatarChang
         filters: [{ name: translate (this.props.l10n) ("image"), extensions }],
       },
       fileNames => {
-        if (fileNames !== null && fileNames.length > 0) {
+        if (fileNames !== undefined && fileNames.length > 0) {
           const fileName = fileNames[0]
           const splitted = fileName.split (".")
           if (extensions.includes (splitted[splitted.length - 1])) {
@@ -53,7 +53,7 @@ export class AvatarChange extends React.Component<AvatarChangeProps, AvatarChang
   }
 
   componentWillReceiveProps (nextProps: AvatarChangeProps) {
-    if (nextProps.isOpened === false && this.props.isOpened === true) {
+    if (nextProps.isOpen === false && this.props.isOpen === true) {
       this.setState ({
         fileValid: false,
         url: "",

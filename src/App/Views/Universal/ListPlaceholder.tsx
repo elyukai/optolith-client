@@ -53,8 +53,8 @@ export function ListPlaceholder (props: ListPlaceholderProps) {
             <div className="cost"><div className="placeholder-text"></div></div>
           </ListItemValues>
           <ListItemButtons>
-            <IconButton icon="&#xE90a" disabled />
-            <IconButton icon="&#xE90e" disabled />
+            <IconButton icon="&#xE90a;" disabled />
+            <IconButton icon="&#xE90e;" disabled />
           </ListItemButtons>
         </ListItem>
       )
@@ -66,8 +66,8 @@ export function ListPlaceholder (props: ListPlaceholderProps) {
           <ListItemName name="" />
           <ListItemSeparator/>
           <ListItemButtons>
-            <IconButton icon="&#xE90a" disabled />
-            <IconButton icon="&#xE90e" disabled />
+            <IconButton icon="&#xE90a;" disabled />
+            <IconButton icon="&#xE90e;" disabled />
           </ListItemButtons>
         </ListItem>
       )
@@ -84,8 +84,8 @@ export function ListPlaceholder (props: ListPlaceholderProps) {
             <div className="cost"><div className="placeholder-text"></div></div>
           </ListItemValues>
           <ListItemButtons>
-            <IconButton icon="&#xE90b" flat disabled />
-            <IconButton icon="&#xE912" flat disabled />
+            <IconButton icon="&#xE90b;" flat disabled />
+            <IconButton icon="&#xE912;" flat disabled />
           </ListItemButtons>
         </ListItem>
       )
@@ -102,8 +102,8 @@ export function ListPlaceholder (props: ListPlaceholderProps) {
             <div className="cost"><div className="placeholder-text"></div></div>
           </ListItemValues>
           <ListItemButtons>
-            <IconButton icon="&#xE916" flat disabled />
-            <IconButton icon="&#xE912" flat disabled />
+            <IconButton icon="&#xE916;" flat disabled />
+            <IconButton icon="&#xE912;" flat disabled />
           </ListItemButtons>
         </ListItem>
       )
@@ -125,9 +125,9 @@ export function ListPlaceholder (props: ListPlaceholderProps) {
             <div className="ic"></div>
           </ListItemValues>
           <ListItemButtons>
-            <IconButton icon="&#xE908" flat disabled />
-            <IconButton icon="&#xE909" flat disabled />
-            <IconButton icon="&#xE912" flat disabled />
+            <IconButton icon="&#xE908;" flat disabled />
+            <IconButton icon="&#xE909;" flat disabled />
+            <IconButton icon="&#xE912;" flat disabled />
           </ListItemButtons>
         </ListItem>
       )
@@ -148,8 +148,8 @@ export function ListPlaceholder (props: ListPlaceholderProps) {
             <div className="ic"></div>
           </ListItemValues>
           <ListItemButtons>
-            <IconButton icon="&#xE916" flat disabled />
-            <IconButton icon="&#xE912" flat disabled />
+            <IconButton icon="&#xE916;" flat disabled />
+            <IconButton icon="&#xE912;" flat disabled />
           </ListItemButtons>
         </ListItem>
       )
@@ -169,9 +169,9 @@ export function ListPlaceholder (props: ListPlaceholderProps) {
             <div className="pa"></div>
           </ListItemValues>
           <ListItemButtons>
-            <IconButton icon="&#xE908" flat disabled />
-            <IconButton icon="&#xE909" flat disabled />
-            <IconButton icon="&#xE912" flat disabled />
+            <IconButton icon="&#xE908;" flat disabled />
+            <IconButton icon="&#xE909;" flat disabled />
+            <IconButton icon="&#xE912;" flat disabled />
           </ListItemButtons>
         </ListItem>
       )
@@ -183,9 +183,9 @@ export function ListPlaceholder (props: ListPlaceholderProps) {
           <ListItemName name="" />
           <ListItemSeparator/>
           <ListItemButtons>
-            <IconButton icon="&#xE90c" flat disabled />
-            <IconButton icon="&#xE90b" flat disabled />
-            <IconButton icon="&#xE912" flat disabled />
+            <IconButton icon="&#xE90c;" flat disabled />
+            <IconButton icon="&#xE90b;" flat disabled />
+            <IconButton icon="&#xE912;" flat disabled />
           </ListItemButtons>
         </ListItem>
       )
@@ -197,8 +197,8 @@ export function ListPlaceholder (props: ListPlaceholderProps) {
           <ListItemName name="" />
           <ListItemSeparator/>
           <ListItemButtons>
-            <IconButton icon="&#xE916" flat disabled />
-            <IconButton icon="&#xE912" flat disabled />
+            <IconButton icon="&#xE916;" flat disabled />
+            <IconButton icon="&#xE912;" flat disabled />
           </ListItemButtons>
         </ListItem>
       )
@@ -210,8 +210,8 @@ export function ListPlaceholder (props: ListPlaceholderProps) {
           <ListItemName name="" />
           <ListItemSeparator/>
           <ListItemButtons>
-            <IconButton icon="&#xE90c" flat disabled />
-            <IconButton icon="&#xE90b" flat disabled />
+            <IconButton icon="&#xE90c;" flat disabled />
+            <IconButton icon="&#xE90b;" flat disabled />
           </ListItemButtons>
         </ListItem>
       )

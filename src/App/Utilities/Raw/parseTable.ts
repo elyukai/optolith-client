@@ -6,11 +6,11 @@ import { flip, thrush } from "../../../Data/Function";
 import { fmap } from "../../../Data/Functor";
 import { Lens_, over, set } from "../../../Data/Lens";
 import { append, consF, empty, foldr, List, map } from "../../../Data/List";
-import { catMaybes, ensure, fromMaybe, Just, mapMaybe, Maybe } from "../../../Data/Maybe";
+import { catMaybes, ensure, fromMaybe, Just, mapMaybe, Maybe, Nothing } from "../../../Data/Maybe";
 import { adjust, elems, fromList, lookupF, mapMEitherWithKey, OrderedMap } from "../../../Data/OrderedMap";
 import { OrderedSet } from "../../../Data/OrderedSet";
 import { fst, Pair, snd } from "../../../Data/Pair";
-import { makeLenses, Record } from "../../../Data/Record";
+import { makeLenses, member, Record } from "../../../Data/Record";
 import { Categories } from "../../Constants/Categories";
 import { AdvantageL } from "../../Models/Wiki/Advantage";
 import { Book } from "../../Models/Wiki/Book";
@@ -363,7 +363,7 @@ const mapCategoriesToSelectOptions =
                 r => SelectOption ({
                   id: Skill.AL.id (r),
                   name: Skill.AL.name (r),
-                  cost: Just (Skill.AL.ic (r)),
+                  cost: member ("ic") (r) ? Just (Skill.AL.ic (r)) : Nothing,
                   src: Skill.AL.src (r),
                 })
               ),

@@ -235,7 +235,7 @@ export class ActivatableAddListItem extends
           <Dialog
             id="custom-cost-dialog"
             close={this.closeCustomCostDialog}
-            isOpened={showCustomCostDialog}
+            isOpen={showCustomCostDialog}
             title={translate (l10n) ("customcost")}
             buttons={[
               {
@@ -263,13 +263,13 @@ export class ActivatableAddListItem extends
         </ListItemValues>
         <ListItemButtons>
           <IconButton
-            icon="&#xE916"
+            icon="&#xE916;"
             disabled={disabled}
             onClick={this.addToList.bind (null, fst (finalProps))}
             flat
             />
           <IconButton
-            icon="&#xE912"
+            icon="&#xE912;"
             onClick={() => selectForInfo (IAA.id (item))}
             flat
             />

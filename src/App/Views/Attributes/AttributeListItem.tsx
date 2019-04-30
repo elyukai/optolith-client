@@ -52,7 +52,7 @@ export class AttributeListItem extends React.Component<AttributeListItemProps, {
         {isInCharacterCreation ? <NumberBox max={Maybe.sum (mmax)} /> : null}
         <IconButton
           className="add"
-          icon="&#xE908"
+          icon="&#xE908;"
           onClick={this.props.addPoint.bind (null, id)}
           disabled={
             isInCharacterCreation && sum >= Maybe.sum (maxTotalAttributeValues)
@@ -63,7 +63,7 @@ export class AttributeListItem extends React.Component<AttributeListItemProps, {
           ? (
               <IconButton
                 className="remove"
-                icon="&#xE909"
+                icon="&#xE909;"
                 onClick={this.props.removePoint.bind (null, id)}
                 disabled={value <= AWRA.min (attr)}
                 />

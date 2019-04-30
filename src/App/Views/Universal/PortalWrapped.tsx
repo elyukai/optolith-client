@@ -7,7 +7,7 @@ interface CallBackProps extends React.Props<any> {
 }
 
 interface ReactPortalProps {
-  isOpened?: boolean
+  isOpen?: boolean
   openByClickOn?: React.ReactElement<CallBackProps>
   closeOnEsc?: boolean
   closeOnOutsideClick?: boolean
@@ -37,11 +37,15 @@ export type PortalWrappedProps =
 export function PortalWrapped (props: PortalWrappedProps) {
   const { children, className, theme, id, ...other } = props
 
-  return (
-    <Portal {...other}>
-      <div className={classNames (className, `theme-${theme}`)} id={id}>
-        {children}
-      </div>
-    </Portal>
-  )
+  const { isOpen = false } = other
+
+  return isOpen
+    ? (
+      <Portal {...other}>
+        <div className={classNames (className, `theme-${theme}`)} id={id}>
+          {children}
+        </div>
+      </Portal>
+    )
+    : null
 }

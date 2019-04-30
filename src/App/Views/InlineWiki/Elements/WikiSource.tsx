@@ -1,11 +1,15 @@
 import * as React from "react";
-import { filter, List } from "../../../../Data/List";
-import { memberF, OrderedMap } from "../../../../Data/OrderedMap";
+import { fmap } from "../../../../Data/Functor";
+import { filter, intercalate, List } from "../../../../Data/List";
+import { mapMaybe } from "../../../../Data/Maybe";
+import { lookupF, memberF, OrderedMap } from "../../../../Data/OrderedMap";
+import { fst, isPair, snd } from "../../../../Data/Pair";
 import { Record, RecordBase } from "../../../../Data/Record";
 import { Book } from "../../../Models/Wiki/Book";
-import { L10nRecord } from "../../../Models/Wiki/L10n";
+import { L10n, L10nRecord } from "../../../Models/Wiki/L10n";
 import { SourceLink } from "../../../Models/Wiki/sub/SourceLink";
-import { pipe } from "../../../Utilities/pipe";
+import { pipe, pipe_ } from "../../../Utilities/pipe";
+import { sortStrings } from "../../../Utilities/sortBy";
 
 interface Accessors<A extends RecordBase> {
   src: (r: Record<A>) => List<Record<SourceLink>>
@@ -28,25 +32,23 @@ export function WikiSource<A extends RecordBase> (props: WikiSourceProps<A>) {
 
   const src = acc.src (x)
 
-  const availableSources = filter (pipe (SourceLink.A.id, memberF (books))) (src)
+  const available_src = filter (pipe (SourceLink.A.id, memberF (books))) (src)
 
-  const sourceList = availableSources.map(e => {
-    const book = books.get(e.id)!.name
-    if (typeof e.page === "number") {
-      return `${book} ${e.page}`
-    }
-    return book
-  })
+  const srcs = mapMaybe ((sl: Record<SourceLink>) => pipe_ (
+                          sl,
+                          SourceLink.A.id,
+                          lookupF (books),
+                          fmap (b => {
+                            const p = SourceLink.A.page (sl)
 
-  return (
-    <p className="source">
-      <span>{sortStrings(sourceList, locale.id).intercalate(", ")}</span>
-    </p>
-  )
+                            return `${Book.A.name (b)} ${isPair (p) ? `${fst (p)}–${snd (p)}` : p}`
+                          })
+                        ))
+                        (available_src)
 
   return (
     <p className="source">
-      <span>{books.get("US25001")!.name} {src}</span>
+      <span>{pipe_ (srcs, sortStrings (L10n.A.id (l10n)), intercalate (", "))}</span>
     </p>
   )
 }

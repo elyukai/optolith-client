@@ -234,7 +234,7 @@ const showPDepth = (depth: number) => (x: any): string => {
     return `${dws}Date (${x .toISOString ()})`
   }
 
-  return `${dws}${String (x)}`
+  return `${dws}${JSON.stringify (x)}`
 }
 
 const trimNextDepth =

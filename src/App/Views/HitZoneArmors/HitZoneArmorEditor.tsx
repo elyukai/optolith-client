@@ -83,7 +83,7 @@ export function HitZoneArmorEditor (props: HitZoneArmorEditorProps) {
           ? translate (l10n) ("createhitzonearmor")
           : translate (l10n) ("edithitzonearmor")
       }
-      isOpened
+      isOpen
       close={closeEditor}
       buttons={[
         {

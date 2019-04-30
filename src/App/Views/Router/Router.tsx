@@ -118,6 +118,6 @@ export class Router extends React.Component<RouterProps> {
       // master: <Master />
     }
 
-    return VIEWS [id] !== null ? VIEWS [id] : undefined
+    return VIEWS [id] ()
   }
 }
