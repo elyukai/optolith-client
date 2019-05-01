@@ -1,10 +1,11 @@
 import classNames = require("classnames")
 import * as React from "react";
 import { cnst, flip, ident } from "../../../Data/Function";
-import { set } from "../../../Data/Lens";
-import { appendStr, ifoldr, imap, intercalate, isList, List, map, subscript } from "../../../Data/List";
-import { bind, fromJust, fromMaybe, isJust, isNothing, Just, maybe, Maybe, maybeR, maybeRNullF, Nothing } from "../../../Data/Maybe";
-import { lookup, OrderedMap } from "../../../Data/OrderedMap";
+import { fmap } from "../../../Data/Functor";
+import { over, set } from "../../../Data/Lens";
+import { any, appendStr, consF, head, ifoldr, imap, intercalate, isList, List, map, subscript } from "../../../Data/List";
+import { bind, ensure, fromJust, fromMaybe, isJust, isNothing, Just, liftM2, mapMaybe, maybe, Maybe, maybeR, maybeRNullF, Nothing } from "../../../Data/Maybe";
+import { lookup, lookupF, OrderedMap } from "../../../Data/OrderedMap";
 import { fromDefault, makeLenses, Record, RecordI } from "../../../Data/Record";
 import { Categories } from "../../Constants/Categories";
 import { HeroModelRecord } from "../../Models/Hero/HeroModel";
@@ -18,16 +19,17 @@ import { RequireActivatable } from "../../Models/Wiki/prerequisites/ActivatableR
 import { RequireIncreasable } from "../../Models/Wiki/prerequisites/IncreasableRequirement";
 import { RequirePrimaryAttribute } from "../../Models/Wiki/prerequisites/PrimaryAttributeRequirement";
 import { RaceRequirement } from "../../Models/Wiki/prerequisites/RaceRequirement";
+import { Race } from "../../Models/Wiki/Race";
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
 import { WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { Activatable, AllRequirements } from "../../Models/Wiki/wikiTypeHelpers";
 import { DCIds } from "../../Selectors/derivedCharacteristicsSelectors";
-import { translate } from "../../Utilities/I18n";
-import { getCategoryById } from "../../Utilities/IDUtils";
+import { localizeOrList, translate } from "../../Utilities/I18n";
+import { getCategoryById, isBlessedTraditionId, isMagicalTraditionId, prefixRace } from "../../Utilities/IDUtils";
 import { dec, negate } from "../../Utilities/mathUtils";
 import { toRoman, toRomanFromIndex } from "../../Utilities/NumberUtils";
 import { pipe, pipe_ } from "../../Utilities/pipe";
-import { misNumberM, misStringM } from "../../Utilities/typeCheckUtils";
+import { isString, misNumberM, misStringM } from "../../Utilities/typeCheckUtils";
 import { getWikiEntry } from "../../Utilities/WikiUtils";
 import { Markdown } from "../Universal/Markdown";
 import { WikiSource } from "./Elements/WikiSource";
@@ -560,11 +562,34 @@ export function getPrerequisitesActivatablesText(list: ActivatablePrerequisiteOb
   })
 }
 
-export function getPrerequisitesRaceText(race: RacePrerequisiteObjects, races: Map<string, Race>, locale: UIMessages): JSX.Element {
-  return <span>
-    {typeof race === "string" ? race : `${translate(locale, "race")} ${Array.isArray(race.value) ? race.value.filter(e => races.has(`R_${e}`)).map(e => races.get(`R_${e}`)!.name).join(translate(locale, "info.or")) : races.has(`R_${race.value}`) && races.get(`R_${race.value}`)!.name}`}
-  </span>
-}
+const getPrerequisitesRaceText =
+  (l10n: L10nRecord) =>
+  (races: OrderedMap<string, Record<Race>>) =>
+  (race: RacePrerequisiteObjects) => {
+    if (isString (race)) {
+      return <span>{race}</span>
+    }
+
+    const race_tag = translate (l10n) ("race")
+
+    const value = RaceRequirement.A.value (race)
+
+    if (isList (value)) {
+      const curr_races =
+        pipe_ (
+          value,
+          mapMaybe (pipe (prefixRace, lookupF (races), fmap (Race.A.name))),
+          localizeOrList (l10n)
+        )
+
+      return <span>{`${race_tag} ${curr_races}`}</span>
+    }
+    else {
+      const curr_race = pipe_ (value, prefixRace, lookupF (races), maybe ("") (Race.A.name))
+
+      return <span>{`${race_tag} ${curr_race}`}</span>
+    }
+  }
 
 interface CategorizedItems {
   rcp: RCPPrerequisiteObjects
@@ -604,6 +629,24 @@ const CategorizedItems =
 const CIA = CategorizedItems.A
 const CIL = makeLenses (CategorizedItems)
 
+const isCasterOrBlessedOneId = (x: string) => x === "ADV_12" || x === "ADV_50"
+const isTraditionId = (x: string) => isMagicalTraditionId (x) || isBlessedTraditionId (x)
+
+const getActivatablePrerequisite =
+  (index_special: Maybe<string | false>) =>
+  (e: Record<RequireActivatable>) =>
+    fromMaybe<ActivatablePrerequisiteObjects> (e)
+                                              (liftM2 ((safe_id: string) =>
+                                                       (value: string): ActivatableStringObject =>
+                                                         ({
+                                                           id: safe_id,
+                                                           active: RequireActivatable.A.active (e),
+                                                           value,
+                                                         }))
+                                                      (ensure (isString)
+                                                              (RequireActivatable.A.id (e)))
+                                                      (misStringM (index_special)))
+
 export const getCategorizedItems =
   (req_text_index: OrderedMap<number, string | false>) =>
   // tslint:disable-next-line: cyclomatic-complexity
@@ -624,87 +667,60 @@ export const getCategorizedItems =
            }
 
            if (RequirePrimaryAttribute.is (e)) {
+             type InRecord = ReplacedPrerequisite<RequirePrimaryAttribute>
+
              return set (CIL.primaryAttribute)
-                        (Just (fromMaybe<ReplacedPrerequisite<RequirePrimaryAttribute>>
-                                (e)
-                                (misStringM (index_special))))
-             return {
-               ...obj,
-               primaryAttribute: index_special || e
+                        (Just (fromMaybe<InRecord> (e) (misStringM (index_special))))
+           }
+
+           if (RequireIncreasable.is (e)) {
+             type InRecord = ReplacedPrerequisite<RequireIncreasable>
+             const id = RequireIncreasable.A.id (e)
+             const mcategory = isList (id) ? getCategoryById (head (id)) : getCategoryById (id)
+             const isCategory = Maybe.elemF (mcategory)
+
+             return over (isCategory (Categories.ATTRIBUTES) ? CIL.attributes : CIL.skills)
+                         (consF (fromMaybe<InRecord> (e) (misStringM (index_special))))
+           }
+
+           if (RequireActivatable.is (e)) {
+             const id = RequireActivatable.A.id (e)
+             const mcategory = isList (id) ? getCategoryById (head (id)) : getCategoryById (id)
+             const isCategory = Maybe.elemF (mcategory)
+             const addEntry = consF (getActivatablePrerequisite (index_special) (e))
+
+             if (isCategory (Categories.LITURGIES) || isCategory (Categories.SPELLS)) {
+               return over (CIL.activeSkills) (addEntry)
+             }
+
+             if (isList (id) ? any (isCasterOrBlessedOneId) (id) : isCasterOrBlessedOneId (id)) {
+               return over (CIL.casterBlessedOne) (addEntry)
+             }
+
+             if (isList (id) ? any (isTraditionId) (id) : isTraditionId (id)) {
+               return over (CIL.traditions) (addEntry)
+             }
+
+             const isActive = RequireActivatable.A.active (e)
+
+             if (isCategory (Categories.SPECIAL_ABILITIES)) {
+               return over (isActive
+                             ? CIL.otherActiveSpecialAbilities
+                             : CIL.inactiveSpecialAbilities)
+                           (addEntry)
+             }
+
+             if (isCategory (Categories.ADVANTAGES)) {
+               return over (isActive ? CIL.otherActiveAdvantages : CIL.inactiveAdvantages)
+                           (addEntry)
+             }
+
+             if (isCategory (Categories.DISADVANTAGES)) {
+               return over (isActive ? CIL.activeDisadvantages : CIL.inactiveDisadvantages)
+                           (addEntry)
              }
            }
 
-           if (isRequiringIncreasable(e)) {
-             const category = Array.isArray(e.id) ? getCategoryById(e.id[0]) : getCategoryById(e.id)
-             if (category === Categories.ATTRIBUTES) {
-               return {
-                 ...obj,
-                 attributes: [...obj.attributes, index_special || e]
-               }
-             }
-             return {
-               ...obj,
-               skills: [...obj.skills, index_special || e]
-             }
-           }
-
-           if (isRequiringActivatable(e)) {
-             const category = Array.isArray(e.id) ? getCategoryById(e.id[0]) : getCategoryById(e.id)
-             if (category === Categories.LITURGIES || category === Categories.SPELLS) {
-               return {
-                 ...obj,
-                 activeSkills: [...obj.activeSkills, index_special ? { ...e, value: index_special } : e]
-               }
-             }
-             else if (Array.isArray(e.id) ? e.id.includes("ADV_12") || e.id.includes("ADV_50") : ["ADV_12", "ADV_50"].includes(e.id)) {
-               return {
-                 ...obj,
-                 casterBlessedOne: [...obj.casterBlessedOne, index_special ? { ...e, value: index_special } : e]
-               }
-             }
-             else if (Array.isArray(e.id) ? e.id.includes("SA_78") || e.id.includes("SA_86") : ["SA_78", "SA_86"].includes(e.id)) {
-               return {
-                 ...obj,
-                 traditions: [...obj.traditions, index_special ? { ...e, value: index_special } : e]
-               }
-             }
-             else if (category === Categories.SPECIAL_ABILITIES) {
-               if (e.active === true) {
-                 return {
-                   ...obj,
-                   otherActiveSpecialAbilities: [...obj.otherActiveSpecialAbilities, index_special ? { ...e, value: index_special } : e]
-                 }
-               }
-               return {
-                 ...obj,
-                 inactiveSpecialAbilities: [...obj.inactiveSpecialAbilities, index_special ? { ...e, value: index_special } : e]
-               }
-             }
-             else if (category === Categories.ADVANTAGES) {
-               if (e.active === true) {
-                 return {
-                   ...obj,
-                   otherActiveAdvantages: [...obj.otherActiveAdvantages, index_special ? { ...e, value: index_special } : e]
-                 }
-               }
-               return {
-                 ...obj,
-                 inactiveAdvantages: [...obj.inactiveAdvantages, index_special ? { ...e, value: index_special } : e]
-               }
-             }
-             else if (category === Categories.DISADVANTAGES) {
-               if (e.active === true) {
-                 return {
-                   ...obj,
-                   activeDisadvantages: [...obj.activeDisadvantages, index_special ? { ...e, value: index_special } : e]
-                 }
-               }
-               return {
-                 ...obj,
-                 inactiveDisadvantages: [...obj.inactiveDisadvantages, index_special ? { ...e, value: index_special } : e]
-               }
-             }
-           }
-           return obj
+           return ident
          })
          (CategorizedItems.default)

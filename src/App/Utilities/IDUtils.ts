@@ -15,6 +15,11 @@ export const getNumericId = (id: string) => Number.parseInt (id.split (/_/)[1], 
 export const prefixId = (prefix: IdPrefixes) => (id: number | string) => `${prefix}_${id}`
 
 /**
+ * Create a race id.
+ */
+export const prefixRace = prefixId (IdPrefixes.RACES)
+
+/**
  * Create an attribute id.
  */
 export const prefixAttr = prefixId (IdPrefixes.ATTRIBUTES)
