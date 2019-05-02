@@ -1,20 +1,22 @@
 import classNames = require("classnames")
 import * as React from "react";
 import { cnst, flip, ident } from "../../../Data/Function";
-import { fmap } from "../../../Data/Functor";
+import { fmap, fmapF } from "../../../Data/Functor";
 import { over, set } from "../../../Data/Lens";
-import { any, appendStr, consF, head, ifoldr, imap, intercalate, isList, List, map, subscript } from "../../../Data/List";
-import { bind, ensure, fromJust, fromMaybe, isJust, isNothing, Just, liftM2, mapMaybe, maybe, Maybe, maybeR, maybeRNullF, Nothing } from "../../../Data/Maybe";
+import { any, appendStr, consF, head, ifoldr, imap, intercalate, isList, List, map, NonEmptyList, notNull, notNullStr, subscript } from "../../../Data/List";
+import { bind, bindF, ensure, fromJust, fromMaybe, isJust, isNothing, Just, liftM2, mapMaybe, maybe, Maybe, maybeR, maybeRNullF, Nothing } from "../../../Data/Maybe";
 import { lookup, lookupF, OrderedMap } from "../../../Data/OrderedMap";
 import { fromDefault, makeLenses, Record, RecordI } from "../../../Data/Record";
 import { Categories } from "../../Constants/Categories";
+import { ActiveObjectWithId } from "../../Models/ActiveEntries/ActiveObjectWithId";
 import { HeroModelRecord } from "../../Models/Hero/HeroModel";
+import { ActivatableNameCostA_ } from "../../Models/View/ActivatableNameCost";
 import { DerivedCharacteristic } from "../../Models/View/DerivedCharacteristic";
 import { Advantage } from "../../Models/Wiki/Advantage";
 import { Attribute } from "../../Models/Wiki/Attribute";
 import { Book } from "../../Models/Wiki/Book";
 import { Disadvantage } from "../../Models/Wiki/Disadvantage";
-import { L10nRecord } from "../../Models/Wiki/L10n";
+import { L10n, L10nRecord } from "../../Models/Wiki/L10n";
 import { RequireActivatable } from "../../Models/Wiki/prerequisites/ActivatableRequirement";
 import { RequireIncreasable } from "../../Models/Wiki/prerequisites/IncreasableRequirement";
 import { RequirePrimaryAttribute } from "../../Models/Wiki/prerequisites/PrimaryAttributeRequirement";
@@ -24,11 +26,13 @@ import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
 import { WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { Activatable, AllRequirements } from "../../Models/Wiki/wikiTypeHelpers";
 import { DCIds } from "../../Selectors/derivedCharacteristicsSelectors";
+import { getNameCostForWiki } from "../../Utilities/Activatable/activatableActiveUtils";
 import { localizeOrList, translate } from "../../Utilities/I18n";
 import { getCategoryById, isBlessedTraditionId, isMagicalTraditionId, prefixRace } from "../../Utilities/IDUtils";
 import { dec, negate } from "../../Utilities/mathUtils";
 import { toRoman, toRomanFromIndex } from "../../Utilities/NumberUtils";
 import { pipe, pipe_ } from "../../Utilities/pipe";
+import { sortRecordsByName } from "../../Utilities/sortBy";
 import { isString, misNumberM, misStringM } from "../../Utilities/typeCheckUtils";
 import { getWikiEntry } from "../../Utilities/WikiUtils";
 import { Markdown } from "../Universal/Markdown";
@@ -57,6 +61,9 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
   const { x, l10n, specialAbilities, wiki } = props
 
   const cost = getCost (l10n) (x)
+  const cost_elem = <Markdown source={cost} />
+
+  const source_elem = <WikiSource<RecordI<Activatable>> {...props} acc={AcA} />
 
   if (SpecialAbility.is (x)) {
     const header_name_levels =
@@ -87,8 +94,6 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
     //       />
     //   )
     // }
-
-    const source_elem = <WikiSource<RecordI<Activatable>> {...props} acc={AcA} />
 
     switch (AcA.gr (x)) {
       case 5:
@@ -137,7 +142,7 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
                            </WikiProperty>
                          ))}
             <PrerequisitesText {...props} entry={currentObject} />
-            <Markdown source={costText} />
+            {cost_elem}
             {source_elem}
           </WikiBoxTemplate>
         )
@@ -316,7 +321,7 @@ const getCost =
     const apValueAppend = AcA.apValueAppend (x)
     const mcost = AcA.cost (x)
 
-    pipe_ (
+    return pipe_ (
       `**${translate (l10n) ("apvalue")}:** `,
       str => {
         if (isJust (apValue)) {
@@ -515,52 +520,153 @@ export function getPrerequisitesSkillsText(list: IncreasablePrerequisiteObjects[
   </span> : <React.Fragment></React.Fragment>
 }
 
-export function getPrerequisitesActivatedSkillsText(list: ActivatablePrerequisiteObjects[], wiki: WikiState, locale: UIMessages): JSX.Element {
-  return list.length > 0 ? <span>
-  {sortStrings(list.map(e => {
-    if (isActivatableStringObject(e)) {
-      return e.value
-    }
-    const { id } = e
-    if (Array.isArray(id)) {
-      const category = getCategoryById(id[0])
-      return `${category === Categories.LITURGIES ? translate(locale, "knowledgeofliturgicalchant") : translate(locale, "knowledgeofspell")} ${id.map(e => getWikiEntry(wiki) (e)!.name).join(translate(locale, "info.or"))}`
-    }
-    const category = getCategoryById(id)
-    return `${category === Categories.LITURGIES ? translate(locale, "knowledgeofliturgicalchant") : translate(locale, "knowledgeofspell")} ${getWikiEntry(wiki) (id)!.name}`
-  }), locale.id).intercalate(", ")}
-  </span> : <React.Fragment></React.Fragment>
+const getPrerequisitesActivatedSkillsText =
+  (l10n: L10nRecord) =>
+  (wiki: WikiModelRecord) =>
+    pipe (
+      ensure (notNull as notNull<ActivatablePrerequisiteObjects>),
+      maybeR (null)
+             (pipe (
+               map (e => {
+                 if (isActivatableStringObject(e)) {
+                   return e.value
+                 }
+                 const { id } = e
+                 if (Array.isArray(id)) {
+                   const category = getCategoryById(id[0])
+                   return `${category === Categories.LITURGIES ? translate(locale, "knowledgeofliturgicalchant") : translate(locale, "knowledgeofspell")} ${id.map(e => getWikiEntry(wiki) (e)!.name).join(translate(locale, "info.or"))}`
+                 }
+                 const category = getCategoryById(id)
+                 return `${category === Categories.LITURGIES ? translate(locale, "knowledgeofliturgicalchant")   : translate(locale, "knowledgeofspell")} ${getWikiEntry(wiki) (id)!.name}`
+               }),
+               sortStrings (L10n.A.id (l10n)),
+               intercalate (", ")
+             ))
+    )
+
+interface ActivatablePrerequisiteText {
+  id: string | NonEmptyList<string>
+  active: boolean
+  name: string
 }
 
-export function getPrerequisitesActivatablesText(list: ActivatablePrerequisiteObjects[], wiki: WikiState, locale: UIMessages): React.ReactFragment[] {
-  return sortObjects(list.map(e => {
-    if (isActivatableStringObject(e)) {
-      const { id, active, value } = e
-      const category = getCategoryById(id)
-      return {
-        name: `${category === Categories.ADVANTAGES ? `${translate(locale, "advantage")} ` : category === Categories.DISADVANTAGES ? `${translate(locale, "disadvantage")} ` : ""}${value}`,
-        active,
-        id
-      }
-    }
-    const { id, active, sid, sid2, tier } = e
-    return {
-      name: Array.isArray(id) ? id.filter(a => typeof getWikiEntry(wiki) (a) === "object").map(a => {
-        const category = getCategoryById(a)
-        return `${category === Categories.ADVANTAGES ? `${translate(locale, "advantage")} ` : category === Categories.DISADVANTAGES ? `${translate(locale, "disadvantage")} ` : ""}${getNameCostForWiki({ id: a, sid: sid as string | number | undefined, sid2, tier, index: 0 }, wiki, locale).combinedName}`
-      }).join(translate(locale, "info.or")) : typeof getWikiEntry(wiki) (id) === "object" ? (Array.isArray(sid) ? sid.map(a => {
-        const category = getCategoryById(id)
-        return `${category === Categories.ADVANTAGES ? `${translate(locale, "advantage")} ` : category === Categories.DISADVANTAGES ? `${translate(locale, "disadvantage")} ` : ""}${getNameCostForWiki({ id, sid: a, sid2, tier, index: 0 }, wiki, locale).combinedName}`
-      }).join(translate(locale, "info.or")) : `${getCategoryById(id) === Categories.ADVANTAGES ? `${translate(locale, "advantage")} ` : getCategoryById(id) === Categories.DISADVANTAGES ? `${translate(locale, "disadvantage")} ` : ""}${getNameCostForWiki({ id, sid, sid2, tier, index: 0 }, wiki, locale).combinedName}`) : undefined,
-      active,
-      id
-    }
-  }), locale.id).map(e => {
-    return <span key={e.name || typeof e.id === "string" ? e.id as string : ""}>
-      <span className={classNames(!e.active && "disabled")}>{e.name}</span>
-    </span>
+const ActivatablePrerequisiteText =
+  fromDefault<ActivatablePrerequisiteText> ({
+    id: "",
+    active: false,
+    name: "",
   })
-}
+
+const APTA = ActivatablePrerequisiteText.A
+
+const getPrerequisitesActivatablesCategoryAdd =
+  (l10n: L10nRecord) =>
+    pipe (
+      getCategoryById,
+      Maybe.elemF,
+      isCategory =>
+        isCategory (Categories.ADVANTAGES)
+          ? `${translate (l10n) ("advantage")} `
+          : isCategory (Categories.DISADVANTAGES)
+          ? `${translate (l10n) ("disadvantage")} `
+          : ""
+    )
+
+const mapPrerequisitesActivatablesTextElem =
+  (l10n: L10nRecord) =>
+  (wiki: WikiModelRecord) =>
+  (sid: Maybe<string | number>) =>
+  (sid2: Maybe<string | number>) =>
+  (level: Maybe<number>) =>
+    pipe (
+      getWikiEntry (wiki),
+      bindF (a => {
+        const curr_id = Advantage.AL.id (a)
+
+        const category_add = getPrerequisitesActivatablesCategoryAdd (l10n) (curr_id)
+
+        const mcombined_name =
+          getNameCostForWiki (l10n)
+                             (wiki)
+                             (ActiveObjectWithId ({
+                               id: curr_id,
+                               sid,
+                               sid2,
+                               tier: level,
+                               index: 0,
+                             }))
+
+        return fmapF (mcombined_name)
+                     (combined_name =>
+                       `${category_add}${ActivatableNameCostA_.name (combined_name)}`)
+      })
+    )
+
+const getPrerequisitesActivatablesText =
+  (l10n: L10nRecord) =>
+  (wiki: WikiModelRecord) =>
+    pipe (
+      map ((x: ActivatablePrerequisiteObjects) => {
+        if (RequireActivatable.is (x)) {
+          const id = RequireActivatable.A.id (x)
+          const active = RequireActivatable.A.active (x)
+          const msid = RequireActivatable.A.sid (x)
+          const sid2 = RequireActivatable.A.sid2 (x)
+          const level = RequireActivatable.A.tier (x)
+
+          const name =
+            pipe_ (
+              msid,
+              bindF (ensure ((a): a is string | number => !isList (a))),
+              sid => isList (id)
+                           ? pipe_ (
+                               id,
+                               mapMaybe (mapPrerequisitesActivatablesTextElem (l10n)
+                                                                              (wiki)
+                                                                              (sid)
+                                                                              (sid2)
+                                                                              (level)),
+                               localizeOrList (l10n)
+                             )
+                           : fromMaybe ("")
+                                       (mapPrerequisitesActivatablesTextElem (l10n)
+                                                                             (wiki)
+                                                                             (sid)
+                                                                             (sid2)
+                                                                             (level)
+                                                                             (id))
+            )
+
+          return ActivatablePrerequisiteText ({
+            id,
+            active,
+            name,
+          })
+        }
+        else {
+          const { id, active, value } = x
+          const category_add = getPrerequisitesActivatablesCategoryAdd (l10n) (id)
+
+          return ActivatablePrerequisiteText ({
+            id,
+            active,
+            name: `${category_add}${value}`,
+          })
+        }
+      }),
+      sortRecordsByName (L10n.A.id (l10n)),
+      map (x => {
+        const id = APTA.id (x)
+        const name = APTA.name (x)
+        const active = APTA.active (x)
+
+        return (
+          <span key={notNullStr (name) ? name : isString (id) ? id : ""}>
+            <span className={classNames (!active ? "disabled" : undefined)}>{name}</span>
+          </span>
+        )
+      })
+    )
 
 const getPrerequisitesRaceText =
   (l10n: L10nRecord) =>

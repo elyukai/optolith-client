@@ -1692,6 +1692,8 @@ export const splitOn =
 export const notNull =
   pipe (fnull, not) as <A> (xs: List<A>) => xs is NonEmptyList<A>
 
+export type notNull<A> = (xs: List<A>) => xs is NonEmptyList<A>
+
 /**
  * `notNull :: String -> Bool`
  *
