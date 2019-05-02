@@ -25,6 +25,20 @@ export const range =
     buildRangeList (snd (b)) (fst (b)) (List.empty)
 
 /**
+ * `rangeN :: Int a => (a, a) -> [a]`
+ *
+ * The list of values in the subrange defined by a bounding pair.
+ *
+ * The first argument `(l,u)` is a pair specifying the lower and upper bounds of
+ * a contiguous subrange of values.
+ *
+ * Native version of `range`.
+ */
+export const rangeN =
+  (l: number, u: number): List<number> =>
+    buildRangeList (l) (u) (List.empty)
+
+/**
  * `index :: Int a => (a, a) -> a -> Int`
  *
  * The position of a subscript in the subrange.

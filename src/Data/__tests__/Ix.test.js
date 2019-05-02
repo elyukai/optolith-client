@@ -1,5 +1,5 @@
 // @ts-check
-const { range, index, inRange, rangeSize } = require('../Ix')
+const { range, rangeN, index, inRange, rangeSize } = require('../Ix')
 const { List } = require('../List')
 const { Pair } = require('../Pair')
 
@@ -7,6 +7,12 @@ test ('range', () => {
   expect (range (Pair (1, 5))) .toEqual (List (1, 2, 3, 4, 5))
   expect (range (Pair (1, 1))) .toEqual (List (1))
   expect (range (Pair (1, -2))) .toEqual (List ())
+})
+
+test ('rangeN', () => {
+  expect (rangeN (1, 5)) .toEqual (List (1, 2, 3, 4, 5))
+  expect (rangeN (1, 1)) .toEqual (List (1))
+  expect (rangeN (1, -2)) .toEqual (List ())
 })
 
 test ('index', () => {

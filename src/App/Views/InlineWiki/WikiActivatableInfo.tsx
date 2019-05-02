@@ -1,11 +1,12 @@
 import classNames = require("classnames")
 import * as React from "react";
-import { cnst, flip, ident } from "../../../Data/Function";
+import { cnst, flip, ident, join } from "../../../Data/Function";
 import { fmap, fmapF } from "../../../Data/Functor";
+import { rangeN } from "../../../Data/Ix";
 import { over, set } from "../../../Data/Lens";
-import { any, appendStr, consF, head, ifoldr, imap, intercalate, isList, List, map, NonEmptyList, notNull, notNullStr, subscript } from "../../../Data/List";
-import { bind, bindF, ensure, fromJust, fromMaybe, isJust, isNothing, Just, liftM2, mapMaybe, maybe, Maybe, maybeR, maybeRNullF, Nothing } from "../../../Data/Maybe";
-import { lookup, lookupF, OrderedMap } from "../../../Data/OrderedMap";
+import { any, append, appendStr, consF, elem, fnull, head, ifoldr, imap, intercalate, isList, List, map, NonEmptyList, notNull, notNullStr, subscript } from "../../../Data/List";
+import { bind, bindF, ensure, fromJust, fromMaybe, fromMaybeNil, isJust, isNothing, Just, liftM2, mapMaybe, maybe, Maybe, maybeR, maybeRNullF, maybeToNullable, Nothing } from "../../../Data/Maybe";
+import { isOrderedMap, lookup, lookupF, member, OrderedMap } from "../../../Data/OrderedMap";
 import { fromDefault, makeLenses, Record, RecordI } from "../../../Data/Record";
 import { Categories } from "../../Constants/Categories";
 import { ActiveObjectWithId } from "../../Models/ActiveEntries/ActiveObjectWithId";
@@ -15,25 +16,27 @@ import { DerivedCharacteristic } from "../../Models/View/DerivedCharacteristic";
 import { Advantage } from "../../Models/Wiki/Advantage";
 import { Attribute } from "../../Models/Wiki/Attribute";
 import { Book } from "../../Models/Wiki/Book";
-import { Disadvantage } from "../../Models/Wiki/Disadvantage";
 import { L10n, L10nRecord } from "../../Models/Wiki/L10n";
 import { RequireActivatable } from "../../Models/Wiki/prerequisites/ActivatableRequirement";
 import { RequireIncreasable } from "../../Models/Wiki/prerequisites/IncreasableRequirement";
 import { RequirePrimaryAttribute } from "../../Models/Wiki/prerequisites/PrimaryAttributeRequirement";
 import { RaceRequirement } from "../../Models/Wiki/prerequisites/RaceRequirement";
+import { Profession } from "../../Models/Wiki/Profession";
 import { Race } from "../../Models/Wiki/Race";
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
-import { WikiModelRecord } from "../../Models/Wiki/WikiModel";
+import { SelectOption } from "../../Models/Wiki/sub/SelectOption";
+import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { Activatable, AllRequirements } from "../../Models/Wiki/wikiTypeHelpers";
 import { DCIds } from "../../Selectors/derivedCharacteristicsSelectors";
 import { getNameCostForWiki } from "../../Utilities/Activatable/activatableActiveUtils";
-import { localizeOrList, translate } from "../../Utilities/I18n";
-import { getCategoryById, isBlessedTraditionId, isMagicalTraditionId, prefixRace } from "../../Utilities/IDUtils";
+import { isExtendedSpecialAbility } from "../../Utilities/Activatable/checkStyleUtils";
+import { localizeOrList, translate, translateP } from "../../Utilities/I18n";
+import { getCategoryById, isBlessedTraditionId, isMagicalTraditionId, prefixRace, prefixSA } from "../../Utilities/IDUtils";
 import { dec, negate } from "../../Utilities/mathUtils";
 import { toRoman, toRomanFromIndex } from "../../Utilities/NumberUtils";
 import { pipe, pipe_ } from "../../Utilities/pipe";
-import { sortRecordsByName } from "../../Utilities/sortBy";
-import { isString, misNumberM, misStringM } from "../../Utilities/typeCheckUtils";
+import { sortRecordsByName, sortStrings } from "../../Utilities/sortBy";
+import { isNumber, isString, misNumberM, misStringM } from "../../Utilities/typeCheckUtils";
 import { getWikiEntry } from "../../Utilities/WikiUtils";
 import { Markdown } from "../Universal/Markdown";
 import { WikiSource } from "./Elements/WikiSource";
@@ -52,9 +55,12 @@ export interface WikiActivatableInfoProps {
 }
 
 const AcA = { ...Advantage.AL, ...SpecialAbility.AL }
-const AdA = Advantage.A
-const DA = Disadvantage.A
 const SAA = SpecialAbility.A
+const RAA = RequireActivatable.A
+const RAAL = RequireActivatable.AL
+const RIA = RequireIncreasable.A
+const RPAA = RequirePrimaryAttribute.A
+const AAL = Advantage.AL
 
 // tslint:disable-next-line: cyclomatic-complexity
 export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
@@ -69,9 +75,9 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
     const header_name_levels =
       maybe ("")
             ((levels: number) => levels < 2 ? " I" : ` I-${toRoman (levels)}`)
-            (AcA.tiers (x))
+            (SAA.tiers (x))
 
-    const header_full_name = fromMaybe (AcA.name (x)) (AcA.nameInWiki (x))
+    const header_full_name = fromMaybe (SAA.name (x)) (SAA.nameInWiki (x))
 
     const header_name = `${header_full_name}${header_name_levels}`
 
@@ -82,7 +88,7 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
                  {subgr}
                </p>
              ))
-             (bind (AcA.subgr (x))
+             (bind (SAA.subgr (x))
                    (pipe (dec, subscript (translate (l10n) ("combatspecialabilitygroups")))))
 
     // if (["nl-BE"].includes(l10n.id)) {
@@ -95,7 +101,7 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
     //   )
     // }
 
-    switch (AcA.gr (x)) {
+    switch (SAA.gr (x)) {
       case 5:
       case 15:
       case 16:
@@ -109,39 +115,39 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
             title={header_name}
             subtitle={header_sub_name}
             >
-            {maybeRNullF (AcA.effect (x))
+            {maybeRNullF (SAA.effect (x))
                          (str => (
                            <Markdown source={`**${translate (l10n) ("effect")}:** ${str}`} />
                          ))}
-            {maybeRNullF (AcA.volume (x))
+            {maybeRNullF (SAA.volume (x))
                          (str => (
                            <WikiProperty l10n={l10n} title="volume">
                              {str}
                            </WikiProperty>
                          ))}
-            {maybeRNullF (AcA.aeCost (x))
+            {maybeRNullF (SAA.aeCost (x))
                          (str => (
                            <WikiProperty l10n={l10n} title="aecost">
                              {str}
                            </WikiProperty>
                          ))}
-            {isNothing (AcA.aeCost (x)) && isNothing (AcA.bindingCost (x))
+            {isNothing (SAA.aeCost (x)) && isNothing (SAA.bindingCost (x))
               ? <WikiProperty l10n={l10n} title="aecost">{translate (l10n) ("none")}</WikiProperty>
               : null}
-            {maybeRNullF (AcA.bindingCost (x))
+            {maybeRNullF (SAA.bindingCost (x))
                          (str => (
                            <WikiProperty l10n={l10n} title="bindingcost">
                              {str}
                            </WikiProperty>
                          ))}
-            {maybeRNullF (bind (misNumberM (AcA.property (x)))
+            {maybeRNullF (bind (misNumberM (SAA.property (x)))
                                (pipe (dec, subscript (translate (l10n) ("propertylist")))))
                          (str => (
                            <WikiProperty l10n={l10n} title="bindingcost">
                              {str}
                            </WikiProperty>
                          ))}
-            <PrerequisitesText {...props} entry={currentObject} />
+            <PrerequisitesText {...props} />
             {cost_elem}
             {source_elem}
           </WikiBoxTemplate>
@@ -154,12 +160,22 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
             title={header_name}
             subtitle={header_sub_name}
             >
-            {currentObject.effect && <Markdown source={`**${translate(l10n, "info.effect")}:** ${currentObject.effect}`} />}
-            {currentObject.aspect && <WikiProperty l10n={l10n} title="aspect">
-              {typeof currentObject.aspect === "number" ? translate(l10n, "liturgies.view.aspects")[currentObject.aspect - 1] : currentObject.aspect}
-            </WikiProperty>}
-            <PrerequisitesText {...props} entry={currentObject} />
-            <Markdown source={costText} />
+            {maybeRNullF (SAA.effect (x))
+                         (str => (
+                           <Markdown source={`**${translate (l10n) ("effect")}:** ${str}`} />
+                         ))}
+            {maybeRNullF (SAA.aspect (x))
+                         (aspect => (
+                           <WikiProperty l10n={l10n} title="aspect">
+                             {isNumber (aspect)
+                               ? fromMaybe ("")
+                                           (subscript (translate (l10n) ("aspectlist"))
+                                                      (aspect - 1))
+                               : aspect}
+                           </WikiProperty>
+                         ))}
+            <PrerequisitesText {...props} />
+            {cost_elem}
             {source_elem}
           </WikiBoxTemplate>
         )
@@ -172,15 +188,15 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
             subtitle={header_sub_name}
             >
             <WikiProperty l10n={l10n} title="aecost">
-              {currentObject.aeCost}
+              {SAA.aeCost (x)}
             </WikiProperty>
             <WikiProperty l10n={l10n} title="protectivecircle">
-              {currentObject.protectiveCircle}
+              {SAA.protectiveCircle (x)}
             </WikiProperty>
             <WikiProperty l10n={l10n} title="wardingcircle">
-              {currentObject.wardingCircle}
+              {SAA.wardingCircle (x)}
             </WikiProperty>
-            <Markdown source={costText} />
+            {cost_elem}
             {source_elem}
           </WikiBoxTemplate>
         )
@@ -193,9 +209,9 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
             title={header_name}
             subtitle={header_sub_name}
             >
-            <Markdown source={`${currentObject.rules}`} />
-            <PrerequisitesText {...props} entry={currentObject} />
-            <Markdown source={costText} />
+            <Markdown source={`${SAA.rules (x)}`} />
+            <PrerequisitesText {...props} />
+            {cost_elem}
             {source_elem}
           </WikiBoxTemplate>
         )
@@ -208,12 +224,40 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
             title={header_name}
             subtitle={header_sub_name}
             >
-            {currentObject.rules && <Markdown source={`**${translate(l10n, "info.rules")}:** ${currentObject.rules}`} />}
-            {currentObject.extended && <Markdown source={`**${translate(l10n, "info.extendedcombatspecialabilities")}:** ${sortStrings(currentObject.extended.map(e => !Array.isArray(e) && specialAbilities.has(e) ? specialAbilities.get(e)!.name : "..."), l10n.id).intercalate(", ")}`} />}
-            {currentObject.penalty && <Markdown source={`**${translate(l10n, "info.penalty")}:** ${currentObject.penalty}`} />}
-            {currentObject.combatTechniques && <Markdown source={`**${translate(l10n, "info.combattechniques")}:** ${currentObject.combatTechniques}`} />}
-            <PrerequisitesText {...props} entry={currentObject} />
-            <Markdown source={costText} />
+            {maybeRNullF (SAA.rules (x))
+                         (str => (
+                           <Markdown source={`**${translate (l10n) ("rules")}:** ${str}`} />
+                         ))}
+            {maybeRNullF (SAA.extended (x))
+                         (es => {
+                           const tag = translate (l10n) ("extendedcombatspecialabilities")
+                           const names = pipe_ (
+                            es,
+                            mapMaybe (pipe (
+                              ensure (isString),
+                              bindF (lookupF (specialAbilities)),
+                              fmap (SAA.name)
+                            )),
+                            sortStrings (L10n.A.id (l10n)),
+                            intercalate (", ")
+                           )
+
+                           return (
+                             <Markdown source={`**${tag}:** ${names}`} />
+                           )
+                         })}
+            {maybeRNullF (SAA.penalty (x))
+                         (str => (
+                           <Markdown source={`**${translate (l10n) ("penalty")}:** ${str}`} />
+                         ))}
+            {maybeRNullF (SAA.combatTechniques (x))
+                         (str => (
+                           <Markdown
+                             source={`**${translate (l10n) ("combattechniques")}:** ${str}`}
+                             />
+                         ))}
+            <PrerequisitesText {...props} />
+            {cost_elem}
             {source_elem}
           </WikiBoxTemplate>
         )
@@ -225,28 +269,61 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
             title={header_name}
             subtitle={header_sub_name}
             >
-            {currentObject.rules && <Markdown source={`**${translate(l10n, "info.rules")}:** ${currentObject.rules}`} />}
-            {currentObject.extended && <Markdown source={`**${translate(l10n, "info.extendedmagicalspecialabilities")}:** ${sortStrings(currentObject.extended.map(e => !Array.isArray(e) && specialAbilities.has(e) ? specialAbilities.get(e)!.name : "..."), l10n.id).intercalate(", ")}`} />}
-            <PrerequisitesText {...props} entry={currentObject} />
-            <Markdown source={costText} />
+            {maybeRNullF (SAA.rules (x))
+                         (str => (
+                           <Markdown source={`**${translate (l10n) ("rules")}:** ${str}`} />
+                         ))}
+            {maybeRNullF (SAA.extended (x))
+                         (es => {
+                           const tag = translate (l10n) ("extendedmagicalspecialabilities")
+                           const names = pipe_ (
+                            es,
+                            mapMaybe (pipe (
+                              ensure (isString),
+                              bindF (lookupF (specialAbilities)),
+                              fmap (SAA.name)
+                            )),
+                            sortStrings (L10n.A.id (l10n)),
+                            intercalate (", ")
+                           )
+
+                           return (
+                             <Markdown source={`**${tag}:** ${names}`} />
+                           )
+                         })}
+            <PrerequisitesText {...props} />
+            {cost_elem}
             {source_elem}
           </WikiBoxTemplate>
         )
 
       case 25: {
-        const SA_639 = specialAbilities.get("SA_639")
+        // Gebieter des [Aspekts]
+        const sa_id = prefixSA (639)
+        const SA_639 = lookup (sa_id) (specialAbilities)
 
-        const additionalExtended = SA_639 && SA_639.select && SA_639.select.foldl<ActiveObject[]>((arr, selectionObject) => {
-          if (selectionObject.prerequisites) {
-            if (selectionObject.prerequisites.find(e => e.id === currentObject.id || e.id.includes(currentObject.id))) {
-              return [
-                { sid: selectionObject.id },
-                ...arr
-              ]
-            }
-          }
-          return arr
-        }, [])
+        const add_extended =
+          pipe_ (
+            SA_639,
+            bindF (SAA.select),
+            fmap (mapMaybe (join ((option: Record<SelectOption>) =>
+                                   pipe (
+                                     SelectOption.A.prerequisites,
+                                     bindF (ensure (any (e => {
+                                                     const req_ids = RAAL.id (e)
+
+                                                     return isString (req_ids)
+                                                       ? req_ids === SAA.id (x)
+                                                       : elem (SAA.id (x)) (req_ids)
+                                                   }))),
+                                     fmap (() => ActiveObjectWithId ({
+                                                   id: sa_id,
+                                                   index: 0,
+                                                   sid: Just (SelectOption.A.id (option)),
+                                                 }))
+                                   )))),
+            fromMaybeNil
+          )
 
         return (
           <WikiBoxTemplate
@@ -254,15 +331,44 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
             title={header_name}
             subtitle={header_sub_name}
             >
-            {currentObject.rules && <Markdown source={`**${translate(l10n, "info.rules")}:** ${currentObject.rules}`} />}
-            {currentObject.extended && <Markdown source={`**${translate(l10n, "info.extendedblessedtspecialabilities")}:** ${sortStrings([
-              ...currentObject.extended.map(e => !Array.isArray(e) && specialAbilities.has(e) ? specialAbilities.get(e)!.name : "..."),
-              ...(additionalExtended ? additionalExtended.map(e => getNameCostForWiki({ id: "SA_639", index: 0, ...e }, wiki, l10n).combinedName) : [])
-            ], l10n.id).intercalate(", ")}`} />}
-            {currentObject.penalty && <Markdown source={`**${translate(l10n, "info.penalty")}:** ${currentObject.penalty}`} />}
-            {currentObject.combatTechniques && <Markdown source={`**${translate(l10n, "info.combattechniques")}:** ${currentObject.combatTechniques}`} />}
-            <PrerequisitesText {...props} entry={currentObject} />
-            <Markdown source={costText} />
+            {maybeRNullF (SAA.rules (x))
+                         (str => (
+                           <Markdown source={`**${translate (l10n) ("rules")}:** ${str}`} />
+                         ))}
+            {maybeRNullF (SAA.extended (x))
+                         (pipe (
+                           mapMaybe (pipe (
+                             ensure (isString),
+                             bindF (lookupF (specialAbilities)),
+                             fmap (SAA.name)
+                           )),
+                           append (mapMaybe (pipe (
+                                              getNameCostForWiki (l10n) (wiki),
+                                              fmap (ActivatableNameCostA_.name)
+                                            ))
+                                            (add_extended)),
+                           sortStrings (L10n.A.id (l10n)),
+                           intercalate (", "),
+                           str => {
+                             const tag = translate (l10n) ("extendedblessedtspecialabilities")
+
+                             return (
+                               <Markdown source={`**${tag}:** ${str}`} />
+                             )
+                           }
+                         ))}
+            {maybeRNullF (SAA.penalty (x))
+                         (str => (
+                           <Markdown source={`**${translate (l10n) ("penalty")}:** ${str}`} />
+                         ))}
+            {maybeRNullF (SAA.combatTechniques (x))
+                         (str => (
+                           <Markdown
+                             source={`**${translate (l10n) ("combattechniques")}:** ${str}`}
+                             />
+                         ))}
+            <PrerequisitesText {...props} />
+            {cost_elem}
             {source_elem}
           </WikiBoxTemplate>
         )
@@ -275,43 +381,83 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
             title={header_name}
             subtitle={header_sub_name}
             >
-            {currentObject.rules && <Markdown source={`**${translate(l10n, "info.rules")}:** ${currentObject.rules}`} />}
-            {currentObject.effect && <Markdown source={`**${translate(l10n, "info.effect")}:** ${currentObject.effect}`} />}
-            {currentObject.penalty && <Markdown source={`**${translate(l10n, "info.penalty")}:** ${currentObject.penalty}`} />}
-            {currentObject.combatTechniques && <Markdown source={`**${translate(l10n, "info.combattechniques")}:** ${currentObject.combatTechniques}`} />}
-            {currentObject.aeCost && <WikiProperty l10n={l10n} title="aecost">
-              {currentObject.aeCost}
-            </WikiProperty>}
-            <PrerequisitesText {...props} entry={currentObject} />
-            <Markdown source={costText} />
+            {maybeRNullF (SAA.rules (x))
+                         (str => (
+                           <Markdown source={`**${translate (l10n) ("rules")}:** ${str}`} />
+                         ))}
+            {maybeRNullF (SAA.effect (x))
+                         (str => (
+                           <Markdown source={`**${translate (l10n) ("effect")}:** ${str}`} />
+                         ))}
+            {maybeRNullF (SAA.penalty (x))
+                         (str => (
+                           <Markdown source={`**${translate (l10n) ("penalty")}:** ${str}`} />
+                         ))}
+            {maybeRNullF (SAA.combatTechniques (x))
+                         (str => (
+                           <Markdown
+                             source={`**${translate (l10n) ("combattechniques")}:** ${str}`}
+                             />
+                         ))}
+            {maybeRNullF (SAA.aeCost (x))
+                         (str => (
+                           <WikiProperty l10n={l10n} title="aecost">
+                             {str}
+                           </WikiProperty>
+                         ))}
+            <PrerequisitesText {...props} />
+            {cost_elem}
             {source_elem}
           </WikiBoxTemplate>
         )
     }
   }
+  else {
+    const header_name_levels =
+      maybe ("")
+            ((levels: number) => levels < 2 ? " I" : ` I-${toRoman (levels)}`)
+            (AAL.tiers (x))
 
-  const headerName = `${currentObject.name}${typeof tiers === "number" ? tiers < 2 ? " I" : ` I-${getRoman(tiers)}` : ""}${(Array.isArray(currentObject.reqs) ? currentObject.reqs.includes("RCP") : (currentObject.reqs.has(1) && currentObject.reqs.get(1)!.includes("RCP"))) ? " (*)" : ""}`
+    const header_full_name = AAL.name (x)
 
-  // if (["en-US", "nl-BE"].includes(l10n.id)) {
-  //   return (
-  //     <WikiBoxTemplate className="race" title={headerName} />
-  //   )
-  // }
+    const rs = AAL.prerequisites (x)
 
-  return (
-    <WikiBoxTemplate className="disadv" title={headerName}>
-      {currentObject.rules && <Markdown source={`**${translate(l10n, "info.rules")}:** ${currentObject.rules}`} />}
-      {currentObject.range && <WikiProperty l10n={l10n} title="range">
-        {currentObject.range}
-      </WikiProperty>}
-      {currentObject.actions && <WikiProperty l10n={l10n} title="actions">
-        {currentObject.actions}
-      </WikiProperty>}
-      <PrerequisitesText {...props} entry={currentObject} />
-      <Markdown source={costText} />
-            {source_elem}
-    </WikiBoxTemplate>
-  )
+    const has_rcp =
+      isOrderedMap (rs)
+        ? maybe (false) (elem<AllRequirements> ("RCP")) (lookup (1) (rs))
+        : elem<AllRequirements> ("RCP") (rs)
+
+    const header_rcp = has_rcp ? " (*)" : ""
+
+    const header_name = `${header_full_name}${header_name_levels}${header_rcp}`
+
+    // if (["en-US", "nl-BE"].includes(l10n.id)) {
+    //   return (
+    //     <WikiBoxTemplate className="race" title={headerName} />
+    //   )
+    // }
+
+    return (
+      <WikiBoxTemplate className="disadv" title={header_name}>
+        <Markdown source={`**${translate (l10n) ("rules")}:** ${AAL.rules (x)}`} />
+        {maybeRNullF (AcA.range (x))
+                     (str => (
+                       <WikiProperty l10n={l10n} title="range">
+                         {str}
+                       </WikiProperty>
+                     ))}
+        {maybeRNullF (AcA.actions (x))
+                     (str => (
+                       <WikiProperty l10n={l10n} title="actions">
+                         {str}
+                       </WikiProperty>
+                     ))}
+        <PrerequisitesText {...props} />
+        {cost_elem}
+        {source_elem}
+      </WikiBoxTemplate>
+    )
+  }
 }
 
 const getCost =
@@ -368,103 +514,156 @@ const getCost =
   }
 
 export interface PrerequisitesTextProps {
-  entry: ActivatableInstance
-  dependent: DependentInstancesState
-  locale: UIMessages
-  wiki: WikiState
+  x: Activatable
+  hero: HeroModelRecord
+  l10n: L10nRecord
+  wiki: WikiModelRecord
 }
 
-export function PrerequisitesText (props: PrerequisitesTextProps): JSX.Element {
-  const { entry, locale } = props
+export function PrerequisitesText (props: PrerequisitesTextProps) {
+  const { x, l10n } = props
 
-  if (typeof entry.prerequisitesText === "string") {
-    return <Markdown source={`**${translate(locale, "info.prerequisites")}:** ${entry.prerequisitesText}`} />
+  const prerequisitesText = AAL.prerequisitesText (x)
+  const prerequisitesTextIndex = AAL.prerequisitesTextIndex (x)
+
+  if (isString (prerequisitesText)) {
+    return <Markdown source={`**${translate (l10n) ("prerequisites")}:** ${prerequisitesText}`} />
   }
 
-  const { prerequisitesTextEnd, prerequisitesTextStart, tiers = 1, reqs } = entry
+  const levels = Maybe.product (AAL.tiers (x))
+  const prerequisites = AAL.prerequisites (x)
+  const prerequisitesTextEnd = AAL.prerequisitesTextEnd (x)
+  const prerequisitesTextStart = AAL.prerequisitesTextStart (x)
 
-  if (!Array.isArray(reqs)) {
-    const tiersArr = Array.from({ length: tiers }, (_, index) => index + 1)
-    return <p>
-      <span>{translate(locale, "info.prerequisites")}</span>
-      <span>
-        {prerequisitesTextStart && <Markdown source={prerequisitesTextStart} oneLine="span" />}
-        {!reqs.has(1) && `${translate(locale, "tier")} I: ${translate(locale, "info.none")} `}
-        {tiersArr.map(e => {
-          return <span key={e} className="tier">
-            {`${translate(locale, "tier")} ${getRoman(e)}: `}
-            {reqs.has(e) && <Prerequisites {...props} list={reqs.get(e)!} prerequisitesTextIndex={entry.prerequisitesTextIndex} />}
-            {e > 1 && <span>{entry.name} {getRoman(e - 1)}</span>}
-          </span>
-        })}
-        {prerequisitesTextEnd && <Markdown source={prerequisitesTextEnd} oneLine="span" />}
-      </span>
-    </p>
+  if (isOrderedMap (prerequisites)) {
+    const levelList = rangeN (1, levels)
+
+    return (
+      <p>
+        <span>{translate (l10n) ("prerequisites")}</span>
+        <span>
+          {maybeR (null)
+                  ((y: string) => <Markdown source={y} oneLine="span" />)
+                  (prerequisitesTextStart)}
+          {member (1) (prerequisites)
+            ? `${translate (l10n) ("level")} I: ${translate (l10n) ("none")} `
+            : null}
+          {map ((lvl: number) => (
+                 <span key={lvl} className="tier">
+                   {`${translate (l10n) ("level")} ${toRoman (lvl)}: `}
+                   {maybeR (null)
+                           ((rs: List<AllRequirements>) => (
+                             <Prerequisites
+                               {...props}
+                               rs={rs}
+                               req_text_index={prerequisitesTextIndex}
+                               />
+                           ))
+                           (lookup (lvl) (prerequisites))}
+                   {lvl > 1 ? <span>{AAL.name (x)} {toRoman (lvl - 1)}</span> : null}
+                 </span>
+               ))
+               (levelList)}
+          {maybeR (null)
+                  ((y: string) => <Markdown source={y} oneLine="span" />)
+                  (prerequisitesTextEnd)}
+        </span>
+      </p>
+    )
   }
-
-  return <p>
-    <span>{translate(locale, "info.prerequisites")}</span>
-    <span>
-      {prerequisitesTextStart && <Markdown source={prerequisitesTextStart} oneLine="span" />}
-      <Prerequisites {...props} list={reqs} prerequisitesTextIndex={entry.prerequisitesTextIndex} />
-      {prerequisitesTextEnd && (/^(?:|,|\.)/.test(prerequisitesTextEnd) ? <Markdown source={prerequisitesTextEnd} oneLine="fragment" /> : <Markdown source={prerequisitesTextEnd} oneLine="span" />)}
-    </span>
-  </p>
+  else {
+    return (
+      <p>
+        <span>{translate (l10n) ("prerequisites")}</span>
+        <span>
+          {maybeR (null)
+                  ((y: string) => <Markdown source={y} oneLine="span" />)
+                  (prerequisitesTextStart)}
+          <Prerequisites
+            {...props}
+            rs={prerequisites}
+            req_text_index={prerequisitesTextIndex}
+            />
+          {maybeR (null)
+                  ((y: string) =>
+                    /^(?:|,|\.)/ .test (y)
+                      ? <Markdown source={y} oneLine="fragment" />
+                      : <Markdown source={y} oneLine="span" />)
+                  (prerequisitesTextEnd)}
+        </span>
+      </p>
+    )
+  }
 }
 
 export interface PrerequisitesProps {
-  list: ActivatableBasePrerequisites
-  entry: ActivatableInstance
-  locale: UIMessages
-  prerequisitesTextIndex: Map<number, string | false>
-  wiki: WikiState
+  rs: List<AllRequirements>
+  x: Activatable
+  l10n: L10nRecord
+  req_text_index: OrderedMap<number, string | false>
+  wiki: WikiModelRecord
 }
 
-export function Prerequisites(props: PrerequisitesProps) {
-  const { list, entry, locale, prerequisitesTextIndex, wiki } = props
+export function Prerequisites (props: PrerequisitesProps) {
+  const { rs, x, l10n, req_text_index, wiki } = props
 
-  if (list.length === 0 && !isExtendedSpecialAbility(entry)) {
-    return <React.Fragment>
-      {translate(locale, "info.none")}
-    </React.Fragment>
+  if (fnull (rs) && !isExtendedSpecialAbility (x)) {
+    return <>
+      {translate (l10n) ("none")}
+    </>
   }
 
-  const items = getCategorizedItems(list, prerequisitesTextIndex)
+  const items = getCategorizedItems (req_text_index) (rs)
 
-  const {
-    rcp,
-    casterBlessedOne,
-    traditions,
-    attributes,
-    primaryAttribute,
-    skills,
-    activeSkills,
-    otherActiveSpecialAbilities,
-    inactiveSpecialAbilities,
-    otherActiveAdvantages,
-    inactiveAdvantages,
-    activeDisadvantages,
-    inactiveDisadvantages,
-    race
-  } = items
+  const rcp = CIA.rcp (items)
+  const casterBlessedOne = CIA.casterBlessedOne (items)
+  const traditions = CIA.traditions (items)
+  const attributes = CIA.attributes (items)
+  const primaryAttribute = CIA.primaryAttribute (items)
+  const skills = CIA.skills (items)
+  const activeSkills = CIA.activeSkills (items)
+  const otherActiveSpecialAbilities = CIA.otherActiveSpecialAbilities (items)
+  const inactiveSpecialAbilities = CIA.inactiveSpecialAbilities (items)
+  const otherActiveAdvantages = CIA.otherActiveAdvantages (items)
+  const inactiveAdvantages = CIA.inactiveAdvantages (items)
+  const activeDisadvantages = CIA.activeDisadvantages (items)
+  const inactiveDisadvantages = CIA.inactiveDisadvantages (items)
+  const race = CIA.race (items)
 
-  return <React.Fragment>
-    {rcp && getPrerequisitesRCPText(rcp, entry, locale)}
-    {getPrerequisitesActivatablesText(casterBlessedOne, wiki, locale)}
-    {getPrerequisitesActivatablesText(traditions, wiki, locale)}
-    {getPrerequisitesAttributesText(attributes, wiki.attributes, locale)}
-    {primaryAttribute && getPrerequisitesPrimaryAttributeText(primaryAttribute, locale)}
-    {getPrerequisitesSkillsText(skills, wiki, locale)}
-    {getPrerequisitesActivatedSkillsText(activeSkills, wiki, locale)}
-    {getPrerequisitesActivatablesText(otherActiveSpecialAbilities, wiki, locale)}
-    {getPrerequisitesActivatablesText(inactiveSpecialAbilities, wiki, locale)}
-    {getPrerequisitesActivatablesText(otherActiveAdvantages, wiki, locale)}
-    {getPrerequisitesActivatablesText(inactiveAdvantages, wiki, locale)}
-    {getPrerequisitesActivatablesText(activeDisadvantages, wiki, locale)}
-    {getPrerequisitesActivatablesText(inactiveDisadvantages, wiki, locale)}
-    {race && getPrerequisitesRaceText(race, wiki.races, locale)}
-    {entry.category === Categories.SPECIAL_ABILITIES ? (entry.gr === 11 ? <span>{translate(locale, "appropriatecombatstylespecialability")}</span> : entry.gr === 14 ? <span>{translate(locale, "appropriatemagicalstylespecialability")}</span> : entry.gr === 26 ? <span>{translate(locale, "appropriateblessedstylespecialability")}</span> : "") : ""}
-  </React.Fragment>
+  const category = AAL.category (x)
+  const gr = AAL.gr (x)
+
+  return <>
+    {(isString (rcp) ? notNullStr (rcp) : rcp)
+      ? getPrerequisitesRCPText (l10n) (x) (rcp)
+      : null}
+    {getPrerequisitesActivatablesText (l10n) (wiki) (casterBlessedOne)}
+    {getPrerequisitesActivatablesText (l10n) (wiki) (traditions)}
+    {getPrerequisitesAttributesText (l10n) (WikiModel.A.attributes (wiki)) (attributes)}
+    {pipe_ (primaryAttribute, fmap (getPrerequisitesPrimaryAttributeText (l10n)), maybeToNullable)}
+    {getPrerequisitesSkillsText (l10n) (wiki) (skills)}
+    {getPrerequisitesActivatedSkillsText (l10n) (wiki) (activeSkills)}
+    {getPrerequisitesActivatablesText (l10n) (wiki) (otherActiveSpecialAbilities)}
+    {getPrerequisitesActivatablesText (l10n) (wiki) (inactiveSpecialAbilities)}
+    {getPrerequisitesActivatablesText (l10n) (wiki) (otherActiveAdvantages)}
+    {getPrerequisitesActivatablesText (l10n) (wiki) (inactiveAdvantages)}
+    {getPrerequisitesActivatablesText (l10n) (wiki) (activeDisadvantages)}
+    {getPrerequisitesActivatablesText (l10n) (wiki) (inactiveDisadvantages)}
+    {pipe_ (
+      race,
+      fmap (getPrerequisitesRaceText (l10n) (WikiModel.A.races (wiki))),
+      maybeToNullable
+    )}
+    {category === Categories.SPECIAL_ABILITIES
+      ? (gr === 11
+        ? <span>{translate (l10n) ("appropriatecombatstylespecialability")}</span>
+        : gr === 14
+        ? <span>{translate (l10n) ("appropriatemagicalstylespecialability")}</span>
+        : gr === 26
+        ? <span>{translate (l10n) ("appropriateblessedstylespecialability")}</span>
+        : "")
+      : ""}
+  </>
 }
 
 interface ActivatableStringObject {
@@ -480,45 +679,118 @@ type IncreasablePrerequisiteObjects = Record<RequireIncreasable> | string
 type RacePrerequisiteObjects = Record<RaceRequirement> | string
 type RCPPrerequisiteObjects = boolean | string
 
-function isActivatableStringObject(testObj: ActivatablePrerequisiteObjects): testObj is ActivatableStringObject {
-  return testObj.hasOwnProperty("id") && testObj.hasOwnProperty("active") && testObj.hasOwnProperty("value")
-}
+const getPrerequisitesRCPText =
+  (l10n: L10nRecord) =>
+  (x: Activatable) =>
+  (options: RCPPrerequisiteObjects) => {
+    if (isString (options)) {
+      return <span>{options}</span>
+    }
+    else {
+      const category = AAL.category (x)
+      const name = translateP (l10n)
+                              ("racecultureorprofessionrequiresautomaticorsuggested")
+                              (List (
+                                AAL.name (x),
+                                category === Categories.ADVANTAGES
+                                  ? translate (l10n) ("advantage")
+                                  : translate (l10n) ("disadvantage")
+                              ))
 
-export function getPrerequisitesRCPText(options: RCPPrerequisiteObjects, entry: ActivatableInstance, locale: UIMessages): JSX.Element {
-  return <span>
-    {typeof options === "string" ? options : translate(locale, "requiresrcp", entry.name, entry.category === Categories.ADVANTAGES ? translate(locale, "advantage") : translate(locale, "disadvantage"))}
-  </span>
-}
+      return <span>{name}</span>
+    }
+  }
 
-export function getPrerequisitesAttributesText(list: IncreasablePrerequisiteObjects[], attributes: Map<string, Attribute>, locale: UIMessages): JSX.Element {
-  return list.length > 0 ? <span>
-    {list.map(e => {
-      if (typeof e === "string") {
-        return e
-      }
-      const { id, value } = e
-      return `${Array.isArray(id) ? id.map(a => attributes.get(a)!.short).join(translate(locale, "info.or")) : attributes.get(id)!.short} ${value}`
-    }).join(", ")}
-  </span> : <React.Fragment></React.Fragment>
-}
+const getPrerequisitesAttributesText =
+  (l10n: L10nRecord) =>
+  (attrs: OrderedMap<string, Record<Attribute>>) => {
+    const getAttrAbbrv = pipe (lookupF (attrs), fmap (Attribute.A.short))
 
-export function getPrerequisitesPrimaryAttributeText(primaryAttribute: PrimaryAttributePrerequisiteObjects, locale: UIMessages): JSX.Element {
-  return <span>
-    {typeof primaryAttribute === "string" ? primaryAttribute : `${translate(locale, "primaryattributeofthetradition")} ${primaryAttribute.value}`}
-  </span>
-}
+    return pipe (
+      ensure (notNull as notNull<IncreasablePrerequisiteObjects>),
+      maybeR (null)
+             (pipe (
+               map (e => {
+                 if (RequireIncreasable.is (e)) {
+                   const ids = RIA.id (e)
+                   const value = RIA.value (e)
 
-export function getPrerequisitesSkillsText(list: IncreasablePrerequisiteObjects[], wiki: WikiState, locale: UIMessages): JSX.Element {
-  return list.length > 0 ? <span>
-    {sortStrings(list.map(e => {
-      if (typeof e === "string") {
-        return e
-      }
-      const { id, value } = e
-      return `${Array.isArray(id) ? id.map(a => getWikiEntry(wiki) (a)!.name).join(translate(locale, "info.or")) : getWikiEntry(wiki) (id)!.name} ${value}`
-    }), locale.id).intercalate(", ")}
-  </span> : <React.Fragment></React.Fragment>
-}
+                   if (isList (ids)) {
+                     const name = pipe_ (ids, mapMaybe (getAttrAbbrv), localizeOrList (l10n))
+
+                     return `${name} ${value}`
+                   }
+                   else {
+                     const name = pipe_ (ids, getAttrAbbrv, fromMaybe (""))
+
+                     return `${name} ${value}`
+                   }
+                 }
+                 else {
+                   return e
+                 }
+               }),
+               sortStrings (L10n.A.id (l10n)),
+               intercalate (", ")
+             ))
+    )
+  }
+
+const getPrerequisitesPrimaryAttributeText =
+  (l10n: L10nRecord) =>
+  (x: PrimaryAttributePrerequisiteObjects) => (
+    <span>
+      {isString (x)
+        ? x
+        : `${translate (l10n) ("primaryattributeofthetradition")} ${RPAA.value (x)}`}
+    </span>
+  )
+
+const getPrerequisitesSkillsText =
+  (l10n: L10nRecord) =>
+  (wiki: WikiModelRecord) =>
+    pipe (
+      ensure (notNull as notNull<IncreasablePrerequisiteObjects>),
+      maybeR (null)
+             (pipe (
+               map (e => {
+                 if (RequireIncreasable.is (e)) {
+                   const ids = RIA.id (e)
+                   const value = RIA.value (e)
+
+                   if (isList (ids)) {
+                     const name = pipe_ (ids, mapMaybe (getNameById (wiki)), localizeOrList (l10n))
+
+                     return `${name} ${value}`
+                   }
+                   else {
+                     const name = pipe_ (ids, getNameById (wiki), fromMaybe (""))
+
+                     return `${name} ${value}`
+                   }
+                 }
+                 else {
+                   return e
+                 }
+               }),
+               sortStrings (L10n.A.id (l10n)),
+               intercalate (", ")
+             ))
+    )
+
+const getPrerequisitesActivatedSkillsTextCategoryAdd =
+  (l10n: L10nRecord) =>
+  (id: string) => {
+    const isCategory = Maybe.elemF (getCategoryById (id))
+
+    return isCategory (Categories.LITURGIES)
+      ? translate (l10n) ("knowledgeofliturgicalchant")
+      : translate (l10n) ("knowledgeofspell")
+  }
+
+const getNameById =
+  (wiki: WikiModelRecord) =>
+    pipe (getWikiEntry (wiki), bindF (pipe (Profession.AL.name, ensure (isString))))
 
 const getPrerequisitesActivatedSkillsText =
   (l10n: L10nRecord) =>
@@ -528,16 +800,29 @@ const getPrerequisitesActivatedSkillsText =
       maybeR (null)
              (pipe (
                map (e => {
-                 if (isActivatableStringObject(e)) {
-                   return e.value
+                 if (RequireActivatable.is (e)) {
+                   const ids = RAA.id (e)
+
+                   if (isList (ids)) {
+                     const category_add =
+                       getPrerequisitesActivatedSkillsTextCategoryAdd (l10n) (head (ids))
+
+                     const name = pipe_ (ids, mapMaybe (getNameById (wiki)), localizeOrList (l10n))
+
+                     return `${category_add} ${name}`
+                   }
+                   else {
+                     const category_add =
+                       getPrerequisitesActivatedSkillsTextCategoryAdd (l10n) (ids)
+
+                     const name = pipe_ (ids, getNameById (wiki), fromMaybe (""))
+
+                     return `${category_add} ${name}`
+                   }
                  }
-                 const { id } = e
-                 if (Array.isArray(id)) {
-                   const category = getCategoryById(id[0])
-                   return `${category === Categories.LITURGIES ? translate(locale, "knowledgeofliturgicalchant") : translate(locale, "knowledgeofspell")} ${id.map(e => getWikiEntry(wiki) (e)!.name).join(translate(locale, "info.or"))}`
+                 else {
+                   return e .value
                  }
-                 const category = getCategoryById(id)
-                 return `${category === Categories.LITURGIES ? translate(locale, "knowledgeofliturgicalchant")   : translate(locale, "knowledgeofspell")} ${getWikiEntry(wiki) (id)!.name}`
                }),
                sortStrings (L10n.A.id (l10n)),
                intercalate (", ")
@@ -581,7 +866,7 @@ const mapPrerequisitesActivatablesTextElem =
     pipe (
       getWikiEntry (wiki),
       bindF (a => {
-        const curr_id = Advantage.AL.id (a)
+        const curr_id = AAL.id (a)
 
         const category_add = getPrerequisitesActivatablesCategoryAdd (l10n) (curr_id)
 
@@ -608,11 +893,11 @@ const getPrerequisitesActivatablesText =
     pipe (
       map ((x: ActivatablePrerequisiteObjects) => {
         if (RequireActivatable.is (x)) {
-          const id = RequireActivatable.A.id (x)
-          const active = RequireActivatable.A.active (x)
-          const msid = RequireActivatable.A.sid (x)
-          const sid2 = RequireActivatable.A.sid2 (x)
-          const level = RequireActivatable.A.tier (x)
+          const id = RAA.id (x)
+          const active = RAA.active (x)
+          const msid = RAA.sid (x)
+          const sid2 = RAA.sid2 (x)
+          const level = RAA.tier (x)
 
           const name =
             pipe_ (
@@ -746,11 +1031,11 @@ const getActivatablePrerequisite =
                                                        (value: string): ActivatableStringObject =>
                                                          ({
                                                            id: safe_id,
-                                                           active: RequireActivatable.A.active (e),
+                                                           active: RAA.active (e),
                                                            value,
                                                          }))
                                                       (ensure (isString)
-                                                              (RequireActivatable.A.id (e)))
+                                                              (RAA.id (e)))
                                                       (misStringM (index_special)))
 
 export const getCategorizedItems =
@@ -790,7 +1075,7 @@ export const getCategorizedItems =
            }
 
            if (RequireActivatable.is (e)) {
-             const id = RequireActivatable.A.id (e)
+             const id = RAA.id (e)
              const mcategory = isList (id) ? getCategoryById (head (id)) : getCategoryById (id)
              const isCategory = Maybe.elemF (mcategory)
              const addEntry = consF (getActivatablePrerequisite (index_special) (e))
@@ -807,7 +1092,7 @@ export const getCategorizedItems =
                return over (CIL.traditions) (addEntry)
              }
 
-             const isActive = RequireActivatable.A.active (e)
+             const isActive = RAA.active (e)
 
              if (isCategory (Categories.SPECIAL_ABILITIES)) {
                return over (isActive
