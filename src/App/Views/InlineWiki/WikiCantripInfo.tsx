@@ -1,41 +1,53 @@
 import * as React from "react";
-import { Book, Cantrip } from "../../Models/Wiki/wikiTypeHelpers";
-import { translate, UIMessages } from "../../Utilities/I18n";
+import { subscript } from "../../../Data/List";
+import { maybeRNullF } from "../../../Data/Maybe";
+import { OrderedMap } from "../../../Data/OrderedMap";
+import { Record } from "../../../Data/Record";
+import { Book } from "../../Models/Wiki/Book";
+import { Cantrip } from "../../Models/Wiki/Cantrip";
+import { L10nRecord } from "../../Models/Wiki/L10n";
+import { translate } from "../../Utilities/I18n";
 import { Markdown } from "../Universal/Markdown";
 import { WikiSource } from "./Elements/WikiSource";
 import { WikiBoxTemplate } from "./WikiBoxTemplate";
 import { WikiProperty } from "./WikiProperty";
 
 export interface WikiCantripInfoProps {
-  books: Map<string, Book>
-  currentObject: Cantrip
-  locale: UIMessages
+  books: OrderedMap<string, Record<Book>>
+  x: Record<Cantrip>
+  l10n: L10nRecord
 }
 
-export function WikiCantripInfo(props: WikiCantripInfoProps) {
-  const { currentObject, locale } = props
+const CA = Cantrip.A
 
-  if (["nl-BE"].includes(locale.id)) {
-    return (
-      <WikiBoxTemplate className="cantrip" title={currentObject.name}>
-        <WikiProperty l10n={locale} title="info.property">
-          {translate(locale, "spells.view.properties")[currentObject.property - 1]}
-        </WikiProperty>
-      </WikiBoxTemplate>
-    )
-  }
+export function WikiCantripInfo (props: WikiCantripInfoProps) {
+  const { x, l10n } = props
+
+  // if (["nl-BE"].includes(locale.id)) {
+  //   return (
+  //     <WikiBoxTemplate className="cantrip" title={x.name}>
+  //       <WikiProperty l10n={locale} title="info.property">
+  //         {translate(locale, "spells.view.properties")[x.property - 1]}
+  //       </WikiProperty>
+  //     </WikiBoxTemplate>
+  //   )
+  // }
 
   return (
-    <WikiBoxTemplate className="cantrip" title={currentObject.name}>
-      <Markdown className="no-indent" source={currentObject.effect} />
-      <WikiProperty l10n={locale} title="info.range">{currentObject.range}</WikiProperty>
-      <WikiProperty l10n={locale} title="info.duration">{currentObject.duration}</WikiProperty>
-      <WikiProperty l10n={locale} title="info.targetcategory">{currentObject.target}</WikiProperty>
-      <WikiProperty l10n={locale} title="info.property">
-        {translate(locale, "spells.view.properties")[currentObject.property - 1]}
-      </WikiProperty>
-      {currentObject.note && <WikiProperty l10n={locale} title="info.note">{currentObject.note}</WikiProperty>}
-      <WikiSource {...props} />
+    <WikiBoxTemplate className="cantrip" title={CA.name (x)}>
+      <Markdown className="no-indent" source={CA.effect (x)} />
+      <WikiProperty l10n={l10n} title="range">{CA.range (x)}</WikiProperty>
+      <WikiProperty l10n={l10n} title="duration">{CA.duration (x)}</WikiProperty>
+      <WikiProperty l10n={l10n} title="targetcategory">{CA.target (x)}</WikiProperty>
+      {maybeRNullF (subscript (translate (l10n) ("propertylist")) (CA.property (x) - 1))
+                   (str => (
+                    <WikiProperty l10n={l10n} title="property">{str}</WikiProperty>
+                   ))}
+      {maybeRNullF (CA.note (x))
+                   (str => (
+                    <WikiProperty l10n={l10n} title="notes">{str}</WikiProperty>
+                   ))}
+      <WikiSource {...props} acc={CA} />
     </WikiBoxTemplate>
   )
 }

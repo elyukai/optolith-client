@@ -1,38 +1,63 @@
 import * as React from "react";
-import { Attribute, Book, CombatTechnique } from "../../Models/Wiki/wikiTypeHelpers";
+import { fmap } from "../../../Data/Functor";
+import { intercalate } from "../../../Data/List";
+import { mapMaybe, Maybe, maybeRNullF } from "../../../Data/Maybe";
+import { lookupF, OrderedMap } from "../../../Data/OrderedMap";
+import { Record } from "../../../Data/Record";
+import { Sex } from "../../Models/Hero/heroTypeHelpers";
+import { Attribute } from "../../Models/Wiki/Attribute";
+import { Book } from "../../Models/Wiki/Book";
+import { CombatTechnique } from "../../Models/Wiki/CombatTechnique";
+import { L10nRecord } from "../../Models/Wiki/L10n";
 import { getICName } from "../../Utilities/AdventurePoints/improvementCostUtils";
-import { translate, UIMessages } from "../../Utilities/I18n";
+import { translate } from "../../Utilities/I18n";
+import { pipe, pipe_ } from "../../Utilities/pipe";
 import { Markdown } from "../Universal/Markdown";
 import { WikiSource } from "./Elements/WikiSource";
 import { WikiBoxTemplate } from "./WikiBoxTemplate";
 import { WikiProperty } from "./WikiProperty";
 
 export interface WikiCombatTechniqueInfoProps {
-  attributes: Map<string, Attribute>
-  books: Map<string, Book>
-  currentObject: CombatTechnique
-  locale: UIMessages
-  sex: "m" | "f" | undefined
+  attributes: OrderedMap<string, Record<Attribute>>
+  books: OrderedMap<string, Record<Book>>
+  x: Record<CombatTechnique>
+  l10n: L10nRecord
+  sex: Maybe<Sex>
 }
 
-export function WikiCombatTechniqueInfo(props: WikiCombatTechniqueInfoProps) {
-  const { attributes, currentObject, locale } = props
+const CTA = CombatTechnique.A
 
-  if (["nl-BE"].includes(locale.id)) {
-    return (
-      <WikiBoxTemplate className="combattechnique" title={currentObject.name}>
-        <WikiProperty l10n={locale} title="primaryattribute.long">{currentObject.primary.map(e => attributes.has(e) ? attributes.get(e)!.name : "...").intercalate("/")}</WikiProperty>
-        <WikiProperty l10n={locale} title="info.improvementcost">{getICName(currentObject.ic)}</WikiProperty>
-      </WikiBoxTemplate>
-    )
-  }
+export function WikiCombatTechniqueInfo (props: WikiCombatTechniqueInfoProps) {
+  const { attributes, x, l10n } = props
+
+  // if (["nl-BE"].includes(l10n.id)) {
+  //   return (
+  //     <WikiBoxTemplate className="combattechnique" title={x.name}>
+  //       <WikiProperty l10n={l10n} title="primaryattribute.long">
+  //         {x.primary.map(e => attributes.has(e)
+  //           ? attributes.get(e)!.name : "...").intercalate("/")}
+  //       </WikiProperty>
+  //       <WikiProperty l10n={l10n} title="info.improvementcost">{getICName(x.ic)}</WikiProperty>
+  //     </WikiBoxTemplate>
+  //   )
+  // }
 
   return (
-    <WikiBoxTemplate className="combattechnique" title={currentObject.name}>
-      {currentObject.special && <Markdown source={`**${translate(locale, "info.special")}:** ${currentObject.special}`} />}
-      <WikiProperty l10n={locale} title="primaryattribute.long">{currentObject.primary.map(e => attributes.has(e) ? attributes.get(e)!.name : "...").intercalate("/")}</WikiProperty>
-      <WikiProperty l10n={locale} title="info.improvementcost">{getICName(currentObject.ic)}</WikiProperty>
-      <WikiSource {...props} />
+    <WikiBoxTemplate className="combattechnique" title={CTA.name (x)}>
+      {maybeRNullF (CTA.special (x))
+                   (str => (
+                     <Markdown source={`**${translate (l10n) ("special")}:** ${str}`} />
+                   ))}
+      <WikiProperty l10n={l10n} title="primaryattribute">
+        {pipe_ (
+          x,
+          CTA.primary,
+          mapMaybe (pipe (lookupF (attributes), fmap (Attribute.A.name))),
+          intercalate ("/")
+        )}
+      </WikiProperty>
+      <WikiProperty l10n={l10n} title="improvementcost">{getICName (CTA.ic (x))}</WikiProperty>
+      <WikiSource {...props} acc={CTA} />
     </WikiBoxTemplate>
   )
 }
