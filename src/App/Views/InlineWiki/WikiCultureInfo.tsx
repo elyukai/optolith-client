@@ -1,11 +1,11 @@
 import * as React from "react";
 import { equals } from "../../../Data/Eq";
 import { fmap, fmapF } from "../../../Data/Functor";
-import { find, head, List, notNull } from "../../../Data/List";
-import { bindF, ensure, fromMaybe, mapMaybe } from "../../../Data/Maybe";
+import { elemF, find, head, intercalate, List, map, notNull, subscript } from "../../../Data/List";
+import { bindF, ensure, fromMaybe, mapMaybe, maybe } from "../../../Data/Maybe";
 import { lookupF, OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
-import { increasableViewFrom } from "../../Models/View/IncreasableForView";
+import { IncreasableForView, increasableViewFrom } from "../../Models/View/IncreasableForView";
 import { Book } from "../../Models/Wiki/Book";
 import { Culture } from "../../Models/Wiki/Culture";
 import { L10n, L10nRecord } from "../../Models/Wiki/L10n";
@@ -14,8 +14,10 @@ import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
 import { IncreaseSkill } from "../../Models/Wiki/sub/IncreaseSkill";
 import { SelectOption } from "../../Models/Wiki/sub/SelectOption";
 import { localizeOrList, translate, translateP } from "../../Utilities/I18n";
+import { prefixC } from "../../Utilities/IDUtils";
+import { dec } from "../../Utilities/mathUtils";
 import { pipe, pipe_ } from "../../Utilities/pipe";
-import { sortStrings } from "../../Utilities/sortBy";
+import { sortRecordsByName, sortStrings } from "../../Utilities/sortBy";
 import { Markdown } from "../Universal/Markdown";
 import { WikiSource } from "./Elements/WikiSource";
 import { WikiBoxTemplate } from "./WikiBoxTemplate";
@@ -32,8 +34,11 @@ export interface WikiCultureInfoProps {
 
 const CA = Culture.A
 const ISA = IncreaseSkill.A
+const IFVA = IncreasableForView.A
 const SAA = SpecialAbility.A
 const SOA = SelectOption.A
+
+const isElvenCulture = elemF (List (prefixC (19), prefixC (20), prefixC (21)))
 
 export function WikiCultureInfo (props: WikiCultureInfoProps) {
   const { x, languages, l10n, scripts, skills } = props
@@ -116,6 +121,18 @@ export function WikiCultureInfo (props: WikiCultureInfoProps) {
       fromMaybe (translate (l10n) ("none"))
     )
 
+  const social_status =
+    pipe_ (
+      x,
+      CA.socialStatus,
+      ensure (notNull),
+      maybe (translate (l10n) ("none"))
+            (pipe (
+              mapMaybe (pipe (dec, subscript (translate (l10n) ("socialstatuses")))),
+              intercalate (", ")
+            ))
+    )
+
   return (
     <WikiBoxTemplate className="culture" title={CA.name (x)}>
       <WikiProperty l10n={l10n} title="language">
@@ -128,35 +145,62 @@ export function WikiCultureInfo (props: WikiCultureInfoProps) {
         {CA.areaKnowledge (x)}
       </WikiProperty>
       <WikiProperty l10n={l10n} title="socialstatus">
-        {CA.socialStatus (x).length > 0 ? sortStrings(CA.socialStatus (x).map(e => translate(l10n, "socialstatus")[e - 1]), l10n.id).intercalate(", ") : translate(l10n, "none")}
+        {social_status}
       </WikiProperty>
       <WikiProperty l10n={l10n} title="commonprofessions">
-        {["C_19", "C_20", "C_21"].includes(CA.id (x)) ? CA.commonMagicProfessions (x) : undefined}
+        {isElvenCulture (CA.id (x)) ? CA.commonMagicProfessions (x) : null}
       </WikiProperty>
-      {!["C_19", "C_20", "C_21"].includes(CA.id (x)) ? <ul>
-        <li><em>{translate(l10n, "commonmundaneprofessions")}:</em> {CA.commonMundaneProfessions (x) || "-"}</li>
-        <li><em>{translate(l10n, "commonmagicprofessions")}:</em> {CA.commonMagicProfessions (x) || "-"}</li>
-        <li><em>{translate(l10n, "commonblessedprofessions")}:</em> {CA.commonBlessedProfessions (x) || "-"}</li>
-      </ul> : undefined}
+      {!isElvenCulture (CA.id (x))
+        ? <ul>
+            <li>
+              <em>{translate (l10n) ("commonmundaneprofessions")}:</em>
+              {" "}
+              {fromMaybe ("–") (CA.commonMundaneProfessions (x))}</li>
+            <li>
+              <em>{translate (l10n) ("commonmagicprofessions")}:</em>
+              {" "}
+              {fromMaybe ("–") (CA.commonMagicProfessions (x))}</li>
+            <li>
+              <em>{translate (l10n) ("commonblessedprofessions")}:</em>
+              {" "}
+              {fromMaybe ("–") (CA.commonBlessedProfessions (x))}</li>
+          </ul>
+        : null}
       <WikiProperty l10n={l10n} title="commonadvantages">
-        {CA.commonAdvantagesText (x) || translate(l10n, "none")}
+        {fromMaybe (translate (l10n) ("none"))
+                   (CA.commonAdvantagesText (x))}
       </WikiProperty>
       <WikiProperty l10n={l10n} title="commondisadvantages">
-        {CA.commonDisadvantagesText (x) || translate(l10n, "none")}
+        {fromMaybe (translate (l10n) ("none"))
+                   (CA.commonDisadvantagesText (x))}
       </WikiProperty>
       <WikiProperty l10n={l10n} title="uncommonadvantages">
-        {CA.uncommonAdvantagesText (x) || translate(l10n, "none")}
+        {fromMaybe (translate (l10n) ("none"))
+                   (CA.uncommonAdvantagesText (x))}
       </WikiProperty>
       <WikiProperty l10n={l10n} title="uncommondisadvantages">
-        {CA.uncommonDisadvantagesText (x) || translate(l10n, "none")}
+        {fromMaybe (translate (l10n) ("none"))
+                   (CA.uncommonDisadvantagesText (x))}
       </WikiProperty>
       <WikiProperty l10n={l10n} title="commonskills">
-        {sortStrings(CA.commonSkills (x).map(e => skills.get(e)!.name), l10n.id).intercalate(", ")}
+        {pipe_ (
+          x,
+          CA.commonSkills,
+          mapMaybe (pipe (lookupF (skills), fmap (Skill.A.name))),
+          sortStrings (L10n.A.id (l10n)),
+          intercalate (", ")
+        )}
       </WikiProperty>
       <WikiProperty l10n={l10n} title="uncommonskills">
-        {sortStrings(CA.uncommonSkills (x).map(e => skills.get(e)!.name), l10n.id).intercalate(", ")}
+        {pipe_ (
+          x,
+          CA.uncommonSkills,
+          mapMaybe (pipe (lookupF (skills), fmap (Skill.A.name))),
+          sortStrings (L10n.A.id (l10n)),
+          intercalate (", ")
+        )}
       </WikiProperty>
-      <Markdown source={`**${translate(l10n, "commonnames")}:**\n${x.commonNames || ""}`} />
+      <Markdown source={`**${translate (l10n) ("commonnames")}:**\n${CA.commonNames (x)}`} />
       <p className="cultural-package">
         <span>
           {translateP (l10n)
@@ -164,12 +208,15 @@ export function WikiCultureInfo (props: WikiCultureInfoProps) {
                       (List<string | number> (CA.name (x), CA.culturalPackageAdventurePoints (x)))}
         </span>
         <span>
-          {sortObjects(culturalPackageSkills, l10n.id).map(skill => {
-            return `${skill.name} +${skill.value}`
-          }).intercalate(", ")}
+          {pipe_ (
+            culturalPackageSkills,
+            sortRecordsByName (L10n.A.id (l10n)),
+            map (skill => `${IFVA.name (skill)} +${IFVA.value (skill)}`),
+            intercalate (", ")
+          )}
         </span>
       </p>
-      <WikiSource {...props} />
+      <WikiSource {...props} acc={CA} />
     </WikiBoxTemplate>
   )
 }

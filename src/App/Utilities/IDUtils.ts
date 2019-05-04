@@ -20,6 +20,11 @@ export const prefixId = (prefix: IdPrefixes) => (id: number | string) => `${pref
 export const prefixRace = prefixId (IdPrefixes.RACES)
 
 /**
+ * Create a culture id.
+ */
+export const prefixC = prefixId (IdPrefixes.CULTURES)
+
+/**
  * Create an attribute id.
  */
 export const prefixAttr = prefixId (IdPrefixes.ATTRIBUTES)
