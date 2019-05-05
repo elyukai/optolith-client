@@ -1,11 +1,12 @@
 import * as React from "react";
-import { List } from "../../../Data/List";
-import { bind, Maybe } from "../../../Data/Maybe";
+import { equals } from "../../../Data/Eq";
+import { find, List } from "../../../Data/List";
+import { bind, fromJust, isJust, Maybe } from "../../../Data/Maybe";
 import { OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
-import { Categories } from "../../Constants/Categories";
 import { HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { Sex } from "../../Models/Hero/heroTypeHelpers";
+import { Item } from "../../Models/Hero/Item";
 import { DerivedCharacteristic } from "../../Models/View/DerivedCharacteristic";
 import { Advantage } from "../../Models/Wiki/Advantage";
 import { Attribute } from "../../Models/Wiki/Attribute";
@@ -14,9 +15,11 @@ import { Book } from "../../Models/Wiki/Book";
 import { Cantrip } from "../../Models/Wiki/Cantrip";
 import { CombatTechnique } from "../../Models/Wiki/CombatTechnique";
 import { Culture } from "../../Models/Wiki/Culture";
+import { Disadvantage } from "../../Models/Wiki/Disadvantage";
 import { ItemTemplate } from "../../Models/Wiki/ItemTemplate";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { LiturgicalChant } from "../../Models/Wiki/LiturgicalChant";
+import { Profession } from "../../Models/Wiki/Profession";
 import { ProfessionVariant } from "../../Models/Wiki/ProfessionVariant";
 import { Race } from "../../Models/Wiki/Race";
 import { RaceVariant } from "../../Models/Wiki/RaceVariant";
@@ -26,15 +29,14 @@ import { Spell } from "../../Models/Wiki/Spell";
 import { WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { Entry } from "../../Models/Wiki/wikiTypeHelpers";
 import { DCIds } from "../../Selectors/derivedCharacteristicsSelectors";
-import { isItemTemplateFromMixed } from "../../Utilities/WikiUtils";
-import { Aside } from "../Universal/Aside";
+import { pipe } from "../../Utilities/pipe";
 import { WikiActivatableInfo } from "./WikiActivatableInfo";
 import { WikiBlessingInfo } from "./WikiBlessingInfo";
 import { WikiCantripInfo } from "./WikiCantripInfo";
 import { WikiCombatTechniqueInfo } from "./WikiCombatTechniqueInfo";
 import { WikiCultureInfo } from "./WikiCultureInfo";
 import { WikiEquipmentInfo } from "./WikiEquipmentInfo";
-import { WikiInfoEmpty } from "./WikiInfoEmpty";
+import { WikiInfoContentWrapper } from "./WikiInfoContentWrapper";
 import { WikiLiturgicalChantInfo } from "./WikiLiturgicalChantInfo";
 import { WikiProfessionInfo } from "./WikiProfessionInfo";
 import { WikiRaceInfo } from "./WikiRaceInfo";
@@ -55,8 +57,8 @@ export interface WikiInfoContentStateProps {
   cantrips: OrderedMap<string, Record<Cantrip>>
   combatTechniques: OrderedMap<string, Record<CombatTechnique>>
   cultures: OrderedMap<string, Record<Culture>>
-  derivedCharacteristics: OrderedMap<DCIds, Record<DerivedCharacteristic>>
-  hero: HeroModelRecord
+  derivedCharacteristics: Maybe<OrderedMap<DCIds, Record<DerivedCharacteristic>>>
+  hero: Maybe<HeroModelRecord>
   languages: Record<SpecialAbility>
   liturgicalChantExtensions: Maybe<Record<SpecialAbility>>
   liturgicalChants: OrderedMap<string, Record<LiturgicalChant>>
@@ -82,58 +84,79 @@ export type WikiInfoContentProps =
   & WikiInfoContentOwnProps
 
 export function WikiInfoContent (props: WikiInfoContentProps) {
-  const { currentId: mid, list, noWrapper } = props
+  const { currentId: mid, list } = props
 
-  const currentObject = bind (mid) (id => find () (list)) list.find (e => mid === e.id)
+  const mx = bind (mid) (id => find (pipe (Advantage.AL.id, equals (id))) (list))
 
-  let currentElement: JSX.Element | null
+  if (isJust (mx)) {
+    const x = fromJust (mx)
 
-  if (typeof currentObject === "object") {
-    if (isItemTemplateFromMixed (currentObject)) {
-      currentElement = <WikiEquipmentInfo {...props} currentObject={currentObject} />
+    if (Item.is (x) || ItemTemplate.is (x)) {
+      return <WikiInfoContentWrapper {...props}>
+        <WikiEquipmentInfo {...props} x={x} />
+      </WikiInfoContentWrapper>
     }
 
-    const isCategory = Skill.AL.category (currentObject)
+    if (Advantage.is (x) || Disadvantage.is (x) || SpecialAbility.is (x)) {
+      return <WikiInfoContentWrapper {...props}>
+        <WikiActivatableInfo {...props} x={x} />
+      </WikiInfoContentWrapper>
+    }
 
-    else if () {
-      case Categories.ADVANTAGES:
-      case Categories.DISADVANTAGES:
-      case Categories.SPECIAL_ABILITIES:
-        currentElement = <WikiActivatableInfo {...props} x={currentObject} />
-        break
-      case Categories.BLESSINGS:
-        currentElement = <WikiBlessingInfo {...props} x={currentObject} />
-        break
-      case Categories.CANTRIPS:
-        currentElement = <WikiCantripInfo {...props} currentObject={currentObject} />
-        break
-      case Categories.COMBAT_TECHNIQUES:
-        currentElement = <WikiCombatTechniqueInfo {...props} currentObject={currentObject} />
-        break
-      case Categories.CULTURES:
-        currentElement = <WikiCultureInfo {...props} currentObject={currentObject} />
-        break
-      case Categories.LITURGIES:
-        currentElement = <WikiLiturgicalChantInfo {...props} currentObject={currentObject} />
-        break
-      case Categories.PROFESSIONS:
-        currentElement = <WikiProfessionInfo {...props} currentObject={currentObject} />
-        break
-      case Categories.RACES:
-        currentElement = <WikiRaceInfo {...props} currentObject={currentObject} />
-        break
-      case Categories.SPELLS:
-        currentElement = <WikiSpellInfo {...props} currentObject={currentObject} />
-        break
-      case Categories.TALENTS:
-        currentElement = <WikiSkillInfo {...props} currentObject={currentObject} />
-        break
+    if (Blessing.is (x)) {
+      return <WikiInfoContentWrapper {...props}>
+        <WikiBlessingInfo {...props} x={x} />
+      </WikiInfoContentWrapper>
+    }
+
+    if (Cantrip.is (x)) {
+      return <WikiInfoContentWrapper {...props}>
+        <WikiCantripInfo {...props} x={x} />
+      </WikiInfoContentWrapper>
+    }
+
+    if (CombatTechnique.is (x)) {
+      return <WikiInfoContentWrapper {...props}>
+        <WikiCombatTechniqueInfo {...props} x={x} />
+      </WikiInfoContentWrapper>
+    }
+
+    if (Culture.is (x)) {
+      return <WikiInfoContentWrapper {...props}>
+        <WikiCultureInfo {...props} x={x} />
+      </WikiInfoContentWrapper>
+    }
+
+    if (LiturgicalChant.is (x)) {
+      return <WikiInfoContentWrapper {...props}>
+        <WikiLiturgicalChantInfo {...props} x={x} />
+      </WikiInfoContentWrapper>
+    }
+
+    if (Profession.is (x)) {
+      return <WikiInfoContentWrapper {...props}>
+        <WikiProfessionInfo {...props} x={x} />
+      </WikiInfoContentWrapper>
+    }
+
+    if (Race.is (x)) {
+      return <WikiInfoContentWrapper {...props}>
+        <WikiRaceInfo {...props} x={x} />
+      </WikiInfoContentWrapper>
+    }
+
+    if (Spell.is (x)) {
+      return <WikiInfoContentWrapper {...props}>
+        <WikiSpellInfo {...props} x={x} />
+      </WikiInfoContentWrapper>
+    }
+
+    if (Skill.is (x)) {
+      return <WikiInfoContentWrapper {...props}>
+        <WikiSkillInfo {...props} x={x} />
+      </WikiInfoContentWrapper>
     }
   }
 
-  return noWrapper ? (currentElement || <WikiInfoEmpty />) : (
-    <Aside>
-      {currentElement || <WikiInfoEmpty />}
-    </Aside>
-  )
+  return <WikiInfoContentWrapper {...props} />
 }

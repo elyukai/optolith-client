@@ -1,8 +1,9 @@
 import * as React from "react";
-import { fmap } from "../../../../Data/Functor";
+import { fmap, fmapF } from "../../../../Data/Functor";
 import { intercalate, List } from "../../../../Data/List";
-import { fromMaybe, join, liftM2, mapMaybe, Maybe } from "../../../../Data/Maybe";
-import { lookup, lookupF, OrderedMap } from "../../../../Data/OrderedMap";
+import { mapMaybe, Maybe } from "../../../../Data/Maybe";
+import { lookupF, OrderedMap } from "../../../../Data/OrderedMap";
+import { OrderedSet, toList } from "../../../../Data/OrderedSet";
 import { Record, RecordBase } from "../../../../Data/Record";
 import { DerivedCharacteristic } from "../../../Models/View/DerivedCharacteristic";
 import { Attribute } from "../../../Models/Wiki/Attribute";
@@ -10,11 +11,12 @@ import { L10nRecord } from "../../../Models/Wiki/L10n";
 import { CheckModifier } from "../../../Models/Wiki/wikiTypeHelpers";
 import { DCIds } from "../../../Selectors/derivedCharacteristicsSelectors";
 import { pipe, pipe_ } from "../../../Utilities/pipe";
+import { renderMaybeWith } from "../../../Utilities/ReactUtils";
 import { WikiProperty } from "../WikiProperty";
 
 interface Accessors<A extends RecordBase> {
   check: (r: Record<A>) => List<string>
-  checkmod: (r: Record<A>) => Maybe<CheckModifier>
+  checkmod: (r: Record<A>) => OrderedSet<CheckModifier>
 }
 
 export interface WikiSkillCheckProps<A extends RecordBase> {
@@ -24,6 +26,8 @@ export interface WikiSkillCheckProps<A extends RecordBase> {
   derivedCharacteristics: Maybe<OrderedMap<DCIds, Record<DerivedCharacteristic>>>
   l10n: L10nRecord
 }
+
+const DCA = DerivedCharacteristic.A
 
 export function WikiSkillCheck<A extends RecordBase> (props: WikiSkillCheckProps<A>) {
   const {
@@ -42,20 +46,16 @@ export function WikiSkillCheck<A extends RecordBase> (props: WikiSkillCheckProps
       intercalate ("/")
     )
 
-  const mcheckmod = acc.checkmod (x)
+  const checkmods = acc.checkmod (x)
 
-  const mod =
-    pipe_ (
-      mderived_characteristics,
-      liftM2 (lookup as lookup<DCIds, Record<DerivedCharacteristic>>) (mcheckmod),
-      join,
-      fmap (DerivedCharacteristic.A.short)
-    )
+  const mod = fmapF (mderived_characteristics)
+                    (dc => mapMaybe (pipe (lookupF (dc), fmap (DCA.short)))
+                                    (toList (checkmods)))
 
   return (
     <WikiProperty l10n={l10n} title="check">
       {checkString}
-      {fromMaybe ("") (mod)}
+      {renderMaybeWith (intercalate ("/")) (mod)}
     </WikiProperty>
   )
 }

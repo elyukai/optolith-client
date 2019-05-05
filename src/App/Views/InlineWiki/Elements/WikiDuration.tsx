@@ -1,12 +1,12 @@
 import * as React from "react";
 import { Record, RecordBase } from "../../../../Data/Record";
-import { Categories, CategoryWithGroups } from "../../../Constants/Categories";
+import { Categories } from "../../../Constants/Categories";
 import { L10n, L10nRecord } from "../../../Models/Wiki/L10n";
 import { WikiProperty } from "../WikiProperty";
 
 interface Accessors<A extends RecordBase> {
   duration: (r: Record<A>) => string
-  category: (r: Record<A>) => CategoryWithGroups
+  category: (r: Record<A>) => Categories
   gr: (r: Record<A>) => number
 }
 

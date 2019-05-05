@@ -12,7 +12,6 @@ import { Categories } from "../../Constants/Categories";
 import { ActiveObjectWithId } from "../../Models/ActiveEntries/ActiveObjectWithId";
 import { HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { ActivatableNameCostA_ } from "../../Models/View/ActivatableNameCost";
-import { DerivedCharacteristic } from "../../Models/View/DerivedCharacteristic";
 import { Advantage } from "../../Models/Wiki/Advantage";
 import { Attribute } from "../../Models/Wiki/Attribute";
 import { Book } from "../../Models/Wiki/Book";
@@ -27,7 +26,6 @@ import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
 import { SelectOption } from "../../Models/Wiki/sub/SelectOption";
 import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { Activatable, AllRequirements } from "../../Models/Wiki/wikiTypeHelpers";
-import { DCIds } from "../../Selectors/derivedCharacteristicsSelectors";
 import { getNameCostForWiki } from "../../Utilities/Activatable/activatableActiveUtils";
 import { isExtendedSpecialAbility } from "../../Utilities/Activatable/checkStyleUtils";
 import { localizeOrList, translate, translateP } from "../../Utilities/I18n";
@@ -46,8 +44,7 @@ import { WikiProperty } from "./WikiProperty";
 export interface WikiActivatableInfoProps {
   attributes: OrderedMap<string, Record<Attribute>>
   books: OrderedMap<string, Record<Book>>
-  derivedCharacteristics: OrderedMap<DCIds, Record<DerivedCharacteristic>>
-  hero: HeroModelRecord
+  hero: Maybe<HeroModelRecord>
   wiki: WikiModelRecord
   x: Activatable
   l10n: L10nRecord
@@ -515,7 +512,6 @@ const getCost =
 
 export interface PrerequisitesTextProps {
   x: Activatable
-  hero: HeroModelRecord
   l10n: L10nRecord
   wiki: WikiModelRecord
 }

@@ -865,9 +865,10 @@ export const fromMaybeR =
  * React node, which can be nullable, as the default value.
  */
 export const maybeR =
-  (def: ReactElement) =>
-  <A extends Some> (f: (x: A) => NonNullable<ReactElement>) =>
-  (x: Maybe<A>): ReactElement =>
+  <R1 extends ReactElement>
+  (def: R1) =>
+  <A extends Some, R2 extends ReactElement> (f: (x: A) => NonNullable<R2>) =>
+  (x: Maybe<A>): R1 | R2 =>
     isJust (x) ? f (x .value) : def
 
 /**

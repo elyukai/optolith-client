@@ -36,6 +36,13 @@ export namespace Internals {
     readonly f: () => Promise<A>
   }
 
+  export interface Tuple<A extends any[]> extends Internals.TuplePrototype {
+    readonly phantom: A
+    readonly values: { [index: number]: any }
+    readonly length: number
+    readonly prototype: Internals.TuplePrototype
+  }
+
   // Prototypes
 
   interface ConstPrototype {
@@ -170,6 +177,15 @@ export namespace Internals {
   export const IOPrototype =
     Object.freeze<IOPrototype> ({
       isIO: true,
+    })
+
+  export interface TuplePrototype {
+    readonly isTuple: true
+  }
+
+  const TuplePrototype =
+    Object.freeze<TuplePrototype> ({
+      isTuple: true,
     })
 
 
@@ -414,6 +430,29 @@ export namespace Internals {
     throw new TypeError ("Cannot create an IO action from a value that is not a function.")
   }
 
+  export const _Tuple =
+    <A extends any[]> (...values: A): Tuple<A> => {
+      const obj: { [index: number]: any } = {}
+
+      values.forEach ((e, i) => {
+        obj [i] = e
+      })
+
+      return Object.create (
+        TuplePrototype,
+        {
+          values: {
+            value: Object.freeze (obj),
+            enumerable: true,
+          },
+          length: {
+            value: values .length,
+            enumerable: true,
+          },
+        }
+      )
+    }
+
 
   // Functions on Prototypes
 
@@ -541,4 +580,13 @@ export namespace Internals {
   export const isIO =
     (x: any): x is IO<any> =>
       typeof x === "object" && x !== null && Object.getPrototypeOf (x) === IOPrototype
+
+  /**
+   * `isTuple :: a -> Bool`
+   *
+   * The `isTuple` function returns `True` if its argument is a `Tuple`.
+   */
+  export const isTuple =
+    (x: any): x is Tuple<any[]> =>
+      typeof x === "object" && x !== null && Object.getPrototypeOf (x) === TuplePrototype
 }

@@ -1,7 +1,14 @@
 import * as React from "react";
-import { SecondaryAttribute } from "../../Models/Hero/heroTypeHelpers";
-import { UIMessages } from "../../Models/View/viewTypeHelpers";
-import { Attribute, Book, LiturgicalChant, SpecialAbility } from "../../Models/Wiki/wikiTypeHelpers";
+import { Maybe } from "../../../Data/Maybe";
+import { OrderedMap } from "../../../Data/OrderedMap";
+import { Record } from "../../../Data/Record";
+import { DerivedCharacteristic } from "../../Models/View/DerivedCharacteristic";
+import { Attribute } from "../../Models/Wiki/Attribute";
+import { Book } from "../../Models/Wiki/Book";
+import { L10nRecord } from "../../Models/Wiki/L10n";
+import { LiturgicalChant } from "../../Models/Wiki/LiturgicalChant";
+import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
+import { DCIds } from "../../Selectors/derivedCharacteristicsSelectors";
 import { WikiCastingTime } from "./Elements/WikiCastingTime";
 import { WikiCost } from "./Elements/WikiCost";
 import { WikiDuration } from "./Elements/WikiDuration";
@@ -16,46 +23,42 @@ import { WikiTargetCategory } from "./Elements/WikiTargetCategory";
 import { WikiBoxTemplate } from "./WikiBoxTemplate";
 
 export interface WikiLiturgicalChantInfoProps {
-  attributes: Map<string, Attribute>
-  books: Map<string, Book>
-  derivedCharacteristics: Map<string, SecondaryAttribute>
-  currentObject: LiturgicalChant
-  locale: UIMessages
-  liturgicalChantExtensions: SpecialAbility | undefined
+  attributes: OrderedMap<string, Record<Attribute>>
+  books: OrderedMap<string, Record<Book>>
+  derivedCharacteristics: Maybe<OrderedMap<DCIds, Record<DerivedCharacteristic>>>
+  x: Record<LiturgicalChant>
+  l10n: L10nRecord
+  liturgicalChantExtensions: Maybe<Record<SpecialAbility>>
 }
 
-export function WikiLiturgicalChantInfo(props: WikiLiturgicalChantInfoProps) {
-  const {
-    currentObject: {
-      name,
-    },
-    liturgicalChantExtensions,
-    locale
-  } = props
+const LCA = LiturgicalChant.A
 
-  if (["nl-BE"].includes(locale.id)) {
-    return (
-      <WikiBoxTemplate className="liturgicalchant" title={name}>
-        <WikiSkillCheck {...props} />
-        <WikiLiturgicalChantTraditions {...props} />
-        <WikiImprovementCost {...props} />
-      </WikiBoxTemplate>
-    )
-  }
+export function WikiLiturgicalChantInfo (props: WikiLiturgicalChantInfoProps) {
+  const { liturgicalChantExtensions, } = props
+
+  // if (["nl-BE"].includes(l10n.id)) {
+  //   return (
+  //     <WikiBoxTemplate className="liturgicalchant" title={name}>
+  //       <WikiSkillCheck {...props} />
+  //       <WikiLiturgicalChantTraditions {...props} />
+  //       <WikiImprovementCost {...props} />
+  //     </WikiBoxTemplate>
+  //   )
+  // }
 
   return (
     <WikiBoxTemplate className="liturgicalchant" title={name}>
-      <WikiSkillCheck {...props} />
-      <WikiEffect {...props} />
-      <WikiCastingTime {...props} />
-      <WikiCost {...props} />
-      <WikiRange {...props} />
-      <WikiDuration {...props} />
-      <WikiTargetCategory {...props} />
-      <WikiLiturgicalChantTraditions {...props} />
-      <WikiImprovementCost {...props} />
-      <WikiExtensions {...props} extensions={liturgicalChantExtensions} />
-      <WikiSource {...props} />
+      <WikiSkillCheck {...props} acc={LCA} />
+      <WikiEffect {...props} acc={LCA} />
+      <WikiCastingTime {...props} acc={LCA} />
+      <WikiCost {...props} acc={LCA} />
+      <WikiRange {...props} acc={LCA} />
+      <WikiDuration {...props} acc={LCA} />
+      <WikiTargetCategory {...props} acc={LCA} />
+      <WikiLiturgicalChantTraditions {...props} acc={LCA} />
+      <WikiImprovementCost {...props} acc={LCA} />
+      <WikiExtensions {...props} extensions={liturgicalChantExtensions} acc={LCA} />
+      <WikiSource {...props} acc={LCA} />
     </WikiBoxTemplate>
   )
 }
