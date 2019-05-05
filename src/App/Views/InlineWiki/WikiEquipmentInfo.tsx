@@ -1,179 +1,355 @@
 import * as React from "react";
-import { Attribute, Book, CombatTechnique, ItemTemplate } from "../../Models/Wiki/wikiTypeHelpers";
-import { localizeNumber, localizeSize, localizeWeight, translate, UIMessages } from "../../Utilities/I18n";
+import { fmap, fmapF } from "../../../Data/Functor";
+import { elemF, intercalate, isList, List, notElem, notNull, subscript } from "../../../Data/List";
+import { alt_, bind, bindF, ensure, fromMaybe, guard, imapMaybe, liftM2, mapMaybe, Maybe, maybe, maybeR, maybeRNullF, then } from "../../../Data/Maybe";
+import { lookupF, OrderedMap } from "../../../Data/OrderedMap";
+import { fromDefault, Record } from "../../../Data/Record";
+import { Item } from "../../Models/Hero/Item";
+import { Attribute } from "../../Models/Wiki/Attribute";
+import { Book } from "../../Models/Wiki/Book";
+import { CombatTechnique } from "../../Models/Wiki/CombatTechnique";
+import { ItemTemplate } from "../../Models/Wiki/ItemTemplate";
+import { L10n, L10nRecord } from "../../Models/Wiki/L10n";
+import { PrimaryAttributeDamageThreshold } from "../../Models/Wiki/sub/PrimaryAttributeDamageThreshold";
+import { SourceLink } from "../../Models/Wiki/sub/SourceLink";
+import { minus, ndash } from "../../Utilities/Chars";
+import { localizeNumber, localizeSize, localizeWeight, translate } from "../../Utilities/I18n";
+import { prefixCT } from "../../Utilities/IDUtils";
 import { convertPrimaryAttributeToArray } from "../../Utilities/ItemUtils";
+import { dec, gt } from "../../Utilities/mathUtils";
 import { sign, signNull } from "../../Utilities/NumberUtils";
+import { pipe, pipe_ } from "../../Utilities/pipe";
+import { renderMaybe, renderMaybeWith } from "../../Utilities/ReactUtils";
 import { Markdown } from "../Universal/Markdown";
 import { WikiSource } from "./Elements/WikiSource";
 import { WikiBoxTemplate } from "./WikiBoxTemplate";
 
 export interface WikiEquipmentInfoProps {
-  attributes: Map<string, Attribute>
-  books: Map<string, Book>
-  combatTechniques: Map<string, CombatTechnique>
-  currentObject: ItemTemplate
-  locale: UIMessages
-  templates: Map<string, ItemTemplate>
+  attributes: OrderedMap<string, Record<Attribute>>
+  books: OrderedMap<string, Record<Book>>
+  combatTechniques: OrderedMap<string, Record<CombatTechnique>>
+  x: Record<ItemTemplate> | Record<Item>
+  l10n: L10nRecord
+  templates: OrderedMap<string, Record<ItemTemplate>>
 }
 
-export function WikiEquipmentInfo(props: WikiEquipmentInfoProps) {
-  const { attributes, currentObject, locale, combatTechniques, templates } = props
-  const { gr, name, price, weight, combatTechnique, damageDiceNumber, damageDiceSides, damageFlat, damageBonus, at, pa, reach, length, reloadTime, range, ammunition, pro, enc, movMod, iniMod, addPenalties, src } = currentObject
+const ITAL = ItemTemplate.AL
+const ITA = ItemTemplate.A
+const PADTA = PrimaryAttributeDamageThreshold.A
+const CTA = CombatTechnique.A
+const AA = Attribute.A
 
-  const ammunitionTemplate = typeof ammunition === "string" && templates.get(ammunition)
+// tslint:disable-next-line: cyclomatic-complexity
+export function WikiEquipmentInfo (props: WikiEquipmentInfoProps) {
+  const { attributes, x, l10n, combatTechniques, templates } = props
+  const locale = L10n.A.id (l10n)
+  const gr = ITAL.gr (x)
+  const name = ITAL.name (x)
+  const mprice = ITAL.price (x)
+  const mweight = ITAL.weight (x)
+  const combatTechniqueId = ITAL.combatTechnique (x)
+  const damageDiceNumber = ITAL.damageDiceNumber (x)
+  const damageDiceSides = ITAL.damageDiceSides (x)
+  const damageFlat = ITAL.damageFlat (x)
+  const mpadt_obj = ITAL.damageBonus (x)
+  const at = ITAL.at (x)
+  const pa = ITAL.pa (x)
+  const reach = ITAL.reach (x)
+  const mlength = ITAL.length (x)
+  const reloadTime = ITAL.reloadTime (x)
+  const range = ITAL.range (x)
+  const ammunition = ITAL.ammunition (x)
+  const pro = ITAL.pro (x)
+  const enc = ITAL.enc (x)
+  const movMod = ITAL.movMod (x)
+  const iniMod = ITAL.iniMod (x)
+  const addPenalties = ITAL.addPenalties (x)
+  const templ = then (guard (ITAL.isTemplateLocked (x))) (ensure (ItemTemplate.is) (x))
+  const msrc = fmap (ITA.src) (templ)
+  const mnote = bindF (ITA.note) (templ)
+  const mrules = bindF (ITA.rules) (templ)
+  const madvantage =
+    pipe (bindF (ensure (pipe (ITA.gr, elemF (List (1, 2, 4))))), fmap (ITA.advantage)) (templ)
+  const mdisadvantage =
+    pipe (bindF (ensure (pipe (ITA.gr, elemF (List (1, 2, 4))))), fmap (ITA.disadvantage)) (templ)
 
-  const addPenaltiesArr = []
+  const ammunitionTemplate = bind (ammunition) (lookupF (templates))
 
-  if (addPenalties === true) {
-    addPenaltiesArr.push(`-${1 + (movMod || 0)} GS`)
-  }
+  const addPenaltiesArr =
+    addPenalties
+      ? List (
+          `${minus}${Maybe.sum (movMod) + 1} ${translate (l10n) ("movement.short")}`,
+          `${minus}${Maybe.sum (iniMod) + 1} ${translate (l10n) ("initiative.short")}`
+        )
+      : List<string> ()
 
-  if (addPenalties === true) {
-    addPenaltiesArr.push(`-${1 + (iniMod || 0)} INI`)
-  }
+  const mcombat_technique = bind (combatTechniqueId) (lookupF (combatTechniques))
 
-  const combatTechniqueInstance = combatTechnique && combatTechniques.get(combatTechnique)
+  const mprimary_attr_id_list =
+    alt_ (pipe_ (mpadt_obj, bindF (PADTA.primary), fmap (convertPrimaryAttributeToArray)))
+         (() => fmapF (mcombat_technique) (CTA.primary))
 
-  const primaryAttributeIdArray = damageBonus && typeof damageBonus.primary === "string" && convertPrimaryAttributeToArray(damageBonus.primary) || combatTechniqueInstance && combatTechniqueInstance.primary
+  const mpadt =
+    liftM2 ((primary_attr_id_list: List<string>) =>
+            (padt_obj: Record<PrimaryAttributeDamageThreshold>) => {
+              const threshold = PADTA.threshold (padt_obj)
+
+              return isList (threshold)
+                ? pipe_ (
+                    primary_attr_id_list,
+                    imapMaybe (i => pipe (
+                                           lookupF (attributes),
+                                           liftM2 ((t: number) => pipe (AA.short, s => `${s} ${t}`))
+                                                  (subscript (threshold) (i))
+                                         )),
+                    intercalate ("/")
+                  )
+                : pipe_ (
+                    primary_attr_id_list,
+                    mapMaybe (pipe (lookupF (attributes), fmap (AA.short))),
+                    intercalate ("/")
+                  )
+            })
+           (mprimary_attr_id_list)
+           (mpadt_obj)
+
+  const isLancesCT = Maybe.elem (prefixCT (7)) (combatTechniqueId)
 
   return (
     <WikiBoxTemplate
       className="item"
       title={name}
-      subtitle={gr === 3 && (
-        <p className="title">
-          {translate(locale, "equipment.view.list.ammunitionsubtitle")}
-        </p>
-      )}
+      subtitle={gr === 3
+                  ? <p className="title">{translate (l10n) ("ammunition")}</p>
+                  : null}
       >
-      {gr === 3 && <p className="ammunition">{translate(locale, "equipment.view.list.ammunitionsubtitle")}</p>}
-      { ![1, 2, 4].includes(gr) && <table className="melee">
-        <tbody>
-          {typeof weight === "number" && weight > 0 && <tr>
-            <td>{translate(locale, "equipment.view.list.weight")}</td>
-            <td>{`${localizeNumber(localizeWeight(weight, locale.id), locale.id)} ${translate(locale, "equipment.view.list.weightunit")}`}</td>
-          </tr>}
-          {typeof price === "number" && price > 0 && <tr>
-            <td>{translate(locale, "equipment.view.list.price")}</td>
-            <td>{`${localizeNumber(price, locale.id)} ${translate(locale, "equipment.view.list.priceunit")}`}</td>
-          </tr>}
-        </tbody>
-      </table>}
-      { gr === 1 ? <table className="melee">
+      {gr === 3
+        ? <p className="ammunition">{translate (l10n) ("ammunition")}</p>
+        : null}
+      {notElem (gr) (List (1, 2, 4))
+        ? (
+            <table className="melee">
+              <tbody>
+                {maybeR (null)
+                        ((weight: number) => (
+                          <tr>
+                            <td>{translate (l10n) ("weight")}</td>
+                            <td>
+                              {pipe_ (weight, localizeWeight (locale), localizeNumber (locale))}
+                              {" "}
+                              {translate (l10n) ("weightunit.short")}
+                            </td>
+                          </tr>
+                        ))
+                        (ensureNatural (mweight))}
+                {maybeR (null)
+                        ((price: number) => (
+                          <tr>
+                            <td>{translate (l10n) ("weight")}</td>
+                            <td>
+                              {localizeNumber (locale) (price)}
+                              {" "}
+                              {translate (l10n) ("priceunit")}
+                            </td>
+                          </tr>
+                        ))
+                        (ensureNatural (mprice))}
+              </tbody>
+            </table>
+          )
+        : null}
+      {gr === 1 ? <table className="melee">
         <tbody>
           <tr>
-            <td>{translate(locale, "equipment.view.list.combattechnique")}</td>
-            <td>
-              {combatTechniqueInstance && combatTechniqueInstance.name}
-            </td>
+            <td>{translate (l10n) ("combattechnique")}</td>
+            <td>{renderMaybeWith (CTA.name) (mcombat_technique)}</td>
           </tr>
           <tr>
-            <td>{translate(locale, "equipment.view.list.damage")}</td>
+            <td>{translate (l10n) ("damage")}</td>
             <td>
-              {damageDiceNumber}
-              {translate(locale, "equipment.view.list.dice")}
+              {renderMaybe (damageDiceNumber)}
+              {translate (l10n) ("dice.short")}
               {damageDiceSides}
-              {typeof damageFlat === "number" ? signNull(damageFlat) : null}
+              {renderMaybeWith (signNull) (damageFlat)}
             </td>
           </tr>
           <tr>
-            <td>{translate(locale, "equipment.view.list.primaryattributedamagethreshold")}</td>
-            <td>{combatTechnique === "CT_7" && "-" || primaryAttributeIdArray && damageBonus && (Array.isArray(damageBonus.threshold) ? primaryAttributeIdArray.map((attr, index) => `${attributes.get(attr)!.short} ${(damageBonus.threshold as number[])[index]}`).join("/") : `${primaryAttributeIdArray.map(attr => attributes.get(attr)!.short).join("/")} ${damageBonus.threshold}`)}</td>
+            <td>{translate (l10n) ("primaryattributeanddamagethreshold.short")}</td>
+            <td>{isLancesCT ? ndash : renderMaybe (mpadt)}</td>
           </tr>
           <tr>
-            <td>{translate(locale, "equipment.view.list.atpamod")}</td>
-            <td>{combatTechnique === "CT_7" ? "-" : `${at && sign(at)}/${pa && sign(pa)}`}</td>
+            <td>{translate (l10n) ("attackparrymodifier.short")}</td>
+            <td>
+              {isLancesCT ? ndash : `${renderMaybeWith (sign) (at)}/${renderMaybeWith (sign) (pa)}`}
+            </td>
           </tr>
           <tr>
-            <td>{translate(locale, "equipment.view.list.reach")}</td>
-            <td>{combatTechnique === "CT_7" && "-" || reach && translate(locale, "equipment.view.list.reachlabels")[reach - 1]}</td>
+            <td>{translate (l10n) ("reach")}</td>
+            <td>
+              {isLancesCT
+                ? ndash
+                : pipe_ (
+                    reach,
+                    bindF (pipe (dec, subscript (translate (l10n) ("reachlabels")))),
+                    renderMaybe
+                  )}
+            </td>
           </tr>
           <tr>
-            <td>{translate(locale, "equipment.view.list.weight")}</td>
-            <td>{weight && `${localizeNumber(localizeWeight(weight, locale.id), locale.id)} ${translate(locale, "equipment.view.list.weightunit")}`}</td>
+            <td>{translate (l10n) ("weight")}</td>
+            <td>
+              {renderMaybeWith (pipe (localizeWeight (locale), localizeNumber (locale))) (mweight)}
+              {" "}
+              {translate (l10n) ("weightunit.short")}
+            </td>
           </tr>
           <tr>
-            <td>{translate(locale, "equipment.view.list.length")}</td>
-            <td>{localizeNumber(localizeSize(length, locale.id), locale.id)} {translate(locale, "equipment.view.list.lengthunit")}</td>
+            <td>{translate (l10n) ("length")}</td>
+            <td>
+              {renderMaybeWith (pipe (localizeSize (locale), localizeNumber (locale))) (mlength)}
+              {" "}
+              {translate (l10n) ("lengthunit")}
+            </td>
           </tr>
           <tr>
-            <td>{translate(locale, "equipment.view.list.price")}</td>
-            <td>{price && `${localizeNumber(price, locale.id)} ${translate(locale, "equipment.view.list.priceunit")}`}</td>
+            <td>{translate (l10n) ("price")}</td>
+            <td>
+              {renderMaybeWith (localizeNumber (locale)) (mprice)}
+              {" "}
+              {translate (l10n) ("priceunit")}
+            </td>
           </tr>
         </tbody>
       </table> : null}
-      { gr === 2 ? <table className="ranged">
+      {gr === 2 ? <table className="ranged">
         <tbody>
           <tr>
-            <td>{translate(locale, "equipment.view.list.combattechnique")}</td>
+            <td>{translate (l10n) ("combattechnique")}</td>
             <td>
-              {combatTechniqueInstance && combatTechniqueInstance.name}
+              {renderMaybeWith (CTA.name) (mcombat_technique)}
             </td>
           </tr>
           <tr>
-            <td>{translate(locale, "equipment.view.list.damage")}</td>
+            <td>{translate (l10n) ("damage")}</td>
             <td>
               {damageDiceNumber}
-              {translate(locale, "equipment.view.list.dice")}
+              {translate (l10n) ("dice.short")}
               {damageDiceSides}
-              {typeof damageFlat === "number" ? signNull(damageFlat) : null}
+              {renderMaybeWith (signNull) (damageFlat)}
             </td>
           </tr>
           <tr>
-            <td>{translate(locale, "equipment.view.list.reloadtime")}</td>
-            <td>{reloadTime} {translate(locale, "equipment.view.list.reloadtimeunit")}</td>
+            <td>{translate (l10n) ("reloadtime")}</td>
+            <td>{reloadTime} {translate (l10n) ("actions.short")}</td>
           </tr>
           <tr>
-            <td>{translate(locale, "equipment.view.list.range")}</td>
-            <td>{range && range.join("/")}</td>
+            <td>{translate (l10n) ("range")}</td>
+            <td>{renderMaybeWith (intercalate ("/")) (range)}</td>
           </tr>
           <tr>
-            <td>{translate(locale, "equipment.view.list.ammunition")}</td>
-            <td>{(ammunitionTemplate || { name: translate(locale, "options.none")} ).name}</td>
+            <td>{translate (l10n) ("ammunition")}</td>
+            <td>{maybe (translate (l10n) ("none")) (ITAL.name) (ammunitionTemplate)}</td>
           </tr>
           <tr>
-            <td>{translate(locale, "equipment.view.list.weight")}</td>
-            <td>{weight && `${localizeNumber(localizeWeight(weight, locale.id), locale.id)} ${translate(locale, "equipment.view.list.weightunit")}`}</td>
+            <td>{translate (l10n) ("weight")}</td>
+            <td>
+              {renderMaybeWith (pipe (localizeWeight (locale), localizeNumber (locale))) (mweight)}
+              {" "}
+              {translate (l10n) ("weightunit.short")}
+            </td>
           </tr>
           <tr>
-            <td>{translate(locale, "equipment.view.list.length")}</td>
-            <td>{localizeNumber(localizeSize(length, locale.id), locale.id)} {translate(locale, "equipment.view.list.lengthunit")}</td>
+            <td>{translate (l10n) ("length")}</td>
+            <td>
+              {renderMaybeWith (pipe (localizeSize (locale), localizeNumber (locale))) (mlength)}
+              {" "}
+              {translate (l10n) ("lengthunit")}
+            </td>
           </tr>
           <tr>
-            <td>{translate(locale, "equipment.view.list.price")}</td>
-            <td>{price && `${localizeNumber(price, locale.id)} ${translate(locale, "equipment.view.list.priceunit")}`}</td>
+            <td>{translate (l10n) ("price")}</td>
+            <td>
+              {renderMaybeWith (localizeNumber (locale)) (mprice)}
+              {" "}
+              {translate (l10n) ("priceunit")}
+            </td>
           </tr>
         </tbody>
       </table> : null}
-      { gr === 4 ? <table className="armor">
+      {gr === 4 ? <table className="armor">
         <tbody>
           <tr>
-            <td>{translate(locale, "equipment.view.list.pro")}</td>
+            <td>{translate (l10n) ("protection.short")}</td>
             <td>{pro}</td>
           </tr>
           <tr>
-            <td>{translate(locale, "equipment.view.list.enc")}</td>
+            <td>{translate (l10n) ("encumbrance.short")}</td>
             <td>{enc}</td>
           </tr>
           <tr>
-            <td>{translate(locale, "equipment.view.list.weight")}</td>
-            <td>{weight && `${localizeNumber(localizeWeight(weight, locale.id), locale.id)} ${translate(locale, "equipment.view.list.weightunit")}`}</td>
+            <td>{translate (l10n) ("weight")}</td>
+            <td>
+              {renderMaybeWith (pipe (localizeWeight (locale), localizeNumber (locale))) (mweight)}
+              {" "}
+              {translate (l10n) ("weightunit.short")}
+            </td>
           </tr>
           <tr>
-            <td>{translate(locale, "equipment.view.list.price")}</td>
-            <td>{price && `${localizeNumber(price, locale.id)} ${translate(locale, "equipment.view.list.priceunit")}`}</td>
+            <td>{translate (l10n) ("price")}</td>
+            <td>
+              {renderMaybeWith (localizeNumber (locale)) (mprice)}
+              {" "}
+              {translate (l10n) ("priceunit")}
+            </td>
           </tr>
           <tr>
-            <td>{translate(locale, "equipment.view.list.additionalpenalties")}</td>
-            <td>{addPenaltiesArr.length > 0 ? addPenaltiesArr.join(", ") : "-"}</td>
+            <td>{translate (l10n) ("additionalpenalties")}</td>
+            <td>{maybe (ndash) (intercalate (", ")) (ensure (notNull) (addPenaltiesArr))}</td>
           </tr>
         </tbody>
       </table> : null}
-      {currentObject.isTemplateLocked && currentObject.note && <Markdown source={`**${translate(locale, "info.note")}:** ${currentObject.note}`} />}
-      {currentObject.isTemplateLocked && currentObject.rules && <Markdown source={`**${translate(locale, "info.equipment.rules")}:** ${currentObject.rules}`} />}
-      {currentObject.isTemplateLocked && [1, 2, 4].includes(currentObject.gr) && <Markdown source={`**${[1, 2].includes(currentObject.gr) ? translate(locale, "info.weaponadvantage") : translate(locale, "info.armoradvantage")}:** ${currentObject.advantage || translate(locale, "info.none")}`} />}
-      {currentObject.isTemplateLocked && [1, 2, 4].includes(currentObject.gr) && <Markdown source={`**${[1, 2].includes(currentObject.gr) ? translate(locale, "info.weapondisadvantage") : translate(locale, "info.armordisadvantage")}:** ${currentObject.disadvantage || translate(locale, "info.none")}`} />}
-      {src && <WikiSource {...props} currentObject={{ src }} />}
+      {maybeRNullF (mnote)
+                   (str => (
+                     <Markdown source={`**${translate (l10n) ("notes")}:** ${str}`} />
+                   ))}
+      {maybeRNullF (mrules)
+                   (str => (
+                     <Markdown source={`**${translate (l10n) ("rules")}:** ${str}`} />
+                   ))}
+      {maybeRNullF (madvantage)
+                   (str => {
+                     const tag =
+                       ITAL.gr (x) === 4
+                         ? translate (l10n) ("armoradvantage")
+                         : translate (l10n) ("weaponadvantage")
+
+                     const val = fromMaybe (translate (l10n) ("none")) (str)
+
+                     return (
+                       <Markdown source={`**${tag}:** ${val}`} />
+                     )
+                   })}
+      {maybeRNullF (mdisadvantage)
+                   (str => {
+                     const tag =
+                       ITAL.gr (x) === 4
+                         ? translate (l10n) ("armordisadvantage")
+                         : translate (l10n) ("weapondisadvantage")
+
+                     const val = fromMaybe (translate (l10n) ("none")) (str)
+
+                     return (
+                       <Markdown source={`**${tag}:** ${val}`} />
+                     )
+                   })}
+      {maybeRNullF (msrc)
+                   (src => (
+                     <WikiSource {...props} x={SrcObj ({ src })} acc={SrcObj.A} />
+                   ))}
     </WikiBoxTemplate>
   )
 }
+
+const SrcObj = fromDefault ({ src: List<Record<SourceLink>> () })
+
+const ensureNatural = bindF (ensure (gt (0)))

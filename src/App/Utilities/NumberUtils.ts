@@ -1,6 +1,7 @@
 import { not } from "../../Data/Bool";
 import { List, subscript } from "../../Data/List";
 import { bindF, ensure, fromMaybe, Just, Maybe, Nothing } from "../../Data/Maybe";
+import { minus } from "./Chars";
 import { inc } from "./mathUtils";
 import { pipe } from "./pipe";
 import { isInteger, isNaturalNumber } from "./RegexUtils";
@@ -48,17 +49,18 @@ export const toRoman = pipe (inc, subscript (romanNumbers), fromMaybe (""))
 export const toRomanFromIndex = pipe (subscript (romanNumbers), fromMaybe (""))
 
 /**
- * Forces signing on the given number.
- */
-export const sign = (number: number): string =>
-  number > 0 ? `+${number}` : String (number)
-
-/**
  * Forces signing on the given number, returns the specified string when the
  * number is `0`.
  */
-export const signNullCustom = (stringFor0: string) => (number: number): string =>
-  number > 0 ? `+${number}` : number < 0 ? String (number) : stringFor0
+export const signNullCustom =
+  (zero: string) =>
+  (x: number): string =>
+    x > 0 ? `+${x}` : x < 0 ? `${minus}${x}` : zero
+
+/**
+ * Forces signing on the given number.
+ */
+export const sign = signNullCustom ("0")
 
 /**
  * Forces signing on the given number, ignores 0.

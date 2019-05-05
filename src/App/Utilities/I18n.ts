@@ -87,8 +87,9 @@ export const localizeNumber = (localeId: string) => (num: number) => num .toLoca
  * Uses `1cm = 0.4in` instead of `1cm = 0.3937in`.
  */
 export const localizeSize =
-  (localeId: string) =>
+  (localeId: string): ((x: number | Maybe<number>) => number) =>
     pipe (
+      normalize,
       fmap<number, number> (size => localeId === "en-US" ? size * 0.4 : size) as
         (m: Maybe<number>) => Maybe<number>,
       sum
