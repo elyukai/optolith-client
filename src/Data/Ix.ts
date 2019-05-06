@@ -36,7 +36,7 @@ export const range =
  */
 export const rangeN =
   (l: number, u: number): List<number> =>
-    buildRangeList (l) (u) (List.empty)
+    buildRangeList (u) (l) (List.empty)
 
 /**
  * `index :: Int a => (a, a) -> a -> Int`

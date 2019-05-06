@@ -2,7 +2,7 @@ import { equals } from "../../Data/Eq";
 import { flip, thrush } from "../../Data/Function";
 import { fmap, fmapF } from "../../Data/Functor";
 import { over } from "../../Data/Lens";
-import { all, cons, Cons, elem, elemF, filter, find, foldr, head, List, ListI, map, subscriptF } from "../../Data/List";
+import { all, cons, Cons, elem, elemF, filter, find, foldr, List, ListI, map, subscriptF } from "../../Data/List";
 import { bind, ensure, fromMaybe, fromMaybe_, imapMaybe, Just, liftM2, liftM4, mapM, mapMaybe, maybe, Maybe } from "../../Data/Maybe";
 import { elems, lookup, lookupF, OrderedMap } from "../../Data/OrderedMap";
 import { uncurryN, uncurryN3, uncurryN4, uncurryN8 } from "../../Data/Pair";
@@ -483,7 +483,7 @@ const mapIncreaseSkillOrList =
             map (nameAcc),
             name =>
               IncreasableListForView ({
-                id: head (ISLA.id (e) as Cons<string>),
+                id: ISLA.id (e) as Cons<string>,
                 name,
                 value: ISLA.value (e),
               })
@@ -542,7 +542,7 @@ const mapIncreaseSkillListPrevious =
             map (nameAcc),
             name =>
               IncreasableListForView ({
-                id: head (ISLA.id (e) as Cons<string>),
+                id: ISLA.id (e) as Cons<string>,
                 name,
                 previous: pipe_ (
                   main_xs,

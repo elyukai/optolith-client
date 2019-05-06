@@ -668,6 +668,12 @@ export const initS =
   <A> (xs: List<A>): Maybe<List<A>> =>
     fnull (xs) ? Nothing : Just (init (xs))
 
+interface uncons {
+  <A> (xs: Nil): Nothing
+  <A> (xs: Cons<A>): Just<Pair<A, List<A>>>
+  <A> (xs: List<A>): Maybe<Pair<A, List<A>>>
+}
+
 /**
  * `uncons :: [a] -> Maybe (a, [a])`
  *
@@ -675,9 +681,10 @@ export const initS =
  * `Nothing`. If the list is non-empty, returns `Just (x, xs)`, where `x` is
  * the head of the list and `xs` its tail.
  */
-export const uncons =
+export const uncons = (
   <A> (xs: List<A>): Maybe<Pair<A, List<A>>> =>
     fnull (xs) ? Nothing : Just (Pair (xs .x, tail (xs)))
+) as uncons
 
 
 // LIST TRANSFORMATIONS
@@ -1273,14 +1280,14 @@ export const indexed = <A> (xs: List<A>): List<Pair<number, A>> =>
  * returned.
  */
 export const deleteAt =
-  <A> (index: number) => (xs: List<A>): List<A> =>
+  (index: number) => <A> (xs: List<A>): List<A> =>
     index < 0
     ? xs
     : isNil (xs)
     ? Nil
     : index === 0
     ? xs .xs
-    : Cons (xs .x, deleteAt<A> (index - 1) (xs .xs))
+    : Cons (xs .x, deleteAt (index - 1) (xs .xs))
 
 /**
  * `setAt :: Int -> a -> [a] -> [a]`

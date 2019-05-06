@@ -122,30 +122,6 @@ describe ("swap", () => {
   })
 })
 
-// ACCESSOR
-
-describe ("nth", () => {
-  it ("returns the value at the given position", () => {
-    expect (nth (2) (Tuple (3, 1, 3, 4))) .toEqual (3)
-  })
-
-  it ("throws if position is not valid", () => {
-    // @ts-ignore
-    expect (() => nth (4) (Tuple (3, 1, 3, 4))) .toThrow ()
-  })
-})
-
-describe ("nthF", () => {
-  it ("returns the value at the given position", () => {
-    expect (nthF (Tuple (3, 1, 3, 4)) (2)) .toEqual (3)
-  })
-
-  it ("throws if position is not valid", () => {
-    // @ts-ignore
-    expect (() => nthF (Tuple (3, 1, 3, 4)) (4)) .toThrow ()
-  })
-})
-
 // CUSTOM FUNCTIONS
 
 test ('toArray', () => {

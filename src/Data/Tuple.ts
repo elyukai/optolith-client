@@ -26,27 +26,50 @@ interface TupleConstructor {
   <A, B, C, D>
   (fFirst: (first: A) => B) =>
   (fSecond: (second: C) => D) =>
-  (x: Tuple<[A, C]>) =>
-  Tuple<[B, D]>
+  (x: Pair<A, C>) =>
+  Pair<B, D>
 
-  first: <A, B> (f: (first: A) => B) => <C> (x: Tuple<[A, C]>) => Tuple<[B, C]>
-  second: <A, B, C>(f: (second: B) => C) => (x: Tuple<[A, B]>) => Tuple<[A, C]>
+  first: <A, B> (f: (first: A) => B) => <C> (x: Pair<A, C>) => Pair<B, C>
+  second: <A, B, C>(f: (second: B) => C) => (x: Pair<A, B>) => Pair<A, C>
 
-  fst: <A>(x: Tuple<[A, any]>) => A
-  snd: <B>(x: Tuple<[any, B]>) => B
-  curry: <A, B, C>(f: (x: Tuple<[A, B]>) => C) => (a: A) => (b: B) => C
-  uncurry: <A, B, C>(f: (a: A) => (b: B) => C) => (x: Tuple<[A, B]>) => C
-  swap: <A, B>(x: Tuple<[A, B]>) => Tuple<[B, A]>
+  fst: <A>(x: Pair<A, any>) => A
+  snd: <B>(x: Pair<any, B>) => B
+  curry: <A, B, C>(f: (x: Pair<A, B>) => C) => (a: A) => (b: B) => C
+  uncurry: <A, B, C>(f: (a: A) => (b: B) => C) => (x: Pair<A, B>) => C
+  swap: <A, B>(x: Pair<A, B>) => Pair<B, A>
 
-  toArray: <A, B>(x: Tuple<[A, B]>) => [A, B]
-  fromArray: <A, B>(x: [A, B]) => Tuple<[A, B]>
+  toArray: <A, B>(x: Pair<A, B>) => [A, B]
+  fromArray: <A, B>(x: [A, B]) => Pair<A, B>
   isTuple: (x: any) => x is Tuple<any[]>
 }
 
 export const Tuple =
   ((...args: any[]) => {
-    return Internals._Tuple (args [0], args [1])
+    return Internals._Tuple (...args)
   }) as TupleConstructor
+
+
+// CONSTRUCTOR SPECIFIED ON PAIRS
+
+export type Pair<A, B> = Tuple<[A, B]>
+
+export type PairP1 = <A> (first: A) => <B> (second: B) => Pair<A, B>
+export type PairP1_ = <A, B> (first: A) => (second: B) => Pair<A, B>
+export type PairP2 = <A, B> (first: A, second: B) => Pair<A, B>
+
+interface PairConstructor {
+  <A> (first: A): <B> (second: B) => Pair<A, B>
+  <A, B> (first: A, second: B): Pair<A, B>
+}
+
+export const Pair =
+  ((...args: [any] | [any, any]) => {
+    if (args.length === 1) {
+      return (b: any) => Tuple (args [0], b)
+    }
+
+    return Tuple (args [0], args [1])
+  }) as PairConstructor
 
 
 // BIFUNCTOR
@@ -74,7 +97,7 @@ export const first =
   <A, B>
   (f: (first: A) => B) =>
   <C>
-  (x: Tuple<[A, C]>): Tuple<[B, C]> => {
+  (x: Pair<A, C>): Pair<B, C> => {
     if (x .length !== 2) {
       throw new TypeError (`first: Tuple is of length ${x .length} instead of length 2.`)
     }
@@ -89,7 +112,7 @@ export const second =
   <B, C>
   (f: (second: B) => C) =>
   <A>
-  (x: Tuple<[A, B]>): Tuple<[A, C]> => {
+  (x: Pair<A, B>): Pair<A, C> => {
     if (x .length !== 2) {
       throw new TypeError (`second: Tuple is of length ${x .length} instead of length 2.`)
     }
@@ -105,7 +128,7 @@ export const second =
  *
  * Extract the first component of a pair.
  */
-export const fst = <A> (x: Tuple<[A, any]>): A => {
+export const fst = <A> (x: Pair<A, any>): A => {
   if (x .length !== 2) {
     throw new TypeError (`fst: Tuple is of length ${x .length} instead of length 2.`)
   }
@@ -118,7 +141,7 @@ export const fst = <A> (x: Tuple<[A, any]>): A => {
  *
  * Extract the second component of a pair.
  */
-export const snd = <B> (x: Tuple<[any, B]>): B => {
+export const snd = <B> (x: Pair<any, B>): B => {
   if (x .length !== 2) {
     throw new TypeError (`snd: Tuple is of length ${x .length} instead of length 2.`)
   }
@@ -132,7 +155,7 @@ export const snd = <B> (x: Tuple<[any, B]>): B => {
  * `curry` converts an uncurried function to a curried function.
  */
 export const curry =
-  <A, B, C> (f: (x: Tuple<[A, B]>) => C) => (a: A) => (b: B): C =>
+  <A, B, C> (f: (x: Pair<A, B>) => C) => (a: A) => (b: B): C =>
     f (Tuple (a, b))
 
 /**
@@ -150,7 +173,7 @@ export const curryN =
  * `uncurry` converts a curried function to a function on pairs.
  */
 export const uncurry =
-  <A, B, C> (f: (a: A) => (b: B) => C) => (x: Tuple<[A, B]>): C => {
+  <A, B, C> (f: (a: A) => (b: B) => C) => (x: Pair<A, B>): C => {
     if (x .length !== 2) {
       throw new TypeError (`uncurry: Tuple is of length ${x .length} instead of length 2.`)
     }
@@ -237,55 +260,12 @@ export const uncurryN8 =
  * Swap the components of a pair.
  */
 export const swap =
-  <A, B> (x: Tuple<[A, B]>): Tuple<[B, A]> => {
+  <A, B> (x: Pair<A, B>): Pair<B, A> => {
     if (x .length !== 2) {
       throw new TypeError (`swap: Tuple is of length ${x .length} instead of length 2.`)
     }
 
     return Tuple (x .values [1], x .values [0])
-  }
-
-
-// Generic functions on Tuples
-
-type FilterNumber<A> = Exclude<A, string>
-
-export const nth =
-  <A extends any[], I extends FilterNumber<keyof A>>
-  (i: I) =>
-  (x: Tuple<A>): A[I] => {
-    if (i > x .length - 1 || i < 0) {
-      throw new TypeError (
-        `nth: Tuple is of length ${x .length}, but you tried to access a value at position ${i}.`
-      )
-    }
-
-    return x .values [i as number]
-  }
-
-export const nthF =
-  <A extends any[]>
-  (x: Tuple<A>) =>
-  <I extends FilterNumber<keyof A>>
-  (i: I): A[I] =>
-    nth<A, I> (i) (x)
-
-export const mapNth =
-  <A extends any[], I extends FilterNumber<keyof A>>
-  (f: (x: A[I]) => A[I]) =>
-  (i: I) =>
-  (x: Tuple<A>): Tuple<A> => {
-    if (i > x .length - 1 || i < 0) {
-      throw new TypeError (
-        `nth: Tuple is of length ${x .length}, but you tried to access a value at position ${i}.`
-      )
-    }
-
-    const arr: A = Array.from ({ ...x.values, length: x.length }) as A
-
-    arr [i as number] = f (arr [i as number] as A[I])
-
-    return Tuple (...arr)
   }
 
 

@@ -1,13 +1,17 @@
 import * as React from "react";
-import { append, List, map } from "../../../Data/List";
-import { Maybe, maybe } from "../../../Data/Maybe";
-import { OrderedMap } from "../../../Data/OrderedMap";
+import { all, append, cons, deleteAt, findIndex, isList, List, map, NonEmptyList, notNull, uncons, unsafeIndex } from "../../../Data/List";
+import { fromJust, Maybe, maybe, maybe_ } from "../../../Data/Maybe";
+import { lookup, member, memberF, OrderedMap } from "../../../Data/OrderedMap";
 import { difference } from "../../../Data/OrderedSet";
+import { fst, snd } from "../../../Data/Pair";
 import { fromDefault, Record } from "../../../Data/Record";
-import { nthF, Tuple } from "../../../Data/Tuple";
+import { Tuple } from "../../../Data/Tuple";
+import { sel1, sel2, sel3 } from "../../../Data/Tuple/Select";
+import { upd1, upd2, upd3 } from "../../../Data/Tuple/Update";
 import { Categories } from "../../Constants/Categories";
 import { Sex } from "../../Models/Hero/heroTypeHelpers";
 import { IncreasableForView } from "../../Models/View/IncreasableForView";
+import { IncreasableListForView } from "../../Models/View/IncreasableListForView";
 import { ProfessionCombined } from "../../Models/View/ProfessionCombined";
 import { ProfessionVariantCombined } from "../../Models/View/ProfessionVariantCombined";
 import { Attribute } from "../../Models/Wiki/Attribute";
@@ -65,6 +69,8 @@ const PCA = ProfessionCombined.A
 const PVCA = ProfessionVariantCombined.A
 const ISA = IncreaseSkill.A
 const IFVA = IncreasableForView.A
+const IFVAL = IncreasableForView.AL
+const ILFVA = IncreasableListForView.A
 
 // tslint:disable-next-line: cyclomatic-complexity
 export function WikiProfessionInfo(props: WikiProfessionInfoProps) {
@@ -467,86 +473,6 @@ function getLiturgicalChants(
   ], l10n.id)
 
   return sortedList.length > 0 ? sortedList.intercalate(", ") : undefined
-}
-
-interface CombinedSpell {
-  newId: string
-  oldId: string
-  value: number
-}
-
-const CombinedSpell = fromDefault<CombinedSpell> ({ newId: "", oldId: "", value: 0 })
-
-type CombinedSpells = List<Record<IncreasableForView> | Record<CombinedSpell>>
-
-const combineSpells =
-  (spells: OrderedMap<string, Record<Spell>>) =>
-  (xs: List<Record<IncreasableForView>>): CombinedSpells => {
-  type Triple = Tuple<[
-                  List<Record<IncreasableForView>>,
-                  List<Record<CombinedSpell>>,
-                  List<Record<IncreasableForView>>
-                ]>
-
-  const oldList = [...xs]
-  const combinedSpells: CombinedSpell[] = []
-  const singleSpells: IncreasableForView[] = []
-
-  return pipe_ (
-    Tuple (xs, List (), List ())
-    whilePred<Triple> ()
-                      (),
-    x => append<Record<IncreasableForView> | Record<CombinedSpell>> (nthF (x) (1))
-                                                                    (nthF (x) (2))
-  )
-
-  while (oldList.length > 0) {
-    const base = oldList.shift()!
-    const { id, value, previous } = base
-    const baseSpell = spells.get(id)
-
-    if (baseSpell) {
-      if (typeof previous === "number") {
-        const matchingSpellIndex = oldList.findIndex(e => {
-          const matchingSpellInstance = spells.get(e.id)
-          return e.value === previous && typeof matchingSpellInstance === "object"
-        })
-        if (matchingSpellIndex > -1) {
-          const matchingSpell = oldList.splice(matchingSpellIndex, 1)[0]
-          combinedSpells.push({
-            oldId: id,
-            newId: matchingSpell.id,
-            value: previous
-          })
-        }
-        else {
-          singleSpells.push(base)
-        }
-      }
-      else {
-        const matchingSpellIndex = oldList.findIndex(e => {
-          const matchingSpellInstance = spells.get(e.id)
-          return e.previous === value && e.value === 0 && typeof matchingSpellInstance === "object"
-        })
-        if (matchingSpellIndex > -1) {
-          const matchingSpell = oldList.splice(matchingSpellIndex, 1)[0]
-          combinedSpells.push({
-            oldId: matchingSpell.id,
-            newId: id,
-            value
-          })
-        }
-        else {
-          singleSpells.push(base)
-        }
-      }
-    }
-  }
-
-  return [
-    ...combinedSpells,
-    ...singleSpells
-  ]
 }
 
 interface SkillsListProps {
@@ -1031,7 +957,7 @@ function VariantSkillsSelection (props: VariantSkillsSelectionProps): JSX.Elemen
   const skillsList =
     pipe_ (variant, PVCA.mappedSkills, mapVariantSkills (l10n) (0))
 
-  const combinedSpellsList = combineSpells(variant.spells, spells)
+  const combinedSpellsList = combineSpells (spells) (PVCA.mappedSpells (variant))
 
   const spellsList = combinedSpellsList.map(e => {
     if (isCombinedSpell(e)) {
@@ -1091,3 +1017,157 @@ const mapVariantSkills =
 
       return `${IFVA.name (e)} ${prev + IFVA.value (e)} ${translate (l10n) ("insteadof")} ${prev}`
     })
+
+interface CombinedSpell {
+  newId: string | NonEmptyList<string>
+  oldId: string | NonEmptyList<string>
+  value: number
+}
+
+const CombinedSpell = fromDefault<CombinedSpell> ({ newId: "", oldId: "", value: 0 })
+
+type CombinedMappedSpell = Record<IncreasableForView> | Record<IncreasableListForView>
+
+type CombinedSpells = List<CombinedMappedSpell | Record<CombinedSpell>>
+
+type CombinedSpellsTriple = Tuple<[
+                              List<CombinedMappedSpell>,
+                              List<Record<CombinedSpell>>,
+                              List<CombinedMappedSpell>
+                            ]>
+
+type CombinedSpellsTripleValid = Tuple<[
+                                   NonEmptyList<CombinedMappedSpell>,
+                                   List<Record<CombinedSpell>>,
+                                   List<CombinedMappedSpell>
+                                 ]>
+
+const combineSpellsPred =
+  (x: CombinedSpellsTriple): x is CombinedSpellsTripleValid =>
+    pipe_ (x, sel1, notNull)
+
+const getCombinedSpellId =
+  (x: CombinedMappedSpell) => IncreasableListForView.is (x) ? ILFVA.id (x) : IFVA.id (x)
+
+const combineSpells =
+  (spells: OrderedMap<string, Record<Spell>>) =>
+  (xs: List<CombinedMappedSpell>): CombinedSpells => {
+
+  type CST = CombinedSpellsTriple
+
+  return pipe_ (
+    Tuple (xs, List<Record<CombinedSpell>> (), List<CombinedMappedSpell> ()),
+    whilePred (combineSpellsPred)
+              (t => {
+                const olds = sel1 (t)
+                const combined_spells = sel2 (t)
+                const single_spells = sel3 (t)
+
+                const olds_separate = fromJust (uncons (olds))
+
+                const base = fst (olds_separate)
+                const id = getCombinedSpellId (base)
+
+                const value = IFVAL.value (base)
+
+                const mprevious = IFVAL.previous (base)
+
+                const olds_left = snd (olds_separate)
+
+                const mbase_spell = lookup (id) (spells)
+
+                return maybe<CST> (t)
+                                  (_ =>
+                                    maybe_ (() => {
+                                             const mmatching_spell_index =
+                                               findIndex ((e: CombinedMappedSpell) => {
+                                                           const curr_id = getCombinedSpellId (e)
+                                                           const curr_value = IFVAL.value (e)
+                                                           const mcurr_previous = IFVAL.previous (e)
+
+                                                           const matching_spell_exists =
+                                                             isList (curr_id)
+                                                               ? all (memberF (spells)) (curr_id)
+                                                               : member (curr_id) (spells)
+
+                                                           return Maybe.elem (value)
+                                                                             (mcurr_previous)
+                                                             && curr_value === 0
+                                                             && matching_spell_exists
+                                                         })
+                                                         (olds_left)
+
+                                             return maybe_ (() => pipe_ (
+                                                                    t,
+                                                                    upd1 (olds_left),
+                                                                    upd3 (cons (single_spells)
+                                                                               (base))
+                                                                  ))
+                                                           ((index: number) => {
+                                                             const matching_spell =
+                                                               unsafeIndex (olds_left) (index)
+
+                                                             const oldId =
+                                                               getCombinedSpellId (matching_spell)
+
+                                                             return pipe_ (
+                                                               t,
+                                                               upd1 (deleteAt (index) (olds_left)),
+                                                               upd2 (cons (combined_spells)
+                                                                          (CombinedSpell ({
+                                                                            oldId,
+                                                                            newId: id,
+                                                                            value
+                                                                          })))
+                                                             )
+                                                           })
+                                                           (mmatching_spell_index)
+                                           })
+                                           ((previous: number) => {
+                                             const mmatching_spell_index =
+                                               findIndex ((e: CombinedMappedSpell) => {
+                                                           const curr_id = getCombinedSpellId (e)
+                                                           const curr_value = IFVAL.value (e)
+
+                                                           const matching_spell_exists =
+                                                             isList (curr_id)
+                                                               ? all (memberF (spells)) (curr_id)
+                                                               : member (curr_id) (spells)
+
+                                                           return curr_value === previous
+                                                             && matching_spell_exists
+                                                         })
+                                                         (olds_left)
+
+                                             return maybe_ (() => pipe_ (
+                                                                    t,
+                                                                    upd1 (olds_left),
+                                                                    upd3 (cons (single_spells)
+                                                                               (base))
+                                                                  ))
+                                                           ((index: number) => {
+                                                             const matching_spell =
+                                                               unsafeIndex (olds_left) (index)
+
+                                                             const newId =
+                                                               getCombinedSpellId (matching_spell)
+
+                                                             return pipe_ (
+                                                               t,
+                                                               upd1 (deleteAt (index) (olds_left)),
+                                                               upd2 (cons (combined_spells)
+                                                                          (CombinedSpell ({
+                                                                            oldId: id,
+                                                                            newId,
+                                                                            value
+                                                                          })))
+                                                             )
+                                                           })
+                                                           (mmatching_spell_index)
+                                           })
+                                           (mprevious))
+                                  (mbase_spell)
+              }),
+    x => append<CombinedMappedSpell | Record<CombinedSpell>> (sel1 (x)) (sel2 (x))
+  )
+}
