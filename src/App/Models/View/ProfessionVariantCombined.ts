@@ -35,5 +35,11 @@ export const ProfessionVariantCombined =
   })
 
 export const ProfessionVariantCombinedA_ = {
+  id: pipe (ProfessionVariantCombined.A.wikiEntry, ProfessionVariant.A.id),
+  name: pipe (ProfessionVariantCombined.A.wikiEntry, ProfessionVariant.A.name),
+  ap: pipe (ProfessionVariantCombined.A.wikiEntry, ProfessionVariant.A.ap),
   blessings: pipe (ProfessionVariantCombined.A.wikiEntry, ProfessionVariant.A.blessings),
+  precedingText: pipe (ProfessionVariantCombined.A.wikiEntry, ProfessionVariant.A.precedingText),
+  concludingText: pipe (ProfessionVariantCombined.A.wikiEntry, ProfessionVariant.A.concludingText),
+  fullText: pipe (ProfessionVariantCombined.A.wikiEntry, ProfessionVariant.A.fullText),
 }

@@ -1,9 +1,10 @@
 import * as React from "react";
+import { equals } from "../../../Data/Eq";
 import { ident } from "../../../Data/Function";
 import { fmap, fmapF } from "../../../Data/Functor";
-import { all, append, cons, consF, deleteAt, findIndex, flength, intercalate, isList, List, ListI, map, NonEmptyList, notNull, toArray, uncons, unsafeIndex } from "../../../Data/List";
-import { ensure, fromJust, isJust, liftM2, mapMaybe, Maybe, maybe, maybeR, maybe_ } from "../../../Data/Maybe";
-import { lookup, lookupF, member, memberF, OrderedMap } from "../../../Data/OrderedMap";
+import { all, append, cons, consF, deleteAt, findIndex, flength, imap, intercalate, isList, List, ListI, map, NonEmptyList, notElem, notNull, snoc, subscript, toArray, uncons, unsafeIndex } from "../../../Data/List";
+import { alt_, any, ensure, fromJust, fromMaybe, isJust, Just, liftM2, mapMaybe, Maybe, maybe, maybeR, maybeRNullF, maybe_, Nothing } from "../../../Data/Maybe";
+import { elems, lookup, lookupF, member, memberF, OrderedMap } from "../../../Data/OrderedMap";
 import { difference, fromList, OrderedSet } from "../../../Data/OrderedSet";
 import { fst, snd } from "../../../Data/Pair";
 import { fromDefault, Record } from "../../../Data/Record";
@@ -15,7 +16,7 @@ import { Sex } from "../../Models/Hero/heroTypeHelpers";
 import { ActivatableNameCostIsActive, ActivatableNameCostIsActiveA_ } from "../../Models/View/ActivatableNameCostIsActive";
 import { IncreasableForView } from "../../Models/View/IncreasableForView";
 import { IncreasableListForView } from "../../Models/View/IncreasableListForView";
-import { ProfessionCombined } from "../../Models/View/ProfessionCombined";
+import { ProfessionCombined, ProfessionCombinedA_ } from "../../Models/View/ProfessionCombined";
 import { ProfessionVariantCombined, ProfessionVariantCombinedA_ } from "../../Models/View/ProfessionVariantCombined";
 import { Attribute } from "../../Models/Wiki/Attribute";
 import { Blessing } from "../../Models/Wiki/Blessing";
@@ -23,7 +24,7 @@ import { Book } from "../../Models/Wiki/Book";
 import { Cantrip } from "../../Models/Wiki/Cantrip";
 import { L10n, L10nRecord } from "../../Models/Wiki/L10n";
 import { LiturgicalChant } from "../../Models/Wiki/LiturgicalChant";
-import { isRequiringIncreasable } from "../../Models/Wiki/prerequisites/IncreasableRequirement";
+import { isRequiringIncreasable, ProfessionRequireIncreasable } from "../../Models/Wiki/prerequisites/IncreasableRequirement";
 import { isRaceRequirement, RaceRequirement } from "../../Models/Wiki/prerequisites/RaceRequirement";
 import { isSexRequirement, SexRequirement } from "../../Models/Wiki/prerequisites/SexRequirement";
 import { CantripsSelection } from "../../Models/Wiki/professionSelections/CantripsSelection";
@@ -43,15 +44,17 @@ import { Skill } from "../../Models/Wiki/Skill";
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
 import { Spell } from "../../Models/Wiki/Spell";
 import { IncreaseSkill } from "../../Models/Wiki/sub/IncreaseSkill";
+import { IncreaseSkillList } from "../../Models/Wiki/sub/IncreaseSkillList";
 import { NameBySex } from "../../Models/Wiki/sub/NameBySex";
 import { ProfessionSelectionIds } from "../../Models/Wiki/wikiTypeHelpers";
 import { getSelectOptionName } from "../../Utilities/Activatable/selectionUtils";
+import { ndash } from "../../Utilities/Chars";
 import { localizeOrList, translate, translateP } from "../../Utilities/I18n";
-import { getNumericId } from "../../Utilities/IDUtils";
-import { add, gt } from "../../Utilities/mathUtils";
+import { getNumericId, prefixSA } from "../../Utilities/IDUtils";
+import { add, dec, gt } from "../../Utilities/mathUtils";
 import { pipe, pipe_ } from "../../Utilities/pipe";
 import { renderMaybe } from "../../Utilities/ReactUtils";
-import { sortStrings } from "../../Utilities/sortBy";
+import { sortRecordsByName, sortStrings } from "../../Utilities/sortBy";
 import { whilePred } from "../../Utilities/whilePred";
 import { WikiSource } from "./Elements/WikiSource";
 import { WikiBoxTemplate } from "./WikiBoxTemplate";
@@ -73,16 +76,21 @@ export interface WikiProfessionInfoProps {
 }
 
 const PCA = ProfessionCombined.A
+const PCA_ = ProfessionCombinedA_
 const PSA = ProfessionSelections.A
 const PVCA = ProfessionVariantCombined.A
 const PVCA_ = ProfessionVariantCombinedA_
 const PVSA = ProfessionVariantSelections.A
 const ISA = IncreaseSkill.A
+const ILSA = IncreaseSkillList.A
 const IFVA = IncreasableForView.A
 const IFVAL = IncreasableForView.AL
 const ILFVA = IncreasableListForView.A
 const ANCIAA = ActivatableNameCostIsActive.A
 const ANCIAA_ = ActivatableNameCostIsActiveA_
+const PRIA = ProfessionRequireIncreasable.A
+const CTSA = CombatTechniquesSelection.A
+const CTSSA = CombatTechniquesSecondSelection.A
 
 // tslint:disable-next-line: cyclomatic-complexity
 export function WikiProfessionInfo(props: WikiProfessionInfoProps) {
@@ -243,20 +251,10 @@ export function WikiProfessionInfo(props: WikiProfessionInfoProps) {
   )
 }
 
-function getName(nameProp: string | NameBySex, sex: "m" | "f"): string
-function getName(nameProp: string | NameBySex | undefined, sex: "m" | "f"): string | undefined
-function getName(nameProp: string | NameBySex | undefined, sex: "m" | "f"): string | undefined {
-  if (typeof nameProp === "object") {
-    return nameProp[sex]
-  }
-
-  return nameProp
-}
-
 function getSpecializationSelection(
   selections: ProfessionSelectionList,
   skills: Map<string, Skill>,
-  l10n: UIMessages,
+  l10n: L10nRecord,
 ): string | undefined {
   const selection = selections.find(e => {
     return e.id === "SPECIALISATION"
@@ -284,10 +282,10 @@ function getSpecializationSelection(
 interface CombatTechniquesProps {
   combatTechniquesSelectionString: string | undefined
   x: ProfessionCombined
-  l10n: UIMessages
+  l10n: L10nRecord
 }
 
-function CombatTechniques(props: CombatTechniquesProps): JSX.Element {
+function CombatTechniques (props: CombatTechniquesProps): JSX.Element {
   const {
     combatTechniquesSelectionString: selectionString,
     x,
@@ -309,309 +307,370 @@ function CombatTechniques(props: CombatTechniquesProps): JSX.Element {
 }
 
 interface SkillsSelectionJoined {
-  properties: SkillsSelection
+  properties: Record<SkillsSelection>
   text: string
 }
 
-function getSkillSelection(
-  selections: ProfessionSelectionList,
-  l10n: UIMessages,
-): SkillsSelectionJoined | undefined {
-  const selection = selections.find(e => {
-    return e.id === "SKILLS"
-  }) as SkillsSelection | undefined
+const SkillsSelectionJoined =
+  fromDefault<SkillsSelectionJoined> ({
+    properties: SkillsSelection.default,
+    text: "",
+  })
 
-  if (selection === undefined) {
-    return
-  }
+const getSkillSelection =
+  (l10n: L10nRecord) =>
+  (profession: Record<ProfessionCombined>): Maybe<Record<SkillsSelectionJoined>> =>
+    pipe_ (
+      profession,
+      PCA.mappedSelections,
+      PSA[ProfessionSelectionIds.SKILLS],
+      fmap (sel => {
+        const skill_gr = subscript (translate (l10n) ("skillgroups"))
+                                   (fromMaybe (0) (SkillsSelection.A.gr (sel)))
 
-  const skillGroup = translate(l10n, "rcpselections.labels.skillgroups")[selection.gr || 0]
-
-  return {
-    properties: selection,
-    text: translate(l10n, "info.skillsselection", selection.value, skillGroup)
-  }
-}
-
-function getCombatTechniquesSelection(
-  selections: ProfessionSelectionList,
-  l10n: UIMessages,
-): string | undefined {
-  const selection = selections.find(e => {
-    return e.id === "COMBAT_TECHNIQUES"
-  }) as CombatTechniquesSelection | undefined
-
-  const secondSelection = selections.find(e => {
-    return e.id === "COMBAT_TECHNIQUES_SECOND"
-  }) as CombatTechniquesSecondSelection | undefined
-
-  if (selection === undefined) {
-    return
-  }
-
-  const counter: keyof UIMessages = "info.combattechniquesselectioncounter"
-  const firstCounter = translate(l10n, counter)[selection.amount - 1]
-  const firstValue = selection.value + 6
-  const entryList = sortStrings(selection.sid, l10n.id).intercalate(", ")
-
-  let value: string
-
-  if (typeof secondSelection === "object") {
-    const mainString: keyof UIMessages = "info.combattechniquessecondselection"
-    const secondCounter = translate(l10n, counter)[secondSelection.amount - 1]
-    const secondValue = secondSelection.value + 6
-
-    const precedingText = translate(
-      l10n,
-      mainString,
-      firstCounter,
-      firstValue,
-      secondCounter,
-      secondValue
+        return SkillsSelectionJoined ({
+          properties: sel,
+          text: translateP (l10n)
+                           ("skillsselection")
+                           (List<string | number> (
+                             SkillsSelection.A.value (sel),
+                             fromMaybe ("...") (skill_gr)
+                           )),
+        })
+      })
     )
 
-    value = `${precedingText}${entryList}`
-  }
-  else {
-    const mainString: keyof UIMessages = "info.combattechniquesselection"
-    const precedingText = translate(l10n, mainString, firstCounter, firstValue)
+const getCombatTechniquesSelection =
+  (l10n: L10nRecord) =>
+  (profession: Record<ProfessionCombined>): Maybe<string> => {
+    const selections = PCA.mappedSelections (profession)
 
-    value = `${precedingText}${entryList}`
-  }
+    const msel = PSA[ProfessionSelectionIds.COMBAT_TECHNIQUES] (selections)
+    const msecond_sel = PSA[ProfessionSelectionIds.COMBAT_TECHNIQUES_SECOND] (selections)
 
-  return value
-}
+    return fmapF (msel)
+                 (sel => {
+                   const fst_counter = subscript (translate (l10n) ("combattechniquecounter"))
+                                                 (CTSA.amount (sel) - 1)
 
-function getTerrainKnowledgeSelection(
-  selections: ProfessionSelectionList,
-  specialAbilities: Map<string, SpecialAbility>,
-  l10n: UIMessages,
-): string | undefined {
-  const selection = selections.find(e => {
-    return e.id === "TERRAIN_KNOWLEDGE"
-  }) as TerrainKnowledgeSelection | undefined
+                   const firstValue = CTSA.value (sel) + 6
 
-  if (selection === undefined) {
-    return
-  }
+                   const entryList =
+                     pipe_ (
+                       sel,
+                       CTSA.sid,
+                       sortStrings (L10n.A.id (l10n)),
+                       intercalate (", ")
+                     )
 
-  const terrainKnowledge = specialAbilities.get("SA_12")!
+                   return maybe_ (() => {
+                                   const precedingText =
+                                     translateP (l10n)
+                                                ("combattechniquesselection")
+                                                (List (renderMaybe (fst_counter), firstValue))
 
-  const optionsString = selection.sid.map(sid => {
-    return getSelectOptionName(terrainKnowledge, sid)!
-  })
+                                   return `${precedingText}${entryList}`
+                                 })
+                                 ((second_sel: Record<CombatTechniquesSecondSelection>) => {
+                                   const snd_counter =
+                                     subscript (translate (l10n) ("combattechniquecounter"))
+                                               (CTSSA.amount (second_sel) - 1)
 
-  const last = optionsString.pop()
+                                   const secondValue = CTSSA.value (second_sel) + 6
 
-  const joinedFirst = optionsString.intercalate(", ")
-  const joined = `${joinedFirst} ${translate(l10n, "info.or")} ${last}`
+                                   const precedingText =
+                                     translateP (l10n)
+                                                ("combattechniquessecondselection")
+                                                (List (
+                                                  renderMaybe (fst_counter),
+                                                  firstValue,
+                                                  renderMaybe (snd_counter),
+                                                  secondValue
+                                                ))
 
-  return `${terrainKnowledge.name} (${joined})`
-}
-
-function getSpells(
-  profession: ProfessionCombined,
-  selections: ProfessionSelectionList,
-  spells: Map<string, Spell>,
-  cantrips: Map<string, Cantrip>,
-  l10n: UIMessages,
-): string | undefined {
-  const cantripsSelection = selections.find(e => {
-    return e.id === "CANTRIPS"
-  }) as CantripsSelection | undefined
-
-  let cantripsString = ""
-
-  if (typeof cantripsSelection === "object") {
-    const mainMessage: keyof UIMessages = "info.spellscantrips"
-
-    const counterMessage: keyof UIMessages = "info.spellscantripscounter"
-    const counter = translate(l10n, counterMessage)[cantripsSelection.amount - 1]
-
-    const precedingText = translate(l10n, mainMessage, counter)
-
-    const options = cantripsSelection.sid.map(e => cantrips.get(e)!.name)
-    const sortedOptions = sortStrings(options, l10n.id)
-
-    cantripsString = `${precedingText}${sortedOptions.intercalate(", ")}, `
+                                   return `${precedingText}${entryList}`
+                                 })
+                                 (msecond_sel)
+                 })
   }
 
-  const spellsArr = profession.spells.map(e => `${spells.get(e.id)!.name} ${e.value}`)
-  const sortedSpells = sortStrings(spellsArr, l10n.id)
+const getTerrainKnowledgeSelection =
+  (l10n: L10nRecord) =>
+  (specialAbilities: OrderedMap<string, Record<SpecialAbility>>) =>
+  (profession: Record<ProfessionCombined>): Maybe<string> =>
+    pipe_ (
+      profession,
+      PCA_.selections,
+      PSA[ProfessionSelectionIds.TERRAIN_KNOWLEDGE],
+      liftM2 ((terrain_knowledge: Record<SpecialAbility>) =>
+               pipe (
+                 TerrainKnowledgeSelection.A.sid,
+                 mapMaybe (pipe (Just, getSelectOptionName (terrain_knowledge))),
+                 localizeOrList (l10n),
+                 xs => `${SpecialAbility.A.name (terrain_knowledge)} (${xs})`
+               ))
+             (lookup (prefixSA (12)) (specialAbilities))
+    )
 
-  if (cantripsString.length === 0 || sortedSpells.length === 0) {
-    return
+const getSpells =
+  (l10n: L10nRecord) =>
+  (cantrips: OrderedMap<string, Record<Cantrip>>) =>
+  (spells: OrderedMap<string, Record<Spell>>) =>
+  (profession: Record<ProfessionCombined>): Maybe<string> => {
+    const cantrips_str =
+      pipe_ (
+        profession,
+        PCA_.selections,
+        PSA[ProfessionSelectionIds.CANTRIPS],
+        maybe ("")
+              (cantrips_sel => {
+                const mcounter = subscript (translate (l10n) ("cantripcounter"))
+                                           (CantripsSelection.A.amount (cantrips_sel) - 1)
+
+                const precedingText =
+                  fmapF (mcounter) (pipe (List.pure, translateP (l10n) ("cantripsfromlist")))
+
+                const options =
+                  pipe_ (
+                    cantrips_sel,
+                    CantripsSelection.A.sid,
+                    mapMaybe (pipe (lookupF (cantrips), fmap (Cantrip.A.name))),
+                    sortStrings (L10n.A.id (l10n)),
+                    intercalate (", ")
+                  )
+
+                return `${precedingText}${options}, `
+              })
+      )
+
+    const spells_str =
+      pipe_ (
+        profession,
+        PCA_.spells,
+        mapMaybe (x => {
+          if (IncreaseSkillList.is (x)) {
+            const ids = ILSA.id (x)
+            const value = ILSA.value (x)
+
+            return pipe_ (
+              ids,
+              mapMaybe (pipe (lookupF (spells), fmap (Spell.A.name))),
+              ensure (pipe (flength, gt (1))),
+              fmap (pipe (localizeOrList (l10n), names => `${names} ${value}`))
+            )
+          }
+          else {
+            const id = ISA.id (x)
+            const value = ISA.value (x)
+
+            return fmapF (lookup (id) (spells)) (spell => `${Spell.A.name (spell)} ${value}`)
+          }
+        }),
+        sortStrings (L10n.A.id (l10n)),
+        intercalate (", ")
+      )
+
+
+    return cantrips_str.length === 0 || spells_str.length === 0
+      ? Nothing
+      : Just (`${cantrips_str}${spells_str}`)
   }
 
-  return `${cantripsString}${sortedSpells.intercalate(", ")}`
-}
+const getLiturgicalChants =
+  (l10n: L10nRecord) =>
+  (blessings: OrderedMap<string, Record<Blessing>>) =>
+  (liturgicalChants: OrderedMap<string, Record<LiturgicalChant>>) =>
+  (profession: Record<ProfessionCombined>): Maybe<string> => {
+    return pipe_ (
+      profession,
+      PCA_.liturgicalChants,
+      mapMaybe (x => {
+        if (IncreaseSkillList.is (x)) {
+          const ids = ILSA.id (x)
+          const value = ILSA.value (x)
 
-function getLiturgicalChants(
-  profession: ProfessionCombined,
-  liturgicalChants: Map<string, LiturgicalChant>,
-  blessings: Map<string, Blessing>,
-  l10n: UIMessages,
-): string | undefined {
-  let blessingsArr = []
+          return pipe_ (
+            ids,
+            mapMaybe (pipe (lookupF (liturgicalChants), fmap (LiturgicalChant.A.name))),
+            ensure (pipe (flength, gt (1))),
+            fmap (pipe (localizeOrList (l10n), names => `${names} ${value}`))
+          )
+        }
+        else {
+          const id = ISA.id (x)
+          const value = ISA.value (x)
 
-  const blessingsKey: keyof UIMessages = "info.thetwelveblessings"
-  const blessingsMessage = translate(l10n, blessingsKey)
-  const exceptionsKey: keyof UIMessages = "info.thetwelveblessingsexceptions"
+          return fmapF (lookup (id) (liturgicalChants))
+                       (chant => `${LiturgicalChant.A.name (chant)} ${value}`)
+        }
+      }),
+      xs => {
+        const incl_blessings = PCA_.blessings (profession)
 
-  if (profession.blessings.length === 12) {
-    blessingsArr.push(blessingsMessage)
+        if (flength (incl_blessings) === 12) {
+          return cons (xs) (translate (l10n) ("thetwelveblessings"))
+        }
+        else if (flength (incl_blessings) === 9) {
+          return pipe_ (
+            blessings,
+            elems,
+            mapMaybe (pipe (
+                       ensure (pipe (
+                                Blessing.A.id,
+                                id => notElem (id) (incl_blessings) && getNumericId (id) <= 12
+                              )),
+                       fmap (Blessing.A.name)
+                     )),
+            sortStrings (L10n.A.id (l10n)),
+            translateP (l10n) ("thetwelveblessingsexceptions"),
+            str => cons (xs) (str)
+          )
+        }
+
+        return xs
+      },
+      sortStrings (L10n.A.id (l10n)),
+      ensure (notNull),
+      fmap (intercalate (", "))
+    )
   }
-  else if (profession.blessings.length === 9) {
-    const allBlessings = [...blessings.values()]
-    const notIncluded = allBlessings.filter(e => {
-      const numericId = getNumericId(e.id)
-      return !profession.blessings.includes(e.id) && numericId <= 12
-    })
-
-    const blessingNameArr = notIncluded.map(e => e.name)
-    const sortedBlessings = sortStrings(blessingNameArr, l10n.id)
-    const exceptionsMessage = translate(l10n, exceptionsKey, ...sortedBlessings)
-
-    blessingsArr.push(`${blessingsMessage}${exceptionsMessage}`)
-  }
-
-  const liturgicalChantsArr = profession.liturgicalChants.map(e => {
-    return `${liturgicalChants.get(e.id)!.name} ${e.value}`
-  })
-
-  const sortedList = sortStrings([
-    ...blessingsArr,
-    ...liturgicalChantsArr
-  ], l10n.id)
-
-  return sortedList.length > 0 ? sortedList.intercalate(", ") : undefined
-}
 
 interface SkillsListProps {
-  profession: ProfessionCombined
-  l10n: UIMessages
-  skillsSelection: SkillsSelectionJoined | undefined
+  profession: Record<ProfessionCombined>
+  l10n: L10nRecord
+  skillsSelection: Maybe<Record<SkillsSelectionJoined>>
 }
 
-function SkillsList(props: SkillsListProps): JSX.Element {
+function SkillsList (props: SkillsListProps): JSX.Element {
   const {
     profession,
     l10n,
     skillsSelection,
   } = props
 
-  const list = [
-    profession.physicalSkills,
-    profession.socialSkills,
-    profession.natureSkills,
-    profession.knowledgeSkills,
-    profession.craftSkills,
-  ]
+  const xss = List (
+    PCA.mappedPhysicalSkills (profession),
+    PCA.mappedSocialSkills (profession),
+    PCA.mappedNatureSkills (profession),
+    PCA.mappedKnowledgeSkills (profession),
+    PCA.mappedCraftSkills (profession)
+  )
 
   return (
     <>
-      {
-        list.map((list, index) => (
-          <Skills
-            key={index}
-            groupIndex={index}
-            list={list}
-            l10n={l10n}
-            skillsSelection={skillsSelection}
-            />
-        ))
-      }
+      {pipe_ (
+        xss,
+        imap (i => xs => (
+               <Skills
+                 key={i}
+                 groupIndex={i}
+                 list={xs}
+                 l10n={l10n}
+                 skillsSelection={skillsSelection}
+                 />
+             )),
+        toArray
+      )}
     </>
   )
 }
 
 interface SkillProps {
-  l10n: UIMessages
+  l10n: L10nRecord
   groupIndex: number
-  list: Increasable[]
-  skillsSelection: SkillsSelectionJoined | undefined
+  list: List<Record<IncreasableForView>>
+  skillsSelection: Maybe<Record<SkillsSelectionJoined>>
 }
 
-function Skills(props: SkillProps) {
+function Skills (props: SkillProps) {
   const {
     groupIndex,
     list,
     l10n,
-    skillsSelection,
+    skillsSelection: mskills_selection,
   } = props
 
-  const skillsArr = list.map(e => `${e.name} ${e.value}`)
-  const sortedSkills = sortStrings(skillsArr, l10n.id)
+  return pipe_ (
+      list,
+      map (e => `${IFVA.name (e)} ${IFVA.value (e)}`),
+      sortStrings (L10n.A.id (l10n)),
+      xs => maybe (xs)
+                  ((skills_selection: Record<SkillsSelectionJoined>) => {
+                    const mgr =
+                      pipe_ (
+                        skills_selection,
+                        SkillsSelectionJoined.A.properties,
+                        SkillsSelection.A.gr
+                      )
 
-  // Needs array to be able to add no element to the list
-  const specialTextArr = []
+                    const is_group_valid = any (pipe (dec, equals (groupIndex))) (mgr)
 
-  if (skillsSelection) {
-    const hasGroup = typeof skillsSelection.properties.gr === "number"
-    const isGroupValid = hasGroup && skillsSelection.properties.gr! - 1 === groupIndex
-
-    if (isGroupValid) {
-      specialTextArr.push(skillsSelection.text)
-    }
-  }
-
-  const joinedText = [...sortedSkills, ...specialTextArr].join(", ")
-
-  return (
-    <p className="skill-group">
-      <span>{translate(l10n, "skills.view.groups")[groupIndex]}</span>
-      <span>{list.length > 0 ? joinedText : "-"}</span>
-    </p>
-  )
+                    return is_group_valid
+                      ? snoc (xs) (SkillsSelectionJoined.A.text (skills_selection))
+                      : xs
+                  })
+                  (mskills_selection),
+      intercalate (", "),
+      joined_text => (
+        <p className="skill-group">
+          <span>{renderMaybe (subscript (translate (l10n) ("skillgroups")) (groupIndex))}</span>
+          <span>{notNull (list) ? joined_text : ndash}</span>
+        </p>
+      )
+    )
 }
 
 interface VariantListHeaderProps {
-  l10n: UIMessages
+  l10n: L10nRecord
 }
 
-function VariantListHeader(props: VariantListHeaderProps): JSX.Element {
-  const {
-    l10n,
-  } = props
+function VariantListHeader (props: VariantListHeaderProps): JSX.Element {
+  const { l10n } = props
 
   return (
     <p className="profession-variants">
-      <span>{translate(l10n, "info.variants")}</span>
+      <span>{translate (l10n) ("variants")}</span>
     </p>
   )
 }
 
 interface VariantListProps {
-  attributes: Map<string, Attribute>
-  combatTechniquesSelectionString: string | undefined
-  liturgicalChants: Map<string, LiturgicalChant>
-  l10n: UIMessages
-  profession: ProfessionCombined
-  sex: "m" | "f" | undefined
-  skills: Map<string, Skill>
-  specializationSelectionString: string | undefined
-  spells: Map<string, Spell>
+  attributes: OrderedMap<string, Record<Attribute>>
+  combatTechniquesSelectionString: Maybe<string>
+  liturgicalChants: OrderedMap<string, Record<LiturgicalChant>>
+  l10n: L10nRecord
+  profession: Record<ProfessionCombined>
+  sex: Maybe<Sex>
+  skills: OrderedMap<string, Record<Skill>>
+  specializationSelectionString: Maybe<string>
+  spells: OrderedMap<string, Record<Spell>>
 }
 
-function VariantList(props: VariantListProps): JSX.Element | null {
+function VariantList (props: VariantListProps): JSX.Element | null {
   const {
     l10n,
-    profession
+    profession,
   } = props
 
-  if (profession.variants.length > 0) {
+  const variants = PCA.mappedVariants (profession)
+
+  if (notNull (variants)) {
     return (
       <>
         <VariantListHeader l10n={l10n} />
         <ul className="profession-variants">
           {
-            profession.variants.map(variant => (
-              <Variant
-                {...props}
-                key={variant.id}
-                variant={variant}
-                />
-            ))
+            pipe_ (
+              variants,
+              map (variant => (
+                    <Variant
+                      {...props}
+                      key={PVCA_.id (variant)}
+                      variant={variant}
+                      />
+                  )),
+              toArray
+            )
           }
         </ul>
       </>
@@ -622,37 +681,38 @@ function VariantList(props: VariantListProps): JSX.Element | null {
 }
 
 interface VariantProps {
-  attributes: Map<string, Attribute>
-  combatTechniquesSelectionString: string | undefined
-  liturgicalChants: Map<string, LiturgicalChant>
-  l10n: UIMessages
-  profession: ProfessionCombined
-  sex: "m" | "f" | undefined
-  skills: Map<string, Skill>
-  specializationSelectionString: string | undefined
-  spells: Map<string, Spell>
-  variant: ProfessionVariantCombined
+  attributes: OrderedMap<string, Record<Attribute>>
+  combatTechniquesSelectionString: Maybe<string>
+  liturgicalChants: OrderedMap<string, Record<LiturgicalChant>>
+  l10n: L10nRecord
+  profession: Record<ProfessionCombined>
+  sex: Maybe<Sex>
+  skills: OrderedMap<string, Record<Skill>>
+  specializationSelectionString: Maybe<string>
+  spells: OrderedMap<string, Record<Spell>>
+  variant: Record<ProfessionVariantCombined>
 }
 
-function Variant(props: VariantProps) {
+function Variant (props: VariantProps) {
   const {
     l10n,
     profession,
-    sex = "m",
-    variant
+    sex: msex,
+    variant,
   } = props
 
-  const { fullText } = variant
-  let { name } = variant
+  const fullText = PVCA_.fullText (variant)
 
-  name = getName(name, sex)
+  const name = getName (fromMaybe<Sex> ("m") (msex)) (PVCA_.name (variant))
 
-  if (fullText) {
+  const ap_sum = Maybe.sum (PCA_.ap (profession)) + PVCA_.ap (variant)
+
+  if (isJust (fullText)) {
     return (
       <li>
         <span>{name}</span>
-        <span>({profession.ap + variant.ap} {translate(l10n, "apshort")})</span>
-        <span>{fullText}</span>
+        <span>({ap_sum} {translate (l10n) ("adventurepoints.short")})</span>
+        <span>{fromJust (fullText)}</span>
       </li>
     )
   }
@@ -660,16 +720,27 @@ function Variant(props: VariantProps) {
   return (
     <li>
       <span>{name}</span>
-      <span>({profession.ap + variant.ap} {translate(l10n, "apshort")})</span>
+      <span>({ap_sum} {translate (l10n) ("adventurepoints.short")})</span>
       <span>
-        {variant.precedingText && <span>{variant.precedingText}</span>}
+        {maybeRNullF (PVCA_.precedingText (variant))
+                     (str => <span>{str}</span>)}
         <VariantPrerequisites {...props} />
         <VariantSpecialAbilities {...props} />
-        <VariantLanguagesLiteracySelection {...props} mappedProfSelections={profession.selections} />
-        <VariantSpecializationSelection {...props} selections={profession.selections} />
-        <VariantCombatTechniquesSelection {...props} mappedProfSelections={profession.selections} />
+        <VariantLanguagesLiteracySelection
+          {...props}
+          mappedProfSelections={PCA_.selections (profession)}
+          />
+        <VariantSpecializationSelection
+          {...props}
+          mappedProfSelections={PCA_.selections (profession)}
+          />
+        <VariantCombatTechniquesSelection
+          {...props}
+          mappedProfSelections={PCA_.selections (profession)}
+          />
         <VariantSkillsSelection {...props} />
-        {variant.concludingText && ` ${variant.concludingText}`}
+        {maybeRNullF (PVCA_.concludingText (variant))
+                     (str => <span>{str}</span>)}
       </span>
     </li>
   )
@@ -685,8 +756,15 @@ interface VariantPrerequisitesProps {
 interface VariantPrerequisiteIntermediate {
   id: string
   name: string
-  active?: boolean
+  active: Maybe<boolean>
 }
+
+const VariantPrerequisiteIntermediate =
+  fromDefault<VariantPrerequisiteIntermediate> ({
+    id: "",
+    name: "",
+    active: Nothing,
+  })
 
 function VariantPrerequisites (props: VariantPrerequisitesProps): JSX.Element {
   const {
@@ -696,44 +774,58 @@ function VariantPrerequisites (props: VariantPrerequisitesProps): JSX.Element {
     variant,
   } = props
 
-  const reducedNameArr = variant.prerequisites.map<VariantPrerequisiteIntermediate>(e => {
-    if (isRequiringIncreasable(e)) {
-      const instance = attributes.get(e.id) || skills.get(e.id)
-      let name
-      if (instance && instance.category === Categories.ATTRIBUTES) {
-        name = instance.short
-      }
-      else if (instance) {
-        name = instance.name
-      }
-      return {
-        id: e.id,
-        name: `${name} ${e.value}`
-      }
-    }
-    return {
-      id: e.id,
-      name: `${e.combinedName} (${e.currentCost} ${translate(l10n, "apshort")})`,
-      active: e.active
-    }
-  })
+  return pipe_ (
+    variant,
+    PVCA.mappedPrerequisites,
+    map (x => {
+          if (ProfessionRequireIncreasable.is (x)) {
+            const id = PRIA.id (x)
+            const value = PRIA.value (x)
 
-  const sortedReducedNameArray = sortObjects(reducedNameArr, l10n.id)
+            type wiki_entry = Record<Attribute> | Record<Skill>
 
-  return (
-    <span className="hard-break">
-      {`${translate(l10n, "info.prerequisites")}: `}
-      {
-        sortedReducedNameArray.map(e => {
-          if (e.active === false) {
-            return <span key={e.id}>
-              <span className="disabled">{e.name}</span>
-            </span>
+            const wiki_entry =
+              alt_<wiki_entry> (lookup (id) (attributes)) (() => lookup (id) (skills))
+
+            const mname = fmapF (wiki_entry)
+                                (e => Attribute.is (e) ? Attribute.A.short (e) : Skill.A.name (e))
+
+            return VariantPrerequisiteIntermediate ({
+              id,
+              name: `${renderMaybe (mname)} ${value}`,
+            })
           }
-          return <span key={e.id}>{e.name}</span>
-        })
-      }
-    </span>
+          else {
+            const id = ANCIAA_.id (x)
+            const active = ANCIAA.isActive (x)
+            const name = ANCIAA_.name (x)
+            const finalCost = ANCIAA_.finalCost (x)
+
+            return VariantPrerequisiteIntermediate ({
+              id,
+              name: `${name} (${finalCost} ${translate (l10n) ("adventurepoints.short")})`,
+              active: Just (active),
+            })
+          }
+        }),
+    sortRecordsByName (L10n.A.id (l10n)),
+    map (x => {
+          if (Maybe.and (VariantPrerequisiteIntermediate.A.active (x))) {
+            return (
+              <span key={VariantPrerequisiteIntermediate.A.id (x)}>
+                <span className="disabled">{VariantPrerequisiteIntermediate.A.name (x)}</span>
+              </span>
+            )
+          }
+          else {
+            return (
+              <span key={VariantPrerequisiteIntermediate.A.id (x)}>
+                {VariantPrerequisiteIntermediate.A.name (x)}
+              </span>
+            )
+          }
+        }),
+    xs => <span className="hard-break">{translate (l10n) ("prerequisites")}: {xs}</span>
   )
 }
 
@@ -1144,7 +1236,7 @@ const combineSpells =
   return pipe_ (
     Tuple (xs, List<Record<CombinedSpell>> (), List<CombinedMappedSpell> ()),
     whilePred (combineSpellsPred)
-              (t => {
+              ((t: CombinedSpellsTripleValid) => {
                 const olds = sel1 (t)
                 const combined_spells = sel2 (t)
                 const single_spells = sel3 (t)
@@ -1257,3 +1349,13 @@ const combineSpells =
     x => append<CombinedMappedSpell | Record<CombinedSpell>> (sel1 (x)) (sel2 (x))
   )
 }
+
+interface getName {
+  (mname: Just<string | Record<NameBySex>>): Just<string>
+  (mname: Maybe<string | Record<NameBySex>>): Maybe<string>
+}
+
+const getName =
+  (sex: Sex) =>
+  (name: string | Record<NameBySex>): string =>
+    NameBySex.is (name) ? NameBySex.A[sex] (name) : name

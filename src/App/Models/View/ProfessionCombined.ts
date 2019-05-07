@@ -52,6 +52,12 @@ export const ProfessionCombinedL = makeLenses (ProfessionCombined)
 
 export const ProfessionCombinedA_ = {
   id: pipe (ProfessionCombined.A.wikiEntry, Profession.A.id),
+  ap: pipe (ProfessionCombined.A.wikiEntry, Profession.A.ap),
+  spells: pipe (ProfessionCombined.A.wikiEntry, Profession.A.spells),
+  liturgicalChants: pipe (ProfessionCombined.A.wikiEntry, Profession.A.liturgicalChants),
+  blessings: pipe (ProfessionCombined.A.wikiEntry, Profession.A.blessings),
+  selections: pipe (ProfessionCombined.A.wikiEntry, Profession.A.selections),
+  variants: pipe (ProfessionCombined.A.wikiEntry, Profession.A.variants),
   gr: pipe (ProfessionCombined.A.wikiEntry, Profession.A.gr),
   subgr: pipe (ProfessionCombined.A.wikiEntry, Profession.A.subgr),
   src: pipe (ProfessionCombined.A.wikiEntry, Profession.A.src),

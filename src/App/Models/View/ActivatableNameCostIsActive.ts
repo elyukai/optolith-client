@@ -26,6 +26,10 @@ export const ActivatableNameCostIsActiveA_ = {
     ActivatableNameCost.A.naming,
     ActivatableCombinedName.A.name
   ),
+  finalCost: pipe (
+    ActivatableNameCostIsActive.A.nameAndCost,
+    ActivatableNameCost.A.finalCost as (x: Record<ActivatableNameCostSafeCost>) => number
+  ),
 }
 
 export const ActivatableNameCostL = makeLenses (ActivatableNameCostIsActive)
