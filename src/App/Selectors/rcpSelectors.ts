@@ -315,7 +315,7 @@ export const getAllProfessions = createMaybeSelector (
                     mappedSpecialAbilities:
                       imapMaybe (mapProfessionSpecialAbility (l10n) (wiki))
                                 (PA.specialAbilities (p)),
-                    selections:
+                    mappedSelections:
                       thrush (PA.selections (p))
                              (mapProfessionSelection (wiki)),
                     mappedCombatTechniques:
@@ -347,7 +347,7 @@ export const getAllProfessions = createMaybeSelector (
                           mappedSpecialAbilities:
                             imapMaybe (mapProfessionSpecialAbility (l10n) (wiki))
                                       (PA.specialAbilities (p)),
-                          selections:
+                          mappedSelections:
                             thrush (PA.selections (p))
                                    (mapProfessionSelection (wiki)),
                           mappedCombatTechniques:

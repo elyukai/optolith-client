@@ -18,7 +18,7 @@ export interface ProfessionCombined {
     Record<ProfessionRequireIncreasable>
   >
   mappedSpecialAbilities: List<Record<ActivatableNameCostIsActive>>
-  selections: Profession["selections"]
+  mappedSelections: Profession["selections"]
   mappedCombatTechniques: List<Record<IncreasableForView>>
   mappedPhysicalSkills: List<Record<IncreasableForView>>
   mappedSocialSkills: List<Record<IncreasableForView>>
@@ -36,7 +36,7 @@ export const ProfessionCombined =
     mappedAP: 0,
     mappedPrerequisites: List.empty,
     mappedSpecialAbilities: List.empty,
-    selections: ProfessionSelections.default,
+    mappedSelections: ProfessionSelections.default,
     mappedCombatTechniques: List.empty,
     mappedPhysicalSkills: List.empty,
     mappedSocialSkills: List.empty,

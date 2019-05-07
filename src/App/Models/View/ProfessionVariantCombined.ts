@@ -1,5 +1,6 @@
 import { List } from "../../../Data/List";
 import { fromDefault, Record } from "../../../Data/Record";
+import { pipe } from "../../Utilities/pipe";
 import { ProfessionRequireIncreasable } from "../Wiki/prerequisites/IncreasableRequirement";
 import { ProfessionVariantSelections } from "../Wiki/professionSelections/ProfessionVariantAdjustmentSelections";
 import { ProfessionVariant } from "../Wiki/ProfessionVariant";
@@ -14,7 +15,7 @@ export interface ProfessionVariantCombined {
     Record<ProfessionRequireIncreasable>
   >
   mappedSpecialAbilities: List<Record<ActivatableNameCostIsActive>>
-  selections: ProfessionVariant["selections"]
+  mappedSelections: ProfessionVariant["selections"]
   mappedCombatTechniques: List<Record<IncreasableForView>>
   mappedSkills: List<Record<IncreasableForView>>
   mappedSpells: List<Record<IncreasableForView> | Record<IncreasableListForView>>
@@ -26,9 +27,13 @@ export const ProfessionVariantCombined =
     wikiEntry: ProfessionVariant .default,
     mappedPrerequisites: List.empty,
     mappedSpecialAbilities: List.empty,
-    selections: ProfessionVariantSelections.default,
+    mappedSelections: ProfessionVariantSelections.default,
     mappedCombatTechniques: List.empty,
     mappedSkills: List.empty,
     mappedSpells: List.empty,
     mappedLiturgicalChants: List.empty,
   })
+
+export const ProfessionVariantCombinedA_ = {
+  blessings: pipe (ProfessionVariantCombined.A.wikiEntry, ProfessionVariant.A.blessings),
+}
