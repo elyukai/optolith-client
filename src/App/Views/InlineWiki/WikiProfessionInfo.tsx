@@ -2,8 +2,8 @@ import * as React from "react";
 import { equals } from "../../../Data/Eq";
 import { ident } from "../../../Data/Function";
 import { fmap, fmapF } from "../../../Data/Functor";
-import { all, append, cons, consF, deleteAt, findIndex, flength, imap, intercalate, isList, List, ListI, map, NonEmptyList, notElem, notNull, snoc, subscript, toArray, uncons, unsafeIndex } from "../../../Data/List";
-import { alt_, any, ensure, fromJust, fromMaybe, isJust, Just, liftM2, mapMaybe, Maybe, maybe, maybeR, maybeRNullF, maybe_, Nothing } from "../../../Data/Maybe";
+import { all, append, cons, consF, deleteAt, find, findIndex, flength, imap, intercalate, isList, List, ListI, map, NonEmptyList, notElem, notNull, snoc, subscript, toArray, uncons, unsafeIndex } from "../../../Data/List";
+import { alt_, any, bind, bindF, ensure, fromJust, fromMaybe, isJust, Just, liftM2, mapMaybe, Maybe, maybe, maybeR, maybeRNullF, maybe_, Nothing } from "../../../Data/Maybe";
 import { elems, lookup, lookupF, member, memberF, OrderedMap } from "../../../Data/OrderedMap";
 import { difference, fromList, OrderedSet } from "../../../Data/OrderedSet";
 import { fst, snd } from "../../../Data/Pair";
@@ -26,10 +26,9 @@ import { L10n, L10nRecord } from "../../Models/Wiki/L10n";
 import { LiturgicalChant } from "../../Models/Wiki/LiturgicalChant";
 import { isRequiringIncreasable, ProfessionRequireIncreasable } from "../../Models/Wiki/prerequisites/IncreasableRequirement";
 import { isRaceRequirement, RaceRequirement } from "../../Models/Wiki/prerequisites/RaceRequirement";
-import { isSexRequirement, SexRequirement } from "../../Models/Wiki/prerequisites/SexRequirement";
+import { isSexRequirement } from "../../Models/Wiki/prerequisites/SexRequirement";
 import { CantripsSelection } from "../../Models/Wiki/professionSelections/CantripsSelection";
 import { CombatTechniquesSelection } from "../../Models/Wiki/professionSelections/CombatTechniquesSelection";
-import { CursesSelection } from "../../Models/Wiki/professionSelections/CursesSelection";
 import { LanguagesScriptsSelection } from "../../Models/Wiki/professionSelections/LanguagesScriptsSelection";
 import { ProfessionSelections } from "../../Models/Wiki/professionSelections/ProfessionAdjustmentSelections";
 import { ProfessionVariantSelections } from "../../Models/Wiki/professionSelections/ProfessionVariantAdjustmentSelections";
@@ -50,7 +49,7 @@ import { ProfessionSelectionIds } from "../../Models/Wiki/wikiTypeHelpers";
 import { getSelectOptionName } from "../../Utilities/Activatable/selectionUtils";
 import { ndash } from "../../Utilities/Chars";
 import { localizeOrList, translate, translateP } from "../../Utilities/I18n";
-import { getNumericId, prefixSA } from "../../Utilities/IDUtils";
+import { getNumericId, prefixRace, prefixSA } from "../../Utilities/IDUtils";
 import { add, dec, gt } from "../../Utilities/mathUtils";
 import { pipe, pipe_ } from "../../Utilities/pipe";
 import { renderMaybe } from "../../Utilities/ReactUtils";
@@ -93,7 +92,7 @@ const CTSA = CombatTechniquesSelection.A
 const CTSSA = CombatTechniquesSecondSelection.A
 
 // tslint:disable-next-line: cyclomatic-complexity
-export function WikiProfessionInfo(props: WikiProfessionInfoProps) {
+export function WikiProfessionInfo (props: WikiProfessionInfoProps): JSX.Element {
   const {
     attributes,
     blessings,
@@ -102,75 +101,108 @@ export function WikiProfessionInfo(props: WikiProfessionInfoProps) {
     liturgicalChants,
     l10n,
     races,
-    sex = "m",
+    sex,
     skills,
     spells,
     specialAbilities,
   } = props
 
-  const {
-    selections
-  } = x
+  const selections = PCA.mappedSelections (x)
 
-  let { name, subname } = x
+  const name = getName (fromMaybe<Sex> ("m") (sex)) (PCA_.name (x))
+  const msubname = fmapF (PCA_.subname (x)) (getName (fromMaybe<Sex> ("m") (sex)))
 
-  name = getName(name, sex)
-  subname = getName(subname, sex)
+  const specializationSelectionString =
+    getSpecializationSelection (l10n) (skills) (x)
 
-  const specializationSelectionString = getSpecializationSelection(selections, skills, l10n)
-  const skillsSelectionJoinedObject = getSkillSelection(selections, l10n)
-  const cursesSelection = selections.find(e => e.id === "CURSES") as CursesSelection | undefined
-  const languagesLiteracySelection = selections.find(e => e.id === "LANGUAGES_SCRIPTS") as LanguagesScriptsSelection | undefined
-  const combatTechniquesSelectionString = getCombatTechniquesSelection(selections, l10n)
-  const terrainKnowledgeSelectionString = getTerrainKnowledgeSelection(selections, specialAbilities, l10n)
+  const skillsSelectionJoinedObject =
+    getSkillSelection (l10n) (x)
 
-  const spellsString = getSpells(x, selections, spells, cantrips, l10n)
-  const liturgicalChantsString = getLiturgicalChants(x, liturgicalChants, blessings, l10n)
+  const cursesSelection =
+    PSA[ProfessionSelectionIds.CURSES] (selections)
 
-  const raceRequirement = x.dependencies.find(e => isRaceRequirement(e)) as RaceRequirement | undefined
-  const sexRequirement = x.dependencies.find(e => isSexRequirement(e)) as SexRequirement | undefined
+  const languagesLiteracySelection =
+    PSA[ProfessionSelectionIds.LANGUAGES_SCRIPTS] (selections)
 
-  if (["nl-BE"].includes(l10n.id)) {
-    return (
-      <WikiBoxTemplate className="profession" title={subname ? `${name} (${subname})` : name}>
-        <WikiProperty l10n={l10n} title="info.apvalue">
-          {x.ap} {translate(l10n, "aptext")}
-        </WikiProperty>
-        <CombatTechniques
-          combatTechniquesSelectionString={combatTechniquesSelectionString}
-          x={x}
-          l10n={l10n}
-          />
-        <WikiProperty l10n={l10n} title="info.skills" />
-        <SkillsList
-          profession={x}
-          l10n={l10n}
-          skillsSelection={skillsSelectionJoinedObject}
-          />
-        {typeof spellsString === "string" ? (
-          <WikiProperty l10n={l10n} title="info.spells">
-            {spellsString}
-          </WikiProperty>
-        ) : null}
-        {typeof liturgicalChantsString === "string" ? (
-          <WikiProperty l10n={l10n} title="info.liturgicalchants">
-            {liturgicalChantsString}
-          </WikiProperty>
-        ) : null}
-        <VariantList
-          {...props}
-          combatTechniquesSelectionString={combatTechniquesSelectionString}
-          profession={x}
-          specializationSelectionString={specializationSelectionString}
-          />
-      </WikiBoxTemplate>
-    )
-  }
+  const combatTechniquesSelectionString =
+    getCombatTechniquesSelection (l10n) (x)
 
-  const getRaceNameAP = (race: Race) => `${race.name} (${race.ap} ${translate(l10n, "apshort")})`
+  const terrainKnowledgeSelectionString =
+    getTerrainKnowledgeSelection (l10n) (specialAbilities) (x)
 
-  const prerequisites = [
-    ...(raceRequirement ? [`${translate(l10n, "race")}: ${Array.isArray(raceRequirement.value) ? raceRequirement.value.map(e => getRaceNameAP(races.get(`R_${e}`)!)).join(translate(l10n, "info.or")) : getRaceNameAP(races.get(`R_${raceRequirement.value}`)!)}`] : []),
+  const spellsString =
+    getSpells (l10n) (cantrips) (spells) (x)
+
+  const liturgicalChantsString =
+    getLiturgicalChants (l10n) (blessings) (liturgicalChants) (x)
+
+  const raceRequirement =
+     pipe_ (x, PCA_.dependencies, find (isRaceRequirement))
+
+  const sexRequirement =
+     pipe_ (x, PCA_.dependencies, find (isSexRequirement))
+
+  // if (["nl-BE"].includes(l10n.id)) {
+  //   return (
+  //     <WikiBoxTemplate className="profession" title={subname ? `${name} (${subname})` : name}>
+  //       <WikiProperty l10n={l10n} title="info.apvalue">
+  //         {x.ap} {translate(l10n, "aptext")}
+  //       </WikiProperty>
+  //       <CombatTechniques
+  //         combatTechniquesSelectionString={combatTechniquesSelectionString}
+  //         x={x}
+  //         l10n={l10n}
+  //         />
+  //       <WikiProperty l10n={l10n} title="info.skills" />
+  //       <SkillsList
+  //         profession={x}
+  //         l10n={l10n}
+  //         skillsSelection={skillsSelectionJoinedObject}
+  //         />
+  //       {typeof spellsString === "string" ? (
+  //         <WikiProperty l10n={l10n} title="info.spells">
+  //           {spellsString}
+  //         </WikiProperty>
+  //       ) : null}
+  //       {typeof liturgicalChantsString === "string" ? (
+  //         <WikiProperty l10n={l10n} title="info.liturgicalchants">
+  //           {liturgicalChantsString}
+  //         </WikiProperty>
+  //       ) : null}
+  //       <VariantList
+  //         {...props}
+  //         combatTechniquesSelectionString={combatTechniquesSelectionString}
+  //         profession={x}
+  //         specializationSelectionString={specializationSelectionString}
+  //         />
+  //     </WikiBoxTemplate>
+  //   )
+  // }
+
+  const getRaceNameAP =
+    (race: Record<Race>) =>
+      `${Race.A.name (race)} (${Race.A.ap (race)} ${translate (l10n) ("adventurepoints.short")})`
+
+  const mrace_depencency_str =
+    bind (raceRequirement)
+         (pipe (
+           race_dep => {
+             const value = RaceRequirement.A.value (race_dep)
+
+             return isList (value)
+               ? pipe_ (
+                   value,
+                   mapMaybe (pipe (prefixRace, lookupF (races), fmap (getRaceNameAP))),
+                   ensure (notNull),
+                   fmap (localizeOrList (l10n))
+                 )
+               : pipe_ (value, prefixRace, lookupF (races), fmap (getRaceNameAP))
+           },
+           fmap (str => `${translate (l10n) ("race")}: ${str}`)
+         ))
+
+  const prerequisites = List (
+    ...(maybe (List<string> ()) <string> (List.pure) (mrace_depencency_str)),
     ...(x.prerequisitesStart ? [x.prerequisitesStart] : []),
     ...sortStrings(x.prerequisites.map(e => {
       if (isRequiringIncreasable(e)) {
@@ -187,10 +219,10 @@ export function WikiProfessionInfo(props: WikiProfessionInfoProps) {
       return `${e.combinedName} (${e.currentCost} ${translate(l10n, "apshort")})`
     }), l10n.id),
     ...(x.prerequisitesEnd ? [x.prerequisitesEnd] : []),
-  ]
+  )
 
   return (
-    <WikiBoxTemplate className="profession" title={subname ? `${name} (${subname})` : name}>
+    <WikiBoxTemplate className="profession" title={msubname ? `${name} (${msubname})` : name}>
       <WikiProperty l10n={l10n} title="info.apvalue">
         {x.ap} {translate(l10n, "aptext")}
       </WikiProperty>
@@ -251,37 +283,38 @@ export function WikiProfessionInfo(props: WikiProfessionInfoProps) {
   )
 }
 
-function getSpecializationSelection(
-  selections: ProfessionSelectionList,
-  skills: Map<string, Skill>,
-  l10n: L10nRecord,
-): string | undefined {
-  const selection = selections.find(e => {
-    return e.id === "SPECIALISATION"
-  }) as SpecialisationSelection | undefined
+const getSpecializationSelection =
+  (l10n: L10nRecord) =>
+  (skills: OrderedMap<string, Record<Skill>>) =>
+  (profession: Record<ProfessionCombined>): Maybe<string> =>
+    pipe_ (
+      profession,
+      PCA.mappedSelections,
+      PSA[ProfessionSelectionIds.SPECIALIZATION],
+      bindF (sel => {
+              const sid = SpecializationSelection.A.sid (sel)
 
-  if (selection === undefined) {
-    return
-  }
-
-  let value: string
-
-  if (Array.isArray(selection.sid)) {
-    const selectionArr = selection.sid.map(e => skills.get(e)!.name)
-    const sortedArr = sortStrings(selectionArr, l10n.id)
-    const separator = translate(l10n, "info.specialabilitiesspecializationseparator")
-    value = sortedArr.intercalate(separator)
-  }
-  else {
-    value = skills.get(selection.sid)!.name
-  }
-
-  return translate(l10n, "info.specialabilitiesspecialization", value)
-}
+              if (isList (sid)) {
+                return pipe_ (
+                  sid,
+                  mapMaybe (pipe (lookupF (skills), fmap (Skill.A.name))),
+                  ensure (notNull),
+                  fmap (pipe (
+                    sortStrings (L10n.A.id (l10n)),
+                    localizeOrList (l10n)
+                  ))
+                )
+              }
+              else {
+                return pipe_ (sid, lookupF (skills), fmap (Skill.A.name))
+              }
+            }),
+      fmap (pipe (List.pure, translateP (l10n) ("skillspecialization")))
+    )
 
 interface CombatTechniquesProps {
-  combatTechniquesSelectionString: string | undefined
-  x: ProfessionCombined
+  combatTechniquesSelectionString: Maybe<string>
+  x: Record<ProfessionCombined>
   l10n: L10nRecord
 }
 
@@ -292,16 +325,20 @@ function CombatTechniques (props: CombatTechniquesProps): JSX.Element {
     l10n,
   } = props
 
-  const combatTechniquesList = x.combatTechniques.map(e => {
-    return `${e.name} ${e.value + 6}`
-  })
+  const cts =
+    pipe_ (
+      x,
+      PCA.mappedCombatTechniques,
+      map (e => `${IFVA.name (e)} ${IFVA.value (e) + 6}`),
+      sortStrings (L10n.A.id (l10n)),
+      maybe<ident<List<string>>> (ident) <string> (consF) (selectionString),
+      ensure (notNull),
+      maybe (ndash) (intercalate (", "))
+    )
 
   return (
-    <WikiProperty l10n={l10n} title="info.combattechniques">
-      {[
-        ...sortStrings(combatTechniquesList, l10n.id),
-        ...(selectionString ? [selectionString] : [])
-      ].join(", ") || "-"}
+    <WikiProperty l10n={l10n} title="combattechniques">
+      {cts}
     </WikiProperty>
   )
 }
