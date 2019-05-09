@@ -1,8 +1,8 @@
 import { connect } from "react-redux";
-import { Action, Dispatch } from "redux";
+import { ReduxDispatch } from "../Actions/Actions";
 import * as ConfigActions from "../Actions/ConfigActions";
 import * as LiturgicalChantActions from "../Actions/LiturgicalChantActions";
-import { AppState } from "../Reducers/appReducer";
+import { AppStateRecord } from "../Reducers/appReducer";
 import { getAttributesForSheet } from "../Selectors/attributeSelectors";
 import { getDerivedCharacteristicsMap } from "../Selectors/derivedCharacteristicsSelectors";
 import { getBlessedTraditionNumericId, getFilteredActiveLiturgicalChantsAndBlessings, getFilteredInactiveLiturgicalChantsAndBlessings, isActivationDisabled } from "../Selectors/liturgicalChantsSelectors";
@@ -12,7 +12,7 @@ import { getEnableActiveItemHints, getLiturgiesSortOrder } from "../Selectors/ui
 import { LiturgicalChants, LiturgicalChantsDispatchProps, LiturgicalChantsOwnProps, LiturgicalChantsStateProps } from "../Views/LiturgicalChants/LiturgicalChants";
 
 const mapStateToProps = (
-  state: AppState,
+  state: AppStateRecord,
   ownProps: LiturgicalChantsOwnProps
 ): LiturgicalChantsStateProps => ({
   attributes: getAttributesForSheet (state),
@@ -29,17 +29,17 @@ const mapStateToProps = (
 })
 
 const mapDispatchToProps = (
-  dispatch: Dispatch<Action, AppState>,
-  { locale }: LiturgicalChantsOwnProps
+  dispatch: ReduxDispatch,
+  { l10n }: LiturgicalChantsOwnProps
 ): LiturgicalChantsDispatchProps => ({
   addPoint (id: string) {
-    dispatch (LiturgicalChantActions.addLiturgicalChantPoint (locale) (id))
+    dispatch (LiturgicalChantActions.addLiturgicalChantPoint (l10n) (id))
   },
   addToList (id: string) {
-    dispatch (LiturgicalChantActions.addLiturgicalChant (locale) (id))
+    dispatch (LiturgicalChantActions.addLiturgicalChant (l10n) (id))
   },
   addBlessingToList (id: string) {
-    dispatch (LiturgicalChantActions.addBlessing (locale) (id))
+    dispatch (LiturgicalChantActions.addBlessing (l10n) (id))
   },
   removePoint (id: string) {
     dispatch (LiturgicalChantActions.removeLiturgicalChantPoint (id))
@@ -69,7 +69,7 @@ export const connectLiturgicalChants =
     LiturgicalChantsStateProps,
     LiturgicalChantsDispatchProps,
     LiturgicalChantsOwnProps,
-    AppState
+    AppStateRecord
   > (
     mapStateToProps,
     mapDispatchToProps

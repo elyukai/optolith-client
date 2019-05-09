@@ -349,7 +349,7 @@ export const getFilteredActiveLiturgicalChantsAndBlessings = createMaybeSelector
           (filterAndSortRecordsBy (0)
                                   ([getNameFromChantOrBlessing as getNameFromChantOrBlessing])
                                   (sort_options)
-                                  (filter_text))
+                                  (filter_text)) as Maybe<ListCombined>
 )
 
 export const getFilteredInactiveLiturgicalChantsAndBlessings = createMaybeSelector (
@@ -370,7 +370,7 @@ export const getFilteredInactiveLiturgicalChantsAndBlessings = createMaybeSelect
                                               (filter_text)
                                               (areActiveItemHintsEnabled
                                                 ? append (active) (inactive)
-                                                : inactive)))
+                                                : inactive) as ListCombined))
 )
 
 export const isActivationDisabled = createMaybeSelector (

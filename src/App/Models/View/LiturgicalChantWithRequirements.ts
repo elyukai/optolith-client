@@ -1,4 +1,5 @@
 import { fromDefault, makeLenses } from "../../../Data/Record";
+import { pipe } from "../../Utilities/pipe";
 import { ActivatableSkillDependent } from "../ActiveEntries/ActivatableSkillDependent";
 import { LiturgicalChant } from "../Wiki/LiturgicalChant";
 import { LiturgicalChantCombined } from "./LiturgicalChantCombined";
@@ -14,5 +15,15 @@ export const LiturgicalChantWithRequirements =
     isIncreasable: false,
     isDecreasable: false,
   })
+
+const LCWRA = LiturgicalChantWithRequirements.A
+const LCA = LiturgicalChant.A
+
+export const LiturgicalChantWithRequirementsA_ = {
+  check: pipe (LCWRA.wikiEntry, LCA.check),
+  checkmod: pipe (LCWRA.wikiEntry, LCA.checkmod),
+  ic: pipe (LCWRA.wikiEntry, LCA.ic),
+  gr: pipe (LCWRA.wikiEntry, LCA.gr),
+}
 
 export const LiturgicalChantWithRequirementsL = makeLenses (LiturgicalChantWithRequirements)
