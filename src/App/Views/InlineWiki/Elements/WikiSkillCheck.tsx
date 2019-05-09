@@ -1,7 +1,8 @@
 import * as React from "react";
+import { thrush } from "../../../../Data/Function";
 import { fmap, fmapF } from "../../../../Data/Functor";
 import { intercalate, List } from "../../../../Data/List";
-import { mapMaybe, Maybe } from "../../../../Data/Maybe";
+import { fromMaybe, mapMaybe, Maybe } from "../../../../Data/Maybe";
 import { lookupF, OrderedMap } from "../../../../Data/OrderedMap";
 import { OrderedSet, toList } from "../../../../Data/OrderedSet";
 import { Record, RecordBase } from "../../../../Data/Record";
@@ -16,7 +17,7 @@ import { WikiProperty } from "../WikiProperty";
 
 interface Accessors<A extends RecordBase> {
   check: (r: Record<A>) => List<string>
-  checkmod: (r: Record<A>) => OrderedSet<CheckModifier>
+  checkmod?: (r: Record<A>) => OrderedSet<CheckModifier>
 }
 
 export interface WikiSkillCheckProps<A extends RecordBase> {
@@ -46,11 +47,11 @@ export function WikiSkillCheck<A extends RecordBase> (props: WikiSkillCheckProps
       intercalate ("/")
     )
 
-  const checkmods = acc.checkmod (x)
+  const checkmods = fmapF (Maybe (acc.checkmod)) (pipe (thrush (x), toList))
 
   const mod = fmapF (mderived_characteristics)
                     (dc => mapMaybe (pipe (lookupF (dc), fmap (DCA.short)))
-                                    (toList (checkmods)))
+                                    (fromMaybe (List<CheckModifier> ()) (checkmods)))
 
   return (
     <WikiProperty l10n={l10n} title="check">
