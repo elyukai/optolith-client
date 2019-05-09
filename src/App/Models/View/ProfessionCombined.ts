@@ -64,6 +64,16 @@ export const ProfessionCombinedA_ = {
   subgr: pipe (ProfessionCombined.A.wikiEntry, Profession.A.subgr),
   src: pipe (ProfessionCombined.A.wikiEntry, Profession.A.src),
   dependencies: pipe (ProfessionCombined.A.wikiEntry, Profession.A.dependencies),
+  prerequisitesEnd: pipe (ProfessionCombined.A.wikiEntry, Profession.A.prerequisitesEnd),
+  prerequisitesStart: pipe (ProfessionCombined.A.wikiEntry, Profession.A.prerequisitesStart),
+  suggestedAdvantagesText:
+    pipe (ProfessionCombined.A.wikiEntry, Profession.A.suggestedAdvantagesText),
+  suggestedDisadvantagesText:
+    pipe (ProfessionCombined.A.wikiEntry, Profession.A.suggestedDisadvantagesText),
+  unsuitableAdvantagesText:
+    pipe (ProfessionCombined.A.wikiEntry, Profession.A.unsuitableAdvantagesText),
+  unsuitableDisadvantagesText:
+    pipe (ProfessionCombined.A.wikiEntry, Profession.A.unsuitableDisadvantagesText),
 }
 
 export const isProfessionCombined =

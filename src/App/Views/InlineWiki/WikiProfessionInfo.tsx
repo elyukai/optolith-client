@@ -3,7 +3,7 @@ import { equals } from "../../../Data/Eq";
 import { ident } from "../../../Data/Function";
 import { fmap, fmapF } from "../../../Data/Functor";
 import { all, append, cons, consF, deleteAt, find, findIndex, flength, imap, intercalate, isList, List, ListI, map, NonEmptyList, notElem, notNull, snoc, subscript, toArray, uncons, unsafeIndex } from "../../../Data/List";
-import { alt_, any, bind, bindF, ensure, fromJust, fromMaybe, isJust, Just, liftM2, mapMaybe, Maybe, maybe, maybeR, maybeRNullF, maybe_, Nothing } from "../../../Data/Maybe";
+import { alt_, any, bind, bindF, ensure, fromJust, fromMaybe, isJust, Just, liftM2, mapMaybe, Maybe, maybe, maybeR, maybeRNullF, maybeToList, maybe_, Nothing } from "../../../Data/Maybe";
 import { elems, lookup, lookupF, member, memberF, OrderedMap } from "../../../Data/OrderedMap";
 import { difference, fromList, OrderedSet } from "../../../Data/OrderedSet";
 import { fst, snd } from "../../../Data/Pair";
@@ -11,7 +11,6 @@ import { fromDefault, Record } from "../../../Data/Record";
 import { Tuple } from "../../../Data/Tuple";
 import { sel1, sel2, sel3 } from "../../../Data/Tuple/Select";
 import { upd1, upd2, upd3 } from "../../../Data/Tuple/Update";
-import { Categories } from "../../Constants/Categories";
 import { Sex } from "../../Models/Hero/heroTypeHelpers";
 import { ActivatableNameCostIsActive, ActivatableNameCostIsActiveA_ } from "../../Models/View/ActivatableNameCostIsActive";
 import { IncreasableForView } from "../../Models/View/IncreasableForView";
@@ -24,11 +23,12 @@ import { Book } from "../../Models/Wiki/Book";
 import { Cantrip } from "../../Models/Wiki/Cantrip";
 import { L10n, L10nRecord } from "../../Models/Wiki/L10n";
 import { LiturgicalChant } from "../../Models/Wiki/LiturgicalChant";
-import { isRequiringIncreasable, ProfessionRequireIncreasable } from "../../Models/Wiki/prerequisites/IncreasableRequirement";
+import { ProfessionRequireIncreasable } from "../../Models/Wiki/prerequisites/IncreasableRequirement";
 import { isRaceRequirement, RaceRequirement } from "../../Models/Wiki/prerequisites/RaceRequirement";
-import { isSexRequirement } from "../../Models/Wiki/prerequisites/SexRequirement";
+import { isSexRequirement, SexRequirement } from "../../Models/Wiki/prerequisites/SexRequirement";
 import { CantripsSelection } from "../../Models/Wiki/professionSelections/CantripsSelection";
 import { CombatTechniquesSelection } from "../../Models/Wiki/professionSelections/CombatTechniquesSelection";
+import { CursesSelection } from "../../Models/Wiki/professionSelections/CursesSelection";
 import { LanguagesScriptsSelection } from "../../Models/Wiki/professionSelections/LanguagesScriptsSelection";
 import { ProfessionSelections } from "../../Models/Wiki/professionSelections/ProfessionAdjustmentSelections";
 import { ProfessionVariantSelections } from "../../Models/Wiki/professionSelections/ProfessionVariantAdjustmentSelections";
@@ -145,7 +145,7 @@ export function WikiProfessionInfo (props: WikiProfessionInfoProps): JSX.Element
   // if (["nl-BE"].includes(l10n.id)) {
   //   return (
   //     <WikiBoxTemplate className="profession" title={subname ? `${name} (${subname})` : name}>
-  //       <WikiProperty l10n={l10n} title="info.apvalue">
+  //       <WikiProperty l10n={l10n} title="apvalue">
   //         {x.ap} {translate(l10n, "aptext")}
   //       </WikiProperty>
   //       <CombatTechniques
@@ -153,19 +153,19 @@ export function WikiProfessionInfo (props: WikiProfessionInfoProps): JSX.Element
   //         x={x}
   //         l10n={l10n}
   //         />
-  //       <WikiProperty l10n={l10n} title="info.skills" />
+  //       <WikiProperty l10n={l10n} title="skills" />
   //       <SkillsList
   //         profession={x}
   //         l10n={l10n}
   //         skillsSelection={skillsSelectionJoinedObject}
   //         />
   //       {typeof spellsString === "string" ? (
-  //         <WikiProperty l10n={l10n} title="info.spells">
+  //         <WikiProperty l10n={l10n} title="spells">
   //           {spellsString}
   //         </WikiProperty>
   //       ) : null}
   //       {typeof liturgicalChantsString === "string" ? (
-  //         <WikiProperty l10n={l10n} title="info.liturgicalchants">
+  //         <WikiProperty l10n={l10n} title="liturgicalchants">
   //           {liturgicalChantsString}
   //         </WikiProperty>
   //       ) : null}
@@ -201,76 +201,127 @@ export function WikiProfessionInfo (props: WikiProfessionInfoProps): JSX.Element
            fmap (str => `${translate (l10n) ("race")}: ${str}`)
          ))
 
+  const prereq_strs =
+    pipe_ (
+      x,
+      PCA.mappedPrerequisites,
+      mapMaybe (e => {
+        if (ProfessionRequireIncreasable.is (e)) {
+          const id = PRIA.id (e)
+          const value = PRIA.value (e)
+          const mwiki_entry =
+            alt_<Record<Attribute> | Record<Skill>> (lookup (id) (attributes))
+                                                    (() => lookup (id) (skills))
+
+          return fmapF (mwiki_entry)
+                       (wiki_entry =>
+                         Attribute.is (wiki_entry)
+                           ? `${Attribute.A.short (wiki_entry)} ${value}`
+                           : `${Skill.A.name (wiki_entry)} ${value}`)
+        }
+        else {
+          const pr_name = ANCIAA_.name (e)
+          const pr_cost = ANCIAA_.finalCost (e)
+
+          return Just (`${pr_name} (${pr_cost} ${translate (l10n) ("adventurepoints.short")})`)
+        }
+      }),
+      sortStrings (L10n.A.id (l10n))
+    )
+
   const prerequisites = List (
-    ...(maybe (List<string> ()) <string> (List.pure) (mrace_depencency_str)),
-    ...(x.prerequisitesStart ? [x.prerequisitesStart] : []),
-    ...sortStrings(x.prerequisites.map(e => {
-      if (isRequiringIncreasable(e)) {
-        const instance = attributes.get(e.id) || skills.get(e.id)
-        let name
-        if (instance && instance.category === Categories.ATTRIBUTES) {
-          name = instance.short
-        }
-        else if (instance) {
-          name = instance.name
-        }
-        return `${name} ${e.value}`
-      }
-      return `${e.combinedName} (${e.currentCost} ${translate(l10n, "apshort")})`
-    }), l10n.id),
-    ...(x.prerequisitesEnd ? [x.prerequisitesEnd] : []),
+    ...maybeToList (mrace_depencency_str),
+    ...maybeToList (PCA_.prerequisitesStart (x)),
+    ...prereq_strs,
+    ...maybeToList (PCA_.prerequisitesEnd (x))
   )
 
+  const sex_dep_str =
+    fmapF (sexRequirement)
+          (sex_dep => {
+            const space_before = notNull (prerequisites) ? " " : ""
+            const sex_tag = translate (l10n) ("sex")
+            const sex_value =
+              SexRequirement.A.value (sex_dep) === "m"
+                ? translate (l10n) ("male")
+                : translate (l10n) ("female")
+
+            return `${space_before}${sex_tag}: ${sex_value}`
+          })
+
+  const sas_str =
+    pipe_ (
+      List<string> (),
+      maybe<ident<List<string>>> (ident)
+                                 ((curss: Record<CursesSelection>) =>
+                                   consF (translateP (l10n)
+                                                     ("cursestotalingap")
+                                                     (List (CursesSelection.A.value (curss)))))
+                                 (cursesSelection),
+      maybe<ident<List<string>>> (ident) <string> (consF) (terrainKnowledgeSelectionString),
+      maybe<ident<List<string>>> (ident) <string> (consF) (specializationSelectionString),
+      maybe<ident<List<string>>> (ident)
+                                 ((curss: Record<LanguagesScriptsSelection>) =>
+                                   consF (translateP (l10n)
+                                                     ("languagesandliteracytotalingap")
+                                                     (List (
+                                                       LanguagesScriptsSelection.A.value (curss)
+                                                     ))))
+                                 (languagesLiteracySelection),
+      ensure (notNull),
+      maybe (translate (l10n) ("none"))
+            (pipe (sortStrings (L10n.A.id (l10n)), intercalate (", ")))
+    )
+
   return (
-    <WikiBoxTemplate className="profession" title={msubname ? `${name} (${msubname})` : name}>
-      <WikiProperty l10n={l10n} title="info.apvalue">
-        {x.ap} {translate(l10n, "aptext")}
+    <WikiBoxTemplate
+      className="profession"
+      title={maybe (name) ((subname: string) => `${name} (${subname})`) (msubname)}
+      >
+      <WikiProperty l10n={l10n} title="apvalue">
+        {PCA_.ap (x)} {translate (l10n) ("adventurepoints")}
       </WikiProperty>
-      <WikiProperty l10n={l10n} title="info.prerequisites">
-        {prerequisites.length > 0 ? prerequisites.join(", ") : translate(l10n, "info.none")}
-        {sexRequirement && `${prerequisites.length > 0 ? " " : ""}${translate(l10n, "charactersheet.main.sex")}: ${sexRequirement.value === "m" ? translate(l10n, "herocreation.options.selectsex.male") : translate(l10n, "herocreation.options.selectsex.female")}`}
+      <WikiProperty l10n={l10n} title="prerequisites">
+        {maybe (translate (l10n) ("none")) (intercalate (", ")) (ensure (notNull) (prerequisites))}
+        {renderMaybe (sex_dep_str)}
       </WikiProperty>
-      <WikiProperty l10n={l10n} title="info.specialabilities">
-        {[
-          ...(languagesLiteracySelection ? [translate(l10n, "info.specialabilitieslanguagesandliteracy", languagesLiteracySelection.value)] : []),
-          ...(typeof specializationSelectionString === "string" ? [specializationSelectionString] : []),
-          ...(typeof terrainKnowledgeSelectionString === "string" ? [terrainKnowledgeSelectionString] : []),
-          ...(cursesSelection ? [translate(l10n, "info.specialabilitiescurses", cursesSelection.value)] : []),
-          ...sortStrings(x.specialAbilities.map(e => e.combinedName), l10n.id)
-        ].join(", ") || translate(l10n, "info.none")}
+      <WikiProperty l10n={l10n} title="specialabilities">
+        {sas_str}
       </WikiProperty>
       <CombatTechniques
         combatTechniquesSelectionString={combatTechniquesSelectionString}
         x={x}
         l10n={l10n}
         />
-      <WikiProperty l10n={l10n} title="info.skills" />
+      <WikiProperty l10n={l10n} title="skills" />
       <SkillsList
         profession={x}
         l10n={l10n}
         skillsSelection={skillsSelectionJoinedObject}
         />
-      {typeof spellsString === "string" ? (
-        <WikiProperty l10n={l10n} title="info.spells">
-          {spellsString}
-        </WikiProperty>
-      ) : null}
-      {typeof liturgicalChantsString === "string" ? (
-        <WikiProperty l10n={l10n} title="info.liturgicalchants">
-          {liturgicalChantsString}
-        </WikiProperty>
-      ) : null}
-      <WikiProperty l10n={l10n} title="info.suggestedadvantages">
-        {x.suggestedAdvantagesText || translate(l10n, "info.none")}
+      {maybeRNullF (spellsString)
+                   (str => (
+                     <WikiProperty l10n={l10n} title="spells">
+                       {str}
+                     </WikiProperty>
+                   ))}
+      {maybeRNullF (liturgicalChantsString)
+                   (str => (
+                     <WikiProperty l10n={l10n} title="liturgicalchants">
+                       {str}
+                     </WikiProperty>
+                   ))}
+      <WikiProperty l10n={l10n} title="suggestedadvantages">
+        {fromMaybe (translate (l10n) ("none")) (PCA_.suggestedAdvantagesText (x))}
       </WikiProperty>
-      <WikiProperty l10n={l10n} title="info.suggesteddisadvantages">
-        {x.suggestedDisadvantagesText || translate(l10n, "info.none")}
+      <WikiProperty l10n={l10n} title="suggesteddisadvantages">
+        {fromMaybe (translate (l10n) ("none")) (PCA_.suggestedDisadvantagesText (x))}
       </WikiProperty>
-      <WikiProperty l10n={l10n} title="info.unsuitableadvantages">
-        {x.unsuitableAdvantagesText || translate(l10n, "info.none")}
+      <WikiProperty l10n={l10n} title="unsuitableadvantages">
+        {fromMaybe (translate (l10n) ("none")) (PCA_.unsuitableAdvantagesText (x))}
       </WikiProperty>
-      <WikiProperty l10n={l10n} title="info.unsuitabledisadvantages">
-        {x.unsuitableDisadvantagesText || translate(l10n, "info.none")}
+      <WikiProperty l10n={l10n} title="unsuitabledisadvantages">
+        {fromMaybe (translate (l10n) ("none")) (PCA_.unsuitableDisadvantagesText (x))}
       </WikiProperty>
       <VariantList
         {...props}
@@ -278,7 +329,7 @@ export function WikiProfessionInfo (props: WikiProfessionInfoProps): JSX.Element
         profession={x}
         specializationSelectionString={specializationSelectionString}
         />
-      <WikiSource {...props} />
+      <WikiSource {...props} acc={PCA_} />
     </WikiBoxTemplate>
   )
 }
