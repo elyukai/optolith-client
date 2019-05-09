@@ -8,6 +8,8 @@ import { HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { Sex } from "../../Models/Hero/heroTypeHelpers";
 import { Item } from "../../Models/Hero/Item";
 import { DerivedCharacteristic } from "../../Models/View/DerivedCharacteristic";
+import { ProfessionCombined, ProfessionCombinedA_ } from "../../Models/View/ProfessionCombined";
+import { RaceCombined, RaceCombinedA_ } from "../../Models/View/RaceCombined";
 import { Advantage } from "../../Models/Wiki/Advantage";
 import { Attribute } from "../../Models/Wiki/Attribute";
 import { Blessing } from "../../Models/Wiki/Blessing";
@@ -19,17 +21,15 @@ import { Disadvantage } from "../../Models/Wiki/Disadvantage";
 import { ItemTemplate } from "../../Models/Wiki/ItemTemplate";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { LiturgicalChant } from "../../Models/Wiki/LiturgicalChant";
-import { Profession } from "../../Models/Wiki/Profession";
 import { ProfessionVariant } from "../../Models/Wiki/ProfessionVariant";
 import { Race } from "../../Models/Wiki/Race";
-import { RaceVariant } from "../../Models/Wiki/RaceVariant";
 import { Skill } from "../../Models/Wiki/Skill";
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
 import { Spell } from "../../Models/Wiki/Spell";
 import { WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import { Entry } from "../../Models/Wiki/wikiTypeHelpers";
+import { InlineWikiEntry } from "../../Models/Wiki/wikiTypeHelpers";
 import { DCIds } from "../../Selectors/derivedCharacteristicsSelectors";
-import { pipe } from "../../Utilities/pipe";
+import { pipe_ } from "../../Utilities/pipe";
 import { WikiActivatableInfo } from "./WikiActivatableInfo";
 import { WikiBlessingInfo } from "./WikiBlessingInfo";
 import { WikiCantripInfo } from "./WikiCantripInfo";
@@ -62,11 +62,10 @@ export interface WikiInfoContentStateProps {
   languages: Record<SpecialAbility>
   liturgicalChantExtensions: Maybe<Record<SpecialAbility>>
   liturgicalChants: OrderedMap<string, Record<LiturgicalChant>>
-  list: List<Entry>
+  list: List<InlineWikiEntry>
   professionVariants: OrderedMap<string, Record<ProfessionVariant>>
-  raceVariants: OrderedMap<string, Record<RaceVariant>>
   races: OrderedMap<string, Record<Race>>
-  scripts: SpecialAbility
+  scripts: Record<SpecialAbility>
   sex: Maybe<Sex>
   skills: OrderedMap<string, Record<Skill>>
   spellExtensions: Maybe<Record<SpecialAbility>>
@@ -86,7 +85,20 @@ export type WikiInfoContentProps =
 export function WikiInfoContent (props: WikiInfoContentProps) {
   const { currentId: mid, list } = props
 
-  const mx = bind (mid) (id => find (pipe (Advantage.AL.id, equals (id))) (list))
+  const mx =
+    bind (mid)
+         (id => find<InlineWikiEntry> (e => {
+                                        if (RaceCombined.is (e)) {
+                                          return RaceCombinedA_.id (e) === id
+                                        }
+                                        else if (ProfessionCombined.is (e)) {
+                                          return ProfessionCombinedA_.id (e) === id
+                                        }
+                                        else {
+                                          return pipe_ (e, Advantage.AL.id, equals (id))
+                                        }
+                                      })
+                                      (list))
 
   if (isJust (mx)) {
     const x = fromJust (mx)
@@ -133,13 +145,13 @@ export function WikiInfoContent (props: WikiInfoContentProps) {
       </WikiInfoContentWrapper>
     }
 
-    if (Profession.is (x)) {
+    if (ProfessionCombined.is (x)) {
       return <WikiInfoContentWrapper {...props}>
         <WikiProfessionInfo {...props} x={x} />
       </WikiInfoContentWrapper>
     }
 
-    if (Race.is (x)) {
+    if (RaceCombined.is (x)) {
       return <WikiInfoContentWrapper {...props}>
         <WikiRaceInfo {...props} x={x} />
       </WikiInfoContentWrapper>

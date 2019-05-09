@@ -3,6 +3,8 @@ import { Just, Maybe } from "../../../Data/Maybe";
 import { OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { Categories } from "../../Constants/Categories";
+import { ProfessionCombined } from "../View/ProfessionCombined";
+import { RaceCombined } from "../View/RaceCombined";
 import { Advantage } from "./Advantage";
 import { Attribute } from "./Attribute";
 import { Blessing } from "./Blessing";
@@ -97,6 +99,20 @@ export type ActivatableSkillEntry = Record<Spell>
                                   | Record<LiturgicalChant>
 
 export type Entry = EntryWithCategory | Record<ItemTemplate>
+
+export type InlineWikiEntry = Record<RaceCombined>
+                            | Record<Culture>
+                            | Record<ProfessionCombined>
+                            | Record<Advantage>
+                            | Record<Disadvantage>
+                            | Record<Skill>
+                            | Record<CombatTechnique>
+                            | Record<SpecialAbility>
+                            | Record<Spell>
+                            | Record<Cantrip>
+                            | Record<LiturgicalChant>
+                            | Record<Blessing>
+                            | Record<ItemTemplate>
 
 export type EntryWithCategory = Record<Race>
                               | Record<RaceVariant>

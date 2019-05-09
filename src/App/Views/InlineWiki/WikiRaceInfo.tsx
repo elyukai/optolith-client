@@ -1,120 +1,212 @@
 import * as React from "react";
-import { Book, Culture, Race, RaceVariant } from "../../Models/Wiki/wikiTypeHelpers";
-import { translate, UIMessages } from "../../Utilities/I18n";
+import { equals } from "../../../Data/Eq";
+import { fmap } from "../../../Data/Functor";
+import { all, flength, fnull, intercalate, List, map, notNull, toArray } from "../../../Data/List";
+import { ensure, fromMaybe, isNothing, mapMaybe, Maybe, maybeRNullF, maybe_ } from "../../../Data/Maybe";
+import { lookupF, OrderedMap } from "../../../Data/OrderedMap";
+import { Record } from "../../../Data/Record";
+import { RaceCombined, RaceCombinedA_ } from "../../Models/View/RaceCombined";
+import { Book } from "../../Models/Wiki/Book";
+import { Culture } from "../../Models/Wiki/Culture";
+import { L10n, L10nRecord } from "../../Models/Wiki/L10n";
+import { RaceVariant } from "../../Models/Wiki/RaceVariant";
+import { translate } from "../../Utilities/I18n";
+import { pipe, pipe_ } from "../../Utilities/pipe";
+import { sortStrings } from "../../Utilities/sortBy";
 import { WikiSource } from "./Elements/WikiSource";
 import { WikiBoxTemplate } from "./WikiBoxTemplate";
 import { WikiProperty } from "./WikiProperty";
 
 export interface WikiRaceInfoProps {
-  books: Map<string, Book>
-  cultures: Map<string, Culture>
-  currentObject: Race
-  locale: UIMessages
-  raceVariants: Map<string, RaceVariant>
+  books: OrderedMap<string, Record<Book>>
+  cultures: OrderedMap<string, Record<Culture>>
+  x: Record<RaceCombined>
+  l10n: L10nRecord
 }
 
-export function WikiRaceInfo(props: WikiRaceInfoProps) {
-  const { cultures, currentObject, locale, raceVariants } = props
+const RCA = RaceCombined.A
+const RVA = RaceVariant.A
+const RCA_ = RaceCombinedA_
 
-  const {
-    name
-  } = currentObject
+export function WikiRaceInfo (props: WikiRaceInfoProps) {
+  const { cultures, x, l10n } = props
 
-  if (["nl-BE"].includes(locale.id)) {
-    return (
-      <WikiBoxTemplate className="race" title={name}>
-        <WikiProperty l10n={locale} title="info.apvalue">{currentObject.ap} {translate(locale, "aptext")}</WikiProperty>
-        <WikiProperty l10n={locale} title="info.lifepointbasevalue">{currentObject.lp}</WikiProperty>
-        <WikiProperty l10n={locale} title="info.spiritbasevalue">{currentObject.spi}</WikiProperty>
-        <WikiProperty l10n={locale} title="info.toughnessbasevalue">{currentObject.tou}</WikiProperty>
-        <WikiProperty l10n={locale} title="info.movementbasevalue">{currentObject.mov}</WikiProperty>
-        <WikiSource {...props} />
-      </WikiBoxTemplate>
-    )
-  }
+  const name = RCA_.name (x)
 
-  const variants = currentObject.variants.filter(v => raceVariants.has(v)).map(v => raceVariants.get(v)!)
+  // if (["nl-BE"].includes(l10n.id)) {
+  //   return (
+  //     <WikiBoxTemplate className="race" title={name}>
+  //       <WikiProperty l10n={l10n} title="info.apvalue">
+  //         {x.ap} {translate(l10n, "aptext")}
+  //       </WikiProperty>
+  //       <WikiProperty l10n={l10n} title="info.lifepointbasevalue">{x.lp}</WikiProperty>
+  //       <WikiProperty l10n={l10n} title="info.spiritbasevalue">{x.spi}</WikiProperty>
+  //       <WikiProperty l10n={l10n} title="info.toughnessbasevalue">{x.tou}</WikiProperty>
+  //       <WikiProperty l10n={l10n} title="info.movementbasevalue">{x.mov}</WikiProperty>
+  //       <WikiSource {...props} />
+  //     </WikiBoxTemplate>
+  //   )
+  // }
 
-  const sameCommonCultures = variants.every(e => e.commonCultures.length === 0) || variants.every(e => e.commonCultures.length === 1)
-  const sameCommonAdvantages = variants.every(e => e.commonAdvantagesText === undefined)
-  const sameCommonDisadvantages = variants.every(e => e.commonDisadvantagesText === undefined)
-  const sameUncommonAdvantages = variants.every(e => e.uncommonAdvantagesText === undefined)
-  const sameUncommonDisadvantages = variants.every(e => e.uncommonDisadvantagesText === undefined)
+  const variants = RCA.mappedVariants (x)
+
+  const sameCommonCultures =
+    all (pipe (RVA.commonCultures, fnull)) (variants)
+    || all (pipe (RVA.commonCultures, flength, equals (1))) (variants)
+
+  const sameCommonAdvantages = all (pipe (RVA.commonAdvantagesText, isNothing))
+                                   (variants)
+
+  const sameCommonDisadvantages = all (pipe (RVA.commonDisadvantagesText, isNothing))
+                                      (variants)
+
+  const sameUncommonAdvantages = all (pipe (RVA.uncommonAdvantagesText, isNothing))
+                                     (variants)
+
+  const sameUncommonDisadvantages = all (pipe (RVA.uncommonDisadvantagesText, isNothing))
+                                        (variants)
+
 
   return (
     <WikiBoxTemplate className="race" title={name}>
-      <WikiProperty l10n={locale} title="info.apvalue">{currentObject.ap} {translate(locale, "aptext")}</WikiProperty>
-      <WikiProperty l10n={locale} title="info.lifepointbasevalue">{currentObject.lp}</WikiProperty>
-      <WikiProperty l10n={locale} title="info.spiritbasevalue">{currentObject.spi}</WikiProperty>
-      <WikiProperty l10n={locale} title="info.toughnessbasevalue">{currentObject.tou}</WikiProperty>
-      <WikiProperty l10n={locale} title="info.movementbasevalue">{currentObject.mov}</WikiProperty>
-      <WikiProperty l10n={locale} title="info.attributeadjustments">{currentObject.attributeAdjustmentsText}</WikiProperty>
-      {currentObject.automaticAdvantagesText && <WikiProperty l10n={locale} title="info.automaticadvantages">
-        {currentObject.automaticAdvantagesText}
-      </WikiProperty>}
-      {currentObject.stronglyRecommendedAdvantagesText && <WikiProperty l10n={locale} title="info.stronglyrecommendedadvantages">
-        {currentObject.stronglyRecommendedAdvantagesText}
-      </WikiProperty>}
-      {currentObject.stronglyRecommendedDisadvantagesText && <WikiProperty l10n={locale} title="info.stronglyrecommendeddisadvantages">
-        {currentObject.stronglyRecommendedDisadvantagesText}
-      </WikiProperty>}
-      <WikiProperty l10n={locale} title="info.commoncultures">
-        {sameCommonCultures && <span>{sortStrings((currentObject.commonCultures.length > 0 ? currentObject.commonCultures.filter(id => cultures.has(id)).map(id => cultures.get(id)!.name) : variants.map(e => e.name)), locale.id).intercalate(", ")}</span>}
+      <WikiProperty l10n={l10n} title="apvalue">
+        {RCA_.ap (x)} {translate (l10n) ("adventurepoints")}
       </WikiProperty>
-      {!sameCommonCultures && <ul className="race-variant-options">
-        {variants.map(e => {
-          const commonCultures = e.commonCultures.map(id => cultures.has(id) ? cultures.get(id)!.name : "...")
-          return <li key={e.id}>
-            <span>{e.name}</span>
-            <span>{sortStrings(commonCultures, locale.id).intercalate(", ")}</span>
-          </li>
-        })}
-      </ul>}
-      <WikiProperty l10n={locale} title="info.commonadvantages">
-        {sameCommonAdvantages && <span>{currentObject.commonAdvantagesText || translate(locale, "info.none")}</span>}
+      <WikiProperty l10n={l10n} title="lifepointbasevalue">{RCA_.lp (x)}</WikiProperty>
+      <WikiProperty l10n={l10n} title="spiritbasevalue">{RCA_.spi (x)}</WikiProperty>
+      <WikiProperty l10n={l10n} title="toughnessbasevalue">{RCA_.tou (x)}</WikiProperty>
+      <WikiProperty l10n={l10n} title="movementbasevalue">{RCA_.mov (x)}</WikiProperty>
+      <WikiProperty l10n={l10n} title="attributeadjustments">
+        {RCA_.attributeAdjustmentsText (x)}
       </WikiProperty>
-      {!sameCommonAdvantages && <ul className="race-variant-options">
-        {variants.filter(e => typeof e.commonAdvantagesText === "string").map(e => {
-          return <li key={e.id}>
-            <span>{e.name}</span>
-            <span>{e.commonAdvantagesText}</span>
-          </li>
-        })}
-      </ul>}
-      <WikiProperty l10n={locale} title="info.commondisadvantages">
-        {sameCommonDisadvantages && <span>{currentObject.commonDisadvantagesText || translate(locale, "info.none")}</span>}
+      {maybeRNullF (RCA_.automaticAdvantagesText (x))
+                   (str => (
+                     <WikiProperty l10n={l10n} title="automaticadvantages">
+                       {str}
+                     </WikiProperty>
+                   ))}
+      {maybeRNullF (RCA_.stronglyRecommendedAdvantagesText (x))
+                   (str => (
+                     <WikiProperty l10n={l10n} title="stronglyrecommendedadvantages">
+                       {str}
+                     </WikiProperty>
+                   ))}
+      {maybeRNullF (RCA_.stronglyRecommendedDisadvantagesText (x))
+                   (str => (
+                     <WikiProperty l10n={l10n} title="stronglyrecommendeddisadvantages">
+                       {str}
+                     </WikiProperty>
+                   ))}
+      {maybeRNullF (RCA_.stronglyRecommendedDisadvantagesText (x))
+                   (str => (
+                     <WikiProperty l10n={l10n} title="stronglyrecommendeddisadvantages">
+                       {str}
+                     </WikiProperty>
+                   ))}
+      <WikiProperty l10n={l10n} title="commoncultures">
+        {sameCommonCultures
+          ? <span>
+              {pipe_ (
+                x,
+                RCA_.commonCultures,
+                ensure (notNull),
+                maybe_ (() => map (RVA.name) (variants))
+                       (mapMaybe (pipe (lookupF (cultures), fmap (Culture.A.name)))),
+                sortStrings (L10n.A.id (l10n)),
+                intercalate (", ")
+              )}
+            </span>
+          : null}
       </WikiProperty>
-      {!sameCommonDisadvantages && <ul className="race-variant-options">
-        {variants.filter(e => typeof e.commonDisadvantagesText === "string").map(e => {
-          return <li key={e.id}>
-            <span>{e.name}</span>
-            <span>{e.commonDisadvantagesText}</span>
-          </li>
-        })}
-      </ul>}
-      <WikiProperty l10n={locale} title="info.uncommonadvantages">
-        {sameUncommonAdvantages && <span>{currentObject.uncommonAdvantagesText || translate(locale, "info.none")}</span>}
-      </WikiProperty>
-      {!sameUncommonAdvantages && <ul className="race-variant-options">
-        {variants.filter(e => typeof e.uncommonAdvantagesText === "string").map(e => {
-          return <li key={e.id}>
-            <span>{e.name}</span>
-            <span>{e.uncommonAdvantagesText}</span>
-          </li>
-        })}
-      </ul>}
-      <WikiProperty l10n={locale} title="info.uncommondisadvantages">
-        {sameUncommonDisadvantages && <span>{currentObject.uncommonDisadvantagesText || translate(locale, "info.none")}</span>}
-      </WikiProperty>
-      {!sameUncommonDisadvantages && <ul className="race-variant-options">
-        {variants.filter(e => typeof e.uncommonDisadvantagesText === "string").map(e => {
-          return <li key={e.id}>
-            <span>{e.name}</span>
-            <span>{e.uncommonDisadvantagesText}</span>
-          </li>
-        })}
-      </ul>}
-      <WikiSource {...props} />
+      {!sameCommonCultures
+        ? <ul className="race-variant-options">
+            {pipe_ (
+              variants,
+              map (e => {
+                    const commonCultures =
+                      pipe_ (
+                        x,
+                        RCA_.commonCultures,
+                        mapMaybe (pipe (lookupF (cultures), fmap (Culture.A.name))),
+                        sortStrings (L10n.A.id (l10n)),
+                        intercalate (", ")
+                      )
+
+                    return <li key={RVA.id (e)}>
+                      <span>{RVA.name (e)}</span>
+                      <span>{commonCultures}</span>
+                    </li>
+                  }),
+              toArray
+            )}
+          </ul>
+        : null}
+      {renderPlainOrByVars (l10n)
+                           (RCA_.commonAdvantagesText)
+                           (RVA.commonAdvantagesText)
+                           (variants)
+                           ("commonadvantages")
+                           (sameCommonAdvantages)
+                           (x)}
+      {renderPlainOrByVars (l10n)
+                           (RCA_.commonDisadvantagesText)
+                           (RVA.commonDisadvantagesText)
+                           (variants)
+                           ("commondisadvantages")
+                           (sameCommonDisadvantages)
+                           (x)}
+      {renderPlainOrByVars (l10n)
+                           (RCA_.uncommonAdvantagesText)
+                           (RVA.uncommonAdvantagesText)
+                           (variants)
+                           ("uncommonadvantages")
+                           (sameUncommonAdvantages)
+                           (x)}
+      {renderPlainOrByVars (l10n)
+                           (RCA_.uncommonDisadvantagesText)
+                           (RVA.uncommonDisadvantagesText)
+                           (variants)
+                           ("uncommondisadvantages")
+                           (sameUncommonDisadvantages)
+                           (x)}
+      <WikiSource {...props} acc={RCA_} />
     </WikiBoxTemplate>
   )
 }
+
+type PlainOrByVarsTitle = "commonadvantages"
+                        | "commondisadvantages"
+                        | "uncommonadvantages"
+                        | "uncommondisadvantages"
+
+const renderPlainOrByVars =
+  (l10n: L10nRecord) =>
+  (mapText: (x: Record<RaceCombined>) => Maybe<string>) =>
+  (mapVarText: (x: Record<RaceVariant>) => Maybe<string>) =>
+  (vars: List<Record<RaceVariant>>) =>
+  (title: PlainOrByVarsTitle) =>
+  (same_for_vars: boolean) =>
+  (x: Record<RaceCombined>) =>
+    <>
+      <WikiProperty l10n={l10n} title={title}>
+        {same_for_vars
+          ? <span>{fromMaybe (translate (l10n) ("none")) (mapText (x))}</span>
+          : null}
+      </WikiProperty>
+      {!same_for_vars
+        ? <ul className="race-variant-options">
+            {toArray (mapMaybe ((v: Record<RaceVariant>) =>
+                                 pipe_ (
+                                   v,
+                                   mapVarText,
+                                   fmap (text => (
+                                     <li key={RVA.id (v)}>
+                                       <span>{RVA.name (v)}</span>
+                                       <span>{text}</span>
+                                     </li>
+                                   ))
+                                 ))
+                               (vars))}
+          </ul>
+        : null}
+    </>
