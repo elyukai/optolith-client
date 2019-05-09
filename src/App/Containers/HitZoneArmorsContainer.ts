@@ -1,7 +1,8 @@
 import { connect } from "react-redux";
-import { Action, Dispatch } from "redux";
+import { Maybe } from "../../Data/Maybe";
+import { ReduxDispatch } from "../Actions/Actions";
 import * as EquipmentActions from "../Actions/EquipmentActions";
-import { AppState } from "../Reducers/appReducer";
+import { AppStateRecord } from "../Reducers/appReducer";
 import { getInitialStartingWealth } from "../Selectors/activatableSelectors";
 import { getHasCurrentNoAddedAP } from "../Selectors/adventurePointsSelectors";
 import { getCarryingCapacity } from "../Selectors/attributeSelectors";
@@ -10,7 +11,7 @@ import { getArmorZonesEditorInstance, getIsInHitZoneArmorCreation, getPurse, get
 import { HitZoneArmors, HitZoneArmorsDispatchProps, HitZoneArmorsOwnProps, HitZoneArmorsStateProps } from "../Views/HitZoneArmors/HitZoneArmors";
 
 const mapStateToProps = (
-  state: AppState,
+  state: AppStateRecord,
   ownProps: HitZoneArmorsOwnProps
 ): HitZoneArmorsStateProps => ({
   armorZones: getFilteredHitZoneArmors (state, ownProps),
@@ -27,7 +28,7 @@ const mapStateToProps = (
   filterText: getZoneArmorFilterText (state),
 })
 
-const mapDispatchToProps = (dispatch: Dispatch<Action, AppState>): HitZoneArmorsDispatchProps => ({
+const mapDispatchToProps = (dispatch: ReduxDispatch): HitZoneArmorsDispatchProps => ({
   addToList () {
     dispatch (EquipmentActions.addArmorZonesToList ())
   },
@@ -103,7 +104,9 @@ const mapDispatchToProps = (dispatch: Dispatch<Action, AppState>): HitZoneArmors
 })
 
 export const connectHitZoneArmors =
-  connect<HitZoneArmorsStateProps, HitZoneArmorsDispatchProps, HitZoneArmorsOwnProps, AppState> (
+  connect<
+    HitZoneArmorsStateProps, HitZoneArmorsDispatchProps, HitZoneArmorsOwnProps, AppStateRecord
+  > (
     mapStateToProps,
     mapDispatchToProps
   )

@@ -1,12 +1,12 @@
 import { connect } from "react-redux";
-import { AppState } from "../Reducers/appReducer";
+import { AppStateRecord } from "../Reducers/appReducer";
 import { Help, HelpDispatchProps, HelpOwnProps, HelpStateProps } from "../Views/Help/Help";
 
 const mapStateToProps = () => ({})
 
 const mapDispatchToProps = () => ({})
 
-const connectHelp = connect<HelpStateProps, HelpDispatchProps, HelpOwnProps, AppState> (
+const connectHelp = connect<HelpStateProps, HelpDispatchProps, HelpOwnProps, AppStateRecord> (
   mapStateToProps,
   mapDispatchToProps
 )

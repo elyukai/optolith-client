@@ -1,22 +1,24 @@
 import { connect } from "react-redux";
-import { Action, Dispatch } from "redux";
+import { Maybe } from "../../Data/Maybe";
+import { ReduxDispatch } from "../Actions/Actions";
 import * as EquipmentActions from "../Actions/EquipmentActions";
-import { AppState } from "../Reducers/appReducer";
+import { AppStateRecord } from "../Reducers/appReducer";
 import { getSortedTemplates } from "../Selectors/equipmentSelectors";
 import { getIsItemCreation, getItemEditorInstance, getWikiAttributes, getWikiCombatTechniques } from "../Selectors/stateSelectors";
 import { ItemEditor, ItemEditorDispatchProps, ItemEditorOwnProps, ItemEditorStateProps } from "../Views/Equipment/ItemEditor";
 
-const mapStateToProps = (state: AppState, ownProps: ItemEditorOwnProps): ItemEditorStateProps => ({
-  attributes: getWikiAttributes (state),
-  combatTechniques: getWikiCombatTechniques (state),
-  isInCreation: getIsItemCreation (state),
-  item: getItemEditorInstance (state),
-  templates: getSortedTemplates (state, ownProps),
-})
+const mapStateToProps =
+  (state: AppStateRecord, ownProps: ItemEditorOwnProps): ItemEditorStateProps => ({
+    attributes: getWikiAttributes (state),
+    combatTechniques: getWikiCombatTechniques (state),
+    isInCreation: getIsItemCreation (state),
+    item: getItemEditorInstance (state),
+    templates: getSortedTemplates (state, ownProps),
+  })
 
-const mapDispatchToProps = (dispatch: Dispatch<Action, AppState>): ItemEditorDispatchProps => ({
+const mapDispatchToProps = (dispatch: ReduxDispatch): ItemEditorDispatchProps => ({
   addToList (): void {
-    dispatch (EquipmentActions.addItem ())
+    dispatch (EquipmentActions.addItem)
   },
   closeEditor (): void {
     dispatch (EquipmentActions.closeItemEditor ())
@@ -147,7 +149,7 @@ const mapDispatchToProps = (dispatch: Dispatch<Action, AppState>): ItemEditorDis
 })
 
 export const connectItemEditor =
-  connect<ItemEditorStateProps, ItemEditorDispatchProps, ItemEditorOwnProps, AppState> (
+  connect<ItemEditorStateProps, ItemEditorDispatchProps, ItemEditorOwnProps, AppStateRecord> (
     mapStateToProps,
     mapDispatchToProps
   )

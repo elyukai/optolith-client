@@ -224,41 +224,9 @@ export class LiturgicalChants
                   bindF (ensure (notNull)),
                   fmap (pipe (
                     mapAccumL ((mprev: Maybe<Combined>) => (curr: Combined) => {
-                                const insertTopMargin =
-                                  pipe_ (
-                                    mprev,
-                                    bindF (ensure (
-                                      () => sortOrder === "group" && LCBCA.active (curr)
-                                    )),
-                                    fmap (prev =>
-                                           !isBlessing (prev) && isBlessing (curr)
-                                           || isBlessing (prev) && !isBlessing (curr)
-                                           || !isBlessing (prev)
-                                             && !isBlessing (curr)
-                                             && notEquals (LCBCA.gr (prev)) (LCBCA.gr (curr))),
-                                    or
-                                  )
+                                const insertTopMargin = isTopMarginNeeded (sortOrder) (curr) (mprev)
 
-                                const aspects =
-                                  pipe_ (
-                                    mtradition_id,
-                                    fmap (pipe (
-                                      tradition_id =>
-                                        mapMaybe (pipe (
-                                                   ensure (elemF (
-                                                     getAspectsOfTradition (tradition_id + 1)
-                                                   )),
-                                                   bindF (pipe (
-                                                     dec,
-                                                     subscript (translate (l10n) ("aspectlist"))
-                                                   ))
-                                                 ))
-                                                 (LCBCA.aspects (curr)),
-                                      sortStrings (L10n.A.id (l10n)),
-                                      intercalate (", ")
-                                    )),
-                                    fromMaybe ("")
-                                  )
+                                const aspects = getAspectsStr (l10n) (curr) (mtradition_id)
 
                                 if (LCBCA.active (curr)) {
                                   return Pair<Maybe<Combined>, JSX.Element> (
@@ -293,9 +261,7 @@ export class LiturgicalChants
                                         selectForInfo={this.showSlideinInfo}
                                         addText={
                                           sortOrder === "group"
-                                            ? `${aspects} / ${
-                                              translate (l10n) ("blessing")
-                                            }`
+                                            ? `${aspects} / ${translate (l10n) ("blessing")}`
                                             : aspects
                                         }
                                         />
@@ -303,14 +269,7 @@ export class LiturgicalChants
                                   )
                                 }
                                 else {
-                                  const groups = translate (l10n) ("liturgicalchantgroups")
-
-                                  const add_text =
-                                    pipe_ (
-                                      guard (sortOrder === "group"),
-                                      thenF (subscript (groups) (LCWRA_.gr (curr) - 1)),
-                                      fromMaybe (aspects)
-                                    )
+                                  const add_text = getLCAddText (l10n) (sortOrder) (aspects) (curr)
 
                                   return Pair<Maybe<Combined>, JSX.Element> (
                                     Just (curr),
@@ -375,26 +334,106 @@ export class LiturgicalChants
             </ListHeaderTag>
             <ListHeaderTag className="group">
               {translate (l10n) ("aspect")}
-              {sortOrder === "group" && ` / ${translate (l10n) ("group")}`}
+              {sortOrder === "group" ? ` / ${translate (l10n) ("group")}` : null}
             </ListHeaderTag>
-            <ListHeaderTag className="value" hint={translate (l10n) ("sr.long")}>
-              {translate (l10n) ("sr.short")}
+            <ListHeaderTag className="value" hint={translate (l10n) ("skillrating")}>
+              {translate (l10n) ("skillrating.short")}
             </ListHeaderTag>
             <ListHeaderTag className="check">
               {translate (l10n) ("check")}
             </ListHeaderTag>
-            <ListHeaderTag className="mod" hint={translate (l10n) ("mod.long")}>
-              {translate (l10n) ("mod.short")}
+            <ListHeaderTag className="mod" hint={translate (l10n) ("checkmodifier")}>
+              {translate (l10n) ("checkmodifier.short")}
             </ListHeaderTag>
-            <ListHeaderTag className="ic" hint={translate (l10n) ("ic.long")}>
-              {translate (l10n) ("ic.short")}
+            <ListHeaderTag className="ic" hint={translate (l10n) ("improvementcost")}>
+              {translate (l10n) ("improvementcost.short")}
             </ListHeaderTag>
-            {isRemovingEnabled && <ListHeaderTag className="btn-placeholder" />}
+            {isRemovingEnabled ? <ListHeaderTag className="btn-placeholder" /> : null}
             <ListHeaderTag className="btn-placeholder" />
             <ListHeaderTag className="btn-placeholder" />
           </ListHeader>
           <Scroll>
             <ListView>
+              {pipe_ (
+                activeList,
+                bindF (ensure (notNull)),
+                fmap (pipe (
+                  mapAccumL ((mprev: Maybe<Combined>) => (curr: Combined) => {
+                              const insertTopMargin = isTopMarginNeeded (sortOrder) (curr) (mprev)
+
+                              const aspects = getAspectsStr (l10n) (curr) (mtradition_id)
+
+                              if (isBlessing (curr)) {
+                                return Pair<Maybe<Combined>, JSX.Element> (
+                                  Just (curr),
+                                  (
+                                    <SkillListItem
+                                      key={LCBCA.id (curr)}
+                                      id={LCBCA.id (curr)}
+                                      name={LCBCA.name (curr)}
+                                      removePoint={
+                                        isRemovingEnabled
+                                          ? removeBlessingFromList.bind (null, LCBCA.id (curr))
+                                          : undefined}
+                                      addFillElement
+                                      noIncrease
+                                      insertTopMargin={insertTopMargin}
+                                      attributes={attributes}
+                                      derivedCharacteristics={derivedCharacteristics}
+                                      selectForInfo={this.showSlideinInfo}
+                                      addText={
+                                        sortOrder === "group"
+                                          ? `${aspects} / ${translate (l10n) ("blessing")}`
+                                          : aspects
+                                      }
+                                      />
+                                  )
+                                )
+                              }
+                              else {
+                                const add_text = getLCAddText (l10n) (sortOrder) (aspects) (curr)
+
+                                return Pair<Maybe<Combined>, JSX.Element> (
+                                  Just (curr),
+                                  (
+                                    <SkillListItem
+                                      key={LCBCA.id (curr)}
+                                      id={LCBCA.id (curr)}
+                                      name={LCBCA.name (curr)}
+                                      addDisabled={!current .get ("isIncreasable")}
+                                      addPoint={addPoint.bind (null, LCBCA.id (curr))}
+                                      removeDisabled={!current .get ("isDecreasable")}
+                                      removePoint={
+                                        isRemovingEnabled
+                                          ? current .get ("value") === 0
+                                            ? removeFromList.bind (null, LCBCA.id (curr))
+                                            : removePoint.bind (null, LCBCA.id (curr))
+                                          : undefined
+                                      }
+                                      addFillElement
+                                      check={current .get ("check")}
+                                      checkmod={current .lookup ("checkmod")}
+                                      ic={current .get ("ic")}
+                                      sr={current .get ("value")}
+                                      insertTopMargin={insertTopMargin}
+                                      attributes={attributes}
+                                      derivedCharacteristics={derivedCharacteristics}
+                                      selectForInfo={this.showSlideinInfo}
+                                      addText={add_text}
+                                      />
+                                  )
+                                )
+                              }
+                            })
+                            (Nothing),
+                  snd,
+                  toArray,
+                  arr => <>{arr}</>
+                )),
+                fromMaybeR (
+                  <ListPlaceholder l10n={l10n} type="inactiveLiturgicalChants" noResults />
+                )
+              )}
               {
                 Maybe.fromMaybe<NonNullable<React.ReactNode>>
                   (
@@ -535,3 +574,56 @@ export class LiturgicalChants
     )
   }
 }
+
+const isTopMarginNeeded =
+  (sortOrder: string) =>
+  (curr: Combined) =>
+  (mprev: Maybe<Combined>) =>
+    pipe_ (
+      mprev,
+      bindF (ensure (
+        () => sortOrder === "group" && LCBCA.active (curr)
+      )),
+      fmap (prev =>
+             !isBlessing (prev) && isBlessing (curr)
+             || isBlessing (prev) && !isBlessing (curr)
+             || !isBlessing (prev)
+               && !isBlessing (curr)
+               && notEquals (LCBCA.gr (prev)) (LCBCA.gr (curr))),
+      or
+    )
+
+const getAspectsStr =
+  (l10n: L10nRecord) =>
+  (curr: Combined) =>
+  (mtradition_id: Maybe<number>) =>
+    pipe_ (
+      mtradition_id,
+      fmap (pipe (
+        tradition_id =>
+          mapMaybe (pipe (
+                     ensure (elemF (
+                       getAspectsOfTradition (tradition_id + 1)
+                     )),
+                     bindF (pipe (
+                       dec,
+                       subscript (translate (l10n) ("aspectlist"))
+                     ))
+                   ))
+                   (LCBCA.aspects (curr)),
+        sortStrings (L10n.A.id (l10n)),
+        intercalate (", ")
+      )),
+      fromMaybe ("")
+    )
+
+const getLCAddText =
+  (l10n: L10nRecord) =>
+  (sortOrder: string) =>
+  (aspectsStr: string) =>
+  (curr: Record<LiturgicalChantWithRequirements>) =>
+    pipe_ (
+      guard (sortOrder === "group"),
+      thenF (subscript (translate (l10n) ("liturgicalchantgroups")) (LCWRA_.gr (curr) - 1)),
+      fromMaybe (aspectsStr)
+    )

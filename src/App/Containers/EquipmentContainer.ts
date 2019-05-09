@@ -1,7 +1,8 @@
 import { connect } from "react-redux";
-import { Action, Dispatch } from "redux";
+import { Maybe } from "../../Data/Maybe";
+import { ReduxDispatch } from "../Actions/Actions";
 import * as EquipmentActions from "../Actions/EquipmentActions";
-import { AppState } from "../Reducers/appReducer";
+import { AppStateRecord } from "../Reducers/appReducer";
 import { getInitialStartingWealth } from "../Selectors/activatableSelectors";
 import { getHasCurrentNoAddedAP } from "../Selectors/adventurePointsSelectors";
 import { getCarryingCapacity } from "../Selectors/attributeSelectors";
@@ -11,24 +12,25 @@ import { getEquipmentFilterText, getItemTemplatesFilterText, getPurse } from "..
 import { getEquipmentSortOrder, getMeleeItemTemplateCombatTechniqueFilter, getRangedItemTemplateCombatTechniqueFilter } from "../Selectors/uisettingsSelectors";
 import { Equipment, EquipmentDispatchProps, EquipmentOwnProps, EquipmentStateProps } from "../Views/Equipment/Equipment";
 
-const mapStateToProps = (state: AppState, ownProps: EquipmentOwnProps): EquipmentStateProps => ({
-  combatTechniques: getFilteredCombatTechniques (state, ownProps),
-  carryingCapacity: getCarryingCapacity (state),
-  initialStartingWealth: getInitialStartingWealth (state),
-  items: getFilteredItems (state, ownProps),
-  hasNoAddedAP: getHasCurrentNoAddedAP (state),
-  purse: getPurse (state),
-  sortOrder: getEquipmentSortOrder (state),
-  templates: getFilteredItemTemplates (state, ownProps),
-  totalPrice: getTotalPrice (state, ownProps),
-  totalWeight: getTotalWeight (state, ownProps),
-  meleeItemTemplateCombatTechniqueFilter: getMeleeItemTemplateCombatTechniqueFilter (state),
-  rangedItemTemplateCombatTechniqueFilter: getRangedItemTemplateCombatTechniqueFilter (state),
-  filterText: getEquipmentFilterText (state),
-  templatesFilterText: getItemTemplatesFilterText (state),
-})
+const mapStateToProps =
+  (state: AppStateRecord, ownProps: EquipmentOwnProps): EquipmentStateProps => ({
+    combatTechniques: getFilteredCombatTechniques (state, ownProps),
+    carryingCapacity: getCarryingCapacity (state),
+    initialStartingWealth: getInitialStartingWealth (state),
+    items: getFilteredItems (state, ownProps),
+    hasNoAddedAP: getHasCurrentNoAddedAP (state),
+    purse: getPurse (state),
+    sortOrder: getEquipmentSortOrder (state),
+    templates: getFilteredItemTemplates (state, ownProps),
+    totalPrice: getTotalPrice (state, ownProps),
+    totalWeight: getTotalWeight (state, ownProps),
+    meleeItemTemplateCombatTechniqueFilter: getMeleeItemTemplateCombatTechniqueFilter (state),
+    rangedItemTemplateCombatTechniqueFilter: getRangedItemTemplateCombatTechniqueFilter (state),
+    filterText: getEquipmentFilterText (state),
+    templatesFilterText: getItemTemplatesFilterText (state),
+  })
 
-const mapDispatchToProps = (dispatch: Dispatch<Action, AppState>): EquipmentDispatchProps => ({
+const mapDispatchToProps = (dispatch: ReduxDispatch): EquipmentDispatchProps => ({
   addTemplateToList (id: string): void {
     dispatch (EquipmentActions.addTemplateToList (id))
   },
@@ -71,7 +73,7 @@ const mapDispatchToProps = (dispatch: Dispatch<Action, AppState>): EquipmentDisp
 })
 
 export const connectEquipment =
-  connect<EquipmentStateProps, EquipmentDispatchProps, EquipmentOwnProps, AppState> (
+  connect<EquipmentStateProps, EquipmentDispatchProps, EquipmentOwnProps, AppStateRecord> (
     mapStateToProps,
     mapDispatchToProps
   )
