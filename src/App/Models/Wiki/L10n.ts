@@ -126,7 +126,7 @@ export interface L10n {
   "eyecolors": List<string>
   "pactcategory": string
   "nopact": string
-  "pactcategories": string
+  "pactcategories": List<string>
   "pactlevel": string
   "fairytype": string
   "fairytypes": List<string>
@@ -729,7 +729,7 @@ export const L10n =
     "eyecolors": List.empty,
     "pactcategory": "",
     "nopact": "",
-    "pactcategories": "",
+    "pactcategories": List.empty,
     "pactlevel": "",
     "fairytype": "",
     "fairytypes": List.empty,

@@ -9,6 +9,9 @@ export const isStringM = ensure (isString)
 export const misStringM: <A> (x: Maybe<A | string>) => Maybe<string> =
   bindF<any, string> (ensure (isString))
 
+export const misNonEmptyStringM: <A> (x: Maybe<A | string>) => Maybe<string> =
+  bindF<any, string> (ensure (e => isString (e) && e .length > 0))
+
 export const isNumber =
   <A> (arg: A | number): arg is number =>
     typeof arg === "number"

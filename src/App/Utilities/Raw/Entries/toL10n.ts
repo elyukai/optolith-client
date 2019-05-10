@@ -173,7 +173,7 @@ export const toL10n =
         "eyecolors": checkL10nNonEmptyStringList ("eyecolors"),
         "pactcategory": checkL10nNonEmptyString ("pactcategory"),
         "nopact": checkL10nNonEmptyString ("nopact"),
-        "pactcategories": checkL10nNonEmptyString ("pactcategories"),
+        "pactcategories": checkL10nNonEmptyStringList ("pactcategories"),
         "pactlevel": checkL10nNonEmptyString ("pactlevel"),
         "fairytype": checkL10nNonEmptyString ("fairytype"),
         "fairytypes": checkL10nNonEmptyStringList ("fairytypes"),

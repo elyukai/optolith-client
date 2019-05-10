@@ -1,12 +1,11 @@
 import * as React from "react";
 import { notEquals } from "../../../Data/Eq";
 import { fmap } from "../../../Data/Functor";
-import { elemF, intercalate, List, mapAccumL, notNull, subscript, toArray } from "../../../Data/List";
+import { elemF, intercalate, List, mapAccumL, notNull, notNullStr, subscript, toArray } from "../../../Data/List";
 import { bindF, ensure, fromMaybe, fromMaybeR, guard, Just, mapMaybe, Maybe, Nothing, or, thenF } from "../../../Data/Maybe";
 import { OrderedMap } from "../../../Data/OrderedMap";
 import { Pair, snd } from "../../../Data/Pair";
 import { Record } from "../../../Data/Record";
-import { Categories } from "../../Constants/Categories";
 import { WikiInfoContainer } from "../../Containers/WikiInfoContainer";
 import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
 import { AttributeCombined } from "../../Models/View/AttributeCombined";
@@ -81,6 +80,7 @@ export interface LiturgicalChantsState {
   currentSlideinId: Maybe<string>
 }
 
+const LCWRA = LiturgicalChantWithRequirements.A
 const LCWRA_ = LiturgicalChantWithRequirementsA_
 
 type Combined = Record<LiturgicalChantWithRequirements> | Record<BlessingCombined>
@@ -400,21 +400,21 @@ export class LiturgicalChants
                                       key={LCBCA.id (curr)}
                                       id={LCBCA.id (curr)}
                                       name={LCBCA.name (curr)}
-                                      addDisabled={!current .get ("isIncreasable")}
+                                      addDisabled={!LCWRA.isIncreasable (curr)}
                                       addPoint={addPoint.bind (null, LCBCA.id (curr))}
-                                      removeDisabled={!current .get ("isDecreasable")}
+                                      removeDisabled={!LCWRA.isDecreasable (curr)}
                                       removePoint={
                                         isRemovingEnabled
-                                          ? current .get ("value") === 0
+                                          ? LCWRA_.value (curr) === 0
                                             ? removeFromList.bind (null, LCBCA.id (curr))
                                             : removePoint.bind (null, LCBCA.id (curr))
                                           : undefined
                                       }
                                       addFillElement
-                                      check={current .get ("check")}
-                                      checkmod={current .lookup ("checkmod")}
-                                      ic={current .get ("ic")}
-                                      sr={current .get ("value")}
+                                      check={LCWRA_.check (curr)}
+                                      checkmod={LCWRA_.checkmod (curr)}
+                                      ic={LCWRA_.ic (curr)}
+                                      sr={LCWRA_.value (curr)}
                                       insertTopMargin={insertTopMargin}
                                       attributes={attributes}
                                       derivedCharacteristics={derivedCharacteristics}
@@ -431,141 +431,13 @@ export class LiturgicalChants
                   arr => <>{arr}</>
                 )),
                 fromMaybeR (
-                  <ListPlaceholder l10n={l10n} type="inactiveLiturgicalChants" noResults />
+                  <ListPlaceholder
+                    l10n={l10n}
+                    type="liturgicalChants"
+                    noResults={notNullStr (filterText)}
+                    />
                 )
               )}
-              {
-                Maybe.fromMaybe<NonNullable<React.ReactNode>>
-                  (
-                    <ListPlaceholder
-                      l10n={l10n}
-                      type="liturgicalChants"
-                      noResults={filterText.length > 0}
-                      />
-                  )
-                  (activeList
-                    .bind (Maybe.ensure (R.complement (List.null)))
-                    .fmap (R.pipe (
-                      List.mapAccumL<
-                        Maybe<Record<LiturgicalChantWithRequirements> | Record<BlessingCombined>>,
-                        Record<LiturgicalChantWithRequirements> | Record<BlessingCombined>,
-                        JSX.Element
-                      >
-                        (maybePrevious => current => {
-                          const insertTopMargin = Maybe.elem
-                            (true)
-                            (maybePrevious
-                              .bind (Maybe.ensure (() => sortOrder === "group"))
-                              .fmap (
-                                previous => (current .get ("category") as Categories)
-                                  === Categories.BLESSINGS
-                                  ? (previous .get ("category") as Categories)
-                                    !== Categories.BLESSINGS
-                                  : !isBlessing (previous) && isBlessing (current)
-                                    || isBlessing (previous) && !isBlessing (current)
-                                    || !isBlessing (previous)
-                                      && !isBlessing (current)
-                                      && previous .get ("gr") !== current.get ("gr")
-                              ))
-
-                          const aspects =
-                            Maybe.fromMaybe
-                              ("")
-                              (mtradition_id .fmap (
-                                R.pipe (
-                                  traditionId => Maybe.mapMaybe<number, string>
-                                    (R.pipe (
-                                      Maybe.ensure (
-                                        List.elem_ (getAspectsOfTradition (traditionId + 1))
-                                      ),
-                                      Maybe.bind_ (R.pipe (
-                                        R.dec,
-                                        List.subscript (
-                                          translate (l10n) ("liturgies.view.aspects")
-                                        )
-                                      ))
-                                    ))
-                                    (current .get ("aspects")),
-                                  sortStrings (l10n .get ("id")),
-                                  List.intercalate (", ")
-                                )
-                              ))
-
-                          return Tuple.of<
-                            Maybe<
-                              Record<LiturgicalChantWithRequirements> | Record<BlessingCombined>
-                            >,
-                            JSX.Element
-                          >
-                            (Just (current))
-                            (isBlessing (current)
-                              ? (
-                                <SkillListItem
-                                  key={LCBCA.id (curr)}
-                                  id={LCBCA.id (curr)}
-                                  name={LCBCA.name (curr)}
-                                  removePoint={
-                                    isRemovingEnabled
-                                      ? removeBlessingFromList.bind (null, LCBCA.id (curr))
-                                      : undefined}
-                                  addFillElement
-                                  noIncrease
-                                  insertTopMargin={insertTopMargin}
-                                  attributes={attributes}
-                                  derivedCharacteristics={derivedCharacteristics}
-                                  selectForInfo={this.showSlideinInfo}
-                                  addText={
-                                    sortOrder === "group"
-                                      ? `${aspects} / ${
-                                        translate (l10n) ("liturgies.view.blessing")
-                                      }`
-                                      : aspects
-                                  }
-                                  />
-                              )
-                              : (
-                                <SkillListItem
-                                  key={LCBCA.id (curr)}
-                                  id={LCBCA.id (curr)}
-                                  name={LCBCA.name (curr)}
-                                  addDisabled={!current .get ("isIncreasable")}
-                                  addPoint={addPoint.bind (null, LCBCA.id (curr))}
-                                  removeDisabled={!current .get ("isDecreasable")}
-                                  removePoint={
-                                    isRemovingEnabled
-                                      ? current .get ("value") === 0
-                                        ? removeFromList.bind (null, LCBCA.id (curr))
-                                        : removePoint.bind (null, LCBCA.id (curr))
-                                      : undefined
-                                  }
-                                  addFillElement
-                                  check={current .get ("check")}
-                                  checkmod={current .lookup ("checkmod")}
-                                  ic={current .get ("ic")}
-                                  sr={current .get ("value")}
-                                  insertTopMargin={insertTopMargin}
-                                  attributes={attributes}
-                                  derivedCharacteristics={derivedCharacteristics}
-                                  selectForInfo={this.showSlideinInfo}
-                                  addText={
-                                    sortOrder === "group"
-                                    ? `${aspects} / ${
-                                      Maybe.fromMaybe
-                                        ("")
-                                        (translate (l10n) ("liturgies.view.groups")
-                                          .subscript (current .get ("gr") - 1))
-                                    }`
-                                    : aspects
-                                  }
-                                  />
-                              )
-                            )
-                        })
-                        (Nothing),
-                      snd,
-                      toArray
-                    )))
-              }
             </ListView>
           </Scroll>
         </MainContent>

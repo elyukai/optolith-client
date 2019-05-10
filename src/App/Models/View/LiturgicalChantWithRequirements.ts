@@ -18,12 +18,14 @@ export const LiturgicalChantWithRequirements =
 
 const LCWRA = LiturgicalChantWithRequirements.A
 const LCA = LiturgicalChant.A
+const ASDA = ActivatableSkillDependent.A
 
 export const LiturgicalChantWithRequirementsA_ = {
   check: pipe (LCWRA.wikiEntry, LCA.check),
   checkmod: pipe (LCWRA.wikiEntry, LCA.checkmod),
   ic: pipe (LCWRA.wikiEntry, LCA.ic),
   gr: pipe (LCWRA.wikiEntry, LCA.gr),
+  value: pipe (LCWRA.stateEntry, ASDA.value),
 }
 
 export const LiturgicalChantWithRequirementsL = makeLenses (LiturgicalChantWithRequirements)
