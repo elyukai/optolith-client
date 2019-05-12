@@ -1,10 +1,15 @@
 import * as React from "react";
+import { List, map, notNull, toArray } from "../../../Data/List";
+import { ensure, Just, Maybe, maybeR } from "../../../Data/Maybe";
+import { Record } from "../../../Data/Record";
 import { SelectionsContainer } from "../../Containers/RCPSelectionsContainer";
 import { WikiInfoContainer } from "../../Containers/WikiInfoContainer";
 import { InputTextEvent, Sex } from "../../Models/Hero/heroTypeHelpers";
-import { ProfessionCombined } from "../../Models/View/viewTypeHelpers";
-import { WikiAll } from "../../Models/Wiki/wikiTypeHelpers";
-import { translate, UIMessagesObject } from "../../Utilities/I18n";
+import { ProfessionCombined, ProfessionCombinedA_ } from "../../Models/View/ProfessionCombined";
+import { L10nRecord } from "../../Models/Wiki/L10n";
+import { WikiModelRecord } from "../../Models/Wiki/WikiModel";
+import { translate } from "../../Utilities/I18n";
+import { pipe, pipe_ } from "../../Utilities/pipe";
 import { Aside } from "../Universal/Aside";
 import { Dropdown, DropdownOption } from "../Universal/Dropdown";
 import { ListView } from "../Universal/List";
@@ -21,11 +26,11 @@ import { ProfessionsListItem } from "./ProfessionsListItem";
 import { ProfessionVariants } from "./ProfessionVariants";
 
 export interface ProfessionsOwnProps {
-  locale: UIMessagesObject
+  l10n: L10nRecord
 }
 
 export interface ProfessionsStateProps {
-  wiki: Record<WikiAll>
+  wiki: WikiModelRecord
   currentProfessionId: Maybe<string>
   currentProfessionVariantId: Maybe<string>
   groupVisibilityFilter: number
@@ -68,7 +73,7 @@ export class Professions extends React.Component<ProfessionsProps, ProfessionsSt
     const {
       currentProfessionId,
       groupVisibilityFilter,
-      locale,
+      l10n,
       professions,
       setGroupVisibilityFilter,
       setSortOrder,
@@ -82,12 +87,10 @@ export class Professions extends React.Component<ProfessionsProps, ProfessionsSt
 
     return (
       <Page id="professions">
-        {
-          showAddSlidein && <SelectionsContainer close={this.hideAddSlidein} locale={locale} />
-        }
+        {showAddSlidein ? <SelectionsContainer close={this.hideAddSlidein} l10n={l10n} /> : null}
         <Options>
           <TextField
-            hint={translate (locale, "options.filtertext")}
+            hint={translate (l10n) ("search")}
             value={filterText}
             onChangeString={this.props.setFilterText}
             fullWidth
@@ -95,14 +98,14 @@ export class Professions extends React.Component<ProfessionsProps, ProfessionsSt
           <Dropdown
             value={Just (visibilityFilter)}
             onChangeJust={setVisibilityFilter}
-            options={List.of (
-              Record.of<DropdownOption> ({
-                id: "all",
-                name: translate (locale, "professions.options.allprofessions"),
+            options={List (
+              DropdownOption ({
+                id: Just ("all"),
+                name: translate (l10n) ("allprofessions"),
               }),
-              Record.of<DropdownOption> ({
-                id: "common",
-                name: translate (locale, "professions.options.commonprofessions"),
+              DropdownOption ({
+                id: Just ("common"),
+                name: translate (l10n) ("commonprofessions"),
               })
             )}
             fullWidth
@@ -110,22 +113,22 @@ export class Professions extends React.Component<ProfessionsProps, ProfessionsSt
           <Dropdown
             value={Just (groupVisibilityFilter)}
             onChangeJust={setGroupVisibilityFilter}
-            options={List.of (
-              Record.of<DropdownOption> ({
-                id: 0,
-                name: translate (locale, "professions.options.allprofessiongroups"),
+            options={List (
+              DropdownOption ({
+                id: Just (0),
+                name: translate (l10n) ("allprofessiongroups"),
               }),
-              Record.of<DropdownOption> ({
-                id: 1,
-                name: translate (locale, "professions.options.mundaneprofessions"),
+              DropdownOption ({
+                id: Just (1),
+                name: translate (l10n) ("mundaneprofessions"),
               }),
-              Record.of<DropdownOption> ({
-                id: 2,
-                name: translate (locale, "professions.options.magicalprofessions"),
+              DropdownOption ({
+                id: Just (2),
+                name: translate (l10n) ("magicalprofessions"),
               }),
-              Record.of<DropdownOption> ({
-                id: 3,
-                name: translate (locale, "professions.options.blessedprofessions"),
+              DropdownOption ({
+                id: Just (3),
+                name: translate (l10n) ("blessedprofessions"),
               })
             )}
             fullWidth
@@ -133,39 +136,39 @@ export class Professions extends React.Component<ProfessionsProps, ProfessionsSt
           <SortOptions
             sortOrder={sortOrder}
             sort={setSortOrder}
-            options={List.of<SortNames> ("name", "cost")}
-            locale={locale}
+            options={List<SortNames> ("name", "cost")}
+            l10n={l10n}
             />
         </Options>
         <MainContent>
           <ListHeader>
             <ListHeaderTag className="name">
-              {translate (locale, "name")}
+              {translate (l10n) ("name")}
             </ListHeaderTag>
-            <ListHeaderTag className="cost" hint={translate (locale, "aptext")}>
-              {translate (locale, "apshort")}
+            <ListHeaderTag className="cost" hint={translate (l10n) ("adventurepoints")}>
+              {translate (l10n) ("adventurepoints.short")}
             </ListHeaderTag>
             <ListHeaderTag className="btn-placeholder" />
             <ListHeaderTag className="btn-placeholder has-border" />
           </ListHeader>
           <Scroll>
             <ListView>
-              {
-                List.null (professions)
-                  ? (<ListPlaceholder locale={locale} type="professions" noResults />)
-                  : professions
-                    .map (
-                      profession => (
-                        <ProfessionsListItem
-                          {...this.props}
-                          key={profession .get ("id")}
-                          showAddSlidein={this.showAddSlidein}
-                          profession={profession}
-                          />
-                      )
-                    )
-                    .toArray ()
-              }
+              {pipe_ (
+                professions,
+                ensure (notNull),
+                maybeR (<ListPlaceholder l10n={l10n} type="professions" noResults />)
+                       (pipe (
+                         map ((profession: Record<ProfessionCombined>) => (
+                           <ProfessionsListItem
+                             {...this.props}
+                             key={ProfessionCombinedA_.id (profession)}
+                             showAddSlidein={this.showAddSlidein}
+                             profession={profession}
+                             />
+                         )),
+                         toArray
+                       ))
+              )}
             </ListView>
           </Scroll>
         </MainContent>

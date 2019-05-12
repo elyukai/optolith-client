@@ -837,7 +837,7 @@ export const INTERNAL_shallowEquals =
     isNothing (x) && isNothing (y)
     || isJust (x) && isJust (y) && x .value === y .value
 
-type ReactElement = JSX.Element | null | string | number
+type ReactElement = JSX.Element | null | string | number | JSX.Element[]
 
 /**
  * `fromMaybeR :: a -> Maybe a -> a`

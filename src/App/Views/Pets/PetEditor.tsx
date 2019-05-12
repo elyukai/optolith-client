@@ -1,6 +1,15 @@
 import * as React from "react";
-import { PetEditorInstance } from "../../Models/Hero/heroTypeHelpers";
-import { translate, UIMessagesObject } from "../../Utilities/I18n";
+import { fmap } from "../../../Data/Functor";
+import { fromJust, isJust, Maybe } from "../../../Data/Maybe";
+import { lookupF } from "../../../Data/OrderedMap";
+import { Record } from "../../../Data/Record";
+import { EditPet } from "../../Models/Hero/EditPet";
+import { Attribute } from "../../Models/Wiki/Attribute";
+import { L10nRecord } from "../../Models/Wiki/L10n";
+import { WikiModel } from "../../Models/Wiki/WikiModel";
+import { translate } from "../../Utilities/I18n";
+import { prefixAttr } from "../../Utilities/IDUtils";
+import { pipe } from "../../Utilities/pipe";
 import { AvatarChange } from "../Universal/AvatarChange";
 import { AvatarWrapper } from "../Universal/AvatarWrapper";
 import { BorderButton } from "../Universal/BorderButton";
@@ -8,8 +17,9 @@ import { Slidein } from "../Universal/Slidein";
 import { TextField } from "../Universal/TextField";
 
 export interface PetEditorProps {
-  petInEditor: Maybe<Record<PetEditorInstance>>
-  locale: UIMessagesObject
+  attributes: WikiModel["attributes"]
+  petInEditor: Maybe<Record<EditPet>>
+  l10n: L10nRecord
   isEditPetAvatarOpen: boolean
   isInCreation: Maybe<boolean>
 
@@ -51,193 +61,195 @@ export interface PetEditorProps {
   setNotes (notes: string): void
 }
 
-export function PetEditor (props: PetEditorProps) {
-  const { petInEditor: maybePetInEditor, locale, isInCreation } = props
+const EPA = EditPet.A
 
-  if (Maybe.isJust (maybePetInEditor)) {
-    const pet = Maybe.fromJust (maybePetInEditor)
+export function PetEditor (props: PetEditorProps) {
+  const { attributes, petInEditor: mpet_in_editor, l10n, isInCreation } = props
+
+  if (isJust (mpet_in_editor)) {
+    const pet = fromJust (mpet_in_editor)
 
     return (
       <Slidein isOpened close={props.closePetEditor}>
         <div className="pet-edit">
           <div className="left">
-            <AvatarWrapper src={pet .lookup ("avatar")} onClick={props.openEditPetAvatar} />
+            <AvatarWrapper src={EPA.avatar (pet)} onClick={props.openEditPetAvatar} />
           </div>
           <div className="right">
             <div className="row">
               <TextField
-                label={translate (locale, "pet.name")}
-                value={pet .get ("name")}
+                label={translate (l10n) ("name")}
+                value={EPA.name (pet)}
                 onChangeString={props.setName}
                 />
               <TextField
-                label={translate (locale, "pet.sizecategory")}
-                value={pet .get ("size")}
+                label={translate (l10n) ("sizecategory")}
+                value={EPA.size (pet)}
                 onChangeString={props.setSize}
                 />
               <TextField
-                label={translate (locale, "pet.type")}
-                value={pet .get ("type")}
+                label={translate (l10n) ("type")}
+                value={EPA.type (pet)}
                 onChangeString={props.setType}
                 />
               <TextField
-                label={translate (locale, "pet.apspent")}
-                value={pet .get ("spentAp")}
+                label={translate (l10n) ("apspent")}
+                value={EPA.spentAp (pet)}
                 onChangeString={props.setSpentAp}
                 />
               <TextField
-                label={translate (locale, "pet.totalap")}
-                value={pet .get ("totalAp")}
+                label={translate (l10n) ("totalap")}
+                value={EPA.totalAp (pet)}
                 onChangeString={props.setTotalAp}
                 />
             </div>
             <div className="row">
               <TextField
-                label={translate (locale, "pet.cou")}
-                value={pet .get ("cou")}
+                label={getAttrShort (attributes) (prefixAttr (1))}
+                value={EPA.cou (pet)}
                 onChangeString={props.setCourage}
                 />
               <TextField
-                label={translate (locale, "pet.sgc")}
-                value={pet .get ("sgc")}
+                label={getAttrShort (attributes) (prefixAttr (2))}
+                value={EPA.sgc (pet)}
                 onChangeString={props.setSagacity}
                 />
               <TextField
-                label={translate (locale, "pet.int")}
-                value={pet .get ("int")}
+                label={getAttrShort (attributes) (prefixAttr (3))}
+                value={EPA.int (pet)}
                 onChangeString={props.setIntuition}
                 />
               <TextField
-                label={translate (locale, "pet.cha")}
-                value={pet .get ("cha")}
+                label={getAttrShort (attributes) (prefixAttr (4))}
+                value={EPA.cha (pet)}
                 onChangeString={props.setCharisma}
                 />
               <TextField
-                label={translate (locale, "pet.dex")}
-                value={pet .get ("dex")}
+                label={getAttrShort (attributes) (prefixAttr (5))}
+                value={EPA.dex (pet)}
                 onChangeString={props.setDexterity}
                 />
               <TextField
-                label={translate (locale, "pet.agi")}
-                value={pet .get ("agi")}
+                label={getAttrShort (attributes) (prefixAttr (6))}
+                value={EPA.agi (pet)}
                 onChangeString={props.setAgility}
                 />
               <TextField
-                label={translate (locale, "pet.con")}
-                value={pet .get ("con")}
+                label={getAttrShort (attributes) (prefixAttr (7))}
+                value={EPA.con (pet)}
                 onChangeString={props.setConstitution}
                 />
               <TextField
-                label={translate (locale, "pet.str")}
-                value={pet .get ("str")}
+                label={getAttrShort (attributes) (prefixAttr (8))}
+                value={EPA.str (pet)}
                 onChangeString={props.setStrength}
                 />
             </div>
             <div className="row">
               <TextField
-                label={translate (locale, "pet.lp")}
-                value={pet .get ("lp")}
+                label={translate (l10n) ("lifepoints.short")}
+                value={EPA.lp (pet)}
                 onChangeString={props.setLp}
                 />
               <TextField
-                label={translate (locale, "pet.ae")}
-                value={pet .get ("ae")}
+                label={translate (l10n) ("arcaneenergy.short")}
+                value={EPA.ae (pet)}
                 onChangeString={props.setAe}
                 />
               <TextField
-                label={translate (locale, "pet.spi")}
-                value={pet .get ("spi")}
+                label={translate (l10n) ("spirit.short")}
+                value={EPA.spi (pet)}
                 onChangeString={props.setSpi}
                 />
               <TextField
-                label={translate (locale, "pet.tou")}
-                value={pet .get ("tou")}
+                label={translate (l10n) ("toughness.short")}
+                value={EPA.tou (pet)}
                 onChangeString={props.setTou}
                 />
               <TextField
-                label={translate (locale, "pet.pro")}
-                value={pet .get ("pro")}
+                label={translate (l10n) ("protection.short")}
+                value={EPA.pro (pet)}
                 onChangeString={props.setPro}
                 />
               <TextField
-                label={translate (locale, "pet.ini")}
-                value={pet .get ("ini")}
+                label={translate (l10n) ("initiative.short")}
+                value={EPA.ini (pet)}
                 onChangeString={props.setIni}
                 />
               <TextField
-                label={translate (locale, "pet.mov")}
-                value={pet .get ("mov")}
+                label={translate (l10n) ("movement.short")}
+                value={EPA.mov (pet)}
                 onChangeString={props.setMov}
                 />
             </div>
             <div className="row">
               <TextField
-                label={translate (locale, "pet.attack")}
-                value={pet .get ("attack")}
+                label={translate (l10n) ("attack")}
+                value={EPA.attack (pet)}
                 onChangeString={props.setAttack}
                 />
               <TextField
-                label={translate (locale, "pet.at")}
-                value={pet .get ("at")}
+                label={translate (l10n) ("attack.short")}
+                value={EPA.at (pet)}
                 onChangeString={props.setAt}
                 />
               <TextField
-                label={translate (locale, "pet.pa")}
-                value={pet .get ("pa")}
+                label={translate (l10n) ("parry.short")}
+                value={EPA.pa (pet)}
                 onChangeString={props.setPa}
                 />
               <TextField
-                label={translate (locale, "pet.dp")}
-                value={pet .get ("dp")}
+                label={translate (l10n) ("damagepoints.short")}
+                value={EPA.dp (pet)}
                 onChangeString={props.setDp}
                 />
               <TextField
-                label={translate (locale, "pet.reach")}
-                value={pet .get ("reach")}
+                label={translate (l10n) ("reach")}
+                value={EPA.reach (pet)}
                 onChangeString={props.setReach}
                 />
             </div>
             <div className="row">
               <TextField
-                label={translate (locale, "pet.actions")}
-                value={pet .get ("actions")}
+                label={translate (l10n) ("actions")}
+                value={EPA.actions (pet)}
                 onChangeString={props.setActions}
                 />
               <TextField
-                label={translate (locale, "pet.skills")}
-                value={pet .get ("talents")}
+                label={translate (l10n) ("skills")}
+                value={EPA.talents (pet)}
                 onChangeString={props.setSkills}
                 />
               <TextField
-                label={translate (locale, "pet.specialabilities")}
-                value={pet .get ("skills")}
+                label={translate (l10n) ("specialabilities")}
+                value={EPA.skills (pet)}
                 onChangeString={props.setAbilities}
                 />
             </div>
             <div className="row">
               <TextField
-                label={translate (locale, "pet.notes")}
-                value={pet .get ("notes")}
+                label={translate (l10n) ("notes")}
+                value={EPA.notes (pet)}
                 onChangeString={props.setNotes}
                 />
             </div>
             {Maybe.elem (true) (isInCreation)
               ? (
                 <BorderButton
-                  label={translate (locale, "actions.addtolist")}
+                  label={translate (l10n) ("add")}
                   onClick={props.addPet}
                   />
               )
               : (
                 <BorderButton
-                  label={translate (locale, "actions.save")}
+                  label={translate (l10n) ("save")}
                   onClick={props.savePet}
                   />
               )}
           </div>
         </div>
         <AvatarChange
-          locale={locale}
+          l10n={l10n}
           setPath={props.setAvatar}
           close={props.closeEditPetAvatar}
           isOpen={props.isEditPetAvatarOpen}
@@ -248,3 +260,7 @@ export function PetEditor (props: PetEditorProps) {
 
   return null
 }
+
+const getAttrShort =
+  (attrs: WikiModel["attributes"]) =>
+    pipe (lookupF (attrs), fmap (Attribute.A.short))

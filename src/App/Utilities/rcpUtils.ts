@@ -1,4 +1,4 @@
-import { fmap } from "../../Data/Functor";
+import { fmap, fmapF } from "../../Data/Functor";
 import { foldr, subscriptF } from "../../Data/List";
 import { altF, bindF, elem, fromMaybe, Just, liftM2, Maybe, sum } from "../../Data/Maybe";
 import { lookupF, OrderedMap } from "../../Data/OrderedMap";
@@ -11,7 +11,7 @@ import { ProfessionVariant } from "../Models/Wiki/ProfessionVariant";
 import { Race } from "../Models/Wiki/Race";
 import { RaceVariant } from "../Models/Wiki/RaceVariant";
 import { Die } from "../Models/Wiki/sub/Die";
-import { nameBySexDef } from "../Models/Wiki/sub/NameBySex";
+import { NameBySex, nameBySexDef } from "../Models/Wiki/sub/NameBySex";
 import { rollDiceFold, rollDiceR, rollDie } from "./dice";
 import { translate } from "./I18n";
 import { ifElse } from "./ifElse";
@@ -190,3 +190,15 @@ export const getFullProfessionName =
       fromMaybe ("")
     )
   }
+
+export const getNameBySex =
+  (sex: Sex) =>
+  // tslint:disable-next-line: no-shadowed-variable
+  (name: string | Record<NameBySex>): string =>
+    NameBySex.is (name) ? NameBySex.A[sex] (name) : name
+
+export const getNameBySexM =
+  (sex: Sex) =>
+  (mname: Maybe<string | Record<NameBySex>>): Maybe<string> =>
+                  // tslint:disable-next-line: no-shadowed-variable
+    fmapF (mname) (name => NameBySex.is (name) ? NameBySex.A[sex] (name) : name)

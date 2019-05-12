@@ -44,7 +44,6 @@ import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
 import { Spell } from "../../Models/Wiki/Spell";
 import { IncreaseSkill } from "../../Models/Wiki/sub/IncreaseSkill";
 import { IncreaseSkillList } from "../../Models/Wiki/sub/IncreaseSkillList";
-import { NameBySex } from "../../Models/Wiki/sub/NameBySex";
 import { ProfessionSelectionIds } from "../../Models/Wiki/wikiTypeHelpers";
 import { getSelectOptionName } from "../../Utilities/Activatable/selectionUtils";
 import { ndash } from "../../Utilities/Chars";
@@ -52,6 +51,7 @@ import { localizeOrList, translate, translateP } from "../../Utilities/I18n";
 import { getNumericId, prefixRace, prefixSA } from "../../Utilities/IDUtils";
 import { add, dec, gt } from "../../Utilities/mathUtils";
 import { pipe, pipe_ } from "../../Utilities/pipe";
+import { getNameBySex, getNameBySexM } from "../../Utilities/rcpUtils";
 import { renderMaybe } from "../../Utilities/ReactUtils";
 import { sortRecordsByName, sortStrings } from "../../Utilities/sortBy";
 import { whilePred } from "../../Utilities/whilePred";
@@ -109,8 +109,8 @@ export function WikiProfessionInfo (props: WikiProfessionInfoProps): JSX.Element
 
   const selections = PCA.mappedSelections (x)
 
-  const name = getName (fromMaybe<Sex> ("m") (sex)) (PCA_.name (x))
-  const msubname = fmapF (PCA_.subname (x)) (getName (fromMaybe<Sex> ("m") (sex)))
+  const name = getNameBySex (fromMaybe<Sex> ("m") (sex)) (PCA_.name (x))
+  const msubname = getNameBySexM (fromMaybe<Sex> ("m") (sex)) (PCA_.subname (x))
 
   const specializationSelectionString =
     getSpecializationSelection (l10n) (skills) (x)
@@ -791,7 +791,7 @@ function Variant (props: VariantProps) {
 
   const fullText = PVCA_.fullText (variant)
 
-  const name = getName (fromMaybe<Sex> ("m") (msex)) (PVCA_.name (variant))
+  const name = getNameBySex (fromMaybe<Sex> ("m") (msex)) (PVCA_.name (variant))
 
   const ap_sum = Maybe.sum (PCA_.ap (profession)) + PVCA_.ap (variant)
 
@@ -1437,13 +1437,3 @@ const combineSpells =
     x => append<CombinedMappedSpell | Record<CombinedSpell>> (sel1 (x)) (sel2 (x))
   )
 }
-
-interface getName {
-  (mname: Just<string | Record<NameBySex>>): Just<string>
-  (mname: Maybe<string | Record<NameBySex>>): Maybe<string>
-}
-
-const getName =
-  (sex: Sex) =>
-  (name: string | Record<NameBySex>): string =>
-    NameBySex.is (name) ? NameBySex.A[sex] (name) : name

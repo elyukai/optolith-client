@@ -1,7 +1,17 @@
 import * as React from "react";
+import { flip } from "../../../Data/Function";
+import { fmap, fmapF } from "../../../Data/Functor";
+import { notNull, toArray } from "../../../Data/List";
+import { bind, fromMaybe, mapMaybe, Maybe, maybe } from "../../../Data/Maybe";
+import { lookupF } from "../../../Data/OrderedMap";
+import { Record } from "../../../Data/Record";
 import { Sex } from "../../Models/Hero/heroTypeHelpers";
-import { ProfessionCombined } from "../../Models/View/viewTypeHelpers";
-import { Book, NameBySex, SourceLink, WikiAll } from "../../Models/Wiki/wikiTypeHelpers";
+import { ProfessionCombined, ProfessionCombinedA_ } from "../../Models/View/ProfessionCombined";
+import { Book } from "../../Models/Wiki/Book";
+import { SourceLink } from "../../Models/Wiki/sub/SourceLink";
+import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
+import { pipe, pipe_ } from "../../Utilities/pipe";
+import { getNameBySex, getNameBySexM } from "../../Utilities/rcpUtils";
 import { IconButton } from "../Universal/IconButton";
 import { ListItem } from "../Universal/ListItem";
 import { ListItemButtons } from "../Universal/ListItemButtons";
@@ -15,10 +25,12 @@ export interface ProfessionsListItemProps {
   currentProfessionVariantId: Maybe<string>
   profession: Record<ProfessionCombined>
   sex: Maybe<Sex>
-  wiki: Record<WikiAll>
+  wiki: WikiModelRecord
   selectProfession (id: string): void
   showAddSlidein (): void
 }
+
+const PCA_ = ProfessionCombinedA_
 
 export function ProfessionsListItem (props: ProfessionsListItemProps) {
   const {
@@ -26,69 +38,54 @@ export function ProfessionsListItem (props: ProfessionsListItemProps) {
     currentProfessionId,
     profession,
     selectProfession,
-    sex: maybeSex,
+    sex: msex,
     wiki,
   } = props
 
-  const professionName = maybeSex
-    .fmap (
-      sex => {
-        const name = profession .get ("name")
+  const professionName = fmapF (msex) (flip (getNameBySex) (PCA_.name (profession)))
 
-        return name instanceof Record ? name .get (sex) : name
-      }
-    )
+  const professionSubName = bind (msex) (flip (getNameBySexM) (PCA_.subname (profession)))
 
-  const professionSubName =
-    Maybe.liftM2<Sex, string | Record<NameBySex>, string>
-      (sex => subname => subname instanceof Record ? subname .get (sex) : subname)
-      (maybeSex)
-      (profession .lookup ("subname"))
+  const fullName = fmapF (professionName)
+                         (name => maybe (name)
+                                        ((subname: string) => `${name} (${subname})`)
+                                        (professionSubName))
 
-  const fullName = professionName
-    .fmap (
-      name => Maybe.maybe<string, string>
-        (name)
-        (subname => `${name} (${subname})`)
-        (professionSubName)
-    )
-
-  const src = profession .get ("src")
+  const id = PCA_.id (profession)
+  const src = PCA_.src (profession)
 
   return (
-    <ListItem active={Maybe.elem (profession .get ("id")) (currentProfessionId)}>
-      <ListItemName name={Maybe.fromMaybe ("") (fullName)} />
+    <ListItem active={Maybe.elem (id) (currentProfessionId)}>
+      <ListItemName name={fromMaybe ("") (fullName)} />
       <ListItemSeparator />
-      {!src .null () && (
-        <ListItemGroup small>
-          {
-            Maybe.mapMaybe<Record<SourceLink>, Record<Book>>
-              (e => wiki .get ("books") .lookup (e .get ("id")))
-              (src)
-              .map (
-                e => (
-                  <span key={e .get ("id")}>
-                    {e .get ("short")}
-                  </span>
-                )
-              )
-              .toArray ()
-          }
-        </ListItemGroup>
-      )}
+      {notNull (src)
+        ? (
+            <ListItemGroup small>
+              {pipe_ (
+                src,
+                mapMaybe (pipe (
+                  SourceLink.A.id,
+                  lookupF (WikiModel.A.books (wiki)),
+                  fmap (book => <span key={Book.A.id (book)}>{Book.A.short (book)}</span>)
+                )),
+                toArray
+              )}
+            </ListItemGroup>
+          )
+        : null}
       <ListItemValues>
-        <div className="cost">{profession .get ("ap")}</div>
+        <div className="cost">{PCA_.ap (profession)}</div>
       </ListItemValues>
       <ListItemButtons>
         <IconButton
           icon="&#xE90a;"
-          onClick={() => selectProfession (profession .get ("id"))}
-          disabled={Maybe.elem (profession .get ("id")) (currentProfessionId)}
+          onClick={() => selectProfession (id)}
+          disabled={Maybe.elem (id) (currentProfessionId)}
           />
         <IconButton
           icon="&#xE90e;"
           onClick={showAddSlidein}
-          disabled={Maybe.notElem (profession .get ("id")) (currentProfessionId)}
+          disabled={Maybe.notElem (id) (currentProfessionId)}
           />
       </ListItemButtons>
     </ListItem>

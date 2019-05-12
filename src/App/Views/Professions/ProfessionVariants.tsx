@@ -1,59 +1,70 @@
 import * as React from "react";
+import { ident } from "../../../Data/Function";
+import { consF, find, List, map } from "../../../Data/List";
+import { Just, liftM2, Maybe, maybeRNull } from "../../../Data/Maybe";
+import { Record } from "../../../Data/Record";
 import { Sex } from "../../Models/Hero/heroTypeHelpers";
-import { ProfessionCombined } from "../../Models/View/viewTypeHelpers";
-import { translate, UIMessagesObject } from "../../Utilities/I18n";
+import { ProfessionCombined, ProfessionCombinedA_ } from "../../Models/View/ProfessionCombined";
+import { ProfessionVariantCombinedA_ } from "../../Models/View/ProfessionVariantCombined";
+import { L10n, L10nRecord } from "../../Models/Wiki/L10n";
+import { translate } from "../../Utilities/I18n";
+import { pipe, pipe_ } from "../../Utilities/pipe";
+import { getNameBySex } from "../../Utilities/rcpUtils";
+import { sortRecordsByName } from "../../Utilities/sortBy";
 import { Option, RadioButtonGroup } from "../Universal/RadioButtonGroup";
 
 export interface ProfessionVariantsProps {
   currentProfessionId: Maybe<string>
   currentProfessionVariantId: Maybe<string>
-  locale: UIMessagesObject
+  l10n: L10nRecord
   professions: List<Record<ProfessionCombined>>
   sex: Maybe<Sex>
   selectProfessionVariant (id: Maybe<string>): void
 }
 
+const PCA = ProfessionCombined.A
+const PCA_ = ProfessionCombinedA_
+const PVCA_ = ProfessionVariantCombinedA_
+
 export function ProfessionVariants (props: ProfessionVariantsProps) {
   const {
     currentProfessionId,
     currentProfessionVariantId,
-    locale,
+    l10n,
     professions,
     selectProfessionVariant,
-    sex: maybeSex,
+    sex: msex,
   } = props
 
-  const variants =
-    Maybe.liftM2<Record<ProfessionCombined>, Sex, List<Record<Option>>>
-      (profession => sex => sortObjects (
-        profession .get ("mappedVariants") .map (variant => {
+  const mvars =
+    liftM2 ((sex: Sex) => (prof: Record<ProfessionCombined>) =>
+             pipe_ (
+               prof,
+               PCA.mappedVariants,
+               map (prof_var => {
+                 const name = getNameBySex (sex) (PVCA_.name (prof_var))
+                 const ap_tag = translate (l10n) ("adventurepoints.short")
 
-          const name = variant .get ("name")
+                 return Option ({
+                   name: `${name} (${Maybe.sum (PCA_.ap (prof)) + PVCA_.ap (prof_var)} ${ap_tag})`,
+                   value: Just (PVCA_.id (prof_var)),
+                 })
+               }),
+               sortRecordsByName (L10n.A.id (l10n)),
+               !PCA_.isVariantRequired (prof)
+                 ? consF (Option ({ name: translate (l10n) ("novariant") }))
+                 : ident
+             ))
+           (msex)
+           (find (pipe (PCA_.id, Maybe.elemF (currentProfessionId)))
+                 (professions))
 
-          const finalName = name instanceof Record ? name .get (sex) : name
-
-          return Record.of<Option> ({
-            name: `${finalName} (${profession .get ("ap") + variant .get ("ap")} AP)`,
-            value: variant .get ("id"),
-          })
-        }),
-        locale .get ("id")
-      )
-        .cons (
-          Record.of<Option> ({
-            name: translate (locale, "professions.options.novariant"),
-          })
-        ))
-      (professions .find (e => Maybe.elem (e .get ("id")) (currentProfessionId)))
-      (maybeSex)
-
-  if (Maybe.isJust (variants)) {
-    return <RadioButtonGroup
-      active={currentProfessionVariantId}
-      onClick={selectProfessionVariant}
-      array={Maybe.fromJust (variants)}
-      />
-  }
-
-  return null
+  return maybeRNull ((vars: List<Record<Option<string>>>) => (
+                      <RadioButtonGroup
+                        active={currentProfessionVariantId}
+                        onClick={selectProfessionVariant}
+                        array={vars}
+                        />
+                    ))
+                    (mvars)
 }

@@ -66,6 +66,7 @@ export const ProfessionCombinedA_ = {
   dependencies: pipe (ProfessionCombined.A.wikiEntry, Profession.A.dependencies),
   prerequisitesEnd: pipe (ProfessionCombined.A.wikiEntry, Profession.A.prerequisitesEnd),
   prerequisitesStart: pipe (ProfessionCombined.A.wikiEntry, Profession.A.prerequisitesStart),
+  isVariantRequired: pipe (ProfessionCombined.A.wikiEntry, Profession.A.isVariantRequired),
   suggestedAdvantagesText:
     pipe (ProfessionCombined.A.wikiEntry, Profession.A.suggestedAdvantagesText),
   suggestedDisadvantagesText:

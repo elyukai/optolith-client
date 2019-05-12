@@ -3,8 +3,9 @@ import * as classNames from "classnames";
 import * as React from "react";
 import { findDOMNode } from "react-dom";
 import { fmapF } from "../../../Data/Functor";
-import { notNullStrUndef } from "../../../Data/List";
-import { fromMaybe, Maybe, normalize } from "../../../Data/Maybe";
+import { notNullStr } from "../../../Data/List";
+import { bindF, ensure, fromMaybe, fromMaybeR, Maybe, maybeR, normalize } from "../../../Data/Maybe";
+import { pipe_ } from "../../Utilities/pipe";
 import { isNumber } from "../../Utilities/typeCheckUtils";
 import { Label } from "./Label";
 
@@ -16,7 +17,7 @@ export interface TextFieldProps {
   disabled?: boolean
   fullWidth?: boolean
   hint?: Maybe<string> | string
-  label?: string
+  label?: Maybe<string> | string
   multiLine?: boolean
   onChange? (event: React.FormEvent<HTMLInputElement>): void
   onChangeString? (updatedText: string): void
@@ -51,6 +52,8 @@ export class TextField extends React.Component<TextFieldProps, {}> {
     } = this.props
 
     const value = fromMaybe<string | number> ("") (normalize (this.props.value))
+
+    const mlabel = normalize (label)
 
     const mhint = normalize (this.props.hint)
 
@@ -103,9 +106,9 @@ export class TextField extends React.Component<TextFieldProps, {}> {
         disabled,
         invalid: valid === false,
       })}>
-        {notNullStrUndef (label) ? <Label text={label} /> : null}
+        {pipe_ (mlabel, bindF (ensure (notNullStr)), maybeR (null) (l => <Label text={l} />))}
         {inputElement}
-        {Maybe.fromMaybe (<></>) (hintElement)}
+        {fromMaybeR (null) (hintElement)}
         {counterTextElement}
       </div>
     )

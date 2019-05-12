@@ -1,4 +1,7 @@
 import * as React from "react";
+import { Record } from "../../../Data/Record";
+import { Pet } from "../../Models/Hero/Pet";
+import { renderMaybe } from "../../Utilities/ReactUtils";
 import { AvatarWrapper } from "../Universal/AvatarWrapper";
 import { IconButton } from "../Universal/IconButton";
 import { ListItem } from "../Universal/ListItem";
@@ -8,7 +11,7 @@ import { ListItemSeparator } from "../Universal/ListItemSeparator";
 import { VerticalList } from "../Universal/VerticalList";
 
 export interface PetsListItemProps {
-  pet: Record<PetInstance>
+  pet: Record<Pet>
   editPet (id: string): void
   deletePet (id: string): void
 }
@@ -18,16 +21,16 @@ export function PetsListItem (props: PetsListItemProps) {
 
   return (
     <ListItem>
-      <AvatarWrapper src={pet .lookup ("avatar")} />
-      <ListItemName name={pet .get ("name")} large>
+      <AvatarWrapper src={Pet.A.avatar (pet)} />
+      <ListItemName name={Pet.A.name (pet)} large>
         <VerticalList>
-          <span>{pet .lookupWithDefault<"type"> ("") ("type")}</span>
+          <span>{renderMaybe (Pet.A.type (pet))}</span>
         </VerticalList>
       </ListItemName>
       <ListItemSeparator/>
       <ListItemButtons>
-        <IconButton icon="&#xE90b;" onClick={() => deletePet (pet .get ("id"))} />
-        <IconButton icon="&#xE90c;" onClick={() => editPet (pet .get ("id"))} />
+        <IconButton icon="&#xE90b;" onClick={() => deletePet (Pet.A.id (pet))} />
+        <IconButton icon="&#xE90c;" onClick={() => editPet (Pet.A.id (pet))} />
       </ListItemButtons>
     </ListItem>
   )

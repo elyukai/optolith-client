@@ -1,6 +1,15 @@
 import * as React from "react";
-import { PetEditorInstance, PetInstance } from "../../Models/Hero/heroTypeHelpers";
-import { translate, UIMessagesObject } from "../../Utilities/I18n";
+import { fmap } from "../../../Data/Functor";
+import { map, toArray } from "../../../Data/List";
+import { fromMaybeR, Maybe } from "../../../Data/Maybe";
+import { elems, OrderedMap, size } from "../../../Data/OrderedMap";
+import { Record } from "../../../Data/Record";
+import { EditPet } from "../../Models/Hero/EditPet";
+import { Pet } from "../../Models/Hero/Pet";
+import { Attribute } from "../../Models/Wiki/Attribute";
+import { L10nRecord } from "../../Models/Wiki/L10n";
+import { translate } from "../../Utilities/I18n";
+import { pipe, pipe_ } from "../../Utilities/pipe";
 import { BorderButton } from "../Universal/BorderButton";
 import { ListView } from "../Universal/List";
 import { Options } from "../Universal/Options";
@@ -10,12 +19,13 @@ import { PetEditor } from "./PetEditor";
 import { PetsListItem } from "./PetsListItem";
 
 export interface PetsOwnProps {
-  locale: UIMessagesObject
+  l10n: L10nRecord
 }
 
 export interface PetsStateProps {
-  pets: Maybe<OrderedMap<string, Record<PetInstance>>>
-  petInEditor: Maybe<Record<PetEditorInstance>>
+  attributes: OrderedMap<string, Record<Attribute>>
+  pets: Maybe<OrderedMap<string, Record<Pet>>>
+  petInEditor: Maybe<Record<EditPet>>
   isEditPetAvatarOpen: boolean
   isInCreation: Maybe<boolean>
 }
@@ -65,34 +75,35 @@ export interface PetsDispatchProps {
 export type PetsProps = PetsStateProps & PetsDispatchProps & PetsOwnProps
 
 export function Pets (props: PetsProps) {
-  const { createPet, locale, pets } = props
+  const { createPet, l10n, pets } = props
 
   return (
     <Page id="pets">
       <PetEditor {...props} />
       {
-        Maybe.elem (0) (pets .fmap (OrderedMap.size))
-        && (
-          <Options>
-            <BorderButton
-              label={translate (locale, "actions.addtolist")}
-              onClick={createPet}
-              />
-          </Options>
-        )
+        Maybe.elem (0) (fmap (size) (pets))
+          ? (
+            <Options>
+              <BorderButton
+                label={translate (l10n) ("add")}
+                onClick={createPet}
+                />
+            </Options>
+          )
+          : null
       }
       <Scroll>
         <ListView>
-          {
-            Maybe.fromMaybe<NonNullable<React.ReactNode>>
-              (<></>)
-              (pets .fmap (R.pipe (
-                OrderedMap.elems,
-                List.map (e => (
-                  <PetsListItem {...props} pet={e} key={e .get ("id")} />
-                ))
-              )))
-          }
+          {pipe_ (
+            pets,
+            fmap (pipe (
+              elems,
+              map (e => <PetsListItem {...props} pet={e} key={Pet.A.id (e)} />),
+              toArray,
+              x => <>{x}</>
+            )),
+            fromMaybeR (null)
+          )}
         </ListView>
       </Scroll>
     </Page>
