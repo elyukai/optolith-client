@@ -1,18 +1,19 @@
 import { connect } from "react-redux";
-import { Action, Dispatch } from "redux";
+import { Maybe } from "../../Data/Maybe";
+import { ReduxDispatch } from "../Actions/Actions";
 import * as PactActions from "../Actions/PactActions";
-import { AppState } from "../Reducers/appReducer";
+import { AppStateRecord } from "../Reducers/appReducer";
 import { getIsPactValid, isPactEditable } from "../Selectors/pactSelectors";
 import { getPact } from "../Selectors/stateSelectors";
 import { PactSettings, PactSettingsDispatchProps, PactSettingsOwnProps, PactSettingsStateProps } from "../Views/Pact/Pact";
 
-const mapStateToProps = (state: AppState): PactSettingsStateProps => ({
+const mapStateToProps = (state: AppStateRecord): PactSettingsStateProps => ({
   pact: getPact (state),
   isPactValid: getIsPactValid (state),
   isPactEditable: isPactEditable (state),
 })
 
-const mapDispatchToProps = (dispatch: Dispatch<Action>): PactSettingsDispatchProps => ({
+const mapDispatchToProps = (dispatch: ReduxDispatch): PactSettingsDispatchProps => ({
   setPactCategory (category: Maybe<number>) {
     dispatch (PactActions.setPactCategory (category))
   },
@@ -37,7 +38,7 @@ const mapDispatchToProps = (dispatch: Dispatch<Action>): PactSettingsDispatchPro
 })
 
 const connectPact =
-  connect<PactSettingsStateProps, PactSettingsDispatchProps, PactSettingsOwnProps, AppState> (
+  connect<PactSettingsStateProps, PactSettingsDispatchProps, PactSettingsOwnProps, AppStateRecord> (
     mapStateToProps,
     mapDispatchToProps
   )

@@ -1,11 +1,12 @@
-import { fromMaybe, maybe } from "../../Data/Maybe";
+import { fromMaybe, maybe, Maybe } from "../../Data/Maybe";
 
 /**
  * `renderMaybe :: Maybe (String | Int) -> (String | Int)`
  *
  * Returns the value in the `Just` or `""` if it is `Nothing`.
  */
-export const renderMaybe = fromMaybe<string | number> ("")
+export const renderMaybe =
+  fromMaybe<string | number> ("") as <A extends string | number> (x: Maybe<A>) => A | string
 
 /**
  * `renderMaybeWith :: (a -> (String | Int)) -> Maybe a -> (String | Int)`

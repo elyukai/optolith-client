@@ -1,6 +1,6 @@
 import * as React from "react";
 import { List, map, notNull, toArray } from "../../../Data/List";
-import { ensure, Just, Maybe, maybeR } from "../../../Data/Maybe";
+import { bindF, ensure, Just, Maybe, maybeR } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
 import { SelectionsContainer } from "../../Containers/RCPSelectionsContainer";
 import { WikiInfoContainer } from "../../Containers/WikiInfoContainer";
@@ -34,7 +34,7 @@ export interface ProfessionsStateProps {
   currentProfessionId: Maybe<string>
   currentProfessionVariantId: Maybe<string>
   groupVisibilityFilter: number
-  professions: List<Record<ProfessionCombined>>
+  professions: Maybe<List<Record<ProfessionCombined>>>
   sortOrder: string
   sex: Maybe<Sex>
   visibilityFilter: string
@@ -155,7 +155,7 @@ export class Professions extends React.Component<ProfessionsProps, ProfessionsSt
             <ListView>
               {pipe_ (
                 professions,
-                ensure (notNull),
+                bindF (ensure (notNull)),
                 maybeR (<ListPlaceholder l10n={l10n} type="professions" noResults />)
                        (pipe (
                          map ((profession: Record<ProfessionCombined>) => (

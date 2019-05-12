@@ -388,6 +388,8 @@ export const elem =
   <A> (x: A) => (xs: List<A>): boolean =>
     isNil (xs) ? false : equals (x) (xs .x) || elem (x) (xs .xs)
 
+export type elem<A> = (x: A) => (xs: List<A>) => boolean
+
 /**
  * `elemF :: Eq a => [a] -> a -> Bool`
  *

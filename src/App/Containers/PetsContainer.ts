@@ -1,19 +1,20 @@
 import { connect } from "react-redux";
-import { Action, Dispatch } from "redux";
+import { ReduxDispatch } from "../Actions/Actions";
 import * as PetActions from "../Actions/PetActions";
 import * as SubwindowsActions from "../Actions/SubwindowsActions";
-import { AppState } from "../Reducers/appReducer";
-import { getIsEditPetAvatarOpen, getIsInPetCreation, getPetEditorInstance, getPets } from "../Selectors/stateSelectors";
+import { AppStateRecord } from "../Reducers/appReducer";
+import { getIsEditPetAvatarOpen, getIsInPetCreation, getPetEditorInstance, getPets, getWikiAttributes } from "../Selectors/stateSelectors";
 import { Pets, PetsDispatchProps, PetsOwnProps, PetsStateProps } from "../Views/Pets/Pets";
 
-const mapStateToProps = (state: AppState): PetsStateProps => ({
+const mapStateToProps = (state: AppStateRecord): PetsStateProps => ({
+  attributes: getWikiAttributes (state),
   pets: getPets (state),
   isEditPetAvatarOpen: getIsEditPetAvatarOpen (state),
   petInEditor: getPetEditorInstance (state),
   isInCreation: getIsInPetCreation (state),
 })
 
-const mapDispatchToProps = (dispatch: Dispatch<Action, AppState>): PetsDispatchProps => ({
+const mapDispatchToProps = (dispatch: ReduxDispatch): PetsDispatchProps => ({
   addPet (): void {
     dispatch (PetActions.addPet)
   },
@@ -130,9 +131,10 @@ const mapDispatchToProps = (dispatch: Dispatch<Action, AppState>): PetsDispatchP
   },
 })
 
-export const connectPets = connect<PetsStateProps, PetsDispatchProps, PetsOwnProps, AppState> (
-  mapStateToProps,
-  mapDispatchToProps
-)
+export const connectPets =
+  connect<PetsStateProps, PetsDispatchProps, PetsOwnProps, AppStateRecord> (
+    mapStateToProps,
+    mapDispatchToProps
+  )
 
 export const PetsContainer = connectPets (Pets)

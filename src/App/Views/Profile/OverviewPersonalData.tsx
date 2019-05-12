@@ -1,9 +1,19 @@
 import * as React from "react";
-import { InputTextEvent, PersonalData } from "../../Models/Hero/heroTypeHelpers";
-import { Culture, Race, RaceVariant } from "../../Models/Wiki/wikiTypeHelpers";
+import { fmap } from "../../../Data/Functor";
+import { elem, elemF, List, subscriptF } from "../../../Data/List";
+import { all, alt, bind, catMaybes, ensure, fromJust, imapMaybe, isJust, Just, liftM2, Maybe, maybe, or } from "../../../Data/Maybe";
+import { Record } from "../../../Data/Record";
+import { InputTextEvent } from "../../Models/Hero/heroTypeHelpers";
+import { PersonalData } from "../../Models/Hero/PersonalData";
+import { Culture } from "../../Models/Wiki/Culture";
+import { L10n, L10nRecord } from "../../Models/Wiki/L10n";
+import { Race } from "../../Models/Wiki/Race";
+import { RaceVariant } from "../../Models/Wiki/RaceVariant";
 import { translate } from "../../Utilities/I18n";
+import { pipe, pipe_ } from "../../Utilities/pipe";
 import { isEmptyOr, isFloat, isNaturalNumber } from "../../Utilities/RegexUtils";
-import { isNumber } from "../../Utilities/typeCheckUtils";
+import { sortRecordsByName } from "../../Utilities/sortBy";
+import { misNumberM } from "../../Utilities/typeCheckUtils";
 import { Dropdown, DropdownOption } from "../Universal/Dropdown";
 import { IconButton } from "../Universal/IconButton";
 import { InputButtonGroup } from "../Universal/InputButtonGroup";
@@ -13,7 +23,7 @@ export interface OverviewPersonalDataOwnProps {
   culture: Maybe<Record<Culture>>
   eyecolorTags: List<string>
   haircolorTags: List<string>
-  locale: UIMessagesObject
+  l10n: L10nRecord
   profile: Record<PersonalData>
   race: Maybe<Record<Race>>
   raceVariant: Maybe<Record<RaceVariant>>
@@ -50,92 +60,88 @@ interface HairColorAndEyeColorOptions {
   eyeOptions: List<Record<DropdownOption>>
 }
 
-const getHairColorAndEyeColorOptions = (locale: UIMessagesObject) =>
-  (maybeRace: Maybe<Record<Race>>) =>
-    (maybeRaceVariant: Maybe<Record<RaceVariant>>) =>
-      (hairColorTags: List<string>) =>
-        (eyeColorTags: List<string>) =>
-          (isAlbino: Maybe<boolean>): HairColorAndEyeColorOptions => {
-            if (Maybe.elem (true) (isAlbino)) {
-              return {
-                hairOptions: Maybe.catMaybes (
-                  List.of (
-                    hairColorTags .subscript (23) .fmap (
-                      name => Record.of<DropdownOption> ({ id: 24, name })
-                    )
-                  )
-                ),
-                eyeOptions: sortObjects (
-                  Maybe.catMaybes (
-                    List.of (
-                      eyeColorTags .subscript (18) .fmap (
-                        name => Record.of<DropdownOption> ({ id: 19, name })
-                      ),
-                      eyeColorTags .subscript (19) .fmap (
-                        name => Record.of<DropdownOption> ({ id: 20, name })
-                      )
-                    )
-                  ),
-                  locale.get ("id")
-                ),
-              }
-            }
+const getDropdownOption =
+  (id: number) => fmap ((name: string) => DropdownOption ({ id: Just (id), name }))
 
-            if (Maybe.isJust (maybeRace)) {
-              const race = Maybe.fromJust (maybeRace)
-              const raceHairColors = race.lookup ("hairColors")
-              const raceEyeColors = race.lookup ("eyeColors")
+const getHairColorAndEyeColorOptions =
+  (l10n: L10nRecord) =>
+  (mrace: Maybe<Record<Race>>) =>
+  (mrace_var: Maybe<Record<RaceVariant>>) =>
+  (hair_color_tags: List<string>) =>
+  (eye_color_tags: List<string>) =>
+  (mis_albino: Maybe<boolean>): HairColorAndEyeColorOptions => {
+    if (or (mis_albino)) {
+      return {
+        hairOptions: catMaybes (List (pipe_ (
+                                       hair_color_tags,
+                                       subscriptF (23),
+                                       getDropdownOption (24)
+                                     ))),
+        eyeOptions: pipe_ (
+          List (
+            pipe_ (eye_color_tags, subscriptF (18), getDropdownOption (19)),
+            pipe_ (eye_color_tags, subscriptF (19), getDropdownOption (20))
+          ),
+          catMaybes,
+          sortRecordsByName (L10n.A.id (l10n))
+        ),
+      }
+    }
 
-              const raceVariantHairColors =
-                maybeRaceVariant .bind (raceVariant => raceVariant.lookup ("hairColors"))
+    if (isJust (mrace)) {
+      const race = fromJust (mrace)
+      const raceHairColors = Race.A.hairColors (race)
+      const raceEyeColors = Race.A.eyeColors (race)
 
-              const raceVariantEyeColors =
-                maybeRaceVariant .bind (raceVariant => raceVariant.lookup ("eyeColors"))
+      const raceVariantHairColors =
+        bind (mrace_var) (RaceVariant.A.hairColors)
 
-              return {
-                hairOptions: sortObjects (
-                  Maybe.imapMaybe
-                    (index => (name: string) =>
-                      Maybe.ensure<Record<DropdownOption>>
-                        (entry => Maybe.elem
-                          (true)
-                          (Maybe.liftM2<number, List<number>, boolean>
-                            (List.elem)
-                            (entry .lookup ("id") .bind (Maybe.ensure (isNumber)))
-                            (raceHairColors .alt (raceVariantHairColors))))
-                        (Record.of<DropdownOption> ({ id: index + 1, name })))
-                    (hairColorTags),
-                  locale.get ("id")
-                ),
-                eyeOptions: sortObjects (
-                  Maybe.imapMaybe
-                    (index => (name: string) =>
-                      Maybe.ensure<Record<DropdownOption>>
-                        (entry => Maybe.elem
-                          (true)
-                          (Maybe.liftM2<number, List<number>, boolean>
-                            (List.elem)
-                            (entry .lookup ("id") .bind (Maybe.ensure (isNumber)))
-                            (raceEyeColors .alt (raceVariantEyeColors))))
-                        (Record.of<DropdownOption> ({ id: index + 1, name })))
-                    (eyeColorTags),
-                  locale.get ("id")
-                ),
-              }
-            }
+      const raceVariantEyeColors =
+        bind (mrace_var) (RaceVariant.A.eyeColors)
 
-            return {
-              hairOptions: List.empty (),
-              eyeOptions: List.empty (),
-            }
-          }
+      const hairColors = alt (raceHairColors) (raceVariantHairColors)
+      const eyeColors = alt (raceEyeColors) (raceVariantEyeColors)
+
+      return {
+        hairOptions: pipe_ (
+          hair_color_tags,
+          imapMaybe (index => (name: string) =>
+                      ensure (pipe (
+                               DropdownOption.A.id,
+                               id => or (liftM2 (elem as elem<number>)
+                                                (misNumberM (id))
+                                                (hairColors))
+                             ))
+                             (DropdownOption ({ id: Just (index + 1), name }))),
+          sortRecordsByName (L10n.A.id (l10n))
+        ),
+        eyeOptions: pipe_ (
+          eye_color_tags,
+          imapMaybe (index => (name: string) =>
+                      ensure (pipe (
+                               DropdownOption.A.id,
+                               id => or (liftM2 (elem as elem<number>)
+                                                (misNumberM (id))
+                                                (eyeColors))
+                             ))
+                             (DropdownOption ({ id: Just (index + 1), name }))),
+          sortRecordsByName (L10n.A.id (l10n))
+        ),
+      }
+    }
+
+    return {
+      hairOptions: List (),
+      eyeOptions: List (),
+    }
+  }
 
 export function OverviewPersonalData (props: OverviewPersonalDataProps) {
   const {
-    culture: maybeCulture,
+    culture: mculture,
     eyecolorTags,
     haircolorTags,
-    locale,
+    l10n,
     profile,
     race,
     raceVariant,
@@ -143,68 +149,67 @@ export function OverviewPersonalData (props: OverviewPersonalDataProps) {
     isAlbino,
   } = props
 
-  const hairAndEyeColorOptions = getHairColorAndEyeColorOptions (locale)
+  const hairAndEyeColorOptions = getHairColorAndEyeColorOptions (l10n)
                                                                 (race)
                                                                 (raceVariant)
                                                                 (haircolorTags)
                                                                 (eyecolorTags)
                                                                 (isAlbino)
 
-  const socialOptions = Maybe.fromMaybe
-    (List.empty<Record<DropdownOption>> ())
-    (maybeCulture .fmap (
-      culture => Maybe.imapMaybe
-        (index => (name: string) =>
-          Maybe.ensure<Record<DropdownOption>>
-            (R.pipe (
-              Record.lookup<DropdownOption, "id"> ("id"),
-              Maybe.bind_ (Maybe.ensure (isNumber)),
-              Maybe.fmap (List.elem_ (culture .get ("socialStatus"))),
-              Maybe.elem (true)
-            ))
-            (Record.of<DropdownOption> ({ id: index + 1, name })))
-        (socialstatusTags)
-    ))
+  const socialOptions =
+    maybe (List<Record<DropdownOption>> ())
+          ((culture: Record<Culture>) =>
+            imapMaybe (index => (name: string) =>
+                        ensure (pipe (
+                                 DropdownOption.A.id,
+                                 misNumberM,
+                                 fmap (elemF (Culture.A.socialStatus (culture))),
+                                 or
+                               ))
+                               (DropdownOption ({ id: Just (index + 1), name })))
+                      (socialstatusTags)
+          )
+          (mculture)
 
-  const age = profile.lookup ("age")
-  const size = profile.lookup ("size")
-  const weight = profile.lookup ("weight")
+  const age = PersonalData.A.age (profile)
+  const size = PersonalData.A.size (profile)
+  const weight = PersonalData.A.weight (profile)
 
   return (
     <div className="personal-data">
       <div>
         <TextField
-          label={translate (locale, "personaldata.family")}
-          value={Maybe.fromMaybe ("") (profile.lookup ("family"))}
+          label={translate (l10n) ("family")}
+          value={PersonalData.A.family (profile)}
           onChange={props.changeFamily}
           />
       </div>
       <div>
         <TextField
-          label={translate (locale, "personaldata.placeofbirth")}
-          value={Maybe.fromMaybe ("") (profile.lookup ("placeOfBirth"))}
+          label={translate (l10n) ("placeofbirth")}
+          value={PersonalData.A.placeOfBirth (profile)}
           onChange={props.changePlaceOfBirth}
           />
       </div>
       <div>
         <TextField
-          label={translate (locale, "personaldata.dateofbirth")}
-          value={Maybe.fromMaybe ("") (profile.lookup ("dateOfBirth"))}
+          label={translate (l10n) ("dateofbirth")}
+          value={PersonalData.A.dateOfBirth (profile)}
           onChange={props.changeDateOfBirth}
           />
       </div>
       <div>
         <TextField
-          label={translate (locale, "personaldata.age")}
-          value={Maybe.fromMaybe ("") (age)}
+          label={translate (l10n) ("age")}
+          value={age}
           onChange={props.changeAge}
-          valid={!Maybe.isJust (age) || Maybe.elem (true) (age .fmap (isEmptyOr (isNaturalNumber)))}
+          valid={all (isEmptyOr (isNaturalNumber)) (age)}
           />
       </div>
       <InputButtonGroup className="reroll">
         <Dropdown
-          label={translate (locale, "personaldata.haircolor")}
-          value={profile.lookup ("hairColor")}
+          label={translate (l10n) ("haircolor")}
+          value={PersonalData.A.hairColor (profile)}
           onChange={props.changeHaircolor}
           options={hairAndEyeColorOptions.hairOptions}
           disabled={isAlbino}
@@ -213,8 +218,8 @@ export function OverviewPersonalData (props: OverviewPersonalDataProps) {
       </InputButtonGroup>
       <InputButtonGroup className="reroll">
         <Dropdown
-          label={translate (locale, "personaldata.eyecolor")}
-          value={profile.lookup ("eyeColor")}
+          label={translate (l10n) ("eyecolor")}
+          value={PersonalData.A.eyeColor (profile)}
           onChange={props.changeEyecolor}
           options={hairAndEyeColorOptions.eyeOptions}
           />
@@ -222,58 +227,55 @@ export function OverviewPersonalData (props: OverviewPersonalDataProps) {
       </InputButtonGroup>
       <InputButtonGroup className="reroll">
         <TextField
-          label={translate (locale, "personaldata.size")}
-          value={Maybe.fromMaybe ("") (profile.lookup ("size"))}
+          label={translate (l10n) ("size")}
+          value={PersonalData.A.size (profile)}
           onChange={props.changeSize}
-          valid={!Maybe.isJust (size) || Maybe.elem (true) (size .fmap (isEmptyOr (isFloat)))}
+          valid={all (isEmptyOr (isFloat)) (size)}
           />
         <IconButton icon="&#xE913;" onClick={props.rerollSize} />
       </InputButtonGroup>
       <InputButtonGroup className="reroll">
         <TextField
-          label={translate (locale, "personaldata.weight")}
-          value={Maybe.fromMaybe ("") (profile.lookup ("weight"))}
+          label={translate (l10n) ("weight")}
+          value={PersonalData.A.weight (profile)}
           onChange={props.changeWeight}
-          valid={
-            !Maybe.isJust (weight)
-            || Maybe.elem (true) (weight .fmap (isEmptyOr (isNaturalNumber)))
-          }
+          valid={all (isEmptyOr (isNaturalNumber)) (weight)}
           />
         <IconButton icon="&#xE913;" onClick={props.rerollWeight} />
       </InputButtonGroup>
       <div>
         <TextField
-          label={translate (locale, "personaldata.title")}
-          value={profile.lookup ("title")}
+          label={translate (l10n) ("title")}
+          value={PersonalData.A.title (profile)}
           onChange={props.changeTitle}
           />
       </div>
       <div>
         <Dropdown
-          label={translate (locale, "personaldata.socialstatus")}
-          value={profile.lookup ("socialStatus")}
+          label={translate (l10n) ("socialstatus")}
+          value={PersonalData.A.socialStatus (profile)}
           onChange={props.changeSocialStatus}
           options={socialOptions}
           />
       </div>
       <div>
         <TextField
-          label={translate (locale, "personaldata.characteristics")}
-          value={profile.lookup ("characteristics")}
+          label={translate (l10n) ("characteristics")}
+          value={PersonalData.A.characteristics (profile)}
           onChange={props.changeCharacteristics}
           />
       </div>
       <div>
         <TextField
-          label={translate (locale, "personaldata.otherinfo")}
-          value={profile.lookup ("otherInfo")}
+          label={translate (l10n) ("otherinfo")}
+          value={PersonalData.A.otherInfo (profile)}
           onChange={props.changeOtherInfo}
           />
       </div>
       <div>
         <TextField
-          label={translate (locale, "personaldata.cultureareaknowledge")}
-          value={profile.lookup ("cultureAreaKnowledge")}
+          label={translate (l10n) ("cultureareaknowledge")}
+          value={PersonalData.A.cultureAreaKnowledge (profile)}
           onChange={props.changeCultureAreaKnowledge}
           />
       </div>

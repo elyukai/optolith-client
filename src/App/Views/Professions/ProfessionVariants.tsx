@@ -1,7 +1,7 @@
 import * as React from "react";
 import { ident } from "../../../Data/Function";
 import { consF, find, List, map } from "../../../Data/List";
-import { Just, liftM2, Maybe, maybeRNull } from "../../../Data/Maybe";
+import { bind, Just, liftM2, Maybe, maybeRNull } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
 import { Sex } from "../../Models/Hero/heroTypeHelpers";
 import { ProfessionCombined, ProfessionCombinedA_ } from "../../Models/View/ProfessionCombined";
@@ -17,7 +17,7 @@ export interface ProfessionVariantsProps {
   currentProfessionId: Maybe<string>
   currentProfessionVariantId: Maybe<string>
   l10n: L10nRecord
-  professions: List<Record<ProfessionCombined>>
+  professions: Maybe<List<Record<ProfessionCombined>>>
   sex: Maybe<Sex>
   selectProfessionVariant (id: Maybe<string>): void
 }
@@ -56,8 +56,7 @@ export function ProfessionVariants (props: ProfessionVariantsProps) {
                  : ident
              ))
            (msex)
-           (find (pipe (PCA_.id, Maybe.elemF (currentProfessionId)))
-                 (professions))
+           (bind (professions) (find (pipe (PCA_.id, Maybe.elemF (currentProfessionId)))))
 
   return maybeRNull ((vars: List<Record<Option<string>>>) => (
                       <RadioButtonGroup
