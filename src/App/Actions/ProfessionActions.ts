@@ -1,4 +1,5 @@
-import { liftM3, Maybe } from "../../Data/Maybe";
+import { fromJust, isJust, liftM3, listToMaybe, Maybe, Nothing } from "../../Data/Maybe";
+import { lookup } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
 import { ActionTypes } from "../Constants/ActionTypes";
 import { Selections } from "../Models/Hero/heroTypeHelpers";
@@ -6,24 +7,43 @@ import { Culture } from "../Models/Wiki/Culture";
 import { Profession } from "../Models/Wiki/Profession";
 import { ProfessionVariant } from "../Models/Wiki/ProfessionVariant";
 import { Race } from "../Models/Wiki/Race";
-import { WikiModelRecord } from "../Models/Wiki/WikiModel";
+import { WikiModel, WikiModelRecord } from "../Models/Wiki/WikiModel";
+import { AppState } from "../Reducers/appReducer";
 import { getCurrentCulture, getCurrentProfession, getCurrentProfessionVariant, getCurrentRace } from "../Selectors/rcpSelectors";
 import { getWiki } from "../Selectors/stateSelectors";
-import { ReduxAction } from "./Actions";
+import { pipe_ } from "../Utilities/pipe";
+import { ReduxAction, ReduxActions } from "./Actions";
 
 export interface SelectProfessionAction {
   type: ActionTypes.SELECT_PROFESSION
   payload: {
     id: string;
+    var_id: Maybe<string>;
   }
 }
 
-export const selectProfession = (id: string): SelectProfessionAction => ({
-  type: ActionTypes.SELECT_PROFESSION,
-  payload: {
-    id,
-  },
-})
+export const selectProfession =
+  (id: string): ReduxActions =>
+  (dispatch, getState) => {
+    const state = getState ();
+
+    const mselected_prof = pipe_ (state, AppState.A.wiki, WikiModel.A.professions, lookup (id))
+
+    if (isJust (mselected_prof)) {
+      const selected_prof = fromJust (mselected_prof)
+
+      dispatch<SelectProfessionAction> ({
+        type: ActionTypes.SELECT_PROFESSION,
+        payload: {
+          id,
+          var_id:
+            Profession.A.isVariantRequired (selected_prof)
+              ? listToMaybe (Profession.A.variants (selected_prof))
+              : Nothing,
+        },
+      })
+    }
+  }
 
 interface SelectionsAndWikiEntries extends Selections {
   race: Record<Race>

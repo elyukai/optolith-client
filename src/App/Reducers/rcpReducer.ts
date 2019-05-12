@@ -45,7 +45,7 @@ export const rcpReducer =
       case ActionTypes.SELECT_PROFESSION:
         return pipe (
           set (HeroModelL.profession) (Just (action.payload.id)),
-          set (HeroModelL.professionVariant) (Nothing)
+          set (HeroModelL.professionVariant) (action.payload.var_id)
         )
 
       case ActionTypes.SELECT_PROFESSION_VARIANT:
