@@ -1,51 +1,43 @@
 import * as React from "react";
-import { RaceCombined } from "../../Models/View/viewTypeHelpers";
+import { find, List, map, notNull } from "../../../Data/List";
+import { bindF, ensure, Just, Maybe, maybeRNull } from "../../../Data/Maybe";
+import { Record } from "../../../Data/Record";
+import { RaceCombined, RaceCombinedA_ } from "../../Models/View/RaceCombined";
+import { L10n, L10nRecord } from "../../Models/Wiki/L10n";
+import { RaceVariant } from "../../Models/Wiki/RaceVariant";
+import { pipe, pipe_ } from "../../Utilities/pipe";
+import { sortRecordsByName } from "../../Utilities/sortBy";
 import { Option, RadioButtonGroup } from "../Universal/RadioButtonGroup";
 
 export interface RaceVariantsProps {
   currentId: Maybe<string>
   currentVariantId: Maybe<string>
-  locale: UIMessagesObject
+  l10n: L10nRecord
   races: Maybe<List<Record<RaceCombined>>>
   selectRaceVariant (id: string): void
 }
 
 export function RaceVariants (props: RaceVariantsProps) {
-  const { currentId, currentVariantId, locale, races, selectRaceVariant } = props
+  const { currentId, currentVariantId, l10n, races, selectRaceVariant } = props
 
-  const variantsList =
-    races
-      .bind (
-        List.find (
-          R.pipe (
-            Record.get<RaceCombined, "id"> ("id"),
-            Maybe.elem_ (currentId)
-          )
-        )
-      )
-      .fmap (
-        R.pipe (
-          Record.get<RaceCombined, "mappedVariants"> ("mappedVariants"),
-          List.map (e => Record.of<Option> ({
-            name: e .get ("name"),
-            value: e .get ("id"),
-          })),
-          list => sortObjects (list, locale .get ("id"))
-        )
-      )
-      .bind (
-        Maybe.ensure<List<Record<Option>>> (R.pipe (List.null, R.not))
-      )
-
-  if (Maybe.isJust (variantsList)) {
-    return (
-      <RadioButtonGroup
-        active={currentVariantId}
-        onClickJust={selectRaceVariant}
-        array={Maybe.fromJust (variantsList)}
-        />
-    )
-  }
-
-  return null
+  return pipe_ (
+    races,
+    bindF (find (pipe (RaceCombinedA_.id, Maybe.elemF (currentId)))),
+    bindF (pipe (
+      RaceCombined.A.mappedVariants,
+      map (e => Option ({
+        name: RaceVariant.A.name (e),
+        value: Just (RaceVariant.A.id (e)),
+      })),
+      sortRecordsByName (L10n.A.id (l10n)),
+      ensure (notNull)
+    )),
+    maybeRNull (vars => (
+                          <RadioButtonGroup
+                            active={currentVariantId}
+                            onClickJust={selectRaceVariant}
+                            array={vars}
+                            />
+                        ))
+  )
 }

@@ -1,7 +1,12 @@
 import * as React from "react";
+import { List, map, notNull, toArray } from "../../../Data/List";
+import { bindF, ensure, Maybe, maybeR } from "../../../Data/Maybe";
+import { Record } from "../../../Data/Record";
 import { WikiInfoContainer } from "../../Containers/WikiInfoContainer";
-import { RaceCombined } from "../../Models/View/viewTypeHelpers";
-import { translate, UIMessagesObject } from "../../Utilities/I18n";
+import { RaceCombined, RaceCombinedA_ } from "../../Models/View/RaceCombined";
+import { L10nRecord } from "../../Models/Wiki/L10n";
+import { translate } from "../../Utilities/I18n";
+import { pipe, pipe_ } from "../../Utilities/pipe";
 import { Aside } from "../Universal/Aside";
 import { ListView } from "../Universal/List";
 import { ListHeader } from "../Universal/ListHeader";
@@ -17,7 +22,7 @@ import { RacesListItem } from "./RacesListItem";
 import { RaceVariants } from "./RaceVariants";
 
 export interface RacesOwnProps {
-  locale: UIMessagesObject
+  l10n: L10nRecord
 }
 
 export interface RacesStateProps {
@@ -40,13 +45,13 @@ export interface RacesDispatchProps {
 export type RacesProps = RacesStateProps & RacesDispatchProps & RacesOwnProps
 
 export function Races (props: RacesProps) {
-  const { filterText, locale, races: list, sortOrder } = props
+  const { filterText, l10n, races: list, sortOrder } = props
 
   return (
     <Page id="races">
       <Options>
         <TextField
-          hint={translate (locale, "options.filtertext")}
+          hint={translate (l10n) ("search")}
           value={filterText}
           onChangeString={props.setFilterText}
           fullWidth
@@ -54,41 +59,40 @@ export function Races (props: RacesProps) {
         <SortOptions
           sortOrder={sortOrder}
           sort={props.setSortOrder}
-          options={List.of<SortNames> ("name", "cost")}
-          locale={locale}
+          options={List<SortNames> ("name", "cost")}
+          l10n={l10n}
           />
       </Options>
       <MainContent>
         <ListHeader>
           <ListHeaderTag className="name">
-            {translate (locale, "name")}
+            {translate (l10n) ("name")}
           </ListHeaderTag>
-          <ListHeaderTag className="cost" hint={translate (locale, "aptext")}>
-            {translate (locale, "apshort")}
+          <ListHeaderTag className="cost" hint={translate (l10n) ("adventurepoints")}>
+            {translate (l10n) ("adventurepoints.short")}
           </ListHeaderTag>
           <ListHeaderTag className="btn-placeholder" />
           <ListHeaderTag className="btn-placeholder has-border" />
         </ListHeader>
         <Scroll>
           <ListView>
-            {
-              Maybe.fromMaybe<NonNullable<React.ReactNode>>
-                (
-                  <ListPlaceholder
-                    locale={locale}
-                    type="races"
-                    noResults={filterText.length > 0}
-                    />
-                )
-                (list
-                  .bind (Maybe.ensure (R.pipe (List.null, R.not)))
-                  .fmap (R.pipe (
-                    List.map (
-                      race => (<RacesListItem {...props} key={race .get ("id")} race={race} />)
-                    ),
-                    List.toArray
-                  )))
-            }
+            {pipe_ (
+              list,
+              bindF (ensure (notNull)),
+              maybeR (
+                       <ListPlaceholder
+                         l10n={l10n}
+                         type="races"
+                         noResults={filterText.length > 0}
+                         />
+                     )
+                     (pipe (
+                       map (race => (
+                         <RacesListItem {...props} key={RaceCombinedA_.id (race)} race={race} />
+                       )),
+                       toArray
+                     ))
+            )}
           </ListView>
         </Scroll>
       </MainContent>

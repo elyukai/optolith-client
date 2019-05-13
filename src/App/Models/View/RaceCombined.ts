@@ -34,5 +34,6 @@ export const RaceCombinedA_ = {
   commonCultures: pipe (RaceCombined.A.wikiEntry, Race.A.commonCultures),
   uncommonAdvantagesText: pipe (RaceCombined.A.wikiEntry, Race.A.uncommonAdvantagesText),
   uncommonDisadvantagesText: pipe (RaceCombined.A.wikiEntry, Race.A.uncommonDisadvantagesText),
+  variants: pipe (RaceCombined.A.wikiEntry, Race.A.variants),
   src: pipe (RaceCombined.A.wikiEntry, Race.A.src),
 }
