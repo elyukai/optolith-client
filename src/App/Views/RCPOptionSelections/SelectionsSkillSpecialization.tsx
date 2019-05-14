@@ -1,15 +1,17 @@
 import * as React from "react";
-import { fmap, fmapF } from "../../../Data/Functor";
+import { fmap, fmapF, mapReplace } from "../../../Data/Functor";
 import { isList, List, map } from "../../../Data/List";
-import { altF_, bind, ensure, Just, mapMaybe, Maybe } from "../../../Data/Maybe";
+import { altF_, bind, ensure, Just, mapMaybe, Maybe, maybeToNullable } from "../../../Data/Maybe";
 import { lookupF, OrderedMap } from "../../../Data/OrderedMap";
-import { Pair } from "../../../Data/Pair";
+import { fst, Pair, snd } from "../../../Data/Pair";
 import { Record } from "../../../Data/Record";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { SpecializationSelection } from "../../Models/Wiki/professionSelections/SpecializationSelection";
 import { Skill } from "../../Models/Wiki/Skill";
-import { localizeOrList, translate } from "../../Utilities/I18n";
+import { Application } from "../../Models/Wiki/sub/Application";
+import { localizeOrList, translateP } from "../../Utilities/I18n";
 import { pipe, pipe_ } from "../../Utilities/pipe";
+import { renderMaybe } from "../../Utilities/ReactUtils";
 import { isString } from "../../Utilities/typeCheckUtils";
 import { Dropdown, DropdownOption } from "../Universal/Dropdown";
 import { TextField } from "../Universal/TextField";
@@ -47,81 +49,69 @@ export function SelectionsSkillSpecialization (props: SelectionsSkillSpecializat
         map (Skill.A.name),
         localizeOrList (l10n)
       )),
-      altF_ (() )
+      altF_ (() => fmapF (maybeActiveSkill) (Skill.A.name))
     )
-    maybeSkillsList .fmap (
-      R.pipe (
-        List.map (e => e .get ("name")),
-        List.intercalate (
-          ` ${translate (l10n, "rcpselections.labels.applicationforskillspecialization")} `
-        )
-      )
-    )
-      .alt (maybeActiveSkill .fmap (Record.get<Skill, "name"> ("name")))
 
   const selectSkillElement =
-    maybeSkillsList
-      .fmap (
-        skillsList => (
-          <div>
-            <Dropdown
-              className="talents"
-              value={activeId}
-              onChangeJust={changeId}
-              options={skillsList as unknown as List<Record<DropdownOption>>}
-              />
-          </div>
-        )
-      )
+    fmapF (maybeSkillsList)
+          (skillsList => (
+              <div>
+                <Dropdown
+                  className="talents"
+                  value={activeId}
+                  onChangeJust={changeId}
+                  options={skillsList as unknown as List<Record<DropdownOption>>}
+                  />
+              </div>
+            )
+          )
 
   const selectionElement =
-    mapReplace<JSX.Element, Record<Skill>>
-      (
-        <div>
-          {
-            maybeToReactNode (
-              maybeApplicationList
-                .fmap (
-                  applicationList => (
-                    <Dropdown
-                      className="tiers"
-                      value={fromMaybe (0) (Tuple.fst (active))}
-                      onChangeJust={change}
-                      options={applicationList as List<Record<DropdownOption>>}
-                      disabled={Tuple.snd (active) .length > 0}
-                      />
-                  )
-                )
-            )
-          }
-          {
-            maybeToReactNode (
-              maybeApplicationInput
-                .fmap (
-                  applicationInput => (
-                    <TextField
-                      hint={applicationInput}
-                      value={Tuple.snd (active)}
-                      onChangeString={change}
-                      />
-                  )
-                )
-            )
-          }
-        </div>
-      )
-      (maybeActiveSkill)
+    mapReplace (
+                 <div>
+                   {pipe_ (
+                     maybeApplicationList,
+                     fmap (pipe (
+                       map (e => DropdownOption ({
+                              id: Just (Application.A.id (e)),
+                              name: Application.A.name (e),
+                            })),
+                       applicationList => (
+                         <Dropdown
+                           className="tiers"
+                           value={Maybe.sum (fst (active))}
+                           onChangeJust={change}
+                           options={applicationList as List<Record<DropdownOption>>}
+                           disabled={snd (active) .length > 0}
+                           />
+                       )
+                     )),
+                     maybeToNullable
+                   )}
+                   {pipe_ (
+                     maybeApplicationInput,
+                     fmap (applicationInput => (
+                            <TextField
+                              hint={applicationInput}
+                              value={snd (active)}
+                              onChangeString={change}
+                              />
+                          )),
+                     maybeToNullable
+                   )}
+                 </div>
+               )
+               (maybeActiveSkill)
 
   return (
     <div className="spec">
       <h4>
-        {translate (l10n, "rcpselections.labels.applicationforskillspecialization")}
-        {" ("}
-        {fromMaybe ("") (name)}
-        {")"}
+        {translateP (l10n)
+                    ("skillspecialization")
+                    (List (renderMaybe (name)))}
       </h4>
-      {maybeToReactNode (selectSkillElement)}
-      {maybeToReactNode (selectionElement)}
+      {maybeToNullable (selectSkillElement)}
+      {maybeToNullable (selectionElement)}
     </div>
   )
 }

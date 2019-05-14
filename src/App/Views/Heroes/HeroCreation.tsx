@@ -1,8 +1,8 @@
 import * as React from "react";
-import { List, map, toArray } from "../../../Data/List";
+import { List, map } from "../../../Data/List";
 import { fromJust, isJust, isNothing, Just, Maybe, Nothing } from "../../../Data/Maybe";
 import { elems, OrderedMap } from "../../../Data/OrderedMap";
-import { member, OrderedSet, toggle } from "../../../Data/OrderedSet";
+import { OrderedSet, toggle } from "../../../Data/OrderedSet";
 import { Record } from "../../../Data/Record";
 import { Sex } from "../../Models/Hero/heroTypeHelpers";
 import { Book } from "../../Models/Wiki/Book";
@@ -10,7 +10,7 @@ import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { translate } from "../../Utilities/I18n";
 import { pipe_ } from "../../Utilities/pipe";
-import { Checkbox } from "../Universal/Checkbox";
+import { BookSelection } from "../Rules/BookSelection";
 import { Dialog, DialogProps } from "../Universal/DialogNew";
 import { Dropdown, DropdownOption } from "../Universal/Dropdown";
 import { Hr } from "../Universal/Hr";
@@ -148,28 +148,14 @@ export class HeroCreation extends React.Component<HeroCreationProps, HeroCreatio
           />
         <Hr/>
         <Scroll>
-          <Checkbox
-            checked={enableAllRuleBooks}
-            onClick={this.switchEnableAllRuleBooks}
-            label={translate (l10n) ("enableallrulebooks")}
+          <BookSelection
+            allRuleBooksEnabled={enableAllRuleBooks}
+            enabledRuleBooks={enabledRuleBooks}
+            l10n={l10n}
+            sortedBooks={sortedBooks}
+            switchEnableAllRuleBooks={this.switchEnableAllRuleBooks}
+            switchEnableRuleBook={this.switchEnableRuleBook}
             />
-          {pipe_ (
-            sortedBooks,
-            map (e => {
-              return (
-                <Checkbox
-                  key={Book.A.id (e)}
-                  checked={enableAllRuleBooks
-                           || member (Book.A.id (e)) (enabledRuleBooks)
-                           || Book.A.isCore (e)}
-                  onClick={() => this.switchEnableRuleBook (Book.A.id (e))}
-                  label={Book.A.name (e)}
-                  disabled={enableAllRuleBooks || Book.A.isCore (e)}
-                  />
-              )
-            }),
-            toArray
-          )}
         </Scroll>
       </Dialog>
     )

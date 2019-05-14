@@ -88,15 +88,17 @@ export class Router extends React.Component<RouterProps> {
       [TabId.ThirdPartyLicenses]: () => <ThirdPartyLicenses />,
       [TabId.LastChanges]: () => <LastChanges />,
 
-      [TabId.Profile]: () => <PersonalDataContainer locale={l10n} />,
-      [TabId.PersonalData]: () => <PersonalDataContainer locale={l10n} />,
+      [TabId.Profile]:
+        () => unwrapWithHero (hero => <PersonalDataContainer l10n={l10n} hero={hero} />),
+      [TabId.PersonalData]:
+        () => unwrapWithHero (hero => <PersonalDataContainer l10n={l10n} hero={hero} />),
       [TabId.CharacterSheet]: () => <SheetsContainer locale={l10n} />,
-      [TabId.Pact]: () => <PactContainer locale={l10n} />,
+      [TabId.Pact]: () => <PactContainer l10n={l10n} />,
       [TabId.Rules]: () => <RulesContainer locale={l10n} />,
 
-      [TabId.Races]: () => <RacesContainer locale={l10n} />,
+      [TabId.Races]: () => <RacesContainer l10n={l10n} />,
       [TabId.Cultures]: () => <CulturesContainer l10n={l10n} />,
-      [TabId.Professions]: () => <ProfessionsContainer locale={l10n} />,
+      [TabId.Professions]: () => <ProfessionsContainer l10n={l10n} />,
 
       [TabId.Attributes]: () => <AttributesContainer l10n={l10n} />,
 
@@ -109,11 +111,11 @@ export class Router extends React.Component<RouterProps> {
       [TabId.CombatTechniques]: () => <CombatTechniquesContainer l10n={l10n} />,
       [TabId.SpecialAbilities]: () => <SpecialAbilitiesContainer locale={l10n} />,
       [TabId.Spells]: () => <SpellsContainer locale={l10n} />,
-      [TabId.LiturgicalChants]: () => <LiturgicalChantsContainer locale={l10n} />,
+      [TabId.LiturgicalChants]: () => <LiturgicalChantsContainer l10n={l10n} />,
 
       [TabId.Equipment]: () => <EquipmentContainer l10n={l10n} />,
       [TabId.ZoneArmor]: () => <HitZoneArmorsContainer l10n={l10n} />,
-      [TabId.Pets]: () => <PetsContainer locale={l10n} />,
+      [TabId.Pets]: () => <PetsContainer l10n={l10n} />,
 
       // master: <Master />
     }

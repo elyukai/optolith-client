@@ -1,6 +1,7 @@
 import { List } from "../../../../Data/List";
-import { Maybe, Nothing } from "../../../../Data/Maybe";
+import { Just, Maybe, Nothing } from "../../../../Data/Maybe";
 import { fromDefault, makeLenses, Record } from "../../../../Data/Record";
+import { DropdownOption } from "../../../Views/Universal/Dropdown";
 import { AllRequirementObjects } from "../wikiTypeHelpers";
 import { Application } from "./Application";
 import { SourceLink } from "./SourceLink";
@@ -47,3 +48,10 @@ export const SelectOption =
   })
 
 export const SelectOptionL = makeLenses (SelectOption)
+
+export const selectToDropdownOption =
+  (x: Record<SelectOption>) =>
+    DropdownOption ({
+      id: Just (SelectOption.A.id (x)),
+      name: SelectOption.A.name (x),
+    })

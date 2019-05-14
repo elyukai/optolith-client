@@ -1,6 +1,13 @@
 import * as React from "react";
-import { SpecialAbility } from "../../Models/Wiki/wikiTypeHelpers";
-import { Dropdown, DropdownOption } from "../Universal/Dropdown";
+import { fmap } from "../../../Data/Functor";
+import { elem, List } from "../../../Data/List";
+import { ensure, mapMaybe, Maybe, maybeToNullable } from "../../../Data/Maybe";
+import { Record } from "../../../Data/Record";
+import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
+import { SelectOption, selectToDropdownOption } from "../../Models/Wiki/sub/SelectOption";
+import { pipe, pipe_ } from "../../Utilities/pipe";
+import { isNumber } from "../../Utilities/typeCheckUtils";
+import { Dropdown } from "../Universal/Dropdown";
 
 export interface TerrainKnowledgeProps {
   active: Maybe<number>
@@ -9,31 +16,32 @@ export interface TerrainKnowledgeProps {
   set (id: number): void
 }
 
+const SAA = SpecialAbility.A
+
 export function TerrainKnowledge (props: TerrainKnowledgeProps) {
   const { active, available, terrainKnowledge, set } = props
 
   return (
     <div className="terrain-knowledge">
-      <h4>{terrainKnowledge .get ("name")}</h4>
-      {Maybe.maybeToReactNode (
-        terrainKnowledge .lookup ("select")
-          .fmap (
-            select => (
-              <Dropdown
-                value={active}
-                options={
-                  select .filter (
-                    e => {
-                      const id = e .get ("id")
-
-                      return typeof id === "number" && available .elem (id)
-                    }
-                  ) as List<Record<DropdownOption>>
-                }
-                onChangeJust={set}
-                />
-            )
-          )
+      <h4>{SAA.name (terrainKnowledge)}</h4>
+      {pipe_ (
+        terrainKnowledge,
+        SAA.select,
+        fmap (select => (
+          <Dropdown
+            value={active}
+            options={mapMaybe (pipe (
+                                ensure (pipe (
+                                  SelectOption.A.id,
+                                  id => isNumber (id) && elem (id) (available)
+                                )),
+                                fmap (selectToDropdownOption)
+                              ))
+                              (select)}
+            onChangeJust={set}
+            />
+        )),
+        maybeToNullable
       )}
     </div>
   )
