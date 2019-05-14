@@ -1,13 +1,15 @@
 import * as React from "react";
 import { fmapF } from "../../../Data/Functor";
-import { List, toArray } from "../../../Data/List";
+import { List, map, toArray } from "../../../Data/List";
 import { isJust, isNothing, Just, Maybe, maybe, maybeToNullable, Nothing } from "../../../Data/Maybe";
 import { lookup, OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { Spell } from "../../Models/Wiki/Spell";
+import { minus } from "../../Utilities/Chars";
 import { translateP } from "../../Utilities/I18n";
 import { lte } from "../../Utilities/mathUtils";
+import { pipe_ } from "../../Utilities/pipe";
 import { BorderButton } from "../Universal/BorderButton";
 import { Checkbox } from "../Universal/Checkbox";
 
@@ -31,6 +33,7 @@ export function SelectionsCurses (props: SelectionsCursesProps) {
         map (e => {
           const id = Spell.A.id (e)
           const name = Spell.A.name (e)
+          const ic = Spell.A.ic (e)
 
           const maybeValue = lookup (id) (active)
 
@@ -46,15 +49,11 @@ export function SelectionsCurses (props: SelectionsCursesProps) {
               {maybeToNullable (fmapF (maybeValue) (value => (<span>{value}</span>)))}
               <BorderButton
                 label="+"
-                disabled={
-                  isNothing (maybeValue)
-                  || apLeft <= 0
-                  || apLeft - obj .get ("ic") < 0
-                }
+                disabled={isNothing (maybeValue) || apLeft <= 0 || apLeft - ic < 0}
                 onClick={() => change (id) (Just<"add"> ("add"))}
                 />
               <BorderButton
-                label="-"
+                label={minus}
                 disabled={maybe (true) (lte (0)) (maybeValue)}
                 onClick={() => change (id) (Just<"remove"> ("remove"))}
                 />

@@ -1,44 +1,59 @@
 import * as React from "react";
-import { Skill, VariantSpecializationSelection } from "../../Models/Wiki/wikiTypeHelpers";
-import { translate, UIMessagesObject } from "../../Utilities/I18n";
+import { fmap, fmapF } from "../../../Data/Functor";
+import { isList, List, map } from "../../../Data/List";
+import { altF_, bind, ensure, Just, mapMaybe, Maybe } from "../../../Data/Maybe";
+import { lookupF, OrderedMap } from "../../../Data/OrderedMap";
+import { Pair } from "../../../Data/Pair";
+import { Record } from "../../../Data/Record";
+import { L10nRecord } from "../../Models/Wiki/L10n";
+import { SpecializationSelection } from "../../Models/Wiki/professionSelections/SpecializationSelection";
+import { Skill } from "../../Models/Wiki/Skill";
+import { localizeOrList, translate } from "../../Utilities/I18n";
+import { pipe, pipe_ } from "../../Utilities/pipe";
+import { isString } from "../../Utilities/typeCheckUtils";
 import { Dropdown, DropdownOption } from "../Universal/Dropdown";
 import { TextField } from "../Universal/TextField";
 
 export interface SelectionsSkillSpecializationProps {
-  active: Tuple<Maybe<number>, string>
+  active: Pair<Maybe<number>, string>
   activeId: Maybe<string>
-  options: VariantSpecializationSelection
-  locale: UIMessagesObject
+  options: Record<SpecializationSelection>
+  l10n: L10nRecord
   skills: OrderedMap<string, Record<Skill>>
   change (value: string | number): void
   changeId (id: string): void
 }
 
+const SSA = SpecializationSelection.A
+
 export function SelectionsSkillSpecialization (props: SelectionsSkillSpecializationProps) {
-  const { active, activeId, change, changeId, locale, options, skills } = props
+  const { active, activeId, change, changeId, l10n, options, skills } = props
 
-  const sid = options .get ("sid")
+  const sid = SSA.sid (options)
 
-  const maybeSkillsList =
-    Maybe.ensure<string | List<string>, List<string>> ((e): e is List<string> => e instanceof List)
-                                                      (sid)
-      .fmap (Maybe.mapMaybe (OrderedMap.lookup_ (skills)))
+  const maybeSkillsList = fmapF (ensure (isList) (sid)) (mapMaybe (lookupF (skills)))
 
-  const activeSkillId = typeof sid === "string" ? Just (sid) : activeId
-  const maybeActiveSkill = activeSkillId .bind (OrderedMap.lookup_ (skills))
+  const activeSkillId = isString (sid) ? Just (sid) : activeId
+  const maybeActiveSkill = bind (activeSkillId) (lookupF (skills))
 
-  const maybeApplicationList =
-    maybeActiveSkill .bind (Record.lookup<Skill, "applications"> ("applications"))
+  const maybeApplicationList = fmapF (maybeActiveSkill) (Skill.A.applications)
 
-  const maybeApplicationInput =
-    maybeActiveSkill .bind (Record.lookup<Skill, "applicationsInput"> ("applicationsInput"))
+  const maybeApplicationInput = bind (maybeActiveSkill) (Skill.A.applicationsInput)
 
   const name =
+    pipe_ (
+      maybeSkillsList,
+      fmap (pipe (
+        map (Skill.A.name),
+        localizeOrList (l10n)
+      )),
+      altF_ (() )
+    )
     maybeSkillsList .fmap (
       R.pipe (
         List.map (e => e .get ("name")),
         List.intercalate (
-          ` ${translate (locale, "rcpselections.labels.applicationforskillspecialization")} `
+          ` ${translate (l10n, "rcpselections.labels.applicationforskillspecialization")} `
         )
       )
     )
@@ -60,17 +75,17 @@ export function SelectionsSkillSpecialization (props: SelectionsSkillSpecializat
       )
 
   const selectionElement =
-    Maybe.mapReplace<JSX.Element, Record<Skill>>
+    mapReplace<JSX.Element, Record<Skill>>
       (
         <div>
           {
-            Maybe.maybeToReactNode (
+            maybeToReactNode (
               maybeApplicationList
                 .fmap (
                   applicationList => (
                     <Dropdown
                       className="tiers"
-                      value={Maybe.fromMaybe (0) (Tuple.fst (active))}
+                      value={fromMaybe (0) (Tuple.fst (active))}
                       onChangeJust={change}
                       options={applicationList as List<Record<DropdownOption>>}
                       disabled={Tuple.snd (active) .length > 0}
@@ -80,7 +95,7 @@ export function SelectionsSkillSpecialization (props: SelectionsSkillSpecializat
             )
           }
           {
-            Maybe.maybeToReactNode (
+            maybeToReactNode (
               maybeApplicationInput
                 .fmap (
                   applicationInput => (
@@ -100,13 +115,13 @@ export function SelectionsSkillSpecialization (props: SelectionsSkillSpecializat
   return (
     <div className="spec">
       <h4>
-        {translate (locale, "rcpselections.labels.applicationforskillspecialization")}
+        {translate (l10n, "rcpselections.labels.applicationforskillspecialization")}
         {" ("}
-        {Maybe.fromMaybe ("") (name)}
+        {fromMaybe ("") (name)}
         {")"}
       </h4>
-      {Maybe.maybeToReactNode (selectSkillElement)}
-      {Maybe.maybeToReactNode (selectionElement)}
+      {maybeToReactNode (selectSkillElement)}
+      {maybeToReactNode (selectionElement)}
     </div>
   )
 }

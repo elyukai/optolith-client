@@ -3,20 +3,23 @@ import { equals } from "../../Data/Eq";
 import { flip } from "../../Data/Function";
 import { fmap } from "../../Data/Functor";
 import { elemF, filter, List, pure } from "../../Data/List";
-import { bindF, elem, fromJust, fromMaybe, guard, isJust, join, Just, liftM2, liftM3, listToMaybe, mapMaybe, Maybe, maybe, maybeToNullable, Nothing } from "../../Data/Maybe";
+import { bindF, elem, ensure, fromJust, fromMaybe, guard, isJust, join, Just, liftM2, liftM3, listToMaybe, mapMaybe, Maybe, maybe, maybeToNullable, Nothing } from "../../Data/Maybe";
 import { elems, lookup, lookupF, OrderedMap, size, sum } from "../../Data/OrderedMap";
 import { OrderedSet } from "../../Data/OrderedSet";
 import { fst, Pair, snd } from "../../Data/Pair";
 import { Record } from "../../Data/Record";
 import { LanguagesSelectionListItem } from "../Models/Hero/LanguagesSelectionListItem";
 import { ScriptsSelectionListItem } from "../Models/Hero/ScriptsSelectionListItem";
+import { Cantrip } from "../Models/Wiki/Cantrip";
 import { CombatTechnique } from "../Models/Wiki/CombatTechnique";
 import { Culture } from "../Models/Wiki/Culture";
 import { L10n, L10nRecord } from "../Models/Wiki/L10n";
 import { CombatTechniquesSelection } from "../Models/Wiki/professionSelections/CombatTechniquesSelection";
 import { LanguagesScriptsSelection } from "../Models/Wiki/professionSelections/LanguagesScriptsSelection";
 import { ProfessionSelections } from "../Models/Wiki/professionSelections/ProfessionAdjustmentSelections";
+import { ProfessionVariantSelections } from "../Models/Wiki/professionSelections/ProfessionVariantAdjustmentSelections";
 import { SkillsSelection } from "../Models/Wiki/professionSelections/SkillsSelection";
+import { SpecializationSelection } from "../Models/Wiki/professionSelections/SpecializationSelection";
 import { TerrainKnowledgeSelection } from "../Models/Wiki/professionSelections/TerrainKnowledgeSelection";
 import { Skill } from "../Models/Wiki/Skill";
 import { SpecialAbility } from "../Models/Wiki/SpecialAbility";
@@ -34,11 +37,11 @@ import { Checkbox } from "../Views/Universal/Checkbox";
 import { Dropdown, DropdownOption } from "../Views/Universal/Dropdown";
 import { findSelectOption } from "./Activatable/selectionUtils";
 import { translate } from "./I18n";
-import { pipe } from "./pipe";
+import { pipe, pipe_ } from "./pipe";
 import { sortRecordsByName } from "./sortBy";
 import { getAllWikiEntriesByGroup } from "./WikiUtils";
 
-const { specialAbilities, spells, combatTechniques, cantrips, skills } = WikiModel.AL
+const { specialAbilities, spells, combatTechniques, cantrips, skills } = WikiModel.A
 const { select } = SpecialAbility.AL
 const { scripts, languages } = Culture.AL
 const { id, name, cost } = SelectOption.AL
@@ -234,7 +237,7 @@ export const getLanguagesAndScriptsElementAndValidation =
                     apLeft={apLeft}
                     adjustScript={adjustScript}
                     adjustLanguage={adjustLanguage}
-                    locale={l10n}
+                    l10n={l10n}
                     />
                 )
               )
@@ -356,12 +359,12 @@ export const getCantripsElementAndValidation =
       ProfessionSelections.A[ProfessionSelectionIds.CANTRIPS],
       fmap (selection => {
             const list =
-              pipe (
-                    cantrips,
-                    elems,
-                    filter (pipe (CombatTechnique.A.id, elemF (sid (selection))))
-                  )
-                  (wiki)
+              pipe_ (
+                wiki,
+                cantrips,
+                elems,
+                filter (pipe (Cantrip.A.id, elemF (sid (selection))))
+              )
 
             // fst: isValidSelection
             return Pair (
@@ -387,7 +390,8 @@ export const getSkillSpecializationElement =
   (setSpecialization: (value: string | number) => void) =>
   (setSpecializationSkill: (id: string) => void) =>
     pipe (
-      ProfessionSelections.AL[ProfessionSelectionIds.SPECIALIZATION],
+      ProfessionVariantSelections.A[ProfessionSelectionIds.SPECIALIZATION],
+      bindF (ensure (SpecializationSelection.is)),
       fmap (selection => (
              <SelectionsSkillSpecialization
                options={selection}
@@ -395,7 +399,7 @@ export const getSkillSpecializationElement =
                activeId={specializationSkillId}
                change={setSpecialization}
                changeId={setSpecializationSkill}
-               locale={l10n}
+               l10n={l10n}
                skills={skills (wiki)}
                />
            ))
@@ -435,7 +439,7 @@ export const getSkillsElementAndValidation =
                   list={list}
                   remove={removeSkillPoint}
                   value={value (selection)}
-                  locale={l10n}
+                  l10n={l10n}
                   />
               )
             )
