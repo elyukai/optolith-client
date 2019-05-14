@@ -1,6 +1,13 @@
 import * as React from "react";
-import { CombatTechnique } from "../../Models/Wiki/wikiTypeHelpers";
-import { translate, UIMessagesObject } from "../../Utilities/I18n";
+import { List, map, subscript, toArray } from "../../../Data/List";
+import { Maybe, maybe } from "../../../Data/Maybe";
+import { member, notMember, OrderedSet, size } from "../../../Data/OrderedSet";
+import { Record } from "../../../Data/Record";
+import { CombatTechnique } from "../../Models/Wiki/CombatTechnique";
+import { L10nRecord } from "../../Models/Wiki/L10n";
+import { translate, translateP } from "../../Utilities/I18n";
+import { pipe_ } from "../../Utilities/pipe";
+import { renderMaybe } from "../../Utilities/ReactUtils";
 import { Checkbox } from "../Universal/Checkbox";
 
 export interface SelectionsCombatTechniquesProps {
@@ -8,48 +15,49 @@ export interface SelectionsCombatTechniquesProps {
   disabled?: OrderedSet<string>
   amount: number
   list: List<Record<CombatTechnique>>
-  locale: UIMessagesObject
+  l10n: L10nRecord
   value: number
   second?: boolean
   change (id: string): void
 }
 
 export function SelectionsCombatTechniques (props: SelectionsCombatTechniquesProps) {
-  const { active, amount, change, disabled, list, locale, value, second } = props
+  const { active, amount, change, disabled, list, l10n, value } = props
 
-  const amountTags = List.of (
-    translate (locale, "rcpselections.labels.one"),
-    translate (locale, "rcpselections.labels.two")
-  )
+  const mdisabled = Maybe (disabled)
+
+  const amountTags = translate (l10n) ("combattechniquecounter")
 
   const text =
-    second
-      ? translate (locale, "rcpselections.labels.more")
-      : translate (locale, "rcpselections.labels.ofthefollowingcombattechniques")
+    translateP (l10n)
+               ("combattechniquesselection")
+               (List<string | number> (
+                 renderMaybe (subscript (amountTags) (amount - 1)),
+                 value + 6
+               ))
 
   return (
     <div className="ct list">
-      <h4>{Maybe.fromMaybe ("") (amountTags .subscript (amount - 1))} {text} {value + 6}</h4>
-      {
-        list
-          .map (obj => {
-            const id = obj .get ("id")
-            const name = obj .get ("name")
+      <h4>{text}</h4>
+      {pipe_ (
+        list,
+        map (e => {
+          const id = CombatTechnique.A.id (e)
+          const name = CombatTechnique.A.name (e)
 
-            return (
-              <Checkbox
-                key={id}
-                checked={active .member (id)}
-                disabled={
-                  active.notMember (id) && active .size () >= amount
-                  || disabled && disabled.member (id)
-                }
-                label={name}
-                onClick={() => change (id)} />
-            )
-          })
-          .toArray ()
-      }
+          return (
+            <Checkbox
+              key={id}
+              checked={member (id) (active)}
+              disabled={
+                notMember (id) (active) && size (active) >= amount
+                || maybe (false) (member (id)) (mdisabled)}
+              label={name}
+              onClick={() => change (id)} />
+          )
+        }),
+        toArray
+      )}
     </div>
   )
 }

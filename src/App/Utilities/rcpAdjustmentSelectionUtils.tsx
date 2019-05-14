@@ -78,7 +78,7 @@ export const getBuyScriptElement =
                 onClick={switchIsBuyingMainScriptEnabled}
                 disabled={isAnyLanguageOrScriptSelected}
                 >
-                {translate (l10n) (L10n.AL["rcpselections.labels.buyscript"])}
+                {translate (l10n) ("buyscript")}
                 {
                   !snd (isScriptSelectionNeeded)
                   && Maybe.isJust (selectionItem)
@@ -222,7 +222,7 @@ export const getLanguagesAndScriptsElementAndValidation =
               const apLeft =
                 value (selection) - sum (selected_languages) * 2 - sum (selected_scripts)
 
-              return Pair.fromBinary (
+              return Pair (
                 apLeft,
                 (
                   <SelectionsLanguagesAndScripts
@@ -261,7 +261,7 @@ export const getCursesElementAndValidation =
 
              const apLeft = value (selection) - size (cursesActive) - sum (cursesActive) * 2
 
-             return Pair.fromBinary (
+             return Pair (
                apLeft,
                (
                  <SelectionsCurses
@@ -270,7 +270,7 @@ export const getCursesElementAndValidation =
                    apTotal={value (selection)}
                    apLeft={apLeft}
                    change={adjustCurse}
-                   locale={l10n}
+                   l10n={l10n}
                    />
                )
              )
@@ -290,12 +290,12 @@ export const getCombatTechniquesElementAndValidation =
                pipe (
                       combatTechniques,
                       elems,
-                      filter (pipe (CombatTechnique.AL.id, elemF (sid (selection))))
+                      filter (pipe (CombatTechnique.A.id, elemF (sid (selection))))
                     )
                     (wiki)
 
              // fst: isValidSelection
-             return Pair.fromBinary (
+             return Pair (
                OrderedSet.size (combatTechniquesActive) === amount (selection),
                (
                  <SelectionsCombatTechniques
@@ -305,7 +305,7 @@ export const getCombatTechniquesElementAndValidation =
                    amount={amount (selection)}
                    disabled={combatTechniquesSecondActive}
                    change={switchCombatTechnique}
-                   locale={l10n}
+                   l10n={l10n}
                    />
                )
              )
@@ -325,12 +325,12 @@ export const getCombatTechniquesSecondElementAndValidation =
               pipe (
                      combatTechniques,
                      elems,
-                     filter (pipe (CombatTechnique.AL.id, elemF (sid (selection))))
+                     filter (pipe (CombatTechnique.A.id, elemF (sid (selection))))
                    )
                    (wiki)
 
             // fst: isValidSelection
-            return Pair.fromBinary (
+            return Pair (
               OrderedSet.size (combatTechniquesSecondActive) === amount (selection),
               (
                 <SelectionsCombatTechniques
@@ -340,7 +340,7 @@ export const getCombatTechniquesSecondElementAndValidation =
                   amount={amount (selection)}
                   disabled={combatTechniquesActive}
                   change={switchSecondCombatTechnique}
-                  locale={l10n}
+                  l10n={l10n}
                   />
               )
             )
@@ -353,18 +353,18 @@ export const getCantripsElementAndValidation =
   (cantripsActive: OrderedSet<string>) =>
   (switchCantrip: (id: string) => void) =>
     pipe (
-      ProfessionSelections.AL[ProfessionSelectionIds.CANTRIPS],
+      ProfessionSelections.A[ProfessionSelectionIds.CANTRIPS],
       fmap (selection => {
             const list =
               pipe (
                     cantrips,
                     elems,
-                    filter (pipe (CombatTechnique.AL.id, elemF (sid (selection))))
+                    filter (pipe (CombatTechnique.A.id, elemF (sid (selection))))
                   )
                   (wiki)
 
             // fst: isValidSelection
-            return Pair.fromBinary (
+            return Pair (
               OrderedSet.size (cantripsActive) === amount (selection),
               (
                 <SelectionsCantrips
@@ -372,7 +372,7 @@ export const getCantripsElementAndValidation =
                   active={cantripsActive}
                   num={amount (selection)}
                   change={switchCantrip}
-                  locale={l10n}
+                  l10n={l10n}
                   />
               )
             )
@@ -424,7 +424,7 @@ export const getSkillsElementAndValidation =
 
             const apLeft = value (selection) - sum (skillsActive)
 
-            return Pair.fromBinary (
+            return Pair (
               apLeft,
               (
                 <SelectionsSkills
@@ -472,7 +472,7 @@ export const getMotherTongueSelectionElement =
            bindF (() => lookupF (specialAbilities (wiki)) ("SA_29")),
            fmap ((wikiEntry: Record<SpecialAbility>) => (
                   <Dropdown
-                    hint={translate (locale) (L10n.AL["rcpselections.labels.selectnativetongue"])}
+                    hint={translate (locale) ("selectnativetongue")}
                     value={motherTongue}
                     onChangeJust={setMotherTongue}
                     options={
@@ -507,7 +507,7 @@ export const getMainScriptSelectionElement =
            bindF (() => lookupF (specialAbilities (wiki)) ("SA_27")),
            fmap ((wikiEntry: Record<SpecialAbility>) => (
                   <Dropdown
-                    hint={translate (l10n) (L10n.AL["rcpselections.labels.selectscript"])}
+                    hint={translate (l10n) ("selectscript")}
                     value={mainScript}
                     onChangeJust={setMainCulturalLiteracy}
                     options={

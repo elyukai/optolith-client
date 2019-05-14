@@ -25,6 +25,11 @@ export const prefixRace = prefixId (IdPrefixes.RACES)
 export const prefixC = prefixId (IdPrefixes.CULTURES)
 
 /**
+ * Create a profession id.
+ */
+export const prefixProf = prefixId (IdPrefixes.PROFESSIONS)
+
+/**
  * Create an attribute id.
  */
 export const prefixAttr = prefixId (IdPrefixes.ATTRIBUTES)
