@@ -1,12 +1,17 @@
 import * as React from "react";
 import { Textfit } from "react-textfit";
-import { List } from "../../../../Data/List";
-import { Maybe } from "../../../../Data/Maybe";
+import { notEquals } from "../../../../Data/Eq";
+import { fmap, fmapF } from "../../../../Data/Functor";
+import { flength, intercalate, List, map, notNull, replicateR, toArray } from "../../../../Data/List";
+import { catMaybes, ensure, Maybe, maybe, maybeRNull } from "../../../../Data/Maybe";
 import { Record } from "../../../../Data/Record";
 import { Armor } from "../../../Models/View/Armor";
 import { L10nRecord } from "../../../Models/Wiki/L10n";
+import { ndash } from "../../../Utilities/Chars";
 import { localizeNumber, localizeWeight, translate } from "../../../Utilities/I18n";
 import { sign, toRoman } from "../../../Utilities/NumberUtils";
+import { pipe, pipe_ } from "../../../Utilities/pipe";
+import { renderMaybe, renderMaybeWith } from "../../../Utilities/ReactUtils";
 import { TextBox } from "../../Universal/TextBox";
 
 export interface CombatSheetArmorProps {
@@ -14,8 +19,13 @@ export interface CombatSheetArmorProps {
   l10n: L10nRecord
 }
 
+const AA = Armor.A
+
 export function CombatSheetArmor (props: CombatSheetArmorProps) {
   const { l10n, armors: marmors } = props
+
+  const movement_tag = translate (l10n) ("movement.short")
+  const initiative_tag = translate (l10n) ("initiative.short")
 
   return (
     <TextBox
@@ -28,89 +38,75 @@ export function CombatSheetArmor (props: CombatSheetArmorProps) {
             <th className="name">{translate (l10n) ("armor")}</th>
             <th className="st">{translate (l10n) ("sturdinessrating.short")}</th>
             <th className="loss">{translate (l10n) ("wear.short")}</th>
-            <th className="pro">{translate (l10n) ("pro")}</th>
-            <th className="enc">{translate (l10n) ("enc")}</th>
+            <th className="pro">{translate (l10n) ("protection.short")}</th>
+            <th className="enc">{translate (l10n) ("encumbrance.short")}</th>
             <th className="add-penalties">{translate (l10n) ("additionalpenalties")}</th>
             <th className="weight">{translate (l10n) ("weight")}</th>
-            <th className="where">{translate (l10n) ("where")}</th>
+            <th className="where">{translate (l10n) ("carriedwhereexamples")}</th>
           </tr>
         </thead>
         <tbody>
-          {Maybe.fromMaybe<NonNullable<React.ReactNode>>
-            (<></>)
-            (marmors .fmap (
-              armors => armors
-                .map (e => {
-                  const addPenalties = Maybe.catMaybes<string> (
-                    List.of (
-                      e .get ("mov") !== 0
-                        ? Just (
-                          `${sign (e .get ("mov"))} ${translate (l10n) ("secondaryattributes.mov.short")}`
-                        )
-                        : Nothing (),
-                      e .get ("ini") !== 0
-                        ? Just (
-                          `${sign (e .get ("ini"))} ${translate (l10n) ("secondaryattributes.ini.short")}`
-                        )
-                        : Nothing ()
-                    )
-                  )
+          {maybeRNull (pipe (
+                        map ((e: Record<Armor>) => {
+                          const addPenalties =
+                            catMaybes (List (
+                                        fmapF (ensure (notEquals (0)) (AA.mov (e)))
+                                              (mov => `${sign (mov)} ${movement_tag}`),
+                                        fmapF (ensure (notEquals (0)) (AA.ini (e)))
+                                              (ini => `${sign (ini)} ${initiative_tag}`)
+                                      ))
 
-                  return (
-                    <tr key={e .get ("id")}>
-                      <td className="name">
-                        <Textfit max={11} min={7} mode="single">{e .get ("name")}</Textfit>
-                      </td>
-                      <td className="st">{e .lookupWithDefault<"st"> (0) ("st")}</td>
-                      <td className="loss">
-                        {Maybe.fromMaybe ("") (e .lookup ("loss") .fmap (toRoman))}
-                      </td>
-                      <td className="pro">{e .lookupWithDefault<"pro"> (0) ("pro")}</td>
-                      <td className="enc">{e .lookupWithDefault<"enc"> (0) ("enc")}</td>
-                      <td className="add-penalties">
-                        {addPenalties .null () ? "-" : addPenalties .intercalate (", ")}
-                      </td>
-                      <td className="weight">
-                        {Maybe.fromMaybe<string | number>
-                          ("")
-                          (e .lookup ("weight") .fmap (
-                            weight => localizeNumber (l10n .get ("id"))
-                                                     (localizeWeight (l10n .get ("id")) (weight))
-                          ))}
-                        {" "}
-                        {translate (l10n) ("weightunit")}
-                      </td>
-                      <td className="where">
-                        <Textfit max={11} min={7} mode="single">
-                          {e .lookupWithDefault<"where"> ("") ("where")}
-                        </Textfit>
-                      </td>
-                    </tr>
-                  )
-                })
-                .toArray ()
-            ))}
-          {List.unfoldr<JSX.Element, number>
-            (x => x >= 4
-              ? Nothing ()
-              : Just (
-                Tuple.of<JSX.Element, number>
-                  (
-                    <tr key={`undefined${3 - x}`}>
-                      <td className="name"></td>
-                      <td className="st"></td>
-                      <td className="loss"></td>
-                      <td className="pro"></td>
-                      <td className="enc"></td>
-                      <td className="add-penalties"></td>
-                      <td className="weight"></td>
-                      <td className="where"></td>
-                    </tr>
-                  )
-                  (R.inc (x))
-              )
-            )
-            (Maybe.fromMaybe (0) (marmors .fmap (List.lengthL)))}
+                          return (
+                            <tr key={AA.id (e)}>
+                              <td className="name">
+                                <Textfit max={11} min={7} mode="single">{AA.name (e)}</Textfit>
+                              </td>
+                              <td className="st">{Maybe.sum (AA.st (e))}</td>
+                              <td className="loss">{renderMaybeWith (toRoman) (AA.loss (e))}</td>
+                              <td className="pro">{Maybe.sum (AA.pro (e))}</td>
+                              <td className="enc">{Maybe.sum (AA.enc (e))}</td>
+                              <td className="add-penalties">
+                                {maybe (ndash)
+                                       (intercalate (", "))
+                                       (ensure (notNull) (addPenalties))}
+                              </td>
+                              <td className="weight">
+                                {pipe_ (
+                                  e,
+                                  AA.weight,
+                                  fmap (pipe (
+                                    localizeWeight (l10n),
+                                    localizeNumber (l10n)
+                                  )),
+                                  renderMaybe
+                                )}
+                                {" "}
+                                {translate (l10n) ("weightunit.short")}
+                              </td>
+                              <td className="where">
+                                <Textfit max={11} min={7} mode="single">
+                                  {renderMaybe (AA.where (e))}
+                                </Textfit>
+                              </td>
+                            </tr>
+                          )
+                        }),
+                        toArray
+                      ))
+                      (marmors)}
+          {replicateR (4 - Maybe.sum (fmapF (marmors) (flength)))
+                      (i => (
+                        <tr key={`undefined-${i}`}>
+                          <td className="name"></td>
+                          <td className="st"></td>
+                          <td className="loss"></td>
+                          <td className="pro"></td>
+                          <td className="enc"></td>
+                          <td className="add-penalties"></td>
+                          <td className="weight"></td>
+                          <td className="where"></td>
+                        </tr>
+                      ))}
         </tbody>
       </table>
     </TextBox>

@@ -55,7 +55,7 @@ export const toRomanFromIndex = pipe (subscript (romanNumbers), fromMaybe (""))
 export const signNullCustom =
   (zero: string) =>
   (x: number): string =>
-    x > 0 ? `+${x}` : x < 0 ? `${minus}${x}` : zero
+    x > 0 ? `+${x}` : x < 0 ? `${minus}${Math.abs (x)}` : zero
 
 /**
  * Forces signing on the given number.
