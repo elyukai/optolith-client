@@ -17,6 +17,7 @@ export const AttributeCombined =
 export const AttributeCombinedA_ = {
   id: pipe (AttributeCombined.A.wikiEntry, Attribute.A.id),
   short: pipe (AttributeCombined.A.wikiEntry, Attribute.A.short),
+  value: pipe (AttributeCombined.A.stateEntry, AttributeDependent.A.value),
 }
 
 export const newAttributeCombined =

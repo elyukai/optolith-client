@@ -6,6 +6,7 @@ import { toOrdering } from "../../Data/Ord";
 import { fst, snd } from "../../Data/Pair";
 import { L10n, L10nRecord } from "../Models/Wiki/L10n";
 import { pipe } from "./pipe";
+import { isString } from "./typeCheckUtils";
 
 /**
  * Displays a localized message and inserts values into placeholders if
@@ -78,7 +79,10 @@ export const translateM =
   (key: K): Maybe<L10n [K]> =>
     translateMP (messages) (key) (List.empty)
 
-export const localizeNumber = (localeId: string) => (num: number) => num .toLocaleString (localeId);
+export const localizeNumber =
+  (localeId: string | L10nRecord) =>
+  (num: number) =>
+    num .toLocaleString ((isString (localeId) ? localeId : L10n.A.id (localeId)))
 
 /**
  * If the selected language is English centimeters it will be converted to
@@ -87,11 +91,13 @@ export const localizeNumber = (localeId: string) => (num: number) => num .toLoca
  * Uses `1cm = 0.4in` instead of `1cm = 0.3937in`.
  */
 export const localizeSize =
-  (localeId: string): ((x: number | Maybe<number>) => number) =>
+  (localeId: string | L10nRecord): ((x: number | Maybe<number>) => number) =>
     pipe (
       normalize,
-      fmap<number, number> (size => localeId === "en-US" ? size * 0.4 : size) as
-        (m: Maybe<number>) => Maybe<number>,
+      fmap ((size: number) =>
+             (isString (localeId) ? localeId : L10n.A.id (localeId)) === "en-US"
+               ? size * 0.4
+               : size),
       sum
     )
 
@@ -101,10 +107,13 @@ export const localizeSize =
  * Uses `1kg = 2pd` instead of `1kg = 2.2046pd`.
  */
 export const localizeWeight =
-  (localeId: string): ((x: number | Maybe<number>) => number) =>
+  (localeId: string | L10nRecord): ((x: number | Maybe<number>) => number) =>
     pipe (
       normalize,
-      fmap ((weight: number) => localeId === "en-US" ? weight * 2 : weight),
+      fmap ((weight: number) =>
+             (isString (localeId) ? localeId : L10n.A.id (localeId)) === "en-US"
+               ? weight * 2
+               : weight),
       sum
     )
 

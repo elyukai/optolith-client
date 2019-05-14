@@ -1,8 +1,18 @@
 import * as React from "react";
-import { ActiveViewObject, SecondaryAttribute } from "../../../Models/Hero/heroTypeHelpers";
-import { Armor, AttributeCombined, CombatTechniqueWithAttackParryBase, MeleeWeapon, RangedWeapon, ShieldOrParryingWeapon } from "../../../Models/View/viewTypeHelpers";
-import { SpecialAbility } from "../../../Models/Wiki/wikiTypeHelpers";
-import { translate, UIMessagesObject } from "../../../Utilities/I18n";
+import { cons, drop, fnull, head, List, map } from "../../../../Data/List";
+import { Maybe } from "../../../../Data/Maybe";
+import { Record } from "../../../../Data/Record";
+import { ActiveActivatable } from "../../../Models/View/ActiveActivatable";
+import { Armor } from "../../../Models/View/Armor";
+import { AttributeCombined } from "../../../Models/View/AttributeCombined";
+import { CombatTechniqueWithAttackParryBase } from "../../../Models/View/CombatTechniqueWithAttackParryBase";
+import { DerivedCharacteristic } from "../../../Models/View/DerivedCharacteristic";
+import { MeleeWeapon } from "../../../Models/View/MeleeWeapon";
+import { RangedWeapon } from "../../../Models/View/RangedWeapon";
+import { ShieldOrParryingWeapon } from "../../../Models/View/ShieldOrParryingWeapon";
+import { L10nRecord } from "../../../Models/Wiki/L10n";
+import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility";
+import { translate } from "../../../Utilities/I18n";
 import { Options } from "../../Universal/Options";
 import { Sheet } from "../Sheet";
 import { HeaderValue } from "../SheetHeader";
@@ -19,10 +29,10 @@ import { CombatSheetTechniques } from "./CombatSheetTechniques";
 export interface CombatSheetProps {
   armors: Maybe<List<Record<Armor>>>
   attributes: List<Record<AttributeCombined>>
-  combatSpecialAbilities: Maybe<List<Record<ActiveViewObject<SpecialAbility>>>>
+  combatSpecialAbilities: Maybe<List<Record<ActiveActivatable<SpecialAbility>>>>
   combatTechniques: Maybe<List<Record<CombatTechniqueWithAttackParryBase>>>
-  derivedCharacteristics: List<Record<SecondaryAttribute>>
-  locale: UIMessagesObject
+  derivedCharacteristics: List<Record<DerivedCharacteristic>>
+  l10n: L10nRecord
   meleeWeapons: Maybe<List<Record<MeleeWeapon>>>
   rangedWeapons: Maybe<List<Record<RangedWeapon>>>
   shieldsAndParryingWeapons: Maybe<List<Record<ShieldOrParryingWeapon>>>
@@ -35,64 +45,70 @@ export function CombatSheet (props: CombatSheetProps) {
     combatSpecialAbilities,
     combatTechniques,
     derivedCharacteristics,
-    locale,
+    l10n,
     meleeWeapons,
     rangedWeapons,
     shieldsAndParryingWeapons,
   } = props
 
-  const addHeader = List.null (derivedCharacteristics)
-    ? List.empty<Record<HeaderValue>> ()
-    : List.drop<Record<HeaderValue>>
-        (3)
-        (derivedCharacteristics as any as List<Record<HeaderValue>>)
-          .cons (List.head (derivedCharacteristics as any as List<Record<HeaderValue>>))
+  const addHeader = fnull (derivedCharacteristics)
+    ? List<Record<HeaderValue>> ()
+    : cons (drop (3) (map (dcToHeaderVal) (derivedCharacteristics)))
+           (dcToHeaderVal (head (derivedCharacteristics)))
 
   return (
     <SheetWrapper>
       <Options/>
       <Sheet
         id="combat-sheet"
-        title={translate (locale, "charactersheet.combat.title")}
+        title={translate (l10n) ("combat")}
         addHeaderInfo={addHeader}
         attributes={attributes}
-        locale={locale}
+        l10n={l10n}
         >
         <div className="upper">
           <CombatSheetTechniques
             attributes={attributes}
             combatTechniques={combatTechniques}
-            locale={locale}
+            l10n={l10n}
             />
           <CombatSheetLifePoints
             derivedCharacteristics={derivedCharacteristics}
-            locale={locale}
+            l10n={l10n}
             />
         </div>
         <div className="lower">
           <CombatSheetMeleeWeapons
-            locale={locale}
+            l10n={l10n}
             meleeWeapons={meleeWeapons}
             />
           <CombatSheetRangedWeapons
-            locale={locale}
+            l10n={l10n}
             rangedWeapons={rangedWeapons}
             />
           <CombatSheetArmor
             armors={armors}
-            locale={locale}
+            l10n={l10n}
             />
           <CombatSheetShields
-            locale={locale}
+            l10n={l10n}
             shieldsAndParryingWeapons={shieldsAndParryingWeapons}
             />
           <CombatSheetSpecialAbilities
-            locale={locale}
+            l10n={l10n}
             combatSpecialAbilities={combatSpecialAbilities}
             />
-          <CombatSheetStates locale={locale} />
+          <CombatSheetStates l10n={l10n} />
         </div>
       </Sheet>
     </SheetWrapper>
   )
 }
+
+const dcToHeaderVal =
+  (e: Record<DerivedCharacteristic>) =>
+    HeaderValue ({
+      id: DerivedCharacteristic.A.id (e),
+      short: DerivedCharacteristic.A.short (e),
+      value: DerivedCharacteristic.A.value (e),
+    })

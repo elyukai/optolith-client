@@ -1,5 +1,8 @@
 import * as React from "react";
-import { AttributeCombined } from "../../Models/View/viewTypeHelpers";
+import { List } from "../../../Data/List";
+import { Record } from "../../../Data/Record";
+import { AttributeCombined } from "../../Models/View/AttributeCombined";
+import { L10nRecord } from "../../Models/Wiki/L10n";
 import { HeaderValue, SheetHeader } from "./SheetHeader";
 
 export interface SheetProps {
@@ -7,12 +10,12 @@ export interface SheetProps {
   attributes: List<Record<AttributeCombined>>
   children?: React.ReactNode
   id: string
-  locale: UIMessagesObject
+  l10n: L10nRecord
   title: string
 }
 
 export function Sheet (props: SheetProps) {
-  const { addHeaderInfo, attributes, children, id, locale, title } = props
+  const { addHeaderInfo, attributes, children, id, l10n, title } = props
 
   return (
     <div className="sheet" id={id}>
@@ -20,7 +23,7 @@ export function Sheet (props: SheetProps) {
         title={title}
         add={addHeaderInfo}
         attributes={attributes}
-        locale={locale}
+        l10n={l10n}
         />
       {children}
     </div>

@@ -1,4 +1,5 @@
 // @ts-check
+const { ident } = require('../Function');
 const { Internals } = require('../Internals');
 const { List } = require('../List')
 const { Pair } = require('../Pair')
@@ -367,6 +368,52 @@ test ('mapAccumL', () => {
                    (List (1, 2, 3))
   )
     .toEqual (Pair (6, List (2, 4, 6)))
+})
+
+// INFINITE LISTS
+
+describe ('replicate', () => {
+  it ("creates a list with 0 elements", () => {
+    expect (List.replicate (0) ("test"))
+      .toEqual (List ())
+  })
+
+  it ("creates a list with 1 element", () => {
+    expect (List.replicate (1) ("test"))
+      .toEqual (List ("test"))
+  })
+
+  it ("creates a list with 3 elements", () => {
+    expect (List.replicate (3) ("test"))
+      .toEqual (List ("test", "test", "test"))
+  })
+
+  it ("creates a list with 5 elements", () => {
+    expect (List.replicate (5) ("test"))
+      .toEqual (List ("test", "test", "test", "test", "test"))
+  })
+})
+
+describe ('replicateR', () => {
+  it ("creates a list with 0 elements", () => {
+    expect (List.replicateR (0) (ident))
+      .toEqual (List ())
+  })
+
+  it ("creates a list with 1 element", () => {
+    expect (List.replicateR (1) (ident))
+      .toEqual (List (0))
+  })
+
+  it ("creates a list with 3 elements", () => {
+    expect (List.replicateR (3) (ident))
+      .toEqual (List (0, 1, 2))
+  })
+
+  it ("creates a list with 5 elements", () => {
+    expect (List.replicateR (5) (ident))
+      .toEqual (List (0, 1, 2, 3, 4))
+  })
 })
 
 // UNFOLDING

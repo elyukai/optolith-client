@@ -1,54 +1,56 @@
 import * as React from "react";
 import { Textfit } from "react-textfit";
-import { Armor } from "../../../Models/View/viewTypeHelpers";
-import { localizeNumber, localizeWeight, translate, UIMessagesObject } from "../../../Utilities/I18n";
-import { getRoman, sign } from "../../../Utilities/NumberUtils";
+import { List } from "../../../../Data/List";
+import { Maybe } from "../../../../Data/Maybe";
+import { Record } from "../../../../Data/Record";
+import { Armor } from "../../../Models/View/Armor";
+import { L10nRecord } from "../../../Models/Wiki/L10n";
+import { localizeNumber, localizeWeight, translate } from "../../../Utilities/I18n";
+import { sign, toRoman } from "../../../Utilities/NumberUtils";
 import { TextBox } from "../../Universal/TextBox";
 
 export interface CombatSheetArmorProps {
   armors: Maybe<List<Record<Armor>>>
-  locale: UIMessagesObject
+  l10n: L10nRecord
 }
 
 export function CombatSheetArmor (props: CombatSheetArmorProps) {
-  const { locale, armors: maybeArmors } = props
+  const { l10n, armors: marmors } = props
 
   return (
     <TextBox
-      label={translate (locale, "charactersheet.combat.armor.title")}
+      label={translate (l10n) ("armor")}
       className="armor"
       >
       <table>
         <thead>
           <tr>
-            <th className="name">{translate (locale, "charactersheet.combat.headers.armor")}</th>
-            <th className="st">{translate (locale, "charactersheet.combat.headers.st")}</th>
-            <th className="loss">{translate (locale, "charactersheet.combat.headers.loss")}</th>
-            <th className="pro">{translate (locale, "charactersheet.combat.headers.pro")}</th>
-            <th className="enc">{translate (locale, "charactersheet.combat.headers.enc")}</th>
-            <th className="add-penalties">
-              {translate (locale, "charactersheet.combat.headers.addpenalties")}
-            </th>
-            <th className="weight">{translate (locale, "charactersheet.combat.headers.weight")}</th>
-            <th className="where">{translate (locale, "charactersheet.combat.headers.where")}</th>
+            <th className="name">{translate (l10n) ("armor")}</th>
+            <th className="st">{translate (l10n) ("sturdinessrating.short")}</th>
+            <th className="loss">{translate (l10n) ("wear.short")}</th>
+            <th className="pro">{translate (l10n) ("pro")}</th>
+            <th className="enc">{translate (l10n) ("enc")}</th>
+            <th className="add-penalties">{translate (l10n) ("additionalpenalties")}</th>
+            <th className="weight">{translate (l10n) ("weight")}</th>
+            <th className="where">{translate (l10n) ("where")}</th>
           </tr>
         </thead>
         <tbody>
           {Maybe.fromMaybe<NonNullable<React.ReactNode>>
             (<></>)
-            (maybeArmors .fmap (
+            (marmors .fmap (
               armors => armors
                 .map (e => {
                   const addPenalties = Maybe.catMaybes<string> (
                     List.of (
                       e .get ("mov") !== 0
                         ? Just (
-                          `${sign (e .get ("mov"))} ${translate (locale, "secondaryattributes.mov.short")}`
+                          `${sign (e .get ("mov"))} ${translate (l10n) ("secondaryattributes.mov.short")}`
                         )
                         : Nothing (),
                       e .get ("ini") !== 0
                         ? Just (
-                          `${sign (e .get ("ini"))} ${translate (locale, "secondaryattributes.ini.short")}`
+                          `${sign (e .get ("ini"))} ${translate (l10n) ("secondaryattributes.ini.short")}`
                         )
                         : Nothing ()
                     )
@@ -61,7 +63,7 @@ export function CombatSheetArmor (props: CombatSheetArmorProps) {
                       </td>
                       <td className="st">{e .lookupWithDefault<"st"> (0) ("st")}</td>
                       <td className="loss">
-                        {Maybe.fromMaybe ("") (e .lookup ("loss") .fmap (getRoman))}
+                        {Maybe.fromMaybe ("") (e .lookup ("loss") .fmap (toRoman))}
                       </td>
                       <td className="pro">{e .lookupWithDefault<"pro"> (0) ("pro")}</td>
                       <td className="enc">{e .lookupWithDefault<"enc"> (0) ("enc")}</td>
@@ -72,11 +74,11 @@ export function CombatSheetArmor (props: CombatSheetArmorProps) {
                         {Maybe.fromMaybe<string | number>
                           ("")
                           (e .lookup ("weight") .fmap (
-                            weight => localizeNumber (locale .get ("id"))
-                                                     (localizeWeight (locale .get ("id")) (weight))
+                            weight => localizeNumber (l10n .get ("id"))
+                                                     (localizeWeight (l10n .get ("id")) (weight))
                           ))}
                         {" "}
-                        {translate (locale, "charactersheet.combat.headers.weightunit")}
+                        {translate (l10n) ("weightunit")}
                       </td>
                       <td className="where">
                         <Textfit max={11} min={7} mode="single">
@@ -108,7 +110,7 @@ export function CombatSheetArmor (props: CombatSheetArmorProps) {
                   (R.inc (x))
               )
             )
-            (Maybe.fromMaybe (0) (maybeArmors .fmap (List.lengthL)))}
+            (Maybe.fromMaybe (0) (marmors .fmap (List.lengthL)))}
         </tbody>
       </table>
     </TextBox>

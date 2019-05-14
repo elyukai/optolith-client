@@ -792,6 +792,33 @@ export const mapAccumL =
   }
 
 
+// INFINITE LISTS
+
+/**
+ * `replicate :: Int -> a -> [a]`
+ *
+ * `replicate n x` is a list of length `n` with `x` the value of every element.
+ * It is an instance of the more general `genericReplicate`, in which `n` may be
+ * of any integral type.
+ */
+export const replicate =
+  (len: number) => <A> (x: A): List<A> => len > 0 ? Cons (x, replicate (len - 1) (x)) : Nil
+
+/**
+ * `replicateR :: Int -> (Int -> a) -> [a]`
+ *
+ * `replicate n f` is a list of length `n` with the result of `f` the value of
+ * every element. Its used for lists of React elements to get a accumulating
+ * key, as the `Int` passed to `f` is the index of the element
+ */
+export const replicateR =
+  (len: number) =>
+  <A>
+  (f: (index: number) => A): List<A> =>
+    unfoldr ((index: number) => index < len ? Just (Pair (f (index), index + 1)) : Nothing)
+            (0)
+
+
 // UNFOLDING
 
 /**
@@ -2104,6 +2131,9 @@ List.intercalate = intercalate
 List.scanl = scanl
 
 List.mapAccumL = mapAccumL
+
+List.replicate = replicate
+List.replicateR = replicateR
 
 List.unfoldr = unfoldr
 

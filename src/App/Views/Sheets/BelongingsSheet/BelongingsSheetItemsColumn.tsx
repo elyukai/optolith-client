@@ -1,83 +1,95 @@
 import * as React from "react";
 import { Textfit } from "react-textfit";
-import { Item } from "../../../Models/View/viewTypeHelpers";
-import { localizeNumber, localizeWeight, translate, UIMessagesObject } from "../../../Utilities/I18n";
+import { fmap } from "../../../../Data/Functor";
+import { flength, List, map, replicateR, toArray } from "../../../../Data/List";
+import { bindF, ensure } from "../../../../Data/Maybe";
+import { Record } from "../../../../Data/Record";
+import { ItemForView } from "../../../Models/View/ItemForView";
+import { L10nRecord } from "../../../Models/Wiki/L10n";
+import { localizeNumber, localizeWeight, translate } from "../../../Utilities/I18n";
+import { gt } from "../../../Utilities/mathUtils";
+import { pipe, pipe_ } from "../../../Utilities/pipe";
+import { renderMaybe, renderMaybeWith } from "../../../Utilities/ReactUtils";
 
 export interface BelongingsSheetItemsColumnProps {
   columnSize: number
-  items: List<Record<Item>>
-  locale: UIMessagesObject
+  items: List<Record<ItemForView>>
+  l10n: L10nRecord
 }
 
+const IFVA = ItemForView.A
+
 export function BelongingsSheetItemsColumn (props: BelongingsSheetItemsColumnProps) {
-  const { columnSize, locale, items } = props
+  const { columnSize, l10n, items } = props
 
   return (
     <table>
       <thead>
         <tr>
           <th className="name">
-            {translate (locale, "charactersheet.belongings.equipment.headers.item")}
+            {translate (l10n) ("item")}
           </th>
           <th className="amount">
-            {translate (locale, "charactersheet.belongings.equipment.headers.number")}
+            {translate (l10n) ("number")}
           </th>
           <th className="price">
-            {translate (locale, "charactersheet.belongings.equipment.headers.price")}
+            {translate (l10n) ("price")}
           </th>
           <th className="weight">
-            {translate (locale, "charactersheet.belongings.equipment.headers.weight")}
+            {translate (l10n) ("weight")}
           </th>
           <th className="where">
-            {translate (locale, "charactersheet.belongings.equipment.headers.carriedwhere")}
+            {translate (l10n) ("carriedwhere")}
           </th>
         </tr>
       </thead>
       <tbody>
-        {items
-          .map (e => (
-            <tr key={e .get ("id")}>
+        {pipe_ (
+          items,
+          map (e => (
+            <tr key={IFVA.id (e)}>
               <td className="name">
-                <Textfit max={11} min={7} mode="single">{e .get ("name")}</Textfit>
+                <Textfit max={11} min={7} mode="single">{IFVA.name (e)}</Textfit>
               </td>
-              <td className="amount">{e .get ("amount") > 1 && e.get ("amount")}</td>
+              <td className="amount">{renderMaybe (ensure (gt (1)) (IFVA.amount (e)))}</td>
               <td className="price">
-                {e .get ("price") > 0 && localizeNumber (locale .get ("id")) (e .get ("price"))}
+                {pipe_ (
+                  e,
+                  IFVA.price,
+                  bindF (ensure (gt (0))),
+                  renderMaybeWith (localizeNumber (l10n))
+                )}
               </td>
               <td className="weight">
-                {Maybe.fromMaybe<string | number>
-                  ("")
-                  (e .lookup ("weight") .fmap (
-                    weight => localizeNumber (locale .get ("id"))
-                                             (localizeWeight (locale .get ("id")) (weight))
-                  ))}
+                  {pipe_ (
+                    e,
+                    IFVA.weight,
+                    fmap (pipe (
+                      localizeWeight (l10n),
+                      localizeNumber (l10n)
+                    )),
+                    renderMaybe
+                  )}
               </td>
               <td className="where">
                 <Textfit max={11} min={7} mode="single">
-                  {e .lookupWithDefault<"where"> ("") ("where")}
+                  {renderMaybe (IFVA.where (e))}
                 </Textfit>
               </td>
             </tr>
-          ))
-          .toArray ()}
-        {List.unfoldr<JSX.Element, number>
-          (x => x >= columnSize
-            ? Nothing ()
-            : Just (
-              Tuple.of<JSX.Element, number>
-                (
-                  <tr key={`undefined${columnSize - 1 - x}`}>
-                    <td className="name"></td>
-                    <td className="amount"></td>
-                    <td className="price"></td>
-                    <td className="weight"></td>
-                    <td className="where"></td>
-                  </tr>
-                )
-                (R.inc (x))
-            )
-          )
-          (items.length ())}
+          )),
+          toArray
+        )}
+        {replicateR (flength (items) - columnSize)
+                    (index => (
+                      <tr key={`undefined-${index}`}>
+                        <td className="name"></td>
+                        <td className="amount"></td>
+                        <td className="price"></td>
+                        <td className="weight"></td>
+                        <td className="where"></td>
+                      </tr>
+                    ))}
       </tbody>
     </table>
   )

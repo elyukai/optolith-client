@@ -1,7 +1,20 @@
 import * as React from "react";
-import { PetInstance, Purse } from "../../../Models/Hero/heroTypeHelpers";
-import { AttributeCombined, Item } from "../../../Models/View/viewTypeHelpers";
-import { localizeNumber, localizeWeight, translate, UIMessagesObject } from "../../../Utilities/I18n";
+import { equals } from "../../../../Data/Eq";
+import { fmap, fmapF } from "../../../../Data/Functor";
+import { filter, find, flength, intercalate, List, map, splitAt } from "../../../../Data/List";
+import { fromMaybe, fromMaybeR, Just, Maybe, Nothing } from "../../../../Data/Maybe";
+import { fst, snd } from "../../../../Data/Pair";
+import { Record } from "../../../../Data/Record";
+import { Pet } from "../../../Models/Hero/Pet";
+import { Purse } from "../../../Models/Hero/Purse";
+import { AttributeCombined, AttributeCombinedA_ } from "../../../Models/View/AttributeCombined";
+import { ItemForView } from "../../../Models/View/ItemForView";
+import { L10nRecord } from "../../../Models/Wiki/L10n";
+import { localizeNumber, localizeWeight, translate } from "../../../Utilities/I18n";
+import { prefixAttr } from "../../../Utilities/IDUtils";
+import { divideBy, max, multiply } from "../../../Utilities/mathUtils";
+import { pipe, pipe_ } from "../../../Utilities/pipe";
+import { renderMaybe } from "../../../Utilities/ReactUtils";
 import { LabelBox } from "../../Universal/LabelBox";
 import { Options } from "../../Universal/Options";
 import { TextBox } from "../../Universal/TextBox";
@@ -12,9 +25,9 @@ import { BelongingsSheetPet } from "./BelongingsSheetPet";
 
 export interface BelongingsSheetProps {
   attributes: List<Record<AttributeCombined>>
-  items: Maybe<List<Record<Item>>>
-  locale: UIMessagesObject
-  pet: Maybe<Record<PetInstance>>
+  items: Maybe<List<Record<ItemForView>>>
+  l10n: L10nRecord
+  pet: Maybe<Record<Pet>>
   purse: Maybe<Record<Purse>>
   totalPrice: Maybe<number>
   totalWeight: Maybe<number>
@@ -23,149 +36,158 @@ export interface BelongingsSheetProps {
 export function BelongingsSheet (props: BelongingsSheetProps) {
   const {
     attributes,
-    items: maybeItems,
-    locale,
+    items: mitems,
+    l10n,
     purse,
     totalPrice: maybeTotalPrice,
     totalWeight: maybeTotalWeight,
   } = props
 
-  const strength = Maybe.fromMaybe
-    (0)
-    (attributes
-      .find (e => e .get ("id") === "ATTR_8")
-      .fmap (Record.get<AttributeCombined, "value"> ("value")))
+  const strength =
+    pipe_ (
+      attributes,
+      find (pipe (AttributeCombinedA_.id, equals (prefixAttr (8)))),
+      fmap (AttributeCombinedA_.value),
+      Maybe.sum
+    )
 
-  const columnSize = Maybe.fromMaybe
-    (33)
-    (maybeItems .fmap (R.pipe (
-      List.lengthL,
-      R.flip (R.divide) (2),
-      Math.round,
-      R.max<number> (33)
-    )))
+  const columnSize =
+    pipe_ (
+      mitems,
+      fmap (pipe (
+        flength,
+        divideBy (2),
+        Math.round,
+        max (33)
+      )),
+      fromMaybe (33)
+    )
 
-  const maybeColumns = maybeItems .fmap (List.splitAt<Record<Item>> (columnSize))
+  const maybeColumns = fmapF (mitems) (splitAt (columnSize))
 
   return (
     <SheetWrapper>
       <Options/>
       <Sheet
         id="belongings"
-        title={translate (locale, "charactersheet.belongings.title")}
+        title={translate (l10n) ("belongings")}
         attributes={attributes}
-        locale={locale}
+        l10n={l10n}
         >
         <div className="upper">
           <TextBox
-            label={translate (locale, "charactersheet.belongings.equipment.title")}
+            label={translate (l10n) ("equipment")}
             className="equipment"
             >
-            {Maybe.fromMaybe<NonNullable<React.ReactNode>>
-              (<div></div>)
-              (maybeColumns .fmap (
-                columns => (
-                  <div>
-                    <BelongingsSheetItemsColumn
-                      items={Tuple.fst (columns)}
-                      columnSize={columnSize}
-                      locale={locale}
-                      />
-                    <BelongingsSheetItemsColumn
-                      items={Tuple.snd (columns)}
-                      columnSize={columnSize}
-                      locale={locale}
-                      />
-                  </div>
-                )
-              ))}
+            {pipe_ (
+              maybeColumns,
+              fmap (columns => (
+                <div>
+                  <BelongingsSheetItemsColumn
+                    items={fst (columns)}
+                    columnSize={columnSize}
+                    l10n={l10n}
+                    />
+                  <BelongingsSheetItemsColumn
+                    items={snd (columns)}
+                    columnSize={columnSize}
+                    l10n={l10n}
+                    />
+                </div>
+              )),
+              fromMaybeR (<div></div>)
+            )}
             <div className="total">
               <label>
-                {translate (locale, "charactersheet.belongings.equipment.footers.total")}
+                {translate (l10n) ("total")}
               </label>
               <span>
-                {Maybe.fromMaybe
-                  ("")
-                  (maybeTotalPrice .fmap (R.pipe (
-                    R.multiply (100),
+                {pipe_ (
+                  maybeTotalPrice,
+                  fmap (pipe (
+                    multiply (100),
                     Math.round,
-                    R.flip (R.divide) (100),
-                    roundedPrice => localizeNumber (locale .get ("id")) (roundedPrice)
-                  )))}
+                    divideBy (100),
+                    localizeNumber (l10n)
+                  )),
+                  renderMaybe
+                )}
               </span>
               <span>
-                {Maybe.fromMaybe
-                  ("")
-                  (maybeTotalWeight .fmap (R.pipe (
-                    R.multiply (100),
+                {pipe_ (
+                  maybeTotalWeight,
+                  fmap (pipe (
+                    multiply (100),
                     Math.round,
-                    R.flip (R.divide) (100),
-                    roundedWeight => localizeWeight (locale .get ("id")) (roundedWeight),
-                    localizedWeight => localizeNumber (locale .get ("id")) (localizedWeight)
-                  )))}
+                    divideBy (100),
+                    localizeWeight (l10n),
+                    localizeNumber (l10n)
+                  )),
+                  renderMaybe
+                )}
               </span>
             </div>
           </TextBox>
           <TextBox
-            label={translate (locale, "charactersheet.belongings.purse.title")}
+            label={translate (l10n) ("purse")}
             className="purse"
             >
             <div className="top">
               <LabelBox
                 className="money"
-                label={translate (locale, "charactersheet.belongings.purse.labels.ducats")}
-                value={purse .fmap (Record.get<Purse, "d"> ("d"))}
+                label={translate (l10n) ("ducates.short")}
+                value={fmapF (purse) (Purse.A.d)}
                 />
               <LabelBox
                 className="money"
-                label={translate (locale, "charactersheet.belongings.purse.labels.silverthalers")}
-                value={purse .fmap (Record.get<Purse, "s"> ("s"))}
+                label={translate (l10n) ("silverthalers.short")}
+                value={fmapF (purse) (Purse.A.s)}
                 />
               <LabelBox
                 className="money"
-                label={translate (locale, "charactersheet.belongings.purse.labels.halers")}
-                value={purse .fmap (Record.get<Purse, "h"> ("h"))}
+                label={translate (l10n) ("halers.short")}
+                value={fmapF (purse) (Purse.A.h)}
                 />
               <LabelBox
                 className="money"
-                label={translate (locale, "charactersheet.belongings.purse.labels.kreutzers")}
-                value={purse .fmap (Record.get<Purse, "k"> ("k"))}
+                label={translate (l10n) ("kreutzers.short")}
+                value={fmapF (purse) (Purse.A.k)}
                 />
               <LabelBox
                 className="specifics"
-                label={translate (locale, "charactersheet.belongings.purse.labels.gems")}
-                value={maybeItems .fmap (
-                  items => items
-                    .filter (e => e .get ("gr") === 16)
-                    .map (e => e .get ("name"))
-                    .intercalate (", ")
-                )}
+                label={translate (l10n) ("gems")}
+                value={fmapF (mitems)
+                             (pipe (
+                               filter (pipe (ItemForView.A.gr, equals (16))),
+                               map (ItemForView.A.name),
+                               intercalate (", ")
+                             ))}
                 />
               <LabelBox
                 className="specifics"
-                label={translate (locale, "charactersheet.belongings.purse.labels.jewelry")}
-                value={maybeItems .fmap (
-                  items => items
-                    .filter (e => e .get ("gr") === 15)
-                    .map (e => e .get ("name"))
-                    .intercalate (", ")
-                )}
+                label={translate (l10n) ("jewelry")}
+                value={fmapF (mitems)
+                             (pipe (
+                               filter (pipe (ItemForView.A.gr, equals (15))),
+                               map (ItemForView.A.name),
+                               intercalate (", ")
+                             ))}
                 />
               <LabelBox
                 className="specifics"
-                label={translate (locale, "charactersheet.belongings.purse.labels.other")}
-                value={Nothing ()}
+                label={translate (l10n) ("other")}
+                value={Nothing}
                 />
             </div>
             <div className="fill"></div>
             <div className="carrying-capacity">
               <div className="left">
-                <h3>{translate (locale, "charactersheet.belongings.carryingcapacity.title")}</h3>
-                <p>{translate (locale, "charactersheet.belongings.carryingcapacity.calc")}</p>
+                <h3>{translate (l10n) ("carryingcapacity")}</h3>
+                <p>{translate (l10n) ("carryingcapacitycalc")}</p>
               </div>
               <LabelBox
-                label={translate (locale, "charactersheet.belongings.carryingcapacity.label")}
-                value={Just (localizeWeight (locale .get ("id")) (strength * 2))}
+                label={translate (l10n) ("carryingcapacitylabel")}
+                value={Just (localizeWeight (l10n) (strength * 2))}
                 />
             </div>
           </TextBox>

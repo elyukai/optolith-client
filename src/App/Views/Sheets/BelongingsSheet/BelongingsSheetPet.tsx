@@ -1,329 +1,276 @@
 import * as React from "react";
 import { Textfit } from "react-textfit";
-import { PetInstance } from "../../../Models/Hero/heroTypeHelpers";
-import { AttributeCombined } from "../../../Models/View/viewTypeHelpers";
-import { translate, UIMessagesObject } from "../../../Utilities/I18n";
+import { equals } from "../../../../Data/Eq";
+import { fmap } from "../../../../Data/Functor";
+import { find, List } from "../../../../Data/List";
+import { bind, bindF, Maybe } from "../../../../Data/Maybe";
+import { Record } from "../../../../Data/Record";
+import { Pet } from "../../../Models/Hero/Pet";
+import { AttributeCombined, AttributeCombinedA_ } from "../../../Models/View/AttributeCombined";
+import { L10nRecord } from "../../../Models/Wiki/L10n";
+import { translate } from "../../../Utilities/I18n";
+import { prefixAttr } from "../../../Utilities/IDUtils";
+import { pipe, pipe_ } from "../../../Utilities/pipe";
+import { renderMaybe, renderMaybeWith } from "../../../Utilities/ReactUtils";
 import { AvatarWrapper } from "../../Universal/AvatarWrapper";
 import { TextBox } from "../../Universal/TextBox";
 
 export interface BelongingsSheetPetProps {
   attributes: List<Record<AttributeCombined>>
-  locale: UIMessagesObject
-  pet: Maybe<Record<PetInstance>>
+  l10n: L10nRecord
+  pet: Maybe<Record<Pet>>
 }
 
 export function BelongingsSheetPet (props: BelongingsSheetPetProps) {
-  const {
-    attributes,
-    locale,
-    pet: maybePet,
-  } = props
+  const { attributes, l10n, pet: mpet, } = props
 
   return (
     <div className="pet">
-      <TextBox label={translate (locale, "charactersheet.belongings.animal.title")}>
+      <TextBox label={translate (l10n) ("title")}>
         <div className="pet-content">
           <div className="left">
             <div className="row pet-base">
               <div className="name">
-                <span className="label">{translate (locale, "pet.name")}</span>
+                <span className="label">{translate (l10n) ("name")}</span>
                 <span className="value">
                   <Textfit max={11} min={7} mode="single">
-                    {Maybe.fromMaybe
-                      ("")
-                      (maybePet .fmap (Record.get<PetInstance, "name"> ("name")))}
+                    {pipe_ (mpet, fmap (Pet.A.name), renderMaybe)}
                   </Textfit>
                 </span>
               </div>
               <div className="size">
-                <span className="label">{translate (locale, "pet.sizecategory")}</span>
+                <span className="label">{translate (l10n) ("sizecategory")}</span>
                 <span className="value">
-                  {Maybe.fromMaybe
-                    ("")
-                    (maybePet .bind (Record.lookup<PetInstance, "size"> ("size")))}
+                  {pipe_ (mpet, bindF (Pet.A.size), renderMaybe)}
                 </span>
               </div>
               <div className="type">
-                <span className="label">{translate (locale, "pet.type")}</span>
+                <span className="label">{translate (l10n) ("type")}</span>
                 <span className="value">
-                  {Maybe.fromMaybe
-                    ("")
-                    (maybePet .bind (Record.lookup<PetInstance, "type"> ("type")))}
+                  {pipe_ (mpet, bindF (Pet.A.type), renderMaybe)}
                 </span>
               </div>
               <div className="ap">
-                <span className="label">{translate (locale, "pet.ap")}</span>
+                <span className="label">{translate (l10n) ("adventurepoints.short")}</span>
                 <span className="value">
-                  {Maybe.fromMaybe
-                    ("")
-                    (maybePet .bind (Record.lookup<PetInstance, "spentAp"> ("spentAp")))}
+                  {pipe_ (mpet, bindF (Pet.A.spentAp), renderMaybe)}
                 </span>
                 <span className="label">/</span>
                 <span className="value">
-                  {Maybe.fromMaybe
-                    ("")
-                    (maybePet .bind (Record.lookup<PetInstance, "totalAp"> ("totalAp")))}
+                  {pipe_ (mpet, bindF (Pet.A.totalAp), renderMaybe)}
                 </span>
               </div>
             </div>
             <div className="row pet-primary">
               <div>
                 <span className="label">
-                  {Maybe.fromMaybe
-                    ("")
-                    (attributes
-                      .find (e => e .get ("id") === "ATTR_1")
-                      .fmap (Record.get<AttributeCombined, "short"> ("short")))}
+                  {pipe_ (
+                    attributes,
+                    find (pipe (AttributeCombinedA_.id, equals (prefixAttr (1)))),
+                    renderMaybeWith (AttributeCombinedA_.short)
+                  )}
                 </span>
                 <span className="value">
-                  {Maybe.fromMaybe
-                    ("")
-                    (maybePet .bind (Record.lookup<PetInstance, "cou"> ("cou")))}
+                  {pipe_ (mpet, bindF (Pet.A.cou), renderMaybe)}
                 </span>
               </div>
               <div>
                 <span className="label">
-                  {Maybe.fromMaybe
-                    ("")
-                    (attributes
-                      .find (e => e .get ("id") === "ATTR_2")
-                      .fmap (Record.get<AttributeCombined, "short"> ("short")))}
+                  {pipe_ (
+                    attributes,
+                    find (pipe (AttributeCombinedA_.id, equals (prefixAttr (2)))),
+                    renderMaybeWith (AttributeCombinedA_.short)
+                  )}
                 </span>
                 <span className="value">
-                  {Maybe.fromMaybe
-                    ("")
-                    (maybePet .bind (Record.lookup<PetInstance, "sgc"> ("sgc")))}
+                  {pipe_ (mpet, bindF (Pet.A.sgc), renderMaybe)}
                 </span>
               </div>
               <div>
                 <span className="label">
-                  {Maybe.fromMaybe
-                    ("")
-                    (attributes
-                      .find (e => e .get ("id") === "ATTR_3")
-                      .fmap (Record.get<AttributeCombined, "short"> ("short")))}
+                  {pipe_ (
+                    attributes,
+                    find (pipe (AttributeCombinedA_.id, equals (prefixAttr (3)))),
+                    renderMaybeWith (AttributeCombinedA_.short)
+                  )}
                 </span>
                 <span className="value">
-                  {Maybe.fromMaybe
-                    ("")
-                    (maybePet .bind (Record.lookup<PetInstance, "int"> ("int")))}
+                  {pipe_ (mpet, bindF (Pet.A.int), renderMaybe)}
                 </span>
               </div>
               <div>
                 <span className="label">
-                  {Maybe.fromMaybe
-                    ("")
-                    (attributes
-                      .find (e => e .get ("id") === "ATTR_4")
-                      .fmap (Record.get<AttributeCombined, "short"> ("short")))}
+                  {pipe_ (
+                    attributes,
+                    find (pipe (AttributeCombinedA_.id, equals (prefixAttr (4)))),
+                    renderMaybeWith (AttributeCombinedA_.short)
+                  )}
                 </span>
                 <span className="value">
-                  {Maybe.fromMaybe
-                    ("")
-                    (maybePet .bind (Record.lookup<PetInstance, "cha"> ("cha")))}
+                  {pipe_ (mpet, bindF (Pet.A.cha), renderMaybe)}
                 </span>
               </div>
               <div>
                 <span className="label">
-                  {Maybe.fromMaybe
-                    ("")
-                    (attributes
-                      .find (e => e .get ("id") === "ATTR_5")
-                      .fmap (Record.get<AttributeCombined, "short"> ("short")))}
+                  {pipe_ (
+                    attributes,
+                    find (pipe (AttributeCombinedA_.id, equals (prefixAttr (5)))),
+                    renderMaybeWith (AttributeCombinedA_.short)
+                  )}
                 </span>
                 <span className="value">
-                  {Maybe.fromMaybe
-                    ("")
-                    (maybePet .bind (Record.lookup<PetInstance, "dex"> ("dex")))}
+                  {pipe_ (mpet, bindF (Pet.A.dex), renderMaybe)}
                 </span>
               </div>
               <div>
                 <span className="label">
-                  {Maybe.fromMaybe
-                    ("")
-                    (attributes
-                      .find (e => e .get ("id") === "ATTR_6")
-                      .fmap (Record.get<AttributeCombined, "short"> ("short")))}
+                  {pipe_ (
+                    attributes,
+                    find (pipe (AttributeCombinedA_.id, equals (prefixAttr (6)))),
+                    renderMaybeWith (AttributeCombinedA_.short)
+                  )}
                 </span>
                 <span className="value">
-                  {Maybe.fromMaybe
-                    ("")
-                    (maybePet .bind (Record.lookup<PetInstance, "agi"> ("agi")))}
+                  {pipe_ (mpet, bindF (Pet.A.agi), renderMaybe)}
                 </span>
               </div>
               <div>
                 <span className="label">
-                  {Maybe.fromMaybe
-                    ("")
-                    (attributes
-                      .find (e => e .get ("id") === "ATTR_7")
-                      .fmap (Record.get<AttributeCombined, "short"> ("short")))}
+                  {pipe_ (
+                    attributes,
+                    find (pipe (AttributeCombinedA_.id, equals (prefixAttr (7)))),
+                    renderMaybeWith (AttributeCombinedA_.short)
+                  )}
                 </span>
                 <span className="value">
-                  {Maybe.fromMaybe
-                    ("")
-                    (maybePet .bind (Record.lookup<PetInstance, "con"> ("con")))}
+                  {pipe_ (mpet, bindF (Pet.A.con), renderMaybe)}
                 </span>
               </div>
               <div>
                 <span className="label">
-                  {Maybe.fromMaybe
-                    ("")
-                    (attributes
-                      .find (e => e .get ("id") === "ATTR_8")
-                      .fmap (Record.get<AttributeCombined, "short"> ("short")))}
+                  {pipe_ (
+                    attributes,
+                    find (pipe (AttributeCombinedA_.id, equals (prefixAttr (8)))),
+                    renderMaybeWith (AttributeCombinedA_.short)
+                  )}
                 </span>
                 <span className="value">
-                  {Maybe.fromMaybe
-                    ("")
-                    (maybePet .bind (Record.lookup<PetInstance, "str"> ("str")))}
+                  {pipe_ (mpet, bindF (Pet.A.str), renderMaybe)}
                 </span>
               </div>
             </div>
             <div className="row pet-secondary">
               <div className="lp">
-                <span className="label">{translate (locale, "pet.lp")}</span>
+                <span className="label">{translate (l10n) ("lifepoints.short")}</span>
                 <span className="value">
-                  {Maybe.fromMaybe
-                    ("")
-                    (maybePet .bind (Record.lookup<PetInstance, "lp"> ("lp")))}
+                  {pipe_ (mpet, bindF (Pet.A.lp), renderMaybe)}
                 </span>
               </div>
               <div className="ae">
-                <span className="label">{translate (locale, "pet.ae")}</span>
+                <span className="label">{translate (l10n) ("arcaneenergy.short")}</span>
                 <span className="value">
-                  {Maybe.fromMaybe
-                    ("")
-                    (maybePet .bind (Record.lookup<PetInstance, "ae"> ("ae")))}
+                  {pipe_ (mpet, bindF (Pet.A.ae), renderMaybe)}
                 </span>
               </div>
               <div className="spi">
-                <span className="label">{translate (locale, "pet.spi")}</span>
+                <span className="label">{translate (l10n) ("spirit.short")}</span>
                 <span className="value">
-                  {Maybe.fromMaybe
-                    ("")
-                    (maybePet .bind (Record.lookup<PetInstance, "spi"> ("spi")))}
+                  {pipe_ (mpet, bindF (Pet.A.spi), renderMaybe)}
                 </span>
               </div>
               <div className="tou">
-                <span className="label">{translate (locale, "pet.tou")}</span>
+                <span className="label">{translate (l10n) ("toughness.short")}</span>
                 <span className="value">
-                  {Maybe.fromMaybe
-                    ("")
-                    (maybePet .bind (Record.lookup<PetInstance, "tou"> ("tou")))}
+                  {pipe_ (mpet, bindF (Pet.A.tou), renderMaybe)}
                 </span>
               </div>
               <div className="pro">
-                <span className="label">{translate (locale, "pet.pro")}</span>
+                <span className="label">{translate (l10n) ("protection.short")}</span>
                 <span className="value">
-                  {Maybe.fromMaybe
-                    ("")
-                    (maybePet .bind (Record.lookup<PetInstance, "pro"> ("pro")))}
+                  {pipe_ (mpet, bindF (Pet.A.pro), renderMaybe)}
                 </span>
               </div>
               <div className="ini">
-                <span className="label">{translate (locale, "pet.ini")}</span>
+                <span className="label">{translate (l10n) ("initiative.short")}</span>
                 <span className="value">
-                  {Maybe.fromMaybe
-                    ("")
-                    (maybePet .bind (Record.lookup<PetInstance, "ini"> ("ini")))}
+                  {pipe_ (mpet, bindF (Pet.A.ini), renderMaybe)}
                 </span>
               </div>
               <div className="mov">
-                <span className="label">{translate (locale, "pet.mov")}</span>
+                <span className="label">{translate (l10n) ("movement.short")}</span>
                 <span className="value">
-                  {Maybe.fromMaybe
-                    ("")
-                    (maybePet .bind (Record.lookup<PetInstance, "mov"> ("mov")))}
+                  {pipe_ (mpet, bindF (Pet.A.mov), renderMaybe)}
                 </span>
               </div>
             </div>
             <div className="row pet-offensive">
               <div className="attack">
-                <span className="label">{translate (locale, "pet.attack")}</span>
+                <span className="label">{translate (l10n) ("attack")}</span>
                 <span className="value">
-                  {Maybe.fromMaybe
-                    ("")
-                    (maybePet .bind (Record.lookup<PetInstance, "attack"> ("attack")))}
+                  {pipe_ (mpet, bindF (Pet.A.attack), renderMaybe)}
                 </span>
               </div>
               <div className="at">
-                <span className="label">{translate (locale, "pet.at")}</span>
+                <span className="label">{translate (l10n) ("attack.short")}</span>
                 <span className="value">
-                  {Maybe.fromMaybe
-                    ("")
-                    (maybePet .bind (Record.lookup<PetInstance, "at"> ("at")))}
+                  {pipe_ (mpet, bindF (Pet.A.at), renderMaybe)}
                 </span>
               </div>
               <div className="pa">
-                <span className="label">{translate (locale, "pet.pa")}</span>
+                <span className="label">{translate (l10n) ("parry.short")}</span>
                 <span className="value">
-                  {Maybe.fromMaybe
-                    ("")
-                    (maybePet .bind (Record.lookup<PetInstance, "pa"> ("pa")))}
+                  {pipe_ (mpet, bindF (Pet.A.pa), renderMaybe)}
                 </span>
               </div>
               <div className="dp">
-                <span className="label">{translate (locale, "pet.dp")}</span>
+                <span className="label">{translate (l10n) ("damagepoints.short")}</span>
                 <span className="value">
-                  {Maybe.fromMaybe
-                    ("")
-                    (maybePet .bind (Record.lookup<PetInstance, "dp"> ("dp")))}
+                  {pipe_ (mpet, bindF (Pet.A.dp), renderMaybe)}
                 </span>
               </div>
               <div className="reach">
-                <span className="label">{translate (locale, "pet.reach")}</span>
+                <span className="label">{translate (l10n) ("reach")}</span>
                 <span className="value">
-                  {Maybe.fromMaybe
-                    ("")
-                    (maybePet .bind (Record.lookup<PetInstance, "reach"> ("reach")))}
+                  {pipe_ (mpet, bindF (Pet.A.reach), renderMaybe)}
                 </span>
               </div>
             </div>
             <div className="row pet-actions">
               <div className="actions">
-                <span className="label">{translate (locale, "pet.actions")}</span>
+                <span className="label">{translate (l10n) ("actions")}</span>
                 <span className="value">
                   <Textfit max={11} min={7} mode="single">
-                    {Maybe.fromMaybe
-                      ("")
-                      (maybePet .bind (Record.lookup<PetInstance, "actions"> ("actions")))}
+                    {pipe_ (mpet, bindF (Pet.A.actions), renderMaybe)}
                   </Textfit>
                 </span>
               </div>
             </div>
             <div className="row pet-skills">
               <div className="skills">
-                <span className="label">{translate (locale, "pet.skills")}</span>
+                <span className="label">{translate (l10n) ("skills")}</span>
                 <span className="value">
                   <Textfit max={11} min={7} mode="single">
-                    {Maybe.fromMaybe
-                      ("")
-                      (maybePet .bind (Record.lookup<PetInstance, "talents"> ("talents")))}
+                    {pipe_ (mpet, bindF (Pet.A.talents), renderMaybe)}
                   </Textfit>
                 </span>
               </div>
             </div>
             <div className="row pet-specialabilities">
               <div className="specialabilities">
-                <span className="label">{translate (locale, "pet.specialabilities")}</span>
+                <span className="label">{translate (l10n) ("specialabilities")}</span>
                 <span className="value">
                   <Textfit max={11} min={7} mode="single">
-                    {Maybe.fromMaybe
-                      ("")
-                      (maybePet .bind (Record.lookup<PetInstance, "skills"> ("skills")))}
+                    {pipe_ (mpet, bindF (Pet.A.skills), renderMaybe)}
                   </Textfit>
                 </span>
               </div>
             </div>
             <div className="row pet-notes">
               <div className="notes">
-                <span className="label">{translate (locale, "pet.notes")}</span>
+                <span className="label">{translate (l10n) ("notes")}</span>
                 <span className="value">
                   <Textfit max={11} min={7} mode="single">
-                    {Maybe.fromMaybe
-                      ("")
-                      (maybePet .bind (Record.lookup<PetInstance, "notes"> ("notes")))}
+                    {pipe_ (mpet, bindF (Pet.A.notes), renderMaybe)}
                   </Textfit>
                 </span>
               </div>
@@ -331,7 +278,7 @@ export function BelongingsSheetPet (props: BelongingsSheetPetProps) {
           </div>
           <div className="right">
             <AvatarWrapper
-              src={maybePet .bind (Record.lookup<PetInstance, "avatar"> ("avatar"))}
+              src={bind (mpet) (Pet.A.avatar)}
               />
           </div>
         </div>
