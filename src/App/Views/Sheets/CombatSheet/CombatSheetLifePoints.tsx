@@ -1,37 +1,46 @@
 import * as React from "react";
-import { SecondaryAttribute } from "../../../Models/Hero/heroTypeHelpers";
-import { translate, UIMessagesObject } from "../../../Utilities/I18n";
+import { equals } from "../../../../Data/Eq";
+import { find, List } from "../../../../Data/List";
+import { bindF, Just, Maybe, Nothing } from "../../../../Data/Maybe";
+import { Record } from "../../../../Data/Record";
+import { DerivedCharacteristic } from "../../../Models/View/DerivedCharacteristic";
+import { L10nRecord } from "../../../Models/Wiki/L10n";
+import { DCIds } from "../../../Selectors/derivedCharacteristicsSelectors";
+import { translate } from "../../../Utilities/I18n";
+import { pipe, pipe_ } from "../../../Utilities/pipe";
 import { Box } from "../../Universal/Box";
 import { LabelBox } from "../../Universal/LabelBox";
 import { TextBox } from "../../Universal/TextBox";
 
 export interface CombatSheetLifePointsProps {
-  derivedCharacteristics: List<Record<SecondaryAttribute>>
-  locale: UIMessagesObject
+  derivedCharacteristics: List<Record<DerivedCharacteristic>>
+  l10n: L10nRecord
 }
 
 export function CombatSheetLifePoints (props: CombatSheetLifePointsProps) {
-  const { derivedCharacteristics, locale } = props
+  const { derivedCharacteristics, l10n } = props
 
   const lifePoints =
-    Maybe.fromMaybe (0)
-                    (derivedCharacteristics
-                      .find (e => e .get ("id") === "LP")
-                      .bind (Record.lookup<SecondaryAttribute, "value"> ("value")))
+    pipe_ (
+      derivedCharacteristics,
+      find (pipe (DerivedCharacteristic.A.id, equals<DCIds> ("LP"))),
+      bindF (DerivedCharacteristic.A.value),
+      Maybe.sum
+    )
 
   return (
     <TextBox
       className="life-points"
-      label={translate (locale, "charactersheet.combat.lifepoints.title")}
+      label={translate (l10n) ("lifepoints")}
       >
       <div className="life-points-first">
         <LabelBox
-          label={translate (locale, "charactersheet.combat.lifepoints.labels.max")}
+          label={translate (l10n) ("max")}
           value={Just (lifePoints)}
           />
         <LabelBox
-          label={translate (locale, "charactersheet.combat.lifepoints.labels.current")}
-          value={Nothing ()}
+          label={translate (l10n) ("current")}
+          value={Nothing}
           />
       </div>
       <div className="life-points-second">
@@ -39,23 +48,23 @@ export function CombatSheetLifePoints (props: CombatSheetLifePointsProps) {
       </div>
       <div className="tiers">
         <Box>{Math.round (lifePoints * 0.75)}</Box>
-        {translate (locale, "charactersheet.combat.lifepoints.labels.pain1")}
+        {translate (l10n) ("pain1")}
       </div>
       <div className="tiers">
         <Box>{Math.round (lifePoints * 0.5)}</Box>
-        {translate (locale, "charactersheet.combat.lifepoints.labels.pain2")}
+        {translate (l10n) ("pain2")}
       </div>
       <div className="tiers">
         <Box>{Math.round (lifePoints * 0.25)}</Box>
-        {translate (locale, "charactersheet.combat.lifepoints.labels.pain3")}
+        {translate (l10n) ("pain3")}
       </div>
       <div className="tiers">
         <Box>5</Box>
-        {translate (locale, "charactersheet.combat.lifepoints.labels.pain4")}
+        {translate (l10n) ("pain4")}
       </div>
       <div className="tiers">
         <Box>0</Box>
-        {translate (locale, "charactersheet.combat.lifepoints.labels.dying")}
+        {translate (l10n) ("dying")}
       </div>
     </TextBox>
   )

@@ -1,10 +1,12 @@
 import { connect } from "react-redux";
-import { Action, Dispatch } from "redux";
+import { join, Just } from "../../Data/Maybe";
+import { ReduxDispatch } from "../Actions/Actions";
 import * as IOActions from "../Actions/IOActions";
 import * as SheetActions from "../Actions/SheetActions";
-import { AppState } from "../Reducers/appReducer";
+import { HeroModel } from "../Models/Hero/HeroModel";
+import { AppStateRecord } from "../Reducers/appReducer";
 import { getAdvantagesForSheet, getAspectKnowledgesForSheet, getBlessedSpecialAbilitiesForSheet, getBlessedTraditionForSheet, getCombatSpecialAbilitiesForSheet, getDisadvantagesForSheet, getFatePointsModifier, getGeneralSpecialAbilitiesForSheet, getMagicalSpecialAbilitiesForSheet, getMagicalTraditionForSheet, getPropertyKnowledgesForSheet } from "../Selectors/activatableSelectors";
-import { getAdventurePointsObject } from "../Selectors/adventurePointsSelectors";
+import { getAPObjectMap } from "../Selectors/adventurePointsSelectors";
 import { getAttributesForSheet, getPrimaryBlessedAttributeForSheet, getPrimaryMagicalAttributeForSheet } from "../Selectors/attributeSelectors";
 import { getCombatTechniquesForSheet } from "../Selectors/combatTechniquesSelectors";
 import { getDerivedCharacteristics } from "../Selectors/derivedCharacteristicsSelectors";
@@ -13,16 +15,19 @@ import { getAllItems, getArmors, getArmorZones, getMeleeWeapons, getRangedWeapon
 import { getBlessingsForSheet, getLiturgicalChantsForSheet } from "../Selectors/liturgicalChantsSelectors";
 import { getPet } from "../Selectors/petsSelectors";
 import { getCurrentCulture, getCurrentFullProfessionName, getCurrentRace } from "../Selectors/rcpSelectors";
+import { getConditions, getStates } from "../Selectors/sheetSelectors";
 import { getAllSkills } from "../Selectors/skillsSelectors";
 import { getCantripsForSheet, getSpellsForSheet } from "../Selectors/spellsSelectors";
-import { getAvatar, getCurrentHeroName, getProfile, getPurse, getSex, getSpecialAbilities, getWikiSpecialAbilities } from "../Selectors/stateSelectors";
+import { getAvatar, getCurrentHeroName, getProfile, getPurse, getSex, getSpecialAbilities, getWikiBooks, getWikiSpecialAbilities } from "../Selectors/stateSelectors";
 import { getSheetCheckAttributeValueVisibility } from "../Selectors/uisettingsSelectors";
+import { prefixSA } from "../Utilities/IDUtils";
+import { pipe } from "../Utilities/pipe";
 import { mapGetToMaybeSlice } from "../Utilities/SelectorsUtils";
 import { Sheets, SheetsDispatchProps, SheetsOwnProps, SheetsStateProps } from "../Views/Sheets/Sheets";
 
-const mapStateToProps = (state: AppState, ownProps: SheetsOwnProps): SheetsStateProps => ({
+const mapStateToProps = (state: AppStateRecord, ownProps: SheetsOwnProps): SheetsStateProps => ({
   advantagesActive: getAdvantagesForSheet (state, ownProps),
-  ap: getAdventurePointsObject (state, ownProps),
+  ap: join (getAPObjectMap (HeroModel.A.id (ownProps.hero)) (state, ownProps)),
   armors: getArmors (state),
   armorZones: getArmorZones (state),
   attributes: getAttributesForSheet (state),
@@ -52,11 +57,19 @@ const mapStateToProps = (state: AppState, ownProps: SheetsOwnProps): SheetsState
   purse: getPurse (state),
   totalPrice: getTotalPrice (state, ownProps),
   totalWeight: getTotalWeight (state, ownProps),
-  languagesWikiEntry: mapGetToMaybeSlice (R.pipe (getWikiSpecialAbilities, Just), "SA_29") (state),
-  languagesStateEntry: mapGetToMaybeSlice (getSpecialAbilities, "SA_29") (state),
-  scriptsWikiEntry: mapGetToMaybeSlice (R.pipe (getWikiSpecialAbilities, Just), "SA_27") (state),
-  scriptsStateEntry: mapGetToMaybeSlice (getSpecialAbilities, "SA_27") (state),
-  cantrips: getCantripsForSheet (state),
+  languagesWikiEntry: mapGetToMaybeSlice (pipe (getWikiSpecialAbilities, Just))
+                                         (prefixSA (29))
+                                         (state),
+  languagesStateEntry: mapGetToMaybeSlice (getSpecialAbilities)
+                                          (prefixSA (29))
+                                          (state),
+  scriptsWikiEntry: mapGetToMaybeSlice (pipe (getWikiSpecialAbilities, Just))
+                                       (prefixSA (27))
+                                       (state),
+  scriptsStateEntry: mapGetToMaybeSlice (getSpecialAbilities)
+                                        (prefixSA (27))
+                                        (state),
+  cantrips: getCantripsForSheet (state, ownProps),
   magicalPrimary: getPrimaryMagicalAttributeForSheet (state),
   magicalSpecialAbilities: getMagicalSpecialAbilitiesForSheet (state, ownProps),
   magicalTradition: getMagicalTraditionForSheet (state),
@@ -66,21 +79,24 @@ const mapStateToProps = (state: AppState, ownProps: SheetsOwnProps): SheetsState
   blessedPrimary: getPrimaryBlessedAttributeForSheet (state),
   blessedSpecialAbilities: getBlessedSpecialAbilitiesForSheet (state, ownProps),
   blessedTradition: getBlessedTraditionForSheet (state),
-  blessings: getBlessingsForSheet (state),
+  blessings: getBlessingsForSheet (state, ownProps),
   liturgicalChants: getLiturgicalChantsForSheet (state, ownProps),
+  conditions: getConditions (state, ownProps),
+  states: getStates (state, ownProps),
+  books: getWikiBooks (state),
 })
 
-const mapDispatchToProps = (dispatch: Dispatch<Action, AppState>, { locale }: SheetsOwnProps) => ({
+const mapDispatchToProps = (dispatch: ReduxDispatch, { l10n }: SheetsOwnProps) => ({
   switchAttributeValueVisibility () {
     dispatch (SheetActions.switchAttributeValueVisibility ())
   },
   printToPDF () {
-    dispatch (IOActions.requestPrintHeroToPDF (locale))
+    dispatch (IOActions.requestPrintHeroToPDF (l10n))
   },
 })
 
 export const connectSheets =
-  connect<SheetsStateProps, SheetsDispatchProps, SheetsOwnProps, AppState> (
+  connect<SheetsStateProps, SheetsDispatchProps, SheetsOwnProps, AppStateRecord> (
     mapStateToProps,
     mapDispatchToProps
   )

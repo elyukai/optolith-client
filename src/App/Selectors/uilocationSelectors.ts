@@ -1,6 +1,6 @@
 import { ident } from "../../Data/Function";
 import { fmapF } from "../../Data/Functor";
-import { elem, insertAt, List, snocF } from "../../Data/List";
+import { any, elem, insertAt, List, snocF } from "../../Data/List";
 import { Just, Maybe, Nothing } from "../../Data/Maybe";
 import { SubTab } from "../Models/Hero/heroTypeHelpers";
 import { createMaybeSelector } from "../Utilities/createMaybeSelector";
@@ -309,12 +309,11 @@ export const getSubtabs = createMaybeSelector (
             {
               id: TabId.Pact,
               label: translate (locale) ("pact"),
-              disabled: Maybe.elem (true)
-                                   (fmapF (mruleBooksEnabled)
-                                          (ruleBooksEnabled => isBookEnabled (ruleBooksEnabled)
-                                                                             ("US25102")
-                                                               || isBookEnabled (ruleBooksEnabled)
-                                                                                ("US25008"))),
+              disabled:
+                Maybe.elem (true)
+                           (fmapF (mruleBooksEnabled)
+                                  (ruleBooksEnabled => any (isBookEnabled (ruleBooksEnabled))
+                                                           (List ("US25102", "US25008")))),
             },
             {
               id: TabId.Rules,

@@ -1108,7 +1108,7 @@ const findIndicesIndex =
  * input list is short, excess elements of the longer list are discarded.
  */
 export const zip =
-  <A, B> (xs1: List<A>) => (xs2: List<B>): List<Pair<A, B>> =>
+  <A> (xs1: List<A>) => <B> (xs2: List<B>): List<Pair<A, B>> =>
     zipWith<A, B, Pair<A, B>> (Pair) (xs1) (xs2)
 
 /**

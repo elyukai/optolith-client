@@ -121,8 +121,14 @@ export const localizeWeight =
  * Takes a locale and returns a locale-aware string compare function.
  */
 export const compareLocale =
-  (locale: string) => (a: string) => (b: string) =>
-    toOrdering (Intl.Collator (locale, { numeric: true }) .compare (a, b))
+  (locale: string | L10nRecord) => (a: string) => (b: string) =>
+    toOrdering (Intl.Collator (
+                                isString (locale)
+                                  ? locale
+                                  : L10n.A.id (locale),
+                                { numeric: true }
+                              )
+                  .compare (a, b))
 
 export const localizeList =
   (sepWord: string): (xs: List<string | number>) => string =>

@@ -2,6 +2,7 @@ import * as React from "react";
 import { cons, drop, fnull, head, List, map } from "../../../../Data/List";
 import { Maybe } from "../../../../Data/Maybe";
 import { Record } from "../../../../Data/Record";
+import { NumIdName } from "../../../Models/NumIdName";
 import { ActiveActivatable } from "../../../Models/View/ActiveActivatable";
 import { Armor } from "../../../Models/View/Armor";
 import { AttributeCombined } from "../../../Models/View/AttributeCombined";
@@ -28,7 +29,7 @@ import { CombatSheetTechniques } from "./CombatSheetTechniques";
 
 export interface CombatSheetProps {
   armors: Maybe<List<Record<Armor>>>
-  attributes: List<Record<AttributeCombined>>
+  attributes: Maybe<List<Record<AttributeCombined>>>
   combatSpecialAbilities: Maybe<List<Record<ActiveActivatable<SpecialAbility>>>>
   combatTechniques: Maybe<List<Record<CombatTechniqueWithAttackParryBase>>>
   derivedCharacteristics: List<Record<DerivedCharacteristic>>
@@ -36,6 +37,8 @@ export interface CombatSheetProps {
   meleeWeapons: Maybe<List<Record<MeleeWeapon>>>
   rangedWeapons: Maybe<List<Record<RangedWeapon>>>
   shieldsAndParryingWeapons: Maybe<List<Record<ShieldOrParryingWeapon>>>
+  conditions: List<Record<NumIdName>>
+  states: List<Record<NumIdName>>
 }
 
 export function CombatSheet (props: CombatSheetProps) {
@@ -49,12 +52,11 @@ export function CombatSheet (props: CombatSheetProps) {
     meleeWeapons,
     rangedWeapons,
     shieldsAndParryingWeapons,
+    conditions,
+    states,
   } = props
 
-  const addHeader = fnull (derivedCharacteristics)
-    ? List<Record<HeaderValue>> ()
-    : cons (drop (3) (map (dcToHeaderVal) (derivedCharacteristics)))
-           (dcToHeaderVal (head (derivedCharacteristics)))
+  const addHeader = getAddCombatHeaderVals (derivedCharacteristics)
 
   return (
     <SheetWrapper>
@@ -98,12 +100,19 @@ export function CombatSheet (props: CombatSheetProps) {
             l10n={l10n}
             combatSpecialAbilities={combatSpecialAbilities}
             />
-          <CombatSheetStates l10n={l10n} />
+          <CombatSheetStates l10n={l10n} conditions={conditions} states={states} />
         </div>
       </Sheet>
     </SheetWrapper>
   )
 }
+
+export const getAddCombatHeaderVals =
+  (derivedCharacteristics: List<Record<DerivedCharacteristic>>) =>
+    fnull (derivedCharacteristics)
+      ? List<Record<HeaderValue>> ()
+      : cons (drop (3) (map (dcToHeaderVal) (derivedCharacteristics)))
+             (dcToHeaderVal (head (derivedCharacteristics)))
 
 const dcToHeaderVal =
   (e: Record<DerivedCharacteristic>) =>

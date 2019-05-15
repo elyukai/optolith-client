@@ -1,7 +1,7 @@
 import { flip, ident } from "../../Data/Function";
 import { fmap, fmapF } from "../../Data/Functor";
 import { consF, elem, elemF, filter, foldr, intercalate, List, map } from "../../Data/List";
-import { fromMaybe, Just, liftM2, liftM3, mapMaybe, Nothing } from "../../Data/Maybe";
+import { fromMaybe, Just, liftM2, liftM3, mapMaybe, Maybe, Nothing } from "../../Data/Maybe";
 import { insert, lookup, OrderedMap } from "../../Data/OrderedMap";
 import { uncurryN } from "../../Data/Pair";
 import { Record } from "../../Data/Record";
@@ -212,7 +212,7 @@ export const getGeneralSpecialAbilitiesForSheet = createMaybeSelector (
                              ActiveActivatable.A.wikiEntry,
                              SpecialAbility.AL.gr,
                              elemF (List (1, 2, 22, 30))
-                           )),
+                           )) as ident<List<Record<ActiveActivatable<SpecialAbility>>>>,
                     consF (ActiveActivatable ({
                             nameAndCost: ActivatableNameCost ({
                               active: ActiveObjectWithId ({
@@ -239,7 +239,7 @@ export const getGeneralSpecialAbilitiesForSheet = createMaybeSelector (
                             }),
                             heroEntry: ActivatableDependent.default,
                             wikiEntry: SpecialAbility.default,
-                          }))))
+                          }) as Record<ActiveActivatable<SpecialAbility>>)))
            (lookup (prefixId (IdPrefixes.SPECIAL_ABILITIES) (22))
                    (wiki_special_abilities))
            (mspecial_abilities)
@@ -251,7 +251,7 @@ const getSpecialAbilitiesByGroups =
       ActiveActivatable.A.wikiEntry,
       SpecialAbility.AL.gr,
       elemF (grs)
-    )))
+    ))) as ident<Maybe<List<Record<ActiveActivatable<SpecialAbility>>>>>
 
 export const getCombatSpecialAbilitiesForSheet = createMaybeSelector (
   getSpecialAbilitiesForSheet,

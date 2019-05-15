@@ -1,92 +1,98 @@
 import * as React from "react";
 import { Textfit } from "react-textfit";
-import { ArmorZone } from "../../../Models/View/viewTypeHelpers";
-import { localizeNumber, localizeWeight, translate, UIMessagesObject } from "../../../Utilities/I18n";
+import { fmap, fmapF } from "../../../../Data/Functor";
+import { flength, List, map, replicateR, toArray } from "../../../../Data/List";
+import { fromMaybeR, Maybe } from "../../../../Data/Maybe";
+import { Record } from "../../../../Data/Record";
+import { HitZoneArmorForView } from "../../../Models/View/HitZoneArmorForView";
+import { L10nRecord } from "../../../Models/Wiki/L10n";
+import { minus, ndash } from "../../../Utilities/Chars";
+import { localizeNumber, localizeWeight, translate } from "../../../Utilities/I18n";
+import { pipe, pipe_ } from "../../../Utilities/pipe";
 import { TextBox } from "../../Universal/TextBox";
 
 export interface CombatSheetArmorZonesProps {
-  armorZones: Maybe<List<Record<ArmorZone>>>
-  locale: UIMessagesObject
+  armorZones: Maybe<List<Record<HitZoneArmorForView>>>
+  l10n: L10nRecord
 }
 
+const HZAFVA = HitZoneArmorForView.A
+
 export function CombatSheetArmorZones (props: CombatSheetArmorZonesProps) {
-  const { locale, armorZones: maybeZoneArmors } = props
+  const { l10n, armorZones: mhit_zone_armors } = props
 
   return (
     <TextBox
-      label={translate (locale, "charactersheet.combat.armor.title")}
+      label={translate (l10n) ("armor")}
       className="armor armor-zones"
       >
       <table>
         <thead>
           <tr>
-            <th className="name">{translate (locale, "charactersheet.combat.headers.armor")}</th>
-            <th className="zone">{translate (locale, "charactersheet.combat.headers.head")}</th>
-            <th className="zone">{translate (locale, "charactersheet.combat.headers.torso")}</th>
-            <th className="zone">{translate (locale, "charactersheet.combat.headers.leftarm")}</th>
-            <th className="zone">{translate (locale, "charactersheet.combat.headers.rightarm")}</th>
-            <th className="zone">{translate (locale, "charactersheet.combat.headers.leftleg")}</th>
-            <th className="zone">{translate (locale, "charactersheet.combat.headers.rightleg")}</th>
-            <th className="enc">{translate (locale, "charactersheet.combat.headers.enc")}</th>
+            <th className="name">{translate (l10n) ("armor")}</th>
+            <th className="zone">{translate (l10n) ("head")}</th>
+            <th className="zone">{translate (l10n) ("torso")}</th>
+            <th className="zone">{translate (l10n) ("leftarm")}</th>
+            <th className="zone">{translate (l10n) ("rightarm")}</th>
+            <th className="zone">{translate (l10n) ("leftleg")}</th>
+            <th className="zone">{translate (l10n) ("rightleg")}</th>
+            <th className="enc">{translate (l10n) ("encumbrance.short")}</th>
             <th className="add-penalties">
-              {translate (locale, "charactersheet.combat.headers.addpenalties")}
+              {translate (l10n) ("additionalpenalties")}
             </th>
-            <th className="weight">{translate (locale, "charactersheet.combat.headers.weight")}</th>
+            <th className="weight">{translate (l10n) ("weight")}</th>
           </tr>
         </thead>
         <tbody>
-          {Maybe.fromMaybe<NonNullable<React.ReactNode>>
-            (<></>)
-            (maybeZoneArmors .fmap (
-              zoneArmors => zoneArmors
-                .map (e => (
-                  <tr key={e .get ("id")}>
-                    <td className="name">
-                      <Textfit max={11} min={7} mode="single">{e .get ("name")}</Textfit>
-                    </td>
-                    <td className="zone">{e .lookupWithDefault<"head"> (0) ("head")}</td>
-                    <td className="zone">{e .lookupWithDefault<"torso"> (0) ("torso")}</td>
-                    <td className="zone">{e .lookupWithDefault<"leftArm"> (0) ("leftArm")}</td>
-                    <td className="zone">{e .lookupWithDefault<"rightArm"> (0) ("rightArm")}</td>
-                    <td className="zone">{e .lookupWithDefault<"leftLeg"> (0) ("leftLeg")}</td>
-                    <td className="zone">{e .lookupWithDefault<"rightLeg"> (0) ("rightLeg")}</td>
-                    <td className="enc">{e .lookupWithDefault<"enc"> (0) ("enc")}</td>
-                    <td className="add-penalties">{e .get ("addPenalties") ? "-1/-1" : "-"}</td>
-                    <td className="weight">
-                      {Maybe.fromMaybe<string | number>
-                        ("")
-                        (e .lookup ("weight") .fmap (
-                          weight => localizeNumber (locale .get ("id"))
-                                                   (localizeWeight (locale .get ("id")) (weight))
-                        ))}
-                      {" "}
-                      {translate (locale, "charactersheet.combat.headers.weightunit")}
-                    </td>
-                  </tr>
-                ))
-                .toArray ()
-            ))}
-          {List.unfoldr<JSX.Element, number>
-            (x => x >= 4
-              ? Nothing ()
-              : Just (
-                Tuple.of<JSX.Element, number>
-                  (
-                    <tr key={`undefined${3 - x}`}>
-                      <td className="name"></td>
-                      <td className="st"></td>
-                      <td className="loss"></td>
-                      <td className="pro"></td>
-                      <td className="enc"></td>
-                      <td className="add-penalties"></td>
-                      <td className="weight"></td>
-                      <td className="where"></td>
-                    </tr>
-                  )
-                  (R.inc (x))
-              )
-            )
-            (Maybe.fromMaybe (0) (maybeZoneArmors .fmap (List.lengthL)))}
+          {pipe_ (
+            mhit_zone_armors,
+            fmap (pipe (
+              map (e => (
+                <tr key={HZAFVA.id (e)}>
+                  <td className="name">
+                    <Textfit max={11} min={7} mode="single">{HZAFVA.name (e)}</Textfit>
+                  </td>
+                  <td className="zone">{Maybe.sum (HZAFVA.head (e))}</td>
+                  <td className="zone">{Maybe.sum (HZAFVA.torso (e))}</td>
+                  <td className="zone">{Maybe.sum (HZAFVA.leftArm (e))}</td>
+                  <td className="zone">{Maybe.sum (HZAFVA.rightArm (e))}</td>
+                  <td className="zone">{Maybe.sum (HZAFVA.leftLeg (e))}</td>
+                  <td className="zone">{Maybe.sum (HZAFVA.rightLeg (e))}</td>
+                  <td className="enc">{HZAFVA.enc (e)}</td>
+                  <td className="add-penalties">
+                    {HZAFVA.addPenalties (e) ? `${minus}1/${minus}1` : ndash}
+                  </td>
+                  <td className="weight">
+                    {pipe_ (
+                      e,
+                      HZAFVA.weight,
+                      localizeWeight (l10n),
+                      localizeNumber (l10n)
+                    )}
+                    {" "}
+                    {translate (l10n) ("weightunit.short")}
+                  </td>
+                </tr>
+              )),
+              toArray
+            )),
+            fromMaybeR (null)
+          )}
+          {replicateR (4 - Maybe.sum (fmapF (mhit_zone_armors) (flength)))
+                      (i => (
+                        <tr key={`undefined-${i}`}>
+                          <td className="name"></td>
+                          <td className="zone"></td>
+                          <td className="zone"></td>
+                          <td className="zone"></td>
+                          <td className="zone"></td>
+                          <td className="zone"></td>
+                          <td className="zone"></td>
+                          <td className="enc"></td>
+                          <td className="add-penalties"></td>
+                          <td className="weight"></td>
+                        </tr>
+                      ))}
         </tbody>
       </table>
     </TextBox>

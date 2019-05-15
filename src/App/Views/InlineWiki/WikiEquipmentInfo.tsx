@@ -17,7 +17,7 @@ import { localizeNumber, localizeSize, localizeWeight, translate } from "../../U
 import { prefixCT } from "../../Utilities/IDUtils";
 import { convertPrimaryAttributeToArray } from "../../Utilities/ItemUtils";
 import { dec, gt } from "../../Utilities/mathUtils";
-import { sign, signNull } from "../../Utilities/NumberUtils";
+import { sign, signZero } from "../../Utilities/NumberUtils";
 import { pipe, pipe_ } from "../../Utilities/pipe";
 import { renderMaybe, renderMaybeWith } from "../../Utilities/ReactUtils";
 import { Markdown } from "../Universal/Markdown";
@@ -170,7 +170,7 @@ export function WikiEquipmentInfo (props: WikiEquipmentInfoProps) {
               {renderMaybe (damageDiceNumber)}
               {translate (l10n) ("dice.short")}
               {damageDiceSides}
-              {renderMaybeWith (signNull) (damageFlat)}
+              {renderMaybeWith (signZero) (damageFlat)}
             </td>
           </tr>
           <tr>
@@ -235,7 +235,7 @@ export function WikiEquipmentInfo (props: WikiEquipmentInfoProps) {
               {damageDiceNumber}
               {translate (l10n) ("dice.short")}
               {damageDiceSides}
-              {renderMaybeWith (signNull) (damageFlat)}
+              {renderMaybeWith (signZero) (damageFlat)}
             </td>
           </tr>
           <tr>

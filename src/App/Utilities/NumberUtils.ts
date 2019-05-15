@@ -65,7 +65,7 @@ export const sign = signNullCustom ("0")
 /**
  * Forces signing on the given number, ignores 0.
  */
-export const signNull = signNullCustom ("")
+export const signZero = signNullCustom ("")
 
 /**
  * Multiplies given string by 100 if it contains `,` o `.`.

@@ -144,60 +144,32 @@ const foldProfessionSubName =
 
 export const getProfessionsSortOptions = createMaybeSelector (
   getLocaleAsProp,
-  uiSettingsSelectors.getProfessionsSortOrder,
   getSex,
-  (l10n, sortOrder, msex) =>
+  (l10n, msex) =>
     maybe<SortOptions<Profession>>
       ([])
-      ((sex: Sex): SortOptions<Profession> => {
-        if (sortOrder === "cost") {
-          return [
-            comparingR (Profession.AL.ap) (compare),
-            comparingR (foldProfessionName (sex)) (compareLocale (L10n.A.id (l10n))),
-            comparingR (foldProfessionSubName (sex)) (compareLocale (L10n.A.id (l10n))),
-            comparingR (getProfessionSourceKey) (compareLocale (L10n.A.id (l10n))),
-          ]
-        }
-
-        return [
-          comparingR (foldProfessionName (sex)) (compareLocale (L10n.A.id (l10n))),
-          comparingR (foldProfessionSubName (sex)) (compareLocale (L10n.A.id (l10n))),
-          comparingR (getProfessionSourceKey) (compareLocale (L10n.A.id (l10n))),
-        ]
-      })
+      ((sex: Sex): SortOptions<Profession> => [
+        comparingR (foldProfessionName (sex)) (compareLocale (L10n.A.id (l10n))),
+        comparingR (foldProfessionSubName (sex)) (compareLocale (L10n.A.id (l10n))),
+        comparingR (getProfessionSourceKey) (compareLocale (L10n.A.id (l10n))),
+      ])
       (msex)
 )
 
 export const getProfessionsCombinedSortOptions = createMaybeSelector (
   getLocaleAsProp,
-  uiSettingsSelectors.getProfessionsSortOrder,
   getSex,
-  (l10n, sortOrder, msex) =>
+  (l10n, msex) =>
     maybe<SortOptions<ProfessionCombined>>
       ([])
-      ((sex: Sex): SortOptions<ProfessionCombined> => {
-        if (sortOrder === "cost") {
-          return [
-            comparingR (pipe (ProfessionCombined.A.wikiEntry, Profession.AL.ap))
-                       (compare),
-            comparingR (pipe (ProfessionCombined.A.wikiEntry, foldProfessionName (sex)))
-                       (compareLocale (L10n.A.id (l10n))),
-            comparingR (pipe (ProfessionCombined.A.wikiEntry, foldProfessionSubName (sex)))
-                       (compareLocale (L10n.A.id (l10n))),
-            comparingR (pipe (ProfessionCombined.A.wikiEntry, getProfessionSourceKey))
-                       (compareLocale (L10n.A.id (l10n))),
-          ]
-        }
-
-        return [
-          comparingR (pipe (ProfessionCombined.A.wikiEntry, foldProfessionName (sex)))
-                     (compareLocale (L10n.A.id (l10n))),
-          comparingR (pipe (ProfessionCombined.A.wikiEntry, foldProfessionSubName (sex)))
-                     (compareLocale (L10n.A.id (l10n))),
-          comparingR (pipe (ProfessionCombined.A.wikiEntry, getProfessionSourceKey))
-                     (compareLocale (L10n.A.id (l10n))),
-        ]
-      })
+      ((sex: Sex): SortOptions<ProfessionCombined> => [
+        comparingR (pipe (ProfessionCombined.A.wikiEntry, foldProfessionName (sex)))
+                    (compareLocale (L10n.A.id (l10n))),
+        comparingR (pipe (ProfessionCombined.A.wikiEntry, foldProfessionSubName (sex)))
+                    (compareLocale (L10n.A.id (l10n))),
+        comparingR (pipe (ProfessionCombined.A.wikiEntry, getProfessionSourceKey))
+                    (compareLocale (L10n.A.id (l10n))),
+      ])
       (msex)
 )
 

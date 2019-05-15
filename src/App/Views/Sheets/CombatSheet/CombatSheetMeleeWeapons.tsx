@@ -1,136 +1,145 @@
 import * as React from "react";
 import { Textfit } from "react-textfit";
-import { MeleeWeapon } from "../../../Models/View/viewTypeHelpers";
-import { localizeNumber, localizeWeight, translate, UIMessagesObject } from "../../../Utilities/I18n";
-import { getRoman, sign, signNull } from "../../../Utilities/NumberUtils";
+import { fmap, fmapF } from "../../../../Data/Functor";
+import { flength, intercalate, isList, List, map, replicateR, subscript, toArray, zip } from "../../../../Data/List";
+import { bindF, fromMaybeR, Maybe } from "../../../../Data/Maybe";
+import { fst, snd } from "../../../../Data/Pair";
+import { Record } from "../../../../Data/Record";
+import { MeleeWeapon } from "../../../Models/View/MeleeWeapon";
+import { L10nRecord } from "../../../Models/Wiki/L10n";
+import { ndash } from "../../../Utilities/Chars";
+import { localizeNumber, localizeWeight, translate } from "../../../Utilities/I18n";
+import { dec } from "../../../Utilities/mathUtils";
+import { sign, signZero, toRoman } from "../../../Utilities/NumberUtils";
+import { pipe, pipe_ } from "../../../Utilities/pipe";
+import { renderMaybe, renderMaybeWith } from "../../../Utilities/ReactUtils";
 import { TextBox } from "../../Universal/TextBox";
 
 export interface CombatSheetMeleeWeaponsProps {
-  locale: UIMessagesObject
+  l10n: L10nRecord
   meleeWeapons: Maybe<List<Record<MeleeWeapon>>>
 }
 
+const MWA = MeleeWeapon.A
+
 export function CombatSheetMeleeWeapons (props: CombatSheetMeleeWeaponsProps) {
-  const { locale, meleeWeapons: maybeMeleeWeapons } = props
+  const { l10n, meleeWeapons: mmelee_weapons } = props
 
   return (
     <TextBox
-      label={translate (locale, "charactersheet.combat.closecombatweapons.title")}
+      label={translate (l10n) ("closecombatweapons")}
       className="melee-weapons"
       >
       <table>
         <thead>
           <tr>
-            <th className="name">{translate (locale, "charactersheet.combat.headers.weapon")}</th>
+            <th className="name">{translate (l10n) ("weapon")}</th>
             <th className="combat-technique">
-              {translate (locale, "charactersheet.combat.headers.combattechnique")}
+              {translate (l10n) ("combattechnique")}
             </th>
             <th className="damage-bonus">
-              {translate (locale, "charactersheet.combat.headers.damagebonus")}
+              {translate (l10n) ("damagebonus.medium")}
             </th>
-            <th className="damage">{translate (locale, "charactersheet.combat.headers.dp")}</th>
+            <th className="damage">{translate (l10n) ("damagepoints.short")}</th>
             <th className="mod" colSpan={2}>
-              {translate (locale, "charactersheet.combat.headers.atpamod")}
+              {translate (l10n) ("attackparrymodifier.short")}
             </th>
-            <th className="reach">{translate (locale, "charactersheet.combat.headers.reach")}</th>
-            <th className="bf">{translate (locale, "charactersheet.combat.headers.bf")}</th>
-            <th className="loss">{translate (locale, "charactersheet.combat.headers.loss")}</th>
-            <th className="at">{translate (locale, "charactersheet.combat.headers.at")}</th>
-            <th className="pa">{translate (locale, "charactersheet.combat.headers.pa")}</th>
-            <th className="weight">{translate (locale, "charactersheet.combat.headers.weight")}</th>
+            <th className="reach">{translate (l10n) ("reach")}</th>
+            <th className="bf">{translate (l10n) ("breakingpointrating.short")}</th>
+            <th className="loss">{translate (l10n) ("damaged.short")}</th>
+            <th className="at">{translate (l10n) ("attack.short")}</th>
+            <th className="pa">{translate (l10n) ("parry.short")}</th>
+            <th className="weight">{translate (l10n) ("weight")}</th>
           </tr>
         </thead>
         <tbody>
-          {Maybe.fromMaybe<NonNullable<React.ReactNode>>
-            (<></>)
-            (maybeMeleeWeapons .fmap (
-              meleeWeapons => meleeWeapons
-                .map (e => {
-                  const primaryBonus = e .get ("primaryBonus")
+          {pipe_ (
+            mmelee_weapons,
+            fmap (pipe (
+              map (e => {
+                const primaryBonus = MWA.primaryBonus (e)
 
-                  return (
-                    <tr key={e .get ("id")}>
-                      <td className="name">
-                        <Textfit max={11} min={7} mode="single">{e .get ("name")}</Textfit>
-                      </td>
-                      <td className="combat-technique">{e .get ("combatTechnique")}</td>
-                      <td className="damage-bonus">
-                        {primaryBonus instanceof List
-                          ? List.zip<string, number> (e .get ("primary")) (primaryBonus)
-                            .map (pair => `${Tuple.fst (pair)} ${Tuple.snd (pair)}`)
-                            .intercalate ("/")
-                          : `${e .get ("primary") .intercalate ("/")} ${primaryBonus}`}
-                      </td>
-                      <td className="damage">
-                        {Maybe.fromMaybe<string | number> ("") (e .lookup ("damageDiceNumber"))}
-                        {translate (locale, "charactersheet.combat.content.dice")}
-                        {Maybe.fromMaybe<string | number> ("") (e .lookup ("damageDiceSides"))}
-                        {signNull (e .get ("damageFlat"))}
-                      </td>
-                      <td className="at-mod mod">
-                        {sign (e .lookupWithDefault<"atMod"> (0) ("atMod"))}
-                      </td>
-                      <td className="pa-mod mod">
-                        {sign (e .lookupWithDefault<"paMod"> (0) ("paMod"))}
-                      </td>
-                      <td className="reach">
-                        {Maybe.fromMaybe
-                          ("")
-                          (e .lookup ("reach") .bind (R.pipe (
-                            R.dec,
-                            List.subscript (
-                              translate (locale, "charactersheet.combat.headers.reachlabels")
-                            )
-                          )))}
-                      </td>
-                      <td className="bf">{e .get ("bf")}</td>
-                      <td className="loss">
-                        {Maybe.fromMaybe ("") (e .lookup ("loss") .fmap (getRoman))}
-                      </td>
-                      <td className="at">{e .get ("at")}</td>
-                      <td className="pa">
-                        {Maybe.fromMaybe<string | number> ("--") (e .lookup ("pa"))}
-                      </td>
-                      <td className="weight">
-                        {Maybe.fromMaybe<string | number>
-                          ("")
-                          (e .lookup ("weight") .fmap (
-                            weight => localizeNumber (locale .get ("id"))
-                                                     (localizeWeight (locale .get ("id")) (weight))
-                          ))}
-                        {" "}
-                        {translate (locale, "charactersheet.combat.headers.weightunit")}
-                      </td>
-                    </tr>
-                  )
-                })
-                .toArray ()
-            ))}
-          {List.unfoldr<JSX.Element, number>
-            (x => x >= 4
-              ? Nothing ()
-              : Just (
-                Tuple.of<JSX.Element, number>
-                  (
-                    <tr key={`undefined${3 - x}`}>
-                      <td className="name"></td>
-                      <td className="combat-technique"></td>
-                      <td className="damage-bonus"></td>
-                      <td className="damage"></td>
-                      <td className="at-mod mod"></td>
-                      <td className="pa-mod mod"></td>
-                      <td className="reach"></td>
-                      <td className="bf"></td>
-                      <td className="loss"></td>
-                      <td className="at"></td>
-                      <td className="pa"></td>
-                      <td className="weight"></td>
-                    </tr>
-                  )
-                  (R.inc (x))
-              )
-            )
-            (Maybe.fromMaybe (0) (maybeMeleeWeapons .fmap (List.lengthL)))}
+                return (
+                  <tr key={MWA.id (e)}>
+                    <td className="name">
+                      <Textfit max={11} min={7} mode="single">{MWA.name (e)}</Textfit>
+                    </td>
+                    <td className="combat-technique">{MWA.combatTechnique (e)}</td>
+                    <td className="damage-bonus">
+                      {isList (primaryBonus)
+                        ? pipe_ (
+                            primaryBonus,
+                            zip (MWA.primary (e)),
+                            map (p => `${fst (p)} ${snd (p)}`),
+                            intercalate ("/")
+                          )
+                        : `${intercalate ("/") (MWA.primary (e))} ${primaryBonus}`}
+                    </td>
+                    <td className="damage">
+                      {renderMaybe (MWA.damageDiceNumber (e))}
+                      {translate (l10n) ("dice.short")}
+                      {renderMaybe (MWA.damageDiceSides (e))}
+                      {signZero (MWA.damageFlat (e))}
+                    </td>
+                    <td className="at-mod mod">
+                      {sign (Maybe.sum (MWA.atMod (e)))}
+                    </td>
+                    <td className="pa-mod mod">
+                      {sign (Maybe.sum (MWA.paMod (e)))}
+                    </td>
+                    <td className="reach">
+                      {pipe_ (
+                        e,
+                        MWA.reach,
+                        bindF (pipe (
+                          dec,
+                          subscript (translate (l10n) ("reachlabels"))
+                        )),
+                        renderMaybe
+                      )}
+                    </td>
+                    <td className="bf">{MWA.bf (e)}</td>
+                    <td className="loss">
+                      {renderMaybeWith (toRoman) (MWA.loss (e))}
+                    </td>
+                    <td className="at">{MWA.at (e)}</td>
+                    <td className="pa">
+                      {fromMaybeR (ndash) (MWA.pa (e))}
+                    </td>
+                    <td className="weight">
+                      {pipe_ (
+                        e,
+                        MWA.weight,
+                        localizeWeight (l10n),
+                        localizeNumber (l10n)
+                      )}
+                      {" "}
+                      {translate (l10n) ("weightunit.short")}
+                    </td>
+                  </tr>
+                )
+              }),
+              toArray
+            )),
+            fromMaybeR (null)
+          )}
+          {replicateR (4 - Maybe.sum (fmapF (mmelee_weapons) (flength)))
+                      (i => (
+                        <tr key={`undefined-${i}`}>
+                          <td className="name"></td>
+                          <td className="combat-technique"></td>
+                          <td className="damage-bonus"></td>
+                          <td className="damage"></td>
+                          <td className="at-mod mod"></td>
+                          <td className="pa-mod mod"></td>
+                          <td className="reach"></td>
+                          <td className="bf"></td>
+                          <td className="loss"></td>
+                          <td className="at"></td>
+                          <td className="pa"></td>
+                          <td className="weight"></td>
+                        </tr>
+                      ))}
         </tbody>
       </table>
     </TextBox>

@@ -1,93 +1,93 @@
 import * as React from "react";
 import { Textfit } from "react-textfit";
-import { ShieldOrParryingWeapon } from "../../../Models/View/viewTypeHelpers";
-import { localizeNumber, localizeWeight, translate, UIMessagesObject } from "../../../Utilities/I18n";
-import { getRoman, sign } from "../../../Utilities/NumberUtils";
+import { fmap, fmapF } from "../../../../Data/Functor";
+import { flength, List, map, replicateR, toArray } from "../../../../Data/List";
+import { fromMaybeR, Maybe } from "../../../../Data/Maybe";
+import { Record } from "../../../../Data/Record";
+import { ShieldOrParryingWeapon } from "../../../Models/View/ShieldOrParryingWeapon";
+import { L10nRecord } from "../../../Models/Wiki/L10n";
+import { localizeNumber, localizeWeight, translate } from "../../../Utilities/I18n";
+import { sign, toRoman } from "../../../Utilities/NumberUtils";
+import { pipe, pipe_ } from "../../../Utilities/pipe";
+import { renderMaybeWith } from "../../../Utilities/ReactUtils";
 import { TextBox } from "../../Universal/TextBox";
 
 export interface CombatSheetShieldsProps {
-  locale: UIMessagesObject
+  l10n: L10nRecord
   shieldsAndParryingWeapons: Maybe<List<Record<ShieldOrParryingWeapon>>>
 }
 
+const SOPWA = ShieldOrParryingWeapon.A
+
 export function CombatSheetShields (props: CombatSheetShieldsProps) {
-  const { locale, shieldsAndParryingWeapons: maybeShieldsAndParryingWeapons } = props
+  const { l10n, shieldsAndParryingWeapons: msh_or_parry_weapons } = props
 
   return (
     <TextBox
-      label={translate (locale, "charactersheet.combat.shieldparryingweapon.title")}
+      label={translate (l10n) ("shieldparryingweapon")}
       className="shields"
       >
       <table>
         <thead>
           <tr>
             <th className="name">
-              {translate (locale, "charactersheet.combat.headers.shieldparryingweapon")}
+              {translate (l10n) ("shieldparryingweapon")}
             </th>
             <th className="str">
-              {translate (locale, "charactersheet.combat.headers.structurepoints")}
+              {translate (l10n) ("structurepoints.short")}
             </th>
-            <th className="bf">{translate (locale, "charactersheet.combat.headers.bf")}</th>
-            <th className="loss">{translate (locale, "charactersheet.combat.headers.loss")}</th>
-            <th className="mod">{translate (locale, "charactersheet.combat.headers.atpamod")}</th>
-            <th className="weight">{translate (locale, "charactersheet.combat.headers.weight")}</th>
+            <th className="bf">{translate (l10n) ("breakingpointrating.short")}</th>
+            <th className="loss">{translate (l10n) ("damaged")}</th>
+            <th className="mod">{translate (l10n) ("attackparrymodifier.short")}</th>
+            <th className="weight">{translate (l10n) ("weight")}</th>
           </tr>
         </thead>
         <tbody>
-          {Maybe.fromMaybe<NonNullable<React.ReactNode>>
-            (<></>)
-            (maybeShieldsAndParryingWeapons .fmap (
-              shieldsAndParryingWeapons => shieldsAndParryingWeapons
-                .map (e => (
-                  <tr key={e .get ("id")}>
-                    <td className="name">
-                      <Textfit max={11} min={7} mode="single">{e .get ("name")}</Textfit>
-                    </td>
-                    <td className="str">
-                      {Maybe.fromMaybe<string | number> ("") (e .lookup ("stp"))}
-                    </td>
-                    <td className="bf">{e .get ("bf")}</td>
-                    <td className="loss">
-                      {Maybe.fromMaybe ("") (e .lookup ("loss") .fmap (getRoman))}
-                    </td>
-                    <td className="mod">
-                      {sign (e .lookupWithDefault<"atMod"> (0) ("atMod"))}
-                      /
-                      {sign (e .lookupWithDefault<"paMod"> (0) ("paMod"))}
-                    </td>
-                    <td className="weight">
-                      {Maybe.fromMaybe<string | number>
-                        ("")
-                        (e .lookup ("weight") .fmap (
-                          weight => localizeNumber (locale .get ("id"))
-                                                   (localizeWeight (locale .get ("id")) (weight))
-                        ))}
-                      {" "}
-                      {translate (locale, "charactersheet.combat.headers.weightunit")}
-                    </td>
-                  </tr>
-                ))
-                .toArray ()
-            ))}
-          {List.unfoldr<JSX.Element, number>
-            (x => x >= 4
-              ? Nothing ()
-              : Just (
-                Tuple.of<JSX.Element, number>
-                  (
-                    <tr key={`undefined${3 - x}`}>
-                      <td className="name"></td>
-                      <td className="str"></td>
-                      <td className="bf"></td>
-                      <td className="loss"></td>
-                      <td className="mod"></td>
-                      <td className="weight"></td>
-                    </tr>
-                  )
-                  (R.inc (x))
-              )
-            )
-            (Maybe.fromMaybe (0) (maybeShieldsAndParryingWeapons .fmap (List.lengthL)))}
+          {pipe_ (
+            msh_or_parry_weapons,
+            fmap (pipe (
+              map (e => (
+                <tr key={SOPWA.id (e)}>
+                  <td className="name">
+                    <Textfit max={11} min={7} mode="single">{SOPWA.name (e)}</Textfit>
+                  </td>
+                  <td className="str">
+                    {Maybe.fromMaybe<string | number> ("") (SOPWA.stp (e))}
+                  </td>
+                  <td className="bf">{SOPWA.bf (e)}</td>
+                  <td className="loss">
+                    {renderMaybeWith (toRoman) (SOPWA.loss (e))}
+                  </td>
+                  <td className="mod">
+                    {sign (Maybe.sum (SOPWA.atMod (e)))}/{sign (Maybe.sum (SOPWA.paMod (e)))}
+                  </td>
+                  <td className="weight">
+                    {pipe_ (
+                      e,
+                      SOPWA.weight,
+                      localizeWeight (l10n),
+                      localizeNumber (l10n)
+                    )}
+                    {" "}
+                    {translate (l10n) ("weightunit.short")}
+                  </td>
+                </tr>
+              )),
+              toArray
+            )),
+            fromMaybeR (null)
+          )}
+          {replicateR (4 - Maybe.sum (fmapF (msh_or_parry_weapons) (flength)))
+                      (i => (
+                        <tr key={`undefined-${i}`}>
+                          <td className="name"></td>
+                          <td className="str"></td>
+                          <td className="bf"></td>
+                          <td className="loss"></td>
+                          <td className="mod"></td>
+                          <td className="weight"></td>
+                        </tr>
+                      ))}
         </tbody>
       </table>
     </TextBox>
