@@ -1,10 +1,24 @@
 import * as React from "react";
-import * as Data from "../../../Models/Hero/heroTypeHelpers";
-import * as View from "../../../Models/View/viewTypeHelpers";
-import * as Wiki from "../../../Models/Wiki/wikiTypeHelpers";
-import { AdventurePointsObject } from "../../../Selectors/adventurePointsSelectors";
+import { fmap } from "../../../../Data/Functor";
+import { List } from "../../../../Data/List";
+import { fromMaybeR, Maybe } from "../../../../Data/Maybe";
+import { Record } from "../../../../Data/Record";
+import { Sex } from "../../../Models/Hero/heroTypeHelpers";
+import { PersonalData } from "../../../Models/Hero/PersonalData";
+import { ActiveActivatable } from "../../../Models/View/ActiveActivatable";
+import { AdventurePointsCategories } from "../../../Models/View/AdventurePointsCategories";
+import { AttributeCombined } from "../../../Models/View/AttributeCombined";
+import { DerivedCharacteristic } from "../../../Models/View/DerivedCharacteristic";
+import { Advantage } from "../../../Models/Wiki/Advantage";
+import { Culture } from "../../../Models/Wiki/Culture";
+import { Disadvantage } from "../../../Models/Wiki/Disadvantage";
+import { ExperienceLevel } from "../../../Models/Wiki/ExperienceLevel";
+import { L10nRecord } from "../../../Models/Wiki/L10n";
+import { Race } from "../../../Models/Wiki/Race";
+import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility";
 import { compressList } from "../../../Utilities/Activatable/activatableNameUtils";
 import { translate } from "../../../Utilities/I18n";
+import { pipe_ } from "../../../Utilities/pipe";
 import { BorderButton } from "../../Universal/BorderButton";
 import { Options } from "../../Universal/Options";
 import { TextBox } from "../../Universal/TextBox";
@@ -14,22 +28,22 @@ import { MainSheetAttributes } from "./MainSheetAttributes";
 import { MainSheetPersonalData } from "./MainSheetPersonalData";
 
 export interface MainSheetProps {
-  advantagesActive: Maybe<List<Record<Data.ActiveViewObject<Wiki.Advantage>>>>
-  ap: Record<AdventurePointsObject>
-  attributes: List<Record<View.AttributeCombined>>
+  advantagesActive: Maybe<List<Record<ActiveActivatable<Advantage>>>>
+  ap: Maybe<Record<AdventurePointsCategories>>
+  attributes: Maybe<List<Record<AttributeCombined>>>
   avatar: Maybe<string>
-  culture: Maybe<Record<Wiki.Culture>>
-  derivedCharacteristics: List<Record<Data.SecondaryAttribute>>
-  disadvantagesActive: Maybe<List<Record<Data.ActiveViewObject<Wiki.Disadvantage>>>>
-  el: Maybe<Record<Wiki.ExperienceLevel>>
+  culture: Maybe<Record<Culture>>
+  derivedCharacteristics: Maybe<List<Record<DerivedCharacteristic>>>
+  disadvantagesActive: Maybe<List<Record<ActiveActivatable<Disadvantage>>>>
+  el: Maybe<Record<ExperienceLevel>>
   fatePointsModifier: number
-  generalsaActive: Maybe<List<string | Record<Data.ActiveViewObject<Wiki.SpecialAbility>>>>
-  locale: UIMessagesObject
+  generalsaActive: Maybe<List<Record<ActiveActivatable<SpecialAbility>>>>
+  l10n: L10nRecord
   name: Maybe<string>
   professionName: Maybe<string>
-  profile: Maybe<Record<Data.PersonalData>>
-  race: Maybe<Record<Wiki.Race>>
-  sex: Maybe<Data.Sex>
+  profile: Maybe<Record<PersonalData>>
+  race: Maybe<Record<Race>>
+  sex: Maybe<Sex>
   printToPDF (): void
 }
 
@@ -48,7 +62,7 @@ export function MainSheet (props: MainSheetProps) {
     name,
     professionName,
     profile,
-    locale,
+    l10n,
     printToPDF,
     race,
     sex,
@@ -59,86 +73,71 @@ export function MainSheet (props: MainSheetProps) {
       <Options>
         <BorderButton
           className="print-document"
-          label={translate (locale, "charactersheet.actions.printtopdf")}
+          label={translate (l10n) ("printtopdf")}
           onClick={printToPDF}
           />
       </Options>
       <Sheet
         id="main-sheet"
-        title={translate (locale, "charactersheet.main.title")}
+        title={translate (l10n) ("personaldata")}
         attributes={attributes}
-        locale={locale}
+        l10n={l10n}
         >
         <MainSheetPersonalData
           ap={ap}
           avatar={avatar}
           culture={culture}
           el={el}
-          eyeColorTags={translate (locale, "eyecolors")}
-          hairColorTags={translate (locale, "haircolors")}
-          locale={locale}
+          eyeColorTags={translate (l10n) ("eyecolors")}
+          hairColorTags={translate (l10n) ("haircolors")}
+          l10n={l10n}
           name={name}
           professionName={professionName}
           profile={profile}
           race={race}
           sex={sex}
-          socialstatusTags={translate (locale, "socialstatus")}
+          socialstatusTags={translate (l10n) ("socialstatuses")}
           />
         <div className="lower">
           <div className="lists">
-            {Maybe.fromMaybe
-              (<></>)
-              (maybeAdvantagesActive .fmap (
-                advantagesActive => (
-                  <TextBox
-                    className="activatable-list"
-                    label={translate (locale, "charactersheet.main.advantages")}
-                    value={
-                      compressList (
-                        advantagesActive as List<Record<Data.ActiveViewObject>>,
-                        locale
-                      )
-                    }
-                    />
-                )
-              ))}
-            {Maybe.fromMaybe
-                (<></>)
-                (maybeDisadvantagesActive .fmap (
-                  disadvantagesActive => (
-                    <TextBox
-                      className="activatable-list"
-                      label={translate (locale, "charactersheet.main.disadvantages")}
-                      value={
-                        compressList (
-                          disadvantagesActive as List<Record<Data.ActiveViewObject>>,
-                          locale
-                        )
-                      }
-                      />
-                )
-              ))}
-            {Maybe.fromMaybe
-                (<></>)
-                (maybeGeneralsaActive .fmap (
-                  generalsaActive => (
-                    <TextBox
-                      className="activatable-list"
-                      label={translate (locale, "charactersheet.main.generalspecialabilites")}
-                      value={
-                        compressList (
-                          generalsaActive as List<Record<Data.ActiveViewObject>>,
-                          locale
-                        )
-                      }
-                      />
-                )
-              ))}
+            {pipe_ (
+              maybeAdvantagesActive,
+              fmap (advantagesActive => (
+                <TextBox
+                  className="activatable-list"
+                  label={translate (l10n) ("advantages")}
+                  value={compressList (l10n) (advantagesActive)}
+                  />
+              )),
+              fromMaybeR (null)
+            )}
+            {pipe_ (
+              maybeDisadvantagesActive,
+              fmap (disadvantagesActive => (
+                <TextBox
+                  className="activatable-list"
+                  label={translate (l10n) ("disadvantages")}
+                  value={compressList (l10n) (disadvantagesActive)}
+                  />
+              )),
+              fromMaybeR (null)
+            )}
+            {pipe_ (
+              maybeGeneralsaActive,
+              fmap (generalsaActive => (
+                <TextBox
+                  className="activatable-list"
+                  label={translate (l10n) ("generalspecialabilites")}
+                  value={compressList (l10n) (generalsaActive)}
+                  />
+              )),
+              fromMaybeR (null)
+            )}
           </div>
           <MainSheetAttributes
             attributes={derivedCharacteristics}
             fatePointsModifier={fatePointsModifier}
-            locale={locale}
+            l10n={l10n}
             race={race}
             />
         </div>

@@ -1,8 +1,18 @@
 import * as React from "react";
-import { ActiveViewObject, SecondaryAttribute } from "../../../Models/Hero/heroTypeHelpers";
-import { AttributeCombined, BlessingCombined, LiturgicalChantWithRequirements } from "../../../Models/View/viewTypeHelpers";
-import { SpecialAbility } from "../../../Models/Wiki/wikiTypeHelpers";
-import { translate, UIMessagesObject } from "../../../Utilities/I18n";
+import { equals } from "../../../../Data/Eq";
+import { find, List } from "../../../../Data/List";
+import { bindF, Maybe } from "../../../../Data/Maybe";
+import { Record } from "../../../../Data/Record";
+import { ActiveActivatable } from "../../../Models/View/ActiveActivatable";
+import { AttributeCombined } from "../../../Models/View/AttributeCombined";
+import { BlessingCombined } from "../../../Models/View/BlessingCombined";
+import { DerivedCharacteristic } from "../../../Models/View/DerivedCharacteristic";
+import { LiturgicalChantWithRequirements } from "../../../Models/View/LiturgicalChantWithRequirements";
+import { L10nRecord } from "../../../Models/Wiki/L10n";
+import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility";
+import { DCIds } from "../../../Selectors/derivedCharacteristicsSelectors";
+import { translate } from "../../../Utilities/I18n";
+import { pipe, pipe_ } from "../../../Utilities/pipe";
 import { Checkbox } from "../../Universal/Checkbox";
 import { Options } from "../../Universal/Options";
 import { AttributeMods } from "../AttributeMods";
@@ -16,15 +26,15 @@ import { LiturgicalChantsSheetTraditionsAspects } from "./LiturgicalChantsSheetT
 
 export interface LiturgicalChantsSheetProps {
   aspects: Maybe<List<string>>
-  attributes: List<Record<AttributeCombined>>
+  attributes: Maybe<List<Record<AttributeCombined>>>
   blessedPrimary: Maybe<string>
-  blessedSpecialAbilities: Maybe<List<Record<ActiveViewObject<SpecialAbility>>>>
+  blessedSpecialAbilities: Maybe<List<Record<ActiveActivatable<SpecialAbility>>>>
   blessedTradition: Maybe<string>
   blessings: Maybe<List<Record<BlessingCombined>>>
   checkAttributeValueVisibility: boolean
-  derivedCharacteristics: List<Record<SecondaryAttribute>>
+  derivedCharacteristics: Maybe<List<Record<DerivedCharacteristic>>>
   liturgicalChants: Maybe<List<Record<LiturgicalChantWithRequirements>>>
-  locale: UIMessagesObject
+  l10n: L10nRecord
   switchAttributeValueVisibility (): void
 }
 
@@ -32,21 +42,24 @@ export function LiturgicalChantsSheet (props: LiturgicalChantsSheetProps) {
   const {
     checkAttributeValueVisibility,
     derivedCharacteristics,
-    locale,
+    l10n,
     switchAttributeValueVisibility,
   } = props
 
-  const addHeader = List.of<Record<HeaderValue>> (
-    Record.ofMaybe<HeaderValue> ({
+  const addHeader = List<Record<HeaderValue>> (
+    HeaderValue ({
       id: "KP_MAX",
-      short: translate (locale, "charactersheet.chants.headers.kpmax"),
-      value: derivedCharacteristics
-        .find (e => e .get ("id") === "KP")
-        .bind (Record.lookup<SecondaryAttribute, "value"> ("value")),
+      short: translate (l10n) ("kpmax"),
+      value:
+        pipe_ (
+          derivedCharacteristics,
+          bindF (find (pipe (DerivedCharacteristic.A.id, equals<DCIds> ("KP")))),
+          bindF (DerivedCharacteristic.A.value)
+        ),
     }),
-    Record.of<HeaderValue> ({
+    HeaderValue ({
       id: "KP_CURRENT",
-      short: translate (locale, "charactersheet.chants.headers.kpcurrent"),
+      short: translate (l10n) ("current"),
     })
   )
 
@@ -57,13 +70,13 @@ export function LiturgicalChantsSheet (props: LiturgicalChantsSheetProps) {
           checked={checkAttributeValueVisibility}
           onClick={switchAttributeValueVisibility}
           >
-          {translate (locale, "charactersheet.options.showattributevalues")}
+          {translate (l10n) ("showattributevalues")}
         </Checkbox>
       </Options>
       <Sheet
         {...props}
         id="liturgies-sheet"
-        title={translate (locale, "charactersheet.chants.title")}
+        title={translate (l10n) ("liturgicalchants")}
         addHeaderInfo={addHeader}
         >
         <div className="all">

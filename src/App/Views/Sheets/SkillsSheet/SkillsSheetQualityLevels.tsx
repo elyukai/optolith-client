@@ -9,19 +9,19 @@ export interface SkillsSheetQualityLevelsProps {
 export const SkillsSheetQualityLevels = ({ locale }: SkillsSheetQualityLevelsProps) => (
   <TextBox
     className="quality-levels"
-    label={translate (locale, "charactersheet.gamestats.qualitylevels.title")}
+    label={translate (l10n) ("charactersheet.gamestats.qualitylevels.title")}
     >
     <table>
       <thead>
         <tr>
           <th>
             <div>
-              {translate (locale, "charactersheet.gamestats.qualitylevels.headers.skillpoints")}
+              {translate (l10n) ("charactersheet.gamestats.qualitylevels.headers.skillpoints")}
             </div>
           </th>
           <th>
             <div>
-              {translate (locale, "charactersheet.gamestats.qualitylevels.headers.qualitylevel")}
+              {translate (l10n) ("charactersheet.gamestats.qualitylevels.headers.qualitylevel")}
             </div>
           </th>
         </tr>

@@ -39,31 +39,31 @@ export function SkillsSheetSkills (props: SkillsSheetSkillsProps) {
   const groupHeaders = iterateGroupHeaders (attributes) (checkAttributeValueVisibility) (locale)
 
   return (
-    <TextBox label={translate (locale, "charactersheet.gamestats.skills.title")}>
+    <TextBox label={translate (l10n) ("charactersheet.gamestats.skills.title")}>
       <div className="upper">
         <table>
           <thead>
             <tr>
               <th className="name">
-                {translate (locale, "charactersheet.gamestats.skills.headers.skill")}
+                {translate (l10n) ("charactersheet.gamestats.skills.headers.skill")}
               </th>
               <th className="check">
-                {translate (locale, "charactersheet.gamestats.skills.headers.check")}
+                {translate (l10n) ("charactersheet.gamestats.skills.headers.check")}
               </th>
               <th className="enc">
-                {translate (locale, "charactersheet.gamestats.skills.headers.enc")}
+                {translate (l10n) ("charactersheet.gamestats.skills.headers.enc")}
               </th>
               <th className="ic">
-                {translate (locale, "charactersheet.gamestats.skills.headers.ic")}
+                {translate (l10n) ("charactersheet.gamestats.skills.headers.ic")}
               </th>
               <th className="sr">
-                {translate (locale, "charactersheet.gamestats.skills.headers.sr")}
+                {translate (l10n) ("charactersheet.gamestats.skills.headers.sr")}
               </th>
               <th className="routine">
-                {translate (locale, "charactersheet.gamestats.skills.headers.r")}
+                {translate (l10n) ("charactersheet.gamestats.skills.headers.r")}
               </th>
               <th className="comment">
-                {translate (locale, "charactersheet.gamestats.skills.headers.notes")}
+                {translate (l10n) ("charactersheet.gamestats.skills.headers.notes")}
               </th>
             </tr>
           </thead>
@@ -91,25 +91,25 @@ export function SkillsSheetSkills (props: SkillsSheetSkillsProps) {
           <thead>
             <tr>
               <th className="name">
-                {translate (locale, "charactersheet.gamestats.skills.headers.skill")}
+                {translate (l10n) ("charactersheet.gamestats.skills.headers.skill")}
               </th>
               <th className="check">
-                {translate (locale, "charactersheet.gamestats.skills.headers.check")}
+                {translate (l10n) ("charactersheet.gamestats.skills.headers.check")}
               </th>
               <th className="enc">
-                {translate (locale, "charactersheet.gamestats.skills.headers.enc")}
+                {translate (l10n) ("charactersheet.gamestats.skills.headers.enc")}
               </th>
               <th className="ic">
-                {translate (locale, "charactersheet.gamestats.skills.headers.ic")}
+                {translate (l10n) ("charactersheet.gamestats.skills.headers.ic")}
               </th>
               <th className="sr">
-                {translate (locale, "charactersheet.gamestats.skills.headers.sr")}
+                {translate (l10n) ("charactersheet.gamestats.skills.headers.sr")}
               </th>
               <th className="routine">
-                {translate (locale, "charactersheet.gamestats.skills.headers.r")}
+                {translate (l10n) ("charactersheet.gamestats.skills.headers.r")}
               </th>
               <th className="comment">
-                {translate (locale, "charactersheet.gamestats.skills.headers.notes")}
+                {translate (l10n) ("charactersheet.gamestats.skills.headers.notes")}
               </th>
             </tr>
           </thead>

@@ -24,49 +24,49 @@ export function SpellsSheetSpells (props: SpellsSheetSpellsProps) {
     spells: maybeSpells,
   } = props
 
-  const propertyNames = translate (locale, "spells.view.properties")
-  const traditionNames = translate (locale, "spells.view.traditions")
+  const propertyNames = translate (l10n) ("spells.view.properties")
+  const traditionNames = translate (l10n) ("spells.view.traditions")
 
   return (
     <TextBox
-      label={translate (locale, "charactersheet.spells.spellslist.title")}
+      label={translate (l10n) ("charactersheet.spells.spellslist.title")}
       className="skill-list"
       >
       <table>
         <thead>
           <tr>
             <th className="name">
-              {translate (locale, "charactersheet.spells.spellslist.headers.spellritual")}
+              {translate (l10n) ("charactersheet.spells.spellslist.headers.spellritual")}
             </th>
             <th className="check">
-              {translate (locale, "charactersheet.spells.spellslist.headers.check")}
+              {translate (l10n) ("charactersheet.spells.spellslist.headers.check")}
             </th>
             <th className="value">
-              {translate (locale, "charactersheet.spells.spellslist.headers.sr")}
+              {translate (l10n) ("charactersheet.spells.spellslist.headers.sr")}
             </th>
             <th className="cost">
-              {translate (locale, "charactersheet.spells.spellslist.headers.cost")}
+              {translate (l10n) ("charactersheet.spells.spellslist.headers.cost")}
             </th>
             <th className="cast-time">
-              {translate (locale, "charactersheet.spells.spellslist.headers.castingtime")}
+              {translate (l10n) ("charactersheet.spells.spellslist.headers.castingtime")}
             </th>
             <th className="range">
-              {translate (locale, "charactersheet.spells.spellslist.headers.range")}
+              {translate (l10n) ("charactersheet.spells.spellslist.headers.range")}
             </th>
             <th className="duration">
-              {translate (locale, "charactersheet.spells.spellslist.headers.duration")}
+              {translate (l10n) ("charactersheet.spells.spellslist.headers.duration")}
             </th>
             <th className="property">
-              {translate (locale, "charactersheet.spells.spellslist.headers.property")}
+              {translate (l10n) ("charactersheet.spells.spellslist.headers.property")}
             </th>
             <th className="ic">
-              {translate (locale, "charactersheet.spells.spellslist.headers.ic")}
+              {translate (l10n) ("charactersheet.spells.spellslist.headers.ic")}
             </th>
             <th className="effect">
-              {translate (locale, "charactersheet.spells.spellslist.headers.effect")}
+              {translate (l10n) ("charactersheet.spells.spellslist.headers.effect")}
             </th>
             <th className="ref">
-              {translate (locale, "charactersheet.spells.spellslist.headers.page")}
+              {translate (l10n) ("charactersheet.spells.spellslist.headers.page")}
             </th>
           </tr>
         </thead>

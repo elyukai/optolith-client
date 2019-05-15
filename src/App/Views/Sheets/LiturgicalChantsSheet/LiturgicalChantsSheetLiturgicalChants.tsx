@@ -1,166 +1,181 @@
 import * as React from "react";
 import { Textfit } from "react-textfit";
-import { SecondaryAttribute } from "../../../Models/Hero/heroTypeHelpers";
-import { AttributeCombined, LiturgicalChantWithRequirements } from "../../../Models/View/viewTypeHelpers";
+import { equals } from "../../../../Data/Eq";
+import { fmap, fmapF } from "../../../../Data/Functor";
+import { find, flength, intercalate, List, map, replicateR, subscript, toArray } from "../../../../Data/List";
+import { fromMaybeR, mapMaybe, Maybe } from "../../../../Data/Maybe";
+import { elems } from "../../../../Data/OrderedSet";
+import { Record } from "../../../../Data/Record";
+import { AttributeCombined } from "../../../Models/View/AttributeCombined";
+import { DerivedCharacteristic } from "../../../Models/View/DerivedCharacteristic";
+import { LiturgicalChantWithRequirements, LiturgicalChantWithRequirementsA_ } from "../../../Models/View/LiturgicalChantWithRequirements";
+import { L10nRecord } from "../../../Models/Wiki/L10n";
+import { DCIds } from "../../../Selectors/derivedCharacteristicsSelectors";
 import { getICName } from "../../../Utilities/AdventurePoints/improvementCostUtils";
-import { translate, UIMessagesObject } from "../../../Utilities/I18n";
+import { translate } from "../../../Utilities/I18n";
+import { dec } from "../../../Utilities/mathUtils";
+import { pipe, pipe_ } from "../../../Utilities/pipe";
 import { getAttributeStringByIdList } from "../../../Utilities/sheetUtils";
+import { sortStrings } from "../../../Utilities/sortBy";
 import { TextBox } from "../../Universal/TextBox";
 
 export interface LiturgicalChantsSheetLiturgicalChantsProps {
-  attributes: List<Record<AttributeCombined>>
+  attributes: Maybe<List<Record<AttributeCombined>>>
   checkAttributeValueVisibility: boolean
-  derivedCharacteristics: List<Record<SecondaryAttribute>>
+  derivedCharacteristics: Maybe<List<Record<DerivedCharacteristic>>>
   liturgicalChants: Maybe<List<Record<LiturgicalChantWithRequirements>>>
-  locale: UIMessagesObject
+  l10n: L10nRecord
 }
+
+const LCWRA_ = LiturgicalChantWithRequirementsA_
+const DCA = DerivedCharacteristic.A
 
 export function LiturgicalChantsSheetLiturgicalChants (
   props: LiturgicalChantsSheetLiturgicalChantsProps
 ) {
   const {
-    attributes,
+    attributes: mattributes,
     checkAttributeValueVisibility,
     derivedCharacteristics,
-    locale,
+    l10n,
     liturgicalChants: maybeLiturgicalChants,
   } = props
 
-  const aspectNames = translate (locale, "liturgies.view.aspects")
+  const aspectNames = translate (l10n) ("aspectlist")
 
   return (
     <TextBox
-      label={translate (locale, "charactersheet.chants.chantslist.title")}
+      label={translate (l10n) ("liturgicalchantsandceremonies")}
       className="skill-list"
       >
       <table>
         <thead>
           <tr>
             <th className="name">
-              {translate (locale, "charactersheet.chants.chantslist.headers.liturgyceremony")}
+              {translate (l10n) ("liturgicalchantsandceremonies")}
             </th>
             <th className="check">
-              {translate (locale, "charactersheet.chants.chantslist.headers.check")}
+              {translate (l10n) ("check")}
             </th>
             <th className="value">
-              {translate (locale, "charactersheet.chants.chantslist.headers.sr")}
+              {translate (l10n) ("skillrating.short")}
             </th>
             <th className="cost">
-              {translate (locale, "charactersheet.chants.chantslist.headers.cost")}
+              {translate (l10n) ("cost")}
             </th>
             <th className="cast-time">
-              {translate (locale, "charactersheet.chants.chantslist.headers.castingtime")}
+              {translate (l10n) ("castingtime")}
             </th>
             <th className="range">
-              {translate (locale, "charactersheet.chants.chantslist.headers.range")}
+              {translate (l10n) ("range")}
             </th>
             <th className="duration">
-              {translate (locale, "charactersheet.chants.chantslist.headers.duration")}
+              {translate (l10n) ("duration")}
             </th>
             <th className="aspect">
-              {translate (locale, "charactersheet.chants.chantslist.headers.property")}
+              {translate (l10n) ("property")}
             </th>
             <th className="ic">
-              {translate (locale, "charactersheet.chants.chantslist.headers.ic")}
+              {translate (l10n) ("improvementcost.short")}
             </th>
             <th className="effect">
-              {translate (locale, "charactersheet.chants.chantslist.headers.effect")}
+              {translate (l10n) ("effect")}
             </th>
             <th className="ref">
-              {translate (locale, "charactersheet.chants.chantslist.headers.page")}
+              {translate (l10n) ("page.short")}
             </th>
           </tr>
         </thead>
         <tbody>
-          {Maybe.fromMaybe<NonNullable<React.ReactNode>>
-            (<></>)
-            (maybeLiturgicalChants .fmap (
-              liturgicalChants => liturgicalChants
-                .map (e => {
-                  const check = getAttributeStringByIdList (checkAttributeValueVisibility)
-                                                           (attributes)
-                                                           (e .get ("check"))
+          {pipe_ (
+            maybeLiturgicalChants,
+            fmap (pipe (
+              map (e => {
+                const check =
+                  fmapF (mattributes)
+                        (attributes => getAttributeStringByIdList (checkAttributeValueVisibility)
+                                                                  (attributes)
+                                                                  (LCWRA_.check (e)))
 
-                  return (
-                    <tr>
-                      <td className="name">
-                        <Textfit max={11} min={7} mode="single">{e .get ("name")}</Textfit>
-                      </td>
-                      <td className="check">
-                        <Textfit max={11} min={7} mode="single">
-                          {check}
-                          {Maybe.fromMaybe
-                            ("")
-                            (e
-                              .lookup ("checkmod")
-                              .bind (
-                                checkmod => derivedCharacteristics
-                                  .find (derived => derived .get ("id") === checkmod)
-                              )
-                              .fmap (checkmod => ` (+${checkmod .get ("short")})`))}
-                        </Textfit>
-                      </td>
-                      <td className="value">{e .get ("value")}</td>
-                      <td className="cost">
-                        <Textfit max={11} min={7} mode="single">{e .get ("costShort")}</Textfit>
-                      </td>
-                      <td className="cast-time">
-                        <Textfit max={11} min={7} mode="single">
-                          {e .get ("castingTimeShort")}
-                        </Textfit>
-                      </td>
-                      <td className="range">
-                        <Textfit max={11} min={7} mode="single">{e .get ("rangeShort")}</Textfit>
-                      </td>
-                      <td className="duration">
-                        <Textfit max={11} min={7} mode="single">{e .get ("durationShort")}</Textfit>
-                      </td>
-                      <td className="aspect">
-                        <Textfit max={11} min={7} mode="single">
-                          {sortStrings (locale .get ("id"))
-                                       (
-                                         Maybe.mapMaybe<number, string>
-                                           (R.pipe (
-                                             R.dec,
-                                             List.subscript (aspectNames)
-                                           ))
-                                           (e .get ("aspects"))
-                                       )}
-                        </Textfit>
-                      </td>
-                      <td className="ic">{getICName (e .get ("ic"))}</td>
-                      <td className="effect"></td>
-                      <td className="ref"></td>
-                    </tr>
-                  )
-                })
-                .toArray ()
-            ))}
-          {List.unfoldr<JSX.Element, number>
-            (x => x >= 21
-              ? Nothing ()
-              : Just (
-                Tuple.of<JSX.Element, number>
-                  (
-                    <tr key={`undefined${20 - x}`}>
-                      <td className="name"></td>
-                      <td className="check"></td>
-                      <td className="value"></td>
-                      <td className="cost"></td>
-                      <td className="cast-time"></td>
-                      <td className="range"></td>
-                      <td className="duration"></td>
-                      <td className="aspect"></td>
-                      <td className="ic"></td>
-                      <td className="effect"></td>
-                      <td className="ref"></td>
-                    </tr>
-                  )
-                  (R.inc (x))
-              )
-            )
-            (Maybe.fromMaybe (0) (maybeLiturgicalChants .fmap (List.lengthL)))}
-          }
+
+                return (
+                  <tr key={LCWRA_.id (e)}>
+                    <td className="name">
+                      <Textfit max={11} min={7} mode="single">{LCWRA_.name (e)}</Textfit>
+                    </td>
+                    <td className="check">
+                      <Textfit max={11} min={7} mode="single">
+                        {check}
+                        {pipe_ (
+                          derivedCharacteristics,
+                          fmap (dcs => pipe_ (
+                                         e,
+                                         LCWRA_.checkmod,
+                                         elems,
+                                         mapMaybe (id => fmapF (find (pipe (
+                                                                       DCA.id,
+                                                                       equals<DCIds> (id)
+                                                                     ))
+                                                                     (dcs))
+                                                               (DCA.short)),
+                                         intercalate ("/"),
+                                         str => ` (+${str})`
+                                       )),
+                          fromMaybeR (null)
+                        )}
+                      </Textfit>
+                    </td>
+                    <td className="value">{LCWRA_.value (e)}</td>
+                    <td className="cost">
+                      <Textfit max={11} min={7} mode="single">{LCWRA_.costShort (e)}</Textfit>
+                    </td>
+                    <td className="cast-time">
+                      <Textfit max={11} min={7} mode="single">
+                        {LCWRA_.castingTimeShort (e)}
+                      </Textfit>
+                    </td>
+                    <td className="range">
+                      <Textfit max={11} min={7} mode="single">{LCWRA_.rangeShort (e)}</Textfit>
+                    </td>
+                    <td className="duration">
+                      <Textfit max={11} min={7} mode="single">{LCWRA_.durationShort (e)}</Textfit>
+                    </td>
+                    <td className="aspect">
+                      <Textfit max={11} min={7} mode="single">
+                        {pipe_ (
+                          e,
+                          LCWRA_.aspects,
+                          mapMaybe (pipe (dec, subscript (aspectNames))),
+                          sortStrings (l10n)
+                        )}
+                      </Textfit>
+                    </td>
+                    <td className="ic">{getICName (LCWRA_.ic (e))}</td>
+                    <td className="effect"></td>
+                    <td className="ref"></td>
+                  </tr>
+                )
+              }),
+              toArray
+            )),
+            fromMaybeR (null)
+          )}
+          {replicateR (4 - Maybe.sum (fmapF (maybeLiturgicalChants) (flength)))
+                      (i => (
+                        <tr key={`undefined-${i}`}>
+                          <td className="name"></td>
+                          <td className="check"></td>
+                          <td className="value"></td>
+                          <td className="cost"></td>
+                          <td className="cast-time"></td>
+                          <td className="range"></td>
+                          <td className="duration"></td>
+                          <td className="aspect"></td>
+                          <td className="ic"></td>
+                          <td className="effect"></td>
+                          <td className="ref"></td>
+                        </tr>
+                      ))}
         </tbody>
       </table>
     </TextBox>

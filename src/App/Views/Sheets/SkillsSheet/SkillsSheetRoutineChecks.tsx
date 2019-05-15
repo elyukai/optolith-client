@@ -9,40 +9,40 @@ export interface SkillsSheetRoutineChecksProps {
 export const SkillsSheetRoutineChecks = ({ locale }: SkillsSheetRoutineChecksProps) => (
   <TextBox
     className="routine-checks"
-    label={translate (locale, "charactersheet.gamestats.routinechecks.title")}
+    label={translate (l10n) ("charactersheet.gamestats.routinechecks.title")}
     >
-    <p>{translate (locale, "charactersheet.gamestats.routinechecks.texts.first")}</p>
-    <p>{translate (locale, "charactersheet.gamestats.routinechecks.texts.second")}</p>
-    <p>{translate (locale, "charactersheet.gamestats.routinechecks.texts.third")}</p>
-    <p>{translate (locale, "charactersheet.gamestats.routinechecks.texts.fourth")}</p>
+    <p>{translate (l10n) ("charactersheet.gamestats.routinechecks.texts.first")}</p>
+    <p>{translate (l10n) ("charactersheet.gamestats.routinechecks.texts.second")}</p>
+    <p>{translate (l10n) ("charactersheet.gamestats.routinechecks.texts.third")}</p>
+    <p>{translate (l10n) ("charactersheet.gamestats.routinechecks.texts.fourth")}</p>
     <table>
       <thead>
         <tr>
           <th>
             <div>
-              {translate (locale, "charactersheet.gamestats.routinechecks.headers.checkmod")}
+              {translate (l10n) ("charactersheet.gamestats.routinechecks.headers.checkmod")}
             </div>
           </th>
           <th>
             <div>
-              {translate (locale, "charactersheet.gamestats.routinechecks.headers.neededsr")}
+              {translate (l10n) ("charactersheet.gamestats.routinechecks.headers.neededsr")}
             </div>
           </th>
           <th>
             <div>
-              {translate (locale, "charactersheet.gamestats.routinechecks.headers.checkmod")}
+              {translate (l10n) ("charactersheet.gamestats.routinechecks.headers.checkmod")}
             </div>
           </th>
           <th>
             <div>
-              {translate (locale, "charactersheet.gamestats.routinechecks.headers.neededsr")}
+              {translate (l10n) ("charactersheet.gamestats.routinechecks.headers.neededsr")}
             </div>
           </th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td>{translate (locale, "charactersheet.gamestats.routinechecks.from")} +3</td>
+          <td>{translate (l10n) ("charactersheet.gamestats.routinechecks.from")} +3</td>
           <td>1</td>
           <td>-1</td>
           <td>13</td>

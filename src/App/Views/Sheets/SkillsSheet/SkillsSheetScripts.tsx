@@ -32,7 +32,7 @@ export function SkillsSheetScripts (props: SkillsSheetScriptsProps) {
       )
 
   return (
-    <TextBox label={translate (locale, "charactersheet.gamestats.knownscripts.title")}>
+    <TextBox label={translate (l10n) ("charactersheet.gamestats.knownscripts.title")}>
       <div className="scripts-list">
         {scripts.intercalate (", ")}
       </div>

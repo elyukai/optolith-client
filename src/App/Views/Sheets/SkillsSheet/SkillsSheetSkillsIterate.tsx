@@ -38,10 +38,10 @@ export const iterateList = (locale: UIMessagesObject) =>
               .intercalate ("/")
 
             const encString = obj .get ("encumbrance") === "true"
-              ? translate (locale, "charactersheet.gamestats.skills.enc.yes")
+              ? translate (l10n) ("charactersheet.gamestats.skills.enc.yes")
               : obj .get ("encumbrance") === "false"
-              ? translate (locale, "charactersheet.gamestats.skills.enc.no")
-              : translate (locale, "charactersheet.gamestats.skills.enc.maybe")
+              ? translate (l10n) ("charactersheet.gamestats.skills.enc.no")
+              : translate (l10n) ("charactersheet.gamestats.skills.enc.maybe")
 
             const maybeRoutine = getRoutineValue (obj .get ("value"), checkValues)
 

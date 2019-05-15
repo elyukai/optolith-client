@@ -46,12 +46,12 @@ export function SkillsSheet (props: SkillsSheetProps) {
           checked={checkAttributeValueVisibility}
           onClick={switchAttributeValueVisibility}
           >
-          {translate (locale, "charactersheet.options.showattributevalues")}
+          {translate (l10n) ("charactersheet.options.showattributevalues")}
         </Checkbox>
       </Options>
       <Sheet
         id="skills-sheet"
-        title={translate (locale, "charactersheet.gamestats.title")}
+        title={translate (l10n) ("charactersheet.gamestats.title")}
         attributes={attributes}
         locale={locale}
         >

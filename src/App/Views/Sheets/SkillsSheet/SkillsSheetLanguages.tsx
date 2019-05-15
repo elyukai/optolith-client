@@ -42,7 +42,7 @@ export function SkillsSheetLanguages (props: SkillsSheetLanguagesProps) {
   )
 
   return (
-    <TextBox label={translate (locale, "charactersheet.gamestats.languages.title")}>
+    <TextBox label={translate (l10n) ("charactersheet.gamestats.languages.title")}>
       <table className="languages-list">
         <tbody>
           {languages
@@ -51,7 +51,7 @@ export function SkillsSheetLanguages (props: SkillsSheetLanguagesProps) {
                 <td>{e .get ("name")}</td>
                 <td>{
                   e .get ("level") === 4
-                    ? translate (locale, "charactersheet.gamestats.languages.native")
+                    ? translate (l10n) ("charactersheet.gamestats.languages.native")
                     : getRoman (e .get ("level"))
                 }</td>
               </tr>

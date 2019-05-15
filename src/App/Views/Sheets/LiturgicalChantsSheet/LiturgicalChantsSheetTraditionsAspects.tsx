@@ -1,39 +1,43 @@
 import * as React from "react";
-import { translate, UIMessagesObject } from "../../../Utilities/I18n";
+import { intercalate, List } from "../../../../Data/List";
+import { Maybe } from "../../../../Data/Maybe";
+import { L10nRecord } from "../../../Models/Wiki/L10n";
+import { translate } from "../../../Utilities/I18n";
+import { renderMaybe, renderMaybeWith } from "../../../Utilities/ReactUtils";
 
 export interface LiturgicalChantsSheetTraditionsAspectsProps {
   aspects: Maybe<List<string>>
   blessedPrimary: Maybe<string>
   blessedTradition: Maybe<string>
-  locale: UIMessagesObject
+  l10n: L10nRecord
 }
 
 export function LiturgicalChantsSheetTraditionsAspects (
   props: LiturgicalChantsSheetTraditionsAspectsProps
 ) {
-  const { aspects, blessedPrimary, blessedTradition, locale } = props
+  const { aspects, blessedPrimary, blessedTradition, l10n } = props
 
   return (
     <div className="tradition-aspects">
       <div className="primary">
         <span className="label">
-          {translate (locale, "charactersheet.chants.traditionsaspects.labels.primaryattribute")}
+          {translate (l10n) ("primaryattribute")}
         </span>
-        <span className="value">{Maybe.fromMaybe ("") (blessedPrimary)}</span>
+        <span className="value">{renderMaybe (blessedPrimary)}</span>
       </div>
       <div className="aspects">
         <span className="label">
-          {translate (locale, "charactersheet.chants.traditionsaspects.labels.aspects")}
+          {translate (l10n) ("aspects.oneormore")}
         </span>
         <span className="value">
-          {Maybe.fromMaybe ("") (aspects .fmap (List.intercalate (", ")))}
+          {renderMaybeWith (intercalate (", ")) (aspects)}
         </span>
       </div>
       <div className="tradition">
         <span className="label">
-          {translate (locale, "charactersheet.chants.traditionsaspects.labels.tradition")}
+          {translate (l10n) ("tradition")}
         </span>
-        <span className="value">{Maybe.fromMaybe ("") (blessedTradition)}</span>
+        <span className="value">{renderMaybe (blessedTradition)}</span>
       </div>
     </div>
   )

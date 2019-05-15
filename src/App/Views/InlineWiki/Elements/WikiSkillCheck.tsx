@@ -11,6 +11,7 @@ import { Attribute } from "../../../Models/Wiki/Attribute";
 import { L10nRecord } from "../../../Models/Wiki/L10n";
 import { CheckModifier } from "../../../Models/Wiki/wikiTypeHelpers";
 import { DCIds } from "../../../Selectors/derivedCharacteristicsSelectors";
+import { localizeOrList } from "../../../Utilities/I18n";
 import { pipe, pipe_ } from "../../../Utilities/pipe";
 import { renderMaybeWith } from "../../../Utilities/ReactUtils";
 import { WikiProperty } from "../WikiProperty";
@@ -56,7 +57,7 @@ export function WikiSkillCheck<A extends RecordBase> (props: WikiSkillCheckProps
   return (
     <WikiProperty l10n={l10n} title="check">
       {checkString}
-      {renderMaybeWith (intercalate ("/")) (mod)}
+      {renderMaybeWith (localizeOrList (l10n)) (mod)}
     </WikiProperty>
   )
 }

@@ -1,116 +1,126 @@
 import * as React from "react";
-import { SecondaryAttribute } from "../../../Models/Hero/heroTypeHelpers";
-import { Race } from "../../../Models/Wiki/wikiTypeHelpers";
-import { translate, UIMessagesObject } from "../../../Utilities/I18n";
+import { fmap, fmapF } from "../../../../Data/Functor";
+import { List, map, toArray } from "../../../../Data/List";
+import { fromMaybeR, Just, Maybe, Nothing } from "../../../../Data/Maybe";
+import { Record } from "../../../../Data/Record";
+import { DerivedCharacteristic } from "../../../Models/View/DerivedCharacteristic";
+import { L10nRecord } from "../../../Models/Wiki/L10n";
+import { Race } from "../../../Models/Wiki/Race";
+import { translate } from "../../../Utilities/I18n";
+import { pipe, pipe_ } from "../../../Utilities/pipe";
 import { MainSheetAttributesItem } from "./MainSheetAttributesItem";
 import { MainSheetFatePoints } from "./MainSheetFatePoints";
 
 export interface MainSheetAttributesProps {
-  attributes: List<Record<SecondaryAttribute>>
+  attributes: Maybe<List<Record<DerivedCharacteristic>>>
   fatePointsModifier: number
-  locale: UIMessagesObject
+  l10n: L10nRecord
   race: Maybe<Record<Race>>
 }
 
+const DCA = DerivedCharacteristic.A
+
 export function MainSheetAttributes (props: MainSheetAttributesProps) {
-  const { attributes, fatePointsModifier, race, locale } = props
+  const { attributes, fatePointsModifier, race, l10n } = props
 
   return (
     <div className="calculated">
       <div className="calc-header">
-        <div>{translate (locale, "charactersheet.main.headers.value")}</div>
-        <div>{translate (locale, "charactersheet.main.headers.bonuspenalty")}</div>
-        <div>{translate (locale, "charactersheet.main.headers.bought")}</div>
-        <div>{translate (locale, "charactersheet.main.headers.max")}</div>
+        <div>{translate (l10n) ("value")}</div>
+        <div>{translate (l10n) ("bonuspenalty")}</div>
+        <div>{translate (l10n) ("bought")}</div>
+        <div>{translate (l10n) ("max")}</div>
       </div>
-      {
-        attributes
-          .map (
-            attribute => (
-              <MainSheetAttributesItem
-                key={attribute .get ("id")}
-                label={attribute .get ("name")}
-                calc={attribute .get ("calc")}
-                base={attribute .lookup ("base")}
-                max={attribute .lookup ("value")}
-                add={attribute .lookup ("mod")}
-                purchased={attribute .lookup ("currentAdd")}
-                subLabel={(() => {
-                  switch (attribute .get ("id")) {
-                    case "LP":
-                    case "SPI":
-                    case "TOU":
-                    case "MOV":
-                      return Just (translate (locale, "charactersheet.main.subheaders.basestat"))
+      {pipe_ (
+        attributes,
+        fmap (pipe (
+          map (attribute => (
+            <MainSheetAttributesItem
+              key={DCA.id (attribute)}
+              label={DCA.name (attribute)}
+              calc={DCA.calc (attribute)}
+              base={DCA.base (attribute)}
+              max={DCA.value (attribute)}
+              add={DCA.mod (attribute)}
+              purchased={DCA.currentAdd (attribute)}
+              subLabel={(() => {
+                switch (DCA.id (attribute)) {
+                  case "LP":
+                  case "SPI":
+                  case "TOU":
+                  case "MOV":
+                    return Just (translate (l10n) ("basestat"))
 
-                    case "AE":
-                    case "KP":
-                      return Just (translate (locale, "charactersheet.main.subheaders.permanent"))
+                  case "AE":
+                  case "KP":
+                    return Just (translate (l10n) ("permanentlylostboughtback"))
 
-                    default:
-                      return Nothing ()
-                  }
-                }) ()}
-                subArray={(() => {
-                  switch (attribute .get ("id")) {
-                    case "LP":
-                      return Just (
-                        List.of (
-                          Maybe.fromMaybe (0) (race.fmap (Record.get<Race, "lp"> ("lp")))
-                        )
+                  default:
+                    return Nothing
+                }
+              }) ()}
+              subArray={(() => {
+                switch (DCA.id (attribute)) {
+                  case "LP":
+                    return Just (
+                      List (
+                        Maybe.sum (fmapF (race) (Race.A.lp))
                       )
+                    )
 
-                    case "AE":
-                    case "KP":
-                      return Just (
-                        List.of (
-                          Maybe.fromMaybe (0) (attribute .lookup ("permanentLost")),
-                          Maybe.fromMaybe (0) (attribute .lookup ("permanentRedeemed"))
-                        )
+                  case "AE":
+                  case "KP":
+                    return Just (
+                      List (
+                        Maybe.sum (DCA.permanentLost (attribute)),
+                        Maybe.sum (DCA.permanentRedeemed (attribute))
                       )
+                    )
 
-                    case "SPI":
-                      return Just (
-                        List.of (
-                          Maybe.fromMaybe (0) (race.fmap (Record.get<Race, "spi"> ("spi")))
-                        )
+                  case "SPI":
+                    return Just (
+                      List (
+                        Maybe.sum (fmapF (race) (Race.A.spi))
                       )
+                    )
 
-                    case "TOU":
-                      return Just (
-                        List.of (
-                          Maybe.fromMaybe (0) (race.fmap (Record.get<Race, "tou"> ("tou")))
-                        )
+                  case "TOU":
+                    return Just (
+                      List (
+                        Maybe.sum (fmapF (race) (Race.A.tou))
                       )
+                    )
 
-                    case "MOV":
-                      return Just (
-                        List.of (
-                          Maybe.fromMaybe (0) (race.fmap (Record.get<Race, "mov"> ("mov")))
-                        )
+                  case "MOV":
+                    return Just (
+                      List (
+                        Maybe.sum (fmapF (race) (Race.A.mov))
                       )
+                    )
 
-                    default:
-                      return Nothing ()
-                  }
-                }) ()}
-                empty={(() => {
-                  switch (attribute .get ("id")) {
-                    case "AE":
-                    case "KP":
-                      return Just (Maybe.isNothing (attribute .lookup ("value")))
+                  default:
+                    return Nothing
+                }
+              }) ()}
+              empty={(() => {
+                switch (DCA.id (attribute)) {
+                  case "AE":
+                  case "KP":
+                    return Just (Maybe.isNothing (DCA.value (attribute)))
 
-                    default:
-                      return Nothing ()
-                  }
-                }) ()}
-                />
-            )
-          )
-      }
+                  default:
+                    return Nothing
+                }
+              }) ()}
+              />
+          )),
+          toArray
+        )),
+        fromMaybeR (null)
+      )}
       <MainSheetFatePoints
         fatePointsModifier={fatePointsModifier}
-        locale={locale}
+        l10n={l10n}
         />
     </div>
   )

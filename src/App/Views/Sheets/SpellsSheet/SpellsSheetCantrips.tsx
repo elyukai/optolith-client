@@ -13,7 +13,7 @@ export function SpellsSheetCantrips (props: SpellsSheetCantripsProps) {
 
   return (
     <TextBox
-      label={translate (locale, "charactersheet.spells.cantrips.title")}
+      label={translate (l10n) ("charactersheet.spells.cantrips.title")}
       className="cantrips activatable-list"
       >
       <div className="list">

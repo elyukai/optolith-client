@@ -15,13 +15,13 @@ export function SpellsSheetTraditionsProperties (props: SpellsSheetTraditionsPro
     <div className="tradition-properties">
       <div className="primary">
         <span className="label">
-          {translate (locale, "charactersheet.spells.traditionsproperties.labels.primaryattribute")}
+          {translate (l10n) ("charactersheet.spells.traditionsproperties.labels.primaryattribute")}
         </span>
         <span className="value">{Maybe.fromMaybe ("") (magicalPrimary)}</span>
       </div>
       <div className="properties">
         <span className="label">
-          {translate (locale, "charactersheet.spells.traditionsproperties.labels.properties")}
+          {translate (l10n) ("charactersheet.spells.traditionsproperties.labels.properties")}
         </span>
         <span className="value">
           {Maybe.fromMaybe ("") (properties .fmap (List.intercalate (", ")))}
@@ -29,7 +29,7 @@ export function SpellsSheetTraditionsProperties (props: SpellsSheetTraditionsPro
       </div>
       <div className="tradition">
         <span className="label">
-          {translate (locale, "charactersheet.spells.traditionsproperties.labels.tradition")}
+          {translate (l10n) ("charactersheet.spells.traditionsproperties.labels.tradition")}
         </span>
         <span className="value">{Maybe.fromMaybe ("") (magicalTradition)}</span>
       </div>

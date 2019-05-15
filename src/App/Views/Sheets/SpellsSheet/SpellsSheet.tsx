@@ -39,14 +39,14 @@ export function SpellsSheet (props: SpellsSheetProps) {
   const addHeader = List.of<Record<HeaderValue>> (
     Record.ofMaybe<HeaderValue> ({
       id: "AE_MAX",
-      short: translate (locale, "charactersheet.spells.headers.aemax"),
+      short: translate (l10n) ("charactersheet.spells.headers.aemax"),
       value: derivedCharacteristics
         .find (e => e .get ("id") === "AE")
         .bind (Record.lookup<SecondaryAttribute, "value"> ("value")),
     }),
     Record.of<HeaderValue> ({
       id: "AE_CURRENT",
-      short: translate (locale, "charactersheet.spells.headers.aecurrent"),
+      short: translate (l10n) ("charactersheet.spells.headers.aecurrent"),
     })
   )
 
@@ -57,13 +57,13 @@ export function SpellsSheet (props: SpellsSheetProps) {
           checked={checkAttributeValueVisibility}
           onClick={switchAttributeValueVisibility}
           >
-          {translate (locale, "charactersheet.options.showattributevalues")}
+          {translate (l10n) ("charactersheet.options.showattributevalues")}
         </Checkbox>
       </Options>
       <Sheet
         {...props}
         id="spells-sheet"
-        title={translate (locale, "charactersheet.spells.title")}
+        title={translate (l10n) ("charactersheet.spells.title")}
         addHeaderInfo={addHeader}
         >
         <div className="all">

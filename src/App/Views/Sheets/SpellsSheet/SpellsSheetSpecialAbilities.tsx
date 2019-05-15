@@ -16,7 +16,7 @@ export function SpellsSheetSpecialAbilities (props: SpellsSheetSpecialAbilitiesP
   return (
     <TextBox
       className="activatable-list"
-      label={translate (locale, "charactersheet.spells.magicalspecialabilities.title")}
+      label={translate (l10n) ("charactersheet.spells.magicalspecialabilities.title")}
       value={compressList (
         Maybe.fromMaybe<List<Record<ActiveViewObject<SpecialAbility>>>>
           (List.empty<Record<ActiveViewObject<SpecialAbility>>> ())

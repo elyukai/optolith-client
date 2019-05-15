@@ -1,5 +1,10 @@
 import * as classNames from "classnames";
 import * as React from "react";
+import { fmap } from "../../../../Data/Functor";
+import { imap, List, toArray } from "../../../../Data/List";
+import { fromMaybe, fromMaybeR, Maybe, maybeR, maybeRNull, or } from "../../../../Data/Maybe";
+import { ndash } from "../../../Utilities/Chars";
+import { pipe, pipe_ } from "../../../Utilities/pipe";
 
 export interface MainSheetAttributesItemProps {
   add: Maybe<number>
@@ -31,22 +36,14 @@ export function MainSheetAttributesItem (props: MainSheetAttributesItemProps) {
       <div className="label">
         <h3>{label}</h3>
         <span className="calc">{calc}</span>
-        {
-          Maybe.isJust (subLabel)
-            ? (
-              <span className="sub">{Maybe.fromJust (subLabel)}:</span>
-            )
-            : null
-        }
+        {maybeRNull ((str: string) => <span className="sub">{str}:</span>) (subLabel)}
       </div>
       <div className="values">
         <div className="base">
-          {Maybe.elem (true) (empty)
-            ? "\u2013"
-            : Maybe.fromMaybe<string | number> ("\u2013") (base)}
+          {or (empty) ? ndash : fromMaybe<string | number> (ndash) (base)}
         </div>
         <div className="add">
-          {Maybe.elem (true) (empty) ? "\u2013" : Maybe.fromMaybe (0) (add)}+
+          {or (empty) ? ndash : Maybe.sum (add)}+
         </div>
         <div
           className={classNames ({
@@ -54,28 +51,23 @@ export function MainSheetAttributesItem (props: MainSheetAttributesItemProps) {
             "purchased": true,
           })}
           >
-          {
-            Maybe.isJust (purchased)
-              ? Maybe.elem (true) (empty) ? "\u2013" : Maybe.fromJust (purchased)
-              : "\uE14B"
-          }
+          {maybeR ("\uE14B") ((num: number) => or (empty) ? ndash : num) (purchased)}
         </div>
         <div className="max">
-          {Maybe.elem (true) (empty) ? "\u2013" : Maybe.fromMaybe (0) (max)}
+          {or (empty) ? ndash : Maybe.sum (max)}
         </div>
-        {
-          Maybe.fromMaybe<NonNullable<React.ReactNode>>
-            (<></>)
-            (maybeSubList.fmap (
-              subList => subList
-                .imap (
-                  index => value => (
-                    <div key={label + index} className="sub">{empty ? "\u2013" : value}</div>
-                  )
-                )
-                .toArray ()
-            ))
-        }
+        {pipe_ (
+          maybeSubList,
+          fmap (pipe (
+            imap (i => x => (
+              <div key={`${label}${i}`} className="sub">
+                {or (empty) ? ndash : x}
+              </div>
+            )),
+            toArray
+          )),
+          fromMaybeR (null)
+        )}
       </div>
     </div>
   )
