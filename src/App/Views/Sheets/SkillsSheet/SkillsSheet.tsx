@@ -1,8 +1,13 @@
 import * as React from "react";
-import { ActivatableDependent } from "../../../Models/Hero/heroTypeHelpers";
-import { AttributeCombined, SkillCombined } from "../../../Models/View/viewTypeHelpers";
-import { SpecialAbility } from "../../../Models/Wiki/wikiTypeHelpers";
-import { translate, UIMessagesObject } from "../../../Utilities/I18n";
+import { List } from "../../../../Data/List";
+import { Maybe } from "../../../../Data/Maybe";
+import { Record } from "../../../../Data/Record";
+import { ActivatableDependent } from "../../../Models/ActiveEntries/ActivatableDependent";
+import { AttributeCombined } from "../../../Models/View/AttributeCombined";
+import { SkillCombined } from "../../../Models/View/SkillCombined";
+import { L10nRecord } from "../../../Models/Wiki/L10n";
+import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility";
+import { translate } from "../../../Utilities/I18n";
 import { Checkbox } from "../../Universal/Checkbox";
 import { Options } from "../../Universal/Options";
 import { AttributeMods } from "../AttributeMods";
@@ -15,14 +20,14 @@ import { SkillsSheetScripts } from "./SkillsSheetScripts";
 import { SkillsSheetSkills } from "./SkillsSheetSkills";
 
 export interface SkillsSheetProps {
-  attributes: List<Record<AttributeCombined>>
+  attributes: Maybe<List<Record<AttributeCombined>>>
   checkAttributeValueVisibility: boolean
   languagesStateEntry: Maybe<Record<ActivatableDependent>>
   languagesWikiEntry: Maybe<Record<SpecialAbility>>
-  locale: UIMessagesObject
+  l10n: L10nRecord
   scriptsStateEntry: Maybe<Record<ActivatableDependent>>
   scriptsWikiEntry: Maybe<Record<SpecialAbility>>
-  skills: List<Record<SkillCombined>>
+  skills: Maybe<List<Record<SkillCombined>>>
   switchAttributeValueVisibility (): void
 }
 
@@ -32,7 +37,7 @@ export function SkillsSheet (props: SkillsSheetProps) {
     checkAttributeValueVisibility,
     languagesStateEntry,
     languagesWikiEntry,
-    locale,
+    l10n,
     scriptsStateEntry,
     scriptsWikiEntry,
     skills,
@@ -46,19 +51,19 @@ export function SkillsSheet (props: SkillsSheetProps) {
           checked={checkAttributeValueVisibility}
           onClick={switchAttributeValueVisibility}
           >
-          {translate (l10n) ("charactersheet.options.showattributevalues")}
+          {translate (l10n) ("showattributevalues")}
         </Checkbox>
       </Options>
       <Sheet
         id="skills-sheet"
-        title={translate (l10n) ("charactersheet.gamestats.title")}
+        title={translate (l10n) ("gamestats")}
         attributes={attributes}
-        locale={locale}
+        l10n={l10n}
         >
         <SkillsSheetSkills
           attributes={attributes}
           checkAttributeValueVisibility={checkAttributeValueVisibility}
-          locale={locale}
+          l10n={l10n}
           skills={skills}
           />
         <div className="lower">
@@ -66,20 +71,20 @@ export function SkillsSheet (props: SkillsSheetProps) {
             <SkillsSheetLanguages
               languagesStateEntry={languagesStateEntry}
               languagesWikiEntry={languagesWikiEntry}
-              locale={locale}
+              l10n={l10n}
               />
             <SkillsSheetScripts
               scriptsStateEntry={scriptsStateEntry}
               scriptsWikiEntry={scriptsWikiEntry}
-              locale={locale}
+              l10n={l10n}
               />
           </div>
           <AttributeMods
             attributes={attributes}
-            locale={locale}
+            l10n={l10n}
             />
-          <SkillsSheetRoutineChecks locale={locale} />
-          <SkillsSheetQualityLevels locale={locale} />
+          <SkillsSheetRoutineChecks l10n={l10n} />
+          <SkillsSheetQualityLevels l10n={l10n} />
         </div>
       </Sheet>
     </SheetWrapper>
