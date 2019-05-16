@@ -1,21 +1,26 @@
 import * as React from "react";
-import { AttributeCombined } from "../../Models/View/viewTypeHelpers";
+import { Record } from "../../../Data/Record";
+import { AttributeCombined, AttributeCombinedA_ } from "../../Models/View/AttributeCombined";
 
 interface AttributeModsListItemProps {
   attribute: Record<AttributeCombined>
 }
 
 export function AttributeModsListItem (props: AttributeModsListItemProps) {
+  const id = AttributeCombinedA_.id (props.attribute)
+  const short = AttributeCombinedA_.short (props.attribute)
+  const value = AttributeCombinedA_.value (props.attribute)
+
   return (
-    <tr className={props.attribute .get ("id")}>
-      <td className="name">{props.attribute .get ("short")}</td>
-      <td>{props.attribute .get ("value") - 3}</td>
-      <td>{props.attribute .get ("value") - 2}</td>
-      <td>{props.attribute .get ("value") - 1}</td>
-      <td className="null">{props.attribute .get ("value")}</td>
-      <td>{props.attribute .get ("value") + 1}</td>
-      <td>{props.attribute .get ("value") + 2}</td>
-      <td>{props.attribute .get ("value") + 3}</td>
+    <tr className={id}>
+      <td className="name">{short}</td>
+      <td>{value - 3}</td>
+      <td>{value - 2}</td>
+      <td>{value - 1}</td>
+      <td className="null">{value}</td>
+      <td>{value + 1}</td>
+      <td>{value + 2}</td>
+      <td>{value + 3}</td>
     </tr>
   )
 }
