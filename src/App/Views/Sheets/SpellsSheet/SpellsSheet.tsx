@@ -1,8 +1,18 @@
 import * as React from "react";
-import { ActiveViewObject, SecondaryAttribute } from "../../../Models/Hero/heroTypeHelpers";
-import { AttributeCombined, CantripCombined, SpellCombined } from "../../../Models/View/viewTypeHelpers";
-import { SpecialAbility } from "../../../Models/Wiki/wikiTypeHelpers";
-import { translate, UIMessagesObject } from "../../../Utilities/I18n";
+import { equals } from "../../../../Data/Eq";
+import { find, List } from "../../../../Data/List";
+import { bindF, Maybe } from "../../../../Data/Maybe";
+import { Record } from "../../../../Data/Record";
+import { ActiveActivatable } from "../../../Models/View/ActiveActivatable";
+import { AttributeCombined } from "../../../Models/View/AttributeCombined";
+import { CantripCombined } from "../../../Models/View/CantripCombined";
+import { DerivedCharacteristic } from "../../../Models/View/DerivedCharacteristic";
+import { SpellCombined } from "../../../Models/View/SpellCombined";
+import { L10nRecord } from "../../../Models/Wiki/L10n";
+import { SpecialAbility } from "../../../Models/Wiki/SpecialAbility";
+import { DCIds } from "../../../Selectors/derivedCharacteristicsSelectors";
+import { translate } from "../../../Utilities/I18n";
+import { pipe, pipe_ } from "../../../Utilities/pipe";
 import { Checkbox } from "../../Universal/Checkbox";
 import { Options } from "../../Universal/Options";
 import { AttributeMods } from "../AttributeMods";
@@ -15,13 +25,13 @@ import { SpellsSheetSpells } from "./SpellsSheetSpells";
 import { SpellsSheetTraditionsProperties } from "./SpellsSheetTraditionsProperties";
 
 export interface SpellsSheetProps {
-  attributes: List<Record<AttributeCombined>>
+  attributes: Maybe<List<Record<AttributeCombined>>>
   cantrips: Maybe<List<Record<CantripCombined>>>
   checkAttributeValueVisibility: boolean
-  derivedCharacteristics: List<Record<SecondaryAttribute>>
-  locale: UIMessagesObject
+  derivedCharacteristics: List<Record<DerivedCharacteristic>>
+  l10n: L10nRecord
   magicalPrimary: Maybe<string>
-  magicalSpecialAbilities: Maybe<List<Record<ActiveViewObject<SpecialAbility>>>>
+  magicalSpecialAbilities: Maybe<List<Record<ActiveActivatable<SpecialAbility>>>>
   magicalTradition: Maybe<string>
   properties: Maybe<List<string>>
   spells: Maybe<List<Record<SpellCombined>>>
@@ -32,21 +42,24 @@ export function SpellsSheet (props: SpellsSheetProps) {
   const {
     checkAttributeValueVisibility,
     derivedCharacteristics,
-    locale,
+    l10n,
     switchAttributeValueVisibility,
   } = props
 
-  const addHeader = List.of<Record<HeaderValue>> (
-    Record.ofMaybe<HeaderValue> ({
+  const addHeader = List<Record<HeaderValue>> (
+    HeaderValue ({
       id: "AE_MAX",
-      short: translate (l10n) ("charactersheet.spells.headers.aemax"),
-      value: derivedCharacteristics
-        .find (e => e .get ("id") === "AE")
-        .bind (Record.lookup<SecondaryAttribute, "value"> ("value")),
+      short: translate (l10n) ("aemax"),
+      value:
+        pipe_ (
+          derivedCharacteristics,
+          find (pipe (DerivedCharacteristic.A.id, equals<DCIds> ("AE"))),
+          bindF (DerivedCharacteristic.A.value)
+        ),
     }),
-    Record.of<HeaderValue> ({
+    HeaderValue ({
       id: "AE_CURRENT",
-      short: translate (l10n) ("charactersheet.spells.headers.aecurrent"),
+      short: translate (l10n) ("current"),
     })
   )
 
@@ -57,13 +70,13 @@ export function SpellsSheet (props: SpellsSheetProps) {
           checked={checkAttributeValueVisibility}
           onClick={switchAttributeValueVisibility}
           >
-          {translate (l10n) ("charactersheet.options.showattributevalues")}
+          {translate (l10n) ("showattributevalues")}
         </Checkbox>
       </Options>
       <Sheet
         {...props}
         id="spells-sheet"
-        title={translate (l10n) ("charactersheet.spells.title")}
+        title={translate (l10n) ("spellsandrituals")}
         addHeaderInfo={addHeader}
         >
         <div className="all">

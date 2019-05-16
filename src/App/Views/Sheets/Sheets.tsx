@@ -1,6 +1,7 @@
 import * as React from "react";
-import { List } from "../../../Data/List";
-import { Maybe } from "../../../Data/Maybe";
+import { equals } from "../../../Data/Eq";
+import { find, List } from "../../../Data/List";
+import { bindF, Maybe, maybeRNull } from "../../../Data/Maybe";
 import { OrderedMap } from "../../../Data/OrderedMap";
 import { Pair } from "../../../Data/Pair";
 import { Record } from "../../../Data/Record";
@@ -35,6 +36,8 @@ import { L10nRecord } from "../../Models/Wiki/L10n";
 import { Race } from "../../Models/Wiki/Race";
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
 import { WikiModel } from "../../Models/Wiki/WikiModel";
+import { DCIds } from "../../Selectors/derivedCharacteristicsSelectors";
+import { pipe, pipe_ } from "../../Utilities/pipe";
 import { isBookEnabled } from "../../Utilities/RulesUtils";
 import { Page } from "../Universal/Page";
 import { Scroll } from "../Universal/Scroll";
@@ -66,7 +69,7 @@ export interface SheetsStateProps {
   disadvantagesActive: Maybe<List<Record<ActiveActivatable<Disadvantage>>>>
   el: Maybe<Record<ExperienceLevel>>
   fatePointsModifier: number
-  generalsaActive: Maybe<List<string | Record<ActiveActivatable<SpecialAbility>>>>
+  generalsaActive: Maybe<List<Record<ActiveActivatable<SpecialAbility>>>>
   meleeWeapons: Maybe<List<Record<MeleeWeapon>>>
   name: Maybe<string>
   professionName: Maybe<string>
@@ -114,9 +117,11 @@ export interface SheetsDispatchProps {
 export type SheetsProps = SheetsStateProps & SheetsDispatchProps & SheetsOwnProps
 
 export function Sheets (props: SheetsProps) {
-  const maybeArcaneEnergy = props.derivedCharacteristics.find (e => e.get ("id") === "AE")
+  const maybeArcaneEnergy = find (pipe (DerivedCharacteristic.A.id, equals<DCIds> ("AE")))
+                                 (props.derivedCharacteristics)
 
-  const maybeKarmaPoints = props.derivedCharacteristics.find (e => e.get ("id") === "KP")
+  const maybeKarmaPoints = find (pipe (DerivedCharacteristic.A.id, equals<DCIds> ("KP")))
+                                (props.derivedCharacteristics)
 
   return (
     <Page id="sheets">
@@ -128,15 +133,15 @@ export function Sheets (props: SheetsProps) {
           ? <CombatSheetZones {...props} />
           : null}
         <BelongingsSheet {...props} />
-        {Maybe.maybeToReactNode (
-          maybeArcaneEnergy
-            .bind (arcaneEnergy => arcaneEnergy.lookup ("value"))
-            .then (Just (<SpellsSheet {...props} />))
+        {pipe_ (
+          maybeArcaneEnergy,
+          bindF (DerivedCharacteristic.A.value),
+          maybeRNull (() => <SpellsSheet {...props} />)
         )}
-        {Maybe.maybeToReactNode (
-          maybeKarmaPoints
-            .bind (karmaPoints => karmaPoints.lookup ("value"))
-            .then (Just (<LiturgicalChantsSheet {...props} />))
+        {pipe_ (
+          maybeKarmaPoints,
+          bindF (DerivedCharacteristic.A.value),
+          maybeRNull (() => <LiturgicalChantsSheet {...props} />)
         )}
       </Scroll>
     </Page>

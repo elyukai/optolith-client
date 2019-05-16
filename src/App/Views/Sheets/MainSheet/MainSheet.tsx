@@ -33,7 +33,7 @@ export interface MainSheetProps {
   attributes: Maybe<List<Record<AttributeCombined>>>
   avatar: Maybe<string>
   culture: Maybe<Record<Culture>>
-  derivedCharacteristics: Maybe<List<Record<DerivedCharacteristic>>>
+  derivedCharacteristics: List<Record<DerivedCharacteristic>>
   disadvantagesActive: Maybe<List<Record<ActiveActivatable<Disadvantage>>>>
   el: Maybe<Record<ExperienceLevel>>
   fatePointsModifier: number

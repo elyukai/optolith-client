@@ -32,7 +32,7 @@ export interface LiturgicalChantsSheetProps {
   blessedTradition: Maybe<string>
   blessings: Maybe<List<Record<BlessingCombined>>>
   checkAttributeValueVisibility: boolean
-  derivedCharacteristics: Maybe<List<Record<DerivedCharacteristic>>>
+  derivedCharacteristics: List<Record<DerivedCharacteristic>>
   liturgicalChants: Maybe<List<Record<LiturgicalChantWithRequirements>>>
   l10n: L10nRecord
   switchAttributeValueVisibility (): void
@@ -53,7 +53,7 @@ export function LiturgicalChantsSheet (props: LiturgicalChantsSheetProps) {
       value:
         pipe_ (
           derivedCharacteristics,
-          bindF (find (pipe (DerivedCharacteristic.A.id, equals<DCIds> ("KP")))),
+          find (pipe (DerivedCharacteristic.A.id, equals<DCIds> ("KP"))),
           bindF (DerivedCharacteristic.A.value)
         ),
     }),

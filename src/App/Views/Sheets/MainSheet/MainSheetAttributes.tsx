@@ -1,18 +1,18 @@
 import * as React from "react";
-import { fmap, fmapF } from "../../../../Data/Functor";
+import { fmapF } from "../../../../Data/Functor";
 import { List, map, toArray } from "../../../../Data/List";
-import { fromMaybeR, Just, Maybe, Nothing } from "../../../../Data/Maybe";
+import { Just, Maybe, Nothing } from "../../../../Data/Maybe";
 import { Record } from "../../../../Data/Record";
 import { DerivedCharacteristic } from "../../../Models/View/DerivedCharacteristic";
 import { L10nRecord } from "../../../Models/Wiki/L10n";
 import { Race } from "../../../Models/Wiki/Race";
 import { translate } from "../../../Utilities/I18n";
-import { pipe, pipe_ } from "../../../Utilities/pipe";
+import { pipe_ } from "../../../Utilities/pipe";
 import { MainSheetAttributesItem } from "./MainSheetAttributesItem";
 import { MainSheetFatePoints } from "./MainSheetFatePoints";
 
 export interface MainSheetAttributesProps {
-  attributes: Maybe<List<Record<DerivedCharacteristic>>>
+  attributes: List<Record<DerivedCharacteristic>>
   fatePointsModifier: number
   l10n: L10nRecord
   race: Maybe<Record<Race>>
@@ -33,90 +33,87 @@ export function MainSheetAttributes (props: MainSheetAttributesProps) {
       </div>
       {pipe_ (
         attributes,
-        fmap (pipe (
-          map (attribute => (
-            <MainSheetAttributesItem
-              key={DCA.id (attribute)}
-              label={DCA.name (attribute)}
-              calc={DCA.calc (attribute)}
-              base={DCA.base (attribute)}
-              max={DCA.value (attribute)}
-              add={DCA.mod (attribute)}
-              purchased={DCA.currentAdd (attribute)}
-              subLabel={(() => {
-                switch (DCA.id (attribute)) {
-                  case "LP":
-                  case "SPI":
-                  case "TOU":
-                  case "MOV":
-                    return Just (translate (l10n) ("basestat"))
+        map (attribute => (
+          <MainSheetAttributesItem
+            key={DCA.id (attribute)}
+            label={DCA.name (attribute)}
+            calc={DCA.calc (attribute)}
+            base={DCA.base (attribute)}
+            max={DCA.value (attribute)}
+            add={DCA.mod (attribute)}
+            purchased={DCA.currentAdd (attribute)}
+            subLabel={(() => {
+              switch (DCA.id (attribute)) {
+                case "LP":
+                case "SPI":
+                case "TOU":
+                case "MOV":
+                  return Just (translate (l10n) ("basestat"))
 
-                  case "AE":
-                  case "KP":
-                    return Just (translate (l10n) ("permanentlylostboughtback"))
+                case "AE":
+                case "KP":
+                  return Just (translate (l10n) ("permanentlylostboughtback"))
 
-                  default:
-                    return Nothing
-                }
-              }) ()}
-              subArray={(() => {
-                switch (DCA.id (attribute)) {
-                  case "LP":
-                    return Just (
-                      List (
-                        Maybe.sum (fmapF (race) (Race.A.lp))
-                      )
+                default:
+                  return Nothing
+              }
+            }) ()}
+            subArray={(() => {
+              switch (DCA.id (attribute)) {
+                case "LP":
+                  return Just (
+                    List (
+                      Maybe.sum (fmapF (race) (Race.A.lp))
                     )
+                  )
 
-                  case "AE":
-                  case "KP":
-                    return Just (
-                      List (
-                        Maybe.sum (DCA.permanentLost (attribute)),
-                        Maybe.sum (DCA.permanentRedeemed (attribute))
-                      )
+                case "AE":
+                case "KP":
+                  return Just (
+                    List (
+                      Maybe.sum (DCA.permanentLost (attribute)),
+                      Maybe.sum (DCA.permanentRedeemed (attribute))
                     )
+                  )
 
-                  case "SPI":
-                    return Just (
-                      List (
-                        Maybe.sum (fmapF (race) (Race.A.spi))
-                      )
+                case "SPI":
+                  return Just (
+                    List (
+                      Maybe.sum (fmapF (race) (Race.A.spi))
                     )
+                  )
 
-                  case "TOU":
-                    return Just (
-                      List (
-                        Maybe.sum (fmapF (race) (Race.A.tou))
-                      )
+                case "TOU":
+                  return Just (
+                    List (
+                      Maybe.sum (fmapF (race) (Race.A.tou))
                     )
+                  )
 
-                  case "MOV":
-                    return Just (
-                      List (
-                        Maybe.sum (fmapF (race) (Race.A.mov))
-                      )
+                case "MOV":
+                  return Just (
+                    List (
+                      Maybe.sum (fmapF (race) (Race.A.mov))
                     )
+                  )
 
-                  default:
-                    return Nothing
-                }
-              }) ()}
-              empty={(() => {
-                switch (DCA.id (attribute)) {
-                  case "AE":
-                  case "KP":
-                    return Just (Maybe.isNothing (DCA.value (attribute)))
+                default:
+                  return Nothing
+              }
+            }) ()}
+            empty={(() => {
+              switch (DCA.id (attribute)) {
+                case "AE":
+                case "KP":
+                  return Just (Maybe.isNothing (DCA.value (attribute)))
 
-                  default:
-                    return Nothing
-                }
-              }) ()}
-              />
-          )),
-          toArray
+                default:
+                  return Nothing
+              }
+            }) ()}
+            />
         )),
-        fromMaybeR (null)
+        toArray
       )}
       <MainSheetFatePoints
         fatePointsModifier={fatePointsModifier}

@@ -1,176 +1,186 @@
 import * as React from "react";
 import { Textfit } from "react-textfit";
-import { SecondaryAttribute } from "../../../Models/Hero/heroTypeHelpers";
-import { AttributeCombined, SpellCombined } from "../../../Models/View/viewTypeHelpers";
+import { equals } from "../../../../Data/Eq";
+import { fmap, fmapF } from "../../../../Data/Functor";
+import { find, flength, intercalate, List, map, notNull, replicateR, subscript, toArray } from "../../../../Data/List";
+import { ensure, fromMaybeR, mapMaybe, Maybe } from "../../../../Data/Maybe";
+import { elems } from "../../../../Data/OrderedSet";
+import { Record } from "../../../../Data/Record";
+import { AttributeCombined } from "../../../Models/View/AttributeCombined";
+import { DerivedCharacteristic } from "../../../Models/View/DerivedCharacteristic";
+import { SpellCombined, SpellCombinedA_ } from "../../../Models/View/SpellCombined";
+import { L10nRecord } from "../../../Models/Wiki/L10n";
+import { DCIds } from "../../../Selectors/derivedCharacteristicsSelectors";
 import { getICName } from "../../../Utilities/AdventurePoints/improvementCostUtils";
-import { translate, UIMessagesObject } from "../../../Utilities/I18n";
+import { translate } from "../../../Utilities/I18n";
+import { dec } from "../../../Utilities/mathUtils";
+import { pipe, pipe_ } from "../../../Utilities/pipe";
+import { renderMaybe } from "../../../Utilities/ReactUtils";
 import { getAttributeStringByIdList } from "../../../Utilities/sheetUtils";
+import { sortStrings } from "../../../Utilities/sortBy";
 import { TextBox } from "../../Universal/TextBox";
 
 export interface SpellsSheetSpellsProps {
-  attributes: List<Record<AttributeCombined>>
+  attributes: Maybe<List<Record<AttributeCombined>>>
   checkAttributeValueVisibility: boolean
-  derivedCharacteristics: List<Record<SecondaryAttribute>>
-  locale: UIMessagesObject
+  derivedCharacteristics: List<Record<DerivedCharacteristic>>
+  l10n: L10nRecord
   spells: Maybe<List<Record<SpellCombined>>>
 }
 
+const SCA_ = SpellCombinedA_
+const DCA = DerivedCharacteristic.A
+
 export function SpellsSheetSpells (props: SpellsSheetSpellsProps) {
   const {
-    attributes,
+    attributes: mattributes,
     checkAttributeValueVisibility,
     derivedCharacteristics,
-    locale,
+    l10n,
     spells: maybeSpells,
   } = props
 
-  const propertyNames = translate (l10n) ("spells.view.properties")
-  const traditionNames = translate (l10n) ("spells.view.traditions")
+  const propertyNames = translate (l10n) ("propertylist")
+  const traditionNames = translate (l10n) ("magicaltraditions")
 
   return (
     <TextBox
-      label={translate (l10n) ("charactersheet.spells.spellslist.title")}
+      label={translate (l10n) ("spells")}
       className="skill-list"
       >
       <table>
         <thead>
           <tr>
             <th className="name">
-              {translate (l10n) ("charactersheet.spells.spellslist.headers.spellritual")}
+              {translate (l10n) ("spellorritual")}
             </th>
             <th className="check">
-              {translate (l10n) ("charactersheet.spells.spellslist.headers.check")}
+              {translate (l10n) ("check")}
             </th>
             <th className="value">
-              {translate (l10n) ("charactersheet.spells.spellslist.headers.sr")}
+              {translate (l10n) ("skillrating.short")}
             </th>
             <th className="cost">
-              {translate (l10n) ("charactersheet.spells.spellslist.headers.cost")}
+              {translate (l10n) ("cost")}
             </th>
             <th className="cast-time">
-              {translate (l10n) ("charactersheet.spells.spellslist.headers.castingtime")}
+              {translate (l10n) ("castingtime")}
             </th>
             <th className="range">
-              {translate (l10n) ("charactersheet.spells.spellslist.headers.range")}
+              {translate (l10n) ("range")}
             </th>
             <th className="duration">
-              {translate (l10n) ("charactersheet.spells.spellslist.headers.duration")}
+              {translate (l10n) ("duration")}
             </th>
             <th className="property">
-              {translate (l10n) ("charactersheet.spells.spellslist.headers.property")}
+              {translate (l10n) ("property")}
             </th>
             <th className="ic">
-              {translate (l10n) ("charactersheet.spells.spellslist.headers.ic")}
+              {translate (l10n) ("improvementcost.short")}
             </th>
             <th className="effect">
-              {translate (l10n) ("charactersheet.spells.spellslist.headers.effect")}
+              {translate (l10n) ("effect")}
             </th>
             <th className="ref">
-              {translate (l10n) ("charactersheet.spells.spellslist.headers.page")}
+              {translate (l10n) ("page.short")}
             </th>
           </tr>
         </thead>
         <tbody>
-          {Maybe.fromMaybe<NonNullable<React.ReactNode>>
-            (<></>)
-            (maybeSpells .fmap (
-              spells => spells
-                .map (e => {
-                  const check = getAttributeStringByIdList (checkAttributeValueVisibility)
-                                                           (attributes)
-                                                           (e .get ("check"))
+          {pipe_ (
+            maybeSpells,
+            fmap (pipe (
+              map (e => {
+                const check =
+                  fmapF (mattributes)
+                        (attributes => getAttributeStringByIdList (checkAttributeValueVisibility)
+                                                                  (attributes)
+                                                                  (SCA_.check (e)))
 
-                  return (
-                    <tr>
-                      <td className="name">
-                        <Textfit max={11} min={7} mode="single">
-                          {e .get ("name")}
-                          {e .get ("tradition") .null ()
-                            ? ""
-                            : ` (${
-                              sortStrings
-                                (locale .get ("id"))
-                                (
-                                  Maybe.mapMaybe<number, string>
-                                    (R.pipe (
-                                      R.dec,
-                                      List.subscript (traditionNames)
-                                    ))
-                                    (e .get ("tradition"))
-                                )
-                                .intercalate (", ")
-                            })`}
-                        </Textfit>
-                      </td>
-                      <td className="check">
-                        <Textfit max={11} min={7} mode="single">
-                          {check}
-                          {Maybe.fromMaybe
-                            ("")
-                            (e
-                              .lookup ("checkmod")
-                              .bind (
-                                checkmod => derivedCharacteristics
-                                  .find (derived => derived .get ("id") === checkmod)
-                              )
-                              .fmap (checkmod => ` (+${checkmod .get ("short")})`))}
-                        </Textfit>
-                      </td>
-                      <td className="value">{e .get ("value")}</td>
-                      <td className="cost">
-                        <Textfit max={11} min={7} mode="single">{e .get ("costShort")}</Textfit>
-                      </td>
-                      <td className="cast-time">
-                        <Textfit max={11} min={7} mode="single">
-                          {e .get ("castingTimeShort")}
-                        </Textfit>
-                      </td>
-                      <td className="range">
-                        <Textfit max={11} min={7} mode="single">{e .get ("rangeShort")}</Textfit>
-                      </td>
-                      <td className="duration">
-                        <Textfit max={11} min={7} mode="single">{e .get ("durationShort")}</Textfit>
-                      </td>
-                      <td className="property">
-                        <Textfit max={11} min={7} mode="single">
-                          {Maybe.fromMaybe
-                            ("")
-                            (propertyNames .subscript (e .get ("property") - 1))}
-                        </Textfit>
-                      </td>
-                      <td className="ic">{getICName (e .get ("ic"))}</td>
-                      <td className="effect"></td>
-                      <td className="ref"></td>
-                    </tr>
-                  )
-                })
-                .toArray ()
-            ))}
-          {List.unfoldr<JSX.Element, number>
-            (x => x >= 21
-              ? Nothing ()
-              : Just (
-                Tuple.of<JSX.Element, number>
-                  (
-                    <tr key={`undefined${20 - x}`}>
-                      <td className="name"></td>
-                      <td className="check"></td>
-                      <td className="value"></td>
-                      <td className="cost"></td>
-                      <td className="cast-time"></td>
-                      <td className="range"></td>
-                      <td className="duration"></td>
-                      <td className="property"></td>
-                      <td className="ic"></td>
-                      <td className="effect"></td>
-                      <td className="ref"></td>
-                    </tr>
-                  )
-                  (R.inc (x))
-              )
-            )
-            (Maybe.fromMaybe (0) (maybeSpells .fmap (List.lengthL)))}
-          }
+
+                return (
+                  <tr key={SCA_.id (e)}>
+                    <td className="name">
+                      <Textfit max={11} min={7} mode="single">
+                        {SCA_.name (e)}
+                        {pipe_ (
+                          e,
+                          SCA_.tradition,
+                          ensure (notNull),
+                          fmap (pipe (
+                            mapMaybe (pipe (dec, subscript (traditionNames))),
+                            sortStrings (l10n),
+                            intercalate (", "),
+                            str => ` (${str})`
+                          )),
+                          renderMaybe
+                        )}
+                      </Textfit>
+                    </td>
+                    <td className="check">
+                      <Textfit max={11} min={7} mode="single">
+                        {check}
+                        {pipe_ (
+                          e,
+                          SCA_.checkmod,
+                          elems,
+                          mapMaybe (id => fmapF (find (pipe (
+                                                        DCA.id,
+                                                        equals<DCIds> (id)
+                                                      ))
+                                                      (derivedCharacteristics))
+                                                (DCA.short)),
+                          intercalate ("/"),
+                          str => ` (+${str})`
+                        )}
+                      </Textfit>
+                    </td>
+                    <td className="value">{SCA_.value (e)}</td>
+                    <td className="cost">
+                      <Textfit max={11} min={7} mode="single">{SCA_.costShort (e)}</Textfit>
+                    </td>
+                    <td className="cast-time">
+                      <Textfit max={11} min={7} mode="single">
+                        {SCA_.castingTimeShort (e)}
+                      </Textfit>
+                    </td>
+                    <td className="range">
+                      <Textfit max={11} min={7} mode="single">{SCA_.rangeShort (e)}</Textfit>
+                    </td>
+                    <td className="duration">
+                      <Textfit max={11} min={7} mode="single">{SCA_.durationShort (e)}</Textfit>
+                    </td>
+                    <td className="property">
+                      <Textfit max={11} min={7} mode="single">
+                        {renderMaybe (subscript (propertyNames) (SCA_.property (e) - 1))}
+                      </Textfit>
+                    </td>
+                    <td className="ic">{getICName (SCA_.ic (e))}</td>
+                    <td className="effect"></td>
+                    <td className="ref"></td>
+                  </tr>
+                )
+              }),
+              toArray
+            )),
+            fromMaybeR (null)
+          )}
+          {replicateR (21 - Maybe.sum (fmapF (maybeSpells) (flength)))
+                      (i => (
+                        <tr key={`undefined-${i}`}>
+                          <td className="name"></td>
+                          <td className="check"></td>
+                          <td className="value"></td>
+                          <td className="cost"></td>
+                          <td className="cast-time"></td>
+                          <td className="range"></td>
+                          <td className="duration"></td>
+                          <td className="aspect"></td>
+                          <td className="ic"></td>
+                          <td className="effect"></td>
+                          <td className="ref"></td>
+                        </tr>
+                      ))}
         </tbody>
       </table>
     </TextBox>

@@ -1,37 +1,41 @@
 import * as React from "react";
-import { translate, UIMessagesObject } from "../../../Utilities/I18n";
+import { intercalate, List } from "../../../../Data/List";
+import { Maybe } from "../../../../Data/Maybe";
+import { L10nRecord } from "../../../Models/Wiki/L10n";
+import { translate } from "../../../Utilities/I18n";
+import { renderMaybe, renderMaybeWith } from "../../../Utilities/ReactUtils";
 
 export interface SpellsSheetTraditionsPropertiesProps {
-  locale: UIMessagesObject
+  l10n: L10nRecord
   magicalPrimary: Maybe<string>
   magicalTradition: Maybe<string>
   properties: Maybe<List<string>>
 }
 
 export function SpellsSheetTraditionsProperties (props: SpellsSheetTraditionsPropertiesProps) {
-  const { magicalPrimary, magicalTradition, properties, locale } = props
+  const { magicalPrimary, magicalTradition, properties, l10n } = props
 
   return (
     <div className="tradition-properties">
       <div className="primary">
         <span className="label">
-          {translate (l10n) ("charactersheet.spells.traditionsproperties.labels.primaryattribute")}
+          {translate (l10n) ("primaryattribute")}
         </span>
-        <span className="value">{Maybe.fromMaybe ("") (magicalPrimary)}</span>
+        <span className="value">{renderMaybe (magicalPrimary)}</span>
       </div>
       <div className="properties">
         <span className="label">
-          {translate (l10n) ("charactersheet.spells.traditionsproperties.labels.properties")}
+          {translate (l10n) ("property")}
         </span>
         <span className="value">
-          {Maybe.fromMaybe ("") (properties .fmap (List.intercalate (", ")))}
+          {renderMaybeWith (intercalate (", ")) (properties)}
         </span>
       </div>
       <div className="tradition">
         <span className="label">
-          {translate (l10n) ("charactersheet.spells.traditionsproperties.labels.tradition")}
+          {translate (l10n) ("tradition")}
         </span>
-        <span className="value">{Maybe.fromMaybe ("") (magicalTradition)}</span>
+        <span className="value">{renderMaybe (magicalTradition)}</span>
       </div>
     </div>
   )

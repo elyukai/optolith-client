@@ -22,7 +22,7 @@ import { TextBox } from "../../Universal/TextBox";
 export interface LiturgicalChantsSheetLiturgicalChantsProps {
   attributes: Maybe<List<Record<AttributeCombined>>>
   checkAttributeValueVisibility: boolean
-  derivedCharacteristics: Maybe<List<Record<DerivedCharacteristic>>>
+  derivedCharacteristics: List<Record<DerivedCharacteristic>>
   liturgicalChants: Maybe<List<Record<LiturgicalChantWithRequirements>>>
   l10n: L10nRecord
 }
@@ -107,21 +107,17 @@ export function LiturgicalChantsSheetLiturgicalChants (
                       <Textfit max={11} min={7} mode="single">
                         {check}
                         {pipe_ (
-                          derivedCharacteristics,
-                          fmap (dcs => pipe_ (
-                                         e,
-                                         LCWRA_.checkmod,
-                                         elems,
-                                         mapMaybe (id => fmapF (find (pipe (
-                                                                       DCA.id,
-                                                                       equals<DCIds> (id)
-                                                                     ))
-                                                                     (dcs))
-                                                               (DCA.short)),
-                                         intercalate ("/"),
-                                         str => ` (+${str})`
-                                       )),
-                          fromMaybeR (null)
+                          e,
+                          LCWRA_.checkmod,
+                          elems,
+                          mapMaybe (id => fmapF (find (pipe (
+                                                        DCA.id,
+                                                        equals<DCIds> (id)
+                                                      ))
+                                                      (derivedCharacteristics))
+                                                (DCA.short)),
+                          intercalate ("/"),
+                          str => ` (+${str})`
                         )}
                       </Textfit>
                     </td>
@@ -160,7 +156,7 @@ export function LiturgicalChantsSheetLiturgicalChants (
             )),
             fromMaybeR (null)
           )}
-          {replicateR (4 - Maybe.sum (fmapF (maybeLiturgicalChants) (flength)))
+          {replicateR (21 - Maybe.sum (fmapF (maybeLiturgicalChants) (flength)))
                       (i => (
                         <tr key={`undefined-${i}`}>
                           <td className="name"></td>

@@ -1,34 +1,38 @@
 import * as React from "react";
-import { CantripCombined } from "../../../Models/View/viewTypeHelpers";
-import { translate, UIMessagesObject } from "../../../Utilities/I18n";
+import { fmap } from "../../../../Data/Functor";
+import { intercalate, List, map } from "../../../../Data/List";
+import { Maybe, maybeToNullable } from "../../../../Data/Maybe";
+import { Record } from "../../../../Data/Record";
+import { CantripCombined, CantripCombinedA_ } from "../../../Models/View/CantripCombined";
+import { L10nRecord } from "../../../Models/Wiki/L10n";
+import { translate } from "../../../Utilities/I18n";
+import { pipe, pipe_ } from "../../../Utilities/pipe";
+import { sortStrings } from "../../../Utilities/sortBy";
 import { TextBox } from "../../Universal/TextBox";
 
 export interface SpellsSheetCantripsProps {
   cantrips: Maybe<List<Record<CantripCombined>>>
-  locale: UIMessagesObject
+  l10n: L10nRecord
 }
 
 export function SpellsSheetCantrips (props: SpellsSheetCantripsProps) {
-  const { cantrips, locale } = props
+  const { cantrips, l10n } = props
 
   return (
     <TextBox
-      label={translate (l10n) ("charactersheet.spells.cantrips.title")}
+      label={translate (l10n) ("cantrips")}
       className="cantrips activatable-list"
       >
       <div className="list">
-        {
-          Maybe.maybeToReactNode (
-            cantrips
-              .fmap (
-                R.pipe (
-                  List.map (e => e .get ("name")),
-                  sortStrings (locale .get ("id")),
-                  List.intercalate (", ")
-                )
-              )
-          )
-        }
+        {pipe_ (
+          cantrips,
+          fmap (pipe (
+            map (CantripCombinedA_.name),
+            sortStrings (l10n),
+            intercalate (", ")
+          )),
+          maybeToNullable
+        )}
       </div>
     </TextBox>
   )
