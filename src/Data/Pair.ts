@@ -8,87 +8,37 @@
  */
 
 import { Internals } from "./Internals";
+import { Tuple } from "./Tuple";
+import * as Curry from "./Tuple/Curry";
 
 
 // CONSTRUCTOR
 
-export interface Pair<A, B> extends Internals.PairPrototype {
-  readonly first: A
-  readonly second: B
-  readonly prototype: Internals.PairPrototype
-}
-
-export type PairP1 = <A> (first: A) => <B> (second: B) => Pair<A, B>
-export type PairP1_ = <A, B> (first: A) => (second: B) => Pair<A, B>
-export type PairP2 = <A, B> (first: A, second: B) => Pair<A, B>
-
-interface PairConstructor {
-  <A> (first: A): <B> (second: B) => Pair<A, B>
-  <A, B> (first: A, second: B): Pair<A, B>
-
-  bimap:
-  <A, B, C, D>
-  (fFirst: (first: A) => B) =>
-  (fSecond: (second: C) => D) =>
-  (x: Pair<A, C>) =>
-  Pair<B, D>
-
-  first: <A, B> (f: (first: A) => B) => <C> (x: Pair<A, C>) => Pair<B, C>
-  second: <A, B, C>(f: (second: B) => C) => (x: Pair<A, B>) => Pair<A, C>
-
-  fst: <A>(x: Pair<A, any>) => A
-  snd: <B>(x: Pair<any, B>) => B
-  curry: <A, B, C>(f: (x: Pair<A, B>) => C) => (a: A) => (b: B) => C
-  uncurry: <A, B, C>(f: (a: A) => (b: B) => C) => (x: Pair<A, B>) => C
-  swap: <A, B>(x: Pair<A, B>) => Pair<B, A>
-
-  toArray: <A, B>(x: Pair<A, B>) => [A, B]
-  fromArray: <A, B>(x: [A, B]) => Pair<A, B>
-  isPair: (x: any) => x is Pair<any, any>
-}
-
-export const Pair =
-  ((...args: [any] | [any, any]) => {
-    if (args.length === 1) {
-      return (b: any) => Internals._Pair (args [0], b)
-    }
-
-    return Internals._Pair (args [0], args [1])
-  }) as PairConstructor
+export { Pair } from "./Tuple";
 
 
 // BIFUNCTOR
 
 /**
  * `bimap :: (a -> b) -> (c -> d) -> (a, c) -> (b, d)`
+ *
+ * @deprecated use Tuple.bimap
  */
-export const bimap =
-  <A, B>
-  (fFirst: (first: A) => B) =>
-  <C, D>
-  (fSecond: (second: C) => D) =>
-  (x: Pair<A, C>): Pair<B, D> =>
-    Pair (fFirst (x .first)) (fSecond (x .second))
+export const bimap = Tuple.bimap
 
 /**
 * `first :: (a -> b) -> (a, c) -> (b, c)`
+ *
+ * @deprecated use Tuple.first
 */
-export const first =
-  <A, B>
-  (f: (first: A) => B) =>
-  <C>
-  (x: Pair<A, C>): Pair<B, C> =>
-    Pair (f (x .first)) (x .second)
+export const first = Tuple.first
 
 /**
 * `second :: (b -> c) -> (a, b) -> (a, c)`
+ *
+ * @deprecated use Tuple.second
 */
-export const second =
-  <B, C>
-  (f: (second: B) => C) =>
-  <A>
-  (x: Pair<A, B>): Pair<A, C> =>
-    Pair (x .first) (f (x .second))
+export const second = Tuple.second
 
 
 // PAIR FUNCTIONS
@@ -97,124 +47,118 @@ export const second =
  * `fst :: (a, b) -> a`
  *
  * Extract the first component of a pair.
+ *
+ * @deprecated use Tuple.fst
  */
-export const fst = <A> (x: Pair<A, any>): A => x .first
+export const fst = Tuple.fst
 
 /**
  * `snd :: (a, b) -> b`
  *
  * Extract the second component of a pair.
+ *
+ * @deprecated use Tuple.snd
  */
-export const snd = <B> (x: Pair<any, B>): B => x .second
+export const snd = Tuple.snd
 
 /**
  * `curry :: ((a, b) -> c) -> a -> b -> c`
  *
  * `curry` converts an uncurried function to a curried function.
+ *
+ * @deprecated use Tuple.curry
  */
-export const curry =
-  <A, B, C> (f: (x: Pair<A, B>) => C) => (a: A) => (b: B): C =>
-    f (Pair (a, b))
+export const curry = Tuple.curry
 
 /**
  * `curryN :: ((a, b) -> c) -> a -> b -> c`
  *
  * `curryN` converts an uncurried function to a curried function.
+ *
+ * @deprecated use Tuple.Curry.curryN
  */
-export const curryN =
-  <A, B, C> (f: (x: A, y: B) => C) => (a: A) => (b: B): C =>
-    f (a, b)
+export const curryN = Curry.curryN
 
 /**
  * `uncurry :: (a -> b -> c) -> (a, b) -> c`
  *
  * `uncurry` converts a curried function to a function on pairs.
+ *
+ * @deprecated use Tuple.uncurry
  */
-export const uncurry =
-  <A, B, C> (f: (a: A) => (b: B) => C) => (x: Pair<A, B>): C =>
-    f (x .first) (x .second)
+export const uncurry = Tuple.uncurry
 
 /**
  * `uncurryN :: (a -> b -> c) -> (a, b) -> c`
  *
  * `uncurryN` converts a curried function to a function on pairs.
+ *
+ * @deprecated use Tuple.Curry.uncurryN
  */
-export const uncurryN =
-  <A, B, C> (f: (a: A) => (b: B) => C) => (x: A, y: B): C =>
-    f (x) (y)
+export const uncurryN = Curry.uncurryN
 
 /**
  * `uncurryN3 :: (a -> b -> c -> d) -> (a, b, c) -> d`
  *
  * `uncurryN3` converts a curried function to a function on pairs.
+ *
+ * @deprecated use Tuple.Curry.uncurryN3
  */
-export const uncurryN3 =
-  <A, B, C, D> (f: (a: A) => (b: B) => (c: C) => D) => (x: A, y: B, z: C): D =>
-    f (x) (y) (z)
+export const uncurryN3 = Curry.uncurryN3
 
 /**
  * `uncurryN4 :: (a -> b -> c -> d -> e) -> (a, b, c, d) -> e`
  *
  * `uncurryN4` converts a curried function to a function on pairs.
+ *
+ * @deprecated use Tuple.Curry.uncurryN4
  */
-export const uncurryN4 =
-  <A, B, C, D, E>
-  (f: (a: A) => (b: B) => (c: C) => (c: D) => E) =>
-  (x: A, y: B, z: C, a: D): E =>
-    f (x) (y) (z) (a)
+export const uncurryN4 = Curry.uncurryN4
 
 /**
  * `uncurryN5 :: (a -> b -> c -> d -> e -> f) -> (a, b, c, d, e) -> f`
  *
  * `uncurryN5` converts a curried function to a function on pairs.
+ *
+ * @deprecated use Tuple.Curry.uncurryN5
  */
-export const uncurryN5 =
-  <A, B, C, D, E, F>
-  (f: (a: A) => (b: B) => (c: C) => (d: D) => (e: E) => F) =>
-  (x: A, y: B, z: C, a: D, b: E): F =>
-    f (x) (y) (z) (a) (b)
+export const uncurryN5 = Curry.uncurryN5
 
 /**
  * `uncurryN6 :: (a -> b -> c -> d -> e -> f -> g) -> (a, b, c, d, e, f) -> g`
  *
  * `uncurryN6` converts a curried function to a function on pairs.
+ *
+ * @deprecated use Tuple.Curry.uncurryN6
  */
-export const uncurryN6 =
-  <A, B, C, D, E, F, G>
-  (f: (a: A) => (b: B) => (c: C) => (d: D) => (e: E) => (f: F) => G) =>
-  (x: A, y: B, z: C, a: D, b: E, c: F): G =>
-    f (x) (y) (z) (a) (b) (c)
+export const uncurryN6 = Curry.uncurryN6
 
 /**
  * `uncurryN7 :: (a -> b -> c -> d -> e -> f -> g -> h) -> (a, b, c, d, e, f, g) -> h`
  *
  * `uncurryN7` converts a curried function to a function on pairs.
+ *
+ * @deprecated use Tuple.Curry.uncurryN7
  */
-export const uncurryN7 =
-  <A, B, C, D, E, F, G, H>
-  (f: (a: A) => (b: B) => (c: C) => (d: D) => (e: E) => (f: F) => (g: G) => H) =>
-  (x: A, y: B, z: C, a: D, b: E, c: F, d: G): H =>
-    f (x) (y) (z) (a) (b) (c) (d)
+export const uncurryN7 = Curry.uncurryN7
 
 /**
  * `uncurryN8 :: (a -> b -> c -> d -> e -> f -> g -> h -> i) -> (a, b, c, d, e, f, g, h) -> i`
  *
  * `uncurryN8` converts a curried function to a function on pairs.
+ *
+ * @deprecated use Tuple.Curry.uncurryN8
  */
-export const uncurryN8 =
-  <A, B, C, D, E, F, G, H, I>
-  (f: (a: A) => (b: B) => (c: C) => (d: D) => (e: E) => (f: F) => (g: G) => (h: H) => I) =>
-  (x: A, y: B, z: C, a: D, b: E, c: F, d: G, e: H): I =>
-    f (x) (y) (z) (a) (b) (c) (d) (e)
+export const uncurryN8 = Curry.uncurryN8
 
 /**
  * `swap :: (a, b) -> (b, a)`
  *
  * Swap the components of a pair.
+ *
+ * @deprecated use Tuple.swap
  */
-export const swap =
-  <A, B> (x: Pair<A, B>): Pair<B, A> =>
-    Pair (x .second, x .first)
+export const swap = Tuple.swap
 
 
 // CUSTOM FUNCTIONS
@@ -223,31 +167,21 @@ export const swap =
  * `toArray :: (a, b) -> Array (b | a)`
  *
  * Converts the pair to a native `Array`.
+ *
+ * @deprecated use Tuple.toArray
  */
-export const toArray = <A, B> (x: Pair<A, B>): [A, B] => [x .first, x .second]
+export const toArray = Tuple.toArray
 
 /**
  * `fromArray :: (a, b) -> Array (b | a)`
  *
  * Creates a pair from a native `Array` of length `2`.
+ *
+ * @deprecated use Tuple.fromArray
  */
-export const fromArray = <A, B> (x: [A, B]): Pair<A, B> => Pair (...x)
+export const fromArray = Tuple.fromArray
 
-export import isPair = Internals.isPair
-
-
-// NAMESPACED FUNCTIONS
-
-Pair.bimap = bimap
-Pair.first = first
-Pair.second = second
-
-Pair.fst = fst
-Pair.snd = snd
-Pair.curry = curry
-Pair.uncurry = uncurry
-Pair.swap = swap
-
-Pair.toArray = toArray
-Pair.fromArray = fromArray
-Pair.isPair = isPair
+/**
+ * @deprecated use Tuple.isTuple
+ */
+export import isPair = Internals.isTuple

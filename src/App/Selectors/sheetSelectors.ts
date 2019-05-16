@@ -1,10 +1,21 @@
-import { imap, List } from "../../Data/List";
+import { ident } from "../../Data/Function";
+import { fmap } from "../../Data/Functor";
+import { foldr, groupByKey, imap, List } from "../../Data/List";
+import { fromMaybe, listToMaybe } from "../../Data/Maybe";
+import { elems, map } from "../../Data/OrderedMap";
+import { fst, isTuple, Pair, snd } from "../../Data/Tuple";
+import { upd1, upd2 } from "../../Data/Tuple/Update";
 import { fromIndexName } from "../Models/NumIdName";
+import { SkillCombinedA_ } from "../Models/View/SkillCombined";
+import { Skill } from "../Models/Wiki/Skill";
+import { SourceLink } from "../Models/Wiki/sub/SourceLink";
 import { createMaybeSelector } from "../Utilities/createMaybeSelector";
 import { translate } from "../Utilities/I18n";
-import { pipe_ } from "../Utilities/pipe";
+import { max, min } from "../Utilities/mathUtils";
+import { pipe, pipe_ } from "../Utilities/pipe";
 import { sortStrings } from "../Utilities/sortBy";
-import { getLocaleAsProp } from "./stateSelectors";
+import { getAllSkills } from "./skillsSelectors";
+import { getLocaleAsProp, getWikiSkills } from "./stateSelectors";
 
 export const getConditions = createMaybeSelector (
   getLocaleAsProp,
@@ -54,4 +65,45 @@ export const getStates = createMaybeSelector (
       sortStrings (l10n),
       imap (fromIndexName)
     )
+)
+
+export const getSkillsByGroup = createMaybeSelector (
+  getAllSkills,
+  fmap (groupByKey (SkillCombinedA_.gr))
+)
+
+export const getSkillPages = createMaybeSelector (
+  getWikiSkills,
+  pipe (
+    elems,
+    groupByKey (Skill.A.gr),
+    map (foldr (pipe (
+                 Skill.A.src,
+                 listToMaybe,
+                 fmap (sl => {
+                   const pages = SourceLink.A.page (sl)
+
+                   if (isTuple (pages)) {
+                     const lower = min (fst (pages)) (snd (pages))
+                     const higher = max (fst (pages)) (snd (pages))
+
+                     return (acc: Pair<number, number>) =>
+                       pipe_ (
+                         acc,
+                         fst (acc) > lower ? upd1 (lower) : ident,
+                         snd (acc) < higher ? upd2 (higher) : ident
+                       )
+                   }
+
+                   return (acc: Pair<number, number>) =>
+                     pipe_ (
+                       acc,
+                       fst (acc) > pages ? upd1 (pages) : ident,
+                       snd (acc) < pages ? upd2 (pages) : ident
+                     )
+                 }),
+                 fromMaybe (ident as ident<Pair<number, number>>)
+               ))
+               (Pair (1000, 0)))
+  )
 )

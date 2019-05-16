@@ -14,14 +14,13 @@ export const SkillCombined =
     stateEntry: SkillDependent .default,
   })
 
-const { wikiEntry, stateEntry } = SkillCombined.AL
-const { id, check } = Skill.AL
-const { value, dependencies } = SkillDependent.AL
-
-export const SkillCombinedAccessors = {
-  ...SkillCombined.AL,
-  id: pipe (wikiEntry, id),
-  check: pipe (wikiEntry, check),
-  value: pipe (stateEntry, value),
-  dependencies: pipe (stateEntry, dependencies),
+export const SkillCombinedA_ = {
+  id: pipe (SkillCombined.A.wikiEntry, Skill.A.id),
+  name: pipe (SkillCombined.A.wikiEntry, Skill.A.name),
+  check: pipe (SkillCombined.A.wikiEntry, Skill.A.check),
+  ic: pipe (SkillCombined.A.wikiEntry, Skill.A.ic),
+  encumbrance: pipe (SkillCombined.A.wikiEntry, Skill.A.encumbrance),
+  gr: pipe (SkillCombined.A.wikiEntry, Skill.A.gr),
+  value: pipe (SkillCombined.A.stateEntry, SkillDependent.A.value),
+  dependencies: pipe (SkillCombined.A.stateEntry, SkillDependent.A.dependencies),
 }

@@ -1,6 +1,7 @@
 import * as React from "react";
 import { List } from "../../../Data/List";
 import { Maybe } from "../../../Data/Maybe";
+import { OrderedMap } from "../../../Data/OrderedMap";
 import { Pair } from "../../../Data/Pair";
 import { Record } from "../../../Data/Record";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
@@ -101,6 +102,8 @@ export interface SheetsStateProps {
   conditions: List<Record<NumIdName>>
   states: List<Record<NumIdName>>
   books: WikiModel["books"]
+  skillGroupPages: OrderedMap<number, Pair<number, number>>
+  skillsByGroup: Maybe<OrderedMap<number, List<Record<SkillCombined>>>>
 }
 
 export interface SheetsDispatchProps {

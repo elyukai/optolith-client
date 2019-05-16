@@ -1,6 +1,8 @@
 import * as React from "react";
 import { List } from "../../../../Data/List";
 import { Maybe } from "../../../../Data/Maybe";
+import { OrderedMap } from "../../../../Data/OrderedMap";
+import { Pair } from "../../../../Data/Pair";
 import { Record } from "../../../../Data/Record";
 import { ActivatableDependent } from "../../../Models/ActiveEntries/ActivatableDependent";
 import { AttributeCombined } from "../../../Models/View/AttributeCombined";
@@ -27,7 +29,8 @@ export interface SkillsSheetProps {
   l10n: L10nRecord
   scriptsStateEntry: Maybe<Record<ActivatableDependent>>
   scriptsWikiEntry: Maybe<Record<SpecialAbility>>
-  skills: Maybe<List<Record<SkillCombined>>>
+  skillsByGroup: Maybe<OrderedMap<number, List<Record<SkillCombined>>>>
+  skillGroupPages: OrderedMap<number, Pair<number, number>>
   switchAttributeValueVisibility (): void
 }
 
@@ -40,7 +43,8 @@ export function SkillsSheet (props: SkillsSheetProps) {
     l10n,
     scriptsStateEntry,
     scriptsWikiEntry,
-    skills,
+    skillsByGroup,
+    skillGroupPages,
     switchAttributeValueVisibility,
   } = props
 
@@ -64,7 +68,8 @@ export function SkillsSheet (props: SkillsSheetProps) {
           attributes={attributes}
           checkAttributeValueVisibility={checkAttributeValueVisibility}
           l10n={l10n}
-          skills={skills}
+          skillsByGroup={skillsByGroup}
+          skillGroupPages={skillGroupPages}
           />
         <div className="lower">
           <div className="abilites">

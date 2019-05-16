@@ -1,66 +1,80 @@
 import * as React from "react";
-import { AttributeCombined, SkillCombined } from "../../../Models/View/viewTypeHelpers";
+import { equals } from "../../../../Data/Eq";
+import { fmap } from "../../../../Data/Functor";
+import { find, intercalate, List, map, toArray } from "../../../../Data/List";
+import { bind, mapMaybe, Maybe, maybe } from "../../../../Data/Maybe";
+import { Record } from "../../../../Data/Record";
+import { fst, Pair, snd } from "../../../../Data/Tuple";
+import { AttributeCombined, AttributeCombinedA_ } from "../../../Models/View/AttributeCombined";
+import { SkillCombined, SkillCombinedA_ } from "../../../Models/View/SkillCombined";
+import { L10nRecord } from "../../../Models/Wiki/L10n";
 import { getICName } from "../../../Utilities/AdventurePoints/improvementCostUtils";
-import { translate, UIMessagesObject } from "../../../Utilities/I18n";
+import { ndash } from "../../../Utilities/Chars";
+import { compareLocale, translate } from "../../../Utilities/I18n";
+import { getRoutineValue } from "../../../Utilities/Increasable/skillUtils";
 import { sign } from "../../../Utilities/NumberUtils";
+import { pipe, pipe_ } from "../../../Utilities/pipe";
+import { comparingR, sortRecordsBy } from "../../../Utilities/sortBy";
 
-export const iterateList = (locale: UIMessagesObject) =>
+export const iterateList =
+  (l10n: L10nRecord) =>
   (checkValueVisibility: boolean) =>
-    (attributes: List<Record<AttributeCombined>>) =>
-      (skills: List<Record<SkillCombined>>): ReadonlyArray<JSX.Element> =>
-        sortObjects (skills, locale .get ("id"))
-          .map (obj => {
-            const checkValues =
-              Maybe.mapMaybe<string, number> (R.pipe (
-                                               e => attributes .find (
-                                                 attr => attr .get ("id") === e
-                                               ),
-                                               Maybe.fmap (
-                                                 Record.get<AttributeCombined, "value"> ("value")
-                                               )
-                                             ))
-                                             (obj .get ("check"))
+  (mattributes: Maybe<List<Record<AttributeCombined>>>) =>
+  (skills: List<Record<SkillCombined>>): JSX.Element[] =>
+    pipe_ (
+      skills,
+      sortRecordsBy ([comparingR (SkillCombinedA_.name) (compareLocale (l10n))]),
+      map (obj => {
+        const check_vals = mapMaybe (pipe (
+                                      (id: string) => bind (mattributes)
+                                                           (find (pipe (
+                                                                   AttributeCombinedA_.id,
+                                                                   equals (id)
+                                                                 ))),
+                                      fmap (AttributeCombinedA_.value)
+                                    ))
+                                    (SkillCombinedA_.check (obj))
 
-            const checkString = obj
-              .get ("check")
-              .map (e => {
-                const maybeAttribute = attributes .find (
-                  attr => attr .get ("id") === e
-                )
+        const check_str =
+          pipe_ (
+            obj,
+            SkillCombinedA_.check,
+            mapMaybe (pipe (
+              id => bind (mattributes)
+                         (find (pipe (AttributeCombinedA_.id, equals (id)))),
+              fmap (attr => checkValueVisibility
+                              ? AttributeCombinedA_.value (attr)
+                              : AttributeCombinedA_.short (attr))
+            )),
+            intercalate ("/")
+          )
 
-                if (checkValueVisibility === true) {
-                  return Maybe.fromMaybe (0) (maybeAttribute .fmap (attr => attr .get ("value")))
-                }
-                else {
-                  return Maybe.fromMaybe ("") (maybeAttribute .fmap (attr => attr .get ("short")))
-                }
-              })
-              .intercalate ("/")
+        const enc = SkillCombinedA_.encumbrance (obj)
 
-            const encString = obj .get ("encumbrance") === "true"
-              ? translate (l10n) ("charactersheet.gamestats.skills.enc.yes")
-              : obj .get ("encumbrance") === "false"
-              ? translate (l10n) ("charactersheet.gamestats.skills.enc.no")
-              : translate (l10n) ("charactersheet.gamestats.skills.enc.maybe")
+        const enc_str = enc === "true"
+          ? translate (l10n) ("yes")
+          : enc === "false"
+          ? translate (l10n) ("no")
+          : translate (l10n) ("maybe")
 
-            const maybeRoutine = getRoutineValue (obj .get ("value"), checkValues)
+        const mroutine = getRoutineValue (check_vals) (SkillCombinedA_.value (obj))
 
-            return (
-              <tr key={obj .get ("id")}>
-                <td className="name">{obj .get ("name")}</td>
-                <td className="check">{checkString}</td>
-                <td className="enc">{encString}</td>
-                <td className="ic">{getICName (obj .get ("ic"))}</td>
-                <td className="sr">{obj .get ("value")}</td>
-                <td className="routine">
-                  {Maybe.fromMaybe
-                    ("-")
-                    (maybeRoutine .fmap (
-                      routine => `${sign (Tuple.fst (routine))}${Tuple.snd (routine) ? "!" : ""}`
-                    ))}
-                </td>
-                <td className="comment"></td>
-              </tr>
-            )
-          })
-          .toArray ()
+        return (
+          <tr key={SkillCombinedA_.id (obj)}>
+            <td className="name">{SkillCombinedA_.name (obj)}</td>
+            <td className="check">{check_str}</td>
+            <td className="enc">{enc_str}</td>
+            <td className="ic">{getICName (SkillCombinedA_.ic (obj))}</td>
+            <td className="sr">{SkillCombinedA_.value (obj)}</td>
+            <td className="routine">
+              {maybe (ndash)
+                     ((routine: Pair<number, boolean>) =>
+                       `${sign (fst (routine))}${snd (routine) ? "!" : ""}`)
+                     (mroutine)}
+            </td>
+            <td className="comment"></td>
+          </tr>
+        )
+      }),
+      toArray
+    )

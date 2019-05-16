@@ -1,89 +1,88 @@
 import * as React from "react";
-import { imap, List } from "../../../../Data/List";
+import { equals } from "../../../../Data/Eq";
+import { fmap } from "../../../../Data/Functor";
+import { find, imap, intercalate, List, subscriptF } from "../../../../Data/List";
+import { mapMaybe, Maybe } from "../../../../Data/Maybe";
+import { lookup, OrderedMap } from "../../../../Data/OrderedMap";
 import { Record } from "../../../../Data/Record";
-import { AttributeCombined } from "../../../Models/View/AttributeCombined";
+import { fst, Pair, snd } from "../../../../Data/Tuple";
+import { AttributeCombined, AttributeCombinedA_ } from "../../../Models/View/AttributeCombined";
 import { L10nRecord } from "../../../Models/Wiki/L10n";
+import { ndash } from "../../../Utilities/Chars";
 import { translate } from "../../../Utilities/I18n";
 import { prefixAttr } from "../../../Utilities/IDUtils";
-import { pipe_ } from "../../../Utilities/pipe";
+import { pipe, pipe_ } from "../../../Utilities/pipe";
+import { renderMaybeWith } from "../../../Utilities/ReactUtils";
+
+type GroupNameKeys = "physicalskills"
+                   | "socialskills"
+                   | "natureskills"
+                   | "knowledgeskills"
+                   | "craftskills"
 
 export const iterateGroupHeaders =
   (l10n: L10nRecord) =>
   (checkAttributeValueVisibility: boolean) =>
-  (attributes: List<Record<AttributeCombined>>) => {
-      const groupChecksIds = List (
-        List (prefixAttr (1), prefixAttr (6), prefixAttr (8)),
-        List (prefixAttr (3), prefixAttr (4), prefixAttr (4)),
-        List (prefixAttr (1), prefixAttr (6), prefixAttr (7)),
-        List (prefixAttr (2), prefixAttr (2), prefixAttr (3)),
-        List (prefixAttr (5), prefixAttr (5), prefixAttr (7))
-      )
+  (pages: OrderedMap<number, Pair<number, number>>) =>
+  (mattributes: Maybe<List<Record<AttributeCombined>>>) => {
+    const groupChecksIds = List (
+      List (prefixAttr (1), prefixAttr (6), prefixAttr (8)),
+      List (prefixAttr (3), prefixAttr (4), prefixAttr (4)),
+      List (prefixAttr (1), prefixAttr (6), prefixAttr (7)),
+      List (prefixAttr (2), prefixAttr (2), prefixAttr (3)),
+      List (prefixAttr (5), prefixAttr (5), prefixAttr (7))
+    )
 
-      const groupNameKeys = List (
-        "physical",
-        "social",
-        "nature",
-        "knowledge",
-        "craft"
-      )
+    const groupNameKeys = List<GroupNameKeys> (
+      "physicalskills",
+      "socialskills",
+      "natureskills",
+      "knowledgeskills",
+      "craftskills"
+    )
 
-      pipe_ (
-        groupChecksIds,
-        imap
-      )
+    const page = translate (l10n) ("page.short")
 
-      return groupChecksIds
-        .imap (index => attibuteIds => {
-          const check = attibuteIds
-            .map (id => {
-              const attribute = attributes .find (e => e .get ("id") === id)
-
-              return checkAttributeValueVisibility
-                ? Maybe.fromMaybe (0)
-                                  (attribute .fmap (
-                                    Record.get<AttributeCombined, "value"> ("value")
-                                  ))
-                : Maybe.fromMaybe ("")
-                                  (attribute .fmap (
-                                    Record.get<AttributeCombined, "short"> ("short")
-                                  ))
-            })
-            .intercalate ("/")
-
-          return (
-            <tr className="group">
-              <td className="name">
-                {Maybe.fromMaybe
-                  ("")
-                  (groupNameKeys
-                    .subscript (index)
-                    .fmap (
-                      key => translate (
-                        l10n,
-                        `charactersheet.gamestats.skills.subheaders.${key}` as
-                          "charactersheet.gamestats.skills.subheaders.physical"
-                      )
-                    ))}
-              </td>
-              <td className="check">{check}</td>
-              <td className="enc"></td>
-              <td className="ic"></td>
-              <td className="sr"></td>
-              <td className="routine"></td>
-              <td className="comment">
-                {Maybe.fromMaybe
-                  ("")
-                  (groupNameKeys
-                    .subscript (index)
-                    .fmap (
-                      key => translate (
-                        l10n,
-                        `charactersheet.gamestats.skills.subheaders.${key}pages` as
-                          "charactersheet.gamestats.skills.subheaders.physicalpages"
-                      )
-                    ))}
-              </td>
-            </tr>
-          )
-        })
-    }
+    return fmap ((attributes: List<Record<AttributeCombined>>) =>
+                  imap (index => pipe (
+                                   mapMaybe (pipe (
+                                     (id: string) => find (pipe (
+                                                            AttributeCombinedA_.id,
+                                                            equals (id)
+                                                          ))
+                                                          (attributes),
+                                     fmap (attr => checkAttributeValueVisibility
+                                                     ? AttributeCombinedA_.value (attr)
+                                                     : AttributeCombinedA_.short (attr))
+                                   )),
+                                   intercalate ("/"),
+                                   check => (
+                                     <tr className="group">
+                                       <td className="name">
+                                         {pipe_ (
+                                           groupNameKeys,
+                                           subscriptF (index),
+                                           renderMaybeWith (translate (l10n))
+                                         )}
+                                       </td>
+                                       <td className="check">{check}</td>
+                                       <td className="enc"></td>
+                                       <td className="ic"></td>
+                                       <td className="sr"></td>
+                                       <td className="routine"></td>
+                                       <td className="comment">
+                                         {pipe_ (
+                                           pages,
+                                           lookup (index + 1),
+                                           renderMaybeWith (
+                                             p => `${page} ${fst (p)}${ndash}${snd (p)}`
+                                           )
+                                         )}
+                                       </td>
+                                     </tr>
+                                   )
+                                 ))
+                       (groupChecksIds)
+                )
+                (mattributes)
+  }

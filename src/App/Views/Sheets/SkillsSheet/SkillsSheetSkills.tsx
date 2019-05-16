@@ -1,15 +1,24 @@
 import * as React from "react";
-import { AttributeCombined, SkillCombined } from "../../../Models/View/viewTypeHelpers";
-import { translate, UIMessagesObject } from "../../../Utilities/I18n";
+import { List, subscriptF } from "../../../../Data/List";
+import { bindF, fromMaybeR, Maybe, maybeR } from "../../../../Data/Maybe";
+import { lookup, OrderedMap } from "../../../../Data/OrderedMap";
+import { Pair } from "../../../../Data/Pair";
+import { Record } from "../../../../Data/Record";
+import { AttributeCombined } from "../../../Models/View/AttributeCombined";
+import { SkillCombined } from "../../../Models/View/SkillCombined";
+import { L10nRecord } from "../../../Models/Wiki/L10n";
+import { translate } from "../../../Utilities/I18n";
+import { pipe_ } from "../../../Utilities/pipe";
 import { TextBox } from "../../Universal/TextBox";
 import { iterateGroupHeaders } from "./SkillsSheetSkillsGroups";
 import { iterateList } from "./SkillsSheetSkillsIterate";
 
 export interface SkillsSheetSkillsProps {
-  attributes: List<Record<AttributeCombined>>
+  attributes: Maybe<List<Record<AttributeCombined>>>
   checkAttributeValueVisibility: boolean
-  locale: UIMessagesObject
-  skills: List<Record<SkillCombined>>
+  l10n: L10nRecord
+  skillsByGroup: Maybe<OrderedMap<number, List<Record<SkillCombined>>>>
+  skillGroupPages: OrderedMap<number, Pair<number, number>>
 }
 
 const EmptyRow = () => (
@@ -25,106 +34,105 @@ const EmptyRow = () => (
 )
 
 export function SkillsSheetSkills (props: SkillsSheetSkillsProps) {
-  const { attributes, checkAttributeValueVisibility, locale, skills } = props
+  const { attributes, checkAttributeValueVisibility, l10n, skillsByGroup, skillGroupPages } = props
 
-  const emptySkillsByGroup =
-    OrderedMap.fromSet<number, List<Record<SkillCombined>>> (List.empty)
-                                                            (OrderedSet.of ([1, 2, 3, 4, 5]))
-
-  const skillsByGroup = skills
-    .foldl<OrderedMap<number, List<Record<SkillCombined>>>>
-      (map => skill => map.adjust (List.cons_<Record<SkillCombined>> (skill)) (skill.get ("gr")))
-      (emptySkillsByGroup)
-
-  const groupHeaders = iterateGroupHeaders (attributes) (checkAttributeValueVisibility) (locale)
+  const groupHeaders = iterateGroupHeaders (l10n)
+                                           (checkAttributeValueVisibility)
+                                           (skillGroupPages)
+                                           (attributes)
 
   return (
-    <TextBox label={translate (l10n) ("charactersheet.gamestats.skills.title")}>
+    <TextBox label={translate (l10n) ("skills")}>
       <div className="upper">
         <table>
           <thead>
             <tr>
               <th className="name">
-                {translate (l10n) ("charactersheet.gamestats.skills.headers.skill")}
+                {translate (l10n) ("skill")}
               </th>
               <th className="check">
-                {translate (l10n) ("charactersheet.gamestats.skills.headers.check")}
+                {translate (l10n) ("check")}
               </th>
               <th className="enc">
-                {translate (l10n) ("charactersheet.gamestats.skills.headers.enc")}
+                {translate (l10n) ("encumbrance.short")}
               </th>
               <th className="ic">
-                {translate (l10n) ("charactersheet.gamestats.skills.headers.ic")}
+                {translate (l10n) ("improvementcost.short")}
               </th>
               <th className="sr">
-                {translate (l10n) ("charactersheet.gamestats.skills.headers.sr")}
+                {translate (l10n) ("skillrating.short")}
               </th>
               <th className="routine">
-                {translate (l10n) ("charactersheet.gamestats.skills.headers.r")}
+                {translate (l10n) ("routinechecks.short")}
               </th>
               <th className="comment">
-                {translate (l10n) ("charactersheet.gamestats.skills.headers.notes")}
+                {translate (l10n) ("notes")}
               </th>
             </tr>
           </thead>
           <tbody>
-            {Maybe.fromMaybe (<></>) (groupHeaders .subscript (0))}
-            {iterateList (locale)
-                         (checkAttributeValueVisibility)
-                         (attributes)
-                         (skillsByGroup .findWithDefault (List.empty ()) (0))}
+            {pipe_ (groupHeaders, bindF (subscriptF (0)), fromMaybeR (null))}
+            {pipe_ (
+              skillsByGroup,
+              bindF (lookup (0)),
+              maybeR (null) (iterateList (l10n) (checkAttributeValueVisibility) (attributes))
+            )}
             <EmptyRow />
-            {Maybe.fromMaybe (<></>) (groupHeaders .subscript (1))}
-            {iterateList (locale)
-                         (checkAttributeValueVisibility)
-                         (attributes)
-                         (skillsByGroup .findWithDefault (List.empty ()) (1))}
+            {pipe_ (groupHeaders, bindF (subscriptF (1)), fromMaybeR (null))}
+            {pipe_ (
+              skillsByGroup,
+              bindF (lookup (1)),
+              maybeR (null) (iterateList (l10n) (checkAttributeValueVisibility) (attributes))
+            )}
             <EmptyRow />
-            {Maybe.fromMaybe (<></>) (groupHeaders .subscript (2))}
-            {iterateList (locale)
-                         (checkAttributeValueVisibility)
-                         (attributes)
-                         (skillsByGroup .findWithDefault (List.empty ()) (2))}
+            {pipe_ (groupHeaders, bindF (subscriptF (2)), fromMaybeR (null))}
+            {pipe_ (
+              skillsByGroup,
+              bindF (lookup (2)),
+              maybeR (null) (iterateList (l10n) (checkAttributeValueVisibility) (attributes))
+            )}
           </tbody>
         </table>
         <table>
           <thead>
             <tr>
               <th className="name">
-                {translate (l10n) ("charactersheet.gamestats.skills.headers.skill")}
+                {translate (l10n) ("skill")}
               </th>
               <th className="check">
-                {translate (l10n) ("charactersheet.gamestats.skills.headers.check")}
+                {translate (l10n) ("check")}
               </th>
               <th className="enc">
-                {translate (l10n) ("charactersheet.gamestats.skills.headers.enc")}
+                {translate (l10n) ("encumbrance.short")}
               </th>
               <th className="ic">
-                {translate (l10n) ("charactersheet.gamestats.skills.headers.ic")}
+                {translate (l10n) ("improvementcost.short")}
               </th>
               <th className="sr">
-                {translate (l10n) ("charactersheet.gamestats.skills.headers.sr")}
+                {translate (l10n) ("skillrating.short")}
               </th>
               <th className="routine">
-                {translate (l10n) ("charactersheet.gamestats.skills.headers.r")}
+                {translate (l10n) ("routinechecks.short")}
               </th>
               <th className="comment">
-                {translate (l10n) ("charactersheet.gamestats.skills.headers.notes")}
+                {translate (l10n) ("notes")}
               </th>
             </tr>
           </thead>
           <tbody>
-            {Maybe.fromMaybe (<></>) (groupHeaders .subscript (3))}
-            {iterateList (locale)
-                         (checkAttributeValueVisibility)
-                         (attributes)
-                         (skillsByGroup .findWithDefault (List.empty ()) (3))}
+            {pipe_ (groupHeaders, bindF (subscriptF (3)), fromMaybeR (null))}
+            {pipe_ (
+              skillsByGroup,
+              bindF (lookup (3)),
+              maybeR (null) (iterateList (l10n) (checkAttributeValueVisibility) (attributes))
+            )}
             <EmptyRow />
-            {Maybe.fromMaybe (<></>) (groupHeaders .subscript (4))}
-            {iterateList (locale)
-                         (checkAttributeValueVisibility)
-                         (attributes)
-                         (skillsByGroup .findWithDefault (List.empty ()) (4))}
+            {pipe_ (groupHeaders, bindF (subscriptF (4)), fromMaybeR (null))}
+            {pipe_ (
+              skillsByGroup,
+              bindF (lookup (4)),
+              maybeR (null) (iterateList (l10n) (checkAttributeValueVisibility) (attributes))
+            )}
           </tbody>
         </table>
       </div>

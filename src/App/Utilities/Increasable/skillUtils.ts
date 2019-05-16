@@ -12,7 +12,7 @@ import { AttributeDependent } from "../../Models/ActiveEntries/AttributeDependen
 import { SkillDependent } from "../../Models/ActiveEntries/SkillDependent";
 import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { EntryRating } from "../../Models/Hero/heroTypeHelpers";
-import { SkillCombined, SkillCombinedAccessors } from "../../Models/View/SkillCombined";
+import { SkillCombined, SkillCombinedA_ } from "../../Models/View/SkillCombined";
 import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel";
 import { Skill } from "../../Models/Wiki/Skill";
 import { WikiModelRecord } from "../../Models/Wiki/WikiModel";
@@ -26,7 +26,8 @@ import { getSkillCheckValues } from "./attributeUtils";
 const { specialAbilities, skills } = HeroModel.AL
 const { active } = ActivatableDependent.AL
 const { sid } = ActiveObject.AL
-const { id, value, dependencies, wikiEntry } = SkillCombinedAccessors
+const SCA = SkillCombined.A
+const { id, value, dependencies } = SkillCombinedA_
 const { maxSkillRating } = ExperienceLevel.AL
 
 /**
@@ -63,7 +64,7 @@ export const getInitialMaximumList =
 export const putMaximumSkillRatingFromExperienceLevel =
   (startEL: Record<ExperienceLevel>) =>
   (phase: number) =>
-    ifElse<List<number>, List<number>>
+    ifElse<List<number>>
       (cnst (phase < 3))
       (consF (maxSkillRating (startEL)))
       (ident)
@@ -84,7 +85,7 @@ export const isSkillIncreasable =
                        putMaximumSkillRatingFromExperienceLevel (startEL) (phase),
                        minimum
                      )
-                     (wikiEntry (skill))
+                     (SCA.wikiEntry (skill))
 
     return value (skill) < max + bonus
   }

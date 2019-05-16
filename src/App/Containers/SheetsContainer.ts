@@ -15,7 +15,7 @@ import { getAllItems, getArmors, getArmorZones, getMeleeWeapons, getRangedWeapon
 import { getBlessingsForSheet, getLiturgicalChantsForSheet } from "../Selectors/liturgicalChantsSelectors";
 import { getPet } from "../Selectors/petsSelectors";
 import { getCurrentCulture, getCurrentFullProfessionName, getCurrentRace } from "../Selectors/rcpSelectors";
-import { getConditions, getStates } from "../Selectors/sheetSelectors";
+import { getConditions, getSkillPages, getSkillsByGroup, getStates } from "../Selectors/sheetSelectors";
 import { getAllSkills } from "../Selectors/skillsSelectors";
 import { getCantripsForSheet, getSpellsForSheet } from "../Selectors/spellsSelectors";
 import { getAvatar, getCurrentHeroName, getProfile, getPurse, getSex, getSpecialAbilities, getWikiBooks, getWikiSpecialAbilities } from "../Selectors/stateSelectors";
@@ -84,6 +84,8 @@ const mapStateToProps = (state: AppStateRecord, ownProps: SheetsOwnProps): Sheet
   conditions: getConditions (state, ownProps),
   states: getStates (state, ownProps),
   books: getWikiBooks (state),
+  skillGroupPages: getSkillPages (state),
+  skillsByGroup: getSkillsByGroup (state),
 })
 
 const mapDispatchToProps = (dispatch: ReduxDispatch, { l10n }: SheetsOwnProps) => ({
