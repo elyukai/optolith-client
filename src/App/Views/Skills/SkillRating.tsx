@@ -22,7 +22,7 @@ export function SkillRating (props: SkillRatingProps) {
       </div>
     )
   }
-  else if (!addPoint && !isNotActive && !noIncrease) {
+  else if (!addPoint && isNotActive !== true && noIncrease !== true) {
     return (
       <div className="sr empty" />
     )

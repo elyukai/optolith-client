@@ -1,10 +1,15 @@
 import * as React from "react";
+import { List } from "../../../Data/List";
+import { fromMaybeR, Just, Maybe, Nothing } from "../../../Data/Maybe";
+import { OrderedMap } from "../../../Data/OrderedMap";
+import { Record } from "../../../Data/Record";
 import { WikiInfoContainer } from "../../Containers/WikiInfoContainer";
 import { EntryRating, SecondaryAttribute } from "../../Models/Hero/heroTypeHelpers";
 import { AttributeCombined, SkillWithRequirements } from "../../Models/View/viewTypeHelpers";
+import { L10nRecord } from "../../Models/Wiki/L10n";
 import { Skill } from "../../Models/Wiki/wikiTypeHelpers";
 import { DCIds } from "../../Selectors/derivedCharacteristicsSelectors";
-import { translate, UIMessagesObject } from "../../Utilities/I18n";
+import { translate } from "../../Utilities/I18n";
 import { Checkbox } from "../Universal/Checkbox";
 import { ListView } from "../Universal/List";
 import { ListHeader } from "../Universal/ListHeader";
@@ -20,7 +25,7 @@ import { TextField } from "../Universal/TextField";
 import { SkillListItem } from "./SkillListItem";
 
 export interface SkillsOwnProps {
-  locale: UIMessagesObject
+  l10n: L10nRecord
 }
 
 export interface SkillsStateProps {
@@ -50,7 +55,7 @@ export interface SkillsState {
 
 export class Skills extends React.Component<SkillsProps, SkillsState> {
   state: SkillsState = {
-    infoId: Nothing (),
+    infoId: Nothing,
   }
 
   showInfo = (id: string) => this.setState ({ infoId: Just (id) })
@@ -60,7 +65,7 @@ export class Skills extends React.Component<SkillsProps, SkillsState> {
       addPoint,
       attributes,
       derivedCharacteristics,
-      locale,
+      l10n,
       isRemovingEnabled,
       ratingVisibility,
       removePoint,
@@ -78,7 +83,7 @@ export class Skills extends React.Component<SkillsProps, SkillsState> {
       <Page id="talents">
         <Options>
           <TextField
-            hint={translate (locale, "options.filtertext")}
+            hint={translate (l10n) ("search")}
             value={filterText}
             onChangeString={this.props.setFilterText}
             fullWidth
@@ -86,43 +91,127 @@ export class Skills extends React.Component<SkillsProps, SkillsState> {
           <SortOptions
             sortOrder={sortOrder}
             sort={setSortOrder}
-            locale={locale}
-            options={List.of<SortNames> ("name", "group", "ic")}
+            l10n={l10n}
+            options={List<SortNames> ("name", "group", "ic")}
             />
           <Checkbox
             checked={ratingVisibility}
             onClick={switchRatingVisibility}
             >
-            {translate (locale, "skills.options.commoninculture")}
+            {translate (l10n) ("commoninculture")}
           </Checkbox>
-          {ratingVisibility && <RecommendedReference locale={locale} />}
+          {ratingVisibility ? <RecommendedReference l10n={l10n} /> : null}
         </Options>
         <MainContent>
           <ListHeader>
             <ListHeaderTag className="name">
-              {translate (locale, "name")}
+              {translate (l10n) ("name")}
             </ListHeaderTag>
             <ListHeaderTag className="group">
-              {translate (locale, "group")}
+              {translate (l10n) ("group")}
             </ListHeaderTag>
-            <ListHeaderTag className="value" hint={translate (locale, "sr.long")}>
-              {translate (locale, "sr.short")}
+            <ListHeaderTag className="value" hint={translate (l10n) ("skillrating")}>
+              {translate (l10n) ("skillrating.short")}
             </ListHeaderTag>
             <ListHeaderTag className="check">
-              {translate (locale, "check")}
+              {translate (l10n) ("check")}
             </ListHeaderTag>
-            <ListHeaderTag className="ic" hint={translate (locale, "ic.long")}>
-              {translate (locale, "ic.short")}
+            <ListHeaderTag className="ic" hint={translate (l10n) ("improvementcost")}>
+              {translate (l10n) ("improvementcost.short")}
             </ListHeaderTag>
-            {isRemovingEnabled && <ListHeaderTag className="btn-placeholder" />}
+            {isRemovingEnabled ? <ListHeaderTag className="btn-placeholder" /> : null}
             <ListHeaderTag className="btn-placeholder" />
             <ListHeaderTag className="btn-placeholder" />
           </ListHeader>
           <Scroll>
             <ListView>
+              {pipe_ (
+                activeList,
+                bindF (ensure (notNull)),
+                fmap (pipe (
+                  mapAccumL ((mprev: Maybe<Combined>) => (curr: Combined) => {
+                              const insertTopMargin = isTopMarginNeeded (sortOrder) (curr) (mprev)
+
+                              const aspects = getAspectsStr (l10n) (curr) (mtradition_id)
+
+                              if (isBlessing (curr)) {
+                                return Pair<Maybe<Combined>, JSX.Element> (
+                                  Just (curr),
+                                  (
+                                    <SkillListItem
+                                      key={LCBCA.id (curr)}
+                                      id={LCBCA.id (curr)}
+                                      name={LCBCA.name (curr)}
+                                      removePoint={
+                                        isRemovingEnabled
+                                          ? removeBlessingFromList.bind (null, LCBCA.id (curr))
+                                          : undefined}
+                                      addFillElement
+                                      noIncrease
+                                      insertTopMargin={insertTopMargin}
+                                      attributes={attributes}
+                                      derivedCharacteristics={derivedCharacteristics}
+                                      selectForInfo={this.showSlideinInfo}
+                                      addText={
+                                        sortOrder === "group"
+                                          ? `${aspects} / ${translate (l10n) ("blessing")}`
+                                          : aspects
+                                      }
+                                      />
+                                  )
+                                )
+                              }
+                              else {
+                                const add_text = getLCAddText (l10n) (sortOrder) (aspects) (curr)
+
+                                return Pair<Maybe<Combined>, JSX.Element> (
+                                  Just (curr),
+                                  (
+                                    <SkillListItem
+                                      key={LCBCA.id (curr)}
+                                      id={LCBCA.id (curr)}
+                                      name={LCBCA.name (curr)}
+                                      addDisabled={!LCWRA.isIncreasable (curr)}
+                                      addPoint={addPoint.bind (null, LCBCA.id (curr))}
+                                      removeDisabled={!LCWRA.isDecreasable (curr)}
+                                      removePoint={
+                                        isRemovingEnabled
+                                          ? LCWRA_.value (curr) === 0
+                                            ? removeFromList.bind (null, LCBCA.id (curr))
+                                            : removePoint.bind (null, LCBCA.id (curr))
+                                          : undefined
+                                      }
+                                      addFillElement
+                                      check={LCWRA_.check (curr)}
+                                      checkmod={LCWRA_.checkmod (curr)}
+                                      ic={LCWRA_.ic (curr)}
+                                      sr={LCWRA_.value (curr)}
+                                      insertTopMargin={insertTopMargin}
+                                      attributes={attributes}
+                                      derivedCharacteristics={derivedCharacteristics}
+                                      selectForInfo={this.showSlideinInfo}
+                                      addText={add_text}
+                                      />
+                                  )
+                                )
+                              }
+                            })
+                            (Nothing),
+                  snd,
+                  toArray,
+                  arr => <>{arr}</>
+                )),
+                fromMaybeR (
+                  <ListPlaceholder
+                    l10n={l10n}
+                    type="skills"
+                    noResults
+                    />
+                )
+              )}
               {
                 Maybe.fromMaybe<NonNullable<React.ReactNode>>
-                  (<ListPlaceholder locale={locale} type="skills" noResults />)
+                  (<ListPlaceholder l10n={l10n} type="skills" noResults />)
                   (list
                     .bind (Maybe.ensure (R.complement (List.null)))
                     .fmap (R.pipe (
@@ -167,7 +256,7 @@ export class Skills extends React.Component<SkillsProps, SkillsState> {
                                 attributes={attributes}
                                 derivedCharacteristics={derivedCharacteristics}
                                 groupIndex={current .get ("gr")}
-                                groupList={translate (locale, "skills.view.groups")}
+                                groupList={translate (l10n) ("skills.view.groups")}
                                 />
                             ))
                         (Nothing ()),

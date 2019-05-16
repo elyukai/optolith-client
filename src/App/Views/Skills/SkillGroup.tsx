@@ -1,4 +1,5 @@
 import * as React from "react";
+import { List } from "../../../Data/List";
 import { ListItemGroup } from "../Universal/ListItemGroup";
 
 export interface SkillListItemProps {
@@ -14,7 +15,7 @@ export function SkillGroup (props: SkillListItemProps) {
     groupList,
   } = props
 
-  if (addText || groupIndex && groupList) {
+  if (addText !== undefined || groupIndex !== undefined && groupList) {
     return (
       <ListItemGroup index={groupIndex} list={groupList} text={addText}/>
     )

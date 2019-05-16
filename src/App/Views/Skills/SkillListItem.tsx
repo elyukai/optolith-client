@@ -1,6 +1,12 @@
 import * as React from "react";
-import { SecondaryAttribute } from "../../Models/Hero/heroTypeHelpers";
-import { AttributeCombined } from "../../Models/View/viewTypeHelpers";
+import { List } from "../../../Data/List";
+import { Maybe } from "../../../Data/Maybe";
+import { OrderedMap } from "../../../Data/OrderedMap";
+import { OrderedSet } from "../../../Data/OrderedSet";
+import { Record } from "../../../Data/Record";
+import { AttributeCombined } from "../../Models/View/AttributeCombined";
+import { DerivedCharacteristic } from "../../Models/View/DerivedCharacteristic";
+import { CheckModifier } from "../../Models/Wiki/wikiTypeHelpers";
 import { DCIds } from "../../Selectors/derivedCharacteristicsSelectors";
 import { ListItem } from "../Universal/ListItem";
 import { ListItemName } from "../Universal/ListItemName";
@@ -15,7 +21,7 @@ import { SkillImprovementCost } from "./SkillImprovementCost";
 import { SkillRating } from "./SkillRating";
 
 export interface SkillListItemProps {
-  attributes: List<Record<AttributeCombined>>
+  attributes: Maybe<List<Record<AttributeCombined>>>
   activateDisabled?: boolean
   addDisabled?: boolean
   addFillElement?: boolean
@@ -23,8 +29,8 @@ export interface SkillListItemProps {
   addText?: string
   check?: List<string>
   checkDisabled?: boolean
-  checkmod?: Maybe<"SPI" | "TOU">
-  derivedCharacteristics?: OrderedMap<DCIds, Record<SecondaryAttribute>>
+  checkmod?: OrderedSet<CheckModifier>
+  derivedCharacteristics?: OrderedMap<DCIds, Record<DerivedCharacteristic>>
   groupList?: List<string>
   groupIndex?: number
   ic?: number
