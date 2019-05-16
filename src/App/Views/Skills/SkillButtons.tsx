@@ -1,4 +1,5 @@
 import * as React from "react";
+import { isNumber } from "../../Utilities/typeCheckUtils";
 import { IconButton } from "../Universal/IconButton";
 import { ListItemButtons } from "../Universal/ListItemButtons";
 
@@ -33,37 +34,46 @@ export function SkillButtons (props: SkillButtonsProps) {
 
   const boundSelectForInfo = () => selectForInfo (id)
 
-  const getRemoveIcon = () => ic && sr === 0 && !removeDisabled || !ic ? "\uE90b" : "\uE909"
+  const getRemoveIcon =
+    () => isNumber (sr) && sr === 0 && removeDisabled !== true || ic === undefined
+            ? "\uE90b"
+            : "\uE909"
 
   return (
     <ListItemButtons>
-      {isNotActive ? (
-        <IconButton
-          icon="&#xE916;"
-          onClick={activate}
-          disabled={activateDisabled}
-          flat
-          />
-      ) : (
-        <>
-          {addPoint && (
-            <IconButton
-              icon="&#xE908;"
-              onClick={addPoint}
-              disabled={addDisabled}
-              flat
-              />
+      {isNotActive === true
+        ? (
+          <IconButton
+            icon="&#xE916;"
+            onClick={activate}
+            disabled={activateDisabled}
+            flat
+            />
+        )
+        : (
+            <>
+              {addPoint
+                ? (
+                  <IconButton
+                    icon="&#xE908;"
+                    onClick={addPoint}
+                    disabled={addDisabled}
+                    flat
+                    />
+                )
+              : null}
+              {removePoint
+                ? (
+                  <IconButton
+                    icon={getRemoveIcon ()}
+                    onClick={removePoint}
+                    disabled={removeDisabled}
+                    flat
+                    />
+                )
+              : null}
+            </>
           )}
-          {removePoint && (
-            <IconButton
-              icon={getRemoveIcon ()}
-              onClick={removePoint}
-              disabled={removeDisabled}
-              flat
-              />
-          )}
-        </>
-      )}
       <IconButton
         icon="&#xE912;"
         onClick={boundSelectForInfo}

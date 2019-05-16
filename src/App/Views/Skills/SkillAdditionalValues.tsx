@@ -1,4 +1,6 @@
 import * as React from "react";
+import { List, map, toArray } from "../../../Data/List";
+import { pipe_ } from "../../Utilities/pipe";
 
 export interface AdditionalValue {
   className: string
@@ -15,15 +17,15 @@ export function SkillAdditionalValues (props: SkillAdditionalValuesProps) {
   if (typeof addValues === "object") {
     return (
       <>
-        {
-          ...addValues
-            .map (e => (
-              <div key={e.className} className={e.className}>
-                {e.value}
-              </div>
-            ))
-            .toArray () as JSX.Element[]
-        }
+        {pipe_ (
+          addValues,
+          map (e => (
+            <div key={e.className} className={e.className}>
+              {e.value}
+            </div>
+          )),
+          toArray
+        )}
       </>
     )
   }
