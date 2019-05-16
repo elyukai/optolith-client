@@ -1,7 +1,7 @@
 import { connect } from "react-redux";
-import { Action, Dispatch } from "redux";
+import { ReduxDispatch } from "../Actions/Actions";
 import * as SkillActions from "../Actions/SkillActions";
-import { AppState } from "../Reducers/appReducer";
+import { AppStateRecord } from "../Reducers/appReducer";
 import { getAttributesForSheet } from "../Selectors/attributeSelectors";
 import { getDerivedCharacteristicsMap } from "../Selectors/derivedCharacteristicsSelectors";
 import { getIsRemovingEnabled } from "../Selectors/phaseSelectors";
@@ -10,7 +10,7 @@ import { getSkillsFilterText } from "../Selectors/stateSelectors";
 import { getSkillsCultureRatingVisibility, getSkillsSortOrder } from "../Selectors/uisettingsSelectors";
 import { Skills, SkillsDispatchProps, SkillsOwnProps, SkillsStateProps } from "../Views/Skills/Skills";
 
-const mapStateToProps = (state: AppState, ownProps: SkillsOwnProps): SkillsStateProps => ({
+const mapStateToProps = (state: AppStateRecord, ownProps: SkillsOwnProps): SkillsStateProps => ({
   attributes: getAttributesForSheet (state),
   derivedCharacteristics: getDerivedCharacteristicsMap (state, ownProps),
   isRemovingEnabled: getIsRemovingEnabled (state),
@@ -21,29 +21,27 @@ const mapStateToProps = (state: AppState, ownProps: SkillsOwnProps): SkillsState
   skillRating: getSkillRating (state),
 })
 
-const mapDispatchToProps = (
-  dispatch: Dispatch<Action, AppState>,
-  { locale }: SkillsOwnProps
-): SkillsDispatchProps => ({
-  addPoint (id: string) {
-    dispatch (SkillActions.addSkillPoint (locale) (id))
-  },
-  removePoint (id: string) {
-    dispatch (SkillActions.removeSkillPoint (id))
-  },
-  setSortOrder (sortOrder: string) {
-    dispatch (SkillActions.setSkillsSortOrder (sortOrder))
-  },
-  switchRatingVisibility () {
-    dispatch (SkillActions.switchSkillRatingVisibility ())
-  },
-  setFilterText (filterText: string) {
-    dispatch (SkillActions.setSkillsFilterText (filterText))
-  },
-})
+const mapDispatchToProps =
+  (dispatch: ReduxDispatch, { l10n }: SkillsOwnProps): SkillsDispatchProps => ({
+    addPoint (id: string) {
+      dispatch (SkillActions.addSkillPoint (l10n) (id))
+    },
+    removePoint (id: string) {
+      dispatch (SkillActions.removeSkillPoint (id))
+    },
+    setSortOrder (sortOrder: string) {
+      dispatch (SkillActions.setSkillsSortOrder (sortOrder))
+    },
+    switchRatingVisibility () {
+      dispatch (SkillActions.switchSkillRatingVisibility ())
+    },
+    setFilterText (filterText: string) {
+      dispatch (SkillActions.setSkillsFilterText (filterText))
+    },
+  })
 
 export const connectSkills =
-  connect<SkillsStateProps, SkillsDispatchProps, SkillsOwnProps, AppState> (
+  connect<SkillsStateProps, SkillsDispatchProps, SkillsOwnProps, AppStateRecord> (
     mapStateToProps,
     mapDispatchToProps
   )

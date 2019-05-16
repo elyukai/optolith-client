@@ -24,6 +24,7 @@ import { getCurrentHeroPresent, getSkills, getSkillsFilterText, getWiki, getWiki
 const HA = HeroModel.A
 const SA = Skill.A
 const SCA = SkillCombined.A
+const SWRA = SkillWithRequirements.A
 const CA = Culture.A
 
 export const getAllSkills = createMaybeSelector (
@@ -75,7 +76,7 @@ export const getFilteredSkills = createMaybeSelector (
   uncurryN3 (sort_options =>
              filter_text =>
                fmap (filterAndSortRecordsBy (0)
-                                            ([pipe (SCA.wikiEntry, SA.name)])
+                                            ([pipe (SWRA.wikiEntry, SA.name)])
                                             (sort_options)
                                             (filter_text)))
 )

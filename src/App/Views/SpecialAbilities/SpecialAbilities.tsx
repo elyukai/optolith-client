@@ -1,8 +1,18 @@
 import * as React from "react";
+import { List } from "../../../Data/List";
+import { Just, Maybe, Nothing } from "../../../Data/Maybe";
+import { OrderedMap } from "../../../Data/OrderedMap";
+import { Record } from "../../../Data/Record";
 import { WikiInfoContainer } from "../../Containers/WikiInfoContainer";
-import { ActivatableDependent, ActivateArgs, ActiveViewObject, DeactivateArgs, DeactiveViewObject } from "../../Models/Hero/heroTypeHelpers";
-import { SpecialAbility } from "../../Models/Wiki/wikiTypeHelpers";
-import { translate, UIMessagesObject } from "../../Utilities/I18n";
+import { ActivatableActivationOptions } from "../../Models/Actions/ActivatableActivationOptions";
+import { ActivatableDeactivationOptions } from "../../Models/Actions/ActivatableDeactivationOptions";
+import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
+import { HeroModelRecord } from "../../Models/Hero/HeroModel";
+import { ActiveActivatable } from "../../Models/View/ActiveActivatable";
+import { InactiveActivatable } from "../../Models/View/InactiveActivatable";
+import { L10nRecord } from "../../Models/Wiki/L10n";
+import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
+import { translate } from "../../Utilities/I18n";
 import { ActivatableAddList } from "../Activatable/ActivatableAddList";
 import { ActivatableRemoveList } from "../Activatable/ActivatableRemoveList";
 import { BorderButton } from "../Universal/BorderButton";
@@ -17,14 +27,15 @@ import { SortNames, SortOptions } from "../Universal/SortOptions";
 import { TextField } from "../Universal/TextField";
 
 export interface SpecialAbilitiesOwnProps {
-  locale: UIMessagesObject
+  l10n: L10nRecord
+  hero: HeroModelRecord
 }
 
 export interface SpecialAbilitiesStateProps {
-  activeList: Maybe<List<Record<ActiveViewObject<SpecialAbility>>>>
+  activeList: Maybe<List<Record<ActiveActivatable<SpecialAbility>>>>
   deactiveList: Maybe<List<
-    Record<ActiveViewObject<SpecialAbility>>
-    | Record<DeactiveViewObject<SpecialAbility>>
+    Record<ActiveActivatable<SpecialAbility>>
+    | Record<InactiveActivatable<SpecialAbility>>
   >>
   stateEntries: Maybe<OrderedMap<string, Record<ActivatableDependent>>>
   wikiEntries: OrderedMap<string, Record<SpecialAbility>>
@@ -38,8 +49,8 @@ export interface SpecialAbilitiesStateProps {
 export interface SpecialAbilitiesDispatchProps {
   setSortOrder (sortOrder: string): void
   switchActiveItemHints (): void
-  addToList (args: ActivateArgs): void
-  removeFromList (args: DeactivateArgs): void
+  addToList (args: Record<ActivatableActivationOptions>): void
+  removeFromList (args: Record<ActivatableDeactivationOptions>): void
   setLevel (id: string, index: number, level: number): void
   setFilterText (filterText: string): void
   setInactiveFilterText (filterText: string): void
@@ -60,8 +71,8 @@ export class SpecialAbilities
   extends React.Component<SpecialAbilitiesProps, SpecialAbilitiesState> {
   state: SpecialAbilitiesState = {
     showAddSlidein: false,
-    currentId: Nothing (),
-    currentSlideinId: Nothing (),
+    currentId: Nothing,
+    currentSlideinId: Nothing,
   }
 
   showAddSlidein = () => this.setState ({ showAddSlidein: true })
@@ -80,7 +91,7 @@ export class SpecialAbilities
       addToList,
       deactiveList,
       enableActiveItemHints,
-      locale,
+      l10n,
       isRemovingEnabled,
       removeFromList,
       setSortOrder,
@@ -98,44 +109,41 @@ export class SpecialAbilities
         <Slidein isOpened={showAddSlidein} close={this.hideAddSlidein}>
           <Options>
             <TextField
-              hint={translate (locale, "options.filtertext")}
+              hint={translate (l10n) ("search")}
               value={inactiveFilterText}
               onChangeString={this.props.setInactiveFilterText}
               fullWidth />
             <SortOptions
               sortOrder={sortOrder}
               sort={setSortOrder}
-              options={List.of<SortNames> ("name", "groupname")}
-              locale={locale}
+              options={List<SortNames> ("name", "groupname")}
+              l10n={l10n}
               />
             <Checkbox
               checked={enableActiveItemHints}
               onClick={switchActiveItemHints}
               >
-              {translate (locale, "options.showactivated")}
+              {translate (l10n) ("showactivated")}
             </Checkbox>
           </Options>
           <MainContent>
             <ListHeader>
               <ListHeaderTag className="name">
-                {translate (locale, "name")}
+                {translate (l10n) ("name")}
               </ListHeaderTag>
               <ListHeaderTag className="group">
-                {translate (locale, "group")}
+                {translate (l10n) ("group")}
                 </ListHeaderTag>
-              <ListHeaderTag className="cost" hint={translate (locale, "aptext")}>
-                {translate (locale, "apshort")}
+              <ListHeaderTag className="cost" hint={translate (l10n) ("adventurepoints")}>
+                {translate (l10n) ("adventurepoints.short")}
               </ListHeaderTag>
               <ListHeaderTag className="btn-placeholder" />
               <ListHeaderTag className="btn-placeholder" />
             </ListHeader>
             <ActivatableAddList
               addToList={addToList}
-              inactiveList={
-                deactiveList as
-                  Maybe<List<Record<ActiveViewObject> | Record<DeactiveViewObject>>>
-              }
-              locale={locale}
+              inactiveList={deactiveList}
+              l10n={l10n}
               selectForInfo={this.showSlideinInfo}
               />
           </MainContent>
@@ -143,7 +151,7 @@ export class SpecialAbilities
         </Slidein>
         <Options>
           <TextField
-            hint={translate (locale, "options.filtertext")}
+            hint={translate (l10n) ("search")}
             value={filterText}
             onChangeString={this.props.setFilterText}
             fullWidth
@@ -151,32 +159,32 @@ export class SpecialAbilities
           <SortOptions
             sortOrder={sortOrder}
             sort={setSortOrder}
-            options={List.of<SortNames> ("name", "groupname")}
-            locale={locale}
+            options={List<SortNames> ("name", "groupname")}
+            l10n={l10n}
             />
           <BorderButton
-            label={translate (locale, "actions.addtolist")}
+            label={translate (l10n) ("add")}
             onClick={this.showAddSlidein}
             />
         </Options>
         <MainContent>
           <ListHeader>
             <ListHeaderTag className="name">
-              {translate (locale, "name")}
+              {translate (l10n) ("name")}
             </ListHeaderTag>
             <ListHeaderTag className="group">
-              {translate (locale, "group")}
+              {translate (l10n) ("group")}
               </ListHeaderTag>
-            <ListHeaderTag className="cost" hint={translate (locale, "aptext")}>
-              {translate (locale, "apshort")}
+            <ListHeaderTag className="cost" hint={translate (l10n) ("adventurepoints")}>
+              {translate (l10n) ("adventurepoints.short")}
             </ListHeaderTag>
-            {isRemovingEnabled && <ListHeaderTag className="btn-placeholder" />}
+            {isRemovingEnabled ? <ListHeaderTag className="btn-placeholder" /> : null}
             <ListHeaderTag className="btn-placeholder" />
           </ListHeader>
           <ActivatableRemoveList
             filterText={filterText}
-            list={activeList as Maybe<List<Record<ActiveViewObject>>>}
-            locale={locale}
+            list={activeList}
+            l10n={l10n}
             isRemovingEnabled={isRemovingEnabled}
             removeFromList={removeFromList}
             setLevel={setLevel}

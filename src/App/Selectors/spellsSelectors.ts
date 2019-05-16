@@ -349,7 +349,7 @@ export const getFilteredActiveSpellsAndCantrips = createMaybeSelector (
           (filterAndSortRecordsBy (0)
                                   ([getNameFromSpellOrCantrip as getNameFromSpellOrCantrip])
                                   (sort_options)
-                                  (filter_text))
+                                  (filter_text)) as Maybe<ListCombined>
 )
 
 export const getFilteredInactiveSpellsAndCantrips = createMaybeSelector (
@@ -370,7 +370,7 @@ export const getFilteredInactiveSpellsAndCantrips = createMaybeSelector (
                                               (filter_text)
                                               (areActiveItemHintsEnabled
                                                 ? append (active) (inactive)
-                                                : inactive)))
+                                                : inactive) as ListCombined))
 )
 
 export const isActivationDisabled = createMaybeSelector (

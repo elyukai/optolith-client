@@ -157,10 +157,7 @@ export class Disadvantages extends React.Component<DisadvantagesProps, Disadvant
               <ListHeaderTag className="btn-placeholder" />
             </ListHeader>
             <InactiveList
-              inactiveList={
-                deactiveList as
-                  Maybe<List<Record<ActiveActivatable> | Record<InactiveActivatable>>>
-              }
+              inactiveList={deactiveList}
               l10n={l10n}
               rating={rating}
               showRating={showRating}
@@ -203,7 +200,7 @@ export class Disadvantages extends React.Component<DisadvantagesProps, Disadvant
           <ActiveList
             {...this.props}
             filterText={filterText}
-            list={activeList as Maybe<List<Record<ActiveActivatable>>>}
+            list={activeList}
             selectForInfo={this.showInfo}
             />
         </MainContent>

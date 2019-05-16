@@ -1,9 +1,12 @@
 import { connect } from "react-redux";
-import { Action, Dispatch } from "redux";
+import { Record } from "../../Data/Record";
+import { ReduxDispatch } from "../Actions/Actions";
 import * as ConfigActions from "../Actions/ConfigActions";
 import * as SpecialAbilitiesActions from "../Actions/SpecialAbilitiesActions";
-import { ActivateArgs, DeactivateArgs } from "../Models/Hero/heroTypeHelpers";
-import { AppState } from "../Reducers/appReducer";
+import { ActivatableActivationOptions } from "../Models/Actions/ActivatableActivationOptions";
+import { ActivatableDeactivationOptions } from "../Models/Actions/ActivatableDeactivationOptions";
+import { HeroModel } from "../Models/Hero/HeroModel";
+import { AppStateRecord } from "../Reducers/appReducer";
 import { getFilteredActiveSpecialAbilities } from "../Selectors/activatableSelectors";
 import { getFilteredInactiveSpecialAbilities } from "../Selectors/combinedActivatablesSelectors";
 import { getIsRemovingEnabled } from "../Selectors/phaseSelectors";
@@ -12,11 +15,12 @@ import { getEnableActiveItemHints, getSpecialAbilitiesSortOrder } from "../Selec
 import { SpecialAbilities, SpecialAbilitiesDispatchProps, SpecialAbilitiesOwnProps, SpecialAbilitiesStateProps } from "../Views/SpecialAbilities/SpecialAbilities";
 
 const mapStateToProps = (
-  state: AppState,
+  state: AppStateRecord,
   ownProps: SpecialAbilitiesOwnProps
 ): SpecialAbilitiesStateProps => ({
   activeList: getFilteredActiveSpecialAbilities (state, ownProps),
-  deactiveList: getFilteredInactiveSpecialAbilities (state, ownProps),
+  deactiveList: getFilteredInactiveSpecialAbilities (HeroModel.A.id (ownProps.hero))
+                                                    (state, ownProps),
   enableActiveItemHints: getEnableActiveItemHints (state),
   isRemovingEnabled: getIsRemovingEnabled (state),
   stateEntries: getSpecialAbilities (state),
@@ -27,8 +31,8 @@ const mapStateToProps = (
 })
 
 const mapDispatchToProps = (
-  dispatch: Dispatch<Action, AppState>,
-  { locale }: SpecialAbilitiesOwnProps
+  dispatch: ReduxDispatch,
+  { l10n }: SpecialAbilitiesOwnProps
 ): SpecialAbilitiesDispatchProps => ({
   setSortOrder (sortOrder: string) {
     dispatch (SpecialAbilitiesActions.setSpecialAbilitiesSortOrder (sortOrder))
@@ -36,14 +40,14 @@ const mapDispatchToProps = (
   switchActiveItemHints () {
     dispatch (ConfigActions.switchEnableActiveItemHints ())
   },
-  addToList (args: ActivateArgs) {
-    dispatch (SpecialAbilitiesActions.addSpecialAbility (locale) (args))
+  addToList (args: Record<ActivatableActivationOptions>) {
+    dispatch (SpecialAbilitiesActions.addSpecialAbility (l10n) (args))
   },
-  removeFromList (args: DeactivateArgs) {
+  removeFromList (args: Record<ActivatableDeactivationOptions>) {
     dispatch (SpecialAbilitiesActions.removeSpecialAbility (args))
   },
   setLevel (id: string, index: number, level: number) {
-    dispatch (SpecialAbilitiesActions.setSpecialAbilityLevel (locale) (id) (index) (level))
+    dispatch (SpecialAbilitiesActions.setSpecialAbilityLevel (l10n) (id) (index) (level))
   },
   setFilterText (filterText: string) {
     dispatch (SpecialAbilitiesActions.setActiveSpecialAbilitiesFilterText (filterText))
@@ -58,7 +62,7 @@ export const connectSpecialAbilities =
     SpecialAbilitiesStateProps,
     SpecialAbilitiesDispatchProps,
     SpecialAbilitiesOwnProps,
-    AppState
+    AppStateRecord
   > (
     mapStateToProps,
     mapDispatchToProps

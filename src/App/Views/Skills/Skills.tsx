@@ -1,15 +1,21 @@
 import * as React from "react";
-import { List } from "../../../Data/List";
-import { fromMaybeR, Just, Maybe, Nothing } from "../../../Data/Maybe";
+import { notEquals } from "../../../Data/Eq";
+import { fmap } from "../../../Data/Functor";
+import { List, mapAccumL, notNull, toArray } from "../../../Data/List";
+import { bindF, ensure, fromMaybeR, Just, Maybe, maybe, Nothing } from "../../../Data/Maybe";
 import { OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
+import { Pair, snd } from "../../../Data/Tuple";
 import { WikiInfoContainer } from "../../Containers/WikiInfoContainer";
-import { EntryRating, SecondaryAttribute } from "../../Models/Hero/heroTypeHelpers";
-import { AttributeCombined, SkillWithRequirements } from "../../Models/View/viewTypeHelpers";
+import { EntryRating } from "../../Models/Hero/heroTypeHelpers";
+import { AttributeCombined } from "../../Models/View/AttributeCombined";
+import { DerivedCharacteristic } from "../../Models/View/DerivedCharacteristic";
+import { SkillWithRequirements, SkillWithRequirementsA_ } from "../../Models/View/SkillWithRequirements";
 import { L10nRecord } from "../../Models/Wiki/L10n";
-import { Skill } from "../../Models/Wiki/wikiTypeHelpers";
 import { DCIds } from "../../Selectors/derivedCharacteristicsSelectors";
 import { translate } from "../../Utilities/I18n";
+import { isCommon, isUncommon } from "../../Utilities/Increasable/skillUtils";
+import { pipe, pipe_ } from "../../Utilities/pipe";
 import { Checkbox } from "../Universal/Checkbox";
 import { ListView } from "../Universal/List";
 import { ListHeader } from "../Universal/ListHeader";
@@ -29,8 +35,8 @@ export interface SkillsOwnProps {
 }
 
 export interface SkillsStateProps {
-  attributes: List<Record<AttributeCombined>>
-  derivedCharacteristics: OrderedMap<DCIds, Record<SecondaryAttribute>>
+  attributes: Maybe<List<Record<AttributeCombined>>>
+  derivedCharacteristics: OrderedMap<DCIds, Record<DerivedCharacteristic>>
   list: Maybe<List<Record<SkillWithRequirements>>>
   isRemovingEnabled: boolean
   sortOrder: string
@@ -53,6 +59,10 @@ export interface SkillsState {
   infoId: Maybe<string>
 }
 
+type Element = Record<SkillWithRequirements>
+const SWRA = SkillWithRequirements.A
+const SWRA_ = SkillWithRequirementsA_
+
 export class Skills extends React.Component<SkillsProps, SkillsState> {
   state: SkillsState = {
     infoId: Nothing,
@@ -67,7 +77,7 @@ export class Skills extends React.Component<SkillsProps, SkillsState> {
       derivedCharacteristics,
       l10n,
       isRemovingEnabled,
-      ratingVisibility,
+      ratingVisibility: is_rating_visible,
       removePoint,
       setSortOrder,
       sortOrder,
@@ -95,12 +105,12 @@ export class Skills extends React.Component<SkillsProps, SkillsState> {
             options={List<SortNames> ("name", "group", "ic")}
             />
           <Checkbox
-            checked={ratingVisibility}
+            checked={is_rating_visible}
             onClick={switchRatingVisibility}
             >
-            {translate (l10n) ("commoninculture")}
+            {translate (l10n) ("commonskills")}
           </Checkbox>
-          {ratingVisibility ? <RecommendedReference l10n={l10n} /> : null}
+          {is_rating_visible ? <RecommendedReference l10n={l10n} /> : null}
         </Options>
         <MainContent>
           <ListHeader>
@@ -126,144 +136,53 @@ export class Skills extends React.Component<SkillsProps, SkillsState> {
           <Scroll>
             <ListView>
               {pipe_ (
-                activeList,
+                list,
                 bindF (ensure (notNull)),
                 fmap (pipe (
-                  mapAccumL ((mprev: Maybe<Combined>) => (curr: Combined) => {
-                              const insertTopMargin = isTopMarginNeeded (sortOrder) (curr) (mprev)
-
-                              const aspects = getAspectsStr (l10n) (curr) (mtradition_id)
-
-                              if (isBlessing (curr)) {
-                                return Pair<Maybe<Combined>, JSX.Element> (
-                                  Just (curr),
-                                  (
-                                    <SkillListItem
-                                      key={LCBCA.id (curr)}
-                                      id={LCBCA.id (curr)}
-                                      name={LCBCA.name (curr)}
-                                      removePoint={
-                                        isRemovingEnabled
-                                          ? removeBlessingFromList.bind (null, LCBCA.id (curr))
-                                          : undefined}
-                                      addFillElement
-                                      noIncrease
-                                      insertTopMargin={insertTopMargin}
-                                      attributes={attributes}
-                                      derivedCharacteristics={derivedCharacteristics}
-                                      selectForInfo={this.showSlideinInfo}
-                                      addText={
-                                        sortOrder === "group"
-                                          ? `${aspects} / ${translate (l10n) ("blessing")}`
-                                          : aspects
-                                      }
-                                      />
-                                  )
+                  mapAccumL ((mprev: Maybe<Element>) => (curr: Element) =>
+                              Pair<Maybe<Element>, JSX.Element> (
+                                Just (curr),
+                                (
+                                  <SkillListItem
+                                    key={SWRA_.id (curr)}
+                                    id={SWRA_.id (curr)}
+                                    typ={
+                                      is_rating_visible
+                                      && isCommon (skillRating) (SWRA.wikiEntry (curr))
+                                    }
+                                    untyp={
+                                      is_rating_visible
+                                      && isUncommon (skillRating) (SWRA.wikiEntry (curr))
+                                    }
+                                    name={SWRA_.name (curr)}
+                                    sr={SWRA_.value (curr)}
+                                    check={SWRA_.check (curr)}
+                                    ic={SWRA_.ic (curr)}
+                                    addDisabled={!SWRA.isIncreasable (curr)}
+                                    addPoint={addPoint.bind (null, SWRA_.id (curr))}
+                                    removeDisabled={!SWRA.isDecreasable (curr)}
+                                    removePoint={
+                                      isRemovingEnabled
+                                        ? removePoint.bind (null, SWRA_.id (curr))
+                                        : undefined
+                                    }
+                                    addFillElement
+                                    insertTopMargin={isTopMarginNeeded (sortOrder) (curr) (mprev)}
+                                    attributes={attributes}
+                                    derivedCharacteristics={derivedCharacteristics}
+                                    selectForInfo={this.showInfo}
+                                    groupIndex={SWRA_.gr (curr)}
+                                    groupList={translate (l10n) ("skillgroups")}
+                                    />
                                 )
-                              }
-                              else {
-                                const add_text = getLCAddText (l10n) (sortOrder) (aspects) (curr)
-
-                                return Pair<Maybe<Combined>, JSX.Element> (
-                                  Just (curr),
-                                  (
-                                    <SkillListItem
-                                      key={LCBCA.id (curr)}
-                                      id={LCBCA.id (curr)}
-                                      name={LCBCA.name (curr)}
-                                      addDisabled={!LCWRA.isIncreasable (curr)}
-                                      addPoint={addPoint.bind (null, LCBCA.id (curr))}
-                                      removeDisabled={!LCWRA.isDecreasable (curr)}
-                                      removePoint={
-                                        isRemovingEnabled
-                                          ? LCWRA_.value (curr) === 0
-                                            ? removeFromList.bind (null, LCBCA.id (curr))
-                                            : removePoint.bind (null, LCBCA.id (curr))
-                                          : undefined
-                                      }
-                                      addFillElement
-                                      check={LCWRA_.check (curr)}
-                                      checkmod={LCWRA_.checkmod (curr)}
-                                      ic={LCWRA_.ic (curr)}
-                                      sr={LCWRA_.value (curr)}
-                                      insertTopMargin={insertTopMargin}
-                                      attributes={attributes}
-                                      derivedCharacteristics={derivedCharacteristics}
-                                      selectForInfo={this.showSlideinInfo}
-                                      addText={add_text}
-                                      />
-                                  )
-                                )
-                              }
-                            })
+                              ))
                             (Nothing),
                   snd,
                   toArray,
                   arr => <>{arr}</>
                 )),
-                fromMaybeR (
-                  <ListPlaceholder
-                    l10n={l10n}
-                    type="skills"
-                    noResults
-                    />
-                )
+                fromMaybeR (<ListPlaceholder l10n={l10n} type="skills" noResults />)
               )}
-              {
-                Maybe.fromMaybe<NonNullable<React.ReactNode>>
-                  (<ListPlaceholder l10n={l10n} type="skills" noResults />)
-                  (list
-                    .bind (Maybe.ensure (R.complement (List.null)))
-                    .fmap (R.pipe (
-                      List.mapAccumL<
-                        Maybe<Record<SkillWithRequirements>>,
-                        Record<SkillWithRequirements>,
-                        JSX.Element
-                      >
-                        (previous => current =>
-                          Tuple.of<Maybe<Record<SkillWithRequirements>>, JSX.Element>
-                            (Just (current))
-                            (
-                              <SkillListItem
-                                key={current .get ("id")}
-                                id={current .get ("id")}
-                                typ={
-                                  ratingVisibility
-                                  && isCommon (skillRating) (current as any as Record<Skill>)
-                                }
-                                untyp={
-                                  ratingVisibility
-                                  && isUncommon (skillRating) (current as any as Record<Skill>)
-                                }
-                                name={current .get ("name")}
-                                sr={current .get ("value")}
-                                check={current .get ("check")}
-                                ic={current .get ("ic")}
-                                addPoint={addPoint.bind (null, current .get ("id"))}
-                                addDisabled={!current .get ("isIncreasable")}
-                                removePoint={
-                                  isRemovingEnabled
-                                    ? removePoint.bind (null, current .get ("id"))
-                                    : undefined
-                                }
-                                removeDisabled={!current .get ("isDecreasable")}
-                                insertTopMargin={
-                                  sortOrder === "group"
-                                  && Maybe.isJust (previous)
-                                  && Maybe.fromJust (previous) .get ("gr") !== current .get ("gr")
-                                }
-                                selectForInfo={this.showInfo}
-                                attributes={attributes}
-                                derivedCharacteristics={derivedCharacteristics}
-                                groupIndex={current .get ("gr")}
-                                groupList={translate (l10n) ("skills.view.groups")}
-                                />
-                            ))
-                        (Nothing ()),
-                      Tuple.snd,
-                      List.toArray
-                    )))
-              }
             </ListView>
           </Scroll>
         </MainContent>
@@ -272,3 +191,10 @@ export class Skills extends React.Component<SkillsProps, SkillsState> {
     )
   }
 }
+
+const isTopMarginNeeded =
+  (sortOrder: string) =>
+  (curr: Element) =>
+  (mprev: Maybe<Element>) =>
+    sortOrder === "group"
+    && maybe (false) (pipe (SWRA_.gr, notEquals (SWRA_.gr (curr)))) (mprev)

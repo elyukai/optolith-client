@@ -1,5 +1,5 @@
 import { connect } from "react-redux";
-import { AppState } from "../Reducers/appReducer";
+import { AppStateRecord } from "../Reducers/appReducer";
 import { getDerivedCharacteristicsMap } from "../Selectors/derivedCharacteristicsSelectors";
 import * as stateSelectors from "../Selectors/stateSelectors";
 import { getAllWikiEntries } from "../Selectors/wikiSelectors";
@@ -8,7 +8,7 @@ import { WikiInfo, WikiInfoDispatchProps, WikiInfoOwnProps } from "../Views/Inli
 import { WikiInfoContentStateProps } from "../Views/InlineWiki/WikiInfoContent";
 
 const mapStateToProps =
-  (state: AppState, ownProps: WikiInfoOwnProps): WikiInfoContentStateProps => ({
+  (state: AppStateRecord, ownProps: WikiInfoOwnProps): WikiInfoContentStateProps => ({
     attributes: stateSelectors.getWikiAttributes (state),
     advantages: stateSelectors.getWikiAdvantages (state),
     blessings: stateSelectors.getWikiBlessings (state),
@@ -36,7 +36,7 @@ const mapStateToProps =
   })
 
 export const connectWikiInfo =
-  connect<WikiInfoContentStateProps, WikiInfoDispatchProps, WikiInfoOwnProps, AppState> (
+  connect<WikiInfoContentStateProps, WikiInfoDispatchProps, WikiInfoOwnProps, AppStateRecord> (
     mapStateToProps
   )
 

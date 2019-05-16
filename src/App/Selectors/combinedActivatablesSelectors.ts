@@ -2,6 +2,7 @@ import { fmapF } from "../../Data/Functor";
 import { append, List } from "../../Data/List";
 import { Maybe, maybe } from "../../Data/Maybe";
 import { Record, RecordI } from "../../Data/Record";
+import { uncurryN6 } from "../../Data/Tuple/Curry";
 import { ActiveActivatable } from "../Models/View/ActiveActivatable";
 import { InactiveActivatable } from "../Models/View/InactiveActivatable";
 import { Advantage } from "../Models/Wiki/Advantage";
@@ -97,5 +98,5 @@ export const getFilteredInactiveSpecialAbilities =
       getInactiveSpecialAbilitiesFilterText,
       getLocaleAsProp,
       getEnableActiveItemHints,
-      getFilteredInactives
+      uncurryN6 (getFilteredInactives)
     )
