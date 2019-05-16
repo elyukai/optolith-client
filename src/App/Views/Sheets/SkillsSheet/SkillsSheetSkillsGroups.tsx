@@ -1,24 +1,35 @@
 import * as React from "react";
-import { AttributeCombined } from "../../../Models/View/viewTypeHelpers";
-import { translate, UIMessagesObject } from "../../../Utilities/I18n";
+import { imap, List } from "../../../../Data/List";
+import { Record } from "../../../../Data/Record";
+import { AttributeCombined } from "../../../Models/View/AttributeCombined";
+import { L10nRecord } from "../../../Models/Wiki/L10n";
+import { translate } from "../../../Utilities/I18n";
+import { prefixAttr } from "../../../Utilities/IDUtils";
+import { pipe_ } from "../../../Utilities/pipe";
 
-export const iterateGroupHeaders = (attributes: List<Record<AttributeCombined>>) =>
+export const iterateGroupHeaders =
+  (l10n: L10nRecord) =>
   (checkAttributeValueVisibility: boolean) =>
-    (locale: UIMessagesObject) => {
-      const groupChecksIds = List.of (
-        List.of ("ATTR_1", "ATTR_6", "ATTR_8"),
-        List.of ("ATTR_3", "ATTR_4", "ATTR_4"),
-        List.of ("ATTR_1", "ATTR_6", "ATTR_7"),
-        List.of ("ATTR_2", "ATTR_2", "ATTR_3"),
-        List.of ("ATTR_5", "ATTR_5", "ATTR_7")
+  (attributes: List<Record<AttributeCombined>>) => {
+      const groupChecksIds = List (
+        List (prefixAttr (1), prefixAttr (6), prefixAttr (8)),
+        List (prefixAttr (3), prefixAttr (4), prefixAttr (4)),
+        List (prefixAttr (1), prefixAttr (6), prefixAttr (7)),
+        List (prefixAttr (2), prefixAttr (2), prefixAttr (3)),
+        List (prefixAttr (5), prefixAttr (5), prefixAttr (7))
       )
 
-      const groupNameKeys = List.of (
+      const groupNameKeys = List (
         "physical",
         "social",
         "nature",
         "knowledge",
         "craft"
+      )
+
+      pipe_ (
+        groupChecksIds,
+        imap
       )
 
       return groupChecksIds
@@ -48,7 +59,7 @@ export const iterateGroupHeaders = (attributes: List<Record<AttributeCombined>>)
                     .subscript (index)
                     .fmap (
                       key => translate (
-                        locale,
+                        l10n,
                         `charactersheet.gamestats.skills.subheaders.${key}` as
                           "charactersheet.gamestats.skills.subheaders.physical"
                       )
@@ -66,7 +77,7 @@ export const iterateGroupHeaders = (attributes: List<Record<AttributeCombined>>)
                     .subscript (index)
                     .fmap (
                       key => translate (
-                        locale,
+                        l10n,
                         `charactersheet.gamestats.skills.subheaders.${key}pages` as
                           "charactersheet.gamestats.skills.subheaders.physicalpages"
                       )
