@@ -1,14 +1,16 @@
 import { connect } from "react-redux";
-import { Action, Dispatch } from "redux";
+import { Maybe } from "../../Data/Maybe";
+import { ReduxDispatch } from "../Actions/Actions";
 import { setTab } from "../Actions/LocationActions";
 import * as RaceActions from "../Actions/RaceActions";
-import { AppState } from "../Reducers/appReducer";
+import { AppStateRecord } from "../Reducers/appReducer";
 import { getFilteredRaces } from "../Selectors/rcpSelectors";
 import { getCurrentRaceId, getCurrentRaceVariantId, getRacesFilterText } from "../Selectors/stateSelectors";
 import { getRacesSortOrder } from "../Selectors/uisettingsSelectors";
+import { TabId } from "../Utilities/LocationUtils";
 import { Races, RacesDispatchProps, RacesOwnProps, RacesStateProps } from "../Views/Races/Races";
 
-const mapStateToProps = (state: AppState, ownProps: RacesOwnProps): RacesStateProps => {
+const mapStateToProps = (state: AppStateRecord, ownProps: RacesOwnProps): RacesStateProps => {
   return {
     currentId: getCurrentRaceId (state),
     currentVariantId: getCurrentRaceVariantId (state),
@@ -18,7 +20,7 @@ const mapStateToProps = (state: AppState, ownProps: RacesOwnProps): RacesStatePr
   }
 }
 
-const mapDispatchToProps = (dispatch: Dispatch<Action, AppState>): RacesDispatchProps => ({
+const mapDispatchToProps = (dispatch: ReduxDispatch): RacesDispatchProps => ({
   selectRace (id: string): ((variantId: Maybe<string>) => void) {
     return variantId => dispatch (RaceActions.selectRace (id) (variantId))
   },
@@ -35,13 +37,14 @@ const mapDispatchToProps = (dispatch: Dispatch<Action, AppState>): RacesDispatch
     dispatch (RaceActions.setFilterText (filterText))
   },
   switchToCultures () {
-    dispatch (setTab ("cultures"))
+    dispatch (setTab (TabId.Cultures))
   },
 })
 
-export const connectRaces = connect<RacesStateProps, RacesDispatchProps, RacesOwnProps, AppState> (
-  mapStateToProps,
-  mapDispatchToProps
-)
+export const connectRaces =
+  connect<RacesStateProps, RacesDispatchProps, RacesOwnProps, AppStateRecord> (
+    mapStateToProps,
+    mapDispatchToProps
+  )
 
 export const RacesContainer = connectRaces (Races)

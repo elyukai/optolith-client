@@ -1,7 +1,7 @@
 import { fmap } from "../../Data/Functor";
 import { set } from "../../Data/Lens";
 import { List, subscriptF } from "../../Data/List";
-import { bind, bindF, ensure, fromJust, isJust, isNothing, Just, liftM2, Maybe } from "../../Data/Maybe";
+import { bind, bindF, ensure, fromJust, isJust, isNothing, join, Just, liftM2, Maybe } from "../../Data/Maybe";
 import { lookup } from "../../Data/OrderedMap";
 import { Pair } from "../../Data/Pair";
 import { Record } from "../../Data/Record";
@@ -14,7 +14,7 @@ import { HeroModel } from "../Models/Hero/HeroModel";
 import { ActivatableNameCost, ActivatableNameCostSafeCost } from "../Models/View/ActivatableNameCost";
 import { L10nRecord } from "../Models/Wiki/L10n";
 import { isSpecialAbility, SpecialAbility } from "../Models/Wiki/SpecialAbility";
-import { getAvailableAdventurePoints } from "../Selectors/adventurePointsSelectors";
+import { getAvailableAPMap } from "../Selectors/adventurePointsSelectors";
 import { getIsInCharacterCreation } from "../Selectors/phaseSelectors";
 import { getCurrentHeroPresent, getWiki } from "../Selectors/stateSelectors";
 import { getNameCost } from "../Utilities/Activatable/activatableActiveUtils";
@@ -22,7 +22,7 @@ import { convertPerTierCostToFinalCost } from "../Utilities/AdventurePoints/acti
 import { getMissingAP } from "../Utilities/AdventurePoints/adventurePointsUtils";
 import { translate, translateP } from "../Utilities/I18n";
 import { subtract } from "../Utilities/mathUtils";
-import { pipe } from "../Utilities/pipe";
+import { pipe, pipe_ } from "../Utilities/pipe";
 import { getWikiEntry } from "../Utilities/WikiUtils";
 import { ReduxAction } from "./Actions";
 import { addAlert } from "./AlertActions";
@@ -62,13 +62,13 @@ export const addSpecialAbility =
         const wiki_entry = fromJust (mwiki_entry)
 
         const mmissingAP =
-          bind (getAvailableAdventurePoints (
-                  state,
-                  { l10n }
-                ))
-                (ap => getMissingAP (getIsInCharacterCreation (state))
-                                    (current_cost)
-                                    (ap))
+          pipe_ (
+            mhero,
+            bindF (pipe (HeroModel.A.id, hero_id => getAvailableAPMap (hero_id) (state, { l10n }))),
+            join,
+            bindF (getMissingAP (getIsInCharacterCreation (state))
+                                (current_cost))
+          )
 
         if (isNothing (mmissingAP)) {
           dispatch<ActivateSpecialAbilityAction> ({
@@ -206,13 +206,16 @@ export const setSpecialAbilityLevel =
           const diff_cost = fromJust (mdiff_cost)
 
           const mmissingAP =
-            bind (getAvailableAdventurePoints (
-                    state,
-                    { l10n }
-                  ))
-                  (ap => getMissingAP (getIsInCharacterCreation (state))
-                                      (diff_cost)
-                                      (ap))
+            pipe_ (
+              mhero,
+              bindF (pipe (
+                HeroModel.A.id,
+                hero_id => getAvailableAPMap (hero_id) (state, { l10n })
+              )),
+              join,
+              bindF (getMissingAP (getIsInCharacterCreation (state))
+                                  (diff_cost))
+            )
 
 
           if (isNothing (mmissingAP)) {

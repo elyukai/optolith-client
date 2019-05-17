@@ -1,10 +1,10 @@
 import { fmap, fmapF } from "../../Data/Functor";
 import { over, set } from "../../Data/Lens";
 import { List, subscriptF, uncons } from "../../Data/List";
-import { altF_, bind, bindF, elem, ensure, fromJust, isJust, Just, liftM2, Maybe, Nothing } from "../../Data/Maybe";
+import { altF_, bind, bindF, elem, ensure, fromJust, isJust, join, Just, liftM2, Maybe, Nothing } from "../../Data/Maybe";
 import { lookup } from "../../Data/OrderedMap";
-import { fst, Pair, PairP1_, snd } from "../../Data/Pair";
 import { Record } from "../../Data/Record";
+import { fst, Pair, PairP1_, snd } from "../../Data/Tuple";
 import { ActionTypes } from "../Constants/ActionTypes";
 import { ActivatableActivationEntryType } from "../Models/Actions/ActivatableActivationEntryType";
 import { ActivatableActivationOptions } from "../Models/Actions/ActivatableActivationOptions";
@@ -20,7 +20,7 @@ import { Disadvantage, isDisadvantage } from "../Models/Wiki/Disadvantage";
 import { L10nRecord } from "../Models/Wiki/L10n";
 import { Race } from "../Models/Wiki/Race";
 import { RaceVariant } from "../Models/Wiki/RaceVariant";
-import { getAdventurePointsObject } from "../Selectors/adventurePointsSelectors";
+import { getAPObjectMap } from "../Selectors/adventurePointsSelectors";
 import { getIsInCharacterCreation } from "../Selectors/phaseSelectors";
 import { getCurrentRace, getCurrentRaceVariant } from "../Selectors/rcpSelectors";
 import { getCurrentHeroPresent, getWiki } from "../Selectors/stateSelectors";
@@ -141,10 +141,7 @@ export const addDisAdvantage =
         const entryType = isBlessedOrMagical (wiki_entry)
 
         const mmissingAPForDisAdvantage =
-          fmapF (getAdventurePointsObject (
-                  state,
-                  { l10n }
-                ))
+          fmapF (join (getAPObjectMap (HeroModel.A.id (hero)) (state, { l10n })))
                 (ap => getMissingAPForDisAdvantage (getIsInCharacterCreation (state))
                                                    (entryType)
                                                    (is_disadvantage)
@@ -238,10 +235,7 @@ export const removeDisAdvantage =
         const entryType = isBlessedOrMagical (wiki_entry)
 
         const mmissingAPForDisAdvantage =
-          fmapF (getAdventurePointsObject (
-                  state,
-                  { l10n }
-                ))
+          fmapF (join (getAPObjectMap (HeroModel.A.id (hero)) (state, { l10n })))
                 (ap => getMissingAPForDisAdvantage (getIsInCharacterCreation (state))
                                                    (entryType)
                                                    (is_disadvantage)
@@ -399,10 +393,7 @@ export const setDisAdvantageLevel =
           const entryType = isBlessedOrMagical (wiki_entry)
 
           const mmissingAPForDisAdvantage =
-            fmapF (getAdventurePointsObject (
-                    state,
-                    { l10n }
-                  ))
+            fmapF (join (getAPObjectMap (HeroModel.A.id (hero)) (state, { l10n })))
                   (ap => getMissingAPForDisAdvantage (getIsInCharacterCreation (state))
                                                      (entryType)
                                                      (is_disadvantage)

@@ -15,7 +15,7 @@ export function LabelBox (props: LabelBoxProps) {
 
   return (
     <div className={classNames ("labelbox", className)}>
-      <Box>{fromMaybeR (children) (value)}</Box>
+      <Box>{fromMaybeR (children as any) (value)}</Box>
       <label>{label}</label>
     </div>
   )

@@ -179,7 +179,7 @@ export class CombatTechniques
                                 value: fromMaybe<string | number> ("--") (CTWRA.pa (x)),
                               }
                             )}
-                            attributes={attributes}
+                            attributes={mattributes}
                             derivedCharacteristics={derivedCharacteristics}
                             selectForInfo={this.showInfo}
                             groupIndex={CTWRA_.gr (x)}

@@ -23,14 +23,15 @@ interface TupleConstructor {
   <A extends any[]> (...values: A): Tuple<A>
 
   bimap:
-  <A, B, C, D>
+  <A, B>
   (fFirst: (first: A) => B) =>
+  <C, D>
   (fSecond: (second: C) => D) =>
   (x: Pair<A, C>) =>
   Pair<B, D>
 
   first: <A, B> (f: (first: A) => B) => <C> (x: Pair<A, C>) => Pair<B, C>
-  second: <A, B, C>(f: (second: B) => C) => (x: Pair<A, B>) => Pair<A, C>
+  second: <B, C> (f: (second: B) => C) => <A> (x: Pair<A, B>) => Pair<A, C>
 
   fst: <A>(x: Pair<A, any>) => A
   snd: <B>(x: Pair<any, B>) => B

@@ -139,8 +139,8 @@ export enum ProfessionSelectionIds {
   CANTRIPS = "CANTRIPS",
   CURSES = "CURSES",
   SKILLS = "SKILLS",
-  TERRAIN_KNOWLEDGE = "TERRAIN_KNOWLEDGE",
   SPECIAL_ABILITY = "SPECIAL_ABILITY",
+  TERRAIN_KNOWLEDGE = "TERRAIN_KNOWLEDGE",
 }
 
 export type AnyProfessionSelection =

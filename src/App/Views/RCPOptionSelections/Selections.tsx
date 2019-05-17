@@ -266,8 +266,7 @@ export class RCPOptionSelections extends React.Component<SelectionsProps, Select
                 */
                const isScriptSelectionNeeded = Pair (scriptsListLength > 0, scriptsListLength > 1)
 
-               const prof_sels = getAllAdjustmentSelections (profession)
-                                                                       (maybeProfessionVariant)
+               const prof_sels = getAllAdjustmentSelections (profession) (maybeProfessionVariant)
 
                const isAnyLanguageOrScriptSelected = size (languages) > 0 || size (scripts) > 0
 

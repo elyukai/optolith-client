@@ -10,14 +10,14 @@ import * as EquipmentActions from "../Actions/EquipmentActions";
 import { ActionTypes } from "../Constants/ActionTypes";
 import { BelongingsL } from "../Models/Hero/Belongings";
 import { EditHitZoneArmor, EditHitZoneArmorL, EditHitZoneArmorSafe, ensureHitZoneArmorId } from "../Models/Hero/EditHitZoneArmor";
-import { EditItem, EditItemL, EditItemSafe, ensureEditId, fromItemTemplateEdit } from "../Models/Hero/EditItem";
+import { EditItem, EditItemL, EditItemSafe, ensureEditId } from "../Models/Hero/EditItem";
 import { EditPrimaryAttributeDamageThreshold, EditPrimaryAttributeDamageThresholdL } from "../Models/Hero/EditPrimaryAttributeDamageThreshold";
 import { HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel";
 import { HitZoneArmor, HitZoneArmorL } from "../Models/Hero/HitZoneArmor";
 import { fromItemTemplate, Item } from "../Models/Hero/Item";
 import { PurseL } from "../Models/Hero/Purse";
 import { composeL } from "../Utilities/compose";
-import { editableToHitZoneArmor, editableToItem, hitZoneArmorToEditable, itemToEditable } from "../Utilities/ItemUtils";
+import { editableToHitZoneArmor, editableToItem, fromItemTemplateEdit, hitZoneArmorToEditable, itemToEditable } from "../Utilities/ItemUtils";
 import { pipe } from "../Utilities/pipe";
 
 type Action = EquipmentActions.AddItemAction

@@ -82,7 +82,7 @@ export class Router extends React.Component<RouterProps> {
     const VIEWS: { [K in TabId]: () => React.ReactNode } = {
       [TabId.Herolist]: () => <HerolistContainer l10n={l10n} />,
       [TabId.Grouplist]: () => <Grouplist />,
-      [TabId.Wiki]: () => <WikiContainer locale={l10n} />,
+      [TabId.Wiki]: () => <WikiContainer l10n={l10n} />,
       [TabId.Faq]: () => <HelpContainer l10n={l10n} />,
       [TabId.Imprint]: () => <Imprint l10n={l10n} />,
       [TabId.ThirdPartyLicenses]: () => <ThirdPartyLicenses />,
@@ -92,7 +92,8 @@ export class Router extends React.Component<RouterProps> {
         () => unwrapWithHero (hero => <PersonalDataContainer l10n={l10n} hero={hero} />),
       [TabId.PersonalData]:
         () => unwrapWithHero (hero => <PersonalDataContainer l10n={l10n} hero={hero} />),
-      [TabId.CharacterSheet]: () => <SheetsContainer locale={l10n} />,
+      [TabId.CharacterSheet]:
+        () => unwrapWithHero (hero => <SheetsContainer l10n={l10n} hero={hero} />),
       [TabId.Pact]: () => <PactContainer l10n={l10n} />,
       [TabId.Rules]:
         () => unwrapWithHero (hero => <RulesContainer l10n={l10n} hero={hero} />),
@@ -108,10 +109,11 @@ export class Router extends React.Component<RouterProps> {
       [TabId.Disadvantages]:
         () => unwrapWithHero (hero => <DisadvantagesContainer l10n={l10n} hero={hero} />),
 
-      [TabId.Skills]: () => <SkillsContainer locale={l10n} />,
+      [TabId.Skills]: () => <SkillsContainer l10n={l10n} />,
       [TabId.CombatTechniques]: () => <CombatTechniquesContainer l10n={l10n} />,
-      [TabId.SpecialAbilities]: () => <SpecialAbilitiesContainer locale={l10n} />,
-      [TabId.Spells]: () => <SpellsContainer locale={l10n} />,
+      [TabId.SpecialAbilities]:
+        () => unwrapWithHero (hero => <SpecialAbilitiesContainer l10n={l10n} hero={hero} />),
+      [TabId.Spells]: () => <SpellsContainer l10n={l10n} />,
       [TabId.LiturgicalChants]: () => <LiturgicalChantsContainer l10n={l10n} />,
 
       [TabId.Equipment]: () => <EquipmentContainer l10n={l10n} />,

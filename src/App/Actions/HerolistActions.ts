@@ -1,3 +1,5 @@
+import { tryIO } from "../../Control/Exception";
+import { fmap } from "../../Data/Functor";
 import { List } from "../../Data/List";
 import { fromJust, isJust, Maybe } from "../../Data/Maybe";
 import { lookup } from "../../Data/OrderedMap";
@@ -118,13 +120,13 @@ export const loadHero = (id: string): LoadHeroAction => ({
 export const saveHeroes =
   (l10n: L10nRecord): ReduxAction =>
   dispatch => {
-    dispatch (requestAllHeroesSave (l10n))
-      .then (
-        () => dispatch (addAlert ({
-          message: translate (l10n) ("allsaved"),
-        }))
-      )
-      .catch ()
+    pipe_ (
+      dispatch (requestAllHeroesSave (l10n)),
+      tryIO,
+      fmap (fmap (() => dispatch (addAlert ({
+                                   message: translate (l10n) ("allsaved"),
+                                 }))))
+    )
   }
 
 export interface SaveHeroAction {
@@ -138,16 +140,16 @@ export const saveHero =
   (l10n: L10nRecord) =>
   (id: Maybe<string>): ReduxAction =>
     dispatch => {
-      dispatch (requestHeroSave (l10n) (id))
-        .then (
-          save_id => dispatch<SaveHeroAction> ({
-                  type: ActionTypes.SAVE_HERO,
-                  payload: {
-                    id: save_id, // specified by param or currently open
-                  },
-                })
-        )
-        .catch ()
+      pipe_ (
+        dispatch (requestHeroSave (l10n) (id)),
+        tryIO,
+        fmap (fmap (fmap (save_id => dispatch<SaveHeroAction> ({
+                                       type: ActionTypes.SAVE_HERO,
+                                       payload: {
+                                         id: save_id, // specified by param or currently open
+                                       },
+                                     }))))
+      )
     }
 
 export const exportHeroValidate =
@@ -183,7 +185,7 @@ export const deleteHeroValidate =
 
       const resolve: ReduxAction = futureDispatch => {
         futureDispatch (deleteHero (id))
-        futureDispatch (requestHeroDeletion (l10n) (id)) .catch ()
+        tryIO (futureDispatch (requestHeroDeletion (l10n) (id)))
       }
 
       // @ts-ignore

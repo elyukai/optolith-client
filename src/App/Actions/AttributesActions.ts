@@ -2,15 +2,16 @@ import { List } from "../../Data/List";
 import { bind, bindF, fromJust, isNothing, join, liftM2 } from "../../Data/Maybe";
 import { lookup } from "../../Data/OrderedMap";
 import { ActionTypes } from "../Constants/ActionTypes";
+import { HeroModel } from "../Models/Hero/HeroModel";
 import { L10nRecord } from "../Models/Wiki/L10n";
-import { getAvailableAdventurePoints } from "../Selectors/adventurePointsSelectors";
+import { getAvailableAPMap } from "../Selectors/adventurePointsSelectors";
 import { getIsInCharacterCreation } from "../Selectors/phaseSelectors";
-import { getAddedArcaneEnergyPoints, getAddedKarmaPoints, getAddedLifePoints, getAttributes, getWikiAttributes } from "../Selectors/stateSelectors";
+import { getAddedArcaneEnergyPoints, getAddedKarmaPoints, getAddedLifePoints, getAttributes, getCurrentHeroPresent, getWikiAttributes } from "../Selectors/stateSelectors";
 import { getMissingAP } from "../Utilities/AdventurePoints/adventurePointsUtils";
 import { getIncreaseAP } from "../Utilities/AdventurePoints/improvementCostUtils";
 import { translate, translateP } from "../Utilities/I18n";
 import { getAreSufficientAPAvailableForIncrease } from "../Utilities/Increasable/increasableUtils";
-import { pipe } from "../Utilities/pipe";
+import { pipe, pipe_ } from "../Utilities/pipe";
 import { ReduxAction } from "./Actions";
 import { addAlert } from "./AlertActions";
 
@@ -26,12 +27,19 @@ export const addAttributePoint = (l10n: L10nRecord) => (id: string): ReduxAction
     const state = getState ()
     const mhero_attributes = getAttributes (state)
     const wiki_attributes = getWikiAttributes (state)
+    const mhero = getCurrentHeroPresent (state)
 
     const missingAPForInc =
-      join (liftM2 (getAreSufficientAPAvailableForIncrease (getIsInCharacterCreation (state))
-                                                           (bind (mhero_attributes) (lookup (id))))
-                   (lookup (id) (wiki_attributes))
-                   (getAvailableAdventurePoints (state, { l10n })))
+      pipe_ (
+        mhero,
+        bindF (pipe (HeroModel.A.id, hero_id => getAvailableAPMap (hero_id) (state, { l10n }))),
+        join,
+        liftM2 (getAreSufficientAPAvailableForIncrease (getIsInCharacterCreation (state))
+                                                       (bind (mhero_attributes)
+                                                             (lookup (id))))
+               (lookup (id) (wiki_attributes)),
+        join
+      )
 
     if (isNothing (missingAPForInc)) {
       dispatch<AddAttributePointAction> ({
@@ -69,16 +77,22 @@ export interface AddLifePointAction {
 
 export const addLifePoint = (l10n: L10nRecord): ReduxAction => (dispatch, getState) => {
   const state = getState ()
+  const mhero = getCurrentHeroPresent (state)
 
   const missingAP =
-    join (liftM2 (pipe (
-                   // get AP for added points
-                   getIncreaseAP (4),
+    pipe_ (
+      mhero,
+      bindF (pipe (HeroModel.A.id, hero_id => getAvailableAPMap (hero_id) (state, { l10n }))),
+      join,
+      liftM2 (pipe (
+               // get AP for added points
+               getIncreaseAP (4),
 
-                   // AP are passed to result and result finally gets the available AP
-                   getMissingAP (getIsInCharacterCreation (state))))
-                 (getAddedLifePoints (state))
-                 (getAvailableAdventurePoints (state, { l10n })))
+               // AP are passed to result and result finally gets the available AP
+               getMissingAP (getIsInCharacterCreation (state))))
+             (getAddedLifePoints (state)),
+      join
+    )
 
   if (isNothing (missingAP)) {
     dispatch<AddLifePointAction> ({
@@ -100,16 +114,22 @@ export interface AddArcaneEnergyPointAction {
 export const addArcaneEnergyPoint = (l10n: L10nRecord): ReduxAction =>
   (dispatch, getState) => {
     const state = getState ()
+    const mhero = getCurrentHeroPresent (state)
 
     const missingAP =
-      join (liftM2 (pipe (
-                     // get AP for added points
-                     getIncreaseAP (4),
+      pipe_ (
+        mhero,
+        bindF (pipe (HeroModel.A.id, hero_id => getAvailableAPMap (hero_id) (state, { l10n }))),
+        join,
+        liftM2 (pipe (
+                 // get AP for added points
+                 getIncreaseAP (4),
 
-                     // AP are passed to result and result finally gets the available AP
-                     getMissingAP (getIsInCharacterCreation (state))))
-                   (getAddedArcaneEnergyPoints (state))
-                   (getAvailableAdventurePoints (state, { l10n })))
+                 // AP are passed to result and result finally gets the available AP
+                 getMissingAP (getIsInCharacterCreation (state))))
+               (getAddedArcaneEnergyPoints (state)),
+        join
+      )
 
     if (isNothing (missingAP)) {
       dispatch<AddArcaneEnergyPointAction> ({
@@ -130,16 +150,22 @@ export interface AddKarmaPointAction {
 
 export const addKarmaPoint = (l10n: L10nRecord): ReduxAction => (dispatch, getState) => {
   const state = getState ()
+  const mhero = getCurrentHeroPresent (state)
 
   const missingAP =
-    join (liftM2 (pipe (
-                   // get AP for added points
-                   getIncreaseAP (4),
+    pipe_ (
+      mhero,
+      bindF (pipe (HeroModel.A.id, hero_id => getAvailableAPMap (hero_id) (state, { l10n }))),
+      join,
+      liftM2 (pipe (
+               // get AP for added points
+               getIncreaseAP (4),
 
-                   // AP are passed to result and result finally gets the available AP
-                   getMissingAP (getIsInCharacterCreation (state))))
-                 (getAddedKarmaPoints (state))
-                 (getAvailableAdventurePoints (state, { l10n })))
+               // AP are passed to result and result finally gets the available AP
+               getMissingAP (getIsInCharacterCreation (state))))
+             (getAddedKarmaPoints (state)),
+      join
+    )
 
   if (isNothing (missingAP)) {
     dispatch<AddKarmaPointAction> ({
@@ -185,11 +211,16 @@ export interface AddBoughtBackAEPointAction {
 export const addBoughtBackAEPoint = (l10n: L10nRecord): ReduxAction =>
   (dispatch, getState) => {
     const state = getState ()
+    const mhero = getCurrentHeroPresent (state)
 
     const missingAP =
-      bindF (getMissingAP (getIsInCharacterCreation (state))
-                          (2))
-            (getAvailableAdventurePoints (state, { l10n }))
+      pipe_ (
+        mhero,
+        bindF (pipe (HeroModel.A.id, hero_id => getAvailableAPMap (hero_id) (state, { l10n }))),
+        join,
+        bindF (getMissingAP (getIsInCharacterCreation (state))
+                            (2))
+      )
 
     if (isNothing (missingAP)) {
       dispatch<AddBoughtBackAEPointAction> ({
@@ -279,11 +310,16 @@ export interface AddBoughtBackKPPointAction {
 export const addBoughtBackKPPoint = (l10n: L10nRecord): ReduxAction =>
   (dispatch, getState) => {
     const state = getState ()
+    const mhero = getCurrentHeroPresent (state)
 
     const missingAP =
-      bindF (getMissingAP (getIsInCharacterCreation (state))
-                          (2))
-            (getAvailableAdventurePoints (state, { l10n }))
+      pipe_ (
+        mhero,
+        bindF (pipe (HeroModel.A.id, hero_id => getAvailableAPMap (hero_id) (state, { l10n }))),
+        join,
+        bindF (getMissingAP (getIsInCharacterCreation (state))
+                            (2))
+      )
 
     if (isNothing (missingAP)) {
       dispatch<AddBoughtBackKPPointAction> ({

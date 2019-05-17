@@ -1,5 +1,5 @@
 import * as React from "react";
-import { currentVersion } from "../../Utilities/Raw/compatibilityUtils";
+import { current_version } from "../../Selectors/envSelectors";
 import { Page } from "../Universal/Page";
 import { Scroll } from "../Universal/Scroll";
 
@@ -39,7 +39,7 @@ const MITLicense = () => (
 export const ThirdPartyLicenses = () => (
   <Page id="third-party-software">
     <Scroll className="text">
-      <h2>Optolith Desktop Client v{currentVersion}</h2>
+      <h2>Optolith Desktop Client v{current_version}</h2>
       Third Party Software and Content Licenses
       <div className="third-party-software-body">
         <p>

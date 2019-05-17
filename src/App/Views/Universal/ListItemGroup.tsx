@@ -17,7 +17,7 @@ export function ListItemGroup (props: ListItemGroupProps) {
   const normalizedIndex = normalize (index)
 
   const content =
-    fromMaybeR (children)
+    fromMaybeR (children as any)
                (isJust (normalizedIndex) && isList (list)
                  ? subscript (list) (Maybe.fromJust (normalizedIndex) - 1)
                  : typeof text === "string"

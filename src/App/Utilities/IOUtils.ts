@@ -1,9 +1,9 @@
 import { remote } from "electron";
 import { tryIO } from "../../Control/Exception";
 import { Either, fromLeft_, fromRight_, isLeft, Left, Right } from "../../Data/Either";
-import { fmapF } from "../../Data/Functor";
+import { fmap, fmapF } from "../../Data/Functor";
 import { flength, fromArray, List, subscript } from "../../Data/List";
-import { fromMaybe, Nothing } from "../../Data/Maybe";
+import { fromMaybe, normalize, Nothing } from "../../Data/Maybe";
 import { bimap, fst, Pair, snd } from "../../Data/Pair";
 import { IO } from "../../System/IO";
 import { divideBy, inc } from "./mathUtils";
@@ -43,7 +43,10 @@ export const showOpenDialog =
     IO (async () => new Promise<List<string>> (res => remote.dialog.showOpenDialog (
                                                        remote .getCurrentWindow (),
                                                        options,
-                                                       pipe (fromArray, res)
+                                                       pipe (
+                                                         normalize,
+                                                         fmap (pipe (fromArray, res)
+                                                       ))
                                                      )))
 
 export const NothingIO = IO.pure (Nothing)

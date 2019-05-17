@@ -20,6 +20,6 @@ export const setTab = (tab: TabId): SetTabAction => ({
 export const showAbout: ReduxAction = (dispatch, getState) => {
   const alert = isDialogOpen (getState ())
   if (!alert) {
-    dispatch (setTab ("imprint"))
+    dispatch (setTab (TabId.Imprint))
   }
 }

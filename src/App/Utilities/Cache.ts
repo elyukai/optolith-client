@@ -6,9 +6,9 @@ import { fmap } from "../../Data/Functor";
 import { all, fromArray, List } from "../../Data/List";
 import { bindF, ensure, mapM, Maybe } from "../../Data/Maybe";
 import { fromList, OrderedMap, toObjectWith } from "../../Data/OrderedMap";
-import { Pair } from "../../Data/Pair";
 import { Record } from "../../Data/Record";
 import { parseJSON } from "../../Data/String/JSON";
+import { Tuple } from "../../Data/Tuple";
 import { deleteFile, readFile, writeFile } from "../../System/IO";
 import { AdventurePointsCategories } from "../Models/View/AdventurePointsCategories";
 import { L10nRecord } from "../Models/Wiki/L10n";
@@ -93,7 +93,7 @@ export const readCache =
                    && all ((k: keyof APCache) => typeof e [1] [k] === "number"
                                                  || e [1] [k] === undefined)
                           (ap_optional_cache_keys)),
-          fmap (Pair.fromArray)
+          fmap (Tuple.fromArray)
         ))
       )),
       fmap (fromList)

@@ -3,16 +3,17 @@ import { bind, bindF, fromJust, isJust, isNothing, join, liftM2 } from "../../Da
 import { lookup } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
 import { ActionTypes } from "../Constants/ActionTypes";
+import { HeroModel } from "../Models/Hero/HeroModel";
 import { L10nRecord } from "../Models/Wiki/L10n";
 import { Spell } from "../Models/Wiki/Spell";
-import { getAvailableAdventurePoints } from "../Selectors/adventurePointsSelectors";
+import { getAvailableAPMap } from "../Selectors/adventurePointsSelectors";
 import { getIsInCharacterCreation } from "../Selectors/phaseSelectors";
-import { getSpells, getWikiSpells } from "../Selectors/stateSelectors";
+import { getCurrentHeroPresent, getSpells, getWikiSpells } from "../Selectors/stateSelectors";
 import { getMissingAP } from "../Utilities/AdventurePoints/adventurePointsUtils";
 import { getICMultiplier } from "../Utilities/AdventurePoints/improvementCostUtils";
 import { translate, translateP } from "../Utilities/I18n";
 import { getAreSufficientAPAvailableForIncrease } from "../Utilities/Increasable/increasableUtils";
-import { pipe_ } from "../Utilities/pipe";
+import { pipe, pipe_ } from "../Utilities/pipe";
 import { ReduxAction } from "./Actions";
 import { addAlert } from "./AlertActions";
 
@@ -30,6 +31,7 @@ export const addSpell =
   (dispatch, getState) => {
     const state = getState ()
     const wiki_spells = getWikiSpells (state)
+    const mhero = getCurrentHeroPresent (state)
 
     const mwiki_spell = lookup (id) (wiki_spells)
 
@@ -37,9 +39,13 @@ export const addSpell =
       const wiki_entry = fromJust (mwiki_spell)
 
       const missingAPForInc =
-        bindF (getMissingAP (getIsInCharacterCreation (state))
-                            (pipe_ (wiki_entry, Spell.A.ic, getICMultiplier)))
-              (getAvailableAdventurePoints (state, { l10n }))
+        pipe_ (
+          mhero,
+          bindF (pipe (HeroModel.A.id, hero_id => getAvailableAPMap (hero_id) (state, { l10n }))),
+          join,
+          bindF (getMissingAP (getIsInCharacterCreation (state))
+                              (pipe_ (wiki_entry, Spell.A.ic, getICMultiplier)))
+        )
 
       if (isNothing (missingAPForInc)) {
         dispatch<ActivateSpellAction> ({
@@ -71,11 +77,16 @@ export const addCantrip =
   (id: string): ReduxAction =>
   (dispatch, getState) => {
     const state = getState ()
+    const mhero = getCurrentHeroPresent (state)
 
     const missingAP =
-      bindF (getMissingAP (getIsInCharacterCreation (state))
-                          (1))
-            (getAvailableAdventurePoints (state, { l10n }))
+      pipe_ (
+        mhero,
+        bindF (pipe (HeroModel.A.id, hero_id => getAvailableAPMap (hero_id) (state, { l10n }))),
+        join,
+        bindF (getMissingAP (getIsInCharacterCreation (state))
+                            (1))
+      )
 
     if (isNothing (missingAP)) {
       dispatch<ActivateCantripAction> ({
@@ -150,13 +161,19 @@ export const addSpellPoint =
     const state = getState ()
     const mhero_spells = getSpells (state)
     const wiki_spells = getWikiSpells (state)
+    const mhero = getCurrentHeroPresent (state)
 
     const missingAPForInc =
-      join (liftM2 (getAreSufficientAPAvailableForIncrease (getIsInCharacterCreation (state))
-                                                           (bind (mhero_spells)
-                                                                 (lookup (id))))
-                   (lookup (id) (wiki_spells))
-                   (getAvailableAdventurePoints (state, { l10n })))
+      pipe_ (
+        mhero,
+        bindF (pipe (HeroModel.A.id, hero_id => getAvailableAPMap (hero_id) (state, { l10n }))),
+        join,
+        liftM2 (getAreSufficientAPAvailableForIncrease (getIsInCharacterCreation (state))
+                                                       (bind (mhero_spells)
+                                                             (lookup (id))))
+               (lookup (id) (wiki_spells)),
+        join
+      )
 
     if (isNothing (missingAPForInc)) {
       dispatch<AddSpellPointAction> ({

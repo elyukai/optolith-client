@@ -1,6 +1,6 @@
 import * as React from "react";
 import { List } from "../../../Data/List";
-import { Maybe, fromMaybeR } from "../../../Data/Maybe";
+import { Maybe, maybeRNull } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
 import { AdventurePointsCategories } from "../../Models/View/AdventurePointsCategories";
 import { L10nRecord } from "../../Models/Wiki/L10n";
@@ -76,14 +76,13 @@ export function ApTooltip (props: ApTooltipProps) {
         <span>
           {translateP (l10n) ("apspentonrace") (List (APCA.spentOnRace (ap), 80))}
         </span>
-        {maybeR (<></>)
-                ((spentOnProfession: number) => (
-                    <span>
-                      {translateP (l10n) ("apspentonprofession") (List (spentOnProfession, 80))}
-                    </span>
-                  )
-                )
-                (APCA.spentOnProfession (ap))}
+        {maybeRNull ((spentOnProfession: number) => (
+                        <span>
+                          {translateP (l10n) ("apspentonprofession") (List (spentOnProfession, 80))}
+                        </span>
+                      )
+                    )
+                    (APCA.spentOnProfession (ap))}
         <span>
           {translateP (l10n)
                       ("apspentonattributes")

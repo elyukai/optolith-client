@@ -22,12 +22,12 @@ import { AdventurePointsCategories } from "../../Models/View/AdventurePointsCate
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { PrimaryAttributeDamageThreshold } from "../../Models/Wiki/sub/PrimaryAttributeDamageThreshold";
 import { WikiModelRecord } from "../../Models/Wiki/WikiModel";
+import { current_version } from "../../Selectors/envSelectors";
 import { getAPObject } from "../AdventurePoints/adventurePointsSumUtils";
 import { HeroStateMapKey } from "../heroStateUtils";
 import { ifElse } from "../ifElse";
 import { gt } from "../mathUtils";
 import { pipe } from "../pipe";
-import { currentVersion } from "./compatibilityUtils";
 import { RawActiveObject, RawArmorZone, RawCustomItem, RawHero, RawPet, RawPrimaryAttributeDamageThreshold } from "./RawData";
 
 const {
@@ -206,8 +206,9 @@ const getBelongingsForSave = (hero: HeroModelRecord) =>
                 (bonus => ({
                   primary: maybeToUndefined (primary (bonus)) ,
                   threshold:
-                    ifElse<number | List<number>, List<number>, number | number[]>
+                    ifElse<number | List<number>, List<number>>
                       (List.isList)
+                      <number | number[]>
                       (List.toArray)
                       (ident)
                       (threshold (bonus)),
@@ -311,7 +312,7 @@ export const convertHeroForSave =
                                               (OrderedMap.lookupF<string, Data.User> (users))
 
     const obj: RawHero = {
-      clientVersion: currentVersion,
+      clientVersion: current_version,
       dateCreated: dateCreated .toJSON (),
       dateModified: dateModified .toJSON (),
       id: id (hero),

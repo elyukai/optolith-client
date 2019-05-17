@@ -1,13 +1,15 @@
 import { List } from "../../Data/List";
-import { bind, fromJust, isNothing, join, liftM2 } from "../../Data/Maybe";
+import { bind, bindF, fromJust, isNothing, join, liftM2 } from "../../Data/Maybe";
 import { lookup } from "../../Data/OrderedMap";
 import { ActionTypes } from "../Constants/ActionTypes";
+import { HeroModel } from "../Models/Hero/HeroModel";
 import { L10nRecord } from "../Models/Wiki/L10n";
-import { getAvailableAdventurePoints } from "../Selectors/adventurePointsSelectors";
+import { getAvailableAPMap } from "../Selectors/adventurePointsSelectors";
 import { getIsInCharacterCreation } from "../Selectors/phaseSelectors";
-import { getCombatTechniques, getWikiCombatTechniques } from "../Selectors/stateSelectors";
+import { getCombatTechniques, getCurrentHeroPresent, getWikiCombatTechniques } from "../Selectors/stateSelectors";
 import { translate, translateP } from "../Utilities/I18n";
 import { getAreSufficientAPAvailableForIncrease } from "../Utilities/Increasable/increasableUtils";
+import { pipe, pipe_ } from "../Utilities/pipe";
 import { ReduxAction } from "./Actions";
 import { addAlert } from "./AlertActions";
 
@@ -23,13 +25,19 @@ export const addCombatTechniquePoint = (l10n: L10nRecord) => (id: string): Redux
     const state = getState ()
     const mhero_combat_techniques = getCombatTechniques (state)
     const wiki_combat_techniques = getWikiCombatTechniques (state)
+    const mhero = getCurrentHeroPresent (state)
 
     const missingAPForInc =
-      join (liftM2 (getAreSufficientAPAvailableForIncrease (getIsInCharacterCreation (state))
-                                                           (bind (mhero_combat_techniques)
-                                                                 (lookup (id))))
-                   (lookup (id) (wiki_combat_techniques))
-                   (getAvailableAdventurePoints (state, { l10n })))
+      pipe_ (
+        mhero,
+        bindF (pipe (HeroModel.A.id, hero_id => getAvailableAPMap (hero_id) (state, { l10n }))),
+        join,
+        liftM2 (getAreSufficientAPAvailableForIncrease (getIsInCharacterCreation (state))
+                                                       (bind (mhero_combat_techniques)
+                                                             (lookup (id))))
+               (lookup (id) (wiki_combat_techniques)),
+        join
+      )
 
     if (isNothing (missingAPForInc)) {
       dispatch<AddCombatTechniquePointAction> ({

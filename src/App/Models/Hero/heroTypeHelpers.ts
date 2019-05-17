@@ -146,7 +146,7 @@ export interface HistoryPrevState {
 
 }
 
-export type InputTextEvent = React.FormEvent<HTMLInputElement>
+export type InputTextEvent = React.ChangeEvent<HTMLInputElement>
 export type InputKeyEvent = React.KeyboardEvent<HTMLInputElement>
 
 export interface SubTab {

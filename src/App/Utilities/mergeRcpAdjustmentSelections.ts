@@ -1,124 +1,85 @@
-import { flip, ident } from "../../Data/Function";
-import { set } from "../../Data/Lens";
-import { foldl } from "../../Data/List";
-import { Just, Maybe, maybe, Nothing } from "../../Data/Maybe";
+import { bindF, ensure, Just, Maybe, maybe } from "../../Data/Maybe";
 import { Record } from "../../Data/Record";
 import { Profession } from "../Models/Wiki/Profession";
-import { isCantripsSelection } from "../Models/Wiki/professionSelections/CantripsSelection";
-import { isCombatTechniquesSelection } from "../Models/Wiki/professionSelections/CombatTechniquesSelection";
-import { isCursesSelection } from "../Models/Wiki/professionSelections/CursesSelection";
-import { isLanguagesScriptsSelection } from "../Models/Wiki/professionSelections/LanguagesScriptsSelection";
-import { ProfessionSelections, ProfessionSelectionsL } from "../Models/Wiki/professionSelections/ProfessionAdjustmentSelections";
-import { isRemoveCombatTechniquesSelection } from "../Models/Wiki/professionSelections/RemoveCombatTechniquesSelection";
-import { isRemoveCombatTechniquesSecondSelection } from "../Models/Wiki/professionSelections/RemoveSecondCombatTechniquesSelection";
-import { isRemoveSpecializationSelection } from "../Models/Wiki/professionSelections/RemoveSpecializationSelection";
-import { isSecondCombatTechniquesSelection } from "../Models/Wiki/professionSelections/SecondCombatTechniquesSelection";
-import { isSkillsSelection } from "../Models/Wiki/professionSelections/SkillsSelection";
-import { isSpecializationSelection } from "../Models/Wiki/professionSelections/SpecializationSelection";
+import { CombatTechniquesSelection } from "../Models/Wiki/professionSelections/CombatTechniquesSelection";
+import { ProfessionSelections } from "../Models/Wiki/professionSelections/ProfessionAdjustmentSelections";
+import { ProfessionVariantSelections } from "../Models/Wiki/professionSelections/ProfessionVariantAdjustmentSelections";
+import { CombatTechniquesSecondSelection } from "../Models/Wiki/professionSelections/SecondCombatTechniquesSelection";
+import { SpecializationSelection } from "../Models/Wiki/professionSelections/SpecializationSelection";
 import { ProfessionVariant } from "../Models/Wiki/ProfessionVariant";
-import { AnyProfessionSelection, AnyProfessionVariantSelection, ProfessionSelectionIds } from "../Models/Wiki/wikiTypeHelpers";
-import { pipe } from "./pipe";
+import { ProfessionSelectionIds } from "../Models/Wiki/wikiTypeHelpers";
+import { pipe, pipe_ } from "./pipe";
+
+const PA = Profession.A
+const PSA = ProfessionSelections.A
+const PVA = ProfessionVariant.A
+const PVSA = ProfessionVariantSelections.A
 
 /**
  * Collects all available RCP adjustment selections in one record
  */
 export const getAllAdjustmentSelections =
-  (profession: Record<Profession>) =>
-  (maybeProfessionVariant: Maybe<Record<ProfessionVariant>>): Record<ProfessionSelections> => {
-    const buildRecord = pipe (
-      putProfessionSelectionsIntoRecord,
-      putProfessionVariantSelectionsIntoRecord (maybeProfessionVariant)
-    )
-
-    return buildRecord (profession)
-  }
-
-const putProfessionSelectionIntoRecord =
-  (acc: Record<ProfessionSelections>) => (current: AnyProfessionSelection) => {
-    if (isSpecializationSelection (current)) {
-      return set (ProfessionSelectionsL[ProfessionSelectionIds.SPECIALIZATION])
-                 (Just (current))
-                 (acc)
-    }
-
-    if (isLanguagesScriptsSelection (current)) {
-      return set (ProfessionSelectionsL[ProfessionSelectionIds.LANGUAGES_SCRIPTS])
-                 (Just (current))
-                 (acc)
-    }
-
-    if (isCombatTechniquesSelection (current)) {
-      return set (ProfessionSelectionsL[ProfessionSelectionIds.COMBAT_TECHNIQUES])
-                 (Just (current))
-                 (acc)
-    }
-
-    if (isSecondCombatTechniquesSelection (current)) {
-      return set (ProfessionSelectionsL[ProfessionSelectionIds.COMBAT_TECHNIQUES_SECOND])
-                 (Just (current))
-                 (acc)
-    }
-
-    if (isCantripsSelection (current)) {
-      return set (ProfessionSelectionsL[ProfessionSelectionIds.CANTRIPS])
-                 (Just (current))
-                 (acc)
-    }
-
-    if (isCursesSelection (current)) {
-      return set (ProfessionSelectionsL[ProfessionSelectionIds.CURSES])
-                 (Just (current))
-                 (acc)
-    }
-
-    if (isSkillsSelection (current)) {
-      return set (ProfessionSelectionsL[ProfessionSelectionIds.SKILLS])
-                 (Just (current))
-                 (acc)
-    }
-
-    return set (ProfessionSelectionsL[ProfessionSelectionIds.TERRAIN_KNOWLEDGE])
-               (Just (current))
-               (acc)
-  }
-
-const putProfessionVariantSelectionIntoRecord =
-  (acc: Record<ProfessionSelections>) => (current: AnyProfessionVariantSelection) => {
-    if (isRemoveSpecializationSelection (current)) {
-      return set (ProfessionSelectionsL[ProfessionSelectionIds.SPECIALIZATION])
-                 (Nothing)
-                 (acc)
-    }
-
-    if (isRemoveCombatTechniquesSelection (current)) {
-      return set (ProfessionSelectionsL[ProfessionSelectionIds.COMBAT_TECHNIQUES])
-                 (Nothing)
-                 (acc)
-    }
-
-    if (isRemoveCombatTechniquesSecondSelection (current)) {
-      return set (ProfessionSelectionsL[ProfessionSelectionIds.COMBAT_TECHNIQUES_SECOND])
-                 (Nothing)
-                 (acc)
-    }
-
-    return putProfessionSelectionIntoRecord (acc) (current)
-  }
-
-const putProfessionSelectionsIntoRecord =
-  pipe (
-    Profession.AL.selections,
-    foldl<AnyProfessionSelection, Record<ProfessionSelections>> (putProfessionSelectionIntoRecord)
-                                                              (ProfessionSelections ({ }))
-  )
-
-const putProfessionVariantSelectionsIntoRecord =
-  maybe<(x: Record<ProfessionSelections>) => Record<ProfessionSelections>>
-    (ident)
-    (pipe (
-      ProfessionVariant.AL.selections,
-      flip (
-        foldl<AnyProfessionVariantSelection, Record<ProfessionSelections>>
-          (putProfessionVariantSelectionIntoRecord)
-      )
-    ))
+  (prof: Record<Profession>) =>
+  (mprof_var: Maybe<Record<ProfessionVariant>>):
+    Record<ProfessionSelections> =>
+    ProfessionSelections ({
+      [ProfessionSelectionIds.CANTRIPS]:
+        pipe_ (
+          mprof_var,
+          bindF (pipe (PVA.selections, PVSA[ProfessionSelectionIds.CANTRIPS])),
+          maybe (pipe_ (prof, PA.selections, PSA[ProfessionSelectionIds.CANTRIPS]))
+                (Just)
+        ),
+      [ProfessionSelectionIds.COMBAT_TECHNIQUES]:
+        pipe_ (
+          mprof_var,
+          bindF (pipe (PVA.selections, PVSA[ProfessionSelectionIds.COMBAT_TECHNIQUES])),
+          bindF (ensure (CombatTechniquesSelection.is)),
+          maybe (pipe_ (prof, PA.selections, PSA[ProfessionSelectionIds.COMBAT_TECHNIQUES]))
+                (Just)
+        ),
+      [ProfessionSelectionIds.COMBAT_TECHNIQUES_SECOND]:
+        pipe_ (
+          mprof_var,
+          bindF (pipe (PVA.selections, PVSA[ProfessionSelectionIds.COMBAT_TECHNIQUES_SECOND])),
+          bindF (ensure (CombatTechniquesSecondSelection.is)),
+          maybe (pipe_ (prof, PA.selections, PSA[ProfessionSelectionIds.COMBAT_TECHNIQUES_SECOND]))
+                (Just)
+        ),
+      [ProfessionSelectionIds.CURSES]:
+        pipe_ (
+          mprof_var,
+          bindF (pipe (PVA.selections, PVSA[ProfessionSelectionIds.CURSES])),
+          maybe (pipe_ (prof, PA.selections, PSA[ProfessionSelectionIds.CURSES]))
+                (Just)
+        ),
+      [ProfessionSelectionIds.LANGUAGES_SCRIPTS]:
+        pipe_ (
+          mprof_var,
+          bindF (pipe (PVA.selections, PVSA[ProfessionSelectionIds.LANGUAGES_SCRIPTS])),
+          maybe (pipe_ (prof, PA.selections, PSA[ProfessionSelectionIds.LANGUAGES_SCRIPTS]))
+                (Just)
+        ),
+      [ProfessionSelectionIds.SKILLS]:
+        pipe_ (
+          mprof_var,
+          bindF (pipe (PVA.selections, PVSA[ProfessionSelectionIds.SKILLS])),
+          maybe (pipe_ (prof, PA.selections, PSA[ProfessionSelectionIds.SKILLS]))
+                (Just)
+        ),
+      [ProfessionSelectionIds.SPECIALIZATION]:
+        pipe_ (
+          mprof_var,
+          bindF (pipe (PVA.selections, PVSA[ProfessionSelectionIds.SPECIALIZATION])),
+          bindF (ensure (SpecializationSelection.is)),
+          maybe (pipe_ (prof, PA.selections, PSA[ProfessionSelectionIds.SPECIALIZATION]))
+                (Just)
+        ),
+      [ProfessionSelectionIds.TERRAIN_KNOWLEDGE]:
+        pipe_ (
+          mprof_var,
+          bindF (pipe (PVA.selections, PVSA[ProfessionSelectionIds.TERRAIN_KNOWLEDGE])),
+          maybe (pipe_ (prof, PA.selections, PSA[ProfessionSelectionIds.TERRAIN_KNOWLEDGE]))
+                (Just)
+        ),
+    })

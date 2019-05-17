@@ -252,6 +252,7 @@ export const getAPSpentForProfession =
       bindF (lookupF (WikiModel.A.professions (wiki))),
       fmap (pipe (
         Profession.A.ap,
+        Maybe.sum,
         add (pipe_ (
           mprofVarId,
           bindF (lookupF (WikiModel.A.professionVariants (wiki))),

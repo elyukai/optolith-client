@@ -5,6 +5,7 @@ import { findDOMNode } from "react-dom";
 import { fmapF } from "../../../Data/Functor";
 import { notNullStr } from "../../../Data/List";
 import { bindF, ensure, fromMaybe, fromMaybeR, Maybe, maybeR, normalize } from "../../../Data/Maybe";
+import { InputKeyEvent, InputTextEvent } from "../../Models/Hero/heroTypeHelpers";
 import { pipe_ } from "../../Utilities/pipe";
 import { isNumber } from "../../Utilities/typeCheckUtils";
 import { Label } from "./Label";
@@ -19,9 +20,9 @@ export interface TextFieldProps {
   hint?: Maybe<string> | string
   label?: Maybe<string> | string
   multiLine?: boolean
-  onChange? (event: React.FormEvent<HTMLInputElement>): void
+  onChange? (event: InputTextEvent): void
   onChangeString? (updatedText: string): void
-  onKeyDown? (event: React.KeyboardEvent<HTMLInputElement>): void
+  onKeyDown? (event: InputKeyEvent): void
   type?: string
   value?: string | number | Maybe<string | number>
   valid?: boolean

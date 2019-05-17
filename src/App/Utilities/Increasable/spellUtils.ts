@@ -64,11 +64,12 @@ export const isOwnTradition =
 const putPropertyKnowledgeRestrictionMaximum =
   (propertyKnowledge: Maybe<Record<ActivatableDependent>>) =>
   (wiki_entry: Record<Spell>) =>
-    ifElse<List<number>, List<number>>
+    ifElse<List<number>>
       (cnst (
         or (fmap (notElem<string | number> (property (wiki_entry)))
                  (getActiveSelectionsMaybe (propertyKnowledge)))
       ))
+      <List<number>>
       (consF (14))
       (ident)
 

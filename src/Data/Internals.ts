@@ -534,7 +534,7 @@ export namespace Internals {
    * The `isMaybe` function returns `True` if its argument is a `Maybe`.
    */
   export const isMaybe =
-    <A, A0>(x: A | Maybe<A0>): x is Maybe<A0> =>
+    <A, A0 extends Some>(x: A | Maybe<A0>): x is Maybe<A0> =>
       typeof x === "object"
       && x !== null
       && (x === Nothing || Object.getPrototypeOf (x) === JustPrototype)

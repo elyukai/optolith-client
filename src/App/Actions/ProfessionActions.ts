@@ -12,7 +12,7 @@ import { AppState } from "../Reducers/appReducer";
 import { getCurrentCulture, getCurrentProfession, getCurrentProfessionVariant, getCurrentRace } from "../Selectors/rcpSelectors";
 import { getWiki } from "../Selectors/stateSelectors";
 import { pipe_ } from "../Utilities/pipe";
-import { ReduxAction, ReduxActions } from "./Actions";
+import { ReduxAction } from "./Actions";
 
 export interface SelectProfessionAction {
   type: ActionTypes.SELECT_PROFESSION
@@ -23,7 +23,7 @@ export interface SelectProfessionAction {
 }
 
 export const selectProfession =
-  (id: string): ReduxActions =>
+  (id: string): ReduxAction =>
   (dispatch, getState) => {
     const state = getState ();
 

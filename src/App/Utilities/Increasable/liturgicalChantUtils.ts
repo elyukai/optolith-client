@@ -47,7 +47,7 @@ const putAspectKnowledgeRestrictionMaximum =
   (currentTradition: Record<SpecialAbility>) =>
   (aspectKnowledge: Maybe<Record<ActivatableDependent>>) =>
   (wikiEntry: Record<LiturgicalChant>) =>
-    ifElse<List<number>, List<number>>
+    ifElse<List<number>>
       (cnst (
         // is not nameless tradition
         id (currentTradition) !== "SA_693"
@@ -56,6 +56,7 @@ const putAspectKnowledgeRestrictionMaximum =
         && or (fmap (all (notElemF<string | number> (aspects (wikiEntry))))
                     (getActiveSelectionsMaybe (aspectKnowledge)))
       ))
+      <List<number>>
       (consF (14))
       (ident)
 

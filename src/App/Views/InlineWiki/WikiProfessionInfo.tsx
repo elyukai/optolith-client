@@ -8,7 +8,7 @@ import { elems, lookup, lookupF, member, memberF, OrderedMap } from "../../../Da
 import { difference, fromList, OrderedSet } from "../../../Data/OrderedSet";
 import { fst, snd } from "../../../Data/Pair";
 import { fromDefault, Record } from "../../../Data/Record";
-import { Tuple } from "../../../Data/Tuple";
+import { Pair, Tuple } from "../../../Data/Tuple";
 import { sel1, sel2, sel3 } from "../../../Data/Tuple/Select";
 import { upd1, upd2, upd3 } from "../../../Data/Tuple/Update";
 import { Sex } from "../../Models/Hero/heroTypeHelpers";
@@ -455,7 +455,10 @@ const getCombatTechniquesSelection =
                                    const precedingText =
                                      translateP (l10n)
                                                 ("combattechniquesselection")
-                                                (List (renderMaybe (fst_counter), firstValue))
+                                                (List<string | number> (
+                                                  renderMaybe (fst_counter),
+                                                  firstValue
+                                                ))
 
                                    return `${precedingText}${entryList}`
                                  })
@@ -469,7 +472,7 @@ const getCombatTechniquesSelection =
                                    const precedingText =
                                      translateP (l10n)
                                                 ("combattechniquessecondselection")
-                                                (List (
+                                                (List<string | number> (
                                                   renderMaybe (fst_counter),
                                                   firstValue,
                                                   renderMaybe (snd_counter),
@@ -1329,7 +1332,12 @@ const combineSpells =
                 const combined_spells = sel2 (t)
                 const single_spells = sel3 (t)
 
-                const olds_separate = fromJust (uncons (olds))
+                const molds_separate = uncons (olds)
+                const olds_separate =
+                  fromJust (
+                    molds_separate as
+                      Just<Pair<CombinedMappedSpell, List<CombinedMappedSpell>>>
+                  )
 
                 const base = fst (olds_separate)
                 const id = getCombinedSpellId (base)

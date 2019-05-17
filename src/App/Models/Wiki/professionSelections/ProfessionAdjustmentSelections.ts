@@ -7,7 +7,6 @@ import { CursesSelection } from "./CursesSelection";
 import { LanguagesScriptsSelection } from "./LanguagesScriptsSelection";
 import { CombatTechniquesSecondSelection } from "./SecondCombatTechniquesSelection";
 import { SkillsSelection } from "./SkillsSelection";
-import { SpecialAbilitySelection } from "./SpecialAbilitySelection";
 import { SpecializationSelection } from "./SpecializationSelection";
 import { TerrainKnowledgeSelection } from "./TerrainKnowledgeSelection";
 
@@ -20,7 +19,7 @@ export interface ProfessionSelections {
   [ProfessionSelectionIds.SPECIALIZATION]: Maybe<Record<SpecializationSelection>>
   [ProfessionSelectionIds.SKILLS]: Maybe<Record<SkillsSelection>>
   [ProfessionSelectionIds.TERRAIN_KNOWLEDGE]: Maybe<Record<TerrainKnowledgeSelection>>
-  [ProfessionSelectionIds.SPECIAL_ABILITY]: Maybe<Record<SpecialAbilitySelection>>
+  // [ProfessionSelectionIds.SPECIAL_ABILITY]: Maybe<Record<SpecialAbilitySelection>>
 }
 
 export const ProfessionSelections =
@@ -33,7 +32,7 @@ export const ProfessionSelections =
     [ProfessionSelectionIds.SPECIALIZATION]: Nothing,
     [ProfessionSelectionIds.SKILLS]: Nothing,
     [ProfessionSelectionIds.TERRAIN_KNOWLEDGE]: Nothing,
-    [ProfessionSelectionIds.SPECIAL_ABILITY]: Nothing,
+    // [ProfessionSelectionIds.SPECIAL_ABILITY]: Nothing,
   })
 
 export const ProfessionSelectionsL = makeLenses (ProfessionSelections)

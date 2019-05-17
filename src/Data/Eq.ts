@@ -154,6 +154,8 @@ export const equals =
     return x1 === x2
   }
 
+export type equals<A> = (x1: A) => (x2: A) => boolean
+
 /**
  * `(!=) :: a -> a -> Bool`
  *

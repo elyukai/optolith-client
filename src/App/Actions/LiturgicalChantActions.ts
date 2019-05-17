@@ -3,16 +3,17 @@ import { List } from "../../Data/List";
 import { bind, bindF, fromJust, isNothing, join, liftM2 } from "../../Data/Maybe";
 import { lookup } from "../../Data/OrderedMap";
 import { ActionTypes } from "../Constants/ActionTypes";
+import { HeroModel } from "../Models/Hero/HeroModel";
 import { L10nRecord } from "../Models/Wiki/L10n";
 import { LiturgicalChant } from "../Models/Wiki/LiturgicalChant";
-import { getAvailableAdventurePoints } from "../Selectors/adventurePointsSelectors";
+import { getAvailableAPMap } from "../Selectors/adventurePointsSelectors";
 import { getIsInCharacterCreation } from "../Selectors/phaseSelectors";
-import { getLiturgicalChants, getWikiLiturgicalChants } from "../Selectors/stateSelectors";
+import { getCurrentHeroPresent, getLiturgicalChants, getWikiLiturgicalChants } from "../Selectors/stateSelectors";
 import { getMissingAP } from "../Utilities/AdventurePoints/adventurePointsUtils";
 import { getICMultiplier } from "../Utilities/AdventurePoints/improvementCostUtils";
 import { translate, translateP } from "../Utilities/I18n";
 import { getAreSufficientAPAvailableForIncrease } from "../Utilities/Increasable/increasableUtils";
-import { pipe } from "../Utilities/pipe";
+import { pipe, pipe_ } from "../Utilities/pipe";
 import { ReduxAction } from "./Actions";
 import { addAlert } from "./AlertActions";
 
@@ -29,12 +30,18 @@ export const addLiturgicalChant =
   (dispatch, getState) => {
     const state = getState ()
     const wiki_liturgical_chants = getWikiLiturgicalChants (state)
+    const mhero = getCurrentHeroPresent (state)
 
     const missingAPForInc =
-      join (liftM2 (getMissingAP (getIsInCharacterCreation (state)))
-                   (fmapF (lookup (id) (wiki_liturgical_chants))
-                          (pipe (LiturgicalChant.A.ic, getICMultiplier)))
-                   (getAvailableAdventurePoints (state, { l10n })))
+      pipe_ (
+        mhero,
+        bindF (pipe (HeroModel.A.id, hero_id => getAvailableAPMap (hero_id) (state, { l10n }))),
+        join,
+        liftM2 (getMissingAP (getIsInCharacterCreation (state)))
+               (fmapF (lookup (id) (wiki_liturgical_chants))
+                      (pipe (LiturgicalChant.A.ic, getICMultiplier))),
+        join
+      )
 
     if (isNothing (missingAPForInc)) {
       dispatch<ActivateLiturgicalChantAction> ({
@@ -64,11 +71,16 @@ export const addBlessing =
   (id: string): ReduxAction =>
   (dispatch, getState) => {
     const state = getState ()
+    const mhero = getCurrentHeroPresent (state)
 
     const missingAP =
-      bindF (getMissingAP (getIsInCharacterCreation (state))
-                          (1))
-            (getAvailableAdventurePoints (state, { l10n }))
+      pipe_ (
+        mhero,
+        bindF (pipe (HeroModel.A.id, hero_id => getAvailableAPMap (hero_id) (state, { l10n }))),
+        join,
+        bindF (getMissingAP (getIsInCharacterCreation (state))
+                            (1))
+      )
 
     if (isNothing (missingAP)) {
       dispatch<ActivateBlessingAction> ({
@@ -128,13 +140,19 @@ export const addLiturgicalChantPoint =
     const state = getState ()
     const mhero_liturgical_chants = getLiturgicalChants (state)
     const wiki_liturgical_chants = getWikiLiturgicalChants (state)
+    const mhero = getCurrentHeroPresent (state)
 
     const missingAPForInc =
-      join (liftM2 (getAreSufficientAPAvailableForIncrease (getIsInCharacterCreation (state))
-                                                           (bind (mhero_liturgical_chants)
-                                                                 (lookup (id))))
-                   (lookup (id) (wiki_liturgical_chants))
-                   (getAvailableAdventurePoints (state, { l10n })))
+      pipe_ (
+        mhero,
+        bindF (pipe (HeroModel.A.id, hero_id => getAvailableAPMap (hero_id) (state, { l10n }))),
+        join,
+        liftM2 (getAreSufficientAPAvailableForIncrease (getIsInCharacterCreation (state))
+                                                       (bind (mhero_liturgical_chants)
+                                                             (lookup (id))))
+               (lookup (id) (wiki_liturgical_chants)),
+        join
+      )
 
     if (isNothing (missingAPForInc)) {
       dispatch<AddLiturgicalChantPointAction> ({

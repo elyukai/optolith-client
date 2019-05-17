@@ -670,12 +670,6 @@ export const initS =
   <A> (xs: List<A>): Maybe<List<A>> =>
     fnull (xs) ? Nothing : Just (init (xs))
 
-interface uncons {
-  <A> (xs: Nil): Nothing
-  <A> (xs: Cons<A>): Just<Pair<A, List<A>>>
-  <A> (xs: List<A>): Maybe<Pair<A, List<A>>>
-}
-
 /**
  * `uncons :: [a] -> Maybe (a, [a])`
  *
@@ -683,10 +677,9 @@ interface uncons {
  * `Nothing`. If the list is non-empty, returns `Just (x, xs)`, where `x` is
  * the head of the list and `xs` its tail.
  */
-export const uncons = (
+export const uncons =
   <A> (xs: List<A>): Maybe<Pair<A, List<A>>> =>
     fnull (xs) ? Nothing : Just (Pair (xs .x, tail (xs)))
-) as uncons
 
 
 // LIST TRANSFORMATIONS

@@ -3,8 +3,8 @@ import { fmap } from "../../../Data/Functor";
 import { cons, empty, filter, find, flength, head, ifoldr, lines, List, map, notNull, notNullStr, replaceStr, splitOn, uncons, zip } from "../../../Data/List";
 import { ensure, fromJust, isJust, mapMaybe } from "../../../Data/Maybe";
 import { fromList, OrderedMap } from "../../../Data/OrderedMap";
-import { fst, Pair, second, snd } from "../../../Data/Pair";
 import { show } from "../../../Data/Show";
+import { fst, Pair, second, snd } from "../../../Data/Tuple";
 import { pipe } from "../pipe";
 
 // const file = xlsx.readFile(`${dataSrcPath}TDE5.xlsx`);
@@ -38,6 +38,8 @@ export const csvToList =
     // header and body
     uncons,
 
+    x => x,
+
     maybeToEither ("csvToList: Empty file"),
 
     bindF (headerAndBody => {
@@ -68,7 +70,7 @@ export const csvToList =
                     )
                     : Right (cons (acc)
                                   (fromList (mapMaybe (decode)
-                                                      (zip<string, string> (header) (l)))))
+                                                      (zip (header) (l)))))
                 ))
               (Right (empty))
               (body)

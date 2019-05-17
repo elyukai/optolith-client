@@ -975,7 +975,7 @@ Maybe.maybeRNullF = maybeRNullF
 
 // TYPE HELPERS
 
-export type MaybeI<A> = A extends Maybe<infer AI> ? AI : never
+export type MaybeI<A> = A extends Internals.Maybe<infer AI> ? AI : never
 
 // tslint:disable-next-line:interface-over-type-literal
 export type Some = {}

@@ -1,15 +1,3 @@
-declare global {
-  interface Event {
-    charCode: number
-  }
-
-  interface EventTarget {
-    readonly value: string
-    readonly files: FileList | null
-    readonly result: string
-  }
-}
-
 // tslint:disable-next-line:no-implicit-dependencies
 import { ProgressInfo } from "builder-util-runtime";
 import { ipcRenderer, remote } from "electron";

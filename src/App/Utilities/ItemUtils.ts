@@ -29,8 +29,9 @@ const primaryAttributeDamageThresholdToEditable =
     ((damageBonus: Record<PrimaryAttributeDamageThreshold>) =>
       EditPrimaryAttributeDamageThreshold ({
         primary: PrimaryAttributeDamageThreshold.AL.primary (damageBonus),
-        threshold: ifElse<number | List<number>, List<number>, string | List<string>>
+        threshold: ifElse<number | List<number>, List<number>>
           (isList)
+          <string | List<string>>
           (map (show))
           (show)
           (PrimaryAttributeDamageThreshold.AL.threshold (damageBonus)),
@@ -85,7 +86,7 @@ const toMaybeIntGreaterThan1 = toMaybeIntGreaterThan (1)
 
 const editableToPrimaryAttributeDamageThreshold =
   (damageBonus: Record<EditPrimaryAttributeDamageThreshold>) =>
-    ifElse<string | List<string>, List<string>, Maybe<Record<PrimaryAttributeDamageThreshold>>>
+    ifElse<string | List<string>, List<string>>
       (isList)
       (threshold => all<string> (e => e .length > 0) (threshold)
         ? Just (PrimaryAttributeDamageThreshold ({

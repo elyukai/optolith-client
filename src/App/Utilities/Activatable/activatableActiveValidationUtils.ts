@@ -28,7 +28,7 @@ import { ExperienceLevel } from "../../Models/Wiki/ExperienceLevel";
 import { RequireActivatable } from "../../Models/Wiki/prerequisites/ActivatableRequirement";
 import { isSpecialAbility, SpecialAbility } from "../../Models/Wiki/SpecialAbility";
 import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import { Activatable, AllRequirementObjects, EntryWithCategory, LevelAwarePrerequisites, SID } from "../../Models/Wiki/wikiTypeHelpers";
+import { Activatable, AllRequirementObjects, EntryWithCategory, LevelAwarePrerequisites } from "../../Models/Wiki/wikiTypeHelpers";
 import { countActiveGroupEntries } from "../entryGroupUtils";
 import { getAllEntriesByGroup, getHeroStateItem } from "../heroStateUtils";
 import { ifElse } from "../ifElse";
@@ -66,7 +66,7 @@ const isRequiredByOthers =
     pipe (
            addependencies,
            any (
-             ifElse<ActivatableDependency, boolean, boolean>
+             ifElse<ActivatableDependency, boolean>
                (isBoolean)
                (e => e && flength (adactive (state_entry)) === 1)
                (e => equals (sid (current_active)) (sid (e))
@@ -391,10 +391,9 @@ const adjustMinimumLevelByDependencies =
                     // greater than the current mininumu level and that
                     bindF (dep => bindF<number, number>
                                     (ensure (dep_level => sum (min) < dep_level
-                                                          && or (liftM2<SID, SID, boolean>
-                                                                  (equals)
-                                                                  (sid (dep))
-                                                                  (sid (entry)))))
+                                                          && or (liftM2 (equals)
+                                                                        (sid (dep))
+                                                                        (sid (entry)))))
                                     (tier (dep))),
                     // if the current dependency's level is not valid, return
                     // the current minimum
