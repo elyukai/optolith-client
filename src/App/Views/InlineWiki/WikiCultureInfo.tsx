@@ -2,7 +2,7 @@ import * as React from "react";
 import { equals } from "../../../Data/Eq";
 import { fmap, fmapF } from "../../../Data/Functor";
 import { elemF, find, head, intercalate, List, map, notNull, subscript } from "../../../Data/List";
-import { bindF, ensure, fromMaybe, mapMaybe, maybe } from "../../../Data/Maybe";
+import { bindF, ensure, fromMaybe, mapMaybe, maybe, Maybe } from "../../../Data/Maybe";
 import { lookupF, OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { IncreasableForView, increasableViewFrom } from "../../Models/View/IncreasableForView";
@@ -26,9 +26,9 @@ import { WikiProperty } from "./WikiProperty";
 export interface WikiCultureInfoProps {
   books: OrderedMap<string, Record<Book>>
   x: Record<Culture>
-  languages: Record<SpecialAbility>
+  languages: Maybe<Record<SpecialAbility>>
   l10n: L10nRecord
-  scripts: Record<SpecialAbility>
+  scripts: Maybe<Record<SpecialAbility>>
   skills: OrderedMap<string, Record<Skill>>
 }
 
@@ -81,7 +81,7 @@ export function WikiCultureInfo (props: WikiCultureInfoProps) {
       CA.languages,
       mapMaybe (id => pipe_ (
                         languages,
-                        SAA.select,
+                        bindF (SAA.select),
                         bindF (find (pipe (SOA.id, equals<string | number> (id)))),
                         fmap (SOA.name)
                       )),
@@ -99,7 +99,7 @@ export function WikiCultureInfo (props: WikiCultureInfoProps) {
                 script_ids,
                 mapMaybe (id => pipe_ (
                                   scripts,
-                                  SAA.select,
+                                  bindF (SAA.select),
                                   bindF (find (pipe (SOA.id, equals<string | number> (id)))),
                                   fmap (SOA.name)
                                 )),
@@ -109,7 +109,7 @@ export function WikiCultureInfo (props: WikiCultureInfoProps) {
 
               const mcost = pipe_ (
                 scripts,
-                SAA.select,
+                bindF (SAA.select),
                 bindF (find (pipe (SOA.id, equals<string | number> (head (script_ids))))),
                 bindF (SOA.cost)
               )

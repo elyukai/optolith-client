@@ -1,8 +1,28 @@
 import * as React from "react";
+import { fmapF } from "../../../Data/Functor";
+import { cons, consF, imap, List, notNull } from "../../../Data/List";
+import { Just, Maybe, maybeR, Nothing } from "../../../Data/Maybe";
+import { Record } from "../../../Data/Record";
 import { WikiInfoContainer } from "../../Containers/WikiInfoContainer";
-import { Advantage, Blessing, Cantrip, CombatTechnique, Culture, Disadvantage, Entry, ItemTemplate, LiturgicalChant, Profession, Race, Skill, SpecialAbility, Spell } from "../../Models/Wiki/wikiTypeHelpers";
+import { CultureCombined } from "../../Models/View/CultureCombined";
+import { ProfessionCombined } from "../../Models/View/ProfessionCombined";
+import { RaceCombined } from "../../Models/View/RaceCombined";
+import { Advantage } from "../../Models/Wiki/Advantage";
+import { Blessing } from "../../Models/Wiki/Blessing";
+import { Cantrip } from "../../Models/Wiki/Cantrip";
+import { CombatTechnique } from "../../Models/Wiki/CombatTechnique";
+import { Disadvantage } from "../../Models/Wiki/Disadvantage";
+import { ItemTemplate } from "../../Models/Wiki/ItemTemplate";
+import { L10nRecord } from "../../Models/Wiki/L10n";
+import { LiturgicalChant } from "../../Models/Wiki/LiturgicalChant";
+import { Skill } from "../../Models/Wiki/Skill";
+import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
+import { Spell } from "../../Models/Wiki/Spell";
+import { InlineWikiEntry } from "../../Models/Wiki/wikiTypeHelpers";
 import { translate } from "../../Utilities/I18n";
-import { Dropdown } from "../Universal/Dropdown";
+import { pipe } from "../../Utilities/pipe";
+import { sortRecordsByName } from "../../Utilities/sortBy";
+import { Dropdown, DropdownOption } from "../Universal/Dropdown";
 import { ListPlaceholder } from "../Universal/ListPlaceholder";
 import { MainContent } from "../Universal/MainContent";
 import { Options } from "../Universal/Options";
@@ -12,13 +32,13 @@ import { TextField } from "../Universal/TextField";
 import { WikiList } from "./WikiList";
 
 export interface WikiOwnProps {
-  locale: UIMessagesObject
+  l10n: L10nRecord
 }
 
-interface Lists {
-  races: List<Record<Race>>
-  cultures: List<Record<Culture>>
-  professions: List<Record<Profession>>
+export interface WikiTabLists {
+  races: List<Record<RaceCombined>>
+  cultures: List<Record<CultureCombined>>
+  professions: List<Record<ProfessionCombined>>
   advantages: List<Record<Advantage>>
   disadvantages: List<Record<Disadvantage>>
   skills: List<Record<Skill>>
@@ -31,7 +51,7 @@ interface Lists {
   itemTemplates: List<Record<ItemTemplate>>
 }
 
-export interface WikiStateProps extends Lists {
+export interface WikiStateProps extends WikiTabLists {
   filterText: string
   category: Maybe<string>
   professionsGroup: Maybe<number>
@@ -41,7 +61,7 @@ export interface WikiStateProps extends Lists {
   spellsGroup: Maybe<number>
   liturgicalChantsGroup: Maybe<number>
   itemTemplatesGroup: Maybe<number>
-  specialAbilityGroups: List<Record<{ id: number; name: string }>>
+  specialAbilityGroups: List<Record<DropdownOption>>
 }
 
 export interface WikiDispatchProps {
@@ -60,19 +80,21 @@ export interface WikiDispatchProps {
 export type WikiProps = WikiStateProps & WikiDispatchProps & WikiOwnProps
 
 export interface WikiState {
-  infoId?: string
+  infoId: Maybe<string>
 }
 
 export class Wiki extends React.Component<WikiProps, WikiState> {
-  state: WikiState = {}
+  state: WikiState = {
+    infoId: Nothing,
+  }
 
-  showInfo = (id: string) => this.setState (() => ({ infoId: id }))
+  showInfo = (id: string) => this.setState (() => ({ infoId: Just (id) }))
 
   render () {
     const {
       category: maybeCategory,
       filterText,
-      locale,
+      l10n,
       setCategory1,
       setCategory2,
       setFilter,
@@ -96,205 +118,186 @@ export class Wiki extends React.Component<WikiProps, WikiState> {
 
     const { infoId } = this.state
 
-
-    const maybeList: Maybe<List<Entry>> =
-      maybeCategory.fmap (category => other[category as keyof Lists])
+    const mxs: Maybe<List<InlineWikiEntry>> =
+      fmapF (maybeCategory) (category => other[category as keyof WikiTabLists])
 
     return (
       <Page id="wiki">
         <Options>
           <TextField
-            hint={translate (locale, "options.filtertext")}
+            hint={translate (l10n) ("search")}
             onChange={e => setFilter (e.target.value)}
             value={filterText}
             />
           <Dropdown
             value={maybeCategory}
             onChange={setCategory1}
-            hint={translate (locale, "wiki.chooseacategory")}
-            options={List.of (
-              { id: Just ("races"), name: translate (locale, "races") },
-              { id: Just ("cultures"), name: translate (locale, "cultures") },
-              { id: Just ("professions"), name: translate (locale, "professions") },
-              { id: Just ("advantages"), name: translate (locale, "advantages") },
-              { id: Just ("disadvantages"), name: translate (locale, "disadvantages") },
-              { id: Just ("skills"), name: translate (locale, "skills") },
-              { id: Just ("combatTechniques"), name: translate (locale, "combattechniques") },
-              { id: Just ("specialAbilities"), name: translate (locale, "specialabilities") },
-              { id: Just ("spells"), name: translate (locale, "spells") },
-              { id: Just ("cantrips"), name: translate (locale, "cantrips") },
-              { id: Just ("liturgicalChants"), name: translate (locale, "liturgicalChants") },
-              { id: Just ("blessings"), name: translate (locale, "blessings") },
-              { id: Just ("itemTemplates"), name: translate (locale, "items") }
+            hint={translate (l10n) ("chooseacategory")}
+            options={List (
+              DropdownOption ({
+                id: Just ("races"),
+                name: translate (l10n) ("races"),
+              }),
+              DropdownOption ({
+                id: Just ("cultures"),
+                name: translate (l10n) ("cultures"),
+              }),
+              DropdownOption ({
+                id: Just ("professions"),
+                name: translate (l10n) ("professions"),
+              }),
+              DropdownOption ({
+                id: Just ("advantages"),
+                name: translate (l10n) ("advantages"),
+              }),
+              DropdownOption ({
+                id: Just ("disadvantages"),
+                name: translate (l10n) ("disadvantages"),
+              }),
+              DropdownOption ({
+                id: Just ("skills"),
+                name: translate (l10n) ("skills"),
+              }),
+              DropdownOption ({
+                id: Just ("combatTechniques"),
+                name: translate (l10n) ("combattechniques"),
+              }),
+              DropdownOption ({
+                id: Just ("specialAbilities"),
+                name: translate (l10n) ("specialabilities"),
+              }),
+              DropdownOption ({
+                id: Just ("spells"),
+                name: translate (l10n) ("spells"),
+              }),
+              DropdownOption ({
+                id: Just ("cantrips"),
+                name: translate (l10n) ("cantrips"),
+              }),
+              DropdownOption ({
+                id: Just ("liturgicalChants"),
+                name: translate (l10n) ("liturgicalchants"),
+              }),
+              DropdownOption ({
+                id: Just ("blessings"),
+                name: translate (l10n) ("blessings"),
+              }),
+              DropdownOption ({
+                id: Just ("itemTemplates"),
+                name: translate (l10n) ("items"),
+              })
             )}
             />
-          {Maybe.elem ("professions") (maybeCategory) && (
-            <Dropdown
-              value={professionsGroup}
-              onChange={setProfessionsGroup}
-              options={List.of (
-                {
-                  id: Nothing (),
-                  name: translate (locale, "professions.options.allprofessiongroups"),
-                },
-                {
-                  id: Just (1),
-                  name: translate (locale, "professions.options.mundaneprofessions"),
-                },
-                {
-                  id: Just (2),
-                  name: translate (locale, "professions.options.magicalprofessions"),
-                },
-                {
-                  id: Just (3),
-                  name: translate (locale, "professions.options.blessedprofessions"),
-                }
-              )}
-              fullWidth
-              />
-          )}
-          {Maybe.elem ("skills") (maybeCategory) && (
-            <Dropdown
-              value={skillsGroup}
-              onChange={setSkillsGroup}
-              options={
-                sortObjects (
-                  translate (locale, "skills.view.groups")
-                    .imap (index => name => Record.of ({
-                      id: Just (index + 1),
-                      name,
-                    })),
-                  locale.get ("id")
-                )
-                  .map<{ id: Maybe<number>; name: string }> (Record.toObject)
-                  .cons ({
-                    id: Nothing (),
-                    name: translate (locale, "allskillgroups"),
-                  })
-              }
-              fullWidth
-              />
-          )}
-          {Maybe.elem ("combatTechniques") (maybeCategory) && (
-            <Dropdown
-              value={combatTechniquesGroup}
-              onChange={setCombatTechniquesGroup}
-              options={
-                sortObjects (
-                  translate (locale, "combattechniques.view.groups")
-                    .imap (index => name => Record.of ({
-                      id: Just (index + 1),
-                      name,
-                    })),
-                  locale.get ("id")
-                )
-                  .map<{ id: Maybe<number>; name: string }> (Record.toObject)
-                  .cons ({
-                    id: Nothing (),
-                    name: translate (locale, "allcombattechniquegroups"),
-                  })
-              }
-              fullWidth
-              />
-          )}
-          {Maybe.elem ("specialAbilities") (maybeCategory) && (
-            <Dropdown
-              value={specialAbilitiesGroup}
-              onChange={setSpecialAbilitiesGroup}
-              options={
-                specialAbilityGroups
-                  .map<{ id: Maybe<number>; name: string }> (
-                    obj => ({
-                      ...obj.toObject (),
-                      id: Just (obj.get ("id")),
+          {Maybe.elem ("professions") (maybeCategory)
+            ? (
+                <Dropdown
+                  value={professionsGroup}
+                  onChange={setProfessionsGroup}
+                  options={List (
+                    DropdownOption ({
+                      id: Nothing,
+                      name: translate (l10n) ("allprofessiongroups"),
+                    }),
+                    DropdownOption ({
+                      id: Just (1),
+                      name: translate (l10n) ("mundaneprofessions"),
+                    }),
+                    DropdownOption ({
+                      id: Just (2),
+                      name: translate (l10n) ("magicalprofessions"),
+                    }),
+                    DropdownOption ({
+                      id: Just (3),
+                      name: translate (l10n) ("blessedprofessions"),
                     })
-                  )
-                  .cons ({
-                    id: Nothing (),
-                    name: translate (locale, "allspecialabilitygroups"),
-                  })
-              }
-              fullWidth
-              />
-          )}
-          {Maybe.elem ("spells") (maybeCategory) && (
-            <Dropdown
-              value={spellsGroup}
-              onChange={setSpellsGroup}
-              options={
-                sortObjects (
-                  translate (locale, "spells.view.groups")
-                    .imap (index => name => Record.of ({
-                      id: Just (index + 1),
-                      name,
-                    })),
-                  locale.get ("id")
-                )
-                  .map<{ id: Maybe<number>; name: string }> (Record.toObject)
-                  .cons ({
-                    id: Nothing (),
-                    name: translate (locale, "allspellgroups"),
-                  })
-              }
-              fullWidth
-              />
-          )}
-          {Maybe.elem ("liturgicalChants") (maybeCategory) && (
+                  )}
+                  fullWidth
+                  />
+              )
+            : null}
+          {Maybe.elem ("skills") (maybeCategory)
+            ? (
               <Dropdown
-              value={liturgicalChantsGroup}
-              onChange={setLiturgicalChantsGroup}
-              options={
-                sortObjects (
-                  translate (locale, "liturgies.view.groups")
-                    .imap (index => name => Record.of ({
-                      id: Just (index + 1),
-                      name,
-                    })),
-                  locale.get ("id")
-                )
-                  .map<{ id: Maybe<number>; name: string }> (Record.toObject)
-                  .cons ({
-                    id: Nothing (),
-                    name: translate (locale, "allliturgicalchantgroups"),
-                  })
-              }
-              fullWidth
-              />
-          )}
-          {Maybe.elem ("itemTemplates") (maybeCategory) && (
-              <Dropdown
-              value={itemTemplatesGroup}
-              onChange={setItemTemplatesGroup}
-              options={
-                sortObjects (
-                  translate (locale, "equipment.view.groups")
-                    .imap (index => name => Record.of ({
-                      id: Just (index + 1),
-                      name,
-                    })),
-                  locale.get ("id")
-                )
-                  .map<{ id: Maybe<number>; name: string }> (Record.toObject)
-                  .cons ({
-                    id: Nothing (),
-                    name: translate (locale, "allitemtemplategroups"),
-                  })
-              }
-              fullWidth
-              />
-          )}
+                value={skillsGroup}
+                onChange={setSkillsGroup}
+                options={getSortedGroupsDef (l10n)
+                                            (translate (l10n) ("allskills"))
+                                            (translate (l10n) ("skillgroups"))}
+                fullWidth
+                />
+            )
+            : null}
+          {Maybe.elem ("combatTechniques") (maybeCategory)
+            ? (
+                <Dropdown
+                  value={combatTechniquesGroup}
+                  onChange={setCombatTechniquesGroup}
+                  options={getSortedGroupsDef (l10n)
+                                              (translate (l10n) ("allcombattechniques"))
+                                              (translate (l10n) ("combattechniquegroups"))}
+                  fullWidth
+                  />
+              )
+            : null}
+          {Maybe.elem ("specialAbilities") (maybeCategory)
+            ? (
+                <Dropdown
+                  value={specialAbilitiesGroup}
+                  onChange={setSpecialAbilitiesGroup}
+                  options={cons (specialAbilityGroups)
+                                (DropdownOption ({
+                                  id: Nothing,
+                                  name: translate (l10n) ("allspecialabilities"),
+                                }))}
+                  fullWidth
+                  />
+              )
+            : null}
+          {Maybe.elem ("spells") (maybeCategory)
+            ? (
+                <Dropdown
+                  value={spellsGroup}
+                  onChange={setSpellsGroup}
+                  options={getSortedGroupsDef (l10n)
+                                              (translate (l10n) ("allspells"))
+                                              (translate (l10n) ("spellgroups"))}
+                  fullWidth
+                  />
+              )
+            : null}
+          {Maybe.elem ("liturgicalChants") (maybeCategory)
+            ? (
+                <Dropdown
+                  value={liturgicalChantsGroup}
+                  onChange={setLiturgicalChantsGroup}
+                  options={getSortedGroupsDef (l10n)
+                                              (translate (l10n) ("allliturgicalchants"))
+                                              (translate (l10n) ("liturgicalchantgroups"))}
+                  fullWidth
+                  />
+              )
+            : null}
+          {Maybe.elem ("itemTemplates") (maybeCategory)
+            ? (
+                <Dropdown
+                  value={itemTemplatesGroup}
+                  onChange={setItemTemplatesGroup}
+                  options={getSortedGroupsDef (l10n)
+                                              (translate (l10n) ("allitemtemplates"))
+                                              (translate (l10n) ("itemgroups"))}
+                  fullWidth
+                  />
+              )
+            : null}
         </Options>
         <MainContent>
           <Scroll>
-            {
-              Maybe.fromMaybe
-                (<ListPlaceholder wikiInitial locale={locale} type="wiki" />)
-                (maybeList.fmap (
-                  list => list.null ()
-                    ? <ListPlaceholder noResults locale={locale} type="wiki" />
-                    : <WikiList list={list} showInfo={this.showInfo} currentInfoId={infoId} />
-                ))
-            }
+            {maybeR (<ListPlaceholder wikiInitial l10n={l10n} type="wiki" />)
+                    ((xs: List<InlineWikiEntry>) =>
+                      notNull (xs)
+                        ? <WikiList list={xs} showInfo={this.showInfo} currentInfoId={infoId} />
+                        : <ListPlaceholder noResults l10n={l10n} type="wiki" />)
+                    (mxs)}
           </Scroll>
         </MainContent>
         <WikiInfoContainer {...this.props} currentId={infoId}/>
@@ -302,3 +305,15 @@ export class Wiki extends React.Component<WikiProps, WikiState> {
     )
   }
 }
+
+const getSortedGroupsDef =
+  (l10n: L10nRecord) =>
+  (def: string) =>
+    pipe (
+      imap (i => (n: string) => DropdownOption ({ id: Just (i + 1), name: n })),
+      sortRecordsByName (l10n),
+      consF (DropdownOption ({
+              id: Nothing,
+              name: def,
+            }))
+    )

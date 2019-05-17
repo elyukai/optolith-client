@@ -30,7 +30,7 @@ export class WikiInfo extends React.Component<WikiInfoProps, WikiInfoState> {
   }
 
   shouldComponentUpdate (nextProps: WikiInfoProps) {
-    return nextProps.currentId !== this.props.currentId || nextProps.list !== this.props.list
+    return nextProps.currentId !== this.props.currentId
   }
 
   componentWillReceiveProps (nextProps: WikiInfoProps) {

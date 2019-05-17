@@ -1,8 +1,9 @@
 import { connect } from "react-redux";
+import { Just } from "../../Data/Maybe";
 import { AppStateRecord } from "../Reducers/appReducer";
 import { getDerivedCharacteristicsMap } from "../Selectors/derivedCharacteristicsSelectors";
+import { getAllCultures, getAllProfessions, getAllRaces } from "../Selectors/rcpSelectors";
 import * as stateSelectors from "../Selectors/stateSelectors";
-import { getAllWikiEntries } from "../Selectors/wikiSelectors";
 import { mapGetToSlice } from "../Utilities/SelectorsUtils";
 import { WikiInfo, WikiInfoDispatchProps, WikiInfoOwnProps } from "../Views/InlineWiki/WikiInfo";
 import { WikiInfoContentStateProps } from "../Views/InlineWiki/WikiInfoContent";
@@ -16,19 +17,22 @@ const mapStateToProps =
     cantrips: stateSelectors.getWikiCantrips (state),
     combatTechniques: stateSelectors.getWikiCombatTechniques (state),
     cultures: stateSelectors.getWikiCultures (state),
-    derivedCharacteristics: getDerivedCharacteristicsMap (state, ownProps),
-    languages: mapGetToSlice (stateSelectors.getWikiSpecialAbilities) (state) ("SA_29"),
-    list: getAllWikiEntries (state),
+    combinedCultures: getAllCultures (state),
+    combinedRaces: getAllRaces (state),
+    combinedProfessions: getAllProfessions (state, ownProps),
+    disadvantages: stateSelectors.getWikiDisadvantages (state),
+    derivedCharacteristics: Just (getDerivedCharacteristicsMap (state, ownProps)),
+    hero: stateSelectors.getCurrentHeroPresent (state),
+    languages: mapGetToSlice (stateSelectors.getWikiSpecialAbilities) ("SA_29") (state),
     professionVariants: stateSelectors.getWikiProfessionVariants (state),
-    raceVariants: stateSelectors.getWikiRaceVariants (state),
     races: stateSelectors.getWikiRaces (state),
     liturgicalChantExtensions:
-      mapGetToSlice (stateSelectors.getWikiSpecialAbilities) (state) ("SA_663"),
+      mapGetToSlice (stateSelectors.getWikiSpecialAbilities) ("SA_663") (state),
     liturgicalChants: stateSelectors.getWikiLiturgicalChants (state),
-    scripts: mapGetToSlice (stateSelectors.getWikiSpecialAbilities) (state) ("SA_27"),
+    scripts: mapGetToSlice (stateSelectors.getWikiSpecialAbilities) ("SA_27") (state),
     sex: stateSelectors.getSex (state),
     skills: stateSelectors.getWikiSkills (state),
-    spellExtensions: mapGetToSlice (stateSelectors.getWikiSpecialAbilities) (state) ("SA_414"),
+    spellExtensions: mapGetToSlice (stateSelectors.getWikiSpecialAbilities) ("SA_414") (state),
     spells: stateSelectors.getWikiSpells (state),
     specialAbilities: stateSelectors.getWikiSpecialAbilities (state),
     templates: stateSelectors.getWikiItemTemplates (state),

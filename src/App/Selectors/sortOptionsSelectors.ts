@@ -1,4 +1,3 @@
-import { ident } from "../../Data/Function";
 import { compare } from "../../Data/Int";
 import { subscript } from "../../Data/List";
 import { bindF, ensure, fromMaybe, listToMaybe, maybe, Maybe } from "../../Data/Maybe";
@@ -13,7 +12,7 @@ import { CombatTechniqueWithRequirements } from "../Models/View/CombatTechniqueW
 import { CultureCombined } from "../Models/View/CultureCombined";
 import { InactiveActivatable } from "../Models/View/InactiveActivatable";
 import { LiturgicalChantWithRequirements } from "../Models/View/LiturgicalChantWithRequirements";
-import { isProfessionCombined, ProfessionCombined } from "../Models/View/ProfessionCombined";
+import { ProfessionCombined } from "../Models/View/ProfessionCombined";
 import { RaceCombined } from "../Models/View/RaceCombined";
 import { SkillCombined } from "../Models/View/SkillCombined";
 import { SpellWithRequirements } from "../Models/View/SpellWithRequirements";
@@ -30,9 +29,10 @@ import { Skill } from "../Models/Wiki/Skill";
 import { SpecialAbility } from "../Models/Wiki/SpecialAbility";
 import { isSpell, Spell } from "../Models/Wiki/Spell";
 import { NameBySex } from "../Models/Wiki/sub/NameBySex";
+import { SourceLink } from "../Models/Wiki/sub/SourceLink";
 import { createMaybeSelector } from "../Utilities/createMaybeSelector";
 import { compareLocale, translate } from "../Utilities/I18n";
-import { pipe, pipe_ } from "../Utilities/pipe";
+import { pipe } from "../Utilities/pipe";
 import { comparingR, SortOptions } from "../Utilities/sortBy";
 import { isString } from "../Utilities/typeCheckUtils";
 import { getLocaleAsProp, getSex } from "./stateSelectors";
@@ -125,15 +125,19 @@ export const getCulturesCombinedSortOptions = createMaybeSelector (
 )
 
 const getProfessionSourceKey =
-  (e: Record<Profession> | Record<ProfessionCombined>): string =>
-    pipe_ (
-      e,
-      x => isProfessionCombined (x) ? ProfessionCombined.A.wikiEntry (x) : ident (x),
-      Profession.AL.src,
-      listToMaybe,
-      maybe ("US25000")
-            (Profession.AL.id)
-    )
+  pipe (
+    Profession.A.src,
+    listToMaybe,
+    maybe ("US25000") (SourceLink.A.id)
+  )
+
+const getProfessionCombinedSourceKey =
+  pipe (
+    ProfessionCombined.A.wikiEntry,
+    Profession.A.src,
+    listToMaybe,
+    maybe ("US25000") (SourceLink.A.id)
+  )
 
 const foldProfessionName =
   (sex: Sex) => pipe (Profession.AL.name, x => isString (x) ? x : NameBySex.A[sex] (x))
@@ -164,11 +168,11 @@ export const getProfessionsCombinedSortOptions = createMaybeSelector (
       ([])
       ((sex: Sex): SortOptions<ProfessionCombined> => [
         comparingR (pipe (ProfessionCombined.A.wikiEntry, foldProfessionName (sex)))
-                    (compareLocale (L10n.A.id (l10n))),
+                   (compareLocale (L10n.A.id (l10n))),
         comparingR (pipe (ProfessionCombined.A.wikiEntry, foldProfessionSubName (sex)))
-                    (compareLocale (L10n.A.id (l10n))),
-        comparingR (pipe (ProfessionCombined.A.wikiEntry, getProfessionSourceKey))
-                    (compareLocale (L10n.A.id (l10n))),
+                   (compareLocale (L10n.A.id (l10n))),
+        comparingR (getProfessionCombinedSourceKey)
+                   (compareLocale (L10n.A.id (l10n))),
       ])
       (msex)
 )

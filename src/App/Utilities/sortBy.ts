@@ -2,6 +2,7 @@ import { on } from "../../Data/Function";
 import { flength, List, sortBy } from "../../Data/List";
 import { EQ, Ordering, reverseCompare } from "../../Data/Ord";
 import { fromDefault, Record, RecordBase } from "../../Data/Record";
+import { L10n, L10nRecord } from "../Models/Wiki/L10n";
 import { compareLocale } from "./I18n";
 import { pipe } from "./pipe";
 
@@ -60,15 +61,18 @@ export const RecordWithName = fromDefault<RecordWithName> ({ name: "" })
 
 const { name } = RecordWithName.AL
 
+const getLocaleId = (locale: string | L10nRecord) => L10n.is (locale) ? L10n.A.id (locale) : locale
+
 /**
  * Sort the list of passed records by their `name` property in ascending order.
  */
 export const sortRecordsByName = (
-  (locale: string) =>
+  (locale: string | L10nRecord) =>
     sortRecordsBy<RecordWithName> ([
-      comparingR<RecordWithName, string> (name) (compareLocale (locale)),
+      comparingR<RecordWithName, string> (name) (compareLocale (getLocaleId (locale))),
     ])
-) as (locale: string) => <A extends RecordWithName> (xs: List<Record<A>>) => List<Record<A>>
+) as (locale: string | L10nRecord) =>
+  <A extends RecordWithName> (xs: List<Record<A>>) => List<Record<A>>
 
 /**
  * `comparingR :: Ord a => (a -> a -> Ordering) -> (b -> a) -> b -> b -> Ordering`

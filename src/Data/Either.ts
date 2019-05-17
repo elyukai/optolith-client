@@ -19,7 +19,7 @@ import { fmap, fmapF } from "./Functor";
 import { Internals } from "./Internals";
 import { cons, consF, List } from "./List";
 import { fromJust, isJust, Just, Maybe, Nothing, Some } from "./Maybe";
-import { Pair } from "./Pair";
+import { Pair, Tuple } from "./Tuple";
 
 export import Left = Internals.Left
 export import Right = Internals.Right
@@ -649,8 +649,8 @@ export const partitionEithers =
   <A, B> (xs: List<Either<A, B>>): Pair<List<A>, List<B>> =>
     List.foldr<Either<A, B>, Pair<List<A>, List<B>>>
       (x => isRight (x)
-            ? Pair.second (consF (x .value))
-            : Pair.first (consF (x .value)))
+            ? Tuple.second (consF (x .value))
+            : Tuple.first (consF (x .value)))
       (Pair<List<A>, List<B>> (List.empty, List.empty))
       (xs)
 

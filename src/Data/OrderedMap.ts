@@ -17,8 +17,8 @@ import { fmapF } from "./Functor";
 import { Internals } from "./Internals";
 import { append, List } from "./List";
 import { bind, fromMaybe, Just, Maybe, maybe, maybe_ } from "./Maybe";
-import { Pair } from "./Pair";
 import { show } from "./Show";
+import { Pair, Tuple } from "./Tuple";
 
 import _OrderedMap = Internals._OrderedMap
 import OrderedSet = Internals.OrderedSet
@@ -852,7 +852,7 @@ export const fromSet =
  */
 export const fromList =
   <K, A> (xs: List<Pair<K, A>>): OrderedMap<K, A> =>
-    fromArray (List.toArray (List.map<Pair<K, A>, [K, A]> (Pair.toArray) (xs)))
+    fromArray (List.toArray (List.map<Pair<K, A>, [K, A]> (Tuple.toArray) (xs)))
 
 
 // FILTER

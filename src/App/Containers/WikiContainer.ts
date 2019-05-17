@@ -1,16 +1,15 @@
 import { connect } from "react-redux";
 import { Action, Dispatch } from "redux";
+import { fromJust, isJust, Maybe } from "../../Data/Maybe";
 import { setWikiCategory1, setWikiCategory2, setWikiCombatTechniquesGroup, setWikiFilter, setWikiFilterAll, setWikiItemTemplatesGroup, setWikiLiturgicalChantsGroup, setWikiProfessionsGroup, setWikiSkillsGroup, setWikiSpecialAbilitiesGroup, setWikiSpellsGroup } from "../Actions/WikiActions";
-import { AppState } from "../Reducers/appReducer";
-import { getSex, getWikiCombatTechniquesGroup, getWikiFilterAll, getWikiFilterText, getWikiItemTemplatesGroup, getWikiLiturgicalChantsGroup, getWikiMainCategory, getWikiProfessionsGroup, getWikiSkillsGroup, getWikiSpecialAbilitiesGroup, getWikiSpellsGroup } from "../Selectors/stateSelectors";
+import { AppStateRecord } from "../Reducers/appReducer";
+import { getWikiCombatTechniquesGroup, getWikiFilterText, getWikiItemTemplatesGroup, getWikiLiturgicalChantsGroup, getWikiMainCategory, getWikiProfessionsGroup, getWikiSkillsGroup, getWikiSpecialAbilitiesGroup, getWikiSpellsGroup } from "../Selectors/stateSelectors";
 import { getPreparedAdvantages, getPreparedBlessings, getPreparedCantrips, getPreparedCombatTechniques, getPreparedCultures, getPreparedDisadvantages, getPreparedItemTemplates, getPreparedLiturgicalChants, getPreparedProfessions, getPreparedRaces, getPreparedSkills, getPreparedSpecialAbilities, getPreparedSpells, getSpecialAbilityGroups } from "../Selectors/wikiSelectors";
 import { Wiki, WikiDispatchProps, WikiOwnProps, WikiStateProps } from "../Views/Wiki/Wiki";
 
-const mapStateToProps = (state: AppState, props: WikiOwnProps) => ({
+const mapStateToProps = (state: AppStateRecord, props: WikiOwnProps): WikiStateProps => ({
   filterText: getWikiFilterText (state),
-  filterAllText: getWikiFilterAll (state),
   category: getWikiMainCategory (state),
-  sex: getSex (state),
   races: getPreparedRaces (state, props),
   cultures: getPreparedCultures (state, props),
   professions: getPreparedProfessions (state, props),
@@ -36,13 +35,13 @@ const mapStateToProps = (state: AppState, props: WikiOwnProps) => ({
 
 const mapDispatchToProps = (dispatch: Dispatch<Action>) => ({
   setCategory1 (category: Maybe<string>) {
-    if (Maybe.isJust (category)) {
-      dispatch (setWikiCategory1 (Maybe.fromJust (category)))
+    if (isJust (category)) {
+      dispatch (setWikiCategory1 (fromJust (category)))
     }
   },
   setCategory2 (category: Maybe<string>) {
-    if (Maybe.isJust (category)) {
-      dispatch (setWikiCategory2 (Maybe.fromJust (category)))
+    if (isJust (category)) {
+      dispatch (setWikiCategory2 (fromJust (category)))
     }
   },
   setFilter (filterText: string) {
@@ -74,7 +73,7 @@ const mapDispatchToProps = (dispatch: Dispatch<Action>) => ({
   },
 })
 
-const connectWiki = connect<WikiStateProps, WikiDispatchProps, WikiOwnProps, AppState> (
+const connectWiki = connect<WikiStateProps, WikiDispatchProps, WikiOwnProps, AppStateRecord> (
   mapStateToProps,
   mapDispatchToProps
 )

@@ -3,6 +3,7 @@ import { Just, Maybe } from "../../../Data/Maybe";
 import { OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { Categories } from "../../Constants/Categories";
+import { CultureCombined } from "../View/CultureCombined";
 import { ProfessionCombined } from "../View/ProfessionCombined";
 import { RaceCombined } from "../View/RaceCombined";
 import { Advantage } from "./Advantage";
@@ -101,7 +102,7 @@ export type ActivatableSkillEntry = Record<Spell>
 export type Entry = EntryWithCategory | Record<ItemTemplate>
 
 export type InlineWikiEntry = Record<RaceCombined>
-                            | Record<Culture>
+                            | Record<CultureCombined>
                             | Record<ProfessionCombined>
                             | Record<Advantage>
                             | Record<Disadvantage>

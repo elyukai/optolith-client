@@ -1,12 +1,14 @@
 import * as React from "react";
 import { equals } from "../../../Data/Eq";
 import { find, List } from "../../../Data/List";
-import { bind, fromJust, isJust, Maybe } from "../../../Data/Maybe";
-import { OrderedMap } from "../../../Data/OrderedMap";
+import { bind, fromJust, isJust, Maybe, Nothing } from "../../../Data/Maybe";
+import { lookup, OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
+import { Categories } from "../../Constants/Categories";
 import { HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { Sex } from "../../Models/Hero/heroTypeHelpers";
 import { Item } from "../../Models/Hero/Item";
+import { CultureCombined, CultureCombinedA_ } from "../../Models/View/CultureCombined";
 import { DerivedCharacteristic } from "../../Models/View/DerivedCharacteristic";
 import { ProfessionCombined, ProfessionCombinedA_ } from "../../Models/View/ProfessionCombined";
 import { RaceCombined, RaceCombinedA_ } from "../../Models/View/RaceCombined";
@@ -29,7 +31,8 @@ import { Spell } from "../../Models/Wiki/Spell";
 import { WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { InlineWikiEntry } from "../../Models/Wiki/wikiTypeHelpers";
 import { DCIds } from "../../Selectors/derivedCharacteristicsSelectors";
-import { pipe_ } from "../../Utilities/pipe";
+import { getCategoryById } from "../../Utilities/IDUtils";
+import { pipe } from "../../Utilities/pipe";
 import { WikiActivatableInfo } from "./WikiActivatableInfo";
 import { WikiBlessingInfo } from "./WikiBlessingInfo";
 import { WikiCantripInfo } from "./WikiCantripInfo";
@@ -57,15 +60,18 @@ export interface WikiInfoContentStateProps {
   cantrips: OrderedMap<string, Record<Cantrip>>
   combatTechniques: OrderedMap<string, Record<CombatTechnique>>
   cultures: OrderedMap<string, Record<Culture>>
+  combinedRaces: List<Record<RaceCombined>>
+  combinedCultures: List<Record<CultureCombined>>
+  combinedProfessions: List<Record<ProfessionCombined>>
+  disadvantages: OrderedMap<string, Record<Disadvantage>>
   derivedCharacteristics: Maybe<OrderedMap<DCIds, Record<DerivedCharacteristic>>>
   hero: Maybe<HeroModelRecord>
-  languages: Record<SpecialAbility>
+  languages: Maybe<Record<SpecialAbility>>
   liturgicalChantExtensions: Maybe<Record<SpecialAbility>>
   liturgicalChants: OrderedMap<string, Record<LiturgicalChant>>
-  list: List<InlineWikiEntry>
   professionVariants: OrderedMap<string, Record<ProfessionVariant>>
   races: OrderedMap<string, Record<Race>>
-  scripts: Record<SpecialAbility>
+  scripts: Maybe<Record<SpecialAbility>>
   sex: Maybe<Sex>
   skills: OrderedMap<string, Record<Skill>>
   spellExtensions: Maybe<Record<SpecialAbility>>
@@ -83,22 +89,9 @@ export type WikiInfoContentProps =
   & WikiInfoContentOwnProps
 
 export function WikiInfoContent (props: WikiInfoContentProps) {
-  const { currentId: mid, list } = props
+  const { currentId: mid } = props
 
-  const mx =
-    bind (mid)
-         (id => find<InlineWikiEntry> (e => {
-                                        if (RaceCombined.is (e)) {
-                                          return RaceCombinedA_.id (e) === id
-                                        }
-                                        else if (ProfessionCombined.is (e)) {
-                                          return ProfessionCombinedA_.id (e) === id
-                                        }
-                                        else {
-                                          return pipe_ (e, Advantage.AL.id, equals (id))
-                                        }
-                                      })
-                                      (list))
+  const mx = getEntry (props) (mid)
 
   if (isJust (mx)) {
     const x = fromJust (mx)
@@ -172,3 +165,58 @@ export function WikiInfoContent (props: WikiInfoContentProps) {
 
   return <WikiInfoContentWrapper {...props} />
 }
+
+const getEntry =
+  (props: WikiInfoContentStateProps) =>
+  (mid: Maybe<string>) =>
+    bind (mid)
+         (id => {
+           const mcategory = getCategoryById (id)
+
+           return bind (mcategory)
+                       ((category): Maybe<InlineWikiEntry> => {
+                         switch (category) {
+                           case Categories.ADVANTAGES:
+                             return lookup (id) (props.advantages)
+
+                           case Categories.BLESSINGS:
+                             return lookup (id) (props.blessings)
+
+                           case Categories.CANTRIPS:
+                             return lookup (id) (props.cantrips)
+
+                           case Categories.COMBAT_TECHNIQUES:
+                             return lookup (id) (props.combatTechniques)
+
+                           case Categories.CULTURES:
+                             return find (pipe (CultureCombinedA_.id, equals (id)))
+                                         (props.combinedCultures)
+
+                           case Categories.DISADVANTAGES:
+                             return lookup (id) (props.disadvantages)
+
+                           case Categories.LITURGIES:
+                             return lookup (id) (props.liturgicalChants)
+
+                           case Categories.PROFESSIONS:
+                             return find (pipe (ProfessionCombinedA_.id, equals (id)))
+                                         (props.combinedProfessions)
+
+                           case Categories.RACES:
+                             return find (pipe (RaceCombinedA_.id, equals (id)))
+                                         (props.combinedRaces)
+
+                           case Categories.SPECIAL_ABILITIES:
+                             return lookup (id) (props.specialAbilities)
+
+                           case Categories.SPELLS:
+                             return lookup (id) (props.spells)
+
+                           case Categories.TALENTS:
+                             return lookup (id) (props.skills)
+
+                           default:
+                             return Nothing
+                         }
+                       })
+         })
