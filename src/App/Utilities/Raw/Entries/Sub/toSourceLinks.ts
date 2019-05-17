@@ -18,7 +18,7 @@ export const toSourceLinks =
   flip (
          lookupKeyValid (
            mensureMapList ("&")
-                          (`BookId, ${Expect.NaturalNumber}, ${Expect.NaturalNumber}?`)
+                          (Expect.G (`BookId, ${Expect.NaturalNumber}, ${Expect.NaturalNumber}?`))
                           (x => {
                             const xs = splitOn (",") (x) as Cons<string>
 
@@ -46,5 +46,5 @@ export const toSourceLinks =
          )
          (TableType.L10n)
        )
-       ("variants") as
+       ("src") as
          (lookup_l10n: (key: string) => Maybe<string>) => Either<string, List<Record<SourceLink>>>
