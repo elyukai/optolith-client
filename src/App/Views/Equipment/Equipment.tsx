@@ -7,6 +7,7 @@ import { bindF, elem, ensure, fromJust, fromMaybe, fromMaybeR, isJust, Just, map
 import { Record } from "../../../Data/Record";
 import { ItemEditorContainer } from "../../Containers/ItemEditorContainer";
 import { WikiInfoContainer } from "../../Containers/WikiInfoContainer";
+import { HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { fromItemTemplate, Item } from "../../Models/Hero/Item";
 import { Purse } from "../../Models/Hero/Purse";
 import { CombatTechniqueWithRequirements, CombatTechniqueWithRequirementsA_ } from "../../Models/View/CombatTechniqueWithRequirements";
@@ -34,6 +35,7 @@ import { PurseAndTotals } from "./PurseAndTotals";
 
 export interface EquipmentOwnProps {
   l10n: L10nRecord
+  hero: HeroModelRecord
 }
 
 export interface EquipmentStateProps {
@@ -173,7 +175,7 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
 
     return (
       <Page id="equipment">
-        <Slidein isOpened={showAddSlidein} close={this.hideAddSlidein}>
+        <Slidein isOpen={showAddSlidein} close={this.hideAddSlidein}>
           <Options>
             <TextField
               hint={translate (l10n) ("search")}

@@ -21,7 +21,7 @@ import { sortStrings } from "../../../Utilities/sortBy";
 import { TextBox } from "../../Universal/TextBox";
 
 export interface SpellsSheetSpellsProps {
-  attributes: Maybe<List<Record<AttributeCombined>>>
+  attributes: List<Record<AttributeCombined>>
   checkAttributeValueVisibility: boolean
   derivedCharacteristics: List<Record<DerivedCharacteristic>>
   l10n: L10nRecord
@@ -33,7 +33,7 @@ const DCA = DerivedCharacteristic.A
 
 export function SpellsSheetSpells (props: SpellsSheetSpellsProps) {
   const {
-    attributes: mattributes,
+    attributes,
     checkAttributeValueVisibility,
     derivedCharacteristics,
     l10n,
@@ -92,10 +92,9 @@ export function SpellsSheetSpells (props: SpellsSheetSpellsProps) {
             fmap (pipe (
               map (e => {
                 const check =
-                  fmapF (mattributes)
-                        (attributes => getAttributeStringByIdList (checkAttributeValueVisibility)
-                                                                  (attributes)
-                                                                  (SCA_.check (e)))
+                  getAttributeStringByIdList (checkAttributeValueVisibility)
+                                             (attributes)
+                                             (SCA_.check (e))
 
 
                 return (

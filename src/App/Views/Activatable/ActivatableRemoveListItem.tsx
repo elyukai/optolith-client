@@ -71,7 +71,7 @@ export class ActivatableRemoveListItem extends React.Component<ActivatableRemove
       isImportant,
       isTypical,
       isUntypical,
-      l10n: locale,
+      l10n,
       selectForInfo,
       removeFromList,
     } = this.props
@@ -94,7 +94,7 @@ export class ActivatableRemoveListItem extends React.Component<ActivatableRemove
               ? cons (levelOptions)
                      (DropdownOption ({
                        id: Just (4),
-                       name: translate (locale) ("nativetongue.short"),
+                       name: translate (l10n) ("nativetongue.short"),
                      }))
               : levelOptions
 
@@ -123,10 +123,15 @@ export class ActivatableRemoveListItem extends React.Component<ActivatableRemove
                 })
       )
 
+    const baseName = AAA_.baseName (item)
+
     return (
       <ListItem important={isImportant} recommended={isTypical} unrecommended={isUntypical}>
         <ListItemName
-          name={pipe_ (mlevel_element, misStringM, maybe (AAA_.name (item))
+          name={pipe_ (mlevel_element, misStringM, maybe (maybe (baseName)
+                                                                ((add_str: string) =>
+                                                                  `${baseName} (${add_str})`)
+                                                                (AAA_.addName (item)))
                                                          (l => `${AAA_.name (item)}${l}`))}
           />
         <ListItemSelections>
@@ -140,7 +145,7 @@ export class ActivatableRemoveListItem extends React.Component<ActivatableRemove
         {hideGroup !== true
           ? (
             <ListItemGroup
-              list={translate (locale) ("specialabilitygroups")}
+              list={translate (l10n) ("specialabilitygroups")}
               index={AAA_.gr (item)}
               />
           )

@@ -2,7 +2,7 @@ import { not } from "../../Data/Bool";
 import { List, subscript } from "../../Data/List";
 import { bindF, ensure, fromMaybe, Just, Maybe, Nothing } from "../../Data/Maybe";
 import { minus } from "./Chars";
-import { inc } from "./mathUtils";
+import { dec } from "./mathUtils";
 import { pipe } from "./pipe";
 import { isInteger, isNaturalNumber } from "./RegexUtils";
 
@@ -35,7 +35,7 @@ const romanNumbers =
  * toRoman 3 == "III"
  * ```
  */
-export const toRoman = pipe (inc, subscript (romanNumbers), fromMaybe (""))
+export const toRoman = pipe (dec, subscript (romanNumbers), fromMaybe (""))
 
 /**
  * Converts a 0-based number to a Roman number.
@@ -61,6 +61,20 @@ export const signNullCustom =
  * Forces signing on the given number.
  */
 export const sign = signNullCustom ("0")
+
+/**
+ * `signNeg :: Int -> String`
+ *
+ * Correctly signs numbers. Basically, this makes negative numbers use the
+ * typographically correct minus sign instead of the default hyphen.
+ *
+ * ```haskell
+ * signNeg -1 === "−1"
+ * signNeg 0 === "0"
+ * signNeg 1 === "1"
+ * ```
+ */
+export const signNeg = (x: number) => x < 0 ? `${minus}${Math.abs (x)}` : `${x}`
 
 /**
  * Forces signing on the given number, ignores 0.

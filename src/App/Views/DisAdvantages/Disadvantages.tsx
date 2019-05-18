@@ -112,7 +112,7 @@ export class Disadvantages extends React.Component<DisadvantagesProps, Disadvant
 
     return (
       <Page id="advantages">
-        <Slidein isOpened={this.state.showAddSlidein} close={this.hideAddSlidein}>
+        <Slidein isOpen={this.state.showAddSlidein} close={this.hideAddSlidein}>
           <Options>
             <TextField
               hint={translate (l10n) ("search")}

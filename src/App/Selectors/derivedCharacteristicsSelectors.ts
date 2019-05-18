@@ -21,7 +21,7 @@ import { getAttributeValueWithDefault } from "../Utilities/Increasable/attribute
 import { add, multiply, negate, subtract } from "../Utilities/mathUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
 import { isBookEnabled } from "../Utilities/RulesUtils";
-import { mapGetToMaybeSlice } from "../Utilities/SelectorsUtils";
+import { mapGetToMaybeSlice, mapGetToSliceWithProps } from "../Utilities/SelectorsUtils";
 import { getPrimaryBlessedAttribute, getPrimaryMagicalAttribute } from "./attributeSelectors";
 import { getCurrentRace } from "./rcpSelectors";
 import { getRuleBooksEnabled } from "./rulesSelectors";
@@ -47,7 +47,7 @@ const getFirstLevel =
 
 export const getLP = createMaybeSelector (
   getCurrentRace,
-  mapGetToMaybeSlice (getAttributes) (prefixAttr (7)),
+  mapGetToSliceWithProps (getAttributes) (prefixAttr (7)),
   getPermanentLifePoints,
   mapGetToMaybeSlice (getAdvantages) (prefixAdv (25)),
   mapGetToMaybeSlice (getDisadvantages) (prefixDis (28)),
@@ -185,9 +185,9 @@ export const getKP = createMaybeSelector (
 
 export const getSPI = createMaybeSelector (
   getCurrentRace,
-  mapGetToMaybeSlice (getAttributes) (prefixAttr (1)),
-  mapGetToMaybeSlice (getAttributes) (prefixAttr (2)),
-  mapGetToMaybeSlice (getAttributes) (prefixAttr (3)),
+  mapGetToSliceWithProps (getAttributes) (prefixAttr (1)),
+  mapGetToSliceWithProps (getAttributes) (prefixAttr (2)),
+  mapGetToSliceWithProps (getAttributes) (prefixAttr (3)),
   mapGetToMaybeSlice (getAdvantages) (prefixAdv (26)),
   mapGetToMaybeSlice (getDisadvantages) (prefixDis (29)),
   getLocaleAsProp,
@@ -218,8 +218,8 @@ export const getSPI = createMaybeSelector (
 
 export const getTOU = createMaybeSelector (
   getCurrentRace,
-  mapGetToMaybeSlice (getAttributes) (prefixAttr (7)),
-  mapGetToMaybeSlice (getAttributes) (prefixAttr (8)),
+  mapGetToSliceWithProps (getAttributes) (prefixAttr (7)),
+  mapGetToSliceWithProps (getAttributes) (prefixAttr (8)),
   mapGetToMaybeSlice (getAdvantages) (prefixAdv (27)),
   mapGetToMaybeSlice (getDisadvantages) (prefixDis (30)),
   getLocaleAsProp,
@@ -248,7 +248,7 @@ export const getTOU = createMaybeSelector (
 )
 
 export const getDO = createMaybeSelector (
-  mapGetToMaybeSlice (getAttributes) (prefixAttr (6)),
+  mapGetToSliceWithProps (getAttributes) (prefixAttr (6)),
   mapGetToMaybeSlice (getSpecialAbilities) (prefixSA (64)),
   getLocaleAsProp,
   (magi, mimproved_dodge, l10n) => {
@@ -271,8 +271,8 @@ export const getDO = createMaybeSelector (
 )
 
 export const getINI = createMaybeSelector (
-  mapGetToMaybeSlice (getAttributes) (prefixAttr (1)),
-  mapGetToMaybeSlice (getAttributes) (prefixAttr (6)),
+  mapGetToSliceWithProps (getAttributes) (prefixAttr (1)),
+  mapGetToSliceWithProps (getAttributes) (prefixAttr (6)),
   mapGetToMaybeSlice (getSpecialAbilities) (prefixSA (51)),
   getLocaleAsProp,
   (mcou, magi, mcombat_reflexes, l10n) => {
@@ -333,7 +333,7 @@ export const getMOV = createMaybeSelector (
 )
 
 export const getWT = createMaybeSelector (
-  mapGetToMaybeSlice (getAttributes) (prefixAttr (7)),
+  mapGetToSliceWithProps (getAttributes) (prefixAttr (7)),
   mapGetToMaybeSlice (getAdvantages) (prefixAdv (54)),
   mapGetToMaybeSlice (getDisadvantages) (prefixDis (56)),
   getLocaleAsProp,

@@ -2,6 +2,7 @@ import * as React from "react";
 import { List } from "../../../Data/List";
 import { Maybe } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
+import { HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { AttributeWithRequirements } from "../../Models/View/AttributeWithRequirements";
 import { DerivedCharacteristic } from "../../Models/View/DerivedCharacteristic";
 import { L10nRecord } from "../../Models/Wiki/L10n";
@@ -16,6 +17,7 @@ import { AttributesPermanentList } from "./AttributesPermanentList";
 
 export interface AttributesOwnProps {
   l10n: L10nRecord
+  hero: HeroModelRecord
 }
 
 export interface AttributesStateProps {

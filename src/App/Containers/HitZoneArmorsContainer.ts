@@ -15,7 +15,7 @@ const mapStateToProps = (
   ownProps: HitZoneArmorsOwnProps
 ): HitZoneArmorsStateProps => ({
   armorZones: getFilteredHitZoneArmors (state, ownProps),
-  carryingCapacity: getCarryingCapacity (state),
+  carryingCapacity: getCarryingCapacity (state, ownProps),
   initialStartingWealth: getInitialStartingWealth (state),
   items: getItems (state),
   isInHitZoneArmorCreation: getIsInHitZoneArmorCreation (state),

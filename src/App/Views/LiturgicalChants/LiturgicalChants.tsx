@@ -8,6 +8,7 @@ import { Pair, snd } from "../../../Data/Pair";
 import { Record } from "../../../Data/Record";
 import { WikiInfoContainer } from "../../Containers/WikiInfoContainer";
 import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
+import { HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { AttributeCombined } from "../../Models/View/AttributeCombined";
 import { BlessingCombined } from "../../Models/View/BlessingCombined";
 import { DerivedCharacteristic } from "../../Models/View/DerivedCharacteristic";
@@ -40,12 +41,13 @@ import { TextField } from "../Universal/TextField";
 
 export interface LiturgicalChantsOwnProps {
   l10n: L10nRecord
+  hero: HeroModelRecord
 }
 
 export interface LiturgicalChantsStateProps {
   activeList: Maybe<List<Record<BlessingCombined> | Record<LiturgicalChantWithRequirements>>>
   addChantsDisabled: boolean
-  attributes: Maybe<List<Record<AttributeCombined>>>
+  attributes: List<Record<AttributeCombined>>
   derivedCharacteristics: OrderedMap<DCIds, Record<DerivedCharacteristic>>
   enableActiveItemHints: boolean
   filterText: string
@@ -172,7 +174,7 @@ export class LiturgicalChants
     return (
       <Page id="liturgies">
         <Slidein
-          isOpened={showAddSlidein}
+          isOpen={showAddSlidein}
           close={this.hideAddSlidein}
           className="adding-liturgical-chants"
           >

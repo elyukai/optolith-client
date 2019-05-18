@@ -106,7 +106,7 @@ export class SpecialAbilities
 
     return (
       <Page id="specialabilities">
-        <Slidein isOpened={showAddSlidein} close={this.hideAddSlidein}>
+        <Slidein isOpen={showAddSlidein} close={this.hideAddSlidein}>
           <Options>
             <TextField
               hint={translate (l10n) ("search")}

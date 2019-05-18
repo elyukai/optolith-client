@@ -5,11 +5,9 @@ import { bind, fromJust, isJust, Maybe, Nothing } from "../../../Data/Maybe";
 import { lookup, OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { Categories } from "../../Constants/Categories";
-import { HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { Sex } from "../../Models/Hero/heroTypeHelpers";
 import { Item } from "../../Models/Hero/Item";
 import { CultureCombined, CultureCombinedA_ } from "../../Models/View/CultureCombined";
-import { DerivedCharacteristic } from "../../Models/View/DerivedCharacteristic";
 import { ProfessionCombined, ProfessionCombinedA_ } from "../../Models/View/ProfessionCombined";
 import { RaceCombined, RaceCombinedA_ } from "../../Models/View/RaceCombined";
 import { Advantage } from "../../Models/Wiki/Advantage";
@@ -30,7 +28,6 @@ import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
 import { Spell } from "../../Models/Wiki/Spell";
 import { WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { InlineWikiEntry } from "../../Models/Wiki/wikiTypeHelpers";
-import { DCIds } from "../../Selectors/derivedCharacteristicsSelectors";
 import { getCategoryById } from "../../Utilities/IDUtils";
 import { pipe } from "../../Utilities/pipe";
 import { WikiActivatableInfo } from "./WikiActivatableInfo";
@@ -64,8 +61,6 @@ export interface WikiInfoContentStateProps {
   combinedCultures: List<Record<CultureCombined>>
   combinedProfessions: List<Record<ProfessionCombined>>
   disadvantages: OrderedMap<string, Record<Disadvantage>>
-  derivedCharacteristics: Maybe<OrderedMap<DCIds, Record<DerivedCharacteristic>>>
-  hero: Maybe<HeroModelRecord>
   languages: Maybe<Record<SpecialAbility>>
   liturgicalChantExtensions: Maybe<Record<SpecialAbility>>
   liturgicalChants: OrderedMap<string, Record<LiturgicalChant>>
@@ -126,7 +121,7 @@ export function WikiInfoContent (props: WikiInfoContentProps) {
       </WikiInfoContentWrapper>
     }
 
-    if (Culture.is (x)) {
+    if (CultureCombined.is (x)) {
       return <WikiInfoContentWrapper {...props}>
         <WikiCultureInfo {...props} x={x} />
       </WikiInfoContentWrapper>

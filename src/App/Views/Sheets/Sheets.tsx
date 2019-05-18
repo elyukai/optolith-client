@@ -59,7 +59,7 @@ export interface SheetsStateProps {
   ap: Maybe<Record<AdventurePointsCategories>>
   armors: Maybe<List<Record<Armor>>>
   armorZones: Maybe<List<Record<HitZoneArmorForView>>>
-  attributes: Maybe<List<Record<AttributeCombined>>>
+  attributes: List<Record<AttributeCombined>>
   avatar: Maybe<string>
   checkAttributeValueVisibility: boolean
   combatSpecialAbilities: Maybe<List<Record<ActiveActivatable<SpecialAbility>>>>

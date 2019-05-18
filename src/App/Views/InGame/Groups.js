@@ -29,7 +29,7 @@ export class Groups extends Component {
 	render() {
 		return (
 			<div className="page" id="groups">
-				<Slidein isOpened={this.state.requestsOpen} close={this.closeRequests}>
+				<Slidein isOpen={this.state.requestsOpen} close={this.closeRequests}>
 					Liste mit den Namen der Helden und dazugehörigen Spieler, die ihren Helden freigeben wollen, und Annahme- und Ablehnoptionen
 				</Slidein>
 				<Scroll className="full">

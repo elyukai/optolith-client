@@ -1,5 +1,5 @@
 // @ts-check
-const { Tuple, bimap, first, second, fst, snd, curry, curryN, uncurry, uncurryN, uncurryN3, swap, toArray, fromArray, isTuple, nth, nthF } = require('../Tuple')
+const { Tuple, bimap, first, second, fst, snd, curry, uncurry, swap, toArray, fromArray, isTuple } = require('../Tuple')
 
 // CONSTRUCTOR
 
@@ -88,10 +88,6 @@ describe ("curry", () => {
   })
 })
 
-test ('curryN', () => {
-  expect (curryN ((x, y) => x + y) (2) (3)) .toEqual (5)
-})
-
 describe ("uncurry", () => {
   it ("returns a Pair", () => {
     expect (uncurry (a => b => a + b) (Tuple (2, 3))) .toEqual (5)
@@ -101,14 +97,6 @@ describe ("uncurry", () => {
     // @ts-ignore
     expect (() => uncurry (a => b => a + b) (Tuple (2, 3, 4))) .toThrow ()
   })
-})
-
-test ('uncurryN', () => {
-  expect (uncurryN (a => b => a + b) (2, 3)) .toEqual (5)
-})
-
-test ('uncurryN3', () => {
-  expect (uncurryN3 (a => b => c => a + b + c) (2, 3, 8)) .toEqual (13)
 })
 
 describe ("swap", () => {

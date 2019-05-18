@@ -14,7 +14,7 @@ const mapStateToProps = (
   state: AppStateRecord,
   ownProps: CombatTechniquesOwnProps
 ): CombatTechniquesStateProps => ({
-  attributes: getAttributesForSheet (state),
+  attributes: getAttributesForSheet (state, ownProps),
   derivedCharacteristics: getDerivedCharacteristicsMap (state, ownProps),
   isRemovingEnabled: getIsRemovingEnabled (state),
   list: getFilteredCombatTechniques (state, ownProps),

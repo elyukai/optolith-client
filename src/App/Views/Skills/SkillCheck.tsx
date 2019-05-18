@@ -2,7 +2,7 @@ import * as React from "react";
 import { equals } from "../../../Data/Eq";
 import { fmap } from "../../../Data/Functor";
 import { find, intercalate, List, toArray } from "../../../Data/List";
-import { bindF, fromMaybeR, imapMaybe, liftM2, mapMaybe, Maybe } from "../../../Data/Maybe";
+import { fromMaybeR, imapMaybe, liftM2, mapMaybe, Maybe } from "../../../Data/Maybe";
 import { lookupF, OrderedMap } from "../../../Data/OrderedMap";
 import { elems, OrderedSet } from "../../../Data/OrderedSet";
 import { Record } from "../../../Data/Record";
@@ -13,7 +13,7 @@ import { DCIds } from "../../Selectors/derivedCharacteristicsSelectors";
 import { pipe, pipe_ } from "../../Utilities/pipe";
 
 export interface SkillCheckProps {
-  attributes: Maybe<List<Record<AttributeCombined>>>
+  attributes: List<Record<AttributeCombined>>
   check?: List<string>
   checkDisabled?: boolean
   checkmod?: OrderedSet<CheckModifier>
@@ -36,7 +36,7 @@ export function SkillCheck (props: SkillCheckProps) {
           check,
           imapMaybe (index => id => pipe_ (
                                       attributes,
-                                      bindF (find (pipe (AttributeCombinedA_.id, equals (id)))),
+                                      find (pipe (AttributeCombinedA_.id, equals (id))),
                                       fmap (attr => (
                                         <div key={`${id}${index}`} className={`check ${id}`}>
                                           <span className="short">

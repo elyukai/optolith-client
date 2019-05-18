@@ -21,7 +21,7 @@ const mapStateToProps =
     isRemovingEnabled: getIsRemovingEnabled (state),
     derived: getDerivedCharacteristics (state, ownProps),
     maxTotalAttributeValues: getMaxTotalAttributeValues (state),
-    sum: getAttributeSum (state),
+    sum: getAttributeSum (state, ownProps),
     getEditPermanentEnergy: getEditPermanentEnergy (state),
     getAddPermanentEnergy: getAddPermanentEnergy (state),
   })

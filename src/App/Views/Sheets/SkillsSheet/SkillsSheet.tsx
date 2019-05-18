@@ -22,7 +22,7 @@ import { SkillsSheetScripts } from "./SkillsSheetScripts";
 import { SkillsSheetSkills } from "./SkillsSheetSkills";
 
 export interface SkillsSheetProps {
-  attributes: Maybe<List<Record<AttributeCombined>>>
+  attributes: List<Record<AttributeCombined>>
   checkAttributeValueVisibility: boolean
   languagesStateEntry: Maybe<Record<ActivatableDependent>>
   languagesWikiEntry: Maybe<Record<SpecialAbility>>

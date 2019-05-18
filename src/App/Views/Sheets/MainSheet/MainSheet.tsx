@@ -30,7 +30,7 @@ import { MainSheetPersonalData } from "./MainSheetPersonalData";
 export interface MainSheetProps {
   advantagesActive: Maybe<List<Record<ActiveActivatable<Advantage>>>>
   ap: Maybe<Record<AdventurePointsCategories>>
-  attributes: Maybe<List<Record<AttributeCombined>>>
+  attributes: List<Record<AttributeCombined>>
   avatar: Maybe<string>
   culture: Maybe<Record<Culture>>
   derivedCharacteristics: List<Record<DerivedCharacteristic>>

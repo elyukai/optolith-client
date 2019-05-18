@@ -23,7 +23,7 @@ import { pairToIncreaseSkill } from "../../../Models/Wiki/sub/IncreaseSkill";
 import { pairToIncreaseSkillOrList } from "../../../Models/Wiki/sub/IncreaseSkillList";
 import { NameBySex } from "../../../Models/Wiki/sub/NameBySex";
 import { AnyProfessionVariantSelection, ProfessionSelectionIds } from "../../../Models/Wiki/wikiTypeHelpers";
-import { prefixId } from "../../IDUtils";
+import { prefixCT, prefixId } from "../../IDUtils";
 import { toInt, toNatural } from "../../NumberUtils";
 import { pipe } from "../../pipe";
 import { mergeRowsById } from "../mergeTableRows";
@@ -84,7 +84,7 @@ const stringToVariantSelections =
                   id: Nothing,
                   amount: obj .amount,
                   value: obj .value,
-                  sid: fromArray (obj .sid),
+                  sid: fromArray (obj .sid .map (prefixCT)),
                 }))
               : isRemoveRawCombatTechniquesSelection (obj)
               ? Just (RemoveCombatTechniquesSelection)
@@ -93,7 +93,7 @@ const stringToVariantSelections =
                   id: Nothing,
                   amount: obj .amount,
                   value: obj .value,
-                  sid: fromArray (obj .sid),
+                  sid: fromArray (obj .sid .map (prefixCT)),
                 }))
               : isRemoveRawCombatTechniquesSecondSelection (obj)
               ? Just (RemoveCombatTechniquesSecondSelection)

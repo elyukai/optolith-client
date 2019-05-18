@@ -9,6 +9,7 @@ import { Record } from "../../../Data/Record";
 import { Pair, snd } from "../../../Data/Tuple";
 import { WikiInfoContainer } from "../../Containers/WikiInfoContainer";
 import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
+import { HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { AttributeCombined } from "../../Models/View/AttributeCombined";
 import { CantripCombined } from "../../Models/View/CantripCombined";
 import { DerivedCharacteristic } from "../../Models/View/DerivedCharacteristic";
@@ -42,12 +43,13 @@ import { TextField } from "../Universal/TextField";
 
 export interface SpellsOwnProps {
   l10n: L10nRecord
+  hero: HeroModelRecord
 }
 
 export interface SpellsStateProps {
   activeList: Maybe<List<Record<SpellWithRequirements> | Record<CantripCombined>>>
   addSpellsDisabled: Maybe<boolean>
-  attributes: Maybe<List<Record<AttributeCombined>>>
+  attributes: List<Record<AttributeCombined>>
   derivedCharacteristics: OrderedMap<DCIds, Record<DerivedCharacteristic>>
   enableActiveItemHints: boolean
   filterText: string
@@ -170,7 +172,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
 
     return (
       <Page id="spells">
-        <Slidein isOpened={showAddSlidein} close={this.hideAddSlidein} className="adding-spells">
+        <Slidein isOpen={showAddSlidein} close={this.hideAddSlidein} className="adding-spells">
           <Options>
             <TextField
               hint={translate (l10n) ("search")}

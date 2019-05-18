@@ -2,13 +2,11 @@ import * as React from "react";
 import { Maybe } from "../../../Data/Maybe";
 import { OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
-import { DerivedCharacteristic } from "../../Models/View/DerivedCharacteristic";
 import { Attribute } from "../../Models/Wiki/Attribute";
 import { Book } from "../../Models/Wiki/Book";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
 import { Spell } from "../../Models/Wiki/Spell";
-import { DCIds } from "../../Selectors/derivedCharacteristicsSelectors";
 import { WikiCastingTime } from "./Elements/WikiCastingTime";
 import { WikiCost } from "./Elements/WikiCost";
 import { WikiDuration } from "./Elements/WikiDuration";
@@ -26,7 +24,6 @@ import { WikiBoxTemplate } from "./WikiBoxTemplate";
 export interface WikiSpellInfoProps {
   attributes: OrderedMap<string, Record<Attribute>>
   books: OrderedMap<string, Record<Book>>
-  derivedCharacteristics: Maybe<OrderedMap<DCIds, Record<DerivedCharacteristic>>>
   x: Record<Spell>
   l10n: L10nRecord
   spellExtensions: Maybe<Record<SpecialAbility>>

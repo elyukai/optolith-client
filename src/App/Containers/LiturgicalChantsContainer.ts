@@ -15,7 +15,7 @@ const mapStateToProps = (
   state: AppStateRecord,
   ownProps: LiturgicalChantsOwnProps
 ): LiturgicalChantsStateProps => ({
-  attributes: getAttributesForSheet (state),
+  attributes: getAttributesForSheet (state, ownProps),
   addChantsDisabled: isActivationDisabled (state),
   derivedCharacteristics: getDerivedCharacteristicsMap (state, ownProps),
   enableActiveItemHints: getEnableActiveItemHints (state),

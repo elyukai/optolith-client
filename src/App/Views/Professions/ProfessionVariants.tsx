@@ -1,7 +1,8 @@
 import * as React from "react";
 import { ident } from "../../../Data/Function";
-import { consF, find, List, map } from "../../../Data/List";
-import { bind, Just, liftM2, Maybe, maybeRNull } from "../../../Data/Maybe";
+import { fmap } from "../../../Data/Functor";
+import { consF, find, List, map, notNull } from "../../../Data/List";
+import { bind, ensure, join, Just, liftM2, Maybe, maybeRNull } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
 import { Sex } from "../../Models/Hero/heroTypeHelpers";
 import { ProfessionCombined, ProfessionCombinedA_ } from "../../Models/View/ProfessionCombined";
@@ -41,19 +42,23 @@ export function ProfessionVariants (props: ProfessionVariantsProps) {
              pipe_ (
                prof,
                PCA.mappedVariants,
-               map (prof_var => {
-                 const name = getNameBySex (sex) (PVCA_.name (prof_var))
-                 const ap_tag = translate (l10n) ("adventurepoints.short")
+               ensure (notNull),
+               fmap (pipe (
+                 map (prof_var => {
+                   const name = getNameBySex (sex) (PVCA_.name (prof_var))
+                   const ap_tag = translate (l10n) ("adventurepoints.short")
+                   const ap = Maybe.sum (PCA_.ap (prof)) + PVCA_.ap (prof_var)
 
-                 return Option ({
-                   name: `${name} (${Maybe.sum (PCA_.ap (prof)) + PVCA_.ap (prof_var)} ${ap_tag})`,
-                   value: Just (PVCA_.id (prof_var)),
-                 })
-               }),
-               sortRecordsByName (L10n.A.id (l10n)),
-               !PCA_.isVariantRequired (prof)
-                 ? consF (Option ({ name: translate (l10n) ("novariant") }))
-                 : ident
+                   return Option ({
+                     name: `${name} (${ap} ${ap_tag})`,
+                     value: Just (PVCA_.id (prof_var)),
+                   })
+                 }),
+                 sortRecordsByName (L10n.A.id (l10n)),
+                 !PCA_.isVariantRequired (prof)
+                   ? consF (Option ({ name: translate (l10n) ("novariant") }))
+                   : ident
+               ))
              ))
            (msex)
            (bind (professions) (find (pipe (PCA_.id, Maybe.elemF (currentProfessionId)))))
@@ -65,5 +70,5 @@ export function ProfessionVariants (props: ProfessionVariantsProps) {
                         array={vars}
                         />
                     ))
-                    (mvars)
+                    (join (mvars))
 }

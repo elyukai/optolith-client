@@ -4,6 +4,7 @@ import { List, map, notNull, toArray } from "../../../Data/List";
 import { bindF, ensure, isJust, Maybe } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
 import { EditHitZoneArmor } from "../../Models/Hero/EditHitZoneArmor";
+import { HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { HitZoneArmor } from "../../Models/Hero/HitZoneArmor";
 import { Item } from "../../Models/Hero/Item";
 import { Purse } from "../../Models/Hero/Purse";
@@ -28,6 +29,7 @@ import { HitZoneArmorsListItem } from "./HitZoneArmorsListItem";
 
 export interface HitZoneArmorsOwnProps {
   l10n: L10nRecord
+  hero: HeroModelRecord
 }
 
 export interface HitZoneArmorsStateProps {

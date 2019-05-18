@@ -1,19 +1,16 @@
 import * as React from "react";
 import { thrush } from "../../../../Data/Function";
 import { fmap, fmapF } from "../../../../Data/Functor";
-import { intercalate, List } from "../../../../Data/List";
+import { intercalate, List, map } from "../../../../Data/List";
 import { fromMaybe, mapMaybe, Maybe } from "../../../../Data/Maybe";
 import { lookupF, OrderedMap } from "../../../../Data/OrderedMap";
 import { OrderedSet, toList } from "../../../../Data/OrderedSet";
 import { Record, RecordBase } from "../../../../Data/Record";
-import { DerivedCharacteristic } from "../../../Models/View/DerivedCharacteristic";
 import { Attribute } from "../../../Models/Wiki/Attribute";
 import { L10nRecord } from "../../../Models/Wiki/L10n";
 import { CheckModifier } from "../../../Models/Wiki/wikiTypeHelpers";
-import { DCIds } from "../../../Selectors/derivedCharacteristicsSelectors";
-import { localizeOrList } from "../../../Utilities/I18n";
+import { localizeOrList, translate } from "../../../Utilities/I18n";
 import { pipe, pipe_ } from "../../../Utilities/pipe";
-import { renderMaybeWith } from "../../../Utilities/ReactUtils";
 import { WikiProperty } from "../WikiProperty";
 
 interface Accessors<A extends RecordBase> {
@@ -25,18 +22,14 @@ export interface WikiSkillCheckProps<A extends RecordBase> {
   attributes: OrderedMap<string, Record<Attribute>>
   x: Record<A>
   acc: Accessors<A>
-  derivedCharacteristics: Maybe<OrderedMap<DCIds, Record<DerivedCharacteristic>>>
   l10n: L10nRecord
 }
-
-const DCA = DerivedCharacteristic.A
 
 export function WikiSkillCheck<A extends RecordBase> (props: WikiSkillCheckProps<A>) {
   const {
     attributes,
     x,
     acc,
-    derivedCharacteristics: mderived_characteristics,
     l10n,
   } = props
 
@@ -50,14 +43,16 @@ export function WikiSkillCheck<A extends RecordBase> (props: WikiSkillCheckProps
 
   const checkmods = fmapF (Maybe (acc.checkmod)) (pipe (thrush (x), toList))
 
-  const mod = fmapF (mderived_characteristics)
-                    (dc => mapMaybe (pipe (lookupF (dc), fmap (DCA.short)))
-                                    (fromMaybe (List<CheckModifier> ()) (checkmods)))
+  const mod = map ((id: CheckModifier) =>
+                    id === "SPI"
+                      ? translate (l10n) ("spirit.short")
+                      : translate (l10n) ("toughness.short"))
+                  (fromMaybe (List<CheckModifier> ()) (checkmods))
 
   return (
     <WikiProperty l10n={l10n} title="check">
       {checkString}
-      {renderMaybeWith (localizeOrList (l10n)) (mod)}
+      {localizeOrList (l10n) (mod)}
     </WikiProperty>
   )
 }

@@ -15,7 +15,7 @@ import { Equipment, EquipmentDispatchProps, EquipmentOwnProps, EquipmentStatePro
 const mapStateToProps =
   (state: AppStateRecord, ownProps: EquipmentOwnProps): EquipmentStateProps => ({
     combatTechniques: getFilteredCombatTechniques (state, ownProps),
-    carryingCapacity: getCarryingCapacity (state),
+    carryingCapacity: getCarryingCapacity (state, ownProps),
     initialStartingWealth: getInitialStartingWealth (state),
     items: getFilteredItems (state, ownProps),
     hasNoAddedAP: getHasCurrentNoAddedAP (state),

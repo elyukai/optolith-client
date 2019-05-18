@@ -1,18 +1,16 @@
 import * as React from "react";
-import { fmap } from "../../../Data/Functor";
 import { List, map, toArray } from "../../../Data/List";
-import { fromMaybeR, Maybe } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
 import { AttributeCombined, AttributeCombinedA_ } from "../../Models/View/AttributeCombined";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { minus } from "../../Utilities/Chars";
 import { translate } from "../../Utilities/I18n";
-import { pipe, pipe_ } from "../../Utilities/pipe";
+import { pipe_ } from "../../Utilities/pipe";
 import { TextBox } from "../Universal/TextBox";
 import { AttributeModsListItem } from "./AttributeModsListItem";
 
 export interface AttributeModsProps {
-  attributes: Maybe<List<Record<AttributeCombined>>>
+  attributes: List<Record<AttributeCombined>>
   l10n: L10nRecord
 }
 
@@ -38,11 +36,8 @@ export function AttributeMods (props: AttributeModsProps) {
         <tbody>
           {pipe_ (
             props.attributes,
-            fmap (pipe (
-              map (e => <AttributeModsListItem attribute={e} key={AttributeCombinedA_.id (e)} />),
-              toArray
-            )),
-            fromMaybeR (null)
+            map (e => <AttributeModsListItem attribute={e} key={AttributeCombinedA_.id (e)} />),
+            toArray
           )}
         </tbody>
       </table>

@@ -10,7 +10,6 @@ import { isOrderedMap, lookup, lookupF, member, OrderedMap } from "../../../Data
 import { fromDefault, makeLenses, Record, RecordI } from "../../../Data/Record";
 import { Categories } from "../../Constants/Categories";
 import { ActiveObjectWithId } from "../../Models/ActiveEntries/ActiveObjectWithId";
-import { HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { ActivatableNameCostA_ } from "../../Models/View/ActivatableNameCost";
 import { Advantage } from "../../Models/Wiki/Advantage";
 import { Attribute } from "../../Models/Wiki/Attribute";
@@ -44,7 +43,6 @@ import { WikiProperty } from "./WikiProperty";
 export interface WikiActivatableInfoProps {
   attributes: OrderedMap<string, Record<Attribute>>
   books: OrderedMap<string, Record<Book>>
-  hero: Maybe<HeroModelRecord>
   wiki: WikiModelRecord
   x: Activatable
   l10n: L10nRecord

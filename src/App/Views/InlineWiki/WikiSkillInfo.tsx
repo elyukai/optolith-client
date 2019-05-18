@@ -1,5 +1,4 @@
 import * as React from "react";
-import { Nothing } from "../../../Data/Maybe";
 import { OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { Advantage } from "../../Models/Wiki/Advantage";
@@ -49,7 +48,7 @@ export function WikiSkillInfo (props: WikiSkillInfoProps) {
   return (
     <WikiBoxTemplate className="skill" title={name}>
       <WikiApplications {...props} showNewApplications acc={Skill.A} />
-      <WikiSkillCheck {...props} acc={Skill.A} derivedCharacteristics={Nothing} />
+      <WikiSkillCheck {...props} acc={Skill.A} />
       <WikiApplications {...props} acc={Skill.A} />
       <WikiEncumbrance {...props} acc={Skill.A} />
       <WikiTools {...props} acc={Skill.A} />

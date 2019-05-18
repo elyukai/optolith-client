@@ -346,7 +346,7 @@ export class RCPOptionSelections extends React.Component<SelectionsProps, Select
                                                                    (prof_sels)
 
                return (
-                 <Slidein isOpened close={close} className="rcp-selections">
+                 <Slidein isOpen close={close} className="rcp-selections">
                    <Scroll>
                      <h3>{translate (l10n) ("race")}</h3>
                      <Dropdown

@@ -70,7 +70,7 @@ export function PetEditor (props: PetEditorProps) {
     const pet = fromJust (mpet_in_editor)
 
     return (
-      <Slidein isOpened close={props.closePetEditor}>
+      <Slidein isOpen close={props.closePetEditor}>
         <div className="pet-edit">
           <div className="left">
             <AvatarWrapper src={EPA.avatar (pet)} onClick={props.openEditPetAvatar} />

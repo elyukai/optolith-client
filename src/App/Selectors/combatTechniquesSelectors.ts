@@ -1,5 +1,5 @@
 import { thrush } from "../../Data/Function";
-import { fmapF } from "../../Data/Functor";
+import { fmap, fmapF } from "../../Data/Functor";
 import { cons, consF, elem, List, map, maximum } from "../../Data/List";
 import { fromJust, isJust, Just, liftM2, Maybe, Nothing, or } from "../../Data/Maybe";
 import { findWithDefault, foldrWithKey, lookup } from "../../Data/OrderedMap";
@@ -80,22 +80,23 @@ export const getCombatTechniquesForSheet = createMaybeSelector (
   getAttributes,
   getCombatTechniques,
   uncurryN3 (wiki_combat_techniques =>
-              liftM2 (attributes => combatTechniques =>
-                       foldrWithKey ((id: string) => (wiki_entry: Record<CombatTechnique>) => {
-                                      const hero_entry =
-                                        findWithDefault (createSkillDependentWithValue6 (id))
-                                                        (id)
-                                                        (combatTechniques)
+             attributes =>
+               fmap (combatTechniques =>
+                 foldrWithKey ((id: string) => (wiki_entry: Record<CombatTechnique>) => {
+                                const hero_entry =
+                                  findWithDefault (createSkillDependentWithValue6 (id))
+                                                  (id)
+                                                  (combatTechniques)
 
-                                      return consF (CombatTechniqueWithAttackParryBase ({
-                                        at: getAttackBase (attributes) (wiki_entry) (hero_entry),
-                                        pa: getParryBase (attributes) (wiki_entry) (hero_entry),
-                                        stateEntry: hero_entry,
-                                        wikiEntry: wiki_entry,
-                                      }))
-                                    })
-                                    (List.empty)
-                                    (wiki_combat_techniques)))
+                                return consF (CombatTechniqueWithAttackParryBase ({
+                                  at: getAttackBase (attributes) (wiki_entry) (hero_entry),
+                                  pa: getParryBase (attributes) (wiki_entry) (hero_entry),
+                                  stateEntry: hero_entry,
+                                  wikiEntry: wiki_entry,
+                                }))
+                              })
+                              (List.empty)
+                              (wiki_combat_techniques)))
 )
 
 const getMaximum =
@@ -164,11 +165,11 @@ export const getAllCombatTechniques = createMaybeSelector (
                              CombatTechniqueWithRequirements ({
                                at: CTWAPBA.at (x),
                                pa: CTWAPBA.pa (x),
-                               max: getMinimum (hunterRequiresMinimum)
+                               min: getMinimum (hunterRequiresMinimum)
                                                (wiki)
                                                (hero)
                                                (x),
-                               min: getMaximum (exceptionalCombatTechnique)
+                               max: getMaximum (exceptionalCombatTechnique)
                                                (mstartEl)
                                                (HeroModel.A.attributes (hero))
                                                (HeroModel.A.phase (hero))

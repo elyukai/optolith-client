@@ -2,13 +2,11 @@ import * as React from "react";
 import { Maybe } from "../../../Data/Maybe";
 import { OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
-import { DerivedCharacteristic } from "../../Models/View/DerivedCharacteristic";
 import { Attribute } from "../../Models/Wiki/Attribute";
 import { Book } from "../../Models/Wiki/Book";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { LiturgicalChant } from "../../Models/Wiki/LiturgicalChant";
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
-import { DCIds } from "../../Selectors/derivedCharacteristicsSelectors";
 import { WikiCastingTime } from "./Elements/WikiCastingTime";
 import { WikiCost } from "./Elements/WikiCost";
 import { WikiDuration } from "./Elements/WikiDuration";
@@ -25,7 +23,6 @@ import { WikiBoxTemplate } from "./WikiBoxTemplate";
 export interface WikiLiturgicalChantInfoProps {
   attributes: OrderedMap<string, Record<Attribute>>
   books: OrderedMap<string, Record<Book>>
-  derivedCharacteristics: Maybe<OrderedMap<DCIds, Record<DerivedCharacteristic>>>
   x: Record<LiturgicalChant>
   l10n: L10nRecord
   liturgicalChantExtensions: Maybe<Record<SpecialAbility>>
@@ -34,7 +31,7 @@ export interface WikiLiturgicalChantInfoProps {
 const LCA = LiturgicalChant.A
 
 export function WikiLiturgicalChantInfo (props: WikiLiturgicalChantInfoProps) {
-  const { liturgicalChantExtensions, } = props
+  const { liturgicalChantExtensions } = props
 
   // if (["nl-BE"].includes(l10n.id)) {
   //   return (

@@ -7,6 +7,7 @@ import { OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { Pair, snd } from "../../../Data/Tuple";
 import { WikiInfoContainer } from "../../Containers/WikiInfoContainer";
+import { HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { EntryRating } from "../../Models/Hero/heroTypeHelpers";
 import { AttributeCombined } from "../../Models/View/AttributeCombined";
 import { DerivedCharacteristic } from "../../Models/View/DerivedCharacteristic";
@@ -32,10 +33,11 @@ import { SkillListItem } from "./SkillListItem";
 
 export interface SkillsOwnProps {
   l10n: L10nRecord
+  hero: HeroModelRecord
 }
 
 export interface SkillsStateProps {
-  attributes: Maybe<List<Record<AttributeCombined>>>
+  attributes: List<Record<AttributeCombined>>
   derivedCharacteristics: OrderedMap<DCIds, Record<DerivedCharacteristic>>
   list: Maybe<List<Record<SkillWithRequirements>>>
   isRemovingEnabled: boolean

@@ -22,7 +22,7 @@ import { Culture } from "../Models/Wiki/Culture";
 import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel";
 import { L10nRecord } from "../Models/Wiki/L10n";
 import { LiturgicalChant } from "../Models/Wiki/LiturgicalChant";
-import { isProfessionRequiringActivatable, ProfessionRequireActivatable } from "../Models/Wiki/prerequisites/ActivatableRequirement";
+import { ProfessionRequireActivatable } from "../Models/Wiki/prerequisites/ActivatableRequirement";
 import { isProfessionRequiringIncreasable, ProfessionRequireIncreasable } from "../Models/Wiki/prerequisites/IncreasableRequirement";
 import { Profession } from "../Models/Wiki/Profession";
 import { CombatTechniquesSelectionL } from "../Models/Wiki/professionSelections/CombatTechniquesSelection";
@@ -386,7 +386,7 @@ const mapProfessionPrerequisite =
   (index: number) =>
   (e: ListI<Profession["prerequisites"]>):
   Maybe<ListI<ProfessionCombined["mappedPrerequisites"]>> => {
-    if (isProfessionRequiringActivatable (e)) {
+    if (ProfessionRequireActivatable.is (e)) {
       return pipe_ (
         ActiveObjectWithId ({
           id: ProfessionRequireActivatable.A.id (e),

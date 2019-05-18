@@ -13,34 +13,70 @@ const Nothing = Internals.Nothing
 const Left = Internals.Left
 const Right = Internals.Right
 
-test ('fmap', () => {
-  expect (fmap (add (3)) (Const (3)))
-    .toEqual (Const (3))
+describe ('fmap', () => {
+  it ("works on Const", () => {
+    expect (fmap (add (3)) (Const (3)))
+      .toEqual (Const (3))
+  })
 
-  expect (fmap (x => x * 2) (Right (3)))
-    .toEqual (Right (6))
+  it ("works on Either", () => {
+    expect (fmap (x => x * 2) (Right (3)))
+      .toEqual (Right (6))
 
-  expect (fmap (x => x * 2) (Left ('test')))
-    .toEqual (Left ('test'))
+    expect (fmap (x => x * 2) (Left ('test')))
+      .toEqual (Left ('test'))
+  })
 
-  expect (fmap (add (3)) (Identity (3)))
-    .toEqual (Identity (6))
+  it ("works on Identity", () => {
+    expect (fmap (add (3)) (Identity (3)))
+      .toEqual (Identity (6))
+  })
 
-  expect (fmap (x => x * 2) (List (3, 2, 1)))
-    .toEqual (List (6, 4, 2))
+  it ("works on List", () => {
+    expect (fmap (x => x * 2) (List (3, 2, 1)))
+      .toEqual (List (6, 4, 2))
+  })
 
-  expect (fmap (x => x * 2) (Just (3)))
-    .toEqual (Just (6))
+  it ("works on Maybe", () => {
+    expect (fmap (x => x * 2) (Just (3)))
+      .toEqual (Just (6))
 
-  expect (fmap (x => x * 2) (Nothing))
-    .toEqual (Nothing)
+    expect (fmap (x => x * 2) (Nothing))
+      .toEqual (Nothing)
+  })
 
-  expect (fmap (x => x * 2)
-               (fromUniquePairs (['x', 1], ['y', 2], ['z', 3])))
-    .toEqual (fromUniquePairs (['x', 2], ['y', 4], ['z', 6]))
+  it ("works on OrderedMap", () => {
+    expect (fmap (x => x * 2)
+                 (fromUniquePairs (['x', 1], ['y', 2], ['z', 3])))
+      .toEqual (fromUniquePairs (['x', 2], ['y', 4], ['z', 6]))
+  })
 
-  expect (fmap (x => x * 2) (Pair (3, 1)))
-    .toEqual (Pair (3, 2))
+  it ("works on Pair", () => {
+    expect (fmap (x => x * 2) (Pair (3, 1)))
+      .toEqual (Pair (3, 2))
+  })
+
+  it ("works on IO", () => {
+    expect.assertions (4)
+
+    let a
+
+    const io = Internals.IO (() => new Promise (res => (a = 1, res (1))))
+
+    expect (a) .toBeUndefined ()
+
+    const mappedIO = fmap (x => {
+                            expect (a) .toEqual (1)
+                            a++
+                            return x + 1
+                          })
+                          (io)
+                          .f ()
+                          .then (x => {
+                            expect (a) .toEqual (2)
+                            expect (x) .toEqual (2)
+                          })
+  })
 })
 
 test ('fmapF', () => {

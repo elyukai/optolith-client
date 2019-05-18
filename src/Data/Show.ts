@@ -50,8 +50,15 @@ export const show = (x: any): string => {
     return `[${intercalate (", ") (map (show) (x))}]`
   }
 
-  if (Internals.isPair (x)) {
-    return `(${show (x .first)}, ${show (x .second)})`
+  if (Internals.isTuple (x)) {
+    const arr: any = []
+
+    for (let i = 0; i < x .length; i++) {
+      const e = x .values [i]
+      arr .push (e)
+    }
+
+    return `(${arr .map (show) .join (", ")})`
   }
 
   if (Internals.isOrderedSet (x)) {
@@ -164,10 +171,15 @@ const showPDepth = (depth: number) => (x: any): string => {
     return `${dws}[ ${[...x] .map (trimNextDepth (depth)) .join (`\n${dws}, `)} ]`
   }
 
-  if (Internals.isPair (x)) {
-    return `${dws}( `
-      + `${trimNextDepth (depth) (x .first)}`
-      + `\n${dws}, ${trimNextDepth (depth) (x .second)}\n${dws})`
+  if (Internals.isTuple (x)) {
+    const arr: any = []
+
+    for (let i = 0; i < x .length; i++) {
+      const e = x .values [i]
+      arr .push (e)
+    }
+
+    return `${dws}( ${arr .map (trimNextDepth (depth)) .join (`\n${dws}, `)}\n${dws})`
   }
 
   if (Internals.isOrderedSet (x)) {

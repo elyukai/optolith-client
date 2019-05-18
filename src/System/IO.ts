@@ -261,6 +261,18 @@ export const toIO =
  */
 export const IdentityIO = Internals.IO (() => Promise.resolve ())
 
+/**
+ * `runIO :: IO a -> IO a`
+ *
+ * Runs the `IO` action and returns an `IO` with the resolved return value.
+ */
+export const runIO =
+  <A> (x: IO<A>): IO<A> => {
+    const p = x .f ()
+
+    return Internals.IO (async () => p)
+  }
+
 const IONamespace = {
   pure,
   bind,

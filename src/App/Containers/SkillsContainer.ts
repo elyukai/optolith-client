@@ -11,7 +11,7 @@ import { getSkillsCultureRatingVisibility, getSkillsSortOrder } from "../Selecto
 import { Skills, SkillsDispatchProps, SkillsOwnProps, SkillsStateProps } from "../Views/Skills/Skills";
 
 const mapStateToProps = (state: AppStateRecord, ownProps: SkillsOwnProps): SkillsStateProps => ({
-  attributes: getAttributesForSheet (state),
+  attributes: getAttributesForSheet (state, ownProps),
   derivedCharacteristics: getDerivedCharacteristicsMap (state, ownProps),
   isRemovingEnabled: getIsRemovingEnabled (state),
   list: getFilteredSkills (state, ownProps),

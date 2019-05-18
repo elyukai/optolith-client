@@ -5,16 +5,16 @@ const { Pair, bimap, first, second, fst, snd, curry, curryN, uncurry, uncurryN, 
 
 test ('Pair (x) (y)', () => {
   const pair = Pair (3) (1)
-  expect (pair .first) .toEqual (3)
-  expect (pair .second) .toEqual (1)
-  expect (pair .isPair) .toEqual (true)
+  expect (pair .values [0]) .toEqual (3)
+  expect (pair .values [1]) .toEqual (1)
+  expect (pair .isTuple) .toEqual (true)
 })
 
 test ('Pair (x, y)', () => {
   const pair = Pair (3, 1)
-  expect (pair .first) .toEqual (3)
-  expect (pair .second) .toEqual (1)
-  expect (pair .isPair) .toEqual (true)
+  expect (pair .values [0]) .toEqual (3)
+  expect (pair .values [1]) .toEqual (1)
+  expect (pair .isTuple) .toEqual (true)
 })
 
 // BIFUNCTOR
@@ -46,20 +46,8 @@ test ('curry', () => {
   expect (curry (p => fst (p) + snd (p)) (2) (3)) .toEqual (5)
 })
 
-test ('curryN', () => {
-  expect (curryN ((x, y) => x + y) (2) (3)) .toEqual (5)
-})
-
 test ('uncurry', () => {
   expect (uncurry (a => b => a + b) (Pair (2, 3))) .toEqual (5)
-})
-
-test ('uncurryN', () => {
-  expect (uncurryN (a => b => a + b) (2, 3)) .toEqual (5)
-})
-
-test ('uncurryN3', () => {
-  expect (uncurryN3 (a => b => c => a + b + c) (2, 3, 8)) .toEqual (13)
 })
 
 test ('swap', () => {

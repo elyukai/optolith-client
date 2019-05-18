@@ -1,6 +1,5 @@
 import * as React from "react";
 import { List } from "../../../Data/List";
-import { Maybe } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
 import { AttributeCombined } from "../../Models/View/AttributeCombined";
 import { L10nRecord } from "../../Models/Wiki/L10n";
@@ -8,7 +7,7 @@ import { HeaderValue, SheetHeader } from "./SheetHeader";
 
 export interface SheetProps {
   addHeaderInfo?: List<Record<HeaderValue>>
-  attributes: Maybe<List<Record<AttributeCombined>>>
+  attributes: List<Record<AttributeCombined>>
   children?: React.ReactNode
   id: string
   l10n: L10nRecord

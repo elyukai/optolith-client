@@ -13,8 +13,8 @@ import { cnst } from "./Function";
 import { Const } from "./Functor/Const";
 import { Internals } from "./Internals";
 import { isMarket, Market } from "./Market";
-import { Pair } from "./Pair";
 import { show, showP } from "./Show";
+import { Pair } from "./Tuple";
 
 import Just = Internals.Just
 import Maybe = Internals.Maybe
@@ -57,6 +57,7 @@ export type FunctorMap<A, B> =
 export const fmap =
   <A, B>
   (f: (x: A) => B): FunctorMap<A, B> =>
+  // tslint:disable-next-line: cyclomatic-complexity
   (x: Functor<any>): any => {
     if (Internals.isList (x)) {
       if (Internals.isNil (x)) {
@@ -125,14 +126,14 @@ export const fmap =
       return Just (nextValue)
     }
 
-    if (Internals.isPair (x)) {
-      const nextValue = f (x .second)
+    if (Internals.isTuple (x) && x .length === 2) {
+      const nextValue = f (x .values [1])
 
-      if (nextValue === x .second) {
+      if (nextValue === x .values [1]) {
         return x
       }
 
-      return Pair (x .first, f (x .second))
+      return Pair (x .values [0], f (x .values [1]))
     }
 
     if (typeof x === "function") {

@@ -2,12 +2,14 @@ import * as React from "react";
 import { equals } from "../../../Data/Eq";
 import { ident } from "../../../Data/Function";
 import { fmap, fmapF } from "../../../Data/Functor";
-import { all, append, cons, consF, deleteAt, find, findIndex, flength, imap, intercalate, isList, List, ListI, map, NonEmptyList, notElem, notNull, snoc, subscript, toArray, uncons, unsafeIndex } from "../../../Data/List";
-import { alt_, any, bind, bindF, ensure, fromJust, fromMaybe, isJust, Just, liftM2, mapMaybe, Maybe, maybe, maybeR, maybeRNullF, maybeToList, maybe_, Nothing } from "../../../Data/Maybe";
+import { compare } from "../../../Data/Int";
+import { all, append, cons, consF, deleteAt, find, findIndex, flength, foldr, imap, intercalate, isList, List, ListI, map, NonEmptyList, notElem, notNull, snoc, sortBy, subscript, toArray, uncons, unsafeIndex } from "../../../Data/List";
+import { alt_, any, bind, bindF, ensure, fromJust, fromMaybe, fromMaybe_, isJust, Just, liftM2, mapMaybe, Maybe, maybe, maybeR, maybeRNullF, maybeToList, maybe_, Nothing } from "../../../Data/Maybe";
 import { elems, lookup, lookupF, member, memberF, OrderedMap } from "../../../Data/OrderedMap";
-import { difference, fromList, OrderedSet } from "../../../Data/OrderedSet";
+import { difference, fromList, insert, OrderedSet, toList } from "../../../Data/OrderedSet";
 import { fst, snd } from "../../../Data/Pair";
 import { fromDefault, Record } from "../../../Data/Record";
+import { show } from "../../../Data/Show";
 import { Pair, Tuple } from "../../../Data/Tuple";
 import { sel1, sel2, sel3 } from "../../../Data/Tuple/Select";
 import { upd1, upd2, upd3 } from "../../../Data/Tuple/Update";
@@ -273,13 +275,25 @@ export function WikiProfessionInfo (props: WikiProfessionInfoProps): JSX.Element
             (pipe (sortStrings (L10n.A.id (l10n)), intercalate (", ")))
     )
 
+  const final_ap =
+    fromMaybe_ (() => pipe_ (
+                        x,
+                        PCA.mappedVariants,
+                        foldr (pipe (PVCA_.ap, insert))
+                              (OrderedSet.empty),
+                        toList,
+                        sortBy (compare),
+                        localizeOrList (l10n)
+                      ))
+               (fmapF (PCA_.ap (x)) (show))
+
   return (
     <WikiBoxTemplate
       className="profession"
       title={maybe (name) ((subname: string) => `${name} (${subname})`) (msubname)}
       >
       <WikiProperty l10n={l10n} title="apvalue">
-        {PCA_.ap (x)} {translate (l10n) ("adventurepoints")}
+        {final_ap} {translate (l10n) ("adventurepoints")}
       </WikiProperty>
       <WikiProperty l10n={l10n} title="prerequisites">
         {maybe (translate (l10n) ("none")) (intercalate (", ")) (ensure (notNull) (prerequisites))}

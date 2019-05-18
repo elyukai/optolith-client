@@ -1,6 +1,5 @@
 import * as React from "react";
 import { List } from "../../../Data/List";
-import { Maybe } from "../../../Data/Maybe";
 import { OrderedMap } from "../../../Data/OrderedMap";
 import { OrderedSet } from "../../../Data/OrderedSet";
 import { Record } from "../../../Data/Record";
@@ -21,7 +20,7 @@ import { SkillImprovementCost } from "./SkillImprovementCost";
 import { SkillRating } from "./SkillRating";
 
 export interface SkillListItemProps {
-  attributes: Maybe<List<Record<AttributeCombined>>>
+  attributes: List<Record<AttributeCombined>>
   activateDisabled?: boolean
   addDisabled?: boolean
   addFillElement?: boolean

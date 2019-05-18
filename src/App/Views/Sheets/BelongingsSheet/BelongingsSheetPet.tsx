@@ -16,7 +16,7 @@ import { AvatarWrapper } from "../../Universal/AvatarWrapper";
 import { TextBox } from "../../Universal/TextBox";
 
 export interface BelongingsSheetPetProps {
-  attributes: Maybe<List<Record<AttributeCombined>>>
+  attributes: List<Record<AttributeCombined>>
   l10n: L10nRecord
   pet: Maybe<Record<Pet>>
 }
@@ -66,7 +66,7 @@ export function BelongingsSheetPet (props: BelongingsSheetPetProps) {
                 <span className="label">
                   {pipe_ (
                     attributes,
-                    bindF (find (pipe (AttributeCombinedA_.id, equals (prefixAttr (1))))),
+                    find (pipe (AttributeCombinedA_.id, equals (prefixAttr (1)))),
                     renderMaybeWith (AttributeCombinedA_.short)
                   )}
                 </span>
@@ -78,7 +78,7 @@ export function BelongingsSheetPet (props: BelongingsSheetPetProps) {
                 <span className="label">
                   {pipe_ (
                     attributes,
-                    bindF (find (pipe (AttributeCombinedA_.id, equals (prefixAttr (2))))),
+                    find (pipe (AttributeCombinedA_.id, equals (prefixAttr (2)))),
                     renderMaybeWith (AttributeCombinedA_.short)
                   )}
                 </span>
@@ -90,7 +90,7 @@ export function BelongingsSheetPet (props: BelongingsSheetPetProps) {
                 <span className="label">
                   {pipe_ (
                     attributes,
-                    bindF (find (pipe (AttributeCombinedA_.id, equals (prefixAttr (3))))),
+                    find (pipe (AttributeCombinedA_.id, equals (prefixAttr (3)))),
                     renderMaybeWith (AttributeCombinedA_.short)
                   )}
                 </span>
@@ -102,7 +102,7 @@ export function BelongingsSheetPet (props: BelongingsSheetPetProps) {
                 <span className="label">
                   {pipe_ (
                     attributes,
-                    bindF (find (pipe (AttributeCombinedA_.id, equals (prefixAttr (4))))),
+                    find (pipe (AttributeCombinedA_.id, equals (prefixAttr (4)))),
                     renderMaybeWith (AttributeCombinedA_.short)
                   )}
                 </span>
@@ -114,7 +114,7 @@ export function BelongingsSheetPet (props: BelongingsSheetPetProps) {
                 <span className="label">
                   {pipe_ (
                     attributes,
-                    bindF (find (pipe (AttributeCombinedA_.id, equals (prefixAttr (5))))),
+                    find (pipe (AttributeCombinedA_.id, equals (prefixAttr (5)))),
                     renderMaybeWith (AttributeCombinedA_.short)
                   )}
                 </span>
@@ -126,7 +126,7 @@ export function BelongingsSheetPet (props: BelongingsSheetPetProps) {
                 <span className="label">
                   {pipe_ (
                     attributes,
-                    bindF (find (pipe (AttributeCombinedA_.id, equals (prefixAttr (6))))),
+                    find (pipe (AttributeCombinedA_.id, equals (prefixAttr (6)))),
                     renderMaybeWith (AttributeCombinedA_.short)
                   )}
                 </span>
@@ -138,7 +138,7 @@ export function BelongingsSheetPet (props: BelongingsSheetPetProps) {
                 <span className="label">
                   {pipe_ (
                     attributes,
-                    bindF (find (pipe (AttributeCombinedA_.id, equals (prefixAttr (7))))),
+                    find (pipe (AttributeCombinedA_.id, equals (prefixAttr (7)))),
                     renderMaybeWith (AttributeCombinedA_.short)
                   )}
                 </span>
@@ -150,7 +150,7 @@ export function BelongingsSheetPet (props: BelongingsSheetPetProps) {
                 <span className="label">
                   {pipe_ (
                     attributes,
-                    bindF (find (pipe (AttributeCombinedA_.id, equals (prefixAttr (8))))),
+                    find (pipe (AttributeCombinedA_.id, equals (prefixAttr (8)))),
                     renderMaybeWith (AttributeCombinedA_.short)
                   )}
                 </span>

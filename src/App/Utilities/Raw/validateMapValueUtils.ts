@@ -274,7 +274,7 @@ export const mensureMapIntegerOptional =
 export const mensureMapBoolean =
   mensureMap (Expect.Boolean)
              (pipe (
-               fromMaybe ("TRUE"),
+               fromMaybe ("FALSE"),
                ensure ((x: string) => x === "TRUE"
                                       || x === "FALSE"
                                       || x === "true"

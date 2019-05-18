@@ -29,7 +29,7 @@ import { CombatSheetTechniques } from "./CombatSheetTechniques";
 
 export interface CombatSheetProps {
   armors: Maybe<List<Record<Armor>>>
-  attributes: Maybe<List<Record<AttributeCombined>>>
+  attributes: List<Record<AttributeCombined>>
   combatSpecialAbilities: Maybe<List<Record<ActiveActivatable<SpecialAbility>>>>
   combatTechniques: Maybe<List<Record<CombatTechniqueWithAttackParryBase>>>
   derivedCharacteristics: List<Record<DerivedCharacteristic>>

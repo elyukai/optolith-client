@@ -3,7 +3,7 @@ import { bind, bindF, listToMaybe } from "../../Data/Maybe";
 import { lookupF } from "../../Data/OrderedMap";
 import { Belongings } from "../Models/Hero/Belongings";
 import { Energies } from "../Models/Hero/Energies";
-import { HeroModel } from "../Models/Hero/HeroModel";
+import { HeroModel, HeroModelRecord } from "../Models/Hero/HeroModel";
 import { PersonalData } from "../Models/Hero/PersonalData";
 import { Rules } from "../Models/Hero/Rules";
 import { L10nRecord } from "../Models/Wiki/L10n";
@@ -45,6 +45,8 @@ export const getCurrentHero = createMaybeSelector (
   (mid, heroes) => bind (mid) (lookupF (heroes))
 )
 
+export const getHeroProp = (_: AppStateRecord, props: { hero: HeroModelRecord }) => props.hero
+
 
 export const getCurrentHeroPresent =
   createMaybeSelector (getCurrentHero, fmap (heroReducer.A.present))
@@ -66,7 +68,7 @@ export const getAdvantages =
   pipe (getCurrentHeroPresent, fmap (Hero.advantages))
 
 export const getAttributes =
-  pipe (getCurrentHeroPresent, fmap (Hero.attributes))
+  createMaybeSelector (getHeroProp, Hero.attributes)
 
 export const getCurrentAttributeAdjustmentId =
   pipe (getCurrentHeroPresent, fmap (Hero.attributeAdjustmentSelected))

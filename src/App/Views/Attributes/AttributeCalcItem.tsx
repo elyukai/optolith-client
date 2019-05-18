@@ -6,7 +6,7 @@ import { DerivedCharacteristic } from "../../Models/View/DerivedCharacteristic";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { translate } from "../../Utilities/I18n";
 import { gt, subtractBy } from "../../Utilities/mathUtils";
-import { sign } from "../../Utilities/NumberUtils";
+import { sign, signNeg } from "../../Utilities/NumberUtils";
 import { pipe, pipe_ } from "../../Utilities/pipe";
 import { IconButton } from "../Universal/IconButton";
 import { NumberBox } from "../Universal/NumberBox";
@@ -72,7 +72,8 @@ export class AttributeCalcItem extends React.Component<AttributeCalcItemProps, {
     const mod = DCA.mod (dc)
     const mcurrent_add = DCA.currentAdd (dc)
     const mmax_add = DCA.maxAdd (dc)
-    const value = fromMaybe<string | number> ("\u2013") (DCA.value (dc))
+    const has_value = isJust (DCA.value (dc))
+    const value = maybe ("\u2013") (signNeg) (DCA.value (dc))
     const mpermanent_lost = DCA.permanentLost (dc)
     const mpermanent_redeemed = DCA.permanentRedeemed (dc)
 
@@ -124,7 +125,7 @@ export class AttributeCalcItem extends React.Component<AttributeCalcItemProps, {
           maybe (<></>) (maxAdd => (<NumberBox current={mcurrent_add} max={maxAdd} />))
         )}
         {
-          typeof value === "number"
+          has_value
           && !isInCharacterCreation
             ? fromMaybe (<></>)
                         (liftM2 ((current_add: number) => (max_add: number) => (
@@ -147,7 +148,7 @@ export class AttributeCalcItem extends React.Component<AttributeCalcItemProps, {
             : null
         }
         {
-          typeof value === "number"
+          has_value
           && !isInCharacterCreation
           && isRemovingEnabled
           && isJust (mmax_add)

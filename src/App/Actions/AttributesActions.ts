@@ -1,3 +1,4 @@
+import { fmapF } from "../../Data/Functor";
 import { List } from "../../Data/List";
 import { bind, bindF, fromJust, isNothing, join, liftM2 } from "../../Data/Maybe";
 import { lookup } from "../../Data/OrderedMap";
@@ -6,7 +7,7 @@ import { HeroModel } from "../Models/Hero/HeroModel";
 import { L10nRecord } from "../Models/Wiki/L10n";
 import { getAvailableAPMap } from "../Selectors/adventurePointsSelectors";
 import { getIsInCharacterCreation } from "../Selectors/phaseSelectors";
-import { getAddedArcaneEnergyPoints, getAddedKarmaPoints, getAddedLifePoints, getAttributes, getCurrentHeroPresent, getWikiAttributes } from "../Selectors/stateSelectors";
+import { getAddedArcaneEnergyPoints, getAddedKarmaPoints, getAddedLifePoints, getCurrentHeroPresent, getWikiAttributes } from "../Selectors/stateSelectors";
 import { getMissingAP } from "../Utilities/AdventurePoints/adventurePointsUtils";
 import { getIncreaseAP } from "../Utilities/AdventurePoints/improvementCostUtils";
 import { translate, translateP } from "../Utilities/I18n";
@@ -25,9 +26,9 @@ export interface AddAttributePointAction {
 export const addAttributePoint = (l10n: L10nRecord) => (id: string): ReduxAction =>
   (dispatch, getState) => {
     const state = getState ()
-    const mhero_attributes = getAttributes (state)
     const wiki_attributes = getWikiAttributes (state)
     const mhero = getCurrentHeroPresent (state)
+    const mhero_attributes = fmapF (mhero) (HeroModel.A.attributes)
 
     const missingAPForInc =
       pipe_ (

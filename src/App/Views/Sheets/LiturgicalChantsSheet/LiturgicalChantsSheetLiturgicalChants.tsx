@@ -20,7 +20,7 @@ import { sortStrings } from "../../../Utilities/sortBy";
 import { TextBox } from "../../Universal/TextBox";
 
 export interface LiturgicalChantsSheetLiturgicalChantsProps {
-  attributes: Maybe<List<Record<AttributeCombined>>>
+  attributes: List<Record<AttributeCombined>>
   checkAttributeValueVisibility: boolean
   derivedCharacteristics: List<Record<DerivedCharacteristic>>
   liturgicalChants: Maybe<List<Record<LiturgicalChantWithRequirements>>>
@@ -34,7 +34,7 @@ export function LiturgicalChantsSheetLiturgicalChants (
   props: LiturgicalChantsSheetLiturgicalChantsProps
 ) {
   const {
-    attributes: mattributes,
+    attributes,
     checkAttributeValueVisibility,
     derivedCharacteristics,
     l10n,
@@ -92,10 +92,9 @@ export function LiturgicalChantsSheetLiturgicalChants (
             fmap (pipe (
               map (e => {
                 const check =
-                  fmapF (mattributes)
-                        (attributes => getAttributeStringByIdList (checkAttributeValueVisibility)
-                                                                  (attributes)
-                                                                  (LCWRA_.check (e)))
+                  getAttributeStringByIdList (checkAttributeValueVisibility)
+                                             (attributes)
+                                             (LCWRA_.check (e))
 
 
                 return (

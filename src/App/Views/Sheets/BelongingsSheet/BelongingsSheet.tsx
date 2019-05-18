@@ -2,7 +2,7 @@ import * as React from "react";
 import { equals } from "../../../../Data/Eq";
 import { fmap, fmapF } from "../../../../Data/Functor";
 import { filter, find, flength, intercalate, List, map, splitAt } from "../../../../Data/List";
-import { bindF, fromMaybe, fromMaybeR, Just, Maybe, Nothing } from "../../../../Data/Maybe";
+import { fromMaybe, fromMaybeR, Just, Maybe, Nothing } from "../../../../Data/Maybe";
 import { fst, snd } from "../../../../Data/Pair";
 import { Record } from "../../../../Data/Record";
 import { Pet } from "../../../Models/Hero/Pet";
@@ -24,7 +24,7 @@ import { BelongingsSheetItemsColumn } from "./BelongingsSheetItemsColumn";
 import { BelongingsSheetPet } from "./BelongingsSheetPet";
 
 export interface BelongingsSheetProps {
-  attributes: Maybe<List<Record<AttributeCombined>>>
+  attributes: List<Record<AttributeCombined>>
   items: Maybe<List<Record<ItemForView>>>
   l10n: L10nRecord
   pet: Maybe<Record<Pet>>
@@ -46,7 +46,7 @@ export function BelongingsSheet (props: BelongingsSheetProps) {
   const strength =
     pipe_ (
       attributes,
-      bindF (find (pipe (AttributeCombinedA_.id, equals (prefixAttr (8))))),
+      find (pipe (AttributeCombinedA_.id, equals (prefixAttr (8)))),
       fmap (AttributeCombinedA_.value),
       Maybe.sum
     )

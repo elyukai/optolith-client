@@ -29,6 +29,8 @@ export interface SelectionsLanguagesAndScriptsProps {
 const LSLIA = LanguagesSelectionListItem.A
 const SSLIA = ScriptsSelectionListItem.A
 
+const levels = getLevelElements (3)
+
 export function SelectionsLanguagesAndScripts (props: SelectionsLanguagesAndScriptsProps) {
   const {
     apTotal,
@@ -41,8 +43,6 @@ export function SelectionsLanguagesAndScripts (props: SelectionsLanguagesAndScri
     adjustLanguage,
     adjustScript,
   } = props
-
-  const levels = getLevelElements (3)
 
   return (
     <div className="lang_lit list">
@@ -63,6 +63,8 @@ export function SelectionsLanguagesAndScripts (props: SelectionsLanguagesAndScri
               const is_active = member (id) (languagesActive)
 
               const disabled = native || !is_active && apLeft <= 0
+
+              const active_level = findWithDefault (0) (id) (languagesActive)
 
               return (
                 <div key={id} className={classNames (disabled ? "disabled" : undefined)}>
@@ -93,14 +95,11 @@ export function SelectionsLanguagesAndScripts (props: SelectionsLanguagesAndScri
                       return (
                         <Dropdown
                           className="tiers"
-                          value={is_active}
+                          value={active_level}
                           onChange={optionId => adjustLanguage (id) (misNumberM (optionId))}
                           options={filter ((option: Record<DropdownOption>) => {
                                             const current_level =
                                               Maybe.sum (misNumberM (DropdownOption.A.id (option)))
-
-                                            const active_level =
-                                              findWithDefault (0) (id) (languagesActive)
 
                                             return (current_level - active_level) * 2 <= apLeft
                                           })

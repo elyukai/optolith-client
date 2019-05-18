@@ -102,22 +102,29 @@ export class Router extends React.Component<RouterProps> {
       [TabId.Cultures]: () => <CulturesContainer l10n={l10n} />,
       [TabId.Professions]: () => <ProfessionsContainer l10n={l10n} />,
 
-      [TabId.Attributes]: () => <AttributesContainer l10n={l10n} />,
+      [TabId.Attributes]:
+        () => unwrapWithHero (hero => <AttributesContainer l10n={l10n} hero={hero} />),
 
       [TabId.Advantages]:
         () => unwrapWithHero (hero => <AdvantagesContainer l10n={l10n} hero={hero} />),
       [TabId.Disadvantages]:
         () => unwrapWithHero (hero => <DisadvantagesContainer l10n={l10n} hero={hero} />),
 
-      [TabId.Skills]: () => <SkillsContainer l10n={l10n} />,
-      [TabId.CombatTechniques]: () => <CombatTechniquesContainer l10n={l10n} />,
+      [TabId.Skills]:
+        () => unwrapWithHero (hero => <SkillsContainer l10n={l10n} hero={hero} />),
+      [TabId.CombatTechniques]:
+        () => unwrapWithHero (hero => <CombatTechniquesContainer l10n={l10n} hero={hero} />),
       [TabId.SpecialAbilities]:
         () => unwrapWithHero (hero => <SpecialAbilitiesContainer l10n={l10n} hero={hero} />),
-      [TabId.Spells]: () => <SpellsContainer l10n={l10n} />,
-      [TabId.LiturgicalChants]: () => <LiturgicalChantsContainer l10n={l10n} />,
+      [TabId.Spells]:
+        () => unwrapWithHero (hero => <SpellsContainer l10n={l10n} hero={hero} />),
+      [TabId.LiturgicalChants]:
+        () => unwrapWithHero (hero => <LiturgicalChantsContainer l10n={l10n} hero={hero} />),
 
-      [TabId.Equipment]: () => <EquipmentContainer l10n={l10n} />,
-      [TabId.ZoneArmor]: () => <HitZoneArmorsContainer l10n={l10n} />,
+      [TabId.Equipment]:
+        () => unwrapWithHero (hero => <EquipmentContainer l10n={l10n} hero={hero} />),
+      [TabId.ZoneArmor]:
+        () => unwrapWithHero (hero => <HitZoneArmorsContainer l10n={l10n} hero={hero} />),
       [TabId.Pets]: () => <PetsContainer l10n={l10n} />,
 
       // master: <Master />

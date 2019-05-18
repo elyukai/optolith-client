@@ -29,6 +29,7 @@
     "remark-breaks": "1.0.2",
     "reselect": "4.0.0",
     "semver": "6.0.0",
+    "styled-components": "4.2.0",
     "tslib": "1.9.3",
     "xlsx": "0.14.2"
   },
@@ -42,6 +43,7 @@
     "@types/react-portal": "4.0.2",
     "@types/react-redux": "7.0.8",
     "@types/semver": "6.0.0",
+    "@types/styled-components": "4.1.15",
     "electron": "5.0.1",
     "electron-builder": "20.40.2",
     "eslint": "4.19.1",

@@ -2,15 +2,17 @@ import * as React from "react";
 import { equals } from "../../../Data/Eq";
 import { fmapF } from "../../../Data/Functor";
 import { find, flength, intercalate, List, map, notNull, toArray } from "../../../Data/List";
-import { bindF, ensure, fromMaybe, fromMaybeNil, Just, listToMaybe, mapMaybe, Maybe, maybe, Nothing } from "../../../Data/Maybe";
+import { bindF, ensure, fromMaybe, Just, listToMaybe, mapMaybe, Maybe, maybe, Nothing } from "../../../Data/Maybe";
 import { OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { WikiInfoContainer } from "../../Containers/WikiInfoContainer";
+import { HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { AttributeCombined, AttributeCombinedA_ } from "../../Models/View/AttributeCombined";
 import { CombatTechniqueWithRequirements, CombatTechniqueWithRequirementsA_ } from "../../Models/View/CombatTechniqueWithRequirements";
 import { DerivedCharacteristic } from "../../Models/View/DerivedCharacteristic";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { DCIds } from "../../Selectors/derivedCharacteristicsSelectors";
+import { ndash } from "../../Utilities/Chars";
 import { translate } from "../../Utilities/I18n";
 import { pipe, pipe_ } from "../../Utilities/pipe";
 import { SkillListItem } from "../Skills/SkillListItem";
@@ -27,10 +29,11 @@ import { TextField } from "../Universal/TextField";
 
 export interface CombatTechniquesOwnProps {
   l10n: L10nRecord
+  hero: HeroModelRecord
 }
 
 export interface CombatTechniquesStateProps {
-  attributes: Maybe<List<Record<AttributeCombined>>>
+  attributes: List<Record<AttributeCombined>>
   derivedCharacteristics: OrderedMap<DCIds, Record<DerivedCharacteristic>>
   list: Maybe<List<Record<CombatTechniqueWithRequirements>>>
   isRemovingEnabled: boolean
@@ -69,7 +72,7 @@ export class CombatTechniques
   render () {
     const {
       addPoint,
-      attributes: mattributes,
+      attributes,
       derivedCharacteristics,
       list,
       l10n,
@@ -82,8 +85,6 @@ export class CombatTechniques
     } = this.props
 
     const { infoId } = this.state
-
-    const attributes = fromMaybeNil (mattributes)
 
     return (
       <Page id="combattechniques">
@@ -176,10 +177,10 @@ export class CombatTechniques
                               { className: "atpa" },
                               {
                                 className: "pa",
-                                value: fromMaybe<string | number> ("--") (CTWRA.pa (x)),
+                                value: fromMaybe<string | number> (ndash) (CTWRA.pa (x)),
                               }
                             )}
-                            attributes={mattributes}
+                            attributes={attributes}
                             derivedCharacteristics={derivedCharacteristics}
                             selectForInfo={this.showInfo}
                             groupIndex={CTWRA_.gr (x)}

@@ -62,7 +62,7 @@ export class TextField extends React.Component<TextFieldProps, {}> {
       fmapF (mhint)
             (hint => (
               <div
-                className={classNames ("textfield-hint", value === "" ? "hide" : undefined)}
+                className={classNames ("textfield-hint", value !== "" ? "hide" : undefined)}
                 >
                 {hint}
               </div>

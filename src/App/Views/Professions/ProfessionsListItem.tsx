@@ -2,7 +2,7 @@ import * as React from "react";
 import { flip } from "../../../Data/Function";
 import { fmap, fmapF } from "../../../Data/Functor";
 import { notNull, toArray } from "../../../Data/List";
-import { bind, fromMaybe, mapMaybe, Maybe, maybe } from "../../../Data/Maybe";
+import { bind, fromMaybe, mapMaybe, Maybe, maybe, maybeRNull } from "../../../Data/Maybe";
 import { lookupF } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { Sex } from "../../Models/Hero/heroTypeHelpers";
@@ -74,7 +74,8 @@ export function ProfessionsListItem (props: ProfessionsListItemProps) {
           )
         : null}
       <ListItemValues>
-        <div className="cost">{PCA_.ap (profession)}</div>
+        {maybeRNull ((cost: number) => <div className="cost">{cost}</div>)
+                    (PCA_.ap (profession))}
       </ListItemValues>
       <ListItemButtons>
         <IconButton

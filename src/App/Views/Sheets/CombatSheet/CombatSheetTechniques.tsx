@@ -10,11 +10,10 @@ import { L10nRecord } from "../../../Models/Wiki/L10n";
 import { getICName } from "../../../Utilities/AdventurePoints/improvementCostUtils";
 import { translate } from "../../../Utilities/I18n";
 import { pipe, pipe_ } from "../../../Utilities/pipe";
-import { renderMaybe } from "../../../Utilities/ReactUtils";
 import { TextBox } from "../../Universal/TextBox";
 
 export interface CombatSheetTechniquesProps {
-  attributes: Maybe<List<Record<AttributeCombined>>>
+  attributes: List<Record<AttributeCombined>>
   combatTechniques: Maybe<List<Record<CombatTechniqueWithAttackParryBase>>>
   l10n: L10nRecord
 }
@@ -23,7 +22,7 @@ const CTWAPBA = CombatTechniqueWithAttackParryBase.A
 const CTWAPBA_ = CombatTechniqueWithAttackParryBaseA_
 
 export function CombatSheetTechniques (props: CombatSheetTechniquesProps) {
-  const { attributes: mattributes, combatTechniques: mcombat_techniques, l10n } = props
+  const { attributes, combatTechniques: mcombat_techniques, l10n } = props
 
   return (
     <TextBox
@@ -62,18 +61,14 @@ export function CombatSheetTechniques (props: CombatSheetTechniquesProps) {
                   <td className="name">{CTWAPBA_.name (e)}</td>
                   <td className="primary">
                     {pipe_ (
-                      mattributes,
-                      fmap (attributes => pipe_ (
-                                           e,
-                                           CTWAPBA_.primary,
-                                           mapMaybe (pipe (
-                                             id => find (pipe (AttributeCombinedA_.id, equals (id)))
-                                                        (attributes),
-                                             fmap (AttributeCombinedA_.short)
-                                           )),
-                                           intercalate ("/")
-                                         )),
-                      renderMaybe
+                      e,
+                      CTWAPBA_.primary,
+                      mapMaybe (pipe (
+                        id => find (pipe (AttributeCombinedA_.id, equals (id)))
+                                   (attributes),
+                        fmap (AttributeCombinedA_.short)
+                      )),
+                      intercalate ("/")
                     )}
                   </td>
                   <td className="ic">{getICName (CTWAPBA_.ic (e))}</td>

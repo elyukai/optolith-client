@@ -2,13 +2,12 @@ import * as React from "react";
 import { equals } from "../../../Data/Eq";
 import { fmap } from "../../../Data/Functor";
 import { all, flength, fnull, intercalate, List, map, notNull, toArray } from "../../../Data/List";
-import { ensure, fromMaybe, isNothing, mapMaybe, Maybe, maybeRNullF, maybe_ } from "../../../Data/Maybe";
-import { lookupF, OrderedMap } from "../../../Data/OrderedMap";
+import { ensure, fromMaybe, fromMaybe_, isNothing, mapMaybe, Maybe, maybeRNullF } from "../../../Data/Maybe";
+import { OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { RaceCombined, RaceCombinedA_ } from "../../Models/View/RaceCombined";
 import { Book } from "../../Models/Wiki/Book";
-import { Culture } from "../../Models/Wiki/Culture";
-import { L10n, L10nRecord } from "../../Models/Wiki/L10n";
+import { L10nRecord } from "../../Models/Wiki/L10n";
 import { RaceVariant } from "../../Models/Wiki/RaceVariant";
 import { translate } from "../../Utilities/I18n";
 import { pipe, pipe_ } from "../../Utilities/pipe";
@@ -19,7 +18,6 @@ import { WikiProperty } from "./WikiProperty";
 
 export interface WikiRaceInfoProps {
   books: OrderedMap<string, Record<Book>>
-  cultures: OrderedMap<string, Record<Culture>>
   x: Record<RaceCombined>
   l10n: L10nRecord
 }
@@ -29,7 +27,7 @@ const RVA = RaceVariant.A
 const RCA_ = RaceCombinedA_
 
 export function WikiRaceInfo (props: WikiRaceInfoProps) {
-  const { cultures, x, l10n } = props
+  const { x, l10n } = props
 
   const name = RCA_.name (x)
 
@@ -110,9 +108,8 @@ export function WikiRaceInfo (props: WikiRaceInfoProps) {
                 x,
                 RCA_.commonCultures,
                 ensure (notNull),
-                maybe_ (() => map (RVA.name) (variants))
-                       (mapMaybe (pipe (lookupF (cultures), fmap (Culture.A.name)))),
-                sortStrings (L10n.A.id (l10n)),
+                fromMaybe_ (() => map (RVA.name) (variants)),
+                sortStrings (l10n),
                 intercalate (", ")
               )}
             </span>
@@ -125,10 +122,9 @@ export function WikiRaceInfo (props: WikiRaceInfoProps) {
               map (e => {
                     const commonCultures =
                       pipe_ (
-                        x,
-                        RCA_.commonCultures,
-                        mapMaybe (pipe (lookupF (cultures), fmap (Culture.A.name))),
-                        sortStrings (L10n.A.id (l10n)),
+                        e,
+                        RVA.commonCultures,
+                        sortStrings (l10n),
                         intercalate (", ")
                       )
 

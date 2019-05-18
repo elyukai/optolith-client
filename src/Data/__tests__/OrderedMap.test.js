@@ -3,7 +3,7 @@ const { Internals } = require('../Internals');
 const { ident } = require('../Function');
 const { fmap } = require('../Functor');
 const { List } = require('../List');
-const { Pair } = require('../Pair');
+const { Pair, Tuple } = require('../Tuple');
 const { OrderedSet } = require('../OrderedSet');
 const { fromArray, fromUniquePairs, fromMap, OrderedMap } = require('../OrderedMap');
 const { Maybe } = require('../Maybe');
@@ -489,12 +489,12 @@ test ('updateLookupWithKey', () => {
     .toEqual (Pair (Just ('c'))
                        (fromArray ([[1, 'a'], [2, 'b']])))
 
-  expect (Pair.snd (OrderedMap.updateLookupWithKey (key => x => Just (x + key))
+  expect (Tuple.snd (OrderedMap.updateLookupWithKey (key => x => Just (x + key))
                                                     (4)
                                                     (map)) === map)
     .toBeTruthy()
 
-  expect (Pair.snd (OrderedMap.updateLookupWithKey (key => x => Nothing)
+  expect (Tuple.snd (OrderedMap.updateLookupWithKey (key => x => Nothing)
                                                     (4)
                                                     (map)) === map)
     .toBeTruthy()

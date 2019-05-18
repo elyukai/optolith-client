@@ -2,7 +2,7 @@ import * as React from "react";
 import { equals } from "../../../../Data/Eq";
 import { fmap } from "../../../../Data/Functor";
 import { find, intercalate, List, map, toArray } from "../../../../Data/List";
-import { bind, mapMaybe, Maybe, maybe } from "../../../../Data/Maybe";
+import { mapMaybe, maybe } from "../../../../Data/Maybe";
 import { Record } from "../../../../Data/Record";
 import { fst, Pair, snd } from "../../../../Data/Tuple";
 import { AttributeCombined, AttributeCombinedA_ } from "../../../Models/View/AttributeCombined";
@@ -19,18 +19,18 @@ import { comparingR, sortRecordsBy } from "../../../Utilities/sortBy";
 export const iterateList =
   (l10n: L10nRecord) =>
   (checkValueVisibility: boolean) =>
-  (mattributes: Maybe<List<Record<AttributeCombined>>>) =>
+  (attributes: List<Record<AttributeCombined>>) =>
   (skills: List<Record<SkillCombined>>): JSX.Element[] =>
     pipe_ (
       skills,
       sortRecordsBy ([comparingR (SkillCombinedA_.name) (compareLocale (l10n))]),
       map (obj => {
         const check_vals = mapMaybe (pipe (
-                                      (id: string) => bind (mattributes)
-                                                           (find (pipe (
-                                                                   AttributeCombinedA_.id,
-                                                                   equals (id)
-                                                                 ))),
+                                      (id: string) => find (pipe (
+                                                             AttributeCombinedA_.id,
+                                                             equals (id)
+                                                           ))
+                                                           (attributes),
                                       fmap (AttributeCombinedA_.value)
                                     ))
                                     (SkillCombinedA_.check (obj))
@@ -40,8 +40,8 @@ export const iterateList =
             obj,
             SkillCombinedA_.check,
             mapMaybe (pipe (
-              id => bind (mattributes)
-                         (find (pipe (AttributeCombinedA_.id, equals (id)))),
+              id => find (pipe (AttributeCombinedA_.id, equals (id)))
+                         (attributes),
               fmap (attr => checkValueVisibility
                               ? AttributeCombinedA_.value (attr)
                               : AttributeCombinedA_.short (attr))

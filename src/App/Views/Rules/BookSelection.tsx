@@ -48,8 +48,8 @@ export function BookSelection (props: BookSelectionProps) {
               key={Book.A.id (e)}
               checked={
                 isCore
-                || isAdultContent && member (id) (enabledRuleBooks)
-                || !isAdultContent && (allRuleBooksEnabled || member (id) (enabledRuleBooks))
+                || member (id) (enabledRuleBooks)
+                || !isAdultContent && allRuleBooksEnabled
               }
               onClick={() => switchEnableRuleBook (id)}
               label={name}

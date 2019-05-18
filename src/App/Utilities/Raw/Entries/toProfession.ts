@@ -25,7 +25,7 @@ import { pairToIncreaseSkill } from "../../../Models/Wiki/sub/IncreaseSkill";
 import { pairToIncreaseSkillOrList } from "../../../Models/Wiki/sub/IncreaseSkillList";
 import { NameBySex } from "../../../Models/Wiki/sub/NameBySex";
 import { AnyProfessionSelection, ProfessionDependency, ProfessionPrerequisite, ProfessionSelectionIds } from "../../../Models/Wiki/wikiTypeHelpers";
-import { prefixId } from "../../IDUtils";
+import { prefixCT, prefixId } from "../../IDUtils";
 import { toNatural } from "../../NumberUtils";
 import { pipe, pipe_ } from "../../pipe";
 import { mergeRowsById } from "../mergeTableRows";
@@ -158,14 +158,14 @@ const stringToSelections =
                   id: Nothing,
                   amount: obj .amount,
                   value: obj .value,
-                  sid: fromArray (obj .sid),
+                  sid: fromArray (obj .sid .map (prefixCT)),
                 }))
               : isRawSecondCombatTechniquesSelection (obj)
               ? Just (CombatTechniquesSecondSelection ({
                   id: Nothing,
                   amount: obj .amount,
                   value: obj .value,
-                  sid: fromArray (obj .sid),
+                  sid: fromArray (obj .sid .map (prefixCT)),
                 }))
               : isRawCantripsSelection (obj)
               ? Just (CantripsSelection ({

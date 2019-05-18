@@ -1,6 +1,6 @@
 import * as React from "react";
 import { append, List, map, toArray } from "../../../Data/List";
-import { fromMaybe, Just, Maybe, Nothing } from "../../../Data/Maybe";
+import { Just, Maybe, Nothing } from "../../../Data/Maybe";
 import { fromDefault, Record } from "../../../Data/Record";
 import { AttributeCombined, AttributeCombinedA_ } from "../../Models/View/AttributeCombined";
 import { L10nRecord } from "../../Models/Wiki/L10n";
@@ -23,15 +23,13 @@ export const HeaderValue =
 
 export interface SheetHeaderProps {
   add?: List<Record<HeaderValue>>
-  attributes: Maybe<List<Record<AttributeCombined>>>
+  attributes: List<Record<AttributeCombined>>
   l10n: L10nRecord
   title: string
 }
 
 export function SheetHeader (props: SheetHeaderProps) {
-  const { add = List<Record<HeaderValue>> (), attributes: mattributes, l10n, title } = props
-
-  const attributes = fromMaybe (List<Record<AttributeCombined>> ()) (mattributes)
+  const { add = List<Record<HeaderValue>> (), attributes, l10n, title } = props
 
   const list: List<Record<HeaderValue>> =
     append (map ((attr: Record<AttributeCombined>) =>

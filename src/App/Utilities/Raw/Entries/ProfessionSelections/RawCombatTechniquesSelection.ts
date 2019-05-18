@@ -1,20 +1,13 @@
-import { IdPrefixes } from "../../../../Constants/IdPrefixes";
 import { ProfessionSelectionIds } from "../../../../Models/Wiki/wikiTypeHelpers";
-import { prefixId } from "../../../IDUtils";
-import { naturalNumber } from "../../../RegexUtils";
+import { isNaturalNumber } from "../../../RegexUtils";
 import { AnyRawProfessionSelection } from "../rawTypeHelpers";
 
 export interface RawCombatTechniquesSelection {
   id: ProfessionSelectionIds
   amount: number
   value: number
-  sid: string[]
+  sid: number[]
 }
-
-const combatTechniqueId =
-  new RegExp (prefixId (IdPrefixes.COMBAT_TECHNIQUES) (naturalNumber.source))
-
-export const isCombatTechniqueId = (x: string) => combatTechniqueId .test (x)
 
 export const isRawCombatTechniquesSelection =
   (obj: AnyRawProfessionSelection): obj is RawCombatTechniquesSelection =>
@@ -26,4 +19,4 @@ export const isRawCombatTechniquesSelection =
     // @ts-ignore
     && Array.isArray (obj .sid)
     // @ts-ignore
-    && obj .sid .every (isCombatTechniqueId)
+    && obj .sid .every (isNaturalNumber)

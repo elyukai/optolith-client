@@ -111,7 +111,7 @@ export class Advantages extends React.Component<AdvantagesProps, AdvantagesState
 
     return (
       <Page id="advantages">
-        <Slidein isOpened={this.state.showAddSlidein} close={this.hideAddSlidein}>
+        <Slidein isOpen={this.state.showAddSlidein} close={this.hideAddSlidein}>
           <Options>
             <TextField
               hint={translate (l10n) ("search")}

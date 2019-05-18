@@ -5,7 +5,7 @@ import { Portal } from "./Portal";
 export interface SlideinProps {
   children?: React.ReactNode
   className?: string
-  isOpened: boolean
+  isOpen: boolean
   close (): void
 }
 

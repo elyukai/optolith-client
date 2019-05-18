@@ -25,7 +25,7 @@ import { SpellsSheetSpells } from "./SpellsSheetSpells";
 import { SpellsSheetTraditionsProperties } from "./SpellsSheetTraditionsProperties";
 
 export interface SpellsSheetProps {
-  attributes: Maybe<List<Record<AttributeCombined>>>
+  attributes: List<Record<AttributeCombined>>
   cantrips: Maybe<List<Record<CantripCombined>>>
   checkAttributeValueVisibility: boolean
   derivedCharacteristics: List<Record<DerivedCharacteristic>>

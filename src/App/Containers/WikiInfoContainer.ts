@@ -1,7 +1,5 @@
 import { connect } from "react-redux";
-import { Just } from "../../Data/Maybe";
 import { AppStateRecord } from "../Reducers/appReducer";
-import { getDerivedCharacteristicsMap } from "../Selectors/derivedCharacteristicsSelectors";
 import { getAllCultures, getAllProfessions, getAllRaces } from "../Selectors/rcpSelectors";
 import * as stateSelectors from "../Selectors/stateSelectors";
 import { mapGetToSlice } from "../Utilities/SelectorsUtils";
@@ -21,8 +19,6 @@ const mapStateToProps =
     combinedRaces: getAllRaces (state),
     combinedProfessions: getAllProfessions (state, ownProps),
     disadvantages: stateSelectors.getWikiDisadvantages (state),
-    derivedCharacteristics: Just (getDerivedCharacteristicsMap (state, ownProps)),
-    hero: stateSelectors.getCurrentHeroPresent (state),
     languages: mapGetToSlice (stateSelectors.getWikiSpecialAbilities) ("SA_29") (state),
     professionVariants: stateSelectors.getWikiProfessionVariants (state),
     races: stateSelectors.getWikiRaces (state),

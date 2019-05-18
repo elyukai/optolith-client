@@ -64,10 +64,20 @@ export const equals =
       return Internals.isList (x2) && equalsCons (x1, x2)
     }
 
-    if (Internals.isPair (x1)) {
-      return Internals.isPair (x2)
-        && equals (x1 .first) (x2 .first)
-        && equals (x1 .second) (x2 .second)
+    if (Internals.isTuple (x1)) {
+      if (Internals.isTuple (x2) && x1 .length === x2 .length) {
+        for (let i = 0; i < x1 .length; i++) {
+          const equal = equals (x1 .values [i]) (x2 .values [i])
+
+          if (!equal) {
+            return false
+          }
+        }
+
+        return true
+      }
+
+      return false
     }
 
     if (Internals.isOrderedSet (x1)) {

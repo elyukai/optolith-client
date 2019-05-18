@@ -38,7 +38,6 @@ const AOWIA = ActiveObjectWithId.A
 
 export const ActiveActivatableA_ = {
   id: pipe (AAA.wikiEntry, Advantage.AL.id) as GenA<string>,
-  name: pipe (AAA.wikiEntry, Advantage.AL.name),
   levels: pipe (AAA.wikiEntry, Advantage.AL.tiers),
   gr: pipe (AAA.wikiEntry, Advantage.AL.gr),
   level: pipe (AAA.nameAndCost, ANCA_.tier),
@@ -49,6 +48,7 @@ export const ActiveActivatableA_ = {
       AAA.nameAndCost,
       ANCA.finalCost as StrictAccessor<ActivatableNameCostSafeCost, "finalCost">
     ),
+  name: pipe (AAA.nameAndCost, ANCA_.name),
   baseName: pipe (AAA.nameAndCost, ANCA_.baseName) as GenA<string>,
   addName: pipe (AAA.nameAndCost, ANCA_.addName) as GenA<Maybe<string>>,
   levelName: pipe (AAA.nameAndCost, ANCA_.levelName) as GenA<Maybe<string>>,

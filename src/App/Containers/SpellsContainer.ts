@@ -14,7 +14,7 @@ import { Spells, SpellsDispatchProps, SpellsOwnProps, SpellsStateProps } from ".
 const mapStateToProps = (state: AppStateRecord, ownProps: SpellsOwnProps): SpellsStateProps => ({
   activeList: getFilteredActiveSpellsAndCantrips (state, ownProps),
   inactiveList: getFilteredInactiveSpellsAndCantrips (state, ownProps),
-  attributes: getAttributesForSheet (state),
+  attributes: getAttributesForSheet (state, ownProps),
   derivedCharacteristics: getDerivedCharacteristicsMap (state, ownProps),
   addSpellsDisabled: isActivationDisabled (state),
   enableActiveItemHints: getEnableActiveItemHints (state),
