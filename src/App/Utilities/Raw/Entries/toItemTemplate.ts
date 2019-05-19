@@ -4,10 +4,10 @@ import { ensure, Nothing } from "../../../../Data/Maybe";
 import { IdPrefixes } from "../../../Constants/IdPrefixes";
 import { ItemTemplate } from "../../../Models/Wiki/ItemTemplate";
 import { PrimaryAttributeDamageThreshold } from "../../../Models/Wiki/sub/PrimaryAttributeDamageThreshold";
-import { prefixId } from "../../IDUtils";
+import { prefixAttr, prefixId, prefixItemTpl } from "../../IDUtils";
 import { toNatural } from "../../NumberUtils";
 import { pipe } from "../../pipe";
-import { naturalNumber } from "../../RegexUtils";
+import { exactR, naturalNumberU } from "../../RegexUtils";
 import { mergeRowsById } from "../mergeTableRows";
 import { Expect } from "../showExpected";
 import { mensureMapBoolean, mensureMapListBindAfterOptional, mensureMapNaturalFixedListOptional, mensureMapNaturalInRange, mensureMapNaturalInRangeOptional, mensureMapNaturalOptional, mensureMapNonEmptyString, mensureMapStringPredOptional } from "../validateMapValueUtils";
@@ -15,12 +15,12 @@ import { lookupKeyValid, mapMNamed, TableType } from "../validateValueUtils";
 import { toSourceLinks } from "./Sub/toSourceLinks";
 
 const primaryAttributeRx =
-  new RegExp (`${IdPrefixes.ATTRIBUTES}_[1-8]|${IdPrefixes.ATTRIBUTES}_6_8`)
+  new RegExp (exactR (`${prefixAttr ("[1-8]")}|${prefixAttr ("6_8")}`))
 
 const isPrimaryAttributeString = (x: string) => primaryAttributeRx .test (x)
 
 const itemTemplateIdRx =
-  new RegExp (`${IdPrefixes.ITEM_TEMPLATE}_${naturalNumber.source}`)
+  new RegExp (exactR (prefixItemTpl (naturalNumberU)))
 
 const isItemTemplateIdString = (x: string) => itemTemplateIdRx .test (x)
 

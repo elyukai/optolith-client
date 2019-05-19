@@ -1,7 +1,6 @@
-import { IdPrefixes } from "../../../../Constants/IdPrefixes";
 import { ProfessionSelectionIds } from "../../../../Models/Wiki/wikiTypeHelpers";
-import { prefixId } from "../../../IDUtils";
-import { naturalNumber } from "../../../RegexUtils";
+import { prefixSkill } from "../../../IDUtils";
+import { exactR, naturalNumberU } from "../../../RegexUtils";
 import { AnyRawProfessionSelection } from "../rawTypeHelpers";
 
 export interface RawSpecializationSelection {
@@ -10,7 +9,7 @@ export interface RawSpecializationSelection {
 }
 
 const skillId =
-  new RegExp (prefixId (IdPrefixes.SKILLS) (naturalNumber.source))
+  new RegExp (exactR (prefixSkill (naturalNumberU)))
 
 export const isSkillId = (x: string) => skillId .test (x)
 

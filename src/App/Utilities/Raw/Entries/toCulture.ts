@@ -6,9 +6,9 @@ import { IdPrefixes } from "../../../Constants/IdPrefixes";
 import { Culture } from "../../../Models/Wiki/Culture";
 import { CommonProfession } from "../../../Models/Wiki/sub/CommonProfession";
 import { IncreaseSkill } from "../../../Models/Wiki/sub/IncreaseSkill";
-import { prefixId } from "../../IDUtils";
+import { prefixId, prefixProf } from "../../IDUtils";
 import { toNatural, unsafeToInt } from "../../NumberUtils";
-import { isNaturalNumber, naturalNumber } from "../../RegexUtils";
+import { exactR, isNaturalNumber, naturalNumberU } from "../../RegexUtils";
 import { mergeRowsById } from "../mergeTableRows";
 import { maybePrefix } from "../rawConversionUtils";
 import { Expect } from "../showExpected";
@@ -17,7 +17,7 @@ import { lookupKeyValid, mapMNamed, TableType } from "../validateValueUtils";
 import { toSourceLinks } from "./Sub/toSourceLinks";
 
 const exception =
-  new RegExp (`${naturalNumber.source}|(${IdPrefixes.PROFESSIONS}_${naturalNumber.source})`)
+  new RegExp (exactR (`${naturalNumberU}|${prefixProf (naturalNumberU)}`))
 
 const checkException =
   (x: string) => exception .test (x)

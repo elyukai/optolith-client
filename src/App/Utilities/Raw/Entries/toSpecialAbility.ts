@@ -71,7 +71,7 @@ export const toSpecialAbility =
 
       const ename = checkL10nNonEmptyString ("name")
 
-      const nameInWiki = lookup_l10n ("name")
+      const nameInWiki = lookup_l10n ("nameInWiki")
 
       const ecost = toActivatableCost (lookup_univ)
 

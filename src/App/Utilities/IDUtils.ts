@@ -50,9 +50,24 @@ export const prefixDis = prefixId (IdPrefixes.DISADVANTAGES)
 export const prefixSA = prefixId (IdPrefixes.SPECIAL_ABILITIES)
 
 /**
+ * Create a skill id.
+ */
+export const prefixSkill = prefixId (IdPrefixes.SKILLS)
+
+/**
  * Create a combat technique id.
  */
 export const prefixCT = prefixId (IdPrefixes.COMBAT_TECHNIQUES)
+
+/**
+ * Create a cantrip id.
+ */
+export const prefixCantrip = prefixId (IdPrefixes.CANTRIPS)
+
+/**
+ * Create a item template id.
+ */
+export const prefixItemTpl = prefixId (IdPrefixes.ITEM_TEMPLATE)
 
 /**
  * Gets a list of ids and returns an unused numeric id.

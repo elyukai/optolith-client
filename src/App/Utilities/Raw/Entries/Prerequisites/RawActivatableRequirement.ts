@@ -2,7 +2,7 @@ import { intercalate, map } from "../../../../../Data/List";
 import { ActivatableLikeCategories, ActivatableLikeCategory } from "../../../../Constants/Categories";
 import { IdPrefixes, IdPrefixesByCategory } from "../../../../Constants/IdPrefixes";
 import { prefixId } from "../../../IDUtils";
-import { naturalNumber } from "../../../RegexUtils";
+import { exactR, naturalNumberU } from "../../../RegexUtils";
 import { isNumber } from "../../../typeCheckUtils";
 import { AllRawRequirementObjects, RawProfessionPrerequisite, RawSID } from "../rawTypeHelpers";
 
@@ -29,7 +29,7 @@ const availablePrefixes =
 const prefixesRx = `(${intercalate ("|") (availablePrefixes)})`
 
 const activatableLikeId =
-  new RegExp (prefixId (prefixesRx as IdPrefixes) (naturalNumber.source))
+  new RegExp (exactR (prefixId (prefixesRx as IdPrefixes) (naturalNumberU)))
 
 const isActivatableLikeId = (x: string) => activatableLikeId .test (x)
 

@@ -2,9 +2,27 @@ import { existsSync } from "fs";
 import { notNullStr } from "../../Data/List";
 import { maybe } from "../../Data/Maybe";
 
-export const naturalNumber = /^0|[1-9]\d*$/
-export const integer = /^0|(?:-?[1-9]\d*)$/
-export const float = /^0|(?:-?[1-9]\d*(?:[\.,]\d+)?)$/
+export const naturalNumber = /^(?:0|[1-9][0-9]*)$/
+
+/**
+ * Natural number regex source without explicit start and end.
+ */
+export const naturalNumberU = "(?:0|[1-9][0-9]*)$"
+
+export const integer = /^(?:0|-?[1-9][0-9]*)$/
+
+/**
+ * Integer regex source without explicit start and end.
+ */
+export const integerU = "(?:0|-?[1-9][0-9]*)$"
+
+export const float = /^(?:0|-?[1-9][0-9]*(?:[\.,][0-9]+)?)$/
+
+/**
+ * Float regex source without explicit start and end.
+ */
+export const floatU = "(?:0|-?[1-9][0-9]*(?:[\.,][0-9]+)?)"
+
 export const base64Image = /^data:image\/(png|gif|jpeg|jpg)base64,.+/
 
 /**
@@ -54,3 +72,13 @@ export const isPathValidM =
                             isBase64Image (src)
                             || existsSync (src.replace (/file:[\\\/]+/, ""))
                           ))
+
+
+/**
+ * Surrounds a regular expression string with `^(?:` ... `)$`.
+ *
+ * ```haskell
+ * exactR "[0-8]" == "^(?:[0-8])$"
+ * ```
+ */
+export const exactR = (str: string) => `^(?:${str})$`

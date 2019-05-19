@@ -9,20 +9,18 @@ import { bindOptional, mensureMap } from "../../validateMapValueUtils";
 import { lookupKeyValid, TableType } from "../../validateValueUtils";
 
 export const toActivatableCost =
-  flip (
-         lookupKeyValid (mensureMap (Expect.Maybe (Expect.G (
-                                      Expect.Union (
-                                        Expect.NaturalNumber,
-                                        Expect.List (Expect.NaturalNumber)
-                                      )
-                                    )))
-                        (bindOptional<number | List<number>> (
-                          x => isNaturalNumber (x)
-                            ? Just (unsafeToInt (x))
-                            : mapM<string, number> (toNatural) (splitOn ("&") (x))
-                        )))
-                        (TableType.Univ)
-       )
+  flip (lookupKeyValid (mensureMap (Expect.Maybe (Expect.G (
+                                     Expect.Union (
+                                       Expect.NaturalNumber,
+                                       Expect.List (Expect.NaturalNumber)
+                                     )
+                                   )))
+                                   (bindOptional<number | List<number>> (
+                                     x => isNaturalNumber (x)
+                                       ? Just (unsafeToInt (x))
+                                       : mapM<string, number> (toNatural) (splitOn ("&") (x))
+                                   )))
+                       (TableType.Univ))
        ("cost") as
          (lookup_univ: (key: string) => Maybe<string>) =>
            Either<string, Maybe<number | List<number>>>

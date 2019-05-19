@@ -5,6 +5,7 @@ import { empty, flength, foldr, fromArray, List, map, notNull, splitOn } from ".
 import { altF_, any, bindF, ensure, fromJust, fromMaybe, isJust, Just, mapM, maybe, Maybe, Nothing, Some } from "../../../../Data/Maybe";
 import { Record } from "../../../../Data/Record";
 import { parseJSON } from "../../../../Data/String/JSON";
+import { traceN } from "../../../../System/IO";
 import { IdPrefixes } from "../../../Constants/IdPrefixes";
 import { ProfessionRequireActivatable, RequireActivatable } from "../../../Models/Wiki/prerequisites/ActivatableRequirement";
 import { CultureRequirement } from "../../../Models/Wiki/prerequisites/CultureRequirement";
@@ -25,7 +26,7 @@ import { pairToIncreaseSkill } from "../../../Models/Wiki/sub/IncreaseSkill";
 import { pairToIncreaseSkillOrList } from "../../../Models/Wiki/sub/IncreaseSkillList";
 import { NameBySex } from "../../../Models/Wiki/sub/NameBySex";
 import { AnyProfessionSelection, ProfessionDependency, ProfessionPrerequisite, ProfessionSelectionIds } from "../../../Models/Wiki/wikiTypeHelpers";
-import { prefixCT, prefixId } from "../../IDUtils";
+import { prefixCantrip, prefixCT, prefixId } from "../../IDUtils";
 import { toNatural } from "../../NumberUtils";
 import { pipe, pipe_ } from "../../pipe";
 import { mergeRowsById } from "../mergeTableRows";
@@ -171,7 +172,7 @@ const stringToSelections =
               ? Just (CantripsSelection ({
                   id: Nothing,
                   amount: obj .amount,
-                  sid: fromArray (obj .sid),
+                  sid: fromArray (obj .sid .map (prefixCantrip)),
                 }))
               : isRawCursesSelection (obj)
               ? Just (CursesSelection ({
@@ -188,7 +189,7 @@ const stringToSelections =
                   id: Nothing,
                   value: obj .value,
                 }))
-              : Nothing
+              : (traceN ("Invalid selection: ") (obj), Nothing)
           }
 
           return Nothing
@@ -280,7 +281,7 @@ const toNaturalNumberPairOptional =
                              (toNatural)
                              (toNatural)
 
-export const toNaturalNumberOrNumberListPairOptional =
+const toNaturalNumberOrNumberListPairOptional =
   mensureMapPairListOptional ("&")
                              ("?")
                              (Expect.Union (

@@ -1,19 +1,12 @@
-import { IdPrefixes } from "../../../../Constants/IdPrefixes";
 import { ProfessionSelectionIds } from "../../../../Models/Wiki/wikiTypeHelpers";
-import { prefixId } from "../../../IDUtils";
-import { naturalNumber } from "../../../RegexUtils";
+import { isNaturalNumber } from "../../../RegexUtils";
 import { AnyRawProfessionSelection } from "../rawTypeHelpers";
 
 export interface RawCantripsSelection {
   id: ProfessionSelectionIds
   amount: number
-  sid: string[]
+  sid: number[]
 }
-
-const cantripId =
-  new RegExp (prefixId (IdPrefixes.CANTRIPS) (naturalNumber.source))
-
-const isCantripId = (x: string) => cantripId .test (x)
 
 export const isRawCantripsSelection =
   (obj: AnyRawProfessionSelection): obj is RawCantripsSelection =>
@@ -23,4 +16,4 @@ export const isRawCantripsSelection =
     // @ts-ignore
     && Array.isArray (obj .sid)
     // @ts-ignore
-    && obj .sid .every (isCantripId)
+    && obj .sid .every (isNaturalNumber)

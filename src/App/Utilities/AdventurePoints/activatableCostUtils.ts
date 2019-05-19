@@ -15,6 +15,7 @@ import { appendStr, countWith, filter, find, foldl, ifoldr, isList, List, map, n
 import { any, bind, bindF, elem, elemF, ensure, fromJust, fromMaybe, isJust, isNothing, Just, liftM2, listToMaybe, Maybe, maybe, Nothing } from "../../../Data/Maybe";
 import { lookup, lookupF } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
+import { traceN } from "../../../System/IO";
 import { Categories } from "../../Constants/Categories";
 import { ActivatableDependent, isActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
@@ -384,14 +385,18 @@ const getTotalCost =
       return fromJust (custom_cost)
     }
 
-    const current_cost =
-      fromMaybe<number | List<number>> (0)
-                                       (getEntrySpecificCost (isEntryToAdd)
-                                                             (wiki)
-                                                             (hero)
-                                                             (wiki_entry)
-                                                             (hero_entry)
-                                                             (entry))
+    const mentry_specifc_cost = getEntrySpecificCost (isEntryToAdd)
+                                                     (wiki)
+                                                     (hero)
+                                                     (wiki_entry)
+                                                     (hero_entry)
+                                                     (entry)
+
+    traceN ("wiki entry: ") (wiki_entry)
+    traceN ("hero entry: ") (hero_entry)
+    traceN ("cost: ") (mentry_specifc_cost)
+
+    const current_cost = fromMaybe<number | List<number>> (0) (mentry_specifc_cost)
 
     if (isDisadvantage (wiki_entry)) {
       return isList (current_cost) ? map (negate) (current_cost) : -current_cost

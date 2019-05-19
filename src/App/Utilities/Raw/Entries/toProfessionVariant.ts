@@ -1,8 +1,8 @@
 import { ident } from "../../../../Data/Function";
 import { fmap } from "../../../../Data/Functor";
 import { set } from "../../../../Data/Lens";
-import { empty, foldr, fromArray, map } from "../../../../Data/List";
-import { any, fromJust, fromMaybe, Just, maybe, Maybe, Nothing, Some } from "../../../../Data/Maybe";
+import { empty, foldr, fromArray, List, map, notNull, splitOn } from "../../../../Data/List";
+import { altF_, any, bindF, ensure, fromJust, fromMaybe, Just, mapM, maybe, Maybe, Nothing, Some } from "../../../../Data/Maybe";
 import { Record } from "../../../../Data/Record";
 import { parseJSON } from "../../../../Data/String/JSON";
 import { IdPrefixes } from "../../../Constants/IdPrefixes";
@@ -23,9 +23,9 @@ import { pairToIncreaseSkill } from "../../../Models/Wiki/sub/IncreaseSkill";
 import { pairToIncreaseSkillOrList } from "../../../Models/Wiki/sub/IncreaseSkillList";
 import { NameBySex } from "../../../Models/Wiki/sub/NameBySex";
 import { AnyProfessionVariantSelection, ProfessionSelectionIds } from "../../../Models/Wiki/wikiTypeHelpers";
-import { prefixCT, prefixId } from "../../IDUtils";
+import { prefixCantrip, prefixCT, prefixId } from "../../IDUtils";
 import { toInt, toNatural } from "../../NumberUtils";
-import { pipe } from "../../pipe";
+import { pipe, pipe_ } from "../../pipe";
 import { mergeRowsById } from "../mergeTableRows";
 import { Expect } from "../showExpected";
 import { mensureMapInteger, mensureMapListOptional, mensureMapNonEmptyString, mensureMapPairListOptional } from "../validateMapValueUtils";
@@ -41,7 +41,7 @@ import { isRawTerrainKnowledgeSelection } from "./ProfessionSelections/RawTerrai
 import { isRemoveRawCombatTechniquesSelection } from "./ProfessionSelections/RemoveRawCombatTechniquesSelection";
 import { isRemoveRawCombatTechniquesSecondSelection } from "./ProfessionSelections/RemoveRawSecondCombatTechniquesSelection";
 import { isRemoveRawSpecializationSelection } from "./ProfessionSelections/RemoveRawSpecializationSelection";
-import { stringToBlessings, stringToDependencies, stringToPrerequisites, stringToSpecialAbilities, toNaturalNumberOrNumberListPairOptional } from "./toProfession";
+import { stringToBlessings, stringToDependencies, stringToPrerequisites, stringToSpecialAbilities } from "./toProfession";
 
 const PVSL = ProfessionVariantSelectionsL
 
@@ -101,7 +101,7 @@ const stringToVariantSelections =
               ? Just (CantripsSelection ({
                   id: Nothing,
                   amount: obj .amount,
-                  sid: fromArray (obj .sid),
+                  sid: fromArray (obj .sid .map (prefixCantrip)),
                 }))
               : isRawCursesSelection (obj)
               ? Just (CursesSelection ({
@@ -179,6 +179,26 @@ const toNaturalNumberIntPairOptional =
                              (Expect.NaturalNumber)
                              (Expect.Integer)
                              (toNatural)
+                             (toInt)
+
+const toNaturalNumberOrNumberListPairOptional =
+  mensureMapPairListOptional ("&")
+                             ("?")
+                             (Expect.Union (
+                               Expect.NaturalNumber,
+                               Expect.NonEmptyList (Expect.NaturalNumber)
+                             ))
+                             (Expect.Integer)
+                             (x => pipe_ (
+                               x,
+                               toNatural,
+                               altF_<number | List<number>> (() => pipe_ (
+                                                                           x,
+                                                                           splitOn ("|"),
+                                                                           ensure (notNull),
+                                                                           bindF (mapM (toNatural))
+                                                                         ))
+                             ))
                              (toInt)
 
 export const toProfessionVariant =

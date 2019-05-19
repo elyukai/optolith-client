@@ -2,7 +2,7 @@ import { intercalate, map } from "../../../../../Data/List";
 import { Categories, IncreasableCategories } from "../../../../Constants/Categories";
 import { IdPrefixes, IdPrefixesByCategory } from "../../../../Constants/IdPrefixes";
 import { prefixId } from "../../../IDUtils";
-import { naturalNumber } from "../../../RegexUtils";
+import { exactR, naturalNumberU } from "../../../RegexUtils";
 import { AllRawRequirementObjects, RawProfessionPrerequisite } from "../rawTypeHelpers";
 
 export interface RawRequireIncreasable {
@@ -21,7 +21,7 @@ const availablePrefixes =
 const prefixesRx = `(${intercalate ("|") (availablePrefixes)})`
 
 const increasableId =
-  new RegExp (prefixId (prefixesRx as IdPrefixes) (naturalNumber.source))
+  new RegExp (exactR (prefixId (prefixesRx as IdPrefixes) (naturalNumberU)))
 
 const isIncreasableId = (x: string) => increasableId .test (x)
 
