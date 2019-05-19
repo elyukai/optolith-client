@@ -114,9 +114,9 @@ export interface RawCustomItem {
   pa?: number
   reach?: number
   length?: number
-  stp?: number
+  stp?: string
   range?: number[]
-  reloadTime?: number
+  reloadTime?: string
   ammunition?: string
   pro?: number
   enc?: number

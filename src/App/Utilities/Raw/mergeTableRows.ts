@@ -4,8 +4,9 @@ import { bindF, elem, ensure, fromJust, isJust, Just, Maybe, Nothing } from "../
 import { lookup, lookupF, OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { show } from "../../../Data/Show";
-import { toInt } from "../NumberUtils";
+import { toInt, toNatural, unsafeToInt } from "../NumberUtils";
 import { pipe, pipe_ } from "../pipe";
+import { id_rx, isNaturalNumber } from "../RegexUtils";
 
 /**
  * Lookup property `"id"` in passed line from universal table and returns an
@@ -70,7 +71,7 @@ export const mergeRowsById =
 
 type MergeRowsByIdAndMainIdFunction<A> =
   (mainId: number) =>
-  (id: number) =>
+  (id: number | string) =>
   (lookup_l10n: (key: string) => Maybe<string>) =>
   (lookup_univ: (key: string) => Maybe<string>) => Either<string, A>
 
@@ -86,8 +87,17 @@ export const mergeRowsByIdAndMainId =
   <A> (f: MergeRowsByIdAndMainIdFunction<A>) =>
   (l10n: List<OrderedMap<string, string>>) =>
   (univ_row: OrderedMap<string, string>): Either<string, Maybe<A>> => {
-    const either_main_id = lookupId (origin) (toInt) ("mainId") (univ_row)
-    const either_id = lookupId (origin) (toInt) ("id") (univ_row)
+    const either_main_id = lookupId (origin) (toNatural) ("mainId") (univ_row)
+    const either_id = lookupId (origin)
+                               <string | number>
+                               (x =>
+                                 isNaturalNumber (x)
+                                 ? Just (unsafeToInt (x))
+                                 : id_rx .test (x)
+                                 ? Just (x)
+                                 : Nothing)
+                               ("id")
+                               (univ_row)
 
     if (isLeft (either_main_id)) {
       return either_main_id

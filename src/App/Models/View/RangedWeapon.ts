@@ -6,7 +6,7 @@ export interface RangedWeapon {
   id: string
   name: string
   combatTechnique: string
-  reloadTime: Maybe<number>
+  reloadTime: Maybe<string>
   damageDiceNumber: Maybe<number>
   damageDiceSides: Maybe<number>
   damageFlat: Maybe<number>

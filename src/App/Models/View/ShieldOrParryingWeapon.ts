@@ -4,7 +4,7 @@ import { fromDefault } from "../../../Data/Record";
 export interface ShieldOrParryingWeapon {
   id: string
   name: string
-  stp: Maybe<number>
+  stp: Maybe<string>
   bf: number
   loss: Maybe<number>
   atMod: Maybe<number>

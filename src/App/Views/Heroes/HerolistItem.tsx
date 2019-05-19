@@ -1,6 +1,6 @@
 import * as React from "react";
 import { fmap } from "../../../Data/Functor";
-import { bindF, fromMaybe, join, Maybe, maybe } from "../../../Data/Maybe";
+import { bindF, fromMaybe, Maybe } from "../../../Data/Maybe";
 import { lookupF, OrderedMap } from "../../../Data/OrderedMap";
 import { notMember, OrderedSet } from "../../../Data/OrderedSet";
 import { Record } from "../../../Data/Record";
@@ -15,6 +15,7 @@ import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { translate } from "../../Utilities/I18n";
 import { pipe, pipe_ } from "../../Utilities/pipe";
 import { getFullProfessionName } from "../../Utilities/rcpUtils";
+import { renderMaybeWith } from "../../Utilities/ReactUtils";
 import { AvatarWrapper } from "../Universal/AvatarWrapper";
 import { BorderButton } from "../Universal/BorderButton";
 import { IconButton } from "../Universal/IconButton";
@@ -30,7 +31,7 @@ export interface HerolistItemOwnProps {
 }
 
 export interface HerolistItemStateProps {
-  ap: Maybe<Maybe<Record<AdventurePointsCategories>>>
+  ap: Maybe<Record<AdventurePointsCategories>>
   wiki: WikiModelRecord
   users: OrderedMap<string, User>
   unsavedHeroesById: OrderedSet<string>
@@ -51,7 +52,7 @@ export type HerolistItemProps = HerolistItemStateProps
 
 export function HerolistItem (props: HerolistItemProps) {
   const {
-    ap: mmap,
+    ap: map,
     hero,
     wiki,
     users,
@@ -63,8 +64,6 @@ export function HerolistItem (props: HerolistItemProps) {
     deleteHero,
     duplicateHero,
   } = props
-
-  const m_ap = join (mmap)
 
   const id = HeroModel.A.id (hero)
 
@@ -117,9 +116,9 @@ export function HerolistItem (props: HerolistItemProps) {
                                    (HeroModel.A.professionName (hero))}
           </span>
           <span className="totalap">
-            {maybe (0) (AdventurePointsCategories.A.spent) (m_ap)}
+            {renderMaybeWith (AdventurePointsCategories.A.spent) (map)}
             {" / "}
-            {maybe (0) (AdventurePointsCategories.A.total) (m_ap)}
+            {renderMaybeWith (AdventurePointsCategories.A.total) (map)}
             {" "}
             {translate (l10n) ("adventurepoints.short")}
           </span>

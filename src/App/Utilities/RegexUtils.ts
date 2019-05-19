@@ -7,21 +7,26 @@ export const naturalNumber = /^(?:0|[1-9][0-9]*)$/
 /**
  * Natural number regex source without explicit start and end.
  */
-export const naturalNumberU = "(?:0|[1-9][0-9]*)$"
+export const naturalNumberU = "[1-9][0-9]*"
+
+/**
+ * Natural number (including zero) regex source without explicit start and end.
+ */
+export const naturalNumberZeroU = "0|[1-9][0-9]*"
 
 export const integer = /^(?:0|-?[1-9][0-9]*)$/
 
 /**
  * Integer regex source without explicit start and end.
  */
-export const integerU = "(?:0|-?[1-9][0-9]*)$"
+export const integerU = "0|-?[1-9][0-9]*"
 
 export const float = /^(?:0|-?[1-9][0-9]*(?:[\.,][0-9]+)?)$/
 
 /**
  * Float regex source without explicit start and end.
  */
-export const floatU = "(?:0|-?[1-9][0-9]*(?:[\.,][0-9]+)?)"
+export const floatU = "0|-?[1-9][0-9]*(?:[\.,][0-9]+)?"
 
 export const base64Image = /^data:image\/(png|gif|jpeg|jpg)base64,.+/
 
@@ -82,3 +87,5 @@ export const isPathValidM =
  * ```
  */
 export const exactR = (str: string) => `^(?:${str})$`
+
+export const id_rx = new RegExp (exactR (`[A-Z]+_${naturalNumberU}`))

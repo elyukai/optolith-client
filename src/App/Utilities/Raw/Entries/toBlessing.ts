@@ -17,7 +17,7 @@ export const toBlessing =
         lookupKeyValid (mensureMapNonEmptyString) (TableType.L10n) (lookup_l10n)
 
       const checkUnivNaturalNumberList =
-        lookupKeyValid (mensureMapNaturalList ("&")) (TableType.Univ) (lookup_univ)
+        lookupKeyValid (mensureMapNaturalList (",")) (TableType.Univ) (lookup_univ)
 
       // Check and convert fields
 

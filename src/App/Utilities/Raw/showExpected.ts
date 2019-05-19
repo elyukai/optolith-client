@@ -2,6 +2,7 @@ export const Expect = Object.freeze ({
   NonEmptyString: "String (non-empty)",
   NaturalNumber: "Natural",
   Integer: "Int",
+  Float: "Float",
   Boolean: "Bool",
   Maybe: (x: string) => `Maybe ${x}`,
   List: (x: string) => `[${x}]`,

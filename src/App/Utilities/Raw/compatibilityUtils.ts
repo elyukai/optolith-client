@@ -1,7 +1,10 @@
 import { lt, lte, satisfies } from "semver";
+import { ident } from "../../../Data/Function";
 import { StringKeyObject } from "../../../Data/Record";
 import { getBlessedTradStrIdFromNumId, getMagicalTraditionInstanceIdByNumericId } from "../IDUtils";
-import { RawActiveObject, RawHero } from "./RawData";
+import { pipe_ } from "../pipe";
+import { isNumber } from "../typeCheckUtils";
+import { RawActiveObject, RawCustomItem, RawHero } from "./RawData";
 
 // tslint:disable-next-line:variable-name
 const convertLowerThan0_49_5 = (hero: RawHero): RawHero => {
@@ -751,8 +754,6 @@ const convertLowerThan1_0_0 = (hero: RawHero): RawHero => {
     entry.pers.eyecolor = 19
   }
 
-  entry.clientVersion = "1.0.0"
-
   return entry
 }
 
@@ -789,8 +790,6 @@ const convertLowerThan1_0_2 = (hero: RawHero): RawHero => {
     return inter
   })
 
-  entry.clientVersion = "1.0.2"
-
   return entry
 }
 
@@ -822,12 +821,11 @@ const convertLowerThan1_1_0_Alpha_1 = (hero: RawHero): RawHero => {
     },
     // ct: Object.entries (hero.ct)
     //   .reduce<StringKeyObject<number>> ((acc, e) => ({ ...acc, [e[0]]: e[1] - 6 }), {}),
-    clientVersion: "1.1.0-alpha.1",
   }
 }
 
-export const convertHero = (hero: RawHero): RawHero => {
-  let entry = { ...hero }
+export const convertHero = (orig_hero: RawHero): RawHero => {
+  let entry = { ...orig_hero }
 
   if (lt (entry.clientVersion, "0.49.5")) {
     entry = convertLowerThan0_49_5 (entry)
@@ -848,17 +846,57 @@ export const convertHero = (hero: RawHero): RawHero => {
     entry = convertLowerThanOrEqual0_51_3 (entry)
   }
 
-  if (satisfies (entry.clientVersion, "< 1.0.0")) {
-    entry = convertLowerThan1_0_0 (entry)
-  }
-
-  if (satisfies (entry.clientVersion, "< 1.0.2")) {
-    entry = convertLowerThan1_0_2 (entry)
-  }
-
-  if (satisfies (entry.clientVersion, "< 1.1.0-alpha.1")) {
-    entry = convertLowerThan1_1_0_Alpha_1 (entry)
-  }
-
-  return entry
+  return pipe_ (
+    entry,
+    convertLT ("1.0.0") (convertLowerThan1_0_0),
+    convertLT ("1.0.2") (convertLowerThan1_0_2),
+    convertLT ("1.1.0-alpha.1") (convertLowerThan1_1_0_Alpha_1),
+    convertLT ("1.1.0-alpha.9")
+              (hero => ({
+                ...hero,
+                belongings: {
+                  ...hero.belongings,
+                  items: pipe_ (
+                    hero.belongings.items,
+                    Object.entries,
+                    (xs: [string, RawCustomItem][]) => xs .map<[string, RawCustomItem]> (
+                      x => [
+                        x[0],
+                        {
+                          ...x[1],
+                          reloadTime:
+                            isNumber (x[1].reloadTime)
+                              ? (x[1].reloadTime as number).toString ()
+                              : x[1].reloadTime,
+                          stp:
+                            isNumber (x[1].stp)
+                              ? (x[1].stp as number).toString ()
+                              : x[1].stp,
+                        },
+                      ]
+                    ),
+                    fromEntries
+                  ),
+                },
+              }))
+  )
 }
+
+const fromEntries =
+  <A> (xs: [string, A][]): { [key: string]: A } => {
+    const obj: { [key: string]: A } = {}
+
+    xs.forEach (x => {
+      obj [x[0]] = x[1]
+    })
+
+    return obj
+  }
+
+const convertLT =
+  (lower_than_version: string) =>
+  (f: ident<RawHero>) =>
+  (hero: RawHero): RawHero =>
+    lt (hero.clientVersion, lower_than_version)
+      ? { ...(f (hero)), clientVersion: lower_than_version }
+      : hero

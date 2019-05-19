@@ -63,7 +63,7 @@ export function CombatSheetRangedWeapons (props: CombatSheetRangedWeaponProps) {
                   </td>
                   <td className="combat-technique">{RWA.combatTechnique (e)}</td>
                   <td className="reload-time">
-                    {Maybe.sum (RWA.reloadTime (e))}
+                    {renderMaybe (RWA.reloadTime (e))}
                     {" "}
                     {translate (l10n) ("actions")}
                   </td>

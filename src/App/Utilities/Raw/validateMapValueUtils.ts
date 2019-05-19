@@ -7,7 +7,7 @@ import { bindF, ensure, fromMaybe, Just, liftM2, mapM, Maybe, maybe, Nothing } f
 import { fromList, OrderedSet } from "../../../Data/OrderedSet";
 import { Pair } from "../../../Data/Pair";
 import { show } from "../../../Data/Show";
-import { toInt, toNatural } from "../NumberUtils";
+import { toFloat, toInt, toNatural } from "../NumberUtils";
 import { pipe } from "../pipe";
 import { Expect } from "./showExpected";
 
@@ -270,6 +270,10 @@ export const mensureMapInteger =
 export const mensureMapIntegerOptional =
   mensureMap (Expect.Maybe (Expect.Integer))
              (bindOptional (toInt))
+
+export const mensureMapFloatOptional =
+  mensureMap (Expect.Maybe (Expect.Float))
+             (bindOptional (toFloat))
 
 export const mensureMapBoolean =
   mensureMap (Expect.Boolean)

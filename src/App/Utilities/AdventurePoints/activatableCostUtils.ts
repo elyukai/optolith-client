@@ -15,7 +15,6 @@ import { appendStr, countWith, filter, find, foldl, ifoldr, isList, List, map, n
 import { any, bind, bindF, elem, elemF, ensure, fromJust, fromMaybe, isJust, isNothing, Just, liftM2, listToMaybe, Maybe, maybe, Nothing } from "../../../Data/Maybe";
 import { lookup, lookupF } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
-import { traceN } from "../../../System/IO";
 import { Categories } from "../../Constants/Categories";
 import { ActivatableDependent, isActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
@@ -36,7 +35,7 @@ import { getCategoryById } from "../IDUtils";
 import { add, dec, multiply, negate } from "../mathUtils";
 import { toRoman } from "../NumberUtils";
 import { pipe, pipe_ } from "../pipe";
-import { isNumber, isNumberM, misNumberM, misStringM } from "../typeCheckUtils";
+import { isNumber, misNumberM, misStringM } from "../typeCheckUtils";
 import { getWikiEntry, isActivatableWikiEntry, isSkillishWikiEntry } from "../WikiUtils";
 
 const isDisadvantageActive =
@@ -66,7 +65,7 @@ const getEntrySpecificCost =
     const mcurrent_sid = ActiveObjectWithId.A.sid (entry)
     const mcurrent_level = ActiveObject.AL.tier (entry)
 
-    const mcurrent_cost = Advantage.AL.cost (entry)
+    const mcurrent_cost = Advantage.AL.cost (wiki_entry)
 
     const all_active = ActivatableDependent.AL.active (hero_entry)
 
@@ -163,7 +162,7 @@ const getEntrySpecificCost =
         }
 
         // Otherwise, the level difference results in the cost.
-        return fmapF (isNumberM (mcurrent_cost))
+        return fmapF (misNumberM (mcurrent_cost))
                      (multiply (current_level - current_second_max_level))
       }
 
@@ -391,10 +390,6 @@ const getTotalCost =
                                                      (wiki_entry)
                                                      (hero_entry)
                                                      (entry)
-
-    traceN ("wiki entry: ") (wiki_entry)
-    traceN ("hero entry: ") (hero_entry)
-    traceN ("cost: ") (mentry_specifc_cost)
 
     const current_cost = fromMaybe<number | List<number>> (0) (mentry_specifc_cost)
 

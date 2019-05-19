@@ -1,4 +1,4 @@
-import { fmap } from "../../../../Data/Functor";
+import { fmap, fmapF } from "../../../../Data/Functor";
 import { Cons, flength, head, List } from "../../../../Data/List";
 import { ensure, Nothing } from "../../../../Data/Maybe";
 import { IdPrefixes } from "../../../Constants/IdPrefixes";
@@ -7,10 +7,10 @@ import { PrimaryAttributeDamageThreshold } from "../../../Models/Wiki/sub/Primar
 import { prefixAttr, prefixId, prefixItemTpl } from "../../IDUtils";
 import { toNatural } from "../../NumberUtils";
 import { pipe } from "../../pipe";
-import { exactR, naturalNumberU } from "../../RegexUtils";
+import { exactR } from "../../RegexUtils";
 import { mergeRowsById } from "../mergeTableRows";
 import { Expect } from "../showExpected";
-import { mensureMapBoolean, mensureMapListBindAfterOptional, mensureMapNaturalFixedListOptional, mensureMapNaturalInRange, mensureMapNaturalInRangeOptional, mensureMapNaturalOptional, mensureMapNonEmptyString, mensureMapStringPredOptional } from "../validateMapValueUtils";
+import { mensureMapBoolean, mensureMapFloatOptional, mensureMapIntegerOptional, mensureMapListBindAfterOptional, mensureMapNaturalFixedListOptional, mensureMapNaturalInRange, mensureMapNaturalInRangeOptional, mensureMapNaturalOptional, mensureMapNonEmptyString, mensureMapStringPredOptional } from "../validateMapValueUtils";
 import { lookupKeyValid, mapMNamed, TableType } from "../validateValueUtils";
 import { toSourceLinks } from "./Sub/toSourceLinks";
 
@@ -18,11 +18,6 @@ const primaryAttributeRx =
   new RegExp (exactR (`${prefixAttr ("[1-8]")}|${prefixAttr ("6_8")}`))
 
 const isPrimaryAttributeString = (x: string) => primaryAttributeRx .test (x)
-
-const itemTemplateIdRx =
-  new RegExp (exactR (prefixItemTpl (naturalNumberU)))
-
-const isItemTemplateIdString = (x: string) => itemTemplateIdRx .test (x)
 
 export const toItemTemplate =
   mergeRowsById
@@ -35,6 +30,12 @@ export const toItemTemplate =
 
       const checkUnivNaturalNumberOptional =
         lookupKeyValid (mensureMapNaturalOptional) (TableType.Univ) (lookup_univ)
+
+      const checkUnivIntegerOptional =
+        lookupKeyValid (mensureMapIntegerOptional) (TableType.Univ) (lookup_univ)
+
+      const checkUnivFloatOptional =
+        lookupKeyValid (mensureMapFloatOptional) (TableType.Univ) (lookup_univ)
 
       const checkUnivBoolean =
         lookupKeyValid (mensureMapBoolean) (TableType.Univ) (lookup_univ)
@@ -51,9 +52,9 @@ export const toItemTemplate =
 
       const disadvantage = lookup_l10n ("disadvantage")
 
-      const eprice = checkUnivNaturalNumberOptional ("price")
+      const eprice = checkUnivFloatOptional ("price")
 
-      const eweight = checkUnivNaturalNumberOptional ("weight")
+      const eweight = checkUnivFloatOptional ("weight")
 
       const egr =
         lookupKeyValid (mensureMapNaturalInRange (1) (30))
@@ -88,9 +89,9 @@ export const toItemTemplate =
                        (lookup_univ)
                        ("damageThreshold")
 
-      const eat = checkUnivNaturalNumberOptional ("at")
+      const eat = checkUnivIntegerOptional ("at")
 
-      const epa = checkUnivNaturalNumberOptional ("pa")
+      const epa = checkUnivIntegerOptional ("pa")
 
       const ereach =
         lookupKeyValid (mensureMapNaturalInRangeOptional (1) (4))
@@ -100,7 +101,7 @@ export const toItemTemplate =
 
       const elength = checkUnivNaturalNumberOptional ("length")
 
-      const estructurePoints = checkUnivNaturalNumberOptional ("structurePoints")
+      const structurePoints = lookup_univ ("structurePoints")
 
       const eisParryingWeapon = checkUnivBoolean ("isParryingWeapon")
 
@@ -112,14 +113,9 @@ export const toItemTemplate =
                        (lookup_univ)
                        ("range")
 
-      const ereloadTime = checkUnivNaturalNumberOptional ("reloadTime")
+      const reloadTime = lookup_univ ("reloadTime")
 
-      const eammunition =
-        lookupKeyValid (mensureMapStringPredOptional (isItemTemplateIdString)
-                                                     ("ItemTemplateId"))
-                       (TableType.Univ)
-                       (lookup_univ)
-                       ("ammunition")
+      const eammunition = checkUnivNaturalNumberOptional ("ammunition")
 
       const eimprovisedWeaponGroup =
         lookupKeyValid (mensureMapNaturalInRangeOptional (1) (2))
@@ -159,11 +155,9 @@ export const toItemTemplate =
           epa,
           ereach,
           elength,
-          estructurePoints,
           eisParryingWeapon,
           eisTwoHandedWeapon,
           erange,
-          ereloadTime,
           eammunition,
           eimprovisedWeaponGroup,
           eprotection,
@@ -202,12 +196,12 @@ export const toItemTemplate =
           pa: rs.epa,
           reach: rs.ereach,
           length: rs.elength,
-          stp: rs.estructurePoints,
+          stp: structurePoints,
           isParryingWeapon: rs.eisParryingWeapon,
           isTwoHandedWeapon: rs.eisTwoHandedWeapon,
           range: rs.erange,
-          reloadTime: rs.ereloadTime,
-          ammunition: rs.eammunition,
+          reloadTime,
+          ammunition: fmapF (rs.eammunition) (prefixItemTpl),
           improvisedWeaponGroup: rs.eimprovisedWeaponGroup,
           pro: rs.eprotection,
           enc: rs.eencumbrance,

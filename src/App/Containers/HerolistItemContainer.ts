@@ -1,6 +1,6 @@
 import { connect } from "react-redux";
 import { Action } from "redux";
-import { Just } from "../../Data/Maybe";
+import { join, Just } from "../../Data/Maybe";
 import { ReduxDispatch } from "../Actions/Actions";
 import * as HerolistActions from "../Actions/HerolistActions";
 import * as LocationActions from "../Actions/LocationActions";
@@ -13,7 +13,7 @@ import { TabId } from "../Utilities/LocationUtils";
 import { HerolistItem, HerolistItemDispatchProps, HerolistItemOwnProps, HerolistItemStateProps } from "../Views/Heroes/HerolistItem";
 
 const mapStateToProps = (state: AppStateRecord, props: HerolistItemOwnProps) => ({
-  ap: getAPObjectMap (HeroModel.A.id (props .hero)) (state, props),
+  ap: join (getAPObjectMap (HeroModel.A.id (props .hero)) (state, props)),
   unsavedHeroesById: getUnsavedHeroesById (state),
   users: getUsers (state),
   wiki: getWiki (state),

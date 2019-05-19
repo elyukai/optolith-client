@@ -1,8 +1,8 @@
-import { cnst, flip } from "../../Data/Function";
+import { cnst } from "../../Data/Function";
 import { fmap } from "../../Data/Functor";
 import { foldr, fromArray } from "../../Data/List";
 import { any, elem, fromJust, isJust, isMaybe, join, Just, liftM2, Maybe, Nothing } from "../../Data/Maybe";
-import { uncurryN, uncurryN3 } from "../../Data/Pair";
+import { uncurryN3 } from "../../Data/Pair";
 import { Record } from "../../Data/Record";
 import { HeroModel } from "../Models/Hero/HeroModel";
 import { AdventurePointsCategories } from "../Models/View/AdventurePointsCategories";
@@ -10,11 +10,11 @@ import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel";
 import { heroReducer } from "../Reducers/heroReducer";
 import { getAPSpentForAdvantages, getAPSpentForAttributes, getAPSpentForBlessedAdvantages, getAPSpentForBlessedDisadvantages, getAPSpentForBlessings, getAPSpentForCantrips, getAPSpentForCombatTechniques, getAPSpentForDisadvantages, getAPSpentForEnergies, getAPSpentForLiturgicalChants, getAPSpentForMagicalAdvantages, getAPSpentForMagicalDisadvantages, getAPSpentForProfession, getAPSpentForRace, getAPSpentForSkills, getAPSpentForSpecialAbilities, getAPSpentForSpells } from "../Utilities/AdventurePoints/adventurePointsSumUtils";
 import { getDisAdvantagesSubtypeMax } from "../Utilities/AdventurePoints/adventurePointsUtils";
-import { createMapSelector, createMapSelectorP, createMapSelectorS } from "../Utilities/createMapSelector";
+import { createMapSelector, createMapSelectorS } from "../Utilities/createMapSelector";
 import { createMaybeSelector } from "../Utilities/createMaybeSelector";
 import { add, subtract } from "../Utilities/mathUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
-import { getAdvantagesForEdit, getDisadvantagesForEdit, getSpecialAbilitiesForEdit } from "./activatableSelectors";
+import { getAdvantagesForEditMap, getDisadvantagesForEditMap, getSpecialAbilitiesForEditMap } from "./activatableSelectors";
 import { getStartEl } from "./elSelectors";
 import { getCurrentHeroPresent, getHeroes, getTotalAdventurePoints, getWiki, getWikiCombatTechniques, getWikiLiturgicalChants, getWikiSkills, getWikiSpells } from "./stateSelectors";
 
@@ -64,45 +64,52 @@ export const getAPSpentOnBlessingsMap =
                      (cnst (getAPSpentForBlessings))
 
 export const getAPSpentOnAdvantagesMap =
-  createMapSelectorP (getHeroes)
-                     (getWiki, getAdvantagesForEdit)
-                     (pipe (UA.present, HA.advantages))
-                     (uncurryN (wiki => flip (map => fmap (getAPSpentForAdvantages (wiki) (map)))))
+  createMapSelector (getHeroes)
+                    (getAdvantagesForEditMap)
+                    (getWiki)
+                    (pipe (UA.present, HA.advantages))
+                    (map => wiki => xmap =>
+                      fmap (getAPSpentForAdvantages (wiki) (xmap)) (map))
 
 export const getAPSpentOnMagicalAdvantagesMap =
-  createMapSelectorP (getHeroes)
-                     (getWiki, getAdvantagesForEdit)
-                     (pipe (UA.present, HA.advantages))
-                     (uncurryN (wiki => flip (map => fmap (getAPSpentForMagicalAdvantages (wiki)
-                                                                                          (map)))))
+  createMapSelector (getHeroes)
+                    (getAdvantagesForEditMap)
+                    (getWiki)
+                    (pipe (UA.present, HA.advantages))
+                    (map => wiki => xmap =>
+                      fmap (getAPSpentForMagicalAdvantages (wiki) (xmap)) (map))
 
 export const getAPSpentOnBlessedAdvantagesMap =
-  createMapSelectorP (getHeroes)
-                     (getWiki, getAdvantagesForEdit)
-                     (pipe (UA.present, HA.advantages))
-                     (uncurryN (wiki => flip (map => fmap (getAPSpentForBlessedAdvantages (wiki)
-                                                                                          (map)))))
+  createMapSelector (getHeroes)
+                    (getAdvantagesForEditMap)
+                    (getWiki)
+                    (pipe (UA.present, HA.advantages))
+                    (map => wiki => xmap =>
+                      fmap (getAPSpentForBlessedAdvantages (wiki) (xmap)) (map))
 
 export const getAPSpentOnDisadvantagesMap =
-  createMapSelectorP (getHeroes)
-                     (getWiki, getDisadvantagesForEdit)
-                     (pipe (UA.present, HA.disadvantages))
-                     (uncurryN (wiki => flip (map => fmap (getAPSpentForDisadvantages (wiki)
-                                                                                      (map)))))
+  createMapSelector (getHeroes)
+                    (getDisadvantagesForEditMap)
+                    (getWiki)
+                    (pipe (UA.present, HA.disadvantages))
+                    (map => wiki => xmap =>
+                      fmap (getAPSpentForDisadvantages (wiki) (xmap)) (map))
 
 export const getAPSpentOnMagicalDisadvantagesMap =
-  createMapSelectorP (getHeroes)
-                     (getWiki, getDisadvantagesForEdit)
-                     (pipe (UA.present, HA.disadvantages))
-                     (uncurryN (wiki =>
-                       flip (map => fmap (getAPSpentForMagicalDisadvantages (wiki) (map)))))
+  createMapSelector (getHeroes)
+                    (getDisadvantagesForEditMap)
+                    (getWiki)
+                    (pipe (UA.present, HA.disadvantages))
+                    (map => wiki => xmap =>
+                      fmap (getAPSpentForMagicalDisadvantages (wiki) (xmap)) (map))
 
 export const getAPSpentOnBlessedDisadvantagesMap =
-  createMapSelectorP (getHeroes)
-                     (getWiki, getDisadvantagesForEdit)
-                     (pipe (UA.present, HA.disadvantages))
-                     (uncurryN (wiki =>
-                       flip (map => fmap (getAPSpentForBlessedDisadvantages (wiki) (map)))))
+  createMapSelector (getHeroes)
+                    (getDisadvantagesForEditMap)
+                    (getWiki)
+                    (pipe (UA.present, HA.disadvantages))
+                    (map => wiki => xmap =>
+                      fmap (getAPSpentForBlessedDisadvantages (wiki) (xmap)) (map))
 
 export const getMagicalAdvantagesDisadvantagesAdventurePointsMaximum = createMaybeSelector (
   getCurrentHeroPresent,
@@ -110,11 +117,12 @@ export const getMagicalAdvantagesDisadvantagesAdventurePointsMaximum = createMay
 )
 
 export const getAPSpentOnSpecialAbilitiesMap =
-  createMapSelectorP (getHeroes)
-                     (getWiki, getSpecialAbilitiesForEdit)
-                     (pipe (UA.present, HA.specialAbilities))
-                     (uncurryN (wiki =>
-                       flip (map => fmap (getAPSpentForSpecialAbilities (wiki) (map)))))
+  createMapSelector (getHeroes)
+                    (getSpecialAbilitiesForEditMap)
+                    (getWiki)
+                    (pipe (UA.present, HA.specialAbilities))
+                    (map => wiki => xmap =>
+                      fmap (getAPSpentForSpecialAbilities (wiki) (xmap)) (map))
 
 export const getAPSpentOnEnergiesMap =
   createMapSelectorS (getHeroes)

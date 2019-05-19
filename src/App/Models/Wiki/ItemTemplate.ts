@@ -34,9 +34,9 @@ export interface ItemTemplate {
   pro: Maybe<number>
   range: Maybe<List<number>>
   reach: Maybe<number>
-  reloadTime: Maybe<number>
+  reloadTime: Maybe<string>
   stabilityMod: Maybe<number>
-  stp: Maybe<number>
+  stp: Maybe<string>
   template: string
   weight: Maybe<number>
   note: Maybe<string>

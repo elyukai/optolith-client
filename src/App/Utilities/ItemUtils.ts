@@ -1,7 +1,7 @@
 import { equals } from "../../Data/Eq";
 import { fmap } from "../../Data/Functor";
 import { set } from "../../Data/Lens";
-import { all, flength, fromArray, isList, List, map } from "../../Data/List";
+import { all, flength, fromArray, isList, List, map, notNullStr } from "../../Data/List";
 import { bindF, ensure, fromJust, Just, mapMaybe, Maybe, maybe, Nothing, product } from "../../Data/Maybe";
 import { Record } from "../../Data/Record";
 import { show } from "../../Data/Show";
@@ -137,8 +137,8 @@ export const editableToItem =
       pro: toInt (EditItem.AL.pro (item)),
       range: ensure<List<number>> (pipe (flength, equals (3)))
                                   (mapMaybe (toInt) (EditItem.AL.range (item))),
-      reloadTime: toInt (EditItem.AL.reloadTime (item)),
-      stp: toInt (EditItem.AL.stp (item)),
+      reloadTime: ensure (notNullStr) (EditItem.AL.reloadTime (item)),
+      stp: ensure (notNullStr) (EditItem.AL.stp (item)),
       weight: toFloat (EditItem.AL.weight (item)),
       stabilityMod: toInt (EditItem.AL.stabilityMod (item)),
     })

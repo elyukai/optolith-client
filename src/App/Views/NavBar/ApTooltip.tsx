@@ -51,14 +51,16 @@ export function ApTooltip (props: ApTooltipProps) {
             : null}
         </span>
         <span>
-          {translateP (l10n) ("apspentondisadvantages") (List (APCA.spentOnDisadvantages (ap), 80))}
+          {translateP (l10n)
+                      ("apspentondisadvantages")
+                      (List (Math.abs (APCA.spentOnDisadvantages (ap)), 80))}
         </span>
         <span>
           {APCA.spentOnMagicalDisadvantages (ap) > 0
             ? translateP (l10n)
                          ("apspentonmagicdisadvantages")
                          (List (
-                           APCA.spentOnMagicalDisadvantages (ap),
+                           Math.abs (APCA.spentOnMagicalDisadvantages (ap)),
                            Maybe.sum (props.maximumForMagicalAdvantagesDisadvantages)
                          ))
             : null}
@@ -67,7 +69,7 @@ export function ApTooltip (props: ApTooltipProps) {
           {APCA.spentOnBlessedDisadvantages (ap) > 0
             ? translateP (l10n)
                          ("apspentonblesseddisadvantages")
-                         (List (APCA.spentOnBlessedDisadvantages (ap), 50))
+                         (List (Math.abs (APCA.spentOnBlessedDisadvantages (ap)), 50))
             : null}
         </span>
       </p>

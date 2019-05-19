@@ -21,22 +21,24 @@ import { L10n } from "../Models/Wiki/L10n";
 import { Profession } from "../Models/Wiki/Profession";
 import { Race } from "../Models/Wiki/Race";
 import { SpecialAbility } from "../Models/Wiki/SpecialAbility";
+import { heroReducer } from "../Reducers/heroReducer";
 import { getAllActiveByCategory } from "../Utilities/Activatable/activatableActiveUtils";
 import { getModifierByActiveLevel, getModifierByIsActive } from "../Utilities/Activatable/activatableModifierUtils";
 import { getBracketedNameFromFullName } from "../Utilities/Activatable/activatableNameUtils";
 import { getActiveSelections, getSelectOptionName } from "../Utilities/Activatable/selectionUtils";
+import { createMapSelectorP } from "../Utilities/createMapSelector";
 import { createMaybeSelector } from "../Utilities/createMaybeSelector";
 import { filterAndSortRecordsBy } from "../Utilities/filterAndSortBy";
 import { compareLocale } from "../Utilities/I18n";
 import { prefixId } from "../Utilities/IDUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
-import { mapGetToMaybeSlice, mapGetToSlice } from "../Utilities/SelectorsUtils";
+import { mapCurrentHero, mapGetToMaybeSlice, mapGetToSlice } from "../Utilities/SelectorsUtils";
 import { comparingR } from "../Utilities/sortBy";
 import { getBlessedTraditionFromWikiState } from "./liturgicalChantsSelectors";
 import { getCurrentCulture, getCurrentProfession, getCurrentRace } from "./rcpSelectors";
 import { getSpecialAbilitiesSortOptions } from "./sortOptionsSelectors";
 import { getMagicalTraditionsFromWiki } from "./spellsSelectors";
-import { getAdvantages, getAdvantagesFilterText, getCultureAreaKnowledge, getCurrentHeroPresent, getDisadvantages, getDisadvantagesFilterText, getLocaleAsProp, getSpecialAbilities, getSpecialAbilitiesFilterText, getWiki, getWikiSpecialAbilities } from "./stateSelectors";
+import { getAdvantages, getAdvantagesFilterText, getCultureAreaKnowledge, getCurrentHeroPresent, getDisadvantages, getDisadvantagesFilterText, getHeroes, getLocaleAsProp, getSpecialAbilities, getSpecialAbilitiesFilterText, getWiki, getWikiSpecialAbilities } from "./stateSelectors";
 
 export const getActive = <T extends ActivatableCategory>(category: T, addLevelToName: boolean) =>
   createMaybeSelector (
@@ -49,11 +51,27 @@ export const getActive = <T extends ActivatableCategory>(category: T, addLevelTo
                                                                  (wiki))
   )
 
+export const getActiveMap =
+  (addLevelToName: boolean) =>
+  <T extends ActivatableCategory>
+  (category: T) =>
+    createMapSelectorP (getHeroes)
+                       (getWiki, getLocaleAsProp)
+                       (heroReducer.A.present)
+                       ((wiki, l10n) => getAllActiveByCategory (category)
+                                                               (addLevelToName)
+                                                               (l10n)
+                                                               (wiki))
+
 export const getActiveForView = <T extends ActivatableCategory>(category: T) =>
   getActive (category, false)
 
 export const getActiveForEditView = <T extends ActivatableCategory>(category: T) =>
   getActive (category, true)
+
+export const getActiveForViewMap = getActiveMap (false)
+
+export const getActiveForEditViewMap = getActiveMap (true)
 
 type RatingMap = OrderedMap<string, EntryRating>
 
@@ -134,10 +152,9 @@ export const getAdvantagesForSheet = createMaybeSelector (
   ident
 )
 
-export const getAdvantagesForEdit = createMaybeSelector (
-  getActiveForEditView (Categories.ADVANTAGES),
-  ident
-)
+export const getAdvantagesForEditMap = getActiveForEditViewMap (Categories.ADVANTAGES)
+
+export const getAdvantagesForEdit = mapCurrentHero (getAdvantagesForEditMap)
 
 export const getFilteredActiveAdvantages = createMaybeSelector (
   getAdvantagesForEdit,
@@ -158,10 +175,9 @@ export const getDisadvantagesForSheet = createMaybeSelector (
   ident
 )
 
-export const getDisadvantagesForEdit = createMaybeSelector (
-  getActiveForEditView (Categories.DISADVANTAGES),
-  ident
-)
+export const getDisadvantagesForEditMap = getActiveForEditViewMap (Categories.DISADVANTAGES)
+
+export const getDisadvantagesForEdit = mapCurrentHero (getDisadvantagesForEditMap)
 
 export const getFilteredActiveDisadvantages = createMaybeSelector (
   getDisadvantagesForEdit,
@@ -182,10 +198,9 @@ export const getSpecialAbilitiesForSheet = createMaybeSelector (
   ident
 )
 
-export const getSpecialAbilitiesForEdit = createMaybeSelector (
-  getActiveForEditView (Categories.SPECIAL_ABILITIES),
-  ident
-)
+export const getSpecialAbilitiesForEditMap = getActiveForEditViewMap (Categories.SPECIAL_ABILITIES)
+
+export const getSpecialAbilitiesForEdit = mapCurrentHero (getSpecialAbilitiesForEditMap)
 
 export const getFilteredActiveSpecialAbilities = createMaybeSelector (
   getSpecialAbilitiesForEdit,

@@ -80,7 +80,10 @@ export const createMapSelector =
       const newGlobalValues =
         globalSelectors .map (s => s (state, props)) as MappedReturnType<G>
 
-      if (map === prevMap || maybeEquals (value, prevValues .get (key_str))) {
+      if (
+        map === prevMap && keyMap .has (key_str)
+        || maybeEquals (value, prevValues .get (key_str))
+      ) {
         const prevMapValueValues = keyMap .get (key_str)! [1]
 
         prevMap = map
@@ -262,4 +265,4 @@ interface CreatedParametricSelector<S, P, V, R> extends Cache<S, V, R> {
 
 type PSelector<S, P, R> = ParametricSelector<S, P, R>
 
-type PSelectorWithKey<S, P, R> = (key_str: string) => ParametricSelector<S, P, R>
+export type PSelectorWithKey<S, P, R> = (key_str: string) => ParametricSelector<S, P, R>
