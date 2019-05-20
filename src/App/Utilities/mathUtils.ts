@@ -1,4 +1,5 @@
 import { flip } from "../../Data/Function";
+import { Pair } from "../../Data/Tuple";
 
 /**
  * Adds two numbers. Equivalent to `a + b` but curried.
@@ -89,6 +90,14 @@ export const min = (x: number) => (y: number) => x < y ? x : y
  * Returns the larger of its two arguments.
  */
 export const max = (x: number) => (y: number) => x > y ? x : y
+
+/**
+ * `minmax :: Ord a => a -> a -> (a, a)`
+ *
+ * `minmax x y` returns a pair consisting of `x` and `y` where the first value
+ * is lower than the second.
+ */
+export const minmax = (x: number) => (y: number) => x > y ? Pair (y, x) : Pair (x, y)
 
 /**
  * `inc :: Num a => a -> a`

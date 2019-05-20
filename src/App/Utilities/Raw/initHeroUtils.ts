@@ -1,7 +1,7 @@
 import { cnst, flip, ident, join } from "../../../Data/Function";
 import { fmap } from "../../../Data/Functor";
 import { foldr, fromArray, List } from "../../../Data/List";
-import { elem, Maybe, maybe } from "../../../Data/Maybe";
+import { elem, Maybe, maybe, Nothing } from "../../../Data/Maybe";
 import { foldlWithKey, lookup, lookupF, OrderedMap } from "../../../Data/OrderedMap";
 import { insert, OrderedSet } from "../../../Data/OrderedSet";
 import { Record, StringKeyObject } from "../../../Data/Record";
@@ -249,9 +249,10 @@ const createHeroObject = (hero: Raw.RawHero): HeroModelRecord =>
       : OrderedMap.empty,
 
     isInPetCreation: false,
-    blessedStyleDependencies: List.empty,
-    combatStyleDependencies: List.empty,
-    magicalStyleDependencies: List.empty,
+    blessedStyleDependencies: Nothing,
+    combatStyleDependencies: Nothing,
+    magicalStyleDependencies: Nothing,
+    skillStyleDependencies: Nothing,
   })
 
 const getActivatableDependent =

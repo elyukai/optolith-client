@@ -256,9 +256,9 @@ const isRemovalDisabledEntrySpecific =
 
                                 // Get flat prerequisites for origin entry
                                 fmap (origin_entry =>
-                                  flattenPrerequisites (prerequisites (origin_entry))
+                                  flattenPrerequisites (Nothing)
                                                        (alt (tiers (origin_entry)) (Just (1)))
-                                                       (Nothing)),
+                                                       (prerequisites (origin_entry))),
 
                                 // Get the prerequisite that matches this entry
                                 // to get all other options from list

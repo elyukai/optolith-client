@@ -1,60 +1,56 @@
 import { cnst } from "../../../Data/Function";
-import { List } from "../../../Data/List";
-import { Just, Maybe, maybe, Nothing } from "../../../Data/Maybe";
-import { filterWithKeyF, isOrderedMap, OrderedMap } from "../../../Data/OrderedMap";
+import { inRange } from "../../../Data/Ix";
+import { concat } from "../../../Data/List";
+import { fromJust, isJust, Just, Maybe, Nothing } from "../../../Data/Maybe";
+import { elems, filterWithKey, isOrderedMap } from "../../../Data/OrderedMap";
+import { first } from "../../../Data/Tuple";
 import { ActivatablePrerequisites, LevelAwarePrerequisites } from "../../Models/Wiki/wikiTypeHelpers";
-import { lte, max, min } from "../mathUtils";
+import { inc, lte, minmax } from "../mathUtils";
 import { pipe } from "../pipe";
 
-type LevelFilter = (key: number) => (value: ActivatablePrerequisites) => boolean
+const keyInRangePred =
+  (mnew_level: Maybe<number>) =>
+  (mold_level: Maybe<number>): (key: number) => boolean => {
+    // Used for changing level
+    if (isJust (mnew_level) && isJust (mold_level)) {
+      const new_level = fromJust (mnew_level)
+      const old_level = fromJust (mold_level)
 
-const createLowerFilter =
-  (oldTier: number): LevelFilter => pipe (lte (oldTier), cnst)
+      return inRange (first (inc) (minmax (new_level) (old_level)))
+    }
+    // Used for activating an entry
+    else if (isJust (mnew_level)) {
+      const new_level = fromJust (mnew_level)
 
-const createInBetweenFilter =
-  (oldTier: number) => (newTier: number): LevelFilter => {
-    const lower = min (oldTier) (newTier)
-    const higher = max (oldTier) (newTier)
+      return lte (new_level)
+    }
+    // Used for deactivating an entry
+    else if (isJust (mold_level)) {
+      const old_level = fromJust (mold_level)
 
-    return (key: number) => cnst (key <= higher && key > lower)
+      return lte (old_level)
+    }
+    else {
+      return cnst (true)
+    }
   }
 
-/**
- * `createFilter newLevel oldLevel` creates a new filter function for filtering
- * level-based prerequisites.
- */
-const createFilter = (new_level: Maybe<number>) =>
-  maybe<LevelFilter> (cnst (cnst (true)))
-                     ((old_level: number) => maybe (createLowerFilter (old_level))
-                                                   (createInBetweenFilter (old_level))
-                                                   (new_level))
-
-const createFlattenFiltered = (
-  (prerequisites: OrderedMap<number, ActivatablePrerequisites>) =>
+const flattenMap =
+  (mnew_level: Maybe<number>) =>
+  (mold_level: Maybe<number>) =>
     pipe (
-      filterWithKeyF (prerequisites),
-      OrderedMap.elems,
-      List.concat
+      filterWithKey ((key: number) => (_: ActivatablePrerequisites) =>
+                      keyInRangePred (mnew_level) (mold_level) (key)),
+      elems,
+      concat
     )
-)
-
-const flattenMap = (
-  (prerequisites: OrderedMap<number, ActivatablePrerequisites>) =>
-  (newTier: Maybe<number>) =>
-    pipe (
-      createFilter (newTier),
-      createFlattenFiltered (prerequisites)
-    )
-)
 
 export const flattenPrerequisites =
-  (prerequisites: LevelAwarePrerequisites) =>
   (newTier: Maybe<number>) =>
-  (oldTier: Maybe<number>): ActivatablePrerequisites =>
+  (oldTier: Maybe<number>) =>
+  (prerequisites: LevelAwarePrerequisites): ActivatablePrerequisites =>
     isOrderedMap (prerequisites)
-      ? flattenMap (prerequisites) (newTier) (oldTier)
+      ? flattenMap (newTier) (oldTier) (prerequisites)
       : prerequisites
 
-export const getFirstLevelPrerequisites =
-  (prerequisites: LevelAwarePrerequisites): ActivatablePrerequisites =>
-    flattenPrerequisites (prerequisites) (Nothing) (Just (1))
+export const getFirstLevelPrerequisites = flattenPrerequisites (Just (1)) (Nothing)

@@ -1,4 +1,3 @@
-import { ident } from "../../Data/Function";
 import { fmapF } from "../../Data/Functor";
 import { fromArray, List } from "../../Data/List";
 import { catMaybes, join, liftM2, mapMaybe, Maybe } from "../../Data/Maybe";
@@ -42,38 +41,37 @@ type Inactives<T extends ActivatableCategory> = Maybe<List<Inactive<T>>>
 export const getInactiveForView =
   <T extends ActivatableCategory>
   (category: T) =>
-  createMapSelector (stateSelectors.getHeroes)
-                    (getAPObjectMap)
-                    (
-                      stateSelectors.getLocaleAsProp,
-                      getExtendedSpecialAbilitiesToAdd,
-                      stateSelectors.getWiki
+    createMapSelector (stateSelectors.getHeroes)
+                      (getAPObjectMap)
+                      (
+                        stateSelectors.getLocaleAsProp,
+                        getExtendedSpecialAbilitiesToAdd,
+                        stateSelectors.getWiki
+                      )
+                      (heroReducer.A.present)
+                      (madventure_points =>
+                       (l10n, validExtendedSpecialAbilities, wiki) =>
+                       (hero): Inactives<T> =>
+                         fmapF (join (madventure_points))
+                               (adventure_points => {
+                                 const wikiKey = getWikiSliceGetterByCategory (category)
+                                 const wikiSlice = wikiKey (wiki)
+
+                                 const stateSlice = getActivatableHeroSliceByCategory (category)
+                                                                                      (hero)
+
+                                 return mapMaybe ((wiki_entry: WikiEntryRecordByCategory[T]) =>
+                                                   getInactiveView (l10n)
+                                                                   (wiki)
+                                                                   (hero)
+                                                                   (adventure_points)
+                                                                   (validExtendedSpecialAbilities)
+                                                                   (wiki_entry)
+                                                                   (lookup (getId (wiki_entry))
+                                                                           (stateSlice)))
+                                                 (elems<Activatable> (wikiSlice))
+                               })
                     )
-                    (ident)
-                    (madventure_points =>
-                     (l10n, validExtendedSpecialAbilities, wiki) =>
-                     (undo_hero): Inactives<T> =>
-                       fmapF (join (madventure_points))
-                             (adventure_points => {
-                               const hero = heroReducer.A.present (undo_hero)
-                               const wikiKey = getWikiSliceGetterByCategory (category)
-                               const wikiSlice = wikiKey (wiki)
-
-                               const stateSlice = getActivatableHeroSliceByCategory (category)
-                                                                                    (hero)
-
-                               return mapMaybe ((wiki_entry: WikiEntryRecordByCategory[T]) =>
-                                                 getInactiveView (l10n)
-                                                                 (wiki)
-                                                                 (hero)
-                                                                 (adventure_points)
-                                                                 (validExtendedSpecialAbilities)
-                                                                 (wiki_entry)
-                                                                 (lookup (getId (wiki_entry))
-                                                                         (stateSlice)))
-                                               (elems<Activatable> (wikiSlice))
-                             })
-                  )
 
 type avai = EnabledSourceBooks
 type listAdv = List<Record<InactiveActivatable<Advantage>>>

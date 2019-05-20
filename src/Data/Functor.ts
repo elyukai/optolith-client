@@ -13,6 +13,7 @@ import { cnst } from "./Function";
 import { Const } from "./Functor/Const";
 import { Internals } from "./Internals";
 import { isMarket, Market } from "./Market";
+import { Some } from "./Maybe";
 import { show, showP } from "./Show";
 import { Pair } from "./Tuple";
 
@@ -172,7 +173,7 @@ interface fmapF {
   /**
    * `fmap :: Maybe a -> (a -> b) -> Maybe b`
    */
-  <A> (x: Maybe<A>): <B> (f: (x: A) => B) => Maybe<B>
+  <A extends Some> (x: Maybe<A>): <B extends Some> (f: (x: A) => B) => Maybe<B>
   /**
    * `fmap :: Map k a -> (a -> b) -> Map k b`
    */

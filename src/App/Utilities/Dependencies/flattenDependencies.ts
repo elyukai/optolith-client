@@ -1,4 +1,3 @@
-import { thrush } from "../../../Data/Function";
 import { fmap } from "../../../Data/Functor";
 import { elem, filter, find, foldl, isList, List, map, maximumNonNegative } from "../../../Data/List";
 import { bindF, Maybe, Nothing, or, sum } from "../../../Data/Maybe";
@@ -42,9 +41,7 @@ export const flattenDependencies =
                  getWikiEntry (wiki) as (id: string) => Maybe<Activatable>,
                  bindF (pipe (
                    prerequisites,
-                   flattenPrerequisites,
-                   thrush (Nothing),
-                   thrush (Nothing),
+                   flattenPrerequisites (Nothing) (Nothing),
                    find ((r): r is AbilityRequirement =>
                      r !== "RCP"
                      && isList (id (r))

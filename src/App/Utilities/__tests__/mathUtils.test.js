@@ -1,4 +1,5 @@
 const Math = require ('../mathUtils')
+const Tuple = require ('../../../Data/Tuple')
 
 test ('add', () => {
   expect (Math.add (1) (2)) .toEqual (3)
@@ -66,6 +67,12 @@ test ('min', () => {
 test ('max', () => {
   expect (Math.max (3) (5)) .toEqual (5)
   expect (Math.max (6) (5)) .toEqual (6)
+})
+
+test ('minmax', () => {
+  expect (Math.minmax (3) (5)) .toEqual (Tuple.Pair (3, 5))
+  expect (Math.minmax (6) (5)) .toEqual (Tuple.Pair (5, 6))
+  expect (Math.minmax (5) (5)) .toEqual (Tuple.Pair (5, 5))
 })
 
 test ('inc', () => {

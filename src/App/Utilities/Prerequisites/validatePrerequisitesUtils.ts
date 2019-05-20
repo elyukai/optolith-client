@@ -15,7 +15,7 @@ import { ActivatableSkillDependent, isMaybeActivatableSkillDependent } from "../
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
 import { AttributeDependent } from "../../Models/ActiveEntries/AttributeDependent";
 import { DependencyObject } from "../../Models/ActiveEntries/DependencyObject";
-import { isExtendedSkillDependent, SkillDependent } from "../../Models/ActiveEntries/SkillDependent";
+import { SkillDependent } from "../../Models/ActiveEntries/SkillDependent";
 import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
 import * as Data from "../../Models/Hero/heroTypeHelpers";
 import { Pact } from "../../Models/Hero/Pact";
@@ -49,6 +49,10 @@ type Validator = (wiki: WikiModelRecord) =>
 
 const { races, cultures, professions, skills } = WikiModel.AL
 const { race, culture, profession, specialAbilities, attributes, sex, pact } = HeroModel.AL
+
+const RIA = RequireIncreasable.A
+const RAA = RequireActivatable.A
+const SDAL = SkillDependent.AL
 
 const getAllRaceEntries =
   (wiki: WikiModelRecord) =>
@@ -228,9 +232,7 @@ const isIncreasableValid =
     }
 
     return or (fmap ((obj: Data.Dependent) =>
-                      isExtendedSkillDependent (obj)
-                      && gte (RequireIncreasable.AL.value (req))
-                             (SkillDependent.AL.value (obj)))
+                      !ActivatableDependent.is (obj) && SDAL.value (obj) >= RIA.value (req))
                     (getHeroStateItem (state) (id)))
   }
 
@@ -242,7 +244,7 @@ const isOneOfListActiveSelection =
   (activeSelections: Maybe<List<string | number>>) =>
   (req: Record<RequireActivatable>) =>
   (sid: List<number>): boolean =>
-    Maybe.elem (RequireActivatable.AL.active (req))
+    Maybe.elem (RAA.active (req))
                (fmap<List<string | number>, boolean> (pipe (List.elemF, any, thrush (sid)))
                                                      (activeSelections))
 
@@ -254,7 +256,7 @@ const isSingleActiveSelection =
   (activeSelections: Maybe<List<string | number>>) =>
   (req: Record<RequireActivatable>) =>
   (sid: string | number): boolean =>
-    Maybe.elem (RequireActivatable.AL.active (req))
+    Maybe.elem (RAA.active (req))
                (fmap (elem (sid)) (activeSelections))
 
 const isActiveSelection =
@@ -281,7 +283,7 @@ const isActivatableValid =
   (sourceId: string) =>
   (req: Record<RequireActivatable>) =>
   (objectValidator: Validator): boolean => {
-    const id = RequireActivatable.AL.id (req)
+    const id = RAA.id (req)
 
     if (isList (id)) {
       return any (pipe (
@@ -293,7 +295,7 @@ const isActivatableValid =
                  (id)
     }
     else {
-      const sid = RequireActivatable.AL.sid (req)
+      const sid = RAA.sid (req)
 
       if (Maybe.elem<Wiki.SID> ("sel") (sid)) {
         return true
@@ -310,7 +312,7 @@ const isActivatableValid =
                                      (getAllWikiEntriesByGroup
                                        (skills (wiki))
                                        (maybeToList (
-                                         RequireActivatable.AL.sid2 (req) as Maybe<number>
+                                         RAA.sid2 (req) as Maybe<number>
                                        )))
 
                                return fmap (all (pipe (elemF<string | number> (arr), not)))
@@ -327,8 +329,8 @@ const isActivatableValid =
         const instance = Maybe.fromJust (maybeInstance)
         const activeSelections = getActiveSelectionsMaybe (maybeInstance)
 
-        const maybeSid = RequireActivatable.AL.sid (req)
-        const maybeLevel = RequireActivatable.AL.tier (req)
+        const maybeSid = RAA.sid (req)
+        const maybeLevel = RAA.tier (req)
 
         const sidValid = fmap (isActiveSelection (activeSelections) (req)) (maybeSid)
         const levelValid = fmap (flip (isNeededLevelGiven) (instance)) (maybeLevel)
@@ -337,12 +339,12 @@ const isActivatableValid =
           return and (sidValid) && and (levelValid)
         }
 
-        return isActive (instance) === RequireActivatable.AL.active (req)
+        return isActive (instance) === RAA.active (req)
       }
 
       if (isMaybeActivatableSkillDependent (maybeInstance)) {
         return ActivatableSkillDependent.AL.active (fromJust (maybeInstance))
-          === RequireActivatable.AL.active (req)
+          === RAA.active (req)
       }
 
       return false
@@ -389,7 +391,8 @@ export const validatePrerequisites =
   (state: HeroModelRecord) =>
   (prerequisites: List<Wiki.AllRequirements>) =>
   (sourceId: string): boolean =>
-    all (pipe (validateObject (wiki) (state), thrush (sourceId))) (prerequisites)
+    all (pipe (validateObject (wiki) (state), thrush (sourceId)))
+        (prerequisites)
 
 type ReqEntries = List<Pair<number, List<Wiki.AllRequirements>>>
 

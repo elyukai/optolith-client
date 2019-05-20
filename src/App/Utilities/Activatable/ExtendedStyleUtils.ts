@@ -16,6 +16,7 @@ const {
   combatStyleDependencies,
   magicalStyleDependencies,
   blessedStyleDependencies,
+  skillStyleDependencies,
 } = HeroModelL
 
 const { id, gr, extended } = SpecialAbility.AL
@@ -26,7 +27,8 @@ type StyleDependenciesLens = Lens_<HeroModelRecord, List<Record<StyleDependency>
 export type StyleDependencyStateKeys =
   "combatStyleDependencies" |
   "magicalStyleDependencies" |
-  "blessedStyleDependencies"
+  "blessedStyleDependencies" |
+  "skillStyleDependencies"
 
 /**
  * Checks if the given entry is a Style Special Ability and which state key it
@@ -50,6 +52,10 @@ const lensByStyle =
       return Just (blessedStyleDependencies)
     }
 
+    if (gr (x) === 33) {
+      return Just (skillStyleDependencies)
+    }
+
     return Nothing
   }
 
@@ -67,6 +73,9 @@ const lensByExtended =
     }
     else if (gr (x) === 26) {
       return Just (blessedStyleDependencies)
+    }
+    else if (gr (x) === 34) {
+      return Just (skillStyleDependencies)
     }
 
     return Nothing

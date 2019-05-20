@@ -21,7 +21,7 @@ import { Cantrip } from "../Models/Wiki/Cantrip";
 import { CombatTechnique } from "../Models/Wiki/CombatTechnique";
 import { Culture } from "../Models/Wiki/Culture";
 import { ItemTemplate } from "../Models/Wiki/ItemTemplate";
-import { L10n, L10nRecord } from "../Models/Wiki/L10n";
+import { L10nRecord } from "../Models/Wiki/L10n";
 import { isLiturgicalChant, LiturgicalChant } from "../Models/Wiki/LiturgicalChant";
 import { Profession } from "../Models/Wiki/Profession";
 import { Race } from "../Models/Wiki/Race";
@@ -39,7 +39,7 @@ import { getLocaleAsProp, getSex } from "./stateSelectors";
 import * as uiSettingsSelectors from "./uisettingsSelectors";
 
 const compareName =
-  (l10n: L10nRecord) => comparingR (HeroModel.AL.name) (compareLocale (L10n.A.id (l10n)))
+  (l10n: L10nRecord) => comparingR (HeroModel.AL.name) (compareLocale (l10n))
 
 export const getHerolistSortOptions = createMaybeSelector (
   getLocaleAsProp,
@@ -82,11 +82,11 @@ export const getRacesCombinedSortOptions = createMaybeSelector (
           comparingR (pipe (RaceCombined.A.wikiEntry, Race.A.ap))
                      (compare),
           comparingR (pipe (RaceCombined.A.wikiEntry, Race.A.name))
-                     (compareLocale (L10n.A.id (l10n))),
+                     (compareLocale (l10n)),
         ]
       : [
           comparingR (pipe (RaceCombined.A.wikiEntry, Race.A.name))
-                     (compareLocale (L10n.A.id (l10n))),
+                     (compareLocale (l10n)),
         ]
 )
 
@@ -116,11 +116,11 @@ export const getCulturesCombinedSortOptions = createMaybeSelector (
                      ))
                      (compare),
           comparingR (pipe (CultureCombined.A.wikiEntry, Culture.A.name))
-                     (compareLocale (L10n.A.id (l10n))),
+                     (compareLocale (l10n)),
         ]
       : [
           comparingR (pipe (CultureCombined.A.wikiEntry, Culture.A.name))
-                     (compareLocale (L10n.A.id (l10n))),
+                     (compareLocale (l10n)),
         ]
 )
 
@@ -153,9 +153,9 @@ export const getProfessionsSortOptions = createMaybeSelector (
     maybe<SortOptions<Profession>>
       ([])
       ((sex: Sex): SortOptions<Profession> => [
-        comparingR (foldProfessionName (sex)) (compareLocale (L10n.A.id (l10n))),
-        comparingR (foldProfessionSubName (sex)) (compareLocale (L10n.A.id (l10n))),
-        comparingR (getProfessionSourceKey) (compareLocale (L10n.A.id (l10n))),
+        comparingR (foldProfessionName (sex)) (compareLocale (l10n)),
+        comparingR (foldProfessionSubName (sex)) (compareLocale (l10n)),
+        comparingR (getProfessionSourceKey) (compareLocale (l10n)),
       ])
       (msex)
 )
@@ -168,11 +168,11 @@ export const getProfessionsCombinedSortOptions = createMaybeSelector (
       ([])
       ((sex: Sex): SortOptions<ProfessionCombined> => [
         comparingR (pipe (ProfessionCombined.A.wikiEntry, foldProfessionName (sex)))
-                   (compareLocale (L10n.A.id (l10n))),
+                   (compareLocale (l10n)),
         comparingR (pipe (ProfessionCombined.A.wikiEntry, foldProfessionSubName (sex)))
-                   (compareLocale (L10n.A.id (l10n))),
+                   (compareLocale (l10n)),
         comparingR (getProfessionCombinedSourceKey)
-                   (compareLocale (L10n.A.id (l10n))),
+                   (compareLocale (l10n)),
       ])
       (msex)
 )
@@ -186,7 +186,7 @@ export const getSkillsCombinedSortOptions = createMaybeSelector (
         comparingR (pipe (SkillCombined.A.wikiEntry, Skill.A.ic))
                    (compare),
         comparingR (pipe (SkillCombined.A.wikiEntry, Skill.A.name))
-                   (compareLocale (L10n.A.id (l10n))),
+                   (compareLocale (l10n)),
       ]
     }
     else if (sortOrder === "group") {
@@ -194,13 +194,13 @@ export const getSkillsCombinedSortOptions = createMaybeSelector (
         comparingR (pipe (SkillCombined.A.wikiEntry, Skill.A.gr))
                    (compare),
         comparingR (pipe (SkillCombined.A.wikiEntry, Skill.A.name))
-                   (compareLocale (L10n.A.id (l10n))),
+                   (compareLocale (l10n)),
       ]
     }
 
     return [
       comparingR (pipe (SkillCombined.A.wikiEntry, Skill.A.name))
-                 (compareLocale (L10n.A.id (l10n))),
+                 (compareLocale (l10n)),
     ]
   }
 )
@@ -235,7 +235,7 @@ export const getCombatTechniquesWithRequirementsSortOptions = createMaybeSelecto
         comparingR (pipe (CombatTechniqueWithRequirements.A.wikiEntry, CombatTechnique.A.ic))
                    (compare),
         comparingR (pipe (CombatTechniqueWithRequirements.A.wikiEntry, CombatTechnique.A.name))
-                   (compareLocale (L10n.A.id (l10n))),
+                   (compareLocale (l10n)),
       ]
     }
     else if (sortOrder === "group") {
@@ -243,13 +243,13 @@ export const getCombatTechniquesWithRequirementsSortOptions = createMaybeSelecto
         comparingR (pipe (CombatTechniqueWithRequirements.A.wikiEntry, CombatTechnique.A.gr))
                    (compare),
         comparingR (pipe (CombatTechniqueWithRequirements.A.wikiEntry, CombatTechnique.A.name))
-                   (compareLocale (L10n.A.id (l10n))),
+                   (compareLocale (l10n)),
       ]
     }
 
     return [
       comparingR (pipe (CombatTechniqueWithRequirements.A.wikiEntry, CombatTechnique.A.name))
-                 (compareLocale (L10n.A.id (l10n))),
+                 (compareLocale (l10n)),
     ]
   }
 )
@@ -269,15 +269,15 @@ export const getSpecialAbilitiesSortOptions = createMaybeSelector (
                      subscript (translate (l10n) ("specialabilitygroups")),
                      fromMaybe ("")
                    ))
-                   (compareLocale (L10n.A.id (l10n))),
+                   (compareLocale (l10n)),
         comparingR (pipe (ActiveActivatable.AL.wikiEntry, SpecialAbility.AL.name))
-                   (compareLocale (L10n.A.id (l10n))),
+                   (compareLocale (l10n)),
       ]
     }
 
     return [
       comparingR (pipe (ActiveActivatable.AL.wikiEntry, SpecialAbility.AL.name))
-                 (compareLocale (L10n.A.id (l10n))),
+                 (compareLocale (l10n)),
     ]
   }
 )
@@ -296,9 +296,9 @@ export const getSpellsSortOptions = createMaybeSelector (
                      subscript (translate (l10n) ("propertylist")),
                      fromMaybe ("")
                    ))
-                   (compareLocale (L10n.A.id (l10n))),
+                   (compareLocale (l10n)),
         comparingR (pipe (SpellWithRequirements.A.wikiEntry, Spell.A.name))
-                   (compareLocale (L10n.A.id (l10n))),
+                   (compareLocale (l10n)),
       ]
     }
     else if (sortOrder === "ic") {
@@ -306,7 +306,7 @@ export const getSpellsSortOptions = createMaybeSelector (
         comparingR (pipe (SpellWithRequirements.A.wikiEntry, Spell.A.ic))
                    (compare),
         comparingR (pipe (SpellWithRequirements.A.wikiEntry, Spell.A.name))
-                   (compareLocale (L10n.A.id (l10n))),
+                   (compareLocale (l10n)),
       ]
     }
     else if (sortOrder === "group") {
@@ -314,13 +314,13 @@ export const getSpellsSortOptions = createMaybeSelector (
         comparingR (pipe (SpellWithRequirements.A.wikiEntry, Spell.A.gr))
                    (compare),
         comparingR (pipe (SpellWithRequirements.A.wikiEntry, Spell.A.name))
-                   (compareLocale (L10n.A.id (l10n))),
+                   (compareLocale (l10n)),
       ]
     }
 
     return [
       comparingR (pipe (SpellWithRequirements.A.wikiEntry, Spell.A.name))
-                 (compareLocale (L10n.A.id (l10n))),
+                 (compareLocale (l10n)),
     ]
   }
 )
@@ -348,12 +348,12 @@ export const getSpellsCombinedSortOptions = createMaybeSelector (
                      subscript (translate (l10n) ("propertylist")),
                      fromMaybe ("")
                    ))
-                   (compareLocale (L10n.A.id (l10n))),
+                   (compareLocale (l10n)),
         comparingR (pipe (
                      getSpellOrCantripFromCombined as getSpellOrCantripFromCombined,
                      Spell.AL.name
                    ))
-                   (compareLocale (L10n.A.id (l10n))),
+                   (compareLocale (l10n)),
       ]
     }
     else if (sortOrder === "ic") {
@@ -368,7 +368,7 @@ export const getSpellsCombinedSortOptions = createMaybeSelector (
                      getSpellOrCantripFromCombined as getSpellOrCantripFromCombined,
                      Spell.AL.name
                    ))
-                   (compareLocale (L10n.A.id (l10n))),
+                   (compareLocale (l10n)),
       ]
     }
     else if (sortOrder === "group") {
@@ -383,7 +383,7 @@ export const getSpellsCombinedSortOptions = createMaybeSelector (
                      getSpellOrCantripFromCombined as getSpellOrCantripFromCombined,
                      Spell.AL.name
                    ))
-                   (compareLocale (L10n.A.id (l10n))),
+                   (compareLocale (l10n)),
       ]
     }
 
@@ -392,7 +392,7 @@ export const getSpellsCombinedSortOptions = createMaybeSelector (
                    getSpellOrCantripFromCombined as getSpellOrCantripFromCombined,
                    Spell.AL.name
                  ))
-                 (compareLocale (L10n.A.id (l10n))),
+                 (compareLocale (l10n)),
     ]
   }
 )
@@ -401,7 +401,7 @@ export const getCantripsSortOptions = createMaybeSelector (
   getLocaleAsProp,
   (l10n): SortOptions<CantripCombined> =>
     [ comparingR (pipe (CantripCombined.A.wikiEntry, Cantrip.A.name))
-                 (compareLocale (L10n.A.id (l10n))) ]
+                 (compareLocale (l10n)) ]
 )
 
 type ensureChant = (x: Record<LiturgicalChant | Blessing>) => Maybe<Record<LiturgicalChant>>
@@ -415,7 +415,7 @@ export const getLiturgicalChantsSortOptions = createMaybeSelector (
         comparingR (pipe (LiturgicalChantWithRequirements.A.wikiEntry, LiturgicalChant.A.ic))
                    (compare),
         comparingR (pipe (LiturgicalChantWithRequirements.A.wikiEntry, LiturgicalChant.A.name))
-                   (compareLocale (L10n.A.id (l10n))),
+                   (compareLocale (l10n)),
       ]
     }
     else if (sortOrder === "group") {
@@ -423,13 +423,13 @@ export const getLiturgicalChantsSortOptions = createMaybeSelector (
         comparingR (pipe (LiturgicalChantWithRequirements.A.wikiEntry, LiturgicalChant.A.gr))
                    (compare),
         comparingR (pipe (LiturgicalChantWithRequirements.A.wikiEntry, LiturgicalChant.A.name))
-                   (compareLocale (L10n.A.id (l10n))),
+                   (compareLocale (l10n)),
       ]
     }
 
     return [
       comparingR (pipe (LiturgicalChantWithRequirements.A.wikiEntry, LiturgicalChant.A.name))
-                 (compareLocale (L10n.A.id (l10n))),
+                 (compareLocale (l10n)),
     ]
   }
 )
@@ -460,7 +460,7 @@ export const getLiturgicalChantsCombinedSortOptions = createMaybeSelector (
                      getChantOrBlessingFromCombined as getChantOrBlessingFromCombined,
                      LiturgicalChant.AL.name
                    ))
-                   (compareLocale (L10n.A.id (l10n))),
+                   (compareLocale (l10n)),
       ]
     }
     else if (sortOrder === "group") {
@@ -475,7 +475,7 @@ export const getLiturgicalChantsCombinedSortOptions = createMaybeSelector (
                      getChantOrBlessingFromCombined as getChantOrBlessingFromCombined,
                      LiturgicalChant.AL.name
                    ))
-                   (compareLocale (L10n.A.id (l10n))),
+                   (compareLocale (l10n)),
       ]
     }
 
@@ -484,7 +484,7 @@ export const getLiturgicalChantsCombinedSortOptions = createMaybeSelector (
                    getChantOrBlessingFromCombined as getChantOrBlessingFromCombined,
                    LiturgicalChant.AL.name
                  ))
-                 (compareLocale (L10n.A.id (l10n))),
+                 (compareLocale (l10n)),
     ]
   }
 )
@@ -493,7 +493,7 @@ export const getBlessingsSortOptions = createMaybeSelector (
   getLocaleAsProp,
   (l10n): SortOptions<BlessingCombined> =>
     [ comparingR (pipe (BlessingCombined.A.wikiEntry, Blessing.A.name))
-                 (compareLocale (L10n.A.id (l10n))) ]
+                 (compareLocale (l10n)) ]
 )
 
 type ensureItem = (x: Record<Item | ItemTemplate>) => Maybe<Record<Item>>
@@ -510,7 +510,7 @@ export const getEquipmentSortOptions = createMaybeSelector (
                      subscript (translate (l10n) ("itemgroups")),
                      fromMaybe ("")
                    ))
-                   (compareLocale (L10n.A.id (l10n))),
+                   (compareLocale (l10n)),
         compareName (l10n),
       ]
     }
@@ -521,7 +521,7 @@ export const getEquipmentSortOptions = createMaybeSelector (
                      bindF (Item.A.where),
                      fromMaybe ("")
                    ))
-                   (compareLocale (L10n.A.id (l10n))),
+                   (compareLocale (l10n)),
         compareName (l10n),
       ]
     }

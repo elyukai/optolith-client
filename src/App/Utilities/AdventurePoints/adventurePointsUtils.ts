@@ -6,6 +6,7 @@ import { all, altF, bind, bindF, elem, ensure, fromJust, fromMaybe, isJust, isNo
 import { alter, empty, findWithDefault, lookup, OrderedMap } from "../../../Data/OrderedMap";
 import { fst, Pair, snd } from "../../../Data/Pair";
 import { fromDefault, Record } from "../../../Data/Record";
+import { show } from "../../../Data/Show";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
 import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
@@ -124,19 +125,26 @@ export const getMissingAPForDisAdvantage =
   (hero: HeroModelRecord) =>
   (ap: Record<AdventurePointsCategories>) =>
   (cost: number): Record<MissingAPForDisAdvantage> => {
-    const currentAPSpent = isDisadvantage
-      ? AP.spentOnDisadvantages (ap)
-      : AP.spentOnAdvantages (ap)
+    const currentAPSpent =
+      isDisadvantage
+        ? AP.spentOnDisadvantages (ap)
+        : AP.spentOnAdvantages (ap)
+
+    console.log ("currentAPSpent: ", show (currentAPSpent));
 
     const subCurrentAPSpent = getDisAdvantageSubtypeAPSpent (isBlessedOrMagical)
                                                             (isDisadvantage)
                                                             (ap)
+
+    console.log ("subCurrentAPSpent: ", show (subCurrentAPSpent));
 
     const smallMax = getDisAdvantagesSubtypeMax (snd (isBlessedOrMagical)) (hero)
 
     // a disadvantage has negative cost, but the sum to check is always positive
     // (to be able to use one function for both advantages and disadvantages)
     const normalizedCost = isDisadvantage ? cost * -1 : cost
+
+    console.log ("normalizedCost: ", normalizedCost);
 
     // checks if there are enough AP below the max for the subtype
     // (magical/blessed)
@@ -150,6 +158,8 @@ export const getMissingAPForDisAdvantage =
                  ensure (gt (0)) // (current + spent) - max > 0 => invalid
                ))
 
+    console.log ("subMissing: ", show (subMissing));
+
     // Checks if there are enough AP below the max for advantages/disadvantages
     const mainMissing =
       !isInCharacterCreation
@@ -157,10 +167,14 @@ export const getMissingAPForDisAdvantage =
         // (current + spent) - max > 0 => invalid
         : ensure (gt (0)) (currentAPSpent + normalizedCost - 80)
 
+    console.log ("mainMissing: ", show (mainMissing));
+
     // Checks if there are enough AP available in total
     const totalMissing = getMissingAP (isInCharacterCreation)
                                       (cost)
                                       (AP.available (ap))
+
+    console.log ("totalMissing: ", show (totalMissing));
 
     return MissingAPForDisAdvantage ({ totalMissing, mainMissing, subMissing })
   }

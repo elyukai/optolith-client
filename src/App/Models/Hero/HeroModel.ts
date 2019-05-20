@@ -60,6 +60,7 @@ export interface HeroModel {
   combatStyleDependencies: List<Record<StyleDependency>>
   magicalStyleDependencies: List<Record<StyleDependency>>
   blessedStyleDependencies: List<Record<StyleDependency>>
+  skillStyleDependencies: List<Record<StyleDependency>>
 }
 
 /**
@@ -104,9 +105,10 @@ export const HeroModel =
     petInEditor: Nothing,
     isInPetCreation: false,
     pact: Nothing,
-    combatStyleDependencies: List.empty,
-    magicalStyleDependencies: List.empty,
-    blessedStyleDependencies: List.empty,
+    combatStyleDependencies: List (),
+    magicalStyleDependencies: List (),
+    blessedStyleDependencies: List (),
+    skillStyleDependencies: List (),
   })
 
 export const HeroModelL = makeLenses (HeroModel)
@@ -159,4 +161,5 @@ export const getInitialHeroObject =
       combatStyleDependencies: Nothing,
       magicalStyleDependencies: Nothing,
       blessedStyleDependencies: Nothing,
+      skillStyleDependencies: Nothing,
     })

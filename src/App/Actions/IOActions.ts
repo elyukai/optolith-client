@@ -103,19 +103,25 @@ export const requestInitialData: ReduxAction<IO<void>> = dispatch =>
             dispatch ((dispatch2, getState) => {
               insertAppStateCache (getState ())
               insertHeroesCache (getHeroes (getState ()))
-              fmapF (fromRight_ (data) .cache) (insertCacheMap)
-              fmapF (fromRight_ (data) .cache)
-                    (pipe (
-                      keysSet,
-                      differenceF (keysSet (getHeroes (getState ()))),
-                      map (id => {
-                        forceCacheIsAvailable (id)
-                                              (getState ())
-                                              ({ l10n: fst (fromRight_ (data) .tables) })
+              const mcache = fromRight_ (data) .cache
 
-                        return id
-                      })
-                    ))
+              if (isJust (mcache)) {
+                const cache = fromJust (mcache)
+                insertCacheMap (cache)
+
+                pipe_ (
+                  cache,
+                  keysSet,
+                  differenceF (keysSet (getHeroes (getState ()))),
+                  map (id => {
+                    forceCacheIsAvailable (id)
+                                          (getState ())
+                                          ({ l10n: fst (fromRight_ (data) .tables) })
+
+                    return id
+                  })
+                )
+              }
 
               dispatch2 (endLoadingState ())
             })

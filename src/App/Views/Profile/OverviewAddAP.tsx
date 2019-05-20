@@ -1,5 +1,5 @@
 import * as React from "react";
-import { fmapF } from "../../../Data/Functor";
+import { fromJust, isJust } from "../../../Data/Maybe";
 import { InputTextEvent } from "../../Models/Hero/heroTypeHelpers";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { translate } from "../../Utilities/I18n";
@@ -26,7 +26,13 @@ export class OverviewAddAP extends React.Component<OverviewAddAPProps, OverviewA
   }
 
   onChange = (event: InputTextEvent) => this.setState ({ value: event.target.value })
-  addAP = () => fmapF (toInt (this.state.value)) (this.props.addAdventurePoints)
+  addAP = () => {
+    const mvalue = toInt (this.state.value)
+
+    if (isJust (mvalue)) {
+      this.props.addAdventurePoints (fromJust (mvalue))
+    }
+  }
 
   componentWillReceiveProps (nextProps: OverviewAddAPProps) {
     if (!nextProps.isOpened && this.props.isOpened) {

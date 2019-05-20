@@ -7,7 +7,7 @@
  * @since 1.1.0
  */
 
-import { equals } from "../../../Data/Eq";
+import { notEquals } from "../../../Data/Eq";
 import { ident } from "../../../Data/Function";
 import { over, set } from "../../../Data/Lens";
 import { append, consF, deleteAt, empty, List, modifyAt, subscriptF } from "../../../Data/List";
@@ -18,7 +18,7 @@ import { ActivatableDependent, ActivatableDependentL } from "../../Models/Active
 import { ActiveObject, ActiveObjectL } from "../../Models/ActiveEntries/ActiveObject";
 import { HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { Advantage } from "../../Models/Wiki/Advantage";
-import { Activatable, AllRequirementObjects, AllRequirements, LevelAwarePrerequisites } from "../../Models/Wiki/wikiTypeHelpers";
+import { Activatable, AllRequirementObjects, AllRequirements } from "../../Models/Wiki/wikiTypeHelpers";
 import { addDependencies, removeDependencies } from "../Dependencies/dependencyUtils";
 import { adjustEntryDef } from "../heroStateUtils";
 import { pipe } from "../pipe";
@@ -32,9 +32,7 @@ const { active } = ActivatableDependent.AL
 
 const getStaticPrerequisites =
   (entry: Record<ActiveObject>) =>
-  (entry_prerequisites: LevelAwarePrerequisites): List<AllRequirements> =>
-    flattenPrerequisites (entry_prerequisites)
-                         (alt (tier (entry)) (Just (1)))
+    flattenPrerequisites (alt (tier (entry)) (Just (1)))
                          (Nothing)
 
 /**
@@ -155,25 +153,29 @@ export const setLevel =
 
     const current_prerequisites = prerequisites (wiki_entry)
 
-    if (any (equals (new_level)) (prev_level)) {
+    if (any (notEquals (new_level)) (prev_level)) {
       if (isOrderedMap (current_prerequisites)) {
-        const flatPrerequisites = flattenPrerequisites (current_prerequisites)
+        const flatPrerequisites = flattenPrerequisites (Just (new_level))
                                                        (prev_level)
-                                                       (Just (new_level))
+                                                       (current_prerequisites)
 
         if (Maybe.fromJust (prev_level) > new_level) {
           return removeDependencies (id (wiki_entry))
                                     (flatPrerequisites)
                                     (hero_modified)
         }
-
-        return addDependencies (id (wiki_entry))
-                               (flatPrerequisites)
-                               (hero_modified)
+        else {
+          return addDependencies (id (wiki_entry))
+                                 (flatPrerequisites)
+                                 (hero_modified)
+        }
+      }
+      else {
+        return hero_modified
       }
 
-      return hero_modified
     }
-
-    return hero
+    else {
+      return hero
+    }
   }

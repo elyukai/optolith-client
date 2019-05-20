@@ -174,16 +174,15 @@ export const addDisAdvantage =
           })
         }
 
-        fmapF (mmissingAPForDisAdvantage)
-              (missing_ap => handleMissingAPForDisAdvantage (l10n)
-                                                            (successFn)
-                                                            (hero)
-                                                            (missing_ap)
-                                                            (entryType)
-                                                            (is_disadvantage)
-                                                            (dispatch))
-
-
+        if (isJust (mmissingAPForDisAdvantage)) {
+          handleMissingAPForDisAdvantage (l10n)
+                                         (successFn)
+                                         (hero)
+                                         (fromJust (mmissingAPForDisAdvantage))
+                                         (entryType)
+                                         (is_disadvantage)
+                                         (dispatch)
+        }
       }
     }
   }
@@ -297,14 +296,15 @@ export const removeDisAdvantage =
           })
         }
 
-        fmapF (mmissingAPForDisAdvantage)
-              (missing_ap => handleMissingAPForDisAdvantage (l10n)
-                                                            (successFn)
-                                                            (hero)
-                                                            (missing_ap)
-                                                            (entryType)
-                                                            (is_disadvantage)
-                                                            (dispatch))
+        if (isJust (mmissingAPForDisAdvantage)) {
+          handleMissingAPForDisAdvantage (l10n)
+                                         (successFn)
+                                         (hero)
+                                         (fromJust (mmissingAPForDisAdvantage))
+                                         (entryType)
+                                         (is_disadvantage)
+                                         (dispatch)
+        }
       }
     }
   }
@@ -424,14 +424,15 @@ export const setDisAdvantageLevel =
             })
           }
 
-          fmapF (mmissingAPForDisAdvantage)
-                (missing_ap => handleMissingAPForDisAdvantage (l10n)
-                                                              (successFn)
-                                                              (hero)
-                                                              (missing_ap)
-                                                              (entryType)
-                                                              (is_disadvantage)
-                                                              (dispatch))
+          if (isJust (mmissingAPForDisAdvantage)) {
+            handleMissingAPForDisAdvantage (l10n)
+                                           (successFn)
+                                           (hero)
+                                           (fromJust (mmissingAPForDisAdvantage))
+                                           (entryType)
+                                           (is_disadvantage)
+                                           (dispatch)
+          }
         }
       }
     }

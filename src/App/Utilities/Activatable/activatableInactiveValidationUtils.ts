@@ -24,7 +24,7 @@ import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { Activatable } from "../../Models/Wiki/wikiTypeHelpers";
 import { countActiveGroupEntries, hasActiveGroupEntry } from "../entryGroupUtils";
 import { getAllEntriesByGroup } from "../heroStateUtils";
-import { add, gte, inc, lte } from "../mathUtils";
+import { add, inc, lte } from "../mathUtils";
 import { pipe } from "../pipe";
 import { getFirstLevelPrerequisites } from "../Prerequisites/flattenPrerequisites";
 import { validatePrerequisites } from "../Prerequisites/validatePrerequisitesUtils";
@@ -85,6 +85,11 @@ const isAdditionDisabledSpecialAbilitySpecific =
     // Blessed Styles
     if (CheckStyleUtils.isBlessedStyleSpecialAbility (wiki_entry)) {
       return hasActiveGroupEntry (wiki) (hero) (25)
+    }
+
+    // Skill Styles
+    if (CheckStyleUtils.isSkillStyleSpecialAbility (wiki_entry)) {
+      return hasActiveGroupEntry (wiki) (hero) (33)
     }
 
     // Combat Style Combination
@@ -156,13 +161,18 @@ const isAdditionDisabledEntrySpecific =
   (hero: HeroModelRecord) =>
   (wiki_entry: Activatable): boolean => {
     if (isSpecialAbility (wiki_entry)) {
-      return isAdditionDisabledSpecialAbilitySpecific (wiki) (hero) (wiki_entry)
+      const isAdditionDisabledSASpecific =
+        isAdditionDisabledSpecialAbilitySpecific (wiki) (hero) (wiki_entry)
+
+      if (isAdditionDisabledSASpecific) {
+        return true
+      }
     }
 
-    return validatePrerequisites (wiki)
-                                 (hero)
-                                 (getFirstLevelPrerequisites (prerequisites (wiki_entry)))
-                                 (id (wiki_entry))
+    return !validatePrerequisites (wiki)
+                                  (hero)
+                                  (getFirstLevelPrerequisites (prerequisites (wiki_entry)))
+                                  (id (wiki_entry))
   }
 
 const hasGeneralRestrictionToAdd =
@@ -171,7 +181,7 @@ const hasGeneralRestrictionToAdd =
 const hasReachedMaximumEntries =
   (wiki_entry: Activatable) =>
   (mhero_entry: Maybe<Record<ActivatableDependent>>) =>
-    any (gte (fromMaybe (0)
+    any (lte (fromMaybe (0)
                         (fmap (pipe (active, flength))
                               (mhero_entry))))
         (max (wiki_entry))
@@ -195,7 +205,7 @@ export const isAdditionDisabled =
   (validExtendedSpecialAbilities: List<string>) =>
   (wiki_entry: Activatable) =>
   (mhero_entry: Maybe<Record<ActivatableDependent>>) =>
-  (max_level: Maybe<number>) =>
+  (max_level: Maybe<number>): boolean =>
     isAdditionDisabledEntrySpecific (wiki) (hero) (wiki_entry)
     || hasGeneralRestrictionToAdd (mhero_entry)
     || hasReachedMaximumEntries (wiki_entry) (mhero_entry)

@@ -4,6 +4,7 @@ import { fromDefault, makeLenses, member, notMember, Omit, Record } from "../../
 import { add } from "../../Utilities/mathUtils";
 import { pipe } from "../../Utilities/pipe";
 import { Dependent, ExtendedSkillDependent, SkillDependency } from "../Hero/heroTypeHelpers";
+import { ActivatableSkillDependent } from "./ActivatableSkillDependent";
 
 export interface SkillDependent {
   id: string;
@@ -53,8 +54,7 @@ export const isSkillDependent =
 
 export const isExtendedSkillDependent =
   (entry: Dependent): entry is ExtendedSkillDependent =>
-    member ("value") (entry)
-    && notMember ("mod") (entry)
+    SkillDependent.is (entry) || ActivatableSkillDependent.is (entry)
 
 const { value, dependencies } = SkillDependent.AL
 

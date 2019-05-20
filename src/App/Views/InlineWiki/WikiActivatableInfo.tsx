@@ -6,10 +6,11 @@ import { rangeN } from "../../../Data/Ix";
 import { over, set } from "../../../Data/Lens";
 import { any, append, appendStr, consF, elem, fnull, head, ifoldr, imap, intercalate, isList, List, map, NonEmptyList, notNull, notNullStr, subscript } from "../../../Data/List";
 import { bind, bindF, ensure, fromJust, fromMaybe, fromMaybeNil, isJust, isNothing, Just, liftM2, mapMaybe, maybe, Maybe, maybeR, maybeRNullF, maybeToNullable, Nothing } from "../../../Data/Maybe";
-import { isOrderedMap, lookup, lookupF, member, OrderedMap } from "../../../Data/OrderedMap";
+import { isOrderedMap, lookup, lookupF, notMember, OrderedMap } from "../../../Data/OrderedMap";
 import { fromDefault, makeLenses, Record, RecordI } from "../../../Data/Record";
 import { Categories } from "../../Constants/Categories";
 import { ActiveObjectWithId } from "../../Models/ActiveEntries/ActiveObjectWithId";
+import { ActivatableCombinedName } from "../../Models/View/ActivatableCombinedName";
 import { ActivatableNameCostA_ } from "../../Models/View/ActivatableNameCost";
 import { Advantage } from "../../Models/Wiki/Advantage";
 import { Attribute } from "../../Models/Wiki/Attribute";
@@ -26,6 +27,7 @@ import { SelectOption } from "../../Models/Wiki/sub/SelectOption";
 import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { Activatable, AllRequirements } from "../../Models/Wiki/wikiTypeHelpers";
 import { getNameCostForWiki } from "../../Utilities/Activatable/activatableActiveUtils";
+import { getName } from "../../Utilities/Activatable/activatableNameUtils";
 import { isExtendedSpecialAbility } from "../../Utilities/Activatable/checkStyleUtils";
 import { localizeOrList, translate, translateP } from "../../Utilities/I18n";
 import { getCategoryById, isBlessedTraditionId, isMagicalTraditionId, prefixRace, prefixSA } from "../../Utilities/IDUtils";
@@ -539,7 +541,7 @@ export function PrerequisitesText (props: PrerequisitesTextProps) {
           {maybeR (null)
                   ((y: string) => <Markdown source={y} oneLine="span" />)
                   (prerequisitesTextStart)}
-          {member (1) (prerequisites)
+          {notMember (1) (prerequisites)
             ? `${translate (l10n) ("level")} I: ${translate (l10n) ("none")} `
             : null}
           {map ((lvl: number) => (
@@ -725,7 +727,8 @@ const getPrerequisitesAttributesText =
                  }
                }),
                sortStrings (L10n.A.id (l10n)),
-               intercalate (", ")
+               intercalate (", "),
+               str => <span>{str}</span>
              ))
     )
   }
@@ -865,19 +868,19 @@ const mapPrerequisitesActivatablesTextElem =
         const category_add = getPrerequisitesActivatablesCategoryAdd (l10n) (curr_id)
 
         const mcombined_name =
-          getNameCostForWiki (l10n)
-                             (wiki)
-                             (ActiveObjectWithId ({
-                               id: curr_id,
-                               sid,
-                               sid2,
-                               tier: level,
-                               index: 0,
-                             }))
+          getName (l10n)
+                  (wiki)
+                  (ActiveObjectWithId ({
+                    id: curr_id,
+                    sid,
+                    sid2,
+                    tier: level,
+                    index: 0,
+                  }))
 
         return fmapF (mcombined_name)
                      (combined_name =>
-                       `${category_add}${ActivatableNameCostA_.name (combined_name)}`)
+                       `${category_add}${ActivatableCombinedName.A.name (combined_name)}`)
       })
     )
 
@@ -890,8 +893,8 @@ const getPrerequisitesActivatablesText =
           const id = RAA.id (x)
           const active = RAA.active (x)
           const msid = RAA.sid (x)
-          const sid2 = RAA.sid2 (x)
-          const level = RAA.tier (x)
+          const msid2 = RAA.sid2 (x)
+          const mlevel = RAA.tier (x)
 
           const name =
             pipe_ (
@@ -903,16 +906,16 @@ const getPrerequisitesActivatablesText =
                                mapMaybe (mapPrerequisitesActivatablesTextElem (l10n)
                                                                               (wiki)
                                                                               (sid)
-                                                                              (sid2)
-                                                                              (level)),
+                                                                              (msid2)
+                                                                              (mlevel)),
                                localizeOrList (l10n)
                              )
                            : fromMaybe ("")
                                        (mapPrerequisitesActivatablesTextElem (l10n)
                                                                              (wiki)
                                                                              (sid)
-                                                                             (sid2)
-                                                                             (level)
+                                                                             (msid2)
+                                                                             (mlevel)
                                                                              (id))
             )
 

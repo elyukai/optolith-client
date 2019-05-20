@@ -4,6 +4,7 @@ import { fmap } from "../../../Data/Functor";
 import { foldr, isList } from "../../../Data/List";
 import { elemF, fromMaybe, isNothing, Just, Nothing } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
+import { showP } from "../../../Data/Show";
 import { Categories } from "../../Constants/Categories";
 import { DependencyObject } from "../../Models/ActiveEntries/DependencyObject";
 import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
@@ -152,7 +153,7 @@ const modifyDependencies =
   (modifyActivatableSkillDependency: ModifyActivatableSkillDependency) =>
   (modifyActivatableDependency: ModifyActivatableDependency) =>
   (sourceId: string) =>
-    flip (foldr ((x: AllRequirements): (state: Record<HeroModel>) => Record<HeroModel> => {
+    flip (foldr ((x: AllRequirements): ident<Record<HeroModel>> => {
                   if (isDependentPrerequisite (x)) {
                     if (isPrimaryAttributeRequirement (x)) {
                       return putPrimaryAttributeDependency (modifyAttributeDependency)
@@ -160,11 +161,21 @@ const modifyDependencies =
                     }
 
                     if (isRequiringIncreasable (x)) {
-                      return putIncreasableDependency (modifyAttributeDependency)
+                      console.log (sourceId);
+                      console.log (showP (x));
+
+                      return pipe (
+                        ident,
+                        hero => (console.log (HeroModel.A.name (hero)), hero),
+                        // traceN ("before increasable dependency mod: "),
+                        putIncreasableDependency (modifyAttributeDependency)
                                                       (modifySkillDependency)
                                                       (modifyActivatableSkillDependency)
                                                       (sourceId)
-                                                      (x)
+                                                      (x),
+                        // traceN ("after increasable dependency mod: "),
+                        ident
+                      )
                     }
 
                     if (

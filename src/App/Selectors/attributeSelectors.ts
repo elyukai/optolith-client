@@ -35,7 +35,14 @@ const AWRA = AttributeWithRequirements.A
 
 export const getAttributeSum = createMaybeSelector (
   getAttributes,
-  foldr (pipe (ADA.value, add)) (0)
+  getWikiAttributes,
+  uncurryN (hero_attrs => foldr (pipe (
+                                  AA.id,
+                                  lookupF (hero_attrs),
+                                  maybe (add (8))
+                                        (pipe (ADA.value, add))
+                                ))
+                                (0))
 )
 
 /**

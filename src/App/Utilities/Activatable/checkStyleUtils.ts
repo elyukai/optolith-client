@@ -15,6 +15,10 @@ export const isBlessedStyleSpecialAbility =
   (e: Wiki.EntryWithCategory) =>
     isSpecialAbility (e) && gr (e) === 25
 
+export const isSkillStyleSpecialAbility =
+  (e: Wiki.EntryWithCategory) =>
+    isSpecialAbility (e) && gr (e) === 33
+
 /**
  * Returns if the given entry is an extended (combat/magical/blessed) special
  * ability.
@@ -22,4 +26,4 @@ export const isBlessedStyleSpecialAbility =
  */
 export const isExtendedSpecialAbility =
   (e: Wiki.EntryWithCategory) =>
-    isSpecialAbility (e) && [11, 14, 26] .includes (gr (e))
+    isSpecialAbility (e) && [11, 14, 26, 34] .includes (gr (e))

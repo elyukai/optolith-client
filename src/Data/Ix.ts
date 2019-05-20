@@ -71,6 +71,21 @@ export const inRange =
     x >= fst (b) && x <= snd (b)
 
 /**
+ * `inRangeN :: Int a => (a, a) -> a -> Bool`
+ *
+ * Returns `True` the given subscript lies in the range defined the bounding
+ * pair.
+ *
+ * The first argument `(l,u)` is a pair specifying the lower and upper bounds of
+ * a contiguous subrange of values.
+ *
+ * Native version of `inRange`.
+ */
+export const inRangeN =
+  (l: number, u: number) => (x: number): boolean =>
+    x >= l && x <= u
+
+/**
  * `rangeSize :: Int a => (a, a) -> Int`
  *
  * The size of the subrange defined by a bounding pair.

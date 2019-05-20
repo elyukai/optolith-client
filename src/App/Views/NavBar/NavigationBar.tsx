@@ -10,6 +10,8 @@ import { AdventurePointsCategories } from "../../Models/View/AdventurePointsCate
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { translate } from "../../Utilities/I18n";
 import { TabId } from "../../Utilities/LocationUtils";
+import { signNeg } from "../../Utilities/NumberUtils";
+import { pipe } from "../../Utilities/pipe";
 import { AvatarWrapper } from "../Universal/AvatarWrapper";
 import { BorderButton } from "../Universal/BorderButton";
 import { IconButton } from "../Universal/IconButton";
@@ -103,7 +105,10 @@ export function NavigationBar (props: NavigationBarProps) {
                           >
                           <Text className="collected-ap">
                             {maybe<string | number > ("")
-                                                     (AdventurePointsCategories.A.available)
+                                                     (pipe (
+                                                       AdventurePointsCategories.A.available,
+                                                       signNeg
+                                                     ))
                                                      (m_ap)}
                             {" "}
                             {translate (l10n) ("adventurepoints.short")}

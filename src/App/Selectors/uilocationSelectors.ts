@@ -99,7 +99,7 @@ export const getTabs = createMaybeSelector (
           },
           {
             id: TabId.Skills,
-            label: translate (l10n) ("skills"),
+            label: translate (l10n) ("abilities"),
             subTabs: List (
               TabId.Skills,
               TabId.CombatTechniques,
@@ -134,7 +134,7 @@ export const getTabs = createMaybeSelector (
         },
         {
           id: TabId.Skills,
-          label: translate (l10n) ("skills"),
+          label: translate (l10n) ("abilities"),
           subTabs: List (
             TabId.Skills,
             TabId.CombatTechniques,

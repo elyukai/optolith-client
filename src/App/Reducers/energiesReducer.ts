@@ -123,7 +123,7 @@ export const energiesReducer =
 
       case ActionTypes.REMOVE_LOST_LP_POINT:
         return over (composeL (energies, permanentLifePoints, lost))
-                    (inc)
+                    (dec)
 
       case ActionTypes.REMOVE_LOST_AE_POINT:
         return over (composeL (energies, permanentArcaneEnergyPoints))
