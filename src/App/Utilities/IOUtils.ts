@@ -2,27 +2,30 @@ import { remote } from "electron";
 import { tryIO } from "../../Control/Exception";
 import { Either, fromLeft_, fromRight_, isLeft, Left, Right } from "../../Data/Either";
 import { fmap, fmapF } from "../../Data/Functor";
+import { Internals } from "../../Data/Internals";
 import { flength, fromArray, List, subscript } from "../../Data/List";
 import { fromMaybe, normalize, Nothing } from "../../Data/Maybe";
 import { bimap, fst, Pair, snd } from "../../Data/Pair";
-import { IO } from "../../System/IO";
+import { bind, pure } from "../../System/IO";
 import { divideBy, inc } from "./mathUtils";
 import { pipe } from "./pipe";
+
+import IO = Internals.IO
 
 /**
  * Prints windows' web page as PDF with Chromium's preview printing custom settings.
  */
 export const windowPrintToPDF =
   (options: Electron.PrintToPDFOptions) =>
-  IO (async () => new Promise<Buffer> ((res, rej) => remote
-                                                       .getCurrentWindow ()
-                                                       .webContents
-                                                       .printToPDF (
-                                                         options,
-                                                         (error, data) => error !== null
-                                                                            ? rej (error)
-                                                                            : res (data)
-                                                       )))
+    IO (async () => new Promise<Buffer> ((res, rej) => remote
+                                                         .getCurrentWindow ()
+                                                         .webContents
+                                                         .printToPDF (
+                                                           options,
+                                                           (error, data) => error !== null
+                                                                              ? rej (error)
+                                                                              : res (data)
+                                                         )))
 
 /**
  * Shows a native save dialog.
@@ -49,9 +52,9 @@ export const showOpenDialog =
                                                        ))
                                                      )))
 
-export const NothingIO = IO.pure (Nothing)
+export const NothingIO = pure (Nothing)
 
-export const LeftIO = pipe (Left, IO.pure)
+export const LeftIO = pipe (Left, pure)
 
 /**
  * `catchIOEither :: (a -> IO b) -> IO a -> IO (Either Error b)`
@@ -71,10 +74,10 @@ export const bindIOEither =
   (f: (x: A) => IO<B>) =>
   <E>
   (x: IO<Either<E, A>>) =>
-    IO.bind (x)
-            ((e): IO<Either<E, B>> => isLeft (e)
-                    ? LeftIO (fromLeft_ (e))
-                    : fmapF (f (fromRight_ (e))) (Right))
+    bind (x)
+         ((e): IO<Either<E, B>> => isLeft (e)
+                 ? LeftIO (fromLeft_ (e))
+                 : fmapF (f (fromRight_ (e))) (Right))
 
 export const getSystemLocale = () => {
   const systemLocale = remote.app.getLocale ()

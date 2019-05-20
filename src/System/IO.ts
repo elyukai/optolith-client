@@ -25,11 +25,37 @@ export interface IO<A> extends Internals.IOPrototype {
   readonly f: () => Promise<A>
 }
 
-type IONamespace = typeof IONamespace
-
-interface IOConstructor extends IONamespace {
-  <A>(f: () => Promise<A>): IO<A>
+interface IOConstructor {
+  <A> (f: () => Promise<A>): IO<A>
+  pure: <A> (x: A) => Internals.IO<A>
+  bind: <A> (x: IO<A>) => <B> (f: (x: A) => IO<B>) => IO<B>
+  bindF: <A, B> (f: (x: A) => IO<B>) => (x: IO<A>) => IO<B>
+  then: (x: IO<any>) => <A> (y: IO<A>) => IO<A>
+  thenF: <A> (x: IO<A>) => (y: IO<any>) => IO<A>
+  join: <A> (x: IO<IO<A>>) => IO<A>
+  liftM2: <A1, A2, B> (f: (a1: A1) => (a2: A2) => B) => (x1: IO<A1>) => (x2: IO<A2>) => IO<B>
+  liftM3:
+    <A1, A2, A3, B>
+    (f: (x1: A1) => (x2: A2) => (x3: A3) => B) =>
+    (x1: IO<A1>) =>
+    (x2: IO<A2>) =>
+    (x3: IO<A3>) => IO<B>
+  readFile: (path: string) => IO<string>
+  writeFile: (path: string) => (data: string | Buffer) => IO<void>
+  deleteFile: (path: string) => IO<void>
+  existsFile: (path: string) => IO<boolean>
+  copyFile: (origin: string) => (dest: string) => IO<void>
+  print: (x: any) => IO<void>
+  trace: (msg: string) => <A> (x: A) => IO<A>
+  traceN: (msg: string) => <A> (x: A) => A
+  isIO: (x: any) => x is IO<any>
+  fromIO: <A> (x: IO<A>) => Promise<A>
+  toIO: <A extends any[], B> (f: (...args: A) => Promise<B>) => (...args: A) => IO<B>
+  IdentityIO: IO<void>
+  runIO: <A>(x: IO<A>) => IO<A>
 }
+
+export const IO: IOConstructor = Internals.IO as IOConstructor
 
 
 // APPLICATIVE
@@ -40,6 +66,8 @@ interface IOConstructor extends IONamespace {
  * Lift a value.
  */
 export const pure = <A> (x: A) => Internals.IO (() => Promise.resolve (x))
+
+IO.pure = pure
 
 
 // MONAD
@@ -58,6 +86,8 @@ export const bind =
                                    .catch (err => { throw err }))
   }
 
+IO.bind = bind
+
 /**
  * `(=<<) :: Monad m => (a -> m b) -> m a -> m b`
  */
@@ -66,6 +96,8 @@ export const bindF =
   (f: (x: A) => IO<B>) =>
   (x: IO<A>): IO<B> =>
     bind<A> (x) (f)
+
+IO.bindF = bindF
 
 /**
  * `(>>) :: IO a -> IO b -> IO b`
@@ -80,6 +112,8 @@ export const then =
   (x: IO<any>) => <A> (y: IO<A>): IO<A> =>
     bind<any> (x) (_ => y)
 
+IO.then = then
+
 /**
  * `(<<) :: IO a -> IO b -> IO a`
  *
@@ -89,6 +123,8 @@ export const then =
 export const thenF =
   <A> (x: IO<A>) => (y: IO<any>): IO<A> =>
     bind<any> (y) (_ => x)
+
+IO.thenF = thenF
 
 /**
  * `join :: IO (IO a) -> IO a`
@@ -100,6 +136,8 @@ export const thenF =
 export const join =
   <A> (x: IO<IO<A>>): IO<A> =>
     bind (x) (ident)
+
+IO.join = join
 
 /**
  * `liftM2 :: (a1 -> a2 -> r) -> IO a1 -> IO a2 -> IO r`
@@ -114,6 +152,8 @@ export const liftM2 =
   (x2: IO<A2>): IO<B> =>
     bind<A1> (x1) (pipe (f, fmapF (x2)))
 
+IO.liftM2 = liftM2
+
 /**
  * `liftM3 :: (a1 -> a2 -> a3 -> r) -> IO a1 -> IO a2 -> IO a3 -> IO r`
  *
@@ -127,6 +167,8 @@ export const liftM3 =
   (x2: IO<A2>) =>
   (x3: IO<A3>): IO<B> =>
     bind<A1> (x1) (a1 => liftM2 (f (a1)) (x2) (x3))
+
+IO.liftM3 = liftM3
 
 
 // OPENING AND CLOSING FILES
@@ -145,6 +187,8 @@ export const readFile =
   (path: FilePath) =>
     Internals.IO (async () => readFileP (path, "utf8"))
 
+IO.readFile = readFile
+
 const writeFileP = util.promisify (fs.writeFile)
 
 /**
@@ -158,6 +202,8 @@ export const writeFile =
   (data: string | Buffer) =>
     Internals.IO (async () => writeFileP (path, data, "utf8"))
 
+IO.writeFile = writeFile
+
 const deleteFileP = util.promisify (fs.unlink)
 
 /**
@@ -168,6 +214,8 @@ const deleteFileP = util.promisify (fs.unlink)
 export const deleteFile =
   (path: FilePath) =>
     Internals.IO (async () => deleteFileP (path))
+
+IO.deleteFile = deleteFile
 
 const existsFileP = util.promisify (fs.access)
 
@@ -182,6 +230,8 @@ export const existsFile =
                                 .then (() => true)
                                 .catch (() => false))
 
+IO.existsFile = existsFile
+
 const copyFileP = util.promisify (fs.copyFile)
 
 /**
@@ -194,6 +244,8 @@ export const copyFile =
   (origin: FilePath) =>
   (dest: FilePath) =>
     Internals.IO (async () => copyFileP (origin, dest))
+
+IO.copyFile = copyFile
 
 
 // TEXT OUTPUT
@@ -210,6 +262,8 @@ export const print =
   (x: any) =>
     Internals.IO (async () => Promise.resolve (console.log (showP (x))))
 
+IO.print = print
+
 /**
  * `trace :: Show a => String -> a -> IO a`
  *
@@ -223,6 +277,8 @@ export const trace =
   <A> (x: A) =>
     Internals.IO (async () => (console.log (`${msg} ${showP (x)}`), Promise.resolve (x)))
 
+IO.trace = trace
+
 /**
  * `traceN :: Show a => String -> a -> a`
  *
@@ -231,10 +287,14 @@ export const trace =
  */
 export const traceN = (msg: string) => <A> (x: A) => (console.log (`${msg} ${showP (x)}`), x)
 
+IO.traceN = traceN
+
 
 // CUSTOM FUNCTIONS
 
 export import isIO = Internals.isIO
+
+IO.isIO = isIO
 
 /**
  * `fromIO :: IO a -> Promise a`
@@ -243,6 +303,8 @@ export import isIO = Internals.isIO
  */
 export const fromIO =
   <A> (x: IO<A>): Promise<A> => x .f ()
+
+IO.fromIO = fromIO
 
 /**
  * `toIO :: (...a -> Promise b) -> ...a -> IO b`
@@ -255,11 +317,15 @@ export const toIO =
   (...args: A): IO<B> =>
     Internals.IO (() => f (...args))
 
+IO.toIO = toIO
+
 /**
  * An `IO` that does nothing. Can be useful for chained `then`s to execute
  * `IO`s.
  */
 export const IdentityIO = Internals.IO (() => Promise.resolve ())
+
+IO.IdentityIO = IdentityIO
 
 /**
  * `runIO :: IO a -> IO a`
@@ -273,30 +339,4 @@ export const runIO =
     return Internals.IO (async () => p)
   }
 
-const IONamespace = {
-  pure,
-  bind,
-  bindF,
-  then,
-  thenF,
-  join,
-  liftM2,
-  liftM3,
-  readFile,
-  writeFile,
-  deleteFile,
-  existsFile,
-  copyFile,
-  print,
-  isIO,
-  fromIO,
-  IdentityIO,
-}
-
-export const IO: IOConstructor =
-  // tslint:disable-next-line: prefer-object-spread
-  Object.assign (
-    {},
-    Internals.IO,
-    IONamespace
-  )
+IO.runIO = runIO
