@@ -341,7 +341,7 @@ export const parseTables =
                             }
                           )),
                           matchSelectOptionsToBaseRecords (rs.specialAbilitySelectOptions),
-                          matchExtensionsToBaseRecord (rs.spellExtensions) ("SA_484"),
+                          matchExtensionsToBaseRecord (rs.spellExtensions) ("SA_414"),
                           matchExtensionsToBaseRecord (rs.liturgicalChantExtensions) ("SA_663")
                         ))
                         (w)

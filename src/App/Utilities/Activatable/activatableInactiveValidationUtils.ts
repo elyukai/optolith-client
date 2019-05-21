@@ -148,6 +148,12 @@ const isAdditionDisabledSpecialAbilitySpecific =
       return pipe (rules, enableLanguageSpecializations, not) (hero)
     }
 
+    if (elem (gr (wiki_entry)) (List (31, 32))) {
+      // TODO: add option to activate vampire or lycanthropy and activate this
+      // SAs based on that option
+      return true
+    }
+
     return false
   }
 

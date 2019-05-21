@@ -51,9 +51,7 @@ export const getFullName =
       return obj
     }
 
-    return maybe (AAA_.name (obj))
-                 ((level_name: string) => AAA_.name (obj) + level_name)
-                 (AAA_.levelName (obj))
+    return AAA_.name (obj)
   }
 
 /**

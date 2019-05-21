@@ -1,7 +1,7 @@
 import classNames = require("classnames")
 import * as React from "react";
 import { notNullStrUndef } from "../../../Data/List";
-import { fromJust, fromMaybe, isJust, Maybe, maybeToUndefined } from "../../../Data/Maybe";
+import { fromJust, fromMaybe, fromMaybeR, isJust, Maybe, maybeToUndefined } from "../../../Data/Maybe";
 import { fst, snd } from "../../../Data/Pair";
 import { Record } from "../../../Data/Record";
 import { ActivatableActivationOptions } from "../../Models/Actions/ActivatableActivationOptions";
@@ -200,15 +200,26 @@ export class ActivatableAddListItem extends
         (this.state)
         (finalProps)
 
+    if (
+      !disabled
+      && (
+        isJust (IACEA.levelElementBefore (controlElements))
+        || isJust (IACEA.levelElementAfter (controlElements))
+      )
+      && this.state.selectedTier === undefined
+    ) {
+      disabled = true;
+    }
+
     return (
       <ListItem important={isImportant} recommended={isTypical} unrecommended={isUntypical}>
         <ListItemLeft>
           <ListItemName name={IAA.name (item)} />
-          {fromMaybe (<></>) (IACEA.levelElementBefore (controlElements))}
-          {fromMaybe (<></>) (IACEA.selectElement (controlElements))}
-          {fromMaybe (<></>) (IACEA.secondSelectElement (controlElements))}
-          {fromMaybe (<></>) (IACEA.inputElement (controlElements))}
-          {fromMaybe (<></>) (IACEA.levelElementAfter (controlElements))}
+          {fromMaybeR (null) (IACEA.levelElementBefore (controlElements))}
+          {fromMaybeR (null) (IACEA.selectElement (controlElements))}
+          {fromMaybeR (null) (IACEA.secondSelectElement (controlElements))}
+          {fromMaybeR (null) (IACEA.inputElement (controlElements))}
+          {fromMaybeR (null) (IACEA.levelElementAfter (controlElements))}
         </ListItemLeft>
         <ListItemSeparator/>
         {hideGroup !== true

@@ -371,6 +371,41 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
         )
       }
 
+      case 33:
+        return (
+          <WikiBoxTemplate
+            className="specialability"
+            title={header_name}
+            subtitle={header_sub_name}
+            >
+            {maybeRNullF (SAA.rules (x))
+                         (str => (
+                           <Markdown source={`**${translate (l10n) ("rules")}:** ${str}`} />
+                         ))}
+            {maybeRNullF (SAA.extended (x))
+                         (es => {
+                           const tag = translate (l10n) ("extendedskillspecialabilities")
+                           const names = pipe_ (
+                            es,
+                            mapMaybe (pipe (
+                              ensure (isString),
+                              bindF (lookupF (specialAbilities)),
+                              fmap (SAA.name)
+                            )),
+                            sortStrings (L10n.A.id (l10n)),
+                            intercalate (", ")
+                           )
+
+                           return (
+                             <Markdown source={`**${tag}:** ${names}`} />
+                           )
+                         })}
+            <PrerequisitesText {...props} />
+            {cost_elem}
+            {source_elem}
+          </WikiBoxTemplate>
+        )
+
       default:
         return (
           <WikiBoxTemplate

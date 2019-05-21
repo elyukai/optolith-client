@@ -672,6 +672,7 @@ export const toL10n =
         "chooseacategorytodisplayalist":
           checkL10nNonEmptyString ("chooseacategorytodisplayalist"),
         "emptylistnoresults": checkL10nNonEmptyString ("emptylistnoresults"),
+        "extendedskillspecialabilities": checkL10nNonEmptyString ("extendedskillspecialabilities"),
       }
 
       return mapMNamed
@@ -1276,6 +1277,7 @@ export const toL10n =
           "chooseacategory": res ["chooseacategory"],
           "chooseacategorytodisplayalist": res ["chooseacategorytodisplayalist"],
           "emptylistnoresults": res ["emptylistnoresults"],
+          "extendedskillspecialabilities": res ["extendedskillspecialabilities"],
           // tslint:enable: no-string-literal
         }))
     }

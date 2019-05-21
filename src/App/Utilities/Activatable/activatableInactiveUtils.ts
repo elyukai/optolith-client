@@ -11,7 +11,7 @@ import { equals } from "../../../Data/Eq";
 import { ident, thrush } from "../../../Data/Function";
 import { fmap, fmapF, mapReplace } from "../../../Data/Functor";
 import { over, set } from "../../../Data/Lens";
-import { consF, countWith, elem, filter, find, flength, fnull, foldr, isList, List, map, mapByIdKeyMap, maximum, notElem, notElemF, subscript } from "../../../Data/List";
+import { consF, countWith, elem, filter, find, flength, fnull, foldr, isList, List, map, mapByIdKeyMap, maximum, notElem, notElemF, notNull, subscript } from "../../../Data/List";
 import { all, bind, bindF, ensure, fromJust, fromMaybe, guard, guard_, isJust, join, Just, liftM2, listToMaybe, mapMaybe, Maybe, maybe, Nothing, or } from "../../../Data/Maybe";
 import { alter, elems, foldrWithKey, isOrderedMap, lookup, lookupF, member, OrderedMap } from "../../../Data/OrderedMap";
 import { fst, Pair, snd } from "../../../Data/Pair";
@@ -28,6 +28,7 @@ import { Advantage } from "../../Models/Wiki/Advantage";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { LiturgicalChant } from "../../Models/Wiki/LiturgicalChant";
 import { Spell } from "../../Models/Wiki/Spell";
+import { Application } from "../../Models/Wiki/sub/Application";
 import { SelectOption, SelectOptionL } from "../../Models/Wiki/sub/SelectOption";
 import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { Activatable } from "../../Models/Wiki/wikiTypeHelpers";
@@ -35,7 +36,7 @@ import { countActiveGroupEntries } from "../entryGroupUtils";
 import { getAllEntriesByGroup } from "../heroStateUtils";
 import { getBlessedTradStrIdFromNumId } from "../IDUtils";
 import { getTraditionOfAspect } from "../Increasable/liturgicalChantUtils";
-import { add, gt, gte, inc, lt, lte, multiply, subtract } from "../mathUtils";
+import { add, gt, gte, inc, lt, multiply, subtract } from "../mathUtils";
 import { pipe, pipe_ } from "../pipe";
 import { validateLevel, validatePrerequisites } from "../Prerequisites/validatePrerequisitesUtils";
 import { sortRecordsByName } from "../sortBy";
@@ -72,14 +73,9 @@ const { property } = Spell.AL
 const { active, dependencies } = ActivatableDependent.AL
 const { value } = ActivatableSkillDependent.AL
 
-const {
-  id: select_id,
-  prerequisites: select_prerequisites,
-  gr,
-  level,
-  target,
-  name,
-} = SelectOption.AL
+const SOA = SelectOption.A
+const AppA = Application.A
+const SpAL = Spell.AL
 
 const { cost: select_costL, applications, name: nameL } = SelectOptionL
 const { sid, tier } = ActiveObject.AL
@@ -98,7 +94,7 @@ const isNotActive =
     getActiveSelectionsMaybe,
     fromMaybe<List<string | number>> (List.empty),
     activeSelections => pipe (
-      select_id,
+      SOA.id,
       notElemF (activeSelections)
     )
   )
@@ -114,7 +110,7 @@ const areNoSameActive =
     getActiveSelectionsMaybe,
     fromMaybe<List<string | number>> (List.empty),
     activeSelections => pipe (
-      select_id as (x: Record<SelectOption>) => string | number,
+      SOA.id,
       current_id => countWith (equals (current_id)) (activeSelections) < 2
     )
   )
@@ -130,7 +126,7 @@ const isNotRequired =
     getRequiredSelections,
     fromMaybe<List<string | number | List<number>>> (List.empty),
     requiredSelections => pipe (
-      select_id as (x: Record<SelectOption>) => string | number,
+      SOA.id,
       notElemF (requiredSelections)
     )
   )
@@ -275,7 +271,7 @@ const modifySelectOptions =
         if (current_id === "DISADV_33") {
           return fmap (filter (
                                 (e: Record<SelectOption>) =>
-                                  elem (select_id (e) as number) (list7and8)
+                                  elem (SOA.id (e) as number) (list7and8)
                                   || isNoRequiredOrActiveSelection (e)
                               ))
                               (mcurrent_select)
@@ -292,7 +288,7 @@ const modifySelectOptions =
 
         const isSkillOfIcB =
           pipe (
-            select_id,
+            SOA.id,
             ensure (isString),
             bindF (lookupF (skills (wiki))),
             fmap (pipe (ic, equals (2))),
@@ -320,7 +316,7 @@ const modifySelectOptions =
                                                                (hero),
                                          thrush (current_id)
                                        ))
-                                       (select_prerequisites (e))))
+                                       (SOA.prerequisites (e))))
                     (mcurrent_select)
       }
 
@@ -330,7 +326,7 @@ const modifySelectOptions =
 
         return fmap (pipe (
                             filter ((e: Record<SelectOption>) => {
-                                     const curr_select_id = select_id (e)
+                                     const curr_select_id = SOA.id (e)
 
                                      if (isJust (mcounter)) {
                                        const counter = fromJust (mcounter)
@@ -353,7 +349,7 @@ const modifySelectOptions =
                                                                           (curr_select_id)
                                    }),
                             map (e => {
-                                  const curr_select_id = select_id (e)
+                                  const curr_select_id = SOA.id (e)
 
                                   const mcounts = bind (mcounter) (lookup (curr_select_id))
 
@@ -370,7 +366,8 @@ const modifySelectOptions =
                                       over (applications)
                                            (fmap (filter (app => {
                                                            const isInactive =
-                                                             all (notElem (select_id (app)))
+                                                             all (notElem<number | string>
+                                                                   (AppA.id (app)))
                                                                  (mcounts)
 
                                                            const arePrerequisitesMet =
@@ -379,7 +376,7 @@ const modifySelectOptions =
                                                                                          (hero),
                                                                    thrush (current_id)
                                                                  ))
-                                                                 (select_prerequisites (app))
+                                                                 (AppA.prerequisites (app))
 
                                                            return isInactive && arePrerequisitesMet
                                                          })))
@@ -400,7 +397,7 @@ const modifySelectOptions =
 
         return fmap (filter ((e: Record<SelectOption>) =>
                               isNoRequiredSelection (e)
-                              && List.all (pipe (sid, Maybe.notElem (select_id (e))))
+                              && List.all (pipe (sid, Maybe.notElem (SOA.id (e))))
                                           (actives)))
                     (mcurrent_select)
       }
@@ -411,7 +408,7 @@ const modifySelectOptions =
 
         return fmap (filter ((e: Record<SelectOption>) =>
                               isNoRequiredOrActiveSelection (e)
-                              && notElem (select_id (e)) (valid_props)))
+                              && notElem (SOA.id (e)) (valid_props)))
                     (mcurrent_select)
       }
 
@@ -434,7 +431,7 @@ const modifySelectOptions =
         return liftM2 ((trad: Record<ActivatableDependent>) =>
                         filter ((e: Record<SelectOption>) =>
                                  pipe (
-                                        select_id,
+                                        SOA.id,
                                         ensure (isNumber),
                                         fmap (getTraditionOfAspect),
                                         bindF (getBlessedTradStrIdFromNumId),
@@ -442,7 +439,7 @@ const modifySelectOptions =
                                       )
                                       (e)
                                  && isNoRequiredOrActiveSelection (e)
-                                 && notElem (select_id (e)) (valid_aspects)))
+                                 && notElem (SOA.id (e)) (valid_aspects)))
                       (getBlessedTradition (hero_specialAbilities (hero)))
                       (mcurrent_select)
       }
@@ -453,7 +450,7 @@ const modifySelectOptions =
                               isNoRequiredOrActiveSelection (e)
                               && maybe (false)
                                        (pipe (value, gte (10)))
-                                       (pipe (hero_spells, lookup (select_id (e))) (hero))))
+                                       (pipe (hero_spells, lookup (SOA.id (e))) (hero))))
                     (mcurrent_select)
       }
 
@@ -469,7 +466,7 @@ const modifySelectOptions =
                                  listToMaybe,
                                  bindF (sid),
                                  findSelectOption (wiki_entry),
-                                 bindF (gr)
+                                 bindF (SOA.gr)
                                )
                                (fromJust (mhero_entry))
 
@@ -478,7 +475,7 @@ const modifySelectOptions =
                                  mapMaybe (pipe (
                                    Just as (x: string | number) => Maybe<string | number>,
                                    findSelectOption (wiki_entry),
-                                   bindF (level)
+                                   bindF (SOA.level)
                                  )),
                                  maximum,
                                  inc
@@ -486,12 +483,12 @@ const modifySelectOptions =
                                (mactive_sels)
 
                         return filter ((e: Record<SelectOption>) =>
-                                          equals (path) (gr (e))
-                                          && equals (level (e)) (highest_level))
+                                          equals (path) (SOA.gr (e))
+                                          && equals (SOA.level (e)) (highest_level))
                                       (xs)
                       }
 
-                      return filter<Record<SelectOption>> (pipe (level, Maybe.elem (1)))
+                      return filter<Record<SelectOption>> (pipe (SOA.level, Maybe.elem (1)))
                                                           (xs)
                     })
                     (mcurrent_select)
@@ -512,31 +509,31 @@ const modifySelectOptions =
             : bindF (lookupF (liturgicalChants (wiki)))
 
         return fmap (foldr ((e: Record<SelectOption>) => {
-                             const mtarget_hero_entry = getTargetHeroEntry (target (e))
-                             const mtarget_wiki_entry = getTargetWikiEntry (target (e))
+                             const mtarget_hero_entry = getTargetHeroEntry (SOA.target (e))
+                             const mtarget_wiki_entry = getTargetWikiEntry (SOA.target (e))
 
                              if (
                                isNoRequiredOrActiveSelection (e)
                                && validatePrerequisites (wiki)
                                                         (hero)
                                                         (pipe (
-                                                                select_prerequisites,
+                                                                SOA.prerequisites,
                                                                 fromMaybe (List ())
                                                               )
                                                               (e))
                                                         (current_id)
                                && isJust (mtarget_wiki_entry)
                                && isJust (mtarget_hero_entry)
-                               && lte (value (fromJust (mtarget_hero_entry)))
-                                      (maybe (0)
-                                             (pipe (multiply (4), add (4)))
-                                             (level (e)))
+                               && value (fromJust (mtarget_hero_entry))
+                                  >= maybe (0)
+                                           (pipe (multiply (4), add (4)))
+                                           (SOA.level (e))
                              ) {
                                const target_wiki_entry = fromJust (mtarget_wiki_entry)
 
                                return consF (
                                  set (nameL)
-                                     (`${name (target_wiki_entry)}: ${name (e)}`)
+                                     (`${SpAL.name (target_wiki_entry)}: ${SOA.name (e)}`)
                                      (e)
                                )
                              }
@@ -587,7 +584,7 @@ const modifySelectOptions =
                              return foldr ((e: Record<SelectOption>) => {
                                             const lang =
                                               find ((l: Pair<number, number>) =>
-                                                     fst (l) === select_id (e))
+                                                     fst (l) === SOA.id (e))
                                                    (available_langs)
 
                                             const first_for_language =
@@ -921,24 +918,20 @@ export const getInactiveView =
                                                      (wiki_entry)
                                                      (mhero_entry)
 
-      return liftM2 (
-                      (modify: ident<Record<InactiveActivatable>>) =>
-                      (select_options: Maybe<List<Record<SelectOption>>>) =>
-                        modify (
-                          InactiveActivatable ({
-                            id: current_id,
-                            name: name (wiki_entry),
-                            cost: cost (wiki_entry),
-                            maxLevel: max_level,
-                            heroEntry: mhero_entry,
-                            wikiEntry: wiki_entry as Record<RecordI<Activatable>>,
-                            selectOptions: fmapF (select_options)
-                                                 (sortRecordsByName (id (l10n))),
-                          })
-                        ))
+      return liftM2 ((modify: ident<Record<InactiveActivatable>>) =>
+                     (select_options: Maybe<List<Record<SelectOption>>>) =>
+                       modify (InactiveActivatable ({
+                                id: current_id,
+                                name: SpAL.name (wiki_entry),
+                                cost: cost (wiki_entry),
+                                maxLevel: max_level,
+                                heroEntry: mhero_entry,
+                                wikiEntry: wiki_entry as Record<RecordI<Activatable>>,
+                                selectOptions: fmapF (select_options)
+                                                     (sortRecordsByName (id (l10n))),
+                              })))
                     (mmodifyOtherOptions)
-                    (ensure<Maybe<List<Record<SelectOption>>>> (Maybe.all (fnull))
-                                                               (specificSelections))
+                    (ensure (Maybe.all (notNull)) (specificSelections))
     }
 
     return Nothing
