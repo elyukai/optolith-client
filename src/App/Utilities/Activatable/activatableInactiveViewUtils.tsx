@@ -335,6 +335,7 @@ export const getIdSpecificAffectedAndDispatchProps =
           PropertiesAffectedByState ({
             currentCost: getSelectOptionCost (IAA.wikiEntry (entry) as Activatable)
                                              (mselected),
+            disabled: Just (isNothing (mselected) || isNothing (minput_text)),
           })
         )
       }
@@ -542,8 +543,7 @@ export const getIdSpecificAffectedAndDispatchProps =
                           )),
               first (pipe (
                 set (AAOL.level) (Just (selectedLevel)),
-                Maybe.elem<string | number | List<number>> ("sel") (IAA.cost (entry))
-                && isJust (mselect_options)
+                isNothing (IAA.cost (entry)) && isJust (mselect_options)
                   ? set (AAOL.selectOptionId1) (mselected)
                   : isJust (pipe_ (entry, IAA.wikiEntry, SAAL.input))
                   ? set (AAOL.input) (minput_text)
@@ -552,7 +552,7 @@ export const getIdSpecificAffectedAndDispatchProps =
             )
 
         const fillPairForNoLevel =
-          Maybe.elem<string | number | List<number>> ("sel") (IAA.cost (entry))
+          isNothing (IAA.cost (entry))
             ? first (set (AAOL.selectOptionId1) (mselected))
             : bimap (isJust (mselect_options)
                       ? set (AAOL.selectOptionId1) (mselected)
@@ -561,10 +561,9 @@ export const getIdSpecificAffectedAndDispatchProps =
                       : ident as ident<Record<ActivatableActivationOptions>>)
                     (set (PABYL.currentCost) (getPlainCostFromEntry (entry)))
 
-        return Maybe.fromMaybe
-          (fillPairForNoLevel)
-          (pipe_ (mlevels, thenF (mselected_level), fmap (fillPairForActiveLevel)))
-          (base_pair)
+        return fromMaybe (fillPairForNoLevel)
+                         (pipe_ (mlevels, thenF (mselected_level), fmap (fillPairForActiveLevel)))
+                         (base_pair)
       }
     }
   }
@@ -719,7 +718,7 @@ export const getInactiveActivatableControlElements =
                         "DISADV_45",
                         "DISADV_50"))
         ? set (IACEL.disabled) (Just (true))
-        : ident as ident<Record<InactiveActivatableControlElements>>,
+        : ident,
       fromMaybe
         (ident as ident<Record<InactiveActivatableControlElements>>)
         (pipe_ (
@@ -763,25 +762,26 @@ export const getInactiveActivatableControlElements =
                        ))),
             set (IACEL.disabled) (Just (isNothing (mselected2) && isNothing (minput_text)))
           )
-        : pipe (
-            maybe (ident as ident<Record<InactiveActivatableControlElements>>)
-                  (pipe (
-                    map (selectToDropdownOption),
-                    sels2 =>
-                      set (IACEL.secondSelectElement)
-                          (Just (
-                            <Dropdown
-                              value={mselected2}
-                              onChange={inputHandlers.handleSecondSelect}
-                              options={sels2}
-                              disabled={isNothing (mselected)}
-                              />
-                          ))
-                  ))
-                  (msels2),
-            isNothing (mselected2)
-              ? set (IACEL.disabled) (Just (true))
-              : ident as ident<Record<InactiveActivatableControlElements>>
-          )
+        : maybe (ident as ident<Record<InactiveActivatableControlElements>>)
+                (pipe (
+                  map (selectToDropdownOption),
+                  sels2 =>
+                    set (IACEL.secondSelectElement)
+                        (Just (
+                          <Dropdown
+                            value={mselected2}
+                            onChange={inputHandlers.handleSecondSelect}
+                            options={sels2}
+                            disabled={isNothing (mselected)}
+                            />
+                        )),
+                  f => pipe (
+                    f,
+                    isNothing (mselected2)
+                      ? set (IACEL.disabled) (Just (true))
+                      : ident
+                  )
+                ))
+                (msels2)
     )
   }

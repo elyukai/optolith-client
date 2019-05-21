@@ -1,9 +1,10 @@
 import classNames = require("classnames")
 import * as React from "react";
 import { notNullStrUndef } from "../../../Data/List";
-import { fromJust, fromMaybe, fromMaybeR, isJust, Maybe, maybeToUndefined, or } from "../../../Data/Maybe";
+import { fromJust, fromMaybe, fromMaybeR, isJust, Maybe, maybeToUndefined } from "../../../Data/Maybe";
 import { fst, snd } from "../../../Data/Pair";
 import { Record } from "../../../Data/Record";
+import { show } from "../../../Data/Show";
 import { ActivatableActivationOptions } from "../../Models/Actions/ActivatableActivationOptions";
 import { HeroModel } from "../../Models/Hero/HeroModel";
 import { InputTextEvent } from "../../Models/Hero/heroTypeHelpers";
@@ -198,22 +199,24 @@ export class ActivatableAddListItem extends
         (this.state)
         (finalProps)
 
-    const levelElementBefore = IACEA.levelElementBefore (controlElements)
-    const levelElementAfter = IACEA.levelElementAfter (controlElements)
-    const selectElement = IACEA.selectElement (controlElements)
-    const secondSelectElement = IACEA.secondSelectElement (controlElements)
-    const inputElement = IACEA.inputElement (controlElements)
-    const disabled = or (IACEA.disabled (controlElements))
+    const mlevelElementBefore = IACEA.levelElementBefore (controlElements)
+    const mlevelElementAfter = IACEA.levelElementAfter (controlElements)
+    const mselectElement = IACEA.selectElement (controlElements)
+    const msecondSelectElement = IACEA.secondSelectElement (controlElements)
+    const minputElement = IACEA.inputElement (controlElements)
+    const mdisabled = IACEA.disabled (controlElements)
+
+    console.log (`${IAA.name (item)} (${IAA.id (item)}) disabled: ${show (mdisabled)}`);
 
     return (
       <ListItem important={isImportant} recommended={isTypical} unrecommended={isUntypical}>
         <ListItemLeft>
           <ListItemName name={IAA.name (item)} />
-          {fromMaybeR (null) (levelElementBefore)}
-          {fromMaybeR (null) (selectElement)}
-          {fromMaybeR (null) (secondSelectElement)}
-          {fromMaybeR (null) (inputElement)}
-          {fromMaybeR (null) (levelElementAfter)}
+          {fromMaybeR (null) (mlevelElementBefore)}
+          {fromMaybeR (null) (mselectElement)}
+          {fromMaybeR (null) (msecondSelectElement)}
+          {fromMaybeR (null) (minputElement)}
+          {fromMaybeR (null) (mlevelElementAfter)}
         </ListItemLeft>
         <ListItemSeparator/>
         {hideGroup !== true
@@ -269,7 +272,7 @@ export class ActivatableAddListItem extends
         <ListItemButtons>
           <IconButton
             icon="&#xE916;"
-            disabled={disabled}
+            disabled={mdisabled}
             onClick={this.addToList.bind (null, fst (finalProps))}
             flat
             />
