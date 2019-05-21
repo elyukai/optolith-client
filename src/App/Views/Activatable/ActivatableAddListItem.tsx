@@ -1,7 +1,7 @@
 import classNames = require("classnames")
 import * as React from "react";
 import { notNullStrUndef } from "../../../Data/List";
-import { fromJust, fromMaybe, fromMaybeR, isJust, Maybe, maybeToUndefined } from "../../../Data/Maybe";
+import { fromJust, fromMaybe, fromMaybeR, isJust, Maybe, maybeToUndefined, or } from "../../../Data/Maybe";
 import { fst, snd } from "../../../Data/Pair";
 import { Record } from "../../../Data/Record";
 import { ActivatableActivationOptions } from "../../Models/Actions/ActivatableActivationOptions";
@@ -159,8 +159,6 @@ export class ActivatableAddListItem extends
       showCustomCostDialog,
     } = this.state
 
-    let disabled = false
-
     const selectElementDisabled =
       [
         "ADV_32",
@@ -200,26 +198,22 @@ export class ActivatableAddListItem extends
         (this.state)
         (finalProps)
 
-    if (
-      !disabled
-      && (
-        isJust (IACEA.levelElementBefore (controlElements))
-        || isJust (IACEA.levelElementAfter (controlElements))
-      )
-      && this.state.selectedTier === undefined
-    ) {
-      disabled = true;
-    }
+    const levelElementBefore = IACEA.levelElementBefore (controlElements)
+    const levelElementAfter = IACEA.levelElementAfter (controlElements)
+    const selectElement = IACEA.selectElement (controlElements)
+    const secondSelectElement = IACEA.secondSelectElement (controlElements)
+    const inputElement = IACEA.inputElement (controlElements)
+    const disabled = or (IACEA.disabled (controlElements))
 
     return (
       <ListItem important={isImportant} recommended={isTypical} unrecommended={isUntypical}>
         <ListItemLeft>
           <ListItemName name={IAA.name (item)} />
-          {fromMaybeR (null) (IACEA.levelElementBefore (controlElements))}
-          {fromMaybeR (null) (IACEA.selectElement (controlElements))}
-          {fromMaybeR (null) (IACEA.secondSelectElement (controlElements))}
-          {fromMaybeR (null) (IACEA.inputElement (controlElements))}
-          {fromMaybeR (null) (IACEA.levelElementAfter (controlElements))}
+          {fromMaybeR (null) (levelElementBefore)}
+          {fromMaybeR (null) (selectElement)}
+          {fromMaybeR (null) (secondSelectElement)}
+          {fromMaybeR (null) (inputElement)}
+          {fromMaybeR (null) (levelElementAfter)}
         </ListItemLeft>
         <ListItemSeparator/>
         {hideGroup !== true

@@ -13,6 +13,7 @@ import windowStateKeeper = require("electron-window-state")
 let mainWindow: Electron.BrowserWindow | null | undefined
 
 app.setAppUserModelId ("lukasobermann.optolith")
+app.commandLine.appendSwitch ("flags", "--experimental-modules")
 
 /**
  * Path to directory where all of the cached and saved files are located.
