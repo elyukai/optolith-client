@@ -4,10 +4,12 @@ import { cnst, Functn, ident } from "../../../Data/Function";
 import { fmap, fmapF } from "../../../Data/Functor";
 import { over, set } from "../../../Data/Lens";
 import { countWith, elemF, filter, find, flength, foldr, imap, isList, List, map, notElem, notElemF, subscript, subscriptF, sum, take } from "../../../Data/List";
-import { alt, altF, altF_, any, bind, bindF, ensure, fromMaybe, guard, isJust, isNothing, join, Just, liftM2, mapMaybe, Maybe, maybe, maybe_, Nothing, or, then, thenF } from "../../../Data/Maybe";
+import { alt, altF, altF_, any, bind, bindF, ensure, fromMaybe, fromMaybeNil, guard, isJust, isNothing, join, Just, liftM2, mapMaybe, Maybe, maybe, maybe_, Nothing, or, then, thenF } from "../../../Data/Maybe";
 import { lookupF } from "../../../Data/OrderedMap";
 import { bimap, first, Pair, second, snd } from "../../../Data/Pair";
 import { fromDefault, makeLenses, Omit, Record } from "../../../Data/Record";
+import { showP } from "../../../Data/Show";
+import { traceN } from "../../../System/IO";
 import { ActivatableActivationOptions, ActivatableActivationOptionsL } from "../../Models/Actions/ActivatableActivationOptions";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
@@ -249,15 +251,18 @@ export const getIdSpecificAffectedAndDispatchProps =
       // Obligations
       case "DISADV_50": {
         const active_selections =
-          fromMaybe<List<string | number>> (List ())
-                                           (getActiveSelectionsMaybe (IAA.heroEntry (entry)))
+          fromMaybeNil (getActiveSelectionsMaybe (IAA.heroEntry (entry)))
 
         const mfiltered_select_options =
           pipe_ (
             entry,
             IAA.selectOptions,
-            fmap (filter (pipe (SOA.id, notElemF (active_selections))))
+            traceN ("getIdSpecificAffectedAndDispatchProps before: "),
+            fmap (filter (pipe (SOA.id, notElemF (active_selections)))),
+            traceN ("getIdSpecificAffectedAndDispatchProps after: ")
           )
+
+        const is_input_
 
         return Pair (
           ActivatableActivationOptions ({
@@ -301,6 +306,7 @@ export const getIdSpecificAffectedAndDispatchProps =
                           />
                       )
                     )),
+            inputDescription:
           })
         )
       }
@@ -570,56 +576,56 @@ export const getIdSpecificAffectedAndDispatchProps =
 
 export const insertFinalCurrentCost =
   (entry: Record<InactiveActivatable>) =>
-    (selectedOptions: SelectedOptions): ident<IdSpecificAffectedAndDispatchProps> => {
-      const mselected = Maybe (selectedOptions.selected)
+  (selectedOptions: SelectedOptions): ident<IdSpecificAffectedAndDispatchProps> => {
+    const mselected = Maybe (selectedOptions.selected)
 
-      const mcustom_cost =
-        pipe_ (
-          Maybe (selectedOptions.customCost),
-          bindF (toInt),
-          fmap (Math.abs)
-        )
-
-      type Cost = string | number | List<number>
-
-      return pipe (
-        second (over (PABYL.currentCost)
-                     (pipe (
-                       misNumberM,
-                       alt (mcustom_cost),
-                       altF_ (() => getSelectOptionCost (IAA.wikiEntry (entry) as Activatable)
-                                                        (pipe_ (
-                                                          guard (
-                                                            Maybe.elem<Cost> ("sel")
-                                                                             (IAA.cost (entry))),
-                                                          thenF (mselected),
-                                                          fmap (sel =>
-                                                            isNumber (sel)
-                                                              ? sel
-                                                              : Maybe.sum (toInt (sel)))
-                                                        ))),
-                       Disadvantage.is (IAA.wikiEntry (entry)) ? fmap (negate) : ident
-                     ))),
-        Functn.join (pair => first (pipe (
-                                     pipe_ (
-                                       pair,
-                                       snd,
-                                       PABYA.currentCost,
-                                       misNumberM,
-                                       maybe<ident<Record<ActivatableActivationOptions>>>
-                                         (ident)
-                                         (set (AAOL.cost))
-                                     ),
-                                     set (AAOL.customCost)
-                                         (pipe_ (
-                                           pair,
-                                           snd,
-                                           PABYA.currentCost,
-                                           thenF (mcustom_cost)
-                                         ))
-                                   )))
+    const mcustom_cost =
+      pipe_ (
+        Maybe (selectedOptions.customCost),
+        bindF (toInt),
+        fmap (Math.abs)
       )
-    }
+
+    type Cost = string | number | List<number>
+
+    return pipe (
+      second (over (PABYL.currentCost)
+                   (pipe (
+                     misNumberM,
+                     alt (mcustom_cost),
+                     altF_ (() => getSelectOptionCost (IAA.wikiEntry (entry) as Activatable)
+                                                      (pipe_ (
+                                                        guard (
+                                                          Maybe.elem<Cost> ("sel")
+                                                                           (IAA.cost (entry))),
+                                                        thenF (mselected),
+                                                        fmap (sel =>
+                                                          isNumber (sel)
+                                                            ? sel
+                                                            : Maybe.sum (toInt (sel)))
+                                                      ))),
+                     Disadvantage.is (IAA.wikiEntry (entry)) ? fmap (negate) : ident
+                   ))),
+      Functn.join (pair => first (pipe (
+                                   pipe_ (
+                                     pair,
+                                     snd,
+                                     PABYA.currentCost,
+                                     misNumberM,
+                                     maybe<ident<Record<ActivatableActivationOptions>>>
+                                       (ident)
+                                       (set (AAOL.cost))
+                                   ),
+                                   set (AAOL.customCost)
+                                       (pipe_ (
+                                         pair,
+                                         snd,
+                                         PABYA.currentCost,
+                                         thenF (mcustom_cost)
+                                       ))
+                                 )))
+    )
+  }
 
 interface InactiveActivatableControlElementsInputHandlers {
   handleSelect (option: Maybe<string | number>): void
@@ -640,6 +646,8 @@ export const getInactiveActivatableControlElements =
     const mselected_level = Maybe (selectedOptions.selectedTier)
 
     const msels = pipe_ (props, snd, PABYA.firstSelectOptions, altF (IAA.selectOptions (entry)))
+
+    console.log ("getInactiveActivatableControlElements: ", showP (msels));
 
     const msels2 = pipe_ (props, snd, PABYA.secondSelectOptions)
 
@@ -707,6 +715,9 @@ export const getInactiveActivatableControlElements =
                   )
           ))
         )),
+      maybe (ident as ident<Record<InactiveActivatableControlElements>>)
+            (pipe (Just as (x: JSX.Element) => Just<JSX.Element>, set (IACEL.selectElement)))
+            (PABYA.selectElement (snd (props))),
       (isJust (msels) || isJust (minput_text))
       && isNothing (mselected)
       && notElem (IAA.id (entry))

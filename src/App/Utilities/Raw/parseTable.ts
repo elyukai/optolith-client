@@ -84,6 +84,18 @@ const bindM2MapM =
                          (lookup_univ (sheet_name))))
            (lookup_l10n (sheet_name)))
 
+const bindM2MapMUnivOpt =
+  (lookup_l10n: LookupSheet) =>
+  (lookup_univ: LookupSheet) =>
+  <A>
+  (f: Convert<A>) =>
+  (sheet_name: string) =>
+    (bindF ((univ: List<OrderedMap<string, string>>) =>
+             fmap<List<Maybe<A>>, List<A>> (catMaybes)
+                  (bindF (mapM (f (univ)))
+                         (lookup_l10n (sheet_name))))
+           (lookup_univ (sheet_name)))
+
 const bindM2MapMToMap =
   (lookup_l10n: LookupSheet) =>
   (lookup_univ: LookupSheet) =>
@@ -105,8 +117,8 @@ const matchSelectOptionsToBaseRecords =
                                 Just
                               )))
                         (fst (p)))) as
-    <A extends Activatable>
     (xs: List<Pair<string, Record<SelectOption>>>) =>
+    <A extends Activatable>
     (initial: OrderedMap<string, A>) => OrderedMap<string, A>
 
 const matchExtensionsToBaseRecord =
@@ -173,6 +185,8 @@ export const parseTables =
 
     const lookupBindM2MapM = bindM2MapM (lookup_l10n) (lookup_univ)
 
+    const lookupBindM2MapMUnivOpt = bindM2MapMUnivOpt (lookup_l10n) (lookup_univ)
+
     const lookupBindM2MapMToMap = bindM2MapMToMap (lookup_l10n) (lookup_univ)
 
     const l10n = bind (lookup_l10n ("UI")) <L10nRecord> (toL10n (locale))
@@ -199,12 +213,12 @@ export const parseTables =
     const advantages = lookupBindM2MapMToMap (toAdvantage) ("ADVANTAGES")
 
     const advantageSelectOptions =
-      lookupBindM2MapM (toAdvantageSelectOption) ("AdvantagesSelections")
+      lookupBindM2MapMUnivOpt (toAdvantageSelectOption) ("AdvantagesSelections")
 
     const disadvantages = lookupBindM2MapMToMap (toDisadvantage) ("DISADVANTAGES")
 
     const disadvantageSelectOptions =
-      lookupBindM2MapM (toDisadvantageSelectOption) ("DisadvantagesSelections")
+      lookupBindM2MapMUnivOpt (toDisadvantageSelectOption) ("DisadvantagesSelections")
 
     const skills = lookupBindM2MapMToMap (toSkill) ("SKILLS")
 
@@ -225,7 +239,7 @@ export const parseTables =
     const specialAbilities = lookupBindM2MapMToMap (toSpecialAbility) ("SPECIAL_ABILITIES")
 
     const specialAbilitySelectOptions =
-      lookupBindM2MapM (toSpecialAbilitySelectOption) ("SpecialAbilitiesSelections")
+      lookupBindM2MapMUnivOpt (toSpecialAbilitySelectOption) ("SpecialAbilitiesSelections")
 
     const itemTemplates = lookupBindM2MapMToMap (toItemTemplate) ("EQUIPMENT")
 
@@ -291,6 +305,7 @@ export const parseTables =
                       OrderedMap.map (over (DisadvantageL.select)
                                            (fmap (mapCategoriesToSelectOptions (w)))),
                       matchSelectOptionsToBaseRecords (rs.disadvantageSelectOptions)
+                      // x => (console.log (showP (rs.disadvantageSelectOptions)), x)
                     ))
                     (w),
           w => {

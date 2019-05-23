@@ -16,6 +16,8 @@ import { all, bind, bindF, ensure, fromJust, fromMaybe, guard, guard_, isJust, j
 import { alter, elems, foldrWithKey, isOrderedMap, lookup, lookupF, member, OrderedMap } from "../../../Data/OrderedMap";
 import { fst, Pair, snd } from "../../../Data/Pair";
 import { Record, RecordI } from "../../../Data/Record";
+import { showP } from "../../../Data/Show";
+import { traceN } from "../../../System/IO";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
@@ -211,6 +213,7 @@ const modifySelectOptions =
   (wiki: WikiModelRecord) =>
   (hero: HeroModelRecord) =>
   (wiki_entry: Activatable) =>
+  // tslint:disable-next-line: cyclomatic-complexity
   (mhero_entry: Maybe<Record<ActivatableDependent>>): Maybe<List<Record<SelectOption>>> => {
     const current_id = id (wiki_entry)
     const mcurrent_select = select (wiki_entry)
@@ -243,6 +246,12 @@ const modifySelectOptions =
       case "DISADV_34":
       // Obligations
       case "DISADV_50":
+        if (["DISADV_34", "DISADV_50"] .includes (current_id)) {
+          return traceN ("modifySelectOptions select: ")
+                        (fmap (filter (isNotRequired (mhero_entry)))
+                              (mcurrent_select))
+        }
+
         return fmap (filter (isNotRequired (mhero_entry)))
                     (mcurrent_select)
 
@@ -919,8 +928,13 @@ export const getInactiveView =
                                                      (mhero_entry)
 
       return liftM2 ((modify: ident<Record<InactiveActivatable>>) =>
-                     (select_options: Maybe<List<Record<SelectOption>>>) =>
-                       modify (InactiveActivatable ({
+                     (select_options: Maybe<List<Record<SelectOption>>>) =>{
+                       if (["DISADV_34", "DISADV_50"] .includes (current_id)) {
+                         console.log ("getInactiveView after: ", showP (fmapF (select_options)
+                         (sortRecordsByName (id (l10n)))));
+                       }
+
+                       return modify (InactiveActivatable ({
                                 id: current_id,
                                 name: SpAL.name (wiki_entry),
                                 cost: cost (wiki_entry),
@@ -929,7 +943,7 @@ export const getInactiveView =
                                 wikiEntry: wiki_entry as Record<RecordI<Activatable>>,
                                 selectOptions: fmapF (select_options)
                                                      (sortRecordsByName (id (l10n))),
-                              })))
+                              }))})
                     (mmodifyOtherOptions)
                     (ensure (Maybe.all (notNull)) (specificSelections))
     }

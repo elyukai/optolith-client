@@ -48,6 +48,7 @@ interface IOConstructor {
   print: (x: any) => IO<void>
   trace: (msg: string) => <A> (x: A) => IO<A>
   traceN: (msg: string) => <A> (x: A) => A
+  traceWithN: (msg: string) => <A, B>(f: (x: A) => B) => (x: A) => A
   isIO: (x: any) => x is IO<any>
   fromIO: <A> (x: IO<A>) => Promise<A>
   toIO: <A extends any[], B> (f: (...args: A) => Promise<B>) => (...args: A) => IO<B>
@@ -288,6 +289,27 @@ IO.trace = trace
 export const traceN = (msg: string) => <A> (x: A) => (console.log (`${msg} ${showP (x)}`), x)
 
 IO.traceN = traceN
+
+/**
+ * `traceWithN :: Show b => String -> (a -> b) -> a -> a`
+ *
+ * The `traceWithN msg f x` function takes a message `msg`, a function `f` and
+ * an input `x`. It applies `x` to `f`, the result of `f` to `showP` and appends
+ * the result of `showP` to the passed `msg`, which is then printed out to the
+ * console. The actual input is returned by the function.
+ *
+ * This is useful to print a part of a structure to the console.
+ *
+ * The `traceWithN` function is a variant of the `traceWIth` function that
+ * doesn't use `IO` but only native functions.
+ */
+export const traceWithN =
+  (msg: string) =>
+  <A, B> (f: (x: A) => B) =>
+  (x: A): A =>
+    (console.log (`${msg} ${showP (f (x))}`), x)
+
+IO.traceWithN = traceWithN
 
 
 // CUSTOM FUNCTIONS

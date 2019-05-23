@@ -1,10 +1,9 @@
 import classNames = require("classnames")
 import * as React from "react";
 import { notNullStrUndef } from "../../../Data/List";
-import { fromJust, fromMaybe, fromMaybeR, isJust, Maybe, maybeToUndefined } from "../../../Data/Maybe";
+import { fromJust, fromMaybeR, isJust, Maybe, maybeToUndefined } from "../../../Data/Maybe";
 import { fst, snd } from "../../../Data/Pair";
 import { Record } from "../../../Data/Record";
-import { show } from "../../../Data/Show";
 import { ActivatableActivationOptions } from "../../Models/Actions/ActivatableActivationOptions";
 import { HeroModel } from "../../Models/Hero/HeroModel";
 import { InputTextEvent } from "../../Models/Hero/heroTypeHelpers";
@@ -15,6 +14,7 @@ import { WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { getIdSpecificAffectedAndDispatchProps, getInactiveActivatableControlElements, InactiveActivatableControlElements, insertFinalCurrentCost, PropertiesAffectedByState } from "../../Utilities/Activatable/activatableInactiveViewUtils";
 import { translate } from "../../Utilities/I18n";
 import { pipe_ } from "../../Utilities/pipe";
+import { renderMaybe } from "../../Utilities/ReactUtils";
 import { isInteger } from "../../Utilities/RegexUtils";
 import { Dialog } from "../Universal/DialogNew";
 import { IconButton } from "../Universal/IconButton";
@@ -184,6 +184,11 @@ export class ActivatableAddListItem extends
         (item)
         (this.state)
 
+    console.log (
+      "propsAndActivationArgs:",
+      PropertiesAffectedByState.A.firstSelectOptions (snd (propsAndActivationArgs))
+    );
+
     const finalProps = insertFinalCurrentCost (item) (this.state) (propsAndActivationArgs)
 
     const controlElements =
@@ -205,8 +210,6 @@ export class ActivatableAddListItem extends
     const msecondSelectElement = IACEA.secondSelectElement (controlElements)
     const minputElement = IACEA.inputElement (controlElements)
     const mdisabled = IACEA.disabled (controlElements)
-
-    console.log (`${IAA.name (item)} (${IAA.id (item)}) disabled: ${show (mdisabled)}`);
 
     return (
       <ListItem important={isImportant} recommended={isTypical} unrecommended={isUntypical}>
@@ -238,7 +241,7 @@ export class ActivatableAddListItem extends
             }
             onClick={this.showCustomCostDialog}
             >
-            {fromMaybe<string | number> ("") (PABSA.currentCost (snd (finalProps)))}
+            {renderMaybe (PABSA.currentCost (snd (finalProps)))}
           </div>
           <Dialog
             id="custom-cost-dialog"

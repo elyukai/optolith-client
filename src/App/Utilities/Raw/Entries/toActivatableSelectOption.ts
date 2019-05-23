@@ -4,7 +4,7 @@ import { Pair } from "../../../../Data/Pair";
 import { IdPrefixes } from "../../../Constants/IdPrefixes";
 import { SelectOption } from "../../../Models/Wiki/sub/SelectOption";
 import { prefixId } from "../../IDUtils";
-import { mergeRowsByIdAndMainId } from "../mergeTableRows";
+import { mergeRowsByIdAndMainIdUnivOpt } from "../mergeTableRows";
 import { Expect } from "../showExpected";
 import { mensureMapBoolean, mensureMapNaturalInRangeOptional, mensureMapNaturalListOptional, mensureMapNaturalOptional, mensureMapNonEmptyString, mensureMapStringPredListOptional } from "../validateMapValueUtils";
 import { lookupKeyValid, mapMNamed, TableType } from "../validateValueUtils";
@@ -13,7 +13,7 @@ import { toSourceLinks } from "./Sub/toSourceLinks";
 
 export const toActivatableSelectOption =
   (prefix: IdPrefixes) =>
-    mergeRowsByIdAndMainId
+    mergeRowsByIdAndMainIdUnivOpt
       ("toActivatableSelectOption")
       (mainId => id => lookup_l10n => lookup_univ => {
         // Shortcuts
