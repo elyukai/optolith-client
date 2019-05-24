@@ -8,7 +8,6 @@ import { alt, altF, altF_, any, bind, bindF, ensure, fromMaybe, fromMaybeNil, gu
 import { lookupF } from "../../../Data/OrderedMap";
 import { bimap, first, Pair, second, snd } from "../../../Data/Pair";
 import { fromDefault, makeLenses, Omit, Record } from "../../../Data/Record";
-import { showP } from "../../../Data/Show";
 import { traceN } from "../../../System/IO";
 import { ActivatableActivationOptions, ActivatableActivationOptionsL } from "../../Models/Actions/ActivatableActivationOptions";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
@@ -262,8 +261,6 @@ export const getIdSpecificAffectedAndDispatchProps =
             traceN ("getIdSpecificAffectedAndDispatchProps after: ")
           )
 
-        const is_input_
-
         return Pair (
           ActivatableActivationOptions ({
             id,
@@ -306,7 +303,6 @@ export const getIdSpecificAffectedAndDispatchProps =
                           />
                       )
                     )),
-            inputDescription:
           })
         )
       }
@@ -647,8 +643,6 @@ export const getInactiveActivatableControlElements =
 
     const msels = pipe_ (props, snd, PABYA.firstSelectOptions, altF (IAA.selectOptions (entry)))
 
-    console.log ("getInactiveActivatableControlElements: ", showP (msels));
-
     const msels2 = pipe_ (props, snd, PABYA.secondSelectOptions)
 
     const minput_desc =
@@ -662,6 +656,8 @@ export const getInactiveActivatableControlElements =
     return pipe_ (
       InactiveActivatableControlElements ({
         disabled: pipe_ (props, snd, PABYA.disabled),
+        selectElement: PABYA.selectElement (snd (props)),
+        inputElement: PABYA.inputElement (snd (props)),
       }),
       (elements: Record<InactiveActivatableControlElements>) =>
         maybe (elements)
@@ -715,9 +711,6 @@ export const getInactiveActivatableControlElements =
                   )
           ))
         )),
-      maybe (ident as ident<Record<InactiveActivatableControlElements>>)
-            (pipe (Just as (x: JSX.Element) => Just<JSX.Element>, set (IACEL.selectElement)))
-            (PABYA.selectElement (snd (props))),
       (isJust (msels) || isJust (minput_text))
       && isNothing (mselected)
       && notElem (IAA.id (entry))
