@@ -2,6 +2,7 @@ import { compare } from "../../Data/Int";
 import { subscript } from "../../Data/List";
 import { bindF, ensure, fromMaybe, listToMaybe, maybe, Maybe } from "../../Data/Maybe";
 import { Record } from "../../Data/Record";
+import { traceShow } from "../../System/IO";
 import { HeroModel } from "../Models/Hero/HeroModel";
 import { Sex } from "../Models/Hero/heroTypeHelpers";
 import { isItem, Item } from "../Models/Hero/Item";
@@ -263,15 +264,22 @@ export const getSpecialAbilitiesSortOptions = createMaybeSelector (
   (l10n, sortOrder): SortOptions<ActiveSpecialAbility | InactiveSpecialAbility> => {
     if (sortOrder === "groupname") {
       return [
-        comparingR (pipe (
+        x => y =>
+        traceShow ("gr: ") (comparingR (pipe (
                      ActiveActivatable.AL.wikiEntry,
                      SpecialAbility.AL.gr,
                      subscript (translate (l10n) ("specialabilitygroups")),
                      fromMaybe ("")
                    ))
-                   (compareLocale (l10n)),
-        comparingR (pipe (ActiveActivatable.AL.wikiEntry, SpecialAbility.AL.name))
-                   (compareLocale (l10n)),
+                   (compareLocale (l10n))
+                   (x)
+                   (y)),
+        x => y =>
+        traceShow ("name: ")
+        (comparingR (pipe (ActiveActivatable.AL.wikiEntry, SpecialAbility.AL.name))
+                   (compareLocale (l10n))
+                   (x)
+                   (y)),
       ]
     }
 

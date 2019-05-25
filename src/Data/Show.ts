@@ -8,6 +8,7 @@
 
 import { pipe } from "../App/Utilities/pipe";
 import { Internals } from "./Internals";
+import { GT, isOrdering, LT } from "./Ord";
 
 const intercalate =
   (separator: string) => (xs: Internals.List<number | string>): string =>
@@ -91,6 +92,10 @@ export const show = (x: any): string => {
     return `IO`
   }
 
+  if (isOrdering (x)) {
+    return x === GT ? "GT" : x === LT ? "LT" : "EQ";
+  }
+
   // tslint:disable-next-line: strict-type-predicates
   if (typeof x === "bigint") {
     return x .toString ()
@@ -109,7 +114,12 @@ export const show = (x: any): string => {
   }
 
   if (typeof x === "symbol") {
-    return `Symbol`
+    if (x.description !== "") {
+      return `Symbol "${x.description}"`
+    }
+    else {
+      return `Symbol`
+    }
   }
 
   if (x === undefined) {
@@ -213,6 +223,10 @@ const showPDepth = (depth: number) => (x: any): string => {
     return `${dws}IO`
   }
 
+  if (isOrdering (x)) {
+    return x === GT ? `${dws}GT` : x === LT ? `${dws}LT` : `${dws}EQ`;
+  }
+
   // tslint:disable-next-line: strict-type-predicates
   if (typeof x === "bigint") {
     return `${dws}${x .toString ()}`
@@ -231,7 +245,12 @@ const showPDepth = (depth: number) => (x: any): string => {
   }
 
   if (typeof x === "symbol") {
-    return `${dws}Symbol`
+    if (x.description !== "") {
+      return `${dws}Symbol "${x.description}"`
+    }
+    else {
+      return `${dws}Symbol`
+    }
   }
 
   if (x === undefined) {

@@ -8,7 +8,6 @@ import { alt, altF, altF_, any, bind, bindF, ensure, fromMaybe, fromMaybeNil, gu
 import { lookupF } from "../../../Data/OrderedMap";
 import { bimap, first, Pair, second, snd } from "../../../Data/Pair";
 import { fromDefault, makeLenses, Omit, Record } from "../../../Data/Record";
-import { traceN } from "../../../System/IO";
 import { ActivatableActivationOptions, ActivatableActivationOptionsL } from "../../Models/Actions/ActivatableActivationOptions";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
@@ -256,9 +255,7 @@ export const getIdSpecificAffectedAndDispatchProps =
           pipe_ (
             entry,
             IAA.selectOptions,
-            traceN ("getIdSpecificAffectedAndDispatchProps before: "),
-            fmap (filter (pipe (SOA.id, notElemF (active_selections)))),
-            traceN ("getIdSpecificAffectedAndDispatchProps after: ")
+            fmap (filter (pipe (SOA.id, notElemF (active_selections))))
           )
 
         return Pair (

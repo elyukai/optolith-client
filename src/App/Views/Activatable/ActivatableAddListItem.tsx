@@ -184,11 +184,6 @@ export class ActivatableAddListItem extends
         (item)
         (this.state)
 
-    console.log (
-      "propsAndActivationArgs:",
-      PropertiesAffectedByState.A.firstSelectOptions (snd (propsAndActivationArgs))
-    );
-
     const finalProps = insertFinalCurrentCost (item) (this.state) (propsAndActivationArgs)
 
     const controlElements =

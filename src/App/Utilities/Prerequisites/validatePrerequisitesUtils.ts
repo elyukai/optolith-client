@@ -1,10 +1,10 @@
 import { not } from "../../../Data/Bool";
 import { equals } from "../../../Data/Eq";
-import { flip, join, on, thrush } from "../../../Data/Function";
+import { flip, on, thrush } from "../../../Data/Function";
 import { fmap, fmapF } from "../../../Data/Functor";
 import { compare } from "../../../Data/Int";
 import { set } from "../../../Data/Lens";
-import { all, any, concat, elem, elemF, foldl, ifoldl, isList, List, map, sortBy, subscript } from "../../../Data/List";
+import { all, any, concat, elem, elemF, foldl, isList, List, map, sortBy } from "../../../Data/List";
 import { and, bindF, catMaybes, ensure, fromJust, isJust, isNothing, Just, Maybe, maybe, maybeToList, Nothing, or } from "../../../Data/Maybe";
 import { lookupF, OrderedMap, toList } from "../../../Data/OrderedMap";
 import { fst, Pair, snd } from "../../../Data/Pair";
@@ -17,7 +17,7 @@ import { AttributeDependent } from "../../Models/ActiveEntries/AttributeDependen
 import { DependencyObject } from "../../Models/ActiveEntries/DependencyObject";
 import { SkillDependent } from "../../Models/ActiveEntries/SkillDependent";
 import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
-import * as Data from "../../Models/Hero/heroTypeHelpers";
+import { ActivatableDependency, Dependent, ExtendedActivatableDependent, Sex } from "../../Models/Hero/heroTypeHelpers";
 import { Pact } from "../../Models/Hero/Pact";
 import { Culture } from "../../Models/Wiki/Culture";
 import { RequireActivatable, RequireActivatableL } from "../../Models/Wiki/prerequisites/ActivatableRequirement";
@@ -31,20 +31,20 @@ import { Profession } from "../../Models/Wiki/Profession";
 import { Race } from "../../Models/Wiki/Race";
 import { Skill } from "../../Models/Wiki/Skill";
 import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
-import * as Wiki from "../../Models/Wiki/wikiTypeHelpers";
+import { AllRequirements, ProfessionDependency, SID } from "../../Models/Wiki/wikiTypeHelpers";
 import { isActive } from "../Activatable/isActive";
 import { isPactFromStateValid } from "../Activatable/pactUtils";
 import { getActiveSelectionsMaybe } from "../Activatable/selectionUtils";
 import { getHeroStateItem } from "../heroStateUtils";
 import { prefixId } from "../IDUtils";
-import { dec, gte, lt, lte, min } from "../mathUtils";
-import { pipe } from "../pipe";
+import { dec, gt, gte, lte, min } from "../mathUtils";
+import { pipe, pipe_ } from "../pipe";
 import { getPrimaryAttributeId } from "../primaryAttributeUtils";
 import { getAllWikiEntriesByGroup } from "../WikiUtils";
 
 type Validator = (wiki: WikiModelRecord) =>
                  (state: HeroModelRecord) =>
-                 (req: Wiki.AllRequirements) =>
+                 (req: AllRequirements) =>
                  (sourceId: string) => boolean
 
 const { races, cultures, professions, skills } = WikiModel.AL
@@ -231,7 +231,7 @@ const isIncreasableValid =
                  (id)
     }
 
-    return or (fmap ((obj: Data.Dependent) =>
+    return or (fmap ((obj: Dependent) =>
                       !ActivatableDependent.is (obj) && SDAL.value (obj) >= RIA.value (req))
                     (getHeroStateItem (state) (id)))
   }
@@ -262,7 +262,7 @@ const isSingleActiveSelection =
 const isActiveSelection =
   (activeSelections: Maybe<List<string | number>>) =>
   (req: Record<RequireActivatable>) =>
-  (sid: Wiki.SID): boolean =>
+  (sid: SID): boolean =>
     isList (sid)
       ? isOneOfListActiveSelection (activeSelections) (req) (sid)
       : isSingleActiveSelection (activeSelections) (req) (sid)
@@ -297,13 +297,13 @@ const isActivatableValid =
     else {
       const sid = RAA.sid (req)
 
-      if (Maybe.elem<Wiki.SID> ("sel") (sid)) {
+      if (Maybe.elem<SID> ("sel") (sid)) {
         return true
       }
 
-      if (Maybe.elem<Wiki.SID> ("GR") (sid)) {
+      if (Maybe.elem<SID> ("GR") (sid)) {
         return and (pipe (
-                           bindF<Data.Dependent, Record<ActivatableDependent>>
+                           bindF<Dependent, Record<ActivatableDependent>>
                              (ensure (isActivatableDependent)),
                            bindF<Record<ActivatableDependent>, boolean>
                              (target => {
@@ -323,7 +323,7 @@ const isActivatableValid =
       }
 
       const maybeInstance =
-        getHeroStateItem (state) (id) as Maybe<Data.ExtendedActivatableDependent>
+        getHeroStateItem (state) (id) as Maybe<ExtendedActivatableDependent>
 
       if (isMaybeActivatableDependent (maybeInstance)) {
         const instance = Maybe.fromJust (maybeInstance)
@@ -361,7 +361,7 @@ const isActivatableValid =
 export const validateObject =
   (wiki: WikiModelRecord) =>
   (hero: HeroModelRecord) =>
-  (req: Wiki.AllRequirements) =>
+  (req: AllRequirements) =>
   (sourceId: string): boolean =>
     req === "RCP"
       ? isRCPValid (wiki) (hero) (sourceId)
@@ -389,22 +389,19 @@ export const validateObject =
 export const validatePrerequisites =
   (wiki: WikiModelRecord) =>
   (state: HeroModelRecord) =>
-  (prerequisites: List<Wiki.AllRequirements>) =>
+  (prerequisites: List<AllRequirements>) =>
   (sourceId: string): boolean =>
     all (pipe (validateObject (wiki) (state), thrush (sourceId)))
         (prerequisites)
 
-type ReqEntries = List<Pair<number, List<Wiki.AllRequirements>>>
-
+/**
+ * Returns if the current index can be skipped because there is already a lower
+ * level which prerequisites are not met.
+ */
 const isSkipping =
-  (arr: ReqEntries) => (index: number) => (max: Maybe<number>) =>
-    isJust (max)
-    && index > 1
-    && or (
-      fmap<Pair<number, List<Wiki.AllRequirements>>, boolean>
-        (pipe (fst, lt (fromJust (max))))
-        (subscript (arr) (index - 2))
-    )
+  (current_req: Pair<number, List<AllRequirements>>) =>
+  (mmax: Maybe<number>) =>
+    isJust (mmax) && pipe_ (current_req, fst, gt (fromJust (mmax)))
 
 /**
  * Get maximum valid level.
@@ -415,46 +412,41 @@ const isSkipping =
 export const validateLevel =
   (wiki: WikiModelRecord) =>
   (state: HeroModelRecord) =>
-  (requirements: OrderedMap<number, List<Wiki.AllRequirements>>) =>
-  (dependencies: List<Data.ActivatableDependency>) =>
+  (requirements: OrderedMap<number, List<AllRequirements>>) =>
+  (dependencies: List<ActivatableDependency>) =>
   (sourceId: string): Maybe<number> =>
-    foldl<Data.ActivatableDependency, Maybe<number>>
-      (max => dep =>
-          // If `dep` prohibits higher level
-          typeof dep === "object"
-          && Maybe.elem (false) (DependencyObject.AL.active (dep))
-          ? maybe<Maybe<number>>
-            (max)
-            (pipe (dec, level => Just (maybe<number> (level) (min (level)) (max))))
-            (DependencyObject.AL.tier (dep))
-          : max)
-      (pipe (
-              toList as (m: OrderedMap<number, List<Wiki.AllRequirements>>) =>
-                List<Pair<number, List<Wiki.AllRequirements>>>,
-              sortBy (on (compare) (fst)),
-              join (
-                list => ifoldl<Pair<number, List<Wiki.AllRequirements>>, Maybe<number>>
-                  (max => index => entry =>
-                    !isSkipping (list) (index) (max)
+    foldl ((max: Maybe<number>) => (dep: ActivatableDependency) =>
+            // If `dep` prohibits higher level
+            typeof dep === "object"
+            && Maybe.elem (false) (DependencyObject.AL.active (dep))
+              ? maybe<Maybe<number>>
+                (max)
+                (pipe (dec, level => Just (maybe<number> (level) (min (level)) (max))))
+                (DependencyObject.AL.tier (dep))
+              : max)
+          (pipe_ (
+            requirements,
+            toList,
+            sortBy (on (compare) (fst)),
+            foldl ((max: Maybe<number>) => (entry: Pair<number, List<AllRequirements>>) =>
+                    !isSkipping (entry) (max)
                     || validatePrerequisites (wiki) (state) (snd (entry)) (sourceId)
-                    ? Just (fst (entry))
-                    : max)
+                      ? Just (fst (entry))
+                      : max)
                   (Nothing)
-              )
-            )
-            (requirements))
-      (dependencies)
+          ))
+          (dependencies)
 
 /**
  * Checks if all profession prerequisites are fulfilled.
  * @param prerequisites An array of prerequisite objects.
  */
 export const validateProfession =
-  (prerequisites: List<Wiki.ProfessionDependency>) =>
-  (current_sex: Data.Sex) =>
+  (prerequisites: List<ProfessionDependency>) =>
+  (current_sex: Sex) =>
   (current_race_id: string) =>
   (current_culture_id: string): boolean =>
-    all<Wiki.ProfessionDependency> (req =>
+    all<ProfessionDependency> (req =>
                                      isSexRequirement (req)
                                      ? isSexValid (current_sex) (req)
                                      : isRaceRequirement (req)

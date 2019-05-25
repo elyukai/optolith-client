@@ -36,3 +36,5 @@ export const reverseCompare =
  * converted to `LT`, a positive number to `GT` and `0` to `EQ`.
  */
 export const toOrdering = (n: number) => n < 0 ? LT : n > 0 ? GT : EQ
+
+export const isOrdering = (x: any) => [LT, EQ, GT] .includes (x)

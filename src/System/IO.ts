@@ -46,9 +46,10 @@ interface IOConstructor {
   existsFile: (path: string) => IO<boolean>
   copyFile: (origin: string) => (dest: string) => IO<void>
   print: (x: any) => IO<void>
-  trace: (msg: string) => <A> (x: A) => IO<A>
-  traceN: (msg: string) => <A> (x: A) => A
-  traceWithN: (msg: string) => <A, B>(f: (x: A) => B) => (x: A) => A
+  traceShowIO: (msg: string) => <A> (x: A) => IO<A>
+  traceShow: (msg: string) => <A> (x: A) => A
+  traceShowWith: (msg: string) => <A, B>(f: (x: A) => B) => (x: A) => A
+  traceShowOn: <A>(pred: (x: A) => boolean) => (msg: string) => (x: A) => A
   isIO: (x: any) => x is IO<any>
   fromIO: <A> (x: IO<A>) => Promise<A>
   toIO: <A extends any[], B> (f: (...args: A) => Promise<B>) => (...args: A) => IO<B>
@@ -266,29 +267,29 @@ export const print =
 IO.print = print
 
 /**
- * `trace :: Show a => String -> a -> IO a`
+ * `traceShowIO :: Show a => String -> a -> IO a`
  *
- * The `trace` function is a variant of the `print` function. It takes a
+ * The `traceShowIO` function is a variant of the `print` function. It takes a
  * `String` and a showable value and returns an `IO`, that prints the String
  * concatenated with the value (a space in between) to the console and returns
  * the showable value.
  */
-export const trace =
+export const traceShowIO =
   (msg: string) =>
   <A> (x: A) =>
     Internals.IO (async () => (console.log (`${msg} ${showP (x)}`), Promise.resolve (x)))
 
-IO.trace = trace
+IO.traceShowIO = traceShowIO
 
 /**
- * `traceN :: Show a => String -> a -> a`
+ * `traceShow :: Show a => String -> a -> a`
  *
- * The `traceN` function is a variant of the `trace` function that doesn't use
+ * The `traceShow` function is a variant of the `trace` function that doesn't use
  * `IO` but only native JS-functions.
  */
-export const traceN = (msg: string) => <A> (x: A) => (console.log (`${msg} ${showP (x)}`), x)
+export const traceShow = (msg: string) => <A> (x: A) => (console.log (`${msg} ${showP (x)}`), x)
 
-IO.traceN = traceN
+IO.traceShow = traceShow
 
 /**
  * `traceWithN :: Show b => String -> (a -> b) -> a -> a`
@@ -303,13 +304,27 @@ IO.traceN = traceN
  * The `traceWithN` function is a variant of the `traceWIth` function that
  * doesn't use `IO` but only native functions.
  */
-export const traceWithN =
+export const traceShowWith =
   (msg: string) =>
   <A, B> (f: (x: A) => B) =>
   (x: A): A =>
     (console.log (`${msg} ${showP (f (x))}`), x)
 
-IO.traceWithN = traceWithN
+IO.traceShowWith = traceShowWith
+
+/**
+ * `traceShowOn :: Show a => String -> a -> a`
+ *
+ * The `traceShowOn` function is a variant of the `trace` function that doesn't
+ * use `IO` but only native JS-functions. It only shows a message if the
+ * predicate returns `True`.
+ */
+export const traceShowOn =
+  <A> (pred: (x: A) => boolean) =>
+  (msg: string) =>
+  (x: A) => pred (x) ? (console.log (`${msg} ${showP (x)}`), x) : x
+
+IO.traceShowOn = traceShowOn
 
 
 // CUSTOM FUNCTIONS

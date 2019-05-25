@@ -5,7 +5,7 @@ import { empty, flength, foldr, fromArray, List, map, notNull, splitOn } from ".
 import { altF_, any, bindF, ensure, fromJust, fromMaybe, isJust, Just, mapM, maybe, Maybe, Nothing, Some } from "../../../../Data/Maybe";
 import { Record } from "../../../../Data/Record";
 import { parseJSON } from "../../../../Data/String/JSON";
-import { traceN } from "../../../../System/IO";
+import { traceShow } from "../../../../System/IO";
 import { IdPrefixes } from "../../../Constants/IdPrefixes";
 import { ProfessionRequireActivatable, RequireActivatable } from "../../../Models/Wiki/prerequisites/ActivatableRequirement";
 import { CultureRequirement } from "../../../Models/Wiki/prerequisites/CultureRequirement";
@@ -189,7 +189,7 @@ const stringToSelections =
                   id: Nothing,
                   value: obj .value,
                 }))
-              : (traceN ("Invalid selection: ") (obj), Nothing)
+              : (traceShow ("Invalid selection: ") (obj), Nothing)
           }
 
           return Nothing

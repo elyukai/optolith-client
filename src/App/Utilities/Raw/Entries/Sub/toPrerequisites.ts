@@ -7,7 +7,7 @@ import { fromList } from "../../../../../Data/OrderedMap";
 import { fst, Pair, snd } from "../../../../../Data/Pair";
 import { show } from "../../../../../Data/Show";
 import { parseJSON } from "../../../../../Data/String/JSON";
-import { traceN } from "../../../../../System/IO";
+import { traceShow } from "../../../../../System/IO";
 import { RequireActivatable } from "../../../../Models/Wiki/prerequisites/ActivatableRequirement";
 import { CultureRequirement } from "../../../../Models/Wiki/prerequisites/CultureRequirement";
 import { RequireIncreasable } from "../../../../Models/Wiki/prerequisites/IncreasableRequirement";
@@ -108,7 +108,7 @@ const toLevelAwarePrerequisites =
                           : Maybe (x .domain),
                         level: Maybe (x .level),
                       }))
-                    : (traceN ("Invalid prerequisite: ") (x), Nothing)
+                    : (traceShow ("Invalid prerequisite: ") (x), Nothing)
                 )
               ))
               (snd (p))
@@ -194,7 +194,7 @@ const toFlatPrerequisites =
                          : Maybe (x .domain),
                        level: Maybe (x .level),
                      }))
-                   : (traceN ("Invalid prerequisite: ") (x), Nothing)
+                   : (traceShow ("Invalid prerequisite: ") (x), Nothing)
                )
              )),
            maybeToEither
@@ -264,7 +264,7 @@ const toFlatSpellPrerequisites =
                          : Maybe (x .domain),
                        level: Maybe (x .level),
                      }))
-                   : (traceN ("Invalid prerequisite: ") (x), Nothing)
+                   : (traceShow ("Invalid prerequisite: ") (x), Nothing)
                )
              )),
            maybeToEither

@@ -305,7 +305,6 @@ export const parseTables =
                       OrderedMap.map (over (DisadvantageL.select)
                                            (fmap (mapCategoriesToSelectOptions (w)))),
                       matchSelectOptionsToBaseRecords (rs.disadvantageSelectOptions)
-                      // x => (console.log (showP (rs.disadvantageSelectOptions)), x)
                     ))
                     (w),
           w => {
