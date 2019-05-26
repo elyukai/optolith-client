@@ -1,10 +1,15 @@
 import { connect } from "react-redux";
 import { Maybe } from "../../Data/Maybe";
 import { ReduxDispatch } from "../Actions/Actions";
+import { setHeroLocale } from "../Actions/ProfileActions";
 import * as RulesActions from "../Actions/RulesActions";
+import { setGuildMageUnfamiliarSpellId } from "../Actions/SpecialAbilitiesActions";
 import { AppStateRecord } from "../Reducers/appReducer";
+import { getGuildMageUnfamiliarSpellId } from "../Selectors/activatableSelectors";
 import { getSortedBooks } from "../Selectors/bookSelectors";
 import { isEnableLanguageSpecializationsDeactivatable } from "../Selectors/rulesSelectors";
+import { getAllSpellsForManualGuildMageSelect } from "../Selectors/spellsSelectors";
+import { getHeroLocale } from "../Selectors/stateSelectors";
 import { RulesDispatchProps, RulesOwnProps, RulesStateProps, RulesView } from "../Views/Rules/Rules";
 
 const mapStateToProps =
@@ -12,6 +17,9 @@ const mapStateToProps =
     sortedBooks: getSortedBooks (state, ownProps),
     isEnableLanguageSpecializationsDeactivatable:
       isEnableLanguageSpecializationsDeactivatable (state),
+    hero_locale: getHeroLocale (state, ownProps),
+    mcurrent_guild_mage_spell: getGuildMageUnfamiliarSpellId (state),
+    all_spells_select_options: getAllSpellsForManualGuildMageSelect (state, ownProps),
   })
 
 const mapDispatchToProps = (dispatch: ReduxDispatch) => ({
@@ -31,6 +39,12 @@ const mapDispatchToProps = (dispatch: ReduxDispatch) => ({
   },
   switchEnableLanguageSpecializations () {
     dispatch (RulesActions.switchEnableLanguageSpecializations ())
+  },
+  setGuildMageSpell (spellId: string) {
+    dispatch (setGuildMageUnfamiliarSpellId (spellId))
+  },
+  setHeroLocale (locale: string) {
+    dispatch (setHeroLocale (locale))
   },
 })
 

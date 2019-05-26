@@ -16,7 +16,7 @@ const mapStateToProps = (state: AppStateRecord, ownProps: SpellsOwnProps): Spell
   inactiveList: getFilteredInactiveSpellsAndCantrips (state, ownProps),
   attributes: getAttributesForSheet (state, ownProps),
   derivedCharacteristics: getDerivedCharacteristicsMap (state, ownProps),
-  addSpellsDisabled: isActivationDisabled (state),
+  addSpellsDisabled: isActivationDisabled (state, ownProps),
   enableActiveItemHints: getEnableActiveItemHints (state),
   isRemovingEnabled: getIsRemovingEnabled (state),
   traditions: getMagicalTraditionsFromWiki (state),

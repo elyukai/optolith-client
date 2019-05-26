@@ -1,8 +1,8 @@
 import * as React from "react";
 import { thrush } from "../../../../Data/Function";
 import { fmap, fmapF } from "../../../../Data/Functor";
-import { intercalate, List, map } from "../../../../Data/List";
-import { fromMaybe, mapMaybe, Maybe } from "../../../../Data/Maybe";
+import { intercalate, List, map, notNull } from "../../../../Data/List";
+import { ensure, fromMaybe, mapMaybe, Maybe } from "../../../../Data/Maybe";
 import { lookupF, OrderedMap } from "../../../../Data/OrderedMap";
 import { OrderedSet, toList } from "../../../../Data/OrderedSet";
 import { Record, RecordBase } from "../../../../Data/Record";
@@ -11,6 +11,7 @@ import { L10nRecord } from "../../../Models/Wiki/L10n";
 import { CheckModifier } from "../../../Models/Wiki/wikiTypeHelpers";
 import { localizeOrList, translate } from "../../../Utilities/I18n";
 import { pipe, pipe_ } from "../../../Utilities/pipe";
+import { renderMaybeWith } from "../../../Utilities/ReactUtils";
 import { WikiProperty } from "../WikiProperty";
 
 interface Accessors<A extends RecordBase> {
@@ -52,7 +53,8 @@ export function WikiSkillCheck<A extends RecordBase> (props: WikiSkillCheckProps
   return (
     <WikiProperty l10n={l10n} title="check">
       {checkString}
-      {localizeOrList (l10n) (mod)}
+      {renderMaybeWith (pipe (localizeOrList (l10n), str => `(+${str})`))
+                       (ensure (notNull) (mod))}
     </WikiProperty>
   )
 }

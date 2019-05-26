@@ -34,31 +34,33 @@ export function BookSelection (props: BookSelectionProps) {
         onClick={switchEnableAllRuleBooks}
         label={translate (l10n) ("enableallrulebooks")}
         />
-      {pipe_ (
-        sortedBooks,
-        map (e => {
-          const id = Book.A.id (e)
-          const name = Book.A.name (e)
-          const isCore = Book.A.isCore (e)
-          const isAdultContent = Book.A.isAdultContent (e)
+      <div className="rule-books">
+        {pipe_ (
+          sortedBooks,
+          map (e => {
+            const id = Book.A.id (e)
+            const name = Book.A.name (e)
+            const isCore = Book.A.isCore (e)
+            const isAdultContent = Book.A.isAdultContent (e)
 
-          return (
-            <Checkbox
-              className={isAdultContent ? "adult-content" : undefined}
-              key={Book.A.id (e)}
-              checked={
-                isCore
-                || member (id) (enabledRuleBooks)
-                || !isAdultContent && allRuleBooksEnabled
-              }
-              onClick={() => switchEnableRuleBook (id)}
-              label={name}
-              disabled={allRuleBooksEnabled && !isAdultContent || isCore}
-              />
-          )
-        }),
-        toArray
-      )}
+            return (
+              <Checkbox
+                className={isAdultContent ? "adult-content" : undefined}
+                key={Book.A.id (e)}
+                checked={
+                  isCore
+                  || member (id) (enabledRuleBooks)
+                  || !isAdultContent && allRuleBooksEnabled
+                }
+                onClick={() => switchEnableRuleBook (id)}
+                label={name}
+                disabled={allRuleBooksEnabled && !isAdultContent || isCore}
+                />
+            )
+          }),
+          toArray
+        )}
+      </div>
     </>
   )
 }

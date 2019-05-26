@@ -1,9 +1,10 @@
 import * as React from "react";
+import { notP } from "../../../Data/Bool";
 import { notEquals } from "../../../Data/Eq";
 import { flip } from "../../../Data/Function";
 import { fmap } from "../../../Data/Functor";
 import { List, mapAccumL, notNull, notNullStr, subscript, toArray } from "../../../Data/List";
-import { bindF, ensure, fromMaybe, fromMaybeR, guard, Just, Maybe, maybe, Nothing, or, thenF } from "../../../Data/Maybe";
+import { bindF, ensure, fromMaybeR, guard, Just, Maybe, maybe, Nothing, or, thenF } from "../../../Data/Maybe";
 import { OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { Pair, snd } from "../../../Data/Tuple";
@@ -11,7 +12,7 @@ import { WikiInfoContainer } from "../../Containers/WikiInfoContainer";
 import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
 import { HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { AttributeCombined } from "../../Models/View/AttributeCombined";
-import { CantripCombined } from "../../Models/View/CantripCombined";
+import { CantripCombined, CantripCombinedA_ } from "../../Models/View/CantripCombined";
 import { DerivedCharacteristic } from "../../Models/View/DerivedCharacteristic";
 import { SpellWithRequirements, SpellWithRequirementsA_ } from "../../Models/View/SpellWithRequirements";
 import { Cantrip } from "../../Models/Wiki/Cantrip";
@@ -110,15 +111,14 @@ const SCCA = {
           Just
         )
       : Nothing,
-  property: (x: Combined): Maybe<number> =>
+  property: (x: Combined): number =>
     SpellWithRequirements.is (x)
       ? pipe_ (
           x,
           SpellWithRequirements.A.wikiEntry,
-          Spell.A.property,
-          Just
+          Spell.A.property
         )
-      : Nothing,
+      : CantripCombinedA_.property (x),
   id: pipe (wikiEntryCombined, Cantrip.AL.id),
   name: pipe (wikiEntryCombined, Cantrip.AL.name),
 }
@@ -385,7 +385,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
                                       insertTopMargin={insertTopMargin}
                                       attributes={attributes}
                                       derivedCharacteristics={derivedCharacteristics}
-                                      selectForInfo={this.showSlideinInfo}
+                                      selectForInfo={this.showInfo}
                                       addText={
                                         sortOrder === "group"
                                           ? `${propertyName} / ${translate (l10n) ("cantrip")}`
@@ -427,7 +427,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
                                       insertTopMargin={insertTopMargin}
                                       attributes={attributes}
                                       derivedCharacteristics={derivedCharacteristics}
-                                      selectForInfo={this.showSlideinInfo}
+                                      selectForInfo={this.showInfo}
                                       addText={add_text}
                                       untyp={isOfUnfTrad (maybeTraditions) (curr)}
                                       />
@@ -481,7 +481,8 @@ const getPropertyStr =
     pipe_ (
       curr,
       SCCA.property,
-      bindF (pipe (dec, subscript (translate (l10n) ("propertylist")))),
+      dec,
+      subscript (translate (l10n) ("propertylist")),
       renderMaybe
     )
 
@@ -493,12 +494,13 @@ const getSpellAddText =
     pipe_ (
       guard (sortOrder === "group"),
       thenF (subscript (translate (l10n) ("spellgroups")) (SWRA_.gr (curr) - 1)),
-      fromMaybe (property_str)
+      maybe (property_str)
+            (gr_str => `${property_str} / ${gr_str}`)
     )
 
 const isOfUnfTrad =
   (mtraditions: Maybe<List<Record<SpecialAbility>>>) =>
   (curr: Combined) =>
     maybe (false)
-          (flip (isOwnTradition) (wikiEntryCombined (curr)))
+          (notP (flip (isOwnTradition) (wikiEntryCombined (curr))))
           (mtraditions)

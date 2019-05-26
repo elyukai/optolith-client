@@ -22,7 +22,7 @@ export type HelpProps = HelpStateProps & HelpDispatchProps & HelpOwnProps
 export const Help = (props: HelpProps) => {
   const { l10n } = props
   const text = fs.readFileSync (
-    path.join (app_path, "app", "docs", `FAQ.${L10n.A.id (l10n)}.md`),
+    path.join (app_path, "app", "Database", L10n.A.id (l10n), `FAQ.md`),
     "UTF-8"
   )
 

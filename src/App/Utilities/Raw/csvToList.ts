@@ -88,5 +88,10 @@ const unescapeStr =
     return x
   }
 
+const decodeLF = replaceStr ("\\n") ("\n")
+
 const decode =
-  pipe (ensure<Pair<string, string>> (pipe (snd, notNullStr)), fmap (second (unescapeStr)))
+  pipe (
+    ensure<Pair<string, string>> (pipe (snd, notNullStr)),
+    fmap (second (pipe (unescapeStr, decodeLF)))
+  )

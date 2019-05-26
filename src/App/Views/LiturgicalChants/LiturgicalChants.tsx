@@ -382,7 +382,7 @@ export class LiturgicalChants
                                       insertTopMargin={insertTopMargin}
                                       attributes={attributes}
                                       derivedCharacteristics={derivedCharacteristics}
-                                      selectForInfo={this.showSlideinInfo}
+                                      selectForInfo={this.showInfo}
                                       addText={
                                         sortOrder === "group"
                                           ? `${aspects} / ${translate (l10n) ("blessing")}`
@@ -420,7 +420,7 @@ export class LiturgicalChants
                                       insertTopMargin={insertTopMargin}
                                       attributes={attributes}
                                       derivedCharacteristics={derivedCharacteristics}
-                                      selectForInfo={this.showSlideinInfo}
+                                      selectForInfo={this.showInfo}
                                       addText={add_text}
                                       />
                                   )

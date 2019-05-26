@@ -15,4 +15,5 @@ export const CantripCombined =
 
 export const CantripCombinedA_ = {
   name: pipe (CantripCombined.A.wikiEntry, Cantrip.A.name),
+  property: pipe (CantripCombined.A.wikiEntry, Cantrip.A.property),
 }

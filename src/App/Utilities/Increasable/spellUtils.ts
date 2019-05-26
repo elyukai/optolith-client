@@ -2,7 +2,7 @@ import { equals } from "../../../Data/Eq";
 import { cnst, ident, thrush } from "../../../Data/Function";
 import { fmap } from "../../../Data/Functor";
 import { any, consF, find, List, minimum, notElem } from "../../../Data/List";
-import { bindF, elem, ensure, isJust, Just, Maybe, maybe, or, sum } from "../../../Data/Maybe";
+import { and, bindF, elem, ensure, isJust, Just, Maybe, maybe, sum } from "../../../Data/Maybe";
 import { alter, empty, filter, foldl, lookup, lookupF, OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
@@ -49,11 +49,7 @@ export const isOwnTradition =
   (x: Record<Spell> | Record<Cantrip>): boolean =>
     pipe (
            tradition,
-           any (
-             e =>
-               e === 1
-               || isJust (isActiveTradition (e) (activeTradition))
-           )
+           any (e => e === 1 || isJust (isActiveTradition (e) (activeTradition)))
          )
          (x)
 
@@ -66,8 +62,8 @@ const putPropertyKnowledgeRestrictionMaximum =
   (wiki_entry: Record<Spell>) =>
     ifElse<List<number>>
       (cnst (
-        or (fmap (notElem<string | number> (property (wiki_entry)))
-                 (getActiveSelectionsMaybe (propertyKnowledge)))
+        and (fmap (notElem<string | number> (property (wiki_entry)))
+                  (getActiveSelectionsMaybe (propertyKnowledge)))
       ))
       <List<number>>
       (consF (14))
@@ -148,7 +144,7 @@ const isSpellDecreasableByPropertyKnowledges =
   (propertyKnowledge: Maybe<Record<ActivatableDependent>>) =>
   (wiki_entry: Record<Spell>) =>
   (hero_entry: Record<ActivatableSkillDependent>) =>
-    or (
+    and (
       pipe (
         getActiveSelectionsMaybe,
 

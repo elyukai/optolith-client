@@ -31,7 +31,7 @@ export interface WikiLiturgicalChantInfoProps {
 const LCA = LiturgicalChant.A
 
 export function WikiLiturgicalChantInfo (props: WikiLiturgicalChantInfoProps) {
-  const { liturgicalChantExtensions } = props
+  const { liturgicalChantExtensions, x } = props
 
   // if (["nl-BE"].includes(l10n.id)) {
   //   return (
@@ -44,7 +44,7 @@ export function WikiLiturgicalChantInfo (props: WikiLiturgicalChantInfoProps) {
   // }
 
   return (
-    <WikiBoxTemplate className="liturgicalchant" title={name}>
+    <WikiBoxTemplate className="liturgicalchant" title={LCA.name (x)}>
       <WikiSkillCheck {...props} acc={LCA} />
       <WikiEffect {...props} acc={LCA} />
       <WikiCastingTime {...props} acc={LCA} />

@@ -1,14 +1,27 @@
 #optional-rules {
 	.scroll-inner > div {
 		margin-top: 10px;
+
+		&.rule-books {
+			margin-top: 16px;
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+			grid-gap: 8px;
+		}
 	}
 
 	.extended {
 		display: flex;
+
+		.dropdown {
+			margin: 0 0 0 10px;
+			width: 60px;
+		}
 	}
 
-	.dropdown {
-		margin: 0 0 0 10px;
-		width: 60px;
+	.temporary-fixes {
+		.dropdown {
+			margin-top: 16px;
+		}
 	}
 }

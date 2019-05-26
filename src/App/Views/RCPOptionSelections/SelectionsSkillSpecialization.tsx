@@ -60,7 +60,11 @@ export function SelectionsSkillSpecialization (props: SelectionsSkillSpecializat
                   className="talents"
                   value={activeId}
                   onChangeJust={changeId}
-                  options={skillsList as unknown as List<Record<DropdownOption>>}
+                  options={map ((skill: Record<Skill>) => DropdownOption ({
+                                                            id: Just (Skill.A.id (skill)),
+                                                            name: Skill.A.name (skill),
+                                                          }))
+                               (skillsList)}
                   />
               </div>
             )
@@ -81,7 +85,7 @@ export function SelectionsSkillSpecialization (props: SelectionsSkillSpecializat
                            className="tiers"
                            value={Maybe.sum (fst (active))}
                            onChangeJust={change}
-                           options={applicationList as List<Record<DropdownOption>>}
+                           options={applicationList}
                            disabled={snd (active) .length > 0}
                            />
                        )

@@ -11,7 +11,7 @@ import { Record } from "../../Data/Record";
 import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent, createInactiveActivatableSkillDependent } from "../Models/ActiveEntries/ActivatableSkillDependent";
 import { ActiveObject } from "../Models/ActiveEntries/ActiveObject";
-import { HeroModel, HeroModelRecord } from "../Models/Hero/HeroModel";
+import { HeroModel } from "../Models/Hero/HeroModel";
 import { CantripCombined } from "../Models/View/CantripCombined";
 import { SpellWithRequirements, SpellWithRequirementsL } from "../Models/View/SpellWithRequirements";
 import { Cantrip } from "../Models/Wiki/Cantrip";
@@ -36,7 +36,7 @@ import { DropdownOption } from "../Views/Universal/Dropdown";
 import { getStartEl } from "./elSelectors";
 import { getRuleBooksEnabled } from "./rulesSelectors";
 import { getCantripsSortOptions, getSpellsCombinedSortOptions, getSpellsSortOptions } from "./sortOptionsSelectors";
-import { getAdvantages, getCantrips, getCurrentHeroPresent, getDisadvantages, getInactiveSpellsFilterText, getLocaleAsProp, getPhase, getSpecialAbilities, getSpells, getSpellsFilterText, getWiki, getWikiCantrips, getWikiSpecialAbilities, getWikiSpells } from "./stateSelectors";
+import { getAdvantages, getCantrips, getCurrentHeroPresent, getDisadvantages, getHeroProp, getInactiveSpellsFilterText, getLocaleAsProp, getPhase, getSpecialAbilities, getSpells, getSpellsFilterText, getWiki, getWikiCantrips, getWikiSpecialAbilities, getWikiSpells } from "./stateSelectors";
 import { getEnableActiveItemHints } from "./uisettingsSelectors";
 
 const HA = HeroModel.A
@@ -77,10 +77,10 @@ export const getActiveSpells = createMaybeSelector (
   mapGetToMaybeSlice (getAdvantages) (prefixAdv (16)),
   mapGetToMaybeSlice (getSpecialAbilities) (prefixSA (72)),
   getWiki,
-  getCurrentHeroPresent,
-  (mstart_el, mexceptional_skill, maproperty_knowledge, wiki, mhero) =>
-    liftM2 ((hero: HeroModelRecord) => (start_el: Record<ExperienceLevel>) =>
-             thrush (elems (HA.liturgicalChants (hero)))
+  getHeroProp,
+  (mstart_el, mexceptional_skill, maproperty_knowledge, wiki, hero) =>
+    fmap ((start_el: Record<ExperienceLevel>) =>
+             thrush (elems (HA.spells (hero)))
                     (mapMaybe (pipe (
                       ensure (ASDA.active),
                       bindF (hero_entry =>
@@ -110,7 +110,6 @@ export const getActiveSpells = createMaybeSelector (
                                 )
                               ))
                     ))))
-           (mhero)
            (mstart_el)
 )
 

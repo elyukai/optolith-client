@@ -1,7 +1,7 @@
 import { cnst, ident, thrush } from "../../../Data/Function";
 import { fmap } from "../../../Data/Functor";
 import { all, any, consF, foldr, List, minimum, notElem, notElemF } from "../../../Data/List";
-import { bindF, elem, ensure, fromJust, isJust, Just, Maybe, maybe, or, sum } from "../../../Data/Maybe";
+import { and, bindF, elem, ensure, fromJust, isJust, Just, Maybe, maybe, sum } from "../../../Data/Maybe";
 import { alter, empty, filter, findWithDefault, foldl, fromArray, lookupF, OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
@@ -53,8 +53,8 @@ const putAspectKnowledgeRestrictionMaximum =
         id (currentTradition) !== "SA_693"
 
         // no aspect knowledge active for the current chant
-        && or (fmap (all (notElemF<string | number> (aspects (wikiEntry))))
-                    (getActiveSelectionsMaybe (aspectKnowledge)))
+        && and (fmap (all (notElemF<string | number> (aspects (wikiEntry))))
+                     (getActiveSelectionsMaybe (aspectKnowledge)))
       ))
       <List<number>>
       (consF (14))
@@ -136,7 +136,7 @@ const isLiturgicalChantDecreasableByAspectKnowledges =
   (aspectKnowledge: Maybe<Record<ActivatableDependent>>) =>
   (wikiEntry: Record<LiturgicalChant>) =>
   (stateEntry: Record<ActivatableSkillDependent>) =>
-    or (
+    and (
       pipe (
         getActiveSelectionsMaybe,
 

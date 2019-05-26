@@ -1,7 +1,7 @@
 import * as React from "react";
 import { fmap } from "../../../Data/Functor";
 import { List } from "../../../Data/List";
-import { any, isJust, isNothing, Just, Maybe, maybe, maybeR, maybeRNull, Nothing } from "../../../Data/Maybe";
+import { any, isNothing, Maybe, maybe, maybeRNull } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
 import { HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { Sex } from "../../Models/Hero/heroTypeHelpers";
@@ -24,7 +24,6 @@ import { ActivatableTextList } from "../Activatable/ActivatableTextList";
 import { AvatarChange } from "../Universal/AvatarChange";
 import { AvatarWrapper } from "../Universal/AvatarWrapper";
 import { BorderButton } from "../Universal/BorderButton";
-import { Dropdown, DropdownOption } from "../Universal/Dropdown";
 import { EditText } from "../Universal/EditText";
 import { IconButton } from "../Universal/IconButton";
 import { Page } from "../Universal/Page";
@@ -61,9 +60,6 @@ export interface PersonalDataStateProps {
   isAddAdventurePointsOpen: boolean
   isEditCharacterAvatarOpen: boolean
   isAlbino: Maybe<boolean>
-  hero_locale: string
-  mcurrent_guild_mage_spell: Maybe<Maybe<string>>
-  all_spells_select_options: List<Record<DropdownOption>>
 }
 
 export interface PersonalDataDispatchProps extends OverviewPersonalDataDispatchProps {
@@ -76,8 +72,6 @@ export interface PersonalDataDispatchProps extends OverviewPersonalDataDispatchP
   closeAddAdventurePoints (): void
   openEditCharacterAvatar (): void
   closeEditCharacterAvatar (): void
-  setHeroLocale (locale: string): void
-  setGuildMageSpell (spellId: string): void
 }
 
 export type PersonalDataProps =
@@ -149,11 +143,6 @@ export class PersonalDataView extends React.Component<PersonalDataProps, Persona
       closeAddAdventurePoints,
       closeEditCharacterAvatar,
       setAvatar,
-      hero_locale,
-      setHeroLocale,
-      all_spells_select_options,
-      mcurrent_guild_mage_spell,
-      setGuildMageSpell,
       ...other
     } = this.props
 
@@ -330,63 +319,6 @@ export class PersonalDataView extends React.Component<PersonalDataProps, Persona
                            )
                          : null
                        }
-                       <p>
-                         Die folgenden ein bis zwei Optionen sind nur temporär verfügbar. Die
-                         Sprache sollte auf die Sprache eingestellt sein, mit der der Held erstellt
-                         wurde. Die gildenmagische Tradition muss auch konfiguriert werden, um
-                         spätere Bände zuzulassen.
-                       </p>
-                       <p>
-                        The following one or two options are only temporarily available. The
-                        language should be set to the language the hero was created in. The guild
-                        mage tradition must also be configured to allow later rule books to
-                        introduce more options for your hero.
-                       </p>
-                       <div>
-                         <Dropdown
-                           options={List (
-                             DropdownOption ({
-                               id: Just ("de-DE"),
-                               name: "Deutsch (Deutschland)",
-                             }),
-                             DropdownOption ({
-                               id: Just ("en-US"),
-                               name: "English (United States)",
-                             }),
-                             DropdownOption ({
-                               id: Just ("nl-BE"),
-                               name: "Nederlands (België)",
-                             }),
-                             DropdownOption ({
-                               id: Just ("fr-FR"),
-                               name: "Français (France)",
-                             })
-                           )}
-                           value={hero_locale}
-                           label={translate (l10n) ("language")}
-                           onChangeJust={setHeroLocale}
-                           />
-                         {maybeR (
-                                   <Dropdown
-                                     options={List ()}
-                                     value={Nothing}
-                                     label="Tradition (Guild Mage) Unfamiliar Spell"
-                                     hint="No 'Tradition (Guild Mage)' present"
-                                     onChangeJust={setGuildMageSpell}
-                                     disabled
-                                     />
-                                 )
-                                 ((mcurr_spell_id: Maybe<string>) => (
-                                   <Dropdown
-                                     options={all_spells_select_options}
-                                     value={mcurr_spell_id}
-                                     label="Tradition (Guild Mage) Unfamiliar Spell"
-                                     onChangeJust={setGuildMageSpell}
-                                     disabled={isJust (mcurr_spell_id)}
-                                     />
-                                 ))
-                                 (mcurrent_guild_mage_spell)}
-                       </div>
                      </Scroll>
                      <OverviewAddAP
                        {...this.props}

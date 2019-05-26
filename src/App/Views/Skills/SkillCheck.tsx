@@ -2,14 +2,15 @@ import * as React from "react";
 import { equals } from "../../../Data/Eq";
 import { fmap } from "../../../Data/Functor";
 import { find, intercalate, List, toArray } from "../../../Data/List";
-import { fromMaybeR, imapMaybe, liftM2, mapMaybe, Maybe } from "../../../Data/Maybe";
+import { bind, ensure, fromMaybeR, imapMaybe, liftM2, mapMaybe, Maybe } from "../../../Data/Maybe";
 import { lookupF, OrderedMap } from "../../../Data/OrderedMap";
-import { elems, OrderedSet } from "../../../Data/OrderedSet";
+import { elems, OrderedSet, size } from "../../../Data/OrderedSet";
 import { Record } from "../../../Data/Record";
 import { AttributeCombined, AttributeCombinedA_ } from "../../Models/View/AttributeCombined";
 import { DerivedCharacteristic } from "../../Models/View/DerivedCharacteristic";
 import { CheckModifier } from "../../Models/Wiki/wikiTypeHelpers";
 import { DCIds } from "../../Selectors/derivedCharacteristicsSelectors";
+import { gt } from "../../Utilities/mathUtils";
 import { pipe, pipe_ } from "../../Utilities/pipe";
 
 export interface SkillCheckProps {
@@ -60,7 +61,7 @@ export function SkillCheck (props: SkillCheckProps) {
                       intercalate ("/")
                     ))
                  (Maybe (derived))
-                 (Maybe (checkmod)),
+                 (bind (Maybe (checkmod)) (ensure (pipe (size, gt (0))))),
           fmap (characteristic => <div className="check mod">+{characteristic}</div>),
           fromMaybeR (null)
         )}

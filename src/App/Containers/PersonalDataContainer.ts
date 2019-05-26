@@ -3,18 +3,16 @@ import { fmapF } from "../../Data/Functor";
 import { join, Maybe, Nothing } from "../../Data/Maybe";
 import { ReduxDispatch } from "../Actions/Actions";
 import * as ProfileActions from "../Actions/ProfileActions";
-import { setGuildMageUnfamiliarSpellId } from "../Actions/SpecialAbilitiesActions";
 import * as SubwindowsActions from "../Actions/SubwindowsActions";
 import { HeroModel } from "../Models/Hero/HeroModel";
 import { InputTextEvent } from "../Models/Hero/heroTypeHelpers";
 import { AppStateRecord } from "../Reducers/appReducer";
-import { getAdvantagesForSheet, getDisadvantagesForSheet, getGuildMageUnfamiliarSpellId, isAlbino } from "../Selectors/activatableSelectors";
+import { getAdvantagesForSheet, getDisadvantagesForSheet, isAlbino } from "../Selectors/activatableSelectors";
 import { getAvailableAPMap } from "../Selectors/adventurePointsSelectors";
 import { getStartEl } from "../Selectors/elSelectors";
 import { getIsRemovingEnabled } from "../Selectors/phaseSelectors";
 import { getCurrentCulture, getCurrentFullProfessionName, getCurrentProfession, getCurrentProfessionVariant, getCurrentRace, getCurrentRaceVariant } from "../Selectors/rcpSelectors";
-import { getAllSpellsForManualGuildMageSelect } from "../Selectors/spellsSelectors";
-import { getAvatar, getCurrentHeroName, getCustomProfessionName, getHeroLocale, getIsAddAdventurePointsOpen, getIsEditCharacterAvatarOpen, getPhase, getProfile, getSex, getTotalAdventurePoints } from "../Selectors/stateSelectors";
+import { getAvatar, getCurrentHeroName, getCustomProfessionName, getIsAddAdventurePointsOpen, getIsEditCharacterAvatarOpen, getPhase, getProfile, getSex, getTotalAdventurePoints } from "../Selectors/stateSelectors";
 import { getIsEditingHeroAfterCreationPhaseEnabled } from "../Selectors/uisettingsSelectors";
 import { PersonalDataDispatchProps, PersonalDataOwnProps, PersonalDataStateProps, PersonalDataView } from "../Views/Profile/PersonalData";
 
@@ -42,9 +40,6 @@ const mapStateToProps =
     isAddAdventurePointsOpen: getIsAddAdventurePointsOpen (state),
     isEditCharacterAvatarOpen: getIsEditCharacterAvatarOpen (state),
     isAlbino: isAlbino (state),
-    hero_locale: getHeroLocale (state, ownProps),
-    mcurrent_guild_mage_spell: getGuildMageUnfamiliarSpellId (state),
-    all_spells_select_options: getAllSpellsForManualGuildMageSelect (state, ownProps),
   })
 
 const mapDispatchToProps = (dispatch: ReduxDispatch): PersonalDataDispatchProps => ({
@@ -125,12 +120,6 @@ const mapDispatchToProps = (dispatch: ReduxDispatch): PersonalDataDispatchProps 
   },
   rerollWeight () {
     dispatch (ProfileActions.rerollWeight)
-  },
-  setGuildMageSpell (spellId: string) {
-    dispatch (setGuildMageUnfamiliarSpellId (spellId))
-  },
-  setHeroLocale (locale: string) {
-    dispatch (ProfileActions.setHeroLocale (locale))
   },
 })
 
