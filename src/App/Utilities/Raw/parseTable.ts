@@ -7,7 +7,7 @@ import { fmap } from "../../../Data/Functor";
 import { Lens_, over, set } from "../../../Data/Lens";
 import { append, consF, empty, foldr, List, map } from "../../../Data/List";
 import { catMaybes, ensure, fromMaybe, Just, mapMaybe, Maybe, Nothing } from "../../../Data/Maybe";
-import { adjust, elems, fromList, lookupF, mapMEitherWithKey, OrderedMap } from "../../../Data/OrderedMap";
+import { adjust, elems, fromList, insert, lookupF, mapMEitherWithKey, OrderedMap } from "../../../Data/OrderedMap";
 import { OrderedSet } from "../../../Data/OrderedSet";
 import { fst, Pair, snd } from "../../../Data/Pair";
 import { makeLenses, member, Record } from "../../../Data/Record";
@@ -16,12 +16,14 @@ import { AdvantageL } from "../../Models/Wiki/Advantage";
 import { Book } from "../../Models/Wiki/Book";
 import { DisadvantageL } from "../../Models/Wiki/Disadvantage";
 import { L10nRecord } from "../../Models/Wiki/L10n";
+import { getCustomProfession } from "../../Models/Wiki/Profession";
 import { Skill } from "../../Models/Wiki/Skill";
 import { SpecialAbility, SpecialAbilityL } from "../../Models/Wiki/SpecialAbility";
 import { SelectOption } from "../../Models/Wiki/sub/SelectOption";
 import { WikiModel, WikiModelL, WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { Activatable, Skillish } from "../../Models/Wiki/wikiTypeHelpers";
 import { app_path } from "../../Selectors/envSelectors";
+import { prefixProf } from "../IDUtils";
 import { pipe, pipe_ } from "../pipe";
 import { getWikiSliceGetterByCategory } from "../WikiUtils";
 import { CsvColumnDelimiter, csvToList } from "./csvToList";
@@ -293,6 +295,8 @@ export const parseTables =
             blessings: rs.blessings,
             itemTemplates: rs.itemTemplates,
           }),
+          over (WikiModelL.professions)
+               (insert (prefixProf (0)) (getCustomProfession (rs.l10n))),
           w => over (WikiModelL.advantages)
                     (pipe (
                       OrderedMap.map (over (AdvantageL.select)

@@ -1,11 +1,13 @@
 import { remote } from "electron";
 import { tryIO } from "../../Control/Exception";
 import { Either, fromLeft_, fromRight_, isLeft, Left, Right } from "../../Data/Either";
+import { cnst } from "../../Data/Function";
 import { fmap, fmapF } from "../../Data/Functor";
 import { Internals } from "../../Data/Internals";
 import { flength, fromArray, List, subscript } from "../../Data/List";
 import { fromMaybe, normalize, Nothing } from "../../Data/Maybe";
 import { bimap, fst, Pair, snd } from "../../Data/Pair";
+import { Unit } from "../../Data/Unit";
 import { bind, pure } from "../../System/IO";
 import { divideBy, inc } from "./mathUtils";
 import { pipe } from "./pipe";
@@ -48,7 +50,7 @@ export const showOpenDialog =
                                                        options,
                                                        pipe (
                                                          normalize,
-                                                         fmap (pipe (fromArray, res)
+                                                         fmap (pipe (fromArray, res, cnst (Unit))
                                                        ))
                                                      )))
 

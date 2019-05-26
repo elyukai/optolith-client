@@ -16,7 +16,7 @@ import { any, keysSet, lookup, lookupF, mapMaybe, OrderedMap } from "../../Data/
 import { differenceF, map } from "../../Data/OrderedSet";
 import { fst, Pair } from "../../Data/Pair";
 import { Record, StringKeyObject, toObject } from "../../Data/Record";
-import { IO, readFile, writeFile } from "../../System/IO";
+import { IO, readFile, runIO, writeFile } from "../../System/IO";
 import { ActionTypes } from "../Constants/ActionTypes";
 import { IdPrefixes } from "../Constants/IdPrefixes";
 import { HeroModel } from "../Models/Hero/HeroModel";
@@ -462,7 +462,8 @@ export const requestHeroExport =
               title: translate (l10n) ("error"),
             }))
           }
-        })
+        }),
+        runIO
       )
     }
   }
@@ -509,8 +510,8 @@ export const loadImportedHero =
 
 export const requestHeroImport =
   (l10n: L10nRecord): ReduxAction =>
-  dispatch => fmapF (dispatch (loadImportedHero (l10n)))
-                    (fmap (x => dispatch (receiveHeroImport (x))))
+  dispatch => runIO (fmapF (dispatch (loadImportedHero (l10n)))
+                           (fmap (x => dispatch (receiveHeroImport (x)))))
 
 export const receiveHeroImport = (raw: RawHero): ReceiveImportedHeroAction => {
   const newId = prefixId (IdPrefixes.HERO) (getNewIdByDate ())
@@ -535,10 +536,7 @@ export const receiveHeroImport = (raw: RawHero): ReceiveImportedHeroAction => {
   }
 }
 
-const isAnyHeroUnsaved = pipe (
-                                getHeroes,
-                                any (pipe (heroReducer.A_.past, notNull))
-                              )
+const isAnyHeroUnsaved = pipe (getHeroes, any (pipe (heroReducer.A.past, notNull)))
 
 const close =
   (l10n: L10nRecord) =>
@@ -556,11 +554,12 @@ const close =
                    fromJust (f) ()
                  }
 
-                 remote.getCurrentWindow ().close ()
+                 remote .getCurrentWindow () .close ()
                },
              }))
            }
-         })
+         }),
+    runIO
   )
 
 
@@ -568,9 +567,7 @@ export const requestClose =
   (optionalCall: Maybe<() => void>): ReduxAction =>
   (dispatch, getState) => {
     const state = getState ()
-    const safeToExit = isAnyHeroUnsaved (state)
-
-    const currentWindow = remote.getCurrentWindow ()
+    const safeToExit = !isAnyHeroUnsaved (state)
 
     const ml10n = getLocaleMessages (state)
 
@@ -578,15 +575,15 @@ export const requestClose =
       const l10n = fromJust (ml10n)
 
       if (safeToExit) {
-        currentWindow .close ()
+        dispatch (close (l10n) (false) (optionalCall))
       }
       else {
         dispatch (addAlert ({
           title: translate (l10n) ("unsavedactions"),
           message: translate (l10n) ("unsavedactions.text"),
           confirm: {
-            resolve: close (l10n) (true) (optionalCall),
-            reject: currentWindow .close,
+            resolve: close (l10n) (false) (optionalCall),
+            reject: close (l10n) (true) (optionalCall),
           },
           confirmYesNo: true,
         }))
@@ -626,7 +623,8 @@ export const requestPrintHeroToPDF =
             title: translate (l10n) ("error"),
           }))
         }
-      })
+      }),
+      runIO
     )
 
 export interface SetUpdateDownloadProgressAction {

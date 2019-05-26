@@ -8,13 +8,13 @@ import { isBlessedTraditionId, isMagicalTraditionId } from "../IDUtils";
 import { pipe } from "../pipe";
 import { isActive } from "./isActive";
 
-const { id } = ActivatableDependent.AL
+const ADA = ActivatableDependent.A
 
 const isActiveMagicalTradition =
-  (e: Record<ActivatableDependent>) => isMagicalTraditionId (id (e)) && isActive (e)
+  (e: Record<ActivatableDependent>) => isMagicalTraditionId (ADA.id (e)) && isActive (e)
 
 const isActiveBlessedTradition =
-  (e: Record<ActivatableDependent>) => isBlessedTraditionId (id (e)) && isActive (e)
+  (e: Record<ActivatableDependent>) => isBlessedTraditionId (ADA.id (e)) && isActive (e)
 
 /**
  * Get magical traditions' dependent entries.
@@ -34,7 +34,7 @@ export const getMagicalTraditionsHeroEntries =
  */
 export const getMagicalTraditionsFromWiki =
   (wiki: OrderedMap<string, Record<SpecialAbility>>) =>
-    pipe (getMagicalTraditionsHeroEntries, mapMaybe (pipe (id, lookupF (wiki))))
+    pipe (getMagicalTraditionsHeroEntries, mapMaybe (pipe (ADA.id, lookupF (wiki))))
 
 /**
  * Get blessed traditions' dependent entry.
@@ -49,4 +49,4 @@ export const getBlessedTradition = find (isActiveBlessedTradition)
  */
 export const getBlessedTraditionFromWiki =
   (wiki: OrderedMap<string, Record<SpecialAbility>>) =>
-    pipe (getBlessedTradition, bindF (pipe (id, lookupF (wiki))))
+    pipe (getBlessedTradition, bindF (pipe (ADA.id, lookupF (wiki))))

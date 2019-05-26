@@ -17,24 +17,20 @@ import * as Wiki from "../Wiki/wikiTypeHelpers";
 import { EditPrimaryAttributeDamageThreshold } from "./EditPrimaryAttributeDamageThreshold";
 import { SkillOptionalDependency } from "./SkillOptionalDependency";
 
-export type ExtendedSkillDependent =
-  Record<SkillDependent> |
-  Record<ActivatableSkillDependent>
+export type ExtendedSkillDependent = Record<SkillDependent>
+                                   | Record<ActivatableSkillDependent>
 
-export type ExtendedActivatableDependent =
-  Record<ActivatableDependent> |
-  Record<ActivatableSkillDependent>
+export type ExtendedActivatableDependent = Record<ActivatableDependent>
+                                         | Record<ActivatableSkillDependent>
 
-export type ValueBasedDependent =
-  Record<AttributeDependent> |
-  Record<SkillDependent> |
-  Record<ActivatableSkillDependent>
+export type ValueBasedDependent = Record<AttributeDependent>
+                                | Record<SkillDependent>
+                                | Record<ActivatableSkillDependent>
 
-export type Dependent =
-  Record<ActivatableDependent> |
-  Record<AttributeDependent> |
-  Record<SkillDependent> |
-  Record<ActivatableSkillDependent>
+export type Dependent = Record<ActivatableDependent>
+                      | Record<AttributeDependent>
+                      | Record<SkillDependent>
+                      | Record<ActivatableSkillDependent>
 
 export type ActivatableDependency = boolean | Record<DependencyObject>
 export type SkillDependency = number | Record<SkillOptionalDependency>

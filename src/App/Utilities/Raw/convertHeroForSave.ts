@@ -1,5 +1,5 @@
 import { ident } from "../../../Data/Function";
-import { fmap } from "../../../Data/Functor";
+import { fmap, fmapF } from "../../../Data/Functor";
 import { List } from "../../../Data/List";
 import { bind, elem, maybeToUndefined } from "../../../Data/Maybe";
 import { foldl, foldlWithKey, OrderedMap, OrderedMapValueElement, toObjectWith, union } from "../../../Data/OrderedMap";
@@ -13,7 +13,7 @@ import { AttributeDependent } from "../../Models/ActiveEntries/AttributeDependen
 import { Belongings } from "../../Models/Hero/Belongings";
 import { Energies } from "../../Models/Hero/Energies";
 import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
-import * as Data from "../../Models/Hero/heroTypeHelpers";
+import { ExtendedSkillDependent, User } from "../../Models/Hero/heroTypeHelpers";
 import { HitZoneArmor } from "../../Models/Hero/HitZoneArmor";
 import { Item } from "../../Models/Hero/Item";
 import { PersonalData } from "../../Models/Hero/PersonalData";
@@ -53,6 +53,7 @@ const { id, value } = AttributeDependent.AL
 const { active } = ActivatableSkillDependent.AL
 const { active: activeList } = ActivatableDependent.AL
 const { items, hitZoneArmors: armorZones, purse } = Belongings.AL
+const PDA = PersonalData.A
 
 const {
   addedArcaneEnergyPoints,
@@ -82,32 +83,34 @@ const getAttributesForSave = (hero: HeroModelRecord): RawHero["attr"] =>
 
 const getActivatablesForSave =
   (hero: HeroModelRecord) =>
-    foldlWithKey<string, Record<ActivatableDependent>, StringKeyObject<RawActiveObject[]>>
-      (acc => key => obj => ({
-        ...acc,
-        [key]: List.foldl<Record<ActiveObject>, RawActiveObject[]>
-          (accActive => e => [
-            ...accActive,
-            {
-              cost: maybeToUndefined (cost (e)),
-              sid2: maybeToUndefined (sid2 (e)),
-              sid: maybeToUndefined (sid (e)),
-              tier: maybeToUndefined (tier (e)),
-            },
-          ])
-          ([])
-          (activeList (obj)),
-      }))
-      ({})
-      (union (advantages (hero)) (union (disadvantages (hero)) (specialAbilities (hero))))
+    foldlWithKey ((acc: StringKeyObject<RawActiveObject[]>) =>
+                  (key: string) =>
+                  (obj: Record<ActivatableDependent>) => ({
+                    ...acc,
+                    [key]: List.foldl
+                      ((accActive: RawActiveObject[]) => (e: Record<ActiveObject>) => [
+                        ...accActive,
+                        {
+                          cost: maybeToUndefined (cost (e)),
+                          sid2: maybeToUndefined (sid2 (e)),
+                          sid: maybeToUndefined (sid (e)),
+                          tier: maybeToUndefined (tier (e)),
+                        },
+                      ])
+                      ([])
+                      (activeList (obj)),
+                  }))
+                 ({})
+                 (union (advantages (hero))
+                        (union (disadvantages (hero)) (specialAbilities (hero))))
 
 const getValuesForSave =
   <T extends HeroModel[HeroStateMapKey]>
   (sliceGetter: (hero: HeroModelRecord) => T) =>
   (testFn: (obj: OrderedMapValueElement<T>) => boolean) =>
   (hero: HeroModelRecord) =>
-    foldlWithKey<string, Data.ExtendedSkillDependent, StringKeyObject<number>>
-      (acc => key => obj => {
+    foldlWithKey
+      ((acc: StringKeyObject<number>) => (key: string) => (obj: ExtendedSkillDependent) => {
         if (testFn (obj as OrderedMapValueElement<T>)) {
           return {
             ...acc,
@@ -118,7 +121,7 @@ const getValuesForSave =
         return acc;
       })
       ({})
-      (sliceGetter (hero) as OrderedMap<string, Data.ExtendedSkillDependent>)
+      (sliceGetter (hero) as OrderedMap<string, ExtendedSkillDependent>)
 
 const getSkillsForSave = getValuesForSave (skills) (pipe (value, gt (0)))
 
@@ -136,8 +139,8 @@ const { primary, threshold } = PrimaryAttributeDamageThreshold.AL
 
 const getBelongingsForSave = (hero: HeroModelRecord) =>
   ({
-    items: toObjectWith<Record<Item>, RawCustomItem>
-      ((obj): RawCustomItem => {
+    items: toObjectWith
+      ((obj: Record<Item>): RawCustomItem => {
         const {
           improvisedWeaponGroup,
           damageBonus,
@@ -176,6 +179,8 @@ const getBelongingsForSave = (hero: HeroModelRecord) =>
           ...other
         } = toObject (obj)
 
+        type PNumNum = Pair<number, number>
+
         return {
           ...other,
           weight: maybeToUndefined (weight),
@@ -202,43 +207,37 @@ const getBelongingsForSave = (hero: HeroModelRecord) =>
           armorType: maybeToUndefined (armorType),
           imp: maybeToUndefined (improvisedWeaponGroup),
           primaryThreshold:
-            maybeToUndefined (
-              fmap<Record<PrimaryAttributeDamageThreshold>, RawPrimaryAttributeDamageThreshold>
-                (bonus => ({
-                  primary: maybeToUndefined (primary (bonus)) ,
-                  threshold:
-                    ifElse<number | Pair<number, number>, Pair<number, number>>
-                      (isTuple)
-                      <number | number[]>
-                      (Tuple.toArray)
-                      (ident)
-                      (threshold (bonus)),
-                }))
-                (damageBonus)
-            ),
+            maybeToUndefined (fmapF (damageBonus)
+                             ((bonus): RawPrimaryAttributeDamageThreshold => ({
+                               primary: maybeToUndefined (primary (bonus)),
+                               threshold: ifElse<number | PNumNum, PNumNum> (isTuple)
+                                                                            <number | number[]>
+                                                                            (Tuple.toArray)
+                                                                            (ident)
+                                                                            (threshold (bonus)),
+                             }))),
           range: maybeToUndefined (fmap<List<number>, number[]> (List.toArray) (range)),
         }
       })
       (items (belongings (hero))),
     armorZones:
-      toObjectWith<Record<HitZoneArmor>, RawArmorZone>
-        (obj => ({
-          id: HitZoneArmor.AL.id (obj),
-          name: HitZoneArmor.AL.name (obj),
-          head: maybeToUndefined (HitZoneArmor.AL.head (obj)),
-          headLoss: maybeToUndefined (HitZoneArmor.AL.headLoss (obj)),
-          leftArm: maybeToUndefined (HitZoneArmor.AL.leftArm (obj)),
-          leftArmLoss: maybeToUndefined (HitZoneArmor.AL.leftArmLoss (obj)),
-          rightArm: maybeToUndefined (HitZoneArmor.AL.rightArm (obj)),
-          rightArmLoss: maybeToUndefined (HitZoneArmor.AL.rightArmLoss (obj)),
-          torso: maybeToUndefined (HitZoneArmor.AL.torso (obj)),
-          torsoLoss: maybeToUndefined (HitZoneArmor.AL.torsoLoss (obj)),
-          leftLeg: maybeToUndefined (HitZoneArmor.AL.leftLeg (obj)),
-          leftLegLoss: maybeToUndefined (HitZoneArmor.AL.leftLegLoss (obj)),
-          rightLeg: maybeToUndefined (HitZoneArmor.AL.rightLeg (obj)),
-          rightLegLoss: maybeToUndefined (HitZoneArmor.AL.rightLegLoss (obj)),
-        }))
-        (armorZones (belongings (hero))),
+      toObjectWith ((obj: Record<HitZoneArmor>): RawArmorZone => ({
+                     id: HitZoneArmor.AL.id (obj),
+                     name: HitZoneArmor.AL.name (obj),
+                     head: maybeToUndefined (HitZoneArmor.AL.head (obj)),
+                     headLoss: maybeToUndefined (HitZoneArmor.AL.headLoss (obj)),
+                     leftArm: maybeToUndefined (HitZoneArmor.AL.leftArm (obj)),
+                     leftArmLoss: maybeToUndefined (HitZoneArmor.AL.leftArmLoss (obj)),
+                     rightArm: maybeToUndefined (HitZoneArmor.AL.rightArm (obj)),
+                     rightArmLoss: maybeToUndefined (HitZoneArmor.AL.rightArmLoss (obj)),
+                     torso: maybeToUndefined (HitZoneArmor.AL.torso (obj)),
+                     torsoLoss: maybeToUndefined (HitZoneArmor.AL.torsoLoss (obj)),
+                     leftLeg: maybeToUndefined (HitZoneArmor.AL.leftLeg (obj)),
+                     leftLegLoss: maybeToUndefined (HitZoneArmor.AL.leftLegLoss (obj)),
+                     rightLeg: maybeToUndefined (HitZoneArmor.AL.rightLeg (obj)),
+                     rightLegLoss: maybeToUndefined (HitZoneArmor.AL.rightLegLoss (obj)),
+                   }))
+                   (armorZones (belongings (hero))),
     purse: toObject (purse (belongings (hero))),
   })
 
@@ -287,7 +286,7 @@ const getPetsForSave = pipe (
 export const convertHeroForSave =
   (wiki: WikiModelRecord) =>
   (locale: L10nRecord) =>
-  (users: OrderedMap<string, Data.User>) =>
+  (users: OrderedMap<string, User>) =>
   (hero: HeroModelRecord): RawHero => {
     const {
       dateCreated,
@@ -310,7 +309,7 @@ export const convertHeroForSave =
     const adventurePoints = getAPObject (locale) (wiki) (hero)
 
     const maybeUser = bind (player (hero))
-                                              (OrderedMap.lookupF<string, Data.User> (users))
+                                              (OrderedMap.lookupF<string, User> (users))
 
     const obj: RawHero = {
       clientVersion: current_version,
@@ -334,20 +333,20 @@ export const convertHeroForSave =
       pv: maybeToUndefined (professionVariant),
       sex,
       pers: {
-        family: maybeToUndefined (PersonalData.AL.family (personalData)),
-        placeofbirth: maybeToUndefined (PersonalData.AL.placeOfBirth (personalData)),
-        dateofbirth: maybeToUndefined (PersonalData.AL.dateOfBirth (personalData)),
-        age: maybeToUndefined (PersonalData.AL.age (personalData)),
-        haircolor: maybeToUndefined (PersonalData.AL.hairColor (personalData)),
-        eyecolor: maybeToUndefined (PersonalData.AL.eyeColor (personalData)),
-        size: maybeToUndefined (PersonalData.AL.size (personalData)),
-        weight: maybeToUndefined (PersonalData.AL.weight (personalData)),
-        title: maybeToUndefined (PersonalData.AL.title (personalData)),
-        socialstatus: maybeToUndefined (PersonalData.AL.socialStatus (personalData)),
-        characteristics: maybeToUndefined (PersonalData.AL.characteristics (personalData)),
-        otherinfo: maybeToUndefined (PersonalData.AL.otherInfo (personalData)),
+        family: maybeToUndefined (PDA.family (personalData)),
+        placeofbirth: maybeToUndefined (PDA.placeOfBirth (personalData)),
+        dateofbirth: maybeToUndefined (PDA.dateOfBirth (personalData)),
+        age: maybeToUndefined (PDA.age (personalData)),
+        haircolor: maybeToUndefined (PDA.hairColor (personalData)),
+        eyecolor: maybeToUndefined (PDA.eyeColor (personalData)),
+        size: maybeToUndefined (PDA.size (personalData)),
+        weight: maybeToUndefined (PDA.weight (personalData)),
+        title: maybeToUndefined (PDA.title (personalData)),
+        socialstatus: maybeToUndefined (PDA.socialStatus (personalData)),
+        characteristics: maybeToUndefined (PDA.characteristics (personalData)),
+        otherinfo: maybeToUndefined (PDA.otherInfo (personalData)),
         cultureAreaKnowledge:
-          maybeToUndefined (PersonalData.AL.cultureAreaKnowledge (personalData)),
+          maybeToUndefined (PDA.cultureAreaKnowledge (personalData)),
       },
       attr: getAttributesForSave (hero),
       activatable: getActivatablesForSave (hero),
@@ -373,7 +372,7 @@ const { present } = UndoableHero.AL
 export const convertHeroesForSave =
   (wiki: WikiModelRecord) =>
   (locale: L10nRecord) =>
-  (users: OrderedMap<string, Data.User>) =>
+  (users: OrderedMap<string, User>) =>
   (heroes: OrderedMap<string, UndoableHeroModelRecord>) =>
     toObjectWith (pipe (present, convertHeroForSave (wiki) (locale) (users)))
                  (heroes)

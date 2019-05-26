@@ -3,10 +3,14 @@ import * as log from "electron-log";
 // tslint:disable-next-line:no-implicit-dependencies
 import { autoUpdater, CancellationToken, UpdateInfo } from "electron-updater";
 import * as path from "path";
+import { prerelease } from "semver";
 import * as url from "url";
+import { pipe_ } from "./App/Utilities/pipe";
 import { tryIO } from "./Control/Exception";
-import { Either, fromLeft_, isLeft } from "./Data/Either";
-import { existsFile, IdentityIO, IO, join, liftM2, liftM3, then } from "./System/IO";
+import { fromLeft_, isLeft } from "./Data/Either";
+import { fmap } from "./Data/Functor";
+import { Unit } from "./Data/Unit";
+import { existsFile, IO, join, liftM2, runIO, thenF } from "./System/IO";
 // tslint:disable-next-line:ordered-imports
 import windowStateKeeper = require("electron-window-state")
 
@@ -36,13 +40,13 @@ const copyFileFromToFolder =
   (originFolder: string) =>
   (destFolder: string) =>
   (fileName: string) => {
-    const originPath = path.join (originFolder, `${fileName}.json`)
-    const destPath = path.join (destFolder, `${fileName}.json`)
+    const originPath = path.join (originFolder, `${fileName}`)
+    const destPath = path.join (destFolder, `${fileName}`)
 
     return join (liftM2 ((origin_exists: boolean) => (dest_exists: boolean) =>
                           !dest_exists && origin_exists
                             ? IO.copyFile (originPath) (destPath)
-                            : IdentityIO)
+                            : IO.pure (undefined))
                         (existsFile (originPath))
                         (existsFile (destPath)))
   }
@@ -162,41 +166,57 @@ function createWindow () {
   })
 }
 
+const openMainWindow = () => {
+  autoUpdater.logger = log
+  // @ts-ignore
+  autoUpdater.logger.transports.file.level = "info"
+  autoUpdater.autoDownload = false
+
+  createWindow ()
+
+  app.on ("window-all-closed", () => {
+    app.quit ()
+  })
+
+  app.on ("activate", () => {
+    if (mainWindow === null) {
+      createWindow ()
+    }
+  })
+
+  return Unit
+}
+
+const copyAllFiles =
+  (copy: (fileName: string) => IO<void>) =>
+    pipe_ (
+      copy ("window.json"),
+      tryIO,
+      fmap (x => isLeft (x) ? (console.warn (fromLeft_ (x)), Unit) : Unit),
+      thenF (copy ("heroes.json")),
+      tryIO,
+      fmap (x => isLeft (x) ? (console.warn (fromLeft_ (x)), Unit) : Unit),
+      thenF (copy ("config.json")),
+      tryIO,
+      fmap (x => isLeft (x) ? (console.warn (fromLeft_ (x)), Unit) : Unit)
+    )
+
 function main () {
-  then (liftM3 ((w: Either<Error, void>) =>
-                (h: Either<Error, void>) =>
-                (c: Either<Error, void>) => {
-                  if (isLeft (w)) {
-                    console.warn (fromLeft_ (w))
-                  }
-                  else if (isLeft (h)) {
-                    console.warn (fromLeft_ (h))
-                  }
-                  else if (isLeft (c)) {
-                    console.warn (fromLeft_ (c))
-                  }
-
-                  autoUpdater.logger = log
-                  // @ts-ignore
-                  autoUpdater.logger.transports.file.level = "info"
-                  autoUpdater.autoDownload = false
-
-                  createWindow ()
-
-                  app.on ("window-all-closed", () => {
-                    app.quit ()
-                  })
-
-                  app.on ("activate", () => {
-                    if (mainWindow === null) {
-                      createWindow ()
-                    }
-                  })
-               })
-               (tryIO (copyFileToCurrent ("Optolyth") ("window")))
-               (tryIO (copyFileToCurrent ("Optolyth") ("heroes")))
-               (tryIO (copyFileToCurrent ("Optolyth") ("config"))))
-       (IdentityIO)
+  if (prerelease (require ("../package.json") .version) !== null) {
+    pipe_ (
+      copyAllFiles (copyFileFromToFolder ("Optolyth") ("Optolith")),
+      thenF (copyAllFiles (copyFileToCurrent ("Optolith"))),
+      fmap (openMainWindow),
+      runIO
+    )
+  }
+  else {
+    pipe_ (
+      copyAllFiles (copyFileToCurrent ("Optolyth")),
+      fmap (openMainWindow),
+      runIO
+    )
+  }
 }
 
 app.on ("ready", main)

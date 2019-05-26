@@ -165,21 +165,13 @@ const isAdditionDisabledSpecialAbilitySpecific =
 const isAdditionDisabledEntrySpecific =
   (wiki: WikiModelRecord) =>
   (hero: HeroModelRecord) =>
-  (wiki_entry: Activatable): boolean => {
-    if (isSpecialAbility (wiki_entry)) {
-      const isAdditionDisabledSASpecific =
-        isAdditionDisabledSpecialAbilitySpecific (wiki) (hero) (wiki_entry)
-
-      if (isAdditionDisabledSASpecific) {
-        return true
-      }
-    }
-
-    return !validatePrerequisites (wiki)
-                                  (hero)
-                                  (getFirstLevelPrerequisites (prerequisites (wiki_entry)))
-                                  (id (wiki_entry))
-  }
+  (wiki_entry: Activatable): boolean =>
+    isSpecialAbility (wiki_entry)
+    && isAdditionDisabledSpecialAbilitySpecific (wiki) (hero) (wiki_entry)
+    || !validatePrerequisites (wiki)
+                              (hero)
+                              (getFirstLevelPrerequisites (prerequisites (wiki_entry)))
+                              (id (wiki_entry))
 
 const hasGeneralRestrictionToAdd =
   any (pipe (dependencies, elem<ActivatableDependency> (false)))

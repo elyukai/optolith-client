@@ -7,7 +7,7 @@ import { fromList } from "../../../../../Data/OrderedMap";
 import { fst, Pair, snd } from "../../../../../Data/Pair";
 import { show } from "../../../../../Data/Show";
 import { parseJSON } from "../../../../../Data/String/JSON";
-import { traceShow } from "../../../../../System/IO";
+import { traceShow } from "../../../../../Debug/Trace";
 import { RequireActivatable } from "../../../../Models/Wiki/prerequisites/ActivatableRequirement";
 import { CultureRequirement } from "../../../../Models/Wiki/prerequisites/CultureRequirement";
 import { RequireIncreasable } from "../../../../Models/Wiki/prerequisites/IncreasableRequirement";

@@ -102,7 +102,7 @@ const createHeroObject = (l10n: L10nRecord) => (hero: Raw.RawHero): HeroModelRec
     ...getActivatables (hero),
 
     skills: getDependentSkills (hero .talents),
-    combatTechniques: getDependentSkills (hero .talents),
+    combatTechniques: getDependentSkills (hero .ct),
     spells: getActivatableDependentSkills (hero .spells),
     cantrips: OrderedSet.fromArray (hero .cantrips),
     liturgicalChants: getActivatableDependentSkills (hero .liturgies),

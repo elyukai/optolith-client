@@ -2,6 +2,7 @@ import { fnull, List } from "../../../Data/List";
 import { fromJust, isJust, Just, Maybe } from "../../../Data/Maybe";
 import { fromDefault, makeLenses, member, notMember, Omit, Record } from "../../../Data/Record";
 import { ActivatableDependency, Dependent } from "../Hero/heroTypeHelpers";
+import { ActivatableSkillDependent } from "./ActivatableSkillDependent";
 import { ActiveObject } from "./ActiveObject";
 
 export interface ActivatableDependent {
@@ -52,3 +53,7 @@ export const isActivatableDependentUnused =
   (entry: Record<ActivatableDependent>): boolean =>
     fnull (active (entry))
     && fnull (dependencies (entry))
+
+export const isExtendedActivatableDependent =
+  (x: Dependent): x is Record<ActivatableDependent> | Record<ActivatableSkillDependent> =>
+    ActivatableDependent.is (x) || ActivatableSkillDependent.is (x)

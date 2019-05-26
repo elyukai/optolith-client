@@ -5,19 +5,19 @@ import { fmap, fmapF } from "../../../Data/Functor";
 import { compare } from "../../../Data/Int";
 import { set } from "../../../Data/Lens";
 import { all, any, concat, elem, elemF, foldl, isList, List, map, sortBy } from "../../../Data/List";
-import { and, bindF, catMaybes, ensure, fromJust, isJust, isNothing, Just, Maybe, maybe, maybeToList, Nothing, or } from "../../../Data/Maybe";
+import { and, bind, bindF, catMaybes, ensure, fromJust, isJust, isNothing, Just, Maybe, maybe, maybeToList, Nothing, or } from "../../../Data/Maybe";
 import { lookupF, OrderedMap, toList } from "../../../Data/OrderedMap";
 import { fst, Pair, snd } from "../../../Data/Pair";
 import { Record } from "../../../Data/Record";
 import { IdPrefixes } from "../../Constants/IdPrefixes";
-import { ActivatableDependent, isActivatableDependent, isMaybeActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
-import { ActivatableSkillDependent, isMaybeActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
+import { ActivatableDependent, isActivatableDependent, isExtendedActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
+import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
 import { AttributeDependent } from "../../Models/ActiveEntries/AttributeDependent";
 import { DependencyObject } from "../../Models/ActiveEntries/DependencyObject";
 import { SkillDependent } from "../../Models/ActiveEntries/SkillDependent";
 import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
-import { ActivatableDependency, Dependent, ExtendedActivatableDependent, Sex } from "../../Models/Hero/heroTypeHelpers";
+import { ActivatableDependency, Dependent, Sex } from "../../Models/Hero/heroTypeHelpers";
 import { Pact } from "../../Models/Hero/Pact";
 import { Culture } from "../../Models/Wiki/Culture";
 import { RequireActivatable, RequireActivatableL } from "../../Models/Wiki/prerequisites/ActivatableRequirement";
@@ -322,32 +322,32 @@ const isActivatableValid =
                          (getHeroStateItem (state) (id)))
       }
 
-      const maybeInstance =
-        getHeroStateItem (state) (id) as Maybe<ExtendedActivatableDependent>
+      const mhero_entry = bind (getHeroStateItem (state) (id))
+                               (ensure (isExtendedActivatableDependent))
 
-      if (isMaybeActivatableDependent (maybeInstance)) {
-        const instance = Maybe.fromJust (maybeInstance)
-        const activeSelections = getActiveSelectionsMaybe (maybeInstance)
+      if (Maybe.any (ActivatableDependent.is) (mhero_entry)) {
+        const hero_entry = fromJust (mhero_entry)
+        const activeSelections = getActiveSelectionsMaybe (mhero_entry)
 
         const maybeSid = RAA.sid (req)
         const maybeLevel = RAA.tier (req)
 
         const sidValid = fmap (isActiveSelection (activeSelections) (req)) (maybeSid)
-        const levelValid = fmap (flip (isNeededLevelGiven) (instance)) (maybeLevel)
+        const levelValid = fmap (flip (isNeededLevelGiven) (hero_entry)) (maybeLevel)
 
         if (isJust (maybeSid) || isJust (maybeLevel)) {
           return and (sidValid) && and (levelValid)
         }
 
-        return isActive (instance) === RAA.active (req)
+        return isActive (hero_entry) === RAA.active (req)
       }
 
-      if (isMaybeActivatableSkillDependent (maybeInstance)) {
-        return ActivatableSkillDependent.AL.active (fromJust (maybeInstance))
+      if (Maybe.any (ActivatableSkillDependent.is) (mhero_entry)) {
+        return ActivatableSkillDependent.AL.active (fromJust (mhero_entry))
           === RAA.active (req)
       }
 
-      return false
+      return !RAA.active (req)
     }
   }
 

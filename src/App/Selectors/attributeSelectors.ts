@@ -7,6 +7,7 @@ import { elems, foldr, lookup, lookupF, OrderedMap } from "../../Data/OrderedMap
 import { Record } from "../../Data/Record";
 import { fst, snd } from "../../Data/Tuple";
 import { uncurryN } from "../../Data/Tuple/Curry";
+import { traceShow } from "../../Debug/Trace";
 import { IdPrefixes } from "../Constants/IdPrefixes";
 import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
 import { AttributeDependent, createPlainAttributeDependent } from "../Models/ActiveEntries/AttributeDependent";
@@ -19,7 +20,7 @@ import { Race } from "../Models/Wiki/Race";
 import { WikiModel, WikiModelRecord } from "../Models/Wiki/WikiModel";
 import { createMaybeSelector } from "../Utilities/createMaybeSelector";
 import { flattenDependencies } from "../Utilities/Dependencies/flattenDependencies";
-import { getNumericMagicalTraditionIdByInstanceId, prefixAttr, prefixId } from "../Utilities/IDUtils";
+import { getNumericBlessedTraditionIdByInstanceId, getNumericMagicalTraditionIdByInstanceId, prefixAttr, prefixId } from "../Utilities/IDUtils";
 import { add, gte, lt, multiply, subtractBy } from "../Utilities/mathUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
 import { getCurrentEl, getStartEl } from "./elSelectors";
@@ -270,7 +271,7 @@ const getPrimaryBlessedAttributeByTrad =
     pipe_ (
       tradition,
       ActivatableDependent.A.id,
-      getNumericMagicalTraditionIdByInstanceId,
+      getNumericBlessedTraditionIdByInstanceId,
       bindF (numericId => {
         switch (numericId) {
           case 2:
@@ -318,9 +319,12 @@ export const getPrimaryBlessedAttribute = createMaybeSelector (
   getAttributes,
   getWikiAttributes,
   (mtradition, mhero_attributes, wiki_attributes) =>
-    bind (mtradition)
-        (getPrimaryBlessedAttributeByTrad (wiki_attributes)
-                                          (mhero_attributes))
+    bind (traceShow ("mtradition = ") (mtradition))
+         (pipe (
+           getPrimaryBlessedAttributeByTrad (wiki_attributes)
+                                            (mhero_attributes),
+           traceShow ("primary attr = ")
+         ))
 )
 
 export const getPrimaryBlessedAttributeForSheet = createMaybeSelector (

@@ -1,7 +1,10 @@
 import { List } from "../../../Data/List";
-import { Maybe, Nothing } from "../../../Data/Maybe";
+import { Just, Maybe, Nothing } from "../../../Data/Maybe";
 import { fromDefault, makeLenses, Record } from "../../../Data/Record";
 import { Categories } from "../../Constants/Categories";
+import { translate } from "../../Utilities/I18n";
+import { prefixProf } from "../../Utilities/IDUtils";
+import { L10nRecord } from "./L10n";
 import { ProfessionRequireActivatable } from "./prerequisites/ActivatableRequirement";
 import { ProfessionSelections } from "./professionSelections/ProfessionAdjustmentSelections";
 import { IncreaseSkill } from "./sub/IncreaseSkill";
@@ -83,3 +86,37 @@ export const ProfessionL = makeLenses (Profession)
 
 export const isProfession =
   (r: EntryWithCategory) => Profession.AL.category (r) === Categories.PROFESSIONS
+
+export const getCustomProfession =
+  (l10n: L10nRecord) =>
+    Profession ({
+      id: prefixProf (0),
+      name: translate (l10n) ("ownprofession"),
+      subname: Nothing,
+      ap: Just (0),
+      dependencies: Nothing,
+      prerequisites: Nothing,
+      prerequisitesStart: Nothing,
+      prerequisitesEnd: Nothing,
+      selections: Nothing,
+      specialAbilities: Nothing,
+      combatTechniques: Nothing,
+      skills: Nothing,
+      spells: Nothing,
+      liturgicalChants: Nothing,
+      blessings: Nothing,
+      suggestedAdvantages: Nothing,
+      suggestedAdvantagesText: Nothing,
+      suggestedDisadvantages: Nothing,
+      suggestedDisadvantagesText: Nothing,
+      unsuitableAdvantages: Nothing,
+      unsuitableAdvantagesText: Nothing,
+      unsuitableDisadvantages: Nothing,
+      unsuitableDisadvantagesText: Nothing,
+      isVariantRequired: Nothing,
+      variants: Nothing,
+      category: Nothing,
+      gr: 0,
+      subgr: 0,
+      src: List (),
+    })
