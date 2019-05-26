@@ -92,7 +92,7 @@ function createWindow () {
       slashes: true,
     }))
     .then (() => {
-      mainWindow!.webContents.openDevTools ()
+      // mainWindow!.webContents.openDevTools ()
 
       mainWindow!.show ()
 

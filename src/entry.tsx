@@ -18,13 +18,15 @@ import { AppContainer } from "./App/Containers/AppContainer";
 import { appReducer, AppState, AppStateRecord } from "./App/Reducers/appReducer";
 import { getLocaleMessages } from "./App/Selectors/stateSelectors";
 import { translate, translateP } from "./App/Utilities/I18n";
-import { pipe } from "./App/Utilities/pipe";
+import { pipe, pipe_ } from "./App/Utilities/pipe";
 import { isDialogOpen } from "./App/Utilities/SubwindowsUtils";
 import { flip } from "./Data/Function";
-import { fmapF } from "./Data/Functor";
+import { fmap } from "./Data/Functor";
 import { List } from "./Data/List";
 import { fromJust, isJust, Just } from "./Data/Maybe";
 import { uncurryN } from "./Data/Pair";
+import { Unit } from "./Data/Unit";
+import { runIO } from "./System/IO";
 
 const nativeAppReducer =
   uncurryN (pipe ((x: AppStateRecord | undefined) => x === undefined ? AppState.default : x,
@@ -33,108 +35,113 @@ const nativeAppReducer =
 const store: Store<AppStateRecord, Action<any>> & { dispatch: ReduxDispatch<Action> } =
   createStore (nativeAppReducer, applyMiddleware (thunk))
 
-fmapF (store.dispatch (requestInitialData))
-      (() => {
-        const currentWindow = remote.getCurrentWindow ()
+pipe_ (
+  store .dispatch (requestInitialData),
+  fmap (() => {
+    const currentWindow = remote.getCurrentWindow ()
 
-        const { getState } = store
-        const dispatch = store.dispatch
+    const { getState } = store
+    const dispatch = store.dispatch
 
-        if (remote.process.platform === "darwin") {
-          const maybeLocale = getLocaleMessages (getState ())
+    if (remote.process.platform === "darwin") {
+      const maybeLocale = getLocaleMessages (getState ())
 
-          if (isJust (maybeLocale)) {
-            const locale = fromJust (maybeLocale)
+      if (isJust (maybeLocale)) {
+        const locale = fromJust (maybeLocale)
 
-            const menuTemplate: Electron.MenuItemConstructorOptions[] = [
+        const menuTemplate: Electron.MenuItemConstructorOptions[] = [
+          {
+            label: remote.app.getName (),
+            submenu: [
               {
-                label: remote.app.getName (),
-                submenu: [
-                  {
-                    label: translateP (locale) ("aboutapp") (List (remote.app.getName ())),
-                    click: () => dispatch (showAbout),
-                  },
-                  { type: "separator" },
-                  { role: "hide" },
-                  { role: "hideothers" },
-                  { role: "unhide" },
-                  { type: "separator" },
-                  {
-                    label: translate (locale) ("quit"),
-                    click: () => dispatch (requestClose (Just (remote.app.quit))),
-                  },
-                ],
+                label: translateP (locale) ("aboutapp") (List (remote.app.getName ())),
+                click: () => dispatch (showAbout),
               },
+              { type: "separator" },
+              { role: "hide" },
+              { role: "hideothers" },
+              { role: "unhide" },
+              { type: "separator" },
               {
-                label: translate (locale) ("edit"),
-                submenu: [
-                  { role: "cut" },
-                  { role: "copy" },
-                  { role: "paste" },
-                  { role: "delete" },
-                  { role: "selectall" },
-                ],
+                label: translate (locale) ("quit"),
+                click: () => dispatch (requestClose (Just (remote.app.quit))),
               },
-              {
-                label: translate (locale) ("view"),
-                submenu: [
-                  { role: "togglefullscreen" },
-                ],
-              },
-              {
-                role: "window",
-                submenu: [
-                  { role: "minimize" },
-                  { type: "separator" },
-                  { role: "front" },
-                ],
-              },
-            ]
+            ],
+          },
+          {
+            label: translate (locale) ("edit"),
+            submenu: [
+              { role: "cut" },
+              { role: "copy" },
+              { role: "paste" },
+              { role: "delete" },
+              { role: "selectall" },
+            ],
+          },
+          {
+            label: translate (locale) ("view"),
+            submenu: [
+              { role: "togglefullscreen" },
+            ],
+          },
+          {
+            role: "window",
+            submenu: [
+              { role: "minimize" },
+              { type: "separator" },
+              { role: "front" },
+            ],
+          },
+        ]
 
-            const menu = remote.Menu.buildFromTemplate (menuTemplate)
-            remote.Menu.setApplicationMenu (menu)
+        const menu = remote.Menu.buildFromTemplate (menuTemplate)
+        remote.Menu.setApplicationMenu (menu)
 
-            store.subscribe (() => {
-              const areSubwindowsOpen = isDialogOpen ()
-              type MenuItems = Electron.MenuItemConstructorOptions[]
-              const appMenu = menuTemplate[0].submenu as MenuItems
-              appMenu[0].enabled = !areSubwindowsOpen
-              const currentMenu = remote.Menu.buildFromTemplate (menuTemplate)
-              remote.Menu.setApplicationMenu (currentMenu)
-            })
-
-            localShortcut.register (currentWindow, "Cmd+Q", () => {
-              dispatch (quitAccelerator)
-            })
-
-            localShortcut.register (currentWindow, "CmdOrCtrl+S", () => {
-              dispatch (saveHeroAccelerator (locale))
-            })
-          }
-        }
-
-        localShortcut.register (currentWindow, "CmdOrCtrl+Z", () => {
-          dispatch (undoAccelerator ())
+        store.subscribe (() => {
+          const areSubwindowsOpen = isDialogOpen ()
+          type MenuItems = Electron.MenuItemConstructorOptions[]
+          const appMenu = menuTemplate[0].submenu as MenuItems
+          appMenu[0].enabled = !areSubwindowsOpen
+          const currentMenu = remote.Menu.buildFromTemplate (menuTemplate)
+          remote.Menu.setApplicationMenu (currentMenu)
         })
 
-        localShortcut.register (currentWindow, "CmdOrCtrl+Y", () => {
-          dispatch (redoAccelerator ())
+        localShortcut.register (currentWindow, "Cmd+Q", () => {
+          dispatch (quitAccelerator)
         })
 
-        localShortcut.register (currentWindow, "CmdOrCtrl+Shift+Z", () => {
-          dispatch (redoAccelerator ())
+        localShortcut.register (currentWindow, "CmdOrCtrl+S", () => {
+          dispatch (saveHeroAccelerator (locale))
         })
+      }
+    }
 
-        localShortcut.register (currentWindow, "CmdOrCtrl+W", () => {
-          dispatch (backAccelerator ())
-        })
+    localShortcut.register (currentWindow, "CmdOrCtrl+Z", () => {
+      dispatch (undoAccelerator ())
+    })
 
-        localShortcut.register (currentWindow, "CmdOrCtrl+O", () => {
-          dispatch (openSettingsAccelerator ())
-        })
+    localShortcut.register (currentWindow, "CmdOrCtrl+Y", () => {
+      dispatch (redoAccelerator ())
+    })
 
-        ipcRenderer.send ("loading-done")
-      })
+    localShortcut.register (currentWindow, "CmdOrCtrl+Shift+Z", () => {
+      dispatch (redoAccelerator ())
+    })
+
+    localShortcut.register (currentWindow, "CmdOrCtrl+W", () => {
+      dispatch (backAccelerator ())
+    })
+
+    localShortcut.register (currentWindow, "CmdOrCtrl+O", () => {
+      dispatch (openSettingsAccelerator ())
+    })
+
+    ipcRenderer.send ("loading-done")
+
+    return Unit
+  }),
+  runIO
+)
 
 render (
   <Provider store={store}>
