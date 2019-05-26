@@ -42,6 +42,7 @@ export const precedingHerolistReducer =
     switch (action.type) {
       case ActionTypes.CREATE_HERO: {
         const {
+          l10n,
           el,
           enableAllRuleBooks,
           enabledRuleBooks,
@@ -51,7 +52,8 @@ export const precedingHerolistReducer =
           totalAp,
         } = action.payload
 
-        const hero = getInitialHeroObject (id)
+        const hero = getInitialHeroObject (l10n)
+                                          (id)
                                           (name)
                                           (sex)
                                           (el)

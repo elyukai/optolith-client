@@ -1,5 +1,7 @@
 import { ident } from "../../Data/Function";
 import { over, set } from "../../Data/Lens";
+import { modifyAt } from "../../Data/List";
+import { Just } from "../../Data/Maybe";
 import { adjust } from "../../Data/OrderedMap";
 import { fst, snd } from "../../Data/Pair";
 import * as DisAdvActions from "../Actions/DisAdvActions";
@@ -8,6 +10,8 @@ import { ActionTypes } from "../Constants/ActionTypes";
 import { ActivatableActivationEntryType } from "../Models/Actions/ActivatableActivationEntryType";
 import { ActivatableDeactivationEntryType } from "../Models/Actions/ActivatableDeactivationEntryType";
 import { ActivatableDeactivationOptions } from "../Models/Actions/ActivatableDeactivationOptions";
+import { ActivatableDependentL } from "../Models/ActiveEntries/ActivatableDependent";
+import { ActiveObjectL } from "../Models/ActiveEntries/ActiveObject";
 import { SkillDependentL } from "../Models/ActiveEntries/SkillDependent";
 import { HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel";
 import { activate, deactivate, setLevel } from "../Utilities/Activatable/activatableActivationUtils";
@@ -21,10 +25,12 @@ type Action = DisAdvActions.ActivateDisAdvAction
             | SpecialAbilitiesActions.ActivateSpecialAbilityAction
             | SpecialAbilitiesActions.DeactivateSpecialAbilityAction
             | SpecialAbilitiesActions.SetSpecialAbilityTierAction
+            | SpecialAbilitiesActions.SetGuildMageUnfamiliarSpellIdAction
 
 const AAETA = ActivatableActivationEntryType.A
 const ADETA = ActivatableDeactivationEntryType.A
 const ADOA = ActivatableDeactivationOptions.A
+const HL = HeroModelL
 
 export const activatableReducer =
   (action: Action): ident<HeroModelRecord> => {
@@ -76,6 +82,15 @@ export const activatableReducer =
                         (pipe_ (action.payload, fst, e => e.tier))
                         (pipe_ (action.payload, snd, fst))
                         (pipe_ (action.payload, snd, snd))
+      }
+
+      case ActionTypes.SET_TRADITION_GUILD_MAGE_UNFAMILIAR_SPELL_ID: {
+        return over (HL.specialAbilities)
+                    (adjust (over (ActivatableDependentL.active)
+                                  (modifyAt (0)
+                                            (set (ActiveObjectL.sid)
+                                                 (Just (action.payload.id)))))
+                            (prefixSA (70)))
       }
 
       default:

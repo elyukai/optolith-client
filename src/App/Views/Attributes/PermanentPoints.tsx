@@ -55,7 +55,7 @@ export function PermanentPoints (props: PermanentPointsProps) {
           && isJust (permanentBoughtBack)
             ? (
               <div className="column boughtback">
-                <div className="value">{permanentBoughtBack}</div>
+                <div className="value">{fromJust (permanentBoughtBack)}</div>
                 <div className="description smallcaps">
                   {translate (l10n) ("boughtback")}
                 </div>

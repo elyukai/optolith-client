@@ -1,10 +1,11 @@
 import * as React from "react";
 import { equals } from "../../../Data/Eq";
 import { fmap } from "../../../Data/Functor";
-import { flength, imap, intercalate, isList, lastS, List, map } from "../../../Data/List";
-import { bindF, elem, ensure, fromJust, isJust, isNothing, Just, listToMaybe, mapMaybe, Maybe, maybe, or } from "../../../Data/Maybe";
+import { flength, imap, intercalate, isList, List, map } from "../../../Data/List";
+import { bindF, elem, ensure, fromJust, isJust, isNothing, Just, mapMaybe, Maybe, maybe, or } from "../../../Data/Maybe";
 import { elems, lookup, lookupF, OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
+import { fst, isTuple, snd } from "../../../Data/Tuple";
 import { EditItem } from "../../Models/Hero/EditItem";
 import { EditPrimaryAttributeDamageThreshold } from "../../Models/Hero/EditPrimaryAttributeDamageThreshold";
 import { Attribute } from "../../Models/Wiki/Attribute";
@@ -145,7 +146,7 @@ export function ItemEditorMeleeSection (props: ItemEditorMeleeSectionProps) {
               disabled={lockedByNoCombatTechniqueOrLances}
               />
             {
-              isList (damageBonusThreshold)
+              isTuple (damageBonusThreshold)
                 ? (
                   <div className="container damage-threshold">
                     <Label
@@ -154,16 +155,14 @@ export function ItemEditorMeleeSection (props: ItemEditorMeleeSectionProps) {
                       />
                     <TextField
                       className="damage-threshold-part"
-                      value={listToMaybe (damageBonusThreshold)}
+                      value={fst (damageBonusThreshold)}
                       onChangeString={props.setFirstDamageThreshold}
                       disabled={lockedByNoCombatTechniqueOrLances}
                       valid={IEIVA.firstDamageThreshold (inputValidation)}
                       />
                     <TextField
                       className="damage-threshold-part"
-                      value={isString (damageBonusThreshold)
-                        ? damageBonusThreshold
-                        : lastS (damageBonusThreshold)}
+                      value={snd (damageBonusThreshold)}
                       onChangeString={props.setSecondDamageThreshold}
                       disabled={lockedByNoCombatTechniqueOrLances}
                       valid={IEIVA.secondDamageThreshold (inputValidation)}
@@ -296,7 +295,6 @@ export function ItemEditorMeleeSection (props: ItemEditorMeleeSectionProps) {
                   value={EIA.stp (item)}
                   onChangeString={props.setStructurePoints}
                   disabled={locked}
-                  valid={IEIVA.structurePoints (inputValidation)}
                   />
               )
               : (

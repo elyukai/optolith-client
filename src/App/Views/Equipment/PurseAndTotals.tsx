@@ -76,7 +76,7 @@ export function PurseAndTotals (props: PurseAndTotalsProps) {
                 {" / "}
                 {localizeNumber (l10n_id) (initialStartingWealth)}
                 {" "}
-                {translate (l10n) ("price")}
+                {translate (l10n) ("priceunit")}
               </div>
             )
             : null}
@@ -85,7 +85,7 @@ export function PurseAndTotals (props: PurseAndTotalsProps) {
             {" / "}
             {localizeNumber (l10n_id) (localizeWeight (l10n_id) (carryingCapacity))}
             {" "}
-            {translate (l10n) ("weight")}
+            {translate (l10n) ("weightunit.short")}
           </div>
         </div>
       </div>

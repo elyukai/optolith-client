@@ -60,6 +60,9 @@ export const getCurrentHeroFuture =
 
 const Hero = HeroModel.A
 
+export const getHeroLocale =
+  createMaybeSelector (getHeroProp, Hero.locale)
+
 export const getTotalAdventurePoints =
   pipe (getCurrentHeroPresent, fmap (Hero.adventurePointsTotal))
 

@@ -20,6 +20,8 @@ const mapStateToProps =
     combinedProfessions: getAllProfessions (state, ownProps),
     disadvantages: stateSelectors.getWikiDisadvantages (state),
     languages: mapGetToSlice (stateSelectors.getWikiSpecialAbilities) ("SA_29") (state),
+    items: stateSelectors.getItemsState (state),
+    itemTemplates: stateSelectors.getWikiItemTemplates (state),
     professionVariants: stateSelectors.getWikiProfessionVariants (state),
     races: stateSelectors.getWikiRaces (state),
     liturgicalChantExtensions:
@@ -31,7 +33,6 @@ const mapStateToProps =
     spellExtensions: mapGetToSlice (stateSelectors.getWikiSpecialAbilities) ("SA_414") (state),
     spells: stateSelectors.getWikiSpells (state),
     specialAbilities: stateSelectors.getWikiSpecialAbilities (state),
-    templates: stateSelectors.getWikiItemTemplates (state),
     wiki: stateSelectors.getWiki (state),
   })
 

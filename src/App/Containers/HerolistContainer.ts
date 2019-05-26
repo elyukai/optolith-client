@@ -59,7 +59,12 @@ const mapDispatchToProps = (
     enableAllRuleBooks: boolean,
     enabledRuleBooks: OrderedSet<string>
   ) {
-    dispatch (HerolistActions.createHero (name) (sex) (el) (enableAllRuleBooks) (enabledRuleBooks))
+    dispatch (HerolistActions.createHero (l10n)
+                                         (name)
+                                         (sex)
+                                         (el)
+                                         (enableAllRuleBooks)
+                                         (enabledRuleBooks))
   },
   importHero () {
     dispatch (IOActions.requestHeroImport (l10n))

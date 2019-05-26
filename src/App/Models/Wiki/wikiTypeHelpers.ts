@@ -3,6 +3,7 @@ import { Just, Maybe } from "../../../Data/Maybe";
 import { OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { Categories } from "../../Constants/Categories";
+import { Item } from "../Hero/Item";
 import { CultureCombined } from "../View/CultureCombined";
 import { ProfessionCombined } from "../View/ProfessionCombined";
 import { RaceCombined } from "../View/RaceCombined";
@@ -113,6 +114,7 @@ export type InlineWikiEntry = Record<RaceCombined>
                             | Record<Cantrip>
                             | Record<LiturgicalChant>
                             | Record<Blessing>
+                            | Record<Item>
                             | Record<ItemTemplate>
 
 export type EntryWithCategory = Record<Race>

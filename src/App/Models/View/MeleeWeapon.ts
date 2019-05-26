@@ -1,13 +1,14 @@
 import { List } from "../../../Data/List";
 import { Maybe, Nothing } from "../../../Data/Maybe";
 import { fromDefault } from "../../../Data/Record";
+import { Pair } from "../../../Data/Tuple";
 
 export interface MeleeWeapon {
   id: string
   name: string
   combatTechnique: string
   primary: List<string>
-  primaryBonus: number | List<number>
+  primaryBonus: number | Pair<number, number>
   damageDiceNumber: Maybe<number>
   damageDiceSides: Maybe<number>
   damageFlat: number

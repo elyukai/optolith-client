@@ -2,11 +2,12 @@ import { equals } from "../../Data/Eq";
 import { ident, thrush } from "../../Data/Function";
 import { fmap, fmapF } from "../../Data/Functor";
 import { set } from "../../Data/Lens";
-import { append, consF, filter, foldr, isList, List, map, maximum, subscript, sum } from "../../Data/List";
-import { altF_, bind, bindF, fromMaybe, guard, imapMaybe, isJust, Just, liftM2, mapMaybe, Maybe, maybe, thenF } from "../../Data/Maybe";
+import { append, consF, filter, foldr, imap, List, map, maximum, subscript, sum } from "../../Data/List";
+import { altF_, bind, bindF, fromMaybe, guard, isJust, Just, liftM2, mapMaybe, Maybe, maybe, thenF } from "../../Data/Maybe";
 import { elems, lookup, lookupF } from "../../Data/OrderedMap";
-import { uncurryN } from "../../Data/Pair";
 import { Record } from "../../Data/Record";
+import { fst, isTuple, Pair, snd } from "../../Data/Tuple";
+import { uncurryN } from "../../Data/Tuple/Curry";
 import { AttributeDependent } from "../Models/ActiveEntries/AttributeDependent";
 import { Belongings } from "../Models/Hero/Belongings";
 import { HeroModel } from "../Models/Hero/HeroModel";
@@ -29,7 +30,7 @@ import { filterAndSortRecordsBy, filterAndSortRecordsByName } from "../Utilities
 import { filterRecordsByName } from "../Utilities/filterBy";
 import { getAttack, getParry } from "../Utilities/Increasable/combatTechniqueUtils";
 import { convertPrimaryAttributeToArray } from "../Utilities/ItemUtils";
-import { add, dec, multiply, subtract, subtractBy } from "../Utilities/mathUtils";
+import { add, dec, multiply, subtractBy } from "../Utilities/mathUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
 import { isAvailable } from "../Utilities/RulesUtils";
 import { sortRecordsByName } from "../Utilities/sortBy";
@@ -316,7 +317,7 @@ export const getMeleeWeapons = createMaybeSelector (
                                         (ADA.value)
                                 )))
 
-                        type Thresholds = number | List<number>
+                        type Thresholds = number | Pair<number, number>
 
                         const damage_thresholds =
                           fromMaybe<Thresholds> (0)
@@ -326,16 +327,16 @@ export const getMeleeWeapons = createMaybeSelector (
                         const damage_flat_bonus =
                           fmapF (mprimary_attr_values)
                                 (primary_attr_values =>
-                                  isList (damage_thresholds)
+                                  isTuple (damage_thresholds)
                                     // P/T looks like "AGI 14/STR 15" and combat
                                     // technique has both attributes as primary
                                     // => maps them and look up the greatest
                                     // bonus
                                     ? pipe_ (
                                         primary_attr_values,
-                                        imapMaybe (i => x => fmapF (subscript (damage_thresholds)
-                                                                              (i))
-                                                                   (subtract (x))),
+                                        imap (i => subtractBy (i === 0
+                                                                ? fst (damage_thresholds)
+                                                                : snd (damage_thresholds))),
                                         consF (0),
                                         maximum
                                       )

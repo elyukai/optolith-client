@@ -19,7 +19,7 @@ export interface EquipmentListItemProps {
   addTemplateToList (id: string): void
   deleteItem (id: string): void
   editItem (id: string): void
-  selectForInfo? (id: string): void
+  selectForInfo (id: string): void
 }
 
 const IA = Item.A
@@ -41,8 +41,7 @@ export function EquipmentListItem (props: EquipmentListItemProps) {
           />
         <IconButton
           icon="&#xE912;"
-          onClick={selectForInfo ? (() => selectForInfo (IA.id (data))) : undefined}
-          disabled={!selectForInfo}
+          onClick={() => selectForInfo (IA.id (data))}
           flat
           />
       </ListItemButtons>
@@ -69,8 +68,7 @@ export function EquipmentListItem (props: EquipmentListItemProps) {
           />
         <IconButton
           icon="&#xE912;"
-          onClick={selectForInfo ? (() => selectForInfo (IA.id (data))) : undefined}
-          disabled={!selectForInfo}
+          onClick={() => selectForInfo (IA.id (data))}
           flat
           />
       </ListItemButtons>

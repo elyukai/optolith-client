@@ -29,6 +29,7 @@ type Action = ProfileActions.SetHeroNameAction
             | ProfileActions.SetOtherInfoAction
             | ProfileActions.SetCultureAreaKnowledge
             | ProfileActions.SetCustomProfessionNameAction
+            | ProfileActions.SetHeroLocaleAction
             | DisAdvActions.ActivateDisAdvAction
             | DisAdvActions.DeactivateDisAdvAction
 
@@ -147,6 +148,9 @@ export const profileReducer =
 
       case ActionTypes.SET_HERO_AVATAR:
         return set (HeroModelL.avatar) (Just (action.payload.url))
+
+      case ActionTypes.SET_HERO_LOCALE:
+        return set (HeroModelL.locale) (action.payload.locale)
 
       case ActionTypes.SET_FAMILY:
       case ActionTypes.SET_PLACEOFBIRTH:

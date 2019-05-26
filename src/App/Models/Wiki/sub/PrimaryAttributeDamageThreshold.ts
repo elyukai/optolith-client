@@ -1,14 +1,14 @@
-import { List } from "../../../../Data/List";
 import { Maybe, Nothing } from "../../../../Data/Maybe";
 import { fromDefault } from "../../../../Data/Record";
+import { Pair } from "../../../../Data/Tuple";
 
 export interface PrimaryAttributeDamageThreshold {
   primary: Maybe<string>
-  threshold: number | List<number>
+  threshold: number | Pair<number, number>
 }
 
 export const PrimaryAttributeDamageThreshold =
   fromDefault<PrimaryAttributeDamageThreshold> ({
     primary: Nothing,
-    threshold: List.empty,
+    threshold: 0,
   })

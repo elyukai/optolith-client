@@ -30,8 +30,9 @@ import { pipe, pipe_ } from "../Utilities/pipe";
 import { validatePrerequisites } from "../Utilities/Prerequisites/validatePrerequisitesUtils";
 import { filterByAvailability } from "../Utilities/RulesUtils";
 import { mapGetToMaybeSlice } from "../Utilities/SelectorsUtils";
-import { sortRecordsBy } from "../Utilities/sortBy";
+import { sortRecordsBy, sortRecordsByName } from "../Utilities/sortBy";
 import { misNumberM } from "../Utilities/typeCheckUtils";
+import { DropdownOption } from "../Views/Universal/Dropdown";
 import { getStartEl } from "./elSelectors";
 import { getRuleBooksEnabled } from "./rulesSelectors";
 import { getCantripsSortOptions, getSpellsCombinedSortOptions, getSpellsSortOptions } from "./sortOptionsSelectors";
@@ -432,4 +433,17 @@ export const getSpellsForSheet = createMaybeSelector (
                                                   : s),
                                       sortRecordsBy (sort_options)
                                     )))
+)
+
+export const getAllSpellsForManualGuildMageSelect = createMaybeSelector (
+  getLocaleAsProp,
+  getWikiSpells,
+  uncurryN (l10n => pipe (
+                      elems,
+                      map (spell => DropdownOption ({
+                                      id: Just (Spell.A.id (spell)),
+                                      name: Spell.A.name (spell),
+                                    })),
+                      sortRecordsByName (l10n)
+                    ))
 )

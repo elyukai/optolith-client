@@ -296,7 +296,7 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
                         {...this.props}
                         key={IA.id (obj)}
                         data={obj}
-                        selectForInfo={this.showSlideinInfo}
+                        selectForInfo={this.showInfo}
                         />
                     )
                   ),

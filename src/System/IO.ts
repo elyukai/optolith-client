@@ -54,7 +54,7 @@ interface IOConstructor {
   fromIO: <A> (x: IO<A>) => Promise<A>
   toIO: <A extends any[], B> (f: (...args: A) => Promise<B>) => (...args: A) => IO<B>
   IdentityIO: IO<void>
-  runIO: <A>(x: IO<A>) => IO<A>
+  runIO: <A>(x: IO<A>) => IO<void>
 }
 
 export const IO: IOConstructor = Internals.IO as IOConstructor
@@ -370,10 +370,10 @@ IO.IdentityIO = IdentityIO
  * Runs the `IO` action and returns an `IO` with the resolved return value.
  */
 export const runIO =
-  <A> (x: IO<A>): IO<A> => {
-    const p = x .f ()
+  <A> (x: IO<A>): IO<void> => {
+    x .f () .catch (err => { throw err })
 
-    return Internals.IO (async () => p)
+    return Internals.IO (async () => { return })
   }
 
 IO.runIO = runIO

@@ -587,6 +587,6 @@ export namespace Internals {
    * The `isTuple` function returns `True` if its argument is a `Tuple`.
    */
   export const isTuple =
-    (x: any): x is Tuple<any[]> =>
+    <A, A0 extends any[]>(x: A | Tuple<A0>): x is Tuple<A0> =>
       typeof x === "object" && x !== null && Object.getPrototypeOf (x) === TuplePrototype
 }

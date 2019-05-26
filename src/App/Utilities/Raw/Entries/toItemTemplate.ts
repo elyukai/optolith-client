@@ -1,6 +1,7 @@
 import { fmap, fmapF } from "../../../../Data/Functor";
-import { Cons, flength, head, List } from "../../../../Data/List";
+import { Cons, flength, head, last, List } from "../../../../Data/List";
 import { ensure, Nothing } from "../../../../Data/Maybe";
+import { Pair } from "../../../../Data/Tuple";
 import { IdPrefixes } from "../../../Constants/IdPrefixes";
 import { ItemTemplate } from "../../../Models/Wiki/ItemTemplate";
 import { PrimaryAttributeDamageThreshold } from "../../../Models/Wiki/sub/PrimaryAttributeDamageThreshold";
@@ -189,7 +190,7 @@ export const toItemTemplate =
                    threshold:
                     flength (threshold) === 1
                       ? head (threshold as Cons<number>)
-                      : threshold,
+                      : Pair (head (threshold as Cons<number>), last (threshold as Cons<number>)),
                  }))
                  (rs.edamageThreshold),
           at: rs.eat,

@@ -1,7 +1,8 @@
 import { fmap } from "../../Data/Functor";
-import { all, isList, List, subscriptF, unsafeIndex } from "../../Data/List";
+import { subscriptF } from "../../Data/List";
 import { elem, isJust, Nothing } from "../../Data/Maybe";
 import { fromDefault, Record } from "../../Data/Record";
+import { fst, isTuple, snd } from "../../Data/Tuple";
 import { EditItem } from "../Models/Hero/EditItem";
 import { EditPrimaryAttributeDamageThreshold } from "../Models/Hero/EditPrimaryAttributeDamageThreshold";
 import { pipe } from "./pipe";
@@ -27,7 +28,6 @@ export interface ItemEditorInputValidation {
   range2: boolean
   range3: boolean
   stabilityMod: boolean
-  structurePoints: boolean
   weight: boolean
 
   melee: boolean
@@ -57,7 +57,6 @@ export const ItemEditorInputValidation =
     range2: true,
     range3: true,
     stabilityMod: true,
-    structurePoints: true,
     weight: true,
 
     melee: true,
@@ -66,33 +65,12 @@ export const ItemEditorInputValidation =
     other: true,
   })
 
-const {
-  name,
-  combatTechnique,
-  reach,
-  armorType,
-  at,
-  iniMod,
-  movMod,
-  damageBonus,
-  damageDiceNumber,
-  damageFlat,
-  enc,
-  length,
-  amount,
-  pa,
-  price,
-  pro,
-  range,
-  stp,
-  weight,
-  stabilityMod,
-} = EditItem.AL
-
-const { primary, threshold } = EditPrimaryAttributeDamageThreshold.AL
+const EIA = EditItem.A
+const IEIVA = ItemEditorInputValidation.A
+const EPADTA = EditPrimaryAttributeDamageThreshold.A
 
 const validateRange = (index: 0 | 1 | 2) => pipe (
-  range,
+  EIA.range,
   subscriptF (index),
   fmap (isEmptyOr (isNaturalNumber)),
   elem<boolean> (true)
@@ -105,46 +83,38 @@ const validateRange = (index: 0 | 1 | 2) => pipe (
  * item groups.
  */
 export const validateItemEditorInput = (item: Record<EditItem>) => {
-  const validName = name (item) .length > 0
-  const validATMod = isInteger (at (item))
-  const validDamageDiceNumber = isEmptyOr (isNaturalNumber) (damageDiceNumber (item))
-  const validDamageFlat = isEmptyOr (isInteger) (damageFlat (item))
+  const validName = EIA.name (item) .length > 0
+  const validATMod = isInteger (EIA.at (item))
+  const validDamageDiceNumber = isEmptyOr (isNaturalNumber) (EIA.damageDiceNumber (item))
+  const validDamageFlat = isEmptyOr (isInteger) (EIA.damageFlat (item))
 
-  const primaryAttribute = primary (damageBonus (item))
-  const damageThreshold = threshold (damageBonus (item))
-
-  const validPrimaryAttribute = isJust (primaryAttribute)
+  const damageThreshold = EPADTA.threshold (EIA.damageBonus (item))
 
   const validFirstDamageThreshold =
-    isList (damageThreshold)
-    && List.flength (damageThreshold) === 2
-    && isInteger (unsafeIndex (damageThreshold) (0))
+    isTuple (damageThreshold)
+    && isInteger (fst (damageThreshold))
 
   const validSecondDamageThreshold =
-    isList (damageThreshold)
-    && List.flength (damageThreshold) === 2
-    && isInteger (unsafeIndex (damageThreshold) (1))
+    isTuple (damageThreshold)
+    && isInteger (snd (damageThreshold))
 
-  const validDamageThreshold = isList (damageThreshold)
-    ? List.flength (damageThreshold) === 2 && all (isInteger) (damageThreshold)
+  const validDamageThreshold = isTuple (damageThreshold)
+    ? isInteger (fst (damageThreshold)) && isInteger (snd (damageThreshold))
     : isInteger (damageThreshold)
 
-  const validPrimaryAttributeDamageThreshold = validPrimaryAttribute && validDamageThreshold
-
-  const validENC = isNaturalNumber (enc (item))
-  const validINIMod = isEmptyOr (isInteger) (iniMod (item))
-  const validLength = isEmptyOr (isNaturalNumber) (length (item))
-  const validMOVMod = isEmptyOr (isInteger) (movMod (item))
-  const validNumber = isEmptyOr (isNaturalNumber) (amount (item))
-  const validPAMod = isInteger (pa (item))
-  const validPrice = isEmptyOr (isFloat) (price (item))
-  const validPRO = isNaturalNumber (pro (item))
+  const validENC = isNaturalNumber (EIA.enc (item))
+  const validINIMod = isEmptyOr (isInteger) (EIA.iniMod (item))
+  const validLength = isEmptyOr (isNaturalNumber) (EIA.length (item))
+  const validMOVMod = isEmptyOr (isInteger) (EIA.movMod (item))
+  const validNumber = isEmptyOr (isNaturalNumber) (EIA.amount (item))
+  const validPAMod = isInteger (EIA.pa (item))
+  const validPrice = isEmptyOr (isFloat) (EIA.price (item))
+  const validPRO = isNaturalNumber (EIA.pro (item))
   const validRange1 = validateRange (0) (item)
   const validRange2 = validateRange (1) (item)
   const validRange3 = validateRange (2) (item)
-  const validStabilityMod = isEmptyOr (isInteger) (stabilityMod (item))
-  const validStructurePoints = isEmptyOr (isNaturalNumber) (stp (item))
-  const validWeight = isEmptyOr (isFloat) (weight (item))
+  const validStabilityMod = isEmptyOr (isInteger) (EIA.stabilityMod (item))
+  const validWeight = isEmptyOr (isFloat) (EIA.weight (item))
 
   const validSingle = ItemEditorInputValidation ({
     name: validName,
@@ -155,7 +125,7 @@ export const validateItemEditorInput = (item: Record<EditItem>) => {
     damageFlat: validDamageFlat,
     firstDamageThreshold: validFirstDamageThreshold,
     secondDamageThreshold: validSecondDamageThreshold,
-    damageThreshold: validPrimaryAttributeDamageThreshold,
+    damageThreshold: validDamageThreshold,
     enc: validENC,
     ini: validINIMod,
     length: validLength,
@@ -167,7 +137,6 @@ export const validateItemEditorInput = (item: Record<EditItem>) => {
     range2: validRange2,
     range3: validRange3,
     stabilityMod: validStabilityMod,
-    structurePoints: validStructurePoints,
     weight: validWeight,
 
     melee: Nothing,
@@ -186,7 +155,6 @@ export const validateItemEditorInput = (item: Record<EditItem>) => {
     validName
     && validNumber
     && validPrice
-    && validStructurePoints
     && validWeight
 
   return ItemEditorInputValidation ({
@@ -198,7 +166,7 @@ export const validateItemEditorInput = (item: Record<EditItem>) => {
     damageFlat: validDamageFlat,
     firstDamageThreshold: validFirstDamageThreshold,
     secondDamageThreshold: validSecondDamageThreshold,
-    damageThreshold: validPrimaryAttributeDamageThreshold,
+    damageThreshold: validDamageThreshold,
     enc: validENC,
     ini: validINIMod,
     length: validLength,
@@ -210,7 +178,6 @@ export const validateItemEditorInput = (item: Record<EditItem>) => {
     range2: validRange2,
     range3: validRange3,
     stabilityMod: validStabilityMod,
-    structurePoints: validStructurePoints,
     weight: validWeight,
 
     melee: validMelee,
@@ -223,58 +190,56 @@ export const validateItemEditorInput = (item: Record<EditItem>) => {
 const validateMeleeWeaponInput =
   (item: Record<EditItem>) =>
   (validSingle: Record<ItemEditorInputValidation>) =>
-    elem ("CT_7") (combatTechnique (item))
+    elem ("CT_7") (EIA.combatTechnique (item))
     ? validateNoParryingWeapons (validSingle)
-    : ItemEditorInputValidation.AL.at (validSingle)
-      && ItemEditorInputValidation.AL.damageDiceNumber (validSingle)
-      && ItemEditorInputValidation.AL.damageFlat (validSingle)
-      && ItemEditorInputValidation.AL.damageThreshold (validSingle)
-      && ItemEditorInputValidation.AL.length (validSingle)
-      && ItemEditorInputValidation.AL.amount (validSingle)
-      && ItemEditorInputValidation.AL.pa (validSingle)
-      && ItemEditorInputValidation.AL.price (validSingle)
-      && ItemEditorInputValidation.AL.stabilityMod (validSingle)
-      && ItemEditorInputValidation.AL.structurePoints (validSingle)
-      && ItemEditorInputValidation.AL.weight (validSingle)
-      && isJust (combatTechnique (item))
-      && isJust (reach (item))
+    : IEIVA.at (validSingle)
+      && IEIVA.damageDiceNumber (validSingle)
+      && IEIVA.damageFlat (validSingle)
+      && IEIVA.damageThreshold (validSingle)
+      && IEIVA.length (validSingle)
+      && IEIVA.amount (validSingle)
+      && IEIVA.pa (validSingle)
+      && IEIVA.price (validSingle)
+      && IEIVA.stabilityMod (validSingle)
+      && IEIVA.weight (validSingle)
+      && isJust (EIA.combatTechnique (item))
+      && isJust (EIA.reach (item))
 
 // Lances
 const validateNoParryingWeapons =
   (validSingle: Record<ItemEditorInputValidation>) =>
-    ItemEditorInputValidation.AL.damageDiceNumber (validSingle)
-    && ItemEditorInputValidation.AL.damageFlat (validSingle)
-    && ItemEditorInputValidation.AL.length (validSingle)
-    && ItemEditorInputValidation.AL.amount (validSingle)
-    && ItemEditorInputValidation.AL.price (validSingle)
-    && ItemEditorInputValidation.AL.stabilityMod (validSingle)
-    && ItemEditorInputValidation.AL.structurePoints (validSingle)
-    && ItemEditorInputValidation.AL.weight (validSingle)
+    IEIVA.damageDiceNumber (validSingle)
+    && IEIVA.damageFlat (validSingle)
+    && IEIVA.length (validSingle)
+    && IEIVA.amount (validSingle)
+    && IEIVA.price (validSingle)
+    && IEIVA.stabilityMod (validSingle)
+    && IEIVA.weight (validSingle)
 
 const validateRangedWeaponInput =
   (item: Record<EditItem>) =>
   (validSingle: Record<ItemEditorInputValidation>) =>
-    ItemEditorInputValidation.AL.damageDiceNumber (validSingle)
-    && ItemEditorInputValidation.AL.damageFlat (validSingle)
-    && ItemEditorInputValidation.AL.length (validSingle)
-    && ItemEditorInputValidation.AL.amount (validSingle)
-    && ItemEditorInputValidation.AL.price (validSingle)
-    && ItemEditorInputValidation.AL.range1 (validSingle)
-    && ItemEditorInputValidation.AL.range2 (validSingle)
-    && ItemEditorInputValidation.AL.range3 (validSingle)
-    && ItemEditorInputValidation.AL.stabilityMod (validSingle)
-    && ItemEditorInputValidation.AL.weight (validSingle)
-    && isJust (combatTechnique (item))
+    IEIVA.damageDiceNumber (validSingle)
+    && IEIVA.damageFlat (validSingle)
+    && IEIVA.length (validSingle)
+    && IEIVA.amount (validSingle)
+    && IEIVA.price (validSingle)
+    && IEIVA.range1 (validSingle)
+    && IEIVA.range2 (validSingle)
+    && IEIVA.range3 (validSingle)
+    && IEIVA.stabilityMod (validSingle)
+    && IEIVA.weight (validSingle)
+    && isJust (EIA.combatTechnique (item))
 
 const validateArmorInput =
   (item: Record<EditItem>) =>
   (validSingle: Record<ItemEditorInputValidation>) =>
-    ItemEditorInputValidation.AL.enc (validSingle)
-    && ItemEditorInputValidation.AL.ini (validSingle)
-    && ItemEditorInputValidation.AL.mov (validSingle)
-    && ItemEditorInputValidation.AL.amount (validSingle)
-    && ItemEditorInputValidation.AL.price (validSingle)
-    && ItemEditorInputValidation.AL.pro (validSingle)
-    && ItemEditorInputValidation.AL.stabilityMod (validSingle)
-    && ItemEditorInputValidation.AL.weight (validSingle)
-    && isJust (armorType (item))
+    IEIVA.enc (validSingle)
+    && IEIVA.ini (validSingle)
+    && IEIVA.mov (validSingle)
+    && IEIVA.amount (validSingle)
+    && IEIVA.price (validSingle)
+    && IEIVA.pro (validSingle)
+    && IEIVA.stabilityMod (validSingle)
+    && IEIVA.weight (validSingle)
+    && isJust (EIA.armorType (item))

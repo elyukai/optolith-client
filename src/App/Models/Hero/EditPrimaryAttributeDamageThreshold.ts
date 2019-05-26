@@ -1,16 +1,16 @@
-import { List } from "../../../Data/List";
 import { Maybe, Nothing } from "../../../Data/Maybe";
 import { fromDefault, makeLenses } from "../../../Data/Record";
+import { Pair } from "../../../Data/Tuple";
 
 export interface EditPrimaryAttributeDamageThreshold {
   primary: Maybe<string>
-  threshold: string | List<string>
+  threshold: string | Pair<string, string>
 }
 
 export const EditPrimaryAttributeDamageThreshold =
   fromDefault<EditPrimaryAttributeDamageThreshold> ({
     primary: Nothing,
-    threshold: List.empty,
+    threshold: "",
   })
 
 export const EditPrimaryAttributeDamageThresholdL =

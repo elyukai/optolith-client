@@ -4,6 +4,7 @@ import { List } from "../../Data/List";
 import { fromJust, isJust, Maybe } from "../../Data/Maybe";
 import { lookup } from "../../Data/OrderedMap";
 import { OrderedSet } from "../../Data/OrderedSet";
+import { runIO } from "../../System/IO";
 import { ActionTypes } from "../Constants/ActionTypes";
 import { HeroModel } from "../Models/Hero/HeroModel";
 import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel";
@@ -63,6 +64,7 @@ export const setHerolistVisibilityFilter =
 export interface CreateHeroAction {
   type: ActionTypes.CREATE_HERO
   payload: {
+    l10n: L10nRecord;
     id: string;
     name: string;
     sex: "m" | "f";
@@ -74,6 +76,7 @@ export interface CreateHeroAction {
 }
 
 export const createHero =
+  (l10n: L10nRecord) =>
   (name: string) =>
   (sex: "m" | "f") =>
   (el: string) =>
@@ -91,6 +94,7 @@ export const createHero =
       dispatch<CreateHeroAction> ({
         type: ActionTypes.CREATE_HERO,
         payload: {
+          l10n,
           id: `H_${getNewIdByDate ()}`,
           name,
           sex,
@@ -125,7 +129,8 @@ export const saveHeroes =
       tryIO,
       fmap (fmap (() => dispatch (addAlert ({
                                    message: translate (l10n) ("allsaved"),
-                                 }))))
+                                 })))),
+      runIO
     )
   }
 
@@ -148,7 +153,8 @@ export const saveHero =
                                        payload: {
                                          id: save_id, // specified by param or currently open
                                        },
-                                     }))))
+                                     })))),
+        runIO
       )
     }
 

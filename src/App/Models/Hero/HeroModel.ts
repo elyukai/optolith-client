@@ -8,6 +8,7 @@ import { ActivatableDependent } from "../ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent } from "../ActiveEntries/ActivatableSkillDependent";
 import { AttributeDependent } from "../ActiveEntries/AttributeDependent";
 import { SkillDependent } from "../ActiveEntries/SkillDependent";
+import { L10n, L10nRecord } from "../Wiki/L10n";
 import { Belongings } from "./Belongings";
 import { EditPet } from "./EditPet";
 import { Energies } from "./Energies";
@@ -23,6 +24,7 @@ export type HeroModelRecord = Record<HeroModel>
 export interface HeroModel {
   id: string
   clientVersion: string
+  locale: string
   player: Maybe<string>
   dateCreated: Date
   dateModified: Date
@@ -71,6 +73,7 @@ export const HeroModel =
   fromDefault<HeroModel> ({
     id: "",
     clientVersion: current_version,
+    locale: "",
     player: Nothing,
     dateCreated: new Date (),
     dateModified: new Date (),
@@ -118,6 +121,7 @@ export const HeroModelL = makeLenses (HeroModel)
  * a new hero.
  */
 export const getInitialHeroObject =
+  (l10n: L10nRecord) =>
   (id: string) =>
   (name: string) =>
   (sex: "m" | "f") =>
@@ -128,6 +132,7 @@ export const getInitialHeroObject =
     HeroModel ({
       id,
       clientVersion: Nothing,
+      locale: L10n.A.id (l10n),
       dateCreated: new Date (),
       dateModified: new Date (),
       phase: Nothing,

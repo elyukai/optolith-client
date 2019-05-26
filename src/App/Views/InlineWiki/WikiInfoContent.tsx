@@ -1,10 +1,11 @@
 import * as React from "react";
 import { equals } from "../../../Data/Eq";
 import { find, List } from "../../../Data/List";
-import { bind, fromJust, isJust, Maybe, Nothing } from "../../../Data/Maybe";
+import { bind, fromJust, isJust, Maybe, maybe_, Nothing } from "../../../Data/Maybe";
 import { lookup, OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { Categories } from "../../Constants/Categories";
+import { IdPrefixes } from "../../Constants/IdPrefixes";
 import { Sex } from "../../Models/Hero/heroTypeHelpers";
 import { Item } from "../../Models/Hero/Item";
 import { CultureCombined, CultureCombinedA_ } from "../../Models/View/CultureCombined";
@@ -28,7 +29,7 @@ import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
 import { Spell } from "../../Models/Wiki/Spell";
 import { WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { InlineWikiEntry } from "../../Models/Wiki/wikiTypeHelpers";
-import { getCategoryById } from "../../Utilities/IDUtils";
+import { getCategoryById, getIdPrefix } from "../../Utilities/IDUtils";
 import { pipe } from "../../Utilities/pipe";
 import { WikiActivatableInfo } from "./WikiActivatableInfo";
 import { WikiBlessingInfo } from "./WikiBlessingInfo";
@@ -61,6 +62,8 @@ export interface WikiInfoContentStateProps {
   combinedCultures: List<Record<CultureCombined>>
   combinedProfessions: List<Record<ProfessionCombined>>
   disadvantages: OrderedMap<string, Record<Disadvantage>>
+  items: Maybe<OrderedMap<string, Record<Item>>>
+  itemTemplates: OrderedMap<string, Record<ItemTemplate>>
   languages: Maybe<Record<SpecialAbility>>
   liturgicalChantExtensions: Maybe<Record<SpecialAbility>>
   liturgicalChants: OrderedMap<string, Record<LiturgicalChant>>
@@ -72,7 +75,6 @@ export interface WikiInfoContentStateProps {
   spellExtensions: Maybe<Record<SpecialAbility>>
   spells: OrderedMap<string, Record<Spell>>
   specialAbilities: OrderedMap<string, Record<SpecialAbility>>
-  templates: OrderedMap<string, Record<ItemTemplate>>
   wiki: WikiModelRecord
 }
 
@@ -168,50 +170,63 @@ const getEntry =
          (id => {
            const mcategory = getCategoryById (id)
 
-           return bind (mcategory)
-                       ((category): Maybe<InlineWikiEntry> => {
-                         switch (category) {
-                           case Categories.ADVANTAGES:
-                             return lookup (id) (props.advantages)
+           return maybe_ ((): Maybe<InlineWikiEntry> => {
+                           const prefix = getIdPrefix (id)
 
-                           case Categories.BLESSINGS:
-                             return lookup (id) (props.blessings)
-
-                           case Categories.CANTRIPS:
-                             return lookup (id) (props.cantrips)
-
-                           case Categories.COMBAT_TECHNIQUES:
-                             return lookup (id) (props.combatTechniques)
-
-                           case Categories.CULTURES:
-                             return find (pipe (CultureCombinedA_.id, equals (id)))
-                                         (props.combinedCultures)
-
-                           case Categories.DISADVANTAGES:
-                             return lookup (id) (props.disadvantages)
-
-                           case Categories.LITURGIES:
-                             return lookup (id) (props.liturgicalChants)
-
-                           case Categories.PROFESSIONS:
-                             return find (pipe (ProfessionCombinedA_.id, equals (id)))
-                                         (props.combinedProfessions)
-
-                           case Categories.RACES:
-                             return find (pipe (RaceCombinedA_.id, equals (id)))
-                                         (props.combinedRaces)
-
-                           case Categories.SPECIAL_ABILITIES:
-                             return lookup (id) (props.specialAbilities)
-
-                           case Categories.SPELLS:
-                             return lookup (id) (props.spells)
-
-                           case Categories.TALENTS:
-                             return lookup (id) (props.skills)
-
-                           default:
+                           if (prefix === IdPrefixes.ITEM) {
+                             return bind (props.items) (lookup (id))
+                           }
+                           else if (prefix === IdPrefixes.ITEM_TEMPLATE) {
+                             return lookup (id) (props.itemTemplates)
+                           }
+                           else {
                              return Nothing
-                         }
-                       })
+                           }
+                         })
+                         ((category: Categories) => {
+                           switch (category) {
+                             case Categories.ADVANTAGES:
+                               return lookup (id) (props.advantages)
+
+                             case Categories.BLESSINGS:
+                               return lookup (id) (props.blessings)
+
+                             case Categories.CANTRIPS:
+                               return lookup (id) (props.cantrips)
+
+                             case Categories.COMBAT_TECHNIQUES:
+                               return lookup (id) (props.combatTechniques)
+
+                             case Categories.CULTURES:
+                               return find (pipe (CultureCombinedA_.id, equals (id)))
+                                           (props.combinedCultures)
+
+                             case Categories.DISADVANTAGES:
+                               return lookup (id) (props.disadvantages)
+
+                             case Categories.LITURGIES:
+                               return lookup (id) (props.liturgicalChants)
+
+                             case Categories.PROFESSIONS:
+                               return find (pipe (ProfessionCombinedA_.id, equals (id)))
+                                           (props.combinedProfessions)
+
+                             case Categories.RACES:
+                               return find (pipe (RaceCombinedA_.id, equals (id)))
+                                           (props.combinedRaces)
+
+                             case Categories.SPECIAL_ABILITIES:
+                               return lookup (id) (props.specialAbilities)
+
+                             case Categories.SPELLS:
+                               return lookup (id) (props.spells)
+
+                             case Categories.TALENTS:
+                               return lookup (id) (props.skills)
+
+                             default:
+                               return Nothing
+                           }
+                         })
+                         (mcategory)
          })

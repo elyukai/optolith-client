@@ -1,10 +1,11 @@
 import { equals } from "../../Data/Eq";
 import { fmap } from "../../Data/Functor";
 import { set } from "../../Data/Lens";
-import { all, flength, fromArray, isList, List, map, notNullStr } from "../../Data/List";
-import { bindF, ensure, fromJust, Just, mapMaybe, Maybe, maybe, Nothing, product } from "../../Data/Maybe";
+import { flength, fromArray, List, map, notNullStr } from "../../Data/List";
+import { bindF, ensure, fromJust, Just, liftM2, mapMaybe, Maybe, maybe, Nothing, product } from "../../Data/Maybe";
 import { Record } from "../../Data/Record";
 import { show } from "../../Data/Show";
+import { bimap, fst, isTuple, Pair, snd } from "../../Data/Tuple";
 import { IdPrefixes } from "../Constants/IdPrefixes";
 import { EditHitZoneArmor, EditHitZoneArmorSafe } from "../Models/Hero/EditHitZoneArmor";
 import { EditItem, EditItemL, EditItemSafe } from "../Models/Hero/EditItem";
@@ -29,10 +30,10 @@ const primaryAttributeDamageThresholdToEditable =
     ((damageBonus: Record<PrimaryAttributeDamageThreshold>) =>
       EditPrimaryAttributeDamageThreshold ({
         primary: PrimaryAttributeDamageThreshold.AL.primary (damageBonus),
-        threshold: ifElse<number | List<number>, List<number>>
-          (isList)
-          <string | List<string>>
-          (map (show))
+        threshold: ifElse<number | Pair<number, number>, Pair<number, number>>
+          (isTuple)
+          <string | Pair<string, string>>
+          (bimap (show) (show))
           (show)
           (PrimaryAttributeDamageThreshold.AL.threshold (damageBonus)),
       }))
@@ -67,14 +68,14 @@ export const itemToEditable =
       length: showMaybe (Item.AL.length (item)),
       amount: show (Item.AL.amount (item)),
       pa: showMaybe (Item.AL.pa (item)),
-      price: show (Item.AL.price (item)),
+      price: showMaybe (Item.AL.price (item)),
       pro: showMaybe (Item.AL.pro (item)),
       range: maybe (List ("", "", ""))
                    (map<number, string> (show))
                    (Item.AL.range (item)),
       reloadTime: showMaybe (Item.AL.reloadTime (item)),
       stp: showMaybe (Item.AL.stp (item)),
-      weight: show (Item.AL.weight (item)),
+      weight: showMaybe (Item.AL.weight (item)),
       stabilityMod: showMaybe (Item.AL.stabilityMod (item)),
     })
 
@@ -86,14 +87,20 @@ const toMaybeIntGreaterThan1 = toMaybeIntGreaterThan (1)
 
 const editableToPrimaryAttributeDamageThreshold =
   (damageBonus: Record<EditPrimaryAttributeDamageThreshold>) =>
-    ifElse<string | List<string>, List<string>>
-      (isList)
-      (threshold => all<string> (e => e .length > 0) (threshold)
-        ? Just (PrimaryAttributeDamageThreshold ({
-          primary: EditPrimaryAttributeDamageThreshold.AL.primary (damageBonus),
-          threshold: mapMaybe<string, number> (toInt) (threshold),
-        }))
-        : Nothing)
+    ifElse<string | Pair<string, string>, Pair<string, string>>
+      (isTuple)
+      (threshold => {
+        const mfst_th = toInt (fst (threshold))
+        const msnd_th = toInt (snd (threshold))
+
+        return liftM2 ((fst_th: number) => (snd_th: number) =>
+                        PrimaryAttributeDamageThreshold ({
+                          primary: EditPrimaryAttributeDamageThreshold.AL.primary (damageBonus),
+                          threshold: Pair (fst_th, snd_th),
+                        }))
+                      (mfst_th)
+                      (msnd_th)
+      })
       (threshold => threshold .length > 0
         ? fmap ((safeThreshold: number) => PrimaryAttributeDamageThreshold ({
                  primary: EditPrimaryAttributeDamageThreshold.AL.primary (damageBonus),

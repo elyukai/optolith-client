@@ -16,7 +16,7 @@ import { any, keysSet, lookup, lookupF, mapMaybe, OrderedMap } from "../../Data/
 import { differenceF, map } from "../../Data/OrderedSet";
 import { fst, Pair } from "../../Data/Pair";
 import { Record, StringKeyObject, toObject } from "../../Data/Record";
-import { IO, readFile, runIO, writeFile } from "../../System/IO";
+import { IO, readFile, writeFile } from "../../System/IO";
 import { ActionTypes } from "../Constants/ActionTypes";
 import { IdPrefixes } from "../Constants/IdPrefixes";
 import { HeroModel } from "../Models/Hero/HeroModel";
@@ -339,8 +339,7 @@ export const requestHeroSave =
 
                              return Just (hero .id)
                            }
-                         }),
-                         runIO
+                         })
                        ))
     }
 

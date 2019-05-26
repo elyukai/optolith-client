@@ -1,13 +1,14 @@
 import { flip, ident } from "../../Data/Function";
 import { fmap, fmapF } from "../../Data/Functor";
 import { consF, elem, elemF, filter, foldr, intercalate, List, map } from "../../Data/List";
-import { fromMaybe, Just, liftM2, liftM3, mapMaybe, Maybe, Nothing } from "../../Data/Maybe";
+import { bindF, fromMaybe, Just, liftM2, liftM3, listToMaybe, mapMaybe, Maybe, Nothing } from "../../Data/Maybe";
 import { insert, lookup, OrderedMap } from "../../Data/OrderedMap";
 import { uncurryN } from "../../Data/Pair";
 import { Record } from "../../Data/Record";
 import { ActivatableCategory, Categories } from "../Constants/Categories";
 import { IdPrefixes } from "../Constants/IdPrefixes";
 import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
+import { ActiveObject } from "../Models/ActiveEntries/ActiveObject";
 import { ActiveObjectWithId } from "../Models/ActiveEntries/ActiveObjectWithId";
 import { EntryRating } from "../Models/Hero/heroTypeHelpers";
 import { ActivatableActivationValidation } from "../Models/View/ActivatableActivationValidationObject";
@@ -30,10 +31,11 @@ import { createMapSelectorP } from "../Utilities/createMapSelector";
 import { createMaybeSelector } from "../Utilities/createMaybeSelector";
 import { filterAndSortRecordsBy } from "../Utilities/filterAndSortBy";
 import { compareLocale } from "../Utilities/I18n";
-import { prefixId } from "../Utilities/IDUtils";
+import { prefixId, prefixSA } from "../Utilities/IDUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
 import { mapCurrentHero, mapGetToMaybeSlice, mapGetToSlice } from "../Utilities/SelectorsUtils";
 import { comparingR } from "../Utilities/sortBy";
+import { misStringM } from "../Utilities/typeCheckUtils";
 import { getBlessedTraditionFromWikiState } from "./liturgicalChantsSelectors";
 import { getCurrentCulture, getCurrentProfession, getCurrentRace } from "./rcpSelectors";
 import { getSpecialAbilitiesSortOptions } from "./sortOptionsSelectors";
@@ -333,4 +335,12 @@ export const isAlbino = createMaybeSelector (
     getActiveSelections,
     elem<string | number> (1)
   ))
+)
+
+export const getGuildMageUnfamiliarSpellId = createMaybeSelector (
+  mapGetToMaybeSlice (getSpecialAbilities) (prefixSA (70)),
+  pipe (
+    bindF (pipe (ActivatableDependent.A.active, listToMaybe)),
+    fmap (pipe (ActiveObject.A.sid, misStringM))
+  )
 )

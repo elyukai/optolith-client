@@ -286,3 +286,17 @@ export const setInactiveSpecialAbilitiesFilterText =
       filterText,
     },
   })
+
+export interface SetGuildMageUnfamiliarSpellIdAction {
+  type: ActionTypes.SET_TRADITION_GUILD_MAGE_UNFAMILIAR_SPELL_ID
+  payload: {
+    id: string;
+  }
+}
+
+export const setGuildMageUnfamiliarSpellId = (id: string): SetGuildMageUnfamiliarSpellIdAction => ({
+  type: ActionTypes.SET_TRADITION_GUILD_MAGE_UNFAMILIAR_SPELL_ID,
+  payload: {
+    id,
+  },
+})

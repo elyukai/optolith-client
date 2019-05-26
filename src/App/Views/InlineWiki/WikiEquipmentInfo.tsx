@@ -1,9 +1,10 @@
 import * as React from "react";
 import { fmap, fmapF } from "../../../Data/Functor";
-import { elemF, intercalate, isList, List, notElem, notNull, subscript } from "../../../Data/List";
+import { elemF, intercalate, List, notElem, notNull, subscript } from "../../../Data/List";
 import { alt_, bind, bindF, ensure, fromMaybe, guard, imapMaybe, liftM2, mapMaybe, Maybe, maybe, maybeR, maybeRNullF, then } from "../../../Data/Maybe";
 import { lookupF, OrderedMap } from "../../../Data/OrderedMap";
 import { fromDefault, Record } from "../../../Data/Record";
+import { fst, isTuple, snd } from "../../../Data/Tuple";
 import { Item } from "../../Models/Hero/Item";
 import { Attribute } from "../../Models/Wiki/Attribute";
 import { Book } from "../../Models/Wiki/Book";
@@ -30,7 +31,7 @@ export interface WikiEquipmentInfoProps {
   combatTechniques: OrderedMap<string, Record<CombatTechnique>>
   x: Record<ItemTemplate> | Record<Item>
   l10n: L10nRecord
-  templates: OrderedMap<string, Record<ItemTemplate>>
+  itemTemplates: OrderedMap<string, Record<ItemTemplate>>
 }
 
 const ITAL = ItemTemplate.AL
@@ -41,7 +42,7 @@ const AA = Attribute.A
 
 // tslint:disable-next-line: cyclomatic-complexity
 export function WikiEquipmentInfo (props: WikiEquipmentInfoProps) {
-  const { attributes, x, l10n, combatTechniques, templates } = props
+  const { attributes, x, l10n, combatTechniques, itemTemplates } = props
   const locale = L10n.A.id (l10n)
   const gr = ITAL.gr (x)
   const name = ITAL.name (x)
@@ -73,7 +74,7 @@ export function WikiEquipmentInfo (props: WikiEquipmentInfoProps) {
   const mdisadvantage =
     pipe (bindF (ensure (pipe (ITA.gr, elemF (List (1, 2, 4))))), fmap (ITA.disadvantage)) (templ)
 
-  const ammunitionTemplate = bind (ammunition) (lookupF (templates))
+  const ammunitionTemplate = bind (ammunition) (lookupF (itemTemplates))
 
   const addPenaltiesArr =
     addPenalties
@@ -92,15 +93,17 @@ export function WikiEquipmentInfo (props: WikiEquipmentInfoProps) {
   const mpadt =
     liftM2 ((primary_attr_id_list: List<string>) =>
             (padt_obj: Record<PrimaryAttributeDamageThreshold>) => {
-              const threshold = PADTA.threshold (padt_obj)
+              const th = PADTA.threshold (padt_obj)
 
-              return isList (threshold)
+              return isTuple (th)
                 ? pipe_ (
                     primary_attr_id_list,
                     imapMaybe (i => pipe (
                                            lookupF (attributes),
-                                           liftM2 ((t: number) => pipe (AA.short, s => `${s} ${t}`))
-                                                  (subscript (threshold) (i))
+                                           fmap (pipe (
+                                             AA.short,
+                                             s => `${s} ${i === 0 ? fst (th) : snd (th)}`
+                                           ))
                                          )),
                     intercalate ("/")
                   )
@@ -169,7 +172,7 @@ export function WikiEquipmentInfo (props: WikiEquipmentInfoProps) {
             <td>
               {renderMaybe (damageDiceNumber)}
               {translate (l10n) ("dice.short")}
-              {damageDiceSides}
+              {renderMaybe (damageDiceSides)}
               {renderMaybeWith (signZero) (damageFlat)}
             </td>
           </tr>

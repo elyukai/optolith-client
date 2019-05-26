@@ -318,3 +318,17 @@ export const addAdventurePoints = (amount: number): AddAdventurePointsAction => 
     amount,
   },
 })
+
+export interface SetHeroLocaleAction {
+  type: ActionTypes.SET_HERO_LOCALE
+  payload: {
+    locale: string;
+  }
+}
+
+export const setHeroLocale = (locale: string): SetHeroLocaleAction => ({
+  type: ActionTypes.SET_HERO_LOCALE,
+  payload: {
+    locale,
+  },
+})

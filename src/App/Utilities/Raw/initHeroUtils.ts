@@ -5,6 +5,7 @@ import { elem, Maybe, maybe, Nothing } from "../../../Data/Maybe";
 import { foldlWithKey, lookup, lookupF, OrderedMap } from "../../../Data/OrderedMap";
 import { insert, OrderedSet } from "../../../Data/OrderedSet";
 import { Record, StringKeyObject } from "../../../Data/Record";
+import { Tuple } from "../../../Data/Tuple";
 import { Categories } from "../../Constants/Categories";
 import { ActivatableDependent, createActivatableDependentWithActive } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent, createActivatableSkillDependentWithValue } from "../../Models/ActiveEntries/ActivatableSkillDependent";
@@ -23,6 +24,7 @@ import { PersonalData } from "../../Models/Hero/PersonalData";
 import { Pet } from "../../Models/Hero/Pet";
 import { Purse } from "../../Models/Hero/Purse";
 import { Rules } from "../../Models/Hero/Rules";
+import { L10n, L10nRecord } from "../../Models/Wiki/L10n";
 import { Spell } from "../../Models/Wiki/Spell";
 import { PrimaryAttributeDamageThreshold } from "../../Models/Wiki/sub/PrimaryAttributeDamageThreshold";
 import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
@@ -35,10 +37,11 @@ import { getCategoryById } from "../IDUtils";
 import { pipe, pipe_ } from "../pipe";
 import * as Raw from "./RawData";
 
-const createHeroObject = (hero: Raw.RawHero): HeroModelRecord =>
+const createHeroObject = (l10n: L10nRecord) => (hero: Raw.RawHero): HeroModelRecord =>
   HeroModel ({
     id: hero .id,
     clientVersion: hero .clientVersion,
+    locale: L10n.A.id (l10n),
     phase: hero .phase,
     name: hero .name,
     avatar: Maybe (hero .avatar),
@@ -143,7 +146,7 @@ const createHeroObject = (hero: Raw.RawHero): HeroModelRecord =>
                     (primaryThreshold => PrimaryAttributeDamageThreshold ({
                       primary: Maybe (primaryThreshold .primary),
                       threshold: typeof primaryThreshold .threshold === "object"
-                        ? List.fromArray (primaryThreshold .threshold)
+                        ? Tuple.fromArray (primaryThreshold .threshold as [number, number])
                         : primaryThreshold .threshold,
                     }))
                     (Maybe (obj .primaryThreshold)),
@@ -354,8 +357,10 @@ const addDependenciesForSlice =
   }
 
 export const convertFromRawHero =
-  (wiki: WikiModelRecord) => (hero: Raw.RawHero): HeroModelRecord => {
-    const intermediateState = createHeroObject (hero)
+  (l10n: L10nRecord) =>
+  (wiki: WikiModelRecord) =>
+  (hero: Raw.RawHero): HeroModelRecord => {
+    const intermediateState = createHeroObject (l10n) (hero)
 
     const activeAdvantages = getActiveFromState (advantages (intermediateState))
     const activeDisadvantages = getActiveFromState (disadvantages (intermediateState))

@@ -21,7 +21,7 @@ export const integer = /^(?:0|-?[1-9][0-9]*)$/
  */
 export const integerU = "0|-?[1-9][0-9]*"
 
-export const float = /^(?:0|-?[1-9][0-9]*(?:[\.,][0-9]+)?)$/
+export const float = /^(?:(?:0|-?[1-9][0-9]*)(?:[\.,][0-9]+)?)$/
 
 /**
  * Float regex source without explicit start and end.

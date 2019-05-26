@@ -5,6 +5,7 @@ import { bind, elem, maybeToUndefined } from "../../../Data/Maybe";
 import { foldl, foldlWithKey, OrderedMap, OrderedMapValueElement, toObjectWith, union } from "../../../Data/OrderedMap";
 import { toArray } from "../../../Data/OrderedSet";
 import { Record, StringKeyObject, toObject } from "../../../Data/Record";
+import { isTuple, Pair, Tuple } from "../../../Data/Tuple";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
@@ -206,10 +207,10 @@ const getBelongingsForSave = (hero: HeroModelRecord) =>
                 (bonus => ({
                   primary: maybeToUndefined (primary (bonus)) ,
                   threshold:
-                    ifElse<number | List<number>, List<number>>
-                      (List.isList)
+                    ifElse<number | Pair<number, number>, Pair<number, number>>
+                      (isTuple)
                       <number | number[]>
-                      (List.toArray)
+                      (Tuple.toArray)
                       (ident)
                       (threshold (bonus)),
                 }))

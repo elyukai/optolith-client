@@ -1,6 +1,7 @@
 import { lt, lte, satisfies } from "semver";
 import { ident } from "../../../Data/Function";
 import { StringKeyObject } from "../../../Data/Record";
+import { L10n, L10nRecord } from "../../Models/Wiki/L10n";
 import { getBlessedTradStrIdFromNumId, getMagicalTraditionInstanceIdByNumericId } from "../IDUtils";
 import { pipe_ } from "../pipe";
 import { isNumber } from "../typeCheckUtils";
@@ -824,63 +825,66 @@ const convertLowerThan1_1_0_Alpha_1 = (hero: RawHero): RawHero => {
   }
 }
 
-export const convertHero = (orig_hero: RawHero): RawHero => {
-  let entry = { ...orig_hero }
+export const convertHero =
+  (l10n: L10nRecord) =>
+  (orig_hero: RawHero): RawHero => {
+    let entry = { ...orig_hero }
 
-  if (lt (entry.clientVersion, "0.49.5")) {
-    entry = convertLowerThan0_49_5 (entry)
-  }
+    if (lt (entry.clientVersion, "0.49.5")) {
+      entry = convertLowerThan0_49_5 (entry)
+    }
 
-  if (
-    lte (entry.clientVersion.split (/-/)[0], "0.51.0")
-    || entry.clientVersion === "0.51.1-alpha.1"
-  ) {
-    entry = convertLowerThanOrEqual0_51_0 (entry)
-  }
+    if (
+      lte (entry.clientVersion.split (/-/)[0], "0.51.0")
+      || entry.clientVersion === "0.51.1-alpha.1"
+    ) {
+      entry = convertLowerThanOrEqual0_51_0 (entry)
+    }
 
-  if (satisfies (entry.clientVersion.split (/-/)[0], "<= 0.51.2 || <= 0.51.3-alpha.3")) {
-    entry = convertLowerThanOrEqual0_51_2 (entry)
-  }
+    if (satisfies (entry.clientVersion.split (/-/)[0], "<= 0.51.2 || <= 0.51.3-alpha.3")) {
+      entry = convertLowerThanOrEqual0_51_2 (entry)
+    }
 
-  if (satisfies (entry.clientVersion, "<= 0.51.3 || < 0.51.4-alpha.6")) {
-    entry = convertLowerThanOrEqual0_51_3 (entry)
-  }
+    if (satisfies (entry.clientVersion, "<= 0.51.3 || < 0.51.4-alpha.6")) {
+      entry = convertLowerThanOrEqual0_51_3 (entry)
+    }
 
-  return pipe_ (
-    entry,
-    convertLT ("1.0.0") (convertLowerThan1_0_0),
-    convertLT ("1.0.2") (convertLowerThan1_0_2),
-    convertLT ("1.1.0-alpha.1") (convertLowerThan1_1_0_Alpha_1),
-    convertLT ("1.1.0-alpha.9")
-              (hero => ({
-                ...hero,
-                belongings: {
-                  ...hero.belongings,
-                  items: pipe_ (
-                    hero.belongings.items,
-                    Object.entries,
-                    (xs: [string, RawCustomItem][]) => xs .map<[string, RawCustomItem]> (
-                      x => [
-                        x[0],
-                        {
-                          ...x[1],
-                          reloadTime:
-                            isNumber (x[1].reloadTime)
-                              ? (x[1].reloadTime as number).toString ()
-                              : x[1].reloadTime,
-                          stp:
-                            isNumber (x[1].stp)
-                              ? (x[1].stp as number).toString ()
-                              : x[1].stp,
-                        },
-                      ]
+    return pipe_ (
+      entry,
+      convertLT ("1.0.0") (convertLowerThan1_0_0),
+      convertLT ("1.0.2") (convertLowerThan1_0_2),
+      convertLT ("1.1.0-alpha.1") (convertLowerThan1_1_0_Alpha_1),
+      convertLT ("1.1.0-alpha.9")
+                (hero => ({
+                  ...hero,
+                  locale: L10n.A.id (l10n),
+                  belongings: {
+                    ...hero.belongings,
+                    items: pipe_ (
+                      hero.belongings.items,
+                      Object.entries,
+                      (xs: [string, RawCustomItem][]) => xs .map<[string, RawCustomItem]> (
+                        x => [
+                          x[0],
+                          {
+                            ...x[1],
+                            reloadTime:
+                              isNumber (x[1].reloadTime)
+                                ? (x[1].reloadTime as number).toString ()
+                                : x[1].reloadTime,
+                            stp:
+                              isNumber (x[1].stp)
+                                ? (x[1].stp as number).toString ()
+                                : x[1].stp,
+                          },
+                        ]
+                      ),
+                      fromEntries
                     ),
-                    fromEntries
-                  ),
-                },
-              }))
-  )
-}
+                  },
+                }))
+    )
+  }
 
 const fromEntries =
   <A> (xs: [string, A][]): { [key: string]: A } => {

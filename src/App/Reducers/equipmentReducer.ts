@@ -2,10 +2,12 @@ import { not } from "../../Data/Bool";
 import { ident } from "../../Data/Function";
 import { fmap } from "../../Data/Functor";
 import { over, set, view } from "../../Data/Lens";
-import { insertAt, isList, List } from "../../Data/List";
+import { insertAt, isList } from "../../Data/List";
 import { bind, bindF, ensure, fromJust, Just, maybe, Maybe, Nothing, thenF } from "../../Data/Maybe";
 import { insert, lookup, map, sdelete } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
+import { isTuple, Pair } from "../../Data/Tuple";
+import { upd1, upd2 } from "../../Data/Tuple/Update";
 import * as EquipmentActions from "../Actions/EquipmentActions";
 import { ActionTypes } from "../Constants/ActionTypes";
 import { BelongingsL } from "../Models/Hero/Belongings";
@@ -396,13 +398,11 @@ const itemDetailsReducer =
       case ActionTypes.SET_ITEM_FIRST_DAMAGE_THRESHOLD:
       case ActionTypes.SET_ITEM_SECOND_DAMAGE_THRESHOLD: {
         const isFirst = action.type === ActionTypes.SET_ITEM_FIRST_DAMAGE_THRESHOLD
-        const index = isFirst ? 0 : 1
+        const upd = isFirst ? upd1 : upd2
 
         return modifyEditItem (over (composeL (damageBonus, threshold))
-                                    (xs => isList (xs)
-                                      ? insertAt (index)
-                                                 (action.payload.value)
-                                                 (xs)
+                                    (xs => isTuple (xs)
+                                      ? upd (action.payload.value) (xs)
                                       : xs))
       }
 
@@ -468,7 +468,7 @@ const itemOptionsReducer =
     switch (action.type) {
       case ActionTypes.SWITCH_IS_ITEM_DAMAGE_THRESHOLD_SEPARATED: {
         return modifyEditItem (over (composeL (damageBonus, threshold))
-                                    (xs => isList (xs) ? "" : List ("", "")))
+                                    (xs => isTuple (xs) ? "" : Pair ("", "")))
       }
 
       case ActionTypes.SWITCH_IS_ITEM_PARRYING_WEAPON: {

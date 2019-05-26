@@ -13,34 +13,34 @@ import { HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel";
 import { activatableReducer } from "./activatableReducer";
 import { increasableReducer } from "./increasableReducer";
 
-type Action =
-  AttributesActions.AddAttributePointAction |
-  AttributesActions.RemoveAttributePointAction |
-  AttributesActions.SetAdjustmentIdAction |
-  CombatTechniquesActions.AddCombatTechniquePointAction |
-  CombatTechniquesActions.RemoveCombatTechniquePointAction |
-  HerolistActions.CreateHeroAction |
-  HerolistActions.LoadHeroAction |
-  LiturgicalChantActions.ActivateLiturgicalChantAction |
-  LiturgicalChantActions.AddLiturgicalChantPointAction |
-  LiturgicalChantActions.DeactivateLiturgyAction |
-  LiturgicalChantActions.RemoveLiturgicalChantPointAction |
-  LiturgicalChantActions.ActivateBlessingAction |
-  LiturgicalChantActions.DeactivateBlessingAction |
-  SpellsActions.ActivateSpellAction |
-  SpellsActions.AddSpellPointAction |
-  SpellsActions.DeactivateSpellAction |
-  SpellsActions.RemoveSpellPointAction |
-  SpellsActions.ActivateCantripAction |
-  SpellsActions.DeactivateCantripAction |
-  SkillActions.AddSkillPointAction |
-  SkillActions.RemoveSkillPointAction |
-  DisAdvActions.ActivateDisAdvAction |
-  DisAdvActions.DeactivateDisAdvAction |
-  DisAdvActions.SetDisAdvLevelAction |
-  SpecialAbilitiesActions.ActivateSpecialAbilityAction |
-  SpecialAbilitiesActions.DeactivateSpecialAbilityAction |
-  SpecialAbilitiesActions.SetSpecialAbilityTierAction
+type Action = AttributesActions.AddAttributePointAction
+            | AttributesActions.RemoveAttributePointAction
+            | AttributesActions.SetAdjustmentIdAction
+            | CombatTechniquesActions.AddCombatTechniquePointAction
+            | CombatTechniquesActions.RemoveCombatTechniquePointAction
+            | HerolistActions.CreateHeroAction
+            | HerolistActions.LoadHeroAction
+            | LiturgicalChantActions.ActivateLiturgicalChantAction
+            | LiturgicalChantActions.AddLiturgicalChantPointAction
+            | LiturgicalChantActions.DeactivateLiturgyAction
+            | LiturgicalChantActions.RemoveLiturgicalChantPointAction
+            | LiturgicalChantActions.ActivateBlessingAction
+            | LiturgicalChantActions.DeactivateBlessingAction
+            | SpellsActions.ActivateSpellAction
+            | SpellsActions.AddSpellPointAction
+            | SpellsActions.DeactivateSpellAction
+            | SpellsActions.RemoveSpellPointAction
+            | SpellsActions.ActivateCantripAction
+            | SpellsActions.DeactivateCantripAction
+            | SkillActions.AddSkillPointAction
+            | SkillActions.RemoveSkillPointAction
+            | DisAdvActions.ActivateDisAdvAction
+            | DisAdvActions.DeactivateDisAdvAction
+            | DisAdvActions.SetDisAdvLevelAction
+            | SpecialAbilitiesActions.ActivateSpecialAbilityAction
+            | SpecialAbilitiesActions.DeactivateSpecialAbilityAction
+            | SpecialAbilitiesActions.SetSpecialAbilityTierAction
+            | SpecialAbilitiesActions.SetGuildMageUnfamiliarSpellIdAction
 
 const { attributeAdjustmentSelected } = HeroModelL
 
@@ -73,6 +73,7 @@ export const dependentReducer =
       case ActionTypes.DEACTIVATE_SPECIALABILITY:
       case ActionTypes.SET_DISADV_TIER:
       case ActionTypes.SET_SPECIALABILITY_TIER:
+      case ActionTypes.SET_TRADITION_GUILD_MAGE_UNFAMILIAR_SPELL_ID:
         return activatableReducer (action)
 
       case ActionTypes.SET_ATTRIBUTE_ADJUSTMENT_SELECTION_ID:

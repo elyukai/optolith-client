@@ -39,8 +39,8 @@ interface TupleConstructor {
   uncurry: <A, B, C>(f: (a: A) => (b: B) => C) => (x: Pair<A, B>) => C
   swap: <A, B>(x: Pair<A, B>) => Pair<B, A>
 
-  toArray: <A, B>(x: Pair<A, B>) => [A, B]
-  fromArray: <A, B>(x: [A, B]) => Pair<A, B>
+  toArray: <A extends any[]>(x: Tuple<A>) => A
+  fromArray: <A extends any[]>(x: A) => Tuple<A>
   isTuple: (x: any) => x is Tuple<any[]>
 }
 

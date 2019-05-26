@@ -2,18 +2,19 @@ import { notP } from "../../Data/Bool";
 import { flip, ident, join } from "../../Data/Function";
 import { fmapF } from "../../Data/Functor";
 import { over, set } from "../../Data/Lens";
-import { List } from "../../Data/List";
+import { consF, List } from "../../Data/List";
 import { and, elem, fromJust, isJust, isNothing, Just, or } from "../../Data/Maybe";
 import { insert, OrderedMap } from "../../Data/OrderedMap";
 import { snd } from "../../Data/Pair";
 import { Record } from "../../Data/Record";
+import { fst } from "../../Data/Tuple";
 import { RedoAction, UndoAction } from "../Actions/HistoryActions";
 import { ReceiveImportedHeroAction, ReceiveInitialDataAction } from "../Actions/IOActions";
 import { ActionTypes } from "../Constants/ActionTypes";
 import { HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel";
-import { User } from "../Models/Hero/heroTypeHelpers";
+import { Alert, User } from "../Models/Hero/heroTypeHelpers";
 import { getRuleBooksEnabled } from "../Selectors/rulesSelectors";
-import { getCurrentCultureId, getCurrentRaceId, getCurrentTab, getPhase } from "../Selectors/stateSelectors";
+import { getCurrentCultureId, getCurrentRaceId, getCurrentTab, getLocaleMessages, getPhase } from "../Selectors/stateSelectors";
 import { composeL } from "../Utilities/compose";
 import { TabId } from "../Utilities/LocationUtils";
 import { pipe } from "../Utilities/pipe";
@@ -21,7 +22,7 @@ import { convertHero } from "../Utilities/Raw/compatibilityUtils";
 import { convertFromRawHero } from "../Utilities/Raw/initHeroUtils";
 import { isBookEnabled } from "../Utilities/RulesUtils";
 import { UndoState } from "../Utilities/undo";
-import { AppStateRecord } from "./appReducer";
+import { AppState, AppStateRecord } from "./appReducer";
 import { appSlicesReducer } from "./appSlicesReducer";
 import { HeroesStateL } from "./herolistReducer";
 import { toHeroWithHistory } from "./heroReducer";
@@ -44,13 +45,10 @@ const prepareHerolist =
     if (isJust (rawHeroes)) {
       const hs = Object.entries (fromJust (rawHeroes)).reduce<Reduced> (
         ({ heroes, users }, [key, hero]) => {
-          const updatedHero = convertHero (hero)
-          const heroInstance = convertFromRawHero (snd (action.payload.tables))
+          const updatedHero = convertHero (fst (action.payload.tables)) (hero)
+          const heroInstance = convertFromRawHero (fst (action.payload.tables))
+                                                  (snd (action.payload.tables))
                                                   (updatedHero)
-
-          if (hero.name === "ReworkTest#1") {
-            console.log (hero, updatedHero, heroInstance)
-          }
 
           const undoState = toHeroWithHistory (heroInstance)
 
@@ -88,8 +86,23 @@ const prepareImportedHero =
   (state: AppStateRecord): AppStateRecord => {
     const { data, player } = action.payload
 
-    const updatedHero = convertHero (data)
-    const heroInstance = convertFromRawHero (appSlicesReducer.A.wiki (state)) (updatedHero)
+    const ml10n = getLocaleMessages (state)
+
+    if (isNothing (ml10n)) {
+      return over (composeL (AppState.L.ui, uiReducer.L.alerts))
+                  (consF<Alert> ({
+                    title: "No localization loaded!",
+                    message: "Could not prepare imported hero for integration.",
+                  }))
+                  (state)
+    }
+
+    const l10n = fromJust (ml10n)
+
+    const updatedHero = convertHero (l10n) (data)
+    const heroInstance = convertFromRawHero (l10n)
+                                            (appSlicesReducer.A.wiki (state))
+                                            (updatedHero)
 
 
     if (player) {
