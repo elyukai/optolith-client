@@ -4,7 +4,6 @@ import { bind, bindF, fromMaybe, Just, liftM2, listToMaybe, maybe, Maybe, Nothin
 import { elems, fromList } from "../../Data/OrderedMap";
 import { fst, Pair, snd } from "../../Data/Pair";
 import { Record } from "../../Data/Record";
-import { showP } from "../../Data/Show";
 import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
 import { ActiveObject } from "../Models/ActiveEntries/ActiveObject";
 import { AttributeDependent } from "../Models/ActiveEntries/AttributeDependent";
@@ -166,8 +165,6 @@ export const getKP = createMaybeSelector (
     const mbase = fmapF (mprimary) (pipe (ACA.stateEntry, ADA.value, add (20)))
 
     const value = fmapF (mbase) (base => base + mod + Maybe.sum (added))
-
-    console.log (showP (mprimary), showP (mbase), showP (value));
 
     return DerivedCharacteristic<"KP"> ({
       add: Just (Maybe.sum (added)),

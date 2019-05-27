@@ -141,6 +141,7 @@ export class Disadvantages extends React.Component<DisadvantagesProps, Disadvant
                                    magical={APCA.spentOnMagicalDisadvantages (ap)}
                                    magicalMax={magicalMax}
                                    l10n={l10n}
+                                   isDisadvantages
                                    />
                                )))}
             {showRating ? <RecommendedReference l10n={l10n} /> : null}

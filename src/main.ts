@@ -111,9 +111,7 @@ function createWindow () {
               mainWindow!.webContents.send ("update-available", res.updateInfo)
             }
           })
-          .catch (
-            err => mainWindow!.webContents.send ("auto-updater-error", err)
-          )
+          .catch ()
 
         autoUpdater.addListener ("update-available", (info: UpdateInfo) => {
           mainWindow!.webContents.send ("update-available", info)
@@ -123,9 +121,7 @@ function createWindow () {
         ipcMain.addListener ("download-update", () => {
           autoUpdater
             .downloadUpdate (cancellationToken)
-            .catch (
-              err => mainWindow!.webContents.send ("auto-updater-error", err)
-            )
+            .catch ()
         })
 
         ipcMain.addListener ("check-for-updates", () => {
@@ -140,9 +136,7 @@ function createWindow () {
                 mainWindow!.webContents.send ("update-not-available")
               }
             })
-            .catch (
-              err => mainWindow!.webContents.send ("auto-updater-error", err)
-            )
+            .catch ()
         })
 
         autoUpdater.signals.progress (progressObj => {
@@ -158,10 +152,9 @@ function createWindow () {
         })
       })
     })
-    .catch (err => { console.error (err); })
+    .catch (err => { console.error (err) })
 
   mainWindow.on ("closed", () => {
-    // tslint:disable-next-line:no-null-keyword
     mainWindow = null
   })
 }

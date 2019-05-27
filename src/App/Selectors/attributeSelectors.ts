@@ -7,7 +7,6 @@ import { elems, foldr, lookup, lookupF, OrderedMap } from "../../Data/OrderedMap
 import { Record } from "../../Data/Record";
 import { fst, snd } from "../../Data/Tuple";
 import { uncurryN } from "../../Data/Tuple/Curry";
-import { traceShow } from "../../Debug/Trace";
 import { IdPrefixes } from "../Constants/IdPrefixes";
 import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
 import { AttributeDependent, createPlainAttributeDependent } from "../Models/ActiveEntries/AttributeDependent";
@@ -319,12 +318,9 @@ export const getPrimaryBlessedAttribute = createMaybeSelector (
   getAttributes,
   getWikiAttributes,
   (mtradition, mhero_attributes, wiki_attributes) =>
-    bind (traceShow ("mtradition = ") (mtradition))
-         (pipe (
-           getPrimaryBlessedAttributeByTrad (wiki_attributes)
-                                            (mhero_attributes),
-           traceShow ("primary attr = ")
-         ))
+    bind (mtradition)
+         (getPrimaryBlessedAttributeByTrad (wiki_attributes)
+                                           (mhero_attributes))
 )
 
 export const getPrimaryBlessedAttributeForSheet = createMaybeSelector (

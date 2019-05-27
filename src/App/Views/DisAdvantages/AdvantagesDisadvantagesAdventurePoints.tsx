@@ -10,6 +10,7 @@ export interface AdvantagesDisadvantagesAdventurePointsProps {
   magicalMax: Maybe<number>
   blessed: number
   l10n: L10nRecord
+  isDisadvantages?: boolean
 }
 
 export function AdvantagesDisadvantagesAdventurePoints (
@@ -21,22 +22,33 @@ export function AdvantagesDisadvantagesAdventurePoints (
     magicalMax,
     blessed,
     l10n,
+    isDisadvantages,
   } = props
 
   return (
     <p>
-      {translateP (l10n) ("apspentonadvantages") (List (total, 80))}<br/>
+      {translateP (l10n)
+                  (isDisadvantages === true
+                    ? "apspentondisadvantages"
+                    : "apspentonadvantages")
+                  (List (total, 80))}<br/>
       {
         magical > 0
           ? translateP (l10n)
-                       ("apspentonmagicadvantages")
+                       (isDisadvantages === true
+                         ? "apspentonmagicdisadvantages"
+                         : "apspentonmagicadvantages")
                        (List (magical, fromMaybe (50) (magicalMax)))
           : null
       }
       {magical > 0 && blessed > 0 ? <br/> : null}
       {
         blessed > 0
-          ? translateP (l10n) ("apspentonblessedadvantages") (List (blessed, 50))
+          ? translateP (l10n)
+                       (isDisadvantages === true
+                         ? "apspentonblesseddisadvantages"
+                         : "apspentonblessedadvantages")
+                       (List (blessed, 50))
           : null
       }
     </p>

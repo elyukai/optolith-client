@@ -1,9 +1,9 @@
-import { equals } from "../../../Data/Eq";
+import { equals, notEquals } from "../../../Data/Eq";
 import { flip, thrush } from "../../../Data/Function";
 import { fmap } from "../../../Data/Functor";
 import { Lens_, over, set, view } from "../../../Data/Lens";
 import { all, append, concatMap, elem, empty, filter, findIndex, flength, foldr, isList, List, ListI, map, modifyAt, partition, pure } from "../../../Data/List";
-import { alt, and, any, fromJust, fromMaybe, isJust, isNothing, Just, liftM2, Maybe, Nothing, or } from "../../../Data/Maybe";
+import { alt, and, fromJust, fromMaybe, isJust, isNothing, Just, liftM2, Maybe, Nothing, or } from "../../../Data/Maybe";
 import { fst, snd } from "../../../Data/Pair";
 import { Record } from "../../../Data/Record";
 import { HeroModelL, HeroModelRecord } from "../../Models/Hero/HeroModel";
@@ -36,7 +36,7 @@ export type StyleDependencyStateKeys =
  */
 const lensByStyle =
   (x: Record<SpecialAbility>): Maybe<StyleDependenciesLens> => {
-    if (any (pipe ((flength), equals (3))) (extended (x))) {
+    if (Maybe.all (pipe (flength, notEquals (3))) (extended (x))) {
       return Nothing
     }
 

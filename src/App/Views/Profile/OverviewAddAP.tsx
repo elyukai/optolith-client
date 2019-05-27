@@ -10,7 +10,7 @@ import { TextField } from "../Universal/TextField";
 
 interface OverviewAddAPProps {
   l10n: L10nRecord
-  isOpened: boolean
+  isOpen: boolean
   isRemovingEnabled: boolean
   addAdventurePoints (ap: number): void
   close (): void
@@ -35,7 +35,7 @@ export class OverviewAddAP extends React.Component<OverviewAddAPProps, OverviewA
   }
 
   componentWillReceiveProps (nextProps: OverviewAddAPProps) {
-    if (!nextProps.isOpened && this.props.isOpened) {
+    if (!nextProps.isOpen && this.props.isOpen) {
       this.setState ({
         value: "",
       })

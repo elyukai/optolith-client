@@ -323,7 +323,7 @@ export class PersonalDataView extends React.Component<PersonalDataProps, Persona
                      <OverviewAddAP
                        {...this.props}
                        close={closeAddAdventurePoints}
-                       isOpened={isAddAdventurePointsOpen}
+                       isOpen={isAddAdventurePointsOpen}
                        />
                      <AvatarChange
                        {...this.props}
