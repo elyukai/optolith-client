@@ -76,7 +76,15 @@ export const getAPSpentForCombatTechniques =
 
 const getAPForSpellOrChant =
   (x: Record<Spell> | Record<LiturgicalChant>) =>
-    pipe (ActivatableSkillDependent.A.value, getAPRange (Spell.AL.ic (x)) (0))
+  (asd: Record<ActivatableSkillDependent>) =>
+    ActivatableSkillDependent.A.active (asd)
+      ? pipe_ (
+          asd,
+          ActivatableSkillDependent.A.value,
+          getAPRange (Spell.AL.ic (x)) (0),
+          add (Spell.AL.ic (x))
+        )
+      : 0
 
 type actSkillsFold = (x: Record<ActivatableSkillDependent>) => (s: number) => number
 
