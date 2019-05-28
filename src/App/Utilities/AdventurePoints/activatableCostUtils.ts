@@ -22,7 +22,7 @@ import { ActiveObjectWithId } from "../../Models/ActiveEntries/ActiveObjectWithI
 import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { ActivatableNameCost, ActivatableNameCostA_, ActivatableNameCostL, ActivatableNameCostL_, ActivatableNameCostSafeCost } from "../../Models/View/ActivatableNameCost";
 import { Advantage } from "../../Models/Wiki/Advantage";
-import { isDisadvantage } from "../../Models/Wiki/Disadvantage";
+import { Disadvantage, isDisadvantage } from "../../Models/Wiki/Disadvantage";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { Skill } from "../../Models/Wiki/Skill";
 import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
@@ -381,7 +381,9 @@ const getTotalCost =
     const custom_cost = ActiveObjectWithId.A.cost (entry)
 
     if (isJust (custom_cost)) {
-      return fromJust (custom_cost)
+      const is_disadvantage = Disadvantage.is (wiki_entry)
+
+      return is_disadvantage ? -fromJust (custom_cost) : fromJust (custom_cost)
     }
 
     const mentry_specifc_cost = getEntrySpecificCost (isEntryToAdd)
@@ -452,6 +454,7 @@ const putCurrentCost =
              isJust (mcurrent_level)
              && current_id !== "DISADV_34"
              && current_id !== "DISADV_50"
+             && isNothing (ActivatableNameCostA_.customCost (entry))
            ) {
              return maybe (0) (multiply (current_cost)) (mcurrent_level)
            }
