@@ -5,7 +5,7 @@ import { fmap, fmapF } from "../../../Data/Functor";
 import { compare } from "../../../Data/Int";
 import { set } from "../../../Data/Lens";
 import { all, any, concat, elem, elemF, foldl, isList, List, map, sortBy } from "../../../Data/List";
-import { and, bind, bindF, catMaybes, ensure, fromJust, isJust, isNothing, Just, Maybe, maybe, maybeToList, Nothing, or } from "../../../Data/Maybe";
+import { and, bind, bindF, catMaybes, ensure, fromJust, fromMaybe, isJust, isNothing, Just, Maybe, maybe, maybeToList, Nothing, or } from "../../../Data/Maybe";
 import { lookupF, OrderedMap, toList } from "../../../Data/OrderedMap";
 import { fst, Pair, snd } from "../../../Data/Pair";
 import { Record } from "../../../Data/Record";
@@ -208,7 +208,8 @@ const isPrimaryAttributeValid =
     or (fmap (pipe (
                lookupF (attributes (state)),
                fmap (AttributeDependent.AL.value),
-               Maybe.elem (RequirePrimaryAttribute.AL.value (req))
+               fromMaybe (8),
+               gte (RequirePrimaryAttribute.AL.value (req))
              ))
              (getPrimaryAttributeId (specialAbilities (state))
                                     (RequirePrimaryAttribute.AL.type (req))))

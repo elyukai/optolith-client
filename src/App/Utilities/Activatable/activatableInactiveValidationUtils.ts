@@ -10,7 +10,7 @@ import { not } from "../../../Data/Bool";
 import { ident } from "../../../Data/Function";
 import { fmap } from "../../../Data/Functor";
 import { elem, flength, foldr, isList, List, notElem } from "../../../Data/List";
-import { all, any, bind, bindF, fromMaybe, isJust, isNothing, listToMaybe, Maybe, sum } from "../../../Data/Maybe";
+import { all, any, bind, bindF, fromMaybe, isJust, listToMaybe, Maybe, sum } from "../../../Data/Maybe";
 import { isOrderedMap, lookup } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
@@ -25,7 +25,7 @@ import { Activatable } from "../../Models/Wiki/wikiTypeHelpers";
 import { countActiveGroupEntries, hasActiveGroupEntry } from "../entryGroupUtils";
 import { getAllEntriesByGroup } from "../heroStateUtils";
 import { add, inc, lte } from "../mathUtils";
-import { pipe } from "../pipe";
+import { pipe, pipe_ } from "../pipe";
 import { getFirstLevelPrerequisites } from "../Prerequisites/flattenPrerequisites";
 import { validatePrerequisites } from "../Prerequisites/validatePrerequisitesUtils";
 import * as CheckStyleUtils from "./checkStyleUtils";
@@ -44,12 +44,9 @@ const isAdditionDisabledForCombatStyle =
   (hero: HeroModelRecord) =>
   (wiki_entry: Record<SpecialAbility>): boolean => {
     const combination_hero_entry = lookup ("SA_164") (hero_specialAbilities (hero))
-    const combination_wiki_entry = lookup ("SA_164") (specialAbilities (wiki))
 
-    if (isNothing (combination_hero_entry)) {
-      return hasActiveGroupEntry (wiki) (hero) (9, 10)
-    }
-
+    // Combination-SA is active, which allows 3 styles to be active,
+    // but only a maximum of 2 from one type (armed/unarmed).
     if (isMaybeActive (combination_hero_entry)) {
       const totalActive = countActiveGroupEntries (wiki) (hero) (9, 10)
 
@@ -58,9 +55,10 @@ const isAdditionDisabledForCombatStyle =
 
       return totalActive >= 3 || equalTypeStylesActive >= 2
     }
-
-    return any (pipe (gr, hasActiveGroupEntry (wiki) (hero)))
-               (combination_wiki_entry)
+    // Otherwise, only one of each type can be active.
+    else {
+      return pipe_ (wiki_entry, gr, hasActiveGroupEntry (wiki) (hero))
+    }
   }
 
 const isAdditionDisabledSpecialAbilitySpecific =

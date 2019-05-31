@@ -27,7 +27,7 @@ import { heroReducer } from "../Reducers/heroReducer";
 import { UISettingsState } from "../Reducers/uiSettingsReducer";
 import { getAPObjectMap } from "../Selectors/adventurePointsSelectors";
 import { user_data_path } from "../Selectors/envSelectors";
-import { getCurrentHeroId, getHeroes, getLocaleMessages, getLocaleType, getUsers, getWiki } from "../Selectors/stateSelectors";
+import { getCurrentHeroId, getHeroes, getLocaleId, getLocaleMessages, getUsers, getWiki } from "../Selectors/stateSelectors";
 import { getUISettingsState } from "../Selectors/uisettingsSelectors";
 import { APCache, deleteCache, forceCacheIsAvailable, insertAppStateCache, insertCacheMap, insertHeroesCache, readCache, toAPCache, writeCache } from "../Utilities/Cache";
 import { translate, translateP } from "../Utilities/I18n";
@@ -196,7 +196,7 @@ export const requestConfigSave =
         maybeToUndefined (UISSA.meleeItemTemplatesCombatTechniqueFilter (uiSettingsState)),
       rangedItemTemplatesCombatTechniqueFilter:
         maybeToUndefined (UISSA.rangedItemTemplatesCombatTechniqueFilter (uiSettingsState)),
-      locale: getLocaleType (state) === "default" ? undefined : L10n.A.id (l10n),
+      locale: maybeToUndefined (getLocaleId (state)),
     }
 
     return pipe_ (
@@ -260,7 +260,7 @@ export const requestAllHeroesSave =
     )
   }
 
-export const requestSaveAll = (l10n: L10nRecord): ReduxAction<IO<boolean>> =>
+const requestSaveAll = (l10n: L10nRecord): ReduxAction<IO<boolean>> =>
   dispatch => {
     const configSavedDone = dispatch (requestConfigSave (l10n))
     const heroesSavedDone = dispatch (requestAllHeroesSave (l10n))

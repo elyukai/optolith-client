@@ -115,6 +115,10 @@ export const magicalTraditionIdByNumericId = OrderedMap.fromArray ([
   [8, prefixSA (679)],
   [9, prefixSA (680)],
   [10, prefixSA (681)],
+  // [11, prefixSA ()], // Kristallomanten
+  [12, prefixSA (1255)],
+  // [13, prefixSA ()], // Alchimisten
+  [14, prefixSA (726)],
 ])
 
 export const magicalNumericIdByTraditionId = OrderedMap.fromArray ([
@@ -128,6 +132,10 @@ export const magicalNumericIdByTraditionId = OrderedMap.fromArray ([
   [prefixSA (679), 8],
   [prefixSA (680), 9],
   [prefixSA (681), 10],
+  // [prefixSA (), 11], // Kristallomanten
+  [prefixSA (1255), 12],
+  // [prefixSA (), 13], // Alchimisten
+  [prefixSA (726), 14],
 ])
 
 export const isMagicalTraditionId = memberF (magicalNumericIdByTraditionId)

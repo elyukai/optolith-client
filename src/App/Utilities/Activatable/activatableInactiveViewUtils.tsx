@@ -4,7 +4,7 @@ import { cnst, Functn, ident } from "../../../Data/Function";
 import { fmap, fmapF } from "../../../Data/Functor";
 import { over, set } from "../../../Data/Lens";
 import { countWith, elemF, filter, find, flength, foldr, imap, isList, List, map, notElem, notElemF, subscript, subscriptF, sum, take } from "../../../Data/List";
-import { alt, altF, altF_, any, bind, bindF, ensure, fromMaybe, fromMaybeNil, guard, isJust, isNothing, join, Just, liftM2, mapMaybe, Maybe, maybe, maybe_, Nothing, or, then, thenF } from "../../../Data/Maybe";
+import { alt, altF, altF_, any, bind, bindF, ensure, fromJust, fromMaybe, fromMaybeNil, guard, isJust, isNothing, join, Just, liftM2, mapMaybe, Maybe, maybe, maybe_, Nothing, or, then, thenF } from "../../../Data/Maybe";
 import { lookupF } from "../../../Data/OrderedMap";
 import { bimap, first, Pair, second, snd } from "../../../Data/Pair";
 import { fromDefault, makeLenses, Omit, Record } from "../../../Data/Record";
@@ -553,11 +553,36 @@ export const getIdSpecificAffectedAndDispatchProps =
         const fillPairForNoLevel =
           isNothing (IAA.cost (entry))
             ? first (set (AAOL.selectOptionId1) (mselected))
-            : bimap (isJust (mselect_options)
-                      ? set (AAOL.selectOptionId1) (mselected)
-                      : isJust (pipe_ (entry, IAA.wikiEntry, SAAL.input))
-                      ? set (AAOL.input) (minput_text)
-                      : ident as ident<Record<ActivatableActivationOptions>>)
+            : bimap ((aao: Record<ActivatableActivationOptions>) => {
+                      if (isJust (mselect_options)) {
+                        const setSelectOptionId = set (AAOL.selectOptionId1) (mselected)
+
+                        const mselected_cost =
+                          pipe_ (
+                            mselected,
+                            bindF (sel => find (pipe (SOA.id, equals (sel)))
+                                               (fromJust (mselect_options))),
+                            bindF (SOA.cost)
+                          )
+
+                        if (isJust (mselected_cost)) {
+                          return pipe_ (
+                            aao,
+                            setSelectOptionId,
+                            set (AAOL.cost) (fromJust (mselected_cost))
+                          )
+                        }
+                        else {
+                          return setSelectOptionId (aao)
+                        }
+                      }
+                      else if (isJust (pipe_ (entry, IAA.wikiEntry, SAAL.input))) {
+                        return set (AAOL.input) (minput_text) (aao)
+                      }
+                      else {
+                        return aao
+                      }
+                    })
                     (set (PABYL.currentCost) (getPlainCostFromEntry (entry)))
 
         return fromMaybe (fillPairForNoLevel)
