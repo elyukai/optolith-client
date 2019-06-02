@@ -9,3 +9,4 @@ npm-debug.log*
 app/**/*.js
 /installer/
 electron-builder.env
+app/Database/**/*.xlsx
