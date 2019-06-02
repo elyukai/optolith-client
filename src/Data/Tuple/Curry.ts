@@ -1,0 +1,81 @@
+/**
+ * `curryN :: ((a, b) -> c) -> a -> b -> c`
+ *
+ * `curryN` converts an uncurried function to a curried function.
+ */
+export const curryN =
+  <A, B, C> (f: (x: A, y: B) => C) => (a: A) => (b: B): C =>
+    f (a, b)
+
+/**
+ * `uncurryN :: (a -> b -> c) -> (a, b) -> c`
+ *
+ * `uncurryN` converts a curried function to a function on pairs.
+ */
+export const uncurryN =
+  <A, B, C> (f: (a: A) => (b: B) => C) => (x: A, y: B): C =>
+    f (x) (y)
+
+/**
+ * `uncurryN3 :: (a -> b -> c -> d) -> (a, b, c) -> d`
+ *
+ * `uncurryN3` converts a curried function to a function on pairs.
+ */
+export const uncurryN3 =
+  <A, B, C, D> (f: (a: A) => (b: B) => (c: C) => D) => (x: A, y: B, z: C): D =>
+    f (x) (y) (z)
+
+/**
+ * `uncurryN4 :: (a -> b -> c -> d -> e) -> (a, b, c, d) -> e`
+ *
+ * `uncurryN4` converts a curried function to a function on pairs.
+ */
+export const uncurryN4 =
+  <A, B, C, D, E>
+  (f: (a: A) => (b: B) => (c: C) => (c: D) => E) =>
+  (x: A, y: B, z: C, a: D): E =>
+    f (x) (y) (z) (a)
+
+/**
+ * `uncurryN5 :: (a -> b -> c -> d -> e -> f) -> (a, b, c, d, e) -> f`
+ *
+ * `uncurryN5` converts a curried function to a function on pairs.
+ */
+export const uncurryN5 =
+  <A, B, C, D, E, F>
+  (f: (a: A) => (b: B) => (c: C) => (d: D) => (e: E) => F) =>
+  (x: A, y: B, z: C, a: D, b: E): F =>
+    f (x) (y) (z) (a) (b)
+
+/**
+ * `uncurryN6 :: (a -> b -> c -> d -> e -> f -> g) -> (a, b, c, d, e, f) -> g`
+ *
+ * `uncurryN6` converts a curried function to a function on pairs.
+ */
+export const uncurryN6 =
+  <A, B, C, D, E, F, G>
+  (f: (a: A) => (b: B) => (c: C) => (d: D) => (e: E) => (f: F) => G) =>
+  (x: A, y: B, z: C, a: D, b: E, c: F): G =>
+    f (x) (y) (z) (a) (b) (c)
+
+/**
+ * `uncurryN7 :: (a -> b -> c -> d -> e -> f -> g -> h) -> (a, b, c, d, e, f, g) -> h`
+ *
+ * `uncurryN7` converts a curried function to a function on pairs.
+ */
+export const uncurryN7 =
+  <A, B, C, D, E, F, G, H>
+  (f: (a: A) => (b: B) => (c: C) => (d: D) => (e: E) => (f: F) => (g: G) => H) =>
+  (x: A, y: B, z: C, a: D, b: E, c: F, d: G): H =>
+    f (x) (y) (z) (a) (b) (c) (d)
+
+/**
+ * `uncurryN8 :: (a -> b -> c -> d -> e -> f -> g -> h -> i) -> (a, b, c, d, e, f, g, h) -> i`
+ *
+ * `uncurryN8` converts a curried function to a function on pairs.
+ */
+export const uncurryN8 =
+  <A, B, C, D, E, F, G, H, I>
+  (f: (a: A) => (b: B) => (c: C) => (d: D) => (e: E) => (f: F) => (g: G) => (h: H) => I) =>
+  (x: A, y: B, z: C, a: D, b: E, c: F, d: G, e: H): I =>
+    f (x) (y) (z) (a) (b) (c) (d) (e)

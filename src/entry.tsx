@@ -1,184 +1,188 @@
-declare global {
-  interface Event {
-    charCode: number;
-  }
-
-  interface EventTarget {
-    readonly value: string;
-    readonly files: FileList | null;
-    readonly result: string;
-  }
-}
-
 // tslint:disable-next-line:no-implicit-dependencies
-import { ProgressInfo } from 'builder-util-runtime';
-import { ipcRenderer, remote } from 'electron';
-import * as localShortcut from 'electron-localshortcut';
+import { ProgressInfo } from "builder-util-runtime";
+import { ipcRenderer, remote } from "electron";
+import * as localShortcut from "electron-localshortcut";
 // tslint:disable-next-line:no-implicit-dependencies
-import { UpdateInfo } from 'electron-updater';
-import * as React from 'react';
-import { render } from 'react-dom';
-import { Provider } from 'react-redux';
-import { Action, applyMiddleware, createStore, Dispatch, Store } from 'redux';
-import ReduxThunk from 'redux-thunk';
-import { backAccelerator, openSettingsAccelerator, quitAccelerator, redoAccelerator, saveHeroAccelerator, undoAccelerator } from './actions/AcceleratorActions';
-import { addErrorAlert } from './actions/AlertActions';
-import { requestClose, requestInitialData, setUpdateDownloadProgress, updateAvailable, updateNotAvailable } from './actions/IOActions';
-import { showAbout } from './actions/LocationActions';
-import { AppContainer } from './containers/AppContainer';
-import { appReducer, AppState } from './reducers/appReducer';
-import { getLocaleMessages } from './selectors/stateSelectors';
-import { Just, Maybe } from './utils/dataUtils';
-import { translate } from './utils/I18n';
-import { isDialogOpen } from './utils/SubwindowsUtils';
+import { UpdateInfo } from "electron-updater";
+import * as React from "react";
+import { render } from "react-dom";
+import { Provider } from "react-redux";
+import { Action, applyMiddleware, createStore, Store } from "redux";
+import thunk from "redux-thunk";
+import { backAccelerator, openSettingsAccelerator, quitAccelerator, redoAccelerator, saveHeroAccelerator, undoAccelerator } from "./App/Actions/AcceleratorActions";
+import { ReduxDispatch } from "./App/Actions/Actions";
+import { addErrorAlert } from "./App/Actions/AlertActions";
+import { requestClose, requestInitialData, setUpdateDownloadProgress, updateAvailable, updateNotAvailable } from "./App/Actions/IOActions";
+import { showAbout } from "./App/Actions/LocationActions";
+import { AppContainer } from "./App/Containers/AppContainer";
+import { appReducer, AppState, AppStateRecord } from "./App/Reducers/appReducer";
+import { getLocaleMessages } from "./App/Selectors/stateSelectors";
+import { translate, translateP } from "./App/Utilities/I18n";
+import { pipe, pipe_ } from "./App/Utilities/pipe";
+import { isDialogOpen } from "./App/Utilities/SubwindowsUtils";
+import { flip } from "./Data/Function";
+import { fmap } from "./Data/Functor";
+import { List } from "./Data/List";
+import { fromJust, isJust, Just } from "./Data/Maybe";
+import { uncurryN } from "./Data/Pair";
+import { Unit } from "./Data/Unit";
+import { runIO } from "./System/IO";
 
-const store: Store<AppState, Action<any>> & { dispatch: Dispatch<Action, AppState> } =
-  createStore (appReducer, applyMiddleware (ReduxThunk));
+const nativeAppReducer =
+  uncurryN (pipe ((x: AppStateRecord | undefined) => x === undefined ? AppState.default : x,
+                  flip (appReducer)))
 
-store.dispatch (requestInitialData ())
-  .then (() => {
-    const currentWindow = remote.getCurrentWindow ();
+const store: Store<AppStateRecord, Action<any>> & { dispatch: ReduxDispatch<Action> } =
+  createStore (nativeAppReducer, applyMiddleware (thunk))
 
-    const { getState } = store;
-    const dispatch = store.dispatch as Dispatch<Action, AppState>;
+pipe_ (
+  store .dispatch (requestInitialData),
+  fmap (() => {
+    const currentWindow = remote.getCurrentWindow ()
 
-    if (remote.process.platform === 'darwin') {
-      const maybeLocale = getLocaleMessages (getState ());
+    const { getState } = store
+    const dispatch = store.dispatch
 
-      if (Maybe.isJust (maybeLocale)) {
-        const locale = Maybe.fromJust (maybeLocale);
+    if (remote.process.platform === "darwin") {
+      const maybeLocale = getLocaleMessages (getState ())
+
+      if (isJust (maybeLocale)) {
+        const locale = fromJust (maybeLocale)
 
         const menuTemplate: Electron.MenuItemConstructorOptions[] = [
           {
             label: remote.app.getName (),
             submenu: [
               {
-                label: translate (locale, 'mac.aboutapp', remote.app.getName ()),
+                label: translateP (locale) ("aboutapp") (List (remote.app.getName ())),
                 click: () => dispatch (showAbout),
               },
-              { type: 'separator' },
-              { role: 'hide' },
-              { role: 'hideothers' },
-              { role: 'unhide' },
-              { type: 'separator' },
+              { type: "separator" },
+              { role: "hide" },
+              { role: "hideothers" },
+              { role: "unhide" },
+              { type: "separator" },
               {
-                label: translate (locale, 'mac.quit'),
+                label: translate (locale) ("quit"),
                 click: () => dispatch (requestClose (Just (remote.app.quit))),
               },
             ],
           },
           {
-            label: translate (locale, 'edit'),
+            label: translate (locale) ("edit"),
             submenu: [
-              { role: 'cut' },
-              { role: 'copy' },
-              { role: 'paste' },
-              { role: 'delete' },
-              { role: 'selectall' },
+              { role: "cut" },
+              { role: "copy" },
+              { role: "paste" },
+              { role: "delete" },
+              { role: "selectall" },
             ],
           },
           {
-            label: translate (locale, 'view'),
+            label: translate (locale) ("view"),
             submenu: [
-              { role: 'togglefullscreen' },
+              { role: "togglefullscreen" },
             ],
           },
           {
-            role: 'window',
+            role: "window",
             submenu: [
-              { role: 'minimize' },
-              { type: 'separator' },
-              { role: 'front' },
+              { role: "minimize" },
+              { type: "separator" },
+              { role: "front" },
             ],
           },
-        ];
+        ]
 
-        const menu = remote.Menu.buildFromTemplate (menuTemplate);
-        remote.Menu.setApplicationMenu (menu);
+        const menu = remote.Menu.buildFromTemplate (menuTemplate)
+        remote.Menu.setApplicationMenu (menu)
 
         store.subscribe (() => {
-          const areSubwindowsOpen = isDialogOpen ();
-          type MenuItems = Electron.MenuItemConstructorOptions[];
-          const appMenu = menuTemplate[0].submenu as MenuItems;
-          appMenu[0].enabled = !areSubwindowsOpen;
-          const currentMenu = remote.Menu.buildFromTemplate (menuTemplate);
-          remote.Menu.setApplicationMenu (currentMenu);
-        });
+          const areSubwindowsOpen = isDialogOpen ()
+          type MenuItems = Electron.MenuItemConstructorOptions[]
+          const appMenu = menuTemplate[0].submenu as MenuItems
+          appMenu[0].enabled = !areSubwindowsOpen
+          const currentMenu = remote.Menu.buildFromTemplate (menuTemplate)
+          remote.Menu.setApplicationMenu (currentMenu)
+        })
 
-        localShortcut.register (currentWindow, 'Cmd+Q', () => {
-          dispatch (quitAccelerator);
-        });
+        localShortcut.register (currentWindow, "Cmd+Q", () => {
+          dispatch (quitAccelerator)
+        })
 
-        localShortcut.register (currentWindow, 'CmdOrCtrl+S', () => {
-          dispatch (saveHeroAccelerator (locale));
-        });
+        localShortcut.register (currentWindow, "CmdOrCtrl+S", () => {
+          dispatch (saveHeroAccelerator (locale))
+        })
       }
     }
 
-    localShortcut.register (currentWindow, 'CmdOrCtrl+Z', () => {
-      dispatch (undoAccelerator ());
-    });
+    localShortcut.register (currentWindow, "CmdOrCtrl+Z", () => {
+      dispatch (undoAccelerator ())
+    })
 
-    localShortcut.register (currentWindow, 'CmdOrCtrl+Y', () => {
-      dispatch (redoAccelerator ());
-    });
+    localShortcut.register (currentWindow, "CmdOrCtrl+Y", () => {
+      dispatch (redoAccelerator ())
+    })
 
-    localShortcut.register (currentWindow, 'CmdOrCtrl+Shift+Z', () => {
-      dispatch (redoAccelerator ());
-    });
+    localShortcut.register (currentWindow, "CmdOrCtrl+Shift+Z", () => {
+      dispatch (redoAccelerator ())
+    })
 
-    localShortcut.register (currentWindow, 'CmdOrCtrl+W', () => {
-      dispatch (backAccelerator ());
-    });
+    localShortcut.register (currentWindow, "CmdOrCtrl+W", () => {
+      dispatch (backAccelerator ())
+    })
 
-    localShortcut.register (currentWindow, 'CmdOrCtrl+O', () => {
-      dispatch (openSettingsAccelerator ());
-    });
+    localShortcut.register (currentWindow, "CmdOrCtrl+O", () => {
+      dispatch (openSettingsAccelerator ())
+    })
 
-    ipcRenderer.send ('loading-done');
-  });
+    ipcRenderer.send ("loading-done")
+
+    return Unit
+  }),
+  runIO
+)
 
 render (
   <Provider store={store}>
     <AppContainer />
   </Provider>,
-  document.querySelector ('#bodywrapper')
-);
+  document.querySelector ("#bodywrapper")
+)
 
-ipcRenderer.addListener ('update-available', (_event: Event, info: UpdateInfo) => {
-  const dispatch = store.dispatch as Dispatch<AnyAction, AppState>;
-  const maybeLocale = getLocaleMessages (store.getState ());
+ipcRenderer.addListener ("update-available", (_event: Event, info: UpdateInfo) => {
+  const dispatch = store.dispatch as ReduxDispatch
+  const maybeLocale = getLocaleMessages (store.getState ())
 
-  if (Maybe.isJust (maybeLocale)) {
-    dispatch (updateAvailable (Maybe.fromJust (maybeLocale)) (info));
+  if (isJust (maybeLocale)) {
+    dispatch (updateAvailable (fromJust (maybeLocale)) (info))
   }
-});
+})
 
-ipcRenderer.addListener ('update-not-available', () => {
-  const dispatch = store.dispatch as Dispatch<AnyAction, AppState>;
-  const maybeLocale = getLocaleMessages (store.getState ());
+ipcRenderer.addListener ("update-not-available", () => {
+  const dispatch = store.dispatch as ReduxDispatch
+  const maybeLocale = getLocaleMessages (store.getState ())
 
-  if (Maybe.isJust (maybeLocale)) {
-    dispatch (updateNotAvailable (Maybe.fromJust (maybeLocale)));
+  if (isJust (maybeLocale)) {
+    dispatch (updateNotAvailable (fromJust (maybeLocale)))
   }
-});
+})
 
-ipcRenderer.addListener ('download-progress', (_event: Event, progressObj: ProgressInfo) => {
-  store.dispatch (setUpdateDownloadProgress (progressObj));
-});
+ipcRenderer.addListener ("download-progress", (_event: Event, progressObj: ProgressInfo) => {
+  store.dispatch (setUpdateDownloadProgress (progressObj))
+})
 
-ipcRenderer.addListener ('auto-updater-error', (_event: Event, err: Error) => {
-  const dispatch = store.dispatch as Dispatch<AnyAction, AppState>;
-  const maybeLocale = getLocaleMessages (store.getState ());
+ipcRenderer.addListener ("auto-updater-error", (_event: Event, err: Error) => {
+  const dispatch = store.dispatch as ReduxDispatch
+  const maybeLocale = getLocaleMessages (store.getState ())
 
-  if (Maybe.isJust (maybeLocale)) {
-    dispatch (setUpdateDownloadProgress ());
-    dispatch (addErrorAlert (
-      {
-        title: 'Auto Update Error',
-        message: `An error occured during auto-update. (${JSON.stringify (err)})`,
-      },
-      Maybe.fromJust (maybeLocale)
-    ));
+  if (isJust (maybeLocale)) {
+    dispatch (setUpdateDownloadProgress ())
+    dispatch (addErrorAlert (fromJust (maybeLocale))
+                            ({
+                              title: "Auto Update Error",
+                              message: `An error occured during auto-update.`
+                                + ` (${JSON.stringify (err)})`,
+                            }))
   }
-});
+})

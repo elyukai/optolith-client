@@ -33,7 +33,7 @@
 		// Functionality
     "await-promise": true,
     // "ban-comma-operator": true,
-		"curly": true,
+		// "curly": true,
     "forin": true,
     "label-position": true,
     "no-arg": true,
@@ -66,13 +66,13 @@
 		// "no-unsafe-any": true,
 		"no-unsafe-finally": true,
     // "no-var-keyword": true,
-    "no-void-expression": true,
+    // "no-void-expression": true,
     "prefer-conditional-expression": [true, "check-else-if"],
     "prefer-object-spread": true,
     "radix": true,
     "restrict-plus-operands": true,
     "strict-boolean-expressions": [true, "allow-undefined-union"],
-		"strict-type-predicates": true,
+		// "strict-type-predicates": true,
 		"triple-equals": true,
 
     // Maintainability
@@ -84,7 +84,7 @@
       true,
       {
         "limit": 100,
-        "ignore-pattern": "^import |^export {(.*?)}|class [a-zA-Z]+ implements |^ *`.+`,?$"
+        "ignore-pattern": "^import |^export {(.*?)}|class [a-zA-Z]+ implements "
       }
     ],
     "no-default-export": true,
@@ -121,12 +121,12 @@
 		"object-literal-shorthand": true,
 		// "one-line": [true, "check-open-brace", "check-whitespace"],
 		"one-variable-per-declaration": [true, "ignore-for-loop"],
-    "ordered-imports": true,
+    // "ordered-imports": true,
     "prefer-function-over-method": true,
     // "prefer-method-signature": true,
     "prefer-template": true,
     "prefer-while": true,
-    "quotemark": [true, "single", "jsx-double"],
+    "quotemark": [true, "double"],
     "space-before-function-paren": [true, "always"],
     "space-within-parens": [true, "never"],
     "switch-final-break": [true, "always"],
