@@ -145,8 +145,6 @@ export const parseTables =
 
     const l10n_path = path.join (app_path, "app", "Database", locale, "l10n.xlsx")
 
-    console.log ("L10n path: ", l10n_path)
-
     try {
       univ_wb = xlsx.readFile (univ_path, { raw: true })
     }
@@ -182,7 +180,11 @@ export const parseTables =
     }
 
     const lookup_univ =
-      pipe (lookupF (fromRight_ (euniv_map)), maybeToEither ("univ.xlsx Sheet not found."))
+      (sheet: string) =>
+        pipe_ (
+          sheet,
+          lookupF (fromRight_ (euniv_map)),
+          maybeToEither (`univ.xlsx: "${sheet}" sheet not found.`))
 
     const lookup_l10n =
       (sheet: string) =>

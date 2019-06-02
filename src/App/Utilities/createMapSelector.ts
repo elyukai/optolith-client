@@ -50,6 +50,8 @@ export const createMapSelector =
       let res = resMap .get (key_str)
 
       if (state === prevState && res !== undefined) {
+        console.log ("createMapSelector: equal state, no recalc")
+
         return Just (res)
       }
 
@@ -68,6 +70,8 @@ export const createMapSelector =
       const mvalue = lookup (key_str) (map)
 
       if (isNothing (mvalue)) {
+        console.log ("createMapSelector: no value available")
+
         return Nothing
       }
 
@@ -84,6 +88,8 @@ export const createMapSelector =
         map === prevMap && keyMap .has (key_str)
         || maybeEquals (value, prevValues .get (key_str))
       ) {
+        console.log ("createMapSelector: equal substate, no recalc")
+
         const prevMapValueValues = keyMap .get (key_str)! [1]
 
         prevMap = map
@@ -98,6 +104,8 @@ export const createMapSelector =
 
         return Just (res)
       }
+
+      console.log ("createMapSelector: recalc")
 
       const newMapValueValues =
         valueSelectors .map (s => s (value, props)) as MappedReturnType<M>

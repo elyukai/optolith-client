@@ -80,9 +80,11 @@ export const translateM =
     translateMP (messages) (key) (List.empty)
 
 export const localizeNumber =
-  (localeId: string | L10nRecord) =>
-  (num: number) =>
-    num .toLocaleString ((isString (localeId) ? localeId : L10n.A.id (localeId)))
+  (localeId: string | L10nRecord) => {
+    const locale = isString (localeId) ? localeId : L10n.A.id (localeId)
+
+    return (num: number) => num .toLocaleString (locale)
+  }
 
 /**
  * If the selected language is English centimeters it will be converted to
@@ -121,14 +123,16 @@ export const localizeWeight =
  * Takes a locale and returns a locale-aware string compare function.
  */
 export const compareLocale =
-  (locale: string | L10nRecord) => (a: string) => (b: string) =>
-    toOrdering (Intl.Collator (
-                                isString (locale)
-                                  ? locale
-                                  : L10n.A.id (locale),
-                                { numeric: true }
-                              )
-                  .compare (a, b))
+  (locale: string | L10nRecord) => {
+    const coll = Intl.Collator (
+      isString (locale)
+        ? locale
+        : L10n.A.id (locale),
+      { numeric: true }
+    )
+
+    return (a: string) => (b: string) => toOrdering (coll .compare (a, b))
+  }
 
 export const localizeList =
   (sepWord: string): (xs: List<string | number>) => string =>
