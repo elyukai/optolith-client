@@ -1,5 +1,5 @@
 import { compare } from "../../Data/Int";
-import { subscript } from "../../Data/List";
+import { fnull, head, List, subscript } from "../../Data/List";
 import { bindF, ensure, fromMaybe, listToMaybe, maybe, Maybe } from "../../Data/Maybe";
 import { Record } from "../../Data/Record";
 import { HeroModel } from "../Models/Hero/HeroModel";
@@ -32,9 +32,10 @@ import { NameBySex } from "../Models/Wiki/sub/NameBySex";
 import { SourceLink } from "../Models/Wiki/sub/SourceLink";
 import { createMaybeSelector } from "../Utilities/createMaybeSelector";
 import { compareLocale, translate } from "../Utilities/I18n";
+import { dec } from "../Utilities/mathUtils";
 import { pipe } from "../Utilities/pipe";
 import { comparingR, SortOptions } from "../Utilities/sortBy";
-import { isString } from "../Utilities/typeCheckUtils";
+import { isNumber, isString } from "../Utilities/typeCheckUtils";
 import { getLocaleAsProp, getSex } from "./stateSelectors";
 import * as uiSettingsSelectors from "./uisettingsSelectors";
 
@@ -124,13 +125,6 @@ export const getCulturesCombinedSortOptions = createMaybeSelector (
         ]
 )
 
-const getProfessionSourceKey =
-  pipe (
-    Profession.A.src,
-    listToMaybe,
-    maybe ("US25000") (SourceLink.A.id)
-  )
-
 const getProfessionCombinedSourceKey =
   pipe (
     ProfessionCombined.A.wikiEntry,
@@ -146,34 +140,35 @@ const foldProfessionSubName =
   (sex: Sex) =>
     pipe (Profession.AL.subname, maybe ("") (x => isString (x) ? x : NameBySex.A[sex] (x)))
 
-export const getProfessionsSortOptions = createMaybeSelector (
-  getLocaleAsProp,
-  getSex,
-  (l10n, msex) =>
-    maybe<SortOptions<Profession>>
-      ([])
-      ((sex: Sex): SortOptions<Profession> => [
-        comparingR (foldProfessionName (sex)) (compareLocale (l10n)),
-        comparingR (foldProfessionSubName (sex)) (compareLocale (l10n)),
-        comparingR (getProfessionSourceKey) (compareLocale (l10n)),
-      ])
-      (msex)
-)
+const getPlainProfAP = (x: List<number> | number) => isNumber (x) ? x : fnull (x) ? 0 : head (x)
 
 export const getProfessionsCombinedSortOptions = createMaybeSelector (
   getLocaleAsProp,
+  uiSettingsSelectors.getProfessionsSortOrder,
   getSex,
-  (l10n, msex) =>
+  (l10n, sort_order, msex) =>
     maybe<SortOptions<ProfessionCombined>>
       ([])
-      ((sex: Sex): SortOptions<ProfessionCombined> => [
-        comparingR (pipe (ProfessionCombined.A.wikiEntry, foldProfessionName (sex)))
-                   (compareLocale (l10n)),
-        comparingR (pipe (ProfessionCombined.A.wikiEntry, foldProfessionSubName (sex)))
-                   (compareLocale (l10n)),
-        comparingR (getProfessionCombinedSourceKey)
-                   (compareLocale (l10n)),
-      ])
+      ((sex: Sex): SortOptions<ProfessionCombined> =>
+        sort_order === "cost"
+          ? [
+              comparingR (pipe (ProfessionCombined.A.mappedAP, getPlainProfAP))
+                         (compare),
+              comparingR (pipe (ProfessionCombined.A.wikiEntry, foldProfessionName (sex)))
+                         (compareLocale (l10n)),
+              comparingR (pipe (ProfessionCombined.A.wikiEntry, foldProfessionSubName (sex)))
+                         (compareLocale (l10n)),
+              comparingR (getProfessionCombinedSourceKey)
+                         (compareLocale (l10n)),
+            ]
+          : [
+              comparingR (pipe (ProfessionCombined.A.wikiEntry, foldProfessionName (sex)))
+                         (compareLocale (l10n)),
+              comparingR (pipe (ProfessionCombined.A.wikiEntry, foldProfessionSubName (sex)))
+                         (compareLocale (l10n)),
+              comparingR (getProfessionCombinedSourceKey)
+                         (compareLocale (l10n)),
+            ])
       (msex)
 )
 
@@ -266,6 +261,7 @@ export const getSpecialAbilitiesSortOptions = createMaybeSelector (
         comparingR (pipe (
                      ActiveActivatable.AL.wikiEntry,
                      SpecialAbility.AL.gr,
+                     dec,
                      subscript (translate (l10n) ("specialabilitygroups")),
                      fromMaybe ("")
                    ))
@@ -507,6 +503,7 @@ export const getEquipmentSortOptions = createMaybeSelector (
       return [
         comparingR (pipe (
                      Item.AL.gr,
+                     dec,
                      subscript (translate (l10n) ("itemgroups")),
                      fromMaybe ("")
                    ))

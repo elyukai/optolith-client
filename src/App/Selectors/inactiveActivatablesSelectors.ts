@@ -81,7 +81,9 @@ type listAdv = List<Record<InactiveActivatable<Advantage>>>
 type listDis = List<Record<InactiveActivatable<Disadvantage>>>
 type listSA = List<Record<InactiveActivatable<SpecialAbility>>>
 
-const getWikiEntry = InactiveActivatable.A.wikiEntry as
+const IAA = InactiveActivatable.A
+
+const getWikiEntry = IAA.wikiEntry as
   <T extends ActivatableCategory> (x: Inactive<T>) => WikiEntryRecordByCategory[T]
 
 const getSrc = pipe (getWikiEntry, Advantage.AL.src) as

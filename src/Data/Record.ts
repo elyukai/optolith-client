@@ -60,15 +60,19 @@ const _Record =
       {
         values: {
           value: Object.freeze (specified),
+          enumerable: true,
         },
         defaultValues: {
           value: def,
+          enumerable: true,
         },
         keys: {
           value: keys,
+          enumerable: true,
         },
         unique: {
           value: unique,
+          enumerable: true,
         },
       }
     )

@@ -53,7 +53,7 @@ const mapDispatchToProps = (
     dispatch (SpecialAbilitiesActions.setActiveSpecialAbilitiesFilterText (filterText))
   },
   setInactiveFilterText (filterText: string) {
-    dispatch (SpecialAbilitiesActions.setActiveSpecialAbilitiesFilterText (filterText))
+    dispatch (SpecialAbilitiesActions.setInactiveSpecialAbilitiesFilterText (filterText))
   },
 })
 

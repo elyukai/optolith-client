@@ -2,7 +2,7 @@ import { fmapF } from "../../Data/Functor";
 import { append, List } from "../../Data/List";
 import { Maybe, maybe } from "../../Data/Maybe";
 import { Record, RecordI } from "../../Data/Record";
-import { uncurryN6 } from "../../Data/Tuple/Curry";
+import { uncurryN5 } from "../../Data/Tuple/Curry";
 import { ActiveActivatable } from "../Models/View/ActiveActivatable";
 import { InactiveActivatable } from "../Models/View/InactiveActivatable";
 import { Advantage } from "../Models/Wiki/Advantage";
@@ -31,7 +31,6 @@ const getFilteredInactives =
   (mactive: Maybe<List<Record<ActiveActivatable<A>>>>) =>
   (sortOptions: SortOptions<RecordI<InactiveOrActive<A>>>) =>
   (filterText: string) =>
-  (l10n: Record<L10n>) =>
   (areHintsEnabled: boolean): Maybe<List<InactiveOrActive<A>>> =>
     fmapF (minactive)
           (inactive => areHintsEnabled
@@ -47,8 +46,7 @@ const getFilteredInactives =
             : filterAndSortRecordsBy (0)
                                      <InactiveActivatable<A>>
                                      ([getName])
-                                     ([comparingR (getName)
-                                                   (compareLocale (L10n.A.id (l10n)))])
+                                     (sortOptions)
                                      (filterText)
                                      (inactive))
 
@@ -68,7 +66,6 @@ export const getFilteredInactiveAdvantages =
                              (mactive)
                              (sortByName (l10n))
                              (filterText)
-                             (l10n)
                              (areHintsEnabled)
     )
 
@@ -85,7 +82,6 @@ export const getFilteredInactiveDisadvantages =
                              (mactive)
                              (sortByName (l10n))
                              (filterText)
-                             (l10n)
                              (areHintsEnabled)
     )
 
@@ -96,7 +92,6 @@ export const getFilteredInactiveSpecialAbilities =
       getSpecialAbilitiesForEdit,
       getSpecialAbilitiesSortOptions,
       getInactiveSpecialAbilitiesFilterText,
-      getLocaleAsProp,
       getEnableActiveItemHints,
-      uncurryN6 (getFilteredInactives)
+      uncurryN5 (getFilteredInactives)
     )

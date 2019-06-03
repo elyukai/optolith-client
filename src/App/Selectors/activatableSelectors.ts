@@ -60,14 +60,10 @@ export const getActiveMap =
     createMapSelectorP (getHeroes)
                        (getWiki, getLocaleAsProp)
                        (heroReducer.A.present)
-                       ((wiki, l10n) => {
-                         console.log (`getActiveMap (${category})`)
-
-                         return getAllActiveByCategory (category)
+                       ((wiki, l10n) => getAllActiveByCategory (category)
                                                                (addLevelToName)
                                                                (l10n)
-                                                               (wiki)
-                       })
+                                                               (wiki))
 
 export const getActiveForView = <T extends ActivatableCategory>(category: T) =>
   getActive (category, false)
@@ -212,16 +208,13 @@ export const getFilteredActiveSpecialAbilities = createMaybeSelector (
   getSpecialAbilitiesForEdit,
   getSpecialAbilitiesSortOptions,
   getSpecialAbilitiesFilterText,
-  (mspecial_abilities, sortOptions, filterText) => {
-    console.log ("getFilteredActiveSpecialAbilities()")
-
-    return fmapF (mspecial_abilities)
+  (mspecial_abilities, sortOptions, filterText) =>
+    fmapF (mspecial_abilities)
           (filterAndSortRecordsBy (0)
                                   <ActiveActivatable<SpecialAbility>>
                                   ([ActiveActivatableA_.name])
                                   (sortOptions)
                                   (filterText))
-  }
 )
 
 export const getGeneralSpecialAbilitiesForSheet = createMaybeSelector (

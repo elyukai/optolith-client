@@ -45,14 +45,16 @@ export const createMapSelector =
     const keyMap: Map<string, [MappedReturnType<G>, MappedReturnType<M>]> = new Map ()
 
     let resMap: Map<string, R> = new Map ()
+    let justResMap: Map<string, Just<R>> = new Map ()
 
     const g = (key_str: string) => (state: S, props: P): Maybe<R> => {
       let res = resMap .get (key_str)
+      let mres = justResMap .get (key_str)
 
-      if (state === prevState && res !== undefined) {
-        console.log ("createMapSelector: equal state, no recalc")
+      if (state === prevState && mres !== undefined) {
+        // console.log ("createMapSelector: equal state, no recalc")
 
-        return Just (res)
+        return mres
       }
 
       // const mkey_str = normalize (typeof key === "function" ? key (state) : key)
@@ -70,7 +72,7 @@ export const createMapSelector =
       const mvalue = lookup (key_str) (map)
 
       if (isNothing (mvalue)) {
-        console.log ("createMapSelector: no value available")
+        // console.log ("createMapSelector: no value available")
 
         return Nothing
       }
@@ -88,7 +90,7 @@ export const createMapSelector =
         map === prevMap && keyMap .has (key_str)
         || maybeEquals (value, prevValues .get (key_str))
       ) {
-        console.log ("createMapSelector: equal substate, no recalc")
+        // console.log ("createMapSelector: equal substate, no recalc")
 
         const prevMapValueValues = keyMap .get (key_str)! [1]
 
@@ -100,12 +102,15 @@ export const createMapSelector =
                    (...newGlobalValues as any)
                    (...prevMapValueValues as any)
 
-        resMap .set (key_str, res)
+        mres = Just (res)
 
-        return Just (res)
+        resMap .set (key_str, res)
+        justResMap .set (key_str, mres)
+
+        return mres
       }
 
-      console.log ("createMapSelector: recalc")
+      // console.log ("createMapSelector: recalc")
 
       const newMapValueValues =
         valueSelectors .map (s => s (value, props)) as MappedReturnType<M>
@@ -118,15 +123,27 @@ export const createMapSelector =
                  (...newGlobalValues as any)
                  (...newMapValueValues as any)
 
-      resMap .set (key_str, res)
+      mres = Just (res)
 
-      return Just (res)
+      resMap .set (key_str, res)
+      justResMap .set (key_str, mres)
+
+      return mres
     }
 
-    g.getCacheAt = (key_str: string) => Maybe (resMap .get (key_str))
-    g.setCacheAt = (key_str: string) => (x: R) => { resMap .set (key_str, x) }
+    g.getCacheAt = (key_str: string): Maybe<R> => Maybe (resMap .get (key_str))
+    g.setCacheAt =
+      (key_str: string) =>
+      (x: R) => {
+        resMap .set (key_str, x)
+        justResMap .set (key_str, Just (x))
+      }
     g.getCache = () => fromMap (resMap)
-    g.setCache = (m: OrderedMap<string, R>) => { resMap = toMap (m) as Map<string, R> }
+    g.setCache =
+      (m: OrderedMap<string, R>) => {
+        resMap = toMap (m) as Map<string, R>
+        resMap .forEach ((v, k) => justResMap .set (k, Just (v)))
+      }
     g.setBaseMap = (m: OrderedMap<string, V>) => { prevMap = m }
     g.setState = (s: S) => { prevState = s }
 
