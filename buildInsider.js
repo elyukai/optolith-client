@@ -11,12 +11,15 @@ const copyL10nTable =
     const src = join (src_dir, `TDE5_${locale}.xlsx`)
     if (existsSync (src)) {
       await copyFile (src, join ("app", "Database", locale, "l10n.xlsx"))
+      console.log (`"TDE5_${locale}.xlsx" copied to "${join (locale, "l10n.xlsx")}"!`)
     }
   }
 
 const copyTables =
   async () => {
     await copyFile (join (src_dir, `TDE5.xlsx`), join ("app", "Database", "univ.xlsx"))
+    console.log (`"TDE5.xlsx" copied to "univ.xlsx"!`)
+
     await copyL10nTable ("de-DE")
     await copyL10nTable ("en-US")
     await copyL10nTable ("nl-BE")
