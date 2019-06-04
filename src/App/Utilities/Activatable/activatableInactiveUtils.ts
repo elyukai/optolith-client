@@ -16,8 +16,6 @@ import { all, bind, bindF, ensure, fromJust, fromMaybe, guard, guard_, isJust, j
 import { alter, elems, foldrWithKey, isOrderedMap, lookup, lookupF, member, OrderedMap } from "../../../Data/OrderedMap";
 import { fst, Pair, snd } from "../../../Data/Pair";
 import { Record, RecordI } from "../../../Data/Record";
-import { showP } from "../../../Data/Show";
-import { traceShow } from "../../../Debug/Trace";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
@@ -729,11 +727,9 @@ const modifyOtherOptions =
       case "SA_87": {
         return pipe (
                       cost,
-                      traceShow ("cost = "),
                       bindF<number | List<number>, List<number>> (ensure (isList)),
                       bindF (costs => subscript (costs)
                                                 (maybe (0) (pipe (active, flength)) (mhero_entry))),
-                      traceShow ("current cost = "),
                       fmap (pipe (Just, set (costL)))
                     )
                     (wiki_entry)
@@ -914,11 +910,6 @@ export const getInactiveView =
                                           (mhero_entry)
                                           (max_level)
 
-    if (current_id === "SA_72") {
-      console.log ("current_prerequisites = ", showP (current_prerequisites))
-      console.log ("isNotValid = ", showP (isNotValid))
-    }
-
     if (!isNotValid) {
       const specificSelections = modifySelectOptions (wiki) (hero) (wiki_entry) (mhero_entry)
 
@@ -928,11 +919,6 @@ export const getInactiveView =
                                                      (wiki_entry)
                                                      (mhero_entry)
 
-
-      if (current_id === "SA_72") {
-        console.log ("specificSelections = ", showP (specificSelections))
-        console.log ("mmodifyOtherOptions = ", showP (mmodifyOtherOptions))
-      }
 
       return liftM2 ((modify: ident<Record<InactiveActivatable>>) =>
                      (select_options: Maybe<List<Record<SelectOption>>>) =>
