@@ -316,6 +316,12 @@ export const getAvailableInactiveSpells = createMaybeSelector (
   uncurryN (liftM2 (filterByAvailability (pipe (SWRA.wikiEntry, SA.src))))
 )
 
+export const getAvailableInactiveCantrips = createMaybeSelector (
+  getRuleBooksEnabled,
+  getInactiveCantrips,
+  uncurryN (liftM2 (filterByAvailability (pipe (CCA.wikiEntry, CA.src))))
+)
+
 type ListCombined = List<Record<SpellWithRequirements> | Record<CantripCombined>>
 
 export const getActiveSpellsAndCantrips = createMaybeSelector (
@@ -326,7 +332,7 @@ export const getActiveSpellsAndCantrips = createMaybeSelector (
 
 export const getAvailableInactiveSpellsAndCantrips = createMaybeSelector (
   getAvailableInactiveSpells,
-  getInactiveCantrips,
+  getAvailableInactiveCantrips,
   uncurryN (liftM2<ListCombined, ListCombined, ListCombined> (append))
 )
 
