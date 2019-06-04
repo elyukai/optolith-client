@@ -1,10 +1,9 @@
+import { flip } from "../../Data/Function";
 import { fmapF } from "../../Data/Functor";
 import { fromArray, List } from "../../Data/List";
 import { catMaybes, join, liftM2, mapMaybe, Maybe } from "../../Data/Maybe";
 import { elems, lookup } from "../../Data/OrderedMap";
-import { uncurryN } from "../../Data/Pair";
 import { Record } from "../../Data/Record";
-import { uncurryN3 } from "../../Data/Tuple/Curry";
 import { ActivatableCategory, Categories } from "../Constants/Categories";
 import { InactiveActivatable } from "../Models/View/InactiveActivatable";
 import { Advantage } from "../Models/Wiki/Advantage";
@@ -16,7 +15,8 @@ import { heroReducer } from "../Reducers/heroReducer";
 import { getActivatableHeroSliceByCategory } from "../Utilities/Activatable/activatableActiveUtils";
 import { getInactiveView } from "../Utilities/Activatable/activatableInactiveUtils";
 import { getAllAvailableExtendedSpecialAbilities } from "../Utilities/Activatable/ExtendedStyleUtils";
-import { createMapSelector } from "../Utilities/createMapSelector";
+import { createMapMaybeSelector } from "../Utilities/createMapMaybeSelector";
+import { createMapSelector, ignore3rd } from "../Utilities/createMapSelector";
 import { createMaybeSelector } from "../Utilities/createMaybeSelector";
 import { pipe } from "../Utilities/pipe";
 import { filterByAvailability } from "../Utilities/RulesUtils";
@@ -76,7 +76,11 @@ export const getInactiveForView =
                                })
                     )
 
-type avai = EnabledSourceBooks
+const getInactiveAdvantagesForView = getInactiveForView (Categories.ADVANTAGES)
+const getInactiveDisadvantagesForView = getInactiveForView (Categories.DISADVANTAGES)
+const getInactiveSpecialAbilitiesForView = getInactiveForView (Categories.SPECIAL_ABILITIES)
+
+type Av = EnabledSourceBooks
 type listAdv = List<Record<InactiveActivatable<Advantage>>>
 type listDis = List<Record<InactiveActivatable<Disadvantage>>>
 type listSA = List<Record<InactiveActivatable<SpecialAbility>>>
@@ -89,49 +93,39 @@ const getWikiEntry = IAA.wikiEntry as
 const getSrc = pipe (getWikiEntry, Advantage.AL.src) as
   <T extends ActivatableCategory> (x: Inactive<T>) => List<Record<SourceLink>>
 
+const filterDeactiveAdv =
+  ignore3rd (flip (liftM2<Av, listAdv, listAdv> (filterByAvailability (getSrc))))
+
+const filterDeactiveDis =
+  filterDeactiveAdv as (a: Maybe<listDis>) => (b: Maybe<Av>) => () => Maybe<listDis>
+
 export const getDeactiveAdvantages =
-  (hero_id: string) =>
-    createMaybeSelector (
-      getRuleBooksEnabled,
-      getInactiveForView (Categories.ADVANTAGES) (hero_id),
-      uncurryN (rules =>
-                  pipe (
-                    join,
-                    liftM2<avai, listAdv, listAdv> (filterByAvailability (getSrc))
-                                                   (rules)
-                  ))
-    )
+  createMapMaybeSelector (stateSelectors.getHeroes)
+                         (getInactiveAdvantagesForView)
+                         (getRuleBooksEnabled)
+                         ()
+                         (filterDeactiveAdv)
 
 export const getDeactiveDisadvantages =
-  (hero_id: string) =>
-    createMaybeSelector (
-      getRuleBooksEnabled,
-      getInactiveForView (Categories.DISADVANTAGES) (hero_id),
-      uncurryN (rules =>
-                  pipe (
-                    join,
-                    liftM2<avai, listDis, listDis> (filterByAvailability (getSrc))
-                                                   (rules)
-                  ))
-    )
+  createMapMaybeSelector (stateSelectors.getHeroes)
+                         (getInactiveDisadvantagesForView)
+                         (getRuleBooksEnabled)
+                         ()
+                         (filterDeactiveDis)
 
 type CatSA = Categories.SPECIAL_ABILITIES
 type InAcSA = InactiveActivatable<SpecialAbility>
 
 export const getDeactiveSpecialAbilities =
-  (hero_id: string) =>
-    createMaybeSelector (
-      getSpecialAbilitiesSortOptions,
-      getRuleBooksEnabled,
-      getInactiveForView (Categories.SPECIAL_ABILITIES) (hero_id),
-      uncurryN3 (sort_options => rules =>
-                  pipe (
-                    join,
-                    liftM2<avai, listSA, listSA> (availability => pipe (
-                                                   filterByAvailability (getSrc)
-                                                                        <CatSA> (availability),
-                                                   sortRecordsBy<InAcSA> (sort_options)
-                                                 ))
-                                                 (rules)
-                  ))
-    )
+  createMapMaybeSelector (stateSelectors.getHeroes)
+                         (getInactiveSpecialAbilitiesForView)
+                         (getSpecialAbilitiesSortOptions, getRuleBooksEnabled)
+                         ()
+                         (mxs => (sort_options, mrules) => () =>
+                           liftM2<Av, listSA, listSA> (availability => pipe (
+                                                        filterByAvailability (getSrc)
+                                                                             <CatSA> (availability),
+                                                        sortRecordsBy<InAcSA> (sort_options)
+                                                      ))
+                                                      (mrules)
+                                                      (mxs))

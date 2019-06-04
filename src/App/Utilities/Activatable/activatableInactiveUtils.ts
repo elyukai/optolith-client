@@ -16,6 +16,8 @@ import { all, bind, bindF, ensure, fromJust, fromMaybe, guard, guard_, isJust, j
 import { alter, elems, foldrWithKey, isOrderedMap, lookup, lookupF, member, OrderedMap } from "../../../Data/OrderedMap";
 import { fst, Pair, snd } from "../../../Data/Pair";
 import { Record, RecordI } from "../../../Data/Record";
+import { showP } from "../../../Data/Show";
+import { traceShow } from "../../../Debug/Trace";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
@@ -151,7 +153,7 @@ const isNotRequiredNotActive =
  * Increment the value at the specified key by `1`. If there is no value at that
  * key, the value will be set to `0`.
  */
-const incMapVal = alter (pipe (maybe (0) (inc), Just))
+const incMapVal = alter (pipe (maybe (1) (inc), Just))
 
 const addChantToCounter =
   (chant: Record<LiturgicalChant>) =>
@@ -162,7 +164,7 @@ const addChantToCounter =
 
 const addSpellToCounter = pipe (property, incMapVal)
 
-const filterSkills = filter<Record<ActivatableSkillDependent>> (pipe (value, gte (10)))
+const filterSkillsGte10 = filter<Record<ActivatableSkillDependent>> (pipe (value, gte (10)))
 
 const foldCounter =
   foldrWithKey<number, number, List<number>> (k => x => x >= 3 ? consF (k) : ident)
@@ -179,7 +181,7 @@ const getPropsWith3Gte10 =
     pipe (
       hero_spells,
       elems,
-      filterSkills,
+      filterSkillsGte10,
       mapByIdKeyMap (spells (wiki)),
       foldr (addSpellToCounter) (OrderedMap.empty),
       foldCounter
@@ -196,7 +198,7 @@ const getAspectsWith3Gte10 =
     pipe (
       hero_liturgicalChants,
       elems,
-      filterSkills,
+      filterSkillsGte10,
       mapByIdKeyMap (liturgicalChants (wiki)),
       foldr (addChantToCounter) (OrderedMap.empty),
       foldCounter
@@ -409,7 +411,7 @@ const modifySelectOptions =
 
         return fmap (filter ((e: Record<SelectOption>) =>
                               isNoRequiredOrActiveSelection (e)
-                              && notElem (SOA.id (e)) (valid_props)))
+                              && elem (SOA.id (e)) (valid_props)))
                     (mcurrent_select)
       }
 
@@ -440,7 +442,7 @@ const modifySelectOptions =
                                       )
                                       (e)
                                  && isNoRequiredOrActiveSelection (e)
-                                 && notElem (SOA.id (e)) (valid_aspects)))
+                                 && elem (SOA.id (e)) (valid_aspects)))
                       (getBlessedTradition (hero_specialAbilities (hero)))
                       (mcurrent_select)
       }
@@ -727,9 +729,11 @@ const modifyOtherOptions =
       case "SA_87": {
         return pipe (
                       cost,
+                      traceShow ("cost = "),
                       bindF<number | List<number>, List<number>> (ensure (isList)),
-                      bindF (costs => bindF (pipe (active, flength, subscript (costs)))
-                                            (mhero_entry)),
+                      bindF (costs => subscript (costs)
+                                                (maybe (0) (pipe (active, flength)) (mhero_entry))),
+                      traceShow ("current cost = "),
                       fmap (pipe (Just, set (costL)))
                     )
                     (wiki_entry)
@@ -910,6 +914,11 @@ export const getInactiveView =
                                           (mhero_entry)
                                           (max_level)
 
+    if (current_id === "SA_72") {
+      console.log ("current_prerequisites = ", showP (current_prerequisites))
+      console.log ("isNotValid = ", showP (isNotValid))
+    }
+
     if (!isNotValid) {
       const specificSelections = modifySelectOptions (wiki) (hero) (wiki_entry) (mhero_entry)
 
@@ -918,6 +927,12 @@ export const getInactiveView =
                                                      (adventure_points)
                                                      (wiki_entry)
                                                      (mhero_entry)
+
+
+      if (current_id === "SA_72") {
+        console.log ("specificSelections = ", showP (specificSelections))
+        console.log ("mmodifyOtherOptions = ", showP (mmodifyOtherOptions))
+      }
 
       return liftM2 ((modify: ident<Record<InactiveActivatable>>) =>
                      (select_options: Maybe<List<Record<SelectOption>>>) =>

@@ -1,4 +1,5 @@
 import { connect } from "react-redux";
+import { join } from "../../Data/Maybe";
 import { Record } from "../../Data/Record";
 import { ReduxDispatch } from "../Actions/Actions";
 import * as ConfigActions from "../Actions/ConfigActions";
@@ -19,8 +20,8 @@ const mapStateToProps = (
   ownProps: SpecialAbilitiesOwnProps
 ): SpecialAbilitiesStateProps => ({
   activeList: getFilteredActiveSpecialAbilities (state, ownProps),
-  deactiveList: getFilteredInactiveSpecialAbilities (HeroModel.A.id (ownProps.hero))
-                                                    (state, ownProps),
+  deactiveList: join (getFilteredInactiveSpecialAbilities (HeroModel.A.id (ownProps.hero))
+                                                          (state, ownProps)),
   enableActiveItemHints: getEnableActiveItemHints (state),
   isRemovingEnabled: getIsRemovingEnabled (state),
   stateEntries: getSpecialAbilities (state),
