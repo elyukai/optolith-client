@@ -12,6 +12,7 @@ import { List } from "../../../Data/List";
 import { liftM2, liftM4, mapMaybe, Maybe } from "../../../Data/Maybe";
 import { lookup, OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
+import { traceShow } from "../../../Debug/Trace";
 import { ActivatableCategory, Categories } from "../../Constants/Categories";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActiveObjectWithId } from "../../Models/ActiveEntries/ActiveObjectWithId";
@@ -116,6 +117,7 @@ export const getAllActiveByCategory =
     return pipe_ (
       hero_slice,
       getActiveFromState,
+      traceShow ("getActiveFromState"),
       mapMaybe ((active: Record<ActiveObjectWithId>) => {
                  const current_id = ActiveObjectWithId.A.id (active)
 
@@ -123,12 +125,12 @@ export const getAllActiveByCategory =
                                 (wiki_entry: GenericWikiEntry) =>
                                 (hero_entry: Record<ActivatableDependent>) =>
                                 (validation: Record<ActivatableActivationValidation>) =>
-                                 ActiveActivatable ({
-                                  nameAndCost,
-                                  validation,
-                                  heroEntry: hero_entry,
-                                  wikiEntry: wiki_entry,
-                                 }))
+                                  ActiveActivatable ({
+                                   nameAndCost,
+                                   validation,
+                                   heroEntry: hero_entry,
+                                   wikiEntry: wiki_entry,
+                                  }))
                                (fmap (convertCost)
                                      (getNameCost (false) (l10n) (wiki) (hero) (active)))
                                (lookup (current_id) (wiki_slice) as Maybe<GenericWikiEntry>)

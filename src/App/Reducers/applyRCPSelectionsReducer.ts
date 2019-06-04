@@ -9,7 +9,7 @@ import { insert, OrderedSet, toList, union } from "../../Data/OrderedSet";
 import { fromDefault, makeLenses, Record } from "../../Data/Record";
 import { SetSelectionsAction } from "../Actions/ProfessionActions";
 import { ActionTypes } from "../Constants/ActionTypes";
-import { ActivatableDependent, ActivatableDependentL } from "../Models/ActiveEntries/ActivatableDependent";
+import { ActivatableDependent, ActivatableDependentL, createPlainActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent, ActivatableSkillDependentL } from "../Models/ActiveEntries/ActivatableSkillDependent";
 import { ActiveObject } from "../Models/ActiveEntries/ActiveObject";
 import { SkillDependent, SkillDependentL } from "../Models/ActiveEntries/SkillDependent";
@@ -437,7 +437,7 @@ const applyModifications =
       // - Scripts additions
       join (acc => over (composeL (CML.hero, HL.specialAbilities))
                         (alter (pipe (
-                                 fromMaybe (ActivatableDependent.default),
+                                 fromMaybe (createPlainActivatableDependent (prefixSA (27))),
                                  over (ActivatableDependentL.active)
                                       (append (pipe_ (
                                         acc,
@@ -452,7 +452,7 @@ const applyModifications =
       // - Languages additions
       join (acc => over (composeL (CML.hero, HL.specialAbilities))
                         (alter (pipe (
-                                 fromMaybe (ActivatableDependent.default),
+                                 fromMaybe (createPlainActivatableDependent (prefixSA (29))),
                                  over (ActivatableDependentL.active)
                                       (append (pipe_ (
                                         acc,

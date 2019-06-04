@@ -416,6 +416,8 @@ export const getIdSpecificAffectedAndDispatchProps =
       case "SA_9": {
         const x = getCurrentSelectOption (entry) (mselected)
 
+        const src = pipe_ (entry, IAA.wikiEntry, SAAL.src)
+
         return Pair (
           ActivatableActivationOptions ({
             id,
@@ -433,7 +435,7 @@ export const getIdSpecificAffectedAndDispatchProps =
                 fmap (map (a => SelectOption ({
                                   id: AA.id (a),
                                   name: AA.name (a),
-                                  src: pipe_ (entry, IAA.wikiEntry, SAAL.src),
+                                  src,
                                 })))
               ),
             inputDescription: bind (x) (SOA.applicationInput),
@@ -782,7 +784,7 @@ export const getInactiveActivatableControlElements =
                              value={mselected2}
                              onChange={inputHandlers.handleSecondSelect}
                              options={sels2}
-                             disabled={isJust (minput_text) || isJust (mselected)}
+                             disabled={isJust (minput_text) || isNothing (mselected)}
                              />
                          )
                        ))),

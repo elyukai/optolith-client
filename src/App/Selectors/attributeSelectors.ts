@@ -194,7 +194,7 @@ const getAttributeCombined =
   (id: string) =>
     fmapF (lookup (id) (wiki_attributes))
           (wiki_entry => AttributeCombined ({
-                           stateEntry: fromMaybe (AttributeDependent.default)
+                           stateEntry: fromMaybe (createPlainAttributeDependent (id))
                                                  (lookup (id) (hero_attributes)),
                            wikiEntry: wiki_entry,
                          }))

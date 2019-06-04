@@ -34,7 +34,7 @@ import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { Activatable } from "../../Models/Wiki/wikiTypeHelpers";
 import { countActiveGroupEntries } from "../entryGroupUtils";
 import { getAllEntriesByGroup } from "../heroStateUtils";
-import { getBlessedTradStrIdFromNumId } from "../IDUtils";
+import { getBlessedTradStrIdFromNumId, prefixSA } from "../IDUtils";
 import { getTraditionOfAspect } from "../Increasable/liturgicalChantUtils";
 import { add, gt, gte, inc, lt, multiply, subtract } from "../mathUtils";
 import { pipe, pipe_ } from "../pipe";
@@ -325,67 +325,74 @@ const modifySelectOptions =
       case "SA_9": {
         const mcounter = getActiveSecondarySelections (mhero_entry)
 
-        return fmap (pipe (
-                            filter ((e: Record<SelectOption>) => {
-                                     const curr_select_id = SOA.id (e)
+        return fmap (mapMaybe ((x: Record<SelectOption>) => {
+                                const curr_select_id = SOA.id (x)
 
-                                     if (isJust (mcounter)) {
-                                       const counter = fromJust (mcounter)
+                                return pipe_ (
+                                  x,
+                                  ensure (e => {
+                                    // if an inactive selection is a dependency (which is the
+                                    // result of isNoRequiredSelection), it means you cannot
+                                    // activate that one
+                                    if (!isNoRequiredSelection (e)) {
+                                      return false
+                                    }
 
-                                       if (isNoRequiredSelection (e)) {
-                                         return false
-                                       }
+                                    // if mcounter is available, mhero_entry must be a Just and thus
+                                    // there can be active selections
+                                    if (isJust (mcounter)) {
+                                      const counter = fromJust (mcounter)
 
-                                       if (member (curr_select_id) (counter)) {
-                                         return isAddExistSkillSpecAllowed (hero)
-                                                                           (counter)
-                                                                           (curr_select_id)
-                                       }
-                                     }
-                                     else if (isNoRequiredSelection (e)) {
-                                       return false
-                                     }
-
-                                     return isAddNotExistSkillSpecAllowed (hero)
+                                      if (member (curr_select_id) (counter)) {
+                                        return isAddExistSkillSpecAllowed (hero)
+                                                                          (counter)
                                                                           (curr_select_id)
-                                   }),
-                            map (e => {
-                                  const curr_select_id = SOA.id (e)
+                                      }
+                                    }
 
-                                  const mcounts = bind (mcounter) (lookup (curr_select_id))
+                                    // otherwise we only need to check if the skill rating is at
+                                    // least 6, as there can't be an activated selection.
+                                    return isAddNotExistSkillSpecAllowed (hero) (curr_select_id)
+                                  }),
+                                  fmap (e => {
+                                    const mcounts = bind (mcounter) (lookup (curr_select_id))
 
-                                  const adjustSelectOption =
-                                    pipe (
-                                      over (select_costL)
-                                           (isJust (mcounts)
-                                             // Increase cost if there are active specializations
-                                             // for the same skill
-                                             ? fmap (multiply (flength (fromJust (mcounts)) + 1))
+                                    const adjustSelectOption =
+                                      pipe (
+                                        over (select_costL)
+                                             (isJust (mcounts)
+                                               // Increase cost if there are active specializations
+                                               // for the same skill
+                                               ? fmap (multiply (flength (fromJust (mcounts)) + 1))
 
-                                             // otherwise return current cost
-                                             : ident),
-                                      over (applications)
-                                           (fmap (filter (app => {
-                                                           const isInactive =
-                                                             all (notElem<number | string>
-                                                                   (AppA.id (app)))
-                                                                 (mcounts)
+                                               // otherwise return current cost
+                                               : ident),
+                                        over (applications)
+                                             (fmap (filter (app => {
+                                                             const isInactive =
+                                                               all (notElem<number | string>
+                                                                     (AppA.id (app)))
+                                                                   (mcounts)
 
-                                                           const arePrerequisitesMet =
-                                                             all (pipe (
-                                                                   validatePrerequisites (wiki)
-                                                                                         (hero),
-                                                                   thrush (current_id)
-                                                                 ))
-                                                                 (AppA.prerequisites (app))
+                                                             const arePrerequisitesMet =
+                                                               all (pipe (
+                                                                     validatePrerequisites (wiki)
+                                                                                           (hero),
+                                                                     thrush (current_id)
+                                                                   ))
+                                                                   (AppA.prerequisites (app))
 
-                                                           return isInactive && arePrerequisitesMet
-                                                         })))
-                                    )
+                                                             return isInactive
+                                                               && arePrerequisitesMet
+                                                           })))
+                                      )
 
-                                  return adjustSelectOption (e)
-                                })
-                    ))
+                                    return adjustSelectOption (e)
+                                  })
+                                )
+
+                              })
+                    )
                     (mcurrent_select)
       }
 
@@ -632,30 +639,27 @@ const isAddExistSkillSpecAllowed =
   (hero: HeroModelRecord) =>
   (counter: OrderedMap<string | number, List<string | number>>) =>
   (curr_select_id: string | number) =>
-    pipe (
+    pipe_ (
+      curr_select_id,
       ensure (isString),
       bindF (lookupF (hero_skills (hero))),
-      bindF (skill => pipe (
-                             lookupF (counter),
-                             fmap (xs =>
-                                    flength (xs) < 3
-                                    && value (skill) >= (flength (xs) + 1) * 6)
-                           )
-                           (curr_select_id)),
+      liftM2 ((apps: List<string | number>) =>
+              (skill: Record<SkillDependent>) =>
+                flength (apps) < 3 && value (skill) >= (flength (apps) + 1) * 6)
+             (lookupF (counter) (curr_select_id)),
       or
     )
-    (curr_select_id)
 
 const isAddNotExistSkillSpecAllowed =
   (hero: HeroModelRecord) =>
   (curr_select_id: string | number) =>
-    pipe (
+    pipe_ (
+      curr_select_id,
       ensure (isString),
       bindF (lookupF (hero_skills (hero))),
       fmap (skill => value (skill) >= 6),
       or
     )
-    (curr_select_id)
 
 const is3or4 = (x: string | number): x is number => x === 3 || x === 4
 
@@ -706,12 +710,18 @@ const modifyOtherOptions =
       }
 
       // Magical Traditions
-      case "SA_70":
-      case "SA_255":
-      case "SA_345":
-      case "SA_346":
-      case "SA_676":
-      case "SA_681": {
+      case prefixSA (70):
+      case prefixSA (255):
+      case prefixSA (345):
+      case prefixSA (346):
+      case prefixSA (676):
+      case prefixSA (677):
+      case prefixSA (678):
+      case prefixSA (679):
+      case prefixSA (680):
+      case prefixSA (681):
+      case prefixSA (1255):
+      case prefixSA (726): {
         return pipe (
                       hero_specialAbilities,
                       getMagicalTraditionsHeroEntries,

@@ -31,6 +31,7 @@ import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { Activatable, AllRequirementObjects, EntryWithCategory, LevelAwarePrerequisites } from "../../Models/Wiki/wikiTypeHelpers";
 import { countActiveGroupEntries } from "../entryGroupUtils";
 import { getAllEntriesByGroup, getHeroStateItem } from "../heroStateUtils";
+import { prefixSA } from "../IDUtils";
 import { ifElse } from "../ifElse";
 import { isOwnTradition } from "../Increasable/liturgicalChantUtils";
 import { add, gt, gte, inc, lt, subtract, subtractBy } from "../mathUtils";
@@ -134,16 +135,18 @@ const isRemovalDisabledEntrySpecific =
       }
 
       // Magical traditions
-      case "SA_70":
-      case "SA_255":
-      case "SA_345":
-      case "SA_346":
-      case "SA_676":
-      case "SA_677":
-      case "SA_678":
-      case "SA_679":
-      case "SA_680":
-      case "SA_681": {
+      case prefixSA (70):
+      case prefixSA (255):
+      case prefixSA (345):
+      case prefixSA (346):
+      case prefixSA (676):
+      case prefixSA (677):
+      case prefixSA (678):
+      case prefixSA (679):
+      case prefixSA (680):
+      case prefixSA (681):
+      case prefixSA (1255):
+      case prefixSA (726): {
         // All active tradition entries
         const traditions =
           getMagicalTraditionsHeroEntries (HeroModel.AL.specialAbilities (hero))
