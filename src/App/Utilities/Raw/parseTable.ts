@@ -5,7 +5,7 @@ import { equals } from "../../../Data/Eq";
 import { flip, thrush } from "../../../Data/Function";
 import { fmap } from "../../../Data/Functor";
 import { Lens_, over, set } from "../../../Data/Lens";
-import { append, consF, empty, foldr, List, map } from "../../../Data/List";
+import { append, consF, empty, foldr, List, map, notElem } from "../../../Data/List";
 import { catMaybes, ensure, fromMaybe, Just, mapMaybe, Maybe, Nothing } from "../../../Data/Maybe";
 import { adjust, elems, fromList, insert, lookupF, mapMEitherWithKey, OrderedMap } from "../../../Data/OrderedMap";
 import { OrderedSet } from "../../../Data/OrderedSet";
@@ -19,6 +19,7 @@ import { L10nRecord } from "../../Models/Wiki/L10n";
 import { getCustomProfession } from "../../Models/Wiki/Profession";
 import { Skill } from "../../Models/Wiki/Skill";
 import { SpecialAbility, SpecialAbilityL } from "../../Models/Wiki/SpecialAbility";
+import { Spell } from "../../Models/Wiki/Spell";
 import { SelectOption } from "../../Models/Wiki/sub/SelectOption";
 import { WikiModel, WikiModelL, WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { Activatable, Skillish } from "../../Models/Wiki/wikiTypeHelpers";
@@ -309,14 +310,14 @@ export const parseTables =
           w => over (WikiModelL.advantages)
                     (pipe (
                       OrderedMap.map (over (AdvantageL.select)
-                                           (fmap (mapCategoriesToSelectOptions (w)))),
+                                           (fmap (mapCatToSelectOptions (w)))),
                       matchSelectOptionsToBaseRecords (rs.advantageSelectOptions)
                     ))
                     (w),
           w => over (WikiModelL.disadvantages)
                     (pipe (
                       OrderedMap.map (over (DisadvantageL.select)
-                                           (fmap (mapCategoriesToSelectOptions (w)))),
+                                           (fmap (mapCatToSelectOptions (w)))),
                       matchSelectOptionsToBaseRecords (rs.disadvantageSelectOptions)
                     ))
                     (w),
@@ -346,27 +347,32 @@ export const parseTables =
 
             return over (WikiModelL.specialAbilities)
                         (pipe (
-                          OrderedMap.map (pipe (
-                            over (SpecialAbilityL.select)
-                                 (fmap (mapCategoriesToSelectOptions (w))),
-                            x => {
-                              switch (SpecialAbility.A.id (x)) {
-                                case "SA_472":
-                                case "SA_473":
-                                case "SA_531":
-                                case "SA_533": {
-                                  return set (SpecialAbilityL.select) (Just (knowledge_skills)) (x)
-                                }
-
-                                case "SA_9": {
-                                  return set (SpecialAbilityL.select) (Just (skills_with_apps)) (x)
-                                }
-
-                                default:
-                                  return x
+                          OrderedMap.map (x => {
+                            switch (SpecialAbility.A.id (x)) {
+                              case "SA_472":
+                              case "SA_473":
+                              case "SA_531":
+                              case "SA_533": {
+                                return set (SpecialAbilityL.select) (Just (knowledge_skills)) (x)
                               }
+
+                              case "SA_9": {
+                                return set (SpecialAbilityL.select) (Just (skills_with_apps)) (x)
+                              }
+
+                              case "SA_70": {
+                                return over (SpecialAbilityL.select)
+                                            (fmap (mapCatToSelectOptionsPred (noGuildMageSkill)
+                                                                             (w)))
+                                            (x)
+                              }
+
+                              default:
+                                return over (SpecialAbilityL.select)
+                                            (fmap (mapCatToSelectOptions (w)))
+                                            (x)
                             }
-                          )),
+                          }),
                           matchSelectOptionsToBaseRecords (rs.specialAbilitySelectOptions),
                           matchExtensionsToBaseRecord (rs.spellExtensions) ("SA_414"),
                           matchExtensionsToBaseRecord (rs.liturgicalChantExtensions) ("SA_663")
@@ -377,7 +383,7 @@ export const parseTables =
       ))
   }
 
-const mapCategoriesToSelectOptions =
+const mapCatToSelectOptions =
   (wiki: WikiModelRecord) =>
     foldr (pipe (
               SelectOption.A.id as (x: Record<SelectOption>) => Categories,
@@ -397,3 +403,28 @@ const mapCategoriesToSelectOptions =
               append
             ))
             (List ())
+
+const mapCatToSelectOptionsPred =
+  (pred: (x: Skillish) => boolean) =>
+  (wiki: WikiModelRecord) =>
+    foldr (pipe (
+              SelectOption.A.id as (x: Record<SelectOption>) => Categories,
+              getWikiSliceGetterByCategory as
+                (c: Categories) =>
+                  (x: Record<WikiModel>) => OrderedMap<string, Skillish>,
+              thrush (wiki),
+              elems,
+              mapMaybe (pipe (
+                ensure (pred),
+                fmap (r => SelectOption ({
+                  id: Skill.AL.id (r),
+                  name: Skill.AL.name (r),
+                  cost: member ("ic") (r) ? Just (Skill.AL.ic (r)) : Nothing,
+                  src: Skill.AL.src (r),
+                }))
+              )),
+              append
+            ))
+            (List ())
+
+const noGuildMageSkill = (x: Skillish) => !Spell.is (x) || notElem (2) (Spell.A.tradition (x))

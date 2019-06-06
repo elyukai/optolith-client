@@ -18,6 +18,7 @@ import { Cantrip } from "../Models/Wiki/Cantrip";
 import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel";
 import { SpecialAbility } from "../Models/Wiki/SpecialAbility";
 import { Spell, SpellL } from "../Models/Wiki/Spell";
+import { selectToDropdownOption } from "../Models/Wiki/sub/SelectOption";
 import { WikiModel } from "../Models/Wiki/WikiModel";
 import { getModifierByActiveLevel } from "../Utilities/Activatable/activatableModifierUtils";
 import { getMagicalTraditionsHeroEntries } from "../Utilities/Activatable/traditionUtils";
@@ -32,7 +33,6 @@ import { filterByAvailability } from "../Utilities/RulesUtils";
 import { mapGetToMaybeSlice } from "../Utilities/SelectorsUtils";
 import { sortRecordsBy, sortRecordsByName } from "../Utilities/sortBy";
 import { misNumberM } from "../Utilities/typeCheckUtils";
-import { DropdownOption } from "../Views/Universal/Dropdown";
 import { getStartEl } from "./elSelectors";
 import { getRuleBooksEnabled } from "./rulesSelectors";
 import { getCantripsSortOptions, getSpellsCombinedSortOptions, getSpellsSortOptions } from "./sortOptionsSelectors";
@@ -442,13 +442,13 @@ export const getSpellsForSheet = createMaybeSelector (
 
 export const getAllSpellsForManualGuildMageSelect = createMaybeSelector (
   getLocaleAsProp,
-  getWikiSpells,
+  getWikiSpecialAbilities,
   uncurryN (l10n => pipe (
-                      elems,
-                      map (spell => DropdownOption ({
-                                      id: Just (Spell.A.id (spell)),
-                                      name: Spell.A.name (spell),
-                                    })),
-                      sortRecordsByName (l10n)
+                      lookup (prefixSA (70)),
+                      bindF (SAA.select),
+                      fmap (pipe (
+                        map (selectToDropdownOption),
+                        sortRecordsByName (l10n)
+                      ))
                     ))
 )
