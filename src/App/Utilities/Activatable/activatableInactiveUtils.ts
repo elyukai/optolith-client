@@ -423,12 +423,11 @@ const modifySelectOptions =
       // Property Focus
       case "SA_81": {
         const isNoActivePropertyKnowledge =
-          pipe (hero_specialAbilities, lookup ("SA_72"), isNotActive)
-               (hero)
+          pipe_ (hero, hero_specialAbilities, lookup ("SA_72"), isNotActive)
 
         return fmap (filter ((e: Record<SelectOption>) =>
                               isNoRequiredOrActiveSelection (e)
-                              && isNoActivePropertyKnowledge (e)))
+                              && !isNoActivePropertyKnowledge (e)))
                     (mcurrent_select)
       }
 
