@@ -133,7 +133,7 @@ export function ItemEditorRangedSection (props: ItemEditorRangedSectionProps) {
             <Dropdown
               className="weapon-loss"
               label={translate (l10n) ("damaged.short")}
-              value={EIA.stabilityMod (item)}
+              value={EIA.loss (item)}
               options={getLossLevelElements ()}
               onChange={props.setLoss}
               />

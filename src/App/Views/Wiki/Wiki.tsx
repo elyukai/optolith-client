@@ -61,7 +61,7 @@ export interface WikiStateProps extends WikiTabLists {
   spellsGroup: Maybe<number>
   liturgicalChantsGroup: Maybe<number>
   itemTemplatesGroup: Maybe<number>
-  specialAbilityGroups: List<Record<DropdownOption>>
+  specialAbilityGroups: List<Record<DropdownOption<number>>>
 }
 
 export interface WikiDispatchProps {

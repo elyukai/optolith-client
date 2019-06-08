@@ -7,13 +7,13 @@ import { toRoman } from "./NumberUtils";
 
 const getElements =
   (max: number) =>
-    unfoldr<Record<DropdownOption>, number>
+    unfoldr<Record<DropdownOption<number>>, number>
       (current => current > max
         ? Nothing
         : current === 0
         ? Just (
           Pair
-            (DropdownOption ({ name: "0" }))
+            (DropdownOption<number> ({ name: "0" }))
             (current + 1)
         )
         : Just (

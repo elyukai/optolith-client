@@ -729,7 +729,7 @@ export const getInactiveActivatableControlElements =
                       <Dropdown
                         value={mselected}
                         onChange={inputHandlers.handleSelect}
-                        options={sel as List<Record<DropdownOption>>}
+                        options={sel}
                         disabled={inputHandlers.selectElementDisabled} />
                     )
                   )

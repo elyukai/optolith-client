@@ -56,8 +56,8 @@ export type OverviewPersonalDataProps =
   & OverviewPersonalDataOwnProps
 
 interface HairColorAndEyeColorOptions {
-  hairOptions: List<Record<DropdownOption>>
-  eyeOptions: List<Record<DropdownOption>>
+  hairOptions: List<Record<DropdownOption<number>>>
+  eyeOptions: List<Record<DropdownOption<number>>>
 }
 
 const getDropdownOption =
@@ -157,7 +157,7 @@ export function OverviewPersonalData (props: OverviewPersonalDataProps) {
                                                                 (isAlbino)
 
   const socialOptions =
-    maybe (List<Record<DropdownOption>> ())
+    maybe (List<Record<DropdownOption<number>>> ())
           ((culture: Record<Culture>) =>
             imapMaybe (index => (name: string) =>
                         ensure (pipe (
