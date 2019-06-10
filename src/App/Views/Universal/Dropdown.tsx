@@ -152,7 +152,7 @@ export class Dropdown<A extends DropdownKey>
     const style = isOpen ? (flength (options) < 6 ? flength (options) * 33 + 1 : 166) : 0
 
     const mselected =
-      isMultiple
+      !isMultiple
         ? pipe_ (
             options,
             find<Record<DropdownOption<A>>> (pipe (DOA.id, equals (normalizedValue))),
