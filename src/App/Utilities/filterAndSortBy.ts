@@ -1,6 +1,6 @@
 import { List } from "../../Data/List";
 import { Record, RecordBase } from "../../Data/Record";
-import { filterRecordsBy, filterRecordsByE, filterRecordsByName } from "./filterBy";
+import { FilterAccessor, filterRecordsBy, filterRecordsByE, filterRecordsByName } from "./filterBy";
 import { pipe } from "./pipe";
 import { RecordWithName, SortOptions, sortRecordsBy, sortRecordsByName } from "./sortBy";
 
@@ -10,7 +10,7 @@ import { RecordWithName, SortOptions, sortRecordsBy, sortRecordsByName } from ".
 export const filterAndSortRecordsBy =
   (minFilterTextLength: number) =>
   <A extends RecordBase>
-  (filterAccessors: ((x: Record<A>) => string)[]) =>
+  (filterAccessors: FilterAccessor<A>[]) =>
   (sortOptions: SortOptions<A>) =>
   (filterText: string) =>
     pipe (

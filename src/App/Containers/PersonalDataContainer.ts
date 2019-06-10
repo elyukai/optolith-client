@@ -46,6 +46,9 @@ const mapDispatchToProps = (dispatch: ReduxDispatch): PersonalDataDispatchProps 
   setAvatar (path: string) {
     dispatch (ProfileActions.setHeroAvatar (path))
   },
+  deleteAvatar () {
+    dispatch (ProfileActions.deleteHeroAvatar ())
+  },
   setHeroName (name: string) {
     dispatch (ProfileActions.setHeroName (name))
   },

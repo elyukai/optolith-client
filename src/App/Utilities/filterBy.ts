@@ -1,14 +1,17 @@
 import { thrush } from "../../Data/Function";
-import { filter, isInfixOf, List, lower } from "../../Data/List";
+import { any, filter, isInfixOf, List, lower } from "../../Data/List";
 import { Record, RecordBase } from "../../Data/Record";
-import { pipe } from "./pipe";
+import { pipe, pipe_ } from "./pipe";
 import { RecordWithName } from "./sortBy";
+import { isString } from "./typeCheckUtils";
 
 /**
  * The default minimum filter text length for more efficient filtering of long
  * lists.
  */
 const PERF_MIN = 3
+
+export type FilterAccessor<A> = (x: Record<A>) => string | List<string>
 
 /**
  * `filterRecordsBy min accs text xs` filters a list of records `xs` by checking
@@ -19,7 +22,7 @@ const PERF_MIN = 3
 export const filterRecordsBy =
   (minFilterTextLength: number) =>
   <A extends RecordBase>
-  (filterAccessors: ((x: Record<A>) => string)[]) =>
+  (filterAccessors: FilterAccessor<A>[]) =>
   (filterText: string) =>
   (xs: List<Record<A>>): List<Record<A>> => {
     if (
@@ -31,7 +34,10 @@ export const filterRecordsBy =
 
     return filter<Record<A>>
       (x => filterAccessors
-        .some (pipe (thrush (x), lower, isInfixOf (lower (filterText)))))
+        .some (pipe (thrush (x), str => isString (str)
+                                          ? pipe_ (str, lower, isInfixOf (lower (filterText)))
+                                          : any (pipe (lower, isInfixOf (lower (filterText))))
+                                                (str))))
       (xs)
   }
 

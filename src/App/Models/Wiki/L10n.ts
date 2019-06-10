@@ -598,6 +598,7 @@ export interface L10n {
   "chooseacategorytodisplayalist": string
   "emptylistnoresults": string
   "extendedskillspecialabilities": string
+  "deleteavatar": string
 }
 
 export type L10nKey = keyof L10n
@@ -1202,4 +1203,5 @@ export const L10n =
     "chooseacategorytodisplayalist": "",
     "emptylistnoresults": "",
     "extendedskillspecialabilities": "",
+    "deleteavatar": "",
   })

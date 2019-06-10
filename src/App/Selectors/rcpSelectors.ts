@@ -1,5 +1,5 @@
 import { equals } from "../../Data/Eq";
-import { flip, thrush } from "../../Data/Function";
+import { flip, ident, thrush } from "../../Data/Function";
 import { fmap, fmapF } from "../../Data/Functor";
 import { over } from "../../Data/Lens";
 import { all, cons, Cons, elem, elemF, filter, find, foldr, List, ListI, map, subscriptF } from "../../Data/List";
@@ -745,6 +745,17 @@ export const getFilteredProfessions = createMaybeSelector (
                                                          (n => NameBySex.is (n)
                                                                  ? NameBySex.A[sex] (n)
                                                                  : n)
+                                                 ),
+                                                 pipe (
+                                                   PCA.mappedVariants,
+                                                   map (pipe (
+                                                    PVCA.wikiEntry,
+                                                    PVA.name,
+                                                    ident,
+                                                    n => NameBySex.is (n)
+                                                           ? NameBySex.A[sex] (n)
+                                                           : n
+                                                   ))
                                                  ),
                                                ])
                                                (sort_options)
