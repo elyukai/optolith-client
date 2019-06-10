@@ -71,8 +71,6 @@ export interface AdvantagesState {
   currentSlideinId: Maybe<string>
 }
 
-const APCA = AdventurePointsCategories.A
-
 export class Advantages extends React.Component<AdvantagesProps, AdvantagesState> {
   state: AdvantagesState = {
     showAddSlidein: false,
@@ -134,9 +132,7 @@ export class Advantages extends React.Component<AdvantagesProps, AdvantagesState
                         (fmapF (m_ap)
                                (ap => (
                                  <AdvantagesDisadvantagesAdventurePoints
-                                   total={APCA.spentOnAdvantages (ap)}
-                                   blessed={APCA.spentOnBlessedAdvantages (ap)}
-                                   magical={APCA.spentOnMagicalAdvantages (ap)}
+                                   ap={ap}
                                    magicalMax={magicalMax}
                                    l10n={l10n}
                                    />
