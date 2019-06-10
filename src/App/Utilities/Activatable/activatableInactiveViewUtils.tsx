@@ -735,8 +735,10 @@ export const getInactiveActivatableControlElements =
                   )
           ))
         )),
-      (isJust (msels) || isJust (minput_text))
-      && isNothing (mselected)
+      (
+        isJust (msels) && isNothing (mselected)
+        || isJust (minput_desc) && isNothing (minput_text)
+      )
       && notElem (IAA.id (entry))
                  (List ("ADV_32",
                         "DISADV_1",
