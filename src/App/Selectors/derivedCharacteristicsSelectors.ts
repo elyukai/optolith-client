@@ -1,6 +1,6 @@
 import { fmap, fmapF } from "../../Data/Functor";
 import { elem, foldr, List, snoc } from "../../Data/List";
-import { bind, bindF, fromMaybe, Just, liftM2, listToMaybe, maybe, Maybe, Nothing, or } from "../../Data/Maybe";
+import { bindF, fromMaybe, Just, liftM2, listToMaybe, maybe, Maybe, Nothing, or } from "../../Data/Maybe";
 import { elems, fromList } from "../../Data/OrderedMap";
 import { fst, Pair, snd } from "../../Data/Pair";
 import { Record } from "../../Data/Record";
@@ -21,7 +21,7 @@ import { getAttributeValueWithDefault } from "../Utilities/Increasable/attribute
 import { add, multiply, negate, subtract } from "../Utilities/mathUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
 import { isBookEnabled } from "../Utilities/RulesUtils";
-import { mapGetToMaybeSlice, mapGetToSliceWithProps } from "../Utilities/SelectorsUtils";
+import { mapGetToMaybeSlice, mapGetToSlice, mapGetToSliceWithProps } from "../Utilities/SelectorsUtils";
 import { getPrimaryBlessedAttribute, getPrimaryMagicalAttribute } from "./attributeSelectors";
 import { getCurrentRace } from "./rcpSelectors";
 import { getRuleBooksEnabled } from "./rulesSelectors";
@@ -88,8 +88,8 @@ export const getAE = createMaybeSelector (
   mapGetToMaybeSlice (getDisadvantages) (prefixDis (26)),
   getAddedArcaneEnergyPoints,
   getLocaleAsProp,
-  (mtrads, mprimary, paep, minc, mdec, added, l10n) => {
-    const mlast_trad = bind (mtrads) (listToMaybe)
+  (trads, mprimary, paep, minc, mdec, added, l10n) => {
+    const mlast_trad = listToMaybe (trads)
 
     const mredeemed = fmap (PermanentEnergyLossAndBoughtBack.A.redeemed) (paep)
 
@@ -147,7 +147,7 @@ export const getKP = createMaybeSelector (
   mapGetToMaybeSlice (getDisadvantages) (prefixDis (27)),
   getAddedKarmaPoints,
   getLocaleAsProp,
-  mapGetToMaybeSlice (getSpecialAbilities) (prefixSA (563)),
+  mapGetToSlice (getSpecialAbilities) (prefixSA (563)),
   (mprimary, pkp, minc, mdec, added, l10n, mhigh_consecration) => {
     const mredeemed = fmap (PermanentEnergyLossAndBoughtBack.A.redeemed) (pkp)
 
@@ -249,7 +249,7 @@ export const getTOU = createMaybeSelector (
 
 export const getDO = createMaybeSelector (
   mapGetToSliceWithProps (getAttributes) (prefixAttr (6)),
-  mapGetToMaybeSlice (getSpecialAbilities) (prefixSA (64)),
+  mapGetToSlice (getSpecialAbilities) (prefixSA (64)),
   getLocaleAsProp,
   (magi, mimproved_dodge, l10n) => {
     const base = divideBy2AndRound (getAttributeValueWithDefault (magi))
@@ -273,7 +273,7 @@ export const getDO = createMaybeSelector (
 export const getINI = createMaybeSelector (
   mapGetToSliceWithProps (getAttributes) (prefixAttr (1)),
   mapGetToSliceWithProps (getAttributes) (prefixAttr (6)),
-  mapGetToMaybeSlice (getSpecialAbilities) (prefixSA (51)),
+  mapGetToSlice (getSpecialAbilities) (prefixSA (51)),
   getLocaleAsProp,
   (mcou, magi, mcombat_reflexes, l10n) => {
     const base = divideBy2AndRound (

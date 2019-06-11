@@ -1,3 +1,4 @@
+
 // @ts-check
 const { ident } = require('../Function');
 const { Internals } = require('../Internals');
@@ -980,4 +981,9 @@ test ('mapByIdKeyMap', () => {
   expect (List.mapByIdKeyMap (m)
                              (List (R ({ id: "d" }), R ({ id: "b" }), R ({ id: "a" }))))
     .toEqual (List (4, 2, 1))
+})
+
+test ('intersecting', () => {
+  expect (List.intersecting (List (1, 2, 3)) (List (4, 5, 6))) .toEqual (false)
+  expect (List.intersecting (List (1, 2, 3)) (List (3, 5, 6))) .toEqual (true)
 })

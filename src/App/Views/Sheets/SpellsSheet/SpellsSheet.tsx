@@ -32,7 +32,7 @@ export interface SpellsSheetProps {
   l10n: L10nRecord
   magicalPrimary: Maybe<string>
   magicalSpecialAbilities: Maybe<List<Record<ActiveActivatable<SpecialAbility>>>>
-  magicalTradition: Maybe<string>
+  magicalTradition: string
   properties: Maybe<List<string>>
   spells: Maybe<List<Record<SpellCombined>>>
   switchAttributeValueVisibility (): void

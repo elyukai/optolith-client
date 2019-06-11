@@ -2063,6 +2063,16 @@ export const notNullStrUndef =
 
 List.notNullStrUndef = notNullStrUndef
 
+/**
+ * `intersecting :: [a] -> [a] -> Bool`
+ *
+ * Returns if the passed lists have at least one value in common.
+ */
+export const intersecting =
+  <A> (ys: List<A>) => any (elemF (ys))
+
+List.intersecting = intersecting
+
 
 // NAMESPACED FUNCTIONS
 

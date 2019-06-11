@@ -1,12 +1,14 @@
+import { notP } from "../../../Data/Bool";
 import { equals } from "../../../Data/Eq";
 import { cnst, ident, thrush } from "../../../Data/Function";
 import { fmap } from "../../../Data/Functor";
-import { any, consF, find, List, minimum, notElem } from "../../../Data/List";
-import { and, bindF, elem, ensure, isJust, Just, Maybe, maybe, sum } from "../../../Data/Maybe";
+import { any, cons, consF, find, intersecting, List, minimum, notElem } from "../../../Data/List";
+import { and, bindF, elem, ensure, fromJust, isJust, Just, listToMaybe, mapMaybe, Maybe, maybe, sum } from "../../../Data/Maybe";
 import { alter, empty, filter, foldl, lookup, lookupF, OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
+import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
 import { AttributeDependent } from "../../Models/ActiveEntries/AttributeDependent";
 import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { Cantrip } from "../../Models/Wiki/Cantrip";
@@ -16,16 +18,20 @@ import { Spell } from "../../Models/Wiki/Spell";
 import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { getActiveSelectionsMaybe } from "../Activatable/selectionUtils";
 import { filterAndMaximumNonNegative, flattenDependencies } from "../Dependencies/flattenDependencies";
-import { getNumericMagicalTraditionIdByInstanceId } from "../IDUtils";
+import { getNumericMagicalTraditionIdByInstanceId, prefixSA } from "../IDUtils";
 import { ifElse } from "../ifElse";
 import { gte, inc } from "../mathUtils";
-import { pipe } from "../pipe";
+import { pipe, pipe_ } from "../pipe";
 import { isNumber } from "../typeCheckUtils";
 import { getExceptionalSkillBonus, getInitialMaximumList, putMaximumSkillRatingFromExperienceLevel } from "./skillUtils";
 
-const { spells } = WikiModel.AL
-const { id, tradition, property } = Spell.AL
-const { value, dependencies } = ActivatableSkillDependent.AL
+const WA = WikiModel.A
+const SA = Spell.A
+const SAL = Spell.AL
+const ASDA = ActivatableSkillDependent.A
+const ADA = ActivatableDependent.A
+const SAA = SpecialAbility.A
+const AOA = ActiveObject.A
 
 /**
  * `isActiveTradition id xs` checks if `id` is a tradition contained in the list
@@ -33,12 +39,12 @@ const { value, dependencies } = ActivatableSkillDependent.AL
  */
 const isActiveTradition =
   (e: number) =>
-    find<Record<SpecialAbility>> (pipe (
-                                   id,
-                                   getNumericMagicalTraditionIdByInstanceId,
-                                   fmap (inc),
-                                   elem (e)
-                                 ))
+    find (pipe (
+           SAA.id,
+           getNumericMagicalTraditionIdByInstanceId,
+           fmap (inc),
+           elem (e)
+         ))
 
 /**
  * Checks if the passed spell or cantrip is valid for the current
@@ -48,7 +54,7 @@ export const isOwnTradition =
   (activeTradition: List<Record<SpecialAbility>>) =>
   (x: Record<Spell> | Record<Cantrip>): boolean =>
     pipe (
-           tradition,
+           SAL.tradition,
            any (e => e === 1 || isJust (isActiveTradition (e) (activeTradition)))
          )
          (x)
@@ -62,7 +68,7 @@ const putPropertyKnowledgeRestrictionMaximum =
   (wiki_entry: Record<Spell>) =>
     ifElse<List<number>>
       (cnst (
-        and (fmap (notElem<string | number> (property (wiki_entry)))
+        and (fmap (notElem<string | number> (SA.property (wiki_entry)))
                   (getActiveSelectionsMaybe (propertyKnowledge)))
       ))
       <List<number>>
@@ -80,7 +86,7 @@ export const isSpellIncreasable =
   (propertyKnowledge: Maybe<Record<ActivatableDependent>>) =>
   (wiki_entry: Record<Spell>) =>
   (hero_entry: Record<ActivatableSkillDependent>): boolean => {
-    const bonus = getExceptionalSkillBonus (id (wiki_entry))
+    const bonus = getExceptionalSkillBonus (SA.id (wiki_entry))
                                            (exceptionalSkill)
 
     const max = pipe (
@@ -92,7 +98,7 @@ export const isSpellIncreasable =
                     )
                     (wiki_entry)
 
-    return value (hero_entry) < max + bonus
+    return ASDA.value (hero_entry) < max + bonus
   }
 
 /**
@@ -100,22 +106,22 @@ export const isSpellIncreasable =
  * property.
  */
 export const countActiveSpellsPerProperty =
-  (wiki: OrderedMap<string, Record<Spell>>) =>
+  (wiki: OrderedMap<string, Record<Spell>>):
+  (hero: OrderedMap<string, Record<ActivatableSkillDependent>>) => OrderedMap<number, number> =>
     pipe (
-      filter<string, Record<ActivatableSkillDependent>> (pipe (value, gte (10))),
-      foldl<Record<ActivatableSkillDependent>, OrderedMap<number, number>>
-        (acc => pipe (
-          id,
-          lookupF (wiki),
-          maybe
-            (acc)
-            (pipe (
-              property,
-              alter (pipe (sum, inc, Just)),
-              thrush (acc)
+      filter (pipe (ASDA.value, gte (10))),
+      foldl ((acc: OrderedMap<number, number>) => pipe (
+              ASDA.id,
+              lookupF (wiki),
+              maybe
+                (acc)
+                (pipe (
+                  SA.property,
+                  alter (pipe (sum, inc, Just)),
+                  thrush (acc)
+                ))
             ))
-        ))
-        (empty)
+            (empty)
     )
 
 /**
@@ -126,11 +132,11 @@ const isSpellDecreasableByDependencies =
   (state: HeroModelRecord) =>
   (hero_entry: Record<ActivatableSkillDependent>) => {
     const flattenedDependencies =
-      flattenDependencies (wiki) (state) (dependencies (hero_entry))
+      flattenDependencies (wiki) (state) (ASDA.dependencies (hero_entry))
 
-    return value (hero_entry) < 1
+    return ASDA.value (hero_entry) < 1
       ? notElem<number | boolean> (true) (flattenedDependencies)
-      : value (hero_entry) > filterAndMaximumNonNegative (flattenedDependencies)
+      : ASDA.value (hero_entry) > filterAndMaximumNonNegative (flattenedDependencies)
   }
 
 /**
@@ -150,15 +156,15 @@ const isSpellDecreasableByPropertyKnowledges =
 
         // Check if spell is part of dependencies of active Property Knowledge
         bindF<List<string | number>, List<string | number>>
-          (ensure (any (e => isNumber (e) && equals (e) (property (wiki_entry))))),
+          (ensure (any (e => isNumber (e) && equals (e) (SA.property (wiki_entry))))),
 
         fmap (
           pipe (
-            () => countActiveSpellsPerProperty (spells (wiki))
+            () => countActiveSpellsPerProperty (WA.spells (wiki))
                                                (spellsStateEntries),
-            lookup (property (wiki_entry)),
+            lookup (SA.property (wiki_entry)),
             sum,
-            lowest => value (hero_entry) !== 10 || lowest > 3
+            lowest => ASDA.value (hero_entry) !== 10 || lowest > 3
           )
         )
       )
@@ -180,3 +186,33 @@ export const isSpellDecreasable =
                                               (propertyKnowledge)
                                               (wiki_entry)
                                               (hero_entry)
+
+export const isUnfamiliarSpell =
+  (trad_hero_entries: List<Record<ActivatableDependent>>) => {
+    const mguild_mage_sel =
+      pipe_ (
+        trad_hero_entries,
+        find (pipe (ADA.id, equals (prefixSA (70)))),
+        bindF (pipe (ADA.active, listToMaybe)),
+        bindF (AOA.sid)
+      )
+
+    const active_trad_num_ids =
+      cons (mapMaybe (pipe (ADA.id, getNumericMagicalTraditionIdByInstanceId, fmap (inc)))
+                     (trad_hero_entries))
+           (1)
+
+    const isNoTraditionActive = notP (intersecting (active_trad_num_ids))
+
+    return (spell: Record<Spell> | Record<Cantrip>) => {
+      if (isJust (mguild_mage_sel)) {
+        const guild_mage_sel = fromJust (mguild_mage_sel)
+
+        if (guild_mage_sel === SAL.id (spell)) {
+          return false
+        }
+      }
+
+      return isNoTraditionActive (SAL.tradition (spell))
+    }
+  }

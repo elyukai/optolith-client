@@ -11,7 +11,7 @@ import { AppStateRecord } from "../Reducers/appReducer";
 import { getFilteredActiveSpecialAbilities } from "../Selectors/activatableSelectors";
 import { getFilteredInactiveSpecialAbilities } from "../Selectors/combinedActivatablesSelectors";
 import { getIsRemovingEnabled } from "../Selectors/phaseSelectors";
-import { getInactiveSpecialAbilitiesFilterText, getSpecialAbilities, getSpecialAbilitiesFilterText, getWikiSpecialAbilities } from "../Selectors/stateSelectors";
+import { getInactiveSpecialAbilitiesFilterText, getSpecialAbilitiesFilterText, getWikiSpecialAbilities } from "../Selectors/stateSelectors";
 import { getEnableActiveItemHints, getSpecialAbilitiesSortOrder } from "../Selectors/uisettingsSelectors";
 import { SpecialAbilities, SpecialAbilitiesDispatchProps, SpecialAbilitiesOwnProps, SpecialAbilitiesStateProps } from "../Views/SpecialAbilities/SpecialAbilities";
 
@@ -24,7 +24,6 @@ const mapStateToProps = (
                                                           (state, ownProps)),
   enableActiveItemHints: getEnableActiveItemHints (state),
   isRemovingEnabled: getIsRemovingEnabled (state),
-  stateEntries: getSpecialAbilities (state),
   wikiEntries: getWikiSpecialAbilities (state),
   sortOrder: getSpecialAbilitiesSortOrder (state),
   filterText: getSpecialAbilitiesFilterText (state),

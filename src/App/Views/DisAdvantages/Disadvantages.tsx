@@ -139,7 +139,7 @@ export class Disadvantages extends React.Component<DisadvantagesProps, Disadvant
                                    l10n={l10n}
                                    />
                                )))}
-            {showRating ? <RecommendedReference l10n={l10n} /> : null}
+            {showRating ? <RecommendedReference l10n={l10n} strongly /> : null}
           </Options>
           <MainContent>
             <ListHeader>
@@ -180,7 +180,7 @@ export class Disadvantages extends React.Component<DisadvantagesProps, Disadvant
             label={translate (l10n) ("add")}
             onClick={this.showAddSlidein}
             />
-          {showRating ? <RecommendedReference l10n={l10n} /> : null}
+          {showRating ? <RecommendedReference l10n={l10n} strongly /> : null}
         </Options>
         <MainContent>
           <ListHeader>

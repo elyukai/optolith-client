@@ -292,10 +292,10 @@ export const getFatePointsModifier = createMaybeSelector (
 
 export const getMagicalTraditionForSheet = createMaybeSelector (
   getMagicalTraditionsFromWiki,
-  fmap (pipe (
+  pipe (
     map (pipe (SpecialAbility.A.name, getBracketedNameFromFullName)),
     intercalate (", ")
-  ))
+  )
 )
 
 export const getBlessedTraditionForSheet = createMaybeSelector (
@@ -311,13 +311,13 @@ const getPropertyOrAspectKnowledgesForSheet =
                        (getActiveSelections (hero_entry))))
 
 export const getPropertyKnowledgesForSheet = createMaybeSelector (
-  mapGetToMaybeSlice (getSpecialAbilities) ("SA_72"),
+  mapGetToSlice (getSpecialAbilities) ("SA_72"),
   mapGetToSlice (getWikiSpecialAbilities) ("SA_72"),
   getPropertyOrAspectKnowledgesForSheet
 )
 
 export const getAspectKnowledgesForSheet = createMaybeSelector (
-  mapGetToMaybeSlice (getSpecialAbilities) ("SA_87"),
+  mapGetToSlice (getSpecialAbilities) ("SA_87"),
   mapGetToSlice (getWikiSpecialAbilities) ("SA_87"),
   getPropertyOrAspectKnowledgesForSheet
 )
@@ -337,7 +337,7 @@ export const isAlbino = createMaybeSelector (
 )
 
 export const getGuildMageUnfamiliarSpellId = createMaybeSelector (
-  mapGetToMaybeSlice (getSpecialAbilities) (prefixSA (70)),
+  mapGetToSlice (getSpecialAbilities) (prefixSA (70)),
   pipe (
     bindF (pipe (ActivatableDependent.A.active, listToMaybe)),
     fmap (pipe (ActiveObject.A.sid, misStringM))

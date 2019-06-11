@@ -1,7 +1,5 @@
 import * as React from "react";
-import { notP } from "../../../Data/Bool";
 import { notEquals } from "../../../Data/Eq";
-import { flip } from "../../../Data/Function";
 import { fmap } from "../../../Data/Functor";
 import { List, mapAccumL, notNull, notNullStr, subscript, toArray } from "../../../Data/List";
 import { bindF, ensure, fromMaybeR, guard, Just, Maybe, maybe, Nothing, or, thenF } from "../../../Data/Maybe";
@@ -17,11 +15,9 @@ import { DerivedCharacteristic } from "../../Models/View/DerivedCharacteristic";
 import { SpellWithRequirements, SpellWithRequirementsA_ } from "../../Models/View/SpellWithRequirements";
 import { Cantrip } from "../../Models/Wiki/Cantrip";
 import { L10nRecord } from "../../Models/Wiki/L10n";
-import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
 import { Spell } from "../../Models/Wiki/Spell";
 import { DCIds } from "../../Selectors/derivedCharacteristicsSelectors";
 import { translate } from "../../Utilities/I18n";
-import { isOwnTradition } from "../../Utilities/Increasable/spellUtils";
 import { dec } from "../../Utilities/mathUtils";
 import { pipe, pipe_ } from "../../Utilities/pipe";
 import { renderMaybe } from "../../Utilities/ReactUtils";
@@ -37,6 +33,7 @@ import { ListPlaceholder } from "../Universal/ListPlaceholder";
 import { MainContent } from "../Universal/MainContent";
 import { Options } from "../Universal/Options";
 import { Page } from "../Universal/Page";
+import { RecommendedReference } from "../Universal/RecommendedReference";
 import { Scroll } from "../Universal/Scroll";
 import { Slidein } from "../Universal/Slidein";
 import { SortNames, SortOptions } from "../Universal/SortOptions";
@@ -58,7 +55,6 @@ export interface SpellsStateProps {
   inactiveList: Maybe<List<Record<SpellWithRequirements> | Record<CantripCombined>>>
   isRemovingEnabled: boolean
   sortOrder: string
-  traditions: Maybe<List<Record<SpecialAbility>>>
 }
 
 export interface SpellsDispatchProps {
@@ -83,6 +79,7 @@ export interface SpellsState {
 }
 
 const SWRA = SpellWithRequirements.A
+const SWRAL = SpellWithRequirements.AL
 const SWRA_ = SpellWithRequirementsA_
 
 type Combined = Record<SpellWithRequirements> | Record<CantripCombined>
@@ -161,7 +158,6 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
       setSortOrder,
       sortOrder,
       switchActiveItemHints,
-      traditions: maybeTraditions,
       filterText,
       inactiveFilterText,
       setFilterText,
@@ -192,6 +188,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
               >
               {translate (l10n) ("showactivated")}
             </Checkbox>
+            <RecommendedReference l10n={l10n} unfamiliarSpells />
           </Options>
           <MainContent>
             <ListHeader>
@@ -261,7 +258,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
                                             ? `${propertyName} / ${translate (l10n) ("cantrip")}`
                                             : propertyName
                                         }
-                                        untyp={isOfUnfTrad (maybeTraditions) (curr)}
+                                        untyp={SWRAL.isUnfamiliar (curr)}
                                         />
                                     )
                                   )
@@ -294,7 +291,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
                                         derivedCharacteristics={derivedCharacteristics}
                                         selectForInfo={this.showSlideinInfo}
                                         addText={add_text}
-                                        untyp={isOfUnfTrad (maybeTraditions) (curr)}
+                                        untyp={SWRAL.isUnfamiliar (curr)}
                                         />
                                     )
                                   )
@@ -331,6 +328,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
             label={translate (l10n) ("add")}
             onClick={this.showAddSlidein}
             />
+          <RecommendedReference l10n={l10n} unfamiliarSpells />
         </Options>
         <MainContent>
           <ListHeader>
@@ -391,7 +389,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
                                           ? `${propertyName} / ${translate (l10n) ("cantrip")}`
                                           : propertyName
                                       }
-                                      untyp={isOfUnfTrad (maybeTraditions) (curr)}
+                                      untyp={SWRAL.isUnfamiliar (curr)}
                                       />
                                   )
                                 )
@@ -429,7 +427,7 @@ export class Spells extends React.Component<SpellsProps, SpellsState> {
                                       derivedCharacteristics={derivedCharacteristics}
                                       selectForInfo={this.showInfo}
                                       addText={add_text}
-                                      untyp={isOfUnfTrad (maybeTraditions) (curr)}
+                                      untyp={SWRAL.isUnfamiliar (curr)}
                                       />
                                   )
                                 )
@@ -497,10 +495,3 @@ const getSpellAddText =
       maybe (property_str)
             (gr_str => `${property_str} / ${gr_str}`)
     )
-
-const isOfUnfTrad =
-  (mtraditions: Maybe<List<Record<SpecialAbility>>>) =>
-  (curr: Combined) =>
-    maybe (false)
-          (notP (flip (isOwnTradition) (wikiEntryCombined (curr))))
-          (mtraditions)

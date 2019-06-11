@@ -674,6 +674,8 @@ export const toL10n =
         "emptylistnoresults": checkL10nNonEmptyString ("emptylistnoresults"),
         "extendedskillspecialabilities": checkL10nNonEmptyString ("extendedskillspecialabilities"),
         "deleteavatar": checkL10nNonEmptyString ("deleteavatar"),
+        "stronglyrecommended": checkL10nNonEmptyString ("stronglyrecommended"),
+        "unfamiliarspells": checkL10nNonEmptyString ("unfamiliarspells"),
       }
 
       return mapMNamed
@@ -1280,6 +1282,8 @@ export const toL10n =
           "emptylistnoresults": res ["emptylistnoresults"],
           "extendedskillspecialabilities": res ["extendedskillspecialabilities"],
           "deleteavatar": res ["deleteavatar"],
+          "stronglyrecommended": res ["stronglyrecommended"],
+          "unfamiliarspells": res ["unfamiliarspells"],
           // tslint:enable: no-string-literal
         }))
     }

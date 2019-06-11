@@ -5,12 +5,14 @@ import { IsActive } from "./viewTypeHelpers";
 
 export interface CantripCombined extends IsActive {
   wikiEntry: Record<Cantrip>
+  isUnfamiliar: boolean
 }
 
 export const CantripCombined =
   fromDefault<CantripCombined> ({
     wikiEntry: Cantrip .default,
     active: false,
+    isUnfamiliar: false,
   })
 
 export const CantripCombinedA_ = {

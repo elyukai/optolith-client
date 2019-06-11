@@ -3,7 +3,7 @@ import { ident, thrush } from "../../Data/Function";
 import { fmap, fmapF } from "../../Data/Functor";
 import { set } from "../../Data/Lens";
 import { append, consF, countWith, elemF, List, map, notNull, partition } from "../../Data/List";
-import { all, bindF, elem, ensure, fromMaybe_, Just, liftM2, liftM3, liftM4, liftM5, listToMaybe, mapMaybe, Maybe, maybe, Nothing } from "../../Data/Maybe";
+import { all, any, bindF, ensure, fromMaybe_, Just, liftM2, liftM3, listToMaybe, mapMaybe, Maybe, maybe, Nothing } from "../../Data/Maybe";
 import { elems, lookup, lookupF, OrderedMap } from "../../Data/OrderedMap";
 import { member } from "../../Data/OrderedSet";
 import { fst, snd, uncurryN, uncurryN3, uncurryN4, uncurryN5, uncurryN6, uncurryN8 } from "../../Data/Pair";
@@ -26,17 +26,17 @@ import { composeL } from "../Utilities/compose";
 import { createMaybeSelector } from "../Utilities/createMaybeSelector";
 import { filterAndSortRecordsBy } from "../Utilities/filterAndSortBy";
 import { prefixAdv, prefixDis, prefixSA } from "../Utilities/IDUtils";
-import { isOwnTradition, isSpellDecreasable, isSpellIncreasable } from "../Utilities/Increasable/spellUtils";
+import { isOwnTradition, isSpellDecreasable, isSpellIncreasable, isUnfamiliarSpell } from "../Utilities/Increasable/spellUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
 import { validatePrerequisites } from "../Utilities/Prerequisites/validatePrerequisitesUtils";
 import { filterByAvailability } from "../Utilities/RulesUtils";
-import { mapGetToMaybeSlice } from "../Utilities/SelectorsUtils";
+import { mapGetToMaybeSlice, mapGetToSlice } from "../Utilities/SelectorsUtils";
 import { sortRecordsBy, sortRecordsByName } from "../Utilities/sortBy";
 import { misNumberM } from "../Utilities/typeCheckUtils";
 import { getStartEl } from "./elSelectors";
 import { getRuleBooksEnabled } from "./rulesSelectors";
 import { getCantripsSortOptions, getSpellsCombinedSortOptions, getSpellsSortOptions } from "./sortOptionsSelectors";
-import { getAdvantages, getCantrips, getCurrentHeroPresent, getDisadvantages, getHeroProp, getInactiveSpellsFilterText, getLocaleAsProp, getPhase, getSpecialAbilities, getSpells, getSpellsFilterText, getWiki, getWikiCantrips, getWikiSpecialAbilities, getWikiSpells } from "./stateSelectors";
+import { getAdvantages, getCantrips, getDisadvantages, getHeroProp, getInactiveSpellsFilterText, getLocaleAsProp, getMaybeSpecialAbilities, getPhase, getSpecialAbilities, getSpells, getSpellsFilterText, getWiki, getWikiCantrips, getWikiSpecialAbilities, getWikiSpells } from "./stateSelectors";
 import { getEnableActiveItemHints } from "./uisettingsSelectors";
 
 const HA = HeroModel.A
@@ -55,6 +55,11 @@ const SAA = SpecialAbility.A
 
 export const getMagicalTraditionsFromHero = createMaybeSelector (
   getSpecialAbilities,
+  getMagicalTraditionsHeroEntries
+)
+
+const getMaybeMagicalTraditionsFromHero = createMaybeSelector (
+  getMaybeSpecialAbilities,
   fmap (getMagicalTraditionsHeroEntries)
 )
 
@@ -63,69 +68,81 @@ export const getMagicalTraditionsFromWiki = createMaybeSelector (
   getMagicalTraditionsFromHero,
   uncurryN (
     wiki_special_abilities =>
-      fmap (mapMaybe (pipe (ActivatableDependent.A.id, lookupF (wiki_special_abilities))))
+      mapMaybe (pipe (ActivatableDependent.A.id, lookupF (wiki_special_abilities)))
   )
 )
 
 export const getIsSpellsTabAvailable = createMaybeSelector (
-  getMagicalTraditionsFromHero,
-  pipe (fmap (notNull), elem<boolean> (true))
+  getMaybeMagicalTraditionsFromHero,
+  any (notNull)
 )
 
 export const getActiveSpells = createMaybeSelector (
   getStartEl,
   mapGetToMaybeSlice (getAdvantages) (prefixAdv (16)),
-  mapGetToMaybeSlice (getSpecialAbilities) (prefixSA (72)),
+  mapGetToSlice (getSpecialAbilities) (prefixSA (72)),
   getWiki,
   getHeroProp,
-  (mstart_el, mexceptional_skill, maproperty_knowledge, wiki, hero) =>
-    fmap ((start_el: Record<ExperienceLevel>) =>
-             thrush (elems (HA.spells (hero)))
-                    (mapMaybe (pipe (
-                      ensure (ASDA.active),
-                      bindF (hero_entry =>
-                              pipe_ (
-                                wiki,
-                                WA.spells,
-                                lookup (ASDA.id (hero_entry)),
-                                fmap (wiki_entry =>
-                                  SpellWithRequirements ({
-                                    isIncreasable:
-                                      isSpellIncreasable (start_el)
-                                                         (HA.phase (hero))
-                                                         (HA.attributes (hero))
-                                                         (mexceptional_skill)
-                                                         (maproperty_knowledge)
-                                                         (wiki_entry)
-                                                         (hero_entry),
-                                    isDecreasable:
-                                      isSpellDecreasable (wiki)
-                                                         (hero)
-                                                         (maproperty_knowledge)
-                                                         (wiki_entry)
-                                                         (hero_entry),
-                                    stateEntry: hero_entry,
-                                    wikiEntry: wiki_entry,
-                                  })
-                                )
-                              ))
-                    ))))
-           (mstart_el)
+  getMagicalTraditionsFromHero,
+  (mstart_el, mexceptional_skill, maproperty_knowledge, wiki, hero, trads) => {
+    const isUnfamiliar = isUnfamiliarSpell (trads)
+
+    return fmap ((start_el: Record<ExperienceLevel>) =>
+                  thrush (elems (HA.spells (hero)))
+                         (mapMaybe (pipe (
+                           ensure (ASDA.active),
+                           bindF (hero_entry =>
+                                   pipe_ (
+                                     wiki,
+                                     WA.spells,
+                                     lookup (ASDA.id (hero_entry)),
+                                     fmap (wiki_entry =>
+                                       SpellWithRequirements ({
+                                         isIncreasable:
+                                           isSpellIncreasable (start_el)
+                                                              (HA.phase (hero))
+                                                              (HA.attributes (hero))
+                                                              (mexceptional_skill)
+                                                              (maproperty_knowledge)
+                                                              (wiki_entry)
+                                                              (hero_entry),
+                                         isDecreasable:
+                                           isSpellDecreasable (wiki)
+                                                              (hero)
+                                                              (maproperty_knowledge)
+                                                              (wiki_entry)
+                                                              (hero_entry),
+                                         isUnfamiliar: isUnfamiliar (wiki_entry),
+                                         stateEntry: hero_entry,
+                                         wikiEntry: wiki_entry,
+                                       })
+                                     )
+                                   ))
+                         ))))
+                (mstart_el)
+  }
 )
 
 export const getActiveAndInactiveCantrips = createMaybeSelector (
+  getMagicalTraditionsFromHero,
   getWikiCantrips,
   getCantrips,
-  uncurryN (wiki_cantrips => fmap (hero_cantrips => pipe_ (
-                                                            wiki_cantrips,
-                                                            elems,
-                                                            map (wiki_entry => CantripCombined ({
-                                                              wikiEntry: wiki_entry,
-                                                              active: member (CA.id (wiki_entry))
-                                                                             (hero_cantrips),
-                                                            })),
-                                                            partition (CCA.active)
-                                                          )))
+  uncurryN3 (trads =>
+             wiki_cantrips => fmap (hero_cantrips => {
+                                    const isUnfamiliar = isUnfamiliarSpell (trads)
+
+                                    return pipe_ (
+                                      wiki_cantrips,
+                                      elems,
+                                      map (wiki_entry => CantripCombined ({
+                                        wikiEntry: wiki_entry,
+                                        active: member (CA.id (wiki_entry))
+                                                       (hero_cantrips),
+                                        isUnfamiliar: isUnfamiliar (wiki_entry),
+                                      })),
+                                      partition (CCA.active)
+                                    )
+                                  }))
 )
 
 export const getActiveCantrips = createMaybeSelector (
@@ -143,8 +160,8 @@ export const getAreMaxUnfamiliar = createMaybeSelector (
   getPhase,
   getStartEl,
   getActiveSpells,
-  uncurryN4 (liftM4 (trads =>
-                     phase =>
+  uncurryN4 (trads =>
+             liftM3 (phase =>
                      start_el =>
                      xs => {
                        if (phase > 2) {
@@ -193,18 +210,18 @@ export const getInactiveSpells = createMaybeSelector (
   getWiki,
   getMagicalTraditionsFromHero,
   getWikiSpells,
-  getCurrentHeroPresent,
+  getHeroProp,
   getMagicalTraditionsFromWiki,
   getIsMaximumOfSpellsReached,
   getAreMaxUnfamiliar,
   getSpells,
   uncurryN8 (
     wiki =>
-    mtrads_hero =>
+    trads_hero =>
     wiki_spells =>
-      liftM5 (hero =>
-              trads_wiki =>
-              is_max =>
+    hero =>
+    trads_wiki =>
+      liftM3 (is_max =>
               is_max_unfamiliar =>
               hero_spells => {
         const isLastTrad = pipe_ (trads_wiki, listToMaybe, fmap (SAA.id), Maybe.elemF)
@@ -215,6 +232,8 @@ export const getInactiveSpells = createMaybeSelector (
                                   (hero)
                                   (SA.prerequisites (entry))
                                   (SA.id (entry))
+
+        const isUnfamiliar = isUnfamiliarSpell (trads_hero)
 
         if (isLastTrad (prefixSA (679))) {
           if (is_max) {
@@ -232,6 +251,7 @@ export const getInactiveSpells = createMaybeSelector (
                 wikiEntry: wiki_entry,
                 stateEntry: fromMaybe_ (() => createInactiveActivatableSkillDependent (k))
                                        (mhero_entry),
+                isUnfamiliar: isUnfamiliar (wiki_entry),
                 isDecreasable: Nothing,
                 isIncreasable: Nothing,
               }))
@@ -252,8 +272,8 @@ export const getInactiveSpells = createMaybeSelector (
 
           const msub_trad =
             pipe_ (
-              mtrads_hero,
-              bindF (listToMaybe),
+              trads_hero,
+              listToMaybe,
               bindF (pipe (ADA.active, listToMaybe)),
               bindF (AOA.sid),
               misNumberM
@@ -270,6 +290,7 @@ export const getInactiveSpells = createMaybeSelector (
                 wikiEntry: wiki_entry,
                 stateEntry: fromMaybe_ (() => createInactiveActivatableSkillDependent (k))
                                        (mhero_entry),
+                isUnfamiliar: isUnfamiliar (wiki_entry),
                 isDecreasable: Nothing,
                 isIncreasable: Nothing,
               }))
@@ -296,6 +317,7 @@ export const getInactiveSpells = createMaybeSelector (
               stateEntry:
                 fromMaybe_ (() => createInactiveActivatableSkillDependent (k))
                            (mhero_entry),
+              isUnfamiliar: isUnfamiliar (wiki_entry),
               isDecreasable: Nothing,
               isIncreasable: Nothing,
             }))
@@ -383,15 +405,15 @@ export const isActivationDisabled = createMaybeSelector (
   getActiveSpellsCounter,
   mapGetToMaybeSlice (getAdvantages) (prefixAdv (58)),
   mapGetToMaybeSlice (getDisadvantages) (prefixDis (59)),
+  getMagicalTraditionsFromHero,
   getStartEl,
   getPhase,
-  getMagicalTraditionsFromHero,
   uncurryN6 (active_spells =>
              mbonus =>
              mmalus =>
-               liftM3 (start_el =>
+             hero_trads =>
+               liftM2 (start_el =>
                        phase =>
-                       hero_trads =>
                          pipe_ (
                            hero_trads,
                            listToMaybe,
@@ -429,15 +451,15 @@ export const getSpellsForSheet = createMaybeSelector (
   getMagicalTraditionsFromWiki,
   getActiveSpells,
   uncurryN3 (sort_options =>
-              liftM2 (wiki_trads => pipe (
-                                      map (s => isOwnTradition (wiki_trads)
-                                                               (SWRA.wikiEntry (s))
-                                                  ? set (composeL (SWRL.wikiEntry, SL.tradition))
-                                                        (List ())
-                                                        (s)
-                                                  : s),
-                                      sortRecordsBy (sort_options)
-                                    )))
+              wiki_trads => fmap (pipe (
+                                   map (s => isOwnTradition (wiki_trads)
+                                                            (SWRA.wikiEntry (s))
+                                               ? set (composeL (SWRL.wikiEntry, SL.tradition))
+                                                     (List ())
+                                                     (s)
+                                               : s),
+                                   sortRecordsBy (sort_options)
+                                 )))
 )
 
 export const getAllSpellsForManualGuildMageSelect = createMaybeSelector (

@@ -5,6 +5,7 @@ import { consF, imap, notNullStr, subscript, unfoldr } from "../../../Data/List"
 import { and, bindF, ensure, isNothing, Just, Maybe, maybe, Nothing } from "../../../Data/Maybe";
 import { Pair } from "../../../Data/Pair";
 import { Record } from "../../../Data/Record";
+import { HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { InputTextEvent } from "../../Models/Hero/heroTypeHelpers";
 import { Pact } from "../../Models/Hero/Pact";
 import { L10nRecord } from "../../Models/Wiki/L10n";
@@ -19,12 +20,13 @@ import { TextField } from "../Universal/TextField";
 
 export interface PactSettingsOwnProps {
   l10n: L10nRecord
+  hero: HeroModelRecord
 }
 
 export interface PactSettingsStateProps {
   pact: Maybe<Record<Pact>>
   isPactValid: boolean
-  isPactEditable: Maybe<boolean>
+  isPactEditable: boolean
 }
 
 export interface PactSettingsDispatchProps {
@@ -52,8 +54,6 @@ export function PactSettings (props: PactSettingsProps) {
     l10n,
   } = props
 
-  const isPactNotEditable = Maybe.elem (false) (isPactEditable)
-
   return (
     <Page id="pact">
       <div className="pact-content">
@@ -71,7 +71,7 @@ export function PactSettings (props: PactSettingsProps) {
           )}
           onChange={setPactCategory}
           value={fmapF (mpact) (Pact.A.category)}
-          disabled={isPactNotEditable}
+          disabled={!isPactEditable}
           />
         <Dropdown
           label={translate (l10n) ("pactlevel")}
@@ -83,7 +83,7 @@ export function PactSettings (props: PactSettingsProps) {
                           DropdownOption ({
                             id: Just (id),
                             name: toRoman (id),
-                            disabled: Just (maybe (isPactNotEditable)
+                            disabled: Just (maybe (!isPactEditable)
                                                   (pipe (Pact.A.level, gte (id)))
                                                   (mpact)),
                           }),
@@ -104,7 +104,7 @@ export function PactSettings (props: PactSettingsProps) {
                         (translate (l10n) ("fairytypes"))}
           onChange={setTargetType}
           value={fmapF (mpact) (Pact.A.type)}
-          disabled={isPactNotEditable || isNothing (mpact)}
+          disabled={!isPactEditable || isNothing (mpact)}
           />
         <Dropdown
           label={translate (l10n) ("domain")}
@@ -116,7 +116,7 @@ export function PactSettings (props: PactSettingsProps) {
           onChange={setTargetDomain}
           value={pipe_ (mpact, fmap (Pact.A.domain), misNumberM)}
           disabled={
-            isPactNotEditable
+            !isPactEditable
             || pipe_ (mpact, fmap (pipe (Pact.A.domain, d => isString (d) && notNullStr (d))), and)
           }
           />
@@ -129,13 +129,13 @@ export function PactSettings (props: PactSettingsProps) {
           )}
           onChange={(event: InputTextEvent) => setTargetDomain (Just (event.target.value))}
           value={pipe_ (mpact, fmap (Pact.A.domain), misStringM)}
-          disabled={isPactNotEditable || isNothing (mpact)}
+          disabled={!isPactEditable || isNothing (mpact)}
           />
         <TextField
           label={translate (l10n) ("name")}
           onChange={(event: InputTextEvent) => setTargetName (event.target.value)}
           value={fmapF (mpact) (Pact.A.name)}
-          disabled={isPactNotEditable || isNothing (mpact)}
+          disabled={!isPactEditable || isNothing (mpact)}
           />
       </div>
     </Page>

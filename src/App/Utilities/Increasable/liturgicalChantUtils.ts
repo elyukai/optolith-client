@@ -92,9 +92,10 @@ export const isLiturgicalChantIncreasable =
  * have multiple aspects and thus can influence multiple counters if active.
  */
 export const countActiveLiturgicalChantsPerAspect =
-  (wiki: OrderedMap<string, Record<LiturgicalChant>>) =>
+  (wiki: OrderedMap<string, Record<LiturgicalChant>>):
+  (hero: OrderedMap<string, Record<ActivatableSkillDependent>>) => OrderedMap<number, number> =>
     pipe (
-      filter<string, Record<ActivatableSkillDependent>> (pipe (value, gte (10))),
+      filter<Record<ActivatableSkillDependent>> (pipe (value, gte (10))),
       foldl<Record<ActivatableSkillDependent>, OrderedMap<number, number>>
         (acc => pipe (
           id,

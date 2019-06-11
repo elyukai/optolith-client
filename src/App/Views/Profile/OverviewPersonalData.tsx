@@ -13,7 +13,6 @@ import { translate } from "../../Utilities/I18n";
 import { pipe, pipe_ } from "../../Utilities/pipe";
 import { isEmptyOr, isFloat, isNaturalNumber } from "../../Utilities/RegexUtils";
 import { sortRecordsByName } from "../../Utilities/sortBy";
-import { misNumberM } from "../../Utilities/typeCheckUtils";
 import { Dropdown, DropdownOption } from "../Universal/Dropdown";
 import { IconButton } from "../Universal/IconButton";
 import { InputButtonGroup } from "../Universal/InputButtonGroup";
@@ -106,25 +105,23 @@ const getHairColorAndEyeColorOptions =
         hairOptions: pipe_ (
           hair_color_tags,
           imapMaybe (index => (name: string) =>
-                      ensure (pipe (
-                               DropdownOption.A.id,
-                               id => or (liftM2 (elem as elem<number>)
-                                                (misNumberM (id))
-                                                (hairColors))
-                             ))
-                             (DropdownOption ({ id: Just (index + 1), name }))),
-          sortRecordsByName (L10n.A.id (l10n))
+                      ensure<Record<DropdownOption<number>>>
+                        (pipe (
+                          DropdownOption.A.id,
+                          id => or (liftM2 (elem as elem<number>) (id) (hairColors))
+                        ))
+                        (DropdownOption ({ id: Just (index + 1), name }))),
+          sortRecordsByName (l10n)
         ),
         eyeOptions: pipe_ (
           eye_color_tags,
           imapMaybe (index => (name: string) =>
-                      ensure (pipe (
-                               DropdownOption.A.id,
-                               id => or (liftM2 (elem as elem<number>)
-                                                (misNumberM (id))
-                                                (eyeColors))
-                             ))
-                             (DropdownOption ({ id: Just (index + 1), name }))),
+                      ensure<Record<DropdownOption<number>>>
+                        (pipe (
+                          DropdownOption.A.id,
+                          id => or (liftM2 (elem as elem<number>) (id) (eyeColors))
+                        ))
+                        (DropdownOption ({ id: Just (index + 1), name }))),
           sortRecordsByName (L10n.A.id (l10n))
         ),
       }
@@ -160,13 +157,13 @@ export function OverviewPersonalData (props: OverviewPersonalDataProps) {
     maybe (List<Record<DropdownOption<number>>> ())
           ((culture: Record<Culture>) =>
             imapMaybe (index => (name: string) =>
-                        ensure (pipe (
-                                 DropdownOption.A.id,
-                                 misNumberM,
-                                 fmap (elemF (Culture.A.socialStatus (culture))),
-                                 or
-                               ))
-                               (DropdownOption ({ id: Just (index + 1), name })))
+                        ensure<Record<DropdownOption<number>>>
+                          (pipe (
+                            DropdownOption.A.id,
+                            fmap (elemF (Culture.A.socialStatus (culture))),
+                            or
+                          ))
+                          (DropdownOption ({ id: Just (index + 1), name })))
                       (socialstatusTags)
           )
           (mculture)

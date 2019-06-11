@@ -599,6 +599,8 @@ export interface L10n {
   "emptylistnoresults": string
   "extendedskillspecialabilities": string
   "deleteavatar": string
+  "stronglyrecommended": string
+  "unfamiliarspells": string
 }
 
 export type L10nKey = keyof L10n
@@ -1204,4 +1206,6 @@ export const L10n =
     "emptylistnoresults": "",
     "extendedskillspecialabilities": "",
     "deleteavatar": "",
+    "stronglyrecommended": "",
+    "unfamiliarspells": "",
   })

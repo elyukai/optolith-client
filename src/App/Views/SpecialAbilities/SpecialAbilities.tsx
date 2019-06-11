@@ -6,7 +6,6 @@ import { Record } from "../../../Data/Record";
 import { WikiInfoContainer } from "../../Containers/WikiInfoContainer";
 import { ActivatableActivationOptions } from "../../Models/Actions/ActivatableActivationOptions";
 import { ActivatableDeactivationOptions } from "../../Models/Actions/ActivatableDeactivationOptions";
-import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { ActiveActivatable } from "../../Models/View/ActiveActivatable";
 import { InactiveActivatable } from "../../Models/View/InactiveActivatable";
@@ -37,7 +36,6 @@ export interface SpecialAbilitiesStateProps {
     Record<ActiveActivatable<SpecialAbility>>
     | Record<InactiveActivatable<SpecialAbility>>
   >>
-  stateEntries: Maybe<OrderedMap<string, Record<ActivatableDependent>>>
   wikiEntries: OrderedMap<string, Record<SpecialAbility>>
   enableActiveItemHints: boolean
   isRemovingEnabled: boolean

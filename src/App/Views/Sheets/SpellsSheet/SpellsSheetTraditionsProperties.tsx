@@ -8,7 +8,7 @@ import { renderMaybe, renderMaybeWith } from "../../../Utilities/ReactUtils";
 export interface SpellsSheetTraditionsPropertiesProps {
   l10n: L10nRecord
   magicalPrimary: Maybe<string>
-  magicalTradition: Maybe<string>
+  magicalTradition: string
   properties: Maybe<List<string>>
 }
 
@@ -35,7 +35,7 @@ export function SpellsSheetTraditionsProperties (props: SpellsSheetTraditionsPro
         <span className="label">
           {translate (l10n) ("tradition")}
         </span>
-        <span className="value">{renderMaybe (magicalTradition)}</span>
+        <span className="value">{magicalTradition}</span>
       </div>
     </div>
   )

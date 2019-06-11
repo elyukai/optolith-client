@@ -93,7 +93,7 @@ export interface SheetsStateProps {
   cantrips: Maybe<List<Record<CantripCombined>>>
   magicalPrimary: Maybe<string>
   magicalSpecialAbilities: Maybe<List<Record<ActiveActivatable<SpecialAbility>>>>
-  magicalTradition: Maybe<string>
+  magicalTradition: string
   properties: Maybe<List<string>>
   spells: Maybe<List<Record<SpellCombined>>>
   aspects: Maybe<List<string>>

@@ -137,7 +137,7 @@ export class Advantages extends React.Component<AdvantagesProps, AdvantagesState
                                    l10n={l10n}
                                    />
                                )))}
-            {showRating ? <RecommendedReference l10n={l10n} /> : null}
+            {showRating ? <RecommendedReference l10n={l10n} strongly /> : null}
           </Options>
           <MainContent>
             <ListHeader>
@@ -178,7 +178,7 @@ export class Advantages extends React.Component<AdvantagesProps, AdvantagesState
             label={translate (l10n) ("add")}
             onClick={this.showAddSlidein}
             />
-          {showRating ? <RecommendedReference l10n={l10n} /> : null}
+          {showRating ? <RecommendedReference l10n={l10n} strongly /> : null}
         </Options>
         <MainContent>
           <ListHeader>

@@ -1,6 +1,5 @@
 import { not } from "../../Data/Bool";
 import { cnst } from "../../Data/Function";
-import { fmap } from "../../Data/Functor";
 import { any, fnull, isList } from "../../Data/List";
 import { bindF, ensure, fromJust, isJust, maybe } from "../../Data/Maybe";
 import { elems, lookup } from "../../Data/OrderedMap";
@@ -31,7 +30,7 @@ export const isPactEditable = createMaybeSelector (
   getWikiSpecialAbilities,
   getSpecialAbilities,
   uncurryN (wiki_special_abilities =>
-             fmap (pipe (
+             pipe (
                elems,
                any (e => {
                  const curr_active = ActivatableDependent.A.active (e)
@@ -64,5 +63,5 @@ export const isPactEditable = createMaybeSelector (
                  return false
                }),
                not
-             )))
+             ))
 )
