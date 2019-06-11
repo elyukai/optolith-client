@@ -146,6 +146,7 @@ const isRemovalDisabledEntrySpecific =
       case prefixSA (680):
       case prefixSA (681):
       case prefixSA (1255):
+      case prefixSA (750):
       case prefixSA (726): {
         // All active tradition entries
         const traditions =

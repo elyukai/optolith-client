@@ -117,7 +117,7 @@ export const magicalTraditionIdByNumericId = OrderedMap.fromArray ([
   [10, prefixSA (681)],
   // [11, prefixSA ()], // Kristallomanten
   [12, prefixSA (1255)],
-  // [13, prefixSA ()], // Alchimisten
+  [13, prefixSA (750)],
   [14, prefixSA (726)],
 ])
 
@@ -134,7 +134,7 @@ export const magicalNumericIdByTraditionId = OrderedMap.fromArray ([
   [prefixSA (681), 10],
   // [prefixSA (), 11], // Kristallomanten
   [prefixSA (1255), 12],
-  // [prefixSA (), 13], // Alchimisten
+  [prefixSA (750), 13],
   [prefixSA (726), 14],
 ])
 
