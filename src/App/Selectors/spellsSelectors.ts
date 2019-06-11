@@ -3,10 +3,10 @@ import { ident, thrush } from "../../Data/Function";
 import { fmap, fmapF } from "../../Data/Functor";
 import { set } from "../../Data/Lens";
 import { append, consF, countWith, elemF, List, map, notNull, partition } from "../../Data/List";
-import { all, any, bindF, ensure, fromMaybe_, Just, liftM2, liftM3, listToMaybe, mapMaybe, Maybe, maybe, Nothing } from "../../Data/Maybe";
+import { all, any, bindF, ensure, fromMaybe_, Just, liftM2, listToMaybe, mapMaybe, Maybe, maybe, Nothing } from "../../Data/Maybe";
 import { elems, lookup, lookupF, OrderedMap } from "../../Data/OrderedMap";
 import { member } from "../../Data/OrderedSet";
-import { fst, snd, uncurryN, uncurryN3, uncurryN4, uncurryN5, uncurryN6, uncurryN8 } from "../../Data/Pair";
+import { fst, snd, uncurryN, uncurryN3, uncurryN5, uncurryN6, uncurryN8 } from "../../Data/Pair";
 import { Record } from "../../Data/Record";
 import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent, createInactiveActivatableSkillDependent } from "../Models/ActiveEntries/ActivatableSkillDependent";
@@ -27,6 +27,7 @@ import { createMaybeSelector } from "../Utilities/createMaybeSelector";
 import { filterAndSortRecordsBy } from "../Utilities/filterAndSortBy";
 import { prefixAdv, prefixDis, prefixSA } from "../Utilities/IDUtils";
 import { isOwnTradition, isSpellDecreasable, isSpellIncreasable, isUnfamiliarSpell } from "../Utilities/Increasable/spellUtils";
+import { lte } from "../Utilities/mathUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
 import { validatePrerequisites } from "../Utilities/Prerequisites/validatePrerequisitesUtils";
 import { filterByAvailability } from "../Utilities/RulesUtils";
@@ -155,32 +156,6 @@ export const getInactiveCantrips = createMaybeSelector (
   fmap (snd)
 )
 
-export const getAreMaxUnfamiliar = createMaybeSelector (
-  getMagicalTraditionsFromWiki,
-  getPhase,
-  getStartEl,
-  getActiveSpells,
-  uncurryN4 (trads =>
-             liftM3 (phase =>
-                     start_el =>
-                     xs => {
-                       if (phase > 2) {
-                         return false
-                       }
-
-                       const max = ELA.maxUnfamiliarSpells (start_el)
-
-                       const unfamiliarSpells =
-                         countWith ((x: Record<SpellWithRequirements>) =>
-                                      pipe_ (x, SWRA.wikiEntry, SA.gr) < 3
-                                      && pipe_ (x, SWRA.stateEntry, ASDA.active)
-                                      && !isOwnTradition (trads) (SWRA.wikiEntry (x)))
-                                   (xs)
-
-                       return unfamiliarSpells >= max
-                     }))
-)
-
 export const getActiveSpellsCounter = createMaybeSelector (
   getActiveSpells,
   pipe (
@@ -204,6 +179,17 @@ export const getIsMaximumOfSpellsReached = createMaybeSelector (
                      }))
 )
 
+const getUnfamiliarSpellsCount = createMaybeSelector (
+  getActiveSpells,
+  maybe (0) (countWith (SWRA.isUnfamiliar))
+)
+
+const isUnfamiliarSpellsActivationDisabled = createMaybeSelector (
+  getUnfamiliarSpellsCount,
+  getStartEl,
+  uncurryN (count => maybe (false) (pipe (ELA.maxUnfamiliarSpells, lte (count))))
+)
+
 type Combined = Record<SpellWithRequirements>
 
 export const getInactiveSpells = createMaybeSelector (
@@ -212,8 +198,8 @@ export const getInactiveSpells = createMaybeSelector (
   getWikiSpells,
   getHeroProp,
   getMagicalTraditionsFromWiki,
+  isUnfamiliarSpellsActivationDisabled,
   getIsMaximumOfSpellsReached,
-  getAreMaxUnfamiliar,
   getSpells,
   uncurryN8 (
     wiki =>
@@ -221,8 +207,8 @@ export const getInactiveSpells = createMaybeSelector (
     wiki_spells =>
     hero =>
     trads_wiki =>
-      liftM3 (is_max =>
-              is_max_unfamiliar =>
+    is_max_unfamiliar =>
+      liftM2 (is_max =>
               hero_spells => {
         const isLastTrad = pipe_ (trads_wiki, listToMaybe, fmap (SAA.id), Maybe.elemF)
 

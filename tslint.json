@@ -84,7 +84,7 @@
       true,
       {
         "limit": 100,
-        "ignore-pattern": "^import |^export {(.*?)}|class [a-zA-Z]+ implements "
+        "ignore-pattern": "^import |^export {(.*?)}|class [a-zA-Z]+ implements |^ \\* "
       }
     ],
     "no-default-export": true,
