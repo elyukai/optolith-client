@@ -40,8 +40,8 @@ const copyFileFromToFolder =
   (originFolder: string) =>
   (destFolder: string) =>
   (fileName: string) => {
-    const originPath = path.join (originFolder, `${fileName}`)
-    const destPath = path.join (destFolder, `${fileName}`)
+    const originPath = path.join (originFolder, fileName)
+    const destPath = path.join (destFolder, fileName)
 
     return join (liftM2 ((origin_exists: boolean) => (dest_exists: boolean) =>
                           !dest_exists && origin_exists
@@ -197,7 +197,8 @@ const copyAllFiles =
 function main () {
   if (prerelease (require ("../package.json") .version) !== null) {
     pipe_ (
-      copyAllFiles (copyFileFromToFolder ("Optolyth") ("Optolith")),
+      copyAllFiles (copyFileFromToFolder (path.join (user_data_path, "..", "Optolyth"))
+                                         (path.join (user_data_path, "..", "Optolith"))),
       thenF (copyAllFiles (copyFileToCurrent ("Optolith"))),
       fmap (openMainWindow),
       runIO
