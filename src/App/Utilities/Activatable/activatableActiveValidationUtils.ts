@@ -147,7 +147,8 @@ const isRemovalDisabledEntrySpecific =
       case prefixSA (681):
       case prefixSA (1255):
       case prefixSA (750):
-      case prefixSA (726): {
+      case prefixSA (726):
+      case prefixSA (1221): {
         // All active tradition entries
         const traditions =
           getMagicalTraditionsHeroEntries (HeroModel.AL.specialAbilities (hero))

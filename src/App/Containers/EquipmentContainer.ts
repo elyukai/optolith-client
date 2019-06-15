@@ -7,7 +7,7 @@ import { getInitialStartingWealth } from "../Selectors/activatableSelectors";
 import { getHasCurrentNoAddedAP } from "../Selectors/adventurePointsSelectors";
 import { getCarryingCapacity } from "../Selectors/attributeSelectors";
 import { getFilteredCombatTechniques } from "../Selectors/combatTechniquesSelectors";
-import { getFilteredItems, getFilteredItemTemplates, getTotalPrice, getTotalWeight } from "../Selectors/equipmentSelectors";
+import { getAvailableSortedEquipmentGroups, getFilteredItems, getFilteredItemTemplates, getTotalPrice, getTotalWeight } from "../Selectors/equipmentSelectors";
 import { getEquipmentFilterText, getItemTemplatesFilterText, getPurse } from "../Selectors/stateSelectors";
 import { getEquipmentSortOrder, getMeleeItemTemplateCombatTechniqueFilter, getRangedItemTemplateCombatTechniqueFilter } from "../Selectors/uisettingsSelectors";
 import { Equipment, EquipmentDispatchProps, EquipmentOwnProps, EquipmentStateProps } from "../Views/Equipment/Equipment";
@@ -28,6 +28,7 @@ const mapStateToProps =
     rangedItemTemplateCombatTechniqueFilter: getRangedItemTemplateCombatTechniqueFilter (state),
     filterText: getEquipmentFilterText (state),
     templatesFilterText: getItemTemplatesFilterText (state),
+    filteredEquipmentGroups: getAvailableSortedEquipmentGroups (state, ownProps),
   })
 
 const mapDispatchToProps = (dispatch: ReduxDispatch): EquipmentDispatchProps => ({

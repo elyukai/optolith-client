@@ -1,5 +1,6 @@
 import { List } from "../../Data/List";
 import { Record, RecordBase } from "../../Data/Record";
+import { L10nRecord } from "../Models/Wiki/L10n";
 import { FilterAccessor, filterRecordsBy, filterRecordsByE, filterRecordsByName } from "./filterBy";
 import { pipe } from "./pipe";
 import { RecordWithName, SortOptions, sortRecordsBy, sortRecordsByName } from "./sortBy";
@@ -38,7 +39,7 @@ export const filterEAndSortRecordsBy =
  * A combination of `filterRecordsByE` and `sortRecordsBy`.
  */
 export const filterAndSortRecordsByName =
-  (locale: string) =>
+  (locale: string | L10nRecord) =>
   (filterText: string) =>
   <A extends RecordWithName>
   (xs: List<Record<A>>) =>

@@ -2,7 +2,7 @@ import { equals } from "../../Data/Eq";
 import { ident, thrush } from "../../Data/Function";
 import { fmap, fmapF } from "../../Data/Functor";
 import { set } from "../../Data/Lens";
-import { append, consF, filter, foldr, imap, List, map, maximum, subscript, sum } from "../../Data/List";
+import { any, append, consF, filter, foldr, ifilter, imap, List, map, maximum, subscript, sum } from "../../Data/List";
 import { altF_, bind, bindF, fromMaybe, guard, isJust, Just, liftM2, mapMaybe, Maybe, maybe, thenF } from "../../Data/Maybe";
 import { elems, lookup, lookupF } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
@@ -32,8 +32,9 @@ import { getAttack, getParry } from "../Utilities/Increasable/combatTechniqueUti
 import { convertPrimaryAttributeToArray } from "../Utilities/ItemUtils";
 import { add, dec, multiply, subtractBy } from "../Utilities/mathUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
-import { isAvailable } from "../Utilities/RulesUtils";
-import { sortRecordsByName } from "../Utilities/sortBy";
+import { filterByAvailability } from "../Utilities/RulesUtils";
+import { sortRecordsByName, sortStrings } from "../Utilities/sortBy";
+import { DropdownOption, stringOfListToDropdown } from "../Views/Universal/Dropdown";
 import { getRuleBooksEnabled } from "./rulesSelectors";
 import { getEquipmentSortOptions } from "./sortOptionsSelectors";
 import { getCurrentHeroPresent, getEquipmentFilterText, getEquipmentState, getHigherParadeValues, getHitZoneArmorsState, getItemsState, getItemTemplatesFilterText, getLocaleAsProp, getWiki, getWikiItemTemplates, getZoneArmorFilterText } from "./stateSelectors";
@@ -91,15 +92,13 @@ export const getTemplates = createMaybeSelector (
 export const getSortedTemplates = createMaybeSelector (
   getLocaleAsProp,
   getTemplates,
-  uncurryN (l10n => sortRecordsByName (L10n.A.id (l10n)))
+  uncurryN (l10n => tpls => sortRecordsByName (l10n) (tpls))
 )
 
 export const getAvailableItemTemplates = createMaybeSelector (
   getSortedTemplates,
   getRuleBooksEnabled,
-  uncurryN (xs => fmap (availablility => filter<Record<ItemTemplate>> (isAvailable (ITA.src)
-                                                                                   (availablility))
-                                                                      (xs)))
+  uncurryN (xs => fmap (availability => filterByAvailability (ITA.src) (availability) (xs)))
 )
 
 export const getFilteredItemTemplates = createMaybeSelector (
@@ -720,3 +719,16 @@ export const getProtectionAndWeight =
       weight: weightSum,
     }
   }
+
+export const getAvailableSortedEquipmentGroups = createMaybeSelector (
+  getLocaleAsProp,
+  getAvailableItemTemplates,
+  uncurryN (l10n => maybe (List<Record<DropdownOption>> ())
+                          (pipe (
+                            tpls => ifilter<string> (i => () =>
+                                                      any (pipe (ITA.gr, equals (i + 1))) (tpls))
+                                                    (L10n.A.itemgroups (l10n)),
+                            sortStrings (l10n),
+                            imap (stringOfListToDropdown)
+                          )))
+)

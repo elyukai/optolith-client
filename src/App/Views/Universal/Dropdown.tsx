@@ -2,7 +2,7 @@ import * as classNames from "classnames";
 import * as React from "react";
 import { equals } from "../../../Data/Eq";
 import { cons, elemF, filter, find, flength, fnull, intercalate, List, map, notNull, toArray } from "../../../Data/List";
-import { any, ensure, fromJust, fromMaybe, isJust, Maybe, maybe, maybeToList, normalize, Nothing, or } from "../../../Data/Maybe";
+import { any, ensure, fromJust, fromMaybe, isJust, Just, Maybe, maybe, maybeToList, normalize, Nothing, or } from "../../../Data/Maybe";
 import { Accessors, fromDefault, PartialMaybeOrNothing, Record, RecordCreator, StrictAccessors } from "../../../Data/Record";
 import { pipe, pipe_ } from "../../Utilities/pipe";
 import { renderMaybe } from "../../Utilities/ReactUtils";
@@ -241,3 +241,6 @@ export class Dropdown<A extends DropdownKey>
     )
   }
 }
+
+export const stringOfListToDropdown =
+  (index: number) => (name: string) => DropdownOption ({ id: Just (index + 1), name })

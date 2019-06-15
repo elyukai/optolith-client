@@ -119,6 +119,7 @@ export const magicalTraditionIdByNumericId = OrderedMap.fromArray ([
   [12, prefixSA (1255)],
   [13, prefixSA (750)],
   [14, prefixSA (726)],
+  [15, prefixSA (1221)],
 ])
 
 export const magicalNumericIdByTraditionId = OrderedMap.fromArray ([
@@ -136,6 +137,7 @@ export const magicalNumericIdByTraditionId = OrderedMap.fromArray ([
   [prefixSA (1255), 12],
   [prefixSA (750), 13],
   [prefixSA (726), 14],
+  [prefixSA (1221), 15],
 ])
 
 export const isMagicalTraditionId = memberF (magicalNumericIdByTraditionId)

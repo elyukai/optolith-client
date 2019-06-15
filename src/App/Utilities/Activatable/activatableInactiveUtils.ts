@@ -721,7 +721,8 @@ const modifyOtherOptions =
       case prefixSA (681):
       case prefixSA (1255):
       case prefixSA (750):
-      case prefixSA (726): {
+      case prefixSA (726):
+      case prefixSA (1221): {
         return pipe (
                       hero_specialAbilities,
                       getMagicalTraditionsHeroEntries,

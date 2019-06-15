@@ -2,7 +2,7 @@ import * as React from "react";
 import { notP } from "../../../Data/Bool";
 import { equals } from "../../../Data/Eq";
 import { fmap, fmapF } from "../../../Data/Functor";
-import { any, cons, filter, imap, List, map, notNull, toArray } from "../../../Data/List";
+import { any, cons, filter, List, map, notNull, toArray } from "../../../Data/List";
 import { bindF, elem, ensure, fromJust, fromMaybe, fromMaybeR, isJust, Just, mapMaybe, Maybe, Nothing } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
 import { ItemEditorContainer } from "../../Containers/ItemEditorContainer";
@@ -12,10 +12,9 @@ import { fromItemTemplate, Item } from "../../Models/Hero/Item";
 import { Purse } from "../../Models/Hero/Purse";
 import { CombatTechniqueWithRequirements, CombatTechniqueWithRequirementsA_ } from "../../Models/View/CombatTechniqueWithRequirements";
 import { ItemTemplate } from "../../Models/Wiki/ItemTemplate";
-import { L10n, L10nRecord } from "../../Models/Wiki/L10n";
+import { L10nRecord } from "../../Models/Wiki/L10n";
 import { translate } from "../../Utilities/I18n";
 import { pipe, pipe_ } from "../../Utilities/pipe";
-import { sortRecordsByName } from "../../Utilities/sortBy";
 import { Aside } from "../Universal/Aside";
 import { BorderButton } from "../Universal/BorderButton";
 import { Dropdown, DropdownOption } from "../Universal/Dropdown";
@@ -53,6 +52,7 @@ export interface EquipmentStateProps {
   rangedItemTemplateCombatTechniqueFilter: Maybe<string>
   filterText: string
   templatesFilterText: string
+  filteredEquipmentGroups: List<Record<DropdownOption>>
 }
 
 export interface EquipmentDispatchProps {
@@ -130,16 +130,10 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
       setRangedItemTemplatesCombatTechniqueFilter,
       filterText,
       templatesFilterText,
+      filteredEquipmentGroups,
     } = this.props
 
     const { filterGroupSlidein, showAddSlidein } = this.state
-
-    const groups = translate (l10n) ("itemgroups")
-
-    const groupsSelectionItems =
-      sortRecordsByName (L10n.A.id (l10n))
-                        (imap (i => (e: string) => DropdownOption ({ id: Just (i + 1), name: e }))
-                              (groups))
 
     const getHasValidCombatTechnique = (e: Record<ItemTemplate>) =>
       isJust (meleeItemTemplateCombatTechniqueFilter) && ITA.gr (e) === 1
@@ -186,7 +180,7 @@ export class Equipment extends React.Component<EquipmentProps, EquipmentState> {
             <Dropdown
               value={Just (filterGroupSlidein)}
               onChange={this.filterGroupSlidein}
-              options={groupsSelectionItems}
+              options={filteredEquipmentGroups}
               fullWidth
               />
             {filterGroupSlidein === 1
