@@ -676,6 +676,9 @@ export const toL10n =
         "deleteavatar": checkL10nNonEmptyString ("deleteavatar"),
         "stronglyrecommended": checkL10nNonEmptyString ("stronglyrecommended"),
         "unfamiliarspells": checkL10nNonEmptyString ("unfamiliarspells"),
+        "unfamiliarspellselectionfortraditionguildmage":
+          checkL10nNonEmptyString ("unfamiliarspellselectionfortraditionguildmage"),
+        "selectaspell": checkL10nNonEmptyString ("selectaspell"),
       }
 
       return mapMNamed
@@ -1284,6 +1287,9 @@ export const toL10n =
           "deleteavatar": res ["deleteavatar"],
           "stronglyrecommended": res ["stronglyrecommended"],
           "unfamiliarspells": res ["unfamiliarspells"],
+          "unfamiliarspellselectionfortraditionguildmage":
+            res ["unfamiliarspellselectionfortraditionguildmage"],
+          "selectaspell": res ["selectaspell"],
           // tslint:enable: no-string-literal
         }))
     }

@@ -531,3 +531,21 @@ export const getMainScriptSelectionElement =
            maybeToNullable
          )
          (guard (snd (isScriptSelectionNeeded)))
+
+export const getGuildMageUnfamiliarSpellSelectionElement =
+  (l10n: L10nRecord) =>
+  (mspells: Maybe<List<Record<DropdownOption>>>) =>
+  (selected: Maybe<string>) =>
+  (setGuildMageUnfamiliarSpell: (id: string) => void) =>
+    fmapF (mspells)
+          (spells => (
+            <div className="unfamiliar-spell">
+              <h4>{translate (l10n) ("unfamiliarspellselectionfortraditionguildmage")}</h4>
+              <Dropdown<string | number>
+                hint={translate (l10n) ("selectaspell")}
+                value={selected}
+                onChangeJust={setGuildMageUnfamiliarSpell}
+                options={spells}
+                />
+            </div>
+          ))

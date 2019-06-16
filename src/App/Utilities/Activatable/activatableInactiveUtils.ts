@@ -12,10 +12,11 @@ import { ident, thrush } from "../../../Data/Function";
 import { fmap, fmapF, mapReplace } from "../../../Data/Functor";
 import { over, set } from "../../../Data/Lens";
 import { consF, countWith, elem, filter, find, flength, fnull, foldr, isList, List, map, mapByIdKeyMap, maximum, notElem, notElemF, notNull, subscript } from "../../../Data/List";
-import { all, bind, bindF, ensure, fromJust, fromMaybe, guard, guard_, isJust, join, Just, liftM2, listToMaybe, mapMaybe, Maybe, maybe, Nothing, or } from "../../../Data/Maybe";
+import { all, bind, bindF, ensure, fromJust, fromMaybe, guard, guard_, isJust, isNothing, join, Just, liftM2, listToMaybe, mapMaybe, Maybe, maybe, Nothing, or } from "../../../Data/Maybe";
 import { alter, elems, foldrWithKey, isOrderedMap, lookup, lookupF, member, OrderedMap } from "../../../Data/OrderedMap";
 import { fst, Pair, snd } from "../../../Data/Pair";
 import { Record, RecordI } from "../../../Data/Record";
+import { showP } from "../../../Data/Show";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
@@ -34,7 +35,7 @@ import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { Activatable } from "../../Models/Wiki/wikiTypeHelpers";
 import { countActiveGroupEntries } from "../entryGroupUtils";
 import { getAllEntriesByGroup } from "../heroStateUtils";
-import { getBlessedTradStrIdFromNumId, prefixSA } from "../IDUtils";
+import { getBlessedTradStrIdFromNumId, isBlessedTraditionId, prefixSA } from "../IDUtils";
 import { getTraditionOfAspect } from "../Increasable/liturgicalChantUtils";
 import { add, gt, gte, inc, lt, multiply, subtract } from "../mathUtils";
 import { pipe, pipe_ } from "../pipe";
@@ -662,13 +663,14 @@ const isAddNotExistSkillSpecAllowed =
 
 const is3or4 = (x: string | number): x is number => x === 3 || x === 4
 
+type OtherOptionsModifier = ident<Record<InactiveActivatable>>
+
 const modifyOtherOptions =
   (wiki: WikiModelRecord) =>
   (hero: HeroModelRecord) =>
   (ap: Record<AdventurePointsCategories>) =>
   (wiki_entry: Activatable) =>
-  (mhero_entry: Maybe<Record<ActivatableDependent>>):
-  Maybe<(x: Record<InactiveActivatable>) => Record<InactiveActivatable>> => {
+  (mhero_entry: Maybe<Record<ActivatableDependent>>): Maybe<OtherOptionsModifier> => {
     const current_id = id (wiki_entry)
 
     switch (current_id) {
@@ -708,7 +710,7 @@ const modifyOtherOptions =
                     (2)
       }
 
-      // Magical Traditions
+      // Magical Traditions (excluding below)
       case prefixSA (70):
       case prefixSA (255):
       case prefixSA (345):
@@ -766,12 +768,12 @@ const modifyOtherOptions =
       case "SA_697":
       case "SA_698":
       case "SA_1049": {
-        return pipe (
-                      hero_specialAbilities,
-                      getBlessedTradition,
-                      mapReplace (ident)
-                    )
-                    (hero)
+        return pipe_ (
+                       hero,
+                       hero_specialAbilities,
+                       getBlessedTradition,
+                       maybe<Maybe<OtherOptionsModifier>> (Just (ident)) (() => Nothing)
+                     )
       }
 
       // Recherchegespür
@@ -922,6 +924,10 @@ export const getInactiveView =
                                           (mhero_entry)
                                           (max_level)
 
+    if (isBlessedTraditionId (current_id)) {
+      console.log ("isNotValid = ", showP (isNotValid))
+    }
+
     if (!isNotValid) {
       const specificSelections = modifySelectOptions (wiki) (hero) (wiki_entry) (mhero_entry)
 
@@ -930,20 +936,30 @@ export const getInactiveView =
                                                      (adventure_points)
                                                      (wiki_entry)
                                                      (mhero_entry)
+      if (isBlessedTraditionId (current_id)) {
+        console.log ("specificSelections = ", showP (specificSelections))
+        console.log ("(mmodifyOtherOptions == Nothing) = ", isNothing (mmodifyOtherOptions))
+      }
 
 
       return liftM2 ((modify: ident<Record<InactiveActivatable>>) =>
-                     (select_options: Maybe<List<Record<SelectOption>>>) =>
-                       modify (InactiveActivatable ({
-                                id: current_id,
-                                name: SpAL.name (wiki_entry),
-                                cost: cost (wiki_entry),
-                                maxLevel: max_level,
-                                heroEntry: mhero_entry,
-                                wikiEntry: wiki_entry as Record<RecordI<Activatable>>,
-                                selectOptions: fmapF (select_options)
-                                                     (sortRecordsByName (id (l10n))),
-                              })))
+                     (select_options: Maybe<List<Record<SelectOption>>>) => {
+                       const x = modify (InactiveActivatable ({
+                        id: current_id,
+                        name: SpAL.name (wiki_entry),
+                        cost: cost (wiki_entry),
+                        maxLevel: max_level,
+                        heroEntry: mhero_entry,
+                        wikiEntry: wiki_entry as Record<RecordI<Activatable>>,
+                        selectOptions: fmapF (select_options)
+                                             (sortRecordsByName (id (l10n))),
+                      }))
+                       if (isBlessedTraditionId (current_id)) {
+                         console.log ("InactiveActivatable = ", showP (x))
+                       }
+
+                       return x
+                     })
                     (mmodifyOtherOptions)
                     (ensure (Maybe.all (notNull)) (specificSelections))
     }

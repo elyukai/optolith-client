@@ -601,6 +601,8 @@ export interface L10n {
   "deleteavatar": string
   "stronglyrecommended": string
   "unfamiliarspells": string
+  "unfamiliarspellselectionfortraditionguildmage": string
+  "selectaspell": string
 }
 
 export type L10nKey = keyof L10n
@@ -1208,4 +1210,6 @@ export const L10n =
     "deleteavatar": "",
     "stronglyrecommended": "",
     "unfamiliarspells": "",
+    "unfamiliarspellselectionfortraditionguildmage": "",
+    "selectaspell": "",
   })

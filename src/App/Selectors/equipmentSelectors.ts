@@ -1,5 +1,5 @@
 import { equals } from "../../Data/Eq";
-import { ident, thrush } from "../../Data/Function";
+import { flip, ident, thrush } from "../../Data/Function";
 import { fmap, fmapF } from "../../Data/Functor";
 import { set } from "../../Data/Lens";
 import { any, append, consF, filter, foldr, ifilter, imap, List, map, maximum, subscript, sum } from "../../Data/List";
@@ -33,7 +33,7 @@ import { convertPrimaryAttributeToArray } from "../Utilities/ItemUtils";
 import { add, dec, multiply, subtractBy } from "../Utilities/mathUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
 import { filterByAvailability } from "../Utilities/RulesUtils";
-import { sortRecordsByName, sortStrings } from "../Utilities/sortBy";
+import { sortRecordsByName } from "../Utilities/sortBy";
 import { DropdownOption, stringOfListToDropdown } from "../Views/Universal/Dropdown";
 import { getRuleBooksEnabled } from "./rulesSelectors";
 import { getEquipmentSortOptions } from "./sortOptionsSelectors";
@@ -720,15 +720,23 @@ export const getProtectionAndWeight =
     }
   }
 
+const getItemGroupsAsDropdowns = pipe (L10n.A.itemgroups, imap (stringOfListToDropdown))
+
+const isAnyTplOfGr = (gr_name_index: number) => any (pipe (ITA.gr, equals (gr_name_index + 1)))
+
+const filterGrsIfAnyTplAvailable =
+  (tpls: List<Record<ItemTemplate>>) =>
+    pipe (
+      getItemGroupsAsDropdowns,
+      ifilter (i => () => isAnyTplOfGr (i) (tpls))
+    )
+
 export const getAvailableSortedEquipmentGroups = createMaybeSelector (
   getLocaleAsProp,
   getAvailableItemTemplates,
   uncurryN (l10n => maybe (List<Record<DropdownOption>> ())
                           (pipe (
-                            tpls => ifilter<string> (i => () =>
-                                                      any (pipe (ITA.gr, equals (i + 1))) (tpls))
-                                                    (L10n.A.itemgroups (l10n)),
-                            sortStrings (l10n),
-                            imap (stringOfListToDropdown)
+                            flip (filterGrsIfAnyTplAvailable) (l10n),
+                            sortRecordsByName (l10n)
                           )))
 )

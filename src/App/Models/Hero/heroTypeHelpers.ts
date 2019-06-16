@@ -59,6 +59,7 @@ export interface Selections {
   specialization: Maybe<number | string>
   specializationSkillId: Maybe<string>
   terrainKnowledge: Maybe<number>
+  unfamiliarSpell: Maybe<string>
   map: Record<ProfessionSelections>
 }
 

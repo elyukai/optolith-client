@@ -78,6 +78,21 @@ interface pipe {
     ij: (i: I) => J,
     jk: (j: J) => K
   ): (...a: A) => K
+
+  <A extends any[], B, C, D, E, F, G, H, I, J, K, L>
+  (
+    ab: (...a: A) => B,
+    bc: (b: B) => C,
+    cd: (c: C) => D,
+    de: (d: D) => E,
+    ef: (e: E) => F,
+    fg: (f: F) => G,
+    gh: (g: G) => H,
+    hi: (h: H) => I,
+    ij: (i: I) => J,
+    jk: (j: J) => K,
+    kl: (k: L) => L
+  ): (...a: A) => L
 }
 
 /**

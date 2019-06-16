@@ -19,6 +19,7 @@ export interface ProfessionSelections {
   [ProfessionSelectionIds.SPECIALIZATION]: Maybe<Record<SpecializationSelection>>
   [ProfessionSelectionIds.SKILLS]: Maybe<Record<SkillsSelection>>
   [ProfessionSelectionIds.TERRAIN_KNOWLEDGE]: Maybe<Record<TerrainKnowledgeSelection>>
+  [ProfessionSelectionIds.GUILD_MAGE_UNFAMILIAR_SPELL]: boolean
   // [ProfessionSelectionIds.SPECIAL_ABILITY]: Maybe<Record<SpecialAbilitySelection>>
 }
 
@@ -32,6 +33,7 @@ export const ProfessionSelections =
     [ProfessionSelectionIds.SPECIALIZATION]: Nothing,
     [ProfessionSelectionIds.SKILLS]: Nothing,
     [ProfessionSelectionIds.TERRAIN_KNOWLEDGE]: Nothing,
+    [ProfessionSelectionIds.GUILD_MAGE_UNFAMILIAR_SPELL]: false,
     // [ProfessionSelectionIds.SPECIAL_ABILITY]: Nothing,
   })
 
