@@ -180,7 +180,8 @@ const isRemovalDisabledEntrySpecific =
       case "SA_695":
       case "SA_696":
       case "SA_697":
-      case "SA_698": {
+      case "SA_698":
+      case "SA_1049": {
         // there must be no active liturgical chant or blessing
         return countActiveSkillEntries ("liturgicalChants") (hero) > 0
           || size (blessings (hero)) > 0

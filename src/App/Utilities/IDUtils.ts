@@ -165,6 +165,7 @@ const blessedTraditionIdByNumericId = OrderedMap.fromArray ([
   [16, prefixSA (696)],
   [17, prefixSA (697)],
   [18, prefixSA (698)],
+  [19, prefixSA (1049)],
 ])
 
 const blessedNumericIdByTraditionId = OrderedMap.fromArray ([
@@ -186,6 +187,7 @@ const blessedNumericIdByTraditionId = OrderedMap.fromArray ([
   [prefixSA (696), 16],
   [prefixSA (697), 17],
   [prefixSA (698), 18],
+  [prefixSA (1049), 19],
 ])
 
 export const isBlessedTraditionId = memberF (blessedNumericIdByTraditionId)

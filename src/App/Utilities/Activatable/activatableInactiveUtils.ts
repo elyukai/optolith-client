@@ -764,7 +764,8 @@ const modifyOtherOptions =
       case "SA_695":
       case "SA_696":
       case "SA_697":
-      case "SA_698": {
+      case "SA_698":
+      case "SA_1049": {
         return pipe (
                       hero_specialAbilities,
                       getBlessedTradition,
