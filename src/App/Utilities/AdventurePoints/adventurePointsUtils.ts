@@ -53,7 +53,7 @@ export const getDisAdvantagesSubtypeMax =
       const mtradition =
         listToMaybe (getMagicalTraditionsHeroEntries (HeroModel.AL.specialAbilities (state)))
 
-      const semiTraditionIds = List ("SA_677", "SA_678", "SA_679", "SA_680")
+      const semiTraditionIds = List ("SA_677", "SA_678", "SA_679", "SA_680", "SA_750", "SA_1221")
 
       const misSemiTradition =
         fmap (pipe (ActivatableDependent.AL.id, elemF (semiTraditionIds)))

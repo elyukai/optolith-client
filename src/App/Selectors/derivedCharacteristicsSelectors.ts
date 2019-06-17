@@ -109,7 +109,11 @@ export const getAE = createMaybeSelector (
                                            (primary => {
                                             const hasTraditionHalfAE =
                                               elem (ActivatableDependent.A.id (last_trad))
-                                                   (List (prefixSA (677), prefixSA (678)))
+                                                   (List (
+                                                     prefixSA (677),
+                                                     prefixSA (678),
+                                                     prefixSA (750),
+                                                     prefixSA (1221)))
 
                                             const maxAdd = hasTraditionHalfAE
                                               ? divideBy2AndRound (pipe_ (primary,
