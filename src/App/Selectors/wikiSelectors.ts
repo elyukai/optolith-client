@@ -1,11 +1,12 @@
 import { equals } from "../../Data/Eq";
 import { ident } from "../../Data/Function";
 import { fmapF } from "../../Data/Functor";
-import { all, any, filter, isInfixOf, List } from "../../Data/List";
+import { any, filter, isInfixOf, List, map } from "../../Data/List";
 import { guard, imapMaybe, Just, Maybe, maybe } from "../../Data/Maybe";
 import { elems } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
 import { uncurryN, uncurryN3 } from "../../Data/Tuple/Curry";
+import { traceShowWith } from "../../Debug/Trace";
 import { CultureCombinedA_ } from "../Models/View/CultureCombined";
 import { ProfessionCombined, ProfessionCombinedA_ } from "../Models/View/ProfessionCombined";
 import { RaceCombinedA_ } from "../Models/View/RaceCombined";
@@ -23,8 +24,10 @@ import { pipe, pipe_ } from "../Utilities/pipe";
 import { comparingR, sortRecordsBy, sortRecordsByName } from "../Utilities/sortBy";
 import { DropdownOption } from "../Views/Universal/Dropdown";
 import { getAllCultures, getAllProfessions, getAllRaces } from "./rcpSelectors";
-import { getProfessionsCombinedSortOptions } from "./sortOptionsSelectors";
+import { getWikiProfessionsCombinedSortOptions } from "./sortOptionsSelectors";
 import { getLocaleAsProp, getWikiAdvantages, getWikiBlessings, getWikiCantrips, getWikiCombatTechniques, getWikiCombatTechniquesGroup, getWikiDisadvantages, getWikiFilterText, getWikiItemTemplates, getWikiItemTemplatesGroup, getWikiLiturgicalChants, getWikiLiturgicalChantsGroup, getWikiProfessionsGroup, getWikiSkills, getWikiSkillsGroup, getWikiSpecialAbilities, getWikiSpecialAbilitiesGroup, getWikiSpells, getWikiSpellsGroup } from "./stateSelectors";
+
+const PCA_ = ProfessionCombinedA_
 
 export const getRacesSortedByName = createMaybeSelector (
   getLocaleAsProp,
@@ -53,46 +56,51 @@ export const getPreparedCultures = createMaybeSelector (
 )
 
 export const getProfessionsSortedByName = createMaybeSelector (
-  getProfessionsCombinedSortOptions,
+  getWikiProfessionsCombinedSortOptions,
   getAllProfessions,
   uncurryN (sortRecordsBy)
 )
 
 const getProfessionFilters =
   (filter_text: string) =>
-  (gr: Maybe<number>) =>
+  (mselected_gr: Maybe<number>) =>
   (x: Record<ProfessionCombined>) =>
-    all ((f: (x: Record<ProfessionCombined>) => boolean) => f (x))
-        (List (
-          pipe (ProfessionCombinedA_.gr, Maybe.elemF (gr)),
-          pipe (
-            ProfessionCombinedA_.name,
-            n => NameBySex.is (n)
-              ? List (
-                  NameBySex.A.f (n),
-                  NameBySex.A.m (n)
-                )
-              : List (n),
-            any (isInfixOf (filter_text))
-          ),
-          pipe (
-            ProfessionCombinedA_.subname,
-            maybe (List<string> ())
-                  (n => NameBySex.is (n)
-                          ? List (
-                              NameBySex.A.f (n),
-                              NameBySex.A.m (n)
-                            )
-                          : List (n)),
-            any (isInfixOf (filter_text))
-          )
-        ))
+    pipe_ (x, PCA_.gr, gr => Maybe.all (equals (gr)) (mselected_gr))
+    && (
+      filter_text === ""
+      || pipe_ (
+           x,
+           PCA_.name,
+           n => NameBySex.is (n)
+             ? List (
+                 NameBySex.A.f (n),
+                 NameBySex.A.m (n)
+               )
+             : List (n),
+           any (isInfixOf (filter_text))
+         )
+      || pipe_ (
+           x,
+           PCA_.subname,
+           maybe (List<string> ())
+                 (n => NameBySex.is (n)
+                         ? List (
+                             NameBySex.A.f (n),
+                             NameBySex.A.m (n)
+                           )
+                         : List (n)),
+           any (isInfixOf (filter_text))
+         )
+    )
 
 export const getPreparedProfessions = createMaybeSelector (
   getWikiFilterText,
   getWikiProfessionsGroup,
   getProfessionsSortedByName,
-  uncurryN3 (filter_text => gr => filter (getProfessionFilters (filter_text) (gr)))
+  uncurryN3 (filter_text => gr => pipe (
+                                    filter (getProfessionFilters (filter_text) (gr)),
+                                    traceShowWith ("getAllProfessions names = ") (map (PCA_.name))
+                                  ))
 )
 
 export const getAdvantagesSortedByName = createMaybeSelector (

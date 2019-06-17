@@ -457,6 +457,10 @@ test ('isInfixOf', () => {
     .toEqual (true)
   expect (List.isInfixOf ('test') ('das asd  dsad   ad tese f as'))
     .toEqual (false)
+  expect (List.isInfixOf ('') ('das asd  dsad   ad tese f as'))
+    .toEqual (true)
+  expect (List.isInfixOf ('') (''))
+    .toEqual (true)
 })
 
 // SEARCHING BY EQUALITY
