@@ -5,6 +5,7 @@ import { bindF, fromMaybe, Just, liftM2, liftM3, listToMaybe, mapMaybe, Maybe, N
 import { insert, lookup, OrderedMap } from "../../Data/OrderedMap";
 import { uncurryN } from "../../Data/Pair";
 import { Record } from "../../Data/Record";
+import { uncurryN3 } from "../../Data/Tuple/Curry";
 import { ActivatableCategory, Categories } from "../Constants/Categories";
 import { IdPrefixes } from "../Constants/IdPrefixes";
 import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
@@ -18,7 +19,7 @@ import { ActiveActivatable, ActiveActivatableA_ } from "../Models/View/ActiveAct
 import { Advantage } from "../Models/Wiki/Advantage";
 import { Culture } from "../Models/Wiki/Culture";
 import { Disadvantage } from "../Models/Wiki/Disadvantage";
-import { L10n } from "../Models/Wiki/L10n";
+import { L10n, L10nRecord } from "../Models/Wiki/L10n";
 import { Profession } from "../Models/Wiki/Profession";
 import { Race } from "../Models/Wiki/Race";
 import { SpecialAbility } from "../Models/Wiki/SpecialAbility";
@@ -34,7 +35,7 @@ import { compareLocale } from "../Utilities/I18n";
 import { prefixId, prefixSA } from "../Utilities/IDUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
 import { mapCurrentHero, mapGetToMaybeSlice, mapGetToSlice } from "../Utilities/SelectorsUtils";
-import { comparingR } from "../Utilities/sortBy";
+import { comparingR, sortStrings } from "../Utilities/sortBy";
 import { misStringM } from "../Utilities/typeCheckUtils";
 import { getBlessedTraditionFromWikiState } from "./liturgicalChantsSelectors";
 import { getCurrentCulture, getCurrentProfession, getCurrentRace } from "./rcpSelectors";
@@ -304,21 +305,28 @@ export const getBlessedTraditionForSheet = createMaybeSelector (
 )
 
 const getPropertyOrAspectKnowledgesForSheet =
-  uncurryN (
-    liftM2 ((hero_entry: Record<ActivatableDependent>) => (wiki_entry: Record<SpecialAbility>) =>
-             mapMaybe ((x: string | number) =>
-                         pipe_ (x, Just, getSelectOptionName (wiki_entry)))
-                       (getActiveSelections (hero_entry))))
+  uncurryN3 ((l10n: L10nRecord) => liftM2 ((wiki_entry: Record<SpecialAbility>) =>
+                                            pipe (
+                                              getActiveSelections,
+                                              mapMaybe (pipe (
+                                                Just,
+                                                getSelectOptionName (wiki_entry)
+                                              )),
+                                              sortStrings (l10n),
+                                              intercalate (", ")
+                                            )))
 
 export const getPropertyKnowledgesForSheet = createMaybeSelector (
-  mapGetToSlice (getSpecialAbilities) ("SA_72"),
+  getLocaleAsProp,
   mapGetToSlice (getWikiSpecialAbilities) ("SA_72"),
+  mapGetToSlice (getSpecialAbilities) ("SA_72"),
   getPropertyOrAspectKnowledgesForSheet
 )
 
 export const getAspectKnowledgesForSheet = createMaybeSelector (
-  mapGetToSlice (getSpecialAbilities) ("SA_87"),
+  getLocaleAsProp,
   mapGetToSlice (getWikiSpecialAbilities) ("SA_87"),
+  mapGetToSlice (getSpecialAbilities) ("SA_87"),
   getPropertyOrAspectKnowledgesForSheet
 )
 

@@ -94,9 +94,9 @@ export interface SheetsStateProps {
   magicalPrimary: Maybe<string>
   magicalSpecialAbilities: Maybe<List<Record<ActiveActivatable<SpecialAbility>>>>
   magicalTradition: string
-  properties: Maybe<List<string>>
+  properties: Maybe<string>
   spells: Maybe<List<Record<SpellCombined>>>
-  aspects: Maybe<List<string>>
+  aspects: Maybe<string>
   blessedPrimary: Maybe<string>
   blessedSpecialAbilities: Maybe<List<Record<ActiveActivatable<SpecialAbility>>>>
   blessedTradition: Maybe<string>
