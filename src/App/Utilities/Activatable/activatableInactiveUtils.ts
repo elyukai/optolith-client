@@ -11,12 +11,13 @@ import { equals } from "../../../Data/Eq";
 import { ident, thrush } from "../../../Data/Function";
 import { fmap, fmapF, mapReplace } from "../../../Data/Functor";
 import { over, set } from "../../../Data/Lens";
-import { consF, countWith, elem, filter, find, flength, fnull, foldr, isList, List, map, mapByIdKeyMap, maximum, notElem, notElemF, notNull, subscript } from "../../../Data/List";
+import { consF, countWith, elem, elemF, filter, find, flength, fnull, foldr, isList, List, map, mapByIdKeyMap, maximum, notElem, notElemF, notNull, subscript } from "../../../Data/List";
 import { all, bind, bindF, ensure, fromJust, fromMaybe, guard, guard_, isJust, isNothing, join, Just, liftM2, listToMaybe, mapMaybe, Maybe, maybe, Nothing, or } from "../../../Data/Maybe";
 import { alter, elems, foldrWithKey, isOrderedMap, lookup, lookupF, member, OrderedMap } from "../../../Data/OrderedMap";
 import { fst, Pair, snd } from "../../../Data/Pair";
 import { Record, RecordI } from "../../../Data/Record";
 import { showP } from "../../../Data/Show";
+import { traceShow } from "../../../Debug/Trace";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
@@ -35,7 +36,7 @@ import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { Activatable } from "../../Models/Wiki/wikiTypeHelpers";
 import { countActiveGroupEntries } from "../entryGroupUtils";
 import { getAllEntriesByGroup } from "../heroStateUtils";
-import { getBlessedTradStrIdFromNumId, isBlessedTraditionId, prefixSA } from "../IDUtils";
+import { getBlessedTradStrIdFromNumId, prefixSA } from "../IDUtils";
 import { getTraditionOfAspect } from "../Increasable/liturgicalChantUtils";
 import { add, gt, gte, inc, lt, multiply, subtract } from "../mathUtils";
 import { pipe, pipe_ } from "../pipe";
@@ -203,6 +204,10 @@ const modifySelectOptions =
     const mcurrent_select = fmap (filterByAvailability (SOA.src)
                                  (Pair (WA.books (wiki), HA.rules (hero))))
                                  (select (wiki_entry))
+
+    if (current_id === "SA_72") {
+      console.log ("SA_72 mcurrent_select = ", showP (mcurrent_select))
+    }
 
     const isNoRequiredOrActiveSelection =
       isNotRequiredNotActive (mhero_entry)
@@ -402,10 +407,17 @@ const modifySelectOptions =
       case "SA_72": {
         const valid_props = getPropsWith3Gte10 (wiki) (hero)
 
-        return fmap (filter ((e: Record<SelectOption>) =>
+        traceShow ("SA_72 valid props = ") (valid_props)
+
+        return traceShow ("SA_72 filtered select = ") (fmap (filter ((e: Record<SelectOption>) =>
                               isNoRequiredOrActiveSelection (e)
-                              && elem (SOA.id (e)) (valid_props)))
-                    (mcurrent_select)
+                              && pipe_ (
+                                e,
+                                SOA.id,
+                                ensure (isNumber),
+                                maybe (false) (pipe (inc, elemF (valid_props)))
+                              )))
+                    (mcurrent_select))
       }
 
       // Property Focus
@@ -730,6 +742,7 @@ const modifyOtherOptions =
                       bindF<number | List<number>, List<number>> (ensure (isList)),
                       bindF (costs => subscript (costs)
                                                 (maybe (0) (pipe (active, flength)) (mhero_entry))),
+                      traceShow ("SA_72/SA_87 display cost = "),
                       fmap (pipe (Just, set (costL)))
                     )
                     (wiki_entry)
@@ -911,8 +924,8 @@ export const getInactiveView =
                                           (mhero_entry)
                                           (max_level)
 
-    if (isBlessedTraditionId (current_id)) {
-      console.log ("isNotValid = ", showP (isNotValid))
+    if (current_id === "SA_72") {
+      console.log ("SA_72 isNotValid = ", showP (isNotValid))
     }
 
     if (!isNotValid) {
@@ -923,7 +936,7 @@ export const getInactiveView =
                                                      (adventure_points)
                                                      (wiki_entry)
                                                      (mhero_entry)
-      if (isBlessedTraditionId (current_id)) {
+      if (current_id === "SA_72") {
         console.log ("specificSelections = ", showP (specificSelections))
         console.log ("(mmodifyOtherOptions == Nothing) = ", isNothing (mmodifyOtherOptions))
       }
@@ -941,7 +954,7 @@ export const getInactiveView =
                         selectOptions: fmapF (select_options)
                                              (sortRecordsByName (id (l10n))),
                       }))
-                       if (isBlessedTraditionId (current_id)) {
+                       if (current_id === "SA_72") {
                          console.log ("InactiveActivatable = ", showP (x))
                        }
 

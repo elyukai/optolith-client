@@ -7,7 +7,6 @@ import { bind, ensure, fromMaybe, fromMaybe_, imapMaybe, Just, liftM2, liftM4, m
 import { elems, lookup, lookupF, OrderedMap } from "../../Data/OrderedMap";
 import { uncurryN, uncurryN3, uncurryN4, uncurryN8 } from "../../Data/Pair";
 import { Record } from "../../Data/Record";
-import { traceShowWith } from "../../Debug/Trace";
 import { Categories } from "../Constants/Categories";
 import { ActiveObjectWithId } from "../Models/ActiveEntries/ActiveObjectWithId";
 import { Sex } from "../Models/Hero/heroTypeHelpers";
@@ -66,7 +65,6 @@ const CCA = CultureCombined.A
 const PA = Profession.A
 const PVA = ProfessionVariant.A
 const PCA = ProfessionCombined.A
-const PCA_ = ProfessionCombinedA_
 const PCL = ProfessionCombinedL
 const PVCA = ProfessionVariantCombined.A
 const ISA = IncreaseSkill.A
@@ -378,8 +376,7 @@ export const getAllProfessions = createMaybeSelector (
                           (filtered_variants),
                     wikiEntry: p,
                   })
-                }),
-                traceShowWith ("getAllProfessions names = ") (map (PCA_.name))
+                })
               ))
 )
 
