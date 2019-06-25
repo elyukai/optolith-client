@@ -1,8 +1,8 @@
 import * as React from "react";
 import { Textfit } from "react-textfit";
 import { fmap, fmapF } from "../../../../Data/Functor";
-import { flength, intercalate, isList, List, map, replicateR, subscript, toArray, zip } from "../../../../Data/List";
-import { bindF, fromMaybeR, Maybe } from "../../../../Data/Maybe";
+import { flength, intercalate, isList, List, map, replicateR, subscript, toArray, zip, subscriptF } from "../../../../Data/List";
+import { bindF, fromMaybeR, Maybe, listToMaybe } from "../../../../Data/Maybe";
 import { fst, snd } from "../../../../Data/Pair";
 import { Record } from "../../../../Data/Record";
 import { MeleeWeapon } from "../../../Models/View/MeleeWeapon";
@@ -14,6 +14,7 @@ import { sign, signZero, toRoman } from "../../../Utilities/NumberUtils";
 import { pipe, pipe_ } from "../../../Utilities/pipe";
 import { renderMaybe, renderMaybeWith } from "../../../Utilities/ReactUtils";
 import { TextBox } from "../../Universal/TextBox";
+import { isTuple, bimap } from "../../../../Data/Tuple";
 
 export interface CombatSheetMeleeWeaponsProps {
   l10n: L10nRecord
@@ -59,6 +60,9 @@ export function CombatSheetMeleeWeapons (props: CombatSheetMeleeWeaponsProps) {
               map (e => {
                 const primaryBonus = MWA.primaryBonus (e)
 
+                const getPrimaryAtIndex =
+                  (i: number) => pipe (MWA.primary, subscriptF (i), renderMaybe)
+
                 return (
                   <tr key={MWA.id (e)}>
                     <td className="name">
@@ -66,12 +70,12 @@ export function CombatSheetMeleeWeapons (props: CombatSheetMeleeWeaponsProps) {
                     </td>
                     <td className="combat-technique">{MWA.combatTechnique (e)}</td>
                     <td className="damage-bonus">
-                      {isList (primaryBonus)
+                      {isTuple (primaryBonus)
                         ? pipe_ (
                             primaryBonus,
-                            zip (MWA.primary (e)),
-                            map (p => `${fst (p)} ${snd (p)}`),
-                            intercalate ("/")
+                            bimap (first => `${getPrimaryAtIndex (0) (e)} ${first}`)
+                                  (second => `${getPrimaryAtIndex (1) (e)} ${second}`)
+                            p => `${fst (p)}/${snd (p)}`
                           )
                         : `${intercalate ("/") (MWA.primary (e))} ${primaryBonus}`}
                     </td>

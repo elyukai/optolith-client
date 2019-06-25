@@ -12,12 +12,11 @@ import { ident, thrush } from "../../../Data/Function";
 import { fmap, fmapF, mapReplace } from "../../../Data/Functor";
 import { over, set } from "../../../Data/Lens";
 import { consF, countWith, elem, elemF, filter, find, flength, fnull, foldr, isList, List, map, mapByIdKeyMap, maximum, notElem, notElemF, notNull, subscript } from "../../../Data/List";
-import { all, bind, bindF, ensure, fromJust, fromMaybe, guard, guard_, isJust, isNothing, join, Just, liftM2, listToMaybe, mapMaybe, Maybe, maybe, Nothing, or } from "../../../Data/Maybe";
+import { all, bind, bindF, ensure, fromJust, fromMaybe, guard, guard_, isJust, join, Just, liftM2, listToMaybe, mapMaybe, Maybe, maybe, Nothing, or } from "../../../Data/Maybe";
 import { alter, elems, foldrWithKey, isOrderedMap, lookup, lookupF, member, OrderedMap } from "../../../Data/OrderedMap";
 import { fst, Pair, snd } from "../../../Data/Pair";
 import { Record, RecordI } from "../../../Data/Record";
 import { showP } from "../../../Data/Show";
-import { traceShow } from "../../../Debug/Trace";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent } from "../../Models/ActiveEntries/ActivatableSkillDependent";
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
@@ -407,9 +406,7 @@ const modifySelectOptions =
       case "SA_72": {
         const valid_props = getPropsWith3Gte10 (wiki) (hero)
 
-        traceShow ("SA_72 valid props = ") (valid_props)
-
-        return traceShow ("SA_72 filtered select = ") (fmap (filter ((e: Record<SelectOption>) =>
+        return fmap (filter ((e: Record<SelectOption>) =>
                               isNoRequiredOrActiveSelection (e)
                               && pipe_ (
                                 e,
@@ -417,7 +414,7 @@ const modifySelectOptions =
                                 ensure (isNumber),
                                 maybe (false) (pipe (inc, elemF (valid_props)))
                               )))
-                    (mcurrent_select))
+                    (mcurrent_select)
       }
 
       // Property Focus
@@ -742,7 +739,6 @@ const modifyOtherOptions =
                       bindF<number | List<number>, List<number>> (ensure (isList)),
                       bindF (costs => subscript (costs)
                                                 (maybe (0) (pipe (active, flength)) (mhero_entry))),
-                      traceShow ("SA_72/SA_87 display cost = "),
                       fmap (pipe (Just, set (costL)))
                     )
                     (wiki_entry)
@@ -924,10 +920,6 @@ export const getInactiveView =
                                           (mhero_entry)
                                           (max_level)
 
-    if (current_id === "SA_72") {
-      console.log ("SA_72 isNotValid = ", showP (isNotValid))
-    }
-
     if (!isNotValid) {
       const specificSelections = modifySelectOptions (wiki) (hero) (wiki_entry) (mhero_entry)
 
@@ -936,15 +928,11 @@ export const getInactiveView =
                                                      (adventure_points)
                                                      (wiki_entry)
                                                      (mhero_entry)
-      if (current_id === "SA_72") {
-        console.log ("specificSelections = ", showP (specificSelections))
-        console.log ("(mmodifyOtherOptions == Nothing) = ", isNothing (mmodifyOtherOptions))
-      }
 
 
       return liftM2 ((modify: ident<Record<InactiveActivatable>>) =>
-                     (select_options: Maybe<List<Record<SelectOption>>>) => {
-                       const x = modify (InactiveActivatable ({
+                     (select_options: Maybe<List<Record<SelectOption>>>) =>
+                      modify (InactiveActivatable ({
                         id: current_id,
                         name: SpAL.name (wiki_entry),
                         cost: cost (wiki_entry),
@@ -953,13 +941,7 @@ export const getInactiveView =
                         wikiEntry: wiki_entry as Record<RecordI<Activatable>>,
                         selectOptions: fmapF (select_options)
                                              (sortRecordsByName (id (l10n))),
-                      }))
-                       if (current_id === "SA_72") {
-                         console.log ("InactiveActivatable = ", showP (x))
-                       }
-
-                       return x
-                     })
+                      })))
                     (mmodifyOtherOptions)
                     (ensure (Maybe.all (notNull)) (specificSelections))
     }

@@ -991,3 +991,36 @@ test ('intersecting', () => {
   expect (List.intersecting (List (1, 2, 3)) (List (4, 5, 6))) .toEqual (false)
   expect (List.intersecting (List (1, 2, 3)) (List (3, 5, 6))) .toEqual (true)
 })
+
+test ('filterMulti', () => {
+  expect (List.filterMulti (List (a => a > 2, a => a < 5)) (List (1, 2, 3, 4, 5)))
+    .toEqual (List (3, 4))
+  expect (List.filterMulti (List (a => a > 2, a => a < 5)) (List (2, 5, 6, 7)))
+    .toEqual (List ())
+})
+
+test ('lengthAtLeast', () => {
+  expect (List.lengthAtLeast (3) (List (1, 2, 3, 4, 5)))
+    .toEqual (true)
+  expect (List.lengthAtLeast (3) (List (1, 2, 3, 4)))
+    .toEqual (true)
+  expect (List.lengthAtLeast (3) (List (1, 2, 3)))
+    .toEqual (true)
+  expect (List.lengthAtLeast (3) (List (1, 2)))
+    .toEqual (false)
+  expect (() => List.lengthAtLeast (-1) (List (1, 2)))
+    .toThrow ()
+})
+
+test ('lengthAtMost', () => {
+  expect (List.lengthAtMost (3) (List (1)))
+    .toEqual (true)
+  expect (List.lengthAtMost (3) (List (1, 2)))
+    .toEqual (true)
+  expect (List.lengthAtMost (3) (List (1, 2, 3)))
+    .toEqual (true)
+  expect (List.lengthAtMost (3) (List (1, 2, 3, 4)))
+    .toEqual (false)
+  expect (() => List.lengthAtMost (-1) (List (1, 2)))
+    .toThrow ()
+})

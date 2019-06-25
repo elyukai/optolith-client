@@ -10,7 +10,7 @@ import { add, inc, max, min, multiply } from "../App/Utilities/mathUtils";
 import { pipe } from "../App/Utilities/pipe";
 import { not } from "./Bool";
 import { equals } from "./Eq";
-import { ident } from "./Function";
+import { ident, thrush } from "./Function";
 import { fmap, fmapF } from "./Functor";
 import { Internals } from "./Internals";
 import { isLTorEQ, Ordering } from "./Ord";
@@ -2072,6 +2072,82 @@ export const intersecting =
   <A> (ys: List<A>) => any (elemF (ys))
 
 List.intersecting = intersecting
+
+/**
+ * `filterMulti :: [a -> Bool] -> [a] -> [a]`
+ *
+ * `filterMulti`, applied to a list of predicates and a list, returns the list of those elements that satisfy the all predicates.
+ */
+export const filterMulti =
+  <A> (preds: List<(x: A) => boolean>): (xs: List<A>) => List<A> =>
+    filter<A> (x => all<(x: A) => boolean> (thrush (x)) (preds))
+
+List.filterMulti = filterMulti
+
+/**
+ * `lengthAtLeast :: Int -> [a] -> Bool`
+ */
+export const lengthAtLeast =
+  (min_len: number) => <A> (xs: List<A>): boolean => {
+    if (min_len < 0) {
+      throw new RangeError ("lengthAtLeast: A list length cannot be negative!")
+    }
+    else if (min_len === 0) {
+      return true
+    }
+    else if (min_len === 1) {
+      return !isNil (xs)
+    }
+    else {
+      return lengthAtLeastIter (min_len) (0) (xs)
+    }
+  }
+
+const lengthAtLeastIter =
+  (min_len: number) => (len: number) => <A> (xs: List<A>): boolean => {
+    if (isNil (xs)) {
+      return false;
+    }
+    else if (min_len === len + 1) {
+      return true
+    }
+    else {
+      return lengthAtLeastIter (min_len) (len + 1) (xs .xs)
+    }
+  }
+
+List.lengthAtLeast = lengthAtLeast
+
+/**
+ * `lengthAtLeast :: Int -> [a] -> Bool`
+ */
+export const lengthAtMost =
+  (max_len: number) => <A> (xs: List<A>): boolean => {
+    if (max_len < 0) {
+      throw new RangeError ("lengthAtMost: A list length cannot be negative!")
+    }
+    else if (max_len === 0) {
+      return isNil (xs)
+    }
+    else {
+      return lengthAtMostIter (max_len) (0) (xs)
+    }
+  }
+
+const lengthAtMostIter =
+  (max_len: number) => (len: number) => <A> (xs: List<A>): boolean => {
+    if (isNil (xs)) {
+      return true;
+    }
+    else if (max_len > len + 1) {
+      return false
+    }
+    else {
+      return lengthAtLeastIter (max_len) (len + 1) (xs .xs)
+    }
+  }
+
+List.lengthAtMost = lengthAtMost
 
 
 // NAMESPACED FUNCTIONS

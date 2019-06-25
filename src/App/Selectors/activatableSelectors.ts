@@ -1,6 +1,6 @@
 import { flip, ident } from "../../Data/Function";
 import { fmap, fmapF } from "../../Data/Functor";
-import { consF, elem, elemF, filter, foldr, intercalate, List, map } from "../../Data/List";
+import { consF, elem, elemF, filter, filterMulti, foldr, intercalate, List, map, notElemF } from "../../Data/List";
 import { bindF, fromMaybe, Just, liftM2, liftM3, listToMaybe, mapMaybe, Maybe, Nothing } from "../../Data/Maybe";
 import { insert, lookup, OrderedMap } from "../../Data/OrderedMap";
 import { uncurryN } from "../../Data/Pair";
@@ -224,39 +224,49 @@ export const getGeneralSpecialAbilitiesForSheet = createMaybeSelector (
   getCultureAreaKnowledge,
   (wiki_special_abilities, mspecial_abilities, culture_area_knowledge_text) =>
     liftM2 ((culture_area_knowledge: Record<SpecialAbility>) =>
-             pipe (
-                    filter (pipe (
-                             ActiveActivatable.A.wikiEntry,
-                             SpecialAbility.AL.gr,
-                             elemF (List (1, 2, 22, 30))
-                           )) as ident<List<Record<ActiveActivatable<SpecialAbility>>>>,
-                    consF (ActiveActivatable ({
-                            nameAndCost: ActivatableNameCost ({
-                              active: ActiveObjectWithId ({
-                                id: SpecialAbility.A.id (culture_area_knowledge),
-                                sid: Nothing,
-                                sid2: Nothing,
-                                tier: Nothing,
-                                cost: Nothing,
-                                index: Nothing,
-                              }),
-                              finalCost: 0,
-                              naming: ActivatableCombinedName ({
-                                name:
-                                  `${SpecialAbility.A.name (culture_area_knowledge)}`
-                                  + ` (${fromMaybe ("") (culture_area_knowledge_text)})`,
-                                baseName: SpecialAbility.A.name (culture_area_knowledge),
-                                addName: culture_area_knowledge_text,
-                              }),
-                            }),
-                            validation: ActivatableActivationValidation ({
-                              disabled: true,
-                              maxLevel: Nothing,
-                              minLevel: Nothing,
-                            }),
-                            heroEntry: ActivatableDependent.default,
-                            wikiEntry: SpecialAbility.default,
-                          }) as Record<ActiveActivatable<SpecialAbility>>)))
+            (special_abilities: List<Record<ActiveActivatable<SpecialAbility>>>) =>
+              pipe_ (
+                special_abilities,
+                filterMulti<Record<ActiveActivatable<SpecialAbility>>>
+                  (List (
+                    pipe (
+                      ActiveActivatable.A.wikiEntry,
+                      SpecialAbility.AL.gr,
+                      elemF (List (1, 2, 22, 30))
+                    ),
+                    pipe (
+                      ActiveActivatable.A.wikiEntry,
+                      SpecialAbility.AL.id,
+                      notElemF (List (prefixSA (27), prefixSA (29)))
+                    )
+                  )),
+                consF (ActiveActivatable ({
+                        nameAndCost: ActivatableNameCost ({
+                          active: ActiveObjectWithId ({
+                            id: SpecialAbility.A.id (culture_area_knowledge),
+                            sid: Nothing,
+                            sid2: Nothing,
+                            tier: Nothing,
+                            cost: Nothing,
+                            index: Nothing,
+                          }),
+                          finalCost: 0,
+                          naming: ActivatableCombinedName ({
+                            name:
+                              `${SpecialAbility.A.name (culture_area_knowledge)}`
+                              + ` (${fromMaybe ("") (culture_area_knowledge_text)})`,
+                            baseName: SpecialAbility.A.name (culture_area_knowledge),
+                            addName: culture_area_knowledge_text,
+                          }),
+                        }),
+                        validation: ActivatableActivationValidation ({
+                          disabled: true,
+                          maxLevel: Nothing,
+                          minLevel: Nothing,
+                        }),
+                        heroEntry: ActivatableDependent.default,
+                        wikiEntry: SpecialAbility.default,
+                      }) as Record<ActiveActivatable<SpecialAbility>>)))
            (lookup (prefixId (IdPrefixes.SPECIAL_ABILITIES) (22))
                    (wiki_special_abilities))
            (mspecial_abilities)
@@ -272,12 +282,12 @@ const getSpecialAbilitiesByGroups =
 
 export const getCombatSpecialAbilitiesForSheet = createMaybeSelector (
   getSpecialAbilitiesForSheet,
-  getSpecialAbilitiesByGroups (List (4, 5, 6, 13, 14, 15, 16, 17, 18, 19, 20, 28))
+  getSpecialAbilitiesByGroups (List (3, 9, 10, 11, 12, 21))
 )
 
 export const getMagicalSpecialAbilitiesForSheet = createMaybeSelector (
   getSpecialAbilitiesForSheet,
-  getSpecialAbilitiesByGroups (List (3, 9, 10, 11, 12, 21))
+  getSpecialAbilitiesByGroups (List (4, 5, 6, 13, 14, 15, 16, 17, 18, 19, 20, 28))
 )
 
 export const getBlessedSpecialAbilitiesForSheet = createMaybeSelector (
