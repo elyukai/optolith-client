@@ -92,8 +92,7 @@
 		flex-direction: column;
 
 		.textbox {
-			flex: 1 1 auto;
-			height: 50%;
+			flex: 1 1 50%;
 		}
 
 		h3 {
@@ -107,14 +106,39 @@
 	}
 
 	.languages-list {
-		td:last-child {
-			width: 10.4mm;
-			border-left-width: 0.15mm;
-			text-align: center;
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		grid-auto-rows: 1fr;
+		list-style: none;
+		margin: 0;
+		padding: 0;
+
+		li {
+			border-bottom: 0.15mm solid #c8c8c8;
+			display: flex;
+			padding: 0;
+
+			&::before {
+				display: none;
+			}
+
+			&:nth-child(2n) {
+				border-left: 0.15mm solid #c8c8c8;
+			}
 		}
 
-		td {
-			border-width: 0 0 0.15mm;
+		span {
+			display: block;
+
+			&:first-child {
+				padding: 0 1mm;
+				flex: 1 1 0;
+			}
+
+			&:last-child {
+				flex: 0 0 10.4mm;
+				text-align: center;
+			}
 		}
 	}
 

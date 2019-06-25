@@ -77,7 +77,7 @@ export function CombatSheetShields (props: CombatSheetShieldsProps) {
             )),
             fromMaybeR (null)
           )}
-          {replicateR (4 - Maybe.sum (fmapF (msh_or_parry_weapons) (flength)))
+          {replicateR (3 - Maybe.sum (fmapF (msh_or_parry_weapons) (flength)))
                       (i => (
                         <tr key={`undefined-${i}`}>
                           <td className="name"></td>

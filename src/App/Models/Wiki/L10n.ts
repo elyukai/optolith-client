@@ -38,6 +38,8 @@ export interface L10n {
   "adventurepoints.short": string
   "adventurepoint": string
   "adventurepoints": string
+  "totalap.novar": string
+  "apspent.novar": string
   "totalap": string
   "apspent": string
   "apspentonadvantages": string
@@ -647,6 +649,8 @@ export const L10n =
     "adventurepoints.short": "",
     "adventurepoint": "",
     "adventurepoints": "",
+    "totalap.novar": "",
+    "apspent.novar": "",
     "totalap": "",
     "apspent": "",
     "apspentonadvantages": "",

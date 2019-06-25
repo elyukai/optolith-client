@@ -1,10 +1,11 @@
 import * as React from "react";
 import { Textfit } from "react-textfit";
 import { fmap, fmapF } from "../../../../Data/Functor";
-import { flength, intercalate, isList, List, map, replicateR, subscript, toArray, zip, subscriptF } from "../../../../Data/List";
-import { bindF, fromMaybeR, Maybe, listToMaybe } from "../../../../Data/Maybe";
+import { flength, intercalate, List, map, replicateR, subscript, subscriptF, toArray } from "../../../../Data/List";
+import { bindF, fromMaybeR, Maybe } from "../../../../Data/Maybe";
 import { fst, snd } from "../../../../Data/Pair";
 import { Record } from "../../../../Data/Record";
+import { bimap, isTuple } from "../../../../Data/Tuple";
 import { MeleeWeapon } from "../../../Models/View/MeleeWeapon";
 import { L10nRecord } from "../../../Models/Wiki/L10n";
 import { ndash } from "../../../Utilities/Chars";
@@ -14,7 +15,6 @@ import { sign, signZero, toRoman } from "../../../Utilities/NumberUtils";
 import { pipe, pipe_ } from "../../../Utilities/pipe";
 import { renderMaybe, renderMaybeWith } from "../../../Utilities/ReactUtils";
 import { TextBox } from "../../Universal/TextBox";
-import { isTuple, bimap } from "../../../../Data/Tuple";
 
 export interface CombatSheetMeleeWeaponsProps {
   l10n: L10nRecord
@@ -74,7 +74,7 @@ export function CombatSheetMeleeWeapons (props: CombatSheetMeleeWeaponsProps) {
                         ? pipe_ (
                             primaryBonus,
                             bimap (first => `${getPrimaryAtIndex (0) (e)} ${first}`)
-                                  (second => `${getPrimaryAtIndex (1) (e)} ${second}`)
+                                  (second => `${getPrimaryAtIndex (1) (e)} ${second}`),
                             p => `${fst (p)}/${snd (p)}`
                           )
                         : `${intercalate ("/") (MWA.primary (e))} ${primaryBonus}`}
@@ -127,7 +127,7 @@ export function CombatSheetMeleeWeapons (props: CombatSheetMeleeWeaponsProps) {
             )),
             fromMaybeR (null)
           )}
-          {replicateR (4 - Maybe.sum (fmapF (mmelee_weapons) (flength)))
+          {replicateR (3 - Maybe.sum (fmapF (mmelee_weapons) (flength)))
                       (i => (
                         <tr key={`undefined-${i}`}>
                           <td className="name"></td>

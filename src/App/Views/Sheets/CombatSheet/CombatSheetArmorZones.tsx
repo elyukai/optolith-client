@@ -30,12 +30,12 @@ export function CombatSheetArmorZones (props: CombatSheetArmorZonesProps) {
         <thead>
           <tr>
             <th className="name">{translate (l10n) ("armor")}</th>
-            <th className="zone">{translate (l10n) ("head")}</th>
-            <th className="zone">{translate (l10n) ("torso")}</th>
-            <th className="zone">{translate (l10n) ("leftarm")}</th>
-            <th className="zone">{translate (l10n) ("rightarm")}</th>
-            <th className="zone">{translate (l10n) ("leftleg")}</th>
-            <th className="zone">{translate (l10n) ("rightleg")}</th>
+            <th className="zone">{translate (l10n) ("head.short")}</th>
+            <th className="zone">{translate (l10n) ("torso.short")}</th>
+            <th className="zone">{translate (l10n) ("leftarm.short")}</th>
+            <th className="zone">{translate (l10n) ("rightarm.short")}</th>
+            <th className="zone">{translate (l10n) ("leftleg.short")}</th>
+            <th className="zone">{translate (l10n) ("rightleg.short")}</th>
             <th className="enc">{translate (l10n) ("encumbrance.short")}</th>
             <th className="add-penalties">
               {translate (l10n) ("additionalpenalties")}
@@ -78,7 +78,7 @@ export function CombatSheetArmorZones (props: CombatSheetArmorZonesProps) {
             )),
             fromMaybeR (null)
           )}
-          {replicateR (4 - Maybe.sum (fmapF (mhit_zone_armors) (flength)))
+          {replicateR (3 - Maybe.sum (fmapF (mhit_zone_armors) (flength)))
                       (i => (
                         <tr key={`undefined-${i}`}>
                           <td className="name"></td>

@@ -272,7 +272,7 @@ export const getMeleeWeapons = createMaybeSelector (
             const filteredItems =
               thrush (rawItems)
                      (filter (item => IA.gr (item) === 1
-                                      || !Maybe.elem (1) (IA.improvisedWeaponGroup (item))))
+                                      || Maybe.elem (1) (IA.improvisedWeaponGroup (item))))
 
             const mapper = pipe (
               IA.id,
@@ -396,7 +396,7 @@ export const getRangedWeapons = createMaybeSelector (
             const filteredItems =
               thrush (rawItems)
                      (filter (item => IA.gr (item) === 2
-                                      || !Maybe.elem (2) (IA.improvisedWeaponGroup (item))))
+                                      || Maybe.elem (2) (IA.improvisedWeaponGroup (item))))
 
             const mapper = pipe (
               IA.id,
