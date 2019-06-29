@@ -148,7 +148,7 @@ export function WikiEquipmentInfo (props: WikiEquipmentInfoProps) {
                 {maybeR (null)
                         ((price: number) => (
                           <tr>
-                            <td>{translate (l10n) ("weight")}</td>
+                            <td>{translate (l10n) ("price")}</td>
                             <td>
                               {localizeNumber (locale) (price)}
                               {" "}
