@@ -360,6 +360,7 @@ export class RCPOptionSelections extends React.Component<SelectionsProps, Select
                                                              (munfamiliar_spells)
                                                              (selectedUnfamiliarSpell)
                                                              (this.setGuildMageUnfamiliarSpellId)
+                                                             (profession)
 
                return (
                  <Slidein isOpen close={close} className="rcp-selections">

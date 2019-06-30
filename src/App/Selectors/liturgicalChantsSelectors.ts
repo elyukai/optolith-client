@@ -7,12 +7,13 @@ import { any, append, consF, elem, filter, flength, foldr, List, map, notElem, n
 import { all, and, bind, bindF, ensure, fromMaybe_, guard, isJust, liftM2, liftM4, mapMaybe, maybe, Maybe, Nothing, or } from "../../Data/Maybe";
 import { elems, lookup, lookupF, OrderedMap } from "../../Data/OrderedMap";
 import { insert, member, OrderedSet } from "../../Data/OrderedSet";
-import { fst, snd, uncurryN, uncurryN3, uncurryN4, uncurryN5, uncurryN6 } from "../../Data/Pair";
 import { Record } from "../../Data/Record";
+import { fst, snd } from "../../Data/Tuple";
+import { uncurryN, uncurryN3, uncurryN4, uncurryN5, uncurryN6 } from "../../Data/Tuple/Curry";
 import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent, createInactiveActivatableSkillDependent } from "../Models/ActiveEntries/ActivatableSkillDependent";
 import { HeroModel, HeroModelRecord } from "../Models/Hero/HeroModel";
-import { BlessingCombined } from "../Models/View/BlessingCombined";
+import { BlessingCombined, BlessingCombinedA_ } from "../Models/View/BlessingCombined";
 import { LiturgicalChantWithRequirements, LiturgicalChantWithRequirementsL } from "../Models/View/LiturgicalChantWithRequirements";
 import { Blessing } from "../Models/Wiki/Blessing";
 import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel";
@@ -44,6 +45,7 @@ const ADA = ActivatableDependent.A
 const ASDA = ActivatableSkillDependent.A
 const BA = Blessing.A
 const BCA = BlessingCombined.A
+const BCA_ = BlessingCombinedA_
 const LCWRA = LiturgicalChantWithRequirements.A
 const LCWRL = LiturgicalChantWithRequirementsL
 const LCA = LiturgicalChant.A
@@ -143,9 +145,15 @@ export const getActiveBlessings = createMaybeSelector (
   fmap (fst)
 )
 
-export const getInactiveBlessings = createMaybeSelector (
+const getInactiveBlessings = createMaybeSelector (
   getActiveAndInactiveBlessings,
   fmap (snd)
+)
+
+export const getAvailableInactiveBlessings = createMaybeSelector (
+  getBlessedTraditionNumericId,
+  getInactiveBlessings,
+  uncurryN (liftM2 (id => filter (pipe (BCA_.tradition, any (equals (id + 1))))))
 )
 
 export const getActiveLiturgicalChantsCounter = createMaybeSelector (
@@ -332,7 +340,7 @@ export const getActiveLiturgicalChantsAndBlessings = createMaybeSelector (
 
 export const getAvailableInactiveLiturgicalChantsAndBlessings = createMaybeSelector (
   getAvailableInactiveLiturgicalChants,
-  getInactiveBlessings,
+  getAvailableInactiveBlessings,
   uncurryN (liftM2<ListCombined, ListCombined, ListCombined> (append))
 )
 
