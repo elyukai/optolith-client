@@ -780,3 +780,21 @@ export const getCurrentFullProfessionName = createMaybeSelector (
                                         (mprof_var_id)
                                         (mcustom_prof_name))
 )
+
+export const getRandomWeightCalc = createMaybeSelector (
+  getLocaleAsProp,
+  getWiki,
+  getSex,
+  getCurrentProfessionId,
+  getCurrentProfessionVariantId,
+  getCustomProfessionName,
+  (l10n, wiki, msex, mprof_id, mprof_var_id, mcustom_prof_name) =>
+    fmapF (msex)
+          (sex => getFullProfessionName (l10n)
+                                        (WA.professions (wiki))
+                                        (WA.professionVariants (wiki))
+                                        (sex)
+                                        (mprof_id)
+                                        (mprof_var_id)
+                                        (mcustom_prof_name))
+)
