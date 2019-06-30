@@ -3,6 +3,7 @@ import { fmap } from "../../../Data/Functor";
 import { elem, elemF, List, subscriptF } from "../../../Data/List";
 import { all, alt, bind, catMaybes, ensure, fromJust, imapMaybe, isJust, Just, liftM2, Maybe, maybe, or } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
+import { traceShow } from "../../../Debug/Trace";
 import { InputTextEvent } from "../../Models/Hero/heroTypeHelpers";
 import { PersonalData } from "../../Models/Hero/PersonalData";
 import { Culture } from "../../Models/Wiki/Culture";
@@ -11,6 +12,7 @@ import { Race } from "../../Models/Wiki/Race";
 import { RaceVariant } from "../../Models/Wiki/RaceVariant";
 import { translate } from "../../Utilities/I18n";
 import { pipe, pipe_ } from "../../Utilities/pipe";
+import { renderMaybeWith } from "../../Utilities/ReactUtils";
 import { isEmptyOr, isFloat, isNaturalNumber } from "../../Utilities/RegexUtils";
 import { sortRecordsByName } from "../../Utilities/sortBy";
 import { Dropdown, DropdownOption } from "../Universal/Dropdown";
@@ -28,6 +30,8 @@ export interface OverviewPersonalDataOwnProps {
   raceVariant: Maybe<Record<RaceVariant>>
   socialstatusTags: List<string>
   isAlbino: Maybe<boolean>
+  sizeCalcStr: Maybe<string>
+  weightCalcStr: Maybe<string>
 }
 
 export interface OverviewPersonalDataDispatchProps {
@@ -58,6 +62,8 @@ interface HairColorAndEyeColorOptions {
   hairOptions: List<Record<DropdownOption<number>>>
   eyeOptions: List<Record<DropdownOption<number>>>
 }
+
+const wrapParenSpace = renderMaybeWith<string> (str => ` (${str})`)
 
 const getDropdownOption =
   (id: number) => fmap ((name: string) => DropdownOption ({ id: Just (id), name }))
@@ -144,6 +150,8 @@ export function OverviewPersonalData (props: OverviewPersonalDataProps) {
     raceVariant,
     socialstatusTags,
     isAlbino,
+    sizeCalcStr,
+    weightCalcStr,
   } = props
 
   const hairAndEyeColorOptions = getHairColorAndEyeColorOptions (l10n)
@@ -171,6 +179,9 @@ export function OverviewPersonalData (props: OverviewPersonalDataProps) {
   const age = PersonalData.A.age (profile)
   const size = PersonalData.A.size (profile)
   const weight = PersonalData.A.weight (profile)
+
+  traceShow ("sizeCalcStr = ") (sizeCalcStr)
+  traceShow ("weightCalcStr = ") (weightCalcStr)
 
   return (
     <div className="personal-data">
@@ -224,7 +235,7 @@ export function OverviewPersonalData (props: OverviewPersonalDataProps) {
       </InputButtonGroup>
       <InputButtonGroup className="reroll">
         <TextField
-          label={translate (l10n) ("size")}
+          label={`${translate (l10n) ("size")}${wrapParenSpace (sizeCalcStr)}`}
           value={PersonalData.A.size (profile)}
           onChange={props.changeSize}
           valid={all (isEmptyOr (isFloat)) (size)}
@@ -233,7 +244,7 @@ export function OverviewPersonalData (props: OverviewPersonalDataProps) {
       </InputButtonGroup>
       <InputButtonGroup className="reroll">
         <TextField
-          label={translate (l10n) ("weight")}
+          label={`${translate (l10n) ("weight")}${wrapParenSpace (weightCalcStr)}`}
           value={PersonalData.A.weight (profile)}
           onChange={props.changeWeight}
           valid={all (isEmptyOr (isNaturalNumber)) (weight)}

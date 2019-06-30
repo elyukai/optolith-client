@@ -61,21 +61,17 @@ export const rerollSize =
     pipe (
       bindF (sizeBase),
       altF (bindF (sizeBase) (raceVariant)),
-      fmap (
-        pipe (
-          add (
-            sum (
-              pipe (
-                     bindF (sizeRandom),
-                     altF (bindF (sizeRandom) (raceVariant)),
-                     fmap (foldr (pipe (rollDiceR, add)) (0))
-                   )
-                   (race)
-            )
-          ),
-          show
-        )
-      )
+      fmap (pipe (
+        pipe_ (
+          race,
+          bindF (sizeRandom),
+          altF (bindF (sizeRandom) (raceVariant)),
+          fmap (foldr (pipe (rollDiceR, add)) (0)),
+          sum,
+          add
+        ),
+        show
+      ))
     )
     (race)
 

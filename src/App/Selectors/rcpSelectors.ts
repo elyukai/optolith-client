@@ -2,8 +2,8 @@ import { equals } from "../../Data/Eq";
 import { flip, ident, thrush } from "../../Data/Function";
 import { fmap, fmapF } from "../../Data/Functor";
 import { over } from "../../Data/Lens";
-import { all, cons, Cons, elem, elemF, filter, find, foldr, List, ListI, map, subscriptF } from "../../Data/List";
-import { bind, ensure, fromMaybe, fromMaybe_, imapMaybe, Just, liftM2, liftM4, mapM, mapMaybe, maybe, Maybe } from "../../Data/Maybe";
+import { all, cons, Cons, consF, elem, elemF, filter, find, foldr, intercalate, List, ListI, map, subscriptF } from "../../Data/List";
+import { alt, bind, bindF, ensure, fromMaybe, fromMaybe_, imapMaybe, Just, liftM2, liftM4, mapM, mapMaybe, maybe, Maybe } from "../../Data/Maybe";
 import { elems, lookup, lookupF, OrderedMap } from "../../Data/OrderedMap";
 import { uncurryN, uncurryN3, uncurryN4, uncurryN8 } from "../../Data/Pair";
 import { Record } from "../../Data/Record";
@@ -33,6 +33,7 @@ import { RaceVariant, RaceVariantL } from "../Models/Wiki/RaceVariant";
 import { Skill } from "../Models/Wiki/Skill";
 import { Spell } from "../Models/Wiki/Spell";
 import { CommonProfession } from "../Models/Wiki/sub/CommonProfession";
+import { Die } from "../Models/Wiki/sub/Die";
 import { IncreaseSkill } from "../Models/Wiki/sub/IncreaseSkill";
 import { IncreaseSkillList } from "../Models/Wiki/sub/IncreaseSkillList";
 import { NameBySex } from "../Models/Wiki/sub/NameBySex";
@@ -40,9 +41,12 @@ import { WikiModel, WikiModelRecord } from "../Models/Wiki/WikiModel";
 import { ProfessionDependency, ProfessionPrerequisite, ProfessionSelectionIds } from "../Models/Wiki/wikiTypeHelpers";
 import { getNameCostForWiki } from "../Utilities/Activatable/activatableActiveUtils";
 import { convertPerTierCostToFinalCost } from "../Utilities/AdventurePoints/activatableCostUtils";
+import { minus } from "../Utilities/Chars";
 import { createMaybeSelector } from "../Utilities/createMaybeSelector";
 import { filterAndSortRecordsBy } from "../Utilities/filterAndSortBy";
+import { translate } from "../Utilities/I18n";
 import { getCategoryById } from "../Utilities/IDUtils";
+import { abs } from "../Utilities/mathUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
 import { validateProfession } from "../Utilities/Prerequisites/validatePrerequisitesUtils";
 import { getFullProfessionName } from "../Utilities/rcpUtils";
@@ -781,20 +785,66 @@ export const getCurrentFullProfessionName = createMaybeSelector (
                                         (mcustom_prof_name))
 )
 
-export const getRandomWeightCalc = createMaybeSelector (
+export const getRandomSizeCalcStr = createMaybeSelector (
   getLocaleAsProp,
-  getWiki,
-  getSex,
-  getCurrentProfessionId,
-  getCurrentProfessionVariantId,
-  getCustomProfessionName,
-  (l10n, wiki, msex, mprof_id, mprof_var_id, mcustom_prof_name) =>
-    fmapF (msex)
-          (sex => getFullProfessionName (l10n)
-                                        (WA.professions (wiki))
-                                        (WA.professionVariants (wiki))
-                                        (sex)
-                                        (mprof_id)
-                                        (mprof_var_id)
-                                        (mcustom_prof_name))
+  getCurrentRace,
+  getCurrentRaceVariant,
+  (l10n, mrace, mrace_var) => {
+    const msize_base = alt (bindF (RA.sizeBase) (mrace))
+                           (bindF (RVA.sizeBase) (mrace_var))
+
+    const msize_randoms = alt (bindF (RA.sizeRandom) (mrace))
+                              (bindF (RVA.sizeRandom) (mrace_var))
+
+    return liftM2 ((base: number) => (randoms: List<Record<Die>>) => {
+                    const dice_tag = translate (l10n) ("dice.short")
+
+                    return pipe_ (
+                      randoms,
+                      map (die => {
+                        const sides = Die.A.sides (die)
+                        const amount = Die.A.amount (die)
+                        const sign = getSign (sides)
+
+                        return `${sign} ${amount}${dice_tag}${abs (sides)}`
+                      }),
+                      consF (`${base}`),
+                      intercalate (" ")
+                    )
+                  })
+                  (msize_base)
+                  (msize_randoms)
+  }
+)
+
+const getSign = (x: number) => x < 0 ? minus : "+"
+
+export const getRandomWeightCalcStr = createMaybeSelector (
+  getLocaleAsProp,
+  getCurrentRace,
+  (l10n, mrace) => {
+    const mweight_base = fmap (RA.weightBase) (mrace)
+    const mweight_randoms = fmap (RA.weightRandom) (mrace)
+
+    return liftM2 ((base: number) => (randoms: List<Record<Die>>) => {
+                    const size_tag = translate (l10n) ("size")
+                    const dice_tag = translate (l10n) ("dice.short")
+
+                    return pipe_ (
+                      randoms,
+                      map (die => {
+                        const sides = Die.A.sides (die)
+                        const amount = Die.A.amount (die)
+                        const sign = getSign (sides)
+
+                        return `${sign} ${amount}${dice_tag}${abs (sides)}`
+                      }),
+                      consF (`${minus} ${base}`),
+                      consF (size_tag),
+                      intercalate (" ")
+                    )
+                  })
+                  (mweight_base)
+                  (mweight_randoms)
+  }
 )

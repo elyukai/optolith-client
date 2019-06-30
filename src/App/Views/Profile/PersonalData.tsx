@@ -60,6 +60,8 @@ export interface PersonalDataStateProps {
   isAddAdventurePointsOpen: boolean
   isEditCharacterAvatarOpen: boolean
   isAlbino: Maybe<boolean>
+  sizeCalcStr: Maybe<string>
+  weightCalcStr: Maybe<string>
 }
 
 export interface PersonalDataDispatchProps extends OverviewPersonalDataDispatchProps {

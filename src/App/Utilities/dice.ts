@@ -1,12 +1,15 @@
 import { Record } from "../../Data/Record";
 import { Die } from "../Models/Wiki/sub/Die";
+import { subtractAbs } from "./mathUtils";
 
 /**
  * Return a random integer between 1 (included) and the passed parameter
  * (included).
  * @example rollDice (6) // D6
  */
-export const rollDie = (sides: number): number => Math.floor (Math.random () * sides) + 1
+export const rollDie =
+  (sides: number): number =>
+    Math.floor (Math.random () * sides) + 1
 
 /**
  * Returns the sum of random integers between 1 (included) and the passed
@@ -15,7 +18,9 @@ export const rollDie = (sides: number): number => Math.floor (Math.random () * s
  */
 export const rollDice =
   (sides: number) => (amount: number): number =>
-    amount <= 1 ? rollDie (sides) : rollDie (sides) + rollDice (sides) (amount - 1)
+    Math.abs (amount) <= 1
+      ? rollDie (sides)
+      : rollDie (sides) + rollDice (sides) (subtractAbs (amount) (1))
 
 /**
  * Returns the sum of random integers between 1 (included) and the passed
@@ -31,4 +36,4 @@ export const rollDiceR =
  */
 export const rollDiceFold =
   (f: (acc: number) => number) => (amount: number): number =>
-    amount <= 1 ? f (0) : f (rollDiceFold (f) (amount - 1))
+    Math.abs (amount) <= 1 ? f (0) : f (rollDiceFold (f) (subtractAbs (amount) (1)))
