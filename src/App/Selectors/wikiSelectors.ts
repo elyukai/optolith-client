@@ -1,12 +1,11 @@
 import { equals } from "../../Data/Eq";
 import { ident } from "../../Data/Function";
 import { fmapF } from "../../Data/Functor";
-import { any, filter, isInfixOf, List, map } from "../../Data/List";
+import { any, filter, isInfixOf, List } from "../../Data/List";
 import { guard, imapMaybe, Just, Maybe, maybe } from "../../Data/Maybe";
 import { elems } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
 import { uncurryN, uncurryN3 } from "../../Data/Tuple/Curry";
-import { traceShowWith } from "../../Debug/Trace";
 import { CultureCombinedA_ } from "../Models/View/CultureCombined";
 import { ProfessionCombined, ProfessionCombinedA_ } from "../Models/View/ProfessionCombined";
 import { RaceCombinedA_ } from "../Models/View/RaceCombined";
@@ -61,7 +60,7 @@ export const getProfessionsSortedByName = createMaybeSelector (
   uncurryN (sortRecordsBy)
 )
 
-const getProfessionFilters =
+const isProfessionIncludedInFilter =
   (filter_text: string) =>
   (mselected_gr: Maybe<number>) =>
   (x: Record<ProfessionCombined>) =>
@@ -97,10 +96,7 @@ export const getPreparedProfessions = createMaybeSelector (
   getWikiFilterText,
   getWikiProfessionsGroup,
   getProfessionsSortedByName,
-  uncurryN3 (filter_text => gr => pipe (
-                                    filter (getProfessionFilters (filter_text) (gr)),
-                                    traceShowWith ("getAllProfessions names = ") (map (PCA_.name))
-                                  ))
+  uncurryN3 (filter_text => gr => filter (isProfessionIncludedInFilter (filter_text) (gr)))
 )
 
 export const getAdvantagesSortedByName = createMaybeSelector (

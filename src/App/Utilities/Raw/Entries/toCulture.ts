@@ -90,8 +90,8 @@ export const toCulture =
       const ecommonMagicalProfessionsExceptions =
         checkOptionalExceptionList ("commonMagicalProfessionsExceptions")
 
-      const commonMagicalProfessions =
-        lookup_l10n ("commonMagicalProfessions")
+      const commonMagicProfessions =
+        lookup_l10n ("commonMagicProfessions")
 
       const ecommonBlessedProfessionsAll =
         checkUnivBoolean ("commonBlessedProfessionsAll")
@@ -212,7 +212,7 @@ export const toCulture =
             ),
 
             commonMundaneProfessions,
-            commonMagicProfessions: commonMagicalProfessions,
+            commonMagicProfessions,
             commonBlessedProfessions,
 
             commonAdvantages:

@@ -1,6 +1,6 @@
 import * as React from "react";
 import { elem, flength, List } from "../../../Data/List";
-import { fromMaybe, fromMaybeNil, isNothing, Just, liftM2, mapMaybe, Maybe, Nothing } from "../../../Data/Maybe";
+import { fromMaybe, isNothing, joinMaybeList, Just, liftM2, mapMaybe, Maybe, Nothing } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
 import { AttributeWithRequirements, AttributeWithRequirementsA_ } from "../../Models/View/AttributeWithRequirements";
 import { L10nRecord } from "../../Models/Wiki/L10n";
@@ -40,7 +40,7 @@ export function AttributesAdjustment (props: AttributesAdjustmentProps) {
                     options={
                       pipe_ (
                         mattributes,
-                        fromMaybeNil,
+                        joinMaybeList,
                         mapMaybe (x => elem (AWRA_.id (x)) (available_attr_ids)
                                          ? Just (DropdownOption ({
                                                   id: Just (AWRA_.id (x)),

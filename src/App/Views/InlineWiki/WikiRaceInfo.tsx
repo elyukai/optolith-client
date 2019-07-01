@@ -10,6 +10,7 @@ import { Book } from "../../Models/Wiki/Book";
 import { L10nRecord } from "../../Models/Wiki/L10n";
 import { RaceVariant } from "../../Models/Wiki/RaceVariant";
 import { translate } from "../../Utilities/I18n";
+import { signNeg } from "../../Utilities/NumberUtils";
 import { pipe, pipe_ } from "../../Utilities/pipe";
 import { sortStrings } from "../../Utilities/sortBy";
 import { WikiSource } from "./Elements/WikiSource";
@@ -70,10 +71,10 @@ export function WikiRaceInfo (props: WikiRaceInfoProps) {
       <WikiProperty l10n={l10n} title="apvalue">
         {RCA_.ap (x)} {translate (l10n) ("adventurepoints")}
       </WikiProperty>
-      <WikiProperty l10n={l10n} title="lifepointbasevalue">{RCA_.lp (x)}</WikiProperty>
-      <WikiProperty l10n={l10n} title="spiritbasevalue">{RCA_.spi (x)}</WikiProperty>
-      <WikiProperty l10n={l10n} title="toughnessbasevalue">{RCA_.tou (x)}</WikiProperty>
-      <WikiProperty l10n={l10n} title="movementbasevalue">{RCA_.mov (x)}</WikiProperty>
+      <WikiProperty l10n={l10n} title="lifepointbasevalue">{signNeg (RCA_.lp (x))}</WikiProperty>
+      <WikiProperty l10n={l10n} title="spiritbasevalue">{signNeg (RCA_.spi (x))}</WikiProperty>
+      <WikiProperty l10n={l10n} title="toughnessbasevalue">{signNeg (RCA_.tou (x))}</WikiProperty>
+      <WikiProperty l10n={l10n} title="movementbasevalue">{signNeg (RCA_.mov (x))}</WikiProperty>
       <WikiProperty l10n={l10n} title="attributeadjustments">
         {RCA_.attributeAdjustmentsText (x)}
       </WikiProperty>

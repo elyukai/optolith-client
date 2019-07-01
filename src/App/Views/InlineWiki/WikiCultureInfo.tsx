@@ -5,6 +5,7 @@ import { elemF, find, head, intercalate, List, map, notNull, subscript } from ".
 import { bindF, ensure, fromMaybe, mapMaybe, maybe, Maybe } from "../../../Data/Maybe";
 import { lookupF, OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
+import { traceShow } from "../../../Debug/Trace";
 import { CultureCombined, CultureCombinedA_ } from "../../Models/View/CultureCombined";
 import { IncreasableForView } from "../../Models/View/IncreasableForView";
 import { Book } from "../../Models/Wiki/Book";
@@ -16,6 +17,7 @@ import { localizeOrList, translate, translateP } from "../../Utilities/I18n";
 import { prefixC } from "../../Utilities/IDUtils";
 import { dec } from "../../Utilities/mathUtils";
 import { pipe, pipe_ } from "../../Utilities/pipe";
+import { renderMaybe } from "../../Utilities/ReactUtils";
 import { sortRecordsByName, sortStrings } from "../../Utilities/sortBy";
 import { Markdown } from "../Universal/Markdown";
 import { WikiSource } from "./Elements/WikiSource";
@@ -124,6 +126,8 @@ export function WikiCultureInfo (props: WikiCultureInfoProps) {
             ))
     )
 
+  traceShow ("culture = ") (x)
+
   return (
     <WikiBoxTemplate className="culture" title={CCA_.name (x)}>
       <WikiProperty l10n={l10n} title="language">
@@ -139,7 +143,7 @@ export function WikiCultureInfo (props: WikiCultureInfoProps) {
         {social_status}
       </WikiProperty>
       <WikiProperty l10n={l10n} title="commonprofessions">
-        {isElvenCulture (CCA_.id (x)) ? CCA_.commonMagicProfessions (x) : null}
+        {isElvenCulture (CCA_.id (x)) ? renderMaybe (CCA_.commonMagicProfessions (x)) : null}
       </WikiProperty>
       {!isElvenCulture (CCA_.id (x))
         ? <ul>

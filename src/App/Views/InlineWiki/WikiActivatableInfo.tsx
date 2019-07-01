@@ -5,7 +5,7 @@ import { fmap, fmapF } from "../../../Data/Functor";
 import { rangeN } from "../../../Data/Ix";
 import { over, set } from "../../../Data/Lens";
 import { any, append, appendStr, consF, elem, fnull, head, ifoldr, imap, intercalate, isList, List, map, NonEmptyList, notNull, notNullStr, subscript } from "../../../Data/List";
-import { bind, bindF, ensure, fromJust, fromMaybe, fromMaybeNil, isJust, isNothing, Just, liftM2, mapMaybe, maybe, Maybe, maybeR, maybeRNullF, maybeToNullable, Nothing } from "../../../Data/Maybe";
+import { bind, bindF, ensure, fromJust, fromMaybe, isJust, isNothing, joinMaybeList, Just, liftM2, mapMaybe, maybe, Maybe, maybeR, maybeRNullF, maybeToNullable, Nothing } from "../../../Data/Maybe";
 import { isOrderedMap, lookup, lookupF, notMember, OrderedMap } from "../../../Data/OrderedMap";
 import { fromDefault, makeLenses, Record, RecordI } from "../../../Data/Record";
 import { Categories } from "../../Constants/Categories";
@@ -34,6 +34,7 @@ import { getCategoryById, isBlessedTraditionId, isMagicalTraditionId, prefixRace
 import { dec, negate } from "../../Utilities/mathUtils";
 import { toRoman, toRomanFromIndex } from "../../Utilities/NumberUtils";
 import { pipe, pipe_ } from "../../Utilities/pipe";
+import { renderMaybe } from "../../Utilities/ReactUtils";
 import { sortRecordsByName, sortStrings } from "../../Utilities/sortBy";
 import { isNumber, isString, misNumberM, misStringM } from "../../Utilities/typeCheckUtils";
 import { getWikiEntry } from "../../Utilities/WikiUtils";
@@ -206,7 +207,7 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
             title={header_name}
             subtitle={header_sub_name}
             >
-            <Markdown source={`${SAA.rules (x)}`} />
+            <Markdown source={renderMaybe (SAA.rules (x))} />
             <PrerequisitesText {...props} />
             {cost_elem}
             {source_elem}
@@ -295,8 +296,7 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
         )
 
       case 25: {
-        // Gebieter des [Aspekts]
-        const sa_id = prefixSA (639)
+        const sa_id = prefixSA (639) // Gebieter des [Aspekts]
         const SA_639 = lookup (sa_id) (specialAbilities)
 
         const add_extended =
@@ -319,7 +319,7 @@ export function WikiActivatableInfo (props: WikiActivatableInfoProps) {
                                                    sid: Just (SelectOption.A.id (option)),
                                                  }))
                                    )))),
-            fromMaybeNil
+            joinMaybeList
           )
 
         return (
@@ -602,6 +602,14 @@ export function PrerequisitesText (props: PrerequisitesTextProps) {
       </p>
     )
   }
+  else if (fnull (prerequisites)) {
+    return (
+      <p>
+        <span>{translate (l10n) ("prerequisites")}</span>
+        <span>{translate (l10n) ("none")}</span>
+      </p>
+    )
+  }
   else {
     return (
       <p>
@@ -617,7 +625,7 @@ export function PrerequisitesText (props: PrerequisitesTextProps) {
             />
           {maybeR (null)
                   ((y: string) =>
-                    /^(?:|,|\.)/ .test (y)
+                    /^(?: |,|\.)/ .test (y)
                       ? <Markdown source={y} oneLine="fragment" />
                       : <Markdown source={y} oneLine="span" />)
                   (prerequisitesTextEnd)}
@@ -634,6 +642,8 @@ export interface PrerequisitesProps {
   req_text_index: OrderedMap<number, string | false>
   wiki: WikiModelRecord
 }
+
+const wrapSpan = (x: React.ReactText) => <span>{x}</span>
 
 export function Prerequisites (props: PrerequisitesProps) {
   const { rs, x, l10n, req_text_index, wiki } = props
@@ -806,7 +816,8 @@ const getPrerequisitesSkillsText =
                  }
                }),
                sortStrings (L10n.A.id (l10n)),
-               intercalate (", ")
+               intercalate (", "),
+               wrapSpan
              ))
     )
 
@@ -857,7 +868,8 @@ const getPrerequisitesActivatedSkillsText =
                  }
                }),
                sortStrings (L10n.A.id (l10n)),
-               intercalate (", ")
+               intercalate (", "),
+               wrapSpan
              ))
     )
 

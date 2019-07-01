@@ -1,10 +1,10 @@
 import * as React from "react";
 import { equals } from "../../../Data/Eq";
-import { ident } from "../../../Data/Function";
+import { flip, ident } from "../../../Data/Function";
 import { fmap, fmapF } from "../../../Data/Functor";
 import { compare } from "../../../Data/Int";
 import { all, append, cons, consF, deleteAt, find, findIndex, flength, foldr, imap, intercalate, isList, List, ListI, map, NonEmptyList, notElem, notNull, snoc, sortBy, subscript, toArray, uncons, unsafeIndex } from "../../../Data/List";
-import { alt_, any, bind, bindF, ensure, fromJust, fromMaybe, fromMaybe_, isJust, Just, liftM2, mapMaybe, Maybe, maybe, maybeR, maybeRNullF, maybeToList, maybe_, Nothing } from "../../../Data/Maybe";
+import { alt_, any, bind, bindF, ensure, fromJust, fromMaybe, fromMaybe_, isJust, Just, liftM2, mapMaybe, Maybe, maybe, maybeR, maybeRNull, maybeRNullF, maybeToList, maybe_, Nothing } from "../../../Data/Maybe";
 import { elems, lookup, lookupF, member, memberF, OrderedMap } from "../../../Data/OrderedMap";
 import { difference, fromList, insert, OrderedSet, toList } from "../../../Data/OrderedSet";
 import { fst, snd } from "../../../Data/Pair";
@@ -92,6 +92,7 @@ const ANCIAA_ = ActivatableNameCostIsActiveA_
 const PRIA = ProfessionRequireIncreasable.A
 const CTSA = CombatTechniquesSelection.A
 const CTSSA = CombatTechniquesSecondSelection.A
+const LCA = LiturgicalChant.A
 
 // tslint:disable-next-line: cyclomatic-complexity
 export function WikiProfessionInfo (props: WikiProfessionInfoProps): JSX.Element {
@@ -251,6 +252,14 @@ export function WikiProfessionInfo (props: WikiProfessionInfoProps): JSX.Element
             return `${space_before}${sex_tag}: ${sex_value}`
           })
 
+  const single_sas_strs =
+    pipe_ (
+      x,
+      PCA.mappedSpecialAbilities,
+      map (ANCIAA_.name),
+      sortStrings (l10n)
+    )
+
   const sas_str =
     pipe_ (
       List<string> (),
@@ -270,9 +279,10 @@ export function WikiProfessionInfo (props: WikiProfessionInfoProps): JSX.Element
                                                        LanguagesScriptsSelection.A.value (curss)
                                                      ))))
                                  (languagesLiteracySelection),
+      sortStrings (L10n.A.id (l10n)),
+      flip (append) (single_sas_strs),
       ensure (notNull),
-      maybe (translate (l10n) ("none"))
-            (pipe (sortStrings (L10n.A.id (l10n)), intercalate (", ")))
+      maybe (translate (l10n) ("none")) (intercalate (", "))
     )
 
   const final_ap =
@@ -871,7 +881,7 @@ const VariantPrerequisiteIntermediate =
     active: Nothing,
   })
 
-function VariantPrerequisites (props: VariantPrerequisitesProps): JSX.Element {
+function VariantPrerequisites (props: VariantPrerequisitesProps): JSX.Element | null {
   const {
     attributes,
     l10n,
@@ -915,7 +925,7 @@ function VariantPrerequisites (props: VariantPrerequisitesProps): JSX.Element {
         }),
     sortRecordsByName (L10n.A.id (l10n)),
     map (x => {
-          if (Maybe.and (VariantPrerequisiteIntermediate.A.active (x))) {
+          if (!Maybe.and (VariantPrerequisiteIntermediate.A.active (x))) {
             return (
               <span key={VariantPrerequisiteIntermediate.A.id (x)}>
                 <span className="disabled">{VariantPrerequisiteIntermediate.A.name (x)}</span>
@@ -930,7 +940,10 @@ function VariantPrerequisites (props: VariantPrerequisitesProps): JSX.Element {
             )
           }
         }),
-    xs => <span className="hard-break">{translate (l10n) ("prerequisites")}: {xs}</span>
+    ensure (notNull),
+    maybeRNull (xs => (
+                 <span className="hard-break">{translate (l10n) ("prerequisites")}: {xs}</span>
+               ))
   )
 }
 
@@ -1252,7 +1265,8 @@ function VariantSkillsSelection (props: VariantSkillsSelectionProps): JSX.Elemen
                     chants,
                     mapMaybe (e => {
                       if (IncreasableListForView.is (e)) {
-                        const names = mapMaybe (lookupF (liturgicalChants)) (ILFVA.id (e))
+                        const names = mapMaybe (pipe (lookupF (liturgicalChants), fmap (LCA.name)))
+                                               (ILFVA.id (e))
 
                         return fmapF (ensure (pipe (flength, gt (1))) (names))
                                      (pipe (
@@ -1261,7 +1275,8 @@ function VariantSkillsSelection (props: VariantSkillsSelectionProps): JSX.Elemen
                                      ))
                       }
                       else {
-                        const mname = lookup (IFVA.id (e)) (liturgicalChants)
+                        const mname =
+                          pipe_ (liturgicalChants, lookup (IFVA.id (e)), fmap (LCA.name))
 
                         return fmapF (mname)
                                      (name => `${name} ${IFVA.value (e)}`)
@@ -1270,8 +1285,8 @@ function VariantSkillsSelection (props: VariantSkillsSelectionProps): JSX.Elemen
                     flength (PVCA_.blessings (variant)) === 12 ? consF (blessings) : ident,
                     sortStrings (L10n.A.id (l10n)),
                     intercalate (", "),
-                    xs => ` ${translate (l10n) ("liturgicalchants")}: ${xs}`,
-                    str => <span>{combinedList}{str}</span>
+                    xs => `${translate (l10n) ("liturgicalchants")}: ${xs}`,
+                    str => <><span>{combinedList}</span><span>{str}</span></>
                   )
                 })
                 (ensure (notNull) (PVCA.mappedLiturgicalChants (variant)))

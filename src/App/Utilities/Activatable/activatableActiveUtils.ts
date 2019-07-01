@@ -96,7 +96,7 @@ export const getNameCostForWiki =
                naming,
                finalCost,
              }))
-           (getCost (false) (wiki) (HeroModel.default) (active))
+           (getCost (true) (wiki) (HeroModel.default) (active))
            (getName (l10n) (wiki) (active))
 
 export const getAllActiveByCategory =

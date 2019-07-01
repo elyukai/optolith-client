@@ -7,6 +7,7 @@ import { alt, bind, bindF, ensure, fromMaybe, fromMaybe_, imapMaybe, Just, liftM
 import { elems, lookup, lookupF, OrderedMap } from "../../Data/OrderedMap";
 import { uncurryN, uncurryN3, uncurryN4, uncurryN8 } from "../../Data/Pair";
 import { Record } from "../../Data/Record";
+import { traceShow } from "../../Debug/Trace";
 import { Categories } from "../Constants/Categories";
 import { ActiveObjectWithId } from "../Models/ActiveEntries/ActiveObjectWithId";
 import { Sex } from "../Models/Hero/heroTypeHelpers";
@@ -25,8 +26,9 @@ import { LiturgicalChant } from "../Models/Wiki/LiturgicalChant";
 import { ProfessionRequireActivatable } from "../Models/Wiki/prerequisites/ActivatableRequirement";
 import { isProfessionRequiringIncreasable, ProfessionRequireIncreasable } from "../Models/Wiki/prerequisites/IncreasableRequirement";
 import { Profession } from "../Models/Wiki/Profession";
-import { CombatTechniquesSelectionL } from "../Models/Wiki/professionSelections/CombatTechniquesSelection";
+import { CombatTechniquesSelection, CombatTechniquesSelectionL } from "../Models/Wiki/professionSelections/CombatTechniquesSelection";
 import { ProfessionSelectionsL } from "../Models/Wiki/professionSelections/ProfessionAdjustmentSelections";
+import { ProfessionVariantSelectionsL } from "../Models/Wiki/professionSelections/ProfessionVariantAdjustmentSelections";
 import { ProfessionVariant } from "../Models/Wiki/ProfessionVariant";
 import { Race, RaceL } from "../Models/Wiki/Race";
 import { RaceVariant, RaceVariantL } from "../Models/Wiki/RaceVariant";
@@ -79,6 +81,7 @@ const CTA = CombatTechnique.A
 const LCA = LiturgicalChant.A
 const PRIA = ProfessionRequireIncreasable.A
 const PSL = ProfessionSelectionsL
+const PVSL = ProfessionVariantSelectionsL
 
 export const getCurrentRace = createMaybeSelector (
   getWikiRaces,
@@ -347,30 +350,30 @@ export const getAllProfessions = createMaybeSelector (
                         ProfessionVariantCombined ({
                           mappedPrerequisites:
                             imapMaybe (mapProfessionPrerequisite (l10n) (wiki))
-                                      (PA.prerequisites (p)),
+                                      (PVA.prerequisites (v)),
                           mappedSpecialAbilities:
                             imapMaybe (mapProfessionSpecialAbility (l10n) (wiki))
-                                      (PA.specialAbilities (p)),
+                                      (PVA.specialAbilities (v)),
                           mappedSelections:
-                            thrush (PA.selections (p))
-                                   (mapProfessionSelection (wiki)),
+                            thrush (PVA.selections (v))
+                                   (mapProfessionVariantSelection (wiki)),
                           mappedCombatTechniques:
-                            thrush (PA.combatTechniques (p))
+                            thrush (PVA.combatTechniques (v))
                                    (mapMaybe (mapCombatTechniquePrevious (wiki)
                                                                          (PA.combatTechniques (p))
                                              )),
                           mappedSkills:
-                            thrush (PA.skills (p))
+                            thrush (PVA.skills (v))
                                    (mapMaybe (mapSkillPrevious (wiki)
                                                                (PA.skills (p)))),
                           mappedSpells:
-                            thrush (PA.spells (p))
+                            thrush (PVA.spells (v))
                                    (mapMaybe<
                                      ListI<Profession["spells"]>,
                                      ListI<ProfessionCombined["mappedSpells"]>
                                    > (mapSpellPrevious (wiki) (PA.spells (p)))),
                           mappedLiturgicalChants:
-                            thrush (PA.liturgicalChants (p))
+                            thrush (PVA.liturgicalChants (v))
                                    (mapMaybe<
                                      ListI<Profession["liturgicalChants"]>,
                                      ListI<ProfessionCombined["mappedLiturgicalChants"]>
@@ -399,15 +402,13 @@ const mapProfessionPrerequisite =
           sid: ProfessionRequireActivatable.A.sid (e),
           tier: ProfessionRequireActivatable.A.tier (e),
         }),
-        getNameCostForWiki (l10n)
-                           (wiki),
+        getNameCostForWiki (l10n) (wiki),
         fmap (pipe (
           convertPerTierCostToFinalCost (false) (l10n),
           nameAndCost =>
             ActivatableNameCostIsActive ({
               nameAndCost,
-              isActive:
-                ProfessionRequireActivatable.A.active (e),
+              isActive: ProfessionRequireActivatable.A.active (e),
             })
         ))
       )
@@ -429,8 +430,8 @@ const mapProfessionSpecialAbility =
         sid: ProfessionRequireActivatable.A.sid (e),
         tier: ProfessionRequireActivatable.A.tier (e),
       }),
-      getNameCostForWiki (l10n)
-                         (wiki),
+      getNameCostForWiki (l10n) (wiki),
+      traceShow ("getNameCostForWiki"),
       fmap (pipe (
         convertPerTierCostToFinalCost (false) (l10n),
         nameAndCost =>
@@ -441,14 +442,26 @@ const mapProfessionSpecialAbility =
       ))
     )
 
+const mapCombatTechniquesSelectionNames =
+  (wiki: WikiModelRecord) =>
+    over (CombatTechniquesSelectionL.sid)
+         (mapMaybe (pipe (
+                     lookupF (WA.combatTechniques (wiki)),
+                     fmap (CTA.name)
+                   )))
+
 const mapProfessionSelection =
   (wiki: WikiModelRecord) =>
     over (PSL[ProfessionSelectionIds.COMBAT_TECHNIQUES])
-         (fmap (over (CombatTechniquesSelectionL.sid)
-               (mapMaybe (pipe (
-                           lookupF (WA.combatTechniques (wiki)),
-                           fmap (CTA.name)
-                         )))))
+         (fmap (mapCombatTechniquesSelectionNames (wiki)))
+
+const mapProfessionVariantSelection =
+  (wiki: WikiModelRecord) =>
+    over (PVSL[ProfessionSelectionIds.COMBAT_TECHNIQUES])
+         (fmap (sel =>
+                 CombatTechniquesSelection.is (sel)
+                   ? mapCombatTechniquesSelectionNames (wiki) (sel)
+                   : sel))
 
 const mapIncreaseSkill =
   <a>

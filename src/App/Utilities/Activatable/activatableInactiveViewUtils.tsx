@@ -4,7 +4,7 @@ import { cnst, Functn, ident } from "../../../Data/Function";
 import { fmap, fmapF } from "../../../Data/Functor";
 import { over, set } from "../../../Data/Lens";
 import { countWith, elemF, filter, find, flength, foldr, imap, isList, List, map, notElem, notElemF, subscript, subscriptF, sum, take } from "../../../Data/List";
-import { alt, altF, altF_, any, bind, bindF, ensure, fromJust, fromMaybe, fromMaybeNil, guard, isJust, isNothing, join, Just, liftM2, mapMaybe, Maybe, maybe, maybe_, Nothing, or, then, thenF } from "../../../Data/Maybe";
+import { alt, altF, altF_, any, bind, bindF, ensure, fromJust, fromMaybe, guard, isJust, isNothing, join, joinMaybeList, Just, liftM2, mapMaybe, Maybe, maybe, maybe_, Nothing, or, then, thenF } from "../../../Data/Maybe";
 import { bimap, first, Pair, second, snd } from "../../../Data/Pair";
 import { fromDefault, makeLenses, Omit, Record } from "../../../Data/Record";
 import { showP } from "../../../Data/Show";
@@ -250,7 +250,7 @@ export const getIdSpecificAffectedAndDispatchProps =
       // Obligations
       case "DISADV_50": {
         const active_selections =
-          fromMaybeNil (getActiveSelectionsMaybe (IAA.heroEntry (entry)))
+          joinMaybeList (getActiveSelectionsMaybe (IAA.heroEntry (entry)))
 
         const mfiltered_select_options =
           pipe_ (
