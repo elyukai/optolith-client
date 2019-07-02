@@ -10,7 +10,7 @@ import { pipe } from "../App/Utilities/pipe";
 import { Identity, runIdentity } from "../Control/Monad/Identity";
 import { fmap } from "./Functor";
 import { Const, getConst } from "./Functor/Const";
-import { fst, Pair, snd } from "./Pair";
+import { fst, Pair, snd } from "./Tuple";
 
 interface Getter <S, T, A, B> {
   (lift: (x: A) => Const<A, B>): (m: S) => Const<A, T>

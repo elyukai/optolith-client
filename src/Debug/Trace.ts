@@ -1,5 +1,5 @@
-import { Internals } from "../Data/Internals";
 import { showP } from "../Data/Show";
+import { IO } from "../System/IO";
 
 /**
  * `trace :: Show a => String -> a -> a`
@@ -20,7 +20,7 @@ export const trace = (msg: string) => <A> (x: A) => (console.log (msg), x)
 export const traceShowIO =
   (msg: string) =>
   <A> (x: A) =>
-    Internals.IO (async () => (console.log (`${msg} ${showP (x)}`), Promise.resolve (x)))
+    IO (async () => (console.log (`${msg} ${showP (x)}`), Promise.resolve (x)))
 
 /**
  * `traceShow :: Show a => String -> a -> a`

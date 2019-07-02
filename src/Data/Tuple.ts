@@ -7,16 +7,26 @@
  * @author Lukas Obermann
  */
 
-import { Internals } from "./Internals";
+
+// PROTOTYPE
+
+export interface TuplePrototype {
+  readonly isTuple: true
+}
+
+const TuplePrototype =
+  Object.freeze<TuplePrototype> ({
+    isTuple: true,
+  })
 
 
 // CONSTRUCTOR
 
-export interface Tuple<A extends any[]> extends Internals.TuplePrototype {
+export interface Tuple<A extends any[]> extends TuplePrototype {
   readonly phantom: A
   readonly values: { [index: number]: any }
   readonly length: number
-  readonly prototype: Internals.TuplePrototype
+  readonly prototype: TuplePrototype
 }
 
 interface TupleConstructor {
@@ -45,8 +55,26 @@ interface TupleConstructor {
 }
 
 export const Tuple =
-  ((...args: any[]) => {
-    return Internals._Tuple (...args)
+  (<A extends any[]> (...values: A): Tuple<A> => {
+    const obj: { [index: number]: any } = {}
+
+    values.forEach ((e, i) => {
+      obj [i] = e
+    })
+
+    return Object.create (
+      TuplePrototype,
+      {
+        values: {
+          value: Object.freeze (obj),
+          enumerable: true,
+        },
+        length: {
+          value: values .length,
+          enumerable: true,
+        },
+      }
+    )
   }) as TupleConstructor
 
 
@@ -214,7 +242,14 @@ export const toArray =
  */
 export const fromArray = <A extends any[]> (x: A): Tuple<A> => Tuple (...x)
 
-export import isTuple = Internals.isTuple
+/**
+ * `isTuple :: a -> Bool`
+ *
+ * The `isTuple` function returns `True` if its argument is a `Tuple`.
+ */
+export const isTuple =
+  <A, A0 extends any[]>(x: A | Tuple<A0>): x is Tuple<A0> =>
+    typeof x === "object" && x !== null && Object.getPrototypeOf (x) === TuplePrototype
 
 
 // NAMESPACED FUNCTIONS

@@ -1,8 +1,8 @@
 import { ident } from "../../Data/Function";
 import { over, set } from "../../Data/Lens";
 import { isJust, Just, Nothing } from "../../Data/Maybe";
-import { snd } from "../../Data/Pair";
 import { Record } from "../../Data/Record";
+import { snd } from "../../Data/Tuple";
 import * as DisAdvActions from "../Actions/DisAdvActions";
 import * as ProfileActions from "../Actions/ProfileActions";
 import { ActionTypes } from "../Constants/ActionTypes";

@@ -10,30 +10,52 @@
 import { add, multiply } from "../App/Utilities/mathUtils";
 import { pipe } from "../App/Utilities/pipe";
 import { not } from "./Bool";
-import { Either, fromRight_, isLeft, Right } from "./Either";
+import { Either, isLeft, Right } from "./Either";
+import { fromRight_ } from "./Either/Extra";
 import { equals } from "./Eq";
 import { ident } from "./Function";
 import { fmapF } from "./Functor";
-import { Internals } from "./Internals";
 import { append, List } from "./List";
 import { bind, fromMaybe, Just, Maybe, maybe, maybe_ } from "./Maybe";
+import { OrderedSet } from "./OrderedSet";
+import { StringKeyObject } from "./Record";
 import { show } from "./Show";
 import { Pair, Tuple } from "./Tuple";
 
-import _OrderedMap = Internals._OrderedMap
-import OrderedSet = Internals.OrderedSet
-import mapFromArray = Internals.mapFromArray
 
-interface StringKeyObject<V> {
-  readonly [id: string]: V
+// PROTOTYPE
+
+export interface OrderedMapPrototype<K, A> {
+  [Symbol.iterator] (): IterableIterator<[K, A]>
+  readonly isOrderedMap: true
 }
+
+const OrderedMapPrototype =
+  Object.freeze<OrderedMapPrototype<any, any>> ({
+      [Symbol.iterator] (this: OrderedMap<any, any>) {
+        return this .value [Symbol.iterator] ()
+      },
+      isOrderedMap: true,
+  })
 
 
 // CONSTRUCTOR
 
-export interface OrderedMap<K, A> extends Internals.OrderedMapPrototype<K, A> {
+export interface OrderedMap<K, A> extends OrderedMapPrototype<K, A> {
   readonly value: ReadonlyMap<K, A>
 }
+
+const _OrderedMap =
+  <K, A> (x: ReadonlyMap<K, A>): OrderedMap<K, A> =>
+    Object.create (
+      OrderedMapPrototype,
+      {
+        value: {
+          value: x,
+          enumerable: true,
+        },
+      }
+    )
 
 /**
  * `fromUniquePairs :: ...(k, a) -> Map k a`
@@ -823,7 +845,7 @@ export const assocs = <K, A> (mp: OrderedMap<K, A>): List<Pair<K, A>> =>
  * The set of all keys of the map.
  */
 export const keysSet = <K> (mp: OrderedMap<K, any>): OrderedSet<K> =>
-  Internals._OrderedSet (new Set (mp .value .keys ()))
+  OrderedSet.fromSet (new Set (mp .value .keys ()))
 
 /**
  * `fromSet :: (k -> a) -> Set k -> Map k a`
@@ -1041,14 +1063,29 @@ export const lookup2F =
          (x => fmapF (lookup (key) (m2))
                      (f (x)))
 
-export import isOrderedMap = Internals.isOrderedMap
+/**
+ * Checks if the given value is a `OrderedMap`.
+ * @param x The value to test.
+ */
+export const isOrderedMap =
+  (x: any): x is OrderedMap<any, any> =>
+    typeof x === "object" && x !== null && Object.getPrototypeOf (x) === OrderedMapPrototype
 
 /**
  * `fromArray :: Array (k, a) -> Map k a`
  *
  * Creates a new `Set` instance from the passed native `Array`.
  */
-export const fromArray = mapFromArray (show)
+export const fromArray =
+  <K, A> (xs: ReadonlyArray<[K, A]>): OrderedMap<K, A> => {
+    if (Array.isArray (xs)) {
+      return _OrderedMap (new Map (xs))
+    }
+
+    throw new TypeError (
+      `fromArray requires an array but instead it received ${show (xs)}`
+    )
+  }
 
 /**
  * `mapMEitherWithKey :: (k -> a -> Either e b) -> OrderedMap k a -> Either e (OrderedMap k b)`

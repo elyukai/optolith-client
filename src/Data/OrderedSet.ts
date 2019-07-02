@@ -11,21 +11,44 @@ import { pipe } from "../App/Utilities/pipe";
 import { not } from "./Bool";
 import { equals, notEquals } from "./Eq";
 import { ident } from "./Function";
-import { Internals } from "./Internals";
-import { append, List } from "./List";
+import { append, isList, List } from "./List";
 import { Maybe } from "./Maybe";
 import { show } from "./Show";
 
-import isList = Internals.isList
-import _OrderedSet = Internals._OrderedSet
-import setFromArray = Internals.setFromArray
+
+// PROTOTYPE
+
+export interface OrderedSetPrototype<A> {
+  [Symbol.iterator] (): IterableIterator<A>
+  readonly isOrderedSet: true
+}
+
+const OrderedSetPrototype =
+  Object.freeze<OrderedSetPrototype<any>> ({
+    [Symbol.iterator] (this: OrderedSet<any>) {
+      return this .value [Symbol.iterator] ()
+    },
+    isOrderedSet: true,
+  })
 
 
 // CONSTRUCTOR
 
-export interface OrderedSet<A> extends Internals.OrderedSetPrototype<A> {
+export interface OrderedSet<A> extends OrderedSetPrototype<A> {
   readonly value: ReadonlySet<A>
 }
+
+const _OrderedSet =
+  <A> (x: ReadonlySet<A>): OrderedSet<A> =>
+    Object.create (
+      OrderedSetPrototype,
+      {
+        value: {
+          value: x,
+          enumerable: true,
+        },
+      }
+    )
 
 /**
  * `fromUniqueElements :: ...a -> Set a`
@@ -518,14 +541,29 @@ export const toggle =
   <A> (x: A) => (xs: OrderedSet<A>): OrderedSet<A> =>
     member (x) (xs) ? sdelete (x) (xs) : insert (x) (xs)
 
-export import isOrderedSet = Internals.isOrderedSet
+/**
+ * Checks if the given value is a `OrderedSet`.
+ * @param x The value to test.
+ */
+export const isOrderedSet =
+  (x: any): x is OrderedSet<any> =>
+    typeof x === "object" && x !== null && Object.getPrototypeOf (x) === OrderedSetPrototype
 
 /**
  * `fromArray :: Array a -> Set a`
  *
  * Creates a new `Set` instance from the passed native `Array`.
  */
-export const fromArray = setFromArray (show)
+export const fromArray =
+  <A> (xs: ReadonlyArray<A>): OrderedSet<A> => {
+    if (Array.isArray (xs)) {
+      return _OrderedSet (new Set (xs))
+    }
+
+    throw new TypeError (
+      `fromArray requires an array but instead it received ${show (xs)}`
+    )
+  }
 
 
 // NAMESPACED FUNCTIONS

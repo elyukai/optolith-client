@@ -15,19 +15,30 @@ import * as util from "util";
 import { pipe } from "../App/Utilities/pipe";
 import { ident } from "../Data/Function";
 import { fmapF } from "../Data/Functor";
-import { Internals } from "../Data/Internals";
 import { showP } from "../Data/Show";
+
+
+// PROTOTYPE
+
+export interface IOPrototype {
+  readonly isIO: true
+}
+
+export const IOPrototype =
+  Object.freeze<IOPrototype> ({
+    isIO: true,
+  })
 
 
 // CONSTRUCTOR
 
-export interface IO<A> extends Internals.IOPrototype {
+export interface IO<A> extends IOPrototype {
   readonly f: () => Promise<A>
 }
 
 interface IOConstructor {
   <A> (f: () => Promise<A>): IO<A>
-  pure: <A> (x: A) => Internals.IO<A>
+  pure: <A> (x: A) => IO<A>
   bind: <A> (x: IO<A>) => <B> (f: (x: A) => IO<B>) => IO<B>
   bindF: <A, B> (f: (x: A) => IO<B>) => (x: IO<A>) => IO<B>
   then: (x: IO<any>) => <A> (y: IO<A>) => IO<A>
@@ -52,7 +63,21 @@ interface IOConstructor {
   runIO: <A>(x: IO<A>) => IO<void>
 }
 
-export const IO: IOConstructor = Internals.IO as IOConstructor
+export const IO =
+  (<A> (f: () => Promise<A>): IO<A> => {
+    if (typeof f === "function") {
+      return Object.create (
+        IOPrototype,
+        {
+          f: {
+            value: f,
+          },
+        }
+      )
+    }
+
+    throw new TypeError ("Cannot create an IO action from a value that is not a function.")
+  }) as IOConstructor
 
 
 // APPLICATIVE
@@ -62,7 +87,7 @@ export const IO: IOConstructor = Internals.IO as IOConstructor
  *
  * Lift a value.
  */
-export const pure = <A> (x: A) => Internals.IO (() => Promise.resolve (x))
+export const pure = <A> (x: A) => IO (() => Promise.resolve (x))
 
 IO.pure = pure
 
@@ -79,7 +104,7 @@ export const bind =
   (f: (x: A) => IO<B>): IO<B> => {
     const res = x .f ()
 
-    return Internals.IO (() => res .then (pipe (f, y => y.f ()))
+    return IO (() => res .then (pipe (f, y => y.f ()))
                                    .catch (err => { throw err }))
   }
 
@@ -182,7 +207,7 @@ const readFileP = util.promisify (fs.readFile)
  */
 export const readFile =
   (path: FilePath) =>
-    Internals.IO (async () => readFileP (path, "utf8"))
+    IO (async () => readFileP (path, "utf8"))
 
 IO.readFile = readFile
 
@@ -197,7 +222,7 @@ const writeFileP = util.promisify (fs.writeFile)
 export const writeFile =
   (path: FilePath) =>
   (data: string | Buffer) =>
-    Internals.IO (async () => writeFileP (path, data, "utf8"))
+    IO (async () => writeFileP (path, data, "utf8"))
 
 IO.writeFile = writeFile
 
@@ -210,7 +235,7 @@ const deleteFileP = util.promisify (fs.unlink)
  */
 export const deleteFile =
   (path: FilePath) =>
-    Internals.IO (async () => deleteFileP (path))
+    IO (async () => deleteFileP (path))
 
 IO.deleteFile = deleteFile
 
@@ -223,7 +248,7 @@ const existsFileP = util.promisify (fs.access)
  */
 export const existsFile =
   (path: FilePath) =>
-    Internals.IO (async () => existsFileP (path, fs.constants.F_OK)
+    IO (async () => existsFileP (path, fs.constants.F_OK)
                                 .then (() => true)
                                 .catch (() => false))
 
@@ -240,7 +265,7 @@ const copyFileP = util.promisify (fs.copyFile)
 export const copyFile =
   (origin: FilePath) =>
   (dest: FilePath) =>
-    Internals.IO (async () => copyFileP (origin, dest))
+    IO (async () => copyFileP (origin, dest))
 
 IO.copyFile = copyFile
 
@@ -257,14 +282,21 @@ IO.copyFile = copyFile
  */
 export const print =
   (x: any) =>
-    Internals.IO (async () => Promise.resolve (console.log (showP (x))))
+    IO (async () => Promise.resolve (console.log (showP (x))))
 
 IO.print = print
 
 
 // CUSTOM FUNCTIONS
 
-export import isIO = Internals.isIO
+/**
+ * `isIO :: a -> Bool`
+ *
+ * The `isIO` function returns `True` if its argument is an `IO`.
+ */
+export const isIO =
+  (x: any): x is IO<any> =>
+    typeof x === "object" && x !== null && Object.getPrototypeOf (x) === IOPrototype
 
 IO.isIO = isIO
 
@@ -287,7 +319,7 @@ export const toIO =
   <A extends any[], B>
   (f: (...args: A) => Promise<B>) =>
   (...args: A): IO<B> =>
-    Internals.IO (() => f (...args))
+    IO (() => f (...args))
 
 IO.toIO = toIO
 
@@ -300,7 +332,7 @@ export const runIO =
   <A> (x: IO<A>): IO<void> => {
     x .f () .catch (err => { throw err })
 
-    return Internals.IO (async () => { return })
+    return IO (async () => { return })
   }
 
 IO.runIO = runIO

@@ -7,7 +7,7 @@ import { List } from "../List";
 import { Market } from "../Market";
 import { Maybe } from "../Maybe";
 import { OrderedMap } from "../OrderedMap";
-import { Pair } from "../Pair";
+import { Pair } from "../Tuple";
 import { Const } from "./Const";
 
 type FunctorMap2<A, B, C> =

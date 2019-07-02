@@ -1,4 +1,5 @@
-import { Either, first, fromRight_, isEither, isLeft, isRight, Left, Right, RightI } from "../../../Data/Either";
+import { Either, first, isEither, isLeft, isRight, Left, Right, RightI } from "../../../Data/Either";
+import { fromRight_ } from "../../../Data/Either/Extra";
 import { appendStr, List, notNullStr } from "../../../Data/List";
 import { bindF, ensure, Maybe } from "../../../Data/Maybe";
 import { showP } from "../../../Data/Show";

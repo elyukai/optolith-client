@@ -10,10 +10,7 @@
 import { pipe } from "../App/Utilities/pipe";
 import { Either, Left, Right } from "../Data/Either";
 import { ident } from "../Data/Function";
-import { Internals } from "../Data/Internals";
-import { fromIO } from "../System/IO";
-
-import IO = Internals.IO
+import { fromIO, IO } from "../System/IO";
 
 /**
  * `catch :: Exception e => IO a -> (e -> IO a) -> IO a`

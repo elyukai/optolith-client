@@ -1,7 +1,8 @@
 import { fmap } from "../../Data/Functor";
 import { OrderedMap } from "../../Data/OrderedMap";
-import { Pair, uncurryN } from "../../Data/Pair";
 import { Record } from "../../Data/Record";
+import { Pair } from "../../Data/Tuple";
+import { uncurryN } from "../../Data/Tuple/Curry";
 import { Rules } from "../Models/Hero/Rules";
 import { Book } from "../Models/Wiki/Book";
 import { isMaybeActive } from "../Utilities/Activatable/isActive";

@@ -1,5 +1,6 @@
 import { pipe } from "../../App/Utilities/pipe";
-import { Either, eitherToMaybe, Left, Right } from "../Either";
+import { Either, Left, Right } from "../Either";
+import { eitherToMaybe } from "../Either/Extra";
 
 export const tryParseJSON =
   (x: string): Either<Error, any> => {

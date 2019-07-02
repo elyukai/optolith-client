@@ -7,20 +7,27 @@
  */
 
 import { pipe } from "../App/Utilities/pipe";
-import { Internals } from "./Internals";
+import { isIO } from "../System/IO";
+import { isEither, isRight } from "./Either";
+import { consF, fnull, isList, List } from "./List";
+import { isJust, isMaybe } from "./Maybe";
 import { GT, isOrdering, LT } from "./Ord";
+import { isOrderedMap } from "./OrderedMap";
+import { isOrderedSet } from "./OrderedSet";
+import { isRecord } from "./Record";
+import { isTuple } from "./Tuple";
 
 const intercalate =
-  (separator: string) => (xs: Internals.List<number | string>): string =>
-  Internals.isNil (xs)
+  (separator: string) => (xs: List<number | string>): string =>
+  fnull (xs)
     ? ""
-    : Internals.isNil (xs .xs)
+    : fnull (xs .xs)
     ? xs .x .toString ()
     : xs .x .toString () + separator + intercalate (separator) (xs .xs)
 
 const map =
-  <A, B> (f: (x: A) => B) => (xs: Internals.List<A>): Internals.List<B> =>
-  Internals.isNil (xs) ? Internals.Nil : Internals.Cons (f (xs .x), map (f) (xs .xs))
+  <A, B> (f: (x: A) => B) => (xs: List<A>): List<B> =>
+  fnull (xs) ? List () : consF (f (xs .x)) (map (f) (xs .xs))
 
 const trimStart = (str: string) => str .replace (/^\s+/, "")
 
@@ -31,27 +38,27 @@ const trimStart = (str: string) => str .replace (/^\s+/, "")
  */
 // tslint:disable-next-line: cyclomatic-complexity
 export const show = (x: any): string => {
-  if (Internals.isMaybe (x)) {
-    if (Internals.isJust (x)) {
+  if (isMaybe (x)) {
+    if (isJust (x)) {
       return `Just (${show (x.value)})`
     }
 
     return `Nothing`
   }
 
-  if (Internals.isEither (x)) {
-    if (Internals.isRight (x)) {
+  if (isEither (x)) {
+    if (isRight (x)) {
       return `Right (${show (x .value)})`
     }
 
     return `Left (${show (x .value)})`
   }
 
-  if (Internals.isList (x)) {
+  if (isList (x)) {
     return `[${intercalate (", ") (map (show) (x))}]`
   }
 
-  if (Internals.isTuple (x)) {
+  if (isTuple (x)) {
     const arr: any = []
 
     for (let i = 0; i < x .length; i++) {
@@ -62,17 +69,17 @@ export const show = (x: any): string => {
     return `(${arr .map (show) .join (", ")})`
   }
 
-  if (Internals.isOrderedSet (x)) {
+  if (isOrderedSet (x)) {
     return `Set (${[...x] .map (show) .join (", ")})`
   }
 
-  if (Internals.isOrderedMap (x)) {
+  if (isOrderedMap (x)) {
     return `Map (${
       [...x] .map (([k, v]) => `${show (k)} = ${show (v)}`) .join (", ")
     })`
   }
 
-  if (Internals.isRecord (x)) {
+  if (isRecord (x)) {
     return `{ ${
       [...x .keys .value]
         .sort ()
@@ -88,7 +95,7 @@ export const show = (x: any): string => {
     } }`
   }
 
-  if (Internals.isIO (x)) {
+  if (isIO (x)) {
     return `IO`
   }
 
@@ -141,8 +148,8 @@ export const show = (x: any): string => {
 const showPDepth = (depth: number) => (x: any): string => {
   const dws = " " .repeat (depth * 2) // depth whitespace
 
-  if (Internals.isMaybe (x)) {
-    if (Internals.isJust (x)) {
+  if (isMaybe (x)) {
+    if (isJust (x)) {
       const str = trimNextDepth (depth) (x.value)
 
       if (/\n/ .test (str)) {
@@ -155,10 +162,10 @@ const showPDepth = (depth: number) => (x: any): string => {
     return `${dws}Nothing`
   }
 
-  if (Internals.isEither (x)) {
+  if (isEither (x)) {
     const str = trimNextDepth (depth) (x.value)
 
-    if (Internals.isRight (x)) {
+    if (isRight (x)) {
       if (/\n/ .test (str)) {
         return `${dws}Right (\n${dws}  ${str}${dws}\n)`
       }
@@ -173,15 +180,15 @@ const showPDepth = (depth: number) => (x: any): string => {
     return `${dws}Left ${wrapParens (str)}`
   }
 
-  if (Internals.isList (x)) {
-    if (Internals.isNil (x)) {
+  if (isList (x)) {
+    if (fnull (x)) {
       return `${dws}[]`
     }
 
     return `${dws}[ ${[...x] .map (trimNextDepth (depth)) .join (`\n${dws}, `)} ]`
   }
 
-  if (Internals.isTuple (x)) {
+  if (isTuple (x)) {
     const arr: any = []
 
     for (let i = 0; i < x .length; i++) {
@@ -192,17 +199,17 @@ const showPDepth = (depth: number) => (x: any): string => {
     return `${dws}( ${arr .map (trimNextDepth (depth)) .join (`\n${dws}, `)}\n${dws})`
   }
 
-  if (Internals.isOrderedSet (x)) {
+  if (isOrderedSet (x)) {
     return `${dws}Set (${[...x] .map (trimNextDepth (depth + 2)) .join (`\n${dws}    , `)})`
   }
 
-  if (Internals.isOrderedMap (x)) {
+  if (isOrderedMap (x)) {
     return `${dws}Map (${
       [...x] .map (([k, v]) => `${show (k)} = ${show (v)}`) .join (`\n${dws}    , `)
     })`
   }
 
-  if (Internals.isRecord (x)) {
+  if (isRecord (x)) {
     return `${dws}{ ${
       [...x .keys .value]
         .sort ()
@@ -219,7 +226,7 @@ const showPDepth = (depth: number) => (x: any): string => {
     } }`
   }
 
-  if (Internals.isIO (x)) {
+  if (isIO (x)) {
     return `${dws}IO`
   }
 

@@ -1,18 +1,16 @@
 import { remote } from "electron";
 import { tryIO } from "../../Control/Exception";
-import { Either, fromLeft_, fromRight_, isLeft, Left, Right } from "../../Data/Either";
+import { Either, isLeft, Left, Right } from "../../Data/Either";
+import { fromLeft_, fromRight_ } from "../../Data/Either/Extra";
 import { cnst } from "../../Data/Function";
 import { fmap, fmapF } from "../../Data/Functor";
-import { Internals } from "../../Data/Internals";
 import { flength, fromArray, List, subscript } from "../../Data/List";
 import { fromMaybe, normalize, Nothing } from "../../Data/Maybe";
-import { bimap, fst, Pair, snd } from "../../Data/Pair";
+import { bimap, fst, Pair, snd } from "../../Data/Tuple";
 import { Unit } from "../../Data/Unit";
-import { bind, pure } from "../../System/IO";
+import { bind, IO, pure } from "../../System/IO";
 import { divideBy, inc } from "./mathUtils";
 import { pipe } from "./pipe";
-
-import IO = Internals.IO
 
 /**
  * Prints windows' web page as PDF with Chromium's preview printing custom settings.

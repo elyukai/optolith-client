@@ -3,8 +3,8 @@ import { fmap } from "../../../../Data/Functor";
 import { filter, intercalate, List } from "../../../../Data/List";
 import { mapMaybe } from "../../../../Data/Maybe";
 import { lookupF, memberF, OrderedMap } from "../../../../Data/OrderedMap";
-import { fst, isPair, snd } from "../../../../Data/Pair";
 import { Record, RecordBase } from "../../../../Data/Record";
+import { fst, isTuple, snd } from "../../../../Data/Tuple";
 import { Book } from "../../../Models/Wiki/Book";
 import { L10n, L10nRecord } from "../../../Models/Wiki/L10n";
 import { SourceLink } from "../../../Models/Wiki/sub/SourceLink";
@@ -41,7 +41,7 @@ export function WikiSource<A extends RecordBase> (props: WikiSourceProps<A>) {
                           fmap (b => {
                             const p = SourceLink.A.page (sl)
 
-                            return `${Book.A.name (b)} ${isPair (p) ? `${fst (p)}–${snd (p)}` : p}`
+                            return `${Book.A.name (b)} ${isTuple (p) ? `${fst (p)}–${snd (p)}` : p}`
                           })
                         ))
                         (available_src)

@@ -1,6 +1,6 @@
 import { join } from "path";
 import { tryIO } from "../../Control/Exception";
-import { eitherToMaybe } from "../../Data/Either";
+import { eitherToMaybe } from "../../Data/Either/Extra";
 import { ident } from "../../Data/Function";
 import { fmap } from "../../Data/Functor";
 import { all, fromArray, List } from "../../Data/List";

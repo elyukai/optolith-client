@@ -16,26 +16,146 @@ import { ifElse } from "../App/Utilities/ifElse";
 import { pipe } from "../App/Utilities/pipe";
 import { ident } from "./Function";
 import { fmap, fmapF } from "./Functor";
-import { Internals } from "./Internals";
 import { cons, consF, List } from "./List";
-import { fromJust, isJust, Just, Maybe, Nothing, Some } from "./Maybe";
+import { Just, Maybe, Nothing, Some } from "./Maybe";
 import { Pair, Tuple } from "./Tuple";
 
-export import Left = Internals.Left
-export import Right = Internals.Right
-export import isLeft = Internals.isLeft
-export import isRight = Internals.isRight
+
+// PROTOTYPES
+
+interface LeftPrototype {
+  readonly isLeft: true
+  readonly isRight: false
+}
+
+const LeftPrototype =
+  Object.freeze<LeftPrototype> ({
+    isLeft: true,
+    isRight: false,
+  })
+
+interface RightPrototype {
+  readonly isLeft: false
+  readonly isRight: true
+}
+
+const RightPrototype: RightPrototype =
+  Object.freeze<RightPrototype> ({
+    isLeft: false,
+    isRight: true,
+  })
+
+
+// CONSTRUCTORS
 
 export type Either<A, B> = Left<A> | Right<B>
 
-// @module Data.Either.Extra
-//
-// This module extends `Data.Either` with extra operations, particularly to
-// quickly extract from inside an `Either`. Some of these operations are
-// partial, and should be used with care in production-quality code.
-//
-// @author Lukas Obermann
-// @see Data.Either
+export interface Left<A> extends LeftPrototype {
+  readonly value: A
+}
+
+/**
+ * `Left :: a -> Either a b`
+ *
+ * Creates a new `Left` from the passed value.
+ */
+export const Left =
+  <A>
+  (x: A): Left<A> =>
+    Object.create (
+      LeftPrototype,
+      {
+        value: {
+          value: x,
+          enumerable: true,
+        },
+      }
+    )
+
+export interface Right<B> extends RightPrototype {
+  readonly value: B
+  readonly prototype: RightPrototype
+}
+
+/**
+ * `Right :: b -> Either a b`
+ *
+ * Creates a new `Right` from the passed value.
+ */
+export const Right =
+  <B>
+  (x: B): Right<B> =>
+    Object.create (
+      RightPrototype,
+      {
+        value: {
+          value: x,
+          enumerable: true,
+        },
+      }
+    )
+
+
+// EITHER FUNCTIONS
+
+/**
+ * `either :: (a -> c) -> (b -> c) -> Either a b -> c`
+ *
+ * Case analysis for the `Either` type. If the value is `Left a`, apply the
+ * first function to `a` if it is `Right b`, apply the second function to `b`.
+ */
+export const either =
+  <A, B, C>
+  (fLeft: (l: A) => C) =>
+  (fRight: (r: B) => C) =>
+  (x: Either<A, B>): C =>
+    isRight (x) ? fRight (x .value) : fLeft (x .value)
+
+/**
+ * `lefts :: [Either a b] -> [a]`
+ *
+ * Extracts from a list of `Either` all the `Left` elements. All the `Left`
+ * elements are extracted in order.
+ */
+export const lefts =
+  <A, B> (xs: List<Either<A, B>>): List<A> =>
+    List.foldr<Either<A, B>, List<A>> (x => acc => isLeft (x)
+                                                   ? cons (acc) (x .value)
+                                                   : acc)
+                                      (List.empty)
+                                      (xs)
+
+/**
+ * `rights :: [Either a b] -> [b]`
+ *
+ * Extracts from a list of `Either` all the `Right` elements. All the `Right`
+ * elements are extracted in order.
+ */
+export const rights =
+  <A, B> (xs: List<Either<A, B>>): List<B> =>
+    List.foldr<Either<A, B>, List<B>> (x => acc => isRight (x)
+                                                   ? cons (acc) (x .value)
+                                                   : acc)
+                                      (List.empty)
+                                      (xs)
+
+/**
+ * `isLeft :: Either a b -> Bool`
+ *
+ * Return `True` if the given value is a `Left`-value, `False` otherwise.
+ */
+export const isLeft =
+  <A, B> (x: Either<A, B>): x is Left<A> =>
+    Object.getPrototypeOf (x) === LeftPrototype
+
+/**
+* `isRight :: Either a b -> Bool`
+*
+* Return `True` if the given value is a `Right`-value, `False` otherwise.
+*/
+export const isRight =
+  <A, B> (x: Either<A, B>): x is Right<B> =>
+    Object.getPrototypeOf (x) === RightPrototype
 
 /**
  * `fromLeft :: a -> Either a b -> a`
@@ -67,107 +187,20 @@ export const fromRight =
     isRight (x) ? x .value : def
 
 /**
- * `fromEither :: Either a a -> a`
+ * `partitionEithers :: [Either a b] -> ([a], [b])`
  *
- * Pull the value out of an `Either` where both alternatives have the same type.
- *
- * `\x -> fromEither (Left x ) == x`
- * `\x -> fromEither (Right x) == x`
+ * Partitions a list of `Either` into two lists. All the `Left` elements are
+ * extracted, in order, to the first component of the output. Similarly the
+ * `Right` elements are extracted to the second component of the output.
  */
-export const fromEither =
-  <A>
-  (x: Either<A, A>): A =>
-    isRight (x) ? x .value : x .value
-
-/**
- * `fromLeft' :: Either l r -> l`
- *
- * The `fromLeft'` function extracts the element out of a `Left` and throws an
- * error if its argument is `Right`. Much like `fromJust`, using this function
- * in polished code is usually a bad idea.
- *
- * `\x -> fromLeft' (Left  x) == x`
- * `\x -> fromLeft' (Right x) == undefined`
- *
- * @throws TypeError
- */
-export const fromLeft_ =
-  <L>
-  (x: Left<L>): L => {
-    if (isLeft (x)) {
-      return x .value
-    }
-
-    throw new TypeError (`Cannot extract a Left value out of ${x}.`)
-  }
-
-/**
- * `fromRight' :: Either l r -> r`
- *
- * The `fromRight'` function extracts the element out of a `Right` and throws an
- * error if its argument is `Left`. Much like `fromJust`, using this function
- * in polished code is usually a bad idea.
- *
- * `\x -> fromRight' (Right x) == x`
- * `\x -> fromRight' (Left  x) == undefined`
- *
- * @throws TypeError
- */
-export const fromRight_ =
-  <R>
-  (x: Right<R>): R => {
-    if (isRight (x)) {
-      return x .value
-    }
-
-    throw new TypeError (`Cannot extract a Right value out of ${x}.`)
-  }
-
-/**
- * `eitherToMaybe :: Either a b -> Maybe b`
- *
- * Given an `Either`, convert it to a `Maybe`, where `Left` becomes `Nothing`.
- *
- * `\x -> eitherToMaybe (Left x) == Nothing`
- * `\x -> eitherToMaybe (Right x) == Just x`
- */
-export const eitherToMaybe =
-  <B>
-  (x: Either<any, B>): Maybe<B> =>
-    isRight (x) ? Just (x .value) : Nothing
-
-/**
- * `maybeToEither :: a -> Maybe b -> Either a b`
- *
- * Given a `Maybe`, convert it to an `Either`, providing a suitable value for
- * the `Left` should the value be `Nothing`.
- *
- * `\a b -> maybeToEither a (Just b) == Right b`
- * `\a -> maybeToEither a Nothing == Left a`
- */
-export const maybeToEither =
-  <A>
-  (left: A) =>
-  <B> (x: Maybe<B>): Either<A, B> =>
-    isJust (x) ? Right (fromJust (x)) : Left (left)
-
-/**
- * `maybeToEither' :: (() -> a) -> Maybe b -> Either a b`
- *
- * Given a `Maybe`, convert it to an `Either`, providing a suitable value for
- * the `Left` should the value be `Nothing`.
- *
- * `\a b -> maybeToEither a (Just b) == Right b`
- * `\a -> maybeToEither a Nothing == Left a`
- *
- * Lazy version of `maybeToEither`.
- */
-export const maybeToEither_ =
-  <A>
-  (left: () => A) =>
-  <B>
-  (x: Maybe<B>): Either<A, B> =>
-    isJust (x) ? Right (fromJust (x)) : Left (left ())
+export const partitionEithers =
+  <A, B> (xs: List<Either<A, B>>): Pair<List<A>, List<B>> =>
+    List.foldr<Either<A, B>, Pair<List<A>, List<B>>>
+      (x => isRight (x)
+            ? Tuple.second (consF (x .value))
+            : Tuple.first (consF (x .value)))
+      (Pair<List<A>, List<B>> (List.empty, List.empty))
+      (xs)
 
 
 // BIFUNCTOR
@@ -305,7 +338,7 @@ export const mapM =
       (isLeft)
       <Either<E, List<B>>>
       (ident)
-      (y => second (consF (fromRight_ (y)))
+      (y => second (consF (y .value))
                    (mapM (f) (xs .xs)))
       (f (xs .x))
 
@@ -595,69 +628,16 @@ export const lte =
     || isLeft (m1) && isLeft (m2) && m2 .value <= m1 .value
 
 
-// EITHER FUNCTIONS (PART 2)
-
-/**
- * `either :: (a -> c) -> (b -> c) -> Either a b -> c`
- *
- * Case analysis for the `Either` type. If the value is `Left a`, apply the
- * first function to `a` if it is `Right b`, apply the second function to `b`.
- */
-export const either =
-  <A, B, C>
-  (fLeft: (l: A) => C) =>
-  (fRight: (r: B) => C) =>
-  (x: Either<A, B>): C =>
-    isRight (x) ? fRight (x .value) : fLeft (x .value)
-
-/**
- * `lefts :: [Either a b] -> [a]`
- *
- * Extracts from a list of `Either` all the `Left` elements. All the `Left`
- * elements are extracted in order.
- */
-export const lefts =
-  <A, B> (xs: List<Either<A, B>>): List<A> =>
-    List.foldr<Either<A, B>, List<A>> (x => acc => isLeft (x)
-                                                   ? cons (acc) (x .value)
-                                                   : acc)
-                                      (List.empty)
-                                      (xs)
-
-/**
- * `rights :: [Either a b] -> [b]`
- *
- * Extracts from a list of `Either` all the `Right` elements. All the `Right`
- * elements are extracted in order.
- */
-export const rights =
-  <A, B> (xs: List<Either<A, B>>): List<B> =>
-    List.foldr<Either<A, B>, List<B>> (x => acc => isRight (x)
-                                                   ? cons (acc) (x .value)
-                                                   : acc)
-                                      (List.empty)
-                                      (xs)
-
-/**
- * `partitionEithers :: [Either a b] -> ([a], [b])`
- *
- * Partitions a list of `Either` into two lists. All the `Left` elements are
- * extracted, in order, to the first component of the output. Similarly the
- * `Right` elements are extracted to the second component of the output.
- */
-export const partitionEithers =
-  <A, B> (xs: List<Either<A, B>>): Pair<List<A>, List<B>> =>
-    List.foldr<Either<A, B>, Pair<List<A>, List<B>>>
-      (x => isRight (x)
-            ? Tuple.second (consF (x .value))
-            : Tuple.first (consF (x .value)))
-      (Pair<List<A>, List<B>> (List.empty, List.empty))
-      (xs)
-
-
 // CUSTOM FUNCTIONS
 
-export import isEither = Internals.isEither
+/**
+ * `isEither :: a -> Bool`
+ *
+ * Return `True` if the given value is an `Either`.
+ */
+export const isEither =
+  (x: any): x is Either<any, any> =>
+    typeof x === "object" && x !== null && (isLeft (x) || isRight (x))
 
 /**
  * `imapM :: (Int -> a -> Either e b) -> [a] -> Either e [b]`
@@ -685,7 +665,7 @@ const imapMIndex =
       (isLeft)
       <Either<E, List<B>>>
       (ident)
-      (y => second (consF (fromRight_ (y)))
+      (y => second (consF (y .value))
                    (imapMIndex (i + 1) (f) (xs .xs)))
       (f (i) (xs .x))
 
@@ -711,14 +691,14 @@ export const Either = {
   Left,
   Right,
 
+  isLeft,
+  isRight,
+  either,
+  lefts,
+  rights,
   fromLeft,
   fromRight,
-  fromEither,
-  fromLeft_,
-  fromRight_,
-  eitherToMaybe,
-  maybeToEither,
-  maybeToEither_,
+  partitionEithers,
 
   bimap,
   first,
@@ -757,13 +737,6 @@ export const Either = {
   lt,
   gte,
   lte,
-
-  isLeft,
-  isRight,
-  either,
-  lefts,
-  rights,
-  partitionEithers,
 
   isEither,
   imapM,

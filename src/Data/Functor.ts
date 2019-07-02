@@ -8,23 +8,17 @@
  */
 
 import { pipe } from "../App/Utilities/pipe";
-import { Identity, runIdentity } from "../Control/Monad/Identity";
+import { Identity, isIdentity, runIdentity } from "../Control/Monad/Identity";
+import { IO, isIO } from "../System/IO";
+import { Either, isEither, isLeft, Left, Right } from "./Either";
 import { cnst } from "./Function";
-import { Const } from "./Functor/Const";
-import { Internals } from "./Internals";
+import { Const, isConst } from "./Functor/Const";
+import { consF, fnull, isList, List, NonEmptyList } from "./List";
 import { isMarket, Market } from "./Market";
-import { Some } from "./Maybe";
-import { show, showP } from "./Show";
-import { Pair } from "./Tuple";
-
-import Just = Internals.Just
-import Maybe = Internals.Maybe
-import Either = Internals.Either
-import Right = Internals.Right
-import List = Internals.List
-import IO = Internals.IO
-import OrderedMap = Internals.OrderedMap
-import mapFromArray = Internals.mapFromArray
+import { isMaybe, isNothing, Just, Maybe, Some } from "./Maybe";
+import { fromArray, isOrderedMap, OrderedMap } from "./OrderedMap";
+import { showP } from "./Show";
+import { isTuple, Pair } from "./Tuple";
 
 export type Functor<A> = Const<A, any>
                        | Either<any, A>
@@ -60,31 +54,31 @@ export const fmap =
   (f: (x: A) => B): FunctorMap<A, B> =>
   // tslint:disable-next-line: cyclomatic-complexity
   (x: Functor<any>): any => {
-    if (Internals.isList (x)) {
-      if (Internals.isNil (x)) {
-        return Internals.Nil
+    if (isList (x)) {
+      if (fnull (x)) {
+        return List ()
       }
 
-      const nextElement = fmap (f) ((x as Internals.Cons<A>) .xs)
-      const nextValue = f ((x as Internals.Cons<A>) .x)
+      const nextElement = fmap (f) ((x as NonEmptyList<A>) .xs)
+      const nextValue = f ((x as NonEmptyList<A>) .x)
 
       if (nextValue === x .x && nextElement === x .xs) {
         return x
       }
 
-      return Internals.Cons (nextValue, nextElement)
+      return consF (nextValue) (nextElement)
     }
 
-    if (Internals.isOrderedMap (x)) {
-      return mapFromArray (show) ([...x .value] .map (([k, a]) => [k, f (a)] as [any, B]))
+    if (isOrderedMap (x)) {
+      return fromArray ([...x .value] .map (([k, a]) => [k, f (a)] as [any, B]))
     }
 
-    if (Internals.isConst (x)) {
+    if (isConst (x)) {
       return x
     }
 
-    if (Internals.isEither (x)) {
-      if (Internals.isLeft (x)) {
+    if (isEither (x)) {
+      if (isLeft (x)) {
         return x
       }
 
@@ -97,7 +91,7 @@ export const fmap =
       return Right (nextValue)
     }
 
-    if (Internals.isIdentity (x)) {
+    if (isIdentity (x)) {
       const nextValue = f (runIdentity (x))
 
       if (nextValue === runIdentity (x)) {
@@ -107,14 +101,14 @@ export const fmap =
       return Identity (nextValue)
     }
 
-    if (Internals.isIO (x)) {
+    if (isIO (x)) {
       const res = x .f ()
 
       return IO (() => res .then (f))
     }
 
-    if (Internals.isMaybe (x)) {
-      if (Internals.isNothing (x)) {
+    if (isMaybe (x)) {
+      if (isNothing (x)) {
         return x
       }
 
@@ -127,7 +121,7 @@ export const fmap =
       return Just (nextValue)
     }
 
-    if (Internals.isTuple (x) && x .length === 2) {
+    if (isTuple (x) && x .length === 2) {
       const nextValue = f (x .values [1])
 
       if (nextValue === x .values [1]) {
@@ -143,7 +137,7 @@ export const fmap =
 
     if (isMarket (x)) {
       return Market (pipe (x.to, f))
-                    (pipe (x.fro, e => Internals.isLeft (e) ? Internals.Left (f (e .value)) : e))
+                    (pipe (x.fro, e => isLeft (e) ? Left (f (e .value)) : e))
     }
 
     throw new TypeError (instanceErrorMsg ("fmap") (x))

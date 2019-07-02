@@ -4,8 +4,8 @@ import { consF, countWith, foldr, List, maximum, maximumNonNegative, minimum } f
 import { elem, Just, maybe, Maybe, Nothing, sum } from "../../../Data/Maybe";
 import { lookupF, OrderedMap } from "../../../Data/OrderedMap";
 import { } from "../../../Data/OrderedSet";
-import { Pair } from "../../../Data/Pair";
 import { Record } from "../../../Data/Record";
+import { Pair } from "../../../Data/Tuple";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
 import { AttributeDependent } from "../../Models/ActiveEntries/AttributeDependent";

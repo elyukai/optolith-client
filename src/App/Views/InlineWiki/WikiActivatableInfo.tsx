@@ -1,5 +1,6 @@
 import * as React from "react";
-import { Either, eitherToMaybe, invertEither, Left, Right } from "../../../Data/Either";
+import { Either, invertEither, Left, Right } from "../../../Data/Either";
+import { eitherToMaybe } from "../../../Data/Either/Extra";
 import { cnst, flip, ident, join } from "../../../Data/Function";
 import { fmap, fmapF } from "../../../Data/Functor";
 import { rangeN } from "../../../Data/Ix";

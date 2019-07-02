@@ -1,6 +1,7 @@
 import * as path from "path";
 import * as xlsx from "xlsx";
-import { bind, bindF, Either, first, fromRight_, isLeft, Left, mapM, maybeToEither } from "../../../Data/Either";
+import { bind, bindF, Either, first, isLeft, Left, mapM } from "../../../Data/Either";
+import { fromRight_, maybeToEither } from "../../../Data/Either/Extra";
 import { equals } from "../../../Data/Eq";
 import { flip, thrush } from "../../../Data/Function";
 import { fmap } from "../../../Data/Functor";
@@ -9,8 +10,8 @@ import { all, append, consF, empty, foldr, List, map, notElemF } from "../../../
 import { catMaybes, ensure, fromMaybe, Just, mapMaybe, Maybe, Nothing } from "../../../Data/Maybe";
 import { adjust, elems, fromList, insert, lookupF, mapMEitherWithKey, OrderedMap } from "../../../Data/OrderedMap";
 import { OrderedSet } from "../../../Data/OrderedSet";
-import { fst, Pair, snd } from "../../../Data/Pair";
 import { makeLenses, member, Record } from "../../../Data/Record";
+import { fst, Pair, snd } from "../../../Data/Tuple";
 import { Categories } from "../../Constants/Categories";
 import { AdvantageL } from "../../Models/Wiki/Advantage";
 import { Book } from "../../Models/Wiki/Book";

@@ -1,12 +1,13 @@
-import { Either, maybeToEither_ } from "../../../Data/Either";
+import { Either } from "../../../Data/Either";
+import { maybeToEither_ } from "../../../Data/Either/Extra";
 import { equals } from "../../../Data/Eq";
 import { fmap } from "../../../Data/Functor";
 import { inRange } from "../../../Data/Ix";
 import { Cons, flength, List, notNullStr, splitOn } from "../../../Data/List";
 import { bindF, ensure, fromMaybe, Just, liftM2, mapM, Maybe, maybe, Nothing } from "../../../Data/Maybe";
 import { fromList, OrderedSet } from "../../../Data/OrderedSet";
-import { Pair } from "../../../Data/Pair";
 import { show } from "../../../Data/Show";
+import { Pair } from "../../../Data/Tuple";
 import { toFloat, toInt, toNatural } from "../NumberUtils";
 import { pipe } from "../pipe";
 import { Expect } from "./showExpected";

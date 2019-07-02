@@ -9,7 +9,7 @@ import { prerelease } from "semver";
 import * as url from "url";
 import { pipe_ } from "./App/Utilities/pipe";
 import { tryIO } from "./Control/Exception";
-import { fromLeft_, isLeft } from "./Data/Either";
+import { fromLeft_, isLeft } from "./Data/Either/Extra";
 import { fmap } from "./Data/Functor";
 import { Unit } from "./Data/Unit";
 import { existsFile, IO, join, liftM2, runIO, thenF } from "./System/IO";
@@ -56,6 +56,7 @@ const copyFileToCurrent =
                          (user_data_path)
 
 function createWindow () {
+  console.log("test");
   const mainWindowState = windowStateKeeper ({
     defaultHeight: 720,
     defaultWidth: 1280,

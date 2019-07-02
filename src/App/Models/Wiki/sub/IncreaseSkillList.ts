@@ -1,6 +1,6 @@
 import { isList, List, map } from "../../../../Data/List";
-import { fst, Pair, snd } from "../../../../Data/Pair";
 import { fromDefault } from "../../../../Data/Record";
+import { fst, Pair, snd } from "../../../../Data/Tuple";
 import { IdPrefixes } from "../../../Constants/IdPrefixes";
 import { prefixId } from "../../../Utilities/IDUtils";
 import { pairToIncreaseSkill } from "./IncreaseSkill";

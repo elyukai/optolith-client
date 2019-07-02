@@ -19,16 +19,41 @@ import * as Math from "../App/Utilities/mathUtils";
 import { pipe } from "../App/Utilities/pipe";
 import { cnst, flip, ident } from "./Function";
 import { fmap, fmapF } from "./Functor";
-import { Internals } from "./Internals";
 import { cons, consF, head, ifoldr, List } from "./List";
 
-export import Just = Internals.Just
-export import Nothing = Internals.Nothing
-export import isJust = Internals.isJust
-export import isNothing = Internals.isNothing
+
+// PROTOTYPES
+
+interface JustPrototype {
+  readonly isJust: true
+  readonly isNothing: false
+}
+
+const JustPrototype =
+  Object.freeze<JustPrototype> ({
+    isJust: true,
+    isNothing: false,
+  })
+
+interface NothingPrototype extends Object {
+  readonly isJust: false
+  readonly isNothing: true
+}
+
+const NothingPrototype: NothingPrototype =
+  Object.freeze<NothingPrototype> ({
+    isJust: false,
+    isNothing: true,
+  })
 
 
 // CONSTRUCTORS
+
+export interface Just<A extends Some> extends JustPrototype {
+  readonly value: A
+}
+
+export interface Nothing extends NothingPrototype { }
 
 export type Maybe<A extends Some> = Just<A> | Nothing
 
@@ -41,8 +66,66 @@ export const Maybe =
   <A extends Some> (x: A | Nullable): Maybe<A> =>
     x !== null && x !== undefined ? Just (x) : Nothing
 
+/**
+ * `Just :: a -> Maybe a`
+ *
+ * Creates a new `Just` from the passed value.
+ */
+export const Just = <A extends Some> (x: A): Just<A> => {
+  if (x !== null && x !== undefined) {
+    return Object.create (
+      JustPrototype,
+      {
+        value: {
+          value: x,
+          enumerable: true,
+        },
+      }
+    )
+  }
 
-// MAYBE FUNCTIONS (PART 1)
+  throw new TypeError ("Cannot create a Just from a nullable value.")
+}
+
+/**
+ * `Nothing :: Maybe a`
+ *
+ * The empty `Maybe`.
+ */
+export const Nothing: Nothing = Object.create (NothingPrototype)
+
+
+// MAYBE FUNCTIONS
+
+/**
+ * `maybe :: b -> (a -> b) -> Maybe a -> b`
+ *
+ * The `maybe` function takes a default value, a function, and a `Maybe`
+ * value. If the `Maybe` value is `Nothing`, the function returns the default
+ * value. Otherwise, it applies the function to the value inside the `Just`
+ * and returns the result.
+ */
+export const maybe =
+  <B extends Some> (def: B) =>
+  <A extends Some> (f: (x: A) => B) =>
+    foldl<A, B> (() => f) (def)
+
+/**
+ * `isJust :: Maybe a -> Bool`
+ *
+ * The `isJust` function returns `true` if its argument is of the form
+ * `Just _`.
+ */
+export const isJust =
+  <A extends Some> (x: Maybe<A>): x is Just<A> =>
+    Object.getPrototypeOf (x) === JustPrototype
+
+/**
+ * `isNothing :: Maybe a -> Bool`
+ *
+ * The `isNothing` function returns `true` if its argument is `Nothing`.
+ */
+export const isNothing = (x: Maybe<Some>): x is Nothing => x === Nothing
 
 /**
  * `fromJust :: Maybe a -> a`
@@ -84,6 +167,58 @@ export const fromMaybe =
 export const fromMaybe_ =
   <A extends Some> (def: () => A) => (x: Maybe<A>): A =>
     isJust (x) ? x .value : def ()
+
+/**
+ * `listToMaybe :: [a] -> Maybe a`
+ *
+ * The `listToMaybe` function returns `Nothing` on an empty list or `Just a`
+ * where `a` is the first element of the list.
+ */
+export const listToMaybe =
+  <A extends Some> (xs: List<A>): Maybe<A> =>
+    List.fnull (xs) ? Nothing : Just (head (xs))
+
+/**
+ * `maybeToList :: Maybe a -> [a]`
+ *
+ * The `maybeToList` function returns an empty list when given `Nothing` or a
+ * singleton list when not given `Nothing`.
+ */
+export const maybeToList =
+  <A extends Some>(x: Maybe<A>): List<A> =>
+    isJust (x) ? List.pure (x .value) : List.empty
+
+/**
+ * `catMaybes :: [Maybe a] -> [a]`
+ *
+ * The `catMaybes` function takes a list of `Maybe`s and returns a list of all
+ * the `Just` values.
+ */
+export const catMaybes =
+  <A extends Some>
+  (xs: List<Maybe<A>>): List<A> =>
+    List.foldr<Maybe<A>, List<A>> (maybe<(xs: List<A>) => List<A>> (ident)
+                                                                   (consF))
+                                  (List.empty)
+                                  (xs)
+
+/**
+ * `mapMaybe :: (a -> Maybe b) -> [a] -> [b]`
+ *
+ * The `mapMaybe` function is a version of `map` which can throw out elements.
+ * If particular, the functional argument returns something of type `Maybe b`.
+ * If this is `Nothing`, no element is added on to the result list. If it is
+ * `Just b`, then `b` is included in the result list.
+ */
+export const mapMaybe =
+  <A extends Some, B extends Some>
+  (f: (x: A) => Maybe<B>) =>
+    List.foldr<A, List<B>> (pipe (
+                             f,
+                             maybe<(xs: List<B>) => List<B>> (ident)
+                                                             (consF)
+                           ))
+                           (List.empty)
 
 
 // APPLICATIVE
@@ -389,9 +524,7 @@ export const foldl =
  *
  * List of elements of a structure, from left to right.
  */
-export const toList =
-  <A extends Some>(x: Maybe<A>): List<A> =>
-    isJust (x) ? List.pure (x .value) : List.empty
+export const toList = maybeToList
 
 /**
  * `null :: Maybe a -> Bool`
@@ -656,75 +789,20 @@ export const mappend =
       : x
 
 
-// MAYBE FUNCTIONS (PART 2)
-
-/**
- * `maybe :: b -> (a -> b) -> Maybe a -> b`
- *
- * The `maybe` function takes a default value, a function, and a `Maybe`
- * value. If the `Maybe` value is `Nothing`, the function returns the default
- * value. Otherwise, it applies the function to the value inside the `Just`
- * and returns the result.
- */
-export const maybe =
-  <B extends Some> (def: B) =>
-  <A extends Some> (f: (x: A) => B) =>
-    foldl<A, B> (() => f) (def)
-
-/**
- * `listToMaybe :: [a] -> Maybe a`
- *
- * The `listToMaybe` function returns `Nothing` on an empty list or `Just a`
- * where `a` is the first element of the list.
- */
-export const listToMaybe =
-  <A extends Some> (xs: List<A>): Maybe<A> =>
-    List.fnull (xs) ? Nothing : Just (head (xs))
-
-/**
- * `maybeToList :: Maybe a -> [a]`
- *
- * The `maybeToList` function returns an empty list when given `Nothing` or a
- * singleton list when not given `Nothing`.
- */
-export const maybeToList = toList
-
-/**
- * `catMaybes :: [Maybe a] -> [a]`
- *
- * The `catMaybes` function takes a list of `Maybe`s and returns a list of all
- * the `Just` values.
- */
-export const catMaybes =
-  <A extends Some>
-  (xs: List<Maybe<A>>): List<A> =>
-    List.foldr<Maybe<A>, List<A>> (maybe<(xs: List<A>) => List<A>> (ident)
-                                                                   (consF))
-                                  (List.empty)
-                                  (xs)
-
-/**
- * `mapMaybe :: (a -> Maybe b) -> [a] -> [b]`
- *
- * The `mapMaybe` function is a version of `map` which can throw out elements.
- * If particular, the functional argument returns something of type `Maybe b`.
- * If this is `Nothing`, no element is added on to the result list. If it is
- * `Just b`, then `b` is included in the result list.
- */
-export const mapMaybe =
-  <A extends Some, B extends Some>
-  (f: (x: A) => Maybe<B>) =>
-    List.foldr<A, List<B>> (pipe (
-                             f,
-                             maybe<(xs: List<B>) => List<B>> (ident)
-                                                             (consF)
-                           ))
-                           (List.empty)
-
-
 // CUSTOM MAYBE FUNCTIONS
 
-export import isMaybe = Internals.isMaybe
+/**
+ * `isMaybe :: a -> Bool`
+ *
+ * The `isMaybe` function returns `True` if its argument is a `Maybe`.
+ */
+export const isMaybe =
+  <A, A0 extends Some>(x: A | Maybe<A0>): x is Maybe<A0> =>
+    typeof x === "object"
+    && x !== null
+    && (x === Nothing || Object.getPrototypeOf (x) === JustPrototype)
+
+Maybe.isMaybe = isMaybe
 
 /**
  * `normalize :: (a | Maybe a) -> Maybe a`
@@ -963,7 +1041,6 @@ Maybe.maybeToList = maybeToList
 Maybe.catMaybes = catMaybes
 Maybe.mapMaybe = mapMaybe
 
-Maybe.isMaybe = isMaybe
 Maybe.normalize = normalize
 Maybe.ensure = ensure
 Maybe.imapMaybe = imapMaybe
@@ -976,7 +1053,7 @@ Maybe.maybeRNullF = maybeRNullF
 
 // TYPE HELPERS
 
-export type MaybeI<A> = A extends Internals.Maybe<infer AI> ? AI : never
+export type MaybeI<A> = A extends Maybe<infer AI> ? AI : never
 
 // tslint:disable-next-line:interface-over-type-literal
 export type Some = {}

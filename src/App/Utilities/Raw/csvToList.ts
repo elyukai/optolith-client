@@ -1,4 +1,5 @@
-import { bindF, Either, Left, maybeToEither, Right } from "../../../Data/Either";
+import { bindF, Either, Left, Right } from "../../../Data/Either";
+import { maybeToEither } from "../../../Data/Either/Extra";
 import { fmap } from "../../../Data/Functor";
 import { cons, empty, filter, find, flength, head, ifoldr, lines, List, map, notNull, notNullStr, replaceStr, splitOn, uncons, zip } from "../../../Data/List";
 import { ensure, fromJust, isJust, mapMaybe } from "../../../Data/Maybe";

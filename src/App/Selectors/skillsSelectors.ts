@@ -3,7 +3,7 @@ import { fmap } from "../../Data/Functor";
 import { foldr, map } from "../../Data/List";
 import { fromMaybe, liftM3, maybe } from "../../Data/Maybe";
 import { elems, insertF, lookup, OrderedMap } from "../../Data/OrderedMap";
-import { uncurryN, uncurryN3, uncurryN4 } from "../../Data/Pair";
+import { uncurryN, uncurryN3, uncurryN4 } from "../../Data/Tuple/Curry";
 import { createPlainSkillDependent } from "../Models/ActiveEntries/SkillDependent";
 import { HeroModel } from "../Models/Hero/HeroModel";
 import { EntryRating } from "../Models/Hero/heroTypeHelpers";

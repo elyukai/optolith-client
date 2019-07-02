@@ -1,4 +1,5 @@
-import { bimap, Either, first, fromRight_, isLeft, maybeToEither, Right } from "../../../Data/Either";
+import { bimap, Either, first, isLeft, Right } from "../../../Data/Either";
+import { fromRight_, maybeToEither } from "../../../Data/Either/Extra";
 import { appendStr, find, List, notNullStr } from "../../../Data/List";
 import { bind, bindF, elem, ensure, fromJust, isJust, Just, Maybe, Nothing } from "../../../Data/Maybe";
 import { lookup, lookupF, OrderedMap } from "../../../Data/OrderedMap";
