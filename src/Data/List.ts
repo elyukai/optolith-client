@@ -14,9 +14,9 @@ import { ident, thrush } from "./Function";
 import { fmap, fmapF } from "./Functor";
 import { Internals } from "./Internals";
 import { isLTorEQ, Ordering } from "./Ord";
-import { first, fst, Pair, second, snd } from "./Pair";
 import { fromDefault, RecordBase } from "./Record";
 import { show } from "./Show";
+import { first, fst, Pair, second, snd } from "./Tuple";
 
 export import NonEmptyList = Internals.NonEmptyList
 export import Cons = Internals.Cons

@@ -2,12 +2,11 @@ import { Either, fromRight_, isLeft, mapM, maybeToEither, maybeToEither_ } from 
 import { List } from "../../../../Data/List";
 import { ensure, liftM2 } from "../../../../Data/Maybe";
 import { fromList, lookupF, OrderedMap } from "../../../../Data/OrderedMap";
-import { Pair } from "../../../../Data/Pair";
 import { show } from "../../../../Data/Show";
+import { Pair } from "../../../../Data/Tuple";
 import { L10n, L10nRecord } from "../../../Models/Wiki/L10n";
 import { mensureMapNonEmptyString, mensureMapNonEmptyStringList } from "../validateMapValueUtils";
 import { lookupKeyValid, mapMNamed, TableType } from "../validateValueUtils";
-
 const localeRx = /[a-z]{2}-[A-Z]{2}/
 
 const isLocale =

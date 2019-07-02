@@ -6,8 +6,9 @@ import { append, consF, countWith, elemF, List, map, notNull, partition } from "
 import { all, any, bindF, ensure, fromMaybe_, Just, liftM2, listToMaybe, mapMaybe, Maybe, maybe, Nothing } from "../../Data/Maybe";
 import { elems, lookup, lookupF, OrderedMap } from "../../Data/OrderedMap";
 import { member } from "../../Data/OrderedSet";
-import { fst, snd, uncurryN, uncurryN3, uncurryN5, uncurryN6, uncurryN8 } from "../../Data/Pair";
 import { Record } from "../../Data/Record";
+import { fst, snd } from "../../Data/Tuple";
+import { uncurryN, uncurryN3, uncurryN5, uncurryN6, uncurryN8 } from "../../Data/Tuple/Curry";
 import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent, createInactiveActivatableSkillDependent } from "../Models/ActiveEntries/ActivatableSkillDependent";
 import { ActiveObject } from "../Models/ActiveEntries/ActiveObject";

@@ -4,9 +4,9 @@ import { fmap } from "../../../../../Data/Functor";
 import { fromArray, isInfixOf, List, NonEmptyList, splitOn, uncons } from "../../../../../Data/List";
 import { bindF, ensure, fromJust, fromMaybe, isNothing, Just, Maybe, Nothing } from "../../../../../Data/Maybe";
 import { fromList } from "../../../../../Data/OrderedMap";
-import { fst, Pair, snd } from "../../../../../Data/Pair";
 import { show } from "../../../../../Data/Show";
 import { parseJSON } from "../../../../../Data/String/JSON";
+import { fst, Pair, snd } from "../../../../../Data/Tuple";
 import { traceShow } from "../../../../../Debug/Trace";
 import { RequireActivatable } from "../../../../Models/Wiki/prerequisites/ActivatableRequirement";
 import { CultureRequirement } from "../../../../Models/Wiki/prerequisites/CultureRequirement";
@@ -29,7 +29,6 @@ import { isRawPactRequirement } from "../Prerequisites/RawPactRequirement";
 import { isRawRequiringPrimaryAttribute } from "../Prerequisites/RawPrimaryAttributeRequirement";
 import { isRawRaceRequirement } from "../Prerequisites/RawRaceRequirement";
 import { isRawSexRequirement } from "../Prerequisites/RawSexRequirement";
-
 const parseJSONAndRCP = (x: string) => x === "RCP" ? Just (x) : parseJSON (x)
 
 const toLevelAwarePrerequisites =

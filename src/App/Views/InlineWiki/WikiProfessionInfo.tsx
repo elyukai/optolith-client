@@ -7,10 +7,9 @@ import { all, append, cons, consF, deleteAt, find, findIndex, flength, foldr, im
 import { alt_, any, bind, bindF, catMaybes, ensure, fromJust, fromMaybe, fromMaybe_, isJust, Just, liftM2, mapMaybe, Maybe, maybe, maybeRNull, maybeRNullF, maybeToList, maybe_, Nothing } from "../../../Data/Maybe";
 import { elems, lookup, lookupF, member, memberF, OrderedMap } from "../../../Data/OrderedMap";
 import { difference, fromList, insert, OrderedSet, toList } from "../../../Data/OrderedSet";
-import { fst, snd } from "../../../Data/Pair";
 import { fromDefault, Record } from "../../../Data/Record";
 import { show } from "../../../Data/Show";
-import { Pair, Tuple } from "../../../Data/Tuple";
+import { fst, Pair, snd, Tuple } from "../../../Data/Tuple";
 import { sel1, sel2, sel3 } from "../../../Data/Tuple/Select";
 import { upd1, upd2, upd3 } from "../../../Data/Tuple/Update";
 import { Sex } from "../../Models/Hero/heroTypeHelpers";

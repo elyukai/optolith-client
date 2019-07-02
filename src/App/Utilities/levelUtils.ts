@@ -1,7 +1,7 @@
 import { unfoldr } from "../../Data/List";
 import { Just, Nothing } from "../../Data/Maybe";
-import { Pair } from "../../Data/Pair";
 import { Record } from "../../Data/Record";
+import { Pair } from "../../Data/Tuple";
 import { DropdownOption } from "../Views/Universal/Dropdown";
 import { toRoman } from "./NumberUtils";
 

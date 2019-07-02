@@ -9,8 +9,8 @@ import { all, append, consF, empty, foldr, List, map, notElemF } from "../../../
 import { catMaybes, ensure, fromMaybe, Just, mapMaybe, Maybe, Nothing } from "../../../Data/Maybe";
 import { adjust, elems, fromList, insert, lookupF, mapMEitherWithKey, OrderedMap } from "../../../Data/OrderedMap";
 import { OrderedSet } from "../../../Data/OrderedSet";
-import { fst, Pair, snd } from "../../../Data/Pair";
 import { makeLenses, member, Record } from "../../../Data/Record";
+import { fst, Pair, snd } from "../../../Data/Tuple";
 import { Categories } from "../../Constants/Categories";
 import { AdvantageL } from "../../Models/Wiki/Advantage";
 import { Book } from "../../Models/Wiki/Book";

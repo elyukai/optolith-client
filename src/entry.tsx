@@ -24,7 +24,7 @@ import { flip } from "./Data/Function";
 import { fmap } from "./Data/Functor";
 import { List } from "./Data/List";
 import { fromJust, isJust, Just } from "./Data/Maybe";
-import { uncurryN } from "./Data/Pair";
+import { uncurryN } from "./Data/Tuple/Curry";
 import { Unit } from "./Data/Unit";
 import { runIO } from "./System/IO";
 

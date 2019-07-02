@@ -4,9 +4,8 @@ import { consF, elem, filter, filterMulti, foldr, intercalate, List, map, notEle
 import { bindF, fromMaybe, Just, liftM2, liftM3, listToMaybe, mapMaybe, Maybe, Nothing } from "../../Data/Maybe";
 import { insert, lookup, OrderedMap } from "../../Data/OrderedMap";
 import { member, OrderedSet } from "../../Data/OrderedSet";
-import { uncurryN } from "../../Data/Pair";
 import { Record } from "../../Data/Record";
-import { uncurryN3 } from "../../Data/Tuple/Curry";
+import { uncurryN, uncurryN3 } from "../../Data/Tuple/Curry";
 import { ActivatableCategory, Categories } from "../Constants/Categories";
 import { IdPrefixes } from "../Constants/IdPrefixes";
 import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";

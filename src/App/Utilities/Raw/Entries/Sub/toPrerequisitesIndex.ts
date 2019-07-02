@@ -2,7 +2,7 @@ import { Either } from "../../../../../Data/Either";
 import { append, empty, List, map, notNullStr } from "../../../../../Data/List";
 import { ensure, fromMaybe, Maybe } from "../../../../../Data/Maybe";
 import { fromList } from "../../../../../Data/OrderedMap";
-import { Pair } from "../../../../../Data/Pair";
+import { Pair } from "../../../../../Data/Tuple";
 import { Advantage } from "../../../../Models/Wiki/Advantage";
 import { toNatural } from "../../../NumberUtils";
 import { Expect } from "../../showExpected";
