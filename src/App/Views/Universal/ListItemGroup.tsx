@@ -1,4 +1,4 @@
-import * as classNames from "classnames";
+import classNames from "classnames";
 import * as React from "react";
 import { isList, List, subscript } from "../../../Data/List";
 import { fromMaybeR, isJust, Just, Maybe, normalize, Nothing } from "../../../Data/Maybe";

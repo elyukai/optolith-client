@@ -1,5 +1,5 @@
 // import { TextareaAutosize } from 'react-textarea-autosize'
-import * as classNames from "classnames";
+import classNames from "classnames";
 import * as React from "react";
 import { findDOMNode } from "react-dom";
 import { fmapF } from "../../../Data/Functor";

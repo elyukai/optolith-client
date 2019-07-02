@@ -1,6 +1,6 @@
 import * as React from "react";
-import ReactMarkdown = require("react-markdown");
-import breaks = require("remark-breaks")
+import ReactMarkdown from "react-markdown";
+import Ph from "remark-breaks";
 
 export interface MarkdownProps {
   className?: string
@@ -40,7 +40,7 @@ export function Markdown (props: MarkdownProps) {
         link,
         linkReference: link,
       }}
-      plugins={[breaks]}
+      plugins={[Ph]}
       disallowedTypes={oneLine ? ["paragraph"] : undefined}
       />
   )

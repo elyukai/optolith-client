@@ -1,4 +1,4 @@
-import * as classNames from "classnames";
+import classNames from "classnames";
 import * as React from "react";
 import { fmap } from "../../../../Data/Functor";
 import { imap, List, toArray } from "../../../../Data/List";

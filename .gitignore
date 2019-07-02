@@ -7,6 +7,7 @@ npm-debug.log*
 .rpt2_cache
 .esm-cache
 app/**/*.js
+!app/index.js
 /installer/
 electron-builder.env
 app/Database/**/*.xlsx

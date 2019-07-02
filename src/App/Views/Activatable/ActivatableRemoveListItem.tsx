@@ -1,4 +1,4 @@
-import classNames = require("classnames")
+import classNames from "classnames";
 import * as React from "react";
 import { isString } from "util";
 import { notEquals } from "../../../Data/Eq";
