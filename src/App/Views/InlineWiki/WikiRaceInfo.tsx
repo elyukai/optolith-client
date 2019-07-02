@@ -130,7 +130,7 @@ export function WikiRaceInfo (props: WikiRaceInfoProps) {
                       )
 
                     return <li key={RVA.id (e)}>
-                      <span>{RVA.name (e)}</span>
+                      <span>{RVA.name (e)}: </span>
                       <span>{commonCultures}</span>
                     </li>
                   }),

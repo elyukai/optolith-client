@@ -1,17 +1,19 @@
 import { equals } from "../../Data/Eq";
 import { ident } from "../../Data/Function";
 import { fmapF } from "../../Data/Functor";
-import { any, filter, isInfixOf, List } from "../../Data/List";
+import { any, filter, isInfixOf, List, lower } from "../../Data/List";
 import { guard, imapMaybe, Just, Maybe, maybe } from "../../Data/Maybe";
 import { elems } from "../../Data/OrderedMap";
 import { Record } from "../../Data/Record";
 import { uncurryN, uncurryN3 } from "../../Data/Tuple/Curry";
 import { CultureCombinedA_ } from "../Models/View/CultureCombined";
 import { ProfessionCombined, ProfessionCombinedA_ } from "../Models/View/ProfessionCombined";
+import { ProfessionVariantCombined } from "../Models/View/ProfessionVariantCombined";
 import { RaceCombinedA_ } from "../Models/View/RaceCombined";
 import { CombatTechnique } from "../Models/Wiki/CombatTechnique";
 import { ItemTemplate } from "../Models/Wiki/ItemTemplate";
 import { LiturgicalChant } from "../Models/Wiki/LiturgicalChant";
+import { ProfessionVariant } from "../Models/Wiki/ProfessionVariant";
 import { Skill } from "../Models/Wiki/Skill";
 import { SpecialAbility } from "../Models/Wiki/SpecialAbility";
 import { Spell } from "../Models/Wiki/Spell";
@@ -26,7 +28,10 @@ import { getAllCultures, getAllProfessions, getAllRaces } from "./rcpSelectors";
 import { getWikiProfessionsCombinedSortOptions } from "./sortOptionsSelectors";
 import { getLocaleAsProp, getWikiAdvantages, getWikiBlessings, getWikiCantrips, getWikiCombatTechniques, getWikiCombatTechniquesGroup, getWikiDisadvantages, getWikiFilterText, getWikiItemTemplates, getWikiItemTemplatesGroup, getWikiLiturgicalChants, getWikiLiturgicalChantsGroup, getWikiProfessionsGroup, getWikiSkills, getWikiSkillsGroup, getWikiSpecialAbilities, getWikiSpecialAbilitiesGroup, getWikiSpells, getWikiSpellsGroup } from "./stateSelectors";
 
+const PCA = ProfessionCombined.A
 const PCA_ = ProfessionCombinedA_
+const PVA = ProfessionVariant.A
+const PVCA = ProfessionVariantCombined.A
 
 export const getRacesSortedByName = createMaybeSelector (
   getLocaleAsProp,
@@ -71,12 +76,12 @@ const isProfessionIncludedInFilter =
            x,
            PCA_.name,
            n => NameBySex.is (n)
-             ? List (
-                 NameBySex.A.f (n),
-                 NameBySex.A.m (n)
-               )
-             : List (n),
-           any (isInfixOf (filter_text))
+                  ? List (
+                      lower (NameBySex.A.f (n)),
+                      lower (NameBySex.A.m (n))
+                    )
+                  : List (lower (n)),
+           any (isInfixOf (lower (filter_text)))
          )
       || pipe_ (
            x,
@@ -84,11 +89,27 @@ const isProfessionIncludedInFilter =
            maybe (List<string> ())
                  (n => NameBySex.is (n)
                          ? List (
-                             NameBySex.A.f (n),
-                             NameBySex.A.m (n)
+                             lower (NameBySex.A.f (n)),
+                             lower (NameBySex.A.m (n))
                            )
-                         : List (n)),
-           any (isInfixOf (filter_text))
+                         : List (lower (n))),
+           any (isInfixOf (lower (filter_text)))
+         )
+      || pipe_ (
+           x,
+           PCA.mappedVariants,
+           any (pipe (
+             PVCA.wikiEntry,
+             PVA.name,
+             ident,
+             n => NameBySex.is (n)
+                    ? List (
+                        lower (NameBySex.A.f (n)),
+                        lower (NameBySex.A.m (n))
+                      )
+                    : List (lower (n)),
+             any (isInfixOf (lower (filter_text)))
+           ))
          )
     )
 

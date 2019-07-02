@@ -3,7 +3,6 @@ import { fmap } from "../../../Data/Functor";
 import { elem, elemF, List, subscriptF } from "../../../Data/List";
 import { all, alt, bind, catMaybes, ensure, fromJust, imapMaybe, isJust, Just, liftM2, Maybe, maybe, or } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
-import { traceShow } from "../../../Debug/Trace";
 import { InputTextEvent } from "../../Models/Hero/heroTypeHelpers";
 import { PersonalData } from "../../Models/Hero/PersonalData";
 import { Culture } from "../../Models/Wiki/Culture";
@@ -179,9 +178,6 @@ export function OverviewPersonalData (props: OverviewPersonalDataProps) {
   const age = PersonalData.A.age (profile)
   const size = PersonalData.A.size (profile)
   const weight = PersonalData.A.weight (profile)
-
-  traceShow ("sizeCalcStr = ") (sizeCalcStr)
-  traceShow ("weightCalcStr = ") (weightCalcStr)
 
   return (
     <div className="personal-data">

@@ -5,7 +5,6 @@ import { elemF, find, head, intercalate, List, map, notNull, subscript } from ".
 import { bindF, ensure, fromMaybe, mapMaybe, maybe, Maybe } from "../../../Data/Maybe";
 import { lookupF, OrderedMap } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
-import { traceShow } from "../../../Debug/Trace";
 import { CultureCombined, CultureCombinedA_ } from "../../Models/View/CultureCombined";
 import { IncreasableForView } from "../../Models/View/IncreasableForView";
 import { Book } from "../../Models/Wiki/Book";
@@ -125,8 +124,6 @@ export function WikiCultureInfo (props: WikiCultureInfoProps) {
               intercalate (", ")
             ))
     )
-
-  traceShow ("culture = ") (x)
 
   return (
     <WikiBoxTemplate className="culture" title={CCA_.name (x)}>

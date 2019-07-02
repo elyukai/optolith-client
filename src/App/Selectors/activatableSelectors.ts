@@ -1,8 +1,9 @@
 import { flip, ident } from "../../Data/Function";
 import { fmap, fmapF } from "../../Data/Functor";
-import { consF, elem, elemF, filter, filterMulti, foldr, intercalate, List, map, notElemF } from "../../Data/List";
+import { consF, elem, filter, filterMulti, foldr, intercalate, List, map, notElemF } from "../../Data/List";
 import { bindF, fromMaybe, Just, liftM2, liftM3, listToMaybe, mapMaybe, Maybe, Nothing } from "../../Data/Maybe";
 import { insert, lookup, OrderedMap } from "../../Data/OrderedMap";
+import { member, OrderedSet } from "../../Data/OrderedSet";
 import { uncurryN } from "../../Data/Pair";
 import { Record } from "../../Data/Record";
 import { uncurryN3 } from "../../Data/Tuple/Curry";
@@ -35,6 +36,7 @@ import { compareLocale } from "../Utilities/I18n";
 import { prefixId, prefixSA } from "../Utilities/IDUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
 import { mapCurrentHero, mapGetToMaybeSlice, mapGetToSlice } from "../Utilities/SelectorsUtils";
+import { blessedSpecialAbilityGroups, combatSpecialAbilityGroups, generalSpecialAbilityGroups, magicalSpecialAbilityGroups } from "../Utilities/sheetUtils";
 import { comparingR, sortStrings } from "../Utilities/sortBy";
 import { misStringM } from "../Utilities/typeCheckUtils";
 import { getBlessedTraditionFromWikiState } from "./liturgicalChantsSelectors";
@@ -232,7 +234,7 @@ export const getGeneralSpecialAbilitiesForSheet = createMaybeSelector (
                     pipe (
                       ActiveActivatable.A.wikiEntry,
                       SpecialAbility.AL.gr,
-                      elemF (List (1, 2, 22, 30))
+                      flip (member) (generalSpecialAbilityGroups)
                     ),
                     pipe (
                       ActiveActivatable.A.wikiEntry,
@@ -273,26 +275,26 @@ export const getGeneralSpecialAbilitiesForSheet = createMaybeSelector (
 )
 
 const getSpecialAbilitiesByGroups =
-  (grs: List<number>) =>
+  (grs: OrderedSet<number>) =>
     fmap (filter (pipe (
       ActiveActivatable.A.wikiEntry,
       SpecialAbility.AL.gr,
-      elemF (grs)
+      flip (member) (grs)
     ))) as ident<Maybe<List<Record<ActiveActivatable<SpecialAbility>>>>>
 
 export const getCombatSpecialAbilitiesForSheet = createMaybeSelector (
   getSpecialAbilitiesForSheet,
-  getSpecialAbilitiesByGroups (List (3, 9, 10, 11, 12, 21))
+  getSpecialAbilitiesByGroups (combatSpecialAbilityGroups)
 )
 
 export const getMagicalSpecialAbilitiesForSheet = createMaybeSelector (
   getSpecialAbilitiesForSheet,
-  getSpecialAbilitiesByGroups (List (4, 5, 6, 13, 14, 15, 16, 17, 18, 19, 20, 28))
+  getSpecialAbilitiesByGroups (magicalSpecialAbilityGroups)
 )
 
 export const getBlessedSpecialAbilitiesForSheet = createMaybeSelector (
   getSpecialAbilitiesForSheet,
-  getSpecialAbilitiesByGroups (List (7, 8, 23, 24, 25, 26, 27, 29))
+  getSpecialAbilitiesByGroups (blessedSpecialAbilityGroups)
 )
 
 export const getFatePointsModifier = createMaybeSelector (

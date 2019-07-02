@@ -3,13 +3,14 @@ import { fmap, fmapF } from "../../Data/Functor";
 import { cons, consF, elem, List, map, maximum } from "../../Data/List";
 import { fromJust, isJust, Just, liftM2, Maybe, Nothing, or } from "../../Data/Maybe";
 import { findWithDefault, foldrWithKey, lookup } from "../../Data/OrderedMap";
-import { uncurryN, uncurryN3 } from "../../Data/Pair";
+import { uncurryN } from "../../Data/Pair";
 import { Record } from "../../Data/Record";
+import { uncurryN4 } from "../../Data/Tuple/Curry";
 import { IdPrefixes } from "../Constants/IdPrefixes";
 import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
 import { createSkillDependentWithValue6, SkillDependent } from "../Models/ActiveEntries/SkillDependent";
 import { HeroModel, HeroModelRecord } from "../Models/Hero/HeroModel";
-import { CombatTechniqueWithAttackParryBase } from "../Models/View/CombatTechniqueWithAttackParryBase";
+import { CombatTechniqueWithAttackParryBase, CombatTechniqueWithAttackParryBaseA_ } from "../Models/View/CombatTechniqueWithAttackParryBase";
 import { CombatTechniqueWithRequirements } from "../Models/View/CombatTechniqueWithRequirements";
 import { CombatTechnique } from "../Models/Wiki/CombatTechnique";
 import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel";
@@ -19,15 +20,17 @@ import { getActiveSelections } from "../Utilities/Activatable/selectionUtils";
 import { createMaybeSelector } from "../Utilities/createMaybeSelector";
 import { flattenDependencies } from "../Utilities/Dependencies/flattenDependencies";
 import { filterAndSortRecordsBy } from "../Utilities/filterAndSortBy";
+import { compareLocale } from "../Utilities/I18n";
 import { prefixAdv, prefixId, prefixSA } from "../Utilities/IDUtils";
 import { add, divideBy, gt, max, subtractBy } from "../Utilities/mathUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
 import { filterByAvailabilityAndPred } from "../Utilities/RulesUtils";
+import { comparingR, sortRecordsBy } from "../Utilities/sortBy";
 import { getMaxAttributeValueByID } from "./attributeSelectors";
 import { getStartEl } from "./elSelectors";
 import { getRuleBooksEnabled } from "./rulesSelectors";
 import { getCombatTechniquesWithRequirementsSortOptions } from "./sortOptionsSelectors";
-import { getAttributes, getCombatTechniques, getCombatTechniquesFilterText, getCurrentHeroPresent, getWiki, getWikiCombatTechniques } from "./stateSelectors";
+import { getAttributes, getCombatTechniques, getCombatTechniquesFilterText, getCurrentHeroPresent, getLocaleAsProp, getWiki, getWikiCombatTechniques } from "./stateSelectors";
 
 const CTA = CombatTechnique.A
 const SDA = SkillDependent.A
@@ -76,13 +79,17 @@ const getParryBase =
   }
 
 export const getCombatTechniquesForSheet = createMaybeSelector (
+  getLocaleAsProp,
   getWikiCombatTechniques,
   getAttributes,
   getCombatTechniques,
-  uncurryN3 (wiki_combat_techniques =>
+  uncurryN4 (l10n =>
+             wiki_combat_techniques =>
              attributes =>
                fmap (combatTechniques =>
-                 foldrWithKey ((id: string) => (wiki_entry: Record<CombatTechnique>) => {
+                 pipe_ (
+                   wiki_combat_techniques,
+                   foldrWithKey ((id: string) => (wiki_entry: Record<CombatTechnique>) => {
                                 const hero_entry =
                                   findWithDefault (createSkillDependentWithValue6 (id))
                                                   (id)
@@ -95,8 +102,10 @@ export const getCombatTechniquesForSheet = createMaybeSelector (
                                   wikiEntry: wiki_entry,
                                 }))
                               })
-                              (List.empty)
-                              (wiki_combat_techniques)))
+                              (List.empty),
+                   sortRecordsBy ([comparingR (CombatTechniqueWithAttackParryBaseA_.name)
+                                              (compareLocale (l10n))])
+                 )))
 )
 
 const getMaximum =

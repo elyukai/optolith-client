@@ -7,7 +7,6 @@ import { alt, bind, bindF, ensure, fromMaybe, fromMaybe_, imapMaybe, Just, liftM
 import { elems, lookup, lookupF, OrderedMap } from "../../Data/OrderedMap";
 import { uncurryN, uncurryN3, uncurryN4, uncurryN8 } from "../../Data/Pair";
 import { Record } from "../../Data/Record";
-import { traceShow } from "../../Debug/Trace";
 import { Categories } from "../Constants/Categories";
 import { ActiveObjectWithId } from "../Models/ActiveEntries/ActiveObjectWithId";
 import { Sex } from "../Models/Hero/heroTypeHelpers";
@@ -431,7 +430,6 @@ const mapProfessionSpecialAbility =
         tier: ProfessionRequireActivatable.A.tier (e),
       }),
       getNameCostForWiki (l10n) (wiki),
-      traceShow ("getNameCostForWiki"),
       fmap (pipe (
         convertPerTierCostToFinalCost (false) (l10n),
         nameAndCost =>

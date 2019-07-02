@@ -346,6 +346,11 @@ test ('reverse', () => {
   expect (original === result) .toBeFalsy()
 })
 
+test ('intersperse', () => {
+  expect (List.intersperse (0) (List (3, 2, 1)))
+    .toEqual (List (3, 0, 2, 0, 1))
+})
+
 test ('intercalate', () => {
   expect (List.intercalate (', ') (List (3, 2, 1)))
     .toEqual ('3, 2, 1')

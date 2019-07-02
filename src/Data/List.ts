@@ -7,7 +7,7 @@
  */
 
 import { add, inc, max, min, multiply } from "../App/Utilities/mathUtils";
-import { pipe } from "../App/Utilities/pipe";
+import { pipe, pipe_ } from "../App/Utilities/pipe";
 import { not } from "./Bool";
 import { equals } from "./Eq";
 import { ident, thrush } from "./Function";
@@ -702,6 +702,33 @@ export const map =
 export const reverse =
   <A> (xs: List<A>): List<A> =>
     foldl<A, List<A>> (cons) (empty) (xs)
+
+/**
+ * `intersperse :: a -> [a] -> [a]`
+ *
+ * The intersperse function takes an element and a list and 'intersperses' that
+ * element between the elements of the list. For example,
+ *
+ * ```haskell
+ * intersperse ',' "abcde" == "a,b,c,d,e"
+ * ```
+ */
+export const intersperse =
+  <A> (x: A) => (xs: List<A>): List<A> =>
+    isNil (xs)
+    ? Nil
+    : isNil (xs .xs)
+    ? xs
+    : cons (intersperseIterator (x) (xs .xs)) (xs .x)
+
+const intersperseIterator =
+  <A> (x: A) => (xs: List<A>): List<A> =>
+    isNil (xs)
+    ? Nil
+    : pipe_ (intersperseIterator (x) (xs .xs), consF (xs .x), consF (x))
+
+List.intersperse = intersperse
+
 
 /**
  * `intercalate :: [a] -> [[a]] -> [a]`
@@ -2139,11 +2166,11 @@ const lengthAtMostIter =
     if (isNil (xs)) {
       return true;
     }
-    else if (max_len > len + 1) {
+    else if (max_len < len + 1) {
       return false
     }
     else {
-      return lengthAtLeastIter (max_len) (len + 1) (xs .xs)
+      return lengthAtMostIter (max_len) (len + 1) (xs .xs)
     }
   }
 
