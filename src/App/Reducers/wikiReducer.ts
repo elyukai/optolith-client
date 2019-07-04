@@ -1,5 +1,5 @@
 import { cnst, ident } from "../../Data/Function";
-import { snd } from "../../Data/Pair";
+import { snd } from "../../Data/Tuple";
 import { ReceiveInitialDataAction } from "../Actions/IOActions";
 import { ActionTypes } from "../Constants/ActionTypes";
 import { WikiModelRecord } from "../Models/Wiki/WikiModel";

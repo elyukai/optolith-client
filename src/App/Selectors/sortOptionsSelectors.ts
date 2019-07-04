@@ -172,6 +172,25 @@ export const getProfessionsCombinedSortOptions = createMaybeSelector (
       (msex)
 )
 
+const foldMaleProfessionName =
+  pipe (Profession.AL.name, x => isString (x) ? x : NameBySex.A.m (x))
+
+const foldMaleProfessionSubName =
+  pipe (Profession.AL.subname, maybe ("") (x => isString (x) ? x : NameBySex.A.m (x)))
+
+export const getWikiProfessionsCombinedSortOptions = createMaybeSelector (
+  getLocaleAsProp,
+  (l10n): SortOptions<ProfessionCombined> =>
+    [
+      comparingR (pipe (ProfessionCombined.A.wikiEntry, foldMaleProfessionName))
+                 (compareLocale (l10n)),
+      comparingR (pipe (ProfessionCombined.A.wikiEntry, foldMaleProfessionSubName))
+                 (compareLocale (l10n)),
+      comparingR (getProfessionCombinedSourceKey)
+                 (compareLocale (l10n)),
+    ]
+)
+
 export const getSkillsCombinedSortOptions = createMaybeSelector (
   getLocaleAsProp,
   uiSettingsSelectors.getSkillsSortOrder,

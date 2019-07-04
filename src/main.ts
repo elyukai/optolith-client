@@ -2,6 +2,8 @@ import { app, BrowserWindow, ipcMain } from "electron";
 import * as log from "electron-log";
 // tslint:disable-next-line:no-implicit-dependencies
 import { autoUpdater, CancellationToken, UpdateInfo } from "electron-updater";
+// tslint:disable-next-line:ordered-imports
+import windowStateKeeper from "electron-window-state";
 import * as path from "path";
 import { prerelease } from "semver";
 import * as url from "url";
@@ -11,13 +13,10 @@ import { fromLeft_, isLeft } from "./Data/Either";
 import { fmap } from "./Data/Functor";
 import { Unit } from "./Data/Unit";
 import { existsFile, IO, join, liftM2, runIO, thenF } from "./System/IO";
-// tslint:disable-next-line:ordered-imports
-import windowStateKeeper = require("electron-window-state")
 
 let mainWindow: Electron.BrowserWindow | null | undefined
 
 app.setAppUserModelId ("lukasobermann.optolith")
-app.commandLine.appendSwitch ("flags", "--experimental-modules")
 
 /**
  * Path to directory where all of the cached and saved files are located.
@@ -40,8 +39,8 @@ const copyFileFromToFolder =
   (originFolder: string) =>
   (destFolder: string) =>
   (fileName: string) => {
-    const originPath = path.join (originFolder, `${fileName}`)
-    const destPath = path.join (destFolder, `${fileName}`)
+    const originPath = path.join (originFolder, fileName)
+    const destPath = path.join (destFolder, fileName)
 
     return join (liftM2 ((origin_exists: boolean) => (dest_exists: boolean) =>
                           !dest_exists && origin_exists
@@ -197,7 +196,8 @@ const copyAllFiles =
 function main () {
   if (prerelease (require ("../package.json") .version) !== null) {
     pipe_ (
-      copyAllFiles (copyFileFromToFolder ("Optolyth") ("Optolith")),
+      copyAllFiles (copyFileFromToFolder (path.join (user_data_path, "..", "Optolyth"))
+                                         (path.join (user_data_path, "..", "Optolith"))),
       thenF (copyAllFiles (copyFileToCurrent ("Optolith"))),
       fmap (openMainWindow),
       runIO

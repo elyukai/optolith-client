@@ -17,14 +17,18 @@ html, body, #bodywrapper, #body {
 
 .background-image {
 	position: absolute;
-	width: 100%;
-	height: 100%;
+	width: 120vmax;
+	height: 120vmax;
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	align-self: center;
+	left: -10vmax;
 
 	> img {
 		opacity: .15;
+		width: 100vmax;
+		height: 100vmax;
 	}
 }
 

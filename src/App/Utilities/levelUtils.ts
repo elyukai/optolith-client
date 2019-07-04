@@ -1,19 +1,19 @@
 import { unfoldr } from "../../Data/List";
 import { Just, Nothing } from "../../Data/Maybe";
-import { Pair } from "../../Data/Pair";
 import { Record } from "../../Data/Record";
+import { Pair } from "../../Data/Tuple";
 import { DropdownOption } from "../Views/Universal/Dropdown";
 import { toRoman } from "./NumberUtils";
 
 const getElements =
   (max: number) =>
-    unfoldr<Record<DropdownOption>, number>
+    unfoldr<Record<DropdownOption<number>>, number>
       (current => current > max
         ? Nothing
         : current === 0
         ? Just (
           Pair
-            (DropdownOption ({ name: "0" }))
+            (DropdownOption<number> ({ name: "0" }))
             (current + 1)
         )
         : Just (

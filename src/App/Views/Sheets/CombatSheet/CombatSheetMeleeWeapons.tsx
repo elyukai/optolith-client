@@ -1,10 +1,10 @@
 import * as React from "react";
 import { Textfit } from "react-textfit";
 import { fmap, fmapF } from "../../../../Data/Functor";
-import { flength, intercalate, isList, List, map, replicateR, subscript, toArray, zip } from "../../../../Data/List";
+import { flength, intercalate, List, map, replicateR, subscript, subscriptF, toArray } from "../../../../Data/List";
 import { bindF, fromMaybeR, Maybe } from "../../../../Data/Maybe";
-import { fst, snd } from "../../../../Data/Pair";
 import { Record } from "../../../../Data/Record";
+import { bimap, fst, isTuple, snd } from "../../../../Data/Tuple";
 import { MeleeWeapon } from "../../../Models/View/MeleeWeapon";
 import { L10nRecord } from "../../../Models/Wiki/L10n";
 import { ndash } from "../../../Utilities/Chars";
@@ -59,6 +59,9 @@ export function CombatSheetMeleeWeapons (props: CombatSheetMeleeWeaponsProps) {
               map (e => {
                 const primaryBonus = MWA.primaryBonus (e)
 
+                const getPrimaryAtIndex =
+                  (i: number) => pipe (MWA.primary, subscriptF (i), renderMaybe)
+
                 return (
                   <tr key={MWA.id (e)}>
                     <td className="name">
@@ -66,12 +69,12 @@ export function CombatSheetMeleeWeapons (props: CombatSheetMeleeWeaponsProps) {
                     </td>
                     <td className="combat-technique">{MWA.combatTechnique (e)}</td>
                     <td className="damage-bonus">
-                      {isList (primaryBonus)
+                      {isTuple (primaryBonus)
                         ? pipe_ (
                             primaryBonus,
-                            zip (MWA.primary (e)),
-                            map (p => `${fst (p)} ${snd (p)}`),
-                            intercalate ("/")
+                            bimap (first => `${getPrimaryAtIndex (0) (e)} ${first}`)
+                                  (second => `${getPrimaryAtIndex (1) (e)} ${second}`),
+                            p => `${fst (p)}/${snd (p)}`
                           )
                         : `${intercalate ("/") (MWA.primary (e))} ${primaryBonus}`}
                     </td>
@@ -123,7 +126,7 @@ export function CombatSheetMeleeWeapons (props: CombatSheetMeleeWeaponsProps) {
             )),
             fromMaybeR (null)
           )}
-          {replicateR (4 - Maybe.sum (fmapF (mmelee_weapons) (flength)))
+          {replicateR (3 - Maybe.sum (fmapF (mmelee_weapons) (flength)))
                       (i => (
                         <tr key={`undefined-${i}`}>
                           <td className="name"></td>

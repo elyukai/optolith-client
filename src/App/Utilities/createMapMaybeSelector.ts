@@ -1,12 +1,13 @@
 import { ParametricSelector, Selector } from "reselect";
 import { cnst } from "../../Data/Function";
+import { notNullStrUndef } from "../../Data/List";
 import { fromJust, INTERNAL_shallowEquals, isMaybe, isNothing, Just, Maybe, Nothing, Some } from "../../Data/Maybe";
 import { fromMap, lookup, OrderedMap, toMap } from "../../Data/OrderedMap";
 
 /**
  * ```haskell
  * createMapSelector :: ((s, p) -> Map String v)
- *                   -> (...(String -> (s, p) -> ...a))
+ *                   -> (...(String -> (s, p) -> ...(Just a)))
  *                   -> (...((s, p) -> ...b))
  *                   -> (...((v, p) -> ...c))
  *                   -> (...a -> ...b -> ...c -> r)
@@ -25,8 +26,8 @@ import { fromMap, lookup, OrderedMap, toMap } from "../../Data/OrderedMap";
  * takes all selector results and produces a value that is returned and also
  * cached for the current `key`.
  */
-export const createMapSelectorDebug =
-  (debug: boolean) =>
+export const createMapMaybeSelectorDebug =
+  (debug_origin?: string) =>
   <S, P1, V extends Some>
   (mapSelector: PSelector<S, P1, OrderedMap<string, V>>) =>
   <K extends PSelectorWithKey<S, any, any>[]>
@@ -36,10 +37,16 @@ export const createMapSelectorDebug =
   <M extends PSelector<V, any, any>[]>
   (...valueSelectors: M) =>
   <R extends Some, P extends CombineProps<P1, K, G, M> = CombineProps<P1, K, G, M>>
-  (fold: Callback<S, V, K, G, M, R>): CreatedParametricSelector<S, P, V, R> => {
+  (fold: Callback<S, V, K, G, M, R>): CreatedParametricSelector<S, P, R> => {
+    const debug = notNullStrUndef (debug_origin)
+
+    if (debug) {
+      console.log (`createMapMaybeSelector: "${debug_origin}"`)
+    }
+
     let prevState: S | undefined
 
-    let prevMap: OrderedMap<string, V> | undefined
+    // let prevMap: OrderedMap<string, V> | undefined
 
     const prevValues: Map<string, V> = new Map ()
 
@@ -58,7 +65,7 @@ export const createMapSelectorDebug =
 
       if (state === prevState && mres !== undefined) {
         if (debug) {
-          console.log ("createMapSelector: equal state, no recalc")
+          console.log ("createMapMaybeSelector: equal state, no recalc")
         }
 
         return mres
@@ -72,15 +79,13 @@ export const createMapSelectorDebug =
 
       // const key_str = fromJust (mkey_str)
 
-      prevState = state
-
       const map = mapSelector (state, props)
 
       const mvalue = lookup (key_str) (map)
 
       if (isNothing (mvalue)) {
         if (debug) {
-          console.log ("createMapSelector: no value available")
+          console.log ("createMapMaybeSelector: no value available")
         }
 
         return Nothing
@@ -88,9 +93,17 @@ export const createMapSelectorDebug =
 
       const value = fromJust (mvalue)
 
-      const newGlobalValuesWithKey =
+      const newGlobalValuesWithKeyMaybe =
         globalSelectorsWithKey .map (s => s (key_str) (state, props)) as
           MappedReturnType<MappedReturnType<K>>
+
+      if (newGlobalValuesWithKeyMaybe .some (isNothing)) {
+        return Nothing
+      }
+
+      const newGlobalValuesWithKey =
+        newGlobalValuesWithKeyMaybe .map (fromJust) as
+          MappedMaybeI<MappedReturnType<MappedReturnType<K>>>
 
       const newGlobalValues =
         globalSelectors .map (s => s (state, props)) as MappedReturnType<G>
@@ -102,33 +115,52 @@ export const createMapSelectorDebug =
       if (
         mres !== undefined
         && (
-          map === prevMap && keyMap .has (key_str)
+          state === prevState && keyMap .has (key_str)
           || (
             maybeEquals (value, prevMapValue)
             && prevGlobalKeyAndGlobalValues !== undefined
-            && (newGlobalValuesWithKey as any[])
-              .every ((x, i) => x === prevGlobalKeyAndGlobalValues [0] [i])
+            && (newGlobalValuesWithKeyMaybe as any[])
+              .every ((x, i) => INTERNAL_shallowEquals (x) (prevGlobalKeyAndGlobalValues [0] [i]))
             && (newGlobalValues as any[])
               .every ((x, i) => x === prevGlobalKeyAndGlobalValues [1] [i])
           )
         )) {
         if (debug) {
-          console.log ("createMapSelector: equal substate, no recalc")
+          console.log (state === prevState && keyMap .has (key_str))
+
+          if (prevGlobalKeyAndGlobalValues !== undefined) {
+            console.log ((newGlobalValues as any[])
+            .every ((x, i) => x === prevGlobalKeyAndGlobalValues [1] [i]))
+          }
+
+          console.log (
+            "new filterText = ",
+            newGlobalValues [0]
+          )
+
+          console.log (
+            "prev filterText = ",
+            prevGlobalKeyAndGlobalValues !== undefined
+              ? prevGlobalKeyAndGlobalValues [1] [0]
+              : undefined
+          )
+
+          console.log ("createMapMaybeSelector: equal substate, no recalc")
         }
 
         return mres
       }
 
       if (debug) {
-        console.log ("createMapSelector: recalc")
+        console.log ("createMapMaybeSelector: recalc")
       }
 
       const newMapValueValues =
         valueSelectors .map (s => s (value, props)) as MappedReturnType<M>
 
-      prevMap = map
+      // prevMap = map
       prevValues .set (key_str, value)
-      keyMap .set (key_str, [newGlobalValuesWithKey, newGlobalValues, newMapValueValues])
+      keyMap .set (key_str, [newGlobalValuesWithKeyMaybe, newGlobalValues, newMapValueValues])
 
       res = fold (...newGlobalValuesWithKey as any)
                  (...newGlobalValues as any)
@@ -138,6 +170,8 @@ export const createMapSelectorDebug =
 
       resMap .set (key_str, res)
       justResMap .set (key_str, mres)
+
+      prevState = state
 
       return mres
     }
@@ -155,13 +189,13 @@ export const createMapSelectorDebug =
         resMap = toMap (m) as Map<string, R>
         resMap .forEach ((v, k) => justResMap .set (k, Just (v)))
       }
-    g.setBaseMap = (m: OrderedMap<string, V>) => { prevMap = m }
+    // g.setBaseMap = (m: OrderedMap<string, V>) => { prevMap = m }
     g.setState = (s: S) => { prevState = s }
 
     return g
   }
 
-export const createMapSelector = createMapSelectorDebug (false)
+export const createMapMaybeSelector = createMapMaybeSelectorDebug ()
 
 /**
  * ```haskell
@@ -184,7 +218,7 @@ export const createMapSelector = createMapSelectorDebug (false)
  * takes all selector results and produces a value that is returned and also
  * cached for the current `key`.
  */
-export const createMapSelectorS =
+export const createMapMaybeSelectorS =
   <S, V extends Some>
   (mapSelector: Selector<S, OrderedMap<string, V>>) =>
   <G extends Selector<S, any>[]>
@@ -192,12 +226,12 @@ export const createMapSelectorS =
   <M extends Selector<V, any>[]>
   (...valueSelectors: M) =>
   <R extends Some>
-  (fold: CallbackWithoutKeys<S, V, G, M, R>): CreatedSelector<S, V, R> =>
-    createMapSelector (mapSelector)
+  (fold: CallbackWithoutKeys<S, V, G, M, R>): CreatedSelector<S, R> =>
+    createMapMaybeSelector (mapSelector)
                       ()
                       (...globalSelectors)
                       (...valueSelectors)
-                      (cnst (fold)) as CreatedSelector<S, V, R>
+                      (cnst (fold)) as CreatedSelector<S, R>
 
 /**
  * ```haskell
@@ -220,7 +254,7 @@ export const createMapSelectorS =
  * takes all selector results and produces a value that is returned and also
  * cached for the current `key`.
  */
-export const createMapSelectorP =
+export const createMapMaybeSelectorSWithProps =
   <S, P1, V extends Some>
   (mapSelector: PSelector<S, P1, OrderedMap<string, V>>) =>
   <G extends PSelector<S, any, any>[]>
@@ -228,12 +262,12 @@ export const createMapSelectorP =
   <M extends PSelector<V, any, any>[]>
   (...valueSelectors: M) =>
   <R extends Some, P extends P1 & Props<G> & Props<M> = P1 & Props<G> & Props<M>>
-  (fold: CallbackWithoutKeys<S, V, G, M, R>): CreatedParametricSelector<S, P, V, R> =>
-    createMapSelector (mapSelector)
-                      ()
-                      (...globalSelectors)
-                      (...valueSelectors)
-                      (cnst (fold))
+  (fold: CallbackWithoutKeys<S, V, G, M, R>): CreatedParametricSelector<S, P, R> =>
+    createMapMaybeSelector (mapSelector)
+                           ()
+                           (...globalSelectors)
+                           (...valueSelectors)
+                           (cnst (fold))
 
 const maybeEquals =
   (x: any, y: any) =>
@@ -250,6 +284,9 @@ const maybeEquals =
 
 // @ts-ignore
 type MappedReturnType<A extends ((...args: any[]) => any)[]> = { [K in keyof A]: ReturnType<A[K]> }
+
+type MappedMaybeI<A extends Maybe<Some>[]> =
+  { [K in keyof A]: A[K] extends Maybe<infer AI> ? AI : never }
 
 type Props<S> = S extends ParametricSelector<any, infer I, any>[] ? I : never
 
@@ -269,7 +306,7 @@ type Callback
     M extends PSelector<V, any, any>[],
     R
   > =
-    (...globalValuesWithKey: MappedReturnType<MappedReturnType<K>>) =>
+    (...globalValuesWithKey: MappedMaybeI<MappedReturnType<MappedReturnType<K>>>) =>
     (...globalValues: MappedReturnType<G>) =>
     (...mapValueValues: MappedReturnType<M>) => R
 
@@ -284,26 +321,23 @@ type CallbackWithoutKeys
     (...globalValues: MappedReturnType<G>) =>
     (...mapValueValues: MappedReturnType<M>) => R
 
-interface Cache<S, V, R> {
+interface Cache<S, R> {
   getCacheAt (key_str: string): Maybe<R>
   setCacheAt (key_str: string): (x: R) => void
   getCache (): OrderedMap<string, R>
   setCache (m: OrderedMap<string, R>): void
-  setBaseMap (m: OrderedMap<string, V>): void
+  // setBaseMap (m: OrderedMap<string, V>): void
   setState (s: S): void
 }
 
-interface CreatedSelector<S, V, R> extends Cache<S, V, R> {
+interface CreatedSelector<S, R> extends Cache<S, R> {
   (key_str: string): (state: S) => Maybe<R>;
 }
 
-interface CreatedParametricSelector<S, P, V, R> extends Cache<S, V, R> {
+interface CreatedParametricSelector<S, P, R> extends Cache<S, R> {
   (key_str: string): (state: S, props: P) => Maybe<R>;
 }
 
 type PSelector<S, P, R> = ParametricSelector<S, P, R>
 
 export type PSelectorWithKey<S, P, R> = (key_str: string) => ParametricSelector<S, P, R>
-
-export const ignore3rd =
-  <A, B, C> (f: (a: A) => (b: B) => C) => (a: A) => (b: B) => (): C => f (a) (b)

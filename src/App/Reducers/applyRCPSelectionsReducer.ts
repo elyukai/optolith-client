@@ -9,7 +9,7 @@ import { insert, OrderedSet, toList, union } from "../../Data/OrderedSet";
 import { fromDefault, makeLenses, Record } from "../../Data/Record";
 import { SetSelectionsAction } from "../Actions/ProfessionActions";
 import { ActionTypes } from "../Constants/ActionTypes";
-import { ActivatableDependent, ActivatableDependentL } from "../Models/ActiveEntries/ActivatableDependent";
+import { ActivatableDependent, ActivatableDependentL, createPlainActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
 import { ActivatableSkillDependent, ActivatableSkillDependentL } from "../Models/ActiveEntries/ActivatableSkillDependent";
 import { ActiveObject } from "../Models/ActiveEntries/ActiveObject";
 import { SkillDependent, SkillDependentL } from "../Models/ActiveEntries/SkillDependent";
@@ -17,7 +17,7 @@ import { HeroModel, HeroModelL, HeroModelRecord } from "../Models/Hero/HeroModel
 import { Advantage } from "../Models/Wiki/Advantage";
 import { Culture } from "../Models/Wiki/Culture";
 import { ExperienceLevel } from "../Models/Wiki/ExperienceLevel";
-import { ProfessionRequireActivatable, reqToActive } from "../Models/Wiki/prerequisites/ActivatableRequirement";
+import { ProfessionRequireActivatable, ProfessionRequireActivatableL, reqToActive } from "../Models/Wiki/prerequisites/ActivatableRequirement";
 import { ProfessionRequireIncreasable } from "../Models/Wiki/prerequisites/IncreasableRequirement";
 import { Profession } from "../Models/Wiki/Profession";
 import { CombatTechniquesSelection } from "../Models/Wiki/professionSelections/CombatTechniquesSelection";
@@ -343,7 +343,18 @@ const concatSpecificModifications = (action: SetSelectionsAction) => {
                                maybe (ident as ident<OrderedMap<string, number>>)
                                      ((r: Record<Skill>) => addToSRs (value / SA.ic (r)) (id))
                                      (lookup (id) (WA.skills (P.wiki)))))
-                             (P.skills))
+                             (P.skills)),
+
+    // - Tradition (Guild Mage) unfamiliar spell
+    maybe (ident as ident<Record<ConcatenatedModifications>>)
+          ((spell_id: string) => over (CML.professionPrerequisites)
+                                      (map (x => ProfessionRequireActivatable.is (x)
+                                                 && PRAA.id (x) === prefixSA (70)
+                                                 ? set (ProfessionRequireActivatableL.sid)
+                                                       (Just (spell_id))
+                                                       (x)
+                                                 : x)))
+          (P.unfamiliarSpell)
   )
 }
 
@@ -437,7 +448,7 @@ const applyModifications =
       // - Scripts additions
       join (acc => over (composeL (CML.hero, HL.specialAbilities))
                         (alter (pipe (
-                                 fromMaybe (ActivatableDependent.default),
+                                 fromMaybe (createPlainActivatableDependent (prefixSA (27))),
                                  over (ActivatableDependentL.active)
                                       (append (pipe_ (
                                         acc,
@@ -452,7 +463,7 @@ const applyModifications =
       // - Languages additions
       join (acc => over (composeL (CML.hero, HL.specialAbilities))
                         (alter (pipe (
-                                 fromMaybe (ActivatableDependent.default),
+                                 fromMaybe (createPlainActivatableDependent (prefixSA (29))),
                                  over (ActivatableDependentL.active)
                                       (append (pipe_ (
                                         acc,

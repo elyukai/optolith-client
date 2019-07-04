@@ -3,7 +3,7 @@ import { fmap } from "../../Data/Functor";
 import { fnull, intercalate, List, subscript, unsnoc } from "../../Data/List";
 import { maybe, Maybe, normalize, sum } from "../../Data/Maybe";
 import { toOrdering } from "../../Data/Ord";
-import { fst, snd } from "../../Data/Pair";
+import { fst, snd } from "../../Data/Tuple";
 import { L10n, L10nRecord } from "../Models/Wiki/L10n";
 import { pipe } from "./pipe";
 import { isString } from "./typeCheckUtils";

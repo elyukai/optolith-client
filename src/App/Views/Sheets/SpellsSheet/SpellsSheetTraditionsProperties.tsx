@@ -1,15 +1,14 @@
 import * as React from "react";
-import { intercalate, List } from "../../../../Data/List";
 import { Maybe } from "../../../../Data/Maybe";
 import { L10nRecord } from "../../../Models/Wiki/L10n";
 import { translate } from "../../../Utilities/I18n";
-import { renderMaybe, renderMaybeWith } from "../../../Utilities/ReactUtils";
+import { renderMaybe } from "../../../Utilities/ReactUtils";
 
 export interface SpellsSheetTraditionsPropertiesProps {
   l10n: L10nRecord
   magicalPrimary: Maybe<string>
-  magicalTradition: Maybe<string>
-  properties: Maybe<List<string>>
+  magicalTradition: string
+  properties: Maybe<string>
 }
 
 export function SpellsSheetTraditionsProperties (props: SpellsSheetTraditionsPropertiesProps) {
@@ -28,14 +27,14 @@ export function SpellsSheetTraditionsProperties (props: SpellsSheetTraditionsPro
           {translate (l10n) ("property")}
         </span>
         <span className="value">
-          {renderMaybeWith (intercalate (", ")) (properties)}
+          {renderMaybe (properties)}
         </span>
       </div>
       <div className="tradition">
         <span className="label">
           {translate (l10n) ("tradition")}
         </span>
-        <span className="value">{renderMaybe (magicalTradition)}</span>
+        <span className="value">{magicalTradition}</span>
       </div>
     </div>
   )

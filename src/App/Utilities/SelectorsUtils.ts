@@ -12,7 +12,7 @@ import { createMaybeSelector } from "./createMaybeSelector";
 import { pipe } from "./pipe";
 
 export type MaybeSliceSelector<A> = (state: Record<AppState>) => Maybe<OrderedMap<string, A>>
-export type SliceSelector<A> = (state: Record<AppState>) => OrderedMap<string, A>
+export type SliceSelector<A, B extends any[]> = (...args: B) => OrderedMap<string, A>
 export type SlicePropsSelector<A, P> = (state: Record<AppState>, props: P) => OrderedMap<string, A>
 
 // type Args<A> = A extends (...args: infer B) => any ? B : never
@@ -35,7 +35,7 @@ export const mapGetToMaybeSlice =
  * if the map has no matching key.
  */
 export const mapGetToSlice =
-  <A> (sliceSelector: SliceSelector<A>) => (id: string) =>
+  <A, B extends any[]> (sliceSelector: SliceSelector<A, B>) => (id: string) =>
     pipe (sliceSelector, lookup (id))
 
 /**

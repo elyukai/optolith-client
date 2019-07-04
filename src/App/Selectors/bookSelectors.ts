@@ -1,7 +1,7 @@
 import { append, partition } from "../../Data/List";
 import { elems } from "../../Data/OrderedMap";
-import { uncurryN } from "../../Data/Pair";
 import { bimap, fst, snd } from "../../Data/Tuple";
+import { uncurryN } from "../../Data/Tuple/Curry";
 import { Book } from "../Models/Wiki/Book";
 import { createMaybeSelector } from "../Utilities/createMaybeSelector";
 import { compareLocale } from "../Utilities/I18n";

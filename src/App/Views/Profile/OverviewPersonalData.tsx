@@ -11,9 +11,9 @@ import { Race } from "../../Models/Wiki/Race";
 import { RaceVariant } from "../../Models/Wiki/RaceVariant";
 import { translate } from "../../Utilities/I18n";
 import { pipe, pipe_ } from "../../Utilities/pipe";
+import { renderMaybeWith } from "../../Utilities/ReactUtils";
 import { isEmptyOr, isFloat, isNaturalNumber } from "../../Utilities/RegexUtils";
 import { sortRecordsByName } from "../../Utilities/sortBy";
-import { misNumberM } from "../../Utilities/typeCheckUtils";
 import { Dropdown, DropdownOption } from "../Universal/Dropdown";
 import { IconButton } from "../Universal/IconButton";
 import { InputButtonGroup } from "../Universal/InputButtonGroup";
@@ -29,6 +29,8 @@ export interface OverviewPersonalDataOwnProps {
   raceVariant: Maybe<Record<RaceVariant>>
   socialstatusTags: List<string>
   isAlbino: Maybe<boolean>
+  sizeCalcStr: Maybe<string>
+  weightCalcStr: Maybe<string>
 }
 
 export interface OverviewPersonalDataDispatchProps {
@@ -56,9 +58,11 @@ export type OverviewPersonalDataProps =
   & OverviewPersonalDataOwnProps
 
 interface HairColorAndEyeColorOptions {
-  hairOptions: List<Record<DropdownOption>>
-  eyeOptions: List<Record<DropdownOption>>
+  hairOptions: List<Record<DropdownOption<number>>>
+  eyeOptions: List<Record<DropdownOption<number>>>
 }
+
+const wrapParenSpace = renderMaybeWith<string> (str => ` (${str})`)
 
 const getDropdownOption =
   (id: number) => fmap ((name: string) => DropdownOption ({ id: Just (id), name }))
@@ -106,25 +110,23 @@ const getHairColorAndEyeColorOptions =
         hairOptions: pipe_ (
           hair_color_tags,
           imapMaybe (index => (name: string) =>
-                      ensure (pipe (
-                               DropdownOption.A.id,
-                               id => or (liftM2 (elem as elem<number>)
-                                                (misNumberM (id))
-                                                (hairColors))
-                             ))
-                             (DropdownOption ({ id: Just (index + 1), name }))),
-          sortRecordsByName (L10n.A.id (l10n))
+                      ensure<Record<DropdownOption<number>>>
+                        (pipe (
+                          DropdownOption.A.id,
+                          id => or (liftM2 (elem as elem<number>) (id) (hairColors))
+                        ))
+                        (DropdownOption ({ id: Just (index + 1), name }))),
+          sortRecordsByName (l10n)
         ),
         eyeOptions: pipe_ (
           eye_color_tags,
           imapMaybe (index => (name: string) =>
-                      ensure (pipe (
-                               DropdownOption.A.id,
-                               id => or (liftM2 (elem as elem<number>)
-                                                (misNumberM (id))
-                                                (eyeColors))
-                             ))
-                             (DropdownOption ({ id: Just (index + 1), name }))),
+                      ensure<Record<DropdownOption<number>>>
+                        (pipe (
+                          DropdownOption.A.id,
+                          id => or (liftM2 (elem as elem<number>) (id) (eyeColors))
+                        ))
+                        (DropdownOption ({ id: Just (index + 1), name }))),
           sortRecordsByName (L10n.A.id (l10n))
         ),
       }
@@ -147,6 +149,8 @@ export function OverviewPersonalData (props: OverviewPersonalDataProps) {
     raceVariant,
     socialstatusTags,
     isAlbino,
+    sizeCalcStr,
+    weightCalcStr,
   } = props
 
   const hairAndEyeColorOptions = getHairColorAndEyeColorOptions (l10n)
@@ -157,16 +161,16 @@ export function OverviewPersonalData (props: OverviewPersonalDataProps) {
                                                                 (isAlbino)
 
   const socialOptions =
-    maybe (List<Record<DropdownOption>> ())
+    maybe (List<Record<DropdownOption<number>>> ())
           ((culture: Record<Culture>) =>
             imapMaybe (index => (name: string) =>
-                        ensure (pipe (
-                                 DropdownOption.A.id,
-                                 misNumberM,
-                                 fmap (elemF (Culture.A.socialStatus (culture))),
-                                 or
-                               ))
-                               (DropdownOption ({ id: Just (index + 1), name })))
+                        ensure<Record<DropdownOption<number>>>
+                          (pipe (
+                            DropdownOption.A.id,
+                            fmap (elemF (Culture.A.socialStatus (culture))),
+                            or
+                          ))
+                          (DropdownOption ({ id: Just (index + 1), name })))
                       (socialstatusTags)
           )
           (mculture)
@@ -227,7 +231,7 @@ export function OverviewPersonalData (props: OverviewPersonalDataProps) {
       </InputButtonGroup>
       <InputButtonGroup className="reroll">
         <TextField
-          label={translate (l10n) ("size")}
+          label={`${translate (l10n) ("size")}${wrapParenSpace (sizeCalcStr)}`}
           value={PersonalData.A.size (profile)}
           onChange={props.changeSize}
           valid={all (isEmptyOr (isFloat)) (size)}
@@ -236,7 +240,7 @@ export function OverviewPersonalData (props: OverviewPersonalDataProps) {
       </InputButtonGroup>
       <InputButtonGroup className="reroll">
         <TextField
-          label={translate (l10n) ("weight")}
+          label={`${translate (l10n) ("weight")}${wrapParenSpace (weightCalcStr)}`}
           value={PersonalData.A.weight (profile)}
           onChange={props.changeWeight}
           valid={all (isEmptyOr (isNaturalNumber)) (weight)}

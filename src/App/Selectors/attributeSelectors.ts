@@ -194,7 +194,7 @@ const getAttributeCombined =
   (id: string) =>
     fmapF (lookup (id) (wiki_attributes))
           (wiki_entry => AttributeCombined ({
-                           stateEntry: fromMaybe (AttributeDependent.default)
+                           stateEntry: fromMaybe (createPlainAttributeDependent (id))
                                                  (lookup (id) (hero_attributes)),
                            wikiEntry: wiki_entry,
                          }))
@@ -241,21 +241,21 @@ export const getPrimaryMagicalAttribute = createMaybeSelector (
   getMagicalTraditionsFromHero,
   getAttributes,
   getWikiAttributes,
-  (mtraditions, hero_attributes, wiki_attributes) =>
-    bind (mtraditions)
-         (List.foldr ((trad: Record<ActivatableDependent>) =>
-                       (mhighest: Maybe<Record<AttributeCombined>>) => {
-                         const mattr = getPrimaryMagicalAttributeByTrad (wiki_attributes)
-                                                                        (hero_attributes)
-                                                                        (trad)
+  (traditions, hero_attributes, wiki_attributes) =>
+    List.foldr ((trad: Record<ActivatableDependent>) =>
+                 (mhighest: Maybe<Record<AttributeCombined>>) => {
+                   const mattr = getPrimaryMagicalAttributeByTrad (wiki_attributes)
+                                                                  (hero_attributes)
+                                                                  (trad)
 
-                         const attrVal = mgetValueFromAttrCombined (mattr)
+                   const attrVal = mgetValueFromAttrCombined (mattr)
 
-                         return and (liftM2 (lt) (attrVal) (mgetValueFromAttrCombined (mhighest)))
-                           ? mattr
-                           : mhighest
-                       })
-                     (Nothing))
+                   return and (liftM2 (lt) (attrVal) (mgetValueFromAttrCombined (mhighest)))
+                     ? mattr
+                     : mhighest
+                 })
+               (Nothing)
+               (traditions)
 )
 
 export const getPrimaryMagicalAttributeForSheet = createMaybeSelector (

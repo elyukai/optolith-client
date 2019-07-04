@@ -96,7 +96,7 @@ export const getNameCostForWiki =
                naming,
                finalCost,
              }))
-           (getCost (false) (wiki) (HeroModel.default) (active))
+           (getCost (true) (wiki) (HeroModel.default) (active))
            (getName (l10n) (wiki) (active))
 
 export const getAllActiveByCategory =
@@ -123,12 +123,12 @@ export const getAllActiveByCategory =
                                 (wiki_entry: GenericWikiEntry) =>
                                 (hero_entry: Record<ActivatableDependent>) =>
                                 (validation: Record<ActivatableActivationValidation>) =>
-                                 ActiveActivatable ({
-                                  nameAndCost,
-                                  validation,
-                                  heroEntry: hero_entry,
-                                  wikiEntry: wiki_entry,
-                                 }))
+                                  ActiveActivatable ({
+                                   nameAndCost,
+                                   validation,
+                                   heroEntry: hero_entry,
+                                   wikiEntry: wiki_entry,
+                                  }))
                                (fmap (convertCost)
                                      (getNameCost (false) (l10n) (wiki) (hero) (active)))
                                (lookup (current_id) (wiki_slice) as Maybe<GenericWikiEntry>)

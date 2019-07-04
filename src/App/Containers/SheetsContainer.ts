@@ -22,7 +22,7 @@ import { getAvatar, getCurrentHeroName, getProfile, getPurse, getSex, getSpecial
 import { getSheetCheckAttributeValueVisibility } from "../Selectors/uisettingsSelectors";
 import { prefixSA } from "../Utilities/IDUtils";
 import { pipe } from "../Utilities/pipe";
-import { mapGetToMaybeSlice } from "../Utilities/SelectorsUtils";
+import { mapGetToMaybeSlice, mapGetToSlice } from "../Utilities/SelectorsUtils";
 import { Sheets, SheetsDispatchProps, SheetsOwnProps, SheetsStateProps } from "../Views/Sheets/Sheets";
 
 const mapStateToProps = (state: AppStateRecord, ownProps: SheetsOwnProps): SheetsStateProps => ({
@@ -60,25 +60,25 @@ const mapStateToProps = (state: AppStateRecord, ownProps: SheetsOwnProps): Sheet
   languagesWikiEntry: mapGetToMaybeSlice (pipe (getWikiSpecialAbilities, Just))
                                          (prefixSA (29))
                                          (state),
-  languagesStateEntry: mapGetToMaybeSlice (getSpecialAbilities)
-                                          (prefixSA (29))
-                                          (state),
+  languagesStateEntry: mapGetToSlice (getSpecialAbilities)
+                                     (prefixSA (29))
+                                     (state, ownProps),
   scriptsWikiEntry: mapGetToMaybeSlice (pipe (getWikiSpecialAbilities, Just))
                                        (prefixSA (27))
                                        (state),
-  scriptsStateEntry: mapGetToMaybeSlice (getSpecialAbilities)
-                                        (prefixSA (27))
-                                        (state),
+  scriptsStateEntry: mapGetToSlice (getSpecialAbilities)
+                                   (prefixSA (27))
+                                   (state, ownProps),
   cantrips: getCantripsForSheet (state, ownProps),
   magicalPrimary: getPrimaryMagicalAttributeForSheet (state, ownProps),
   magicalSpecialAbilities: getMagicalSpecialAbilitiesForSheet (state, ownProps),
-  magicalTradition: getMagicalTraditionForSheet (state),
-  properties: getPropertyKnowledgesForSheet (state),
+  magicalTradition: getMagicalTraditionForSheet (state, ownProps),
+  properties: getPropertyKnowledgesForSheet (state, ownProps),
   spells: getSpellsForSheet (state, ownProps),
-  aspects: getAspectKnowledgesForSheet (state),
+  aspects: getAspectKnowledgesForSheet (state, ownProps),
   blessedPrimary: getPrimaryBlessedAttributeForSheet (state, ownProps),
   blessedSpecialAbilities: getBlessedSpecialAbilitiesForSheet (state, ownProps),
-  blessedTradition: getBlessedTraditionForSheet (state),
+  blessedTradition: getBlessedTraditionForSheet (state, ownProps),
   blessings: getBlessingsForSheet (state, ownProps),
   liturgicalChants: getLiturgicalChantsForSheet (state, ownProps),
   conditions: getConditions (state, ownProps),

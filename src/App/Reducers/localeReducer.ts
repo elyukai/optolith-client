@@ -1,8 +1,8 @@
 import { cnst, ident } from "../../Data/Function";
 import { set } from "../../Data/Lens";
 import { bind, fromMaybe, isJust, Just, Maybe, Nothing } from "../../Data/Maybe";
-import { fst } from "../../Data/Pair";
 import { fromDefault, makeLenses, Record } from "../../Data/Record";
+import { fst } from "../../Data/Tuple";
 import { ReceiveInitialDataAction } from "../Actions/IOActions";
 import { SetLocaleAction } from "../Actions/LocaleActions";
 import { ActionTypes } from "../Constants/ActionTypes";

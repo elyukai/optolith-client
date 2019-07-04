@@ -16,9 +16,9 @@ const mapStateToProps =
   (state: AppStateRecord, ownProps: RulesOwnProps): RulesStateProps => ({
     sortedBooks: getSortedBooks (state, ownProps),
     isEnableLanguageSpecializationsDeactivatable:
-      isEnableLanguageSpecializationsDeactivatable (state),
+      isEnableLanguageSpecializationsDeactivatable (state, ownProps),
     hero_locale: getHeroLocale (state, ownProps),
-    mcurrent_guild_mage_spell: getGuildMageUnfamiliarSpellId (state),
+    mcurrent_guild_mage_spell: getGuildMageUnfamiliarSpellId (state, ownProps),
     all_spells_select_options: getAllSpellsForManualGuildMageSelect (state, ownProps),
   })
 

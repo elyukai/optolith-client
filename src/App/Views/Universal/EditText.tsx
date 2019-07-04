@@ -1,4 +1,4 @@
-import * as classNames from "classnames";
+import classNames from "classnames";
 import * as React from "react";
 import { fnullStr, notNullStr } from "../../../Data/List";
 import { fromMaybe, Maybe } from "../../../Data/Maybe";

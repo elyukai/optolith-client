@@ -25,7 +25,7 @@ import { LiturgicalChantsSheetSpecialAbilities } from "./LiturgicalChantsSheetSp
 import { LiturgicalChantsSheetTraditionsAspects } from "./LiturgicalChantsSheetTraditionsAspects";
 
 export interface LiturgicalChantsSheetProps {
-  aspects: Maybe<List<string>>
+  aspects: Maybe<string>
   attributes: List<Record<AttributeCombined>>
   blessedPrimary: Maybe<string>
   blessedSpecialAbilities: Maybe<List<Record<ActiveActivatable<SpecialAbility>>>>

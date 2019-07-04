@@ -61,21 +61,17 @@ export const rerollSize =
     pipe (
       bindF (sizeBase),
       altF (bindF (sizeBase) (raceVariant)),
-      fmap (
-        pipe (
-          add (
-            sum (
-              pipe (
-                     bindF (sizeRandom),
-                     altF (bindF (sizeRandom) (raceVariant)),
-                     fmap (foldr (pipe (rollDiceR, add)) (0))
-                   )
-                   (race)
-            )
-          ),
-          show
-        )
-      )
+      fmap (pipe (
+        pipe_ (
+          race,
+          bindF (sizeRandom),
+          altF (bindF (sizeRandom) (raceVariant)),
+          fmap (foldr (pipe (rollDiceR, add)) (0)),
+          sum,
+          add
+        ),
+        show
+      ))
     )
     (race)
 
@@ -116,26 +112,26 @@ interface RerolledWeight {
  */
 export const rerollWeight =
   (size: Maybe<string>) =>
-  (race: Maybe<Record<Race>>): RerolledWeight => {
+  (mrace: Maybe<Record<Race>>): RerolledWeight => {
     const formattedSize = fmap (multiplyString) (size)
 
     const rerolled_weight =
       fmap (pipe (
-             (justRace: Record<Race>) => {
-               const f = id (justRace) === "R_1"
+             (race: Record<Race>) => {
+               const f = id (race) === "R_1"
                  ? randomWeightRace (odd)
                  : randomWeightRace (lt (0))
 
                return foldr
                  ((die: Record<Die>) => add (rollDiceFold (f (sides (die)))
                                                           (amount (die))))
-                 (weightBase (justRace))
-                 (weightRandom (justRace))
+                 (-weightBase (race))
+                 (weightRandom (race))
              },
              add (sum (bindF (toInt) (formattedSize))),
              show
            ))
-           (race)
+           (mrace)
 
     return {
       weight: rerolled_weight,

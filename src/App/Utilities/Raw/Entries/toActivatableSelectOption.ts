@@ -1,6 +1,6 @@
 import { notNull, notNullStr } from "../../../../Data/List";
 import { Just, Nothing } from "../../../../Data/Maybe";
-import { Pair } from "../../../../Data/Pair";
+import { Pair } from "../../../../Data/Tuple";
 import { IdPrefixes } from "../../../Constants/IdPrefixes";
 import { SelectOption } from "../../../Models/Wiki/sub/SelectOption";
 import { prefixId } from "../../IDUtils";

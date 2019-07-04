@@ -38,6 +38,8 @@ export interface L10n {
   "adventurepoints.short": string
   "adventurepoint": string
   "adventurepoints": string
+  "totalap.novar": string
+  "apspent.novar": string
   "totalap": string
   "apspent": string
   "apspentonadvantages": string
@@ -598,6 +600,11 @@ export interface L10n {
   "chooseacategorytodisplayalist": string
   "emptylistnoresults": string
   "extendedskillspecialabilities": string
+  "deleteavatar": string
+  "stronglyrecommended": string
+  "unfamiliarspells": string
+  "unfamiliarspellselectionfortraditionguildmage": string
+  "selectaspell": string
 }
 
 export type L10nKey = keyof L10n
@@ -642,6 +649,8 @@ export const L10n =
     "adventurepoints.short": "",
     "adventurepoint": "",
     "adventurepoints": "",
+    "totalap.novar": "",
+    "apspent.novar": "",
     "totalap": "",
     "apspent": "",
     "apspentonadvantages": "",
@@ -1202,4 +1211,9 @@ export const L10n =
     "chooseacategorytodisplayalist": "",
     "emptylistnoresults": "",
     "extendedskillspecialabilities": "",
+    "deleteavatar": "",
+    "stronglyrecommended": "",
+    "unfamiliarspells": "",
+    "unfamiliarspellselectionfortraditionguildmage": "",
+    "selectaspell": "",
   })

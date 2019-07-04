@@ -12,7 +12,7 @@ import { cnst, flip, ident } from "../../../Data/Function";
 import { fmap, fmapF } from "../../../Data/Functor";
 import { over, set } from "../../../Data/Lens";
 import { appendStr, countWith, filter, find, foldl, ifoldr, isList, List, map, notElem, notNull, subscript, subscriptF } from "../../../Data/List";
-import { any, bind, bindF, elem, elemF, ensure, fromJust, fromMaybe, isJust, isNothing, Just, liftM2, listToMaybe, Maybe, maybe, Nothing } from "../../../Data/Maybe";
+import { any, bind, bindF, elem, elemF, ensure, fromJust, fromMaybe, isJust, isNothing, joinMaybeList, Just, liftM2, listToMaybe, Maybe, maybe, Nothing } from "../../../Data/Maybe";
 import { lookup, lookupF } from "../../../Data/OrderedMap";
 import { Record } from "../../../Data/Record";
 import { Categories } from "../../Constants/Categories";
@@ -58,16 +58,16 @@ const getEntrySpecificCost =
   (wiki: WikiModelRecord) =>
   (hero: HeroModelRecord) =>
   (wiki_entry: Activatable) =>
-  (hero_entry: Record<ActivatableDependent>) =>
+  (hero_entry: Maybe<Record<ActivatableDependent>>) =>
   // tslint:disable-next-line: cyclomatic-complexity
   (entry: Record<ActiveObjectWithId>): Maybe<number | List<number>> => {
     const current_id = ActiveObjectWithId.A.id (entry)
     const mcurrent_sid = ActiveObjectWithId.A.sid (entry)
-    const mcurrent_level = ActiveObject.AL.tier (entry)
+    const mcurrent_level = ActiveObjectWithId.A.tier (entry)
 
     const mcurrent_cost = Advantage.AL.cost (wiki_entry)
 
-    const all_active = ActivatableDependent.AL.active (hero_entry)
+    const all_active = joinMaybeList (fmap (ActivatableDependent.A.active) (hero_entry))
 
     switch (current_id) {
       // Aptitude
@@ -275,17 +275,20 @@ const getEntrySpecificCost =
 
         const getCostFromHeroEntry =
           pipe (
-            ActivatableDependent.A.active,
-            listToMaybe,
-            bindF (ActiveObject.A.sid),
+            ActiveObject.AL.sid,
             misStringM,
             bindF (lookupF (WikiModel.A.skills (wiki))),
             bindF (pipe (Skill.A.ic, dec, subscript (current_cost)))
           )
 
         return liftM2 (add)
-                      (getCostFromHeroEntry (hero_entry))
-                      (getCostFromHeroEntry (hero_entry_SA_531))
+                      (getCostFromHeroEntry (entry))
+                      (pipe_ (
+                        hero_entry_SA_531,
+                        ActivatableDependent.A.active,
+                        listToMaybe,
+                        bindF (getCostFromHeroEntry)
+                      ))
 
       }
 
@@ -376,8 +379,8 @@ const getTotalCost =
   (wiki: WikiModelRecord) =>
   (hero: HeroModelRecord) =>
   (entry: Record<ActiveObjectWithId>) =>
-  (wiki_entry: Activatable) =>
-  (hero_entry: Record<ActivatableDependent>): number | List<number> => {
+  (hero_entry: Maybe<Record<ActivatableDependent>>) =>
+  (wiki_entry: Activatable): number | List<number> => {
     const custom_cost = ActiveObjectWithId.A.cost (entry)
 
     if (isJust (custom_cost)) {
@@ -415,14 +418,16 @@ export const getCost =
   (entry: Record<ActiveObjectWithId>): Maybe<number | List<number>> => {
     const current_id = ActiveObjectWithId.A.id (entry)
 
-    return liftM2 (getTotalCost (isEntryToAdd)
-                                (wiki)
-                                (hero)
-                                (entry))
-                  (bind (getWikiEntry (wiki) (current_id))
-                        (ensure (isActivatableWikiEntry)))
-                  (bind (getHeroStateItem (hero) (current_id))
-                        (ensure (isActivatableDependent)))
+    return pipe_ (
+      getWikiEntry (wiki) (current_id),
+      bindF (ensure (isActivatableWikiEntry)),
+      fmap (getTotalCost (isEntryToAdd)
+                          (wiki)
+                          (hero)
+                          (entry)
+                          (bind (getHeroStateItem (hero) (current_id))
+                                (ensure (isActivatableDependent))))
+    )
   }
 
 /**

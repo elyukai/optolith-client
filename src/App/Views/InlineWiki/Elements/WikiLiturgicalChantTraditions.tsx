@@ -4,9 +4,10 @@ import { consF, elem, flength, foldr, intercalate, List, subscript } from "../..
 import { fromJust, fromMaybe, isNothing, Just, mapMaybe } from "../../../../Data/Maybe";
 import { alter, insert, OrderedMap } from "../../../../Data/OrderedMap";
 import { Record, RecordBase } from "../../../../Data/Record";
-import { L10n, L10nRecord } from "../../../Models/Wiki/L10n";
+import { L10nRecord } from "../../../Models/Wiki/L10n";
 import { translate } from "../../../Utilities/I18n";
 import { getAspectsOfTradition, getTraditionOfAspect } from "../../../Utilities/Increasable/liturgicalChantUtils";
+import { dec } from "../../../Utilities/mathUtils";
 import { pipe, pipe_ } from "../../../Utilities/pipe";
 import { sortStrings } from "../../../Utilities/sortBy";
 import { WikiProperty } from "../WikiProperty";
@@ -48,7 +49,7 @@ export function WikiLiturgicalChantTraditions<A extends RecordBase>
           (OrderedMap.empty),
     elem (14) (curr_traditions) ? insert (14) (List ()) : ident,
     OrderedMap.foldrWithKey ((t: number) => (as: List<number>) => {
-                              const mmain_trad = subscript (tradition_strings) (t)
+                              const mmain_trad = subscript (tradition_strings) (t - 1)
 
                               if (isNothing (mmain_trad)) {
                                 return ident as ident<List<string>>
@@ -60,19 +61,18 @@ export function WikiLiturgicalChantTraditions<A extends RecordBase>
                                 return consF (main_trad)
                               }
 
-                              const mapped_aspects = mapMaybe (subscript (aspect_strings)) (as)
+                              const mapped_aspects =
+                                mapMaybe (pipe (dec, subscript (aspect_strings))) (as)
 
                               const complete_aspects =
-                                intercalate (", ")
-                                            (sortStrings (L10n.A.id (l10n))
-                                                         (mapped_aspects))
+                                intercalate (", ") (sortStrings (l10n) (mapped_aspects))
 
                               return consF (`${main_trad} (${complete_aspects})`)
                             })
                             (List ()),
     traditions => (
       <WikiProperty l10n={l10n} title="traditions">
-        {traditions}
+        {intercalate (", ") (traditions)}
       </WikiProperty>
     )
   )

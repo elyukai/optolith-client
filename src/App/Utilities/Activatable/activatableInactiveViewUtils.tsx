@@ -4,10 +4,10 @@ import { cnst, Functn, ident } from "../../../Data/Function";
 import { fmap, fmapF } from "../../../Data/Functor";
 import { over, set } from "../../../Data/Lens";
 import { countWith, elemF, filter, find, flength, foldr, imap, isList, List, map, notElem, notElemF, subscript, subscriptF, sum, take } from "../../../Data/List";
-import { alt, altF, altF_, any, bind, bindF, ensure, fromJust, fromMaybe, fromMaybeNil, guard, isJust, isNothing, join, Just, liftM2, mapMaybe, Maybe, maybe, maybe_, Nothing, or, then, thenF } from "../../../Data/Maybe";
-import { lookupF } from "../../../Data/OrderedMap";
-import { bimap, first, Pair, second, snd } from "../../../Data/Pair";
+import { alt, altF, altF_, any, bind, bindF, ensure, fromJust, fromMaybe, guard, isJust, isNothing, join, joinMaybeList, Just, liftM2, mapMaybe, Maybe, maybe, maybe_, Nothing, or, then, thenF } from "../../../Data/Maybe";
 import { fromDefault, makeLenses, Omit, Record } from "../../../Data/Record";
+import { showP } from "../../../Data/Show";
+import { bimap, first, Pair, second, snd } from "../../../Data/Tuple";
 import { ActivatableActivationOptions, ActivatableActivationOptionsL } from "../../Models/Actions/ActivatableActivationOptions";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
@@ -18,7 +18,7 @@ import { Skill } from "../../Models/Wiki/Skill";
 import { SpecialAbility } from "../../Models/Wiki/SpecialAbility";
 import { Application } from "../../Models/Wiki/sub/Application";
 import { SelectOption } from "../../Models/Wiki/sub/SelectOption";
-import { WikiModel, WikiModelRecord } from "../../Models/Wiki/WikiModel";
+import { WikiModelRecord } from "../../Models/Wiki/WikiModel";
 import { Activatable } from "../../Models/Wiki/wikiTypeHelpers";
 import { ActivatableAddListItemState } from "../../Views/Activatable/ActivatableAddListItem";
 import { Dropdown, DropdownOption } from "../../Views/Universal/Dropdown";
@@ -30,6 +30,7 @@ import { dec, gte, lt, max, min, multiply, negate } from "../mathUtils";
 import { toInt } from "../NumberUtils";
 import { pipe, pipe_ } from "../pipe";
 import { isNumber, misNumberM, misStringM } from "../typeCheckUtils";
+import { getWikiEntry, isSkillishWikiEntry } from "../WikiUtils";
 import { getActiveSelectionsMaybe, getSelectOptionCost } from "./selectionUtils";
 
 interface PropertiesAffectedByState {
@@ -79,12 +80,11 @@ export const InactiveActivatableControlElements =
 
 const InactiveActivatableControlElementsL = makeLenses (InactiveActivatableControlElements)
 
-const WA = WikiModel.A
 const IAA = InactiveActivatable.A
 const SAAL = SpecialAbility.AL
 const ADA = ActivatableDependent.A
 const SOA = SelectOption.A
-const SkA = Skill.A
+const SkAL = Skill.AL
 const AOA = ActiveObject.A
 const AA = Application.A
 const AAOL = ActivatableActivationOptionsL
@@ -193,9 +193,10 @@ export const getIdSpecificAffectedAndDispatchProps =
               pipe_ (
                 mselected,
                 misStringM,
-                bindF (lookupF (WA.skills (wiki))),
+                bindF (getWikiEntry (wiki)),
+                bindF (ensure (isSkillishWikiEntry)),
                 bindF (pipe (
-                  SkA.ic,
+                  SkAL.ic,
                   dec,
                   i => pipe_ (entry, IAA.cost, bindF (ensure (isList)), bindF (subscriptF (i)))
                 ))
@@ -249,7 +250,7 @@ export const getIdSpecificAffectedAndDispatchProps =
       // Obligations
       case "DISADV_50": {
         const active_selections =
-          fromMaybeNil (getActiveSelectionsMaybe (IAA.heroEntry (entry)))
+          joinMaybeList (getActiveSelectionsMaybe (IAA.heroEntry (entry)))
 
         const mfiltered_select_options =
           pipe_ (
@@ -416,6 +417,8 @@ export const getIdSpecificAffectedAndDispatchProps =
       case "SA_9": {
         const x = getCurrentSelectOption (entry) (mselected)
 
+        const src = pipe_ (entry, IAA.wikiEntry, SAAL.src)
+
         return Pair (
           ActivatableActivationOptions ({
             id,
@@ -433,7 +436,7 @@ export const getIdSpecificAffectedAndDispatchProps =
                 fmap (map (a => SelectOption ({
                                   id: AA.id (a),
                                   name: AA.name (a),
-                                  src: pipe_ (entry, IAA.wikiEntry, SAAL.src),
+                                  src,
                                 })))
               ),
             inputDescription: bind (x) (SOA.applicationInput),
@@ -550,40 +553,44 @@ export const getIdSpecificAffectedAndDispatchProps =
               ))
             )
 
-        const fillPairForNoLevel =
-          isNothing (IAA.cost (entry))
-            ? first (set (AAOL.selectOptionId1) (mselected))
-            : bimap ((aao: Record<ActivatableActivationOptions>) => {
-                      if (isJust (mselect_options)) {
-                        const setSelectOptionId = set (AAOL.selectOptionId1) (mselected)
-
-                        const mselected_cost =
-                          pipe_ (
-                            mselected,
-                            bindF (sel => find (pipe (SOA.id, equals (sel)))
-                                               (fromJust (mselect_options))),
-                            bindF (SOA.cost)
-                          )
-
-                        if (isJust (mselected_cost)) {
-                          return pipe_ (
-                            aao,
-                            setSelectOptionId,
-                            set (AAOL.cost) (fromJust (mselected_cost))
-                          )
-                        }
-                        else {
-                          return setSelectOptionId (aao)
-                        }
-                      }
-                      else if (isJust (pipe_ (entry, IAA.wikiEntry, SAAL.input))) {
-                        return set (AAOL.input) (minput_text) (aao)
-                      }
-                      else {
-                        return aao
-                      }
-                    })
+        const fillPairForNoLevel: ident<IdSpecificAffectedAndDispatchProps> =
+          isJust (IAA.cost (entry))
+            ? bimap (set (AAOL.selectOptionId1) (mselected))
                     (set (PABYL.currentCost) (getPlainCostFromEntry (entry)))
+            : (() => {
+                if (isJust (mselect_options)) {
+                  const setSelectOptionId = set (AAOL.selectOptionId1) (mselected)
+
+                  const mselected_option =
+                    bind (mselected) (sel => find (pipe (SOA.id, equals (sel)))
+                                                  (fromJust (mselect_options)))
+
+                  const mselected_cost = bind (mselected_option) (SOA.cost)
+
+                  if (id === "SA_414") {
+                    console.log (showP (mselected_option))
+                    console.log (showP (mselected_cost))
+                  }
+
+                  if (isJust (mselected_cost)) {
+                    return bimap (setSelectOptionId)
+                                 (set (PABYL.currentCost) (mselected_cost))
+                  }
+                  else {
+                    return first (setSelectOptionId)
+                  }
+                }
+                else if (isJust (pipe_ (entry, IAA.wikiEntry, SAAL.input))) {
+                  return first (set (AAOL.input) (minput_text))
+                }
+                else {
+                  return ident
+                }
+              }) ()
+
+        if (id === "SA_414") {
+          console.log (showP (fillPairForNoLevel (base_pair)))
+        }
 
         return fromMaybe (fillPairForNoLevel)
                          (pipe_ (mlevels, thenF (mselected_level), fmap (fillPairForActiveLevel)))
@@ -595,8 +602,6 @@ export const getIdSpecificAffectedAndDispatchProps =
 export const insertFinalCurrentCost =
   (entry: Record<InactiveActivatable>) =>
   (selectedOptions: SelectedOptions): ident<IdSpecificAffectedAndDispatchProps> => {
-    const mselected = Maybe (selectedOptions.selected)
-
     const mcustom_cost =
       pipe_ (
         Maybe (selectedOptions.customCost),
@@ -604,26 +609,14 @@ export const insertFinalCurrentCost =
         fmap (Math.abs)
       )
 
-    type Cost = string | number | List<number>
-
     return pipe (
-      second (over (PABYL.currentCost)
-                   (pipe (
-                     misNumberM,
-                     alt (mcustom_cost),
-                     altF_ (() => getSelectOptionCost (IAA.wikiEntry (entry) as Activatable)
-                                                      (pipe_ (
-                                                        guard (
-                                                          Maybe.elem<Cost> ("sel")
-                                                                           (IAA.cost (entry))),
-                                                        thenF (mselected),
-                                                        fmap (sel =>
-                                                          isNumber (sel)
-                                                            ? sel
-                                                            : Maybe.sum (toInt (sel)))
-                                                      ))),
-                     Disadvantage.is (IAA.wikiEntry (entry)) ? fmap (negate) : ident
-                   ))),
+      x => second (over (PABYL.currentCost)
+                        (pipe (
+                          misNumberM,
+                          alt (mcustom_cost),
+                          Disadvantage.is (IAA.wikiEntry (entry)) ? fmap (negate) : ident
+                        )))
+                  (x),
       Functn.join (pair => first (pipe (
                                    pipe_ (
                                      pair,
@@ -727,14 +720,16 @@ export const getInactiveActivatableControlElements =
                       <Dropdown
                         value={mselected}
                         onChange={inputHandlers.handleSelect}
-                        options={sel as List<Record<DropdownOption>>}
+                        options={sel}
                         disabled={inputHandlers.selectElementDisabled} />
                     )
                   )
           ))
         )),
-      (isJust (msels) || isJust (minput_text))
-      && isNothing (mselected)
+      (
+        isJust (msels) && isNothing (mselected)
+        || isJust (minput_desc) && isNothing (minput_text)
+      )
       && notElem (IAA.id (entry))
                  (List ("ADV_32",
                         "DISADV_1",
@@ -782,7 +777,7 @@ export const getInactiveActivatableControlElements =
                              value={mselected2}
                              onChange={inputHandlers.handleSecondSelect}
                              options={sels2}
-                             disabled={isJust (minput_text) || isJust (mselected)}
+                             disabled={isJust (minput_text) || isNothing (mselected)}
                              />
                          )
                        ))),

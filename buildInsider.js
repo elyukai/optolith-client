@@ -1,10 +1,38 @@
 // @ts-check
 
 const builder = require ("electron-builder")
+const { promises: { copyFile }, existsSync } = require ("fs")
+const { join } = require ("path")
+
+const src_dir = join ("..", "..", "OneDrive", "TDE app", "data" , "insider")
+
+const copyL10nTable =
+  async locale => {
+    const src = join (src_dir, `TDE5_${locale}.xlsx`)
+    if (existsSync (src)) {
+      await copyFile (src, join ("app", "Database", locale, "l10n.xlsx"))
+      console.log (`"TDE5_${locale}.xlsx" copied to "${join (locale, "l10n.xlsx")}"!`)
+    }
+  }
+
+const copyTables =
+  async () => {
+    await copyFile (join (src_dir, `TDE5.xlsx`), join ("app", "Database", "univ.xlsx"))
+    console.log (`"TDE5.xlsx" copied to "univ.xlsx"!`)
+
+    await copyL10nTable ("de-DE")
+    await copyL10nTable ("en-US")
+    await copyL10nTable ("nl-BE")
+    await copyL10nTable ("fr-FR")
+  }
 
 module.exports = {
   buildWindows:
-    () => {
+    async () => {
+      console.log ("Copy most recent tables...")
+
+      await copyTables ()
+
       console.log ("Building Optolith Insider for Windows...")
 
       builder
@@ -13,7 +41,11 @@ module.exports = {
         .catch (err => console.error (err))
     },
   buildLinux:
-    () => {
+    async () => {
+      console.log ("Copy most recent tables...")
+
+      await copyTables ()
+
       console.log ("Building Optolith Insider for Linux...")
 
       builder

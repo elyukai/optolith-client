@@ -15,4 +15,5 @@ export const BlessingCombined =
 
 export const BlessingCombinedA_ = {
   name: pipe (BlessingCombined.A.wikiEntry, Blessing.A.name),
+  tradition: pipe (BlessingCombined.A.wikiEntry, Blessing.A.tradition),
 }

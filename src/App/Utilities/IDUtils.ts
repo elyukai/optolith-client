@@ -105,37 +105,39 @@ export const getCategoryById = pipe (
 )
 
 export const magicalTraditionIdByNumericId = OrderedMap.fromArray ([
-  [1, prefixSA (70)],
-  [2, prefixSA (255)],
-  [3, prefixSA (345)],
-  [4, prefixSA (346)],
-  [5, prefixSA (676)],
-  [6, prefixSA (677)],
-  [7, prefixSA (678)],
-  [8, prefixSA (679)],
-  [9, prefixSA (680)],
-  [10, prefixSA (681)],
-  // [11, prefixSA ()], // Kristallomanten
-  [12, prefixSA (1255)],
-  // [13, prefixSA ()], // Alchimisten
-  [14, prefixSA (726)],
+  [1, prefixSA (70)], // Guild Mage
+  [2, prefixSA (255)], //
+  [3, prefixSA (345)], //
+  [4, prefixSA (346)], //
+  [5, prefixSA (676)], //
+  [6, prefixSA (677)], //
+  [7, prefixSA (678)], //
+  [8, prefixSA (679)], //
+  [9, prefixSA (680)], //
+  [10, prefixSA (681)], //
+  // [11, prefixSA (0000)], // Kristallomanten
+  [12, prefixSA (1255)], // Geoden
+  [13, prefixSA (750)], // Zauberalchimisten
+  [14, prefixSA (726)], // Schelme
+  [15, prefixSA (1221)], // Animisten
 ])
 
 export const magicalNumericIdByTraditionId = OrderedMap.fromArray ([
-  [prefixSA (70), 1],
-  [prefixSA (255), 2],
-  [prefixSA (345), 3],
-  [prefixSA (346), 4],
-  [prefixSA (676), 5],
-  [prefixSA (677), 6],
-  [prefixSA (678), 7],
-  [prefixSA (679), 8],
-  [prefixSA (680), 9],
-  [prefixSA (681), 10],
-  // [prefixSA (), 11], // Kristallomanten
-  [prefixSA (1255), 12],
-  // [prefixSA (), 13], // Alchimisten
-  [prefixSA (726), 14],
+  [prefixSA (70), 1], // Guild Mage
+  [prefixSA (255), 2], //
+  [prefixSA (345), 3], //
+  [prefixSA (346), 4], //
+  [prefixSA (676), 5], //
+  [prefixSA (677), 6], //
+  [prefixSA (678), 7], //
+  [prefixSA (679), 8], //
+  [prefixSA (680), 9], //
+  [prefixSA (681), 10], //
+  // [prefixSA (0000), 11], // Kristallomanten
+  [prefixSA (1255), 12], // Geoden
+  [prefixSA (750), 13], // Zauberalchimisten
+  [prefixSA (726), 14], // Schelme
+  [prefixSA (1221), 15], // Animisten
 ])
 
 export const isMagicalTraditionId = memberF (magicalNumericIdByTraditionId)
@@ -145,45 +147,47 @@ export const getMagicalTraditionInstanceIdByNumericId = lookupF (magicalTraditio
 export const getNumericMagicalTraditionIdByInstanceId = lookupF (magicalNumericIdByTraditionId)
 
 const blessedTraditionIdByNumericId = OrderedMap.fromArray ([
-  [1, prefixSA (86)],
-  [2, prefixSA (682)],
-  [3, prefixSA (683)],
-  [4, prefixSA (684)],
-  [5, prefixSA (685)],
-  [6, prefixSA (686)],
-  [7, prefixSA (687)],
-  [8, prefixSA (688)],
-  [9, prefixSA (689)],
-  [10, prefixSA (690)],
-  [11, prefixSA (691)],
-  [12, prefixSA (692)],
-  [13, prefixSA (693)],
-  [14, prefixSA (694)],
-  [15, prefixSA (695)],
-  [16, prefixSA (696)],
-  [17, prefixSA (697)],
-  [18, prefixSA (698)],
+  [1, prefixSA (86)], // Praios
+  [2, prefixSA (682)], //
+  [3, prefixSA (683)], //
+  [4, prefixSA (684)], //
+  [5, prefixSA (685)], //
+  [6, prefixSA (686)], //
+  [7, prefixSA (687)], //
+  [8, prefixSA (688)], //
+  [9, prefixSA (689)], //
+  [10, prefixSA (690)], //
+  [11, prefixSA (691)], //
+  [12, prefixSA (692)], //
+  [13, prefixSA (693)], //
+  [14, prefixSA (694)], //
+  [15, prefixSA (695)], //
+  [16, prefixSA (696)], //
+  [17, prefixSA (697)], //
+  [18, prefixSA (698)], //
+  [19, prefixSA (1049)], // Numinorukult
 ])
 
 const blessedNumericIdByTraditionId = OrderedMap.fromArray ([
-  [prefixSA (86), 1],
-  [prefixSA (682), 2],
-  [prefixSA (683), 3],
-  [prefixSA (684), 4],
-  [prefixSA (685), 5],
-  [prefixSA (686), 6],
-  [prefixSA (687), 7],
-  [prefixSA (688), 8],
-  [prefixSA (689), 9],
-  [prefixSA (690), 10],
-  [prefixSA (691), 11],
-  [prefixSA (692), 12],
-  [prefixSA (693), 13],
-  [prefixSA (694), 14],
-  [prefixSA (695), 15],
-  [prefixSA (696), 16],
-  [prefixSA (697), 17],
-  [prefixSA (698), 18],
+  [prefixSA (86), 1], // Praios
+  [prefixSA (682), 2], //
+  [prefixSA (683), 3], //
+  [prefixSA (684), 4], //
+  [prefixSA (685), 5], //
+  [prefixSA (686), 6], //
+  [prefixSA (687), 7], //
+  [prefixSA (688), 8], //
+  [prefixSA (689), 9], //
+  [prefixSA (690), 10], //
+  [prefixSA (691), 11], //
+  [prefixSA (692), 12], //
+  [prefixSA (693), 13], //
+  [prefixSA (694), 14], //
+  [prefixSA (695), 15], //
+  [prefixSA (696), 16], //
+  [prefixSA (697), 17], //
+  [prefixSA (698), 18], //
+  [prefixSA (1049), 19], // Numinorukult
 ])
 
 export const isBlessedTraditionId = memberF (blessedNumericIdByTraditionId)

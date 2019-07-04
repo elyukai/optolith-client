@@ -1,16 +1,15 @@
 import * as React from "react";
 import { equals } from "../../../Data/Eq";
-import { ident } from "../../../Data/Function";
+import { flip, ident } from "../../../Data/Function";
 import { fmap, fmapF } from "../../../Data/Functor";
 import { compare } from "../../../Data/Int";
-import { all, append, cons, consF, deleteAt, find, findIndex, flength, foldr, imap, intercalate, isList, List, ListI, map, NonEmptyList, notElem, notNull, snoc, sortBy, subscript, toArray, uncons, unsafeIndex } from "../../../Data/List";
-import { alt_, any, bind, bindF, ensure, fromJust, fromMaybe, fromMaybe_, isJust, Just, liftM2, mapMaybe, Maybe, maybe, maybeR, maybeRNullF, maybeToList, maybe_, Nothing } from "../../../Data/Maybe";
+import { all, append, cons, consF, deleteAt, find, findIndex, flength, foldr, imap, intercalate, intersperse, isList, List, ListI, map, NonEmptyList, notElem, notNull, snoc, sortBy, subscript, toArray, uncons, unsafeIndex } from "../../../Data/List";
+import { alt_, any, bind, bindF, catMaybes, ensure, fromJust, fromMaybe, fromMaybe_, isJust, Just, liftM2, mapMaybe, Maybe, maybe, maybeRNull, maybeRNullF, maybeToList, maybe_, Nothing } from "../../../Data/Maybe";
 import { elems, lookup, lookupF, member, memberF, OrderedMap } from "../../../Data/OrderedMap";
 import { difference, fromList, insert, OrderedSet, toList } from "../../../Data/OrderedSet";
-import { fst, snd } from "../../../Data/Pair";
 import { fromDefault, Record } from "../../../Data/Record";
 import { show } from "../../../Data/Show";
-import { Pair, Tuple } from "../../../Data/Tuple";
+import { fst, Pair, snd, Tuple } from "../../../Data/Tuple";
 import { sel1, sel2, sel3 } from "../../../Data/Tuple/Select";
 import { upd1, upd2, upd3 } from "../../../Data/Tuple/Update";
 import { Sex } from "../../Models/Hero/heroTypeHelpers";
@@ -52,6 +51,7 @@ import { ndash } from "../../Utilities/Chars";
 import { localizeOrList, translate, translateP } from "../../Utilities/I18n";
 import { getNumericId, prefixRace, prefixSA } from "../../Utilities/IDUtils";
 import { add, dec, gt } from "../../Utilities/mathUtils";
+import { signNeg } from "../../Utilities/NumberUtils";
 import { pipe, pipe_ } from "../../Utilities/pipe";
 import { getNameBySex, getNameBySexM } from "../../Utilities/rcpUtils";
 import { renderMaybe } from "../../Utilities/ReactUtils";
@@ -92,6 +92,7 @@ const ANCIAA_ = ActivatableNameCostIsActiveA_
 const PRIA = ProfessionRequireIncreasable.A
 const CTSA = CombatTechniquesSelection.A
 const CTSSA = CombatTechniquesSecondSelection.A
+const LCA = LiturgicalChant.A
 
 // tslint:disable-next-line: cyclomatic-complexity
 export function WikiProfessionInfo (props: WikiProfessionInfoProps): JSX.Element {
@@ -223,12 +224,13 @@ export function WikiProfessionInfo (props: WikiProfessionInfoProps): JSX.Element
         }
         else {
           const pr_name = ANCIAA_.name (e)
-          const pr_cost = ANCIAA_.finalCost (e)
+          const pr_cost_str = signNeg (ANCIAA_.finalCost (e))
+          const ap_tag = translate (l10n) ("adventurepoints.short")
 
-          return Just (`${pr_name} (${pr_cost} ${translate (l10n) ("adventurepoints.short")})`)
+          return Just (`${pr_name} (${pr_cost_str} ${ap_tag})`)
         }
       }),
-      sortStrings (L10n.A.id (l10n))
+      sortStrings (l10n)
     )
 
   const prerequisites = List (
@@ -251,6 +253,14 @@ export function WikiProfessionInfo (props: WikiProfessionInfoProps): JSX.Element
             return `${space_before}${sex_tag}: ${sex_value}`
           })
 
+  const single_sas_strs =
+    pipe_ (
+      x,
+      PCA.mappedSpecialAbilities,
+      map (ANCIAA_.name),
+      sortStrings (l10n)
+    )
+
   const sas_str =
     pipe_ (
       List<string> (),
@@ -270,9 +280,10 @@ export function WikiProfessionInfo (props: WikiProfessionInfoProps): JSX.Element
                                                        LanguagesScriptsSelection.A.value (curss)
                                                      ))))
                                  (languagesLiteracySelection),
+      sortStrings (l10n),
+      flip (append) (single_sas_strs),
       ensure (notNull),
-      maybe (translate (l10n) ("none"))
-            (pipe (sortStrings (L10n.A.id (l10n)), intercalate (", ")))
+      maybe (translate (l10n) ("none")) (intercalate (", "))
     )
 
   const final_ap =
@@ -365,7 +376,7 @@ const getSpecializationSelection =
                   mapMaybe (pipe (lookupF (skills), fmap (Skill.A.name))),
                   ensure (notNull),
                   fmap (pipe (
-                    sortStrings (L10n.A.id (l10n)),
+                    sortStrings (l10n),
                     localizeOrList (l10n)
                   ))
                 )
@@ -395,7 +406,7 @@ function CombatTechniques (props: CombatTechniquesProps): JSX.Element {
       x,
       PCA.mappedCombatTechniques,
       map (e => `${IFVA.name (e)} ${IFVA.value (e) + 6}`),
-      sortStrings (L10n.A.id (l10n)),
+      sortStrings (l10n),
       maybe<ident<List<string>>> (ident) <string> (consF) (selectionString),
       ensure (notNull),
       maybe (ndash) (intercalate (", "))
@@ -461,7 +472,7 @@ const getCombatTechniquesSelection =
                      pipe_ (
                        sel,
                        CTSA.sid,
-                       sortStrings (L10n.A.id (l10n)),
+                       sortStrings (l10n),
                        intercalate (", ")
                      )
 
@@ -540,7 +551,7 @@ const getSpells =
                     cantrips_sel,
                     CantripsSelection.A.sid,
                     mapMaybe (pipe (lookupF (cantrips), fmap (Cantrip.A.name))),
-                    sortStrings (L10n.A.id (l10n)),
+                    sortStrings (l10n),
                     intercalate (", ")
                   )
 
@@ -571,7 +582,7 @@ const getSpells =
             return fmapF (lookup (id) (spells)) (spell => `${Spell.A.name (spell)} ${value}`)
           }
         }),
-        sortStrings (L10n.A.id (l10n)),
+        sortStrings (l10n),
         intercalate (", ")
       )
 
@@ -626,7 +637,7 @@ const getLiturgicalChants =
                               )),
                        fmap (Blessing.A.name)
                      )),
-            sortStrings (L10n.A.id (l10n)),
+            sortStrings (l10n),
             translateP (l10n) ("thetwelveblessingsexceptions"),
             str => cons (xs) (str)
           )
@@ -634,7 +645,7 @@ const getLiturgicalChants =
 
         return xs
       },
-      sortStrings (L10n.A.id (l10n)),
+      sortStrings (l10n),
       ensure (notNull),
       fmap (intercalate (", "))
     )
@@ -698,7 +709,7 @@ function Skills (props: SkillProps) {
   return pipe_ (
       list,
       map (e => `${IFVA.name (e)} ${IFVA.value (e)}`),
-      sortStrings (L10n.A.id (l10n)),
+      sortStrings (l10n),
       xs => maybe (xs)
                   ((skills_selection: Record<SkillsSelectionJoined>) => {
                     const mgr =
@@ -718,7 +729,7 @@ function Skills (props: SkillProps) {
       intercalate (", "),
       joined_text => (
         <p className="skill-group">
-          <span>{renderMaybe (subscript (translate (l10n) ("skillgroups")) (groupIndex))}</span>
+          <span>{renderMaybe (subscript (translate (l10n) ("skillgroups")) (groupIndex))}: </span>
           <span>{notNull (list) ? joined_text : ndash}</span>
         </p>
       )
@@ -815,37 +826,34 @@ function Variant (props: VariantProps) {
   if (isJust (fullText)) {
     return (
       <li>
-        <span>{name}</span>
-        <span>({ap_sum} {translate (l10n) ("adventurepoints.short")})</span>
-        <span>{fromJust (fullText)}</span>
+        <span>{name} </span>
+        <span>({ap_sum} {translate (l10n) ("adventurepoints.short")}): </span>
+        {fromJust (fullText)}
       </li>
     )
   }
 
   return (
     <li>
-      <span>{name}</span>
-      <span>({ap_sum} {translate (l10n) ("adventurepoints.short")})</span>
+      <span>{name} </span>
+      <span>({ap_sum} {translate (l10n) ("adventurepoints.short")}): </span>
       <span>
         {maybeRNullF (PVCA_.precedingText (variant))
                      (str => <span>{str}</span>)}
         <VariantPrerequisites {...props} />
-        <VariantSpecialAbilities {...props} />
-        <VariantLanguagesLiteracySelection
-          {...props}
-          mappedProfSelections={PCA_.selections (profession)}
-          />
-        <VariantSpecializationSelection
-          {...props}
-          mappedProfSelections={PCA_.selections (profession)}
-          />
-        <VariantCombatTechniquesSelection
-          {...props}
-          mappedProfSelections={PCA_.selections (profession)}
-          />
-        <VariantSkillsSelection {...props} />
-        {maybeRNullF (PVCA_.concludingText (variant))
-                     (str => <span>{str}</span>)}
+        {pipe_ (
+          List<Maybe<NonNullable<React.ReactNode>>> (
+            ...getVariantSpecialAbilities (props),
+            getVariantLanguagesLiteracySelection (PCA_.selections (profession)) (props),
+            getVariantSpecializationSelection (PCA_.selections (profession)) (props),
+            getVariantCombatTechniquesSelection (PCA_.selections (profession)) (props),
+            Just (getVariantSkillsSelection (props)),
+            PVCA_.concludingText (variant)
+          ),
+          catMaybes,
+          intersperse<React.ReactNode> (", "),
+          toArray
+        )}
       </span>
     </li>
   )
@@ -871,7 +879,7 @@ const VariantPrerequisiteIntermediate =
     active: Nothing,
   })
 
-function VariantPrerequisites (props: VariantPrerequisitesProps): JSX.Element {
+const VariantPrerequisites = (props: VariantPrerequisitesProps): JSX.Element | null => {
   const {
     attributes,
     l10n,
@@ -915,22 +923,20 @@ function VariantPrerequisites (props: VariantPrerequisitesProps): JSX.Element {
         }),
     sortRecordsByName (L10n.A.id (l10n)),
     map (x => {
-          if (Maybe.and (VariantPrerequisiteIntermediate.A.active (x))) {
+          if (!Maybe.and (VariantPrerequisiteIntermediate.A.active (x))) {
             return (
-              <span key={VariantPrerequisiteIntermediate.A.id (x)}>
-                <span className="disabled">{VariantPrerequisiteIntermediate.A.name (x)}</span>
-              </span>
-            )
-          }
-          else {
-            return (
-              <span key={VariantPrerequisiteIntermediate.A.id (x)}>
+              <span key={VariantPrerequisiteIntermediate.A.id (x)} className="disabled">
                 {VariantPrerequisiteIntermediate.A.name (x)}
               </span>
             )
           }
+          else {
+            return VariantPrerequisiteIntermediate.A.name (x)
+          }
         }),
-    xs => <span className="hard-break">{translate (l10n) ("prerequisites")}: {xs}</span>
+    intersperse<React.ReactNode> (", "),
+    ensure (notNull),
+    maybeRNull (xs => <>{translate (l10n) ("prerequisites")}: {xs}; </>)
   )
 }
 
@@ -938,244 +944,205 @@ interface VariantSpecialAbilitiesProps {
   variant: Record<ProfessionVariantCombined>
 }
 
-function VariantSpecialAbilities (props: VariantSpecialAbilitiesProps): JSX.Element {
-  return (
-    <>
-      {pipe_ (
-        props.variant,
-        PVCA.mappedSpecialAbilities,
-        map (e => (
-          <span key={ANCIAA_.id (e)}>
-            <span className={!ANCIAA.isActive (e) ? "disabled" : undefined}>
-              {ANCIAA_.name (e)}
-            </span>
-          </span>
-        )),
-        toArray
-      )}
-    </>
-  )
-}
+const getVariantSpecialAbilities =
+  (props: VariantSpecialAbilitiesProps): List<Maybe<NonNullable<React.ReactNode>>> =>
+    pipe_ (
+      props.variant,
+      PVCA.mappedSpecialAbilities,
+      map (e =>
+        ANCIAA.isActive (e)
+          ? Just (ANCIAA_.name (e))
+          : Just (
+              <span key={ANCIAA_.id (e)} className="disabled">
+                {ANCIAA_.name (e)}
+              </span>
+            )
+      )
+    )
 
 interface VariantLanguagesLiteracySelectionProps {
   l10n: L10nRecord
-  mappedProfSelections: Record<ProfessionSelections>
   variant: Record<ProfessionVariantCombined>
 }
 
-function VariantLanguagesLiteracySelection (
-  props: VariantLanguagesLiteracySelectionProps
-): JSX.Element | null {
-  const {
-    l10n,
-    mappedProfSelections,
-    variant,
-  } = props
+const getVariantLanguagesLiteracySelection =
+  (mappedProfSelections: Record<ProfessionSelections>) =>
+  (props: VariantLanguagesLiteracySelectionProps): Maybe<string> => {
+    const {
+      l10n,
+      variant,
+    } = props
 
-  const mappedProfVariantSelections = PVCA.mappedSelections (variant)
+    const mappedProfVariantSelections = PVCA.mappedSelections (variant)
 
-  const msel =
-    PSA[ProfessionSelectionIds.LANGUAGES_SCRIPTS] (mappedProfSelections)
+    const msel =
+      PSA[ProfessionSelectionIds.LANGUAGES_SCRIPTS] (mappedProfSelections)
 
-  const mvariant_sel =
-    PVSA[ProfessionSelectionIds.LANGUAGES_SCRIPTS] (mappedProfVariantSelections)
+    const mvariant_sel =
+      PVSA[ProfessionSelectionIds.LANGUAGES_SCRIPTS] (mappedProfVariantSelections)
 
-  if (isJust (mvariant_sel)) {
-    const variant_sel = fromJust (mvariant_sel)
-    const vvalue = LanguagesScriptsSelection.A.value (variant_sel)
+    if (isJust (mvariant_sel)) {
+      const variant_sel = fromJust (mvariant_sel)
+      const vvalue = LanguagesScriptsSelection.A.value (variant_sel)
 
-    const main_str = translateP (l10n) ("languagesandliteracytotalingap") (List (vvalue))
+      const main_str = translateP (l10n) ("languagesandliteracytotalingap") (List (vvalue))
 
-    if (isJust (msel)) {
-      const value = LanguagesScriptsSelection.A.value (fromJust (msel))
-      const instead = translate (l10n) ("insteadof")
+      if (isJust (msel)) {
+        const value = LanguagesScriptsSelection.A.value (fromJust (msel))
+        const instead = translate (l10n) ("insteadof")
 
-      return (
-        <span>
-          <span>{main_str} {instead} {value}</span>
-        </span>
-      )
+        return Just (`${main_str} ${instead} ${value}`)
+      }
+      else {
+        return Just (main_str)
+      }
     }
-    else {
-      return (
-        <span>
-          <span>{main_str}</span>
-        </span>
-      )
-    }
+
+    return Nothing
   }
-
-  return null
-}
 
 interface VariantSpecializationSelectionProps {
   l10n: L10nRecord
-  mappedProfSelections: Record<ProfessionSelections>
   skills: OrderedMap<string, Record<Skill>>
   specializationSelectionString: Maybe<string>
   variant: Record<ProfessionVariantCombined>
 }
 
-function VariantSpecializationSelection (
-  props: VariantSpecializationSelectionProps
-): JSX.Element | null {
-  const {
-    l10n,
-    mappedProfSelections,
-    skills,
-    specializationSelectionString,
-    variant,
-  } = props
+const getVariantSpecializationSelection =
+  (mappedProfSelections: Record<ProfessionSelections>) =>
+  (props: VariantSpecializationSelectionProps): Maybe<NonNullable<React.ReactNode>> => {
+    const {
+      l10n,
+      skills,
+      specializationSelectionString,
+      variant,
+    } = props
 
-  const mappedProfVariantSelections = PVCA.mappedSelections (variant)
+    const mappedProfVariantSelections = PVCA.mappedSelections (variant)
 
-  const msel =
-    PSA[ProfessionSelectionIds.SPECIALIZATION] (mappedProfSelections)
+    const msel =
+      PSA[ProfessionSelectionIds.SPECIALIZATION] (mappedProfSelections)
 
-  const mvariant_sel =
-    PVSA[ProfessionSelectionIds.SPECIALIZATION] (mappedProfVariantSelections)
+    const mvariant_sel =
+      PVSA[ProfessionSelectionIds.SPECIALIZATION] (mappedProfVariantSelections)
 
-  if (isJust (mvariant_sel)) {
-    const variant_sel = fromJust (mvariant_sel)
+    if (isJust (mvariant_sel)) {
+      const variant_sel = fromJust (mvariant_sel)
 
-    if (isRemoveSpecializationSelection (variant_sel)) {
-      return (
-        <span>
-          <span className="disabled">{renderMaybe (specializationSelectionString)}</span>
-        </span>
-      )
-    }
-    else {
-      const vsid = SpecializationSelection.A.sid (variant_sel)
-
-      const mskill_text =
-        isList (vsid)
-          ? pipe_ (
-              vsid,
-              mapMaybe (pipe (lookupF (skills), fmap (Skill.A.name))),
-              sortStrings (L10n.A.id (l10n)),
-              ensure (pipe (flength, gt (1))),
-              fmap (localizeOrList (l10n))
-            )
-          : pipe_ (vsid, lookupF (skills), fmap (Skill.A.name))
-
-      const mmain_text = fmapF (mskill_text)
-                               (skill_text => translateP (l10n)
-                                                         ("skillspecialization")
-                                                         (List (skill_text)))
-
-      if (isJust (msel)) {
-        const instead = translate (l10n) ("insteadof")
-
-        return (
-          <span>
-            <span>
-              {renderMaybe (mmain_text)}
-              {" "}
-              {instead}
-              {" "}
-              {renderMaybe (specializationSelectionString)}
-            </span>
+      if (isRemoveSpecializationSelection (variant_sel)) {
+        return Just (
+          <span className="disabled">
+            {renderMaybe (specializationSelectionString)}
           </span>
         )
       }
       else {
-        return (
-          <span>
-            <span>{renderMaybe (mmain_text)}</span>
-          </span>
-        )
+        const vsid = SpecializationSelection.A.sid (variant_sel)
+
+        const mskill_text =
+          isList (vsid)
+            ? pipe_ (
+                vsid,
+                mapMaybe (pipe (lookupF (skills), fmap (Skill.A.name))),
+                sortStrings (l10n),
+                ensure (pipe (flength, gt (1))),
+                fmap (localizeOrList (l10n))
+              )
+            : pipe_ (vsid, lookupF (skills), fmap (Skill.A.name))
+
+        const mmain_text = fmapF (mskill_text)
+                                 (skill_text => translateP (l10n)
+                                                           ("skillspecialization")
+                                                           (List (skill_text)))
+
+        if (isJust (msel)) {
+          const instead = translate (l10n) ("insteadof")
+          const next = renderMaybe (mmain_text)
+          const prev = renderMaybe (specializationSelectionString)
+
+          return Just (`${next} ${instead} ${prev}`)
+        }
+        else {
+          return Just (renderMaybe (mmain_text))
+        }
       }
     }
-  }
 
-  return null
-}
+    return Nothing
+  }
 
 interface VariantCombatTechniquesSelectionProps {
   combatTechniquesSelectionString: Maybe<string>
   l10n: L10nRecord
-  mappedProfSelections: Record<ProfessionSelections>
   variant: Record<ProfessionVariantCombined>
 }
 
-function VariantCombatTechniquesSelection (
-  props: VariantCombatTechniquesSelectionProps
-): JSX.Element | null {
-  const {
-    combatTechniquesSelectionString,
-    l10n,
-    mappedProfSelections,
-    variant,
-  } = props
+const getVariantCombatTechniquesSelection =
+  (mappedProfSelections: Record<ProfessionSelections>) =>
+  (props: VariantCombatTechniquesSelectionProps): Maybe<NonNullable<React.ReactNode>> => {
+    const {
+      combatTechniquesSelectionString,
+      l10n,
+      variant,
+    } = props
 
-  const mappedProfVariantSelections = PVCA.mappedSelections (variant)
+    const mappedProfVariantSelections = PVCA.mappedSelections (variant)
 
-  const msel =
-    PSA[ProfessionSelectionIds.COMBAT_TECHNIQUES] (mappedProfSelections)
+    const msel =
+      PSA[ProfessionSelectionIds.COMBAT_TECHNIQUES] (mappedProfSelections)
 
-  const mvariant_sel =
-    PVSA[ProfessionSelectionIds.COMBAT_TECHNIQUES] (mappedProfVariantSelections)
+    const mvariant_sel =
+      PVSA[ProfessionSelectionIds.COMBAT_TECHNIQUES] (mappedProfVariantSelections)
 
-  if (isJust (mvariant_sel)) {
-    const variant_sel = fromJust (mvariant_sel)
+    if (isJust (mvariant_sel)) {
+      const variant_sel = fromJust (mvariant_sel)
 
-    if (isRemoveCombatTechniquesSelection (variant_sel)) {
-      return (
-        <span>
+      if (isRemoveCombatTechniquesSelection (variant_sel)) {
+        return Just (
           <span className="disabled">{renderMaybe (combatTechniquesSelectionString)}</span>
-        </span>
-      )
-    }
-    else if (isJust (msel)) {
-      const sel = fromJust (msel)
-      const sid = CombatTechniquesSelection.A.sid (sel)
-      const amount = CombatTechniquesSelection.A.amount (sel)
-      const value = CombatTechniquesSelection.A.value (sel)
-      const vsid = CombatTechniquesSelection.A.sid (variant_sel)
-      const vamount = CombatTechniquesSelection.A.amount (variant_sel)
-      const vvalue = CombatTechniquesSelection.A.value (variant_sel)
-
-      const hasSameSids = OrderedSet.fnull (difference (fromList (sid)) (fromList (vsid)))
-      const hasSameAmount = amount === vamount
-
-      if (hasSameSids && hasSameAmount) {
-        const instead = translate (l10n) ("insteadof")
-
-        const joinedList = pipe_ (sid, sortStrings (L10n.A.id (l10n)), localizeOrList (l10n))
-
-        return (
-          <span>
-            <span>{joinedList} {vvalue} {instead} {value}</span>
-          </span>
         )
       }
+      else if (isJust (msel)) {
+        const sel = fromJust (msel)
+        const sid = CombatTechniquesSelection.A.sid (sel)
+        const amount = CombatTechniquesSelection.A.amount (sel)
+        const value = CombatTechniquesSelection.A.value (sel)
+        const vsid = CombatTechniquesSelection.A.sid (variant_sel)
+        const vamount = CombatTechniquesSelection.A.amount (variant_sel)
+        const vvalue = CombatTechniquesSelection.A.value (variant_sel)
+
+        const hasSameSids = OrderedSet.fnull (difference (fromList (sid)) (fromList (vsid)))
+        const hasSameAmount = amount === vamount
+
+        if (hasSameSids && hasSameAmount) {
+          const instead = translate (l10n) ("insteadof")
+
+          const joinedList = pipe_ (sid, sortStrings (l10n), localizeOrList (l10n))
+
+          return Just (`${joinedList} ${vvalue} ${instead} ${value}`)
+        }
+      }
+      else {
+        const vsid = CombatTechniquesSelection.A.sid (variant_sel)
+        const vamount = CombatTechniquesSelection.A.amount (variant_sel)
+        const vvalue = CombatTechniquesSelection.A.value (variant_sel)
+
+        const tag = translateP (l10n)
+                               ("combattechniquesselection")
+                               (List<string | number> (
+                                 unsafeIndex (translate (l10n) ("combattechniquecounter"))
+                                             (vamount - 1),
+                                 vvalue + 6
+                               ))
+
+        const joinedList = pipe_ (vsid, sortStrings (l10n), intercalate (", "))
+
+        return Just (`${tag}${joinedList}`)
+      }
     }
-    else {
-      const vsid = CombatTechniquesSelection.A.sid (variant_sel)
-      const vamount = CombatTechniquesSelection.A.amount (variant_sel)
-      const vvalue = CombatTechniquesSelection.A.value (variant_sel)
 
-      const tag = translateP (l10n)
-                             ("combattechniquesselection")
-                             (List<string | number> (
-                               unsafeIndex (translate (l10n) ("combattechniquecounter"))
-                                           (vamount - 1),
-                               vvalue + 6
-                             ))
-
-      const joinedList = pipe_ (vsid, sortStrings (L10n.A.id (l10n)), intercalate (", "))
-
-      return (
-        <span>
-          <span>{tag}{joinedList}</span>
-        </span>
-      )
-    }
+    return Nothing
   }
-
-  return null
-}
 
 interface VariantSkillsSelectionProps {
   l10n: L10nRecord
@@ -1184,98 +1151,100 @@ interface VariantSkillsSelectionProps {
   variant: Record<ProfessionVariantCombined>
 }
 
-function VariantSkillsSelection (props: VariantSkillsSelectionProps): JSX.Element {
-  const {
-    l10n,
-    liturgicalChants,
-    spells,
-    variant,
-  } = props
+const getVariantSkillsSelection =
+  (props: VariantSkillsSelectionProps): string => {
+    const {
+      l10n,
+      liturgicalChants,
+      spells,
+      variant,
+    } = props
 
-  const instead = translate (l10n) ("insteadof")
+    const instead = translate (l10n) ("insteadof")
 
-  const combatTechniquesList =
-    pipe_ (variant, PVCA.mappedCombatTechniques, mapVariantSkills (l10n) (6))
+    const combatTechniquesList =
+      pipe_ (variant, PVCA.mappedCombatTechniques, mapVariantSkills (l10n) (6))
 
-  const skillsList =
-    pipe_ (variant, PVCA.mappedSkills, mapVariantSkills (l10n) (0))
+    const skillsList =
+      pipe_ (variant, PVCA.mappedSkills, mapVariantSkills (l10n) (0))
 
-  const combinedSpellsList = combineSpells (spells) (PVCA.mappedSpells (variant))
+    const combinedSpellsList = combineSpells (spells) (PVCA.mappedSpells (variant))
 
-  const spellsList =
-    mapMaybe ((e: ListI<CombinedSpells>) => {
-               if (CombinedSpell.is (e)) {
-                 const newId = CSA.newId (e)
-                 const oldId = CSA.oldId (e)
-                 const value = CSA.value (e)
+    const spellsList =
+      mapMaybe ((e: ListI<CombinedSpells>) => {
+                 if (CombinedSpell.is (e)) {
+                   const newId = CSA.newId (e)
+                   const oldId = CSA.oldId (e)
+                   const val = CSA.value (e)
 
-                 const mnew_spell_name = mapSpellNames (l10n) (spells) (newId)
-                 const mold_spell_name = mapSpellNames (l10n) (spells) (oldId)
+                   const mnew_spell_name = mapSpellNames (l10n) (spells) (newId)
+                   const mold_spell_name = mapSpellNames (l10n) (spells) (oldId)
 
-                 return liftM2 ((new_spell_name: string) => (old_spell_name: string) =>
-                                 `${new_spell_name} ${value} ${instead} ${old_spell_name} ${value}`)
-                               (mnew_spell_name)
-                               (mold_spell_name)
-               }
-               else if (IncreasableListForView.is (e)) {
-                const ids = ILFVA.id (e)
-                const value = ILFVA.value (e)
-                const previous = Maybe.sum (ILFVA.previous (e))
+                   return liftM2 ((new_spell_name: string) => (old_spell_name: string) =>
+                                   `${new_spell_name} ${val} ${instead} ${old_spell_name} ${val}`)
+                                 (mnew_spell_name)
+                                 (mold_spell_name)
+                 }
+                 else if (IncreasableListForView.is (e)) {
+                  const ids = ILFVA.id (e)
+                  const value = ILFVA.value (e)
+                  const previous = Maybe.sum (ILFVA.previous (e))
 
-                return fmapF (mapSpellNames (l10n) (spells) (ids))
-                             (name => `${name} ${previous + value} ${instead} ${previous}`)
-               }
-               else {
-                 const id = IFVA.id (e)
-                 const value = IFVA.value (e)
-                 const previous = Maybe.sum (IFVA.previous (e))
+                  return fmapF (mapSpellNames (l10n) (spells) (ids))
+                               (name => `${name} ${previous + value} ${instead} ${previous}`)
+                 }
+                 else {
+                   const id = IFVA.id (e)
+                   const value = IFVA.value (e)
+                   const previous = Maybe.sum (IFVA.previous (e))
 
-                 return fmapF (mapSpellNames (l10n) (spells) (id))
-                              (name => `${name} ${previous + value} ${instead} ${previous}`)
-               }
-             })
-             (combinedSpellsList)
+                   return fmapF (mapSpellNames (l10n) (spells) (id))
+                                (name => `${name} ${previous + value} ${instead} ${previous}`)
+                 }
+               })
+               (combinedSpellsList)
 
-  const combinedList =
-    intercalate (", ")
-                (List (
-                  ...sortStrings (L10n.A.id (l10n)) (combatTechniquesList),
-                  ...sortStrings (L10n.A.id (l10n)) (skillsList),
-                  ...sortStrings (L10n.A.id (l10n)) (spellsList)
-                ))
+    const combinedList =
+      intercalate (", ")
+                  (List (
+                    ...sortStrings (l10n) (combatTechniquesList),
+                    ...sortStrings (l10n) (skillsList),
+                    ...sortStrings (l10n) (spellsList)
+                  ))
 
-  return maybeR (<span>{combinedList}</span>)
-                ((chants: NonEmptyList<CombinedMappedSpell>) => {
-                  const blessings = translate (l10n) ("thetwelveblessings")
+    return maybe (combinedList)
+                 ((chants: NonEmptyList<CombinedMappedSpell>) => {
+                   const blessings = translate (l10n) ("thetwelveblessings")
 
-                  return pipe_ (
-                    chants,
-                    mapMaybe (e => {
-                      if (IncreasableListForView.is (e)) {
-                        const names = mapMaybe (lookupF (liturgicalChants)) (ILFVA.id (e))
+                   return pipe_ (
+                     chants,
+                     mapMaybe (e => {
+                       if (IncreasableListForView.is (e)) {
+                         const names = mapMaybe (pipe (lookupF (liturgicalChants), fmap (LCA.name)))
+                                                (ILFVA.id (e))
 
-                        return fmapF (ensure (pipe (flength, gt (1))) (names))
-                                     (pipe (
-                                       localizeOrList (l10n),
-                                       name => `${name} ${ILFVA.value (e)}`
-                                     ))
-                      }
-                      else {
-                        const mname = lookup (IFVA.id (e)) (liturgicalChants)
+                         return fmapF (ensure (pipe (flength, gt (1))) (names))
+                                      (pipe (
+                                        localizeOrList (l10n),
+                                        name => `${name} ${ILFVA.value (e)}`
+                                      ))
+                       }
+                       else {
+                         const mname =
+                           pipe_ (liturgicalChants, lookup (IFVA.id (e)), fmap (LCA.name))
 
-                        return fmapF (mname)
-                                     (name => `${name} ${IFVA.value (e)}`)
-                      }
-                    }),
-                    flength (PVCA_.blessings (variant)) === 12 ? consF (blessings) : ident,
-                    sortStrings (L10n.A.id (l10n)),
-                    intercalate (", "),
-                    xs => ` ${translate (l10n) ("liturgicalchants")}: ${xs}`,
-                    str => <span>{combinedList}{str}</span>
-                  )
-                })
-                (ensure (notNull) (PVCA.mappedLiturgicalChants (variant)))
-}
+                         return fmapF (mname)
+                                      (name => `${name} ${IFVA.value (e)}`)
+                       }
+                     }),
+                     flength (PVCA_.blessings (variant)) === 12 ? consF (blessings) : ident,
+                     sortStrings (l10n),
+                     intercalate (", "),
+                     xs => `${combinedList}, ${translate (l10n) ("liturgicalchants")}: ${xs}`
+                   )
+                 })
+                 (ensure (notNull) (PVCA.mappedLiturgicalChants (variant)))
+  }
 
 const mapSpellNames =
   (l10n: L10nRecord) =>

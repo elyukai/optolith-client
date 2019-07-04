@@ -13,6 +13,20 @@ test ('subtractBy', () => {
   expect (Math.subtractBy (1) (2)) .toEqual (1)
 })
 
+test ('subtractAbs', () => {
+  expect (Math.subtractAbs (1) (2)) .toEqual (-1)
+  expect (Math.subtractAbs (-1) (2)) .toEqual (1)
+  expect (Math.subtractAbs (1) (-2)) .toEqual (3)
+  expect (Math.subtractAbs (-1) (-2)) .toEqual (-3)
+})
+
+test ('subtractAbsBy', () => {
+  expect (Math.subtractAbsBy (1) (2)) .toEqual (1)
+  expect (Math.subtractAbsBy (1) (-2)) .toEqual (-1)
+  expect (Math.subtractAbsBy (-1) (2)) .toEqual (3)
+  expect (Math.subtractAbsBy (-1) (-2)) .toEqual (-3)
+})
+
 test ('multiply', () => {
   expect (Math.multiply (1) (2)) .toEqual (2)
 })
@@ -88,4 +102,26 @@ test ('dec', () => {
 test ('negate', () => {
   expect (Math.negate (3)) .toEqual (-3)
   expect (Math.negate (-5)) .toEqual (5)
+})
+
+test ('abs', () => {
+  expect (Math.abs (3)) .toEqual (3)
+  expect (Math.abs (0)) .toEqual (0)
+  expect (Math.abs (-5)) .toEqual (5)
+})
+
+test ('gcd', () => {
+  expect (Math.gcd (-3) (6)) .toEqual (3)
+  expect (Math.gcd (-3) (-6)) .toEqual (3)
+  expect (Math.gcd (12) (18)) .toEqual (6)
+  expect (Math.gcd (0) (4)) .toEqual (4)
+  expect (() => Math.gcd (0) (0)) .toThrow ()
+})
+
+test ('lcm', () => {
+  expect (Math.lcm (-3) (6)) .toEqual (-6)
+  expect (Math.lcm (-3) (-6)) .toEqual (6)
+  expect (Math.lcm (12) (18)) .toEqual (36)
+  expect (Math.lcm (0) (4)) .toEqual (0)
+  expect (() => Math.lcm (0) (0)) .toThrow ()
 })

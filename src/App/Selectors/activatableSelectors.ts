@@ -1,10 +1,11 @@
 import { flip, ident } from "../../Data/Function";
 import { fmap, fmapF } from "../../Data/Functor";
-import { consF, elem, elemF, filter, foldr, intercalate, List, map } from "../../Data/List";
+import { consF, elem, filter, filterMulti, foldr, intercalate, List, map, notElemF } from "../../Data/List";
 import { bindF, fromMaybe, Just, liftM2, liftM3, listToMaybe, mapMaybe, Maybe, Nothing } from "../../Data/Maybe";
 import { insert, lookup, OrderedMap } from "../../Data/OrderedMap";
-import { uncurryN } from "../../Data/Pair";
+import { member, OrderedSet } from "../../Data/OrderedSet";
 import { Record } from "../../Data/Record";
+import { uncurryN, uncurryN3 } from "../../Data/Tuple/Curry";
 import { ActivatableCategory, Categories } from "../Constants/Categories";
 import { IdPrefixes } from "../Constants/IdPrefixes";
 import { ActivatableDependent } from "../Models/ActiveEntries/ActivatableDependent";
@@ -18,7 +19,7 @@ import { ActiveActivatable, ActiveActivatableA_ } from "../Models/View/ActiveAct
 import { Advantage } from "../Models/Wiki/Advantage";
 import { Culture } from "../Models/Wiki/Culture";
 import { Disadvantage } from "../Models/Wiki/Disadvantage";
-import { L10n } from "../Models/Wiki/L10n";
+import { L10n, L10nRecord } from "../Models/Wiki/L10n";
 import { Profession } from "../Models/Wiki/Profession";
 import { Race } from "../Models/Wiki/Race";
 import { SpecialAbility } from "../Models/Wiki/SpecialAbility";
@@ -34,7 +35,8 @@ import { compareLocale } from "../Utilities/I18n";
 import { prefixId, prefixSA } from "../Utilities/IDUtils";
 import { pipe, pipe_ } from "../Utilities/pipe";
 import { mapCurrentHero, mapGetToMaybeSlice, mapGetToSlice } from "../Utilities/SelectorsUtils";
-import { comparingR } from "../Utilities/sortBy";
+import { blessedSpecialAbilityGroups, combatSpecialAbilityGroups, generalSpecialAbilityGroups, magicalSpecialAbilityGroups } from "../Utilities/sheetUtils";
+import { comparingR, sortStrings } from "../Utilities/sortBy";
 import { misStringM } from "../Utilities/typeCheckUtils";
 import { getBlessedTraditionFromWikiState } from "./liturgicalChantsSelectors";
 import { getCurrentCulture, getCurrentProfession, getCurrentRace } from "./rcpSelectors";
@@ -223,65 +225,75 @@ export const getGeneralSpecialAbilitiesForSheet = createMaybeSelector (
   getCultureAreaKnowledge,
   (wiki_special_abilities, mspecial_abilities, culture_area_knowledge_text) =>
     liftM2 ((culture_area_knowledge: Record<SpecialAbility>) =>
-             pipe (
-                    filter (pipe (
-                             ActiveActivatable.A.wikiEntry,
-                             SpecialAbility.AL.gr,
-                             elemF (List (1, 2, 22, 30))
-                           )) as ident<List<Record<ActiveActivatable<SpecialAbility>>>>,
-                    consF (ActiveActivatable ({
-                            nameAndCost: ActivatableNameCost ({
-                              active: ActiveObjectWithId ({
-                                id: SpecialAbility.A.id (culture_area_knowledge),
-                                sid: Nothing,
-                                sid2: Nothing,
-                                tier: Nothing,
-                                cost: Nothing,
-                                index: Nothing,
-                              }),
-                              finalCost: 0,
-                              naming: ActivatableCombinedName ({
-                                name:
-                                  `${SpecialAbility.A.name (culture_area_knowledge)}`
-                                  + ` (${fromMaybe ("") (culture_area_knowledge_text)})`,
-                                baseName: SpecialAbility.A.name (culture_area_knowledge),
-                                addName: culture_area_knowledge_text,
-                              }),
-                            }),
-                            validation: ActivatableActivationValidation ({
-                              disabled: true,
-                              maxLevel: Nothing,
-                              minLevel: Nothing,
-                            }),
-                            heroEntry: ActivatableDependent.default,
-                            wikiEntry: SpecialAbility.default,
-                          }) as Record<ActiveActivatable<SpecialAbility>>)))
+            (special_abilities: List<Record<ActiveActivatable<SpecialAbility>>>) =>
+              pipe_ (
+                special_abilities,
+                filterMulti<Record<ActiveActivatable<SpecialAbility>>>
+                  (List (
+                    pipe (
+                      ActiveActivatable.A.wikiEntry,
+                      SpecialAbility.AL.gr,
+                      flip (member) (generalSpecialAbilityGroups)
+                    ),
+                    pipe (
+                      ActiveActivatable.A.wikiEntry,
+                      SpecialAbility.AL.id,
+                      notElemF (List (prefixSA (27), prefixSA (29)))
+                    )
+                  )),
+                consF (ActiveActivatable ({
+                        nameAndCost: ActivatableNameCost ({
+                          active: ActiveObjectWithId ({
+                            id: SpecialAbility.A.id (culture_area_knowledge),
+                            sid: Nothing,
+                            sid2: Nothing,
+                            tier: Nothing,
+                            cost: Nothing,
+                            index: Nothing,
+                          }),
+                          finalCost: 0,
+                          naming: ActivatableCombinedName ({
+                            name:
+                              `${SpecialAbility.A.name (culture_area_knowledge)}`
+                              + ` (${fromMaybe ("") (culture_area_knowledge_text)})`,
+                            baseName: SpecialAbility.A.name (culture_area_knowledge),
+                            addName: culture_area_knowledge_text,
+                          }),
+                        }),
+                        validation: ActivatableActivationValidation ({
+                          disabled: true,
+                          maxLevel: Nothing,
+                          minLevel: Nothing,
+                        }),
+                        heroEntry: ActivatableDependent.default,
+                        wikiEntry: SpecialAbility.default,
+                      }) as Record<ActiveActivatable<SpecialAbility>>)))
            (lookup (prefixId (IdPrefixes.SPECIAL_ABILITIES) (22))
                    (wiki_special_abilities))
            (mspecial_abilities)
 )
 
 const getSpecialAbilitiesByGroups =
-  (grs: List<number>) =>
+  (grs: OrderedSet<number>) =>
     fmap (filter (pipe (
       ActiveActivatable.A.wikiEntry,
       SpecialAbility.AL.gr,
-      elemF (grs)
+      flip (member) (grs)
     ))) as ident<Maybe<List<Record<ActiveActivatable<SpecialAbility>>>>>
 
 export const getCombatSpecialAbilitiesForSheet = createMaybeSelector (
   getSpecialAbilitiesForSheet,
-  getSpecialAbilitiesByGroups (List (4, 5, 6, 13, 14, 15, 16, 17, 18, 19, 20, 28))
+  getSpecialAbilitiesByGroups (combatSpecialAbilityGroups)
 )
 
 export const getMagicalSpecialAbilitiesForSheet = createMaybeSelector (
   getSpecialAbilitiesForSheet,
-  getSpecialAbilitiesByGroups (List (3, 9, 10, 11, 12, 21))
+  getSpecialAbilitiesByGroups (magicalSpecialAbilityGroups)
 )
 
 export const getBlessedSpecialAbilitiesForSheet = createMaybeSelector (
   getSpecialAbilitiesForSheet,
-  getSpecialAbilitiesByGroups (List (7, 8, 23, 24, 25, 26, 27, 29))
+  getSpecialAbilitiesByGroups (blessedSpecialAbilityGroups)
 )
 
 export const getFatePointsModifier = createMaybeSelector (
@@ -292,10 +304,10 @@ export const getFatePointsModifier = createMaybeSelector (
 
 export const getMagicalTraditionForSheet = createMaybeSelector (
   getMagicalTraditionsFromWiki,
-  fmap (pipe (
+  pipe (
     map (pipe (SpecialAbility.A.name, getBracketedNameFromFullName)),
     intercalate (", ")
-  ))
+  )
 )
 
 export const getBlessedTraditionForSheet = createMaybeSelector (
@@ -304,21 +316,28 @@ export const getBlessedTraditionForSheet = createMaybeSelector (
 )
 
 const getPropertyOrAspectKnowledgesForSheet =
-  uncurryN (
-    liftM2 ((hero_entry: Record<ActivatableDependent>) => (wiki_entry: Record<SpecialAbility>) =>
-             mapMaybe ((x: string | number) =>
-                         pipe_ (x, Just, getSelectOptionName (wiki_entry)))
-                       (getActiveSelections (hero_entry))))
+  uncurryN3 ((l10n: L10nRecord) => liftM2 ((wiki_entry: Record<SpecialAbility>) =>
+                                            pipe (
+                                              getActiveSelections,
+                                              mapMaybe (pipe (
+                                                Just,
+                                                getSelectOptionName (wiki_entry)
+                                              )),
+                                              sortStrings (l10n),
+                                              intercalate (", ")
+                                            )))
 
 export const getPropertyKnowledgesForSheet = createMaybeSelector (
-  mapGetToMaybeSlice (getSpecialAbilities) ("SA_72"),
+  getLocaleAsProp,
   mapGetToSlice (getWikiSpecialAbilities) ("SA_72"),
+  mapGetToSlice (getSpecialAbilities) ("SA_72"),
   getPropertyOrAspectKnowledgesForSheet
 )
 
 export const getAspectKnowledgesForSheet = createMaybeSelector (
-  mapGetToMaybeSlice (getSpecialAbilities) ("SA_87"),
+  getLocaleAsProp,
   mapGetToSlice (getWikiSpecialAbilities) ("SA_87"),
+  mapGetToSlice (getSpecialAbilities) ("SA_87"),
   getPropertyOrAspectKnowledgesForSheet
 )
 
@@ -337,7 +356,7 @@ export const isAlbino = createMaybeSelector (
 )
 
 export const getGuildMageUnfamiliarSpellId = createMaybeSelector (
-  mapGetToMaybeSlice (getSpecialAbilities) (prefixSA (70)),
+  mapGetToSlice (getSpecialAbilities) (prefixSA (70)),
   pipe (
     bindF (pipe (ActivatableDependent.A.active, listToMaybe)),
     fmap (pipe (ActiveObject.A.sid, misStringM))

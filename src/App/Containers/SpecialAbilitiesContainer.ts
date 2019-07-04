@@ -1,4 +1,5 @@
 import { connect } from "react-redux";
+import { join } from "../../Data/Maybe";
 import { Record } from "../../Data/Record";
 import { ReduxDispatch } from "../Actions/Actions";
 import * as ConfigActions from "../Actions/ConfigActions";
@@ -10,7 +11,7 @@ import { AppStateRecord } from "../Reducers/appReducer";
 import { getFilteredActiveSpecialAbilities } from "../Selectors/activatableSelectors";
 import { getFilteredInactiveSpecialAbilities } from "../Selectors/combinedActivatablesSelectors";
 import { getIsRemovingEnabled } from "../Selectors/phaseSelectors";
-import { getInactiveSpecialAbilitiesFilterText, getSpecialAbilities, getSpecialAbilitiesFilterText, getWikiSpecialAbilities } from "../Selectors/stateSelectors";
+import { getInactiveSpecialAbilitiesFilterText, getSpecialAbilitiesFilterText, getWikiSpecialAbilities } from "../Selectors/stateSelectors";
 import { getEnableActiveItemHints, getSpecialAbilitiesSortOrder } from "../Selectors/uisettingsSelectors";
 import { SpecialAbilities, SpecialAbilitiesDispatchProps, SpecialAbilitiesOwnProps, SpecialAbilitiesStateProps } from "../Views/SpecialAbilities/SpecialAbilities";
 
@@ -19,11 +20,10 @@ const mapStateToProps = (
   ownProps: SpecialAbilitiesOwnProps
 ): SpecialAbilitiesStateProps => ({
   activeList: getFilteredActiveSpecialAbilities (state, ownProps),
-  deactiveList: getFilteredInactiveSpecialAbilities (HeroModel.A.id (ownProps.hero))
-                                                    (state, ownProps),
+  deactiveList: join (getFilteredInactiveSpecialAbilities (HeroModel.A.id (ownProps.hero))
+                                                          (state, ownProps)),
   enableActiveItemHints: getEnableActiveItemHints (state),
   isRemovingEnabled: getIsRemovingEnabled (state),
-  stateEntries: getSpecialAbilities (state),
   wikiEntries: getWikiSpecialAbilities (state),
   sortOrder: getSpecialAbilitiesSortOrder (state),
   filterText: getSpecialAbilitiesFilterText (state),

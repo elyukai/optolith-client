@@ -1,6 +1,6 @@
 import * as React from "react";
 import { List } from "../../../Data/List";
-import { isJust, Just, Maybe, maybeR, Nothing } from "../../../Data/Maybe";
+import { fromMaybe, isJust, Just, liftM2, Maybe, Nothing } from "../../../Data/Maybe";
 import { Record } from "../../../Data/Record";
 import { HeroModel, HeroModelRecord } from "../../Models/Hero/HeroModel";
 import { Rules } from "../../Models/Hero/Rules";
@@ -22,7 +22,7 @@ export interface RulesStateProps {
   isEnableLanguageSpecializationsDeactivatable: boolean
   hero_locale: string
   mcurrent_guild_mage_spell: Maybe<Maybe<string>>
-  all_spells_select_options: List<Record<DropdownOption>>
+  all_spells_select_options: Maybe<List<Record<DropdownOption>>>
 }
 
 export interface RulesDispatchProps {
@@ -144,26 +144,28 @@ export function RulesView (props: RulesProps) {
             label={translate (l10n) ("language")}
             onChangeJust={setHeroLocale}
             />
-          {maybeR (
-                    <Dropdown
-                      options={List ()}
-                      value={Nothing}
-                      label="Tradition (Guild Mage) Unfamiliar Spell"
-                      hint="No 'Tradition (Guild Mage)' present"
-                      onChangeJust={setGuildMageSpell}
-                      disabled
-                      />
-                  )
-                  ((mcurr_spell_id: Maybe<string>) => (
-                    <Dropdown
-                      options={all_spells_select_options}
-                      value={mcurr_spell_id}
-                      label="Tradition (Guild Mage) Unfamiliar Spell"
-                      onChangeJust={setGuildMageSpell}
-                      disabled={isJust (mcurr_spell_id)}
-                      />
-                  ))
-                  (mcurrent_guild_mage_spell)}
+          {fromMaybe (
+                       <Dropdown
+                         options={List ()}
+                         value={Nothing}
+                         label="Tradition (Guild Mage) Unfamiliar Spell"
+                         hint="No 'Tradition (Guild Mage)' present"
+                         onChangeJust={setGuildMageSpell}
+                         disabled
+                         />
+                     )
+                     (liftM2 ((mcurr_spell_id: Maybe<string>) =>
+                              (spells: List<Record<DropdownOption>>) => (
+                                <Dropdown
+                                  options={spells}
+                                  value={mcurr_spell_id}
+                                  label="Tradition (Guild Mage) Unfamiliar Spell"
+                                  onChangeJust={setGuildMageSpell}
+                                  disabled={isJust (mcurr_spell_id)}
+                                  />
+                              ))
+                             (mcurrent_guild_mage_spell)
+                             (all_spells_select_options))}
         </div>
       </Scroll>
     </div>

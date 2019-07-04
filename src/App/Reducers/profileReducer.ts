@@ -1,8 +1,8 @@
 import { ident } from "../../Data/Function";
 import { over, set } from "../../Data/Lens";
-import { isJust, Just } from "../../Data/Maybe";
-import { snd } from "../../Data/Pair";
+import { isJust, Just, Nothing } from "../../Data/Maybe";
 import { Record } from "../../Data/Record";
+import { snd } from "../../Data/Tuple";
 import * as DisAdvActions from "../Actions/DisAdvActions";
 import * as ProfileActions from "../Actions/ProfileActions";
 import { ActionTypes } from "../Constants/ActionTypes";
@@ -15,6 +15,7 @@ import { pipe } from "../Utilities/pipe";
 
 type Action = ProfileActions.SetHeroNameAction
             | ProfileActions.SetHeroAvatarAction
+            | ProfileActions.DeleteHeroAvatarAction
             | ProfileActions.SetFamilyAction
             | ProfileActions.SetPlaceOfBirthAction
             | ProfileActions.SetDateOfBirthAction
@@ -148,6 +149,9 @@ export const profileReducer =
 
       case ActionTypes.SET_HERO_AVATAR:
         return set (HeroModelL.avatar) (Just (action.payload.url))
+
+      case ActionTypes.DELETE_HERO_AVATAR:
+        return set (HeroModelL.avatar) (Nothing)
 
       case ActionTypes.SET_HERO_LOCALE:
         return set (HeroModelL.locale) (action.payload.locale)

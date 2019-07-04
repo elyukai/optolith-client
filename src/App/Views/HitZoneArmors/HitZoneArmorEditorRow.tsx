@@ -15,11 +15,11 @@ export type HitZoneNames =
   | "rightleg"
 
 export interface ArmorZonesEditorProps {
-  armorList: List<Record<DropdownOption>>
+  armorList: List<Record<DropdownOption<string>>>
   component: Maybe<string>
   componentLoss: Maybe<number>
   l10n: L10nRecord
-  lossLevels: List<Record<DropdownOption>>
+  lossLevels: List<Record<DropdownOption<number>>>
   name: HitZoneNames
   setComponent (value: Maybe<string>): void
   setComponentLoss (id: Maybe<number>): void

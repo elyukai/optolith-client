@@ -1,3 +1,4 @@
+import { equals } from "../../../../Data/Eq";
 import { ident } from "../../../../Data/Function";
 import { fmap } from "../../../../Data/Functor";
 import { set } from "../../../../Data/Lens";
@@ -26,7 +27,7 @@ import { pairToIncreaseSkill } from "../../../Models/Wiki/sub/IncreaseSkill";
 import { pairToIncreaseSkillOrList } from "../../../Models/Wiki/sub/IncreaseSkillList";
 import { NameBySex } from "../../../Models/Wiki/sub/NameBySex";
 import { AnyProfessionSelection, ProfessionDependency, ProfessionPrerequisite, ProfessionSelectionIds } from "../../../Models/Wiki/wikiTypeHelpers";
-import { prefixCantrip, prefixCT, prefixId } from "../../IDUtils";
+import { prefixCantrip, prefixCT, prefixId, prefixSA } from "../../IDUtils";
 import { toNatural } from "../../NumberUtils";
 import { pipe, pipe_ } from "../../pipe";
 import { mergeRowsById } from "../mergeTableRows";
@@ -476,98 +477,112 @@ export const toProfession =
           esgr,
           esrc,
         })
-        (rs => Profession ({
-          id: prefixId (IdPrefixes.PROFESSIONS) (id),
+        (rs => {
+          const is_guild_mage_tradition_add =
+            any (List.any ((x: ProfessionPrerequisite) =>
+                            ProfessionRequireActivatable.is (x)
+                            && ProfessionRequireActivatable.A.id (x) === prefixSA (70)))
+                (rs.eprerequisites)
+            && any (List.any (pipe (ProfessionRequireActivatable.A.id, equals (prefixSA (70)))))
+                   (rs.especialAbilities)
 
-          name:
-            maybe<Profession["name"]> (rs.ename)
-                                      ((f: string) => NameBySex ({ m: rs.ename, f }))
-                                      (nameFemale),
+          const selections = fromMaybe (ProfessionSelections.default) (rs.eselections)
 
-          subname:
-            fmap<string, Profession["name"]> (m => maybe<Profession["name"]>
-                                               (m)
-                                               ((f: string) => NameBySex ({ m, f }))
-                                               (subnameFemale))
-                                             (subname),
+          return Profession ({
+            id: prefixId (IdPrefixes.PROFESSIONS) (id),
 
-          ap: rs.ecost,
+            name:
+              maybe<Profession["name"]> (rs.ename)
+                                        ((f: string) => NameBySex ({ m: rs.ename, f }))
+                                        (nameFemale),
 
-          dependencies:
-            fromMaybe<Profession["dependencies"]> (empty) (rs.edependencies),
+            subname:
+              fmap<string, Profession["name"]> (m => maybe<Profession["name"]>
+                                                 (m)
+                                                 ((f: string) => NameBySex ({ m, f }))
+                                                 (subnameFemale))
+                                               (subname),
 
-          prerequisites:
-            fromMaybe<Profession["prerequisites"]> (empty) (rs.eprerequisites),
+            ap: rs.ecost,
 
-          prerequisitesStart,
-          prerequisitesEnd,
+            dependencies:
+              fromMaybe<Profession["dependencies"]> (empty) (rs.edependencies),
 
-          selections:
-            fromMaybe<Profession["selections"]> (ProfessionSelections.default) (rs.eselections),
+            prerequisites:
+              fromMaybe<Profession["prerequisites"]> (empty) (rs.eprerequisites),
 
-          specialAbilities:
-            fromMaybe<Profession["specialAbilities"]> (empty) (rs.especialAbilities),
+            prerequisitesStart,
+            prerequisitesEnd,
 
-          combatTechniques:
-            maybe<Profession["combatTechniques"]>
-              (empty)
-              (map (pairToIncreaseSkill (IdPrefixes.COMBAT_TECHNIQUES)))
-              (rs.ecombatTechniques),
+            selections:
+              is_guild_mage_tradition_add
+                ? set (PSL[ProfessionSelectionIds.GUILD_MAGE_UNFAMILIAR_SPELL]) (true) (selections)
+                : selections,
 
-          skills:
-            maybe<Profession["skills"]>
-              (empty)
-              (map (pairToIncreaseSkill (IdPrefixes.SKILLS)))
-              (rs.eskills),
+            specialAbilities:
+              fromMaybe<Profession["specialAbilities"]> (empty) (rs.especialAbilities),
 
-          spells:
-            maybe<Profession["spells"]>
-              (empty)
-              (map (pairToIncreaseSkillOrList (IdPrefixes.SPELLS)))
-              (rs.espells),
+            combatTechniques:
+              maybe<Profession["combatTechniques"]>
+                (empty)
+                (map (pairToIncreaseSkill (IdPrefixes.COMBAT_TECHNIQUES)))
+                (rs.ecombatTechniques),
 
-          liturgicalChants:
-            maybe<Profession["liturgicalChants"]>
-              (empty)
-              (map (pairToIncreaseSkillOrList (IdPrefixes.LITURGICAL_CHANTS)))
-              (rs.eliturgicalChants),
+            skills:
+              maybe<Profession["skills"]>
+                (empty)
+                (map (pairToIncreaseSkill (IdPrefixes.SKILLS)))
+                (rs.eskills),
 
-          blessings:
-            maybe<Profession["blessings"]>
-              (empty)
-              (map (prefixId (IdPrefixes.BLESSINGS)))
-              (rs.eblessings),
+            spells:
+              maybe<Profession["spells"]>
+                (empty)
+                (map (pairToIncreaseSkillOrList (IdPrefixes.SPELLS)))
+                (rs.espells),
 
-          suggestedAdvantages:
-            maybePrefix (IdPrefixes.ADVANTAGES) (rs.esuggestedAdvantages),
+            liturgicalChants:
+              maybe<Profession["liturgicalChants"]>
+                (empty)
+                (map (pairToIncreaseSkillOrList (IdPrefixes.LITURGICAL_CHANTS)))
+                (rs.eliturgicalChants),
 
-          suggestedAdvantagesText,
+            blessings:
+              maybe<Profession["blessings"]>
+                (empty)
+                (map (prefixId (IdPrefixes.BLESSINGS)))
+                (rs.eblessings),
 
-          suggestedDisadvantages:
-            maybePrefix (IdPrefixes.DISADVANTAGES) (rs.esuggestedDisadvantages),
+            suggestedAdvantages:
+              maybePrefix (IdPrefixes.ADVANTAGES) (rs.esuggestedAdvantages),
 
-          suggestedDisadvantagesText,
+            suggestedAdvantagesText,
 
-          unsuitableAdvantages:
-            maybePrefix (IdPrefixes.ADVANTAGES) (rs.eunsuitableAdvantages),
+            suggestedDisadvantages:
+              maybePrefix (IdPrefixes.DISADVANTAGES) (rs.esuggestedDisadvantages),
 
-          unsuitableAdvantagesText,
+            suggestedDisadvantagesText,
 
-          unsuitableDisadvantages:
-            maybePrefix (IdPrefixes.DISADVANTAGES) (rs.eunsuitableDisadvantages),
+            unsuitableAdvantages:
+              maybePrefix (IdPrefixes.ADVANTAGES) (rs.eunsuitableAdvantages),
 
-          unsuitableDisadvantagesText,
+            unsuitableAdvantagesText,
 
-          isVariantRequired: rs.eisVariantRequired,
+            unsuitableDisadvantages:
+              maybePrefix (IdPrefixes.DISADVANTAGES) (rs.eunsuitableDisadvantages),
 
-          variants:
-            maybePrefix (IdPrefixes.PROFESSION_VARIANTS) (rs.evariants),
+            unsuitableDisadvantagesText,
 
-          gr: rs.egr,
-          subgr: rs.esgr,
+            isVariantRequired: rs.eisVariantRequired,
 
-          src: rs.esrc,
+            variants:
+              maybePrefix (IdPrefixes.PROFESSION_VARIANTS) (rs.evariants),
 
-          category: Nothing,
-        }))
+            gr: rs.egr,
+            subgr: rs.esgr,
+
+            src: rs.esrc,
+
+            category: Nothing,
+          })
+        })
     })

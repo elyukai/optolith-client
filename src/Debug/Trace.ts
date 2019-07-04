@@ -2,6 +2,14 @@ import { Internals } from "../Data/Internals";
 import { showP } from "../Data/Show";
 
 /**
+ * `trace :: Show a => String -> a -> a`
+ *
+ * The `trace` prints the passed `String` to the console and returns the second
+ * parameter.
+ */
+export const trace = (msg: string) => <A> (x: A) => (console.log (msg), x)
+
+/**
  * `traceShowIO :: Show a => String -> a -> IO a`
  *
  * The `traceShowIO` function is a variant of the `print` function. It takes a

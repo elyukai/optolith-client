@@ -1,7 +1,7 @@
 import { empty, List, map, notNull } from "../../../../Data/List";
 import { fromMaybe, maybe, Nothing } from "../../../../Data/Maybe";
-import { fst, Pair, snd } from "../../../../Data/Pair";
 import { Record } from "../../../../Data/Record";
+import { fst, Pair, snd } from "../../../../Data/Tuple";
 import { IdPrefixes } from "../../../Constants/IdPrefixes";
 import { Culture } from "../../../Models/Wiki/Culture";
 import { CommonProfession } from "../../../Models/Wiki/sub/CommonProfession";
@@ -90,8 +90,8 @@ export const toCulture =
       const ecommonMagicalProfessionsExceptions =
         checkOptionalExceptionList ("commonMagicalProfessionsExceptions")
 
-      const commonMagicalProfessions =
-        lookup_l10n ("commonMagicalProfessions")
+      const commonMagicProfessions =
+        lookup_l10n ("commonMagicProfessions")
 
       const ecommonBlessedProfessionsAll =
         checkUnivBoolean ("commonBlessedProfessionsAll")
@@ -212,7 +212,7 @@ export const toCulture =
             ),
 
             commonMundaneProfessions,
-            commonMagicProfessions: commonMagicalProfessions,
+            commonMagicProfessions,
             commonBlessedProfessions,
 
             commonAdvantages:

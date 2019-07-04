@@ -3,7 +3,7 @@ import { over, set } from "../../Data/Lens";
 import { modifyAt } from "../../Data/List";
 import { Just } from "../../Data/Maybe";
 import { adjust } from "../../Data/OrderedMap";
-import { fst, snd } from "../../Data/Pair";
+import { fst, snd } from "../../Data/Tuple";
 import * as DisAdvActions from "../Actions/DisAdvActions";
 import * as SpecialAbilitiesActions from "../Actions/SpecialAbilitiesActions";
 import { ActionTypes } from "../Constants/ActionTypes";

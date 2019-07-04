@@ -1,4 +1,4 @@
-import * as classNames from "classnames";
+import classNames from "classnames";
 import * as React from "react";
 import { filter, List, map, toArray } from "../../../Data/List";
 import { Just, Maybe, Nothing } from "../../../Data/Maybe";
@@ -10,7 +10,6 @@ import { L10nRecord } from "../../Models/Wiki/L10n";
 import { translate, translateP } from "../../Utilities/I18n";
 import { getLevelElements } from "../../Utilities/levelUtils";
 import { pipe_ } from "../../Utilities/pipe";
-import { misNumberM } from "../../Utilities/typeCheckUtils";
 import { Checkbox } from "../Universal/Checkbox";
 import { Dropdown, DropdownOption } from "../Universal/Dropdown";
 
@@ -96,10 +95,10 @@ export function SelectionsLanguagesAndScripts (props: SelectionsLanguagesAndScri
                         <Dropdown
                           className="tiers"
                           value={active_level}
-                          onChange={optionId => adjustLanguage (id) (misNumberM (optionId))}
-                          options={filter ((option: Record<DropdownOption>) => {
+                          onChange={optionId => adjustLanguage (id) (optionId)}
+                          options={filter ((option: Record<DropdownOption<number>>) => {
                                             const current_level =
-                                              Maybe.sum (misNumberM (DropdownOption.A.id (option)))
+                                              Maybe.sum (DropdownOption.A.id (option))
 
                                             return (current_level - active_level) * 2 <= apLeft
                                           })

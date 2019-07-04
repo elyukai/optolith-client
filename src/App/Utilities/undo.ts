@@ -3,8 +3,8 @@ import { flip, ident } from "../../Data/Function";
 import { set } from "../../Data/Lens";
 import { cons, elem, empty, List, uncons } from "../../Data/List";
 import { maybe } from "../../Data/Maybe";
-import { fst, Pair, snd } from "../../Data/Pair";
 import { fromDefault, makeLenses, Record } from "../../Data/Record";
+import { fst, Pair, snd } from "../../Data/Tuple";
 import { ActionTypes } from "../Constants/ActionTypes";
 
 export interface UndoState<S> {

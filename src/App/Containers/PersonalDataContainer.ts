@@ -11,7 +11,7 @@ import { getAdvantagesForSheet, getDisadvantagesForSheet, isAlbino } from "../Se
 import { getAvailableAPMap } from "../Selectors/adventurePointsSelectors";
 import { getStartEl } from "../Selectors/elSelectors";
 import { getIsRemovingEnabled } from "../Selectors/phaseSelectors";
-import { getCurrentCulture, getCurrentFullProfessionName, getCurrentProfession, getCurrentProfessionVariant, getCurrentRace, getCurrentRaceVariant } from "../Selectors/rcpSelectors";
+import { getCurrentCulture, getCurrentFullProfessionName, getCurrentProfession, getCurrentProfessionVariant, getCurrentRace, getCurrentRaceVariant, getRandomSizeCalcStr, getRandomWeightCalcStr } from "../Selectors/rcpSelectors";
 import { getAvatar, getCurrentHeroName, getCustomProfessionName, getIsAddAdventurePointsOpen, getIsEditCharacterAvatarOpen, getPhase, getProfile, getSex, getTotalAdventurePoints } from "../Selectors/stateSelectors";
 import { getIsEditingHeroAfterCreationPhaseEnabled } from "../Selectors/uisettingsSelectors";
 import { PersonalDataDispatchProps, PersonalDataOwnProps, PersonalDataStateProps, PersonalDataView } from "../Views/Profile/PersonalData";
@@ -40,11 +40,16 @@ const mapStateToProps =
     isAddAdventurePointsOpen: getIsAddAdventurePointsOpen (state),
     isEditCharacterAvatarOpen: getIsEditCharacterAvatarOpen (state),
     isAlbino: isAlbino (state),
+    sizeCalcStr: getRandomSizeCalcStr (state, ownProps),
+    weightCalcStr: getRandomWeightCalcStr (state, ownProps),
   })
 
 const mapDispatchToProps = (dispatch: ReduxDispatch): PersonalDataDispatchProps => ({
   setAvatar (path: string) {
     dispatch (ProfileActions.setHeroAvatar (path))
+  },
+  deleteAvatar () {
+    dispatch (ProfileActions.deleteHeroAvatar ())
   },
   setHeroName (name: string) {
     dispatch (ProfileActions.setHeroName (name))

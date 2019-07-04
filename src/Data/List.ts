@@ -7,16 +7,16 @@
  */
 
 import { add, inc, max, min, multiply } from "../App/Utilities/mathUtils";
-import { pipe } from "../App/Utilities/pipe";
+import { pipe, pipe_ } from "../App/Utilities/pipe";
 import { not } from "./Bool";
 import { equals } from "./Eq";
-import { ident } from "./Function";
+import { ident, thrush } from "./Function";
 import { fmap, fmapF } from "./Functor";
 import { Internals } from "./Internals";
 import { isLTorEQ, Ordering } from "./Ord";
-import { first, fst, Pair, second, snd } from "./Pair";
 import { fromDefault, RecordBase } from "./Record";
 import { show } from "./Show";
+import { first, fst, Pair, second, snd } from "./Tuple";
 
 export import NonEmptyList = Internals.NonEmptyList
 export import Cons = Internals.Cons
@@ -702,6 +702,33 @@ export const map =
 export const reverse =
   <A> (xs: List<A>): List<A> =>
     foldl<A, List<A>> (cons) (empty) (xs)
+
+/**
+ * `intersperse :: a -> [a] -> [a]`
+ *
+ * The intersperse function takes an element and a list and 'intersperses' that
+ * element between the elements of the list. For example,
+ *
+ * ```haskell
+ * intersperse ',' "abcde" == "a,b,c,d,e"
+ * ```
+ */
+export const intersperse =
+  <A> (x: A) => (xs: List<A>): List<A> =>
+    isNil (xs)
+    ? Nil
+    : isNil (xs .xs)
+    ? xs
+    : cons (intersperseIterator (x) (xs .xs)) (xs .x)
+
+const intersperseIterator =
+  <A> (x: A) => (xs: List<A>): List<A> =>
+    isNil (xs)
+    ? Nil
+    : pipe_ (intersperseIterator (x) (xs .xs), consF (xs .x), consF (x))
+
+List.intersperse = intersperse
+
 
 /**
  * `intercalate :: [a] -> [[a]] -> [a]`
@@ -2062,6 +2089,92 @@ export const notNullStrUndef =
     str !== undefined && str .length > 0
 
 List.notNullStrUndef = notNullStrUndef
+
+/**
+ * `intersecting :: [a] -> [a] -> Bool`
+ *
+ * Returns if the passed lists have at least one value in common.
+ */
+export const intersecting =
+  <A> (ys: List<A>) => any (elemF (ys))
+
+List.intersecting = intersecting
+
+/**
+ * `filterMulti :: [a -> Bool] -> [a] -> [a]`
+ *
+ * `filterMulti`, applied to a list of predicates and a list, returns the list of those elements that satisfy the all predicates.
+ */
+export const filterMulti =
+  <A> (preds: List<(x: A) => boolean>): (xs: List<A>) => List<A> =>
+    filter<A> (x => all<(x: A) => boolean> (thrush (x)) (preds))
+
+List.filterMulti = filterMulti
+
+/**
+ * `lengthAtLeast :: Int -> [a] -> Bool`
+ */
+export const lengthAtLeast =
+  (min_len: number) => <A> (xs: List<A>): boolean => {
+    if (min_len < 0) {
+      throw new RangeError ("lengthAtLeast: A list length cannot be negative!")
+    }
+    else if (min_len === 0) {
+      return true
+    }
+    else if (min_len === 1) {
+      return !isNil (xs)
+    }
+    else {
+      return lengthAtLeastIter (min_len) (0) (xs)
+    }
+  }
+
+const lengthAtLeastIter =
+  (min_len: number) => (len: number) => <A> (xs: List<A>): boolean => {
+    if (isNil (xs)) {
+      return false;
+    }
+    else if (min_len === len + 1) {
+      return true
+    }
+    else {
+      return lengthAtLeastIter (min_len) (len + 1) (xs .xs)
+    }
+  }
+
+List.lengthAtLeast = lengthAtLeast
+
+/**
+ * `lengthAtLeast :: Int -> [a] -> Bool`
+ */
+export const lengthAtMost =
+  (max_len: number) => <A> (xs: List<A>): boolean => {
+    if (max_len < 0) {
+      throw new RangeError ("lengthAtMost: A list length cannot be negative!")
+    }
+    else if (max_len === 0) {
+      return isNil (xs)
+    }
+    else {
+      return lengthAtMostIter (max_len) (0) (xs)
+    }
+  }
+
+const lengthAtMostIter =
+  (max_len: number) => (len: number) => <A> (xs: List<A>): boolean => {
+    if (isNil (xs)) {
+      return true;
+    }
+    else if (max_len < len + 1) {
+      return false
+    }
+    else {
+      return lengthAtMostIter (max_len) (len + 1) (xs .xs)
+    }
+  }
+
+List.lengthAtMost = lengthAtMost
 
 
 // NAMESPACED FUNCTIONS

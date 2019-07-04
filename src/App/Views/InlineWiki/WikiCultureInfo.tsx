@@ -16,6 +16,7 @@ import { localizeOrList, translate, translateP } from "../../Utilities/I18n";
 import { prefixC } from "../../Utilities/IDUtils";
 import { dec } from "../../Utilities/mathUtils";
 import { pipe, pipe_ } from "../../Utilities/pipe";
+import { renderMaybe } from "../../Utilities/ReactUtils";
 import { sortRecordsByName, sortStrings } from "../../Utilities/sortBy";
 import { Markdown } from "../Universal/Markdown";
 import { WikiSource } from "./Elements/WikiSource";
@@ -139,7 +140,7 @@ export function WikiCultureInfo (props: WikiCultureInfoProps) {
         {social_status}
       </WikiProperty>
       <WikiProperty l10n={l10n} title="commonprofessions">
-        {isElvenCulture (CCA_.id (x)) ? CCA_.commonMagicProfessions (x) : null}
+        {isElvenCulture (CCA_.id (x)) ? renderMaybe (CCA_.commonMagicProfessions (x)) : null}
       </WikiProperty>
       {!isElvenCulture (CCA_.id (x))
         ? <ul>

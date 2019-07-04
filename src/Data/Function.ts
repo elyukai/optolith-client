@@ -121,6 +121,23 @@ export const blackbirdF =
   <D> (f: (z: C) => D) =>
     blackbird (f) (g)
 
+export const genericMap2 =
+  <A, D, E>
+  (f: (g: (z: D) => E) => (x: A) => A) =>
+  <B, C>
+  (g: (x: B) => (y: C) => (z: D) => E) =>
+  (y: B) =>
+  (z: C) =>
+  (x: A) =>
+    f (g (y) (z)) (x)
+
+export const genericMap2F =
+  <B, C, D, E>
+  (g: (x: B) => (y: C) => (z: D) => E) =>
+  <A>
+  (f: (g: (z: D) => E) => (x: A) => A) =>
+    genericMap2 (f) (g)
+
 
 // NAMESPACED FUNCTIONS
 

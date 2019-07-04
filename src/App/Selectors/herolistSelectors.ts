@@ -2,7 +2,7 @@ import { ident } from "../../Data/Function";
 import { map, notNull } from "../../Data/List";
 import { elems, foldr } from "../../Data/OrderedMap";
 import { insert, OrderedSet } from "../../Data/OrderedSet";
-import { uncurryN3 } from "../../Data/Pair";
+import { uncurryN3 } from "../../Data/Tuple/Curry";
 import { HeroModel } from "../Models/Hero/HeroModel";
 import { heroReducer } from "../Reducers/heroReducer";
 import { createMaybeSelector } from "../Utilities/createMaybeSelector";

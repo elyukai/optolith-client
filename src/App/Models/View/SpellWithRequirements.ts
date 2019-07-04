@@ -5,7 +5,9 @@ import { Spell } from "../Wiki/Spell";
 import { SpellCombined } from "./SpellCombined";
 import { IncreasableWithRequirements } from "./viewTypeHelpers";
 
-export interface SpellWithRequirements extends SpellCombined, IncreasableWithRequirements { }
+export interface SpellWithRequirements extends SpellCombined, IncreasableWithRequirements {
+  isUnfamiliar: boolean
+}
 
 export const SpellWithRequirements =
   fromDefault<SpellWithRequirements> ({
@@ -13,6 +15,7 @@ export const SpellWithRequirements =
     stateEntry: ActivatableSkillDependent .default,
     isIncreasable: false,
     isDecreasable: false,
+    isUnfamiliar: false,
   })
 
 const SWRA = SpellWithRequirements.A

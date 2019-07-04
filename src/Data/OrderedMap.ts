@@ -863,16 +863,15 @@ interface Filter {
    *
    * Filter all values that satisfy the predicate.
    */
-  <K, A, A1 extends A>
-  (pred: (x: A) => x is A1): (list: OrderedMap<K, A>) => OrderedMap<K, A1>
+  <A, A1 extends A>
+  (pred: (x: A) => x is A1): <K> (list: OrderedMap<K, A>) => OrderedMap<K, A1>
 
   /**
    * `filter :: (a -> Bool) -> Map k a -> Map k a`
    *
    * Filter all values that satisfy the predicate.
    */
-  <K, A>
-  (pred: (x: A) => boolean): (list: OrderedMap<K, A>) => OrderedMap<K, A>
+  <A> (pred: (x: A) => boolean): <K> (list: OrderedMap<K, A>) => OrderedMap<K, A>
 }
 
 /**

@@ -93,7 +93,7 @@ export function ItemEditorArmorSection (props: ItemEditorArmorSectionProps) {
               <Dropdown
                 className="weapon-loss"
                 label={translate (l10n) ("wear")}
-                value={EIA.stabilityMod (item)}
+                value={EIA.loss (item)}
                 options={getLossLevelElements ()}
                 onChange={props.setLoss}
                 />

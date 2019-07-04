@@ -6,7 +6,6 @@ import { isRecord, Record } from "../../../Data/Record";
 import { ActivatableDependent } from "../../Models/ActiveEntries/ActivatableDependent";
 import { ActiveObject } from "../../Models/ActiveEntries/ActiveObject";
 import { DependencyObject } from "../../Models/ActiveEntries/DependencyObject";
-import { ActivatableDependency } from "../../Models/Hero/heroTypeHelpers";
 import { Advantage } from "../../Models/Wiki/Advantage";
 import { SelectOption } from "../../Models/Wiki/sub/SelectOption";
 import { Activatable } from "../../Models/Wiki/wikiTypeHelpers";
@@ -14,7 +13,7 @@ import { pipe } from "../pipe";
 
 const { select } = Advantage.AL
 const { id: getId, name, cost } = SelectOption.AL
-const { active, dependencies } = ActivatableDependent.A
+const ADA = ActivatableDependent.A
 const { sid, sid2 } = ActiveObject.AL
 
 /**
@@ -47,7 +46,7 @@ export const getSelectOptionCost = (obj: Activatable) => pipe (findSelectOption 
  * Get all `ActiveObject.sid` values from the given instance.
  * @param obj The entry.
  */
-export const getActiveSelections = pipe (active, mapMaybe (sid))
+export const getActiveSelections = pipe (ADA.active, mapMaybe (sid))
 
 /**
  * Get all `ActiveObject.sid` values from the given instance.
@@ -65,27 +64,22 @@ type SecondarySelections = OrderedMap<number | string, List<string | number>>
  * @param entry
  */
 export const getActiveSecondarySelections =
-  fmap (
-    pipe (
-      active as (r: Record<ActivatableDependent>) => ActivatableDependent["active"],
-      foldl<Record<ActiveObject>, SecondarySelections>
-        (map => selection =>
-          fromMaybe
-            (map)
-            (liftM2<string | number, string | number, SecondarySelections>
-              (id => id2 => alter<List<string | number>>
-                (pipe (
-                  fmap (consF (id2)),
-                  altF (Just (List (id2)))
-                ))
-                (id)
-                (map))
-              (sid (selection))
-              (sid2 (selection)))
-        )
-        (OrderedMap.empty)
-    )
-  )
+  fmap (pipe (
+               ADA.active,
+               foldl ((map: SecondarySelections) => (selection: Record<ActiveObject>) =>
+                       fromMaybe (map)
+                                 (liftM2<string | number, string | number, SecondarySelections>
+                                   (id => id2 => alter<List<string | number>>
+                                     (pipe (
+                                       fmap (consF (id2)),
+                                       altF (Just (List (id2)))
+                                     ))
+                                     (id)
+                                     (map))
+                                   (sid (selection))
+                                   (sid2 (selection))))
+                     (OrderedMap.empty)
+             ))
 
 /**
  * Get all `DependencyObject.sid` values from the given instance.
@@ -93,14 +87,10 @@ export const getActiveSecondarySelections =
  */
 export const getRequiredSelections:
   (m: Maybe<Record<ActivatableDependent>>) => Maybe<List<string | number | List<number>>> =
-  fmap (
-    pipe (
-      dependencies,
-      mapMaybe<ActivatableDependency, string | number | List<number>> (
-        pipe (
-          ensure<ActivatableDependency, Record<DependencyObject>> (isRecord),
-          bindF (DependencyObject.AL.sid)
-        )
-      )
-    )
-  )
+    fmap (pipe (
+      ADA.dependencies,
+      mapMaybe (pipe (
+        ensure (isRecord),
+        bindF (DependencyObject.AL.sid)
+      ))
+    ))

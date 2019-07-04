@@ -1,7 +1,7 @@
 {
   "name": "optolith",
   "productName": "Optolith Insider",
-  "version": "1.1.0-alpha.13",
+  "version": "1.1.0-alpha.17",
   "description": "A generator for heroes for the P&P-RPG 'The Dark Eye'.",
   "author": {
     "name": "Lukas Obermann",
@@ -9,14 +9,14 @@
   },
   "homepage": "https://github.com/Elytherion/tdeheroes",
   "license": "GPL-3.0",
-  "main": "app/main.js",
+  "main": "app/index.js",
   "dependencies": {
     "classnames": "2.2.6",
     "electron-localshortcut": "3.1.0",
     "electron-log": "3.0.5",
     "electron-updater": "4.0.6",
     "electron-window-state": "5.0.3",
-    "esm": "3.2.4",
+    "esm": "3.2.25",
     "react": "16.8.6",
     "react-custom-scrollbars": "4.2.1",
     "react-dom": "16.8.6",
